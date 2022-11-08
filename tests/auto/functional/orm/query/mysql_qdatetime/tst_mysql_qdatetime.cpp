@@ -10,7 +10,7 @@
 #include "databases.hpp"
 
 using Orm::Constants::ID;
-using Orm::Constants::UTC;
+//using Orm::Constants::UTC;
 
 using Orm::DB;
 using Orm::QtTimeZoneConfig;
@@ -2181,7 +2181,9 @@ tst_MySql_QDateTime::createQuery() const
 
 void tst_MySql_QDateTime::setUtcTimezone() const
 {
-    setTimezone(UTC, {QtTimeZoneType::QtTimeSpec, QVariant::fromValue(Qt::UTC)});
+    setTimezone(QStringLiteral("+00:00"), {QtTimeZoneType::QtTimeSpec,
+                                           QVariant::fromValue(Qt::UTC)});
+//    setTimezone(UTC, {QtTimeZoneType::QtTimeSpec, QVariant::fromValue(Qt::UTC)});
 }
 
 void tst_MySql_QDateTime::set0200Timezone() const
@@ -2192,7 +2194,8 @@ void tst_MySql_QDateTime::set0200Timezone() const
 
 void tst_MySql_QDateTime::setDontConvertTimezone() const
 {
-    setTimezone(UTC, {QtTimeZoneType::DontConvert});
+    setTimezone(QStringLiteral("+00:00"), {QtTimeZoneType::DontConvert});
+//    setTimezone(UTC, {QtTimeZoneType::DontConvert});
 }
 
 void tst_MySql_QDateTime::setTimezone(const QString &timeZone,
