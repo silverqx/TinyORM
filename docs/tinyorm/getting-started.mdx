@@ -344,6 +344,18 @@ By default, a newly instantiated model instance will not contain any attribute v
         };
     };
 
+:::caution
+Use the `Model::instance` or `Model::instanceHeap` related methods to instantiate a model that contains a `QDateTime` in Default Attribute Values, or if attributes you want to pass to the model's constructor contain a `QDateTime` instance <small>(problem is described below)</small>.
+:::
+
+##### QDateTime and connection name problem
+
+If your Default Attribute Values or attributes that you can pass to the `Model` constructor contain the `QDateTime` instance, then `TinyORM` throws an exception. You have to use the `Model::instance` related methods to create such a Model.
+
+Virtually everything important is covered in the thrown exception, but let me summarize. The problem is that the `QDateTime` instance is converted to a string based on the `Model::u_dateFormat`, or if not defined, the date format from `Orm::Query::Grammars::Grammar` will be used. This `QueryGrammar` is obtained from `Orm::DatabaseConnection` and because of that TinyORM needs to know the __connection name__ and that's the crux of this problem. You can define your connection name using the `Model::u_connection` in your derived model class, but this derived model __is not yet initialized__, so the `Model::u_connection` is also not initialized.
+
+So if the `Model::u_connection` is not yet initialized, `TinyORM` can't obtain the `Orm::DatabaseConnection` -> `QueryGrammar` -> `dateFormat`.
+
 ## Retrieving Models
 
 Once you have created a model and its associated database table, you are ready to start retrieving data from your database. You can think of each TinyORM model as a powerful [query builder](database/query-builder.mdx) allowing you to fluently query the database table associated with the model. The model's `all` method will retrieve all of the records from the model's associated database table:
