@@ -117,6 +117,23 @@ The `select` method returns a `QSqlQuery` containing the results of the query, w
     while(users.next())
         qDebug() << users.value("name").toString();
 
+#### Selecting Scalar Values
+
+Sometimes your database query may result in a single, scalar value. Instead of being required to retrieve the query's scalar result from a record instance, TinyORM allows you to retrieve this value directly using the `scalar` shortcut method:
+
+    #include <orm/db.hpp>
+
+    auto states = DB::scalar(
+        "select count(case when state = 'pending' then 1 end) as states "
+          "from comments"
+    );
+
+    // With binding
+    auto states = DB::scalar(
+        "select count(case when state = ? then 1 end) as states from comments",
+        {"pending"}
+    );
+
 #### Running An Insert Statement
 
 To execute an `insert` statement, you may use the `insert` method on the `DB` facade. Like `select`, this method accepts the SQL query as its first argument and bindings as its second argument and returns `QSqlQuery`:
