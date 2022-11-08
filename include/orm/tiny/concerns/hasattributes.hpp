@@ -1296,7 +1296,6 @@ namespace Orm::Tiny::Concerns
 
         const auto &format = getDateFormat();
 
-        // CUR tz, add more formats? eg. with the t format expression and also for Qt::TextDate to be able transform more string dates to the QDateTime instance, but have to be carefull, at 100% this would be good for the setAttribute(), but need to think about originalIsEquiv() and other scenarios where this can collide or somehow change correct behavior silverqx
         /* Finally, we will just assume this date is in the format used by default on
            the database connection and use that format to create the QDateTime object
            that is returned back out to the developers after we convert it here. */
@@ -1304,6 +1303,10 @@ namespace Orm::Tiny::Concerns
             date.isValid()
         )
             return setTimeZone(date);
+
+        /* QDateTime doesn't offer any advanced parsing method that can guess and
+           instantiate the QDateTime from many formats, a function like that would be
+           ideal here. */
 
         throw Orm::Exceptions::InvalidFormatError(
                     QStringLiteral("Could not parse the datetime '%1' using "
