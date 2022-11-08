@@ -96,10 +96,14 @@ namespace Orm
         inline SqlQuery
         selectFromWriteConnection(const QString &queryString,
                                   const QVector<QVariant> &bindings = {});
+
         /*! Run a select statement and return a single result. */
         SqlQuery
-        selectOne(const QString &queryString,
-                  const QVector<QVariant> &bindings = {});
+        selectOne(const QString &queryString, const QVector<QVariant> &bindings = {});
+        /*! Run a select statement and return the first column of the first row. */
+        QVariant
+        scalar(const QString &queryString, const QVector<QVariant> &bindings = {});
+
         /*! Run an insert statement against the database. */
         inline SqlQuery
         insert(const QString &queryString,

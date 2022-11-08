@@ -4,6 +4,9 @@
 #  include <QDebug>
 #endif
 
+#include <QtSql/QSqlRecord>
+
+#include "orm/exceptions/multiplecolumnsselectederror.hpp"
 #include "orm/query/querybuilder.hpp"
 #include "orm/utils/configuration.hpp"
 #include "orm/utils/type.hpp"
@@ -152,6 +155,23 @@ DatabaseConnection::selectOne(const QString &queryString,
     query.first();
 
     return query;
+}
+
+QVariant
+DatabaseConnection::scalar(const QString &queryString, const QVector<QVariant> &bindings)
+{
+    const auto query = selectOne(queryString, bindings);
+
+    // Nothing to do, the query should be positioned on the first row/record
+    if (!query.isValid())
+        return {};
+
+    if (const auto count = query.record().count();
+        count > 1
+    )
+        throw Exceptions::MultipleColumnsSelectedError(count, __tiny_func__);
+
+    return query.value(0);
 }
 
 SqlQuery DatabaseConnection::statement(const QString &queryString,

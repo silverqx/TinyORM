@@ -3,6 +3,7 @@
 #include <QtTest>
 
 #include "orm/db.hpp"
+#include "orm/exceptions/multiplecolumnsselectederror.hpp"
 #include "orm/mysqlconnection.hpp"
 #include "orm/query/querybuilder.hpp"
 #include "orm/utils/type.hpp"
@@ -20,6 +21,7 @@ using Orm::Constants::qt_timezone;
 using Orm::Constants::timezone_;
 
 using Orm::DB;
+using Orm::Exceptions::MultipleColumnsSelectedError;
 using Orm::MySqlConnection;
 using Orm::QtTimeZoneConfig;
 using Orm::QtTimeZoneType;
@@ -53,12 +55,18 @@ private Q_SLOTS:
 
     void autoTests_timezone_And_qt_timezone() const;
 
+    void scalar() const;
+    void scalar_EmptyResult() const;
+    void scalar_MultipleColumnsSelectedError() const;
+
 // NOLINTNEXTLINE(readability-redundant-access-specifiers)
 private:
     /*! Create QueryBuilder instance for the given connection. */
     [[nodiscard]] std::shared_ptr<QueryBuilder>
     createQuery(const QString &connection) const;
 };
+
+/* private slots */
 
 void tst_DatabaseConnection::initTestCase_data() const
 {
@@ -824,6 +832,37 @@ void tst_DatabaseConnection::autoTests_timezone_And_qt_timezone() const
     } else
         Q_UNREACHABLE();
 }
+
+void tst_DatabaseConnection::scalar() const
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    auto name = DB::connection(connection).scalar(
+                    "select name from torrents order by id");
+
+    QCOMPARE(name, QVariant(QString("test1")));
+}
+
+void tst_DatabaseConnection::scalar_EmptyResult() const
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    auto name = DB::connection(connection).scalar(
+                    "select name from torrents where id = ?", {0});
+
+    QVERIFY(!name.isValid() && name.isNull());
+}
+
+void tst_DatabaseConnection::scalar_MultipleColumnsSelectedError() const
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    QVERIFY_EXCEPTION_THROWN(DB::connection(connection).scalar(
+                                 "select id, name from torrents order by id"),
+                             MultipleColumnsSelectedError);
+}
+
+/* private */
 
 std::shared_ptr<QueryBuilder>
 tst_DatabaseConnection::createQuery(const QString &connection) const
