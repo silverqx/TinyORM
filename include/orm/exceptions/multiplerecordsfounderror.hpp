@@ -17,27 +17,39 @@ namespace Orm::Exceptions
     {
     public:
         /*! Constructor. */
-        inline explicit MultipleRecordsFoundError(int count);
+        inline explicit MultipleRecordsFoundError(int count, QString &&functionName);
 
         /*! Get the number of records found. */
         inline int count() const noexcept;
+        /*! Get a function name where the exception occured. */
+        inline const QString &functionName() const noexcept;
 
     protected:
         /*! The number of records found. */
         int m_count;
+        /*! Function name where the exception occured. */
+        QString m_functionName;
     };
 
     /* public */
 
-    MultipleRecordsFoundError::MultipleRecordsFoundError(const int count)
-        : RuntimeError(QStringLiteral("%1 records were found.").arg(count)
+    MultipleRecordsFoundError::MultipleRecordsFoundError(const int count,
+                                                         QString &&functionName)
+        : RuntimeError(QStringLiteral("%1 records were found in %2().")
+                       .arg(count).arg(functionName)
                        .toUtf8().constData())
         , m_count(count)
+        , m_functionName(std::move(functionName))
     {}
 
     int MultipleRecordsFoundError::count() const noexcept
     {
         return m_count;
+    }
+
+    const QString &MultipleRecordsFoundError::functionName() const noexcept
+    {
+        return m_functionName;
     }
 
 } // namespace Orm::Exceptions

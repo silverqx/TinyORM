@@ -185,7 +185,7 @@ SqlQuery BuildsQueries::sole(const QVector<Column> &columns)
                 QStringLiteral("No records found in %1().").arg(__tiny_func__));
 
     if (count > 1)
-        throw Exceptions::MultipleRecordsFoundError(count);
+        throw Exceptions::MultipleRecordsFoundError(count, __tiny_func__);
 
     query.first();
 

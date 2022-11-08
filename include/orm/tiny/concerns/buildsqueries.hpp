@@ -287,7 +287,7 @@ namespace Concerns
                     QStringLiteral("No records found in %1().").arg(__tiny_func__));
 
         if (count > 1)
-            throw Orm::Exceptions::MultipleRecordsFoundError(count);
+            throw Orm::Exceptions::MultipleRecordsFoundError(count, __tiny_func__);
 
         return std::move(models.first());
     }
