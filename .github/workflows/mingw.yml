@@ -119,13 +119,6 @@ jobs:
         mysql.exe --version
         postgres.exe --version
 
-    - name: Setup tmate session
-      if: ${{ failure() }}
-      uses: mxschmitt/action-tmate@v3
-      with:
-        limit-access-to-actor: true
-    - run: exit 1
-
     - name: TinyORM create build folder (${{ matrix.compiler.key }}-cmake-debug)
       run: |
         mkdir -p ../TinyORM-builds-cmake/build-${{ matrix.compiler.key }}-cmake-debug
