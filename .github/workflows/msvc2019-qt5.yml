@@ -72,6 +72,23 @@ jobs:
         DB_MYSQL_PASSWORD: ${{ secrets.DB_MYSQL_PASSWORD }}
         DB_MYSQL_USERNAME: ${{ secrets.DB_MYSQL_USERNAME }}
 
+    - name: MySQL populate time zone tables 👌
+      working-directory: ${{ runner.temp }}
+      run: >-
+        $filepath = Join-Path -Path $(Resolve-Path -Path .) -ChildPath timezone_2022f_posix_sql
+        -AdditionalChildPath timezone_posix.sql
+
+        # source path can't be quoted, it works correctly even with spaces
+
+        mysql.exe --host=$env:DB_MYSQL_HOST --user=$env:DB_MYSQL_USERNAME
+        --password=$env:DB_MYSQL_PASSWORD --execute="source $filepath" mysql
+
+        Restart-Service MySQL
+      env:
+        DB_MYSQL_HOST: ${{ secrets.DB_MYSQL_HOST }}
+        DB_MYSQL_PASSWORD: ${{ secrets.DB_MYSQL_PASSWORD }}
+        DB_MYSQL_USERNAME: ${{ secrets.DB_MYSQL_USERNAME }}
+
     - name: MySQL check service status
       run: >-
         $mysqlService = Get-Service MySQL
