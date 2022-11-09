@@ -67,7 +67,7 @@ jobs:
         DB_MYSQL_PASSWORD_DEFAULT: ${{ secrets.DB_MYSQL_PASSWORD_DEFAULT }}
         DB_MYSQL_USERNAME: ${{ secrets.DB_MYSQL_USERNAME }}
 
-    - name: MySQL populate time zone tables
+    - name: MySQL populate time zone tables 👌
       run: >-
         mysql_tzinfo_to_sql /usr/share/zoneinfo |
         mysql --user=$DB_MYSQL_USERNAME --password=$DB_MYSQL_PASSWORD mysql
