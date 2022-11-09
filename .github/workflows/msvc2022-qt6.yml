@@ -95,6 +95,7 @@ jobs:
         -AdditionalChildPath timezone_posix.sql
 
         # source path can't be quoted, it works correctly even with spaces
+
         mysql --user=$DB_MYSQL_USERNAME --password=$DB_MYSQL_PASSWORD mysql
         --execute="source $filepath"
 
