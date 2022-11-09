@@ -13,6 +13,7 @@ using Orm::Constants::ID;
 using Orm::Constants::QMYSQL;
 using Orm::Constants::QPSQL;
 using Orm::Constants::QSQLITE;
+using Orm::Constants::TZ00;
 using Orm::Constants::UTC;
 
 using Orm::DB;
@@ -79,6 +80,10 @@ private Q_SLOTS:
     private:
         /*! Set the MySQL/PostgreSQL timezone session variable to the UTC value. */
         inline void setUtcTimezone(const QString &connection = {}) const;
+        /*! Get the UTC time zone string. */
+        static const QString &utcTimezoneString(const QString &connection);
+        /*! Are MySQL time zone table populated? */
+        static bool mysqlTimezoneTablesNotPopulated(const QString &connection);
 
         /*! Set the database timezone session variable to +02:00 value by connection. */
         inline void set0200Timezone(const QString &connection = {}) const;
@@ -88,7 +93,7 @@ private Q_SLOTS:
         inline void setEUBratislavaTimezoneForPSQL(const QString &connection = {}) const;
 
         /*! Set the MySQL/PostgreSQL timezone session variable to the given value. */
-        static void setTimezone(QString timeZone, QtTimeZoneConfig &&qtTimeZone,
+        static void setTimezone(const QString &timeZone, QtTimeZoneConfig &&qtTimeZone,
                                 const QString &connection);
         /*! Get a SQL query string to set a database time zone session variable. */
         static QString getSetTimezoneQueryString(const QString &connection);
@@ -1316,8 +1321,35 @@ create_QDateTime_0300Timezone_DatetimeAttribute_UtcOnServer_DontConvert() const
 
 void tst_Model_QDateTime::setUtcTimezone(const QString &connection) const
 {
-    setTimezone(UTC, {QtTimeZoneType::QtTimeSpec, QVariant::fromValue(Qt::UTC)},
+    setTimezone(utcTimezoneString(connection),
+                {QtTimeZoneType::QtTimeSpec, QVariant::fromValue(Qt::UTC)},
                 connection);
+}
+
+const QString &tst_Model_QDateTime::utcTimezoneString(const QString &connection)
+{
+    const auto driverName = DB::driverName(connection);
+
+    if (driverName == QMYSQL && mysqlTimezoneTablesNotPopulated(connection))
+        return TZ00;
+
+    return UTC;
+}
+
+bool
+tst_Model_QDateTime::mysqlTimezoneTablesNotPopulated(const QString &connection)
+{
+    auto qtQuery = DB::select(
+                       QStringLiteral("select count(*) from mysql.time_zone_name"),
+                       {}, connection);
+
+    if (!qtQuery.first())
+        return true;
+
+    const auto tzTableRows = qtQuery.value(0);
+
+    // If 0 then TZ tables are empty
+    return tzTableRows.value<quint64>() == 0;
 }
 
 void tst_Model_QDateTime::set0200Timezone(const QString &connection) const
@@ -1358,13 +1390,9 @@ void tst_Model_QDateTime::setEUBratislavaTimezoneForPSQL(const QString &connecti
 }
 
 void tst_Model_QDateTime::setTimezone(
-        QString timeZone, Orm::QtTimeZoneConfig &&qtTimeZone,
+        const QString &timeZone, Orm::QtTimeZoneConfig &&qtTimeZone,
         const QString &connection)
 {
-    const auto driverName = DB::driverName(connection);
-    if (driverName == QMYSQL && timeZone == UTC)
-        timeZone = QStringLiteral("+00:00");
-
     const auto qtQuery = DB::unprepared(
                              getSetTimezoneQueryString(connection).arg(timeZone),
                              connection);

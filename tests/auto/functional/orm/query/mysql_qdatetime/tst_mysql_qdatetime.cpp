@@ -10,7 +10,14 @@
 #include "databases.hpp"
 
 using Orm::Constants::ID;
-//using Orm::Constants::UTC;
+using Orm::Constants::TZ00;
+using Orm::Constants::UTC;
+
+// Copy the preprocessor condition for the Q_ASSERT()
+#if defined(QT_NO_DEBUG) && !defined(QT_FORCE_ASSERTS)
+#else
+using Orm::Constants::QMYSQL;
+#endif
 
 using Orm::DB;
 using Orm::QtTimeZoneConfig;
@@ -123,6 +130,11 @@ private:
     inline void setDontConvertTimezone() const;
     /*! Set the MySQL timezone session variable to the given value. */
     void setTimezone(const QString &timeZone, QtTimeZoneConfig &&qtTimeZone) const;
+
+    /*! Get the UTC time zone string. */
+    inline const QString &utcTimezoneString() const;
+    /*! Are MySQL time zone table populated? */
+    bool mysqlTimezoneTablesNotPopulated() const;
 
     /*! Restore the database after a QDateTime-related test. */
     void restore(quint64 lastId, bool restoreTimezone = false) const;
@@ -2181,9 +2193,8 @@ tst_MySql_QDateTime::createQuery() const
 
 void tst_MySql_QDateTime::setUtcTimezone() const
 {
-    setTimezone(QStringLiteral("+00:00"), {QtTimeZoneType::QtTimeSpec,
-                                           QVariant::fromValue(Qt::UTC)});
-//    setTimezone(UTC, {QtTimeZoneType::QtTimeSpec, QVariant::fromValue(Qt::UTC)});
+    setTimezone(utcTimezoneString(),
+                {QtTimeZoneType::QtTimeSpec, QVariant::fromValue(Qt::UTC)});
 }
 
 void tst_MySql_QDateTime::set0200Timezone() const
@@ -2194,8 +2205,7 @@ void tst_MySql_QDateTime::set0200Timezone() const
 
 void tst_MySql_QDateTime::setDontConvertTimezone() const
 {
-    setTimezone(QStringLiteral("+00:00"), {QtTimeZoneType::DontConvert});
-//    setTimezone(UTC, {QtTimeZoneType::DontConvert});
+    setTimezone(utcTimezoneString(), {QtTimeZoneType::DontConvert});
 }
 
 void tst_MySql_QDateTime::setTimezone(const QString &timeZone,
@@ -2208,6 +2218,28 @@ void tst_MySql_QDateTime::setTimezone(const QString &timeZone,
     QVERIFY(!qtQuery.isValid() && qtQuery.isActive() && !qtQuery.isSelect());
 
     DB::connection(m_connection).setQtTimeZone(std::move(qtTimeZone));
+}
+
+const QString &tst_MySql_QDateTime::utcTimezoneString() const
+{
+    Q_ASSERT(DB::driverName(m_connection) == QMYSQL);
+
+    return mysqlTimezoneTablesNotPopulated() ? TZ00 : UTC;
+}
+
+bool tst_MySql_QDateTime::mysqlTimezoneTablesNotPopulated() const
+{
+    auto qtQuery = DB::select(
+                       QStringLiteral("select count(*) from mysql.time_zone_name"),
+                       {}, m_connection);
+
+    if (!qtQuery.first())
+        return true;
+
+    const auto tzTableRows = qtQuery.value(0);
+
+    // If 0 then TZ tables are empty
+    return tzTableRows.value<quint64>() == 0;
 }
 
 void tst_MySql_QDateTime::restore(const quint64 lastId,
