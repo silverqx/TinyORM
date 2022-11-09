@@ -130,15 +130,6 @@ jobs:
         DB_MYSQL_PASSWORD: ${{ secrets.DB_MYSQL_PASSWORD }}
         DB_MYSQL_USERNAME: ${{ secrets.DB_MYSQL_USERNAME }}
 
-    - name: Setup tmate session
-      if: ${{ always() }}
-      uses: mxschmitt/action-tmate@v3
-      with:
-        limit-access-to-actor: true
-      env:
-        DB_MYSQL_PASSWORD: ${{ secrets.DB_MYSQL_PASSWORD }}
-    - run: exit 1
-
     - name: MySQL create TinyORM database
       run: >-
         echo "
