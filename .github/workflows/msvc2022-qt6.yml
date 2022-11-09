@@ -96,11 +96,12 @@ jobs:
 
         # source path can't be quoted, it works correctly even with spaces
 
-        mysql --user=$DB_MYSQL_USERNAME --password=$DB_MYSQL_PASSWORD mysql
-        --execute="source $filepath"
+        mysql.exe --host=$env:DB_MYSQL_HOST --user=$env:DB_MYSQL_USERNAME
+        --password=$env:DB_MYSQL_PASSWORD --execute="source $filepath" mysql
 
         Restart-Service MySQL
       env:
+        DB_MYSQL_HOST: ${{ secrets.DB_MYSQL_HOST }}
         DB_MYSQL_PASSWORD: ${{ secrets.DB_MYSQL_PASSWORD }}
         DB_MYSQL_USERNAME: ${{ secrets.DB_MYSQL_USERNAME }}
 
