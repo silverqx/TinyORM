@@ -82,12 +82,15 @@ jobs:
         DB_MYSQL_USERNAME: ${{ secrets.DB_MYSQL_USERNAME }}
 
     - name: MySQL check service status
-      run: |
+      run: >-
         $mysqlService = Get-Service MySQL
+
         Write-Output $mysqlService
-        $mysqlService.status.ToString() -ceq "Running" `
+
+        $mysqlService.status.ToString() -ceq "Running"
         -or $(throw 'MySQL service is not running') > $null
-        mysqladmin.exe --bind-address=$env:DB_MYSQL_HOST --user=$env:DB_MYSQL_USERNAME `
+
+        mysqladmin.exe --bind-address=$env:DB_MYSQL_HOST --user=$env:DB_MYSQL_USERNAME
         --password=$env:DB_MYSQL_PASSWORD ping
       env:
         DB_MYSQL_HOST: ${{ secrets.DB_MYSQL_HOST }}
