@@ -72,6 +72,37 @@ jobs:
         DB_MYSQL_PASSWORD: ${{ secrets.DB_MYSQL_PASSWORD }}
         DB_MYSQL_USERNAME: ${{ secrets.DB_MYSQL_USERNAME }}
 
+    - name: MySQL download time zone POSIX tables
+      working-directory: ${{ runner.temp }}
+      run: >-
+        $tzFileUrl = 'https://downloads.mysql.com/general/timezone_2022f_posix_sql.zip'
+
+        $response = Invoke-WebRequest -Uri $tzFileUrl
+
+        $filename = ($tzFileUrl -split '/')[-1]
+
+        $filepath = Join-Path -Path $(Resolve-Path -Path .) -ChildPath $filename
+
+        $response | Select-Object -ExpandProperty Content |
+        Set-Content -Path $filepath -AsByteStream
+
+        7z.exe x -o"$(Resolve-Path -Path .)" $filepath
+
+    - name: MySQL populate time zone tables 👌
+      working-directory: ${{ runner.temp }}
+      run: >-
+        $filepath = Join-Path -Path $(Resolve-Path -Path .) -ChildPath timezone_2022f_posix_sql
+        -AdditionalChildPath timezone_posix.sql
+
+        # source path can't be quoted, it works correctly even with spaces
+        mysql --user=$DB_MYSQL_USERNAME --password=$DB_MYSQL_PASSWORD mysql
+        --execute="source $filepath"
+
+        Restart-Service MySQL
+      env:
+        DB_MYSQL_PASSWORD: ${{ secrets.DB_MYSQL_PASSWORD }}
+        DB_MYSQL_USERNAME: ${{ secrets.DB_MYSQL_USERNAME }}
+
     - name: MySQL check service status
       run: >-
         $mysqlService = Get-Service MySQL
@@ -87,6 +118,17 @@ jobs:
         DB_MYSQL_HOST: ${{ secrets.DB_MYSQL_HOST }}
         DB_MYSQL_PASSWORD: ${{ secrets.DB_MYSQL_PASSWORD }}
         DB_MYSQL_USERNAME: ${{ secrets.DB_MYSQL_USERNAME }}
+
+    - name: Setup tmate session
+      if: ${{ always() }}
+      uses: mxschmitt/action-tmate@v3
+      with:
+        limit-access-to-actor: true
+      env:
+        DB_MYSQL_PASSWORD: ${{ secrets.DB_MYSQL_PASSWORD }}
+        DB_PGSQL_PASSWORD: ${{ secrets.DB_PGSQL_PASSWORD }}
+        DB_PGSQL_USERNAME: ${{ secrets.DB_PGSQL_USERNAME }}
+    - run: exit 1
 
     - name: MySQL create TinyORM database
       run: >-
