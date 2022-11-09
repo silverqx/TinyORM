@@ -70,10 +70,11 @@ jobs:
     - name: MySQL populate time zone tables 👌
       run: >-
         mysql_tzinfo_to_sql /usr/share/zoneinfo |
-        mysql --user=$DB_MYSQL_USERNAME --password=$DB_MYSQL_PASSWORD mysql
+        mysql --host=$DB_MYSQL_HOST --user=$DB_MYSQL_USERNAME --password=$DB_MYSQL_PASSWORD mysql
 
         sudo systemctl restart mysql.service
       env:
+        DB_MYSQL_HOST: ${{ secrets.DB_MYSQL_HOST }}
         DB_MYSQL_PASSWORD: ${{ secrets.DB_MYSQL_PASSWORD }}
         DB_MYSQL_USERNAME: ${{ secrets.DB_MYSQL_USERNAME }}
 
