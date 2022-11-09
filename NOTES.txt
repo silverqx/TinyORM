@@ -459,6 +459,18 @@ https://drive.google.com/uc?id=some_id
     ctrl-b 0-9 - switch to window
     ctrl-b [   - enable scroll mode (eg. Up Arrow or PgDn), press q to quit the scroll mode
 
+  - run if failure or success:
+
+    - name: Setup tmate session
+      if: ${{ always() }}
+      uses: mxschmitt/action-tmate@v3
+      with:
+        limit-access-to-actor: true
+    - run: exit 1
+
+  - !!! with if: ${{ failure() }} condition !!!
+             --------------------
+
     - name: Setup tmate session
       if: ${{ failure() }}
       uses: mxschmitt/action-tmate@v3
