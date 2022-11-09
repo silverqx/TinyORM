@@ -97,6 +97,18 @@ jobs:
       env:
         DB_SQLITE_DATABASE: ${{ runner.temp }}/${{ secrets.DB_SQLITE_DATABASE }}
 
+    - name: Print MySQL, SQLite, PostgreSQL database versions
+      run: |
+        mysql --version
+        postgres --version
+
+    - name: Setup tmate session
+      if: ${{ failure() }}
+      uses: mxschmitt/action-tmate@v3
+      with:
+        limit-access-to-actor: true
+    - run: exit 1
+
     - name: add-apt-repository gcc 11 and Qt 5.15.2
       run: |
         sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test
