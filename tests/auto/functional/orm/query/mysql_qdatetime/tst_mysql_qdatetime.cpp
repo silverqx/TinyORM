@@ -10,14 +10,9 @@
 #include "databases.hpp"
 
 using Orm::Constants::ID;
+using Orm::Constants::QMYSQL;
 using Orm::Constants::TZ00;
 using Orm::Constants::UTC;
-
-// Copy the preprocessor condition for the Q_ASSERT()
-#if defined(QT_NO_DEBUG) && !defined(QT_FORCE_ASSERTS)
-#else
-using Orm::Constants::QMYSQL;
-#endif
 
 using Orm::DB;
 using Orm::QtTimeZoneConfig;
