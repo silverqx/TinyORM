@@ -43,6 +43,10 @@ The `u_casts` data member should be the `std::unordered_map<QString, Orm::CastIt
 
 </div>
 
+:::info
+The primary key name defined by the `u_primaryKey` model's data member is automatically cast to the `CastType::ULongLong` for all database drivers if the `u_incrementing` is set to true (its default value).
+:::
+
 To demonstrate attribute casting, let's cast the `is_admin` attribute, which is stored in our database as an integer (`0` or `1`) to a `QVariant(bool)` value:
 
     #pragma once
