@@ -963,6 +963,9 @@ namespace Tiny
         /*! Apply query-time casts to the model instance. */
         static std::unique_ptr<TinyBuilder<Derived>>
         withCasts(std::unordered_map<QString, CastItem> &&casts);
+        /*! Apply query-time cast to the model instance. */
+        static std::unique_ptr<TinyBuilder<Derived>>
+        withCast(std::pair<QString, CastItem> cast);
 
     private:
         /*! Begin querying the model, proxy to Model::query(). */
@@ -3428,6 +3431,18 @@ namespace Tiny
         auto builder = query();
 
         builder->withCasts(std::move(casts));
+
+        return builder;
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    std::unique_ptr<TinyBuilder<Derived>>
+    ModelProxies<Derived, AllRelations...>::withCast(
+            std::pair<QString, CastItem> cast)
+    {
+        auto builder = query();
+
+        builder->withCasts({std::move(cast)});
 
         return builder;
     }

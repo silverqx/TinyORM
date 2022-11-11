@@ -954,6 +954,9 @@ namespace Tiny::Relations
         /*! Apply query-time casts to the model instance. */
         const Relation<Model, Related> &
         withCasts(std::unordered_map<QString, CastItem> &&casts) const;
+        /*! Apply query-time cast to the model instance. */
+        const Relation<Model, Related> &
+        withCast(std::pair<QString, CastItem> cast) const;
 
     private:
         /*! Static cast this to a child's instance Relation type. */
@@ -3171,6 +3174,15 @@ namespace Tiny::Relations
             std::unordered_map<QString, CastItem> &&casts) const
     {
         getQuery().withCasts(std::move(casts));
+
+        return relation();
+    }
+
+    template<class Model, class Related>
+    const Relation<Model, Related> &
+    RelationProxies<Model, Related>::withCast(std::pair<QString, CastItem> cast) const
+    {
+        getQuery().withCasts({std::move(cast)});
 
         return relation();
     }

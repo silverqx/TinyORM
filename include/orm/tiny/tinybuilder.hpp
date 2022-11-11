@@ -219,6 +219,8 @@ namespace Orm::Tiny
         inline Builder &withCasts(std::unordered_map<QString, CastItem> &casts);
         /*! Apply query-time casts to the model instance. */
         inline Builder &withCasts(std::unordered_map<QString, CastItem> &&casts);
+        /*! Apply query-time cast to the model instance. */
+        inline Builder &withCast(std::pair<QString, CastItem> cast);
 
         /* TinyBuilder methods */
         /*! Clone the Tiny query. */
@@ -949,6 +951,15 @@ namespace Orm::Tiny
     Builder<Model>::withCasts(std::unordered_map<QString, CastItem> &&casts)
     {
         m_model.mergeCasts(std::move(casts));
+
+        return *this;
+    }
+
+    template<typename Model>
+    Builder<Model> &
+    Builder<Model>::withCast(std::pair<QString, CastItem> cast)
+    {
+        m_model.mergeCasts({std::move(cast)});
 
         return *this;
     }
