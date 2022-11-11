@@ -4,4 +4,4 @@ TinyORM is an object-relational mapper (ORM) that makes it enjoyable to interact
 
 - [Getting Started](getting-started.mdx#tinyorm-getting-started)
 - [Relationships](relationships.mdx#tinyorm-relationships)
-- [Casts](casts.mdx#tinyorm-casts)
+- [Casts](casts.mdx#tinyorm-casting)
