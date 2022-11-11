@@ -15,7 +15,6 @@ class Type final : public Model<Type>
     friend Model;
     using Model::Model;
 
-private:
     /*! The table associated with the model. */
     QString u_table {"types"};
 
