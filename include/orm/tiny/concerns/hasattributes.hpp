@@ -1234,7 +1234,7 @@ namespace Orm::Tiny::Concerns
                     std::numeric_limits<double>::epsilon() * 4;
         }
 
-        // FEATURE castable, update this if I will support eg. class casts, this check is only for primitive types silverqx
+        // FEATURE castable, update this if I will support eg. class casts, following check is only for primitive types, but there can be also another cast type like one above for real types silverqx
         if (hasCast(key))
             return castAttribute(key, attribute) == castAttribute(key, original);
 
