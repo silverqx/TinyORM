@@ -253,10 +253,10 @@ SQLiteSchemaGrammar::invokeCompileMethod(const CommandDefinition &command,
                 const CommandDefinition &command_) // clazy:exclude=function-args-by-value
         {
             /* Get type of a second parameter of compile method and cast to that type. */
-            const auto &castedCommand =
+            const auto &castCommand =
                     reinterpret_cast<decltype (argumentType<1>(compileMethod))>(command_);
 
-            return std::invoke(compileMethod, grammar, blueprint_, castedCommand);
+            return std::invoke(compileMethod, grammar, blueprint_, castCommand);
         };
     };
 

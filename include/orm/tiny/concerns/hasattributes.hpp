@@ -1614,7 +1614,7 @@ namespace Orm::Tiny::Concerns
         throw Orm::Exceptions::InvalidArgumentError(
                     QStringLiteral(
                         "Bad cast type was defined in the %1::u_casts hash, the '%2' "
-                        "attribute can not be casted to the 'CastType::%3' "
+                        "attribute can not be cast to the 'CastType::%3' "
                         "(using the QMetaType::%4) in %5().")
                     .arg(TypeUtils::template classPureBasename<Derived>(), key,
                          castTypeName(castType), metaType.name(), functionName));
