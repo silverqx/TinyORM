@@ -1,0 +1,132 @@
+---
+sidebar_position: 2
+sidebar_label: Casts
+description: Attribute casting allow you to transform TinyORM attribute values when you retrieve them on model instances. For example, you may want to convert a `datetime` string that is stored in your database to the `QDateTime` instance when it is accessed via your TinyORM model.
+keywords: [c++ orm, orm, casts, casting, attributes, tinyorm]
+---
+
+# TinyORM: Casting
+
+- [Introduction](#introduction)
+- [Attribute Casting](#attribute-casting)
+    - [Date Casting](#date-casting)
+    - [Query Time Casting](#query-time-casting)
+
+## Introduction
+
+Attribute casting allows you to transform TinyORM attribute values when you retrieve them on model instances. For example, you may want to convert a `datetime` string that is stored in your database to the `QDateTime` instance when it is accessed via your TinyORM model. Or, you may want to convert a `tinyint` number that is stored in the database to the `bool` when you access it on the TinyORM model.
+
+## Attribute Casting
+
+Attribute casting provides functionality that allows converting model attributes to the appropriate `QVariant` __metatype__ when it is accessed via your TinyORM model. The core of this functionality is a model's `u_casts` data member that provides a convenient method of converting attributes' `QVariant` __internal types__ to the defined cast types.
+
+The `u_casts` data member should be the `std::unordered_map<QString, Orm::CastItem>` where the key is the name of the attribute being cast and the value is the type you wish to cast the column to. The supported cast types are:
+
+<div id="casts-types-list">
+
+- `CastType::QString`
+- `CastType::Boolean` / `CastType::Bool`
+- `CastType::Integer` / `CastType::Int`
+- `CastType::UInteger` / `CastType::UInt`
+- `CastType::LongLong`
+- `CastType::ULongLong`
+- `CastType::Short`
+- `CastType::UShort`
+- `CastType::QDate`
+- `CastType::QDateTime`
+- `CastType::Timestamp`
+- `CastType::Real`
+- `CastType::Float`
+- `CastType::Double`
+- <code>CastType::Decimal:&lt;precision&gt;</code>
+- `CastType::QByteArray`
+
+</div>
+
+To demonstrate attribute casting, let's cast the `is_admin` attribute, which is stored in our database as an integer (`0` or `1`) to a `QVariant(bool)` value:
+
+    #pragma once
+
+    #include <orm/tiny/model.hpp>
+
+    using Orm::Tiny::CastItem;
+    using Orm::Tiny::CastType;
+    using Orm::Tiny::Model;
+
+    class User final : public Model<User>
+    {
+        friend Model;
+        using Model::Model;
+
+        /*! The attributes that should be cast. */
+        std::unordered_map<QString, CastItem> u_casts {
+            {"is_admin", CastType::Boolean},
+        };
+    };
+
+After defining the cast, the `is_admin` attribute will always be cast to a `QVariant(bool)` when you access it, even if the underlying value is stored in the database as an integer:
+
+    using Orm::Utils::Helpers;
+
+    auto isAdmin = User::find(1)->getAttribute("is_admin");
+
+    // Proof of the QVariant type
+    Q_ASSERT(Helpers::qVariantTypeId(isAdmin) == QMetaType::Bool);
+
+    if (isAdmin.value<bool>()) {
+        //
+    }
+
+If you need to add a new, __temporary__ cast at runtime, you may use the `mergeCasts` method. These cast definitions will be added to any of the casts already defined on the model:
+
+    user->mergeCasts({
+        {"is_paid", CastType::Boolean},
+        {"income", {CastType::Decimal, 2}},
+    });
+
+:::caution
+You should never define a cast (or an attribute) that has the same name as a relationship.
+:::
+
+:::info
+Attributes that are `null` __will also be__ cast so that the `QVariant`'s internal type will have the correct type.
+:::
+
+### Date Casting
+
+By default, TinyORM will cast the `created_at` and `updated_at` columns to instances of `QDateTime`. You may cast additional date attributes by defining additional date casts within your model's `u_casts` data member unordered map. Typically, dates should be cast using the `CastType::QDateTime`, `CastType::QDate`, or `CastType::Timestamp` cast types.
+
+When a database column is of the date type, you may set the corresponding model attribute value to a UNIX timestamp, date string (`Y-m-d`), date-time string, or a `QDateTime` instance. The date's value will be correctly converted and stored in your database.<br/>
+The same is true for the datetime or timestamp database column types, you can set the corresponding model attribute value to a UNIX timestamp, date-time string, or a `QDateTime` instance.
+
+To specify the format that should be used when actually storing a model's dates within your database, you should define a `u_dateFormat` data member on your model:
+
+    /*! The storage format of the model's date columns. */
+    inline static QString u_dateFormat {QLatin1Char('U')};
+
+This format can be any format that the QDateTime's `fromString` or `toString` methods accept or the special `U` format that represents the UNIX timestamp (this `U` format is TinyORM specific and isn't supported by `QDateTime`).
+
+### Query Time Casting
+
+Sometimes you may need to apply casts while executing a query, such as when selecting a raw value from a table. For example, consider the following query:
+
+    using Models::Post;
+    using Models::User;
+
+    auto users = User::select("users.*")
+                 ->addSelect(
+                     Post::selectRaw("MAX(created_at)")
+                         ->whereColumnEq("user_id", "users.id")
+                         .toBase(),
+                     "last_posted_at"
+                 ).get();
+
+The `last_posted_at` attribute on the results of this query will be a simple string. It would be wonderful if we could apply a `CastType::QDateTime` cast to this attribute when executing the query. Thankfully, we may accomplish this using the `withCasts` or `withCast` methods:
+
+    auto users = User::select("users.*")
+                 ->addSelect(Post::selectRaw("MAX(created_at)")
+                                 ->whereColumnEq("user_id", "users.id")
+                                 .toBase(),
+                             "last_posted_at")
+                 .withCast({"last_posted_at", CastType::QDateTime})
+                 .get();

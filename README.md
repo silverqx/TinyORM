@@ -35,6 +35,7 @@ Whole library is documented as markdown documents:
 - [TinyORM](/docs/tinyorm#tinyorm)
   - [Getting Started](/docs/tinyorm/getting-started.mdx#tinyorm-getting-started)
   - [Relationships](/docs/tinyorm/relationships.mdx#tinyorm-relationships)
+  - [Casts](/docs/tinyorm/casts.mdx#tinyorm-casts)
 - [Building](/docs/building#building)
   - [TinyORM](/docs/building/tinyorm.mdx#building-tinyorm)
   - [Hello world](/docs/building/hello-world.mdx#building-hello-world)
