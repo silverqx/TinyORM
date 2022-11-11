@@ -461,7 +461,8 @@ Using the subquery functionality available to the query builder's `select` and `
                 ->whereColumnEq("destination_id", "destinations.id")
                 .orderByDesc("arrived_at")
                 .limit(1)
-                .toBase(), "last_flight")
+                .toBase(),
+            "last_flight")
         ->get();
 
 #### Subquery Ordering
