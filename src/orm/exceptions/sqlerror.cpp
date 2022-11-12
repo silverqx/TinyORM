@@ -55,7 +55,7 @@ QString SqlError::formatMessage(const char *message, const QSqlError &error) con
 
     result += errorText.join(COMMA);
 
-    result += QChar(')');
+    result += QLatin1Char(')');
 
     return result;
 }

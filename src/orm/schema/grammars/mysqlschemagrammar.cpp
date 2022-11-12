@@ -454,12 +454,11 @@ QString MySqlSchemaGrammar::escapeString(QString value) const
 //            .replace(QChar(QChar::Tabulation), "\\t")
 //            .replace(QChar(0x0008), "\\b")
 //            .replace(QChar(QChar::CarriageReturn), "\\r")
-//            .replace(QChar('"'), "\\\"")
+//            .replace(QUOTE, "\\\"")
             .replace(QChar(0x001a), QStringLiteral("^Z"))
-            .replace(QChar('\\'), QStringLiteral("\\\\"))
+            .replace(QLatin1Char('\\'), QStringLiteral("\\\\"))
             .replace(QChar(QChar::Null), QStringLiteral("\\0"))
-            // 0x0027 = '
-            .replace(QChar(0x0027), "''");
+            .replace(QLatin1Char('\''), "''");
 }
 
 QString MySqlSchemaGrammar::getType(const ColumnDefinition &column) const

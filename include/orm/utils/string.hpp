@@ -32,7 +32,7 @@ namespace Orm::Utils
 
 #if !defined(TINYORM_DISABLE_TOM) || !defined(TINYORM_DISABLE_ORM)
         /*! Convert a string to snake case (snake_case). */
-        static QString snake(QString string, QChar delimiter = '_');
+        static QString snake(QString string, QChar delimiter = Constants::UNDERSCORE);
 #endif
 
 #ifndef TINYORM_DISABLE_TOM

@@ -8,6 +8,7 @@
 #include "fs.hpp"
 
 // TinyORM
+#include "orm/constants.hpp"
 #include "orm/version.hpp"
 // TinyUtils
 #include "version.hpp"
@@ -28,6 +29,8 @@
 #  define TINYTEST_VERSION_TINYUTILS_PATH
 #  define TINYTEST_VERSION_TOMEXAMPLE_PATH
 #endif
+
+using Orm::Constants::DOT;
 
 #if defined(_WIN32)
 using TestUtils::Fs;
@@ -92,18 +95,18 @@ void tst_Version::versions_TinyOrm() const
     QVERIFY(TINYORM_VERSION_BUILD >= 0);
 
     // Project and File Version strings
-    QString versionStr = QString::number(TINYORM_VERSION_MAJOR) + QChar('.') +
-                         QString::number(TINYORM_VERSION_MINOR) + QChar('.') +
+    QString versionStr = QString::number(TINYORM_VERSION_MAJOR) + DOT +
+                         QString::number(TINYORM_VERSION_MINOR) + DOT +
                          QString::number(TINYORM_VERSION_BUGFIX);
-    QString fileVersionStr = versionStr + QChar('.') +
+    QString fileVersionStr = versionStr + DOT +
                              QString::number(TINYORM_VERSION_BUILD);
     if constexpr (TINYORM_VERSION_BUILD > 0)
-        versionStr += QChar('.') + QString::number(TINYORM_VERSION_BUILD);
+        versionStr += DOT + QString::number(TINYORM_VERSION_BUILD);
     versionStr += TINYORM_VERSION_STATUS;
 
     QCOMPARE(TINYORM_FILEVERSION_STR, fileVersionStr);
     QCOMPARE(TINYORM_VERSION_STR, versionStr);
-    QCOMPARE(TINYORM_VERSION_STR_2, QChar('v') + versionStr);
+    QCOMPARE(TINYORM_VERSION_STR_2, QLatin1Char('v') + versionStr);
 
     // Project Version number, to check API compatibility
     const auto version = TINYORM_VERSION_MAJOR * 10000 +
@@ -127,17 +130,17 @@ void tst_Version::versions_TinyUtils() const
     QVERIFY(TINYUTILS_VERSION_BUILD >= 0);
 
     // Project and File Version strings
-    QString versionStr = QString::number(TINYUTILS_VERSION_MAJOR) + QChar('.') +
-                         QString::number(TINYUTILS_VERSION_MINOR) + QChar('.') +
+    QString versionStr = QString::number(TINYUTILS_VERSION_MAJOR) + DOT +
+                         QString::number(TINYUTILS_VERSION_MINOR) + DOT +
                          QString::number(TINYUTILS_VERSION_BUGFIX);
-    QString fileVersionStr = versionStr + QChar('.') +
+    QString fileVersionStr = versionStr + DOT +
                              QString::number(TINYUTILS_VERSION_BUILD);
     if constexpr (TINYUTILS_VERSION_BUILD > 0)
-        versionStr += QChar('.') + QString::number(TINYUTILS_VERSION_BUILD);
+        versionStr += DOT + QString::number(TINYUTILS_VERSION_BUILD);
 
     QCOMPARE(TINYUTILS_FILEVERSION_STR, fileVersionStr);
     QCOMPARE(TINYUTILS_VERSION_STR, versionStr);
-    QCOMPARE(TINYUTILS_VERSION_STR_2, QChar('v') + versionStr);
+    QCOMPARE(TINYUTILS_VERSION_STR_2, QLatin1Char('v') + versionStr);
 
     // Project Version number, to check API compatibility
     const auto version = TINYUTILS_VERSION_MAJOR * 10000 +
@@ -162,18 +165,18 @@ void tst_Version::versions_TomExample() const
     QVERIFY(TINYTOM_VERSION_BUILD >= 0);
 
     // Project and File Version strings
-    QString versionStr = QString::number(TINYTOM_VERSION_MAJOR) + QChar('.') +
-                         QString::number(TINYTOM_VERSION_MINOR) + QChar('.') +
+    QString versionStr = QString::number(TINYTOM_VERSION_MAJOR) + DOT +
+                         QString::number(TINYTOM_VERSION_MINOR) + DOT +
                          QString::number(TINYTOM_VERSION_BUGFIX);
-    QString fileVersionStr = versionStr + QChar('.') +
+    QString fileVersionStr = versionStr + DOT +
                              QString::number(TINYTOM_VERSION_BUILD);
     if constexpr (TINYTOM_VERSION_BUILD > 0)
-        versionStr += QChar('.') + QString::number(TINYTOM_VERSION_BUILD);
+        versionStr += DOT + QString::number(TINYTOM_VERSION_BUILD);
     versionStr += TINYTOM_VERSION_STATUS;
 
     QCOMPARE(TINYTOM_FILEVERSION_STR, fileVersionStr);
     QCOMPARE(TINYTOM_VERSION_STR, versionStr);
-    QCOMPARE(TINYTOM_VERSION_STR_2, QChar('v') + versionStr);
+    QCOMPARE(TINYTOM_VERSION_STR_2, QLatin1Char('v') + versionStr);
 
     // Project Version number, to check API compatibility
     const auto version = TINYTOM_VERSION_MAJOR * 10000 +
@@ -194,9 +197,9 @@ void tst_Version::checkFileVersion_TinyOrm() const
             getExeVersionString(Fs::absolutePath(TINYTEST_VERSION_TINYORM_PATH));
 
     // Project and File Version strings
-    const QString versionStr = QString::number(TINYORM_VERSION_MAJOR) + QChar('.') +
-                               QString::number(TINYORM_VERSION_MINOR) + QChar('.') +
-                               QString::number(TINYORM_VERSION_BUGFIX) + QChar('.') +
+    const QString versionStr = QString::number(TINYORM_VERSION_MAJOR) + DOT +
+                               QString::number(TINYORM_VERSION_MINOR) + DOT +
+                               QString::number(TINYORM_VERSION_BUGFIX) + DOT +
                                QString::number(TINYORM_VERSION_BUILD);
 
     QCOMPARE(fileVersions.productVersion, versionStr);
@@ -216,9 +219,9 @@ void tst_Version::checkFileVersion_TinyUtils() const
             getExeVersionString(Fs::absolutePath(TINYTEST_VERSION_TINYUTILS_PATH));
 
     // Project and File Version strings
-    const QString versionStr = QString::number(TINYUTILS_VERSION_MAJOR) + QChar('.') +
-                               QString::number(TINYUTILS_VERSION_MINOR) + QChar('.') +
-                               QString::number(TINYUTILS_VERSION_BUGFIX) + QChar('.') +
+    const QString versionStr = QString::number(TINYUTILS_VERSION_MAJOR) + DOT +
+                               QString::number(TINYUTILS_VERSION_MINOR) + DOT +
+                               QString::number(TINYUTILS_VERSION_BUGFIX) + DOT +
                                QString::number(TINYUTILS_VERSION_BUILD);
 
     QCOMPARE(fileVersions.productVersion, versionStr);
@@ -239,9 +242,9 @@ void tst_Version::checkFileVersion_TomExample() const
             getExeVersionString(Fs::absolutePath(TINYTEST_VERSION_TOMEXAMPLE_PATH));
 
     // Project and File Version strings
-    const QString versionStr = QString::number(TINYTOM_VERSION_MAJOR) + QChar('.') +
-                               QString::number(TINYTOM_VERSION_MINOR) + QChar('.') +
-                               QString::number(TINYTOM_VERSION_BUGFIX) + QChar('.') +
+    const QString versionStr = QString::number(TINYTOM_VERSION_MAJOR) + DOT +
+                               QString::number(TINYTOM_VERSION_MINOR) + DOT +
+                               QString::number(TINYTOM_VERSION_BUGFIX) + DOT +
                                QString::number(TINYTOM_VERSION_BUILD);
 
     QCOMPARE(fileVersions.productVersion, versionStr);

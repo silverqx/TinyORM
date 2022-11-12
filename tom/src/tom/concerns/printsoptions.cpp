@@ -63,8 +63,8 @@ QStringList PrintsOptions::createOptionNamesList(const QCommandLineOption &optio
         if (name.size() == 1)
             options << ShortOption
                        // Custom logic for the verbose option, good enough 😎
-                       .arg(name == QChar('v') ? QStringLiteral("v|vv|vvv")
-                                               : std::move(name));
+                       .arg(name == QLatin1Char('v') ? QStringLiteral("v|vv|vvv")
+                                                     : std::move(name));
 
         // Long option
         else

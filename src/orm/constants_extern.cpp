@@ -6,20 +6,21 @@ namespace Orm::Constants
 {
 
     // Common chars
-    const QChar SPACE      = QChar(' ');
-    const QChar DOT        = QChar('.');
-    const QChar SEMICOLON  = QChar(';');
-    const QChar COLON      = QChar(':');
-    const QChar UNDERSCORE = QChar('_');
-    const QChar DASH       = QChar('-');
-    const QChar MINUS      = QChar('-');
-    const QChar PLUS       = QChar('+');
-    const QChar ASTERISK_C = QChar('*');
-    const QChar COMMA_C    = QChar(',');
-    const QChar EQ_C       = QChar('=');
-    const QChar NOT_C      = QChar('!');
-    const QChar LT_C       = QChar('<');
-    const QChar GT_C       = QChar('>');
+    const QChar SPACE      = QLatin1Char(' ');
+    const QChar DOT        = QLatin1Char('.');
+    const QChar SEMICOLON  = QLatin1Char(';');
+    const QChar COLON      = QLatin1Char(':');
+    const QChar UNDERSCORE = QLatin1Char('_');
+    const QChar DASH       = QLatin1Char('-');
+    const QChar MINUS      = QLatin1Char('-');
+    const QChar PLUS       = QLatin1Char('+');
+    const QChar ASTERISK_C = QLatin1Char('*');
+    const QChar COMMA_C    = QLatin1Char(',');
+    const QChar EQ_C       = QLatin1Char('=');
+    const QChar NOT_C      = QLatin1Char('!');
+    const QChar LT_C       = QLatin1Char('<');
+    const QChar GT_C       = QLatin1Char('>');
+    const QChar QUOTE      = QLatin1Char('"');
 
     // Common strings
     const QString ASTERISK    = QStringLiteral("*");

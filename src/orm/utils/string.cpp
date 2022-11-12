@@ -94,11 +94,11 @@ QString String::snake(QString string, const QChar delimiter)
     for (QString::size_type i = 0; i < string.size(); ++i) {
         const auto ch = string.at(i);
 
-        if (i > 0 && ch >= QChar('A') && ch <= QChar('Z')) {
+        if (i > 0 && ch >= QLatin1Char('A') && ch <= QLatin1Char('Z')) {
             const auto previousChar = string.at(i - 1);
 
-            if ((previousChar >= QChar('a') && previousChar <= QChar('z')) ||
-                (previousChar >= QChar('0') && previousChar <= QChar('9'))
+            if ((previousChar >= QLatin1Char('a') && previousChar <= QLatin1Char('z')) ||
+                (previousChar >= QLatin1Char('0') && previousChar <= QLatin1Char('9'))
             )
                 positions.push_back(i);
         }
@@ -319,7 +319,7 @@ QString String::wrapValue(const QString &string, const QChar firstCharacter,
 
 //QString String::singular(const QString &string)
 //{
-//    if (!string.endsWith(QChar('s')))
+//    if (!string.endsWith(QLatin1Char('s')))
 //        return string;
 
 //    return string.chopped(1);

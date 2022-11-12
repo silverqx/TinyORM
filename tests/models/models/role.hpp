@@ -51,7 +51,7 @@ private:
     bool u_timestamps = false;
 
     /*! The storage format of the model's date columns. */
-    inline static QString u_dateFormat {QChar('U')};
+    inline static QString u_dateFormat {QLatin1Char('U')};
 
     /*! The attributes that should be mutated to dates. */
     inline static const QStringList u_dates {"added_on"};

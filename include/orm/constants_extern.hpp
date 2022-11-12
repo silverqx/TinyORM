@@ -31,6 +31,7 @@ namespace Orm::Constants
     SHAREDLIB_EXPORT extern const QChar NOT_C;
     SHAREDLIB_EXPORT extern const QChar LT_C;
     SHAREDLIB_EXPORT extern const QChar GT_C;
+    SHAREDLIB_EXPORT extern const QChar QUOTE;
 
     // Common strings
     SHAREDLIB_EXPORT extern const QString ASTERISK;

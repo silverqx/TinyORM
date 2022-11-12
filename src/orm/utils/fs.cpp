@@ -9,7 +9,7 @@ namespace Orm::Utils
 
 QString Fs::resolveHome(QString filepath)
 {
-    if (filepath == QChar('~') || filepath.startsWith(QStringLiteral("~/")))
+    if (filepath == QLatin1Char('~') || filepath.startsWith(QStringLiteral("~/")))
         filepath.replace (0, 1, QDir::homePath());
 
     return QDir::cleanPath(filepath);

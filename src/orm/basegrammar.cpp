@@ -155,7 +155,7 @@ QString BaseGrammar::wrapAliasedValue(const QString &value, const bool prefixAli
 
 QString BaseGrammar::wrapValue(QString value) const
 {
-    if (value == QChar('*'))
+    if (value == ASTERISK_C)
         return value;
 
     return QStringLiteral("\"%1\"").arg(value.replace(QStringLiteral("\""),

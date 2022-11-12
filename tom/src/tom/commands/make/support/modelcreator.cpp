@@ -27,6 +27,7 @@ using Orm::Constants::DOT;
 using Orm::Constants::EMPTY;
 using Orm::Constants::NEWLINE;
 using Orm::Constants::NOSPACE;
+using Orm::Constants::QUOTE;
 using Orm::Constants::SPACE;
 
 using ContainerUtils = Orm::Utils::Container;
@@ -375,7 +376,7 @@ QString ModelCreator::createRelationArguments(const QString &foreignKey)
     if (foreignKey.isEmpty())
         return {};
 
-    return StringUtils::wrapValue(foreignKey, QChar('"'));
+    return StringUtils::wrapValue(foreignKey, QUOTE);
 }
 
 namespace
@@ -488,16 +489,16 @@ QString ModelCreator::createRelationArgumentsBtm(
     std::deque<QString> argumentsList;
 
     if (!relatedPivotKey.isEmpty())
-        argumentsList.push_back(StringUtils::wrapValue(relatedPivotKey, QChar('"')));
+        argumentsList.push_back(StringUtils::wrapValue(relatedPivotKey, QUOTE));
 
     if (!foreignPivotKey.isEmpty())
-        argumentsList.push_front(StringUtils::wrapValue(foreignPivotKey, QChar('"')));
+        argumentsList.push_front(StringUtils::wrapValue(foreignPivotKey, QUOTE));
     else if (!relatedPivotKey.isEmpty())
         argumentsList.push_front(QStringLiteral("{}"));
 
     // Table name of the relationship's intermediate table
     if (!pivotTable.isEmpty())
-        argumentsList.push_front(StringUtils::wrapValue(pivotTable, QChar('"')));
+        argumentsList.push_front(StringUtils::wrapValue(pivotTable, QUOTE));
     else if (!foreignPivotKey.isEmpty() || !relatedPivotKey.isEmpty())
         argumentsList.push_front(QStringLiteral("{}"));
 
@@ -569,7 +570,7 @@ QString ModelCreator::createRelationCalls(
         const auto withPivotWrapped = withPivot
                 | ranges::views::transform([](const auto &pivotName)
         {
-            return StringUtils::wrapValue(pivotName, QChar('"'));
+            return StringUtils::wrapValue(pivotName, QUOTE);
         })
                 | ranges::to<QStringList>();
 
@@ -579,7 +580,8 @@ QString ModelCreator::createRelationCalls(
                               withPivot.size() == 1
                               ? withPivotWrapped.constFirst()
                               : StringUtils::wrapValue(withPivotWrapped.join(COMMA),
-                                                       QChar('{'), QChar('}')));
+                                                       QLatin1Char('{'),
+                                                       QLatin1Char('}')));
     }
 
     // Pivot table with timestamps
@@ -597,7 +599,7 @@ QString ModelCreator::guessSingularComment(const QString &className)
 
 QString ModelCreator::guessPluralComment(const QString &className)
 {
-    return StringUtils::snake(className, SPACE).append(QChar('s'));
+    return StringUtils::snake(className, SPACE).append(QLatin1Char('s'));
 }
 
 QString ModelCreator::guessOneTypeRelationName(const QString &className)
@@ -607,7 +609,7 @@ QString ModelCreator::guessOneTypeRelationName(const QString &className)
 
 QString ModelCreator::guessManyTypeRelationName(const QString &className)
 {
-    return guessOneTypeRelationName(className).append(QChar('s'));
+    return guessOneTypeRelationName(className).append(QLatin1Char('s'));
 }
 
 /* Private model section */
@@ -1017,7 +1019,7 @@ QString ModelCreator::createForwardsSection() const
         return {};
 
     return StringUtils::wrapValue(ContainerUtils::join(m_forwardsList, NEWLINE),
-                                  QChar('\n'));
+                                  QChar(QChar::LineFeed));
 }
 
 /* Common for public/private sections */

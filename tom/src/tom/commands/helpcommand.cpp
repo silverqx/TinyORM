@@ -153,7 +153,7 @@ void HelpCommand::printUsageSection(
                 usage += QStringLiteral(" <%1>").arg(std::move(syntax));
         }
 
-        usage += QString(optionalCounter, QChar(']'));
+        usage += QString(optionalCounter, QLatin1Char(']'));
     }
 
     note(usage);

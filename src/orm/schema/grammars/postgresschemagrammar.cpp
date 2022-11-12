@@ -445,8 +445,7 @@ QString PostgresSchemaGrammar::escapeString(QString value) const
        (especially look at the caution box):
        https://www.postgresql.org/docs/current/sql-syntax-lexical.html#SQL-SYNTAX-SPECIAL-CHARS*/
 
-    // 0x0027 = '
-    return value.replace(QChar(0x0027), QStringLiteral("''"));
+    return value.replace(QLatin1Char('\''), QStringLiteral("''"));
 }
 
 QString PostgresSchemaGrammar::getType(const ColumnDefinition &column) const

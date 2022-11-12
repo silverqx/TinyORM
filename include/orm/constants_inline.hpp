@@ -16,20 +16,21 @@ namespace Orm::Constants
 {
 
     // Common chars
-    inline const QChar SPACE      = QChar(' ');
-    inline const QChar DOT        = QChar('.');
-    inline const QChar SEMICOLON  = QChar(';');
-    inline const QChar COLON      = QChar(':');
-    inline const QChar UNDERSCORE = QChar('_');
-    inline const QChar DASH       = QChar('-');
-    inline const QChar MINUS      = QChar('-');
-    inline const QChar PLUS       = QChar('+');
-    inline const QChar ASTERISK_C = QChar('*');
-    inline const QChar COMMA_C    = QChar(',');
-    inline const QChar EQ_C       = QChar('=');
-    inline const QChar NOT_C      = QChar('!');
-    inline const QChar LT_C       = QChar('<');
-    inline const QChar GT_C       = QChar('>');
+    inline const QChar SPACE      = QLatin1Char(' ');
+    inline const QChar DOT        = QLatin1Char('.');
+    inline const QChar SEMICOLON  = QLatin1Char(';');
+    inline const QChar COLON      = QLatin1Char(':');
+    inline const QChar UNDERSCORE = QLatin1Char('_');
+    inline const QChar DASH       = QLatin1Char('-');
+    inline const QChar MINUS      = QLatin1Char('-');
+    inline const QChar PLUS       = QLatin1Char('+');
+    inline const QChar ASTERISK_C = QLatin1Char('*');
+    inline const QChar COMMA_C    = QLatin1Char(',');
+    inline const QChar EQ_C       = QLatin1Char('=');
+    inline const QChar NOT_C      = QLatin1Char('!');
+    inline const QChar LT_C       = QLatin1Char('<');
+    inline const QChar GT_C       = QLatin1Char('>');
+    inline const QChar QUOTE      = QLatin1Char('"');
 
     // Common strings
     inline const QString ASTERISK    = QStringLiteral("*");

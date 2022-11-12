@@ -35,8 +35,9 @@ void MakeCommand::prepareFileSystem(
 void MakeCommand::throwIfContainsNamespaceOrPath(
             const QString &type, const QString &className, const QString &source)
 {
-    if (!className.contains(QStringLiteral("::")) && !className.contains(QChar('/')) &&
-        !className.contains(QChar('\\'))
+    if (!className.contains(QStringLiteral("::")) &&
+        !className.contains(QLatin1Char('/')) &&
+        !className.contains(QLatin1Char('\\'))
     )
         return;
 

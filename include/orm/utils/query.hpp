@@ -101,7 +101,7 @@ namespace Orm::Utils
                                  .arg(binding.template value<QString>())
                                : binding.template value<QString>();
 
-            queryString.replace(queryString.indexOf(QChar('?')), 1, bindingValue);
+            queryString.replace(queryString.indexOf(QLatin1Char('?')), 1, bindingValue);
 
             if (simpleBindings)
                 simpleBindingsList << bindingValue; // clazy:exclude=reserve-candidates

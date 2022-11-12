@@ -537,7 +537,7 @@ void ModelCommand::createMigration(const QString &className) const
 
     // Plural for a non-pivot models
     if (!isSet(pivot_model))
-        table.append(QChar('s'));
+        table.append(QLatin1Char('s'));
 
     call(MakeMigration, {longOption(create_, table),
                          boolCmd(force),

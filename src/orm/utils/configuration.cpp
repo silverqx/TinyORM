@@ -92,11 +92,11 @@ Configuration::prepareTimeZoneId(QString &&timezoneId, const QString &connection
 
     // Prepend the UTC if needed (avoid RegEx for performance reasons)
     if (timezoneIdSize == 6 &&
-        (timezoneId[0] == QChar('-') || timezoneId[0] == QChar('+')) &&
+        (timezoneId[0] == MINUS || timezoneId[0] == PLUS) &&
         // Is numeric != 0
         std::isdigit(timezoneId[1].toLatin1()) != 0 &&
         std::isdigit(timezoneId[2].toLatin1()) != 0 &&
-        timezoneId[3] == QChar(':') &&
+        timezoneId[3] == COLON &&
         std::isdigit(timezoneId[4].toLatin1()) != 0 &&
         std::isdigit(timezoneId[5].toLatin1()) != 0
     )
@@ -104,10 +104,10 @@ Configuration::prepareTimeZoneId(QString &&timezoneId, const QString &connection
 
     // Append the :00 if needed (avoid RegEx for performance reasons)
     else if (timezoneIdSize == 6 &&
-             timezoneId[0] == QChar('U') &&
-             timezoneId[1] == QChar('T') &&
-             timezoneId[2] == QChar('C') &&
-             (timezoneId[3] == QChar('-') || timezoneId[3] == QChar('+')) &&
+             timezoneId[0] == QLatin1Char('U') &&
+             timezoneId[1] == QLatin1Char('T') &&
+             timezoneId[2] == QLatin1Char('C') &&
+             (timezoneId[3] == MINUS || timezoneId[3] == PLUS) &&
              // Is numeric != 0
              std::isdigit(timezoneId[4].toLatin1()) != 0 &&
              std::isdigit(timezoneId[5].toLatin1()) != 0
@@ -116,7 +116,7 @@ Configuration::prepareTimeZoneId(QString &&timezoneId, const QString &connection
 
     // Prepend the UTC and append the :00 if needed (avoid RegEx for performance reasons)
     else if (timezoneIdSize == 3 &&
-             (timezoneId[0] == QChar('-') || timezoneId[0] == QChar('+')) &&
+             (timezoneId[0] == MINUS || timezoneId[0] == PLUS) &&
              // Is numeric != 0
              std::isdigit(timezoneId[1].toLatin1()) != 0 &&
              std::isdigit(timezoneId[2].toLatin1()) != 0
