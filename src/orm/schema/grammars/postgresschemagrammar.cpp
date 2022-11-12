@@ -8,8 +8,6 @@
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
-using ContainerUtils = Orm::Utils::Container;
-
 namespace Orm::SchemaNs::Grammars
 {
 

@@ -9,6 +9,8 @@
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
+using ContainerUtils = Orm::Utils::Container;
+
 namespace Orm::SchemaNs
 {
 
@@ -741,7 +743,7 @@ Blueprint::createIndexName(const QString &type, const QVector<QString> &columns)
 {
     auto index = QStringLiteral("%1_%2_%3")
                  .arg(NOSPACE.arg(m_prefix, m_table),
-                      Utils::Container::join(columns, UNDERSCORE),
+                      ContainerUtils::join(columns, UNDERSCORE),
                       type)
                  .toLower();
 

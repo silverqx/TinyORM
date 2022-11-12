@@ -31,6 +31,8 @@ namespace Query
         Q_DISABLE_COPY(BaseGrammar)
 
     protected:
+        /*! Alias for the container utils. */
+        using ContainerUtils = Orm::Utils::Container;
         /*! Alias for the Expression. */
         using Expression = Query::Expression;
 
@@ -131,7 +133,7 @@ namespace Query
     template<ColumnContainer T>
     QString BaseGrammar::columnizeWithoutWrap(T &&columns) const
     {
-        return Utils::Container::join(std::forward<T>(columns));
+        return ContainerUtils::join(std::forward<T>(columns));
     }
 
     QString BaseGrammar::getTablePrefix() const
