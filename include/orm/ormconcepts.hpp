@@ -30,6 +30,9 @@ namespace Query
 }
     using QueryBuilder = Query::Builder;
 
+    /* Don't test for eg. QString and also const QString & in the std::converible_to<>,
+       test only for the QString, it doesn't make sense to test for both. */
+
     /*! Concept for a queryable parameter. */
     template<typename T>
     concept Queryable = std::convertible_to<T, Orm::QueryBuilder &> ||
