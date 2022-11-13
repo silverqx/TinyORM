@@ -7,16 +7,22 @@ TINY_SYSTEM_HEADER
 
 #include "orm/config.hpp"
 
+#include "orm/macros/commonnamespace.hpp"
+
 #if !defined(LOG_EXECUTED_QUERY) && !defined(TINYORM_NO_DEBUG)
 #  include "orm/utils/query.hpp"
 #endif
 
+TINYORM_BEGIN_COMMON_NAMESPACE
+
 #ifndef LOG_EXECUTED_QUERY
-#  if !defined(TINYORM_NO_DEBUG)
+#  ifndef TINYORM_NO_DEBUG
 #    define LOG_EXECUTED_QUERY(query) Orm::Utils::Query::logExecutedQuery(query)
 #  else
 #    define LOG_EXECUTED_QUERY(query) qt_noop()
 #  endif
 #endif
+
+TINYORM_END_COMMON_NAMESPACE
 
 #endif // ORM_MACROS_LOGEXECUTEDQUERY_HPP

@@ -17,6 +17,8 @@ TINY_SYSTEM_HEADER
 #include "orm/macros/commonnamespace.hpp"
 #include "orm/macros/export.hpp"
 
+TINYORM_BEGIN_COMMON_NAMESPACE
+
 #if defined(__GNUG__) || defined(__clang__)
 // NOLINTNEXTLINE(bugprone-reserved-identifier)
 #  define __tiny_func__ \
@@ -28,8 +30,6 @@ TINY_SYSTEM_HEADER
 #else
 #  define __tiny_func__ QString {__FUNCTION__}
 #endif
-
-TINYORM_BEGIN_COMMON_NAMESPACE
 
 namespace Orm::Utils
 {
