@@ -169,10 +169,10 @@ namespace Concerns
         bool dontOutput(Verbosity verbosity) const;
 
         /*! Should the given output use ansi? (ansi is disabled for non-tty). */
-        bool isAnsiOutput(std::ostream &cout = std::cout) const;
+        bool isAnsiOutput(const std::ostream &cout = std::cout) const;
         /*! Should the given output use ansi? (ansi is disabled for non-tty),
             wide version. */
-        bool isAnsiWOutput(std::wostream &cout = std::wcout) const;
+        bool isAnsiWOutput(const std::wostream &cout = std::wcout) const;
 
         /*! Write a string as error output (red box with a white text). */
         QString errorWallInternal(const QString &string) const;

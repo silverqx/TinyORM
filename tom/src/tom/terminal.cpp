@@ -33,9 +33,9 @@ void Terminal::initialize()
 #endif
 }
 
-bool Terminal::hasColorSupport(std::ostream &cout) const
+bool Terminal::hasColorSupport(const std::ostream &cout) const
 {
-    auto *const coutPointer = std::addressof(cout);
+    const auto *const coutPointer = std::addressof(cout);
 
     // Return from the cache, compute only once
     if (m_isAnsiOutput.contains(coutPointer))
@@ -62,9 +62,9 @@ bool Terminal::hasColorSupport(std::ostream &cout) const
     return isAnsi;
 }
 
-bool Terminal::hasWColorSupport(std::wostream &wcout) const
+bool Terminal::hasWColorSupport(const std::wostream &wcout) const
 {
-    auto *const wcoutPointer = std::addressof(wcout);
+    const auto *const wcoutPointer = std::addressof(wcout);
 
     // Return from the cache, compute only once
     if (m_isAnsiWOutput.contains(wcoutPointer))
@@ -164,7 +164,7 @@ Terminal::TerminalSize Terminal::terminalSize() const
 namespace
 {
     /*! Get Windows output handle by passed c++ output stream. */
-    HANDLE getStdHandleByCppStream(std::ostream &cout = std::cout)
+    HANDLE getStdHandleByCppStream(const std::ostream &cout = std::cout)
     {
         HANDLE handle = nullptr;
 
@@ -181,7 +181,7 @@ namespace
     }
 
     /*! Get Windows output handle by passed c++ output stream, wide version. */
-    HANDLE getStdHandleByCppStream(std::wostream &wcout = std::wcout)
+    HANDLE getStdHandleByCppStream(const std::wostream &wcout = std::wcout)
     {
         HANDLE handle = nullptr;
 
@@ -198,7 +198,7 @@ namespace
     }
 } // namespace
 
-bool Terminal::hasVt100Support(std::ostream &cout) const
+bool Terminal::hasVt100Support(const std::ostream &cout) const
 {
     DWORD mode = 0;
 
@@ -209,7 +209,7 @@ bool Terminal::hasVt100Support(std::ostream &cout) const
             ENABLE_VIRTUAL_TERMINAL_PROCESSING;
 }
 
-bool Terminal::hasVt100Support(std::wostream &wcout) const
+bool Terminal::hasVt100Support(const std::wostream &wcout) const
 {
     DWORD mode = 0;
 

@@ -437,7 +437,7 @@ bool InteractsWithIO::dontOutput(const Verbosity verbosity) const
     return verbosity > m_verbosity;
 }
 
-bool InteractsWithIO::isAnsiOutput(std::ostream &cout) const
+bool InteractsWithIO::isAnsiOutput(const std::ostream &cout) const
 {
     // ansi was set explicitly on the command-line, respect it
     if (m_ansi)
@@ -447,7 +447,7 @@ bool InteractsWithIO::isAnsiOutput(std::ostream &cout) const
     return m_terminal->hasColorSupport(cout);
 }
 
-bool InteractsWithIO::isAnsiWOutput(std::wostream &wcout) const
+bool InteractsWithIO::isAnsiWOutput(const std::wostream &wcout) const
 {
     // ansi was set explicitly on the command-line, respect it
     if (m_ansi)

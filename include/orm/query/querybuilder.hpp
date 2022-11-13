@@ -21,7 +21,7 @@ namespace Orm::Query
     /*! Concept for the remove() method parameter. */
     template<typename T>
     concept Remove = std::convertible_to<T, quint64> ||
-                     std::same_as<T, Query::Expression>;
+                     std::convertible_to<T, Query::Expression>;
 
     // TODO querybuilder, whereDay/Month/..., whereFullText silverqx
     // FUTURE querybuilder, paginator silverqx

@@ -21,11 +21,11 @@ namespace Orm::Utils
 
     /*! Concept for a bindings type used in the replaceBindingsInSql(). */
     template<typename T>
-    concept BindingsConcept = std::convertible_to<T, const QVector<QVariant> &> ||
+    concept BindingsConcept = std::convertible_to<T, QVector<QVariant>> ||
 #if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
-                              std::convertible_to<T, const QVariantList &>;
+                              std::convertible_to<T, QVariantList>;
 #else
-                              std::convertible_to<T, const QVariantMap &>;
+                              std::convertible_to<T, QVariantMap>;
 #endif
 
     /*! Library class for database query. */

@@ -36,12 +36,12 @@ namespace Tom
         static void initialize();
 
         /*! Supports the given output ansi colors? (ansi is disabled for non-tty). */
-        bool hasColorSupport(std::ostream &cout = std::cout) const;
+        bool hasColorSupport(const std::ostream &cout = std::cout) const;
         /*! Supports the given output ansi colors? (ansi is disabled for non-tty),
             wide version. */
-        bool hasWColorSupport(std::wostream &wcout = std::wcout) const;
+        bool hasWColorSupport(const std::wostream &wcout = std::wcout) const;
 
-        /*! Determines whether a file descriptor is associated with a character device. */
+        /*! Determines if a file descriptor is associated with a character device. */
         bool isatty(FILE *stream) const;
 
         /*! Obtain the current terminal width. */
@@ -69,14 +69,14 @@ namespace Tom
     private:
         /*! Supports the given output ansi colors? (common logic). */
         template<OStreamConcept O>
-        bool hasColorSupportInternal(O &&cout, FILE *stream) const;
+        bool hasColorSupportInternal(const O &cout, FILE *stream) const;
 
 #ifdef _WIN32
         /*! Detect if c++ ostream has enabled virtual terminal processing. */
-        bool hasVt100Support(std::ostream &cout) const;
+        bool hasVt100Support(const std::ostream &cout) const;
         /*! Detect if c++ wostream has enabled virtual terminal processing,
             wide version. */
-        bool hasVt100Support(std::wostream &wcout) const;
+        bool hasVt100Support(const std::wostream &wcout) const;
 #endif
 
         /* Terminal initialization */
@@ -90,9 +90,9 @@ namespace Tom
 #endif
 
         /*! Cache for detected ansi output. */
-        mutable std::unordered_map<std::ostream *, bool> m_isAnsiOutput {};
+        mutable std::unordered_map<const std::ostream *, bool> m_isAnsiOutput {};
         /*! Cache for detected ansi output, wide version. */
-        mutable std::unordered_map<std::wostream *, bool> m_isAnsiWOutput {};
+        mutable std::unordered_map<const std::wostream *, bool> m_isAnsiWOutput {};
 
         /*! Current terminal width. */
         int m_lastWidth = 80;
@@ -115,7 +115,7 @@ namespace Tom
     /* private */
 
     template<OStreamConcept O>
-    bool Terminal::hasColorSupportInternal(O &&cout, FILE *stream) const
+    bool Terminal::hasColorSupportInternal(const O &cout, FILE *stream) const
     {
 #ifndef _WIN32
         Q_UNUSED(cout)
@@ -129,7 +129,7 @@ namespace Tom
 
 #ifdef _WIN32
         return isatty(stream) &&
-                (hasVt100Support(std::forward<O>(cout)) ||
+                (hasVt100Support(cout) ||
                  qEnvironmentVariableIsSet("ANSICON") ||
                  qEnvironmentVariable("ConEmuANSI") == QStringLiteral("ON") ||
                  qEnvironmentVariable("TERM") == QStringLiteral("xterm"));
