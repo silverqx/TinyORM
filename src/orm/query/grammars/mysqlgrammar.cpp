@@ -83,44 +83,6 @@ const QVector<QString> &MySqlGrammar::getOperators() const
     return cachedOperators;
 }
 
-QString
-MySqlGrammar::compileUpdateWithoutJoins(
-        const QueryBuilder &query, const QString &table,
-        const QString &columns, const QString &wheres) const
-{
-    // The table argument is already wrapped
-    auto sql = Grammar::compileUpdateWithoutJoins(query, table, columns, wheres);
-
-    /* When using MySQL, udpate statements may contain order by statements and limits
-       so we will compile both of those here. */
-    if (!query.getOrders().isEmpty())
-        sql += QStringLiteral(" %1").arg(compileOrders(query));
-
-    if (query.getLimit() > -1)
-        sql += QStringLiteral(" %1").arg(compileLimit(query));
-
-    return sql;
-}
-
-QString
-MySqlGrammar::compileDeleteWithoutJoins(const QueryBuilder &query, const QString &table,
-                                        const QString &wheres) const
-{
-    // The table argument is already wrapped
-    auto sql = Grammar::compileDeleteWithoutJoins(query, table, wheres);
-
-    /* When using MySQL, delete statements may contain order by statements and limits
-       so we will compile both of those here. Once we have finished compiling this
-       we will return the completed SQL statement so it will be executed for us. */
-    if (!query.getOrders().isEmpty())
-        sql += QStringLiteral(" %1").arg(compileOrders(query));
-
-    if (query.getLimit() > -1)
-        sql += QStringLiteral(" %1").arg(compileLimit(query));
-
-    return sql;
-}
-
 QString MySqlGrammar::wrapValue(QString value) const
 {
     if (value == ASTERISK_C)
@@ -228,6 +190,44 @@ MySqlGrammar::getWhereMethod(const WhereType whereType) const
     Q_ASSERT((0 <= type) && (type < size));
 
     return cached.at(type);
+}
+
+QString
+MySqlGrammar::compileUpdateWithoutJoins(
+        const QueryBuilder &query, const QString &table,
+        const QString &columns, const QString &wheres) const
+{
+    // The table argument is already wrapped
+    auto sql = Grammar::compileUpdateWithoutJoins(query, table, columns, wheres);
+
+    /* When using MySQL, udpate statements may contain order by statements and limits
+       so we will compile both of those here. */
+    if (!query.getOrders().isEmpty())
+        sql += QStringLiteral(" %1").arg(compileOrders(query));
+
+    if (query.getLimit() > -1)
+        sql += QStringLiteral(" %1").arg(compileLimit(query));
+
+    return sql;
+}
+
+QString
+MySqlGrammar::compileDeleteWithoutJoins(const QueryBuilder &query, const QString &table,
+                                        const QString &wheres) const
+{
+    // The table argument is already wrapped
+    auto sql = Grammar::compileDeleteWithoutJoins(query, table, wheres);
+
+    /* When using MySQL, delete statements may contain order by statements and limits
+       so we will compile both of those here. Once we have finished compiling this
+       we will return the completed SQL statement so it will be executed for us. */
+    if (!query.getOrders().isEmpty())
+        sql += QStringLiteral(" %1").arg(compileOrders(query));
+
+    if (query.getLimit() > -1)
+        sql += QStringLiteral(" %1").arg(compileLimit(query));
+
+    return sql;
 }
 
 } // namespace Orm::Query::Grammars

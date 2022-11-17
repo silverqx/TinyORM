@@ -46,6 +46,16 @@ namespace Orm::Query::Grammars
         const QVector<QString> &getOperators() const override;
 
     protected:
+        /*! Wrap a single string in keyword identifiers. */
+        QString wrapValue(QString value) const override;
+
+        /*! Map the ComponentType to a Grammar::compileXx() methods. */
+        const QMap<SelectComponentType, SelectComponentValue> &
+        getCompileMap() const override;
+        /*! Map the WhereType to a Grammar::whereXx() methods. */
+        const std::function<QString(const WhereConditionItem &)> &
+        getWhereMethod(WhereType whereType) const override;
+
         /*! Compile an update statement without joins into SQL. */
         QString
         compileUpdateWithoutJoins(
@@ -56,16 +66,6 @@ namespace Orm::Query::Grammars
         QString
         compileDeleteWithoutJoins(const QueryBuilder &query, const QString &table,
                                   const QString &wheres) const override;
-
-        /*! Wrap a single string in keyword identifiers. */
-        QString wrapValue(QString value) const override;
-
-        /*! Map the ComponentType to a Grammar::compileXx() methods. */
-        const QMap<SelectComponentType, SelectComponentValue> &
-        getCompileMap() const override;
-        /*! Map the WhereType to a Grammar::whereXx() methods. */
-        const std::function<QString(const WhereConditionItem &)> &
-        getWhereMethod(WhereType whereType) const override;
     };
 
 } // namespace Orm::Query::Grammars

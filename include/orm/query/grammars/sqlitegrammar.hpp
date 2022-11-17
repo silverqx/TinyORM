@@ -51,15 +51,15 @@ namespace Orm::Query::Grammars
         const QVector<QString> &getOperators() const override;
 
     protected:
-        /*! Compile the columns for an update statement. */
-        QString compileUpdateColumns(const QVector<UpdateItem> &values) const override;
-
         /*! Map the ComponentType to a Grammar::compileXx() methods. */
         const QMap<SelectComponentType, SelectComponentValue> &
         getCompileMap() const override;
         /*! Map the WhereType to a Grammar::whereXx() methods. */
         const std::function<QString(const WhereConditionItem &)> &
         getWhereMethod(WhereType whereType) const override;
+
+        /*! Compile the columns for an update statement. */
+        QString compileUpdateColumns(const QVector<UpdateItem> &values) const override;
 
     private:
         /*! Compile an update statement with joins or limit into SQL. */

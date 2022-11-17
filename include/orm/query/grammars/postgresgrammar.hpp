@@ -58,9 +58,6 @@ namespace Orm::Query::Grammars
         QString whereBasic(const WhereConditionItem &where) const;
 
     protected:
-        /*! Compile the columns for an update statement. */
-        QString compileUpdateColumns(const QVector<UpdateItem> &values) const override;
-
         /*! Map the ComponentType to a Grammar::compileXx() methods. */
         const QMap<SelectComponentType, SelectComponentValue> &
         getCompileMap() const override;
@@ -70,6 +67,9 @@ namespace Orm::Query::Grammars
 
         /*! Compile the "select *" portion of the query. */
         QString compileColumns(const QueryBuilder &query) const override;
+
+        /*! Compile the columns for an update statement. */
+        QString compileUpdateColumns(const QVector<UpdateItem> &values) const override;
 
     private:
         /*! Compile an update statement with joins or limit into SQL. */

@@ -79,19 +79,6 @@ const QVector<QString> &SQLiteGrammar::getOperators() const
     return cachedOperators;
 }
 
-QString SQLiteGrammar::compileUpdateColumns(const QVector<UpdateItem> &values) const
-{
-    QStringList compiledAssignments;
-    compiledAssignments.reserve(values.size());
-
-    for (const auto &assignment : values)
-        compiledAssignments << QStringLiteral("%1 = %2").arg(
-                                   wrap(unqualifyColumn(assignment.column)),
-                                   parameter(assignment.value));
-
-    return columnizeWithoutWrap(compiledAssignments);
-}
-
 const QMap<Grammar::SelectComponentType, Grammar::SelectComponentValue> &
 SQLiteGrammar::getCompileMap() const
 {
@@ -188,6 +175,19 @@ SQLiteGrammar::getWhereMethod(const WhereType whereType) const
     Q_ASSERT((0 <= type) && (type < size));
 
     return cached.at(type);
+}
+
+QString SQLiteGrammar::compileUpdateColumns(const QVector<UpdateItem> &values) const
+{
+    QStringList compiledAssignments;
+    compiledAssignments.reserve(values.size());
+
+    for (const auto &assignment : values)
+        compiledAssignments << QStringLiteral("%1 = %2").arg(
+                                   wrap(unqualifyColumn(assignment.column)),
+                                   parameter(assignment.value));
+
+    return columnizeWithoutWrap(compiledAssignments);
 }
 
 QString

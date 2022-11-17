@@ -102,19 +102,6 @@ QString PostgresGrammar::whereBasic(const WhereConditionItem &where) const
                                                 parameter(where.value));
 }
 
-QString PostgresGrammar::compileUpdateColumns(const QVector<UpdateItem> &values) const
-{
-    QStringList compiledAssignments;
-    compiledAssignments.reserve(values.size());
-
-    for (const auto &assignment : values)
-        compiledAssignments << QStringLiteral("%1 = %2").arg(
-                                   wrap(unqualifyColumn(assignment.column)),
-                                   parameter(assignment.value));
-
-    return columnizeWithoutWrap(compiledAssignments);
-}
-
 const QMap<Grammar::SelectComponentType, Grammar::SelectComponentValue> &
 PostgresGrammar::getCompileMap() const
 {
@@ -231,6 +218,19 @@ QString PostgresGrammar::compileColumns(const QueryBuilder &query) const
         select.append(QStringLiteral("select "));
 
     return select.append(columnize(query.getColumns()));
+}
+
+QString PostgresGrammar::compileUpdateColumns(const QVector<UpdateItem> &values) const
+{
+    QStringList compiledAssignments;
+    compiledAssignments.reserve(values.size());
+
+    for (const auto &assignment : values)
+        compiledAssignments << QStringLiteral("%1 = %2").arg(
+                                   wrap(unqualifyColumn(assignment.column)),
+                                   parameter(assignment.value));
+
+    return columnizeWithoutWrap(compiledAssignments);
 }
 
 QString PostgresGrammar::compileUpdateWithJoinsOrLimit(
