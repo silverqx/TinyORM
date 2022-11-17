@@ -9,6 +9,8 @@ TINYORM_BEGIN_COMMON_NAMESPACE
 namespace Orm::Query::Grammars
 {
 
+/* public */
+
 QString MySqlGrammar::compileInsert(const QueryBuilder &query,
                                     const QVector<QVariantMap> &values) const
 {
@@ -82,6 +84,8 @@ const QVector<QString> &MySqlGrammar::getOperators() const
 
     return cachedOperators;
 }
+
+/* protected */
 
 QString MySqlGrammar::wrapValue(QString value) const
 {

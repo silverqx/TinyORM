@@ -8,6 +8,8 @@ TINYORM_BEGIN_COMMON_NAMESPACE
 namespace Orm::Query::Grammars
 {
 
+/* public */
+
 QString SQLiteGrammar::compileInsertOrIgnore(const QueryBuilder &query,
                                              const QVector<QVariantMap> &values) const
 {
@@ -78,6 +80,8 @@ const QVector<QString> &SQLiteGrammar::getOperators() const
 
     return cachedOperators;
 }
+
+/* protected */
 
 const QMap<Grammar::SelectComponentType, Grammar::SelectComponentValue> &
 SQLiteGrammar::getCompileMap() const
@@ -189,6 +193,8 @@ QString SQLiteGrammar::compileUpdateColumns(const QVector<UpdateItem> &values) c
 
     return columnizeWithoutWrap(compiledAssignments);
 }
+
+/* private */
 
 QString
 SQLiteGrammar::compileUpdateWithJoinsOrLimit(QueryBuilder &query,

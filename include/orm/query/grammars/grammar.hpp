@@ -222,6 +222,8 @@ namespace Orm::Query::Grammars
                                     const QVector<BindingType> &exclude) const;
     };
 
+    /* public */
+
     Grammar::~Grammar() = default;
 
     QString Grammar::compileInsertGetId(

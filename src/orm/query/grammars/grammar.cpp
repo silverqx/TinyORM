@@ -9,6 +9,8 @@ TINYORM_BEGIN_COMMON_NAMESPACE
 namespace Orm::Query::Grammars
 {
 
+/* public */
+
 QString Grammar::compileSelect(QueryBuilder &query) const
 {
     /* If the query does not have any columns set, we'll set the columns to the
@@ -145,6 +147,8 @@ const QVector<QString> &Grammar::getOperators() const
 
     return cachedOperators;
 }
+
+/* protected */
 
 bool Grammar::shouldCompileAggregate(const std::optional<AggregateItem> &aggregate) const
 {

@@ -8,6 +8,8 @@ TINYORM_BEGIN_COMMON_NAMESPACE
 namespace Orm::Query::Grammars
 {
 
+/* public */
+
 QString PostgresGrammar::compileInsertOrIgnore(const QueryBuilder &query,
                                                const QVector<QVariantMap> &values) const
 {
@@ -101,6 +103,8 @@ QString PostgresGrammar::whereBasic(const WhereConditionItem &where) const
                                                 where.comparison,
                                                 parameter(where.value));
 }
+
+/* protected */
 
 const QMap<Grammar::SelectComponentType, Grammar::SelectComponentValue> &
 PostgresGrammar::getCompileMap() const
@@ -232,6 +236,8 @@ QString PostgresGrammar::compileUpdateColumns(const QVector<UpdateItem> &values)
 
     return columnizeWithoutWrap(compiledAssignments);
 }
+
+/* private */
 
 QString PostgresGrammar::compileUpdateWithJoinsOrLimit(
         QueryBuilder &query, const QVector<UpdateItem> &values) const
