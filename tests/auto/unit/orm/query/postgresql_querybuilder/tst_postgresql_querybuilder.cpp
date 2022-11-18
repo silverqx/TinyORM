@@ -9,7 +9,10 @@
 
 using Orm::Constants::AND;
 using Orm::Constants::ASC;
+using Orm::Constants::CREATED_AT;
 using Orm::Constants::DESC;
+using Orm::Constants::EQ;
+using Orm::Constants::GE;
 using Orm::Constants::ID;
 using Orm::Constants::LEFT;
 using Orm::Constants::LIKE;
@@ -109,6 +112,13 @@ private Q_SLOTS:
     void whereNotNull_ColumnExpression() const;
     void whereNull_WithVectorValue() const;
     void whereNotNull_WithVectorValue() const;
+
+    /* where dates */
+    void whereDate();
+    void whereTime();
+    void whereDay();
+    void whereMonth();
+    void whereYear();
 
     void orderBy() const;
     void latestOldest() const;
@@ -1622,6 +1632,77 @@ void tst_PostgreSQL_QueryBuilder::whereNotNull_WithVectorValue() const
         QCOMPARE(builder->getBindings(),
                  QVector<QVariant>({QVariant(3)}));
     }
+}
+
+/* where dates */
+
+void tst_PostgreSQL_QueryBuilder::whereDate()
+{
+    auto builder = createQuery();
+
+    QDate date(2022, 1, 12);
+
+    builder->select("*").from("torrents")
+            .whereDate(CREATED_AT, EQ, date);
+
+    QCOMPARE(builder->toSql(),
+             R"(select * from "torrents" where "created_at"::date = ?)");
+    QCOMPARE(builder->getBindings(),
+             QVector<QVariant>({QVariant(date.toString(Qt::ISODate))}));
+}
+
+void tst_PostgreSQL_QueryBuilder::whereTime()
+{
+    auto builder = createQuery();
+
+    QTime time(9, 10, 4);
+
+    builder->select("*").from("torrents")
+            .whereTime(CREATED_AT, GE, time);
+
+    QCOMPARE(builder->toSql(),
+             R"(select * from "torrents" where "created_at"::time >= ?)");
+    QCOMPARE(builder->getBindings(),
+             QVector<QVariant>({QVariant(time.toString(Qt::ISODate))}));
+}
+
+void tst_PostgreSQL_QueryBuilder::whereDay()
+{
+    auto builder = createQuery();
+
+    builder->select("*").from("torrents")
+            .whereDay(CREATED_AT, EQ, 5);
+
+    QCOMPARE(builder->toSql(),
+             R"(select * from "torrents" where extract(day from "created_at") = ?)");
+    QCOMPARE(builder->getBindings(),
+             QVector<QVariant>({QVariant(5)}));
+}
+
+void tst_PostgreSQL_QueryBuilder::whereMonth()
+{
+    auto builder = createQuery();
+
+    builder->select("*").from("torrents")
+            .whereMonth(CREATED_AT, GE, 11);
+
+    QCOMPARE(builder->toSql(),
+             R"(select * from "torrents" where extract(month from "created_at") >= ?)");
+    QCOMPARE(builder->getBindings(),
+             QVector<QVariant>({QVariant(11)}));
+}
+
+void tst_PostgreSQL_QueryBuilder::whereYear()
+{
+    auto builder = createQuery();
+
+    builder->select("*").from("torrents")
+            .whereYear(CREATED_AT, GE, 2015);
+
+    QCOMPARE(builder->toSql(),
+             R"(select * from "torrents" where extract(year from "created_at") >= ?)");
+    QCOMPARE(builder->getBindings(),
+             QVector<QVariant>({QVariant(2015)}));
 }
 
 void tst_PostgreSQL_QueryBuilder::orderBy() const

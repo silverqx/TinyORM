@@ -668,6 +668,65 @@ namespace Tiny
         orWhereRowValuesEq(const QVector<Column> &columns,
                            const QVector<QVariant> &values);
 
+        /* where dates */
+        /*! Add a "where date" statement to the query. */
+        static std::unique_ptr<TinyBuilder<Derived>>
+        whereDate(const Column &column, const QString &comparison, QVariant value,
+                  const QString &condition = AND);
+        /*! Add a "where time" statement to the query. */
+        static std::unique_ptr<TinyBuilder<Derived>>
+        whereTime(const Column &column, const QString &comparison, QVariant value,
+                  const QString &condition = AND);
+        /*! Add a "where day" statement to the query. */
+        static std::unique_ptr<TinyBuilder<Derived>>
+        whereDay(const Column &column, const QString &comparison, QVariant value,
+                 const QString &condition = AND);
+        /*! Add a "where month" statement to the query. */
+        static std::unique_ptr<TinyBuilder<Derived>>
+        whereMonth(const Column &column, const QString &comparison, QVariant value,
+                   const QString &condition = AND);
+        /*! Add a "where year" statement to the query. */
+        static std::unique_ptr<TinyBuilder<Derived>>
+        whereYear(const Column &column, const QString &comparison, QVariant value,
+                  const QString &condition = AND);
+
+        /*! Add an equal "where date" statement to the query. */
+        static std::unique_ptr<TinyBuilder<Derived>>
+        whereEqDate(const Column &column, QVariant value,
+                    const QString &condition = AND);
+        /*! Add an equal "where time" statement to the query. */
+        static std::unique_ptr<TinyBuilder<Derived>>
+        whereEqTime(const Column &column, QVariant value,
+                    const QString &condition = AND);
+        /*! Add an equal "where day" statement to the query. */
+        static std::unique_ptr<TinyBuilder<Derived>>
+        whereEqDay(const Column &column, QVariant value,
+                   const QString &condition = AND);
+        /*! Add an equal "where month" statement to the query. */
+        static std::unique_ptr<TinyBuilder<Derived>>
+        whereEqMonth(const Column &column, QVariant value,
+                     const QString &condition = AND);
+        /*! Add an equal "where year" statement to the query. */
+        static std::unique_ptr<TinyBuilder<Derived>>
+        whereEqYear(const Column &column, QVariant value,
+                    const QString &condition = AND);
+
+        /*! Add a "or where date" statement to the query. */
+        static std::unique_ptr<TinyBuilder<Derived>>
+        orWhereDate(const Column &column, const QString &comparison, QVariant value);
+        /*! Add a "or where time" statement to the query. */
+        static std::unique_ptr<TinyBuilder<Derived>>
+        orWhereTime(const Column &column, const QString &comparison, QVariant value);
+        /*! Add a "or where day" statement to the query. */
+        static std::unique_ptr<TinyBuilder<Derived>>
+        orWhereDay(const Column &column, const QString &comparison, QVariant value);
+        /*! Add a "or where month" statement to the query. */
+        static std::unique_ptr<TinyBuilder<Derived>>
+        orWhereMonth(const Column &column, const QString &comparison, QVariant value);
+        /*! Add a "or where year" statement to the query. */
+        static std::unique_ptr<TinyBuilder<Derived>>
+        orWhereYear(const Column &column, const QString &comparison, QVariant value);
+
         /* where raw */
         /*! Add a raw "where" clause to the query. */
         static std::unique_ptr<TinyBuilder<Derived>>
@@ -2686,6 +2745,193 @@ namespace Tiny
         auto builder = query();
 
         builder->whereRowValues(columns, EQ, values, OR);
+
+        return builder;
+    }
+
+    /* where dates */
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    std::unique_ptr<TinyBuilder<Derived>>
+    ModelProxies<Derived, AllRelations...>::whereDate(
+            const Column &column, const QString &comparison, QVariant value,
+            const QString &condition)
+    {
+        auto builder = query();
+
+        builder->whereDate(column, comparison, std::move(value), condition);
+
+        return builder;
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    std::unique_ptr<TinyBuilder<Derived>>
+    ModelProxies<Derived, AllRelations...>::whereTime(
+            const Column &column, const QString &comparison, QVariant value,
+            const QString &condition)
+    {
+        auto builder = query();
+
+        builder->whereTime(column, comparison, std::move(value), condition);
+
+        return builder;
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    std::unique_ptr<TinyBuilder<Derived>>
+    ModelProxies<Derived, AllRelations...>::whereDay(
+            const Column &column, const QString &comparison, QVariant value,
+            const QString &condition)
+    {
+        auto builder = query();
+
+        builder->whereDay(column, comparison, std::move(value), condition);
+
+        return builder;
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    std::unique_ptr<TinyBuilder<Derived>>
+    ModelProxies<Derived, AllRelations...>::whereMonth(
+            const Column &column, const QString &comparison, QVariant value,
+            const QString &condition)
+    {
+        auto builder = query();
+
+        builder->whereMonth(column, comparison, std::move(value), condition);
+
+        return builder;
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    std::unique_ptr<TinyBuilder<Derived>>
+    ModelProxies<Derived, AllRelations...>::whereYear(
+            const Column &column, const QString &comparison, QVariant value,
+            const QString &condition)
+    {
+        auto builder = query();
+
+        builder->whereYear(column, comparison, std::move(value), condition);
+
+        return builder;
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    std::unique_ptr<TinyBuilder<Derived>>
+    ModelProxies<Derived, AllRelations...>::whereEqDate(
+            const Column &column, QVariant value, const QString &condition)
+    {
+        auto builder = query();
+
+        builder->whereDate(column, EQ, std::move(value), condition);
+
+        return builder;
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    std::unique_ptr<TinyBuilder<Derived>>
+    ModelProxies<Derived, AllRelations...>::whereEqTime(
+            const Column &column, QVariant value, const QString &condition)
+    {
+        auto builder = query();
+
+        builder->whereTime(column, EQ, std::move(value), condition);
+
+        return builder;
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    std::unique_ptr<TinyBuilder<Derived>>
+    ModelProxies<Derived, AllRelations...>::whereEqDay(
+            const Column &column, QVariant value, const QString &condition)
+    {
+        auto builder = query();
+
+        builder->whereDay(column, EQ, std::move(value), condition);
+
+        return builder;
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    std::unique_ptr<TinyBuilder<Derived>>
+    ModelProxies<Derived, AllRelations...>::whereEqMonth(
+            const Column &column, QVariant value, const QString &condition)
+    {
+        auto builder = query();
+
+        builder->whereMonth(column, EQ, std::move(value), condition);
+
+        return builder;
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    std::unique_ptr<TinyBuilder<Derived>>
+    ModelProxies<Derived, AllRelations...>::whereEqYear(
+            const Column &column, QVariant value, const QString &condition)
+    {
+        auto builder = query();
+
+        builder->whereYear(column, EQ, std::move(value), condition);
+
+        return builder;
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    std::unique_ptr<TinyBuilder<Derived>>
+    ModelProxies<Derived, AllRelations...>::orWhereDate(
+            const Column &column, const QString &comparison, QVariant value)
+    {
+        auto builder = query();
+
+        builder->whereDate(column, comparison, std::move(value), OR);
+
+        return builder;
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    std::unique_ptr<TinyBuilder<Derived>>
+    ModelProxies<Derived, AllRelations...>::orWhereTime(
+            const Column &column, const QString &comparison, QVariant value)
+    {
+        auto builder = query();
+
+        builder->whereTime(column, comparison, std::move(value), OR);
+
+        return builder;
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    std::unique_ptr<TinyBuilder<Derived>>
+    ModelProxies<Derived, AllRelations...>::orWhereDay(
+            const Column &column, const QString &comparison, QVariant value)
+    {
+        auto builder = query();
+
+        builder->whereDay(column, comparison, std::move(value), OR);
+
+        return builder;
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    std::unique_ptr<TinyBuilder<Derived>>
+    ModelProxies<Derived, AllRelations...>::orWhereMonth(
+            const Column &column, const QString &comparison, QVariant value)
+    {
+        auto builder = query();
+
+        builder->whereMonth(column, comparison, std::move(value), OR);
+
+        return builder;
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    std::unique_ptr<TinyBuilder<Derived>>
+    ModelProxies<Derived, AllRelations...>::orWhereYear(
+            const Column &column, const QString &comparison, QVariant value)
+    {
+        auto builder = query();
+
+        builder->whereYear(column, comparison, std::move(value), OR);
 
         return builder;
     }

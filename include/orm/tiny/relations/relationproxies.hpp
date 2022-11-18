@@ -657,6 +657,70 @@ namespace Tiny::Relations
         orWhereRowValuesEq(const QVector<Column> &columns,
                            const QVector<QVariant> &values) const;
 
+        /* where dates */
+        /*! Add a "where date" statement to the query. */
+        const Relation<Model, Related> &
+        whereDate(const Column &column, const QString &comparison, QVariant value,
+                  const QString &condition = AND) const;
+        /*! Add a "where time" statement to the query. */
+        const Relation<Model, Related> &
+        whereTime(const Column &column, const QString &comparison, QVariant value,
+                  const QString &condition = AND) const;
+        /*! Add a "where day" statement to the query. */
+        const Relation<Model, Related> &
+        whereDay(const Column &column, const QString &comparison, QVariant value,
+                 const QString &condition = AND) const;
+        /*! Add a "where month" statement to the query. */
+        const Relation<Model, Related> &
+        whereMonth(const Column &column, const QString &comparison, QVariant value,
+                   const QString &condition = AND) const;
+        /*! Add a "where year" statement to the query. */
+        const Relation<Model, Related> &
+        whereYear(const Column &column, const QString &comparison, QVariant value,
+                  const QString &condition = AND) const;
+
+        /*! Add an equal "where date" statement to the query. */
+        const Relation<Model, Related> &
+        whereEqDate(const Column &column, QVariant value,
+                    const QString &condition = AND) const;
+        /*! Add an equal "where time" statement to the query. */
+        const Relation<Model, Related> &
+        whereEqTime(const Column &column, QVariant value,
+                    const QString &condition = AND) const;
+        /*! Add an equal "where day" statement to the query. */
+        const Relation<Model, Related> &
+        whereEqDay(const Column &column, QVariant value,
+                   const QString &condition = AND) const;
+        /*! Add an equal "where month" statement to the query. */
+        const Relation<Model, Related> &
+        whereEqMonth(const Column &column, QVariant value,
+                     const QString &condition = AND) const;
+        /*! Add an equal "where year" statement to the query. */
+        const Relation<Model, Related> &
+        whereEqYear(const Column &column, QVariant value,
+                    const QString &condition = AND) const;
+
+        /*! Add a "or where date" statement to the query. */
+        const Relation<Model, Related> &
+        orWhereDate(const Column &column, const QString &comparison,
+                    QVariant value) const;
+        /*! Add a "or where time" statement to the query. */
+        const Relation<Model, Related> &
+        orWhereTime(const Column &column, const QString &comparison,
+                    QVariant value) const;
+        /*! Add a "or where day" statement to the query. */
+        const Relation<Model, Related> &
+        orWhereDay(const Column &column, const QString &comparison,
+                   QVariant value) const;
+        /*! Add a "or where month" statement to the query. */
+        const Relation<Model, Related> &
+        orWhereMonth(const Column &column, const QString &comparison,
+                     QVariant value) const;
+        /*! Add a "or where year" statement to the query. */
+        const Relation<Model, Related> &
+        orWhereYear(const Column &column, const QString &comparison,
+                    QVariant value) const;
+
         /* where raw */
         /*! Add a raw "where" clause to the query. */
         const Relation<Model, Related> &whereRaw(
@@ -2500,6 +2564,163 @@ namespace Tiny::Relations
             const QVector<Column> &columns, const QVector<QVariant> &values) const
     {
         getQuery().whereRowValues(columns, EQ, values, OR);
+
+        return relation();
+    }
+
+    /* where dates */
+
+    template<class Model, class Related>
+    const Relation<Model, Related> &
+    RelationProxies<Model, Related>::whereDate(
+            const Column &column, const QString &comparison, QVariant value,
+            const QString &condition) const
+    {
+        getQuery().whereDate(column, comparison, std::move(value), condition);
+
+        return relation();
+    }
+
+    template<class Model, class Related>
+    const Relation<Model, Related> &
+    RelationProxies<Model, Related>::whereTime(
+            const Column &column, const QString &comparison, QVariant value,
+            const QString &condition) const
+    {
+        getQuery().whereTime(column, comparison, std::move(value), condition);
+
+        return relation();
+    }
+
+    template<class Model, class Related>
+    const Relation<Model, Related> &
+    RelationProxies<Model, Related>::whereDay(
+            const Column &column, const QString &comparison, QVariant value,
+            const QString &condition) const
+    {
+        getQuery().whereDay(column, comparison, std::move(value), condition);
+
+        return relation();
+    }
+
+    template<class Model, class Related>
+    const Relation<Model, Related> &
+    RelationProxies<Model, Related>::whereMonth(
+            const Column &column, const QString &comparison, QVariant value,
+            const QString &condition) const
+    {
+        getQuery().whereMonth(column, comparison, std::move(value), condition);
+
+        return relation();
+    }
+
+    template<class Model, class Related>
+    const Relation<Model, Related> &
+    RelationProxies<Model, Related>::whereYear(
+            const Column &column, const QString &comparison, QVariant value,
+            const QString &condition) const
+    {
+        getQuery().whereYear(column, comparison, std::move(value), condition);
+
+        return relation();
+    }
+
+    template<class Model, class Related>
+    const Relation<Model, Related> &
+    RelationProxies<Model, Related>::whereEqDate(
+            const Column &column, QVariant value, const QString &condition) const
+    {
+        getQuery().whereDate(column, EQ, std::move(value), condition);
+
+        return relation();
+    }
+
+    template<class Model, class Related>
+    const Relation<Model, Related> &
+    RelationProxies<Model, Related>::whereEqTime(
+            const Column &column, QVariant value, const QString &condition) const
+    {
+        getQuery().whereTime(column, EQ, std::move(value), condition);
+
+        return relation();
+    }
+
+    template<class Model, class Related>
+    const Relation<Model, Related> &
+    RelationProxies<Model, Related>::whereEqDay(
+            const Column &column, QVariant value, const QString &condition) const
+    {
+        getQuery().whereDay(column, EQ, std::move(value), condition);
+
+        return relation();
+    }
+
+    template<class Model, class Related>
+    const Relation<Model, Related> &
+    RelationProxies<Model, Related>::whereEqMonth(
+            const Column &column, QVariant value, const QString &condition) const
+    {
+        getQuery().whereMonth(column, EQ, std::move(value), condition);
+
+        return relation();
+    }
+
+    template<class Model, class Related>
+    const Relation<Model, Related> &
+    RelationProxies<Model, Related>::whereEqYear(
+            const Column &column, QVariant value, const QString &condition) const
+    {
+        getQuery().whereYear(column, EQ, std::move(value), condition);
+
+        return relation();
+    }
+
+    template<class Model, class Related>
+    const Relation<Model, Related> &
+    RelationProxies<Model, Related>::orWhereDate(
+            const Column &column, const QString &comparison, QVariant value) const
+    {
+        getQuery().whereDate(column, comparison, std::move(value), OR);
+
+        return relation();
+    }
+
+    template<class Model, class Related>
+    const Relation<Model, Related> &
+    RelationProxies<Model, Related>::orWhereTime(
+            const Column &column, const QString &comparison, QVariant value) const
+    {
+        getQuery().whereTime(column, comparison, std::move(value), OR);
+
+        return relation();
+    }
+
+    template<class Model, class Related>
+    const Relation<Model, Related> &
+    RelationProxies<Model, Related>::orWhereDay(
+            const Column &column, const QString &comparison, QVariant value) const
+    {
+        getQuery().whereDay(column, comparison, std::move(value), OR);
+
+        return relation();
+    }
+
+    template<class Model, class Related>
+    const Relation<Model, Related> &
+    RelationProxies<Model, Related>::orWhereMonth(
+            const Column &column, const QString &comparison, QVariant value) const
+    {
+        getQuery().whereMonth(column, comparison, std::move(value), OR);
+
+        return relation();
+    }
+
+    template<class Model, class Related>
+    const Relation<Model, Related> &
+    RelationProxies<Model, Related>::orWhereYear(
+            const Column &column, const QString &comparison, QVariant value) const
+    {
+        getQuery().whereYear(column, comparison, std::move(value), OR);
 
         return relation();
     }

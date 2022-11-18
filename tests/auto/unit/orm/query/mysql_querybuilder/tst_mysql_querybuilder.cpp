@@ -12,7 +12,9 @@
 using Orm::Constants::AND;
 using Orm::Constants::ASC;
 using Orm::Constants::DESC;
+using Orm::Constants::CREATED_AT;
 using Orm::Constants::EQ;
+using Orm::Constants::GE;
 using Orm::Constants::GT;
 using Orm::Constants::ID;
 using Orm::Constants::LEFT;
@@ -191,6 +193,13 @@ private Q_SLOTS:
     void whereRowValues_Empty() const;
     void whereRowValues_ColumnExpression() const;
     void whereRowValues_ValueExpression() const;
+
+    /* where dates */
+    void whereDate();
+    void whereTime();
+    void whereDay();
+    void whereMonth();
+    void whereYear();
 
     void orderBy() const;
     void latestOldest() const;
@@ -2783,6 +2792,77 @@ void tst_MySql_QueryBuilder::whereRowValues_ValueExpression() const
                  "select * from `torrents` where (`name`, `size`) = ('test3', 3)");
         QVERIFY(builder->getBindings().isEmpty());
     }
+}
+
+/* where dates */
+
+void tst_MySql_QueryBuilder::whereDate()
+{
+    auto builder = createQuery();
+
+    QDate date(2022, 1, 12);
+
+    builder->select("*").from("torrents")
+            .whereDate(CREATED_AT, EQ, date);
+
+    QCOMPARE(builder->toSql(),
+             "select * from `torrents` where date(`created_at`) = ?");
+    QCOMPARE(builder->getBindings(),
+             QVector<QVariant>({QVariant(date.toString(Qt::ISODate))}));
+}
+
+void tst_MySql_QueryBuilder::whereTime()
+{
+    auto builder = createQuery();
+
+    QTime time(9, 10, 4);
+
+    builder->select("*").from("torrents")
+            .whereTime(CREATED_AT, GE, time);
+
+    QCOMPARE(builder->toSql(),
+             "select * from `torrents` where time(`created_at`) >= ?");
+    QCOMPARE(builder->getBindings(),
+             QVector<QVariant>({QVariant(time.toString(Qt::ISODate))}));
+}
+
+void tst_MySql_QueryBuilder::whereDay()
+{
+    auto builder = createQuery();
+
+    builder->select("*").from("torrents")
+            .whereDay(CREATED_AT, EQ, 5);
+
+    QCOMPARE(builder->toSql(),
+             "select * from `torrents` where day(`created_at`) = ?");
+    QCOMPARE(builder->getBindings(),
+             QVector<QVariant>({QVariant(5)}));
+}
+
+void tst_MySql_QueryBuilder::whereMonth()
+{
+    auto builder = createQuery();
+
+    builder->select("*").from("torrents")
+            .whereMonth(CREATED_AT, GE, 11);
+
+    QCOMPARE(builder->toSql(),
+             "select * from `torrents` where month(`created_at`) >= ?");
+    QCOMPARE(builder->getBindings(),
+             QVector<QVariant>({QVariant(11)}));
+}
+
+void tst_MySql_QueryBuilder::whereYear()
+{
+    auto builder = createQuery();
+
+    builder->select("*").from("torrents")
+            .whereYear(CREATED_AT, GE, 2015);
+
+    QCOMPARE(builder->toSql(),
+             "select * from `torrents` where year(`created_at`) >= ?");
+    QCOMPARE(builder->getBindings(),
+             QVector<QVariant>({QVariant(2015)}));
 }
 
 void tst_MySql_QueryBuilder::orderBy() const

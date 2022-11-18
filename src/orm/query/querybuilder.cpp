@@ -10,6 +10,8 @@
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
+using Orm::Utils::Helpers;
+
 namespace Orm::Query
 {
 
@@ -837,6 +839,97 @@ Builder::orWhereRowValuesEq(const QVector<Column> &columns,
     return whereRowValues(columns, EQ, values, OR);
 }
 
+/* where dates */
+
+Builder &Builder::whereDate(const Column &column, const QString &comparison,
+                            QVariant value, const QString &condition)
+{
+    // Convert to the QString representation (support both QDate and QDateTime)
+    if (const auto type = Helpers::qVariantTypeId(value);
+        type == QMetaType::QDate
+    )
+        value = value.value<QDate>().toString(Qt::ISODate);
+
+    else if (type == QMetaType::QDateTime)
+        value = value.value<QDateTime>().date().toString(Qt::ISODate);
+
+    return whereInternal(column, comparison, std::move(value), condition,
+                         WhereType::DATE);
+}
+
+Builder &Builder::whereTime(const Column &column, const QString &comparison,
+                            QVariant value, const QString &condition)
+{
+    // Convert to the QString representation (support both QTime and QDateTime)
+    if (const auto type = Helpers::qVariantTypeId(value);
+        type == QMetaType::QTime
+    )
+        value = value.value<QTime>().toString(Qt::ISODate);
+
+    else if (type == QMetaType::QDateTime)
+        value = value.value<QDateTime>().time().toString(Qt::ISODate);
+
+    return whereInternal(column, comparison, std::move(value), condition,
+                         WhereType::TIME);
+}
+
+Builder &Builder::whereDay(const Column &column, const QString &comparison,
+                           QVariant value, const QString &condition)
+{
+    // Convert to the int representation (support both QDate and QDateTime)
+    if (const auto type = Helpers::qVariantTypeId(value);
+        type == QMetaType::QDate
+    )
+        value = value.value<QDate>().day();
+
+    else if (type == QMetaType::QDateTime)
+        value = value.value<QDateTime>().date().day();
+
+    else
+        value = value.value<int>();
+
+    return whereInternal(column, comparison, std::move(value), condition,
+                         WhereType::DAY);
+}
+
+Builder &Builder::whereMonth(const Column &column, const QString &comparison,
+                             QVariant value, const QString &condition)
+{
+    // Convert to the int representation (support both QDate and QDateTime)
+    if (const auto type = Helpers::qVariantTypeId(value);
+        type == QMetaType::QDate
+    )
+        value = value.value<QDate>().month();
+
+    else if (type == QMetaType::QDateTime)
+        value = value.value<QDateTime>().date().month();
+
+    else
+        value = value.value<int>();
+
+    return whereInternal(column, comparison, std::move(value), condition,
+                         WhereType::MONTH);
+}
+
+Builder &Builder::whereYear(const Column &column, const QString &comparison,
+                            QVariant value, const QString &condition)
+{
+    // Convert to the int representation (support both QDate and QDateTime)
+    if (const auto type = Helpers::qVariantTypeId(value);
+        type == QMetaType::QDate
+    )
+        value = value.value<QDate>().year();
+
+    else if (type == QMetaType::QDateTime)
+        value = value.value<QDateTime>().date().year();
+
+    else
+        value = value.value<int>();
+
+    return whereInternal(column, comparison, std::move(value), condition,
+                         WhereType::YEAR);
+}
+
 /* where raw */
 
 Builder &Builder::whereRaw(const QString &sql, const QVector<QVariant> &bindings,
@@ -1154,6 +1247,16 @@ Builder &Builder::addBinding(const QVariant &binding, const BindingType type)
     checkBindingType(type);
 
     m_bindings[type].append(binding);
+
+    return *this;
+}
+
+Builder &Builder::addBinding(QVariant &&binding, const BindingType type)
+{
+    // Check if m_bindings contain type
+    checkBindingType(type);
+
+    m_bindings[type].append(std::move(binding));
 
     return *this;
 }
@@ -1593,16 +1696,17 @@ Builder &Builder::joinSubInternal(
                 callback, type);
 }
 
-Builder &Builder::whereInternal(const Column &column, const QString &comparison,
-                                const QVariant &value, const QString &condition)
+Builder &Builder::whereInternal(
+        const Column &column, const QString &comparison, QVariant value,
+        const QString &condition, const WhereType type)
 {
     invalidOperator(comparison);
 
     m_wheres.append({.column = column, .value = value, .comparison = comparison,
-                     .condition = condition, .type = WhereType::BASIC});
+                     .condition = condition, .type = type});
 
     if (!value.canConvert<Expression>())
-        addBinding(value, BindingType::WHERE);
+        addBinding(std::move(value), BindingType::WHERE);
 
     return *this;
 }

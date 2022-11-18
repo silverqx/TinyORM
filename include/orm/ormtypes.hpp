@@ -78,6 +78,11 @@ namespace Query
         ROW_VALUES,
         BETWEEN,
         BETWEEN_COLUMNS,
+        DATE,
+        TIME,
+        DAY,
+        MONTH,
+        YEAR,
     };
 
     /*! Supported having types. */

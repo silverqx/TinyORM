@@ -58,6 +58,23 @@ namespace Orm::Query::Grammars
         const std::function<QString(const WhereConditionItem &)> &
         getWhereMethod(WhereType whereType) const override;
 
+        /*! Compile a "where date" clause. */
+        QString whereDate(const WhereConditionItem &where) const;
+        /*! Compile a "where time" clause. */
+        QString whereTime(const WhereConditionItem &where) const;
+        /*! Compile a "where day" clause. */
+        QString whereDay(const WhereConditionItem &where) const;
+        /*! Compile a "where month" clause. */
+        QString whereMonth(const WhereConditionItem &where) const;
+        /*! Compile a "where year" clause. */
+        QString whereYear(const WhereConditionItem &where) const;
+        /*! Compile a date based where clause. */
+        QString dateBasedWhere(const QString &type,
+                               const WhereConditionItem &where) const override;
+        /*! Column for a date based where clause based on the type (uses strftime()). */
+        QString dateBasedWhereColumn(const QString &type,
+                                     const WhereConditionItem &where) const;
+
         /*! Compile the columns for an update statement. */
         QString compileUpdateColumns(const QVector<UpdateItem> &values) const override;
 

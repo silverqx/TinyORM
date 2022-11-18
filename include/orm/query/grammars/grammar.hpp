@@ -187,6 +187,20 @@ namespace Orm::Query::Grammars
         /*! Compile a "between" where clause using columns. */
         QString whereBetweenColumns(const WhereConditionItem &where) const;
 
+        /*! Compile a "where date" clause. */
+        QString whereDate(const WhereConditionItem &where) const;
+        /*! Compile a "where time" clause. */
+        QString whereTime(const WhereConditionItem &where) const;
+        /*! Compile a "where day" clause. */
+        QString whereDay(const WhereConditionItem &where) const;
+        /*! Compile a "where month" clause. */
+        QString whereMonth(const WhereConditionItem &where) const;
+        /*! Compile a "where year" clause. */
+        QString whereYear(const WhereConditionItem &where) const;
+        /*! Compile a date based where clause. */
+        virtual QString
+        dateBasedWhere(const QString &type, const WhereConditionItem &where) const;
+
         /*! Compile a insert values lists. */
         QStringList compileInsertToVector(const QVector<QVariantMap> &values) const;
 

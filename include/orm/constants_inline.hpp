@@ -48,6 +48,7 @@ namespace Orm::Constants
     inline const QString CREATED_AT  = QStringLiteral("created_at");
     inline const QString UPDATED_AT  = QStringLiteral("updated_at");
     inline const QString DELETED_AT  = QStringLiteral("deleted_at");
+    inline const QString TMPL_ONE    = QStringLiteral("%1");
     inline const QString PARENTH_ONE = QStringLiteral("(%1)");
     inline const QString NEWLINE     = QStringLiteral("\n");
     inline const QString DOT_IN      = QStringLiteral("%1.%2");

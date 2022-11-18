@@ -184,6 +184,11 @@ MySqlGrammar::getWhereMethod(const WhereType whereType) const
         bind(&MySqlGrammar::whereRowValues),
         bind(&MySqlGrammar::whereBetween),
         bind(&MySqlGrammar::whereBetweenColumns),
+        bind(&MySqlGrammar::whereDate),
+        bind(&MySqlGrammar::whereTime),
+        bind(&MySqlGrammar::whereDay),
+        bind(&MySqlGrammar::whereMonth),
+        bind(&MySqlGrammar::whereYear),
     };
 
     T_THREAD_LOCAL

@@ -193,6 +193,11 @@ PostgresGrammar::getWhereMethod(const WhereType whereType) const
         bind(&PostgresGrammar::whereRowValues),
         bind(&PostgresGrammar::whereBetween),
         bind(&PostgresGrammar::whereBetweenColumns),
+        bind(&PostgresGrammar::whereDate),
+        bind(&PostgresGrammar::whereTime),
+        bind(&PostgresGrammar::whereDay),
+        bind(&PostgresGrammar::whereMonth),
+        bind(&PostgresGrammar::whereYear),
     };
 
     T_THREAD_LOCAL
@@ -222,6 +227,29 @@ QString PostgresGrammar::compileColumns(const QueryBuilder &query) const
         select.append(QStringLiteral("select "));
 
     return select.append(columnize(query.getColumns()));
+}
+
+QString PostgresGrammar::whereDate(const WhereConditionItem &where) const
+{
+    return QStringLiteral("%1::date %3 %4").arg(wrap(where.column),
+                                                where.comparison,
+                                                parameter(where.value));
+}
+
+QString PostgresGrammar::whereTime(const WhereConditionItem &where) const
+{
+    return QStringLiteral("%1::time %3 %4").arg(wrap(where.column),
+                                                where.comparison,
+                                                parameter(where.value));
+}
+
+QString PostgresGrammar::dateBasedWhere(const QString &type,
+                                        const WhereConditionItem &where) const
+{
+    return QStringLiteral("extract(%1 from %2) %3 %4").arg(type,
+                                                           wrap(where.column),
+                                                           where.comparison,
+                                                           parameter(where.value));
 }
 
 QString PostgresGrammar::compileUpdateColumns(const QVector<UpdateItem> &values) const

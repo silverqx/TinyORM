@@ -476,6 +476,40 @@ QString Grammar::whereBetweenColumns(const WhereConditionItem &where) const
                                                  wrap(where.betweenColumns.max));
 }
 
+QString Grammar::whereDate(const WhereConditionItem &where) const
+{
+    return dateBasedWhere(QStringLiteral("date"), where);
+}
+
+QString Grammar::whereTime(const WhereConditionItem &where) const
+{
+    return dateBasedWhere(QStringLiteral("time"), where);
+}
+
+QString Grammar::whereDay(const WhereConditionItem &where) const
+{
+    return dateBasedWhere(QStringLiteral("day"), where);
+}
+
+QString Grammar::whereMonth(const WhereConditionItem &where) const
+{
+    return dateBasedWhere(QStringLiteral("month"), where);
+}
+
+QString Grammar::whereYear(const WhereConditionItem &where) const
+{
+    return dateBasedWhere(QStringLiteral("year"), where);
+}
+
+QString
+Grammar::dateBasedWhere(const QString &type, const WhereConditionItem &where) const
+{
+    return QStringLiteral("%1(%2) %3 %4").arg(type,
+                                              wrap(where.column),
+                                              where.comparison,
+                                              parameter(where.value));
+}
+
 QStringList
 Grammar::compileInsertToVector(const QVector<QVariantMap> &values) const
 {

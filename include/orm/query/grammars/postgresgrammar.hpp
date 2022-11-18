@@ -68,6 +68,14 @@ namespace Orm::Query::Grammars
         /*! Compile the "select *" portion of the query. */
         QString compileColumns(const QueryBuilder &query) const override;
 
+        /*! Compile a "where date" clause. */
+        QString whereDate(const WhereConditionItem &where) const;
+        /*! Compile a "where time" clause. */
+        QString whereTime(const WhereConditionItem &where) const;
+        /*! Compile a date based where clause. */
+        QString dateBasedWhere(const QString &type, const
+                               WhereConditionItem &where) const override;
+
         /*! Compile the columns for an update statement. */
         QString compileUpdateColumns(const QVector<UpdateItem> &values) const override;
 

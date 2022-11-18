@@ -5,6 +5,8 @@
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
+using Orm::Utils::Helpers;
+
 namespace Orm::Query::Grammars
 {
 
@@ -169,6 +171,11 @@ SQLiteGrammar::getWhereMethod(const WhereType whereType) const
         bind(&SQLiteGrammar::whereRowValues),
         bind(&SQLiteGrammar::whereBetween),
         bind(&SQLiteGrammar::whereBetweenColumns),
+        bind(&SQLiteGrammar::whereDate),
+        bind(&SQLiteGrammar::whereTime),
+        bind(&SQLiteGrammar::whereDay),
+        bind(&SQLiteGrammar::whereMonth),
+        bind(&SQLiteGrammar::whereYear),
     };
 
     T_THREAD_LOCAL
@@ -179,6 +186,64 @@ SQLiteGrammar::getWhereMethod(const WhereType whereType) const
     Q_ASSERT((0 <= type) && (type < size));
 
     return cached.at(type);
+}
+
+QString SQLiteGrammar::whereDate(const WhereConditionItem &where) const
+{
+    return dateBasedWhere(QStringLiteral("%Y-%m-%d"), where);
+}
+
+QString SQLiteGrammar::whereTime(const WhereConditionItem &where) const
+{
+    return dateBasedWhere(QStringLiteral("%H:%M:%S"), where);
+}
+
+QString SQLiteGrammar::whereDay(const WhereConditionItem &where) const
+{
+    return dateBasedWhere(QStringLiteral("%d"), where);
+}
+
+QString SQLiteGrammar::whereMonth(const WhereConditionItem &where) const
+{
+    return dateBasedWhere(QStringLiteral("%m"), where);
+}
+
+QString SQLiteGrammar::whereYear(const WhereConditionItem &where) const
+{
+    return dateBasedWhere(QStringLiteral("%Y"), where);
+}
+
+QString SQLiteGrammar::dateBasedWhere(const QString &type,
+                                      const WhereConditionItem &where) const
+{
+    return QStringLiteral("%1 %2 %3")
+            .arg(dateBasedWhereColumn(type, where), where.comparison,
+                 parameter(where.value));
+}
+
+QString SQLiteGrammar::dateBasedWhereColumn(const QString &type,
+                                            const WhereConditionItem &where) const
+{
+    switch (where.type) {
+    // Compare as text types
+    case WhereType::DATE:
+    case WhereType::TIME:
+        Q_ASSERT(Helpers::qVariantTypeId(where.value) == QMetaType::QString);
+
+        return QStringLiteral("strftime('%1', %2)").arg(type, wrap(where.column));
+
+    // Compare as integral types
+    case WhereType::DAY:
+    case WhereType::MONTH:
+    case WhereType::YEAR:
+        Q_ASSERT(Helpers::qVariantTypeId(where.value) == QMetaType::Int);
+
+        return QStringLiteral("cast(strftime('%1', %2) as integer)")
+                .arg(type, wrap(where.column));
+
+    default:
+        Q_UNREACHABLE();
+    }
 }
 
 QString SQLiteGrammar::compileUpdateColumns(const QVector<UpdateItem> &values) const

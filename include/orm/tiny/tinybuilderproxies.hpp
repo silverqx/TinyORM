@@ -508,6 +508,65 @@ namespace Tiny
         orWhereRowValuesEq(const QVector<Column> &columns,
                            const QVector<QVariant> &values);
 
+        /* where dates */
+        /*! Add a "where date" statement to the query. */
+        TinyBuilder<Model> &
+        whereDate(const Column &column, const QString &comparison, QVariant value,
+                  const QString &condition = AND);
+        /*! Add a "where time" statement to the query. */
+        TinyBuilder<Model> &
+        whereTime(const Column &column, const QString &comparison, QVariant value,
+                  const QString &condition = AND);
+        /*! Add a "where day" statement to the query. */
+        TinyBuilder<Model> &
+        whereDay(const Column &column, const QString &comparison, QVariant value,
+                 const QString &condition = AND);
+        /*! Add a "where month" statement to the query. */
+        TinyBuilder<Model> &
+        whereMonth(const Column &column, const QString &comparison, QVariant value,
+                   const QString &condition = AND);
+        /*! Add a "where year" statement to the query. */
+        TinyBuilder<Model> &
+        whereYear(const Column &column, const QString &comparison, QVariant value,
+                  const QString &condition = AND);
+
+        /*! Add an equal "where date" statement to the query. */
+        TinyBuilder<Model> &
+        whereEqDate(const Column &column, QVariant value,
+                    const QString &condition = AND);
+        /*! Add an equal "where time" statement to the query. */
+        TinyBuilder<Model> &
+        whereEqTime(const Column &column, QVariant value,
+                    const QString &condition = AND);
+        /*! Add an equal "where day" statement to the query. */
+        TinyBuilder<Model> &
+        whereEqDay(const Column &column, QVariant value,
+                   const QString &condition = AND);
+        /*! Add an equal "where month" statement to the query. */
+        TinyBuilder<Model> &
+        whereEqMonth(const Column &column, QVariant value,
+                     const QString &condition = AND);
+        /*! Add an equal "where year" statement to the query. */
+        TinyBuilder<Model> &
+        whereEqYear(const Column &column, QVariant value,
+                    const QString &condition = AND);
+
+        /*! Add a "or where date" statement to the query. */
+        TinyBuilder<Model> &
+        orWhereDate(const Column &column, const QString &comparison, QVariant value);
+        /*! Add a "or where time" statement to the query. */
+        TinyBuilder<Model> &
+        orWhereTime(const Column &column, const QString &comparison, QVariant value);
+        /*! Add a "or where day" statement to the query. */
+        TinyBuilder<Model> &
+        orWhereDay(const Column &column, const QString &comparison, QVariant value);
+        /*! Add a "or where month" statement to the query. */
+        TinyBuilder<Model> &
+        orWhereMonth(const Column &column, const QString &comparison, QVariant value);
+        /*! Add a "or where year" statement to the query. */
+        TinyBuilder<Model> &
+        orWhereYear(const Column &column, const QString &comparison, QVariant value);
+
         /* where raw */
         /*! Add a raw "where" clause to the query. */
         TinyBuilder<Model> &whereRaw(const QString &sql,
@@ -1766,6 +1825,143 @@ namespace Tiny
                                               const QVector<QVariant> &values)
     {
         getQuery().whereRowValues(columns, EQ, values, OR);
+        return builder();
+    }
+
+    /* where dates */
+
+    template<typename Model>
+    TinyBuilder<Model> &
+    BuilderProxies<Model>::whereDate(const Column &column, const QString &comparison,
+                                     QVariant value, const QString &condition)
+    {
+        getQuery().whereDate(column, comparison, std::move(value), condition);
+        return builder();
+    }
+
+    template<typename Model>
+    TinyBuilder<Model> &
+    BuilderProxies<Model>::whereTime(const Column &column, const QString &comparison,
+                                     QVariant value, const QString &condition)
+    {
+        getQuery().whereTime(column, comparison, std::move(value), condition);
+        return builder();
+    }
+
+    template<typename Model>
+    TinyBuilder<Model> &
+    BuilderProxies<Model>::whereDay(const Column &column, const QString &comparison,
+                                    QVariant value, const QString &condition)
+    {
+        getQuery().whereDay(column, comparison, std::move(value), condition);
+        return builder();
+    }
+
+    template<typename Model>
+    TinyBuilder<Model> &
+    BuilderProxies<Model>::whereMonth(const Column &column, const QString &comparison,
+                                      QVariant value, const QString &condition)
+    {
+        getQuery().whereMonth(column, comparison, std::move(value), condition);
+        return builder();
+    }
+
+    template<typename Model>
+    TinyBuilder<Model> &
+    BuilderProxies<Model>::whereYear(const Column &column, const QString &comparison,
+                                     QVariant value, const QString &condition)
+    {
+        getQuery().whereYear(column, comparison, std::move(value), condition);
+        return builder();
+    }
+
+    template<typename Model>
+    TinyBuilder<Model> &
+    BuilderProxies<Model>::whereEqDate(const Column &column, QVariant value,
+                                       const QString &condition)
+    {
+        getQuery().whereDate(column, EQ, std::move(value), condition);
+        return builder();
+    }
+
+    template<typename Model>
+    TinyBuilder<Model> &
+    BuilderProxies<Model>::whereEqTime(const Column &column, QVariant value,
+                                       const QString &condition)
+    {
+        getQuery().whereTime(column, EQ, std::move(value), condition);
+        return builder();
+    }
+
+    template<typename Model>
+    TinyBuilder<Model> &
+    BuilderProxies<Model>::whereEqDay(const Column &column, QVariant value,
+                                      const QString &condition)
+    {
+        getQuery().whereDay(column, EQ, std::move(value), condition);
+        return builder();
+    }
+
+    template<typename Model>
+    TinyBuilder<Model> &
+    BuilderProxies<Model>::whereEqMonth(const Column &column, QVariant value,
+                                        const QString &condition)
+    {
+        getQuery().whereMonth(column, EQ, std::move(value), condition);
+        return builder();
+    }
+
+    template<typename Model>
+    TinyBuilder<Model> &
+    BuilderProxies<Model>::whereEqYear(const Column &column, QVariant value,
+                                       const QString &condition)
+    {
+        getQuery().whereYear(column, EQ, std::move(value), condition);
+        return builder();
+    }
+
+    template<typename Model>
+    TinyBuilder<Model> &
+    BuilderProxies<Model>::orWhereDate(const Column &column, const QString &comparison,
+                                     QVariant value)
+    {
+        getQuery().whereDate(column, comparison, std::move(value), OR);
+        return builder();
+    }
+
+    template<typename Model>
+    TinyBuilder<Model> &
+    BuilderProxies<Model>::orWhereTime(const Column &column, const QString &comparison,
+                                     QVariant value)
+    {
+        getQuery().whereTime(column, comparison, std::move(value), OR);
+        return builder();
+    }
+
+    template<typename Model>
+    TinyBuilder<Model> &
+    BuilderProxies<Model>::orWhereDay(const Column &column, const QString &comparison,
+                                    QVariant value)
+    {
+        getQuery().whereDay(column, comparison, std::move(value), OR);
+        return builder();
+    }
+
+    template<typename Model>
+    TinyBuilder<Model> &
+    BuilderProxies<Model>::orWhereMonth(const Column &column, const QString &comparison,
+                                      QVariant value)
+    {
+        getQuery().whereMonth(column, comparison, std::move(value), OR);
+        return builder();
+    }
+
+    template<typename Model>
+    TinyBuilder<Model> &
+    BuilderProxies<Model>::orWhereYear(const Column &column, const QString &comparison,
+                                       QVariant value)
+    {
+        getQuery().whereYear(column, comparison, std::move(value), OR);
         return builder();
     }
 

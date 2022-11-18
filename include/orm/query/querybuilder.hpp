@@ -23,7 +23,7 @@ namespace Orm::Query
     concept Remove = std::convertible_to<T, quint64> ||
                      std::convertible_to<T, Query::Expression>;
 
-    // TODO querybuilder, whereDay/Month/..., whereFullText silverqx
+    // TODO querybuilder, whereFullText, whereBitwise silverqx
     // FUTURE querybuilder, paginator silverqx
     /*! Database query builder. */
     class SHAREDLIB_EXPORT Builder : public Concerns::BuildsQueries // clazy:exclude=copyable-polymorphic
@@ -546,6 +546,55 @@ namespace Orm::Query
         orWhereRowValuesEq(const QVector<Column> &columns,
                            const QVector<QVariant> &values);
 
+        /* where dates */
+        /*! Add a "where date" statement to the query. */
+        Builder &whereDate(const Column &column, const QString &comparison,
+                           QVariant value, const QString &condition = AND);
+        /*! Add a "where time" statement to the query. */
+        Builder &whereTime(const Column &column, const QString &comparison,
+                           QVariant value, const QString &condition = AND);
+        /*! Add a "where day" statement to the query. */
+        Builder &whereDay(const Column &column, const QString &comparison,
+                          QVariant value, const QString &condition = AND);
+        /*! Add a "where month" statement to the query. */
+        Builder &whereMonth(const Column &column, const QString &comparison,
+                            QVariant value, const QString &condition = AND);
+        /*! Add a "where year" statement to the query. */
+        Builder &whereYear(const Column &column, const QString &comparison,
+                           QVariant value, const QString &condition = AND);
+
+        /*! Add an equal "where date" statement to the query. */
+        inline Builder &whereEqDate(const Column &column, QVariant value,
+                                    const QString &condition = AND);
+        /*! Add an equal "where time" statement to the query. */
+        inline Builder &whereEqTime(const Column &column, QVariant value,
+                                    const QString &condition = AND);
+        /*! Add an equal "where day" statement to the query. */
+        inline Builder &whereEqDay(const Column &column, QVariant value,
+                                   const QString &condition = AND);
+        /*! Add an equal "where month" statement to the query. */
+        inline Builder &whereEqMonth(const Column &column, QVariant value,
+                                     const QString &condition = AND);
+        /*! Add an equal "where year" statement to the query. */
+        inline Builder &whereEqYear(const Column &column, QVariant value,
+                                    const QString &condition = AND);
+
+        /*! Add a "or where date" statement to the query. */
+        inline Builder &orWhereDate(const Column &column, const QString &comparison,
+                                    QVariant value);
+        /*! Add a "or where time" statement to the query. */
+        inline Builder &orWhereTime(const Column &column, const QString &comparison,
+                                    QVariant value);
+        /*! Add a "or where day" statement to the query. */
+        inline Builder &orWhereDay(const Column &column, const QString &comparison,
+                                   QVariant value);
+        /*! Add a "or where month" statement to the query. */
+        inline Builder &orWhereMonth(const Column &column, const QString &comparison,
+                                     QVariant value);
+        /*! Add a "or where year" statement to the query. */
+        inline Builder &orWhereYear(const Column &column, const QString &comparison,
+                                    QVariant value);
+
         /* where raw */
         /*! Add a raw "where" clause to the query. */
         Builder &whereRaw(const QString &sql, const QVector<QVariant> &bindings = {},
@@ -671,6 +720,9 @@ namespace Orm::Query
         inline const BindingsMap &getRawBindings() const;
         /*! Add a binding to the query. */
         Builder &addBinding(const QVariant &binding,
+                            BindingType type = BindingType::WHERE);
+        /*! Add a binding to the query. */
+        Builder &addBinding(QVariant &&binding,
                             BindingType type = BindingType::WHERE);
         /*! Add bindings to the query. */
         Builder &addBinding(const QVector<QVariant> &bindings,
@@ -858,8 +910,9 @@ namespace Orm::Query
                 const QString &type);
 
         /*! Add a basic where clause to the query, common code. */
-        Builder &whereInternal(const Column &column, const QString &comparison,
-                               const QVariant &value, const QString &condition);
+        Builder &whereInternal(
+                const Column &column, const QString &comparison, QVariant value,
+                const QString &condition, WhereType type = WhereType::BASIC);
 
         /*! Throw exception when m_bindings doesn't contain a passed type. */
         void checkBindingType(BindingType type) const;
@@ -1412,6 +1465,68 @@ namespace Orm::Query
 
         return where(column, comparison, Expression(PARENTH_ONE.arg(queryString)),
                      condition);
+    }
+
+    /* where dates */
+
+    Builder &
+    Builder::whereEqDate(const Column &column, QVariant value, const QString &condition)
+    {
+        return whereDate(column, EQ, std::move(value), condition);
+    }
+
+    Builder &
+    Builder::whereEqTime(const Column &column, QVariant value, const QString &condition)
+    {
+        return whereTime(column, EQ, std::move(value), condition);
+    }
+
+    Builder &
+    Builder::whereEqDay(const Column &column, QVariant value, const QString &condition)
+    {
+        return whereDay(column, EQ, std::move(value), condition);
+    }
+
+    Builder &
+    Builder::whereEqMonth(const Column &column, QVariant value, const QString &condition)
+    {
+        return whereMonth(column, EQ, std::move(value), condition);
+    }
+
+    Builder &
+    Builder::whereEqYear(const Column &column, QVariant value, const QString &condition)
+    {
+        return whereYear(column, EQ, std::move(value), condition);
+    }
+
+    Builder &
+    Builder::orWhereDate(const Column &column, const QString &comparison, QVariant value)
+    {
+        return whereDate(column, comparison, std::move(value), OR);
+    }
+
+    Builder &
+    Builder::orWhereTime(const Column &column, const QString &comparison, QVariant value)
+    {
+        return whereTime(column, comparison, std::move(value), OR);
+    }
+
+    Builder &
+    Builder::orWhereDay(const Column &column, const QString &comparison, QVariant value)
+    {
+        return whereDay(column, comparison, std::move(value), OR);
+    }
+
+    Builder &
+    Builder::orWhereMonth(const Column &column, const QString &comparison, QVariant value)
+    {
+        return whereMonth(column, comparison, std::move(value), OR);
+    }
+
+    Builder &
+    Builder::orWhereYear(const Column &column, const QString &comparison, QVariant value)
+    {
+        return whereYear(column, comparison, std::move(value), OR);
     }
 
     template<ColumnConcept ...Args>

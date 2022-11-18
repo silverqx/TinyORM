@@ -1263,7 +1263,7 @@ void tst_Model_Connection_Independent::only() const
         {ID,         1},
         {NAME,       QString("test1")},
         {SIZE,       11},
-        {CREATED_AT, QDateTime::fromString("2021-01-01 14:51:23z", Qt::ISODate)},
+        {CREATED_AT, QDateTime::fromString("2016-06-01 08:08:23z", Qt::ISODate)},
     };
     QCOMPARE(attributes, expectedAttributes);
 }

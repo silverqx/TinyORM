@@ -15,8 +15,10 @@
 
 using Orm::Constants::ASTERISK;
 using Orm::Constants::COMMA;
+using Orm::Constants::CREATED_AT;
 using Orm::Constants::GT;
 using Orm::Constants::ID;
+using Orm::Constants::LE;
 using Orm::Constants::LT;
 using Orm::Constants::NAME;
 using Orm::Constants::OR;
@@ -60,6 +62,30 @@ private Q_SLOTS:
     void implode_QualifiedColumnOrKey() const;
 
     void whereBetween() const;
+
+    /* where dates */
+    void whereDate_QDate();
+    void whereDate_QDateTime();
+    void whereDate_QString();
+
+    void whereTime_QTime();
+    void whereTime_QDateTime();
+    void whereTime_QString();
+
+    void whereDay_QDate();
+    void whereDay_QDateTime();
+    void whereDay_QString();
+    void whereDay_int();
+
+    void whereMonth_QDate();
+    void whereMonth_QDateTime();
+    void whereMonth_QString();
+    void whereMonth_int();
+
+    void whereYear_QDate();
+    void whereYear_QDateTime();
+    void whereYear_QString();
+    void whereYear_int();
 
     void updateOrInsert() const;
     void updateOrInsert_EmptyValues() const;
@@ -497,6 +523,498 @@ void tst_QueryBuilder::whereBetween() const
         actualIds << result.value("id").value<quint64>();
 
     QCOMPARE(actualIds, expectedIds);
+}
+
+/* where dates */
+
+void tst_QueryBuilder::whereDate_QDate()
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    auto result = createQuery(connection)->from("torrents")
+                  .whereDate(CREATED_AT, LE, QDate(2018, 8, 3))
+                  .orderBy(CREATED_AT)
+                  .get();
+
+    QVERIFY(result.isActive() && result.isSelect() && !result.isValid());
+    QCOMPARE(QueryUtils::queryResultSize(result), 3);
+
+    QVector<QDateTime> expectedCreatedAts {
+        QDateTime({2016, 6, 1}, {8,  8, 23}, Qt::UTC),
+        QDateTime({2017, 7, 2}, {8,  9, 23}, Qt::UTC),
+        QDateTime({2018, 8, 3}, {8, 10, 23}, Qt::UTC),
+    };
+
+    QVector<QDateTime> actualCreatedAts;
+    actualCreatedAts.reserve(expectedCreatedAts.size());
+
+    while (result.next())
+        actualCreatedAts << result.value(CREATED_AT).value<QDateTime>();
+
+    QCOMPARE(actualCreatedAts, expectedCreatedAts);
+}
+
+void tst_QueryBuilder::whereDate_QDateTime()
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    auto result = createQuery(connection)->from("torrents")
+                  .whereDate(CREATED_AT, LE,
+                             // QTime part is ignored
+                             QDateTime({2018, 8, 3}, {}, Qt::UTC))
+                  .orderBy(CREATED_AT)
+                  .get();
+
+    QVERIFY(result.isActive() && result.isSelect() && !result.isValid());
+    QCOMPARE(QueryUtils::queryResultSize(result), 3);
+
+    QVector<QDateTime> expectedCreatedAts {
+        QDateTime({2016, 6, 1}, {8,  8, 23}, Qt::UTC),
+        QDateTime({2017, 7, 2}, {8,  9, 23}, Qt::UTC),
+        QDateTime({2018, 8, 3}, {8, 10, 23}, Qt::UTC),
+    };
+
+    QVector<QDateTime> actualCreatedAts;
+    actualCreatedAts.reserve(expectedCreatedAts.size());
+
+    while (result.next())
+        actualCreatedAts << result.value(CREATED_AT).value<QDateTime>();
+
+    QCOMPARE(actualCreatedAts, expectedCreatedAts);
+}
+
+void tst_QueryBuilder::whereDate_QString()
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    auto result = createQuery(connection)->from("torrents")
+                  .whereDate(CREATED_AT, LE, QStringLiteral("2018-08-03"))
+                  .orderBy(CREATED_AT)
+                  .get();
+
+    QVERIFY(result.isActive() && result.isSelect() && !result.isValid());
+    QCOMPARE(QueryUtils::queryResultSize(result), 3);
+
+    QVector<QDateTime> expectedCreatedAts {
+        QDateTime({2016, 6, 1}, {8,  8, 23}, Qt::UTC),
+        QDateTime({2017, 7, 2}, {8,  9, 23}, Qt::UTC),
+        QDateTime({2018, 8, 3}, {8, 10, 23}, Qt::UTC),
+    };
+
+    QVector<QDateTime> actualCreatedAts;
+    actualCreatedAts.reserve(expectedCreatedAts.size());
+
+    while (result.next())
+        actualCreatedAts << result.value(CREATED_AT).value<QDateTime>();
+
+    QCOMPARE(actualCreatedAts, expectedCreatedAts);
+}
+
+void tst_QueryBuilder::whereTime_QTime()
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    auto result = createQuery(connection)->from("torrents")
+                  .whereTime(CREATED_AT, LE, QTime(8, 10, 23))
+                  .orderBy(CREATED_AT)
+                  .get();
+
+    QVERIFY(result.isActive() && result.isSelect() && !result.isValid());
+    QCOMPARE(QueryUtils::queryResultSize(result), 3);
+
+    QVector<QDateTime> expectedCreatedAts {
+        QDateTime({2016, 6, 1}, {8,  8, 23}, Qt::UTC),
+        QDateTime({2017, 7, 2}, {8,  9, 23}, Qt::UTC),
+        QDateTime({2018, 8, 3}, {8, 10, 23}, Qt::UTC),
+    };
+
+    QVector<QDateTime> actualCreatedAts;
+    actualCreatedAts.reserve(expectedCreatedAts.size());
+
+    while (result.next())
+        actualCreatedAts << result.value(CREATED_AT).value<QDateTime>();
+
+    QCOMPARE(actualCreatedAts, expectedCreatedAts);
+}
+
+void tst_QueryBuilder::whereTime_QDateTime()
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    auto result = createQuery(connection)->from("torrents")
+                  .whereTime(CREATED_AT, LE,
+                             // QDate part is ignored
+                             QDateTime({}, {8, 10, 23}, Qt::UTC))
+                  .orderBy(CREATED_AT)
+                  .get();
+
+    QVERIFY(result.isActive() && result.isSelect() && !result.isValid());
+    QCOMPARE(QueryUtils::queryResultSize(result), 3);
+
+    QVector<QDateTime> expectedCreatedAts {
+        QDateTime({2016, 6, 1}, {8,  8, 23}, Qt::UTC),
+        QDateTime({2017, 7, 2}, {8,  9, 23}, Qt::UTC),
+        QDateTime({2018, 8, 3}, {8, 10, 23}, Qt::UTC),
+    };
+
+    QVector<QDateTime> actualCreatedAts;
+    actualCreatedAts.reserve(expectedCreatedAts.size());
+
+    while (result.next())
+        actualCreatedAts << result.value(CREATED_AT).value<QDateTime>();
+
+    QCOMPARE(actualCreatedAts, expectedCreatedAts);
+}
+
+void tst_QueryBuilder::whereTime_QString()
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    auto result = createQuery(connection)->from("torrents")
+                  .whereTime(CREATED_AT, LE, QStringLiteral("08:10:23"))
+                  .orderBy(CREATED_AT)
+                  .get();
+
+    QVERIFY(result.isActive() && result.isSelect() && !result.isValid());
+    QCOMPARE(QueryUtils::queryResultSize(result), 3);
+
+    QVector<QDateTime> expectedCreatedAts {
+        QDateTime({2016, 6, 1}, {8,  8, 23}, Qt::UTC),
+        QDateTime({2017, 7, 2}, {8,  9, 23}, Qt::UTC),
+        QDateTime({2018, 8, 3}, {8, 10, 23}, Qt::UTC),
+    };
+
+    QVector<QDateTime> actualCreatedAts;
+    actualCreatedAts.reserve(expectedCreatedAts.size());
+
+    while (result.next())
+        actualCreatedAts << result.value(CREATED_AT).value<QDateTime>();
+
+    QCOMPARE(actualCreatedAts, expectedCreatedAts);
+}
+
+void tst_QueryBuilder::whereDay_QDate()
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    auto result = createQuery(connection)->from("torrents")
+                  .whereDay(CREATED_AT, LE, QDate(2018, 8, 3))
+                  .orderBy(CREATED_AT)
+                  .get();
+
+    QVERIFY(result.isActive() && result.isSelect() && !result.isValid());
+    QCOMPARE(QueryUtils::queryResultSize(result), 3);
+
+    QVector<QDateTime> expectedCreatedAts {
+        QDateTime({2016, 6, 1}, {8,  8, 23}, Qt::UTC),
+        QDateTime({2017, 7, 2}, {8,  9, 23}, Qt::UTC),
+        QDateTime({2018, 8, 3}, {8, 10, 23}, Qt::UTC),
+    };
+
+    QVector<QDateTime> actualCreatedAts;
+    actualCreatedAts.reserve(expectedCreatedAts.size());
+
+    while (result.next())
+        actualCreatedAts << result.value(CREATED_AT).value<QDateTime>();
+
+    QCOMPARE(actualCreatedAts, expectedCreatedAts);
+}
+
+void tst_QueryBuilder::whereDay_QDateTime()
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    auto result = createQuery(connection)->from("torrents")
+                  .whereDay(CREATED_AT, LE, QDateTime({2018, 8, 3}, {}, Qt::UTC))
+                  .orderBy(CREATED_AT)
+                  .get();
+
+    QVERIFY(result.isActive() && result.isSelect() && !result.isValid());
+    QCOMPARE(QueryUtils::queryResultSize(result), 3);
+
+    QVector<QDateTime> expectedCreatedAts {
+        QDateTime({2016, 6, 1}, {8,  8, 23}, Qt::UTC),
+        QDateTime({2017, 7, 2}, {8,  9, 23}, Qt::UTC),
+        QDateTime({2018, 8, 3}, {8, 10, 23}, Qt::UTC),
+    };
+
+    QVector<QDateTime> actualCreatedAts;
+    actualCreatedAts.reserve(expectedCreatedAts.size());
+
+    while (result.next())
+        actualCreatedAts << result.value(CREATED_AT).value<QDateTime>();
+
+    QCOMPARE(actualCreatedAts, expectedCreatedAts);
+}
+
+void tst_QueryBuilder::whereDay_QString()
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    auto result = createQuery(connection)->from("torrents")
+                  .whereDay(CREATED_AT, LE, QStringLiteral("3"))
+                  .orderBy(CREATED_AT)
+                  .get();
+
+    QVERIFY(result.isActive() && result.isSelect() && !result.isValid());
+    QCOMPARE(QueryUtils::queryResultSize(result), 3);
+
+    QVector<QDateTime> expectedCreatedAts {
+        QDateTime({2016, 6, 1}, {8,  8, 23}, Qt::UTC),
+        QDateTime({2017, 7, 2}, {8,  9, 23}, Qt::UTC),
+        QDateTime({2018, 8, 3}, {8, 10, 23}, Qt::UTC),
+    };
+
+    QVector<QDateTime> actualCreatedAts;
+    actualCreatedAts.reserve(expectedCreatedAts.size());
+
+    while (result.next())
+        actualCreatedAts << result.value(CREATED_AT).value<QDateTime>();
+
+    QCOMPARE(actualCreatedAts, expectedCreatedAts);
+}
+
+void tst_QueryBuilder::whereDay_int()
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    auto result = createQuery(connection)->from("torrents")
+                  .whereDay(CREATED_AT, LE, 3)
+                  .orderBy(CREATED_AT)
+                  .get();
+
+    QVERIFY(result.isActive() && result.isSelect() && !result.isValid());
+    QCOMPARE(QueryUtils::queryResultSize(result), 3);
+
+    QVector<QDateTime> expectedCreatedAts {
+        QDateTime({2016, 6, 1}, {8,  8, 23}, Qt::UTC),
+        QDateTime({2017, 7, 2}, {8,  9, 23}, Qt::UTC),
+        QDateTime({2018, 8, 3}, {8, 10, 23}, Qt::UTC),
+    };
+
+    QVector<QDateTime> actualCreatedAts;
+    actualCreatedAts.reserve(expectedCreatedAts.size());
+
+    while (result.next())
+        actualCreatedAts << result.value(CREATED_AT).value<QDateTime>();
+
+    QCOMPARE(actualCreatedAts, expectedCreatedAts);
+}
+
+void tst_QueryBuilder::whereMonth_QDate()
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    auto result = createQuery(connection)->from("torrents")
+                  .whereMonth(CREATED_AT, LE, QDate(2018, 8, 3))
+                  .orderBy(CREATED_AT)
+                  .get();
+
+    QVERIFY(result.isActive() && result.isSelect() && !result.isValid());
+    QCOMPARE(QueryUtils::queryResultSize(result), 3);
+
+    QVector<QDateTime> expectedCreatedAts {
+        QDateTime({2016, 6, 1}, {8,  8, 23}, Qt::UTC),
+        QDateTime({2017, 7, 2}, {8,  9, 23}, Qt::UTC),
+        QDateTime({2018, 8, 3}, {8, 10, 23}, Qt::UTC),
+    };
+
+    QVector<QDateTime> actualCreatedAts;
+    actualCreatedAts.reserve(expectedCreatedAts.size());
+
+    while (result.next())
+        actualCreatedAts << result.value(CREATED_AT).value<QDateTime>();
+
+    QCOMPARE(actualCreatedAts, expectedCreatedAts);
+}
+
+void tst_QueryBuilder::whereMonth_QDateTime()
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    auto result = createQuery(connection)->from("torrents")
+                  .whereMonth(CREATED_AT, LE, QDateTime({2018, 8, 3}, {}, Qt::UTC))
+                  .orderBy(CREATED_AT)
+                  .get();
+
+    QVERIFY(result.isActive() && result.isSelect() && !result.isValid());
+    QCOMPARE(QueryUtils::queryResultSize(result), 3);
+
+    QVector<QDateTime> expectedCreatedAts {
+        QDateTime({2016, 6, 1}, {8,  8, 23}, Qt::UTC),
+        QDateTime({2017, 7, 2}, {8,  9, 23}, Qt::UTC),
+        QDateTime({2018, 8, 3}, {8, 10, 23}, Qt::UTC),
+    };
+
+    QVector<QDateTime> actualCreatedAts;
+    actualCreatedAts.reserve(expectedCreatedAts.size());
+
+    while (result.next())
+        actualCreatedAts << result.value(CREATED_AT).value<QDateTime>();
+
+    QCOMPARE(actualCreatedAts, expectedCreatedAts);
+}
+
+void tst_QueryBuilder::whereMonth_QString()
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    auto result = createQuery(connection)->from("torrents")
+                  .whereMonth(CREATED_AT, LE, QStringLiteral("8"))
+                  .orderBy(CREATED_AT)
+                  .get();
+
+    QVERIFY(result.isActive() && result.isSelect() && !result.isValid());
+    QCOMPARE(QueryUtils::queryResultSize(result), 3);
+
+    QVector<QDateTime> expectedCreatedAts {
+        QDateTime({2016, 6, 1}, {8,  8, 23}, Qt::UTC),
+        QDateTime({2017, 7, 2}, {8,  9, 23}, Qt::UTC),
+        QDateTime({2018, 8, 3}, {8, 10, 23}, Qt::UTC),
+    };
+
+    QVector<QDateTime> actualCreatedAts;
+    actualCreatedAts.reserve(expectedCreatedAts.size());
+
+    while (result.next())
+        actualCreatedAts << result.value(CREATED_AT).value<QDateTime>();
+
+    QCOMPARE(actualCreatedAts, expectedCreatedAts);
+}
+
+void tst_QueryBuilder::whereMonth_int()
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    auto result = createQuery(connection)->from("torrents")
+                  .whereMonth(CREATED_AT, LE, 8)
+                  .orderBy(CREATED_AT)
+                  .get();
+
+    QVERIFY(result.isActive() && result.isSelect() && !result.isValid());
+    QCOMPARE(QueryUtils::queryResultSize(result), 3);
+
+    QVector<QDateTime> expectedCreatedAts {
+        QDateTime({2016, 6, 1}, {8,  8, 23}, Qt::UTC),
+        QDateTime({2017, 7, 2}, {8,  9, 23}, Qt::UTC),
+        QDateTime({2018, 8, 3}, {8, 10, 23}, Qt::UTC),
+    };
+
+    QVector<QDateTime> actualCreatedAts;
+    actualCreatedAts.reserve(expectedCreatedAts.size());
+
+    while (result.next())
+        actualCreatedAts << result.value(CREATED_AT).value<QDateTime>();
+
+    QCOMPARE(actualCreatedAts, expectedCreatedAts);
+}
+
+void tst_QueryBuilder::whereYear_QDate()
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    auto result = createQuery(connection)->from("torrents")
+                  .whereYear(CREATED_AT, LE, QDate(2018, 8, 3))
+                  .orderBy(CREATED_AT)
+                  .get();
+
+    QVERIFY(result.isActive() && result.isSelect() && !result.isValid());
+    QCOMPARE(QueryUtils::queryResultSize(result), 3);
+
+    QVector<QDateTime> expectedCreatedAts {
+        QDateTime({2016, 6, 1}, {8,  8, 23}, Qt::UTC),
+        QDateTime({2017, 7, 2}, {8,  9, 23}, Qt::UTC),
+        QDateTime({2018, 8, 3}, {8, 10, 23}, Qt::UTC),
+    };
+
+    QVector<QDateTime> actualCreatedAts;
+    actualCreatedAts.reserve(expectedCreatedAts.size());
+
+    while (result.next())
+        actualCreatedAts << result.value(CREATED_AT).value<QDateTime>();
+
+    QCOMPARE(actualCreatedAts, expectedCreatedAts);
+}
+
+void tst_QueryBuilder::whereYear_QDateTime()
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    auto result = createQuery(connection)->from("torrents")
+                  .whereYear(CREATED_AT, LE, QDateTime({2018, 8, 3}, {}, Qt::UTC))
+                  .orderBy(CREATED_AT)
+                  .get();
+
+    QVERIFY(result.isActive() && result.isSelect() && !result.isValid());
+    QCOMPARE(QueryUtils::queryResultSize(result), 3);
+
+    QVector<QDateTime> expectedCreatedAts {
+        QDateTime({2016, 6, 1}, {8,  8, 23}, Qt::UTC),
+        QDateTime({2017, 7, 2}, {8,  9, 23}, Qt::UTC),
+        QDateTime({2018, 8, 3}, {8, 10, 23}, Qt::UTC),
+    };
+
+    QVector<QDateTime> actualCreatedAts;
+    actualCreatedAts.reserve(expectedCreatedAts.size());
+
+    while (result.next())
+        actualCreatedAts << result.value(CREATED_AT).value<QDateTime>();
+
+    QCOMPARE(actualCreatedAts, expectedCreatedAts);
+}
+
+void tst_QueryBuilder::whereYear_QString()
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    auto result = createQuery(connection)->from("torrents")
+                  .whereYear(CREATED_AT, LE, QStringLiteral("2018"))
+                  .orderBy(CREATED_AT)
+                  .get();
+
+    QVERIFY(result.isActive() && result.isSelect() && !result.isValid());
+    QCOMPARE(QueryUtils::queryResultSize(result), 3);
+
+    QVector<QDateTime> expectedCreatedAts {
+        QDateTime({2016, 6, 1}, {8,  8, 23}, Qt::UTC),
+        QDateTime({2017, 7, 2}, {8,  9, 23}, Qt::UTC),
+        QDateTime({2018, 8, 3}, {8, 10, 23}, Qt::UTC),
+    };
+
+    QVector<QDateTime> actualCreatedAts;
+    actualCreatedAts.reserve(expectedCreatedAts.size());
+
+    while (result.next())
+        actualCreatedAts << result.value(CREATED_AT).value<QDateTime>();
+
+    QCOMPARE(actualCreatedAts, expectedCreatedAts);
+}
+
+void tst_QueryBuilder::whereYear_int()
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    auto result = createQuery(connection)->from("torrents")
+                  .whereYear(CREATED_AT, LE, 2018)
+                  .orderBy(CREATED_AT)
+                  .get();
+
+    QVERIFY(result.isActive() && result.isSelect() && !result.isValid());
+    QCOMPARE(QueryUtils::queryResultSize(result), 3);
+
+    QVector<QDateTime> expectedCreatedAts {
+        QDateTime({2016, 6, 1}, {8,  8, 23}, Qt::UTC),
+        QDateTime({2017, 7, 2}, {8,  9, 23}, Qt::UTC),
+        QDateTime({2018, 8, 3}, {8, 10, 23}, Qt::UTC),
+    };
+
+    QVector<QDateTime> actualCreatedAts;
+    actualCreatedAts.reserve(expectedCreatedAts.size());
+
+    while (result.next())
+        actualCreatedAts << result.value(CREATED_AT).value<QDateTime>();
+
+    QCOMPARE(actualCreatedAts, expectedCreatedAts);
 }
 
 void tst_QueryBuilder::updateOrInsert() const
