@@ -540,6 +540,46 @@ The `whereNotNull` method verifies that the column's value is not `NULL`:
                      ->whereNotNull("updated_at")
                      .get();
 
+**whereDate / whereTime / whereDay / whereMonth / whereYear**
+
+The `whereDate` method may be used to compare a column's value against a date:
+
+    auto users = DB::table("users")
+                     ->whereDate("created_at", EQ, QDate(2022, 11, 18))
+                     .get();
+
+The `whereTime` method may be used to compare a column's value against a specific time:
+
+    auto users = DB::table("users")
+                     ->whereTime("created_at", "=", QTime(11, 14, 23))
+                     .get();
+
+The `whereDay` method may be used to compare a column's value against a specific day of the month:
+
+    auto users = DB::table("users")
+                     ->whereDay("created_at", "<=", 15)
+                     .get();
+
+The `whereMonth` method may be used to compare a column's value against a specific month:
+
+    auto users = DB::table("users")
+                     ->whereEqMonth("created_at", 12)
+                     .get();
+
+The `whereYear` method may be used to compare a column's value against a specific year:
+
+    auto users = DB::table("users")
+                     ->whereEqYear("created_at", 2016)
+                     .get();
+
+The `whereDate` and `whereTime` methods also accept a `QDateTime` instance or you can pass values as a `QString` in `2022-12-31` or `09:15:11` formats.
+
+The `whereDay`, `whereMoth`, and `whereYear` accept `QDate` or `QDateTime` instances, an integral number or a `QString` that contains an integral number.
+
+:::info
+All the above methods offer `whereEqXyz` and `orWhereXyz` shortcut methods.
+:::
+
 **whereColumn / orWhereColumn**
 
 The `whereColumnEq` method may be used to verify that two columns are equal:
