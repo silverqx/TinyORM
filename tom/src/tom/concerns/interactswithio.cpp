@@ -16,6 +16,7 @@ using Orm::Constants::ASTERISK;
 using Orm::Constants::NEWLINE;
 using Orm::Constants::NOSPACE;
 using Orm::Constants::SPACE;
+using Orm::Constants::TMPL_ONE;
 
 using StringUtils = Orm::Utils::String;
 
@@ -142,7 +143,7 @@ const InteractsWithIO &InteractsWithIO::errorWall(const QString &string,
     if (!isAnsiOutput())
         return line(string, true, verbosity, {}, std::cerr);
 
-    static const auto tmpl = QStringLiteral("%1%2%1").arg(NEWLINE, "%1");
+    static const auto tmpl = QStringLiteral("%1%2%1").arg(NEWLINE, TMPL_ONE);
 
     line(tmpl.arg(errorWallInternal(string)), true, verbosity, {}, std::cerr);
 
@@ -228,7 +229,7 @@ const InteractsWithIO &InteractsWithIO::werrorWall(const QString &string,
     if (!isAnsiWOutput())
         return wline(string, true, verbosity, {}, std::wcerr);
 
-    static const auto tmpl = QStringLiteral("%1%2%1").arg(NEWLINE, "%1");
+    static const auto tmpl = QStringLiteral("%1%2%1").arg(NEWLINE, TMPL_ONE);
 
     wline(tmpl.arg(errorWallInternal(string)), true, verbosity, {}, std::wcerr);
 

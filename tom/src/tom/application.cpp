@@ -48,6 +48,7 @@ using fspath = std::filesystem::path;
 using Orm::ConnectionResolverInterface;
 using Orm::Constants::EMPTY;
 using Orm::Constants::NEWLINE;
+using Orm::Constants::TMPL_ONE;
 using Orm::Constants::Version;
 
 using TypeUtils = Orm::Utils::Type;
@@ -180,7 +181,7 @@ void Application::logException(const std::exception &e, const bool noAnsi)
        instantiated again. */
     const Concerns::InteractsWithIO io(noAnsi);
 
-    static const auto tmpl = QStringLiteral("%1%2%1").arg(NEWLINE, "%1");
+    static const auto tmpl = QStringLiteral("%1%2%1").arg(NEWLINE, TMPL_ONE);
 
     auto message = QStringLiteral("Caught '%1' Exception:\n%2")
                    .arg(TypeUtils::classPureBasename(e, true), e.what());
