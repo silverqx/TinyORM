@@ -1243,8 +1243,10 @@ QVector<QVariant> Builder::getBindings() const
 
 Builder &Builder::addBinding(const QVariant &binding, const BindingType type)
 {
+#ifdef TINYORM_DEBUG
     // Check if m_bindings contain type
     checkBindingType(type);
+#endif
 
     m_bindings[type].append(binding);
 
@@ -1253,8 +1255,10 @@ Builder &Builder::addBinding(const QVariant &binding, const BindingType type)
 
 Builder &Builder::addBinding(QVariant &&binding, const BindingType type)
 {
+#ifdef TINYORM_DEBUG
     // Check if m_bindings contain type
     checkBindingType(type);
+#endif
 
     m_bindings[type].append(std::move(binding));
 
@@ -1263,8 +1267,10 @@ Builder &Builder::addBinding(QVariant &&binding, const BindingType type)
 
 Builder &Builder::addBinding(const QVector<QVariant> &bindings, const BindingType type)
 {
+#ifdef TINYORM_DEBUG
     // Check if m_bindings contain type
     checkBindingType(type);
+#endif
 
     if (!bindings.isEmpty())
         std::ranges::copy(bindings, std::back_inserter(m_bindings[type]));
@@ -1274,8 +1280,10 @@ Builder &Builder::addBinding(const QVector<QVariant> &bindings, const BindingTyp
 
 Builder &Builder::addBinding(QVector<QVariant> &&bindings, const BindingType type)
 {
+#ifdef TINYORM_DEBUG
     // Check if m_bindings contain type
     checkBindingType(type);
+#endif
 
     if (!bindings.isEmpty())
         std::ranges::move(bindings, std::back_inserter(m_bindings[type]));
@@ -1285,8 +1293,10 @@ Builder &Builder::addBinding(QVector<QVariant> &&bindings, const BindingType typ
 
 Builder &Builder::setBindings(QVector<QVariant> &&bindings, const BindingType type)
 {
+#ifdef TINYORM_DEBUG
     // Check if m_bindings contain type
     checkBindingType(type);
+#endif
 
     auto &bindingsRef = m_bindings[type]; // clazy:exclude=detaching-member
 
