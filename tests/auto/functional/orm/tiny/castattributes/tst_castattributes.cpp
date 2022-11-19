@@ -986,8 +986,7 @@ void tst_CastAttributes::defaultCast_timestamp() const
 
     auto datetimeActual = attribute.value<QDateTime>();
 
-    QCOMPARE(datetimeActual,
-             QDateTime::fromString("2022-09-09 08:41:28z", Qt::ISODate));
+    QCOMPARE(datetimeActual, QDateTime({2022, 9, 9}, {8, 41, 28}, Qt::UTC));
     QCOMPARE(datetimeActual.timeZone(), QTimeZone::utc());
 }
 
@@ -1004,8 +1003,7 @@ void tst_CastAttributes::defaultCast_datetime() const
 
     auto timestampActual = attribute.value<QDateTime>();
 
-    QCOMPARE(timestampActual,
-             QDateTime::fromString("2022-09-10 08:41:28z", Qt::ISODate));
+    QCOMPARE(timestampActual, QDateTime({2022, 9, 10}, {8, 41, 28}, Qt::UTC));
     QCOMPARE(timestampActual.timeZone(), QTimeZone::utc());
 }
 
@@ -1045,8 +1043,7 @@ void tst_CastAttributes::defaultCast_timestamp_QSQLITE_OffReturnQDateTime() cons
 
     const auto datetimeActual = attribute.value<QDateTime>();
 
-    QCOMPARE(datetimeActual,
-             QDateTime::fromString("2022-09-09 08:41:28", Qt::ISODate));
+    QCOMPARE(datetimeActual, QDateTime({2022, 9, 9}, {8, 41, 28}));
     QCOMPARE(datetimeActual.timeZone(), QTimeZone::systemTimeZone());
 
     // Restore
@@ -1075,8 +1072,7 @@ void tst_CastAttributes::defaultCast_datetime_QSQLITE_OffReturnQDateTime() const
 
     const auto timestampActual = attribute.value<QDateTime>();
 
-    QCOMPARE(timestampActual,
-             QDateTime::fromString("2022-09-10 08:41:28", Qt::ISODate));
+    QCOMPARE(timestampActual, QDateTime({2022, 9, 10}, {8, 41, 28}));
     QCOMPARE(timestampActual.timeZone(), QTimeZone::systemTimeZone());
 
     // Restore
@@ -2388,7 +2384,7 @@ void tst_CastAttributes::cast_timestamp_to_QDateTime() const
         Q_UNREACHABLE();
 
     QCOMPARE(attribute.value<QDateTime>(),
-             QDateTime::fromString("2022-09-09 08:41:28z", Qt::ISODate));
+             QDateTime({2022, 9, 9}, {8, 41, 28}, Qt::UTC));
 }
 
 void tst_CastAttributes::cast_timestamp_to_QString() const
@@ -2446,7 +2442,7 @@ void tst_CastAttributes::cast_timestamp_to_Timestamp() const
     QCOMPARE(attribute.value<qint64>(), static_cast<qint64>(1662712888));
     // This is not 100% ok, but I want to do also this QCOMPARE()
     QCOMPARE(QDateTime::fromSecsSinceEpoch(attribute.value<qint64>(), Qt::UTC),
-             QDateTime::fromString("2022-09-09 08:41:28z", Qt::ISODate));
+             QDateTime({2022, 9, 9}, {8, 41, 28}, Qt::UTC));
 }
 
 void tst_CastAttributes::cast_datetime_to_QDateTime() const
@@ -2472,7 +2468,7 @@ void tst_CastAttributes::cast_datetime_to_QDateTime() const
         Q_UNREACHABLE();
 
     QCOMPARE(attribute.value<QDateTime>(),
-             QDateTime::fromString("2022-09-10 08:41:28z", Qt::ISODate));
+             QDateTime({2022, 9, 10}, {8, 41, 28}, Qt::UTC));
 }
 
 void tst_CastAttributes::cast_datetime_to_QString() const

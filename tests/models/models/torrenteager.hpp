@@ -60,7 +60,7 @@ private:
     inline static const QVector<AttributeItem> u_attributes { // NOLINT(cppcoreguidelines-interfaces-global-init)
         {SIZE,       0},
         {"progress", 0},
-        {"added_on", QDateTime::fromString("2021-04-01 15:10:10z", Qt::ISODate)},
+        {"added_on", QDateTime({2021, 4, 1}, {15, 10, 10}, Qt::UTC)},
     };
 
     /*! The attributes that are mass assignable. */

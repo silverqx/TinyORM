@@ -202,8 +202,8 @@ insert_Qt_QDateTime_UtcTimezone_DatetimeColumn() const
         /* QSQLITE driver returns a string of a datetime with a timezone that was sent
            to the database in unchanged form. */
         const auto datetimeActual = datetimeDbVariant.value<QDateTime>();
-        const auto datetimeExpected = QDateTime::fromString("2022-08-28 13:14:15z",
-                                                            Qt::ISODate);
+        const auto datetimeExpected = QDateTime({2022, 8, 28}, {13, 14, 15}, Qt::UTC);
+
         QCOMPARE(datetimeActual, datetimeExpected);
         QCOMPARE(datetimeActual, datetimeExpected.toLocalTime());
         QCOMPARE(datetimeActual.timeZone(), QTimeZone::utc());
@@ -266,7 +266,7 @@ insert_Qt_QDateTime_0200Timezone_DatetimeColumn() const
         /* QSQLITE driver returns a string of a datetime with a timezone that was sent
            to the database in unchanged form. */
         const auto datetimeActual = datetimeDbVariant.value<QDateTime>();
-        const auto datetimeExpected = QDateTime::fromString("2022-08-28 13:14:15+02",
+        const auto datetimeExpected = QDateTime::fromString("2022-08-28 13:14:15+02:00",
                                                             Qt::ISODate);
         QCOMPARE(datetimeActual, datetimeExpected);
         QCOMPARE(datetimeActual, datetimeExpected.toLocalTime());
@@ -326,8 +326,8 @@ void tst_SQLite_QDateTime::insert_Qt_QString_DatetimeColumn() const
         /* QSQLITE driver returns a string of a datetime that was sent to the database
            in unchanged form. */
         const auto datetimeActual = datetimeDbVariant.value<QDateTime>();
-        const auto datetimeExpected = QDateTime::fromString("2022-08-28 13:14:15",
-                                                            Qt::ISODate);
+        const auto datetimeExpected = QDateTime({2022, 8, 28}, {13, 14, 15});
+
         QCOMPARE(datetimeActual, datetimeExpected);
         QCOMPARE(datetimeActual, datetimeExpected.toLocalTime());
         QCOMPARE(datetimeActual.timeZone(), QTimeZone::systemTimeZone());
@@ -348,7 +348,7 @@ insert_Qt_QDateTime_UtcTimezone_TimestampColumn() const
 
         QVERIFY(qtQuery.prepare(R"(insert into "datetimes" ("timestamp") values (?))"));
 
-        qtQuery.addBindValue(QDateTime::fromString("2022-08-29 13:14:15z", Qt::ISODate));
+        qtQuery.addBindValue(QDateTime({2022, 8, 29}, {13, 14, 15}, Qt::UTC));
 
         /* QSQLITE driver takes the QDateTime timezone into account, it internally calls
            .toString(Qt::ISODateWithMs). */
@@ -389,8 +389,8 @@ insert_Qt_QDateTime_UtcTimezone_TimestampColumn() const
         /* QSQLITE driver returns a string of a datetime with a timezone that was sent
            to the database in unchanged form. */
         const auto timestampActual = timestampDbVariant.value<QDateTime>();
-        const auto timestampExpected = QDateTime::fromString("2022-08-29 13:14:15z",
-                                                             Qt::ISODate);
+        const auto timestampExpected = QDateTime({2022, 8, 29}, {13, 14, 15}, Qt::UTC);
+
         QCOMPARE(timestampActual, timestampExpected);
         QCOMPARE(timestampActual, timestampExpected.toLocalTime());
         QCOMPARE(timestampActual.timeZone(), QTimeZone::utc());
@@ -513,8 +513,8 @@ void tst_SQLite_QDateTime::insert_Qt_QString_TimestampColumn() const
         /* QSQLITE driver returns a string of a datetime that was sent to the database
            in unchanged form. */
         const auto timestampActual = timestampDbVariant.value<QDateTime>();
-        const auto timestampExpected = QDateTime::fromString("2022-08-29 13:14:15",
-                                                             Qt::ISODate);
+        const auto timestampExpected = QDateTime({2022, 8, 29}, {13, 14, 15});
+
         QCOMPARE(timestampActual, timestampExpected);
         QCOMPARE(timestampActual, timestampExpected.toLocalTime());
         QCOMPARE(timestampActual.timeZone(), QTimeZone::systemTimeZone());
@@ -532,9 +532,9 @@ void tst_SQLite_QDateTime::
 insert_QDateTime_UtcTimezone_DatetimeColumn_OnReturnQDateTime() const
 {
     // Insert
-    quint64 lastId = createQuery()->from("datetimes").insertGetId(
-                         {{"datetime", QDateTime::fromString("2022-08-28 13:14:15z",
-                                                             Qt::ISODate)}});
+    quint64 lastId = createQuery()->from("datetimes")
+                     .insertGetId({{"datetime",
+                                    QDateTime({2022, 8, 28}, {13, 14, 15}, Qt::UTC)}});
 
     // Verify
     {
@@ -550,8 +550,8 @@ insert_QDateTime_UtcTimezone_DatetimeColumn_OnReturnQDateTime() const
 
         // TinyORM QueryBuilder fixes this and returns the QDateTime instead of QString
         const auto datetimeActual = datetimeDbVariant.value<QDateTime>();
-        const auto datetimeExpected = QDateTime::fromString("2022-08-28 13:14:15z",
-                                                            Qt::ISODate);
+        const auto datetimeExpected = QDateTime({2022, 8, 28}, {13, 14, 15}, Qt::UTC);
+
         QCOMPARE(datetimeActual, datetimeExpected);
         QCOMPARE(datetimeActual, datetimeExpected.toLocalTime());
         QCOMPARE(datetimeActual.timeZone(), QTimeZone::utc());
@@ -583,8 +583,8 @@ insert_QDateTime_0200Timezone_DatetimeColumn_OnReturnQDateTime() const
 
         // TinyORM QueryBuilder fixes this and returns the QDateTime instead of QString
         const auto datetimeActual = datetimeDbVariant.value<QDateTime>();
-        const auto datetimeExpected = QDateTime::fromString("2022-08-28 11:14:15z",
-                                                            Qt::ISODate);
+        const auto datetimeExpected = QDateTime({2022, 8, 28}, {11, 14, 15}, Qt::UTC);
+
         QCOMPARE(datetimeActual, datetimeExpected);
         QCOMPARE(datetimeActual, datetimeExpected.toLocalTime());
         QCOMPARE(datetimeActual.timeZone(), QTimeZone::utc());
@@ -614,8 +614,8 @@ void tst_SQLite_QDateTime::insert_QString_DatetimeColumn_OnReturnQDateTime() con
 
         // TinyORM QueryBuilder fixes this and returns the QDateTime instead of QString
         const auto datetimeActual = datetimeDbVariant.value<QDateTime>();
-        const auto datetimeExpected = QDateTime::fromString("2022-08-28 13:14:15z",
-                                                            Qt::ISODate);
+        const auto datetimeExpected = QDateTime({2022, 8, 28}, {13, 14, 15}, Qt::UTC);
+
         QCOMPARE(datetimeActual, datetimeExpected);
         QCOMPARE(datetimeActual, datetimeExpected.toLocalTime());
         QCOMPARE(datetimeActual.timeZone(), QTimeZone::utc());
@@ -629,9 +629,9 @@ void tst_SQLite_QDateTime::
 insert_QDateTime_UtcTimezone_TimestampColumn_OnReturnQDateTime() const
 {
     // Insert
-    quint64 lastId = createQuery()->from("datetimes").insertGetId(
-                         {{"timestamp", QDateTime::fromString("2022-08-28 13:14:15z",
-                                                              Qt::ISODate)}});
+    quint64 lastId = createQuery()->from("datetimes")
+                     .insertGetId({{"timestamp",
+                                    QDateTime({2022, 8, 28}, {13, 14, 15}, Qt::UTC)}});
 
     // Verify
     {
@@ -647,8 +647,8 @@ insert_QDateTime_UtcTimezone_TimestampColumn_OnReturnQDateTime() const
 
         // TinyORM QueryBuilder fixes this and returns the QDateTime instead of QString
         const auto timestampActual = timestampDbVariant.value<QDateTime>();
-        const auto timestampExpected = QDateTime::fromString("2022-08-28 13:14:15z",
-                                                             Qt::ISODate);
+        const auto timestampExpected = QDateTime({2022, 8, 28}, {13, 14, 15}, Qt::UTC);
+
         QCOMPARE(timestampActual, timestampExpected);
         QCOMPARE(timestampActual, timestampExpected.toLocalTime());
         QCOMPARE(timestampActual.timeZone(), QTimeZone::utc());
@@ -681,8 +681,8 @@ insert_QDateTime_0200Timezone_TimestampColumn_OnReturnQDateTime() const
 
         // TinyORM QueryBuilder fixes this and returns the QDateTime instead of QString
         const auto timestampActual = timestampDbVariant.value<QDateTime>();
-        const auto timestampExpected = QDateTime::fromString("2022-08-28 11:14:15z",
-                                                             Qt::ISODate);
+        const auto timestampExpected = QDateTime({2022, 8, 28}, {11, 14, 15}, Qt::UTC);
+
         QCOMPARE(timestampActual, timestampExpected);
         QCOMPARE(timestampActual, timestampExpected.toLocalTime());
         QCOMPARE(timestampActual.timeZone(), QTimeZone::utc());
@@ -712,8 +712,8 @@ void tst_SQLite_QDateTime::insert_QString_TimestampColumn_OnReturnQDateTime() co
 
         // TinyORM QueryBuilder fixes this and returns the QDateTime instead of QString
         const auto timestampActual = timestampDbVariant.value<QDateTime>();
-        const auto timestampExpected = QDateTime::fromString("2022-08-28 13:14:15z",
-                                                             Qt::ISODate);
+        const auto timestampExpected = QDateTime({2022, 8, 28}, {13, 14, 15}, Qt::UTC);
+
         QCOMPARE(timestampActual, timestampExpected);
         QCOMPARE(timestampActual, timestampExpected.toLocalTime());
         QCOMPARE(timestampActual.timeZone(), QTimeZone::utc());
@@ -731,9 +731,9 @@ insert_QDateTime_UtcTimezone_DatetimeColumn_OffReturnQDateTime() const
     disableReturnQDateTime();
 
     // Insert
-    quint64 lastId = createQuery()->from("datetimes").insertGetId(
-                         {{"datetime", QDateTime::fromString("2022-08-28 13:14:15z",
-                                                             Qt::ISODate)}});
+    quint64 lastId = createQuery()->from("datetimes")
+                     .insertGetId({{"datetime",
+                                    QDateTime({2022, 8, 28}, {13, 14, 15}, Qt::UTC)}});
 
     // Verify
     {
@@ -750,8 +750,8 @@ insert_QDateTime_UtcTimezone_DatetimeColumn_OffReturnQDateTime() const
         /* Returning the QDateTime (fixed behavior by the TinyORM QueryBuilder) can be
            disabled by the return_qdatetime = false. */
         const auto datetimeActual = datetimeDbVariant.value<QDateTime>();
-        const auto datetimeExpected = QDateTime::fromString("2022-08-28 13:14:15",
-                                                            Qt::ISODate);
+        const auto datetimeExpected = QDateTime({2022, 8, 28}, {13, 14, 15});
+
         QCOMPARE(datetimeActual, datetimeExpected);
         QCOMPARE(datetimeActual, datetimeExpected.toLocalTime());
         QCOMPARE(datetimeActual.timeZone(), QTimeZone::systemTimeZone());
@@ -787,8 +787,8 @@ insert_QDateTime_0200Timezone_DatetimeColumn_OffReturnQDateTime() const
         /* Returning the QDateTime (fixed behavior by the TinyORM QueryBuilder) can be
            disabled by the return_qdatetime = false. */
         const auto datetimeActual = datetimeDbVariant.value<QDateTime>();
-        const auto datetimeExpected = QDateTime::fromString("2022-08-28 11:14:15",
-                                                            Qt::ISODate);
+        const auto datetimeExpected = QDateTime({2022, 8, 28}, {11, 14, 15});
+
         QCOMPARE(datetimeActual, datetimeExpected);
         QCOMPARE(datetimeActual, datetimeExpected.toLocalTime());
         QCOMPARE(datetimeActual.timeZone(), QTimeZone::systemTimeZone());
@@ -822,8 +822,8 @@ void tst_SQLite_QDateTime::insert_QString_DatetimeColumn_OffReturnQDateTime() co
         /* Returning the QDateTime (fixed behavior by the TinyORM QueryBuilder) can be
            disabled by the return_qdatetime = false. */
         const auto datetimeActual = datetimeDbVariant.value<QDateTime>();
-        const auto datetimeExpected = QDateTime::fromString("2022-08-28 13:14:15",
-                                                            Qt::ISODate);
+        const auto datetimeExpected = QDateTime({2022, 8, 28}, {13, 14, 15});
+
         QCOMPARE(datetimeActual, datetimeExpected);
         QCOMPARE(datetimeActual, datetimeExpected.toLocalTime());
         QCOMPARE(datetimeActual.timeZone(), QTimeZone::systemTimeZone());
@@ -840,9 +840,9 @@ insert_QDateTime_UtcTimezone_TimestampColumn_OffReturnQDateTime() const
     disableReturnQDateTime();
 
     // Insert
-    quint64 lastId = createQuery()->from("datetimes").insertGetId(
-                         {{"timestamp", QDateTime::fromString("2022-08-28 13:14:15z",
-                                                              Qt::ISODate)}});
+    quint64 lastId = createQuery()->from("datetimes")
+                     .insertGetId({{"timestamp",
+                                    QDateTime({2022, 8, 28}, {13, 14, 15}, Qt::UTC)}});
 
     // Verify
     {
@@ -859,8 +859,8 @@ insert_QDateTime_UtcTimezone_TimestampColumn_OffReturnQDateTime() const
         /* Returning the QDateTime (fixed behavior by the TinyORM QueryBuilder) can be
            disabled by the return_qdatetime = false. */
         const auto timestampActual = timestampDbVariant.value<QDateTime>();
-        const auto timestampExpected = QDateTime::fromString("2022-08-28 13:14:15",
-                                                             Qt::ISODate);
+        const auto timestampExpected = QDateTime({2022, 8, 28}, {13, 14, 15});
+
         QCOMPARE(timestampActual, timestampExpected);
         QCOMPARE(timestampActual, timestampExpected.toLocalTime());
         QCOMPARE(timestampActual.timeZone(), QTimeZone::systemTimeZone());
@@ -897,8 +897,8 @@ insert_QDateTime_0200Timezone_TimestampColumn_OffReturnQDateTime() const
         /* Returning the QDateTime (fixed behavior by the TinyORM QueryBuilder) can be
            disabled by the return_qdatetime = false. */
         const auto timestampActual = timestampDbVariant.value<QDateTime>();
-        const auto timestampExpected = QDateTime::fromString("2022-08-28 11:14:15",
-                                                             Qt::ISODate);
+        const auto timestampExpected = QDateTime({2022, 8, 28}, {11, 14, 15});
+
         QCOMPARE(timestampActual, timestampExpected);
         QCOMPARE(timestampActual, timestampExpected.toLocalTime());
         QCOMPARE(timestampActual.timeZone(), QTimeZone::systemTimeZone());
@@ -932,8 +932,8 @@ void tst_SQLite_QDateTime::insert_QString_TimestampColumn_OffReturnQDateTime() c
         /* Returning the QDateTime (fixed behavior by the TinyORM QueryBuilder) can be
            disabled by the return_qdatetime = false. */
         const auto timestampActual = timestampDbVariant.value<QDateTime>();
-        const auto timestampExpected = QDateTime::fromString("2022-08-28 13:14:15",
-                                                             Qt::ISODate);
+        const auto timestampExpected = QDateTime({2022, 8, 28}, {13, 14, 15});
+
         QCOMPARE(timestampActual, timestampExpected);
         QCOMPARE(timestampActual, timestampExpected.toLocalTime());
         QCOMPARE(timestampActual.timeZone(), QTimeZone::systemTimeZone());
@@ -1412,8 +1412,8 @@ insert_QDateTime_0300Timezone_DatetimeColumn_UtcOnServer_DontConvert() const
            so it also retuns QString because return_qdatetime only works when converting
            TZ is enabled. */
         const auto datetimeActual = datetimeDbVariant.value<QDateTime>();
-        const auto datetimeExpected = QDateTime::fromString("2022-08-28 13:14:15",
-                                                            Qt::ISODate);
+        const auto datetimeExpected = QDateTime({2022, 8, 28}, {13, 14, 15});
+
         QCOMPARE(datetimeActual, datetimeExpected);
         QCOMPARE(datetimeActual, datetimeExpected.toLocalTime());
         QCOMPARE(datetimeActual.timeZone(), QTimeZone::systemTimeZone());

@@ -190,7 +190,7 @@ void tst_TinyBuilder::incrementAndDecrement() const
     QCOMPARE(sizeOriginal, QVariant(14));
     QCOMPARE(progressOriginal, QVariant(400));
     QCOMPARE(updatedAtOriginal,
-             QVariant(QDateTime::fromString("2021-01-04 18:46:31z", Qt::ISODate)));
+             QVariant(QDateTime({2021, 1, 4}, {18, 46, 31}, Qt::UTC)));
 
     // Increment
     Torrent::whereEq(ID, 4)->increment(SIZE, 2, {{"progress", 444}});
@@ -238,7 +238,7 @@ void tst_TinyBuilder::update() const
     QVERIFY(torrent->exists);
     QCOMPARE(progressOriginal, QVariant(400));
     QCOMPARE(updatedAtOriginal,
-             QVariant(QDateTime::fromString("2021-01-04 18:46:31z", Qt::ISODate)));
+             QVariant(QDateTime({2021, 1, 4}, {18, 46, 31}, Qt::UTC)));
 
     auto [affected, query] = Torrent::whereEq(ID, 4)->update({{"progress", 447}});
     QCOMPARE(affected, 1);

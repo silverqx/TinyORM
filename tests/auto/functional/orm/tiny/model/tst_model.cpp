@@ -150,7 +150,7 @@ void tst_Model::save_Insert() const
 
     Torrent torrent;
 
-    const auto addedOn = QDateTime::fromString("2020-10-01 20:22:10z", Qt::ISODate);
+    const auto addedOn = QDateTime({2020, 10, 1}, {20, 22, 10}, Qt::UTC);
     torrent.setAttribute(NAME, "test50")
             .setAttribute(SIZE, 50)
             .setAttribute("progress", 50)
@@ -203,7 +203,7 @@ void tst_Model::save_Insert_WithDefaultValues() const
 
     Torrent torrent;
 
-    const auto addedOn = QDateTime::fromString("2020-10-01 20:22:10z", Qt::ISODate);
+    const auto addedOn = QDateTime({2020, 10, 1}, {20, 22, 10}, Qt::UTC);
     torrent.setAttribute(NAME, "test51")
             .setAttribute("added_on", addedOn)
             .setAttribute("hash", "5179e3af2768cdf52ec84c1f320333f68401dc61");
@@ -605,9 +605,8 @@ void tst_Model::whereEq() const
     }
     // QDateTime
     {
-        auto torrent = Torrent::whereEq(
-                           "added_on",
-                           QDateTime::fromString("2020-08-01 20:11:10z", Qt::ISODate))
+        auto torrent = Torrent::whereEq("added_on",
+                                        QDateTime({2020, 8, 1}, {20, 11, 10}, Qt::UTC))
                        ->first();
         QVERIFY(torrent);
         QCOMPARE(torrent->getAttribute(ID), QVariant(1));
@@ -1073,7 +1072,7 @@ void tst_Model::firstOrCreate_Found() const
         QCOMPARE(torrent[SIZE], QVariant(13));
         QCOMPARE(torrent["progress"], QVariant(300));
         QCOMPARE(torrent["added_on"],
-                QVariant(QDateTime::fromString("2020-08-03 20:11:10z", Qt::ISODate)));
+                QVariant(QDateTime({2020, 8, 3}, {20, 11, 10}, Qt::UTC)));
         QCOMPARE(torrent["hash"], QVariant("3579e3af2768cdf52ec84c1f320333f68401dc6e"));
     }
 }
@@ -1084,7 +1083,7 @@ void tst_Model::firstOrCreate_NotFound() const
 
     ConnectionOverride::connection = connection;
 
-    const auto addedOn = QDateTime::fromString("2020-10-01 20:22:10z", Qt::ISODate);
+    const auto addedOn = QDateTime({2020, 10, 1}, {20, 22, 10}, Qt::UTC);
 
     auto torrent = Torrent::firstOrCreate(
                        {{NAME, "test100"}},
@@ -1206,7 +1205,7 @@ void tst_Model::create() const
 
     ConnectionOverride::connection = connection;
 
-    const auto addedOn = QDateTime::fromString("2021-02-01 20:22:10z", Qt::ISODate);
+    const auto addedOn = QDateTime({2021, 2, 1}, {20, 22, 10}, Qt::UTC);
 
     auto torrent = Torrent::create({
         {NAME,       "test100"},
@@ -1247,7 +1246,7 @@ void tst_Model::create_Failed() const
 
     ConnectionOverride::connection = connection;
 
-    const auto addedOn = QDateTime::fromString("2021-02-01 20:22:10z", Qt::ISODate);
+    const auto addedOn = QDateTime({2021, 2, 1}, {20, 22, 10}, Qt::UTC);
 
     Torrent torrent;
     QVERIFY_EXCEPTION_THROWN((torrent = Torrent::create({
@@ -1287,7 +1286,7 @@ void tst_Model::incrementAndDecrement() const
     QCOMPARE(sizeOriginal, QVariant(14));
     QCOMPARE(progressOriginal, QVariant(400));
     QCOMPARE(updatedAtOriginal,
-             QVariant(QDateTime::fromString("2021-01-04 18:46:31z", Qt::ISODate)));
+             QVariant(QDateTime({2021, 1, 4}, {18, 46, 31}, Qt::UTC)));
 
     // Increment
     torrent4_1->increment(SIZE, 2, {{"progress", 444}});
@@ -1373,7 +1372,7 @@ void tst_Model::update() const
     QVERIFY(torrent->exists);
     QCOMPARE(progressOriginal, QVariant(400));
     QCOMPARE(updatedAtOriginal,
-             QVariant(QDateTime::fromString("2021-01-04 18:46:31z", Qt::ISODate)));
+             QVariant(QDateTime({2021, 1, 4}, {18, 46, 31}, Qt::UTC)));
 
     auto result = torrent->update({{"progress", 449}});
 
@@ -1628,7 +1627,7 @@ void tst_Model::touch_WithAttribute() const
     // Verify an original added_on value
     auto addedOnOriginal = Torrent::find(1)->getAttribute("added_on");
     QCOMPARE(addedOnOriginal,
-             QVariant(QDateTime::fromString("2020-08-01 20:11:10z", Qt::ISODate)));
+             QVariant(QDateTime({2020, 8, 1}, {20, 11, 10}, Qt::UTC)));
 
     // Save a time before touch
     auto timeBeforeTouch = QDateTime::currentDateTimeUtc();

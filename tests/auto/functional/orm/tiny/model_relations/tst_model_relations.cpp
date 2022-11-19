@@ -4048,8 +4048,8 @@ timezone_TimestampAttribute_UtcOnServer_OnCustomPivotModel_ManyToMany() const
        configuration, TinyORM TinyBuilder fixes and unifies the buggy time zone
        behavior of all QtSql drivers. */
     const auto timestampActual = timestampDbVariant.value<QDateTime>();
-    const auto timestampExpected = QDateTime::fromString("2021-02-21 17:31:58z",
-                                                         Qt::ISODate);
+    const auto timestampExpected = QDateTime({2021, 2, 21}, {17, 31, 58}, Qt::UTC);
+
     QCOMPARE(timestampActual, timestampExpected);
     QCOMPARE(timestampActual, timestampExpected.toLocalTime());
     QCOMPARE(timestampActual.timeZone(), QTimeZone::utc());
@@ -4094,8 +4094,8 @@ timezone_TimestampAttribute_UtcOnServer_DontConvert_OnCustomPivot_MtM() const
        configuration, TinyORM TinyBuilder fixes and unifies the buggy time zone
        behavior of all QtSql drivers. */
     const auto timestampActual = timestampDbVariant.value<QDateTime>();
-    const auto timestampExpected = QDateTime::fromString("2021-02-21 17:31:58",
-                                                         Qt::ISODate);
+    const auto timestampExpected = QDateTime({2021, 2, 21}, {17, 31, 58});
+
     QCOMPARE(timestampActual, timestampExpected);
     QCOMPARE(timestampActual, timestampExpected.toLocalTime());
     QCOMPARE(timestampActual.timeZone(), QTimeZone::systemTimeZone());
