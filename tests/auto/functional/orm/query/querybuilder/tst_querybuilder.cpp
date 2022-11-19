@@ -512,7 +512,7 @@ void tst_QueryBuilder::whereBetween() const
                   .get();
 
     QVERIFY(result.isActive() && result.isSelect() && !result.isValid());
-    QVERIFY(QueryUtils::queryResultSize(result) == 3);
+    QCOMPARE(QueryUtils::queryResultSize(result), 3);
 
     QVector<quint64> expectedIds {2, 3, 4};
 

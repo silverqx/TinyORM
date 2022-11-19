@@ -1255,7 +1255,7 @@ void tst_Model_Connection_Independent::only() const
     QVERIFY(torrent->exists);
 
     auto attributes = torrent->only({ID, NAME, SIZE, CREATED_AT});
-    QVERIFY(attributes.size() == 4);
+    QCOMPARE(attributes.size(), 4);
 
     /* The order must be the same as the requested order during only() method call and
        as it internally calls getAttribute() all the casts will be applied. */
@@ -1275,7 +1275,7 @@ void tst_Model_Connection_Independent::only_NonExistentAttribute() const
     QVERIFY(torrent->exists);
 
     auto attributes = torrent->only({ID, NAME, "dummy-NON_EXISTENT"});
-    QVERIFY(attributes.size() == 3);
+    QCOMPARE(attributes.size(), 3);
 
     /* The order must be the same as the requested order during only() method call and
        as it internally calls getAttribute() all the casts will be applied. */

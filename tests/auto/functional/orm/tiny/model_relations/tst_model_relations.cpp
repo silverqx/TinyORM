@@ -1235,7 +1235,7 @@ void tst_Model_Relations::load() const
     torrent->load({{"torrentFiles"}, {"torrentPeer"}});
 
     const auto &relations = torrent->getRelations();
-    QVERIFY(relations.size() == 2);
+    QCOMPARE(relations.size(), 2);
     QVERIFY(relations.contains("torrentFiles"));
     QVERIFY(relations.contains("torrentPeer"));
 
@@ -1423,7 +1423,7 @@ void tst_Model_Relations::refresh_EagerLoad_OnlyRelations() const
     QVERIFY(torrent->exists);
 
     auto &relations = torrent->getRelations();
-    QVERIFY(relations.size() == 2);
+    QCOMPARE(relations.size(), 2);
 
     // Validate original attribute values in relations
     auto filesOriginal =
@@ -1463,7 +1463,7 @@ void tst_Model_Relations::refresh_EagerLoad_OnlyRelations() const
 
     torrent->refresh();
 
-    QVERIFY(relations.size() == 2);
+    QCOMPARE(relations.size(), 2);
     /* Values in the std::unordered_map container has to be the same, because
        only loaded relations will be replaced with std::move directly
        to the relation std::variant reference in the Model::load() method. */
@@ -1509,7 +1509,7 @@ void tst_Model_Relations::refresh_LazyLoad_OnlyRelations() const
             torrent->getRelationValue<TorrentPeer, One>("torrentPeer");
     auto seedsOriginal =
             peerOriginal->getAttribute("seeds");
-    QVERIFY(relations.size() == 2);
+    QCOMPARE(relations.size(), 2);
     QVERIFY(filepathOriginal == QVariant("test3_file1.mkv"));
     QVERIFY(seedsOriginal == QVariant(3));
 
@@ -1539,7 +1539,7 @@ void tst_Model_Relations::refresh_LazyLoad_OnlyRelations() const
 
     torrent->refresh();
 
-    QVERIFY(relations.size() == 2);
+    QCOMPARE(relations.size(), 2);
     /* Values in the std::unordered_map container has to be the same, because
        only loaded relations will be replaced with std::move directly
        to the relation std::variant reference in the Model::load() method. */

@@ -747,7 +747,7 @@ void tst_SQLite_SchemaBuilder::defaultStringLength_Set() const
     QVERIFY(Blueprint::DefaultStringLength == Orm::SchemaNs::DefaultStringLength);
 
     Schema::defaultStringLength(191);
-    QVERIFY(Blueprint::DefaultStringLength == 191);
+    QCOMPARE(Blueprint::DefaultStringLength, 191);
 
     // Restore
     Schema::defaultStringLength(Orm::SchemaNs::DefaultStringLength);

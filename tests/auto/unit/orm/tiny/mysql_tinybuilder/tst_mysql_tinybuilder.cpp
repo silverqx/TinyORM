@@ -156,7 +156,7 @@ void tst_MySql_TinyBuilder::touch() const
              "update `users` "
              "set `updated_at` = ? "
              "where `status` = ? and `users`.`deleted_at` is null");
-    QVERIFY(firstLog.boundValues.size() == 2);
+    QCOMPARE(firstLog.boundValues.size(), 2);
     QVERIFY(Helpers::setTimeZone(firstLog.boundValues.at(0).value<QDateTime>(),
                                  m_connection) >=
             timeBeforeTouch);
@@ -186,7 +186,7 @@ void tst_MySql_TinyBuilder::touch_CustomColumn() const
              "update `users` "
              "set `updated_on` = ? "
              "where `status` = ? and `users`.`deleted_at` is null");
-    QVERIFY(firstLog.boundValues.size() == 2);
+    QCOMPARE(firstLog.boundValues.size(), 2);
     QVERIFY(Helpers::setTimeZone(firstLog.boundValues.at(0).value<QDateTime>(),
                                  m_connection) >=
             timeBeforeTouch);
@@ -225,7 +225,7 @@ void tst_MySql_TinyBuilder::setAttribute_UnixTimestamp_With_UDates_UDateFormat()
 
         const auto &attributes = role.getAttributes();
 
-        QVERIFY(attributes.size() == 1);
+        QCOMPARE(attributes.size(), 1);
 
         const auto &[_, addedOn] = attributes.constFirst();
         QCOMPARE(addedOn, QVariant(timestamp));
@@ -238,7 +238,7 @@ void tst_MySql_TinyBuilder::setAttribute_UnixTimestamp_With_UDates_UDateFormat()
 
         const auto &attributes = role.getAttributes();
 
-        QVERIFY(attributes.size() == 1);
+        QCOMPARE(attributes.size(), 1);
 
         const auto &[_, addedOn] = attributes.constFirst();
         QCOMPARE(addedOn, QVariant(timestamp));
@@ -287,7 +287,7 @@ void tst_MySql_TinyBuilder::
 
         const auto &attributes = role.getAttributes();
 
-        QVERIFY(attributes.size() == 1);
+        QCOMPARE(attributes.size(), 1);
 
         const auto &[_, addedOn] = attributes.constFirst();
         /* Here comes into the play the variant.typeId() == QDateTime in setAttribute()
@@ -303,7 +303,7 @@ void tst_MySql_TinyBuilder::
 
         const auto &attributes = role.getAttributes();
 
-        QVERIFY(attributes.size() == 1);
+        QCOMPARE(attributes.size(), 1);
 
         const auto &[_, addedOn] = attributes.constFirst();
         /* Here comes into the play the variant.typeId() == QDateTime in setAttribute()
@@ -335,7 +335,7 @@ void tst_MySql_TinyBuilder::setAttribute_UnixTimestamp_WithOut_UDates() const
 
         const auto &attributes = role.getAttributes();
 
-        QVERIFY(attributes.size() == 1);
+        QCOMPARE(attributes.size(), 1);
 
         const auto &[_, addedOn] = attributes.constFirst();
         /* Here comes into the play the variant.typeId() == QDateTime in setAttribute()
@@ -351,7 +351,7 @@ void tst_MySql_TinyBuilder::setAttribute_UnixTimestamp_WithOut_UDates() const
 
         const auto &attributes = role.getAttributes();
 
-        QVERIFY(attributes.size() == 1);
+        QCOMPARE(attributes.size(), 1);
 
         const auto &[_, addedOn] = attributes.constFirst();
         QCOMPARE(addedOn, QVariant(timestamp));
@@ -371,7 +371,7 @@ void tst_MySql_TinyBuilder::
 
         const auto &attributes = role.getAttributes();
 
-        QVERIFY(attributes.size() == 1);
+        QCOMPARE(attributes.size(), 1);
 
         const auto &[_, addedOn] = attributes.constFirst();
         QCOMPARE(addedOn, NullVariant::LongLong());
@@ -384,7 +384,7 @@ void tst_MySql_TinyBuilder::
 
         const auto &attributes = role.getAttributes();
 
-        QVERIFY(attributes.size() == 1);
+        QCOMPARE(attributes.size(), 1);
 
         const auto &[_, addedOn] = attributes.constFirst();
         QCOMPARE(addedOn, NullVariant::LongLong());
@@ -408,7 +408,7 @@ void tst_MySql_TinyBuilder::
 
         const auto &attributes = role.getAttributes();
 
-        QVERIFY(attributes.size() == 1);
+        QCOMPARE(attributes.size(), 1);
 
         const auto &[_, addedOn] = attributes.constFirst();
         QCOMPARE(addedOn, NullVariant::QDateTime());
@@ -421,7 +421,7 @@ void tst_MySql_TinyBuilder::
 
         const auto &attributes = role.getAttributes();
 
-        QVERIFY(attributes.size() == 1);
+        QCOMPARE(attributes.size(), 1);
 
         const auto &[_, addedOn] = attributes.constFirst();
         /* Here comes into the play the variant.typeId() == QDateTime in setAttribute()
@@ -446,7 +446,7 @@ void tst_MySql_TinyBuilder::setAttribute_UnixTimestamp_WithOut_UDates_Null() con
 
         const auto &attributes = role.getAttributes();
 
-        QVERIFY(attributes.size() == 1);
+        QCOMPARE(attributes.size(), 1);
 
         const auto &[_, addedOn] = attributes.constFirst();
         QCOMPARE(addedOn, NullVariant::QDateTime());
@@ -459,7 +459,7 @@ void tst_MySql_TinyBuilder::setAttribute_UnixTimestamp_WithOut_UDates_Null() con
 
         const auto &attributes = role.getAttributes();
 
-        QVERIFY(attributes.size() == 1);
+        QCOMPARE(attributes.size(), 1);
 
         const auto &[_, addedOn] = attributes.constFirst();
         QCOMPARE(addedOn, NullVariant::LongLong());
@@ -1209,7 +1209,7 @@ void tst_MySql_TinyBuilder::deletedAt_Column_WithoutJoins() const
     QCOMPARE(firstLog.query,
              "update `users` set `deleted_at` = ?, `users`.`updated_at` = ? "
              "where `users`.`id` = ? and `users`.`deleted_at` is null");
-    QVERIFY(firstLog.boundValues.size() == 3);
+    QCOMPARE(firstLog.boundValues.size(), 3);
 }
 
 void tst_MySql_TinyBuilder::deletedAt_Column_WithJoins() const
@@ -1230,7 +1230,7 @@ void tst_MySql_TinyBuilder::deletedAt_Column_WithJoins() const
              "inner join `contacts` on `users`.`id` = `contacts`.`user_id` "
              "set `users`.`deleted_at` = ?, `users`.`updated_at` = ? "
              "where `users`.`id` = ? and `users`.`deleted_at` is null");
-    QVERIFY(firstLog.boundValues.size() == 3);
+    QCOMPARE(firstLog.boundValues.size(), 3);
 }
 
 /* private */
