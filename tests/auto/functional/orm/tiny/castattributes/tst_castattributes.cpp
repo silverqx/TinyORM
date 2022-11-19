@@ -1020,7 +1020,7 @@ void tst_CastAttributes::defaultCast_date() const
 
     QCOMPARE(typeId, QMetaType::QDate);
 
-    QCOMPARE(attribute.value<QDate>(), QDate::fromString("2022-09-11", Qt::ISODate));
+    QCOMPARE(attribute.value<QDate>(), QDate(2022, 9, 11));
 }
 
 void tst_CastAttributes::defaultCast_timestamp_QSQLITE_OffReturnQDateTime() const
@@ -1103,7 +1103,7 @@ void tst_CastAttributes::defaultCast_date_QSQLITE_OffReturnQDateTime() const
 
     QCOMPARE(typeId, QMetaType::QString);
 
-    QCOMPARE(attribute.value<QDate>(), QDate::fromString("2022-09-11", Qt::ISODate));
+    QCOMPARE(attribute.value<QDate>(), QDate(2022, 9, 11));
 
     // Restore
     enableReturnQDateTime(connection);
@@ -2529,7 +2529,7 @@ void tst_CastAttributes::cast_date_to_QDate() const
 
     QCOMPARE(attribute.value<QDate>(),
              // QDate doesn't have a time zone
-             QDate::fromString("2022-09-11", Qt::ISODate));
+             QDate(2022, 9, 11));
 }
 
 void tst_CastAttributes::cast_date_to_QString() const

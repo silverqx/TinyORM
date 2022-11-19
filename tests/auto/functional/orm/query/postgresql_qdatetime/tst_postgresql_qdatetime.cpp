@@ -1381,7 +1381,7 @@ tst_PostgreSQL_QDateTime::insert_Qt_QDate_UtcTimezone_DateColumn_UtcOnServer() c
 
         QVERIFY(qtQuery.prepare(R"(insert into "datetimes" ("date") values (?))"));
 
-        qtQuery.addBindValue(QDate::fromString("2022-08-28", Qt::ISODate));
+        qtQuery.addBindValue(QDate(2022, 8, 28));
 
         QVERIFY(qtQuery.exec());
 
@@ -1419,7 +1419,7 @@ tst_PostgreSQL_QDateTime::insert_Qt_QDate_UtcTimezone_DateColumn_UtcOnServer() c
         QCOMPARE(Helpers::qVariantTypeId(dateDbVariant), QMetaType::QDate);
 
         const auto dateActual = dateDbVariant.value<QDate>();
-        const auto dateExpected = QDate::fromString("2022-08-28", Qt::ISODate);
+        const auto dateExpected = QDate(2022, 8, 28);
         QCOMPARE(dateActual, dateExpected);
     }
 
@@ -1475,7 +1475,7 @@ void tst_PostgreSQL_QDateTime::insert_Qt_QString_DateColumn_UtcOnServer() const
         QCOMPARE(Helpers::qVariantTypeId(dateDbVariant), QMetaType::QDate);
 
         const auto dateActual = dateDbVariant.value<QDate>();
-        const auto dateExpected = QDate::fromString("2022-08-28", Qt::ISODate);
+        const auto dateExpected = QDate(2022, 8, 28);
         QCOMPARE(dateActual, dateExpected);
     }
 
@@ -1498,7 +1498,7 @@ insert_Qt_QDate_UtcTimezone_DateColumn_0200OnServer() const
 
         QVERIFY(qtQuery.prepare(R"(insert into "datetimes" ("date") values (?))"));
 
-        qtQuery.addBindValue(QDate::fromString("2022-08-28", Qt::ISODate));
+        qtQuery.addBindValue(QDate(2022, 8, 28));
 
         QVERIFY(qtQuery.exec());
 
@@ -1536,7 +1536,7 @@ insert_Qt_QDate_UtcTimezone_DateColumn_0200OnServer() const
         QCOMPARE(Helpers::qVariantTypeId(dateDbVariant), QMetaType::QDate);
 
         const auto dateActual = dateDbVariant.value<QDate>();
-        const auto dateExpected = QDate::fromString("2022-08-28", Qt::ISODate);
+        const auto dateExpected = QDate(2022, 8, 28);
         QCOMPARE(dateActual, dateExpected);
     }
 
@@ -1594,7 +1594,7 @@ void tst_PostgreSQL_QDateTime::insert_Qt_QString_DateColumn_0200OnServer() const
         QCOMPARE(Helpers::qVariantTypeId(dateDbVariant), QMetaType::QDate);
 
         const auto dateActual = dateDbVariant.value<QDate>();
-        const auto dateExpected = QDate::fromString("2022-08-28", Qt::ISODate);
+        const auto dateExpected = QDate(2022, 8, 28);
         QCOMPARE(dateActual, dateExpected);
     }
 
@@ -1609,8 +1609,8 @@ void tst_PostgreSQL_QDateTime::insert_Qt_QString_DateColumn_0200OnServer() const
 void tst_PostgreSQL_QDateTime::insert_QDate_UtcTimezone_DateColumn_UtcOnServer() const
 {
     // Insert
-    quint64 lastId = createQuery()->from("datetimes").insertGetId(
-                         {{"date", QDate::fromString("2022-08-28", Qt::ISODate)}});
+    quint64 lastId = createQuery()->from("datetimes")
+                     .insertGetId({{"date", QDate(2022, 8, 28)}});
 
     // Verify
     {
@@ -1627,7 +1627,7 @@ void tst_PostgreSQL_QDateTime::insert_QDate_UtcTimezone_DateColumn_UtcOnServer()
         QCOMPARE(Helpers::qVariantTypeId(dateDbVariant), QMetaType::QDate);
 
         const auto dateActual = dateDbVariant.value<QDate>();
-        const auto dateExpected = QDate::fromString("2022-08-28", Qt::ISODate);
+        const auto dateExpected = QDate(2022, 8, 28);
         QCOMPARE(dateActual, dateExpected);
     }
 
@@ -1656,7 +1656,7 @@ void tst_PostgreSQL_QDateTime::insert_QString_DateColumn_UtcOnServer() const
         QCOMPARE(Helpers::qVariantTypeId(dateDbVariant), QMetaType::QDate);
 
         const auto dateActual = dateDbVariant.value<QDate>();
-        const auto dateExpected = QDate::fromString("2022-08-28", Qt::ISODate);
+        const auto dateExpected = QDate(2022, 8, 28);
         QCOMPARE(dateActual, dateExpected);
     }
 
@@ -1672,8 +1672,8 @@ insert_QDate_UtcTimezone_DateColumn_0200OnServer() const
     setEUBratislavaTimezone();
 
     // Insert
-    quint64 lastId = createQuery()->from("datetimes").insertGetId(
-                         {{"date", QDate::fromString("2022-08-28", Qt::ISODate)}});
+    quint64 lastId = createQuery()->from("datetimes")
+                     .insertGetId({{"date", QDate(2022, 8, 28)}});
 
     // Verify
     {
@@ -1690,7 +1690,7 @@ insert_QDate_UtcTimezone_DateColumn_0200OnServer() const
         QCOMPARE(Helpers::qVariantTypeId(dateDbVariant), QMetaType::QDate);
 
         const auto dateActual = dateDbVariant.value<QDate>();
-        const auto dateExpected = QDate::fromString("2022-08-28", Qt::ISODate);
+        const auto dateExpected = QDate(2022, 8, 28);
         QCOMPARE(dateActual, dateExpected);
     }
 
@@ -1721,7 +1721,7 @@ void tst_PostgreSQL_QDateTime::insert_QString_DateColumn_0200OnServer() const
         QCOMPARE(Helpers::qVariantTypeId(dateDbVariant), QMetaType::QDate);
 
         const auto dateActual = dateDbVariant.value<QDate>();
-        const auto dateExpected = QDate::fromString("2022-08-28", Qt::ISODate);
+        const auto dateExpected = QDate(2022, 8, 28);
         QCOMPARE(dateActual, dateExpected);
     }
 

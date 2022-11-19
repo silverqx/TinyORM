@@ -1396,7 +1396,7 @@ void tst_MySql_QDateTime::insert_Qt_QDate_UtcTimezone_DateColumn_UtcOnServer() c
 
         QVERIFY(qtQuery.prepare("insert into `datetimes` (`date`) values (?)"));
 
-        qtQuery.addBindValue(QDate::fromString("2022-08-28", Qt::ISODate));
+        qtQuery.addBindValue(QDate(2022, 8, 28));
 
         QVERIFY(qtQuery.exec());
 
@@ -1434,7 +1434,7 @@ void tst_MySql_QDateTime::insert_Qt_QDate_UtcTimezone_DateColumn_UtcOnServer() c
         QCOMPARE(Helpers::qVariantTypeId(dateDbVariant), QMetaType::QDate);
 
         const auto dateActual = dateDbVariant.value<QDate>();
-        const auto dateExpected = QDate::fromString("2022-08-28", Qt::ISODate);
+        const auto dateExpected = QDate(2022, 8, 28);
         QCOMPARE(dateActual, dateExpected);
     }
 
@@ -1490,7 +1490,7 @@ void tst_MySql_QDateTime::insert_Qt_QString_DateColumn_UtcOnServer() const
         QCOMPARE(Helpers::qVariantTypeId(dateDbVariant), QMetaType::QDate);
 
         const auto dateActual = dateDbVariant.value<QDate>();
-        const auto dateExpected = QDate::fromString("2022-08-28", Qt::ISODate);
+        const auto dateExpected = QDate(2022, 8, 28);
         QCOMPARE(dateActual, dateExpected);
     }
 
@@ -1512,7 +1512,7 @@ void tst_MySql_QDateTime::insert_Qt_QDate_UtcTimezone_DateColumn_0200OnServer() 
 
         QVERIFY(qtQuery.prepare("insert into `datetimes` (`date`) values (?)"));
 
-        qtQuery.addBindValue(QDate::fromString("2022-08-28", Qt::ISODate));
+        qtQuery.addBindValue(QDate(2022, 8, 28));
 
         QVERIFY(qtQuery.exec());
 
@@ -1550,7 +1550,7 @@ void tst_MySql_QDateTime::insert_Qt_QDate_UtcTimezone_DateColumn_0200OnServer() 
         QCOMPARE(Helpers::qVariantTypeId(dateDbVariant), QMetaType::QDate);
 
         const auto dateActual = dateDbVariant.value<QDate>();
-        const auto dateExpected = QDate::fromString("2022-08-28", Qt::ISODate);
+        const auto dateExpected = QDate(2022, 8, 28);
         QCOMPARE(dateActual, dateExpected);
     }
 
@@ -1608,7 +1608,7 @@ void tst_MySql_QDateTime::insert_Qt_QString_DateColumn_0200OnServer() const
         QCOMPARE(Helpers::qVariantTypeId(dateDbVariant), QMetaType::QDate);
 
         const auto dateActual = dateDbVariant.value<QDate>();
-        const auto dateExpected = QDate::fromString("2022-08-28", Qt::ISODate);
+        const auto dateExpected = QDate(2022, 8, 28);
         QCOMPARE(dateActual, dateExpected);
     }
 
@@ -1623,8 +1623,8 @@ void tst_MySql_QDateTime::insert_Qt_QString_DateColumn_0200OnServer() const
 void tst_MySql_QDateTime::insert_QDate_UtcTimezone_DateColumn_UtcOnServer() const
 {
     // Insert
-    quint64 lastId = createQuery()->from("datetimes").insertGetId(
-                         {{"date", QDate::fromString("2022-08-28", Qt::ISODate)}});
+    quint64 lastId = createQuery()->from("datetimes")
+                     .insertGetId({{"date", QDate(2022, 8, 28)}});
 
     // Verify
     {
@@ -1641,7 +1641,7 @@ void tst_MySql_QDateTime::insert_QDate_UtcTimezone_DateColumn_UtcOnServer() cons
         QCOMPARE(Helpers::qVariantTypeId(dateDbVariant), QMetaType::QDate);
 
         const auto dateActual = dateDbVariant.value<QDate>();
-        const auto dateExpected = QDate::fromString("2022-08-28", Qt::ISODate);
+        const auto dateExpected = QDate(2022, 8, 28);
         QCOMPARE(dateActual, dateExpected);
     }
 
@@ -1670,7 +1670,7 @@ void tst_MySql_QDateTime::insert_QString_DateColumn_UtcOnServer() const
         QCOMPARE(Helpers::qVariantTypeId(dateDbVariant), QMetaType::QDate);
 
         const auto dateActual = dateDbVariant.value<QDate>();
-        const auto dateExpected = QDate::fromString("2022-08-28", Qt::ISODate);
+        const auto dateExpected = QDate(2022, 8, 28);
         QCOMPARE(dateActual, dateExpected);
     }
 
@@ -1685,8 +1685,8 @@ void tst_MySql_QDateTime::insert_QDate_UtcTimezone_DateColumn_0200OnServer() con
     set0200Timezone();
 
     // Insert
-    quint64 lastId = createQuery()->from("datetimes").insertGetId(
-                         {{"date", QDate::fromString("2022-08-28", Qt::ISODate)}});
+    quint64 lastId = createQuery()->from("datetimes")
+                     .insertGetId({{"date", QDate(2022, 8, 28)}});
 
     // Verify
     {
@@ -1703,7 +1703,7 @@ void tst_MySql_QDateTime::insert_QDate_UtcTimezone_DateColumn_0200OnServer() con
         QCOMPARE(Helpers::qVariantTypeId(dateDbVariant), QMetaType::QDate);
 
         const auto dateActual = dateDbVariant.value<QDate>();
-        const auto dateExpected = QDate::fromString("2022-08-28", Qt::ISODate);
+        const auto dateExpected = QDate(2022, 8, 28);
         QCOMPARE(dateActual, dateExpected);
     }
 
@@ -1734,7 +1734,7 @@ void tst_MySql_QDateTime::insert_QString_DateColumn_0200OnServer() const
         QCOMPARE(Helpers::qVariantTypeId(dateDbVariant), QMetaType::QDate);
 
         const auto dateActual = dateDbVariant.value<QDate>();
-        const auto dateExpected = QDate::fromString("2022-08-28", Qt::ISODate);
+        const auto dateExpected = QDate(2022, 8, 28);
         QCOMPARE(dateActual, dateExpected);
     }
 

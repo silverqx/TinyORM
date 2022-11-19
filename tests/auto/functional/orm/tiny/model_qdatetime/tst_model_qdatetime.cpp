@@ -820,7 +820,7 @@ void tst_Model_QDateTime::create_QDate_UtcTimezone_DateAttribute_UtcOnServer() c
     // Insert
     {
         Datetime datetime;
-        datetime["date"] = QDate::fromString("2022-08-28", Qt::ISODate);
+        datetime["date"] = QDate(2022, 8, 28);
 
         // Check whether a stored value and type are correct
         const auto attribute = datetime.getAttributeFromArray("date");
@@ -847,7 +847,7 @@ void tst_Model_QDateTime::create_QDate_UtcTimezone_DateAttribute_UtcOnServer() c
         QCOMPARE(Helpers::qVariantTypeId(dateDbVariant), QMetaType::QDate);
 
         const auto dateActual = dateDbVariant.value<QDate>();
-        const auto dateExpected = QDate::fromString("2022-08-28", Qt::ISODate);
+        const auto dateExpected = QDate(2022, 8, 28);
         QCOMPARE(dateActual, dateExpected);
     }
 
@@ -894,7 +894,7 @@ void tst_Model_QDateTime::create_QString_DateAttribute_UtcOnServer() const
         QCOMPARE(Helpers::qVariantTypeId(dateDbVariant), QMetaType::QDate);
 
         const auto dateActual = dateDbVariant.value<QDate>();
-        const auto dateExpected = QDate::fromString("2022-08-28", Qt::ISODate);
+        const auto dateExpected = QDate(2022, 8, 28);
         QCOMPARE(dateActual, dateExpected);
     }
 
@@ -917,7 +917,7 @@ void tst_Model_QDateTime::create_QDate_UtcTimezone_DateAttribute_0200OnServer() 
     // Insert
     {
         Datetime datetime;
-        datetime["date"] = QDate::fromString("2022-08-28", Qt::ISODate);
+        datetime["date"] = QDate(2022, 8, 28);
 
         // Check whether a stored value and type are correct
         const auto attribute = datetime.getAttributeFromArray("date");
@@ -944,7 +944,7 @@ void tst_Model_QDateTime::create_QDate_UtcTimezone_DateAttribute_0200OnServer() 
         QCOMPARE(Helpers::qVariantTypeId(dateDbVariant), QMetaType::QDate);
 
         const auto dateActual = dateDbVariant.value<QDate>();
-        const auto dateExpected = QDate::fromString("2022-08-28", Qt::ISODate);
+        const auto dateExpected = QDate(2022, 8, 28);
         QCOMPARE(dateActual, dateExpected);
     }
 
@@ -993,7 +993,7 @@ void tst_Model_QDateTime::create_QString_DateAttribute_0200OnServer() const
         QCOMPARE(Helpers::qVariantTypeId(dateDbVariant), QMetaType::QDate);
 
         const auto dateActual = dateDbVariant.value<QDate>();
-        const auto dateExpected = QDate::fromString("2022-08-28", Qt::ISODate);
+        const auto dateExpected = QDate(2022, 8, 28);
         QCOMPARE(dateActual, dateExpected);
     }
 
