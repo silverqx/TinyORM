@@ -596,8 +596,9 @@ Builder &Builder::orWhereColumn(const QVector<WhereColumnItem> &values)
 Builder &Builder::whereColumn(const Column &first, const QString &comparison,
                               const Column &second, const QString &condition)
 {
-    // Compile check for a invalid comparison operator
-    invalidOperator(comparison);
+#ifdef TINYORM_DEBUG
+    throwIfInvalidOperator(comparison);
+#endif
 
     m_wheres.append({.column = first, .comparison = comparison, .condition = condition,
                      .type = WhereType::COLUMN, .columnTwo = second});
@@ -980,8 +981,9 @@ Builder &Builder::groupByRaw(const QString &sql, const QVector<QVariant> &bindin
 Builder &Builder::having(const Column &column, const QString &comparison,
                          const QVariant &value, const QString &condition)
 {
-    // Compile check for a invalid comparison operator
-    invalidOperator(comparison);
+#ifdef TINYORM_DEBUG
+    throwIfInvalidOperator(comparison);
+#endif
 
     m_havings.append({column, value, comparison, condition, HavingType::BASIC});
 
@@ -1433,12 +1435,19 @@ QString Builder::stripTableForPluck(const QString &column) const
 
 /* protected */
 
-bool Builder::invalidOperator(const QString &comparison) const
+void Builder::throwIfInvalidOperator(const QString &comparison) const
 {
     const auto comparison_ = comparison.toLower();
 
-    return !getOperators().contains(comparison_) &&
-            !m_grammar.getOperators().contains(comparison_);
+    if (getOperators().contains(comparison_) ||
+        m_grammar.getOperators().contains(comparison_)
+    )
+        return;
+
+    throw Exceptions::InvalidArgumentError(
+                QStringLiteral("The '%1' operator is not valid for the '%2' database "
+                               "in %3().")
+                .arg(comparison_, getConnection().driverNamePrintable(), __tiny_func__));
 }
 
 QVector<QVariant> Builder::cleanBindings(const QVector<QVariant> &bindings) const
@@ -1719,7 +1728,9 @@ Builder &Builder::whereInternal(
         const Column &column, const QString &comparison, QVariant value,
         const QString &condition, const WhereType type)
 {
-    invalidOperator(comparison);
+#ifdef TINYORM_DEBUG
+    throwIfInvalidOperator(comparison);
+#endif
 
     m_wheres.append({.column = column, .value = value, .comparison = comparison,
                      .condition = condition, .type = type});

@@ -809,8 +809,8 @@ namespace Orm::Query
         QString stripTableForPluck(const QString &column) const;
 
     protected:
-        /*! Determine if the given operator is supported. */
-        bool invalidOperator(const QString &comparison) const;
+        /*! Throw if the given operator is not valid for the current DB connection. */
+        void throwIfInvalidOperator(const QString &comparison) const;
 
         /*! Remove all of the expressions from a list of bindings. */
         QVector<QVariant> cleanBindings(const QVector<QVariant> &bindings) const;
