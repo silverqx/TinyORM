@@ -1735,12 +1735,13 @@ void Builder::checkBindingType(const BindingType type) const
 const QVector<QString> &Builder::getOperators()
 {
     static const QVector<QString> cachedOperators {
-        EQ, LT, GT, LE, GE, NE_, NE, "<=>",
-        LIKE, "like binary", NLIKE, ILIKE,
+        EQ, LT, GT, LE, GE, NE_, NE, QLatin1String("<=>"),
+        LIKE, QLatin1String("like binary"), NLIKE, ILIKE,
         B_AND, B_OR, "^", "<<", ">>", "&~",
-        "rlike", "not rlike", "regexp", "not regexp",
-        "~", "~*", "!~", "!~*", "similar to",
-        "not similar to", "not ilike", "~~*", "!~~*",
+        QLatin1String("rlike"),  QLatin1String("not rlike"),
+        QLatin1String("regexp"), QLatin1String("not regexp"),
+        "~", "~*", "!~", "!~*", QLatin1String("similar to"),
+        QLatin1String("not similar to"), QLatin1String("not ilike"), "~~*", "!~~*",
     };
 
     return cachedOperators;

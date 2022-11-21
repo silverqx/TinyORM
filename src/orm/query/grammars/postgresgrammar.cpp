@@ -85,10 +85,10 @@ const QVector<QString> &PostgresGrammar::getOperators() const
 {
     static const QVector<QString> cachedOperators {
         EQ, LT, GT, LE, GE, NE, NE_,
-        LIKE, NLIKE, "between", ILIKE, "not ilike",
+        LIKE, NLIKE, QLatin1String("between"), ILIKE, QLatin1String("not ilike"),
         "~", B_AND, B_OR, "#", "<<", ">>", "<<=", ">>=",
-        AND_, "@>", "<@", "?", "?|", "?&", OR_, "-", "@?", "@@", "#-",
-        "is distinct from", "is not distinct from",
+        AND_, "@>", "<@", "?", "?|", "?&", OR_, MINUS, "@?", "@@", "#-",
+        QLatin1String("is distinct from"), QLatin1String("is not distinct from"),
     };
 
     return cachedOperators;

@@ -77,7 +77,7 @@ const QVector<QString> &SQLiteGrammar::getOperators() const
     static const QVector<QString> cachedOperators {
         EQ, LT, GT, LE, GE, NE_, NE,
         LIKE, NLIKE, ILIKE,
-        B_AND, B_OR, "<<", ">>",
+        B_AND, B_OR, QLatin1String("<<"), QLatin1String(">>"),
     };
 
     return cachedOperators;
