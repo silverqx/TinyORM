@@ -671,7 +671,7 @@ void tst_SoftDeletes::restore_NotTrashed_OnModel() const
         QCOMPARE(user->getAttribute(DELETED_AT).value<QDateTime>(), QDateTime());
     }
 
-    // Restore
+    // Restore NOT TRASHED (need to test also this scenario 🤯)
     {
         auto user = User::withTrashed()->find(5);
 
@@ -679,20 +679,23 @@ void tst_SoftDeletes::restore_NotTrashed_OnModel() const
         QVERIFY(user->exists);
         QVERIFY(!user->trashed());
 
-        auto timeBeforeRestore = QDateTime::currentDateTimeUtc();
-        // Reset milliseconds to 0
-        {
-            auto time = timeBeforeRestore.time();
-            timeBeforeRestore.setTime(QTime(time.hour(), time.minute(), time.second()));
-        }
+        /* This is different than others, an updated_at column value must be the same
+           after the restore() operation because model is NOT dirty (nothing changed),
+           so nothing will be updated/saved.
+           It also behaves differently than the TinyBuilder/BuildsSoftDeletes::restore(),
+           this BuildsSoftDeletes's method will call the SQL UPDATE query even if
+           the records aren't trashed because of course, the TinyBuilder doesn't track
+           dirty attributes.
+           I think this was the reason for occasional failure of this test (5% rate). */
+        auto timeBeforeRestore = user->getAttribute(UPDATED_AT).value<QDateTime>();
 
         // Restore
         QVERIFY(user->restore());
 
         QVERIFY(user->exists);
         QVERIFY(!user->trashed());
-        QVERIFY(user->getAttribute(UPDATED_AT).value<QDateTime>() >=
-                timeBeforeRestore);
+        // They must be EQUAL because NO update was performed
+        QVERIFY(user->getAttribute(UPDATED_AT).value<QDateTime>() == timeBeforeRestore);
         QCOMPARE(user->getAttribute(DELETED_AT).value<QDateTime>(), QDateTime());
     }
 
@@ -729,6 +732,9 @@ void tst_SoftDeletes::restore_NotTrashed_OnModel() const
 
 void tst_SoftDeletes::restore_NotTrashed_OnTinyBuilder() const
 {
+    /* Below, the restore will update the deleted_at column even if the record isn't
+       trashed, the TinyBuilder doesn't track dirty attributes as a model does. */
+
     // Prepare (restore)
     {
         auto timeBeforeRestore = QDateTime::currentDateTimeUtc();
