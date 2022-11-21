@@ -1012,6 +1012,7 @@ void tst_PostgreSQL_QDateTime::insert_QString_DatetimeColumn_UtcOnServer() const
            of the QPSQL driver. */
         const auto datetimeActual = datetimeDbVariant.value<QDateTime>();
         const auto datetimeExpected = QDateTime({2022, 8, 28}, {13, 14, 15}, Qt::UTC);
+
         QCOMPARE(datetimeActual, datetimeExpected);
         QCOMPARE(datetimeActual, datetimeExpected.toLocalTime());
         QCOMPARE(datetimeActual.timeZone(), QTimeZone::utc());
@@ -1847,7 +1848,6 @@ void tst_PostgreSQL_QDateTime::insert_Qt_QDate_Null_DateColumn_UtcOnServer() con
 
         const auto dateActual = dateDbVariant.value<QDate>();
         const auto dateExpected = QDate();
-
         QCOMPARE(dateActual, dateExpected);
     }
 
@@ -1972,7 +1972,6 @@ void tst_PostgreSQL_QDateTime::insert_Qt_QDate_Null_DateColumn_0200OnServer() co
 
         const auto dateActual = dateDbVariant.value<QDate>();
         const auto dateExpected = QDate();
-
         QCOMPARE(dateActual, dateExpected);
     }
 
@@ -2040,7 +2039,6 @@ void tst_PostgreSQL_QDateTime::insert_QDate_Null_DateColumn_UtcOnServer() const
 
         const auto dateActual = dateDbVariant.value<QDate>();
         const auto dateExpected = QDate();
-
         QCOMPARE(dateActual, dateExpected);
     }
 
@@ -2110,7 +2108,6 @@ void tst_PostgreSQL_QDateTime::insert_QDate_Null_DateColumn_0200OnServer() const
 
         const auto dateActual = dateDbVariant.value<QDate>();
         const auto dateExpected = QDate();
-
         QCOMPARE(dateActual, dateExpected);
     }
 

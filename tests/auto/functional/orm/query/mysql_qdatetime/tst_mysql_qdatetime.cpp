@@ -1852,7 +1852,6 @@ void tst_MySql_QDateTime::insert_Qt_QDate_Null_DateColumn_UtcOnServer() const
 
         const auto dateActual = dateDbVariant.value<QDate>();
         const auto dateExpected = QDate();
-
         QCOMPARE(dateActual, dateExpected);
     }
 
@@ -1976,7 +1975,6 @@ void tst_MySql_QDateTime::insert_Qt_QDate_Null_DateColumn_0200OnServer() const
 
         const auto dateActual = dateDbVariant.value<QDate>();
         const auto dateExpected = QDate();
-
         QCOMPARE(dateActual, dateExpected);
     }
 
@@ -2044,7 +2042,6 @@ void tst_MySql_QDateTime::insert_QDate_Null_DateColumn_UtcOnServer() const
 
         const auto dateActual = dateDbVariant.value<QDate>();
         const auto dateExpected = QDate();
-
         QCOMPARE(dateActual, dateExpected);
     }
 
@@ -2114,7 +2111,6 @@ void tst_MySql_QDateTime::insert_QDate_Null_DateColumn_0200OnServer() const
 
         const auto dateActual = dateDbVariant.value<QDate>();
         const auto dateExpected = QDate();
-
         QCOMPARE(dateActual, dateExpected);
     }
 

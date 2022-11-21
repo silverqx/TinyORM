@@ -1297,7 +1297,6 @@ void tst_SQLite_QDateTime::insert_Qt_QDate_Null_DateColumn() const
 
         const auto dateActual = dateDbVariant.value<QDate>();
         const auto dateExpected = QDate();
-
         QCOMPARE(dateActual, dateExpected);
     }
 
@@ -1367,7 +1366,6 @@ void tst_SQLite_QDateTime::insert_QDate_Null_DateColumn() const
 
         const auto dateActual = dateDbVariant.value<QDate>();
         const auto dateExpected = QDate();
-
         QCOMPARE(dateActual, dateExpected);
     }
 
