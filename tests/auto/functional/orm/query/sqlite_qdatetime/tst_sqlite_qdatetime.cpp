@@ -532,9 +532,9 @@ void tst_SQLite_QDateTime::
 insert_QDateTime_UtcTimezone_DatetimeColumn_OnReturnQDateTime() const
 {
     // Insert
-    quint64 lastId = createQuery()->from("datetimes")
-                     .insertGetId({{"datetime",
-                                    QDateTime({2022, 8, 28}, {13, 14, 15}, Qt::UTC)}});
+    quint64 lastId = createQuery()->from("datetimes").insertGetId(
+                         {{"datetime",
+                           QDateTime({2022, 8, 28}, {13, 14, 15}, Qt::UTC)}});
 
     // Verify
     {
@@ -629,9 +629,9 @@ void tst_SQLite_QDateTime::
 insert_QDateTime_UtcTimezone_TimestampColumn_OnReturnQDateTime() const
 {
     // Insert
-    quint64 lastId = createQuery()->from("datetimes")
-                     .insertGetId({{"timestamp",
-                                    QDateTime({2022, 8, 28}, {13, 14, 15}, Qt::UTC)}});
+    quint64 lastId = createQuery()->from("datetimes").insertGetId(
+                         {{"timestamp",
+                           QDateTime({2022, 8, 28}, {13, 14, 15}, Qt::UTC)}});
 
     // Verify
     {
@@ -730,9 +730,9 @@ insert_QDateTime_UtcTimezone_DatetimeColumn_OffReturnQDateTime() const
     disableReturnQDateTime();
 
     // Insert
-    quint64 lastId = createQuery()->from("datetimes")
-                     .insertGetId({{"datetime",
-                                    QDateTime({2022, 8, 28}, {13, 14, 15}, Qt::UTC)}});
+    quint64 lastId = createQuery()->from("datetimes").insertGetId(
+                         {{"datetime",
+                           QDateTime({2022, 8, 28}, {13, 14, 15}, Qt::UTC)}});
 
     // Verify
     {
@@ -839,9 +839,9 @@ insert_QDateTime_UtcTimezone_TimestampColumn_OffReturnQDateTime() const
     disableReturnQDateTime();
 
     // Insert
-    quint64 lastId = createQuery()->from("datetimes")
-                     .insertGetId({{"timestamp",
-                                    QDateTime({2022, 8, 28}, {13, 14, 15}, Qt::UTC)}});
+    quint64 lastId = createQuery()->from("datetimes").insertGetId(
+                         {{"timestamp",
+                           QDateTime({2022, 8, 28}, {13, 14, 15}, Qt::UTC)}});
 
     // Verify
     {
@@ -1066,8 +1066,8 @@ void
 tst_SQLite_QDateTime::insert_QDate_UtcTimezone_DateColumn_OnReturnQDateTime() const
 {
     // Insert
-    quint64 lastId = createQuery()->from("datetimes")
-                     .insertGetId({{"date", QDate(2022, 8, 28)}});
+    quint64 lastId = createQuery()->from("datetimes").insertGetId(
+                         {{"date", QDate(2022, 8, 28)}});
 
     // Verify
     {
@@ -1125,8 +1125,8 @@ tst_SQLite_QDateTime::insert_QDate_UtcTimezone_DateColumn_OffReturnQDateTime() c
     disableReturnQDateTime();
 
     // Insert
-    quint64 lastId = createQuery()->from("datetimes")
-                     .insertGetId({{"date", QDate(2022, 8, 28)}});
+    quint64 lastId = createQuery()->from("datetimes").insertGetId(
+                         {{"date", QDate(2022, 8, 28)}});
 
     // Verify
     {

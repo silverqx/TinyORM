@@ -916,9 +916,9 @@ void tst_PostgreSQL_QDateTime::
 insert_QDateTime_UtcTimezone_DatetimeColumn_UtcOnServer() const
 {
     // Insert
-    quint64 lastId = createQuery()->from("datetimes")
-                     .insertGetId({{"datetime",
-                                    QDateTime({2022, 8, 28}, {13, 14, 15}, Qt::UTC)}});
+    quint64 lastId = createQuery()->from("datetimes").insertGetId(
+                         {{"datetime",
+                           QDateTime({2022, 8, 28}, {13, 14, 15}, Qt::UTC)}});
 
     // Verify
     {
@@ -1025,9 +1025,9 @@ void tst_PostgreSQL_QDateTime::
 insert_QDateTime_UtcTimezone_TimestampColumn_UtcOnServer() const
 {
     // Insert
-    quint64 lastId = createQuery()->from("datetimes")
-                     .insertGetId({{"timestamp",
-                                    QDateTime({2022, 8, 28}, {13, 14, 15}, Qt::UTC)}});
+    quint64 lastId = createQuery()->from("datetimes").insertGetId(
+                         {{"timestamp",
+                           QDateTime({2022, 8, 28}, {13, 14, 15}, Qt::UTC)}});
 
     // Verify
     {
@@ -1139,9 +1139,9 @@ insert_QDateTime_UtcTimezone_DatetimeColumn_0200OnServer() const
     setEUBratislavaTimezone();
 
     // Insert
-    quint64 lastId = createQuery()->from("datetimes")
-                     .insertGetId({{"datetime",
-                                    QDateTime({2022, 8, 28}, {13, 14, 15}, Qt::UTC)}});
+    quint64 lastId = createQuery()->from("datetimes").insertGetId(
+                         {{"datetime",
+                           QDateTime({2022, 8, 28}, {13, 14, 15}, Qt::UTC)}});
 
     // Verify
     {
@@ -1255,9 +1255,9 @@ insert_QDateTime_UtcTimezone_TimestampColumn_0200OnServer() const
     setEUBratislavaTimezone();
 
     // Insert
-    quint64 lastId = createQuery()->from("datetimes")
-                     .insertGetId({{"timestamp",
-                                    QDateTime({2022, 8, 28}, {13, 14, 15}, Qt::UTC)}});
+    quint64 lastId = createQuery()->from("datetimes").insertGetId(
+                         {{"timestamp",
+                           QDateTime({2022, 8, 28}, {13, 14, 15}, Qt::UTC)}});
 
     // Verify
     {
@@ -1610,8 +1610,8 @@ void tst_PostgreSQL_QDateTime::insert_Qt_QString_DateColumn_0200OnServer() const
 void tst_PostgreSQL_QDateTime::insert_QDate_UtcTimezone_DateColumn_UtcOnServer() const
 {
     // Insert
-    quint64 lastId = createQuery()->from("datetimes")
-                     .insertGetId({{"date", QDate(2022, 8, 28)}});
+    quint64 lastId = createQuery()->from("datetimes").insertGetId(
+                         {{"date", QDate(2022, 8, 28)}});
 
     // Verify
     {
@@ -1673,8 +1673,8 @@ insert_QDate_UtcTimezone_DateColumn_0200OnServer() const
     setEUBratislavaTimezone();
 
     // Insert
-    quint64 lastId = createQuery()->from("datetimes")
-                     .insertGetId({{"date", QDate(2022, 8, 28)}});
+    quint64 lastId = createQuery()->from("datetimes").insertGetId(
+                         {{"date", QDate(2022, 8, 28)}});
 
     // Verify
     {
