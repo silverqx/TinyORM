@@ -133,6 +133,15 @@ namespace
     Q_GLOBAL_STATIC_WITH_ARGS(QTimeZone, TimeZone02, (QByteArray("UTC+02")));
     /*! Time zone +02:00. */
     Q_GLOBAL_STATIC_WITH_ARGS(QTimeZone, TimeZone0200, (QByteArray("UTC+02")));
+
+    /*! QString constant "datetimes" (perf. reason, one time initialization). */
+    Q_GLOBAL_STATIC_WITH_ARGS(QString, datetimes, ("datetimes"));
+    /*! QString constant "datetime" (perf. reason, one time initialization). */
+    Q_GLOBAL_STATIC_WITH_ARGS(QString, datetime, ("datetime"));
+    /*! QString constant "timestamp" (perf. reason, one time initialization). */
+    Q_GLOBAL_STATIC_WITH_ARGS(QString, timestamp, ("timestamp"));
+    /*! QString constant "date" (perf. reason, one time initialization). */
+    Q_GLOBAL_STATIC_WITH_ARGS(QString, date, ("date"));
 } // namespace
 
 /* private slots */
@@ -195,7 +204,7 @@ insert_Qt_QDateTime_UtcTimezone_DatetimeColumn() const
 
         QCOMPARE(qtQuery.value(ID).value<quint64>(), lastId);
 
-        const auto datetimeDbVariant = qtQuery.value("datetime");
+        const auto datetimeDbVariant = qtQuery.value(*datetime);
         QVERIFY(datetimeDbVariant.isValid());
         QVERIFY(!datetimeDbVariant.isNull());
 
@@ -258,7 +267,7 @@ insert_Qt_QDateTime_0200Timezone_DatetimeColumn() const
 
         QCOMPARE(qtQuery.value(ID).value<quint64>(), lastId);
 
-        const auto datetimeDbVariant = qtQuery.value("datetime");
+        const auto datetimeDbVariant = qtQuery.value(*datetime);
         QVERIFY(datetimeDbVariant.isValid());
         QVERIFY(!datetimeDbVariant.isNull());
 
@@ -318,7 +327,7 @@ void tst_SQLite_QDateTime::insert_Qt_QString_DatetimeColumn() const
 
         QCOMPARE(qtQuery.value(ID).value<quint64>(), lastId);
 
-        const auto datetimeDbVariant = qtQuery.value("datetime");
+        const auto datetimeDbVariant = qtQuery.value(*datetime);
         QVERIFY(datetimeDbVariant.isValid());
         QVERIFY(!datetimeDbVariant.isNull());
 
@@ -381,7 +390,7 @@ insert_Qt_QDateTime_UtcTimezone_TimestampColumn() const
 
         QCOMPARE(qtQuery.value(ID).value<quint64>(), lastId);
 
-        const auto timestampDbVariant = qtQuery.value("timestamp");
+        const auto timestampDbVariant = qtQuery.value(*timestamp);
         QVERIFY(timestampDbVariant.isValid());
         QVERIFY(!timestampDbVariant.isNull());
 
@@ -444,7 +453,7 @@ insert_Qt_QDateTime_0200Timezone_TimestampColumn() const
 
         QCOMPARE(qtQuery.value(ID).value<quint64>(), lastId);
 
-        const auto timestampDbVariant = qtQuery.value("timestamp");
+        const auto timestampDbVariant = qtQuery.value(*timestamp);
         QVERIFY(timestampDbVariant.isValid());
         QVERIFY(!timestampDbVariant.isNull());
 
@@ -504,7 +513,7 @@ void tst_SQLite_QDateTime::insert_Qt_QString_TimestampColumn() const
 
         QCOMPARE(qtQuery.value(ID).value<quint64>(), lastId);
 
-        const auto timestampDbVariant = qtQuery.value("timestamp");
+        const auto timestampDbVariant = qtQuery.value(*timestamp);
         QVERIFY(timestampDbVariant.isValid());
         QVERIFY(!timestampDbVariant.isNull());
 
@@ -532,17 +541,17 @@ void tst_SQLite_QDateTime::
 insert_QDateTime_UtcTimezone_DatetimeColumn_OnReturnQDateTime() const
 {
     // Insert
-    quint64 lastId = createQuery()->from("datetimes").insertGetId(
-                         {{"datetime",
+    quint64 lastId = createQuery()->from(*datetimes).insertGetId(
+                         {{*datetime,
                            QDateTime({2022, 8, 28}, {13, 14, 15}, Qt::UTC)}});
 
     // Verify
     {
-        auto query = createQuery()->from("datetimes").find(lastId, {ID, "datetime"});
+        auto query = createQuery()->from(*datetimes).find(lastId, {ID, *datetime});
 
         QCOMPARE(query.value(ID).value<quint64>(), lastId);
 
-        const auto datetimeDbVariant = query.value("datetime");
+        const auto datetimeDbVariant = query.value(*datetime);
         QVERIFY(datetimeDbVariant.isValid());
         QVERIFY(!datetimeDbVariant.isNull());
 
@@ -565,17 +574,17 @@ void tst_SQLite_QDateTime::
 insert_QDateTime_0200Timezone_DatetimeColumn_OnReturnQDateTime() const
 {
     // Insert
-    quint64 lastId = createQuery()->from("datetimes").insertGetId(
-                         {{"datetime",
+    quint64 lastId = createQuery()->from(*datetimes).insertGetId(
+                         {{*datetime,
                            QDateTime({2022, 8, 28}, {13, 14, 15}, *TimeZone0200)}});
 
     // Verify
     {
-        auto query = createQuery()->from("datetimes").find(lastId, {ID, "datetime"});
+        auto query = createQuery()->from(*datetimes).find(lastId, {ID, *datetime});
 
         QCOMPARE(query.value(ID).value<quint64>(), lastId);
 
-        const auto datetimeDbVariant = query.value("datetime");
+        const auto datetimeDbVariant = query.value(*datetime);
         QVERIFY(datetimeDbVariant.isValid());
         QVERIFY(!datetimeDbVariant.isNull());
 
@@ -597,16 +606,16 @@ insert_QDateTime_0200Timezone_DatetimeColumn_OnReturnQDateTime() const
 void tst_SQLite_QDateTime::insert_QString_DatetimeColumn_OnReturnQDateTime() const
 {
     // Insert
-    quint64 lastId = createQuery()->from("datetimes").insertGetId(
-                         {{"datetime", QString("2022-08-28 13:14:15")}});
+    quint64 lastId = createQuery()->from(*datetimes).insertGetId(
+                         {{*datetime, QString("2022-08-28 13:14:15")}});
 
     // Verify
     {
-        auto query = createQuery()->from("datetimes").find(lastId, {ID, "datetime"});
+        auto query = createQuery()->from(*datetimes).find(lastId, {ID, *datetime});
 
         QCOMPARE(query.value(ID).value<quint64>(), lastId);
 
-        const auto datetimeDbVariant = query.value("datetime");
+        const auto datetimeDbVariant = query.value(*datetime);
         QVERIFY(datetimeDbVariant.isValid());
         QVERIFY(!datetimeDbVariant.isNull());
 
@@ -629,17 +638,17 @@ void tst_SQLite_QDateTime::
 insert_QDateTime_UtcTimezone_TimestampColumn_OnReturnQDateTime() const
 {
     // Insert
-    quint64 lastId = createQuery()->from("datetimes").insertGetId(
-                         {{"timestamp",
+    quint64 lastId = createQuery()->from(*datetimes).insertGetId(
+                         {{*timestamp,
                            QDateTime({2022, 8, 28}, {13, 14, 15}, Qt::UTC)}});
 
     // Verify
     {
-        auto query = createQuery()->from("datetimes").find(lastId, {ID, "timestamp"});
+        auto query = createQuery()->from(*datetimes).find(lastId, {ID, *timestamp});
 
         QCOMPARE(query.value(ID).value<quint64>(), lastId);
 
-        const auto timestampDbVariant = query.value("timestamp");
+        const auto timestampDbVariant = query.value(*timestamp);
         QVERIFY(timestampDbVariant.isValid());
         QVERIFY(!timestampDbVariant.isNull());
 
@@ -662,17 +671,17 @@ void tst_SQLite_QDateTime::
 insert_QDateTime_0200Timezone_TimestampColumn_OnReturnQDateTime() const
 {
     // Insert
-    quint64 lastId = createQuery()->from("datetimes").insertGetId(
-                         {{"timestamp",
+    quint64 lastId = createQuery()->from(*datetimes).insertGetId(
+                         {{*timestamp,
                            QDateTime({2022, 8, 28}, {13, 14, 15}, *TimeZone0200)}});
 
     // Verify
     {
-        auto query = createQuery()->from("datetimes").find(lastId, {ID, "timestamp"});
+        auto query = createQuery()->from(*datetimes).find(lastId, {ID, *timestamp});
 
         QCOMPARE(query.value(ID).value<quint64>(), lastId);
 
-        const auto timestampDbVariant = query.value("timestamp");
+        const auto timestampDbVariant = query.value(*timestamp);
         QVERIFY(timestampDbVariant.isValid());
         QVERIFY(!timestampDbVariant.isNull());
 
@@ -694,16 +703,16 @@ insert_QDateTime_0200Timezone_TimestampColumn_OnReturnQDateTime() const
 void tst_SQLite_QDateTime::insert_QString_TimestampColumn_OnReturnQDateTime() const
 {
     // Insert
-    quint64 lastId = createQuery()->from("datetimes").insertGetId(
-                         {{"timestamp", QString("2022-08-28 13:14:15")}});
+    quint64 lastId = createQuery()->from(*datetimes).insertGetId(
+                         {{*timestamp, QString("2022-08-28 13:14:15")}});
 
     // Verify
     {
-        auto query = createQuery()->from("datetimes").find(lastId, {ID, "timestamp"});
+        auto query = createQuery()->from(*datetimes).find(lastId, {ID, *timestamp});
 
         QCOMPARE(query.value(ID).value<quint64>(), lastId);
 
-        const auto timestampDbVariant = query.value("timestamp");
+        const auto timestampDbVariant = query.value(*timestamp);
         QVERIFY(timestampDbVariant.isValid());
         QVERIFY(!timestampDbVariant.isNull());
 
@@ -730,17 +739,17 @@ insert_QDateTime_UtcTimezone_DatetimeColumn_OffReturnQDateTime() const
     disableReturnQDateTime();
 
     // Insert
-    quint64 lastId = createQuery()->from("datetimes").insertGetId(
-                         {{"datetime",
+    quint64 lastId = createQuery()->from(*datetimes).insertGetId(
+                         {{*datetime,
                            QDateTime({2022, 8, 28}, {13, 14, 15}, Qt::UTC)}});
 
     // Verify
     {
-        auto query = createQuery()->from("datetimes").find(lastId, {ID, "datetime"});
+        auto query = createQuery()->from(*datetimes).find(lastId, {ID, *datetime});
 
         QCOMPARE(query.value(ID).value<quint64>(), lastId);
 
-        const auto datetimeDbVariant = query.value("datetime");
+        const auto datetimeDbVariant = query.value(*datetime);
         QVERIFY(datetimeDbVariant.isValid());
         QVERIFY(!datetimeDbVariant.isNull());
 
@@ -767,17 +776,17 @@ insert_QDateTime_0200Timezone_DatetimeColumn_OffReturnQDateTime() const
     disableReturnQDateTime();
 
     // Insert
-    quint64 lastId = createQuery()->from("datetimes").insertGetId(
-                         {{"datetime",
+    quint64 lastId = createQuery()->from(*datetimes).insertGetId(
+                         {{*datetime,
                            QDateTime({2022, 8, 28}, {13, 14, 15}, *TimeZone0200)}});
 
     // Verify
     {
-        auto query = createQuery()->from("datetimes").find(lastId, {ID, "datetime"});
+        auto query = createQuery()->from(*datetimes).find(lastId, {ID, *datetime});
 
         QCOMPARE(query.value(ID).value<quint64>(), lastId);
 
-        const auto datetimeDbVariant = query.value("datetime");
+        const auto datetimeDbVariant = query.value(*datetime);
         QVERIFY(datetimeDbVariant.isValid());
         QVERIFY(!datetimeDbVariant.isNull());
 
@@ -803,16 +812,16 @@ void tst_SQLite_QDateTime::insert_QString_DatetimeColumn_OffReturnQDateTime() co
     disableReturnQDateTime();
 
     // Insert
-    quint64 lastId = createQuery()->from("datetimes").insertGetId(
-                         {{"datetime", QString("2022-08-28 13:14:15")}});
+    quint64 lastId = createQuery()->from(*datetimes).insertGetId(
+                         {{*datetime, QString("2022-08-28 13:14:15")}});
 
     // Verify
     {
-        auto query = createQuery()->from("datetimes").find(lastId, {ID, "datetime"});
+        auto query = createQuery()->from(*datetimes).find(lastId, {ID, *datetime});
 
         QCOMPARE(query.value(ID).value<quint64>(), lastId);
 
-        const auto datetimeDbVariant = query.value("datetime");
+        const auto datetimeDbVariant = query.value(*datetime);
         QVERIFY(datetimeDbVariant.isValid());
         QVERIFY(!datetimeDbVariant.isNull());
 
@@ -839,17 +848,17 @@ insert_QDateTime_UtcTimezone_TimestampColumn_OffReturnQDateTime() const
     disableReturnQDateTime();
 
     // Insert
-    quint64 lastId = createQuery()->from("datetimes").insertGetId(
-                         {{"timestamp",
+    quint64 lastId = createQuery()->from(*datetimes).insertGetId(
+                         {{*timestamp,
                            QDateTime({2022, 8, 28}, {13, 14, 15}, Qt::UTC)}});
 
     // Verify
     {
-        auto query = createQuery()->from("datetimes").find(lastId, {ID, "timestamp"});
+        auto query = createQuery()->from(*datetimes).find(lastId, {ID, *timestamp});
 
         QCOMPARE(query.value(ID).value<quint64>(), lastId);
 
-        const auto timestampDbVariant = query.value("timestamp");
+        const auto timestampDbVariant = query.value(*timestamp);
         QVERIFY(timestampDbVariant.isValid());
         QVERIFY(!timestampDbVariant.isNull());
 
@@ -876,17 +885,17 @@ insert_QDateTime_0200Timezone_TimestampColumn_OffReturnQDateTime() const
     disableReturnQDateTime();
 
     // Insert
-    quint64 lastId = createQuery()->from("datetimes").insertGetId(
-                         {{"timestamp",
+    quint64 lastId = createQuery()->from(*datetimes).insertGetId(
+                         {{*timestamp,
                            QDateTime({2022, 8, 28}, {13, 14, 15}, *TimeZone0200)}});
 
     // Verify
     {
-        auto query = createQuery()->from("datetimes").find(lastId, {ID, "timestamp"});
+        auto query = createQuery()->from(*datetimes).find(lastId, {ID, *timestamp});
 
         QCOMPARE(query.value(ID).value<quint64>(), lastId);
 
-        const auto timestampDbVariant = query.value("timestamp");
+        const auto timestampDbVariant = query.value(*timestamp);
         QVERIFY(timestampDbVariant.isValid());
         QVERIFY(!timestampDbVariant.isNull());
 
@@ -912,16 +921,16 @@ void tst_SQLite_QDateTime::insert_QString_TimestampColumn_OffReturnQDateTime() c
     disableReturnQDateTime();
 
     // Insert
-    quint64 lastId = createQuery()->from("datetimes").insertGetId(
-                         {{"timestamp", QString("2022-08-28 13:14:15")}});
+    quint64 lastId = createQuery()->from(*datetimes).insertGetId(
+                         {{*timestamp, QString("2022-08-28 13:14:15")}});
 
     // Verify
     {
-        auto query = createQuery()->from("datetimes").find(lastId, {ID, "timestamp"});
+        auto query = createQuery()->from(*datetimes).find(lastId, {ID, *timestamp});
 
         QCOMPARE(query.value(ID).value<quint64>(), lastId);
 
-        const auto timestampDbVariant = query.value("timestamp");
+        const auto timestampDbVariant = query.value(*timestamp);
         QVERIFY(timestampDbVariant.isValid());
         QVERIFY(!timestampDbVariant.isNull());
 
@@ -988,7 +997,7 @@ void tst_SQLite_QDateTime::insert_Qt_QDate_UtcTimezone_DateColumn() const
 
         QCOMPARE(qtQuery.value(ID).value<quint64>(), lastId);
 
-        const auto dateDbVariant = qtQuery.value("date");
+        const auto dateDbVariant = qtQuery.value(*date);
         QVERIFY(dateDbVariant.isValid());
         QVERIFY(!dateDbVariant.isNull());
 
@@ -1043,7 +1052,7 @@ void tst_SQLite_QDateTime::insert_Qt_QString_DateColumn() const
 
         QCOMPARE(qtQuery.value(ID).value<quint64>(), lastId);
 
-        const auto dateDbVariant = qtQuery.value("date");
+        const auto dateDbVariant = qtQuery.value(*date);
         QVERIFY(dateDbVariant.isValid());
         QVERIFY(!dateDbVariant.isNull());
 
@@ -1066,16 +1075,16 @@ void
 tst_SQLite_QDateTime::insert_QDate_UtcTimezone_DateColumn_OnReturnQDateTime() const
 {
     // Insert
-    quint64 lastId = createQuery()->from("datetimes").insertGetId(
-                         {{"date", QDate(2022, 8, 28)}});
+    quint64 lastId = createQuery()->from(*datetimes).insertGetId(
+                         {{*date, QDate(2022, 8, 28)}});
 
     // Verify
     {
-        auto query = createQuery()->from("datetimes").find(lastId, {ID, "date"});
+        auto query = createQuery()->from(*datetimes).find(lastId, {ID, *date});
 
         QCOMPARE(query.value(ID).value<quint64>(), lastId);
 
-        const auto dateDbVariant = query.value("date");
+        const auto dateDbVariant = query.value(*date);
         QVERIFY(dateDbVariant.isValid());
         QVERIFY(!dateDbVariant.isNull());
 
@@ -1093,16 +1102,16 @@ tst_SQLite_QDateTime::insert_QDate_UtcTimezone_DateColumn_OnReturnQDateTime() co
 void tst_SQLite_QDateTime::insert_QString_DateColumn_OnReturnQDateTime() const
 {
     // Insert
-    quint64 lastId = createQuery()->from("datetimes").insertGetId(
-                         {{"date", QString("2022-08-28")}});
+    quint64 lastId = createQuery()->from(*datetimes).insertGetId(
+                         {{*date, QString("2022-08-28")}});
 
     // Verify
     {
-        auto query = createQuery()->from("datetimes").find(lastId, {ID, "date"});
+        auto query = createQuery()->from(*datetimes).find(lastId, {ID, *date});
 
         QCOMPARE(query.value(ID).value<quint64>(), lastId);
 
-        const auto dateDbVariant = query.value("date");
+        const auto dateDbVariant = query.value(*date);
         QVERIFY(dateDbVariant.isValid());
         QVERIFY(!dateDbVariant.isNull());
 
@@ -1125,16 +1134,16 @@ tst_SQLite_QDateTime::insert_QDate_UtcTimezone_DateColumn_OffReturnQDateTime() c
     disableReturnQDateTime();
 
     // Insert
-    quint64 lastId = createQuery()->from("datetimes").insertGetId(
-                         {{"date", QDate(2022, 8, 28)}});
+    quint64 lastId = createQuery()->from(*datetimes).insertGetId(
+                         {{*date, QDate(2022, 8, 28)}});
 
     // Verify
     {
-        auto query = createQuery()->from("datetimes").find(lastId, {ID, "date"});
+        auto query = createQuery()->from(*datetimes).find(lastId, {ID, *date});
 
         QCOMPARE(query.value(ID).value<quint64>(), lastId);
 
-        const auto dateDbVariant = query.value("date");
+        const auto dateDbVariant = query.value(*date);
         QVERIFY(dateDbVariant.isValid());
         QVERIFY(!dateDbVariant.isNull());
 
@@ -1155,16 +1164,16 @@ void tst_SQLite_QDateTime::insert_QString_DateColumn_OffReturnQDateTime() const
     disableReturnQDateTime();
 
     // Insert
-    quint64 lastId = createQuery()->from("datetimes").insertGetId(
-                         {{"date", QString("2022-08-28")}});
+    quint64 lastId = createQuery()->from(*datetimes).insertGetId(
+                         {{*date, QString("2022-08-28")}});
 
     // Verify
     {
-        auto query = createQuery()->from("datetimes").find(lastId, {ID, "date"});
+        auto query = createQuery()->from(*datetimes).find(lastId, {ID, *date});
 
         QCOMPARE(query.value(ID).value<quint64>(), lastId);
 
-        const auto dateDbVariant = query.value("date");
+        const auto dateDbVariant = query.value(*date);
         QVERIFY(dateDbVariant.isValid());
         QVERIFY(!dateDbVariant.isNull());
 
@@ -1227,7 +1236,7 @@ insert_Qt_QDateTime_Null_DatetimeColumn() const
 
         QCOMPARE(qtQuery.value(ID).value<quint64>(), lastId);
 
-        const auto datetimeDbVariant = qtQuery.value("datetime");
+        const auto datetimeDbVariant = qtQuery.value(*datetime);
         QVERIFY(datetimeDbVariant.isValid());
         QVERIFY(datetimeDbVariant.isNull());
 
@@ -1288,7 +1297,7 @@ void tst_SQLite_QDateTime::insert_Qt_QDate_Null_DateColumn() const
 
         QCOMPARE(qtQuery.value(ID).value<quint64>(), lastId);
 
-        const auto dateDbVariant = qtQuery.value("date");
+        const auto dateDbVariant = qtQuery.value(*date);
         QVERIFY(dateDbVariant.isValid());
         QVERIFY(dateDbVariant.isNull());
 
@@ -1311,16 +1320,16 @@ void tst_SQLite_QDateTime::insert_Qt_QDate_Null_DateColumn() const
 void tst_SQLite_QDateTime::insert_QDateTime_Null_DatetimeColumn() const
 {
     // Insert
-    quint64 lastId = createQuery()->from("datetimes").insertGetId(
-                         {{"datetime", NullVariant::QDateTime()}});
+    quint64 lastId = createQuery()->from(*datetimes).insertGetId(
+                         {{*datetime, NullVariant::QDateTime()}});
 
     // Verify
     {
-        auto query = createQuery()->from("datetimes").find(lastId, {ID, "datetime"});
+        auto query = createQuery()->from(*datetimes).find(lastId, {ID, *datetime});
 
         QCOMPARE(query.value(ID).value<quint64>(), lastId);
 
-        const auto datetimeDbVariant = query.value("datetime");
+        const auto datetimeDbVariant = query.value(*datetime);
         QVERIFY(datetimeDbVariant.isValid());
         QVERIFY(datetimeDbVariant.isNull());
 
@@ -1348,16 +1357,16 @@ void tst_SQLite_QDateTime::insert_QDateTime_Null_DatetimeColumn() const
 void tst_SQLite_QDateTime::insert_QDate_Null_DateColumn() const
 {
     // Insert
-    quint64 lastId = createQuery()->from("datetimes").insertGetId(
-                         {{"date", NullVariant::QDate()}});
+    quint64 lastId = createQuery()->from(*datetimes).insertGetId(
+                         {{*date, NullVariant::QDate()}});
 
     // Verify
     {
-        auto query = createQuery()->from("datetimes").find(lastId, {ID, "date"});
+        auto query = createQuery()->from(*datetimes).find(lastId, {ID, *date});
 
         QCOMPARE(query.value(ID).value<quint64>(), lastId);
 
-        const auto dateDbVariant = query.value("date");
+        const auto dateDbVariant = query.value(*date);
         QVERIFY(dateDbVariant.isValid());
         QVERIFY(dateDbVariant.isNull());
 
@@ -1388,17 +1397,17 @@ insert_QDateTime_0300Timezone_DatetimeColumn_UtcOnServer_DontConvert() const
              QtTimeZoneConfig {QtTimeZoneType::DontConvert});
 
     // Insert
-    quint64 lastId = createQuery()->from("datetimes").insertGetId(
-                         {{"datetime",
+    quint64 lastId = createQuery()->from(*datetimes).insertGetId(
+                         {{*datetime,
                            QDateTime({2022, 8, 28}, {13, 14, 15}, *TimeZone0200)}});
 
     // Verify
     {
-        auto query = createQuery()->from("datetimes").find(lastId, {ID, "datetime"});
+        auto query = createQuery()->from(*datetimes).find(lastId, {ID, *datetime});
 
         QCOMPARE(query.value(ID).value<quint64>(), lastId);
 
-        const auto datetimeDbVariant = query.value("datetime");
+        const auto datetimeDbVariant = query.value(*datetime);
         QVERIFY(datetimeDbVariant.isValid());
         QVERIFY(!datetimeDbVariant.isNull());
 
@@ -1440,7 +1449,7 @@ tst_SQLite_QDateTime::createQuery() const
 
 void tst_SQLite_QDateTime::restore(const quint64 lastId) const
 {
-    const auto [affected, query] = createQuery()->from("datetimes").remove(lastId);
+    const auto [affected, query] = createQuery()->from(*datetimes).remove(lastId);
 
     QVERIFY(!query.lastError().isValid());
     QVERIFY(!query.isValid() && query.isActive() && !query.isSelect());
