@@ -7,6 +7,7 @@
 #include "orm/databaseconnection.hpp"
 #include "orm/exceptions/invalidargumenterror.hpp"
 #include "orm/query/joinclause.hpp"
+#include "orm/utils/type.hpp"
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
@@ -297,8 +298,10 @@ Builder::upsert(const QVector<QVariantMap> &values, const QStringList &uniqueBy,
     // If the update is an empty vector then throw and don't insert
     if (update.isEmpty())
         throw Exceptions::InvalidArgumentError(
-                "The upsert method doesn't support an empty update argument, please use "
-                "the insert method instead.");
+                QStringLiteral(
+                    "The 'upsert' method doesn't support an empty update argument, "
+                    "please use the 'insert' method instead in %1().")
+                .arg(__tiny_func__));
 
     return m_connection.affectingStatement(
                 m_grammar.compileUpsert(*this, values, uniqueBy, update),
@@ -806,8 +809,9 @@ Builder::whereRowValues(const QVector<Column> &columns, const QString &compariso
 {
     if (columns.size() != values.size() || columns.isEmpty())
         throw Exceptions::InvalidArgumentError(
-                "The number of columns must match the number of values and "
-                "can not be empty.");
+                QStringLiteral("The number of columns must match the number of values "
+                               "and can not be empty in %1().")
+                .arg(__tiny_func__));
 
     m_wheres.append({.comparison = comparison, .condition = condition,
                      .type = WhereType::ROW_VALUES,
@@ -1017,7 +1021,10 @@ Builder &Builder::orderBy(const Column &column, const QString &direction)
 
     if (directionLower != ASC && directionLower != DESC)
         throw Exceptions::InvalidArgumentError(
-                R"(Order direction must be "asc" or "desc", case is not important.)");
+                QStringLiteral(
+                    "Order direction must be \"asc\" or \"desc\", case is not important "
+                    "in %1().)")
+                .arg(__tiny_func__));
 
     m_orders.append({column, directionLower});
 
@@ -1600,7 +1607,9 @@ void Builder::enforceOrderBy() const
 {
     if (m_orders.isEmpty())
         throw Exceptions::RuntimeError(
-                "You must specify an orderBy clause when using this function.");
+                QStringLiteral("You must specify an orderBy clause when using "
+                               "the '%1()' method in %2().")
+                .arg(__func__, __tiny_func__));
 }
 
 QVector<OrderByItem> Builder::removeExistingOrdersFor(const QString &column) const
@@ -1728,8 +1737,9 @@ void Builder::checkBindingType(const BindingType type) const
 
     // TODO add hash which maps BindingType to the QString silverqx
     throw Exceptions::InvalidArgumentError(
-                QStringLiteral("Invalid binding type: %1")
-                .arg(static_cast<int>(type)));
+                QStringLiteral("Invalid binding type '%1' in %2().")
+                .arg(static_cast<int>(type))
+                .arg(__tiny_func__));
 }
 
 const QVector<QString> &Builder::getOperators()
