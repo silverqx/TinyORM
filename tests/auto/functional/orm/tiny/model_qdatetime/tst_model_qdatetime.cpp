@@ -192,8 +192,8 @@ create_QDateTime_0200Timezone_DatetimeAttribute_UtcOnServer() const
     // Insert
     {
         Datetime datetime;
-        datetime["datetime"] = QDateTime::fromString("2022-08-28 13:14:15+02:00",
-                                                     Qt::ISODate);
+        datetime["datetime"] = QDateTime({2022, 8, 28}, {13, 14, 15},
+                                         timezone0200(connection));
 
         // Check whether a stored value and type are correct
         const auto attribute = datetime.getAttributeFromArray("datetime");
@@ -351,8 +351,8 @@ create_QDateTime_0200Timezone_TimestampAttribute_UtcOnServer() const
     // Insert
     {
         Datetime datetime;
-        datetime["timestamp"] = QDateTime::fromString("2022-08-28 13:14:15+02:00",
-                                                      Qt::ISODate);
+        datetime["timestamp"] = QDateTime({2022, 8, 28}, {13, 14, 15},
+                                          timezone0200(connection));
 
         // Check whether a stored value and type are correct
         const auto attribute = datetime.getAttributeFromArray("timestamp");
@@ -495,8 +495,8 @@ create_QDateTime_UtcTimezone_DatetimeAttribute_0200OnServer() const
            configuration, TinyORM TinyBuilder fixes and unifies the buggy time zone
            behavior of all QtSql drivers. */
         const auto datetimeActual = datetimeDbVariant.value<QDateTime>();
-        const auto datetimeExpected = QDateTime::fromString("2022-08-28 15:14:15+02:00",
-                                                            Qt::ISODate);
+        const auto datetimeExpected = QDateTime({2022, 8, 28}, {15, 14, 15},
+                                                timezone0200(connection));
         QCOMPARE(datetimeActual, datetimeExpected);
         QCOMPARE(datetimeActual, datetimeExpected.toLocalTime());
         QCOMPARE(datetimeActual.timeZone(), timezone0200(connection));
@@ -524,8 +524,8 @@ create_QDateTime_0200Timezone_DatetimeAttribute_0200OnServer() const
     // Insert
     {
         Datetime datetime;
-        datetime["datetime"] = QDateTime::fromString("2022-08-28 13:14:15+02:00",
-                                                     Qt::ISODate);
+        datetime["datetime"] = QDateTime({2022, 8, 28}, {13, 14, 15},
+                                         timezone0200(connection));
 
         // Check whether a stored value and type are correct
         const auto attribute = datetime.getAttributeFromArray("datetime");
@@ -555,8 +555,8 @@ create_QDateTime_0200Timezone_DatetimeAttribute_0200OnServer() const
            configuration, TinyORM TinyBuilder fixes and unifies the buggy time zone
            behavior of all QtSql drivers. */
         const auto datetimeActual = datetimeDbVariant.value<QDateTime>();
-        const auto datetimeExpected = QDateTime::fromString("2022-08-28 13:14:15+02:00",
-                                                            Qt::ISODate);
+        const auto datetimeExpected = QDateTime({2022, 8, 28}, {13, 14, 15},
+                                                timezone0200(connection));
         QCOMPARE(datetimeActual, datetimeExpected);
         QCOMPARE(datetimeActual, datetimeExpected.toLocalTime());
         QCOMPARE(datetimeActual.timeZone(), timezone0200(connection));
@@ -613,8 +613,8 @@ void tst_Model_QDateTime::create_QString_DatetimeAttribute_0200OnServer() const
            configuration, TinyORM TinyBuilder fixes and unifies the buggy time zone
            behavior of all QtSql drivers. */
         const auto datetimeActual = datetimeDbVariant.value<QDateTime>();
-        const auto datetimeExpected = QDateTime::fromString("2022-08-28 13:14:15+02:00",
-                                                            Qt::ISODate);
+        const auto datetimeExpected = QDateTime({2022, 8, 28}, {13, 14, 15},
+                                                timezone0200(connection));
         QCOMPARE(datetimeActual, datetimeExpected);
         QCOMPARE(datetimeActual, datetimeExpected.toLocalTime());
         QCOMPARE(datetimeActual.timeZone(), timezone0200(connection));
@@ -672,8 +672,8 @@ create_QDateTime_UtcTimezone_TimestampAttribute_0200OnServer() const
            configuration, TinyORM TinyBuilder fixes and unifies the buggy time zone
            behavior of all QtSql drivers. */
         const auto timestampActual = timestampDbVariant.value<QDateTime>();
-        const auto timestampExpected = QDateTime::fromString("2022-08-28 15:14:15+02:00",
-                                                             Qt::ISODate);
+        const auto timestampExpected = QDateTime({2022, 8, 28}, {15, 14, 15},
+                                                 timezone0200(connection));
         QCOMPARE(timestampActual, timestampExpected);
         QCOMPARE(timestampActual, timestampExpected.toLocalTime());
         QCOMPARE(timestampActual.timeZone(), timezone0200(connection));
@@ -701,8 +701,8 @@ create_QDateTime_0200Timezone_TimestampAttribute_0200OnServer() const
     // Insert
     {
         Datetime datetime;
-        datetime["timestamp"] = QDateTime::fromString("2022-08-28 13:14:15+02:00",
-                                                      Qt::ISODate);
+        datetime["timestamp"] = QDateTime({2022, 8, 28}, {13, 14, 15},
+                                          timezone0200(connection));
 
         // Check whether a stored value and type are correct
         const auto attribute = datetime.getAttributeFromArray("timestamp");
@@ -732,8 +732,8 @@ create_QDateTime_0200Timezone_TimestampAttribute_0200OnServer() const
            configuration, TinyORM TinyBuilder fixes and unifies the buggy time zone
            behavior of all QtSql drivers. */
         const auto timestampActual = timestampDbVariant.value<QDateTime>();
-        const auto timestampExpected = QDateTime::fromString("2022-08-28 13:14:15+02:00",
-                                                             Qt::ISODate);
+        const auto timestampExpected = QDateTime({2022, 8, 28}, {13, 14, 15},
+                                                 timezone0200(connection));
         QCOMPARE(timestampActual, timestampExpected);
         QCOMPARE(timestampActual, timestampExpected.toLocalTime());
         QCOMPARE(timestampActual.timeZone(), timezone0200(connection));
@@ -790,8 +790,8 @@ void tst_Model_QDateTime::create_QString_TimestampAttribute_0200OnServer() const
            configuration, TinyORM TinyBuilder fixes and unifies the buggy time zone
            behavior of all QtSql drivers. */
         const auto timestampActual = timestampDbVariant.value<QDateTime>();
-        const auto timestampExpected = QDateTime::fromString("2022-08-28 13:14:15+02:00",
-                                                             Qt::ISODate);
+        const auto timestampExpected = QDateTime({2022, 8, 28}, {13, 14, 15},
+                                                 timezone0200(connection));
         QCOMPARE(timestampActual, timestampExpected);
         QCOMPARE(timestampActual, timestampExpected.toLocalTime());
         QCOMPARE(timestampActual.timeZone(), timezone0200(connection));
@@ -1265,8 +1265,8 @@ create_QDateTime_0300Timezone_DatetimeAttribute_UtcOnServer_DontConvert() const
     // Insert
     {
         Datetime datetime;
-        datetime["datetime"] = QDateTime::fromString("2022-08-28 13:14:15+03:00",
-                                                     Qt::ISODate);
+        datetime["datetime"] = QDateTime({2022, 8, 28}, {13, 14, 15},
+                                         QTimeZone("UTC+03:00"));
 
         // Check whether a stored value and type are correct
         const auto attribute = datetime.getAttributeFromArray("datetime");
@@ -1415,7 +1415,7 @@ const QTimeZone &tst_Model_QDateTime::timezone0200(const QString &connection) co
 {
     const auto driverName = DB::driverName(connection);
 
-    if (driverName == QMYSQL)
+    if (driverName == QMYSQL || driverName == QSQLITE)
         return *TimeZone0200;
 
     if (driverName == QPSQL)

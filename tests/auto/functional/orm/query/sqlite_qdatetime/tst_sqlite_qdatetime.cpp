@@ -123,6 +123,18 @@ private:
     QString m_connection {};
 };
 
+namespace
+{
+    /* UTC+02:00 doesn't work here, because I'm not fixing TZ for QSQLITE driver and
+       the QDateTime returns the UTC+02 TZ from QDateTime created using
+       the QVariant(QString).value<QDateTime>() and
+       QTimeZone(UTC+02) != QTimeZone(UTC+02:00). */
+    /*! Time zone +02 (reason for this is QTimeZone(UTC+02) != QTimeZone(UTC+02:00)). */
+    Q_GLOBAL_STATIC_WITH_ARGS(QTimeZone, TimeZone02, (QByteArray("UTC+02")));
+    /*! Time zone +02:00. */
+    Q_GLOBAL_STATIC_WITH_ARGS(QTimeZone, TimeZone0200, (QByteArray("UTC+02")));
+} // namespace
+
 /* private slots */
 
 void tst_SQLite_QDateTime::initTestCase()
@@ -134,16 +146,6 @@ void tst_SQLite_QDateTime::initTestCase()
               .arg(TypeUtils::classPureBasename(*this), Databases::SQLITE)
               .toUtf8().constData(), );
 }
-
-namespace
-{
-    /* UTC+02:00 doesn't work here, because I'm not fixing TZ for QSQLITE driver and
-       the QDateTime returns the UTC+02 TZ from QDateTime created using
-       the QVariant(QString).value<QDateTime>() and
-       QTimeZone(UTC+02) != QTimeZone(UTC+02:00). */
-    /*! Time zone +02:00. */
-    Q_GLOBAL_STATIC_WITH_ARGS(QTimeZone, TimeZone0200, (QByteArray("UTC+02")));
-} // namespace
 
 /* QDateTime with/without timezone */
 
@@ -224,8 +226,7 @@ insert_Qt_QDateTime_0200Timezone_DatetimeColumn() const
 
         QVERIFY(qtQuery.prepare(R"(insert into "datetimes" ("datetime") values (?))"));
 
-        qtQuery.addBindValue(
-                    QDateTime::fromString("2022-08-28 13:14:15+02:00", Qt::ISODate));
+        qtQuery.addBindValue(QDateTime({2022, 8, 28}, {13, 14, 15}, *TimeZone0200));
 
         /* QSQLITE driver takes the QDateTime timezone into account, it internally calls
            .toString(Qt::ISODateWithMs). */
@@ -266,11 +267,11 @@ insert_Qt_QDateTime_0200Timezone_DatetimeColumn() const
         /* QSQLITE driver returns a string of a datetime with a timezone that was sent
            to the database in unchanged form. */
         const auto datetimeActual = datetimeDbVariant.value<QDateTime>();
-        const auto datetimeExpected = QDateTime::fromString("2022-08-28 13:14:15+02:00",
-                                                            Qt::ISODate);
+        const auto datetimeExpected = QDateTime({2022, 8, 28}, {13, 14, 15},
+                                                *TimeZone0200);
         QCOMPARE(datetimeActual, datetimeExpected);
         QCOMPARE(datetimeActual, datetimeExpected.toLocalTime());
-        QCOMPARE(datetimeActual.timeZone(), *TimeZone0200);
+        QCOMPARE(datetimeActual.timeZone(), *TimeZone02);
     }
 
     // Restore
@@ -411,8 +412,7 @@ insert_Qt_QDateTime_0200Timezone_TimestampColumn() const
 
         QVERIFY(qtQuery.prepare(R"(insert into "datetimes" ("timestamp") values (?))"));
 
-        qtQuery.addBindValue(
-                    QDateTime::fromString("2022-08-29 13:14:15+02:00", Qt::ISODate));
+        qtQuery.addBindValue(QDateTime({2022, 8, 29}, {13, 14, 15}, *TimeZone0200));
 
         /* QSQLITE driver takes the QDateTime timezone into account, it internally calls
            .toString(Qt::ISODateWithMs). */
@@ -453,11 +453,11 @@ insert_Qt_QDateTime_0200Timezone_TimestampColumn() const
         /* QSQLITE driver returns a string of a datetime with a timezone that was sent
            to the database in unchanged form. */
         const auto timestampActual = timestampDbVariant.value<QDateTime>();
-        const auto timestampExpected = QDateTime::fromString("2022-08-29 13:14:15+02:00",
-                                                             Qt::ISODate);
+        const auto timestampExpected = QDateTime({2022, 8, 29}, {13, 14, 15},
+                                                 *TimeZone0200);
         QCOMPARE(timestampActual, timestampExpected);
         QCOMPARE(timestampActual, timestampExpected.toLocalTime());
-        QCOMPARE(timestampActual.timeZone(), *TimeZone0200);
+        QCOMPARE(timestampActual.timeZone(), *TimeZone02);
     }
 
     // Restore
@@ -566,8 +566,8 @@ insert_QDateTime_0200Timezone_DatetimeColumn_OnReturnQDateTime() const
 {
     // Insert
     quint64 lastId = createQuery()->from("datetimes").insertGetId(
-                         {{"datetime", QDateTime::fromString("2022-08-28 13:14:15+02:00",
-                                                             Qt::ISODate)}});
+                         {{"datetime",
+                           QDateTime({2022, 8, 28}, {13, 14, 15}, *TimeZone0200)}});
 
     // Verify
     {
@@ -664,8 +664,7 @@ insert_QDateTime_0200Timezone_TimestampColumn_OnReturnQDateTime() const
     // Insert
     quint64 lastId = createQuery()->from("datetimes").insertGetId(
                          {{"timestamp",
-                           QDateTime::fromString("2022-08-28 13:14:15+02:00",
-                                                 Qt::ISODate)}});
+                           QDateTime({2022, 8, 28}, {13, 14, 15}, *TimeZone0200)}});
 
     // Verify
     {
@@ -769,8 +768,8 @@ insert_QDateTime_0200Timezone_DatetimeColumn_OffReturnQDateTime() const
 
     // Insert
     quint64 lastId = createQuery()->from("datetimes").insertGetId(
-                         {{"datetime", QDateTime::fromString("2022-08-28 13:14:15+02:00",
-                                                             Qt::ISODate)}});
+                         {{"datetime",
+                           QDateTime({2022, 8, 28}, {13, 14, 15}, *TimeZone0200)}});
 
     // Verify
     {
@@ -879,8 +878,7 @@ insert_QDateTime_0200Timezone_TimestampColumn_OffReturnQDateTime() const
     // Insert
     quint64 lastId = createQuery()->from("datetimes").insertGetId(
                          {{"timestamp",
-                           QDateTime::fromString("2022-08-28 13:14:15+02:00",
-                                                 Qt::ISODate)}});
+                           QDateTime({2022, 8, 28}, {13, 14, 15}, *TimeZone0200)}});
 
     // Verify
     {
@@ -1393,8 +1391,8 @@ insert_QDateTime_0300Timezone_DatetimeColumn_UtcOnServer_DontConvert() const
 
     // Insert
     quint64 lastId = createQuery()->from("datetimes").insertGetId(
-                         {{"datetime", QDateTime::fromString("2022-08-28 13:14:15+03:00",
-                                                             Qt::ISODate)}});
+                         {{"datetime",
+                           QDateTime({2022, 8, 28}, {13, 14, 15}, *TimeZone0200)}});
 
     // Verify
     {
