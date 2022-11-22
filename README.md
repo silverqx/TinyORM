@@ -11,8 +11,8 @@
 
 [![www.tinyorm.org][docs-badge]][docs]
 [![License MIT][license-badge]][license]
-![TinyORM v0.23.1][version-tinyorm-badge]
-![tom v0.4.2][version-tom-badge]
+[![TinyORM v0.23.1][version-tinyorm-badge]][docs]
+[![tom v0.4.2][version-tom-badge]][docs]
 
 TinyORM is a modern ORM library that makes interacting with a database extremely simple.
 
