@@ -47,6 +47,10 @@ The TinyORM query builder uses `QSqlQuery` parameter binding to protect your app
 `QSqlQuery` does not support binding column names. Therefore, you should never allow user input to dictate the column names referenced by your queries, including "order by" columns.
 :::
 
+:::danger
+The `QMYSQL` Qt driver contains a bug, if your table includes a `json` column type, then you must explicitly name columns other than `json` columns instead of the `*` shorthand, otherwise, you will get an empty result, or all column values will be invalid QVariant-s, or it may even return half of the columns. The `QPSQL` driver returns correct results and doesn't have problem with `json` columns.
+:::
+
 ## Running Database Queries
 
 #### Retrieving All Rows From A Table
