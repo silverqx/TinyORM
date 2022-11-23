@@ -95,7 +95,7 @@ namespace Support
         RelationsOrder relationsOrder();
 
         /* Others */
-        /*! Get the model path (either specified by the --path option or the default
+        /*! Get the models path (either specified by the --path option or the default
             location). */
         fspath getModelsPath() const;
         /*! Set of all cmd. option relation names. */

@@ -48,7 +48,7 @@ namespace Tom::Commands::Make
         /*! Write the seeder file to the disk. */
         void writeSeeder(const QString &className, fspath &&seedersPath) const;
 
-        /*! Get the seeder path (either specified by the --path option or the default
+        /*! Get the seeders path (either specified by the --path option or the default
             location). */
         fspath getSeedersPath() const;
 

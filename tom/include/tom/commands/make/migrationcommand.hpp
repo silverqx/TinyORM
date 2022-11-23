@@ -67,7 +67,7 @@ namespace Tom::Commands::Make
                             std::string &&extension, fspath &&migrationsPath,
                             const QString &table, bool create) const;
 
-        /*! Get the migration path (either specified by the --path option or the default
+        /*! Get the migrations path (either specified by the --path option or the default
             location). */
         fspath getMigrationsPath() const;
 
