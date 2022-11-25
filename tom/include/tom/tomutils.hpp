@@ -7,6 +7,8 @@ TINY_SYSTEM_HEADER
 
 #include <QString>
 
+#include <filesystem>
+
 #include <orm/macros/commonnamespace.hpp>
 
 TINYORM_BEGIN_COMMON_NAMESPACE
@@ -18,6 +20,9 @@ namespace Tom
     class Utils
     {
         Q_DISABLE_COPY(Utils)
+
+        /*! Alias for the filesystem path. */
+        using fspath = std::filesystem::path;
 
     public:
         /*! Deleted default constructor, this is a pure library class. */
@@ -31,9 +36,21 @@ namespace Tom
         /*! Get the default value text (quotes the string type). */
         static QString defaultValueText(const QString &value);
 
+        /*! Try to guess a path for "make:" commands based on the pwd or use
+            the default path. */
+        static fspath
+        guessPathForMakeByPwd(const fspath &defaultPath,
+                              std::optional<
+                                  std::reference_wrapper<const fspath>
+                              > &&defaultModelsPath = std::nullopt);
+
     private:
         /*! Check whether all datetime parts are equal to the DateTimePrefix constant. */
         static bool areDatetimePartsEqual(const QList<QStringView> &prefixParts);
+
+        /*! Determine whether the parent paths are equal. */
+        static bool areParentPathsEqual(QStringList defaultPathList,
+                                        const fspath &defaultModelsPath);
     };
 
 } // namespace Tom

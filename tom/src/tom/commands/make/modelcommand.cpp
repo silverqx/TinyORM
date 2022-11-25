@@ -11,6 +11,7 @@
 #include "tom/application.hpp"
 #include "tom/exceptions/invalidargumenterror.hpp"
 #include "tom/tomconstants.hpp"
+#include "tom/tomutils.hpp"
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
@@ -46,6 +47,7 @@ using Tom::Constants::fillable_up;
 using Tom::Constants::force;
 using Tom::Constants::foreign_key;
 using Tom::Constants::foreign_key_up;
+using Tom::Constants::from_model;
 using Tom::Constants::fullpath;
 using Tom::Constants::guarded;
 using Tom::Constants::guarded_up;
@@ -78,6 +80,8 @@ using Tom::Constants::with_up;
 using Tom::Constants::with_pivot;
 using Tom::Constants::with_pivot_up;
 using Tom::Constants::with_timestamps;
+
+using TomUtils = Tom::Utils;
 
 namespace Tom::Commands::Make
 {
@@ -499,18 +503,14 @@ RelationsOrder ModelCommand::relationsOrder()
 
 fspath ModelCommand::getModelsPath() const
 {
-    // Default location
-    if (!isSet(path_))
-        return application().getModelsPath();
-
-    auto targetPath = value(path_).toStdString();
-
-    // The 'path' argument contains an absolute path
-    if (isSet(realpath_))
-        return {std::move(targetPath)};
-
-    // The 'path' argument contains a relative path
-    auto modelsPath = fs::current_path() / std::move(targetPath);
+    /* If a user passes the --path parameter use it, otherwise try to guess models
+       path based on the pwd and if not found use the default path which is set
+       by the TINYTOM_MODELS_DIR macro. */
+    auto modelsPath = isSet(path_)
+                      // User defined path
+                      ? getUserModelsPath()
+                      // Try to guess or use the default path
+                      : guessModelsPath();
 
     // Validate
     if (fs::exists(modelsPath) && !fs::is_directory(modelsPath))
@@ -519,6 +519,22 @@ fspath ModelCommand::getModelsPath() const
                 .arg(modelsPath.c_str()));
 
     return modelsPath;
+}
+
+fspath ModelCommand::getUserModelsPath() const
+{
+    auto targetPath = fspath(value(path_).toStdString()).lexically_normal();
+
+    return isSet(realpath_)
+            // The 'path' argument contains an absolute path
+            ? std::move(targetPath)
+            // The 'path' argument contains a relative path
+            : fs::current_path() / std::move(targetPath);
+}
+
+fspath ModelCommand::guessModelsPath() const
+{
+    return TomUtils::guessPathForMakeByPwd(application().getModelsPath());
 }
 
 const std::unordered_set<QString> &ModelCommand::relationNames()
@@ -541,7 +557,11 @@ void ModelCommand::createMigration(const QString &className) const
 
     call(MakeMigration, {longOption(create_, table),
                          boolCmd(force),
-                         QStringLiteral("create_%1_table").arg(std::move(table))});
+                         QStringLiteral("create_%1_table").arg(std::move(table)),
+                         // Inform the make:migration that it's called from the make:model
+                         longOption(from_model),
+                         // Proxy path to the make:seeder
+                         valueCmd(path_)});
 }
 
 void ModelCommand::createSeeder(const QString &className) const
@@ -550,7 +570,12 @@ void ModelCommand::createSeeder(const QString &className) const
 
     // FUTURE tom, add hidden options support to the tom's parser, add --table option for the make:seeder command and pass singular table name for pivot models because currently the make:seeder command generates eg. taggeds table name (even if this table name is in the commented code), command to reproduce: tom make:model Tagged --pivot-model --seeder silverqx
 
-    call(MakeSeeder, {boolCmd(force), std::move(seederClassName)});
+    call(MakeSeeder, {boolCmd(force),
+                      std::move(seederClassName),
+                      // Inform the make:seeder that it's called from the make:model
+                      longOption(from_model),
+                      // Proxy path to the make:seeder
+                      valueCmd(path_)});
 }
 
 /* private */

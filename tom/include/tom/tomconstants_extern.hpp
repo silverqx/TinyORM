@@ -101,6 +101,7 @@ namespace Tom::Constants
     SHAREDLIB_EXPORT extern const QString table_;
     SHAREDLIB_EXPORT extern const QString realpath_;
     SHAREDLIB_EXPORT extern const QString fullpath;
+    SHAREDLIB_EXPORT extern const QString from_model;
     // make:model
     SHAREDLIB_EXPORT extern const QString one_to_one;
     SHAREDLIB_EXPORT extern const QString one_to_many;

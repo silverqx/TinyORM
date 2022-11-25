@@ -26,6 +26,7 @@ using StringUtils = Orm::Utils::String;
 using Tom::Constants::create_;
 using Tom::Constants::create_up;
 using Tom::Constants::force;
+using Tom::Constants::from_model;
 using Tom::Constants::fullpath;
 using Tom::Constants::path_;
 using Tom::Constants::path_up;
@@ -67,6 +68,8 @@ QList<QCommandLineOption> MigrationCommand::optionsSignature() const
 
         {{QChar('f'),
           force},      QStringLiteral("Overwrite the migration file if already exists")},
+        // TODO tom, hidden/internal argument, don't show during help silverqx
+        {from_model,   QStringLiteral("Internal argument used when guessing a path")},
     };
 }
 
@@ -215,18 +218,14 @@ void MigrationCommand::writeMigration(
 
 fspath MigrationCommand::getMigrationsPath() const
 {
-    // Default location
-    if (!isSet(path_))
-        return application().getMigrationsPath();
-
-    auto targetPath = value(path_).toStdString();
-
-    // The 'path' argument contains an absolute path
-    if (isSet(realpath_))
-        return {std::move(targetPath)};
-
-    // The 'path' argument contains a relative path
-    auto migrationsPath = fs::current_path() / std::move(targetPath);
+    /* If a user passes the --path parameter use it, otherwise try to guess migrations
+       path based on the pwd and if not found use the default path which is set
+       by the TINYTOM_MIGRATIONS_DIR macro. */
+    auto migrationsPath = isSet(path_)
+                          // User defined path
+                          ? getUserMigrationsPath()
+                          // Try to guess or use the default path
+                          : guessMigrationsPath();
 
     // Validate
     if (fs::exists(migrationsPath) && !fs::is_directory(migrationsPath))
@@ -235,6 +234,28 @@ fspath MigrationCommand::getMigrationsPath() const
                 .arg(migrationsPath.c_str()));
 
     return migrationsPath;
+}
+
+fspath MigrationCommand::getUserMigrationsPath() const
+{
+    auto targetPath = fspath(value(path_).toStdString()).lexically_normal();
+
+    return isSet(realpath_)
+            // The 'path' argument contains an absolute path
+            ? std::move(targetPath)
+            // The 'path' argument contains a relative path
+            : fs::current_path() / std::move(targetPath);
+}
+
+fspath MigrationCommand::guessMigrationsPath() const
+{
+    return TomUtils::guessPathForMakeByPwd(
+                application().getMigrationsPath(),
+                /* Models path needed to correctly guess the path in one special case,
+                   when this command is called from the make:model. */
+                isSet(from_model) ? std::make_optional(
+                                        std::cref(application().getModelsPath()))
+                                  : std::nullopt);
 }
 
 } // namespace Tom::Commands::Make

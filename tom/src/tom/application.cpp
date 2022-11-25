@@ -645,10 +645,13 @@ QList<QCommandLineOption> Application::getCommandOptionsSignature(const QString 
 
 fspath Application::initializePath(fspath &&path)
 {
-    if (path.is_relative())
-        path = std::filesystem::current_path() / std::move(path);
+    path = path.lexically_normal();
 
-    return path.make_preferred();
+    // Remove a trailing separator
+    if (!path.empty() && path.filename().empty())
+        path = path.parent_path();
+
+    return std::move(path);
 }
 
 std::shared_ptr<ConnectionResolverInterface>

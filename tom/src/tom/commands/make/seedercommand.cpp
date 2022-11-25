@@ -6,6 +6,7 @@
 #include "tom/application.hpp"
 #include "tom/exceptions/invalidargumenterror.hpp"
 #include "tom/tomconstants.hpp"
+#include "tom/tomutils.hpp"
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
@@ -18,11 +19,14 @@ using Orm::Constants::NAME;
 using StringUtils = Orm::Utils::String;
 
 using Tom::Constants::force;
+using Tom::Constants::from_model;
 using Tom::Constants::fullpath;
 using Tom::Constants::path_;
 using Tom::Constants::path_up;
 using Tom::Constants::realpath_;
 using Tom::Constants::seeder;
+
+using TomUtils = Tom::Utils;
 
 namespace Tom::Commands::Make
 {
@@ -53,6 +57,8 @@ QList<QCommandLineOption> SeederCommand::optionsSignature() const
 
         {{QChar('f'),
           force},      QStringLiteral("Overwrite the seeder class if already exists")},
+        // TODO tom, hidden/internal argument, don't show during help silverqx
+        {from_model,   QStringLiteral("Internal argument used when guessing a path")},
     };
 }
 
@@ -116,18 +122,14 @@ void SeederCommand::writeSeeder(const QString &className, fspath &&seedersPath) 
 
 fspath SeederCommand::getSeedersPath() const
 {
-    // Default location
-    if (!isSet(path_))
-        return application().getSeedersPath();
-
-    auto targetPath = value(path_).toStdString();
-
-    // The 'path' argument contains an absolute path
-    if (isSet(realpath_))
-        return {std::move(targetPath)};
-
-    // The 'path' argument contains a relative path
-    auto seedersPath = fs::current_path() / std::move(targetPath);
+    /* If a user passes the --path parameter use it, otherwise try to guess seeders
+       path based on the pwd and if not found use the default path which is set
+       by the TINYTOM_SEEDERS_DIR macro. */
+    auto seedersPath = isSet(path_)
+                       // User defined path
+                       ? getUserSeedersPath()
+                       // Try to guess or use the default path
+                       : guessSeedersPath();
 
     // Validate
     if (fs::exists(seedersPath) && !fs::is_directory(seedersPath))
@@ -136,6 +138,28 @@ fspath SeederCommand::getSeedersPath() const
                 .arg(seedersPath.c_str()));
 
     return seedersPath;
+}
+
+fspath SeederCommand::getUserSeedersPath() const
+{
+    auto targetPath = fspath(value(path_).toStdString()).lexically_normal();
+
+    return isSet(realpath_)
+            // The 'path' argument contains an absolute path
+            ? std::move(targetPath)
+            // The 'path' argument contains a relative path
+            : fs::current_path() / std::move(targetPath);
+}
+
+fspath SeederCommand::guessSeedersPath() const
+{
+    return TomUtils::guessPathForMakeByPwd(
+                application().getSeedersPath(),
+                /* Models path needed to correctly guess the path in one special case,
+                   when this command is called from the make:model. */
+                isSet(from_model) ? std::make_optional(
+                                        std::cref(application().getModelsPath()))
+                                  : std::nullopt);
 }
 
 } // namespace Tom::Commands::Make

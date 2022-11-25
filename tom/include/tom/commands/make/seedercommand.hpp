@@ -49,8 +49,12 @@ namespace Tom::Commands::Make
         void writeSeeder(const QString &className, fspath &&seedersPath) const;
 
         /*! Get the seeders path (either specified by the --path option or the default
-            location). */
+            path). */
         fspath getSeedersPath() const;
+        /*! Get the seeders path specified by the --path option. */
+        fspath getUserSeedersPath() const;
+        /*! Try to guess the seeders path based on the pwd or use the default path. */
+        fspath guessSeedersPath() const;
 
         /*! The seeder creator instance. */
         Support::SeederCreator m_creator {};

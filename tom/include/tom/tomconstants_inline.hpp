@@ -100,6 +100,7 @@ namespace Tom::Constants
     inline const QString table_             = QStringLiteral("table");
     inline const QString realpath_          = QStringLiteral("realpath");
     inline const QString fullpath           = QStringLiteral("fullpath");
+    inline const QString from_model         = QStringLiteral("from-model");
     // make:model
     inline const QString one_to_one           = QStringLiteral("one-to-one");
     inline const QString one_to_many          = QStringLiteral("one-to-many");

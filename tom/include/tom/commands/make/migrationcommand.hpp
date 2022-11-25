@@ -68,8 +68,12 @@ namespace Tom::Commands::Make
                             const QString &table, bool create) const;
 
         /*! Get the migrations path (either specified by the --path option or the default
-            location). */
+            path). */
         fspath getMigrationsPath() const;
+        /*! Get the migrations path specified by the --path option. */
+        fspath getUserMigrationsPath() const;
+        /*! Try to guess the migrations path based on the pwd or use the default path. */
+        fspath guessMigrationsPath() const;
 
         /*! The migration creator instance. */
         Support::MigrationCreator m_creator {};

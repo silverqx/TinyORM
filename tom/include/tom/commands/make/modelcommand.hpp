@@ -96,8 +96,13 @@ namespace Support
 
         /* Others */
         /*! Get the models path (either specified by the --path option or the default
-            location). */
+            path). */
         fspath getModelsPath() const;
+        /*! Get the models path specified by the --path option. */
+        fspath getUserModelsPath() const;
+        /*! Try to guess the models path based on the pwd or use the default path. */
+        fspath guessModelsPath() const;
+
         /*! Set of all cmd. option relation names. */
         const std::unordered_set<QString> &relationNames();
 
