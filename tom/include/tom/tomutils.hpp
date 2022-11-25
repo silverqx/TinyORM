@@ -8,6 +8,7 @@ TINY_SYSTEM_HEADER
 #include <QString>
 
 #include <filesystem>
+#include <optional>
 
 #include <orm/macros/commonnamespace.hpp>
 
