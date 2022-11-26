@@ -90,8 +90,8 @@ fspath Utils::guessPathForMakeByPwd(
 
     // Initialize
     auto pwd = fs::current_path();
-    const auto pwdStr = QString::fromWCharArray(pwd.c_str());
-    const auto defaultPathStr = QString::fromWCharArray(defaultPath.c_str());
+    const auto pwdStr = QString::fromStdString(pwd.string());
+    const auto defaultPathStr = QString::fromStdString(defaultPath.string());
 
     // Nothing to do, the pwd is already the defaultPath
     if (pwdStr.endsWith(defaultPathStr))
@@ -112,7 +112,7 @@ fspath Utils::guessPathForMakeByPwd(
        ../seeders. The areParentPathsEqual() condition restricts this special case
        because an user can set up absolutely different paths for migrations/seeders. */
     if (defaultModelsPath &&
-        pwdStr.endsWith(QString::fromWCharArray(defaultModelsPath->get().c_str())) &&
+        pwdStr.endsWith(QString::fromStdString(defaultModelsPath->get().string())) &&
         areParentPathsEqual(defaultPathList, *defaultModelsPath)
     )
         return pwd.parent_path() / defaultPathList.constLast().toStdString();
@@ -218,7 +218,7 @@ bool Utils::areParentPathsEqual(QStringList defaultPathList,
                                 const fspath &defaultModelsPath)
 {
     // Prepare
-    auto defaultModelsPathList = QString::fromWCharArray(defaultModelsPath.c_str())
+    auto defaultModelsPathList = QString::fromStdString(defaultModelsPath.string())
                                  .split(fspath::preferred_separator,
                                         Qt::SkipEmptyParts,
                                         Qt::CaseInsensitive);
