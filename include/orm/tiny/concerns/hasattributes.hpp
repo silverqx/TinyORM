@@ -1439,16 +1439,14 @@ namespace Orm::Tiny::Concerns
             /* Still check for the false value and log to the debug stream, but not if
                the value_ is null, because converting null QVariant will always return
                false and the QVariant type will be changed anyway. */
+#ifdef TINYORM_DEBUG
 #if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
             if (!value_.convert(metaType) && !value_.isNull())
 #else
             if (!value_.convert(metaType.id()) && !value_.isNull())
 #endif
                 // Log if the QVariant::convert() for the given attribute failed
-#ifdef TINYORM_DEBUG
                 logIfConvertAttributeFailed(key, castType, metaType, functionName);
-#else
-                ;
 #endif
 
             return value_;
