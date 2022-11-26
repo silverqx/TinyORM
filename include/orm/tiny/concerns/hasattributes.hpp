@@ -357,10 +357,12 @@ namespace Orm::Tiny::Concerns
         static void throwIfCanNotCastAttribute(
                     const QString &key, CastType castType, QMetaTypeDecl metaType,
                     const QVariant &value, const QString &functionName);
+#ifdef TINYORM_DEBUG
         /*! Log if the QVariant::convert() for the given attribute failed. */
         static void logIfConvertAttributeFailed(
                     const QString &key, CastType castType, QMetaTypeDecl metaType,
                     const QString &functionName);
+#endif
 
         /*! Return the string name of the given cast type. */
         static QString castTypeName(CastType type);
@@ -1622,6 +1624,7 @@ namespace Orm::Tiny::Concerns
                          castTypeName(castType), metaType.name(), functionName));
     }
 
+#ifdef TINYORM_DEBUG
     template<typename Derived, AllRelationsConcept ...AllRelations>
     void HasAttributes<Derived, AllRelations...>::logIfConvertAttributeFailed(
             const QString &key, const CastType castType, QMetaTypeDef metaType,
@@ -1639,6 +1642,7 @@ namespace Orm::Tiny::Concerns
                          TypeUtils::template classPureBasename<Derived>(),
                          castTypeName(castType), functionName);
     }
+#endif
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     QString
