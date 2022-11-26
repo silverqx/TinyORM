@@ -1436,17 +1436,21 @@ namespace Orm::Tiny::Concerns
             // Throw if the given attribute can not be converted to the given cast type
             throwIfCanNotCastAttribute(key, castType, metaType, value_, functionName);
 
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+            const auto &metaTypeId = metaType;
+#else
+            const auto metaTypeId = metaType.id();
+#endif
+
+#ifdef TINYORM_DEBUG
             /* Still check for the false value and log to the debug stream, but not if
                the value_ is null, because converting null QVariant will always return
                false and the QVariant type will be changed anyway. */
-#ifdef TINYORM_DEBUG
-#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
-            if (!value_.convert(metaType) && !value_.isNull())
-#else
-            if (!value_.convert(metaType.id()) && !value_.isNull())
-#endif
+            if (!value_.convert(metaTypeId) && !value_.isNull())
                 // Log if the QVariant::convert() for the given attribute failed
                 logIfConvertAttributeFailed(key, castType, metaType, functionName);
+#else
+            value_.convert(metaTypeId);
 #endif
 
             return value_;
