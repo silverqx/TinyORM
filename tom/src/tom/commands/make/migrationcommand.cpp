@@ -250,7 +250,7 @@ fspath MigrationCommand::getUserMigrationsPath() const
 
 fspath MigrationCommand::guessMigrationsPath() const
 {
-    return TomUtils::guessPathForMakeByPwd(
+    return guessPathForMakeByPwd(
                 application().getMigrationsPath(),
                 /* Models path needed to correctly guess the path in one special case,
                    when this command is called from the make:model. */

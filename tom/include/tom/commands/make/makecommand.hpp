@@ -39,6 +39,14 @@ namespace Tom::Commands::Make
                     const QString &type, const QString &className,
                     const QString &source);
 
+        /*! Try to guess a path for "make:" commands based on the pwd or use
+            the default path. */
+        static fspath
+        guessPathForMakeByPwd(const fspath &defaultPath,
+                              std::optional<
+                                  std::reference_wrapper<const fspath>
+                              > &&defaultModelsPath = std::nullopt);
+
     private:
         /*! Ensure that a file in the given folder doesn't already exist. */
         void throwIfModelAlreadyExists(
@@ -47,6 +55,10 @@ namespace Tom::Commands::Make
 
         /*! Ensure a directory exists. */
         static void ensureDirectoryExists(const fspath &path);
+
+        /*! Determine whether the parent paths are equal. */
+        static bool areParentPathsEqual(QStringList defaultPathList,
+                                        const fspath &defaultModelsPath);
     };
 
 } // namespace Tom::Commands::Make

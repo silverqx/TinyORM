@@ -11,7 +11,6 @@
 #include "tom/application.hpp"
 #include "tom/exceptions/invalidargumenterror.hpp"
 #include "tom/tomconstants.hpp"
-#include "tom/tomutils.hpp"
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
@@ -80,8 +79,6 @@ using Tom::Constants::with_up;
 using Tom::Constants::with_pivot;
 using Tom::Constants::with_pivot_up;
 using Tom::Constants::with_timestamps;
-
-using TomUtils = Tom::Utils;
 
 namespace Tom::Commands::Make
 {
@@ -534,7 +531,7 @@ fspath ModelCommand::getUserModelsPath() const
 
 fspath ModelCommand::guessModelsPath() const
 {
-    return TomUtils::guessPathForMakeByPwd(application().getModelsPath());
+    return guessPathForMakeByPwd(application().getModelsPath());
 }
 
 const std::unordered_set<QString> &ModelCommand::relationNames()
@@ -568,7 +565,7 @@ void ModelCommand::createSeeder(const QString &className) const
 {
     auto seederClassName = NOSPACE.arg(className, QStringLiteral("Seeder"));
 
-    // FUTURE tom, add hidden options support to the tom's parser, add --table option for the make:seeder command and pass singular table name for pivot models because currently the make:seeder command generates eg. taggeds table name (even if this table name is in the commented code), command to reproduce: tom make:model Tagged --pivot-model --seeder silverqx
+    // FUTURE tom, add --table option for the make:seeder command and pass singular table name for pivot models because currently the make:seeder command generates eg. taggeds table name (even if this table name is in the commented code), command to reproduce: tom make:model Tagged --pivot-model --seeder silverqx
 
     call(MakeSeeder, {boolCmd(force),
                       std::move(seederClassName),

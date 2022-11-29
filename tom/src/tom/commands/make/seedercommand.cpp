@@ -6,7 +6,6 @@
 #include "tom/application.hpp"
 #include "tom/exceptions/invalidargumenterror.hpp"
 #include "tom/tomconstants.hpp"
-#include "tom/tomutils.hpp"
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
@@ -25,8 +24,6 @@ using Tom::Constants::path_;
 using Tom::Constants::path_up;
 using Tom::Constants::realpath_;
 using Tom::Constants::seeder;
-
-using TomUtils = Tom::Utils;
 
 namespace Tom::Commands::Make
 {
@@ -154,7 +151,7 @@ fspath SeederCommand::getUserSeedersPath() const
 
 fspath SeederCommand::guessSeedersPath() const
 {
-    return TomUtils::guessPathForMakeByPwd(
+    return guessPathForMakeByPwd(
                 application().getSeedersPath(),
                 /* Models path needed to correctly guess the path in one special case,
                    when this command is called from the make:model. */
