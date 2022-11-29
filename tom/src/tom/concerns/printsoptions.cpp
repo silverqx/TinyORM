@@ -29,7 +29,7 @@ namespace Tom::Concerns
 
 /* public */
 
-PrintsOptions::PrintsOptions(const QList<QCommandLineOption> &options,
+PrintsOptions::PrintsOptions(const QList<CommandLineOption> &options,
                              const Concerns::InteractsWithIO &io)
     : m_options(options)
     , m_io(io)
@@ -114,6 +114,10 @@ int PrintsOptions::optionsMaxSize() const
 void PrintsOptions::printOptions(const int optionsMaxSize) const
 {
     for (const auto &option : options()) {
+
+        // Don't show hidden options
+        if (option.hidden())
+            continue;
 
         auto joinedOptions = createOptionNamesList(option).join(COMMA);
 

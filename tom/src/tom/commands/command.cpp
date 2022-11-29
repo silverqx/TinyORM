@@ -11,6 +11,7 @@
 
 #include "tom/application.hpp"
 #include "tom/tomconstants.hpp"
+#include "tom/tomutils.hpp"
 #include "tom/version.hpp"
 
 TINYORM_BEGIN_COMMON_NAMESPACE
@@ -20,6 +21,8 @@ using Orm::Constants::SPACE;
 
 using Tom::Constants::Help;
 using Tom::Constants::LongOption;
+
+using TomUtils = Tom::Utils;
 
 namespace Tom::Commands
 {
@@ -32,7 +35,7 @@ Command::Command(Application &application, QCommandLineParser &parser)
     , m_parser(parser)
 {}
 
-QList<QCommandLineOption> Command::optionsSignature() const
+QList<CommandLineOption> Command::optionsSignature() const
 {
     return {};
 }
@@ -45,15 +48,16 @@ int Command::run()
 
     parser.clearPositionalArguments();
 
-    parser.addOptions(optionsSignature());
+    parser.addOptions(TomUtils::convertToQCommandLineOptionList(optionsSignature()));
 
     if (!parser.parse(passedArguments()))
         showParserError(parser);
 
-    // Show help if --help argument was passed
+    // Show help if --help argument was passed, if it was, the code below will not run
     checkHelpArgument();
 
-    // Validate if all required positional arguments were passed on the command-line.
+    /* Validate if all required positional arguments were passed on the command-line,
+       shows an error wall and exit application if validation failed. */
     validateRequiredArguments();
 
     return EXIT_SUCCESS;

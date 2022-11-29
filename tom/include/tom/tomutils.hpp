@@ -5,12 +5,12 @@
 #include <orm/macros/systemheader.hpp>
 TINY_SYSTEM_HEADER
 
-#include <QString>
-
 #include <filesystem>
 #include <optional>
 
 #include <orm/macros/commonnamespace.hpp>
+
+#include "tom/types/commandlineoption.hpp"
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
@@ -44,6 +44,13 @@ namespace Tom
                               std::optional<
                                   std::reference_wrapper<const fspath>
                               > &&defaultModelsPath = std::nullopt);
+
+        /*! Convert our Tom::CommandLineOption list to the QCommandLineOption list. */
+        static QList<QCommandLineOption>
+        convertToQCommandLineOptionList(const QList<CommandLineOption> &options);
+        /*! Convert our Tom::CommandLineOption list to the QCommandLineOption list. */
+        static QList<QCommandLineOption>
+        convertToQCommandLineOptionList(QList<CommandLineOption> &&options);
 
     private:
         /*! Check whether all datetime parts are equal to the DateTimePrefix constant. */

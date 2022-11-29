@@ -178,6 +178,30 @@ fspath Utils::guessPathForMakeByPwd(
                                            .toStdString();
 }
 
+QList<QCommandLineOption>
+Utils::convertToQCommandLineOptionList(const QList<CommandLineOption> &options)
+{
+    QList<QCommandLineOption> result;
+    result.reserve(options.size());
+
+    for (const auto &option : options)
+        result << option;
+
+    return result;
+}
+
+QList<QCommandLineOption>
+Utils::convertToQCommandLineOptionList(QList<CommandLineOption> &&options)
+{
+    QList<QCommandLineOption> result;
+    result.reserve(options.size());
+
+    for (auto &&option : options)
+        result << std::move(option);
+
+    return result;
+}
+
 /* private */
 
 bool Utils::areDatetimePartsEqual(const QList<QStringView> &prefixParts)

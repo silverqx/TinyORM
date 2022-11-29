@@ -50,7 +50,7 @@ const std::vector<PositionalArgument> &SeedCommand::positionalArguments() const
     return cached;
 }
 
-QList<QCommandLineOption> SeedCommand::optionsSignature() const
+QList<CommandLineOption> SeedCommand::optionsSignature() const
 {
     return {
         {class_,       QStringLiteral("The class name of the root seeder"), class_up,

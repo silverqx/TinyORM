@@ -66,7 +66,7 @@ CompleteCommand::CompleteCommand(Application &application, QCommandLineParser &p
     : Command(application, parser)
 {}
 
-QList<QCommandLineOption> CompleteCommand::optionsSignature() const
+QList<CommandLineOption> CompleteCommand::optionsSignature() const
 {
     return {
         {word_,       QStringLiteral("The current word that is being "
@@ -393,6 +393,10 @@ int CompleteCommand::printGuessedLongOptions(
         const auto optionNamesSize = optionNames.size();
         Q_ASSERT(optionNamesSize == 1 || optionNamesSize == 2);
 
+        // Don't show hidden options
+        if (option.hidden())
+            continue;
+
         for (auto &&optionName : optionNames)
             if (optionName.size() > 1 &&
                 (printAll || optionName.startsWith(wordToGuess))
@@ -449,6 +453,10 @@ int CompleteCommand::printGuessedShortOptions(
         // Some validation
         Q_ASSERT(optionNames.size() == 1 || optionNames.size() == 2);
 
+        // Don't show hidden options
+        if (option.hidden())
+            continue;
+
         for (const auto &optionName : optionNames)
             // Short option
             if (optionName.size() == 1) {
@@ -494,7 +502,7 @@ QString CompleteCommand::getOptionDefaultValue(const QCommandLineOption &option)
             : TomUtils::defaultValueText(defaultValues.constFirst());
 }
 
-QList<QCommandLineOption>
+QList<CommandLineOption>
 CompleteCommand::getCommandOptionsSignature(const std::optional<QString> &command) const
 {
     if (!command)
@@ -532,6 +540,8 @@ QString CompleteCommand::getOptionValue(const QString &wordArg)
 
 bool CompleteCommand::commandHasLongOption(const QString &command, const QString &option)
 {
+    /* Currently used for the --database= option only, so checking for hidden options
+       doesn't make sense. */
     return ranges::contains(getCommandOptionsSignature(command), true,
                             [&option](const QCommandLineOption &optionItem)
     {

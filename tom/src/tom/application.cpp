@@ -34,6 +34,7 @@
 #include "tom/migrationrepository.hpp"
 #include "tom/migrator.hpp"
 #include "tom/terminal.hpp"
+#include "tom/tomutils.hpp"
 #ifndef TINYTOM_TESTS_CODE
 #  include "tom/version.hpp"
 #endif
@@ -108,6 +109,8 @@ using Tom::Constants::nointeraction;
 using Tom::Constants::quiet;
 using Tom::Constants::verbose;
 
+using TomUtils = Tom::Utils;
+
 namespace Tom {
 
 /* Adding/removing/disabling/enabling a command, add #include, using, factory in the
@@ -116,6 +119,17 @@ namespace Tom {
    a new namespace add it to the Application::namespaceNames().
    I have everything extracted and placed it to the bottom of application.cpp so it is
    nicely in one place. */
+
+/* The m_options list is used by the help, list, and complete commands. For help and
+   complete commands it's clear where they use the m_options list. The list command
+   uses it to show common options, before it "lists commands".
+   The m_options lists saves a copy of all options or only common options, as is needed
+   by the current operation or command that uses this m_options data member.
+   It's initialized in the Application::initializeParser() by the common options and
+   the remaining options will be prepended by the help command
+   in the HelpCommand::printOptionsSection().
+   The complete command uses another approach to obtain all options
+   in the CompleteCommand::getCommandOptionsSignature(). */
 
 /* public */
 
@@ -279,23 +293,27 @@ void Application::initializeParser(QCommandLineParser &parser)
     }));
 }
 
-const QList<QCommandLineOption> &
-Application::saveOptions(QList<QCommandLineOption> &&options)
+QList<QCommandLineOption>
+Application::saveOptions(QList<CommandLineOption> &&options)
 {
-    return m_options = std::move(options);
+    m_options = std::move(options);
+
+    // Result is passed to the QCommandLineParser::addOptions() so conversion is needed
+    return TomUtils::convertToQCommandLineOptionList(m_options);
 }
 
-QList<QCommandLineOption>
-Application::prependOptions(QList<QCommandLineOption> &&options)
+void Application::prependOptions(QList<CommandLineOption> &&options)
 {
+    // It contains only common options by default (initialized in the initializeParser())
     auto commonOptions = m_options;
 
-    m_options = options;
+    m_options.reserve(options.size() + commonOptions.size());
 
+    // Command options first
+    m_options = std::move(options);
+
+    // Common options after Command options
     m_options << std::move(commonOptions);
-
-    // Return only a new options because they are passed to the addOptions() method
-    return std::move(options);
 }
 
 /* Run command */
@@ -314,7 +332,7 @@ void Application::parseCommandLine()
 
     initializeEnvironment();
 
-    /* Command-line arguments are parsed now, the InteractsWithIO() base class can be
+    /* Command-line arguments are parsed now, so the InteractsWithIO() base class can be
        initialized. Nothing bad to divide it into two steps as output to the console
        is not needed until here. */
     Concerns::InteractsWithIO::initialize(m_parser);
@@ -337,7 +355,7 @@ void Application::initializeEnvironment()
         m_environment = std::move(environmentOpt);
 
     else if (auto environmentEnv = QString::fromUtf8(m_environmentEnvName).isEmpty()
-                                   ? ""
+                                   ? EMPTY
                                    : qEnvironmentVariable(m_environmentEnvName);
              !environmentEnv.isEmpty()
     )
@@ -637,7 +655,7 @@ const std::vector<std::tuple<int, int>> &Application::commandsIndexes() const
     return cached;
 }
 
-QList<QCommandLineOption> Application::getCommandOptionsSignature(const QString &command)
+QList<CommandLineOption> Application::getCommandOptionsSignature(const QString &command)
 {
     // Ownership of a unique_ptr()
     return createCommand(command, std::nullopt, false)->optionsSignature();

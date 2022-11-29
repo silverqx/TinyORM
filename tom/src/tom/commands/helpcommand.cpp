@@ -72,8 +72,10 @@ int HelpCommand::run()
 
 std::unique_ptr<Command> HelpCommand::createCommand(const QString &name) const
 {
-    const auto commandName =
-            application().getCommandName(name, Application::ShowErrorWall);
+    /* Get a command name on the base of a passed command name, guess logic will be
+       applied if needed, if the command name is only a partial name, eg. ma:mig. */
+    const auto commandName = application().getCommandName(name,
+                                                          Application::ShowErrorWall);
 
     return application().createCommand(commandName, std::nullopt, false);
 }
@@ -120,8 +122,7 @@ void HelpCommand::printDescriptionSection(const Command &command) const
 }
 
 void HelpCommand::printUsageSection(
-            const Command &command,
-            const std::vector<PositionalArgument> &arguments) const
+        const Command &command, const std::vector<PositionalArgument> &arguments) const
 {
     /* Everything after the option -- (double dash) is treated as positional arguments.
        [] means optional, <> means positional argument. If an argument is optional,
@@ -131,13 +132,27 @@ void HelpCommand::printUsageSection(
 
     comment(QStringLiteral("Usage:"));
 
-    QString usage(2, SPACE);
-    usage += command.name();
+    auto commandName = command.name();
+    const auto hasOptions = command.hasOptions();
+    const auto hasPositionalArguments = command.hasPositionalArguments();
 
-    if (command.hasOptions())
+    QString usage;
+    usage.reserve(2 + commandName.size() +
+                  (hasOptions ? 10 : 0) +
+                  (hasPositionalArguments
+                   ? 5 + (argumentsMaxSize(arguments) + 5) *
+                     static_cast<QString::size_type>(arguments.size())
+                   : 0) +
+                  // Some reserve, important if a command has only one argument
+                  10);
+
+    usage.fill(SPACE, 2);
+    usage += std::move(commandName);
+
+    if (hasOptions)
         usage += QLatin1String(" [options]");
 
-    if (command.hasPositionalArguments()) {
+    if (hasPositionalArguments) {
         usage += QLatin1String(" [--]");
 
         auto optionalCounter = 0;
@@ -185,13 +200,18 @@ void HelpCommand::printArgumentsSection(
 
 int HelpCommand::argumentsMaxSize(const std::vector<PositionalArgument> &arguments) const
 {
-    const auto it = std::ranges::max_element(arguments, std::less {},
-                                             [](const auto &argument)
+    static const auto cached = [&arguments]
     {
-        return argument.name.size();
-    });
+        const auto it = std::ranges::max_element(arguments, std::less {},
+                                                 [](const auto &argument)
+        {
+            return argument.name.size();
+        });
 
-    return static_cast<int>((*it).name.size());
+        return static_cast<int>((*it).name.size());
+    }();
+
+    return cached;
 }
 
 void HelpCommand::printArgumentDefaultValue(const PositionalArgument &argument) const
@@ -206,8 +226,8 @@ void HelpCommand::printArgumentDefaultValue(const PositionalArgument &argument) 
 
 int HelpCommand::printOptionsSection(const Command &command) const
 {
-    // Prepare the command parser to show command options
-    parser().addOptions(application().prependOptions(command.optionsSignature()));
+    // Prepare the m_options list, commands' options will be obtained from it
+    application().prependOptions(command.optionsSignature());
 
     return PrintsOptions::printOptionsSection(false);
 }

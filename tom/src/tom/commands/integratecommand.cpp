@@ -47,7 +47,7 @@ const std::vector<PositionalArgument> &IntegrateCommand::positionalArguments() c
     return cached;
 }
 
-QList<QCommandLineOption> IntegrateCommand::optionsSignature() const
+QList<CommandLineOption> IntegrateCommand::optionsSignature() const
 {
     return {
         {stdout_, QStringLiteral("Print content of the <info>integrate</info> command "

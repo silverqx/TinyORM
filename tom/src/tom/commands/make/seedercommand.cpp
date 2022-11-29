@@ -46,7 +46,7 @@ const std::vector<PositionalArgument> &SeederCommand::positionalArguments() cons
     return cached;
 }
 
-QList<QCommandLineOption> SeederCommand::optionsSignature() const
+QList<CommandLineOption> SeederCommand::optionsSignature() const
 {
     return {
         {path_,        QStringLiteral("The location where the seeder file should be "
@@ -57,8 +57,9 @@ QList<QCommandLineOption> SeederCommand::optionsSignature() const
 
         {{QChar('f'),
           force},      QStringLiteral("Overwrite the seeder class if already exists")},
-        // TODO tom, hidden/internal argument, don't show during help silverqx
-        {from_model,   QStringLiteral("Internal argument used when guessing a path")},
+        // Hidden option, used in the special case when called from the make:model
+        {from_model,   QStringLiteral("Internal argument used when guessing a path"),
+                       true},
     };
 }
 

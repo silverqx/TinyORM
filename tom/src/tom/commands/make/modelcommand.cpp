@@ -101,7 +101,7 @@ const std::vector<PositionalArgument> &ModelCommand::positionalArguments() const
     return cached;
 }
 
-QList<QCommandLineOption> ModelCommand::optionsSignature() const
+QList<CommandLineOption> ModelCommand::optionsSignature() const
 {
     return {
         // Call other commands

@@ -55,7 +55,7 @@ const std::vector<PositionalArgument> &MigrationCommand::positionalArguments() c
     return cached;
 }
 
-QList<QCommandLineOption> MigrationCommand::optionsSignature() const
+QList<CommandLineOption> MigrationCommand::optionsSignature() const
 {
     return {
         {create_,      QStringLiteral("The table name to be created"), create_up}, // Value
@@ -68,8 +68,9 @@ QList<QCommandLineOption> MigrationCommand::optionsSignature() const
 
         {{QChar('f'),
           force},      QStringLiteral("Overwrite the migration file if already exists")},
-        // TODO tom, hidden/internal argument, don't show during help silverqx
-        {from_model,   QStringLiteral("Internal argument used when guessing a path")},
+        // Hidden option, used in the special case when called from the make:model
+        {from_model,   QStringLiteral("Internal argument used when guessing a path"),
+                       true},
     };
 }
 

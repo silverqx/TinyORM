@@ -35,7 +35,7 @@ namespace Tom::Commands
         inline QString description() const override;
 
         /*! The signature of the console command. */
-        QList<QCommandLineOption> optionsSignature() const override;
+        QList<CommandLineOption> optionsSignature() const override;
 
         /*! Execute the console command. */
         int run() override;
@@ -67,7 +67,7 @@ namespace Tom::Commands
         static QString getOptionDefaultValue(const QCommandLineOption &option);
 
         /*! Get options signature for the given command. */
-        QList<QCommandLineOption>
+        QList<CommandLineOption>
         getCommandOptionsSignature(const std::optional<QString> &command) const;
 
         /*! Option type (long/short). */

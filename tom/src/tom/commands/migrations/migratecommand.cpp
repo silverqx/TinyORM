@@ -33,7 +33,7 @@ MigrateCommand::MigrateCommand(
     , m_migrator(std::move(migrator))
 {}
 
-QList<QCommandLineOption> MigrateCommand::optionsSignature() const
+QList<CommandLineOption> MigrateCommand::optionsSignature() const
 {
     return {
         {database_,     QStringLiteral("The database connection to use "

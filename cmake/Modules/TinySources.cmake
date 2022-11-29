@@ -317,6 +317,7 @@ function(tinytom_sources out_headers out_sources)
         tomconstants.hpp
         tomtypes.hpp
         tomutils.hpp
+        types/commandlineoption.hpp
         version.hpp
     )
 

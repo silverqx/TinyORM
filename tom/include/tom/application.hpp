@@ -18,6 +18,7 @@ TINY_SYSTEM_HEADER
 #include "tom/concerns/guesscommandname.hpp"
 #include "tom/concerns/interactswithio.hpp"
 #include "tom/tomtypes.hpp"
+#include "tom/types/commandlineoption.hpp"
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
@@ -156,12 +157,11 @@ namespace Concerns
         /*! Initialize the command-line parser. */
         void initializeParser(QCommandLineParser &parser);
         /*! Save a copy of application options passed to the Qt's parser. */
-        const QList<QCommandLineOption> &
-        saveOptions(QList<QCommandLineOption> &&options);
+        QList<QCommandLineOption>
+        saveOptions(QList<CommandLineOption> &&options);
 
         /*! Prepend command options before common options (used by the help command). */
-        QList<QCommandLineOption>
-        prependOptions(QList<QCommandLineOption> &&options);
+        void prependOptions(QList<CommandLineOption> &&options);
 
         /* Run command */
         /*! Parse current application's command-line. */
@@ -236,7 +236,7 @@ namespace Concerns
         const std::vector<std::tuple<int, int>> &commandsIndexes() const;
 
         /*! Get options signature for the given command. */
-        QList<QCommandLineOption> getCommandOptionsSignature(const QString &command);
+        QList<CommandLineOption> getCommandOptionsSignature(const QString &command);
 
         /*! Initialize the migrations or seeders path (prepend pwd and make_prefered). */
         static fspath initializePath(fspath &&path);
@@ -300,8 +300,8 @@ namespace Concerns
         /*! Is this input means interactive? */
         bool m_interactive = true;
 
-        /*! Application options. */
-        QList<QCommandLineOption> m_options {};
+        /*! Application options (more info at the cpp file beginning). */
+        QList<CommandLineOption> m_options {};
 
         /* Auto tests helpers */
 #ifdef TINYTOM_TESTS_CODE

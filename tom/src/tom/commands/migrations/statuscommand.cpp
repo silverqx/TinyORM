@@ -34,7 +34,7 @@ StatusCommand::StatusCommand(
     , m_migrator(std::move(migrator))
 {}
 
-QList<QCommandLineOption> StatusCommand::optionsSignature() const
+QList<CommandLineOption> StatusCommand::optionsSignature() const
 {
     return {
         {database_, QStringLiteral("The database connection to use "

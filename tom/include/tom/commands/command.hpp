@@ -7,6 +7,7 @@ TINY_SYSTEM_HEADER
 
 #include "tom/concerns/callscommands.hpp"
 #include "tom/concerns/interactswithio.hpp"
+#include "tom/types/commandlineoption.hpp"
 
 class QCommandLineOption;
 
@@ -60,7 +61,7 @@ namespace Tom::Commands
         inline virtual const std::vector<PositionalArgument> &
         positionalArguments() const;
         /*! The signature of the console command. */
-        virtual QList<QCommandLineOption> optionsSignature() const;
+        virtual QList<CommandLineOption> optionsSignature() const;
 
         /*! The console command help. */
         inline virtual QString help() const;

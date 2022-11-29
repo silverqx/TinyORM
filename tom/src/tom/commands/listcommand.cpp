@@ -39,7 +39,7 @@ const std::vector<PositionalArgument> &ListCommand::positionalArguments() const
     return cached;
 }
 
-QList<QCommandLineOption> ListCommand::optionsSignature() const
+QList<CommandLineOption> ListCommand::optionsSignature() const
 {
     return {
         {raw_, QStringLiteral("To output raw command list")},

@@ -26,7 +26,7 @@ WipeCommand::WipeCommand(Application &application, QCommandLineParser &parser)
     , Concerns::UsingConnection(connectionResolver())
 {}
 
-QList<QCommandLineOption> WipeCommand::optionsSignature() const
+QList<CommandLineOption> WipeCommand::optionsSignature() const
 {
     return {
         {database_,    QStringLiteral("The database connection to use "

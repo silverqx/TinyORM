@@ -61,7 +61,7 @@ namespace Support
         /*! The console command positional arguments signature. */
         const std::vector<PositionalArgument> &positionalArguments() const override;
         /*! The signature of the console command. */
-        QList<QCommandLineOption> optionsSignature() const override;
+        QList<CommandLineOption> optionsSignature() const override;
 
         /*! The console command help. */
         QString help() const override;

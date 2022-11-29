@@ -31,7 +31,7 @@ RollbackCommand::RollbackCommand(
     , m_migrator(std::move(migrator))
 {}
 
-QList<QCommandLineOption> RollbackCommand::optionsSignature() const
+QList<CommandLineOption> RollbackCommand::optionsSignature() const
 {
     return {
         {database_,   QStringLiteral("The database connection to use "

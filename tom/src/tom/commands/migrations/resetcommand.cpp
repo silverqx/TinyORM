@@ -29,7 +29,7 @@ ResetCommand::ResetCommand(
     , m_migrator(std::move(migrator))
 {}
 
-QList<QCommandLineOption> ResetCommand::optionsSignature() const
+QList<CommandLineOption> ResetCommand::optionsSignature() const
 {
     return {
         {database_,   QStringLiteral("The database connection to use "

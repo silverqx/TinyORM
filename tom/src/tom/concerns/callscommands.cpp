@@ -57,8 +57,11 @@ CallsCommands::createCommandLineArguments(
        by a command name to execute, then obtain common arguments which were passed
        on the current command-line, and as the last thing append passed arguments. */
 
+    QStringList newArguments;
+    newArguments.reserve(currentArguments.size() + arguments.size());
+
     // Absolute path of the exe name
-    QStringList newArguments {std::move(currentArguments.first())};
+    newArguments << std::move(currentArguments.first());
     // Command name
     newArguments << command;
 
@@ -70,7 +73,7 @@ CallsCommands::createCommandLineArguments(
     currentArguments.removeFirst();
 #endif
 
-    // Get common command-line arguments from the current command-line arguments
+    // Get common allowed command-line arguments from the current command-line arguments
     newArguments << getCommonArguments(std::move(currentArguments));
 
     // Append passed arguments
@@ -93,9 +96,10 @@ QStringList CallsCommands::getCommonArguments(QStringList &&arguments) const
     static const std::unordered_set<QString> allowed {
         o(ansi),
         o(noansi),
-        o(nointeraction), "-n",
-        o(quiet),         "-q",
-        o(verbose),       "-v", "-vv", "-vvv",
+        o(nointeraction), QLatin1String("-n"),
+        o(quiet),         QLatin1String("-q"),
+        o(verbose),       QLatin1String("-v"), QLatin1String("-vv"),
+                          QLatin1String("-vvv"),
     };
 
     return ranges::views::move(arguments)

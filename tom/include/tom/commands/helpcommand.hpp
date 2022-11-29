@@ -44,7 +44,7 @@ namespace Tom::Commands
         std::unique_ptr<Command> createCommand(const QString &name) const;
         /*! Validate if all required positional arguments are after optional arguments. */
         bool validateRequiredArguments(
-                    const std::vector<PositionalArgument> &arguments) const;
+                const std::vector<PositionalArgument> &arguments) const;
 
         /*! Print description section. */
         void printDescriptionSection(const Command &command) const;
@@ -54,7 +54,7 @@ namespace Tom::Commands
 
         /*! Print positional arguments section. */
         void printArgumentsSection(
-                    const std::vector<PositionalArgument> &arguments) const;
+                const std::vector<PositionalArgument> &arguments) const;
         /*! Get max. positional argument size in all command arguments. */
         int argumentsMaxSize(const std::vector<PositionalArgument> &arguments) const;
         /*! Print a positional's argument default value part. */

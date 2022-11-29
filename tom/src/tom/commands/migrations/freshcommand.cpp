@@ -38,7 +38,7 @@ FreshCommand::FreshCommand(
     , m_migrator(std::move(migrator))
 {}
 
-QList<QCommandLineOption> FreshCommand::optionsSignature() const
+QList<CommandLineOption> FreshCommand::optionsSignature() const
 {
     return {
         {database_,     QStringLiteral("The database connection to use "

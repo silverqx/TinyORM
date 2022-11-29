@@ -26,7 +26,7 @@ InstallCommand::InstallCommand(
     , m_repository(std::move(repository))
 {}
 
-QList<QCommandLineOption> InstallCommand::optionsSignature() const
+QList<CommandLineOption> InstallCommand::optionsSignature() const
 {
     return {
         {database_, QStringLiteral("The database connection to use "

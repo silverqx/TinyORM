@@ -39,7 +39,7 @@ RefreshCommand::RefreshCommand(
     , m_migrator(std::move(migrator))
 {}
 
-QList<QCommandLineOption> RefreshCommand::optionsSignature() const
+QList<CommandLineOption> RefreshCommand::optionsSignature() const
 {
     return {
         {database_,    QStringLiteral("The database connection to use "
