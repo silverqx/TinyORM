@@ -32,7 +32,7 @@ namespace Concerns
         using Command = Commands::Command;
 
     public:
-        /*! Constructor (int param. to avoid interpret it as copy ctor). */
+        /*! Constructor (int param. to avoid interpreting it as a copy ctor). */
         Confirmable(Command &command, int /*unused*/);
         /*! Virtual destructor. */
         inline virtual ~Confirmable() = 0;
