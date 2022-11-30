@@ -28,7 +28,7 @@ bool Confirmable::confirmToProceed(const QString &warning,
     if (!shouldConfirm)
         return true;
 
-    if (const auto &parser = m_command.get().application().parser();
+    if (const auto &parser = m_command.get().parser();
         parser.optionNames().contains(force) && parser.isSet(force)
     )
         return true;

@@ -19,7 +19,14 @@ namespace Orm
     class DatabaseConnection;
 }
 
-namespace Tom::Commands
+namespace Tom
+{
+namespace Concerns
+{
+    class Confirmable;
+}
+
+namespace Commands
 {
 
     /*! Positional argument item for a console command. */
@@ -42,6 +49,9 @@ namespace Tom::Commands
                     public Concerns::InteractsWithIO
     {
         Q_DISABLE_COPY(Command)
+
+        // To access parser()
+        friend Concerns::Confirmable;
 
         /*! Alias for the ConnectionResolverInterface. */
         using ConnectionResolverInterface = Orm::ConnectionResolverInterface;
@@ -173,7 +183,8 @@ namespace Tom::Commands
         return m_application;
     }
 
-} // namespace Tom::Commands
+} // namespace Commands
+} // namespace Tom
 
 TINYORM_END_COMMON_NAMESPACE
 
