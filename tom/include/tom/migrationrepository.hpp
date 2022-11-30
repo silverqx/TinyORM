@@ -76,7 +76,7 @@ namespace Tom
         /*! Resolve the database connection instance. */
         DatabaseConnection &connection() const;
         /*! Set the connection name to use in the repository. */
-        inline void setConnection(const QString &name);
+        inline void setConnection(const QString &name) noexcept;
 
     protected:
         /*! Get a query builder for the migration table. */
@@ -95,7 +95,7 @@ namespace Tom
 
     /* public */
 
-    void MigrationRepository::setConnection(const QString &name)
+    void MigrationRepository::setConnection(const QString &name) noexcept
     {
         m_connection = name;
     }
