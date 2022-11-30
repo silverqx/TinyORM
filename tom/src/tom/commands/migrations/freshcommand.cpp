@@ -66,7 +66,7 @@ int FreshCommand::run()
 
     // Database connection to use (multiple connections supported)
     return usingConnections(values(database_), isDebugVerbosity(),
-                           [this](const QString &database)
+                            [this](const QString &database)
     {
         auto databaseCmd = longOption(database_, database);
 

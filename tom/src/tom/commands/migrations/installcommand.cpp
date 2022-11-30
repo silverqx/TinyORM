@@ -41,7 +41,7 @@ int InstallCommand::run()
 
     // Database connection to use (multiple connections supported)
     return usingConnections(values(database_), isDebugVerbosity(), *m_repository,
-                           [this]
+                            [this]
     {
         m_repository->createRepository();
 

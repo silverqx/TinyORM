@@ -50,7 +50,7 @@ int WipeCommand::run()
 
     // Database connection to use (multiple connections supported)
     return usingConnections(values(database_), isDebugVerbosity(),
-                           [this](const QString &database)
+                            [this](const QString &database)
     {
         if (isSet(drop_views)) {
             dropAllViews(database);

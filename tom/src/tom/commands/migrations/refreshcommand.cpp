@@ -66,7 +66,7 @@ int RefreshCommand::run()
 
     // Database connection to use (multiple connections supported)
     return usingConnections(values(database_), isDebugVerbosity(),
-                           [this](const QString &database)
+                            [this](const QString &database)
     {
         // Database connection to use
         auto databaseCmd = longOption(database_, database);
