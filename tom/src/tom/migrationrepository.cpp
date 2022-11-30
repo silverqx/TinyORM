@@ -114,7 +114,7 @@ void MigrationRepository::createRepository() const
 
     /* The migrations table is responsible for keeping track of which migrations have
        actually run for the application. We'll create the table to hold the migration
-      file paths as well as the batch ID. */
+       file paths as well as the batch ID. */
     schema->create(m_table, [](Blueprint &table)
     {
         table.id();
