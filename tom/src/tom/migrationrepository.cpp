@@ -109,13 +109,12 @@ int MigrationRepository::getLastBatchNumber() const
 
 void MigrationRepository::createRepository() const
 {
-    // Ownership of a unique_ptr()
-    const auto schema = connection().getSchemaBuilder();
-
     /* The migrations table is responsible for keeping track of which migrations have
        actually run for the application. We'll create the table to hold the migration
        file paths as well as the batch ID. */
-    schema->create(m_table, [](Blueprint &table)
+
+    // Ownership of a unique_ptr()
+    connection().getSchemaBuilder()->create(m_table, [](Blueprint &table)
     {
         table.id();
 
