@@ -17,6 +17,8 @@
 TINYORM_BEGIN_COMMON_NAMESPACE
 
 using Orm::ConnectionResolverInterface;
+
+using Orm::Constants::COMMA_C;
 using Orm::Constants::SPACE;
 
 using Tom::Constants::Help;
@@ -211,6 +213,7 @@ QStringList Command::values(const QString &name) const
     auto values = parser().values(name);
 
     QStringList valuesSplitted;
+    valuesSplitted.reserve(values.size() + commasCount(values));
 
     // Allow to escape , char using \,
     static const QRegularExpression regex(R"((?<!\\),)");
@@ -389,6 +392,16 @@ void Command::validateRequiredArguments() const
               .arg(arguments.at(static_cast<RequiredStdSizeType>(passedArgsSize)).name));
 
     application().exitApplication(EXIT_FAILURE);
+}
+
+QStringList::size_type Command::commasCount(const QStringList &values)
+{
+    QStringList::size_type result = 0;
+
+    for (const auto &value : values)
+        result += value.count(COMMA_C);
+
+    return result;
 }
 
 } // namespace Tom::Commands

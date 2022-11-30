@@ -146,6 +146,10 @@ namespace Tom::Commands
         void showParserError(const QCommandLineParser &parser) const;
         /*! Validate if all required positional arguments were passed on the cmd. line. */
         void validateRequiredArguments() const;
+
+        /*! Count the number of commas in the values list for reserve. */
+        static QStringList::size_type
+        commasCount(const QStringList &values);
     };
 
     /* public */
