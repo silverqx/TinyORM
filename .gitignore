@@ -94,6 +94,7 @@ conf.pri
 /TODOS.silverqx.txt
 /compile_commands.json
 /database/
+/examples/tom/database/
 /exports*.txt
 /exports.xlsx
 /todos.csv
