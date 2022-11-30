@@ -26,6 +26,9 @@ namespace Commands::Migrations
     {
         Q_DISABLE_COPY(UninstallCommand)
 
+        /*! Alias for the Command. */
+        using Command = Commands::Command;
+
     public:
         /*! Constructor. */
         UninstallCommand(Application &application, QCommandLineParser &parser,
