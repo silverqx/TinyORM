@@ -19,7 +19,7 @@ namespace Tom
 namespace Commands::Migrations
 {
 
-    /*! Rollback the last database migration. */
+    /*! Rollback and re-run all migrations. */
     class RefreshCommand : public Command,
                            public Concerns::Confirmable,
                            public Concerns::UsingConnection

@@ -19,7 +19,7 @@ namespace Tom
 namespace Commands::Migrations
 {
 
-    /*! Rollback the last database migration/s. */
+    /*! Drop all tables and re-run all migrations. */
     class FreshCommand : public Command,
                          public Concerns::Confirmable,
                          public Concerns::UsingConnection

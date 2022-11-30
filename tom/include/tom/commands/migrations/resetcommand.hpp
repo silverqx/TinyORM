@@ -19,7 +19,7 @@ namespace Tom
 namespace Commands::Migrations
 {
 
-    /*! Rollback the last database migration. */
+    /*! Rollback all database migrations. */
     class ResetCommand : public Command,
                          public Concerns::Confirmable,
                          public Concerns::UsingConnection
