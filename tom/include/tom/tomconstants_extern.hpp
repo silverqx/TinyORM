@@ -129,6 +129,8 @@ namespace Tom::Constants
     SHAREDLIB_EXPORT extern const QString preserve_order;
     // migrate:refresh
     SHAREDLIB_EXPORT extern const QString step_migrate;
+    // migrate:uninstall
+    SHAREDLIB_EXPORT extern const QString reset;
     // integrate
     SHAREDLIB_EXPORT extern const QString stdout_;
 
@@ -164,6 +166,7 @@ namespace Tom::Constants
     SHAREDLIB_EXPORT extern const QString MigrateRefresh;
     SHAREDLIB_EXPORT extern const QString MigrateReset;
     SHAREDLIB_EXPORT extern const QString MigrateStatus;
+    SHAREDLIB_EXPORT extern const QString MigrateUninstall;
     SHAREDLIB_EXPORT extern const QString Integrate;
 
 } // namespace Tom::Constants

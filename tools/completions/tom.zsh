@@ -21,6 +21,7 @@ __tom_commands() {
         'migrate\:reset:Rollback all database migrations'
         'migrate\:rollback:Rollback the last database migration'
         'migrate\:status:Show the status of each migration'
+        'migrate\:uninstall:Drop the migration repository with an optional reset'
     )
 
     _describe -t commands command commands
@@ -287,6 +288,14 @@ _tom() {
             _arguments \
                 $common_options \
                 '--database=[The database connection to use]:connection:__tom_connections'
+            ;;
+
+        migrate:uninstall)
+            _arguments \
+                $common_options \
+                '--database=[The database connection to use]:connection:__tom_connections' \
+                '--force[Force the operation to run when in production]' \
+                '--pretend[Dump the SQL queries that would be run]'
             ;;
     esac
 }

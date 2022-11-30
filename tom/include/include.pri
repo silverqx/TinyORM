@@ -43,6 +43,7 @@ headersList += \
     $$PWD/tom/commands/migrations/resetcommand.hpp \
     $$PWD/tom/commands/migrations/rollbackcommand.hpp \
     $$PWD/tom/commands/migrations/statuscommand.hpp \
+    $$PWD/tom/commands/migrations/uninstallcommand.hpp \
     $$PWD/tom/commands/stubs/integratestubs.hpp \
     $$PWD/tom/concerns/callscommands.hpp \
     $$PWD/tom/concerns/confirmable.hpp \

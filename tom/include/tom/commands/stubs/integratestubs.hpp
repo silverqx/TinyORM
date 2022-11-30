@@ -144,7 +144,8 @@ _tom()
     # provide all options
     commands='env help inspire integrate list migrate db:seed db:wipe
         make:migration make:seeder migrate:fresh migrate:install
-        migrate:refresh migrate:reset migrate:rollback migrate:status'
+        migrate:refresh migrate:reset migrate:rollback migrate:status
+        migrate:uninstall'
 
     namespaces='global db make migrate namespaced all'
 
@@ -216,6 +217,7 @@ __tom_commands() {
         'migrate\:reset:Rollback all database migrations'
         'migrate\:rollback:Rollback the last database migration'
         'migrate\:status:Show the status of each migration'
+        'migrate\:uninstall:Drop the migration repository with an optional reset'
     )
 
     _describe -t commands command commands
@@ -444,6 +446,14 @@ _tom() {
             _arguments \
                 $common_options \
                 '--database=[The database connection to use]:connection:__tom_connections'
+            ;;
+
+        migrate:uninstall)
+            _arguments \
+                $common_options \
+                '--database=[The database connection to use]:connection:__tom_connections' \
+                '--force[Force the operation to run when in production]' \
+                '--pretend[Dump the SQL queries that would be run]'
             ;;
     esac
 }

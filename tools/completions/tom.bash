@@ -104,7 +104,8 @@ _tom()
     # provide all options
     commands='env help inspire integrate list migrate db:seed db:wipe
         make:migration make:model make:seeder migrate:fresh migrate:install
-        migrate:refresh migrate:reset migrate:rollback migrate:status'
+        migrate:refresh migrate:reset migrate:rollback migrate:status
+        migrate:uninstall'
 
     namespaces='global db make migrate namespaced all'
 

@@ -31,6 +31,7 @@ sourcesList += \
     $$PWD/tom/commands/migrations/resetcommand.cpp \
     $$PWD/tom/commands/migrations/rollbackcommand.cpp \
     $$PWD/tom/commands/migrations/statuscommand.cpp \
+    $$PWD/tom/commands/migrations/uninstallcommand.cpp \
     $$PWD/tom/concerns/callscommands.cpp \
     $$PWD/tom/concerns/confirmable.cpp \
     $$PWD/tom/concerns/guesscommandname.cpp \

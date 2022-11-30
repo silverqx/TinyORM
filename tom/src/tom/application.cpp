@@ -30,6 +30,7 @@
 #include "tom/commands/migrations/resetcommand.hpp"
 #include "tom/commands/migrations/rollbackcommand.hpp"
 #include "tom/commands/migrations/statuscommand.hpp"
+#include "tom/commands/migrations/uninstallcommand.hpp"
 #include "tom/exceptions/runtimeerror.hpp"
 #include "tom/migrationrepository.hpp"
 #include "tom/migrator.hpp"
@@ -74,6 +75,7 @@ using Tom::Commands::Migrations::RefreshCommand;
 using Tom::Commands::Migrations::ResetCommand;
 using Tom::Commands::Migrations::RollbackCommand;
 using Tom::Commands::Migrations::StatusCommand;
+using Tom::Commands::Migrations::UninstallCommand;
 
 using Tom::Constants::Complete;
 using Tom::Constants::DbSeed;
@@ -94,6 +96,7 @@ using Tom::Constants::MigrateRefresh;
 using Tom::Constants::MigrateReset;
 using Tom::Constants::MigrateRollback;
 using Tom::Constants::MigrateStatus;
+using Tom::Constants::MigrateUninstall;
 using Tom::Constants::NsAll;
 using Tom::Constants::NsDb;
 using Tom::Constants::NsGlobal;
@@ -502,6 +505,10 @@ Application::createCommand(const QString &command, const OptionalParserRef parse
     if (command == MigrateStatus)
         return std::make_unique<StatusCommand>(*this, parserRef, createMigrator());
 
+    if (command == MigrateUninstall)
+        return std::make_unique<UninstallCommand>(*this, parserRef,
+                                                  createMigrationRepository());
+
     if (command == Integrate)
         return std::make_unique<IntegrateCommand>(*this, parserRef);
 
@@ -603,8 +610,8 @@ Application::commandNames() const
         // make
         MakeMigration, MakeModel, /*MakeProject,*/ MakeSeeder,
         // migrate
-        MigrateFresh, MigrateInstall, MigrateRefresh, MigrateReset, MigrateRollback,
-        MigrateStatus,
+        MigrateFresh,  MigrateInstall,  MigrateRefresh, MigrateReset, MigrateRollback,
+        MigrateStatus, MigrateUninstall
     };
 
     return cached;
@@ -647,9 +654,9 @@ const std::vector<std::tuple<int, int>> &Application::commandsIndexes() const
         {0,   7}, // global
         {7,   9}, // db
         {9,  12}, // make
-        {12, 18}, // migrate
-        {7,  18}, // namespaced
-        {0,  18}, // all
+        {12, 19}, // migrate
+        {7,  19}, // namespaced
+        {0,  19}, // all
     };
 
     return cached;

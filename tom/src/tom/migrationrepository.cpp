@@ -124,6 +124,12 @@ void MigrationRepository::createRepository() const
     });
 }
 
+void MigrationRepository::dropRepositoryIfExists() const
+{
+    // Ownership of a unique_ptr()
+    connection().getSchemaBuilder()->dropIfExists(m_table);
+}
+
 bool MigrationRepository::repositoryExists() const
 {
     // Ownership of a unique_ptr()

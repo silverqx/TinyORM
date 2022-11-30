@@ -296,6 +296,7 @@ function(tinytom_sources out_headers out_sources)
         commands/migrations/resetcommand.hpp
         commands/migrations/rollbackcommand.hpp
         commands/migrations/statuscommand.hpp
+        commands/migrations/uninstallcommand.hpp
         commands/stubs/integratestubs.hpp
         concerns/callscommands.hpp
         concerns/confirmable.hpp
@@ -359,6 +360,7 @@ function(tinytom_sources out_headers out_sources)
         commands/migrations/resetcommand.cpp
         commands/migrations/rollbackcommand.cpp
         commands/migrations/statuscommand.cpp
+        commands/migrations/uninstallcommand.cpp
         concerns/callscommands.cpp
         concerns/confirmable.cpp
         concerns/guesscommandname.cpp

@@ -68,6 +68,8 @@ namespace Tom
         int getLastBatchNumber() const;
         /*! Create the migration repository data store. */
         void createRepository() const;
+        /*! Drop the migration repository data store if exists. */
+        void dropRepositoryIfExists() const;
         /*! Determine if the migration repository exists. */
         bool repositoryExists() const;
         /*! Delete the migration repository data store. */

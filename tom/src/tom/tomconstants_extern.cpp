@@ -117,6 +117,8 @@ namespace Tom::Constants
     const QString preserve_order       = QStringLiteral("preserve-order");
     // migrate:refresh
     const QString step_migrate         = QStringLiteral("step-migrate");
+    // migrate:uninstall
+    const QString reset                = QStringLiteral("reset");
     // integrate
     const QString stdout_              = QStringLiteral("stdout");
 
@@ -134,25 +136,26 @@ namespace Tom::Constants
     const QString ShZsh        = QStringLiteral("zsh");
 
     // Command names
-    const QString Complete        = QStringLiteral("complete");
-    const QString DbSeed          = QStringLiteral("db:seed");
-    const QString DbWipe          = QStringLiteral("db:wipe");
-    const QString Inspire         = QStringLiteral("inspire");
-    const QString List            = QStringLiteral("list");
-    const QString &Env            = Tom::Constants::env;
-    const QString &Help           = Tom::Constants::help;
-    const QString MakeMigration   = QStringLiteral("make:migration");
-    const QString MakeModel       = QStringLiteral("make:model");
-    const QString MakeProject     = QStringLiteral("make:project");
-    const QString MakeSeeder      = QStringLiteral("make:seeder");
-    const QString &Migrate        = Tom::Constants::NsMigrate;
-    const QString MigrateFresh    = QStringLiteral("migrate:fresh");
-    const QString MigrateInstall  = QStringLiteral("migrate:install");
-    const QString MigrateRollback = QStringLiteral("migrate:rollback");
-    const QString MigrateRefresh  = QStringLiteral("migrate:refresh");
-    const QString MigrateReset    = QStringLiteral("migrate:reset");
-    const QString MigrateStatus   = QStringLiteral("migrate:status");
-    const QString Integrate       = QStringLiteral("integrate");
+    const QString Complete         = QStringLiteral("complete");
+    const QString DbSeed           = QStringLiteral("db:seed");
+    const QString DbWipe           = QStringLiteral("db:wipe");
+    const QString Inspire          = QStringLiteral("inspire");
+    const QString List             = QStringLiteral("list");
+    const QString &Env             = Tom::Constants::env;
+    const QString &Help            = Tom::Constants::help;
+    const QString MakeMigration    = QStringLiteral("make:migration");
+    const QString MakeModel        = QStringLiteral("make:model");
+    const QString MakeProject      = QStringLiteral("make:project");
+    const QString MakeSeeder       = QStringLiteral("make:seeder");
+    const QString &Migrate         = Tom::Constants::NsMigrate;
+    const QString MigrateFresh     = QStringLiteral("migrate:fresh");
+    const QString MigrateInstall   = QStringLiteral("migrate:install");
+    const QString MigrateRollback  = QStringLiteral("migrate:rollback");
+    const QString MigrateRefresh   = QStringLiteral("migrate:refresh");
+    const QString MigrateReset     = QStringLiteral("migrate:reset");
+    const QString MigrateStatus    = QStringLiteral("migrate:status");
+    const QString MigrateUninstall = QStringLiteral("migrate:uninstall");
+    const QString Integrate        = QStringLiteral("integrate");
 
 } // namespace Tom::Constants
 
