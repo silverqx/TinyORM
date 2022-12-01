@@ -3,11 +3,6 @@
 # 3.22 - because is used CMP0127: cmake_dependent_option() supports full Condition Syntax
 cmake_minimum_required(VERSION 3.22...3.25 FATAL_ERROR)
 
-# My logic doesn't work well with this new msvc debug info related policy, so force old
-# until I fix it, currently, with the new it doesn't add the /Z7 to the CXX compiler flags
-# so ccache will miss every time.
-cmake_policy(SET CMP0141 OLD)
-
 list(APPEND CMAKE_MODULE_PATH
     "${CMAKE_CURRENT_SOURCE_DIR}/cmake/CommonModules"
     "${CMAKE_CURRENT_SOURCE_DIR}/cmake/Modules"

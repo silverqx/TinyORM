@@ -378,13 +378,27 @@ function(tiny_fix_ccache)
         set(CMAKE_DISABLE_PRECOMPILE_HEADERS ON CACHE BOOL ${help_string} FORCE)
     endif()
 
-    # Replace /Zi by /Z7 by the build config type
+    # Below fixes are only needed for the MSVC
+    if(NOT MSVC)
+        return()
+    endif()
+
+    # Support the MSVC debug information format flags selected by an abstraction added
+    # in the CMake 3.25.
+    set(wasCcacheFixed FALSE)
+    tiny_fix_ccache_msvc_325(wasCcacheFixed)
+    if(wasCcacheFixed)
+        return()
+    endif()
+
+    # Replace /Zi by /Z7 by the build config type, for the CMake <=3.24
     if(CMAKE_BUILD_TYPE STREQUAL "Debug")
         tiny_replace_Zi_by_Z7_for(CMAKE_CXX_FLAGS_DEBUG
             "Flags used by the CXX compiler during DEBUG builds.")
         tiny_replace_Zi_by_Z7_for(CMAKE_C_FLAGS_DEBUG
             "Flags used by the C compiler during DEBUG builds.")
 
+    # This should never happen, but I leave it here because it won't hurt anything
     elseif(CMAKE_BUILD_TYPE STREQUAL "Release")
         tiny_replace_Zi_by_Z7_for(CMAKE_CXX_FLAGS_RELEASE
             "Flags used by the CXX compiler during RELEASE builds.")
@@ -397,5 +411,36 @@ function(tiny_fix_ccache)
         tiny_replace_Zi_by_Z7_for(CMAKE_C_FLAGS_RELWITHDEBINFO
             "Flags used by the C compiler during RELWITHDEBINFO builds.")
     endif()
+
+endfunction()
+
+# Support the MSVC debug information format flags selected by an abstraction added
+# in the CMake 3.25.
+function(tiny_fix_ccache_msvc_325 out_variable)
+
+    if(CMAKE_VERSION VERSION_GREATER_EQUAL "3.25")
+
+        cmake_policy(GET CMP0141 policy_cmp0141)
+        if(policy_cmp0141 STREQUAL "NEW")
+            get_property(help_string CACHE CMAKE_MSVC_DEBUG_INFORMATION_FORMAT
+                PROPERTY HELPSTRING
+            )
+            if(NOT help_string)
+                set(help_string
+                    "Default value for MSVC_DEBUG_INFORMATION_FORMAT of targets."
+                )
+            endif()
+
+            set(CMAKE_MSVC_DEBUG_INFORMATION_FORMAT
+                "$<$<CONFIG:Debug,RelWithDebInfo>:Embedded>"
+                CACHE BOOL ${help_string} FORCE
+            )
+
+            set(${out_variable} TRUE PARENT_SCOPE)
+            return()
+        endif()
+    endif()
+
+    set(${out_variable} FALSE PARENT_SCOPE)
 
 endfunction()
