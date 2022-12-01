@@ -34,4 +34,5 @@ Clear-Host
 
 E:\dotfiles\bin\Lint-TinyORM.ps1 `
     -BuildPath '<your_path_here>\TinyOrm\TinyOrm-builds-cmake\build-lint-qt5' `
-    -QtVersion 5 @PSBoundParameters
+    -QtVersion 5 @PSBoundParameters `
+    -Verbose:$VerbosePreference

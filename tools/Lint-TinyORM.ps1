@@ -105,7 +105,8 @@ if (-not (Test-Path $BuildPath\compile_commands.json)) {
         -D CMAKE_EXPORT_PACKAGE_REGISTRY:BOOL=OFF
 }
 
-cmake --build $BuildPath --target all
+cmake --build $BuildPath --target all `
+    $($VerbosePreference -eq 'SilentlyContinue' ? '' : '--verbose')
 
 if (-not $?) {
     Write-Host
