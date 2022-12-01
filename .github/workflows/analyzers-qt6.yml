@@ -61,6 +61,10 @@ jobs:
         echo 'VCPKG_DEFAULT_TRIPLET=x64-linux-dynamic' >> $GITHUB_ENV
         echo 'VCPKG_MAX_CONCURRENCY=2' >> $GITHUB_ENV
 
+    - name: CMake print version
+      run: |
+        cmake --version
+
     - name: TinyORM cmake configure (clang15-cmake-debug)
       run: >-
         cmake

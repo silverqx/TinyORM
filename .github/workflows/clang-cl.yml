@@ -197,6 +197,10 @@ jobs:
       with:
         arch: x64
 
+    - name: CMake print version
+      run: |
+        cmake --version
+
     - name: TinyORM cmake configure (clang-cl-cmake-debug)
       run: >-
         cmake
