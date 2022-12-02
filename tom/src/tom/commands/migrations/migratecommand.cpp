@@ -91,14 +91,14 @@ void MigrateCommand::prepareDatabase(const QString &database) const
     if (!m_migrator->repositoryExists())
         call(MigrateInstall, {longOption(database_, database)});
 
-    if (!m_migrator->hasRunAnyMigrations() && !isSet(pretend))
-        loadSchemaState();
+//    if (!m_migrator->hasRunAnyMigrations() && !isSet(pretend))
+//        loadSchemaState();
 }
 
-void MigrateCommand::loadSchemaState() const
-{
-    // CUR tom, finish load schema silverqx
-}
+//void MigrateCommand::loadSchemaState() const
+//{
+//    // CUR tom, finish load schema silverqx
+//}
 
 bool MigrateCommand::needsSeeding() const
 {

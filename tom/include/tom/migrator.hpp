@@ -64,7 +64,7 @@ namespace Tom
         /*! Determine if the migration repository exists. */
         bool repositoryExists() const;
         /*! Determine if any migrations have been run. */
-        bool hasRunAnyMigrations() const;
+//        bool hasRunAnyMigrations() const;
 
         /* Getters / Setters */
         /*! Get the migration repository instance. */

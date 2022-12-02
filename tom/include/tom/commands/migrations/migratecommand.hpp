@@ -48,7 +48,7 @@ namespace Commands::Migrations
         /*! Prepare the migration database for running. */
         void prepareDatabase(const QString &database) const;
         /*! Load the schema state to seed the initial database schema structure. */
-        void loadSchemaState() const;
+//        void loadSchemaState() const;
 
         /*! Determine if the developer has requested database seeding. */
         bool needsSeeding() const;

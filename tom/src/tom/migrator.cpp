@@ -111,10 +111,10 @@ bool Migrator::repositoryExists() const
     return m_repository->repositoryExists();
 }
 
-bool Migrator::hasRunAnyMigrations() const
-{
-    return repositoryExists() && !m_repository->getRanSimple().isEmpty();
-}
+//bool Migrator::hasRunAnyMigrations() const
+//{
+//    return repositoryExists() && !m_repository->getRanSimple().isEmpty();
+//}
 
 /* protected */
 
