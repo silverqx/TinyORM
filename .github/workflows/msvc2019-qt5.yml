@@ -151,7 +151,7 @@ jobs:
         mkdir -p ../TinyORM-builds-cmake/build-msvc-cmake-debug
 
     - name: Qt 5.15.2 install base components
-      uses: jurplel/install-qt-action@v2
+      uses: jurplel/install-qt-action@v3
       with:
         version: 5.15.2
         arch: win64_msvc2019_64
