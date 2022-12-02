@@ -26,7 +26,6 @@ RollbackCommand::RollbackCommand(
         std::shared_ptr<Migrator> migrator
 )
     : Command(application, parser)
-    , Concerns::Confirmable(*this, 0)
     , Concerns::UsingConnection(connectionResolver())
     , m_migrator(std::move(migrator))
 {}

@@ -28,12 +28,9 @@ namespace Concerns
     {
         Q_DISABLE_COPY(Confirmable)
 
-        /*! Alias for the Command. */
-        using Command = Commands::Command;
-
     public:
-        /*! Constructor (int param. to avoid interpreting it as a copy ctor). */
-        Confirmable(Command &command, int /*unused*/);
+        /*! Default constructor. */
+        inline Confirmable() = default;
         /*! Virtual destructor. */
         inline virtual ~Confirmable() = 0;
 
@@ -42,12 +39,12 @@ namespace Concerns
                     const QString &warning = QStringLiteral("Application In Production!"),
                     const std::function<bool()> &callback = nullptr) const;
 
-    protected:
+    private:
         /*! Get the default confirmation callback. */
         std::function<bool()> defaultConfirmCallback() const;
 
-        /*! Reference to a command that should be confimable. */
-        std::reference_wrapper<Command> m_command;
+        /*! Static cast *this to the Command & derived type, const version. */
+        const Commands::Command &command() const noexcept;
     };
 
     /* public */

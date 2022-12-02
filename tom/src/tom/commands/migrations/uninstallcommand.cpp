@@ -26,7 +26,6 @@ UninstallCommand::UninstallCommand(
         std::shared_ptr<MigrationRepository> repository
 )
     : Command(application, parser)
-    , Concerns::Confirmable(*this, 0)
     , Concerns::UsingConnection(connectionResolver())
     , m_repository(std::move(repository))
 {}

@@ -37,7 +37,6 @@ const QString SeedCommand::DatabaseSeeder = QStringLiteral("Seeders::DatabaseSee
 
 SeedCommand::SeedCommand(Application &application, QCommandLineParser &parser)
     : Command(application, parser)
-    , Concerns::Confirmable(*this, 0)
     , Concerns::UsingConnection(connectionResolver())
 {}
 

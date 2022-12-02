@@ -13,10 +13,6 @@ namespace Tom::Concerns
 
 /* public */
 
-Confirmable::Confirmable(Command &command, const int /*unused*/)
-    : m_command(command)
-{}
-
 bool Confirmable::confirmToProceed(const QString &warning,
                                    const std::function<bool()> &callback) const
 {
@@ -28,37 +24,41 @@ bool Confirmable::confirmToProceed(const QString &warning,
     if (!shouldConfirm)
         return true;
 
-    if (const auto &parser = m_command.get().parser();
+    if (const auto &parser = command().parser();
         parser.optionNames().contains(force) && parser.isSet(force)
     )
         return true;
 
     // Show the alert and confirm logic
-    m_command.get().alert(warning);
+    command().alert(warning);
 
-    const auto confirmed =
-            m_command.get().confirm(
-                QStringLiteral("Do you really wish to run this command?"));
+    const auto confirmed = command().confirm(
+                               QStringLiteral("Do you really wish to run this command?"));
 
     if (confirmed)
         return true;
 
-    m_command.get().comment(QStringLiteral("Command Canceled!"));
+    command().comment(QStringLiteral("Command Canceled!"));
 
     return false;
 }
 
-/* protected */
+/* private */
 
 std::function<bool()> Confirmable::defaultConfirmCallback() const
 {
     return [this]
     {
-        const auto &environment = m_command.get().application().environment();
+        const auto &environment = command().application().environment();
 
         return environment == QLatin1String("production") ||
                 environment == QLatin1String("prod");
     };
+}
+
+const Commands::Command &Confirmable::command() const noexcept
+{
+    return dynamic_cast<const Commands::Command &>(*this);
 }
 
 } // namespace Tom::Concerns
