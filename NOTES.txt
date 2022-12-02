@@ -403,6 +403,17 @@ Maintenance:
 GitHub Actions:
 ---------------
 
+ - all actions with versions currently used by TinyORM:
+
+   actions/checkout@v3
+   Chocobo1/setup-ccache-action@v1
+   mxschmitt/action-tmate@v3
+   actions/cache@v2
+   KyleMayes/install-llvm-action@v1
+   egor-tensin/vs-shell@v2
+   msys2/setup-msys2@v2
+   jurplel/install-qt-action@v3
+
  - how to update the clazy-standalone (analyzers.yml):
    - update the QtCreator to latest version, copy libexec/qtcreator/clang/ to some empty folder
    - leave only the clazy-standalone executable in the bin/ folder and compress it:
