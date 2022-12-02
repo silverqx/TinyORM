@@ -56,7 +56,7 @@ std::function<bool()> Confirmable::defaultConfirmCallback() const
     };
 }
 
-const Commands::Command &Confirmable::command() const noexcept
+const Commands::Command &Confirmable::command() const
 {
     return dynamic_cast<const Commands::Command &>(*this);
 }

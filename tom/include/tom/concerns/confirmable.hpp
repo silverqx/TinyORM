@@ -44,7 +44,7 @@ namespace Concerns
         std::function<bool()> defaultConfirmCallback() const;
 
         /*! Dynamic cast *this to the Command & base type, const version. */
-        const Commands::Command &command() const noexcept;
+        const Commands::Command &command() const;
     };
 
     /* public */
