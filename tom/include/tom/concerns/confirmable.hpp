@@ -43,7 +43,7 @@ namespace Concerns
         /*! Get the default confirmation callback. */
         std::function<bool()> defaultConfirmCallback() const;
 
-        /*! Static cast *this to the Command & derived type, const version. */
+        /*! Dynamic cast *this to the Command & base type, const version. */
         const Commands::Command &command() const noexcept;
     };
 
