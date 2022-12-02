@@ -26,6 +26,15 @@ using Tom::Constants::Migrate;
 namespace Tom::Commands::Migrations
 {
 
+/* Don't add the --pretend option for the migrate:fresh command. It doesn't make sense
+   to have it because it doesn't show relevant informations as we can't really call
+   the db:wipe command, so it would show pretended queries on the base of the current
+   state of the migration repository table and not all pretended queries for all
+   migrations.
+   So eg. if the DB would be fully migrated and the migrate:fresh --pretend would be
+   called, then the output would be empty, but it would be logical to show all pretended
+   queries for all migrations. 🤯🙃😵‍💫 */
+
 /* public */
 
 FreshCommand::FreshCommand(
