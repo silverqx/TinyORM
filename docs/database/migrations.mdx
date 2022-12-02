@@ -319,6 +319,10 @@ The `tom` command is able to guess the command name and command namespace, eg. `
 You can pass the `-vvv` command-line argument to any command to see all executed SQL queries. 👌
 :::
 
+:::note
+The `migrate` Tom command internally calls the `migrate:install` command which installs the migration repository table. To uninstall this repository table you can call the `migrate:uninstall`.
+:::
+
 #### Forcing Migrations To Run In Production
 
 Some migration operations are destructive, which means they may cause you to lose data. In order to protect you from running these commands against your production database, you will be prompted for confirmation before the commands are executed. To force the commands to run without a prompt, use the `--force` flag:
@@ -345,6 +349,12 @@ The `migrate:reset` command will roll back all of your application's migrations:
 
 ```bash
 tom migrate:reset
+```
+
+The `migrate:uninstall` command will uninstall the migration repository table, it optionally accepts the `--reset` option to roll back all of your application's migrations:
+
+```bash
+tom migrate:uninstall --reset
 ```
 
 #### Roll Back & Migrate Using A Single Command
