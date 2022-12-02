@@ -54,5 +54,3 @@ int InstallCommand::run()
 } // namespace Tom::Commands::Migrations
 
 TINYORM_END_COMMON_NAMESPACE
-
-// FUTURE tom, add migrate:uninstall or migrate:install --uninstall silverqx
