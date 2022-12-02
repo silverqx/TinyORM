@@ -302,6 +302,7 @@ function(tinytom_sources out_headers out_sources)
         concerns/confirmable.hpp
         concerns/guesscommandname.hpp
         concerns/interactswithio.hpp
+        concerns/pretendable.hpp
         concerns/printsoptions.hpp
         concerns/usingconnection.hpp
         config.hpp
@@ -365,6 +366,7 @@ function(tinytom_sources out_headers out_sources)
         concerns/confirmable.cpp
         concerns/guesscommandname.cpp
         concerns/interactswithio.cpp
+        concerns/pretendable.cpp
         concerns/printsoptions.cpp
         concerns/usingconnection.cpp
         exceptions/tomlogicerror.cpp

@@ -7,6 +7,7 @@ TINY_SYSTEM_HEADER
 
 #include "tom/commands/command.hpp"
 #include "tom/concerns/confirmable.hpp"
+#include "tom/concerns/pretendable.hpp"
 #include "tom/concerns/usingconnection.hpp"
 #include "tom/tomconstants.hpp"
 
@@ -18,9 +19,13 @@ namespace Tom::Commands::Database
     /*! Drop all tables, views, and types. */
     class WipeCommand : public Command,
                         public Concerns::Confirmable,
+                        public Concerns::Pretendable,
                         public Concerns::UsingConnection
     {
         Q_DISABLE_COPY(WipeCommand)
+
+        /*! Alias for the DatabaseConnection. */
+        using DatabaseConnection = Orm::DatabaseConnection;
 
     public:
         /*! Constructor. */
@@ -41,11 +46,11 @@ namespace Tom::Commands::Database
 
     protected:
         /*! Drop all of the database tables. */
-        void dropAllTables(const QString &database) const;
+        void dropAllTables(DatabaseConnection &connection) const;
         /*! Drop all of the database views. */
-        void dropAllViews(const QString &database) const;
+        void dropAllViews(DatabaseConnection &connection) const;
         /*! Drop all of the database types. */
-        void dropAllTypes(const QString &database) const;
+        void dropAllTypes(DatabaseConnection &connection) const;
     };
 
     /* public */

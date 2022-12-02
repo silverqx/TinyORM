@@ -14,6 +14,7 @@ using Tom::Constants::database_up;
 using Tom::Constants::drop_types;
 using Tom::Constants::drop_views;
 using Tom::Constants::force;
+using Tom::Constants::pretend;
 
 namespace Tom::Commands::Database
 {
@@ -36,6 +37,7 @@ QList<CommandLineOption> WipeCommand::optionsSignature() const
 
         {{QChar('f'),
           force},      QStringLiteral("Force the operation to run when in production")},
+        {pretend,      QStringLiteral("Dump the SQL queries that would be run")},
     };
 }
 
@@ -51,18 +53,20 @@ int WipeCommand::run()
     return usingConnections(values(database_), isDebugVerbosity(),
                             [this](const QString &database)
     {
+        auto &connection = this->connection(database);
+
         if (isSet(drop_views)) {
-            dropAllViews(database);
+            dropAllViews(connection);
 
             info(QStringLiteral("Dropped all views successfully."));
         }
 
-        dropAllTables(database);
+        dropAllTables(connection);
 
         info(QStringLiteral("Dropped all tables successfully."));
 
         if (isSet(drop_types)) {
-            dropAllTypes(database);
+            dropAllTypes(connection);
 
             info(QStringLiteral("Dropped all types successfully."));
         }
@@ -73,19 +77,31 @@ int WipeCommand::run()
 
 /* protected */
 
-void WipeCommand::dropAllTables(const QString &database) const
+void WipeCommand::dropAllTables(DatabaseConnection &connection) const
 {
-    connection(database).getSchemaBuilder()->dropAllTables();
+    optionalPretend(isSet(pretend), connection,
+                    [](auto &connection)
+    {
+        connection.getSchemaBuilder()->dropAllTables();
+    });
 }
 
-void WipeCommand::dropAllViews(const QString &database) const
+void WipeCommand::dropAllViews(DatabaseConnection &connection) const
 {
-    connection(database).getSchemaBuilder()->dropAllViews();
+    optionalPretend(isSet(pretend), connection,
+                    [](auto &connection)
+    {
+        connection.getSchemaBuilder()->dropAllViews();
+    });
 }
 
-void WipeCommand::dropAllTypes(const QString &database) const
+void WipeCommand::dropAllTypes(DatabaseConnection &connection) const
 {
-    connection(database).getSchemaBuilder()->dropAllTypes();
+    optionalPretend(isSet(pretend), connection,
+                    [](auto &connection)
+    {
+        connection.getSchemaBuilder()->dropAllTypes();
+    });
 }
 
 } // namespace Tom::Commands::Database

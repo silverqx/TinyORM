@@ -24,6 +24,7 @@ namespace Tom
 namespace Concerns
 {
     class Confirmable;
+    class Pretendable;
 }
 
 namespace Commands
@@ -52,6 +53,8 @@ namespace Commands
 
         // To access parser()
         friend Concerns::Confirmable;
+        // To access connection()
+        friend Concerns::Pretendable;
 
         /*! Alias for the ConnectionResolverInterface. */
         using ConnectionResolverInterface = Orm::ConnectionResolverInterface;

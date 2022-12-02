@@ -36,6 +36,7 @@ sourcesList += \
     $$PWD/tom/concerns/confirmable.cpp \
     $$PWD/tom/concerns/guesscommandname.cpp \
     $$PWD/tom/concerns/interactswithio.cpp \
+    $$PWD/tom/concerns/pretendable.cpp \
     $$PWD/tom/concerns/printsoptions.cpp \
     $$PWD/tom/concerns/usingconnection.cpp \
     $$PWD/tom/exceptions/tomlogicerror.cpp \

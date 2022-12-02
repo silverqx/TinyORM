@@ -49,6 +49,7 @@ headersList += \
     $$PWD/tom/concerns/confirmable.hpp \
     $$PWD/tom/concerns/guesscommandname.hpp \
     $$PWD/tom/concerns/interactswithio.hpp \
+    $$PWD/tom/concerns/pretendable.hpp \
     $$PWD/tom/concerns/printsoptions.hpp \
     $$PWD/tom/concerns/usingconnection.hpp \
     $$PWD/tom/config.hpp \
