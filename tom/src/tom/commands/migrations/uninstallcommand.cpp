@@ -54,7 +54,9 @@ int UninstallCommand::run()
 
     // Database connection to use (multiple connections supported)
     return usingConnections(values(database_), isDebugVerbosity(), *m_repository,
-                            [this]
+                            [this](const QString &database)
+
+
     {
         int exitCode = EXIT_SUCCESS; // NOLINT(misc-const-correctness)
 
@@ -65,7 +67,10 @@ int UninstallCommand::run()
                                             boolCmd(pretend)});
 
         // Uninstall migration database repository
-        m_repository->dropRepositoryIfExists();
+        optionalPretend(isSet(pretend), database, [this]
+        {
+            m_repository->dropRepositoryIfExists();
+        });
 
         info(QStringLiteral("Migration table dropped successfully."));
 

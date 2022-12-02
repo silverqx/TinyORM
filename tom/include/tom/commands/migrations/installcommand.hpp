@@ -6,6 +6,7 @@
 TINY_SYSTEM_HEADER
 
 #include "tom/commands/command.hpp"
+#include "tom/concerns/pretendable.hpp"
 #include "tom/concerns/usingconnection.hpp"
 #include "tom/tomconstants.hpp"
 
@@ -20,9 +21,13 @@ namespace Commands::Migrations
 
     /*! Create the migration database repository. */
     class InstallCommand : public Command,
+                           public Concerns::Pretendable,
                            public Concerns::UsingConnection
     {
         Q_DISABLE_COPY(InstallCommand)
+
+        /*! Alias for the Command. */
+        using Command = Commands::Command;
 
     public:
         /*! Constructor. */

@@ -16,8 +16,14 @@ TINYORM_BEGIN_COMMON_NAMESPACE
 
 namespace Orm
 {
-    class DatabaseConnection;
+namespace Types
+{
+    struct Log;
 }
+    using Log = Orm::Types::Log;
+
+    class DatabaseConnection;
+} // namespace Orm
 
 namespace Tom
 {
@@ -36,10 +42,10 @@ namespace Concerns
     {
         Q_DISABLE_COPY(Pretendable)
 
-        /*! Alias for the Command. */
-        using Command = Commands::Command;
         /*! Alias for the DatabaseConnection. */
         using DatabaseConnection = Orm::DatabaseConnection;
+        /*! Alias for the Command. */
+        using Command = Commands::Command;
 
     public:
         /*! Default constructor. */
@@ -60,7 +66,25 @@ namespace Concerns
                 std::optional<QString> &&title = std::nullopt,
                 bool newline = false) const;
 
+        /*! Pretend the callback on the base of a bool value (mainly --pretend option). */
+        void optionalPretend(
+                bool pretend, const QString &database,
+                const std::function<void()> &callback,
+                std::optional<QString> &&title = std::nullopt,
+                bool newline = false) const;
+        /*! Pretend the callback on the base of a bool value (mainly --pretend option). */
+        void optionalPretend(
+                bool pretend, DatabaseConnection &connection,
+                const std::function<void()> &callback,
+                std::optional<QString> &&title = std::nullopt,
+                bool newline = false) const;
+
     private:
+        /*! Common logic for the optionalPretend() method, log gathered queries
+            to the console. */
+        void optionalPretendInternal(QVector<Orm::Log> &&queriesLog,
+                                     std::optional<QString> &&title, bool newline) const;
+
         /*! Dynamic cast *this to the Command & base type, const version. */
         const Commands::Command &command() const;
         /*! Get the reference to the base InteractsWithIO concern. */
