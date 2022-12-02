@@ -26,9 +26,6 @@ namespace Commands::Migrations
     {
         Q_DISABLE_COPY(ResetCommand)
 
-        /*! Alias for the Command. */
-        using Command = Commands::Command;
-
     public:
         /*! Constructor. */
         ResetCommand(Application &application, QCommandLineParser &parser,

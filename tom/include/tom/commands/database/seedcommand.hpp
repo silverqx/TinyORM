@@ -26,8 +26,6 @@ namespace Commands::Database
     {
         Q_DISABLE_COPY(SeedCommand)
 
-        /*! Alias for the Command. */
-        using Command = Commands::Command;
         /*! Alias for the ConnectionResolverInterface. */
         using ConnectionResolverInterface = Orm::ConnectionResolverInterface;
 

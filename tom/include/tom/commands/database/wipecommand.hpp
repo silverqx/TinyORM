@@ -22,9 +22,6 @@ namespace Tom::Commands::Database
     {
         Q_DISABLE_COPY(WipeCommand)
 
-        /*! Alias for the Command. */
-        using Command = Commands::Command;
-
     public:
         /*! Constructor. */
         WipeCommand(Application &application, QCommandLineParser &parser);

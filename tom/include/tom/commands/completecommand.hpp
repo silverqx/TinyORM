@@ -20,9 +20,6 @@ namespace Tom::Commands
     {
         Q_DISABLE_COPY(CompleteCommand)
 
-        /*! Alias for the Command. */
-        using Command = Commands::Command;
-
     public:
         /*! Constructor. */
         CompleteCommand(Application &application, QCommandLineParser &parser);

@@ -26,9 +26,6 @@ namespace Commands::Migrations
     {
         Q_DISABLE_COPY(MigrateCommand)
 
-        /*! Alias for the Command. */
-        using Command = Commands::Command;
-
     public:
         /*! Constructor. */
         MigrateCommand(Application &application, QCommandLineParser &parser,

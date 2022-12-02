@@ -26,9 +26,6 @@ namespace Commands::Migrations
     {
         Q_DISABLE_COPY(RefreshCommand)
 
-        /*! Alias for the Command. */
-        using Command = Commands::Command;
-
     public:
         /*! Constructor. */
         RefreshCommand(Application &application, QCommandLineParser &parser,

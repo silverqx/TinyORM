@@ -26,9 +26,6 @@ namespace Commands::Migrations
     {
         Q_DISABLE_COPY(FreshCommand)
 
-        /*! Alias for the Command. */
-        using Command = Commands::Command;
-
     public:
         /*! Constructor. */
         FreshCommand(Application &application, QCommandLineParser &parser,
