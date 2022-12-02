@@ -66,7 +66,7 @@ int UninstallCommand::run()
                                             longOption(force),
                                             boolCmd(pretend)});
 
-        // Uninstall migration database repository
+        // Uninstall the migration database repository
         optionalPretend(isSet(pretend), database, [this]
         {
             m_repository->dropRepositoryIfExists();
