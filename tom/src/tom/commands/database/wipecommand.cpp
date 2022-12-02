@@ -80,27 +80,27 @@ int WipeCommand::run()
 void WipeCommand::dropAllTables(DatabaseConnection &connection) const
 {
     optionalPretend(isSet(pretend), connection,
-                    [](auto &connection)
+                    [](auto &connection_)
     {
-        connection.getSchemaBuilder()->dropAllTables();
+        connection_.getSchemaBuilder()->dropAllTables();
     });
 }
 
 void WipeCommand::dropAllViews(DatabaseConnection &connection) const
 {
     optionalPretend(isSet(pretend), connection,
-                    [](auto &connection)
+                    [](auto &connection_)
     {
-        connection.getSchemaBuilder()->dropAllViews();
+        connection_.getSchemaBuilder()->dropAllViews();
     });
 }
 
 void WipeCommand::dropAllTypes(DatabaseConnection &connection) const
 {
     optionalPretend(isSet(pretend), connection,
-                    [](auto &connection)
+                    [](auto &connection_)
     {
-        connection.getSchemaBuilder()->dropAllTypes();
+        connection_.getSchemaBuilder()->dropAllTypes();
     });
 }
 

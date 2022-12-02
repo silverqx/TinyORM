@@ -26,6 +26,8 @@ namespace Tom::Commands::Database
 
         /*! Alias for the DatabaseConnection. */
         using DatabaseConnection = Orm::DatabaseConnection;
+        /*! Alias for the Command. */
+        using Command = Commands::Command;
 
     public:
         /*! Constructor. */
