@@ -75,7 +75,7 @@ The following list fastly summarizes all the `TinyORM` features.
 
 The [TinyOrmPlayground](https://github.com/silverqx/TinyOrmPlayground) project is my personal project where I have tested all the TinyORM database queries in the early development phases, currently, it executes ~1600 database queries across the whole TinyORM framework. Every query has a nice title header, is logged to the console, and is counted and measured (elapsed time). Every query also runs on all [supported databases](database/getting-started.mdx#introduction).
 
-The TinyOrmPlayground project can be compiled in a single-threaded or multi-threaded mode. In the multi-threaded mode, every database connection runs in its own thread. At the end of every database connection is logged a connection summary and before an exit is logged the application summary.
+The TinyOrmPlayground project can be compiled in a single-threaded or multi-threaded mode. In the multi-threaded mode, every database connection runs in its own thread. At the end of every database connection is logged a connection summary and before an exit is logged the application summary. Whole TinyOrmPlayground application is configurable through the [src/configuration.hpp](https://github.com/silverqx/TinyOrmPlayground/blob/main/src/configuration.hpp) class.
 
 ###### TinyOrmPlayground single-threaded
 
