@@ -76,7 +76,7 @@ int MigrateCommand::run()
         /* Finally, if the "seed" option has been given, we will re-run the database
            seed task to re-populate the database, which is convenient when adding
            a migration and a seed at the same time, as it is only this command. */
-        if (needsSeeding())
+        if (isSet(seed))
             exitCode |= runSeeder(database);
 
         // Return success only, if all executed commands were successful
@@ -88,6 +88,14 @@ int MigrateCommand::run()
 
 void MigrateCommand::prepareDatabase(const QString &database) const
 {
+    /* Don't proxy the pretend option here because the Migrator needs access to
+       the migration repository table, on the base of it it computes migrations
+       to execute, so it can also correctly show pretended queries.
+       It would be possible to make it, but every Migrator operation run(), rollback(),
+       reset() would have to also check if the migration table exists and return empty
+       results set, I don't like it this way. Currently with the pretend proxying
+       it throws an exception during querying the migration repository because
+       it doesn't exist. */
     if (!m_migrator->repositoryExists())
         call(MigrateInstall, {longOption(database_, database)});
 
@@ -100,15 +108,11 @@ void MigrateCommand::prepareDatabase(const QString &database) const
 //    // CUR tom, finish load schema silverqx
 //}
 
-bool MigrateCommand::needsSeeding() const
-{
-    return !isSet(pretend) && isSet(seed);
-}
-
 int MigrateCommand::runSeeder(const QString &database) const
 {
     return call(DbSeed, {longOption(database_, database),
-                         longOption(force)});
+                         longOption(force),
+                         boolCmd(pretend)});
 }
 
 } // namespace Tom::Commands::Migrations
