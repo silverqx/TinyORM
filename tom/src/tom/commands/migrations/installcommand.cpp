@@ -11,6 +11,7 @@ TINYORM_BEGIN_COMMON_NAMESPACE
 using Orm::Constants::database_;
 
 using Tom::Constants::database_up;
+using Tom::Constants::force;
 using Tom::Constants::pretend;
 
 namespace Tom::Commands::Migrations
@@ -30,16 +31,22 @@ InstallCommand::InstallCommand(
 QList<CommandLineOption> InstallCommand::optionsSignature() const
 {
     return {
-        {database_, QStringLiteral("The database connection to use "
-                                   "<comment>(multiple values allowed)</comment>"),
-                    database_up}, // Value
-        {pretend,   QStringLiteral("Dump the SQL queries that would be run")},
+        {database_,   QStringLiteral("The database connection to use "
+                                     "<comment>(multiple values allowed)</comment>"),
+                      database_up}, // Value
+        {{QChar('f'),
+          force},     QStringLiteral("Force the operation to run when in production")},
+        {pretend,     QStringLiteral("Dump the SQL queries that would be run")},
     };
 }
 
 int InstallCommand::run()
 {
     Command::run();
+
+    // Ask for confirmation in the production environment
+    if (!confirmToProceed())
+        return EXIT_FAILURE;
 
     // Database connection to use (multiple connections supported)
     return usingConnections(values(database_), isDebugVerbosity(), *m_repository,

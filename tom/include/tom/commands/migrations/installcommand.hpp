@@ -6,6 +6,7 @@
 TINY_SYSTEM_HEADER
 
 #include "tom/commands/command.hpp"
+#include "tom/concerns/confirmable.hpp"
 #include "tom/concerns/pretendable.hpp"
 #include "tom/concerns/usingconnection.hpp"
 #include "tom/tomconstants.hpp"
@@ -21,6 +22,7 @@ namespace Commands::Migrations
 
     /*! Create the migration database repository. */
     class InstallCommand : public Command,
+                           public Concerns::Confirmable,
                            public Concerns::Pretendable,
                            public Concerns::UsingConnection
     {
