@@ -595,6 +595,19 @@ qa-clang-tidy.ps1, qa-clazy-standalone.ps1, qa-clazy-standalone-st.ps1 are more 
 run-clang-tidy.ps1, run-clazy-standalone.ps1 are raw Powershell wrappers around python run-clang-tidy/run-clazy-standalone.py python scripts.
 
 
+pwsh autocomeplete:
+-------------------
+For a fast lookup for debugging.
+
+ - tom command:
+   - argument:
+tom complete --word="mi" --commandline="tom mi" --position=6
+
+   - option:
+tom complete --word="--" --commandline="tom migrate --" --position=14
+tom complete --word="--p" --commandline="tom migrate --p" --position=15
+
+
 cmake build commands:
 ---------------------
 
