@@ -61,15 +61,14 @@ namespace Commands::Database
         /*! Get a seeder instance. */
         GetSeederResult getSeeder() const;
 
-        /*! Get a reference to the all seeder instances. */
-        const std::vector<std::shared_ptr<Seeder>> &seeders() const noexcept;
-
     private:
         /*! Default name of the root database seeder. */
         static const QString DatabaseSeeder;
 
         /*! Throw if the root seeder is not defined. */
         void throwIfDoesntContainSeeder(const QString &seederClass) const;
+        /*! Get a reference to the all seeder instances. */
+        const std::vector<std::shared_ptr<Seeder>> &seeders() const noexcept;
     };
 
     /* public */

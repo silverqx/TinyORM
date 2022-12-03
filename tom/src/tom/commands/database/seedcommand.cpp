@@ -131,11 +131,6 @@ SeedCommand::GetSeederResult Tom::Commands::Database::SeedCommand::getSeeder() c
     return {std::move(seederClass), rootSeeder};
 }
 
-const std::vector<std::shared_ptr<Seeder>> &SeedCommand::seeders() const noexcept
-{
-    return application().getSeeders();
-}
-
 /* private */
 
 void SeedCommand::throwIfDoesntContainSeeder(const QString &seederClass) const
@@ -152,6 +147,11 @@ void SeedCommand::throwIfDoesntContainSeeder(const QString &seederClass) const
     throw Exceptions::InvalidTemplateArgumentError(
                 QStringLiteral("The root seeder '%1' is not defined.")
                 .arg(seederClass));
+}
+
+const std::vector<std::shared_ptr<Seeder>> &SeedCommand::seeders() const noexcept
+{
+    return application().getSeeders();
 }
 
 } // namespace Tom::Commands::Database
