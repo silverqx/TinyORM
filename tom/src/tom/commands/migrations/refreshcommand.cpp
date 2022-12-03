@@ -27,6 +27,17 @@ using Tom::Constants::MigrateRollback;
 namespace Tom::Commands::Migrations
 {
 
+/* Don't add the --pretend option for the migrate:refresh command. It doesn't make sense
+   to have it because it doesn't show relevant informations as we can't really call
+   the migrate:rollbak command, so it would show pretended queries on the base
+   of the current state of the migration repository table and not pretended queries which
+   would be normally executed without the --pretend option.
+   So eg. if the DB with 4 migrations would be half migrated and
+   the migrate:refresh --pretend would be called, then the output would be to rollback
+   the first two migrations and migrate the LAST two unmigrated migrations.
+   The correct output is to rollback the first two migrations and migrate the FIRST two
+   migrations. 🤯🙃😵‍💫 */
+
 /* public */
 
 RefreshCommand::RefreshCommand(
