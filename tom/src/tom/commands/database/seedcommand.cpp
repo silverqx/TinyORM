@@ -25,6 +25,7 @@ using Tom::Constants::class_;
 using Tom::Constants::class_up;
 using Tom::Constants::database_up;
 using Tom::Constants::force;
+using Tom::Constants::pretend;
 
 using TypeUtils = Orm::Utils::Type;
 
@@ -59,6 +60,7 @@ QList<CommandLineOption> SeedCommand::optionsSignature() const
                        database_up}, // Value
         {{QChar('f'),
          force},       QStringLiteral("Force the operation to run when in production")},
+        {pretend,      QStringLiteral("Dump the SQL queries that would be run")},
     };
 }
 
@@ -82,14 +84,8 @@ int SeedCommand::run()
         timer.start();
 
         // Fire it up 🔥
-#ifdef TINYORM_DISABLE_ORM
-        seederResult.seeder.get().run();
-#else
-        GuardedModel::unguarded([&seederResult]
-        {
-            seederResult.seeder.get().run();
-        });
-#endif
+        if (!isSet(pretend))
+            runRootSeeder(seederResult.seeder);
 
         const auto elapsedTime = timer.elapsed();
 
@@ -129,6 +125,18 @@ SeedCommand::GetSeederResult Tom::Commands::Database::SeedCommand::getSeeder() c
     rootSeeder.setIO(*this);
 
     return {std::move(seederClass), rootSeeder};
+}
+
+void SeedCommand::runRootSeeder(Seeder &seeder)
+{
+#ifdef TINYORM_DISABLE_ORM
+    seeder.run();
+#else
+    GuardedModel::unguarded([&seeder]
+    {
+        seeder.run();
+    });
+#endif
 }
 
 /* private */

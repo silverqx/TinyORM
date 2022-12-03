@@ -61,6 +61,9 @@ namespace Commands::Database
         /*! Get a seeder instance. */
         GetSeederResult getSeeder() const;
 
+        /*! Seed the application's database, execute a root seeder. */
+        static void runRootSeeder(Seeder &seeder);
+
     private:
         /*! Default name of the root database seeder. */
         static const QString DatabaseSeeder;

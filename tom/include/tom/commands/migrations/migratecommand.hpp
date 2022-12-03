@@ -50,8 +50,6 @@ namespace Commands::Migrations
         /*! Load the schema state to seed the initial database schema structure. */
 //        void loadSchemaState() const;
 
-        /*! Determine if the developer has requested database seeding. */
-        bool needsSeeding() const;
         /*! Run the database seeder command. */
         int runSeeder(const QString &database) const;
 
