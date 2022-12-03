@@ -13,7 +13,6 @@ using Orm::Constants::database_;
 using Tom::Constants::class_;
 using Tom::Constants::database_up;
 using Tom::Constants::force;
-using Tom::Constants::pretend;
 using Tom::Constants::seed;
 using Tom::Constants::seeder;
 using Tom::Constants::seeder_up;
@@ -47,7 +46,6 @@ QList<CommandLineOption> RefreshCommand::optionsSignature() const
                        database_up}, // Value
         {{QChar('f'),
           force},      QStringLiteral("Force the operation to run when in production")},
-        {pretend,     QStringLiteral("Dump the SQL queries that would be run")},
         {seed,         QStringLiteral("Indicates if the seed task should be re-run")},
         {seeder,       QStringLiteral("The class name of the root seeder"), seeder_up}, // Value
         {step_,        QStringLiteral("The number of migrations to be reverted & "
@@ -79,16 +77,12 @@ int RefreshCommand::run()
         if (const auto step = value(step_).toInt(); step > 0)
             exitCode |= call(MigrateRollback, {databaseCmd,
                                                longOption(force),
-                                               boolCmd(pretend),
                                                valueCmd(step_)});
         else
-            exitCode |= call(MigrateReset, {databaseCmd,
-                                            longOption(force),
-                                            boolCmd(pretend)});
+            exitCode |= call(MigrateReset, {databaseCmd, longOption(force)});
 
         exitCode |= call(Migrate, {databaseCmd,
                                    longOption(force),
-                                   boolCmd(pretend),
                                    boolCmd(step_migrate, step_)});
 
         // Invoke seeder
@@ -104,7 +98,7 @@ int RefreshCommand::run()
 
 bool RefreshCommand::needsSeeding() const
 {
-    return !isSet(pretend) && (isSet(seed) || !value(seeder).isEmpty());
+    return isSet(seed) || !value(seeder).isEmpty();
 }
 
 int RefreshCommand::runSeeder(QString &&databaseCmd) const
