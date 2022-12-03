@@ -52,10 +52,8 @@ SQLiteSchemaBuilder::dropDatabaseIfExists(const QString &name) const
 // TEST schema, test in functional tests silverqx
 void SQLiteSchemaBuilder::dropAllTables() const
 {
-    if (m_connection.getDatabaseName() != QStringLiteral(":memory:")) {
-        refreshDatabaseFile();
-        return;
-    }
+    if (m_connection.getDatabaseName() != QStringLiteral(":memory:"))
+        return refreshDatabaseFile(); // clazy:exclude=returning-void-expression
 
     const auto &sqliteGrammar =
             dynamic_cast<const Grammars::SQLiteSchemaGrammar &>(m_grammar);

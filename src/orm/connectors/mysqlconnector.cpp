@@ -149,10 +149,8 @@ void MySqlConnector::setModes(const QSqlDatabase &connection,
                               const QVariantHash &config) const
 {
     // Custom modes defined
-    if (config.contains("modes")) {
-        setCustomModes(connection, config);
-        return;
-    }
+    if (config.contains("modes"))
+        return setCustomModes(connection, config); // clazy:exclude=returning-void-expression
 
     // No strict defined
     if (!config.contains(strict_))

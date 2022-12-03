@@ -25,10 +25,8 @@ static bool g_unguarded = false;
 // NOTE api different, Eloquent returns whatever callback returns silverqx
 void GuardedModel::unguarded(const std::function<void()> &callback)
 {
-    if (g_unguarded) {
-        std::invoke(callback);
-        return;
-    }
+    if (g_unguarded)
+        return std::invoke(callback); // clazy:exclude=returning-void-expression
 
     unguard();
 

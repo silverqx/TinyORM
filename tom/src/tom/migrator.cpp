@@ -194,10 +194,8 @@ Migrator::pendingMigrations(const QVector<QVariant> &ran) const
 void Migrator::runUp(const Migration &migration, const int batch,
                      const bool pretend) const
 {
-    if (pretend) {
-        pretendToRun(migration, MigrateMethod::Up);
-        return;
-    }
+    if (pretend)
+        return pretendToRun(migration, MigrateMethod::Up); // clazy:exclude=returning-void-expression
 
     auto migrationName = cachedMigrationName(migration);
 
@@ -283,10 +281,8 @@ void Migrator::runDown(const RollbackItem &migrationToRollback, const bool prete
 {
     const auto &[id, migrationName, migration] = migrationToRollback;
 
-    if (pretend) {
-        pretendToRun(*migration, MigrateMethod::Down);
-        return;
-    }
+    if (pretend)
+        return pretendToRun(*migration, MigrateMethod::Down); // clazy:exclude=returning-void-expression
 
     comment(QStringLiteral("Rolling back: "), false).note(migrationName);
 
@@ -353,10 +349,8 @@ void Migrator::runMigration(const Migration &migration, const MigrateMethod meth
             migartionProperties.withinTransaction;
 
     // Without transaction
-    if (!withinTransaction) {
-        migrateByMethod(migration, method);
-        return;
-    }
+    if (!withinTransaction)
+        return migrateByMethod(migration, method); // clazy:exclude=returning-void-expression
 
     // Transactional migration
     connection.beginTransaction();
@@ -379,12 +373,10 @@ void Migrator::migrateByMethod(const Migration &migration,
 {
     switch (method) {
     case MigrateMethod::Up:
-        migration.up();
-        return;
+        return migration.up(); // clazy:exclude=returning-void-expression
 
     case MigrateMethod::Down:
-        migration.down();
-        return;
+        return migration.down(); // clazy:exclude=returning-void-expression
     }
 
     Q_UNREACHABLE();

@@ -153,10 +153,8 @@ namespace Orm::Tiny
     void SoftDeletes<Derived>::performDeleteOnModel()
     {
         // Perform soft delete
-        if (!m_forceDeleting) {
-            runSoftDelete();
-            return;
-        }
+        if (!m_forceDeleting)
+            return runSoftDelete(); // clazy:exclude=returning-void-expression
 
         // Perform force delete
         auto &model = this->model();
