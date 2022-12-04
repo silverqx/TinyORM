@@ -34,7 +34,13 @@ Param(
     [Parameter(HelpMessage = 'Specifies the CMake build type.')]
     [ValidateSet('Debug', 'Release', 'RelWithDebInfo', 'MinSizeRel')]
     [ValidateNotNullOrEmpty()]
-    [string] $BuildType = 'Debug'
+    [string] $BuildType = 'Debug',
+
+    [Parameter(Mandatory = $false,
+        HelpMessage = 'Specifies the checks filter, when not specified, use clang-tidy default ' +
+            '(eg. -*,readability-magic-numbers to run only a specific check).')]
+    [ValidateNotNullOrEmpty()]
+    [string[]] $Checks
 )
 
 Set-StrictMode -Version 3.0
@@ -119,7 +125,10 @@ if (-not $SkipClangTidy) {
     Write-Host
 
     & 'E:\dotfiles\bin\run-clang-tidy.ps1' -use-color -extra-arg-before='-Qunused-arguments' `
-        -j $Script:numberOfProcesses -p="$BuildPath" $Script:RegEx
+        -j $Script:numberOfProcesses -p="$BuildPath" `
+        <# Allow to pass a custom -checks option #> `
+        $($PSBoundParameters.ContainsKey('Checks') ? "-checks=$($Checks -join ',')" : '') `
+        $Script:RegEx
 }
 
 if (-not $SkipClazy) {

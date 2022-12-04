@@ -25,7 +25,13 @@ Param(
     [Parameter(HelpMessage = 'Specifies the CMake build type.')]
     [ValidateSet('Debug', 'Release', 'RelWithDebInfo', 'MinSizeRel')]
     [ValidateNotNullOrEmpty()]
-    [string] $BuildType = 'Debug'
+    [string] $BuildType = 'Debug',
+
+    [Parameter(Mandatory = $false,
+        HelpMessage = 'Specifies the checks filter, when not specified, use clang-tidy default ' +
+            '(eg. -*,readability-magic-numbers to run only a specific check).')]
+    [ValidateNotNullOrEmpty()]
+    [string[]] $Checks
 )
 
 Set-StrictMode -Version 3.0
