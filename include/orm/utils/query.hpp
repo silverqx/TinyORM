@@ -96,7 +96,7 @@ namespace Orm::Utils
                 bindingValue = Orm::Constants::null_;
             else
                 // Support for string quoting
-                bindingValue = (Helpers::qVariantTypeId(binding) == QMetaType::QString)
+                bindingValue = Helpers::qVariantTypeId(binding) == QMetaType::QString
                                ? QStringLiteral("'%1'")
                                  .arg(binding.template value<QString>())
                                : binding.template value<QString>();
