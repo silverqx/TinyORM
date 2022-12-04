@@ -124,11 +124,13 @@ if (-not $SkipClangTidy) {
     Write-Host 'Clang Tidy' -ForegroundColor DarkBlue
     Write-Host
 
+    # Allow to pass a custom -checks option, the $null can't be swapped by the '' empty string,
+    # it doesn't work then, I don't understand why
+    $checksOption = $PSBoundParameters.ContainsKey('Checks') ? "-checks=$($Checks -join ',')" `
+                                                             : $null
+
     & 'E:\dotfiles\bin\run-clang-tidy.ps1' -use-color -extra-arg-before='-Qunused-arguments' `
-        -j $Script:numberOfProcesses -p="$BuildPath" `
-        <# Allow to pass a custom -checks option #> `
-        $($PSBoundParameters.ContainsKey('Checks') ? "-checks=$($Checks -join ',')" : '') `
-        $Script:RegEx
+        -j $Script:numberOfProcesses -p="$BuildPath" $checksOption $Script:RegEx
 }
 
 if (-not $SkipClazy) {
