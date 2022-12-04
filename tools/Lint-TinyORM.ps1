@@ -2,8 +2,8 @@
 
 Param(
     [Parameter(Position = 0, Mandatory = $false,
-        HelpMessage = 'Specifies the files to be processed, is joined with by the | character ' +
-            'and used in the parenthesized regex eg. (file1|file2).')]
+        HelpMessage = 'Specifies the cpp files to be processed, is joined with by the | ' +
+            'character and used in the parenthesized regex eg. (file1|file2).')]
     [ValidateNotNullOrEmpty()]
     [string[]] $Files,
 
