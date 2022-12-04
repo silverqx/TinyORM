@@ -125,7 +125,7 @@ if (-not $SkipClangTidy) {
     Write-Host
 
     & 'E:\dotfiles\bin\run-clang-tidy.ps1' -use-color -extra-arg-before='-Qunused-arguments' `
-        -j $Script:numberOfProcesses -p="$BuildPath" `
+        -j=$Script:numberOfProcesses -p="$BuildPath" `
         <# Allow to pass a custom -checks option #> `
         $($PSBoundParameters.ContainsKey('Checks') ? "-checks=$($Checks -join ',')" : '') `
         $Script:RegEx
@@ -159,7 +159,7 @@ if (-not $SkipClazy) {
     & 'E:\dotfiles\bin\run-clazy-standalone.ps1' `
         -checks="$Script:Checks" `
         -extra-arg-before='-Qunused-arguments' -header-filter='(orm|tom|migrations)/.+\.(h|hpp)$' `
-        -j $Script:numberOfProcesses `
+        -j=$Script:numberOfProcesses `
         -p="$BuildPath" $Script:RegEx
 }
 
