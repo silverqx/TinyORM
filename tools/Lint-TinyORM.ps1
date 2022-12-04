@@ -40,7 +40,7 @@ Param(
         HelpMessage = 'Specifies the checks filter, when not specified, use clang-tidy default ' +
             '(eg. -*,readability-magic-numbers to run only a specific check).')]
     [ValidateNotNullOrEmpty()]
-    [string[]] $Checks
+    [string[]] $ClangTidyChecks
 )
 
 Set-StrictMode -Version 3.0
@@ -124,10 +124,10 @@ if (-not $SkipClangTidy) {
     Write-Host 'Clang Tidy' -ForegroundColor DarkBlue
     Write-Host
 
-    # Allow to pass a custom -checks option, the $null can't be swapped by the '' empty string,
-    # it doesn't work then, I don't understand why
-    $checksOption = $PSBoundParameters.ContainsKey('Checks') ? "-checks=$($Checks -join ',')" `
-                                                             : $null
+    # Allow to pass a custom -checks option, the $null can't be swapped by the '' empty string!
+    $checksOption = $PSBoundParameters.ContainsKey('ClangTidyChecks') `
+                    ? "-checks=$($ClangTidyChecks -join ',')" `
+                    : $null
 
     & 'E:\dotfiles\bin\run-clang-tidy.ps1' -use-color -extra-arg-before='-Qunused-arguments' `
         -j $Script:numberOfProcesses -p="$BuildPath" $checksOption $Script:RegEx

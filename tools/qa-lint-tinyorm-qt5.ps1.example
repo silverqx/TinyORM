@@ -31,7 +31,7 @@ Param(
         HelpMessage = 'Specifies the checks filter, when not specified, use clang-tidy default ' +
             '(eg. -*,readability-magic-numbers to run only a specific check).')]
     [ValidateNotNullOrEmpty()]
-    [string[]] $Checks
+    [string[]] $ClangTidyChecks
 )
 
 Set-StrictMode -Version 3.0
