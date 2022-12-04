@@ -104,7 +104,7 @@ namespace Orm::Utils
             queryString.replace(queryString.indexOf(QLatin1Char('?')), 1, bindingValue);
 
             if (simpleBindings)
-                simpleBindingsList << std::move(bindingValue);
+                simpleBindingsList << std::move(bindingValue); // clazy:exclude=reserve-candidates
         }
 
         return {std::move(queryString), std::move(simpleBindingsList)};
