@@ -57,7 +57,7 @@ $Script:numberOfProcesses = $env:NUMBER_OF_PROCESSORS - 2
 $FilesPaths = $null -eq $FilesPaths ? '.+?'        : "(?:$($FilesPaths -join '|'))"
 $Files      = $null -eq $Files      ? '[\w_\-\+]+' : "(?:$($Files -join '|'))"
 
-$Script:RegEx = "(?:src|tests)[\\\/]+$FilesPaths[\\\/]+(?!mocs_)$($Files)\.cpp$"
+$Script:RegEx = "(?:examples|src|tests)[\\\/]+$FilesPaths[\\\/]+(?!mocs_)$($Files)\.cpp$"
 
 # Append the build type to the build path
 $BuildPath = $BuildPath.TrimEnd(
