@@ -151,20 +151,20 @@ namespace Concerns
         explicit InteractsWithIO(bool noAnsi);
 
         /*! Repalce text tags with ANSI sequences. */
-        QString parseOutput(QString string, bool isAnsi = true) const;
+        static QString parseOutput(QString string, bool isAnsi = true);
         /*! Remove tom ansi tags from the given string. */
-        QString stripTags(QString string) const;
+        static QString stripTags(QString string);
 
         /*! Initialize verbosity by set options in the command-line parser. */
-        Verbosity initializeVerbosity(const QCommandLineParser &parser) const;
+        static Verbosity initializeVerbosity(const QCommandLineParser &parser);
         /*! Initialize ansi support by set options in the command-line parser. */
-        std::optional<bool> initializeAnsi(const QCommandLineParser &parser) const;
+        static std::optional<bool> initializeAnsi(const QCommandLineParser &parser);
         /*! Initialize ansi support by noAnsi passed to the Application::logException. */
-        std::optional<bool> initializeNoAnsi(bool noAnsi) const;
+        static std::optional<bool> initializeNoAnsi(bool noAnsi);
 
         /*! Number of the option name set on the command-line (used by eg. -vvv). */
-        QStringList::size_type
-        countSetOption(const QString &optionName, const QCommandLineParser &parser) const;
+        static QStringList::size_type
+        countSetOption(const QString &optionName, const QCommandLineParser &parser);
         /*! Determine whether discard output by the current and the given verbosity. */
         bool dontOutput(Verbosity verbosity) const;
 

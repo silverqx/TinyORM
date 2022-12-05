@@ -333,7 +333,7 @@ bool InteractsWithIO::confirm(const QString &question, const bool defaultAnswer)
 
 /* private */
 
-QString InteractsWithIO::parseOutput(QString string, const bool isAnsi) const
+QString InteractsWithIO::parseOutput(QString string, const bool isAnsi)
 {
     // FUTURE ansi, keep track and restore previous styles, don't use ESC[0m, practically recursive parser with nested tags needed silverqx
     // ansi output
@@ -360,7 +360,7 @@ QString InteractsWithIO::parseOutput(QString string, const bool isAnsi) const
     return stripTags(std::move(string));
 }
 
-QString InteractsWithIO::stripTags(QString string) const
+QString InteractsWithIO::stripTags(QString string)
 {
     return string
             .replace(QStringLiteral("<note>"),     "")
@@ -382,7 +382,7 @@ QString InteractsWithIO::stripTags(QString string) const
 }
 
 InteractsWithIO::Verbosity
-InteractsWithIO::initializeVerbosity(const QCommandLineParser &parser) const
+InteractsWithIO::initializeVerbosity(const QCommandLineParser &parser)
 {
     if (parser.isSet(quiet))
         return Quiet;
@@ -402,7 +402,7 @@ InteractsWithIO::initializeVerbosity(const QCommandLineParser &parser) const
 }
 
 std::optional<bool>
-InteractsWithIO::initializeAnsi(const QCommandLineParser &parser) const
+InteractsWithIO::initializeAnsi(const QCommandLineParser &parser)
 {
     // Ansi option has higher priority
     if (parser.isSet(ansi))
@@ -415,7 +415,7 @@ InteractsWithIO::initializeAnsi(const QCommandLineParser &parser) const
 }
 
 std::optional<bool>
-InteractsWithIO::initializeNoAnsi(const bool noAnsi) const
+InteractsWithIO::initializeNoAnsi(const bool noAnsi)
 {
     if (noAnsi)
         return false;
@@ -425,7 +425,7 @@ InteractsWithIO::initializeNoAnsi(const bool noAnsi) const
 
 QStringList::size_type
 InteractsWithIO::countSetOption(const QString &optionName,
-                                const QCommandLineParser &parser) const
+                                const QCommandLineParser &parser)
 {
     /* This should be in the CommandLineParser, but I will not create a wrapper class
        because of one line, I don't event create a future todo task for this. */
