@@ -403,6 +403,8 @@ Maintenance:
 GitHub Actions:
 ---------------
 
+ - Runner images: https://github.com/actions/runner-images/tree/main/images
+
  - all actions with versions currently used by TinyORM:
 
    actions/checkout@v3
