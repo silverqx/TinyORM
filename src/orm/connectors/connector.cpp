@@ -77,7 +77,7 @@ QString Connector::getOptions(const QVariantHash &config) const
 
 QSqlDatabase
 Connector::addQSqlDatabaseConnection(const QString &name, const QVariantHash &config,
-                                     const QString &options) const
+                                     const QString &options)
 {
     QSqlDatabase db;
 

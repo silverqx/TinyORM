@@ -65,7 +65,7 @@ void SQLiteConnector::parseConfigOptions(QVariantHash &/*unused*/) const
 /* protected */
 
 void SQLiteConnector::configureForeignKeyConstraints(
-        const QSqlDatabase &connection, const QVariantHash &config) const
+        const QSqlDatabase &connection, const QVariantHash &config)
 {
     // This ensures default SQLite behavior
     if (!config.contains(foreign_key_constraints))
@@ -86,7 +86,7 @@ void SQLiteConnector::configureForeignKeyConstraints(
 
 /* private */
 
-void SQLiteConnector::checkDatabaseExists(const QVariantHash &config) const
+void SQLiteConnector::checkDatabaseExists(const QVariantHash &config)
 {
     const auto path = config[database_].value<QString>();
 

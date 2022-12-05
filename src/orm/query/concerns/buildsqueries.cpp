@@ -100,7 +100,7 @@ bool BuildsQueries::chunkById(
             const int count, const std::function<bool(SqlQuery &, int)> &callback,
             const QString &column, const QString &alias)
 {
-    const auto columnName = column.isEmpty() ? builder().defaultKeyName() : column;
+    const auto columnName = column.isEmpty() ? Builder::defaultKeyName() : column;
     const auto aliasName = alias.isEmpty() ? columnName : alias;
 
     int page = 1;

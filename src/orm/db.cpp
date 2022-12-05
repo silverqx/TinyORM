@@ -255,17 +255,17 @@ std::size_t DB::openedConnectionsSize()
 
 QStringList DB::supportedDrivers()
 {
-    return manager().supportedDrivers();
+    return DatabaseManager::supportedDrivers();
 }
 
 QStringList DB::drivers()
 {
-    return manager().drivers();
+    return DatabaseManager::drivers();
 }
 
 bool DB::isDriverAvailable(const QString &driverName)
 {
-    return manager().isDriverAvailable(driverName);
+    return DatabaseManager::isDriverAvailable(driverName);
 }
 
 bool DB::isConnectionDriverAvailable(const QString &connection)

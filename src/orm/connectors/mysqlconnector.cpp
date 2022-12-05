@@ -94,7 +94,7 @@ void MySqlConnector::parseConfigOptions(QVariantHash &options) const
 /* protected */
 
 void MySqlConnector::configureIsolationLevel(const QSqlDatabase &connection,
-                                             const QVariantHash &config) const
+                                             const QVariantHash &config)
 {
     if (!config.contains(isolation_level))
         return;
@@ -123,7 +123,7 @@ void MySqlConnector::configureEncoding(const QSqlDatabase &connection,
     throw Exceptions::QueryError(m_configureErrorMessage.arg(__tiny_func__), query);
 }
 
-QString MySqlConnector::getCollation(const QVariantHash &config) const
+QString MySqlConnector::getCollation(const QVariantHash &config)
 {
     return config.contains(collation_)
             ? QStringLiteral(" collate '%1'").arg(config[collation_].value<QString>())
@@ -131,7 +131,7 @@ QString MySqlConnector::getCollation(const QVariantHash &config) const
 }
 
 void MySqlConnector::configureTimezone(const QSqlDatabase &connection,
-                                       const QVariantHash &config) const
+                                       const QVariantHash &config)
 {
     if (!config.contains(timezone_))
         return;
@@ -193,7 +193,7 @@ QString MySqlConnector::strictMode(const QSqlDatabase &connection,
 }
 
 QString MySqlConnector::getMySqlVersion(const QSqlDatabase &connection,
-                                        const QVariantHash &config) const
+                                        const QVariantHash &config)
 {
     // Get the MySQL version from the configuration if it was defined and is valid
     if (auto configVersionValue = ConfigUtils::getValidConfigVersion(config);
@@ -218,7 +218,7 @@ QString MySqlConnector::getMySqlVersion(const QSqlDatabase &connection,
 }
 
 void MySqlConnector::setCustomModes(const QSqlDatabase &connection,
-                                    const QVariantHash &config) const
+                                    const QVariantHash &config)
 {
     const auto modes = config["modes"].value<QStringList>().join(COMMA);
 

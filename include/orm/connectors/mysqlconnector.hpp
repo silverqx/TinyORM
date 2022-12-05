@@ -35,16 +35,16 @@ namespace Orm::Connectors
 
     protected:
         /*! Set the connection transaction isolation level. */
-        void configureIsolationLevel(const QSqlDatabase &connection,
-                                     const QVariantHash &config) const;
+        static void configureIsolationLevel(const QSqlDatabase &connection,
+                                            const QVariantHash &config);
         /*! Set the connection character set and collation. */
         void configureEncoding(const QSqlDatabase &connection,
                                const QVariantHash &config) const;
         /*! Get the collation for the configuration. */
-        QString getCollation(const QVariantHash &config) const;
+        static QString getCollation(const QVariantHash &config);
         /*! Set the timezone on the connection. */
-        void configureTimezone(const QSqlDatabase &connection,
-                               const QVariantHash &config) const;
+        static void configureTimezone(const QSqlDatabase &connection,
+                                      const QVariantHash &config);
 
         /*! Set the modes for the connection. */
         void setModes(const QSqlDatabase &connection,
@@ -53,11 +53,11 @@ namespace Orm::Connectors
         QString strictMode(const QSqlDatabase &connection,
                            const QVariantHash &config) const;
         /*! Get the MySql server version. */
-        QString getMySqlVersion(const QSqlDatabase &connection,
-                                const QVariantHash &config) const;
+        static QString getMySqlVersion(const QSqlDatabase &connection,
+                                       const QVariantHash &config);
         /*! Set the custom modes on the connection. */
-        void setCustomModes(const QSqlDatabase &connection,
-                            const QVariantHash &config) const;
+        static void setCustomModes(const QSqlDatabase &connection,
+                                   const QVariantHash &config);
 
     private:
         /*! The default QSqlDatabase connection options for the MySqlConnector. */

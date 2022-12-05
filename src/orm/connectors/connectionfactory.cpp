@@ -19,7 +19,7 @@ namespace Orm::Connectors
 /* public */
 
 std::unique_ptr<DatabaseConnection>
-ConnectionFactory::make(QVariantHash &config, const QString &connection) const
+ConnectionFactory::make(QVariantHash &config, const QString &connection)
 {
     auto configCopy = parseConfig(config, connection);
 
@@ -55,7 +55,7 @@ ConnectionFactory::createConnector(const QVariantHash &config)
 /* protected */
 
 QVariantHash
-ConnectionFactory::parseConfig(QVariantHash &config, const QString &connection) const
+ConnectionFactory::parseConfig(QVariantHash &config, const QString &connection)
 {
     /* Insert/normalize needed configuration values, following inserted values will be
        also changed in the so called the original configuration that will be also saved
@@ -122,7 +122,7 @@ void ConnectionFactory::parseQtTimeZone(QVariantHash &config, const QString &con
 }
 
 std::unique_ptr<DatabaseConnection>
-ConnectionFactory::createSingleConnection(QVariantHash &&config) const
+ConnectionFactory::createSingleConnection(QVariantHash &&config)
 {
     // The config[return_qdatetime] is guaranteed to have a value for SQLite connection
     auto returnQDateTime = config[driver_] == QSQLITE
@@ -137,7 +137,7 @@ ConnectionFactory::createSingleConnection(QVariantHash &&config) const
 }
 
 std::function<ConnectionName()>
-ConnectionFactory::createQSqlDatabaseResolver(const QVariantHash &config) const
+ConnectionFactory::createQSqlDatabaseResolver(const QVariantHash &config)
 {
     return config.contains(host_)
             ? createQSqlDatabaseResolverWithHosts(config)
@@ -145,10 +145,10 @@ ConnectionFactory::createQSqlDatabaseResolver(const QVariantHash &config) const
 }
 
 std::function<ConnectionName()>
-ConnectionFactory::createQSqlDatabaseResolverWithHosts(const QVariantHash &config) const
+ConnectionFactory::createQSqlDatabaseResolverWithHosts(const QVariantHash &config)
 {
     // Pass the config by value because it will be destroyed in the parseConfig()
-    return [this, config = config]() mutable -> ConnectionName
+    return [config = config]() mutable -> ConnectionName
     {
         const auto hosts = parseHosts(config);
         std::exception_ptr lastException;
@@ -175,7 +175,7 @@ ConnectionFactory::createQSqlDatabaseResolverWithHosts(const QVariantHash &confi
 
 std::function<ConnectionName()>
 ConnectionFactory::createQSqlDatabaseResolverWithoutHosts(
-        const QVariantHash &config) const
+        const QVariantHash &config)
 {
     // Pass the config by value because it will be destroyed in the parseConfig()
     return [config]() -> ConnectionName
@@ -215,7 +215,7 @@ ConnectionFactory::createConnection(
                                    .arg(std::move(driver), __tiny_func__));
 }
 
-QStringList ConnectionFactory::parseHosts(const QVariantHash &config) const
+QStringList ConnectionFactory::parseHosts(const QVariantHash &config)
 {
     if (!config.contains(host_))
         throw Exceptions::RuntimeError(

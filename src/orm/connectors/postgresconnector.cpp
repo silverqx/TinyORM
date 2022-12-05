@@ -69,7 +69,7 @@ void PostgresConnector::parseConfigOptions(QVariantHash &/*unused*/) const
 /* protected */
 
 void PostgresConnector::configureEncoding(const QSqlDatabase &connection,
-                                          const QVariantHash &config) const
+                                          const QVariantHash &config)
 {
     if (!config.contains(charset_))
         return;
@@ -84,7 +84,7 @@ void PostgresConnector::configureEncoding(const QSqlDatabase &connection,
 }
 
 void PostgresConnector::configureTimezone(const QSqlDatabase &connection,
-                                          const QVariantHash &config) const
+                                          const QVariantHash &config)
 {
     if (!config.contains(timezone_))
         return;
@@ -122,7 +122,7 @@ void PostgresConnector::configureSchema(const QSqlDatabase &connection,
     throw Exceptions::QueryError(m_configureErrorMessage.arg(__tiny_func__), query);
 }
 
-QString PostgresConnector::formatSchema(QStringList schema) const
+QString PostgresConnector::formatSchema(QStringList schema)
 {
     /* A schema configuration option can be passed as QString and also
        as QStringList at once. */
@@ -137,7 +137,7 @@ QString PostgresConnector::formatSchema(QStringList schema) const
 }
 
 void PostgresConnector::configureApplicationName(const QSqlDatabase &connection,
-                                                 const QVariantHash &config) const
+                                                 const QVariantHash &config)
 {
     if (!config.contains("application_name"))
         return;
@@ -152,7 +152,7 @@ void PostgresConnector::configureApplicationName(const QSqlDatabase &connection,
 }
 
 void PostgresConnector::configureSynchronousCommit(const QSqlDatabase &connection,
-                                                   const QVariantHash &config) const
+                                                   const QVariantHash &config)
 {
     if (!config.contains("synchronous_commit"))
         return;

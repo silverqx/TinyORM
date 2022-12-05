@@ -106,15 +106,12 @@ SQLiteGrammar::getCompileMap() const
     T_THREAD_LOCAL
     static const QMap<SelectComponentType, SelectComponentValue> cached {
         {SelectComponentType::AGGREGATE, {bind(&SQLiteGrammar::compileAggregate),
-                        [this]
-                        (const auto &query)
+                        [](const auto &query)
                         { return shouldCompileAggregate(query.getAggregate()); }}},
         {SelectComponentType::COLUMNS,   {bind(&SQLiteGrammar::compileColumns),
-                        [this]
-                        (const auto &query) { return shouldCompileColumns(query); }}},
+                        [](const auto &query) { return shouldCompileColumns(query); }}},
         {SelectComponentType::FROM,      {bind(&SQLiteGrammar::compileFrom),
-                        [this]
-                        (const auto &query)
+                        [](const auto &query)
                         { return shouldCompileFrom(query.getFrom()); }}},
         {SelectComponentType::JOINS,     {bind(&SQLiteGrammar::compileJoins),
                         [](const auto &query) { return !query.getJoins().isEmpty(); }}},

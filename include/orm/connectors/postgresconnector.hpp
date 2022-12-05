@@ -37,24 +37,24 @@ namespace Orm::Connectors
 
     protected:
         /*! Set the connection character set and collation. */
-        void configureEncoding(const QSqlDatabase &connection,
-                               const QVariantHash &config) const;
+        static void configureEncoding(const QSqlDatabase &connection,
+                                      const QVariantHash &config);
         /*! Set the timezone on the connection. */
-        void configureTimezone(const QSqlDatabase &connection,
-                               const QVariantHash &config) const;
+        static void configureTimezone(const QSqlDatabase &connection,
+                                      const QVariantHash &config);
 
         /*! Set the schema on the connection. */
         void configureSchema(const QSqlDatabase &connection,
                              const QVariantHash &config) const;
         /*! Format the schema. */
-        QString formatSchema(QStringList schema) const;
+        static QString formatSchema(QStringList schema);
 
         /*! Set an application name for the connection. */
-        void configureApplicationName(const QSqlDatabase &connection,
-                                      const QVariantHash &config) const;
+        static void configureApplicationName(const QSqlDatabase &connection,
+                                             const QVariantHash &config);
         /*! Configure the synchronous_commit setting. */
-        void configureSynchronousCommit(const QSqlDatabase &connection,
-                                        const QVariantHash &config) const;
+        static void configureSynchronousCommit(const QSqlDatabase &connection,
+                                               const QVariantHash &config);
 
     private:
         /*! The default QSqlDatabase connection options for the SQLiteConnector. */

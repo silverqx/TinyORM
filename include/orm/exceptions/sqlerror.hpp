@@ -32,7 +32,7 @@ namespace Orm::Exceptions
         SqlError(const QString &message, const QSqlError &error, int /*unused*/);
 
         /*! Format the Qt SQL error message. */
-        QString formatMessage(const char *message, const QSqlError &error) const;
+        static QString formatMessage(const char *message, const QSqlError &error);
 
         /*! The Qt SQL error instance. */
         QSqlError m_sqlError;

@@ -418,18 +418,18 @@ std::size_t DatabaseManager::openedConnectionsSize() const
     return m_connections->size();
 }
 
-QStringList DatabaseManager::supportedDrivers() const
+QStringList DatabaseManager::supportedDrivers()
 {
     // aaaaaaaaaaaaaachjo 🤔😁 -- 4 months later, looks much better, right?
     return {QMYSQL, QPSQL, QSQLITE};
 }
 
-QStringList DatabaseManager::drivers() const
+QStringList DatabaseManager::drivers()
 {
     return QSqlDatabase::drivers();
 }
 
-bool DatabaseManager::isDriverAvailable(const QString &driverName) const
+bool DatabaseManager::isDriverAvailable(const QString &driverName)
 {
     return QSqlDatabase::isDriverAvailable(driverName);
 }
@@ -896,7 +896,7 @@ DatabaseManager::makeConnection(const QString &connection)
 
     // FUTURE add support for extensions silverqx
 
-    return m_factory.make(config, connection);
+    return Connectors::ConnectionFactory::make(config, connection);
 }
 
 /* Can not be const because I'm modifying the Configuration (QVariantHash)

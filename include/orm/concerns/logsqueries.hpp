@@ -100,8 +100,8 @@ namespace Concerns
                               const QString &type) const;
 
         /*! Convert a named bindings map to the positional bindings vector. */
-        QVector<QVariant>
-        convertNamedToPositionalBindings(QVariantMap &&bindings) const;
+        static QVector<QVariant>
+        convertNamedToPositionalBindings(QVariantMap &&bindings);
 
         /*! Dynamic cast *this to the DatabaseConnection & derived type. */
         const DatabaseConnection &databaseConnection() const;

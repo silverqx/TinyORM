@@ -708,7 +708,7 @@ namespace Orm::Query
 
         /* Getters / Setters */
         /*! Get the default key name of the table. */
-        const QString &defaultKeyName() const;
+        static const QString &defaultKeyName();
         /*! Get a database connection. */
         inline DatabaseConnection &getConnection() const noexcept;
         /*! Get the query grammar instance. */
@@ -813,11 +813,11 @@ namespace Orm::Query
         void throwIfInvalidOperator(const QString &comparison) const;
 
         /*! Remove all of the expressions from a list of bindings. */
-        QVector<QVariant> cleanBindings(const QVector<QVariant> &bindings) const;
+        static QVector<QVariant> cleanBindings(const QVector<QVariant> &bindings);
         /*! Remove all of the expressions from a list of bindings. */
-        QVector<QVariant> cleanBindings(QVector<QVariant> &&bindings) const;
+        static QVector<QVariant> cleanBindings(QVector<QVariant> &&bindings);
         /*! Remove all of the expressions from the WhereBetweenItem bindings. */
-        QVector<QVariant> cleanBindings(const WhereBetweenItem &bindings) const;
+        static QVector<QVariant> cleanBindings(const WhereBetweenItem &bindings);
 
         /*! Add a vector of basic where clauses to the query. */
         Builder &
@@ -830,13 +830,13 @@ namespace Orm::Query
                          const QString &condition = AND);
 
         /*! Get a new join clause. */
-        std::shared_ptr<JoinClause>
+        static std::shared_ptr<JoinClause>
         newJoinClause(const Builder &query, const QString &type,
-                      const QString &table) const;
+                      const QString &table);
         /*! Get a new join clause. */
-        std::shared_ptr<JoinClause>
+        static std::shared_ptr<JoinClause>
         newJoinClause(const Builder &query, const QString &type,
-                      Expression &&table) const;
+                      Expression &&table);
 
         /*! Remove all existing columns and column bindings. */
         Builder &clearColumns();
@@ -852,11 +852,11 @@ namespace Orm::Query
         std::pair<QString, QVector<QVariant>>
         createSub(Builder &query) const;
         /*! Creates a subquery and parse it. */
-        std::pair<QString, QVector<QVariant>>
-        createSub(const QString &query) const;
+        static std::pair<QString, QVector<QVariant>>
+        createSub(const QString &query);
         /*! Creates a subquery and parse it. */
-        std::pair<QString, QVector<QVariant>>
-        createSub(QString &&query) const;
+        static std::pair<QString, QVector<QVariant>>
+        createSub(QString &&query);
 
         /*! Determine whether the T type is a query builder instance or a lambda expr. */
         template<typename T>

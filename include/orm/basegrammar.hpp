@@ -60,18 +60,18 @@ namespace Query
         QVector<QString> wrapArray(const T &values) const;
 
         /*! Quote the given string literal. */
-        QString quoteString(const QString &value) const;
+        static QString quoteString(const QString &value);
         /*! Quote the given string literal. */
         template<typename = void>
-        QString quoteString(const QVector<QString> &values) const;
+        static QString quoteString(const QVector<QString> &values);
 
         /*! Determine if the given value is a raw expression. */
-        bool isExpression(const QVariant &value) const;
+        static bool isExpression(const QVariant &value);
 
         /*! Get the value of a raw expression. */
-        QVariant getValue(const QVariant &expression) const;
+        static QVariant getValue(const QVariant &expression);
         /*! Get the value of a raw expression. */
-        QVariant getValue(const Expression &expression) const;
+        static QVariant getValue(const Expression &expression);
 
         /*! Get the grammar's table prefix. */
         inline QString getTablePrefix() const;
@@ -79,12 +79,12 @@ namespace Query
         BaseGrammar &setTablePrefix(const QString &prefix);
 
         /*! Get the column name without the table name, a string after last dot. */
-        QString unqualifyColumn(const QString &column) const;
+        static QString unqualifyColumn(const QString &column);
 
         /*! Get the table name without an alias. */
-        QString getFromWithoutAlias(const QString &from) const;
+        static QString getFromWithoutAlias(const QString &from);
         /*! Get an alias from the 'from' clause. */
-        QString getAliasFromFrom(const QString &from) const;
+        static QString getAliasFromFrom(const QString &from);
 
     protected:
         /*! Convert the vector of column names into a wrapped comma delimited string. */
@@ -109,7 +109,7 @@ namespace Query
         QString wrapSegments(QStringList segments) const;
 
         /*! Get individual segments from the 'from' clause. */
-        QStringList getSegmentsFromFrom(const QString &from) const;
+        static QStringList getSegmentsFromFrom(const QString &from);
 
         // FEATURE qt6, use everywhere QLatin1String("") instead of = "", BUT Qt6 has char8_t ctor, so u"" can be used, I will wait with this problem silverqx
         /*! The grammar table prefix. */
@@ -154,7 +154,7 @@ namespace Query
     }
 
     template<typename>
-    QString BaseGrammar::quoteString(const QVector<QString> &values) const
+    QString BaseGrammar::quoteString(const QVector<QString> &values)
     {
         QString quoted;
 

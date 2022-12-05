@@ -41,17 +41,17 @@ namespace Support
     protected:
         /*! Validate the 'options' configuration type, has to be the QString or
             QVariantHash. */
-        void validateConfigOptions(const QVariant &options) const;
+        static void validateConfigOptions(const QVariant &options);
         /*! Prepare options for parseConfigOptions() function, convert to
             the QVariantHash if needed. */
-        QVariantHash prepareConfigOptions(const QVariant &options) const;
+        static QVariantHash prepareConfigOptions(const QVariant &options);
 
         /*! Merge the TinyORM connector options with user's provided connection
             options defined in the config. */
-        QVariantHash mergeOptions(const QVariantHash &connectortOptions,
-                                  const QVariantHash &preparedConfigOptions) const;
+        static QVariantHash mergeOptions(const QVariantHash &connectortOptions,
+                                         const QVariantHash &preparedConfigOptions);
         /*! Stringify merged options. */
-        QString joinOptions(const QVariantHash &options) const;
+        static QString joinOptions(const QVariantHash &options);
 
         /*! Connector instance to obtain connection options from. */
         const Connectors::Connector &m_connector;

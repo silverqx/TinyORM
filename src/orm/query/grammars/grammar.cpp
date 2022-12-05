@@ -150,12 +150,12 @@ const QVector<QString> &Grammar::getOperators() const
 
 /* protected */
 
-bool Grammar::shouldCompileAggregate(const std::optional<AggregateItem> &aggregate) const
+bool Grammar::shouldCompileAggregate(const std::optional<AggregateItem> &aggregate)
 {
     return aggregate.has_value() && !aggregate->function.isEmpty();
 }
 
-bool Grammar::shouldCompileColumns(const QueryBuilder &query) const
+bool Grammar::shouldCompileColumns(const QueryBuilder &query)
 {
     /* If the query is actually performing an aggregating select, we will let
        compileAggregate() to handle the building of the select clauses, as it will need
@@ -163,7 +163,7 @@ bool Grammar::shouldCompileColumns(const QueryBuilder &query) const
     return !query.getAggregate() && !query.getColumns().isEmpty();
 }
 
-bool Grammar::shouldCompileFrom(const FromClause &from) const
+bool Grammar::shouldCompileFrom(const FromClause &from)
 {
     return !std::holds_alternative<std::monostate>(from) ||
             (std::holds_alternative<QString>(from) &&
@@ -577,7 +577,7 @@ QString Grammar::compileDeleteWithJoins(const QueryBuilder &query, const QString
     return QStringLiteral("delete %1 from %2 %3 %4").arg(alias, table, joins, wheres);
 }
 
-QString Grammar::concatenate(const QStringList &segments) const
+QString Grammar::concatenate(const QStringList &segments)
 {
     QString result;
 
@@ -591,7 +591,7 @@ QString Grammar::concatenate(const QStringList &segments) const
     return result.trimmed();
 }
 
-QString Grammar::removeLeadingBoolean(QString statement) const
+QString Grammar::removeLeadingBoolean(QString statement)
 {
     // Skip all whitespaces after and/or, to avoid trimmed() for performance reasons
     const auto firstChar = [&statement](const auto from)
@@ -617,7 +617,7 @@ QString Grammar::removeLeadingBoolean(QString statement) const
 
 QVector<std::reference_wrapper<const QVariant>>
 Grammar::flatBindingsForUpdateDelete(const BindingsMap &bindings,
-                                     const QVector<BindingType> &exclude) const
+                                     const QVector<BindingType> &exclude)
 {
     QVector<std::reference_wrapper<const QVariant>> cleanBindingsFlatten;
 

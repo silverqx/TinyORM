@@ -1234,7 +1234,7 @@ void Builder::dd(const bool replaceBindings, const bool simpleBindings)
 
 /* Getters / Setters */
 
-const QString &Builder::defaultKeyName() const
+const QString &Builder::defaultKeyName()
 {
     return ID;
 }
@@ -1428,9 +1428,9 @@ QString Builder::stripTableForPluck(const QString &column) const
     static const auto as = QStringLiteral(" as ");
 
     if (!column.contains(as))
-        return m_grammar.unqualifyColumn(column);
+        return QueryGrammar::unqualifyColumn(column);
 
-    return m_grammar.getAliasFromFrom(column);
+    return QueryGrammar::getAliasFromFrom(column);
 }
 
 /* protected */
@@ -1450,7 +1450,7 @@ void Builder::throwIfInvalidOperator(const QString &comparison) const
                 .arg(comparison_, getConnection().driverNamePrintable(), __tiny_func__));
 }
 
-QVector<QVariant> Builder::cleanBindings(const QVector<QVariant> &bindings) const
+QVector<QVariant> Builder::cleanBindings(const QVector<QVariant> &bindings)
 {
     QVector<QVariant> cleanedBindings;
     cleanedBindings.reserve(bindings.size());
@@ -1462,7 +1462,7 @@ QVector<QVariant> Builder::cleanBindings(const QVector<QVariant> &bindings) cons
     return cleanedBindings;
 }
 
-QVector<QVariant> Builder::cleanBindings(QVector<QVariant> &&bindings) const
+QVector<QVariant> Builder::cleanBindings(QVector<QVariant> &&bindings)
 {
     QVector<QVariant> cleanedBindings;
     cleanedBindings.reserve(bindings.size());
@@ -1474,7 +1474,7 @@ QVector<QVariant> Builder::cleanBindings(QVector<QVariant> &&bindings) const
     return cleanedBindings;
 }
 
-QVector<QVariant> Builder::cleanBindings(const WhereBetweenItem &bindings) const
+QVector<QVariant> Builder::cleanBindings(const WhereBetweenItem &bindings)
 {
     QVector<QVariant> cleanedBindings;
     cleanedBindings.reserve(2);
@@ -1524,7 +1524,7 @@ Builder::addArrayOfWheres(const QVector<WhereColumnItem> &values,
 
 std::shared_ptr<JoinClause>
 Builder::newJoinClause(const Builder &query, const QString &type,
-                       const QString &table) const
+                       const QString &table)
 {
     /* It has to be shared pointer, because it can not be passed down to joinInternal()
        in join() as incomplete type. */
@@ -1533,7 +1533,7 @@ Builder::newJoinClause(const Builder &query, const QString &type,
 
 std::shared_ptr<JoinClause>
 Builder::newJoinClause(const Builder &query, const QString &type,
-                       Expression &&table) const
+                       Expression &&table)
 {
     return std::make_shared<JoinClause>(query, type, std::move(table));
 }
@@ -1587,13 +1587,13 @@ Builder::createSub(Builder &query) const
 }
 
 std::pair<QString, QVector<QVariant>>
-Builder::createSub(const QString &query) const
+Builder::createSub(const QString &query)
 {
     return {query, {}};
 }
 
 std::pair<QString, QVector<QVariant>>
-Builder::createSub(QString &&query) const
+Builder::createSub(QString &&query)
 {
     return {std::move(query), {}};
 }

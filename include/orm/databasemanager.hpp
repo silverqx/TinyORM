@@ -180,11 +180,11 @@ namespace Query
         std::size_t openedConnectionsSize() const;
 
         /*! Get all of the support drivers. */
-        QStringList supportedDrivers() const;
+        static QStringList supportedDrivers();
         /*! Get all of the available drivers (loadable). */
-        QStringList drivers() const;
+        static QStringList drivers();
         /*! Is the given driver name available? */
-        bool isDriverAvailable(const QString &driverName) const;
+        static bool isDriverAvailable(const QString &driverName);
         /*! Is a driver for the given connection available? */
         bool isConnectionDriverAvailable(const QString &connection);
 
@@ -398,8 +398,6 @@ namespace Query
         /*! Throw exception if DatabaseManager instance already exists. */
         static void checkInstance();
 
-        /*! The database connection factory instance. */
-        const Connectors::ConnectionFactory m_factory {};
         /*! Database configuration. */
         Configuration m_configuration {};
         /*! Active database connection instances for the current thread. */

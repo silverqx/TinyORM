@@ -45,7 +45,7 @@ ConfigurationOptionsParser::parseConfiguration(const QVariantHash &config) const
 }
 
 void
-ConfigurationOptionsParser::validateConfigOptions(const QVariant &options) const
+ConfigurationOptionsParser::validateConfigOptions(const QVariant &options)
 {
     if (Helpers::qVariantTypeId(options) != QMetaType::QString && !
         options.canConvert<QVariantHash>()
@@ -56,7 +56,7 @@ ConfigurationOptionsParser::validateConfigOptions(const QVariant &options) const
 }
 
 QVariantHash
-ConfigurationOptionsParser::prepareConfigOptions(const QVariant &options) const
+ConfigurationOptionsParser::prepareConfigOptions(const QVariant &options)
 {
     // Input is already validated, so I can be sure that options key is QVariantHash
     if (Helpers::qVariantTypeId(options) != QMetaType::QString)
@@ -80,7 +80,7 @@ ConfigurationOptionsParser::prepareConfigOptions(const QVariant &options) const
 QVariantHash
 ConfigurationOptionsParser::mergeOptions(
         const QVariantHash &connectortOptions,
-        const QVariantHash &preparedConfigOptions) const
+        const QVariantHash &preparedConfigOptions)
 {
     // Make a copy of prepared config options
     QVariantHash merged = preparedConfigOptions;
@@ -102,7 +102,7 @@ ConfigurationOptionsParser::mergeOptions(
     return merged;
 }
 
-QString ConfigurationOptionsParser::joinOptions(const QVariantHash &options) const
+QString ConfigurationOptionsParser::joinOptions(const QVariantHash &options)
 {
     QStringList joined;
 

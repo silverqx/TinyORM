@@ -47,10 +47,10 @@ namespace Orm::Connectors
 
     protected:
         /*! Add a database to the list of database connections using the driver type. */
-        QSqlDatabase
+        static QSqlDatabase
         addQSqlDatabaseConnection(
                 const QString &name, const QVariantHash &config,
-                const QString &options) const;
+                const QString &options);
         /*! Handle an exception that occurred during connect execution. */
         QSqlDatabase
         tryAgainIfCausedByLostConnection(

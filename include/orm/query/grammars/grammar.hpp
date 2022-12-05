@@ -109,12 +109,12 @@ namespace Orm::Query::Grammars
         getWhereMethod(WhereType whereType) const = 0;
 
         /*! Determine whether the 'aggregate' component should be compiled. */
-        bool shouldCompileAggregate(const std::optional<AggregateItem> &aggregate) const;
+        static bool shouldCompileAggregate(const std::optional<AggregateItem> &aggregate);
         /*! Determine whether the 'columns' component should be compiled. */
-        bool shouldCompileColumns(const QueryBuilder &query) const;
+        static bool shouldCompileColumns(const QueryBuilder &query);
         /*! Determine whether the 'from' component should be compiled. */
-        bool shouldCompileFrom(const std::variant<std::monostate, QString,
-                                                  Query::Expression> &from) const;
+        static bool shouldCompileFrom(const std::variant<std::monostate, QString,
+                                      Query::Expression> &from);
 
         /*! Compile the components necessary for a select clause. */
         QStringList compileComponents(const QueryBuilder &query) const;
@@ -226,14 +226,14 @@ namespace Orm::Query::Grammars
                                const QString &wheres) const;
 
         /*! Concatenate an array of segments, removing empties. */
-        QString concatenate(const QStringList &segments) const;
+        static QString concatenate(const QStringList &segments);
         /*! Remove the leading boolean from a statement. */
-        QString removeLeadingBoolean(QString statement) const;
+        static QString removeLeadingBoolean(QString statement);
 
         /*! Flat bindings map and exclude given binding types. */
-        QVector<std::reference_wrapper<const QVariant>>
+        static QVector<std::reference_wrapper<const QVariant>>
         flatBindingsForUpdateDelete(const BindingsMap &bindings,
-                                    const QVector<BindingType> &exclude) const;
+                                    const QVector<BindingType> &exclude);
     };
 
     /* public */

@@ -37,9 +37,9 @@ namespace Concerns
         inline virtual ~DetectsLostConnections() = 0;
 
         /*! Determine if the given exception was caused by a lost connection. */
-        bool causedByLostConnection(const Exceptions::SqlError &e) const;
+        static bool causedByLostConnection(const Exceptions::SqlError &e);
         /*! Determine if the given exception was caused by a lost connection. */
-        bool causedByLostConnection(const QSqlError &e) const;
+        static bool causedByLostConnection(const QSqlError &e);
     };
 
     /* public */

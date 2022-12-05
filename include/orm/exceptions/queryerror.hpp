@@ -34,7 +34,7 @@ namespace Orm::Exceptions
 
     protected:
         /*! Format the Qt SQL error message. */
-        QString formatMessage(const char *message, const QSqlQuery &query);
+        static QString formatMessage(const char *message, const QSqlQuery &query);
 
         /*! The SQL for the query. */
         QString m_sql;

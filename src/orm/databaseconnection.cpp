@@ -401,8 +401,7 @@ DatabaseConnection::prepareBindings(QVector<QVariant> bindings) const
     return bindings;
 }
 
-void DatabaseConnection::bindValues(QSqlQuery &query,
-                                    const QVector<QVariant> &bindings) const
+void DatabaseConnection::bindValues(QSqlQuery &query, const QVector<QVariant> &bindings)
 {
     auto itBinding = bindings.constBegin();
     while (itBinding != bindings.constEnd()) {

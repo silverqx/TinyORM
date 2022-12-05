@@ -9,12 +9,12 @@ TINYORM_BEGIN_COMMON_NAMESPACE
 namespace Orm::Concerns
 {
 
-bool DetectsLostConnections::causedByLostConnection(const Exceptions::SqlError &e) const
+bool DetectsLostConnections::causedByLostConnection(const Exceptions::SqlError &e)
 {
     return causedByLostConnection(e.getSqlError());
 }
 
-bool DetectsLostConnections::causedByLostConnection(const QSqlError &e) const
+bool DetectsLostConnections::causedByLostConnection(const QSqlError &e)
 {
     // TODO verify this will be pain in the ass 😕, but but it looks like few of them for mysql and postgres are completly valid silverqx
     static const QVector<QString> lostMessagesCache {

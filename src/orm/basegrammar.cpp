@@ -88,22 +88,22 @@ QString BaseGrammar::wrapTable(const FromClause &table) const
     return wrapTable(std::get<QString>(table));
 }
 
-QString BaseGrammar::quoteString(const QString &value) const
+QString BaseGrammar::quoteString(const QString &value)
 {
     return QStringLiteral("'%1'").arg(value);
 }
 
-bool BaseGrammar::isExpression(const QVariant &value) const
+bool BaseGrammar::isExpression(const QVariant &value)
 {
     return value.canConvert<Expression>();
 }
 
-QVariant BaseGrammar::getValue(const QVariant &expression) const
+QVariant BaseGrammar::getValue(const QVariant &expression)
 {
     return expression.value<Expression>().getValue();
 }
 
-QVariant BaseGrammar::getValue(const Expression &expression) const
+QVariant BaseGrammar::getValue(const Expression &expression)
 {
     return expression.getValue();
 }
@@ -115,17 +115,17 @@ BaseGrammar &BaseGrammar::setTablePrefix(const QString &prefix)
     return *this;
 }
 
-QString BaseGrammar::unqualifyColumn(const QString &column) const
+QString BaseGrammar::unqualifyColumn(const QString &column)
 {
     return column.split(DOT).last().trimmed();
 }
 
-QString BaseGrammar::getFromWithoutAlias(const QString &from) const
+QString BaseGrammar::getFromWithoutAlias(const QString &from)
 {
     return std::move(getSegmentsFromFrom(from).first()); // clazy:exclude=detaching-temporary
 }
 
-QString BaseGrammar::getAliasFromFrom(const QString &from) const
+QString BaseGrammar::getAliasFromFrom(const QString &from)
 {
     return std::move(getSegmentsFromFrom(from).last()); // clazy:exclude=detaching-temporary
 }
@@ -178,7 +178,7 @@ QString BaseGrammar::wrapSegments(QStringList segments) const
     return segments.join(DOT);
 }
 
-QStringList BaseGrammar::getSegmentsFromFrom(const QString &from) const
+QStringList BaseGrammar::getSegmentsFromFrom(const QString &from)
 {
     auto segments = from.split(QStringLiteral(" as "), Qt::KeepEmptyParts,
                                Qt::CaseInsensitive);

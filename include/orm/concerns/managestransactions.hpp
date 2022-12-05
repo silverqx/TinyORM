@@ -79,7 +79,7 @@ namespace Concerns
 
         /*! Transform a QtSql transaction error to TinyORM SqlTransactionError
             exception. */
-        void throwIfTransactionError(
+        static void throwIfTransactionError(
                 QString &&functionName, const QString &queryString, QSqlError &&error);
 
         /*! Handle an error returned when beginning a transaction. */

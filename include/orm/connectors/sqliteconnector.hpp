@@ -35,12 +35,12 @@ namespace Orm::Connectors
 
     protected:
         /*! Set the connection foreign key constraints. */
-        void configureForeignKeyConstraints(const QSqlDatabase &connection,
-                                            const QVariantHash &config) const;
+        static void configureForeignKeyConstraints(const QSqlDatabase &connection,
+                                                   const QVariantHash &config);
 
     private:
         /*! Check whether the SQLite database file exists. */
-        void checkDatabaseExists(const QVariantHash &config) const;
+        static void checkDatabaseExists(const QVariantHash &config);
 
         /*! The default QSqlDatabase connection options for the SQLiteConnector. */
         inline static const QVariantHash m_options;

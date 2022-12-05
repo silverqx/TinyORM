@@ -32,8 +32,8 @@ namespace Connectors
         inline ~ConnectionFactory() = default;
 
         /*! Establish a QSqlDatabase connection based on the configuration. */
-        std::unique_ptr<DatabaseConnection>
-        make(QVariantHash &config, const QString &connection) const;
+        static std::unique_ptr<DatabaseConnection>
+        make(QVariantHash &config, const QString &connection);
 
         /*! Create a connector instance based on the configuration. */
         static std::unique_ptr<ConnectorInterface>
@@ -41,8 +41,8 @@ namespace Connectors
 
     protected:
         /*! Parse and prepare the database configuration. */
-        QVariantHash
-        parseConfig(QVariantHash &config, const QString &connection) const;
+        static QVariantHash
+        parseConfig(QVariantHash &config, const QString &connection);
 
         /*! Modify the driver name to uppercase. */
         static void normalizeDriverName(QVariantHash &config);
@@ -50,21 +50,21 @@ namespace Connectors
         static void parseQtTimeZone(QVariantHash &config, const QString &connection);
 
         /*! Create a single database connection  instance. */
-        std::unique_ptr<DatabaseConnection>
-        createSingleConnection(QVariantHash &&config) const;
+        static std::unique_ptr<DatabaseConnection>
+        createSingleConnection(QVariantHash &&config);
         /*! Create a new Closure that resolves to a QSqlDatabase instance
             ( only a connection name returned ). */
-        std::function<ConnectionName()>
-        createQSqlDatabaseResolver(const QVariantHash &config) const;
+        static std::function<ConnectionName()>
+        createQSqlDatabaseResolver(const QVariantHash &config);
 
         /*! Create a new Closure that resolves to a QSqlDatabase instance ( only
             a connection name returned ) with a specific host or a vector of hosts. */
-        std::function<ConnectionName()>
-        createQSqlDatabaseResolverWithHosts(const QVariantHash &config) const;
+        static std::function<ConnectionName()>
+        createQSqlDatabaseResolverWithHosts(const QVariantHash &config);
         /*! Create a new Closure that resolves to a QSqlDatabase instance
             ( only a connection name returned ) where there is no configured host. */
-        std::function<ConnectionName()>
-        createQSqlDatabaseResolverWithoutHosts(const QVariantHash &config) const;
+        static std::function<ConnectionName()>
+        createQSqlDatabaseResolverWithoutHosts(const QVariantHash &config);
 
         /*! Create a new connection instance. */
         static std::unique_ptr<DatabaseConnection>
@@ -76,7 +76,7 @@ namespace Connectors
                 std::optional<bool> &&returnQDateTime = std::nullopt);
 
         /*! Parse the hosts configuration item into the QStringList and validate hosts. */
-        QStringList parseHosts(const QVariantHash &config) const;
+        static QStringList parseHosts(const QVariantHash &config);
         /*! Check if the hosts configuration item has right format. */
         static void validateHosts(const QStringList &hosts);
     };

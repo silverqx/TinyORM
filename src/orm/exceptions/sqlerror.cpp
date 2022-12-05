@@ -30,7 +30,7 @@ SqlError::SqlError(const QString &message, const QSqlError &error, const int /*u
     , m_sqlError(error)
 {}
 
-QString SqlError::formatMessage(const char *message, const QSqlError &error) const
+QString SqlError::formatMessage(const char *message, const QSqlError &error)
 {
     QString result(message);
 

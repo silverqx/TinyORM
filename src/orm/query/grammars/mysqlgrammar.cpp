@@ -117,15 +117,12 @@ MySqlGrammar::getCompileMap() const
     T_THREAD_LOCAL
     static const QMap<SelectComponentType, SelectComponentValue> cached {
         {SelectComponentType::AGGREGATE, {bind(&MySqlGrammar::compileAggregate),
-                        [this]
-                        (const auto &query)
+                        [](const auto &query)
                         { return shouldCompileAggregate(query.getAggregate()); }}},
         {SelectComponentType::COLUMNS,   {bind(&MySqlGrammar::compileColumns),
-                        [this]
-                        (const auto &query) { return shouldCompileColumns(query); }}},
+                        [](const auto &query) { return shouldCompileColumns(query); }}},
         {SelectComponentType::FROM,      {bind(&MySqlGrammar::compileFrom),
-                        [this]
-                        (const auto &query)
+                        [](const auto &query)
                         { return shouldCompileFrom(query.getFrom()); }}},
         {SelectComponentType::JOINS,     {bind(&MySqlGrammar::compileJoins),
                         [](const auto &query) { return !query.getJoins().isEmpty(); }}},

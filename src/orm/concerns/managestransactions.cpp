@@ -253,7 +253,7 @@ void ManagesTransactions::throwIfTransactionError(
 void ManagesTransactions::handleStartTransactionError(
             QString &&functionName, const QString &queryString, QSqlError &&error)
 {
-    if (!databaseConnection().causedByLostConnection(error))
+    if (!DetectsLostConnections::causedByLostConnection(error))
         throwIfTransactionError(std::move(functionName), queryString, std::move(error));
 
     databaseConnection().reconnect();
@@ -264,7 +264,7 @@ void ManagesTransactions::handleStartTransactionError(
 void ManagesTransactions::handleCommonTransactionError(
             QString &&functionName, const QString &queryString, QSqlError &&error)
 {
-    if (databaseConnection().causedByLostConnection(error))
+    if (DetectsLostConnections::causedByLostConnection(error))
         resetTransactions();
 
     throwIfTransactionError(std::move(functionName), queryString, std::move(error));

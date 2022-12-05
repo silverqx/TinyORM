@@ -192,7 +192,7 @@ void LogsQueries::logQueryInternal(
 }
 
 QVector<QVariant>
-LogsQueries::convertNamedToPositionalBindings(QVariantMap &&bindings) const
+LogsQueries::convertNamedToPositionalBindings(QVariantMap &&bindings)
 {
     QVector<QVariant> result;
     result.reserve(bindings.size());

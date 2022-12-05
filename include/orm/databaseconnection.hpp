@@ -145,11 +145,9 @@ namespace Orm
         QSqlQuery getQtQuery();
 
         /*! Prepare the query bindings for execution. */
-        QVector<QVariant>
-        prepareBindings(QVector<QVariant> bindings) const;
+        QVector<QVariant> prepareBindings(QVector<QVariant> bindings) const;
         /*! Bind values to their parameters in the given statement. */
-        void bindValues(QSqlQuery &query,
-                        const QVector<QVariant> &bindings) const;
+        static void bindValues(QSqlQuery &query, const QVector<QVariant> &bindings);
 
         /*! Determine whether the database connection is currently open. */
         inline bool isOpen();
