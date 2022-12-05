@@ -199,7 +199,7 @@ namespace Concerns
         /*! Invoke the list command. */
         Q_NORETURN void showCommandsList(int exitCode);
         /*! Exit the application with post routines. */
-        static Q_NORETURN void exitApplication(int exitCode);
+        Q_NORETURN static void exitApplication(int exitCode);
 
         /* Commands factory */
         /*! Alias for an optional command-line parser reference. */
