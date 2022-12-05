@@ -49,7 +49,7 @@ private Q_SLOTS:
 private:
     /*! Create the TinyBuilder by template parameter. */
     template<typename Model>
-    std::unique_ptr<TinyBuilder<Model>> createQuery() const;
+    static std::unique_ptr<TinyBuilder<Model>> createQuery();
 };
 
 /* private slots */
@@ -316,9 +316,9 @@ void tst_TinyBuilder::update_SameValue() const
 
 template<typename Model>
 std::unique_ptr<TinyBuilder<Model>>
-tst_TinyBuilder::createQuery() const
+tst_TinyBuilder::createQuery()
 {
-    return Model().query();
+    return Model::query();
 }
 
 QTEST_MAIN(tst_TinyBuilder)
