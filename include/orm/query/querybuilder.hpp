@@ -884,7 +884,7 @@ namespace Orm::Query
         QVector<OrderByItem> removeExistingOrdersFor(const QString &column) const;
 
         /*! Strip off the table name or alias from a column identifier. */
-        static QString stripTableForPluck(const QString &column) ;
+        static QString stripTableForPluck(const QString &column);
 
         /* Getters / Setters */
         /*! Set the aggregate property without running the query. */
