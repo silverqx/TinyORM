@@ -223,8 +223,8 @@ namespace Concerns
         /*! Get all supported commands list (used by the list command). */
         const std::vector<std::shared_ptr<Command>> &createCommandsVector();
         /*! Hash that maps namespaces to command indexes from createCommandsVector(). */
-        const std::unordered_map<QString, std::tuple<int, int>> &
-        commandsByNamespaceHash() const;
+        static const std::unordered_map<QString, std::tuple<int, int>> &
+        commandsByNamespaceHash();
         /*! Obtain all commands in the given namespace. */
         inline auto getCommandsInNamespace(const QString &name);
 

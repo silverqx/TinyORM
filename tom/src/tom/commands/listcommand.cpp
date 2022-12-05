@@ -157,7 +157,7 @@ QString ListCommand::getNamespaceName(const QString &namespaceArg) const
     printAmbiguousNamespaces(namespaceArg, namespaces);
 }
 
-std::vector<QString> ListCommand::guessNamespace(const QString &namespaceArg) const
+std::vector<QString> ListCommand::guessNamespace(const QString &namespaceArg)
 {
     return Application::namespaceNames()
             | ranges::views::filter([&namespaceArg](const QString &namespaceName)

@@ -56,7 +56,7 @@ namespace Tom::Commands
         /*! Get the namespace name including the guess namespace name logic. */
         QString getNamespaceName(const QString &namespaceArg) const;
         /*! Try to guess the namespace name. */
-        std::vector<QString> guessNamespace(const QString &namespaceArg) const;
+        static std::vector<QString> guessNamespace(const QString &namespaceArg);
         /*! Print the error wall with ambiguous namespaces. */
         Q_NORETURN void
         printAmbiguousNamespaces(const QString &namespaceName,

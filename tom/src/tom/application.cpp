@@ -574,7 +574,7 @@ Application::createCommandsVector()
 }
 
 const std::unordered_map<QString, std::tuple<int, int>> &
-Application::commandsByNamespaceHash() const
+Application::commandsByNamespaceHash()
 {
     /* First number is index where it starts (0-based), second the number where it ends
        (it's like iterator's end so should point after).
