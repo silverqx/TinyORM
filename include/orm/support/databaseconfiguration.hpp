@@ -89,13 +89,13 @@ namespace Orm::Support
     }
 
     DatabaseConfiguration::ConfigurationsType &
-    DatabaseConfiguration::get() noexcept
+    DatabaseConfiguration::get() noexcept // NOLINT(readability-convert-member-functions-to-static)
     {
         return m_configurations;
     }
 
     const DatabaseConfiguration::ConfigurationsType &
-    DatabaseConfiguration::get() const noexcept
+    DatabaseConfiguration::get() const noexcept // NOLINT(readability-convert-member-functions-to-static)
     {
         return m_configurations;
     }

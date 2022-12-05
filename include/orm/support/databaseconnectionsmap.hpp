@@ -72,13 +72,13 @@ namespace Orm::Support
     }
 
     DatabaseConnectionsMap::ConnectionsType &
-    DatabaseConnectionsMap::get() noexcept
+    DatabaseConnectionsMap::get() noexcept // NOLINT(readability-convert-member-functions-to-static)
     {
         return m_connections;
     }
 
     const DatabaseConnectionsMap::ConnectionsType &
-    DatabaseConnectionsMap::get() const noexcept
+    DatabaseConnectionsMap::get() const noexcept // NOLINT(readability-convert-member-functions-to-static)
     {
         return m_connections;
     }
