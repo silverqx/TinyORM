@@ -339,7 +339,7 @@ namespace Concerns
                 std::optional<std::reference_wrapper<
                         QStringList>> relations = std::nullopt);
 
-        /* Operations on a model instance */
+        /* Operations on a Model instance */
         /*! Obtain all loaded relation names except pivot relations. */
         QVector<WithItem> getLoadedRelationsWithoutPivot();
 
@@ -1216,7 +1216,7 @@ namespace Concerns
         this->resetRelationStore();
     }
 
-    /* Operations on a model instance */
+    /* Operations on a Model instance */
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     QVector<WithItem>

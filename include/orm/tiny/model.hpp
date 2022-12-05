@@ -113,7 +113,7 @@ namespace Orm::Tiny
             values. */
         explicit Model(DontFillDefaultAttributes /*unused*/);
 
-        /* Static operations on a model instance */
+        /* Static operations on the Model class */
         /*! Create a new TinyORM model instance. */
         static Derived instance();
         /*! Create a new TinyORM model instance. */
@@ -160,7 +160,7 @@ namespace Orm::Tiny
         /*! Destroy the model by the given ID. */
         inline static std::size_t destroy(const QVariant &id);
 
-        /* Operations on a model instance */
+        /* Operations on a Model instance */
         /*! Save the model to the database. */
         bool save(SaveOptions options = {});
         /*! Save the model and all of its relationships. */
@@ -295,7 +295,7 @@ namespace Orm::Tiny
         /*! Get a new query builder instance for the connection. */
         std::shared_ptr<QueryBuilder> newBaseQueryBuilder() const;
 
-        /* Operations on a model instance */
+        /* Operations on a Model instance */
         /*! Perform the actual delete query on this model instance. */
         void performDeleteOnModel();
 
@@ -345,7 +345,7 @@ namespace Orm::Tiny
         inline static const QString &UPDATED_AT = Constants::UPDATED_AT; // NOLINT(cppcoreguidelines-interfaces-global-init)
 
     private:
-        /* Operations on a model instance */
+        /* Operations on a Model instance */
         /*! Method to call in the incrementOrDecrement(). */
         enum struct IncrementOrDecrement
         {
@@ -480,7 +480,7 @@ namespace Orm::Tiny
         initializeSoftDeletes();
     }
 
-    /* Static operations on a model instance */
+    /* Static operations on the Model class */
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     Derived
@@ -686,7 +686,7 @@ namespace Orm::Tiny
         return destroy(QVector<QVariant> {id});
     }
 
-    /* Operations on a model instance */
+    /* Operations on a Model instance */
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     bool Model<Derived, AllRelations...>::save(const SaveOptions options)
@@ -1375,7 +1375,7 @@ namespace Orm::Tiny
         return getConnection().query();
     }
 
-    /* Operations on a model instance */
+    /* Operations on a Model instance */
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     void Model<Derived, AllRelations...>::performDeleteOnModel()
@@ -1526,7 +1526,7 @@ namespace Orm::Tiny
 
     /* private */
 
-    /* Operations on a model instance */
+    /* Operations on a Model instance */
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     template<typename T> requires std::is_arithmetic_v<T>
