@@ -30,11 +30,6 @@ namespace Orm::Connectors
         static QSqlDatabase
         createConnection(const QString &name, const QVariantHash &config,
                          const QString &options);
-        /*! Create a new QSqlDatabase instance, create a new database connection. */
-        static QSqlDatabase
-        createQSqlDatabaseConnection(
-                const QString &name, const QVariantHash &config,
-                const QString &options);
 
         /*! Get the QSqlDatabase connection options based on the configuration. */
         QString getOptions(const QVariantHash &config) const;
@@ -46,11 +41,15 @@ namespace Orm::Connectors
         virtual const QVariantHash &getConnectorOptions() const = 0;
 
     protected:
+        /*! Create a new QSqlDatabase instance, create a new database connection. */
+        static QSqlDatabase
+        createQSqlDatabaseConnection(const QString &name, const QVariantHash &config,
+                                     const QString &options);
+
         /*! Add a database to the list of database connections using the driver type. */
         static QSqlDatabase
-        addQSqlDatabaseConnection(
-                const QString &name, const QVariantHash &config,
-                const QString &options);
+        addQSqlDatabaseConnection(const QString &name, const QVariantHash &config,
+                                  const QString &options);
         /*! Handle an exception that occurred during connect execution. */
         static QSqlDatabase
         tryAgainIfCausedByLostConnection(

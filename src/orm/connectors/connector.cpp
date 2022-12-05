@@ -38,6 +38,23 @@ Connector::createConnection(const QString &name, const QVariantHash &config,
     }
 }
 
+QString Connector::getOptions(const QVariantHash &config) const
+{
+    /* This is little different than in the Eloquent, QSqlDatabase doesn't have
+       any default connection options which are common for all drivers, instead
+       every driver has it's own connection options.
+       So I have divided it into two options, one are config options which are
+       defined by the user and others are connector options.
+       Options defined by a user are in the config's 'options' parameter and
+       connector options are defined in the connector itself as 'm_options'
+       data member. */
+    // Validate, prepare, and merge connection options
+    return Support::ConfigurationOptionsParser(*this)
+            .parseConfiguration(config);
+}
+
+/* protected */
+
 QSqlDatabase
 Connector::createQSqlDatabaseConnection(const QString &name, const QVariantHash &config,
                                         const QString &options)
@@ -57,23 +74,6 @@ Connector::createQSqlDatabaseConnection(const QString &name, const QVariantHash 
 
     return db;
 }
-
-QString Connector::getOptions(const QVariantHash &config) const
-{
-    /* This is little different than in the Eloquent, QSqlDatabase doesn't have
-       any default connection options which are common for all drivers, instead
-       every driver has it's own connection options.
-       So I have divided it into two options, one are config options which are
-       defined by the user and others are connector options.
-       Options defined by a user are in the config's 'options' parameter and
-       connector options are defined in the connector itself as 'm_options'
-       data member. */
-    // Validate, prepare, and merge connection options
-    return Support::ConfigurationOptionsParser(*this)
-            .parseConfiguration(config);
-}
-
-/* protected */
 
 QSqlDatabase
 Connector::addQSqlDatabaseConnection(const QString &name, const QVariantHash &config,
