@@ -85,7 +85,7 @@ namespace Tom
         std::shared_ptr<QueryBuilder> table() const;
 
         /*! Hydrate a vector of migration items from a raw SqlQuery. */
-        std::vector<MigrationItem> hydrateMigrations(SqlQuery &query) const;
+        static std::vector<MigrationItem> hydrateMigrations(SqlQuery &query);
 
         /*! The database connection resolver instance. */
         std::shared_ptr<ConnectionResolverInterface> m_connectionResolver;

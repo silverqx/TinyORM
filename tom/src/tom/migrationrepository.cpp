@@ -155,7 +155,7 @@ std::shared_ptr<QueryBuilder> MigrationRepository::table() const
 }
 
 std::vector<MigrationItem>
-MigrationRepository::hydrateMigrations(SqlQuery &query) const
+MigrationRepository::hydrateMigrations(SqlQuery &query)
 {
     std::vector<MigrationItem> migration;
 
