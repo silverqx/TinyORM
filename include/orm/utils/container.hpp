@@ -28,6 +28,11 @@ namespace Orm::Utils
         template<JoinContainer T, DelimiterConcept D = const QString &>
         static QString
         join(const T &container, D &&delimiter = Constants::COMMA);
+
+        /*! Get a size of the greatest element in the container. */
+        template<QStringContainer T>
+        static QVector<QString>::size_type
+        maxElementSize(const T &container, QVector<QString>::size_type addToElement = 0);
     };
 
     template<JoinContainer T, DelimiterConcept D>
@@ -51,6 +56,31 @@ namespace Orm::Utils
             columnized += *it;
 
         return columnized;
+    }
+
+    template<QStringContainer T>
+    QVector<QString>::size_type
+    Container::maxElementSize(const T &container,
+                              const QVector<QString>::size_type addToElement)
+    {
+        // Nothing to do
+        if (container.empty())
+            return 0;
+
+        QVector<QString>::size_type result = 0;
+
+        for (const auto &element : container)
+            if (const auto elementSize = element.size();
+                elementSize > result
+            )
+                result = elementSize;
+
+        /* This is the reason for the addToElement argument, this algorithm returns 0,
+           if the result is 0. */
+        if (result == 0)
+            return 0;
+
+        return result + addToElement;
     }
 
 } // namespace Orm::Utils

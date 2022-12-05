@@ -580,6 +580,7 @@ QString Grammar::compileDeleteWithJoins(const QueryBuilder &query, const QString
 QString Grammar::concatenate(const QStringList &segments)
 {
     QString result;
+    result.reserve(ContainerUtils::maxElementSize(segments, 1));
 
     for (const auto &segment : segments) {
         if (segment.isEmpty())
