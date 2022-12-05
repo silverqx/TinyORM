@@ -347,7 +347,7 @@ namespace Orm
     }
 
     Query::Expression
-    DatabaseConnection::raw(const QVariant &value) const
+    DatabaseConnection::raw(const QVariant &value) const // NOLINT(readability-convert-member-functions-to-static)
     {
         return Query::Expression(value);
     }

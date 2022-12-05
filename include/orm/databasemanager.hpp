@@ -65,7 +65,7 @@ namespace Query
         QSqlQuery qtQuery(const QString &connection = "");
 
         /*! Create a new raw query expression. */
-        inline Query::Expression raw(const QVariant &value);
+        inline Query::Expression raw(const QVariant &value) const;
 
         // TODO next add support for named bindings, Using Named Bindings silverqx
         /*! Run a select statement against the database. */
@@ -414,7 +414,7 @@ namespace Query
     /* Proxy methods to the DatabaseConnection */
 
     Query::Expression
-    DatabaseManager::raw(const QVariant &value)
+    DatabaseManager::raw(const QVariant &value) const // NOLINT(readability-convert-member-functions-to-static)
     {
         return Query::Expression(value);
     }
