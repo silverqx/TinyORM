@@ -3,6 +3,7 @@
 #include <range/v3/view/map.hpp>
 
 #include "orm/concerns/hasconnectionresolver.hpp"
+#include "orm/connectors/connectionfactory.hpp"
 #include "orm/exceptions/invalidargumenterror.hpp"
 #include "orm/schema.hpp"
 

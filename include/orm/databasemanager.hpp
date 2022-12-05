@@ -6,7 +6,6 @@
 TINY_SYSTEM_HEADER
 
 #include "orm/connectionresolverinterface.hpp"
-#include "orm/connectors/connectionfactory.hpp"
 #include "orm/support/databaseconfiguration.hpp"
 #include "orm/support/databaseconnectionsmap.hpp"
 
