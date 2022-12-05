@@ -413,23 +413,23 @@ QStringList DatabaseManager::openedConnectionNames() const
     return names;
 }
 
-std::size_t DatabaseManager::openedConnectionsSize() const
+std::size_t DatabaseManager::openedConnectionsSize() const noexcept
 {
     return m_connections->size();
 }
 
-QStringList DatabaseManager::supportedDrivers()
+QStringList DatabaseManager::supportedDrivers() const // NOLINT(readability-convert-member-functions-to-static)
 {
     // aaaaaaaaaaaaaachjo 🤔😁 -- 4 months later, looks much better, right?
     return {QMYSQL, QPSQL, QSQLITE};
 }
 
-QStringList DatabaseManager::drivers()
+QStringList DatabaseManager::drivers() const // NOLINT(readability-convert-member-functions-to-static)
 {
     return QSqlDatabase::drivers();
 }
 
-bool DatabaseManager::isDriverAvailable(const QString &driverName)
+bool DatabaseManager::isDriverAvailable(const QString &driverName) const // NOLINT(readability-convert-member-functions-to-static)
 {
     return QSqlDatabase::isDriverAvailable(driverName);
 }

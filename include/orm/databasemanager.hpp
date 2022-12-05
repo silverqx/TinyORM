@@ -177,14 +177,14 @@ namespace Query
         /*! Returns a list containing the names of opened connections. */
         QStringList openedConnectionNames() const;
         /*! Get the number of opened connections. */
-        std::size_t openedConnectionsSize() const;
+        std::size_t openedConnectionsSize() const noexcept;
 
         /*! Get all of the support drivers. */
-        static QStringList supportedDrivers();
+        QStringList supportedDrivers() const;
         /*! Get all of the available drivers (loadable). */
-        static QStringList drivers();
+        QStringList drivers() const;
         /*! Is the given driver name available? */
-        static bool isDriverAvailable(const QString &driverName);
+        bool isDriverAvailable(const QString &driverName) const;
         /*! Is a driver for the given connection available? */
         bool isConnectionDriverAvailable(const QString &connection);
 
