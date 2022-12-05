@@ -861,10 +861,10 @@ namespace Orm::Query
         createSub(Builder &query) const;
         /*! Creates a subquery and parse it. */
         static std::pair<QString, QVector<QVariant>>
-        createSub(const QString &query);
+        createSub(const QString &query) noexcept;
         /*! Creates a subquery and parse it. */
         static std::pair<QString, QVector<QVariant>>
-        createSub(QString &&query);
+        createSub(QString &&query) noexcept;
 
         /*! Determine whether the T type is a query builder instance or a lambda expr. */
         template<typename T>

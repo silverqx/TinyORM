@@ -1575,13 +1575,13 @@ Builder::createSub(Builder &query) const
 }
 
 std::pair<QString, QVector<QVariant>>
-Builder::createSub(const QString &query)
+Builder::createSub(const QString &query) noexcept
 {
     return {query, {}};
 }
 
 std::pair<QString, QVector<QVariant>>
-Builder::createSub(QString &&query)
+Builder::createSub(QString &&query) noexcept
 {
     return {std::move(query), {}};
 }
