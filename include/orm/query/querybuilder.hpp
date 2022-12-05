@@ -14,6 +14,14 @@ TINY_SYSTEM_HEADER
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
+#ifndef TINYORM_DISABLE_ORM
+namespace Orm::Tiny
+{
+    template<typename Model>
+    class Builder;
+}
+#endif
+
 namespace Orm::Query
 {
     class JoinClause;
@@ -30,6 +38,11 @@ namespace Orm::Query
     {
         // To access enforceOrderBy()
         friend Concerns::BuildsQueries;
+#ifndef TINYORM_DISABLE_ORM
+        // To access stripTableForPluck()
+        template<typename Model>
+        friend class Tiny::Builder;
+#endif
 
         /*! Alias for the query grammar. */
         using QueryGrammar = Query::Grammars::Grammar;
@@ -805,9 +818,6 @@ namespace Orm::Query
         Builder cloneWithoutBindings(
                 const std::unordered_set<BindingType> &except) const;
 
-        /*! Strip off the table name or alias from a column identifier. */
-        QString stripTableForPluck(const QString &column) const;
-
     protected:
         /*! Throw if the given operator is not valid for the current DB connection. */
         void throwIfInvalidOperator(const QString &comparison) const;
@@ -874,6 +884,9 @@ namespace Orm::Query
         void enforceOrderBy() const;
         /*! Get an array with all orders with a given column removed. */
         QVector<OrderByItem> removeExistingOrdersFor(const QString &column) const;
+
+        /*! Strip off the table name or alias from a column identifier. */
+        static QString stripTableForPluck(const QString &column) ;
 
         /* Getters / Setters */
         /*! Set the aggregate property without running the query. */

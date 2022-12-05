@@ -1423,16 +1423,6 @@ Builder Builder::cloneWithoutBindings(
     return copy;
 }
 
-QString Builder::stripTableForPluck(const QString &column) const
-{
-    static const auto as = QStringLiteral(" as ");
-
-    if (!column.contains(as))
-        return QueryGrammar::unqualifyColumn(column);
-
-    return QueryGrammar::getAliasFromFrom(column);
-}
-
 /* protected */
 
 void Builder::throwIfInvalidOperator(const QString &comparison) const
@@ -1632,6 +1622,16 @@ QVector<OrderByItem> Builder::removeExistingOrdersFor(const QString &column) con
         return std::get<QString>(order.column) == column;
     })
             | ranges::to<QVector<OrderByItem>>();
+}
+
+QString Builder::stripTableForPluck(const QString &column)
+{
+    static const auto as = QStringLiteral(" as ");
+
+    if (!column.contains(as))
+        return QueryGrammar::unqualifyColumn(column);
+
+    return QueryGrammar::getAliasFromFrom(column);
 }
 
 /* Getters / Setters */
