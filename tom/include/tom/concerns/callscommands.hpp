@@ -40,9 +40,9 @@ namespace Concerns
         int runCommand(const QString &command, QStringList &&arguments) const;
 
         /*! Create command-line arguments from the given arguments. */
-        QStringList
+        static QStringList
         createCommandLineArguments(const QString &command, QStringList &&arguments,
-                                   QStringList &&currentArguments) const;
+                                   QStringList &&currentArguments);
 
         /*! Get common command-line arguments from current command-line arguments. */
         static QStringList getCommonArguments(QStringList &&arguments);
