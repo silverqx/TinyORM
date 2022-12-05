@@ -179,7 +179,7 @@ QVector<QString> SQLiteSchemaGrammar::compileIndex(const Blueprint &blueprint,
 }
 
 QVector<QString>
-SQLiteSchemaGrammar::compileSpatialIndex(const Blueprint &/*unused*/,
+SQLiteSchemaGrammar::compileSpatialIndex(const Blueprint &/*unused*/,    // NOLINT(readability-convert-member-functions-to-static)
                                          const IndexCommand &/*unused*/) const
 {
     throw Exceptions::RuntimeError(
@@ -187,7 +187,7 @@ SQLiteSchemaGrammar::compileSpatialIndex(const Blueprint &/*unused*/,
 }
 
 QVector<QString>
-SQLiteSchemaGrammar::compileDropPrimary(const Blueprint &/*unused*/,
+SQLiteSchemaGrammar::compileDropPrimary(const Blueprint &/*unused*/,    // NOLINT(readability-convert-member-functions-to-static)
                                         const IndexCommand &/*unused*/) const
 {
     // CUR schema sqlite, unify all this exceptions silverqx
@@ -203,7 +203,7 @@ QVector<QString> SQLiteSchemaGrammar::compileDropIndex(const Blueprint &/*unused
 }
 
 QVector<QString>
-SQLiteSchemaGrammar::compileDropSpatialIndex(const Blueprint &/*unused*/,
+SQLiteSchemaGrammar::compileDropSpatialIndex(const Blueprint &/*unused*/,    // NOLINT(readability-convert-member-functions-to-static)
                                              const IndexCommand &/*unused*/) const
 {
     throw Exceptions::RuntimeError(
@@ -211,7 +211,7 @@ SQLiteSchemaGrammar::compileDropSpatialIndex(const Blueprint &/*unused*/,
 }
 
 QVector<QString>
-SQLiteSchemaGrammar::compileDropForeign(const Blueprint &/*unused*/,
+SQLiteSchemaGrammar::compileDropForeign(const Blueprint &/*unused*/,    // NOLINT(readability-convert-member-functions-to-static)
                                         const IndexCommand &/*unused*/) const
 {
     throw Exceptions::RuntimeError(
@@ -220,7 +220,7 @@ SQLiteSchemaGrammar::compileDropForeign(const Blueprint &/*unused*/,
 }
 
 QVector<QString>
-SQLiteSchemaGrammar::compileRenameIndex(const Blueprint &/*unused*/,
+SQLiteSchemaGrammar::compileRenameIndex(const Blueprint &/*unused*/,     // NOLINT(readability-convert-member-functions-to-static)
                                         const RenameCommand &/*unused*/) const
 {
     throw Exceptions::RuntimeError(
