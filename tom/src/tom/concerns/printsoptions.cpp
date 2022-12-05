@@ -147,7 +147,7 @@ void PrintsOptions::printOptionDefaultValue(const QCommandLineOption &option) co
         io().comment(TomUtils::defaultValueText(defaultValues.constFirst()));
 }
 
-void PrintsOptions::validateOption(const QCommandLineOption &option) const
+void PrintsOptions::validateOption(const QCommandLineOption &option)
 {
     const auto optionNames = option.names();
     const auto optionsSize = optionNames.size();

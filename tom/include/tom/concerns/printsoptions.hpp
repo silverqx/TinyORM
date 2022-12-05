@@ -52,7 +52,7 @@ namespace Concerns
         void printOptionDefaultValue(const QCommandLineOption &option) const;
 
         /*! Validate command option. */
-        void validateOption(const QCommandLineOption &option) const;
+        static void validateOption(const QCommandLineOption &option);
         /*! Get the command's options list. */
         inline const QList<CommandLineOption> &options() const noexcept;
 
