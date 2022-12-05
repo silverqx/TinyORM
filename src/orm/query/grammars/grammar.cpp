@@ -607,9 +607,9 @@ QString Grammar::removeLeadingBoolean(QString statement)
     // RegExp not used for performance reasons
     /* Before and/or could not be whitespace, current implementation doesn't include
        whitespaces before. */
-    if (statement.startsWith(QLatin1String("and ")))
+    if (statement.startsWith(QStringLiteral("and ")))
         return statement.mid(firstChar(4));
-    if (statement.startsWith(QLatin1String("or ")))
+    if (statement.startsWith(QStringLiteral("or ")))
         return statement.mid(firstChar(3));
 
     return statement;
