@@ -98,7 +98,7 @@ namespace Query
         template<Parametrize Container>
         QString parametrize(const Container &values) const;
         /*! Get the appropriate query parameter place-holder for a value. */
-        QString parameter(const QVariant &value) const;
+        static QString parameter(const QVariant &value);
 
         /*! Wrap a value that has an alias. */
         QString wrapAliasedValue(const QString &value, bool prefixAlias = false) const;

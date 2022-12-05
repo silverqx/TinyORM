@@ -109,7 +109,7 @@ void MySqlConnector::configureIsolationLevel(const QSqlDatabase &connection,
 }
 
 void MySqlConnector::configureEncoding(const QSqlDatabase &connection,
-                                       const QVariantHash &config) const
+                                       const QVariantHash &config)
 {
     if (!config.contains(charset_))
         return;
@@ -146,7 +146,7 @@ void MySqlConnector::configureTimezone(const QSqlDatabase &connection,
 }
 
 void MySqlConnector::setModes(const QSqlDatabase &connection,
-                              const QVariantHash &config) const
+                              const QVariantHash &config)
 {
     // Custom modes defined
     if (config.contains("modes"))
@@ -176,7 +176,7 @@ void MySqlConnector::setModes(const QSqlDatabase &connection,
 }
 
 QString MySqlConnector::strictMode(const QSqlDatabase &connection,
-                                   const QVariantHash &config) const
+                                   const QVariantHash &config)
 {
     const auto version = getMySqlVersion(connection, config);
 

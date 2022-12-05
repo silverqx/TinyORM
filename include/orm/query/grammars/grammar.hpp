@@ -132,8 +132,8 @@ namespace Orm::Query::Grammars
         /*! Get the vector of all the where clauses for the query. */
         QStringList compileWheresToVector(const QueryBuilder &query) const;
         /*! Format the where clause statements into one string. */
-        QString concatenateWhereClauses(const QueryBuilder &query,
-                                        const QStringList &sql) const;
+        static QString concatenateWhereClauses(const QueryBuilder &query,
+                                               const QStringList &sql);
 
         /*! Compile the "join" portions of the query. */
         QString compileJoins(const QueryBuilder &query) const;

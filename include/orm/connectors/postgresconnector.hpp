@@ -44,8 +44,8 @@ namespace Orm::Connectors
                                       const QVariantHash &config);
 
         /*! Set the schema on the connection. */
-        void configureSchema(const QSqlDatabase &connection,
-                             const QVariantHash &config) const;
+        static void configureSchema(const QSqlDatabase &connection,
+                                    const QVariantHash &config);
         /*! Format the schema. */
         static QString formatSchema(QStringList schema);
 

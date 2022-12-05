@@ -132,7 +132,7 @@ QString BaseGrammar::getAliasFromFrom(const QString &from)
 
 /* protected */
 
-QString BaseGrammar::parameter(const QVariant &value) const
+QString BaseGrammar::parameter(const QVariant &value)
 {
     return isExpression(value) ? getValue(value).value<QString>()
                                : QStringLiteral("?");

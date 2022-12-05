@@ -38,8 +38,8 @@ namespace Orm::Connectors
         static void configureIsolationLevel(const QSqlDatabase &connection,
                                             const QVariantHash &config);
         /*! Set the connection character set and collation. */
-        void configureEncoding(const QSqlDatabase &connection,
-                               const QVariantHash &config) const;
+        static void configureEncoding(const QSqlDatabase &connection,
+                                      const QVariantHash &config);
         /*! Get the collation for the configuration. */
         static QString getCollation(const QVariantHash &config);
         /*! Set the timezone on the connection. */
@@ -47,11 +47,11 @@ namespace Orm::Connectors
                                       const QVariantHash &config);
 
         /*! Set the modes for the connection. */
-        void setModes(const QSqlDatabase &connection,
-                      const QVariantHash &config) const;
+        static void setModes(const QSqlDatabase &connection,
+                             const QVariantHash &config);
         /*! Get the query to enable strict mode. */
-        QString strictMode(const QSqlDatabase &connection,
-                           const QVariantHash &config) const;
+        static QString strictMode(const QSqlDatabase &connection,
+                                  const QVariantHash &config);
         /*! Get the MySql server version. */
         static QString getMySqlVersion(const QSqlDatabase &connection,
                                        const QVariantHash &config);
@@ -62,7 +62,7 @@ namespace Orm::Connectors
     private:
         /*! The default QSqlDatabase connection options for the MySqlConnector. */
         inline static const QVariantHash m_options {
-            {"MYSQL_OPT_RECONNECT", 0},
+            {QLatin1String("MYSQL_OPT_RECONNECT"), 0},
         };
     };
 

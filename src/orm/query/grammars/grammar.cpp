@@ -75,7 +75,7 @@ QString Grammar::compileUpdate(QueryBuilder &query,
 }
 
 QVector<QVariant>
-Grammar::prepareBindingsForUpdate(const BindingsMap &bindings,
+Grammar::prepareBindingsForUpdate(const BindingsMap &bindings, // NOLINT(readability-convert-member-functions-to-static)
                                   const QVector<UpdateItem> &values) const
 {
     QVector<QVariant> preparedBindings(bindings.find(BindingType::JOIN).value());
@@ -114,7 +114,7 @@ QString Grammar::compileDelete(QueryBuilder &query) const
                                       : compileDeleteWithJoins(query, table, wheres);
 }
 
-QVector<QVariant> Grammar::prepareBindingsForDelete(const BindingsMap &bindings) const
+QVector<QVariant> Grammar::prepareBindingsForDelete(const BindingsMap &bindings) const  // NOLINT(readability-convert-member-functions-to-static)
 {
     QVector<QVariant> preparedBindings;
 
@@ -259,7 +259,7 @@ QStringList Grammar::compileWheresToVector(const QueryBuilder &query) const
 }
 
 QString Grammar::concatenateWhereClauses(const QueryBuilder &query,
-                                         const QStringList &sql) const
+                                         const QStringList &sql)
 {
     // Is it a query instance of the JoinClause?
     const auto conjunction = dynamic_cast<const JoinClause *>(&query) == nullptr
@@ -355,12 +355,12 @@ QStringList Grammar::compileOrdersToVector(const QueryBuilder &query) const
     return compiledOrders;
 }
 
-QString Grammar::compileLimit(const QueryBuilder &query) const
+QString Grammar::compileLimit(const QueryBuilder &query) const // NOLINT(readability-convert-member-functions-to-static)
 {
     return QStringLiteral("limit %1").arg(query.getLimit());
 }
 
-QString Grammar::compileOffset(const QueryBuilder &query) const
+QString Grammar::compileOffset(const QueryBuilder &query) const // NOLINT(readability-convert-member-functions-to-static)
 {
     return QStringLiteral("offset %1").arg(query.getOffset());
 }
@@ -432,7 +432,7 @@ QString Grammar::whereNotNull(const WhereConditionItem &where) const
     return QStringLiteral("%1 is not null").arg(wrap(where.column));
 }
 
-QString Grammar::whereRaw(const WhereConditionItem &where) const
+QString Grammar::whereRaw(const WhereConditionItem &where) const // NOLINT(readability-convert-member-functions-to-static)
 {
     return where.sql;
 }

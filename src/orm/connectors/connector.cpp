@@ -40,7 +40,7 @@ Connector::createConnection(const QString &name, const QVariantHash &config,
 
 QSqlDatabase
 Connector::createQSqlDatabaseConnection(const QString &name, const QVariantHash &config,
-                                        const QString &options) const
+                                        const QString &options)
 {
     /* If the Qt connection repository already contains this connection,
        than obtain it, and if don't, add a database to the list of database

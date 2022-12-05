@@ -31,10 +31,10 @@ namespace Orm::Connectors
         createConnection(const QString &name, const QVariantHash &config,
                          const QString &options) const;
         /*! Create a new QSqlDatabase instance, create a new database connection. */
-        QSqlDatabase
+        static QSqlDatabase
         createQSqlDatabaseConnection(
                 const QString &name, const QVariantHash &config,
-                const QString &options) const;
+                const QString &options);
 
         /*! Get the QSqlDatabase connection options based on the configuration. */
         QString getOptions(const QVariantHash &config) const;

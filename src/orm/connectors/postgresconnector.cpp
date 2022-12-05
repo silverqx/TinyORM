@@ -107,7 +107,7 @@ void PostgresConnector::configureTimezone(const QSqlDatabase &connection,
 }
 
 void PostgresConnector::configureSchema(const QSqlDatabase &connection,
-                                        const QVariantHash &config) const
+                                        const QVariantHash &config)
 {
     if (!config.contains(schema_))
         return;
