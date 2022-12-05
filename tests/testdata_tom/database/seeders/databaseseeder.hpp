@@ -147,12 +147,12 @@ namespace Seeders
 
     private:
         /*! Fix sequence numbers for the PostgreSQL. */
-        inline void fixPostgresSequences() const;
+        inline static void fixPostgresSequences();
     };
 
     /* private */
 
-    void DatabaseSeeder::fixPostgresSequences() const
+    void DatabaseSeeder::fixPostgresSequences()
     {
         /* I have to fix sequences in Postgres because I'm inserting IDs manually, and
            it doesn't increment sequences. */
