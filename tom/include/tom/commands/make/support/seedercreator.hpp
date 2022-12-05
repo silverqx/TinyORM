@@ -25,13 +25,13 @@ namespace Tom::Commands::Make::Support
         using fspath = std::filesystem::path;
 
     public:
-        /*! Default constructor. */
-        inline SeederCreator() = default;
-        /*! Default destructor. */
-        inline ~SeederCreator() = default;
+        /*! Deleted default constructor, this is a pure library class. */
+        SeederCreator() = delete;
+        /*! Deleted destructor. */
+        ~SeederCreator() = delete;
 
         /*! Create a new seeder at the given path. */
-        fspath create(const QString &className, fspath &&seedersPath) const;
+        static fspath create(const QString &className, fspath &&seedersPath);
 
     protected:
         /*! Get the full path to the seeder. */

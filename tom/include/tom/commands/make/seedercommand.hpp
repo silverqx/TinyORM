@@ -6,7 +6,6 @@
 TINY_SYSTEM_HEADER
 
 #include "tom/commands/make/makecommand.hpp"
-#include "tom/commands/make/support/seedercreator.hpp"
 #include "tom/tomconstants.hpp"
 
 TINYORM_BEGIN_COMMON_NAMESPACE
@@ -55,9 +54,6 @@ namespace Tom::Commands::Make
         fspath getUserSeedersPath() const;
         /*! Try to guess the seeders path based on the pwd or use the default path. */
         fspath guessSeedersPath() const;
-
-        /*! The seeder creator instance. */
-        Support::SeederCreator m_creator {};
     };
 
     /* public */

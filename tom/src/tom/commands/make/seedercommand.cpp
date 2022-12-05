@@ -4,6 +4,7 @@
 #include <orm/utils/string.hpp>
 
 #include "tom/application.hpp"
+#include "tom/commands/make/support/seedercreator.hpp"
 #include "tom/exceptions/invalidargumenterror.hpp"
 #include "tom/tomconstants.hpp"
 
@@ -107,7 +108,8 @@ QString SeederCommand::prepareSeederClassName(QString &&className)
 
 void SeederCommand::writeSeeder(const QString &className, fspath &&seedersPath) const
 {
-    auto seederFilePath = m_creator.create(className, std::move(seedersPath));
+    auto seederFilePath = Support::SeederCreator::create(className,
+                                                         std::move(seedersPath));
 
     // make_preferred() returns reference and filename() creates a new fs::path instance
     const auto seederFile = isSet(fullpath) ? seederFilePath.make_preferred()
