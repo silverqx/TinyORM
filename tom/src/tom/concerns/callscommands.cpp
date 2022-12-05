@@ -84,7 +84,7 @@ CallsCommands::createCommandLineArguments(
     return newArguments;
 }
 
-QStringList CallsCommands::getCommonArguments(QStringList &&arguments) const
+QStringList CallsCommands::getCommonArguments(QStringList &&arguments)
 {
     // This way I'm able to re-use global constants
     /*! Create a long command-line option from the option name (--xyz). */

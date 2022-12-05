@@ -45,7 +45,7 @@ namespace Concerns
                                    QStringList &&currentArguments) const;
 
         /*! Get common command-line arguments from current command-line arguments. */
-        QStringList getCommonArguments(QStringList &&arguments) const;
+        static QStringList getCommonArguments(QStringList &&arguments);
 
     private:
         /*! Static cast *this to the Command & derived type, const version. */
