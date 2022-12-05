@@ -66,8 +66,8 @@ namespace Tom::Commands
         /*! Print commands section. */
         void printCommandsSection(const QString &namespaceName, int optionsMaxSize) const;
         /*! Get max. command size in all command names. */
-        int commandsMaxSize(const std::vector<std::shared_ptr<Command>> &commands,
-                           int optionsMaxSize) const;
+        static int commandsMaxSize(const std::vector<std::shared_ptr<Command>> &commands,
+                                   int optionsMaxSize);
         /*! Print commands to the console. */
         void printCommands(const std::vector<std::shared_ptr<Command>> &commands,
                            int commandsMaxSize, bool hasNamespaceName) const;
@@ -75,7 +75,7 @@ namespace Tom::Commands
         void tryBeginNsSection(QString &renderingNamespace,
                                const QString &commandName, bool hasNamespaceName) const;
         /*! Get command's namespace from a command name. */
-        QString commandNamespace(const QString &commandName) const;
+        static QString commandNamespace(const QString &commandName);
 
         /*! Wrapper for the two methods below, helps to avoid one copy. */
         const std::vector<std::shared_ptr<Command>> &

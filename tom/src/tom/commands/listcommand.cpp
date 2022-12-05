@@ -210,14 +210,13 @@ void ListCommand::printCommandsSection(const QString &namespaceName,
         comment(QStringLiteral("Available commands:"));
 
     // Get max. command size in all command names
-    const auto commandsMaxSize = this->commandsMaxSize(commands, optionsMaxSize);
+    const auto commandsMaxSize = ListCommand::commandsMaxSize(commands, optionsMaxSize);
     // Print commands to the console
     printCommands(commands, commandsMaxSize, hasNamespaceName);
 }
 
-int ListCommand::commandsMaxSize(
-        const std::vector<std::shared_ptr<Command>> &commands,
-        const int optionsMaxSize) const
+int ListCommand::commandsMaxSize(const std::vector<std::shared_ptr<Command>> &commands,
+                                 const int optionsMaxSize)
 {
     const auto it = std::ranges::max_element(commands, std::less {},
                                              [](const auto &command)
@@ -264,7 +263,7 @@ void ListCommand::tryBeginNsSection(
         QString &renderingNamespace, const QString &commandName,
         const bool hasNamespaceName) const
 {
-    const auto commandNamespace = this->commandNamespace(commandName);
+    const auto commandNamespace = ListCommand::commandNamespace(commandName);
 
     if (hasNamespaceName || commandNamespace == renderingNamespace)
         return;
@@ -275,7 +274,7 @@ void ListCommand::tryBeginNsSection(
     comment(QStringLiteral(" %1").arg(renderingNamespace));
 }
 
-QString ListCommand::commandNamespace(const QString &commandName) const
+QString ListCommand::commandNamespace(const QString &commandName)
 {
     if (!commandName.contains(COLON))
         return {};
