@@ -26,10 +26,10 @@ namespace Connectors
         Q_DISABLE_COPY(ConnectionFactory)
 
     public:
-        /*! Default constructor. */
-        inline ConnectionFactory() = default;
-        /*! Default destructor. */
-        inline ~ConnectionFactory() = default;
+        /*! Deleted default constructor, this is a pure library class. */
+        ConnectionFactory() = delete;
+        /*! Deleted destructor. */
+        ~ConnectionFactory() = delete;
 
         /*! Establish a QSqlDatabase connection based on the configuration. */
         static std::unique_ptr<DatabaseConnection>
