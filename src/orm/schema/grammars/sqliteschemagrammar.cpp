@@ -552,67 +552,67 @@ QString SQLiteSchemaGrammar::getType(const ColumnDefinition &column) const
     }
 }
 
-QString SQLiteSchemaGrammar::typeChar(const ColumnDefinition &/*unused*/) const
+QString SQLiteSchemaGrammar::typeChar(const ColumnDefinition &/*unused*/) const // NOLINT(readability-convert-member-functions-to-static)
 {
     return varchar_;
 }
 
-QString SQLiteSchemaGrammar::typeString(const ColumnDefinition &/*unused*/) const
+QString SQLiteSchemaGrammar::typeString(const ColumnDefinition &/*unused*/) const // NOLINT(readability-convert-member-functions-to-static)
 {
     return varchar_;
 }
 
-QString SQLiteSchemaGrammar::typeTinyText(const ColumnDefinition &/*unused*/) const
+QString SQLiteSchemaGrammar::typeTinyText(const ColumnDefinition &/*unused*/) const // NOLINT(readability-convert-member-functions-to-static)
 {
     return text_;
 }
 
-QString SQLiteSchemaGrammar::typeText(const ColumnDefinition &/*unused*/) const
+QString SQLiteSchemaGrammar::typeText(const ColumnDefinition &/*unused*/) const // NOLINT(readability-convert-member-functions-to-static)
 {
     return text_;
 }
 
-QString SQLiteSchemaGrammar::typeMediumText(const ColumnDefinition &/*unused*/) const
+QString SQLiteSchemaGrammar::typeMediumText(const ColumnDefinition &/*unused*/) const // NOLINT(readability-convert-member-functions-to-static)
 {
     return text_;
 }
 
-QString SQLiteSchemaGrammar::typeLongText(const ColumnDefinition &/*unused*/) const
+QString SQLiteSchemaGrammar::typeLongText(const ColumnDefinition &/*unused*/) const // NOLINT(readability-convert-member-functions-to-static)
 {
     return text_;
 }
 
-QString SQLiteSchemaGrammar::typeBigInteger(const ColumnDefinition &/*unused*/) const
+QString SQLiteSchemaGrammar::typeBigInteger(const ColumnDefinition &/*unused*/) const // NOLINT(readability-convert-member-functions-to-static)
 {
     return integer_;
 }
 
-QString SQLiteSchemaGrammar::typeInteger(const ColumnDefinition &/*unused*/) const
+QString SQLiteSchemaGrammar::typeInteger(const ColumnDefinition &/*unused*/) const // NOLINT(readability-convert-member-functions-to-static)
 {
     return integer_;
 }
 
-QString SQLiteSchemaGrammar::typeMediumInteger(const ColumnDefinition &/*unused*/) const
+QString SQLiteSchemaGrammar::typeMediumInteger(const ColumnDefinition &/*unused*/) const // NOLINT(readability-convert-member-functions-to-static)
 {
     return integer_;
 }
 
-QString SQLiteSchemaGrammar::typeTinyInteger(const ColumnDefinition &/*unused*/) const
+QString SQLiteSchemaGrammar::typeTinyInteger(const ColumnDefinition &/*unused*/) const // NOLINT(readability-convert-member-functions-to-static)
 {
     return integer_;
 }
 
-QString SQLiteSchemaGrammar::typeSmallInteger(const ColumnDefinition &/*unused*/) const
+QString SQLiteSchemaGrammar::typeSmallInteger(const ColumnDefinition &/*unused*/) const // NOLINT(readability-convert-member-functions-to-static)
 {
     return integer_;
 }
 
-QString SQLiteSchemaGrammar::typeFloat(const ColumnDefinition &/*unused*/) const
+QString SQLiteSchemaGrammar::typeFloat(const ColumnDefinition &/*unused*/) const // NOLINT(readability-convert-member-functions-to-static)
 {
     return float_;
 }
 
-QString SQLiteSchemaGrammar::typeDouble(const ColumnDefinition &/*unused*/) const
+QString SQLiteSchemaGrammar::typeDouble(const ColumnDefinition &/*unused*/) const // NOLINT(readability-convert-member-functions-to-static)
 {
     return float_;
 }
@@ -622,28 +622,28 @@ QString SQLiteSchemaGrammar::typeDouble(const ColumnDefinition &/*unused*/) cons
 //    return QStringLiteral("real");
 //}
 
-QString SQLiteSchemaGrammar::typeDecimal(const ColumnDefinition &/*unused*/) const
+QString SQLiteSchemaGrammar::typeDecimal(const ColumnDefinition &/*unused*/) const // NOLINT(readability-convert-member-functions-to-static)
 {
     return QStringLiteral("numeric");
 }
 
-QString SQLiteSchemaGrammar::typeBoolean(const ColumnDefinition &/*unused*/) const
+QString SQLiteSchemaGrammar::typeBoolean(const ColumnDefinition &/*unused*/) const // NOLINT(readability-convert-member-functions-to-static)
 {
     return QStringLiteral("tinyint(1)");
 }
 
-QString SQLiteSchemaGrammar::typeEnum(const ColumnDefinition &column) const
+QString SQLiteSchemaGrammar::typeEnum(const ColumnDefinition &column) const // NOLINT(readability-convert-member-functions-to-static)
 {
     return QStringLiteral(R"(varchar check ("%1" in (%2)))")
             .arg(column.name, quoteString(column.allowed));
 }
 
-QString SQLiteSchemaGrammar::typeJson(const ColumnDefinition &/*unused*/) const
+QString SQLiteSchemaGrammar::typeJson(const ColumnDefinition &/*unused*/) const // NOLINT(readability-convert-member-functions-to-static)
 {
     return text_;
 }
 
-QString SQLiteSchemaGrammar::typeJsonb(const ColumnDefinition &/*unused*/) const
+QString SQLiteSchemaGrammar::typeJsonb(const ColumnDefinition &/*unused*/) const // NOLINT(readability-convert-member-functions-to-static)
 {
     return text_;
 }
@@ -654,7 +654,7 @@ QString SQLiteSchemaGrammar::typeJsonb(const ColumnDefinition &/*unused*/) const
    dates and times as TEXT, REAL, or INTEGER values.
    https://www.sqlite.org/datatype3.html. */
 
-QString SQLiteSchemaGrammar::typeDate(const ColumnDefinition &/*unused*/) const
+QString SQLiteSchemaGrammar::typeDate(const ColumnDefinition &/*unused*/) const // NOLINT(readability-convert-member-functions-to-static)
 {
     return QStringLiteral("date");
 }
@@ -669,7 +669,7 @@ QString SQLiteSchemaGrammar::typeDateTimeTz(const ColumnDefinition &column) cons
     return typeDateTime(column);
 }
 
-QString SQLiteSchemaGrammar::typeTime(const ColumnDefinition &/*unused*/) const
+QString SQLiteSchemaGrammar::typeTime(const ColumnDefinition &/*unused*/) const // NOLINT(readability-convert-member-functions-to-static)
 {
     return QStringLiteral("time");
 }
@@ -679,7 +679,7 @@ QString SQLiteSchemaGrammar::typeTimeTz(const ColumnDefinition &column) const
     return typeTime(column);
 }
 
-QString SQLiteSchemaGrammar::typeTimestamp(const ColumnDefinition &column) const
+QString SQLiteSchemaGrammar::typeTimestamp(const ColumnDefinition &column) const // NOLINT(readability-convert-member-functions-to-static)
 {
     return column.useCurrent ? QStringLiteral("datetime default CURRENT_TIMESTAMP")
                              : QStringLiteral("datetime");
@@ -695,63 +695,63 @@ QString SQLiteSchemaGrammar::typeYear(const ColumnDefinition &column) const
     return typeInteger(column);
 }
 
-QString SQLiteSchemaGrammar::typeBinary(const ColumnDefinition &/*unused*/) const
+QString SQLiteSchemaGrammar::typeBinary(const ColumnDefinition &/*unused*/) const // NOLINT(readability-convert-member-functions-to-static)
 {
     return QStringLiteral("blob");
 }
 
-QString SQLiteSchemaGrammar::typeUuid(const ColumnDefinition &/*unused*/) const
+QString SQLiteSchemaGrammar::typeUuid(const ColumnDefinition &/*unused*/) const // NOLINT(readability-convert-member-functions-to-static)
 {
     return varchar_;
 }
 
-QString SQLiteSchemaGrammar::typeIpAddress(const ColumnDefinition &/*unused*/) const
+QString SQLiteSchemaGrammar::typeIpAddress(const ColumnDefinition &/*unused*/) const // NOLINT(readability-convert-member-functions-to-static)
 {
     return varchar_;
 }
 
-QString SQLiteSchemaGrammar::typeMacAddress(const ColumnDefinition &/*unused*/) const
+QString SQLiteSchemaGrammar::typeMacAddress(const ColumnDefinition &/*unused*/) const // NOLINT(readability-convert-member-functions-to-static)
 {
     return varchar_;
 }
 
-QString SQLiteSchemaGrammar::typeGeometry(const ColumnDefinition &/*unused*/) const
+QString SQLiteSchemaGrammar::typeGeometry(const ColumnDefinition &/*unused*/) const // NOLINT(readability-convert-member-functions-to-static)
 {
     return QStringLiteral("geometry");
 }
 
-QString SQLiteSchemaGrammar::typePoint(const ColumnDefinition &/*unused*/) const
+QString SQLiteSchemaGrammar::typePoint(const ColumnDefinition &/*unused*/) const // NOLINT(readability-convert-member-functions-to-static)
 {
     return QStringLiteral("point");
 }
 
-QString SQLiteSchemaGrammar::typeLineString(const ColumnDefinition &/*unused*/) const
+QString SQLiteSchemaGrammar::typeLineString(const ColumnDefinition &/*unused*/) const // NOLINT(readability-convert-member-functions-to-static)
 {
     return QStringLiteral("linestring");
 }
 
-QString SQLiteSchemaGrammar::typePolygon(const ColumnDefinition &/*unused*/) const
+QString SQLiteSchemaGrammar::typePolygon(const ColumnDefinition &/*unused*/) const // NOLINT(readability-convert-member-functions-to-static)
 {
     return QStringLiteral("polygon");
 }
 
 QString
-SQLiteSchemaGrammar::typeGeometryCollection(const ColumnDefinition &/*unused*/) const
+SQLiteSchemaGrammar::typeGeometryCollection(const ColumnDefinition &/*unused*/) const // NOLINT(readability-convert-member-functions-to-static)
 {
     return QStringLiteral("geometrycollection");
 }
 
-QString SQLiteSchemaGrammar::typeMultiPoint(const ColumnDefinition &/*unused*/) const
+QString SQLiteSchemaGrammar::typeMultiPoint(const ColumnDefinition &/*unused*/) const // NOLINT(readability-convert-member-functions-to-static)
 {
     return QStringLiteral("multipoint");
 }
 
-QString SQLiteSchemaGrammar::typeMultiLineString(const ColumnDefinition &/*unused*/) const
+QString SQLiteSchemaGrammar::typeMultiLineString(const ColumnDefinition &/*unused*/) const // NOLINT(readability-convert-member-functions-to-static)
 {
     return QStringLiteral("multilinestring");
 }
 
-QString SQLiteSchemaGrammar::typeMultiPolygon(const ColumnDefinition &/*unused*/) const
+QString SQLiteSchemaGrammar::typeMultiPolygon(const ColumnDefinition &/*unused*/) const // NOLINT(readability-convert-member-functions-to-static)
 {
     return QStringLiteral("multipolygon");
 }
@@ -768,7 +768,7 @@ QString SQLiteSchemaGrammar::typeComputed(const ColumnDefinition &/*unused*/) co
                 "modifiers.");
 }
 
-QString SQLiteSchemaGrammar::modifyVirtualAs(const ColumnDefinition &column) const
+QString SQLiteSchemaGrammar::modifyVirtualAs(const ColumnDefinition &column) const // NOLINT(readability-convert-member-functions-to-static)
 {
     // FEATURE schema json silverqx
     if (column.virtualAs.isEmpty())
@@ -777,7 +777,7 @@ QString SQLiteSchemaGrammar::modifyVirtualAs(const ColumnDefinition &column) con
     return QStringLiteral(" as (%1)").arg(column.virtualAs);
 }
 
-QString SQLiteSchemaGrammar::modifyStoredAs(const ColumnDefinition &column) const
+QString SQLiteSchemaGrammar::modifyStoredAs(const ColumnDefinition &column) const // NOLINT(readability-convert-member-functions-to-static)
 {
     // FEATURE schema json silverqx
     if (column.storedAs.isEmpty())
@@ -786,7 +786,7 @@ QString SQLiteSchemaGrammar::modifyStoredAs(const ColumnDefinition &column) cons
     return QStringLiteral(" as (%1) stored").arg(column.storedAs);
 }
 
-QString SQLiteSchemaGrammar::modifyNullable(const ColumnDefinition &column) const
+QString SQLiteSchemaGrammar::modifyNullable(const ColumnDefinition &column) const // NOLINT(readability-convert-member-functions-to-static)
 {
     static const auto notNull = QStringLiteral(" not null");
 
@@ -813,7 +813,7 @@ QString SQLiteSchemaGrammar::modifyDefault(const ColumnDefinition &column) const
     return QStringLiteral(" default %1").arg(getDefaultValue(defaultValue));
 }
 
-QString SQLiteSchemaGrammar::modifyIncrement(const ColumnDefinition &column) const
+QString SQLiteSchemaGrammar::modifyIncrement(const ColumnDefinition &column) const // NOLINT(readability-convert-member-functions-to-static)
 {
     static const std::unordered_set serials {
         ColumnType::BigInteger,   ColumnType::Integer,     ColumnType::MediumInteger,

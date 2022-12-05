@@ -624,57 +624,57 @@ PostgresSchemaGrammar::formatPostGisType(QString &&type, const ColumnDefinition 
     return QStringLiteral("geometry(%1)").arg(std::move(type));
 }
 
-QString PostgresSchemaGrammar::typeChar(const ColumnDefinition &column) const
+QString PostgresSchemaGrammar::typeChar(const ColumnDefinition &column) const // NOLINT(readability-convert-member-functions-to-static)
 {
     return QStringLiteral("char(%1)").arg(column.length);
 }
 
-QString PostgresSchemaGrammar::typeString(const ColumnDefinition &column) const
+QString PostgresSchemaGrammar::typeString(const ColumnDefinition &column) const // NOLINT(readability-convert-member-functions-to-static)
 {
     return QStringLiteral("varchar(%1)").arg(column.length);
 }
 
-QString PostgresSchemaGrammar::typeTinyText(const ColumnDefinition &/*unused*/) const
+QString PostgresSchemaGrammar::typeTinyText(const ColumnDefinition &/*unused*/) const // NOLINT(readability-convert-member-functions-to-static)
 {
     return QStringLiteral("varchar(255)");
 }
 
-QString PostgresSchemaGrammar::typeText(const ColumnDefinition &/*unused*/) const
+QString PostgresSchemaGrammar::typeText(const ColumnDefinition &/*unused*/) const // NOLINT(readability-convert-member-functions-to-static)
 {
     return text_;
 }
 
-QString PostgresSchemaGrammar::typeMediumText(const ColumnDefinition &/*unused*/) const
+QString PostgresSchemaGrammar::typeMediumText(const ColumnDefinition &/*unused*/) const // NOLINT(readability-convert-member-functions-to-static)
 {
     return text_;
 }
 
-QString PostgresSchemaGrammar::typeLongText(const ColumnDefinition &/*unused*/) const
+QString PostgresSchemaGrammar::typeLongText(const ColumnDefinition &/*unused*/) const // NOLINT(readability-convert-member-functions-to-static)
 {
     return text_;
 }
 
-QString PostgresSchemaGrammar::typeBigInteger(const ColumnDefinition &column) const
+QString PostgresSchemaGrammar::typeBigInteger(const ColumnDefinition &column) const // NOLINT(readability-convert-member-functions-to-static)
 {
     return generatableColumn("bigint", column);
 }
 
-QString PostgresSchemaGrammar::typeInteger(const ColumnDefinition &column) const
+QString PostgresSchemaGrammar::typeInteger(const ColumnDefinition &column) const // NOLINT(readability-convert-member-functions-to-static)
 {
     return generatableColumn("integer", column);
 }
 
-QString PostgresSchemaGrammar::typeMediumInteger(const ColumnDefinition &column) const
+QString PostgresSchemaGrammar::typeMediumInteger(const ColumnDefinition &column) const // NOLINT(readability-convert-member-functions-to-static)
 {
     return generatableColumn("integer", column);
 }
 
-QString PostgresSchemaGrammar::typeTinyInteger(const ColumnDefinition &column) const
+QString PostgresSchemaGrammar::typeTinyInteger(const ColumnDefinition &column) const // NOLINT(readability-convert-member-functions-to-static)
 {
     return generatableColumn("smallint", column);
 }
 
-QString PostgresSchemaGrammar::typeSmallInteger(const ColumnDefinition &column) const
+QString PostgresSchemaGrammar::typeSmallInteger(const ColumnDefinition &column) const // NOLINT(readability-convert-member-functions-to-static)
 {
     return generatableColumn("smallint", column);
 }
@@ -684,17 +684,17 @@ QString PostgresSchemaGrammar::typeFloat(const ColumnDefinition &column) const
     return typeDouble(column);
 }
 
-QString PostgresSchemaGrammar::typeDouble(const ColumnDefinition &/*unused*/) const
+QString PostgresSchemaGrammar::typeDouble(const ColumnDefinition &/*unused*/) const // NOLINT(readability-convert-member-functions-to-static)
 {
     return QStringLiteral("double precision");
 }
 
-QString PostgresSchemaGrammar::typeReal(const ColumnDefinition &/*unused*/) const
+QString PostgresSchemaGrammar::typeReal(const ColumnDefinition &/*unused*/) const // NOLINT(readability-convert-member-functions-to-static)
 {
     return QStringLiteral("real");
 }
 
-QString PostgresSchemaGrammar::typeDecimal(const ColumnDefinition &column) const
+QString PostgresSchemaGrammar::typeDecimal(const ColumnDefinition &column) const // NOLINT(readability-convert-member-functions-to-static)
 {
     if (!column.total)
         return QStringLiteral("decimal");
@@ -704,28 +704,28 @@ QString PostgresSchemaGrammar::typeDecimal(const ColumnDefinition &column) const
                                             .arg(column.places ? *column.places : 0);
 }
 
-QString PostgresSchemaGrammar::typeBoolean(const ColumnDefinition &/*unused*/) const
+QString PostgresSchemaGrammar::typeBoolean(const ColumnDefinition &/*unused*/) const // NOLINT(readability-convert-member-functions-to-static)
 {
     return QStringLiteral("boolean");
 }
 
-QString PostgresSchemaGrammar::typeEnum(const ColumnDefinition &column) const
+QString PostgresSchemaGrammar::typeEnum(const ColumnDefinition &column) const // NOLINT(readability-convert-member-functions-to-static)
 {
     return QStringLiteral(R"(varchar(255) check ("%1" in (%2)))")
             .arg(column.name, quoteString(column.allowed));
 }
 
-QString PostgresSchemaGrammar::typeJson(const ColumnDefinition &/*unused*/) const
+QString PostgresSchemaGrammar::typeJson(const ColumnDefinition &/*unused*/) const // NOLINT(readability-convert-member-functions-to-static)
 {
     return QStringLiteral("json");
 }
 
-QString PostgresSchemaGrammar::typeJsonb(const ColumnDefinition &/*unused*/) const
+QString PostgresSchemaGrammar::typeJsonb(const ColumnDefinition &/*unused*/) const // NOLINT(readability-convert-member-functions-to-static)
 {
     return QStringLiteral("jsonb");
 }
 
-QString PostgresSchemaGrammar::typeDate(const ColumnDefinition &/*unused*/) const
+QString PostgresSchemaGrammar::typeDate(const ColumnDefinition &/*unused*/) const // NOLINT(readability-convert-member-functions-to-static)
 {
     return QStringLiteral("date");
 }
@@ -740,21 +740,21 @@ QString PostgresSchemaGrammar::typeDateTimeTz(const ColumnDefinition &column) co
     return typeTimestampTz(column);
 }
 
-QString PostgresSchemaGrammar::typeTime(const ColumnDefinition &column) const
+QString PostgresSchemaGrammar::typeTime(const ColumnDefinition &column) const // NOLINT(readability-convert-member-functions-to-static)
 {
     return QStringLiteral("time%1 without time zone")
             .arg(column.precision > 0 ? QStringLiteral("(%1)").arg(column.precision)
                                       : EMPTY);
 }
 
-QString PostgresSchemaGrammar::typeTimeTz(const ColumnDefinition &column) const
+QString PostgresSchemaGrammar::typeTimeTz(const ColumnDefinition &column) const // NOLINT(readability-convert-member-functions-to-static)
 {
     return QStringLiteral("time%1 with time zone")
             .arg(column.precision > 0 ? QStringLiteral("(%1)").arg(column.precision)
                                       : EMPTY);
 }
 
-QString PostgresSchemaGrammar::typeTimestamp(const ColumnDefinition &column) const
+QString PostgresSchemaGrammar::typeTimestamp(const ColumnDefinition &column) const // NOLINT(readability-convert-member-functions-to-static)
 {
     auto columnType =
             QStringLiteral("timestamp%1 without time zone")
@@ -769,7 +769,7 @@ QString PostgresSchemaGrammar::typeTimestamp(const ColumnDefinition &column) con
             : std::move(columnType);
 }
 
-QString PostgresSchemaGrammar::typeTimestampTz(const ColumnDefinition &column) const
+QString PostgresSchemaGrammar::typeTimestampTz(const ColumnDefinition &column) const // NOLINT(readability-convert-member-functions-to-static)
 {
     auto columnType =
             QStringLiteral("timestamp%1 with time zone")
@@ -786,73 +786,73 @@ QString PostgresSchemaGrammar::typeYear(const ColumnDefinition &column) const
     return typeInteger(column);
 }
 
-QString PostgresSchemaGrammar::typeBinary(const ColumnDefinition &/*unused*/) const
+QString PostgresSchemaGrammar::typeBinary(const ColumnDefinition &/*unused*/) const // NOLINT(readability-convert-member-functions-to-static)
 {
     return QStringLiteral("bytea");
 }
 
-QString PostgresSchemaGrammar::typeUuid(const ColumnDefinition &/*unused*/) const
+QString PostgresSchemaGrammar::typeUuid(const ColumnDefinition &/*unused*/) const // NOLINT(readability-convert-member-functions-to-static)
 {
     return QStringLiteral("uuid");
 }
 
-QString PostgresSchemaGrammar::typeIpAddress(const ColumnDefinition &/*unused*/) const
+QString PostgresSchemaGrammar::typeIpAddress(const ColumnDefinition &/*unused*/) const // NOLINT(readability-convert-member-functions-to-static)
 {
     return QStringLiteral("inet");
 }
 
-QString PostgresSchemaGrammar::typeMacAddress(const ColumnDefinition &/*unused*/) const
+QString PostgresSchemaGrammar::typeMacAddress(const ColumnDefinition &/*unused*/) const // NOLINT(readability-convert-member-functions-to-static)
 {
     return QStringLiteral("macaddr");
 }
 
-QString PostgresSchemaGrammar::typeGeometry(const ColumnDefinition &column) const
+QString PostgresSchemaGrammar::typeGeometry(const ColumnDefinition &column) const // NOLINT(readability-convert-member-functions-to-static)
 {
     return formatPostGisType(QStringLiteral("geometry"), column);
 }
 
-QString PostgresSchemaGrammar::typePoint(const ColumnDefinition &column) const
+QString PostgresSchemaGrammar::typePoint(const ColumnDefinition &column) const // NOLINT(readability-convert-member-functions-to-static)
 {
     return formatPostGisType(QStringLiteral("point"), column);
 }
 
-QString PostgresSchemaGrammar::typeLineString(const ColumnDefinition &column) const
+QString PostgresSchemaGrammar::typeLineString(const ColumnDefinition &column) const // NOLINT(readability-convert-member-functions-to-static)
 {
     return formatPostGisType(QStringLiteral("linestring"), column);
 }
 
-QString PostgresSchemaGrammar::typePolygon(const ColumnDefinition &column) const
+QString PostgresSchemaGrammar::typePolygon(const ColumnDefinition &column) const // NOLINT(readability-convert-member-functions-to-static)
 {
     return formatPostGisType(QStringLiteral("polygon"), column);
 }
 
 QString
-PostgresSchemaGrammar::typeGeometryCollection(const ColumnDefinition &column) const
+PostgresSchemaGrammar::typeGeometryCollection(const ColumnDefinition &column) const // NOLINT(readability-convert-member-functions-to-static)
 {
     return formatPostGisType(QStringLiteral("geometrycollection"), column);
 }
 
-QString PostgresSchemaGrammar::typeMultiPoint(const ColumnDefinition &column) const
+QString PostgresSchemaGrammar::typeMultiPoint(const ColumnDefinition &column) const // NOLINT(readability-convert-member-functions-to-static)
 {
     return formatPostGisType(QStringLiteral("multipoint"), column);
 }
 
-QString PostgresSchemaGrammar::typeMultiLineString(const ColumnDefinition &column) const
+QString PostgresSchemaGrammar::typeMultiLineString(const ColumnDefinition &column) const // NOLINT(readability-convert-member-functions-to-static)
 {
     return formatPostGisType(QStringLiteral("multilinestring"), column);
 }
 
-QString PostgresSchemaGrammar::typeMultiPolygon(const ColumnDefinition &column) const
+QString PostgresSchemaGrammar::typeMultiPolygon(const ColumnDefinition &column) const // NOLINT(readability-convert-member-functions-to-static)
 {
     return formatPostGisType(QStringLiteral("multipolygon"), column);
 }
 
-QString PostgresSchemaGrammar::typeMultiPolygonZ(const ColumnDefinition &column) const
+QString PostgresSchemaGrammar::typeMultiPolygonZ(const ColumnDefinition &column) const // NOLINT(readability-convert-member-functions-to-static)
 {
     return formatPostGisType(QStringLiteral("multipolygonz"), column);
 }
 
-QString PostgresSchemaGrammar::modifyVirtualAs(const ColumnDefinition &column) const
+QString PostgresSchemaGrammar::modifyVirtualAs(const ColumnDefinition &column) const // NOLINT(readability-convert-member-functions-to-static)
 {
     if (column.virtualAs.isEmpty())
         return {};
@@ -860,7 +860,7 @@ QString PostgresSchemaGrammar::modifyVirtualAs(const ColumnDefinition &column) c
     return QStringLiteral(" generated always as (%1)").arg(column.virtualAs);
 }
 
-QString PostgresSchemaGrammar::modifyStoredAs(const ColumnDefinition &column) const
+QString PostgresSchemaGrammar::modifyStoredAs(const ColumnDefinition &column) const // NOLINT(readability-convert-member-functions-to-static)
 {
     if (column.storedAs.isEmpty())
         return {};
@@ -876,7 +876,7 @@ QString PostgresSchemaGrammar::modifyCollate(const ColumnDefinition &column) con
     return QStringLiteral(" collate %1").arg(wrapValue(column.collation));
 }
 
-QString PostgresSchemaGrammar::modifyNullable(const ColumnDefinition &column) const
+QString PostgresSchemaGrammar::modifyNullable(const ColumnDefinition &column) const // NOLINT(readability-convert-member-functions-to-static)
 {
     return column.nullable ? QStringLiteral(" null") : QStringLiteral(" not null");
 }
@@ -893,7 +893,7 @@ QString PostgresSchemaGrammar::modifyDefault(const ColumnDefinition &column) con
     return QStringLiteral(" default %1").arg(getDefaultValue(defaultValue));
 }
 
-QString PostgresSchemaGrammar::modifyIncrement(const ColumnDefinition &column) const
+QString PostgresSchemaGrammar::modifyIncrement(const ColumnDefinition &column) const // NOLINT(readability-convert-member-functions-to-static)
 {
     static const std::unordered_set serials {
         ColumnType::BigInteger,   ColumnType::Integer,     ColumnType::MediumInteger,

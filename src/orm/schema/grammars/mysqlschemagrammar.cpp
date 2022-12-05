@@ -597,67 +597,67 @@ QString MySqlSchemaGrammar::getType(const ColumnDefinition &column) const
     }
 }
 
-QString MySqlSchemaGrammar::typeChar(const ColumnDefinition &column) const
+QString MySqlSchemaGrammar::typeChar(const ColumnDefinition &column) const // NOLINT(readability-convert-member-functions-to-static)
 {
     return QStringLiteral("char(%1)").arg(column.length);
 }
 
-QString MySqlSchemaGrammar::typeString(const ColumnDefinition &column) const
+QString MySqlSchemaGrammar::typeString(const ColumnDefinition &column) const // NOLINT(readability-convert-member-functions-to-static)
 {
     return QStringLiteral("varchar(%1)").arg(column.length);
 }
 
-QString MySqlSchemaGrammar::typeTinyText(const ColumnDefinition &/*unused*/) const
+QString MySqlSchemaGrammar::typeTinyText(const ColumnDefinition &/*unused*/) const // NOLINT(readability-convert-member-functions-to-static)
 {
     return QStringLiteral("tinytext");
 }
 
-QString MySqlSchemaGrammar::typeText(const ColumnDefinition &/*unused*/) const
+QString MySqlSchemaGrammar::typeText(const ColumnDefinition &/*unused*/) const // NOLINT(readability-convert-member-functions-to-static)
 {
     return text_;
 }
 
-QString MySqlSchemaGrammar::typeMediumText(const ColumnDefinition &/*unused*/) const
+QString MySqlSchemaGrammar::typeMediumText(const ColumnDefinition &/*unused*/) const // NOLINT(readability-convert-member-functions-to-static)
 {
     return QStringLiteral("mediumtext");
 }
 
-QString MySqlSchemaGrammar::typeLongText(const ColumnDefinition &/*unused*/) const
+QString MySqlSchemaGrammar::typeLongText(const ColumnDefinition &/*unused*/) const // NOLINT(readability-convert-member-functions-to-static)
 {
     return QStringLiteral("longtext");
 }
 
-QString MySqlSchemaGrammar::typeBigInteger(const ColumnDefinition &/*unused*/) const
+QString MySqlSchemaGrammar::typeBigInteger(const ColumnDefinition &/*unused*/) const // NOLINT(readability-convert-member-functions-to-static)
 {
     return QStringLiteral("bigint");
 }
 
-QString MySqlSchemaGrammar::typeInteger(const ColumnDefinition &/*unused*/) const
+QString MySqlSchemaGrammar::typeInteger(const ColumnDefinition &/*unused*/) const // NOLINT(readability-convert-member-functions-to-static)
 {
     return QStringLiteral("int");
 }
 
-QString MySqlSchemaGrammar::typeMediumInteger(const ColumnDefinition &/*unused*/) const
+QString MySqlSchemaGrammar::typeMediumInteger(const ColumnDefinition &/*unused*/) const // NOLINT(readability-convert-member-functions-to-static)
 {
     return QStringLiteral("mediumint");
 }
 
-QString MySqlSchemaGrammar::typeTinyInteger(const ColumnDefinition &/*unused*/) const
+QString MySqlSchemaGrammar::typeTinyInteger(const ColumnDefinition &/*unused*/) const // NOLINT(readability-convert-member-functions-to-static)
 {
     return QStringLiteral("tinyint");
 }
 
-QString MySqlSchemaGrammar::typeSmallInteger(const ColumnDefinition &/*unused*/) const
+QString MySqlSchemaGrammar::typeSmallInteger(const ColumnDefinition &/*unused*/) const // NOLINT(readability-convert-member-functions-to-static)
 {
     return QStringLiteral("smallint");
 }
 
-QString MySqlSchemaGrammar::typeFloat(const ColumnDefinition &column) const
+QString MySqlSchemaGrammar::typeFloat(const ColumnDefinition &column) const // NOLINT(readability-convert-member-functions-to-static)
 {
     return typeDouble(column);
 }
 
-QString MySqlSchemaGrammar::typeDouble(const ColumnDefinition &column) const
+QString MySqlSchemaGrammar::typeDouble(const ColumnDefinition &column) const // NOLINT(readability-convert-member-functions-to-static)
 {
     if (column.total && column.places)
         return QStringLiteral("double(%1, %2)").arg(*column.total).arg(*column.places);
@@ -665,7 +665,7 @@ QString MySqlSchemaGrammar::typeDouble(const ColumnDefinition &column) const
     return QStringLiteral("double");
 }
 
-QString MySqlSchemaGrammar::typeDecimal(const ColumnDefinition &column) const
+QString MySqlSchemaGrammar::typeDecimal(const ColumnDefinition &column) const // NOLINT(readability-convert-member-functions-to-static)
 {
     if (!column.total)
         return QStringLiteral("decimal");
@@ -675,37 +675,37 @@ QString MySqlSchemaGrammar::typeDecimal(const ColumnDefinition &column) const
                                             .arg(column.places ? *column.places : 0);
 }
 
-QString MySqlSchemaGrammar::typeBoolean(const ColumnDefinition &/*unused*/) const
+QString MySqlSchemaGrammar::typeBoolean(const ColumnDefinition &/*unused*/) const // NOLINT(readability-convert-member-functions-to-static)
 {
     return QStringLiteral("tinyint(1)");
 }
 
-QString MySqlSchemaGrammar::typeEnum(const ColumnDefinition &column) const
+QString MySqlSchemaGrammar::typeEnum(const ColumnDefinition &column) const // NOLINT(readability-convert-member-functions-to-static)
 {
     return QStringLiteral("enum(%1)").arg(quoteString(column.allowed));
 }
 
-QString MySqlSchemaGrammar::typeSet(const ColumnDefinition &column) const
+QString MySqlSchemaGrammar::typeSet(const ColumnDefinition &column) const // NOLINT(readability-convert-member-functions-to-static)
 {
     return QStringLiteral("set(%1)").arg(quoteString(column.allowed));
 }
 
-QString MySqlSchemaGrammar::typeJson(const ColumnDefinition &/*unused*/) const
+QString MySqlSchemaGrammar::typeJson(const ColumnDefinition &/*unused*/) const // NOLINT(readability-convert-member-functions-to-static)
 {
     return QStringLiteral("json");
 }
 
-QString MySqlSchemaGrammar::typeJsonb(const ColumnDefinition &/*unused*/) const
+QString MySqlSchemaGrammar::typeJsonb(const ColumnDefinition &/*unused*/) const // NOLINT(readability-convert-member-functions-to-static)
 {
     return QStringLiteral("json");
 }
 
-QString MySqlSchemaGrammar::typeDate(const ColumnDefinition &/*unused*/) const
+QString MySqlSchemaGrammar::typeDate(const ColumnDefinition &/*unused*/) const // NOLINT(readability-convert-member-functions-to-static)
 {
     return QStringLiteral("date");
 }
 
-QString MySqlSchemaGrammar::typeDateTime(const ColumnDefinition &column) const
+QString MySqlSchemaGrammar::typeDateTime(const ColumnDefinition &column) const // NOLINT(readability-convert-member-functions-to-static)
 {
     auto columnType = column.precision > 0
                       ? QStringLiteral("datetime(%1)").arg(column.precision)
@@ -729,7 +729,7 @@ QString MySqlSchemaGrammar::typeDateTimeTz(const ColumnDefinition &column) const
     return typeDateTime(column);
 }
 
-QString MySqlSchemaGrammar::typeTime(const ColumnDefinition &column) const
+QString MySqlSchemaGrammar::typeTime(const ColumnDefinition &column) const // NOLINT(readability-convert-member-functions-to-static)
 {
     return column.precision > 0 ? QStringLiteral("time(%1)").arg(column.precision)
                                 : QStringLiteral("time");
@@ -740,7 +740,7 @@ QString MySqlSchemaGrammar::typeTimeTz(const ColumnDefinition &column) const
     return typeTime(column);
 }
 
-QString MySqlSchemaGrammar::typeTimestamp(const ColumnDefinition &column) const
+QString MySqlSchemaGrammar::typeTimestamp(const ColumnDefinition &column) const // NOLINT(readability-convert-member-functions-to-static)
 {
     /* The behavior if the precision is omitted (or 0 of course):
        >0 is ok so the default will be: timestamp and the MySQL default is 0 if omitted.
@@ -767,68 +767,68 @@ QString MySqlSchemaGrammar::typeTimestampTz(const ColumnDefinition &column) cons
     return typeTimestamp(column);
 }
 
-QString MySqlSchemaGrammar::typeYear(const ColumnDefinition &/*unused*/) const
+QString MySqlSchemaGrammar::typeYear(const ColumnDefinition &/*unused*/) const // NOLINT(readability-convert-member-functions-to-static)
 {
     return QStringLiteral("year");
 }
 
-QString MySqlSchemaGrammar::typeBinary(const ColumnDefinition &/*unused*/) const
+QString MySqlSchemaGrammar::typeBinary(const ColumnDefinition &/*unused*/) const // NOLINT(readability-convert-member-functions-to-static)
 {
     return QStringLiteral("blob");
 }
 
-QString MySqlSchemaGrammar::typeUuid(const ColumnDefinition &/*unused*/) const
+QString MySqlSchemaGrammar::typeUuid(const ColumnDefinition &/*unused*/) const // NOLINT(readability-convert-member-functions-to-static)
 {
     return QStringLiteral("char(36)");
 }
 
-QString MySqlSchemaGrammar::typeIpAddress(const ColumnDefinition &/*unused*/) const
+QString MySqlSchemaGrammar::typeIpAddress(const ColumnDefinition &/*unused*/) const // NOLINT(readability-convert-member-functions-to-static)
 {
     return QStringLiteral("varchar(45)");
 }
 
-QString MySqlSchemaGrammar::typeMacAddress(const ColumnDefinition &/*unused*/) const
+QString MySqlSchemaGrammar::typeMacAddress(const ColumnDefinition &/*unused*/) const // NOLINT(readability-convert-member-functions-to-static)
 {
     return QStringLiteral("varchar(17)");
 }
 
-QString MySqlSchemaGrammar::typeGeometry(const ColumnDefinition &/*unused*/) const
+QString MySqlSchemaGrammar::typeGeometry(const ColumnDefinition &/*unused*/) const // NOLINT(readability-convert-member-functions-to-static)
 {
     return QStringLiteral("geometry");
 }
 
-QString MySqlSchemaGrammar::typePoint(const ColumnDefinition &/*unused*/) const
+QString MySqlSchemaGrammar::typePoint(const ColumnDefinition &/*unused*/) const // NOLINT(readability-convert-member-functions-to-static)
 {
     return QStringLiteral("point");
 }
 
-QString MySqlSchemaGrammar::typeLineString(const ColumnDefinition &/*unused*/) const
+QString MySqlSchemaGrammar::typeLineString(const ColumnDefinition &/*unused*/) const // NOLINT(readability-convert-member-functions-to-static)
 {
     return QStringLiteral("linestring");
 }
 
-QString MySqlSchemaGrammar::typePolygon(const ColumnDefinition &/*unused*/) const
+QString MySqlSchemaGrammar::typePolygon(const ColumnDefinition &/*unused*/) const // NOLINT(readability-convert-member-functions-to-static)
 {
     return QStringLiteral("polygon");
 }
 
 QString
-MySqlSchemaGrammar::typeGeometryCollection(const ColumnDefinition &/*unused*/) const
+MySqlSchemaGrammar::typeGeometryCollection(const ColumnDefinition &/*unused*/) const // NOLINT(readability-convert-member-functions-to-static)
 {
     return QStringLiteral("geometrycollection");
 }
 
-QString MySqlSchemaGrammar::typeMultiPoint(const ColumnDefinition &/*unused*/) const
+QString MySqlSchemaGrammar::typeMultiPoint(const ColumnDefinition &/*unused*/) const // NOLINT(readability-convert-member-functions-to-static)
 {
     return QStringLiteral("multipoint");
 }
 
-QString MySqlSchemaGrammar::typeMultiLineString(const ColumnDefinition &/*unused*/) const
+QString MySqlSchemaGrammar::typeMultiLineString(const ColumnDefinition &/*unused*/) const // NOLINT(readability-convert-member-functions-to-static)
 {
     return QStringLiteral("multilinestring");
 }
 
-QString MySqlSchemaGrammar::typeMultiPolygon(const ColumnDefinition &/*unused*/) const
+QString MySqlSchemaGrammar::typeMultiPolygon(const ColumnDefinition &/*unused*/) const // NOLINT(readability-convert-member-functions-to-static)
 {
     return QStringLiteral("multipolygon");
 }
@@ -840,7 +840,7 @@ QString MySqlSchemaGrammar::typeComputed(const ColumnDefinition &/*unused*/) con
                 "modifiers.");
 }
 
-QString MySqlSchemaGrammar::modifyVirtualAs(const ColumnDefinition &column) const
+QString MySqlSchemaGrammar::modifyVirtualAs(const ColumnDefinition &column) const // NOLINT(readability-convert-member-functions-to-static)
 {
     if (column.virtualAs.isEmpty())
         return {};
@@ -848,7 +848,7 @@ QString MySqlSchemaGrammar::modifyVirtualAs(const ColumnDefinition &column) cons
     return QStringLiteral(" as (%1)").arg(column.virtualAs);
 }
 
-QString MySqlSchemaGrammar::modifyStoredAs(const ColumnDefinition &column) const
+QString MySqlSchemaGrammar::modifyStoredAs(const ColumnDefinition &column) const // NOLINT(readability-convert-member-functions-to-static)
 {
     if (column.storedAs.isEmpty())
         return {};
@@ -856,7 +856,7 @@ QString MySqlSchemaGrammar::modifyStoredAs(const ColumnDefinition &column) const
     return QStringLiteral(" as (%1) stored").arg(column.storedAs);
 }
 
-QString MySqlSchemaGrammar::modifyUnsigned(const ColumnDefinition &column) const
+QString MySqlSchemaGrammar::modifyUnsigned(const ColumnDefinition &column) const // NOLINT(readability-convert-member-functions-to-static)
 {
     if (!column.isUnsigned)
         return {};
@@ -864,7 +864,7 @@ QString MySqlSchemaGrammar::modifyUnsigned(const ColumnDefinition &column) const
     return QStringLiteral(" unsigned");
 }
 
-QString MySqlSchemaGrammar::modifyCharset(const ColumnDefinition &column) const
+QString MySqlSchemaGrammar::modifyCharset(const ColumnDefinition &column) const // NOLINT(readability-convert-member-functions-to-static)
 {
     if (column.charset.isEmpty())
         return {};
@@ -873,7 +873,7 @@ QString MySqlSchemaGrammar::modifyCharset(const ColumnDefinition &column) const
     return QStringLiteral(" character set %1").arg(quoteString(column.charset));
 }
 
-QString MySqlSchemaGrammar::modifyCollate(const ColumnDefinition &column) const
+QString MySqlSchemaGrammar::modifyCollate(const ColumnDefinition &column) const // NOLINT(readability-convert-member-functions-to-static)
 {
     if (column.collation.isEmpty())
         return {};
@@ -881,7 +881,7 @@ QString MySqlSchemaGrammar::modifyCollate(const ColumnDefinition &column) const
     return QStringLiteral(" collate %1").arg(quoteString(column.collation));
 }
 
-QString MySqlSchemaGrammar::modifyNullable(const ColumnDefinition &column) const
+QString MySqlSchemaGrammar::modifyNullable(const ColumnDefinition &column) const // NOLINT(readability-convert-member-functions-to-static)
 {
     static const auto notNull = QStringLiteral(" not null");
 
@@ -895,7 +895,7 @@ QString MySqlSchemaGrammar::modifyNullable(const ColumnDefinition &column) const
     return notNull;
 }
 
-QString MySqlSchemaGrammar::modifyInvisible(const ColumnDefinition &column) const
+QString MySqlSchemaGrammar::modifyInvisible(const ColumnDefinition &column) const // NOLINT(readability-convert-member-functions-to-static)
 {
     if (!column.invisible)
         return {};
@@ -915,7 +915,7 @@ QString MySqlSchemaGrammar::modifyDefault(const ColumnDefinition &column) const
     return QStringLiteral(" default %1").arg(getDefaultValue(defaultValue));
 }
 
-QString MySqlSchemaGrammar::modifyIncrement(const ColumnDefinition &column) const
+QString MySqlSchemaGrammar::modifyIncrement(const ColumnDefinition &column) const // NOLINT(readability-convert-member-functions-to-static)
 {
     static const std::unordered_set serials {
         ColumnType::BigInteger,   ColumnType::Integer,     ColumnType::MediumInteger,
@@ -929,7 +929,7 @@ QString MySqlSchemaGrammar::modifyIncrement(const ColumnDefinition &column) cons
     return QStringLiteral(" auto_increment primary key");
 }
 
-QString MySqlSchemaGrammar::modifyFirst(const ColumnDefinition &column) const
+QString MySqlSchemaGrammar::modifyFirst(const ColumnDefinition &column) const // NOLINT(readability-convert-member-functions-to-static)
 {
     if (!column.first)
         return {};
@@ -954,7 +954,7 @@ QString MySqlSchemaGrammar::modifyComment(const ColumnDefinition &column) const
     return QStringLiteral(" comment %1").arg(quoteString(escapeString(column.comment)));
 }
 
-QString MySqlSchemaGrammar::modifySrid(const ColumnDefinition &column) const
+QString MySqlSchemaGrammar::modifySrid(const ColumnDefinition &column) const // NOLINT(readability-convert-member-functions-to-static)
 {
     if (const auto &srid = column.srid;
         srid && *srid > 0
