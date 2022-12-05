@@ -55,31 +55,33 @@ void SQLiteSchemaBuilder::dropAllTables() const
     if (m_connection.getDatabaseName() != QStringLiteral(":memory:"))
         return refreshDatabaseFile(); // clazy:exclude=returning-void-expression
 
-    const auto &sqliteGrammar =
-            dynamic_cast<const Grammars::SQLiteSchemaGrammar &>(m_grammar);
+    using SQLiteSchemaGrammar = Grammars::SQLiteSchemaGrammar;
 
-    m_connection.selectFromWriteConnection(sqliteGrammar.compileEnableWriteableSchema());
+    m_connection.selectFromWriteConnection(SQLiteSchemaGrammar::
+                                           compileEnableWriteableSchema());
 
-    m_connection.selectFromWriteConnection(sqliteGrammar.compileDropAllTables({}));
+    m_connection.selectFromWriteConnection(m_grammar.compileDropAllTables({}));
 
-    m_connection.selectFromWriteConnection(sqliteGrammar.compileDisableWriteableSchema());
+    m_connection.selectFromWriteConnection(SQLiteSchemaGrammar::
+                                           compileDisableWriteableSchema());
 
-    m_connection.selectFromWriteConnection(sqliteGrammar.compileRebuild());
+    m_connection.selectFromWriteConnection(SQLiteSchemaGrammar::compileRebuild());
 }
 
 // TEST schema, test in functional tests silverqx
 void SQLiteSchemaBuilder::dropAllViews() const
 {
-    const auto &sqliteGrammar =
-            dynamic_cast<const Grammars::SQLiteSchemaGrammar &>(m_grammar);
+    using SQLiteSchemaGrammar = Grammars::SQLiteSchemaGrammar;
 
-    m_connection.selectFromWriteConnection(sqliteGrammar.compileEnableWriteableSchema());
+    m_connection.selectFromWriteConnection(SQLiteSchemaGrammar::
+                                           compileEnableWriteableSchema());
 
-    m_connection.selectFromWriteConnection(sqliteGrammar.compileDropAllViews({}));
+    m_connection.selectFromWriteConnection(m_grammar.compileDropAllViews({}));
 
-    m_connection.selectFromWriteConnection(sqliteGrammar.compileDisableWriteableSchema());
+    m_connection.selectFromWriteConnection(SQLiteSchemaGrammar::
+                                           compileDisableWriteableSchema());
 
-    m_connection.selectFromWriteConnection(sqliteGrammar.compileRebuild());
+    m_connection.selectFromWriteConnection(SQLiteSchemaGrammar::compileRebuild());
 }
 
 SqlQuery SQLiteSchemaBuilder::getAllTables() const

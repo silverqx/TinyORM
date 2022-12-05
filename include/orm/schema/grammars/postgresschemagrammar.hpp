@@ -152,8 +152,8 @@ namespace Grammars
                              const ColumnDefinition &column) const override;
 
         /*! Compile the auto-incrementing column starting values. */
-        QVector<QString>
-        compileAutoIncrementStartingValues(const Blueprint &blueprint) const;
+        static QVector<QString>
+        compileAutoIncrementStartingValues(const Blueprint &blueprint);
 
         /*! Compile a drop unique key command. */
         QVector<QString> compileDropConstraint(const Blueprint &blueprint,

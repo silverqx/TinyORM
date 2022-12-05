@@ -401,8 +401,7 @@ QString PostgresSchemaGrammar::addModifiers(QString &&sql,
 }
 
 QVector<QString>
-PostgresSchemaGrammar::compileAutoIncrementStartingValues(
-            const Blueprint &blueprint) const
+PostgresSchemaGrammar::compileAutoIncrementStartingValues(const Blueprint &blueprint)
 {
     const auto autoIncrementStartingValues = blueprint.autoIncrementStartingValues();
 

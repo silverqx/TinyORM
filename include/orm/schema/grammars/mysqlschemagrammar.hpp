@@ -146,11 +146,13 @@ namespace Grammars
                              const ColumnDefinition &column) const override;
 
         /*! Append the character set specifications to a command. */
-        void compileCreateEncoding(QString &sql, const DatabaseConnection &connection,
-                                   const Blueprint &blueprint) const;
+        static void
+        compileCreateEncoding(QString &sql, const DatabaseConnection &connection,
+                              const Blueprint &blueprint);
         /*! Append the engine specifications to a command. */
-        void compileCreateEngine(QString &sql, const DatabaseConnection &connection,
-                                 const Blueprint &blueprint) const;
+        static void
+        compileCreateEngine(QString &sql, const DatabaseConnection &connection,
+                            const Blueprint &blueprint);
         /*! Compile the auto-incrementing column starting values. */
         QVector<QString>
         compileAutoIncrementStartingValues(const Blueprint &blueprint) const;

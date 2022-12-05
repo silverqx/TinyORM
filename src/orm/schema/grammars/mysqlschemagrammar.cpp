@@ -349,8 +349,7 @@ QString MySqlSchemaGrammar::addModifiers(QString &&sql,
 }
 
 void MySqlSchemaGrammar::compileCreateEncoding(
-        QString &sql, const DatabaseConnection &connection,
-        const Blueprint &blueprint) const
+        QString &sql, const DatabaseConnection &connection, const Blueprint &blueprint)
 {
     static const auto charsetTmpl = QStringLiteral(" default character set %1");
     static const auto collateTmpl = QStringLiteral(" collate %1");
@@ -378,8 +377,7 @@ void MySqlSchemaGrammar::compileCreateEncoding(
 }
 
 void MySqlSchemaGrammar::compileCreateEngine(
-        QString &sql, const DatabaseConnection &connection,
-        const Blueprint &blueprint) const
+        QString &sql, const DatabaseConnection &connection, const Blueprint &blueprint)
 {
     static const auto engineTmpl = QStringLiteral(" engine = %1");
 

@@ -55,17 +55,17 @@ QString SQLiteSchemaGrammar::compileDisableForeignKeyConstraints() const
     return QStringLiteral("PRAGMA foreign_keys = OFF;");
 }
 
-QString SQLiteSchemaGrammar::compileEnableWriteableSchema() const
+QString SQLiteSchemaGrammar::compileEnableWriteableSchema()
 {
     return QStringLiteral("PRAGMA writable_schema = 1;");
 }
 
-QString SQLiteSchemaGrammar::compileDisableWriteableSchema() const
+QString SQLiteSchemaGrammar::compileDisableWriteableSchema()
 {
     return QStringLiteral("PRAGMA writable_schema = 0;");
 }
 
-QString SQLiteSchemaGrammar::compileRebuild() const
+QString SQLiteSchemaGrammar::compileRebuild()
 {
     return QStringLiteral("vacuum");
 }
@@ -365,8 +365,7 @@ QString SQLiteSchemaGrammar::addPrimaryKeys(const Blueprint &blueprint) const
 }
 
 std::shared_ptr<CommandDefinition>
-SQLiteSchemaGrammar::getCommandByName(const Blueprint &blueprint,
-                                      const QString &name) const
+SQLiteSchemaGrammar::getCommandByName(const Blueprint &blueprint, const QString &name)
 {
     auto commands = getCommandsByName(blueprint, name);
 
@@ -374,8 +373,7 @@ SQLiteSchemaGrammar::getCommandByName(const Blueprint &blueprint,
 }
 
 QVector<std::shared_ptr<CommandDefinition>>
-SQLiteSchemaGrammar::getCommandsByName(const Blueprint &blueprint,
-                                       const QString &name) const
+SQLiteSchemaGrammar::getCommandsByName(const Blueprint &blueprint, const QString &name)
 {
     return blueprint.getCommands()
             | ranges::views::filter([&name](const auto &command)

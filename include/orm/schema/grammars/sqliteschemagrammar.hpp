@@ -51,12 +51,12 @@ namespace Grammars
         QString compileDisableForeignKeyConstraints() const override;
 
         /*! Compile the SQL needed to enable a writable schema. */
-        QString compileEnableWriteableSchema() const;
+        static QString compileEnableWriteableSchema();
         /*! Compile the SQL needed to disable a writable schema. */
-        QString compileDisableWriteableSchema() const;
+        static QString compileDisableWriteableSchema();
 
         /*! Compile the SQL needed to rebuild the database. */
-        QString compileRebuild() const;
+        static QString compileRebuild();
 
         /*! Compile the query to determine the list of tables. */
         QString compileTableExists() const override;
@@ -136,11 +136,11 @@ namespace Grammars
         QString addPrimaryKeys(const Blueprint &blueprint) const;
 
         /*! Get the primary key command if it exists on the blueprint. */
-        std::shared_ptr<CommandDefinition>
-        getCommandByName(const Blueprint &blueprint, const QString &name) const;
+        static std::shared_ptr<CommandDefinition>
+        getCommandByName(const Blueprint &blueprint, const QString &name);
         /*! Get all of the commands with a given name. */
-        QVector<std::shared_ptr<CommandDefinition>>
-        getCommandsByName(const Blueprint &blueprint, const QString &name) const;
+        static QVector<std::shared_ptr<CommandDefinition>>
+        getCommandsByName(const Blueprint &blueprint, const QString &name);
 
         /* Others */
         /*! Add the column modifiers to the definition. */
