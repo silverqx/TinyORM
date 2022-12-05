@@ -622,8 +622,8 @@ Grammar::flatBindingsForUpdateDelete(const BindingsMap &bindings,
     QVector<std::reference_wrapper<const QVariant>> cleanBindingsFlatten;
 
     for (auto itBindingVector = bindings.constBegin();
-         itBindingVector != bindings.constEnd(); ++itBindingVector)
-
+         itBindingVector != bindings.constEnd(); ++itBindingVector
+    )
         if (exclude.contains(itBindingVector.key()))
             continue;
         else
