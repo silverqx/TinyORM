@@ -27,7 +27,7 @@ namespace Tom::Commands::Make::Support
 
 fspath MigrationCreator::create(
             std::string &&datetimePrefix, const QString &name, std::string &&extension,
-            fspath &&migrationsPath, const QString &table, const bool create) const
+            fspath &&migrationsPath, const QString &table, const bool create)
 {
     auto migrationPath = getPath(std::move(datetimePrefix), name, std::move(extension),
                                  migrationsPath);
@@ -63,7 +63,7 @@ QString MigrationCreator::getStub(const QString &table, const bool create)
 }
 
 fspath MigrationCreator::getPath(std::string &&datetimePrefix, const QString &name,
-                                 std::string &&extension, const fspath &path) const
+                                 std::string &&extension, const fspath &path)
 {
     std::string filename = datetimePrefix.empty() ? getDatePrefix()
                                                   : std::move(datetimePrefix);

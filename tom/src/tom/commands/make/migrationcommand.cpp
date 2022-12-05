@@ -6,6 +6,7 @@
 #include <orm/utils/string.hpp>
 
 #include "tom/application.hpp"
+#include "tom/commands/make/support/migrationcreator.hpp"
 #include "tom/commands/make/support/tableguesser.hpp"
 #include "tom/exceptions/invalidargumenterror.hpp"
 #include "tom/tomconstants.hpp"
@@ -204,7 +205,7 @@ void MigrationCommand::writeMigration(
             std::string &&datetimePrefix, const QString &name, std::string &&extension,
             fspath &&migrationsPath, const QString &table, const bool create) const
 {
-    auto migrationFilePath = m_creator.create(
+    auto migrationFilePath = Support::MigrationCreator::create(
                                  std::move(datetimePrefix), name, std::move(extension),
                                  std::move(migrationsPath), table, create);
 

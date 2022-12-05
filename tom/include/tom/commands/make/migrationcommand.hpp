@@ -6,7 +6,6 @@
 TINY_SYSTEM_HEADER
 
 #include "tom/commands/make/makecommand.hpp"
-#include "tom/commands/make/support/migrationcreator.hpp"
 #include "tom/tomconstants.hpp"
 
 TINYORM_BEGIN_COMMON_NAMESPACE
@@ -74,9 +73,6 @@ namespace Tom::Commands::Make
         fspath getUserMigrationsPath() const;
         /*! Try to guess the migrations path based on the pwd or use the default path. */
         fspath guessMigrationsPath() const;
-
-        /*! The migration creator instance. */
-        Support::MigrationCreator m_creator {};
     };
 
     /* public */

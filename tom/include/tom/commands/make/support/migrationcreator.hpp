@@ -25,23 +25,23 @@ namespace Tom::Commands::Make::Support
         using fspath = std::filesystem::path;
 
     public:
-        /*! Default constructor. */
-        inline MigrationCreator() = default;
-        /*! Default destructor. */
-        inline ~MigrationCreator() = default;
+        /*! Deleted default constructor, this is a pure library class. */
+        MigrationCreator() = delete;
+        /*! Deleted destructor. */
+        ~MigrationCreator() = delete;
 
         /*! Create a new migration at the given path. */
-        fspath create(std::string &&datetimePrefix, const QString &name,
-                      std::string &&extension, fspath &&migrationsPath,
-                      const QString &table = "", bool create = false) const;
+        static fspath create(std::string &&datetimePrefix, const QString &name,
+                             std::string &&extension, fspath &&migrationsPath,
+                             const QString &table = "", bool create = false);
 
     protected:
         /*! Get the migration stub file. */
         static QString getStub(const QString &table, bool create);
 
         /*! Get the full path to the migration. */
-        fspath getPath(std::string &&datetimePrefix, const QString &name,
-                       std::string &&extension, const fspath &path) const;
+        static fspath getPath(std::string &&datetimePrefix, const QString &name,
+                              std::string &&extension, const fspath &path);
         /*! Get the date prefix for the migration. */
         static std::string getDatePrefix();
 
