@@ -27,9 +27,9 @@ namespace Orm::Connectors
         inline ~Connector() override = 0;
 
         /*! Create a new QSqlDatabase connection, factory method. */
-        QSqlDatabase
+        static QSqlDatabase
         createConnection(const QString &name, const QVariantHash &config,
-                         const QString &options) const;
+                         const QString &options);
         /*! Create a new QSqlDatabase instance, create a new database connection. */
         static QSqlDatabase
         createQSqlDatabaseConnection(
@@ -52,11 +52,11 @@ namespace Orm::Connectors
                 const QString &name, const QVariantHash &config,
                 const QString &options);
         /*! Handle an exception that occurred during connect execution. */
-        QSqlDatabase
+        static QSqlDatabase
         tryAgainIfCausedByLostConnection(
                 const std::exception_ptr &ePtr, const Exceptions::SqlError &e,
                 const QString &name, const QVariantHash &config,
-                const QString &options) const;
+                const QString &options);
 
         /*! Error message used when connection configuration fails. */
         static const QString m_configureErrorMessage;

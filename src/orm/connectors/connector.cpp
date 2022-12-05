@@ -26,7 +26,7 @@ const QString Connector::m_configureErrorMessage =
 
 QSqlDatabase
 Connector::createConnection(const QString &name, const QVariantHash &config,
-                            const QString &options) const
+                            const QString &options)
 {
     // TEST null username/password, debug driver code silverqx
 
@@ -102,7 +102,7 @@ Connector::addQSqlDatabaseConnection(const QString &name, const QVariantHash &co
 QSqlDatabase
 Connector::tryAgainIfCausedByLostConnection(
         const std::exception_ptr &ePtr, const Exceptions::SqlError &e,
-        const QString &name, const QVariantHash &config, const QString &options) const
+        const QString &name, const QVariantHash &config, const QString &options)
 {
     if (causedByLostConnection(e))
         return createQSqlDatabaseConnection(name, config, options);
