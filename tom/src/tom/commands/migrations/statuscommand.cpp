@@ -110,7 +110,7 @@ StatusCommand::getStatusFor(QVector<QVariant> &&ran,
 
 #ifdef TINYTOM_TESTS_CODE
 std::vector<StatusCommand::StatusRow>
-StatusCommand::statusForUnitTest(std::vector<TableRow> &&migrations) const
+StatusCommand::statusForUnitTest(std::vector<TableRow> &&migrations)
 {
     return ranges::views::move(migrations)
             | ranges::views::transform([](auto &&migration)

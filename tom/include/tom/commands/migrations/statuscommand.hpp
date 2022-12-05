@@ -72,8 +72,8 @@ namespace Commands::Migrations
                      std::map<QString, QVariant> &&batches) const;
 #ifdef TINYTOM_TESTS_CODE
         /*! Transform migrations status for comparing in auto tests. */
-        std::vector<StatusRow>
-        statusForUnitTest(std::vector<TableRow> &&migrations) const;
+        static std::vector<StatusRow>
+        statusForUnitTest(std::vector<TableRow> &&migrations);
 #endif
 
         /*! The migrator service instance. */
