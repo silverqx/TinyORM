@@ -40,8 +40,8 @@ namespace Orm::Tiny::Exceptions
 
     private:
         /*! Format the error message. */
-        QString formatMessage(const char *model,
-                              const QVector<QVariant> &ids = {}) const;
+        static QString formatMessage(const char *model,
+                                     const QVector<QVariant> &ids = {});
     };
 
     /* public */

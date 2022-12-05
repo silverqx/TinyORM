@@ -20,7 +20,7 @@ RelationNotFoundError::RelationNotFoundError(const QString &model,
 
 QString RelationNotFoundError::formatMessage(const QString &model,
                                              const QString &relation,
-                                             const From from) const
+                                             const From from)
 {
     /* I was confused when I looked at this method after some time, but it's correct,
        it shows two kind of messages, one for the belongsTo/belongsToMany and one

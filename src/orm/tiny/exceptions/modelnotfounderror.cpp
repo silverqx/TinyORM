@@ -27,7 +27,7 @@ ModelNotFoundError::ModelNotFoundError(const QString &model,
 /* private */
 
 QString ModelNotFoundError::formatMessage(const char *model,
-                                          const QVector<QVariant> &ids) const
+                                          const QVector<QVariant> &ids)
 {
     QString result = QStringLiteral("No query results for model '%1'")
                      .arg(model);
