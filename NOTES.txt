@@ -414,6 +414,20 @@ GitHub Actions:
    msys2/setup-msys2@v2
    jurplel/install-qt-action@v3
 
+ - periodical upgrades:
+
+   - analyzers-qtX.yml
+     - add-apt-repository Clang 14
+   - clang-cl.yml
+     - Install LLVM and Clang 15.0.6 (KyleMayes/install-llvm-action@v1)
+     - Qt 6.3.2 install base components (jurplel/install-qt-action@v3)
+     - QMYSQL install driver dlls (Qt 6.3.2) - needed to rebuild the QSQL QMYSQL driver
+   - linux-qtX.yml
+     - add-apt-repository Clang 15
+   - msvc-2022.yml
+     - Qt 6.3.2 install base components (jurplel/install-qt-action@v3)
+     - QMYSQL install driver dlls (Qt 6.3.2) - needed to rebuild the QSQL QMYSQL driver
+
  - how to update the clazy-standalone (analyzers.yml):
    - update the QtCreator to latest version, copy libexec/qtcreator/clang/ to some empty folder
    - leave only the clazy-standalone executable in the bin/ folder and compress it:
