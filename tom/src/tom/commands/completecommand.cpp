@@ -268,7 +268,7 @@ int CompleteCommand::printGuessedCommands(
 
 int CompleteCommand::printGuessedNamespaces(const QString &word) const
 {
-    const auto &allNamespaceNames = application().namespaceNames();
+    const auto &allNamespaceNames = Application::namespaceNames();
 
     const auto printAll = word.isEmpty();
 

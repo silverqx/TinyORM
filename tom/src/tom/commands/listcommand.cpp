@@ -132,7 +132,7 @@ QString ListCommand::getNamespaceName(const QString &namespaceArg) const
 
     // Try to find a full command name to avoid the guess logic
     if (auto namespaceArg_ = namespaceArg.toLower();
-        ranges::contains(application().namespaceNames(), namespaceArg_)
+        ranges::contains(Application::namespaceNames(), namespaceArg_)
     )
         return namespaceArg_;
 
@@ -150,7 +150,7 @@ QString ListCommand::getNamespaceName(const QString &namespaceArg) const
                         "There are no commands defined in the \"%1\" namespace.")
                     .arg(namespaceArg));
 
-        application().exitApplication(EXIT_FAILURE);
+        Application::exitApplication(EXIT_FAILURE);
     }
 
     // Found more namespaces (ambiguous)
@@ -159,7 +159,7 @@ QString ListCommand::getNamespaceName(const QString &namespaceArg) const
 
 std::vector<QString> ListCommand::guessNamespace(const QString &namespaceArg) const
 {
-    return application().namespaceNames()
+    return Application::namespaceNames()
             | ranges::views::filter([&namespaceArg](const QString &namespaceName)
     {
         return namespaceName.startsWith(namespaceArg, Qt::CaseInsensitive);
@@ -184,7 +184,7 @@ ListCommand::printAmbiguousNamespaces(const QString &namespaceName,
                                "Did you mean one of these?\n%2")
                 .arg(namespaceName, formattedNamespaces.join(NEWLINE)));
 
-    application().exitApplication(EXIT_FAILURE);
+    Application::exitApplication(EXIT_FAILURE);
 }
 
 /* Commands section */

@@ -199,7 +199,7 @@ namespace Concerns
         /*! Invoke the list command. */
         Q_NORETURN void showCommandsList(int exitCode);
         /*! Exit the application with post routines. */
-        Q_NORETURN void exitApplication(int exitCode) const;
+        static Q_NORETURN void exitApplication(int exitCode);
 
         /* Commands factory */
         /*! Alias for an optional command-line parser reference. */
@@ -229,11 +229,11 @@ namespace Concerns
         inline auto getCommandsInNamespace(const QString &name);
 
         /*! Get all supported commands' names. */
-        const std::vector<std::reference_wrapper<const QString>> &commandNames() const;
+        static const std::vector<std::reference_wrapper<const QString>> &commandNames();
         /*! Get all commands' namespace names. */
-        const std::vector<std::reference_wrapper<const QString>> &namespaceNames() const;
+        static const std::vector<std::reference_wrapper<const QString>> &namespaceNames();
         /*! Get commands index positions in namespaces. */
-        const std::vector<std::tuple<int, int>> &commandsIndexes() const;
+        static const std::vector<std::tuple<int, int>> &commandsIndexes();
 
         /*! Get options signature for the given command. */
         QList<CommandLineOption> getCommandOptionsSignature(const QString &command);

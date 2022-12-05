@@ -105,7 +105,7 @@ GuessCommandName::printAmbiguousCommands(
                     "Command \"%1\" is ambiguous.\n\nDid you mean one of these?\n%2")
                 .arg(commandName, formattedCommands.join(NEWLINE)));
 
-    application().exitApplication(EXIT_FAILURE);
+    Application::exitApplication(EXIT_FAILURE);
 }
 
 /* For the complete command */

@@ -355,14 +355,14 @@ void Command::checkHelpArgument() const
 
     call(Help, {name()});
 
-    application().exitApplication(EXIT_SUCCESS);
+    Application::exitApplication(EXIT_SUCCESS);
 }
 
 void Command::showParserError(const QCommandLineParser &parser) const
 {
     errorWall(parser.errorText());
 
-    application().exitApplication(EXIT_FAILURE);
+    Application::exitApplication(EXIT_FAILURE);
 }
 
 void Command::validateRequiredArguments() const
@@ -391,7 +391,7 @@ void Command::validateRequiredArguments() const
     errorWall(QStringLiteral(R"(Not enough arguments (missing: "%1").)")
               .arg(arguments.at(static_cast<RequiredStdSizeType>(passedArgsSize)).name));
 
-    application().exitApplication(EXIT_FAILURE);
+    Application::exitApplication(EXIT_FAILURE);
 }
 
 QStringList::size_type Command::commasCount(const QStringList &values)

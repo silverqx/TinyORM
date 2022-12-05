@@ -432,7 +432,7 @@ Q_NORETURN void Application::showCommandsList(const int exitCode)
     exitApplication(exitCode);
 }
 
-Q_NORETURN void Application::exitApplication(const int exitCode) const
+Q_NORETURN void Application::exitApplication(const int exitCode)
 {
     /* Invoke post routines manually, it's safe as they will not be called twice even if
        the QCoreApplication's desctructor calls also this function. */
@@ -580,7 +580,7 @@ Application::commandsByNamespaceHash() const
        (it's like iterator's end so should point after).
        Look to the Application::commandNames() to understand this indexes.
        tuple is forwarded as args to the ranges::views::slice(). */
-    static const std::unordered_map<QString, std::tuple<int, int>> cached = [this]
+    static const std::unordered_map<QString, std::tuple<int, int>> cached = []
     {
         Q_ASSERT(namespaceNames().size() == commandsIndexes().size());
 
@@ -599,7 +599,7 @@ Application::commandsByNamespaceHash() const
 }
 
 const std::vector<std::reference_wrapper<const QString>> &
-Application::commandNames() const
+Application::commandNames()
 {
     // Order is important here (shown by defined order by the list command)
     static const std::vector<std::reference_wrapper<const QString>> cached {
@@ -618,7 +618,7 @@ Application::commandNames() const
 }
 
 const std::vector<std::reference_wrapper<const QString>> &
-Application::namespaceNames() const
+Application::namespaceNames()
 {
     // Order is important here - ziped with the commandsIndexes()
     static const std::vector<std::reference_wrapper<const QString>> cached {
@@ -641,7 +641,7 @@ Application::namespaceNames() const
     return cached;
 }
 
-const std::vector<std::tuple<int, int>> &Application::commandsIndexes() const
+const std::vector<std::tuple<int, int>> &Application::commandsIndexes()
 {
     /* First number is index where it starts (0-based), second the number where it ends
        (it's like iterator's end so should point after).
