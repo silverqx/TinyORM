@@ -259,13 +259,13 @@ void Application::fixEmptyArgv()
 }
 
 // CUR tom, remove? silverqx
-void Application::initializeAtExit() const
-{
-    std::atexit([]
-    {
-        std::cout << std::endl;
-    });
-}
+//void Application::initializeAtExit()
+//{
+//    std::atexit([]
+//    {
+//        std::cout << std::endl;
+//    });
+//}
 
 void Application::initializeParser(QCommandLineParser &parser)
 {

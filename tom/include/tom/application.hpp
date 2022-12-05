@@ -152,7 +152,7 @@ namespace Concerns
         /*! Fix m_argc/m_argv data members if the argv is empty. */
         void fixEmptyArgv();
         /*! Processes the specified function at application's normal exit. */
-        void initializeAtExit() const;
+//        static void initializeAtExit();
 
         /*! Initialize the command-line parser. */
         void initializeParser(QCommandLineParser &parser);
