@@ -87,6 +87,8 @@ namespace Orm::Tiny
         /* Constructors */
         /*! Create a new TinORM model instance, default constructor. */
         Model();
+        /*! Default destructor. */
+        inline ~Model() = default;
 
         /*! Model's copy constructor. */
         inline Model(const Model &) = default;
