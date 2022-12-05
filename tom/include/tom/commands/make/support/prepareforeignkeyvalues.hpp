@@ -61,8 +61,6 @@ namespace Support
         inline ModelCommand &modelCommand();
         /*! Reference to the ModelCommand, const version. */
         inline const ModelCommand &modelCommand() const;
-        /*! Set of all cmd. option relation names. */
-        const std::unordered_set<QString> &relationNames();
 
         /*! Reference to the ModelCommand. */
         std::reference_wrapper<ModelCommand> m_modelCommand;

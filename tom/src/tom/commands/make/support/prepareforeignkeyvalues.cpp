@@ -65,7 +65,7 @@ ForeignKeys PrepareForeignKeyValues::prepareValues()
 bool PrepareForeignKeyValues::startNewRelation(QString &option)
 {
     // Nothing to start
-    if (!relationNames().contains(option))
+    if (!ModelCommand::relationNames().contains(option))
         return false;
 
     // Relation option passed on the command-line, start (found relation option)
@@ -193,13 +193,6 @@ void PrepareForeignKeyValues::showUnusedForeignKeyWarning()
                     "or can be defined twice for the --belongs-to-many= option."));
 
     modelCommand().m_shownUnusedForeignKey = true;
-}
-
-/* Getters */
-
-const std::unordered_set<QString> &PrepareForeignKeyValues::relationNames()
-{
-    return modelCommand().relationNames();
 }
 
 } // namespace Tom::Commands::Make::Support

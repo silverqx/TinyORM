@@ -59,8 +59,6 @@ namespace Tom::Commands::Make::Support
         inline ModelCommand &modelCommand();
         /*! Reference to the ModelCommand, const version. */
         inline const ModelCommand &modelCommand() const;
-        /*! Set of all cmd. option relation names. */
-        inline const std::unordered_set<QString> &relationNames();
 
         /*! Reference to the ModelCommand. */
         std::reference_wrapper<ModelCommand> m_modelCommand;
@@ -175,7 +173,7 @@ namespace Tom::Commands::Make::Support
     bool PrepareBtmOptionValues<P, V>::startNewBtmRelation(const QString &option)
     {
         // Nothing to start
-        if (!relationNames().contains(option))
+        if (!ModelCommand::relationNames().contains(option))
             return false;
 
         /* Nothing to start, reset and also no need to insert a default values.
@@ -281,12 +279,6 @@ namespace Tom::Commands::Make::Support
     const ModelCommand &PrepareBtmOptionValues<P, V>::modelCommand() const
     {
         return m_modelCommand;
-    }
-
-    template<BtmPreparedValuesConcept P, BtmValuesConcept V>
-    const std::unordered_set<QString> &PrepareBtmOptionValues<P, V>::relationNames()
-    {
-        return modelCommand().relationNames();
     }
 
 } // namespace Tom::Commands::Make::Support

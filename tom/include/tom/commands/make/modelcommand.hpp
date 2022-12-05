@@ -104,7 +104,7 @@ namespace Support
         fspath guessModelsPath() const;
 
         /*! Set of all cmd. option relation names. */
-        const std::unordered_set<QString> &relationNames();
+        static const std::unordered_set<QString> &relationNames();
 
         /*! Create a migration file for the model. */
         void createMigration(const QString &className) const;
