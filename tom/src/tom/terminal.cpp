@@ -18,9 +18,11 @@ TINYORM_BEGIN_COMMON_NAMESPACE
 namespace Tom
 {
 
+// I can tell that ansi logic detection in this class is a real porn 😎
+
 /* public */
 
-// I can tell that ansi logic detection in this class is a real porn 😎
+/* Static operations on the Terminal class */
 
 void Terminal::initialize()
 {
@@ -32,6 +34,39 @@ void Terminal::initialize()
     enableVt100Support();
 #endif
 }
+
+bool Terminal::isatty(FILE *stream) noexcept
+{
+#ifdef _WIN32
+    return ::_isatty(::_fileno(stream)) != 0;
+#else
+    return ::isatty(::fileno(stream)) != 0;
+#endif
+}
+
+Terminal::TerminalSize Terminal::terminalSize() noexcept
+{
+    int width  = -1;
+    int height = -1;
+
+#ifdef _WIN32
+    CONSOLE_SCREEN_BUFFER_INFO csbi;
+    GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE), &csbi);
+
+    width  = static_cast<int>(csbi.srWindow.Right - csbi.srWindow.Left) + 1;
+    height = static_cast<int>(csbi.srWindow.Bottom - csbi.srWindow.Top) + 1;
+#elif defined(__linux__)
+    winsize w {};
+    ioctl(fileno(stdout), TIOCGWINSZ, &w);
+
+    width  = static_cast<int>(w.ws_col);
+    height = static_cast<int>(w.ws_row);
+#endif
+
+    return {width, height};
+}
+
+/* Operations on a Terminal instance */
 
 bool Terminal::hasColorSupport(const std::ostream &cout) const
 {
@@ -91,15 +126,6 @@ bool Terminal::hasWColorSupport(const std::wostream &wcout) const
     return isAnsi;
 }
 
-bool Terminal::isatty(FILE *stream) const
-{
-#ifdef _WIN32
-    return ::_isatty(::_fileno(stream)) != 0;
-#else
-    return ::isatty(::fileno(stream)) != 0;
-#endif
-}
-
 int Terminal::width()
 {
     if (const auto widthRaw = qEnvironmentVariable("COLUMNS");
@@ -134,28 +160,6 @@ int Terminal::height()
         return m_lastHeight = height;
 
     return m_lastHeight;
-}
-
-Terminal::TerminalSize Terminal::terminalSize() const
-{
-    int width  = -1;
-    int height = -1;
-
-#ifdef _WIN32
-    CONSOLE_SCREEN_BUFFER_INFO csbi;
-    GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE), &csbi);
-
-    width  = static_cast<int>(csbi.srWindow.Right - csbi.srWindow.Left) + 1;
-    height = static_cast<int>(csbi.srWindow.Bottom - csbi.srWindow.Top) + 1;
-#elif defined(__linux__)
-    winsize w {};
-    ioctl(fileno(stdout), TIOCGWINSZ, &w);
-
-    width  = static_cast<int>(w.ws_col);
-    height = static_cast<int>(w.ws_row);
-#endif
-
-    return {width, height};
 }
 
 /* private */
@@ -198,7 +202,7 @@ namespace
     }
 } // namespace
 
-bool Terminal::hasVt100Support(const std::ostream &cout) const
+bool Terminal::hasVt100Support(const std::ostream &cout)
 {
     DWORD mode = 0;
 
@@ -209,7 +213,7 @@ bool Terminal::hasVt100Support(const std::ostream &cout) const
             ENABLE_VIRTUAL_TERMINAL_PROCESSING;
 }
 
-bool Terminal::hasVt100Support(const std::wostream &wcout) const
+bool Terminal::hasVt100Support(const std::wostream &wcout)
 {
     DWORD mode = 0;
 

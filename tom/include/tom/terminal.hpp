@@ -33,27 +33,11 @@ namespace Tom
         /*! Default destructor. */
         inline ~Terminal() = default;
 
+        /* Static operations on the Terminal class */
         /*! Prepare the console terminal. */
         static void initialize();
-
-        /*! Supports the given output ansi colors? (ansi is disabled for non-tty). */
-        bool hasColorSupport(const std::ostream &cout = std::cout) const;
-        /*! Supports the given output ansi colors? (ansi is disabled for non-tty),
-            wide version. */
-        bool hasWColorSupport(const std::wostream &wcout = std::wcout) const;
-
         /*! Determines if a file descriptor is associated with a character device. */
-        bool isatty(FILE *stream) const;
-
-        /*! Obtain the current terminal width. */
-        int width();
-        /*! Obtain the current terminal height. */
-        int height();
-
-        /*! Get the cached terminal width. */
-        inline int lastWidth() const noexcept;
-        /*! Get the cached terminal height. */
-        inline int lastHeight() const noexcept;
+        static bool isatty(FILE *stream) noexcept;
 
         /*! Terminal width and height. */
         struct TerminalSize
@@ -65,7 +49,24 @@ namespace Tom
         };
 
         /*! Get terminal size of the visible area. */
-        TerminalSize terminalSize() const;
+        static TerminalSize terminalSize() noexcept;
+
+        /* Operations on a Terminal instance */
+        /*! Supports the given output ansi colors? (ansi is disabled for non-tty). */
+        bool hasColorSupport(const std::ostream &cout = std::cout) const;
+        /*! Supports the given output ansi colors? (ansi is disabled for non-tty),
+            wide version. */
+        bool hasWColorSupport(const std::wostream &wcout = std::wcout) const;
+
+        /*! Obtain the current terminal width. */
+        int width();
+        /*! Obtain the current terminal height. */
+        int height();
+
+        /*! Get the cached terminal width. */
+        inline int lastWidth() const noexcept;
+        /*! Get the cached terminal height. */
+        inline int lastHeight() const noexcept;
 
     private:
         /*! Supports the given output ansi colors? (common logic). */
@@ -74,10 +75,10 @@ namespace Tom
 
 #ifdef _WIN32
         /*! Detect if c++ ostream has enabled virtual terminal processing. */
-        bool hasVt100Support(const std::ostream &cout) const;
+        static bool hasVt100Support(const std::ostream &cout);
         /*! Detect if c++ wostream has enabled virtual terminal processing,
             wide version. */
-        bool hasVt100Support(const std::wostream &wcout) const;
+        static bool hasVt100Support(const std::wostream &wcout);
 #endif
 
         /* Terminal initialization */
