@@ -262,7 +262,7 @@ namespace Orm
         /*! Determine whether we're logging queries. */
         static bool logging(const QString &connection = "");
         /*! The current order value for a query log record. */
-        static std::size_t getQueryLogOrder();
+        static std::size_t getQueryLogOrder() noexcept;
 
         /* Queries execution time counter */
         /*! Determine whether we're counting queries execution time. */

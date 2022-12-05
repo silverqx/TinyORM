@@ -271,7 +271,7 @@ namespace Query
         /*! Determine whether we're logging queries. */
         bool logging(const QString &connection = "");
         /*! The current order value for a query log record. */
-        std::size_t getQueryLogOrder();
+        std::size_t getQueryLogOrder() const noexcept;
 
         /* Queries execution time counter */
         /*! Determine whether we're counting queries execution time. */

@@ -622,7 +622,7 @@ bool DatabaseManager::logging(const QString &connection)
     return this->connection(connection).logging();
 }
 
-std::size_t DatabaseManager::getQueryLogOrder()
+std::size_t DatabaseManager::getQueryLogOrder() const noexcept // NOLINT(readability-convert-member-functions-to-static)
 {
     return DatabaseConnection::getQueryLogOrder();
 }

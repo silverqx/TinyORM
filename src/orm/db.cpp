@@ -440,7 +440,7 @@ bool DB::logging(const QString &connection)
     return manager().connection(connection).logging();
 }
 
-std::size_t DB::getQueryLogOrder()
+std::size_t DB::getQueryLogOrder() noexcept
 {
     return manager().getQueryLogOrder();
 }
