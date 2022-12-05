@@ -325,7 +325,7 @@ Migrator::getQueries(const Migration &migration, const MigrateMethod method) con
        queries against the database returning the array of raw SQL statements
        that would get fired against the database system for this migration. */
     return resolveConnection(m_migrationsProperties.get().at(migrationTypeId).connection)
-            .pretend([this, &migration, method]()
+            .pretend([&migration, method]()
     {
         migrateByMethod(migration, method);
     });
@@ -368,8 +368,7 @@ void Migrator::runMigration(const Migration &migration, const MigrateMethod meth
     connection.commit();
 }
 
-void Migrator::migrateByMethod(const Migration &migration,
-                               const MigrateMethod method) const
+void Migrator::migrateByMethod(const Migration &migration, const MigrateMethod method)
 {
     switch (method) {
     case MigrateMethod::Up:
@@ -385,7 +384,7 @@ void Migrator::migrateByMethod(const Migration &migration,
 /* Validate migrations */
 
 void Migrator::throwIfMigrationsNotSorted(const QString &previousMigrationName,
-                                          const QString &migrationName) const
+                                          const QString &migrationName)
 {
     if (previousMigrationName < migrationName)
         return;

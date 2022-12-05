@@ -119,13 +119,13 @@ namespace Tom
         /*! Run a migration inside a transaction if the database supports it. */
         void runMigration(const Migration &migration, MigrateMethod method) const;
         /*! Migrate by the given method (up/down). */
-        void migrateByMethod(const Migration &migration, MigrateMethod method) const;
+        static void migrateByMethod(const Migration &migration, MigrateMethod method);
 
         /* Validate migrations */
         /*! Throw if migrations passed to the TomApplication are not sorted
             alphabetically. */
-        void throwIfMigrationsNotSorted(const QString &previousMigrationName,
-                                        const QString &migrationName) const;
+        static void throwIfMigrationsNotSorted(const QString &previousMigrationName,
+                                               const QString &migrationName);
         /*! Throw if migration filename is not valid. */
         static void throwIfMigrationFileNameNotValid(const QString &migrationName);
         /*! Throw if migration class name is not valid. */
