@@ -184,7 +184,7 @@ void HelpCommand::printArgumentsSection(
 
     comment(QStringLiteral("Arguments:"));
 
-    for (const auto argumentsMaxSize = this->argumentsMaxSize(arguments);
+    for (const auto argumentsMaxSize = HelpCommand::argumentsMaxSize(arguments);
          const auto &argument : arguments
     ) {
         // Compute indent
@@ -198,7 +198,7 @@ void HelpCommand::printArgumentsSection(
     }
 }
 
-int HelpCommand::argumentsMaxSize(const std::vector<PositionalArgument> &arguments) const
+int HelpCommand::argumentsMaxSize(const std::vector<PositionalArgument> &arguments)
 {
     static const auto cached = [&arguments]
     {

@@ -56,7 +56,7 @@ namespace Tom::Commands
         void printArgumentsSection(
                 const std::vector<PositionalArgument> &arguments) const;
         /*! Get max. positional argument size in all command arguments. */
-        int argumentsMaxSize(const std::vector<PositionalArgument> &arguments) const;
+        static int argumentsMaxSize(const std::vector<PositionalArgument> &arguments);
         /*! Print a positional's argument default value part. */
         void printArgumentDefaultValue(const PositionalArgument &argument) const;
 
