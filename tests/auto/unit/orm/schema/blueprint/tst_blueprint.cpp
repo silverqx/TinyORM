@@ -51,6 +51,9 @@ private:
     QString m_connection {};
 };
 
+/* private slots */
+
+// NOLINTBEGIN(readability-convert-member-functions-to-static)
 void tst_Blueprint::initTestCase()
 {
     m_connection = Databases::createConnection(Databases::MYSQL);
@@ -329,6 +332,7 @@ void tst_Blueprint::dropSoftDeletes_Custom_ColumnName() const
     QCOMPARE(blueprint.toSql(DB::connection(m_connection), MySqlSchemaGrammar()),
              QVector<QString> {"alter table `torrents` drop `deleted_on`"});
 }
+// NOLINTEND(readability-convert-member-functions-to-static)
 
 QTEST_MAIN(tst_Blueprint)
 

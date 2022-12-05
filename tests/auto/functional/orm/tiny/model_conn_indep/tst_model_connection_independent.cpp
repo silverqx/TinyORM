@@ -175,6 +175,7 @@ private:
 
 /* private slots */
 
+// NOLINTBEGIN(readability-convert-member-functions-to-static)
 void tst_Model_Connection_Independent::initTestCase()
 {
     ConnectionOverride::connection = m_connection =
@@ -2186,6 +2187,7 @@ void tst_Model_Connection_Independent::soleValue_Pretending() const
     QCOMPARE(firstLog.boundValues,
              QVector<QVariant>({QVariant(QString("dummy-NON_EXISTENT"))}));
 }
+// NOLINTEND(readability-convert-member-functions-to-static)
 
 QTEST_MAIN(tst_Model_Connection_Independent)
 

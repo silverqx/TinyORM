@@ -150,6 +150,7 @@ namespace
 
 /* private slots */
 
+// NOLINTBEGIN(readability-convert-member-functions-to-static)
 void tst_PostgreSQL_QDateTime::initTestCase()
 {
     m_connection = Databases::createConnection(Databases::POSTGRESQL);
@@ -2170,6 +2171,7 @@ insert_QDateTime_0300Timezone_DatetimeColumn_UtcOnServer_DontConvert() const
     // Restore
     restore(lastId, true);
 }
+// NOLINTEND(readability-convert-member-functions-to-static)
 
 /* private */
 

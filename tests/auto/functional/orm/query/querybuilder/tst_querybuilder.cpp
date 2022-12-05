@@ -149,12 +149,13 @@ private Q_SLOTS:
 // NOLINTNEXTLINE(readability-redundant-access-specifiers)
 private:
     /*! Create QueryBuilder instance for the given connection. */
-    [[nodiscard]] std::shared_ptr<QueryBuilder>
-    createQuery(const QString &connection) const;
+    [[nodiscard]] static std::shared_ptr<QueryBuilder>
+    createQuery(const QString &connection);
 };
 
 /* private slots */
 
+// NOLINTBEGIN(readability-convert-member-functions-to-static)
 void tst_QueryBuilder::initTestCase_data() const
 {
     const auto &connections = Databases::createConnections();
@@ -2217,11 +2218,12 @@ void tst_QueryBuilder::eachById_EmptyResult_WithAlias() const
     QVERIFY(!callbackInvoked);
     QVERIFY(result);
 }
+// NOLINTEND(readability-convert-member-functions-to-static)
 
 /* private */
 
 std::shared_ptr<QueryBuilder>
-tst_QueryBuilder::createQuery(const QString &connection) const
+tst_QueryBuilder::createQuery(const QString &connection)
 {
     return DB::connection(connection).query();
 }

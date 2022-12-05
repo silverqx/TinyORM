@@ -152,6 +152,7 @@ private:
 
 /* private slots */
 
+// NOLINTBEGIN(readability-convert-member-functions-to-static)
 void tst_SQLite_QueryBuilder::initTestCase()
 {
     m_connection = Databases::createConnection(Databases::SQLITE);
@@ -1987,6 +1988,7 @@ void tst_SQLite_QueryBuilder::remove_WithExpression() const
              "delete from \"torrents\" where \"torrents\".\"id\" = 2223");
     QVERIFY(firstLog.boundValues.isEmpty());
 }
+// NOLINTEND(readability-convert-member-functions-to-static)
 
 /* private */
 

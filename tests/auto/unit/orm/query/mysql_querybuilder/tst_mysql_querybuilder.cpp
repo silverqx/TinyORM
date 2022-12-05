@@ -243,6 +243,7 @@ private:
 
 /* private slots */
 
+// NOLINTBEGIN(readability-convert-member-functions-to-static)
 void tst_MySql_QueryBuilder::initTestCase()
 {
     m_connection = Databases::createConnection(Databases::MYSQL);
@@ -3364,6 +3365,7 @@ void tst_MySql_QueryBuilder::soleValue() const
     QCOMPARE(firstLog.boundValues,
              QVector<QVariant>({QVariant(QString("dummy-NON_EXISTENT"))}));
 }
+// NOLINTEND(readability-convert-member-functions-to-static)
 
 /* private */
 

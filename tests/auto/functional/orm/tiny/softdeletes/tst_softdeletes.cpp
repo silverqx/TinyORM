@@ -88,6 +88,7 @@ struct UserType
 
 /* private slots */
 
+// NOLINTBEGIN(readability-convert-member-functions-to-static)
 void tst_SoftDeletes::initTestCase()
 {
     ConnectionOverride::connection = m_connection =
@@ -1356,6 +1357,7 @@ void tst_SoftDeletes::forceDelete_NotTrashed_OnTinyBuilder() const
     QVERIFY(User::withTrashed()->whereKey(user1.getKey()).doesntExist());
     QVERIFY(User::withTrashed()->whereKey(user2.getKey()).doesntExist());
 }
+// NOLINTEND(readability-convert-member-functions-to-static)
 
 QTEST_MAIN(tst_SoftDeletes)
 

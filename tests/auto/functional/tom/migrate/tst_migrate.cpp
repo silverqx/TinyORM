@@ -65,22 +65,22 @@ private Q_SLOTS:
 private:
     /*! Prepare arguments and invoke runCommand(). */
     [[nodiscard]] int
-    invokeCommand(const QString &connection, const QString &name,
-                  std::vector<const char *> &&arguments = {}) const;
+    static invokeCommand(const QString &connection, const QString &name,
+                         std::vector<const char *> &&arguments = {});
     /*! Create a tom application instance and invoke the given command. */
-    int runCommand(int &argc, const std::vector<const char *> &argv) const;
+    static int runCommand(int &argc, const std::vector<const char *> &argv);
 
     /*! Invoke the status command to obtain results. */
-    inline int invokeTestStatusCommand(const QString &connection) const;
+    inline static int invokeTestStatusCommand(const QString &connection);
     /*! Get result of the last status command. */
-    Status status() const;
+    static Status status();
     /*! Create a status object for comparing with the result of the status(). */
-    Status createStatus(std::initializer_list<StatusRow> rows) const;
+    static Status createStatus(std::initializer_list<StatusRow> rows);
     /*! Create a status object to be equal after complete rollback. */
-    Status createResetStatus() const;
+    static Status createResetStatus();
 
     /*! Prepare the migration database for running. */
-    void prepareDatabase(const QStringList &connections) const;
+    static void prepareDatabase(const QStringList &connections);
 
     /*! Migrations table name. */
     inline static const auto MigrationsTable = QStringLiteral("migrations_unit_testing");
@@ -140,6 +140,7 @@ namespace
 
 /* private slots */
 
+// NOLINTBEGIN(readability-convert-member-functions-to-static)
 void tst_Migrate::initTestCase() const
 {
     const auto &connections =
@@ -551,11 +552,12 @@ void tst_Migrate::refresh_Step_StepMigrate() const
         }), status());
     }
 }
+// NOLINTEND(readability-convert-member-functions-to-static)
 
 /* private */
 
 int tst_Migrate::invokeCommand(const QString &connection, const QString &name,
-                               std::vector<const char *> &&arguments) const
+                               std::vector<const char *> &&arguments)
 {
     static const auto connectionTmpl = QStringLiteral("--database=%1");
 
@@ -581,7 +583,7 @@ int tst_Migrate::invokeCommand(const QString &connection, const QString &name,
     return runCommand(argc, argv);
 }
 
-int tst_Migrate::runCommand(int &argc, const std::vector<const char *> &argv) const
+int tst_Migrate::runCommand(int &argc, const std::vector<const char *> &argv)
 {
     try {
         // env. should be always development so passed {} for env. name
@@ -602,22 +604,22 @@ int tst_Migrate::runCommand(int &argc, const std::vector<const char *> &argv) co
     return EXIT_FAILURE;
 }
 
-int tst_Migrate::invokeTestStatusCommand(const QString &connection) const
+int tst_Migrate::invokeTestStatusCommand(const QString &connection)
 {
     return invokeCommand(connection, MigrateStatus);
 }
 
-Status tst_Migrate::status() const
+Status tst_Migrate::status()
 {
     return TomApplication::status();
 }
 
-Status tst_Migrate::createStatus(std::initializer_list<StatusRow> rows) const
+Status tst_Migrate::createStatus(std::initializer_list<StatusRow> rows)
 {
     return rows;
 }
 
-Status tst_Migrate::createResetStatus() const
+Status tst_Migrate::createResetStatus()
 {
     return {
         {No, s_2014_10_12_000000_create_posts_table},
@@ -627,7 +629,7 @@ Status tst_Migrate::createResetStatus() const
     };
 }
 
-void tst_Migrate::prepareDatabase(const QStringList &connections) const
+void tst_Migrate::prepareDatabase(const QStringList &connections)
 {
     for (const auto &connection : connections) {
         // Ownership of a unique_ptr()

@@ -121,6 +121,7 @@ private:
 
 /* private slots */
 
+// NOLINTBEGIN(readability-convert-member-functions-to-static)
 void tst_MySql_TinyBuilder::initTestCase()
 {
     m_connection = Databases::createConnection(Databases::MYSQL);
@@ -1232,6 +1233,7 @@ void tst_MySql_TinyBuilder::deletedAt_Column_WithJoins() const
              "where `users`.`id` = ? and `users`.`deleted_at` is null");
     QCOMPARE(firstLog.boundValues.size(), 3);
 }
+// NOLINTEND(readability-convert-member-functions-to-static)
 
 /* private */
 

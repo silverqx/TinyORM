@@ -110,6 +110,7 @@ private:
 
 /* private slots */
 
+// NOLINTBEGIN(readability-convert-member-functions-to-static)
 void tst_MySql_SchemaBuilder::initTestCase()
 {
     m_connection = Databases::createConnection(Databases::MYSQL);
@@ -1658,6 +1659,7 @@ void tst_MySql_SchemaBuilder::dropForeign() const
              "alter table `firewalls` drop `role_id`");
     QVERIFY(log7.boundValues.isEmpty());
 }
+// NOLINTEND(readability-convert-member-functions-to-static)
 
 QTEST_MAIN(tst_MySql_SchemaBuilder)
 

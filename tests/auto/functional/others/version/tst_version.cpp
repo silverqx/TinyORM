@@ -68,9 +68,11 @@ private:
     };
 
     /*! Obtain a ProductVersion and FileVersion strings from an exe/dll. */
-    [[nodiscard]] FileVersions getExeVersionString(const QString &fileName) const;
+    [[nodiscard]] static FileVersions getExeVersionString(const QString &fileName);
 #endif
 };
+
+/* private slots */
 
 #if defined(_WIN32) && defined(TINYTEST_VERSION_IS_SHARED_BUILD)
 namespace
@@ -80,6 +82,7 @@ namespace
 }
 #endif
 
+// NOLINTBEGIN(readability-convert-member-functions-to-static)
 void tst_Version::versions_TinyOrm() const
 {
     // Test types
@@ -253,10 +256,13 @@ void tst_Version::checkFileVersion_TomExample() const
 #endif
 }
 #endif
+// NOLINTEND(readability-convert-member-functions-to-static)
+
+/* private */
 
 #if defined(_WIN32) && defined(TINYTEST_VERSION_IS_SHARED_BUILD)
 tst_Version::FileVersions
-tst_Version::getExeVersionString(const QString &fileName) const
+tst_Version::getExeVersionString(const QString &fileName)
 {
     // first of all, GetFileVersionInfoSize
     DWORD dwHandle = 1;

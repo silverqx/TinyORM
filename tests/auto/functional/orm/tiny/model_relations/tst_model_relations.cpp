@@ -239,6 +239,9 @@ private Q_SLOTS:
     void timezone_TimestampAttribute_UtcOnServer_DontConvert_OnCustomPivot_MtM() const;
 };
 
+/* private slots */
+
+// NOLINTBEGIN(readability-convert-member-functions-to-static)
 void tst_Model_Relations::initTestCase_data() const
 {
     const auto &connections = Databases::createConnections();
@@ -4107,6 +4110,7 @@ timezone_TimestampAttribute_UtcOnServer_DontConvert_OnCustomPivot_MtM() const
              (QtTimeZoneConfig {QtTimeZoneType::QtTimeSpec,
                                 QVariant::fromValue(Qt::UTC)}));
 }
+// NOLINTEND(readability-convert-member-functions-to-static)
 
 QTEST_MAIN(tst_Model_Relations)
 

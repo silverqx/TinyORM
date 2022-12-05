@@ -38,6 +38,7 @@ private:
 
 /* private slots */
 
+// NOLINTBEGIN(readability-convert-member-functions-to-static)
 void tst_Relations_Connection_Independent::initTestCase()
 {
     ConnectionOverride::connection = m_connection =
@@ -134,6 +135,7 @@ void tst_Relations_Connection_Independent::isNot_BelongsTo() const
         ConnectionOverride::connection = m_connection;
     }
 }
+// NOLINTEND(readability-convert-member-functions-to-static)
 
 QTEST_MAIN(tst_Relations_Connection_Independent)
 

@@ -62,12 +62,13 @@ private Q_SLOTS:
 // NOLINTNEXTLINE(readability-redundant-access-specifiers)
 private:
     /*! Create QueryBuilder instance for the given connection. */
-    [[nodiscard]] std::shared_ptr<QueryBuilder>
-    createQuery(const QString &connection) const;
+    [[nodiscard]] static std::shared_ptr<QueryBuilder>
+    createQuery(const QString &connection);
 };
 
 /* private slots */
 
+// NOLINTBEGIN(readability-convert-member-functions-to-static)
 void tst_DatabaseConnection::initTestCase_data() const
 {
     const auto &connections = Databases::createConnections();
@@ -861,11 +862,12 @@ void tst_DatabaseConnection::scalar_MultipleColumnsSelectedError() const
                                  "select id, name from torrents order by id"),
                              MultipleColumnsSelectedError);
 }
+// NOLINTEND(readability-convert-member-functions-to-static)
 
 /* private */
 
 std::shared_ptr<QueryBuilder>
-tst_DatabaseConnection::createQuery(const QString &connection) const
+tst_DatabaseConnection::createQuery(const QString &connection)
 {
     return DB::connection(connection).query();
 }

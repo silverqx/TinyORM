@@ -146,6 +146,7 @@ namespace
 
 /* private slots */
 
+// NOLINTBEGIN(readability-convert-member-functions-to-static)
 void tst_SQLite_QDateTime::initTestCase()
 {
     m_connection = Databases::createConnection(Databases::SQLITE);
@@ -1434,6 +1435,7 @@ insert_QDateTime_0300Timezone_DatetimeColumn_UtcOnServer_DontConvert() const
              (QtTimeZoneConfig {QtTimeZoneType::QtTimeSpec,
                                 QVariant::fromValue(Qt::UTC)}));
 }
+// NOLINTEND(readability-convert-member-functions-to-static)
 
 /* private */
 

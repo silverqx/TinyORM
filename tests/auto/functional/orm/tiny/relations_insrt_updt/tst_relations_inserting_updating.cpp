@@ -109,6 +109,9 @@ private Q_SLOTS:
     void syncWithoutDetaching_CustomPivot_IdsWithAttributes() const;
 };
 
+/* private slots */
+
+// NOLINTBEGIN(readability-convert-member-functions-to-static)
 void tst_Relations_Inserting_Updating::initTestCase_data() const
 {
     const auto &connections = Databases::createConnections();
@@ -3291,6 +3294,7 @@ void tst_Relations_Inserting_Updating::
     tag102.remove();
     tag103.remove();
 }
+// NOLINTEND(readability-convert-member-functions-to-static)
 
 QTEST_MAIN(tst_Relations_Inserting_Updating)
 

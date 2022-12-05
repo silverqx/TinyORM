@@ -56,6 +56,9 @@ private:
     std::shared_ptr<DatabaseManager> m_dm {};
 };
 
+/* private slots */
+
+// NOLINTBEGIN(readability-convert-member-functions-to-static)
 void tst_DatabaseManager::initTestCase()
 {
     m_dm = DatabaseManager::create();
@@ -307,6 +310,7 @@ void tst_DatabaseManager::default_SQLite_ConfigurationValues() const
     // Restore
     QVERIFY(m_dm->removeConnection(connectionName));
 }
+// NOLINTEND(readability-convert-member-functions-to-static)
 
 QTEST_MAIN(tst_DatabaseManager)
 

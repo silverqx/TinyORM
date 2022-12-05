@@ -52,6 +52,9 @@ private:
     std::unique_ptr<TinyBuilder<Model>> createQuery() const;
 };
 
+/* private slots */
+
+// NOLINTBEGIN(readability-convert-member-functions-to-static)
 void tst_TinyBuilder::initTestCase_data() const
 {
     const auto &connections = Databases::createConnections();
@@ -307,6 +310,9 @@ void tst_TinyBuilder::update_SameValue() const
     QVERIFY(torrentVerify->getAttribute(torrent->getUpdatedAtColumn()).value<QDateTime>()
             >= timeBeforeUpdate);
 }
+// NOLINTEND(readability-convert-member-functions-to-static)
+
+/* private */
 
 template<typename Model>
 std::unique_ptr<TinyBuilder<Model>>

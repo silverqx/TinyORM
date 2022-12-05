@@ -280,6 +280,7 @@ private:
 
 /* private slots */
 
+// NOLINTBEGIN(readability-convert-member-functions-to-static)
 void tst_CastAttributes::initTestCase_data() const
 {
     const auto &connections = Databases::createConnections();
@@ -3188,6 +3189,7 @@ void tst_CastAttributes::cast_Null_blob_to_QByteArray() const
 
     QVERIFY(attribute.isNull());
 }
+// NOLINTEND(readability-convert-member-functions-to-static)
 
 /* private */
 

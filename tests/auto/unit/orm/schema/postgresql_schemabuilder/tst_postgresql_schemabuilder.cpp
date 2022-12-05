@@ -110,6 +110,7 @@ private:
 
 /* private slots */
 
+// NOLINTBEGIN(readability-convert-member-functions-to-static)
 void tst_PostgreSQL_SchemaBuilder::initTestCase()
 {
     m_connection = Databases::createConnection(Databases::POSTGRESQL);
@@ -1624,6 +1625,7 @@ void tst_PostgreSQL_SchemaBuilder::dropForeign() const
              R"(alter table "firewalls" drop column "role_id")");
     QVERIFY(log7.boundValues.isEmpty());
 }
+// NOLINTEND(readability-convert-member-functions-to-static)
 
 QTEST_MAIN(tst_PostgreSQL_SchemaBuilder)
 

@@ -129,6 +129,7 @@ private:
 
 /* private slots */
 
+// NOLINTBEGIN(readability-convert-member-functions-to-static)
 void tst_SQLite_SchemaBuilder::initTestCase()
 {
     m_connection = Databases::createConnection(Databases::SQLITE);
@@ -1446,6 +1447,7 @@ QString tst_SQLite_SchemaBuilder::getDatabaseFilepath()
 
     return cached;
 }
+// NOLINTEND(readability-convert-member-functions-to-static)
 
 QTEST_MAIN(tst_SQLite_SchemaBuilder)
 

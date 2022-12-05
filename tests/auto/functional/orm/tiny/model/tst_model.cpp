@@ -127,6 +127,9 @@ private Q_SLOTS:
     void getAttribute_UnixTimestamp_WithOut_UDates_Null() const;
 };
 
+/* private slots */
+
+// NOLINTBEGIN(readability-convert-member-functions-to-static)
 void tst_Model::initTestCase_data() const
 {
     const auto &connections = Databases::createConnections();
@@ -1765,6 +1768,7 @@ void tst_Model::getAttribute_UnixTimestamp_WithOut_UDates_Null() const
     if (DB::driverName(connection) != QSQLITE)
         QCOMPARE(addedOn, NullVariant::LongLong());
 }
+// NOLINTEND(readability-convert-member-functions-to-static)
 
 QTEST_MAIN(tst_Model)
 

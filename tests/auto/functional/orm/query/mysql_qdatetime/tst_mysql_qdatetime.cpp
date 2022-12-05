@@ -156,6 +156,7 @@ namespace
 
 /* private slots */
 
+// NOLINTBEGIN(readability-convert-member-functions-to-static)
 void tst_MySql_QDateTime::initTestCase()
 {
     m_connection = Databases::createConnection(Databases::MYSQL);
@@ -2173,6 +2174,7 @@ insert_QDateTime_0300Timezone_DatetimeColumn_UtcOnServer_DontConvert() const
     // Restore
     restore(lastId, true);
 }
+// NOLINTEND(readability-convert-member-functions-to-static)
 
 /* private */
 

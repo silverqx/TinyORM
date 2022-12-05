@@ -76,34 +76,34 @@ private Q_SLOTS:
     /* Server timezone UTC */
     void create_QDateTime_0300Timezone_DatetimeAttribute_UtcOnServer_DontConvert() const;
 
-    // NOLINTNEXTLINE(readability-redundant-access-specifiers)
-    private:
-        /*! Set the MySQL/PostgreSQL timezone session variable to the UTC value. */
-        inline void setUtcTimezone(const QString &connection = {}) const;
-        /*! Get the UTC time zone string. */
-        static const QString &utcTimezoneString(const QString &connection);
-        /*! Are MySQL time zone table populated? */
-        static bool mysqlTimezoneTablesNotPopulated(const QString &connection);
+// NOLINTNEXTLINE(readability-redundant-access-specifiers)
+private:
+    /*! Set the MySQL/PostgreSQL timezone session variable to the UTC value. */
+    inline static void setUtcTimezone(const QString &connection = {});
+    /*! Get the UTC time zone string. */
+    static const QString &utcTimezoneString(const QString &connection);
+    /*! Are MySQL time zone table populated? */
+    static bool mysqlTimezoneTablesNotPopulated(const QString &connection);
 
-        /*! Set the database timezone session variable to +02:00 value by connection. */
-        inline void set0200Timezone(const QString &connection = {}) const;
-        /*! Set the MySQL timezone session variable to the +02:00 value. */
-        inline void set0200TimezoneForMySQL(const QString &connection = {}) const;
-        /*! Set the PostgreSQL timezone session variable to the +02:00 value. */
-        inline void setEUBratislavaTimezoneForPSQL(const QString &connection = {}) const;
+    /*! Set the database timezone session variable to +02:00 value by connection. */
+    inline static void set0200Timezone(const QString &connection = {});
+    /*! Set the MySQL timezone session variable to the +02:00 value. */
+    inline static void set0200TimezoneForMySQL(const QString &connection = {});
+    /*! Set the PostgreSQL timezone session variable to the +02:00 value. */
+    inline static void setEUBratislavaTimezoneForPSQL(const QString &connection = {});
 
-        /*! Set the MySQL/PostgreSQL timezone session variable to the given value. */
-        static void setTimezone(const QString &timeZone, QtTimeZoneConfig &&qtTimeZone,
-                                const QString &connection);
-        /*! Get a SQL query string to set a database time zone session variable. */
-        static QString getSetTimezoneQueryString(const QString &connection);
+    /*! Set the MySQL/PostgreSQL timezone session variable to the given value. */
+    static void setTimezone(const QString &timeZone, QtTimeZoneConfig &&qtTimeZone,
+                            const QString &connection);
+    /*! Get a SQL query string to set a database time zone session variable. */
+    static QString getSetTimezoneQueryString(const QString &connection);
 
-        /*! Get the QTimeZone +02:00 instance for MySQL/PostgreSQL. */
-        inline const QTimeZone &timezone0200(const QString &connection = {}) const;
+    /*! Get the QTimeZone +02:00 instance for MySQL/PostgreSQL. */
+    inline static const QTimeZone &timezone0200(const QString &connection = {});
 
-        /*! Restore the database after a QDateTime-related test. */
-        void restore(quint64 lastId, bool restoreTimezone = false,
-                     const QString &connection = {}) const;
+    /*! Restore the database after a QDateTime-related test. */
+    static void restore(quint64 lastId, bool restoreTimezone = false,
+                        const QString &connection = {});
 };
 
 namespace
@@ -118,6 +118,7 @@ namespace
 
 /* private slots */
 
+// NOLINTBEGIN(readability-convert-member-functions-to-static)
 void tst_Model_QDateTime::initTestCase_data() const
 {
     const auto &connections = Databases::createConnections();
@@ -1322,10 +1323,11 @@ create_QDateTime_0300Timezone_DatetimeAttribute_UtcOnServer_DontConvert() const
              (QtTimeZoneConfig {QtTimeZoneType::QtTimeSpec,
                                 QVariant::fromValue(Qt::UTC)}));
 }
+// NOLINTEND(readability-convert-member-functions-to-static)
 
 /* private */
 
-void tst_Model_QDateTime::setUtcTimezone(const QString &connection) const
+void tst_Model_QDateTime::setUtcTimezone(const QString &connection)
 {
     setTimezone(utcTimezoneString(connection),
                 {QtTimeZoneType::QtTimeSpec, QVariant::fromValue(Qt::UTC)},
@@ -1358,7 +1360,7 @@ tst_Model_QDateTime::mysqlTimezoneTablesNotPopulated(const QString &connection)
     return tzTableRows.value<quint64>() == 0;
 }
 
-void tst_Model_QDateTime::set0200Timezone(const QString &connection) const
+void tst_Model_QDateTime::set0200Timezone(const QString &connection)
 {
     const auto driverName = DB::driverName(connection);
 
@@ -1381,14 +1383,14 @@ namespace
                               (QByteArray("Europe/Bratislava")));
 } // namespace
 
-void tst_Model_QDateTime::set0200TimezoneForMySQL(const QString &connection) const
+void tst_Model_QDateTime::set0200TimezoneForMySQL(const QString &connection)
 {
     setTimezone(QStringLiteral("+02:00"),
                 {QtTimeZoneType::QTimeZone, QVariant::fromValue(*TimeZone0200)},
                 connection);
 }
 
-void tst_Model_QDateTime::setEUBratislavaTimezoneForPSQL(const QString &connection) const
+void tst_Model_QDateTime::setEUBratislavaTimezoneForPSQL(const QString &connection)
 {
     setTimezone(QStringLiteral("Europe/Bratislava"),
                 {QtTimeZoneType::QTimeZone, QVariant::fromValue(*TimeZoneEUBratislava)},
@@ -1421,7 +1423,7 @@ QString tst_Model_QDateTime::getSetTimezoneQueryString(const QString &connection
     Q_UNREACHABLE();
 }
 
-const QTimeZone &tst_Model_QDateTime::timezone0200(const QString &connection) const
+const QTimeZone &tst_Model_QDateTime::timezone0200(const QString &connection)
 {
     const auto driverName = DB::driverName(connection);
 
@@ -1434,9 +1436,8 @@ const QTimeZone &tst_Model_QDateTime::timezone0200(const QString &connection) co
     Q_UNREACHABLE();
 }
 
-void tst_Model_QDateTime::restore(
-        const quint64 lastId, const bool restoreTimezone,
-        const QString &connection) const
+void tst_Model_QDateTime::restore(const quint64 lastId, const bool restoreTimezone,
+                                  const QString &connection)
 {
     const auto affected = Datetime::destroy(lastId);
 
