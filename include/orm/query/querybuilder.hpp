@@ -40,7 +40,7 @@ namespace Orm::Query
         /*! Constructor. */
         Builder(DatabaseConnection &connection, const QueryGrammar &grammar);
         /* Need to be the polymorphic type because of dynamic_cast<>
-           in Grammar::concatenateWhereClauses(). */
+           in the Grammar::concatenateWhereClauses(). */
         /*! Virtual destructor. */
         inline ~Builder() override = default;
 
