@@ -97,8 +97,8 @@ bool BuildsQueries::each(const std::function<bool(SqlQuery &, int)> &callback,
 //}
 
 bool BuildsQueries::chunkById(
-            const int count, const std::function<bool(SqlQuery &, int)> &callback,
-            const QString &column, const QString &alias)
+        const int count, const std::function<bool(SqlQuery &, int)> &callback,
+        const QString &column, const QString &alias)
 {
     const auto columnName = column.isEmpty() ? builder().defaultKeyName() : column;
     const auto aliasName = alias.isEmpty() ? columnName : alias;
@@ -153,8 +153,8 @@ bool BuildsQueries::chunkById(
 }
 
 bool BuildsQueries::eachById(
-            const std::function<bool(SqlQuery &, int)> &callback,
-            const int count, const QString &column, const QString &alias)
+        const std::function<bool(SqlQuery &, int)> &callback,
+        const int count, const QString &column, const QString &alias)
 {
     return chunkById(count, [&callback, count](SqlQuery &results, const int page)
     {

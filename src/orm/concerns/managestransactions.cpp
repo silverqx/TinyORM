@@ -242,7 +242,7 @@ CountsQueries &ManagesTransactions::countsQueries()
 }
 
 void ManagesTransactions::throwIfTransactionError(
-            QString &&functionName, const QString &queryString, QSqlError &&error)
+        QString &&functionName, const QString &queryString, QSqlError &&error)
 {
     throw Exceptions::SqlTransactionError(
             QStringLiteral("Statement in %1() failed : %2")
@@ -251,7 +251,7 @@ void ManagesTransactions::throwIfTransactionError(
 }
 
 void ManagesTransactions::handleStartTransactionError(
-            QString &&functionName, const QString &queryString, QSqlError &&error)
+        QString &&functionName, const QString &queryString, QSqlError &&error)
 {
     if (!DetectsLostConnections::causedByLostConnection(error))
         throwIfTransactionError(std::move(functionName), queryString, std::move(error));
@@ -262,7 +262,7 @@ void ManagesTransactions::handleStartTransactionError(
 }
 
 void ManagesTransactions::handleCommonTransactionError(
-            QString &&functionName, const QString &queryString, QSqlError &&error)
+        QString &&functionName, const QString &queryString, QSqlError &&error)
 {
     if (DetectsLostConnections::causedByLostConnection(error))
         resetTransactions();
