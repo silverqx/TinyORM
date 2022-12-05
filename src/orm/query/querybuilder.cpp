@@ -1234,7 +1234,7 @@ void Builder::dd(const bool replaceBindings, const bool simpleBindings)
 
 /* Getters / Setters */
 
-const QString &Builder::defaultKeyName()
+const QString &Builder::defaultKeyName() const noexcept // NOLINT(readability-convert-member-functions-to-static)
 {
     return ID;
 }
