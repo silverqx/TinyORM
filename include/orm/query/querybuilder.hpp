@@ -841,12 +841,10 @@ namespace Orm::Query
 
         /*! Get a new join clause. */
         static std::shared_ptr<JoinClause>
-        newJoinClause(const Builder &query, const QString &type,
-                      const QString &table);
+        newJoinClause(const Builder &query, const QString &type, const QString &table);
         /*! Get a new join clause. */
         static std::shared_ptr<JoinClause>
-        newJoinClause(const Builder &query, const QString &type,
-                      Expression &&table);
+        newJoinClause(const Builder &query, const QString &type, Expression &&table);
 
         /*! Remove all existing columns and column bindings. */
         Builder &clearColumns();
