@@ -70,7 +70,7 @@ namespace Query
     /*! Type for the database column. */
     using Column = std::variant<QString, Query::Expression>;
 
-    /*! QString container concept (QStringList or QVector<QString>). */
+    /*! QString/Column container concept (QStringList or QVector<QString>). */
     template<typename T>
     concept ColumnContainer = std::convertible_to<T, QStringList> ||
                               std::convertible_to<T, QVector<QString>> ||
