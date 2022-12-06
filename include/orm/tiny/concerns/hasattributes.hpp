@@ -139,7 +139,7 @@ namespace Orm::Tiny::Concerns
         QStringList getDates() const;
 
         /*! Proxy for an attribute element used in the operator[] &. */
-        class AttributeReference
+        class AttributeReference // clazy:exclude=rule-of-three
         {
             friend HasAttributes<Derived, AllRelations...>;
 
