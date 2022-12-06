@@ -33,7 +33,7 @@ namespace Orm::Tiny::Concerns
     /*! Relation store, handles mapping from a relation name to the Model's relation
         method, also calls visited method with Related parameter when needed. */
     template<typename Derived, AllRelationsConcept ...AllRelations>
-    class HasRelationStore
+    class HasRelationStore // clazy:exclude=rule-of-three
     {
         // To access createXyzStore(), xyzStore() getters, resetRelationStore(), ...
         friend HasRelationships<Derived, AllRelations...>;
