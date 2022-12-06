@@ -6,11 +6,10 @@
 TINY_SYSTEM_HEADER
 
 #include <QVariant>
+#include <QtSql/QSqlQuery>
 
 #include "orm/tiny/tinyconcepts.hpp"
 #include "orm/utils/nullvariant.hpp"
-
-class QSqlQuery;
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
