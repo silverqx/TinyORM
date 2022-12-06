@@ -155,11 +155,11 @@ namespace Orm::Tiny::Concerns
             AttributeReference &operator=(AttributeReference &&) = delete;
 
             /*! Assign a value of the QVariant to the referenced attribute. */
-            inline const AttributeReference & // NOLINT(misc-unconventional-assign-operator)
+            inline const AttributeReference & // NOLINT(misc-unconventional-assign-operator,cppcoreguidelines-c-copy-assignment-signature)
             operator=(const QVariant &value) const;
             /*! Assign a value of another attribute reference to the referenced
                 attribute. */
-            inline const AttributeReference & // NOLINT(misc-unconventional-assign-operator)
+            inline const AttributeReference & // NOLINT(misc-unconventional-assign-operator,cppcoreguidelines-c-copy-assignment-signature)
             operator=(const AttributeReference &attributeReference) const;
 
             /*! Accesses the contained value, only const member functions. */
@@ -852,7 +852,7 @@ namespace Orm::Tiny::Concerns
 
     /* public */
 
-    // NOLINTNEXTLINE(misc-unconventional-assign-operator)
+    // NOLINTNEXTLINE(misc-unconventional-assign-operator,cppcoreguidelines-c-copy-assignment-signature)
     template<typename Derived, AllRelationsConcept ...AllRelations>
     const typename HasAttributes<Derived, AllRelations...>::AttributeReference &
     HasAttributes<Derived, AllRelations...>::AttributeReference::operator=(
@@ -863,7 +863,7 @@ namespace Orm::Tiny::Concerns
         return *this;
     }
 
-    // NOLINTNEXTLINE(misc-unconventional-assign-operator)
+    // NOLINTNEXTLINE(misc-unconventional-assign-operator,cppcoreguidelines-c-copy-assignment-signature)
     template<typename Derived, AllRelationsConcept ...AllRelations>
     const typename HasAttributes<Derived, AllRelations...>::AttributeReference &
     HasAttributes<Derived, AllRelations...>::AttributeReference::operator=(
