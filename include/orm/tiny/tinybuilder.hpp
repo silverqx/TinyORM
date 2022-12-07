@@ -1054,13 +1054,13 @@ namespace Orm::Tiny
            Then we will merge the user defined constraints that were on the query
            back to it, this ensures that an user can specify any where constraints or
            ordering (where, orderBy, and maybe more).*/
-        const auto nested = relationsNestedUnder(relationItem.name);
+        auto nested = relationsNestedUnder(relationItem.name);
 
         /* If there are nested relationships set on this query, we will put those onto
            the relation's query instance so they can be handled after this relationship
            is loaded. In this way they will all trickle down as they are loaded. */
         if (nested.size() > 0)
-            relation->getQuery().with(nested);
+            relation->getQuery().with(std::move(nested));
 
         relation->addEagerConstraints(models);
 
