@@ -1085,12 +1085,11 @@ namespace Orm::Tiny
         QVector<Model> models;
         models.reserve(QueryUtils::queryResultSize(result));
 
-        // Table row, instantiate the QVector once and then re-use
-        QVector<AttributeItem> row;
-        row.reserve(result.record().count());
+        const auto fieldsCount = result.record().count();
 
         while (result.next()) {
-            row.clear();
+            QVector<AttributeItem> row;
+            row.reserve(fieldsCount);
 
             // Populate model attributes with data from the database (one table row)
             const auto record = result.record();
