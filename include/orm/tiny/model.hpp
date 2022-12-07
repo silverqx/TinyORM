@@ -235,6 +235,9 @@ namespace Orm::Tiny
         /*! Create a new model instance that is existing. */
         Derived newFromBuilder(const QVector<AttributeItem> &attributes = {},
                                const std::optional<QString> &connection = std::nullopt);
+        /*! Create a new model instance that is existing. */
+        Derived newFromBuilder(QVector<AttributeItem> &&attributes = {},
+                               const std::optional<QString> &connection = std::nullopt);
         /*! Create a new instance of the given model. */
         inline Derived newInstance();
         /*! Create a new instance of the given model. */
@@ -265,6 +268,8 @@ namespace Orm::Tiny
         inline DatabaseConnection &getConnection() const;
         /*! Set the connection associated with the model. */
         inline Derived &setConnection(const QString &name);
+        /*! Set the connection associated with the model. */
+        inline Derived &setConnection(QString &&name);
         /*! Set the table associated with the model. */
         inline Derived &setTable(const QString &value);
         /*! Get the table associated with the model. */
@@ -1150,6 +1155,21 @@ namespace Orm::Tiny
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     Derived
+    Model<Derived, AllRelations...>::newFromBuilder(
+            QVector<AttributeItem> &&attributes,
+            const std::optional<QString> &connection)
+    {
+        auto model = newInstance({}, true);
+
+        model.setRawAttributes(std::move(attributes), true);
+
+        model.setConnection(connection ? *connection : getConnectionName());
+
+        return model;
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    Derived
     Model<Derived, AllRelations...>::newInstance()
     {
         return newInstance({});
@@ -1275,6 +1295,15 @@ namespace Orm::Tiny
     Model<Derived, AllRelations...>::setConnection(const QString &name)
     {
         model().u_connection = name;
+
+        return model();
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    Derived &
+    Model<Derived, AllRelations...>::setConnection(QString &&name)
+    {
+        model().u_connection = std::move(name);
 
         return model();
     }

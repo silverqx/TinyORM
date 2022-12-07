@@ -1095,7 +1095,7 @@ namespace Orm::Tiny
                 row.append({record.fieldName(i), result.value(i)});
 
             // Create a new model instance from the table row
-            models << instance.newFromBuilder(row);
+            models << instance.newFromBuilder(std::move(row));
         }
 
         return models;
