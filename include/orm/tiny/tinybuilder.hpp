@@ -739,6 +739,9 @@ namespace Orm::Tiny
     Builder<Model> &
     Builder<Model>::with(const QVector<WithItem> &relations)
     {
+        /* Don't make the rvalue variant or pass relations by value, I have tested it and
+           it's ~0.4ms slower, very interesting. 😮 Talking about the with() and
+           the parseWithRelations() methods. */
         auto eagerLoad = parseWithRelations(relations);
 
         std::ranges::move(eagerLoad, std::back_inserter(m_eagerLoad));
