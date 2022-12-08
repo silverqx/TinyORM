@@ -890,22 +890,36 @@ Check copy/move/swap operations:
 {
     using TypeToCheck = Orm::SqlQuery;
 
+    qDebug() << std::is_trivial_v<TypeToCheck>;
+
+    qDebug() << "-- nothrow";
+    qDebug() << std::is_nothrow_default_constructible_v<TypeToCheck>;
+    qDebug() << std::is_nothrow_copy_constructible_v<TypeToCheck>;
+    qDebug() << std::is_nothrow_copy_assignable_v<TypeToCheck>;
+    qDebug() << std::is_nothrow_move_constructible_v<TypeToCheck>;
+    qDebug() << std::is_nothrow_move_assignable_v<TypeToCheck>;
+    qDebug() << std::is_nothrow_swappable_v<TypeToCheck>;
+    qDebug() << std::is_destructible_v<TypeToCheck>;
+
+    qDebug() << "-- throw";
     qDebug() << std::is_default_constructible_v<TypeToCheck>;
     qDebug() << std::is_copy_constructible_v<TypeToCheck>;
     qDebug() << std::is_copy_assignable_v<TypeToCheck>;
     qDebug() << std::is_move_constructible_v<TypeToCheck>;
     qDebug() << std::is_move_assignable_v<TypeToCheck>;
     qDebug() << std::is_swappable_v<TypeToCheck>;
+    qDebug() << std::is_destructible_v<TypeToCheck>;
 
-    qDebug() << "nothrow";
-    qDebug() << std::is_nothrow_copy_constructible_v<TypeToCheck>;
-    qDebug() << std::is_nothrow_copy_assignable_v<TypeToCheck>;
-    qDebug() << std::is_nothrow_move_constructible_v<TypeToCheck>;
-    qDebug() << std::is_nothrow_move_assignable_v<TypeToCheck>;
-    qDebug() << std::is_nothrow_swappable_v<TypeToCheck>;
+    qDebug() << "-- trivially";
+    qDebug() << std::is_trivially_default_constructible_v<TypeToCheck>;
+    qDebug() << std::is_trivially_copyable_v<TypeToCheck>;
+    qDebug() << std::is_trivially_copy_constructible_v<TypeToCheck>;
+    qDebug() << std::is_trivially_copy_assignable_v<TypeToCheck>;
+    qDebug() << std::is_trivially_move_constructible_v<TypeToCheck>;
+    qDebug() << std::is_trivially_move_assignable_v<TypeToCheck>;
+    qDebug() << std::is_trivially_destructible_v<TypeToCheck>;
 
     exit(0);
-    qt_noop();
 }
 
 
