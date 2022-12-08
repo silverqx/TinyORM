@@ -789,10 +789,13 @@ KCachegrind legend:
  - I have selected % Relative, Cycle Detection, Shorten Templates, and Cycle Estimation
    in the top toolbar
  - Instruction Fetch vs Cycle Estimation
-    - Instruction Fetch looks like the Instruction Read Access and it means how much assembler
-      instructions a selected function coasted
-    - I don't exactly understand it
-    - described here https://stackoverflow.com/questions/38311201/kcachegrind-cycle-estimation
+   - Instruction Fetch looks like the Instruction Read Access and it means how much assembler
+     instructions a selected function coasted
+   - I don't exactly understand it
+   - described here https://stackoverflow.com/questions/38311201/kcachegrind-cycle-estimation
+ - also these two video were useful:
+   - https://www.youtube.com/watch?v=h-0HpCblt3A&ab_channel=DerickRethans
+   - https://www.youtube.com/watch?v=iH-hDOuQfcY&ab_channel=DerickRethans
 
 
 inline constants:
