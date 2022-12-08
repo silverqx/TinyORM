@@ -77,12 +77,6 @@ namespace Concerns
         /*! Dynamic cast *this to the Concerns::CountsQueries & base type. */
         Concerns::CountsQueries &countsQueries();
 
-        /*! Transform a QtSql transaction error to TinyORM SqlTransactionError
-            exception. */
-        static void throwIfTransactionError(
-                const QString &functionName, const QString &queryString,
-                QSqlError &&error);
-
         /*! Handle an error returned when beginning a transaction. */
         void handleStartTransactionError(
                 const QString &functionName, const QString &queryString,
@@ -90,6 +84,12 @@ namespace Concerns
         /*! Handle an error returned during a transaction commit, rollBack, savepoint or
             rollbackToSavepoint. */
         void handleCommonTransactionError(
+                const QString &functionName, const QString &queryString,
+                QSqlError &&error);
+
+        /*! Transform a QtSql transaction error to TinyORM SqlTransactionError
+            exception. */
+        static void throwIfTransactionError(
                 const QString &functionName, const QString &queryString,
                 QSqlError &&error);
 

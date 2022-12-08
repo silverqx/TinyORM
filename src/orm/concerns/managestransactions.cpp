@@ -257,15 +257,6 @@ CountsQueries &ManagesTransactions::countsQueries()
     return dynamic_cast<CountsQueries &>(*this);
 }
 
-void ManagesTransactions::throwIfTransactionError(
-        const QString &functionName, const QString &queryString, QSqlError &&error)
-{
-    throw Exceptions::SqlTransactionError(
-            QStringLiteral("Statement in %1() failed : %2")
-                .arg(functionName, queryString),
-            error);
-}
-
 void ManagesTransactions::handleStartTransactionError(
         const QString &functionName, const QString &queryString, QSqlError &&error)
 {
@@ -284,6 +275,15 @@ void ManagesTransactions::handleCommonTransactionError(
         resetTransactions();
 
     throwIfTransactionError(functionName, queryString, std::move(error));
+}
+
+void ManagesTransactions::throwIfTransactionError(
+        const QString &functionName, const QString &queryString, QSqlError &&error)
+{
+    throw Exceptions::SqlTransactionError(
+            QStringLiteral("Statement in %1() failed : %2")
+                .arg(functionName, queryString),
+            error);
 }
 
 } // namespace Orm::Concerns
