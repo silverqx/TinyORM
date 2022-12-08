@@ -577,16 +577,18 @@ QString Grammar::compileDeleteWithJoins(const QueryBuilder &query, const QString
     return QStringLiteral("delete %1 from %2 %3 %4").arg(alias, table, joins, wheres);
 }
 
-QString Grammar::concatenate(const QStringList &segments)
+QString Grammar::concatenate(QStringList &&segments)
 {
     QString result;
     result.reserve(ContainerUtils::maxElementSize(segments, 1));
 
-    for (const auto &segment : segments) {
+    for (auto &&segment : segments) {
         if (segment.isEmpty())
             continue;
 
-        result += QStringLiteral("%1 ").arg(segment);
+        // QStringBuilder benefit
+        result += std::move(segment);
+        result += SPACE;
     }
 
     return result.trimmed();

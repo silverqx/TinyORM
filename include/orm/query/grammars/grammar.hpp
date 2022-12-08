@@ -226,7 +226,7 @@ namespace Orm::Query::Grammars
                                const QString &wheres) const;
 
         /*! Concatenate an array of segments, removing empties. */
-        static QString concatenate(const QStringList &segments);
+        static QString concatenate(QStringList &&segments);
         /*! Remove the leading boolean from a statement. */
         static QString removeLeadingBoolean(QString statement);
 
