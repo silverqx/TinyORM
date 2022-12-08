@@ -35,6 +35,7 @@ Type::classPureBasename(const std::type_index typeIndex, const bool withNamespac
 QString Type::prettyFunction(const QString &function)
 {
     // CUR regex doesn't catch main, ::main, run<int>, ::run<int>, functions without NS, fixed regex (?(?:.*::)?(\\w+)(?:<.*>)?::)?(\\w+)(?:<.*>)?(?:$|::<lambda) silverqx
+    // TODO perf, rewrite w/o the QRegularExpression silverqx
     /* I can leave RegEx here because this function is used only during throwing
        exceptions, so there would not be any performance benefit. */
 #if defined(__GNUG__) || defined(__clang__)
