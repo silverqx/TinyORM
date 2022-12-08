@@ -282,7 +282,8 @@ namespace Relations
         throw Orm::Exceptions::RuntimeError(
                     QStringLiteral("Method %1() is not implemented for '%2' "
                                    "relation type in %3().")
-                    // Don't use __tiny_func__ here!
+                    /* Don't use the __tiny_func__ here, use the __func__ to only show
+                       a function name w/o a class name. */
                     .arg(__func__, relationTypeName(), __tiny_func__));
     }
 
