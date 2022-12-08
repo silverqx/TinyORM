@@ -563,7 +563,7 @@ gh api --method DELETE -H "Accept: application/vnd.github+json" /repos/silverqx/
           ${{ runner.os }}-build-${{ env.cache-name }}-
 
 
-RegExs:
+RegEx-s:
 -------
 
  - const data members:
@@ -765,6 +765,30 @@ QMAKE_LFLAGS += -fsanitize=nullability -fsanitize=float-divide-by-zero -fsanitiz
 Set in the QtCreator env. before execution, it suspends some errors detected in the Qt library:
 
 UBSAN_OPTIONS=suppressions=/home/silverqx/Code/c/TinyOrm/TinyORM/tools/configs/UBSan.supp:print_stacktrace=0
+
+
+Valgrind, callgrind, and KCachegrind:
+-------------------------------------
+
+This only works on the Linux, I have setup Gentoo for this.
+
+ - QtCreator debug view (ctrl+4) and open/switch to the Callgrind view (in the bottom view)
+ - simply start and open the resut in the KCachegrind
+ - described here - https://doc.qt.io/qtcreator/creator-cache-profiler.html
+
+I have enabled debug symbols and source files for the glibc, so I can see everything nicely:
+ - described here - https://wiki.gentoo.org/wiki/Debugging
+
+KCachegrind legend:
+ - Self Cost - function itself ("Self" is sometimes also referred to as "Exclusive" costs)
+ - Inclusive Cost - the cost including all called functions (Incl. in UI)
+ - described in the F1 KCachegrind help - Chapter 5. Questions and Answers
+ - sidebar Flat Profile next to the Search is the grouping dropdown by ELF is useful
+ - select function and in the bottom view select the "Call Graph" tab
+ - I have selected % Relative, Cycle Detection, Shorten Templates, and Cycle Estimation in the top toolbar
+ - Instruction Fetch vs Cycle Estimation
+    - I don't exactly understand it
+    - described here https://stackoverflow.com/questions/38311201/kcachegrind-cycle-estimation
 
 
 inline constants:
