@@ -197,7 +197,7 @@ SqlQuery DatabaseConnection::statement(const QString &queryString,
             return query;
         }
 
-        // TODO perf, use __tiny_func__ but when I fix pref. problem with it, rewrite it w/o the QRegularExpression, look at and revert the 8e114524 commit, also use static local variable instead! silverqx
+        // TODO perf, use __tiny_func__ but when I fix pref. problem with it, rewrite it w/o the QRegularExpression, look at and revert the 8e114524 and 03fc82ae commits, also use static local variable instead! silverqx
         /* If an error occurs when attempting to run a query, we'll transform it
            to the exception QueryError(), which formats the error message to
            include the bindings with SQL, which will make this exception a lot
