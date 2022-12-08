@@ -784,7 +784,8 @@ KCachegrind legend:
  - Inclusive Cost - the cost including all called functions (Incl. in UI)
  - described in the F1 KCachegrind help - Chapter 5. Questions and Answers
  - sidebar Flat Profile next to the Search is the grouping dropdown by ELF is useful
- - select function and in the bottom view select the "Call Graph" tab
+ - select function and in the bottom view select the "Call Graph" or "Callees" tab, they are most
+   useful
  - I have selected % Relative, Cycle Detection, Shorten Templates, and Cycle Estimation
    in the top toolbar
  - Instruction Fetch vs Cycle Estimation
