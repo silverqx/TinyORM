@@ -759,7 +759,9 @@ namespace Orm::Query
         inline const QStringList &getDistinct() const;
         // TODO check up all code and return references when appropriate silverqx
         /*! Get the columns that should be returned. */
-        inline const QVector<Column> &getColumns() const;
+        inline const QVector<Column> &getColumns() const noexcept;
+        /*! Set the columns that should be returned. */
+        inline Builder &setColumns(const QVector<Column> &columns) noexcept;
         /*! Set the columns that should be returned. */
         inline Builder &setColumns(QVector<Column> &&columns) noexcept;
         /*! Get the table associated with the query builder. */
@@ -1643,6 +1645,14 @@ namespace Orm::Query
     Builder::setColumns(const QVector<Column> &columns) noexcept
     {
         m_columns = columns;
+
+        return *this;
+    }
+
+    Builder &
+    Builder::setColumns(QVector<Column> &&columns) noexcept
+    {
+        m_columns = std::move(columns);
 
         return *this;
     }
