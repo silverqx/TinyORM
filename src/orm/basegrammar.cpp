@@ -135,7 +135,7 @@ QString BaseGrammar::getAliasFromFrom(const QString &from)
 QString BaseGrammar::parameter(const QVariant &value)
 {
     return isExpression(value) ? getValue(value).value<QString>()
-                               : QStringLiteral("?");
+                               : QChar::fromLatin1('?');
 }
 
 // NOLINTNEXTLINE(misc-no-recursion)
@@ -158,8 +158,7 @@ QString BaseGrammar::wrapValue(QString value) const
     if (value == ASTERISK_C)
         return value;
 
-    return QStringLiteral("\"%1\"").arg(value.replace(QStringLiteral("\""),
-                                                      QStringLiteral("\"\"")));
+    return QStringLiteral("\"%1\"").arg(value.replace(QUOTE, QStringLiteral("\"\"")));
 }
 
 // NOLINTNEXTLINE(misc-no-recursion)
