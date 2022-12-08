@@ -1429,14 +1429,14 @@ namespace Orm::Tiny::Concerns
         auto value_ = value;
         const auto &castItem = getCastItem(key);
         const auto castType = castItem.type();
-        const auto functionName = __tiny_func__;
 
         /*! Convert the QVariant value of a attribute. */
-        const auto convertAttribute = [this, &key, &value_, castType, &functionName]
+        const auto convertAttribute = [this, &key, &value_, castType]
                                       (QMetaTypeDef metaType)
         {
             // Throw if the given attribute can not be converted to the given cast type
-            throwIfCanNotCastAttribute(key, castType, metaType, value_, functionName);
+            throwIfCanNotCastAttribute(key, castType, metaType, value_,
+                                       QLatin1String("HasAttributes::castAttribute"));
 
 #if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
             const auto &metaTypeId = metaType;
@@ -1450,7 +1450,9 @@ namespace Orm::Tiny::Concerns
                false and the QVariant type will be changed anyway. */
             if (!value_.convert(metaTypeId) && !value_.isNull())
                 // Log if the QVariant::convert() for the given attribute failed
-                logIfConvertAttributeFailed(key, castType, metaType, functionName);
+                logIfConvertAttributeFailed(
+                            key, castType, metaType,
+                            QLatin1String("HasAttributes::castAttribute"));
 #else
             value_.convert(metaTypeId);
 #endif

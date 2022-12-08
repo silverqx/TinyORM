@@ -108,13 +108,10 @@ SqlQuery
 DatabaseConnection::select(const QString &queryString,
                            const QVector<QVariant> &bindings)
 {
-    const auto functionName = __tiny_func__;
-
     auto queryResult = run<QSqlQuery>(
                            queryString, bindings, Prepared,
-                           [this, &functionName]
-                           (const QString &queryString_,
-                            const QVector<QVariant> &preparedBindings)
+                           [this](const QString &queryString_,
+                                  const QVector<QVariant> &preparedBindings)
                            -> QSqlQuery
     {
         if (m_pretending)
@@ -138,8 +135,7 @@ DatabaseConnection::select(const QString &queryString,
            include the bindings with SQL, which will make this exception a lot
            more helpful to the developer instead of just the database's errors. */
         throw Exceptions::QueryError(
-                    QStringLiteral("Select statement in %1() failed.")
-                        .arg(functionName),
+                    "Select statement in DatabaseConnection::select() failed.",
                     query, preparedBindings);
     });
 
@@ -177,13 +173,10 @@ DatabaseConnection::scalar(const QString &queryString, const QVector<QVariant> &
 SqlQuery DatabaseConnection::statement(const QString &queryString,
                                        const QVector<QVariant> &bindings)
 {
-    const auto functionName = __tiny_func__;
-
     auto queryResult = run<QSqlQuery>(
                            queryString, bindings, Prepared,
-                           [this, &functionName]
-                           (const QString &queryString_,
-                            const QVector<QVariant> &preparedBindings)
+                           [this](const QString &queryString_,
+                                  const QVector<QVariant> &preparedBindings)
                            -> QSqlQuery
     {
         if (m_pretending)
@@ -209,7 +202,7 @@ SqlQuery DatabaseConnection::statement(const QString &queryString,
            include the bindings with SQL, which will make this exception a lot
            more helpful to the developer instead of just the database's errors. */
         throw Exceptions::QueryError(
-                    QStringLiteral("Statement in %1() failed.").arg(functionName),
+                    "Statement in DatabaseConnection::statement() failed.",
                     query, preparedBindings);
     });
 
@@ -220,12 +213,10 @@ std::tuple<int, QSqlQuery>
 DatabaseConnection::affectingStatement(const QString &queryString,
                                        const QVector<QVariant> &bindings)
 {
-    const auto functionName = __tiny_func__;
-
     return run<std::tuple<int, QSqlQuery>>(
                queryString, bindings, Prepared,
-               [this, &functionName]
-               (const QString &queryString_, const QVector<QVariant> &preparedBindings)
+               [this](const QString &queryString_,
+                      const QVector<QVariant> &preparedBindings)
                -> std::tuple<int, QSqlQuery>
     {
         if (m_pretending)
@@ -253,21 +244,18 @@ DatabaseConnection::affectingStatement(const QString &queryString,
            include the bindings with SQL, which will make this exception a lot
            more helpful to the developer instead of just the database's errors. */
         throw Exceptions::QueryError(
-                    QStringLiteral("Affecting statement in %1() failed.")
-                        .arg(functionName),
+                    "Affecting statement in DatabaseConnection::affectingStatement() "
+                    "failed.",
                     query, preparedBindings);
     });
 }
 
 SqlQuery DatabaseConnection::unprepared(const QString &queryString)
 {
-    const auto functionName = __tiny_func__;
-
     auto queryResult = run<QSqlQuery>(
                            queryString, {}, Unprepared,
-                           [this, &functionName]
-                           (const QString &queryString_,
-                            const QVector<QVariant> &/*unused*/)
+                           [this](const QString &queryString_,
+                                  const QVector<QVariant> &/*unused*/)
                            -> QSqlQuery
     {
         if (m_pretending)
@@ -291,8 +279,7 @@ SqlQuery DatabaseConnection::unprepared(const QString &queryString)
            include the bindings with SQL, which will make this exception a lot
            more helpful to the developer instead of just the database's errors. */
         throw Exceptions::QueryError(
-                    QStringLiteral("Unprepared statement in %1() failed.")
-                        .arg(functionName),
+                    "Unprepared statement in %DatabaseConnection::unprepared() failed.",
                     query);
     });
 
