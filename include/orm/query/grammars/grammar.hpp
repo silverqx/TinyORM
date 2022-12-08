@@ -228,7 +228,7 @@ namespace Orm::Query::Grammars
         /*! Concatenate an array of segments, removing empties. */
         static QString concatenate(QStringList &&segments);
         /*! Remove the leading boolean from a statement. */
-        static QString removeLeadingBoolean(QString statement);
+        static QString removeLeadingBoolean(QString &&statement);
 
         /*! Flat bindings map and exclude given binding types. */
         static QVector<std::reference_wrapper<const QVariant>>

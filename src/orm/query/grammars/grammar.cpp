@@ -299,8 +299,8 @@ QString Grammar::compileHavings(const QueryBuilder &query) const
     for (const auto &having : havings)
         compiledHavings << compileHaving(having);
 
-    return QStringLiteral("having %1").arg(
-                removeLeadingBoolean(compiledHavings.join(SPACE)));
+    return QStringLiteral("having %1").arg(removeLeadingBoolean(
+                                               compiledHavings.join(SPACE)));
 }
 
 QString Grammar::compileHaving(const HavingConditionItem &having) const
@@ -594,7 +594,7 @@ QString Grammar::concatenate(QStringList &&segments)
     return result.trimmed();
 }
 
-QString Grammar::removeLeadingBoolean(QString statement)
+QString Grammar::removeLeadingBoolean(QString &&statement)
 {
     // Skip all whitespaces after and/or, to avoid trimmed() for performance reasons
     const auto firstChar = [&statement](const auto from)
@@ -607,15 +607,26 @@ QString Grammar::removeLeadingBoolean(QString statement)
         return from;
     };
 
+    static const auto AndTmpl = QStringLiteral("and ");
+    static const auto OrTmpl =  QStringLiteral("or ");
+
     // RegExp not used for performance reasons
     /* Before and/or could not be whitespace, current implementation doesn't include
        whitespaces before. */
-    if (statement.startsWith(QStringLiteral("and ")))
+    if (statement.startsWith(AndTmpl))
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+        return statement.sliced(firstChar(4));
+#else
         return statement.mid(firstChar(4));
-    if (statement.startsWith(QStringLiteral("or ")))
+#endif
+    if (statement.startsWith(OrTmpl))
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+        return statement.sliced(firstChar(3));
+#else
         return statement.mid(firstChar(3));
+#endif
 
-    return statement;
+    return std::move(statement);
 }
 
 QVector<std::reference_wrapper<const QVariant>>
