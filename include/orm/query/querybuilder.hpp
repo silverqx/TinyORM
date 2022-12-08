@@ -725,12 +725,12 @@ namespace Orm::Query
         /*! Get a database connection. */
         inline DatabaseConnection &getConnection() const noexcept;
         /*! Get the query grammar instance. */
-        inline const QueryGrammar &getGrammar() const;
+        inline const QueryGrammar &getGrammar() const noexcept;
 
         /*! Get the current query value bindings as flattened QVector. */
         QVector<QVariant> getBindings() const;
         /*! Get the raw map of bindings. */
-        inline const BindingsMap &getRawBindings() const;
+        inline const BindingsMap &getRawBindings() const noexcept;
         /*! Add a binding to the query. */
         Builder &addBinding(const QVariant &binding,
                             BindingType type = BindingType::WHERE);
@@ -748,9 +748,9 @@ namespace Orm::Query
                              BindingType type = BindingType::WHERE);
 
         /*! Get an aggregate function and column to be run. */
-        inline const std::optional<AggregateItem> &getAggregate() const;
+        inline const std::optional<AggregateItem> &getAggregate() const noexcept;
         /*! Check if the query returns distinct results. */
-        inline const std::variant<bool, QStringList> &getDistinct() const;
+        inline const std::variant<bool, QStringList> &getDistinct() const noexcept;
         /*! Check if the query returns distinct results. */
         template<typename T> requires std::same_as<T, bool>
         inline bool getDistinct() const;
@@ -761,25 +761,26 @@ namespace Orm::Query
         /*! Get the columns that should be returned. */
         inline const QVector<Column> &getColumns() const;
         /*! Set the columns that should be returned. */
-        inline Builder &setColumns(const QVector<Column> &columns);
+        inline Builder &setColumns(QVector<Column> &&columns) noexcept;
         /*! Get the table associated with the query builder. */
-        inline const FromClause &getFrom() const;
+        inline const FromClause &getFrom() const noexcept;
         /*! Get the table joins for the query. */
-        inline const QVector<std::shared_ptr<JoinClause>> &getJoins() const;
+        inline const QVector<std::shared_ptr<JoinClause>> &getJoins() const noexcept;
         /*! Get the where constraints for the query. */
-        inline const QVector<WhereConditionItem> &getWheres() const;
+        inline const QVector<WhereConditionItem> &getWheres() const noexcept;
         /*! Get the groupings for the query. */
-        inline const QVector<Column> &getGroups() const;
+        inline const QVector<Column> &getGroups() const noexcept;
         /*! Get the having constraints for the query. */
-        inline const QVector<HavingConditionItem> &getHavings() const;
+        inline const QVector<HavingConditionItem> &getHavings() const noexcept;
         /*! Get the orderings for the query. */
-        inline const QVector<OrderByItem> &getOrders() const;
+        inline const QVector<OrderByItem> &getOrders() const noexcept;
         /*! Get the maximum number of records to return. */
-        inline int getLimit() const;
+        inline int getLimit() const noexcept;
         /*! Get the number of records to skip. */
-        inline int getOffset() const;
+        inline int getOffset() const noexcept;
         /*! Get the row locking. */
-        inline const std::variant<std::monostate, bool, QString> &getLock() const;
+        inline const std::variant<std::monostate, bool, QString> &
+        getLock() const noexcept;
 
         /* Other methods */
         /*! Get a new instance of the query builder. */
@@ -1599,22 +1600,22 @@ namespace Orm::Query
         return m_connection;
     }
 
-    const Builder::QueryGrammar &Builder::getGrammar() const
+    const Builder::QueryGrammar &Builder::getGrammar() const noexcept
     {
         return m_grammar;
     }
 
-    const BindingsMap &Builder::getRawBindings() const
+    const BindingsMap &Builder::getRawBindings() const noexcept
     {
         return m_bindings;
     }
 
-    const std::optional<AggregateItem> &Builder::getAggregate() const
+    const std::optional<AggregateItem> &Builder::getAggregate() const noexcept
     {
         return m_aggregate;
     }
 
-    const std::variant<bool, QStringList> &Builder::getDistinct() const
+    const std::variant<bool, QStringList> &Builder::getDistinct() const noexcept
     {
         return m_distinct;
     }
@@ -1633,13 +1634,13 @@ namespace Orm::Query
     }
 
     const QVector<Column> &
-    Builder::getColumns() const
+    Builder::getColumns() const noexcept
     {
         return m_columns;
     }
 
     Builder &
-    Builder::setColumns(const QVector<Column> &columns)
+    Builder::setColumns(const QVector<Column> &columns) noexcept
     {
         m_columns = columns;
 
@@ -1647,53 +1648,53 @@ namespace Orm::Query
     }
 
     const FromClause &
-    Builder::getFrom() const
+    Builder::getFrom() const noexcept
     {
         return m_from;
     }
 
     const QVector<std::shared_ptr<JoinClause>> &
-    Builder::getJoins() const
+    Builder::getJoins() const noexcept
     {
         return m_joins;
     }
 
     const QVector<WhereConditionItem> &
-    Builder::getWheres() const
+    Builder::getWheres() const noexcept
     {
         return m_wheres;
     }
 
     const QVector<Column> &
-    Builder::getGroups() const
+    Builder::getGroups() const noexcept
     {
         return m_groups;
     }
 
     const QVector<HavingConditionItem> &
-    Builder::getHavings() const
+    Builder::getHavings() const noexcept
     {
         return m_havings;
     }
 
     const QVector<OrderByItem> &
-    Builder::getOrders() const
+    Builder::getOrders() const noexcept
     {
         return m_orders;
     }
 
-    int Builder::getLimit() const
+    int Builder::getLimit() const noexcept
     {
         return m_limit;
     }
 
-    int Builder::getOffset() const
+    int Builder::getOffset() const noexcept
     {
         return m_offset;
     }
 
     const std::variant<std::monostate, bool, QString> &
-    Builder::getLock() const
+    Builder::getLock() const noexcept
     {
         return m_lock;
     }
