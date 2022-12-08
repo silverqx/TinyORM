@@ -296,8 +296,7 @@ void IntegrateCommand::throwIfBashCompletionDirNotExists()
         return;
 
     throw Exceptions::RuntimeError(
-                QStringLiteral(
-                    "Bash completion directory '%1' doesn't exists in %2().")
+                QStringLiteral("Bash completion directory '%1' doesn't exists in %2().")
                 .arg(*BashCompletionsDirPath, __tiny_func__));
 }
 
