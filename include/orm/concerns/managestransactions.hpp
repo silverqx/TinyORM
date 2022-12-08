@@ -80,15 +80,18 @@ namespace Concerns
         /*! Transform a QtSql transaction error to TinyORM SqlTransactionError
             exception. */
         static void throwIfTransactionError(
-                QString &&functionName, const QString &queryString, QSqlError &&error);
+                const QString &functionName, const QString &queryString,
+                QSqlError &&error);
 
         /*! Handle an error returned when beginning a transaction. */
         void handleStartTransactionError(
-                QString &&functionName, const QString &queryString, QSqlError &&error);
+                const QString &functionName, const QString &queryString,
+                QSqlError &&error);
         /*! Handle an error returned during a transaction commit, rollBack, savepoint or
             rollbackToSavepoint. */
         void handleCommonTransactionError(
-                QString &&functionName, const QString &queryString, QSqlError &&error);
+                const QString &functionName, const QString &queryString,
+                QSqlError &&error);
 
         /*! The connection is in the transaction state. */
         bool m_inTransaction = false;

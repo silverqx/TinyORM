@@ -1177,7 +1177,10 @@ namespace Orm::Tiny::Concerns
         const auto &modelAttributesHash = getAttributesHash();
 
         for (const auto &attribute : attributes) {
-            throwIfNoAttributeInHash(modelAttributesHash, attribute, __tiny_func__);
+            // Initialize as late as possible
+            static const auto functionName = QStringLiteral(
+                                                 "HasAttributes::syncOriginalAttributes");
+            throwIfNoAttributeInHash(modelAttributesHash, attribute, functionName);
 
             const auto &modelAttributeValue =
                     modelAttributes.at(modelAttributesHash.at(attribute)).value;
@@ -1257,7 +1260,7 @@ namespace Orm::Tiny::Concerns
         /* This can never happen, null values must be handled outside of the asDateTime,
            asDate, and asTimestamp methods. */
         Q_ASSERT_X(!value.isNull(),
-                   qUtf8Printable(__tiny_func__),
+                   "HasAttributes::asDateTime",
                    "null values must be handled outside of the asDateTime, asDate, "
                    "and asTimestamp methods.");
 

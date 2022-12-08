@@ -364,7 +364,7 @@ PostgresSchemaGrammar::invokeCompileMethod(const CommandDefinition &command,
     };
 
     Q_ASSERT_X(cached.contains(name),
-               qUtf8Printable(__tiny_func__),
+               "PostgresSchemaGrammar::invokeCompileMethod",
                QStringLiteral("Compile methods map doesn't contain the '%1' key "
                               "(unsupported command).")
                .arg(name)

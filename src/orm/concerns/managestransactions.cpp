@@ -35,10 +35,14 @@ bool ManagesTransactions::beginTransaction()
 
     if (!databaseConnection().pretending() &&
         !databaseConnection().getQtConnection().transaction()
-    )
+    ) {
+        // Initialize as late as possible
+        static const auto functionName = QStringLiteral(
+                                             "ManagesTransactions::beginTransaction");
         handleStartTransactionError(
-                    __tiny_func__, queryString,
+                    functionName, queryString,
                     databaseConnection().getRawQtConnection().lastError());
+    }
 
     m_inTransaction = true;
 
@@ -71,10 +75,13 @@ bool ManagesTransactions::commit()
 
     if (!databaseConnection().pretending() &&
         !databaseConnection().getRawQtConnection().commit()
-    )
+    ) {
+        // Initialize as late as possible
+        static const auto functionName = QStringLiteral("ManagesTransactions::commit");
         handleCommonTransactionError(
-                    __tiny_func__, queryString,
+                    functionName, queryString,
                     databaseConnection().getRawQtConnection().lastError());
+    }
 
     resetTransactions();
 
@@ -107,10 +114,13 @@ bool ManagesTransactions::rollBack()
 
     if (!databaseConnection().pretending() &&
         !databaseConnection().getRawQtConnection().rollback()
-    )
+    ) {
+        // Initialize as late as possible
+        static const auto functionName = QStringLiteral("ManagesTransactions::rollBack");
         handleCommonTransactionError(
-                    __tiny_func__, queryString,
+                    functionName, queryString,
                     databaseConnection().getRawQtConnection().lastError());
+    }
 
     resetTransactions();
 
@@ -144,10 +154,13 @@ bool ManagesTransactions::savepoint(const QString &id)
         timer.start();
 
     // Execute a savepoint query
-    if (!databaseConnection().pretending() && !savePoint.exec(queryString))
+    if (!databaseConnection().pretending() && !savePoint.exec(queryString)) {
+        static const auto functionName = QStringLiteral(
+                                             "ManagesTransactions::savepoint");
         handleCommonTransactionError(
-                    __tiny_func__, queryString,
+                    functionName, queryString,
                     databaseConnection().getRawQtConnection().lastError());
+    }
 
     ++m_savepoints;
 
@@ -187,10 +200,13 @@ bool ManagesTransactions::rollbackToSavepoint(const QString &id)
         timer.start();
 
     // Execute a rollback to savepoint query
-    if (!databaseConnection().pretending() && !rollbackToSavepoint.exec(queryString))
+    if (!databaseConnection().pretending() && !rollbackToSavepoint.exec(queryString)) {
+        static const auto functionName = QStringLiteral(
+                                             "ManagesTransactions::rollbackToSavepoint");
         handleCommonTransactionError(
-                    __tiny_func__, queryString,
+                    functionName, queryString,
                     databaseConnection().getRawQtConnection().lastError());
+    }
 
     m_savepoints = std::max<std::size_t>(0, m_savepoints - 1);
 
@@ -242,7 +258,7 @@ CountsQueries &ManagesTransactions::countsQueries()
 }
 
 void ManagesTransactions::throwIfTransactionError(
-        QString &&functionName, const QString &queryString, QSqlError &&error)
+        const QString &functionName, const QString &queryString, QSqlError &&error)
 {
     throw Exceptions::SqlTransactionError(
             QStringLiteral("Statement in %1() failed : %2")
@@ -251,10 +267,10 @@ void ManagesTransactions::throwIfTransactionError(
 }
 
 void ManagesTransactions::handleStartTransactionError(
-        QString &&functionName, const QString &queryString, QSqlError &&error)
+        const QString &functionName, const QString &queryString, QSqlError &&error)
 {
     if (!DetectsLostConnections::causedByLostConnection(error))
-        throwIfTransactionError(std::move(functionName), queryString, std::move(error));
+        throwIfTransactionError(functionName, queryString, std::move(error));
 
     databaseConnection().reconnect();
 
@@ -262,12 +278,12 @@ void ManagesTransactions::handleStartTransactionError(
 }
 
 void ManagesTransactions::handleCommonTransactionError(
-        QString &&functionName, const QString &queryString, QSqlError &&error)
+        const QString &functionName, const QString &queryString, QSqlError &&error)
 {
     if (DetectsLostConnections::causedByLostConnection(error))
         resetTransactions();
 
-    throwIfTransactionError(std::move(functionName), queryString, std::move(error));
+    throwIfTransactionError(functionName, queryString, std::move(error));
 }
 
 } // namespace Orm::Concerns
