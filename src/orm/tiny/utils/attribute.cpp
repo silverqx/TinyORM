@@ -3,6 +3,7 @@
 #include <unordered_set>
 
 #include <range/v3/algorithm/contains.hpp>
+#include <range/v3/view/reverse.hpp>
 #include <range/v3/view/transform.hpp>
 
 TINYORM_BEGIN_COMMON_NAMESPACE
@@ -62,54 +63,58 @@ QVector<AttributeItem>
 Attribute::removeDuplicitKeys(const QVector<AttributeItem> &attributes)
 {
     const auto size = attributes.size();
+    // The helper set, to check duplicit keys
     std::unordered_set<QString> added(static_cast<std::size_t>(size));
-    QVector<AttributeItem> dedupedAttributes;
-    dedupedAttributes.reserve(size);
+
+    QVector<std::reference_wrapper<const AttributeItem>> dedupedAttributesReversed;
+    dedupedAttributesReversed.reserve(size);
 
     /* If I want to get only the last duplicate, I have to loop in the reverse order,
        so the previous attributes will be skipped and only the last attribute
        will be copied. */
-    for (auto i = size - 1; i > -1; --i) {
-        const auto &attribute = attributes.at(i);
-        const auto &key = attribute.key;
-
+    for (const auto &attribute : attributes | ranges::views::reverse) {
         // If duplicit key then skip
-        if (added.contains(key))
+        if (added.contains(attribute.key))
             continue;
 
-        added.emplace(key);
-        dedupedAttributes.append(attribute);
+        added.emplace(attribute.key);
+        dedupedAttributesReversed << std::cref(attribute);
     }
 
-    // Reverse order
-    return {dedupedAttributes.crbegin(), dedupedAttributes.crend()};
+    // Materialize the vector of references in reverse order
+    return dedupedAttributesReversed
+            | ranges::views::reverse
+            | ranges::to<QVector<AttributeItem>>();
 }
 
 QVector<AttributeItem>
 Attribute::removeDuplicitKeys(QVector<AttributeItem> &&attributes)
 {
     const auto size = attributes.size();
+    // The helper set, to check duplicit keys
     std::unordered_set<QString> added(static_cast<std::size_t>(size));
-    QVector<AttributeItem> dedupedAttributes;
-    dedupedAttributes.reserve(size);
+
+    QVector<std::reference_wrapper<AttributeItem>> dedupedAttributesReversed;
+    dedupedAttributesReversed.reserve(size);
 
     /* If I want to get only the last duplicate, I have to loop in the reverse order,
        so the previous attributes will be skipped and only the last attribute
        will be moved. */
-    for (auto i = size - 1; i > -1; --i) {
-        auto &attribute = attributes[i];
-        const auto &key = attribute.key;
-
+    for (auto &attribute : attributes | ranges::views::reverse) {
         // If duplicit key then skip
-        if (added.contains(key))
+        if (added.contains(attribute.key))
             continue;
 
-        added.emplace(key);
-        dedupedAttributes.append(std::move(attribute));
+        added.emplace(attribute.key);
+        dedupedAttributesReversed << std::ref(attribute);
     }
 
-    // Reverse order
-    std::ranges::reverse(dedupedAttributes);
+    // Materialize the vector of references in reverse order
+    QVector<AttributeItem> dedupedAttributes;
+    dedupedAttributes.reserve(dedupedAttributesReversed.size());
+
+    for (auto &&attribute : dedupedAttributesReversed | ranges::views::reverse)
+        dedupedAttributes << std::move(attribute.get());
 
     return dedupedAttributes;
 }
