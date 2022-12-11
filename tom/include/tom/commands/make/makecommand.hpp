@@ -49,7 +49,7 @@ namespace Tom::Commands::Make
 
     private:
         /*! Ensure that a file in the given folder doesn't already exist. */
-        void throwIfModelAlreadyExists(
+        void throwIfFileAlreadyExists(
                     const QString &type, const fspath &folder, const QString &basename,
                     const QString &className) const;
 

@@ -29,7 +29,7 @@ void MakeCommand::prepareFileSystem(
             const QString &type, const fspath &folder, const QString &basename,
             const QString &className) const
 {
-    throwIfModelAlreadyExists(type, folder, basename, className);
+    throwIfFileAlreadyExists(type, folder, basename, className);
 
     ensureDirectoryExists(folder);
 }
@@ -159,7 +159,7 @@ fspath MakeCommand::guessPathForMakeByPwd(
 
 /* private */
 
-void MakeCommand::throwIfModelAlreadyExists(
+void MakeCommand::throwIfFileAlreadyExists(
             const QString &type, const fspath &folder, const QString &basename,
             const QString &className) const
 {
