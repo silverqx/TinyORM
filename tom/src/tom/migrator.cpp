@@ -161,7 +161,7 @@ QString Migrator::getMigrationName(const Migration &migration) const
         return migrationName;
 
     /* Migration name from the migration type-id */
-    // mid(1) to remove the '_' at beginning
+    // mid(1) to remove the '_' at the beginning
     auto migrationNameFromType = TypeUtils::classPureBasename(migration, false).mid(1);
 
     throwIfMigrationClassNameNotValid(migrationNameFromType);
