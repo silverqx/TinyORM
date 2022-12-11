@@ -174,7 +174,7 @@ void MakeCommand::throwIfModelAlreadyExists(
     for (const auto &entry :
          fs::directory_iterator(folder, options::skip_permission_denied)
     ) {
-        // Check only files
+        // Nothing to do, check only files
         if (!entry.is_regular_file())
             continue;
 
