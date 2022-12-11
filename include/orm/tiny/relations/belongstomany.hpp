@@ -510,7 +510,7 @@ namespace Orm::Tiny::Relations
                          : QVector<Column>();
 
         // Hydrated related models
-        auto models = this->m_query->addSelect(shouldSelect(l_columns))
+        auto models = this->m_query->addSelect(shouldSelect(std::move(l_columns)))
                                     .getModels();
 
         hydratePivotRelation(models);
