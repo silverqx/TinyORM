@@ -4,6 +4,7 @@
 
 #include "tom/exceptions/invalidargumenterror.hpp"
 #include "tom/tomconstants.hpp"
+#include "tom/tomutils.hpp"
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
@@ -13,6 +14,8 @@ using fspath = std::filesystem::path;
 
 using Tom::Constants::DateTimePrefix;
 using Tom::Constants::force;
+
+using TomUtils = Tom::Utils;
 
 namespace Tom::Commands::Make
 {
@@ -181,9 +184,15 @@ void MakeCommand::throwIfFileAlreadyExists(
         // Extract base filename without the extension
         auto entryName = QString::fromStdString(entry.path().stem().string());
 
-        // If checking a migration then also remove the datetime prefix
-        if (type == QStringLiteral("migration"))
+        // Migration specific
+        if (type == QStringLiteral("migration")) {
+            // Nothing to do, check only files with the datetime prefix
+            if (!TomUtils::startsWithDatetimePrefix(entryName))
+                continue;
+
+            // Also remove the datetime prefix
             entryName = entryName.mid(DateTimePrefix.size() + 1);
+        }
 
         if (entryName == basename) {
             // Allow overwriting a file using the --force option
