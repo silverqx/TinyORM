@@ -212,10 +212,9 @@ PostgresSchemaGrammar::compileFullText(const Blueprint &blueprint,
     const auto language = command.language.isEmpty() ? QStringLiteral("english")
                                                      : command.language;
 
-    const auto columns =
-            ranges::views::transform(command.columns,
-                                     [this, &language, &TsVectorTmpl = TsVectorTmpl]
-                                     (const auto &column)
+    const auto columns = command.columns
+            | ranges::views::transform([this, &language, &TsVectorTmpl = TsVectorTmpl]
+                                       (const auto &column)
     {
         return TsVectorTmpl.arg(quoteString(language), BaseGrammar::wrap(column));
     })
