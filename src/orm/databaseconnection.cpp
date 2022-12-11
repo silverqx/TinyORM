@@ -482,17 +482,15 @@ QString DatabaseConnection::driverName()
     return getQtConnection().driverName();
 }
 
-namespace
-{
-    using DriverNameMapType = std::unordered_map<QString, const QString &>;
+/*! Printable driver name hash type. */
+using DriverNameMapType = std::unordered_map<QString, const QString &>;
 
-    /*! Map Qt driver name to the pretty name. */
-    Q_GLOBAL_STATIC_WITH_ARGS(DriverNameMapType, DRIVER_NAME_MAP, ({
-                                  {QMYSQL,  MYSQL_},
-                                  {QPSQL,   POSTGRESQL},
-                                  {QSQLITE, SQLITE}
-                              }));
-} // namespace
+/*! Map a Qt's database driver name to the pretty name. */
+Q_GLOBAL_STATIC_WITH_ARGS(DriverNameMapType, DRIVER_NAME_MAP, ({
+                              {QMYSQL,  MYSQL_},
+                              {QPSQL,   POSTGRESQL},
+                              {QSQLITE, SQLITE}
+                          }));
 
 const QString &DatabaseConnection::driverNamePrintable()
 {

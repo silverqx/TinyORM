@@ -61,11 +61,8 @@ namespace TestUtils
    correctly.
    Tests don't fail but are skipped when a connection is not available. */
 
-namespace
-{
-    /*! DatabaseManager instance. */
-    Q_GLOBAL_STATIC_WITH_ARGS(std::shared_ptr<Orm::DatabaseManager>, db, {nullptr});
-}
+/*! DatabaseManager instance. */
+Q_GLOBAL_STATIC_WITH_ARGS(std::shared_ptr<Orm::DatabaseManager>, db, {nullptr});
 
 /* public */
 

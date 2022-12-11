@@ -123,26 +123,23 @@ private:
     QString m_connection {};
 };
 
-namespace
-{
-    /* UTC+02:00 doesn't work here, because I'm not fixing TZ for QSQLITE driver and
-       the QDateTime returns the UTC+02 TZ from QDateTime created using
-       the QVariant(QString).value<QDateTime>() and
-       QTimeZone(UTC+02) != QTimeZone(UTC+02:00). */
-    /*! Time zone +02 (reason for this is QTimeZone(UTC+02) != QTimeZone(UTC+02:00)). */
-    Q_GLOBAL_STATIC_WITH_ARGS(QTimeZone, TimeZone02, (QByteArray("UTC+02")));
-    /*! Time zone +02:00. */
-    Q_GLOBAL_STATIC_WITH_ARGS(QTimeZone, TimeZone0200, (QByteArray("UTC+02")));
+/* UTC+02:00 doesn't work here, because I'm not fixing TZ for QSQLITE driver and
+   the QDateTime returns the UTC+02 TZ from QDateTime created using
+   the QVariant(QString).value<QDateTime>() and
+   QTimeZone(UTC+02) != QTimeZone(UTC+02:00). */
+/*! Time zone +02 (reason for this is QTimeZone(UTC+02) != QTimeZone(UTC+02:00)). */
+Q_GLOBAL_STATIC_WITH_ARGS(QTimeZone, TimeZone02, (QByteArray("UTC+02")));
+/*! Time zone +02:00. */
+Q_GLOBAL_STATIC_WITH_ARGS(QTimeZone, TimeZone0200, (QByteArray("UTC+02")));
 
-    /*! QString constant "datetimes" (perf. reason, one time initialization). */
-    Q_GLOBAL_STATIC_WITH_ARGS(QString, datetimes, ("datetimes"));
-    /*! QString constant "datetime" (perf. reason, one time initialization). */
-    Q_GLOBAL_STATIC_WITH_ARGS(QString, datetime, ("datetime"));
-    /*! QString constant "timestamp" (perf. reason, one time initialization). */
-    Q_GLOBAL_STATIC_WITH_ARGS(QString, timestamp, ("timestamp"));
-    /*! QString constant "date" (perf. reason, one time initialization). */
-    Q_GLOBAL_STATIC_WITH_ARGS(QString, date, ("date"));
-} // namespace
+/*! QString constant "datetimes" (perf. reason, one time initialization). */
+Q_GLOBAL_STATIC_WITH_ARGS(QString, datetimes, ("datetimes"));
+/*! QString constant "datetime" (perf. reason, one time initialization). */
+Q_GLOBAL_STATIC_WITH_ARGS(QString, datetime, ("datetime"));
+/*! QString constant "timestamp" (perf. reason, one time initialization). */
+Q_GLOBAL_STATIC_WITH_ARGS(QString, timestamp, ("timestamp"));
+/*! QString constant "date" (perf. reason, one time initialization). */
+Q_GLOBAL_STATIC_WITH_ARGS(QString, date, ("date"));
 
 /* private slots */
 

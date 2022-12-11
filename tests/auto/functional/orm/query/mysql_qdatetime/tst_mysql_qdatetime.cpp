@@ -139,20 +139,17 @@ private:
     QString m_connection {};
 };
 
-namespace
-{
-    /*! Time zone +02:00. */
-    Q_GLOBAL_STATIC_WITH_ARGS(QTimeZone, TimeZone0200, (QByteArray("UTC+02:00")));
+/*! Time zone +02:00. */
+Q_GLOBAL_STATIC_WITH_ARGS(QTimeZone, TimeZone0200, (QByteArray("UTC+02:00")));
 
-    /*! QString constant "datetimes" (perf. reason, one time initialization). */
-    Q_GLOBAL_STATIC_WITH_ARGS(QString, datetimes, ("datetimes"));
-    /*! QString constant "datetime" (perf. reason, one time initialization). */
-    Q_GLOBAL_STATIC_WITH_ARGS(QString, datetime, ("datetime"));
-    /*! QString constant "timestamp" (perf. reason, one time initialization). */
-    Q_GLOBAL_STATIC_WITH_ARGS(QString, timestamp, ("timestamp"));
-    /*! QString constant "date" (perf. reason, one time initialization). */
-    Q_GLOBAL_STATIC_WITH_ARGS(QString, date, ("date"));
-} // namespace
+/*! QString constant "datetimes" (perf. reason, one time initialization). */
+Q_GLOBAL_STATIC_WITH_ARGS(QString, datetimes, ("datetimes"));
+/*! QString constant "datetime" (perf. reason, one time initialization). */
+Q_GLOBAL_STATIC_WITH_ARGS(QString, datetime, ("datetime"));
+/*! QString constant "timestamp" (perf. reason, one time initialization). */
+Q_GLOBAL_STATIC_WITH_ARGS(QString, timestamp, ("timestamp"));
+/*! QString constant "date" (perf. reason, one time initialization). */
+Q_GLOBAL_STATIC_WITH_ARGS(QString, date, ("date"));
 
 /* private slots */
 

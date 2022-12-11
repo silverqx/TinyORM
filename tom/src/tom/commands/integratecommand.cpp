@@ -142,16 +142,16 @@ namespace
                     .arg(QStringLiteral("%1/%2").arg(documentsFolder,
                                                      powershellFolder)));
     }
-
-    /*! Template string for tab-completion installed successfully. */
-    Q_GLOBAL_STATIC_WITH_ARGS(
-            QString, IntegrateSuccessTmpl,
-            ("Tab-completion for the %1 shell was successfully registered. 🎉"));
-    /*! Template string for tab-completion already registered. */
-    Q_GLOBAL_STATIC_WITH_ARGS(
-            QString, IntegrateAlreadyRegisteredTmpl,
-            ("Tab-completion for the %1 shell is already registered. 🙌"));
 } // namespace
+
+/*! Template string for tab-completion installed successfully. */
+Q_GLOBAL_STATIC_WITH_ARGS(
+        QString, IntegrateSuccessTmpl,
+        ("Tab-completion for the %1 shell was successfully registered. 🎉"));
+/*! Template string for tab-completion already registered. */
+Q_GLOBAL_STATIC_WITH_ARGS(
+        QString, IntegrateAlreadyRegisteredTmpl,
+        ("Tab-completion for the %1 shell is already registered. 🙌"));
 
 int IntegrateCommand::integratePwsh() const
 {
@@ -279,16 +279,13 @@ int IntegrateCommand::integrateBash() const
     return EXIT_SUCCESS;
 }
 
-namespace
-{
-    /*! Bash completions directory path. */
-    Q_GLOBAL_STATIC_WITH_ARGS(QString, BashCompletionsDirPath,
-                              ("/usr/share/bash-completion/completions"));
+/*! Bash completions directory path. */
+Q_GLOBAL_STATIC_WITH_ARGS(QString, BashCompletionsDirPath,
+                          ("/usr/share/bash-completion/completions"));
 
-    /*! Path to the TinyORM tom bash completion file. */
-    Q_GLOBAL_STATIC_WITH_ARGS(QString, TomBashCompletionFilepath,
-                              (QString("%1/tom").arg(*BashCompletionsDirPath)));
-} // namespace
+/*! Path to the TinyORM tom bash completion file. */
+Q_GLOBAL_STATIC_WITH_ARGS(QString, TomBashCompletionFilepath,
+                          (QString("%1/tom").arg(*BashCompletionsDirPath)));
 
 void IntegrateCommand::throwIfBashCompletionDirNotExists()
 {
@@ -356,32 +353,27 @@ int IntegrateCommand::integrateZsh() const
     return EXIT_SUCCESS;
 }
 
-namespace
+/*! Zsh completions directory path. */
+Q_GLOBAL_STATIC_WITH_ARGS(QStringList, ZshCompletionsDirPaths,
+                          ({"/usr/local/share/zsh/site-functions",
+                            "/usr/share/zsh/site-functions"}));
+
+/*! Zsh completion files structure holds parent directory path and also filepath. */
+struct ZshCompletionPathsItem
 {
+    /*! Parent directory path. */
+    QString dirPath;
+    /*! Absolute completion file filepath. */
+    QString filePath;
+};
 
-    /*! Zsh completions directory path. */
-    Q_GLOBAL_STATIC_WITH_ARGS(QStringList, ZshCompletionsDirPaths,
-                              ({"/usr/local/share/zsh/site-functions",
-                                "/usr/share/zsh/site-functions"}));
-
-    /*! Zsh completion files structure holds parent directory path and also filepath. */
-    struct ZshCompletionPathsItem
-    {
-        /*! Parent directory path. */
-        QString dirPath;
-        /*! Absolute completion file filepath. */
-        QString filePath;
-    };
-
-    /*! Paths to the TinyORM tom zsh completion files. */
-    Q_GLOBAL_STATIC_WITH_ARGS(
-            QVector<ZshCompletionPathsItem>, TomZshCompletionPaths,
-            ({{ZshCompletionsDirPaths->constFirst(),
-               QString("%1/_tom").arg(ZshCompletionsDirPaths->constFirst())},
-              {ZshCompletionsDirPaths->at(1),
-               QString("%1/_tom").arg(ZshCompletionsDirPaths->at(1))}}));
-
-} // namespace
+/*! Paths to the TinyORM tom zsh completion files. */
+Q_GLOBAL_STATIC_WITH_ARGS(
+        QVector<ZshCompletionPathsItem>, TomZshCompletionPaths,
+        ({{ZshCompletionsDirPaths->constFirst(),
+           QString("%1/_tom").arg(ZshCompletionsDirPaths->constFirst())},
+          {ZshCompletionsDirPaths->at(1),
+           QString("%1/_tom").arg(ZshCompletionsDirPaths->at(1))}}));
 
 bool IntegrateCommand::writeTomZshCompletionWrapper() const
 {

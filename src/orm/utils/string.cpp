@@ -72,13 +72,11 @@ bool String::isNumber(const QStringView string, const bool allowFloating,
 }
 
 #if !defined(TINYORM_DISABLE_TOM) || !defined(TINYORM_DISABLE_ORM)
-namespace
-{
-    using SnakeCache = std::unordered_map<QString, QString>;
+/*! Snake cache type. */
+using SnakeCache = std::unordered_map<QString, QString>;
 
-    /*! Snake cache for already computed strings. */
-    Q_GLOBAL_STATIC(SnakeCache, snakeCache); // NOLINT(readability-redundant-member-init)
-} // namespace
+/*! Snake cache for already computed strings. */
+Q_GLOBAL_STATIC(SnakeCache, snakeCache); // NOLINT(readability-redundant-member-init)
 
 QString String::snake(QString string, const QChar delimiter)
 {
@@ -116,18 +114,15 @@ QString String::snake(QString string, const QChar delimiter)
 #endif
 
 #ifndef TINYORM_DISABLE_TOM
-namespace
-{
-    /*! Studly cache type. */
-    using StudlyCache = std::unordered_map<QString, QString>;
-    /*! Camel cache type. */
-    using CamelCache  = std::unordered_map<QString, QString>;
+/*! Studly cache type. */
+using StudlyCache = std::unordered_map<QString, QString>;
+/*! Camel cache type. */
+using CamelCache  = std::unordered_map<QString, QString>;
 
-    /*! Studly cache for already computed strings. */
-    Q_GLOBAL_STATIC(StudlyCache, studlyCache); // NOLINT(readability-redundant-member-init)
-    /*! Camel cache for already computed strings. */
-    Q_GLOBAL_STATIC(CamelCache, camelCache); // NOLINT(readability-redundant-member-init)
-} // namespace
+/*! Studly cache for already computed strings. */
+Q_GLOBAL_STATIC(StudlyCache, studlyCache); // NOLINT(readability-redundant-member-init)
+/*! Camel cache for already computed strings. */
+Q_GLOBAL_STATIC(CamelCache, camelCache); // NOLINT(readability-redundant-member-init)
 
 QString String::camel(QString string)
 {

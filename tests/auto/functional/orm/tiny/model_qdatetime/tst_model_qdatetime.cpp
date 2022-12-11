@@ -106,15 +106,12 @@ private:
                         const QString &connection = {});
 };
 
-namespace
-{
-    /*! QString constant "datetime" (perf. reason, one time initialization). */
-    Q_GLOBAL_STATIC_WITH_ARGS(QString, datetime_, ("datetime"));
-    /*! QString constant "timestamp" (perf. reason, one time initialization). */
-    Q_GLOBAL_STATIC_WITH_ARGS(QString, timestamp, ("timestamp"));
-    /*! QString constant "date" (perf. reason, one time initialization). */
-    Q_GLOBAL_STATIC_WITH_ARGS(QString, date, ("date"));
-} // namespace
+/*! QString constant "datetime" (perf. reason, one time initialization). */
+Q_GLOBAL_STATIC_WITH_ARGS(QString, datetime_, ("datetime"));
+/*! QString constant "timestamp" (perf. reason, one time initialization). */
+Q_GLOBAL_STATIC_WITH_ARGS(QString, timestamp, ("timestamp"));
+/*! QString constant "date" (perf. reason, one time initialization). */
+Q_GLOBAL_STATIC_WITH_ARGS(QString, date, ("date"));
 
 /* private slots */
 
@@ -1373,15 +1370,12 @@ void tst_Model_QDateTime::set0200Timezone(const QString &connection)
     // Do nothing for QSQLITE
 }
 
-namespace
-{
-    /*! Time zone +02:00 for MySQL. */
-    Q_GLOBAL_STATIC_WITH_ARGS(QTimeZone, TimeZone0200, (QByteArray("UTC+02:00")));
+/*! Time zone +02:00 for MySQL. */
+Q_GLOBAL_STATIC_WITH_ARGS(QTimeZone, TimeZone0200, (QByteArray("UTC+02:00")));
 
-    /*! Time zone Europe/Bratislava for PostgreSQL. */
-    Q_GLOBAL_STATIC_WITH_ARGS(QTimeZone, TimeZoneEUBratislava,
-                              (QByteArray("Europe/Bratislava")));
-} // namespace
+/*! Time zone Europe/Bratislava for PostgreSQL. */
+Q_GLOBAL_STATIC_WITH_ARGS(QTimeZone, TimeZoneEUBratislava,
+                          (QByteArray("Europe/Bratislava")));
 
 void tst_Model_QDateTime::set0200TimezoneForMySQL(const QString &connection)
 {
