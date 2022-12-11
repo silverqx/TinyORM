@@ -171,10 +171,17 @@ MigrationCommand::tryExtractDateTimePrefixFromName(
 
     const auto dateTimePrefixSize = DateTimePrefix.size();
 
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+    // Remove the datetime prefix from the migration name
+    auto datetimePrefix = migration.sliced(0, dateTimePrefixSize).toStdString();
+    // +1 to exclude the _ after the datetime prefix
+    migrationName = migration.sliced(dateTimePrefixSize + 1);
+#else
     // Remove the datetime prefix from the migration name
     auto datetimePrefix = migration.mid(0, dateTimePrefixSize).toStdString();
     // +1 to exclude the _ after the datetime prefix
     migrationName = migration.mid(dateTimePrefixSize + 1);
+#endif
 
     return datetimePrefix;
 }

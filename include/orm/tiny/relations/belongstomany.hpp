@@ -1440,7 +1440,11 @@ namespace Orm::Tiny::Relations
             if (attribute.key.startsWith(QStringLiteral("pivot_"))) {
 
                 // Remove the 'pivot_' part from an attribute key
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+                values.append({attribute.key.sliced(6), attribute.value});
+#else
                 values.append({attribute.key.mid(6), attribute.value});
+#endif
 
                 model.unsetAttribute(attribute);
             }

@@ -380,7 +380,12 @@ int CompleteCommand::printGuessedLongOptions(
 {
     const auto commandOptions = getCommandOptionsSignature(currentCommand);
 
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+    // The -- is guaranteed by the isLongOption(wordArg)
+    const auto wordToGuess = word.sliced(2);
+#else
     const auto wordToGuess = word.mid(2);
+#endif
     const auto printAll = wordToGuess.isEmpty();
 
     QStringList options;

@@ -209,9 +209,16 @@ namespace
                 if (!line.isEmpty())
                     line.append(SPACE);
 
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+                // Guaranteed by the token.size() > emptySpace
+                line.append(token.first(pos));
+                // Cut the appended part
+                token = token.sliced(pos);
+#else
                 line.append(token.left(pos));
                 // Cut the appended part
                 token = token.mid(pos);
+#endif
             }
 
             // In every case no more space on the line here, push to lines
@@ -227,10 +234,18 @@ namespace
                     break;
                 }
 
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+                // Guaranteed by the token.size() <= width, so token.size() > width
+                // Fill the whole line
+                line.append(token.first(width));
+                // Cut the appended part
+                token = token.sliced(width);
+#else
                 // Fill the whole line
                 line.append(token.left(width));
                 // Cut the appended part
                 token = token.mid(width);
+#endif
                 // Push to lines
                 lines.emplace_back(std::move(line));
                 // Start a new line
@@ -262,7 +277,7 @@ std::vector<QString> String::splitStringByWidth(const QString &string, const int
          auto token : splitted // clazy:exclude=range-loop,range-loop-reference
     ) {
 #endif
-        /* If there is still a space on the line then append the token */
+        // If there is still a space on the line then append the token
         if (line.size() + token.size() + 1 <= width) {
             // Don't prepend the space at beginning of an empty line
             if (!line.isEmpty())
@@ -272,7 +287,7 @@ std::vector<QString> String::splitStringByWidth(const QString &string, const int
             continue;
         }
 
-        /* If a token is longer than the width or an empty space on the current line */
+        // If a token is longer than the width or an empty space on the current line
         if (splitLongToken(token, width, line, lines))
             continue;
 

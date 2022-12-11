@@ -191,7 +191,11 @@ void MakeCommand::throwIfFileAlreadyExists(
                 continue;
 
             // Also remove the datetime prefix
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+            entryName = entryName.sliced(DateTimePrefix.size() + 1);
+#else
             entryName = entryName.mid(DateTimePrefix.size() + 1);
+#endif
         }
 
         if (entryName == basename) {
