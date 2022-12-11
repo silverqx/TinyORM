@@ -1437,7 +1437,7 @@ namespace Orm::Tiny::Relations
             /* To get the pivots attributes we will just take any of the attributes which
                begin with "pivot_" and add those to this vector, as well as unsetting
                them from the parent's models since they exist in a different table. */
-            if (attribute.key.startsWith("pivot_")) {
+            if (attribute.key.startsWith(QStringLiteral("pivot_"))) {
 
                 // Remove the 'pivot_' part from an attribute key
                 values.append({attribute.key.mid(6), attribute.value});
