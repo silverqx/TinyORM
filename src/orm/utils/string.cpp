@@ -205,7 +205,7 @@ namespace
                 // Position where to split the token
                 auto pos = width - line.size() - spaceSize;
 
-                // Don't prepend the space at beginning of the line
+                // Don't prepend the space at beginning of an empty line
                 if (!line.isEmpty())
                     line.append(SPACE);
 
