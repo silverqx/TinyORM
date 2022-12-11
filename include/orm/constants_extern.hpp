@@ -34,6 +34,8 @@ namespace Orm::Constants
     SHAREDLIB_EXPORT extern const QChar QUOTE;
 
     // Common strings
+    SHAREDLIB_EXPORT extern const QString NEWLINE;
+    SHAREDLIB_EXPORT extern const QString EMPTY;
     SHAREDLIB_EXPORT extern const QString ASTERISK;
     SHAREDLIB_EXPORT extern const QString COMMA;
     SHAREDLIB_EXPORT extern const QString INNER;
@@ -49,19 +51,20 @@ namespace Orm::Constants
     SHAREDLIB_EXPORT extern const QString CREATED_AT;
     SHAREDLIB_EXPORT extern const QString UPDATED_AT;
     SHAREDLIB_EXPORT extern const QString DELETED_AT;
-    SHAREDLIB_EXPORT extern const QString TMPL_ONE;
-    SHAREDLIB_EXPORT extern const QString PARENTH_ONE;
-    SHAREDLIB_EXPORT extern const QString NEWLINE;
-    SHAREDLIB_EXPORT extern const QString DOT_IN;
-    SHAREDLIB_EXPORT extern const QString SPACE_IN;
-    SHAREDLIB_EXPORT extern const QString NOSPACE;
-    SHAREDLIB_EXPORT extern const QString EMPTY;
     SHAREDLIB_EXPORT extern const QString text_;
     SHAREDLIB_EXPORT extern const QString Prepared;
     SHAREDLIB_EXPORT extern const QString Unprepared;
     SHAREDLIB_EXPORT extern const QString null_;
     SHAREDLIB_EXPORT extern const QString Version;
 
+    // Templates
+    SHAREDLIB_EXPORT extern const QString TMPL_ONE;
+    SHAREDLIB_EXPORT extern const QString PARENTH_ONE;
+    SHAREDLIB_EXPORT extern const QString DOT_IN;
+    SHAREDLIB_EXPORT extern const QString SPACE_IN;
+    SHAREDLIB_EXPORT extern const QString NOSPACE;
+
+    // Database related
     SHAREDLIB_EXPORT extern const QString QMYSQL;
     SHAREDLIB_EXPORT extern const QString QPSQL;
     SHAREDLIB_EXPORT extern const QString QSQLITE;

@@ -33,6 +33,8 @@ namespace Orm::Constants
     inline const QChar QUOTE      = QLatin1Char('"');
 
     // Common strings
+    inline const QString NEWLINE     = QStringLiteral("\n");
+    inline const QString EMPTY       = QLatin1String("");
     inline const QString ASTERISK    = QStringLiteral("*");
     inline const QString COMMA       = QStringLiteral(", ");
     inline const QString INNER       = QStringLiteral("inner");
@@ -48,19 +50,20 @@ namespace Orm::Constants
     inline const QString CREATED_AT  = QStringLiteral("created_at");
     inline const QString UPDATED_AT  = QStringLiteral("updated_at");
     inline const QString DELETED_AT  = QStringLiteral("deleted_at");
-    inline const QString TMPL_ONE    = QStringLiteral("%1");
-    inline const QString PARENTH_ONE = QStringLiteral("(%1)");
-    inline const QString NEWLINE     = QStringLiteral("\n");
-    inline const QString DOT_IN      = QStringLiteral("%1.%2");
-    inline const QString SPACE_IN    = QStringLiteral("%1 %2");
-    inline const QString NOSPACE     = QStringLiteral("%1%2");
-    inline const QString EMPTY       = QLatin1String("");
     inline const QString text_       = QStringLiteral("text");
     inline const QString Prepared    = QStringLiteral("prepared");
     inline const QString Unprepared  = QStringLiteral("unprepared");
     inline const QString null_       = QStringLiteral("null");
     inline const QString Version     = QStringLiteral("version");
 
+    // Templates
+    inline const QString TMPL_ONE    = QStringLiteral("%1");
+    inline const QString PARENTH_ONE = QStringLiteral("(%1)");
+    inline const QString DOT_IN      = QStringLiteral("%1.%2");
+    inline const QString SPACE_IN    = QStringLiteral("%1 %2");
+    inline const QString NOSPACE     = QStringLiteral("%1%2");
+
+    // Database related
     inline const QString QMYSQL      = QStringLiteral("QMYSQL");
     inline const QString QPSQL       = QStringLiteral("QPSQL");
     inline const QString QSQLITE     = QStringLiteral("QSQLITE");
