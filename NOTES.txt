@@ -844,7 +844,7 @@ Torrent(const Torrent &torrent)
 {
     qDebug() << "Torrent copy ctor";
 }
-Torrent(Torrent &&torrent)
+Torrent(Torrent &&torrent) noexcept
     : Model(std::move(torrent))
 {
     qDebug() << "Torrent move ctor";
@@ -855,7 +855,7 @@ Torrent &operator=(const Torrent &torrent)
     qDebug() << "Torrent copy assign";
     return *this;
 }
-Torrent &operator=(Torrent &&torrent)
+Torrent &operator=(Torrent &&torrent) noexcept
 {
     Model::operator=(std::move(torrent));
     qDebug() << "Torrent move assign";
