@@ -1462,7 +1462,7 @@ namespace Orm::Tiny::Relations
 
         relation[0] = relation[0].toLower();
 
-        return QStringLiteral("%1s").arg(relation);
+        return TMPL_PLURAL.arg(relation);
     }
 
     /* Others */

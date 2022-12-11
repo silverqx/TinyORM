@@ -62,6 +62,7 @@ namespace Orm::Constants
     inline const QString DOT_IN      = QStringLiteral("%1.%2");
     inline const QString SPACE_IN    = QStringLiteral("%1 %2");
     inline const QString NOSPACE     = QStringLiteral("%1%2");
+    inline const QString TMPL_PLURAL = QStringLiteral("%1s");
 
     // Database related
     inline const QString QMYSQL      = QStringLiteral("QMYSQL");

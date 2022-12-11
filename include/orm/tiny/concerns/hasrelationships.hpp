@@ -855,8 +855,8 @@ namespace Concerns
     QString
     HasRelationships<Derived, AllRelations...>::guessBelongsToManyRelation() const
     {
-        static const QString relation =
-                QStringLiteral("%1s").arg(guessBelongsToRelationInternal<Related>());
+        static const QString relation = TMPL_PLURAL
+                                        .arg(guessBelongsToRelationInternal<Related>());
 
         /* validateUserRelation() method call can not be cached, has to be called
            every time, to correctly inform the user about invalid relation name. */
