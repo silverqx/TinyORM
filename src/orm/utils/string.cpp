@@ -267,7 +267,8 @@ std::vector<QString> String::splitStringByWidth(const QString &string, const int
         return {string};
 
     std::vector<QString> lines;
-    lines.reserve(std::llround(static_cast<double>(string.size()) / width) + 4);
+    lines.reserve(static_cast<std::vector<QString>::size_type>( // omg 😵‍💫🤯
+                      std::llround(static_cast<double>(string.size()) / width)) + 4);
 
     QString line;
 

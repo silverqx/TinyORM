@@ -663,11 +663,11 @@ Grammar::flatBindingsForUpdateDelete(const BindingsMap &bindings,
     return cleanBindingsFlatten;
 }
 
-qsizetype
+QVector<QVariant>::size_type
 Grammar::computeReserveForBindingsMap(const BindingsMap &bindings,
                                       const QVector<BindingType> &exclude)
 {
-    qsizetype size = 0;
+    QVector<QVariant>::size_type size = 0;
 
     for (auto itBindings = bindings.constBegin();
          itBindings != bindings.constEnd(); ++itBindings

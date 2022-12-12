@@ -236,7 +236,7 @@ namespace Orm::Query::Grammars
                                     const QVector<BindingType> &exclude);
 
         /*! Compute the reserve size for the BindingsMap. */
-        static qsizetype
+        static QVector<QVariant>::size_type
         computeReserveForBindingsMap(const BindingsMap &bindings,
                                      const QVector<BindingType> &exclude = {});
     };
