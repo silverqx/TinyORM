@@ -635,13 +635,13 @@ Grammar::flatBindingsForUpdateDelete(const BindingsMap &bindings,
 {
     QVector<std::reference_wrapper<const QVariant>> cleanBindingsFlatten;
 
-    for (auto itBindingVector = bindings.constBegin();
-         itBindingVector != bindings.constEnd(); ++itBindingVector
+    for (auto itBindings = bindings.constBegin();
+         itBindings != bindings.constEnd(); ++itBindings
     )
-        if (exclude.contains(itBindingVector.key()))
+        if (exclude.contains(itBindings.key()))
             continue;
         else
-            for (const auto &binding : itBindingVector.value())
+            for (const auto &binding : itBindings.value())
                 cleanBindingsFlatten.append(std::cref(binding));
 
     return cleanBindingsFlatten;
