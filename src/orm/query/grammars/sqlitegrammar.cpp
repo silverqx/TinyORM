@@ -69,7 +69,7 @@ SQLiteGrammar::compileTruncate(const QueryBuilder &query) const
 
 QString SQLiteGrammar::compileLock(const QueryBuilder &/*unused*/) const
 {
-    return QLatin1String("");
+    return EMPTY;
 }
 
 const QVector<QString> &SQLiteGrammar::getOperators() const
