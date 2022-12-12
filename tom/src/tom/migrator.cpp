@@ -153,24 +153,32 @@ void Migrator::createMigrationNamesMap()
 QString Migrator::getMigrationName(const Migration &migration) const
 {
     /* Migration name from the T_MIGRATION macro */
-    const auto &migrationName = m_migrationsProperties.get().at(typeid (migration)).name;
+    {
+        const auto &migrationName = m_migrationsProperties.get()
+                                    .at(typeid (migration)).name;
 
-    throwIfMigrationFileNameNotValid(migrationName);
+        throwIfMigrationFileNameNotValid(migrationName);
 
-    if (!migrationName.isEmpty())
-        return migrationName;
+        if (!migrationName.isEmpty())
+            return migrationName;
+    }
 
     /* Migration name from the migration type-id */
-    // sliced(1) or mid(1) to remove the '_' at the beginning
+    {
+        const auto migrationNameOriginal = TypeUtils::classPureBasename(migration, false);
+
+        /* sliced(1) or mid(1) to remove the '_' at the beginning, it doesn't matter if
+       it starts with the '_' char, it will be validated by the throw method below. */
 #if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
-    auto migrationNameFromType = TypeUtils::classPureBasename(migration, false).sliced(1);
+        auto migrationName = migrationNameOriginal.sliced(1);
 #else
-    auto migrationNameFromType = TypeUtils::classPureBasename(migration, false).mid(1);
+        auto migrationName = migrationNameFromTypeOriginal.mid(1);
 #endif
 
-    throwIfMigrationClassNameNotValid(migrationNameFromType);
+        throwIfMigrationClassNameNotValid(migrationNameOriginal, migrationName);
 
-    return migrationNameFromType;
+        return migrationName;
+    }
 }
 
 QString Migrator::cachedMigrationName(const Migration &migration) const
@@ -412,7 +420,8 @@ void Migrator::throwIfMigrationFileNameNotValid(const QString &migrationName)
 
 }
 
-void Migrator::throwIfMigrationClassNameNotValid(const QString &migrationName)
+void Migrator::throwIfMigrationClassNameNotValid(const QString &migrationNameOriginal,
+                                                 const QString &migrationName)
 {
     Q_ASSERT(!migrationName.isEmpty());
 
@@ -421,8 +430,11 @@ void Migrator::throwIfMigrationClassNameNotValid(const QString &migrationName)
 
     throw Exceptions::RuntimeError(
                 QStringLiteral(
-                    "Migration class name '%1' has to start with the datetime prefix.")
-                .arg(migrationName));
+                    "Migration class name '%1' has to start with the datetime prefix, "
+                    "eg. _2014_10_12_000000_create_xyz_table, another accepted format "
+                    "is StudlyCase eg. CreateXyzTable with the T_MIGRATION macro (it "
+                    "extracts this datetime prefix from a file name).")
+                .arg(migrationNameOriginal));
 }
 
 } // namespace Tom

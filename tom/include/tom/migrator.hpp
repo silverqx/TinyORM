@@ -129,7 +129,9 @@ namespace Tom
         /*! Throw if migration filename is not valid. */
         static void throwIfMigrationFileNameNotValid(const QString &migrationName);
         /*! Throw if migration class name is not valid. */
-        static void throwIfMigrationClassNameNotValid(const QString &migrationName);
+        static void
+        throwIfMigrationClassNameNotValid(const QString &migrationNameOriginal,
+                                          const QString &migrationName);
 
         /*! The migration repository instance. */
         std::shared_ptr<MigrationRepository> m_repository;
