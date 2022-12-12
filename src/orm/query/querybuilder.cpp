@@ -1641,6 +1641,7 @@ Builder &Builder::setAggregate(const QString &function, const QVector<Column> &c
 #ifdef __clang__
     m_aggregate = {function, columns};
 #else
+    // Also destructs an old value in the std::optional
     m_aggregate.emplace(function, columns);
 #endif
 
