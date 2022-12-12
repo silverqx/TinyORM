@@ -157,6 +157,7 @@ namespace Query
     QString BaseGrammar::quoteString(const QVector<QString> &values)
     {
         QString quoted;
+        quoted.reserve(ContainerUtils::countStringSizes(values, 4) + 8);
 
         if (values.isEmpty())
             return quoted;
