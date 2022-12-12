@@ -328,6 +328,10 @@ namespace Concerns
                                    Migrations().withinTransaction}}...
         };
 
+        /* Can be also written as the following, but I don't like it so. 😎
+           dynamic_cast<Migrations &>(*g_migrations.at(index)).connection,
+           dynamic_cast<Migrations &>(*g_migrations.at(index++)).withinTransaction */
+
         return *this;
     }
 
