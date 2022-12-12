@@ -175,7 +175,7 @@ QString Migrator::getMigrationName(const Migration &migration) const
 #if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
                              ? migrationNameOriginal.sliced(1)
 #else
-                             ? migrationNameFromTypeOriginal.mid(1)
+                             ? migrationNameOriginal.mid(1)
 #endif
                              : migrationNameOriginal;
 
