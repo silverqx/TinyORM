@@ -30,9 +30,9 @@ namespace Orm::Utils
         join(const T &container, D &&delimiter = Constants::COMMA);
 
         /*! Get a size of the greatest element in the container. */
-        template<QStringContainer T>
-        static QVector<QString>::size_type
-        maxElementSize(const T &container, QVector<QString>::size_type addToElement = 0);
+        template<QStringContainer T, typename SizeType = typename T::size_type>
+        static SizeType
+        maxElementSize(const T &container, SizeType addToElement = 0);
     };
 
     template<JoinContainer T, DelimiterConcept D>
@@ -58,16 +58,15 @@ namespace Orm::Utils
         return columnized;
     }
 
-    template<QStringContainer T>
-    QVector<QString>::size_type
-    Container::maxElementSize(const T &container,
-                              const QVector<QString>::size_type addToElement)
+    template<QStringContainer T, typename SizeType>
+    SizeType
+    Container::maxElementSize(const T &container, const SizeType addToElement)
     {
         // Nothing to do
         if (container.empty())
             return 0;
 
-        QVector<QString>::size_type result = 0;
+        SizeType result = 0;
 
         for (const auto &element : container)
             if (const auto elementSize = element.size();
