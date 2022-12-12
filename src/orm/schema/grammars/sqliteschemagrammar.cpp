@@ -328,14 +328,14 @@ QString SQLiteSchemaGrammar::addForeignKeys(const Blueprint &blueprint) const
         const auto &foreign =
                 *std::reinterpret_pointer_cast<ForeignKeyCommand>(foreignBase);
 
-        sql.append(getForeignKey(foreign));
+        sql += getForeignKey(foreign);
 
         // Append on delete and on update if defined
         if (!foreign.onDelete.isEmpty())
-            sql.append(QStringLiteral(" on delete %1").arg(foreign.onDelete));
+            sql += QStringLiteral(" on delete %1").arg(foreign.onDelete);
 
         if (!foreign.onUpdate.isEmpty())
-            sql.append(QStringLiteral(" on update %1").arg(foreign.onUpdate));
+            sql += QStringLiteral(" on update %1").arg(foreign.onUpdate);
     }
 
     return sql;
@@ -395,7 +395,7 @@ QString SQLiteSchemaGrammar::addModifiers(QString &&sql,
     };
 
     for (const auto method : modifierMethods)
-        sql.append(std::invoke(method, this, column));
+        sql += std::invoke(method, this, column);
 
     return std::move(sql);
 }

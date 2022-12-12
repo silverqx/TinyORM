@@ -343,7 +343,7 @@ QString MySqlSchemaGrammar::addModifiers(QString &&sql,
     };
 
     for (const auto method : modifierMethods)
-        sql.append(std::invoke(method, this, column));
+        sql += std::invoke(method, this, column);
 
     return std::move(sql);
 }
@@ -358,22 +358,22 @@ void MySqlSchemaGrammar::compileCreateEncoding(
        blueprint itself or on the root configuration for the connection that the
        table is being created on. We will add these to the create table query. */
     if (!blueprint.charset.isEmpty())
-        sql.append(charsetTmpl.arg(blueprint.charset));
+        sql += charsetTmpl.arg(blueprint.charset);
 
     else if (const auto charset = connection.getConfig(charset_).value<QString>();
              !charset.isEmpty()
     )
-        sql.append(charsetTmpl.arg(charset));
+        sql += charsetTmpl.arg(charset);
 
     /* Next we will add the collation to the create table statement if one has been
        added to either this create table blueprint or the configuration for this
        connection that the query is targeting. We'll add it to this SQL query. */
     if (!blueprint.collation.isEmpty())
-        sql.append(collateTmpl.arg(quoteString(blueprint.collation)));
+        sql += collateTmpl.arg(quoteString(blueprint.collation));
     else if (const auto collation = connection.getConfig(collation_).value<QString>();
              !collation.isEmpty()
     )
-        sql.append(collateTmpl.arg(quoteString(collation)));
+        sql += collateTmpl.arg(quoteString(collation));
 }
 
 void MySqlSchemaGrammar::compileCreateEngine(
@@ -382,12 +382,12 @@ void MySqlSchemaGrammar::compileCreateEngine(
     static const auto engineTmpl = QStringLiteral(" engine = %1");
 
     if (!blueprint.engine.isEmpty())
-        sql.append(engineTmpl.arg(blueprint.engine));
+        sql += engineTmpl.arg(blueprint.engine);
 
     else if (const auto engine = connection.getConfig(engine_).value<QString>();
              !engine.isEmpty()
     )
-        sql.append(engineTmpl.arg(engine));
+        sql += engineTmpl.arg(engine);
 }
 
 QVector<QString>

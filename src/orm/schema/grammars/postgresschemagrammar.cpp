@@ -250,15 +250,15 @@ PostgresSchemaGrammar::compileForeign(const Blueprint &blueprint,
     const auto isDeferrable = command.deferrable.has_value();
 
     if (isDeferrable)
-        sql.append(*command.deferrable ? QStringLiteral(" deferrable")
-                                       : QStringLiteral(" not deferrable"));
+        sql += command.deferrable ? QStringLiteral(" deferrable")
+                                  : QStringLiteral(" not deferrable");
 
     if (isDeferrable && *command.deferrable && command.initiallyImmediate)
-        sql.append(*command.initiallyImmediate ? QStringLiteral(" initially immediate")
-                                               : QStringLiteral(" initially deferred"));
+        sql += command.initiallyImmediate ? QStringLiteral(" initially immediate")
+                                          : QStringLiteral(" initially deferred");
 
     if (command.notValid && *command.notValid)
-        sql.append(QStringLiteral(" not valid"));
+        sql += QStringLiteral(" not valid");
 
     return sqlCommands;
 }
@@ -394,7 +394,7 @@ QString PostgresSchemaGrammar::addModifiers(QString &&sql,
     };
 
     for (const auto method : modifierMethods)
-        sql.append(std::invoke(method, this, column));
+        sql += std::invoke(method, this, column);
 
     return std::move(sql);
 }
