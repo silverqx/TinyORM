@@ -38,6 +38,8 @@ QString MySqlGrammar::compileUpsert(
                                 .useUpsertAlias();
 
     auto sql = compileInsert(query, values);
+    // ~64 is manually counted size of QStringLiteral-s below, exactly it's 49
+    sql.reserve(sql.size() + 64);
 
     if (useUpsertAlias)
         sql += QStringLiteral(" as %1")

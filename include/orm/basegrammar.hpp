@@ -177,6 +177,8 @@ namespace Query
     QString BaseGrammar::parametrize(const Container &values) const
     {
         QStringList compiledParameters;
+        compiledParameters.reserve(
+                    static_cast<QStringList::size_type>(values.size()));
 
         for (const auto &value : values)
             compiledParameters << parameter(value);
