@@ -189,9 +189,8 @@ QStringList Grammar::compileComponents(const QueryBuilder &query) const
     for (const auto &compileMap = getCompileMap();
          const auto &component : compileMap
     )
-        if (component.isset)
-            if (component.isset(query))
-                sql.append(std::invoke(component.compileMethod, query));
+        if (component.isset && component.isset(query))
+            sql.append(std::invoke(component.compileMethod, query));
 
     return sql;
 }
