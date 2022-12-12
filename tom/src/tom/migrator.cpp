@@ -22,6 +22,7 @@ TINYORM_BEGIN_COMMON_NAMESPACE
 using Orm::DatabaseConnection;
 
 using Orm::Constants::DESC;
+using Orm::Constants::UNDERSCORE;
 
 using QueryUtils = Orm::Utils::Query;
 using TypeUtils = Orm::Utils::Type;
@@ -168,12 +169,15 @@ QString Migrator::getMigrationName(const Migration &migration) const
         const auto migrationNameOriginal = TypeUtils::classPureBasename(migration, false);
 
         /* sliced(1) or mid(1) to remove the '_' at the beginning, it doesn't matter if
-       it starts with the '_' char, it will be validated by the throw method below. */
+           it starts with the '_' char, it will be validated by the throw method below. */
+
+        auto migrationName = migrationNameOriginal.startsWith(UNDERSCORE)
 #if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
-        auto migrationName = migrationNameOriginal.sliced(1);
+                             ? migrationNameOriginal.sliced(1)
 #else
-        auto migrationName = migrationNameFromTypeOriginal.mid(1);
+                             ? migrationNameFromTypeOriginal.mid(1)
 #endif
+                             : migrationNameOriginal;
 
         throwIfMigrationClassNameNotValid(migrationNameOriginal, migrationName);
 
