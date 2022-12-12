@@ -1438,10 +1438,12 @@ QString tst_SQLite_SchemaBuilder::getDatabaseFilepath()
 {
     static const auto cached = []
     {
-        auto database = Firewalls;
+        QString database;
+        database.reserve(Firewalls.size() + 32);
 
         return database
-                .prepend(QStringLiteral("tmp/tinyorm_tests_"))
+                .append(QStringLiteral("tmp/tinyorm_tests_"))
+                .append(Firewalls)
                 .append(QStringLiteral(".sqlite3"));
     }();
 

@@ -267,6 +267,8 @@ std::vector<QString> String::splitStringByWidth(const QString &string, const int
         return {string};
 
     std::vector<QString> lines;
+    lines.reserve(std::llround(static_cast<double>(string.size()) / width) + 4);
+
     QString line;
 
 #if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
@@ -317,13 +319,19 @@ QString::size_type String::countBefore(QString string, const QChar character,
 
 QString String::wrapValue(const QString &string, const QChar character)
 {
-    return QString().append(character).append(string).append(character);
+    QString result;
+    result.reserve(string.size() + 8);
+
+    return result.append(character).append(string).append(character);
 }
 
 QString String::wrapValue(const QString &string, const QChar firstCharacter,
                           const QChar lastCharacter)
 {
-    return QString().append(firstCharacter).append(string).append(lastCharacter);
+    QString result;
+    result.reserve(string.size() + 8);
+
+    return result.append(firstCharacter).append(string).append(lastCharacter);
 }
 #endif
 
