@@ -142,10 +142,10 @@ void Migrator::createMigrationNamesMap()
         throwIfMigrationsNotSorted(previousMigrationName, migrationName);
         previousMigrationName = migrationName;
 
-        m_migrationNamesMap.emplace(std::type_index(typeid (migrationRef)),
-                                    migrationName);
+        m_migrationNamesMap.try_emplace(std::type_index(typeid (migrationRef)),
+                                        migrationName);
 
-        m_migrationInstancesMap.emplace(migrationName, migration);
+        m_migrationInstancesMap.try_emplace(migrationName, migration);
 
         m_migrationNames.emplace(std::move(migrationName));
     }

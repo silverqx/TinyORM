@@ -669,7 +669,7 @@ namespace Orm::Tiny::Concerns
             if (const auto &key = m_attributes.at(i).key;
                 !originalIsEquivalent(key)
             )
-                dirtyHash.emplace(m_attributes.at(i).key, i);
+                dirtyHash.try_emplace(m_attributes.at(i).key, i);
 
         return dirtyHash;
     }
@@ -955,9 +955,10 @@ namespace Orm::Tiny::Concerns
            the user's u_casts and add the 'id' cast on the fly on the casts copy. */
         auto casts = model.getUserCasts();
 
-        if (model.getIncrementing() && !casts.contains(keyName))
+        // try_emplace implies casts.contains()
+        if (model.getIncrementing()/* && !casts.contains(keyName)*/)
             // FEATURE dilemma primarykey, Model::KeyType vs QVariant silverqx
-            casts.emplace(keyName, CastType::ULongLong);
+            casts.try_emplace(keyName, CastType::ULongLong);
 
         return casts;
     }

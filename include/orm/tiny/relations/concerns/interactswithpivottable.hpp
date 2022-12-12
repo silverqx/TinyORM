@@ -944,7 +944,7 @@ namespace Concerns
         std::map<RelatedKeyType, QVector<AttributeItem>> records;
 
         for (const auto &id : ids)
-            records.emplace(castKey<RelatedKeyType>(id), QVector<AttributeItem>());
+            records.try_emplace(castKey<RelatedKeyType>(id));
 
         return records;
     }

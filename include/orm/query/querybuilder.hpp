@@ -1042,8 +1042,8 @@ namespace Orm::Query
         std::map<T, QVariant> result;
 
         while (query.next())
-            result.emplace(std::make_pair(query.value(unqualifiedKey).value<T>(),
-                                          query.value(unqualifiedColumn)));
+            result.try_emplace(query.value(unqualifiedKey).value<T>(),
+                               query.value(unqualifiedColumn));
 
         return result;
     }
