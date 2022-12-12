@@ -184,11 +184,15 @@ bool Grammar::shouldCompileFrom(const FromClause &from)
 
 QStringList Grammar::compileComponents(const QueryBuilder &query) const
 {
-    QStringList sql;
+    const auto &compileMap = getCompileMap();
+    /* This is not 100% correct as the getCompileMap() is virtual, but it's guaranteed
+       that all compileMap-s have the same size, so it's safe to cache this size. */
+    static const auto compileMapSize = compileMap.size();
 
-    for (const auto &compileMap = getCompileMap();
-         const auto &component : compileMap
-    )
+    QStringList sql;
+    sql.reserve(compileMapSize);
+
+    for (const auto &component : compileMap)
         if (component.isset && component.isset(query))
             sql << std::invoke(component.compileMethod, query);
 
