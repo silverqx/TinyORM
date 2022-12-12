@@ -181,7 +181,6 @@ namespace Query
         for (const auto &value : values)
             compiledParameters << parameter(value);
 
-        // CUR1 QString allocation 😟 solve everywhere 😭 silverqx
         return columnizeWithoutWrap(compiledParameters);
     }
 
