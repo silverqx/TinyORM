@@ -234,6 +234,11 @@ namespace Orm::Query::Grammars
         static QVector<std::reference_wrapper<const QVariant>>
         flatBindingsForUpdateDelete(const BindingsMap &bindings,
                                     const QVector<BindingType> &exclude);
+
+        /*! Compute the reserve size for the BindingsMap. */
+        static qsizetype
+        computeReserveForBindingsMap(const BindingsMap &bindings,
+                                     const QVector<BindingType> &exclude = {});
     };
 
     /* public */

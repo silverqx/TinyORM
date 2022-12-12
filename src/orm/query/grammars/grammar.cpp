@@ -78,7 +78,17 @@ QVector<QVariant>
 Grammar::prepareBindingsForUpdate(const BindingsMap &bindings, // NOLINT(readability-convert-member-functions-to-static)
                                   const QVector<UpdateItem> &values) const
 {
-    QVector<QVariant> preparedBindings(bindings.find(BindingType::JOIN).value());
+    const auto &joinBindings = bindings.find(BindingType::JOIN).value();
+
+    QVector<QVariant> preparedBindings;
+    preparedBindings.reserve(
+                joinBindings.size() + values.size() +
+                // Rest of the bindings
+                computeReserveForBindingsMap(bindings, {BindingType::SELECT,
+                                                        BindingType::JOIN}));
+
+    // Join bindings have to go first, I don't remember why 🫤
+    preparedBindings << joinBindings;
 
     // Merge update values bindings
     std::transform(values.cbegin(), values.cend(), std::back_inserter(preparedBindings),
@@ -117,6 +127,8 @@ QString Grammar::compileDelete(QueryBuilder &query) const
 QVector<QVariant> Grammar::prepareBindingsForDelete(const BindingsMap &bindings) const  // NOLINT(readability-convert-member-functions-to-static)
 {
     QVector<QVariant> preparedBindings;
+    preparedBindings.reserve(
+                computeReserveForBindingsMap(bindings, {BindingType::SELECT}));
 
     /* Flatten bindings map and exclude select bindings and than merge all remaining
        bindings from flatten bindings map. */
@@ -634,17 +646,35 @@ Grammar::flatBindingsForUpdateDelete(const BindingsMap &bindings,
                                      const QVector<BindingType> &exclude)
 {
     QVector<std::reference_wrapper<const QVariant>> cleanBindingsFlatten;
+    cleanBindingsFlatten.reserve(computeReserveForBindingsMap(bindings, exclude));
 
     for (auto itBindings = bindings.constBegin();
          itBindings != bindings.constEnd(); ++itBindings
     )
-        if (exclude.contains(itBindings.key()))
+        if (!exclude.isEmpty() && exclude.contains(itBindings.key()))
             continue;
         else
             for (const auto &binding : itBindings.value())
                 cleanBindingsFlatten.append(std::cref(binding));
 
     return cleanBindingsFlatten;
+}
+
+qsizetype
+Grammar::computeReserveForBindingsMap(const BindingsMap &bindings,
+                                      const QVector<BindingType> &exclude)
+{
+    qsizetype size = 0;
+
+    for (auto itBindings = bindings.constBegin();
+         itBindings != bindings.constEnd(); ++itBindings
+    )
+        if (!exclude.isEmpty() && exclude.contains(itBindings.key()))
+            continue;
+        else
+            size += itBindings.value().size();
+
+    return size;
 }
 
 } // namespace Orm::Query::Grammars
