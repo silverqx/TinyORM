@@ -214,16 +214,16 @@ QString PostgresGrammar::compileColumns(const QueryBuilder &query) const
     const auto &distinct = query.getDistinct();
 
     if (std::holds_alternative<QStringList>(distinct))
-        select.append(QStringLiteral("select distinct on (%1) ")
-                      .arg(columnize(std::get<QStringList>(distinct))));
+        select += QStringLiteral("select distinct on (%1) ")
+                  .arg(columnize(std::get<QStringList>(distinct)));
 
     else if (std::holds_alternative<bool>(distinct) && std::get<bool>(distinct))
-        select.append(QStringLiteral("select distinct "));
+        select += QStringLiteral("select distinct ");
 
     else
-        select.append(QStringLiteral("select "));
+        select += QStringLiteral("select ");
 
-    return select.append(columnize(query.getColumns()));
+    return select += columnize(query.getColumns());
 }
 
 QString PostgresGrammar::whereDate(const WhereConditionItem &where) const
