@@ -126,6 +126,9 @@ namespace Tom
             alphabetically. */
         static void throwIfMigrationsNotSorted(const QString &previousMigrationName,
                                                const QString &migrationName);
+        /*! Throw if migrations passed to the TomApplication contain the same Migration
+            more times. */
+        void throwIfContainMigration(const QString &migrationName) const;
         /*! Throw if migration filename is not valid. */
         static void throwIfMigrationFileNameNotValid(const QString &migrationName);
         /*! Throw if migration class name is not valid. */

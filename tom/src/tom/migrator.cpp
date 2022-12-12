@@ -138,6 +138,9 @@ void Migrator::createMigrationNamesMap()
 
         auto migrationName = getMigrationName(migrationRef);
 
+        // Verify duplicit Migration, the same Migration can't be passed more times
+        throwIfContainMigration(migrationName);
+
         // Verify alphabetical sorting
         throwIfMigrationsNotSorted(previousMigrationName, migrationName);
         previousMigrationName = migrationName;
@@ -410,6 +413,19 @@ void Migrator::throwIfMigrationsNotSorted(const QString &previousMigrationName,
                     "The template arguments passed to the TomApplication::migrations() "
                     "must always be sorted alphabetically (%1 < %2).")
                 .arg(previousMigrationName, migrationName));
+}
+
+void Migrator::throwIfContainMigration(const QString &migrationName) const
+{
+    if (!m_migrationNames.contains(migrationName))
+        return;
+
+    throw Exceptions::InvalidTemplateArgumentError(
+                QStringLiteral(
+                    "The '%1' migration has already been added, the template arguments "
+                    "passed to the TomApplication::migrations() can't contain the same "
+                    "migration more times.")
+                .arg(migrationName));
 }
 
 void Migrator::throwIfMigrationFileNameNotValid(const QString &migrationName)
