@@ -90,7 +90,7 @@ QString BaseGrammar::wrapTable(const FromClause &table) const
 
 QString BaseGrammar::quoteString(const QString &value)
 {
-    return QStringLiteral("'%1'").arg(value);
+    return TMPL_SQUOTES.arg(value);
 }
 
 bool BaseGrammar::isExpression(const QVariant &value)

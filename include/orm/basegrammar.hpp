@@ -168,7 +168,7 @@ namespace Query
             quoted += QStringLiteral("'%1', ").arg(*it);
 
         if (it == end)
-            quoted += QStringLiteral("'%1'").arg(*it);
+            quoted += TMPL_SQUOTES.arg(*it);
 
         return quoted;
     }

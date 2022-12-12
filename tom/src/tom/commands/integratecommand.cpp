@@ -17,6 +17,7 @@
 TINYORM_BEGIN_COMMON_NAMESPACE
 
 using Orm::Constants::COMMA;
+using Orm::Constants::TMPL_SQUOTES;
 
 using Tom::Constants::ShPwsh;
 using Tom::Constants::path_;
@@ -482,7 +483,7 @@ QStringList IntegrateCommand::getCompletionFilepaths()
                            std::back_inserter(completionFilepaths),
                            [](const auto &completionPaths)
     {
-        return QStringLiteral("'%1'").arg(completionPaths.filePath);
+        return TMPL_SQUOTES.arg(completionPaths.filePath);
     });
 
     return completionFilepaths;
