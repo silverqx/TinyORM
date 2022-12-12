@@ -406,9 +406,9 @@ void Migrator::throwIfMigrationsNotSorted(const QString &previousMigrationName,
         return;
 
     throw Exceptions::InvalidTemplateArgumentError(
-            QStringLiteral(
-                "The template arguments passed to the TomApplication::migrations() "
-                "must always be sorted alphabetically (%1 < %2).")
+                QStringLiteral(
+                    "The template arguments passed to the TomApplication::migrations() "
+                    "must always be sorted alphabetically (%1 < %2).")
                 .arg(previousMigrationName, migrationName));
 }
 
