@@ -74,7 +74,7 @@ bool Terminal::hasColorSupport(const std::ostream &cout) const
 
     // Return from the cache, compute only once
     if (m_isAnsiOutput.contains(coutPointer))
-        return m_isAnsiOutput[coutPointer];
+        return m_isAnsiOutput.at(coutPointer);
 
     // Map c++ stream to the c stream, needed by the isatty()
     FILE *stream = nullptr;
@@ -103,7 +103,7 @@ bool Terminal::hasWColorSupport(const std::wostream &wcout) const
 
     // Return from the cache, compute only once
     if (m_isAnsiWOutput.contains(wcoutPointer))
-        return m_isAnsiWOutput[wcoutPointer];
+        return m_isAnsiWOutput.at(wcoutPointer);
 
     // Map c++ stream to the c stream, needed by the isatty()
     FILE *stream = nullptr;
