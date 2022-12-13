@@ -17,7 +17,9 @@
 TINYORM_BEGIN_COMMON_NAMESPACE
 
 using Orm::Constants::COMMA;
+#if defined(__linux__) || defined(__MINGW32__)
 using Orm::Constants::TMPL_SQUOTES;
+#endif
 
 using Tom::Constants::ShPwsh;
 using Tom::Constants::path_;
