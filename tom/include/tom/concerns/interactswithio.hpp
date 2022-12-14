@@ -8,6 +8,7 @@ TINY_SYSTEM_HEADER
 #include <QStringList>
 
 #include <tabulate/table.hpp>
+#include <tabulate/tabulate.hpp>
 
 #include <orm/macros/commonnamespace.hpp>
 #include <orm/macros/export.hpp>
@@ -16,6 +17,9 @@ class QCommandLineParser;
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
+#define TINY_TABULATE_VERSION QT_VERSION_CHECK(TABULATE_VERSION_MAJOR, \
+                                               TABULATE_VERSION_MINOR, \
+                                               TABULATE_VERSION_PATCH)
 namespace Tom
 {
     class Application;
@@ -33,8 +37,13 @@ namespace Concerns
         friend Tom::Application;
 
     public:
+#if TINY_TABULATE_VERSION >= QT_VERSION_CHECK(1, 4, 0)
+        /*! Alias for the tabulate cell. */
+        using TableCell = std::variant<std::string, const char *, tabulate::Table>;
+#else
         /*! Alias for the tabulate cell. */
         using TableCell = std::variant<std::string, tabulate::Table>;
+#endif
         /*! Alias for the tabulate row. */
         using TableRow = std::vector<TableCell>;
 
