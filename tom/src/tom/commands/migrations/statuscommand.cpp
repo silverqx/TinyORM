@@ -65,7 +65,7 @@ int StatusCommand::run()
             !migrations.empty()
         ) {
             /* During testing save the result of a status command to the global
-                   variable instead of outputting it, to be able to verify results. */
+               variable instead of outputting it, to be able to verify results. */
 #ifdef TINYTOM_TESTS_CODE
             if (m_inUnitTests)
                 m_status = statusForUnitTest(std::move(migrations));
