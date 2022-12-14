@@ -8,7 +8,11 @@ TINY_SYSTEM_HEADER
 #include <QStringList>
 
 #include <tabulate/table.hpp>
-#include <tabulate/tabulate.hpp>
+/* This header exists from the tabulate v1.4.0, it has been added in the middle of v1.3.0
+   and didn't exist at the v1.3.0 release. */
+#if __has_include(<tabulate/tabulate.hpp>)
+#  include <tabulate/tabulate.hpp>
+#endif
 
 #include <orm/macros/commonnamespace.hpp>
 #include <orm/macros/export.hpp>
@@ -16,6 +20,13 @@ TINY_SYSTEM_HEADER
 class QCommandLineParser;
 
 TINYORM_BEGIN_COMMON_NAMESPACE
+
+// Defines to detect the tabulate version
+#ifndef TABULATE_VERSION_MAJOR
+#  define TABULATE_VERSION_MAJOR 0
+#  define TABULATE_VERSION_MINOR 0
+#  define TABULATE_VERSION_PATCH 0
+#endif
 
 #define TINY_TABULATE_VERSION QT_VERSION_CHECK(TABULATE_VERSION_MAJOR, \
                                                TABULATE_VERSION_MINOR, \
