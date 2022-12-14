@@ -329,8 +329,8 @@ namespace Relations
         keys.reserve(models.size());
 
         for (const auto &model : models)
-            keys << key.isEmpty() ? model.getKey()
-                                  : model.getAttribute(key);
+            keys.append(key.isEmpty() ? model.getKey()
+                                      : model.getAttribute(key));
 
         return keys |= ranges::actions::sort(ranges::less {}, [](const auto &key_)
         {
