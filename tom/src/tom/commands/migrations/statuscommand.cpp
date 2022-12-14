@@ -109,25 +109,47 @@ StatusCommand::getStatusFor(QVector<QVariant> &&ran,
 }
 
 #ifdef TINYTOM_TESTS_CODE
+namespace
+{
+#if TINY_TABULATE_VERSION >= QT_VERSION_CHECK(1, 3, 0)
+    constexpr auto transformPredicateForStatus = [](auto &&cell) -> std::string
+    {
+        const auto holdsStdString = std::holds_alternative<std::string>(cell);
+
+        if (!holdsStdString && !std::holds_alternative<const char *>(cell))
+            throw Exceptions::RuntimeError(
+                "Nested tables or types other than the std::string or const char * "
+                "are not supported in StatusCommand::statusForTest().");
+
+        if (holdsStdString)
+            return std::get<std::string>(std::forward<decltype (cell)>(cell));
+
+        return std::get<const char *>(std::forward<decltype (cell)>(cell));
+    };
+#else
+    constexpr auto transformPredicateForStatus = [](auto &&cell)
+    {
+        if (!std::holds_alternative<std::string>(cell))
+            throw Exceptions::RuntimeError(
+                "Nested tables or type other than std::string is not supported "
+                "in StatusCommand::statusForTest().");
+
+        return std::get<std::string>(std::forward<decltype (cell)>(cell));
+    };
+#endif
+} // namespace
+
 std::vector<StatusCommand::StatusRow>
 StatusCommand::statusForUnitTest(std::vector<TableRow> &&migrations)
 {
     return ranges::views::move(migrations)
             | ranges::views::transform([](auto &&migration)
-                                       -> StatusRow
     {
         StatusRow row;
+        row.reserve(migration.size());
 
         ranges::transform(std::forward<decltype (migration)>(migration),
-                          std::back_inserter(row), [](auto &&cell)
-        {
-            if (!std::holds_alternative<std::string>(cell))
-                throw Exceptions::RuntimeError(
-                        "Nested tables or type other than std::string is not supported "
-                        "in StatusCommand::statusForTest().");
-
-            return std::get<std::string>(std::forward<decltype (cell)>(cell));
-        });
+                          std::back_inserter(row), transformPredicateForStatus);
 
         return row;
     })

@@ -37,7 +37,7 @@ namespace Concerns
         friend Tom::Application;
 
     public:
-#if TINY_TABULATE_VERSION >= QT_VERSION_CHECK(1, 4, 0)
+#if TINY_TABULATE_VERSION >= QT_VERSION_CHECK(1, 3, 0)
         /*! Alias for the tabulate cell. */
         using TableCell = std::variant<std::string, const char *, tabulate::Table>;
 #else
