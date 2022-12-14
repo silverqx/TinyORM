@@ -32,13 +32,13 @@ namespace Orm::Utils
         /*! Get a size of the greatest element in the container. */
         template<QStringContainer T, typename SizeType = typename T::size_type>
         static SizeType
-        maxElementSize(const T &container, SizeType addToElement = 0);
+        maxElementSize(const T &container, typename T::size_type addToElement = 0);
 
         /*! Count all string sizes in the given container and optionally add value to
             every string. */
         template<QStringContainer T, typename SizeType = typename T::size_type>
         static SizeType
-        countStringSizes(const T &container, SizeType addToElement = 0);
+        countStringSizes(const T &container, typename T::size_type addToElement = 0);
     };
 
     template<JoinContainer T, DelimiterConcept D>
@@ -66,7 +66,8 @@ namespace Orm::Utils
 
     template<QStringContainer T, typename SizeType>
     SizeType
-    Container::maxElementSize(const T &container, const SizeType addToElement)
+    Container::maxElementSize(const T &container,
+                              const typename T::size_type addToElement)
     {
         // Nothing to do
         if (container.empty())
@@ -90,7 +91,8 @@ namespace Orm::Utils
 
     template<QStringContainer T, typename SizeType>
     SizeType
-    Container::countStringSizes(const T &container, const SizeType addToElement)
+    Container::countStringSizes(const T &container,
+                                const typename T::size_type addToElement)
     {
         // Nothing to do
         if (container.empty())
