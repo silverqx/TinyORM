@@ -412,7 +412,6 @@ namespace Orm::Tiny::Concerns
             const QVector<AttributeItem> &attributes,
             const bool sync)
     {
-        m_attributes.reserve(attributes.size());
         m_attributes = AttributeUtils::removeDuplicitKeys(attributes);
 
         // Build attributes hash

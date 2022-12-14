@@ -86,7 +86,8 @@ namespace Orm::Utils
         QString bindingValue;
 
         QStringList simpleBindingsList;
-        simpleBindingsList.reserve(bindings.size());
+        simpleBindingsList.reserve(
+                    static_cast<QStringList::size_type>(bindings.size()));
 
         for (const auto &binding : bindings) {
 
