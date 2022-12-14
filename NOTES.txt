@@ -405,6 +405,17 @@ Maintenance:
 GitHub Actions:
 ---------------
 
+ - Mass deletion of GitHub workflow runs
+   - authenticate using the gh if auth expired
+     - gh auth login -h github.com
+   - dwr silverqx/TinyORM
+     - <tab> or <shift-tab> to un/select
+     - <enter> to delete selected runs
+     - ~/.dotfiles/bin/dwr
+ - upgrade to the latest dwr
+   - https://qmacro.org/blog/posts/2021/03/26/mass-deletion-of-github-actions-workflow-runs/
+   - https://raw.githubusercontent.com/qmacro/dotfiles/230c6df494f239e9d1762794943847816e1b7c32/scripts/dwr
+
  - Runner images: https://github.com/actions/runner-images/tree/main/images
 
  - all actions with versions currently used by TinyORM:
