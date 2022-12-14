@@ -77,7 +77,7 @@ jobs:
       run: >-
         $tzFileUrl = 'https://downloads.mysql.com/general/timezone_2022g_posix_sql.zip'
 
-        $response = Invoke-WebRequest -Uri $tzFileUrl
+        $response = Invoke-WebRequest -Uri $tzFileUrl -HttpVersion 2.0
 
         $filename = ($tzFileUrl -split '/')[-1]
 
