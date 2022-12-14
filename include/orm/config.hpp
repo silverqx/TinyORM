@@ -17,7 +17,7 @@ TINY_SYSTEM_HEADER
 #  define TINYORM_INLINE_CONSTANTS
 // Enforce extern constants in shared build/linking when a user did not define it
 #elif !defined(TINYORM_EXTERN_CONSTANTS) && !defined(TINYORM_INLINE_CONSTANTS) && \
-    (defined(TINYORM_BUILDING_SHARED) || defined(TINYORM_LINKING_SHARED))
+      (defined(TINYORM_BUILDING_SHARED) || defined(TINYORM_LINKING_SHARED))
 #  define TINYORM_EXTERN_CONSTANTS
 #endif
 
