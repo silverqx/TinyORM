@@ -86,13 +86,15 @@ jobs:
       run: >-
         $tzFileUrl = 'https://downloads.mysql.com/general/timezone_2022g_posix_sql.zip'
 
-        $response = Invoke-WebRequest -Uri $tzFileUrl -HttpVersion 2.0
+        # $response = Invoke-WebRequest -Uri $tzFileUrl -HttpVersion 2.0
+
+        curl -fsSLO $tzFileUrl
 
         $filename = ($tzFileUrl -split '/')[-1]
 
         $filepath = Join-Path -Path $(Resolve-Path -Path .) -ChildPath $filename
 
-        $response | Select-Object -ExpandProperty Content |
+        # $response | Select-Object -ExpandProperty Content |
         Set-Content -Path $filepath -AsByteStream
 
         7z.exe x -o"$(Resolve-Path -Path .)" $filepath
