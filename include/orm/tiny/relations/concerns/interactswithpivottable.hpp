@@ -956,7 +956,8 @@ namespace Concerns
                            QVector<AttributeItem>> &idsWithAttributes) const
     {
         QVector<QVariant> ids;
-        ids.reserve(idsWithAttributes.size());
+        ids.reserve(static_cast<decltype (ids)::size_type>(
+                        idsWithAttributes.size()));
 
         for (const auto &record : idsWithAttributes)
             ids << record.first;
