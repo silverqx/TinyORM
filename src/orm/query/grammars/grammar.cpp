@@ -601,8 +601,7 @@ QString Grammar::concatenate(QStringList &&segments)
         if (segment.isEmpty())
             continue;
 
-        // QStringBuilder benefit
-        result += std::move(segment);
+        result += segment;
         result += SPACE;
     }
 
