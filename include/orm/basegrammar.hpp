@@ -145,7 +145,7 @@ namespace Query
     QVector<QString> BaseGrammar::wrapArray(const T &values) const
     {
         QVector<QString> wrapped;
-        wrapped.reserve(values.size());
+        wrapped.reserve(static_cast<QVector<QString>::size_type>(values.size()));
 
         for (const auto &value : values)
             wrapped << wrap(value);
