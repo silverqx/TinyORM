@@ -283,10 +283,8 @@ namespace Orm::Tiny
         /*! Parse the nested relationships in a relation. */
         void addNestedWiths(const QString &name, QVector<WithItem> &results) const;
 
-        /*! Size type used by the QVector<WithItem>. */
-        using VectorWithItemSizeType = QVector<WithItem>::size_type;
         /*! Guess number of relations for the reserve (including nested relations). */
-        static VectorWithItemSizeType
+        static QVector<WithItem>::size_type
         guessParseWithRelationsSize(const QVector<WithItem> &relations);
 
         /*! Get the deeply nested relations for a given top-level relation. */
@@ -1322,10 +1320,10 @@ namespace Orm::Tiny
     }
 
     template<typename Model>
-    typename Builder<Model>::VectorWithItemSizeType
+    QVector<WithItem>::size_type
     Builder<Model>::guessParseWithRelationsSize(const QVector<WithItem> &relations)
     {
-        VectorWithItemSizeType size = 0;
+        QVector<WithItem>::size_type size = 0;
 
         for (const auto &[relation, _] : relations)
             // Nested relations (x.y.z == 3 relations)
