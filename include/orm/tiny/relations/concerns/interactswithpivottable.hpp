@@ -786,7 +786,7 @@ namespace Concerns
 
         // FEATURE pivot, withPivotValues silverqx
 //        for (auto &[column, value] as m_pivotValues)
-//            record.append(column, value);
+//            record << column, value;
 
         return record;
     }

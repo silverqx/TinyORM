@@ -1809,7 +1809,7 @@ namespace Orm::Tiny
     template<typename Derived, AllRelationsConcept ...AllRelations>
     void Model<Derived, AllRelations...>::appendToUserDates(const QString &column)
     {
-        const_cast<QStringList &>(Derived::u_dates).append(column);
+        const_cast<QStringList &>(Derived::u_dates) << column;
     }
 
 } // namespace Orm::Tiny

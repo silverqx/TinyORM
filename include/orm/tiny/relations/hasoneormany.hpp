@@ -384,7 +384,7 @@ namespace Orm::Tiny::Relations
                                      .template value<typename Model::KeyType>();
                 std::is_same_v<RelationType, QVector<Related>>
             )
-                dictionary[foreign].append(std::move(result));
+                dictionary[foreign] << std::move(result);
             else
                 // Moves to the std::optional
                 dictionary.insert(foreign, std::move(result));

@@ -658,7 +658,7 @@ Grammar::flatBindingsForUpdateDelete(const BindingsMap &bindings,
             continue;
         else
             for (const auto &binding : itBindings.value())
-                cleanBindingsFlatten.append(std::cref(binding));
+                cleanBindingsFlatten << std::cref(binding);
 
     return cleanBindingsFlatten;
 }

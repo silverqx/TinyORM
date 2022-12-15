@@ -17,7 +17,7 @@ QStringList MySqlProcessor::processColumnListing(SqlQuery &query) const
     columns.reserve(QueryUtils::queryResultSize(query));
 
     while (query.next())
-        columns.append(query.value("column_name").value<QString>());
+        columns << query.value("column_name").value<QString>();
 
     return columns;
 }

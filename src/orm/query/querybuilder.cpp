@@ -972,7 +972,7 @@ Builder &Builder::groupBy(const Column &group)
 
 Builder &Builder::groupByRaw(const QString &sql, const QVector<QVariant> &bindings)
 {
-    m_groups.append(Expression(sql));
+    m_groups << Expression(sql);
 
     addBinding(bindings, BindingType::GROUPBY);
 
@@ -1246,7 +1246,7 @@ QVector<QVariant> Builder::getBindings() const
 
     for (const auto &bindings : std::as_const(m_bindings))
         for (const auto &binding : bindings)
-            flattenBindings.append(binding);
+            flattenBindings << binding;
 
     return flattenBindings;
 }
@@ -1258,7 +1258,7 @@ Builder &Builder::addBinding(const QVariant &binding, const BindingType type)
     checkBindingType(type);
 #endif
 
-    m_bindings[type].append(binding);
+    m_bindings[type] << binding;
 
     return *this;
 }
@@ -1270,7 +1270,7 @@ Builder &Builder::addBinding(QVariant &&binding, const BindingType type)
     checkBindingType(type);
 #endif
 
-    m_bindings[type].append(std::move(binding));
+    m_bindings[type] << std::move(binding);
 
     return *this;
 }
@@ -1689,7 +1689,7 @@ Builder &Builder::joinInternal(std::shared_ptr<JoinClause> &&join)
     const auto &joinRef = *join;
 
     // Move ownership
-    m_joins.append(std::move(join));
+    m_joins << std::move(join);
 
     addBinding(joinRef.getBindings(), BindingType::JOIN);
 

@@ -476,7 +476,7 @@ namespace Orm::Tiny::Relations
                     ->getAttribute(m_foreignPivotKey)
                     .template value<typename Model::KeyType>();
 
-            dictionary[foreignPivotKey].append(std::move(result));
+            dictionary[foreignPivotKey] << std::move(result);
         }
 
         return dictionary;

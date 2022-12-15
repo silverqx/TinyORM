@@ -1271,7 +1271,7 @@ namespace Orm::Query
     Builder::crossJoin(T &&table)
     {
         // No need to call joinInternal() because no bindings
-        m_joins.append(newJoinClause(*this, CROSS, std::forward<T>(table)));
+        m_joins << newJoinClause(*this, CROSS, std::forward<T>(table));
 
         return *this;
     }

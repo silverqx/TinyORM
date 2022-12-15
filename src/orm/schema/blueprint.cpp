@@ -597,7 +597,7 @@ void Blueprint::defaultStringLength(const int length) noexcept
 
 ColumnDefinitionReference<> Blueprint::addColumnDefinition(ColumnDefinition &&definition)
 {
-    m_columns.append(std::move(definition));
+    m_columns << std::move(definition);
 
     auto &definitionRef = m_columns.last(); // clazy:exclude=detaching-member
 

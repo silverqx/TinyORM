@@ -127,7 +127,7 @@ namespace Orm::Tiny::Concerns
 
         for (const auto &value : fillable)
             if (!fillable_.contains(value))
-                fillable_.append(value);
+                fillable_ << value;
 
         return model();
     }
@@ -140,7 +140,7 @@ namespace Orm::Tiny::Concerns
 
         for (auto &value : fillable)
             if (!fillable_.contains(value))
-                fillable_.append(std::move(value));
+                fillable_ << std::move(value);
 
         return model();
     }
@@ -178,7 +178,7 @@ namespace Orm::Tiny::Concerns
 
         for (const auto &value : guarded)
             if (!guarded_.contains(value))
-                guarded_.append(value);
+                guarded_ << value;
 
         return model();
     }
@@ -191,7 +191,7 @@ namespace Orm::Tiny::Concerns
 
         for (auto &value : guarded)
             if (!guarded_.contains(value))
-                guarded_.append(std::move(value));
+                guarded_ << std::move(value);
 
         return model();
     }
@@ -288,7 +288,7 @@ namespace Orm::Tiny::Concerns
 
         for (const auto &attribute : attributes)
             if (fillable.contains(attribute.key))
-                result.append(attribute);
+                result << attribute;
 
         return result;
     }
@@ -307,7 +307,7 @@ namespace Orm::Tiny::Concerns
 
         for (auto &attribute : attributes)
             if (fillable.contains(attribute.key))
-                result.append(std::move(attribute));
+                result << std::move(attribute);
 
         return result;
     }

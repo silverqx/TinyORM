@@ -16,7 +16,7 @@ QStringList SQLiteProcessor::processColumnListing(SqlQuery &query) const
     columns.reserve(QueryUtils::queryResultSize(query));
 
     while (query.next())
-        columns.append(query.value(NAME).value<QString>());
+        columns << query.value(NAME).value<QString>();
 
     return columns;
 }

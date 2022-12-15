@@ -388,7 +388,7 @@ void tst_SoftDeletes::restore_remove_OnTinyBuilder() const
             QCOMPARE(user.getAttribute(DELETED_AT).value<QDateTime>(), QDateTime());
             QVERIFY(!user.trashed());
 
-            actualIds.append(user.getAttribute(ID).value<quint64>());
+            actualIds << user.getAttribute(ID).value<quint64>();
         }
 
         QCOMPARE(actualIds, expectedIds);
@@ -428,7 +428,7 @@ void tst_SoftDeletes::restore_remove_OnTinyBuilder() const
                     timeBeforeRemove);
             QVERIFY(user.trashed());
 
-            actualIds.append(user.getAttribute(ID).value<quint64>());
+            actualIds << user.getAttribute(ID).value<quint64>();
         }
 
         QCOMPARE(actualIds, expectedIds);
@@ -606,7 +606,7 @@ void tst_SoftDeletes::restore_Trashed_OnTinyBuilder() const
             QCOMPARE(user.getAttribute(DELETED_AT).value<QDateTime>(), QDateTime());
             QVERIFY(!user.trashed());
 
-            actualIds.append(user.getAttribute(ID).value<quint64>());
+            actualIds << user.getAttribute(ID).value<quint64>();
         }
 
         QCOMPARE(actualIds, expectedIds);
@@ -771,7 +771,7 @@ void tst_SoftDeletes::restore_NotTrashed_OnTinyBuilder() const
                 QCOMPARE(user.getAttribute(DELETED_AT).value<QDateTime>(), QDateTime());
                 QVERIFY(!user.trashed());
 
-                actualIds.append(user.getAttribute(ID).value<quint64>());
+                actualIds << user.getAttribute(ID).value<quint64>();
             }
 
             QCOMPARE(actualIds, expectedIds);
@@ -811,7 +811,7 @@ void tst_SoftDeletes::restore_NotTrashed_OnTinyBuilder() const
             QCOMPARE(user.getAttribute(DELETED_AT).value<QDateTime>(), QDateTime());
             QVERIFY(!user.trashed());
 
-            actualIds.append(user.getAttribute(ID).value<quint64>());
+            actualIds << user.getAttribute(ID).value<quint64>();
         }
 
         QCOMPARE(actualIds, expectedIds);
@@ -996,7 +996,7 @@ void tst_SoftDeletes::remove_Trashed_OnTinyBuilder() const
                     timeBeforeRemove);
             QVERIFY(user.trashed());
 
-            actualIds.append(user.getAttribute(ID).value<quint64>());
+            actualIds << user.getAttribute(ID).value<quint64>();
         }
 
         QCOMPARE(actualIds, expectedIds);
@@ -1160,7 +1160,7 @@ void tst_SoftDeletes::remove_NotTrashed_OnTinyBuilder() const
                 QCOMPARE(user.getAttribute(DELETED_AT).value<QDateTime>(), QDateTime());
                 QVERIFY(!user.trashed());
 
-                actualIds.append(user.getAttribute(ID).value<quint64>());
+                actualIds << user.getAttribute(ID).value<quint64>();
             }
 
             QCOMPARE(actualIds, expectedIds);
@@ -1201,7 +1201,7 @@ void tst_SoftDeletes::remove_NotTrashed_OnTinyBuilder() const
                     timeBeforeRemove);
             QVERIFY(user.trashed());
 
-            actualIds.append(user.getAttribute(ID).value<quint64>());
+            actualIds << user.getAttribute(ID).value<quint64>();
         }
 
         QCOMPARE(actualIds, expectedIds);
