@@ -29,10 +29,10 @@ namespace Orm::Utils
         static QString
         join(const T &container, D &&delimiter = Constants::COMMA);
 
-        /*! Get a size of the greatest element in the container. */
-        template<QStringContainer T, typename SizeType = typename T::size_type>
-        static SizeType
-        maxElementSize(const T &container, typename T::size_type addToElement = 0);
+//        /*! Get a size of the greatest element in the container. */
+//        template<QStringContainer T, typename SizeType = typename T::size_type>
+//        static SizeType
+//        maxElementSize(const T &container, typename T::size_type addToElement = 0);
 
         /*! Count all string sizes in the given container and optionally add value to
             every string. */
@@ -64,30 +64,30 @@ namespace Orm::Utils
         return columnized;
     }
 
-    template<QStringContainer T, typename SizeType>
-    SizeType
-    Container::maxElementSize(const T &container,
-                              const typename T::size_type addToElement)
-    {
-        // Nothing to do
-        if (container.empty())
-            return 0;
+//    template<QStringContainer T, typename SizeType>
+//    SizeType
+//    Container::maxElementSize(const T &container,
+//                              const typename T::size_type addToElement)
+//    {
+//        // Nothing to do
+//        if (container.empty())
+//            return 0;
 
-        SizeType result = 0;
+//        SizeType result = 0;
 
-        for (const auto &element : container)
-            if (const auto elementSize = element.size();
-                elementSize > result
-            )
-                result = elementSize;
+//        for (const auto &element : container)
+//            if (const auto elementSize = element.size();
+//                elementSize > result
+//            )
+//                result = elementSize;
 
-        /* This is the reason for the addToElement argument, this algorithm returns 0,
-           if the result is 0. */
-        if (result == 0)
-            return 0;
+//        /* This is the reason for the addToElement argument, this algorithm returns 0,
+//           if the result is 0. */
+//        if (result == 0)
+//            return 0;
 
-        return result + addToElement;
-    }
+//        return result + addToElement;
+//    }
 
     template<QStringContainer T, typename SizeType>
     SizeType
