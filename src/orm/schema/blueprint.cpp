@@ -63,7 +63,7 @@ QVector<QString> Blueprint::toSql(const DatabaseConnection &connection,
         if (auto sql = grammar.invokeCompileMethod(*command, connection, *this);
             !sql.isEmpty()
         )
-            statements += std::move(sql);
+            statements << std::move(sql);
 
     return statements;
 }
