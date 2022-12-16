@@ -408,6 +408,7 @@ GitHub Actions:
  - Mass deletion of GitHub workflow runs
    - authenticate using the gh if auth expired
      - gh auth login -h github.com
+
    - dwr silverqx/TinyORM
      - <tab> or <shift-tab> to un/select
      - <enter> to delete selected runs
