@@ -441,8 +441,7 @@ namespace Concerns
     template<typename Related>
     Derived &
     HasRelationships<Derived, AllRelations...>::setRelation(
-            const QString &relation,
-            const QVector<Related> &models)
+            const QString &relation, const QVector<Related> &models)
     {
         m_relations[relation] = models;
 
@@ -453,8 +452,7 @@ namespace Concerns
     template<typename Related>
     Derived &
     HasRelationships<Derived, AllRelations...>::setRelation(
-            const QString &relation,
-            QVector<Related> &&models)
+            const QString &relation, QVector<Related> &&models)
     {
         m_relations[relation] = std::move(models);
 
@@ -465,8 +463,7 @@ namespace Concerns
     template<typename Related>
     Derived &
     HasRelationships<Derived, AllRelations...>::setRelation(
-            const QString &relation,
-            const std::optional<Related> &model)
+            const QString &relation, const std::optional<Related> &model)
     {
         m_relations[relation] = model;
 
@@ -477,8 +474,7 @@ namespace Concerns
     template<typename Related>
     Derived &
     HasRelationships<Derived, AllRelations...>::setRelation(
-            const QString &relation,
-            std::optional<Related> &&model)
+            const QString &relation, std::optional<Related> &&model)
     {
         m_relations[relation] = std::move(model);
 
@@ -490,8 +486,7 @@ namespace Concerns
     requires std::is_base_of_v<Relations::IsPivotModel, Related>
     Derived &
     HasRelationships<Derived, AllRelations...>::setRelation(
-            const QString &relation,
-            const std::optional<Related> &model)
+            const QString &relation, const std::optional<Related> &model)
     {
         m_pivots.insert(relation);
 
@@ -505,8 +500,7 @@ namespace Concerns
     requires std::is_base_of_v<Relations::IsPivotModel, Related>
     Derived &
     HasRelationships<Derived, AllRelations...>::setRelation(
-            const QString &relation,
-            std::optional<Related> &&model)
+            const QString &relation, std::optional<Related> &&model)
     {
         m_pivots.insert(relation);
 
