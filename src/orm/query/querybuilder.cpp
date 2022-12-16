@@ -1705,7 +1705,7 @@ Builder &Builder::joinSubInternal(
 
     addBinding(std::move(bindings), BindingType::JOIN);
 
-    return join(Expression(QStringLiteral("(%1) as %2").arg(std::move(queryString),
+    return join(Expression(QStringLiteral("(%1) as %2").arg(queryString,
                                                             m_grammar.wrapTable(as))),
                 first, comparison, second, type, where);
 }
@@ -1719,7 +1719,7 @@ Builder &Builder::joinSubInternal(
 
     addBinding(std::move(bindings), BindingType::JOIN);
 
-    return join(Expression(QStringLiteral("(%1) as %2").arg(std::move(queryString),
+    return join(Expression(QStringLiteral("(%1) as %2").arg(queryString,
                                                             m_grammar.wrapTable(as))),
                 callback, type);
 }

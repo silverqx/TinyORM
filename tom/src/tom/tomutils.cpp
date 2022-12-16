@@ -57,11 +57,11 @@ bool Utils::startsWithDatetimePrefix(const QString &migrationName)
 QString Utils::defaultValueText(const QString &value)
 {
     // Quote the string type
-    auto defaultValue = StringUtils::isNumber(value, true, true)
-                        ? value
-                        : QStringLiteral("\"%1\"").arg(value);
+    const auto defaultValue = StringUtils::isNumber(value, true, true)
+                              ? value
+                              : QStringLiteral("\"%1\"").arg(value);
 
-    return QStringLiteral(" [default: %1]").arg(std::move(defaultValue));
+    return QStringLiteral(" [default: %1]").arg(defaultValue);
 }
 
 QList<QCommandLineOption>

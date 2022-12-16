@@ -45,7 +45,7 @@ QString SQLiteGrammar::compileUpsert(
                         DOT_IN.arg(wrapValue(QStringLiteral("excluded")),
                                    wrap(column)));
 
-    return NOSPACE.arg(std::move(sql), columns.join(COMMA));
+    return NOSPACE.arg(sql, columns.join(COMMA));
 }
 
 QString SQLiteGrammar::compileDelete(QueryBuilder &query) const

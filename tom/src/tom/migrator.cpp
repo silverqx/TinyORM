@@ -216,7 +216,7 @@ void Migrator::runUp(const Migration &migration, const int batch,
     if (pretend)
         return pretendToRun(migration, MigrateMethod::Up); // clazy:exclude=returning-void-expression
 
-    auto migrationName = cachedMigrationName(migration);
+    const auto migrationName = cachedMigrationName(migration);
 
     comment(QStringLiteral("Migrating: "), false).note(migrationName);
 
@@ -233,7 +233,7 @@ void Migrator::runUp(const Migration &migration, const int batch,
     m_repository->log(migrationName, batch);
 
     info(QStringLiteral("Migrated:"), false);
-    note(QStringLiteral("  %1 (%2ms)").arg(std::move(migrationName)).arg(elapsedTime));
+    note(QStringLiteral("  %1 (%2ms)").arg(migrationName).arg(elapsedTime));
 }
 
 /* Rollback */

@@ -103,15 +103,15 @@ int ListCommand::raw(const QString &namespaceArg)
     const auto commandMaxSize = static_cast<int>((*it)->name().size());
 
     for (const auto &command : commands) {
-        auto commandName = command->name();
+        const auto commandName = command->name();
 
         // Exclude defined commands
         if (m_dontList.contains(commandName))
             continue;
 
-        auto indent = QString(commandMaxSize - commandName.size(), SPACE);
+        const auto indent = QString(commandMaxSize - commandName.size(), SPACE);
 
-        note(QStringLiteral("%1%2   %3").arg(std::move(commandName), std::move(indent),
+        note(QStringLiteral("%1%2   %3").arg(commandName, indent,
                                              command->description()));
     }
 
@@ -241,7 +241,7 @@ void ListCommand::printCommands(
     QString renderingNamespace;
 
     for (const auto &command : commands) {
-        auto commandName = command->name();
+        const auto commandName = command->name();
 
         // Exclude defined commands
         if (m_dontList.contains(commandName))
@@ -250,10 +250,9 @@ void ListCommand::printCommands(
         // Begin a new namespace section
         tryBeginNsSection(renderingNamespace, commandName, hasNamespaceName);
 
-        auto indent = QString(commandsMaxSize - commandName.size(), SPACE);
+        const auto indent = QString(commandsMaxSize - commandName.size(), SPACE);
 
-        info(QStringLiteral("  %1%2").arg(std::move(commandName), std::move(indent)),
-             false);
+        info(QStringLiteral("  %1%2").arg(commandName, indent), false);
 
         note(QStringLiteral("  %1").arg(command->description()));
     }

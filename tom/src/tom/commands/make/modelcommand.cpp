@@ -554,7 +554,7 @@ void ModelCommand::createMigration(const QString &className) const
 
     call(MakeMigration, {longOption(create_, table),
                          boolCmd(force),
-                         QStringLiteral("create_%1_table").arg(std::move(table)),
+                         QStringLiteral("create_%1_table").arg(table),
                          // Inform the make:migration that it's called from the make:model
                          longOption(from_model),
                          // Proxy path to the make:seeder

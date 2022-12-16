@@ -601,9 +601,9 @@ PostgresSchemaGrammar::generatableColumn(QString &&type, const ColumnDefinition 
         options = QStringLiteral(" (%1)").arg(column.generatedAs);
 
     return QStringLiteral("%1 generated %2 as identity%3")
-            .arg(std::move(type),
+            .arg(type,
                  column.always ? QStringLiteral("always") : QStringLiteral("by default"),
-                 std::move(options));
+                 options);
 }
 
 QString
@@ -611,15 +611,15 @@ PostgresSchemaGrammar::formatPostGisType(QString &&type, const ColumnDefinition 
 {
     if (!column.isGeometry)
         return QStringLiteral("geography(%1, %2)")
-                .arg(std::move(type), column.srid ? QString::number(*column.srid)
-                                                  : QStringLiteral("4326"));
+                .arg(type, column.srid ? QString::number(*column.srid)
+                                       : QStringLiteral("4326"));
 
     // NOTE api different, Eloquent uses the column.projection for this, I'm reusing the column.srid silverqx
     if (column.srid)
         return QStringLiteral("geometry(%1, %2)")
-                .arg(std::move(type), QString::number(*column.srid));
+                .arg(type, QString::number(*column.srid));
 
-    return QStringLiteral("geometry(%1)").arg(std::move(type));
+    return QStringLiteral("geometry(%1)").arg(type);
 }
 
 QString PostgresSchemaGrammar::typeChar(const ColumnDefinition &column) const // NOLINT(readability-convert-member-functions-to-static)
@@ -763,7 +763,7 @@ QString PostgresSchemaGrammar::typeTimestamp(const ColumnDefinition &column) con
                                        : EMPTY);
 
     return column.useCurrent
-            ? QStringLiteral("%1 default CURRENT_TIMESTAMP").arg(std::move(columnType))
+            ? QStringLiteral("%1 default CURRENT_TIMESTAMP").arg(columnType)
             : std::move(columnType);
 }
 
@@ -775,7 +775,7 @@ QString PostgresSchemaGrammar::typeTimestampTz(const ColumnDefinition &column) c
                                       : EMPTY);
 
     return column.useCurrent
-            ? QStringLiteral("%1 default CURRENT_TIMESTAMP").arg(std::move(columnType))
+            ? QStringLiteral("%1 default CURRENT_TIMESTAMP").arg(columnType)
             : std::move(columnType);
 }
 

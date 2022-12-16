@@ -57,7 +57,7 @@ QStringList PrintsOptions::createOptionNamesList(const QCommandLineOption &optio
     QStringList options;
 
     for (auto names = option.names();
-         auto &&name : names
+         const auto &name : names
     )
         // Short option
         if (name.size() == 1)
@@ -69,27 +69,24 @@ QStringList PrintsOptions::createOptionNamesList(const QCommandLineOption &optio
         // Long option
         else
             // Short and long options passed
-            if (auto valueName = option.valueName();
+            if (const auto valueName = option.valueName();
                 names.size() == 2
             ) {
                 // W/o the value
                 if (valueName.isEmpty())
-                    options << LongOption.arg(std::move(name));
+                    options << LongOption.arg(name);
                 // With the value
                 else
-                    options << LongOptionValue.arg(std::move(name),
-                                                   std::move(valueName));
+                    options << LongOptionValue.arg(name, valueName);
             }
             // Only a long option passed
             else {
                 // W/o a value
                 if (valueName.isEmpty())
-                    options << LongOptionOnly.arg(LongOption.arg(std::move(name)));
+                    options << LongOptionOnly.arg(LongOption.arg(name));
                 // With a value
                 else
-                    options << LongOptionOnly.arg(
-                                   LongOptionValue.arg(std::move(name),
-                                                       std::move(valueName)));
+                    options << LongOptionOnly.arg(LongOptionValue.arg(name, valueName));
             }
 
     return options;
@@ -119,12 +116,11 @@ void PrintsOptions::printOptions(const int optionsMaxSize) const
         if (option.hidden())
             continue;
 
-        auto joinedOptions = createOptionNamesList(option).join(COMMA);
+        const auto joinedOptions = createOptionNamesList(option).join(COMMA);
 
-        auto indent = QString(optionsMaxSize - joinedOptions.size(), SPACE);
+        const auto indent = QString(optionsMaxSize - joinedOptions.size(), SPACE);
 
-        io().info(QStringLiteral("  %1%2  ").arg(std::move(joinedOptions),
-                                                 std::move(indent)),
+        io().info(QStringLiteral("  %1%2  ").arg(joinedOptions, indent),
                   false);
 
         io().note(option.description(), false);

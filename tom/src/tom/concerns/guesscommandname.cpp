@@ -92,11 +92,11 @@ GuessCommandName::printAmbiguousCommands(
             | ranges::views::transform([commandsMaxSize](const auto &command)
                                        -> QString
     {
-        auto commandName_ = command->name();
-        auto indent = QString(commandsMaxSize - commandName_.size() + 1, SPACE);
+        const auto commandName_ = command->name();
+        const auto indent = QString(commandsMaxSize - commandName_.size() + 1, SPACE);
 
-        return QStringLiteral("    %1%2%3")
-                .arg(std::move(commandName_), std::move(indent), command->description());
+        return QStringLiteral("    %1%2%3").arg(commandName_, indent,
+                                                command->description());
     })
             | ranges::to<QStringList>();
 

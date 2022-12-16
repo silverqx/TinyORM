@@ -170,7 +170,7 @@ void MakeCommand::throwIfFileAlreadyExists(
     if (!fs::exists(folder))
         return;
 
-    auto itemName = className.isEmpty() ? basename : className;
+    const auto itemName = className.isEmpty() ? basename : className;
 
     using options = fs::directory_options;
 
@@ -203,10 +203,10 @@ void MakeCommand::throwIfFileAlreadyExists(
             if (!isSet(force))
                 throw Exceptions::InvalidArgumentError(
                         QStringLiteral("A '%1' %2 already exists.")
-                        .arg(std::move(itemName), type));
+                        .arg(itemName, type));
 
             comment(QStringLiteral("Overwriting '%1' already existing %2.")
-                    .arg(std::move(itemName), type));
+                    .arg(itemName, type));
             break;
         }
     }

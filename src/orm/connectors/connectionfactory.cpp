@@ -212,7 +212,7 @@ ConnectionFactory::createConnection(
 //                    std::move(qtTimeZone), std::move(config));
 
     throw Exceptions::RuntimeError(QStringLiteral("Unsupported driver '%1' in %2().")
-                                   .arg(std::move(driver), __tiny_func__));
+                                   .arg(driver, __tiny_func__));
 }
 
 QStringList ConnectionFactory::parseHosts(const QVariantHash &config)

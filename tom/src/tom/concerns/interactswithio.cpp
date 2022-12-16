@@ -66,7 +66,7 @@ InteractsWithIO::InteractsWithIO(const bool noAnsi)
 
 const InteractsWithIO &
 InteractsWithIO::line(const QString &string, const bool newline,
-                      const Verbosity verbosity, QString &&style,
+                      const Verbosity verbosity, const QString &style,
                       std::ostream &cout) const
 {
     if (dontOutput(verbosity))
@@ -74,15 +74,13 @@ InteractsWithIO::line(const QString &string, const bool newline,
 
     static const auto tmplStyled = QStringLiteral("<%3>%1</%3>%2");
 
-    auto parsedString = parseOutput(string, isAnsiOutput(cout));
+    const auto parsedString = parseOutput(string, isAnsiOutput(cout));
 
     if (style.isEmpty())
-        cout << NOSPACE
-                .arg(std::move(parsedString), newline ? NEWLINE : "").toStdString();
+        cout << NOSPACE.arg(parsedString, newline ? NEWLINE : "").toStdString();
     else
-        cout << tmplStyled
-                .arg(std::move(parsedString), newline ? NEWLINE : "", std::move(style))
-                .toStdString();
+        cout << tmplStyled.arg(parsedString, newline ? NEWLINE : "", style)
+                          .toStdString();
 
     return *this;
 }
@@ -152,7 +150,7 @@ const InteractsWithIO &InteractsWithIO::errorWall(const QString &string,
 
 const InteractsWithIO &
 InteractsWithIO::wline(const QString &string, const bool newline,
-                       const Verbosity verbosity, QString &&style,
+                       const Verbosity verbosity, const QString &style,
                        std::wostream &wcout) const
 {
     if (dontOutput(verbosity))
@@ -160,15 +158,13 @@ InteractsWithIO::wline(const QString &string, const bool newline,
 
     static const auto tmplStyled = QStringLiteral("<%3>%1</%3>%2");
 
-    auto parsedString = parseOutput(string, isAnsiWOutput(wcout));
+    const auto parsedString = parseOutput(string, isAnsiWOutput(wcout));
 
     if (style.isEmpty())
-        wcout << NOSPACE
-                 .arg(std::move(parsedString), newline ? NEWLINE : "").toStdWString();
+        wcout << NOSPACE.arg(parsedString, newline ? NEWLINE : "").toStdWString();
     else
-        wcout << tmplStyled
-                 .arg(std::move(parsedString), newline ? NEWLINE : "", std::move(style))
-                 .toStdWString();
+        wcout << tmplStyled.arg(parsedString, newline ? NEWLINE : "", style)
+                           .toStdWString();
 
     return *this;
 }
@@ -500,22 +496,22 @@ QString InteractsWithIO::errorWallInternal(const QString &string) const
         // Get final max. line width in all rendered lines (after split by the width)
         const auto maxLineWidth = getMaxLineWidth(lines);
         // Above/below empty line
-        auto emptyLine = QString(maxLineWidth + 4, SPACE);
+        const auto emptyLine = QString(maxLineWidth + 4, SPACE);
 
         // Empty line above
         output += tmpl.arg(emptyLine).append(NEWLINE);
 
-        for (auto &&line : lines) {
+        for (const auto &line : lines) {
             // Prepend/append spaces
-            auto lineSpaced = QStringLiteral("  %1  ").arg(std::move(line));
+            auto lineSpaced = QStringLiteral("  %1  ").arg(line);
             // Fill a line to the end with spaces
             lineSpaced += QString(maxLineWidth - lineSpaced.size() + 4, SPACE);
             // Ansi wrap
-            output += tmpl.arg(std::move(lineSpaced)).append(NEWLINE);
+            output += tmpl.arg(lineSpaced).append(NEWLINE);
         }
 
         // Empty line below
-        output += tmpl.arg(std::move(emptyLine));
+        output += tmpl.arg(emptyLine);
     }
 
     return output;

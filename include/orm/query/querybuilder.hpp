@@ -1154,9 +1154,9 @@ namespace Orm::Query
     template<SubQuery T>
     Builder &Builder::selectSub(T &&query, const QString &as)
     {
-        auto [queryString, bindings] = createSub(std::forward<T>(query));
+        const auto [queryString, bindings] = createSub(std::forward<T>(query));
 
-        return selectRaw(QStringLiteral("(%1) as %2").arg(std::move(queryString),
+        return selectRaw(QStringLiteral("(%1) as %2").arg(queryString,
                                                           m_grammar.wrap(as)),
                          bindings);
     }
@@ -1165,9 +1165,9 @@ namespace Orm::Query
     Builder &
     Builder::fromSub(T &&query, const QString &as)
     {
-        auto [queryString, bindings] = createSub(std::forward<T>(query));
+        const auto [queryString, bindings] = createSub(std::forward<T>(query));
 
-        return fromRaw(QStringLiteral("(%1) as %2").arg(std::move(queryString),
+        return fromRaw(QStringLiteral("(%1) as %2").arg(queryString,
                                                         m_grammar.wrapTable(as)),
                        bindings);
     }

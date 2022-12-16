@@ -200,12 +200,12 @@ void Application::logException(const std::exception &e, const bool noAnsi)
 
     static const auto tmpl = QStringLiteral("%1%2%1").arg(NEWLINE, TMPL_ONE);
 
-    auto message = QStringLiteral("Caught '%1' Exception:\n%2")
-                   .arg(TypeUtils::classPureBasename(e, true), e.what());
+    const auto message = QStringLiteral("Caught '%1' Exception:\n%2")
+                         .arg(TypeUtils::classPureBasename(e, true), e.what());
 
     // No-ansi output
     if (noAnsi || !io.isAnsiOutput(std::cerr)) {
-        qCritical().nospace().noquote() << tmpl.arg(std::move(message));
+        qCritical().nospace().noquote() << tmpl.arg(message);
         return;
     }
 

@@ -402,7 +402,7 @@ int CompleteCommand::printGuessedLongOptions(
         if (option.hidden())
             continue;
 
-        for (auto &&optionName : optionNames)
+        for (const auto &optionName : optionNames)
             if (optionName.size() > 1 &&
                 (printAll || optionName.startsWith(wordToGuess))
             ) {
@@ -410,7 +410,7 @@ int CompleteCommand::printGuessedLongOptions(
                 if (const auto valueName = option.valueName();
                     valueName.isEmpty()
                 ) {
-                    auto longOption = LongOption.arg(std::move(optionName));
+                    auto longOption = LongOption.arg(optionName);
 
 #ifdef _MSC_VER
                     options << QStringLiteral("%1;%2;%3").arg(longOption, longOption,
@@ -425,11 +425,11 @@ int CompleteCommand::printGuessedLongOptions(
                     auto longOption = LongOption.arg(optionName).append(EQ_C);
 #ifdef _MSC_VER
                     // Text to be displayed in a list
-                    auto longOptionList = LongOptionValue.arg(std::move(optionName),
-                                                              valueName);
+                    const auto longOptionList = LongOptionValue.arg(optionName,
+                                                                    valueName);
 
                     options << QStringLiteral("%1;%2;%3%4")
-                               .arg(std::move(longOption), std::move(longOptionList),
+                               .arg(longOption, longOptionList,
                                     option.description(),
                                     getOptionDefaultValue(option));
 #else

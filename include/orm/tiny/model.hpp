@@ -386,7 +386,7 @@ namespace Orm::Tiny
         static void throwIfQDateTimeAttribute(const QVector<AttributeItem> &attributes);
         /*! Throw if an attempt to fill a guarded attribute is detected
             (mass assignment). */
-        static void throwIfTotallyGuarded(QString &&key);
+        static void throwIfTotallyGuarded(const QString &key);
 
         /*! Get the u_dateFormat attribute from the Derived model. */
         inline QString &getUserDateFormat();
@@ -1002,13 +1002,13 @@ namespace Orm::Tiny
             /* The developers may choose to place some attributes in the "fillable" vector
                which means only those attributes may be set through mass assignment to
                the model, and all others will just get ignored for security reasons. */
-            if (auto &key = attribute.key;
+            if (const auto &key = attribute.key;
                 this->isFillable(key)
             )
                 this->setAttribute(key, std::move(attribute.value));
 
             else if (totallyGuarded)
-                throwIfTotallyGuarded(std::move(key));
+                throwIfTotallyGuarded(key);
 
         return model();
     }
@@ -1023,13 +1023,13 @@ namespace Orm::Tiny
             /* The developers may choose to place some attributes in the "fillable" vector
                which means only those attributes may be set through mass assignment to
                the model, and all others will just get ignored for security reasons. */
-            if (auto &key = attribute.key;
+            if (const auto &key = attribute.key;
                 this->isFillable(key)
             )
                 this->setAttribute(key, std::move(attribute.value));
 
             else if (totallyGuarded)
-                throwIfTotallyGuarded(std::move(key));
+                throwIfTotallyGuarded(key);
         }
 
         return model();
@@ -1674,13 +1674,12 @@ namespace Orm::Tiny
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
-    void Model<Derived, AllRelations...>::throwIfTotallyGuarded(QString &&key)
+    void Model<Derived, AllRelations...>::throwIfTotallyGuarded(const QString &key)
     {
         throw Exceptions::MassAssignmentError(
                     QStringLiteral("Add '%1' to u_fillable data member to allow "
                                    "mass assignment on the '%2' model.")
-                    .arg(std::move(key),
-                         TypeUtils::classPureBasename<Derived>()));
+                    .arg(key, TypeUtils::classPureBasename<Derived>()));
     }
 
     /* Getters for u_ data members defined in the Derived models, helps to avoid

@@ -158,14 +158,15 @@ void HelpCommand::printUsageSection(
         auto optionalCounter = 0;
 
         for (const auto &argument : arguments) {
-            auto syntax = argument.syntax.isEmpty() ? argument.name : argument.syntax;
+            const auto syntax = argument.syntax.isEmpty() ? argument.name
+                                                          : argument.syntax;
 
             if (argument.optional) {
-                usage += QStringLiteral(" [<%1>").arg(std::move(syntax));
+                usage += QStringLiteral(" [<%1>").arg(syntax);
                 ++optionalCounter;
             }
             else
-                usage += QStringLiteral(" <%1>").arg(std::move(syntax));
+                usage += QStringLiteral(" <%1>").arg(syntax);
         }
 
         usage += QString(optionalCounter, QLatin1Char(']'));

@@ -61,7 +61,7 @@ QString MySqlGrammar::compileUpsert(
                                      .arg(wrappedColumn, wrappedColumn));
     }
 
-    return NOSPACE.arg(std::move(sql), columns.join(COMMA));
+    return NOSPACE.arg(sql, columns.join(COMMA));
 }
 
 QString MySqlGrammar::compileLock(const QueryBuilder &query) const

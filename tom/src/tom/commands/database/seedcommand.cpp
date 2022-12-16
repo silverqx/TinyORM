@@ -75,7 +75,7 @@ int SeedCommand::run()
     // Database connection to use (multiple connections supported)
     return usingConnections(values(database_), isDebugVerbosity(), [this]
     {
-        auto seederResult = getSeeder();
+        const auto seederResult = getSeeder();
 
         comment(QStringLiteral("Seeding: "), false);
         note(QStringLiteral("%1 (root)").arg(seederResult.name));
@@ -90,7 +90,7 @@ int SeedCommand::run()
         const auto elapsedTime = timer.elapsed();
 
         info(QStringLiteral("Seeded:"), false);
-        note(QStringLiteral("  %1 (%2ms total)").arg(std::move(seederResult.name))
+        note(QStringLiteral("  %1 (%2ms total)").arg(seederResult.name)
                                                 .arg(elapsedTime));
 
         info(QStringLiteral("Database seeding completed successfully."));

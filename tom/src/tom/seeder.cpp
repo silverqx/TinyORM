@@ -48,7 +48,7 @@ void Seeder::callInternal(const bool silent, std::function<void()> &&callback) c
     const auto elapsedTime = timer.elapsed();
 
     m_io->get().info(QStringLiteral("Seeded:"), false);
-    m_io->get().note(QStringLiteral("  %1 (%2ms)").arg(std::move(seederName))
+    m_io->get().note(QStringLiteral("  %1 (%2ms)").arg(seederName)
                                                   .arg(elapsedTime));
 }
 
