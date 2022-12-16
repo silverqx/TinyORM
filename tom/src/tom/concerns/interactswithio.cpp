@@ -509,7 +509,7 @@ QString InteractsWithIO::errorWallInternal(const QString &string) const
             // Prepend/append spaces
             auto lineSpaced = QStringLiteral("  %1  ").arg(std::move(line));
             // Fill a line to the end with spaces
-            lineSpaced.append(QString(maxLineWidth - lineSpaced.size() + 4, SPACE));
+            lineSpaced += QString(maxLineWidth - lineSpaced.size() + 4, SPACE);
             // Ansi wrap
             output += tmpl.arg(std::move(lineSpaced)).append(NEWLINE);
         }
