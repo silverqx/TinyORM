@@ -194,13 +194,13 @@ QVector<QString>
 PostgresSchemaGrammar::compileIndex(const Blueprint &blueprint,
                                     const IndexCommand &command) const
 {
-    auto algorithm = command.algorithm.isEmpty()
-                     ? EMPTY
-                     : QStringLiteral(" using %1").arg(command.algorithm);
+    const auto algorithm = command.algorithm.isEmpty()
+                           ? EMPTY
+                           : QStringLiteral(" using %1").arg(command.algorithm);
 
     return {QStringLiteral("create index %1 on %2%3 (%4)")
                 .arg(BaseGrammar::wrap(command.index), wrapTable(blueprint),
-                     std::move(algorithm), columnize(command.columns))};
+                     algorithm, columnize(command.columns))};
 }
 
 QVector<QString>
@@ -267,10 +267,11 @@ QVector<QString>
 PostgresSchemaGrammar::compileDropPrimary(const Blueprint &blueprint,
                                           const IndexCommand &/*unused*/) const
 {
-    auto index = BaseGrammar::wrap(QStringLiteral("%1_pkey").arg(blueprint.getTable()));
+    const auto index = BaseGrammar::wrap(QStringLiteral("%1_pkey")
+                                         .arg(blueprint.getTable()));
 
     return {QStringLiteral("alter table %1 drop constraint %2")
-                .arg(wrapTable(blueprint), std::move(index))};
+            .arg(wrapTable(blueprint), index)};
 }
 
 QVector<QString>

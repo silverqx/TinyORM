@@ -1206,14 +1206,13 @@ Builder &Builder::lock(QString &&value)
 // NOTE api different, added the replaceBindings and simpleBindings parameters silverqx
 void Builder::dump(const bool replaceBindings, const bool simpleBindings)
 {
-    auto queryString = toSql();
-    auto bindings = getBindings();
+    const auto queryString = toSql();
+    const auto bindings = getBindings();
 
-    auto [queryStringReplaced, simpleBindingsList] =
+    const auto [queryStringReplaced, simpleBindingsList] =
             QueryUtils::replaceBindingsInSql(queryString, bindings, simpleBindings);
 
-    qDebug().noquote() << (replaceBindings ? std::move(queryStringReplaced)
-                                           : std::move(queryString));
+    qDebug().noquote() << (replaceBindings ? queryStringReplaced : queryString);
 
     if (replaceBindings)
         return;
@@ -1223,7 +1222,7 @@ void Builder::dump(const bool replaceBindings, const bool simpleBindings)
     if (simpleBindings)
         qDebug().noquote() << simpleBindingsList.join(COMMA);
     else
-        qDebug() << std::move(bindings);
+        qDebug() << bindings;
 }
 
 void Builder::dd(const bool replaceBindings, const bool simpleBindings)
@@ -1590,13 +1589,13 @@ Builder::createSub(QString &&query) noexcept
 Builder &Builder::prependDatabaseNameIfCrossDatabaseQuery(Builder &query) const
 {
     const auto &queryDatabaseName = query.getConnection().getDatabaseName();
-    auto queryFrom = std::get<QString>(query.m_from);
+    const auto queryFrom = std::get<QString>(query.m_from);
 
     if (queryDatabaseName != getConnection().getDatabaseName() &&
         !queryFrom.startsWith(queryDatabaseName) &&
         !queryFrom.contains(DOT)
     )
-        query.from(DOT_IN.arg(queryDatabaseName, std::move(queryFrom)));
+        query.from(DOT_IN.arg(queryDatabaseName, queryFrom));
 
     return query;
 }

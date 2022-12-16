@@ -234,11 +234,11 @@ QStringList Command::values(const QString &name) const
 
 QString Command::valueCmd(const QString &name, const QString &key) const
 {
-    if (auto value = parser().value(name);
+    if (const auto value = parser().value(name);
         !value.isEmpty()
     )
         return QStringLiteral("--%1=%2").arg(key.isEmpty() ? name : key,
-                                             std::move(value));
+                                             value);
 
     return {};
 }

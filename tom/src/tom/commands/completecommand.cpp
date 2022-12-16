@@ -324,7 +324,7 @@ int CompleteCommand::printGuessedShells(const QString &word) const
 
 int CompleteCommand::printAndGuessConnectionNames(const QString &connectionName) const
 {
-    auto allConnectionNames = getConnectionNamesFromFile();
+    const auto allConnectionNames = getConnectionNamesFromFile();
 
     // Nothing to guess
     if (allConnectionNames.empty())
@@ -332,16 +332,16 @@ int CompleteCommand::printAndGuessConnectionNames(const QString &connectionName)
 
     QStringList connectionNames;
 
-    for (auto &&connection : allConnectionNames)
+    for (const auto &connection : allConnectionNames)
         /* It also evaluates to true if the given connectionName is an empty string "",
            so it prints all connection names in this case.
            Also --database= has to be prepended because pwsh overwrites whole option. */
         if (connection.startsWith(connectionName))
             connectionNames
-                    << QStringLiteral("%1;%2").arg(
-                           NOSPACE.arg(LongOption.arg(database_).append(EQ_C),
-                                       connection),
-                           std::move(connection));
+                    << QStringLiteral("%1;%2")
+                       .arg(NOSPACE.arg(LongOption.arg(database_).append(EQ_C),
+                                        connection),
+                            connection);
 
     // Print
     note(connectionNames.join(NEWLINE));

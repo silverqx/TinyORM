@@ -132,7 +132,7 @@ void HelpCommand::printUsageSection(
 
     comment(QStringLiteral("Usage:"));
 
-    auto commandName = command.name();
+    const auto commandName = command.name();
     const auto hasOptions = command.hasOptions();
     const auto hasPositionalArguments = command.hasPositionalArguments();
 
@@ -147,7 +147,7 @@ void HelpCommand::printUsageSection(
                   10);
 
     usage.fill(SPACE, 2);
-    usage += std::move(commandName);
+    usage += commandName;
 
     if (hasOptions)
         usage += QLatin1String(" [options]");
@@ -189,9 +189,9 @@ void HelpCommand::printArgumentsSection(
          const auto &argument : arguments
     ) {
         // Compute indent
-        auto indent = QString(argumentsMaxSize - argument.name.size(), SPACE);
+        const auto indent = QString(argumentsMaxSize - argument.name.size(), SPACE);
 
-        info(QStringLiteral("  %1%2  ").arg(argument.name, std::move(indent)), false);
+        info(QStringLiteral("  %1%2  ").arg(argument.name, indent), false);
 
         note(argument.description, false);
 
