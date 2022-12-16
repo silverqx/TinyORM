@@ -221,12 +221,12 @@ QStringList Command::values(const QString &name) const
     // Support passing more values delimited by comma
     for (auto &&value : values) {
         if (!value.contains(regex)) {
-            valuesSplitted += std::move(value);
+            valuesSplitted << std::move(value);
 
             continue;
         }
 
-        valuesSplitted += value.split(regex, Qt::KeepEmptyParts);
+        valuesSplitted << value.split(regex, Qt::KeepEmptyParts);
     }
 
     return valuesSplitted;
