@@ -106,7 +106,7 @@ InteractsWithIO::error(const QString &string, const bool newline,
                        const Verbosity verbosity) const
 {
     return line(QStringLiteral("<error>%1</error>").arg(string), newline, verbosity,
-                "", std::cerr);
+                {}, std::cerr);
 }
 
 const InteractsWithIO &
@@ -192,7 +192,7 @@ InteractsWithIO::werror(const QString &string, const bool newline,
                         const Verbosity verbosity) const
 {
     return wline(QStringLiteral("<error>%1</error>").arg(string), newline, verbosity,
-                 "", std::wcerr);
+                 {}, std::wcerr);
 }
 
 const InteractsWithIO &

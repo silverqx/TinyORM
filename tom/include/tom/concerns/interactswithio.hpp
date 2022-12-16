@@ -85,7 +85,7 @@ namespace Concerns
         /*! Write a string as standard output. */
         const InteractsWithIO &line(const QString &string, bool newline = true,
                                     Verbosity verbosity = Normal,
-                                    QString &&style = "",
+                                    const QString &style = {},
                                     std::ostream &cout = std::cout) const;
         /*! Write a string as note output. */
         const InteractsWithIO &note(const QString &string, bool newline = true,
@@ -109,7 +109,7 @@ namespace Concerns
         /*! Write a string as standard output, wide version. */
         const InteractsWithIO &wline(const QString &string, bool newline = true,
                                      Verbosity verbosity = Normal,
-                                     QString &&style = "",
+                                     const QString &style = {},
                                      std::wostream &wcout = std::wcout) const;
         /*! Write a string as note output, wide version. */
         const InteractsWithIO &wnote(const QString &string, bool newline = true,
