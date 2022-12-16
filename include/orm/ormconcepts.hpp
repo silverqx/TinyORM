@@ -88,10 +88,10 @@ namespace Query
     concept DelimiterConcept = std::convertible_to<T, QString> ||
                                std::convertible_to<T, QChar>;
 
-    /*! QString container concept (QStringList or QVector<QString>). */
+    /*! QString container concept (used by ContainerUtils::countStringSizes()). */
     template<typename T>
-    concept QStringContainer = std::convertible_to<T, QStringList> ||
-                               std::convertible_to<T, QVector<QString>>;
+    concept QStringContainer = JoinContainer<T> &&
+                               !std::convertible_to<T, QVector<Column>>;
 
 } // namespace Orm
 
