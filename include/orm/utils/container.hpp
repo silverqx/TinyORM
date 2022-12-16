@@ -37,8 +37,8 @@ namespace Orm::Utils
 
     private:
         /*! Get the delimiter size (returns 1 for the QChar). */
-        template<DelimiterConcept D>
-        static QString::size_type delimiterSize(D &&delimiter);
+        template<typename SizeType = QString::size_type, DelimiterConcept D>
+        static SizeType delimiterSize(D &&delimiter);
     };
 
     template<JoinContainer T, DelimiterConcept D>
@@ -51,9 +51,9 @@ namespace Orm::Utils
             return columnized;
 
         // +4 serves as a reserve (for the reserve() 😂)
+        const auto delimiterSize_ = delimiterSize<typename T::size_type>(delimiter);
         columnized.reserve(static_cast<QString::size_type>(
-                               countStringSizes(container,
-                                                delimiterSize(delimiter) + 4)));
+                               countStringSizes(container, delimiterSize_ + 4)));
 
         auto end = container.end();
         --end;
@@ -80,20 +80,20 @@ namespace Orm::Utils
         SizeType size = 0;
 
         for (const auto &string : container)
-            size += string.size() + addToElement;
+            size += static_cast<SizeType>(string.size()) + addToElement;
 
         return size;
     }
 
     /* private */
 
-    template<DelimiterConcept D>
-    QString::size_type Container::delimiterSize(D &&delimiter)
+    template<typename SizeType, DelimiterConcept D>
+    SizeType Container::delimiterSize(D &&delimiter)
     {
         if constexpr (std::is_constructible_v<D, QChar>)
             return 1;
         else
-            return QString(delimiter).size();
+            return static_cast<SizeType>(QString(delimiter).size());
     }
 
 } // namespace Orm::Utils
