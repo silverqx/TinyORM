@@ -336,14 +336,6 @@ QString String::wrapValue(const QString &string, const QChar firstCharacter,
 }
 #endif
 
-//QString String::singular(const QString &string)
-//{
-//    if (!string.endsWith(QLatin1Char('s')))
-//        return string;
-
-//    return string.chopped(1);
-//}
-
 } // namespace Orm::Utils
 
 TINYORM_END_COMMON_NAMESPACE

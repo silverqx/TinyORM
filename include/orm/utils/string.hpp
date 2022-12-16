@@ -58,11 +58,6 @@ namespace Orm::Utils
         static QString wrapValue(const QString &string, QChar firstCharacter,
                                  QChar lastCharacter);
 #endif
-
-//        /*! Convert a string to kebab case. (kebab-case). */
-//        inline static QString kebab(const QString &string);
-//        /*! Get the singular form of an English word. */
-//        static QString singular(const QString &string);
     };
 
     /* public */
@@ -79,11 +74,6 @@ namespace Orm::Utils
         return result;
     }
 #endif
-
-//    QString String::kebab(const QString &string)
-//    {
-//        return snake(string, Orm::Constants::DASH);
-//    }
 
 } // namespace Orm::Utils
 
