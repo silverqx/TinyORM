@@ -472,6 +472,10 @@ namespace
 
 QString InteractsWithIO::errorWallInternal(const QString &string) const
 {
+    // Nothing to print
+    if (QStringView(string).trimmed().isEmpty())
+        return string;
+
     QStringList lines;
 
     {
