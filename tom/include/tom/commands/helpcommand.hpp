@@ -56,7 +56,8 @@ namespace Tom::Commands
         void printArgumentsSection(
                 const std::vector<PositionalArgument> &arguments) const;
         /*! Get max. positional argument size in all command arguments. */
-        static int argumentsMaxSize(const std::vector<PositionalArgument> &arguments);
+        static QString::size_type
+        argumentsMaxSize(const std::vector<PositionalArgument> &arguments);
         /*! Count all argument sizes in the given container. */
         static QString::size_type
         countArgumentsSizes(const std::vector<PositionalArgument> &arguments);

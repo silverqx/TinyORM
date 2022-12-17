@@ -199,20 +199,16 @@ void HelpCommand::printArgumentsSection(
     }
 }
 
-int HelpCommand::argumentsMaxSize(const std::vector<PositionalArgument> &arguments)
+QString::size_type
+HelpCommand::argumentsMaxSize(const std::vector<PositionalArgument> &arguments)
 {
-    static const auto cached = [&arguments]
+    const auto it = std::ranges::max_element(arguments, std::less {},
+                                             [](const auto &argument)
     {
-        const auto it = std::ranges::max_element(arguments, std::less {},
-                                                 [](const auto &argument)
-        {
-            return argument.name.size();
-        });
+        return argument.name.size();
+    });
 
-        return static_cast<int>((*it).name.size());
-    }();
-
-    return cached;
+    return (*it).name.size();
 }
 
 QString::size_type
