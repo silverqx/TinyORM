@@ -8,12 +8,12 @@ namespace TestUtils
 
 QString Fs::cleanPath(const QString &path)
 {
-    auto ret = path.trimmed();
+    auto pathTrimmed = path.trimmed();
 
-    if (ret.isEmpty())
-        return ret;
+    if (pathTrimmed.isEmpty())
+        return pathTrimmed;
 
-    return QDir::cleanPath(ret);
+    return QDir::cleanPath(pathTrimmed);
 }
 
 QString Fs::absolutePath(const QString &path)
