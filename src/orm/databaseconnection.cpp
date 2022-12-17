@@ -280,7 +280,7 @@ SqlQuery DatabaseConnection::unprepared(const QString &queryString)
            include the bindings with SQL, which will make this exception a lot
            more helpful to the developer instead of just the database's errors. */
         throw Exceptions::QueryError(
-                    "Unprepared statement in %DatabaseConnection::unprepared() failed.",
+                    "Unprepared statement in DatabaseConnection::unprepared() failed.",
                     query);
     });
 
