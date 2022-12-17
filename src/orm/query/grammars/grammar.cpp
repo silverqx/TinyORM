@@ -471,11 +471,10 @@ QString Grammar::whereRowValues(const WhereConditionItem &where) const
 
 QString Grammar::whereBetween(const WhereConditionItem &where) const
 {
-    auto between = where.nope ? QStringLiteral("not between")
-                              : QStringLiteral("between");
+    const auto between = where.nope ? QStringLiteral("not between")
+                                    : QStringLiteral("between");
 
-    return QStringLiteral("%1 %2 %3 and %4").arg(wrap(where.column),
-                                                 std::move(between),
+    return QStringLiteral("%1 %2 %3 and %4").arg(wrap(where.column), between,
                                                  parameter(where.between.min),
                                                  parameter(where.between.max));
 }
