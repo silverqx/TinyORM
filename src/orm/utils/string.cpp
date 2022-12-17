@@ -183,14 +183,8 @@ QString String::studly(QString string)
 
 namespace
 {
-#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
-    using StringViewType = QStringView;
-#else
-    using StringViewType = QStringRef;
-#endif
-
     /*! Split the token to multiple lines by the given width. */
-    bool splitLongToken(StringViewType token, const int width, QString &line,
+    bool splitLongToken(QStringView token, const int width, QString &line,
                         std::vector<QString> &lines)
     {
         auto shouldContinue = false;
@@ -272,14 +266,7 @@ std::vector<QString> String::splitStringByWidth(const QString &string, const int
 
     QString line;
 
-#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
-    for (auto token : string.tokenize(SPACE)) {
-#else
-    for (const auto splitted = string.splitRef(SPACE);
-         // NOLINTNEXTLINE(performance-for-range-copy)
-         auto token : splitted // clazy:exclude=range-loop,range-loop-reference
-    ) {
-#endif
+    for (auto &&token : QStringView(string).split(SPACE)) {
         // If there is still a space on the line then append the token
         if (line.size() + token.size() + 1 <= width) {
             // Don't prepend the space at beginning of an empty line
