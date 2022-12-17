@@ -150,10 +150,10 @@ void HelpCommand::printUsageSection(
     usage += commandName;
 
     if (hasOptions)
-        usage += QLatin1String(" [options]");
+        usage += QStringLiteral(" [options]");
 
     if (hasPositionalArguments) {
-        usage += QLatin1String(" [--]");
+        usage += QStringLiteral(" [--]");
 
         auto optionalCounter = 0;
 
