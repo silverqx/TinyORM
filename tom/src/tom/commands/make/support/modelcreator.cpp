@@ -66,7 +66,7 @@ namespace Tom::Commands::Make::Support
 /* public */
 
 fspath ModelCreator::create(const QString &className, const CmdOptions &cmdOptions,
-                            fspath &&modelsPath, const bool isSetPreserveOrder)
+                            const fspath &modelsPath, const bool isSetPreserveOrder)
 {
     const auto basename = className.toLower();
 

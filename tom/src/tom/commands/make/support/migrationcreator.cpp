@@ -26,10 +26,10 @@ namespace Tom::Commands::Make::Support
 /* public */
 
 fspath MigrationCreator::create(
-            std::string &&datetimePrefix, const QString &name, std::string &&extension,
-            fspath &&migrationsPath, const QString &table, const bool create)
+        std::string &&datetimePrefix, const QString &name, const std::string &extension,
+        const fspath &migrationsPath, const QString &table, const bool create)
 {
-    auto migrationPath = getPath(std::move(datetimePrefix), name, std::move(extension),
+    auto migrationPath = getPath(std::move(datetimePrefix), name, extension,
                                  migrationsPath);
 
     /* First we will get the stub file for the migration, which serves as a type
@@ -63,14 +63,14 @@ QString MigrationCreator::getStub(const QString &table, const bool create)
 }
 
 fspath MigrationCreator::getPath(std::string &&datetimePrefix, const QString &name,
-                                 std::string &&extension, const fspath &path)
+                                 const std::string &extension, const fspath &path)
 {
     std::string filename = datetimePrefix.empty() ? getDatePrefix()
                                                   : std::move(datetimePrefix);
 
     filename += '_' + name.toStdString();
 
-    filename += extension.empty() ? ".hpp" : std::move(extension);
+    filename += extension.empty() ? ".hpp" : extension;
 
     return path / filename;
 }

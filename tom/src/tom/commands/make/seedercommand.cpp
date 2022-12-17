@@ -67,13 +67,13 @@ int SeederCommand::run()
 
     const auto className = prepareSeederClassName(argument(NAME));
 
-    auto seedersPath = getSeedersPath();
+    const auto seedersPath = getSeedersPath();
 
     // Check whether a seeder file already exists and create parent folder if needed
     prepareFileSystem(seeder, seedersPath, className.toLower(), className);
 
     // Ready to write the seeder to the disk 🧨✨
-    writeSeeder(className, std::move(seedersPath));
+    writeSeeder(className, seedersPath);
 
     return EXIT_SUCCESS;
 }
@@ -106,10 +106,10 @@ QString SeederCommand::prepareSeederClassName(QString &&className)
     return std::move(className);
 }
 
-void SeederCommand::writeSeeder(const QString &className, fspath &&seedersPath) const
+void SeederCommand::writeSeeder(const QString &className,
+                                const fspath &seedersPath) const
 {
-    auto seederFilePath = Support::SeederCreator::create(className,
-                                                         std::move(seedersPath));
+    auto seederFilePath = Support::SeederCreator::create(className, seedersPath);
 
     // make_preferred() returns reference and filename() creates a new fs::path instance
     const auto seederFile = isSet(fullpath) ? seederFilePath.make_preferred()

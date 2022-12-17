@@ -87,7 +87,7 @@ namespace Support
 
         /*! Write the model file to the disk. */
         void writeModel(const QString &className, const CmdOptions &cmdOptions,
-                        fspath &&modelsPath);
+                        const fspath &modelsPath);
 
         /*! Create command-line options instance. */
         CmdOptions createCmdOptions();

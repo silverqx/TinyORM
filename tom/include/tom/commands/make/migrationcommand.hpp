@@ -63,7 +63,7 @@ namespace Tom::Commands::Make
 
         /*! Write the migration file to the disk. */
         void writeMigration(std::string &&datetimePrefix, const QString &name,
-                            std::string &&extension, fspath &&migrationsPath,
+                            const std::string &extension, const fspath &migrationsPath,
                             const QString &table, bool create) const;
 
         /*! Get the migrations path (either specified by the --path option or the default

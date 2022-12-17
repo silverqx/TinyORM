@@ -35,7 +35,7 @@ namespace Tom::Commands::Make::Support
 
         /*! Create a new model at the given path. */
         fspath create(const QString &className, const CmdOptions &cmdOptions,
-                      fspath &&modelsPath, bool isSetPreserveOrder);
+                      const fspath &modelsPath, bool isSetPreserveOrder);
 
     protected:
         /*! Get the full path to the model. */

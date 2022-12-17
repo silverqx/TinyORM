@@ -240,14 +240,14 @@ int ModelCommand::run()
     )
         newLine();
 
-    auto modelsPath = getModelsPath();
+    const auto modelsPath = getModelsPath();
 
     // Check whether a model file already exists and create parent folder if needed
     prepareFileSystem(QStringLiteral("model"), modelsPath, className.toLower(),
                       className);
 
     // Ready to write the model to the disk 🧨✨
-    writeModel(className, cmdOptions, std::move(modelsPath));
+    writeModel(className, cmdOptions, modelsPath);
 
     // Call other commands
     if (isSet(migration_))
@@ -413,9 +413,9 @@ void ModelCommand::showUnusedIncrementingWarning()
 }
 
 void ModelCommand::writeModel(const QString &className, const CmdOptions &cmdOptions,
-                              fspath &&modelsPath)
+                              const fspath &modelsPath)
 {
-    auto modelFilePath = m_creator.create(className, cmdOptions, std::move(modelsPath),
+    auto modelFilePath = m_creator.create(className, cmdOptions, modelsPath,
                                           isSet(preserve_order));
 
     // make_preferred() returns reference and filename() creates a new fs::path instance

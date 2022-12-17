@@ -31,7 +31,7 @@ namespace Tom::Commands::Make::Support
         ~SeederCreator() = delete;
 
         /*! Create a new seeder at the given path. */
-        static fspath create(const QString &className, fspath &&seedersPath);
+        static fspath create(const QString &className, const fspath &seedersPath);
 
     protected:
         /*! Get the full path to the seeder. */

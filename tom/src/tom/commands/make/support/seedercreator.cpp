@@ -19,7 +19,7 @@ namespace Tom::Commands::Make::Support
 
 /* public */
 
-fspath SeederCreator::create(const QString &className, fspath &&seedersPath)
+fspath SeederCreator::create(const QString &className, const fspath &seedersPath)
 {
     const auto basename = className.toLower();
 

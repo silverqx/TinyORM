@@ -85,7 +85,7 @@ int MigrationCommand::run()
     auto [datetimePrefix, migrationName, extension] =
             prepareMigrationNameClassName(argument(NAME).trimmed());
 
-    auto migrationsPath = getMigrationsPath();
+    const auto migrationsPath = getMigrationsPath();
 
     // Check whether a migration file already exists and create parent folder if needed
     prepareFileSystem(QStringLiteral("migration"), migrationsPath, migrationName);
@@ -111,8 +111,8 @@ int MigrationCommand::run()
         std::tie(table, create) = Support::TableGuesser::guess(migrationName);
 
     // Ready to write the migration to the disk 🧨✨
-    writeMigration(std::move(datetimePrefix), migrationName, std::move(extension),
-                   std::move(migrationsPath), table, create);
+    writeMigration(std::move(datetimePrefix), migrationName, extension, migrationsPath,
+                   table, create);
 
     return EXIT_SUCCESS;
 }
@@ -209,12 +209,12 @@ QString MigrationCommand::prepareFinalMigrationName(QString &&migration)
 }
 
 void MigrationCommand::writeMigration(
-            std::string &&datetimePrefix, const QString &name, std::string &&extension,
-            fspath &&migrationsPath, const QString &table, const bool create) const
+        std::string &&datetimePrefix, const QString &name, const std::string &extension,
+        const fspath &migrationsPath, const QString &table, const bool create) const
 {
     auto migrationFilePath = Support::MigrationCreator::create(
-                                 std::move(datetimePrefix), name, std::move(extension),
-                                 std::move(migrationsPath), table, create);
+                                 std::move(datetimePrefix), name, extension,
+                                 migrationsPath, table, create);
 
     // make_preferred() returns reference and filename() creates a new fs::path instance
     const auto migrationFile = isSet(fullpath) ? migrationFilePath.make_preferred()

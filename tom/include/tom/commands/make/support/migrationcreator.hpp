@@ -32,7 +32,7 @@ namespace Tom::Commands::Make::Support
 
         /*! Create a new migration at the given path. */
         static fspath create(std::string &&datetimePrefix, const QString &name,
-                             std::string &&extension, fspath &&migrationsPath,
+                             const std::string &extension, const fspath &migrationsPath,
                              const QString &table = "", bool create = false);
 
     protected:
@@ -41,7 +41,7 @@ namespace Tom::Commands::Make::Support
 
         /*! Get the full path to the migration. */
         static fspath getPath(std::string &&datetimePrefix, const QString &name,
-                              std::string &&extension, const fspath &path);
+                              const std::string &extension, const fspath &path);
         /*! Get the date prefix for the migration. */
         static std::string getDatePrefix();
 
