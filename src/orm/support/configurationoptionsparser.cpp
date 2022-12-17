@@ -58,7 +58,8 @@ ConfigurationOptionsParser::validateConfigOptions(const QVariant &options)
 QVariantHash
 ConfigurationOptionsParser::prepareConfigOptions(const QVariant &options)
 {
-    // Input is already validated, so I can be sure that options key is QVariantHash
+    /* Nothing to do, already contains the QVariantHas. Input is already validated, so
+       I can be sure that options contain the QVariantHash. */
     if (Helpers::qVariantTypeId(options) != QMetaType::QString)
         return options.value<QVariantHash>();
 
