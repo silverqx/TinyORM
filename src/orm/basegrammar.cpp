@@ -189,6 +189,8 @@ QStringList BaseGrammar::getSegmentsFromFrom(const QString &from)
     auto segments = from.split(QStringLiteral(" as "), Qt::KeepEmptyParts,
                                Qt::CaseInsensitive);
 
+    Q_ASSERT(!segments.isEmpty() && segments.size() <= 2);
+
     // Remove leading/ending whitespaces
     for (auto &segement : segments)
         segement = segement.trimmed();
