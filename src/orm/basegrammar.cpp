@@ -190,8 +190,8 @@ QStringList BaseGrammar::getSegmentsFromFrom(const QString &from)
                                Qt::CaseInsensitive);
 
     // Remove leading/ending whitespaces
-    for (auto &segemnt : segments)
-        segemnt = segemnt.trimmed();
+    for (auto &segement : segments)
+        segement = segement.trimmed();
 
     return segments;
 }
