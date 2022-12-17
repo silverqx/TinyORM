@@ -72,7 +72,7 @@ fspath MigrationCreator::getPath(std::string &&datetimePrefix, const QString &na
 
     filename += extension.empty() ? ".hpp" : std::move(extension);
 
-    return path / std::move(filename);
+    return path / filename;
 }
 
 std::string MigrationCreator::getDatePrefix()

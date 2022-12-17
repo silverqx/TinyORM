@@ -153,11 +153,10 @@ fspath MakeCommand::guessPathForMakeByPwd(
     /* The pwd doesn't contain any of the defaultPath folder names (different path),
        the validation stage didn't even start. */
     if (!validationStage)
-        return std::move(pwd) / defaultPath;
+        return pwd / defaultPath;
 
     // Append the computed/guessed (from the defaultPath) to the pwd 🙏
-    return std::move(pwd) / guessedPathList.join(fspath::preferred_separator)
-                                           .toStdString();
+    return pwd / guessedPathList.join(fspath::preferred_separator).toStdString();
 }
 
 /* private */

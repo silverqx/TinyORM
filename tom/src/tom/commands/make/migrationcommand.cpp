@@ -253,7 +253,7 @@ fspath MigrationCommand::getUserMigrationsPath() const
             // The 'path' argument contains an absolute path
             ? std::move(targetPath)
             // The 'path' argument contains a relative path
-            : fs::current_path() / std::move(targetPath);
+            : fs::current_path() / targetPath;
 }
 
 fspath MigrationCommand::guessMigrationsPath() const
