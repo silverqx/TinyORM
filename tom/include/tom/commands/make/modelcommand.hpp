@@ -127,12 +127,12 @@ namespace Support
     private:
         /*! Throw if the model name constains a namespace or path. */
         static void throwIfContainsNamespaceOrPath(
-                    const std::vector<QStringList> &classNames, const QString &source,
-                    const QString &commandType = QStringLiteral("model"));
+                const std::vector<QStringList> &classNames, const QString &source,
+                const QString &commandType = QStringLiteral("model"));
         /*! Throw if the model name constains a namespace or path. */
         static void throwIfContainsNamespaceOrPath(
-                    const QStringList &classNames, const QString &source,
-                    const QString &commandType = QStringLiteral("model"));
+                const QStringList &classNames, const QString &source,
+                const QString &commandType = QStringLiteral("model"));
     };
 
     /* public */

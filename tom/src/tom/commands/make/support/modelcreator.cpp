@@ -86,9 +86,9 @@ fspath ModelCreator::getPath(const QString &basename, const fspath &path)
     return path / (basename.toStdString() + ".hpp");
 }
 
-std::string ModelCreator::populateStub(
-            const QString &className, const CmdOptions &cmdOptions,
-            const bool isSetPreserveOrder)
+std::string
+ModelCreator::populateStub(const QString &className, const CmdOptions &cmdOptions,
+                           const bool isSetPreserveOrder)
 {
     const auto publicSection  = createPublicSection(className, cmdOptions,
                                                     isSetPreserveOrder);
@@ -140,9 +140,9 @@ std::string ModelCreator::populateStub(
 
 /* Public model section */
 
-QString ModelCreator::createPublicSection(
-            const QString &className, const CmdOptions &cmdOptions,
-            const bool isSetPreserveOrder)
+QString
+ModelCreator::createPublicSection(const QString &className, const CmdOptions &cmdOptions,
+                                  const bool isSetPreserveOrder)
 {
     const auto &[
             relationsOrder,
@@ -207,8 +207,8 @@ QString ModelCreator::createPublicSection(
 
 ModelCreator::RelationsWithOrder
 ModelCreator::createOneToOneRelation(
-            const QString &parentClass, const QStringList &relatedClasses,
-            const QStringList &foreignKeys, const std::vector<std::size_t> &orderList)
+        const QString &parentClass, const QStringList &relatedClasses,
+        const QStringList &foreignKeys, const std::vector<std::size_t> &orderList)
 {
     if (relatedClasses.isEmpty())
         return {};
@@ -262,8 +262,8 @@ ModelCreator::createOneToOneRelation(
 
 ModelCreator::RelationsWithOrder
 ModelCreator::createOneToManyRelation(
-            const QString &parentClass, const QStringList &relatedClasses,
-            const QStringList &foreignKeys, const std::vector<std::size_t> &orderList)
+        const QString &parentClass, const QStringList &relatedClasses,
+        const QStringList &foreignKeys, const std::vector<std::size_t> &orderList)
 {
     if (relatedClasses.isEmpty())
         return {};
@@ -317,8 +317,8 @@ ModelCreator::createOneToManyRelation(
 
 ModelCreator::RelationsWithOrder
 ModelCreator::createBelongsToRelation(
-            const QString &parentClass, const QStringList &relatedClasses,
-            const QStringList &foreignKeys, const std::vector<std::size_t> &orderList)
+        const QString &parentClass, const QStringList &relatedClasses,
+        const QStringList &foreignKeys, const std::vector<std::size_t> &orderList)
 {
     if (relatedClasses.isEmpty())
         return {};
@@ -397,13 +397,13 @@ namespace
 
 ModelCreator::RelationsWithOrder
 ModelCreator::createBelongsToManyRelation(
-            const QString &parentClass, const QStringList &relatedClasses,
-            const std::vector<BelongToManyForeignKeys> &foreignKeys,
-            const std::vector<std::size_t> &orderList, const QStringList &pivotTables,
-            const QStringList &pivotClasses,
-            const std::vector<QStringList> &pivotInverseClasses,
-            const QStringList &asList, const std::vector<QStringList> &withPivotList,
-            const std::vector<bool> &withTimestampsList)
+        const QString &parentClass, const QStringList &relatedClasses,
+        const std::vector<BelongToManyForeignKeys> &foreignKeys,
+        const std::vector<std::size_t> &orderList, const QStringList &pivotTables,
+        const QStringList &pivotClasses,
+        const std::vector<QStringList> &pivotInverseClasses,
+        const QStringList &asList, const std::vector<QStringList> &withPivotList,
+        const std::vector<bool> &withTimestampsList)
 {
     if (relatedClasses.isEmpty())
         return {};
@@ -482,7 +482,7 @@ ModelCreator::createBelongsToManyRelation(
 }
 
 QString ModelCreator::createRelationArgumentsBtm(
-            const QString &pivotTable, const BelongToManyForeignKeys &foreignKey)
+        const QString &pivotTable, const BelongToManyForeignKeys &foreignKey)
 {
     const auto &[foreignPivotKey, relatedPivotKey] = foreignKey;
 
@@ -548,7 +548,7 @@ void ModelCreator::handlePivotInverseClass(const QStringList &pivotInverseClasse
 }
 
 QString ModelCreator::createRelationCalls(
-            const QString &as, const QStringList &withPivot, const bool withTimestamps)
+        const QString &as, const QStringList &withPivot, const bool withTimestamps)
 {
     /*! Align a method call on the newline. */
     const auto relationCallsAlign = [](const auto &relationCalls)
@@ -615,8 +615,8 @@ QString ModelCreator::guessManyTypeRelationName(const QString &className)
 /* Private model section */
 
 QString ModelCreator::createPrivateSection(
-            const QString &className, const CmdOptions &cmdOptions,
-            const bool hasPublicSection, const bool isSetPreserveOrder)
+        const QString &className, const CmdOptions &cmdOptions,
+        const bool hasPublicSection, const bool isSetPreserveOrder)
 {
     const auto &[
             _1, _2, _3, _4, _5, _6, _7, _8, _9, _10, _11, _12,
@@ -736,8 +736,8 @@ QString ModelCreator::prepareInitializerListValues(const QStringList &list)
 }
 
 QString ModelCreator::createRelationsHash(
-            const QString &className, const CmdOptions &cmdOptions,
-            const bool isSetPreserveOrder) const
+        const QString &className, const CmdOptions &cmdOptions,
+        const bool isSetPreserveOrder) const
 {
     const auto &[
             relationsOrder,
@@ -812,9 +812,9 @@ QString::size_type ModelCreator::getRelationNamesMaxSize(const CmdOptions &cmdOp
 
 ModelCreator::RelationsWithOrder
 ModelCreator::createOneToOneRelationItem(
-            const QString &parentClass, const QStringList &relatedClasses,
-            const QString::size_type relationsMaxSize,
-            const std::vector<std::size_t> &orderList)
+        const QString &parentClass, const QStringList &relatedClasses,
+        const QString::size_type relationsMaxSize,
+        const std::vector<std::size_t> &orderList)
 {
     if (relatedClasses.isEmpty())
         return {};
@@ -850,9 +850,9 @@ ModelCreator::createOneToOneRelationItem(
 
 ModelCreator::RelationsWithOrder
 ModelCreator::createOneToManyRelationItem(
-            const QString &parentClass, const QStringList &relatedClasses,
-            const QString::size_type relationsMaxSize,
-            const std::vector<std::size_t> &orderList)
+        const QString &parentClass, const QStringList &relatedClasses,
+        const QString::size_type relationsMaxSize,
+        const std::vector<std::size_t> &orderList)
 {
     if (relatedClasses.isEmpty())
         return {};
@@ -888,9 +888,9 @@ ModelCreator::createOneToManyRelationItem(
 
 ModelCreator::RelationsWithOrder
 ModelCreator::createBelongsToRelationItem(
-            const QString &parentClass, const QStringList &relatedClasses,
-            const QString::size_type relationsMaxSize,
-            const std::vector<std::size_t> &orderList)
+        const QString &parentClass, const QStringList &relatedClasses,
+        const QString::size_type relationsMaxSize,
+        const std::vector<std::size_t> &orderList)
 {
     if (relatedClasses.isEmpty())
         return {};
@@ -926,9 +926,9 @@ ModelCreator::createBelongsToRelationItem(
 
 ModelCreator::RelationsWithOrder
 ModelCreator::createBelongsToManyRelationItem(
-            const QString &parentClass, const QStringList &relatedClasses,
-            const QString::size_type relationsMaxSize,
-            const std::vector<std::size_t> &orderList)
+        const QString &parentClass, const QStringList &relatedClasses,
+        const QString::size_type relationsMaxSize,
+        const std::vector<std::size_t> &orderList)
 {
     if (relatedClasses.isEmpty())
         return {};
@@ -1025,8 +1025,8 @@ QString ModelCreator::createForwardsSection() const
 /* Common for public/private sections */
 
 std::size_t ModelCreator::computeReserveForRelationsList(
-            const QStringList &oneToOne, const QStringList &oneToMany,
-            const QStringList &belongsTo, const QStringList &belongsToMany)
+        const QStringList &oneToOne, const QStringList &oneToMany,
+        const QStringList &belongsTo, const QStringList &belongsToMany)
 {
     // Cache the computed reserve size to avoid recomputation in the private section
     m_relationsListSize = static_cast<std::size_t>(oneToOne.size()) +

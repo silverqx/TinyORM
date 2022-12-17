@@ -139,8 +139,8 @@ MigrationCommand::prepareMigrationNameClassName(QString &&migration)
 
 std::tuple<std::string, QString, std::string>
 MigrationCommand::prepareMigrationNameFromFilename(
-            const bool startsWithDatetimePrefix, QString &&migration, const bool hasExt,
-            std::string &&ext)
+        const bool startsWithDatetimePrefix, QString &&migration, const bool hasExt,
+        std::string &&ext)
 {
     QString migrationName;
 

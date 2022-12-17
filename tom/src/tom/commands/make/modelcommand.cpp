@@ -578,16 +578,15 @@ void ModelCommand::createSeeder(const QString &className) const
 /* private */
 
 void ModelCommand::throwIfContainsNamespaceOrPath(
-            const std::vector<QStringList> &classNames, const QString &source,
-            const QString &commandType)
+        const std::vector<QStringList> &classNames, const QString &source,
+        const QString &commandType)
 {
     for (const auto &classNameList : classNames)
         throwIfContainsNamespaceOrPath(classNameList, source, commandType);
 }
 
 void ModelCommand::throwIfContainsNamespaceOrPath(
-            const QStringList &classNames, const QString &source,
-            const QString &commandType)
+        const QStringList &classNames, const QString &source, const QString &commandType)
 {
     for (const auto &className : classNames)
         MakeCommand::throwIfContainsNamespaceOrPath(commandType, className, source);

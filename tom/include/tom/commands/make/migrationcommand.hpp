@@ -47,13 +47,13 @@ namespace Tom::Commands::Make
         /*! Prepare a migration name from the filename. */
         static std::tuple<std::string, QString, std::string>
         prepareMigrationNameFromFilename(
-                    bool startsWithDatetimePrefix, QString &&migration, bool hasExt,
-                    std::string &&ext);
+                bool startsWithDatetimePrefix, QString &&migration, bool hasExt,
+                std::string &&ext);
         /*! Try to extract the datetime prefix from the migration name. */
         static std::string
         tryExtractDateTimePrefixFromName(
-                    bool startsWithDatetimePrefix, QString &&migration,
-                    QString &migrationName);
+                bool startsWithDatetimePrefix, QString &&migration,
+                QString &migrationName);
         /*! Try to extract the extension from the migration name. */
         static std::string
         tryExtractExtensionFromName(bool hasExt, std::string &&ext,
