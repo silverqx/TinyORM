@@ -137,14 +137,14 @@ void HelpCommand::printUsageSection(
     const auto hasPositionalArguments = command.hasPositionalArguments();
 
     QString usage;
+                  // 2 - two spaces at the beginning
     usage.reserve(2 + commandName.size() +
+                  // 10 - ' [options]'
                   (hasOptions ? 10 : 0) +
-                  (hasPositionalArguments
-                   ? 5 + (argumentsMaxSize(arguments) + 5) *
-                     static_cast<QString::size_type>(arguments.size())
-                   : 0) +
-                  // Some reserve, important if a command has only one argument
-                  10);
+                  // 5 - ' [--]'
+                  (hasPositionalArguments ? 5 + countArgumentsSizes(arguments) : 0) +
+                  // Some reserve
+                  16);
 
     usage.fill(SPACE, 2);
     usage += commandName;
@@ -213,6 +213,22 @@ int HelpCommand::argumentsMaxSize(const std::vector<PositionalArgument> &argumen
     }();
 
     return cached;
+}
+
+QString::size_type
+HelpCommand::countArgumentsSizes(const std::vector<PositionalArgument> &arguments)
+{
+    // arguments.empty() check not needed here
+
+    QString::size_type size = 0;
+
+    for (const auto &argument : arguments)
+        size += (argument.syntax.isEmpty() ? argument.name.size()
+                                           : argument.syntax.size()) +
+                // 5 - ' [<>]'; 3 - ' <>' (argName is between the <> characters)
+                (argument.optional ? 5 : 3);
+
+    return size;
 }
 
 void HelpCommand::printArgumentDefaultValue(const PositionalArgument &argument) const

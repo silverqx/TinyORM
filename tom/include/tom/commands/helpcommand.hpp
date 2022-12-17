@@ -57,6 +57,9 @@ namespace Tom::Commands
                 const std::vector<PositionalArgument> &arguments) const;
         /*! Get max. positional argument size in all command arguments. */
         static int argumentsMaxSize(const std::vector<PositionalArgument> &arguments);
+        /*! Count all argument sizes in the given container. */
+        static QString::size_type
+        countArgumentsSizes(const std::vector<PositionalArgument> &arguments);
         /*! Print a positional's argument default value part. */
         void printArgumentDefaultValue(const PositionalArgument &argument) const;
 
