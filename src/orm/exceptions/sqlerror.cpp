@@ -32,26 +32,30 @@ SqlError::SqlError(const QString &message, const QSqlError &error, const int /*u
 
 QString SqlError::formatMessage(const char *message, const QSqlError &error)
 {
-    QString result(message);
+    const auto messageStr = QString::fromUtf8(message);
+    auto nativeErrorCode = error.nativeErrorCode();
+    auto driverText = error.driverText().trimmed();
+    auto databaseText = error.databaseText().trimmed();
 
+    QString result;
+    // +32 as a reserve; +4 : 2 * ', '
+    result.reserve(messageStr.size() + 11 + nativeErrorCode.size() + driverText.size() +
+                   databaseText.size() + 1 + 4 + 32);
+
+    result += messageStr;
     result += QStringLiteral("\nQSqlError(");
 
     QStringList errorText;
+    errorText.reserve(3);
 
-    if (const auto nativeErrorCode = error.nativeErrorCode();
-        !nativeErrorCode.isEmpty()
-    )
-        errorText << nativeErrorCode;
+    if (!nativeErrorCode.isEmpty())
+        errorText << std::move(nativeErrorCode);
 
-    if (const auto driverText = error.driverText().trimmed();
-        !driverText.isEmpty()
-    )
-        errorText << driverText;
+    if (!driverText.isEmpty())
+        errorText << std::move(driverText);
 
-    if (const auto databaseText = error.databaseText().trimmed();
-        !databaseText.isEmpty()
-    )
-        errorText << databaseText;
+    if (!databaseText.isEmpty())
+        errorText << std::move(databaseText);
 
     result += errorText.join(COMMA);
 

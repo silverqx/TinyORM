@@ -41,13 +41,18 @@ const QVector<QVariant> &QueryError::getBindings() const
 
 QString QueryError::formatMessage(const char *message, const QSqlQuery &query)
 {
+    const auto sqlError = SqlError::formatMessage(message, query.lastError());
+    const auto executedQuery = QueryUtils::parseExecutedQuery(query);
+
     // Format SQL error message
-    QString result(SqlError::formatMessage(message, query.lastError()));
+    QString result;
+    // +32 as a reserve
+    result.reserve(sqlError.size() + executedQuery.size() + 7 + 32);
+
+    result += sqlError;
 
     // Also append executed query
-    if (const auto executedQuery = QueryUtils::parseExecutedQuery(query);
-        !executedQuery.isEmpty()
-    )
+    if (!executedQuery.isEmpty())
         result += QStringLiteral(", SQL: %1").arg(executedQuery);
 
     return result;
