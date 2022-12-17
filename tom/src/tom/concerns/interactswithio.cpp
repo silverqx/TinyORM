@@ -482,6 +482,8 @@ QString InteractsWithIO::errorWallInternal(const QString &string) const
         const auto maxLineWidth = std::min(m_terminal->width() - 4,
                                            static_cast<int>(getMaxLineWidth(splitted)));
 
+        lines.reserve(computeReserveForErrorWall(splitted, maxLineWidth));
+
         // Split lines by the given width
         for (const auto &lineNl : splitted)
             for (auto &&line : StringUtils::splitStringByWidth(lineNl, maxLineWidth))
@@ -493,10 +495,18 @@ QString InteractsWithIO::errorWallInternal(const QString &string) const
     {
         // Ansi template
         static const auto tmpl = QStringLiteral("\033[37;41m%1\033[0m");
-        // Get final max. line width in all rendered lines (after split by the width)
+        // Get final max. line width in all rendered lines (after splitted by the width)
         const auto maxLineWidth = getMaxLineWidth(lines);
+        // Full line width (with spaces at the beginning and end)
+        const auto fullLineWidth = maxLineWidth + 4;
         // Above/below empty line
-        const auto emptyLine = QString(maxLineWidth + 4, SPACE);
+        const auto emptyLine = QString(fullLineWidth, SPACE);
+
+        /* Length of line  - 'tmpl.size() - 2' : -2 to exclude %1; '+ 1' : NEWLINE;
+           Number of lines - '* (2 +' : empty line above/below
+           Final +32 as a reserve. */
+        output.reserve((fullLineWidth + (tmpl.size() - 2) + 1) *
+                       (2 + lines.size()) + 32);
 
         // Empty line above
         output += tmpl.arg(emptyLine).append(NEWLINE);
@@ -505,7 +515,7 @@ QString InteractsWithIO::errorWallInternal(const QString &string) const
             // Prepend/append spaces
             auto lineSpaced = QStringLiteral("  %1  ").arg(line);
             // Fill a line to the end with spaces
-            lineSpaced += QString(maxLineWidth - lineSpaced.size() + 4, SPACE);
+            lineSpaced += QString(fullLineWidth - lineSpaced.size(), SPACE);
             // Ansi wrap
             output += tmpl.arg(lineSpaced).append(NEWLINE);
         }
@@ -515,6 +525,20 @@ QString InteractsWithIO::errorWallInternal(const QString &string) const
     }
 
     return output;
+}
+
+QStringList::size_type
+InteractsWithIO::computeReserveForErrorWall(const QStringList &splitted,
+                                            const int maxLineWidth)
+{
+    qint64 size = 0;
+
+    for (const auto &line : splitted)
+        /* +2 serves as a reserve because the splitting algorithm can decided
+           to start a new line if there is <30% free space, +2 is enough. */
+        size += std::llround(static_cast<double>(line.size()) / maxLineWidth) + 2;
+
+    return static_cast<QStringList::size_type>(size);
 }
 
 InteractsWithIO::TableColors InteractsWithIO::initializeTableColors() const

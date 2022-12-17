@@ -196,6 +196,9 @@ namespace Concerns
 
         /*! Write a string as error output (red box with a white text). */
         QString errorWallInternal(const QString &string) const;
+        /*! Compute a reserve value for the QStringList lines. */
+        static QStringList::size_type
+        computeReserveForErrorWall(const QStringList &splitted, int maxLineWidth);
 
         /*! Alias for the tabulate color. */
         using Color = tabulate::Color;
