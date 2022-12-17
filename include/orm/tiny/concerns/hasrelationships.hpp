@@ -1258,11 +1258,14 @@ namespace Concerns
             const auto relationsContainKey =
                     ranges::contains(onlyRelations, true, [&key](const auto &relation)
             {
-                if (!relation.name.contains(COLON))
-                    return relation.name == key;
+                const auto &relationName = relation.name;
+
+                if (!relationName.contains(COLON))
+                    return relationName == key;
 
                 // Support for select constraints
-                return relation.name.split(COLON).constFirst().trimmed() == key;
+                return QStringView(relationName.constData(),
+                                   relationName.indexOf(COLON)).trimmed() == key;
             });
 
             if (!relationsContainKey)

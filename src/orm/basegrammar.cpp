@@ -117,7 +117,14 @@ BaseGrammar &BaseGrammar::setTablePrefix(const QString &prefix)
 
 QString BaseGrammar::unqualifyColumn(const QString &column)
 {
-    return column.split(DOT).last().trimmed();
+    const auto lastDotIndex = column.lastIndexOf(DOT);
+
+    // Nothing do unqualify, a dot not found
+    if (lastDotIndex == -1)
+        return column;
+
+    return QStringView(column.constData() + lastDotIndex + 1, column.constEnd())
+            .trimmed().toString();
 }
 
 QString BaseGrammar::getFromWithoutAlias(const QString &from)
