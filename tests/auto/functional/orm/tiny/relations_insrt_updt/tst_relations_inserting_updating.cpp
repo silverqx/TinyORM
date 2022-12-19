@@ -2566,9 +2566,9 @@ void tst_Relations_Inserting_Updating::sync_BasicPivot_IdsWithAttributes() const
     }
 
     const auto changed = tag5->torrents()->sync(
-                           {{torrent100[ID]->value<quint64>(), {{"active", true}}},
-                            {torrent101[ID]->value<quint64>(), {{"active", false}}},
-                            {torrent103[ID]->value<quint64>(), {{"active", true}}}});
+                             {{torrent100[ID]->value<quint64>(), {{"active", true}}},
+                              {torrent101[ID]->value<quint64>(), {{"active", false}}},
+                              {torrent103[ID]->value<quint64>(), {{"active", true}}}});
 
     // Verify result
     QVERIFY(changed.isValidKey(Attached));
@@ -2783,9 +2783,9 @@ void tst_Relations_Inserting_Updating::sync_CustomPivot_IdsWithAttributes() cons
     }
 
     const auto changed = torrent5->tags()->sync(
-                       {{tag100[ID]->value<quint64>(), {{"active", true}}},
-                        {tag101[ID]->value<quint64>(), {{"active", false}}},
-                        {tag103[ID]->value<quint64>(), {{"active", true}}}});
+                             {{tag100[ID]->value<quint64>(), {{"active", true}}},
+                              {tag101[ID]->value<quint64>(), {{"active", false}}},
+                              {tag103[ID]->value<quint64>(), {{"active", true}}}});
 
     // Verify result
     QVERIFY(changed.isValidKey(Attached));
@@ -3023,9 +3023,9 @@ void tst_Relations_Inserting_Updating::
     }
 
     const auto changed = tag5->torrents()->syncWithoutDetaching(
-                           {{torrent100[ID]->value<quint64>(), {{"active", true}}},
-                            {torrent101[ID]->value<quint64>(), {{"active", false}}},
-                            {torrent103[ID]->value<quint64>(), {{"active", true}}}});
+                             {{torrent100[ID]->value<quint64>(), {{"active", true}}},
+                              {torrent101[ID]->value<quint64>(), {{"active", false}}},
+                              {torrent103[ID]->value<quint64>(), {{"active", true}}}});
 
     // Verify result
     QVERIFY(changed.isValidKey(Attached));
@@ -3236,9 +3236,9 @@ void tst_Relations_Inserting_Updating::
     }
 
     const auto changed = torrent5->tags()->syncWithoutDetaching(
-                       {{tag100[ID]->value<quint64>(), {{"active", true}}},
-                        {tag101[ID]->value<quint64>(), {{"active", false}}},
-                        {tag103[ID]->value<quint64>(), {{"active", true}}}});
+                             {{tag100[ID]->value<quint64>(), {{"active", true}}},
+                              {tag101[ID]->value<quint64>(), {{"active", false}}},
+                              {tag103[ID]->value<quint64>(), {{"active", true}}}});
 
     // Verify result
     QVERIFY(changed.isValidKey(Attached));
