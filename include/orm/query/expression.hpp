@@ -53,6 +53,8 @@ namespace Orm::Query
         QVariant m_value {};
     };
 
+    /* public */
+
     // NOLINTNEXTLINE(modernize-pass-by-value)
     Expression::Expression(const QVariant &value)
         : m_value(value)
