@@ -92,6 +92,10 @@ namespace Orm::Constants
     SHAREDLIB_EXPORT extern const QString dont_drop;
     SHAREDLIB_EXPORT extern const QString qt_timezone;
 
+    SHAREDLIB_EXPORT extern const QString SSL_CERT;
+    SHAREDLIB_EXPORT extern const QString SSL_KEY;
+    SHAREDLIB_EXPORT extern const QString SSL_CA;
+
     SHAREDLIB_EXPORT extern const QString isolation_level;
     SHAREDLIB_EXPORT extern const QString foreign_key_constraints;
     SHAREDLIB_EXPORT extern const QString check_database_exists;
