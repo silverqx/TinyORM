@@ -517,7 +517,7 @@ QString InteractsWithIO::errorWallInternal(const QString &string) const
         // Empty line above
         output += tmpl.arg(emptyLine).append(NEWLINE);
 
-        for (const auto &line : lines) {
+        for (const auto &line : std::as_const(lines)) {
             // Prepend/append spaces
             auto lineSpaced = QStringLiteral("  %1  ").arg(line);
             // Fill a line to the end with spaces
