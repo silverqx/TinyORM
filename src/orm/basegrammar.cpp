@@ -165,7 +165,7 @@ QString BaseGrammar::wrapValue(QString value) const
     if (value == ASTERISK_C)
         return value;
 
-    return QStringLiteral("\"%1\"").arg(value.replace(QUOTE, QStringLiteral("\"\"")));
+    return TMPL_DQUOTES.arg(value.replace(QUOTE, QStringLiteral("\"\"")));
 }
 
 // NOLINTNEXTLINE(misc-no-recursion)

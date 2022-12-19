@@ -12,6 +12,7 @@
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
+using Orm::Constants::TMPL_DQUOTES;
 using Orm::Constants::UNDERSCORE;
 
 using StringUtils = Orm::Utils::String;
@@ -59,7 +60,7 @@ QString Utils::defaultValueText(const QString &value)
     // Quote the string type
     const auto defaultValue = StringUtils::isNumber(value, true, true)
                               ? value
-                              : QStringLiteral("\"%1\"").arg(value);
+                              : TMPL_DQUOTES.arg(value);
 
     return QStringLiteral(" [default: %1]").arg(defaultValue);
 }
