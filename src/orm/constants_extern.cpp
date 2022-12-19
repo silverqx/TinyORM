@@ -54,6 +54,7 @@ namespace Orm::Constants
     const QString NOSPACE      = QStringLiteral("%1%2");
     const QString TMPL_PLURAL  = QStringLiteral("%1s");
     const QString TMPL_SQUOTES = QStringLiteral("'%1'");
+    const QString TMPL_DQUOTES = QStringLiteral("\"%1\"");
 
     // Database related
     const QString QMYSQL       = QStringLiteral("QMYSQL");

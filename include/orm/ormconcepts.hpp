@@ -81,7 +81,8 @@ namespace Query
     concept JoinContainer = ColumnContainer<T> ||
                             std::convertible_to<T, std::set<QString>> ||
                             std::convertible_to<T, std::deque<QString>> ||
-                            std::convertible_to<T, std::vector<QString>>;
+                            std::convertible_to<T, std::vector<QString>> ||
+                            std::convertible_to<T, QVector<QStringView>>;
 
     /*! Concept for delimiter for joining containers. */
     template<typename T>

@@ -7,14 +7,20 @@
 
 #include "orm/constants.hpp"
 #include "orm/exceptions/queryerror.hpp"
+#include "orm/utils/container.hpp"
 #include "orm/utils/type.hpp"
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
-using Orm::Constants::charset_;
+using Orm::Constants::COMMA_C;
+using Orm::Constants::EMPTY;
 using Orm::Constants::NAME;
+using Orm::Constants::TMPL_DQUOTES;
+using Orm::Constants::charset_;
 using Orm::Constants::schema_;
 using Orm::Constants::timezone_;
+
+using ContainerUtils = Orm::Utils::Container;
 
 namespace Orm::Connectors
 {
@@ -115,6 +121,9 @@ void PostgresConnector::configureSchema(const QSqlDatabase &connection,
     QSqlQuery query(connection);
 
     const auto schema = formatSchema(config[schema_].value<QStringList>());
+    // Nothing to set
+    if (schema.isEmpty())
+        return;
 
     if (query.exec(QStringLiteral("set search_path to %1").arg(schema)))
         return;
@@ -122,18 +131,26 @@ void PostgresConnector::configureSchema(const QSqlDatabase &connection,
     throw Exceptions::QueryError(m_configureErrorMessage.arg(__tiny_func__), query);
 }
 
-QString PostgresConnector::formatSchema(QStringList schema)
+QString PostgresConnector::formatSchema(QStringList &&schema)
 {
-    /* A schema configuration option can be passed as QString and also
-       as QStringList at once. */
-    if (schema.size() == 1) {
-        static const QRegularExpression regex("\\s*(?:,|;)\\s*");
+    if (schema.isEmpty())
+        return EMPTY;
 
-        schema = schema.constFirst().trimmed().split(regex, Qt::SkipEmptyParts);
-    }
+    static const auto JoinDelimiter = QStringLiteral("\", \"");
+
+    /* A schema configuration option can be passed as a QString and also
+       as a QStringList at once. */
+    if (schema.size() > 1)
+        return TMPL_DQUOTES.arg(ContainerUtils::join(schema, JoinDelimiter));
+
+    auto schemaView = QStringView(schema.constFirst())
+                      .split(COMMA_C, Qt::SkipEmptyParts);
+
+    for (auto &&schemaName : schemaView)
+        schemaName = schemaName.trimmed();
 
     // Really nice 😎
-    return QStringLiteral("\"%1\"").arg(schema.join(QLatin1String("\", \"")));
+    return TMPL_DQUOTES.arg(ContainerUtils::join(schemaView, JoinDelimiter));
 }
 
 void PostgresConnector::configureApplicationName(const QSqlDatabase &connection,
