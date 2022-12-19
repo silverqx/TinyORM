@@ -916,7 +916,7 @@ Check copy/move/swap operations:
     qDebug() << std::is_nothrow_move_constructible_v<TypeToCheck>;
     qDebug() << std::is_nothrow_move_assignable_v<TypeToCheck>;
     qDebug() << std::is_nothrow_swappable_v<TypeToCheck>;
-    qDebug() << std::is_destructible_v<TypeToCheck>;
+    qDebug() << std::is_nothrow_destructible_v<TypeToCheck>;
 
     qDebug() << "-- throw";
     qDebug() << std::is_default_constructible_v<TypeToCheck>;
