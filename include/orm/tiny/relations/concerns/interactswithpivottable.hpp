@@ -247,7 +247,7 @@ namespace Concerns
         /*! Obtain ids from the Related models. */
         QVector<QVariant>
         getRelatedIds(const QVector<std::reference_wrapper<Related>> &models) const;
-        /*! Obtain ids from the QVector<AttributeItem>. */
+        /*! Obtain ids from the vector of pivot models. */
         QVector<QVariant>
         getRelatedIds(const QVector<PivotType> &pivots) const;
 
