@@ -97,9 +97,9 @@ private Q_SLOTS:
 
     void with_WithSelectConstraint() const;
     void with_WithSelectConstraint_WithWhitespaces() const;
-    void with_BelongsToMany_WithSelectConstraint() const;
+    void with_WithSelectConstraint_BelongsToMany() const;
     void with_WithLambdaConstraint() const;
-    void with_BelongsToMany_WithLambdaConstraint() const;
+    void with_WithLambdaConstraint_BelongsToMany() const;
 
     void without() const;
     void without_NestedRelations() const;
@@ -1004,7 +1004,7 @@ void tst_Model_Relations::with_WithSelectConstraint_WithWhitespaces() const
     }
 }
 
-void tst_Model_Relations::with_BelongsToMany_WithSelectConstraint() const
+void tst_Model_Relations::with_WithSelectConstraint_BelongsToMany() const
 {
     QFETCH_GLOBAL(QString, connection);
 
@@ -1101,7 +1101,7 @@ void tst_Model_Relations::with_WithLambdaConstraint() const
     }
 }
 
-void tst_Model_Relations::with_BelongsToMany_WithLambdaConstraint() const
+void tst_Model_Relations::with_WithLambdaConstraint_BelongsToMany() const
 {
     QFETCH_GLOBAL(QString, connection);
 
