@@ -17,7 +17,7 @@ namespace Orm
 namespace Query
 {
     class Expression;
-} // namespace Query
+}
 
     /*! Concept for container passed to the parametrize() method (QVariantMap
         or QVector<QString>). */
