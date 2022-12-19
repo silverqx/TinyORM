@@ -905,7 +905,8 @@ Check copy/move/swap operations:
 --------------------------------
 
 {
-    using TypeToCheck = Orm::SqlQuery;
+    using TypeToCheck       = Orm::SqlQuery;
+    using ConstructibleFrom = QVariant;
 
     qDebug() << std::is_trivial_v<TypeToCheck>;
 
@@ -935,6 +936,11 @@ Check copy/move/swap operations:
     qDebug() << std::is_trivially_move_constructible_v<TypeToCheck>;
     qDebug() << std::is_trivially_move_assignable_v<TypeToCheck>;
     qDebug() << std::is_trivially_destructible_v<TypeToCheck>;
+
+    qDebug() << "-- nothrow constructible from";
+    qDebug() << std::is_nothrow_constructible_v<TypeToCheck, ConstructibleFrom>;
+    qDebug() << std::is_nothrow_constructible_v<TypeToCheck, const ConstructibleFrom &>;
+    qDebug() << std::is_nothrow_constructible_v<TypeToCheck, ConstructibleFrom &&>;
 
     exit(0);
 }
