@@ -49,6 +49,12 @@ namespace Query
         create(const ConfigurationsType &configs,
                const QString &defaultConnection = Configuration::defaultConnectionName);
 
+        /* Expression factories */
+        /*! Create a new raw query expression. */
+        inline Query::Expression raw(const QVariant &value) const;
+        /*! Create a new raw query expression. */
+        inline Query::Expression raw(QVariant &&value) const noexcept;
+
         /* Proxy methods to the DatabaseConnection */
         /*! Begin a fluent query against a database table for the connection. */
         std::shared_ptr<QueryBuilder>
@@ -62,11 +68,6 @@ namespace Query
         std::shared_ptr<QueryBuilder> query(const QString &connection = "");
         /*! Get a new QSqlQuery instance for the connection. */
         QSqlQuery qtQuery(const QString &connection = "");
-
-        /*! Create a new raw query expression. */
-        inline Query::Expression raw(const QVariant &value) const;
-        /*! Create a new raw query expression. */
-        inline Query::Expression raw(QVariant &&value) const noexcept;
 
         // TODO next add support for named bindings, Using Named Bindings silverqx
         /*! Run a select statement against the database. */
@@ -412,7 +413,7 @@ namespace Query
 
     /* public */
 
-    /* Proxy methods to the DatabaseConnection */
+    /* Expression factories */
 
     Query::Expression
     DatabaseManager::raw(const QVariant &value) const // NOLINT(readability-convert-member-functions-to-static)

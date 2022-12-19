@@ -45,6 +45,12 @@ namespace Orm
         create(const ConfigurationsType &configs,
                const QString &defaultConnection = Configuration::defaultConnectionName);
 
+        /* Expression factories */
+        /*! Create a new raw query expression. */
+        inline static Query::Expression raw(const QVariant &value);
+        /*! Create a new raw query expression. */
+        inline static Query::Expression raw(QVariant &&value) noexcept;
+
         /* Proxy methods to the DatabaseConnection */
         /*! Begin a fluent query against a database table for the connection. */
         static std::shared_ptr<QueryBuilder>
@@ -58,11 +64,6 @@ namespace Orm
         static std::shared_ptr<QueryBuilder> query(const QString &connection = "");
         /*! Get a new QSqlQuery instance for the connection. */
         static QSqlQuery qtQuery(const QString &connection = "");
-
-        /*! Create a new raw query expression. */
-        inline static Query::Expression raw(const QVariant &value);
-        /*! Create a new raw query expression. */
-        inline static Query::Expression raw(QVariant &&value) noexcept;
 
         /*! Run a select statement against the database. */
         static SqlQuery
@@ -365,7 +366,7 @@ namespace Orm
 
     /* public */
 
-    /* Proxy methods to the DatabaseConnection */
+    /* Expression factories */
 
     Query::Expression DB::raw(const QVariant &value)
     {
