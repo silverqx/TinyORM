@@ -76,8 +76,13 @@ ConfigurationOptionsParser::prepareConfigOptions(const QVariant &options)
 
         const auto option = value.split(EQ_C);
 
-        preparedOptions.emplace(option.constFirst().trimmed().toString(),
-                                option[1].trimmed().toString());
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+        preparedOptions.emplace(
+#else
+        preparedOptions.insert(
+#endif
+                    option.constFirst().trimmed().toString(),
+                    option[1].trimmed().toString());
     }
 
     return preparedOptions;

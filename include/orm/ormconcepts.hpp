@@ -82,6 +82,9 @@ namespace Query
                             std::convertible_to<T, std::set<QString>> ||
                             std::convertible_to<T, std::deque<QString>> ||
                             std::convertible_to<T, std::vector<QString>> ||
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
+                            std::convertible_to<T, QList<QStringView>> ||
+#endif
                             std::convertible_to<T, QVector<QStringView>>;
 
     /*! Concept for delimiter for joining containers. */
