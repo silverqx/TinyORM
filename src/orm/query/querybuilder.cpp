@@ -1339,6 +1339,11 @@ Expression Builder::raw(const QVariant &value) const
     return m_connection.raw(value);
 }
 
+Expression Builder::raw(QVariant &&value) const noexcept
+{
+    return m_connection.raw(value);
+}
+
 Builder &Builder::addNestedWhereQuery(const std::shared_ptr<Builder> &query,
                                       const QString &condition)
 {

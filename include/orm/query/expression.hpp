@@ -20,14 +20,14 @@ namespace Orm::Query
     {
     public:
         /*! Default constructor, needed by Q_DECLARE_METATYPE. */
-        inline Expression() = default;
+        inline Expression() noexcept = default;
         /*! Default destructor. */
         inline ~Expression() = default;
 
         /*! Converting constructor from the QVariant type. */
         inline explicit Expression(const QVariant &value);
         /*! Converting constructor from the QVariant type. */
-        inline explicit Expression(QVariant &&value);
+        inline explicit Expression(QVariant &&value) noexcept;
 
         /*! Copy constructor. */
         inline Expression(const Expression &) = default;
@@ -43,7 +43,7 @@ namespace Orm::Query
         inline operator QVariant() const; // NOLINT(google-explicit-constructor)
 
         /*! Obtain expression's value. */
-        inline const QVariant &getValue() const;
+        inline const QVariant &getValue() const noexcept;
 
         /*! Equality comparison operator for the Expression. */
         inline bool operator==(const Expression &) const = default;
@@ -60,7 +60,7 @@ namespace Orm::Query
         : m_value(value)
     {}
 
-    Expression::Expression(QVariant &&value)
+    Expression::Expression(QVariant &&value) noexcept
         : m_value(std::move(value))
     {}
 
@@ -69,7 +69,7 @@ namespace Orm::Query
         return QVariant::fromValue(*this);
     }
 
-    const QVariant &Expression::getValue() const
+    const QVariant &Expression::getValue() const noexcept
     {
         return m_value;
     }

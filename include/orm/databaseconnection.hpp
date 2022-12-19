@@ -86,6 +86,8 @@ namespace Orm
 
         /*! Get a new raw query expression. */
         inline Query::Expression raw(const QVariant &value) const;
+        /*! Get a new raw query expression. */
+        inline Query::Expression raw(QVariant &&value) const noexcept;
 
         /* Running SQL Queries */
         /*! Run a select statement against the database. */
@@ -350,6 +352,12 @@ namespace Orm
     DatabaseConnection::raw(const QVariant &value) const // NOLINT(readability-convert-member-functions-to-static)
     {
         return Query::Expression(value);
+    }
+
+    Query::Expression
+    DatabaseConnection::raw(QVariant &&value) const noexcept // NOLINT(readability-convert-member-functions-to-static)
+    {
+        return Query::Expression(std::move(value));
     }
 
     /* Running SQL Queries */

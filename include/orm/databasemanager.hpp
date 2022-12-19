@@ -65,6 +65,8 @@ namespace Query
 
         /*! Create a new raw query expression. */
         inline Query::Expression raw(const QVariant &value) const;
+        /*! Create a new raw query expression. */
+        inline Query::Expression raw(QVariant &&value) const noexcept;
 
         // TODO next add support for named bindings, Using Named Bindings silverqx
         /*! Run a select statement against the database. */
@@ -416,6 +418,12 @@ namespace Query
     DatabaseManager::raw(const QVariant &value) const // NOLINT(readability-convert-member-functions-to-static)
     {
         return Query::Expression(value);
+    }
+
+    Query::Expression
+    DatabaseManager::raw(QVariant &&value) const noexcept // NOLINT(readability-convert-member-functions-to-static)
+    {
+        return Query::Expression(std::move(value));
     }
 
     /* DatabaseManager */

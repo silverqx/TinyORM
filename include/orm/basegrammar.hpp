@@ -71,7 +71,7 @@ namespace Query
         /*! Get the value of a raw expression. */
         static QVariant getValue(const QVariant &expression);
         /*! Get the value of a raw expression. */
-        static QVariant getValue(const Expression &expression);
+        static QVariant getValue(const Expression &expression) noexcept;
 
         /*! Get the grammar's table prefix. */
         inline QString getTablePrefix() const;

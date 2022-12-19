@@ -61,6 +61,8 @@ namespace Orm
 
         /*! Create a new raw query expression. */
         inline static Query::Expression raw(const QVariant &value);
+        /*! Create a new raw query expression. */
+        inline static Query::Expression raw(QVariant &&value) noexcept;
 
         /*! Run a select statement against the database. */
         static SqlQuery
@@ -368,6 +370,11 @@ namespace Orm
     Query::Expression DB::raw(const QVariant &value)
     {
         return Query::Expression(value);
+    }
+
+    Query::Expression DB::raw(QVariant &&value) noexcept
+    {
+        return Query::Expression(std::move(value));
     }
 
 } // namespace Orm

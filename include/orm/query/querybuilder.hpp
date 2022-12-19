@@ -792,6 +792,8 @@ namespace Orm::Query
 
         /*! Create a raw database expression. */
         Expression raw(const QVariant &value) const;
+        /*! Create a raw database expression. */
+        Expression raw(QVariant &&value) const noexcept;
 
         /*! Add another query builder as a nested where to the query builder. */
         Builder &addNestedWhereQuery(const std::shared_ptr<Builder> &query,

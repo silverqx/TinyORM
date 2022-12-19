@@ -103,7 +103,7 @@ QVariant BaseGrammar::getValue(const QVariant &expression)
     return expression.value<Expression>().getValue();
 }
 
-QVariant BaseGrammar::getValue(const Expression &expression)
+QVariant BaseGrammar::getValue(const Expression &expression) noexcept
 {
     return expression.getValue();
 }
