@@ -7,7 +7,6 @@ TINY_SYSTEM_HEADER
 
 #include <QtSql/QSqlRecord>
 
-#include <range/v3/algorithm/sort.hpp>
 #include <range/v3/view/set_algorithm.hpp>
 
 #include "orm/exceptions/domainerror.hpp"
@@ -459,8 +458,8 @@ namespace Concerns
         // Compute different keys, these keys will be detached
         auto ids = idsFromRecords(idsWithAttributes);
 
-        ranges::sort(ids, {}, castKey);
-        ranges::sort(current, {}, castKey);
+        std::ranges::sort(ids, {}, castKey);
+        std::ranges::sort(current, {}, castKey);
         auto detach =
                 ranges::views::set_difference(current, ids, {}, castKey, castKey) |
                 ranges::to<QVector<QVariant>>();
