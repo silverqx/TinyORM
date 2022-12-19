@@ -2,6 +2,8 @@
 
 #include <QCommandLineParser>
 
+#include <cmath>
+
 #include <orm/constants.hpp>
 #include <orm/utils/string.hpp>
 
