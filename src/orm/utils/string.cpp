@@ -10,6 +10,7 @@ TINYORM_BEGIN_COMMON_NAMESPACE
 
 using Orm::Constants::DASH;
 using Orm::Constants::DOT;
+using Orm::Constants::EMPTY;
 using Orm::Constants::MINUS;
 using Orm::Constants::PLUS;
 using Orm::Constants::SPACE;
@@ -178,7 +179,7 @@ QString String::studly(QString string)
         value[pos] = value[pos].toUpper();
     }
 
-    return (*studlyCache)[std::move(key)] = value.replace(SPACE, "");
+    return (*studlyCache)[std::move(key)] = value.replace(SPACE, EMPTY);
 }
 
 namespace
