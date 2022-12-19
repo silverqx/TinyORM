@@ -186,14 +186,18 @@ QString BaseGrammar::wrapSegments(QStringList segments) const
 
 QStringList BaseGrammar::getSegmentsFromFrom(const QString &from)
 {
-    auto segments = from.split(QStringLiteral(" as "), Qt::KeepEmptyParts,
-                               Qt::CaseInsensitive);
+    const auto segmentsView = QStringView(from)
+                              .split(QStringLiteral(" as "), Qt::KeepEmptyParts,
+                                     Qt::CaseInsensitive);
 
-    Q_ASSERT(!segments.isEmpty() && segments.size() <= 2);
+    Q_ASSERT(!segmentsView.isEmpty() && segmentsView.size() <= 2);
+
+    QStringList segments;
+    segments.reserve(segmentsView.size());
 
     // Remove leading/ending whitespaces
-    for (auto &segement : segments)
-        segement = segement.trimmed();
+    for (const auto segement : segmentsView)
+        segments << segement.trimmed().toString();
 
     return segments;
 }

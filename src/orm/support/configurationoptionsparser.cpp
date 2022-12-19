@@ -64,15 +64,20 @@ ConfigurationOptionsParser::prepareConfigOptions(const QVariant &options)
         return options.value<QVariantHash>();
 
     // Convert to the QVariantHash
-    const auto list = options.value<QString>().split(SEMICOLON,
-                                                     Qt::SkipEmptyParts);
-    QVariantHash preparedOptions;
+    const auto optionsString = options.value<QString>();
+    // QStringView saves 3 copies
+    const auto list = QStringView(optionsString).split(SEMICOLON, Qt::SkipEmptyParts);
 
-    for (const auto &value : list) {
+    QVariantHash preparedOptions;
+    preparedOptions.reserve(list.size());
+
+    for (const auto value : list) {
+        Q_ASSERT(value.count(EQ_C) == 1);
+
         const auto option = value.split(EQ_C);
 
-        preparedOptions.insert(option.constFirst().trimmed(),
-                               option[1].trimmed());
+        preparedOptions.emplace(option.constFirst().trimmed().toString(),
+                                option[1].trimmed().toString());
     }
 
     return preparedOptions;

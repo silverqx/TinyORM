@@ -1251,7 +1251,8 @@ namespace Orm::Tiny
              belongsToManyRelatedTable = std::move(belongsToManyRelatedTable)]
             (QueryBuilder &query)
             {
-                auto columnsSplitted = columns.split(COMMA_C, Qt::SkipEmptyParts);
+                const auto columnsSplitted = QStringView(columns)
+                                             .split(COMMA_C, Qt::SkipEmptyParts);
 
                 // Nothing to do
                 if (columnsSplitted.isEmpty())
@@ -1261,25 +1262,21 @@ namespace Orm::Tiny
                 columnsList.reserve(columnsSplitted.size());
 
                 // Avoid 'clazy might detach' warning
-                for (auto &&column : columnsSplitted)
+                for (const auto column_ : columnsSplitted)
                 {
-                    column = std::move(column).trimmed();
+                    const auto column = column_.trimmed();
 
-                    // Nothing to process (already a fully qualified column name)
-                    if (column.contains(DOT)) {
-                        columnsList << std::move(column);
+                    /* Nothing to process, already a fully qualified column name or
+                       it's not a column for the BelongsToMany relation, in this case,
+                       an unqualified column name is ok. */
+                    if (column.contains(DOT) || !belongsToManyRelatedTable) {
+                        columnsList << column.toString();
                         continue;
                     }
 
                     /* Generate the fully qualified column name for the BelongsToMany
                        relation. */
-                    if (belongsToManyRelatedTable) {
-                        columnsList << DOT_IN.arg(*belongsToManyRelatedTable, column);
-                        continue;
-                    }
-
-                    // All other column names are unqualified (it's ok)
-                    columnsList << std::move(column);
+                    columnsList << DOT_IN.arg(*belongsToManyRelatedTable, column);
                 }
 
                 query.select(std::move(columnsList));
