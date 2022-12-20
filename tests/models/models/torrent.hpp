@@ -2,7 +2,9 @@
 #ifndef MODELS_TORRENT_HPP
 #define MODELS_TORRENT_HPP
 
-#include "orm/db.hpp"
+#ifdef PROJECT_TINYORM_PLAYGROUND
+#  include "orm/db.hpp"
+#endif
 #include "orm/tiny/model.hpp"
 #include "orm/tiny/relations/pivot.hpp"
 //#include "orm/tiny/softdeletes.hpp"

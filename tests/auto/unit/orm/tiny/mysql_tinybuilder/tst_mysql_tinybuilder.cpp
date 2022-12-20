@@ -1,6 +1,7 @@
 #include <QCoreApplication>
 #include <QtTest>
 
+#include "orm/db.hpp"
 #include "orm/tiny/tinybuilder.hpp"
 #include "orm/utils/nullvariant.hpp"
 

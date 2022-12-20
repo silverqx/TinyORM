@@ -3,6 +3,7 @@
 
 #include <typeinfo>
 
+#include "orm/db.hpp"
 #include "orm/utils/query.hpp"
 
 #include "databases.hpp"
