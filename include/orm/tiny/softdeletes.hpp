@@ -9,7 +9,6 @@ TINY_SYSTEM_HEADER
 #include <range/v3/view/transform.hpp>
 
 #include "orm/ormtypes.hpp"
-#include "orm/tiny/tinyconcepts.hpp"
 #include "orm/utils/helpers.hpp"
 #include "orm/utils/nullvariant.hpp"
 
