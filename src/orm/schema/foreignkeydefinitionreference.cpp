@@ -8,6 +8,8 @@ TINYORM_BEGIN_COMMON_NAMESPACE
 namespace Orm::SchemaNs
 {
 
+/* public */
+
 ForeignKeyDefinitionReference::ForeignKeyDefinitionReference(
         ForeignKeyCommand &foreignKeyCommandDefinition
 )

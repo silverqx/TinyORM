@@ -64,6 +64,8 @@ namespace Orm::SchemaNs
         std::reference_wrapper<ForeignKeyCommand> m_foreignKeyCommandDefinition;
     };
 
+    /* public */
+
     template<typename>
     ForeignKeyDefinitionReference &
     ForeignKeyDefinitionReference::references(const QString &column)
