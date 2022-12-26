@@ -4,6 +4,8 @@
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
+using Orm::Constants::TMPL_PLURAL;
+
 namespace Orm::SchemaNs
 {
 
