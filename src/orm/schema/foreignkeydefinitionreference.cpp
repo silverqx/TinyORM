@@ -9,7 +9,7 @@ namespace Orm::SchemaNs
 {
 
 ForeignKeyDefinitionReference::ForeignKeyDefinitionReference(
-            ForeignKeyCommand &foreignKeyCommandDefinition
+        ForeignKeyCommand &foreignKeyCommandDefinition
 )
     : m_foreignKeyCommandDefinition(foreignKeyCommandDefinition)
 {}

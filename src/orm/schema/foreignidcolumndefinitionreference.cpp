@@ -8,8 +8,8 @@ namespace Orm::SchemaNs
 {
 
 ForeignIdColumnDefinitionReference::ForeignIdColumnDefinitionReference(
-            Blueprint &blueprint,
-            const ColumnDefinitionReference<> columnDefinitionReference
+        Blueprint &blueprint,
+        const ColumnDefinitionReference<> columnDefinitionReference
 )
     : ColumnDefinitionReference(columnDefinitionReference.m_columnDefinition)
     , m_blueprint(blueprint)

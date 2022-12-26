@@ -24,8 +24,8 @@ namespace Orm::SchemaNs
     public:
         /*! Constructor. */
         ForeignIdColumnDefinitionReference( // NOLINT(google-explicit-constructor)
-                    Blueprint &blueprint,
-                    ColumnDefinitionReference<> columnDefinitionReference);
+                Blueprint &blueprint,
+                ColumnDefinitionReference<> columnDefinitionReference);
         /*! Default destructor. */
         inline ~ForeignIdColumnDefinitionReference() = default;
 
