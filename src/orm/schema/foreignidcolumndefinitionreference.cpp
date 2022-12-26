@@ -4,7 +4,9 @@
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
+#ifdef TINYORM_DISABLE_ORM
 using Orm::Constants::TMPL_PLURAL;
+#endif
 
 namespace Orm::SchemaNs
 {
