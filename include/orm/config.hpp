@@ -42,7 +42,7 @@ TINY_SYSTEM_HEADER
 /* The libstdc++ shipped with the GCC <12.1 doesn't allow an incomplete
    mapped_type (value) in the std::unordered_map. */
 #if defined(__GNUG__) && defined(_GLIBCXX_RELEASE) && defined(__GLIBCXX__) && \
-    _GLIBCXX_RELEASE < 12 && __GLIBCXX__ < 20220513
+    (_GLIBCXX_RELEASE < 12 || (_GLIBCXX_RELEASE >= 12 && __GLIBCXX__ < 20220513))
 #  define TINY_NO_INCOMPLETE_UNORDERED_MAP
 #endif
 
