@@ -1,6 +1,5 @@
 #include "databases.hpp"
 
-#include "orm/constants.hpp"
 #include "orm/db.hpp"
 #include "orm/exceptions/runtimeerror.hpp"
 #include "orm/utils/configuration.hpp"
