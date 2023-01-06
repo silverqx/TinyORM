@@ -13,7 +13,7 @@ using Orm::Tiny::Relations::BelongsTo;
 
 class Torrent;
 
-// NOLINTNEXTLINE(misc-no-recursion)
+// NOLINTNEXTLINE(misc-no-recursion, bugprone-exception-escape)
 class TorrentPeer final : public Model<TorrentPeer, Torrent>
 {
     friend Model;

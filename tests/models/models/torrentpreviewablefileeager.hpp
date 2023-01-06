@@ -14,6 +14,7 @@ using Orm::Constants::SIZE;
 using Orm::Tiny::Model;
 using Orm::Tiny::Relations::HasOne;
 
+// NOLINTNEXTLINE(bugprone-exception-escape)
 class TorrentPreviewableFileEager final :
         public Model<TorrentPreviewableFileEager, TorrentPreviewableFilePropertyEager>
 {

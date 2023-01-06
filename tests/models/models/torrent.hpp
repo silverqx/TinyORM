@@ -48,7 +48,7 @@ class TorrentPeer;
 class TorrentPreviewableFile;
 class User;
 
-// NOLINTNEXTLINE(misc-no-recursion)
+// NOLINTNEXTLINE(misc-no-recursion, bugprone-exception-escape)
 class Torrent final :
         public Model<Torrent, TorrentPreviewableFile, TorrentPeer, Tag, User, Pivot>
 //        public Model<Torrent, TorrentPreviewableFile, TorrentPeer, Tag, User, Tagged>

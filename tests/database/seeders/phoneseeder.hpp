@@ -9,6 +9,7 @@
 #ifndef TINYORM_DISABLE_ORM
 namespace Models
 {
+    // NOLINTNEXTLINE(misc-no-recursion, bugprone-exception-escape)
     class Phone final : public Orm::Tiny::Model<Phone>
     {
         using Model::Model;

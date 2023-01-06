@@ -16,7 +16,7 @@ using Orm::Tiny::Relations::BelongsToMany;
 
 class User;
 
-// NOLINTNEXTLINE(misc-no-recursion)
+// NOLINTNEXTLINE(misc-no-recursion, bugprone-exception-escape)
 class Role final : public Model<Role, User, RoleUser>
 {
     friend Model;

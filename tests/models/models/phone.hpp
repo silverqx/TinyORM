@@ -14,7 +14,7 @@ using Orm::Tiny::Relations::BelongsTo;
 
 class User;
 
-// NOLINTNEXTLINE(misc-no-recursion)
+// NOLINTNEXTLINE(misc-no-recursion, bugprone-exception-escape)
 class Phone final : public Model<Phone, User>
 {
     friend Model;

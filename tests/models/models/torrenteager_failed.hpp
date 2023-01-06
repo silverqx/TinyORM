@@ -12,6 +12,7 @@ namespace Models
 using Orm::Tiny::Model;
 using Orm::Tiny::Relations::HasMany;
 
+// NOLINTNEXTLINE(bugprone-exception-escape)
 class TorrentEager_Failed final :
         public Model<TorrentEager_Failed, TorrentPreviewableFileEager>
 {

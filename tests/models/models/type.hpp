@@ -10,6 +10,7 @@ namespace Models
 using Orm::Tiny::CastItem;
 using Orm::Tiny::Model;
 
+// NOLINTNEXTLINE(bugprone-exception-escape)
 class Type final : public Model<Type>
 {
     friend Model;

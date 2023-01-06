@@ -24,7 +24,7 @@ using Orm::Tiny::SoftDeletes;
 class Phone;
 class Role;
 
-// NOLINTNEXTLINE(misc-no-recursion)
+// NOLINTNEXTLINE(misc-no-recursion, bugprone-exception-escape)
 class User final : public Model<User, Phone, Role, Torrent, Pivot>,
                    public SoftDeletes<User>
 {

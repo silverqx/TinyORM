@@ -3255,6 +3255,6 @@ void tst_CastAttributes::enableReturnQDateTime(const QString &connection)
             .setReturnQDateTime(true);
 }
 
-QTEST_MAIN(tst_CastAttributes)
+QTEST_MAIN(tst_CastAttributes) // NOLINT(bugprone-exception-escape)
 
 #include "tst_castattributes.moc"

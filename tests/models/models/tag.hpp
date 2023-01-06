@@ -20,7 +20,7 @@ using Orm::Tiny::Relations::Pivot;
 
 class Torrent;
 
-// NOLINTNEXTLINE(misc-no-recursion)
+// NOLINTNEXTLINE(misc-no-recursion, bugprone-exception-escape)
 class Tag final : public Model<Tag, Torrent, TagProperty, Tagged>
 //class Tag final : public Model<Tag, Torrent, TagProperty, Pivot>
 {

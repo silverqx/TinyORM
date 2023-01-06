@@ -17,7 +17,7 @@ using Orm::Tiny::Relations::HasMany;
 class FilePropertyProperty;
 class TorrentPreviewableFile;
 
-// NOLINTNEXTLINE(misc-no-recursion)
+// NOLINTNEXTLINE(misc-no-recursion, bugprone-exception-escape)
 class TorrentPreviewableFileProperty final :
         public Model<TorrentPreviewableFileProperty, TorrentPreviewableFile,
                      FilePropertyProperty>
