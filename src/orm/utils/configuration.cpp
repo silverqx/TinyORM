@@ -3,6 +3,7 @@
 #include <QVersionNumber>
 
 #include "orm/exceptions/invalidargumenterror.hpp"
+#include "orm/ormconcepts.hpp"
 #include "orm/ormtypes.hpp"
 #include "orm/utils/helpers.hpp"
 #include "orm/utils/type.hpp"
@@ -81,6 +82,74 @@ Configuration::prepareQtTimeZone(const QVariant &qtTimeZone, const QString &conn
     default:
         Q_UNREACHABLE();
     }
+}
+
+namespace
+{
+    /*! Insert a new item to the MySQL SSL options hash. */
+    template<QVariantConcept T>
+    void insertMySqlSslOption(QVariantHash &options, const QString &key, T &&value)
+    {
+        if (value.isEmpty())
+            return;
+
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
+        options.insert(key, value);
+#else
+        options.emplace(key, std::forward<T>(value));
+#endif
+    }
+
+    /*! MySQL SSL options hash. */
+    QVariantHash getMySqlSslOptions()
+    {
+        QVariantHash options;
+        options.reserve(3);
+
+        /* Don't make any special validation here like both the KEY and CERT has to be
+           set at once, simply set what is set in the environment variables. */
+        insertMySqlSslOption(options, SSL_CERT,
+                             qEnvironmentVariable("DB_MYSQL_SSL_CERT"));
+        insertMySqlSslOption(options, SSL_KEY,
+                             qEnvironmentVariable("DB_MYSQL_SSL_KEY"));
+        insertMySqlSslOption(options, SSL_CA,
+                             qEnvironmentVariable("DB_MYSQL_SSL_CA"));
+
+        return options;
+    }
+} // namespace
+
+QVariantHash Configuration::mysqlSslOptions()
+{
+    QVariantHash options;
+    options.reserve(8);
+
+    options.insert(getMySqlSslOptions());
+
+    return options;
+}
+
+QVariantHash Configuration::insertMySqlSslOptions(QVariantHash &&options)
+{
+    options.insert(getMySqlSslOptions());
+
+    return std::move(options);
+}
+
+QVariantHash &Configuration::insertMySqlSslOptions(QVariantHash &options)
+{
+    options.insert(getMySqlSslOptions());
+
+    return options;
+}
+
+QVariantHash &Configuration::minimizeMySqlTimeouts(QVariantHash &options)
+{
+    options.insert({{QStringLiteral("MYSQL_OPT_CONNECT_TIMEOUT"), 1},
+                    {QStringLiteral("MYSQL_OPT_READ_TIMEOUT"),    1},
+                    {QStringLiteral("MYSQL_OPT_WRITE_TIMEOUT"),   1}});
+
+    return options;
 }
 
 /* private */

@@ -1,4 +1,5 @@
 #include <orm/db.hpp>
+#include <orm/utils/configuration.hpp>
 
 #include <tom/application.hpp>
 
@@ -22,6 +23,8 @@
 
 using Orm::DatabaseManager;
 using Orm::DB;
+
+using ConfigUtils = Orm::Utils::Configuration;
 
 using TomApplication = Tom::Application;
 
@@ -93,7 +96,7 @@ std::shared_ptr<DatabaseManager> setupManager()
             {isolation_level, QStringLiteral("REPEATABLE READ")},
             {engine_,         InnoDB},
             {Version,         {}}, // Autodetect
-            {options_,        QVariantHash()},
+            {options_,        ConfigUtils::mysqlSslOptions()},
         }},
 
         // PostgreSQL connection

@@ -67,6 +67,10 @@ namespace Query
     template<typename T>
     concept QStringConcept = std::convertible_to<T, QString>;
 
+    /*! Concept for the QVariant. */
+    template<typename T>
+    concept QVariantConcept = std::convertible_to<T, QVariant>;
+
     /*! Type for the database column. */
     using Column = std::variant<QString, Query::Expression>;
 

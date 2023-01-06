@@ -3,6 +3,7 @@
 #include "orm/constants.hpp"
 #include "orm/db.hpp"
 #include "orm/exceptions/runtimeerror.hpp"
+#include "orm/utils/configuration.hpp"
 #include "orm/utils/type.hpp"
 
 using Orm::Constants::EMPTY;
@@ -46,6 +47,8 @@ using Orm::Constants::username_;
 using Orm::DB;
 
 using Orm::Exceptions::RuntimeError;
+
+using ConfigUtils = Orm::Utils::Configuration;
 
 #ifndef TINYORM_SQLITE_DATABASE
 #  define TINYORM_SQLITE_DATABASE ""
@@ -174,7 +177,7 @@ Databases::mysqlConfiguration()
         {isolation_level, QStringLiteral("REPEATABLE READ")},
         {engine_,         InnoDB},
         {Version,         {}}, // Autodetect
-        {options_,        QVariantHash()},
+        {options_,        ConfigUtils::mysqlSslOptions()},
         // FUTURE remove, when unit tested silverqx
         // Example
 //        {options_, "MYSQL_OPT_CONNECT_TIMEOUT = 5 ; MYSQL_OPT_RECONNECT=1"},
