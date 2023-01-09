@@ -58,13 +58,14 @@ jobs:
 
     - name: MySQL change TinyORM password
       run: >-
-        mysql --host=$DB_MYSQL_HOST --user=$DB_MYSQL_USERNAME --password=$DB_MYSQL_PASSWORD_DEFAULT
+        mysql --host=$DB_MYSQL_HOST --user=$DB_MYSQL_USERNAME
+        --password=$DB_MYSQL_ROOT_PASSWORD_DEFAULT
         --execute="ALTER USER '$DB_MYSQL_USERNAME'@'$DB_MYSQL_HOST'
         IDENTIFIED BY '$DB_MYSQL_PASSWORD';"
       env:
         DB_MYSQL_HOST: ${{ secrets.DB_MYSQL_HOST }}
         DB_MYSQL_PASSWORD: ${{ secrets.DB_MYSQL_PASSWORD }}
-        DB_MYSQL_PASSWORD_DEFAULT: ${{ secrets.DB_MYSQL_PASSWORD_DEFAULT }}
+        DB_MYSQL_ROOT_PASSWORD_DEFAULT: ${{ secrets.DB_MYSQL_ROOT_PASSWORD_DEFAULT }}
         DB_MYSQL_USERNAME: ${{ secrets.DB_MYSQL_USERNAME }}
 
     - name: MySQL populate time zone tables 👌
