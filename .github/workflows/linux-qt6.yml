@@ -71,7 +71,7 @@ jobs:
       run: |
         tmpfile=$(mktemp)
 
-        cat ./crystal_client.template.cnf | \
+        cat ./crystal_client_ssl.template.cnf | \
         sed 's/{SSL_CERTIFICATES_PATH}/\/usr\/local\/share\/crystal-mysql/' | \
         sed "s/{MYSQL_HOST}/$DB_MYSQL_HOST/" > "$tmpfile"
 
