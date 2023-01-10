@@ -150,6 +150,7 @@ jobs:
         create user '${env:DB_MYSQL_USERNAME}'@'%'
         identified with caching_sha2_password by '${env:DB_MYSQL_PASSWORD}';
         grant all privileges on ``$env:DB_MYSQL_DATABASE``.* to '${env:DB_MYSQL_USERNAME}'@'%';
+        grant select on \`mysql\`.\`time_zone_name\` to '$DB_MYSQL_USERNAME'@'%';
         flush privileges;"
       env:
         DB_MYSQL_DATABASE: ${{ secrets.DB_MYSQL_DATABASE }}

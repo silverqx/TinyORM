@@ -154,6 +154,7 @@ jobs:
         require issuer '/CN=MySQL_Server_TinyORM_Auto_Generated_CA_Certificate' and
         subject '/CN=MySQL_Server_TinyORM_Auto_Generated_Client_Certificate';
         grant all privileges on \`$DB_MYSQL_DATABASE\`.* to '$DB_MYSQL_USERNAME'@'%';
+        grant select on \`mysql\`.\`time_zone_name\` to '$DB_MYSQL_USERNAME'@'%';
         flush privileges;"
       env:
         DB_MYSQL_DATABASE: ${{ secrets.DB_MYSQL_DATABASE }}
