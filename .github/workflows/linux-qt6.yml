@@ -104,7 +104,7 @@ jobs:
       run: >-
         mysql --user=$DB_MYSQL_ROOT_USERNAME --password=$DB_MYSQL_ROOT_PASSWORD_DEFAULT --execute="
         alter user '$DB_MYSQL_ROOT_USERNAME'@'localhost'
-        identified by '$DB_MYSQL_ROOT_PASSWORD'
+        identified with caching_sha2_password by '$DB_MYSQL_ROOT_PASSWORD'
         require issuer '/CN=MySQL_Server_TinyORM_Auto_Generated_CA_Certificate' and
         subject '/CN=MySQL_Server_TinyORM_Auto_Generated_Client_Certificate';"
       env:
@@ -150,7 +150,7 @@ jobs:
       run: >-
         mysql --user=$DB_MYSQL_ROOT_USERNAME --password=$DB_MYSQL_ROOT_PASSWORD --execute="
         create user '$DB_MYSQL_USERNAME'@'%'
-        identified by '$DB_MYSQL_PASSWORD'
+        identified with caching_sha2_password by '$DB_MYSQL_PASSWORD'
         require issuer '/CN=MySQL_Server_TinyORM_Auto_Generated_CA_Certificate' and
         subject '/CN=MySQL_Server_TinyORM_Auto_Generated_Client_Certificate';
         grant all privileges on \`$DB_MYSQL_DATABASE\`.* to '$DB_MYSQL_USERNAME'@'%';
