@@ -302,6 +302,9 @@ jobs:
         DB_MYSQL_DATABASE: ${{ secrets.DB_MYSQL_DATABASE }}
         DB_MYSQL_HOST: ${{ secrets.DB_MYSQL_HOST_SSL }}
         DB_MYSQL_PASSWORD: ${{ secrets.DB_MYSQL_PASSWORD }}
+        DB_MYSQL_SSL_CA: ${{ secrets.DB_MYSQL_SSL_CA }}
+        DB_MYSQL_SSL_CERT: ${{ secrets.DB_MYSQL_SSL_CERT }}
+        DB_MYSQL_SSL_KEY: ${{ secrets.DB_MYSQL_SSL_KEY }}
         DB_MYSQL_USERNAME: ${{ secrets.DB_MYSQL_USERNAME }}
         DB_PGSQL_CHARSET: utf8
         DB_PGSQL_DATABASE: ${{ secrets.DB_PGSQL_DATABASE }}
@@ -320,6 +323,9 @@ jobs:
         DB_MYSQL_DATABASE: ${{ secrets.DB_MYSQL_DATABASE }}
         DB_MYSQL_HOST: ${{ secrets.DB_MYSQL_HOST_SSL }}
         DB_MYSQL_PASSWORD: ${{ secrets.DB_MYSQL_PASSWORD }}
+        DB_MYSQL_SSL_CA: ${{ secrets.DB_MYSQL_SSL_CA }}
+        DB_MYSQL_SSL_CERT: ${{ secrets.DB_MYSQL_SSL_CERT }}
+        DB_MYSQL_SSL_KEY: ${{ secrets.DB_MYSQL_SSL_KEY }}
         DB_MYSQL_USERNAME: ${{ secrets.DB_MYSQL_USERNAME }}
         DB_PGSQL_CHARSET: utf8
         DB_PGSQL_DATABASE: ${{ secrets.DB_PGSQL_DATABASE }}
@@ -344,6 +350,9 @@ jobs:
         DB_MYSQL_DATABASE: ${{ secrets.DB_MYSQL_DATABASE }}
         DB_MYSQL_HOST: ${{ secrets.DB_MYSQL_HOST_SSL }}
         DB_MYSQL_PASSWORD: ${{ secrets.DB_MYSQL_PASSWORD }}
+        DB_MYSQL_SSL_CA: ${{ secrets.DB_MYSQL_SSL_CA }}
+        DB_MYSQL_SSL_CERT: ${{ secrets.DB_MYSQL_SSL_CERT }}
+        DB_MYSQL_SSL_KEY: ${{ secrets.DB_MYSQL_SSL_KEY }}
         DB_MYSQL_USERNAME: ${{ secrets.DB_MYSQL_USERNAME }}
         TOM_EXAMPLE_ENV: testing
 
