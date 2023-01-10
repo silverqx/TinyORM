@@ -40,7 +40,7 @@ jobs:
     - name: PostgreSQL create TinyORM user
       run: >-
         sudo -u postgres --
-        echo "CREATE USER $DB_PGSQL_USERNAME PASSWORD '$DB_PGSQL_PASSWORD'" | psql
+        psql --command="CREATE USER $DB_PGSQL_USERNAME PASSWORD '$DB_PGSQL_PASSWORD'"
       env:
         DB_PGSQL_PASSWORD: ${{ secrets.DB_PGSQL_PASSWORD }}
         DB_PGSQL_USERNAME: ${{ secrets.DB_PGSQL_USERNAME }}
