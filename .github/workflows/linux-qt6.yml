@@ -39,8 +39,8 @@ jobs:
 
     - name: PostgreSQL create TinyORM user
       run: >-
-        sudo -u postgres
-        psql --command="CREATE USER $DB_PGSQL_USERNAME PASSWORD '$DB_PGSQL_PASSWORD'"
+        sudo -u postgres --
+        echo "CREATE USER $DB_PGSQL_USERNAME PASSWORD '$DB_PGSQL_PASSWORD'" | psql
       env:
         DB_PGSQL_PASSWORD: ${{ secrets.DB_PGSQL_PASSWORD }}
         DB_PGSQL_USERNAME: ${{ secrets.DB_PGSQL_USERNAME }}
@@ -102,11 +102,12 @@ jobs:
 
     - name: MySQL change root password
       run: >-
-        mysql --user=$DB_MYSQL_ROOT_USERNAME --password=$DB_MYSQL_ROOT_PASSWORD_DEFAULT --execute="
+        echo "
         alter user '$DB_MYSQL_ROOT_USERNAME'@'localhost'
         identified with caching_sha2_password by '$DB_MYSQL_ROOT_PASSWORD'
         require issuer '/CN=MySQL_Server_TinyORM_Auto_Generated_CA_Certificate' and
-        subject '/CN=MySQL_Server_TinyORM_Auto_Generated_Client_Certificate';"
+        subject '/CN=MySQL_Server_TinyORM_Auto_Generated_Client_Certificate';" |
+        mysql --user=$DB_MYSQL_ROOT_USERNAME --password=$DB_MYSQL_ROOT_PASSWORD_DEFAULT
       env:
         DB_MYSQL_ROOT_PASSWORD: ${{ secrets.DB_MYSQL_ROOT_PASSWORD }}
         DB_MYSQL_ROOT_PASSWORD_DEFAULT: ${{ secrets.DB_MYSQL_ROOT_PASSWORD_DEFAULT }}
@@ -148,14 +149,15 @@ jobs:
 
     - name: MySQL create TinyORM user
       run: >-
-        mysql --user=$DB_MYSQL_ROOT_USERNAME --password=$DB_MYSQL_ROOT_PASSWORD --execute="
+        echo "
         create user '$DB_MYSQL_USERNAME'@'%'
         identified with caching_sha2_password by '$DB_MYSQL_PASSWORD'
         require issuer '/CN=MySQL_Server_TinyORM_Auto_Generated_CA_Certificate' and
         subject '/CN=MySQL_Server_TinyORM_Auto_Generated_Client_Certificate';
         grant all privileges on \`$DB_MYSQL_DATABASE\`.* to '$DB_MYSQL_USERNAME'@'%';
         grant select on \`mysql\`.\`time_zone_name\` to '$DB_MYSQL_USERNAME'@'%';
-        flush privileges;"
+        flush privileges;" |
+        mysql --user=$DB_MYSQL_ROOT_USERNAME --password=$DB_MYSQL_ROOT_PASSWORD
       env:
         DB_MYSQL_DATABASE: ${{ secrets.DB_MYSQL_DATABASE }}
         DB_MYSQL_PASSWORD: ${{ secrets.DB_MYSQL_PASSWORD }}
