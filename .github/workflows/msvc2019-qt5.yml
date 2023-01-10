@@ -361,11 +361,3 @@ jobs:
       env:
         DB_SQLITE_DATABASE: ${{ runner.temp }}/${{ secrets.DB_SQLITE_DATABASE }}
         TOM_EXAMPLE_ENV: testing
-
-    - name: Setup tmate session
-      if: ${{ failure() }}
-      uses: mxschmitt/action-tmate@v3
-      with:
-        limit-access-to-actor: true
-
-    - run: exit 1
