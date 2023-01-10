@@ -57,20 +57,24 @@ jobs:
       run: |
         tmpfile=$(mktemp)
 
-        cat ./crystal_client.template.cnf | \
-        sed 's/{SSL_CERTIFICATES_PATH}/\/usr\/local\/share\/crystal-mysql/' | \
-        sed "s/{MYSQL_HOST}/$DB_MYSQL_HOST/" > "$tmpfile"
+        cat ./crystal_client.template.cnf | sed "s/{MYSQL_HOST}/$DB_MYSQL_HOST/" > "$tmpfile"
 
         sudo mv "$tmpfile" /etc/mysql/conf.d/crystal_client.cnf
 
         sudo chown root:root /etc/mysql/conf.d/crystal_client.cnf
         sudo chmod 644 /etc/mysql/conf.d/crystal_client.cnf
       env:
-        DB_MYSQL_HOST: ${{ secrets.DB_MYSQL_HOST_SSL }}
+        DB_MYSQL_HOST: ${{ secrets.DB_MYSQL_HOST }}
 
     - name: MySQL start service
       run: |
         sudo systemctl start mysql.service
+
+    - name: Setup tmate session
+      if: ${{ always() }}
+      uses: mxschmitt/action-tmate@v3
+      with:
+        limit-access-to-actor: true
 
     - name: MySQL change root password
       run: >-
