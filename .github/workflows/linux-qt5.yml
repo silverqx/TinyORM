@@ -70,12 +70,6 @@ jobs:
       run: |
         sudo systemctl start mysql.service
 
-    - name: Setup tmate session
-      if: ${{ always() }}
-      uses: mxschmitt/action-tmate@v3
-      with:
-        limit-access-to-actor: true
-
     - name: MySQL change root password
       run: >-
         mysql --user=$DB_MYSQL_ROOT_USERNAME --password=$DB_MYSQL_ROOT_PASSWORD_DEFAULT --execute="
