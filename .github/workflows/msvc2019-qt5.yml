@@ -74,7 +74,7 @@ jobs:
     - name: MySQL change root password
       run: >-
         "alter user '${env:DB_MYSQL_ROOT_USERNAME}'@'localhost'
-        identified with caching_sha2_password by '${env:DB_MYSQL_ROOT_PASSWORD}';" |
+        identified by '${env:DB_MYSQL_ROOT_PASSWORD}';" |
         mysql.exe --user=$env:DB_MYSQL_ROOT_USERNAME --skip-password
       env:
         DB_MYSQL_ROOT_PASSWORD: ${{ secrets.DB_MYSQL_ROOT_PASSWORD }}
@@ -145,7 +145,7 @@ jobs:
     - name: MySQL create TinyORM user
       run: >-
         "create user '${env:DB_MYSQL_USERNAME}'@'%'
-        identified with caching_sha2_password by '${env:DB_MYSQL_PASSWORD}';
+        identified by '${env:DB_MYSQL_PASSWORD}';
         grant all privileges on ``$env:DB_MYSQL_DATABASE``.* to '${env:DB_MYSQL_USERNAME}'@'%';
         grant select on ``mysql``.``time_zone_name`` to '$DB_MYSQL_USERNAME'@'%';
         flush privileges;" |
