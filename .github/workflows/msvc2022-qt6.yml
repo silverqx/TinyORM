@@ -49,28 +49,53 @@ jobs:
         DB_PGSQL_DATABASE: ${{ secrets.DB_PGSQL_DATABASE }}
         DB_PGSQL_USERNAME: ${{ secrets.DB_PGSQL_USERNAME }}
 
-    - name: Remove C:\mysql\bin from $env:Path
-      run: |
-        Rename-Item -Path C:\mysql -NewName C:\mysql.bak
-
-    - name: choco install mysql (MySQL 8)
+    - name: Hosts add MySQL server host URL
       run: >-
-        choco install mysql -y --no-progress
-        --params "/port:3306 /serviceName:MySQL
-        /dataLocation:'$(Resolve-Path ${{ runner.workspace }}/../)'"
-
-        Write-Output 'C:\tools\mysql\current\lib;C:\tools\mysql\current\bin' |
-        Out-File -FilePath $env:GITHUB_PATH -Append
-
-    - name: MySQL change TinyORM password
-      run: >-
-        mysql.exe --host=$env:DB_MYSQL_HOST --user=$env:DB_MYSQL_USERNAME --skip-password
-        --execute="ALTER USER '${env:DB_MYSQL_USERNAME}'@'${env:DB_MYSQL_HOST}'
-        IDENTIFIED BY '${env:DB_MYSQL_PASSWORD}';"
+        "127.0.0.1`t${env:DB_MYSQL_HOST}" |
+        Add-Content -Path "$env:windir/System32/drivers/etc/hosts" -Force
       env:
-        DB_MYSQL_HOST: ${{ secrets.DB_MYSQL_HOST }}
-        DB_MYSQL_PASSWORD: ${{ secrets.DB_MYSQL_PASSWORD }}
-        DB_MYSQL_USERNAME: ${{ secrets.DB_MYSQL_USERNAME }}
+        DB_MYSQL_HOST: ${{ secrets.DB_MYSQL_HOST_SSL }}
+
+    - name: MySQL create data folder
+      run: |
+        New-Item -Type Directory '${{ runner.workspace }}/../mysql/data'
+
+    - name: MySQL initialize my.ini configuration
+      working-directory: ./.github/resources/windows
+      run: >-
+        (Get-Content -Path ./my.template.ini) -creplace
+        '\{MYSQL_DATADIR\}', '${{ runner.workspace }}/../mysql/data' -creplace
+        '\{MYSQL_HOST\}', $env:DB_MYSQL_HOST |
+        Set-Content -Path C:/mysql/my.ini
+      env:
+        DB_MYSQL_HOST: ${{ secrets.DB_MYSQL_HOST_SSL }}
+
+    - name: MySQL initialize data directory
+      run: |
+        mysqld.exe --initialize-insecure --console
+
+    - name: MySQL generate SSL certificates
+      working-directory: ${{ runner.workspace }}/../mysql/data
+      run: |
+        # It's enough to remove only these three certificate-related files
+        Remove-Item ./ca.pem, ./server-cert.pem, ./server-key.pem
+        mysql_ssl_rsa_setup.exe --suffix=TinyORM
+
+    - name: MySQL install/start service
+      run: |
+        mysqld.exe --install MySQL
+        Start-Service MySQL
+
+    - name: MySQL change root password
+      run: >-
+        mysql.exe --user=$env:DB_MYSQL_ROOT_USERNAME --skip-password --execute="
+        alter user '${env:DB_MYSQL_ROOT_USERNAME}'@'localhost'
+        identified by '${env:DB_MYSQL_ROOT_PASSWORD}'
+        require issuer '/CN=MySQL_Server_TinyORM_Auto_Generated_CA_Certificate' and
+        subject '/CN=MySQL_Server_TinyORM_Auto_Generated_Client_Certificate';"
+      env:
+        DB_MYSQL_ROOT_PASSWORD: ${{ secrets.DB_MYSQL_ROOT_PASSWORD }}
+        DB_MYSQL_ROOT_USERNAME: ${{ secrets.DB_MYSQL_ROOT_USERNAME }}
 
     - name: MySQL download time zone POSIX tables
       working-directory: ${{ runner.temp }}
@@ -98,14 +123,13 @@ jobs:
 
         # source path can't be quoted, it works correctly even with spaces
 
-        mysql.exe --host=$env:DB_MYSQL_HOST --user=$env:DB_MYSQL_USERNAME
-        --password=$env:DB_MYSQL_PASSWORD --execute="source $filepath" mysql
+        mysql.exe --user=$env:DB_MYSQL_ROOT_USERNAME --password=$env:DB_MYSQL_ROOT_PASSWORD
+        --execute="source $filepath" mysql
 
         Restart-Service MySQL
       env:
-        DB_MYSQL_HOST: ${{ secrets.DB_MYSQL_HOST }}
-        DB_MYSQL_PASSWORD: ${{ secrets.DB_MYSQL_PASSWORD }}
-        DB_MYSQL_USERNAME: ${{ secrets.DB_MYSQL_USERNAME }}
+        DB_MYSQL_ROOT_PASSWORD: ${{ secrets.DB_MYSQL_ROOT_PASSWORD }}
+        DB_MYSQL_ROOT_USERNAME: ${{ secrets.DB_MYSQL_ROOT_USERNAME }}
 
     - name: MySQL check service status
       run: >-
@@ -113,28 +137,43 @@ jobs:
 
         Write-Output $mysqlService
 
-        $mysqlService.status.ToString() -ceq "Running"
-        -or $(throw 'MySQL service is not running') > $null
+        $mysqlService.status.ToString() -ceq "Running" -or
+        $(throw 'MySQL service is not running') > $null
 
-        mysqladmin.exe --bind-address=$env:DB_MYSQL_HOST --user=$env:DB_MYSQL_USERNAME
-        --password=$env:DB_MYSQL_PASSWORD ping
+        mysqladmin.exe --user=$env:DB_MYSQL_ROOT_USERNAME
+        --password=$env:DB_MYSQL_ROOT_PASSWORD ping
       env:
-        DB_MYSQL_HOST: ${{ secrets.DB_MYSQL_HOST }}
-        DB_MYSQL_PASSWORD: ${{ secrets.DB_MYSQL_PASSWORD }}
-        DB_MYSQL_USERNAME: ${{ secrets.DB_MYSQL_USERNAME }}
+        DB_MYSQL_ROOT_PASSWORD: ${{ secrets.DB_MYSQL_ROOT_PASSWORD }}
+        DB_MYSQL_ROOT_USERNAME: ${{ secrets.DB_MYSQL_ROOT_USERNAME }}
 
     - name: MySQL create TinyORM database
       run: >-
-        echo "
-        create database if not exists $env:DB_MYSQL_DATABASE
-        default character set utf8mb4
-        default collate utf8mb4_0900_ai_ci;" |
-        mysql.exe --host=$env:DB_MYSQL_HOST --user=$env:DB_MYSQL_USERNAME
-        --password=$env:DB_MYSQL_PASSWORD
+        "create database if not exists ``$env:DB_MYSQL_DATABASE``
+        default character set $env:DB_MYSQL_CHARSET
+        default collate $env:DB_MYSQL_COLLATION;" |
+        mysql.exe --user=$env:DB_MYSQL_ROOT_USERNAME --password=$env:DB_MYSQL_ROOT_PASSWORD
+      env:
+        DB_MYSQL_CHARSET: ${{ secrets.DB_MYSQL_CHARSET }}
+        DB_MYSQL_COLLATION: ${{ secrets.DB_MYSQL_COLLATION }}
+        DB_MYSQL_DATABASE: ${{ secrets.DB_MYSQL_DATABASE }}
+        DB_MYSQL_ROOT_PASSWORD: ${{ secrets.DB_MYSQL_ROOT_PASSWORD }}
+        DB_MYSQL_ROOT_USERNAME: ${{ secrets.DB_MYSQL_ROOT_USERNAME }}
+
+    - name: MySQL create TinyORM user
+      run: >-
+        mysql.exe --user=$env:DB_MYSQL_ROOT_USERNAME --password=$env:DB_MYSQL_ROOT_PASSWORD
+        --execute="
+        create user '${env:DB_MYSQL_USERNAME}'@'%'
+        identified by '${env:DB_MYSQL_PASSWORD}'
+        require issuer '/CN=MySQL_Server_TinyORM_Auto_Generated_CA_Certificate' and
+        subject '/CN=MySQL_Server_TinyORM_Auto_Generated_Client_Certificate';
+        grant all privileges on ``$env:DB_MYSQL_DATABASE``.* to '${env:DB_MYSQL_USERNAME}'@'%';
+        flush privileges;"
       env:
         DB_MYSQL_DATABASE: ${{ secrets.DB_MYSQL_DATABASE }}
-        DB_MYSQL_HOST: ${{ secrets.DB_MYSQL_HOST }}
         DB_MYSQL_PASSWORD: ${{ secrets.DB_MYSQL_PASSWORD }}
+        DB_MYSQL_ROOT_PASSWORD: ${{ secrets.DB_MYSQL_ROOT_PASSWORD }}
+        DB_MYSQL_ROOT_USERNAME: ${{ secrets.DB_MYSQL_ROOT_USERNAME }}
         DB_MYSQL_USERNAME: ${{ secrets.DB_MYSQL_USERNAME }}
 
     - name: SQLite create TinyORM database
@@ -261,7 +300,7 @@ jobs:
         DB_MYSQL_CHARSET: utf8mb4
         DB_MYSQL_COLLATION: utf8mb4_0900_ai_ci
         DB_MYSQL_DATABASE: ${{ secrets.DB_MYSQL_DATABASE }}
-        DB_MYSQL_HOST: ${{ secrets.DB_MYSQL_HOST }}
+        DB_MYSQL_HOST: ${{ secrets.DB_MYSQL_HOST_SSL }}
         DB_MYSQL_PASSWORD: ${{ secrets.DB_MYSQL_PASSWORD }}
         DB_MYSQL_USERNAME: ${{ secrets.DB_MYSQL_USERNAME }}
         DB_PGSQL_CHARSET: utf8
@@ -279,7 +318,7 @@ jobs:
         DB_MYSQL_CHARSET: utf8mb4
         DB_MYSQL_COLLATION: utf8mb4_0900_ai_ci
         DB_MYSQL_DATABASE: ${{ secrets.DB_MYSQL_DATABASE }}
-        DB_MYSQL_HOST: ${{ secrets.DB_MYSQL_HOST }}
+        DB_MYSQL_HOST: ${{ secrets.DB_MYSQL_HOST_SSL }}
         DB_MYSQL_PASSWORD: ${{ secrets.DB_MYSQL_PASSWORD }}
         DB_MYSQL_USERNAME: ${{ secrets.DB_MYSQL_USERNAME }}
         DB_PGSQL_CHARSET: utf8
@@ -303,7 +342,7 @@ jobs:
         DB_MYSQL_CHARSET: utf8mb4
         DB_MYSQL_COLLATION: utf8mb4_0900_ai_ci
         DB_MYSQL_DATABASE: ${{ secrets.DB_MYSQL_DATABASE }}
-        DB_MYSQL_HOST: ${{ secrets.DB_MYSQL_HOST }}
+        DB_MYSQL_HOST: ${{ secrets.DB_MYSQL_HOST_SSL }}
         DB_MYSQL_PASSWORD: ${{ secrets.DB_MYSQL_PASSWORD }}
         DB_MYSQL_USERNAME: ${{ secrets.DB_MYSQL_USERNAME }}
         TOM_EXAMPLE_ENV: testing
