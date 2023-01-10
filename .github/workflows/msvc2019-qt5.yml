@@ -147,7 +147,7 @@ jobs:
         "create user '${env:DB_MYSQL_USERNAME}'@'%'
         identified by '${env:DB_MYSQL_PASSWORD}';
         grant all privileges on ``$env:DB_MYSQL_DATABASE``.* to '${env:DB_MYSQL_USERNAME}'@'%';
-        grant select on ``mysql``.``time_zone_name`` to '$DB_MYSQL_USERNAME'@'%';
+        grant select on ``mysql``.``time_zone_name`` to '${env:DB_MYSQL_USERNAME}'@'%';
         flush privileges;" |
         mysql.exe --user=$env:DB_MYSQL_ROOT_USERNAME --password=$env:DB_MYSQL_ROOT_PASSWORD
       env:
