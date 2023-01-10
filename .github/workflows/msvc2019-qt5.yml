@@ -278,7 +278,7 @@ jobs:
         --database=tinyorm_testdata_tom_mysql,tinyorm_testdata_tom_postgres,tinyorm_testdata_tom_sqlite
         --seed --no-ansi
       env:
-        DB_MYSQL_CHARSET: utf8mb4
+        DB_MYSQL_CHARSET: ${{ secrets.DB_MYSQL_CHARSET }}
         DB_MYSQL_COLLATION: utf8mb4_general_ci
         DB_MYSQL_DATABASE: ${{ secrets.DB_MYSQL_DATABASE }}
         DB_MYSQL_HOST: ${{ secrets.DB_MYSQL_HOST }}
@@ -296,7 +296,7 @@ jobs:
       working-directory: ../TinyORM-builds-cmake/build-msvc-cmake-debug
       run: ctest --output-on-failure
       env:
-        DB_MYSQL_CHARSET: utf8mb4
+        DB_MYSQL_CHARSET: ${{ secrets.DB_MYSQL_CHARSET }}
         DB_MYSQL_COLLATION: utf8mb4_general_ci
         DB_MYSQL_DATABASE: ${{ secrets.DB_MYSQL_DATABASE }}
         DB_MYSQL_HOST: ${{ secrets.DB_MYSQL_HOST }}
@@ -320,7 +320,7 @@ jobs:
         .\tom.exe migrate:refresh --database=tinyorm_tom_mysql --seed --no-ansi
         .\tom.exe migrate:status --database=tinyorm_tom_mysql --no-ansi
       env:
-        DB_MYSQL_CHARSET: utf8mb4
+        DB_MYSQL_CHARSET: ${{ secrets.DB_MYSQL_CHARSET }}
         DB_MYSQL_COLLATION: utf8mb4_general_ci
         DB_MYSQL_DATABASE: ${{ secrets.DB_MYSQL_DATABASE }}
         DB_MYSQL_HOST: ${{ secrets.DB_MYSQL_HOST }}
