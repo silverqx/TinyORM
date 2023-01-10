@@ -52,55 +52,82 @@ jobs:
         DB_PGSQL_DATABASE: ${{ secrets.DB_PGSQL_DATABASE }}
         DB_PGSQL_USERNAME: ${{ secrets.DB_PGSQL_USERNAME }}
 
+    - name: MySQL initialize crystal_client.cnf configuration (global)
+      working-directory: .github/resources/linux
+      run: |
+        tmpfile=$(mktemp)
+
+        cat ./crystal_client.template.cnf | \
+        sed 's/{SSL_CERTIFICATES_PATH}/\/usr\/local\/share\/crystal-mysql/' | \
+        sed "s/{MYSQL_HOST}/$DB_MYSQL_HOST/" > "$tmpfile"
+
+        sudo mv "$tmpfile" /etc/mysql/conf.d/crystal_client.cnf
+
+        sudo chown root:root /etc/mysql/conf.d/crystal_client.cnf
+        sudo chmod 644 /etc/mysql/conf.d/crystal_client.cnf
+      env:
+        DB_MYSQL_HOST: ${{ secrets.DB_MYSQL_HOST_SSL }}
+
     - name: MySQL start service
       run: |
         sudo systemctl start mysql.service
 
-    - name: MySQL change TinyORM password
+    - name: MySQL change root password
       run: >-
-        mysql --host=$DB_MYSQL_HOST --user=$DB_MYSQL_USERNAME
-        --password=$DB_MYSQL_ROOT_PASSWORD_DEFAULT
-        --execute="ALTER USER '$DB_MYSQL_USERNAME'@'$DB_MYSQL_HOST'
-        IDENTIFIED BY '$DB_MYSQL_PASSWORD';"
+        mysql --user=$DB_MYSQL_ROOT_USERNAME --password=$DB_MYSQL_ROOT_PASSWORD_DEFAULT --execute="
+        alter user '$DB_MYSQL_ROOT_USERNAME'@'localhost'
+        identified by '$DB_MYSQL_ROOT_PASSWORD';"
       env:
-        DB_MYSQL_HOST: ${{ secrets.DB_MYSQL_HOST }}
-        DB_MYSQL_PASSWORD: ${{ secrets.DB_MYSQL_PASSWORD }}
+        DB_MYSQL_ROOT_PASSWORD: ${{ secrets.DB_MYSQL_ROOT_PASSWORD }}
         DB_MYSQL_ROOT_PASSWORD_DEFAULT: ${{ secrets.DB_MYSQL_ROOT_PASSWORD_DEFAULT }}
-        DB_MYSQL_USERNAME: ${{ secrets.DB_MYSQL_USERNAME }}
+        DB_MYSQL_ROOT_USERNAME: ${{ secrets.DB_MYSQL_ROOT_USERNAME }}
 
     - name: MySQL populate time zone tables 👌
       run: >-
         mysql_tzinfo_to_sql /usr/share/zoneinfo |
-        mysql --host=$DB_MYSQL_HOST --user=$DB_MYSQL_USERNAME --password=$DB_MYSQL_PASSWORD mysql
+        mysql --user=$DB_MYSQL_ROOT_USERNAME --password=$DB_MYSQL_ROOT_PASSWORD mysql
 
         sudo systemctl restart mysql.service
       env:
-        DB_MYSQL_HOST: ${{ secrets.DB_MYSQL_HOST }}
-        DB_MYSQL_PASSWORD: ${{ secrets.DB_MYSQL_PASSWORD }}
-        DB_MYSQL_USERNAME: ${{ secrets.DB_MYSQL_USERNAME }}
+        DB_MYSQL_ROOT_PASSWORD: ${{ secrets.DB_MYSQL_ROOT_PASSWORD }}
+        DB_MYSQL_ROOT_USERNAME: ${{ secrets.DB_MYSQL_ROOT_USERNAME }}
 
     - name: MySQL check service status
-      run: >-
+      run: |
         sudo systemctl status mysql.service
+        systemctl is-active --quiet mysql.service
 
-        mysqladmin --bind-address=$DB_MYSQL_HOST --user=$DB_MYSQL_USERNAME
-        --password=$DB_MYSQL_PASSWORD ping
+        mysqladmin --user=$DB_MYSQL_ROOT_USERNAME --password=$DB_MYSQL_ROOT_PASSWORD ping
       env:
-        DB_MYSQL_HOST: ${{ secrets.DB_MYSQL_HOST }}
-        DB_MYSQL_PASSWORD: ${{ secrets.DB_MYSQL_PASSWORD }}
-        DB_MYSQL_USERNAME: ${{ secrets.DB_MYSQL_USERNAME }}
+        DB_MYSQL_ROOT_PASSWORD: ${{ secrets.DB_MYSQL_ROOT_PASSWORD }}
+        DB_MYSQL_ROOT_USERNAME: ${{ secrets.DB_MYSQL_ROOT_USERNAME }}
 
     - name: MySQL create TinyORM database
       run: >-
         echo "
-        create database if not exists $DB_MYSQL_DATABASE
-        default character set utf8mb4
-        default collate utf8mb4_0900_ai_ci;" |
-        mysql --host=$DB_MYSQL_HOST --user=$DB_MYSQL_USERNAME --password=$DB_MYSQL_PASSWORD
+        create database if not exists \`$DB_MYSQL_DATABASE\`
+        default character set $DB_MYSQL_CHARSET
+        default collate $DB_MYSQL_COLLATION;" |
+        mysql --user=$DB_MYSQL_ROOT_USERNAME --password=$DB_MYSQL_ROOT_PASSWORD
+      env:
+        DB_MYSQL_CHARSET: ${{ secrets.DB_MYSQL_CHARSET }}
+        DB_MYSQL_COLLATION: ${{ secrets.DB_MYSQL_COLLATION }}
+        DB_MYSQL_DATABASE: ${{ secrets.DB_MYSQL_DATABASE }}
+        DB_MYSQL_ROOT_PASSWORD: ${{ secrets.DB_MYSQL_ROOT_PASSWORD }}
+        DB_MYSQL_ROOT_USERNAME: ${{ secrets.DB_MYSQL_ROOT_USERNAME }}
+
+    - name: MySQL create TinyORM user
+      run: >-
+        mysql --user=$DB_MYSQL_ROOT_USERNAME --password=$DB_MYSQL_ROOT_PASSWORD --execute="
+        create user '$DB_MYSQL_USERNAME'@'%'
+        identified by '$DB_MYSQL_PASSWORD';
+        grant all privileges on \`$DB_MYSQL_DATABASE\`.* to '$DB_MYSQL_USERNAME'@'%';
+        flush privileges;"
       env:
         DB_MYSQL_DATABASE: ${{ secrets.DB_MYSQL_DATABASE }}
-        DB_MYSQL_HOST: ${{ secrets.DB_MYSQL_HOST }}
         DB_MYSQL_PASSWORD: ${{ secrets.DB_MYSQL_PASSWORD }}
+        DB_MYSQL_ROOT_PASSWORD: ${{ secrets.DB_MYSQL_ROOT_PASSWORD }}
+        DB_MYSQL_ROOT_USERNAME: ${{ secrets.DB_MYSQL_ROOT_USERNAME }}
         DB_MYSQL_USERNAME: ${{ secrets.DB_MYSQL_USERNAME }}
 
     - name: SQLite create TinyORM database
