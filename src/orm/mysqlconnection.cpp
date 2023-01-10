@@ -9,6 +9,8 @@
 #ifdef TINYORM_MYSQL_PING
 #  ifdef __MINGW32__
 #    include <mysql/errmsg.h>
+#  elif __has_include(<errmsg.h>)
+#    include <errmsg.h>
 #  endif
 #  if __has_include(<mysql/mysql.h>)
 #    include <mysql/mysql.h>
