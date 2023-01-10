@@ -1,0 +1,3 @@
+[mysqld]
+# The default authentication plugin to be used when connecting to the server
+default_authentication_plugin=caching_sha2_password

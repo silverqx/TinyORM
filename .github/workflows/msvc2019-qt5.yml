@@ -76,7 +76,7 @@ jobs:
       run: >-
         mysql.exe --user=$env:DB_MYSQL_ROOT_USERNAME --skip-password --execute="
         alter user '${env:DB_MYSQL_ROOT_USERNAME}'@'localhost'
-        identified by '${env:DB_MYSQL_ROOT_PASSWORD}';"
+        identified with caching_sha2_password by '${env:DB_MYSQL_ROOT_PASSWORD}';"
       env:
         DB_MYSQL_ROOT_PASSWORD: ${{ secrets.DB_MYSQL_ROOT_PASSWORD }}
         DB_MYSQL_ROOT_USERNAME: ${{ secrets.DB_MYSQL_ROOT_USERNAME }}
@@ -148,7 +148,7 @@ jobs:
         mysql.exe --user=$env:DB_MYSQL_ROOT_USERNAME --password=$env:DB_MYSQL_ROOT_PASSWORD
         --execute="
         create user '${env:DB_MYSQL_USERNAME}'@'%'
-        identified by '${env:DB_MYSQL_PASSWORD}';
+        identified with caching_sha2_password by '${env:DB_MYSQL_PASSWORD}';
         grant all privileges on ``$env:DB_MYSQL_DATABASE``.* to '${env:DB_MYSQL_USERNAME}'@'%';
         flush privileges;"
       env:
