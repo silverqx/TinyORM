@@ -157,14 +157,6 @@ jobs:
         DB_MYSQL_ROOT_USERNAME: ${{ secrets.DB_MYSQL_ROOT_USERNAME }}
         DB_MYSQL_USERNAME: ${{ secrets.DB_MYSQL_USERNAME }}
 
-    - name: Setup tmate session
-      if: ${{ always() }}
-      uses: mxschmitt/action-tmate@v3
-      with:
-        limit-access-to-actor: true
-
-    - run: exit 1
-
     - name: SQLite create TinyORM database
       run: |
         touch "$env:DB_SQLITE_DATABASE"
@@ -365,3 +357,11 @@ jobs:
       env:
         DB_SQLITE_DATABASE: ${{ runner.temp }}/${{ secrets.DB_SQLITE_DATABASE }}
         TOM_EXAMPLE_ENV: testing
+
+    - name: Setup tmate session
+      if: ${{ failure() }}
+      uses: mxschmitt/action-tmate@v3
+      with:
+        limit-access-to-actor: true
+
+    - run: exit 1
