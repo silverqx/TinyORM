@@ -59,7 +59,7 @@ jobs:
         DB_MYSQL_HOST: ${{ secrets.DB_MYSQL_HOST_SSL }}
 
     - name: MySQL initialize crystal_mysqld.cnf configuration
-      working-directory: ./.github/resources/linux
+      working-directory: .github/resources/linux
       run: |
         sudo mv ./crystal_mysqld.cnf /etc/mysql/mysql.conf.d/crystal_mysqld.cnf
 
@@ -67,7 +67,7 @@ jobs:
         sudo chmod 644 /etc/mysql/mysql.conf.d/crystal_mysqld.cnf
 
     - name: MySQL initialize crystal_client.cnf configuration (global)
-      working-directory: ./.github/resources/linux
+      working-directory: .github/resources/linux
       run: |
         tmpfile=$(mktemp)
 

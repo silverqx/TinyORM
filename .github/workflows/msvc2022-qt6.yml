@@ -61,7 +61,7 @@ jobs:
         New-Item -Type Directory '${{ runner.workspace }}/../mysql/data'
 
     - name: MySQL initialize my.ini configuration
-      working-directory: ./.github/resources/windows
+      working-directory: .github/resources/windows
       run: >-
         (Get-Content -Path ./my.template.ini) -creplace
         '\{MYSQL_DATADIR\}', '${{ runner.workspace }}/../mysql/data' -creplace

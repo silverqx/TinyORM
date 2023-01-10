@@ -1,0 +1,145 @@
+name: Linux
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+jobs:
+
+  build:
+    name: Linux tests
+
+    runs-on: ubuntu-22.04
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Hosts add MySQL server host URL
+      run: >-
+        sudo -- sh -c "echo '127.0.0.1\t$DB_MYSQL_HOST_SSL' >> /etc/hosts"
+      env:
+        DB_MYSQL_HOST_SSL: ${{ secrets.DB_MYSQL_HOST_SSL }}
+
+    - name: MySQL initialize crystal_mysqld.cnf configuration
+      working-directory: ./.github/resources/linux
+      run: |
+        sudo mv ./crystal_mysqld.cnf /etc/mysql/mysql.conf.d/crystal_mysqld.cnf
+
+        sudo chown root:root /etc/mysql/mysql.conf.d/crystal_mysqld.cnf
+        sudo chmod 644 /etc/mysql/mysql.conf.d/crystal_mysqld.cnf
+
+    - name: MySQL initialize crystal_client.cnf configuration (global)
+      working-directory: ./.github/resources/linux
+      run: |
+        tmpfile=$(mktemp)
+
+        cat ./crystal_client.template.cnf | \
+        sed 's/{SSL_CERTIFICATES_PATH}/\/usr\/local\/share\/crystal-mysql/' | \
+        sed "s/{MYSQL_HOST}/$DB_MYSQL_HOST_SSL/" > "$tmpfile"
+
+        sudo mv "$tmpfile" /etc/mysql/conf.d/crystal_client.cnf
+
+        sudo chown root:root /etc/mysql/conf.d/crystal_client.cnf
+        sudo chmod 644 /etc/mysql/conf.d/crystal_client.cnf
+      env:
+        DB_MYSQL_HOST_SSL: ${{ secrets.DB_MYSQL_HOST_SSL }}
+
+    - name: MySQL generate SSL certificates
+      run: |
+        # It's enough to remove only these three certificate-related files
+        sudo -u mysql -- rm /var/lib/mysql/{ca,server-cert,server-key}.pem
+        sudo mysql_ssl_rsa_setup --suffix=TinyORM --uid=mysql
+
+    - name: MySQL copy SSL certificates for runner user
+      run: |
+        sudo mkdir -p /usr/local/share/crystal-mysql
+        cd /usr/local/share/crystal-mysql
+        sudo cp /var/lib/mysql/{ca,client-cert,client-key}.pem /usr/local/share/crystal-mysql
+        sudo chown -R root:root /usr/local/share/crystal-mysql
+        sudo chmod 444 /usr/local/share/crystal-mysql/{ca,client-cert,client-key}.pem
+
+    - name: MySQL start service
+      run: |
+        sudo systemctl start mysql.service
+
+    - name: MySQL change root password
+      run: >-
+        mysql --user=$DB_MYSQL_ROOT_USERNAME --password=$DB_MYSQL_ROOT_PASSWORD_DEFAULT --execute="
+        alter user '$DB_MYSQL_ROOT_USERNAME'@'localhost'
+        identified by '$DB_MYSQL_ROOT_PASSWORD'
+        require issuer '/CN=MySQL_Server_TinyORM_Auto_Generated_CA_Certificate' and
+        subject '/CN=MySQL_Server_TinyORM_Auto_Generated_Client_Certificate';"
+      env:
+        DB_MYSQL_ROOT_PASSWORD: ${{ secrets.DB_MYSQL_ROOT_PASSWORD }}
+        DB_MYSQL_ROOT_PASSWORD_DEFAULT: ${{ secrets.DB_MYSQL_ROOT_PASSWORD_DEFAULT }}
+        DB_MYSQL_ROOT_USERNAME: ${{ secrets.DB_MYSQL_ROOT_USERNAME }}
+
+    - name: MySQL populate time zone tables 👌
+      run: >-
+        mysql_tzinfo_to_sql /usr/share/zoneinfo |
+        mysql --user=$DB_MYSQL_ROOT_USERNAME --password=$DB_MYSQL_ROOT_PASSWORD mysql
+
+        sudo systemctl restart mysql.service
+      env:
+        DB_MYSQL_ROOT_PASSWORD: ${{ secrets.DB_MYSQL_ROOT_PASSWORD }}
+        DB_MYSQL_ROOT_USERNAME: ${{ secrets.DB_MYSQL_ROOT_USERNAME }}
+
+    - name: MySQL check service status
+      run: |
+        sudo systemctl status mysql.service
+        systemctl is-active --quiet mysql.service
+
+        mysqladmin --user=$DB_MYSQL_ROOT_USERNAME --password=$DB_MYSQL_ROOT_PASSWORD ping
+      env:
+        DB_MYSQL_ROOT_PASSWORD: ${{ secrets.DB_MYSQL_ROOT_PASSWORD }}
+        DB_MYSQL_ROOT_USERNAME: ${{ secrets.DB_MYSQL_ROOT_USERNAME }}
+
+    - name: MySQL create TinyORM database
+      run: >-
+        echo "
+        create database if not exists \`$DB_MYSQL_DATABASE\`
+        default character set $DB_MYSQL_CHARSET
+        default collate $DB_MYSQL_COLLATION;" |
+        mysql --user=$DB_MYSQL_ROOT_USERNAME --password=$DB_MYSQL_ROOT_PASSWORD
+      env:
+        DB_MYSQL_CHARSET: ${{ secrets.DB_MYSQL_CHARSET }}
+        DB_MYSQL_COLLATION: ${{ secrets.DB_MYSQL_COLLATION }}
+        DB_MYSQL_DATABASE: ${{ secrets.DB_MYSQL_DATABASE }}
+        DB_MYSQL_ROOT_PASSWORD: ${{ secrets.DB_MYSQL_ROOT_PASSWORD }}
+        DB_MYSQL_ROOT_USERNAME: ${{ secrets.DB_MYSQL_ROOT_USERNAME }}
+
+    - name: MySQL create TinyORM user
+      run: >-
+        mysql --user=$DB_MYSQL_ROOT_USERNAME --password=$DB_MYSQL_ROOT_PASSWORD --execute="
+        create user '$DB_MYSQL_USERNAME'@'%'
+        identified by '$DB_MYSQL_PASSWORD'
+        require issuer '/CN=MySQL_Server_TinyORM_Auto_Generated_CA_Certificate' and
+        subject '/CN=MySQL_Server_TinyORM_Auto_Generated_Client_Certificate';
+        grant all privileges on \`$DB_MYSQL_DATABASE\`.* to '$DB_MYSQL_USERNAME'@'%';
+        flush privileges;"
+      env:
+        DB_MYSQL_DATABASE: ${{ secrets.DB_MYSQL_DATABASE }}
+        DB_MYSQL_PASSWORD: ${{ secrets.DB_MYSQL_PASSWORD }}
+        DB_MYSQL_ROOT_PASSWORD: ${{ secrets.DB_MYSQL_ROOT_PASSWORD }}
+        DB_MYSQL_ROOT_USERNAME: ${{ secrets.DB_MYSQL_ROOT_USERNAME }}
+        DB_MYSQL_USERNAME: ${{ secrets.DB_MYSQL_USERNAME }}
+
+    - name: Print MySQL database version
+      run: |
+        mysql --version
+
+    - name: MySQL test TinyORM user
+      run: >-
+        mysql --print-defaults --user=$DB_MYSQL_USERNAME --password=$DB_MYSQL_PASSWORD
+        --execute='select current_user(), user(); show tables; \s'
+        $DB_MYSQL_DATABASE
+
+        mysql --user=$DB_MYSQL_USERNAME --password=$DB_MYSQL_PASSWORD
+        --execute='select current_user(), user(); show tables; \s'
+        $DB_MYSQL_DATABASE
+      env:
+        DB_MYSQL_DATABASE: ${{ secrets.DB_MYSQL_DATABASE }}
+        DB_MYSQL_PASSWORD: ${{ secrets.DB_MYSQL_PASSWORD }}
+        DB_MYSQL_USERNAME: ${{ secrets.DB_MYSQL_USERNAME }}

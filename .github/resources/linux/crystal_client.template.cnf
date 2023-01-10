@@ -1,0 +1,9 @@
+[client]
+# Common
+host={MYSQL_HOST}
+
+# Strict TLS connection
+ssl-ca="{SSL_CERTIFICATES_PATH}/ca.pem"
+ssl-cert="{SSL_CERTIFICATES_PATH}/client-cert.pem"
+ssl-key="{SSL_CERTIFICATES_PATH}/client-key.pem"
+ssl-mode=VERIFY_IDENTITY
