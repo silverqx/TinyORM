@@ -63,7 +63,7 @@ jobs:
     - name: MySQL initialize my.ini configuration
       working-directory: .github/resources/windows
       run: >-
-        (Get-Content -Path ./my.template.ini) -creplace
+        (Get-Content -Path ./my_8_ssl.template.ini) -creplace
         '\{MYSQL_DATADIR\}', '${{ runner.workspace }}/../mysql/data' -creplace
         '\{MYSQL_HOST\}', $env:DB_MYSQL_HOST |
         Set-Content -Path C:/mysql/my.ini
