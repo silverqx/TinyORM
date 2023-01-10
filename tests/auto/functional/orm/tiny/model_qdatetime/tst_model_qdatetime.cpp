@@ -1345,7 +1345,7 @@ bool
 tst_Model_QDateTime::mysqlTimezoneTablesNotPopulated(const QString &connection)
 {
     auto qtQuery = DB::select(
-                       QStringLiteral("select count(*) from mysql.time_zone_name"),
+                       QStringLiteral("select count(*) from `mysql`.`time_zone_name`"),
                        {}, connection);
 
     if (!qtQuery.first())
