@@ -18,6 +18,8 @@ using Orm::Constants::NAME;
 using Orm::Constants::QMYSQL;
 using Orm::Constants::SIZE;
 using Orm::Constants::UTF8;
+using Orm::Constants::UTF8Generalci;
+using Orm::Constants::UTF8Unicodeci;
 using Orm::Constants::charset_;
 using Orm::Constants::driver_;
 using Orm::Constants::collation_;
@@ -158,7 +160,7 @@ void tst_MySql_SchemaBuilder::createDatabase_Charset_Collation() const
     DB::addConnection({
         {driver_,    QMYSQL},
         {charset_,   UTF8},
-        {collation_, QStringLiteral("utf8_general_ci")},
+        {collation_, UTF8Generalci},
     }, mysqlCreateDb);
 
     auto log = DB::connection(mysqlCreateDb).pretend([](auto &connection)
@@ -302,7 +304,7 @@ void tst_MySql_SchemaBuilder::createTable_Charset_Collation_Engine() const
                 .create(Firewalls, [](Blueprint &table)
         {
             table.charset = UTF8;
-            table.collation = "utf8_general_ci";
+            table.collation = UTF8Generalci;
             table.engine = MyISAM;
 
             table.id();
@@ -714,7 +716,7 @@ void tst_MySql_SchemaBuilder::modifiers() const
             table.string("name4").invisible();
             table.string("name5").charset(UTF8);
             table.string("name6").collation("utf8mb4_unicode_ci");
-            table.string("name7").charset(UTF8).collation("utf8_unicode_ci");
+            table.string("name7").charset(UTF8).collation(UTF8Unicodeci);
             table.bigInteger("big_int").isUnsigned();
             table.bigInteger("big_int1");
         });
