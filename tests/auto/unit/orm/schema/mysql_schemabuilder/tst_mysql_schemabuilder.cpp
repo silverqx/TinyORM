@@ -104,6 +104,11 @@ private:
     /*! Table or database name used in tests. */
     inline static const auto Firewalls = QStringLiteral("firewalls");
 
+    /*! The charset set for the current MySQL connection (based on env. variable). */
+    QString m_charset {};
+    /*! The collation set for the current MySQL connection (based on env. variable). */
+    QString m_collation {};
+
     /*! Connection name used in this test case. */
     QString m_connection {};
 };
@@ -114,6 +119,11 @@ private:
 void tst_MySql_SchemaBuilder::initTestCase()
 {
     m_connection = Databases::createConnection(Databases::MYSQL);
+
+    // The charset and collation in all queries is set on the base of env. variables
+    const auto &connection = DB::connection(m_connection);
+    m_charset = connection.getConfig(charset_).value<QString>();
+    m_collation = connection.getConfig(collation_).value<QString>();
 
     if (m_connection.isEmpty())
         QSKIP(TestUtils::AutoTestSkipped
@@ -133,8 +143,10 @@ void tst_MySql_SchemaBuilder::createDatabase() const
 
     QCOMPARE(log.size(), 1);
     QCOMPARE(firstLog.query,
-             "create database `firewalls` "
-             "default character set `utf8mb4` default collate `utf8mb4_0900_ai_ci`");
+             QStringLiteral(
+                 "create database `firewalls` "
+                 "default character set `%1` default collate `%2`")
+             .arg(m_charset, m_collation));
     QVERIFY(firstLog.boundValues.isEmpty());
 }
 
@@ -223,31 +235,33 @@ void tst_MySql_SchemaBuilder::createTable() const
 
     QCOMPARE(log.size(), 1);
     QCOMPARE(firstLog.query,
-             "create table `firewalls` ("
-             "`id` bigint unsigned not null auto_increment primary key, "
-             "`char` char(255) not null, "
-             "`char_10` char(10) not null, "
-             "`string` varchar(255) not null, "
-             "`string_22` varchar(22) not null, "
-             "`tiny_text` tinytext not null, "
-             "`text` text not null, "
-             "`medium_text` mediumtext not null, "
-             "`long_text` longtext not null, "
-             "`integer` int not null, "
-             "`tinyInteger` tinyint not null, "
-             "`smallInteger` smallint not null, "
-             "`mediumInteger` mediumint not null, "
-             "`bigInteger` bigint not null, "
-             "`unsignedInteger` int unsigned not null, "
-             "`unsignedTinyInteger` tinyint unsigned not null, "
-             "`unsignedSmallInteger` smallint unsigned not null, "
-             "`unsignedMediumInteger` mediumint unsigned not null, "
-             "`unsignedBigInteger` bigint unsigned not null, "
-             "`uuid` char(36) not null, "
-             "`ip_address` varchar(45) not null, "
-             "`mac_address` varchar(17) not null) "
-             "default character set utf8mb4 collate 'utf8mb4_0900_ai_ci' "
-             "engine = InnoDB");
+             QStringLiteral(
+                 "create table `firewalls` ("
+                 "`id` bigint unsigned not null auto_increment primary key, "
+                 "`char` char(255) not null, "
+                 "`char_10` char(10) not null, "
+                 "`string` varchar(255) not null, "
+                 "`string_22` varchar(22) not null, "
+                 "`tiny_text` tinytext not null, "
+                 "`text` text not null, "
+                 "`medium_text` mediumtext not null, "
+                 "`long_text` longtext not null, "
+                 "`integer` int not null, "
+                 "`tinyInteger` tinyint not null, "
+                 "`smallInteger` smallint not null, "
+                 "`mediumInteger` mediumint not null, "
+                 "`bigInteger` bigint not null, "
+                 "`unsignedInteger` int unsigned not null, "
+                 "`unsignedTinyInteger` tinyint unsigned not null, "
+                 "`unsignedSmallInteger` smallint unsigned not null, "
+                 "`unsignedMediumInteger` mediumint unsigned not null, "
+                 "`unsignedBigInteger` bigint unsigned not null, "
+                 "`uuid` char(36) not null, "
+                 "`ip_address` varchar(45) not null, "
+                 "`mac_address` varchar(17) not null) "
+                 "default character set %1 collate '%2' "
+                 "engine = InnoDB")
+             .arg(m_charset, m_collation));
     QVERIFY(firstLog.boundValues.isEmpty());
 }
 
@@ -270,11 +284,13 @@ void tst_MySql_SchemaBuilder::createTable_Temporary() const
 
     QCOMPARE(log.size(), 1);
     QCOMPARE(firstLog.query,
-             "create temporary table `firewalls` ("
-             "`id` bigint unsigned not null auto_increment primary key, "
-             "`name` varchar(255) not null) "
-             "default character set utf8mb4 collate 'utf8mb4_0900_ai_ci' "
-             "engine = InnoDB");
+             QStringLiteral(
+                 "create temporary table `firewalls` ("
+                 "`id` bigint unsigned not null auto_increment primary key, "
+                 "`name` varchar(255) not null) "
+                 "default character set %1 collate '%2' "
+                 "engine = InnoDB")
+             .arg(m_charset, m_collation));
     QVERIFY(firstLog.boundValues.isEmpty());
 }
 
@@ -342,14 +358,16 @@ void tst_MySql_SchemaBuilder::timestamps_rememberToken_softDeletes_CreateAndDrop
 
     const auto &log0 = log.at(0);
     QCOMPARE(log0.query,
-             "create table `firewalls` ("
-             "`id` bigint unsigned not null auto_increment primary key, "
-             "`created_at` timestamp null, "
-             "`updated_at` timestamp null, "
-             "`remember_token` varchar(100) null, "
-             "`deleted_at` timestamp null) "
-             "default character set utf8mb4 collate 'utf8mb4_0900_ai_ci' "
-             "engine = InnoDB");
+             QStringLiteral(
+                 "create table `firewalls` ("
+                 "`id` bigint unsigned not null auto_increment primary key, "
+                 "`created_at` timestamp null, "
+                 "`updated_at` timestamp null, "
+                 "`remember_token` varchar(100) null, "
+                 "`deleted_at` timestamp null) "
+                 "default character set %1 collate '%2' "
+                 "engine = InnoDB")
+             .arg(m_charset, m_collation));
     QVERIFY(log0.boundValues.isEmpty());
 
     const auto &log1 = log.at(1);
@@ -369,12 +387,14 @@ void tst_MySql_SchemaBuilder::timestamps_rememberToken_softDeletes_CreateAndDrop
 
     const auto &log4 = log.at(4);
     QCOMPARE(log4.query,
-             "create table `firewalls` ("
-             "`id` bigint unsigned not null auto_increment primary key, "
-             "`created_at` timestamp(3) null, "
-             "`updated_at` timestamp(3) null) "
-             "default character set utf8mb4 collate 'utf8mb4_0900_ai_ci' "
-             "engine = InnoDB");
+             QStringLiteral(
+                "create table `firewalls` ("
+                "`id` bigint unsigned not null auto_increment primary key, "
+                "`created_at` timestamp(3) null, "
+                "`updated_at` timestamp(3) null) "
+                "default character set %1 collate '%2' "
+                "engine = InnoDB")
+             .arg(m_charset, m_collation));
     QVERIFY(log4.boundValues.isEmpty());
 }
 
@@ -712,21 +732,23 @@ void tst_MySql_SchemaBuilder::modifiers() const
 
     const auto &log0 = log.at(0);
     QCOMPARE(log0.query,
-             "create table `firewalls` ("
-             "`id` bigint unsigned not null auto_increment primary key, "
-             "`name` varchar(255) not null default 'guest', "
-             "`name1` varchar(255) null, "
-             "`name2` varchar(255) not null comment 'name2 note', "
-             "`name3` varchar(255) not null, "
-             "`name4` varchar(255) not null invisible, "
-             "`name5` varchar(255) character set 'utf8' not null, "
-             "`name6` varchar(255) collate 'utf8mb4_unicode_ci' not null, "
-             "`name7` varchar(255) character set 'utf8' collate 'utf8_unicode_ci' "
-               "not null, "
-             "`big_int` bigint unsigned not null, "
-             "`big_int1` bigint not null) "
-             "default character set utf8mb4 collate 'utf8mb4_0900_ai_ci' "
-             "engine = InnoDB");
+             QStringLiteral(
+                "create table `firewalls` ("
+                "`id` bigint unsigned not null auto_increment primary key, "
+                "`name` varchar(255) not null default 'guest', "
+                "`name1` varchar(255) null, "
+                "`name2` varchar(255) not null comment 'name2 note', "
+                "`name3` varchar(255) not null, "
+                "`name4` varchar(255) not null invisible, "
+                "`name5` varchar(255) character set 'utf8' not null, "
+                "`name6` varchar(255) collate 'utf8mb4_unicode_ci' not null, "
+                "`name7` varchar(255) character set 'utf8' collate 'utf8_unicode_ci' "
+                  "not null, "
+                "`big_int` bigint unsigned not null, "
+                "`big_int1` bigint not null) "
+                "default character set %1 collate '%2' "
+                "engine = InnoDB")
+             .arg(m_charset, m_collation));
     QVERIFY(log0.boundValues.isEmpty());
 
     const auto &log1 = log.at(1);
@@ -764,11 +786,13 @@ void tst_MySql_SchemaBuilder::modifier_defaultValue_WithExpression() const
 
     QCOMPARE(log.size(), 1);
     QCOMPARE(firstLog.query,
-             "create table `firewalls` ("
-             "`name` varchar(255) not null default 'guest', "
-             "`name_raw` varchar(255) not null default 'guest_raw') "
-             "default character set utf8mb4 collate 'utf8mb4_0900_ai_ci' "
-             "engine = InnoDB");
+             QStringLiteral(
+                "create table `firewalls` ("
+                "`name` varchar(255) not null default 'guest', "
+                "`name_raw` varchar(255) not null default 'guest_raw') "
+                "default character set %1 collate '%2' "
+                "engine = InnoDB")
+             .arg(m_charset, m_collation));
     QVERIFY(firstLog.boundValues.isEmpty());
 }
 
@@ -792,14 +816,16 @@ void tst_MySql_SchemaBuilder::modifier_defaultValue_WithBoolean() const
 
     QCOMPARE(log.size(), 1);
     QCOMPARE(firstLog.query,
-             "create table `firewalls` ("
-             "`boolean` tinyint(1) not null, "
-             "`boolean_false` tinyint(1) not null default '0', "
-             "`boolean_true` tinyint(1) not null default '1', "
-             "`boolean_0` tinyint(1) not null default '0', "
-             "`boolean_1` tinyint(1) not null default '1') "
-             "default character set utf8mb4 collate 'utf8mb4_0900_ai_ci' "
-             "engine = InnoDB");
+             QStringLiteral(
+                "create table `firewalls` ("
+                "`boolean` tinyint(1) not null, "
+                "`boolean_false` tinyint(1) not null default '0', "
+                "`boolean_true` tinyint(1) not null default '1', "
+                "`boolean_0` tinyint(1) not null default '0', "
+                "`boolean_1` tinyint(1) not null default '1') "
+                "default character set %1 collate '%2' "
+                "engine = InnoDB")
+             .arg(m_charset, m_collation));
     QVERIFY(firstLog.boundValues.isEmpty());
 }
 
@@ -822,11 +848,13 @@ and tab	end)");
     QCOMPARE(log.size(), 1);
     QCOMPARE(firstLog.query,
              // String contains \t after tab word
-             "create table `firewalls` ("
-             "`string` varchar(255) not null default 'Text '' and \" or \\\\ newline\n"
-             "and tab	end') "
-             "default character set utf8mb4 collate 'utf8mb4_0900_ai_ci' "
-             "engine = InnoDB");
+             QStringLiteral(
+                "create table `firewalls` ("
+                "`string` varchar(255) not null default 'Text '' and \" or \\\\ newline\n"
+                "and tab	end') "
+                "default character set %1 collate '%2' "
+                "engine = InnoDB")
+             .arg(m_charset, m_collation));
     QVERIFY(firstLog.boundValues.isEmpty());
 }
 
@@ -850,13 +878,15 @@ void tst_MySql_SchemaBuilder::useCurrent() const
 
     QCOMPARE(log.size(), 1);
     QCOMPARE(firstLog.query,
-             "create table `firewalls` ("
-             "`created` datetime not null, "
-             "`created_current` datetime default CURRENT_TIMESTAMP not null, "
-             "`created_t` timestamp not null, "
-             "`created_t_current` timestamp default CURRENT_TIMESTAMP not null) "
-             "default character set utf8mb4 collate 'utf8mb4_0900_ai_ci' "
-             "engine = InnoDB");
+             QStringLiteral(
+                "create table `firewalls` ("
+                "`created` datetime not null, "
+                "`created_current` datetime default CURRENT_TIMESTAMP not null, "
+                "`created_t` timestamp not null, "
+                "`created_t_current` timestamp default CURRENT_TIMESTAMP not null) "
+                "default character set %1 collate '%2' "
+                "engine = InnoDB")
+             .arg(m_charset, m_collation));
     QVERIFY(firstLog.boundValues.isEmpty());
 }
 
@@ -880,13 +910,15 @@ void tst_MySql_SchemaBuilder::useCurrentOnUpdate() const
 
     QCOMPARE(log.size(), 1);
     QCOMPARE(firstLog.query,
-             "create table `firewalls` ("
-             "`updated` datetime not null, "
-             "`updated_current` datetime on update CURRENT_TIMESTAMP not null, "
-             "`updated_t` timestamp not null, "
-             "`updated_t_current` timestamp on update CURRENT_TIMESTAMP not null) "
-             "default character set utf8mb4 collate 'utf8mb4_0900_ai_ci' "
-             "engine = InnoDB");
+             QStringLiteral(
+                "create table `firewalls` ("
+                "`updated` datetime not null, "
+                "`updated_current` datetime on update CURRENT_TIMESTAMP not null, "
+                "`updated_t` timestamp not null, "
+                "`updated_t_current` timestamp on update CURRENT_TIMESTAMP not null) "
+                "default character set %1 collate '%2' "
+                "engine = InnoDB")
+             .arg(m_charset, m_collation));
     QVERIFY(firstLog.boundValues.isEmpty());
 }
 
@@ -917,17 +949,19 @@ void tst_MySql_SchemaBuilder::indexes_Fluent() const
 
     const auto &log0 = log.at(0);
     QCOMPARE(log0.query,
-             "create table `firewalls` ("
-             "`id` bigint unsigned not null auto_increment primary key, "
-             "`name_u` varchar(255) not null, "
-             "`name_i` varchar(255) not null, "
-             "`name_i_cn` varchar(255) not null, "
-             "`name_f` varchar(255) not null, "
-             "`name_f_cn` varchar(255) not null, "
-             "`coordinates_s` geometry not null, "
-             "`coordinates_s_cn` geometry not null) "
-             "default character set utf8mb4 collate 'utf8mb4_0900_ai_ci' "
-             "engine = InnoDB");
+             QStringLiteral(
+                "create table `firewalls` ("
+                "`id` bigint unsigned not null auto_increment primary key, "
+                "`name_u` varchar(255) not null, "
+                "`name_i` varchar(255) not null, "
+                "`name_i_cn` varchar(255) not null, "
+                "`name_f` varchar(255) not null, "
+                "`name_f_cn` varchar(255) not null, "
+                "`coordinates_s` geometry not null, "
+                "`coordinates_s_cn` geometry not null) "
+                "default character set %1 collate '%2' "
+                "engine = InnoDB")
+             .arg(m_charset, m_collation));
     QVERIFY(log0.boundValues.isEmpty());
 
     const auto &log1 = log.at(1);
@@ -1010,19 +1044,21 @@ void tst_MySql_SchemaBuilder::indexes_Blueprint() const
 
     const auto &log0 = log.at(0);
     QCOMPARE(log0.query,
-             "create table `firewalls` ("
-             "`id` bigint unsigned not null auto_increment primary key, "
-             "`name_u` varchar(255) not null, "
-             "`name_i` varchar(255) not null, "
-             "`name_i_cn` varchar(255) not null, "
-             "`name_r` varchar(255) not null, "
-             "`name_r1` varchar(255) not null, "
-             "`name_f` varchar(255) not null, "
-             "`name_f_cn` varchar(255) not null, "
-             "`coordinates_s` geometry not null, "
-             "`coordinates_s_cn` geometry not null) "
-             "default character set utf8mb4 collate 'utf8mb4_0900_ai_ci' "
-             "engine = InnoDB");
+             QStringLiteral(
+                "create table `firewalls` ("
+                "`id` bigint unsigned not null auto_increment primary key, "
+                "`name_u` varchar(255) not null, "
+                "`name_i` varchar(255) not null, "
+                "`name_i_cn` varchar(255) not null, "
+                "`name_r` varchar(255) not null, "
+                "`name_r1` varchar(255) not null, "
+                "`name_f` varchar(255) not null, "
+                "`name_f_cn` varchar(255) not null, "
+                "`coordinates_s` geometry not null, "
+                "`coordinates_s_cn` geometry not null) "
+                "default character set %1 collate '%2' "
+                "engine = InnoDB")
+             .arg(m_charset, m_collation));
     QVERIFY(log0.boundValues.isEmpty());
 
     const auto &log1 = log.at(1);
@@ -1092,11 +1128,13 @@ void tst_MySql_SchemaBuilder::renameIndex() const
 
     const auto &log0 = log.at(0);
     QCOMPARE(log0.query,
-             "create table `firewalls` ("
-             "`id` bigint unsigned not null auto_increment primary key, "
-             "`name` varchar(255) not null) "
-             "default character set utf8mb4 collate 'utf8mb4_0900_ai_ci' "
-             "engine = InnoDB");
+             QStringLiteral(
+                "create table `firewalls` ("
+                "`id` bigint unsigned not null auto_increment primary key, "
+                "`name` varchar(255) not null) "
+                "default character set %1 collate '%2' "
+                "engine = InnoDB")
+             .arg(m_charset, m_collation));
     QVERIFY(log0.boundValues.isEmpty());
 
     const auto &log1 = log.at(1);
@@ -1142,14 +1180,16 @@ void tst_MySql_SchemaBuilder::dropIndex_ByIndexName() const
 
     const auto &log0 = log.at(0);
     QCOMPARE(log0.query,
-             "create table `firewalls` ("
-             "`id` int unsigned not null, "
-             "`name_u` varchar(255) not null, "
-             "`name_i` varchar(255) not null, "
-             "`name_f` varchar(255) not null, "
-             "`coordinates_s` geometry not null) "
-             "default character set utf8mb4 collate 'utf8mb4_0900_ai_ci' "
-             "engine = InnoDB");
+             QStringLiteral(
+                "create table `firewalls` ("
+                "`id` int unsigned not null, "
+                "`name_u` varchar(255) not null, "
+                "`name_i` varchar(255) not null, "
+                "`name_f` varchar(255) not null, "
+                "`coordinates_s` geometry not null) "
+                "default character set %1 collate '%2' "
+                "engine = InnoDB")
+             .arg(m_charset, m_collation));
     QVERIFY(log0.boundValues.isEmpty());
 
     const auto &log1 = log.at(1);
@@ -1238,14 +1278,16 @@ void tst_MySql_SchemaBuilder::dropIndex_ByColumn() const
 
     const auto &log0 = log.at(0);
     QCOMPARE(log0.query,
-             "create table `firewalls` ("
-             "`id` int unsigned not null, "
-             "`name_u` varchar(255) not null, "
-             "`name_i` varchar(255) not null, "
-             "`name_f` varchar(255) not null, "
-             "`coordinates_s` geometry not null) "
-             "default character set utf8mb4 collate 'utf8mb4_0900_ai_ci' "
-             "engine = InnoDB");
+             QStringLiteral(
+                "create table `firewalls` ("
+                "`id` int unsigned not null, "
+                "`name_u` varchar(255) not null, "
+                "`name_i` varchar(255) not null, "
+                "`name_f` varchar(255) not null, "
+                "`coordinates_s` geometry not null) "
+                "default character set %1 collate '%2' "
+                "engine = InnoDB")
+             .arg(m_charset, m_collation));
     QVERIFY(log0.boundValues.isEmpty());
 
     const auto &log1 = log.at(1);
@@ -1341,17 +1383,19 @@ void tst_MySql_SchemaBuilder::dropIndex_ByMultipleColumns() const
 
     const auto &log0 = log.at(0);
     QCOMPARE(log0.query,
-             "create table `firewalls` ("
-             "`id` int unsigned not null, "
-             "`id1` int unsigned not null, "
-             "`name_u` varchar(255) not null, "
-             "`name_u1` varchar(255) not null, "
-             "`name_i` varchar(255) not null, "
-             "`name_i1` varchar(255) not null, "
-             "`name_f` varchar(255) not null, "
-             "`name_f1` varchar(255) not null) "
-             "default character set utf8mb4 collate 'utf8mb4_0900_ai_ci' "
-             "engine = InnoDB");
+             QStringLiteral(
+                "create table `firewalls` ("
+                "`id` int unsigned not null, "
+                "`id1` int unsigned not null, "
+                "`name_u` varchar(255) not null, "
+                "`name_u1` varchar(255) not null, "
+                "`name_i` varchar(255) not null, "
+                "`name_i1` varchar(255) not null, "
+                "`name_f` varchar(255) not null, "
+                "`name_f1` varchar(255) not null) "
+                "default character set %1 collate '%2' "
+                "engine = InnoDB")
+             .arg(m_charset, m_collation));
     QVERIFY(log0.boundValues.isEmpty());
 
     const auto &log1 = log.at(1);
@@ -1425,13 +1469,15 @@ void tst_MySql_SchemaBuilder::foreignKey() const
 
     const auto &log0 = log.at(0);
     QCOMPARE(log0.query,
-             "create table `firewalls` ("
-             "`id` bigint unsigned not null auto_increment primary key, "
-             "`user_id` bigint unsigned not null, "
-             "`torrent_id` bigint unsigned not null, "
-             "`role_id` bigint unsigned null) "
-             "default character set utf8mb4 collate 'utf8mb4_0900_ai_ci' "
-             "engine = InnoDB");
+             QStringLiteral(
+                "create table `firewalls` ("
+                "`id` bigint unsigned not null auto_increment primary key, "
+                "`user_id` bigint unsigned not null, "
+                "`torrent_id` bigint unsigned not null, "
+                "`role_id` bigint unsigned null) "
+                "default character set %1 collate '%2' "
+                "engine = InnoDB")
+             .arg(m_charset, m_collation));
     QVERIFY(log0.boundValues.isEmpty());
 
     const auto &log1 = log.at(1);
@@ -1484,13 +1530,15 @@ void tst_MySql_SchemaBuilder::foreignKey_TerserSyntax() const
 
     const auto &log0 = log.at(0);
     QCOMPARE(log0.query,
-             "create table `firewalls` ("
-             "`id` bigint unsigned not null auto_increment primary key, "
-             "`user_id` bigint unsigned not null, "
-             "`torrent_id` bigint unsigned not null, "
-             "`role_id` bigint unsigned null) "
-             "default character set utf8mb4 collate 'utf8mb4_0900_ai_ci' "
-             "engine = InnoDB");
+             QStringLiteral(
+                "create table `firewalls` ("
+                "`id` bigint unsigned not null auto_increment primary key, "
+                "`user_id` bigint unsigned not null, "
+                "`torrent_id` bigint unsigned not null, "
+                "`role_id` bigint unsigned null) "
+                "default character set %1 collate '%2' "
+                "engine = InnoDB")
+             .arg(m_charset, m_collation));
     QVERIFY(log0.boundValues.isEmpty());
 
     const auto &log1 = log.at(1);
@@ -1545,12 +1593,14 @@ void tst_MySql_SchemaBuilder::foreignKey_WithModel() const
 
     const auto &log0 = log.at(0);
     QCOMPARE(log0.query,
-             "create table `firewalls` ("
-             "`id` bigint unsigned not null auto_increment primary key, "
-             "`torrent_id` bigint unsigned not null, "
-             "`user_id` bigint unsigned null) "
-             "default character set utf8mb4 collate 'utf8mb4_0900_ai_ci' "
-             "engine = InnoDB");
+             QStringLiteral(
+                "create table `firewalls` ("
+                "`id` bigint unsigned not null auto_increment primary key, "
+                "`torrent_id` bigint unsigned not null, "
+                "`user_id` bigint unsigned null) "
+                "default character set %1 collate '%2' "
+                "engine = InnoDB")
+             .arg(m_charset, m_collation));
     QVERIFY(log0.boundValues.isEmpty());
 
     const auto &log1 = log.at(1);
@@ -1603,13 +1653,15 @@ void tst_MySql_SchemaBuilder::dropForeign() const
     // I leave these comparisons here, even if they are doubled from the previous test
     const auto &log0 = log.at(0);
     QCOMPARE(log0.query,
-             "create table `firewalls` ("
-             "`id` bigint unsigned not null auto_increment primary key, "
-             "`user_id` bigint unsigned not null, "
-             "`torrent_id` bigint unsigned not null, "
-             "`role_id` bigint unsigned null) "
-             "default character set utf8mb4 collate 'utf8mb4_0900_ai_ci' "
-             "engine = InnoDB");
+             QStringLiteral(
+                "create table `firewalls` ("
+                "`id` bigint unsigned not null auto_increment primary key, "
+                "`user_id` bigint unsigned not null, "
+                "`torrent_id` bigint unsigned not null, "
+                "`role_id` bigint unsigned null) "
+                "default character set %1 collate '%2' "
+                "engine = InnoDB")
+             .arg(m_charset, m_collation));
     QVERIFY(log0.boundValues.isEmpty());
 
     const auto &log1 = log.at(1);
