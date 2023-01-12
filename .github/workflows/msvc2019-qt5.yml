@@ -213,7 +213,7 @@ jobs:
         $response | Select-Object -ExpandProperty Content |
         Set-Content -Path $filepath -AsByteStream
 
-        7z.exe x -o"${{ runner.workspace }}/TinyORM-bin" $filepath
+        7z.exe x -o'${{ runner.workspace }}/TinyORM-bin' $filepath
       env:
         URL_LIBMYSQL_DLL_MYSQL_8_MSVC_X64_5_15_2: ${{ secrets.URL_LIBMYSQL_DLL_MYSQL_8_MSVC_X64_5_15_2 }}
 
