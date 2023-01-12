@@ -21,9 +21,9 @@ jobs:
             pacboy: [ 'clang:u', 'gcc:u' ]
             command: clang++.exe
 
-          # - key: gcc
-          #   pacboy: [ 'gcc:u' ]
-          #   command: g++.exe
+          - key: gcc
+            pacboy: [ 'gcc:u' ]
+            command: g++.exe
 
     steps:
     - uses: actions/checkout@v3
