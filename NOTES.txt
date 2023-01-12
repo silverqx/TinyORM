@@ -521,6 +521,26 @@ https://github.com/silverqx/files/raw/main/clazy-standalone.tar.bz2
         limit-access-to-actor: true
     - run: exit 1
 
+  - all TinyORM env. variables
+
+      env:
+        DB_MYSQL_CHARSET: ${{ secrets.DB_MYSQL_CHARSET }}
+        DB_MYSQL_COLLATION: ${{ secrets.DB_MYSQL_COLLATION }}
+        DB_MYSQL_DATABASE: ${{ secrets.DB_MYSQL_DATABASE }}
+        DB_MYSQL_HOST: ${{ secrets.DB_MYSQL_HOST_SSL }}
+        DB_MYSQL_PASSWORD: ${{ secrets.DB_MYSQL_PASSWORD }}
+        DB_MYSQL_SSL_CA: ${{ runner.workspace }}/../mysql/data/ca.pem
+        DB_MYSQL_SSL_CERT: ${{ runner.workspace }}/../mysql/data/client-cert.pem
+        DB_MYSQL_SSL_KEY: ${{ runner.workspace }}/../mysql/data/client-key.pem
+        DB_MYSQL_USERNAME: ${{ secrets.DB_MYSQL_USERNAME }}
+        DB_PGSQL_CHARSET: utf8
+        DB_PGSQL_DATABASE: ${{ secrets.DB_PGSQL_DATABASE }}
+        DB_PGSQL_HOST: ${{ secrets.DB_PGSQL_HOST }}
+        DB_PGSQL_PASSWORD: ${{ secrets.DB_PGSQL_PASSWORD }}
+        DB_PGSQL_USERNAME: ${{ secrets.DB_PGSQL_USERNAME }}
+        DB_SQLITE_DATABASE: ${{ runner.temp }}/${{ secrets.DB_SQLITE_DATABASE }}
+        TOM_TESTDATA_ENV: testing
+
 - print all contexts:
 
     - name: Dump GitHub context
