@@ -187,10 +187,6 @@ jobs:
         DB_MYSQL_ROOT_USERNAME: ${{ secrets.DB_MYSQL_ROOT_USERNAME }}
         DB_MYSQL_USERNAME: ${{ secrets.DB_MYSQL_USERNAME }}
 
-    - name: MySQL add on the $env:Path
-      run: |
-        Write-Output "C:\mysql\lib" | Out-File -FilePath $env:GITHUB_PATH -Append
-
     - name: SQLite create TinyORM database
       run: |
         touch "$env:DB_SQLITE_DATABASE"
