@@ -447,12 +447,13 @@ GitHub Actions:
 
  - how to update the clazy-standalone (analyzers.yml):
    - update the QtCreator to latest version, copy libexec/qtcreator/clang/ to some empty folder
-   - leave only the clazy-standalone executable in the bin/ folder and compress it:
+   - leave only the clazy-standalone executable in the bin/ and lib/ folder, and compress it:
 tar cjvf ../clazy-standalone.tar.bz2 .
 
-   - then upload to the gdrive to the public/TinyORM folder and create shareble link to obtain ID
-   - paste this new URL to the GitHub secrets:
-https://drive.google.com/uc?id=some_id
+   - then update this file in the https://github.com/silverqx/files project
+   - no need to udpate the URL in the GitHub URL_CLAZY_STANDALONE_LINUX_X64 secret,
+     it's still the same:
+https://github.com/silverqx/files/raw/main/clazy-standalone.tar.bz2
 
  - prepend to the env. variables:
 
