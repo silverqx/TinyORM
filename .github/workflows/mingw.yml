@@ -268,26 +268,6 @@ jobs:
         cmake --build ../TinyORM-builds-cmake/build-${{ matrix.compiler.key }}-cmake-debug
         --target all --parallel ${{ matrix.compiler.key == 'gcc' && 1 || 2 }}
 
-    - name: Setup tmate session
-      if: ${{ always() }}
-      uses: mxschmitt/action-tmate@v3
-      with:
-        limit-access-to-actor: true
-      env:
-        DB_MYSQL_CHARSET: ${{ secrets.DB_MYSQL_CHARSET }}
-        DB_MYSQL_COLLATION: ${{ secrets.DB_MYSQL_COLLATION }}
-        DB_MYSQL_DATABASE: ${{ secrets.DB_MYSQL_DATABASE }}
-        DB_MYSQL_HOST: ${{ secrets.DB_MYSQL_HOST }}
-        DB_MYSQL_PASSWORD: ${{ secrets.DB_MYSQL_PASSWORD }}
-        DB_MYSQL_USERNAME: ${{ secrets.DB_MYSQL_USERNAME }}
-        DB_PGSQL_CHARSET: utf8
-        DB_PGSQL_DATABASE: ${{ secrets.DB_PGSQL_DATABASE }}
-        DB_PGSQL_HOST: ${{ secrets.DB_PGSQL_HOST }}
-        DB_PGSQL_PASSWORD: ${{ secrets.DB_PGSQL_PASSWORD }}
-        DB_PGSQL_USERNAME: ${{ secrets.DB_PGSQL_USERNAME }}
-        DB_SQLITE_DATABASE: ${{ runner.temp }}/${{ secrets.DB_SQLITE_DATABASE }}
-        TOM_TESTDATA_ENV: testing
-
     - name: Create and Seed tables for unit tests 🎉
       shell: msys2 {0}
       working-directory: ../TinyORM-builds-cmake/build-${{ matrix.compiler.key }}-cmake-debug/tests/testdata_tom
@@ -390,3 +370,26 @@ jobs:
       env:
         DB_SQLITE_DATABASE: ${{ runner.temp }}/${{ secrets.DB_SQLITE_DATABASE }}
         TOM_EXAMPLE_ENV: testing
+
+    - name: Setup tmate session
+      if: ${{ failure() }}
+      uses: mxschmitt/action-tmate@v3
+      with:
+        limit-access-to-actor: true
+      env:
+        DB_MYSQL_CHARSET: ${{ secrets.DB_MYSQL_CHARSET }}
+        DB_MYSQL_COLLATION: ${{ secrets.DB_MYSQL_COLLATION }}
+        DB_MYSQL_DATABASE: ${{ secrets.DB_MYSQL_DATABASE }}
+        DB_MYSQL_HOST: ${{ secrets.DB_MYSQL_HOST_SSL }}
+        DB_MYSQL_PASSWORD: ${{ secrets.DB_MYSQL_PASSWORD }}
+        DB_MYSQL_SSL_CA: ${{ runner.workspace }}/../mysql/data/ca.pem
+        DB_MYSQL_SSL_CERT: ${{ runner.workspace }}/../mysql/data/client-cert.pem
+        DB_MYSQL_SSL_KEY: ${{ runner.workspace }}/../mysql/data/client-key.pem
+        DB_MYSQL_USERNAME: ${{ secrets.DB_MYSQL_USERNAME }}
+        DB_PGSQL_CHARSET: utf8
+        DB_PGSQL_DATABASE: ${{ secrets.DB_PGSQL_DATABASE }}
+        DB_PGSQL_HOST: ${{ secrets.DB_PGSQL_HOST }}
+        DB_PGSQL_PASSWORD: ${{ secrets.DB_PGSQL_PASSWORD }}
+        DB_PGSQL_USERNAME: ${{ secrets.DB_PGSQL_USERNAME }}
+        DB_SQLITE_DATABASE: ${{ runner.temp }}/${{ secrets.DB_SQLITE_DATABASE }}
+        TOM_TESTDATA_ENV: testing
