@@ -232,19 +232,19 @@ jobs:
 
     - name: Ccache setup 🥳
       run: |
-        echo "::group::Install ccache"
+        Write-Output "::group::Install ccache"
         choco install ccache -y
-        echo "::endgroup::"
+        Write-Output "::endgroup::"
 
-        echo "::group::Prepare ccache config"
+        Write-Output "::group::Prepare ccache config"
         ccache --set-config max_size=600M
         ccache --set-config sloppiness=pch_defines,time_macros
         ccache --show-config
-        echo "::endgroup::"
+        Write-Output "::endgroup::"
 
-        echo "::group::Clear ccache statistics"
+        Write-Output "::group::Clear ccache statistics"
         ccache --zero-stats
-        echo "::endgroup::"
+        Write-Output "::endgroup::"
 
     - name: vcpkg set-up environment
       run: |
