@@ -201,6 +201,27 @@ jobs:
       env:
         URL_QMYSQL_DLLS_MSVC_X64_5_15_2: ${{ secrets.URL_QMYSQL_DLLS_MSVC_X64_5_15_2 }}
 
+    - name: MySQL 8 libmysql.dll (Qt 5.15.2)
+      working-directory: ${{ runner.temp }}
+      run: >-
+        $response = Invoke-WebRequest -Uri $env:URL_LIBMYSQL_DLL_MYSQL_8_MSVC_X64_5_15_2
+
+        $filename = ($env:URL_LIBMYSQL_DLL_MYSQL_8_MSVC_X64_5_15_2 -split '/')[-1]
+
+        $filepath = Join-Path -Path $(Resolve-Path -Path .) -ChildPath $filename
+
+        $response | Select-Object -ExpandProperty Content |
+        Set-Content -Path $filepath -AsByteStream
+
+        7z.exe x -o"${{ runner.workspace }}/TinyORM-bin" $filepath
+      env:
+        URL_LIBMYSQL_DLL_MYSQL_8_MSVC_X64_5_15_2: ${{ secrets.URL_LIBMYSQL_DLL_MYSQL_8_MSVC_X64_5_15_2 }}
+
+    - name: MySQL 8 libmysql.dll add on the $env:Path
+      run: >-
+        Write-Output '${{ runner.workspace }}/TinyORM-bin' |
+        Out-File -FilePath $env:GITHUB_PATH -Append
+
     - name: Ccache restore cache 🕺
       id: cache-ccache-msvc2019-qt515
       uses: actions/cache@v3
