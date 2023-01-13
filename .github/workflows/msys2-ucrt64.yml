@@ -224,6 +224,7 @@ jobs:
       env:
         cache-name: msys2-ucrt64-${{ matrix.compiler.key }}
       with:
+        # This path is ok also for msys2 shells
         path: ~/AppData/Local/ccache
         key: ${{ runner.os }}-ccache-${{ env.cache-name }}-${{ github.run_id }}
         restore-keys: |
