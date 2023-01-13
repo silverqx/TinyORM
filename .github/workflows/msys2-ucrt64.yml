@@ -218,16 +218,32 @@ jobs:
           qt5-base:u
           libmariadbclient:u postgresql:u
 
-    - name: ccache setup 🕺
-      uses: Chocobo1/setup-ccache-action@v1
+    - name: Ccache restore cache 🕺
+      id: cache-ccache-msys2-ucrt64-${{ matrix.compiler.key }}
+      uses: actions/cache@v3
+      env:
+        cache-name: msys2-ucrt64-${{ matrix.compiler.key }}
       with:
-        windows_compile_environment: msys2
-        prepend_symlinks_to_path: false
-        install_ccache: false
-        update_packager_index: false
-        ccache_options: |
-          compression = false
-          max_size = 800M
+        path: ~/AppData/Local/ccache
+        key: ${{ runner.os }}-ccache-${{ env.cache-name }}-${{ github.run_id }}
+        restore-keys: |
+          ${{ runner.os }}-ccache-${{ env.cache-name }}-
+
+    - name: Ccache setup 🥳
+      shell: msys2 {0}
+      run: |
+        # No need to install it as it's installed above using the pacboy
+
+        Write-Output '::group::Prepare ccache config'
+        ccache --set-config compression=false
+        ccache --set-config max_size=600M
+        ccache --set-config sloppiness=pch_defines,time_macros
+        ccache --show-config
+        Write-Output '::endgroup::'
+
+        Write-Output '::group::Clear ccache statistics'
+        ccache --zero-stats
+        Write-Output '::endgroup::'
 
     - name: vcpkg set-up environment
       shell: msys2 {0}
@@ -268,6 +284,11 @@ jobs:
       run: >-
         cmake --build ../TinyORM-builds-cmake/build-${{ matrix.compiler.key }}-cmake-debug
         --target all --parallel ${{ matrix.compiler.key == 'gcc' && 1 || 2 }}
+
+    - name: Ccache statistics
+      shell: msys2 {0}
+      run: |
+        ccache --show-stats -vv
 
     - name: Create and Seed tables for unit tests 🎉
       shell: msys2 {0}
