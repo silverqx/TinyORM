@@ -211,7 +211,8 @@ jobs:
         extra: --external 7z.exe
         dir: ${{ env.TinyRunnerWorkPath }}
 
-    - name: QMYSQL install driver dlls (Qt 6.4.2)
+    - name: QMYSQL download driver dlls (Qt 6.4.2)
+      id: download-qmysql-dlls
       working-directory: ${{ runner.temp }}
       run: >-
         $response = Invoke-WebRequest -Uri $env:URL_QMYSQL_DLLS_MSVC_X64_6_4_2
@@ -223,9 +224,15 @@ jobs:
         $response | Select-Object -ExpandProperty Content |
         Set-Content -Path $filepath -AsByteStream
 
-        7z.exe x -o"${env:QT_PLUGIN_PATH}/sqldrivers" $filepath
+        "QMysqlDllsFilepath=$filepath" >> $env:GITHUB_OUTPUT
       env:
         URL_QMYSQL_DLLS_MSVC_X64_6_4_2: ${{ secrets.URL_QMYSQL_DLLS_MSVC_X64_6_4_2 }}
+
+    - name: QMYSQL install driver dlls (Qt 6.4.2)
+      working-directory: ${{ runner.temp }}
+      run: >-
+        7z.exe x -o"${env:QT_PLUGIN_PATH}/sqldrivers"
+        ${{ steps.download-qmysql-dlls.outputs.QMysqlDllsFilepath }}
 
     - name: Ccache restore cache 🕺
       uses: actions/cache@v3
