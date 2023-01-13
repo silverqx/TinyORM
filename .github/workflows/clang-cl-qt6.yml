@@ -300,6 +300,10 @@ jobs:
       run: |
         cmake --build ../TinyORM-builds-cmake/build-clang-cl-cmake-debug --target all --parallel 2
 
+    - name: Ccache statistics
+      run: |
+        ccache.exe --show-stats -vv
+
     - name: Create and Seed tables for unit tests 🎉
       working-directory: ../TinyORM-builds-cmake/build-clang-cl-cmake-debug/tests/testdata_tom
       run: >-
