@@ -41,14 +41,15 @@ jobs:
       run: |
         $pgsqlService = Get-Service postgresql-x64-14
         Write-Output $pgsqlService
+
         $pgsqlService.status.ToString() -ceq "Running" `
         -or $(throw 'postgresql-x64-14 service is not running') > $null
+
         pg_isready.exe
 
     - name: PostgreSQL create TinyORM user
-      run: >-
-        psql.exe
-        --command="CREATE USER ${env:DB_PGSQL_USERNAME} PASSWORD '${env:DB_PGSQL_PASSWORD}'"
+      run: |
+        "CREATE USER ${env:DB_PGSQL_USERNAME} PASSWORD '${env:DB_PGSQL_PASSWORD}'" | psql.exe
       env:
         DB_PGSQL_PASSWORD: ${{ secrets.DB_PGSQL_PASSWORD }}
         DB_PGSQL_USERNAME: ${{ secrets.DB_PGSQL_USERNAME }}
@@ -323,6 +324,7 @@ jobs:
       working-directory: ../TinyORM-builds-cmake/build-${{ matrix.compiler.key }}-cmake-debug/examples/tom
       run: |
         export PATH=../..${PATH:+:}$PATH
+
         ./tom.exe migrate:install --database=tinyorm_tom_mysql --no-ansi
         ./tom.exe migrate:status --database=tinyorm_tom_mysql --no-ansi
         ./tom.exe migrate --database=tinyorm_tom_mysql --seed --no-ansi
@@ -345,6 +347,7 @@ jobs:
       working-directory: ../TinyORM-builds-cmake/build-${{ matrix.compiler.key }}-cmake-debug/examples/tom
       run: |
         export PATH=../..${PATH:+:}$PATH
+
         ./tom.exe migrate:install --database=tinyorm_tom_postgres --no-ansi
         ./tom.exe migrate:status --database=tinyorm_tom_postgres --no-ansi
         ./tom.exe migrate --database=tinyorm_tom_postgres --seed --no-ansi
@@ -363,6 +366,7 @@ jobs:
       working-directory: ../TinyORM-builds-cmake/build-${{ matrix.compiler.key }}-cmake-debug/examples/tom
       run: |
         export PATH=../..${PATH:+:}$PATH
+
         ./tom.exe migrate:install --database=tinyorm_tom_sqlite --no-ansi
         ./tom.exe migrate:status --database=tinyorm_tom_sqlite --no-ansi
         ./tom.exe migrate --database=tinyorm_tom_sqlite --seed --no-ansi
