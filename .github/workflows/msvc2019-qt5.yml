@@ -241,6 +241,7 @@ jobs:
         Write-Output '::endgroup::'
 
         Write-Output '::group::Prepare ccache config'
+        ccache --set-config compression=false
         ccache --set-config max_size=600M
         ccache --set-config sloppiness=pch_defines,time_macros
         ccache --show-config
