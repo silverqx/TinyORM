@@ -224,7 +224,6 @@ jobs:
         URL_QMYSQL_DLLS_MSVC_X64_6_4_2: ${{ secrets.URL_QMYSQL_DLLS_MSVC_X64_6_4_2 }}
 
     - name: Ccache restore cache 🕺
-      id: cache-ccache-msvc2022-qt64
       uses: actions/cache@v3
       env:
         cache-name: msvc2022-qt64

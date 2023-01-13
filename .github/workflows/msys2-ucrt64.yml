@@ -219,7 +219,6 @@ jobs:
           libmariadbclient:u postgresql:u
 
     - name: Ccache restore cache 🕺
-      id: cache-ccache-msys2-ucrt64-${{ matrix.compiler.key }}
       uses: actions/cache@v3
       env:
         cache-name: msys2-ucrt64-${{ matrix.compiler.key }}

@@ -224,7 +224,6 @@ jobs:
         '${{ runner.workspace }}/TinyORM-bin' >> $env:GITHUB_PATH
 
     - name: Ccache restore cache 🕺
-      id: cache-ccache-msvc2019-qt515
       uses: actions/cache@v3
       env:
         cache-name: msvc2019-qt515
