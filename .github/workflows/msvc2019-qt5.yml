@@ -210,7 +210,8 @@ jobs:
         7z.exe x -o"${env:QT_PLUGIN_PATH}/sqldrivers"
         ${{ steps.download-qmysql-dlls.outputs.QMysqlDllsFilepath }}
 
-    - name: MySQL 8 libmysql.dll (Qt 5.15.2)
+    - name: MySQL 8 download libmysql.dll (Qt 5.15.2)
+      id: download-libmysql-dll
       working-directory: ${{ runner.temp }}
       run: >-
         $response = Invoke-WebRequest -Uri $env:URL_LIBMYSQL_DLL_MYSQL_8_MSVC_X64_5_15_2
@@ -222,9 +223,15 @@ jobs:
         $response | Select-Object -ExpandProperty Content |
         Set-Content -Path $filepath -AsByteStream
 
-        7z.exe x -o'${{ runner.workspace }}/TinyORM-bin' $filepath
+        "LibmysqlDllFilepath=$filepath" >> $env:GITHUB_OUTPUT
       env:
         URL_LIBMYSQL_DLL_MYSQL_8_MSVC_X64_5_15_2: ${{ secrets.URL_LIBMYSQL_DLL_MYSQL_8_MSVC_X64_5_15_2 }}
+
+    - name: MySQL 8 install libmysql.dll (Qt 5.15.2)
+      working-directory: ${{ runner.temp }}
+      run: >-
+        7z.exe x -o'${{ runner.workspace }}/TinyORM-bin'
+        ${{ steps.download-libmysql-dll.outputs.LibmysqlDllFilepath }}
 
     - name: MySQL 8 libmysql.dll add on the $env:Path
       run: >-
