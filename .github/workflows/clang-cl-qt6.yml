@@ -24,7 +24,7 @@ jobs:
 
     - name: PostgreSQL add on the $env:Path
       run: |
-        Write-Output "$env:PGBIN" | Out-File -FilePath $env:GITHUB_PATH -Append
+        "$env:PGBIN" >> $env:GITHUB_PATH
 
     - name: PostgreSQL check service status
       run: |
@@ -179,7 +179,7 @@ jobs:
 
     - name: MySQL add libmysql.dll on the $env:Path
       run: |
-        Write-Output "C:\mysql\lib" | Out-File -FilePath $env:GITHUB_PATH -Append
+        'C:\mysql\lib' >> $env:GITHUB_PATH
 
     - name: SQLite create TinyORM database
       run: |
@@ -220,15 +220,10 @@ jobs:
         URL_QMYSQL_DLLS_MSVC_X64_6_4_2: ${{ secrets.URL_QMYSQL_DLLS_MSVC_X64_6_4_2 }}
 
     - name: vcpkg set-up environment
-      run: >-
-        Write-Output "VCPKG_ROOT=${env:VCPKG_INSTALLATION_ROOT}" |
-        Out-File -FilePath $env:GITHUB_ENV -Append
-
-        Write-Output 'VCPKG_DEFAULT_TRIPLET=x64-windows' |
-        Out-File -FilePath $env:GITHUB_ENV -Append
-
-        Write-Output 'VCPKG_MAX_CONCURRENCY=2' |
-        Out-File -FilePath $env:GITHUB_ENV -Append
+      run: |
+        "VCPKG_ROOT=${env:VCPKG_INSTALLATION_ROOT}" >> $env:GITHUB_ENV
+        'VCPKG_DEFAULT_TRIPLET=x64-windows' >> $env:GITHUB_ENV
+        'VCPKG_MAX_CONCURRENCY=2' >> $env:GITHUB_ENV
 
     - name: Cache LLVM and Clang
       id: llvm-cached

@@ -35,7 +35,7 @@ jobs:
 
     - name: PostgreSQL add on the $env:Path
       run: |
-        Write-Output "$env:PGBIN" | Out-File -FilePath $env:GITHUB_PATH -Append
+        "$env:PGBIN" >> $env:GITHUB_PATH
 
     - name: PostgreSQL check service status
       run: |
