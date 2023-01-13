@@ -219,12 +219,6 @@ jobs:
       env:
         URL_QMYSQL_DLLS_MSVC_X64_6_4_2: ${{ secrets.URL_QMYSQL_DLLS_MSVC_X64_6_4_2 }}
 
-    - name: vcpkg set-up environment
-      run: |
-        "VCPKG_ROOT=${env:VCPKG_INSTALLATION_ROOT}" >> $env:GITHUB_ENV
-        'VCPKG_DEFAULT_TRIPLET=x64-windows' >> $env:GITHUB_ENV
-        'VCPKG_MAX_CONCURRENCY=2' >> $env:GITHUB_ENV
-
     - name: Cache LLVM and Clang
       id: llvm-cached
       uses: actions/cache@v3
@@ -239,6 +233,12 @@ jobs:
         version: 15.0.6
         force-version: true
         cached: ${{ steps.llvm-cached.outputs.cache-hit }}
+
+    - name: vcpkg set-up environment
+      run: |
+        "VCPKG_ROOT=${env:VCPKG_INSTALLATION_ROOT}" >> $env:GITHUB_ENV
+        'VCPKG_DEFAULT_TRIPLET=x64-windows' >> $env:GITHUB_ENV
+        'VCPKG_MAX_CONCURRENCY=2' >> $env:GITHUB_ENV
 
     - name: Visual Studio 2022 pwsh shell setup
       uses: egor-tensin/vs-shell@v2
