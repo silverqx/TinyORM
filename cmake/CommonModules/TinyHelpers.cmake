@@ -347,6 +347,37 @@ function(tiny_replace_Zi_by_Z7_for option help_string)
 
 endfunction()
 
+# Support the MSVC debug information format flags selected by an abstraction added
+# in the CMake 3.25.
+function(tiny_fix_ccache_msvc_325 out_variable)
+
+    if(CMAKE_VERSION VERSION_GREATER_EQUAL "3.25")
+
+        cmake_policy(GET CMP0141 policy_cmp0141)
+        if(policy_cmp0141 STREQUAL "NEW")
+            get_property(help_string CACHE CMAKE_MSVC_DEBUG_INFORMATION_FORMAT
+                PROPERTY HELPSTRING
+            )
+            if(NOT help_string)
+                set(help_string
+                    "Default value for MSVC_DEBUG_INFORMATION_FORMAT of targets."
+                )
+            endif()
+
+            set(CMAKE_MSVC_DEBUG_INFORMATION_FORMAT
+                "$<$<CONFIG:Debug,RelWithDebInfo>:Embedded>"
+                CACHE BOOL ${help_string} FORCE
+            )
+
+            set(${out_variable} TRUE PARENT_SCOPE)
+            return()
+        endif()
+    endif()
+
+    set(${out_variable} FALSE PARENT_SCOPE)
+
+endfunction()
+
 # Fix cmake variables if CMAKE_CXX_COMPILER_LAUNCHER is ccache or sccache
 # It applies fixes only on the Windows systems. It works well with the MSYS2 g++,
 # clang++, msvc, and clang-cl with msvc. It disables precompiled headers as they are not
@@ -411,36 +442,5 @@ function(tiny_fix_ccache)
         tiny_replace_Zi_by_Z7_for(CMAKE_C_FLAGS_RELWITHDEBINFO
             "Flags used by the C compiler during RELWITHDEBINFO builds.")
     endif()
-
-endfunction()
-
-# Support the MSVC debug information format flags selected by an abstraction added
-# in the CMake 3.25.
-function(tiny_fix_ccache_msvc_325 out_variable)
-
-    if(CMAKE_VERSION VERSION_GREATER_EQUAL "3.25")
-
-        cmake_policy(GET CMP0141 policy_cmp0141)
-        if(policy_cmp0141 STREQUAL "NEW")
-            get_property(help_string CACHE CMAKE_MSVC_DEBUG_INFORMATION_FORMAT
-                PROPERTY HELPSTRING
-            )
-            if(NOT help_string)
-                set(help_string
-                    "Default value for MSVC_DEBUG_INFORMATION_FORMAT of targets."
-                )
-            endif()
-
-            set(CMAKE_MSVC_DEBUG_INFORMATION_FORMAT
-                "$<$<CONFIG:Debug,RelWithDebInfo>:Embedded>"
-                CACHE BOOL ${help_string} FORCE
-            )
-
-            set(${out_variable} TRUE PARENT_SCOPE)
-            return()
-        endif()
-    endif()
-
-    set(${out_variable} FALSE PARENT_SCOPE)
 
 endfunction()
