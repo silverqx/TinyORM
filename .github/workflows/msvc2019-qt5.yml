@@ -230,7 +230,7 @@ jobs:
       env:
         cache-name: msvc2019-qt515
       with:
-        path: ~/AppData/Roaming/ccache
+        path: ~/AppData/Local/ccache
         key: ${{ runner.os }}-ccache-${{ env.cache-name }}-${{ github.run_id }}
         restore-keys: |
           ${{ runner.os }}-ccache-${{ env.cache-name }}-

@@ -229,7 +229,7 @@ jobs:
       env:
         cache-name: msvc2022-qt64
       with:
-        path: ~/AppData/Roaming/ccache
+        path: ~/AppData/Local/ccache
         key: ${{ runner.os }}-ccache-${{ env.cache-name }}-${{ github.run_id }}
         restore-keys: |
           ${{ runner.os }}-ccache-${{ env.cache-name }}-
