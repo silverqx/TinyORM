@@ -389,7 +389,7 @@ jobs:
       working-directory: ../TinyORM-builds-cmake/build-msvc-cmake-debug/examples/tom
       run: |
         $env:Path = '..\..;' + $env:Path
-        
+
         .\tom.exe migrate:install --database=tinyorm_tom_sqlite --no-ansi
         .\tom.exe migrate:status --database=tinyorm_tom_sqlite --no-ansi
         .\tom.exe migrate --database=tinyorm_tom_sqlite --seed --no-ansi
