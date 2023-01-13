@@ -31,7 +31,7 @@ jobs:
         $pgsqlService = Get-Service postgresql-x64-14
         Write-Output $pgsqlService
 
-        $pgsqlService.status.ToString() -ceq "Running" `
+        $pgsqlService.status.ToString() -ceq 'Running' `
         -or $(throw 'postgresql-x64-14 service is not running') > $null
 
         pg_isready.exe
@@ -138,7 +138,7 @@ jobs:
 
         Write-Output $mysqlService
 
-        $mysqlService.status.ToString() -ceq "Running" -or
+        $mysqlService.status.ToString() -ceq 'Running' -or
         $(throw 'MySQL service is not running') > $null
 
         mysqladmin.exe --user=$env:DB_MYSQL_ROOT_USERNAME
@@ -236,19 +236,19 @@ jobs:
 
     - name: Ccache setup 🥳
       run: |
-        Write-Output "::group::Install ccache"
+        Write-Output '::group::Install ccache'
         choco install ccache -y
-        Write-Output "::endgroup::"
+        Write-Output '::endgroup::'
 
-        Write-Output "::group::Prepare ccache config"
+        Write-Output '::group::Prepare ccache config'
         ccache --set-config max_size=600M
         ccache --set-config sloppiness=pch_defines,time_macros
         ccache --show-config
-        Write-Output "::endgroup::"
+        Write-Output '::endgroup::'
 
-        Write-Output "::group::Clear ccache statistics"
+        Write-Output '::group::Clear ccache statistics'
         ccache --zero-stats
-        Write-Output "::endgroup::"
+        Write-Output '::endgroup::'
 
     - name: vcpkg set-up environment
       run: |
@@ -271,7 +271,7 @@ jobs:
         -S .
         -B ../TinyORM-builds-cmake/build-msvc-cmake-debug
         -G Ninja
-        -D CMAKE_CXX_COMPILER_LAUNCHER:FILEPATH="C:/ProgramData/chocolatey/bin/ccache.exe"
+        -D CMAKE_CXX_COMPILER_LAUNCHER:FILEPATH='C:/ProgramData/chocolatey/bin/ccache.exe'
         -D CMAKE_TOOLCHAIN_FILE:FILEPATH="${env:VCPKG_INSTALLATION_ROOT}/scripts/buildsystems/vcpkg.cmake"
         -D CMAKE_DISABLE_PRECOMPILE_HEADERS:BOOL=ON
         -D CMAKE_BUILD_TYPE:BOOL=Debug

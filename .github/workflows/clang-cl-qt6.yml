@@ -31,7 +31,7 @@ jobs:
         $pgsqlService = Get-Service postgresql-x64-14
         Write-Output $pgsqlService
 
-        $pgsqlService.status.ToString() -ceq "Running" `
+        $pgsqlService.status.ToString() -ceq 'Running' `
         -or $(throw 'postgresql-x64-14 service is not running') > $null
 
         pg_isready.exe
@@ -138,7 +138,7 @@ jobs:
 
         Write-Output $mysqlService
 
-        $mysqlService.status.ToString() -ceq "Running" -or
+        $mysqlService.status.ToString() -ceq 'Running' -or
         $(throw 'MySQL service is not running') > $null
 
         mysqladmin.exe --user=$env:DB_MYSQL_ROOT_USERNAME
