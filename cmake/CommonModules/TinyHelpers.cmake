@@ -279,17 +279,6 @@ inline constants :/.")
 don't enable INLINE_CONSTANTS cmake option :/.")
     endif()
 
-    if(MSVC AND CMAKE_CXX_COMPILER_ID STREQUAL "Clang" AND
-        CMAKE_CXX_SIMULATE_ID STREQUAL "MSVC"
-    )
-        # Determine whether the CMAKE_CXX_COMPILER_LAUNCHER contains ccache/sccache
-        tiny_is_ccache_compiler_launcher(isCcacheLauncher)
-        if(isCcacheLauncher)
-            message(WARNING "The TinyORM has 100% cache misses with the clang-cl \
-with msvc and the ccache/sccache enabled using the CMAKE_CXX_COMPILER_LAUNCHER :/.")
-        endif()
-    endif()
-
 endfunction()
 
 # Print a VERBOSE message against which library is project linking
@@ -314,12 +303,6 @@ endfunction()
 # Determine whether the CMAKE_CXX_COMPILER_LAUNCHER contains ccache/sccache
 function(tiny_is_ccache_compiler_launcher out_variable)
 
-    # Target the g++, clang++, msvc, and clang-cl with msvc compilers on Windows
-    if(NOT WIN32 OR NOT DEFINED CMAKE_CXX_COMPILER_LAUNCHER)
-        set(${out_variable} FALSE PARENT_SCOPE)
-        return()
-    endif()
-
     # Support the ccache and also sccache (I have tried and sccache doesn't work)
     cmake_path(GET CMAKE_CXX_COMPILER_LAUNCHER STEM ccacheStem)
     if(NOT ccacheStem STREQUAL "ccache" AND NOT ccacheStem STREQUAL "sccache")
@@ -328,6 +311,74 @@ function(tiny_is_ccache_compiler_launcher out_variable)
     endif()
 
     set(${out_variable} TRUE PARENT_SCOPE)
+
+endfunction()
+
+# Determine if the current platform needs fixes and the CMAKE_CXX_COMPILER_LAUNCHER
+# contains ccache/sccache
+function(tiny_should_fix_ccache out_variable)
+
+    # Target the msvc and clang-cl with msvc compilers on Windows
+    if(NOT WIN32 OR NOT MSVC OR MINGW OR NOT DEFINED CMAKE_CXX_COMPILER_LAUNCHER)
+        set(${out_variable} FALSE PARENT_SCOPE)
+        return()
+    endif()
+
+    # Support the ccache and also sccache (I have tried and sccache doesn't work)
+    set(isCcacheCompilerLauncher FALSE)
+    tiny_is_ccache_compiler_launcher(isCcacheCompilerLauncher)
+
+    set(${out_variable} ${isCcacheCompilerLauncher} PARENT_SCOPE)
+
+endfunction()
+
+# Disable the precompilation of header files
+function(tiny_disable_precompile_headers)
+
+    get_property(help_string CACHE CMAKE_DISABLE_PRECOMPILE_HEADERS
+        PROPERTY HELPSTRING
+    )
+    if(NOT help_string)
+        set(help_string "Default value for DISABLE_PRECOMPILE_HEADERS of targets.")
+    endif()
+
+    set(CMAKE_DISABLE_PRECOMPILE_HEADERS ON CACHE BOOL ${help_string} FORCE)
+
+endfunction()
+
+# Determine whether the CMAKE_MSVC_DEBUG_INFORMATION_FORMAT, a new MSVC debug information
+# format is in effect
+function(tiny_is_new_msvc_debug_information_format_325 out_variable)
+
+    if(CMAKE_VERSION VERSION_GREATER_EQUAL "3.25")
+
+        cmake_policy(GET CMP0141 policy_cmp0141)
+        if(policy_cmp0141 STREQUAL "NEW")
+            set(${out_variable} TRUE PARENT_SCOPE)
+            return()
+        endif()
+
+    endif()
+
+    set(${out_variable} FALSE PARENT_SCOPE)
+
+endfunction()
+
+# Support the MSVC debug information format flags selected by an abstraction added
+# in the CMake 3.25
+function(tiny_fix_ccache_msvc_325)
+
+    get_property(help_string CACHE CMAKE_MSVC_DEBUG_INFORMATION_FORMAT
+        PROPERTY HELPSTRING
+    )
+    if(NOT help_string)
+        set(help_string "Default value for MSVC_DEBUG_INFORMATION_FORMAT of targets.")
+    endif()
+
+    set(CMAKE_MSVC_DEBUG_INFORMATION_FORMAT
+        "$<$<CONFIG:Debug,RelWithDebInfo>:Embedded>"
+        CACHE BOOL ${help_string} FORCE
+    )
 
 endfunction()
 
@@ -347,80 +398,8 @@ function(tiny_replace_Zi_by_Z7_for option help_string)
 
 endfunction()
 
-# Support the MSVC debug information format flags selected by an abstraction added
-# in the CMake 3.25.
-function(tiny_fix_ccache_msvc_325 out_variable)
-
-    if(CMAKE_VERSION VERSION_GREATER_EQUAL "3.25")
-
-        cmake_policy(GET CMP0141 policy_cmp0141)
-        if(policy_cmp0141 STREQUAL "NEW")
-            get_property(help_string CACHE CMAKE_MSVC_DEBUG_INFORMATION_FORMAT
-                PROPERTY HELPSTRING
-            )
-            if(NOT help_string)
-                set(help_string
-                    "Default value for MSVC_DEBUG_INFORMATION_FORMAT of targets."
-                )
-            endif()
-
-            set(CMAKE_MSVC_DEBUG_INFORMATION_FORMAT
-                "$<$<CONFIG:Debug,RelWithDebInfo>:Embedded>"
-                CACHE BOOL ${help_string} FORCE
-            )
-
-            set(${out_variable} TRUE PARENT_SCOPE)
-            return()
-        endif()
-    endif()
-
-    set(${out_variable} FALSE PARENT_SCOPE)
-
-endfunction()
-
-# Fix cmake variables if CMAKE_CXX_COMPILER_LAUNCHER is ccache or sccache
-# It applies fixes only on the Windows systems. It works well with the MSYS2 g++,
-# clang++, msvc, and clang-cl with msvc. It disables precompiled headers as they are not
-# supported on Windows and changes the -Zi compiler option to the -Z7 for debug builds
-# as the -Zi compiler option is not supported
-# (https://github.com/ccache/ccache/issues/1040)
-function(tiny_fix_ccache)
-
-    # I will check only the CMAKE_CXX_COMPILER_LAUNCHER and not also the
-    # CMAKE_C_COMPILER_LAUNCHER as this is a pure c++ project and c compiler is not used
-    # anyway but I will replace the Zi to Z7 compiler option in both
-    # CMAKE_<C|CXX>_FLAGS_<CONFIG> to be consistent 🤔
-
-    # Determine whether the CMAKE_CXX_COMPILER_LAUNCHER contains ccache/sccache
-    tiny_is_ccache_compiler_launcher(isCcacheLauncher)
-    if(NOT isCcacheLauncher)
-        return()
-    endif()
-
-    # MSYS2 g++, clang++ work well with the precompiled headers but the msvc doesn't
-    if(NOT MINGW)
-        get_property(help_string CACHE CMAKE_DISABLE_PRECOMPILE_HEADERS
-            PROPERTY HELPSTRING
-        )
-        if(NOT help_string)
-            set(help_string "Default value for DISABLE_PRECOMPILE_HEADERS of targets.")
-        endif()
-
-        set(CMAKE_DISABLE_PRECOMPILE_HEADERS ON CACHE BOOL ${help_string} FORCE)
-    endif()
-
-    # Below fixes are only needed for the MSVC
-    if(NOT MSVC)
-        return()
-    endif()
-
-    # Support the MSVC debug information format flags selected by an abstraction added
-    # in the CMake 3.25.
-    set(wasCcacheFixed FALSE)
-    tiny_fix_ccache_msvc_325(wasCcacheFixed)
-    if(wasCcacheFixed)
-        return()
-    endif()
+# Replace /Zi by /Z7 in the CMAKE_<C|CXX>_FLAGS_<CONFIG> option for the CMake <3.25
+function(tiny_fix_ccache_msvc_324)
 
     # Replace /Zi by /Z7 by the build config type, for the CMake <=3.24
     if(CMAKE_BUILD_TYPE STREQUAL "Debug")
@@ -441,6 +420,45 @@ function(tiny_fix_ccache)
             "Flags used by the CXX compiler during RELWITHDEBINFO builds.")
         tiny_replace_Zi_by_Z7_for(CMAKE_C_FLAGS_RELWITHDEBINFO
             "Flags used by the C compiler during RELWITHDEBINFO builds.")
+    endif()
+
+endfunction()
+
+# Fix cmake variables if CMAKE_CXX_COMPILER_LAUNCHER is ccache or sccache
+# It applies fixes only on the Windows systems. It works well with the MSYS2 g++,
+# clang++, msvc, and clang-cl with msvc. It disables precompiled headers as they are not
+# supported on Windows and changes the -Zi compiler option to the -Z7 for debug builds
+# as the -Zi compiler option is not supported
+# (https://github.com/ccache/ccache/issues/1040)
+function(tiny_fix_ccache)
+
+    # I will check only the CMAKE_CXX_COMPILER_LAUNCHER and not also the
+    # CMAKE_C_COMPILER_LAUNCHER as this is a pure c++ project and c compiler is not used
+    # anyway but I will replace the Zi to Z7 compiler option in both
+    # CMAKE_<C|CXX>_FLAGS_<CONFIG> to be consistent 🤔
+
+    # Determine if the current platform needs fixes and the CMAKE_CXX_COMPILER_LAUNCHER
+    # contains ccache/sccache
+    set(shouldFixCcache FALSE)
+    tiny_should_fix_ccache(shouldFixCcache)
+
+    if(NOT shouldFixCcache)
+        return()
+    endif()
+
+    # MSYS2 g++ or clang++ work well with the precompiled headers but the msvc doesn't
+    tiny_disable_precompile_headers()
+
+    # Fix the MSVC debug information format by the CMake version
+    set(isNewMsvcDebugInformationFormat FALSE)
+    tiny_is_new_msvc_debug_information_format_325(isNewMsvcDebugInformationFormat)
+
+    if(isNewMsvcDebugInformationFormat)
+        # Support the MSVC debug information format flags added in the CMake 3.25
+        tiny_fix_ccache_msvc_325()
+    else()
+        # Replace /Zi by /Z7 in the CMAKE_<C|CXX>_FLAGS_<CONFIG> for the CMake <3.25
+        tiny_fix_ccache_msvc_324()
     endif()
 
 endfunction()
