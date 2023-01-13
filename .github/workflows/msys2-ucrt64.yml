@@ -234,16 +234,16 @@ jobs:
       run: |
         # No need to install it as it's installed above using the pacboy
 
-        Write-Output '::group::Prepare ccache config'
+        echo '::group::Prepare ccache config'
         ccache --set-config compression=false
         ccache --set-config max_size=600M
         ccache --set-config sloppiness=pch_defines,time_macros
         ccache --show-config
-        Write-Output '::endgroup::'
+        echo '::endgroup::'
 
-        Write-Output '::group::Clear ccache statistics'
+        echo '::group::Clear ccache statistics'
         ccache --zero-stats
-        Write-Output '::endgroup::'
+        echo '::endgroup::'
 
     - name: vcpkg set-up environment
       shell: msys2 {0}
