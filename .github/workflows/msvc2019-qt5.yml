@@ -17,6 +17,10 @@ jobs:
     steps:
     - uses: actions/checkout@v3
 
+    - name: TinyORM prepare environment
+      run: >-
+        "TinyRunnerWorkPath=$(Resolve-Path -Path '${{ runner.workspace }}/..')" >> $env:GITHUB_ENV
+
     - name: PostgreSQL start service
       run: |
         Set-Service -Name postgresql-x64-14 -StartupType Manual
@@ -181,11 +185,13 @@ jobs:
     - name: Qt 5.15.2 install base components
       uses: jurplel/install-qt-action@v3
       with:
+        archives: qtbase
         version: 5.15.2
         arch: win64_msvc2019_64
+        cache: true
         setup-python: false
         extra: --external 7z.exe
-        dir: '${{ runner.workspace }}/../'
+        dir: ${{ env.TinyRunnerWorkPath }}
 
     - name: QMYSQL download driver dlls (Qt 5.15.2)
       id: download-qmysql-dlls
