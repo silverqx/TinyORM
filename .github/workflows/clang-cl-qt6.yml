@@ -201,7 +201,7 @@ jobs:
         cache: true
         setup-python: false
         extra: --external 7z.exe
-        dir: '${{ runner.workspace }}/../'
+        dir: C:/Qt
 
     - name: QMYSQL install driver dlls (Qt 6.4.2)
       working-directory: ${{ runner.temp }}
