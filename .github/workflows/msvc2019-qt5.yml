@@ -319,7 +319,8 @@ jobs:
 
     - name: TinyORM execute ctest 🔥
       working-directory: ../TinyORM-builds-cmake/build-msvc-cmake-debug
-      run: ctest --output-on-failure
+      run: |
+        ctest --output-on-failure
       env:
         DB_MYSQL_CHARSET: ${{ secrets.DB_MYSQL_CHARSET }}
         DB_MYSQL_COLLATION: utf8mb4_general_ci
