@@ -230,30 +230,29 @@ jobs:
       uses: actions/cache@v3
       id: cache-drivers-qmysql-dlls
       with:
-        path: ${{ runner.temp }}/${{ steps.initialize-qmysql-dlls.outputs.Filename }}
-        key: drivers-${{ env.cache-name }}-${{ steps.initialize-qmysql-dlls.outputs.Hash }}
+        path: ${{ env.7z_filepath }}
+        key: drivers-${{ env.cache-name }}-${{ env.cache_hash }}
       env:
+        7z_filepath: ${{ steps.initialize-qmysql-dlls.outputs.Filepath }}
+        cache_hash: ${{ steps.initialize-qmysql-dlls.outputs.Hash }}
         cache-name: qmysql-dlls
 
     - name: QMYSQL driver dlls download (Qt 6.4.2)
       if: steps.cache-drivers-qmysql-dlls.outputs.cache-hit != 'true'
-      run: |
+      run: >-
         $response = Invoke-WebRequest -Uri $env:URL_QMYSQL_DLLS_MSVC_X64_6_4_2
 
-        $filename = '${{ steps.initialize-qmysql-dlls.outputs.Filename }}'
-        $filepath = Join-Path -Path ${{ runner.temp }} -ChildPath $filename
-
-        $response | Select-Object -ExpandProperty Content | `
-        Set-Content -Path $filepath -AsByteStream
+        $response | Select-Object -ExpandProperty Content |
+        Set-Content -Path $env:7z_filepath -AsByteStream
       env:
+        7z_filepath: ${{ steps.initialize-qmysql-dlls.outputs.Filepath }}
         URL_QMYSQL_DLLS_MSVC_X64_6_4_2: ${{ secrets.URL_QMYSQL_DLLS_MSVC_X64_6_4_2 }}
 
     - name: QMYSQL driver dlls install (Qt 6.4.2)
       run: |
-        $filename = '${{ steps.initialize-qmysql-dlls.outputs.Filename }}'
-        $filepath = Join-Path -Path ${{ runner.temp }} -ChildPath $filename
-
-        7z.exe x -o"${env:QT_PLUGIN_PATH}/sqldrivers" $filepath
+        7z.exe x -o"${env:QT_PLUGIN_PATH}/sqldrivers" $env:7z_filepath
+      env:
+        7z_filepath: ${{ steps.initialize-qmysql-dlls.outputs.Filepath }}
 
     - name: Ccache restore cache 🕺
       uses: actions/cache@v3
