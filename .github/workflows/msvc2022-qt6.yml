@@ -211,7 +211,7 @@ jobs:
         extra: --external 7z.exe
         dir: ${{ env.TinyRunnerWorkPath }}
 
-    - name: Initialize download QMYSQL driver dlls (Qt 6.4.2)
+    - name: QMYSQL driver dlls initialize download (Qt 6.4.2)
       id: initialize-qmysql-dlls
       run: |
         $filename = ($env:URL_QMYSQL_DLLS_MSVC_X64_6_4_2 -split '/')[-1]
@@ -235,7 +235,7 @@ jobs:
       env:
         cache-name: qmysql-dlls
 
-    - name: QMYSQL download driver dlls (Qt 6.4.2)
+    - name: QMYSQL driver dlls download (Qt 6.4.2)
       if: steps.cache-drivers-qmysql-dlls.outputs.cache-hit != 'true'
       run: |
         $response = Invoke-WebRequest -Uri $env:URL_QMYSQL_DLLS_MSVC_X64_6_4_2
@@ -248,7 +248,7 @@ jobs:
       env:
         URL_QMYSQL_DLLS_MSVC_X64_6_4_2: ${{ secrets.URL_QMYSQL_DLLS_MSVC_X64_6_4_2 }}
 
-    - name: QMYSQL install driver dlls (Qt 6.4.2)
+    - name: QMYSQL driver dlls install (Qt 6.4.2)
       run: |
         $filename = '${{ steps.initialize-qmysql-dlls.outputs.Filename }}'
         $filepath = Join-Path -Path ${{ runner.temp }} -ChildPath $filename

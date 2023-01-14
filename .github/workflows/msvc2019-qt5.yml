@@ -193,7 +193,7 @@ jobs:
         extra: --external 7z.exe
         dir: ${{ env.TinyRunnerWorkPath }}
 
-    - name: QMYSQL download driver dlls (Qt 5.15.2)
+    - name: QMYSQL driver dlls download (Qt 5.15.2)
       id: download-qmysql-dlls
       working-directory: ${{ runner.temp }}
       run: >-
@@ -210,13 +210,13 @@ jobs:
       env:
         URL_QMYSQL_DLLS_MSVC_X64_5_15_2: ${{ secrets.URL_QMYSQL_DLLS_MSVC_X64_5_15_2 }}
 
-    - name: QMYSQL install driver dlls (Qt 5.15.2)
+    - name: QMYSQL driver dlls install (Qt 5.15.2)
       working-directory: ${{ runner.temp }}
       run: >-
         7z.exe x -o"${env:QT_PLUGIN_PATH}/sqldrivers"
         ${{ steps.download-qmysql-dlls.outputs.QMysqlDllsFilepath }}
 
-    - name: MySQL 8 download libmysql.dll (Qt 5.15.2)
+    - name: MySQL 8 libmysql.dll download (Qt 5.15.2)
       id: download-libmysql-dll
       working-directory: ${{ runner.temp }}
       run: >-
@@ -233,7 +233,7 @@ jobs:
       env:
         URL_LIBMYSQL_DLL_MYSQL_8_MSVC_X64_5_15_2: ${{ secrets.URL_LIBMYSQL_DLL_MYSQL_8_MSVC_X64_5_15_2 }}
 
-    - name: MySQL 8 install libmysql.dll (Qt 5.15.2)
+    - name: MySQL 8 libmysql.dll install (Qt 5.15.2)
       working-directory: ${{ runner.temp }}
       run: >-
         7z.exe x -o'${{ runner.workspace }}/TinyORM-bin'
