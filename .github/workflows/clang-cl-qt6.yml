@@ -290,14 +290,14 @@ jobs:
         Write-Output '::endgroup::'
 
         Write-Output '::group::Prepare ccache config'
-        ccache --set-config compression=false
-        ccache --set-config max_size=600M
-        ccache --set-config sloppiness=pch_defines,time_macros
-        ccache --show-config
+        ccache.exe --set-config compression=false
+        ccache.exe --set-config max_size=600M
+        ccache.exe --set-config sloppiness=pch_defines,time_macros
+        ccache.exe --show-config
         Write-Output '::endgroup::'
 
         Write-Output '::group::Clear ccache statistics'
-        ccache --zero-stats
+        ccache.exe --zero-stats
         Write-Output '::endgroup::'
 
     - name: vcpkg set-up environment
