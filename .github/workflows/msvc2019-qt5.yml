@@ -143,7 +143,7 @@ jobs:
         mysql.exe --user=$env:DB_MYSQL_ROOT_USERNAME --password=$env:DB_MYSQL_ROOT_PASSWORD
       env:
         DB_MYSQL_CHARSET: ${{ secrets.DB_MYSQL_CHARSET }}
-        DB_MYSQL_COLLATION: utf8mb4_general_ci
+        DB_MYSQL_COLLATION: ${{ secrets.DB_MYSQL_57_COLLATION }}
         DB_MYSQL_DATABASE: ${{ secrets.DB_MYSQL_DATABASE }}
         DB_MYSQL_ROOT_PASSWORD: ${{ secrets.DB_MYSQL_ROOT_PASSWORD }}
         DB_MYSQL_ROOT_USERNAME: ${{ secrets.DB_MYSQL_ROOT_USERNAME }}
@@ -369,7 +369,7 @@ jobs:
         --seed --no-ansi
       env:
         DB_MYSQL_CHARSET: ${{ secrets.DB_MYSQL_CHARSET }}
-        DB_MYSQL_COLLATION: utf8mb4_general_ci
+        DB_MYSQL_COLLATION: ${{ secrets.DB_MYSQL_57_COLLATION }}
         DB_MYSQL_DATABASE: ${{ secrets.DB_MYSQL_DATABASE }}
         DB_MYSQL_HOST: ${{ secrets.DB_MYSQL_HOST }}
         DB_MYSQL_PASSWORD: ${{ secrets.DB_MYSQL_PASSWORD }}
@@ -388,7 +388,7 @@ jobs:
         ctest --output-on-failure
       env:
         DB_MYSQL_CHARSET: ${{ secrets.DB_MYSQL_CHARSET }}
-        DB_MYSQL_COLLATION: utf8mb4_general_ci
+        DB_MYSQL_COLLATION: ${{ secrets.DB_MYSQL_57_COLLATION }}
         DB_MYSQL_DATABASE: ${{ secrets.DB_MYSQL_DATABASE }}
         DB_MYSQL_HOST: ${{ secrets.DB_MYSQL_HOST }}
         DB_MYSQL_PASSWORD: ${{ secrets.DB_MYSQL_PASSWORD }}
@@ -413,7 +413,7 @@ jobs:
         .\tom.exe migrate:status --database=tinyorm_tom_mysql --no-ansi
       env:
         DB_MYSQL_CHARSET: ${{ secrets.DB_MYSQL_CHARSET }}
-        DB_MYSQL_COLLATION: utf8mb4_general_ci
+        DB_MYSQL_COLLATION: ${{ secrets.DB_MYSQL_57_COLLATION }}
         DB_MYSQL_DATABASE: ${{ secrets.DB_MYSQL_DATABASE }}
         DB_MYSQL_HOST: ${{ secrets.DB_MYSQL_HOST }}
         DB_MYSQL_PASSWORD: ${{ secrets.DB_MYSQL_PASSWORD }}
