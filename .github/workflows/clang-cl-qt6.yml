@@ -207,28 +207,50 @@ jobs:
         extra: --external 7z.exe
         dir: ${{ env.TinyRunnerWorkPath }}
 
+    - name: Initialize download QMYSQL driver dlls (Qt 6.4.2)
+      id: initialize-qmysql-dlls
+      run: |
+        $filename = ($env:URL_QMYSQL_DLLS_MSVC_X64_6_4_2 -split '/')[-1]
+        "Filename=$filename" >> $env:GITHUB_OUTPUT
+
+        $filepath = Join-Path -Path ${{ runner.temp }} -ChildPath $filename
+        "Filepath=$filepath" >> $env:GITHUB_OUTPUT
+
+        $response = Invoke-WebRequest -Uri $env:URL_CACHE_HASH_WINDOWS
+        "Hash=$($response.Content)" >> $env:GITHUB_OUTPUT
+      env:
+        URL_QMYSQL_DLLS_MSVC_X64_6_4_2: ${{ secrets.URL_QMYSQL_DLLS_MSVC_X64_6_4_2 }}
+        URL_CACHE_HASH_WINDOWS: ${{ secrets.URL_CACHE_HASH_WINDOWS }}
+
+    - name: QMYSQL driver dlls restore cache
+      uses: actions/cache@v3
+      id: cache-drivers-qmysql-dlls
+      with:
+        path: ${{ runner.temp }}/${{ steps.initialize-qmysql-dlls.outputs.Filename }}
+        key: drivers-${{ env.cache-name }}-${{ steps.initialize-qmysql-dlls.outputs.Hash }}
+      env:
+        cache-name: qmysql-dlls
+
     - name: QMYSQL download driver dlls (Qt 6.4.2)
-      id: download-qmysql-dlls
-      working-directory: ${{ runner.temp }}
-      run: >-
+      if: steps.cache-drivers-qmysql-dlls.outputs.cache-hit != 'true'
+      run: |
         $response = Invoke-WebRequest -Uri $env:URL_QMYSQL_DLLS_MSVC_X64_6_4_2
 
-        $filename = ($env:URL_QMYSQL_DLLS_MSVC_X64_6_4_2 -split '/')[-1]
+        $filename = '${{ steps.hash-qmysql-dlls.outputs.Filename }}'
+        $filepath = Join-Path -Path ${{ runner.temp }} -ChildPath $filename
 
-        $filepath = Join-Path -Path $(Resolve-Path -Path .) -ChildPath $filename
-
-        $response | Select-Object -ExpandProperty Content |
+        $response | Select-Object -ExpandProperty Content | `
         Set-Content -Path $filepath -AsByteStream
-
-        "QMysqlDllsFilepath=$filepath" >> $env:GITHUB_OUTPUT
       env:
         URL_QMYSQL_DLLS_MSVC_X64_6_4_2: ${{ secrets.URL_QMYSQL_DLLS_MSVC_X64_6_4_2 }}
 
     - name: QMYSQL install driver dlls (Qt 6.4.2)
       working-directory: ${{ runner.temp }}
-      run: >-
-        7z.exe x -o"${env:QT_PLUGIN_PATH}/sqldrivers"
-        ${{ steps.download-qmysql-dlls.outputs.QMysqlDllsFilepath }}
+      run: |
+        $filename = '${{ steps.hash-qmysql-dlls.outputs.Filename }}'
+        $filepath = Join-Path -Path ${{ runner.temp }} -ChildPath $filename
+
+        7z.exe x -o"${env:QT_PLUGIN_PATH}/sqldrivers" $filepath
 
     - name: Cache LLVM and Clang
       id: llvm-cached
