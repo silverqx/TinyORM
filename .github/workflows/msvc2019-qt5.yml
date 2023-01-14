@@ -18,7 +18,7 @@ jobs:
     - uses: actions/checkout@v3
 
     - name: TinyORM prepare environment
-      run: >-
+      run: |
         "TinyRunnerWorkPath=$(Resolve-Path -Path '${{ runner.workspace }}/..')" >> $env:GITHUB_ENV
 
     - name: PostgreSQL start service
@@ -239,10 +239,8 @@ jobs:
         7z.exe x -o'${{ runner.workspace }}/TinyORM-bin'
         ${{ steps.download-libmysql-dll.outputs.LibmysqlDllFilepath }}
 
-    - run: exit 1
-
     - name: MySQL 8 libmysql.dll add on the $env:Path
-      run: >-
+      run: |
         '${{ runner.workspace }}/TinyORM-bin' >> $env:GITHUB_PATH
 
     - name: Ccache restore cache 🕺
