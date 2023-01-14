@@ -374,7 +374,7 @@ jobs:
         DB_MYSQL_HOST: ${{ secrets.DB_MYSQL_HOST }}
         DB_MYSQL_PASSWORD: ${{ secrets.DB_MYSQL_PASSWORD }}
         DB_MYSQL_USERNAME: ${{ secrets.DB_MYSQL_USERNAME }}
-        DB_PGSQL_CHARSET: utf8
+        DB_PGSQL_CHARSET: ${{ secrets.DB_PGSQL_CHARSET }}
         DB_PGSQL_DATABASE: ${{ secrets.DB_PGSQL_DATABASE }}
         DB_PGSQL_HOST: ${{ secrets.DB_PGSQL_HOST }}
         DB_PGSQL_PASSWORD: ${{ secrets.DB_PGSQL_PASSWORD }}
@@ -393,7 +393,7 @@ jobs:
         DB_MYSQL_HOST: ${{ secrets.DB_MYSQL_HOST }}
         DB_MYSQL_PASSWORD: ${{ secrets.DB_MYSQL_PASSWORD }}
         DB_MYSQL_USERNAME: ${{ secrets.DB_MYSQL_USERNAME }}
-        DB_PGSQL_CHARSET: utf8
+        DB_PGSQL_CHARSET: ${{ secrets.DB_PGSQL_CHARSET }}
         DB_PGSQL_DATABASE: ${{ secrets.DB_PGSQL_DATABASE }}
         DB_PGSQL_HOST: ${{ secrets.DB_PGSQL_HOST }}
         DB_PGSQL_PASSWORD: ${{ secrets.DB_PGSQL_PASSWORD }}
@@ -431,7 +431,7 @@ jobs:
         .\tom.exe migrate:refresh --database=tinyorm_tom_postgres --seed --no-ansi
         .\tom.exe migrate:status --database=tinyorm_tom_postgres --no-ansi
       env:
-        DB_PGSQL_CHARSET: utf8
+        DB_PGSQL_CHARSET: ${{ secrets.DB_PGSQL_CHARSET }}
         DB_PGSQL_DATABASE: ${{ secrets.DB_PGSQL_DATABASE }}
         DB_PGSQL_HOST: ${{ secrets.DB_PGSQL_HOST }}
         DB_PGSQL_PASSWORD: ${{ secrets.DB_PGSQL_PASSWORD }}
