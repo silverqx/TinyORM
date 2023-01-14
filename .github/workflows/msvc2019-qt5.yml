@@ -212,10 +212,10 @@ jobs:
       uses: actions/cache@v3
       id: cache-drivers-qmysql-dlls
       with:
-        path: ${{ env.7z_filepath }}
+        path: ${{ env.archive_filepath }}
         key: drivers-${{ env.cache_name }}-${{ env.cache_hash }}
       env:
-        7z_filepath: ${{ steps.initialize-qmysql-dlls.outputs.Filepath }}
+        archive_filepath: ${{ steps.initialize-qmysql-dlls.outputs.Filepath }}
         cache_hash: ${{ steps.initialize-qmysql-dlls.outputs.Hash }}
         cache_name: qmysql-dlls
 
@@ -225,16 +225,16 @@ jobs:
         $response = Invoke-WebRequest -Uri $env:URL_QMYSQL_DLLS_MSVC_X64_5_15_2
 
         $response | Select-Object -ExpandProperty Content |
-        Set-Content -Path $env:7z_filepath -AsByteStream
+        Set-Content -Path $env:archive_filepath -AsByteStream
       env:
-        7z_filepath: ${{ steps.initialize-qmysql-dlls.outputs.Filepath }}
+        archive_filepath: ${{ steps.initialize-qmysql-dlls.outputs.Filepath }}
         URL_QMYSQL_DLLS_MSVC_X64_5_15_2: ${{ secrets.URL_QMYSQL_DLLS_MSVC_X64_5_15_2 }}
 
     - name: QMYSQL driver dlls install (Qt 5.15.2)
       run: |
-        7z.exe x -o"${env:QT_PLUGIN_PATH}/sqldrivers" $env:7z_filepath
+        7z.exe x -o"${env:QT_PLUGIN_PATH}/sqldrivers" $env:archive_filepath
       env:
-        7z_filepath: ${{ steps.initialize-qmysql-dlls.outputs.Filepath }}
+        archive_filepath: ${{ steps.initialize-qmysql-dlls.outputs.Filepath }}
 
     - name: MySQL 8 libmysql.dll initialize download (Qt 5.15.2)
       id: initialize-mysql_8-libmysql-dll
@@ -255,10 +255,10 @@ jobs:
       uses: actions/cache@v3
       id: cache-drivers-mysql_8-libmysql-dll
       with:
-        path: ${{ env.7z_filepath }}
+        path: ${{ env.archive_filepath }}
         key: drivers-${{ env.cache_name }}-${{ env.cache_hash }}
       env:
-        7z_filepath: ${{ steps.initialize-mysql_8-libmysql-dll.outputs.Filepath }}
+        archive_filepath: ${{ steps.initialize-mysql_8-libmysql-dll.outputs.Filepath }}
         cache_hash: ${{ steps.initialize-mysql_8-libmysql-dll.outputs.Hash }}
         cache_name: mysql_8-libmysql-dll
 
@@ -268,16 +268,16 @@ jobs:
         $response = Invoke-WebRequest -Uri $env:URL_LIBMYSQL_DLL_MYSQL_8_MSVC_X64_5_15_2
 
         $response | Select-Object -ExpandProperty Content |
-        Set-Content -Path $env:7z_filepath -AsByteStream
+        Set-Content -Path $env:archive_filepath -AsByteStream
       env:
-        7z_filepath: ${{ steps.initialize-mysql_8-libmysql-dll.outputs.Filepath }}
+        archive_filepath: ${{ steps.initialize-mysql_8-libmysql-dll.outputs.Filepath }}
         URL_LIBMYSQL_DLL_MYSQL_8_MSVC_X64_5_15_2: ${{ secrets.URL_LIBMYSQL_DLL_MYSQL_8_MSVC_X64_5_15_2 }}
 
     - name: MySQL 8 libmysql.dll install (Qt 5.15.2)
       run: |
-        7z.exe x -o'${{ runner.workspace }}/TinyORM-bin' $env:7z_filepath
+        7z.exe x -o'${{ runner.workspace }}/TinyORM-bin' $env:archive_filepath
       env:
-        7z_filepath: ${{ steps.initialize-mysql_8-libmysql-dll.outputs.Filepath }}
+        archive_filepath: ${{ steps.initialize-mysql_8-libmysql-dll.outputs.Filepath }}
 
     - name: MySQL 8 libmysql.dll add on the $env:Path
       run: |
