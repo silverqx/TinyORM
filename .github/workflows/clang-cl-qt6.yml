@@ -227,11 +227,11 @@ jobs:
       id: cache-drivers-qmysql-dlls
       with:
         path: ${{ env.7z_filepath }}
-        key: drivers-${{ env.cache-name }}-${{ env.cache_hash }}
+        key: drivers-${{ env.cache_name }}-${{ env.cache_hash }}
       env:
         7z_filepath: ${{ steps.initialize-qmysql-dlls.outputs.Filepath }}
         cache_hash: ${{ steps.initialize-qmysql-dlls.outputs.Hash }}
-        cache-name: qmysql-dlls
+        cache_name: qmysql-dlls
 
     - name: QMYSQL driver dlls download (Qt 6.4.2)
       if: steps.cache-drivers-qmysql-dlls.outputs.cache-hit != 'true'
@@ -270,11 +270,11 @@ jobs:
       uses: actions/cache@v3
       with:
         path: ~/AppData/Local/ccache
-        key: ${{ runner.os }}-ccache-${{ env.cache-name }}-${{ github.run_id }}
+        key: ${{ runner.os }}-ccache-${{ env.cache_name }}-${{ github.run_id }}
         restore-keys: |
-          ${{ runner.os }}-ccache-${{ env.cache-name }}-
+          ${{ runner.os }}-ccache-${{ env.cache_name }}-
       env:
-        cache-name: clang-cl-msvc2022-qt64
+        cache_name: clang-cl-msvc2022-qt64
 
     - name: Ccache setup 🥳
       run: |

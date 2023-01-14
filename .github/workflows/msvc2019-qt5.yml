@@ -213,11 +213,11 @@ jobs:
       id: cache-drivers-qmysql-dlls
       with:
         path: ${{ env.7z_filepath }}
-        key: drivers-${{ env.cache-name }}-${{ env.cache_hash }}
+        key: drivers-${{ env.cache_name }}-${{ env.cache_hash }}
       env:
         7z_filepath: ${{ steps.initialize-qmysql-dlls.outputs.Filepath }}
         cache_hash: ${{ steps.initialize-qmysql-dlls.outputs.Hash }}
-        cache-name: qmysql-dlls
+        cache_name: qmysql-dlls
 
     - name: QMYSQL driver dlls download (Qt 5.15.2)
       if: steps.cache-drivers-qmysql-dlls.outputs.cache-hit != 'true'
@@ -256,11 +256,11 @@ jobs:
       id: cache-drivers-mysql_8-libmysql-dll
       with:
         path: ${{ env.7z_filepath }}
-        key: drivers-${{ env.cache-name }}-${{ env.cache_hash }}
+        key: drivers-${{ env.cache_name }}-${{ env.cache_hash }}
       env:
         7z_filepath: ${{ steps.initialize-mysql_8-libmysql-dll.outputs.Filepath }}
         cache_hash: ${{ steps.initialize-mysql_8-libmysql-dll.outputs.Hash }}
-        cache-name: mysql_8-libmysql-dll
+        cache_name: mysql_8-libmysql-dll
 
     - name: MySQL 8 libmysql.dll download (Qt 5.15.2)
       if: steps.cache-drivers-mysql_8-libmysql-dll.outputs.cache-hit != 'true'
@@ -287,11 +287,11 @@ jobs:
       uses: actions/cache@v3
       with:
         path: ~/AppData/Local/ccache
-        key: ${{ runner.os }}-ccache-${{ env.cache-name }}-${{ github.run_id }}
+        key: ${{ runner.os }}-ccache-${{ env.cache_name }}-${{ github.run_id }}
         restore-keys: |
-          ${{ runner.os }}-ccache-${{ env.cache-name }}-
+          ${{ runner.os }}-ccache-${{ env.cache_name }}-
       env:
-        cache-name: msvc2019-qt515
+        cache_name: msvc2019-qt515
 
     - name: Ccache setup 🥳
       run: |
