@@ -240,7 +240,7 @@ jobs:
       run: |
         $response = Invoke-WebRequest -Uri $env:URL_QMYSQL_DLLS_MSVC_X64_6_4_2
 
-        $filename = '${{ steps.hash-qmysql-dlls.outputs.Filename }}'
+        $filename = '${{ steps.initialize-qmysql-dlls.outputs.Filename }}'
         $filepath = Join-Path -Path ${{ runner.temp }} -ChildPath $filename
 
         $response | Select-Object -ExpandProperty Content | `
@@ -250,7 +250,7 @@ jobs:
 
     - name: QMYSQL install driver dlls (Qt 6.4.2)
       run: |
-        $filename = '${{ steps.hash-qmysql-dlls.outputs.Filename }}'
+        $filename = '${{ steps.initialize-qmysql-dlls.outputs.Filename }}'
         $filepath = Join-Path -Path ${{ runner.temp }} -ChildPath $filename
 
         7z.exe x -o"${env:QT_PLUGIN_PATH}/sqldrivers" $filepath
