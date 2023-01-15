@@ -166,9 +166,11 @@ bool MySqlConnection::pingDatabase()
 
     const auto getMysqlHandle = [&qtConnection]() -> MYSQL *
     {
-        if (auto driverHandle = qtConnection.driver()->handle();
-            qstrcmp(driverHandle.typeName(), "MYSQL*") == 0
-        )
+        auto driverHandle = qtConnection.driver()->handle();
+        const auto *typeName = driverHandle.typeName();
+
+        // MYSQL* for MySQL client and st_mysql* for MariaDB client
+        if (qstrcmp(typeName, "MYSQL*") == 0 || qstrcmp(typeName, "st_mysql*") == 0)
             return *static_cast<MYSQL **>(driverHandle.data());
 
         return nullptr;
