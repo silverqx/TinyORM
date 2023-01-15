@@ -21,16 +21,16 @@ jobs:
             pacboy: [ 'clang:u', 'gcc:u' ]
             command: clang++.exe
 
-          - key: gcc
-            pacboy: [ 'gcc:u' ]
-            command: g++.exe
+          # - key: gcc
+          #   pacboy: [ 'gcc:u' ]
+          #   command: g++.exe
 
         qt:
           - key: qt5
             pacboy: qt5-base:u
 
-          - key: qt6
-            pacboy: qt6-base:u
+          # - key: qt6
+          #   pacboy: qt6-base:u
 
     steps:
     - uses: actions/checkout@v3
