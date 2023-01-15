@@ -1050,6 +1050,10 @@ QtCreator common CMake options:
 -D TOM_EXAMPLE:BOOL=ON
 -D TOM_MIGRATIONS_DIR:PATH=database/migrations
 
+ - MSYS2 ccache
+
+-D CMAKE_CXX_COMPILER_LAUNCHER:FILEPATH=C:/msys64/ucrt64/bin/ccache.exe
+
 
 DatabaseConnection debug code:
 ------------------------------
