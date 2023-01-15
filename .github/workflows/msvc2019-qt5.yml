@@ -291,20 +291,20 @@ jobs:
         Write-Output '::endgroup::'
 
         Write-Output '::group::get-config cache_dir'
-        $ccachePath = ccache.exe --get-config cache_dir
-        "CcachePath=$ccachePath" >> $env:GITHUB_OUTPUT
+        $cachePath = ccache.exe --get-config cache_dir
+        "CachePath=$cachePath" >> $env:GITHUB_OUTPUT
         Write-Output '::endgroup::'
 
     - name: Ccache restore cache 🕺
       uses: actions/cache@v3
       with:
-        path: ${{ env.ccache_path }}
+        path: ${{ env.cache_path }}
         key: ${{ runner.os }}-ccache-${{ env.cache_name }}-${{ github.run_id }}
         restore-keys: |
           ${{ runner.os }}-ccache-${{ env.cache_name }}-
       env:
         cache_name: msvc2019-qt515
-        ccache_path: ${{ steps.initialize-ccache-cache.outputs.CcachePath }}
+        cache_path: ${{ steps.initialize-ccache-cache.outputs.CachePath }}
 
     - name: Ccache setup 🥳
       run: |

@@ -224,20 +224,20 @@ jobs:
       run: |
         # No need to install it as it's installed above using the pacboy
 
-        $ccachePath = ccache.exe --get-config cache_dir
-        echo "CcachePath=$ccachePath" >> $GITHUB_OUTPUT
+        cachePath=$(ccache.exe --get-config cache_dir)
+        echo "CachePath=$cachePath" >> $GITHUB_OUTPUT
 
     - name: Ccache restore cache 🕺
       uses: actions/cache@v3
       with:
         # This path is ok also for MSYS2 shells
-        path: ${{ env.ccache_path }}
+        path: ${{ env.cache_path }}
         key: ${{ runner.os }}-ccache-${{ env.cache_name }}-${{ github.run_id }}
         restore-keys: |
           ${{ runner.os }}-ccache-${{ env.cache_name }}-
       env:
         cache_name: msys2-ucrt64-${{ matrix.compiler.key }}
-        ccache_path: ${{ steps.initialize-ccache-cache.outputs.CcachePath }}
+        cache_path: ${{ steps.initialize-ccache-cache.outputs.CachePath }}
 
     - name: Ccache setup 🥳
       shell: msys2 {0}
