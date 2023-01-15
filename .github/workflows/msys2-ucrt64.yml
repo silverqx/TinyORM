@@ -25,6 +25,13 @@ jobs:
             pacboy: [ 'gcc:u' ]
             command: g++.exe
 
+        qt:
+          - key: qt5
+            pacboy: qt5-base:u
+
+          - key: qt6
+            pacboy: qt6-base:u
+
     steps:
     - uses: actions/checkout@v3
 
@@ -199,12 +206,13 @@ jobs:
         mysql.exe --version
         postgres.exe --version
 
-    - name: TinyORM create build folder (${{ matrix.compiler.key }}-cmake-debug)
+    - name: TinyORM create build folder (${{ matrix.compiler.key }}-${{ matrix.qt.key }}-cmake-debug)
       run: |
-        mkdir -p ../TinyORM-builds-cmake/build-${{ matrix.compiler.key }}-cmake-debug
+        mkdir -p ../TinyORM-builds-cmake/build-${{ matrix.compiler.key }}-${{ matrix.qt.key }}-cmake-debug
 
-    - name: |
-        MSYS2 UCRT64 setup (${{ join(matrix.compiler.pacboy, ', ') }}, lld:u, qt5-base:u, ccache:u)
+    - name: >-
+        MSYS2 UCRT64 setup (${{ join(matrix.compiler.pacboy, ', ') }}, lld:u,
+        ${{ matrix.qt.pacboy }}, ccache:u)
       uses: msys2/setup-msys2@v2
       with:
         msystem: ucrt64
@@ -215,7 +223,7 @@ jobs:
         pacboy: >-
           ${{ join(matrix.compiler.pacboy, ' ') }} lld:u
           cmake:u ninja:u ccache:u
-          qt5-base:u
+          ${{ matrix.qt.pacboy }}
           libmariadbclient:u postgresql:u
 
     - name: Ccache initialize
@@ -236,7 +244,7 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-ccache-${{ env.cache_name }}-
       env:
-        cache_name: msys2-ucrt64-${{ matrix.compiler.key }}
+        cache_name: msys2-ucrt64-${{ matrix.compiler.key }}-${{ matrix.qt.key }}
         cache_path: ${{ steps.initialize-ccache-cache.outputs.CachePath }}
 
     - name: Ccache setup 🥳
@@ -266,12 +274,12 @@ jobs:
       run: |
         cmake --version
 
-    - name: TinyORM cmake configure (${{ matrix.compiler.key }}-cmake-debug)
+    - name: TinyORM cmake configure (${{ matrix.compiler.key }}-${{ matrix.qt.key }}-cmake-debug)
       shell: msys2 {0}
       run: >-
         cmake
         -S .
-        -B ../TinyORM-builds-cmake/build-${{ matrix.compiler.key }}-cmake-debug
+        -B ../TinyORM-builds-cmake/build-${{ matrix.compiler.key }}-${{ matrix.qt.key }}-cmake-debug
         -G Ninja
         -D CMAKE_CXX_COMPILER_LAUNCHER:FILEPATH='/ucrt64/bin/ccache.exe'
         -D CMAKE_CXX_COMPILER:FILEPATH="/ucrt64/bin/${{ matrix.compiler.command }}"
@@ -287,10 +295,11 @@ jobs:
         -D TOM:BOOL=ON
         -D TOM_EXAMPLE:BOOL=ON
 
-    - name: TinyORM cmake build ✨ (${{ matrix.compiler.key }}-cmake-debug)
+    - name: TinyORM cmake build ✨ (${{ matrix.compiler.key }}-${{ matrix.qt.key }}-cmake-debug)
       shell: msys2 {0}
       run: >-
-        cmake --build ../TinyORM-builds-cmake/build-${{ matrix.compiler.key }}-cmake-debug
+        cmake
+        --build ../TinyORM-builds-cmake/build-${{ matrix.compiler.key }}-${{ matrix.qt.key }}-cmake-debug
         --target all --parallel ${{ matrix.compiler.key == 'gcc' && 1 || 2 }}
 
     - name: Ccache statistics
@@ -300,7 +309,8 @@ jobs:
 
     - name: Create and Seed tables for unit tests 🎉
       shell: msys2 {0}
-      working-directory: ../TinyORM-builds-cmake/build-${{ matrix.compiler.key }}-cmake-debug/tests/testdata_tom
+      working-directory: |
+        ../TinyORM-builds-cmake/build-${{ matrix.compiler.key }}-${{ matrix.qt.key }}-cmake-debug/tests/testdata_tom
       run: >-
         export PATH=../..${PATH:+:}$PATH
 
@@ -327,7 +337,8 @@ jobs:
 
     - name: TinyORM execute ctest 🔥
       shell: msys2 {0}
-      working-directory: ../TinyORM-builds-cmake/build-${{ matrix.compiler.key }}-cmake-debug
+      working-directory: |
+        ../TinyORM-builds-cmake/build-${{ matrix.compiler.key }}-${{ matrix.qt.key }}-cmake-debug
       run: |
         ctest --output-on-failure
       env:
@@ -350,7 +361,8 @@ jobs:
 
     - name: Tom example test some commands (MySQL) 🚀
       shell: msys2 {0}
-      working-directory: ../TinyORM-builds-cmake/build-${{ matrix.compiler.key }}-cmake-debug/examples/tom
+      working-directory: |
+        ../TinyORM-builds-cmake/build-${{ matrix.compiler.key }}-${{ matrix.qt.key }}-cmake-debug/examples/tom
       run: |
         export PATH=../..${PATH:+:}$PATH
 
@@ -373,7 +385,8 @@ jobs:
 
     - name: Tom example test some commands (PostgreSQL) 🙌
       shell: msys2 {0}
-      working-directory: ../TinyORM-builds-cmake/build-${{ matrix.compiler.key }}-cmake-debug/examples/tom
+      working-directory: |
+        ../TinyORM-builds-cmake/build-${{ matrix.compiler.key }}-${{ matrix.qt.key }}-cmake-debug/examples/tom
       run: |
         export PATH=../..${PATH:+:}$PATH
 
@@ -392,7 +405,8 @@ jobs:
 
     - name: Tom example test some commands (SQLite) 🏁
       shell: msys2 {0}
-      working-directory: ../TinyORM-builds-cmake/build-${{ matrix.compiler.key }}-cmake-debug/examples/tom
+      working-directory: |
+        ../TinyORM-builds-cmake/build-${{ matrix.compiler.key }}-${{ matrix.qt.key }}-cmake-debug/examples/tom
       run: |
         export PATH=../..${PATH:+:}$PATH
 
