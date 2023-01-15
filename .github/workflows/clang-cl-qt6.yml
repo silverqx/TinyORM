@@ -266,11 +266,17 @@ jobs:
         force-version: true
         cached: ${{ steps.llvm-cached.outputs.cache-hit }}
 
-    - name: Ccache get-config cache_dir
+    - name: Ccache initialize
       id: initialize-ccache-cache
       run: |
+        Write-Output '::group::Install'
+        choco install ccache -y
+        Write-Output '::endgroup::'
+
+        Write-Output '::group::get-config cache_dir'
         $ccachePath = ccache.exe --get-config cache_dir
         "CcachePath=$ccachePath" >> $env:GITHUB_OUTPUT
+        Write-Output '::endgroup::'
 
     - name: Ccache restore cache 🕺
       uses: actions/cache@v3
@@ -285,10 +291,6 @@ jobs:
 
     - name: Ccache setup 🥳
       run: |
-        Write-Output '::group::Install ccache'
-        choco install ccache -y
-        Write-Output '::endgroup::'
-
         Write-Output '::group::Prepare ccache config'
         ccache.exe --set-config compression=false
         ccache.exe --set-config max_size=600M
