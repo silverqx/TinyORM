@@ -206,10 +206,6 @@ jobs:
         mysql.exe --version
         postgres.exe --version
 
-    - name: TinyORM create build folder (${{ matrix.compiler.key }}-${{ matrix.qt.key }}-cmake-debug)
-      run: |
-        mkdir -p ../TinyORM-builds-cmake/build-${{ matrix.compiler.key }}-${{ matrix.qt.key }}-cmake-debug
-
     - name: >-
         MSYS2 UCRT64 setup (${{ join(matrix.compiler.pacboy, ', ') }}, lld:u,
         ${{ matrix.qt.pacboy }}, ccache:u)
@@ -273,6 +269,11 @@ jobs:
       shell: msys2 {0}
       run: |
         cmake --version
+
+    - name: TinyORM create build folder (${{ matrix.compiler.key }}-${{ matrix.qt.key }}-cmake-debug)
+      run: >-
+        New-Item -Type Directory
+        '../TinyORM-builds-cmake/build-${{ matrix.compiler.key }}-${{ matrix.qt.key }}-cmake-debug'
 
     - name: TinyORM cmake configure (${{ matrix.compiler.key }}-${{ matrix.qt.key }}-cmake-debug)
       shell: msys2 {0}

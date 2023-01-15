@@ -39,10 +39,6 @@ jobs:
       with:
         destination: ${{ runner.workspace }}/../ninja-build
 
-    - name: TinyORM create build folder (clang15-cmake-debug)
-      run: |
-        mkdir -p ../TinyORM-builds-cmake/build-clang15-cmake-debug
-
     - name: ccache setup 🕺
       uses: Chocobo1/setup-ccache-action@v1
       with:
@@ -64,6 +60,10 @@ jobs:
     - name: CMake print version
       run: |
         cmake --version
+
+    - name: TinyORM create build folder (clang15-cmake-debug)
+      run: |
+        mkdir -p '../TinyORM-builds-cmake/build-clang15-cmake-debug'
 
     - name: TinyORM cmake configure (clang15-cmake-debug)
       run: >-

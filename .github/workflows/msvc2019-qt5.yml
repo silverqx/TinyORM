@@ -178,10 +178,6 @@ jobs:
         mysql.exe --version
         postgres.exe --version
 
-    - name: TinyORM create build folder (msvc-cmake-debug)
-      run: |
-        mkdir -p ../TinyORM-builds-cmake/build-msvc-cmake-debug
-
     - name: Qt 5.15.2 install base components
       uses: jurplel/install-qt-action@v3
       with:
@@ -333,6 +329,10 @@ jobs:
     - name: CMake print version
       run: |
         cmake --version
+
+    - name: TinyORM create build folder (msvc-cmake-debug)
+      run: |
+        New-Item -Type Directory '../TinyORM-builds-cmake/build-msvc-cmake-debug'
 
     - name: TinyORM cmake configure (msvc-cmake-debug)
       run: >-

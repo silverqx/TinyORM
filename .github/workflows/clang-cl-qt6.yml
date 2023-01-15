@@ -317,6 +317,10 @@ jobs:
       run: |
         cmake --version
 
+    - name: TinyORM create build folder (clang-cl-cmake-debug)
+      run: |
+        New-Item -Type Directory '../TinyORM-builds-cmake/build-clang-cl-cmake-debug'
+
     - name: TinyORM cmake configure (clang-cl-cmake-debug)
       run: >-
         cmake
