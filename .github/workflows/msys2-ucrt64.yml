@@ -309,7 +309,7 @@ jobs:
 
     - name: Create and Seed tables for unit tests 🎉
       shell: msys2 {0}
-      working-directory: |
+      working-directory: >-
         ../TinyORM-builds-cmake/build-${{ matrix.compiler.key }}-${{ matrix.qt.key }}-cmake-debug/tests/testdata_tom
       run: >-
         export PATH=../..${PATH:+:}$PATH
@@ -337,7 +337,7 @@ jobs:
 
     - name: TinyORM execute ctest 🔥
       shell: msys2 {0}
-      working-directory: |
+      working-directory: >-
         ../TinyORM-builds-cmake/build-${{ matrix.compiler.key }}-${{ matrix.qt.key }}-cmake-debug
       run: |
         ctest --output-on-failure
@@ -361,7 +361,7 @@ jobs:
 
     - name: Tom example test some commands (MySQL) 🚀
       shell: msys2 {0}
-      working-directory: |
+      working-directory: >-
         ../TinyORM-builds-cmake/build-${{ matrix.compiler.key }}-${{ matrix.qt.key }}-cmake-debug/examples/tom
       run: |
         export PATH=../..${PATH:+:}$PATH
@@ -385,7 +385,7 @@ jobs:
 
     - name: Tom example test some commands (PostgreSQL) 🙌
       shell: msys2 {0}
-      working-directory: |
+      working-directory: >-
         ../TinyORM-builds-cmake/build-${{ matrix.compiler.key }}-${{ matrix.qt.key }}-cmake-debug/examples/tom
       run: |
         export PATH=../..${PATH:+:}$PATH
@@ -405,7 +405,7 @@ jobs:
 
     - name: Tom example test some commands (SQLite) 🏁
       shell: msys2 {0}
-      working-directory: |
+      working-directory: >-
         ../TinyORM-builds-cmake/build-${{ matrix.compiler.key }}-${{ matrix.qt.key }}-cmake-debug/examples/tom
       run: |
         export PATH=../..${PATH:+:}$PATH
