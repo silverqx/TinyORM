@@ -46,12 +46,22 @@ ${TINY_UNPARSED_ARGUMENTS}")
     # ---
 
     if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
+        # All have to be defined because of checks at the beginning of <qt_windows.h>
+        # WINVER, _WIN32_WINNT, NTDDI_VERSION
+
+        # MSYS2 Qt 6 already defines these macros in the Qt6Targets.cmake Qt6::Platform
+        # Flipped expression of : if(MINGW AND QT_VERSION_MAJOR GREATER_EQUAL 6)
+        if(NOT MINGW OR NOT QT_VERSION_MAJOR GREATER_EQUAL 6)
+            target_compile_definitions(${target} INTERFACE
+                # Windows 10 1903 "19H1" - 0x0A000007
+                WINVER=_WIN32_WINNT_WIN10
+                _WIN32_WINNT=_WIN32_WINNT_WIN10
+            )
+        endif()
+
         target_compile_definitions(${target} INTERFACE
-            # All have to be defined because of checks at the beginning of <qt_windows.h>
             # Windows 10 1903 "19H1" - 0x0A000007
-            WINVER=_WIN32_WINNT_WIN10
             NTDDI_VERSION=NTDDI_WIN10_19H1
-            _WIN32_WINNT=_WIN32_WINNT_WIN10
             # Internet Explorer 11
             _WIN32_IE=_WIN32_IE_IE110
             UNICODE _UNICODE

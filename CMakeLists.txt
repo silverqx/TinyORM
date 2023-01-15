@@ -337,6 +337,15 @@ tiny_resource_and_manifest(${TinyOrm_target}
 # Resolve and link dependencies
 # ---
 
+# Must be before the TinyCommon, to exclude WINVER for the MSYS2 Qt6 builds to avoid:
+# 'WINVER' macro redefined [-Wmacro-redefined]
+# Look also to the TinyCommon for conditional WINVER definition
+find_package(QT NAMES Qt5 Qt6 REQUIRED COMPONENTS Core Sql)
+tiny_find_package(Qt${QT_VERSION_MAJOR} ${minQtVersion} CONFIG
+    REQUIRED COMPONENTS Core Sql
+)
+tiny_find_package(range-v3 CONFIG REQUIRED)
+
 # Common configuration as interface library
 include(TinyCommon)
 tiny_common(${CommonConfig_target}
@@ -345,12 +354,6 @@ tiny_common(${CommonConfig_target}
 )
 
 # Unconditional dependencies
-find_package(QT NAMES Qt5 Qt6 REQUIRED COMPONENTS Core Sql)
-tiny_find_package(Qt${QT_VERSION_MAJOR} ${minQtVersion} CONFIG
-    REQUIRED COMPONENTS Core Sql
-)
-tiny_find_package(range-v3 CONFIG REQUIRED)
-
 target_link_libraries(${TinyOrm_target}
     PUBLIC
         Qt${QT_VERSION_MAJOR}::Core
