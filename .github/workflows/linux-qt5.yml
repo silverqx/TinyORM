@@ -184,6 +184,7 @@ jobs:
         ccache_options: |
           compression = false
           max_size = 800M
+          sloppiness = include_file_ctime,include_file_mtime
 
     - name: vcpkg set-up environment
       run: |
