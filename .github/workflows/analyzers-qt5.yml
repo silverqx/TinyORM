@@ -65,17 +65,17 @@ jobs:
       run: |
         cmake --version
 
-    - name: TinyORM create build folder (clang14-cmake-debug)
+    - name: TinyORM create build folder (clang-cmake-debug)
       run: |
-        mkdir -p '../TinyORM-builds-cmake/build-clang14-cmake-debug'
+        mkdir -p '../TinyORM-builds-cmake/build-clang-cmake-debug'
 
-    - name: TinyORM cmake configure (clang14-cmake-debug)
+    - name: TinyORM cmake configure (clang-cmake-debug)
       run: >-
         source .github/resources/qt5env.sh
 
         cmake
         -S .
-        -B ../TinyORM-builds-cmake/build-clang14-cmake-debug
+        -B ../TinyORM-builds-cmake/build-clang-cmake-debug
         -G Ninja
         -D CMAKE_CXX_COMPILER_LAUNCHER:FILEPATH=/usr/bin/ccache
         -D CMAKE_CXX_COMPILER:FILEPATH=/usr/bin/clang++-14
@@ -91,10 +91,10 @@ jobs:
         -D TOM:BOOL=ON
         -D TOM_EXAMPLE:BOOL=ON
 
-    - name: TinyORM cmake build ✨ (clang14-cmake-debug)
+    - name: TinyORM cmake build ✨ (clang-cmake-debug)
       run: |
         source .github/resources/qt5env.sh
-        cmake --build ../TinyORM-builds-cmake/build-clang14-cmake-debug --target all --parallel 2
+        cmake --build ../TinyORM-builds-cmake/build-clang-cmake-debug --target all --parallel 2
 
     - name: clazy-standalone install
       run: >-
@@ -109,7 +109,7 @@ jobs:
       run: |
         echo 'TINY_CLANG_TIDY_EXECUTED=true' >> $GITHUB_ENV
 
-        ln -s ../TinyORM-builds-cmake/build-clang14-cmake-debug/compile_commands.json \
+        ln -s ../TinyORM-builds-cmake/build-clang-cmake-debug/compile_commands.json \
         compile_commands.json
 
         run-clang-tidy-14 '(?:src\/|tests\/).+\/(?!mocs_)[\w_\-\+]+\.cpp$'
