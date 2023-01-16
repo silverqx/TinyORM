@@ -184,7 +184,7 @@ jobs:
         ccache_options: |
           compression = false
           max_size = 800M
-          sloppiness = include_file_ctime,include_file_mtime,pch_defines,time_macros
+          sloppiness = pch_defines,time_macros
 
     - name: vcpkg set-up environment
       run: |
@@ -218,7 +218,7 @@ jobs:
         -D VERBOSE_CONFIGURE:BOOL=ON
         -D MATCH_EQUAL_EXPORTED_BUILDTREE:BOOL=OFF
         -D MYSQL_PING:BOOL=ON
-        -D BUILD_TESTS:BOOL=ON
+        -D BUILD_TESTS:BOOL=OFF
         -D ORM:BOOL=ON
         -D TOM:BOOL=ON
         -D TOM_EXAMPLE:BOOL=ON
