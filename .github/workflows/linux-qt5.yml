@@ -181,16 +181,19 @@ jobs:
         cachePath=$(ccache --get-config cache_dir)
         echo "CachePath=$cachePath" >> $GITHUB_OUTPUT
 
+        echo "ImageOS=$ImageOS" >> $GITHUB_OUTPUT
+
     - name: Ccache restore cache 🕺
       uses: actions/cache@v3
       with:
         path: ${{ env.cache_path }}
-        key: ${{ runner.os }}-ccache-${{ env.cache_name }}-${{ github.run_id }}
+        key: ${{ runner.os }}-${{ env.image_os }}-ccache-${{ env.cache_name }}-${{ github.run_id }}
         restore-keys: |
           ${{ runner.os }}-ccache-${{ env.cache_name }}-
       env:
         cache_name: ${{ matrix.compiler.key }}-qt5
         cache_path: ${{ steps.initialize-ccache-cache.outputs.CachePath }}
+        image_os: ${{ steps.initialize-ccache-cache.outputs.ImageOS }}
 
     - name: Ccache setup 🥳
       run: |
@@ -248,6 +251,10 @@ jobs:
 
         cmake --build ../TinyORM-builds-cmake/build-${{ matrix.compiler.key }}-cmake-debug
         --target all --parallel 2
+
+    - name: Ccache statistics
+      run: |
+        ccache --show-stats -vv
 
     # - name: Create and Seed tables for unit tests 🎉
     #   working-directory: ../TinyORM-builds-cmake/build-${{ matrix.compiler.key }}-cmake-debug/tests/testdata_tom
