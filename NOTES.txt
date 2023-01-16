@@ -585,18 +585,25 @@ gh api --method DELETE -H "Accept: application/vnd.github+json" /repos/silverqx/
 gh api --method DELETE -H "Accept: application/vnd.github+json" /repos/silverqx/TinyORM/actions/caches/CACHE_ID
 
 
-- cache build folder:
+- ternary operator alternative:
 
-    - name: Build folder restore 🕺
-      id: cache-build-msvc2022-qt63
-      uses: actions/cache@v3
-      env:
-        cache-name: msvc2022-qt63
-      with:
-        path: ${{ runner.workspace }}/TinyORM-builds-cmake/build-msvc-cmake-debug
-        key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ github.run_id }}
-        restore-keys: |
-          ${{ runner.os }}-build-${{ env.cache-name }}-
+${{ matrix.compiler.key == 'gcc' && 1 || 2 }}
+
+
+- ccache initial build sizes:
+
+clang-cl         - 120MB
+msvc2022-qt64    - 250MB
+msvc2019-qt5     - 150MB
+linux-gcc-qt62   - 130MB
+linux-clang-qt62 -  70MB
+linux-gcc-qt5    - 124MB
+linux-clang-qt5  -  63MB
+
+MSYS2-clang-qt5  - 110MB
+MSYS2-clang-qt6  - 120MB
+MSYS2-gcc-qt5    - 110MB
+MSYS2-gcc-qt6    - 130MB
 
 
 RegEx-s:
