@@ -343,7 +343,7 @@ jobs:
       working-directory: ../TinyORM-builds-cmake/build-${{ matrix.compiler.key }}-cmake-debug/examples/tom
       run: |
         export LD_LIBRARY_PATH=../..${LD_LIBRARY_PATH:+:}$LD_LIBRARY_PATH
-        
+
         ./tom migrate:install --database=tinyorm_tom_sqlite --no-ansi
         ./tom migrate:status --database=tinyorm_tom_sqlite --no-ansi
         ./tom migrate --database=tinyorm_tom_sqlite --seed --no-ansi
