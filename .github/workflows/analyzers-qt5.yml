@@ -68,7 +68,7 @@ jobs:
         echo '::group::Prepare ccache config'
         ccache --set-config compression=false
         ccache --set-config max_size=250M
-        ccache --set-config sloppiness=pch_defines,time_macros
+        ccache --set-config sloppiness=include_file_ctime,include_file_mtime,pch_defines,time_macros
         ccache --show-config
         echo '::endgroup::'
 
