@@ -179,7 +179,7 @@ jobs:
 
         touch '${{ env.TinySQLitePath }}'
 
-    - name: Print MySQL, SQLite, PostgreSQL database versions
+    - name: Print MySQL, PostgreSQL database versions
       run: |
         mysql.exe --version
         postgres.exe --version
