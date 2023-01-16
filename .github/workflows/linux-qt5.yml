@@ -175,16 +175,35 @@ jobs:
       with:
         destination: ${{ runner.workspace }}/../ninja-build
 
-    - name: ccache setup 🕺
-      uses: Chocobo1/setup-ccache-action@v1
+    - name: Ccache initialize
+      id: initialize-ccache-cache
+      run: |
+        cachePath=$(ccache --get-config cache_dir)
+        echo "CachePath=$cachePath" >> $GITHUB_OUTPUT
+
+    - name: Ccache restore cache 🕺
+      uses: actions/cache@v3
       with:
-        prepend_symlinks_to_path: false
-        install_ccache: false
-        update_packager_index: false
-        ccache_options: |
-          compression = false
-          max_size = 800M
-          sloppiness = pch_defines,time_macros
+        path: ${{ env.cache_path }}
+        key: ${{ runner.os }}-ccache-${{ env.cache_name }}-${{ github.run_id }}
+        restore-keys: |
+          ${{ runner.os }}-ccache-${{ env.cache_name }}-
+      env:
+        cache_name: ${{ matrix.compiler.key }}-qt5
+        cache_path: ${{ steps.initialize-ccache-cache.outputs.CachePath }}
+
+    - name: Ccache setup 🥳
+      run: |
+        Write-Output '::group::Prepare ccache config'
+        ccache --set-config compression=false
+        ccache --set-config max_size=600M
+        ccache --set-config sloppiness=pch_defines,time_macros
+        ccache --show-config
+        Write-Output '::endgroup::'
+
+        Write-Output '::group::Clear ccache statistics'
+        ccache --zero-stats
+        Write-Output '::endgroup::'
 
     - name: vcpkg set-up environment
       run: |
