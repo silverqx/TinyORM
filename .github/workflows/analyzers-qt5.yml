@@ -83,8 +83,6 @@ jobs:
     - name: vcpkg set-up environment
       run: |
         echo "VCPKG_ROOT=$VCPKG_INSTALLATION_ROOT" >> $GITHUB_ENV
-        echo 'VCPKG_OVERLAY_TRIPLETS=${{ github.workspace }}/.github/resources/vcpkg-custom-triplets' \
-        >> $GITHUB_ENV
         echo 'VCPKG_DEFAULT_TRIPLET=x64-linux-dynamic' >> $GITHUB_ENV
         echo 'VCPKG_MAX_CONCURRENCY=2' >> $GITHUB_ENV
 
