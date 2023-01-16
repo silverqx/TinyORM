@@ -359,3 +359,12 @@ jobs:
       env:
         DB_SQLITE_DATABASE: ${{ env.TinySQLitePath }}
         TOM_EXAMPLE_ENV: testing
+
+    - name: Setup tmate session
+      if: ${{ always() }}
+      uses: mxschmitt/action-tmate@v3
+      with:
+        limit-access-to-actor: true
+      env:
+        DB_SQLITE_DATABASE: ${{ env.TinySQLitePath }}
+        TOM_EXAMPLE_ENV: testing
