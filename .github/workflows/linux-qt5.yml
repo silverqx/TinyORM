@@ -189,7 +189,7 @@ jobs:
         path: ${{ env.cache_path }}
         key: ${{ runner.os }}-${{ env.image_os }}-ccache-${{ env.cache_name }}-${{ github.run_id }}
         restore-keys: |
-          ${{ runner.os }}-ccache-${{ env.cache_name }}-
+          ${{ runner.os }}-${{ env.image_os }}-ccache-${{ env.cache_name }}-
       env:
         cache_name: ${{ matrix.compiler.key }}-qt5
         cache_path: ${{ steps.initialize-ccache-cache.outputs.CachePath }}
