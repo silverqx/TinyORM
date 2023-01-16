@@ -35,6 +35,16 @@ jobs:
     steps:
     - uses: actions/checkout@v3
 
+    - name: TinyORM prepare environment
+      run: |
+        $runnerWorkPath = Resolve-Path -Path '${{ runner.workspace }}/..'
+        "TinyRunnerWorkPath=$runnerWorkPath" >> $env:GITHUB_ENV
+
+        $sqlitePath = Join-Path -Path $runnerWorkPath -ChildPath "SQLite/$env:DB_SQLITE_DATABASE"
+        "TinySQLitePath=$sqlitePath" >> $env:GITHUB_ENV
+      env:
+        DB_SQLITE_DATABASE: ${{ secrets.DB_SQLITE_DATABASE }}
+
     - name: PostgreSQL start service
       run: |
         Set-Service -Name postgresql-x64-14 -StartupType Manual
@@ -197,9 +207,9 @@ jobs:
 
     - name: SQLite create TinyORM database
       run: |
-        touch "$env:DB_SQLITE_DATABASE"
-      env:
-        DB_SQLITE_DATABASE: ${{ runner.temp }}/${{ secrets.DB_SQLITE_DATABASE }}
+        New-Item -Type Directory (Split-Path -Parent ${{ env.TinySQLitePath }})
+
+        touch '${{ env.TinySQLitePath }}'
 
     - name: Print MySQL, SQLite, PostgreSQL database versions
       run: |
@@ -335,7 +345,7 @@ jobs:
         DB_PGSQL_HOST: ${{ secrets.DB_PGSQL_HOST }}
         DB_PGSQL_PASSWORD: ${{ secrets.DB_PGSQL_PASSWORD }}
         DB_PGSQL_USERNAME: ${{ secrets.DB_PGSQL_USERNAME }}
-        DB_SQLITE_DATABASE: ${{ runner.temp }}/${{ secrets.DB_SQLITE_DATABASE }}
+        DB_SQLITE_DATABASE: ${{ env.TinySQLitePath }}
         TOM_TESTDATA_ENV: testing
 
     - name: TinyORM execute ctest 🔥
@@ -359,7 +369,7 @@ jobs:
         DB_PGSQL_HOST: ${{ secrets.DB_PGSQL_HOST }}
         DB_PGSQL_PASSWORD: ${{ secrets.DB_PGSQL_PASSWORD }}
         DB_PGSQL_USERNAME: ${{ secrets.DB_PGSQL_USERNAME }}
-        DB_SQLITE_DATABASE: ${{ runner.temp }}/${{ secrets.DB_SQLITE_DATABASE }}
+        DB_SQLITE_DATABASE: ${{ env.TinySQLitePath }}
         TOM_TESTS_ENV: testing
 
     - name: Tom example test some commands (MySQL) 🚀
@@ -419,5 +429,5 @@ jobs:
         ./tom.exe migrate:refresh --database=tinyorm_tom_sqlite --seed --no-ansi
         ./tom.exe migrate:status --database=tinyorm_tom_sqlite --no-ansi
       env:
-        DB_SQLITE_DATABASE: ${{ runner.temp }}/${{ secrets.DB_SQLITE_DATABASE }}
+        DB_SQLITE_DATABASE: ${{ env.TinySQLitePath }}
         TOM_EXAMPLE_ENV: testing
