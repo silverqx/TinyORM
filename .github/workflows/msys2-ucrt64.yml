@@ -56,7 +56,7 @@ jobs:
 
     - name: PostgreSQL create TinyORM user
       run: |
-        "CREATE USER ${env:DB_PGSQL_USERNAME} PASSWORD '${env:DB_PGSQL_PASSWORD}'" | psql.exe
+        "CREATE USER $env:DB_PGSQL_USERNAME PASSWORD '$env:DB_PGSQL_PASSWORD'" | psql.exe
       env:
         DB_PGSQL_PASSWORD: ${{ secrets.DB_PGSQL_PASSWORD }}
         DB_PGSQL_USERNAME: ${{ secrets.DB_PGSQL_USERNAME }}
@@ -70,7 +70,7 @@ jobs:
 
     - name: Hosts add MySQL server host URL
       run: >-
-        "127.0.0.1`t${env:DB_MYSQL_HOST}" |
+        "127.0.0.1`t$env:DB_MYSQL_HOST" |
         Add-Content -Path "$env:windir/System32/drivers/etc/hosts" -Force
       env:
         DB_MYSQL_HOST: ${{ secrets.DB_MYSQL_HOST_SSL }}
@@ -107,8 +107,8 @@ jobs:
 
     - name: MySQL change root password
       run: >-
-        "alter user '${env:DB_MYSQL_ROOT_USERNAME}'@'localhost'
-        identified with caching_sha2_password by '${env:DB_MYSQL_ROOT_PASSWORD}'
+        "alter user '$env:DB_MYSQL_ROOT_USERNAME'@'localhost'
+        identified with caching_sha2_password by '$env:DB_MYSQL_ROOT_PASSWORD'
         require issuer '/CN=MySQL_Server_TinyORM_Auto_Generated_CA_Certificate' and
         subject '/CN=MySQL_Server_TinyORM_Auto_Generated_Client_Certificate';" |
         mysql.exe --user=$env:DB_MYSQL_ROOT_USERNAME --skip-password
@@ -180,12 +180,12 @@ jobs:
 
     - name: MySQL create TinyORM user
       run: >-
-        "create user '${env:DB_MYSQL_USERNAME}'@'%'
-        identified with caching_sha2_password by '${env:DB_MYSQL_PASSWORD}'
+        "create user '$env:DB_MYSQL_USERNAME'@'%'
+        identified with caching_sha2_password by '$env:DB_MYSQL_PASSWORD'
         require issuer '/CN=MySQL_Server_TinyORM_Auto_Generated_CA_Certificate' and
         subject '/CN=MySQL_Server_TinyORM_Auto_Generated_Client_Certificate';
-        grant all privileges on ``$env:DB_MYSQL_DATABASE``.* to '${env:DB_MYSQL_USERNAME}'@'%';
-        grant select on ``mysql``.``time_zone_name`` to '${env:DB_MYSQL_USERNAME}'@'%';
+        grant all privileges on ``$env:DB_MYSQL_DATABASE``.* to '$env:DB_MYSQL_USERNAME'@'%';
+        grant select on ``mysql``.``time_zone_name`` to '$env:DB_MYSQL_USERNAME'@'%';
         flush privileges;" |
         mysql.exe --user=$env:DB_MYSQL_ROOT_USERNAME --password=$env:DB_MYSQL_ROOT_PASSWORD
       env:
