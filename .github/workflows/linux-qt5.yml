@@ -199,7 +199,7 @@ jobs:
       run: |
         echo '::group::Prepare ccache config'
         ccache --set-config compression=false
-        ccache --set-config max_size=${{ matrix.compiler.key == 'gcc' && 400M || 250M }}
+        ccache --set-config max_size=${{ matrix.compiler.key == 'gcc11' && '400M' || '250M' }}
         ccache --set-config sloppiness=pch_defines,time_macros
         ccache --show-config
         echo '::endgroup::'
