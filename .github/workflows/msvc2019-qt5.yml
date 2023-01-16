@@ -42,7 +42,7 @@ jobs:
 
     - name: PostgreSQL create TinyORM user
       run: |
-        "CREATE USER ${env:DB_PGSQL_USERNAME} PASSWORD '${env:DB_PGSQL_PASSWORD}'" | psql.exe
+        "CREATE USER $env:DB_PGSQL_USERNAME PASSWORD '$env:DB_PGSQL_PASSWORD'" | psql.exe
       env:
         DB_PGSQL_PASSWORD: ${{ secrets.DB_PGSQL_PASSWORD }}
         DB_PGSQL_USERNAME: ${{ secrets.DB_PGSQL_USERNAME }}
@@ -79,8 +79,8 @@ jobs:
 
     - name: MySQL change root password
       run: >-
-        "alter user '${env:DB_MYSQL_ROOT_USERNAME}'@'localhost'
-        identified by '${env:DB_MYSQL_ROOT_PASSWORD}';" |
+        "alter user '$env:DB_MYSQL_ROOT_USERNAME'@'localhost'
+        identified by '$env:DB_MYSQL_ROOT_PASSWORD';" |
         mysql.exe --user=$env:DB_MYSQL_ROOT_USERNAME --skip-password
       env:
         DB_MYSQL_ROOT_PASSWORD: ${{ secrets.DB_MYSQL_ROOT_PASSWORD }}
@@ -150,10 +150,10 @@ jobs:
 
     - name: MySQL create TinyORM user
       run: >-
-        "create user '${env:DB_MYSQL_USERNAME}'@'%'
-        identified by '${env:DB_MYSQL_PASSWORD}';
-        grant all privileges on ``$env:DB_MYSQL_DATABASE``.* to '${env:DB_MYSQL_USERNAME}'@'%';
-        grant select on ``mysql``.``time_zone_name`` to '${env:DB_MYSQL_USERNAME}'@'%';
+        "create user '$env:DB_MYSQL_USERNAME'@'%'
+        identified by '$env:DB_MYSQL_PASSWORD';
+        grant all privileges on ``$env:DB_MYSQL_DATABASE``.* to '$env:DB_MYSQL_USERNAME'@'%';
+        grant select on ``mysql``.``time_zone_name`` to '$env:DB_MYSQL_USERNAME'@'%';
         flush privileges;" |
         mysql.exe --user=$env:DB_MYSQL_ROOT_USERNAME --password=$env:DB_MYSQL_ROOT_PASSWORD
       env:
@@ -228,7 +228,7 @@ jobs:
 
     - name: QMYSQL driver dlls install (Qt 5.15.2)
       run: |
-        7z.exe x -o"${env:QT_PLUGIN_PATH}/sqldrivers" $env:archive_filepath
+        7z.exe x -o"$env:QT_PLUGIN_PATH/sqldrivers" $env:archive_filepath
       env:
         archive_filepath: ${{ steps.initialize-qmysql-dlls.outputs.Filepath }}
 
@@ -290,7 +290,7 @@ jobs:
         $cachePath = ccache.exe --get-config cache_dir
         "CachePath=$cachePath" >> $env:GITHUB_OUTPUT
 
-        "ImageOS=${env:ImageOS}" >> $env:GITHUB_OUTPUT
+        "ImageOS=$env:ImageOS" >> $env:GITHUB_OUTPUT
         Write-Output '::endgroup::'
 
     - name: Ccache restore cache 🕺
@@ -324,7 +324,7 @@ jobs:
 
     - name: vcpkg set-up environment
       run: |
-        "VCPKG_ROOT=${env:VCPKG_INSTALLATION_ROOT}" >> $env:GITHUB_ENV
+        "VCPKG_ROOT=$env:VCPKG_INSTALLATION_ROOT" >> $env:GITHUB_ENV
         'VCPKG_DEFAULT_TRIPLET=x64-windows' >> $env:GITHUB_ENV
         'VCPKG_MAX_CONCURRENCY=2' >> $env:GITHUB_ENV
 
@@ -348,7 +348,7 @@ jobs:
         -B ../TinyORM-builds-cmake/build-msvc-cmake-debug
         -G Ninja
         -D CMAKE_CXX_COMPILER_LAUNCHER:FILEPATH='C:/ProgramData/chocolatey/bin/ccache.exe'
-        -D CMAKE_TOOLCHAIN_FILE:FILEPATH="${env:VCPKG_INSTALLATION_ROOT}/scripts/buildsystems/vcpkg.cmake"
+        -D CMAKE_TOOLCHAIN_FILE:FILEPATH="$env:VCPKG_INSTALLATION_ROOT/scripts/buildsystems/vcpkg.cmake"
         -D CMAKE_DISABLE_PRECOMPILE_HEADERS:BOOL=ON
         -D CMAKE_BUILD_TYPE:BOOL=Debug
         -D VERBOSE_CONFIGURE:BOOL=ON
