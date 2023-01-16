@@ -306,6 +306,7 @@ jobs:
       working-directory: ../TinyORM-builds-cmake/build-${{ matrix.compiler.key }}-cmake-debug/examples/tom
       run: |
         export LD_LIBRARY_PATH=../..${LD_LIBRARY_PATH:+:}$LD_LIBRARY_PATH
+
         ./tom migrate:install --database=tinyorm_tom_mysql --no-ansi
         ./tom migrate:status --database=tinyorm_tom_mysql --no-ansi
         ./tom migrate --database=tinyorm_tom_mysql --seed --no-ansi
@@ -324,6 +325,7 @@ jobs:
       working-directory: ../TinyORM-builds-cmake/build-${{ matrix.compiler.key }}-cmake-debug/examples/tom
       run: |
         export LD_LIBRARY_PATH=../..${LD_LIBRARY_PATH:+:}$LD_LIBRARY_PATH
+
         ./tom migrate:install --database=tinyorm_tom_postgres --no-ansi
         ./tom migrate:status --database=tinyorm_tom_postgres --no-ansi
         ./tom migrate --database=tinyorm_tom_postgres --seed --no-ansi
@@ -341,6 +343,7 @@ jobs:
       working-directory: ../TinyORM-builds-cmake/build-${{ matrix.compiler.key }}-cmake-debug/examples/tom
       run: |
         export LD_LIBRARY_PATH=../..${LD_LIBRARY_PATH:+:}$LD_LIBRARY_PATH
+        
         ./tom migrate:install --database=tinyorm_tom_sqlite --no-ansi
         ./tom migrate:status --database=tinyorm_tom_sqlite --no-ansi
         ./tom migrate --database=tinyorm_tom_sqlite --seed --no-ansi
@@ -349,4 +352,3 @@ jobs:
       env:
         DB_SQLITE_DATABASE: ${{ runner.temp }}/${{ secrets.DB_SQLITE_DATABASE }}
         TOM_EXAMPLE_ENV: testing
-

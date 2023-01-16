@@ -92,6 +92,7 @@ jobs:
       run: |
         sudo mkdir -p /usr/local/share/crystal-mysql
         cd /usr/local/share/crystal-mysql
+        
         sudo cp /var/lib/mysql/{ca,client-cert,client-key}.pem /usr/local/share/crystal-mysql
         sudo chown -R root:root /usr/local/share/crystal-mysql
         sudo chmod 444 /usr/local/share/crystal-mysql/{ca,client-cert,client-key}.pem
@@ -335,6 +336,7 @@ jobs:
       working-directory: ../TinyORM-builds-cmake/build-${{ matrix.compiler.key }}-cmake-debug/examples/tom
       run: |
         export LD_LIBRARY_PATH=../..${LD_LIBRARY_PATH:+:}$LD_LIBRARY_PATH
+
         ./tom migrate:install --database=tinyorm_tom_mysql --no-ansi
         ./tom migrate:status --database=tinyorm_tom_mysql --no-ansi
         ./tom migrate --database=tinyorm_tom_mysql --seed --no-ansi
@@ -356,6 +358,7 @@ jobs:
       working-directory: ../TinyORM-builds-cmake/build-${{ matrix.compiler.key }}-cmake-debug/examples/tom
       run: |
         export LD_LIBRARY_PATH=../..${LD_LIBRARY_PATH:+:}$LD_LIBRARY_PATH
+
         ./tom migrate:install --database=tinyorm_tom_postgres --no-ansi
         ./tom migrate:status --database=tinyorm_tom_postgres --no-ansi
         ./tom migrate --database=tinyorm_tom_postgres --seed --no-ansi
@@ -373,6 +376,7 @@ jobs:
       working-directory: ../TinyORM-builds-cmake/build-${{ matrix.compiler.key }}-cmake-debug/examples/tom
       run: |
         export LD_LIBRARY_PATH=../..${LD_LIBRARY_PATH:+:}$LD_LIBRARY_PATH
+
         ./tom migrate:install --database=tinyorm_tom_sqlite --no-ansi
         ./tom migrate:status --database=tinyorm_tom_sqlite --no-ansi
         ./tom migrate --database=tinyorm_tom_sqlite --seed --no-ansi
