@@ -208,6 +208,10 @@ jobs:
         ccache --zero-stats
         echo '::endgroup::'
 
+        echo '::group::Print version'
+        ccache --version
+        echo '::endgroup::'
+
     - name: vcpkg set-up environment
       run: |
         echo "VCPKG_ROOT=$VCPKG_INSTALLATION_ROOT" >> $GITHUB_ENV

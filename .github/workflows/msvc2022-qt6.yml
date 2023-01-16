@@ -286,6 +286,10 @@ jobs:
         ccache.exe --zero-stats
         Write-Output '::endgroup::'
 
+        Write-Output '::group::Print version'
+        ccache.exe --version
+        Write-Output '::endgroup::'
+
     - name: vcpkg set-up environment
       run: |
         "VCPKG_ROOT=${env:VCPKG_INSTALLATION_ROOT}" >> $env:GITHUB_ENV
