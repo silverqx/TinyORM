@@ -62,13 +62,13 @@ jobs:
 
     - name: MySQL create data folder
       run: |
-        New-Item -Type Directory '${{ runner.workspace }}/../mysql/data'
+        New-Item -Type Directory '${{ env.TinyRunnerWorkPath }}/mysql/data'
 
     - name: MySQL initialize my.ini configuration
       working-directory: .github/resources/windows
       run: >-
         (Get-Content -Path ./my_5.template.ini) -creplace
-        '\{MYSQL_DATADIR\}', '${{ runner.workspace }}/../mysql/data' -creplace
+        '\{MYSQL_DATADIR\}', '${{ env.TinyRunnerWorkPath }}/mysql/data' -creplace
         '\{MYSQL_HOST\}', $env:DB_MYSQL_HOST |
         Set-Content -Path C:/mysql/my.ini
       env:

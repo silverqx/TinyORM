@@ -183,7 +183,7 @@ jobs:
     - name: ninja install latest version
       uses: seanmiddleditch/gha-setup-ninja@master
       with:
-        destination: ${{ runner.workspace }}/../ninja-build
+        destination: ${{ env.TinyRunnerWorkPath }}/ninja-build
 
     - name: Ccache initialize
       id: initialize-ccache-cache

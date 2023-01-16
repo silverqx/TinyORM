@@ -20,6 +20,11 @@ jobs:
     steps:
     - uses: actions/checkout@v3
 
+    - name: TinyORM prepare environment
+      run: |
+        runnerWorkPath=$(realpath '${{ runner.workspace }}/..')
+        echo "TinyRunnerWorkPath=$runnerWorkPath" >> $GITHUB_ENV
+
     - name: add-apt-repository gcc 11 and Qt 5.15.2
       run: |
         sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test
@@ -41,7 +46,7 @@ jobs:
     - name: ninja install latest version
       uses: seanmiddleditch/gha-setup-ninja@master
       with:
-        destination: ${{ runner.workspace }}/../ninja-build
+        destination: ${{ env.TinyRunnerWorkPath }}/ninja-build
 
     - name: Ccache initialize
       id: initialize-ccache-cache
