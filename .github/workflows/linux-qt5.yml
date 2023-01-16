@@ -355,6 +355,7 @@ jobs:
         ./tom migrate:install --database=tinyorm_tom_sqlite --no-ansi
         ./tom migrate:status --database=tinyorm_tom_sqlite --no-ansi
         ./tom migrate --database=tinyorm_tom_sqlite --seed --no-ansi
+        # Dropping columns is supported only from the SQLite 3.35, so used migrate:fresh instead (image SQLite 3.31.1)
         ./tom migrate:fresh --database=tinyorm_tom_sqlite --seed --no-ansi
         ./tom migrate:status --database=tinyorm_tom_sqlite --no-ansi
       env:
