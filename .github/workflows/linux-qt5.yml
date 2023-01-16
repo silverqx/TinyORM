@@ -230,6 +230,8 @@ jobs:
         cmake --build ../TinyORM-builds-cmake/build-${{ matrix.compiler.key }}-cmake-debug
         --target all --parallel 2
 
+    - run: exit 0
+
     - name: Create and Seed tables for unit tests 🎉
       working-directory: ../TinyORM-builds-cmake/build-${{ matrix.compiler.key }}-cmake-debug/tests/testdata_tom
       run: >-
