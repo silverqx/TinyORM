@@ -200,16 +200,42 @@ jobs:
       with:
         destination: ${{ runner.workspace }}/../ninja-build
 
-    - name: ccache setup 🕺
-      uses: Chocobo1/setup-ccache-action@v1
+    - name: Ccache initialize
+      id: initialize-ccache-cache
+      run: |
+        cachePath=$(ccache --get-config cache_dir)
+        echo "CachePath=$cachePath" >> $GITHUB_OUTPUT
+
+        echo "ImageOS=$ImageOS" >> $GITHUB_OUTPUT
+
+    - name: Ccache restore cache 🕺
+      uses: actions/cache@v3
       with:
-        prepend_symlinks_to_path: false
-        install_ccache: false
-        update_packager_index: false
-        ccache_options: |
-          compression = false
-          max_size = 800M
-          sloppiness = include_file_ctime,include_file_mtime,pch_defines,time_macros
+        path: ${{ env.cache_path }}
+        key: ${{ runner.os }}-${{ env.image_os }}-ccache-${{ env.cache_name }}-${{ github.run_id }}
+        restore-keys: |
+          ${{ runner.os }}-${{ env.image_os }}-ccache-${{ env.cache_name }}-
+      env:
+        cache_name: ${{ matrix.compiler.key }}-qt62
+        cache_path: ${{ steps.initialize-ccache-cache.outputs.CachePath }}
+        image_os: ${{ steps.initialize-ccache-cache.outputs.ImageOS }}
+
+    - name: Ccache setup 🥳
+      run: |
+        echo '::group::Prepare ccache config'
+        ccache --set-config compression=false
+        ccache --set-config max_size=600M
+        ccache --set-config sloppiness=pch_defines,time_macros
+        ccache --show-config
+        echo '::endgroup::'
+
+        echo '::group::Clear ccache statistics'
+        ccache --zero-stats
+        echo '::endgroup::'
+
+        echo '::group::Print version'
+        ccache --version
+        echo '::endgroup::'
 
     - name: vcpkg set-up environment
       run: |
@@ -252,6 +278,10 @@ jobs:
 
         cmake --build ../TinyORM-builds-cmake/build-${{ matrix.compiler.key }}-cmake-debug
         --target all --parallel 2
+
+    - name: Ccache statistics
+      run: |
+        ccache --show-stats -vv
 
     - name: Create and Seed tables for unit tests 🎉
       working-directory: ../TinyORM-builds-cmake/build-${{ matrix.compiler.key }}-cmake-debug/tests/testdata_tom
