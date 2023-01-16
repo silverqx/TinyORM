@@ -21,8 +21,8 @@ jobs:
       run: >-
         "TinyRunnerWorkPath=$(Resolve-Path -Path '${{ runner.workspace }}/..')" >> $env:GITHUB_ENV
 
-        "TinySQLitePath=$(Resolve-Path -Path '${{ runner.workspace }}/../SQLite/$env:DB_SQLITE_DATABASE')" >>
-        $env:GITHUB_ENV
+        $sqlitePath = [System.IO.Path]::GetFullPath("${{ runner.workspace }}/../SQLite/$env:DB_SQLITE_DATABASE")
+        "TinySQLitePath=$sqlitePath" >> $env:GITHUB_ENV
       env:
         DB_SQLITE_DATABASE: ${{ secrets.DB_SQLITE_DATABASE }}
 
