@@ -662,6 +662,19 @@ Invoke the run-clang-tidy.ps1 manually:
 run-clang-tidy.ps1 -use-color -extra-arg-before='-Qunused-arguments' -j=10 -p='E:\c\qMedia\TinyOrm\TinyOrm-builds-cmake\build-lint-qt6_Debug' -checks='-*,readability-convert-member-functions-to-static' '(?:src|tests)[\\\/]+.+?[\\\/]+(?!mocs_)[\w_\-\+]+\.cpp$'
 
 
+- test *.hpp count
+
+gci -Force -Recurse -Include *.hpp `
+-Path E:\c\qMedia\TinyOrm\TinyOrm\include,E:\c\qMedia\TinyOrm\TinyOrm\examples,e:\c\qMedia\TinyOrm\TinyOrm\tom,E:\c\qMedia\TinyOrm\TinyOrm\tests | `
+select -ExpandProperty FullName > b.txt
+
+- test *.cpp count
+
+cat .\compile_commands.json | sls '"file":' > a.txt
+
+And use regex-es from analyzers-qt5/6.yml
+
+
 pwsh autocomeplete:
 -------------------
 For a fast lookup for debugging.
