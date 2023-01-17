@@ -131,14 +131,51 @@ jobs:
       run: |
         ccache --show-stats
 
-    - name: clazy-standalone install
-      run: >-
-        wget $URL_CLAZY_STANDALONE_LINUX_X64
-        -O ${{ runner.temp }}/clazy-standalone.tar.bz2 --no-verbose
+    - name: clazy-standalone initialize download
+      id: initialize-clazy-standalone
+      run: |
+        filename=$(basename "$URL_CLAZY_STANDALONE_LINUX_X64")
+        echo "Filename=$filename" >> $GITHUB_OUTPUT
 
-        sudo tar xjvf ${{ runner.temp }}/clazy-standalone.tar.bz2 --directory /usr/local
+        filepath="${{ runner.temp }}/$filename"
+        echo "Filepath=$filepath" >> $GITHUB_OUTPUT
+
+        hash=$(wget "$URL_CACHE_HASH_LINUX" -O- --no-verbose --quiet)
+        echo "Hash=$hash" >> $GITHUB_OUTPUT
       env:
+        URL_CACHE_HASH_LINUX: ${{ secrets.URL_CACHE_HASH_LINUX }}
         URL_CLAZY_STANDALONE_LINUX_X64: ${{ secrets.URL_CLAZY_STANDALONE_LINUX_X64 }}
+
+    - name: clazy-standalone restore cache
+      uses: actions/cache@v3
+      id: cache-analyzers-clazy-standalone
+      with:
+        path: ${{ env.archive_filepath }}
+        key: ${{ runner.os }}-analyzers-${{ env.cache_name }}-${{ env.cache_hash }}
+      env:
+        archive_filepath: ${{ steps.initialize-clazy-standalone.outputs.Filepath }}
+        cache_hash: ${{ steps.initialize-clazy-standalone.outputs.Hash }}
+        cache_name: clazy-standalone
+
+    - name: clazy-standalone download
+      if: steps.cache-analyzers-clazy-standalone.outputs.cache-hit != 'true'
+      run: |
+        wget "$URL_CLAZY_STANDALONE_LINUX_X64" -O "$archive_filepath" --no-verbose
+      env:
+        archive_filepath: ${{ steps.initialize-clazy-standalone.outputs.Filepath }}
+        URL_CLAZY_STANDALONE_LINUX_X64: ${{ secrets.URL_CLAZY_STANDALONE_LINUX_X64 }}
+
+    - name: clazy-standalone install
+      run: |
+        echo '::group::Extract archive'
+        sudo tar xjvf "$archive_filepath" --directory /usr/local
+        echo '::endgroup::'
+
+        echo '::group::Print version'
+        clazy-standalone --version
+        echo '::endgroup::'
+      env:
+        archive_filepath: ${{ steps.initialize-clazy-standalone.outputs.Filepath }}
 
     - name: TinyORM execute clang-tidy 🔥
       run: |
