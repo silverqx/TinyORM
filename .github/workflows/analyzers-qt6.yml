@@ -208,5 +208,5 @@ jobs:
         'no-qstring-allocations'
 
         tools/run-clazy-standalone -checks="$checks" \
-        -header-filter='(?:examples|orm|tests|tom)[\\\/]+.+\.(?:h|hpp)$' \
-        '(?:examples|src|tests)[\\\/]+.+?[\\\/]+(?!mocs_)[\w_\-\+]+\.cpp$'
+        -header-filter='[\\\/]+(examples|orm|tests|tom)[\\\/]+.+\.(h|hpp)$' \
+        '[\\\/]+(?:examples|src|tests)[\\\/]+.+?[\\\/]+(?!mocs_)[\w_\-\+]+\.cpp$'
