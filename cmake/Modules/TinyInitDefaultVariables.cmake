@@ -168,7 +168,7 @@ macro(tiny_init_tiny_variables_pre)
 
     get_property(isMultiConfig GLOBAL PROPERTY GENERATOR_IS_MULTI_CONFIG)
     set(TINY_IS_MULTI_CONFIG "${isMultiConfig}" CACHE INTERNAL
-        "True when using a multi-configuration generator")
+        "True when using a multi-configuration generator.")
     unset(isMultiConfig)
 
     # Allow using an environment variable VCPKG_ROOT instead of CMAKE_TOOLCHAIN_FILE
