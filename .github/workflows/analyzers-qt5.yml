@@ -154,6 +154,7 @@ jobs:
     # Manual level - qt4-qstring-from-array, qt6-qlatin1stringchar-to-u,
     #                qvariant-template-instantiation
     - name: TinyORM execute clazy-standalone 🚀
+      # Run the clazy if the clang-tidy was executed and was success or failed
       if: env.TINY_CLANG_TIDY_EXECUTED == 'true' && (success() || failure())
       run: |
         checks=\
