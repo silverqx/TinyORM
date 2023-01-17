@@ -1,3 +1,5 @@
+include(TinyHelpers)
+
 # Set common variables and create interface-only library target so all other targets
 # will be able to link to, either directly or transitively, to consume common compile
 # options/definitions
@@ -171,9 +173,18 @@ ${TINY_UNPARSED_ARGUMENTS}")
         endif()
     endif()
 
-    # Use faster lld linker on Clang
+    # Target Clang except clang-cl with MSVC
     if(NOT MSVC AND CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+        # Use faster lld linker on Clang
         target_link_options(${target} INTERFACE -fuse-ld=lld)
+
+        # Ignore PCH timestamps if the ccache is used (recommended in ccache docs)
+        set(isCcacheCompilerLauncher FALSE)
+        tiny_is_ccache_compiler_launcher(isCcacheCompilerLauncher)
+
+        if(isCcacheCompilerLauncher)
+            list(APPEND CMAKE_CXX_COMPILE_OPTIONS_CREATE_PCH -Xclang -fno-pch-timestamp)
+        endif()
     endif()
 
     # Use 64-bit off_t on 32-bit Linux, ensure 64bit offsets are used for filesystem
