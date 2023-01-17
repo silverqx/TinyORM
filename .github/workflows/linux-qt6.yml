@@ -283,8 +283,6 @@ jobs:
 
     - name: TinyORM cmake build ✨ (${{ matrix.compiler.key }}-cmake-debug)
       run: >-
-        source .github/resources/qt5env.sh
-
         cmake --build ../TinyORM-builds-cmake/build-${{ matrix.compiler.key }}-cmake-debug
         --target all --parallel 2
 
