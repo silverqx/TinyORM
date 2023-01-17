@@ -134,7 +134,7 @@ build
 
     unset(help_string)
 
-    # Fix cmake variables if CMAKE_CXX_COMPILER_LAUNCHER is ccache or sccache
+    # Fix CMake variables if CMAKE_CXX_COMPILER_LAUNCHER is ccache or sccache
     tiny_fix_ccache()
 
 endmacro()

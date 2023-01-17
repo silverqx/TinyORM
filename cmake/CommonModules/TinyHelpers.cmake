@@ -303,6 +303,11 @@ endfunction()
 # Determine whether the CMAKE_CXX_COMPILER_LAUNCHER contains ccache/sccache
 function(tiny_is_ccache_compiler_launcher out_variable)
 
+    if(NOT DEFINED CMAKE_CXX_COMPILER_LAUNCHER)
+        set(${out_variable} FALSE PARENT_SCOPE)
+        return()
+    endif()
+
     # Support the ccache and also sccache (I have tried and sccache doesn't work)
     cmake_path(GET CMAKE_CXX_COMPILER_LAUNCHER STEM ccacheStem)
     if(NOT ccacheStem STREQUAL "ccache" AND NOT ccacheStem STREQUAL "sccache")
@@ -315,8 +320,8 @@ function(tiny_is_ccache_compiler_launcher out_variable)
 endfunction()
 
 # Determine if the current platform needs fixes and the CMAKE_CXX_COMPILER_LAUNCHER
-# contains ccache/sccache
-function(tiny_should_fix_ccache out_variable)
+# contains ccache/sccache (fixes for MSVC compilers)
+function(tiny_should_fix_ccache_msvc out_variable)
 
     # Target the msvc and clang-cl with msvc compilers on Windows
     if(NOT WIN32 OR NOT MSVC OR MINGW OR NOT DEFINED CMAKE_CXX_COMPILER_LAUNCHER)
@@ -424,29 +429,19 @@ function(tiny_fix_ccache_msvc_324)
 
 endfunction()
 
-# Fix cmake variables if CMAKE_CXX_COMPILER_LAUNCHER is ccache or sccache
-# It applies fixes only on the Windows systems. It works well with the MSYS2 g++,
-# clang++, msvc, and clang-cl with msvc. It disables precompiled headers as they are not
-# supported on Windows and changes the -Zi compiler option to the -Z7 for debug builds
-# as the -Zi compiler option is not supported
+# Fix CMake variables if CMAKE_CXX_COMPILER_LAUNCHER is ccache or sccache
+# It applies fixes for MSVC compiler. It disables precompiled headers as they are not
+# supported on Windows with ccache and changes the -Zi compiler option to the -Z7
+# for debug builds as the -Zi compiler option is not supported for CMake <3.25 or
+# set up the CMAKE_MSVC_DEBUG_INFORMATION_FORMAT for CMake >=3.25
 # (https://github.com/ccache/ccache/issues/1040)
-function(tiny_fix_ccache)
+function(tiny_fix_ccache_msvc)
 
     # I will check only the CMAKE_CXX_COMPILER_LAUNCHER and not also the
     # CMAKE_C_COMPILER_LAUNCHER as this is a pure c++ project and c compiler is not used
     # anyway but I will replace the Zi to Z7 compiler option in both
     # CMAKE_<C|CXX>_FLAGS_<CONFIG> to be consistent 🤔
 
-    # Determine if the current platform needs fixes and the CMAKE_CXX_COMPILER_LAUNCHER
-    # contains ccache/sccache
-    set(shouldFixCcache FALSE)
-    tiny_should_fix_ccache(shouldFixCcache)
-
-    if(NOT shouldFixCcache)
-        return()
-    endif()
-
-    # MSYS2 g++ or clang++ work well with the precompiled headers but the msvc doesn't
     tiny_disable_precompile_headers()
 
     # Fix the MSVC debug information format by the CMake version
@@ -459,6 +454,54 @@ function(tiny_fix_ccache)
     else()
         # Replace /Zi by /Z7 in the CMAKE_<C|CXX>_FLAGS_<CONFIG> for the CMake <3.25
         tiny_fix_ccache_msvc_324()
+    endif()
+
+endfunction()
+
+# Determine if the current platform needs fixes and the CMAKE_CXX_COMPILER_LAUNCHER
+# contains ccache/sccache (fixes for Clang compilers)
+function(tiny_should_fix_ccache_clang out_variable)
+
+    # Target the Clang on Linux and MSYS2
+    if(MSVC OR NOT CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+        set(${out_variable} FALSE PARENT_SCOPE)
+        return()
+    endif()
+
+    # Support the ccache and also sccache (I have tried and sccache doesn't work)
+    set(isCcacheCompilerLauncher FALSE)
+    tiny_is_ccache_compiler_launcher(isCcacheCompilerLauncher)
+
+    set(${out_variable} ${isCcacheCompilerLauncher} PARENT_SCOPE)
+
+endfunction()
+
+# Fix cmake variables if CMAKE_CXX_COMPILER_LAUNCHER is ccache or sccache
+# This is a general function that applies fixes for MSVC and Clang compilers, it checks
+# the current platform and based on it applies correct fixes
+function(tiny_fix_ccache)
+
+    # MSYS2 g++ or clang++ work well with the precompiled headers but the msvc doesn't
+
+    # Fixes for the MSVC compiler
+    set(shouldFixCcacheMsvc FALSE)
+    tiny_should_fix_ccache_msvc(shouldFixCcacheMsvc)
+
+    if(shouldFixCcacheMsvc)
+        tiny_fix_ccache_msvc()
+    endif()
+
+    # Fixes for the Clang compiler
+    # Ignore PCH timestamps if the ccache is used (recommended in ccache docs)
+    set(shouldFixCcacheClang FALSE)
+    tiny_should_fix_ccache_clang(shouldFixCcacheClang)
+
+    if(shouldFixCcacheClang)
+        list(APPEND CMAKE_CXX_COMPILE_OPTIONS_CREATE_PCH -Xclang -fno-pch-timestamp)
+
+        set(CMAKE_CXX_COMPILE_OPTIONS_CREATE_PCH
+            "${CMAKE_CXX_COMPILE_OPTIONS_CREATE_PCH}" PARENT_SCOPE
+        )
     endif()
 
 endfunction()
