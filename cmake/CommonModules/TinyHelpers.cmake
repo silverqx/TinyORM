@@ -385,6 +385,8 @@ function(tiny_fix_ccache_msvc_325)
         CACHE BOOL ${help_string} FORCE
     )
 
+    mark_as_advanced(CMAKE_MSVC_DEBUG_INFORMATION_FORMAT)
+
 endfunction()
 
 # Helper function to replace /Zi by /Z7 in the CMAKE_<C|CXX>_FLAGS_<CONFIG> option
