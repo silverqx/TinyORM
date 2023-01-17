@@ -478,7 +478,7 @@ function(tiny_should_fix_ccache_clang out_variable)
 
 endfunction()
 
-# Fix cmake variables if CMAKE_CXX_COMPILER_LAUNCHER is ccache or sccache
+# Fix CMake variables if CMAKE_CXX_COMPILER_LAUNCHER is ccache or sccache
 # This is a general function that applies fixes for MSVC and Clang compilers, it checks
 # the current platform and based on it applies correct fixes
 function(tiny_fix_ccache)

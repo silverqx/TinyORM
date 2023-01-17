@@ -9,7 +9,7 @@ tiny_read_version(TINYUTILS_VERSION
     HEADER_FOR "${TinyUtils_ns}"
 )
 
-# Basic project and cmake build setup
+# Basic project and CMake build setup
 # ---
 
 project(${TinyUtils_ns}

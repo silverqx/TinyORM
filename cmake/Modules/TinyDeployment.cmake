@@ -36,7 +36,7 @@ function(tiny_install_tinyorm)
         install(FILES "$<TARGET_PDB_FILE:${TinyOrm_target}>" TYPE BIN OPTIONAL)
     endif()
 
-    # Do not install Package config, config version, header, doc. and cmake helper files
+    # Do not install Package config, config version, header, doc. and CMake helper files
     # when installing for VCPKG Debug configuration
     if(TINY_VCPKG AND CMAKE_BUILD_TYPE STREQUAL "Debug")
         return()

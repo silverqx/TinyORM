@@ -24,7 +24,7 @@ tiny_read_version(TINY_VERSION
     HEADER_FOR "${TinyOrm_ns}"
 )
 
-# Basic project and cmake build setup
+# Basic project and CMake build setup
 # ---
 
 # TODO add support for POSITION_INDEPENDENT_CODE silverqx
@@ -77,7 +77,7 @@ tiny_toolchain_requirement(
 include(FeatureSummary)
 include(TinyFeatureOptions)
 
-# Initialize default CMake variables on which cmake options depend
+# Initialize default CMake variables on which CMake options depend
 tiny_init_cmake_variables_pre()
 
 feature_option(BUILD_SHARED_LIBS
