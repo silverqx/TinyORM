@@ -31,7 +31,7 @@ jobs:
         sudo tee /etc/apt/trusted.gpg.d/llvm-15.asc
 
         sudo add-apt-repository -y
-        --sourceslist "deb http://apt.llvm.org/jammy/ llvm-toolchain-jammy-15 main"
+        --sourceslist 'deb http://apt.llvm.org/jammy/ llvm-toolchain-jammy-15 main'
 
     - name: apt update
       run: |
