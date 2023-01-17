@@ -215,7 +215,7 @@ jobs:
       id: cache-drivers-qmysql-dlls
       with:
         path: ${{ env.archive_filepath }}
-        key: drivers-${{ env.cache_name }}-${{ env.cache_hash }}
+        key: ${{ runner.os }}-drivers-${{ env.cache_name }}-${{ env.cache_hash }}
       env:
         archive_filepath: ${{ steps.initialize-qmysql-dlls.outputs.Filepath }}
         cache_hash: ${{ steps.initialize-qmysql-dlls.outputs.Hash }}
@@ -258,7 +258,7 @@ jobs:
       id: cache-drivers-mysql_8-libmysql-dll
       with:
         path: ${{ env.archive_filepath }}
-        key: drivers-${{ env.cache_name }}-${{ env.cache_hash }}
+        key: ${{ runner.os }}-drivers-${{ env.cache_name }}-${{ env.cache_hash }}
       env:
         archive_filepath: ${{ steps.initialize-mysql_8-libmysql-dll.outputs.Filepath }}
         cache_hash: ${{ steps.initialize-mysql_8-libmysql-dll.outputs.Hash }}
