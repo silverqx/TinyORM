@@ -124,6 +124,7 @@ jobs:
     - name: TinyORM cmake build ✨ (clang-cmake-debug)
       run: |
         source .github/resources/qt5env.sh
+
         cmake --build ../TinyORM-builds-cmake/build-clang-cmake-debug --target all --parallel 2
 
     - name: Ccache statistics
