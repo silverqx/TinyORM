@@ -286,7 +286,7 @@ jobs:
       run: |
         Write-Output '::group::Prepare ccache config'
         # ~ 190 * 3 + 100
-        ccache.exe --set-config max_size=700M
+        ccache.exe --set-config max_size=1400M
         ccache.exe --set-config sloppiness=pch_defines,time_macros
         ccache.exe --show-config
         Write-Output '::endgroup::'
