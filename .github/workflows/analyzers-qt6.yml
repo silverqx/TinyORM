@@ -157,7 +157,7 @@ jobs:
         -S .
         -B ../TinyORM-builds-cmake/build-clang-cmake-debug
         -G Ninja
-        -D CMAKE_CXX_COMPILER_LAUNCHER:FILEPATH=/usr/bin/ccache
+        -D CMAKE_CXX_COMPILER_LAUNCHER:FILEPATH=/usr/local/bin/ccache
         -D CMAKE_CXX_COMPILER:FILEPATH=/usr/bin/clang++-15
         -D CMAKE_TOOLCHAIN_FILE:FILEPATH="$VCPKG_INSTALLATION_ROOT/scripts/buildsystems/vcpkg.cmake"
         -D CMAKE_DISABLE_PRECOMPILE_HEADERS:BOOL=ON
