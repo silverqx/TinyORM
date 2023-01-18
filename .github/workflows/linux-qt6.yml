@@ -304,9 +304,8 @@ jobs:
     - name: Ccache setup 🥳
       run: |
         echo '::group::Prepare ccache config'
-        ccache --set-config compression=false
-        ccache --set-config max_size=${{ matrix.compiler.key == 'gcc12' && '400M' || '250M' }}
-        ccache --set-config sloppiness=include_file_ctime,include_file_mtime,pch_defines,time_macros
+        ccache --set-config max_size=${{ matrix.compiler.key == 'gcc12' && '400M' || '2000M' }}
+        ccache --set-config sloppiness=pch_defines,time_macros
         ccache --show-config
         echo '::endgroup::'
 
@@ -346,7 +345,7 @@ jobs:
         -D VERBOSE_CONFIGURE:BOOL=ON
         -D MATCH_EQUAL_EXPORTED_BUILDTREE:BOOL=OFF
         -D MYSQL_PING:BOOL=ON
-        -D BUILD_TESTS:BOOL=OFF
+        -D BUILD_TESTS:BOOL=ON
         -D ORM:BOOL=ON
         -D TOM:BOOL=ON
         -D TOM_EXAMPLE:BOOL=ON
