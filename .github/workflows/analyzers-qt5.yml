@@ -39,14 +39,67 @@ jobs:
       run: |
         sudo apt update
 
-    - name: apt install clang-14, lld-14, g++-11, clang-tidy-14, Qt 5.15.2 base, and ccache
+    - name: apt install clang-14, lld-14, g++-11, clang-tidy-14, and Qt 5.15.2 base
       run: |
-        sudo apt install -y clang-14 lld-14 g++-11 clang-tidy-14 qt515base ccache
+        sudo apt install -y clang-14 lld-14 g++-11 clang-tidy-14 qt515base
 
     - name: ninja install latest version
       uses: seanmiddleditch/gha-setup-ninja@master
       with:
         destination: ${{ env.TinyRunnerWorkPath }}/ninja-build
+
+    - name: Ccache initialize download
+      id: initialize-ccache
+      run: |
+        filename=$(basename "$URL_CCACHE_LINUX_X64")
+        echo "Filename=$filename" >> $GITHUB_OUTPUT
+
+        filepath="${{ runner.temp }}/$filename"
+        echo "Filepath=$filepath" >> $GITHUB_OUTPUT
+
+        hash=$(wget "$URL_CACHE_HASH_LINUX" -O- --no-verbose --quiet)
+        echo "Hash=$hash" >> $GITHUB_OUTPUT
+      env:
+        URL_CACHE_HASH_LINUX: ${{ secrets.URL_CACHE_HASH_LINUX }}
+        URL_CCACHE_LINUX_X64: ${{ secrets.URL_CCACHE_LINUX_X64 }}
+
+    - name: Ccache restore cache
+      uses: actions/cache@v3
+      id: cache-caches-ccache
+      with:
+        path: ${{ env.archive_filepath }}
+        key: ${{ runner.os }}-caches-${{ env.cache_name }}-${{ env.cache_hash }}
+      env:
+        archive_filepath: ${{ steps.initialize-ccache.outputs.Filepath }}
+        cache_hash: ${{ steps.initialize-ccache.outputs.Hash }}
+        cache_name: ccache
+
+    - name: Ccache download
+      if: steps.cache-caches-ccache.outputs.cache-hit != 'true'
+      run: |
+        wget "$URL_CCACHE_LINUX_X64" -O "$archive_filepath" --no-verbose
+      env:
+        archive_filepath: ${{ steps.initialize-ccache.outputs.Filepath }}
+        URL_CCACHE_LINUX_X64: ${{ secrets.URL_CCACHE_LINUX_X64 }}
+
+    - name: Ccache install
+      run: |
+        echo '::group::Extract archive'
+        tar xJvf "$archive_filepath" --directory '${{ runner.temp }}'
+        echo '::endgroup::'
+
+        echo '::group::Install'
+        extractedFolder=$(basename --suffix='.tar.xz' "$archive_filename")
+        cd "${{ runner.temp }}/$extractedFolder"
+        sudo make install
+        echo '::endgroup::'
+
+        echo '::group::Print version'
+        ccache --version
+        echo '::endgroup::'
+      env:
+        archive_filename: ${{ steps.initialize-ccache.outputs.Filename }}
+        archive_filepath: ${{ steps.initialize-ccache.outputs.Filepath }}
 
     - name: Ccache initialize
       id: initialize-ccache-cache
