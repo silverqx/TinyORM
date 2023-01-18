@@ -287,16 +287,19 @@ jobs:
     - name: Ccache enable debugging
       id: ccache-debug
       run: |
+        ccacheDebugDir0='${{ runner.temp }}/ccache_debug/run_0'
         ccacheDebugDir1='${{ runner.temp }}/ccache_debug/run_1'
-        ccacheDebugDir2='${{ runner.temp }}/ccache_debug/run_1'
+        # ccacheDebugDir2='${{ runner.temp }}/ccache_debug/run_2'
 
+        mkdir -p "$ccacheDebugDir0"
         mkdir -p "$ccacheDebugDir1"
-        mkdir -p "$ccacheDebugDir2"
+        # mkdir -p "$ccacheDebugDir2"
 
         echo "CCACHE_DEBUG=1" >> $GITHUB_ENV
 
+        echo "TinyCcacheDebugDir0=$ccacheDebugDir0" >> $GITHUB_OUTPUT
         echo "TinyCcacheDebugDir1=$ccacheDebugDir1" >> $GITHUB_OUTPUT
-        echo "TinyCcacheDebugDir2=$ccacheDebugDir2" >> $GITHUB_OUTPUT
+        # echo "TinyCcacheDebugDir2=$ccacheDebugDir2" >> $GITHUB_OUTPUT
 
     - name: Ccache setup 🥳
       run: |
@@ -348,8 +351,10 @@ jobs:
         -D TOM:BOOL=ON
         -D TOM_EXAMPLE:BOOL=ON
 
-    - name: TinyORM cmake build ✨ (${{ matrix.compiler.key }}-cmake-debug)
+    - name: TinyORM cmake build ✨ (${{ matrix.compiler.key }}-cmake-debug) (ccache debug 0)
       run: >-
+        export CCACHE_DEBUGDIR='${{ steps.ccache-debug.outputs.TinyCcacheDebugDir0 }}'
+
         cmake --build ../TinyORM-builds-cmake/build-${{ matrix.compiler.key }}-cmake-debug
         --target all --parallel 2
 
@@ -357,6 +362,13 @@ jobs:
       run: |
         ccache --show-stats -vv
         ccache --zero-stats
+
+    - name: Ccache upload debugging logs (ccache debug 0)
+      uses: actions/upload-artifact@v3
+      with:
+        name: ccache_debug_run_0
+        path: ${{ steps.ccache-debug.outputs.TinyCcacheDebugDir0 }}
+        if-no-files-found: error
 
     - name: TinyORM cmake build ✨ (${{ matrix.compiler.key }}-cmake-debug) (ccache debug 1)
       run: >-
@@ -380,26 +392,26 @@ jobs:
         path: ${{ steps.ccache-debug.outputs.TinyCcacheDebugDir1 }}
         if-no-files-found: error
 
-    - name: TinyORM cmake build ✨ (${{ matrix.compiler.key }}-cmake-debug) (ccache debug 2)
-      run: >-
-        cmake --build ../TinyORM-builds-cmake/build-${{ matrix.compiler.key }}-cmake-debug
-        --target clean
+    # - name: TinyORM cmake build ✨ (${{ matrix.compiler.key }}-cmake-debug) (ccache debug 2)
+    #   run: >-
+    #     cmake --build ../TinyORM-builds-cmake/build-${{ matrix.compiler.key }}-cmake-debug
+    #     --target clean
 
-        export CCACHE_DEBUGDIR='${{ steps.ccache-debug.outputs.TinyCcacheDebugDir2 }}'
+    #     export CCACHE_DEBUGDIR='${{ steps.ccache-debug.outputs.TinyCcacheDebugDir2 }}'
 
-        cmake --build ../TinyORM-builds-cmake/build-${{ matrix.compiler.key }}-cmake-debug
-        --target all --parallel 2
+    #     cmake --build ../TinyORM-builds-cmake/build-${{ matrix.compiler.key }}-cmake-debug
+    #     --target all --parallel 2
 
-    - name: Ccache statistics (ccache debug 2)
-      run: |
-        ccache --show-stats -vv
+    # - name: Ccache statistics (ccache debug 2)
+    #   run: |
+    #     ccache --show-stats -vv
 
-    - name: Ccache upload debugging logs (ccache debug 2)
-      uses: actions/upload-artifact@v3
-      with:
-        name: ccache_debug_run_2
-        path: ${{ steps.ccache-debug.outputs.TinyCcacheDebugDir2 }}
-        if-no-files-found: error
+    # - name: Ccache upload debugging logs (ccache debug 2)
+    #   uses: actions/upload-artifact@v3
+    #   with:
+    #     name: ccache_debug_run_2
+    #     path: ${{ steps.ccache-debug.outputs.TinyCcacheDebugDir2 }}
+    #     if-no-files-found: error
 
     - name: Create and Seed tables for unit tests 🎉
       working-directory: ../TinyORM-builds-cmake/build-${{ matrix.compiler.key }}-cmake-debug/tests/testdata_tom
@@ -502,4 +514,3 @@ jobs:
       env:
         DB_SQLITE_DATABASE: ${{ env.TinySQLitePath }}
         TOM_EXAMPLE_ENV: testing
-
