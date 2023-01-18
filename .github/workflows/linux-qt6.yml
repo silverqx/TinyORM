@@ -21,9 +21,9 @@ jobs:
             apt: [ clang-15, lld-15 ]
             command: clang++-15
 
-          - key: gcc12
-            apt: [ g++-12 ]
-            command: g++-12
+          # - key: gcc12
+          #   apt: [ g++-12 ]
+          #   command: g++-12
 
     steps:
     - uses: actions/checkout@v3
@@ -281,10 +281,15 @@ jobs:
         -D TOM:BOOL=ON
         -D TOM_EXAMPLE:BOOL=ON
 
-    - name: TinyORM cmake build ✨ (${{ matrix.compiler.key }}-cmake-debug)
-      run: >-
-        cmake --build ../TinyORM-builds-cmake/build-${{ matrix.compiler.key }}-cmake-debug
-        --target all --parallel 2
+    - name: Setup tmate session
+      uses: mxschmitt/action-tmate@v3
+      with:
+        limit-access-to-actor: true
+
+    # - name: TinyORM cmake build ✨ (${{ matrix.compiler.key }}-cmake-debug)
+    #   run: >-
+    #     cmake --build ../TinyORM-builds-cmake/build-${{ matrix.compiler.key }}-cmake-debug
+    #     --target all --parallel 2
 
     - name: Ccache statistics
       run: |
