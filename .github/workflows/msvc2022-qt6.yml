@@ -214,7 +214,7 @@ jobs:
         dir: ${{ env.TinyRunnerWorkPath }}
 
     - name: QMYSQL driver dlls initialize download (Qt 6.4.2)
-      id: initialize-qmysql-dlls
+      id: downloads-initialize-qmysql-dlls
       run: |
         $filename = ($env:URL_QMYSQL_DLLS_MSVC_X64_6_4_2 -split '/')[-1]
         "Filename=$filename" >> $env:GITHUB_OUTPUT
@@ -230,34 +230,34 @@ jobs:
 
     - name: QMYSQL driver dlls restore cache (download)
       uses: actions/cache@v3
-      id: cache-drivers-qmysql-dlls
+      id: downloads-cache-qmysql-dlls
       with:
         path: ${{ env.archive_filepath }}
         key: ${{ runner.os }}-drivers-${{ env.cache_name }}-${{ env.cache_hash }}
       env:
-        archive_filepath: ${{ steps.initialize-qmysql-dlls.outputs.Filepath }}
-        cache_hash: ${{ steps.initialize-qmysql-dlls.outputs.Hash }}
+        archive_filepath: ${{ steps.downloads-initialize-qmysql-dlls.outputs.Filepath }}
+        cache_hash: ${{ steps.downloads-initialize-qmysql-dlls.outputs.Hash }}
         cache_name: qmysql-dlls
 
     - name: QMYSQL driver dlls download (Qt 6.4.2)
-      if: steps.cache-drivers-qmysql-dlls.outputs.cache-hit != 'true'
+      if: steps.downloads-cache-qmysql-dlls.outputs.cache-hit != 'true'
       run: >-
         $response = Invoke-WebRequest -Uri $env:URL_QMYSQL_DLLS_MSVC_X64_6_4_2
 
         $response | Select-Object -ExpandProperty Content |
         Set-Content -Path $env:archive_filepath -AsByteStream
       env:
-        archive_filepath: ${{ steps.initialize-qmysql-dlls.outputs.Filepath }}
+        archive_filepath: ${{ steps.downloads-initialize-qmysql-dlls.outputs.Filepath }}
         URL_QMYSQL_DLLS_MSVC_X64_6_4_2: ${{ secrets.URL_QMYSQL_DLLS_MSVC_X64_6_4_2 }}
 
     - name: QMYSQL driver dlls install (Qt 6.4.2)
       run: |
         7z.exe x -o"$env:QT_PLUGIN_PATH/sqldrivers" $env:archive_filepath
       env:
-        archive_filepath: ${{ steps.initialize-qmysql-dlls.outputs.Filepath }}
+        archive_filepath: ${{ steps.downloads-initialize-qmysql-dlls.outputs.Filepath }}
 
     - name: Ccache initialize
-      id: initialize-ccache-cache
+      id: ccache-initialize-cache
       run: |
         Write-Output '::group::Install'
         choco install ccache -y
@@ -279,8 +279,8 @@ jobs:
           ${{ runner.os }}-${{ env.image_os }}-ccache-${{ env.cache_name }}-
       env:
         cache_name: msvc2022-qt64
-        cache_path: ${{ steps.initialize-ccache-cache.outputs.CachePath }}
-        image_os: ${{ steps.initialize-ccache-cache.outputs.ImageOS }}
+        cache_path: ${{ steps.ccache-initialize-cache.outputs.CachePath }}
+        image_os: ${{ steps.ccache-initialize-cache.outputs.ImageOS }}
 
     - name: Ccache setup 🥳
       run: |

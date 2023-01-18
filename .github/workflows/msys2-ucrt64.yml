@@ -233,7 +233,7 @@ jobs:
           libmariadbclient:u postgresql:u
 
     - name: Ccache initialize
-      id: initialize-ccache-cache
+      id: ccache-initialize-cache
       shell: msys2 {0}
       run: |
         # No need to install it as it's installed above using the pacboy
@@ -253,8 +253,8 @@ jobs:
           ${{ runner.os }}-${{ env.image_os }}-ccache-${{ env.cache_name }}-
       env:
         cache_name: msys2-ucrt64-${{ matrix.compiler.key }}-${{ matrix.qt.key }}
-        cache_path: ${{ steps.initialize-ccache-cache.outputs.CachePath }}
-        image_os: ${{ steps.initialize-ccache-cache.outputs.ImageOS }}
+        cache_path: ${{ steps.ccache-initialize-cache.outputs.CachePath }}
+        image_os: ${{ steps.ccache-initialize-cache.outputs.ImageOS }}
 
     - name: Ccache setup 🥳
       shell: msys2 {0}

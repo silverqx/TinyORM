@@ -49,7 +49,7 @@ jobs:
         destination: ${{ env.TinyRunnerWorkPath }}/ninja-build
 
     - name: Ccache initialize download
-      id: initialize-ccache
+      id: downloads-initialize-ccache
       run: |
         filename=$(basename "$URL_CCACHE_LINUX_X64")
         echo "Filename=$filename" >> $GITHUB_OUTPUT
@@ -65,21 +65,21 @@ jobs:
 
     - name: Ccache restore cache (download)
       uses: actions/cache@v3
-      id: cache-caches-ccache
+      id: downloads-cache-ccache
       with:
         path: ${{ env.archive_filepath }}
         key: ${{ runner.os }}-caches-${{ env.cache_name }}-${{ env.cache_hash }}
       env:
-        archive_filepath: ${{ steps.initialize-ccache.outputs.Filepath }}
-        cache_hash: ${{ steps.initialize-ccache.outputs.Hash }}
+        archive_filepath: ${{ steps.downloads-initialize-ccache.outputs.Filepath }}
+        cache_hash: ${{ steps.downloads-initialize-ccache.outputs.Hash }}
         cache_name: ccache
 
     - name: Ccache download
-      if: steps.cache-caches-ccache.outputs.cache-hit != 'true'
+      if: steps.downloads-cache-ccache.outputs.cache-hit != 'true'
       run: |
         wget "$URL_CCACHE_LINUX_X64" -O "$archive_filepath" --no-verbose
       env:
-        archive_filepath: ${{ steps.initialize-ccache.outputs.Filepath }}
+        archive_filepath: ${{ steps.downloads-initialize-ccache.outputs.Filepath }}
         URL_CCACHE_LINUX_X64: ${{ secrets.URL_CCACHE_LINUX_X64 }}
 
     - name: Ccache install
@@ -98,11 +98,11 @@ jobs:
         ccache --version
         echo '::endgroup::'
       env:
-        archive_filename: ${{ steps.initialize-ccache.outputs.Filename }}
-        archive_filepath: ${{ steps.initialize-ccache.outputs.Filepath }}
+        archive_filename: ${{ steps.downloads-initialize-ccache.outputs.Filename }}
+        archive_filepath: ${{ steps.downloads-initialize-ccache.outputs.Filepath }}
 
     - name: Ccache initialize
-      id: initialize-ccache-cache
+      id: ccache-initialize-cache
       run: |
         cachePath=$(ccache --get-config cache_dir)
         echo "CachePath=$cachePath" >> $GITHUB_OUTPUT
@@ -118,8 +118,8 @@ jobs:
           ${{ runner.os }}-${{ env.image_os }}-ccache-${{ env.cache_name }}-
       env:
         cache_name: ${{ matrix.compiler.key }}-qt5
-        cache_path: ${{ steps.initialize-ccache-cache.outputs.CachePath }}
-        image_os: ${{ steps.initialize-ccache-cache.outputs.ImageOS }}
+        cache_path: ${{ steps.ccache-initialize-cache.outputs.CachePath }}
+        image_os: ${{ steps.ccache-initialize-cache.outputs.ImageOS }}
 
     - name: Ccache setup 🥳
       run: |
@@ -185,7 +185,7 @@ jobs:
         ccache --show-stats
 
     - name: clazy-standalone initialize download
-      id: initialize-clazy-standalone
+      id: downloads-initialize-clazy-standalone
       run: |
         filename=$(basename "$URL_CLAZY_STANDALONE_LINUX_X64")
         echo "Filename=$filename" >> $GITHUB_OUTPUT
@@ -201,21 +201,21 @@ jobs:
 
     - name: clazy-standalone restore cache (download)
       uses: actions/cache@v3
-      id: cache-analyzers-clazy-standalone
+      id: downloads-cache-clazy-standalone
       with:
         path: ${{ env.archive_filepath }}
         key: ${{ runner.os }}-analyzers-${{ env.cache_name }}-${{ env.cache_hash }}
       env:
-        archive_filepath: ${{ steps.initialize-clazy-standalone.outputs.Filepath }}
-        cache_hash: ${{ steps.initialize-clazy-standalone.outputs.Hash }}
+        archive_filepath: ${{ steps.downloads-initialize-clazy-standalone.outputs.Filepath }}
+        cache_hash: ${{ steps.downloads-initialize-clazy-standalone.outputs.Hash }}
         cache_name: clazy-standalone
 
     - name: clazy-standalone download
-      if: steps.cache-analyzers-clazy-standalone.outputs.cache-hit != 'true'
+      if: steps.downloads-cache-clazy-standalone.outputs.cache-hit != 'true'
       run: |
         wget "$URL_CLAZY_STANDALONE_LINUX_X64" -O "$archive_filepath" --no-verbose
       env:
-        archive_filepath: ${{ steps.initialize-clazy-standalone.outputs.Filepath }}
+        archive_filepath: ${{ steps.downloads-initialize-clazy-standalone.outputs.Filepath }}
         URL_CLAZY_STANDALONE_LINUX_X64: ${{ secrets.URL_CLAZY_STANDALONE_LINUX_X64 }}
 
     - name: clazy-standalone install
@@ -228,7 +228,7 @@ jobs:
         clazy-standalone --version
         echo '::endgroup::'
       env:
-        archive_filepath: ${{ steps.initialize-clazy-standalone.outputs.Filepath }}
+        archive_filepath: ${{ steps.downloads-initialize-clazy-standalone.outputs.Filepath }}
 
     - name: TinyORM execute clang-tidy 🔥
       run: |
