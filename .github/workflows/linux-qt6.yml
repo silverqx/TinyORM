@@ -201,9 +201,9 @@ jobs:
       run: |
         sudo apt update
 
-    - name: apt install ${{ join(matrix.compiler.apt, ', ') }}, Qt 6.2.4 base, and ccache
+    - name: apt install ${{ join(matrix.compiler.apt, ', ') }}, and Qt 6.2.4 base
       run: >-
-        sudo apt install -y ${{ join(matrix.compiler.apt, ' ') }} ccache
+        sudo apt install -y ${{ join(matrix.compiler.apt, ' ') }}
         qt6-base-dev libqt6sql6-mysql libqt6sql6-sqlite libqt6sql6-psql
 
     - name: ninja install latest version
@@ -284,23 +284,6 @@ jobs:
         cache_path: ${{ steps.initialize-ccache-cache.outputs.CachePath }}
         image_os: ${{ steps.initialize-ccache-cache.outputs.ImageOS }}
 
-    - name: Ccache enable debugging
-      id: ccache-debug
-      run: |
-        ccacheDebugDir0='${{ runner.temp }}/ccache_debug/run_0'
-        ccacheDebugDir1='${{ runner.temp }}/ccache_debug/run_1'
-        # ccacheDebugDir2='${{ runner.temp }}/ccache_debug/run_2'
-
-        mkdir -p "$ccacheDebugDir0"
-        mkdir -p "$ccacheDebugDir1"
-        # mkdir -p "$ccacheDebugDir2"
-
-        echo "CCACHE_DEBUG=1" >> $GITHUB_ENV
-
-        echo "TinyCcacheDebugDir0=$ccacheDebugDir0" >> $GITHUB_OUTPUT
-        echo "TinyCcacheDebugDir1=$ccacheDebugDir1" >> $GITHUB_OUTPUT
-        # echo "TinyCcacheDebugDir2=$ccacheDebugDir2" >> $GITHUB_OUTPUT
-
     - name: Ccache setup 🥳
       run: |
         echo '::group::Prepare ccache config'
@@ -350,166 +333,113 @@ jobs:
         -D TOM:BOOL=ON
         -D TOM_EXAMPLE:BOOL=ON
 
-    - name: TinyORM cmake build ✨ (${{ matrix.compiler.key }}-cmake-debug) (ccache debug 0)
+    - name: TinyORM cmake build ✨ (${{ matrix.compiler.key }}-cmake-debug)
       run: >-
-        export CCACHE_DEBUGDIR='${{ steps.ccache-debug.outputs.TinyCcacheDebugDir0 }}'
-
         cmake --build ../TinyORM-builds-cmake/build-${{ matrix.compiler.key }}-cmake-debug
         --target all --parallel 2
 
     - name: Ccache statistics
       run: |
         ccache --show-stats -vv
-        ccache --zero-stats
 
-    - name: Ccache upload debugging logs (ccache debug 0)
-      uses: actions/upload-artifact@v3
-      with:
-        name: ccache_debug_run_0
-        path: ${{ steps.ccache-debug.outputs.TinyCcacheDebugDir0 }}
-        if-no-files-found: error
-
-    - name: TinyORM cmake build ✨ (${{ matrix.compiler.key }}-cmake-debug) (ccache debug 1)
+    - name: Create and Seed tables for unit tests 🎉
+      working-directory: ../TinyORM-builds-cmake/build-${{ matrix.compiler.key }}-cmake-debug/tests/testdata_tom
       run: >-
-        cmake --build ../TinyORM-builds-cmake/build-${{ matrix.compiler.key }}-cmake-debug
-        --target clean
+        export LD_LIBRARY_PATH=../..${LD_LIBRARY_PATH:+:}$LD_LIBRARY_PATH
 
-        export CCACHE_DEBUGDIR='${{ steps.ccache-debug.outputs.TinyCcacheDebugDir1 }}'
+        ./tom_testdata migrate
+        --database=tinyorm_testdata_tom_mysql,tinyorm_testdata_tom_postgres,tinyorm_testdata_tom_sqlite
+        --seed --no-ansi
+      env:
+        DB_MYSQL_CHARSET: ${{ secrets.DB_MYSQL_CHARSET }}
+        DB_MYSQL_COLLATION: ${{ secrets.DB_MYSQL_COLLATION }}
+        DB_MYSQL_DATABASE: ${{ secrets.DB_MYSQL_DATABASE }}
+        DB_MYSQL_HOST: ${{ secrets.DB_MYSQL_HOST_SSL }}
+        DB_MYSQL_PASSWORD: ${{ secrets.DB_MYSQL_PASSWORD }}
+        DB_MYSQL_SSL_CA: /usr/local/share/crystal-mysql/ca.pem
+        DB_MYSQL_SSL_CERT: /usr/local/share/crystal-mysql/client-cert.pem
+        DB_MYSQL_SSL_KEY: /usr/local/share/crystal-mysql/client-key.pem
+        DB_MYSQL_USERNAME: ${{ secrets.DB_MYSQL_USERNAME }}
+        DB_PGSQL_CHARSET: ${{ secrets.DB_PGSQL_CHARSET }}
+        DB_PGSQL_DATABASE: ${{ secrets.DB_PGSQL_DATABASE }}
+        DB_PGSQL_HOST: ${{ secrets.DB_PGSQL_HOST }}
+        DB_PGSQL_PASSWORD: ${{ secrets.DB_PGSQL_PASSWORD }}
+        DB_PGSQL_USERNAME: ${{ secrets.DB_PGSQL_USERNAME }}
+        DB_SQLITE_DATABASE: ${{ env.TinySQLitePath }}
+        TOM_TESTDATA_ENV: testing
 
-        cmake --build ../TinyORM-builds-cmake/build-${{ matrix.compiler.key }}-cmake-debug
-        --target all --parallel 2
-
-    - name: Ccache statistics (ccache debug 1)
+    - name: TinyORM execute ctest 🔥
+      working-directory: ../TinyORM-builds-cmake/build-${{ matrix.compiler.key }}-cmake-debug
       run: |
-        ccache --show-stats -vv
-        ccache --zero-stats
+        ctest --output-on-failure
+      env:
+        DB_MYSQL_CHARSET: ${{ secrets.DB_MYSQL_CHARSET }}
+        DB_MYSQL_COLLATION: ${{ secrets.DB_MYSQL_COLLATION }}
+        DB_MYSQL_DATABASE: ${{ secrets.DB_MYSQL_DATABASE }}
+        DB_MYSQL_HOST: ${{ secrets.DB_MYSQL_HOST_SSL }}
+        DB_MYSQL_PASSWORD: ${{ secrets.DB_MYSQL_PASSWORD }}
+        DB_MYSQL_SSL_CA: /usr/local/share/crystal-mysql/ca.pem
+        DB_MYSQL_SSL_CERT: /usr/local/share/crystal-mysql/client-cert.pem
+        DB_MYSQL_SSL_KEY: /usr/local/share/crystal-mysql/client-key.pem
+        DB_MYSQL_USERNAME: ${{ secrets.DB_MYSQL_USERNAME }}
+        DB_PGSQL_CHARSET: ${{ secrets.DB_PGSQL_CHARSET }}
+        DB_PGSQL_DATABASE: ${{ secrets.DB_PGSQL_DATABASE }}
+        DB_PGSQL_HOST: ${{ secrets.DB_PGSQL_HOST }}
+        DB_PGSQL_PASSWORD: ${{ secrets.DB_PGSQL_PASSWORD }}
+        DB_PGSQL_USERNAME: ${{ secrets.DB_PGSQL_USERNAME }}
+        DB_SQLITE_DATABASE: ${{ env.TinySQLitePath }}
+        TOM_TESTS_ENV: testing
 
-    - name: Ccache upload debugging logs (ccache debug 1)
-      uses: actions/upload-artifact@v3
-      with:
-        name: ccache_debug_run_1
-        path: ${{ steps.ccache-debug.outputs.TinyCcacheDebugDir1 }}
-        if-no-files-found: error
+    - name: Tom example test some commands (MySQL) 🚀
+      working-directory: ../TinyORM-builds-cmake/build-${{ matrix.compiler.key }}-cmake-debug/examples/tom
+      run: |
+        export LD_LIBRARY_PATH=../..${LD_LIBRARY_PATH:+:}$LD_LIBRARY_PATH
 
-    # - name: TinyORM cmake build ✨ (${{ matrix.compiler.key }}-cmake-debug) (ccache debug 2)
-    #   run: >-
-    #     cmake --build ../TinyORM-builds-cmake/build-${{ matrix.compiler.key }}-cmake-debug
-    #     --target clean
+        ./tom migrate:install --database=tinyorm_tom_mysql --no-ansi
+        ./tom migrate:status --database=tinyorm_tom_mysql --no-ansi
+        ./tom migrate --database=tinyorm_tom_mysql --seed --no-ansi
+        ./tom migrate:refresh --database=tinyorm_tom_mysql --seed --no-ansi
+        ./tom migrate:status --database=tinyorm_tom_mysql --no-ansi
+      env:
+        DB_MYSQL_CHARSET: ${{ secrets.DB_MYSQL_CHARSET }}
+        DB_MYSQL_COLLATION: ${{ secrets.DB_MYSQL_COLLATION }}
+        DB_MYSQL_DATABASE: ${{ secrets.DB_MYSQL_DATABASE }}
+        DB_MYSQL_HOST: ${{ secrets.DB_MYSQL_HOST_SSL }}
+        DB_MYSQL_PASSWORD: ${{ secrets.DB_MYSQL_PASSWORD }}
+        DB_MYSQL_SSL_CA: /usr/local/share/crystal-mysql/ca.pem
+        DB_MYSQL_SSL_CERT: /usr/local/share/crystal-mysql/client-cert.pem
+        DB_MYSQL_SSL_KEY: /usr/local/share/crystal-mysql/client-key.pem
+        DB_MYSQL_USERNAME: ${{ secrets.DB_MYSQL_USERNAME }}
+        TOM_EXAMPLE_ENV: testing
 
-    #     export CCACHE_DEBUGDIR='${{ steps.ccache-debug.outputs.TinyCcacheDebugDir2 }}'
+    - name: Tom example test some commands (PostgreSQL) 🙌
+      working-directory: ../TinyORM-builds-cmake/build-${{ matrix.compiler.key }}-cmake-debug/examples/tom
+      run: |
+        export LD_LIBRARY_PATH=../..${LD_LIBRARY_PATH:+:}$LD_LIBRARY_PATH
 
-    #     cmake --build ../TinyORM-builds-cmake/build-${{ matrix.compiler.key }}-cmake-debug
-    #     --target all --parallel 2
+        ./tom migrate:install --database=tinyorm_tom_postgres --no-ansi
+        ./tom migrate:status --database=tinyorm_tom_postgres --no-ansi
+        ./tom migrate --database=tinyorm_tom_postgres --seed --no-ansi
+        ./tom migrate:refresh --database=tinyorm_tom_postgres --seed --no-ansi
+        ./tom migrate:status --database=tinyorm_tom_postgres --no-ansi
+      env:
+        DB_PGSQL_CHARSET: ${{ secrets.DB_PGSQL_CHARSET }}
+        DB_PGSQL_DATABASE: ${{ secrets.DB_PGSQL_DATABASE }}
+        DB_PGSQL_HOST: ${{ secrets.DB_PGSQL_HOST }}
+        DB_PGSQL_PASSWORD: ${{ secrets.DB_PGSQL_PASSWORD }}
+        DB_PGSQL_USERNAME: ${{ secrets.DB_PGSQL_USERNAME }}
+        TOM_EXAMPLE_ENV: testing
 
-    # - name: Ccache statistics (ccache debug 2)
-    #   run: |
-    #     ccache --show-stats -vv
+    - name: Tom example test some commands (SQLite) 🏁
+      working-directory: ../TinyORM-builds-cmake/build-${{ matrix.compiler.key }}-cmake-debug/examples/tom
+      run: |
+        export LD_LIBRARY_PATH=../..${LD_LIBRARY_PATH:+:}$LD_LIBRARY_PATH
 
-    # - name: Ccache upload debugging logs (ccache debug 2)
-    #   uses: actions/upload-artifact@v3
-    #   with:
-    #     name: ccache_debug_run_2
-    #     path: ${{ steps.ccache-debug.outputs.TinyCcacheDebugDir2 }}
-    #     if-no-files-found: error
-
-    # - name: Create and Seed tables for unit tests 🎉
-    #   working-directory: ../TinyORM-builds-cmake/build-${{ matrix.compiler.key }}-cmake-debug/tests/testdata_tom
-    #   run: >-
-    #     export LD_LIBRARY_PATH=../..${LD_LIBRARY_PATH:+:}$LD_LIBRARY_PATH
-
-    #     ./tom_testdata migrate
-    #     --database=tinyorm_testdata_tom_mysql,tinyorm_testdata_tom_postgres,tinyorm_testdata_tom_sqlite
-    #     --seed --no-ansi
-    #   env:
-    #     DB_MYSQL_CHARSET: ${{ secrets.DB_MYSQL_CHARSET }}
-    #     DB_MYSQL_COLLATION: ${{ secrets.DB_MYSQL_COLLATION }}
-    #     DB_MYSQL_DATABASE: ${{ secrets.DB_MYSQL_DATABASE }}
-    #     DB_MYSQL_HOST: ${{ secrets.DB_MYSQL_HOST_SSL }}
-    #     DB_MYSQL_PASSWORD: ${{ secrets.DB_MYSQL_PASSWORD }}
-    #     DB_MYSQL_SSL_CA: /usr/local/share/crystal-mysql/ca.pem
-    #     DB_MYSQL_SSL_CERT: /usr/local/share/crystal-mysql/client-cert.pem
-    #     DB_MYSQL_SSL_KEY: /usr/local/share/crystal-mysql/client-key.pem
-    #     DB_MYSQL_USERNAME: ${{ secrets.DB_MYSQL_USERNAME }}
-    #     DB_PGSQL_CHARSET: ${{ secrets.DB_PGSQL_CHARSET }}
-    #     DB_PGSQL_DATABASE: ${{ secrets.DB_PGSQL_DATABASE }}
-    #     DB_PGSQL_HOST: ${{ secrets.DB_PGSQL_HOST }}
-    #     DB_PGSQL_PASSWORD: ${{ secrets.DB_PGSQL_PASSWORD }}
-    #     DB_PGSQL_USERNAME: ${{ secrets.DB_PGSQL_USERNAME }}
-    #     DB_SQLITE_DATABASE: ${{ env.TinySQLitePath }}
-    #     TOM_TESTDATA_ENV: testing
-
-    # - name: TinyORM execute ctest 🔥
-    #   working-directory: ../TinyORM-builds-cmake/build-${{ matrix.compiler.key }}-cmake-debug
-    #   run: |
-    #     ctest --output-on-failure
-    #   env:
-    #     DB_MYSQL_CHARSET: ${{ secrets.DB_MYSQL_CHARSET }}
-    #     DB_MYSQL_COLLATION: ${{ secrets.DB_MYSQL_COLLATION }}
-    #     DB_MYSQL_DATABASE: ${{ secrets.DB_MYSQL_DATABASE }}
-    #     DB_MYSQL_HOST: ${{ secrets.DB_MYSQL_HOST_SSL }}
-    #     DB_MYSQL_PASSWORD: ${{ secrets.DB_MYSQL_PASSWORD }}
-    #     DB_MYSQL_SSL_CA: /usr/local/share/crystal-mysql/ca.pem
-    #     DB_MYSQL_SSL_CERT: /usr/local/share/crystal-mysql/client-cert.pem
-    #     DB_MYSQL_SSL_KEY: /usr/local/share/crystal-mysql/client-key.pem
-    #     DB_MYSQL_USERNAME: ${{ secrets.DB_MYSQL_USERNAME }}
-    #     DB_PGSQL_CHARSET: ${{ secrets.DB_PGSQL_CHARSET }}
-    #     DB_PGSQL_DATABASE: ${{ secrets.DB_PGSQL_DATABASE }}
-    #     DB_PGSQL_HOST: ${{ secrets.DB_PGSQL_HOST }}
-    #     DB_PGSQL_PASSWORD: ${{ secrets.DB_PGSQL_PASSWORD }}
-    #     DB_PGSQL_USERNAME: ${{ secrets.DB_PGSQL_USERNAME }}
-    #     DB_SQLITE_DATABASE: ${{ env.TinySQLitePath }}
-    #     TOM_TESTS_ENV: testing
-
-    # - name: Tom example test some commands (MySQL) 🚀
-    #   working-directory: ../TinyORM-builds-cmake/build-${{ matrix.compiler.key }}-cmake-debug/examples/tom
-    #   run: |
-    #     export LD_LIBRARY_PATH=../..${LD_LIBRARY_PATH:+:}$LD_LIBRARY_PATH
-
-    #     ./tom migrate:install --database=tinyorm_tom_mysql --no-ansi
-    #     ./tom migrate:status --database=tinyorm_tom_mysql --no-ansi
-    #     ./tom migrate --database=tinyorm_tom_mysql --seed --no-ansi
-    #     ./tom migrate:refresh --database=tinyorm_tom_mysql --seed --no-ansi
-    #     ./tom migrate:status --database=tinyorm_tom_mysql --no-ansi
-    #   env:
-    #     DB_MYSQL_CHARSET: ${{ secrets.DB_MYSQL_CHARSET }}
-    #     DB_MYSQL_COLLATION: ${{ secrets.DB_MYSQL_COLLATION }}
-    #     DB_MYSQL_DATABASE: ${{ secrets.DB_MYSQL_DATABASE }}
-    #     DB_MYSQL_HOST: ${{ secrets.DB_MYSQL_HOST_SSL }}
-    #     DB_MYSQL_PASSWORD: ${{ secrets.DB_MYSQL_PASSWORD }}
-    #     DB_MYSQL_SSL_CA: /usr/local/share/crystal-mysql/ca.pem
-    #     DB_MYSQL_SSL_CERT: /usr/local/share/crystal-mysql/client-cert.pem
-    #     DB_MYSQL_SSL_KEY: /usr/local/share/crystal-mysql/client-key.pem
-    #     DB_MYSQL_USERNAME: ${{ secrets.DB_MYSQL_USERNAME }}
-    #     TOM_EXAMPLE_ENV: testing
-
-    # - name: Tom example test some commands (PostgreSQL) 🙌
-    #   working-directory: ../TinyORM-builds-cmake/build-${{ matrix.compiler.key }}-cmake-debug/examples/tom
-    #   run: |
-    #     export LD_LIBRARY_PATH=../..${LD_LIBRARY_PATH:+:}$LD_LIBRARY_PATH
-
-    #     ./tom migrate:install --database=tinyorm_tom_postgres --no-ansi
-    #     ./tom migrate:status --database=tinyorm_tom_postgres --no-ansi
-    #     ./tom migrate --database=tinyorm_tom_postgres --seed --no-ansi
-    #     ./tom migrate:refresh --database=tinyorm_tom_postgres --seed --no-ansi
-    #     ./tom migrate:status --database=tinyorm_tom_postgres --no-ansi
-    #   env:
-    #     DB_PGSQL_CHARSET: ${{ secrets.DB_PGSQL_CHARSET }}
-    #     DB_PGSQL_DATABASE: ${{ secrets.DB_PGSQL_DATABASE }}
-    #     DB_PGSQL_HOST: ${{ secrets.DB_PGSQL_HOST }}
-    #     DB_PGSQL_PASSWORD: ${{ secrets.DB_PGSQL_PASSWORD }}
-    #     DB_PGSQL_USERNAME: ${{ secrets.DB_PGSQL_USERNAME }}
-    #     TOM_EXAMPLE_ENV: testing
-
-    # - name: Tom example test some commands (SQLite) 🏁
-    #   working-directory: ../TinyORM-builds-cmake/build-${{ matrix.compiler.key }}-cmake-debug/examples/tom
-    #   run: |
-    #     export LD_LIBRARY_PATH=../..${LD_LIBRARY_PATH:+:}$LD_LIBRARY_PATH
-
-    #     ./tom migrate:install --database=tinyorm_tom_sqlite --no-ansi
-    #     ./tom migrate:status --database=tinyorm_tom_sqlite --no-ansi
-    #     ./tom migrate --database=tinyorm_tom_sqlite --seed --no-ansi
-    #     ./tom migrate:refresh --database=tinyorm_tom_sqlite --seed --no-ansi
-    #     ./tom migrate:status --database=tinyorm_tom_sqlite --no-ansi
-    #   env:
-    #     DB_SQLITE_DATABASE: ${{ env.TinySQLitePath }}
-    #     TOM_EXAMPLE_ENV: testing
+        ./tom migrate:install --database=tinyorm_tom_sqlite --no-ansi
+        ./tom migrate:status --database=tinyorm_tom_sqlite --no-ansi
+        ./tom migrate --database=tinyorm_tom_sqlite --seed --no-ansi
+        ./tom migrate:refresh --database=tinyorm_tom_sqlite --seed --no-ansi
+        ./tom migrate:status --database=tinyorm_tom_sqlite --no-ansi
+      env:
+        DB_SQLITE_DATABASE: ${{ env.TinySQLitePath }}
+        TOM_EXAMPLE_ENV: testing
