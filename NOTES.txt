@@ -596,18 +596,28 @@ ${{ matrix.compiler.key == 'gcc' && '400M' || '250M' }}
 
 - ccache initial build sizes:
 
-clang-cl         - 120MB
-msvc2022-qt64    - 250MB
-msvc2019-qt5     - 150MB
-linux-gcc-qt62   - 130MB
-linux-clang-qt62 -  70MB
-linux-gcc-qt5    - 124MB
-linux-clang-qt5  -  63MB
+First value is with a default compression and second uncompressed (ccache --show-compression)
 
-MSYS2-clang-qt5  - 110MB
-MSYS2-clang-qt6  - 120MB
-MSYS2-gcc-qt5    - 110MB
-MSYS2-gcc-qt6    - 130MB
+with PCH:
+
+linux-gcc-qt64   - 780MB (5.0GB)
+linux-clang-qt63 - 440MB (1.3GB)
+linux-gcc-qt5    - 770MB (4.5GB)
+
+w/o PCH:
+
+clang-cl-qt64    - 135MB (880MB)
+msvc2022-qt64    - 190MB (1.5GB)
+msvc2019-qt5     - 175MB (1.5GB)
+linux-gcc-qt64   - 165MB (700MB)
+linux-clang-qt63 - 100MB (680MB)
+linux-gcc-qt5    - 115MB (665MB)
+linux-clang-qt5  -  90MB (640MB)
+
+MSYS2-clang-qt5  - 140MB (900MB)
+MSYS2-clang-qt6  - 140MB (895MB)
+MSYS2-gcc-qt5    - 180MB (940MB)
+MSYS2-gcc-qt6    - 180MB (940MB)
 
 
 - ccache debugging (Linux):
