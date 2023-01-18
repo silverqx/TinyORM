@@ -210,7 +210,7 @@ jobs:
         URL_QMYSQL_DLLS_MSVC_X64_5_15_2: ${{ secrets.URL_QMYSQL_DLLS_MSVC_X64_5_15_2 }}
         URL_CACHE_HASH_WINDOWS: ${{ secrets.URL_CACHE_HASH_WINDOWS }}
 
-    - name: QMYSQL driver dlls restore cache
+    - name: QMYSQL driver dlls restore cache (download)
       uses: actions/cache@v3
       id: cache-drivers-qmysql-dlls
       with:
