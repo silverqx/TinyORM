@@ -182,7 +182,7 @@ jobs:
 
     - name: Ccache statistics
       run: |
-        ccache --show-stats
+        ccache --show-stats -vv
 
     - name: clazy-standalone initialize download
       id: downloads-initialize-clazy-standalone

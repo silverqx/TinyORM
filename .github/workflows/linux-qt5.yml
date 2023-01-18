@@ -319,7 +319,7 @@ jobs:
 
     - name: Ccache statistics
       run: |
-        ccache --show-stats
+        ccache --show-stats -vv
 
     - name: Create and Seed tables for unit tests 🎉
       working-directory: ../TinyORM-builds-cmake/build-${{ matrix.compiler.key }}-cmake-debug/tests/testdata_tom
