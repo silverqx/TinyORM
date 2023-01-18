@@ -261,9 +261,9 @@ jobs:
     - name: Ccache setup 🥳
       run: |
         echo '::group::Prepare ccache config'
-        ccache --set-config compression=false
-        ccache --set-config max_size=${{ matrix.compiler.key == 'gcc11' && '400M' || '250M' }}
-        ccache --set-config sloppiness=include_file_ctime,include_file_mtime,pch_defines,time_macros
+        # gcc: ~ 115 * 3 + 100 ; clang: ~ 90 * 3 + 100
+        ccache --set-config max_size=${{ matrix.compiler.key == 'gcc11' && '450M' || '380M' }}
+        ccache --set-config sloppiness=pch_defines,time_macros
         ccache --show-config
         echo '::endgroup::'
 

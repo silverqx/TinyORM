@@ -301,9 +301,9 @@ jobs:
     - name: Ccache setup 🥳
       run: |
         Write-Output '::group::Prepare ccache config'
-        ccache.exe --set-config compression=false
-        ccache.exe --set-config max_size=400M
-        ccache.exe --set-config sloppiness=include_file_ctime,include_file_mtime,pch_defines,time_macros
+        # ~ 135 * 3 + 100
+        ccache.exe --set-config max_size=600M
+        ccache.exe --set-config sloppiness=pch_defines,time_macros
         ccache.exe --show-config
         Write-Output '::endgroup::'
 

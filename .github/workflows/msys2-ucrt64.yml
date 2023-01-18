@@ -260,9 +260,9 @@ jobs:
       shell: msys2 {0}
       run: |
         echo '::group::Prepare ccache config'
-        ccache.exe --set-config compression=false
-        ccache.exe --set-config max_size=400M
-        ccache.exe --set-config sloppiness=include_file_ctime,include_file_mtime,pch_defines,time_macros
+        # gcc: ~ 180 * 3 + 100 ; clang: ~ 140 * 3 + 100
+        ccache.exe --set-config max_size=${{ matrix.compiler.key == 'gcc' && '640M' || '520M' }}
+        ccache.exe --set-config sloppiness=pch_defines,time_macros
         ccache.exe --show-config
         echo '::endgroup::'
 
