@@ -240,10 +240,10 @@ SQLite      QString   QString   QString     QString   QString   QString   QStrin
 
 Special rules:
 -----
- - QSQLITE driver returns null QVariant(QMetaType(QMetaType::QString)) for all null values
- - QMYSQL driver returns null QVariant(QMetaType(QMetaType::Char)) for tinyint database types
- - QPSQL driver - the logic for - and ULongLong is not applied for the null values, so it's
-                  everytime LongLong
+ - QSQLITE driver - returns null QVariant(QMetaType(QMetaType::QString)) for all null values
+ - QMYSQL driver  - returns null QVariant(QMetaType(QMetaType::Char)) for tinyint database types
+ - QPSQL driver   - the logic for - and ULongLong is not applied for the null values, so it's
+                    everytime LongLong
 
 
 All places where is created some Model instance:
