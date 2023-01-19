@@ -223,7 +223,7 @@ jobs:
     - name: QMYSQL driver dlls initialize download (Qt 5.15.2)
       id: downloads-initialize-qmysql-dlls
       run: |
-        $filename = ($env:URL_QMYSQL_DLLS_MSVC_X64_5_15_2 -split '/')[-1]
+        $filename = (Split-Path -Path $env:URL_QMYSQL_DLLS_MSVC_X64_5_15_2 -Leaf)
         "Filename=$filename" >> $env:GITHUB_OUTPUT
 
         $filepath = Join-Path -Path ${{ runner.temp }} -ChildPath $filename
@@ -266,7 +266,7 @@ jobs:
     - name: MySQL 8 libmysql.dll initialize download (Qt 5.15.2)
       id: downloads-initialize-mysql_8-libmysql-dll
       run: |
-        $filename = ($env:URL_LIBMYSQL_DLL_MYSQL_8_MSVC_X64_5_15_2 -split '/')[-1]
+        $filename = (Split-Path -Path $env:URL_LIBMYSQL_DLL_MYSQL_8_MSVC_X64_5_15_2 -Leaf)
         "Filename=$filename" >> $env:GITHUB_OUTPUT
 
         $filepath = Join-Path -Path ${{ runner.temp }} -ChildPath $filename

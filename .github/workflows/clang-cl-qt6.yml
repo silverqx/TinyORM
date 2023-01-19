@@ -241,7 +241,7 @@ jobs:
     - name: QMYSQL driver dlls initialize download (Qt 6.4.2)
       id: downloads-initialize-qmysql-dlls
       run: |
-        $filename = ($env:URL_QMYSQL_DLLS_MSVC_X64_6_4_2 -split '/')[-1]
+        $filename = (Split-Path -Path $env:URL_QMYSQL_DLLS_MSVC_X64_6_4_2 -Leaf)
         "Filename=$filename" >> $env:GITHUB_OUTPUT
 
         $filepath = Join-Path -Path ${{ runner.temp }} -ChildPath $filename
