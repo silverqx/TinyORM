@@ -126,29 +126,53 @@ jobs:
         DB_MYSQL_ROOT_PASSWORD: ${{ secrets.DB_MYSQL_ROOT_PASSWORD }}
         DB_MYSQL_ROOT_USERNAME: ${{ secrets.DB_MYSQL_ROOT_USERNAME }}
 
-    - name: MySQL download time zone POSIX tables
-      working-directory: ${{ runner.temp }}
+    - name: MySQL time zone POSIX tables initialize download
+      id: downloads-initialize-mysql-timezone-tables
+      run: |
+        $filename = (Split-Path -Path $env:URL_MYSQL_TIMEZONE_TABLES -Leaf)
+        "Filename=$filename" >> $env:GITHUB_OUTPUT
+
+        $filepath = Join-Path -Path ${{ runner.temp }} -ChildPath $filename
+        "Filepath=$filepath" >> $env:GITHUB_OUTPUT
+
+        $basename = Split-Path -Path $filename -LeafBase
+
+        $extractedFolder = Join-Path -Path ${{ runner.temp }} -ChildPath $basename
+        "ExtractedFolder=$extractedFolder" >> $env:GITHUB_OUTPUT
+
+        "Hash=$basename" >> $env:GITHUB_OUTPUT
+      env:
+        URL_MYSQL_TIMEZONE_TABLES: ${{ secrets.URL_MYSQL_TIMEZONE_TABLES }}
+
+    - name: MySQL time zone POSIX tables restore cache (download)
+      uses: actions/cache@v3
+      id: downloads-cache-mysql-timezone-tables
+      with:
+        path: ${{ env.extracted_folder }}
+        key: ${{ runner.os }}-databases-${{ env.cache_name }}-${{ env.cache_hash }}
+      env:
+        cache_hash: ${{ steps.downloads-initialize-mysql-timezone-tables.outputs.Hash }}
+        cache_name: mysql-timezone-tables
+        extracted_folder: ${{ steps.downloads-initialize-mysql-timezone-tables.outputs.ExtractedFolder }}
+
+    - name: MySQL time zone POSIX tables download
+      if: steps.downloads-cache-mysql-timezone-tables.outputs.cache-hit != 'true'
       run: >-
-        $tzFileUrl = 'https://downloads.mysql.com/general/timezone_2022g_posix_sql.zip'
-
-        # $response = Invoke-WebRequest -Uri $tzFileUrl -HttpVersion 2.0
-
-        curl -fsSLO $tzFileUrl
-
-        $filename = ($tzFileUrl -split '/')[-1]
-
-        $filepath = Join-Path -Path $(Resolve-Path -Path .) -ChildPath $filename
+        # $response = Invoke-WebRequest -Uri $env:URL_MYSQL_TIMEZONE_TABLES -HttpVersion 2.0
 
         # $response | Select-Object -ExpandProperty Content |
-        Set-Content -Path $filepath -AsByteStream
+        Set-Content -Path $env:archive_filepath -AsByteStream
 
-        7z.exe x -o"$(Resolve-Path -Path .)" $filepath
+        curl -fsSLO --output-dir '${{ runner.temp }}' "$env:URL_MYSQL_TIMEZONE_TABLES"
+
+        7z.exe x -y -o'${{ runner.temp }}' "$env:archive_filepath"
+      env:
+        archive_filepath: ${{ steps.downloads-initialize-mysql-timezone-tables.outputs.Filepath }}
+        URL_MYSQL_TIMEZONE_TABLES: ${{ secrets.URL_MYSQL_TIMEZONE_TABLES }}
 
     - name: MySQL populate time zone tables 👌
-      working-directory: ${{ runner.temp }}
       run: >-
-        $filepath = Join-Path -Path $(Resolve-Path -Path .) -ChildPath timezone_2022g_posix_sql
-        -AdditionalChildPath timezone_posix.sql
+        $filepath = Join-Path -Path $env:extracted_folder -ChildPath 'timezone_posix.sql'
 
         # source path can't be quoted, it works correctly even with spaces
 
@@ -157,6 +181,7 @@ jobs:
 
         Restart-Service MySQL
       env:
+        extracted_folder: ${{ steps.downloads-initialize-mysql-timezone-tables.outputs.ExtractedFolder }}
         DB_MYSQL_ROOT_PASSWORD: ${{ secrets.DB_MYSQL_ROOT_PASSWORD }}
         DB_MYSQL_ROOT_USERNAME: ${{ secrets.DB_MYSQL_ROOT_USERNAME }}
 
