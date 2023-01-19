@@ -79,14 +79,13 @@ std::shared_ptr<DatabaseManager> setupManager()
         // MySQL connection
         {QStringLiteral("tinyorm_testdata_tom_mysql"), { // shell:connection
             {driver_,         QMYSQL},
-            {host_,           qEnvironmentVariable("DB_MYSQL_HOST", H127001)},
-            {port_,           qEnvironmentVariable("DB_MYSQL_PORT", P3306)},
-            {database_,       qEnvironmentVariable("DB_MYSQL_DATABASE", EMPTY)},
-            {username_,       qEnvironmentVariable("DB_MYSQL_USERNAME", EMPTY)},
-            {password_,       qEnvironmentVariable("DB_MYSQL_PASSWORD", EMPTY)},
-            {charset_,        qEnvironmentVariable("DB_MYSQL_CHARSET", UTF8MB4)},
-            {collation_,      qEnvironmentVariable("DB_MYSQL_COLLATION",
-                                                   UTF8MB40900aici)},
+            {host_,           qEnvironmentVariable("DB_MYSQL_HOST",      H127001)},
+            {port_,           qEnvironmentVariable("DB_MYSQL_PORT",      P3306)},
+            {database_,       qEnvironmentVariable("DB_MYSQL_DATABASE",  EMPTY)},
+            {username_,       qEnvironmentVariable("DB_MYSQL_USERNAME",  EMPTY)},
+            {password_,       qEnvironmentVariable("DB_MYSQL_PASSWORD",  EMPTY)},
+            {charset_,        qEnvironmentVariable("DB_MYSQL_CHARSET",   UTF8MB4)},
+            {collation_,      qEnvironmentVariable("DB_MYSQL_COLLATION", UTF8MB40900aici)},
             {timezone_,       TZ00},
             // Specifies what time zone all QDateTime-s will have
             {qt_timezone,     QVariant::fromValue(Qt::UTC)},
