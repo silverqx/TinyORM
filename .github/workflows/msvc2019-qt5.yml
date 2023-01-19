@@ -259,7 +259,7 @@ jobs:
 
     - name: QMYSQL driver dlls install (Qt 5.15.2)
       run: |
-        7z.exe x -o"$env:QT_PLUGIN_PATH/sqldrivers" $env:archive_filepath
+        7z.exe x -y -o"$env:QT_PLUGIN_PATH/sqldrivers" $env:archive_filepath
       env:
         archive_filepath: ${{ steps.downloads-initialize-qmysql-dlls.outputs.Filepath }}
 
@@ -302,7 +302,7 @@ jobs:
 
     - name: MySQL 8 libmysql.dll install (Qt 5.15.2)
       run: |
-        7z.exe x -o'${{ runner.workspace }}/TinyORM-bin' $env:archive_filepath
+        7z.exe x -y -o'${{ runner.workspace }}/TinyORM-bin' $env:archive_filepath
       env:
         archive_filepath: ${{ steps.downloads-initialize-mysql_8-libmysql-dll.outputs.Filepath }}
 
