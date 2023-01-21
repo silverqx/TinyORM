@@ -81,9 +81,13 @@ namespace Orm::Constants
     const QString dont_drop    = QStringLiteral("dont_drop");
     const QString qt_timezone  = QStringLiteral("qt_timezone");
 
+    // MySQL SSL
     const QString SSL_CERT     = QStringLiteral("SSL_CERT");
     const QString SSL_KEY      = QStringLiteral("SSL_KEY");
     const QString SSL_CA       = QStringLiteral("SSL_CA");
+
+    // PostgreSQL SSL
+    const QString sslmode_     = QStringLiteral("sslmode");
 
     const QString isolation_level         = QStringLiteral("isolation_level");
     const QString foreign_key_constraints = QStringLiteral("foreign_key_constraints");

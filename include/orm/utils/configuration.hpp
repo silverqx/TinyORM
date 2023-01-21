@@ -42,6 +42,7 @@ namespace Utils
         static QtTimeZoneConfig
         prepareQtTimeZone(const QVariant &qtTimeZone, const QString &connection);
 
+        /* MySQL section */
         /*! Get a MySQL SSL-related options hash (for TLS connection). */
         static QVariantHash mysqlSslOptions();
         /*! Insert a MySQL SSL-related options to the MySQL's options configuration. */
@@ -51,6 +52,16 @@ namespace Utils
 
         /*! Set connect/read/write timeouts to 1sec (use only for localhost). */
         static QVariantHash &minimizeMySqlTimeouts(QVariantHash &options);
+
+        /* PostgreSQL section */
+        /*! Get a PostgreSQL SSL-related options hash (for TLS connection). */
+        static QVariantHash postgresSslOptions();
+        /*! Insert a PostgreSQL SSL-related options to the PostgreSQL's options
+            configuration. */
+        static QVariantHash insertPostgresSslOptions(QVariantHash &&options);
+        /*! Insert a PostgreSQL SSL-related options to the PostgreSQL's options
+            configuration. */
+        static QVariantHash &insertPostgresSslOptions(QVariantHash &options);
 
     private:
         /*! Prepare IANA ID for the QTimeZone constructor (prepends UTC if needed). */

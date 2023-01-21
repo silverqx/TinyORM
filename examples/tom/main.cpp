@@ -119,7 +119,7 @@ std::shared_ptr<DatabaseManager> setupManager()
             {prefix_indexes, true},
             // ConnectionFactory provides a default value for this (for reference only)
 //            {dont_drop,      QStringList {QStringLiteral("spatial_ref_sys")}},
-            {options_,       QVariantHash()},
+            {options_,       ConfigUtils::postgresSslOptions()},
         }},
 
         // SQLite connection

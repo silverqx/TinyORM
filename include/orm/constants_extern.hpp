@@ -92,9 +92,13 @@ namespace Orm::Constants
     SHAREDLIB_EXPORT extern const QString dont_drop;
     SHAREDLIB_EXPORT extern const QString qt_timezone;
 
+    // MySQL SSL
     SHAREDLIB_EXPORT extern const QString SSL_CERT;
     SHAREDLIB_EXPORT extern const QString SSL_KEY;
     SHAREDLIB_EXPORT extern const QString SSL_CA;
+
+    // PostgreSQL SSL
+    SHAREDLIB_EXPORT extern const QString sslmode_;
 
     SHAREDLIB_EXPORT extern const QString isolation_level;
     SHAREDLIB_EXPORT extern const QString foreign_key_constraints;

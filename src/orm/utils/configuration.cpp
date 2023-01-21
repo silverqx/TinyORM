@@ -84,11 +84,13 @@ Configuration::prepareQtTimeZone(const QVariant &qtTimeZone, const QString &conn
     }
 }
 
+/* MySQL section */
+
 namespace
 {
-    /*! Insert a new item to the MySQL SSL options hash. */
+    /*! Insert a new item to the DB options hash. */
     template<QVariantConcept T>
-    void insertMySqlSslOption(QVariantHash &options, const QString &key, T &&value)
+    void insertDbOption(QVariantHash &options, const QString &key, T &&value)
     {
         if (value.isEmpty())
             return;
@@ -108,12 +110,9 @@ namespace
 
         /* Don't make any special validation here like both the KEY and CERT has to be
            set at once, simply set what is set in the environment variables. */
-        insertMySqlSslOption(options, SSL_CERT,
-                             qEnvironmentVariable("DB_MYSQL_SSL_CERT"));
-        insertMySqlSslOption(options, SSL_KEY,
-                             qEnvironmentVariable("DB_MYSQL_SSL_KEY"));
-        insertMySqlSslOption(options, SSL_CA,
-                             qEnvironmentVariable("DB_MYSQL_SSL_CA"));
+        insertDbOption(options, SSL_CERT, qEnvironmentVariable("DB_MYSQL_SSL_CERT"));
+        insertDbOption(options, SSL_KEY,  qEnvironmentVariable("DB_MYSQL_SSL_KEY"));
+        insertDbOption(options, SSL_CA,   qEnvironmentVariable("DB_MYSQL_SSL_CA"));
 
         return options;
     }
@@ -148,6 +147,46 @@ QVariantHash &Configuration::minimizeMySqlTimeouts(QVariantHash &options)
     options.insert({{QStringLiteral("MYSQL_OPT_CONNECT_TIMEOUT"), 1},
                     {QStringLiteral("MYSQL_OPT_READ_TIMEOUT"),    1},
                     {QStringLiteral("MYSQL_OPT_WRITE_TIMEOUT"),   1}});
+
+    return options;
+}
+
+/* PostgreSQL section */
+
+namespace
+{
+    /*! PostgreSQL SSL options hash. */
+    QVariantHash getPostgresSslOptions()
+    {
+        QVariantHash options;
+        options.reserve(1);
+
+        insertDbOption(options, sslmode_, qEnvironmentVariable("DB_PGSQL_SSLMODE"));
+
+        return options;
+    }
+} // namespace
+
+QVariantHash Configuration::postgresSslOptions()
+{
+    QVariantHash options;
+    options.reserve(6);
+
+    options.insert(getPostgresSslOptions());
+
+    return options;
+}
+
+QVariantHash Configuration::insertPostgresSslOptions(QVariantHash &&options)
+{
+    options.insert(getPostgresSslOptions());
+
+    return std::move(options);
+}
+
+QVariantHash &Configuration::insertPostgresSslOptions(QVariantHash &options)
+{
+    options.insert(getPostgresSslOptions());
 
     return options;
 }

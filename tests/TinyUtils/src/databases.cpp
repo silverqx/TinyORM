@@ -246,7 +246,7 @@ Databases::postgresConfiguration()
         {prefix_indexes, true},
         // ConnectionFactory provides a default value for this, this is only for reference
 //        {dont_drop,      QStringList {QStringLiteral("spatial_ref_sys")}},
-        {options_,       QVariantHash()},
+        {options_,       ConfigUtils::postgresSslOptions()},
     };
 
     // Environment variables were undefined
