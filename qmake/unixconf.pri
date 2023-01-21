@@ -23,8 +23,22 @@ QMAKE_CXXFLAGS_WARN_ON *= \
     -pedantic \
     -pedantic-errors \
 
-clang: \
+clang {
     QMAKE_CXXFLAGS_WARN_ON *= -Wdeprecated
+
+    # The -fno-pch-timestamp option is needed for Clang with ccache, this option will be
+    # used even when the ccache isn't used because is very hard to make 100% logic that
+    # will detect the ccache with qmake but it doesn't interfere with anything so it's ok
+    precompile_header {
+        # qmake on MSYS2 ignores the QMAKE_CXXFLAGS_PRECOMPILE variable
+        mingw: \
+            QMAKE_CXXFLAGS = -Xclang -fno-pch-timestamp $$QMAKE_CXXFLAGS
+
+        else: \
+            QMAKE_CXXFLAGS_PRECOMPILE = -Xclang -fno-pch-timestamp \
+                $$QMAKE_CXXFLAGS_PRECOMPILE
+    }
+}
 gcc: \
     QMAKE_CXXFLAGS_WARN_ON *= -Wdeprecated-copy-dtor
 
