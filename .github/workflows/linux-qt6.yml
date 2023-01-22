@@ -62,7 +62,7 @@ jobs:
         DB_PGSQL_DATABASE: ${{ secrets.DB_PGSQL_DATABASE }}
         DB_PGSQL_USERNAME: ${{ secrets.DB_PGSQL_USERNAME }}
 
-    - name: Hosts add MySQL server host URL
+    - name: Hosts add MySQL server hostname
       run: >-
         sudo -- sh -c "echo '127.0.0.1\t$DB_MYSQL_HOST' >> /etc/hosts"
       env:

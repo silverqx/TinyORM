@@ -60,7 +60,7 @@ jobs:
         DB_PGSQL_DATABASE: ${{ secrets.DB_PGSQL_DATABASE }}
         DB_PGSQL_USERNAME: ${{ secrets.DB_PGSQL_USERNAME }}
 
-    - name: Hosts add MySQL server host URL
+    - name: Hosts add MySQL server hostname
       run: >-
         "127.0.0.1`t$env:DB_MYSQL_HOST" |
         Add-Content -Path "$env:windir/System32/drivers/etc/hosts" -Force
