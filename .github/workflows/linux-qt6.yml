@@ -59,7 +59,7 @@ jobs:
 
     - name: PostgreSQL create TinyORM user
       run: >-
-        sudo -u postgres --
+        sudo --user=postgres --
         psql --command="CREATE USER $DB_PGSQL_USERNAME PASSWORD '$DB_PGSQL_PASSWORD'"
       env:
         DB_PGSQL_PASSWORD: ${{ secrets.DB_PGSQL_PASSWORD }}
@@ -67,7 +67,7 @@ jobs:
 
     - name: PostgreSQL create TinyORM database
       run: |
-        sudo -u postgres -- createdb --owner=$DB_PGSQL_USERNAME $DB_PGSQL_DATABASE
+        sudo --user=postgres -- createdb --owner=$DB_PGSQL_USERNAME $DB_PGSQL_DATABASE
       env:
         DB_PGSQL_DATABASE: ${{ secrets.DB_PGSQL_DATABASE }}
         DB_PGSQL_USERNAME: ${{ secrets.DB_PGSQL_USERNAME }}
@@ -105,7 +105,7 @@ jobs:
     - name: MySQL generate SSL certificates
       run: |
         # It's enough to remove only these three certificate-related files
-        sudo -u mysql -- rm /var/lib/mysql/{ca,server-cert,server-key}.pem
+        sudo --user=mysql -- rm /var/lib/mysql/{ca,server-cert,server-key}.pem
         sudo mysql_ssl_rsa_setup --suffix=TinyORM --uid=mysql
 
     - name: MySQL copy SSL certificates for runner user
