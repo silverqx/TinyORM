@@ -31,28 +31,37 @@ jobs:
       env:
         DB_SQLITE_DATABASE: ${{ secrets.DB_SQLITE_DATABASE }}
 
+    - name: PostgreSQL add on the $env:Path
+      run: |
+        "$env:PGBIN" >> $env:GITHUB_PATH
+
     - name: PostgreSQL service start
       run: |
         Set-Service -Name postgresql-x64-14 -StartupType Manual
         Start-Service postgresql-x64-14
 
-    - name: PostgreSQL add on the $env:Path
-      run: |
-        "$env:PGBIN" >> $env:GITHUB_PATH
-
     - name: PostgreSQL service check status
       run: |
-        $pgsqlService = Get-Service postgresql-x64-14
+        $serviceName = 'postgresql-x64-14'
+
+        Write-Output '::group::Get-Service'
+        $pgsqlService = Get-Service $serviceName
         Write-Output $pgsqlService
+        Write-Output '::endgroup::'
 
-        $pgsqlService.status.ToString() -ceq 'Running' `
-        -or $(throw 'postgresql-x64-14 service is not running') > $null
+        Write-Output '::group::Service running check'
+        $pgsqlService.status.ToString() -ceq 'Running' -or `
+        $(throw "$serviceName service is not running") > $null
+        Write-Output '::endgroup::'
 
+        Write-Output '::group::pg_isready'
         pg_isready.exe
+        Write-Output '::endgroup::'
 
     - name: PostgreSQL create TinyORM user
-      run: |
-        "CREATE USER $env:DB_PGSQL_USERNAME PASSWORD '$env:DB_PGSQL_PASSWORD'" | psql.exe
+      run: >-
+        "create user `"$env:DB_PGSQL_USERNAME`"
+        with password '$env:DB_PGSQL_PASSWORD';" | psql.exe
       env:
         DB_PGSQL_PASSWORD: ${{ secrets.DB_PGSQL_PASSWORD }}
         DB_PGSQL_USERNAME: ${{ secrets.DB_PGSQL_USERNAME }}
