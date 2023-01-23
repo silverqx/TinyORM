@@ -186,16 +186,21 @@ jobs:
         DB_MYSQL_ROOT_USERNAME: ${{ secrets.DB_MYSQL_ROOT_USERNAME }}
 
     - name: MySQL check service status
-      run: >-
+      run: |
+        Write-Output '::group::Service name'
         $mysqlService = Get-Service MySQL
-
         Write-Output $mysqlService
+        Write-Output '::endgroup::'
 
-        $mysqlService.status.ToString() -ceq 'Running' -or
+        Write-Output '::group::Service running check'
+        $mysqlService.status.ToString() -ceq 'Running' -or `
         $(throw 'MySQL service is not running') > $null
+        Write-Output '::endgroup::'
 
-        mysqladmin.exe --user=$env:DB_MYSQL_ROOT_USERNAME
+        Write-Output '::group::Ping'
+        mysqladmin.exe --user=$env:DB_MYSQL_ROOT_USERNAME `
         --password=$env:DB_MYSQL_ROOT_PASSWORD ping
+        Write-Output '::endgroup::'
       env:
         DB_MYSQL_ROOT_PASSWORD: ${{ secrets.DB_MYSQL_ROOT_PASSWORD }}
         DB_MYSQL_ROOT_USERNAME: ${{ secrets.DB_MYSQL_ROOT_USERNAME }}

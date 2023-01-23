@@ -136,10 +136,17 @@ jobs:
 
     - name: MySQL check service status
       run: |
-        sudo systemctl status mysql.service
-        systemctl is-active --quiet mysql.service
+        Write-Output '::group::Service status'
+        systemctl status mysql.service
+        Write-Output '::endgroup::'
 
+        Write-Output '::group::Service is-active check'
+        systemctl is-active --quiet mysql.service
+        Write-Output '::endgroup::'
+
+        Write-Output '::group::Ping'
         mysqladmin --user=$DB_MYSQL_ROOT_USERNAME --password=$DB_MYSQL_ROOT_PASSWORD ping
+        Write-Output '::endgroup::'
       env:
         DB_MYSQL_ROOT_PASSWORD: ${{ secrets.DB_MYSQL_ROOT_PASSWORD }}
         DB_MYSQL_ROOT_USERNAME: ${{ secrets.DB_MYSQL_ROOT_USERNAME }}
