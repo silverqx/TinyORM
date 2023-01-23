@@ -42,11 +42,11 @@ jobs:
       env:
         DB_SQLITE_DATABASE: ${{ secrets.DB_SQLITE_DATABASE }}
 
-    - name: PostgreSQL start service
+    - name: PostgreSQL service start
       run: |
         sudo systemctl start postgresql.service
 
-    - name: PostgreSQL check service status
+    - name: PostgreSQL service check status
       run: |
         sudo systemctl status postgresql.service
         pg_isready
@@ -88,7 +88,7 @@ jobs:
       env:
         DB_MYSQL_HOST: ${{ secrets.DB_MYSQL_HOST }}
 
-    - name: MySQL start service
+    - name: MySQL service start
       run: |
         sudo systemctl start mysql.service
 
@@ -113,7 +113,7 @@ jobs:
         DB_MYSQL_ROOT_PASSWORD: ${{ secrets.DB_MYSQL_ROOT_PASSWORD }}
         DB_MYSQL_ROOT_USERNAME: ${{ secrets.DB_MYSQL_ROOT_USERNAME }}
 
-    - name: MySQL check service status
+    - name: MySQL service check status
       run: |
         Write-Output '::group::Service status'
         systemctl status mysql.service

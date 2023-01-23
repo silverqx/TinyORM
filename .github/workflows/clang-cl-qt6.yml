@@ -169,7 +169,7 @@ jobs:
       run: |
         "$env:PGBIN" >> $env:GITHUB_PATH
 
-    - name: PostgreSQL start service
+    - name: PostgreSQL service start
       run: |
         Set-Service -Name postgresql-x64-14 -StartupType Manual
         Start-Service postgresql-x64-14
@@ -216,11 +216,11 @@ jobs:
         DB_PGSQL_SSL_DN: ${{ secrets.DB_PGSQL_SSL_DN }}
         DB_PGSQL_USERNAME: ${{ secrets.DB_PGSQL_USERNAME }}
 
-    - name: PostgreSQL restart service
+    - name: PostgreSQL service restart
       run: |
         Restart-Service postgresql-x64-14
 
-    - name: PostgreSQL check service status
+    - name: PostgreSQL service check status
       run: |
         $serviceName = 'postgresql-x64-14'
 
@@ -270,7 +270,7 @@ jobs:
         Remove-Item ./ca.pem, ./server-cert.pem, ./server-key.pem
         mysql_ssl_rsa_setup.exe --suffix=TinyORM
 
-    - name: MySQL install/start service
+    - name: MySQL service install/start
       run: |
         mysqld.exe --install MySQL
         Start-Service MySQL
@@ -345,7 +345,7 @@ jobs:
         DB_MYSQL_ROOT_PASSWORD: ${{ secrets.DB_MYSQL_ROOT_PASSWORD }}
         DB_MYSQL_ROOT_USERNAME: ${{ secrets.DB_MYSQL_ROOT_USERNAME }}
 
-    - name: MySQL check service status
+    - name: MySQL service check status
       run: |
         $serviceName = 'MySQL'
 

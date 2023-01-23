@@ -55,7 +55,7 @@ jobs:
       env:
         DB_SQLITE_DATABASE: ${{ secrets.DB_SQLITE_DATABASE }}
 
-    - name: PostgreSQL start service
+    - name: PostgreSQL service start
       run: |
         Set-Service -Name postgresql-x64-14 -StartupType Manual
         Start-Service postgresql-x64-14
@@ -64,7 +64,7 @@ jobs:
       run: |
         "$env:PGBIN" >> $env:GITHUB_PATH
 
-    - name: PostgreSQL check service status
+    - name: PostgreSQL service check status
       run: |
         $pgsqlService = Get-Service postgresql-x64-14
         Write-Output $pgsqlService
@@ -120,7 +120,7 @@ jobs:
         Remove-Item ./ca.pem, ./server-cert.pem, ./server-key.pem
         mysql_ssl_rsa_setup.exe --suffix=TinyORM
 
-    - name: MySQL install/start service
+    - name: MySQL service install/start
       run: |
         mysqld.exe --install MySQL
         Start-Service MySQL
@@ -195,7 +195,7 @@ jobs:
         DB_MYSQL_ROOT_PASSWORD: ${{ secrets.DB_MYSQL_ROOT_PASSWORD }}
         DB_MYSQL_ROOT_USERNAME: ${{ secrets.DB_MYSQL_ROOT_USERNAME }}
 
-    - name: MySQL check service status
+    - name: MySQL service check status
       run: |
         $serviceName = 'MySQL'
 
