@@ -1,3 +1,13 @@
+# MySQL
+# ---
+# Forces TLS connections with the caching_sha2_password and certificate validation, also validates
+# issuer  == CN=MySQL_Server_TinyORM_Auto_Generated_CA_Certificate and
+# subject == CN=MySQL_Server_TinyORM_Auto_Generated_Client_Certificate.
+
+# PostgreSQL
+# ---
+# It uses the default unencrypted database connections.
+
 name: MSYS2 UCRT64 GCC/Clang
 
 on:

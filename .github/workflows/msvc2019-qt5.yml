@@ -1,3 +1,7 @@
+# MySQL and PostgreSQL
+# ---
+# Both use the default unencrypted database connections.
+
 name: MSVC2019 Qt5.15
 
 on:

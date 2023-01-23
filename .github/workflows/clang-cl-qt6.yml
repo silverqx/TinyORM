@@ -1,3 +1,16 @@
+# MySQL
+# ---
+# Forces TLS connections with the caching_sha2_password and certificate validation, also validates
+# issuer  == CN=MySQL_Server_TinyORM_Auto_Generated_CA_Certificate and
+# subject == CN=MySQL_Server_TinyORM_Auto_Generated_Client_Certificate.
+
+# PostgreSQL
+# ---
+# Forces TLS connections with the scram-sha-256 authentication and full certificate validation
+# using the clientcert=verify-full in the pg_hba.conf and sslmode=verify-full on the libpq client
+# side, so the the server host name is matched against the CN (Common Name)
+# stored in the server certificate.
+
 name: clang-cl MSVC2022 Qt6.4
 
 on:
