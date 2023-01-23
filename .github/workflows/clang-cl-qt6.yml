@@ -151,18 +151,10 @@ jobs:
         Move-Item -Path ./server.crt, ./server.key -Destination $env:PGDATA
         Write-Output '::endgroup::'
 
-        Write-Output '::group::Verify server certificates'
-        Get-ChildItem -Path "$env:PGDATA/*" -Include root.crt, server.crt, server.key
-        Write-Output '::endgroup::'
-
         Write-Output '::group::Install client certificates'
         $folderPath = Join-Path -Path $env:APPDATA -ChildPath 'postgresql'
         New-Item -Type Directory $folderPath
         Move-Item -Path ./postgresql.crt, ./postgresql.key, ./root.crt -Destination $folderPath
-        Write-Output '::endgroup::'
-
-        Write-Output '::group::Verify client certificates'
-        Get-ChildItem -Path "$folderPath/*" -Include postgresql.crt, postgresql.key, root.crt
         Write-Output '::endgroup::'
 
     - name: PostgreSQL add PGBIN on the $env:Path
