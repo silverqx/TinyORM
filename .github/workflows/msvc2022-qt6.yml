@@ -27,31 +27,156 @@ jobs:
       env:
         DB_SQLITE_DATABASE: ${{ secrets.DB_SQLITE_DATABASE }}
 
+    - name: Hosts add PostgreSQL server hostname
+      run: >-
+        "127.0.0.1`t$env:DB_PGSQL_HOST" |
+        Add-Content -Path "$env:windir/System32/drivers/etc/hosts" -Force
+      env:
+        DB_PGSQL_HOST: ${{ secrets.DB_PGSQL_HOST_SSL }}
+
+    - name: PostgreSQL initialize configuration
+      working-directory: .github/resources/windows/postgresql
+      run: |
+        Copy-Item -Path ./conf.d -Destination $env:PGDATA -Recurse -Force
+
+        "include_dir = 'conf.d'" >> (Join-Path -Path $env:PGDATA -ChildPath 'postgresql.conf')
+
+    - name: PostgreSQL SSL certificates initialize
+      id: openssl-initialize-postgresql-certificates
+      run: |
+        $folderPath = Join-Path -Path ${{ env.TinyRunnerWorkPath }} `
+        -ChildPath 'tiny-postgresql-certificates'
+
+        # Create an empty folder for generating certificates
+        New-Item -Type Directory $folderPath
+
+        "FolderPath=$folderPath" >> $env:GITHUB_OUTPUT
+
+        # This hash invalidates the PostgreSQL certificates cache every month
+        $hash = Get-Date -Format 'yyyyMM'
+        "Hash=$hash" >> $env:GITHUB_OUTPUT
+
+    - name: PostgreSQL SSL certificates restore cache
+      uses: actions/cache/restore@v3
+      id: openssl-cache-postgresql-certificates
+      with:
+        path: |
+          ${{ env.folder_path }}/*.crt
+          ${{ env.folder_path }}/*.key
+        key: ${{ runner.os }}-openssl-${{ env.cache_name }}-${{ env.cache_hash }}
+      env:
+        # This hash invalidates this certificates cache every month
+        cache_hash: ${{ steps.openssl-initialize-postgresql-certificates.outputs.Hash }}
+        cache_name: postgresql-certificates
+        folder_path: ${{ steps.openssl-initialize-postgresql-certificates.outputs.FolderPath }}
+
+    - name: PostgreSQL SSL certificates generate
+      if: steps.openssl-cache-postgresql-certificates.outputs.cache-hit != 'true'
+      working-directory: ${{ steps.openssl-initialize-postgresql-certificates.outputs.FolderPath }}
+      run: |
+        Write-Output '::group::Print openssl version'
+        openssl.exe version -a
+        Write-Output '::endgroup::'
+
+        Write-Output '::group::Create .rnd file'
+        openssl.exe rand -out ./.rnd -writerand ./.rnd
+        Write-Output '::endgroup::'
+
+        Write-Output '::group::CA certificate'
+        # -days 32 is important, -days 30 is not enough
+        openssl.exe req -new -x509 -nodes -subj $env:DB_PGSQL_SSL_SUBJECT_CA -days 32 `
+        -keyout root.key -out root.crt
+        Write-Output '::endgroup::'
+
+        Write-Output '::group::Server certificate'
+        openssl.exe req -new -nodes -subj $env:DB_PGSQL_SSL_SUBJECT_SERVER -keyout server.key `
+        -out server.csr
+        $env:OPENSSL_SAN = "DNS:${env:DB_PGSQL_HOST}"
+        openssl.exe x509 -req -CA root.crt -CAkey root.key -days 32 -set_serial 01 `
+        -extfile $env:extfile -in server.csr -out server.crt
+        Write-Output '::endgroup::'
+
+        Write-Output '::group::Client certificate'
+        openssl.exe req -new -nodes -subj $env:DB_PGSQL_SSL_SUBJECT_CLIENT -keyout postgresql.key `
+        -out postgresql.csr
+        $env:OPENSSL_SAN = "DNS:${env:DB_PGSQL_USERNAME}"
+        openssl.exe x509 -req -CA root.crt -CAkey root.key -days 32 -set_serial 02 `
+        -extfile $env:extfile -in postgresql.csr -out postgresql.crt
+        Write-Output '::endgroup::'
+      env:
+        extfile: ${{ github.workspace }}/.github/resources/openssl/usr_cert.cnf
+        DB_PGSQL_HOST: ${{ secrets.DB_PGSQL_HOST_SSL }}
+        DB_PGSQL_USERNAME: ${{ secrets.DB_PGSQL_USERNAME }}
+        DB_PGSQL_SSL_SUBJECT_CA: ${{ secrets.DB_PGSQL_SSL_SUBJECT_CA }}
+        DB_PGSQL_SSL_SUBJECT_CLIENT: ${{ secrets.DB_PGSQL_SSL_SUBJECT_CLIENT }}
+        DB_PGSQL_SSL_SUBJECT_SERVER: ${{ secrets.DB_PGSQL_SSL_SUBJECT_SERVER }}
+
+    # Always verify, regardless if certificates were newly generated or restored from the cache
+    - name: PostgreSQL SSL certificates verify
+      working-directory: ${{ steps.openssl-initialize-postgresql-certificates.outputs.FolderPath }}
+      run: |
+        openssl.exe verify -CAfile root.crt server.crt postgresql.crt
+
+    # Save the cache only if certificates were newly generated
+    # The actions/cache/save allows to use the Move-Item during the install step
+    - name: PostgreSQL SSL certificates save cache
+      if: steps.openssl-cache-postgresql-certificates.outputs.cache-hit != 'true'
+      uses: actions/cache/save@v3
+      with:
+        path: |
+          ${{ env.folder_path }}/*.crt
+          ${{ env.folder_path }}/*.key
+        key: ${{ steps.openssl-cache-postgresql-certificates.outputs.cache-primary-key }}
+      env:
+        folder_path: ${{ steps.openssl-initialize-postgresql-certificates.outputs.FolderPath }}
+
+    - name: PostgreSQL SSL certificates install
+      working-directory: ${{ steps.openssl-initialize-postgresql-certificates.outputs.FolderPath }}
+      run: |
+        Write-Output '::group::Install server certificates'
+        Copy-Item -Path ./root.crt -Destination $env:PGDATA
+        Move-Item -Path ./server.crt, ./server.key -Destination $env:PGDATA
+        Write-Output '::endgroup::'
+
+        Write-Output '::group::Verify server certificates'
+        Get-ChildItem -Path "$env:PGDATA/*" -Include root.crt, server.crt, server.key
+        Write-Output '::endgroup::'
+
+        Write-Output '::group::Install client certificates'
+        $folderPath = Join-Path -Path $env:APPDATA -ChildPath 'postgresql'
+        New-Item -Type Directory $folderPath
+        Move-Item -Path ./postgresql.crt, ./postgresql.key, ./root.crt -Destination $folderPath
+        Write-Output '::endgroup::'
+
+        Write-Output '::group::Verify client certificates'
+        Get-ChildItem -Path "$folderPath/*" -Include postgresql.crt, postgresql.key, root.crt
+        Write-Output '::endgroup::'
+
+    - name: PostgreSQL add PGBIN on the $env:Path
+      run: |
+        "$env:PGBIN" >> $env:GITHUB_PATH
+
     - name: PostgreSQL start service
       run: |
         Set-Service -Name postgresql-x64-14 -StartupType Manual
         Start-Service postgresql-x64-14
 
-    - name: PostgreSQL add on the $env:Path
-      run: |
-        "$env:PGBIN" >> $env:GITHUB_PATH
-
-    - name: PostgreSQL check service status
-      run: |
-        $pgsqlService = Get-Service postgresql-x64-14
-        Write-Output $pgsqlService
-
-        $pgsqlService.status.ToString() -ceq 'Running' `
-        -or $(throw 'postgresql-x64-14 service is not running') > $null
-
-        pg_isready.exe
+    - name: PostgreSQL change ${{ secrets.DB_PGSQL_ROOT_USERNAME }} password
+      run: >-
+        "alter user `"$env:DB_PGSQL_ROOT_USERNAME`"
+        with password '$env:DB_PGSQL_ROOT_PASSWORD';" | psql.exe
+      env:
+        DB_PGSQL_ROOT_PASSWORD: ${{ secrets.DB_PGSQL_ROOT_PASSWORD }}
+        DB_PGSQL_ROOT_USERNAME: ${{ secrets.DB_PGSQL_ROOT_USERNAME }}
 
     - name: PostgreSQL create TinyORM user
-      run: |
-        "CREATE USER $env:DB_PGSQL_USERNAME PASSWORD '$env:DB_PGSQL_PASSWORD'" | psql.exe
+      run: >-
+        "create user `"$env:DB_PGSQL_USERNAME`"
+        with password '$env:DB_PGSQL_PASSWORD';" | psql.exe
       env:
         DB_PGSQL_PASSWORD: ${{ secrets.DB_PGSQL_PASSWORD }}
         DB_PGSQL_USERNAME: ${{ secrets.DB_PGSQL_USERNAME }}
+        PGPASSWORD: ${{ secrets.DB_PGSQL_ROOT_PASSWORD }}
 
     - name: PostgreSQL create TinyORM database
       run: |
@@ -59,6 +184,50 @@ jobs:
       env:
         DB_PGSQL_DATABASE: ${{ secrets.DB_PGSQL_DATABASE }}
         DB_PGSQL_USERNAME: ${{ secrets.DB_PGSQL_USERNAME }}
+        PGPASSWORD: ${{ secrets.DB_PGSQL_ROOT_PASSWORD }}
+
+    - name: PostgreSQL initialize client authentication
+      working-directory: .github/resources/windows/postgresql
+      run: >-
+        $pgHbaConf = Join-Path -Path $env:PGDATA -ChildPath 'pg_hba.conf'
+
+        $pgHbaTmpl = "`$1`n`n" +
+        "# crystal`n" +
+        'hostssl {0}       {1}       127.0.0.1/32            cert  clientname=DN map=dn'
+
+        (Get-Content -Path $pgHbaConf) -creplace '(# +TYPE +DATABASE +USER +ADDRESS +METHOD)',
+        ($pgHbaTmpl -f $env:DB_PGSQL_DATABASE, $env:DB_PGSQL_USERNAME) |
+        Set-Content -Path $pgHbaConf
+
+        $pgIdentConf = Join-Path -Path $env:PGDATA -ChildPath 'pg_ident.conf'
+
+        'dn "/^{0}$" {1}' -f $env:DB_PGSQL_SSL_DN, $env:DB_PGSQL_USERNAME >> $pgIdentConf
+      env:
+        DB_PGSQL_DATABASE: ${{ secrets.DB_PGSQL_DATABASE }}
+        DB_PGSQL_SSL_DN: ${{ secrets.DB_PGSQL_SSL_DN }}
+        DB_PGSQL_USERNAME: ${{ secrets.DB_PGSQL_USERNAME }}
+
+    - name: PostgreSQL restart service
+      run: |
+        Restart-Service postgresql-x64-14
+
+    - name: PostgreSQL check service status
+      run: |
+        $serviceName = 'postgresql-x64-14'
+
+        Write-Output '::group::Get-Service'
+        $pgsqlService = Get-Service $serviceName
+        Write-Output $pgsqlService
+        Write-Output '::endgroup::'
+
+        Write-Output '::group::Service running check'
+        $pgsqlService.status.ToString() -ceq 'Running' -or `
+        $(throw "$serviceName service is not running") > $null
+        Write-Output '::endgroup::'
+
+        Write-Output '::group::pg_isready'
+        pg_isready.exe
+        Write-Output '::endgroup::'
 
     - name: Hosts add MySQL server hostname
       run: >-
@@ -396,8 +565,8 @@ jobs:
         DB_MYSQL_USERNAME: ${{ secrets.DB_MYSQL_USERNAME }}
         DB_PGSQL_CHARSET: ${{ secrets.DB_PGSQL_CHARSET }}
         DB_PGSQL_DATABASE: ${{ secrets.DB_PGSQL_DATABASE }}
-        DB_PGSQL_HOST: ${{ secrets.DB_PGSQL_HOST }}
-        DB_PGSQL_PASSWORD: ${{ secrets.DB_PGSQL_PASSWORD }}
+        DB_PGSQL_HOST: ${{ secrets.DB_PGSQL_HOST_SSL }}
+        DB_PGSQL_SSLMODE: ${{ secrets.DB_PGSQL_SSLMODE }}
         DB_PGSQL_USERNAME: ${{ secrets.DB_PGSQL_USERNAME }}
         DB_SQLITE_DATABASE: ${{ env.TinySQLitePath }}
         TOM_TESTDATA_ENV: testing
@@ -418,8 +587,8 @@ jobs:
         DB_MYSQL_USERNAME: ${{ secrets.DB_MYSQL_USERNAME }}
         DB_PGSQL_CHARSET: ${{ secrets.DB_PGSQL_CHARSET }}
         DB_PGSQL_DATABASE: ${{ secrets.DB_PGSQL_DATABASE }}
-        DB_PGSQL_HOST: ${{ secrets.DB_PGSQL_HOST }}
-        DB_PGSQL_PASSWORD: ${{ secrets.DB_PGSQL_PASSWORD }}
+        DB_PGSQL_HOST: ${{ secrets.DB_PGSQL_HOST_SSL }}
+        DB_PGSQL_SSLMODE: ${{ secrets.DB_PGSQL_SSLMODE }}
         DB_PGSQL_USERNAME: ${{ secrets.DB_PGSQL_USERNAME }}
         DB_SQLITE_DATABASE: ${{ env.TinySQLitePath }}
         TOM_TESTS_ENV: testing
@@ -459,8 +628,8 @@ jobs:
       env:
         DB_PGSQL_CHARSET: ${{ secrets.DB_PGSQL_CHARSET }}
         DB_PGSQL_DATABASE: ${{ secrets.DB_PGSQL_DATABASE }}
-        DB_PGSQL_HOST: ${{ secrets.DB_PGSQL_HOST }}
-        DB_PGSQL_PASSWORD: ${{ secrets.DB_PGSQL_PASSWORD }}
+        DB_PGSQL_HOST: ${{ secrets.DB_PGSQL_HOST_SSL }}
+        DB_PGSQL_SSLMODE: ${{ secrets.DB_PGSQL_SSLMODE }}
         DB_PGSQL_USERNAME: ${{ secrets.DB_PGSQL_USERNAME }}
         TOM_EXAMPLE_ENV: testing
 
