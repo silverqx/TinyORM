@@ -115,17 +115,17 @@ jobs:
 
     - name: MySQL service check status
       run: |
-        Write-Output '::group::Service status'
+        echo '::group::Service status'
         systemctl status mysql.service
-        Write-Output '::endgroup::'
+        echo '::endgroup::'
 
-        Write-Output '::group::Service is-active check'
+        echo '::group::Service is-active check'
         systemctl is-active --quiet mysql.service
-        Write-Output '::endgroup::'
+        echo '::endgroup::'
 
-        Write-Output '::group::Ping'
+        echo '::group::Ping'
         mysqladmin --user=$DB_MYSQL_ROOT_USERNAME --password=$DB_MYSQL_ROOT_PASSWORD ping
-        Write-Output '::endgroup::'
+        echo '::endgroup::'
       env:
         DB_MYSQL_ROOT_PASSWORD: ${{ secrets.DB_MYSQL_ROOT_PASSWORD }}
         DB_MYSQL_ROOT_USERNAME: ${{ secrets.DB_MYSQL_ROOT_USERNAME }}
