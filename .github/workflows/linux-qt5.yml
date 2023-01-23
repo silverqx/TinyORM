@@ -88,7 +88,7 @@ jobs:
       run: |
         sudo systemctl start mysql.service
 
-    - name: MySQL change root password
+    - name: MySQL change ${{ secrets.DB_MYSQL_ROOT_USERNAME }} password
       run: >-
         echo "
         alter user '$DB_MYSQL_ROOT_USERNAME'@'localhost'

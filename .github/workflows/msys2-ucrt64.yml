@@ -115,7 +115,7 @@ jobs:
         mysqld.exe --install MySQL
         Start-Service MySQL
 
-    - name: MySQL change root password
+    - name: MySQL change ${{ secrets.DB_MYSQL_ROOT_USERNAME }} password
       run: >-
         "alter user '$env:DB_MYSQL_ROOT_USERNAME'@'localhost'
         identified with caching_sha2_password by '$env:DB_MYSQL_ROOT_PASSWORD'
