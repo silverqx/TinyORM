@@ -153,7 +153,7 @@ jobs:
 
     - name: MySQL check service status
       run: |
-        Write-Output '::group::Service name'
+        Write-Output '::group::Get-Service'
         $mysqlService = Get-Service MySQL
         Write-Output $mysqlService
         Write-Output '::endgroup::'
