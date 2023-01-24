@@ -367,7 +367,7 @@ jobs:
       working-directory: >-
         ../TinyORM-builds-cmake/build-${{ matrix.compiler.key }}-${{ matrix.qt.key }}-cmake-debug/tests/testdata_tom
       run: >-
-        export PATH=../..${PATH:+:}$PATH
+        export PATH=../..${PATH:+:}"$PATH"
 
         ./tom_testdata.exe migrate
         --database=tinyorm_testdata_tom_mysql,tinyorm_testdata_tom_postgres,tinyorm_testdata_tom_sqlite
@@ -419,7 +419,7 @@ jobs:
       working-directory: >-
         ../TinyORM-builds-cmake/build-${{ matrix.compiler.key }}-${{ matrix.qt.key }}-cmake-debug/examples/tom
       run: |
-        export PATH=../..${PATH:+:}$PATH
+        export PATH=../..${PATH:+:}"$PATH"
 
         ./tom.exe migrate:install --database=tinyorm_tom_mysql --no-ansi
         ./tom.exe migrate:status --database=tinyorm_tom_mysql --no-ansi
@@ -443,7 +443,7 @@ jobs:
       working-directory: >-
         ../TinyORM-builds-cmake/build-${{ matrix.compiler.key }}-${{ matrix.qt.key }}-cmake-debug/examples/tom
       run: |
-        export PATH=../..${PATH:+:}$PATH
+        export PATH=../..${PATH:+:}"$PATH"
 
         ./tom.exe migrate:install --database=tinyorm_tom_postgres --no-ansi
         ./tom.exe migrate:status --database=tinyorm_tom_postgres --no-ansi
@@ -463,7 +463,7 @@ jobs:
       working-directory: >-
         ../TinyORM-builds-cmake/build-${{ matrix.compiler.key }}-${{ matrix.qt.key }}-cmake-debug/examples/tom
       run: |
-        export PATH=../..${PATH:+:}$PATH
+        export PATH=../..${PATH:+:}"$PATH"
 
         ./tom.exe migrate:install --database=tinyorm_tom_sqlite --no-ansi
         ./tom.exe migrate:status --database=tinyorm_tom_sqlite --no-ansi
