@@ -180,7 +180,7 @@ jobs:
     - name: add-apt-repository Clang 14
       if: ${{ matrix.compiler.key == 'clang14' }}
       run: |
-        wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | sudo apt-key add -
+        wget -O- https://apt.llvm.org/llvm-snapshot.gpg.key | sudo apt-key add -
         sudo add-apt-repository --yes 'deb http://apt.llvm.org/focal/ llvm-toolchain-focal-14 main'
 
     - name: apt update
