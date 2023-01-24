@@ -498,9 +498,19 @@ https://github.com/silverqx/files/raw/main/clazy-standalone.tar.bz2
 - ssh into runner:
 
   - shortcuts:
+    ctrl-b ?   - help (show commands)
     ctrl-b c   - new window
+    ctrl-b l   - last window (switch to)
+    ctrl-b n   - next window (switch to)
+    ctrl-b p   - previous window (switch to)
     ctrl-b 0-9 - switch to window
     ctrl-b [   - enable scroll mode (eg. Up Arrow or PgDn), press q to quit the scroll mode
+
+    ctrl-b "    - split pane (horizontally)
+    ctrl-b %    - split pane (vertically)
+    ctrl-b z    - resize pane (toggle maximize)
+    ctrl-b M-up - resize pane (up, down, left, right; M- is L-ALT)
+    ctrl-b up   - select pane (up, down, left, right)
 
   - run if failure or success:
 
