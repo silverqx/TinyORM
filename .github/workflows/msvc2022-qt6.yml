@@ -521,7 +521,7 @@ jobs:
 
     - name: CMake print version
       run: |
-        cmake --version
+        cmake.exe --version
 
     - name: TinyORM create build folder (msvc-cmake-debug)
       run: |
@@ -547,7 +547,7 @@ jobs:
 
     - name: TinyORM cmake build ✨ (msvc-cmake-debug)
       run: |
-        cmake --build ../TinyORM-builds-cmake/build-msvc-cmake-debug --target all --parallel 2
+        cmake.exe --build ../TinyORM-builds-cmake/build-msvc-cmake-debug --target all --parallel 2
 
     - name: Ccache statistics
       run: |
@@ -582,7 +582,7 @@ jobs:
     - name: TinyORM execute ctest 🔥
       working-directory: ../TinyORM-builds-cmake/build-msvc-cmake-debug
       run: |
-        ctest --output-on-failure
+        ctest.exe --output-on-failure
       env:
         DB_MYSQL_CHARSET: ${{ secrets.DB_MYSQL_CHARSET }}
         DB_MYSQL_COLLATION: ${{ secrets.DB_MYSQL_COLLATION }}
