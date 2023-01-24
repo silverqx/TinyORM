@@ -27,13 +27,13 @@ jobs:
 
     - name: add-apt-repository gcc 11 and Qt 5.15.2
       run: |
-        sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test
-        sudo add-apt-repository -y ppa:beineri/opt-qt-5.15.2-focal
+        sudo add-apt-repository --yes ppa:ubuntu-toolchain-r/test
+        sudo add-apt-repository --yes ppa:beineri/opt-qt-5.15.2-focal
 
     - name: add-apt-repository Clang 14
       run: |
         wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | sudo apt-key add -
-        sudo add-apt-repository -y 'deb http://apt.llvm.org/focal/ llvm-toolchain-focal-14 main'
+        sudo add-apt-repository --yes 'deb http://apt.llvm.org/focal/ llvm-toolchain-focal-14 main'
 
     - name: apt update
       run: |
@@ -41,7 +41,7 @@ jobs:
 
     - name: apt install clang-14, lld-14, g++-11, clang-tidy-14, and Qt 5.15.2 base
       run: |
-        sudo apt install -y clang-14 lld-14 g++-11 clang-tidy-14 qt515base
+        sudo apt install --yes clang-14 lld-14 g++-11 clang-tidy-14 qt515base
 
     - name: ninja install latest version
       uses: seanmiddleditch/gha-setup-ninja@master
@@ -150,7 +150,7 @@ jobs:
 
     - name: TinyORM create build folder (clang-cmake-debug)
       run: |
-        mkdir -p '../TinyORM-builds-cmake/build-clang-cmake-debug'
+        mkdir --parents '../TinyORM-builds-cmake/build-clang-cmake-debug'
 
     - name: TinyORM cmake configure (clang-cmake-debug)
       run: >-
@@ -213,7 +213,7 @@ jobs:
     - name: clazy-standalone download
       if: steps.downloads-cache-clazy-standalone.outputs.cache-hit != 'true'
       run: |
-        wget "$URL_CLAZY_STANDALONE_LINUX_X64" -O "$archive_filepath" --no-verbose
+        wget "$URL_CLAZY_STANDALONE_LINUX_X64" --output-document="$archive_filepath" --no-verbose
       env:
         archive_filepath: ${{ steps.downloads-initialize-clazy-standalone.outputs.Filepath }}
         URL_CLAZY_STANDALONE_LINUX_X64: ${{ secrets.URL_CLAZY_STANDALONE_LINUX_X64 }}
@@ -234,7 +234,7 @@ jobs:
       run: |
         echo 'TINY_CLANG_TIDY_EXECUTED=true' >> $GITHUB_ENV
 
-        ln -s ../TinyORM-builds-cmake/build-clang-cmake-debug/compile_commands.json \
+        ln --symbolic ../TinyORM-builds-cmake/build-clang-cmake-debug/compile_commands.json \
         compile_commands.json
 
         run-clang-tidy-14 '(?:examples|src|tests)[\\\/]+.+?[\\\/]+(?!mocs_)[\w_\-\+]+\.cpp$'

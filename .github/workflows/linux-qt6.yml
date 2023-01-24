@@ -110,11 +110,11 @@ jobs:
 
     - name: MySQL copy SSL certificates for runner user
       run: |
-        sudo mkdir -p /usr/local/share/crystal-mysql
+        sudo mkdir --parents /usr/local/share/crystal-mysql
         cd /usr/local/share/crystal-mysql
 
         sudo cp /var/lib/mysql/{ca,client-cert,client-key}.pem /usr/local/share/crystal-mysql
-        sudo chown -R root:root /usr/local/share/crystal-mysql
+        sudo chown --recursive root:root /usr/local/share/crystal-mysql
         sudo chmod 444 /usr/local/share/crystal-mysql/{ca,client-cert,client-key}.pem
 
     - name: MySQL service start
@@ -195,7 +195,7 @@ jobs:
 
     - name: SQLite create TinyORM database
       run: |
-        mkdir -p "$(dirname "${{ env.TinySQLitePath }}")"
+        mkdir --parents "$(dirname "${{ env.TinySQLitePath }}")"
 
         touch '${{ env.TinySQLitePath }}'
 
@@ -211,7 +211,7 @@ jobs:
         wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key |
         sudo tee /etc/apt/trusted.gpg.d/llvm-15.asc
 
-        sudo add-apt-repository -y
+        sudo add-apt-repository --yes
         --sourceslist 'deb http://apt.llvm.org/jammy/ llvm-toolchain-jammy-15 main'
 
     - name: apt update
@@ -220,7 +220,7 @@ jobs:
 
     - name: apt install ${{ join(matrix.compiler.apt, ', ') }}, and Qt 6.2.4 base
       run: >-
-        sudo apt install -y ${{ join(matrix.compiler.apt, ' ') }}
+        sudo apt install --yes ${{ join(matrix.compiler.apt, ' ') }}
         qt6-base-dev libqt6sql6-mysql libqt6sql6-sqlite libqt6sql6-psql
 
     - name: ninja install latest version
@@ -257,7 +257,7 @@ jobs:
     - name: Ccache download
       if: steps.downloads-cache-ccache.outputs.cache-hit != 'true'
       run: |
-        wget "$URL_CCACHE_LINUX_X64" -O "$archive_filepath" --no-verbose
+        wget "$URL_CCACHE_LINUX_X64" --output-document="$archive_filepath" --no-verbose
       env:
         archive_filepath: ${{ steps.downloads-initialize-ccache.outputs.Filepath }}
         URL_CCACHE_LINUX_X64: ${{ secrets.URL_CCACHE_LINUX_X64 }}
@@ -330,7 +330,7 @@ jobs:
 
     - name: TinyORM create build folder (${{ matrix.compiler.key }}-cmake-debug)
       run: |
-        mkdir -p '../TinyORM-builds-cmake/build-${{ matrix.compiler.key }}-cmake-debug'
+        mkdir --parents '../TinyORM-builds-cmake/build-${{ matrix.compiler.key }}-cmake-debug'
 
     - name: TinyORM cmake configure (${{ matrix.compiler.key }}-cmake-debug)
       run: >-
