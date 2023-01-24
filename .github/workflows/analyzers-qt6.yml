@@ -228,10 +228,10 @@ jobs:
         archive_filepath: ${{ steps.downloads-initialize-clazy-standalone.outputs.Filepath }}
 
     - name: TinyORM execute clang-tidy 🔥
-      run: |
+      run: >-
         echo 'TINY_CLANG_TIDY_EXECUTED=true' >> $GITHUB_ENV
 
-        ln --symbolic ../TinyORM-builds-cmake/build-clang-cmake-debug/compile_commands.json \
+        ln --symbolic ../TinyORM-builds-cmake/build-clang-cmake-debug/compile_commands.json
         compile_commands.json
 
         run-clang-tidy-15 '(?:examples|src|tests)[\\\/]+.+?[\\\/]+(?!mocs_)[\w_\-\+]+\.cpp$'
