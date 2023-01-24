@@ -128,7 +128,7 @@ jobs:
         identified with caching_sha2_password by '$DB_MYSQL_ROOT_PASSWORD'
         require issuer '/CN=MySQL_Server_TinyORM_Auto_Generated_CA_Certificate' and
         subject '/CN=MySQL_Server_TinyORM_Auto_Generated_Client_Certificate';" |
-        mysql --user=$DB_MYSQL_ROOT_USERNAME --password=$DB_MYSQL_ROOT_PASSWORD_DEFAULT
+        mysql --user="$DB_MYSQL_ROOT_USERNAME" --password="$DB_MYSQL_ROOT_PASSWORD_DEFAULT"
       env:
         DB_MYSQL_ROOT_PASSWORD: ${{ secrets.DB_MYSQL_ROOT_PASSWORD }}
         DB_MYSQL_ROOT_PASSWORD_DEFAULT: ${{ secrets.DB_MYSQL_ROOT_PASSWORD_DEFAULT }}
@@ -137,7 +137,7 @@ jobs:
     - name: MySQL populate time zone tables 👌
       run: >-
         mysql_tzinfo_to_sql /usr/share/zoneinfo |
-        mysql --user=$DB_MYSQL_ROOT_USERNAME --password=$DB_MYSQL_ROOT_PASSWORD mysql
+        mysql --user="$DB_MYSQL_ROOT_USERNAME" --password="$DB_MYSQL_ROOT_PASSWORD" mysql
 
         sudo systemctl restart mysql.service
       env:
@@ -155,7 +155,7 @@ jobs:
         echo '::endgroup::'
 
         echo '::group::Ping'
-        mysqladmin --user=$DB_MYSQL_ROOT_USERNAME --password=$DB_MYSQL_ROOT_PASSWORD ping
+        mysqladmin --user="$DB_MYSQL_ROOT_USERNAME" --password="$DB_MYSQL_ROOT_PASSWORD" ping
         echo '::endgroup::'
       env:
         DB_MYSQL_ROOT_PASSWORD: ${{ secrets.DB_MYSQL_ROOT_PASSWORD }}
@@ -167,7 +167,7 @@ jobs:
         create database if not exists \`$DB_MYSQL_DATABASE\`
         default character set $DB_MYSQL_CHARSET
         default collate $DB_MYSQL_COLLATION;" |
-        mysql --user=$DB_MYSQL_ROOT_USERNAME --password=$DB_MYSQL_ROOT_PASSWORD
+        mysql --user="$DB_MYSQL_ROOT_USERNAME" --password="$DB_MYSQL_ROOT_PASSWORD"
       env:
         DB_MYSQL_CHARSET: ${{ secrets.DB_MYSQL_CHARSET }}
         DB_MYSQL_COLLATION: ${{ secrets.DB_MYSQL_COLLATION }}
@@ -185,7 +185,7 @@ jobs:
         grant all privileges on \`$DB_MYSQL_DATABASE\`.* to '$DB_MYSQL_USERNAME'@'%';
         grant select on \`mysql\`.\`time_zone_name\` to '$DB_MYSQL_USERNAME'@'%';
         flush privileges;" |
-        mysql --user=$DB_MYSQL_ROOT_USERNAME --password=$DB_MYSQL_ROOT_PASSWORD
+        mysql --user="$DB_MYSQL_ROOT_USERNAME" --password="$DB_MYSQL_ROOT_PASSWORD"
       env:
         DB_MYSQL_DATABASE: ${{ secrets.DB_MYSQL_DATABASE }}
         DB_MYSQL_PASSWORD: ${{ secrets.DB_MYSQL_PASSWORD }}
@@ -339,7 +339,7 @@ jobs:
         -B ../TinyORM-builds-cmake/build-${{ matrix.compiler.key }}-cmake-debug
         -G Ninja
         -D CMAKE_CXX_COMPILER_LAUNCHER:FILEPATH=/usr/local/bin/ccache
-        -D CMAKE_CXX_COMPILER:FILEPATH=/usr/bin/${{ matrix.compiler.command }}
+        -D CMAKE_CXX_COMPILER:FILEPATH='/usr/bin/${{ matrix.compiler.command }}'
         -D CMAKE_TOOLCHAIN_FILE:FILEPATH="$VCPKG_INSTALLATION_ROOT/scripts/buildsystems/vcpkg.cmake"
         -D CMAKE_DISABLE_PRECOMPILE_HEADERS:BOOL=ON
         -D CMAKE_BUILD_TYPE:BOOL=Debug
@@ -363,7 +363,7 @@ jobs:
     - name: Create and Seed tables for unit tests 🎉
       working-directory: ../TinyORM-builds-cmake/build-${{ matrix.compiler.key }}-cmake-debug/tests/testdata_tom
       run: >-
-        export LD_LIBRARY_PATH=../..${LD_LIBRARY_PATH:+:}$LD_LIBRARY_PATH
+        export LD_LIBRARY_PATH=../..${LD_LIBRARY_PATH:+:}"$LD_LIBRARY_PATH"
 
         ./tom_testdata migrate
         --database=tinyorm_testdata_tom_mysql,tinyorm_testdata_tom_postgres,tinyorm_testdata_tom_sqlite
@@ -411,7 +411,7 @@ jobs:
     - name: Tom example test some commands (MySQL) 🚀
       working-directory: ../TinyORM-builds-cmake/build-${{ matrix.compiler.key }}-cmake-debug/examples/tom
       run: |
-        export LD_LIBRARY_PATH=../..${LD_LIBRARY_PATH:+:}$LD_LIBRARY_PATH
+        export LD_LIBRARY_PATH=../..${LD_LIBRARY_PATH:+:}"$LD_LIBRARY_PATH"
 
         ./tom migrate:install --database=tinyorm_tom_mysql --no-ansi
         ./tom migrate:status --database=tinyorm_tom_mysql --no-ansi
@@ -433,7 +433,7 @@ jobs:
     - name: Tom example test some commands (PostgreSQL) 🙌
       working-directory: ../TinyORM-builds-cmake/build-${{ matrix.compiler.key }}-cmake-debug/examples/tom
       run: |
-        export LD_LIBRARY_PATH=../..${LD_LIBRARY_PATH:+:}$LD_LIBRARY_PATH
+        export LD_LIBRARY_PATH=../..${LD_LIBRARY_PATH:+:}"$LD_LIBRARY_PATH"
 
         ./tom migrate:install --database=tinyorm_tom_postgres --no-ansi
         ./tom migrate:status --database=tinyorm_tom_postgres --no-ansi
@@ -451,7 +451,7 @@ jobs:
     - name: Tom example test some commands (SQLite) 🏁
       working-directory: ../TinyORM-builds-cmake/build-${{ matrix.compiler.key }}-cmake-debug/examples/tom
       run: |
-        export LD_LIBRARY_PATH=../..${LD_LIBRARY_PATH:+:}$LD_LIBRARY_PATH
+        export LD_LIBRARY_PATH=../..${LD_LIBRARY_PATH:+:}"$LD_LIBRARY_PATH"
 
         ./tom migrate:install --database=tinyorm_tom_sqlite --no-ansi
         ./tom migrate:status --database=tinyorm_tom_sqlite --no-ansi
