@@ -69,7 +69,7 @@ jobs:
     - name: MySQL initialize crystal_mysqld.cnf configuration
       working-directory: .github/resources/linux
       run: |
-        sudo mv ./crystal_mysqld.cnf /etc/mysql/mysql.conf.d/crystal_mysqld.cnf
+        sudo mv --target-directory=/etc/mysql/mysql.conf.d ./crystal_mysqld.cnf
 
         sudo chown root:root /etc/mysql/mysql.conf.d/crystal_mysqld.cnf
         sudo chmod 644 /etc/mysql/mysql.conf.d/crystal_mysqld.cnf
