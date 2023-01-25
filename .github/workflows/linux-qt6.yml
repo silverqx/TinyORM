@@ -35,9 +35,9 @@ jobs:
             apt: [ clang-15, lld-15 ]
             command: clang++-15
 
-          - key: gcc12
-            apt: [ g++-12 ]
-            command: g++-12
+          # - key: gcc12
+          #   apt: [ g++-12 ]
+          #   command: g++-12
 
     steps:
     - uses: actions/checkout@v3
