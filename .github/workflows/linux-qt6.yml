@@ -6,7 +6,11 @@
 
 # PostgreSQL
 # ---
-# It uses the default unencrypted database connections.
+# Forces TLS connections with the certificate authentication and full certificate validation
+# using the clientname=DN map=dn in the pg_hba.conf, so the username is matched against
+# the entire Distinguished Name (DN) of the client certificate and sslmode=verify-full
+# on the libpq client side, so the the server host name is matched against the CN (Common Name)
+# stored in the server certificate.
 
 name: Linux GCC/Clang Qt6.2
 
@@ -48,29 +52,241 @@ jobs:
       env:
         DB_SQLITE_DATABASE: ${{ secrets.DB_SQLITE_DATABASE }}
 
+    - name: Hosts add PostgreSQL server hostname
+      run: >-
+        sudo -- sh -c "echo '127.0.0.1\t$DB_PGSQL_HOST' >> /etc/hosts"
+      env:
+        DB_PGSQL_HOST: ${{ secrets.DB_PGSQL_HOST_SSL }}
+
     - name: PostgreSQL service start
       run: |
         sudo systemctl start postgresql.service
 
-    - name: PostgreSQL service check status
+    - name: PostgreSQL prepare environment
+      id: databases-initialize-postgresql
       run: |
-        sudo systemctl status postgresql.service
-        pg_isready
+        pgConfigFile=$(sudo --user=postgres --login -- \
+        psql --command='show config_file;' --no-align --tuples-only)
+
+        pgConfigPath=$(dirname "$pgConfigFile")
+        echo "PgConfigPath=$pgConfigPath" >> $GITHUB_OUTPUT
+
+        pgDataPath=$(sudo --user=postgres --login -- \
+        psql --command='show data_directory;' --no-align --tuples-only)
+        echo "PgDataPath=$pgDataPath" >> $GITHUB_OUTPUT
+
+    - name: PostgreSQL initialize configuration
+      working-directory: .github/resources/postgresql
+      run: |
+        sudo --user=postgres -- cp --recursive --target-directory="$pg_config_path" ./
+
+        echo "\
+        ssl_cert_file = 'server.crt'
+        ssl_key_file = 'server.key'
+        " | \
+        sudo tee -a "$pg_config_path/conf.d/90-crystal.conf" > /dev/null
+      env:
+        pg_config_path: ${{ steps.databases-initialize-postgresql.outputs.PgConfigPath }}
+
+    - name: PostgreSQL SSL certificates initialize
+      id: openssl-initialize-postgresql-certificates
+      run: |
+        folderPath='${{ env.TinyRunnerWorkPath }}/tiny-postgresql-certificates'
+
+        # Create an empty folder for generating certificates
+        sudo mkdir "$folderPath"
+        sudo chown runner:docker "$folderPath"
+
+        echo "FolderPath=$folderPath" >> $GITHUB_OUTPUT
+
+        # This hash invalidates the PostgreSQL certificates cache every month
+        hash=$(date +%4Y%2m)
+        echo "Hash=$hash" >> $GITHUB_OUTPUT
+
+    - name: PostgreSQL SSL certificates restore cache
+      uses: actions/cache/restore@v3
+      id: openssl-cache-postgresql-certificates
+      with:
+        path: |
+          ${{ env.folder_path }}/*.crt
+          ${{ env.folder_path }}/*.key
+        key: ${{ runner.os }}-openssl-${{ env.cache_name }}-${{ env.cache_hash }}
+      env:
+        # This hash invalidates this certificates cache every month
+        cache_hash: ${{ steps.openssl-initialize-postgresql-certificates.outputs.Hash }}
+        cache_name: postgresql-certificates
+        folder_path: ${{ steps.openssl-initialize-postgresql-certificates.outputs.FolderPath }}
+
+    - name: PostgreSQL SSL certificates generate
+      if: steps.openssl-cache-postgresql-certificates.outputs.cache-hit != 'true'
+      working-directory: ${{ steps.openssl-initialize-postgresql-certificates.outputs.FolderPath }}
+      run: |
+        echo '::group::Print openssl version'
+        openssl version -a
+        echo '::endgroup::'
+
+        echo '::group::CA certificate'
+        # -days 32 is important, -days 30 is not enough
+        openssl req -new -x509 -nodes -subj "$DB_PGSQL_SSL_SUBJECT_CA" -days 32 \
+        -keyout ./root.key -out ./root.crt
+        echo '::endgroup::'
+
+        echo '::group::Server certificate'
+        openssl req -new -nodes -subj "$DB_PGSQL_SSL_SUBJECT_SERVER" -keyout ./server.key -out \
+        ./server.csr
+        OPENSSL_SAN="DNS:${DB_PGSQL_HOST}" \
+        openssl x509 -req -CA ./root.crt -CAkey ./root.key -days 32 -set_serial 01 \
+        -extfile "$extfile" -in ./server.csr -out ./server.crt
+        echo '::endgroup::'
+
+        echo '::group::Client certificate'
+        openssl req -new -nodes -subj "$DB_PGSQL_SSL_SUBJECT_CLIENT" -keyout ./postgresql.key \
+        -out ./postgresql.csr
+        OPENSSL_SAN="DNS:${DB_PGSQL_USERNAME}" \
+        openssl x509 -req -CA ./root.crt -CAkey ./root.key -days 32 -set_serial 02 \
+        -extfile "$extfile" -in ./postgresql.csr -out ./postgresql.crt
+        echo '::endgroup::'
+      env:
+        extfile: ${{ github.workspace }}/.github/resources/openssl/usr_cert.cnf
+        DB_PGSQL_HOST: ${{ secrets.DB_PGSQL_HOST_SSL }}
+        DB_PGSQL_USERNAME: ${{ secrets.DB_PGSQL_USERNAME }}
+        DB_PGSQL_SSL_SUBJECT_CA: ${{ secrets.DB_PGSQL_SSL_SUBJECT_CA }}
+        DB_PGSQL_SSL_SUBJECT_SERVER: ${{ secrets.DB_PGSQL_SSL_SUBJECT_SERVER }}
+        DB_PGSQL_SSL_SUBJECT_CLIENT: ${{ secrets.DB_PGSQL_SSL_SUBJECT_CLIENT }}
+
+    - name: PostgreSQL SSL certificates print
+      working-directory: ${{ steps.openssl-initialize-postgresql-certificates.outputs.FolderPath }}
+      run: |
+        echo '::group::CA certificate'
+        openssl x509 -noout -text -in ./root.crt
+        echo '::endgroup::'
+
+        echo '::group::Server certificate'
+        openssl x509 -noout -text -in ./server.crt
+        echo '::endgroup::'
+
+        echo '::group::Client certificate'
+        openssl x509 -noout -text -in ./postgresql.crt
+        echo '::endgroup::'
+
+    # Always verify, regardless if certificates were newly generated or restored from the cache
+    - name: PostgreSQL SSL certificates verify
+      working-directory: ${{ steps.openssl-initialize-postgresql-certificates.outputs.FolderPath }}
+      run: |
+        openssl verify -CAfile ./root.crt ./server.crt ./postgresql.crt
+
+    # Save the cache only if certificates were newly generated
+    # The actions/cache/save allows to use the Move-Item during the install step
+    - name: PostgreSQL SSL certificates save cache
+      if: steps.openssl-cache-postgresql-certificates.outputs.cache-hit != 'true'
+      uses: actions/cache/save@v3
+      with:
+        path: |
+          ${{ env.folder_path }}/*.crt
+          ${{ env.folder_path }}/*.key
+        key: ${{ steps.openssl-cache-postgresql-certificates.outputs.cache-primary-key }}
+      env:
+        folder_path: ${{ steps.openssl-initialize-postgresql-certificates.outputs.FolderPath }}
+
+    - name: PostgreSQL SSL certificates install
+      working-directory: ${{ steps.openssl-initialize-postgresql-certificates.outputs.FolderPath }}
+      run: |
+        echo '::group::Install server certificates'
+        sudo cp --target-directory="$pg_data_path" ./root.crt
+        sudo mv --target-directory="$pg_data_path" ./server.{crt,key}
+        sudo chown postgres:postgres "$pg_data_path"/server.{crt,key} "$pg_data_path/root.crt"
+        sudo chmod 600 "$pg_data_path/server.key"
+        sudo chmod 640 "$pg_data_path"/{root,server}.crt
+        echo '::endgroup::'
+
+        echo '::group::Verify server certificates'
+        sudo ls -la "$pg_data_path/root.crt" "$pg_data_path"/server.{crt,key}
+        echo '::endgroup::'
+
+        echo '::group::Install client certificates'
+        folderPath=~/.postgresql
+        mkdir "$folderPath"
+        mv --target-directory="$folderPath" ./postgresql.{crt,key} ./root.crt
+        chmod 600 "$folderPath/postgresql.key"
+        chmod 640 "$folderPath"/{postgresql,root}.crt
+        echo '::endgroup::'
+
+        echo '::group::Verify client certificates'
+        ls -la "$folderPath"
+        echo '::endgroup::'
+      env:
+        pg_data_path: ${{ steps.databases-initialize-postgresql.outputs.PgDataPath }}
+
+    - name: PostgreSQL change ${{ secrets.DB_PGSQL_ROOT_USERNAME }} password
+      run: >-
+        sudo --user=postgres --login --
+        psql --command="alter user \"$DB_PGSQL_ROOT_USERNAME\"
+        with password '$DB_PGSQL_ROOT_PASSWORD';"
+      env:
+        DB_PGSQL_ROOT_PASSWORD: ${{ secrets.DB_PGSQL_ROOT_PASSWORD }}
+        DB_PGSQL_ROOT_USERNAME: ${{ secrets.DB_PGSQL_ROOT_USERNAME }}
 
     - name: PostgreSQL create TinyORM user
       run: >-
-        sudo --user=postgres --
-        psql --command="CREATE USER $DB_PGSQL_USERNAME PASSWORD '$DB_PGSQL_PASSWORD'"
+        sudo --user=postgres --login --
+        psql --command="create user \"$DB_PGSQL_USERNAME\" with password '$DB_PGSQL_PASSWORD';"
       env:
         DB_PGSQL_PASSWORD: ${{ secrets.DB_PGSQL_PASSWORD }}
         DB_PGSQL_USERNAME: ${{ secrets.DB_PGSQL_USERNAME }}
 
     - name: PostgreSQL create TinyORM database
-      run: |
-        sudo --user=postgres -- createdb --owner=$DB_PGSQL_USERNAME $DB_PGSQL_DATABASE
+      run: >-
+        sudo --user=postgres --login --
+        createdb --owner="$DB_PGSQL_USERNAME" "$DB_PGSQL_DATABASE"
       env:
         DB_PGSQL_DATABASE: ${{ secrets.DB_PGSQL_DATABASE }}
         DB_PGSQL_USERNAME: ${{ secrets.DB_PGSQL_USERNAME }}
+
+    - name: PostgreSQL initialize client authentication
+      run: |
+        pgHbaConf="$pg_config_path/pg_hba.conf"
+
+        pgHbaTmplTmpl='\\n\
+        # crystal\
+        hostssl %s  %s     127.0.0.1\/32            cert  clientname=DN map=dn'
+
+        pgHbaTmpl=$(printf "$pgHbaTmplTmpl" "$DB_PGSQL_DATABASE" "$DB_PGSQL_USERNAME")
+
+        sudo cat "$pgHbaConf" | \
+        sed -E "s/(# +TYPE +DATABASE +USER +ADDRESS +METHOD)/\1$pgHbaTmpl/" | \
+        sudo tee "$pgHbaConf" > /dev/null
+
+        pgIdentConf="$pg_config_path/pg_ident.conf"
+
+        printf 'dn "/^%s$" %s' "$DB_PGSQL_SSL_DN" "$DB_PGSQL_USERNAME" | \
+        sudo tee --append "$pgIdentConf" > /dev/null
+      env:
+        pg_config_path: ${{ steps.databases-initialize-postgresql.outputs.PgConfigPath }}
+        DB_PGSQL_DATABASE: ${{ secrets.DB_PGSQL_DATABASE }}
+        DB_PGSQL_SSL_DN: ${{ secrets.DB_PGSQL_SSL_DN }}
+        DB_PGSQL_USERNAME: ${{ secrets.DB_PGSQL_USERNAME }}
+
+    - name: PostgreSQL verify confs
+      run: |
+        sudo cat "$pg_config_path/pg_hba.conf"
+        echo "|-----------"
+        sudo cat "$pg_config_path/pg_ident.conf"
+      env:
+        pg_config_path: ${{ steps.databases-initialize-postgresql.outputs.PgConfigPath }}
+
+    - name: PostgreSQL service restart
+      run: |
+        sudo systemctl restart postgresql.service
+
+    - name: PostgreSQL service check status
+      run: |
+        echo '::group::Service status'
+        systemctl status postgresql.service
+        echo '::endgroup::'
+
+        echo '::group::pg_isready'
+        pg_isready
+        echo '::endgroup::'
 
     - name: Hosts add MySQL server hostname
       run: >-
