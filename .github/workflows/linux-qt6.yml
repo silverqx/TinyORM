@@ -331,8 +331,8 @@ jobs:
         sudo mkdir --parents "$crystalMySqlPath"
         cd "$crystalMySqlPath"
 
-        mysqlConfdPath=/etc/mysql/mysql.conf.d
-        sudo cp --target-directory="$mysqlConfdPath" /var/lib/mysql/{ca,client-cert,client-key}.pem
+        sudo cp --target-directory="$crystalMySqlPath" \
+        /var/lib/mysql/{ca,client-cert,client-key}.pem
 
         sudo chown --recursive root:root "$crystalMySqlPath"
         sudo chmod 444 "$crystalMySqlPath"/{ca,client-cert,client-key}.pem
