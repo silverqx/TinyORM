@@ -49,7 +49,7 @@ jobs:
         DB_PGSQL_HOST: ${{ secrets.DB_PGSQL_HOST_SSL }}
 
     - name: PostgreSQL initialize configuration
-      working-directory: .github/resources/windows/postgresql
+      working-directory: .github/resources/postgresql
       run: |
         Copy-Item -Path ./conf.d -Destination $env:PGDATA -Recurse -Force
 
@@ -193,7 +193,7 @@ jobs:
         PGPASSWORD: ${{ secrets.DB_PGSQL_ROOT_PASSWORD }}
 
     - name: PostgreSQL initialize client authentication
-      working-directory: .github/resources/windows/postgresql
+      working-directory: .github/resources/postgresql
       run: >-
         $pgHbaConf = Join-Path -Path $env:PGDATA -ChildPath 'pg_hba.conf'
 
