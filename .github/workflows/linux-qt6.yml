@@ -199,20 +199,12 @@ jobs:
         sudo chmod 640 "$pg_data_path"/{root,server}.crt
         echo '::endgroup::'
 
-        echo '::group::Verify server certificates'
-        sudo ls -la "$pg_data_path/root.crt" "$pg_data_path"/server.{crt,key}
-        echo '::endgroup::'
-
         echo '::group::Install client certificates'
         folderPath=~/.postgresql
         mkdir "$folderPath"
         mv --target-directory="$folderPath" ./postgresql.{crt,key} ./root.crt
         chmod 600 "$folderPath/postgresql.key"
         chmod 640 "$folderPath"/{postgresql,root}.crt
-        echo '::endgroup::'
-
-        echo '::group::Verify client certificates'
-        ls -la "$folderPath"
         echo '::endgroup::'
       env:
         pg_data_path: ${{ steps.databases-initialize-postgresql.outputs.PgDataPath }}
@@ -264,14 +256,6 @@ jobs:
         DB_PGSQL_DATABASE: ${{ secrets.DB_PGSQL_DATABASE }}
         DB_PGSQL_SSL_DN: ${{ secrets.DB_PGSQL_SSL_DN }}
         DB_PGSQL_USERNAME: ${{ secrets.DB_PGSQL_USERNAME }}
-
-    - name: PostgreSQL verify confs
-      run: |
-        sudo cat "$pg_config_path/pg_hba.conf"
-        echo "|-----------"
-        sudo cat "$pg_config_path/pg_ident.conf"
-      env:
-        pg_config_path: ${{ steps.databases-initialize-postgresql.outputs.PgConfigPath }}
 
     - name: PostgreSQL service restart
       run: |
