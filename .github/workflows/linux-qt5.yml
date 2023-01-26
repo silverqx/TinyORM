@@ -69,7 +69,7 @@ jobs:
     - name: MySQL initialize crystal_mysqld.cnf configuration
       working-directory: .github/resources/linux
       run: |
-        sudo mv --target-directory=/etc/mysql/mysql.conf.d ./crystal_mysqld.cnf
+        sudo mv --target-directory=/etc/mysql/mysql.conf.d/ ./crystal_mysqld.cnf
 
     - name: MySQL initialize crystal_client.cnf configuration (global)
       working-directory: .github/resources/linux
