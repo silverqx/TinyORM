@@ -76,15 +76,10 @@ jobs:
 
     - name: MySQL initialize crystal_client.cnf configuration (global)
       working-directory: .github/resources/linux
-      run: |
-        tmpfile=$(mktemp)
-
-        cat ./crystal_client.template.cnf | sed "s/{MYSQL_HOST}/$DB_MYSQL_HOST/" > "$tmpfile"
-
-        sudo mv "$tmpfile" /etc/mysql/conf.d/crystal_client.cnf
-
-        sudo chown root:root /etc/mysql/conf.d/crystal_client.cnf
-        sudo chmod 644 /etc/mysql/conf.d/crystal_client.cnf
+      run: >-
+        cat ./crystal_client.template.cnf |
+        sed "s/{MYSQL_HOST}/$DB_MYSQL_HOST/" |
+        sudo tee /etc/mysql/conf.d/crystal_client.cnf > /dev/null
       env:
         DB_MYSQL_HOST: ${{ secrets.DB_MYSQL_HOST }}
 
