@@ -28,7 +28,7 @@ jobs:
     - name: add-apt-repository Clang 15
       run: >-
         wget -O- https://apt.llvm.org/llvm-snapshot.gpg.key |
-        sudo tee /etc/apt/trusted.gpg.d/llvm-15.asc
+        sudo tee /etc/apt/trusted.gpg.d/llvm-15.asc > /dev/null
 
         sudo add-apt-repository --yes
         --sourceslist 'deb http://apt.llvm.org/jammy/ llvm-toolchain-jammy-15 main'
