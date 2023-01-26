@@ -84,7 +84,7 @@ jobs:
         ssl_cert_file = 'server.crt'
         ssl_key_file = 'server.key'
         " | \
-        sudo tee -a "$pg_config_path/conf.d/90-crystal.conf" > /dev/null
+        sudo tee --append "$pg_config_path/conf.d/90-crystal.conf" > /dev/null
       env:
         pg_config_path: ${{ steps.databases-initialize-postgresql.outputs.PgConfigPath }}
 
