@@ -252,9 +252,8 @@ jobs:
 
         pgHbaTmpl=$(printf "$pgHbaTmplTmpl" "$DB_PGSQL_DATABASE" "$DB_PGSQL_USERNAME")
 
-        sudo cat "$pgHbaConf" | \
-        sed -E "s/(# +TYPE +DATABASE +USER +ADDRESS +METHOD)/\1$pgHbaTmpl/" | \
-        sudo tee "$pgHbaConf" > /dev/null
+        sudo sed --regexp-extended "s/(# +TYPE +DATABASE +USER +ADDRESS +METHOD)/\1$pgHbaTmpl/" \
+        --in-place "$pgHbaConf"
 
         pgIdentConf="$pg_config_path/pg_ident.conf"
 
