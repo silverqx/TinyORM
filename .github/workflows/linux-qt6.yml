@@ -282,9 +282,6 @@ jobs:
       run: |
         sudo mv ./crystal_mysqld_ssl.cnf /etc/mysql/mysql.conf.d/crystal_mysqld.cnf
 
-        sudo chown root:root /etc/mysql/mysql.conf.d/crystal_mysqld.cnf
-        sudo chmod 644 /etc/mysql/mysql.conf.d/crystal_mysqld.cnf
-
     - name: MySQL initialize crystal_client.cnf configuration (global)
       working-directory: .github/resources/linux
       run: >-
