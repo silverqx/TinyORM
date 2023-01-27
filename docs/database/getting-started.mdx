@@ -5,10 +5,20 @@ description: TinyORM makes interacting with a database extremely simple using ra
 keywords: [c++ orm, database, getting started, tinyorm]
 ---
 
+import TabItem from '@theme/TabItem'
+import Tabs from '@theme/Tabs'
+
+import {
+    shell,
+    bash, pwsh,
+    bash_label, pwsh_label
+} from '@theme/constants'
+
 # Database: Getting Started
 
 - [Introduction](#introduction)
     - [Configuration](#configuration)
+    - [SSL Connections](#ssl-connections)
 - [Running SQL Queries](#running-sql-queries)
     - [Using Multiple Database Connections](#using-multiple-database-connections)
 - [Database Transactions](#database-transactions)
@@ -93,6 +103,134 @@ SQLite databases are contained within a single file on your filesystem. You can 
 The `database` configuration value is the absolute path to the database. To enable foreign key constraints for SQLite connections, you should set the `foreign_key_constraints` configuration value to `true`, if this configuration value is not set, then the default of the SQLite driver will be used.
 
 If the `check_database_exists` configuration value is set to the `true` value, then the database connection throws an `Orm::InvalidArgumentError` exception, when the SQLite database file doesn't exist. If it is set to the `false` value and the SQLite database file doesn't exist, then it will be created for you by SQLite driver. The default value is `true`.
+
+### SSL Connections
+
+SSL connections are supported for the `MySQL` and `PostgreSQL` databases. They can be set using the `options` configuration option.
+
+:::info
+This feature is heavily dependent on the underlying `QSqlDatabase` module. What means that you can pass the same [connection options](https://doc.qt.io/qt/qsqldatabase.html#setConnectOptions) to the `TinyORM` that the `QSqlDatabase` accepts.
+:::
+
+##### MySQL
+
+You have to pass the `SSL_CA`, `SSL_CERT`, and `SSL_KEY` options.
+
+<Tabs groupId={shell}>
+<TabItem value={pwsh} label={pwsh_label}>
+
+```
+#include <orm/db.hpp>
+
+using Orm::DB;
+
+// Ownership of a shared_ptr()
+auto manager = DB::create({
+    {"driver",  "QMYSQL"},
+    {"host",    qEnvironmentVariable("DB_MYSQL_HOST", "127.0.0.1")},
+    ...
+    // highlight-start
+    {"options", QVariantHash({{"SSL_CA",   "C:/mysql/data/ca.pem"},
+                              {"SSL_CERT", "C:/mysql/data/client-cert.pem"},
+                              {"SSL_KEY",  "C:/mysql/data/client-key.pem"}})},
+    // highlight-end
+});
+```
+
+</TabItem>
+<TabItem value={bash} label={bash_label}>
+
+```
+#include <orm/db.hpp>
+
+using Orm::DB;
+
+// Ownership of a shared_ptr()
+auto manager = DB::create({
+    {"driver",  "QMYSQL"},
+    {"host",    qEnvironmentVariable("DB_MYSQL_HOST", "127.0.0.1")},
+    ...
+    // highlight-start
+    {"options", QVariantHash({{"SSL_CA",   "~/.local/share/TinyORM/ssl/ca.pem"},
+                              {"SSL_CERT", "~/.local/share/TinyORM/ssl/client-cert.pem"},
+                              {"SSL_KEY",  "~/.local/share/TinyORM/ssl/client-key.pem"}})},
+    // highlight-end
+});
+```
+
+</TabItem>
+</Tabs>
+
+You may also use the `ConfigUtils::mysqlSslOptions()` or the `ConfigUtils::insertMySqlSslOptions()` methods to insert these options for you and define them using the `DB_MYSQL_SSL_CA`, `DB_MYSQL_SSL_CERT`, and `DB_MYSQL_SSL_KEY` environment variables.
+
+    #include <orm/db.hpp>
+    #include <orm/utils/configuration.hpp>
+
+    using Orm::DB;
+
+    using ConfigUtils = Orm::Utils::Configuration;
+
+    // Ownership of a shared_ptr()
+    auto manager = DB::create({
+        {"driver",  "QMYSQL"},
+        {"host",    qEnvironmentVariable("DB_MYSQL_HOST", "127.0.0.1")},
+        ...
+        // highlight-next-line
+        {"options", ConfigUtils::mysqlSslOptions()},
+    });
+
+:::tip
+You can take a look at the GitHub actions how the `MySQL` certificates are generated in the CI pipeline for [Windows](https://github.com/silverqx/TinyORM/blob/main/.github/workflows/msvc2022-qt6.yml) and [Linux](https://github.com/silverqx/TinyORM/blob/main/.github/workflows/linux-qt6.yml).
+:::
+
+:::tip
+You can also pass the `QString` to the `options` configuration separated by the `;` semicolon character and using the `=` to assign values.
+:::
+
+##### PostgreSQL
+
+You have to pass the [`sslmode`](https://www.postgresql.org/docs/current/libpq-ssl.html#LIBPQ-SSL-SSLMODE-STATEMENTS) or the deprecated [`requiressl`](https://www.postgresql.org/docs/current/libpq-connect.html#LIBPQ-CONNECT-REQUIRESSL) options.
+
+    #include <orm/db.hpp>
+
+    using Orm::DB;
+
+    // Ownership of a shared_ptr()
+    auto manager = DB::create({
+        {"driver",  "QPSQL"},
+        {"host",    qEnvironmentVariable("DB_PGSQL_HOST", "127.0.0.1")},
+        ...
+        // highlight-next-line
+        {"options", QVariantHash({{"sslmode", "verify-full"}})},
+    });
+
+And place your __client__ certificates to the `~/.postgres/` on [Linux](https://www.postgresql.org/docs/current/libpq-ssl.html#LIBPQ-SSL-FILE-USAGE) and `$env:APPDATA/postgres/` on Windows. Everything is described in the PostgreSQL's [libpq client](https://www.postgresql.org/docs/current/libpq-ssl.html) and [server](https://www.postgresql.org/docs/15/ssl-tcp.html#SSL-FILE-USAGE) documentation.
+
+You may also use the `ConfigUtils::postgresSslOptions()` or the `ConfigUtils::insertPostgresSslOptions()` methods to insert the `sslmode` option for you and define it using the `DB_PGSQL_SSLMODE` environment variable.
+
+    #include <orm/db.hpp>
+    #include <orm/utils/configuration.hpp>
+
+    using Orm::DB;
+
+    using ConfigUtils = Orm::Utils::Configuration;
+
+    // Ownership of a shared_ptr()
+    auto manager = DB::create({
+        {"driver",  "QPSQL"},
+        {"host",    qEnvironmentVariable("DB_PGSQL_HOST", "127.0.0.1")},
+        ...
+        // highlight-next-line
+        {"options", ConfigUtils::postgresSslOptions()},
+    });
+
+:::info
+The PostgreSQL's libpq client library provides the [`PGSSLMODE`](https://www.postgresql.org/docs/current/libpq-envars.html#id-1.7.3.22.3.4.13.1.1) environment variable, so don't have to use TinyORM's `options` configuration and use the `PGSSLMODE` instead.
+:::
+
+:::tip
+You can take a look at the GitHub actions how the `PostgreSQL` certificates are generated in the CI pipeline for [Windows](https://github.com/silverqx/TinyORM/blob/main/.github/workflows/msvc2022-qt6.yml) and [Linux](https://github.com/silverqx/TinyORM/blob/main/.github/workflows/linux-qt6.yml).
+:::
 
 ## Running SQL Queries
 
