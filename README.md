@@ -111,10 +111,10 @@ The following list fastly summarizes all the `TinyORM` features.
 [action-linux-badge-qt5]: https://github.com/silverqx/TinyORM/actions/workflows/linux-qt5.yml/badge.svg
 [action-linux-qt6]: https://github.com/silverqx/TinyORM/actions/workflows/linux-qt6.yml
 [action-linux-badge-qt6]: https://github.com/silverqx/TinyORM/actions/workflows/linux-qt6.yml/badge.svg
-[action-mingw]: https://github.com/silverqx/TinyORM/actions/workflows/mingw.yml
-[action-mingw-badge]: https://github.com/silverqx/TinyORM/actions/workflows/mingw.yml/badge.svg
-[clang-cl]: https://github.com/silverqx/TinyORM/actions/workflows/clang-cl.yml
-[clang-cl-badge]: https://github.com/silverqx/TinyORM/actions/workflows/clang-cl.yml/badge.svg
+[action-mingw]: https://github.com/silverqx/TinyORM/actions/workflows/msys2-ucrt64.yml
+[action-mingw-badge]: https://github.com/silverqx/TinyORM/actions/workflows/msys2-ucrt64.yml/badge.svg
+[clang-cl]: https://github.com/silverqx/TinyORM/actions/workflows/clang-cl-qt6.yml
+[clang-cl-badge]: https://github.com/silverqx/TinyORM/actions/workflows/clang-cl-qt6.yml/badge.svg
 [action-analyzers-qt5]: https://github.com/silverqx/TinyORM/actions/workflows/analyzers-qt5.yml
 [action-analyzers-qt5-badge]: https://github.com/silverqx/TinyORM/actions/workflows/analyzers-qt5.yml/badge.svg
 [action-analyzers-qt6]: https://github.com/silverqx/TinyORM/actions/workflows/analyzers-qt6.yml

@@ -435,7 +435,7 @@ GitHub Actions:
 
    - analyzers-qtX.yml
      - add-apt-repository Clang 14
-   - clang-cl.yml
+   - clang-cl-qt6.yml
      - Install LLVM and Clang 15.0.6 (KyleMayes/install-llvm-action@v1)
      - Qt 6.3.2 install base components (jurplel/install-qt-action@v3)
      - QMYSQL install driver dlls (Qt 6.3.2) - needed to rebuild the QSQL QMYSQL driver
