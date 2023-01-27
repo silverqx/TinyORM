@@ -1828,7 +1828,6 @@ TINYORM_END_COMMON_NAMESPACE
 // FEATURE logging, add support for custom logging, logging to the defined stream?, I don't exactly know how I will solve this issue, design it 🤔 silverqx
 // FEATURE code coverage silverqx
 // TODO dilemma, function params. like direction asc/desc for orderBy, operators for where are QStrings, but they should be flags for performance reasons, how to solve this and preserve nice clean api? that is the question 🤔 silverqx
-// CUR1 connection SSL support silverqx
 // BUG Qt sql drivers do not work with mysql json columns silverqx
 // FEATURE build systems, add docs on how to make a production build of the TinyORM library silverqx
 // FEATURE build systems, add docs on how to set up dev. environment and how to run auto tests silverqx
