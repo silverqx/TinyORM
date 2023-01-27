@@ -33,7 +33,7 @@ Almost every modern application interacts with a database. TinyORM makes interac
 - PostgreSQL 11+ ([Version Policy](https://www.postgresql.org/support/versioning/))
 - SQLite 3.8.8+
 
-TinyORM internally uses `QtSql` module, you can look for [supported databases](https://doc.qt.io/qt-5/sql-driver.html#supported-databases).
+TinyORM internally uses `QtSql` module, you can look for [supported databases](https://doc.qt.io/qt/sql-driver.html#supported-databases).
 
 :::note
 TinyORM's code is ready and designed to simply add support for the  SQL Server.
@@ -69,7 +69,7 @@ You can create and configure new database connection by `create` method provided
 
 The first argument is configuration hash which is of type `QVariantHash` and the second argument specifies the name of the *connection*, this connection will also be a *default connection*. You can configure multiple database connections at once and choose the needed one before executing SQL query, section [Using Multiple Database Connections](#using-multiple-database-connections) describes how to create and use multiple database connections.
 
-You may also configure connection options by `options` key as `QVariantHash` or `QString`, you can pass any [connection options](https://doc.qt.io/qt-5/qsqldatabase.html#setConnectOptions) supported by `QSqlDatabase`.
+You may also configure connection options by `options` key as `QVariantHash` or `QString`, you can pass any [connection options](https://doc.qt.io/qt/qsqldatabase.html#setConnectOptions) supported by `QSqlDatabase`.
 
 You can also configure [Transaction Isolation Levels](https://dev.mysql.com/doc/refman/8.0/en/innodb-transaction-isolation-levels.html) for MySQL connection with the `isolation_level` configuration option.
 
