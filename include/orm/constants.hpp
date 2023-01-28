@@ -8,9 +8,9 @@ TINY_SYSTEM_HEADER
 #include "orm/config.hpp"
 
 #ifdef TINYORM_EXTERN_CONSTANTS
-#  include "orm/constants_extern.hpp"
+#  include "orm/constants_extern.hpp" // IWYU pragma: export
 #else
-#  include "orm/constants_inline.hpp"
+#  include "orm/constants_inline.hpp" // IWYU pragma: export
 #endif
 
 #endif // ORM_CONSTANTS_HPP
