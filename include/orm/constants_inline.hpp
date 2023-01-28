@@ -117,6 +117,7 @@ namespace Orm::Constants
     inline const QString ROOT      = QStringLiteral("root");
     inline const QString UTC       = QStringLiteral("UTC");
     inline const QString LOCAL     = QStringLiteral("LOCAL"); // PostgreSQL time zone
+    inline const QString DEFAULT   = QStringLiteral("DEFAULT"); // PostgreSQL time zone
     inline const QString SYSTEM    = QStringLiteral("SYSTEM"); // MySQL time zone
     inline const QString TZ00      = QStringLiteral("+00:00");
     inline const QString PUBLIC    = QStringLiteral("public");

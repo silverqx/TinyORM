@@ -113,6 +113,7 @@ namespace Orm::Constants
     SHAREDLIB_EXPORT extern const QString ROOT;
     SHAREDLIB_EXPORT extern const QString UTC;
     SHAREDLIB_EXPORT extern const QString LOCAL; // PostgreSQL time zone
+    SHAREDLIB_EXPORT extern const QString DEFAULT; // PostgreSQL time zone
     SHAREDLIB_EXPORT extern const QString SYSTEM; // MySQL time zone
     SHAREDLIB_EXPORT extern const QString TZ00;
     SHAREDLIB_EXPORT extern const QString PUBLIC;

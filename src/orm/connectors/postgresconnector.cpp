@@ -13,7 +13,9 @@
 TINYORM_BEGIN_COMMON_NAMESPACE
 
 using Orm::Constants::COMMA_C;
+using Orm::Constants::DEFAULT;
 using Orm::Constants::EMPTY;
+using Orm::Constants::LOCAL;
 using Orm::Constants::NAME;
 using Orm::Constants::TMPL_DQUOTES;
 using Orm::Constants::charset_;
@@ -89,6 +91,16 @@ void PostgresConnector::configureEncoding(const QSqlDatabase &connection,
     throw Exceptions::QueryError(m_configureErrorMessage.arg(__tiny_func__), query);
 }
 
+/*! The key comparison function for the Compare template parameter. */
+struct QStringLessCi
+{
+    /*! Compare the given strings case insenstive (< operator). */
+    inline bool operator()(const QString &left, const QString &right) const noexcept
+    {
+        return QString::compare(left, right, Qt::CaseInsensitive) < 0;
+    }
+};
+
 void PostgresConnector::configureTimezone(const QSqlDatabase &connection,
                                           const QVariantHash &config)
 {
@@ -97,12 +109,11 @@ void PostgresConnector::configureTimezone(const QSqlDatabase &connection,
 
     QSqlQuery query(connection);
 
-    static const std::unordered_set<QString> local {QStringLiteral("local"),
-                                                    QStringLiteral("default")};
+    static const std::set<QString, QStringLessCi> local {DEFAULT, LOCAL};
 
     const auto timezone = config[timezone_].value<QString>();
 
-    if (local.contains(timezone.toLower())) {
+    if (local.contains(timezone)) {
         if (query.exec(QStringLiteral("set time zone %1").arg(timezone)))
             return;
     } else
