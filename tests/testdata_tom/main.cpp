@@ -100,22 +100,23 @@ std::shared_ptr<DatabaseManager> setupManager()
 
         // PostgreSQL connection
         {QStringLiteral("tinyorm_testdata_tom_postgres"), { // shell:connection
-            {driver_,        QPSQL},
-            {host_,          qEnvironmentVariable("DB_PGSQL_HOST",     H127001)},
-            {port_,          qEnvironmentVariable("DB_PGSQL_PORT",     P5432)},
-            {database_,      qEnvironmentVariable("DB_PGSQL_DATABASE", EMPTY)},
-            {schema_,        qEnvironmentVariable("DB_PGSQL_SCHEMA",   PUBLIC)},
-            {username_,      qEnvironmentVariable("DB_PGSQL_USERNAME", postgres_)},
-            {password_,      qEnvironmentVariable("DB_PGSQL_PASSWORD", EMPTY)},
-            {charset_,       qEnvironmentVariable("DB_PGSQL_CHARSET",  UTF8)},
-            {timezone_,      UTC},
+            {driver_,          QPSQL},
+            {application_name, QStringLiteral("tom_testdata")},
+            {host_,            qEnvironmentVariable("DB_PGSQL_HOST",     H127001)},
+            {port_,            qEnvironmentVariable("DB_PGSQL_PORT",     P5432)},
+            {database_,        qEnvironmentVariable("DB_PGSQL_DATABASE", EMPTY)},
+            {schema_,          qEnvironmentVariable("DB_PGSQL_SCHEMA",   PUBLIC)},
+            {username_,        qEnvironmentVariable("DB_PGSQL_USERNAME", postgres_)},
+            {password_,        qEnvironmentVariable("DB_PGSQL_PASSWORD", EMPTY)},
+            {charset_,         qEnvironmentVariable("DB_PGSQL_CHARSET",  UTF8)},
+            {timezone_,        UTC},
             // Specifies what time zone all QDateTime-s will have
-            {qt_timezone,    QVariant::fromValue(Qt::UTC)},
-            {prefix_,        EMPTY},
-            {prefix_indexes, true},
+            {qt_timezone,      QVariant::fromValue(Qt::UTC)},
+            {prefix_,          EMPTY},
+            {prefix_indexes,   true},
             // ConnectionFactory provides a default value for this (for reference only)
-//            {dont_drop,      QStringList {QStringLiteral("spatial_ref_sys")}},
-            {options_,       ConfigUtils::postgresSslOptions()},
+//            {dont_drop,        QStringList {QStringLiteral("spatial_ref_sys")}},
+            {options_,         ConfigUtils::postgresSslOptions()},
         }},
 
         // SQLite connection

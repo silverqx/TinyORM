@@ -16,6 +16,7 @@ using Orm::Constants::QPSQL;
 using Orm::Constants::QSQLITE;
 using Orm::Constants::UTF8;
 using Orm::Constants::Version;
+using Orm::Constants::application_name;
 using Orm::Constants::charset_;
 using Orm::Constants::database_;
 using Orm::Constants::dont_drop;
@@ -85,15 +86,16 @@ void tst_DatabaseManager::removeConnection_Connected() const
     // Create database connection
     m_dm->addConnections({
         {connectionName, {
-            {driver_,   driverName},
-            {host_,     qEnvironmentVariable("DB_PGSQL_HOST", H127001)},
-            {port_,     qEnvironmentVariable("DB_PGSQL_PORT", P5432)},
-            {database_, databaseName},
-            {schema_,   qEnvironmentVariable("DB_PGSQL_SCHEMA", PUBLIC)},
-            {username_, qEnvironmentVariable("DB_PGSQL_USERNAME",
-                                             QStringLiteral("postgres"))},
-            {password_, qEnvironmentVariable("DB_PGSQL_PASSWORD", "")},
-            {charset_,  qEnvironmentVariable("DB_PGSQL_CHARSET", UTF8)},
+            {driver_,          driverName},
+            {application_name, QStringLiteral("TinyORM tests - tst_databasemanager")},
+            {host_,            qEnvironmentVariable("DB_PGSQL_HOST", H127001)},
+            {port_,            qEnvironmentVariable("DB_PGSQL_PORT", P5432)},
+            {database_,        databaseName},
+            {schema_,          qEnvironmentVariable("DB_PGSQL_SCHEMA", PUBLIC)},
+            {username_,        qEnvironmentVariable("DB_PGSQL_USERNAME",
+                                                    QStringLiteral("postgres"))},
+            {password_,        qEnvironmentVariable("DB_PGSQL_PASSWORD", "")},
+            {charset_,         qEnvironmentVariable("DB_PGSQL_CHARSET", UTF8)},
         }},
     // Don't setup any default connection
     }, EMPTY);

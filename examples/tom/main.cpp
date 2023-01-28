@@ -95,31 +95,32 @@ std::shared_ptr<DatabaseManager> setupManager()
 
         // PostgreSQL connection
         {QStringLiteral("tinyorm_tom_postgres"), { // shell:connection
-            {driver_,        QPSQL},
-            {host_,          qEnvironmentVariable("DB_PGSQL_HOST",     H127001)},
-            {port_,          qEnvironmentVariable("DB_PGSQL_PORT",     P5432)},
-            {database_,      qEnvironmentVariable("DB_PGSQL_DATABASE", EMPTY)},
-            {schema_,        qEnvironmentVariable("DB_PGSQL_SCHEMA",   PUBLIC)},
-            {username_,      qEnvironmentVariable("DB_PGSQL_USERNAME", postgres_)},
-            {password_,      qEnvironmentVariable("DB_PGSQL_PASSWORD", EMPTY)},
-            {charset_,       qEnvironmentVariable("DB_PGSQL_CHARSET",  UTF8)},
+            {driver_,          QPSQL},
+            {application_name, QStringLiteral("tom")},
+            {host_,            qEnvironmentVariable("DB_PGSQL_HOST",     H127001)},
+            {port_,            qEnvironmentVariable("DB_PGSQL_PORT",     P5432)},
+            {database_,        qEnvironmentVariable("DB_PGSQL_DATABASE", EMPTY)},
+            {schema_,          qEnvironmentVariable("DB_PGSQL_SCHEMA",   PUBLIC)},
+            {username_,        qEnvironmentVariable("DB_PGSQL_USERNAME", postgres_)},
+            {password_,        qEnvironmentVariable("DB_PGSQL_PASSWORD", EMPTY)},
+            {charset_,         qEnvironmentVariable("DB_PGSQL_CHARSET",  UTF8)},
             // LOCAL/DEFAULT - set the time zone to your local PostgreSQL server time zone
-            {timezone_,      UTC},
+            {timezone_,        UTC},
             // Specifies what time zone all QDateTime-s will have
-            {qt_timezone,    QVariant::fromValue(Qt::UTC)},
+            {qt_timezone,      QVariant::fromValue(Qt::UTC)},
             // Examples of qt_timezone
-//            {qt_timezone,     QVariant::fromValue(QTimeZone("Europe/Bratislava"))},
-//            {qt_timezone,     "Europe/Prague"}, // Will be converted to QTimeZone("Europe/Prague")
-//            {qt_timezone,     QVariant::fromValue(QTimeZone("UTC+04"))},
-//            {qt_timezone,     "-03:00"},
-//            {qt_timezone,     3600}, // Offset from UTC
-//            {qt_timezone,     QVariant::fromValue(Qt::LocalTime)},
-//            {qt_timezone,     {}}, // The same as Qt::LocalTime
-            {prefix_,        EMPTY},
-            {prefix_indexes, true},
+//            {qt_timezone,       QVariant::fromValue(QTimeZone("Europe/Bratislava"))},
+//            {qt_timezone,       "Europe/Prague"}, // Will be converted to QTimeZone("Europe/Prague")
+//            {qt_timezone,       QVariant::fromValue(QTimeZone("UTC+04"))},
+//            {qt_timezone,       "-03:00"},
+//            {qt_timezone,       3600}, // Offset from UTC
+//            {qt_timezone,       QVariant::fromValue(Qt::LocalTime)},
+//            {qt_timezone,       {}}, // The same as Qt::LocalTime
+            {prefix_,          EMPTY},
+            {prefix_indexes,   true},
             // ConnectionFactory provides a default value for this (for reference only)
-//            {dont_drop,      QStringList {QStringLiteral("spatial_ref_sys")}},
-            {options_,       ConfigUtils::postgresSslOptions()},
+//            {dont_drop,        QStringList {QStringLiteral("spatial_ref_sys")}},
+            {options_,         ConfigUtils::postgresSslOptions()},
         }},
 
         // SQLite connection

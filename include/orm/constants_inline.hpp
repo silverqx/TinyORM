@@ -109,6 +109,8 @@ namespace Orm::Constants
     prefix_indexes          = QStringLiteral("prefix_indexes");
     inline const QString
     return_qdatetime        = QStringLiteral("return_qdatetime");
+    inline const QString
+    application_name        = QStringLiteral("application_name");
 
     inline const QString H127001   = QStringLiteral("127.0.0.1");
     inline const QString LOCALHOST = QStringLiteral("localhost");

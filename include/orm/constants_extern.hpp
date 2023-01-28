@@ -105,6 +105,7 @@ namespace Orm::Constants
     SHAREDLIB_EXPORT extern const QString check_database_exists;
     SHAREDLIB_EXPORT extern const QString prefix_indexes;
     SHAREDLIB_EXPORT extern const QString return_qdatetime;
+    SHAREDLIB_EXPORT extern const QString application_name;
 
     SHAREDLIB_EXPORT extern const QString H127001;
     SHAREDLIB_EXPORT extern const QString LOCALHOST;

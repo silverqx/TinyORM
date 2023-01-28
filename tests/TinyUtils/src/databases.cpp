@@ -21,6 +21,7 @@ using Orm::Constants::UTF8;
 using Orm::Constants::UTF8MB4;
 using Orm::Constants::UTF8MB40900aici;
 using Orm::Constants::Version;
+using Orm::Constants::application_name;
 using Orm::Constants::database_;
 using Orm::Constants::driver_;
 using Orm::Constants::charset_;
@@ -231,22 +232,23 @@ std::pair<std::reference_wrapper<const QVariantHash>, bool>
 Databases::postgresConfiguration()
 {
     static const QVariantHash config {
-        {driver_,        QPSQL},
-        {host_,          qEnvironmentVariable("DB_PGSQL_HOST",     H127001)},
-        {port_,          qEnvironmentVariable("DB_PGSQL_PORT",     P5432)},
-        {database_,      qEnvironmentVariable("DB_PGSQL_DATABASE", EMPTY)},
-        {schema_,        qEnvironmentVariable("DB_PGSQL_SCHEMA",   PUBLIC)},
-        {username_,      qEnvironmentVariable("DB_PGSQL_USERNAME", postgres_)},
-        {password_,      qEnvironmentVariable("DB_PGSQL_PASSWORD", EMPTY)},
-        {charset_,       qEnvironmentVariable("DB_PGSQL_CHARSET",  UTF8)},
-        {timezone_,      UTC},
+        {driver_,          QPSQL},
+        {application_name, QStringLiteral("TinyORM tests (TinyUtils)")},
+        {host_,            qEnvironmentVariable("DB_PGSQL_HOST",     H127001)},
+        {port_,            qEnvironmentVariable("DB_PGSQL_PORT",     P5432)},
+        {database_,        qEnvironmentVariable("DB_PGSQL_DATABASE", EMPTY)},
+        {schema_,          qEnvironmentVariable("DB_PGSQL_SCHEMA",   PUBLIC)},
+        {username_,        qEnvironmentVariable("DB_PGSQL_USERNAME", postgres_)},
+        {password_,        qEnvironmentVariable("DB_PGSQL_PASSWORD", EMPTY)},
+        {charset_,         qEnvironmentVariable("DB_PGSQL_CHARSET",  UTF8)},
+        {timezone_,        UTC},
         // Specifies what time zone all QDateTime-s will have
-        {qt_timezone,    QVariant::fromValue(Qt::UTC)},
-        {prefix_,        EMPTY},
-        {prefix_indexes, true},
+        {qt_timezone,      QVariant::fromValue(Qt::UTC)},
+        {prefix_,          EMPTY},
+        {prefix_indexes,   true},
         // ConnectionFactory provides a default value for this, this is only for reference
-//        {dont_drop,      QStringList {QStringLiteral("spatial_ref_sys")}},
-        {options_,       ConfigUtils::postgresSslOptions()},
+//        {dont_drop,        QStringList {QStringLiteral("spatial_ref_sys")}},
+        {options_,         ConfigUtils::postgresSslOptions()},
     };
 
     // Environment variables were undefined
