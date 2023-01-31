@@ -9,10 +9,10 @@
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
+using Orm::Constants::NAME;
 using Orm::Constants::check_database_exists;
 using Orm::Constants::database_;
 using Orm::Constants::foreign_key_constraints;
-using Orm::Constants::NAME;
 
 namespace Orm::Connectors
 {
