@@ -95,6 +95,8 @@ namespace Orm::Constants
     const QString prefix_indexes          = QStringLiteral("prefix_indexes");
     const QString return_qdatetime        = QStringLiteral("return_qdatetime");
     const QString application_name        = QStringLiteral("application_name");
+    const QString synchronous_commit      = QStringLiteral("synchronous_commit");
+    const QString spatial_ref_sys         = QStringLiteral("spatial_ref_sys");
 
     const QString H127001   = QStringLiteral("127.0.0.1");
     const QString LOCALHOST = QStringLiteral("localhost");

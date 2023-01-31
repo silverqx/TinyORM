@@ -36,6 +36,9 @@ namespace Orm::Connectors
         void parseConfigOptions(QVariantHash &options) const override;
 
     protected:
+        /*! Set the connection transaction isolation level. */
+        static void configureIsolationLevel(const QSqlDatabase &connection,
+                                            const QVariantHash &config);
         /*! Set the connection character set and collation. */
         static void configureEncoding(const QSqlDatabase &connection,
                                       const QVariantHash &config);

@@ -30,6 +30,7 @@ using Orm::Constants::prefix_indexes;
 using Orm::Constants::qt_timezone;
 using Orm::Constants::return_qdatetime;
 using Orm::Constants::schema_;
+using Orm::Constants::spatial_ref_sys;
 using Orm::Constants::username_;
 
 using Orm::DatabaseManager;
@@ -238,7 +239,7 @@ void tst_DatabaseManager::default_PostgreSQL_ConfigurationValues() const
                  {prefix_, EMPTY},
                  {prefix_indexes, false},
                  {options_, QVariantHash()},
-                 {dont_drop, QStringList {QStringLiteral("spatial_ref_sys")}},
+                 {dont_drop, QStringList {spatial_ref_sys}},
              }));
 
     // Connection configuration
@@ -250,7 +251,7 @@ void tst_DatabaseManager::default_PostgreSQL_ConfigurationValues() const
                  {prefix_, EMPTY},
                  {prefix_indexes, false},
                  {options_, QVariantHash()},
-                 {dont_drop, QStringList {QStringLiteral("spatial_ref_sys")}},
+                 {dont_drop, QStringList {spatial_ref_sys}},
                  {qt_timezone, QVariant::fromValue(
                                    QtTimeZoneConfig {QtTimeZoneType::DontConvert, {}})},
              }));

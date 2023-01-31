@@ -109,18 +109,20 @@ std::shared_ptr<DatabaseManager> setupManager()
             // Specifies what time zone all QDateTime-s will have
             {qt_timezone,      QVariant::fromValue(Qt::UTC)},
             // Examples of qt_timezone
-//            {qt_timezone,       QVariant::fromValue(QTimeZone("Europe/Bratislava"))},
-//            {qt_timezone,       "Europe/Prague"}, // Will be converted to QTimeZone("Europe/Prague")
-//            {qt_timezone,       QVariant::fromValue(QTimeZone("UTC+04"))},
-//            {qt_timezone,       "-03:00"},
-//            {qt_timezone,       3600}, // Offset from UTC
-//            {qt_timezone,       QVariant::fromValue(Qt::LocalTime)},
-//            {qt_timezone,       {}}, // The same as Qt::LocalTime
-            {prefix_,          EMPTY},
-            {prefix_indexes,   true},
+//            {qt_timezone,        QVariant::fromValue(QTimeZone("Europe/Bratislava"))},
+//            {qt_timezone,        "Europe/Prague"}, // Will be converted to QTimeZone("Europe/Prague")
+//            {qt_timezone,        QVariant::fromValue(QTimeZone("UTC+04"))},
+//            {qt_timezone,        "-03:00"},
+//            {qt_timezone,        3600}, // Offset from UTC
+//            {qt_timezone,        QVariant::fromValue(Qt::LocalTime)},
+//            {qt_timezone,        {}}, // The same as Qt::LocalTime
+            {prefix_,            EMPTY},
+            {prefix_indexes,     true},
+//            {isolation_level,    QStringLiteral("REPEATABLE READ")}, // Postgres default is READ COMMITTED
+//            {synchronous_commit, QStringLiteral("off")}, // Postgres default is on
             // ConnectionFactory provides a default value for this (for reference only)
-//            {dont_drop,        QStringList {QStringLiteral("spatial_ref_sys")}},
-            {options_,         ConfigUtils::postgresSslOptions()},
+//            {dont_drop,          QStringList {spatial_ref_sys}},
+            {options_,           ConfigUtils::postgresSslOptions()},
         }},
 
         // SQLite connection

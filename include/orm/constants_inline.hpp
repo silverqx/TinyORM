@@ -111,6 +111,10 @@ namespace Orm::Constants
     return_qdatetime        = QStringLiteral("return_qdatetime");
     inline const QString
     application_name        = QStringLiteral("application_name");
+    inline const QString
+    synchronous_commit      = QStringLiteral("synchronous_commit");
+    inline const QString
+    spatial_ref_sys         = QStringLiteral("spatial_ref_sys");
 
     inline const QString H127001   = QStringLiteral("127.0.0.1");
     inline const QString LOCALHOST = QStringLiteral("localhost");

@@ -19,6 +19,7 @@ using Orm::Constants::LOCAL;
 using Orm::Constants::NAME;
 using Orm::Constants::TMPL_DQUOTES;
 using Orm::Constants::charset_;
+using Orm::Constants::isolation_level;
 using Orm::Constants::schema_;
 using Orm::Constants::timezone_;
 
@@ -41,6 +42,9 @@ PostgresConnector::connect(const QVariantHash &config) const
 
     // Create and open new database connection
     const auto connection = createConnection(name, config, options);
+
+    // Transaction isolation level
+    configureIsolationLevel(connection, config);
 
     // Connection encoding
     configureEncoding(connection, config);
@@ -75,6 +79,22 @@ void PostgresConnector::parseConfigOptions(QVariantHash &/*unused*/) const
 {}
 
 /* protected */
+
+void PostgresConnector::configureIsolationLevel(const QSqlDatabase &connection,
+                                                const QVariantHash &config)
+{
+    if (!config.contains(isolation_level))
+        return;
+
+    QSqlQuery query(connection);
+
+    if (query.exec(QStringLiteral("set session characteristics as "
+                                  "transaction isolation level %1;")
+                   .arg(config[isolation_level].value<QString>())))
+        return;
+
+    throw Exceptions::QueryError(m_configureErrorMessage.arg(__tiny_func__), query);
+}
 
 void PostgresConnector::configureEncoding(const QSqlDatabase &connection,
                                           const QVariantHash &config)
