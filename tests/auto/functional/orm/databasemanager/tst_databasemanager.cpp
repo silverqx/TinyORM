@@ -175,7 +175,9 @@ void tst_DatabaseManager::default_MySQL_ConfigurationValues() const
                  {driver_, "qmysql"},
              }));
 
-    // Force the creation of a connection and parse the connection configuration options
+    /* Force the creation of a connection and parse the connection configuration options.
+       The qt_timezone option is only parsed in the connection configuration,
+       the original configuration is untouched. */
     m_dm->connection(connectionName);
     QCOMPARE(originalConfig,
              QVariantHash({
@@ -229,7 +231,9 @@ void tst_DatabaseManager::default_PostgreSQL_ConfigurationValues() const
                  {driver_, "qpsql"},
              }));
 
-    // Force the creation of a connection and parse the connection configuration options
+    /* Force the creation of a connection and parse the connection configuration options.
+       The qt_timezone option is only parsed in the connection configuration,
+       the original configuration is untouched. */
     m_dm->connection(connectionName);
     QCOMPARE(originalConfig,
              QVariantHash({
@@ -283,7 +287,9 @@ void tst_DatabaseManager::default_SQLite_ConfigurationValues() const
                  {driver_, "qsqlite"},
              }));
 
-    // Force the creation of a connection and parse the connection configuration options
+    /* Force the creation of a connection and parse the connection configuration options.
+       The qt_timezone option is only parsed in the connection configuration,
+       the original configuration is untouched. */
     m_dm->connection(connectionName);
     QCOMPARE(originalConfig,
              QVariantHash({
