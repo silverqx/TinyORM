@@ -1,11 +1,7 @@
 #include "orm/connectors/postgresconnector.hpp"
 
-#include <QRegularExpression>
 #include <QtSql/QSqlQuery>
 
-#include <unordered_set>
-
-#include "orm/constants.hpp"
 #include "orm/exceptions/queryerror.hpp"
 #include "orm/utils/container.hpp"
 #include "orm/utils/type.hpp"
