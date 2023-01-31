@@ -181,27 +181,28 @@ void tst_DatabaseManager::default_MySQL_ConfigurationValues() const
     m_dm->connection(connectionName);
     QCOMPARE(originalConfig,
              QVariantHash({
-                 {driver_, QMYSQL},
-                 {NAME, connectionName},
-                 {database_, EMPTY},
-                 {prefix_, EMPTY},
+                 {driver_,        QMYSQL},
+                 {NAME,           connectionName},
+                 {database_,      EMPTY},
+                 {prefix_,        EMPTY},
                  {prefix_indexes, false},
-                 {options_, QVariantHash()},
-                 {Version, {}},
+                 {options_,       QVariantHash()},
+                 {Version,        {}},
              }));
 
     // Connection configuration
     QCOMPARE(m_dm->getConfig(connectionName),
              QVariantHash({
-                 {driver_, QMYSQL},
-                 {NAME, connectionName},
-                 {database_, EMPTY},
-                 {prefix_, EMPTY},
+                 {driver_,        QMYSQL},
+                 {NAME,           connectionName},
+                 {database_,      EMPTY},
+                 {prefix_,        EMPTY},
                  {prefix_indexes, false},
-                 {options_, QVariantHash()},
-                 {Version, {}},
-                 {qt_timezone, QVariant::fromValue(
-                                   QtTimeZoneConfig {QtTimeZoneType::DontConvert, {}})},
+                 {options_,       QVariantHash()},
+                 {Version,        {}},
+                 {qt_timezone,    QVariant::fromValue(
+                                      QtTimeZoneConfig {QtTimeZoneType::DontConvert, {}}
+                                  )},
              }));
 
     // Restore
@@ -237,27 +238,28 @@ void tst_DatabaseManager::default_PostgreSQL_ConfigurationValues() const
     m_dm->connection(connectionName);
     QCOMPARE(originalConfig,
              QVariantHash({
-                 {driver_, QPSQL},
-                 {NAME, connectionName},
-                 {database_, EMPTY},
-                 {prefix_, EMPTY},
+                 {driver_,        QPSQL},
+                 {NAME,           connectionName},
+                 {database_,      EMPTY},
+                 {prefix_,        EMPTY},
                  {prefix_indexes, false},
-                 {options_, QVariantHash()},
-                 {dont_drop, QStringList {spatial_ref_sys}},
+                 {options_,       QVariantHash()},
+                 {dont_drop,      QStringList {spatial_ref_sys}},
              }));
 
     // Connection configuration
     QCOMPARE(m_dm->getConfig(connectionName),
              QVariantHash({
-                 {driver_, QPSQL},
-                 {NAME, connectionName},
-                 {database_, EMPTY},
-                 {prefix_, EMPTY},
+                 {driver_,        QPSQL},
+                 {NAME,           connectionName},
+                 {database_,      EMPTY},
+                 {prefix_,        EMPTY},
                  {prefix_indexes, false},
-                 {options_, QVariantHash()},
-                 {dont_drop, QStringList {spatial_ref_sys}},
-                 {qt_timezone, QVariant::fromValue(
-                                   QtTimeZoneConfig {QtTimeZoneType::DontConvert, {}})},
+                 {options_,       QVariantHash()},
+                 {dont_drop,      QStringList {spatial_ref_sys}},
+                 {qt_timezone,    QVariant::fromValue(
+                                      QtTimeZoneConfig {QtTimeZoneType::DontConvert, {}}
+                                  )},
              }));
 
     // Restore
@@ -293,27 +295,28 @@ void tst_DatabaseManager::default_SQLite_ConfigurationValues() const
     m_dm->connection(connectionName);
     QCOMPARE(originalConfig,
              QVariantHash({
-                 {driver_, QSQLITE},
-                 {NAME, connectionName},
-                 {database_, EMPTY},
-                 {prefix_, EMPTY},
-                 {prefix_indexes, false},
-                 {options_, QVariantHash()},
+                 {driver_,          QSQLITE},
+                 {NAME,             connectionName},
+                 {database_,        EMPTY},
+                 {prefix_,          EMPTY},
+                 {prefix_indexes,   false},
+                 {options_,         QVariantHash()},
                  {return_qdatetime, true},
              }));
 
     // Connection configuration
     QCOMPARE(m_dm->getConfig(connectionName),
              QVariantHash({
-                 {driver_, QSQLITE},
-                 {NAME, connectionName},
-                 {database_, EMPTY},
-                 {prefix_, EMPTY},
-                 {prefix_indexes, false},
-                 {options_, QVariantHash()},
+                 {driver_,          QSQLITE},
+                 {NAME,             connectionName},
+                 {database_,        EMPTY},
+                 {prefix_,          EMPTY},
+                 {prefix_indexes,   false},
+                 {options_,         QVariantHash()},
                  {return_qdatetime, true},
-                 {qt_timezone, QVariant::fromValue(
-                                   QtTimeZoneConfig {QtTimeZoneType::DontConvert, {}})},
+                 {qt_timezone,      QVariant::fromValue(
+                                        QtTimeZoneConfig {QtTimeZoneType::DontConvert, {}}
+                                    )},
              }));
 
     // Restore
