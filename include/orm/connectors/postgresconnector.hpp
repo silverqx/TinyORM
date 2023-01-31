@@ -16,7 +16,8 @@ namespace Orm::Connectors
     // FEATURE connectors, add some data member of support config options and if not contain throw silverqx
     // FEATURE postgres, add support for sslmode, sslcert, sslkey, sslrootcert config. options silverqx
     /*! PostgreSql connector. */
-    class PostgresConnector final : public ConnectorInterface, public Connector
+    class PostgresConnector final : public ConnectorInterface,
+                                    public Connector
     {
         Q_DISABLE_COPY(PostgresConnector)
 
