@@ -127,10 +127,10 @@ QVariantHash ConfigurationOptionsParser::prepareConfigOptions(const QVariant &op
     return preparedOptions;
 }
 
-QVector<QStringView>
+QList<QStringView>
 ConfigurationOptionsParser::splitConfigOptions(const QString &optionsString)
 {
-    QVector<QStringView> list;
+    QList<QStringView> list;
     list.reserve(optionsString.count(SEMICOLON) + optionsString.count(COMMA_C));
 
     // Split by the ; and also ,
