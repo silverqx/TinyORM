@@ -34,9 +34,6 @@ namespace Orm::Connectors
         /*! Get the QSqlDatabase connection options based on the configuration. */
         QString getOptions(const QVariantHash &config) const;
 
-        /*! Parse and validate QSqlDatabase connection options, called from
-            the ConfigurationOptionsParser. */
-        virtual void parseConfigOptions(QVariantHash &options) const = 0;
         /*! Get the QSqlDatabase connection options for the current connector. */
         virtual const QVariantHash &getConnectorOptions() const = 0;
 

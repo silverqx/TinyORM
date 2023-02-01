@@ -1,8 +1,8 @@
 #include "orm/connectors/connector.hpp"
 
+#include "orm/configurations/configurationoptionsparser.hpp"
 #include "orm/constants.hpp"
 #include "orm/exceptions/sqlerror.hpp"
-#include "orm/support/configurationoptionsparser.hpp"
 #include "orm/utils/type.hpp"
 
 TINYORM_BEGIN_COMMON_NAMESPACE
@@ -40,17 +40,17 @@ Connector::createConnection(const QString &name, const QVariantHash &config,
 
 QString Connector::getOptions(const QVariantHash &config) const
 {
-    /* This is little different than in the Eloquent, QSqlDatabase doesn't have
-       any default connection options which are common for all drivers, instead
+    /* This is a little different than in the Eloquent, the QSqlDatabase doesn't have
+       any default connection options which are common for all drivers, instead,
        every driver has it's own connection options.
-       So I have divided it into two options, one are config options which are
-       defined by the user and others are connector options.
-       Options defined by a user are in the config's 'options' parameter and
-       connector options are defined in the connector itself as 'm_options'
+       So I have divided it into two options, one are configuration options which are
+       defined by the user and the others are the default connector options.
+       Options defined by the user are in the configuration's 'options' option and
+       connector options are defined in the connector itself as the 'm_options' static
        data member. */
-    // Validate, prepare, and merge connection options
-    return Support::ConfigurationOptionsParser(*this)
-            .parseConfiguration(config);
+    // Validate, prepare, merge, and concatenate QSqlDatabase connection 'options' option
+    return Configurations::ConfigurationOptionsParser
+            ::mergeAndConcatenateOptions(getConnectorOptions(), config);
 }
 
 /* protected */

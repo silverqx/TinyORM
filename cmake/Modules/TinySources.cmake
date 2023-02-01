@@ -28,6 +28,13 @@ function(tinyorm_sources out_headers out_sources)
         connectors/connectionfactory.hpp
         connectors/connector.hpp
         config.hpp
+        configurations/configurationoptionsparser.hpp
+        configurations/configurationparser.hpp
+        configurations/configurationparserfactory.hpp
+        configurations/configurationparserinterface.hpp
+        configurations/mysqlconfigurationparser.hpp
+        configurations/postgresconfigurationparser.hpp
+        configurations/sqliteconfigurationparser.hpp
         connectors/connectorinterface.hpp
         connectors/mysqlconnector.hpp
         connectors/postgresconnector.hpp
@@ -92,7 +99,6 @@ function(tinyorm_sources out_headers out_sources)
         schema/schematypes.hpp
         schema/sqliteschemabuilder.hpp
         sqliteconnection.hpp
-        support/configurationoptionsparser.hpp
         support/databaseconfiguration.hpp
         support/databaseconnectionsmap.hpp
         types/log.hpp
@@ -170,6 +176,12 @@ function(tinyorm_sources out_headers out_sources)
         concerns/hasconnectionresolver.cpp
         concerns/logsqueries.cpp
         concerns/managestransactions.cpp
+        configurations/configurationoptionsparser.cpp
+        configurations/configurationparser.cpp
+        configurations/configurationparserfactory.cpp
+        configurations/mysqlconfigurationparser.cpp
+        configurations/postgresconfigurationparser.cpp
+        configurations/sqliteconfigurationparser.cpp
         connectors/connectionfactory.cpp
         connectors/connector.cpp
         connectors/mysqlconnector.cpp
@@ -210,7 +222,6 @@ function(tinyorm_sources out_headers out_sources)
         schema/schemabuilder.cpp
         schema/sqliteschemabuilder.cpp
         sqliteconnection.cpp
-        support/configurationoptionsparser.cpp
         types/sqlquery.cpp
         utils/configuration.cpp
         utils/fs.cpp

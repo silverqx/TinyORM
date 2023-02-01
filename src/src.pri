@@ -10,6 +10,12 @@ sourcesList += \
     $$PWD/orm/concerns/hasconnectionresolver.cpp \
     $$PWD/orm/concerns/logsqueries.cpp \
     $$PWD/orm/concerns/managestransactions.cpp \
+    $$PWD/orm/configurations/configurationoptionsparser.cpp \
+    $$PWD/orm/configurations/configurationparser.cpp \
+    $$PWD/orm/configurations/configurationparserfactory.cpp \
+    $$PWD/orm/configurations/mysqlconfigurationparser.cpp \
+    $$PWD/orm/configurations/postgresconfigurationparser.cpp \
+    $$PWD/orm/configurations/sqliteconfigurationparser.cpp \
     $$PWD/orm/connectors/connectionfactory.cpp \
     $$PWD/orm/connectors/connector.cpp \
     $$PWD/orm/connectors/mysqlconnector.cpp \
@@ -50,7 +56,6 @@ sourcesList += \
     $$PWD/orm/schema/schemabuilder.cpp \
     $$PWD/orm/schema/sqliteschemabuilder.cpp \
     $$PWD/orm/sqliteconnection.cpp \
-    $$PWD/orm/support/configurationoptionsparser.cpp \
     $$PWD/orm/types/sqlquery.cpp \
     $$PWD/orm/utils/configuration.cpp \
     $$PWD/orm/utils/fs.cpp \

@@ -17,6 +17,13 @@ headersList += \
     $$PWD/orm/concerns/logsqueries.hpp \
     $$PWD/orm/concerns/managestransactions.hpp \
     $$PWD/orm/config.hpp \
+    $$PWD/orm/configurations/configurationoptionsparser.hpp \
+    $$PWD/orm/configurations/configurationparser.hpp \
+    $$PWD/orm/configurations/configurationparserfactory.hpp \
+    $$PWD/orm/configurations/configurationparserinterface.hpp \
+    $$PWD/orm/configurations/mysqlconfigurationparser.hpp \
+    $$PWD/orm/configurations/postgresconfigurationparser.hpp \
+    $$PWD/orm/configurations/sqliteconfigurationparser.hpp \
     $$PWD/orm/connectionresolverinterface.hpp \
     $$PWD/orm/connectors/connectionfactory.hpp \
     $$PWD/orm/connectors/connector.hpp \
@@ -84,7 +91,6 @@ headersList += \
     $$PWD/orm/schema/schematypes.hpp \
     $$PWD/orm/schema/sqliteschemabuilder.hpp \
     $$PWD/orm/sqliteconnection.hpp \
-    $$PWD/orm/support/configurationoptionsparser.hpp \
     $$PWD/orm/support/databaseconfiguration.hpp \
     $$PWD/orm/support/databaseconnectionsmap.hpp \
     $$PWD/orm/types/log.hpp \

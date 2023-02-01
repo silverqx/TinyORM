@@ -71,9 +71,6 @@ PostgresConnector::getConnectorOptions() const
     return m_options;
 }
 
-void PostgresConnector::parseConfigOptions(QVariantHash &/*unused*/) const
-{}
-
 /* protected */
 
 void PostgresConnector::configureIsolationLevel(const QSqlDatabase &connection,

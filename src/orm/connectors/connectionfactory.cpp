@@ -1,5 +1,6 @@
 #include "orm/connectors/connectionfactory.hpp"
 
+#include "orm/configurations/configurationparserfactory.hpp"
 #include "orm/connectors/mysqlconnector.hpp"
 #include "orm/connectors/postgresconnector.hpp"
 #include "orm/connectors/sqliteconnector.hpp"
@@ -19,9 +20,10 @@ namespace Orm::Connectors
 /* public */
 
 std::unique_ptr<DatabaseConnection>
-ConnectionFactory::make(QVariantHash &config, const QString &connection)
+ConnectionFactory::make(QVariantHash &config, const ConnectionName &connection)
 {
-    auto configCopy = parseConfig(config, connection);
+    // Parse and prepare the database configuration
+    auto configCopy = parseConfiguration(config, connection);
 
     return createSingleConnection(std::move(configCopy));
 }
@@ -55,70 +57,12 @@ ConnectionFactory::createConnector(const QVariantHash &config)
 /* protected */
 
 QVariantHash
-ConnectionFactory::parseConfig(QVariantHash &config, const QString &connection)
+ConnectionFactory::parseConfiguration(QVariantHash &config,
+                                      const ConnectionName &connection)
 {
-    /* Insert/normalize needed configuration values, following inserted values will be
-       also changed in the so called the original configuration that will be also saved
-       in the DatabaseManager. */
-    config.insert(NAME, connection);
-
-    normalizeDriverName(config);
-
-    if (!config.contains(database_))
-        config.insert(database_, EMPTY);
-
-    if (!config.contains(prefix_))
-        config.insert(prefix_, EMPTY);
-
-    if (!config.contains(options_))
-        config.insert(options_, QVariantHash());
-
-    if (!config.contains(prefix_indexes))
-        config.insert(prefix_indexes, false);
-
-    // FUTURE connector, this can be enhanced, eg. add default values per driver, eg. engine_ for mysql is missing, can not be added because is driver specific silverqx
-    if (config[driver_] == QPSQL && !config.contains(dont_drop))
-        // spatial_ref_sys table is used by the PostGIS
-        config.insert(dont_drop, QStringList {QStringLiteral("spatial_ref_sys")});
-
-    if (config[driver_] == QMYSQL && !config.contains(Version))
-        config.insert(Version, {});
-
-    if (config[driver_] == QSQLITE && !config.contains(return_qdatetime))
-        config.insert(return_qdatetime, true);
-
-    /* Changes after this point will be saved only in the DatabaseConnection
-       configuration, the original DatabaseManager configuration will be untouched. */
-    auto configCopy = config;
-
-    // Parse the qt_timezone configuration option
-    parseQtTimeZone(configCopy, connection);
-
-    return configCopy;
-}
-
-void ConnectionFactory::normalizeDriverName(QVariantHash &config)
-{
-    if (!config.contains(driver_))
-        config.insert(driver_, EMPTY);
-
-    else {
-        auto &driver = config[driver_];
-
-        driver = driver.value<QString>().toUpper();
-    }
-}
-
-void ConnectionFactory::parseQtTimeZone(QVariantHash &config, const QString &connection)
-{
-    auto &qtTimeZone = config[qt_timezone];
-
-    // Nothing to parse, already contains the QtTimeZoneConfig
-    if (qtTimeZone.canConvert<QtTimeZoneConfig>())
-        return;
-
-    qtTimeZone = QVariant::fromValue(
-                     ConfigUtils::prepareQtTimeZone(config, connection));
+    // Look at the beginning of the configurationparser.cpp file how parsing works
+    return Configurations::ConfigurationParserFactory::cachedParser(config)
+            .parseConfiguration(config, connection);
 }
 
 std::unique_ptr<DatabaseConnection>

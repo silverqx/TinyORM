@@ -33,7 +33,7 @@ namespace Connectors
 
         /*! Establish a QSqlDatabase connection based on the configuration. */
         static std::unique_ptr<DatabaseConnection>
-        make(QVariantHash &config, const QString &connection);
+        make(QVariantHash &config, const ConnectionName &connection);
 
         /*! Create a connector instance based on the configuration. */
         static std::unique_ptr<ConnectorInterface>
@@ -42,12 +42,7 @@ namespace Connectors
     protected:
         /*! Parse and prepare the database configuration. */
         static QVariantHash
-        parseConfig(QVariantHash &config, const QString &connection);
-
-        /*! Modify the driver name to uppercase. */
-        static void normalizeDriverName(QVariantHash &config);
-        /*! Parse the qt_timezone configuration option. */
-        static void parseQtTimeZone(QVariantHash &config, const QString &connection);
+        parseConfiguration(QVariantHash &config, const ConnectionName &connection);
 
         /*! Create a single database connection  instance. */
         static std::unique_ptr<DatabaseConnection>

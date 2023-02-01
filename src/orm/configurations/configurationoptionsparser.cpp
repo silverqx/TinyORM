@@ -1,69 +1,79 @@
-#include "orm/support/configurationoptionsparser.hpp"
+#include "orm/configurations/configurationoptionsparser.hpp"
 
-#include "orm/connectors/connector.hpp"
 #include "orm/constants.hpp"
-#include "orm/exceptions/runtimeerror.hpp"
+#include "orm/exceptions/invalidargumenterror.hpp"
 #include "orm/utils/helpers.hpp"
+#include "orm/utils/type.hpp"
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
 using Orm::Constants::EQ_C;
-using Orm::Constants::options_;
 using Orm::Constants::SEMICOLON;
+using Orm::Constants::options_;
 
 using Orm::Utils::Helpers;
 
-namespace Orm::Support
+namespace Orm::Configurations
 {
 
-ConfigurationOptionsParser::ConfigurationOptionsParser(const Connectors::Connector &connector)
-    : m_connector(connector)
-{}
+/* public */
 
-QString
-ConfigurationOptionsParser::parseConfiguration(const QVariantHash &config) const
+void ConfigurationOptionsParser::parseOptionsOption(QVariantHash &config) const
 {
     // Get options from a user configuration
-    const auto &configOptions = config.find(options_).value();
+    auto &configOptions = config[options_];
 
-    // Validate options type in the connection configuration
+    // Validate the options type in the user-defined configuration
     validateConfigOptions(configOptions);
 
-    /* Prepare options for prepareConfigOptions() function, convert to QVariantHash
-       if needed. */
-    QVariantHash preparedConfigOptions = prepareConfigOptions(configOptions);
+    /* Prepare options for preparedConfigurationOptions() function, convert
+       to the QVariantHash if needed. */
+    auto preparedConfigOptions = prepareConfigOptions(configOptions);
 
-    // Parse config connection options, driver specific validation/modification
-    m_connector.parseConfigOptions(preparedConfigOptions);
+    // Parse the driver-specific 'options' configuration option (validation/modification)
+    parseDriverSpecificOptionsOption(preparedConfigOptions);
 
-    // Merge TinyORM default connector options with user's provided connection options
-    const auto mergedOptions = mergeOptions(m_connector.getConnectorOptions(),
-                                            preparedConfigOptions);
-
-    // Return in the format expected by QSqlDatabase
-    return joinOptions(mergedOptions);
+    // Swap the original 'options' with the newly prepared 'options' hash
+    configOptions = std::move(preparedConfigOptions);
 }
 
-void
-ConfigurationOptionsParser::validateConfigOptions(const QVariant &options)
+QString
+ConfigurationOptionsParser::mergeAndConcatenateOptions(
+        const QVariantHash &connectortOptions, const QVariantHash &config)
 {
-    if (Helpers::qVariantTypeId(options) != QMetaType::QString && !
+    // Merge the TinyORM's default connector 'options' with the user-defined options
+    const auto mergedOptions = mergeOptions(connectortOptions,
+                                            config[options_].value<QVariantHash>());
+
+    // Return in the format expected by the QSqlDatabase
+    return concatenateOptions(mergedOptions);
+}
+
+/* private */
+
+void ConfigurationOptionsParser::validateConfigOptions(const QVariant &options)
+{
+    if (Helpers::qVariantTypeId(options) == QMetaType::QString ||
         options.canConvert<QVariantHash>()
     )
-        throw Exceptions::RuntimeError(
-                "Passed unsupported 'options' type in the connection configuration, "
-                "it has to be the QString or QVariantHash type.");
+        return;
+
+    throw Exceptions::InvalidArgumentError(
+                QStringLiteral(
+                    "Passed an unsupported 'options' type in the connection "
+                    "configuration, it has to be the QString or QVariantHash type "
+                    "in %1().")
+                .arg(__tiny_func__));
 }
 
-QVariantHash
-ConfigurationOptionsParser::prepareConfigOptions(const QVariant &options)
+QVariantHash ConfigurationOptionsParser::prepareConfigOptions(const QVariant &options)
 {
     /* Nothing to do, already contains the QVariantHas. Input is already validated, so
-       I can be sure that options contain the QVariantHash. */
+       we can be sure that the 'options' option type is the QVariantHash. */
     if (Helpers::qVariantTypeId(options) != QMetaType::QString)
         return options.value<QVariantHash>();
 
-    // Convert to the QVariantHash
+    // The following algorithm converts the QString defined 'options' to the QVariantHash
     const auto optionsString = options.value<QString>();
     // QStringView saves 3 copies
     const auto list = QStringView(optionsString).split(SEMICOLON, Qt::SkipEmptyParts);
@@ -89,15 +99,16 @@ ConfigurationOptionsParser::prepareConfigOptions(const QVariant &options)
 }
 
 QVariantHash
-ConfigurationOptionsParser::mergeOptions(
-        const QVariantHash &connectortOptions,
-        const QVariantHash &preparedConfigOptions)
+ConfigurationOptionsParser::mergeOptions(const QVariantHash &connectortOptions,
+                                         QVariantHash &&preparedConfigOptions)
 {
-    // Make a copy of prepared config options
-    QVariantHash merged = preparedConfigOptions;
+    // Move to the variable with a better name
+    const auto preparedConfigOptionsSize = preparedConfigOptions.size();
+    QVariantHash merged = std::move(preparedConfigOptions);
+    merged.reserve(merged.size() + preparedConfigOptionsSize);
 
-    /* Insert options from the default connector options hash, when prepared
-       config options already doesn't contain it, so user can overwrite
+    /* Insert options from the default connector options hash, if the prepared
+       configuration options already doesn't contain it, so user can overwrite
        default connector options. */
     auto itDefault = connectortOptions.constBegin();
     while (itDefault != connectortOptions.constEnd()) {
@@ -113,23 +124,24 @@ ConfigurationOptionsParser::mergeOptions(
     return merged;
 }
 
-QString ConfigurationOptionsParser::joinOptions(const QVariantHash &options)
+QString ConfigurationOptionsParser::concatenateOptions(const QVariantHash &options)
 {
-    QStringList joined;
+    QStringList concatenated;
+    concatenated.reserve(options.size());
 
     auto itOption = options.constBegin();
     while (itOption != options.constEnd()) {
         const auto &key = itOption.key();
         const auto &value = itOption.value();
 
-        joined << QStringLiteral("%1=%2").arg(key,
-                                              value.value<QString>());
+        concatenated << QStringLiteral("%1=%2").arg(key, value.value<QString>());
+
         ++itOption;
     }
 
-    return joined.join(SEMICOLON);
+    return concatenated.join(SEMICOLON);
 }
 
-} // namespace Orm::Support
+} // namespace Orm::Configurations
 
 TINYORM_END_COMMON_NAMESPACE

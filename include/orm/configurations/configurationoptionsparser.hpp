@@ -1,65 +1,65 @@
 #pragma once
-#ifndef ORM_SUPPORT_CONFIGURATIONOPTIONSPARSER_HPP
-#define ORM_SUPPORT_CONFIGURATIONOPTIONSPARSER_HPP
+#ifndef ORM_CONFIGURATIONS_CONFIGURATIONOPTIONSPARSER_HPP
+#define ORM_CONFIGURATIONS_CONFIGURATIONOPTIONSPARSER_HPP
 
 #include "orm/macros/systemheader.hpp"
 TINY_SYSTEM_HEADER
 
-#include <QString>
 #include <QVariantHash>
 
 #include "orm/macros/commonnamespace.hpp"
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
-namespace Orm
+namespace Orm::Configurations
 {
 
-namespace Connectors
-{
-    class Connector;
-}
-
-namespace Support
-{
-
-    /*! QSqlDatabase connection configuration parser, validate, prepare, and merge
-        QSqlDatabase connection options, these are the settings passed
-        to the QSqlDatabase::setConnectOptions(). */
+    /*! TinyORM configuration parser base mixin class validates and prepares
+        configuration 'options' option, the parsed configuration will be used
+        in the Connector-s by the QSqlDatabase::setConnectOptions() method. */
     class ConfigurationOptionsParser
     {
         Q_DISABLE_COPY(ConfigurationOptionsParser)
 
     public:
-        /*! Constructor. */
-        explicit ConfigurationOptionsParser(const Connectors::Connector &connector);
+        /*! Default constructor. */
+        inline ConfigurationOptionsParser() = default;
+        /*! Pure virtual destructor. */
+        inline virtual ~ConfigurationOptionsParser() = 0;
 
-        /*! Parse the database configuration, validate, prepare, and merge connection
-            options. */
-        QString parseConfiguration(const QVariantHash &config) const;
+        /*! Parse the 'options' configuration option. */
+        void parseOptionsOption(QVariantHash &config) const;
+
+        /*! Merge and concatenate a default connector options with a prepared options. */
+        static QString mergeAndConcatenateOptions(const QVariantHash &connectortOptions,
+                                                  const QVariantHash &config);
 
     protected:
-        /*! Validate the 'options' configuration type, has to be the QString or
+        /*! Parse the driver-specific 'options' configuration option. */
+        virtual void parseDriverSpecificOptionsOption(QVariantHash &options) const = 0;
+
+    private:
+        /*! Validate the 'options' configuration type, must be the QString or
             QVariantHash. */
         static void validateConfigOptions(const QVariant &options);
-        /*! Prepare options for parseConfigOptions() function, convert to
-            the QVariantHash if needed. */
+        /*! Prepare the 'options' for the parseDriverSpecificOptionsOption() method,
+            convert to the QVariantHash if needed. */
         static QVariantHash prepareConfigOptions(const QVariant &options);
 
-        /*! Merge the TinyORM connector options with user's provided connection
-            options defined in the config. */
+        /*! Merge the TinyORM's default connector 'options' with the user-defined
+            options in the configuration. */
         static QVariantHash mergeOptions(const QVariantHash &connectortOptions,
-                                         const QVariantHash &preparedConfigOptions);
-        /*! Stringify merged options. */
-        static QString joinOptions(const QVariantHash &options);
-
-        /*! Connector instance to obtain connection options from. */
-        const Connectors::Connector &m_connector;
+                                         QVariantHash &&preparedConfigOptions);
+        /*! Stringify the prepared 'options' option. */
+        static QString concatenateOptions(const QVariantHash &options);
     };
 
-} // namespace Support
-} // namespace Orm
+    /* public */
+
+    ConfigurationOptionsParser::~ConfigurationOptionsParser() = default;
+
+} // namespace Orm::Configurations
 
 TINYORM_END_COMMON_NAMESPACE
 
-#endif // ORM_SUPPORT_CONFIGURATIONOPTIONSPARSER_HPP
+#endif // ORM_CONFIGURATIONS_CONFIGURATIONOPTIONSPARSER_HPP
