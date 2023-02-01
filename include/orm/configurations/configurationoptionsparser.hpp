@@ -51,6 +51,8 @@ namespace Orm::Configurations
         /*! Prepare the 'options' for the parseDriverSpecificOptionsOption() method,
             convert to the QVariantHash if needed. */
         static QVariantHash prepareConfigOptions(const QVariant &options);
+        /*! Split the 'options' string by the ; and also ,. */
+        static QVector<QStringView> splitConfigOptions(const QString &optionsString);
 
         /*! Merge the TinyORM's default connector 'options' with the user-defined
             options in the configuration. */

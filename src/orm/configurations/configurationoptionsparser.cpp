@@ -8,6 +8,7 @@
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
+using Orm::Constants::COMMA_C;
 using Orm::Constants::EQ_C;
 using Orm::Constants::SEMICOLON;
 using Orm::Constants::options_;
@@ -103,9 +104,8 @@ QVariantHash ConfigurationOptionsParser::prepareConfigOptions(const QVariant &op
         return options.value<QVariantHash>();
 
     // The following algorithm converts the QString defined 'options' to the QVariantHash
-    const auto optionsString = options.value<QString>();
-    // QStringView saves 3 copies
-    const auto list = QStringView(optionsString).split(SEMICOLON, Qt::SkipEmptyParts);
+    // QStringView saves 3 copies (per one split operation)
+    const auto list = splitConfigOptions(options.value<QString>());
 
     QVariantHash preparedOptions;
     preparedOptions.reserve(list.size());
@@ -125,6 +125,19 @@ QVariantHash ConfigurationOptionsParser::prepareConfigOptions(const QVariant &op
     }
 
     return preparedOptions;
+}
+
+QVector<QStringView>
+ConfigurationOptionsParser::splitConfigOptions(const QString &optionsString)
+{
+    QVector<QStringView> list;
+    list.reserve(optionsString.count(SEMICOLON) + optionsString.count(COMMA_C));
+
+    // Split by the ; and also ,
+    for (auto &&value : QStringView(optionsString).split(SEMICOLON, Qt::SkipEmptyParts))
+        list << value.split(COMMA_C, Qt::SkipEmptyParts);
+
+    return list;
 }
 
 QVariantHash
