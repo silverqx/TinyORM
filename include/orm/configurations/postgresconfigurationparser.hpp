@@ -29,6 +29,10 @@ namespace Orm::Configurations
         void parseDriverSpecificOptions() const final;
         /*! Parse the driver-specific 'options' configuration option. */
         void parseDriverSpecificOptionsOption(QVariantHash &options) const final;
+
+    private:
+        /*! Add the SSL-related options to the connection 'options' hash. */
+        void addSslOptions(QVariantHash &options) const;
     };
 
 } // namespace Orm::Configurations

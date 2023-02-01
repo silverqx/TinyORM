@@ -98,6 +98,9 @@ namespace Orm::Constants
 
     // PostgreSQL SSL
     inline const QString sslmode_     = QStringLiteral("sslmode");
+    inline const QString sslcert      = QStringLiteral("sslcert");
+    inline const QString sslkey       = QStringLiteral("sslkey");
+    inline const QString sslrootcert  = QStringLiteral("sslrootcert");
 
     inline const QString
     isolation_level         = QStringLiteral("isolation_level");

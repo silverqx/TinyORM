@@ -206,7 +206,99 @@ You have to pass the [`sslmode`](https://www.postgresql.org/docs/current/libpq-s
 
 And place your __client__ certificates to the `~/.postgres/` on [Linux](https://www.postgresql.org/docs/current/libpq-ssl.html#LIBPQ-SSL-FILE-USAGE) and `$env:APPDATA/postgres/` on Windows. Everything is described in the PostgreSQL's [libpq client](https://www.postgresql.org/docs/current/libpq-ssl.html) and [server](https://www.postgresql.org/docs/15/ssl-tcp.html#SSL-FILE-USAGE) documentation.
 
-You may also use the `ConfigUtils::postgresSslOptions()` or the `ConfigUtils::insertPostgresSslOptions()` methods to insert the `sslmode` option for you and define it using the `DB_PGSQL_SSLMODE` environment variable.
+If you want to keep your __client__ certificates in your own location, you can set the `sslcert`, `sslkey`, and `sslrootcert` options.
+
+<Tabs groupId={shell}>
+<TabItem value={pwsh} label={pwsh_label}>
+
+    #include <orm/db.hpp>
+
+    using Orm::DB;
+
+    // Ownership of a shared_ptr()
+    auto manager = DB::create({
+        {"driver",  "QPSQL"},
+        {"host",    qEnvironmentVariable("DB_PGSQL_HOST", "127.0.0.1")},
+        ...
+        // highlight-next-line
+        {"options", QVariantHash({{"sslmode",     "verify-full"},
+                                  // highlight-start
+                                  {"sslcert",     "C:/example/postgres.crt"},
+                                  {"sslkey",      "C:/example/postgres.key"},
+                                  {"sslrootcert", "C:/example/root.crt"}})},
+                                  // highlight-end
+    });
+
+</TabItem>
+<TabItem value={bash} label={bash_label}>
+
+    #include <orm/db.hpp>
+
+    using Orm::DB;
+
+    // Ownership of a shared_ptr()
+    auto manager = DB::create({
+        {"driver",  "QPSQL"},
+        {"host",    qEnvironmentVariable("DB_PGSQL_HOST", "127.0.0.1")},
+        ...
+        // highlight-next-line
+        {"options", QVariantHash({{"sslmode",     "verify-full"},
+                                  // highlight-start
+                                  {"sslcert",     "/example/postgres.crt"},
+                                  {"sslkey",      "/example/postgres.key"},
+                                  {"sslrootcert", "/example/root.crt"}})},
+                                  // highlight-end
+    });
+
+</TabItem>
+</Tabs>
+
+You can define these SSL-related options in the top-level configuration, they will be copied to the `options` option hash during configuration parsing. The top-level configuration takes precedence and overwrites the options in the `options` hash.
+
+<Tabs groupId={shell}>
+<TabItem value={pwsh} label={pwsh_label}>
+
+    #include <orm/db.hpp>
+
+    using Orm::DB;
+
+    // Ownership of a shared_ptr()
+    auto manager = DB::create({
+        {"driver",  "QPSQL"},
+        {"host",    qEnvironmentVariable("DB_PGSQL_HOST", "127.0.0.1")},
+        ...
+        // highlight-start
+        {"sslmode",     "verify-full"},
+        {"sslcert",     "C:/example/postgres.crt"},
+        {"sslkey",      "C:/example/postgres.key"},
+        {"sslrootcert", "C:/example/root.crt"}
+        // highlight-end
+    });
+
+</TabItem>
+<TabItem value={bash} label={bash_label}>
+
+    #include <orm/db.hpp>
+
+    using Orm::DB;
+
+    // Ownership of a shared_ptr()
+    auto manager = DB::create({
+        {"driver",  "QPSQL"},
+        {"host",    qEnvironmentVariable("DB_PGSQL_HOST", "127.0.0.1")},
+        ...
+        // highlight-start
+        {"sslmode",     "verify-full"},
+        {"sslcert",     "/example/postgres.crt"},
+        {"sslkey",      "/example/postgres.key"},
+        {"sslrootcert", "/example/root.crt"}
+        // highlight-end
+    });
+
+</TabItem>
+</Tabs>
+
+You may also use the `ConfigUtils::postgresSslOptions()` or the `ConfigUtils::insertPostgresSslOptions()` methods to insert the `sslmode`, `sslcert`, `sslkey`, and `sslrootcert` options for you and define them using the `DB_PGSQL_SSLMODE`, `DB_PGSQL_SSLCERT`, `DB_PGSQL_SSLKEY`, and `DB_PGSQL_SSLROOTCERT` environment variable.
 
     #include <orm/db.hpp>
     #include <orm/utils/configuration.hpp>
@@ -225,7 +317,7 @@ You may also use the `ConfigUtils::postgresSslOptions()` or the `ConfigUtils::in
     });
 
 :::info
-The PostgreSQL's libpq client library provides the [`PGSSLMODE`](https://www.postgresql.org/docs/current/libpq-envars.html#id-1.7.3.22.3.4.13.1.1) environment variable, so you don't have to use TinyORM's `options` configuration and may use the `PGSSLMODE` instead.
+The PostgreSQL's libpq client library provides the [`PGSSLMODE`](https://www.postgresql.org/docs/current/libpq-envars.html#id-1.7.3.22.3.4.13.1.1), [`PGSSLCERT`](https://www.postgresql.org/docs/current/libpq-envars.html#id-1.7.3.22.3.4.16.1.1), [`PGSSLKEY`](https://www.postgresql.org/docs/current/libpq-envars.html#id-1.7.3.22.3.4.17.1.1), and [`PGSSLROOTCERT`](https://www.postgresql.org/docs/current/libpq-envars.html#id-1.7.3.22.3.4.18.1.1) environment variables, so you don't have to use TinyORM's `options` configuration and may use these environment variables instead.
 :::
 
 :::tip

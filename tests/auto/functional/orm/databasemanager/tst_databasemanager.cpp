@@ -31,6 +31,10 @@ using Orm::Constants::qt_timezone;
 using Orm::Constants::return_qdatetime;
 using Orm::Constants::schema_;
 using Orm::Constants::spatial_ref_sys;
+using Orm::Constants::sslcert;
+using Orm::Constants::sslkey;
+using Orm::Constants::sslmode_;
+using Orm::Constants::sslrootcert;
 using Orm::Constants::username_;
 
 using Orm::DatabaseManager;
@@ -51,6 +55,8 @@ private Q_SLOTS:
     void default_MySQL_ConfigurationValues() const;
     void default_PostgreSQL_ConfigurationValues() const;
     void default_SQLite_ConfigurationValues() const;
+
+    void ssl_PostgreSQL_ConfigurationValues() const;
 
 // NOLINTNEXTLINE(readability-redundant-access-specifiers)
 private:
@@ -317,6 +323,91 @@ void tst_DatabaseManager::default_SQLite_ConfigurationValues() const
                  {qt_timezone,      QVariant::fromValue(
                                         QtTimeZoneConfig {QtTimeZoneType::DontConvert, {}}
                                     )},
+             }));
+
+    // Restore
+    QVERIFY(m_dm->removeConnection(connectionName));
+}
+
+void tst_DatabaseManager::ssl_PostgreSQL_ConfigurationValues() const
+{
+    const auto connectionName =
+            QStringLiteral(
+                "tinyorm_pgsql_tests-tst_DatabaseMannager-"
+                "ssl_PostgreSQL_ConfigurationValues");
+
+    // Top level
+    const auto sslmodeValue        = QStringLiteral("verify-full");
+    const auto sslcertValue        = QStringLiteral("C:/example/psql.crt");
+    const auto sslkeyValue         = QStringLiteral("C:/example/psql.key");
+    const auto sslrootcertValue    = QStringLiteral("C:/example/ca.crt");
+    // The 'options' level
+    const auto sslcertOptionsValue = QStringLiteral("D:/example/pg.crt");
+    const auto sslkeyOptionsValue  = QStringLiteral("D:/example/pg.key");
+
+    const QVariantHash initialConfiguration({
+        {driver_,     QPSQL},
+        {sslmode_,    sslmodeValue},
+        {sslcert,     sslcertValue},
+        {sslkey,      sslkeyValue},
+        {sslrootcert, sslrootcertValue},
+        {options_,    QVariantHash({{sslcert, sslcertOptionsValue},
+                                    {sslkey,  sslkeyOptionsValue}})}
+    });
+
+    // Create database connection
+    m_dm->addConnections({
+        {connectionName, initialConfiguration},
+    // Don't setup any default connection
+    }, EMPTY);
+
+    // Original configuration
+    // Connection isn't created and configuration options are not parsed yet
+    const auto &originalConfig = m_dm->originalConfig(connectionName);
+    QCOMPARE(originalConfig, initialConfiguration);
+
+    /* Force the creation of a connection and parse the connection configuration options.
+       The SSL-related options are only parsed in the connection configuration,
+       the original configuration is untouched. */
+    m_dm->connection(connectionName);
+    QCOMPARE(originalConfig,
+             QVariantHash({
+                 {driver_,        QPSQL},
+                 {NAME,           connectionName},
+                 {database_,      EMPTY},
+                 {prefix_,        EMPTY},
+                 {prefix_indexes, false},
+                 {options_,       QVariantHash()},
+                 {dont_drop,      QStringList {spatial_ref_sys}},
+                 {sslmode_,       sslmodeValue},
+                 {sslcert,        sslcertValue},
+                 {sslkey,         sslkeyValue},
+                 {sslrootcert,    sslrootcertValue},
+                 {options_,       QVariantHash({{sslcert, sslcertOptionsValue},
+                                                {sslkey,  sslkeyOptionsValue}})}
+             }));
+
+    // Connection configuration
+    QCOMPARE(m_dm->getConfig(connectionName),
+             QVariantHash({
+                 {driver_,        QPSQL},
+                 {NAME,           connectionName},
+                 {database_,      EMPTY},
+                 {prefix_,        EMPTY},
+                 {prefix_indexes, false},
+                 {options_,       QVariantHash()},
+                 {dont_drop,      QStringList {spatial_ref_sys}},
+                 {qt_timezone,    QVariant::fromValue(
+                                      QtTimeZoneConfig {QtTimeZoneType::DontConvert, {}}
+                                  )},
+                 {sslmode_,       sslmodeValue},
+                 {sslcert,        sslcertValue},
+                 {sslkey,         sslkeyValue},
+                 {sslrootcert,    sslrootcertValue},
+                 {options_,       QVariantHash({{sslmode_,    sslmodeValue},
+                                                {sslcert,     sslcertValue},
+                                                {sslkey,      sslkeyValue},
+                                                {sslrootcert, sslrootcertValue}})}
              }));
 
     // Restore

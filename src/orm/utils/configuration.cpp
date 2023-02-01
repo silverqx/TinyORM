@@ -159,9 +159,13 @@ namespace
     QVariantHash getPostgresSslOptions()
     {
         QVariantHash options;
-        options.reserve(1);
+        options.reserve(4);
 
-        insertDbOption(options, sslmode_, qEnvironmentVariable("DB_PGSQL_SSLMODE"));
+        insertDbOption(options, sslmode_,    qEnvironmentVariable("DB_PGSQL_SSLMODE"));
+        insertDbOption(options, sslcert,     qEnvironmentVariable("DB_PGSQL_SSLCERT"));
+        insertDbOption(options, sslkey,      qEnvironmentVariable("DB_PGSQL_SSLKEY"));
+        insertDbOption(options, sslrootcert,
+                       qEnvironmentVariable("DB_PGSQL_SSLROOTCERT"));
 
         return options;
     }
@@ -170,7 +174,7 @@ namespace
 QVariantHash Configuration::postgresSslOptions()
 {
     QVariantHash options;
-    options.reserve(6);
+    options.reserve(9);
 
     options.insert(getPostgresSslOptions());
 
