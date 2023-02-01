@@ -73,12 +73,12 @@ namespace Orm::Configurations
 
     QVariantHash &ConfigurationParser::config() const noexcept
     {
-        return *m_config;
+        return m_config.value(); // NOLINT(bugprone-unchecked-optional-access)
     }
 
     const ConnectionName &ConfigurationParser::connection() const noexcept
     {
-        return *m_connection;
+        return m_connection.value(); // NOLINT(bugprone-unchecked-optional-access)
     }
 
 } // namespace Orm::Configurations
