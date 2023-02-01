@@ -46,6 +46,7 @@ headersList += \
     $$PWD/orm/exceptions/recordsnotfounderror.hpp \
     $$PWD/orm/exceptions/runtimeerror.hpp \
     $$PWD/orm/exceptions/sqlerror.hpp \
+    $$PWD/orm/exceptions/sqlitedatabasedoesnotexisterror.hpp \
     $$PWD/orm/exceptions/sqltransactionerror.hpp \
     $$PWD/orm/libraryinfo.hpp \
     $$PWD/orm/macros/archdetect.hpp \

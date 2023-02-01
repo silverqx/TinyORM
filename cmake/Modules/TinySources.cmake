@@ -54,6 +54,7 @@ function(tinyorm_sources out_headers out_sources)
         exceptions/recordsnotfounderror.hpp
         exceptions/runtimeerror.hpp
         exceptions/sqlerror.hpp
+        exceptions/sqlitedatabasedoesnotexisterror.hpp
         exceptions/sqltransactionerror.hpp
         libraryinfo.hpp
         macros/archdetect.hpp

@@ -5,6 +5,7 @@
 
 #include "orm/constants.hpp"
 #include "orm/exceptions/queryerror.hpp"
+#include "orm/exceptions/sqlitedatabasedoesnotexisterror.hpp"
 #include "orm/utils/type.hpp"
 
 TINYORM_BEGIN_COMMON_NAMESPACE
@@ -95,8 +96,7 @@ void SQLiteConnector::checkDatabaseExists(const QVariantHash &config)
         checkDatabaseExists = config[check_database_exists].value<bool>();
 
     if (checkDatabaseExists && !QFile::exists(path))
-        throw Exceptions::RuntimeError(
-                QStringLiteral("SQLite Database file '%1' does not exist.").arg(path));
+        throw Exceptions::SQLiteDatabaseDoesNotExistError(path);
 }
 
 } // namespace Orm::Connectors
