@@ -97,7 +97,7 @@ void PostgresConnector::configureEncoding(const QSqlDatabase &connection,
 
     QSqlQuery query(connection);
 
-    if (query.exec(QStringLiteral("set names '%1'")
+    if (query.exec(QStringLiteral("set names '%1';")
                    .arg(config[charset_].value<QString>())))
         return;
 
@@ -127,7 +127,7 @@ void PostgresConnector::configureTimezone(const QSqlDatabase &connection,
     const auto timezone = config[timezone_].value<QString>();
 
     if (local.contains(timezone)) {
-        if (query.exec(QStringLiteral("set time zone %1").arg(timezone)))
+        if (query.exec(QStringLiteral("set time zone %1;").arg(timezone)))
             return;
     } else
         if (query.exec(QStringLiteral("set time zone '%1';").arg(timezone)))
@@ -149,7 +149,7 @@ void PostgresConnector::configureSchema(const QSqlDatabase &connection,
     if (schema.isEmpty())
         return;
 
-    if (query.exec(QStringLiteral("set search_path to %1").arg(schema)))
+    if (query.exec(QStringLiteral("set search_path to %1;").arg(schema)))
         return;
 
     throw Exceptions::QueryError(m_configureErrorMessage.arg(__tiny_func__), query);
@@ -185,7 +185,7 @@ void PostgresConnector::configureApplicationName(const QSqlDatabase &connection,
 
     QSqlQuery query(connection);
 
-    if (query.exec(QStringLiteral("set application_name to '%1'")
+    if (query.exec(QStringLiteral("set application_name to '%1';")
                    .arg(config["application_name"].value<QString>())))
         return;
 
@@ -200,7 +200,7 @@ void PostgresConnector::configureSynchronousCommit(const QSqlDatabase &connectio
 
     QSqlQuery query(connection);
 
-    if (query.exec(QStringLiteral("set synchronous_commit to '%1'")
+    if (query.exec(QStringLiteral("set synchronous_commit to '%1';")
                    .arg(config["synchronous_commit"].value<QString>())))
         return;
 
