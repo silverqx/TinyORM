@@ -140,6 +140,7 @@ Databases::createConfigurationsHash(const QStringList &connections)
                 (connections.isEmpty() || connections.contains(connection));
     };
 
+    // This connection must be to the MySQL database server (not MariaDB)
     if (shouldCreateConnection(MYSQL, QMYSQL))
         if (auto [config, envDefined] = mysqlConfiguration(); envDefined)
             configurations[MYSQL] = std::move(config);
@@ -158,6 +159,8 @@ Databases::createConfigurationsHash(const QStringList &connections)
 std::pair<std::reference_wrapper<const QVariantHash>, bool>
 Databases::mysqlConfiguration()
 {
+    /* This connection must be to the MySQL database server (not MariaDB), because
+       some auto tests depends on it and also the TinyOrmPlayground. */
     static const QVariantHash config {
         {driver_,         QMYSQL},
         {host_,           qEnvironmentVariable("DB_MYSQL_HOST",      H127001)},
