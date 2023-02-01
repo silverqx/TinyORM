@@ -357,7 +357,7 @@ bool DatabaseManager::removeConnection(const QString &name)
 
     // Remove TinyORM configuration
     m_configuration->erase(name_);
-    // Remove Qt's database connection
+    // Remove Qt's database connection, ~QSqlDatabase() internally also calls close()
     QSqlDatabase::removeDatabase(name_);
 
     resetDefaultConnection_();
