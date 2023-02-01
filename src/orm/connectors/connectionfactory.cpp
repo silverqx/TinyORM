@@ -159,14 +159,15 @@ ConnectionFactory::createConnection(
 //                    std::move(connection), std::move(database), std::move(tablePrefix),
 //                    std::move(qtTimeZone), std::move(config));
 
-    throw Exceptions::RuntimeError(QStringLiteral("Unsupported driver '%1' in %2().")
-                                   .arg(driver, __tiny_func__));
+    throw Exceptions::InvalidArgumentError(
+                QStringLiteral("Unsupported driver '%1' in %2().")
+                .arg(driver, __tiny_func__));
 }
 
 QStringList ConnectionFactory::parseHosts(const QVariantHash &config)
 {
     if (!config.contains(host_))
-        throw Exceptions::RuntimeError(
+        throw Exceptions::InvalidArgumentError(
                 QStringLiteral("Database 'host' configuration parameter is required "
                                "in %1().")
                 .arg(__tiny_func__));
@@ -182,7 +183,7 @@ void ConnectionFactory::validateHosts(const QStringList &hosts)
 {
     for (const auto &host : hosts)
         if (host.isEmpty())
-            throw Exceptions::RuntimeError(
+            throw Exceptions::InvalidArgumentError(
                     QStringLiteral(
                         "Database 'host' configuration parameter can not contain empty "
                         "value in %1().")
