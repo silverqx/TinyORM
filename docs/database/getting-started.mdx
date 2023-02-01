@@ -119,44 +119,40 @@ You have to pass the `SSL_CA`, `SSL_CERT`, and `SSL_KEY` options.
 <Tabs groupId={shell}>
 <TabItem value={pwsh} label={pwsh_label}>
 
-```
-#include <orm/db.hpp>
+    #include <orm/db.hpp>
 
-using Orm::DB;
+    using Orm::DB;
 
-// Ownership of a shared_ptr()
-auto manager = DB::create({
-    {"driver",  "QMYSQL"},
-    {"host",    qEnvironmentVariable("DB_MYSQL_HOST", "127.0.0.1")},
-    ...
-    // highlight-start
-    {"options", QVariantHash({{"SSL_CA",   "C:/mysql/data/ca.pem"},
-                              {"SSL_CERT", "C:/mysql/data/client-cert.pem"},
-                              {"SSL_KEY",  "C:/mysql/data/client-key.pem"}})},
-    // highlight-end
-});
-```
+    // Ownership of a shared_ptr()
+    auto manager = DB::create({
+        {"driver",  "QMYSQL"},
+        {"host",    qEnvironmentVariable("DB_MYSQL_HOST", "127.0.0.1")},
+        ...
+        // highlight-start
+        {"options", QVariantHash({{"SSL_CA",   "C:/mysql/data/ca.pem"},
+                                  {"SSL_CERT", "C:/mysql/data/client-cert.pem"},
+                                  {"SSL_KEY",  "C:/mysql/data/client-key.pem"}})},
+        // highlight-end
+    });
 
 </TabItem>
 <TabItem value={bash} label={bash_label}>
 
-```
-#include <orm/db.hpp>
+    #include <orm/db.hpp>
 
-using Orm::DB;
+    using Orm::DB;
 
-// Ownership of a shared_ptr()
-auto manager = DB::create({
-    {"driver",  "QMYSQL"},
-    {"host",    qEnvironmentVariable("DB_MYSQL_HOST", "127.0.0.1")},
-    ...
-    // highlight-start
-    {"options", QVariantHash({{"SSL_CA",   "~/.local/share/TinyORM/ssl/ca.pem"},
-                              {"SSL_CERT", "~/.local/share/TinyORM/ssl/client-cert.pem"},
-                              {"SSL_KEY",  "~/.local/share/TinyORM/ssl/client-key.pem"}})},
-    // highlight-end
-});
-```
+    // Ownership of a shared_ptr()
+    auto manager = DB::create({
+        {"driver",  "QMYSQL"},
+        {"host",    qEnvironmentVariable("DB_MYSQL_HOST", "127.0.0.1")},
+        ...
+        // highlight-start
+        {"options", QVariantHash({{"SSL_CA",   "~/.local/share/TinyORM/ssl/ca.pem"},
+                                  {"SSL_CERT", "~/.local/share/TinyORM/ssl/client-cert.pem"},
+                                  {"SSL_KEY",  "~/.local/share/TinyORM/ssl/client-key.pem"}})},
+        // highlight-end
+    });
 
 </TabItem>
 </Tabs>
