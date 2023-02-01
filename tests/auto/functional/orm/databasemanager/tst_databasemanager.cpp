@@ -3,6 +3,7 @@
 
 #include "orm/constants.hpp"
 #include "orm/databasemanager.hpp"
+#include "orm/exceptions/sqlitedatabasedoesnotexisterror.hpp"
 
 #include "databases.hpp"
 
@@ -21,6 +22,7 @@ using Orm::Constants::UTF8;
 using Orm::Constants::Version;
 using Orm::Constants::application_name;
 using Orm::Constants::charset_;
+using Orm::Constants::check_database_exists;
 using Orm::Constants::database_;
 using Orm::Constants::dont_drop;
 using Orm::Constants::driver_;
@@ -42,6 +44,8 @@ using Orm::Constants::username_;
 using Orm::Constants::verify_full;
 
 using Orm::DatabaseManager;
+using Orm::Exceptions::RuntimeError;
+using Orm::Exceptions::SQLiteDatabaseDoesNotExistError;
 using Orm::QtTimeZoneConfig;
 using Orm::QtTimeZoneType;
 using Orm::Support::DatabaseConfiguration;
@@ -63,8 +67,17 @@ private Q_SLOTS:
     void ssl_MySQL_ConfigurationValues() const;
     void ssl_PostgreSQL_ConfigurationValues() const;
 
+    void sqlite_MemoryDriver() const;
+
+    void sqlite_CheckDatabaseExists_True() const;
+    void sqlite_CheckDatabaseExists_False() const;
+
 // NOLINTNEXTLINE(readability-redundant-access-specifiers)
 private:
+    /*! Path to the SQLite database file, for testing the 'check_database_exists'
+        configuration option. */
+    static const QString &checkDatabaseExistsFile();
+
     /*! The Database Manager used in this test case. */
     std::shared_ptr<DatabaseManager> m_dm {};
 };
@@ -496,7 +509,131 @@ void tst_DatabaseManager::ssl_PostgreSQL_ConfigurationValues() const
     // Restore
     QVERIFY(m_dm->removeConnection(connectionName));
 }
+
+void tst_DatabaseManager::sqlite_MemoryDriver() const
+{
+    const auto connectionName =
+            QStringLiteral(
+                "tinyorm_sqlite_tests-tst_DatabaseMannager-sqlite_MemoryDriver");
+
+    // Create database connection
+    m_dm->addConnections({
+        {connectionName, {
+            {driver_,   QSQLITE},
+            {database_, QStringLiteral(":memory:")},
+        }},
+    // Don't setup any default connection
+    }, EMPTY);
+
+    auto &conn = m_dm->connection(connectionName);
+
+    // Create the database and insert some records
+    conn.statement("create table tbl1 (one varchar(10), two smallint)");
+    conn.insert("insert into tbl1 values(?, ?)", {"hello!", 10});
+    conn.insert("insert into tbl1 values(?, ?)", {"goodbye", 20});
+
+    auto query = conn.selectOne("select * from tbl1 where two = ?", {10});
+
+    // Verify
+    QVERIFY(query.isValid());
+    QCOMPARE(query.value("one").value<QString>(), QStringLiteral("hello!"));
+    QCOMPARE(query.value("two").value<int>(), 10);
+
+    // Restore
+    QVERIFY(m_dm->removeConnection(connectionName));
+}
+
+void tst_DatabaseManager::sqlite_CheckDatabaseExists_True() const
+{
+    if (const auto databasePath = qEnvironmentVariable("DB_SQLITE_DATABASE", EMPTY);
+        databasePath.isEmpty()
+    )
+        QSKIP("Autotest skipped because the DB_SQLITE_DATABASE environment variable "
+              "for the SQLite database was not defined.", );
+
+    const auto connectionName =
+            QStringLiteral(
+                "tinyorm_sqlite_tests-tst_DatabaseMannager-"
+                "sqlite_CheckDatabaseExists_True");
+
+    // Create database connection
+    m_dm->addConnections({
+        {connectionName, {
+            {driver_,               QSQLITE},
+            {database_,             checkDatabaseExistsFile()},
+            {check_database_exists, true},
+        }},
+    // Don't setup any default connection
+    }, EMPTY);
+
+    // Verify
+    QVERIFY_EXCEPTION_THROWN(
+                m_dm->connection(connectionName)
+                .statement("create table tbl1 (one varchar(10), two smallint)"),
+                SQLiteDatabaseDoesNotExistError);
+
+    // Restore
+    QVERIFY(m_dm->removeConnection(connectionName));
+}
+
+void tst_DatabaseManager::sqlite_CheckDatabaseExists_False() const
+{
+    if (const auto databasePath = qEnvironmentVariable("DB_SQLITE_DATABASE", EMPTY);
+        databasePath.isEmpty()
+    )
+        QSKIP("Autotest skipped because the DB_SQLITE_DATABASE environment variable "
+              "for the SQLite database was not defined.", );
+
+    const auto connectionName =
+            QStringLiteral(
+                "tinyorm_sqlite_tests-tst_DatabaseMannager-"
+                "sqlite_CheckDatabaseExists_False");
+
+    // Create database connection
+    m_dm->addConnections({
+        {connectionName, {
+            {driver_,               QSQLITE},
+            {database_,             checkDatabaseExistsFile()},
+            {check_database_exists, false},
+        }},
+    // Don't setup any default connection
+    }, EMPTY);
+
+    // Verify
+    // QSqlDatabase automatically creates a SQLite database file
+    m_dm->connection(connectionName)
+            .statement("create table tbl1 (one varchar(10), two smallint)");
+
+    QVERIFY(QFile::exists(checkDatabaseExistsFile()));
+
+    // Restore
+    QVERIFY(m_dm->removeConnection(connectionName));
+
+    // Remove the SQLite database file
+    QVERIFY(QFile::remove(checkDatabaseExistsFile()));
+    QVERIFY(!QFile::exists(checkDatabaseExistsFile()));
+}
 // NOLINTEND(readability-convert-member-functions-to-static)
+
+/* private */
+
+const QString &tst_DatabaseManager::checkDatabaseExistsFile()
+{
+    static const auto cached = []() -> QString
+    {
+        auto databasePath = qEnvironmentVariable("DB_SQLITE_DATABASE", EMPTY);
+
+        if (databasePath.isEmpty())
+            throw RuntimeError("Undefined environment variable 'DB_SQLITE_DATABASE'.");
+
+        databasePath.truncate(QDir::fromNativeSeparators(databasePath)
+                              .lastIndexOf(QChar('/')));
+
+        return databasePath + "/q_tinyorm_test-check_exists.sqlite3";
+    }();
+
+    return cached;
+}
 
 QTEST_MAIN(tst_DatabaseManager)
 
