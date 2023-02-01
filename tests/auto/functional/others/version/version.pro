@@ -3,12 +3,12 @@ include($$TINYORM_SOURCE_TREE/tests/qmake/TinyUtils.pri)
 
 SOURCES = tst_version.cpp
 
+tom_example:!disable_tom: \
+    DEFINES += TINYTOM_EXAMPLE
+
 # Used by checkFileVersion_*() tests
 win32 {
     DEFINES += TINYTEST_VERSION_IS_QMAKE
-
-    tom_example:!disable_tom: \
-        DEFINES += TINYTOM_EXAMPLE
 
     CONFIG(shared, dll|shared|static|staticlib) | \
     CONFIG(dll, dll|shared|static|staticlib): \
