@@ -36,6 +36,7 @@ using Orm::Constants::sslkey;
 using Orm::Constants::sslmode_;
 using Orm::Constants::sslrootcert;
 using Orm::Constants::username_;
+using Orm::Constants::verify_full;
 
 using Orm::DatabaseManager;
 using Orm::QtTimeZoneConfig;
@@ -337,7 +338,7 @@ void tst_DatabaseManager::ssl_PostgreSQL_ConfigurationValues() const
                 "ssl_PostgreSQL_ConfigurationValues");
 
     // Top level
-    const auto sslmodeValue        = QStringLiteral("verify-full");
+    const auto sslmodeValue        = verify_full;
     const auto sslcertValue        = QStringLiteral("C:/example/psql.crt");
     const auto sslkeyValue         = QStringLiteral("C:/example/psql.key");
     const auto sslrootcertValue    = QStringLiteral("C:/example/ca.crt");

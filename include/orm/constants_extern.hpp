@@ -102,6 +102,8 @@ namespace Orm::Constants
     SHAREDLIB_EXPORT extern const QString sslcert;
     SHAREDLIB_EXPORT extern const QString sslkey;
     SHAREDLIB_EXPORT extern const QString sslrootcert;
+    SHAREDLIB_EXPORT extern const QString verify_ca;
+    SHAREDLIB_EXPORT extern const QString verify_full;
 
     SHAREDLIB_EXPORT extern const QString isolation_level;
     SHAREDLIB_EXPORT extern const QString foreign_key_constraints;
