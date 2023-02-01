@@ -33,7 +33,7 @@ namespace Concerns
     public:
         /*! Default constructor. */
         inline LogsQueries() = default;
-        /*! Virtual destructor, to pass -Weffc++. */
+        /*! Pure virtual destructor, to pass -Weffc++. */
         inline virtual ~LogsQueries() = 0;
 
         /*! Log a query into the connection's query log. */

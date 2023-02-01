@@ -16,7 +16,7 @@ namespace Orm::Exceptions
     class OrmError // clazy:exclude=copyable-polymorphic
     {
     public:
-        /*! Virtual destructor. */
+        /*! Pure virtual destructor. */
         inline virtual ~OrmError() = 0;
     };
 

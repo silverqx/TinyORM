@@ -40,7 +40,7 @@ namespace Concerns
     public:
         /*! Default constructor. */
         ManagesTransactions();
-        /*! Virtual destructor, to pass -Weffc++. */
+        /*! Pure virtual destructor, to pass -Weffc++. */
         inline virtual ~ManagesTransactions() = 0;
 
         /*! Start a new database transaction. */

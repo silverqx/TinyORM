@@ -33,7 +33,7 @@ namespace Concerns
     public:
         /*! Default constructor. */
         inline CountsQueries() = default;
-        /*! Virtual destructor, to pass -Weffc++. */
+        /*! Pure virtual destructor, to pass -Weffc++. */
         inline virtual ~CountsQueries() = 0;
 
         /* Queries execution time counter */

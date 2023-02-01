@@ -16,7 +16,7 @@ namespace Tom::Exceptions
     class TomError // clazy:exclude=copyable-polymorphic
     {
     public:
-        /*! Virtual destructor. */
+        /*! Pure virtual destructor. */
         inline virtual ~TomError() = 0;
     };
 

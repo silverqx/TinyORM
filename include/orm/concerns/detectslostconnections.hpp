@@ -33,7 +33,7 @@ namespace Concerns
     public:
         /*! Default constructor. */
         inline DetectsLostConnections() = default;
-        /*! Virtual destructor, to pass -Weffc++. */
+        /*! Pure virtual destructor, to pass -Weffc++. */
         inline virtual ~DetectsLostConnections() = 0;
 
         /*! Determine if the given exception was caused by a lost connection. */

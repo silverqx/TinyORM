@@ -33,7 +33,7 @@ namespace Concerns
         /*! Constructor. */
         PrintsOptions(const QList<CommandLineOption> &options,
                       const Concerns::InteractsWithIO &io);
-        /*! Virtual destructor. */
+        /*! Pure virtual destructor. */
         inline virtual ~PrintsOptions() = 0;
 
         /*! Print options section. */

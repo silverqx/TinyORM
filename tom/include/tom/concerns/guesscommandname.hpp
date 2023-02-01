@@ -36,7 +36,7 @@ namespace Concerns
         using Command = Commands::Command;
 
     public:
-        /*! Virtual destructor. */
+        /*! Pure virtual destructor. */
         inline virtual ~GuessCommandName() = 0;
 
     protected:

@@ -50,7 +50,7 @@ namespace Concerns
         /*! Constructor. */
         explicit UsingConnection(
                 std::shared_ptr<ConnectionResolverInterface> &&connectionResolver);
-        /*! Virtual destructor. */
+        /*! Pure virtual destructor. */
         inline virtual ~UsingConnection() = 0;
 
         /*! Execute the given callback using the given connections as the default

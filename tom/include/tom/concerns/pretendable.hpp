@@ -50,7 +50,7 @@ namespace Concerns
     public:
         /*! Default constructor. */
         inline Pretendable() = default;
-        /*! Virtual destructor. */
+        /*! Pure virtual destructor. */
         inline virtual ~Pretendable() = 0;
 
         /*! Pretend the callback on the base of a bool value (mainly --pretend option). */

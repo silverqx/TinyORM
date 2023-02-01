@@ -28,7 +28,7 @@ namespace Concerns
     public:
         /*! Default constructor. */
         inline PrepareOptionValues() = default;
-        /*! Virtual destructor. */
+        /*! Pure virtual destructor. */
         inline virtual ~PrepareOptionValues() = 0;
 
     protected:

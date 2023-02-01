@@ -31,7 +31,7 @@ namespace Concerns
     public:
         /*! Default constructor. */
         inline Confirmable() = default;
-        /*! Virtual destructor. */
+        /*! Pure virtual destructor. */
         inline virtual ~Confirmable() = 0;
 
         /*! Confirm before proceeding with the action (only in production environment). */

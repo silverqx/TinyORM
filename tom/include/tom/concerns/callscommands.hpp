@@ -29,7 +29,7 @@ namespace Concerns
     public:
         /*! Default constructor. */
         inline CallsCommands() = default;
-        /*! Virtual destructor. */
+        /*! Pure virtual destructor. */
         inline virtual ~CallsCommands() = 0;
 
         /*! Call another console command. */
