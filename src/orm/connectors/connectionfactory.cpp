@@ -4,6 +4,7 @@
 #include "orm/connectors/mysqlconnector.hpp"
 #include "orm/connectors/postgresconnector.hpp"
 #include "orm/connectors/sqliteconnector.hpp"
+#include "orm/exceptions/invalidargumenterror.hpp"
 #include "orm/mysqlconnection.hpp"
 #include "orm/postgresconnection.hpp"
 #include "orm/sqliteconnection.hpp"
@@ -33,8 +34,10 @@ ConnectionFactory::createConnector(const QVariantHash &config)
 {
     // This method is public, so I left this check here
     if (!config.contains(driver_))
-        throw Exceptions::RuntimeError(
-                "A 'driver' configuration parameter must be specified.");
+        throw Exceptions::InvalidArgumentError(
+                QStringLiteral("A 'driver' configuration parameter must be specified "
+                               "in %1().")
+                .arg(__tiny_func__));
 
     const auto driver = config[driver_].value<QString>();
 
@@ -50,8 +53,9 @@ ConnectionFactory::createConnector(const QVariantHash &config)
 //    if (driver == "SQLSRV")
 //        return std::make_unique<SqlServerConnector>();
 
-    throw Exceptions::RuntimeError(QStringLiteral("Unsupported driver '%1' in %2().")
-                                   .arg(driver, __tiny_func__));
+    throw Exceptions::InvalidArgumentError(
+                QStringLiteral("Unsupported driver '%1' in %2().")
+                .arg(driver, __tiny_func__));
 }
 
 /* protected */
