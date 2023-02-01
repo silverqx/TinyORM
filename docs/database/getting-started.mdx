@@ -175,6 +175,49 @@ You may also use the `ConfigUtils::mysqlSslOptions()` or the `ConfigUtils::inser
         {"options", ConfigUtils::mysqlSslOptions()},
     });
 
+You can define these SSL-related options in the top-level configuration, they will be copied to the `options` option hash during a configuration parsing. The top-level configuration takes precedence and overwrites the options in the `options` hash.
+
+<Tabs groupId={shell}>
+<TabItem value={pwsh} label={pwsh_label}>
+
+    #include <orm/db.hpp>
+
+    using Orm::DB;
+
+    // Ownership of a shared_ptr()
+    auto manager = DB::create({
+        {"driver",   "QMYSQL"},
+        {"host",     qEnvironmentVariable("DB_MYSQL_HOST", "127.0.0.1")},
+        ...
+        // highlight-start
+        {"SSL_CA",   "C:/mysql/data/ca.pem"},
+        {"SSL_CERT", "C:/mysql/data/client-cert.pem"},
+        {"SSL_KEY",  "C:/mysql/data/client-key.pem"},
+        // highlight-end
+    });
+
+</TabItem>
+<TabItem value={bash} label={bash_label}>
+
+    #include <orm/db.hpp>
+
+    using Orm::DB;
+
+    // Ownership of a shared_ptr()
+    auto manager = DB::create({
+        {"driver",   "QMYSQL"},
+        {"host",     qEnvironmentVariable("DB_MYSQL_HOST", "127.0.0.1")},
+        ...
+        // highlight-start
+        {"SSL_CA",   "~/.local/share/TinyORM/ssl/ca.pem"},
+        {"SSL_CERT", "~/.local/share/TinyORM/ssl/client-cert.pem"},
+        {"SSL_KEY",  "~/.local/share/TinyORM/ssl/client-key.pem"},
+        // highlight-end
+    });
+
+</TabItem>
+</Tabs>
+
 :::tip
 You can take a look at the GitHub actions how the `MySQL` certificates are generated in the CI pipeline for [Windows](https://github.com/silverqx/TinyORM/blob/main/.github/workflows/msvc2022-qt6.yml) and [Linux](https://github.com/silverqx/TinyORM/blob/main/.github/workflows/linux-qt6.yml).
 :::

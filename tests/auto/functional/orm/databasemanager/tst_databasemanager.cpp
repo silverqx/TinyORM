@@ -14,6 +14,9 @@ using Orm::Constants::PUBLIC;
 using Orm::Constants::QMYSQL;
 using Orm::Constants::QPSQL;
 using Orm::Constants::QSQLITE;
+using Orm::Constants::SSL_CA;
+using Orm::Constants::SSL_CERT;
+using Orm::Constants::SSL_KEY;
 using Orm::Constants::UTF8;
 using Orm::Constants::Version;
 using Orm::Constants::application_name;
@@ -57,6 +60,7 @@ private Q_SLOTS:
     void default_PostgreSQL_ConfigurationValues() const;
     void default_SQLite_ConfigurationValues() const;
 
+    void ssl_MySQL_ConfigurationValues() const;
     void ssl_PostgreSQL_ConfigurationValues() const;
 
 // NOLINTNEXTLINE(readability-redundant-access-specifiers)
@@ -324,6 +328,84 @@ void tst_DatabaseManager::default_SQLite_ConfigurationValues() const
                  {qt_timezone,      QVariant::fromValue(
                                         QtTimeZoneConfig {QtTimeZoneType::DontConvert, {}}
                                     )},
+             }));
+
+    // Restore
+    QVERIFY(m_dm->removeConnection(connectionName));
+}
+
+void tst_DatabaseManager::ssl_MySQL_ConfigurationValues() const
+{
+    const auto connectionName =
+            QStringLiteral(
+                "tinyorm_mysql_tests-tst_DatabaseMannager-"
+                "ssl_MySQL_ConfigurationValues");
+
+    // Top level
+    const auto sslCertValue = QStringLiteral("C:/example/mysql-cert.pem");
+    const auto sslKeyValue  = QStringLiteral("C:/example/mysql-key.pem");
+    const auto sslCaValue   = QStringLiteral("C:/example/mysql-ca.pem");
+    // The 'options' level
+    const auto sslCertOptionsValue = QStringLiteral("D:/example/client-cert.pem");
+    const auto sslKeyOptionsValue  = QStringLiteral("D:/example/client-key.pem");
+
+    const QVariantHash initialConfiguration({
+        {driver_,  QMYSQL},
+        {SSL_CERT, sslCertValue},
+        {SSL_KEY,  sslKeyValue},
+        {SSL_CA,   sslCaValue},
+        {options_, QVariantHash({{SSL_CERT, sslCertOptionsValue},
+                                 {SSL_KEY,  sslKeyOptionsValue}})}
+    });
+
+    // Create database connection
+    m_dm->addConnections({
+        {connectionName, initialConfiguration},
+    // Don't setup any default connection
+    }, EMPTY);
+
+    // Original configuration
+    // Connection isn't created and configuration options are not parsed yet
+    const auto &originalConfig = m_dm->originalConfig(connectionName);
+    QCOMPARE(originalConfig, initialConfiguration);
+
+    /* Force the creation of a connection and parse the connection configuration options.
+       The qt_timezone option is only parsed in the connection configuration,
+       the original configuration is untouched. */
+    m_dm->connection(connectionName);
+    QCOMPARE(originalConfig,
+             QVariantHash({
+                 {driver_,        QMYSQL},
+                 {NAME,           connectionName},
+                 {database_,      EMPTY},
+                 {prefix_,        EMPTY},
+                 {prefix_indexes, false},
+                 {Version,        {}},
+                 {SSL_CERT,       sslCertValue},
+                 {SSL_KEY,        sslKeyValue},
+                 {SSL_CA,         sslCaValue},
+                 {options_,       QVariantHash({{SSL_CERT, sslCertOptionsValue},
+                                                {SSL_KEY,  sslKeyOptionsValue}})},
+             }));
+
+    // Connection configuration
+    QCOMPARE(m_dm->getConfig(connectionName),
+             QVariantHash({
+                 {driver_,        QMYSQL},
+                 {NAME,           connectionName},
+                 {database_,      EMPTY},
+                 {prefix_,        EMPTY},
+                 {prefix_indexes, false},
+                 {Version,        {}},
+                 {qt_timezone,    QVariant::fromValue(
+                                      QtTimeZoneConfig {QtTimeZoneType::DontConvert, {}}
+                                  )},
+                 {SSL_CERT,       sslCertValue},
+                 {SSL_KEY,        sslKeyValue},
+                 {SSL_CA,         sslCaValue},
+                 {options_,       QVariantHash({{SSL_CERT, sslCertValue},
+                                                {SSL_KEY,  sslKeyValue},
+                                                {SSL_CA,   sslCaValue}})},
              }));
 
     // Restore

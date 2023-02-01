@@ -30,8 +30,12 @@ namespace Orm::Configurations
         /*! Parse the driver-specific 'options' configuration option. */
         void parseDriverSpecificOptionsOption(QVariantHash &options) const final;
 
+    private:
         /*! Throw if the 'options' hash contains an unsupported option. */
         static void throwIfContainsUnsupportedOption(const QVariantHash &options);
+
+        /*! Add the SSL-related options to the connection 'options' hash. */
+        void addSslOptions(QVariantHash &options) const;
     };
 
 } // namespace Orm::Configurations

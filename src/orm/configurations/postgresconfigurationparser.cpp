@@ -37,25 +37,7 @@ void PostgresConfigurationParser::addSslOptions(QVariantHash &options) const
     /* Copy all SSL-related connection options from the top-level configuration level
        to the 'options' hash. If the options hash already contains the same option, then
        it will be overwritten. */
-    for (auto &&option : {sslmode_, sslcert, sslkey, sslrootcert}) {
-        // Nothing to do, the original configuration doesn't contain it
-        if (!config().contains(option))
-            continue;
-
-        // Copy the value to the 'options' hash
-#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
-        if (const auto &newValue = config()[option];
-            !newValue.value<QString>().isEmpty()
-        )
-            options.insert(option, newValue);
-#else
-        if (auto newValue = config().value(option);
-            !newValue.value<QString>().isEmpty()
-        )
-            options.emplace(std::move(const_cast<QString &>(option)),
-                            std::move(newValue));
-#endif
-    }
+    copyOptionsFromTopLevel(options, {sslmode_, sslcert, sslkey, sslrootcert});
 }
 
 } // namespace Orm::Configurations

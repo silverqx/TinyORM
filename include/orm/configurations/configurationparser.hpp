@@ -22,6 +22,9 @@ namespace Orm::Configurations
     {
         Q_DISABLE_COPY(ConfigurationParser)
 
+        // To access config()
+        friend class ConfigurationOptionsParser;
+
     public:
         /*! Default constructor. */
         inline ConfigurationParser() = default;

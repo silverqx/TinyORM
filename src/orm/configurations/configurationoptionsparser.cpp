@@ -1,5 +1,6 @@
 #include "orm/configurations/configurationoptionsparser.hpp"
 
+#include "orm/configurations/configurationparser.hpp"
 #include "orm/constants.hpp"
 #include "orm/exceptions/invalidargumenterror.hpp"
 #include "orm/utils/helpers.hpp"
@@ -47,6 +48,34 @@ ConfigurationOptionsParser::mergeAndConcatenateOptions(
 
     // Return in the format expected by the QSqlDatabase
     return concatenateOptions(mergedOptions);
+}
+
+/* protected */
+
+void ConfigurationOptionsParser::copyOptionsFromTopLevel(
+        QVariantHash &options, std::vector<QString> &&optionNames) const
+{
+    /* Copy the given connection options from the top-level configuration level
+       to the 'options' hash. If the options hash already contains the same option, then
+       it will be overwritten. */
+    for (auto &&option : optionNames) {
+        // Nothing to do, the original configuration doesn't contain it
+        if (!config().contains(option))
+            continue;
+
+        // Copy the value to the 'options' hash
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
+        if (const auto &newValue = config()[option];
+            !newValue.value<QString>().isEmpty()
+        )
+            options.insert(option, newValue);
+#else
+        if (auto newValue = config().value(option);
+            !newValue.value<QString>().isEmpty()
+        )
+            options.emplace(std::move(option), std::move(newValue));
+#endif
+    }
 }
 
 /* private */
@@ -140,6 +169,16 @@ QString ConfigurationOptionsParser::concatenateOptions(const QVariantHash &optio
     }
 
     return concatenated.join(SEMICOLON);
+}
+
+QVariantHash &ConfigurationOptionsParser::config() const
+{
+    return parser().config();
+}
+
+const ConfigurationParser &ConfigurationOptionsParser::parser() const
+{
+    return dynamic_cast<const ConfigurationParser &>(*this);
 }
 
 } // namespace Orm::Configurations

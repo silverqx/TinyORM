@@ -5,6 +5,9 @@
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
+using Orm::Constants::SSL_CA;
+using Orm::Constants::SSL_CERT;
+using Orm::Constants::SSL_KEY;
 using Orm::Constants::Version;
 
 namespace Orm::Configurations
@@ -23,7 +26,12 @@ void MySqlConfigurationParser::parseDriverSpecificOptionsOption(
 {
     // Throw if the 'options' hash contains an unsupported option
     throwIfContainsUnsupportedOption(options);
+
+    // Copy all SSL-related options from the top-level config. to the 'options' hash
+    addSslOptions(options);
 }
+
+/* private */
 
 /*! The banned value item. */
 struct BannedValue
@@ -53,6 +61,14 @@ MySqlConfigurationParser::throwIfContainsUnsupportedOption(const QVariantHash &o
                         "The '%1' connection option is not allowed in the TinyORM.%2")
                     .arg(key, errorMessage));
     }
+}
+
+void MySqlConfigurationParser::addSslOptions(QVariantHash &options) const
+{
+    /* Copy all SSL-related connection options from the top-level configuration level
+       to the 'options' hash. If the options hash already contains the same option, then
+       it will be overwritten. */
+    copyOptionsFromTopLevel(options, {SSL_CA, SSL_CERT, SSL_KEY});
 }
 
 } // namespace Orm::Configurations

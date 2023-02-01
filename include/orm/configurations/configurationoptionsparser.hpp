@@ -14,6 +14,8 @@ TINYORM_BEGIN_COMMON_NAMESPACE
 namespace Orm::Configurations
 {
 
+    class ConfigurationParser;
+
     /*! TinyORM configuration parser base mixin class validates and prepares
         configuration 'options' option, the parsed configuration will be used
         in the Connector-s by the QSqlDatabase::setConnectOptions() method. */
@@ -38,6 +40,10 @@ namespace Orm::Configurations
         /*! Parse the driver-specific 'options' configuration option. */
         virtual void parseDriverSpecificOptionsOption(QVariantHash &options) const = 0;
 
+        /*! Copy options from the top-level configuration to the 'options' option hash. */
+        void copyOptionsFromTopLevel(QVariantHash &options,
+                                     std::vector<QString> &&optionNames) const;
+
     private:
         /*! Validate the 'options' configuration type, must be the QString or
             QVariantHash. */
@@ -52,6 +58,12 @@ namespace Orm::Configurations
                                          QVariantHash &&preparedConfigOptions);
         /*! Stringify the prepared 'options' option. */
         static QString concatenateOptions(const QVariantHash &options);
+
+        /*! Get a cached configuration reference. */
+        QVariantHash &config() const;
+
+        /*! Dynamic cast *this to the ConfigurationParser & derived type. */
+        const ConfigurationParser &parser() const;
     };
 
     /* public */
