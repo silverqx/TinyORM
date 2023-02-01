@@ -432,7 +432,8 @@ void DatabaseConnection::disconnect()
        with the database.
        Only close the QSqlDatabase database connection and don't remove it
        from QSqlDatabase connection repository, so it can be reused, it's
-       better for performance. */
+       better for performance.
+       Revisited, it's ok and will not cause any leaks or dangling connection. */
     getRawQtConnection().close();
 
     m_qtConnection.reset();
