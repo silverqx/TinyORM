@@ -17,6 +17,8 @@ TINY_SYSTEM_HEADER
 #include "orm/macros/commonnamespace.hpp"
 #include "orm/macros/export.hpp"
 
+class QVariant; // clazy:exclude=qt6-fwd-fixes
+
 TINYORM_BEGIN_COMMON_NAMESPACE
 
 #if defined(__GNUG__) || defined(__clang__)
