@@ -15,6 +15,8 @@ using Orm::Constants::check_database_exists;
 using Orm::Constants::database_;
 using Orm::Constants::foreign_key_constraints;
 
+using TypeUtils = Orm::Utils::Type;
+
 namespace Orm::Connectors
 {
 
@@ -69,9 +71,9 @@ void SQLiteConnector::configureForeignKeyConstraints(const QSqlDatabase &connect
     if (!config.contains(foreign_key_constraints))
         return;
 
-    const auto foreignKeyConstraints =
-            config[foreign_key_constraints].value<bool>() ? QStringLiteral("ON")
-                                                          : QStringLiteral("OFF");
+    const auto foreignKeyConstraints = TypeUtils::isTrue(config[foreign_key_constraints])
+                                       ? QStringLiteral("ON")
+                                       : QStringLiteral("OFF");
 
     QSqlQuery query(connection);
     // FEATURE schema builder, use DatabaseConnection::statement(), to set recordsHaveBeenModied to true, foreign key constraints silverqx

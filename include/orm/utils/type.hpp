@@ -59,8 +59,12 @@ namespace Orm::Utils
         /*! Return a pretty function name in the following format: Xyz::function. */
         static QString prettyFunction(const QString &function);
 
-        /*! Determine whether a string is true bool value (false for "", '0', "false"). */
+        /*! Determine if a string is the true bool value (false for "", '0', "false",
+            "off"). */
         static bool isTrue(const QString &value);
+        /*! Determine if a string is the true bool value (false for "", '0', "false",
+            "off"). */
+        static bool isTrue(const QVariant &value);
 
     private:
         /*! Class name with or w/o a namespace and w/o template parameters, common

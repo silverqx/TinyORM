@@ -65,8 +65,16 @@ QString Type::prettyFunction(const QString &function)
 
 bool Type::isTrue(const QString &value)
 {
-    return !value.isEmpty() && value != QLatin1Char('0') &&
-            value != QStringLiteral("false");
+    return !value.isEmpty() &&
+            value != QLatin1Char('0') &&
+            value != QStringLiteral("false") &&
+            // QVariant::value<bool>() doesn't check conditions below
+                     value != QStringLiteral("off");
+}
+
+bool Type::isTrue(const QVariant &value)
+{
+    return value.canConvert<QString>() && isTrue(value.value<QString>());
 }
 
 QString
