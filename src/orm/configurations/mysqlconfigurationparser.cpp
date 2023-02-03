@@ -68,7 +68,7 @@ void MySqlConfigurationParser::addSslOptions(QVariantHash &options) const
     /* Copy all SSL-related connection options from the top-level configuration level
        to the 'options' hash. If the options hash already contains the same option, then
        it will be overwritten. */
-    copyOptionsFromTopLevel(options, {SSL_CA, SSL_CERT, SSL_KEY});
+    copyOptionsFromTopLevel(options, {SSL_CA, SSL_CERT, SSL_KEY}, true);
 }
 
 } // namespace Orm::Configurations

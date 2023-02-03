@@ -42,7 +42,8 @@ namespace Orm::Configurations
 
         /*! Copy options from the top-level configuration to the 'options' option hash. */
         void copyOptionsFromTopLevel(QVariantHash &options,
-                                     std::vector<QString> &&optionNames) const;
+                                     std::vector<QString> &&optionNames,
+                                     bool checkLowerCase = false) const;
 
     private:
         /*! Validate the 'options' configuration type, must be the QString or
@@ -60,6 +61,9 @@ namespace Orm::Configurations
                                          QVariantHash &&preparedConfigOptions);
         /*! Stringify the prepared 'options' option. */
         static QString concatenateOptions(const QVariantHash &options);
+
+        /*! Get top-level option name (support top-level option names in lowercase). */
+        QString getTopLevelOptionName(const QString &option, bool checkLowerCase) const;
 
         /*! Get a cached configuration reference. */
         QVariantHash &config() const;

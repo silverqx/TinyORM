@@ -54,24 +54,30 @@ ConfigurationOptionsParser::mergeAndConcatenateOptions(
 /* protected */
 
 void ConfigurationOptionsParser::copyOptionsFromTopLevel(
-        QVariantHash &options, std::vector<QString> &&optionNames) const
+        QVariantHash &options, std::vector<QString> &&optionNames,
+        const bool checkLowerCase) const
 {
     /* Copy the given connection options from the top-level configuration level
        to the 'options' hash. If the options hash already contains the same option, then
        it will be overwritten. */
     for (auto &&option : optionNames) {
+        /* Support top-level option names in lowercase, it's used only by the MySQL,
+           eg. SSL_CA vs ssl_ca. Newly created option will have the original requested
+           name. The lowercase name is used only during the check and obtain a value. */
+        const auto optionTopLevel = getTopLevelOptionName(option, checkLowerCase);
+
         // Nothing to do, the original configuration doesn't contain it
-        if (!config().contains(option))
+        if (optionTopLevel.isEmpty())
             continue;
 
         // Copy the value to the 'options' hash
 #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
-        if (const auto &newValue = config()[option];
+        if (const auto &newValue = config()[optionTopLevel];
             !newValue.value<QString>().isEmpty()
         )
             options.insert(option, newValue);
 #else
-        if (auto newValue = config().value(option);
+        if (auto newValue = config().value(optionTopLevel);
             !newValue.value<QString>().isEmpty()
         )
             options.emplace(std::move(option), std::move(newValue));
@@ -182,6 +188,23 @@ QString ConfigurationOptionsParser::concatenateOptions(const QVariantHash &optio
     }
 
     return concatenated.join(SEMICOLON);
+}
+
+QString
+ConfigurationOptionsParser::getTopLevelOptionName(const QString &option,
+                                                  const bool checkLowerCase) const
+{
+    if (config().contains(option))
+        return option;
+
+    // Allow to define the option name in lowercase
+    if (checkLowerCase)
+        if (auto optionNameLower = option.toLower();
+            config().contains(optionNameLower)
+        )
+            return optionNameLower;
+
+    return {};
 }
 
 QVariantHash &ConfigurationOptionsParser::config() const

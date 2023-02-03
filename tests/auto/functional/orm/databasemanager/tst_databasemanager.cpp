@@ -36,6 +36,7 @@ using Orm::Constants::qt_timezone;
 using Orm::Constants::return_qdatetime;
 using Orm::Constants::schema_;
 using Orm::Constants::spatial_ref_sys;
+using Orm::Constants::ssl_cert;
 using Orm::Constants::sslcert;
 using Orm::Constants::sslkey;
 using Orm::Constants::sslmode_;
@@ -363,12 +364,14 @@ void tst_DatabaseManager::ssl_MySQL_ConfigurationValues() const
     const auto sslKeyOptionsValue  = QStringLiteral("D:/example/client-key.pem");
 
     const QVariantHash initialConfiguration({
-        {driver_,  QMYSQL},
-        {SSL_CERT, sslCertValue},
-        {SSL_KEY,  sslKeyValue},
-        {SSL_CA,   sslCaValue},
-        {options_, QVariantHash({{SSL_CERT, sslCertOptionsValue},
-                                 {SSL_KEY,  sslKeyOptionsValue}})}
+        {driver_,   QMYSQL},
+        // The ssl_cert is only alias to the "SSL_CERT", looks nicer
+        {ssl_cert,  sslCertValue},
+        // Lowercase SSL-related option names in top-level configuration
+        {"ssl_key", sslKeyValue},
+        {"ssl_ca",  sslCaValue},
+        {options_,  QVariantHash({{SSL_CERT, sslCertOptionsValue},
+                                  {SSL_KEY,  sslKeyOptionsValue}})}
     });
 
     // Create database connection
@@ -394,9 +397,11 @@ void tst_DatabaseManager::ssl_MySQL_ConfigurationValues() const
                  {prefix_,        EMPTY},
                  {prefix_indexes, false},
                  {Version,        {}},
-                 {SSL_CERT,       sslCertValue},
-                 {SSL_KEY,        sslKeyValue},
-                 {SSL_CA,         sslCaValue},
+                 // The ssl_cert is only alias to the "SSL_CERT", looks nicer
+                 {ssl_cert,       sslCertValue},
+                 // Lowercase SSL-related option names in top-level configuration
+                 {"ssl_key",      sslKeyValue},
+                 {"ssl_ca",       sslCaValue},
                  {options_,       QVariantHash({{SSL_CERT, sslCertOptionsValue},
                                                 {SSL_KEY,  sslKeyOptionsValue}})},
              }));
@@ -413,10 +418,13 @@ void tst_DatabaseManager::ssl_MySQL_ConfigurationValues() const
                  {qt_timezone,    QVariant::fromValue(
                                       QtTimeZoneConfig {QtTimeZoneType::DontConvert, {}}
                                   )},
-                 {SSL_CERT,       sslCertValue},
-                 {SSL_KEY,        sslKeyValue},
-                 {SSL_CA,         sslCaValue},
+                 // The ssl_cert is only alias to the "SSL_CERT", looks nicer
+                 {ssl_cert,       sslCertValue},
+                 // Lowercase SSL-related option names in top-level configuration
+                 {"ssl_key",      sslKeyValue},
+                 {"ssl_ca",       sslCaValue},
                  {options_,       QVariantHash({{SSL_CERT, sslCertValue},
+                                                // Here will be uppercase
                                                 {SSL_KEY,  sslKeyValue},
                                                 {SSL_CA,   sslCaValue}})},
              }));
