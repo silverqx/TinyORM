@@ -17,6 +17,7 @@ using Orm::Constants::TMPL_DQUOTES;
 using Orm::Constants::charset_;
 using Orm::Constants::isolation_level;
 using Orm::Constants::schema_;
+using Orm::Constants::synchronous_commit;
 using Orm::Constants::timezone_;
 
 using ContainerUtils = Orm::Utils::Container;
@@ -195,13 +196,13 @@ void PostgresConnector::configureApplicationName(const QSqlDatabase &connection,
 void PostgresConnector::configureSynchronousCommit(const QSqlDatabase &connection,
                                                    const QVariantHash &config)
 {
-    if (!config.contains("synchronous_commit"))
+    if (!config.contains(synchronous_commit))
         return;
 
     QSqlQuery query(connection);
 
     if (query.exec(QStringLiteral("set synchronous_commit to '%1';")
-                   .arg(config["synchronous_commit"].value<QString>())))
+                   .arg(config[synchronous_commit].value<QString>())))
         return;
 
     throw Exceptions::QueryError(m_configureErrorMessage.arg(__tiny_func__), query);
