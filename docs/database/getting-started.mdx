@@ -8,10 +8,14 @@ keywords: [c++ orm, database, getting started, tinyorm]
 import TabItem from '@theme/TabItem'
 import Tabs from '@theme/Tabs'
 
+import ConfigurationSettings from '@theme/ConfigurationSettings'
 import {
     shell,
     bash, pwsh,
-    bash_label, pwsh_label
+    bash_label, pwsh_label,
+    database,
+    mysql, postgres, sqlite,
+    mysql_label, postgres_label, sqlite_label,
 } from '@theme/constants'
 
 # Database: Getting Started
@@ -43,6 +47,11 @@ TinyORM's code is ready and designed to simply add support for the  SQL Server.
 
 You can create and configure a new database connection using the `create` method provided by the `DB` facade:
 
+<div id='tinyorm-configuration'>
+<ConfigurationSettings />
+<Tabs className='tinyorm-configuration-basic' groupId={database}>
+<TabItem value={mysql} label={mysql_label}>
+
     #include <orm/db.hpp>
 
     using Orm::DB;
@@ -58,14 +67,176 @@ You can create and configure a new database connection using the `create` method
         {"charset",         qEnvironmentVariable("DB_CHARSET", "utf8mb4")},
         {"collation",       qEnvironmentVariable("DB_COLLATION", "utf8mb4_0900_ai_ci")},
         {"timezone",        "+00:00"},
+        // Specifies what time zone all QDateTime-s will have
+        {"qt_timezone",     QVariant::fromValue(Qt::UTC)},
         {"prefix",          ""},
-        {"strict",          true},
-        {"engine",          InnoDB},
-        {"version",         {}}, // Autodetect
-        {"options",         QVariantHash()},
         {"prefix_indexes",  true},
-        {"isolation_level", "REPEATABLE READ"},
+        {"strict",          true},
+        {"engine",          "InnoDB"},
+        {"options",         QVariantHash()},
     });
+
+</TabItem>
+<TabItem value={postgres} label={postgres_label}>
+
+    #include <orm/db.hpp>
+
+    using Orm::DB;
+
+    // Ownership of a shared_ptr()
+    auto manager = DB::create({
+        {"driver",             "QPSQL"},
+        {"host",               qEnvironmentVariable("DB_HOST", "127.0.0.1")},
+        {"port",               qEnvironmentVariable("DB_PORT", "5432")},
+        {"database",           qEnvironmentVariable("DB_DATABASE", "")},
+        {"schema",             qEnvironmentVariable("DB_SCHEMA", "public")},
+        {"username",           qEnvironmentVariable("DB_USERNAME", "postgres")},
+        {"password",           qEnvironmentVariable("DB_PASSWORD", "")},
+        {"charset",            qEnvironmentVariable("DB_CHARSET", "utf8")},
+        {"timezone",           "UTC"},
+        // Specifies what time zone all QDateTime-s will have
+        {"qt_timezone",        QVariant::fromValue(Qt::UTC)},
+        {"prefix",             ""},
+        {"prefix_indexes",     true},
+        {"options",            QVariantHash()},
+    });
+
+</TabItem>
+<TabItem value={sqlite} label={sqlite_label}>
+
+    #include <orm/db.hpp>
+
+    using Orm::DB;
+
+    // Ownership of a shared_ptr()
+    auto manager = DB::create({
+        {"driver",                  "QSQLITE"},
+        {"database",                qEnvironmentVariable("DB_DATABASE", "/example/example.sqlite3")},
+        {"foreign_key_constraints", qEnvironmentVariable("DB_FOREIGN_KEYS", "true")},
+        {"check_database_exists",   true},
+        // Specifies what time zone all QDateTime-s will have
+        {"qt_timezone",             QVariant::fromValue(Qt::UTC)},
+        /* Return a QDateTime with the correct time zone instead of the QString,
+           only works when the qt_timezone isn't set to the DontConvert. */
+        {"return_qdatetime",        true},
+        {"prefix",                  ""},
+    });
+
+</TabItem>
+</Tabs>
+
+<Tabs className='tinyorm-configuration-full' groupId={database}>
+<TabItem value={mysql} label={mysql_label}>
+
+    #include <orm/db.hpp>
+    #include <orm/utils/configuration.hpp>
+
+    using Orm::DB;
+    using namespace Orm::Constants; // NOLINT(google-build-using-namespace)
+
+    using ConfigUtils = Orm::Utils::Configuration;
+
+    // Ownership of a shared_ptr()
+    auto manager = DB::create({
+        {driver_,         QMYSQL},
+        {host_,           qEnvironmentVariable("DB_HOST", H127001)},
+        {port_,           qEnvironmentVariable("DB_PORT", P3306)},
+        {database_,       qEnvironmentVariable("DB_DATABASE", EMPTY)},
+        {username_,       qEnvironmentVariable("DB_USERNAME", ROOT)},
+        {password_,       qEnvironmentVariable("DB_PASSWORD", EMPTY)},
+        {charset_,        qEnvironmentVariable("DB_CHARSET", UTF8MB4)},
+        {collation_,      qEnvironmentVariable("DB_COLLATION", UTF8MB40900aici)},
+        // SSL-related
+        {ssl_ca,          "C:/mysql/data/ca.pem"},
+        {ssl_cert,        "C:/mysql/data/client-cert.pem"},
+        {ssl_key,         "C:/mysql/data/client-key.pem"},
+        // Or
+    //    {options,         ConfigUtils::mysqlSslOptions()},
+        {timezone_,       TZ00},
+        // Specifies what time zone all QDateTime-s will have
+        {qt_timezone,     QVariant::fromValue(Qt::UTC)},
+        {prefix_,         EMPTY},
+        {prefix_indexes,  true},
+        {strict_,         true},
+        {isolation_level, "REPEATABLE READ"},
+        {engine_,         InnoDB},
+        {Version,         {}}, // Autodetect
+        {options_,        QVariantHash()},
+        // Examples
+    //    {options_,        "MYSQL_OPT_CONNECT_TIMEOUT = 1 ; MYSQL_OPT_READ_TIMEOUT=1"},
+    //    {options_,        QVariantHash {{"MYSQL_OPT_CONNECT_TIMEOUT", 1},
+    //                                    {"MYSQL_OPT_READ_TIMEOUT",    1}}},
+    });
+
+</TabItem>
+<TabItem value={postgres} label={postgres_label}>
+
+    #include <orm/db.hpp>
+    #include <orm/utils/configuration.hpp>
+
+    using Orm::DB;
+    using namespace Orm::Constants; // NOLINT(google-build-using-namespace)
+
+    using ConfigUtils = Orm::Utils::Configuration;
+
+    // Ownership of a shared_ptr()
+    auto manager = DB::create({
+        {driver_,            QPSQL},
+        {application_name,   "Example application"},
+        {host_,              qEnvironmentVariable("DB_HOST", H127001)},
+        {port_,              qEnvironmentVariable("DB_PORT", P5432)},
+        {database_,          qEnvironmentVariable("DB_DATABASE", EMPTY)},
+        {schema_,            qEnvironmentVariable("DB_SCHEMA", PUBLIC)},
+        {username_,          qEnvironmentVariable("DB_USERNAME", postgres_)},
+        {password_,          qEnvironmentVariable("DB_PASSWORD", EMPTY)},
+        {charset_,           qEnvironmentVariable("DB_CHARSET", UTF8)},
+        // SSL-related
+        {sslmode_,           "verify-full"},
+        {sslcert,            "C:/example/postgres.crt"},
+        {sslkey,             "C:/example/postgres.key"},
+        {sslrootcert,        "C:/example/root.crt"},
+        // Or
+    //    {options_,           ConfigUtils::postgresSslOptions()},
+        {timezone_,          UTC},
+        // Specifies what time zone all QDateTime-s will have
+        {qt_timezone,        QVariant::fromValue(Qt::UTC)},
+        {prefix_,            EMPTY},
+        {prefix_indexes,     true},
+        {isolation_level,    "REPEATABLE READ"}, // Postgres default is READ COMMITTED
+        {synchronous_commit, "off"},  // Postgres default is on
+        // ConnectionFactory provides a default value for this, this is only for reference
+        {dont_drop,          QStringList {spatial_ref_sys}},
+        {options_,           QVariantHash()},
+    });
+
+</TabItem>
+<TabItem value={sqlite} label={sqlite_label}>
+
+    #include <orm/db.hpp>
+    #include <orm/utils/configuration.hpp>
+
+    using Orm::DB;
+    using namespace Orm::Constants; // NOLINT(google-build-using-namespace)
+
+    using ConfigUtils = Orm::Utils::Configuration;
+
+    // Ownership of a shared_ptr()
+    auto manager = DB::create({
+        {driver_,                 QSQLITE},
+        {database_,               qEnvironmentVariable("DB_DATABASE", "C:/SQLite/example.sqlite3")},
+        {foreign_key_constraints, qEnvironmentVariable("DB_FOREIGN_KEYS", "true")},
+        {check_database_exists,   true},
+        // Specifies what time zone all QDateTime-s will have
+        {qt_timezone,             QVariant::fromValue(Qt::UTC)},
+        /* Return a QDateTime with the correct time zone instead of the QString,
+           only works when the qt_timezone isn't set to the DontConvert. */
+        {return_qdatetime,        true},
+        {prefix_,                 EMPTY},
+    });
+
+</TabItem>
+</Tabs>
+</div>
 
 The first argument is configuration hash which is of type `QVariantHash` and the second argument specifies the name of the *connection*, this connection will also be a *default connection*. You can configure multiple database connections at once and choose the needed one before executing SQL query, section [Using Multiple Database Connections](#using-multiple-database-connections) describes how to create and use multiple database connections.
 
