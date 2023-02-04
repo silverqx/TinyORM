@@ -9,6 +9,10 @@
 #  include <sys/ioctl.h>
 #endif
 
+#ifndef _WIN32
+#  include <unistd.h>
+#endif
+
 #include <orm/utils/type.hpp>
 
 #include "tom/exceptions/invalidargumenterror.hpp"
