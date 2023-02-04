@@ -42,8 +42,17 @@ enum struct RowType
     /*! All columns all filled with NULL values. */
     Null,
 };
+#if defined(__cpp_using_enum) && __cpp_using_enum >= 201907
 /*! Introduce the RowType enumerator names. */
 using enum RowType;
+#else
+/*! All columns all filled with values. */
+constexpr auto AllFilled = RowType::AllFilled;
+/*! Number columns all filled negative values. */
+constexpr auto Negative  = RowType::Negative;
+/*! All columns all filled with NULL values. */
+constexpr auto Null      = RowType::Null;
+#endif
 
 /*! Type for the Connection name (QString). */
 using ConnectionName = QString;
