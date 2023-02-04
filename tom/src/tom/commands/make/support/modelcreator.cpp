@@ -703,7 +703,7 @@ bool ModelCreator::anyModelOptionGiven(const CmdOptions &cmdOptions)
 QString ModelCreator::prepareInitializerListValues(const QStringList &list)
 {
     /*! Wrap values in quotes and add the given prefix. */
-    const auto wrapValues = [](const auto &values, const QString &prefix)
+    const auto wrapValues = [](const QStringList &values, const QString &prefix)
     {
         return values
                 | ranges::views::transform([&prefix](const auto &value)

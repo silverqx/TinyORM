@@ -356,7 +356,7 @@ namespace Orm::Tiny::Relations
         QString m_relationName;
 
         /*! The name of the accessor to use for the "pivot" relationship. */
-        QString m_accessor = QStringLiteral("pivot");
+        QString m_accessor = QLatin1String("pivot");
         // BUG should be QSet, duplicates are not allowed, check all the containers 😭 and use proper containers where I did mistake, from the point of view of duplicates silverqx
         /*! The pivot table columns to retrieve. */
         QStringList m_pivotColumns;
@@ -1401,7 +1401,7 @@ namespace Orm::Tiny::Relations
         columns.removeDuplicates();
 
         return columns
-                | ranges::views::transform([this](const auto &column)
+                | ranges::views::transform([this](const QString &column)
         {
             return QStringLiteral("%1 as pivot_%2").arg(qualifyPivotColumn(column),
                                                         column);
