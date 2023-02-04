@@ -122,15 +122,15 @@ void tst_MySql_SchemaBuilder::initTestCase()
 {
     m_connection = Databases::createConnection(Databases::MYSQL);
 
-    // The charset and collation in all queries is set on the base of env. variables
-    const auto &connection = DB::connection(m_connection);
-    m_charset = connection.getConfig(charset_).value<QString>();
-    m_collation = connection.getConfig(collation_).value<QString>();
-
     if (m_connection.isEmpty())
         QSKIP(TestUtils::AutoTestSkipped
               .arg(TypeUtils::classPureBasename(*this), Databases::MYSQL)
               .toUtf8().constData(), );
+
+    // The charset and collation in all queries is set on the base of env. variables
+    const auto &connection = DB::connection(m_connection);
+    m_charset = connection.getConfig(charset_).value<QString>();
+    m_collation = connection.getConfig(collation_).value<QString>();
 }
 
 void tst_MySql_SchemaBuilder::createDatabase() const
