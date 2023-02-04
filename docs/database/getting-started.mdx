@@ -158,7 +158,7 @@ You can create and configure a new database connection using the `create` method
         {prefix_,         EMPTY},
         {prefix_indexes,  true},
         {strict_,         true},
-        {isolation_level, "REPEATABLE READ"},
+    //    {isolation_level, "REPEATABLE READ"}, // MySQL default is REPEATABLE READ
         {engine_,         InnoDB},
         {Version,         {}}, // Autodetect
         {options_,        QVariantHash()},
@@ -202,10 +202,10 @@ You can create and configure a new database connection using the `create` method
         {qt_timezone,        QVariant::fromValue(Qt::UTC)},
         {prefix_,            EMPTY},
         {prefix_indexes,     true},
-        {isolation_level,    "REPEATABLE READ"}, // Postgres default is READ COMMITTED
-        {synchronous_commit, "off"},  // Postgres default is on
+    //    {isolation_level,    "REPEATABLE READ"}, // Postgres default is READ COMMITTED
+    //    {synchronous_commit, "off"},  // Postgres default is on
         // ConnectionFactory provides a default value for this, this is only for reference
-        {dont_drop,          QStringList {spatial_ref_sys}},
+    //    {dont_drop,          QStringList {spatial_ref_sys}},
         {options_,           QVariantHash()},
     });
 
