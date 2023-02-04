@@ -134,16 +134,16 @@ private:
 
 /*! Time zone Europe/Bratislava. */
 Q_GLOBAL_STATIC_WITH_ARGS(QTimeZone, TimeZoneEUBratislava,
-                          (QByteArray("Europe/Bratislava")));
+                          (QByteArray("Europe/Bratislava")))
 
 /*! QString constant "datetimes" (perf. reason, one time initialization). */
-Q_GLOBAL_STATIC_WITH_ARGS(QString, datetimes, ("datetimes"));
+Q_GLOBAL_STATIC_WITH_ARGS(QString, datetimes, ("datetimes"))
 /*! QString constant "datetime" (perf. reason, one time initialization). */
-Q_GLOBAL_STATIC_WITH_ARGS(QString, datetime, ("datetime"));
+Q_GLOBAL_STATIC_WITH_ARGS(QString, datetime, ("datetime"))
 /*! QString constant "timestamp" (perf. reason, one time initialization). */
-Q_GLOBAL_STATIC_WITH_ARGS(QString, timestamp, ("timestamp"));
+Q_GLOBAL_STATIC_WITH_ARGS(QString, timestamp, ("timestamp"))
 /*! QString constant "date" (perf. reason, one time initialization). */
-Q_GLOBAL_STATIC_WITH_ARGS(QString, date, ("date"));
+Q_GLOBAL_STATIC_WITH_ARGS(QString, date, ("date"))
 
 /* private slots */
 

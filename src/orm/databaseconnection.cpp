@@ -491,7 +491,7 @@ Q_GLOBAL_STATIC_WITH_ARGS(DriverNameMapType, DRIVER_NAME_MAP, ({
                               {QMYSQL,  MYSQL_},
                               {QPSQL,   POSTGRESQL},
                               {QSQLITE, SQLITE}
-                          }));
+                          }))
 
 const QString &DatabaseConnection::driverNamePrintable()
 {
