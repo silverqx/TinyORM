@@ -1,3 +1,9 @@
+#!/usr/bin/env pwsh
+
+Set-StrictMode -Version 3.0
+
 Write-Host 'Setting up environment for Qt 5.15.2 usage...' -ForegroundColor Magenta
+
 $env:Path = '<your_path_here>\Qt\5.15.2\msvc2019_64\bin;' + $env:Path
+
 . <your_path_here>\dotfiles\bin\vcvars64.ps1

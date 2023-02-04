@@ -26,7 +26,7 @@ Example invocations.
 
 - Show diagnostics also from header files in include/orm/ folder.
     run-clazy-standalone.py -checks='level0,level1' \
-                            -header-filter='orm/.+\.(h|hpp)$' '.+\.cpp$'
+                            -header-filter='/orm/.+\.(h|hpp)$' '.+\.cpp$'
 
 Compilation database setup:
 http://clang.llvm.org/docs/HowToSetupToolingForLLVM.html

@@ -14,7 +14,7 @@ Param(
 
 Set-StrictMode -Version 3.0
 
-. $PSScriptRoot\private\Common.ps1
+. $PSScriptRoot\private\Common-Path.ps1
 
 $Script:TotalElapsed = 0
 $Script:AverageElapsed = 0

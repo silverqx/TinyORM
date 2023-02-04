@@ -26,7 +26,8 @@ Param(
 
     [Parameter(HelpMessage = 'Todo keywords regex pattern.')]
     [ValidateNotNullOrEmpty()]
-    [string] $TodoKeywordsPattern = ' (TODO|NOTE|FIXME|BUG|WARNING|CUR|FEATURE|TEST|FUTURE|CUR1|TMP|SEC) '
+    [string] $TodoKeywordsPattern = ' (TODO|NOTE|FIXME|BUG|WARNING|CUR|FEATURE|TEST|FUTURE|' +
+        'CUR1|TMP|SEC) '
 )
 
 Set-StrictMode -Version 3.0

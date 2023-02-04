@@ -1,3 +1,5 @@
+#!/usr/bin/env pwsh
+
 Set-StrictMode -Version 3.0
 
 if (-not (Test-Path .\compile_commands.json)) {

@@ -20,7 +20,7 @@ Param(
     [switch] $SkipClazy,
 
     [Parameter(HelpMessage = 'Clean CMake build (remove everything inside the -BuildPath).')]
-    [switch] $Clean,
+    [switch] $CleanBuild,
 
     [Parameter(HelpMessage = 'Specifies the CMake build type.')]
     [ValidateSet('Debug', 'Release', 'RelWithDebInfo', 'MinSizeRel')]

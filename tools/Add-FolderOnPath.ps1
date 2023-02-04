@@ -31,7 +31,7 @@ begin {
     }
     $Script:Slashes = $null
 
-    . $PSScriptRoot\private\Common.ps1
+    . $PSScriptRoot\private\Common-Path.ps1
 
     function Get-EnvVariable {
         [OutputType([string[]])]
@@ -363,7 +363,7 @@ process {
    # Appends /tmp and /usr/local/bin paths to the $env:Path environment variable
    Add-FolderOnPath -Path /tmp, /usr/local/bin -Append
 
-   Or
+   # Or
 
    '/tmp', '/usr/local/bin' | Add-FolderOnPath -Append
 

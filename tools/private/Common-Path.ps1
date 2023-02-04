@@ -2,7 +2,6 @@
 
 Set-StrictMode -Version 3.0
 
-
 # Get slashes by platform
 function Get-Slashes {
     [OutputType([string])]

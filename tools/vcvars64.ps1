@@ -1,8 +1,10 @@
+#!/usr/bin/env pwsh
+
 Param(
     [Parameter(Position = 0, HelpMessage = 'Visual Studio version.')]
     [ValidateNotNull()]
     [ValidatePattern('2019|2022')]
-    [Int]$Version = 2019
+    [Int] $Version = 2022
 )
 
 Set-StrictMode -Version 3.0
@@ -16,4 +18,3 @@ Get-Content "$env:TEMP\vcvars64_$Version.tmp" | Foreach-Object {
         Set-Content "env:\$($matches[1])" $matches[2]
     }
 }
-

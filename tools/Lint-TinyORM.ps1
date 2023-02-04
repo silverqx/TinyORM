@@ -29,7 +29,7 @@ Param(
     [int] $QtVersion = 6,
 
     [Parameter(HelpMessage = 'Clean CMake build (remove everything inside the -BuildPath).')]
-    [switch] $Clean,
+    [switch] $CleanBuild,
 
     [Parameter(HelpMessage = 'Specifies the CMake build type.')]
     [ValidateSet('Debug', 'Release', 'RelWithDebInfo', 'MinSizeRel')]
@@ -45,6 +45,10 @@ Param(
 
 Set-StrictMode -Version 3.0
 
+# Script variables section
+# ---
+Set-Variable STACK_NAME -Option Constant -Value $MyInvocation.MyCommand.Name
+
 # Number of processes to spawn (value passed to the -j option)
 $Script:numberOfProcesses = $env:NUMBER_OF_PROCESSORS - 2
 
@@ -57,7 +61,7 @@ $Script:numberOfProcesses = $env:NUMBER_OF_PROCESSORS - 2
 $FilesPaths = $null -eq $FilesPaths ? '.+?'        : "(?:$($FilesPaths -join '|'))"
 $Files      = $null -eq $Files      ? '[\w_\-\+]+' : "(?:$($Files -join '|'))"
 
-$Script:RegEx = "(?:examples|src|tests)[\\\/]+$FilesPaths[\\\/]+(?!mocs_)$($Files)\.cpp$"
+$Script:RegEx = "[\\\/]+(?:examples|src|tests)[\\\/]+$FilesPaths[\\\/]+(?!mocs_)$($Files)\.cpp$"
 
 # Append the build type to the build path
 $BuildPath = $BuildPath.TrimEnd(
@@ -71,7 +75,7 @@ if (-not (Test-Path $BuildPath)) {
     New-Item -Path $BuildPath -ItemType Directory | Out-Null
 }
 
-Push-Location
+Push-Location -StackName $STACK_NAME
 
 Set-Location -Path $BuildPath
 
@@ -81,7 +85,7 @@ if (-not (Test-Path env:WindowsSDKLibVersion)) {
 }
 
 # Clean build
-if ($Clean) {
+if ($CleanBuild) {
     Remove-Item -Recurse -Force $BuildPath\*
 
     Write-Host "`nClean CMake $BuildType build`n" -ForegroundColor Green
@@ -160,9 +164,10 @@ if (-not $SkipClazy) {
 
     & 'E:\dotfiles\bin\run-clazy-standalone.ps1' `
         -checks="$Script:Checks" `
-        -extra-arg-before='-Qunused-arguments' -header-filter='(orm|tom|migrations)/.+\.(h|hpp)$' `
+        -extra-arg-before='-Qunused-arguments' `
+        -header-filter='[\\\/]+(examples|orm|tests|tom)[\\\/]+.+\.(h|hpp)$' `
         -j $Script:numberOfProcesses `
         -p="$BuildPath" $Script:RegEx
 }
 
-Pop-Location
+Pop-Location -StackName $STACK_NAME
