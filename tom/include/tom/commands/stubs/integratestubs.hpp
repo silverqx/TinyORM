@@ -143,7 +143,7 @@ _tom()
     # Inaccurate completion if the tom command is not on the system path, it doesn't
     # provide all options
     commands='env help inspire integrate list migrate db:seed db:wipe
-        make:migration make:seeder migrate:fresh migrate:install
+        make:migration make:model make:seeder migrate:fresh migrate:install
         migrate:refresh migrate:reset migrate:rollback migrate:status
         migrate:uninstall'
 
@@ -210,6 +210,7 @@ __tom_commands() {
         'db\:seed:Seed the database with records'
         'db\:wipe:Drop all tables, views, and types'
         'make\:migration:Create a new migration file'
+        'make\:model:Create a new model class'
         'make\:seeder:Create a new seeder class'
         'migrate\:fresh:Drop all tables and re-run all migrations'
         'migrate\:install:Create the migration repository'
@@ -337,7 +338,7 @@ _tom() {
         integrate)
             _arguments \
                 $common_options \
-                '1::shell:(bash pwsh zsh)' \
+                '1::shell name:(bash pwsh zsh)' \
                 '--stdout[Print content of the integrate command (instead of writing to disk)]' \
                 '--path=[The location where the completion file should be created (zsh only)]:folder path:_files -/'
             ;;
@@ -345,14 +346,14 @@ _tom() {
         list)
             _arguments \
                 $common_options \
-                '1::namepace:__tom_namespaces'
+                '1::namepace name:__tom_namespaces'
             ;;
 
         migrate)
             _arguments \
                 $common_options \
                 '--database=[The database connection to use]:connection:__tom_connections' \
-                '--force[Force the operation to run when in production]' \
+                '(-f --force)'{-f,--force}'[Force the operation to run when in production]' \
                 '--pretend[Dump the SQL queries that would be run]' \
                 '--seed[Indicates if the seed task should be re-run]' \
                 '--step[Force the migrations to be run so they can be rolled back individually]'
@@ -364,7 +365,7 @@ _tom() {
                 '(--class)1::class name:__tom_seeders' \
                 '(1)--class=[The class name of the root seeder \[default: "Seeders::DatabaseSeeder"\]]:class name:__tom_seeders' \
                 '--database=[The database connection to use]:connection:__tom_connections' \
-                '--force[Force the operation to run when in production]'
+                '(-f --force)'{-f,--force}'[Force the operation to run when in production]'
             ;;
 
         db:wipe)
@@ -373,18 +374,55 @@ _tom() {
                 '--database=[The database connection to use]:connection:__tom_connections' \
                 '--drop-views[Drop all tables and views]' \
                 '--drop-types[Drop all tables and types (Postgres only)]' \
-                '--force[Force the operation to run when in production]'
+                '(-f --force)'{-f,--force}'[Force the operation to run when in production]'
             ;;
 
         make:migration)
             _arguments \
                 $common_options \
-                '1::migration:()' \
+                '1::migration name:()' \
                 '--create=[The table to be created]:table name' \
                 '--table=[The table to migrate]:table name' \
                 '--path=[The location where the migration file should be created]:folder path:_files -/' \
                 '--realpath[Indicate that any provided migration file paths are pre-resolved absolute paths]' \
-                '--fullpath[Output the full path of the created migration]'
+                '--fullpath[Output the full path of the created migration]' \
+                '(-f --force)'{-f,--force}'[Overwrite the model class if already exists]'
+            ;;
+
+        make:model)
+            _arguments \
+                $common_options \
+                '1::class name:()' \
+                '(-m --migration)'{-m,--migration}'[Create a new migration file for the model]' \
+                '(-s --seeder)'{-s,--seeder}'[Create a new seeder for the model]' \
+                '*--one-to-one=[Create one-to-one relation to the given model]:class name' \
+                '*--one-to-many=[Create one-to-many relation to the given model]:class name' \
+                '*--belongs-to=[Create belongs-to relation to the given model]:class name' \
+                '*--belongs-to-many=[Create many-to-many relation to the given model]:class name' \
+                '*--foreign-key=[The foreign key name]:column name' \
+                '*--pivot-table=[The pivot table name]:table name' \
+                '*--pivot=[The class name of the pivot class for the belongs-to-many relationship]:class name' \
+                '*--pivot-inverse=[The class name of the pivot class for the belongs-to-many inverse relationship]:class name' \
+                '*--as=[The name for the pivot relation]:relation name' \
+                '*--with-pivot=[Extra attributes for the pivot model]:column names' \
+                '*--with-timestamps[Pivot table with timestamps]' \
+                '--table=[The table associated with the model]:table name' \
+                '--primary-key=[The primary key associated with the table]:column name' \
+                "--incrementing[Enable auto-incrementing for the model's primary key]" \
+                "--disable-incrementing[Disable auto-incrementing for the model's primary key]" \
+                '--connection=[The connection name for the model]:connection name' \
+                '--with=[The relations to eager load on every query]:relationship names' \
+                '--fillable=[The attributes that are mass assignable]:attribute names' \
+                "--guarded=[The guarded attributes that aren't mass assignable]:attribute names" \
+                '--disable-timestamps[Disable timestamping of the model]' \
+                "--dateformat=[The storage format of the model's date columns]:date format" \
+                '--dates=[The attributes that should be mutated to dates]:attribute names' \
+                '--touches=[All of the relationships to be touched]:relationship names' \
+                '(-o --preserve-order)'{-o,--preserve-order}'[Preserve relations order defined on the command-line]' \
+                '--path=[The location where the migration file should be created]:folder path:_files -/' \
+                '--realpath[Indicate any provided migration file paths are pre-resolved absolute paths]' \
+                '--fullpath[Output the full path of the migration]' \
+                '(-f --force)'{-f,--force}'[Overwrite the migration file if already exists]'
             ;;
 
         make:seeder)
@@ -393,7 +431,8 @@ _tom() {
                 '1::class name:()' \
                 '--path=[The location where the seeder file should be created]:folder path:_files -/' \
                 '--realpath[Indicate that any provided seeder file paths are pre-resolved absolute paths]' \
-                '--fullpath[Output the full path of the created seeder]'
+                '--fullpath[Output the full path of the created seeder]' \
+                '(-f --force)'{-f,--force}'[Overwrite the seeder class if already exists]'
             ;;
 
         migrate:fresh)
@@ -402,7 +441,7 @@ _tom() {
                 '--database=[The database connection to use]:connection:__tom_connections' \
                 '--drop-views[Drop all tables and views]' \
                 '--drop-types[Drop all tables and types (Postgres only)]' \
-                '--force[Force the operation to run when in production]' \
+                '(-f --force)'{-f,--force}'[Force the operation to run when in production]' \
                 '--seed[Indicates if the seed task should be re-run]' \
                 '--seeder=[The class name of the root seeder]:class name:__tom_seeders' \
                 '--step[Force the migrations to be run so they can be rolled back individually]'
@@ -418,7 +457,7 @@ _tom() {
             _arguments \
                 $common_options \
                 '--database=[The database connection to use]:connection:__tom_connections' \
-                '--force[Force the operation to run when in production]' \
+                '(-f --force)'{-f,--force}'[Force the operation to run when in production]' \
                 '--seed[Indicates if the seed task should be re-run]' \
                 '--seeder=[The class name of the root seeder]:class name:__tom_seeders' \
                 '--step=[The number of migrations to be reverted & re-run]:number' \
@@ -429,7 +468,7 @@ _tom() {
             _arguments \
                 $common_options \
                 '--database=[The database connection to use]:connection:__tom_connections' \
-                '--force[Force the operation to run when in production]' \
+                '(-f --force)'{-f,--force}'[Force the operation to run when in production]' \
                 '--pretend[Dump the SQL queries that would be run]'
             ;;
 
@@ -437,7 +476,7 @@ _tom() {
             _arguments \
                 $common_options \
                 '--database=[The database connection to use]:connection:__tom_connections' \
-                '--force[Force the operation to run when in production]' \
+                '(-f --force)'{-f,--force}'[Force the operation to run when in production]' \
                 '--pretend[Dump the SQL queries that would be run]' \
                 '--step=[The number of migrations to be reverted & re-run]:number'
             ;;

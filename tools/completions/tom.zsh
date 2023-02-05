@@ -187,8 +187,8 @@ _tom() {
                 '--create=[The table to be created]:table name' \
                 '--table=[The table to migrate]:table name' \
                 '--path=[The location where the migration file should be created]:folder path:_files -/' \
-                '--realpath[Indicate any provided migration file paths are pre-resolved absolute paths]' \
-                '--fullpath[Output the full path of the migration]' \
+                '--realpath[Indicate that any provided migration file paths are pre-resolved absolute paths]' \
+                '--fullpath[Output the full path of the created migration]' \
                 '(-f --force)'{-f,--force}'[Overwrite the model class if already exists]'
             ;;
 
@@ -232,9 +232,9 @@ _tom() {
             _arguments \
                 $common_options \
                 '1::class name:()' \
-                '--path=[The location where the migration file should be created]:folder path:_files -/' \
-                '--realpath[Indicate any provided migration file paths are pre-resolved absolute paths]' \
-                '--fullpath[Output the full path of the migration]' \
+                '--path=[The location where the seeder file should be created]:folder path:_files -/' \
+                '--realpath[Indicate that any provided seeder file paths are pre-resolved absolute paths]' \
+                '--fullpath[Output the full path of the created seeder]' \
                 '(-f --force)'{-f,--force}'[Overwrite the seeder class if already exists]'
             ;;
 
