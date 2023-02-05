@@ -44,6 +44,11 @@ function(tiny_install_tinyorm)
 
     # Install all other files
     install(DIRECTORY "include/orm" TYPE INCLUDE FILES_MATCHING PATTERN "*.hpp")
+    # If for any reason want to install the tom header files
+#    if(TOM)
+#        # The trailing / is important here
+#        install(DIRECTORY "tom/include/" TYPE INCLUDE FILES_MATCHING PATTERN "*.hpp")
+#    endif()
     file(GLOB tiny_docs "docs/*.mdx")
     install(FILES ${tiny_docs} DESTINATION "${CMAKE_INSTALL_DOCDIR}/mdx")
     install(FILES AUTHOR LICENSE TYPE DOC)
