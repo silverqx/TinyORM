@@ -6,4 +6,5 @@ if (-not (Test-Path .\compile_commands.json)) {
     throw 'Compile database compile_commands.json doesn''t exist.'
 }
 
+# run-clang-tidy (scoop install llvm)
 python.exe 'C:\Users\<your_path>\scoop\apps\llvm\current\bin\run-clang-tidy' @args
