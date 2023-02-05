@@ -4,11 +4,12 @@
 
 Set-StrictMode -Version 3.0
 
-$hppFiles = Get-ChildItem -Path ..\include\*.hpp -Recurse
-$cppFiles = Get-ChildItem -Path ..\src\*.cpp -Recurse
+$hppFiles = Get-ChildItem -Path ..\tom\include\*.hpp -Recurse
+$cppFiles = Get-ChildItem -Path ..\tom\src\*.cpp -Recurse
 
 foreach ($hppFile in $hppFiles)
 {
+    # Guess the .cpp filepath
     $cppFile = $hppFile -replace '\\include\\', '\src\'
     $cppFile = $cppFile -replace '\.hpp', '.cpp'
 
@@ -17,11 +18,13 @@ foreach ($hppFile in $hppFiles)
     {
         throw 'More results for ' + $cppFile
     }
+    # If the cpp file was found then skip, we need only header files without cpp files
     if ($hasCpp.Count -eq 1)
     {
         continue
     }
 
+    # Find the SHAREDLIB_EXPORT
     $containsExport = @(Select-String -Path $hppFile -Pattern 'SHAREDLIB_EXPORT')
     if ($containsExport.Count -eq 0)
     {
