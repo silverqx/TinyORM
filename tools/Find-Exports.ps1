@@ -4,8 +4,11 @@
 
 Set-StrictMode -Version 3.0
 
-$hppFiles = Get-ChildItem -Path ..\tom\include\*.hpp -Recurse
-$cppFiles = Get-ChildItem -Path ..\tom\src\*.cpp -Recurse
+$hppFiles = Get-ChildItem `
+                -Path ..\include\*.hpp, ..\tom\include\*.hpp, ..\tests\TinyUtils\src\*.hpp `
+                -Recurse
+$cppFiles = Get-ChildItem -Path ..\src\*.cpp, ..\tom\src\*.cpp, ..\tests\TinyUtils\src\*.cpp `
+                -Recurse
 
 foreach ($hppFile in $hppFiles)
 {
