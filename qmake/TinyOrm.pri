@@ -32,14 +32,16 @@ disable_tom: DEFINES *= TINYORM_DISABLE_TOM
 
 !isEmpty(TINYORM_SOURCE_TREE): \
 exists($$TINYORM_SOURCE_TREE) {
-    win32-msvc|win32-clang-msvc: \
-        INCLUDEPATH *= \
-            $$quote($$TINYORM_SOURCE_TREE/include/) \
-            $$quote($$TINYTOM_SOURCE_TREE/include/)
-    else: \
-        QMAKE_CXXFLAGS += \
-            -isystem $$shell_quote($$TINYORM_SOURCE_TREE/include/) \
-            -isystem $$shell_quote($$TINYTOM_SOURCE_TREE/include/)
+    win32-msvc|win32-clang-msvc {
+        INCLUDEPATH *= $$quote($$TINYORM_SOURCE_TREE/include/)
+        !disable_tom: \
+            INCLUDEPATH *= $$quote($$TINYTOM_SOURCE_TREE/include/)
+    }
+    else {
+        QMAKE_CXXFLAGS += -isystem $$shell_quote($$TINYORM_SOURCE_TREE/include/)
+        !disable_tom: \
+            QMAKE_CXXFLAGS += -isystem $$shell_quote($$TINYTOM_SOURCE_TREE/include/)
+    }
 }
 
 !isEmpty(TINYORM_BUILD_TREE): \
