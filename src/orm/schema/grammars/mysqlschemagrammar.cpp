@@ -456,7 +456,7 @@ QString MySqlSchemaGrammar::escapeString(QString value) const
             .replace(QChar(0x001a), QStringLiteral("^Z"))
             .replace(QLatin1Char('\\'), QStringLiteral("\\\\"))
             .replace(QChar(QChar::Null), QStringLiteral("\\0"))
-            .replace(QLatin1Char('\''), "''");
+            .replace(SQUOTE, "''");
 }
 
 QString MySqlSchemaGrammar::getType(const ColumnDefinition &column) const

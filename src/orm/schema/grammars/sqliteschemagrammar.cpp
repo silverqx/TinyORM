@@ -411,7 +411,7 @@ QString SQLiteSchemaGrammar::escapeString(QString value) const // clazy:exclude=
        (especially look at the caution box):
        https://www.postgresql.org/docs/current/sql-syntax-lexical.html#SQL-SYNTAX-SPECIAL-CHARS*/
 
-    return value.replace(QLatin1Char('\''), QStringLiteral("''"));
+    return value.replace(SQUOTE, QStringLiteral("''"));
 }
 
 QString SQLiteSchemaGrammar::getType(const ColumnDefinition &column) const

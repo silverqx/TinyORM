@@ -21,6 +21,7 @@ namespace Orm::Constants
     const QChar LT_C       = QLatin1Char('<');
     const QChar GT_C       = QLatin1Char('>');
     const QChar QUOTE      = QLatin1Char('"');
+    const QChar SQUOTE     = QLatin1Char('\'');
 
     // Common strings
     const QString NEWLINE      = QStringLiteral("\n");
