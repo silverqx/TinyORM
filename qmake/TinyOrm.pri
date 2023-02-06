@@ -24,7 +24,7 @@ CONFIG(dll, dll|shared|static|staticlib): \
 
 # Disable the ORM-related source code
 disable_orm: DEFINES *= TINYORM_DISABLE_ORM
-# Disable the tom-related source code
+# Disable the tom-related source code (also header files)
 disable_tom: DEFINES *= TINYORM_DISABLE_TOM
 
 # Link against TinyORM library
