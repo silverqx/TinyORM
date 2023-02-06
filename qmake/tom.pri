@@ -21,8 +21,10 @@ CONFIG(dll, dll|shared|static|staticlib): \
 
 # Disable the ORM-related source code
 disable_orm: DEFINES *= TINYORM_DISABLE_ORM
-# Disable the tom-related source code
-disable_tom: DEFINES *= TINYORM_DISABLE_TOM
+# Prohibit disabling the tom-related source code and header files
+disable_tom: \
+    error( "Disabling the tom is forbidden in the tom.pri, please remove\
+            the 'disable_tom' configuration." )
 
 # File version
 # ---
