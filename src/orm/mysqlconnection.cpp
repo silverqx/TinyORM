@@ -67,11 +67,11 @@ std::unique_ptr<SchemaBuilder> MySqlConnection::getSchemaBuilder()
 
 std::optional<QString> MySqlConnection::version()
 {
-    auto configVersionValue = ConfigUtils::getValidConfigVersion(m_config);
+    auto versionConfig = ConfigUtils::getValidConfigVersion(m_config);
 
     /* The default value is the std::nullopt if pretending and the database configuration
        doesn't contain a valid version value. */
-    if (m_pretending && !m_version && configVersionValue.isEmpty())
+    if (m_pretending && !m_version && versionConfig.isEmpty())
         return std::nullopt;
 
     // Return the cached value
@@ -79,8 +79,8 @@ std::optional<QString> MySqlConnection::version()
         return m_version;
 
     // A user can provide the version through the configuration to save one DB query
-    if (!configVersionValue.isEmpty())
-        return m_version = std::move(configVersionValue);
+    if (!versionConfig.isEmpty())
+        return m_version = std::move(versionConfig);
 
     // Obtain and cache the database version value
     return m_version = selectOne(QStringLiteral("select version()")).value(0)
