@@ -79,6 +79,8 @@ namespace Migrations
     using TINYORM_COMMON_NAMESPACE::Orm::Constants::UPDATED_AT; // NOLINT(misc-unused-using-decls)
     /*! Alias for the string constant "deleted_at". */
     using TINYORM_COMMON_NAMESPACE::Orm::Constants::DELETED_AT; // NOLINT(misc-unused-using-decls)
+    /*! Alias for the string constant "null". */
+    using TINYORM_COMMON_NAMESPACE::Orm::Constants::null_; // NOLINT(misc-unused-using-decls)
 
     /*! Alias for the string constant "MySQL". */
     using TINYORM_COMMON_NAMESPACE::Orm::Constants::MYSQL_; // NOLINT(misc-unused-using-decls)
@@ -130,8 +132,12 @@ namespace Migrations
     using TINYORM_COMMON_NAMESPACE::Orm::Constants::UTC; // NOLINT(misc-unused-using-decls)
     /*! Alias for the string constant "LOCAL". */
     using TINYORM_COMMON_NAMESPACE::Orm::Constants::LOCAL; // NOLINT(misc-unused-using-decls)
+    /*! Alias for the string constant "DEFAULT". */
+    using TINYORM_COMMON_NAMESPACE::Orm::Constants::DEFAULT; // NOLINT(misc-unused-using-decls)
     /*! Alias for the string constant "SYSTEM". */
     using TINYORM_COMMON_NAMESPACE::Orm::Constants::SYSTEM; // NOLINT(misc-unused-using-decls)
+    /*! Alias for the string constant "+00:00". */
+    using TINYORM_COMMON_NAMESPACE::Orm::Constants::TZ00; // NOLINT(misc-unused-using-decls)
     /*! Alias for the string constant "public". */
     using TINYORM_COMMON_NAMESPACE::Orm::Constants::PUBLIC; // NOLINT(misc-unused-using-decls)
     /*! Alias for the string constant "utf8". */
@@ -142,6 +148,17 @@ namespace Migrations
     using TINYORM_COMMON_NAMESPACE::Orm::Constants::InnoDB; // NOLINT(misc-unused-using-decls)
     /*! Alias for the string constant "MyISAM". */
     using TINYORM_COMMON_NAMESPACE::Orm::Constants::MyISAM; // NOLINT(misc-unused-using-decls)
+
+    /*! Alias for the string constant "utf8_general_ci". */
+    using TINYORM_COMMON_NAMESPACE::Orm::Constants::UTF8Generalci; // NOLINT(misc-unused-using-decls)
+    /*! Alias for the string constant "utf8_unicode_ci". */
+    using TINYORM_COMMON_NAMESPACE::Orm::Constants::UTF8Unicodeci; // NOLINT(misc-unused-using-decls)
+    /*! Alias for the string constant "utf8mb4_0900_ai_ci". */
+    using TINYORM_COMMON_NAMESPACE::Orm::Constants::UTF8MB40900aici; // NOLINT(misc-unused-using-decls)
+    /*! Alias for the string constant "ucs_basic". */
+    using TINYORM_COMMON_NAMESPACE::Orm::Constants::UcsBasic; // NOLINT(misc-unused-using-decls)
+    /*! Alias for the string constant "POSIX". */
+    using TINYORM_COMMON_NAMESPACE::Orm::Constants::POSIX_; // NOLINT(misc-unused-using-decls)
 
 } // namespace Migrations
 
