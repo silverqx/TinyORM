@@ -389,6 +389,7 @@ This is laravel/framework version, not laravel/laravel version:
 
  - upgraded to Laravel 9
    - v9.44.0 to v9.48.0
+   - v9.48.0 to v9.50.2
 
  - close all expanded sections in github compare diff:
 
