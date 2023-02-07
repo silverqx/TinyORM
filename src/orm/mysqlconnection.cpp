@@ -69,8 +69,8 @@ std::optional<QString> MySqlConnection::version()
 {
     auto configVersionValue = ConfigUtils::getValidConfigVersion(m_config);
 
-    /* Default values is std::nullopt if pretending and the database config. doesn't
-       contain a valid version value. */
+    /* The default value is the std::nullopt if pretending and the database configuration
+       doesn't contain a valid version value. */
     if (m_pretending && !m_version && configVersionValue.isEmpty())
         return std::nullopt;
 
