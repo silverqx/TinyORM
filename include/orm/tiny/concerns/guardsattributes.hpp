@@ -260,8 +260,8 @@ namespace Orm::Tiny::Concerns
 
         if (!m_guardableColumns.contains(guardableKey))
             m_guardableColumns[guardableKey] = model().getConnection()
-                                          .getSchemaBuilder()
-                                          ->getColumnListing(model().getTable());
+                                               .getSchemaBuilder()
+                                               ->getColumnListing(model().getTable());
 
         return m_guardableColumns[guardableKey].contains(key);
     }
