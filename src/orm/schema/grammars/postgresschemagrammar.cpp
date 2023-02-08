@@ -57,12 +57,12 @@ PostgresSchemaGrammar::compileGetAllViews(const QVector<QString> &databases) con
 
 QString PostgresSchemaGrammar::compileEnableForeignKeyConstraints() const
 {
-    return QStringLiteral("SET CONSTRAINTS ALL IMMEDIATE;");
+    return QStringLiteral("set constraints all immediate;");
 }
 
 QString PostgresSchemaGrammar::compileDisableForeignKeyConstraints() const
 {
-    return QStringLiteral("SET CONSTRAINTS ALL DEFERRED;");
+    return QStringLiteral("set constraints all deferred;");
 }
 
 QString PostgresSchemaGrammar::compileTableExists() const

@@ -595,7 +595,7 @@ void tst_PostgreSQL_SchemaBuilder::enableForeignKeyConstraints() const
     const auto &firstLog = log.first();
 
     QCOMPARE(log.size(), 1);
-    QCOMPARE(firstLog.query, "SET CONSTRAINTS ALL IMMEDIATE;");
+    QCOMPARE(firstLog.query, "set constraints all immediate;");
     QVERIFY(firstLog.boundValues.isEmpty());
 }
 
@@ -610,7 +610,7 @@ void tst_PostgreSQL_SchemaBuilder::disableForeignKeyConstraints() const
     const auto &firstLog = log.first();
 
     QCOMPARE(log.size(), 1);
-    QCOMPARE(firstLog.query, "SET CONSTRAINTS ALL DEFERRED;");
+    QCOMPARE(firstLog.query, "set constraints all deferred;");
     QVERIFY(firstLog.boundValues.isEmpty());
 }
 
