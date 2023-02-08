@@ -339,17 +339,17 @@ void tst_SQLite_SchemaBuilder::timestamps_rememberToken_CreateAndDrop() const
 
     const auto &log1 = log.at(1);
     QCOMPARE(log1.query,
-             "alter table \"firewalls\" drop column \"created_at\"");
+             R"(alter table "firewalls" drop column "created_at")");
     QVERIFY(log1.boundValues.isEmpty());
 
     const auto &log2 = log.at(2);
     QCOMPARE(log2.query,
-             "alter table \"firewalls\" drop column \"updated_at\"");
+             R"(alter table "firewalls" drop column "updated_at")");
     QVERIFY(log2.boundValues.isEmpty());
 
     const auto &log3 = log.at(3);
     QCOMPARE(log3.query,
-             "alter table \"firewalls\" drop column \"remember_token\"");
+             R"(alter table "firewalls" drop column "remember_token")");
     QVERIFY(log3.boundValues.isEmpty());
 
     const auto &log4 = log.at(4);
@@ -395,87 +395,87 @@ void tst_SQLite_SchemaBuilder::modifyTable() const
 
     const auto &log0 = log.at(0);
     QCOMPARE(log0.query,
-             "alter table \"firewalls\" add column \"char\" varchar not null");
+             R"(alter table "firewalls" add column "char" varchar not null)");
     QVERIFY(log0.boundValues.isEmpty());
 
     const auto &log1 = log.at(1);
     QCOMPARE(log1.query,
-             "alter table \"firewalls\" add column \"char_10\" varchar not null");
+             R"(alter table "firewalls" add column "char_10" varchar not null)");
     QVERIFY(log1.boundValues.isEmpty());
 
     const auto &log2 = log.at(2);
     QCOMPARE(log2.query,
-             "alter table \"firewalls\" add column \"string\" varchar not null");
+             R"(alter table "firewalls" add column "string" varchar not null)");
     QVERIFY(log2.boundValues.isEmpty());
 
     const auto &log3 = log.at(3);
     QCOMPARE(log3.query,
-             "alter table \"firewalls\" add column \"string_22\" varchar not null");
+             R"(alter table "firewalls" add column "string_22" varchar not null)");
     QVERIFY(log3.boundValues.isEmpty());
 
     const auto &log4 = log.at(4);
     QCOMPARE(log4.query,
-             "alter table \"firewalls\" add column \"tiny_text\" text not null");
+             R"(alter table "firewalls" add column "tiny_text" text not null)");
     QVERIFY(log4.boundValues.isEmpty());
 
     const auto &log5 = log.at(5);
     QCOMPARE(log5.query,
-             "alter table \"firewalls\" add column \"text\" text not null");
+             R"(alter table "firewalls" add column "text" text not null)");
     QVERIFY(log5.boundValues.isEmpty());
 
     const auto &log6 = log.at(6);
     QCOMPARE(log6.query,
-             "alter table \"firewalls\" add column \"medium_text\" text not null");
+             R"(alter table "firewalls" add column "medium_text" text not null)");
     QVERIFY(log6.boundValues.isEmpty());
 
     const auto &log7 = log.at(7);
     QCOMPARE(log7.query,
-             "alter table \"firewalls\" add column \"long_text\" text not null");
+             R"(alter table "firewalls" add column "long_text" text not null)");
     QVERIFY(log7.boundValues.isEmpty());
 
     const auto &log8 = log.at(8);
     QCOMPARE(log8.query,
-             "alter table \"firewalls\" add column \"integer\" integer");
+             R"(alter table "firewalls" add column "integer" integer)");
     QVERIFY(log8.boundValues.isEmpty());
 
     const auto &log9 = log.at(9);
     QCOMPARE(log9.query,
-             "alter table \"firewalls\" add column \"tinyInteger\" integer not null");
+             R"(alter table "firewalls" add column "tinyInteger" integer not null)");
     QVERIFY(log9.boundValues.isEmpty());
 
     const auto &log10 = log.at(10);
     QCOMPARE(log10.query,
-             "alter table \"firewalls\" add column \"smallInteger\" integer not null");
+             R"(alter table "firewalls" add column "smallInteger" integer not null)");
     QVERIFY(log10.boundValues.isEmpty());
 
     const auto &log11 = log.at(11);
     QCOMPARE(log11.query,
-             "alter table \"firewalls\" add column \"mediumInteger\" integer not null");
+             R"(alter table "firewalls" add column "mediumInteger" integer not null)");
     QVERIFY(log11.boundValues.isEmpty());
 
     const auto &log12 = log.at(12);
     QCOMPARE(log12.query,
-             "alter table \"firewalls\" drop column \"long_text\"");
+             R"(alter table "firewalls" drop column "long_text")");
     QVERIFY(log12.boundValues.isEmpty());
 
     const auto &log13 = log.at(13);
     QCOMPARE(log13.query,
-             "alter table \"firewalls\" drop column \"medium_text\"");
+             R"(alter table "firewalls" drop column "medium_text")");
     QVERIFY(log13.boundValues.isEmpty());
 
     const auto &log14 = log.at(14);
     QCOMPARE(log14.query,
-             "alter table \"firewalls\" drop column \"text\"");
+             R"(alter table "firewalls" drop column "text")");
     QVERIFY(log14.boundValues.isEmpty());
 
     const auto &log15 = log.at(15);
     QCOMPARE(log15.query,
-             "alter table \"firewalls\" drop column \"smallInteger\"");
+             R"(alter table "firewalls" drop column "smallInteger")");
     QVERIFY(log15.boundValues.isEmpty());
 
     const auto &log16 = log.at(16);
     QCOMPARE(log16.query,
-             "alter table \"firewalls\" drop column \"mediumInteger\"");
+             R"(alter table "firewalls" drop column "mediumInteger")");
     QVERIFY(log16.boundValues.isEmpty());
 
     const auto &log17 = log.at(17);
@@ -502,7 +502,7 @@ void tst_SQLite_SchemaBuilder::dropTable() const
     const auto &firstLog = log.first();
 
     QCOMPARE(log.size(), 1);
-    QCOMPARE(firstLog.query, "drop table \"firewalls\"");
+    QCOMPARE(firstLog.query, R"(drop table "firewalls")");
     QVERIFY(firstLog.boundValues.isEmpty());
 }
 
@@ -517,7 +517,7 @@ void tst_SQLite_SchemaBuilder::dropTableIfExists() const
     const auto &firstLog = log.first();
 
     QCOMPARE(log.size(), 1);
-    QCOMPARE(firstLog.query, "drop table if exists \"firewalls\"");
+    QCOMPARE(firstLog.query, R"(drop table if exists "firewalls")");
     QVERIFY(firstLog.boundValues.isEmpty());
 }
 
@@ -532,7 +532,7 @@ void tst_SQLite_SchemaBuilder::rename() const
     const auto &firstLog = log.first();
 
     QCOMPARE(log.size(), 1);
-    QCOMPARE(firstLog.query, "alter table \"secured\" rename to \"firewalls\"");
+    QCOMPARE(firstLog.query, R"(alter table "secured" rename to "firewalls")");
     QVERIFY(firstLog.boundValues.isEmpty());
 }
 
@@ -604,7 +604,7 @@ void tst_SQLite_SchemaBuilder::renameColumn() const
 
     QCOMPARE(log.size(), 1);
     QCOMPARE(firstLog.query,
-             "alter table \"firewalls\" rename column \"name\" to \"first_name\"");
+             R"(alter table "firewalls" rename column "name" to "first_name")");
     QVERIFY(firstLog.boundValues.isEmpty());
 }
 
@@ -719,7 +719,7 @@ void tst_SQLite_SchemaBuilder::getColumnListing() const
     const auto &firstLog = log.first();
 
     QCOMPARE(log.size(), 1);
-    QCOMPARE(firstLog.query, "pragma table_info(\"firewalls\")");
+    QCOMPARE(firstLog.query, R"(pragma table_info("firewalls"))");
     QVERIFY(firstLog.boundValues.isEmpty());
 }
 

@@ -347,7 +347,7 @@ void tst_PostgreSQL_SchemaBuilder::timestamps_rememberToken_CreateAndDrop() cons
 
     const auto &log2 = log.at(2);
     QCOMPARE(log2.query,
-             "alter table \"firewalls\" drop column \"remember_token\"");
+             R"(alter table "firewalls" drop column "remember_token")");
     QVERIFY(log2.boundValues.isEmpty());
 
     const auto &log3 = log.at(3);
@@ -410,7 +410,7 @@ void tst_PostgreSQL_SchemaBuilder::modifyTable() const
 
     const auto &log1 = log.at(1);
     QCOMPARE(log1.query,
-             "alter table \"firewalls\" drop column \"long_text\"");
+             R"(alter table "firewalls" drop column "long_text")");
     QVERIFY(log1.boundValues.isEmpty());
 
     const auto &log2 = log.at(2);
@@ -449,7 +449,7 @@ void tst_PostgreSQL_SchemaBuilder::dropTable() const
     const auto &firstLog = log.first();
 
     QCOMPARE(log.size(), 1);
-    QCOMPARE(firstLog.query, "drop table \"firewalls\"");
+    QCOMPARE(firstLog.query, R"(drop table "firewalls")");
     QVERIFY(firstLog.boundValues.isEmpty());
 }
 
@@ -464,7 +464,7 @@ void tst_PostgreSQL_SchemaBuilder::dropTableIfExists() const
     const auto &firstLog = log.first();
 
     QCOMPARE(log.size(), 1);
-    QCOMPARE(firstLog.query, "drop table if exists \"firewalls\"");
+    QCOMPARE(firstLog.query, R"(drop table if exists "firewalls")");
     QVERIFY(firstLog.boundValues.isEmpty());
 }
 
@@ -479,7 +479,7 @@ void tst_PostgreSQL_SchemaBuilder::rename() const
     const auto &firstLog = log.first();
 
     QCOMPARE(log.size(), 1);
-    QCOMPARE(firstLog.query, "alter table \"secured\" rename to \"firewalls\"");
+    QCOMPARE(firstLog.query, R"(alter table "secured" rename to "firewalls")");
     QVERIFY(firstLog.boundValues.isEmpty());
 }
 
@@ -541,7 +541,7 @@ void tst_PostgreSQL_SchemaBuilder::renameColumn() const
 
     QCOMPARE(log.size(), 1);
     QCOMPARE(firstLog.query,
-             "alter table \"firewalls\" rename column \"name\" to \"first_name\"");
+             R"(alter table "firewalls" rename column "name" to "first_name")");
     QVERIFY(firstLog.boundValues.isEmpty());
 }
 
@@ -725,7 +725,7 @@ void tst_PostgreSQL_SchemaBuilder::modifiers() const
 
     const auto &log3 = log.at(3);
     QCOMPARE(log3.query,
-             "alter table \"firewalls\" add column \"id\" serial primary key not null");
+             R"(alter table "firewalls" add column "id" serial primary key not null)");
     QVERIFY(log3.boundValues.isEmpty());
 
     const auto &log4 = log.at(4);
