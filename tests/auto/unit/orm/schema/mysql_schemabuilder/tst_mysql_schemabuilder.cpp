@@ -21,8 +21,9 @@ using Orm::Constants::UTF8;
 using Orm::Constants::UTF8Generalci;
 using Orm::Constants::UTF8Unicodeci;
 using Orm::Constants::charset_;
-using Orm::Constants::driver_;
 using Orm::Constants::collation_;
+using Orm::Constants::driver_;
+using Orm::Constants::engine_;
 
 using Orm::DB;
 using Orm::Exceptions::LogicError;
@@ -173,8 +174,10 @@ void tst_MySql_SchemaBuilder::createDatabase_Charset_Collation() const
 
     QCOMPARE(log.size(), 1);
     QCOMPARE(firstLog.query,
-             "create database `firewalls` "
-             "default character set `utf8` default collate `utf8_general_ci`");
+             QStringLiteral(
+                 "create database `firewalls` "
+                 "default character set `%1` default collate `%2`")
+             .arg(UTF8, UTF8Generalci));
     QVERIFY(firstLog.boundValues.isEmpty());
 
     // Restore
@@ -193,7 +196,7 @@ void tst_MySql_SchemaBuilder::dropDatabaseIfExists() const
 
     QCOMPARE(log.size(), 1);
     QCOMPARE(firstLog.query,
-             "drop database if exists `firewalls`");
+             QStringLiteral("drop database if exists `%1`").arg(Firewalls));
     QVERIFY(firstLog.boundValues.isEmpty());
 }
 
@@ -269,7 +272,9 @@ void tst_MySql_SchemaBuilder::createTable() const
 
 void tst_MySql_SchemaBuilder::createTable_Temporary() const
 {
-    auto log = DB::connection(m_connection).pretend([](auto &connection)
+    auto &connection = DB::connection(m_connection);
+
+    auto log = connection.pretend([](auto &connection)
     {
         Schema::on(connection.getName())
                 .create(Firewalls, [](Blueprint &table)
@@ -291,8 +296,9 @@ void tst_MySql_SchemaBuilder::createTable_Temporary() const
                  "`id` bigint unsigned not null auto_increment primary key, "
                  "`name` varchar(255) not null) "
                  "default character set %1 collate '%2' "
-                 "engine = InnoDB")
-             .arg(m_charset, m_collation));
+                 "engine = %3")
+             .arg(m_charset, m_collation,
+                  connection.getConfig(engine_).value<QString>()));
     QVERIFY(firstLog.boundValues.isEmpty());
 }
 
@@ -317,17 +323,21 @@ void tst_MySql_SchemaBuilder::createTable_Charset_Collation_Engine() const
 
     QCOMPARE(log.size(), 1);
     QCOMPARE(firstLog.query,
-             "create table `firewalls` ("
-             "`id` bigint unsigned not null auto_increment primary key, "
-             "`name` varchar(255) not null) "
-             "default character set utf8 collate 'utf8_general_ci' "
-             "engine = MyISAM");
+             QStringLiteral(
+                 "create table `firewalls` ("
+                 "`id` bigint unsigned not null auto_increment primary key, "
+                 "`name` varchar(255) not null) "
+                 "default character set %1 collate '%2' "
+                 "engine = %3")
+             .arg(UTF8, UTF8Generalci, MyISAM));
     QVERIFY(firstLog.boundValues.isEmpty());
 }
 
 void tst_MySql_SchemaBuilder::timestamps_rememberToken_softDeletes_CreateAndDrop() const
 {
-    auto log = DB::connection(m_connection).pretend([](auto &connection)
+    auto &connection = DB::connection(m_connection);
+
+    auto log = connection.pretend([](auto &connection)
     {
         Schema::on(connection.getName())
                 .create(Firewalls, [](Blueprint &table)
@@ -358,6 +368,8 @@ void tst_MySql_SchemaBuilder::timestamps_rememberToken_softDeletes_CreateAndDrop
 
     QCOMPARE(log.size(), 5);
 
+    const auto engineConfig = connection.getConfig(engine_).value<QString>();
+
     const auto &log0 = log.at(0);
     QCOMPARE(log0.query,
              QStringLiteral(
@@ -368,8 +380,8 @@ void tst_MySql_SchemaBuilder::timestamps_rememberToken_softDeletes_CreateAndDrop
                  "`remember_token` varchar(100) null, "
                  "`deleted_at` timestamp null) "
                  "default character set %1 collate '%2' "
-                 "engine = InnoDB")
-             .arg(m_charset, m_collation));
+                 "engine = %3")
+             .arg(m_charset, m_collation, engineConfig));
     QVERIFY(log0.boundValues.isEmpty());
 
     const auto &log1 = log.at(1);
@@ -395,8 +407,8 @@ void tst_MySql_SchemaBuilder::timestamps_rememberToken_softDeletes_CreateAndDrop
                 "`created_at` timestamp(3) null, "
                 "`updated_at` timestamp(3) null) "
                 "default character set %1 collate '%2' "
-                "engine = InnoDB")
-             .arg(m_charset, m_collation));
+                "engine = %3")
+             .arg(m_charset, m_collation, engineConfig));
     QVERIFY(log4.boundValues.isEmpty());
 }
 
@@ -486,7 +498,7 @@ void tst_MySql_SchemaBuilder::dropTable() const
     const auto &firstLog = log.first();
 
     QCOMPARE(log.size(), 1);
-    QCOMPARE(firstLog.query, "drop table `firewalls`");
+    QCOMPARE(firstLog.query, QStringLiteral("drop table `%1`").arg(Firewalls));
     QVERIFY(firstLog.boundValues.isEmpty());
 }
 
@@ -501,7 +513,8 @@ void tst_MySql_SchemaBuilder::dropTableIfExists() const
     const auto &firstLog = log.first();
 
     QCOMPARE(log.size(), 1);
-    QCOMPARE(firstLog.query, "drop table if exists `firewalls`");
+    QCOMPARE(firstLog.query,
+             QStringLiteral("drop table if exists `%1`").arg(Firewalls));
     QVERIFY(firstLog.boundValues.isEmpty());
 }
 

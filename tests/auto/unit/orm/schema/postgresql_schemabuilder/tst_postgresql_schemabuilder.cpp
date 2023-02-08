@@ -20,6 +20,7 @@ using Orm::Constants::SIZE;
 using Orm::Constants::UTF8;
 using Orm::Constants::UcsBasic;
 using Orm::Constants::charset_;
+using Orm::Constants::database_;
 using Orm::Constants::driver_;
 
 using Orm::DB;
@@ -123,7 +124,9 @@ void tst_PostgreSQL_SchemaBuilder::initTestCase()
 
 void tst_PostgreSQL_SchemaBuilder::createDatabase() const
 {
-    auto log = DB::connection(m_connection).pretend([](auto &connection)
+    auto &connection = DB::connection(m_connection);
+
+    auto log = connection.pretend([](auto &connection)
     {
         Schema::on(connection.getName()).createDatabase(Firewalls);
     });
@@ -133,7 +136,8 @@ void tst_PostgreSQL_SchemaBuilder::createDatabase() const
 
     QCOMPARE(log.size(), 1);
     QCOMPARE(firstLog.query,
-             R"(create database "firewalls" encoding "utf8")");
+             QStringLiteral(R"(create database "firewalls" encoding "%1")")
+             .arg(connection.getConfig(charset_).value<QString>()));
     QVERIFY(firstLog.boundValues.isEmpty());
 }
 
