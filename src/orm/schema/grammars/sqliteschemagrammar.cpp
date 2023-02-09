@@ -35,14 +35,15 @@ SQLiteSchemaGrammar::compileDropAllViews(const QVector<QString> &/*unused*/) con
 QString
 SQLiteSchemaGrammar::compileGetAllTables(const QVector<QString> &/*unused*/) const
 {
-    return QStringLiteral(
-                "select type, name from sqlite_master "
-                "where type = 'table' and name not like 'sqlite_%'");
+    return QStringLiteral("select name, type "
+                          "from sqlite_master "
+                          "where type = 'table' and name not like 'sqlite_%'");
 }
 
 QString SQLiteSchemaGrammar::compileGetAllViews(const QVector<QString> &/*unused*/) const
 {
-    return QStringLiteral("select type, name from sqlite_master where type = 'view'");
+    return QStringLiteral("select name, type "
+                          "from sqlite_master where type = 'view'");
 }
 
 QString SQLiteSchemaGrammar::compileEnableForeignKeyConstraints() const

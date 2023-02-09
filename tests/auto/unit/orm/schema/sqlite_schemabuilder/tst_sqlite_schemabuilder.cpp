@@ -625,7 +625,8 @@ void tst_SQLite_SchemaBuilder::getAllTables() const
 
     QCOMPARE(log.size(), 1);
     QCOMPARE(firstLog.query,
-             "select type, name from sqlite_master "
+             "select name, type "
+             "from sqlite_master "
              "where type = 'table' and name not like 'sqlite_%'");
     QVERIFY(firstLog.boundValues.isEmpty());
 }
@@ -642,7 +643,7 @@ void tst_SQLite_SchemaBuilder::getAllViews() const
 
     QCOMPARE(log.size(), 1);
     QCOMPARE(firstLog.query,
-             "select type, name from sqlite_master where type = 'view'");
+             "select name, type from sqlite_master where type = 'view'");
     QVERIFY(firstLog.boundValues.isEmpty());
 }
 
