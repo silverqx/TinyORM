@@ -67,14 +67,14 @@ QString MySqlSchemaGrammar::compileTableExists() const
     return QStringLiteral("select * "
                           "from `information_schema`.`tables` "
                           "where `table_schema` = ? and `table_name` = ? and "
-                          "`table_type` = 'BASE TABLE'");
+                            "`table_type` = 'BASE TABLE'");
 }
 
 QString MySqlSchemaGrammar::compileColumnListing(const QString &/*unused*/) const
 {
     return QStringLiteral("select `column_name` as `column_name` "
                           "from `information_schema`.`columns` "
-                          "where `table_schema` = ? and `table_name` = ?");
+                            "where `table_schema` = ? and `table_name` = ?");
 }
 
 /* Compile methods for commands */
