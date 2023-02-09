@@ -47,22 +47,22 @@ QString SQLiteSchemaGrammar::compileGetAllViews(const QVector<QString> &/*unused
 
 QString SQLiteSchemaGrammar::compileEnableForeignKeyConstraints() const
 {
-    return QStringLiteral("PRAGMA foreign_keys = ON;");
+    return QStringLiteral("PRAGMA foreign_keys = ON");
 }
 
 QString SQLiteSchemaGrammar::compileDisableForeignKeyConstraints() const
 {
-    return QStringLiteral("PRAGMA foreign_keys = OFF;");
+    return QStringLiteral("PRAGMA foreign_keys = OFF");
 }
 
 QString SQLiteSchemaGrammar::compileEnableWriteableSchema()
 {
-    return QStringLiteral("PRAGMA writable_schema = 1;");
+    return QStringLiteral("PRAGMA writable_schema = 1");
 }
 
 QString SQLiteSchemaGrammar::compileDisableWriteableSchema()
 {
-    return QStringLiteral("PRAGMA writable_schema = 0;");
+    return QStringLiteral("PRAGMA writable_schema = 0");
 }
 
 QString SQLiteSchemaGrammar::compileRebuild()

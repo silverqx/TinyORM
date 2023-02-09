@@ -657,7 +657,7 @@ void tst_SQLite_SchemaBuilder::enableForeignKeyConstraints() const
     const auto &firstLog = log.first();
 
     QCOMPARE(log.size(), 1);
-    QCOMPARE(firstLog.query, "PRAGMA foreign_keys = ON;");
+    QCOMPARE(firstLog.query, "PRAGMA foreign_keys = ON");
     QVERIFY(firstLog.boundValues.isEmpty());
 }
 
@@ -672,7 +672,7 @@ void tst_SQLite_SchemaBuilder::disableForeignKeyConstraints() const
     const auto &firstLog = log.first();
 
     QCOMPARE(log.size(), 1);
-    QCOMPARE(firstLog.query, "PRAGMA foreign_keys = OFF;");
+    QCOMPARE(firstLog.query, "PRAGMA foreign_keys = OFF");
     QVERIFY(firstLog.boundValues.isEmpty());
 }
 
@@ -684,7 +684,7 @@ void tst_SQLite_SchemaBuilder::enableWriteableSchema() const
                 DB::connection(m_connection).getSchemaGrammar());
 
     QCOMPARE(sqliteGrammar.compileEnableWriteableSchema(),
-             "PRAGMA writable_schema = 1;");
+             "PRAGMA writable_schema = 1");
 }
 
 void tst_SQLite_SchemaBuilder::disableWriteableSchema() const
@@ -694,7 +694,7 @@ void tst_SQLite_SchemaBuilder::disableWriteableSchema() const
                 DB::connection(m_connection).getSchemaGrammar());
 
     QCOMPARE(sqliteGrammar.compileDisableWriteableSchema(),
-             "PRAGMA writable_schema = 0;");
+             "PRAGMA writable_schema = 0");
 }
 
 void tst_SQLite_SchemaBuilder::rebuildDatabase() const

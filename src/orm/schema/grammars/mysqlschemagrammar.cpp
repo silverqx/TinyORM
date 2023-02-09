@@ -43,23 +43,23 @@ QString MySqlSchemaGrammar::compileDropAllViews(const QVector<QString> &views) c
 QString
 MySqlSchemaGrammar::compileGetAllTables(const QVector<QString> &/*unused*/) const
 {
-    return QStringLiteral("SHOW FULL TABLES WHERE table_type = 'BASE TABLE';");
+    return QStringLiteral("SHOW FULL TABLES WHERE table_type = 'BASE TABLE'");
 }
 
 QString
 MySqlSchemaGrammar::compileGetAllViews(const QVector<QString> &/*unused*/) const
 {
-    return QStringLiteral("SHOW FULL TABLES WHERE table_type = 'VIEW';");
+    return QStringLiteral("SHOW FULL TABLES WHERE table_type = 'VIEW'");
 }
 
 QString MySqlSchemaGrammar::compileEnableForeignKeyConstraints() const
 {
-    return QStringLiteral("SET FOREIGN_KEY_CHECKS=1;");
+    return QStringLiteral("SET FOREIGN_KEY_CHECKS=1");
 }
 
 QString MySqlSchemaGrammar::compileDisableForeignKeyConstraints() const
 {
-    return QStringLiteral("SET FOREIGN_KEY_CHECKS=0;");
+    return QStringLiteral("SET FOREIGN_KEY_CHECKS=0");
 }
 
 QString MySqlSchemaGrammar::compileTableExists() const

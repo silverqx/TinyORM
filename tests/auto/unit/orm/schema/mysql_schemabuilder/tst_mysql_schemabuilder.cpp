@@ -608,7 +608,7 @@ void tst_MySql_SchemaBuilder::getAllTables() const
     const auto &firstLog = log.first();
 
     QCOMPARE(log.size(), 1);
-    QCOMPARE(firstLog.query, "SHOW FULL TABLES WHERE table_type = 'BASE TABLE';");
+    QCOMPARE(firstLog.query, "SHOW FULL TABLES WHERE table_type = 'BASE TABLE'");
     QVERIFY(firstLog.boundValues.isEmpty());
 }
 
@@ -623,7 +623,7 @@ void tst_MySql_SchemaBuilder::getAllViews() const
     const auto &firstLog = log.first();
 
     QCOMPARE(log.size(), 1);
-    QCOMPARE(firstLog.query, "SHOW FULL TABLES WHERE table_type = 'VIEW';");
+    QCOMPARE(firstLog.query, "SHOW FULL TABLES WHERE table_type = 'VIEW'");
     QVERIFY(firstLog.boundValues.isEmpty());
 }
 
@@ -638,7 +638,7 @@ void tst_MySql_SchemaBuilder::enableForeignKeyConstraints() const
     const auto &firstLog = log.first();
 
     QCOMPARE(log.size(), 1);
-    QCOMPARE(firstLog.query, "SET FOREIGN_KEY_CHECKS=1;");
+    QCOMPARE(firstLog.query, "SET FOREIGN_KEY_CHECKS=1");
     QVERIFY(firstLog.boundValues.isEmpty());
 }
 
@@ -653,7 +653,7 @@ void tst_MySql_SchemaBuilder::disableForeignKeyConstraints() const
     const auto &firstLog = log.first();
 
     QCOMPARE(log.size(), 1);
-    QCOMPARE(firstLog.query, "SET FOREIGN_KEY_CHECKS=0;");
+    QCOMPARE(firstLog.query, "SET FOREIGN_KEY_CHECKS=0");
     QVERIFY(firstLog.boundValues.isEmpty());
 }
 
