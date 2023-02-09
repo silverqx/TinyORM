@@ -24,6 +24,7 @@ using Tom::Constants::MigrateRefresh;
 using Tom::Constants::MigrateReset;
 using Tom::Constants::MigrateRollback;
 using Tom::Constants::MigrateStatus;
+using Tom::Constants::MigrateUninstall;
 
 using TestUtils::Databases;
 
@@ -40,8 +41,9 @@ public:
     using Status = std::vector<StatusRow>;
 
 private Q_SLOTS:
-    void initTestCase() const;
+    void initTestCase();
     void cleanup() const;
+    void cleanupTestCase() const;
 
     void migrate() const;
     void migrate_Step() const;
@@ -80,10 +82,13 @@ private:
     static Status createResetStatus();
 
     /*! Prepare the migration database for running. */
-    static void prepareDatabase(const QStringList &connections);
+    void prepareDatabase() const;
 
     /*! Migrations table name. */
     inline static const auto MigrationsTable = QStringLiteral("migrations_unit_testing");
+
+    /*! Created database connections (needed by the cleanupTestCase()). */
+    QStringList m_connections;
 };
 
 /*! Alias for the test output row. */
@@ -141,18 +146,18 @@ namespace
 /* private slots */
 
 // NOLINTBEGIN(readability-convert-member-functions-to-static)
-void tst_Migrate::initTestCase() const
+void tst_Migrate::initTestCase()
 {
-    const auto &connections = Databases::createConnections();
+    m_connections = Databases::createConnections();
 
-    if (connections.isEmpty())
+    if (m_connections.isEmpty())
         QSKIP(TestUtils::AutoTestSkippedAny.arg(TypeUtils::classPureBasename(*this))
                                            .toUtf8().constData(), );
 
     QTest::addColumn<QString>("connection");
 
     // Run all tests for all supported database connections
-    for (const auto &connection : connections)
+    for (const auto &connection : m_connections)
         QTest::newRow(connection.toUtf8().constData()) << connection;
 
     /* Modify the migrate:status command to not output a status table to the console but
@@ -161,7 +166,7 @@ void tst_Migrate::initTestCase() const
     TomApplication::enableInUnitTests();
 
     // Prepare the migration database for running
-    prepareDatabase(connections);
+    prepareDatabase();
 }
 
 void tst_Migrate::cleanup() const
@@ -181,6 +186,36 @@ void tst_Migrate::cleanup() const
 
         QVERIFY(exitCode == EXIT_SUCCESS);
         QCOMPARE(createResetStatus(), status());
+    }
+}
+
+void tst_Migrate::cleanupTestCase() const
+{
+    /* Uninstall the migration repository, eg. the tst_SchemaBuilder::getAllTables()
+       depends on it. */
+    for (const auto &connection : m_connections) {
+        // Ownership of a unique_ptr()
+        const auto schema = Databases::manager()->connection(connection)
+                            .getSchemaBuilder();
+
+        // Nothing do cleanup, the migration repository was already uninstalled
+        if (!schema->hasTable(MigrationsTable))
+            return;
+
+        // Reset the migrations table
+        {
+            const auto exitCode = invokeCommand(connection, MigrateUninstall);
+
+            QVERIFY(exitCode == EXIT_SUCCESS);
+        }
+
+        {
+            auto exitCode = invokeTestStatusCommand(connection);
+
+            QVERIFY(exitCode == EXIT_FAILURE);
+        }
+
+        QVERIFY(!schema->hasTable(MigrationsTable));
     }
 }
 
@@ -628,9 +663,9 @@ Status tst_Migrate::createResetStatus()
     };
 }
 
-void tst_Migrate::prepareDatabase(const QStringList &connections)
+void tst_Migrate::prepareDatabase() const
 {
-    for (const auto &connection : connections) {
+    for (const auto &connection : m_connections) {
         // Ownership of a unique_ptr()
         const auto schema = Databases::manager()->connection(connection)
                             .getSchemaBuilder();
