@@ -109,7 +109,7 @@ void tst_DatabaseManager::removeConnection_Connected() const
     const auto databaseName = qEnvironmentVariable("DB_PGSQL_DATABASE", "");
     const auto driverName = QPSQL;
 
-    // Create database connection
+    // Add a new database connection
     m_dm->addConnections({
         {connectionName, {
             {driver_,          driverName},
@@ -184,7 +184,7 @@ void tst_DatabaseManager::default_MySQL_ConfigurationValues() const
                 "tinyorm_mysql_tests-tst_DatabaseMannager-"
                 "default_MySQL_ConfigurationValues");
 
-    // Create database connection
+    // Add a new database connection
     m_dm->addConnections({
         {connectionName, {
             {driver_, "qmysql"},
@@ -241,7 +241,7 @@ void tst_DatabaseManager::default_PostgreSQL_ConfigurationValues() const
                 "tinyorm_pgsql_tests-tst_DatabaseMannager-"
                 "default_PostgreSQL_ConfigurationValues");
 
-    // Create database connection
+    // Add a new database connection
     m_dm->addConnections({
         {connectionName, {
             {driver_, "qpsql"},
@@ -298,7 +298,7 @@ void tst_DatabaseManager::default_SQLite_ConfigurationValues() const
                 "tinyorm_sqlite_tests-tst_DatabaseMannager-"
                 "default_SQLite_ConfigurationValues");
 
-    // Create database connection
+    // Add a new database connection
     m_dm->addConnections({
         {connectionName, {
             {driver_, "qsqlite"},
@@ -374,7 +374,7 @@ void tst_DatabaseManager::ssl_MySQL_ConfigurationValues() const
                                   {SSL_KEY,  sslKeyOptionsValue}})}
     });
 
-    // Create database connection
+    // Add a new database connection
     m_dm->addConnections({
         {connectionName, initialConfiguration},
     // Don't setup any default connection
@@ -459,7 +459,7 @@ void tst_DatabaseManager::ssl_PostgreSQL_ConfigurationValues() const
                                     {sslkey,  sslkeyOptionsValue}})}
     });
 
-    // Create database connection
+    // Add a new database connection
     m_dm->addConnections({
         {connectionName, initialConfiguration},
     // Don't setup any default connection
@@ -524,7 +524,7 @@ void tst_DatabaseManager::sqlite_MemoryDriver() const
             QStringLiteral(
                 "tinyorm_sqlite_tests-tst_DatabaseMannager-sqlite_MemoryDriver");
 
-    // Create database connection
+    // Add a new database connection
     m_dm->addConnections({
         {connectionName, {
             {driver_,   QSQLITE},
@@ -564,7 +564,7 @@ void tst_DatabaseManager::sqlite_CheckDatabaseExists_True() const
                 "tinyorm_sqlite_tests-tst_DatabaseMannager-"
                 "sqlite_CheckDatabaseExists_True");
 
-    // Create database connection
+    // Add a new database connection
     m_dm->addConnections({
         {connectionName, {
             {driver_,               QSQLITE},
@@ -597,7 +597,7 @@ void tst_DatabaseManager::sqlite_CheckDatabaseExists_False() const
                 "tinyorm_sqlite_tests-tst_DatabaseMannager-"
                 "sqlite_CheckDatabaseExists_False");
 
-    // Create database connection
+    // Add a new database connection
     m_dm->addConnections({
         {connectionName, {
             {driver_,               QSQLITE},
