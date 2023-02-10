@@ -257,7 +257,7 @@ namespace Grammars
         QString modifyStoredAs(const ColumnDefinition &column) const;
         /*! Get the SQL for an unsigned column modifier. */
         QString modifyUnsigned(const ColumnDefinition &column) const;
-        /*! Get the SQL for a character set column modifier.*/
+        /*! Get the SQL for a character set column modifier. */
         QString modifyCharset(const ColumnDefinition &column) const;
         /*! Get the SQL for a collation column modifier. */
         QString modifyCollate(const ColumnDefinition &column) const;

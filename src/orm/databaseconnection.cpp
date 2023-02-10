@@ -589,7 +589,7 @@ void DatabaseConnection::reconnectIfMissingConnection() const
        is passed to the DatabaseConnection constructor and is always available. Only
        one exception is when disconnect() is called, it resets connection resolver which
        will be recreated (with the db connection of course) here, that is only one case
-       when the code below (reconnect() logic) is true as I'm aware of.*/
+       when the code below (reconnect() logic) is true as I'm aware of. */
     if (m_qtConnectionResolver)
         return;
 

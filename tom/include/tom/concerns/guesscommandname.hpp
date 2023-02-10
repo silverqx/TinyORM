@@ -40,7 +40,7 @@ namespace Concerns
         inline virtual ~GuessCommandName() = 0;
 
     protected:
-        /*! Default constructor.*/
+        /*! Default constructor. */
         inline GuessCommandName() = default;
 
         /* For classic command guesser */

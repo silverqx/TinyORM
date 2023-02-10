@@ -89,7 +89,7 @@ bool PrepareForeignKeyValues::startNewRelation(QString &option)
 bool PrepareForeignKeyValues::isUnusedForeignKeyOption()
 {
     /* m_currentRelation not empty means that any relation was defined
-       on the command-line and a value was not set yet.*/
+       on the command-line and a value was not set yet. */
     if (!m_currentRelation.isEmpty() && !m_wasForeignKeySet)
         return false;
 

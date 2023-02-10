@@ -1065,7 +1065,7 @@ namespace Orm::Tiny
            Following is true for the relationItem.constraints (Constraining Eager Loads):
            Then we will merge the user defined constraints that were on the query
            back to it, this ensures that an user can specify any where constraints or
-           ordering (where, orderBy, and maybe more).*/
+           ordering (where, orderBy, and maybe more). */
         auto nested = relationsNestedUnder(relationItem.name);
 
         /* If there are nested relationships set on this query, we will put those onto
