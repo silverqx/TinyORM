@@ -3,6 +3,7 @@
 #include <QStringList>
 
 #include <cmath>
+#include <ranges>
 
 #include "orm/constants.hpp"
 
@@ -70,6 +71,48 @@ bool String::isNumber(const QStringView string, const bool allowFloating,
     });
 
     return nonDigit == string.cend();
+}
+
+QString String::ltrim(const QString &string, const QString &characters)
+{
+    QString::size_type position = 0;
+
+    for (const auto &c : string)
+        if (characters.contains(c))
+            ++position;
+        else
+            break;
+
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
+    return string.mid(position);
+#else
+    return string.sliced(position);
+#endif
+}
+
+QString String::rtrim(const QString &string, const QString &characters)
+{
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
+    QString::size_type position = 0;
+
+    for (const auto &itString : std::ranges::reverse_view(string))
+        if (characters.contains(itString))
+            ++position;
+        else
+            break;
+
+    return string.chopped(position);
+#else
+    QString::size_type position = string.size();
+
+    for (const auto &itString : std::ranges::reverse_view(string))
+        if (characters.contains(itString))
+            --position;
+        else
+            break;
+
+    return string.first(position);
+#endif
 }
 
 #if !defined(TINYORM_DISABLE_TOM) || !defined(TINYORM_DISABLE_ORM)

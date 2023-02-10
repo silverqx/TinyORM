@@ -30,6 +30,20 @@ namespace Orm::Utils
         static bool isNumber(QStringView string, bool allowFloating = false,
                              bool allowPlusMinus = false);
 
+        /*! Strip whitespaces (or other characters) from the beginning and end
+            of a string. */
+        inline static QString
+        trim(const QString &string,
+             const QString &characters = QStringLiteral(" \n\r\t\v\f"));
+        /*! Strip whitespaces (or other characters) from the beginning of a string. */
+        static QString
+        ltrim(const QString &string,
+              const QString &characters = QStringLiteral(" \n\r\t\v\f"));
+        /*! Strip whitespaces (or other characters) from the end of a string. */
+        static QString
+        rtrim(const QString &string,
+              const QString &characters = QStringLiteral(" \n\r\t\v\f"));
+
 #if !defined(TINYORM_DISABLE_TOM) || !defined(TINYORM_DISABLE_ORM)
         /*! Convert a string to snake case (snake_case). */
         static QString snake(QString string, QChar delimiter = Constants::UNDERSCORE);
@@ -61,6 +75,11 @@ namespace Orm::Utils
     };
 
     /* public */
+
+    QString String::trim(const QString &string, const QString &characters)
+    {
+        return rtrim(ltrim(string, characters), characters);
+    }
 
 #ifndef TINYORM_DISABLE_TOM
     template<ColumnContainer T>
