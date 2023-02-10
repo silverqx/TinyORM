@@ -29,20 +29,19 @@ MySqlSchemaBuilder::dropDatabaseIfExists(const QString &name) const
 void MySqlSchemaBuilder::dropAllTables() const
 {
     auto query = getAllTables();
+    const auto querySize = query.size();
 
-    // No fields in the record
-    if (query.record().isEmpty())
+    // Nothing to do, empty result
+    if (querySize == 0)
         return;
 
     QVector<QString> tables;
-    if (const auto size = query.size(); size > 0)
-        tables.reserve(size);
+    tables.reserve(querySize);
 
     while (query.next())
         tables << query.value(0).value<QString>();
 
-    if (tables.isEmpty())
-        return;
+    Q_ASSERT(!tables.isEmpty());
 
     disableForeignKeyConstraints();
 
@@ -55,20 +54,19 @@ void MySqlSchemaBuilder::dropAllTables() const
 void MySqlSchemaBuilder::dropAllViews() const
 {
     auto query = getAllViews();
+    const auto querySize = query.size();
 
-    // No fields in the record
-    if (query.record().isEmpty())
+    // Nothing to do, empty result
+    if (querySize == 0)
         return;
 
     QVector<QString> views;
-    if (const auto size = query.size(); size > 0)
-        views.reserve(size);
+    views.reserve(querySize);
 
     while (query.next())
         views << query.value(0).value<QString>();
 
-    if (views.isEmpty())
-        return;
+    Q_ASSERT(!views.isEmpty());
 
     m_connection.statement(m_grammar.compileDropAllViews(views));
 }
@@ -86,24 +84,22 @@ SqlQuery MySqlSchemaBuilder::getAllViews() const
 
 QStringList MySqlSchemaBuilder::getColumnListing(const QString &table) const
 {
-    const auto table_ = NOSPACE.arg(m_connection.getTablePrefix(), table);
+    auto table_ = NOSPACE.arg(m_connection.getTablePrefix(), table);
 
     auto query = m_connection.selectFromWriteConnection(
                      m_grammar.compileColumnListing(),
-                     {m_connection.getDatabaseName(), table_});
+                     {m_connection.getDatabaseName(), std::move(table_)});
 
     return m_connection.getPostProcessor().processColumnListing(query);
 }
 
 bool MySqlSchemaBuilder::hasTable(const QString &table) const
 {
-    const auto table_ = NOSPACE.arg(m_connection.getTablePrefix(), table);
-
-    Q_ASSERT(m_connection.driver()->hasFeature(QSqlDriver::QuerySize));
+    auto table_ = NOSPACE.arg(m_connection.getTablePrefix(), table);
 
     return m_connection.selectFromWriteConnection(
                 m_grammar.compileTableExists(),
-                {m_connection.getDatabaseName(), table_}).size() > 0;
+                {m_connection.getDatabaseName(), std::move(table_)}).size() > 0;
 }
 
 } // namespace Orm::SchemaNs
