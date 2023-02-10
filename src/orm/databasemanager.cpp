@@ -255,7 +255,7 @@ namespace
 {
     const auto *const InstanceExceptionMessage =
             "The DatabaseManager instance has not yet been created, create it "
-            "by DB::create() method.";
+            "by the DB::create() method.";
 } // namespace
 
 std::shared_ptr<DatabaseManager> DatabaseManager::instance()
