@@ -120,7 +120,7 @@ namespace Tom
     bool Terminal::hasColorSupportInternal(const O &cout, FILE *stream) const
     {
 #ifndef _WIN32
-        Q_UNUSED(cout)
+        void(cout) // Unused
 #endif
         // Follow https://no-color.org/
         if (qEnvironmentVariableIsSet("NO_COLOR"))
