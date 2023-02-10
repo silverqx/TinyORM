@@ -185,7 +185,7 @@ void tst_Migrate::cleanup() const
         auto exitCode = invokeTestStatusCommand(connection);
 
         QVERIFY(exitCode == EXIT_SUCCESS);
-        QCOMPARE(createResetStatus(), status());
+        QCOMPARE(status(), createResetStatus());
     }
 }
 
@@ -233,7 +233,7 @@ void tst_Migrate::migrate() const
         auto exitCode = invokeTestStatusCommand(connection);
 
         QVERIFY(exitCode == EXIT_SUCCESS);
-        QCOMPARE(createStatus(FullyMigrated), status());
+        QCOMPARE(status(), createStatus(FullyMigrated));
     }
 }
 
@@ -251,7 +251,7 @@ void tst_Migrate::migrate_Step() const
         auto exitCode = invokeTestStatusCommand(connection);
 
         QVERIFY(exitCode == EXIT_SUCCESS);
-        QCOMPARE(createStatus(FullyStepMigrated), status());
+        QCOMPARE(status(), createStatus(FullyStepMigrated));
     }
 }
 
@@ -269,7 +269,7 @@ void tst_Migrate::reset() const
         auto exitCode = invokeTestStatusCommand(connection);
 
         QVERIFY(exitCode == EXIT_SUCCESS);
-        QCOMPARE(createResetStatus(), status());
+        QCOMPARE(status(), createResetStatus());
     }
 }
 
@@ -287,7 +287,7 @@ void tst_Migrate::rollback_OnMigrate() const
         auto exitCode = invokeTestStatusCommand(connection);
 
         QVERIFY(exitCode == EXIT_SUCCESS);
-        QCOMPARE(createStatus(FullyMigrated), status());
+        QCOMPARE(status(), createStatus(FullyMigrated));
     }
 
     // rollback on previous migrate w/o --step
@@ -301,7 +301,7 @@ void tst_Migrate::rollback_OnMigrate() const
         auto exitCode = invokeTestStatusCommand(connection);
 
         QVERIFY(exitCode == EXIT_SUCCESS);
-        QCOMPARE(createResetStatus(), status());
+        QCOMPARE(status(), createResetStatus());
     }
 }
 
@@ -319,7 +319,7 @@ void tst_Migrate::rollback_OnMigrateWithStep() const
         auto exitCode = invokeTestStatusCommand(connection);
 
         QVERIFY(exitCode == EXIT_SUCCESS);
-        QCOMPARE(createStatus(FullyStepMigrated), status());
+        QCOMPARE(status(), createStatus(FullyStepMigrated));
     }
 
     // rollback on previous migrate with --step
@@ -333,12 +333,12 @@ void tst_Migrate::rollback_OnMigrateWithStep() const
         auto exitCode = invokeTestStatusCommand(connection);
 
         QVERIFY(exitCode == EXIT_SUCCESS);
-        QCOMPARE(createStatus({
+        QCOMPARE(status(), createStatus({
             {Yes, s_2014_10_12_000000_create_posts_table,               s_1},
             {Yes, s_2014_10_12_100000_add_factor_column_to_posts_table, s_2},
             {Yes, s_2014_10_12_200000_create_properties_table,          s_3},
             {No,  s_2014_10_12_300000_create_phones_table},
-        }), status());
+        }));
     }
 }
 
@@ -356,7 +356,7 @@ void tst_Migrate::rollback_Step_OnMigrate() const
         auto exitCode = invokeTestStatusCommand(connection);
 
         QVERIFY(exitCode == EXIT_SUCCESS);
-        QCOMPARE(createStatus(FullyMigrated), status());
+        QCOMPARE(status(), createStatus(FullyMigrated));
     }
 
     // rollback on previous migrate w/o --step
@@ -370,12 +370,12 @@ void tst_Migrate::rollback_Step_OnMigrate() const
         auto exitCode = invokeTestStatusCommand(connection);
 
         QVERIFY(exitCode == EXIT_SUCCESS);
-        QCOMPARE(createStatus({
+        QCOMPARE(status(), createStatus({
             {Yes, s_2014_10_12_000000_create_posts_table,               s_1},
             {Yes, s_2014_10_12_100000_add_factor_column_to_posts_table, s_1},
             {No,  s_2014_10_12_200000_create_properties_table},
             {No,  s_2014_10_12_300000_create_phones_table},
-        }), status());
+        }));
     }
 }
 
@@ -393,7 +393,7 @@ void tst_Migrate::rollback_Step_OnMigrateWithStep() const
         auto exitCode = invokeTestStatusCommand(connection);
 
         QVERIFY(exitCode == EXIT_SUCCESS);
-        QCOMPARE(createStatus(FullyStepMigrated), status());
+        QCOMPARE(status(), createStatus(FullyStepMigrated));
     }
 
     // rollback on previous migrate with --step
@@ -407,12 +407,12 @@ void tst_Migrate::rollback_Step_OnMigrateWithStep() const
         auto exitCode = invokeTestStatusCommand(connection);
 
         QVERIFY(exitCode == EXIT_SUCCESS);
-        QCOMPARE(createStatus({
+        QCOMPARE(status(), createStatus({
             {Yes, s_2014_10_12_000000_create_posts_table,               s_1},
             {Yes, s_2014_10_12_100000_add_factor_column_to_posts_table, s_2},
             {No,  s_2014_10_12_200000_create_properties_table},
             {No,  s_2014_10_12_300000_create_phones_table},
-        }), status());
+        }));
     }
 }
 
@@ -430,7 +430,7 @@ void tst_Migrate::refresh_OnMigrate() const
         auto exitCode = invokeTestStatusCommand(connection);
 
         QVERIFY(exitCode == EXIT_SUCCESS);
-        QCOMPARE(createStatus(FullyMigrated), status());
+        QCOMPARE(status(), createStatus(FullyMigrated));
     }
 
     // refresh on previous migrate w/o --step
@@ -444,7 +444,7 @@ void tst_Migrate::refresh_OnMigrate() const
         auto exitCode = invokeTestStatusCommand(connection);
 
         QVERIFY(exitCode == EXIT_SUCCESS);
-        QCOMPARE(createStatus(FullyMigrated), status());
+        QCOMPARE(status(), createStatus(FullyMigrated));
     }
 }
 
@@ -462,7 +462,7 @@ void tst_Migrate::refresh_OnMigrateWithStep() const
         auto exitCode = invokeTestStatusCommand(connection);
 
         QVERIFY(exitCode == EXIT_SUCCESS);
-        QCOMPARE(createStatus(FullyStepMigrated), status());
+        QCOMPARE(status(), createStatus(FullyStepMigrated));
     }
 
     // refresh on previous migrate with --step
@@ -476,7 +476,7 @@ void tst_Migrate::refresh_OnMigrateWithStep() const
         auto exitCode = invokeTestStatusCommand(connection);
 
         QVERIFY(exitCode == EXIT_SUCCESS);
-        QCOMPARE(createStatus(FullyMigrated), status());
+        QCOMPARE(status(), createStatus(FullyMigrated));
     }
 }
 
@@ -494,7 +494,7 @@ void tst_Migrate::refresh_Step() const
         auto exitCode = invokeTestStatusCommand(connection);
 
         QVERIFY(exitCode == EXIT_SUCCESS);
-        QCOMPARE(createStatus(FullyMigrated), status());
+        QCOMPARE(status(), createStatus(FullyMigrated));
     }
 
     // refresh on previous migrate w/o --step
@@ -508,12 +508,12 @@ void tst_Migrate::refresh_Step() const
         auto exitCode = invokeTestStatusCommand(connection);
 
         QVERIFY(exitCode == EXIT_SUCCESS);
-        QCOMPARE(createStatus({
+        QCOMPARE(status(), createStatus({
             {Yes, s_2014_10_12_000000_create_posts_table,               s_1},
             {Yes, s_2014_10_12_100000_add_factor_column_to_posts_table, s_1},
             {Yes, s_2014_10_12_200000_create_properties_table,          s_2},
             {Yes, s_2014_10_12_300000_create_phones_table,              s_2},
-        }), status());
+        }));
     }
 }
 
@@ -531,7 +531,7 @@ void tst_Migrate::refresh_StepMigrate() const
         auto exitCode = invokeTestStatusCommand(connection);
 
         QVERIFY(exitCode == EXIT_SUCCESS);
-        QCOMPARE(createStatus(FullyMigrated), status());
+        QCOMPARE(status(), createStatus(FullyMigrated));
     }
 
     // refresh on previous migrate w/o --step
@@ -545,7 +545,7 @@ void tst_Migrate::refresh_StepMigrate() const
         auto exitCode = invokeTestStatusCommand(connection);
 
         QVERIFY(exitCode == EXIT_SUCCESS);
-        QCOMPARE(createStatus(FullyStepMigrated), status());
+        QCOMPARE(status(), createStatus(FullyStepMigrated));
     }
 }
 
@@ -563,7 +563,7 @@ void tst_Migrate::refresh_Step_StepMigrate() const
         auto exitCode = invokeTestStatusCommand(connection);
 
         QVERIFY(exitCode == EXIT_SUCCESS);
-        QCOMPARE(createStatus(FullyMigrated), status());
+        QCOMPARE(status(), createStatus(FullyMigrated));
     }
 
     // refresh on previous migrate w/o --step
@@ -578,12 +578,12 @@ void tst_Migrate::refresh_Step_StepMigrate() const
         auto exitCode = invokeTestStatusCommand(connection);
 
         QVERIFY(exitCode == EXIT_SUCCESS);
-        QCOMPARE(createStatus({
+        QCOMPARE(status(), createStatus({
             {Yes, s_2014_10_12_000000_create_posts_table,               s_1},
             {Yes, s_2014_10_12_100000_add_factor_column_to_posts_table, s_1},
             {Yes, s_2014_10_12_200000_create_properties_table,          s_2},
             {Yes, s_2014_10_12_300000_create_phones_table,              s_3},
-        }), status());
+        }));
     }
 }
 // NOLINTEND(readability-convert-member-functions-to-static)
