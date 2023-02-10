@@ -15,7 +15,6 @@ namespace Orm::SchemaNs
 
 std::optional<SqlQuery> PostgresSchemaBuilder::createDatabase(const QString &name) const
 {
-    // DUP schema silverqx
     return m_connection.unprepared(
                 m_grammar.compileCreateDatabase(name, m_connection));
 }
@@ -23,7 +22,6 @@ std::optional<SqlQuery> PostgresSchemaBuilder::createDatabase(const QString &nam
 std::optional<SqlQuery>
 PostgresSchemaBuilder::dropDatabaseIfExists(const QString &name) const
 {
-    // DUP schema silverqx
     return m_connection.unprepared(
                 m_grammar.compileDropDatabaseIfExists(name));
 }
