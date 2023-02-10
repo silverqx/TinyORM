@@ -46,7 +46,8 @@ namespace Orm::SchemaNs
         /*! Create a foreign key constraint on this column referencing the "id" column
             of the conventionally related table. */
         ForeignKeyDefinitionReference
-        constrained(const QString &table = "", const QString &column = Constants::ID);
+        constrained(const QString &table = Orm::Constants::EMPTY,
+                    const QString &column = Orm::Constants::ID);
 
         /*! Specify the referenced columns. */
         ForeignKeyDefinitionReference references(const QVector<QString> &columns);
