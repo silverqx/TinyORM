@@ -1,8 +1,5 @@
 #include "orm/schema/mysqlschemabuilder.hpp"
 
-#include <QtSql/QSqlDriver>
-#include <QtSql/QSqlRecord>
-
 #include "orm/databaseconnection.hpp"
 
 TINYORM_BEGIN_COMMON_NAMESPACE
@@ -25,7 +22,6 @@ MySqlSchemaBuilder::dropDatabaseIfExists(const QString &name) const
                 m_grammar.compileDropDatabaseIfExists(name));
 }
 
-// TEST schema, test in functional tests silverqx
 void MySqlSchemaBuilder::dropAllTables() const
 {
     auto query = getAllTables();
@@ -50,7 +46,6 @@ void MySqlSchemaBuilder::dropAllTables() const
     enableForeignKeyConstraints();
 }
 
-// TEST schema, test in functional tests silverqx
 void MySqlSchemaBuilder::dropAllViews() const
 {
     auto query = getAllViews();
