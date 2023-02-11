@@ -56,6 +56,9 @@ namespace Constants
     inline const QString varchar_ = QStringLiteral("varchar");
     inline const QString float_   = QStringLiteral("float");
 
+    // Common strings
+    inline const QString TRIM_QUOTES  = QStringLiteral("'\"");
+
 } // namespace Constants
 
 // NOLINTNEXTLINE(google-build-using-namespace)

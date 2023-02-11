@@ -1,0 +1,57 @@
+#pragma once
+#ifndef ORM_CONCERNS_PARSESSEARCHPATH_HPP
+#define ORM_CONCERNS_PARSESSEARCHPATH_HPP
+
+#include "orm/macros/systemheader.hpp"
+TINY_SYSTEM_HEADER
+
+#include <QStringList>
+
+#include "orm/macros/commonnamespace.hpp"
+#include "orm/macros/export.hpp"
+
+TINYORM_BEGIN_COMMON_NAMESPACE
+
+namespace Orm::Concerns
+{
+
+    /*! Parse the PostgreSQL search_path configuration value into the vector. */
+    class SHAREDLIB_EXPORT ParsesSearchPath
+    {
+        Q_DISABLE_COPY(ParsesSearchPath)
+
+    public:
+        /*! Pure virtual destructor, to pass -Weffc++. */
+        inline virtual ~ParsesSearchPath() = 0;
+
+        /*! Determine whether the search_path is empty or contains ''. */
+        inline static bool isSearchPathEmpty(const QString &searchPath);
+        /*! Determine whether the search_path is empty or contains ''. */
+        static bool isSearchPathEmpty(const QStringList &searchPath);
+
+    protected:
+        /*! Default constructor. */
+        inline ParsesSearchPath() = default;
+
+        /*! Parse the PostgreSQL search_path configuration value into the vector. */
+        static QStringList parseSearchPath(const QString &searchPath);
+        /*! Parse the PostgreSQL search_path configuration value into the vector. */
+        static QStringList parseSearchPath(const QStringList &searchPath);
+        /*! Parse the PostgreSQL search_path configuration value into the vector. */
+        static QStringList parseSearchPath(const QVariant &searchPath);
+    };
+
+    /* public */
+
+    ParsesSearchPath::~ParsesSearchPath() = default;
+
+    bool ParsesSearchPath::isSearchPathEmpty(const QString &searchPath)
+    {
+        return isSearchPathEmpty(QStringList {searchPath});
+    }
+
+} // namespace Orm::Concerns
+
+TINYORM_END_COMMON_NAMESPACE
+
+#endif // ORM_CONCERNS_PARSESSEARCHPATH_HPP

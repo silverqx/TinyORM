@@ -43,6 +43,9 @@ namespace Orm::SchemaNs::Constants
     const QString varchar_ = QStringLiteral("varchar");
     const QString float_   = QStringLiteral("float");
 
+    // Common strings
+    const QString TRIM_QUOTES  = QStringLiteral("'\"");
+
 } // namespace Orm::SchemaNs::Constants
 
 TINYORM_END_COMMON_NAMESPACE

@@ -201,7 +201,7 @@ namespace Seeders
     /*! Alias for the string constant "database". */
     using TINYORM_COMMON_NAMESPACE::Orm::Constants::database_; // NOLINT(misc-unused-using-decls)
     /*! Alias for the string constant "schema". */
-    using TINYORM_COMMON_NAMESPACE::Orm::Constants::schema_; // NOLINT(misc-unused-using-decls)
+    using TINYORM_COMMON_NAMESPACE::Orm::Constants::search_path; // NOLINT(misc-unused-using-decls)
     /*! Alias for the string constant "username". */
     using TINYORM_COMMON_NAMESPACE::Orm::Constants::username_; // NOLINT(misc-unused-using-decls)
     /*! Alias for the string constant "password". */

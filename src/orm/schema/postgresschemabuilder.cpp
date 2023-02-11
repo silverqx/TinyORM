@@ -1,10 +1,9 @@
 #include "orm/schema/postgresschemabuilder.hpp"
 
-#include <QSet>
-#include <QtSql/QSqlDriver>
-#include <QtSql/QSqlRecord>
-
-#include "orm/databaseconnection.hpp"
+#include "orm/exceptions/searchpathemptyerror.hpp"
+#include "orm/postgresconnection.hpp"
+#include "orm/schema/grammars/postgresschemagrammar.hpp"
+#include "orm/utils/type.hpp"
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
@@ -26,137 +25,239 @@ PostgresSchemaBuilder::dropDatabaseIfExists(const QString &name) const
                 m_grammar.compileDropDatabaseIfExists(name));
 }
 
-// TEST schema, test in functional tests silverqx
 void PostgresSchemaBuilder::dropAllTables() const
 {
     auto query = getAllTables();
+    const auto querySize = query.size();
 
-    // No fields in the record
-    if (query.record().isEmpty())
+    // Nothing to do, empty result
+    if (querySize == 0)
         return;
-
-    /* ConnectionFactory provides a default value 'spatial_ref_sys' for this option
-       for the QPSQL driver. */
-    const auto excludedTables = m_connection.getConfig(dont_drop).value<QStringList>();
 
     QVector<QString> tables;
-    if (const auto size = query.size(); size > 0)
-        tables.reserve(size);
+    tables.reserve(querySize);
 
     while (query.next())
-        if (auto table = query.value(0).value<QString>();
-            !excludedTables.contains(table)
+        if (auto [tableUnqualified, tableQualified] = columnValuesForDrop(query);
+            !excludedTables().intersects(
+                grammar().escapeNames(QSet<QString> {tableUnqualified, tableQualified}))
         )
-            tables << std::move(table);
+            tables << (tableQualified.isEmpty() ? std::move(tableUnqualified)
+                                                : std::move(tableQualified));
 
-    if (tables.isEmpty())
-        return;
+    Q_ASSERT(!tables.isEmpty());
 
     m_connection.unprepared(m_grammar.compileDropAllTables(tables));
 }
 
-// TEST schema, test in functional tests silverqx
 void PostgresSchemaBuilder::dropAllViews() const
 {
     auto query = getAllViews();
+    const auto querySize = query.size();
 
-    // No fields in the record
-    if (query.record().isEmpty())
+    // Nothing to do, empty result
+    if (querySize == 0)
         return;
-
-    /* For these it throws that needed by the postgis extension and proposes to delete
-       extension instead, so exclude them. */
-    const QSet<QString> excludedViews {QStringLiteral("geography_columns"),
-                                       QStringLiteral("geometry_columns")};
 
     QVector<QString> views;
-    if (const auto size = query.size(); size > 0)
-        views.reserve(size);
+    views.reserve(querySize);
 
     while (query.next())
-        if (auto view = query.value(0).value<QString>();
-            !excludedViews.contains(view)
+        if (auto [viewUnqualified, viewQualified] = columnValuesForDrop(query);
+            !excludedViews().intersects(
+                grammar().escapeNames(QSet<QString> {viewUnqualified, viewQualified}))
         )
-            views << std::move(view);
+            views << (viewQualified.isEmpty() ? std::move(viewUnqualified)
+                                              : std::move(viewQualified));
 
-    if (views.isEmpty())
-        return;
+    Q_ASSERT(!views.isEmpty());
 
     m_connection.unprepared(m_grammar.compileDropAllViews(views));
 }
 
 SqlQuery PostgresSchemaBuilder::getAllTables() const
 {
-    auto schemaList = m_connection.getConfig(schema_).value<QStringList>();
+    auto searchPathList = searchPath();
 
-    QVector<QString> schema;
-    std::ranges::move(schemaList, std::back_inserter(schema));
+    // Move to the vector (toVector() uses copy)
+    QVector<QString> searchPath;
+    searchPath.reserve(searchPathList.size());
+    std::ranges::move(searchPathList, std::back_inserter(searchPath));
 
     // TODO schema, use postprocessor processColumnListing() silverqx
     return m_connection.selectFromWriteConnection(
-                m_grammar.compileGetAllTables(std::move(schema)));
+                m_grammar.compileGetAllTables(searchPath));
 }
 
 SqlQuery PostgresSchemaBuilder::getAllViews() const
 {
-    auto schemaList = m_connection.getConfig(schema_).value<QStringList>();
+    auto searchPathList = searchPath();
 
-    QVector<QString> schema;
-    std::ranges::move(schemaList, std::back_inserter(schema));
+    // Move to the vector (toVector() uses copy)
+    QVector<QString> searchPath;
+    searchPath.reserve(searchPathList.size());
+    std::ranges::move(searchPathList, std::back_inserter(searchPath));
 
     return m_connection.selectFromWriteConnection(
-                m_grammar.compileGetAllViews(std::move(schema)));
+                m_grammar.compileGetAllViews(searchPath));
 }
 
 QStringList PostgresSchemaBuilder::getColumnListing(const QString &table) const
 {
-    auto [schema, table_] = parseSchemaAndTable(table);
+    auto [database, schema, table_] = parseSchemaAndTable(table);
 
-    table_ = NOSPACE.arg(m_connection.getTablePrefix(), table);
+    table_ = NOSPACE.arg(m_connection.getTablePrefix(), table_);
 
     auto query = m_connection.selectFromWriteConnection(
-            m_grammar.compileColumnListing(), {schema, table_});
+                     m_grammar.compileColumnListing(),
+                     {std::move(database), std::move(schema), std::move(table_)});
 
     return m_connection.getPostProcessor().processColumnListing(query);
 }
 
 bool PostgresSchemaBuilder::hasTable(const QString &table) const
 {
-    auto [schema, table_] = parseSchemaAndTable(table);
+    auto [database, schema, table_] = parseSchemaAndTable(table);
 
-    table_ = NOSPACE.arg(m_connection.getTablePrefix(), table);
-
-    Q_ASSERT(m_connection.driver()->hasFeature(QSqlDriver::QuerySize));
+    table_ = NOSPACE.arg(m_connection.getTablePrefix(), table_);
 
     return m_connection.selectFromWriteConnection(
-                m_grammar.compileTableExists(), {schema, table_}).size() > 0;
+                m_grammar.compileTableExists(),
+                {std::move(database), std::move(schema), std::move(table_)}).size() > 0;
 }
 
 /* protected */
 
-std::tuple<QString, QString>
-PostgresSchemaBuilder::parseSchemaAndTable(const QString &table) const
+std::tuple<QString, QString, QString>
+PostgresSchemaBuilder::parseSchemaAndTable(const QString &reference) const
 {
-    QString schema;
+    auto parts = reference.split(DOT, Qt::KeepEmptyParts);
+    Q_ASSERT(!parts.isEmpty() && parts.size() <= 3);
 
-    if (m_connection.getConfig().contains(schema_)) {
-        auto table_ = table.split(DOT);
-        auto schemaConfig = m_connection.getConfig(schema_).value<QStringList>();
+    auto database = m_connection.getConfig(database_).value<QString>();
+    const auto &connection = m_connection.getName();
 
-        // table was specified with the schema, like schema.table, so use this schema
-        if (schemaConfig.contains(table_.constFirst()))
-            return {table_.takeFirst(), table_.join(DOT)};
+    /* Drop the database name as it can't be different than the database for the current
+       connection anyway. Also throw if the database name differs from a database
+       defined in the configuration. */
+    dropDatabaseForParse(database, parts, connection);
 
-        // Instead, get a schema from the configuration
-        if (!schemaConfig.isEmpty())
-            schema = std::move(schemaConfig.first());
-    }
+    /* We will use the default schema unless the schema has been specified in the
+       query. If the schema has been specified in the query then we can use it
+       instead of a default PostgeSQL's database search_path. */
+    auto schema = getSchemaForParse(parts, connection);
 
-    // Default schema
-    if (schema.isEmpty())
-        schema = PUBLIC;
+    Q_ASSERT(parts.size() == 1);
 
-    return {std::move(schema), table};
+    return {std::move(database), std::move(schema), std::move(parts.first())};
+}
+
+/* private */
+
+void PostgresSchemaBuilder::dropDatabaseForParse(
+        const QString &databaseConfig, QStringList &parts, const QString &connection)
+{
+    // Nothing to drop, a database name was not passed in the query
+    if (parts.size() != 3)
+        return;
+
+    throwIfDatabaseDiffers(databaseConfig, parts, connection);
+}
+
+void PostgresSchemaBuilder::throwIfDatabaseDiffers(
+        const QString &databaseConfig, QStringList &parts, const QString &connection)
+{
+    // Drop the database name from the 'parts' vector
+    auto database = parts.takeFirst();
+
+    if (databaseConfig == database)
+        return;
+
+    throw Exceptions::InvalidArgumentError(
+                QStringLiteral(
+                    "The database '%1' name in the fully qualified table name differs "
+                    "from the database name '%2' defined in the PostgreSQL "
+                    "configuration '%3' in %4().")
+                .arg(std::move(database), databaseConfig, connection, __tiny_func__));
+}
+
+QString PostgresSchemaBuilder::getSchemaForParse(QStringList &parts,
+                                                 const QString &connection) const
+{
+    // The schema was passed as part of the table name (qualified table name)
+    if (parts.size() == 2)
+        return parts.takeFirst();
+
+    // Get the PostgreSQL server search_path for the current connection
+    auto searchPathList = searchPath();
+
+    // Throw if the database search_path is empty
+    throwIfEmptySearchPath(searchPathList, connection);
+
+    // Get the first/default schema name
+    return std::move(searchPathList.first());
+}
+
+void PostgresSchemaBuilder::throwIfEmptySearchPath(const QStringList &searchPath,
+                                                   const QString &connection)
+{
+    if (!isSearchPathEmpty(searchPath))
+        return;
+
+    throw Exceptions::SearchPathEmptyError(
+                QStringLiteral(
+                    "The PostgreSQL 'search_path' connection configuration option is "
+                    "empty, please provide the fully qualified table name during "
+                    "the PostgresSchemaBuilder's getColumnListing() or hasTable() "
+                    "method calls or set the 'search_path' option in the PostgreSQL "
+                    "configuration '%1', in %2().")
+                .arg(connection, __tiny_func__));
+}
+
+QSet<QString> PostgresSchemaBuilder::excludedTables() const
+{
+    /* ConnectionFactory provides the default 'spatial_ref_sys' value for the 'dont_drop'
+       configuration option for the QPSQL driver. */
+    auto excludedTablesList = grammar().escapeNames(
+                                  parseSearchPath(
+                                      m_connection.getConfig(dont_drop)));
+
+    // Move to the set
+    QSet<QString> excludedTables;
+    excludedTables.reserve(excludedTablesList.size());
+    std::ranges::move(excludedTablesList,
+                      std::inserter(excludedTables, excludedTables.end()));
+
+    return excludedTables;
+}
+
+const QSet<QString> &PostgresSchemaBuilder::excludedViews() const
+{
+    /* For these, the PostgreSQL server throws that they are needed by the postgis
+       extension and proposes to delete the postgis extension instead, so exclude them.
+       This is happening during dropping of all views. */
+    static const auto cached(grammar().escapeNames(
+                                 QSet<QString> {QStringLiteral("geography_columns"),
+                                                QStringLiteral("geometry_columns")}));
+    return cached;
+}
+
+std::tuple<QString, QString>
+PostgresSchemaBuilder::columnValuesForDrop(QSqlQuery &query)
+{
+    return {query.value(0).value<QString>(),
+            query.value(QStringLiteral("qualifiedname"))
+                 .value<QString>()};
+}
+
+QStringList PostgresSchemaBuilder::searchPath() const
+{
+    return dynamic_cast<PostgresConnection &>(m_connection).searchPath();
+}
+
+const Grammars::PostgresSchemaGrammar &PostgresSchemaBuilder::grammar() const
+{
+    return dynamic_cast<const Grammars::PostgresSchemaGrammar &>(m_grammar);
 }
 
 } // namespace Orm::SchemaNs

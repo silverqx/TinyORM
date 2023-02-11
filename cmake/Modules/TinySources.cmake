@@ -24,6 +24,7 @@ function(tinyorm_sources out_headers out_sources)
         concerns/hasconnectionresolver.hpp
         concerns/logsqueries.hpp
         concerns/managestransactions.hpp
+        concerns/parsessearchpath.hpp
         connectionresolverinterface.hpp
         connectors/connectionfactory.hpp
         connectors/connector.hpp
@@ -53,6 +54,7 @@ function(tinyorm_sources out_headers out_sources)
         exceptions/queryerror.hpp
         exceptions/recordsnotfounderror.hpp
         exceptions/runtimeerror.hpp
+        exceptions/searchpathemptyerror.hpp
         exceptions/sqlerror.hpp
         exceptions/sqlitedatabasedoesnotexisterror.hpp
         exceptions/sqltransactionerror.hpp
@@ -177,6 +179,7 @@ function(tinyorm_sources out_headers out_sources)
         concerns/hasconnectionresolver.cpp
         concerns/logsqueries.cpp
         concerns/managestransactions.cpp
+        concerns/parsessearchpath.cpp
         configurations/configurationoptionsparser.cpp
         configurations/configurationparser.cpp
         configurations/configurationparserfactory.cpp

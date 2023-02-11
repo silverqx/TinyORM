@@ -3,6 +3,7 @@ TEMPLATE = subdirs
 subdirsList = \
     databasemanager \
     query \
+    schema \
 
 !disable_orm: \
     subdirsList += \

@@ -70,6 +70,7 @@ namespace Orm::Constants
     const QString port_        = QStringLiteral("port");
     const QString database_    = QStringLiteral("database");
     const QString schema_      = QStringLiteral("schema");
+    const QString search_path  = QStringLiteral("search_path");
     const QString username_    = QStringLiteral("username");
     const QString password_    = QStringLiteral("password");
     const QString charset_     = QStringLiteral("charset");

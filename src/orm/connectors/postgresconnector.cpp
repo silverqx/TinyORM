@@ -8,15 +8,13 @@
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
-using Orm::Constants::COMMA_C;
 using Orm::Constants::DEFAULT;
-using Orm::Constants::EMPTY;
 using Orm::Constants::LOCAL;
 using Orm::Constants::NAME;
 using Orm::Constants::TMPL_DQUOTES;
 using Orm::Constants::charset_;
 using Orm::Constants::isolation_level;
-using Orm::Constants::schema_;
+using Orm::Constants::search_path;
 using Orm::Constants::synchronous_commit;
 using Orm::Constants::timezone_;
 
@@ -51,7 +49,7 @@ PostgresConnector::connect(const QVariantHash &config) const
        database. Setting this DB timezone is an optional configuration item. */
     configureTimezone(connection, config);
 
-    configureSchema(connection, config);
+    configureSearchPath(connection, config);
 
     /* Postgres allows an application_name to be set by the user and this name is
        used to when monitoring the application with pg_stat_activity. So we'll
@@ -137,45 +135,33 @@ void PostgresConnector::configureTimezone(const QSqlDatabase &connection,
     throw Exceptions::QueryError(m_configureErrorMessage.arg(__tiny_func__), query);
 }
 
-void PostgresConnector::configureSchema(const QSqlDatabase &connection,
-                                        const QVariantHash &config)
+void PostgresConnector::configureSearchPath(const QSqlDatabase &connection,
+                                            const QVariantHash &config)
 {
-    if (!config.contains(schema_))
+    if (!config.contains(search_path))
         return;
 
     QSqlQuery query(connection);
 
-    const auto schema = formatSchema(config[schema_].value<QStringList>());
-    // Nothing to set
-    if (schema.isEmpty())
-        return;
+    // Don't add the searchPath.isEmpty() check here to allow set "" (empty search path)
 
-    if (query.exec(QStringLiteral("set search_path to %1;").arg(schema)))
+    if (query.exec(QStringLiteral("set search_path to %1;")
+                   .arg(quoteSearchPath(
+                            parseSearchPath(config[search_path]))))
+    )
         return;
 
     throw Exceptions::QueryError(m_configureErrorMessage.arg(__tiny_func__), query);
 }
 
-QString PostgresConnector::formatSchema(QStringList &&schema)
+QString PostgresConnector::quoteSearchPath(QStringList &&searchPath)
 {
-    if (schema.isEmpty())
-        return EMPTY;
-
-    static const auto JoinDelimiter = QStringLiteral("\", \"");
-
-    /* A schema configuration option can be passed as a QString and also
-       as a QStringList at once. */
-    if (schema.size() > 1)
-        return TMPL_DQUOTES.arg(ContainerUtils::join(schema, JoinDelimiter));
-
-    auto schemaView = QStringView(schema.constFirst())
-                      .split(COMMA_C, Qt::SkipEmptyParts);
-
-    for (auto &&schemaName : schemaView)
-        schemaName = schemaName.trimmed();
+    // Allow to set an empty search_path
+    if (isSearchPathEmpty(searchPath))
+        return QStringLiteral("''");
 
     // Really nice 😎
-    return TMPL_DQUOTES.arg(ContainerUtils::join(schemaView, JoinDelimiter));
+    return TMPL_DQUOTES.arg(ContainerUtils::join(searchPath, QStringLiteral("\", \"")));
 }
 
 void PostgresConnector::configureApplicationName(const QSqlDatabase &connection,

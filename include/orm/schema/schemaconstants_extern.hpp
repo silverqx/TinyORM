@@ -56,6 +56,9 @@ namespace Constants
     SHAREDLIB_EXPORT extern const QString varchar_;
     SHAREDLIB_EXPORT extern const QString float_;
 
+    // Common strings
+    SHAREDLIB_EXPORT extern const QString TRIM_QUOTES;
+
 } // namespace Constants
 
 // NOLINTNEXTLINE(google-build-using-namespace)

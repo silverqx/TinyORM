@@ -10,6 +10,7 @@ sourcesList += \
     $$PWD/orm/concerns/hasconnectionresolver.cpp \
     $$PWD/orm/concerns/logsqueries.cpp \
     $$PWD/orm/concerns/managestransactions.cpp \
+    $$PWD/orm/concerns/parsessearchpath.cpp \
     $$PWD/orm/configurations/configurationoptionsparser.cpp \
     $$PWD/orm/configurations/configurationparser.cpp \
     $$PWD/orm/configurations/configurationparserfactory.cpp \

@@ -34,7 +34,7 @@ using Orm::Constants::prefix_;
 using Orm::Constants::prefix_indexes;
 using Orm::Constants::qt_timezone;
 using Orm::Constants::return_qdatetime;
-using Orm::Constants::schema_;
+using Orm::Constants::search_path;
 using Orm::Constants::spatial_ref_sys;
 using Orm::Constants::ssl_cert;
 using Orm::Constants::sslcert;
@@ -95,7 +95,7 @@ void tst_DatabaseManager::removeConnection_Connected() const
 {
     // Skip autotest if all env. variables are empty
     const std::vector<const char *> envVariables {
-        "DB_PGSQL_HOST", "DB_PGSQL_PORT", "DB_PGSQL_DATABASE", "DB_PGSQL_SCHEMA",
+        "DB_PGSQL_HOST", "DB_PGSQL_PORT", "DB_PGSQL_DATABASE", "DB_PGSQL_SEARCHPATH",
         "DB_PGSQL_USERNAME", "DB_PGSQL_PASSWORD", "DB_PGSQL_CHARSET"
     };
 
@@ -117,7 +117,7 @@ void tst_DatabaseManager::removeConnection_Connected() const
             {host_,            qEnvironmentVariable("DB_PGSQL_HOST", H127001)},
             {port_,            qEnvironmentVariable("DB_PGSQL_PORT", P5432)},
             {database_,        databaseName},
-            {schema_,          qEnvironmentVariable("DB_PGSQL_SCHEMA", PUBLIC)},
+            {search_path,      qEnvironmentVariable("DB_PGSQL_SEARCHPATH", PUBLIC)},
             {username_,        qEnvironmentVariable("DB_PGSQL_USERNAME",
                                                     QStringLiteral("postgres"))},
             {password_,        qEnvironmentVariable("DB_PGSQL_PASSWORD", "")},

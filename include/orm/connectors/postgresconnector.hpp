@@ -5,6 +5,7 @@
 #include "orm/macros/systemheader.hpp"
 TINY_SYSTEM_HEADER
 
+#include "orm/concerns/parsessearchpath.hpp"
 #include "orm/connectors/connector.hpp"
 #include "orm/connectors/connectorinterface.hpp"
 
@@ -17,7 +18,8 @@ namespace Orm::Connectors
     // FEATURE postgres, add support for sslmode, sslcert, sslkey, sslrootcert config. options silverqx
     /*! PostgreSql connector. */
     class PostgresConnector final : public ConnectorInterface,
-                                    public Connector
+                                    public Connector,
+                                    protected Concerns::ParsesSearchPath
     {
         Q_DISABLE_COPY(PostgresConnector)
 
@@ -44,11 +46,11 @@ namespace Orm::Connectors
         static void configureTimezone(const QSqlDatabase &connection,
                                       const QVariantHash &config);
 
-        /*! Set the schema on the connection. */
-        static void configureSchema(const QSqlDatabase &connection,
-                                    const QVariantHash &config);
-        /*! Format the schema. */
-        static QString formatSchema(QStringList &&schema);
+        /*! Set the 'search_path' on the database connection. */
+        static void configureSearchPath(const QSqlDatabase &connection,
+                                        const QVariantHash &config);
+        /*! Format the 'search_path' for the database query or DSN. */
+        static QString quoteSearchPath(QStringList &&searchPath);
 
         /*! Set an application name for the connection. */
         static void configureApplicationName(const QSqlDatabase &connection,

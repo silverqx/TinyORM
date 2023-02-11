@@ -5,17 +5,26 @@
 #include "orm/macros/systemheader.hpp"
 TINY_SYSTEM_HEADER
 
+#include "orm/concerns/parsessearchpath.hpp"
 #include "orm/schema/schemabuilder.hpp"
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
 namespace Orm::SchemaNs
 {
+namespace Grammars
+{
+    class PostgresSchemaGrammar;
+}
 
     /*! PostgreSql schema builder class. */
-    class SHAREDLIB_EXPORT PostgresSchemaBuilder : public SchemaBuilder
+    class SHAREDLIB_EXPORT PostgresSchemaBuilder : public SchemaBuilder,
+                                                   protected Concerns::ParsesSearchPath
     {
         Q_DISABLE_COPY(PostgresSchemaBuilder)
+
+        /*! Alias for the PostgresSchemaGrammar. */
+        using PostgresSchemaGrammar = Grammars::PostgresSchemaGrammar;
 
     public:
         /*! Inherit constructors. */
@@ -47,9 +56,36 @@ namespace Orm::SchemaNs
         bool hasTable(const QString &table) const override;
 
     protected:
-        /*! Parse the table name and extract the schema and table. */
-        std::tuple<QString, QString>
-        parseSchemaAndTable(const QString &table) const;
+        /*! Parse the database object reference and extract the database, schema,
+            and table. */
+        std::tuple<QString, QString, QString>
+        parseSchemaAndTable(const QString &reference) const;
+
+    private:
+        /*! Drop a database name for the parseSchemaAndTable(). */
+        static void dropDatabaseForParse(const QString &databaseConfig,
+                                         QStringList &parts, const QString &connection);
+        /*! Throw if the database name differs from a database in the configuration. */
+        static void throwIfDatabaseDiffers(const QString &databaseConfig,
+                                           QStringList &parts, const QString &connection);
+        /*! Get a schema for the parseSchemaAndTable(). */
+        QString getSchemaForParse(QStringList &parts, const QString &connection) const;
+        /*! Throw if the database 'search_path' is empty. */
+        static void throwIfEmptySearchPath(const QStringList &searchPath,
+                                           const QString &connection);
+
+        /*! Get a set of excluded tables from the 'dont_drop' configuration option. */
+        QSet<QString> excludedTables() const;
+        /*! Get a set of excluded views (hardcoded). */
+        const QSet<QString> &excludedViews() const;
+        /*! Get the 0 and qualifiedname column values from the given query. */
+        static std::tuple<QString, QString> columnValuesForDrop(QSqlQuery &query);
+
+        /*! Get the PostgreSQL server 'search_path' for the current connection
+            (with the "$user" variable resolved as the config['username']). */
+        QStringList searchPath() const;
+        /*! Get PostgreSQL schema grammar. */
+        const PostgresSchemaGrammar &grammar() const;
     };
 
 } // namespace Orm::SchemaNs

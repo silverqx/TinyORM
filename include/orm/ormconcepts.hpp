@@ -89,7 +89,8 @@ namespace Query
 #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
                             std::convertible_to<T, QList<QStringView>> ||
 #endif
-                            std::convertible_to<T, QVector<QStringView>>;
+                            std::convertible_to<T, QVector<QStringView>> ||
+                            std::convertible_to<T, QSet<QString>>;
 
     /*! Concept for delimiter for joining containers. */
     template<typename T>

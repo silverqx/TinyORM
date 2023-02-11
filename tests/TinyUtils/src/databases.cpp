@@ -1,7 +1,6 @@
 #include "databases.hpp"
 
 #include "orm/db.hpp"
-#include "orm/exceptions/runtimeerror.hpp"
 #include "orm/utils/configuration.hpp"
 #include "orm/utils/type.hpp"
 
@@ -38,17 +37,20 @@ using Orm::Constants::postgres_;
 using Orm::Constants::prefix_;
 using Orm::Constants::prefix_indexes;
 using Orm::Constants::return_qdatetime;
+using Orm::Constants::search_path;
 using Orm::Constants::qt_timezone;
-using Orm::Constants::schema_;
 using Orm::Constants::strict_;
 using Orm::Constants::timezone_;
 using Orm::Constants::username_;
 
 using Orm::DB;
+using Orm::DatabaseManager;
 
 using Orm::Exceptions::RuntimeError;
 
 using ConfigUtils = Orm::Utils::Configuration;
+
+using ConfigurationsType = TestUtils::Databases::ConfigurationsType;
 
 #ifndef TINYORM_SQLITE_DATABASE
 #  define TINYORM_SQLITE_DATABASE ""
@@ -64,8 +66,10 @@ namespace TestUtils
    correctly.
    Tests don't fail but are skipped when a connection is not available. */
 
-/*! DatabaseManager instance. */
-Q_GLOBAL_STATIC_WITH_ARGS(std::shared_ptr<Orm::DatabaseManager>, db, {nullptr})
+/* private */
+
+std::shared_ptr<DatabaseManager> Databases::m_instance;
+ConfigurationsType Databases::m_configurations;
 
 /* public */
 
@@ -74,14 +78,14 @@ const QStringList &Databases::createConnections(const QStringList &connections)
     throwIfConnectionsInitialized();
 
     // Ownership of a shared_ptr()
-    static const auto manager = *db = DB::create();
+    m_instance = DB::create();
 
     /* The default connection is empty for tests, there is no default connection
        because it can produce hard to find bugs, I have to be explicit about
        the connection which will be used. */
-    manager->addConnections(createConfigurationsHash(connections), EMPTY);
+    m_instance->addConnections(createConfigurationsHash(connections), EMPTY);
 
-    static const auto cachedConnectionNames = manager->connectionNames();
+    static const auto cachedConnectionNames = m_instance->connectionNames();
 
     return cachedConnectionNames;
 }
@@ -101,6 +105,15 @@ QString Databases::createConnection(const QString &connection)
     return {};
 }
 
+std::optional<std::reference_wrapper<const QVariantHash>>
+Databases::configuration(const QString &connection)
+{
+    if (!m_configurations.contains(connection))
+        return std::nullopt;
+
+    return m_configurations.at(connection);
+}
+
 bool Databases::allEnvVariablesEmpty(const std::vector<const char *> &envVariables)
 {
     return std::all_of(envVariables.cbegin(), envVariables.cend(),
@@ -110,23 +123,24 @@ bool Databases::allEnvVariablesEmpty(const std::vector<const char *> &envVariabl
     });
 }
 
-const std::shared_ptr<Orm::DatabaseManager> &Databases::manager()
+const std::shared_ptr<DatabaseManager> &Databases::manager()
 {
-    if (db() == nullptr)
-        throw RuntimeError(
-                QStringLiteral("The global static 'db' was already destroyed in %1().")
-                .arg(__tiny_func__));
+    if (m_instance)
+        return m_instance;
 
-    return *db;
+    throw RuntimeError(
+                QStringLiteral(
+                    "The DatabaseManager instance has not yet been created, create it "
+                    "by the Databases::createConnections() or "
+                    "Databases::createConnection() methods in %1().")
+                .arg(__tiny_func__));
 }
 
 /* private */
 
-const Databases::ConfigurationsType &
+const ConfigurationsType &
 Databases::createConfigurationsHash(const QStringList &connections)
 {
-    static ConfigurationsType configurations;
-
     const auto shouldCreateConnection = [&connections]
                                         (const auto &connection, auto &&driver)
     {
@@ -143,17 +157,17 @@ Databases::createConfigurationsHash(const QStringList &connections)
     // This connection must be to the MySQL database server (not MariaDB)
     if (shouldCreateConnection(MYSQL, QMYSQL))
         if (auto [config, envDefined] = mysqlConfiguration(); envDefined)
-            configurations[MYSQL] = std::move(config);
+            m_configurations[MYSQL] = std::move(config);
 
     if (shouldCreateConnection(SQLITE, QSQLITE))
         if (auto [config, envDefined] = sqliteConfiguration(); envDefined)
-            configurations[SQLITE] = std::move(config);
+            m_configurations[SQLITE] = std::move(config);
 
     if (shouldCreateConnection(POSTGRESQL, QPSQL))
         if (auto [config, envDefined] = postgresConfiguration(); envDefined)
-            configurations[POSTGRESQL] = std::move(config);
+            m_configurations[POSTGRESQL] = std::move(config);
 
-    return configurations;
+    return m_configurations;
 }
 
 std::pair<std::reference_wrapper<const QVariantHash>, bool>
@@ -237,13 +251,13 @@ Databases::postgresConfiguration()
     static const QVariantHash config {
         {driver_,            QPSQL},
         {application_name,   QStringLiteral("TinyORM tests (TinyUtils)")},
-        {host_,              qEnvironmentVariable("DB_PGSQL_HOST",     H127001)},
-        {port_,              qEnvironmentVariable("DB_PGSQL_PORT",     P5432)},
-        {database_,          qEnvironmentVariable("DB_PGSQL_DATABASE", EMPTY)},
-        {schema_,            qEnvironmentVariable("DB_PGSQL_SCHEMA",   PUBLIC)},
-        {username_,          qEnvironmentVariable("DB_PGSQL_USERNAME", postgres_)},
-        {password_,          qEnvironmentVariable("DB_PGSQL_PASSWORD", EMPTY)},
-        {charset_,           qEnvironmentVariable("DB_PGSQL_CHARSET",  UTF8)},
+        {host_,              qEnvironmentVariable("DB_PGSQL_HOST",       H127001)},
+        {port_,              qEnvironmentVariable("DB_PGSQL_PORT",       P5432)},
+        {database_,          qEnvironmentVariable("DB_PGSQL_DATABASE",   EMPTY)},
+        {search_path,        qEnvironmentVariable("DB_PGSQL_SEARCHPATH", PUBLIC)},
+        {username_,          qEnvironmentVariable("DB_PGSQL_USERNAME",   postgres_)},
+        {password_,          qEnvironmentVariable("DB_PGSQL_PASSWORD",   EMPTY)},
+        {charset_,           qEnvironmentVariable("DB_PGSQL_CHARSET",    UTF8)},
         {timezone_,          UTC},
         // Specifies what time zone all QDateTime-s will have
         {qt_timezone,        QVariant::fromValue(Qt::UTC)},
@@ -257,8 +271,8 @@ Databases::postgresConfiguration()
     };
 
     // Environment variables were undefined
-    const std::vector<const char *> envVariables {
-        "DB_PGSQL_HOST", "DB_PGSQL_PORT", "DB_PGSQL_DATABASE", "DB_PGSQL_SCHEMA",
+    static const std::vector<const char *> envVariables {
+        "DB_PGSQL_HOST", "DB_PGSQL_PORT", "DB_PGSQL_DATABASE", "DB_PGSQL_SEARCHPATH",
         "DB_PGSQL_USERNAME", "DB_PGSQL_PASSWORD", "DB_PGSQL_CHARSET"
     };
 

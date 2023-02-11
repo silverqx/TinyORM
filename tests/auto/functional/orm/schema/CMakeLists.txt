@@ -1,0 +1,2 @@
+add_subdirectory(postgresql_schemabuilder_f)
+add_subdirectory(schemabuilder)

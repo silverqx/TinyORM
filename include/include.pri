@@ -16,6 +16,7 @@ headersList += \
     $$PWD/orm/concerns/hasconnectionresolver.hpp \
     $$PWD/orm/concerns/logsqueries.hpp \
     $$PWD/orm/concerns/managestransactions.hpp \
+    $$PWD/orm/concerns/parsessearchpath.hpp \
     $$PWD/orm/config.hpp \
     $$PWD/orm/configurations/configurationoptionsparser.hpp \
     $$PWD/orm/configurations/configurationparser.hpp \
@@ -45,6 +46,7 @@ headersList += \
     $$PWD/orm/exceptions/queryerror.hpp \
     $$PWD/orm/exceptions/recordsnotfounderror.hpp \
     $$PWD/orm/exceptions/runtimeerror.hpp \
+    $$PWD/orm/exceptions/searchpathemptyerror.hpp \
     $$PWD/orm/exceptions/sqlerror.hpp \
     $$PWD/orm/exceptions/sqlitedatabasedoesnotexisterror.hpp \
     $$PWD/orm/exceptions/sqltransactionerror.hpp \

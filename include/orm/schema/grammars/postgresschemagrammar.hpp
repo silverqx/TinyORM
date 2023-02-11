@@ -6,6 +6,7 @@
 TINY_SYSTEM_HEADER
 
 #include "orm/schema/grammars/schemagrammar.hpp"
+#include "orm/utils/string.hpp"
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
@@ -24,6 +25,9 @@ namespace Grammars
     {
         Q_DISABLE_COPY(PostgresSchemaGrammar)
 
+        /*! Alias for the string utils. */
+        using StringUtils = Orm::Utils::String;
+
     public:
         /*! Default constructor. */
         inline PostgresSchemaGrammar() = default;
@@ -32,6 +36,10 @@ namespace Grammars
 
         /*! Check if this Grammar supports schema changes wrapped in a transaction. */
         inline bool supportsSchemaTransactions() const noexcept override;
+
+        /*! Quote-escape the given tables, views, or types. */
+        template<QStringContainer T>
+        T escapeNames(const T &names) const;
 
         /* Compile methods for the SchemaBuilder */
         /*! Compile a create database command. */
@@ -271,6 +279,26 @@ namespace Grammars
     {
         return true;
     }
+
+    template<QStringContainer T>
+    T PostgresSchemaGrammar::escapeNames(const T &names) const
+    {
+        return names
+                | ranges::views::transform([](const auto &name)
+        {
+            QStringList nameList;
+            nameList.reserve(name.count(DOT));
+
+            for (auto &&segment : name.split(DOT, Qt::KeepEmptyParts))
+                // Don't use the TRIM_QUOTES here to avoid include schema constants
+                nameList << StringUtils::trim(segment, QStringLiteral("'\""));
+
+            return TMPL_DQUOTES.arg(nameList.join(QStringLiteral("\".\"")));
+        })
+                | ranges::to<T>();
+    }
+
+    /* Compile methods for commands */
 
     QVector<QString>
     PostgresSchemaGrammar::compileDropUnique(const Blueprint &blueprint,

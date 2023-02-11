@@ -49,7 +49,6 @@ SQLiteSchemaBuilder::dropDatabaseIfExists(const QString &name) const
     return std::nullopt;
 }
 
-// TEST schema, test in functional tests silverqx
 void SQLiteSchemaBuilder::dropAllTables() const
 {
     if (m_connection.getDatabaseName() != QStringLiteral(":memory:"))
@@ -68,7 +67,6 @@ void SQLiteSchemaBuilder::dropAllTables() const
     m_connection.selectFromWriteConnection(SQLiteSchemaGrammar::compileRebuild());
 }
 
-// TEST schema, test in functional tests silverqx
 void SQLiteSchemaBuilder::dropAllViews() const
 {
     using SQLiteSchemaGrammar = Grammars::SQLiteSchemaGrammar;

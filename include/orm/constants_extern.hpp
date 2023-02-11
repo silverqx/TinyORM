@@ -81,6 +81,7 @@ namespace Orm::Constants
     SHAREDLIB_EXPORT extern const QString port_;
     SHAREDLIB_EXPORT extern const QString database_;
     SHAREDLIB_EXPORT extern const QString schema_;
+    SHAREDLIB_EXPORT extern const QString search_path;
     SHAREDLIB_EXPORT extern const QString username_;
     SHAREDLIB_EXPORT extern const QString password_;
     SHAREDLIB_EXPORT extern const QString charset_;

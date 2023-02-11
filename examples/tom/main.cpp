@@ -97,13 +97,13 @@ std::shared_ptr<DatabaseManager> setupManager()
         {QStringLiteral("tinyorm_tom_postgres"), { // shell:connection
             {driver_,          QPSQL},
             {application_name, QStringLiteral("tom")},
-            {host_,            qEnvironmentVariable("DB_PGSQL_HOST",     H127001)},
-            {port_,            qEnvironmentVariable("DB_PGSQL_PORT",     P5432)},
-            {database_,        qEnvironmentVariable("DB_PGSQL_DATABASE", EMPTY)},
-            {schema_,          qEnvironmentVariable("DB_PGSQL_SCHEMA",   PUBLIC)},
-            {username_,        qEnvironmentVariable("DB_PGSQL_USERNAME", postgres_)},
-            {password_,        qEnvironmentVariable("DB_PGSQL_PASSWORD", EMPTY)},
-            {charset_,         qEnvironmentVariable("DB_PGSQL_CHARSET",  UTF8)},
+            {host_,            qEnvironmentVariable("DB_PGSQL_HOST",       H127001)},
+            {port_,            qEnvironmentVariable("DB_PGSQL_PORT",       P5432)},
+            {database_,        qEnvironmentVariable("DB_PGSQL_DATABASE",   EMPTY)},
+            {search_path,      qEnvironmentVariable("DB_PGSQL_SEARCHPATH", PUBLIC)},
+            {username_,        qEnvironmentVariable("DB_PGSQL_USERNAME",   postgres_)},
+            {password_,        qEnvironmentVariable("DB_PGSQL_PASSWORD",   EMPTY)},
+            {charset_,         qEnvironmentVariable("DB_PGSQL_CHARSET",    UTF8)},
             // LOCAL/DEFAULT - set the time zone to your local PostgreSQL server time zone
             {timezone_,        UTC},
             // Specifies what time zone all QDateTime-s will have

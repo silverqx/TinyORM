@@ -31,27 +31,35 @@ QString PostgresSchemaGrammar::compileDropDatabaseIfExists(const QString &name) 
 
 QString PostgresSchemaGrammar::compileDropAllTables(const QVector<QString> &tables) const
 {
-    return QStringLiteral("drop table %1 cascade").arg(columnize(tables));
+    return QStringLiteral("drop table %1 cascade").arg(columnizeWithoutWrap(
+                                                           escapeNames(tables)));
 }
 
 QString PostgresSchemaGrammar::compileDropAllViews(const QVector<QString> &views) const
 {
-    return QStringLiteral("drop view %1 cascade").arg(columnize(views));
+    return QStringLiteral("drop view %1 cascade").arg(columnizeWithoutWrap(
+                                                          escapeNames(views)));
 }
 
 QString
 PostgresSchemaGrammar::compileGetAllTables(const QVector<QString> &databases) const
 {
-    return QStringLiteral("select tablename from pg_catalog.pg_tables "
-                          "where schemaname in (%1)")
+    return QStringLiteral(
+                "select tablename, "
+                  "concat('\"', schemaname, '\".\"', tablename, '\"') as qualifiedname "
+                "from pg_catalog.pg_tables "
+                  "where schemaname in (%1)")
             .arg(quoteString(databases));
 }
 
 QString
 PostgresSchemaGrammar::compileGetAllViews(const QVector<QString> &databases) const
 {
-    return QStringLiteral("select viewname from pg_catalog.pg_views "
-                          "where schemaname in (%1)")
+    return QStringLiteral(
+                "select viewname, "
+                "concat('\"', schemaname, '\".\"', viewname, '\"') as qualifiedname "
+                "from pg_catalog.pg_views "
+                  "where schemaname in (%1)")
             .arg(quoteString(databases));
 }
 
@@ -69,15 +77,16 @@ QString PostgresSchemaGrammar::compileTableExists() const
 {
     return QStringLiteral("select * "
                           "from information_schema.tables "
-                          "where table_schema = ? and table_name = ? and "
-                          "table_type = 'BASE TABLE'");
+                          "where table_catalog = ? and table_schema = ? and "
+                            "table_name = ? and table_type = 'BASE TABLE'");
 }
 
 QString PostgresSchemaGrammar::compileColumnListing(const QString &/*unused*/) const
 {
     return QStringLiteral("select column_name "
                           "from information_schema.columns "
-                          "where table_schema = ? and table_name = ?");
+                          "where table_catalog = ? and table_schema = ? and "
+                            "table_name = ?");
 }
 
 /* Compile methods for commands */
