@@ -695,8 +695,8 @@ void tst_PostgreSQL_SchemaBuilder::hasTable_DatabaseDiffers_ThrowException() con
     auto configuration = Databases::configuration(Databases::POSTGRESQL);
 
     if (!configuration)
-        QSKIP(TestUtils::AutoTestSkippedAny.arg(TypeUtils::classPureBasename(*this))
-                                           .toUtf8().constData(), );
+        QSKIP(TestUtils::AutoTestSkipped.arg(TypeUtils::classPureBasename(*this))
+                                        .toUtf8().constData(), );
 
     const auto connectionName =
             QStringLiteral(
@@ -727,8 +727,8 @@ void tst_PostgreSQL_SchemaBuilder::hasTable_SchemaDiffers() const
     auto configuration = Databases::configuration(Databases::POSTGRESQL);
 
     if (!configuration)
-        QSKIP(TestUtils::AutoTestSkippedAny.arg(TypeUtils::classPureBasename(*this))
-                                           .toUtf8().constData(), );
+        QSKIP(TestUtils::AutoTestSkipped.arg(TypeUtils::classPureBasename(*this))
+                                        .toUtf8().constData(), );
 
     const auto connectionName =
             QStringLiteral(
@@ -782,8 +782,8 @@ void tst_PostgreSQL_SchemaBuilder::
     auto configurationOriginal = Databases::configuration(Databases::POSTGRESQL);
 
     if (!configurationOriginal)
-        QSKIP(TestUtils::AutoTestSkippedAny.arg(TypeUtils::classPureBasename(*this))
-                                           .toUtf8().constData(), );
+        QSKIP(TestUtils::AutoTestSkipped.arg(TypeUtils::classPureBasename(*this))
+                                        .toUtf8().constData(), );
 
     const auto connectionName =
             QStringLiteral(
@@ -839,8 +839,8 @@ void tst_PostgreSQL_SchemaBuilder::
     auto configurationOriginal = Databases::configuration(Databases::POSTGRESQL);
 
     if (!configurationOriginal)
-        QSKIP(TestUtils::AutoTestSkippedAny.arg(TypeUtils::classPureBasename(*this))
-                                           .toUtf8().constData(), );
+        QSKIP(TestUtils::AutoTestSkipped.arg(TypeUtils::classPureBasename(*this))
+                                        .toUtf8().constData(), );
 
     const auto connectionName =
             QStringLiteral(
@@ -896,8 +896,8 @@ void tst_PostgreSQL_SchemaBuilder::
     auto configurationOriginal = Databases::configuration(Databases::POSTGRESQL);
 
     if (!configurationOriginal)
-        QSKIP(TestUtils::AutoTestSkippedAny.arg(TypeUtils::classPureBasename(*this))
-                                           .toUtf8().constData(), );
+        QSKIP(TestUtils::AutoTestSkipped.arg(TypeUtils::classPureBasename(*this))
+                                        .toUtf8().constData(), );
 
     const auto connectionName =
             QStringLiteral(
@@ -933,8 +933,8 @@ void tst_PostgreSQL_SchemaBuilder::
     auto configurationOriginal = Databases::configuration(Databases::POSTGRESQL);
 
     if (!configurationOriginal)
-        QSKIP(TestUtils::AutoTestSkippedAny.arg(TypeUtils::classPureBasename(*this))
-                                           .toUtf8().constData(), );
+        QSKIP(TestUtils::AutoTestSkipped.arg(TypeUtils::classPureBasename(*this))
+                                        .toUtf8().constData(), );
 
     const auto connectionName =
             QStringLiteral(
@@ -990,8 +990,8 @@ void tst_PostgreSQL_SchemaBuilder::hasTable_NoSearchPath_InConfiguration() const
     auto configurationOriginal = Databases::configuration(Databases::POSTGRESQL);
 
     if (!configurationOriginal)
-        QSKIP(TestUtils::AutoTestSkippedAny.arg(TypeUtils::classPureBasename(*this))
-                                           .toUtf8().constData(), );
+        QSKIP(TestUtils::AutoTestSkipped.arg(TypeUtils::classPureBasename(*this))
+                                        .toUtf8().constData(), );
 
     const auto connectionName =
             QStringLiteral(
