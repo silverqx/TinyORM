@@ -2,6 +2,7 @@
 #include <QtTest>
 
 #include <filesystem>
+#include <unordered_set>
 
 #include "orm/schema.hpp"
 #include "orm/utils/query.hpp"
@@ -254,9 +255,15 @@ void tst_SchemaBuilder::getColumnListing() const
 {
     QFETCH_GLOBAL(QString, connection);
 
-    const auto columns = Schema::on(connection).getColumnListing("roles");
+    auto columnsList = Schema::on(connection).getColumnListing("roles");
 
-    QCOMPARE(columns, QStringList({ID, NAME, QStringLiteral("added_on")}));
+    // Move to the unordered_set as returned column names are not ordered
+    std::unordered_set<QString> columns;
+    columns.reserve(columnsList.size());
+    std::ranges::move(columnsList, std::inserter(columns, columns.end()));
+
+    QCOMPARE(columns,
+             std::unordered_set<QString>({ID, NAME, QStringLiteral("added_on")}));
 }
 
 void tst_SchemaBuilder::hasTable() const
