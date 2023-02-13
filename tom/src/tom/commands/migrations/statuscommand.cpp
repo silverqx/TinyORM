@@ -100,10 +100,10 @@ StatusCommand::getStatusFor(QVector<QVariant> &&ran,
         auto migrationName = migration.toStdString();
 
         if (ran.contains(migration))
-            return {"Yes", std::move(migrationName),
+            return {std::string("Yes", 3), std::move(migrationName),
                     batches.at(migration).toString().toStdString()};
 
-        return {"No", std::move(migrationName)};
+        return {std::string("No", 2), std::move(migrationName)};
     })
             | ranges::to<std::vector<TableRow>>();
 }
