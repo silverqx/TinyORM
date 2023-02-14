@@ -11,11 +11,10 @@ TINYORM_BEGIN_COMMON_NAMESPACE
 
 using Orm::Constants::COMMA_C;
 
+using Orm::SchemaNs::Constants::TRIM_QUOTES;
 using Orm::Utils::Helpers;
 
 using StringUtils = Orm::Utils::String;
-
-using Orm::SchemaNs::Constants::TRIM_QUOTES;
 
 namespace Orm::Concerns
 {
