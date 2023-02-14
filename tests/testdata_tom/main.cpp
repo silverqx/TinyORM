@@ -90,7 +90,7 @@ std::shared_ptr<DatabaseManager> setupManager()
             // Specifies what time zone all QDateTime-s will have
             {qt_timezone,     QVariant::fromValue(Qt::UTC)},
             {prefix_,         EMPTY},
-            {prefix_indexes,  true},
+            {prefix_indexes,  false},
             {strict_,         true},
             {isolation_level, QStringLiteral("REPEATABLE READ")},
             {engine_,         InnoDB},
@@ -113,7 +113,7 @@ std::shared_ptr<DatabaseManager> setupManager()
             // Specifies what time zone all QDateTime-s will have
             {qt_timezone,        QVariant::fromValue(Qt::UTC)},
             {prefix_,            EMPTY},
-            {prefix_indexes,     true},
+            {prefix_indexes,     false},
 //            {isolation_level,    QStringLiteral("REPEATABLE READ")}, // Postgres default is READ COMMITTED
 //            {synchronous_commit, QStringLiteral("off")}, // Postgres default is on
             // ConnectionFactory provides a default value for this (for reference only)
@@ -133,6 +133,7 @@ std::shared_ptr<DatabaseManager> setupManager()
                only works when the qt_timezone isn't set to the DontConvert. */
             {return_qdatetime,        true},
             {prefix_,                 EMPTY},
+            {prefix_indexes,          false},
         }}
     },
         /* Because the default connection name is not defined, then will be needed

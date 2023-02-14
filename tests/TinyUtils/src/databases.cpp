@@ -269,7 +269,7 @@ Databases::mysqlConfiguration()
         // Specifies what time zone all QDateTime-s will have
         {qt_timezone,     QVariant::fromValue(Qt::UTC)},
         {prefix_,         EMPTY},
-        {prefix_indexes,  true},
+        {prefix_indexes,  false},
         {strict_,         true},
         {isolation_level, QStringLiteral("REPEATABLE READ")},
         {engine_,         InnoDB},
@@ -305,7 +305,8 @@ Databases::sqliteConfiguration()
            only works when the qt_timezone isn't set to the DontConvert. */
         {return_qdatetime,        true},
         {prefix_,                 EMPTY},
-        // FUTURE schema sqlite, prefix_indexes and sqlite, works it? test silverqx
+        // Prefixing indexes also works with the SQLite database
+        {prefix_indexes,          false},
     };
 
     // All Environment variables are empty
@@ -333,7 +334,7 @@ Databases::postgresConfiguration()
         // Specifies what time zone all QDateTime-s will have
         {qt_timezone,        QVariant::fromValue(Qt::UTC)},
         {prefix_,            EMPTY},
-        {prefix_indexes,     true},
+        {prefix_indexes,     false},
 //        {isolation_level,    QStringLiteral("REPEATABLE READ")}, // Postgres default is READ COMMITTED
 //        {synchronous_commit, QStringLiteral("off")}, // Postgres default is on
         // ConnectionFactory provides a default value for this, this is only for reference
