@@ -35,6 +35,8 @@ private:
     /*! Test case class name. */
     inline static const auto *ClassName = "tst_PostgreSQL_SchemaBuilder_f";
 
+    /*! Connection name used in this test case. */
+    QString m_connection {};
     /*! The Database Manager instance in the TinyUtils. */
     std::shared_ptr<Orm::DatabaseManager> m_dm = nullptr;
 };
@@ -44,6 +46,13 @@ private:
 // NOLINTBEGIN(readability-convert-member-functions-to-static)
 void tst_PostgreSQL_SchemaBuilder_f::initTestCase()
 {
+    m_connection = Databases::createConnection(Databases::POSTGRESQL);
+
+    if (m_connection.isEmpty())
+        QSKIP(TestUtils::AutoTestSkipped
+              .arg(TypeUtils::classPureBasename(*this), Databases::POSTGRESQL)
+              .toUtf8().constData(), );
+
     m_dm = Databases::manager();
 }
 
