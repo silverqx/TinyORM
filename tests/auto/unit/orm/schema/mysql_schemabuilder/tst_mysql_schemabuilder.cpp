@@ -106,14 +106,18 @@ private Q_SLOTS:
 private:
     /*! Table or database name used in tests. */
     inline static const auto Firewalls = QStringLiteral("firewalls");
+    /*! Test case class name. */
+    inline static const auto *ClassName = "tst_MySql_SchemaBuilder";
+
+    /*! Connection name used in this test case. */
+    QString m_connection {};
+    /*! The Database Manager instance in the TinyUtils. */
+    std::shared_ptr<Orm::DatabaseManager> m_dm = nullptr;
 
     /*! The charset set for the current MySQL connection (based on env. variable). */
     QString m_charset {};
     /*! The collation set for the current MySQL connection (based on env. variable). */
     QString m_collation {};
-
-    /*! Connection name used in this test case. */
-    QString m_connection {};
 };
 
 /* private slots */
@@ -127,6 +131,8 @@ void tst_MySql_SchemaBuilder::initTestCase()
         QSKIP(TestUtils::AutoTestSkipped
               .arg(TypeUtils::classPureBasename(*this), Databases::MYSQL)
               .toUtf8().constData(), );
+
+    m_dm = Databases::manager();
 
     // The charset and collation in all queries is set on the base of env. variables
     const auto &connection = DB::connection(m_connection);
@@ -155,16 +161,21 @@ void tst_MySql_SchemaBuilder::createDatabase() const
 
 void tst_MySql_SchemaBuilder::createDatabase_Charset_Collation() const
 {
-    static const auto mysqlCreateDb = QStringLiteral("tinyorm_mysql_tests_create_db");
-
-    // Create a new connection with different charset and collation
-    DB::addConnection({
+    // Add a new database connection with different charset and collation
+    const auto connectionName =
+            Databases::createConnectionTempFrom(
+                Databases::MYSQL, {ClassName, QString::fromUtf8(__func__)},
+    {
         {driver_,    QMYSQL},
         {charset_,   UTF8},
         {collation_, UTF8Generalci},
-    }, mysqlCreateDb);
+    });
 
-    auto log = DB::connection(mysqlCreateDb).pretend([](auto &connection)
+    if (!connectionName)
+        QSKIP(TestUtils::AutoTestSkipped.arg(TypeUtils::classPureBasename(*this))
+                                        .toUtf8().constData(), );
+
+    auto log = m_dm->connection(*connectionName).pretend([](auto &connection)
     {
         Schema::on(connection.getName()).createDatabase(Firewalls);
     });
@@ -181,7 +192,7 @@ void tst_MySql_SchemaBuilder::createDatabase_Charset_Collation() const
     QVERIFY(firstLog.boundValues.isEmpty());
 
     // Restore
-    DB::removeConnection(mysqlCreateDb);
+    QVERIFY(Databases::removeConnection(*connectionName));
 }
 
 void tst_MySql_SchemaBuilder::dropDatabaseIfExists() const

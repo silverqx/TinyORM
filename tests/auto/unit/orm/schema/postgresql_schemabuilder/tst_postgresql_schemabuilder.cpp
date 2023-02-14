@@ -157,16 +157,20 @@ void tst_PostgreSQL_SchemaBuilder::createDatabase() const
 
 void tst_PostgreSQL_SchemaBuilder::createDatabase_Charset_Collation() const
 {
-    static const auto postgresCreateDb = QStringLiteral(
-                                             "tinyorm_postgres_tests_create_db");
-
-    // Create a new connection with different charset
-    DB::addConnection({
+    // Add a new database connection with different charset
+    const auto connectionName =
+            Databases::createConnectionTempFrom(
+                Databases::POSTGRESQL, {ClassName, QString::fromUtf8(__func__)},
+    {
         {driver_,    QPSQL},
         {charset_,   "WIN1250"},
-    }, postgresCreateDb);
+    });
 
-    auto log = DB::connection(postgresCreateDb).pretend([](auto &connection)
+    if (!connectionName)
+        QSKIP(TestUtils::AutoTestSkipped.arg(TypeUtils::classPureBasename(*this))
+                                        .toUtf8().constData(), );
+
+    auto log = m_dm->connection(*connectionName).pretend([](auto &connection)
     {
         Schema::on(connection.getName()).createDatabase(Firewalls);
     });
@@ -180,7 +184,7 @@ void tst_PostgreSQL_SchemaBuilder::createDatabase_Charset_Collation() const
     QVERIFY(firstLog.boundValues.isEmpty());
 
     // Restore
-    DB::removeConnection(postgresCreateDb);
+    m_dm->removeConnection(*connectionName);
 }
 
 void tst_PostgreSQL_SchemaBuilder::dropDatabaseIfExists() const
