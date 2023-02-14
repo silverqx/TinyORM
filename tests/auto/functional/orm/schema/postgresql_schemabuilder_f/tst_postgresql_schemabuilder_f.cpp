@@ -65,7 +65,8 @@ void tst_PostgreSQL_SchemaBuilder_f::hasTable_NoSearchPath_InConfiguration() con
                 {}, {search_path});
 
     if (!connectionName)
-        QSKIP(TestUtils::AutoTestSkipped.arg(TypeUtils::classPureBasename(*this))
+        QSKIP(TestUtils::AutoTestSkipped.arg(TypeUtils::classPureBasename(*this),
+                                             Databases::POSTGRESQL)
                                         .toUtf8().constData(), );
 
     // Verify
@@ -104,7 +105,8 @@ void tst_PostgreSQL_SchemaBuilder_f::
                 {{search_path, QStringLiteral("''")}});
 
     if (!connectionName)
-        QSKIP(TestUtils::AutoTestSkipped.arg(TypeUtils::classPureBasename(*this))
+        QSKIP(TestUtils::AutoTestSkipped.arg(TypeUtils::classPureBasename(*this),
+                                             Databases::POSTGRESQL)
                                         .toUtf8().constData(), );
 
     // Verify
@@ -126,7 +128,8 @@ void tst_PostgreSQL_SchemaBuilder_f::
                 {{search_path, QStringLiteral("''")}});
 
     if (!connectionName)
-        QSKIP(TestUtils::AutoTestSkipped.arg(TypeUtils::classPureBasename(*this))
+        QSKIP(TestUtils::AutoTestSkipped.arg(TypeUtils::classPureBasename(*this),
+                                             Databases::POSTGRESQL)
                                         .toUtf8().constData(), );
 
     // Verify
