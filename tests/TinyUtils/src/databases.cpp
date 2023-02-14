@@ -204,10 +204,17 @@ bool Databases::allEnvVariablesEmpty(const std::vector<const char *> &envVariabl
     });
 }
 
-const std::shared_ptr<DatabaseManager> &Databases::manager()
+const std::shared_ptr<DatabaseManager> &Databases::manager(const bool create)
 {
     if (m_dm)
         return m_dm;
+
+    /* This is the special case for test cases that didn't create any connection/s
+       in the initTestCase() method, eg. the tst_PostgreSQL_SchemaBuilder_f is
+       using it. */
+    if (create)
+        // Ownership of a shared_ptr()
+        return m_dm = DB::create();
 
     throw RuntimeError(
                 QStringLiteral(
