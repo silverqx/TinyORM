@@ -33,7 +33,8 @@ QString RelationNotFoundError::formatMessage(const QString &model,
                 "currently guessed relationship name is '%3', but it does not exist "
                 "in the '%1::u_relation' data member. Please pass the 'relation' "
                 "argument to the 'Model::%2' method called from the '%1' model, "
-                "the __func__ predefined identifier is ideal for this.");
+                "the __func__ predefined identifier is ideal for this "
+                "(eg. QString::fromUtf8(__func__)).");
 
     switch (from) {
     case From::BELONGS_TO:
