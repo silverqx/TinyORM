@@ -11,7 +11,6 @@
 #  include "models/user.hpp"
 #endif
 
-using Orm::Constants::EMPTY;
 using Orm::Constants::ID;
 using Orm::Constants::NAME;
 using Orm::Constants::PUBLIC;
