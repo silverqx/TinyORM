@@ -628,8 +628,10 @@ const QString &tst_DatabaseManager::checkDatabaseExistsFile()
     {
         auto databasePath = qEnvironmentVariable("DB_SQLITE_DATABASE", EMPTY);
 
+        /* Return EMPTY, the Databases::createConnectionTemp() will check env. variable
+           and QSKIP() will be called if it's undefined. */
         if (databasePath.isEmpty())
-            throw RuntimeError("Undefined environment variable 'DB_SQLITE_DATABASE'.");
+            return EMPTY;
 
         databasePath.truncate(QDir::fromNativeSeparators(databasePath)
                               .lastIndexOf(QChar('/')));
