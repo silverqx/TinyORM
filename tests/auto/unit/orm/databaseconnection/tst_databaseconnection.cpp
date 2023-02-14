@@ -88,9 +88,9 @@ void tst_DatabaseConnection::pingDatabase() const
 {
     QFETCH_GLOBAL(QString, connection);
 
-    auto &connection_ = DB::connection(connection);
+    auto &connectionRef = DB::connection(connection);
 
-    if (const auto driverName = connection_.driverName();
+    if (const auto driverName = connectionRef.driverName();
         driverName != QMYSQL
     )
         QSKIP(QStringLiteral("The '%1' database driver doesn't support ping command.")
@@ -103,7 +103,7 @@ void tst_DatabaseConnection::pingDatabase() const
           "for qmake.", );
 #endif
 
-    const auto result = connection_.pingDatabase();
+    const auto result = connectionRef.pingDatabase();
 
     QVERIFY2(result, "Ping database failed.");
 }
