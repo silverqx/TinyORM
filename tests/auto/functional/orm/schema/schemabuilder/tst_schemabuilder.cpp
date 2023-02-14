@@ -50,6 +50,8 @@ private Q_SLOTS:
 
 // NOLINTNEXTLINE(readability-redundant-access-specifiers)
 private:
+    /*! Test case class name. */
+    inline static const auto *ClassName = "tst_SchemaBuilder";
     /*! Database name used in tests. */
     inline static const auto DatabaseExample = QStringLiteral("tinyorm_example_database");
 
@@ -68,14 +70,14 @@ private:
     static bool hasDatabase_Sqlite(const fspath &database);
 
     /*! Create a new alternative connection on the DatabaseExample database. */
-    QString alternativeConnection(const QString &connection) const;
+    std::optional<QString> alternativeConnection(const QString &connection) const;
     /*! Create a new alternative connection on the DatabaseExample database (MySQL). */
-    QString alternativeConnection_MySql() const;
+    static std::optional<QString> alternativeConnection_MySql();
     /*! Create a new alternative connection on the DatabaseExample database
         (PostgreSQL). */
-    QString alternativeConnection_Postgres() const;
+    static std::optional<QString> alternativeConnection_Postgres();
     /*! Create a new alternative connection on the DatabaseExample database (SQLite). */
-    QString alternativeConnection_Sqlite() const;
+    static std::optional<QString> alternativeConnection_Sqlite();
 
     /*! The Database Manager instance in the TinyUtils. */
     std::shared_ptr<Orm::DatabaseManager> m_dm = nullptr;
@@ -118,16 +120,18 @@ void tst_SchemaBuilder::createDatabase_dropAllTables_dropDatabaseIfExists() cons
         QVERIFY(hasDatabase(database, connection));
     }
 
+    /* Create an alternative connection for connecting to another database to test
+       getAllTable() and dropAllTables(). */
+    const auto alternativeConnection = this->alternativeConnection(connection);
+
     // dropAllTables()
     {
-        const auto alternativeConnection = this->alternativeConnection(connection);
-
         const QSet<QString> tables {QStringLiteral("tinyorm_test_table_to_drop_1"),
                                     QStringLiteral("tinyorm_test_table_to_drop_2")};
 
         // Create new tables in another database
         for (const auto &table : tables)
-            Schema::on(alternativeConnection)
+            Schema::on(*alternativeConnection)
                     .create(table, [](Blueprint &table)
             {
                 table.id();
@@ -136,7 +140,7 @@ void tst_SchemaBuilder::createDatabase_dropAllTables_dropDatabaseIfExists() cons
 
         // Verify created tables
         {
-            const auto tablesActual = getAllTablesFor(alternativeConnection);
+            const auto tablesActual = getAllTablesFor(*alternativeConnection);
             // Nicer name
             const auto &tablesExpected = tables;
 
@@ -144,17 +148,17 @@ void tst_SchemaBuilder::createDatabase_dropAllTables_dropDatabaseIfExists() cons
         }
 
         // Fire it up
-        Schema::on(alternativeConnection).dropAllTables();
+        Schema::on(*alternativeConnection).dropAllTables();
 
         // Verify dropAllTables()
         {
-            const auto tablesActual = getAllTablesFor(alternativeConnection);
+            const auto tablesActual = getAllTablesFor(*alternativeConnection);
 
             QVERIFY(tablesActual.isEmpty());
         }
 
         // Restore
-        QVERIFY(m_dm->removeConnection(alternativeConnection));
+        QVERIFY(Databases::removeConnection(*alternativeConnection));
     }
 
     // dropDatabaseIfExists()
@@ -357,7 +361,8 @@ bool tst_SchemaBuilder::hasDatabase_Sqlite(const fspath &database)
     return fs::exists(database);
 }
 
-QString tst_SchemaBuilder::alternativeConnection(const QString &connection) const
+std::optional<QString>
+tst_SchemaBuilder::alternativeConnection(const QString &connection) const
 {
     const auto driver = m_dm->driverName(connection);
 
@@ -373,65 +378,35 @@ QString tst_SchemaBuilder::alternativeConnection(const QString &connection) cons
     Q_UNREACHABLE();
 }
 
-QString tst_SchemaBuilder::alternativeConnection_MySql() const
+std::optional<QString> tst_SchemaBuilder::alternativeConnection_MySql()
 {
-    auto connectionName =
-            QStringLiteral(
-                "tinyorm_mysql_tests-tst_SchemaBuilder-alternativeConnection");
-
-    // Make configuration copy so I can modify it
-    auto configuration = Databases::configuration(Databases::MYSQL)->get();
-
-    // Prepare/modify configuration
-    configuration[database_] = DatabaseExample;
-
     // Add a new database connection
-    m_dm->addConnections({
-        {connectionName, configuration},
-    // Don't setup any default connection
-    }, EMPTY);
+    auto connectionName =
+            Databases::createConnectionTempFrom(
+                Databases::MYSQL, {ClassName, QString::fromUtf8(__func__)},
+                {{database_, DatabaseExample}});
 
     return connectionName;
 }
 
-QString tst_SchemaBuilder::alternativeConnection_Postgres() const
+std::optional<QString> tst_SchemaBuilder::alternativeConnection_Postgres()
 {
-     auto connectionName =
-            QStringLiteral(
-                "tinyorm_pgsql_tests-tst_SchemaBuilder-alternativeConnection");
-
-    // Make configuration copy so I can modify it
-    auto configuration = Databases::configuration(Databases::POSTGRESQL)->get();
-
-    // Prepare/modify configuration
-    configuration[database_] = DatabaseExample;
-
     // Add a new database connection
-    m_dm->addConnections({
-        {connectionName, configuration},
-    // Don't setup any default connection
-    }, EMPTY);
+    auto connectionName =
+            Databases::createConnectionTempFrom(
+                Databases::POSTGRESQL, {ClassName, QString::fromUtf8(__func__)},
+                {{database_, DatabaseExample}});
 
     return connectionName;
 }
 
-QString tst_SchemaBuilder::alternativeConnection_Sqlite() const
+std::optional<QString> tst_SchemaBuilder::alternativeConnection_Sqlite()
 {
-    auto connectionName =
-            QStringLiteral(
-                "tinyorm_sqlite_tests-tst_SchemaBuilder-alternativeConnection");
-
-    // Make configuration copy so I can modify it
-    auto configuration = Databases::configuration(Databases::SQLITE)->get();
-
-    // Prepare/modify configuration
-    configuration[database_] = NOSPACE.arg(DatabaseExample, ".sqlite3");
-
     // Add a new database connection
-    m_dm->addConnections({
-        {connectionName, configuration},
-    // Don't setup any default connection
-    }, EMPTY);
+    auto connectionName =
+            Databases::createConnectionTempFrom(
+                Databases::SQLITE, {ClassName, QString::fromUtf8(__func__)},
+                {{database_, NOSPACE.arg(DatabaseExample, ".sqlite3")}});
 
     return connectionName;
 }
