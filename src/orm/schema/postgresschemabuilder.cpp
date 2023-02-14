@@ -45,7 +45,9 @@ void PostgresSchemaBuilder::dropAllTables() const
             tables << (tableQualified.isEmpty() ? std::move(tableUnqualified)
                                                 : std::move(tableQualified));
 
-    Q_ASSERT(!tables.isEmpty());
+    // This can happen if the getAllTables() returns only excluded tables
+    if (tables.isEmpty())
+        return;
 
     m_connection.unprepared(m_grammar.compileDropAllTables(tables));
 }
@@ -70,7 +72,9 @@ void PostgresSchemaBuilder::dropAllViews() const
             views << (viewQualified.isEmpty() ? std::move(viewUnqualified)
                                               : std::move(viewQualified));
 
-    Q_ASSERT(!views.isEmpty());
+    // This can happen if the getAllViews() returns only excluded views
+    if (views.isEmpty())
+        return;
 
     m_connection.unprepared(m_grammar.compileDropAllViews(views));
 }
