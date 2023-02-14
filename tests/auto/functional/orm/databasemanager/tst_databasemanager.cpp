@@ -124,9 +124,9 @@ void tst_DatabaseManager::removeConnection_Connected() const
     });
 
     if (!connectionName)
-        QSKIP(TestUtils::AutoTestSkipped.arg(TypeUtils::classPureBasename(*this),
-                                             Databases::POSTGRESQL)
-                                        .toUtf8().constData(), );
+        QSKIP(TestUtils::AutoTestSkipped
+              .arg(TypeUtils::classPureBasename(*this), Databases::POSTGRESQL)
+              .toUtf8().constData(), );
 
     // Open connection
     auto &connection = m_dm->connection(*connectionName);
@@ -164,9 +164,9 @@ void tst_DatabaseManager::removeConnection_NotConnected() const
     });
 
     if (!connectionName)
-        QSKIP(TestUtils::AutoTestSkipped.arg(TypeUtils::classPureBasename(*this),
-                                             Databases::POSTGRESQL)
-                                        .toUtf8().constData(), );
+        QSKIP(TestUtils::AutoTestSkipped
+              .arg(TypeUtils::classPureBasename(*this), Databases::POSTGRESQL)
+              .toUtf8().constData(), );
 
     m_dm->setDefaultConnection(*connectionName);
 
@@ -195,9 +195,9 @@ void tst_DatabaseManager::default_MySQL_ConfigurationValues() const
     });
 
     if (!connectionName)
-        QSKIP(TestUtils::AutoTestSkipped.arg(TypeUtils::classPureBasename(*this),
-                                             Databases::MYSQL)
-                                        .toUtf8().constData(), );
+        QSKIP(TestUtils::AutoTestSkipped
+              .arg(TypeUtils::classPureBasename(*this), Databases::MYSQL)
+              .toUtf8().constData(), );
 
     // Original configuration
     // Connection isn't created and configuration options are not parsed yet
@@ -252,9 +252,9 @@ void tst_DatabaseManager::default_PostgreSQL_ConfigurationValues() const
     });
 
     if (!connectionName)
-        QSKIP(TestUtils::AutoTestSkipped.arg(TypeUtils::classPureBasename(*this),
-                                             Databases::POSTGRESQL)
-                                        .toUtf8().constData(), );
+        QSKIP(TestUtils::AutoTestSkipped
+              .arg(TypeUtils::classPureBasename(*this), Databases::POSTGRESQL)
+              .toUtf8().constData(), );
 
     // Original configuration
     // Connection isn't created and configuration options are not parsed yet
@@ -309,9 +309,9 @@ void tst_DatabaseManager::default_SQLite_ConfigurationValues() const
     });
 
     if (!connectionName)
-        QSKIP(TestUtils::AutoTestSkipped.arg(TypeUtils::classPureBasename(*this),
-                                             Databases::SQLITE)
-                                        .toUtf8().constData(), );
+        QSKIP(TestUtils::AutoTestSkipped
+              .arg(TypeUtils::classPureBasename(*this), Databases::SQLITE)
+              .toUtf8().constData(), );
 
     // Original configuration
     // Connection isn't created and configuration options are not parsed yet
@@ -384,9 +384,9 @@ void tst_DatabaseManager::ssl_MySQL_ConfigurationValues() const
                                     initialConfiguration);
 
     if (!connectionName)
-        QSKIP(TestUtils::AutoTestSkipped.arg(TypeUtils::classPureBasename(*this),
-                                             Databases::MYSQL)
-                                        .toUtf8().constData(), );
+        QSKIP(TestUtils::AutoTestSkipped
+              .arg(TypeUtils::classPureBasename(*this), Databases::MYSQL)
+              .toUtf8().constData(), );
 
     // Original configuration
     // Connection isn't created and configuration options are not parsed yet
@@ -469,9 +469,9 @@ void tst_DatabaseManager::ssl_PostgreSQL_ConfigurationValues() const
                                     initialConfiguration);
 
     if (!connectionName)
-        QSKIP(TestUtils::AutoTestSkipped.arg(TypeUtils::classPureBasename(*this),
-                                             Databases::POSTGRESQL)
-                                        .toUtf8().constData(), );
+        QSKIP(TestUtils::AutoTestSkipped
+              .arg(TypeUtils::classPureBasename(*this), Databases::POSTGRESQL)
+              .toUtf8().constData(), );
 
     // Original configuration
     // Connection isn't created and configuration options are not parsed yet
@@ -538,9 +538,9 @@ void tst_DatabaseManager::sqlite_MemoryDriver() const
     });
 
     if (!connectionName)
-        QSKIP(TestUtils::AutoTestSkipped.arg(TypeUtils::classPureBasename(*this),
-                                             Databases::SQLITE)
-                                        .toUtf8().constData(), );
+        QSKIP(TestUtils::AutoTestSkipped
+              .arg(TypeUtils::classPureBasename(*this), Databases::SQLITE)
+              .toUtf8().constData(), );
 
     auto &connection = m_dm->connection(*connectionName);
 
@@ -573,9 +573,9 @@ void tst_DatabaseManager::sqlite_CheckDatabaseExists_True() const
     });
 
     if (!connectionName)
-        QSKIP(TestUtils::AutoTestSkipped.arg(TypeUtils::classPureBasename(*this),
-                                             Databases::SQLITE)
-                                        .toUtf8().constData(), );
+        QSKIP(TestUtils::AutoTestSkipped
+              .arg(TypeUtils::classPureBasename(*this), Databases::SQLITE)
+              .toUtf8().constData(), );
 
     // Verify
     QVERIFY_EXCEPTION_THROWN(
@@ -600,9 +600,9 @@ void tst_DatabaseManager::sqlite_CheckDatabaseExists_False() const
     });
 
     if (!connectionName)
-        QSKIP(TestUtils::AutoTestSkipped.arg(TypeUtils::classPureBasename(*this),
-                                             Databases::SQLITE)
-                                        .toUtf8().constData(), );
+        QSKIP(TestUtils::AutoTestSkipped
+              .arg(TypeUtils::classPureBasename(*this), Databases::SQLITE)
+              .toUtf8().constData(), );
 
     // Verify
     // QSqlDatabase automatically creates a SQLite database file

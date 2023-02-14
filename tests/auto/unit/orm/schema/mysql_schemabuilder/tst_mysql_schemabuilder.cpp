@@ -172,9 +172,9 @@ void tst_MySql_SchemaBuilder::createDatabase_Charset_Collation() const
     });
 
     if (!connectionName)
-        QSKIP(TestUtils::AutoTestSkipped.arg(TypeUtils::classPureBasename(*this),
-                                             Databases::MYSQL)
-                                        .toUtf8().constData(), );
+        QSKIP(TestUtils::AutoTestSkipped
+              .arg(TypeUtils::classPureBasename(*this), Databases::MYSQL)
+              .toUtf8().constData(), );
 
     auto log = m_dm->connection(*connectionName).pretend([](auto &connection)
     {

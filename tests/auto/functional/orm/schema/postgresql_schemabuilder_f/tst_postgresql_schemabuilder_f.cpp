@@ -65,9 +65,9 @@ void tst_PostgreSQL_SchemaBuilder_f::hasTable_NoSearchPath_InConfiguration() con
                 {}, {search_path});
 
     if (!connectionName)
-        QSKIP(TestUtils::AutoTestSkipped.arg(TypeUtils::classPureBasename(*this),
-                                             Databases::POSTGRESQL)
-                                        .toUtf8().constData(), );
+        QSKIP(TestUtils::AutoTestSkipped
+              .arg(TypeUtils::classPureBasename(*this), Databases::POSTGRESQL)
+              .toUtf8().constData(), );
 
     // Verify
     const auto hasTable = Schema::on(*connectionName).hasTable(QStringLiteral("users"));
@@ -105,9 +105,9 @@ void tst_PostgreSQL_SchemaBuilder_f::
                 {{search_path, QStringLiteral("''")}});
 
     if (!connectionName)
-        QSKIP(TestUtils::AutoTestSkipped.arg(TypeUtils::classPureBasename(*this),
-                                             Databases::POSTGRESQL)
-                                        .toUtf8().constData(), );
+        QSKIP(TestUtils::AutoTestSkipped
+              .arg(TypeUtils::classPureBasename(*this), Databases::POSTGRESQL)
+              .toUtf8().constData(), );
 
     // Verify
     QVERIFY_EXCEPTION_THROWN(
@@ -128,9 +128,9 @@ void tst_PostgreSQL_SchemaBuilder_f::
                 {{search_path, QStringLiteral("''")}});
 
     if (!connectionName)
-        QSKIP(TestUtils::AutoTestSkipped.arg(TypeUtils::classPureBasename(*this),
-                                             Databases::POSTGRESQL)
-                                        .toUtf8().constData(), );
+        QSKIP(TestUtils::AutoTestSkipped
+              .arg(TypeUtils::classPureBasename(*this), Databases::POSTGRESQL)
+              .toUtf8().constData(), );
 
     // Verify
     QVERIFY(Schema::on(*connectionName).hasTable(QStringLiteral("public.users")));
