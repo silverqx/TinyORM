@@ -22,7 +22,7 @@ public:
     std::unique_ptr<BelongsTo<TorrentPeerEager, TorrentEager>>
     torrent()
     {
-        return belongsTo<TorrentEager>({}, {}, static_cast<const char *>(__func__));
+        return belongsTo<TorrentEager>({}, {}, QString::fromUtf8(__func__));
     }
 
 private:
