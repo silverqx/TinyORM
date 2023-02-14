@@ -113,6 +113,8 @@ private Q_SLOTS:
 private:
     /*! Table or database name used in tests. */
     inline static const auto Firewalls = QStringLiteral("firewalls");
+    /*! Test case class name. */
+    inline static const auto *ClassName = "tst_PostgreSQL_SchemaBuilder";
 
     /*! The Database Manager instance in the TinyUtils. */
     std::shared_ptr<Orm::DatabaseManager> m_dm;
@@ -692,57 +694,20 @@ void tst_PostgreSQL_SchemaBuilder::hasTable() const
 
 void tst_PostgreSQL_SchemaBuilder::hasTable_DatabaseDiffers_ThrowException() const
 {
-    auto configuration = Databases::configuration(Databases::POSTGRESQL);
-
-    if (!configuration)
-        QSKIP(TestUtils::AutoTestSkipped.arg(TypeUtils::classPureBasename(*this))
-                                        .toUtf8().constData(), );
-
-    const auto connectionName =
-            QStringLiteral(
-                "tinyorm_pgsql_tests-tst_PostgreSQL_SchemaBuilder-"
-                "hasTable_DatabaseDiffers_ThrowException");
-
-    // Add a new database connection
-    m_dm->addConnections({
-        {connectionName, *configuration},
-    // Don't setup any default connection
-    }, EMPTY);
-
     // Verify
-    m_dm->connection(connectionName).pretend([](auto &connection)
+    m_dm->connection(m_connection).pretend([](auto &connection)
     {
         QVERIFY_EXCEPTION_THROWN(
                     Schema::on(connection.getName())
                     .hasTable("dummy-NON_EXISTENT-database.public.users"),
                     InvalidArgumentError);
     });
-
-    // Restore
-    QVERIFY(m_dm->removeConnection(connectionName));
 }
 
 void tst_PostgreSQL_SchemaBuilder::hasTable_SchemaDiffers() const
 {
-    auto configuration = Databases::configuration(Databases::POSTGRESQL);
-
-    if (!configuration)
-        QSKIP(TestUtils::AutoTestSkipped.arg(TypeUtils::classPureBasename(*this))
-                                        .toUtf8().constData(), );
-
-    const auto connectionName =
-            QStringLiteral(
-                "tinyorm_pgsql_tests-tst_PostgreSQL_SchemaBuilder-"
-                "hasTable_SchemaDiffers");
-
-    // Add a new database connection
-    m_dm->addConnections({
-        {connectionName, *configuration},
-    // Don't setup any default connection
-    }, EMPTY);
-
     // Prepare test variables
-    auto &connection = m_dm->connection(connectionName);
+    auto &connection = m_dm->connection(m_connection);
     const auto &databaseName = connection.getDatabaseName();
     const auto schemaName = QStringLiteral("schema_example");
     const auto tableName = QStringLiteral("users");
@@ -771,39 +736,23 @@ void tst_PostgreSQL_SchemaBuilder::hasTable_SchemaDiffers() const
              QVector<QVariant>({QVariant(databaseName),
                                 QVariant(schemaName),
                                 QVariant(tableName)}));
-
-    // Restore
-    QVERIFY(m_dm->removeConnection(connectionName));
 }
 
 void tst_PostgreSQL_SchemaBuilder::
      hasTable_CustomSearchPath_QString_InConfiguration() const
 {
-    auto configurationOriginal = Databases::configuration(Databases::POSTGRESQL);
+    // Add a new database connection
+    const auto connectionName =
+            Databases::createConnectionTempFrom(
+                Databases::POSTGRESQL, {ClassName, QString::fromUtf8(__func__)},
+                {{search_path, QStringLiteral("schema_example, another_example")}});
 
-    if (!configurationOriginal)
+    if (!connectionName)
         QSKIP(TestUtils::AutoTestSkipped.arg(TypeUtils::classPureBasename(*this))
                                         .toUtf8().constData(), );
 
-    const auto connectionName =
-            QStringLiteral(
-                "tinyorm_pgsql_tests-tst_PostgreSQL_SchemaBuilder-"
-                "hasTable_CustomSearchPath_QString_InConfiguration");
-
-    // Make configuration copy so I can modify it
-    auto configuration = configurationOriginal->get();
-
-    // Prepare/modify configuration
-    configuration[search_path] = QStringLiteral("schema_example, another_example");
-
-    // Add a new database connection
-    m_dm->addConnections({
-        {connectionName, configuration},
-    // Don't setup any default connection
-    }, EMPTY);
-
     // Prepare test variables
-    auto &connection = m_dm->connection(connectionName);
+    auto &connection = m_dm->connection(*connectionName);
     const auto tableName = QStringLiteral("users");
 
     // Verify
@@ -830,37 +779,24 @@ void tst_PostgreSQL_SchemaBuilder::
                                 QVariant(tableName)}));
 
     // Restore
-    QVERIFY(m_dm->removeConnection(connectionName));
+    QVERIFY(Databases::removeConnection(*connectionName));
 }
 
 void tst_PostgreSQL_SchemaBuilder::
      hasTable_CustomSearchPath_QStringList_InConfiguration() const
 {
-    auto configurationOriginal = Databases::configuration(Databases::POSTGRESQL);
+    // Add a new database connection
+    const auto connectionName =
+            Databases::createConnectionTempFrom(
+                Databases::POSTGRESQL, {ClassName, QString::fromUtf8(__func__)},
+                {{search_path, QStringList {"schema_example", "another_example"}}});
 
-    if (!configurationOriginal)
+    if (!connectionName)
         QSKIP(TestUtils::AutoTestSkipped.arg(TypeUtils::classPureBasename(*this))
                                         .toUtf8().constData(), );
 
-    const auto connectionName =
-            QStringLiteral(
-                "tinyorm_pgsql_tests-tst_PostgreSQL_SchemaBuilder-"
-                "hasTable_CustomSearchPath_QStringList_InConfiguration");
-
-    // Make configuration copy so I can modify it
-    auto configuration = configurationOriginal->get();
-
-    // Prepare/modify configuration
-    configuration[search_path] = QStringList {"schema_example", "another_example"};
-
-    // Add a new database connection
-    m_dm->addConnections({
-        {connectionName, configuration},
-    // Don't setup any default connection
-    }, EMPTY);
-
     // Prepare test variables
-    auto &connection = m_dm->connection(connectionName);
+    auto &connection = m_dm->connection(*connectionName);
     const auto tableName = QStringLiteral("users");
 
     // Verify
@@ -887,76 +823,48 @@ void tst_PostgreSQL_SchemaBuilder::
                                 QVariant(tableName)}));
 
     // Restore
-    QVERIFY(m_dm->removeConnection(connectionName));
+    QVERIFY(Databases::removeConnection(*connectionName));
 }
 
 void tst_PostgreSQL_SchemaBuilder::
      hasTable_CustomSearchPath_QSet_InConfiguration_ThrowException() const
 {
-    auto configurationOriginal = Databases::configuration(Databases::POSTGRESQL);
+    // Add a new database connection
+    const auto connectionName =
+            Databases::createConnectionTempFrom(
+                Databases::POSTGRESQL, {ClassName, QString::fromUtf8(__func__)},
+                {{search_path, QVariant::fromValue(
+                                   QSet<QString> {QStringLiteral("schema_example"),
+                                                  QStringLiteral("another_example")})}});
 
-    if (!configurationOriginal)
+    if (!connectionName)
         QSKIP(TestUtils::AutoTestSkipped.arg(TypeUtils::classPureBasename(*this))
                                         .toUtf8().constData(), );
 
-    const auto connectionName =
-            QStringLiteral(
-                "tinyorm_pgsql_tests-tst_PostgreSQL_SchemaBuilder-"
-                "hasTable_CustomSearchPath_QSet_InConfiguration_ThrowException");
-
-    // Make configuration copy so I can modify it
-    auto configuration = configurationOriginal->get();
-
-    // Prepare/modify configuration
-    QVERIFY(configuration.remove(search_path));
-    configuration.insert(search_path,
-                         QVariant::fromValue(
-                             QSet<QString> {"schema_example", "another_example"}));
-
-    // Add a new database connection
-    m_dm->addConnections({
-        {connectionName, configuration},
-    // Don't setup any default connection
-    }, EMPTY);
-
     // Create database connection
-    QVERIFY_EXCEPTION_THROWN(m_dm->connection(connectionName),
+    QVERIFY_EXCEPTION_THROWN(m_dm->connection(*connectionName),
                              InvalidArgumentError);
 
     // Restore
-    QVERIFY(m_dm->removeConnection(connectionName));
+    QVERIFY(Databases::removeConnection(*connectionName));
 }
 
 void tst_PostgreSQL_SchemaBuilder::
      hasTable_CustomSearchPath_WithUserVariable_InConfiguration() const
 {
-    auto configurationOriginal = Databases::configuration(Databases::POSTGRESQL);
+    // Add a new database connection
+    const auto connectionName =
+            Databases::createConnectionTempFrom(
+                Databases::POSTGRESQL, {ClassName, QString::fromUtf8(__func__)},
+                {{search_path, QStringLiteral("\"$user\", public")}});
 
-    if (!configurationOriginal)
+    if (!connectionName)
         QSKIP(TestUtils::AutoTestSkipped.arg(TypeUtils::classPureBasename(*this))
                                         .toUtf8().constData(), );
 
-    const auto connectionName =
-            QStringLiteral(
-                "tinyorm_pgsql_tests-tst_PostgreSQL_SchemaBuilder-"
-                "hasTable_CustomSearchPath_WithUserVariable_InConfiguration");
-
-    // Make configuration copy so I can modify it
-    auto configuration = configurationOriginal->get();
-
     // Prepare test variables
+    auto &connection = m_dm->connection(*connectionName);
     const auto tableName = QStringLiteral("users");
-
-    // Prepare/modify configuration
-    configuration[search_path] = QStringLiteral("\"$user\", public");
-
-    // Add a new database connection
-    m_dm->addConnections({
-        {connectionName, configuration},
-    // Don't setup any default connection
-    }, EMPTY);
-
-    auto &connection = m_dm->connection(connectionName);
 
     // Verify
     auto log = connection.pretend([&tableName](auto &connection)
@@ -982,38 +890,24 @@ void tst_PostgreSQL_SchemaBuilder::
                                 QVariant(tableName)}));
 
     // Restore
-    QVERIFY(m_dm->removeConnection(connectionName));
+    QVERIFY(Databases::removeConnection(*connectionName));
 }
 
 void tst_PostgreSQL_SchemaBuilder::hasTable_NoSearchPath_InConfiguration() const
 {
-    auto configurationOriginal = Databases::configuration(Databases::POSTGRESQL);
+    // Add a new database connection
+    const auto connectionName =
+            Databases::createConnectionTempFrom(
+                Databases::POSTGRESQL, {ClassName, QString::fromUtf8(__func__)},
+                {}, {search_path});
 
-    if (!configurationOriginal)
+    if (!connectionName)
         QSKIP(TestUtils::AutoTestSkipped.arg(TypeUtils::classPureBasename(*this))
                                         .toUtf8().constData(), );
 
-    const auto connectionName =
-            QStringLiteral(
-                "tinyorm_pgsql_tests-tst_PostgreSQL_SchemaBuilder-"
-                "hasTable_NoSearchPath_InConfiguration");
-
-    // Make configuration copy so I can modify it
-    auto configuration = configurationOriginal->get();
-
     // Prepare test variables
+    auto &connection = m_dm->connection(*connectionName);
     const auto tableName = QStringLiteral("users");
-
-    // Prepare/modify configuration
-    QVERIFY(configuration.remove(search_path));
-
-    // Add a new database connection
-    m_dm->addConnections({
-        {connectionName, configuration},
-    // Don't setup any default connection
-    }, EMPTY);
-
-    auto &connection = m_dm->connection(connectionName);
 
     // Verify
     auto log = connection.pretend([&tableName](auto &connection)
@@ -1035,12 +929,12 @@ void tst_PostgreSQL_SchemaBuilder::hasTable_NoSearchPath_InConfiguration() const
                "table_name = ? and table_type = 'BASE TABLE'");
     QCOMPARE(firstLog.boundValues,
              QVector<QVariant>({QVariant(connection.getDatabaseName()),
-                                // Should use hardcoded PUBLIC default
+                                // Should use hardcoded PUBLIC default in pretending
                                 QVariant(PUBLIC),
                                 QVariant(tableName)}));
 
     // Restore
-    QVERIFY(m_dm->removeConnection(connectionName));
+    QVERIFY(Databases::removeConnection(*connectionName));
 }
 
 void tst_PostgreSQL_SchemaBuilder::defaultStringLength_Set() const

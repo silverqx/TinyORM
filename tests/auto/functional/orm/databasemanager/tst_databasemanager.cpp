@@ -4,6 +4,7 @@
 #include "orm/constants.hpp"
 #include "orm/databasemanager.hpp"
 #include "orm/exceptions/sqlitedatabasedoesnotexisterror.hpp"
+#include "orm/utils/type.hpp"
 
 #include "databases.hpp"
 
@@ -51,6 +52,10 @@ using Orm::QtTimeZoneConfig;
 using Orm::QtTimeZoneType;
 using Orm::Support::DatabaseConfiguration;
 
+using TypeUtils = Orm::Utils::Type;
+
+using TestUtils::Databases;
+
 class tst_DatabaseManager : public QObject // clazy:exclude=ctor-missing-parent-argument
 {
     Q_OBJECT
@@ -75,6 +80,9 @@ private Q_SLOTS:
 
 // NOLINTNEXTLINE(readability-redundant-access-specifiers)
 private:
+    /*! Test case class name. */
+    inline static const auto *ClassName = "tst_DatabaseManager";
+
     /*! Path to the SQLite database file, for testing the 'check_database_exists'
         configuration option. */
     static const QString &checkDatabaseExistsFile();
@@ -88,58 +96,51 @@ private:
 // NOLINTBEGIN(readability-convert-member-functions-to-static)
 void tst_DatabaseManager::initTestCase()
 {
-    m_dm = DatabaseManager::create();
+    // Default connection must be empty
+    m_dm = DatabaseManager::create(EMPTY);
+    QVERIFY(m_dm->getDefaultConnection().isEmpty());
 }
 
 void tst_DatabaseManager::removeConnection_Connected() const
 {
-    // Skip autotest if all env. variables are empty
-    const std::vector<const char *> envVariables {
-        "DB_PGSQL_HOST", "DB_PGSQL_PORT", "DB_PGSQL_DATABASE", "DB_PGSQL_SEARCHPATH",
-        "DB_PGSQL_USERNAME", "DB_PGSQL_PASSWORD", "DB_PGSQL_CHARSET"
-    };
-
-    if (TestUtils::Databases::allEnvVariablesEmpty(envVariables))
-        QSKIP("Autotest skipped because DB_PGSQL_* environment variables for PostgreSQL "
-              "connection were not defined.", );
-
-    const auto connectionName =
-            QStringLiteral(
-                "tinyorm_pgsql_tests-tst_DatabaseMannager-removeConnection_Connected");
     const auto databaseName = qEnvironmentVariable("DB_PGSQL_DATABASE", "");
     const auto driverName = QPSQL;
 
     // Add a new database connection
-    m_dm->addConnections({
-        {connectionName, {
-            {driver_,          driverName},
-            {application_name, QStringLiteral("TinyORM tests - tst_databasemanager")},
-            {host_,            qEnvironmentVariable("DB_PGSQL_HOST", H127001)},
-            {port_,            qEnvironmentVariable("DB_PGSQL_PORT", P5432)},
-            {database_,        databaseName},
-            {search_path,      qEnvironmentVariable("DB_PGSQL_SEARCHPATH", PUBLIC)},
-            {username_,        qEnvironmentVariable("DB_PGSQL_USERNAME",
-                                                    QStringLiteral("postgres"))},
-            {password_,        qEnvironmentVariable("DB_PGSQL_PASSWORD", "")},
-            {charset_,         qEnvironmentVariable("DB_PGSQL_CHARSET", UTF8)},
-        }},
-    // Don't setup any default connection
-    }, EMPTY);
+    const auto connectionName = Databases::createConnectionTemp(
+                                    Databases::POSTGRESQL,
+                                    {ClassName, QString::fromUtf8(__func__)},
+    {
+        {driver_,          driverName},
+        {application_name, QStringLiteral("TinyORM tests - tst_databasemanager")},
+        {host_,            qEnvironmentVariable("DB_PGSQL_HOST", H127001)},
+        {port_,            qEnvironmentVariable("DB_PGSQL_PORT", P5432)},
+        {database_,        databaseName},
+        {search_path,      qEnvironmentVariable("DB_PGSQL_SEARCHPATH", PUBLIC)},
+        {username_,        qEnvironmentVariable("DB_PGSQL_USERNAME",
+                                                QStringLiteral("postgres"))},
+        {password_,        qEnvironmentVariable("DB_PGSQL_PASSWORD", "")},
+        {charset_,         qEnvironmentVariable("DB_PGSQL_CHARSET", UTF8)},
+    });
+
+    if (!connectionName)
+        QSKIP(TestUtils::AutoTestSkipped.arg(TypeUtils::classPureBasename(*this))
+                                        .toUtf8().constData(), );
 
     // Open connection
-    auto &connection = m_dm->connection(connectionName);
+    auto &connection = m_dm->connection(*connectionName);
     const auto openedConnections = m_dm->openedConnectionNames();
 
-    QCOMPARE(connection.getName(), connectionName);
+    QCOMPARE(connection.getName(), *connectionName);
     QCOMPARE(connection.getDatabaseName(), databaseName);
     QCOMPARE(connection.driverName(), driverName);
     QCOMPARE(openedConnections.size(), 1);
-    QCOMPARE(openedConnections.first(), connectionName);
+    QCOMPARE(openedConnections.first(), *connectionName);
     QCOMPARE(m_dm->connectionNames().size(), 1);
     QVERIFY(m_dm->getDefaultConnection().isEmpty());
 
     // Remove opened connection
-    QVERIFY(m_dm->removeConnection(connectionName));
+    QVERIFY(Databases::removeConnection(*connectionName));
 
     QVERIFY(m_dm->getDefaultConnection().isEmpty());
     QVERIFY(m_dm->openedConnectionNames().isEmpty());
@@ -152,23 +153,27 @@ void tst_DatabaseManager::removeConnection_Connected() const
 
 void tst_DatabaseManager::removeConnection_NotConnected() const
 {
-    const auto connectionName =
-            QStringLiteral(
-                "tinyorm_pgsql_tests-tst_DatabaseMannager-removeConnection_NotConnected");
-
-    m_dm->addConnection({
+    // Add a new database connection
+    const auto connectionName = Databases::createConnectionTemp(
+                                    Databases::POSTGRESQL,
+                                    {ClassName, QString::fromUtf8(__func__)},
+    {
         {driver_, QPSQL},
         {host_,   "example.com"},
-    }, connectionName);
+    });
 
-    m_dm->setDefaultConnection(connectionName);
+    if (!connectionName)
+        QSKIP(TestUtils::AutoTestSkipped.arg(TypeUtils::classPureBasename(*this))
+                                        .toUtf8().constData(), );
+
+    m_dm->setDefaultConnection(*connectionName);
 
     QVERIFY(m_dm->openedConnectionNames().isEmpty());
     QCOMPARE(m_dm->connectionNames().size(), 1);
-    QCOMPARE(m_dm->getDefaultConnection(), connectionName);
+    QCOMPARE(m_dm->getDefaultConnection(), *connectionName);
 
     // Remove database connection that is not opened
-    QVERIFY(m_dm->removeConnection(connectionName));
+    QVERIFY(Databases::removeConnection(*connectionName));
 
     QVERIFY(m_dm->openedConnectionNames().isEmpty());
     QVERIFY(m_dm->connectionNames().isEmpty());
@@ -179,22 +184,21 @@ void tst_DatabaseManager::removeConnection_NotConnected() const
 
 void tst_DatabaseManager::default_MySQL_ConfigurationValues() const
 {
-    const auto connectionName =
-            QStringLiteral(
-                "tinyorm_mysql_tests-tst_DatabaseMannager-"
-                "default_MySQL_ConfigurationValues");
-
     // Add a new database connection
-    m_dm->addConnections({
-        {connectionName, {
-            {driver_, "qmysql"},
-        }},
-    // Don't setup any default connection
-    }, EMPTY);
+    const auto connectionName = Databases::createConnectionTemp(
+                                    Databases::MYSQL,
+                                    {ClassName, QString::fromUtf8(__func__)},
+    {
+        {driver_, "qmysql"},
+    });
+
+    if (!connectionName)
+        QSKIP(TestUtils::AutoTestSkipped.arg(TypeUtils::classPureBasename(*this))
+                                        .toUtf8().constData(), );
 
     // Original configuration
     // Connection isn't created and configuration options are not parsed yet
-    const auto &originalConfig = m_dm->originalConfig(connectionName);
+    const auto &originalConfig = m_dm->originalConfig(*connectionName);
     QCOMPARE(originalConfig,
              QVariantHash({
                  {driver_, "qmysql"},
@@ -203,11 +207,11 @@ void tst_DatabaseManager::default_MySQL_ConfigurationValues() const
     /* Force the creation of a connection and parse the connection configuration options.
        The qt_timezone option is only parsed in the connection configuration,
        the original configuration is untouched. */
-    m_dm->connection(connectionName);
+    m_dm->connection(*connectionName);
     QCOMPARE(originalConfig,
              QVariantHash({
                  {driver_,        QMYSQL},
-                 {NAME,           connectionName},
+                 {NAME,           *connectionName},
                  {database_,      EMPTY},
                  {prefix_,        EMPTY},
                  {prefix_indexes, false},
@@ -216,10 +220,10 @@ void tst_DatabaseManager::default_MySQL_ConfigurationValues() const
              }));
 
     // Connection configuration
-    QCOMPARE(m_dm->getConfig(connectionName),
+    QCOMPARE(m_dm->getConfig(*connectionName),
              QVariantHash({
                  {driver_,        QMYSQL},
-                 {NAME,           connectionName},
+                 {NAME,           *connectionName},
                  {database_,      EMPTY},
                  {prefix_,        EMPTY},
                  {prefix_indexes, false},
@@ -231,27 +235,26 @@ void tst_DatabaseManager::default_MySQL_ConfigurationValues() const
              }));
 
     // Restore
-    QVERIFY(m_dm->removeConnection(connectionName));
+    QVERIFY(Databases::removeConnection(*connectionName));
 }
 
 void tst_DatabaseManager::default_PostgreSQL_ConfigurationValues() const
 {
-    const auto connectionName =
-            QStringLiteral(
-                "tinyorm_pgsql_tests-tst_DatabaseMannager-"
-                "default_PostgreSQL_ConfigurationValues");
-
     // Add a new database connection
-    m_dm->addConnections({
-        {connectionName, {
-            {driver_, "qpsql"},
-        }},
-    // Don't setup any default connection
-    }, EMPTY);
+    const auto connectionName = Databases::createConnectionTemp(
+                                    Databases::POSTGRESQL,
+                                    {ClassName, QString::fromUtf8(__func__)},
+    {
+        {driver_, "qpsql"},
+    });
+
+    if (!connectionName)
+        QSKIP(TestUtils::AutoTestSkipped.arg(TypeUtils::classPureBasename(*this))
+                                        .toUtf8().constData(), );
 
     // Original configuration
     // Connection isn't created and configuration options are not parsed yet
-    const auto &originalConfig = m_dm->originalConfig(connectionName);
+    const auto &originalConfig = m_dm->originalConfig(*connectionName);
     QCOMPARE(originalConfig,
              QVariantHash({
                  {driver_, "qpsql"},
@@ -260,11 +263,11 @@ void tst_DatabaseManager::default_PostgreSQL_ConfigurationValues() const
     /* Force the creation of a connection and parse the connection configuration options.
        The qt_timezone option is only parsed in the connection configuration,
        the original configuration is untouched. */
-    m_dm->connection(connectionName);
+    m_dm->connection(*connectionName);
     QCOMPARE(originalConfig,
              QVariantHash({
                  {driver_,        QPSQL},
-                 {NAME,           connectionName},
+                 {NAME,           *connectionName},
                  {database_,      EMPTY},
                  {prefix_,        EMPTY},
                  {prefix_indexes, false},
@@ -273,10 +276,10 @@ void tst_DatabaseManager::default_PostgreSQL_ConfigurationValues() const
              }));
 
     // Connection configuration
-    QCOMPARE(m_dm->getConfig(connectionName),
+    QCOMPARE(m_dm->getConfig(*connectionName),
              QVariantHash({
                  {driver_,        QPSQL},
-                 {NAME,           connectionName},
+                 {NAME,           *connectionName},
                  {database_,      EMPTY},
                  {prefix_,        EMPTY},
                  {prefix_indexes, false},
@@ -288,27 +291,26 @@ void tst_DatabaseManager::default_PostgreSQL_ConfigurationValues() const
              }));
 
     // Restore
-    QVERIFY(m_dm->removeConnection(connectionName));
+    QVERIFY(Databases::removeConnection(*connectionName));
 }
 
 void tst_DatabaseManager::default_SQLite_ConfigurationValues() const
 {
-    const auto connectionName =
-            QStringLiteral(
-                "tinyorm_sqlite_tests-tst_DatabaseMannager-"
-                "default_SQLite_ConfigurationValues");
-
     // Add a new database connection
-    m_dm->addConnections({
-        {connectionName, {
-            {driver_, "qsqlite"},
-        }},
-    // Don't setup any default connection
-    }, EMPTY);
+    const auto connectionName = Databases::createConnectionTemp(
+                                    Databases::SQLITE,
+                                    {ClassName, QString::fromUtf8(__func__)},
+    {
+        {driver_, "qsqlite"},
+    });
+
+    if (!connectionName)
+        QSKIP(TestUtils::AutoTestSkipped.arg(TypeUtils::classPureBasename(*this))
+                                        .toUtf8().constData(), );
 
     // Original configuration
     // Connection isn't created and configuration options are not parsed yet
-    const auto &originalConfig = m_dm->originalConfig(connectionName);
+    const auto &originalConfig = m_dm->originalConfig(*connectionName);
     QCOMPARE(originalConfig,
              QVariantHash({
                  {driver_, "qsqlite"},
@@ -317,11 +319,11 @@ void tst_DatabaseManager::default_SQLite_ConfigurationValues() const
     /* Force the creation of a connection and parse the connection configuration options.
        The qt_timezone option is only parsed in the connection configuration,
        the original configuration is untouched. */
-    m_dm->connection(connectionName);
+    m_dm->connection(*connectionName);
     QCOMPARE(originalConfig,
              QVariantHash({
                  {driver_,          QSQLITE},
-                 {NAME,             connectionName},
+                 {NAME,             *connectionName},
                  {database_,        EMPTY},
                  {prefix_,          EMPTY},
                  {prefix_indexes,   false},
@@ -330,10 +332,10 @@ void tst_DatabaseManager::default_SQLite_ConfigurationValues() const
              }));
 
     // Connection configuration
-    QCOMPARE(m_dm->getConfig(connectionName),
+    QCOMPARE(m_dm->getConfig(*connectionName),
              QVariantHash({
                  {driver_,          QSQLITE},
-                 {NAME,             connectionName},
+                 {NAME,             *connectionName},
                  {database_,        EMPTY},
                  {prefix_,          EMPTY},
                  {prefix_indexes,   false},
@@ -345,16 +347,12 @@ void tst_DatabaseManager::default_SQLite_ConfigurationValues() const
              }));
 
     // Restore
-    QVERIFY(m_dm->removeConnection(connectionName));
+    QVERIFY(Databases::removeConnection(*connectionName));
 }
 
 void tst_DatabaseManager::ssl_MySQL_ConfigurationValues() const
 {
-    const auto connectionName =
-            QStringLiteral(
-                "tinyorm_mysql_tests-tst_DatabaseMannager-"
-                "ssl_MySQL_ConfigurationValues");
-
+    // Prepare SSL configuration
     // Top level
     const auto sslCertValue = QStringLiteral("C:/example/mysql-cert.pem");
     const auto sslKeyValue  = QStringLiteral("C:/example/mysql-key.pem");
@@ -363,7 +361,7 @@ void tst_DatabaseManager::ssl_MySQL_ConfigurationValues() const
     const auto sslCertOptionsValue = QStringLiteral("D:/example/client-cert.pem");
     const auto sslKeyOptionsValue  = QStringLiteral("D:/example/client-key.pem");
 
-    const QVariantHash initialConfiguration({
+    const QVariantHash initialConfiguration {
         {driver_,   QMYSQL},
         // The ssl_cert is only alias to the "SSL_CERT", looks nicer
         {ssl_cert,  sslCertValue},
@@ -372,27 +370,31 @@ void tst_DatabaseManager::ssl_MySQL_ConfigurationValues() const
         {"ssl_ca",  sslCaValue},
         {options_,  QVariantHash({{SSL_CERT, sslCertOptionsValue},
                                   {SSL_KEY,  sslKeyOptionsValue}})}
-    });
+    };
 
     // Add a new database connection
-    m_dm->addConnections({
-        {connectionName, initialConfiguration},
-    // Don't setup any default connection
-    }, EMPTY);
+    const auto connectionName = Databases::createConnectionTemp(
+                                    Databases::MYSQL,
+                                    {ClassName, QString::fromUtf8(__func__)},
+                                    initialConfiguration);
+
+    if (!connectionName)
+        QSKIP(TestUtils::AutoTestSkipped.arg(TypeUtils::classPureBasename(*this))
+                                        .toUtf8().constData(), );
 
     // Original configuration
     // Connection isn't created and configuration options are not parsed yet
-    const auto &originalConfig = m_dm->originalConfig(connectionName);
+    const auto &originalConfig = m_dm->originalConfig(*connectionName);
     QCOMPARE(originalConfig, initialConfiguration);
 
     /* Force the creation of a connection and parse the connection configuration options.
        The qt_timezone option is only parsed in the connection configuration,
        the original configuration is untouched. */
-    m_dm->connection(connectionName);
+    m_dm->connection(*connectionName);
     QCOMPARE(originalConfig,
              QVariantHash({
                  {driver_,        QMYSQL},
-                 {NAME,           connectionName},
+                 {NAME,           *connectionName},
                  {database_,      EMPTY},
                  {prefix_,        EMPTY},
                  {prefix_indexes, false},
@@ -407,10 +409,10 @@ void tst_DatabaseManager::ssl_MySQL_ConfigurationValues() const
              }));
 
     // Connection configuration
-    QCOMPARE(m_dm->getConfig(connectionName),
+    QCOMPARE(m_dm->getConfig(*connectionName),
              QVariantHash({
                  {driver_,        QMYSQL},
-                 {NAME,           connectionName},
+                 {NAME,           *connectionName},
                  {database_,      EMPTY},
                  {prefix_,        EMPTY},
                  {prefix_indexes, false},
@@ -430,16 +432,12 @@ void tst_DatabaseManager::ssl_MySQL_ConfigurationValues() const
              }));
 
     // Restore
-    QVERIFY(m_dm->removeConnection(connectionName));
+    QVERIFY(Databases::removeConnection(*connectionName));
 }
 
 void tst_DatabaseManager::ssl_PostgreSQL_ConfigurationValues() const
 {
-    const auto connectionName =
-            QStringLiteral(
-                "tinyorm_pgsql_tests-tst_DatabaseMannager-"
-                "ssl_PostgreSQL_ConfigurationValues");
-
+    // Prepare SSL configuration
     // Top level
     const auto sslmodeValue        = verify_full;
     const auto sslcertValue        = QStringLiteral("C:/example/psql.crt");
@@ -458,26 +456,29 @@ void tst_DatabaseManager::ssl_PostgreSQL_ConfigurationValues() const
         {options_,    QVariantHash({{sslcert, sslcertOptionsValue},
                                     {sslkey,  sslkeyOptionsValue}})}
     });
-
     // Add a new database connection
-    m_dm->addConnections({
-        {connectionName, initialConfiguration},
-    // Don't setup any default connection
-    }, EMPTY);
+    const auto connectionName = Databases::createConnectionTemp(
+                                    Databases::POSTGRESQL,
+                                    {ClassName, QString::fromUtf8(__func__)},
+                                    initialConfiguration);
+
+    if (!connectionName)
+        QSKIP(TestUtils::AutoTestSkipped.arg(TypeUtils::classPureBasename(*this))
+                                        .toUtf8().constData(), );
 
     // Original configuration
     // Connection isn't created and configuration options are not parsed yet
-    const auto &originalConfig = m_dm->originalConfig(connectionName);
+    const auto &originalConfig = m_dm->originalConfig(*connectionName);
     QCOMPARE(originalConfig, initialConfiguration);
 
     /* Force the creation of a connection and parse the connection configuration options.
        The SSL-related options are only parsed in the connection configuration,
        the original configuration is untouched. */
-    m_dm->connection(connectionName);
+    m_dm->connection(*connectionName);
     QCOMPARE(originalConfig,
              QVariantHash({
                  {driver_,        QPSQL},
-                 {NAME,           connectionName},
+                 {NAME,           *connectionName},
                  {database_,      EMPTY},
                  {prefix_,        EMPTY},
                  {prefix_indexes, false},
@@ -492,10 +493,10 @@ void tst_DatabaseManager::ssl_PostgreSQL_ConfigurationValues() const
              }));
 
     // Connection configuration
-    QCOMPARE(m_dm->getConfig(connectionName),
+    QCOMPARE(m_dm->getConfig(*connectionName),
              QVariantHash({
                  {driver_,        QPSQL},
-                 {NAME,           connectionName},
+                 {NAME,           *connectionName},
                  {database_,      EMPTY},
                  {prefix_,        EMPTY},
                  {prefix_indexes, false},
@@ -515,32 +516,32 @@ void tst_DatabaseManager::ssl_PostgreSQL_ConfigurationValues() const
              }));
 
     // Restore
-    QVERIFY(m_dm->removeConnection(connectionName));
+    QVERIFY(Databases::removeConnection(*connectionName));
 }
 
 void tst_DatabaseManager::sqlite_MemoryDriver() const
 {
-    const auto connectionName =
-            QStringLiteral(
-                "tinyorm_sqlite_tests-tst_DatabaseMannager-sqlite_MemoryDriver");
-
     // Add a new database connection
-    m_dm->addConnections({
-        {connectionName, {
-            {driver_,   QSQLITE},
-            {database_, QStringLiteral(":memory:")},
-        }},
-    // Don't setup any default connection
-    }, EMPTY);
+    const auto connectionName = Databases::createConnectionTemp(
+                                    Databases::SQLITE,
+                                    {ClassName, QString::fromUtf8(__func__)},
+    {
+        {driver_,   QSQLITE},
+        {database_, QStringLiteral(":memory:")},
+    });
 
-    auto &conn = m_dm->connection(connectionName);
+    if (!connectionName)
+        QSKIP(TestUtils::AutoTestSkipped.arg(TypeUtils::classPureBasename(*this))
+                                        .toUtf8().constData(), );
+
+    auto &connection = m_dm->connection(*connectionName);
 
     // Create the database and insert some records
-    conn.statement("create table tbl1 (one varchar(10), two smallint)");
-    conn.insert("insert into tbl1 values(?, ?)", {"hello!", 10});
-    conn.insert("insert into tbl1 values(?, ?)", {"goodbye", 20});
+    connection.statement("create table tbl1 (one varchar(10), two smallint)");
+    connection.insert("insert into tbl1 values(?, ?)", {"hello!", 10});
+    connection.insert("insert into tbl1 values(?, ?)", {"goodbye", 20});
 
-    auto query = conn.selectOne("select * from tbl1 where two = ?", {10});
+    auto query = connection.selectOne("select * from tbl1 where two = ?", {10});
 
     // Verify
     QVERIFY(query.isValid());
@@ -548,74 +549,60 @@ void tst_DatabaseManager::sqlite_MemoryDriver() const
     QCOMPARE(query.value("two").value<int>(), 10);
 
     // Restore
-    QVERIFY(m_dm->removeConnection(connectionName));
+    QVERIFY(Databases::removeConnection(*connectionName));
 }
 
 void tst_DatabaseManager::sqlite_CheckDatabaseExists_True() const
 {
-    if (const auto databasePath = qEnvironmentVariable("DB_SQLITE_DATABASE", EMPTY);
-        databasePath.isEmpty()
-    )
-        QSKIP("Autotest skipped because the DB_SQLITE_DATABASE environment variable "
-              "for the SQLite database was not defined.", );
-
-    const auto connectionName =
-            QStringLiteral(
-                "tinyorm_sqlite_tests-tst_DatabaseMannager-"
-                "sqlite_CheckDatabaseExists_True");
-
     // Add a new database connection
-    m_dm->addConnections({
-        {connectionName, {
-            {driver_,               QSQLITE},
-            {database_,             checkDatabaseExistsFile()},
-            {check_database_exists, true},
-        }},
-    // Don't setup any default connection
-    }, EMPTY);
+    const auto connectionName = Databases::createConnectionTemp(
+                                    Databases::SQLITE,
+                                    {ClassName, QString::fromUtf8(__func__)},
+    {
+        {driver_,               QSQLITE},
+        {database_,             checkDatabaseExistsFile()},
+        {check_database_exists, true},
+    });
+
+    if (!connectionName)
+        QSKIP(TestUtils::AutoTestSkipped.arg(TypeUtils::classPureBasename(*this))
+                                        .toUtf8().constData(), );
 
     // Verify
     QVERIFY_EXCEPTION_THROWN(
-                m_dm->connection(connectionName)
+                m_dm->connection(*connectionName)
                 .statement("create table tbl1 (one varchar(10), two smallint)"),
                 SQLiteDatabaseDoesNotExistError);
 
     // Restore
-    QVERIFY(m_dm->removeConnection(connectionName));
+    QVERIFY(Databases::removeConnection(*connectionName));
 }
 
 void tst_DatabaseManager::sqlite_CheckDatabaseExists_False() const
 {
-    if (const auto databasePath = qEnvironmentVariable("DB_SQLITE_DATABASE", EMPTY);
-        databasePath.isEmpty()
-    )
-        QSKIP("Autotest skipped because the DB_SQLITE_DATABASE environment variable "
-              "for the SQLite database was not defined.", );
-
-    const auto connectionName =
-            QStringLiteral(
-                "tinyorm_sqlite_tests-tst_DatabaseMannager-"
-                "sqlite_CheckDatabaseExists_False");
-
     // Add a new database connection
-    m_dm->addConnections({
-        {connectionName, {
-            {driver_,               QSQLITE},
-            {database_,             checkDatabaseExistsFile()},
-            {check_database_exists, false},
-        }},
-    // Don't setup any default connection
-    }, EMPTY);
+    const auto connectionName = Databases::createConnectionTemp(
+                                    Databases::SQLITE,
+                                    {ClassName, QString::fromUtf8(__func__)},
+    {
+        {driver_,               QSQLITE},
+        {database_,             checkDatabaseExistsFile()},
+        {check_database_exists, false},
+    });
+
+    if (!connectionName)
+        QSKIP(TestUtils::AutoTestSkipped.arg(TypeUtils::classPureBasename(*this))
+                                        .toUtf8().constData(), );
 
     // Verify
     // QSqlDatabase automatically creates a SQLite database file
-    m_dm->connection(connectionName)
+    m_dm->connection(*connectionName)
             .statement("create table tbl1 (one varchar(10), two smallint)");
 
     QVERIFY(QFile::exists(checkDatabaseExistsFile()));
 
     // Restore
-    QVERIFY(m_dm->removeConnection(connectionName));
+    QVERIFY(Databases::removeConnection(*connectionName));
 
     // Remove the SQLite database file
     QVERIFY(QFile::remove(checkDatabaseExistsFile()));

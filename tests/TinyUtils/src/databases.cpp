@@ -68,41 +68,115 @@ namespace TestUtils
 
 /* private */
 
-std::shared_ptr<DatabaseManager> Databases::m_instance;
+std::shared_ptr<DatabaseManager> Databases::m_dm;
 ConfigurationsType Databases::m_configurations;
 
 /* public */
 
-const QStringList &Databases::createConnections(const QStringList &connections)
+/* Create connection/s for the whole unit test case */
+
+QStringList Databases::createConnections(const QStringList &connections)
 {
     throwIfConnectionsInitialized();
 
     // Ownership of a shared_ptr()
-    m_instance = DB::create();
+    m_dm = DB::create();
 
     /* The default connection is empty for tests, there is no default connection
        because it can produce hard to find bugs, I have to be explicit about
        the connection which will be used. */
-    m_instance->addConnections(createConfigurationsHash(connections), EMPTY);
+    m_dm->addConnections(createConfigurationsHash(connections), EMPTY);
 
-    static const auto cachedConnectionNames = m_instance->connectionNames();
-
-    return cachedConnectionNames;
+    return m_dm->connectionNames();
 }
 
 QString Databases::createConnection(const QString &connection)
 {
-    const auto &connections = createConnections({connection});
+    auto connections = createConnections({connection});
 
-    if (connections.size() > 1)
-        throw RuntimeError(
-                QStringLiteral("Returned more than one connection in %1().")
-                .arg(__tiny_func__));
+    if (connections.isEmpty())
+        return {};
 
-    if (!connections.isEmpty())
-        return connections.first();
+    return std::move(connections.first());
+}
 
-    return {};
+/* Create a connection for one test method */
+
+namespace
+{
+    /*! Create the connection name from the given parts (for temporary connection). */
+    inline QString
+    connectionNameForTemp(const QString &connection,
+                          const Databases::ConnectionNameParts &connectionParts)
+    {
+        return QStringLiteral("%1-%2-%3").arg(connection, connectionParts.className,
+                                              connectionParts.methodName);
+    }
+} // namespace
+
+std::optional<QString>
+Databases::createConnectionTemp(
+        const QString &connection, ConnectionNameParts &&connectionParts,
+        const QVariantHash &configuration)
+{
+    Q_ASSERT(configuration.contains(driver_));
+
+    const auto driver = configuration[driver_].value<QString>().toUpper();
+
+    if (!isDriverAvailable(driver) || allEnvVariablesEmpty(envVariables(driver)))
+        return std::nullopt;
+
+    auto connectionName = connectionNameForTemp(connection, connectionParts);
+
+    // Add a new database connection
+    m_dm->addConnection(configuration, connectionName);
+
+    return connectionName;
+}
+
+std::optional<QString>
+Databases::createConnectionTempFrom(const QString &fromConfiguration,
+                                ConnectionNameParts &&connection)
+{
+    const auto configuration = Databases::configuration(fromConfiguration);
+
+    // Nothing to do, no configuration exists
+    if (!configuration)
+        return std::nullopt;
+
+    auto connectionName = connectionNameForTemp(fromConfiguration, connection);
+
+    // Add a new database connection
+    m_dm->addConnection(*configuration, connectionName);
+
+    return connectionName;
+}
+
+std::optional<QString>
+Databases::createConnectionTempFrom(
+        const QString &fromConfiguration, ConnectionNameParts &&connection,
+        std::unordered_map<QString, QVariant> &&optionsToUpdate,
+        const std::vector<QString> &optionsToRemove)
+{
+    const auto configurationOriginal = Databases::configuration(fromConfiguration);
+
+    // Nothing to do, no configuration exists
+    if (!configurationOriginal)
+        return std::nullopt;
+
+    // Make configuration copy so I can modify it
+    auto configuration = configurationOriginal->get();
+
+    // Add, modify, or remove options in the configuration
+    updateConfigurationForTemp(configuration, std::move(optionsToUpdate),
+                               optionsToRemove);
+
+    auto connectionName = connectionNameForTemp(fromConfiguration, connection);
+
+    // Add a new database connection
+    m_dm->addConnection(configuration, connectionName);
+
+    return connectionName;
 }
 
 std::optional<std::reference_wrapper<const QVariantHash>>
@@ -114,10 +188,17 @@ Databases::configuration(const QString &connection)
     return m_configurations.at(connection);
 }
 
+/* Common */
+
+bool Databases::removeConnection(const QString &connection)
+{
+    return m_dm->removeConnection(connection);
+}
+
 bool Databases::allEnvVariablesEmpty(const std::vector<const char *> &envVariables)
 {
     return std::all_of(envVariables.cbegin(), envVariables.cend(),
-                       [](const auto *envVariable)
+                       [](const char *envVariable)
     {
         return qEnvironmentVariableIsEmpty(envVariable);
     });
@@ -125,14 +206,14 @@ bool Databases::allEnvVariablesEmpty(const std::vector<const char *> &envVariabl
 
 const std::shared_ptr<DatabaseManager> &Databases::manager()
 {
-    if (m_instance)
-        return m_instance;
+    if (m_dm)
+        return m_dm;
 
     throw RuntimeError(
                 QStringLiteral(
                     "The DatabaseManager instance has not yet been created, create it "
-                    "by the Databases::createConnections() or "
-                    "Databases::createConnection() methods in %1().")
+                    "by the Databases::createConnections/createConnection methods "
+                    "in %1().")
                 .arg(__tiny_func__));
 }
 
@@ -141,17 +222,16 @@ const std::shared_ptr<DatabaseManager> &Databases::manager()
 const ConfigurationsType &
 Databases::createConfigurationsHash(const QStringList &connections)
 {
+    /*! Determine whether a connection for the given driver should be created. */
     const auto shouldCreateConnection = [&connections]
-                                        (const auto &connection, auto &&driver)
+                                        (const QString &connection,
+                                         const QString &driver)
     {
-        const auto isAvailable = DB::isDriverAvailable(driver);
+        // connections.isEmpty() means create all connections
+        const auto createAllConnections = connections.isEmpty();
 
-        if (!isAvailable)
-            qWarning("%s driver not available, all tests for this database will be "
-                     "skipped.", driver.toLatin1().constData());
-
-        return isAvailable &&
-                (connections.isEmpty() || connections.contains(connection));
+        return isDriverAvailable(driver) &&
+                (createAllConnections || connections.contains(connection));
     };
 
     // This connection must be to the MySQL database server (not MariaDB)
@@ -174,7 +254,7 @@ std::pair<std::reference_wrapper<const QVariantHash>, bool>
 Databases::mysqlConfiguration()
 {
     /* This connection must be to the MySQL database server (not MariaDB), because
-       some auto tests depends on it and also the TinyOrmPlayground. */
+       some auto tests depend on it and also the TinyOrmPlayground project. */
     static const QVariantHash config {
         {driver_,         QMYSQL},
         {host_,           qEnvironmentVariable("DB_MYSQL_HOST",      H127001)},
@@ -202,16 +282,11 @@ Databases::mysqlConfiguration()
 //                                 {"MYSQL_OPT_READ_TIMEOUT", 10}}},
     };
 
-    // Environment variables were undefined
-    const std::vector<const char *> envVariables {
-        "DB_MYSQL_HOST", "DB_MYSQL_PORT", "DB_MYSQL_DATABASE", "DB_MYSQL_USERNAME",
-        "DB_MYSQL_PASSWORD", "DB_MYSQL_CHARSET", "DB_MYSQL_COLLATION"
-    };
-
-    if (allEnvVariablesEmpty(envVariables))
+    // All Environment variables are empty
+    if (allEnvVariablesEmpty(mysqlEnvVariables()))
         return {std::cref(config), false};
 
-    // Environment variables was defined
+    // Environment variables are defined
     return {std::cref(config), true};
 }
 
@@ -233,15 +308,11 @@ Databases::sqliteConfiguration()
         // FUTURE schema sqlite, prefix_indexes and sqlite, works it? test silverqx
     };
 
-    // Environment variables were undefined
-    const std::vector<const char *> envVariables {
-        "DB_SQLITE_DATABASE", "DB_SQLITE_FOREIGN_KEYS"
-    };
-
-    if (allEnvVariablesEmpty(envVariables))
+    // All Environment variables are empty
+    if (allEnvVariablesEmpty(sqliteEnvVariables()))
         return {std::cref(config), false};
 
-    // Environment variables was defined
+    // Environment variables are defined
     return {std::cref(config), true};
 }
 
@@ -270,23 +341,105 @@ Databases::postgresConfiguration()
         {options_,           ConfigUtils::postgresSslOptions()},
     };
 
-    // Environment variables were undefined
-    static const std::vector<const char *> envVariables {
+
+    // All Environment variables are empty
+    if (allEnvVariablesEmpty(postgresEnvVariables()))
+        return {std::cref(config), false};
+
+    // Environment variables are defined
+    return {std::cref(config), true};
+}
+
+const std::vector<const char *> &Databases::envVariables(const QString &driver)
+{
+    if (driver == QMYSQL)
+        return mysqlEnvVariables();
+
+    if (driver == QPSQL)
+        return postgresEnvVariables();
+
+    if (driver == QSQLITE)
+        return sqliteEnvVariables();
+
+    Q_UNREACHABLE();
+}
+
+const std::vector<const char *> &Databases::mysqlEnvVariables()
+{
+    // Environment variables to check if all are empty (no need to check SSL variables)
+    static const std::vector<const char *> cached {
+        "DB_MYSQL_HOST", "DB_MYSQL_PORT", "DB_MYSQL_DATABASE", "DB_MYSQL_USERNAME",
+        "DB_MYSQL_PASSWORD", "DB_MYSQL_CHARSET", "DB_MYSQL_COLLATION"
+    };
+
+    return cached;
+}
+
+const std::vector<const char *> &Databases::sqliteEnvVariables()
+{
+    // Environment variables to check if all are empty
+    static const std::vector<const char *> cached {
+        "DB_SQLITE_DATABASE", "DB_SQLITE_FOREIGN_KEYS"
+    };
+
+    return cached;
+}
+
+const std::vector<const char *> &Databases::postgresEnvVariables()
+{
+    // Environment variables to check if all are empty (no need to check SSL variables)
+    static const std::vector<const char *> cached {
         "DB_PGSQL_HOST", "DB_PGSQL_PORT", "DB_PGSQL_DATABASE", "DB_PGSQL_SEARCHPATH",
         "DB_PGSQL_USERNAME", "DB_PGSQL_PASSWORD", "DB_PGSQL_CHARSET"
     };
 
-    if (allEnvVariablesEmpty(envVariables))
-        return {std::cref(config), false};
+    return cached;
+}
 
-    // Environment variables was defined
-    return {std::cref(config), true};
+bool Databases::isDriverAvailable(const QString &driver)
+{
+    Q_ASSERT(m_dm->supportedDrivers().contains(driver));
+
+    static std::unordered_map<QString, bool> isAvailableCache;
+
+    // Return a cached value/result
+    if (isAvailableCache.contains(driver) && isAvailableCache.at(driver))
+        return true;
+
+    const auto isAvailable = m_dm->isDriverAvailable(driver);
+
+    if (!isAvailable)
+        qWarning("The '%s' driver not available, all tests for this database will "
+                 "be skipped.", driver.toLatin1().constData());
+
+    // Cache a result and return it
+    const auto [it, ok] = isAvailableCache.emplace(driver, isAvailable);
+    Q_ASSERT(ok);
+
+    return it->second;
+}
+
+void Databases::updateConfigurationForTemp(
+        QVariantHash &configuration,
+        std::unordered_map<QString, QVariant> &&optionsToUpdate,
+        const std::vector<QString> &optionsToRemove)
+{
+    // Add or modify the configuration
+    if (!optionsToUpdate.empty())
+        for (auto &&[option, value] : optionsToUpdate)
+            configuration[option] = std::move(value);
+
+    // Remove options from the configuration
+    if (!optionsToRemove.empty())
+        for (const auto &option : optionsToRemove)
+            if (configuration.contains(option))
+                configuration.remove(option);
 }
 
 void Databases::throwIfConnectionsInitialized()
 {
     /*! Determines whether connections were initialized. */
-    static bool initialized = false;
+    static auto initialized = false;
 
     if (initialized)
         throw RuntimeError(

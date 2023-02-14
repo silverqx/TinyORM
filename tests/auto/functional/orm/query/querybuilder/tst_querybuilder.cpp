@@ -158,7 +158,7 @@ private:
 // NOLINTBEGIN(readability-convert-member-functions-to-static)
 void tst_QueryBuilder::initTestCase_data() const
 {
-    const auto &connections = Databases::createConnections();
+    const auto connections = Databases::createConnections();
 
     if (connections.isEmpty())
         QSKIP(TestUtils::AutoTestSkippedAny.arg(TypeUtils::classPureBasename(*this))

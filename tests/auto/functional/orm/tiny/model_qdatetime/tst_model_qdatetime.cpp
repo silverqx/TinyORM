@@ -118,7 +118,7 @@ Q_GLOBAL_STATIC_WITH_ARGS(QString, date, ("date"))
 // NOLINTBEGIN(readability-convert-member-functions-to-static)
 void tst_Model_QDateTime::initTestCase_data() const
 {
-    const auto &connections = Databases::createConnections();
+    const auto connections = Databases::createConnections();
 
     if (connections.isEmpty())
         QSKIP(TestUtils::AutoTestSkippedAny.arg(TypeUtils::classPureBasename(*this))

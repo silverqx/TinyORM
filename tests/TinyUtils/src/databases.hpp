@@ -18,15 +18,18 @@ namespace TestUtils
     /* I will not create a separate constants file for these two constants, define them
        here is ok because every test that will include databases.hpp will also use
        one of these constants. */
+
     /*! Template message for the QSKIP() for one connection. */
     inline const QString AutoTestSkipped =
             QStringLiteral("%1 autotest skipped, environment variables "
-                           "for '%2' connection have not been defined.");
+                           "for '%2' connection have not been defined or the Qt sql "
+                           "driver is not available.");
     /*! Template message for the QSKIP() for more connections. */
     inline const QString AutoTestSkippedAny =
             QStringLiteral("%1 autotest skipped, environment variables "
                            "for ANY connection have not been defined.");
 
+    /*! Database connections factory for unit tests (library class). */
     class TINYUTILS_EXPORT Databases
     {
         Q_DISABLE_COPY(Databases)
@@ -35,6 +38,11 @@ namespace TestUtils
         using DatabaseManager = Orm::DatabaseManager;
 
     public:
+        /*! Deleted default constructor, this is a pure library class. */
+        Databases() = delete;
+        /*! Deleted destructor. */
+        ~Databases() = delete;
+
         /*! Type used for Database Connections map. */
         using ConfigurationsType = Orm::Support::DatabaseConfiguration
                                                ::ConfigurationsType;
@@ -46,17 +54,47 @@ namespace TestUtils
         /*! PostgreSQL connection name. */
         inline static const QString POSTGRESQL = "tinyorm_pgsql_tests";
 
+        /* Create connection/s for the whole unit test case */
         /*! Create all database connections which will be tested. */
-        static const QStringList &
-        createConnections(const QStringList &connections = {});
-        /*! Create database connection. */
+        static QStringList createConnections(const QStringList &connections = {});
+        /*! Create a database connection. */
         static QString createConnection(const QString &connection);
+
+        /* Create a connection for one test method */
+        /*! Connection name parts to generate the connection name for one test method. */
+        struct ConnectionNameParts
+        {
+            /*! Unit test case class name. */
+            const char *className;
+            /*! Unit test method name. */
+            QString methodName;
+        };
+
+        /*! Create a temporary database connection for one test method. */
+        static std::optional<QString>
+        createConnectionTemp(
+                const QString &connectionName, ConnectionNameParts &&connectionParts,
+                const QVariantHash &configuration);
+        /*! Create a temporary database connection for one test method from config. */
+        static std::optional<QString>
+        createConnectionTempFrom(
+                const QString &fromConfiguration, ConnectionNameParts &&connection);
+        /*! Create a temporary database connection for one test method from config. */
+        static std::optional<QString>
+        createConnectionTempFrom(
+                const QString &fromConfiguration, ConnectionNameParts &&connection,
+                std::unordered_map<QString, QVariant> &&optionsToUpdate,
+                const std::vector<QString> &optionsToRemove = {});
 
         /*! Get a configuration for the given connection. */
         static std::optional<std::reference_wrapper<const QVariantHash>>
         configuration(const QString &connection);
 
-        /*! Check whether all env. variables are empty. */
+        /* Common */
+        /*! Remove a database connection. */
+        static bool removeConnection(const QString &connection);
+
+        /*! Check whether all environment variables are empty. */
         static bool allEnvVariablesEmpty(const std::vector<const char *> &envVariables);
 
         /*! Get a reference to the database manager. */
@@ -77,11 +115,31 @@ namespace TestUtils
         static std::pair<std::reference_wrapper<const QVariantHash>, bool>
         postgresConfiguration();
 
+        /*! Get all env. variable names for the given driver. */
+        static const std::vector<const char *> &envVariables(const QString &driver);
+
+        /*! Get all MySQL environment variable names. */
+        static const std::vector<const char *> &mysqlEnvVariables();
+        /*! Get all SQLite environment variable names. */
+        static const std::vector<const char *> &sqliteEnvVariables();
+        /*! Get all PostgreSQL environment variable names. */
+        static const std::vector<const char *> &postgresEnvVariables();
+
+        /*! Check whether the given Qt driver is available. */
+        static bool isDriverAvailable(const QString &driver);
+
+        /*! Update options in the given configuration (for temporary connection). */
+        static void
+        updateConfigurationForTemp(
+                QVariantHash &configuration,
+                std::unordered_map<QString, QVariant> &&optionsToUpdate,
+                const std::vector<QString> &optionsToRemove);
+
         /*! Throw exception when database connections were already initialized. */
         static void throwIfConnectionsInitialized();
 
         /*! Shared pointer to the DatabaseManager instance. */
-        static std::shared_ptr<Orm::DatabaseManager> m_instance;
+        static std::shared_ptr<Orm::DatabaseManager> m_dm;
         /*! Database configurations map. */
         static ConfigurationsType m_configurations;
     };
