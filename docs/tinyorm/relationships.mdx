@@ -209,7 +209,7 @@ The third `belongsTo` parameter is the relation name, if you pass it, the foreig
     std::unique_ptr<BelongsTo<Phone, User>>
     someUser()
     {
-        return belongsTo<User>({}, {}, __func__); // the foreign key will be some_user_id
+        return belongsTo<User>({}, {}, QString::fromUtf8(__func__)); // the foreign key will be some_user_id
     }
 
 The relation name will be guessed from the type-id of the `Related` template parameter, TinyORM takes this name and changes the first character to lower case, so in the example above, the relation name will be `user`.
@@ -352,7 +352,7 @@ The third `belongsTo` parameter is the relation name, if you pass it, the foreig
     std::unique_ptr<BelongsTo<Comment, Post>>
     somePost()
     {
-        return belongsTo<Post>({}, {}, __func__); // the foreign key will be some_post_id
+        return belongsTo<Post>({}, {}, QString::fromUtf8(__func__)); // the foreign key will be some_post_id
     }
 
 The relation name will be guessed from the type-id of the `Related` template parameter, TinyORM takes this name and changes the first character to lower case, so in the example above, the relation name will be `user`.
