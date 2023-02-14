@@ -36,7 +36,7 @@ private:
     inline static const auto *ClassName = "tst_PostgreSQL_SchemaBuilder_f";
 
     /*! The Database Manager instance in the TinyUtils. */
-    std::shared_ptr<Orm::DatabaseManager> m_dm;
+    std::shared_ptr<Orm::DatabaseManager> m_dm = nullptr;
 };
 
 /* private slots */

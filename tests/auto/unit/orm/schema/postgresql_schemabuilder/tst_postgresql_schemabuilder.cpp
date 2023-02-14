@@ -115,10 +115,10 @@ private:
     /*! Test case class name. */
     inline static const auto *ClassName = "tst_PostgreSQL_SchemaBuilder";
 
-    /*! The Database Manager instance in the TinyUtils. */
-    std::shared_ptr<Orm::DatabaseManager> m_dm;
     /*! Connection name used in this test case. */
     QString m_connection {};
+    /*! The Database Manager instance in the TinyUtils. */
+    std::shared_ptr<Orm::DatabaseManager> m_dm = nullptr;
 };
 
 /* private slots */

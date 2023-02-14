@@ -78,7 +78,7 @@ private:
     QString alternativeConnection_Sqlite() const;
 
     /*! The Database Manager instance in the TinyUtils. */
-    std::shared_ptr<Orm::DatabaseManager> m_dm;
+    std::shared_ptr<Orm::DatabaseManager> m_dm = nullptr;
 };
 
 /* private slots */
