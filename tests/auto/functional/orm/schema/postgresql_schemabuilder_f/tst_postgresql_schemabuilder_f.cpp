@@ -44,7 +44,7 @@ private:
 // NOLINTBEGIN(readability-convert-member-functions-to-static)
 void tst_PostgreSQL_SchemaBuilder_f::initTestCase()
 {
-    m_dm = Databases::manager(true);
+    m_dm = Databases::manager();
 }
 
 void tst_PostgreSQL_SchemaBuilder_f::hasTable_NoSearchPath_InConfiguration() const

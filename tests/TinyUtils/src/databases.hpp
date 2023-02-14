@@ -98,7 +98,7 @@ namespace TestUtils
         static bool allEnvVariablesEmpty(const std::vector<const char *> &envVariables);
 
         /*! Get a reference to the database manager. */
-        static const std::shared_ptr<Orm::DatabaseManager> &manager(bool create = false);
+        static const std::shared_ptr<Orm::DatabaseManager> &manager();
 
     private:
         /*! Create database configurations hash. */
