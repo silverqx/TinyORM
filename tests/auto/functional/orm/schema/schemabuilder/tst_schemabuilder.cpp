@@ -128,10 +128,10 @@ void tst_SchemaBuilder::createDatabase_dropAllTables_dropDatabaseIfExists() cons
         // Create new tables in another database
         for (const auto &table : tables)
             Schema::on(*alternativeConnection)
-                    .create(table, [](Blueprint &table)
+                    .create(table, [](Blueprint &table_)
             {
-                table.id();
-                table.string(NAME);
+                table_.id();
+                table_.string(NAME);
             });
 
         // Verify created tables

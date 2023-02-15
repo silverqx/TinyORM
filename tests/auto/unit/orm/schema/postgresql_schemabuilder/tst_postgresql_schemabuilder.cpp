@@ -136,9 +136,9 @@ void tst_PostgreSQL_SchemaBuilder::createDatabase() const
 {
     auto &connection = DB::connection(m_connection);
 
-    auto log = connection.pretend([](auto &connection)
+    auto log = connection.pretend([](auto &connection_)
     {
-        Schema::on(connection.getName()).createDatabase(Firewalls);
+        Schema::on(connection_.getName()).createDatabase(Firewalls);
     });
 
     QVERIFY(!log.isEmpty());
@@ -573,9 +573,9 @@ void tst_PostgreSQL_SchemaBuilder::getAllTables() const
 {
     auto &connection = DB::connection(m_connection);
 
-    auto log = connection.pretend([](auto &connection)
+    auto log = connection.pretend([](auto &connection_)
     {
-        Schema::on(connection.getName()).getAllTables();
+        Schema::on(connection_.getName()).getAllTables();
     });
 
     QVERIFY(!log.isEmpty());
@@ -596,9 +596,9 @@ void tst_PostgreSQL_SchemaBuilder::getAllViews() const
 {
     auto &connection = DB::connection(m_connection);
 
-    auto log = connection.pretend([](auto &connection)
+    auto log = connection.pretend([](auto &connection_)
     {
-        Schema::on(connection.getName()).getAllViews();
+        Schema::on(connection_.getName()).getAllViews();
     });
 
     QVERIFY(!log.isEmpty());
@@ -714,9 +714,9 @@ void tst_PostgreSQL_SchemaBuilder::hasTable_SchemaDiffers() const
 
     // Verify
     auto log = connection.pretend([&databaseName, &schemaName, &tableName]
-                                  (auto &connection)
+                                  (auto &connection_)
     {
-        const auto hasTable = Schema::on(connection.getName())
+        const auto hasTable = Schema::on(connection_.getName())
                               .hasTable(QStringLiteral("%1.%2.%3")
                                         .arg(databaseName, schemaName, tableName));
 
@@ -757,9 +757,9 @@ void tst_PostgreSQL_SchemaBuilder::
     const auto tableName = QStringLiteral("users");
 
     // Verify
-    auto log = connection.pretend([&tableName](auto &connection)
+    auto log = connection.pretend([&tableName](auto &connection_)
     {
-        const auto hasTable = Schema::on(connection.getName())
+        const auto hasTable = Schema::on(connection_.getName())
                               .hasTable(tableName);
 
         QVERIFY(!hasTable);
@@ -802,9 +802,9 @@ void tst_PostgreSQL_SchemaBuilder::
     const auto tableName = QStringLiteral("users");
 
     // Verify
-    auto log = connection.pretend([&tableName](auto &connection)
+    auto log = connection.pretend([&tableName](auto &connection_)
     {
-        const auto hasTable = Schema::on(connection.getName())
+        const auto hasTable = Schema::on(connection_.getName())
                               .hasTable(tableName);
 
         QVERIFY(!hasTable);
@@ -871,9 +871,9 @@ void tst_PostgreSQL_SchemaBuilder::
     const auto tableName = QStringLiteral("users");
 
     // Verify
-    auto log = connection.pretend([&tableName](auto &connection)
+    auto log = connection.pretend([&tableName](auto &connection_)
     {
-        const auto hasTable = Schema::on(connection.getName())
+        const auto hasTable = Schema::on(connection_.getName())
                               .hasTable(tableName);
 
         QVERIFY(!hasTable);
@@ -915,9 +915,9 @@ void tst_PostgreSQL_SchemaBuilder::hasTable_NoSearchPath_InConfiguration() const
     const auto tableName = QStringLiteral("users");
 
     // Verify
-    auto log = connection.pretend([&tableName](auto &connection)
+    auto log = connection.pretend([&tableName](auto &connection_)
     {
-        const auto hasTable = Schema::on(connection.getName())
+        const auto hasTable = Schema::on(connection_.getName())
                               .hasTable(tableName);
 
         QVERIFY(!hasTable);

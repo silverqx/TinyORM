@@ -88,7 +88,7 @@ private:
     inline static const auto MigrationsTable = QStringLiteral("migrations_unit_testing");
 
     /*! Created database connections (needed by the cleanupTestCase()). */
-    QStringList m_connections;
+    QStringList m_connections {};
 };
 
 /*! Alias for the test output row. */

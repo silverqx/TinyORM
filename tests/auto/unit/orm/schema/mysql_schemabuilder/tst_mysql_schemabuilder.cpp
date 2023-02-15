@@ -281,9 +281,9 @@ void tst_MySql_SchemaBuilder::createTable_Temporary() const
 {
     auto &connection = DB::connection(m_connection);
 
-    auto log = connection.pretend([](auto &connection)
+    auto log = connection.pretend([](auto &connection_)
     {
-        Schema::on(connection.getName())
+        Schema::on(connection_.getName())
                 .create(Firewalls, [](Blueprint &table)
         {
             table.temporary();
@@ -344,9 +344,9 @@ void tst_MySql_SchemaBuilder::timestamps_rememberToken_softDeletes_CreateAndDrop
 {
     auto &connection = DB::connection(m_connection);
 
-    auto log = connection.pretend([](auto &connection)
+    auto log = connection.pretend([](auto &connection_)
     {
-        Schema::on(connection.getName())
+        Schema::on(connection_.getName())
                 .create(Firewalls, [](Blueprint &table)
         {
             table.id();
@@ -356,7 +356,7 @@ void tst_MySql_SchemaBuilder::timestamps_rememberToken_softDeletes_CreateAndDrop
             table.softDeletes();
         });
 
-        Schema::on(connection.getName())
+        Schema::on(connection_.getName())
                 .table(Firewalls, [](Blueprint &table)
         {
             table.dropTimestamps();
@@ -364,7 +364,7 @@ void tst_MySql_SchemaBuilder::timestamps_rememberToken_softDeletes_CreateAndDrop
             table.dropSoftDeletes();
         });
 
-        Schema::on(connection.getName())
+        Schema::on(connection_.getName())
                 .create(Firewalls, [](Blueprint &table)
         {
             table.id();
