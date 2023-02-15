@@ -14,7 +14,6 @@ namespace fs = std::filesystem;
 
 using fspath = std::filesystem::path;
 
-using Orm::Constants::EMPTY;
 using Orm::Constants::ID;
 using Orm::Constants::NAME;
 using Orm::Constants::NOSPACE;
