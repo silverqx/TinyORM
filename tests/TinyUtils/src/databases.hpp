@@ -3,6 +3,7 @@
 #define TINYUTILS_DATABASES_HPP
 
 #include <memory>
+#include <optional>
 
 #include "orm/support/databaseconfiguration.hpp"
 
