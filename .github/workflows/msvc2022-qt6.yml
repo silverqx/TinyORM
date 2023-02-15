@@ -575,6 +575,7 @@ jobs:
         DB_PGSQL_CHARSET: ${{ secrets.DB_PGSQL_CHARSET }}
         DB_PGSQL_DATABASE: ${{ secrets.DB_PGSQL_DATABASE }}
         DB_PGSQL_HOST: ${{ secrets.DB_PGSQL_HOST_SSL }}
+        DB_PGSQL_SEARCHPATH: ${{ secrets.DB_PGSQL_SEARCHPATH }}
         DB_PGSQL_SSLMODE: ${{ secrets.DB_PGSQL_SSLMODE }}
         DB_PGSQL_USERNAME: ${{ secrets.DB_PGSQL_USERNAME }}
         DB_SQLITE_DATABASE: ${{ env.TinySQLitePath }}
@@ -597,6 +598,7 @@ jobs:
         DB_PGSQL_CHARSET: ${{ secrets.DB_PGSQL_CHARSET }}
         DB_PGSQL_DATABASE: ${{ secrets.DB_PGSQL_DATABASE }}
         DB_PGSQL_HOST: ${{ secrets.DB_PGSQL_HOST_SSL }}
+        DB_PGSQL_SEARCHPATH: ${{ secrets.DB_PGSQL_SEARCHPATH }}
         DB_PGSQL_SSLMODE: ${{ secrets.DB_PGSQL_SSLMODE }}
         DB_PGSQL_USERNAME: ${{ secrets.DB_PGSQL_USERNAME }}
         DB_SQLITE_DATABASE: ${{ env.TinySQLitePath }}
@@ -638,6 +640,7 @@ jobs:
         DB_PGSQL_CHARSET: ${{ secrets.DB_PGSQL_CHARSET }}
         DB_PGSQL_DATABASE: ${{ secrets.DB_PGSQL_DATABASE }}
         DB_PGSQL_HOST: ${{ secrets.DB_PGSQL_HOST_SSL }}
+        DB_PGSQL_SEARCHPATH: ${{ secrets.DB_PGSQL_SEARCHPATH }}
         DB_PGSQL_SSLMODE: ${{ secrets.DB_PGSQL_SSLMODE }}
         DB_PGSQL_USERNAME: ${{ secrets.DB_PGSQL_USERNAME }}
         TOM_EXAMPLE_ENV: testing
