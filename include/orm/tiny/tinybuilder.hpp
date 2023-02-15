@@ -756,6 +756,8 @@ namespace Orm::Tiny
            the parseWithRelations() methods. */
         auto eagerLoad = parseWithRelations(relations);
 
+        m_eagerLoad.reserve(eagerLoad.size());
+
         std::ranges::move(eagerLoad, std::back_inserter(m_eagerLoad));
 
         return *this;
