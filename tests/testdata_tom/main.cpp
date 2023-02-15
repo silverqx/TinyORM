@@ -92,7 +92,7 @@ std::shared_ptr<DatabaseManager> setupManager()
             {prefix_,         EMPTY},
             {prefix_indexes,  false},
             {strict_,         true},
-            {isolation_level, QStringLiteral("REPEATABLE READ")},
+            {isolation_level, QStringLiteral("REPEATABLE READ")}, // MySQL default is REPEATABLE READ for InnoDB
             {engine_,         InnoDB},
             {Version,         {}}, // Autodetect
             {options_,        ConfigUtils::mysqlSslOptions()},
