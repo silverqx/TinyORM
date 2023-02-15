@@ -610,6 +610,8 @@ int tst_Migrate::invokeCommand(const QString &connection, const QString &name,
         connectionArr.constData(),
 //        "-vvv",
     };
+
+    argv.reserve(arguments.size());
     std::ranges::move(arguments, std::back_inserter(argv));
 
     int argc = static_cast<int>(argv.size());

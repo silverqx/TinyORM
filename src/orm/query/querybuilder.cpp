@@ -1298,8 +1298,12 @@ Builder &Builder::addBinding(QVector<QVariant> &&bindings, const BindingType typ
     checkBindingType(type);
 #endif
 
-    if (!bindings.isEmpty())
-        std::ranges::move(bindings, std::back_inserter(m_bindings[type]));
+    if (bindings.isEmpty())
+        return *this;
+
+    auto &bindingsRef = m_bindings[type]; // clazy:exclude=detaching-member
+    bindingsRef.reserve(bindings.size());
+    std::ranges::move(bindings, std::back_inserter(bindingsRef));
 
     return *this;
 }
@@ -1390,9 +1394,12 @@ Builder &Builder::mergeWheres(const QVector<WhereConditionItem> &wheres,
 Builder &Builder::mergeWheres(QVector<WhereConditionItem> &&wheres,
                               QVector<QVariant> &&bindings)
 {
+    m_wheres.reserve(wheres.size());
     std::ranges::move(wheres, std::back_inserter(m_wheres));
 
-    std::ranges::move(bindings, std::back_inserter(m_bindings[BindingType::WHERE]));
+    auto &bindingsRef = m_bindings[BindingType::WHERE];
+    bindingsRef.reserve(bindings.size()); // clazy:exclude=detaching-member
+    std::ranges::move(bindings, std::back_inserter(bindingsRef));
 
     return *this;
 }
