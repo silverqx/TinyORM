@@ -3,7 +3,7 @@ project(versions
 )
 
 add_executable(versions
-    include/versiondebug_cmake.hpp.in
+    include/versionsdebug_cmake.hpp.in
     tst_versions.cpp
 )
 
@@ -38,17 +38,17 @@ endif()
 
 # Support a real TinyOrm/TinyUtils library filenames
 configure_file(
-    "include/versiondebug_cmake.hpp.in"
-    "${TINY_BUILD_GENDIR}/tmp/versiondebug_cmake.hpp.genexp"
+    "include/versionsdebug_cmake.hpp.in"
+    "${TINY_BUILD_GENDIR}/tmp/versionsdebug_cmake.hpp.genexp"
     @ONLY NEWLINE_STYLE LF
 )
-file(GENERATE OUTPUT "${TINY_BUILD_GENDIR}/include/versiondebug_cmake-$<CONFIG>.hpp"
-    INPUT "${PROJECT_BINARY_DIR}/${TINY_BUILD_GENDIR}/tmp/versiondebug_cmake.hpp.genexp"
+file(GENERATE OUTPUT "${TINY_BUILD_GENDIR}/include/versionsdebug_cmake-$<CONFIG>.hpp"
+    INPUT "${PROJECT_BINARY_DIR}/${TINY_BUILD_GENDIR}/tmp/versionsdebug_cmake.hpp.genexp"
     NEWLINE_STYLE UNIX
 )
 
 # Following commented code throws warning with clang-cl:
-# warning: definition of macro 'TINYTEST_VERSIONS_VERSIONDEBUG' does not match definition
+# warning: definition of macro 'TINYTEST_VERSIONS_VERSIONSDEBUG' does not match definition
 # in precompiled header [-Wclang-cl-pch]
 
 # Pass generated filename to the tst_versions.cpp source file (used in #include directive)
@@ -56,14 +56,14 @@ file(GENERATE OUTPUT "${TINY_BUILD_GENDIR}/include/versiondebug_cmake-$<CONFIG>.
 #    TARGET_DIRECTORY versions
 #    PROPERTIES
 #        COMPILE_DEFINITIONS
-#            TINYTEST_VERSIONS_VERSIONDEBUG="versiondebug_cmake-$<CONFIG>.hpp"
+#            TINYTEST_VERSIONS_VERSIONSDEBUG="versionsdebug_cmake-$<CONFIG>.hpp"
 #)
 
 # This is ok
 target_compile_definitions(versions
-    PRIVATE TINYTEST_VERSIONS_VERSIONDEBUG="versiondebug_cmake-$<CONFIG>.hpp"
+    PRIVATE TINYTEST_VERSIONS_VERSIONSDEBUG="versionsdebug_cmake-$<CONFIG>.hpp"
 )
 
 target_sources(versions PRIVATE
-    "$<$<BOOL:$<CONFIG>>:${TINY_BUILD_GENDIR}/include/versiondebug_cmake-$<CONFIG>.hpp>"
+    "$<$<BOOL:$<CONFIG>>:${TINY_BUILD_GENDIR}/include/versionsdebug_cmake-$<CONFIG>.hpp>"
 )

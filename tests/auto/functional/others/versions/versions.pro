@@ -21,9 +21,9 @@ win32 {
     TINYTEST_VERSIONS_TOMEXAMPLE_PATH = \
         $$quote($${TINYORM_BUILD_TREE}/examples/tom$${TINY_BUILD_SUBFOLDER}/tom.exe)
 
-    QMAKE_SUBSTITUTES += $$quote(include/versiondebug_qmake.hpp.in)
+    QMAKE_SUBSTITUTES += $$quote(include/versionsdebug_qmake.hpp.in)
 
-    HEADERS += $$OUT_PWD/include/versiondebug_qmake.hpp
+    HEADERS += $$OUT_PWD/include/versionsdebug_qmake.hpp
 
     INCLUDEPATH += $$quote($$OUT_PWD/include/)
 

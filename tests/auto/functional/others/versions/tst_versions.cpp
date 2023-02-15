@@ -22,9 +22,9 @@
 // Used by checkFileVersion_*() tests
 #if defined(_WIN32) && defined(TINYTEST_VERSIONS_IS_SHARED_BUILD)
 #  ifdef TINYTEST_VERSIONS_IS_CMAKE
-#    include TINYTEST_VERSIONS_VERSIONDEBUG
+#    include TINYTEST_VERSIONS_VERSIONSDEBUG
 #  elif defined(TINYTEST_VERSIONS_IS_QMAKE)
-#    include "versiondebug_qmake.hpp"
+#    include "versionsdebug_qmake.hpp"
 #  endif
 #else
 #  define TINYTEST_VERSIONS_TINYORM_PATH
