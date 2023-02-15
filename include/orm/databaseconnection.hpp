@@ -236,13 +236,12 @@ namespace Orm
         /*! Set the query post processor to the default implementation. */
         void useDefaultPostProcessor();
 
-        // NOTE api different, getDefaultQueryGrammar() can not be non-pure because it contains pure virtual member function silverqx
         /*! Get the default query grammar instance. */
         virtual std::unique_ptr<QueryGrammar> getDefaultQueryGrammar() const = 0;
         /*! Get the default schema grammar instance. */
         virtual std::unique_ptr<SchemaGrammar> getDefaultSchemaGrammar() const = 0;
         /*! Get the default post processor instance. */
-        virtual std::unique_ptr<QueryProcessor> getDefaultPostProcessor() const;
+        virtual std::unique_ptr<QueryProcessor> getDefaultPostProcessor() const = 0;
 
         /*! Callback type used in the run() method. */
         template<typename Return>

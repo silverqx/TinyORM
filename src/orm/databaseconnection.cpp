@@ -577,11 +577,6 @@ void DatabaseConnection::useDefaultPostProcessor()
     m_postProcessor = getDefaultPostProcessor();
 }
 
-std::unique_ptr<QueryProcessor> DatabaseConnection::getDefaultPostProcessor() const
-{
-    return std::make_unique<QueryProcessor>();
-}
-
 void DatabaseConnection::reconnectIfMissingConnection() const
 {
     /* Calls a connection resolver defined

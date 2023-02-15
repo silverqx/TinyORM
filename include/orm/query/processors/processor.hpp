@@ -6,7 +6,6 @@
 TINY_SYSTEM_HEADER
 
 #include <QStringList>
-#include <QtGlobal>
 
 #include "orm/macros/commonnamespace.hpp"
 #include "orm/macros/export.hpp"
@@ -23,7 +22,7 @@ namespace Types
 namespace Query::Processors
 {
 
-    /*! Base processor class, process sql result. */
+    /*! Base processor class, process SQL results. */
     class SHAREDLIB_EXPORT Processor
     {
         Q_DISABLE_COPY(Processor)
@@ -34,12 +33,16 @@ namespace Query::Processors
     public:
         /*! Default constructor. */
         inline Processor() = default;
-        /*! Virtual destructor, this class is used so can not be pure. */
-        inline virtual ~Processor() = default;
+        /*! Pure virtual destructor. */
+        inline virtual ~Processor() = 0;
 
         /*! Process the results of a column listing query. */
         virtual QStringList processColumnListing(SqlQuery &query) const;
     };
+
+    /* public */
+
+    Processor::~Processor() = default;
 
 } // namespace Query::Processors
 } // namespace Orm

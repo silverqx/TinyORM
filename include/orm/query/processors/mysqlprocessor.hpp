@@ -12,22 +12,16 @@ TINYORM_BEGIN_COMMON_NAMESPACE
 namespace Orm::Query::Processors
 {
 
-    /*! MySql processor, process sql result. */
-    class SHAREDLIB_EXPORT MySqlProcessor : public Processor
+    /*! MySQL processor, process SQL results. */
+    class MySqlProcessor final : public Processor
     {
         Q_DISABLE_COPY(MySqlProcessor)
-
-        /*! Alias for the SqlQuery. */
-        using SqlQuery = Orm::Types::SqlQuery;
 
     public:
         /*! Default constructor. */
         inline MySqlProcessor() = default;
         /*! Virtual destructor. */
-        inline ~MySqlProcessor() override = default;
-
-        /*! Process the results of a column listing query. */
-        QStringList processColumnListing(SqlQuery &query) const override;
+        inline ~MySqlProcessor() final = default;
     };
 
 } // namespace Orm::Query::Processors

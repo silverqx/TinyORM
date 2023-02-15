@@ -1,17 +1,24 @@
 #include "orm/query/processors/processor.hpp"
 
-#include "orm/exceptions/runtimeerror.hpp"
-#include "orm/utils/type.hpp"
+#include "orm/types/sqlquery.hpp"
+#include "orm/utils/query.hpp"
 
 TINYORM_BEGIN_COMMON_NAMESPACE
+
+using QueryUtils = Orm::Utils::Query;
 
 namespace Orm::Query::Processors
 {
 
-QStringList Processor::processColumnListing(SqlQuery &/*unused*/) const
+QStringList Processor::processColumnListing(SqlQuery &query) const
 {
-    throw Exceptions::RuntimeError(QStringLiteral("Method %1() is not implemented.")
-                                   .arg(__tiny_func__));
+    QStringList columns;
+    columns.reserve(QueryUtils::queryResultSize(query));
+
+    while (query.next())
+        columns << query.value("column_name").value<QString>();
+
+    return columns;
 }
 
 } // namespace Orm::Query::Processors

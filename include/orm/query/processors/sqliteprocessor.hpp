@@ -12,8 +12,8 @@ TINYORM_BEGIN_COMMON_NAMESPACE
 namespace Orm::Query::Processors
 {
 
-    /*! SQLite processor, process sql result. */
-    class SHAREDLIB_EXPORT SQLiteProcessor : public Processor
+    /*! SQLite processor, process SQL results. */
+    class SHAREDLIB_EXPORT SQLiteProcessor final : public Processor
     {
         Q_DISABLE_COPY(SQLiteProcessor)
 
@@ -24,10 +24,10 @@ namespace Orm::Query::Processors
         /*! Default constructor. */
         inline SQLiteProcessor() = default;
         /*! Virtual destructor. */
-        inline ~SQLiteProcessor() override = default;
+        inline ~SQLiteProcessor() final = default;
 
         /*! Process the results of a column listing query. */
-        QStringList processColumnListing(SqlQuery &query) const override;
+        QStringList processColumnListing(SqlQuery &query) const final;
     };
 
 } // namespace Orm::Query::Processors

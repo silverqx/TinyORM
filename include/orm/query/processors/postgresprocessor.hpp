@@ -12,22 +12,16 @@ TINYORM_BEGIN_COMMON_NAMESPACE
 namespace Orm::Query::Processors
 {
 
-    /*! PostgreSql processor, process sql result. */
-    class SHAREDLIB_EXPORT PostgresProcessor : public Processor
+    /*! PostgreSQL processor, process SQL results. */
+    class PostgresProcessor final : public Processor
     {
         Q_DISABLE_COPY(PostgresProcessor)
-
-        /*! Alias for the SqlQuery. */
-        using SqlQuery = Orm::Types::SqlQuery;
 
     public:
         /*! Default constructor. */
         inline PostgresProcessor() = default;
         /*! Virtual destructor. */
-        inline ~PostgresProcessor() override = default;
-
-        /*! Process the results of a column listing query. */
-        QStringList processColumnListing(SqlQuery &query) const override;
+        inline ~PostgresProcessor() final = default;
     };
 
 } // namespace Orm::Query::Processors

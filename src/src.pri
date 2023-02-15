@@ -38,8 +38,6 @@ sourcesList += \
     $$PWD/orm/query/grammars/postgresgrammar.cpp \
     $$PWD/orm/query/grammars/sqlitegrammar.cpp \
     $$PWD/orm/query/joinclause.cpp \
-    $$PWD/orm/query/processors/mysqlprocessor.cpp \
-    $$PWD/orm/query/processors/postgresprocessor.cpp \
     $$PWD/orm/query/processors/processor.cpp \
     $$PWD/orm/query/processors/sqliteprocessor.cpp \
     $$PWD/orm/query/querybuilder.cpp \

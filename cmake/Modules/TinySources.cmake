@@ -207,8 +207,6 @@ function(tinyorm_sources out_headers out_sources)
         query/grammars/postgresgrammar.cpp
         query/grammars/sqlitegrammar.cpp
         query/joinclause.cpp
-        query/processors/mysqlprocessor.cpp
-        query/processors/postgresprocessor.cpp
         query/processors/processor.cpp
         query/processors/sqliteprocessor.cpp
         query/querybuilder.cpp
