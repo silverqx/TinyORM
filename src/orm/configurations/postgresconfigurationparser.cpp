@@ -30,6 +30,7 @@ void PostgresConfigurationParser::parseDriverSpecificOptions() const
         // The spatial_ref_sys table is used by the PostGIS
         config().insert(dont_drop, QStringList {spatial_ref_sys});
 
+    // FUTURE configuration enhance validation, validate QString and bool types for all options and move common logic to the base class and pass the hash with option name and condition to check and based on that throw common exception silverqx
     // Validations
     throwIfContainsSchemaOption();
     throwIfSearchPathHasWrongType();
