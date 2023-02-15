@@ -53,7 +53,7 @@ private Q_SLOTS:
     void transaction_Savepoints_Commit_AllFailed() const;
     void transaction_Savepoints_Commit_AllFailed_Double() const;
 
-    void autoTests_timezone_And_qt_timezone() const;
+    void timezone_And_qt_timezone() const;
 
     void scalar() const;
     void scalar_EmptyResult() const;
@@ -801,7 +801,7 @@ void tst_DatabaseConnection::transaction_Savepoints_Commit_AllFailed_Double() co
     }
 }
 
-void tst_DatabaseConnection::autoTests_timezone_And_qt_timezone() const
+void tst_DatabaseConnection::timezone_And_qt_timezone() const
 {
     QFETCH_GLOBAL(QString, connection);
 
