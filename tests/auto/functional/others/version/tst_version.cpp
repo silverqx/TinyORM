@@ -5,7 +5,9 @@
 #  include <qt_windows.h>
 #endif
 
-#include "fs.hpp"
+#ifdef _WIN32
+#  include "fs.hpp"
+#endif
 
 // TinyORM
 #include "orm/constants.hpp"
