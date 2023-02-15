@@ -44,26 +44,28 @@ namespace Orm::Utils
     template<JoinContainer T, DelimiterConcept D>
     QString Container::join(const T &container, D &&delimiter)
     {
-        QString columnized;
-
         // Nothing to join
         if (container.empty())
-            return columnized;
+            return {};
 
+        QString columnized;
         // +4 serves as a reserve (for the reserve() 😂)
         const auto delimiterSize_ = delimiterSize<typename T::size_type>(delimiter);
         columnized.reserve(static_cast<QString::size_type>(
                                countStringSizes(container, delimiterSize_ + 4)));
 
-        auto end = container.end();
+        auto end = container.cend();
         --end;
-        auto it = container.begin();
+        auto it = container.cbegin();
 
         for (; it != end; ++it)
-            columnized += Constants::NOSPACE.arg(*it).arg(std::forward<D>(delimiter));
+            // These append-s() are better for performance
+            columnized.append(*it)
+                      .append(std::forward<D>(delimiter));
 
-        if (it == end)
-            columnized += *it;
+        Q_ASSERT(it == end);
+
+        columnized.append(*it);
 
         return columnized;
     }

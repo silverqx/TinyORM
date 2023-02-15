@@ -156,20 +156,28 @@ namespace Query
     template<typename>
     QString BaseGrammar::quoteString(const QVector<QString> &values)
     {
+        // Nothing to quote
+        if (values.isEmpty())
+            return {};
+
         QString quoted;
         quoted.reserve(ContainerUtils::countStringSizes(values, 4) + 8);
 
-        if (values.isEmpty())
-            return quoted;
-
-        const auto end = values.cend() - 1;
-        auto it = values.begin();
+        auto end = values.constEnd();
+        --end;
+        auto it = values.constBegin();
 
         for (; it < end; ++it)
-            quoted += QStringLiteral("'%1', ").arg(*it);
+            quoted.append(SQUOTE)
+                  .append(*it)
+                  .append(QStringLiteral("', "));
 
-        if (it == end)
-            quoted += TMPL_SQUOTES.arg(*it);
+        Q_ASSERT(it == end);
+
+        // These append-s() are better for performance
+        quoted.append(SQUOTE)
+              .append(*it)
+              .append(SQUOTE);
 
         return quoted;
     }
