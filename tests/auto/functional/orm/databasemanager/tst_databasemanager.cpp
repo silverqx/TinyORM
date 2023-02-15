@@ -98,6 +98,7 @@ void tst_DatabaseManager::initTestCase()
 {
     // Default connection must be empty
     m_dm = DatabaseManager::create(EMPTY);
+
     QVERIFY(m_dm->getDefaultConnection().isEmpty());
 }
 
