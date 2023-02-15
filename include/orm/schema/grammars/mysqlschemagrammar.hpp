@@ -11,7 +11,6 @@ TINYORM_BEGIN_COMMON_NAMESPACE
 
 namespace Orm::SchemaNs
 {
-    class BasicCommand;
     class DropColumnsCommand;
     class RenameCommand;
 
@@ -65,13 +64,6 @@ namespace Grammars
         /*! Compile a create table command. */
         QVector<QString> compileCreate(const Blueprint &blueprint,
                                        const DatabaseConnection &connection) const;
-
-        /*! Compile a drop table command. */
-        QVector<QString> compileDrop(const Blueprint &blueprint,
-                                     const BasicCommand &command) const;
-        /*! Compile a drop table (if exists) command. */
-        QVector<QString> compileDropIfExists(const Blueprint &blueprint,
-                                             const BasicCommand &command) const;
 
         /*! Compile a rename table command. */
         QVector<QString> compileRename(const Blueprint &blueprint,

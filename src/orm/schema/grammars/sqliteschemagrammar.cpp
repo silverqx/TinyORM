@@ -95,21 +95,6 @@ QVector<QString> SQLiteSchemaGrammar::compileCreate(const Blueprint &blueprint) 
                      addPrimaryKeys(blueprint))};
 }
 
-QVector<QString> SQLiteSchemaGrammar::compileDrop(const Blueprint &blueprint,
-                                                  const BasicCommand &/*unused*/) const
-{
-    // DUP schema silverqx
-    return {QStringLiteral("drop table %1").arg(wrapTable(blueprint))};
-}
-
-QVector<QString>
-SQLiteSchemaGrammar::compileDropIfExists(const Blueprint &blueprint,
-                                         const BasicCommand &/*unused*/) const
-{
-    // DUP schema silverqx
-    return {QStringLiteral("drop table if exists %1").arg(wrapTable(blueprint))};
-}
-
 QVector<QString> SQLiteSchemaGrammar::compileRename(const Blueprint &blueprint,
                                                     const RenameCommand &command) const
 {
@@ -155,7 +140,6 @@ QVector<QString>
 SQLiteSchemaGrammar::compileRenameColumn(const Blueprint &blueprint,
                                          const RenameCommand &command) const
 {
-    // DUP schema silverqx
     return {QStringLiteral("alter table %1 rename column %2 to %3")
                 .arg(wrapTable(blueprint), BaseGrammar::wrap(command.from),
                      BaseGrammar::wrap(command.to))};

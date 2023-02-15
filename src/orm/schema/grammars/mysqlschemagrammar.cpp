@@ -108,19 +108,6 @@ MySqlSchemaGrammar::compileCreate(const Blueprint &blueprint,
     return sql;
 }
 
-QVector<QString> MySqlSchemaGrammar::compileDrop(const Blueprint &blueprint,
-                                                 const BasicCommand &/*unused*/) const
-{
-    return {QStringLiteral("drop table %1").arg(wrapTable(blueprint))};
-}
-
-QVector<QString>
-MySqlSchemaGrammar::compileDropIfExists(const Blueprint &blueprint,
-                                        const BasicCommand &/*unused*/) const
-{
-    return {QStringLiteral("drop table if exists %1").arg(wrapTable(blueprint))};
-}
-
 QVector<QString> MySqlSchemaGrammar::compileRename(const Blueprint &blueprint,
                                                    const RenameCommand &command) const
 {
@@ -903,7 +890,6 @@ QString MySqlSchemaGrammar::modifyInvisible(const ColumnDefinition &column) cons
 
 QString MySqlSchemaGrammar::modifyDefault(const ColumnDefinition &column) const
 {
-    // DUP schema silverqx
     const auto &defaultValue = column.defaultValue;
 
     if (!defaultValue.isValid() || defaultValue.isNull())

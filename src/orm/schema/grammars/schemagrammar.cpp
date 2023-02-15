@@ -58,6 +58,20 @@ QString SchemaGrammar::compileTableExists() const
 /* Compile methods for commands */
 
 QVector<QString>
+SchemaGrammar::compileDrop(const Blueprint &blueprint,
+                           const BasicCommand &/*unused*/) const
+{
+    return {QStringLiteral("drop table %1").arg(wrapTable(blueprint))};
+}
+
+QVector<QString>
+SchemaGrammar::compileDropIfExists(const Blueprint &blueprint,
+                                   const BasicCommand &/*unused*/) const
+{
+    return {QStringLiteral("drop table if exists %1").arg(wrapTable(blueprint))};
+}
+
+QVector<QString>
 SchemaGrammar::compileFullText(const Blueprint &/*unused*/,
                                const IndexCommand &/*unused*/) const
 {

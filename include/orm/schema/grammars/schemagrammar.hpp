@@ -14,6 +14,7 @@ TINYORM_BEGIN_COMMON_NAMESPACE
 
 namespace Orm::SchemaNs
 {
+    class BasicCommand;
     class Blueprint;
     class ColumnDefinition;
     class CommandDefinition;
@@ -65,6 +66,13 @@ namespace Grammars
         virtual QString compileColumnListing(const QString &table = "") const = 0;
 
         /* Compile methods for commands */
+        /*! Compile a drop table command. */
+        QVector<QString> compileDrop(const Blueprint &blueprint,
+                                     const BasicCommand &command) const;
+        /*! Compile a drop table (if exists) command. */
+        QVector<QString> compileDropIfExists(const Blueprint &blueprint,
+                                             const BasicCommand &command) const;
+
         /*! Compile a fulltext index key command. */
         virtual QVector<QString>
         compileFullText(const Blueprint &blueprint,

@@ -25,7 +25,6 @@ QString PostgresSchemaGrammar::compileCreateDatabase(
 
 QString PostgresSchemaGrammar::compileDropDatabaseIfExists(const QString &name) const
 {
-    // DUP schema silverqx
     return QStringLiteral("drop database if exists %1").arg(wrapValue(name));
 }
 
@@ -114,22 +113,6 @@ PostgresSchemaGrammar::compileCreate(const Blueprint &blueprint) const
 }
 
 QVector<QString>
-PostgresSchemaGrammar::compileDrop(const Blueprint &blueprint,
-                                   const BasicCommand &/*unused*/) const
-{
-    // DUP schema silverqx
-    return {QStringLiteral("drop table %1").arg(wrapTable(blueprint))};
-}
-
-QVector<QString>
-PostgresSchemaGrammar::compileDropIfExists(const Blueprint &blueprint,
-                                           const BasicCommand &/*unused*/) const
-{
-    // DUP schema silverqx
-    return {QStringLiteral("drop table if exists %1").arg(wrapTable(blueprint))};
-}
-
-QVector<QString>
 PostgresSchemaGrammar::compileRename(const Blueprint &blueprint,
                                      const RenameCommand &command) const
 {
@@ -176,7 +159,6 @@ QVector<QString>
 PostgresSchemaGrammar::compileRenameColumn(const Blueprint &blueprint,
                                            const RenameCommand &command) const
 {
-    // DUP schema silverqx
     return {QStringLiteral("alter table %1 rename column %2 to %3")
                 .arg(wrapTable(blueprint), BaseGrammar::wrap(command.from),
                      BaseGrammar::wrap(command.to))};
@@ -386,7 +368,6 @@ PostgresSchemaGrammar::invokeCompileMethod(const CommandDefinition &command,
 
 QString PostgresSchemaGrammar::compileCreateTable(const Blueprint &blueprint) const
 {
-    // DUP schema silverqx
     return QStringLiteral("%1 table %2 (%3)")
             .arg(blueprint.isTemporary() ? QStringLiteral("create temporary")
                                          : Create,
@@ -891,7 +872,6 @@ QString PostgresSchemaGrammar::modifyNullable(const ColumnDefinition &column) co
 
 QString PostgresSchemaGrammar::modifyDefault(const ColumnDefinition &column) const
 {
-    // DUP schema silverqx
     const auto &defaultValue = column.defaultValue;
 
     if (!defaultValue.isValid() || defaultValue.isNull())
