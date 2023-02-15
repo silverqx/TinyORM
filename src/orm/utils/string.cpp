@@ -5,6 +5,10 @@
 #include <cmath>
 #include <ranges>
 
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
+#  include <range/v3/view/reverse.hpp>
+#endif
+
 #include "orm/constants.hpp"
 
 TINYORM_BEGIN_COMMON_NAMESPACE
@@ -95,7 +99,7 @@ QString String::rtrim(const QString &string, const QString &characters)
 #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
     QString::size_type position = 0;
 
-    for (const auto &itString : std::ranges::reverse_view(string))
+    for (const auto &itString : string | ranges::views::reverse)
         if (characters.contains(itString))
             ++position;
         else
