@@ -32,7 +32,7 @@
 
 using Orm::Constants::DOT;
 
-#if defined(_WIN32)
+#ifdef _WIN32
 using TestUtils::Fs;
 #endif
 
@@ -188,7 +188,7 @@ void tst_Version::versions_TomExample() const
 
 void tst_Version::checkFileVersion_TinyOrm() const
 {
-#if !defined(_WIN32)
+#ifndef _WIN32
     QSKIP("checkFileVersion_*() related tests are supported on MSVC only.", );
 #elif !defined(TINYTEST_VERSION_IS_SHARED_BUILD)
     QSKIP("checkFileVersion_*() related tests are enabled for shared builds only.", );
@@ -210,7 +210,7 @@ void tst_Version::checkFileVersion_TinyOrm() const
 
 void tst_Version::checkFileVersion_TinyUtils() const
 {
-#if !defined(_WIN32)
+#ifndef _WIN32
     QSKIP("checkFileVersion_*() related tests are supported on MSVC only.", );
 #elif !defined(TINYTEST_VERSION_IS_SHARED_BUILD)
     QSKIP("checkFileVersion_*() related tests are enabled for shared builds only.", );
@@ -233,7 +233,7 @@ void tst_Version::checkFileVersion_TinyUtils() const
 #ifdef TINYTOM_EXAMPLE
 void tst_Version::checkFileVersion_TomExample() const
 {
-#if !defined(_WIN32)
+#ifndef _WIN32
     QSKIP("checkFileVersion_*() related tests are supported on MSVC only.", );
 #elif !defined(TINYTEST_VERSION_IS_SHARED_BUILD)
     QSKIP("checkFileVersion_*() related tests are enabled for shared builds only.", );
