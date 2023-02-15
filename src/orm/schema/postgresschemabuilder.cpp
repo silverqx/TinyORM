@@ -222,17 +222,11 @@ QSet<QString> PostgresSchemaBuilder::excludedTables() const
 {
     /* ConnectionFactory provides the default 'spatial_ref_sys' value for the 'dont_drop'
        configuration option for the QPSQL driver. */
-    auto excludedTablesList = grammar().escapeNames(
-                                  parseSearchPath(
-                                      m_connection.getConfig(dont_drop)));
+    const auto excludedTablesList = grammar().escapeNames(
+                                        parseSearchPath(
+                                            m_connection.getConfig(dont_drop)));
 
-    // Move to the set
-    QSet<QString> excludedTables;
-    excludedTables.reserve(excludedTablesList.size());
-    std::ranges::move(excludedTablesList,
-                      std::inserter(excludedTables, excludedTables.end()));
-
-    return excludedTables;
+    return {excludedTablesList.constBegin(), excludedTablesList.constEnd()};
 }
 
 const QSet<QString> &PostgresSchemaBuilder::excludedViews() const
