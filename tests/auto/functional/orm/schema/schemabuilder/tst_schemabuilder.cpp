@@ -259,7 +259,8 @@ void tst_SchemaBuilder::getColumnListing() const
 
     // Move to the unordered_set as returned column names are not ordered
     std::unordered_set<QString> columns;
-    columns.reserve(columnsList.size());
+    columns.reserve(static_cast<std::unordered_set<QString>::size_type>(
+                        columnsList.size()));
     std::ranges::move(columnsList, std::inserter(columns, columns.end()));
 
     QCOMPARE(columns,
