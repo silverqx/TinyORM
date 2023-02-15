@@ -90,7 +90,7 @@ namespace Orm::Utils
     template<typename SizeType, DelimiterConcept D>
     SizeType Container::delimiterSize(D &&delimiter)
     {
-        if constexpr (std::is_constructible_v<D, QChar>)
+        if constexpr (std::is_constructible_v<QChar, D>)
             return 1;
         else
             return static_cast<SizeType>(QString(delimiter).size());
