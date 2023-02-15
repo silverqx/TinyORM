@@ -1,7 +1,7 @@
 #include <QCoreApplication>
 #include <QtTest>
 
-#if defined(_WIN32) && defined(TINYTEST_VERSION_IS_SHARED_BUILD)
+#if defined(_WIN32) && defined(TINYTEST_VERSIONS_IS_SHARED_BUILD)
 #  include <qt_windows.h>
 #endif
 
@@ -20,16 +20,16 @@
 #endif
 
 // Used by checkFileVersion_*() tests
-#if defined(_WIN32) && defined(TINYTEST_VERSION_IS_SHARED_BUILD)
-#  ifdef TINYTEST_VERSION_IS_CMAKE
-#    include TINYTEST_VERSION_VERSIONDEBUG
-#  elif defined(TINYTEST_VERSION_IS_QMAKE)
+#if defined(_WIN32) && defined(TINYTEST_VERSIONS_IS_SHARED_BUILD)
+#  ifdef TINYTEST_VERSIONS_IS_CMAKE
+#    include TINYTEST_VERSIONS_VERSIONDEBUG
+#  elif defined(TINYTEST_VERSIONS_IS_QMAKE)
 #    include "versiondebug_qmake.hpp"
 #  endif
 #else
-#  define TINYTEST_VERSION_TINYORM_PATH
-#  define TINYTEST_VERSION_TINYUTILS_PATH
-#  define TINYTEST_VERSION_TOMEXAMPLE_PATH
+#  define TINYTEST_VERSIONS_TINYORM_PATH
+#  define TINYTEST_VERSIONS_TINYUTILS_PATH
+#  define TINYTEST_VERSIONS_TOMEXAMPLE_PATH
 #endif
 
 using Orm::Constants::DOT;
@@ -38,7 +38,7 @@ using Orm::Constants::DOT;
 using TestUtils::Fs;
 #endif
 
-class tst_Version : public QObject // clazy:exclude=ctor-missing-parent-argument
+class tst_Versions : public QObject // clazy:exclude=ctor-missing-parent-argument
 {
     Q_OBJECT
 
@@ -55,7 +55,7 @@ private Q_SLOTS:
     void checkFileVersion_TomExample() const;
 #endif
 
-#if defined(_WIN32) && defined(TINYTEST_VERSION_IS_SHARED_BUILD)
+#if defined(_WIN32) && defined(TINYTEST_VERSIONS_IS_SHARED_BUILD)
 // NOLINTNEXTLINE(readability-redundant-access-specifiers)
 private:
     /*! Return value for the getExeVersionString(). */
@@ -76,13 +76,13 @@ private:
 
 /* private slots */
 
-#if defined(_WIN32) && defined(TINYTEST_VERSION_IS_SHARED_BUILD)
+#if defined(_WIN32) && defined(TINYTEST_VERSIONS_IS_SHARED_BUILD)
 /*! Executables copyright, all executables have the same LegalCopyright. */
 Q_GLOBAL_STATIC_WITH_ARGS(QString, CopyRight, ("Copyright (©) 2022 Crystal Studio"))
 #endif
 
 // NOLINTBEGIN(readability-convert-member-functions-to-static)
-void tst_Version::versions_TinyOrm() const
+void tst_Versions::versions_TinyOrm() const
 {
     // Test types
     QCOMPARE(typeid (TINYORM_VERSION_MAJOR), typeid (int));
@@ -117,7 +117,7 @@ void tst_Version::versions_TinyOrm() const
     QCOMPARE(TINYORM_VERSION, version);
 }
 
-void tst_Version::versions_TinyUtils() const
+void tst_Versions::versions_TinyUtils() const
 {
     // Test types
     QCOMPARE(typeid (TINYUTILS_VERSION_MAJOR), typeid (int));
@@ -152,7 +152,7 @@ void tst_Version::versions_TinyUtils() const
 }
 
 #ifdef TINYTOM_EXAMPLE
-void tst_Version::versions_TomExample() const
+void tst_Versions::versions_TomExample() const
 {
     // Test types
     QCOMPARE(typeid (TINYTOM_VERSION_MAJOR), typeid (int));
@@ -188,15 +188,15 @@ void tst_Version::versions_TomExample() const
 }
 #endif
 
-void tst_Version::checkFileVersion_TinyOrm() const
+void tst_Versions::checkFileVersion_TinyOrm() const
 {
 #ifndef _WIN32
     QSKIP("checkFileVersion_*() related tests are supported on MSVC only.", );
-#elif !defined(TINYTEST_VERSION_IS_SHARED_BUILD)
+#elif !defined(TINYTEST_VERSIONS_IS_SHARED_BUILD)
     QSKIP("checkFileVersion_*() related tests are enabled for shared builds only.", );
 #else
     const auto fileVersions =
-            getExeVersionString(Fs::absolutePath(TINYTEST_VERSION_TINYORM_PATH));
+            getExeVersionString(Fs::absolutePath(TINYTEST_VERSIONS_TINYORM_PATH));
 
     // Project and File Version strings
     const QString versionStr = QString::number(TINYORM_VERSION_MAJOR) + DOT +
@@ -210,15 +210,15 @@ void tst_Version::checkFileVersion_TinyOrm() const
 #endif
 }
 
-void tst_Version::checkFileVersion_TinyUtils() const
+void tst_Versions::checkFileVersion_TinyUtils() const
 {
 #ifndef _WIN32
     QSKIP("checkFileVersion_*() related tests are supported on MSVC only.", );
-#elif !defined(TINYTEST_VERSION_IS_SHARED_BUILD)
+#elif !defined(TINYTEST_VERSIONS_IS_SHARED_BUILD)
     QSKIP("checkFileVersion_*() related tests are enabled for shared builds only.", );
 #else
     const auto fileVersions =
-            getExeVersionString(Fs::absolutePath(TINYTEST_VERSION_TINYUTILS_PATH));
+            getExeVersionString(Fs::absolutePath(TINYTEST_VERSIONS_TINYUTILS_PATH));
 
     // Project and File Version strings
     const QString versionStr = QString::number(TINYUTILS_VERSION_MAJOR) + DOT +
@@ -233,15 +233,15 @@ void tst_Version::checkFileVersion_TinyUtils() const
 }
 
 #ifdef TINYTOM_EXAMPLE
-void tst_Version::checkFileVersion_TomExample() const
+void tst_Versions::checkFileVersion_TomExample() const
 {
 #ifndef _WIN32
     QSKIP("checkFileVersion_*() related tests are supported on MSVC only.", );
-#elif !defined(TINYTEST_VERSION_IS_SHARED_BUILD)
+#elif !defined(TINYTEST_VERSIONS_IS_SHARED_BUILD)
     QSKIP("checkFileVersion_*() related tests are enabled for shared builds only.", );
 #else
     const auto fileVersions =
-            getExeVersionString(Fs::absolutePath(TINYTEST_VERSION_TOMEXAMPLE_PATH));
+            getExeVersionString(Fs::absolutePath(TINYTEST_VERSIONS_TOMEXAMPLE_PATH));
 
     // Project and File Version strings
     const QString versionStr = QString::number(TINYTOM_VERSION_MAJOR) + DOT +
@@ -259,9 +259,9 @@ void tst_Version::checkFileVersion_TomExample() const
 
 /* private */
 
-#if defined(_WIN32) && defined(TINYTEST_VERSION_IS_SHARED_BUILD)
-tst_Version::FileVersions
-tst_Version::getExeVersionString(const QString &fileName)
+#if defined(_WIN32) && defined(TINYTEST_VERSIONS_IS_SHARED_BUILD)
+tst_Versions::FileVersions
+tst_Versions::getExeVersionString(const QString &fileName)
 {
     // first of all, GetFileVersionInfoSize
     DWORD dwHandle = 1;
@@ -325,6 +325,6 @@ tst_Version::getExeVersionString(const QString &fileName)
 }
 #endif
 
-QTEST_MAIN(tst_Version)
+QTEST_MAIN(tst_Versions)
 
-#include "tst_version.moc"
+#include "tst_versions.moc"
