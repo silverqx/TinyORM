@@ -117,8 +117,6 @@ private:
 
     /*! Connection name used in this test case. */
     QString m_connection {};
-    /*! The Database Manager instance in the TinyUtils. */
-    std::shared_ptr<Orm::DatabaseManager> m_dm = nullptr;
 };
 
 /* private slots */
@@ -132,8 +130,6 @@ void tst_PostgreSQL_SchemaBuilder::initTestCase()
         QSKIP(TestUtils::AutoTestSkipped
               .arg(TypeUtils::classPureBasename(*this), Databases::POSTGRESQL)
               .toUtf8().constData(), );
-
-    m_dm = Databases::manager();
 }
 
 void tst_PostgreSQL_SchemaBuilder::createDatabase() const
@@ -171,7 +167,7 @@ void tst_PostgreSQL_SchemaBuilder::createDatabase_Charset_Collation() const
               .arg(TypeUtils::classPureBasename(*this), Databases::POSTGRESQL)
               .toUtf8().constData(), );
 
-    auto log = m_dm->connection(*connectionName).pretend([](auto &connection)
+    auto log = DB::connection(*connectionName).pretend([](auto &connection)
     {
         Schema::on(connection.getName()).createDatabase(Firewalls);
     });
@@ -185,7 +181,7 @@ void tst_PostgreSQL_SchemaBuilder::createDatabase_Charset_Collation() const
     QVERIFY(firstLog.boundValues.isEmpty());
 
     // Restore
-    m_dm->removeConnection(*connectionName);
+    Databases::removeConnection(*connectionName);
 }
 
 void tst_PostgreSQL_SchemaBuilder::dropDatabaseIfExists() const
@@ -699,7 +695,7 @@ void tst_PostgreSQL_SchemaBuilder::hasTable() const
 void tst_PostgreSQL_SchemaBuilder::hasTable_DatabaseDiffers_ThrowException() const
 {
     // Verify
-    m_dm->connection(m_connection).pretend([](auto &connection)
+    DB::connection(m_connection).pretend([](auto &connection)
     {
         QVERIFY_EXCEPTION_THROWN(
                     Schema::on(connection.getName())
@@ -711,7 +707,7 @@ void tst_PostgreSQL_SchemaBuilder::hasTable_DatabaseDiffers_ThrowException() con
 void tst_PostgreSQL_SchemaBuilder::hasTable_SchemaDiffers() const
 {
     // Prepare test variables
-    auto &connection = m_dm->connection(m_connection);
+    auto &connection = DB::connection(m_connection);
     const auto &databaseName = connection.getDatabaseName();
     const auto schemaName = QStringLiteral("schema_example");
     const auto tableName = QStringLiteral("users");
@@ -757,7 +753,7 @@ void tst_PostgreSQL_SchemaBuilder::
               .toUtf8().constData(), );
 
     // Prepare test variables
-    auto &connection = m_dm->connection(*connectionName);
+    auto &connection = DB::connection(*connectionName);
     const auto tableName = QStringLiteral("users");
 
     // Verify
@@ -802,7 +798,7 @@ void tst_PostgreSQL_SchemaBuilder::
               .toUtf8().constData(), );
 
     // Prepare test variables
-    auto &connection = m_dm->connection(*connectionName);
+    auto &connection = DB::connection(*connectionName);
     const auto tableName = QStringLiteral("users");
 
     // Verify
@@ -849,7 +845,7 @@ void tst_PostgreSQL_SchemaBuilder::
               .toUtf8().constData(), );
 
     // Create database connection
-    QVERIFY_EXCEPTION_THROWN(m_dm->connection(*connectionName),
+    QVERIFY_EXCEPTION_THROWN(DB::connection(*connectionName),
                              InvalidArgumentError);
 
     // Restore
@@ -871,7 +867,7 @@ void tst_PostgreSQL_SchemaBuilder::
               .toUtf8().constData(), );
 
     // Prepare test variables
-    auto &connection = m_dm->connection(*connectionName);
+    auto &connection = DB::connection(*connectionName);
     const auto tableName = QStringLiteral("users");
 
     // Verify
@@ -915,7 +911,7 @@ void tst_PostgreSQL_SchemaBuilder::hasTable_NoSearchPath_InConfiguration() const
               .toUtf8().constData(), );
 
     // Prepare test variables
-    auto &connection = m_dm->connection(*connectionName);
+    auto &connection = DB::connection(*connectionName);
     const auto tableName = QStringLiteral("users");
 
     // Verify

@@ -4,6 +4,7 @@
 #include <filesystem>
 #include <unordered_set>
 
+#include "orm/db.hpp"
 #include "orm/schema.hpp"
 #include "orm/utils/query.hpp"
 #include "orm/utils/type.hpp"
@@ -24,6 +25,7 @@ using Orm::Constants::database_;
 using Orm::Constants::spatial_ref_sys;
 using Orm::Constants::username_;
 
+using Orm::DB;
 using Orm::Schema;
 using Orm::SchemaNs::Blueprint;
 
@@ -37,7 +39,7 @@ class tst_SchemaBuilder : public QObject // clazy:exclude=ctor-missing-parent-ar
     Q_OBJECT
 
 private Q_SLOTS:
-    void initTestCase();
+    void initTestCase() const;
 
     void createDatabase_dropAllTables_dropDatabaseIfExists() const;
     void getAllTables() const;
@@ -77,15 +79,12 @@ private:
     static std::optional<QString> alternativeConnection_Postgres();
     /*! Create a new alternative connection on the DatabaseExample database (SQLite). */
     static std::optional<QString> alternativeConnection_Sqlite();
-
-    /*! The Database Manager instance in the TinyUtils. */
-    std::shared_ptr<Orm::DatabaseManager> m_dm = nullptr;
 };
 
 /* private slots */
 
 // NOLINTBEGIN(readability-convert-member-functions-to-static)
-void tst_SchemaBuilder::initTestCase()
+void tst_SchemaBuilder::initTestCase() const
 {
     const auto connections = Databases::createConnections();
 
@@ -98,8 +97,6 @@ void tst_SchemaBuilder::initTestCase()
     // Run all tests for all supported database connections
     for (const auto &connection : connections)
         QTest::newRow(connection.toUtf8().constData()) << connection;
-
-    m_dm = Databases::manager();
 }
 
 void tst_SchemaBuilder::createDatabase_dropAllTables_dropDatabaseIfExists() const
@@ -109,7 +106,7 @@ void tst_SchemaBuilder::createDatabase_dropAllTables_dropDatabaseIfExists() cons
     // createDatabase()
     {
         auto database = DatabaseExample;
-        if (m_dm->driverName(connection) == QSQLITE)
+        if (DB::driverName(connection) == QSQLITE)
             database.append(QStringLiteral(".sqlite3"));
 
         QVERIFY(!hasDatabase(database, connection));
@@ -163,7 +160,7 @@ void tst_SchemaBuilder::createDatabase_dropAllTables_dropDatabaseIfExists() cons
     // dropDatabaseIfExists()
     {
         auto database = DatabaseExample;
-        if (m_dm->driverName(connection) == QSQLITE)
+        if (DB::driverName(connection) == QSQLITE)
             database.append(QStringLiteral(".sqlite3"));
 
         QVERIFY(hasDatabase(database, connection));
@@ -186,7 +183,7 @@ void tst_SchemaBuilder::getAllTables() const
         "torrent_tags", "types", "users", "user_phones"
     };
 
-    if (m_dm->driverName(connection) == QPSQL)
+    if (DB::driverName(connection) == QPSQL)
         tablesExpected << spatial_ref_sys;
 
     QCOMPARE(tablesActual, tablesExpected);
@@ -196,7 +193,7 @@ void tst_SchemaBuilder::getAllViews_dropAllViews() const
 {
     QFETCH_GLOBAL(QString, connection);
 
-    const auto isPostgres = m_dm->driverName(connection) == QPSQL;
+    const auto isPostgres = DB::driverName(connection) == QPSQL;
 
     // The PostgreSQL database also contains the postgis views
     const QSet<QString> viewsPostgis {QStringLiteral("geography_columns"),
@@ -222,7 +219,7 @@ void tst_SchemaBuilder::getAllViews_dropAllViews() const
 
     // Create new views to drop
     for (const auto &view : views)
-        m_dm->on(connection)
+        DB::on(connection)
                 .unprepared(QStringLiteral(
                                 "create view %1 as select id, name from users")
                             .arg(view));
@@ -308,7 +305,7 @@ QSet<QString> tst_SchemaBuilder::getAllViewsFor(const QString &connection)
 bool tst_SchemaBuilder::hasDatabase(const QString &database,
                                     const QString &connection) const
 {
-    const auto driver = m_dm->driverName(connection);
+    const auto driver = DB::driverName(connection);
 
     if (driver == QMYSQL)
         return hasDatabase_MySql(database, connection);
@@ -325,9 +322,9 @@ bool tst_SchemaBuilder::hasDatabase(const QString &database,
 bool tst_SchemaBuilder::hasDatabase_MySql(const QString &database,
                                           const QString &connection) const
 {
-    auto query = m_dm->on(connection)
+    auto query = DB::on(connection)
                  .select(QStringLiteral("show databases"),
-                         {m_dm->getConfigValue(username_, connection)});
+                         {DB::getConfigValue(username_, connection)});
 
     while (query.next())
         if (query.value(QStringLiteral("Database")).value<QString>() == database)
@@ -339,14 +336,14 @@ bool tst_SchemaBuilder::hasDatabase_MySql(const QString &database,
 bool tst_SchemaBuilder::hasDatabase_Postgres(const QString &database,
                                              const QString &connection) const
 {
-    auto query = m_dm->on(connection)
+    auto query = DB::on(connection)
                  .select(
                      QStringLiteral(
                          "select datname from pg_database "
                          "join pg_user on pg_database.datdba = pg_user.usesysid "
                          "where datdba = "
                            "(select usesysid from pg_user where usename = ?)"),
-                     {m_dm->getConfigValue(username_, connection)});
+                     {DB::getConfigValue(username_, connection)});
 
     while (query.next())
         if (query.value(QStringLiteral("datname")).value<QString>() == database)
@@ -363,7 +360,7 @@ bool tst_SchemaBuilder::hasDatabase_Sqlite(const fspath &database)
 std::optional<QString>
 tst_SchemaBuilder::alternativeConnection(const QString &connection) const
 {
-    const auto driver = m_dm->driverName(connection);
+    const auto driver = DB::driverName(connection);
 
     if (driver == QMYSQL)
         return alternativeConnection_MySql();

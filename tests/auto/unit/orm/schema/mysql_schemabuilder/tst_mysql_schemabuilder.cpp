@@ -2,7 +2,6 @@
 #include <QtTest>
 
 #include "orm/db.hpp"
-#include "orm/exceptions/logicerror.hpp"
 #include "orm/schema.hpp"
 #include "orm/utils/type.hpp"
 
@@ -111,8 +110,6 @@ private:
 
     /*! Connection name used in this test case. */
     QString m_connection {};
-    /*! The Database Manager instance in the TinyUtils. */
-    std::shared_ptr<Orm::DatabaseManager> m_dm = nullptr;
 
     /*! The charset set for the current MySQL connection (based on env. variable). */
     QString m_charset {};
@@ -131,8 +128,6 @@ void tst_MySql_SchemaBuilder::initTestCase()
         QSKIP(TestUtils::AutoTestSkipped
               .arg(TypeUtils::classPureBasename(*this), Databases::MYSQL)
               .toUtf8().constData(), );
-
-    m_dm = Databases::manager();
 
     // The charset and collation in all queries is set on the base of env. variables
     const auto &connection = DB::connection(m_connection);
@@ -176,7 +171,7 @@ void tst_MySql_SchemaBuilder::createDatabase_Charset_Collation() const
               .arg(TypeUtils::classPureBasename(*this), Databases::MYSQL)
               .toUtf8().constData(), );
 
-    auto log = m_dm->connection(*connectionName).pretend([](auto &connection)
+    auto log = DB::connection(*connectionName).pretend([](auto &connection)
     {
         Schema::on(connection.getName()).createDatabase(Firewalls);
     });

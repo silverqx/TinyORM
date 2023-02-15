@@ -1,6 +1,7 @@
 #include <QCoreApplication>
 #include <QtTest>
 
+#include "orm/db.hpp"
 #include "orm/exceptions/searchpathemptyerror.hpp"
 #include "orm/postgresconnection.hpp"
 #include "orm/schema.hpp"
@@ -11,6 +12,7 @@
 using Orm::Constants::PUBLIC;
 using Orm::Constants::search_path;
 
+using Orm::DB;
 using Orm::Exceptions::SearchPathEmptyError;
 using Orm::PostgresConnection;
 using Orm::Schema;
@@ -37,8 +39,6 @@ private:
 
     /*! Connection name used in this test case. */
     QString m_connection {};
-    /*! The Database Manager instance in the TinyUtils. */
-    std::shared_ptr<Orm::DatabaseManager> m_dm = nullptr;
 };
 
 /* private slots */
@@ -52,8 +52,6 @@ void tst_PostgreSQL_SchemaBuilder_f::initTestCase()
         QSKIP(TestUtils::AutoTestSkipped
               .arg(TypeUtils::classPureBasename(*this), Databases::POSTGRESQL)
               .toUtf8().constData(), );
-
-    m_dm = Databases::manager();
 }
 
 void tst_PostgreSQL_SchemaBuilder_f::hasTable_NoSearchPath_InConfiguration() const
@@ -81,7 +79,7 @@ void tst_PostgreSQL_SchemaBuilder_f::hasTable_NoSearchPath_InConfiguration() con
        secures that this test passes whatever search_path will be set to.
        This also makes auto-tests dependent on the 'public' schema. */
     const auto searchPath = dynamic_cast<PostgresConnection &>(
-                                m_dm->connection(*connectionName))
+                                DB::connection(*connectionName))
                             .searchPath();
 
     if (PostgresConnection::isSearchPathEmpty(searchPath) ||
