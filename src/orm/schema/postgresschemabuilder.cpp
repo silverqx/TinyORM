@@ -1,5 +1,7 @@
 #include "orm/schema/postgresschemabuilder.hpp"
 
+#include <QSet>
+
 #include "orm/exceptions/searchpathemptyerror.hpp"
 #include "orm/postgresconnection.hpp"
 #include "orm/schema/grammars/postgresschemagrammar.hpp"
