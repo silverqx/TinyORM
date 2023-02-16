@@ -148,7 +148,16 @@ namespace
 // NOLINTBEGIN(readability-convert-member-functions-to-static)
 void tst_Migrate::initTestCase()
 {
-    m_connections = Databases::createConnections();
+    /* Testing of the Qt 5 QSQLITE driver is excluded because it doesn't support
+       ALTER TABLE DROP COLUMN, support for dropping columns was added
+       in the SQLite v3.35.0. */
+    m_connections = Databases::createConnections(
+                        {Databases::MYSQL,
+                         Databases::POSTGRESQL,
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+                         Databases::SQLITE
+#endif
+                        });
 
     if (m_connections.isEmpty())
         QSKIP(TestUtils::AutoTestSkippedAny.arg(TypeUtils::classPureBasename(*this))
