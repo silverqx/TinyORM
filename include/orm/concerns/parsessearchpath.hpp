@@ -10,6 +10,8 @@ TINY_SYSTEM_HEADER
 #include "orm/macros/commonnamespace.hpp"
 #include "orm/macros/export.hpp"
 
+class QVariant;
+
 TINYORM_BEGIN_COMMON_NAMESPACE
 
 namespace Orm::Concerns
