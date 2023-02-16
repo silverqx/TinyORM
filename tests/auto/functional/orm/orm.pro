@@ -2,6 +2,7 @@ TEMPLATE = subdirs
 
 subdirsList = \
     databasemanager \
+    postgresql_connection \
     query \
     schema \
 
