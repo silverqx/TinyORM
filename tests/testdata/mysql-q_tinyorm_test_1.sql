@@ -19,10 +19,10 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Database: `q_tinyorm_test_1`
+-- Database: `tinyorm_test_1`
 --
-CREATE DATABASE IF NOT EXISTS `q_tinyorm_test_1` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci;
-USE `q_tinyorm_test_1`;
+CREATE DATABASE IF NOT EXISTS `tinyorm_test_1` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci;
+USE `tinyorm_test_1`;
 
 -- --------------------------------------------------------
 

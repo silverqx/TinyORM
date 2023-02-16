@@ -111,7 +111,7 @@ target_link_libraries(${TinyUtils_target}
 # ---
 
 # Create an empty SQLite database file when does not exist
-set(tiny_sqlite_db "${${TinyOrm_ns}_BINARY_DIR}/tests/q_tinyorm_test_1.sqlite3")
+set(tiny_sqlite_db "${${TinyOrm_ns}_BINARY_DIR}/tests/tinyorm_test_1.sqlite3")
 create_sqlite_db("${tiny_sqlite_db}")
 
 target_compile_definitions(${TinyUtils_target}
