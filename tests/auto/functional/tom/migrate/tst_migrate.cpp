@@ -157,7 +157,7 @@ void tst_Migrate::initTestCase()
     QTest::addColumn<QString>("connection");
 
     // Run all tests for all supported database connections
-    for (const auto &connection : m_connections)
+    for (const auto &connection : std::as_const(m_connections))
         QTest::newRow(connection.toUtf8().constData()) << connection;
 
     /* Modify the migrate:status command to not output a status table to the console but
