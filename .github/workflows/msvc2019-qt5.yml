@@ -204,12 +204,11 @@ jobs:
       run: >-
         "create user '$env:DB_MYSQL_USERNAME'@'%'
         identified by '$env:DB_MYSQL_PASSWORD';
-        grant all privileges on ``$env:DB_MYSQL_DATABASE``.* to '$env:DB_MYSQL_USERNAME'@'%';
+        grant all privileges on ``tinyorm\_%``.* to '$env:DB_MYSQL_USERNAME'@'%';
         grant select on ``mysql``.``time_zone_name`` to '$env:DB_MYSQL_USERNAME'@'%';
         flush privileges;" |
         mysql.exe --user=$env:DB_MYSQL_ROOT_USERNAME --password=$env:DB_MYSQL_ROOT_PASSWORD
       env:
-        DB_MYSQL_DATABASE: ${{ secrets.DB_MYSQL_DATABASE }}
         DB_MYSQL_PASSWORD: ${{ secrets.DB_MYSQL_PASSWORD }}
         DB_MYSQL_ROOT_PASSWORD: ${{ secrets.DB_MYSQL_ROOT_PASSWORD }}
         DB_MYSQL_ROOT_USERNAME: ${{ secrets.DB_MYSQL_ROOT_USERNAME }}
