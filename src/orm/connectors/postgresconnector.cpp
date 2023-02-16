@@ -107,7 +107,7 @@ void PostgresConnector::configureEncoding(const QSqlDatabase &connection,
 struct QStringLessCi
 {
     /*! Compare the given strings case insenstive (< operator). */
-    inline bool operator()(const QString &left, const QString &right) const noexcept
+    inline bool operator()(const QString &left, const QString &right) const noexcept // NOLINT(readability-suspicious-call-argument)
     {
         return QString::compare(left, right, Qt::CaseInsensitive) < 0;
     }
