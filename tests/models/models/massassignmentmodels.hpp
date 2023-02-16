@@ -12,6 +12,7 @@ using Orm::Constants::SIZE;
 
 using Orm::Tiny::Model;
 
+// NOLINTNEXTLINE(bugprone-exception-escape)
 class Torrent_TotallyGuarded final : public Model<Torrent_TotallyGuarded>
 {
     friend Model;
@@ -21,6 +22,7 @@ class Torrent_TotallyGuarded final : public Model<Torrent_TotallyGuarded>
     QString u_table {"torrents"};
 };
 
+// NOLINTNEXTLINE(bugprone-exception-escape)
 class Torrent_GuardedAttribute final : public Model<Torrent_GuardedAttribute>
 {
     friend Model;
@@ -46,6 +48,7 @@ class Torrent_GuardedAttribute final : public Model<Torrent_GuardedAttribute>
     };
 };
 
+// NOLINTNEXTLINE(bugprone-exception-escape)
 class Torrent_AllowedMassAssignment final :
         public Model<Torrent_AllowedMassAssignment>
 {
@@ -59,6 +62,7 @@ class Torrent_AllowedMassAssignment final :
     inline static QStringList u_guarded {}; // disabled
 };
 
+// NOLINTNEXTLINE(bugprone-exception-escape)
 class Torrent_GuardableColumn final :
         public Model<Torrent_GuardableColumn>
 {

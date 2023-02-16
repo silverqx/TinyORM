@@ -13,6 +13,7 @@ using Orm::Constants::SIZE;
 using Orm::Tiny::AttributeItem;
 using Orm::Tiny::Model;
 
+// NOLINTNEXTLINE(bugprone-exception-escape)
 class TorrentEager_Without_QDateTime final :
         public Model<TorrentEager_Without_QDateTime>
 {

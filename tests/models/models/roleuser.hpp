@@ -11,6 +11,7 @@ using Orm::Tiny::CastItem;
 using Orm::Tiny::CastType;
 using Orm::Tiny::Relations::BasePivot;
 
+// NOLINTNEXTLINE(misc-no-recursion, bugprone-exception-escape)
 class RoleUser final : public BasePivot<RoleUser>
 {
     friend Model;

@@ -11,6 +11,7 @@ using Orm::Tiny::CastItem;
 using Orm::Tiny::CastType;
 using Orm::Tiny::Relations::BasePivot;
 
+// NOLINTNEXTLINE(bugprone-exception-escape)
 class Tagged final : public BasePivot<Tagged>
 {
     friend Model;

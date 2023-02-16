@@ -9,6 +9,7 @@ namespace Models
 
 using Orm::Tiny::Model;
 
+// NOLINTNEXTLINE(bugprone-exception-escape)
 class Datetime final : public Model<Datetime>
 {
     friend Model;

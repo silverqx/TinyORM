@@ -9,6 +9,7 @@ namespace Models
 
 using Orm::Tiny::Model;
 
+// NOLINTNEXTLINE(bugprone-exception-escape)
 class TagProperty final : public Model<TagProperty>
 {
     friend Model;
