@@ -5,8 +5,6 @@
 #include <cmath>
 #include <ranges>
 
-#include <range/v3/view/reverse.hpp>
-
 #include "orm/constants.hpp"
 
 TINYORM_BEGIN_COMMON_NAMESPACE
@@ -97,7 +95,7 @@ QString String::rtrim(const QString &string, const QString &characters)
 #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
     QString::size_type position = 0;
 
-    for (const auto &itString : string | ranges::views::reverse)
+    for (const auto &itString : std::ranges::reverse_view(string))
         if (characters.contains(itString))
             ++position;
         else
@@ -107,7 +105,7 @@ QString String::rtrim(const QString &string, const QString &characters)
 #else
     QString::size_type position = string.size();
 
-    for (const auto &itString : string | ranges::views::reverse)
+    for (const auto &itString : std::ranges::reverse_view(string))
         if (characters.contains(itString))
             --position;
         else
