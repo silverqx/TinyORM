@@ -1397,8 +1397,8 @@ Builder &Builder::mergeWheres(QVector<WhereConditionItem> &&wheres,
     m_wheres.reserve(wheres.size());
     std::ranges::move(wheres, std::back_inserter(m_wheres));
 
-    auto &bindingsRef = m_bindings[BindingType::WHERE];
-    bindingsRef.reserve(bindings.size()); // clazy:exclude=detaching-member
+    auto &bindingsRef = m_bindings[BindingType::WHERE]; // clazy:exclude=detaching-member
+    bindingsRef.reserve(bindings.size());
     std::ranges::move(bindings, std::back_inserter(bindingsRef));
 
     return *this;
