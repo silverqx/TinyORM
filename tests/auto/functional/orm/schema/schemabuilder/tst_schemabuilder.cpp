@@ -62,16 +62,16 @@ private:
     static QSet<QString> getAllViewsFor(const QString &connection);
 
     /*! Determine whether a given database exists (router method). */
-    bool hasDatabase(const QString &database, const QString &connection) const;
+    static bool hasDatabase(const QString &database, const QString &connection);
     /*! Determine whether a given database exists (MySQL). */
-    bool hasDatabase_MySql(const QString &database, const QString &connection) const;
+    static bool hasDatabase_MySql(const QString &database, const QString &connection);
     /*! Determine whether a given database exists (PostgreSQL). */
-    bool hasDatabase_Postgres(const QString &database, const QString &connection) const;
+    static bool hasDatabase_Postgres(const QString &database, const QString &connection);
     /*! Determine whether a given database exists (SQLite). */
     static bool hasDatabase_Sqlite(const fspath &database);
 
     /*! Create a new alternative connection on the DatabaseExample database. */
-    std::optional<QString> alternativeConnection(const QString &connection) const;
+    static std::optional<QString> alternativeConnection(const QString &connection);
     /*! Create a new alternative connection on the DatabaseExample database (MySQL). */
     static std::optional<QString> alternativeConnection_MySql();
     /*! Create a new alternative connection on the DatabaseExample database
@@ -118,7 +118,8 @@ void tst_SchemaBuilder::createDatabase_dropAllTables_dropDatabaseIfExists() cons
 
     /* Create an alternative connection for connecting to another database to test
        getAllTable() and dropAllTables(). */
-    const auto alternativeConnection = this->alternativeConnection(connection);
+    const auto alternativeConnection =
+            tst_SchemaBuilder::alternativeConnection(connection);
 
     // dropAllTables()
     {
@@ -303,8 +304,7 @@ QSet<QString> tst_SchemaBuilder::getAllViewsFor(const QString &connection)
     return views;
 }
 
-bool tst_SchemaBuilder::hasDatabase(const QString &database,
-                                    const QString &connection) const
+bool tst_SchemaBuilder::hasDatabase(const QString &database, const QString &connection)
 {
     const auto driver = DB::driverName(connection);
 
@@ -321,7 +321,7 @@ bool tst_SchemaBuilder::hasDatabase(const QString &database,
 }
 
 bool tst_SchemaBuilder::hasDatabase_MySql(const QString &database,
-                                          const QString &connection) const
+                                          const QString &connection)
 {
     auto query = DB::on(connection)
                  .select(QStringLiteral("show databases"),
@@ -335,7 +335,7 @@ bool tst_SchemaBuilder::hasDatabase_MySql(const QString &database,
 }
 
 bool tst_SchemaBuilder::hasDatabase_Postgres(const QString &database,
-                                             const QString &connection) const
+                                             const QString &connection)
 {
     auto query = DB::on(connection)
                  .select(
@@ -359,7 +359,7 @@ bool tst_SchemaBuilder::hasDatabase_Sqlite(const fspath &database)
 }
 
 std::optional<QString>
-tst_SchemaBuilder::alternativeConnection(const QString &connection) const
+tst_SchemaBuilder::alternativeConnection(const QString &connection)
 {
     const auto driver = DB::driverName(connection);
 
