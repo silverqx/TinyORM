@@ -46,7 +46,6 @@ using Orm::Constants::username_;
 using Orm::Constants::verify_full;
 
 using Orm::DatabaseManager;
-using Orm::Exceptions::RuntimeError;
 using Orm::Exceptions::SQLiteDatabaseDoesNotExistError;
 using Orm::QtTimeZoneConfig;
 using Orm::QtTimeZoneType;
