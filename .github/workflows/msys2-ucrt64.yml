@@ -75,8 +75,9 @@ jobs:
         pg_isready.exe
 
     - name: PostgreSQL create TinyORM user
-      run: |
-        "CREATE USER $env:DB_PGSQL_USERNAME PASSWORD '$env:DB_PGSQL_PASSWORD'" | psql.exe
+      run: >-
+        "create user `"$env:DB_PGSQL_USERNAME`"
+        with createdb password '$env:DB_PGSQL_PASSWORD';" | psql.exe
       env:
         DB_PGSQL_PASSWORD: ${{ secrets.DB_PGSQL_PASSWORD }}
         DB_PGSQL_USERNAME: ${{ secrets.DB_PGSQL_USERNAME }}
