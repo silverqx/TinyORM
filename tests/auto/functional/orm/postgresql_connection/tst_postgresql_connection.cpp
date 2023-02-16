@@ -89,7 +89,7 @@ void tst_PostgreSQL_Connection::searchpath_Empty_PostgreSQL() const
     // Add a new database connection
     const auto connectionName = Databases::createConnectionTempFrom(
                                     Databases::POSTGRESQL,
-                                    {ClassName, QString::fromUtf8(__func__)},
+                                    {ClassName, QString::fromUtf8(__func__)}, // NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
     {
         {search_path, EMPTY},
     });
@@ -118,7 +118,7 @@ void tst_PostgreSQL_Connection::searchpath_Empty_SingleQuotes_PostgreSQL() const
     // Add a new database connection
     const auto connectionName = Databases::createConnectionTempFrom(
                                     Databases::POSTGRESQL,
-                                    {ClassName, QString::fromUtf8(__func__)},
+                                    {ClassName, QString::fromUtf8(__func__)}, // NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
     {
         {search_path, QStringLiteral("''")},
     });
@@ -147,7 +147,7 @@ void tst_PostgreSQL_Connection::searchpath_Empty_DoubleQuotes_PostgreSQL() const
     // Add a new database connection
     const auto connectionName = Databases::createConnectionTempFrom(
                                     Databases::POSTGRESQL,
-                                    {ClassName, QString::fromUtf8(__func__)},
+                                    {ClassName, QString::fromUtf8(__func__)}, // NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
     {
         {search_path, QStringLiteral("\"\"")},
     });
@@ -176,7 +176,7 @@ void tst_PostgreSQL_Connection::searchpath_Undefined_PostgreSQL() const
     // Add a new database connection
     const auto connectionName = Databases::createConnectionTempFrom(
                                     Databases::POSTGRESQL,
-                                    {ClassName, QString::fromUtf8(__func__)},
+                                    {ClassName, QString::fromUtf8(__func__)}, // NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
                                     {}, {search_path});
 
     if (!connectionName)
@@ -207,7 +207,7 @@ void tst_PostgreSQL_Connection::
     // Add a new database connection
     const auto connectionName = Databases::createConnectionTempFrom(
                                     Databases::POSTGRESQL,
-                                    {ClassName, QString::fromUtf8(__func__)},
+                                    {ClassName, QString::fromUtf8(__func__)}, // NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
     {
         {search_path, QStringLiteral("\"$user\", public")},
     });
@@ -241,7 +241,7 @@ void tst_PostgreSQL_Connection::
     // Add a new database connection
     const auto connectionName = Databases::createConnectionTempFrom(
                                     Databases::POSTGRESQL,
-                                    {ClassName, QString::fromUtf8(__func__)},
+                                    {ClassName, QString::fromUtf8(__func__)}, // NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
     {
         {search_path, QStringList {"\"$user\"", PUBLIC}},
     });
@@ -278,7 +278,7 @@ void tst_PostgreSQL_Connection::
     // Add a new database connection
     const auto connectionName = Databases::createConnectionTempFrom(
                                     Databases::POSTGRESQL,
-                                    {ClassName, QString::fromUtf8(__func__)},
+                                    {ClassName, QString::fromUtf8(__func__)}, // NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
     {
         {search_path, QStringLiteral("$user, public")},
     });
@@ -315,7 +315,7 @@ void tst_PostgreSQL_Connection::
     // Add a new database connection
     const auto connectionName = Databases::createConnectionTempFrom(
                                     Databases::POSTGRESQL,
-                                    {ClassName, QString::fromUtf8(__func__)},
+                                    {ClassName, QString::fromUtf8(__func__)}, // NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
     {
         {search_path, QStringList {"$user", PUBLIC}},
     });
@@ -350,7 +350,7 @@ void tst_PostgreSQL_Connection::searchpath_Pretend_Empty_PostgreSQL() const
     // Add a new database connection
     const auto connectionName = Databases::createConnectionTempFrom(
                                     Databases::POSTGRESQL,
-                                    {ClassName, QString::fromUtf8(__func__)},
+                                    {ClassName, QString::fromUtf8(__func__)}, // NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
     {
         {search_path, EMPTY},
     });
@@ -384,7 +384,7 @@ void tst_PostgreSQL_Connection::searchpath_Pretend_Empty_SingleQuotes_PostgreSQL
     // Add a new database connection
     const auto connectionName = Databases::createConnectionTempFrom(
                                     Databases::POSTGRESQL,
-                                    {ClassName, QString::fromUtf8(__func__)},
+                                    {ClassName, QString::fromUtf8(__func__)}, // NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
     {
         {search_path, QStringLiteral("''")},
     });
@@ -418,7 +418,7 @@ void tst_PostgreSQL_Connection::searchpath_Pretend_Empty_DoubleQuotes_PostgreSQL
     // Add a new database connection
     const auto connectionName = Databases::createConnectionTempFrom(
                                     Databases::POSTGRESQL,
-                                    {ClassName, QString::fromUtf8(__func__)},
+                                    {ClassName, QString::fromUtf8(__func__)}, // NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
     {
         {search_path, QStringLiteral("\"\"")},
     });
@@ -452,7 +452,7 @@ void tst_PostgreSQL_Connection::searchpath_Pretend_Undefined_PostgreSQL() const
     // Add a new database connection
     const auto connectionName = Databases::createConnectionTempFrom(
                                     Databases::POSTGRESQL,
-                                    {ClassName, QString::fromUtf8(__func__)},
+                                    {ClassName, QString::fromUtf8(__func__)}, // NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
                                     {}, {search_path});
 
     if (!connectionName)
@@ -484,7 +484,7 @@ void tst_PostgreSQL_Connection::
     // Add a new database connection
     const auto connectionName = Databases::createConnectionTempFrom(
                                     Databases::POSTGRESQL,
-                                    {ClassName, QString::fromUtf8(__func__)},
+                                    {ClassName, QString::fromUtf8(__func__)}, // NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
     {
         {search_path, QStringLiteral("\"$user\", public")},
     });
@@ -525,7 +525,7 @@ void tst_PostgreSQL_Connection::
     // Add a new database connection
     const auto connectionName = Databases::createConnectionTempFrom(
                                     Databases::POSTGRESQL,
-                                    {ClassName, QString::fromUtf8(__func__)},
+                                    {ClassName, QString::fromUtf8(__func__)}, // NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
     {
         {search_path, QStringList {"\"$user\"", PUBLIC}},
     });
@@ -566,7 +566,7 @@ void tst_PostgreSQL_Connection::
     // Add a new database connection
     const auto connectionName = Databases::createConnectionTempFrom(
                                     Databases::POSTGRESQL,
-                                    {ClassName, QString::fromUtf8(__func__)},
+                                    {ClassName, QString::fromUtf8(__func__)}, // NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
     {
         {search_path, QStringLiteral("$user, public")},
     });
@@ -605,7 +605,7 @@ void tst_PostgreSQL_Connection::
     // Add a new database connection
     const auto connectionName = Databases::createConnectionTempFrom(
                                     Databases::POSTGRESQL,
-                                    {ClassName, QString::fromUtf8(__func__)},
+                                    {ClassName, QString::fromUtf8(__func__)}, // NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
     {
         {search_path, QStringLiteral("$user, public")},
     });

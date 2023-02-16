@@ -156,7 +156,7 @@ void tst_PostgreSQL_SchemaBuilder::createDatabase_Charset_Collation() const
     // Add a new database connection with different charset
     const auto connectionName =
             Databases::createConnectionTempFrom(
-                Databases::POSTGRESQL, {ClassName, QString::fromUtf8(__func__)},
+                Databases::POSTGRESQL, {ClassName, QString::fromUtf8(__func__)}, // NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
     {
         {driver_,    QPSQL},
         {charset_,   "WIN1250"},
@@ -744,7 +744,7 @@ void tst_PostgreSQL_SchemaBuilder::
     // Add a new database connection
     const auto connectionName =
             Databases::createConnectionTempFrom(
-                Databases::POSTGRESQL, {ClassName, QString::fromUtf8(__func__)},
+                Databases::POSTGRESQL, {ClassName, QString::fromUtf8(__func__)}, // NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
                 {{search_path, QStringLiteral("schema_example, another_example")}});
 
     if (!connectionName)
@@ -789,7 +789,7 @@ void tst_PostgreSQL_SchemaBuilder::
     // Add a new database connection
     const auto connectionName =
             Databases::createConnectionTempFrom(
-                Databases::POSTGRESQL, {ClassName, QString::fromUtf8(__func__)},
+                Databases::POSTGRESQL, {ClassName, QString::fromUtf8(__func__)}, // NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
                 {{search_path, QStringList {"schema_example", "another_example"}}});
 
     if (!connectionName)
@@ -834,7 +834,7 @@ void tst_PostgreSQL_SchemaBuilder::
     // Add a new database connection
     const auto connectionName =
             Databases::createConnectionTempFrom(
-                Databases::POSTGRESQL, {ClassName, QString::fromUtf8(__func__)},
+                Databases::POSTGRESQL, {ClassName, QString::fromUtf8(__func__)}, // NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
                 {{search_path, QVariant::fromValue(
                                    QSet<QString> {QStringLiteral("schema_example"),
                                                   QStringLiteral("another_example")})}});
@@ -858,7 +858,7 @@ void tst_PostgreSQL_SchemaBuilder::
     // Add a new database connection
     const auto connectionName =
             Databases::createConnectionTempFrom(
-                Databases::POSTGRESQL, {ClassName, QString::fromUtf8(__func__)},
+                Databases::POSTGRESQL, {ClassName, QString::fromUtf8(__func__)}, // NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
                 {{search_path, QStringLiteral("\"$user\", public")}});
 
     if (!connectionName)
@@ -902,7 +902,7 @@ void tst_PostgreSQL_SchemaBuilder::hasTable_NoSearchPath_InConfiguration() const
     // Add a new database connection
     const auto connectionName =
             Databases::createConnectionTempFrom(
-                Databases::POSTGRESQL, {ClassName, QString::fromUtf8(__func__)},
+                Databases::POSTGRESQL, {ClassName, QString::fromUtf8(__func__)}, // NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
                 {}, {search_path});
 
     if (!connectionName)

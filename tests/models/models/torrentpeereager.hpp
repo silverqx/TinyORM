@@ -22,7 +22,7 @@ public:
     std::unique_ptr<BelongsTo<TorrentPeerEager, TorrentEager>>
     torrent()
     {
-        return belongsTo<TorrentEager>({}, {}, QString::fromUtf8(__func__));
+        return belongsTo<TorrentEager>({}, {}, QString::fromUtf8(__func__)); // NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
     }
 
 private:

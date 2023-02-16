@@ -109,7 +109,7 @@ void tst_DatabaseManager::removeConnection_Connected() const
     // Add a new database connection
     const auto connectionName = Databases::createConnectionTemp(
                                     Databases::POSTGRESQL,
-                                    {ClassName, QString::fromUtf8(__func__)},
+                                    {ClassName, QString::fromUtf8(__func__)}, // NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
     {
         {driver_,          driverName},
         {application_name, QStringLiteral("TinyORM tests - tst_databasemanager")},
@@ -157,7 +157,7 @@ void tst_DatabaseManager::removeConnection_NotConnected() const
     // Add a new database connection
     const auto connectionName = Databases::createConnectionTemp(
                                     Databases::POSTGRESQL,
-                                    {ClassName, QString::fromUtf8(__func__)},
+                                    {ClassName, QString::fromUtf8(__func__)}, // NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
     {
         {driver_, QPSQL},
         {host_,   "example.com"},
@@ -189,7 +189,7 @@ void tst_DatabaseManager::default_MySQL_ConfigurationValues() const
     // Add a new database connection
     const auto connectionName = Databases::createConnectionTemp(
                                     Databases::MYSQL,
-                                    {ClassName, QString::fromUtf8(__func__)},
+                                    {ClassName, QString::fromUtf8(__func__)}, // NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
     {
         {driver_, "qmysql"},
     });
@@ -246,7 +246,7 @@ void tst_DatabaseManager::default_PostgreSQL_ConfigurationValues() const
     // Add a new database connection
     const auto connectionName = Databases::createConnectionTemp(
                                     Databases::POSTGRESQL,
-                                    {ClassName, QString::fromUtf8(__func__)},
+                                    {ClassName, QString::fromUtf8(__func__)}, // NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
     {
         {driver_, "qpsql"},
     });
@@ -303,7 +303,7 @@ void tst_DatabaseManager::default_SQLite_ConfigurationValues() const
     // Add a new database connection
     const auto connectionName = Databases::createConnectionTemp(
                                     Databases::SQLITE,
-                                    {ClassName, QString::fromUtf8(__func__)},
+                                    {ClassName, QString::fromUtf8(__func__)}, // NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
     {
         {driver_, "qsqlite"},
     });
@@ -380,7 +380,7 @@ void tst_DatabaseManager::ssl_MySQL_ConfigurationValues() const
     // Add a new database connection
     const auto connectionName = Databases::createConnectionTemp(
                                     Databases::MYSQL,
-                                    {ClassName, QString::fromUtf8(__func__)},
+                                    {ClassName, QString::fromUtf8(__func__)}, // NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
                                     initialConfiguration);
 
     if (!connectionName)
@@ -465,7 +465,7 @@ void tst_DatabaseManager::ssl_PostgreSQL_ConfigurationValues() const
     // Add a new database connection
     const auto connectionName = Databases::createConnectionTemp(
                                     Databases::POSTGRESQL,
-                                    {ClassName, QString::fromUtf8(__func__)},
+                                    {ClassName, QString::fromUtf8(__func__)}, // NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
                                     initialConfiguration);
 
     if (!connectionName)
@@ -531,7 +531,7 @@ void tst_DatabaseManager::sqlite_MemoryDriver() const
     // Add a new database connection
     const auto connectionName = Databases::createConnectionTemp(
                                     Databases::SQLITE,
-                                    {ClassName, QString::fromUtf8(__func__)},
+                                    {ClassName, QString::fromUtf8(__func__)}, // NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
     {
         {driver_,   QSQLITE},
         {database_, QStringLiteral(":memory:")},
@@ -565,7 +565,7 @@ void tst_DatabaseManager::sqlite_CheckDatabaseExists_True() const
     // Add a new database connection
     const auto connectionName = Databases::createConnectionTemp(
                                     Databases::SQLITE,
-                                    {ClassName, QString::fromUtf8(__func__)},
+                                    {ClassName, QString::fromUtf8(__func__)}, // NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
     {
         {driver_,               QSQLITE},
         {database_,             checkDatabaseExistsFile()},
@@ -592,7 +592,7 @@ void tst_DatabaseManager::sqlite_CheckDatabaseExists_False() const
     // Add a new database connection
     const auto connectionName = Databases::createConnectionTemp(
                                     Databases::SQLITE,
-                                    {ClassName, QString::fromUtf8(__func__)},
+                                    {ClassName, QString::fromUtf8(__func__)}, // NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
     {
         {driver_,               QSQLITE},
         {database_,             checkDatabaseExistsFile()},

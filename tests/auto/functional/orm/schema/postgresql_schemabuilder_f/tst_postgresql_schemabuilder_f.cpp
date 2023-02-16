@@ -59,7 +59,7 @@ void tst_PostgreSQL_SchemaBuilder_f::hasTable_NoSearchPath_InConfiguration() con
     // Add a new database connection
     const auto connectionName =
             Databases::createConnectionTempFrom(
-                Databases::POSTGRESQL, {ClassName, QString::fromUtf8(__func__)},
+                Databases::POSTGRESQL, {ClassName, QString::fromUtf8(__func__)}, // NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
                 {}, {search_path});
 
     if (!connectionName)
@@ -99,7 +99,7 @@ void tst_PostgreSQL_SchemaBuilder_f::
     // Add a new database connection
     const auto connectionName =
             Databases::createConnectionTempFrom(
-                Databases::POSTGRESQL, {ClassName, QString::fromUtf8(__func__)},
+                Databases::POSTGRESQL, {ClassName, QString::fromUtf8(__func__)}, // NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
                 {{search_path, QStringLiteral("''")}});
 
     if (!connectionName)
@@ -122,7 +122,7 @@ void tst_PostgreSQL_SchemaBuilder_f::
     // Add a new database connection
     const auto connectionName =
             Databases::createConnectionTempFrom(
-                Databases::POSTGRESQL, {ClassName, QString::fromUtf8(__func__)},
+                Databases::POSTGRESQL, {ClassName, QString::fromUtf8(__func__)}, // NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
                 {{search_path, QStringLiteral("''")}});
 
     if (!connectionName)

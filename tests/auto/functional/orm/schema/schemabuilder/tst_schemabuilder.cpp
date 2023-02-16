@@ -380,7 +380,7 @@ std::optional<QString> tst_SchemaBuilder::alternativeConnection_MySql()
     // Add a new database connection
     auto connectionName =
             Databases::createConnectionTempFrom(
-                Databases::MYSQL, {ClassName, QString::fromUtf8(__func__)},
+                Databases::MYSQL, {ClassName, QString::fromUtf8(__func__)}, // NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
                 {{database_, DatabaseExample}});
 
     return connectionName;
@@ -391,7 +391,7 @@ std::optional<QString> tst_SchemaBuilder::alternativeConnection_Postgres()
     // Add a new database connection
     auto connectionName =
             Databases::createConnectionTempFrom(
-                Databases::POSTGRESQL, {ClassName, QString::fromUtf8(__func__)},
+                Databases::POSTGRESQL, {ClassName, QString::fromUtf8(__func__)}, // NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
                 {{database_, DatabaseExample}});
 
     return connectionName;
@@ -402,7 +402,7 @@ std::optional<QString> tst_SchemaBuilder::alternativeConnection_Sqlite()
     // Add a new database connection
     auto connectionName =
             Databases::createConnectionTempFrom(
-                Databases::SQLITE, {ClassName, QString::fromUtf8(__func__)},
+                Databases::SQLITE, {ClassName, QString::fromUtf8(__func__)}, // NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
                 {{database_, NOSPACE.arg(DatabaseExample, ".sqlite3")}});
 
     return connectionName;

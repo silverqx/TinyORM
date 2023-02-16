@@ -31,7 +31,7 @@ public:
                               TorrentEager_WithDefault>>
     torrent()
     {
-        return belongsTo<TorrentEager_WithDefault>({}, {}, QString::fromUtf8(__func__));
+        return belongsTo<TorrentEager_WithDefault>({}, {}, QString::fromUtf8(__func__)); // NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
     }
 
     /*! Get a torrent that owns the previewable file. */
@@ -41,7 +41,7 @@ public:
     {
         // Ownership of a unique_ptr()
         auto relation = belongsTo<TorrentEager_WithDefault>(
-                            {}, {}, QString::fromUtf8(__func__));
+                            {}, {}, QString::fromUtf8(__func__)); // NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
 
         relation->withDefault();
 
@@ -55,7 +55,7 @@ public:
     {
         // Ownership of a unique_ptr()
         auto relation = belongsTo<TorrentEager_WithDefault>(
-                            {}, {}, QString::fromUtf8(__func__));
+                            {}, {}, QString::fromUtf8(__func__)); // NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
 
         relation->withDefault({{NAME, "default_torrent_name"}, {SIZE, 123}});
 

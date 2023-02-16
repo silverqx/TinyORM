@@ -159,7 +159,7 @@ void tst_MySql_SchemaBuilder::createDatabase_Charset_Collation() const
     // Add a new database connection with different charset and collation
     const auto connectionName =
             Databases::createConnectionTempFrom(
-                Databases::MYSQL, {ClassName, QString::fromUtf8(__func__)},
+                Databases::MYSQL, {ClassName, QString::fromUtf8(__func__)}, // NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
     {
         {driver_,    QMYSQL},
         {charset_,   UTF8},

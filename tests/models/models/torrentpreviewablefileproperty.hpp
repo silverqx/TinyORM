@@ -31,7 +31,7 @@ public:
     torrentFile()
     {
         return belongsTo<TorrentPreviewableFile>(
-                    "previewable_file_id", {}, QString::fromUtf8(__func__));
+                    "previewable_file_id", {}, QString::fromUtf8(__func__)); // NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
     }
 
     /*! Get a property property associated with the file property. */
