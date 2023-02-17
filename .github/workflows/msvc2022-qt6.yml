@@ -195,7 +195,8 @@ jobs:
     - name: PostgreSQL initialize client authentication
       working-directory: .github/resources/postgresql
       run: >-
-        $env:DB_PGSQL_DATABASE, $env:TINYORM_DATABASE_TESTS_SCHEMABUILDER > tinyorm_dbs
+        $env:DB_PGSQL_DATABASE, $env:TINYORM_DATABASE_TESTS_SCHEMABUILDER |
+        Set-Concent -Path (Join-Path -Path $env:PGDATA -ChildPath 'tinyorm_dbs')
 
         $pgHbaConf = Join-Path -Path $env:PGDATA -ChildPath 'pg_hba.conf'
 
