@@ -240,7 +240,9 @@ jobs:
         # Create the $PGDATA/tinyorm_dbs file with databases list
         tinyormDbsPath="$pg_config_path/tinyorm_dbs"
         databasesArr=("$DB_PGSQL_DATABASE" "$TINYORM_DATABASE_TESTS_SCHEMABUILDER")
-        (IFS=$'\n'; echo "$databasesArr[*]") | sudo tee --append "$tinyormDbsPath" > /dev/null
+        (IFS=$'\n'; echo "${databasesArr[*]}") | \
+        sudo --user=postgres -- tee --append "$tinyormDbsPath" > /dev/null
+        sudo chmod 640 "$tinyormDbsPath"
 
         pgHbaConf="$pg_config_path/pg_hba.conf"
 
