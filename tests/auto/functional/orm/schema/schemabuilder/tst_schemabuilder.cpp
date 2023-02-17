@@ -184,9 +184,6 @@ void tst_SchemaBuilder::getAllTables() const
         "torrent_tags", "types", "users", "user_phones"
     };
 
-    if (DB::driverName(connection) == QPSQL)
-        tablesExpected << spatial_ref_sys;
-
     QCOMPARE(tablesActual, tablesExpected);
 }
 
@@ -194,25 +191,8 @@ void tst_SchemaBuilder::getAllViews_dropAllViews() const
 {
     QFETCH_GLOBAL(QString, connection);
 
-    const auto isPostgres = DB::driverName(connection) == QPSQL;
-
-    // The PostgreSQL database also contains the postgis views
-    const QSet<QString> viewsPostgis {QStringLiteral("geography_columns"),
-                                      QStringLiteral("geometry_columns")};
-
-    // Verify views before creating new views
-    {
-        const auto viewsActual = getAllViewsFor(connection);
-
-        /* PostgreSQL always contains the postgis views because the postgis extension
-           is installed and also required by some tests. */
-        if (isPostgres)
-            QCOMPARE(viewsActual, viewsPostgis);
-
-        // No views can't exist at the beginning
-        else
-            QVERIFY(viewsActual.isEmpty());
-    }
+    // Verify views before creating new views, no views can't exist at the beginning
+    QVERIFY(getAllViewsFor(connection).isEmpty());
 
     // View names to create and drop
     QSet<QString> views {QStringLiteral("tinyorm_test_view_to_drop_1"),
@@ -228,11 +208,8 @@ void tst_SchemaBuilder::getAllViews_dropAllViews() const
     // Verify newly created views
     {
         const auto viewsActual = getAllViewsFor(connection);
-
         // Nicer name (last usage so can be also modified to avoid a copy)
-        auto &viewsExpected = views;
-        if (isPostgres)
-            viewsExpected += viewsPostgis;
+        const auto &viewsExpected = views;
 
         // Fire it up
         QCOMPARE(viewsActual, viewsExpected);
@@ -242,14 +219,7 @@ void tst_SchemaBuilder::getAllViews_dropAllViews() const
     Schema::on(connection).dropAllViews();
 
     // Verify dropAllViews()
-    {
-        const auto viewsActual = getAllViewsFor(connection);
-
-        if (isPostgres)
-            QCOMPARE(viewsActual, viewsPostgis);
-        else
-            QVERIFY(viewsActual.isEmpty());
-    }
+    QVERIFY(getAllViewsFor(connection).isEmpty());
 }
 
 void tst_SchemaBuilder::getColumnListing() const
