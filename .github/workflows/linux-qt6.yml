@@ -280,6 +280,32 @@ jobs:
         pg_isready
         echo '::endgroup::'
 
+    - name: Setup tmate session
+      # if: ${{ failure() }}
+      uses: mxschmitt/action-tmate@v3
+      with:
+        limit-access-to-actor: true
+      env:
+        DB_MYSQL_CHARSET: ${{ secrets.DB_MYSQL_CHARSET }}
+        DB_MYSQL_COLLATION: ${{ secrets.DB_MYSQL_COLLATION }}
+        DB_MYSQL_DATABASE: ${{ secrets.DB_MYSQL_DATABASE }}
+        DB_MYSQL_HOST: ${{ secrets.DB_MYSQL_HOST_SSL }}
+        DB_MYSQL_PASSWORD: ${{ secrets.DB_MYSQL_PASSWORD }}
+        DB_MYSQL_SSL_CA: /usr/local/share/crystal-mysql/ca.pem
+        DB_MYSQL_SSL_CERT: /usr/local/share/crystal-mysql/client-cert.pem
+        DB_MYSQL_SSL_KEY: /usr/local/share/crystal-mysql/client-key.pem
+        DB_MYSQL_USERNAME: ${{ secrets.DB_MYSQL_USERNAME }}
+        DB_PGSQL_CHARSET: ${{ secrets.DB_PGSQL_CHARSET }}
+        DB_PGSQL_DATABASE: ${{ secrets.DB_PGSQL_DATABASE }}
+        DB_PGSQL_HOST: ${{ secrets.DB_PGSQL_HOST_SSL }}
+        DB_PGSQL_PASSWORD: ${{ secrets.DB_PGSQL_PASSWORD }}
+        DB_PGSQL_SEARCHPATH: ${{ secrets.DB_PGSQL_SEARCHPATH }}
+        DB_PGSQL_SSLMODE: ${{ secrets.DB_PGSQL_SSLMODE }}
+        DB_PGSQL_USERNAME: ${{ secrets.DB_PGSQL_USERNAME }}
+        DB_SQLITE_DATABASE: ${{ env.TinySQLitePath }}
+        TOM_TESTDATA_ENV: testing
+    - run: exit 1
+
     - name: Hosts add MySQL server hostname
       run: >-
         sudo -- sh -c "echo '127.0.0.1\t$DB_MYSQL_HOST' >> /etc/hosts"
@@ -666,28 +692,3 @@ jobs:
       env:
         DB_SQLITE_DATABASE: ${{ env.TinySQLitePath }}
         TOM_EXAMPLE_ENV: testing
-
-    - name: Setup tmate session
-      if: ${{ failure() }}
-      uses: mxschmitt/action-tmate@v3
-      with:
-        limit-access-to-actor: true
-      env:
-        DB_MYSQL_CHARSET: ${{ secrets.DB_MYSQL_CHARSET }}
-        DB_MYSQL_COLLATION: ${{ secrets.DB_MYSQL_COLLATION }}
-        DB_MYSQL_DATABASE: ${{ secrets.DB_MYSQL_DATABASE }}
-        DB_MYSQL_HOST: ${{ secrets.DB_MYSQL_HOST_SSL }}
-        DB_MYSQL_PASSWORD: ${{ secrets.DB_MYSQL_PASSWORD }}
-        DB_MYSQL_SSL_CA: /usr/local/share/crystal-mysql/ca.pem
-        DB_MYSQL_SSL_CERT: /usr/local/share/crystal-mysql/client-cert.pem
-        DB_MYSQL_SSL_KEY: /usr/local/share/crystal-mysql/client-key.pem
-        DB_MYSQL_USERNAME: ${{ secrets.DB_MYSQL_USERNAME }}
-        DB_PGSQL_CHARSET: ${{ secrets.DB_PGSQL_CHARSET }}
-        DB_PGSQL_DATABASE: ${{ secrets.DB_PGSQL_DATABASE }}
-        DB_PGSQL_HOST: ${{ secrets.DB_PGSQL_HOST_SSL }}
-        DB_PGSQL_PASSWORD: ${{ secrets.DB_PGSQL_PASSWORD }}
-        DB_PGSQL_SEARCHPATH: ${{ secrets.DB_PGSQL_SEARCHPATH }}
-        DB_PGSQL_SSLMODE: ${{ secrets.DB_PGSQL_SSLMODE }}
-        DB_PGSQL_USERNAME: ${{ secrets.DB_PGSQL_USERNAME }}
-        DB_SQLITE_DATABASE: ${{ env.TinySQLitePath }}
-        TOM_TESTDATA_ENV: testing
