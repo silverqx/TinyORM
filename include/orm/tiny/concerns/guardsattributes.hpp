@@ -263,6 +263,7 @@ namespace Orm::Tiny::Concerns
                                                .getSchemaBuilder()
                                                ->getColumnListing(model().getTable());
 
+        // CUR change QStringList to std::unoredered_set or QSet for perf. reasons silverqx
         return m_guardableColumns[guardableKey].contains(key);
     }
 
