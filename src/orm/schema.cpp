@@ -10,8 +10,6 @@ namespace Orm
 
 /* private */
 
-std::unordered_map<Connectors::ConnectionName,
-                   std::unique_ptr<SchemaBuilder>> Schema::m_schemaBuildersCache;
 std::shared_ptr<DatabaseManager> Schema::m_manager;
 
 /* public */
@@ -157,15 +155,7 @@ void Schema::defaultStringLength(const int length)
 
 SchemaBuilder &Schema::schemaBuilder(const QString &connection)
 {
-    /* Cache obtained schema builders, they should always be the same for the given
-       connection name, cached value is removed from the cache in
-       DatabaseManager::removeConnection() */
-    if (!connection.isEmpty() && m_schemaBuildersCache.contains(connection))
-        return *m_schemaBuildersCache[connection];
-
-    // Ownership of a unique_ptr()
-    return *(m_schemaBuildersCache[connection] = manager().connection(connection)
-                                                 .getSchemaBuilder());
+    return manager().connection(connection).getSchemaBuilder();
 }
 
 DatabaseManager &Schema::manager()

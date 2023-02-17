@@ -261,7 +261,7 @@ namespace Orm::Tiny::Concerns
         if (!m_guardableColumns.contains(guardableKey))
             m_guardableColumns[guardableKey] = model().getConnection()
                                                .getSchemaBuilder()
-                                               ->getColumnListing(model().getTable());
+                                               .getColumnListing(model().getTable());
 
         // CUR change QStringList to std::unoredered_set or QSet for perf. reasons silverqx
         return m_guardableColumns[guardableKey].contains(key);

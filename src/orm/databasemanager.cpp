@@ -5,7 +5,6 @@
 #include "orm/concerns/hasconnectionresolver.hpp"
 #include "orm/connectors/connectionfactory.hpp"
 #include "orm/exceptions/invalidargumenterror.hpp"
-#include "orm/schema.hpp"
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
@@ -350,10 +349,6 @@ bool DatabaseManager::removeConnection(const QString &name)
        connection and also don't remove connection configuration. */
     if (m_connections->erase(name_) == 0)
         return false;
-
-    // Remove a cached schema builder for the currently removing connection
-    if (Schema::m_schemaBuildersCache.contains(name_))
-        Schema::m_schemaBuildersCache.erase(name_);
 
     // Remove TinyORM configuration
     m_configuration->erase(name_);

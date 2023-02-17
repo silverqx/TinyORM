@@ -29,9 +29,6 @@ namespace Orm
         /*! Virtual destructor. */
         inline ~PostgresConnection() final = default;
 
-        /*! Get a schema builder instance for the connection. */
-        std::unique_ptr<SchemaBuilder> getSchemaBuilder() final;
-
         /* Getters */
         /*! Get the PostgreSQL server 'search_path' for the current connection
             (with the "$user" variable resolved as the config['username']). */
@@ -45,6 +42,8 @@ namespace Orm
         std::unique_ptr<QueryGrammar> getDefaultQueryGrammar() const final;
         /*! Get the default schema grammar instance. */
         std::unique_ptr<SchemaGrammar> getDefaultSchemaGrammar() const final;
+        /*! Get the default schema builder instance. */
+        std::unique_ptr<SchemaBuilder> getDefaultSchemaBuilder() final;
         /*! Get the default post processor instance. */
         std::unique_ptr<QueryProcessor> getDefaultPostProcessor() const final;
 

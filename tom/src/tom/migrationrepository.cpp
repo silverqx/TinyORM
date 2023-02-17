@@ -114,7 +114,7 @@ void MigrationRepository::createRepository() const
        file paths as well as the batch ID. */
 
     // Ownership of a unique_ptr()
-    connection().getSchemaBuilder()->create(m_table, [](Blueprint &table)
+    connection().getSchemaBuilder().create(m_table, [](Blueprint &table)
     {
         table.id();
 
@@ -126,20 +126,20 @@ void MigrationRepository::createRepository() const
 void MigrationRepository::dropRepositoryIfExists() const
 {
     // Ownership of a unique_ptr()
-    connection().getSchemaBuilder()->dropIfExists(m_table);
+    connection().getSchemaBuilder().dropIfExists(m_table);
 }
 
 bool MigrationRepository::repositoryExists() const
 {
     // Ownership of a unique_ptr()
-    const auto schema = connection().getSchemaBuilder();
+    const auto &schema = connection().getSchemaBuilder();
 
-    return schema->hasTable(m_table);
+    return schema.hasTable(m_table);
 }
 
 void MigrationRepository::deleteRepository() const
 {
-    connection().getSchemaBuilder()->drop(m_table);
+    connection().getSchemaBuilder().drop(m_table);
 }
 
 DatabaseConnection &MigrationRepository::connection() const

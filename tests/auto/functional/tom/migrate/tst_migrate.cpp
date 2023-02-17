@@ -204,11 +204,11 @@ void tst_Migrate::cleanupTestCase() const
        depends on it. */
     for (const auto &connection : m_connections) {
         // Ownership of a unique_ptr()
-        const auto schema = Databases::manager()->connection(connection)
-                            .getSchemaBuilder();
+        const auto &schema = Databases::manager()->connection(connection)
+                             .getSchemaBuilder();
 
         // Nothing do cleanup, the migration repository was already uninstalled
-        if (!schema->hasTable(MigrationsTable))
+        if (!schema.hasTable(MigrationsTable))
             return;
 
         // Reset the migrations table
@@ -224,7 +224,7 @@ void tst_Migrate::cleanupTestCase() const
             QVERIFY(exitCode == EXIT_FAILURE);
         }
 
-        QVERIFY(!schema->hasTable(MigrationsTable));
+        QVERIFY(!schema.hasTable(MigrationsTable));
     }
 }
 
@@ -678,11 +678,11 @@ void tst_Migrate::prepareDatabase() const
 {
     for (const auto &connection : m_connections) {
         // Ownership of a unique_ptr()
-        const auto schema = Databases::manager()->connection(connection)
-                            .getSchemaBuilder();
+        const auto &schema = Databases::manager()->connection(connection)
+                             .getSchemaBuilder();
 
         // Create the migrations table if needed
-        if (!schema->hasTable(MigrationsTable)) {
+        if (!schema.hasTable(MigrationsTable)) {
             auto exitCode = invokeCommand(connection, MigrateInstall);
 
             QVERIFY(exitCode == EXIT_SUCCESS);

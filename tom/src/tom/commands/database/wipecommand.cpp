@@ -82,7 +82,7 @@ void WipeCommand::dropAllTables(DatabaseConnection &connection) const
     optionalPretend(isSet(pretend), connection,
                     [](auto &connection_)
     {
-        connection_.getSchemaBuilder()->dropAllTables();
+        connection_.getSchemaBuilder().dropAllTables();
     });
 }
 
@@ -91,7 +91,7 @@ void WipeCommand::dropAllViews(DatabaseConnection &connection) const
     optionalPretend(isSet(pretend), connection,
                     [](auto &connection_)
     {
-        connection_.getSchemaBuilder()->dropAllViews();
+        connection_.getSchemaBuilder().dropAllViews();
     });
 }
 
@@ -100,7 +100,7 @@ void WipeCommand::dropAllTypes(DatabaseConnection &connection) const
     optionalPretend(isSet(pretend), connection,
                     [](auto &connection_)
     {
-        connection_.getSchemaBuilder()->dropAllTypes();
+        connection_.getSchemaBuilder().dropAllTypes();
     });
 }
 

@@ -31,14 +31,6 @@ PostgresConnection::PostgresConnection(
     useDefaultPostProcessor();
 }
 
-std::unique_ptr<SchemaBuilder> PostgresConnection::getSchemaBuilder()
-{
-    if (!m_schemaGrammar)
-        useDefaultSchemaGrammar();
-
-    return std::make_unique<SchemaNs::PostgresSchemaBuilder>(*this);
-}
-
 /* Getters */
 
 QStringList PostgresConnection::searchPath(const bool flushCache)
@@ -96,6 +88,11 @@ std::unique_ptr<SchemaGrammar> PostgresConnection::getDefaultSchemaGrammar() con
     withTablePrefix(*grammar);
 
     return grammar;
+}
+
+std::unique_ptr<SchemaBuilder> PostgresConnection::getDefaultSchemaBuilder()
+{
+    return std::make_unique<SchemaNs::PostgresSchemaBuilder>(*this);
 }
 
 std::unique_ptr<QueryProcessor> PostgresConnection::getDefaultPostProcessor() const

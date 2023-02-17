@@ -28,9 +28,6 @@ namespace Orm
         /*! Virtual destructor. */
         inline ~SQLiteConnection() final = default;
 
-        /*! Get a schema builder instance for the connection. */
-        std::unique_ptr<SchemaBuilder> getSchemaBuilder() final;
-
         /*! Determine whether to return the QDateTime or QString (SQLite only). */
         inline bool returnQDateTime() const noexcept;
         /*! Set return the QDateTime or QString (override the return_qdatetime). */
@@ -41,6 +38,8 @@ namespace Orm
         std::unique_ptr<QueryGrammar> getDefaultQueryGrammar() const final;
         /*! Get the default schema grammar instance. */
         std::unique_ptr<SchemaGrammar> getDefaultSchemaGrammar() const final;
+        /*! Get the default schema builder instance. */
+        std::unique_ptr<SchemaBuilder> getDefaultSchemaBuilder() final;
         /*! Get the default post processor instance. */
         std::unique_ptr<QueryProcessor> getDefaultPostProcessor() const final;
     };

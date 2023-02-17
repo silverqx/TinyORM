@@ -448,12 +448,15 @@ const SchemaGrammar &DatabaseConnection::getSchemaGrammar()
     return *m_schemaGrammar;
 }
 
-std::unique_ptr<SchemaBuilder> DatabaseConnection::getSchemaBuilder()
+SchemaBuilder &DatabaseConnection::getSchemaBuilder()
 {
     if (!m_schemaGrammar)
         useDefaultSchemaGrammar();
 
-    return std::make_unique<SchemaBuilder>(*this);
+    if (!m_schemaBuilder)
+        useDefaultSchemaBuilder();
+
+    return *m_schemaBuilder;
 }
 
 DatabaseConnection &
@@ -570,6 +573,11 @@ void DatabaseConnection::useDefaultQueryGrammar()
 void DatabaseConnection::useDefaultSchemaGrammar()
 {
     m_schemaGrammar = getDefaultSchemaGrammar();
+}
+
+void Orm::DatabaseConnection::useDefaultSchemaBuilder()
+{
+    m_schemaBuilder = getDefaultSchemaBuilder();
 }
 
 void DatabaseConnection::useDefaultPostProcessor()

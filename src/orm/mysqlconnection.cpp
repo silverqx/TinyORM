@@ -55,14 +55,6 @@ MySqlConnection::MySqlConnection(
     useDefaultPostProcessor();
 }
 
-std::unique_ptr<SchemaBuilder> MySqlConnection::getSchemaBuilder()
-{
-    if (!m_schemaGrammar)
-        useDefaultSchemaGrammar();
-
-    return std::make_unique<SchemaNs::MySqlSchemaBuilder>(*this);
-}
-
 /* Getters / Setters */
 
 std::optional<QString> MySqlConnection::version()
@@ -252,6 +244,11 @@ std::unique_ptr<SchemaGrammar> MySqlConnection::getDefaultSchemaGrammar() const
     withTablePrefix(*grammar);
 
     return grammar;
+}
+
+std::unique_ptr<SchemaBuilder> MySqlConnection::getDefaultSchemaBuilder()
+{
+    return std::make_unique<SchemaNs::MySqlSchemaBuilder>(*this);
 }
 
 std::unique_ptr<QueryProcessor> MySqlConnection::getDefaultPostProcessor() const

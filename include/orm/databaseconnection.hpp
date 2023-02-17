@@ -174,8 +174,8 @@ namespace Orm
         inline QueryGrammar &getQueryGrammar();
         /*! Get the schema grammar used by the connection. */
         const SchemaGrammar &getSchemaGrammar();
-        /*! Get a schema builder instance for the connection. */
-        virtual std::unique_ptr<SchemaBuilder> getSchemaBuilder();
+        /*! Get the schema builder used by the connection. */
+        SchemaBuilder &getSchemaBuilder();
         /*! Get the query post processor used by the connection. */
         inline const QueryProcessor &getPostProcessor() const;
 
@@ -233,6 +233,8 @@ namespace Orm
         void useDefaultQueryGrammar();
         /*! Set the schema grammar to the default implementation. */
         void useDefaultSchemaGrammar();
+        /*! Set the schema builder to the default implementation. */
+        void useDefaultSchemaBuilder();
         /*! Set the query post processor to the default implementation. */
         void useDefaultPostProcessor();
 
@@ -240,6 +242,8 @@ namespace Orm
         virtual std::unique_ptr<QueryGrammar> getDefaultQueryGrammar() const = 0;
         /*! Get the default schema grammar instance. */
         virtual std::unique_ptr<SchemaGrammar> getDefaultSchemaGrammar() const = 0;
+        /*! Get the default schema builder instance. */
+        virtual std::unique_ptr<SchemaBuilder> getDefaultSchemaBuilder() = 0;
         /*! Get the default post processor instance. */
         virtual std::unique_ptr<QueryProcessor> getDefaultPostProcessor() const = 0;
 
@@ -286,6 +290,8 @@ namespace Orm
         std::unique_ptr<QueryGrammar> m_queryGrammar = nullptr;
         /*! The schema grammar implementation. */
         std::unique_ptr<SchemaGrammar> m_schemaGrammar = nullptr;
+        /*! The schema builder implementation. */
+        std::unique_ptr<SchemaBuilder> m_schemaBuilder = nullptr;
         /*! The query post processor implementation. */
         std::unique_ptr<QueryProcessor> m_postProcessor = nullptr;
 

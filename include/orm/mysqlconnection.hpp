@@ -27,9 +27,6 @@ namespace Orm
         /*! Virtual destructor. */
         inline ~MySqlConnection() final = default;
 
-        /*! Get a schema builder instance for the connection. */
-        std::unique_ptr<SchemaBuilder> getSchemaBuilder() final;
-
         /* Getters / Setters */
         /*! Get the MySQL server version. */
         std::optional<QString> version();
@@ -53,6 +50,8 @@ namespace Orm
         std::unique_ptr<QueryGrammar> getDefaultQueryGrammar() const final;
         /*! Get the default schema grammar instance. */
         std::unique_ptr<SchemaGrammar> getDefaultSchemaGrammar() const final;
+        /*! Get the default schema builder instance. */
+        std::unique_ptr<SchemaBuilder> getDefaultSchemaBuilder() final;
         /*! Get the default post processor instance. */
         std::unique_ptr<QueryProcessor> getDefaultPostProcessor() const final;
 

@@ -17,9 +17,6 @@ namespace Orm
     {
         Q_DISABLE_COPY(Schema)
 
-        // To access m_schemaBuildersCache
-        friend bool DatabaseManager::removeConnection(const QString &name);
-
         /*! Alias for the Blueprint. */
         using Blueprint     = SchemaNs::Blueprint;
         /*! Alias for the schema builder. */
@@ -119,9 +116,6 @@ namespace Orm
         /*! Get a reference to the DatabaseManager. */
         static DatabaseManager &manager();
 
-        /*! Schema builders cache by connection name. */
-        static std::unordered_map<Connectors::ConnectionName,
-                                  std::unique_ptr<SchemaBuilder>> m_schemaBuildersCache;
         /*! Pointer to the DatabaseManager. */
         static std::shared_ptr<DatabaseManager> m_manager;
     };

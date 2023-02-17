@@ -29,14 +29,6 @@ SQLiteConnection::SQLiteConnection(
     useDefaultPostProcessor();
 }
 
-std::unique_ptr<SchemaBuilder> SQLiteConnection::getSchemaBuilder()
-{
-    if (!m_schemaGrammar)
-        useDefaultSchemaGrammar();
-
-    return std::make_unique<SchemaNs::SQLiteSchemaBuilder>(*this);
-}
-
 SQLiteConnection &SQLiteConnection::setReturnQDateTime(const bool value)
 {
     m_returnQDateTime = value;
@@ -64,6 +56,11 @@ std::unique_ptr<SchemaGrammar> SQLiteConnection::getDefaultSchemaGrammar() const
     withTablePrefix(*grammar);
 
     return grammar;
+}
+
+std::unique_ptr<SchemaBuilder> SQLiteConnection::getDefaultSchemaBuilder()
+{
+    return std::make_unique<SchemaNs::SQLiteSchemaBuilder>(*this);
 }
 
 std::unique_ptr<QueryProcessor> SQLiteConnection::getDefaultPostProcessor() const
