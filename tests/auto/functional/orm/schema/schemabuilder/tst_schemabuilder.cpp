@@ -22,7 +22,6 @@ using Orm::Constants::QMYSQL;
 using Orm::Constants::QPSQL;
 using Orm::Constants::QSQLITE;
 using Orm::Constants::database_;
-using Orm::Constants::spatial_ref_sys;
 using Orm::Constants::username_;
 
 using Orm::DB;
