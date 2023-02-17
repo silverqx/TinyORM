@@ -199,9 +199,10 @@ jobs:
 
         $pgHbaTmplTmpl = "`n`n" +
         "# crystal`n" +
-        'hostssl {0}  {1}     127.0.0.1/32            cert  clientname=DN map=dn'
+        'hostssl {0}  {1}     127.0.0.1/32            cert  clientname=DN map=dn' + "`n" +
+        'hostssl {2}  {1}     127.0.0.1/32            cert  clientname=DN map=dn'
 
-        $pgHbaTmpl = $pgHbaTmplTmpl -f $env:DB_PGSQL_DATABASE, $env:DB_PGSQL_USERNAME
+        $pgHbaTmpl = $pgHbaTmplTmpl -f $env:DB_PGSQL_DATABASE, $env:DB_PGSQL_USERNAME, 'tinyorm_example_database'
 
         (Get-Content -Path $pgHbaConf) -creplace
         '(# +TYPE +DATABASE +USER +ADDRESS +METHOD)', "`$1$pgHbaTmpl" |
