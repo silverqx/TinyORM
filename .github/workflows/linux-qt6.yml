@@ -237,13 +237,18 @@ jobs:
 
     - name: PostgreSQL initialize client authentication
       run: |
+        # Create the $PGDATA/tinyorm_dbs file with databases list
+        tinyormDbsPath="$pg_config_path/tinyorm_dbs"
+        databasesArr=("$DB_PGSQL_DATABASE" "$TINYORM_DATABASE_TESTS_SCHEMABUILDER")
+        (IFS=$'\n'; echo "$databasesArr[*]") | sudo tee --append "$tinyormDbsPath" > /dev/null
+
         pgHbaConf="$pg_config_path/pg_hba.conf"
 
         pgHbaTmplTmpl='\\n\
         # crystal\
-        hostssl %s  %s     127.0.0.1\/32            cert  clientname=DN map=dn'
+        hostssl @tinyorm_dbs    %s         127.0.0.1\/32            cert  clientname=DN map=dn'
 
-        pgHbaTmpl=$(printf "$pgHbaTmplTmpl" "$DB_PGSQL_DATABASE" "$DB_PGSQL_USERNAME")
+        pgHbaTmpl=$(printf "$pgHbaTmplTmpl" "$DB_PGSQL_USERNAME")
 
         sudo sed --regexp-extended "s/(# +TYPE +DATABASE +USER +ADDRESS +METHOD)/\1$pgHbaTmpl/" \
         --in-place "$pgHbaConf"
@@ -257,6 +262,7 @@ jobs:
         DB_PGSQL_DATABASE: ${{ secrets.DB_PGSQL_DATABASE }}
         DB_PGSQL_SSL_DN: ${{ secrets.DB_PGSQL_SSL_DN }}
         DB_PGSQL_USERNAME: ${{ secrets.DB_PGSQL_USERNAME }}
+        TINYORM_DATABASE_TESTS_SCHEMABUILDER: ${{ secrets.TINYORM_DATABASE_TESTS_SCHEMABUILDER }}
 
     - name: PostgreSQL service restart
       run: |

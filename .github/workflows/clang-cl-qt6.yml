@@ -194,13 +194,17 @@ jobs:
     - name: PostgreSQL initialize client authentication
       working-directory: .github/resources/postgresql
       run: >-
+        $env:DB_PGSQL_DATABASE, $env:TINYORM_DATABASE_TESTS_SCHEMABUILDER |
+        Set-Concent -Path (Join-Path -Path $env:PGDATA -ChildPath 'tinyorm_dbs')
+
         $pgHbaConf = Join-Path -Path $env:PGDATA -ChildPath 'pg_hba.conf'
 
         $pgHbaTmplTmpl = "`n`n" +
         "# crystal`n" +
-        'hostssl {0}  {1}     127.0.0.1/32            scram-sha-256  clientcert=verify-full'
+        'hostssl @tinyorm_dbs    {0}         127.0.0.1/32            ' +
+        'scram-sha-256  clientcert=verify-full'
 
-        $pgHbaTmpl = $pgHbaTmplTmpl -f $env:DB_PGSQL_DATABASE, $env:DB_PGSQL_USERNAME
+        $pgHbaTmpl = $pgHbaTmplTmpl -f $env:DB_PGSQL_USERNAME
 
         (Get-Content -Path $pgHbaConf) -creplace
         '(# +TYPE +DATABASE +USER +ADDRESS +METHOD)', "`$1$pgHbaTmpl" |
@@ -209,6 +213,7 @@ jobs:
         DB_PGSQL_DATABASE: ${{ secrets.DB_PGSQL_DATABASE }}
         DB_PGSQL_SSL_DN: ${{ secrets.DB_PGSQL_SSL_DN }}
         DB_PGSQL_USERNAME: ${{ secrets.DB_PGSQL_USERNAME }}
+        TINYORM_DATABASE_TESTS_SCHEMABUILDER: ${{ secrets.TINYORM_DATABASE_TESTS_SCHEMABUILDER }}
 
     - name: PostgreSQL service restart
       run: |
