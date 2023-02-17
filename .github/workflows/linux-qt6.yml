@@ -301,7 +301,6 @@ jobs:
         DB_PGSQL_USERNAME: ${{ secrets.DB_PGSQL_USERNAME }}
         DB_SQLITE_DATABASE: ${{ env.TinySQLitePath }}
         TOM_TESTDATA_ENV: testing
-
     - run: exit 1
 
     - name: Hosts add MySQL server hostname
