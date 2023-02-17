@@ -52,8 +52,8 @@ private Q_SLOTS:
 private:
     /*! Test case class name. */
     inline static const auto *ClassName = "tst_SchemaBuilder";
-    /*! Database name used in tests. */
-    inline static const auto DatabaseExample = QStringLiteral("tinyorm_example_database");
+    /*! Database name used in the current test case. */
+    inline static const auto DatabaseName = QStringLiteral("tinyorm_tests_schemabuilder");
 
     /*! Get all database tables for the given connection. */
     static QSet<QString> getAllTablesFor(const QString &connection);
@@ -104,7 +104,7 @@ void tst_SchemaBuilder::createDatabase_dropAllTables_dropDatabaseIfExists() cons
 
     // createDatabase()
     {
-        auto database = DatabaseExample;
+        auto database = DatabaseName;
         if (DB::driverName(connection) == QSQLITE)
             database.append(QStringLiteral(".sqlite3"));
 
@@ -159,7 +159,7 @@ void tst_SchemaBuilder::createDatabase_dropAllTables_dropDatabaseIfExists() cons
 
     // dropDatabaseIfExists()
     {
-        auto database = DatabaseExample;
+        auto database = DatabaseName;
         if (DB::driverName(connection) == QSQLITE)
             database.append(QStringLiteral(".sqlite3"));
 
@@ -350,7 +350,7 @@ std::optional<QString> tst_SchemaBuilder::alternativeConnection_MySql()
     auto connectionName =
             Databases::createConnectionTempFrom(
                 Databases::MYSQL, {ClassName, QString::fromUtf8(__func__)}, // NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
-                {{database_, DatabaseExample}});
+                {{database_, DatabaseName}});
 
     return connectionName;
 }
@@ -361,7 +361,7 @@ std::optional<QString> tst_SchemaBuilder::alternativeConnection_Postgres()
     auto connectionName =
             Databases::createConnectionTempFrom(
                 Databases::POSTGRESQL, {ClassName, QString::fromUtf8(__func__)}, // NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
-                {{database_, DatabaseExample}});
+                {{database_, DatabaseName}});
 
     return connectionName;
 }
@@ -372,7 +372,7 @@ std::optional<QString> tst_SchemaBuilder::alternativeConnection_Sqlite()
     auto connectionName =
             Databases::createConnectionTempFrom(
                 Databases::SQLITE, {ClassName, QString::fromUtf8(__func__)}, // NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
-                {{database_, NOSPACE.arg(DatabaseExample, ".sqlite3")}});
+                {{database_, NOSPACE.arg(DatabaseName, ".sqlite3")}});
 
     return connectionName;
 }
