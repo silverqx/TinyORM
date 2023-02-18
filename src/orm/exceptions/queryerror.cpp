@@ -15,33 +15,40 @@ namespace Orm::Exceptions
 
 /* public */
 
-QueryError::QueryError(const char *message, const QSqlQuery &query,
-                       const QVector<QVariant> &bindings)
-    : SqlError(formatMessage(message, query), query.lastError(), 1)
+QueryError::QueryError(QString connectionName, const char *message,
+                       const QSqlQuery &query, const QVector<QVariant> &bindings)
+    : SqlError(formatMessage(connectionName, message, query), query.lastError(), 1)
+    , m_connectionName(std::move(connectionName))
     , m_sql(query.executedQuery())
     , m_bindings(bindings)
 {}
 
-QueryError::QueryError(const QString &message, const QSqlQuery &query,
-                       const QVector<QVariant> &bindings)
-    : QueryError(message.toUtf8().constData(), query, bindings)
+QueryError::QueryError(QString connectionName, const QString &message,
+                       const QSqlQuery &query, const QVector<QVariant> &bindings)
+    : QueryError(std::move(connectionName), message.toUtf8().constData(), query, bindings)
 {}
 
 /* protected */
 
-QString QueryError::formatMessage(const char *message, const QSqlQuery &query)
+QString QueryError::formatMessage(const QString &connectionName, const char *message,
+                                  const QSqlQuery &query)
 {
     const auto sqlError = SqlError::formatMessage(message, query.lastError());
     const auto executedQuery = QueryUtils::parseExecutedQuery(query);
 
     // Format SQL error message
     QString result;
-    // +32 as a reserve
-    result.reserve(sqlError.size() + executedQuery.size() + 7 + 32);
+    // +14 and +7 are QStringLiteral-s and +32 as a reserve
+    result.reserve(sqlError.size() +
+                   14 + connectionName.size() +
+                    7 + executedQuery.size() + 32);
 
     result += sqlError;
 
-    // Also append executed query
+    // Connection name
+    result += QStringLiteral(", Connection: %1").arg(connectionName);
+
+    // Executed SQL query
     if (!executedQuery.isEmpty())
         result += QStringLiteral(", SQL: %1").arg(executedQuery);
 

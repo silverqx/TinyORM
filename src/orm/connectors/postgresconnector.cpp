@@ -85,7 +85,8 @@ void PostgresConnector::configureIsolationLevel(const QSqlDatabase &connection,
                    .arg(config[isolation_level].value<QString>())))
         return;
 
-    throw Exceptions::QueryError(m_configureErrorMessage.arg(__tiny_func__), query);
+    throw Exceptions::QueryError(connection.connectionName(),
+                                 m_configureErrorMessage.arg(__tiny_func__), query);
 }
 
 void PostgresConnector::configureEncoding(const QSqlDatabase &connection,
@@ -100,7 +101,8 @@ void PostgresConnector::configureEncoding(const QSqlDatabase &connection,
                    .arg(config[charset_].value<QString>())))
         return;
 
-    throw Exceptions::QueryError(m_configureErrorMessage.arg(__tiny_func__), query);
+    throw Exceptions::QueryError(connection.connectionName(),
+                                 m_configureErrorMessage.arg(__tiny_func__), query);
 }
 
 /*! The key comparison function for the Compare template parameter. */
@@ -132,7 +134,8 @@ void PostgresConnector::configureTimezone(const QSqlDatabase &connection,
         if (query.exec(QStringLiteral("set time zone '%1';").arg(timezone)))
             return;
 
-    throw Exceptions::QueryError(m_configureErrorMessage.arg(__tiny_func__), query);
+    throw Exceptions::QueryError(connection.connectionName(),
+                                 m_configureErrorMessage.arg(__tiny_func__), query);
 }
 
 void PostgresConnector::configureSearchPath(const QSqlDatabase &connection,
@@ -151,7 +154,8 @@ void PostgresConnector::configureSearchPath(const QSqlDatabase &connection,
     )
         return;
 
-    throw Exceptions::QueryError(m_configureErrorMessage.arg(__tiny_func__), query);
+    throw Exceptions::QueryError(connection.connectionName(),
+                                 m_configureErrorMessage.arg(__tiny_func__), query);
 }
 
 QString PostgresConnector::quoteSearchPath(QStringList &&searchPath)
@@ -176,7 +180,8 @@ void PostgresConnector::configureApplicationName(const QSqlDatabase &connection,
                    .arg(config["application_name"].value<QString>())))
         return;
 
-    throw Exceptions::QueryError(m_configureErrorMessage.arg(__tiny_func__), query);
+    throw Exceptions::QueryError(connection.connectionName(),
+                                 m_configureErrorMessage.arg(__tiny_func__), query);
 }
 
 void PostgresConnector::configureSynchronousCommit(const QSqlDatabase &connection,
@@ -191,7 +196,8 @@ void PostgresConnector::configureSynchronousCommit(const QSqlDatabase &connectio
                    .arg(config[synchronous_commit].value<QString>())))
         return;
 
-    throw Exceptions::QueryError(m_configureErrorMessage.arg(__tiny_func__), query);
+    throw Exceptions::QueryError(connection.connectionName(),
+                                 m_configureErrorMessage.arg(__tiny_func__), query);
 }
 
 } // namespace Orm::Connectors

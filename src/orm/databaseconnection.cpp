@@ -135,6 +135,7 @@ DatabaseConnection::select(const QString &queryString,
            include the bindings with SQL, which will make this exception a lot
            more helpful to the developer instead of just the database's errors. */
         throw Exceptions::QueryError(
+                    m_connectionName,
                     "Select statement in DatabaseConnection::select() failed.",
                     query, preparedBindings);
     });
@@ -203,6 +204,7 @@ SqlQuery DatabaseConnection::statement(const QString &queryString,
            include the bindings with SQL, which will make this exception a lot
            more helpful to the developer instead of just the database's errors. */
         throw Exceptions::QueryError(
+                    m_connectionName,
                     "Statement in DatabaseConnection::statement() failed.",
                     query, preparedBindings);
     });
@@ -245,6 +247,7 @@ DatabaseConnection::affectingStatement(const QString &queryString,
            include the bindings with SQL, which will make this exception a lot
            more helpful to the developer instead of just the database's errors. */
         throw Exceptions::QueryError(
+                    m_connectionName,
                     "Affecting statement in DatabaseConnection::affectingStatement() "
                     "failed.",
                     query, preparedBindings);
@@ -280,6 +283,7 @@ SqlQuery DatabaseConnection::unprepared(const QString &queryString)
            include the bindings with SQL, which will make this exception a lot
            more helpful to the developer instead of just the database's errors. */
         throw Exceptions::QueryError(
+                    m_connectionName,
                     "Unprepared statement in DatabaseConnection::unprepared() failed.",
                     query);
     });

@@ -81,7 +81,8 @@ void SQLiteConnector::configureForeignKeyConstraints(const QSqlDatabase &connect
                    .arg(foreignKeyConstraints)))
         return;
 
-    throw Exceptions::QueryError(m_configureErrorMessage.arg(__tiny_func__), query);
+    throw Exceptions::QueryError(connection.connectionName(),
+                                 m_configureErrorMessage.arg(__tiny_func__), query);
 }
 
 /* private */

@@ -78,7 +78,8 @@ void MySqlConnector::configureIsolationLevel(const QSqlDatabase &connection,
                    .arg(config[isolation_level].value<QString>())))
         return;
 
-    throw Exceptions::QueryError(m_configureErrorMessage.arg(__tiny_func__), query);
+    throw Exceptions::QueryError(connection.connectionName(),
+                                 m_configureErrorMessage.arg(__tiny_func__), query);
 }
 
 void MySqlConnector::configureEncoding(const QSqlDatabase &connection,
@@ -93,7 +94,8 @@ void MySqlConnector::configureEncoding(const QSqlDatabase &connection,
                    .arg(config[charset_].value<QString>(), getCollation(config))))
         return;
 
-    throw Exceptions::QueryError(m_configureErrorMessage.arg(__tiny_func__), query);
+    throw Exceptions::QueryError(connection.connectionName(),
+                                 m_configureErrorMessage.arg(__tiny_func__), query);
 }
 
 QString MySqlConnector::getCollation(const QVariantHash &config)
@@ -115,7 +117,8 @@ void MySqlConnector::configureTimezone(const QSqlDatabase &connection,
                    .arg(config[timezone_].value<QString>())))
         return;
 
-    throw Exceptions::QueryError(m_configureErrorMessage.arg(__tiny_func__), query);
+    throw Exceptions::QueryError(connection.connectionName(),
+                                 m_configureErrorMessage.arg(__tiny_func__), query);
 }
 
 void MySqlConnector::setModes(const QSqlDatabase &connection,
@@ -136,16 +139,16 @@ void MySqlConnector::setModes(const QSqlDatabase &connection,
         if (query.exec(strictMode(connection, config)))
             return;
 
-        throw Exceptions::QueryError(m_configureErrorMessage.arg(__tiny_func__),
-                                     query);
+        throw Exceptions::QueryError(connection.connectionName(),
+                                     m_configureErrorMessage.arg(__tiny_func__), query);
     }
 
     // Set defaults, no strict mode
     if (query.exec(QStringLiteral("set session sql_mode='NO_ENGINE_SUBSTITUTION'")))
         return;
 
-    throw Exceptions::QueryError(m_configureErrorMessage.arg(__tiny_func__),
-                                 query);
+    throw Exceptions::QueryError(connection.connectionName(),
+                                 m_configureErrorMessage.arg(__tiny_func__), query);
 }
 
 QString MySqlConnector::strictMode(const QSqlDatabase &connection,
@@ -178,8 +181,8 @@ QString MySqlConnector::getMySqlVersion(const QSqlDatabase &connection,
     QSqlQuery query(connection);
 
     if (!query.exec(QStringLiteral("select version()")))
-        throw Exceptions::QueryError(m_configureErrorMessage.arg(__tiny_func__),
-                                     query);
+        throw Exceptions::QueryError(connection.connectionName(),
+                                     m_configureErrorMessage.arg(__tiny_func__), query);
 
     if (!query.first())
         throw Exceptions::RuntimeError(
@@ -200,7 +203,8 @@ void MySqlConnector::setCustomModes(const QSqlDatabase &connection,
     if (query.exec(QStringLiteral("set session sql_mode='%1';").arg(modes)))
         return;
 
-    throw Exceptions::QueryError(m_configureErrorMessage.arg(__tiny_func__), query);
+    throw Exceptions::QueryError(connection.connectionName(),
+                                 m_configureErrorMessage.arg(__tiny_func__), query);
 }
 
 } // namespace Orm::Connectors
