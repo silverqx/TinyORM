@@ -290,7 +290,7 @@ namespace Orm::Tiny::Concerns
         columnsSet.reserve(static_cast<std::unordered_set<QString>::size_type>(
                                columns.size()));
 
-        std::ranges::move(columns, std::inserter(columnsSet, columnsSet.cend()));
+        std::ranges::move(columns, std::inserter(columnsSet, columnsSet.end()));
 
         return columnsSet;
     }
