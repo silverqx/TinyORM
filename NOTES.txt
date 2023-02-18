@@ -391,6 +391,9 @@ This is laravel/framework version, not laravel/laravel version:
    - v9.44.0 to v9.48.0
    - v9.48.0 to v9.50.2
 
+ - upgraded to Laravel 10
+   - v9.50.2 to v10.0.3
+
  - close all expanded sections in github compare diff:
 
 document.querySelectorAll('.btn-octicon.js-details-target[aria-expanded=true]').forEach((value) => value.click())
@@ -1755,3 +1758,53 @@ QString String::singular(const QString &string)
 
     return string.chopped(1);
 }
+
+
+Upgrade Laravel main version:
+-----------------------------
+
+composer selfup
+composer global outd -D
+composer global up
+laravel new laravel-10
+cd .\laravel-10\
+npm install
+composer require laravel/breeze --dev
+art breeze:install
+composer require --dev barryvdh/laravel-ide-helper
+npm install
+| WinMerge composer.json
+composer up
+| create a new nginx site
+install-Dotfiles.ps1 -Pretend
+install-Dotfiles.ps1
+new-Item -ItemType SymbolicLink -Path .\laravel-10.conf -Target ..\sites-available\laravel-10.conf
+edithosts.ps1
+Restart-Service phpcgi -Force
+| WinMerge .env
+| copy app/Support/TestSchema.php
+| WinMerge app/Models/User.php
+| copy app/Models/
+| copy app/Http/Controllers/TestController.php
+| WinMerge app/
+art vendor:publish --provider="Barryvdh\LaravelIdeHelper\IdeHelperServiceProvider" --tag=config
+| copy resources/views/test/index.blade.php
+| WinMerge routes/
+| WinMerge config/
+| copy MySQL database using phpMyAdmin Operations - Copy Database
+| copy PostgreSQL database using Create database - Template to previous DB - set Template to unchecked (false)
+| replace all occurences of DB_LARAVEL_X to the new X version (.env, config/database.php)
+art migrate:status
+art migrate --pretend
+art migrate
+art migrate:status --database=pgsql
+art migrate --pretend --database=pgsql
+art migrate --database=pgsql
+| PHPStorm create a new server and debug configuration
+| copy and apply instructions in the NOTES.txt
+| set MAIL_MAILER=log and MAIL_LOG_CHANNEL=mail in .env file
+| create mail log channel in the config/logging.php (copy of single channel and mail.log file)
+| regenerate passwords (Forgot your password?), the reset link will be logged to the storage/logs/mail.log
+| login
+| set breakpoint and try query DB and check storage/app/sql.log if queries are logged correctly
+| done 🎉
