@@ -117,6 +117,8 @@ namespace Tom::Constants
     const QString preserve_order       = QStringLiteral("preserve-order");
     // migrate:refresh
     const QString step_migrate         = QStringLiteral("step-migrate");
+    // migrate:status
+    const QString pending_             = QStringLiteral("pending");
     // migrate:uninstall
     const QString reset                = QStringLiteral("reset");
     // integrate

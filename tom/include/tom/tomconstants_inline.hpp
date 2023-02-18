@@ -128,6 +128,8 @@ namespace Tom::Constants
     inline const QString preserve_order       = QStringLiteral("preserve-order");
     // migrate:refresh
     inline const QString step_migrate         = QStringLiteral("step-migrate");
+    // migrate:status
+    inline const QString pending_             = QStringLiteral("pending");
     // migrate:uninstall
     inline const QString reset                = QStringLiteral("reset");
     // integrate

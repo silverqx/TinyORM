@@ -484,7 +484,8 @@ _tom() {
         migrate:status)
             _arguments \
                 $common_options \
-                '--database=[The database connection to use]:connection:__tom_connections'
+                '--database=[The database connection to use]:connection:__tom_connections' \
+                '--pending[Only list pending migrations]'
             ;;
 
         migrate:uninstall)

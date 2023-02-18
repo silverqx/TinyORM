@@ -7,6 +7,8 @@
 #include "tom/migrationrepository.hpp"
 #include "tom/migrator.hpp"
 
+#include <range/v3/view/remove_if.hpp>
+
 #ifdef TINYTOM_TESTS_CODE
 #  include <range/v3/algorithm/transform.hpp>
 #  include <range/v3/view/move.hpp>
@@ -19,6 +21,7 @@ TINYORM_BEGIN_COMMON_NAMESPACE
 using Orm::Constants::database_;
 
 using Tom::Constants::database_up;
+using Tom::Constants::pending_;
 
 namespace Tom::Commands::Migrations
 {
@@ -40,6 +43,7 @@ QList<CommandLineOption> StatusCommand::optionsSignature() const
         {database_, QStringLiteral("The database connection to use "
                                    "<comment>(multiple values allowed)</comment>"),
                     database_up}, // Value
+        {pending_,  QStringLiteral("Only list pending migrations")},
     };
 }
 
@@ -94,6 +98,11 @@ StatusCommand::getStatusFor(QVector<QVariant> &&ran,
                             std::map<QString, QVariant> &&batches) const
 {
     return m_migrator->migrationNames()
+            | ranges::views::remove_if([&ran, pending = isSet(pending_)]
+                                       (const auto &migration)
+    {
+        return pending && ran.contains(migration);
+    })
             | ranges::views::transform([&ran, &batches](const auto &migration)
                                        -> TableRow
     {
