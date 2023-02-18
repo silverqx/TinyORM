@@ -27,16 +27,6 @@ QueryError::QueryError(const QString &message, const QSqlQuery &query,
     : QueryError(message.toUtf8().constData(), query, bindings)
 {}
 
-const QString &QueryError::getSql() const
-{
-    return m_sql;
-}
-
-const QVector<QVariant> &QueryError::getBindings() const
-{
-    return m_bindings;
-}
-
 /* protected */
 
 QString QueryError::formatMessage(const char *message, const QSqlQuery &query)

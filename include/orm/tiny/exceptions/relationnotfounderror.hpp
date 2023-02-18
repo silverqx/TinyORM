@@ -30,9 +30,9 @@ namespace Orm::Tiny::Exceptions
                               From from = From::UNDEFINED);
 
         /*! Get the affected TinyORM model. */
-        inline const QString &getModel() const;
+        inline const QString &getModel() const noexcept;
         /*! Get the name of the relation. */
-        inline const QString &getRelation() const;
+        inline const QString &getRelation() const noexcept;
 
     protected:
         /*! The name of the affected TinyORM model. */
@@ -51,13 +51,13 @@ namespace Orm::Tiny::Exceptions
     /* public */
 
     const QString &
-    RelationNotFoundError::getModel() const
+    RelationNotFoundError::getModel() const noexcept
     {
         return m_model;
     }
 
     const QString &
-    RelationNotFoundError::getRelation() const
+    RelationNotFoundError::getRelation() const noexcept
     {
         return m_relation;
     }

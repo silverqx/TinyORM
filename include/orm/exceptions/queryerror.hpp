@@ -28,9 +28,9 @@ namespace Orm::Exceptions
                    const QVector<QVariant> &bindings = {});
 
         /*! Get the SQL for the query. */
-        const QString &getSql() const;
+        inline const QString &getSql() const noexcept;
         /*! Get the bindings for the query. */
-        const QVector<QVariant> &getBindings() const;
+        inline const QVector<QVariant> &getBindings() const noexcept;
 
     protected:
         /*! Format the Qt SQL error message. */
@@ -41,6 +41,18 @@ namespace Orm::Exceptions
         /*! The bindings for the query. */
         QVector<QVariant> m_bindings;
     };
+
+    /* public */
+
+    const QString &QueryError::getSql() const noexcept
+    {
+        return m_sql;
+    }
+
+    const QVector<QVariant> &QueryError::getBindings() const noexcept
+    {
+        return m_bindings;
+    }
 
 } // namespace Orm::Exceptions
 
