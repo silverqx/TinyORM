@@ -165,6 +165,7 @@ QString BaseGrammar::wrapValue(QString value) const
     if (value == ASTERISK_C)
         return value;
 
+    // Don't change to prepend()/append(), no perf. gain, I have tested it
     return TMPL_DQUOTES.arg(value.replace(QUOTE, QStringLiteral("\"\"")));
 }
 
