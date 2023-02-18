@@ -5,6 +5,8 @@
 #include "orm/macros/systemheader.hpp"
 TINY_SYSTEM_HEADER
 
+#include <unordered_set>
+
 #include "orm/macros/threadlocal.hpp"
 #include "orm/tiny/concerns/guardedmodel.hpp"
 #include "orm/tiny/macros/crtpmodelwithbase.hpp"
@@ -63,6 +65,9 @@ namespace Orm::Tiny::Concerns
         bool isGuardableColumn(const QString &key) const;
         /*! Th key for guardable columns hash cache. */
         QString getKeyForGuardableHash() const;
+        /*! Move columns to the std::unordered_set for guardable columns hash cache. */
+        static std::unordered_set<QString>
+        moveToSetForGuardableHash(QStringList &&columns);
         /*! Get the fillable attributes of a given vector. */
         QVector<AttributeItem>
         fillableFromArray(const QVector<AttributeItem> &attributes) const;
@@ -78,7 +83,8 @@ namespace Orm::Tiny::Concerns
         inline static QStringList u_guarded {ASTERISK}; // NOLINT(cppcoreguidelines-interfaces-global-init)
         /*! The actual columns that exist on the database and can be guarded. */
         T_THREAD_LOCAL
-        inline static QHash<QString, QStringList> m_guardableColumns;
+        inline static
+        std::unordered_map<QString, std::unordered_set<QString>> m_guardableColumns;
 
     private:
         /* Static cast this to a child's instance type (CRTP) */
@@ -256,15 +262,14 @@ namespace Orm::Tiny::Concerns
     {
         // NOTE api different, Eloquent caches it only by the model name silverqx
         // Cache columns by the connection and model name
-        const auto guardableKey = getKeyForGuardableHash();
+        const auto [it, _] = m_guardableColumns.try_emplace(
+                                 getKeyForGuardableHash(),
+                                 moveToSetForGuardableHash(
+                                     model().getConnection()
+                                            .getSchemaBuilder()
+                                            .getColumnListing(model().getTable())));
 
-        if (!m_guardableColumns.contains(guardableKey))
-            m_guardableColumns[guardableKey] = model().getConnection()
-                                               .getSchemaBuilder()
-                                               .getColumnListing(model().getTable());
-
-        // CUR change QStringList to std::unoredered_set or QSet for perf. reasons silverqx
-        return m_guardableColumns[guardableKey].contains(key);
+        return it->second.contains(key);
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
@@ -273,6 +278,21 @@ namespace Orm::Tiny::Concerns
     {
         return QStringLiteral("%1-%2").arg(model().getConnectionName(),
                                            TypeUtils::classPureBasename<Derived>());
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    std::unordered_set<QString>
+    GuardsAttributes<Derived, AllRelations...>::moveToSetForGuardableHash(
+            QStringList &&columns)
+    {
+        std::unordered_set<QString> columnsSet;
+
+        columnsSet.reserve(static_cast<std::unordered_set<QString>::size_type>(
+                               columns.size()));
+
+        std::ranges::move(columns, std::inserter(columnsSet, columnsSet.cend()));
+
+        return columnsSet;
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
