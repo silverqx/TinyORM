@@ -1791,6 +1791,7 @@ art vendor:publish --provider="Barryvdh\LaravelIdeHelper\IdeHelperServiceProvide
 | copy resources/views/test/index.blade.php
 | WinMerge routes/
 | WinMerge config/
+| WinMerge database/
 | copy MySQL database using phpMyAdmin Operations - Copy Database
 | copy PostgreSQL database using Create database - Template to previous DB - set Template to unchecked (false)
 | replace all occurences of DB_LARAVEL_X to the new X version (.env, config/database.php)
