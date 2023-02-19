@@ -55,6 +55,7 @@ private Q_SLOTS:
     void timestamps_rememberToken_CreateAndDrop() const;
 
     void modifyTable() const;
+    void modifyTable_Comment() const;
 
     void dropTable() const;
     void dropTableIfExists() const;
@@ -87,6 +88,7 @@ private Q_SLOTS:
     void modifier_defaultValue_WithExpression() const;
     void modifier_defaultValue_WithBoolean() const;
     void modifier_defaultValue_Escaping() const;
+    void modifier_ColumnComment() const;
 
     void useCurrent() const;
     void useCurrentOnUpdate() const;
@@ -491,6 +493,22 @@ void tst_SQLite_SchemaBuilder::modifyTable() const
     QVERIFY(log18.boundValues.isEmpty());
 }
 
+void tst_SQLite_SchemaBuilder::modifyTable_Comment() const
+{
+    auto log = DB::connection(m_connection).pretend([](auto &connection)
+    {
+        Schema::on(connection.getName())
+                .table(Firewalls, [](Blueprint &table)
+        {
+            // Can't throw an exception (SQLite doesn't support table comments)
+            table.comment(QStringLiteral("Example 'table' comment"));
+        });
+    });
+
+    // No database queries can't be generated
+    QVERIFY(log.isEmpty());
+}
+
 void tst_SQLite_SchemaBuilder::dropTable() const
 {
     auto log = DB::connection(m_connection).pretend([](auto &connection)
@@ -884,6 +902,27 @@ and tab	end)");
              "\"string\" varchar not null "
              "default 'Text '' and \" or \\ newline\n"
              "and tab	end')");
+    QVERIFY(firstLog.boundValues.isEmpty());
+}
+
+void tst_SQLite_SchemaBuilder::modifier_ColumnComment() const
+{
+    auto log = DB::connection(m_connection).pretend([](auto &connection)
+    {
+        Schema::on(connection.getName())
+                .table(Firewalls, [](Blueprint &table)
+        {
+            // Can't throw an exception (SQLite doesn't support column comments)
+            table.string("string").comment("string note");
+        });
+    });
+
+    QVERIFY(!log.isEmpty());
+    const auto &firstLog = log.first();
+
+    QCOMPARE(log.size(), 1);
+    QCOMPARE(firstLog.query,
+             R"(alter table "firewalls" add column "string" varchar not null)");
     QVERIFY(firstLog.boundValues.isEmpty());
 }
 

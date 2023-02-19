@@ -274,6 +274,11 @@ SQLiteSchemaGrammar::invokeCompileMethod(const CommandDefinition &command,
         {DropForeign,      bind(&SQLiteSchemaGrammar::compileDropForeign)},
 
         {RenameIndex,      bind(&SQLiteSchemaGrammar::compileRenameIndex)},
+
+        // PostgreSQL specific
+        {Comment,          nullptr},
+        // PostgreSQL and MySQL specific
+        {TableComment,     nullptr},
     };
 
     Q_ASSERT_X(cached.contains(name),

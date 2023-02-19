@@ -307,6 +307,10 @@ MySqlSchemaGrammar::invokeCompileMethod(const CommandDefinition &command,
 
         {RenameIndex,      bind(&MySqlSchemaGrammar::compileRenameIndex)},
 
+        /* PostgreSQL specific, this is not needed for MySQL, it uses modifier for column
+           comments, the Comment command will never by invoked, but I'm adding
+           for reference so it's clearly visible what's up. */
+//        {Comment,          nullptr},
         // MySQL and PostgreSQL specific
         {TableComment,     bind(&MySqlSchemaGrammar::compileTableComment)},
     };
