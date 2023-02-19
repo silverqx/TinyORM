@@ -115,7 +115,7 @@ namespace Grammars
 
         /*! Get the SQL for the column data type. */
         virtual QString getType(const ColumnDefinition &column) const = 0;
-        /*! Compile the blueprint's column definitions. */
+        /*! Compile the blueprint's added column definitions. */
         QStringList getColumns(const Blueprint &blueprint) const;
 
         /*! Format a value so that it can be used in "default" clauses. */
