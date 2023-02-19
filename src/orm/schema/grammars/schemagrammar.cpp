@@ -118,6 +118,13 @@ SchemaGrammar::compileDropFullText(const Blueprint &/*unused*/,
     throw Exceptions::RuntimeError(NotImplemented);
 }
 
+QVector<QString>
+SchemaGrammar::compileTableComment(const Blueprint &/*unused*/,
+                                   const TableCommentCommand &/*unused*/) const
+{
+    throw Exceptions::RuntimeError(NotImplemented);
+}
+
 /* Others */
 
 QString SchemaGrammar::wrap(const ColumnDefinition &column, bool prefixAlias) const

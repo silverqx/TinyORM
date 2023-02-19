@@ -121,6 +121,11 @@ namespace Grammars
         QVector<QString> compileRenameIndex(const Blueprint &blueprint,
                                             const RenameCommand &command) const;
 
+        /*! Compile a table comment command. */
+        QVector<QString>
+        compileTableComment(const Blueprint &blueprint,
+                            const TableCommentCommand &command) const override;
+
         /*! Map a command name to SchemaGrammar::compileXx() methods. */
         QVector<QString> invokeCompileMethod(const CommandDefinition &command,
                                              const DatabaseConnection &connection,

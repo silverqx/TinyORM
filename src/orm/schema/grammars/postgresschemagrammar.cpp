@@ -290,6 +290,19 @@ PostgresSchemaGrammar::compileComment(const Blueprint &blueprint,
 }
 
 QVector<QString>
+PostgresSchemaGrammar::compileTableComment(const Blueprint &blueprint,
+                                           const TableCommentCommand &command) const
+{
+    if (command.comment.isEmpty())
+        return {};
+
+    // All escaped special characters will be correctly saved in the comment
+    return {QStringLiteral("comment on table %1 is %2")
+                .arg(wrapTable(blueprint),
+                     quoteString(escapeString(command.comment)))};
+}
+
+QVector<QString>
 PostgresSchemaGrammar::invokeCompileMethod(const CommandDefinition &command,
                                            const DatabaseConnection &/*unused*/,
                                            const Blueprint &blueprint) const
@@ -350,8 +363,11 @@ PostgresSchemaGrammar::invokeCompileMethod(const CommandDefinition &command,
         {DropForeign,      bind(&PostgresSchemaGrammar::compileDropForeign)},
 
         {RenameIndex,      bind(&PostgresSchemaGrammar::compileRenameIndex)},
+
         // PostgreSQL specific
         {Comment,          bind(&PostgresSchemaGrammar::compileComment)},
+        // PostgreSQL and MySQL specific
+        {TableComment,     bind(&PostgresSchemaGrammar::compileTableComment)},
     };
 
     Q_ASSERT_X(cached.contains(name),

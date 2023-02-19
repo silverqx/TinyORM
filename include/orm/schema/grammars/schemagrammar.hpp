@@ -20,6 +20,7 @@ namespace Orm::SchemaNs
     class CommandDefinition;
     class ForeignKeyCommand;
     class IndexCommand;
+    class TableCommentCommand;
 
 namespace Grammars
 {
@@ -87,6 +88,11 @@ namespace Grammars
         virtual QVector<QString>
         compileDropFullText(const Blueprint &blueprint,
                             const IndexCommand &command) const;
+
+        /*! Compile a table comment command. */
+        virtual QVector<QString>
+        compileTableComment(const Blueprint &blueprint,
+                            const TableCommentCommand &command) const;
 
         /* Others */
         /*! Wrap a value in keyword identifiers. */

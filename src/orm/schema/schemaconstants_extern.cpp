@@ -25,6 +25,9 @@ namespace Orm::SchemaNs::Constants
     // PostgreSQL specific command
     const QString Comment           = QStringLiteral("comment");
 
+    // MySQL and PostgreSQL specific command
+    const QString TableComment      = QStringLiteral("tableComment");
+
     // Indexes
     const QString Primary      = QStringLiteral("primary");
     const QString Unique       = QStringLiteral("unique");

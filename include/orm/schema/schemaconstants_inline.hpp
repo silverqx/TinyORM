@@ -37,6 +37,9 @@ namespace Constants
     // PostgreSQL specific command
     inline const QString Comment          = QStringLiteral("comment");
 
+    // MySQL and PostgreSQL specific command
+    inline const QString TableComment     = QStringLiteral("tableComment");
+
     // Indexes
     inline const QString Primary      = QStringLiteral("primary");
     inline const QString Unique       = QStringLiteral("unique");

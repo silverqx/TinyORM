@@ -2,11 +2,11 @@
 #include <QtTest>
 
 #include <filesystem>
-#include <unordered_set>
 
 #include "orm/db.hpp"
+#include "orm/postgresconnection.hpp"
+#include "orm/query/querybuilder.hpp"
 #include "orm/schema.hpp"
-#include "orm/utils/query.hpp"
 #include "orm/utils/type.hpp"
 
 #include "databases.hpp"
@@ -18,6 +18,7 @@ using fspath = std::filesystem::path;
 using Orm::Constants::ID;
 using Orm::Constants::NAME;
 using Orm::Constants::NOSPACE;
+using Orm::Constants::PUBLIC;
 using Orm::Constants::QMYSQL;
 using Orm::Constants::QPSQL;
 using Orm::Constants::QSQLITE;
@@ -25,6 +26,7 @@ using Orm::Constants::database_;
 using Orm::Constants::username_;
 
 using Orm::DB;
+using Orm::PostgresConnection;
 using Orm::Schema;
 using Orm::SchemaNs::Blueprint;
 
@@ -40,6 +42,7 @@ class tst_SchemaBuilder : public QObject // clazy:exclude=ctor-missing-parent-ar
 private Q_SLOTS:
     void initTestCase() const;
 
+    /* SchemaBuilder related */
     void createDatabase_dropAllTables_dropDatabaseIfExists() const;
     void getAllTables() const;
     void getAllViews_dropAllViews() const;
@@ -48,8 +51,14 @@ private Q_SLOTS:
 
     void hasTable() const;
 
+    /* Blueprint commands */
+    void createTable_Comment() const;
+    void modifyTable_Comment() const;
+
 // NOLINTNEXTLINE(readability-redundant-access-specifiers)
 private:
+    /*! Table or database name used in tests. */
+    inline static const auto Firewalls = QStringLiteral("firewalls");
     /*! Test case class name. */
     inline static const auto *ClassName = "tst_SchemaBuilder";
     /*! Database name used in the current test case. */
@@ -68,6 +77,15 @@ private:
     static bool hasDatabase_Postgres(const QString &database, const QString &connection);
     /*! Determine whether a given database exists (SQLite). */
     static bool hasDatabase_Sqlite(const fspath &database);
+
+    /*! Get a table comment (router method). */
+    static QVariant getTableComment(const QString &table, const QString &connection);
+    /*! Get a table comment (MySQL). */
+    static QVariant getTableComment_MySql(const QString &table,
+                                          const QString &connection);
+    /*! Get a table comment (PostgreSQL). */
+    static QVariant getTableComment_Postgres(const QString &table,
+                                             const QString &connection);
 
     /*! Create a new alternative connection on the DatabaseExample database. */
     static std::optional<QString> alternativeConnection(const QString &connection);
@@ -97,6 +115,8 @@ void tst_SchemaBuilder::initTestCase() const
     for (const auto &connection : connections)
         QTest::newRow(connection.toUtf8().constData()) << connection;
 }
+
+/* SchemaBuilder related */
 
 void tst_SchemaBuilder::createDatabase_dropAllTables_dropDatabaseIfExists() const
 {
@@ -244,6 +264,90 @@ void tst_SchemaBuilder::hasTable() const
 
     QVERIFY(Schema::on(connection).hasTable("users"));
 }
+
+/* Blueprint commands */
+
+void tst_SchemaBuilder::createTable_Comment() const
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    if (DB::driverName(connection) == QSQLITE)
+        QSKIP("The SQLite database doesn't support table comments.", );
+
+    QVERIFY(!Schema::on(connection).hasTable(Firewalls));
+
+    // Create table with comment
+    const auto tableComment = QStringLiteral("Example 'table' comment");
+
+    Schema::on(connection)
+            .create(Firewalls, [&tableComment](Blueprint &table)
+    {
+        table.comment(tableComment);
+
+        table.id();
+        table.string(NAME);
+    });
+
+    QVERIFY(Schema::on(connection).hasTable(Firewalls));
+
+    // Verify
+    QCOMPARE(getTableComment(Firewalls, connection), QVariant(tableComment));
+
+    // Restore
+    Schema::drop(Firewalls, connection);
+
+    QVERIFY(!Schema::on(connection).hasTable(Firewalls));
+}
+
+void tst_SchemaBuilder::modifyTable_Comment() const
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    if (DB::driverName(connection) == QSQLITE)
+        QSKIP("The SQLite database doesn't support table comments.", );
+
+    QVERIFY(!Schema::on(connection).hasTable(Firewalls));
+
+    // Create table with comment
+    {
+        const auto tableComment = QStringLiteral("Example 'table' comment");
+
+        Schema::on(connection)
+                .create(Firewalls, [&tableComment](Blueprint &table)
+        {
+            table.comment(tableComment);
+
+            table.id();
+            table.string(NAME);
+        });
+
+        QVERIFY(Schema::on(connection).hasTable(Firewalls));
+
+        // Verify
+        QCOMPARE(getTableComment(Firewalls, connection), QVariant(tableComment));
+    }
+
+    // Modify the table comment
+    {
+        const auto tableComment = QStringLiteral("Example modified 'table' comment");
+
+        Schema::on(connection)
+                .table(Firewalls, [&tableComment](Blueprint &table)
+        {
+            table.comment(tableComment);
+        });
+
+        QVERIFY(Schema::on(connection).hasTable(Firewalls));
+
+        // Verify
+        QCOMPARE(getTableComment(Firewalls, connection), QVariant(tableComment));
+    }
+
+    // Restore
+    Schema::drop(Firewalls, connection);
+
+    QVERIFY(!Schema::on(connection).hasTable(Firewalls));
+}
 // NOLINTEND(readability-convert-member-functions-to-static)
 
 /* private */
@@ -326,6 +430,49 @@ bool tst_SchemaBuilder::hasDatabase_Postgres(const QString &database,
 bool tst_SchemaBuilder::hasDatabase_Sqlite(const fspath &database)
 {
     return fs::exists(database);
+}
+
+QVariant tst_SchemaBuilder::getTableComment(const QString &table, const QString &connection)
+{
+    const auto driver = DB::driverName(connection);
+
+    if (driver == QMYSQL)
+        return getTableComment_MySql(table, connection);
+
+    if (driver == QPSQL)
+        return getTableComment_Postgres(table, connection);
+
+    Q_UNREACHABLE();
+}
+
+QVariant tst_SchemaBuilder::getTableComment_MySql(const QString &table,
+                                                  const QString &connection)
+{
+    return DB::table("information_schema.tables", connection)
+            ->whereEq("table_schema",
+                      DB::getConfigValue(database_, connection).value<QString>())
+            .whereEq("table_name", table)
+            .select("table_comment")
+            .value("table_comment");
+}
+
+QVariant tst_SchemaBuilder::getTableComment_Postgres(const QString &table,
+                                                     const QString &connection)
+{
+    // This is useless as schema will always be 'public', but the logic is right
+    const auto schema = dynamic_cast<PostgresConnection &>(DB::connection(connection))
+                        .searchPath().constFirst();
+    Q_ASSERT(schema == PUBLIC);
+
+    auto query = DB::on(connection).unprepared(
+                     QStringLiteral(
+                         "select obj_description('%1.%2'::regclass) as table_comment")
+                     .arg(schema, table));
+
+    Q_ASSERT(query.first());
+    Q_ASSERT(query.isValid());
+
+    return query.value(QStringLiteral("table_comment"));
 }
 
 std::optional<QString>

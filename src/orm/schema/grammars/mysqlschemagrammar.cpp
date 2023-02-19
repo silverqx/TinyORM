@@ -231,6 +231,19 @@ MySqlSchemaGrammar::compileRenameIndex(const Blueprint &blueprint,
 }
 
 QVector<QString>
+MySqlSchemaGrammar::compileTableComment(const Blueprint &blueprint,
+                                        const TableCommentCommand &command) const
+{
+    if (command.comment.isEmpty())
+        return {};
+
+    // All escaped special characters will be correctly saved in the comment
+    return {QStringLiteral("alter table %1 comment = %2")
+                .arg(wrapTable(blueprint),
+                     quoteString(escapeString(command.comment)))};
+}
+
+QVector<QString>
 MySqlSchemaGrammar::invokeCompileMethod(const CommandDefinition &command,
                                         const DatabaseConnection &connection,
                                         const Blueprint &blueprint) const
@@ -293,6 +306,9 @@ MySqlSchemaGrammar::invokeCompileMethod(const CommandDefinition &command,
         {DropForeign,      bind(&MySqlSchemaGrammar::compileDropForeign)},
 
         {RenameIndex,      bind(&MySqlSchemaGrammar::compileRenameIndex)},
+
+        // MySQL and PostgreSQL specific
+        {TableComment,     bind(&MySqlSchemaGrammar::compileTableComment)},
     };
 
     Q_ASSERT_X(cached.contains(name),

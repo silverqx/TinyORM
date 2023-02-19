@@ -494,6 +494,11 @@ ColumnDefinitionReference<> Blueprint::rememberToken()
     return string(QStringLiteral("remember_token"), 100).nullable();
 }
 
+const TableCommentCommand &Blueprint::comment(QString comment)
+{
+    return addCommand<TableCommentCommand>({{}, TableComment, std::move(comment)});
+}
+
 ColumnDefinitionReference<>
 Blueprint::addColumn(const ColumnType type, const QString &name,
                      ColumnDefinition &&definition)

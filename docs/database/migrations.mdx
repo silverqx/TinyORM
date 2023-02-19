@@ -476,6 +476,15 @@ The `temporary` method may be used to indicate that the table should be "tempora
         // ...
     });
 
+If you would like to add a "comment" to a database table, you may invoke the `comment` method on the table instance. Table comments are currently only supported by MySQL and PostgreSQL:
+
+    Schema::create("calculations", [](Blueprint &table)
+    {
+        table.comment("Business calculations");
+
+        // ...
+    });
+
 ### Updating Tables
 
 The `table` method on the `Schema` facade may be used to update existing tables. Like the `create` method, the `table` method accepts two arguments: the name of the table and a lambda expression that receives a `Blueprint` instance you may use to add columns or indexes to the table:

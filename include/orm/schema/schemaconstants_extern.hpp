@@ -38,6 +38,9 @@ namespace Constants
     // PostgreSQL specific command
     SHAREDLIB_EXPORT extern const QString Comment;
 
+    // MySQL and PostgreSQL specific command
+    SHAREDLIB_EXPORT extern const QString TableComment;
+
     // Indexes
     SHAREDLIB_EXPORT extern const QString Primary;
     SHAREDLIB_EXPORT extern const QString Unique;

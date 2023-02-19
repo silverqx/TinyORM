@@ -138,6 +138,11 @@ namespace Grammars
         QVector<QString> compileComment(const Blueprint &blueprint,
                                         const CommentCommand &command) const;
 
+        /*! Compile a table comment command. */
+        QVector<QString>
+        compileTableComment(const Blueprint &blueprint,
+                            const TableCommentCommand &command) const override;
+
         /*! Run command's compile method and return SQL queries. */
         QVector<QString>
         invokeCompileMethod(const CommandDefinition &command,

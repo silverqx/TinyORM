@@ -49,10 +49,12 @@ private Q_SLOTS:
     void createTable() const;
     void createTable_Temporary() const;
     void createTable_Charset_Collation_Engine() const;
+    void createTable_Comment() const;
 
     void timestamps_rememberToken_CreateAndDrop() const;
 
     void modifyTable() const;
+    void modifyTable_Comment() const;
 
     void dropTable() const;
     void dropTableIfExists() const;
@@ -318,6 +320,35 @@ void tst_PostgreSQL_SchemaBuilder::createTable_Charset_Collation_Engine() const
     QVERIFY(firstLog.boundValues.isEmpty());
 }
 
+void tst_PostgreSQL_SchemaBuilder::createTable_Comment() const
+{
+    auto log = DB::connection(m_connection).pretend([](auto &connection)
+    {
+        Schema::on(connection.getName())
+                .create(Firewalls, [](Blueprint &table)
+        {
+            table.comment("Example 'table' comment");
+
+            table.id();
+            table.string(NAME);
+        });
+    });
+
+    QCOMPARE(log.size(), 2);
+
+    const auto &log0 = log.at(0);
+    QCOMPARE(log0.query,
+             "create table \"firewalls\" ("
+             "\"id\" bigserial primary key not null, "
+             "\"name\" varchar(255) not null)");
+    QVERIFY(log0.boundValues.isEmpty());
+
+    const auto &log1 = log.at(1);
+    QCOMPARE(log1.query,
+             "comment on table \"firewalls\" is 'Example ''table'' comment'");
+    QVERIFY(log1.boundValues.isEmpty());
+}
+
 void tst_PostgreSQL_SchemaBuilder::timestamps_rememberToken_CreateAndDrop() const
 {
     auto log = DB::connection(m_connection).pretend([](auto &connection)
@@ -455,6 +486,26 @@ void tst_PostgreSQL_SchemaBuilder::modifyTable() const
              "alter table \"firewalls\" "
              "rename column \"string_22\" to \"string_22_renamed\"");
     QVERIFY(log5.boundValues.isEmpty());
+}
+
+void tst_PostgreSQL_SchemaBuilder::modifyTable_Comment() const
+{
+    auto log = DB::connection(m_connection).pretend([](auto &connection)
+    {
+        Schema::on(connection.getName())
+                .table(Firewalls, [](Blueprint &table)
+        {
+            table.comment(QStringLiteral("Example 'table' comment"));
+        });
+    });
+
+    QVERIFY(!log.isEmpty());
+    const auto &firstLog = log.first();
+
+    QCOMPARE(log.size(), 1);
+    QCOMPARE(firstLog.query,
+             "comment on table \"firewalls\" is 'Example ''table'' comment'");
+    QVERIFY(firstLog.boundValues.isEmpty());
 }
 
 void tst_PostgreSQL_SchemaBuilder::dropTable() const

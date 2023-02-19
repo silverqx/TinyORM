@@ -119,6 +119,16 @@ namespace Orm::SchemaNs
         QString comment;
     };
 
+    /*! Table comment command for the MySQL and PostgreSQL. */
+    class TableCommentCommand : public CommandDefinition
+    {
+    public:
+        /*! Command name. */
+        QString name {};
+        /*! Table comment value. */
+        QString comment;
+    };
+
     /*! Database column definition. */
     class ColumnDefinition
     {

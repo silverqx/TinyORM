@@ -382,6 +382,9 @@ namespace Grammars
         /*! Adds the `remember_token` column to the table. */
         ColumnDefinitionReference<> rememberToken();
 
+        /*! Add a comment to the table. */
+        const TableCommentCommand &comment(QString comment);
+
         /*! Add a new column to the blueprint. */
         ColumnDefinitionReference<> addColumn(ColumnType type, const QString &name,
                                               ColumnDefinition &&definition = {});
