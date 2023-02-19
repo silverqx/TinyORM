@@ -33,6 +33,7 @@ namespace Orm::Query
 
     // TODO querybuilder, whereFullText, whereBitwise silverqx
     // FUTURE querybuilder, paginator silverqx
+    // FUTURE querybuilder, index hint silverqx
     /*! Database query builder. */
     class SHAREDLIB_EXPORT Builder : public Concerns::BuildsQueries // clazy:exclude=copyable-polymorphic
     {
