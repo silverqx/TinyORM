@@ -299,7 +299,7 @@ void tst_Migrate::rollback() const
         QCOMPARE(status(), createStatus(FullyMigrated));
     }
 
-    // rollback on previous migrate w/o --step
+    // Rollback on previous migrate w/o --step
     {
         auto exitCode = invokeCommand(connection, MigrateRollback);
 
@@ -331,7 +331,7 @@ void tst_Migrate::rollback_AfterMigrateWithStep() const
         QCOMPARE(status(), createStatus(FullyStepMigrated));
     }
 
-    // rollback on previous migrate with --step
+    // Rollback on previous migrate with --step
     {
         auto exitCode = invokeCommand(connection, MigrateRollback);
 
@@ -368,7 +368,7 @@ void tst_Migrate::rollback_Step() const
         QCOMPARE(status(), createStatus(FullyMigrated));
     }
 
-    // rollback on previous migrate w/o --step
+    // Rollback on previous migrate w/o --step
     {
         auto exitCode = invokeCommand(connection, MigrateRollback, {"--step=2"});
 
@@ -405,7 +405,7 @@ void tst_Migrate::rollback_Step_AfterMigrateWithStep() const
         QCOMPARE(status(), createStatus(FullyStepMigrated));
     }
 
-    // rollback on previous migrate with --step
+    // Rollback on previous migrate with --step
     {
         auto exitCode = invokeCommand(connection, MigrateRollback, {"--step=2"});
 
@@ -442,7 +442,7 @@ void tst_Migrate::refresh() const
         QCOMPARE(status(), createStatus(FullyMigrated));
     }
 
-    // refresh on previous migrate w/o --step
+    // Refresh on previous migrate w/o --step
     {
         auto exitCode = invokeCommand(connection, MigrateRefresh);
 
@@ -474,7 +474,7 @@ void tst_Migrate::refresh_AfterMigrateWithStep() const
         QCOMPARE(status(), createStatus(FullyStepMigrated));
     }
 
-    // refresh on previous migrate with --step
+    // Refresh on previous migrate with --step
     {
         auto exitCode = invokeCommand(connection, MigrateRefresh);
 
@@ -506,7 +506,7 @@ void tst_Migrate::refresh_Step() const
         QCOMPARE(status(), createStatus(FullyMigrated));
     }
 
-    // refresh on previous migrate w/o --step
+    // Refresh on previous migrate w/o --step
     {
         auto exitCode = invokeCommand(connection, MigrateRefresh, {"--step=2"});
 
@@ -543,7 +543,7 @@ void tst_Migrate::refresh_StepMigrate() const
         QCOMPARE(status(), createStatus(FullyMigrated));
     }
 
-    // refresh on previous migrate w/o --step
+    // Refresh on previous migrate w/o --step
     {
         auto exitCode = invokeCommand(connection, MigrateRefresh, {"--step-migrate"});
 
@@ -575,7 +575,7 @@ void tst_Migrate::refresh_Step_StepMigrate() const
         QCOMPARE(status(), createStatus(FullyMigrated));
     }
 
-    // refresh on previous migrate w/o --step
+    // Refresh on previous migrate w/o --step
     {
         auto exitCode = invokeCommand(connection, MigrateRefresh,
                                       {"--step=2", "--step-migrate"});
