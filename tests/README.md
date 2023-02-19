@@ -2,7 +2,7 @@
 
 ### Requirements
 
-The `tst_PostgreSQL_Connection::searchpath_Undefined_PostgreSQL()` test method hardly depends on the following PostgreSQL configuration:
+The `tst_PostgreSQL_Connection::searchpath_Undefined_PostgreSQL()` test method hardly depends on the following PostgreSQL configuration (database server configuration, not connection configuration in the TinyUtils::Databases class):
 
 ```
 search_path = "$user", public
