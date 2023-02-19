@@ -548,6 +548,8 @@ The schema builder blueprint offers a variety of methods that correspond to the 
 [set](#column-method-set)
 [smallIncrements](#column-method-smallIncrements)
 [smallInteger](#column-method-smallInteger)
+[softDeletes](#column-method-softDeletes)
+[softDeletesTz](#column-method-softDeletesTz)
 [string](#column-method-string)
 [text](#column-method-text)
 [timeTz](#column-method-timeTz)
@@ -814,6 +816,18 @@ The `smallInteger` method creates a `SMALLINT` equivalent column:
 
     table.smallInteger("votes");
 
+#### `softDeletes()` {#column-method-softDeletes}
+
+The `softDeletes` method adds a nullable `deleted_at` `TIMESTAMP` equivalent column with an optional precision (total digits). This column is intended to store the `deleted_at` timestamp needed for TinyORM's "soft delete" functionality:
+
+    table.softDeletes("deleted_at", precision = 0);
+
+#### `softDeletesTz()` {#column-method-softDeletesTz}
+
+The `softDeletesTz` method adds a nullable `deleted_at` `TIMESTAMP` (with timezone) equivalent column with an optional precision (total digits). This column is intended to store the `deleted_at` timestamp needed for TinyORM's "soft delete" functionality:
+
+    table.softDeletesTz("deleted_at", precision = 0);
+
 #### `string()` {#column-method-string}
 
 The `string` method creates a `VARCHAR` equivalent column of the given length:
@@ -1039,6 +1053,8 @@ TinyORM provides several convenient methods related to dropping common types of 
 | Command                          | Description |
 | -------------------------------- | ----------- |
 | `table.dropRememberToken();`     | Drop the `remember_token` column. |
+| `table.dropSoftDeletes();`       | Drop the `deleted_at` column. |
+| `table.dropSoftDeletesTz();`     | Alias of `dropSoftDeletes()` method. |
 | `table.dropTimestamps();`        | Drop the `created_at` and `updated_at` columns. |
 | `table.dropTimestampsTz();`      | Alias of `dropTimestamps()` method. |
 
