@@ -50,14 +50,14 @@ private Q_SLOTS:
 
     void reset() const;
 
-    void rollback_OnMigrate() const;
-    void rollback_OnMigrateWithStep() const;
+    void rollback() const;
+    void rollback_AfterMigrateWithStep() const;
 
-    void rollback_Step_OnMigrate() const;
-    void rollback_Step_OnMigrateWithStep() const;
+    void rollback_Step() const;
+    void rollback_Step_AfterMigrateWithStep() const;
 
-    void refresh_OnMigrate() const;
-    void refresh_OnMigrateWithStep() const;
+    void refresh() const;
+    void refresh_AfterMigrateWithStep() const;
 
     void refresh_Step() const;
     void refresh_StepMigrate() const;
@@ -282,7 +282,7 @@ void tst_Migrate::reset() const
     }
 }
 
-void tst_Migrate::rollback_OnMigrate() const
+void tst_Migrate::rollback() const
 {
     QFETCH_GLOBAL(QString, connection);
 
@@ -314,7 +314,7 @@ void tst_Migrate::rollback_OnMigrate() const
     }
 }
 
-void tst_Migrate::rollback_OnMigrateWithStep() const
+void tst_Migrate::rollback_AfterMigrateWithStep() const
 {
     QFETCH_GLOBAL(QString, connection);
 
@@ -351,7 +351,7 @@ void tst_Migrate::rollback_OnMigrateWithStep() const
     }
 }
 
-void tst_Migrate::rollback_Step_OnMigrate() const
+void tst_Migrate::rollback_Step() const
 {
     QFETCH_GLOBAL(QString, connection);
 
@@ -388,7 +388,7 @@ void tst_Migrate::rollback_Step_OnMigrate() const
     }
 }
 
-void tst_Migrate::rollback_Step_OnMigrateWithStep() const
+void tst_Migrate::rollback_Step_AfterMigrateWithStep() const
 {
     QFETCH_GLOBAL(QString, connection);
 
@@ -425,7 +425,7 @@ void tst_Migrate::rollback_Step_OnMigrateWithStep() const
     }
 }
 
-void tst_Migrate::refresh_OnMigrate() const
+void tst_Migrate::refresh() const
 {
     QFETCH_GLOBAL(QString, connection);
 
@@ -457,7 +457,7 @@ void tst_Migrate::refresh_OnMigrate() const
     }
 }
 
-void tst_Migrate::refresh_OnMigrateWithStep() const
+void tst_Migrate::refresh_AfterMigrateWithStep() const
 {
     QFETCH_GLOBAL(QString, connection);
 
