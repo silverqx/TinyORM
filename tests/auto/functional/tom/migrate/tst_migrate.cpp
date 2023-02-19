@@ -564,7 +564,7 @@ void tst_Migrate::rollback_Batch_AfterMigrateWithStep() const
 
     // Migrate again
     {
-        auto exitCode = invokeCommand(connection, Migrate, {"--step=2"});
+        auto exitCode = invokeCommand(connection, Migrate, {"--step"});
 
         QVERIFY(exitCode == EXIT_SUCCESS);
     }
