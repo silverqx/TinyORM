@@ -478,7 +478,8 @@ _tom() {
                 '--database=[The database connection to use]:connection:__tom_connections' \
                 '(-f --force)'{-f,--force}'[Force the operation to run when in production]' \
                 '--pretend[Dump the SQL queries that would be run]' \
-                '--step=[The number of migrations to be reverted & re-run]:number'
+                '--step=[The number of migrations to be reverted & re-run]:number' \
+                '--batch=[The batch of migrations (identified by their batch number) to be reverted]:number'
             ;;
 
         migrate:status)

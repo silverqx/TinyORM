@@ -51,6 +51,8 @@ namespace Tom
             bool step     = false;
             /*! The number of migrations to be reverted. */
             int stepValue = 0;
+            /*! The batch of migrations (identified by batch number) to be reverted. */
+            int batch     = 0;
         };
 
         /*! Run the pending migrations. */
@@ -96,6 +98,9 @@ namespace Tom
         /*! Get the migrations for a rollback operation (used by rollback). */
         std::vector<RollbackItem>
         getMigrationsForRollback(MigrateOptions options) const;
+        /*! Get the migrations for a rollback operation (used by rollback). */
+        std::vector<MigrationItem>
+        getMigrationsForRollbackByOptions(MigrateOptions options) const;
         /*! Get the migrations for a rollback operation (used by reset). */
         std::vector<RollbackItem>
         getMigrationsForRollback(std::vector<MigrationItem> &&ran) const;

@@ -54,6 +54,8 @@ namespace Tom
         std::vector<MigrationItem> getRan(const QString &order) const;
         /*! Get list of migrations. */
         std::vector<MigrationItem> getMigrations(int steps) const;
+        /*! Get the list of the migrations by batch number. */
+        std::vector<MigrationItem> getMigrationsByBatch(int batch) const;
         /*! Get the last migration batch. */
         std::vector<MigrationItem> getLast() const;
         /*! Get the completed migrations with their batch numbers. */

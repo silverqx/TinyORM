@@ -10,6 +10,8 @@ TINYORM_BEGIN_COMMON_NAMESPACE
 
 using Orm::Constants::database_;
 
+using Tom::Constants::batch_;
+using Tom::Constants::batch_up;
 using Tom::Constants::database_up;
 using Tom::Constants::force;
 using Tom::Constants::pretend;
@@ -40,6 +42,8 @@ QList<CommandLineOption> RollbackCommand::optionsSignature() const
           force},     QStringLiteral("Force the operation to run when in production")},
         {pretend,     QStringLiteral("Dump the SQL queries that would be run")},
         {step_,       QStringLiteral("The number of migrations to be reverted"), step_up}, // Value
+        {batch_,      QStringLiteral("The batch of migrations (identified by their "
+                                     "batch number) to be reverted"), batch_up}, // Value
     };
 }
 
@@ -58,7 +62,8 @@ int RollbackCommand::run()
     {
         // Validation not needed as the toInt() returns 0 if conversion fails, like it
         m_migrator->rollback({.pretend   = isSet(pretend),
-                              .stepValue = value(step_).toInt()});
+                              .stepValue = value(step_).toInt(),
+                              .batch     = value(batch_).toInt()});
 
         return EXIT_SUCCESS;
     });

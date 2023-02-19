@@ -73,7 +73,7 @@ std::vector<std::shared_ptr<Migration>> Migrator::run(const MigrateOptions optio
        each migration's execution. We will also extract a few of the options. */
     auto batch = m_repository->getNextBatchNumber();
 
-    const auto &[pretend, step, _] = options;
+    const auto &[pretend, step, unused1, unused2] = options;
 
     /* Once we have the vector of migrations, we will spin through them and run the
        migrations "up" so the changes are made to the databases. We'll then log
@@ -241,9 +241,7 @@ void Migrator::runUp(const Migration &migration, const int batch,
 std::vector<RollbackItem>
 Migrator::getMigrationsForRollback(const MigrateOptions options) const
 {
-    auto migrationsDb = options.stepValue > 0
-                        ? m_repository->getMigrations(options.stepValue)
-                        : m_repository->getLast();
+    auto migrationsDb = getMigrationsForRollbackByOptions(options);
 
     return m_migrations.get()
             | ranges::views::reverse
@@ -263,6 +261,18 @@ Migrator::getMigrationsForRollback(const MigrateOptions options) const
         return {std::move(id), std::move(migrationName), migration};
     })
             | ranges::to<std::vector<RollbackItem>>();
+}
+
+std::vector<MigrationItem>
+Migrator::getMigrationsForRollbackByOptions(const MigrateOptions options) const
+{
+    if (options.stepValue > 0)
+        return m_repository->getMigrations(options.stepValue);
+
+    if (options.batch > 0)
+        return m_repository->getMigrationsByBatch(options.batch);
+
+    return m_repository->getLast();
 }
 
 std::vector<RollbackItem>

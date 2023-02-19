@@ -56,6 +56,9 @@ private Q_SLOTS:
     void rollback_Step() const;
     void rollback_Step_AfterMigrateWithStep() const;
 
+    void rollback_Batch_MoreMigrations() const;
+    void rollback_Batch_AfterMigrateWithStep() const;
+
     void refresh() const;
     void refresh_AfterMigrateWithStep() const;
 
@@ -108,6 +111,7 @@ namespace
     const auto *s_2  = "2";
     const auto *s_3  = "3";
     const auto *s_4  = "4";
+    const auto *s_5  = "5";
 
     // Migration names
     const auto *
@@ -421,6 +425,160 @@ void tst_Migrate::rollback_Step_AfterMigrateWithStep() const
             {Yes, s_2014_10_12_100000_add_factor_column_to_posts_table, s_2},
             {No,  s_2014_10_12_200000_create_properties_table},
             {No,  s_2014_10_12_300000_create_phones_table},
+        }));
+    }
+}
+
+void tst_Migrate::rollback_Batch_MoreMigrations() const
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    // Prepare migrations to the exact state
+    {
+        auto exitCode = invokeCommand(connection, Migrate);
+
+        QVERIFY(exitCode == EXIT_SUCCESS);
+    }
+
+    {
+        auto exitCode = invokeCommand(connection, MigrateRollback, {"--step=3"});
+
+        QVERIFY(exitCode == EXIT_SUCCESS);
+    }
+
+    {
+        auto exitCode = invokeCommand(connection, Migrate);
+
+        QVERIFY(exitCode == EXIT_SUCCESS);
+    }
+
+    // Verify preparations
+    {
+        auto exitCode = invokeTestStatusCommand(connection);
+
+        QVERIFY(exitCode == EXIT_SUCCESS);
+        QCOMPARE(status(), createStatus({
+            {Yes, s_2014_10_12_000000_create_posts_table,               s_1},
+            {Yes, s_2014_10_12_100000_add_factor_column_to_posts_table, s_2},
+            {Yes, s_2014_10_12_200000_create_properties_table,          s_2},
+            {Yes, s_2014_10_12_300000_create_phones_table,              s_2},
+        }));
+    }
+
+    // Rollback on previous migrate w/o --step
+    {
+        auto exitCode = invokeCommand(connection, MigrateRollback, {"--batch=2"});
+
+        QVERIFY(exitCode == EXIT_SUCCESS);
+    }
+
+    // Verify
+    {
+        auto exitCode = invokeTestStatusCommand(connection);
+
+        QVERIFY(exitCode == EXIT_SUCCESS);
+        QCOMPARE(status(), createStatus({
+            {Yes, s_2014_10_12_000000_create_posts_table,               s_1},
+            {No,  s_2014_10_12_100000_add_factor_column_to_posts_table     },
+            {No,  s_2014_10_12_200000_create_properties_table              },
+            {No,  s_2014_10_12_300000_create_phones_table                  },
+        }));
+    }
+}
+
+void tst_Migrate::rollback_Batch_AfterMigrateWithStep() const
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    {
+        auto exitCode = invokeCommand(connection, Migrate, {"--step"});
+
+        QVERIFY(exitCode == EXIT_SUCCESS);
+    }
+
+    {
+        auto exitCode = invokeTestStatusCommand(connection);
+
+        QVERIFY(exitCode == EXIT_SUCCESS);
+        QCOMPARE(status(), createStatus(FullyStepMigrated));
+    }
+
+    // Rollback on previous migrate with --step
+    {
+        auto exitCode = invokeCommand(connection, MigrateRollback, {"--batch=2"});
+
+        QVERIFY(exitCode == EXIT_SUCCESS);
+    }
+
+    {
+        auto exitCode = invokeTestStatusCommand(connection);
+
+        QVERIFY(exitCode == EXIT_SUCCESS);
+        QCOMPARE(status(), createStatus({
+            {Yes, s_2014_10_12_000000_create_posts_table,               s_1},
+            {No,  s_2014_10_12_100000_add_factor_column_to_posts_table     },
+            {Yes, s_2014_10_12_200000_create_properties_table,          s_3},
+            {Yes, s_2014_10_12_300000_create_phones_table,              s_4},
+        }));
+    }
+
+    // Migrate again
+    {
+        auto exitCode = invokeCommand(connection, Migrate);
+
+        QVERIFY(exitCode == EXIT_SUCCESS);
+    }
+
+    // Verify the batch number
+    {
+        auto exitCode = invokeTestStatusCommand(connection);
+
+        QVERIFY(exitCode == EXIT_SUCCESS);
+        QCOMPARE(status(), createStatus({
+            {Yes, s_2014_10_12_000000_create_posts_table,               s_1},
+            {Yes, s_2014_10_12_100000_add_factor_column_to_posts_table, s_5},
+            {Yes, s_2014_10_12_200000_create_properties_table,          s_3},
+            {Yes, s_2014_10_12_300000_create_phones_table,              s_4},
+        }));
+    }
+
+    // Rollback again
+    {
+        auto exitCode = invokeCommand(connection, MigrateRollback, {"--step=2"});
+
+        QVERIFY(exitCode == EXIT_SUCCESS);
+    }
+
+    // Verify it
+    {
+        auto exitCode = invokeTestStatusCommand(connection);
+
+        QVERIFY(exitCode == EXIT_SUCCESS);
+        QCOMPARE(status(), createStatus({
+            {Yes, s_2014_10_12_000000_create_posts_table,               s_1},
+            {No,  s_2014_10_12_100000_add_factor_column_to_posts_table     },
+            {Yes, s_2014_10_12_200000_create_properties_table,          s_3},
+            {No,  s_2014_10_12_300000_create_phones_table,                 },
+        }));
+    }
+
+    // Migrate again
+    {
+        auto exitCode = invokeCommand(connection, Migrate, {"--step=2"});
+
+        QVERIFY(exitCode == EXIT_SUCCESS);
+    }
+
+    // Verify the batch numbers 🎉
+    {
+        auto exitCode = invokeTestStatusCommand(connection);
+
+        QVERIFY(exitCode == EXIT_SUCCESS);
+        QCOMPARE(status(), createStatus({
+            {Yes, s_2014_10_12_000000_create_posts_table,               s_1},
+            {Yes, s_2014_10_12_100000_add_factor_column_to_posts_table, s_4},
+            {Yes, s_2014_10_12_200000_create_properties_table,          s_3},
+            {Yes, s_2014_10_12_300000_create_phones_table,              s_5},
         }));
     }
 }

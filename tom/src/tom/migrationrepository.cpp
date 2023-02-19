@@ -64,6 +64,17 @@ std::vector<MigrationItem> MigrationRepository::getMigrations(const int steps) c
     return hydrateMigrations(query);
 }
 
+std::vector<MigrationItem>
+MigrationRepository::getMigrationsByBatch(const int batch) const
+{
+    // Ownership of the std::shared_ptr<QueryBuilder>
+    auto query = table()->whereEq(batch_, batch)
+                 .orderBy(migration_, DESC)
+                 .get();
+
+    return hydrateMigrations(query);
+}
+
 std::vector<MigrationItem> MigrationRepository::getLast() const
 {
     // Ownership of the std::shared_ptr<QueryBuilder>

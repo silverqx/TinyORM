@@ -46,6 +46,7 @@ namespace Tom::Constants
     const QString class_up           = QStringLiteral("CLASS");
     const QString database_up        = QStringLiteral("DATABASE");
     const QString seeder_up          = QStringLiteral("SEEDER");
+    const QString batch_up           = QStringLiteral("BATCH");
     const QString step_up            = QStringLiteral("STEP");
     const QString commandline_up     = QStringLiteral("COMMANDLINE");
     const QString position_up        = QStringLiteral("POSITION");

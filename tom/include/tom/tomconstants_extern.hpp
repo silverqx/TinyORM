@@ -58,6 +58,7 @@ namespace Tom::Constants
     SHAREDLIB_EXPORT extern const QString class_up;
     SHAREDLIB_EXPORT extern const QString database_up;
     SHAREDLIB_EXPORT extern const QString seeder_up;
+    SHAREDLIB_EXPORT extern const QString batch_up;
     SHAREDLIB_EXPORT extern const QString step_up;
     SHAREDLIB_EXPORT extern const QString commandline_up;
     SHAREDLIB_EXPORT extern const QString position_up;
