@@ -307,6 +307,12 @@ If you would like to see which migrations have run thus far, you may use the `mi
 tom migrate:status
 ```
 
+If you would like to see the SQL statements that will be executed by the migrations without actually running them, you may provide the `--pretend` flag to the `migrate` command:
+
+```bash
+tom migrate --pretend
+```
+
 :::tip
 Many `tom` commands offer variety of options, you can explore them using the `tom list` and `tom help` commands. In most cases, these commands and options are self-explanatory.
 :::
@@ -344,6 +350,18 @@ You may roll back a limited number of migrations by providing the `step` option 
 ```bash
 tom migrate:rollback --step=5
 ```
+
+The `migrate:reset` command will roll back all of your application's migrations:
+
+```bash
+tom migrate:reset
+```
+
+You may roll back a specific "batch" of migrations by providing the `batch` option to the `rollback` command, where the `batch` option corresponds to a batch value within your application's `migrations` database table. For example, the following command will roll back all migrations in batch three:
+
+ ```bash
+ tom migrate:rollback --batch=3
+ ```
 
 The `migrate:reset` command will roll back all of your application's migrations:
 
