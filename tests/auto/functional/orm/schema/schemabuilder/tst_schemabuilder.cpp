@@ -170,6 +170,7 @@ void tst_SchemaBuilder::createDatabase_dropAllTables_dropDatabaseIfExists() cons
         QVERIFY(!hasDatabase(database, connection));
     }
 }
+
 void tst_SchemaBuilder::getAllTables() const
 {
     QFETCH_GLOBAL(QString, connection);
