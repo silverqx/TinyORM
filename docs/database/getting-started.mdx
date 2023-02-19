@@ -273,7 +273,7 @@ SQLite databases are contained within a single file on your filesystem. You can 
         {"prefix",                  ""},
     });
 
-The `database` configuration value is the absolute path to the database. To enable foreign key constraints for SQLite connections, you should set the `foreign_key_constraints` configuration value to `true`, if this configuration value is not set, then the default of the SQLite driver will be used.
+The `database` configuration value is the absolute path to the database. To enable foreign key constraints for SQLite connections, you should set the `foreign_key_constraints` configuration value to `true`, if this configuration value is not set, then the default of the SQLite driver will be used (currently the default is __disabled__).
 
 If the `check_database_exists` configuration value is set to the `true` value, then the database connection throws an `Orm::InvalidArgumentError` exception, when the SQLite database file doesn't exist. If it is set to the `false` value and the SQLite database file doesn't exist, then it will be created for you by SQLite driver. The default value is `true`.
 

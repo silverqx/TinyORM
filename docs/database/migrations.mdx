@@ -1046,6 +1046,10 @@ You may drop multiple columns from a table by passing a `QVector<QString>` of co
         table.dropColumns("votes", "avatar", "location");
     });
 
+:::caution
+The SQLite prior to `v3.35.0` doesn't support dropping columns using the `ALTER TABLE DROP COLUMN`, dropping columns was added in the SQLite `v3.35.0` as is described in the [release notes](https://www.sqlite.org/releaselog/3_35_0.html).
+:::
+
 #### Available Command Aliases
 
 TinyORM provides several convenient methods related to dropping common types of columns. Each of these methods is described in the table below:
@@ -1213,3 +1217,7 @@ You may enable or disable foreign key constraints within your migrations by usin
     Schema::enableForeignKeyConstraints();
 
     Schema::disableForeignKeyConstraints();
+
+:::caution
+The SQLite disables foreign key constraints by default. When using SQLite, make sure to [enable foreign key support](database/getting-started.mdx#sqlite-configuration) in your database configuration before attempting to create them in your migrations. In addition, SQLite only supports creating foreign keys when creating tables and [not when tables are altered](https://www.sqlite.org/omitted.html).
+:::
