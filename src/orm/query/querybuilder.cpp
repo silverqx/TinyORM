@@ -1374,8 +1374,7 @@ Builder &Builder::addNestedWhereQuery(const std::shared_ptr<Builder> &query,
     m_wheres.append({.column = {}, .condition = condition, .type = WhereType::NESTED,
                      .nestedQuery = query});
 
-    const auto &whereBindings =
-            query->getRawBindings().find(BindingType::WHERE).value();
+    const auto &whereBindings = query->getRawBindings().find(BindingType::WHERE).value();
 
     addBinding(whereBindings, BindingType::WHERE);
 
