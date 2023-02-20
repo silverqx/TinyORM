@@ -636,20 +636,21 @@ namespace Tiny
 
         /* where exists */
         /*! Add an exists clause to the query. */
+        template<QueryableShared C>
         static std::unique_ptr<TinyBuilder<Derived>>
-        whereExists(const std::function<void(QueryBuilder &)> &callback,
-                    const QString &condition = AND, bool nope = false);
+        whereExists(C &&callback, const QString &condition = AND, bool nope = false);
         /*! Add an or exists clause to the query. */
+        template<QueryableShared C>
         static std::unique_ptr<TinyBuilder<Derived>>
-        orWhereExists(const std::function<void(QueryBuilder &)> &callback,
-                      bool nope = false);
+        orWhereExists(C &&callback, bool nope = false);
         /*! Add a where not exists clause to the query. */
+        template<QueryableShared C>
         static std::unique_ptr<TinyBuilder<Derived>>
-        whereNotExists(const std::function<void(QueryBuilder &)> &callback,
-                       const QString &condition = AND);
+        whereNotExists(C &&callback, const QString &condition = AND);
         /*! Add a where not exists clause to the query. */
+        template<QueryableShared C>
         static std::unique_ptr<TinyBuilder<Derived>>
-        orWhereNotExists(const std::function<void(QueryBuilder &)> &callback);
+        orWhereNotExists(C &&callback);
 
         /* where row values */
         /*! Adds a where condition using row values. */
@@ -2647,10 +2648,10 @@ namespace Tiny
     /* where exists */
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
+    template<QueryableShared C>
     std::unique_ptr<TinyBuilder<Derived>>
     ModelProxies<Derived, AllRelations...>::whereExists(
-            const std::function<void(QueryBuilder &)> &callback,
-            const QString &condition, const bool nope)
+            C &&callback, const QString &condition, const bool nope)
     {
         auto builder = query();
 
@@ -2660,9 +2661,9 @@ namespace Tiny
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
+    template<QueryableShared C>
     std::unique_ptr<TinyBuilder<Derived>>
-    ModelProxies<Derived, AllRelations...>::orWhereExists(
-            const std::function<void(QueryBuilder &)> &callback, const bool nope)
+    ModelProxies<Derived, AllRelations...>::orWhereExists(C &&callback, const bool nope)
     {
         auto builder = query();
 
@@ -2672,10 +2673,10 @@ namespace Tiny
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
+    template<QueryableShared C>
     std::unique_ptr<TinyBuilder<Derived>>
     ModelProxies<Derived, AllRelations...>::whereNotExists(
-            const std::function<void(QueryBuilder &)> &callback,
-            const QString &condition)
+            C &&callback, const QString &condition)
     {
         auto builder = query();
 
@@ -2685,9 +2686,9 @@ namespace Tiny
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
+    template<QueryableShared C>
     std::unique_ptr<TinyBuilder<Derived>>
-    ModelProxies<Derived, AllRelations...>::orWhereNotExists(
-            const std::function<void(QueryBuilder &)> &callback)
+    ModelProxies<Derived, AllRelations...>::orWhereNotExists(C &&callback)
     {
         auto builder = query();
 

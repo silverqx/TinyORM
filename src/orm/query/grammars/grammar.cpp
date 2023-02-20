@@ -454,12 +454,26 @@ QString Grammar::whereRaw(const WhereConditionItem &where) const // NOLINT(reada
 
 QString Grammar::whereExists(const WhereConditionItem &where) const
 {
-    return QStringLiteral("exists (%1)").arg(compileSelect(*where.nestedQuery));
+    // Compile the nested query (QueryBuilder instance)
+    if (where.nestedQuery)
+        return QStringLiteral("exists (%1)").arg(compileSelect(*where.nestedQuery));
+
+    Q_ASSERT(std::holds_alternative<Expression>(where.column));
+
+    // Sub-query already compiled in the QueryBuilder using the createSub()
+    return QStringLiteral("exists %1").arg(wrap(where.column));
 }
 
 QString Grammar::whereNotExists(const WhereConditionItem &where) const
 {
-    return QStringLiteral("not exists (%1)").arg(compileSelect(*where.nestedQuery));
+    // Compile the nested query (QueryBuilder instance)
+    if (where.nestedQuery)
+        return QStringLiteral("not exists (%1)").arg(compileSelect(*where.nestedQuery));
+
+    Q_ASSERT(std::holds_alternative<Expression>(where.column));
+
+    // Sub-query already compiled in the QueryBuilder using the createSub()
+    return QStringLiteral("not exists %1").arg(wrap(where.column));
 }
 
 QString Grammar::whereRowValues(const WhereConditionItem &where) const

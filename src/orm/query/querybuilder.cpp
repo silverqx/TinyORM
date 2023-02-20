@@ -786,40 +786,6 @@ Builder &Builder::orWhereNotBetweenColumns(const Column &column,
     return whereBetweenColumns(column, betweenColumns, OR, true);
 }
 
-/* where exists */
-
-Builder &Builder::whereExists(
-        const std::function<void(Builder &)> &callback, const QString &condition,
-        const bool nope)
-{
-    // Ownership of the std::shared_ptr<QueryBuilder>
-    const auto query = forSubQuery();
-
-    /* Similar to the sub-select clause, we will create a new query instance so
-       the developer may cleanly specify the entire exists query and we will
-       compile the whole thing in the grammar and insert it into the SQL. */
-    std::invoke(callback, *query);
-
-    return addWhereExistsQuery(query, condition, nope);
-}
-
-Builder &Builder::orWhereExists(const std::function<void(Builder &)> &callback,
-                                const bool nope)
-{
-    return whereExists(callback, OR, nope);
-}
-
-Builder &Builder::whereNotExists(const std::function<void(Builder &)> &callback,
-                                 const QString &condition)
-{
-    return whereExists(callback, condition, true);
-}
-
-Builder &Builder::orWhereNotExists(const std::function<void(Builder &)> &callback)
-{
-    return whereExists(callback, OR, true);
-}
-
 /* where row values */
 
 Builder &
@@ -1389,6 +1355,22 @@ Builder &Builder::addWhereExistsQuery(const std::shared_ptr<Builder> &query,
     m_wheres.append({.condition = condition, .type = type, .nestedQuery = query});
 
     addBinding(query->getBindings(), BindingType::WHERE);
+
+    return *this;
+}
+
+Builder &Builder::addWhereExistsQuery(Builder &query, const QString &condition,
+                                      const bool nope)
+{
+    const auto type = nope ? WhereType::NOT_EXISTS : WhereType::EXISTS;
+
+    // Compile the sub-query right here and pass it down to the grammar as a expression
+    auto [queryString, bindings] = createSub(query);
+
+    m_wheres.append({.column = Expression(PARENTH_ONE.arg(queryString)),
+                     .condition = condition, .type = type});
+
+    addBinding(std::move(bindings), BindingType::WHERE);
 
     return *this;
 }

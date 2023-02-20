@@ -532,16 +532,18 @@ namespace Orm::Query
 
         /* where exists */
         /*! Add an exists clause to the query. */
-        Builder &whereExists(const std::function<void(Builder &)> &callback,
-                             const QString &condition = AND, bool nope = false);
+        template<QueryableShared C>
+        Builder &whereExists(C &&callback, const QString &condition = AND,
+                             bool nope = false);
         /*! Add an or exists clause to the query. */
-        Builder &orWhereExists(const std::function<void(Builder &)> &callback,
-                               bool nope = false);
+        template<QueryableShared C>
+        Builder &orWhereExists(C &&callback, bool nope = false);
         /*! Add a where not exists clause to the query. */
-        Builder &whereNotExists(const std::function<void(Builder &)> &callback,
-                                const QString &condition = AND);
+        template<QueryableShared C>
+        Builder &whereNotExists(C &&callback, const QString &condition = AND);
         /*! Add a where not exists clause to the query. */
-        Builder &orWhereNotExists(const std::function<void(Builder &)> &callback);
+        template<QueryableShared C>
+        Builder &orWhereNotExists(C &&callback);
 
         /* where row values */
         /*! Adds a where condition using row values. */
@@ -802,6 +804,9 @@ namespace Orm::Query
         /*! Add an "exists" clause to the query. */
         Builder &addWhereExistsQuery(const std::shared_ptr<Builder> &query,
                                      const QString &condition = AND, bool nope = false);
+        /*! Add an "exists" clause to the query. */
+        Builder &addWhereExistsQuery(Builder &query, const QString &condition = AND,
+                                     bool nope = false);
 
         /*! Merge an array of where clauses and bindings. */
         Builder &mergeWheres(const QVector<WhereConditionItem> &wheres,
@@ -1482,6 +1487,47 @@ namespace Orm::Query
 
         return where(column, comparison, Expression(PARENTH_ONE.arg(queryString)),
                      condition);
+    }
+
+    /* where exists */
+
+    template<QueryableShared C>
+    Builder &Builder::whereExists(C &&callback, const QString &condition,
+                                  const bool nope)
+    {
+        if constexpr (std::invocable<C, Builder &>) {
+            // Ownership of the std::shared_ptr<QueryBuilder>
+            const auto query = forSubQuery();
+
+            /* Similar to the sub-select clause, we will create a new query instance so
+               the developer may cleanly specify the entire exists query and we will
+               compile the whole thing in the grammar and insert it into the SQL. */
+            std::invoke(callback, *query);
+
+            return addWhereExistsQuery(query, condition, nope);
+        }
+
+        // For the QueryBuilder & or std::shared_ptr<QueryBuilder>
+        else
+            return addWhereExistsQuery(callback, condition, nope);
+    }
+
+    template<QueryableShared C>
+    Builder &Builder::orWhereExists(C &&callback, const bool nope)
+    {
+        return whereExists(callback, OR, nope);
+    }
+
+    template<QueryableShared C>
+    Builder &Builder::whereNotExists(C &&callback, const QString &condition)
+    {
+        return whereExists(callback, condition, true);
+    }
+
+    template<QueryableShared C>
+    Builder &Builder::orWhereNotExists(C &&callback)
+    {
+        return whereExists(callback, OR, true);
     }
 
     /* where dates */

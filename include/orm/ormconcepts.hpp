@@ -39,6 +39,12 @@ namespace Query
     concept Queryable = std::convertible_to<T, Orm::QueryBuilder &> ||
                         std::invocable<T, Orm::QueryBuilder &>;
 
+    /*! Concept for a queryable parameter (adds the std::shared_ptr<QueryBuilder>). */
+    template<typename T>
+    concept QueryableShared =
+            Queryable<T> ||
+            std::convertible_to<T, const std::shared_ptr<Orm::QueryBuilder> &>;
+
     /*! Concept for whereSub()'s value parameter. */
     template<typename T>
     concept WhereValueSubQuery = Queryable<T>;

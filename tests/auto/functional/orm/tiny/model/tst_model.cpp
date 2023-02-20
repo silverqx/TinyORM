@@ -15,6 +15,7 @@
 using Orm::Constants::ASTERISK;
 using Orm::Constants::CREATED_AT;
 using Orm::Constants::ID;
+using Orm::Constants::LT;
 using Orm::Constants::NAME;
 using Orm::Constants::QMYSQL;
 using Orm::Constants::QSQLITE;
@@ -72,6 +73,8 @@ private Q_SLOTS:
     void whereEq() const;
     void where_WithVector() const;
     void where_WithVector_Condition() const;
+
+    void whereExists() const;
 
     void find() const;
     void findOrNew_Found() const;
@@ -668,6 +671,62 @@ void tst_Model::where_WithVector_Condition() const
                         .get();
         QCOMPARE(torrents.size(), 1);
         QCOMPARE(torrents.at(0).getAttribute(ID), QVariant(4));
+    }
+}
+
+void tst_Model::whereExists() const
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
+    // With lambda expression
+    {
+        const auto actualIds = TorrentPeer::whereExists([](Orm::QueryBuilder &query)
+        {
+            query.from("torrents").where(SIZE, LT, 15);
+        })
+            ->where(ID, LT, 7)
+            .select(ID)
+            .orderBy(ID)
+            .pluck(ID);
+
+        QVector<QVariant> expectedIds {1, 2, 3, 4};
+
+        QCOMPARE(actualIds, expectedIds);
+    }
+    // With QueryBuilder &
+    {
+        auto builder = DB::connection(connection).query();
+
+        const auto actualIds = TorrentPeer::whereExists(builder->from("torrents")
+                                                                .where(SIZE, LT, 15))
+                               ->where(ID, LT, 7)
+                               .select(ID)
+                               .orderBy(ID)
+                               .pluck(ID);
+
+        QVector<QVariant> expectedIds {1, 2, 3, 4};
+
+        QCOMPARE(actualIds, expectedIds);
+    }
+    // With std::shared_ptr<QueryBuilder>
+    {
+        auto builder = DB::connection(connection).query();
+
+        // Ownership of the std::shared_ptr<QueryBuilder>
+        const auto builderForExists = DB::connection(connection).query();
+        builderForExists->from("torrents").where(SIZE, LT, 15);
+
+        const auto actualIds = TorrentPeer::whereExists(builderForExists)
+                               ->where(ID, LT, 7)
+                               .select(ID)
+                               .orderBy(ID)
+                               .pluck(ID);
+
+        QVector<QVariant> expectedIds {1, 2, 3, 4};
+
+        QCOMPARE(actualIds, expectedIds);
     }
 }
 

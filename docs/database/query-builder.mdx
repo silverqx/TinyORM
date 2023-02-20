@@ -657,7 +657,26 @@ The `whereExists` method allows you to write "where exists" SQL clauses. The `wh
                      })
                      .get();
 
-The query above will produce the following SQL:
+Alternatively, you may provide a query object to the `whereExists` method instead of a lambda expression:
+
+    // Ownership of the std::shared_ptr<QueryBuilder>
+    auto builder = DB::table("orders");
+    auto orders = builder->select(DB::raw(1))
+                          .whereColumnEq("orders.user_id", "users.id");
+
+    auto users = DB::table("users")
+                     ->whereExists(orders)
+                     .get();
+
+Or directly:
+
+    auto users = DB::table("users")
+                     ->whereExists(DB::table("orders")
+                                       ->select(DB::raw(1))
+                                       .whereColumnEq("orders.user_id", "users.id"))
+                     .get();
+
+All of the examples above will produce the following SQL:
 
 ```sql
 select * from users

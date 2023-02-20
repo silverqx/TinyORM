@@ -2613,70 +2613,206 @@ void tst_MySql_QueryBuilder::whereBetweenColumns_ColumnExpression() const
 
 void tst_MySql_QueryBuilder::whereExists() const
 {
-    auto builder = createQuery();
-
-    builder->select("*").from("torrent_peers").where(ID, LT, 7)
-            .whereExists([](Builder &query)
+    // With lambda expression
     {
-        query.from("torrents").where(SIZE, LT, 15);
-    });
+        auto builder = createQuery();
 
-    QCOMPARE(builder->toSql(),
-             "select * from `torrent_peers` where `id` < ? and "
-             "exists (select * from `torrents` where `size` < ?)");
-    QCOMPARE(builder->getBindings(),
-             QVector<QVariant>({QVariant(7), QVariant(15)}));
+        builder->select("*").from("torrent_peers").where(ID, LT, 7)
+                .whereExists([](Builder &query)
+        {
+            query.from("torrents").where(SIZE, LT, 15);
+        });
+
+        QCOMPARE(builder->toSql(),
+                 "select * from `torrent_peers` where `id` < ? and "
+                 "exists (select * from `torrents` where `size` < ?)");
+        QCOMPARE(builder->getBindings(),
+                 QVector<QVariant>({QVariant(7), QVariant(15)}));
+    }
+    // With QueryBuilder &
+    {
+        auto builder = createQuery();
+
+        builder->select("*").from("torrent_peers").where(ID, LT, 7)
+                .whereExists(createQuery()->from("torrents")
+                                           .where(SIZE, LT, 15));
+
+        QCOMPARE(builder->toSql(),
+                 "select * from `torrent_peers` where `id` < ? and "
+                 "exists (select * from `torrents` where `size` < ?)");
+        QCOMPARE(builder->getBindings(),
+                 QVector<QVariant>({QVariant(7), QVariant(15)}));
+    }
+    // With std::shared_ptr<QueryBuilder>
+    {
+        auto builder = createQuery();
+
+        // Ownership of the std::shared_ptr<QueryBuilder>
+        const auto builderForExists = createQuery();
+        builderForExists->from("torrents").where(SIZE, LT, 15);
+
+        builder->select("*").from("torrent_peers").where(ID, LT, 7)
+                .whereExists(builderForExists);
+
+        QCOMPARE(builder->toSql(),
+                 "select * from `torrent_peers` where `id` < ? and "
+                 "exists (select * from `torrents` where `size` < ?)");
+        QCOMPARE(builder->getBindings(),
+                 QVector<QVariant>({QVariant(7), QVariant(15)}));
+    }
 }
 
 void tst_MySql_QueryBuilder::whereNotExists() const
 {
-    auto builder = createQuery();
-
-    builder->select("*").from("torrent_peers").where(ID, LT, 7)
-            .whereNotExists([](Builder &query)
+    // With lambda expression
     {
-        query.from("torrents").where(SIZE, LT, 15);
-    });
+        auto builder = createQuery();
 
-    QCOMPARE(builder->toSql(),
-             "select * from `torrent_peers` where `id` < ? and "
-             "not exists (select * from `torrents` where `size` < ?)");
-    QCOMPARE(builder->getBindings(),
-             QVector<QVariant>({QVariant(7), QVariant(15)}));
+        builder->select("*").from("torrent_peers").where(ID, LT, 7)
+                .whereNotExists([](Builder &query)
+        {
+            query.from("torrents").where(SIZE, LT, 15);
+        });
+
+        QCOMPARE(builder->toSql(),
+                 "select * from `torrent_peers` where `id` < ? and "
+                 "not exists (select * from `torrents` where `size` < ?)");
+        QCOMPARE(builder->getBindings(),
+                 QVector<QVariant>({QVariant(7), QVariant(15)}));
+    }
+    // With QueryBuilder &
+    {
+        auto builder = createQuery();
+
+        builder->select("*").from("torrent_peers").where(ID, LT, 7)
+                .whereNotExists(createQuery()->from("torrents")
+                                              .where(SIZE, LT, 15));
+
+        QCOMPARE(builder->toSql(),
+                 "select * from `torrent_peers` where `id` < ? and "
+                 "not exists (select * from `torrents` where `size` < ?)");
+        QCOMPARE(builder->getBindings(),
+                 QVector<QVariant>({QVariant(7), QVariant(15)}));
+    }
+    // With std::shared_ptr<QueryBuilder>
+    {
+        auto builder = createQuery();
+
+        // Ownership of the std::shared_ptr<QueryBuilder>
+        const auto builderForExists = createQuery();
+        builderForExists->from("torrents").where(SIZE, LT, 15);
+
+        builder->select("*").from("torrent_peers").where(ID, LT, 7)
+                .whereNotExists(builderForExists);
+
+        QCOMPARE(builder->toSql(),
+                 "select * from `torrent_peers` where `id` < ? and "
+                 "not exists (select * from `torrents` where `size` < ?)");
+        QCOMPARE(builder->getBindings(),
+                 QVector<QVariant>({QVariant(7), QVariant(15)}));
+    }
 }
 
 void tst_MySql_QueryBuilder::orWhereExists() const
 {
-    auto builder = createQuery();
-
-    builder->select("*").from("torrent_peers").where(ID, LT, 7)
-            .orWhereExists([](Builder &query)
+    // With lambda expression
     {
-        query.from("torrents").where(SIZE, LT, 15);
-    });
+        auto builder = createQuery();
 
-    QCOMPARE(builder->toSql(),
-             "select * from `torrent_peers` where `id` < ? or "
-             "exists (select * from `torrents` where `size` < ?)");
-    QCOMPARE(builder->getBindings(),
-             QVector<QVariant>({QVariant(7), QVariant(15)}));
+        builder->select("*").from("torrent_peers").where(ID, LT, 7)
+                .orWhereExists([](Builder &query)
+        {
+            query.from("torrents").where(SIZE, LT, 15);
+        });
+
+        QCOMPARE(builder->toSql(),
+                 "select * from `torrent_peers` where `id` < ? or "
+                 "exists (select * from `torrents` where `size` < ?)");
+        QCOMPARE(builder->getBindings(),
+                 QVector<QVariant>({QVariant(7), QVariant(15)}));
+    }
+    // With QueryBuilder &
+    {
+        auto builder = createQuery();
+
+        builder->select("*").from("torrent_peers").where(ID, LT, 7)
+                .orWhereExists(createQuery()->from("torrents")
+                                             .where(SIZE, LT, 15));
+
+        QCOMPARE(builder->toSql(),
+                 "select * from `torrent_peers` where `id` < ? or "
+                 "exists (select * from `torrents` where `size` < ?)");
+        QCOMPARE(builder->getBindings(),
+                 QVector<QVariant>({QVariant(7), QVariant(15)}));
+    }
+    // With std::shared_ptr<QueryBuilder>
+    {
+        auto builder = createQuery();
+
+        // Ownership of the std::shared_ptr<QueryBuilder>
+        const auto builderForExists = createQuery();
+        builderForExists->from("torrents").where(SIZE, LT, 15);
+
+        builder->select("*").from("torrent_peers").where(ID, LT, 7)
+                .orWhereExists(builderForExists);
+
+        QCOMPARE(builder->toSql(),
+                 "select * from `torrent_peers` where `id` < ? or "
+                 "exists (select * from `torrents` where `size` < ?)");
+        QCOMPARE(builder->getBindings(),
+                 QVector<QVariant>({QVariant(7), QVariant(15)}));
+    }
 }
 
 void tst_MySql_QueryBuilder::orWhereNotExists() const
 {
-    auto builder = createQuery();
-
-    builder->select("*").from("torrent_peers").where(ID, LT, 7)
-            .orWhereNotExists([](Builder &query)
+    // With lambda expression
     {
-        query.from("torrents").where(SIZE, LT, 15);
-    });
+        auto builder = createQuery();
 
-    QCOMPARE(builder->toSql(),
-             "select * from `torrent_peers` where `id` < ? or "
-             "not exists (select * from `torrents` where `size` < ?)");
-    QCOMPARE(builder->getBindings(),
-             QVector<QVariant>({QVariant(7), QVariant(15)}));
+        builder->select("*").from("torrent_peers").where(ID, LT, 7)
+                .orWhereNotExists([](Builder &query)
+        {
+            query.from("torrents").where(SIZE, LT, 15);
+        });
+
+        QCOMPARE(builder->toSql(),
+                 "select * from `torrent_peers` where `id` < ? or "
+                 "not exists (select * from `torrents` where `size` < ?)");
+        QCOMPARE(builder->getBindings(),
+                 QVector<QVariant>({QVariant(7), QVariant(15)}));
+    }
+    // With QueryBuilder &
+    {
+        auto builder = createQuery();
+
+        builder->select("*").from("torrent_peers").where(ID, LT, 7)
+                .orWhereNotExists(createQuery()->from("torrents")
+                                                .where(SIZE, LT, 15));
+
+        QCOMPARE(builder->toSql(),
+                 "select * from `torrent_peers` where `id` < ? or "
+                 "not exists (select * from `torrents` where `size` < ?)");
+        QCOMPARE(builder->getBindings(),
+                 QVector<QVariant>({QVariant(7), QVariant(15)}));
+    }
+    // With std::shared_ptr<QueryBuilder>
+    {
+        auto builder = createQuery();
+
+        // Ownership of the std::shared_ptr<QueryBuilder>
+        const auto builderForExists = createQuery();
+        builderForExists->from("torrents").where(SIZE, LT, 15);
+
+        builder->select("*").from("torrent_peers").where(ID, LT, 7)
+                .orWhereNotExists(builderForExists);
+
+        QCOMPARE(builder->toSql(),
+                 "select * from `torrent_peers` where `id` < ? or "
+                 "not exists (select * from `torrents` where `size` < ?)");
+        QCOMPARE(builder->getBindings(),
+                 QVector<QVariant>({QVariant(7), QVariant(15)}));
+    }
 }
 
 void tst_MySql_QueryBuilder::whereRowValues() const
