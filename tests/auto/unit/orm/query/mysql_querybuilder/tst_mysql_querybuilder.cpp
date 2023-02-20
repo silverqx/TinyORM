@@ -2615,7 +2615,6 @@ void tst_MySql_QueryBuilder::whereExists() const
 {
     auto builder = createQuery();
 
-    // Query doesn't make sense (whereColumn() is missing) but it tests what is needed
     builder->select("*").from("torrent_peers").where(ID, LT, 7)
             .whereExists([](Builder &query)
     {
@@ -2633,7 +2632,6 @@ void tst_MySql_QueryBuilder::whereNotExists() const
 {
     auto builder = createQuery();
 
-    // Query doesn't make sense (whereColumn() is missing) but it tests what is needed
     builder->select("*").from("torrent_peers").where(ID, LT, 7)
             .whereNotExists([](Builder &query)
     {
