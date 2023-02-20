@@ -6,6 +6,7 @@
 
 #include "orm/databaseconnection.hpp"
 #include "orm/exceptions/invalidargumenterror.hpp"
+#include "orm/macros/likely.hpp"
 #include "orm/query/joinclause.hpp"
 #include "orm/utils/type.hpp"
 
@@ -418,7 +419,11 @@ Builder &Builder::addSelect(const QVector<Column> &columns)
 {
     m_columns.reserve(m_columns.size() + columns.size());
 
-    std::ranges::copy(columns, std::back_inserter(m_columns));
+    std::ranges::copy_if(columns, std::back_inserter(m_columns),
+                         [this](const auto &column)
+    {
+        return !m_columns.contains(column);
+    });
 
     return *this;
 }
@@ -454,7 +459,11 @@ Builder &Builder::addSelect(QVector<Column> &&columns)
 {
     m_columns.reserve(m_columns.size() + columns.size());
 
-    std::ranges::move(columns, std::back_inserter(m_columns));
+    for (auto &&column : columns)
+        if (m_columns.contains(column)) T_UNLIKELY
+            continue;
+        else T_LIKELY
+            m_columns << std::move(column);
 
     return *this;
 }
