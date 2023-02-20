@@ -5,8 +5,6 @@
 #include "orm/macros/systemheader.hpp"
 TINY_SYSTEM_HEADER
 
-#include <deque>
-#include <memory>
 #include <optional>
 
 #include "orm/ormconcepts.hpp"

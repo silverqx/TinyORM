@@ -5,7 +5,6 @@
 #include "orm/macros/systemheader.hpp"
 TINY_SYSTEM_HEADER
 
-#include <memory>
 #include <unordered_set>
 
 #include "orm/query/concerns/buildsqueries.hpp"
