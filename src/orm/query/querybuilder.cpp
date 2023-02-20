@@ -398,6 +398,8 @@ Builder &Builder::select(const QVector<Column> &columns)
 {
     clearColumns();
 
+    m_columns.reserve(columns.size());
+
     std::ranges::copy(columns, std::back_inserter(m_columns));
 
     return *this;
@@ -414,6 +416,8 @@ Builder &Builder::select(const Column &column)
 
 Builder &Builder::addSelect(const QVector<Column> &columns)
 {
+    m_columns.reserve(m_columns.size() + columns.size());
+
     std::ranges::copy(columns, std::back_inserter(m_columns));
 
     return *this;
@@ -448,7 +452,7 @@ Builder &Builder::select(Column &&column)
 
 Builder &Builder::addSelect(QVector<Column> &&columns)
 {
-    m_columns.reserve(columns.size());
+    m_columns.reserve(m_columns.size() + columns.size());
 
     std::ranges::move(columns, std::back_inserter(m_columns));
 
