@@ -233,9 +233,9 @@ void DB::disconnect(const QString &name)
     manager().disconnect(name);
 }
 
-QSqlDatabase DB::connectEagerly(const QString &name)
+void DB::connectEagerly(const QString &name)
 {
-    return manager().connectEagerly(name);
+    manager().connectEagerly(name);
 }
 
 QStringList DB::connectionNames()

@@ -311,7 +311,7 @@ QSqlDatabase DatabaseConnection::getQtConnection()
     }
 
     // Return the connection from QSqlDatabase connection manager
-    return QSqlDatabase::database(*m_qtConnection);
+    return QSqlDatabase::database(*m_qtConnection, true);
 }
 
 QSqlDatabase DatabaseConnection::getRawQtConnection() const

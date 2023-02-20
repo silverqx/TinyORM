@@ -172,7 +172,7 @@ namespace Query
         void disconnect(const QString &name = "") const;
         /*! Force connection to the database (creates physical connection), doesn't have
             to be called before querying a database. */
-        QSqlDatabase connectEagerly(const QString &name = "");
+        void connectEagerly(const QString &name = "");
 
         /*! Returns a list containing the names of all connections. */
         QStringList connectionNames() const;

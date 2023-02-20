@@ -387,9 +387,9 @@ void DatabaseManager::disconnect(const QString &name) const
     m_connections->find(name_)->second->disconnect();
 }
 
-QSqlDatabase DatabaseManager::connectEagerly(const QString &name)
+void DatabaseManager::connectEagerly(const QString &name)
 {
-    return connection(name).connectEagerly();
+    connection(name).connectEagerly();
 }
 
 QStringList DatabaseManager::connectionNames() const

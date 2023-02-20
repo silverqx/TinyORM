@@ -165,7 +165,7 @@ namespace Orm
         static void disconnect(const QString &name = "");
         /*! Force connection to the database (creates physical connection), doesn't have
             to be called before querying a database. */
-        static QSqlDatabase connectEagerly(const QString &name = "");
+        static void connectEagerly(const QString &name = "");
 
         /*! Returns a list containing the names of all connections. */
         static QStringList connectionNames();

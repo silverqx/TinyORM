@@ -166,7 +166,7 @@ namespace Orm
         void disconnect();
         /*! Force connection to the database (creates physical connection), doesn't have
             to be called before querying a database. */
-        inline QSqlDatabase connectEagerly();
+        inline void connectEagerly();
 
         /*! Get the query grammar used by the connection. */
         inline const QueryGrammar &getQueryGrammar() const;
@@ -410,11 +410,12 @@ namespace Orm
         return m_qtConnection && getQtConnection().isOpen();
     }
 
-    QSqlDatabase DatabaseConnection::connectEagerly()
+    void DatabaseConnection::connectEagerly()
     {
         reconnectIfMissingConnection();
 
-        return getQtConnection();
+        // This opens a physical database connection
+        std::ignore = getQtConnection();
     }
 
     const QueryGrammar &DatabaseConnection::getQueryGrammar() const
