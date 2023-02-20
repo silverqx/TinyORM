@@ -9,6 +9,7 @@ TINY_SYSTEM_HEADER
 #include <QVariant>
 
 #include <deque>
+#include <memory>
 #include <set>
 
 #include "orm/macros/commonnamespace.hpp"
