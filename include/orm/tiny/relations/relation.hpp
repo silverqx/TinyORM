@@ -73,7 +73,7 @@ namespace Relations
                       std::unique_ptr<Relation<Model, Related>>()> &callback);
 
         /*! Set the constraints for an eager load of the relation. */
-        virtual void addEagerConstraints(const QVector<Model> &models) const = 0;
+        virtual void addEagerConstraints(const QVector<Model> &models) = 0;
         /*! Initialize the relation on a set of models. */
         virtual QVector<Model> &
         initRelation(QVector<Model> &models, const QString &relation) const = 0;
@@ -132,6 +132,9 @@ namespace Relations
         /*! Initialize a Relation instance. */
         inline void init() const;
 
+        /*! Add a whereIn eager constraint for a given set of model keys to be loaded. */
+        void whereInEager(const QString &key, const QVector<QVariant> &modelKeys);
+
         /*! Get all of the primary keys for the vector of models. */
         QVector<QVariant>
         getKeys(const QVector<Model> &models, const QString &key = "") const;
@@ -166,6 +169,11 @@ namespace Relations
         /*! Indicates if the relation is adding constraints. */
         T_THREAD_LOCAL
         inline static bool constraints = true;
+
+    private:
+        /*! Indicates whether the eagerly loaded relation should implicitly return
+            an empty collection. */
+        bool m_eagerKeysWereEmpty = false;
     };
 
     /* protected */
@@ -204,6 +212,10 @@ namespace Relations
     QVector<Related>
     Relation<Model, Related>::getEager() const
     {
+        // Avoid querying the database if the keys are empty (IN () aka. where 0 = 1)
+        if (m_eagerKeysWereEmpty)
+            return {};
+
         return get();
     }
 
@@ -318,6 +330,17 @@ namespace Relations
     void Relation<Model, Related>::init() const
     {
         addConstraints();
+    }
+
+    template<class Model, class Related>
+    void Relation<Model, Related>::whereInEager(const QString &key,
+                                                const QVector<QVariant> &modelKeys)
+    {
+        getBaseQuery().whereIn(key, modelKeys);
+
+        // Set empty keys flag
+        if (modelKeys.isEmpty())
+            m_eagerKeysWereEmpty = true;
     }
 
     template<class Model, class Related>

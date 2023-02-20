@@ -41,7 +41,7 @@ namespace Orm::Tiny::Relations
         void addConstraints() const override;
 
         /*! Set the constraints for an eager load of the relation. */
-        void addEagerConstraints(const QVector<Model> &models) const override;
+        void addEagerConstraints(const QVector<Model> &models) override;
 
         /* Getters / Setters */
         /*! Get the key value of the parent's local key. */
@@ -163,10 +163,9 @@ namespace Orm::Tiny::Relations
 
     template<class Model, class Related>
     void
-    HasOneOrMany<Model, Related>::addEagerConstraints(const QVector<Model> &models) const
+    HasOneOrMany<Model, Related>::addEagerConstraints(const QVector<Model> &models)
     {
-        this->getBaseQuery().whereIn(m_foreignKey,
-                                     this->getKeys(models, m_localKey));
+        this->whereInEager(m_foreignKey, this->getKeys(models, m_localKey));
     }
 
     /* Getters / Setters */

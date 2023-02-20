@@ -52,7 +52,7 @@ namespace Orm::Tiny::Relations
         void addConstraints() const override;
 
         /*! Set the constraints for an eager load of the relation. */
-        void addEagerConstraints(const QVector<Model> &models) const override;
+        void addEagerConstraints(const QVector<Model> &models) override;
 
         /*! Initialize the relation on a set of models. */
         QVector<Model> &
@@ -188,14 +188,13 @@ namespace Orm::Tiny::Relations
 
     template<class Model, class Related>
     void
-    BelongsTo<Model, Related>::addEagerConstraints(const QVector<Model> &models) const
+    BelongsTo<Model, Related>::addEagerConstraints(const QVector<Model> &models)
     {
         /* We'll grab the primary key name of the related models since it could be set to
            a non-standard name and not "id". We will then construct the constraint for
            our eagerly loading query so it returns the proper models from execution. */
-        this->getBaseQuery().whereIn(
-                    DOT_IN.arg(this->m_related->getTable(), m_ownerKey),
-                    getEagerModelKeys(models));
+        this->whereInEager(DOT_IN.arg(this->m_related->getTable(), m_ownerKey),
+                           getEagerModelKeys(models));
     }
 
     template<class Model, class Related>

@@ -74,7 +74,7 @@ namespace Orm::Tiny::Relations
         void addConstraints() const override;
 
         /*! Set the constraints for an eager load of the relation. */
-        void addEagerConstraints(const QVector<Model> &models) const override;
+        void addEagerConstraints(const QVector<Model> &models) override;
         /*! Initialize the relation on a set of models. */
         QVector<Model> &
         initRelation(QVector<Model> &models, const QString &relation) const override;
@@ -421,10 +421,10 @@ namespace Orm::Tiny::Relations
 
     template<class Model, class Related, class PivotType>
     void BelongsToMany<Model, Related, PivotType>::addEagerConstraints(
-            const QVector<Model> &models) const
+            const QVector<Model> &models)
     {
-        this->m_query->whereIn(getQualifiedForeignPivotKeyName(),
-                               this->getKeys(models, m_parentKey));
+        this->whereInEager(getQualifiedForeignPivotKeyName(),
+                           this->getKeys(models, m_parentKey));
     }
 
     template<class Model, class Related, class PivotType>
