@@ -542,10 +542,10 @@ The schema builder blueprint offers a variety of methods that correspond to the 
 [binary](#column-method-binary)
 [boolean](#column-method-boolean)
 [Char](#column-method-Char)
-[datetimeTz](#column-method-datetimeTz)
+[date](#column-method-date)
 [datetime](#column-method-datetime)
 [datetimes](#column-method-datetimes)
-[date](#column-method-date)
+[datetimeTz](#column-method-datetimeTz)
 [decimal](#column-method-decimal)
 [Double](#column-method-Double)
 [Enum](#column-method-Enum)
@@ -553,8 +553,8 @@ The schema builder blueprint offers a variety of methods that correspond to the 
 [foreignId](#column-method-foreignId)
 [foreignIdFor](#column-method-foreignIdFor)
 [foreignUuid](#column-method-foreignUuid)
-[geometryCollection](#column-method-geometryCollection)
 [geometry](#column-method-geometry)
+[geometryCollection](#column-method-geometryCollection)
 [id](#column-method-id)
 [increments](#column-method-increments)
 [integer](#column-method-integer)
@@ -581,10 +581,10 @@ The schema builder blueprint offers a variety of methods that correspond to the 
 [softDeletesTz](#column-method-softDeletesTz)
 [string](#column-method-string)
 [text](#column-method-text)
-[timeTz](#column-method-timeTz)
 [time](#column-method-time)
-[timestampTz](#column-method-timestampTz)
+[timeTz](#column-method-timeTz)
 [timestamp](#column-method-timestamp)
+[timestampTz](#column-method-timestampTz)
 [timestampsTz](#column-method-timestampsTz)
 [timestamps](#column-method-timestamps)
 [tinyIncrements](#column-method-tinyIncrements)
@@ -641,13 +641,11 @@ The `Char` method creates a `CHAR` equivalent column with of a given length:
 
     table.Char(Orm::NAME, 100);
 
-#### `datetimeTz()` {#column-method-datetimeTz}
+#### `date()` {#column-method-date}
 
-The `datetimeTz` method creates a `DATETIME` (with timezone) equivalent column with an optional precision (total digits):
+The `date` method creates a `DATE` equivalent column:
 
-    #include <orm/constants.hpp>
-
-    table.datetimeTz(Orm::CREATED_AT, precision = 0);
+    table.date("created_at");
 
 #### `datetime()` {#column-method-datetime}
 
@@ -661,11 +659,13 @@ The `datetimes` method creates `created_at` and `updated_at` `DATETIME` equivale
 
     table.datetimes(precision = 0);
 
-#### `date()` {#column-method-date}
+#### `datetimeTz()` {#column-method-datetimeTz}
 
-The `date` method creates a `DATE` equivalent column:
+The `datetimeTz` method creates a `DATETIME` (with timezone) equivalent column with an optional precision (total digits):
 
-    table.date("created_at");
+    #include <orm/constants.hpp>
+
+    table.datetimeTz(Orm::CREATED_AT, precision = 0);
 
 #### `decimal()` {#column-method-decimal}
 
@@ -713,17 +713,17 @@ The `foreignUuid` method creates a `UUID` equivalent column:
 
     table.foreignUuid("user_id");
 
-#### `geometryCollection()` {#column-method-geometryCollection}
-
-The `geometryCollection` method creates a `GEOMETRYCOLLECTION` equivalent column:
-
-    table.geometryCollection("positions");
-
 #### `geometry()` {#column-method-geometry}
 
 The `geometry` method creates a `GEOMETRY` equivalent column:
 
     table.geometry("positions");
+
+#### `geometryCollection()` {#column-method-geometryCollection}
+
+The `geometryCollection` method creates a `GEOMETRYCOLLECTION` equivalent column:
+
+    table.geometryCollection("positions");
 
 #### `id()` {#column-method-id}
 
@@ -883,29 +883,29 @@ The `text` method creates a `TEXT` equivalent column:
 
     table.text("description");
 
-#### `timeTz()` {#column-method-timeTz}
-
-The `timeTz` method creates a `TIME` (with timezone) equivalent column with an optional precision (total digits):
-
-    table.timeTz("sunrise", precision = 0);
-
 #### `time()` {#column-method-time}
 
 The `time` method creates a `TIME` equivalent column with an optional precision (total digits):
 
     table.time("sunrise", precision = 0);
 
-#### `timestampTz()` {#column-method-timestampTz}
+#### `timeTz()` {#column-method-timeTz}
 
-The `timestampTz` method creates a `TIMESTAMP` (with timezone) equivalent column with an optional precision (total digits):
+The `timeTz` method creates a `TIME` (with timezone) equivalent column with an optional precision (total digits):
 
-    table.timestampTz("added_at", precision = 0);
+    table.timeTz("sunrise", precision = 0);
 
 #### `timestamp()` {#column-method-timestamp}
 
 The `timestamp` method creates a `TIMESTAMP` equivalent column with an optional precision (total digits):
 
     table.timestamp("added_at", precision = 0);
+
+#### `timestampTz()` {#column-method-timestampTz}
+
+The `timestampTz` method creates a `TIMESTAMP` (with timezone) equivalent column with an optional precision (total digits):
+
+    table.timestampTz("added_at", precision = 0);
 
 #### `timestampsTz()` {#column-method-timestampsTz}
 
