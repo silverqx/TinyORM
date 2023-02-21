@@ -1055,6 +1055,14 @@ To rename a column, you may use the `renameColumn` method provided by the schema
         table.renameColumn("from", "to");
     });
 
+#### Renaming Columns On Legacy Databases
+
+Renaming columns is not supported if you are running a database installation older than one of the following releases:
+
+- MySQL `<8.0.3`
+- MariaDB `<10.5.2`
+- SQLite `<3.25.0`
+
 ### Dropping Columns
 
 To drop a column, you may use the `dropColumn` method on the schema builder blueprint:
