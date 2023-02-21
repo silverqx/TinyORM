@@ -327,6 +327,9 @@ namespace Grammars
         /*! Add creation and update timestampTz columns to the table. */
         void timestampsTz(int precision = 0);
 
+        /*! Add creation and update datetime columns to the table. */
+        inline void datetimes(int precision = 0);
+
         /*! Add a "deleted at" timestamp for the table. */
         ColumnDefinitionReference<>
         softDeletes(const QString &column = Orm::Constants::DELETED_AT,
@@ -335,6 +338,11 @@ namespace Grammars
         ColumnDefinitionReference<>
         softDeletesTz(const QString &column = Orm::Constants::DELETED_AT,
                       int precision = 0);
+
+        /*! Add a "deleted at" datetime column to the table. */
+        inline ColumnDefinitionReference<>
+        softDeletesDatetime(const QString &column = Orm::Constants::DELETED_AT,
+                            int precision = 0);
 
         /*! Create a new year column on the table. */
         ColumnDefinitionReference<> year(const QString &column);
@@ -693,6 +701,19 @@ namespace Grammars
                                const std::optional<int> places)
     {
         return decimal(column, total, places, true);
+    }
+
+    void Blueprint::datetimes(const int precision)
+    {
+        dateTime(Orm::Constants::CREATED_AT, precision).nullable();
+
+        dateTime(Orm::Constants::UPDATED_AT, precision).nullable();
+    }
+
+    ColumnDefinitionReference<>
+    Blueprint::softDeletesDatetime(const QString &column, const int precision)
+    {
+        return dateTime(column, precision).nullable();
     }
 
     const QString &Blueprint::getTable() const noexcept

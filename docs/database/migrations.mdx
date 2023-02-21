@@ -544,6 +544,7 @@ The schema builder blueprint offers a variety of methods that correspond to the 
 [Char](#column-method-Char)
 [dateTimeTz](#column-method-dateTimeTz)
 [dateTime](#column-method-dateTime)
+[datetimes](#column-method-datetimes)
 [date](#column-method-date)
 [decimal](#column-method-decimal)
 [Double](#column-method-Double)
@@ -576,6 +577,7 @@ The schema builder blueprint offers a variety of methods that correspond to the 
 [smallIncrements](#column-method-smallIncrements)
 [smallInteger](#column-method-smallInteger)
 [softDeletes](#column-method-softDeletes)
+[softDeletesDatetime](#column-method-softDeletesDatetime)
 [softDeletesTz](#column-method-softDeletesTz)
 [string](#column-method-string)
 [text](#column-method-text)
@@ -652,6 +654,12 @@ The `dateTimeTz` method creates a `DATETIME` (with timezone) equivalent column w
 The `dateTime` method creates a `DATETIME` equivalent column with an optional precision (total digits):
 
     table.dateTime("created_at", precision = 0);
+
+#### `datetimes()` {#column-method-datetimes}
+
+The `datetimes` method creates `created_at` and `updated_at` `DATETIME` equivalent columns with an optional precision (total digits):
+
+    table.datetimes(precision = 0);
 
 #### `date()` {#column-method-date}
 
@@ -848,6 +856,12 @@ The `smallInteger` method creates a `SMALLINT` equivalent column:
 The `softDeletes` method adds a nullable `deleted_at` `TIMESTAMP` equivalent column with an optional precision (total digits). This column is intended to store the `deleted_at` timestamp needed for TinyORM's "soft delete" functionality:
 
     table.softDeletes("deleted_at", precision = 0);
+
+#### `softDeletesDatetime()` {#column-method-softDeletesDatetime}
+
+The `softDeletesDatetime` method adds a nullable `deleted_at` `DATETIME` equivalent column with an optional precision (total digits). This column is intended to store the `deleted_at` timestamp needed for TinyORM's "soft delete" functionality:
+
+    table.softDeletesDatetime("deleted_at", precision = 0);
 
 #### `softDeletesTz()` {#column-method-softDeletesTz}
 
