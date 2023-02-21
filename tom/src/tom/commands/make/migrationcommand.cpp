@@ -24,6 +24,7 @@ using Orm::Constants::UNDERSCORE;
 
 using StringUtils = Orm::Utils::String;
 
+using Tom::Constants::DateTimePrefix;
 using Tom::Constants::create_;
 using Tom::Constants::create_up;
 using Tom::Constants::force;
@@ -34,7 +35,6 @@ using Tom::Constants::path_up;
 using Tom::Constants::realpath_;
 using Tom::Constants::table_;
 using Tom::Constants::table_up;
-using Tom::Constants::DateTimePrefix;
 
 using TomUtils = Tom::Utils;
 
