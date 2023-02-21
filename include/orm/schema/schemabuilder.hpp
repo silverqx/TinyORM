@@ -86,6 +86,8 @@ namespace Grammars
         SqlQuery enableForeignKeyConstraints() const;
         /*! Disable foreign key constraints. */
         SqlQuery disableForeignKeyConstraints() const;
+        /*! Disable foreign key constraints during the execution of a callback. */
+        void withoutForeignKeyConstraints(const std::function<void()> &callback) const;
 
         /*! Get the column listing for a given table. */
         virtual QStringList getColumnListing(const QString &table) const;

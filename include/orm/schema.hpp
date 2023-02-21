@@ -85,6 +85,9 @@ namespace Orm
         static SqlQuery enableForeignKeyConstraints(const QString &connection = "");
         /*! Disable foreign key constraints. */
         static SqlQuery disableForeignKeyConstraints(const QString &connection = "");
+        /*! Disable foreign key constraints during the execution of a callback. */
+        static void withoutForeignKeyConstraints(const std::function<void()> &callback,
+                                                 const QString &connection = "");
 
         /*! Get the column listing for a given table. */
         static QStringList getColumnListing(const QString &table,

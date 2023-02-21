@@ -152,6 +152,16 @@ SqlQuery SchemaBuilder::disableForeignKeyConstraints() const
     return m_connection.statement(m_grammar.compileDisableForeignKeyConstraints());
 }
 
+void
+SchemaBuilder::withoutForeignKeyConstraints(const std::function<void()> &callback) const
+{
+    disableForeignKeyConstraints();
+
+    std::invoke(callback);
+
+    enableForeignKeyConstraints();
+}
+
 QStringList SchemaBuilder::getColumnListing(const QString &table) const
 {
     auto query = m_connection.selectFromWriteConnection(

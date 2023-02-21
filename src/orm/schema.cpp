@@ -110,6 +110,12 @@ SqlQuery Schema::disableForeignKeyConstraints(const QString &connection)
     return schemaBuilder(connection).disableForeignKeyConstraints();
 }
 
+void Schema::withoutForeignKeyConstraints(const std::function<void()> &callback,
+                                          const QString &connection)
+{
+    schemaBuilder(connection).withoutForeignKeyConstraints(callback);
+}
+
 QStringList Schema::getColumnListing(const QString &table, const QString &connection)
 {
     return schemaBuilder(connection).getColumnListing(table);
