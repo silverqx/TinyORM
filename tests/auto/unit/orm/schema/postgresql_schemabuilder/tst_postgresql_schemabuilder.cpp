@@ -51,7 +51,8 @@ private Q_SLOTS:
     void createTable_Charset_Collation_Engine() const;
     void createTable_Comment() const;
 
-    void timestamps_rememberToken_CreateAndDrop() const;
+    void timestamps_rememberToken_softDeletes_CreateAndDrop() const;
+    void datetimes_softDeletesDatetime_CreateAndDrop() const;
 
     void modifyTable() const;
     void modifyTable_Comment() const;
@@ -349,7 +350,8 @@ void tst_PostgreSQL_SchemaBuilder::createTable_Comment() const
     QVERIFY(log1.boundValues.isEmpty());
 }
 
-void tst_PostgreSQL_SchemaBuilder::timestamps_rememberToken_CreateAndDrop() const
+void
+tst_PostgreSQL_SchemaBuilder::timestamps_rememberToken_softDeletes_CreateAndDrop() const
 {
     auto log = DB::connection(m_connection).pretend([](auto &connection)
     {
@@ -360,6 +362,7 @@ void tst_PostgreSQL_SchemaBuilder::timestamps_rememberToken_CreateAndDrop() cons
 
             table.timestamps();
             table.rememberToken();
+            table.softDeletes();
         });
 
         Schema::on(connection.getName())
@@ -367,6 +370,7 @@ void tst_PostgreSQL_SchemaBuilder::timestamps_rememberToken_CreateAndDrop() cons
         {
             table.dropTimestamps();
             table.dropRememberToken();
+            table.dropSoftDeletes();
         });
 
         Schema::on(connection.getName())
@@ -378,7 +382,7 @@ void tst_PostgreSQL_SchemaBuilder::timestamps_rememberToken_CreateAndDrop() cons
         });
     });
 
-    QCOMPARE(log.size(), 4);
+    QCOMPARE(log.size(), 5);
 
     const auto &log0 = log.at(0);
     QCOMPARE(log0.query,
@@ -386,7 +390,8 @@ void tst_PostgreSQL_SchemaBuilder::timestamps_rememberToken_CreateAndDrop() cons
              "\"id\" bigserial primary key not null, "
              "\"created_at\" timestamp(0) without time zone null, "
              "\"updated_at\" timestamp(0) without time zone null, "
-             "\"remember_token\" varchar(100) null)");
+             "\"remember_token\" varchar(100) null, "
+             "\"deleted_at\" timestamp(0) without time zone null)");
     QVERIFY(log0.boundValues.isEmpty());
 
     const auto &log1 = log.at(1);
@@ -398,6 +403,73 @@ void tst_PostgreSQL_SchemaBuilder::timestamps_rememberToken_CreateAndDrop() cons
     const auto &log2 = log.at(2);
     QCOMPARE(log2.query,
              R"(alter table "firewalls" drop column "remember_token")");
+    QVERIFY(log2.boundValues.isEmpty());
+
+    const auto &log3 = log.at(3);
+    QCOMPARE(log3.query,
+             R"(alter table "firewalls" drop column "deleted_at")");
+    QVERIFY(log3.boundValues.isEmpty());
+
+    const auto &log4 = log.at(4);
+    QCOMPARE(log4.query,
+             "create table \"firewalls\" ("
+             "\"id\" bigserial primary key not null, "
+             "\"created_at\" timestamp(3) without time zone null, "
+             "\"updated_at\" timestamp(3) without time zone null)");
+    QVERIFY(log4.boundValues.isEmpty());
+}
+
+void tst_PostgreSQL_SchemaBuilder::datetimes_softDeletesDatetime_CreateAndDrop() const
+{
+    /* On PostgreSQL there is not any DATETIME column type so the result should be
+       the same like the previous unit test. */
+    auto log = DB::connection(m_connection).pretend([](auto &connection)
+    {
+        Schema::on(connection.getName())
+                .create(Firewalls, [](Blueprint &table)
+        {
+            table.id();
+
+            table.datetimes();
+            table.softDeletesDatetime();
+        });
+
+        Schema::on(connection.getName())
+                .table(Firewalls, [](Blueprint &table)
+        {
+            table.dropDatetimes();
+            table.dropSoftDeletesDatetime();
+        });
+
+        Schema::on(connection.getName())
+                .create(Firewalls, [](Blueprint &table)
+        {
+            table.id();
+
+            table.datetimes(3);
+        });
+    });
+
+    QCOMPARE(log.size(), 4);
+
+    const auto &log0 = log.at(0);
+    QCOMPARE(log0.query,
+             "create table \"firewalls\" ("
+             "\"id\" bigserial primary key not null, "
+             "\"created_at\" timestamp(0) without time zone null, "
+             "\"updated_at\" timestamp(0) without time zone null, "
+             "\"deleted_at\" timestamp(0) without time zone null)");
+    QVERIFY(log0.boundValues.isEmpty());
+
+    const auto &log1 = log.at(1);
+    QCOMPARE(log1.query,
+             "alter table \"firewalls\" "
+             "drop column \"created_at\", drop column \"updated_at\"");
+    QVERIFY(log1.boundValues.isEmpty());
+
+    const auto &log2 = log.at(2);
+    QCOMPARE(log2.query,
+             R"(alter table "firewalls" drop column "deleted_at")");
     QVERIFY(log2.boundValues.isEmpty());
 
     const auto &log3 = log.at(3);

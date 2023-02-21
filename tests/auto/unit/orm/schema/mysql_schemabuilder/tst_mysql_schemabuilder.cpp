@@ -52,6 +52,7 @@ private Q_SLOTS:
     void createTable_Comment() const;
 
     void timestamps_rememberToken_softDeletes_CreateAndDrop() const;
+    void datetimes_softDeletesDatetime_CreateAndDrop() const;
 
     void modifyTable() const;
     void modifyTable_Comment() const;
@@ -452,6 +453,77 @@ void tst_MySql_SchemaBuilder::timestamps_rememberToken_softDeletes_CreateAndDrop
                 "engine = %3")
              .arg(m_charset, m_collation, engineConfig));
     QVERIFY(log4.boundValues.isEmpty());
+}
+
+void tst_MySql_SchemaBuilder::datetimes_softDeletesDatetime_CreateAndDrop() const
+{
+    auto &connection = DB::connection(m_connection);
+
+    auto log = connection.pretend([](auto &connection_)
+    {
+        Schema::on(connection_.getName())
+                .create(Firewalls, [](Blueprint &table)
+        {
+            table.id();
+
+            table.datetimes();
+            table.softDeletesDatetime();
+        });
+
+        Schema::on(connection_.getName())
+                .table(Firewalls, [](Blueprint &table)
+        {
+            table.dropDatetimes();
+            table.dropSoftDeletesDatetime();
+        });
+
+        Schema::on(connection_.getName())
+                .create(Firewalls, [](Blueprint &table)
+        {
+            table.id();
+
+            table.datetimes(3);
+        });
+    });
+
+    QCOMPARE(log.size(), 4);
+
+    const auto engineConfig = connection.getConfig(engine_).value<QString>();
+
+    const auto &log0 = log.at(0);
+    QCOMPARE(log0.query,
+             QStringLiteral(
+                 "create table `firewalls` ("
+                 "`id` bigint unsigned not null auto_increment primary key, "
+                 "`created_at` datetime null, "
+                 "`updated_at` datetime null, "
+                 "`deleted_at` datetime null) "
+                 "default character set %1 collate '%2' "
+                 "engine = %3")
+             .arg(m_charset, m_collation, engineConfig));
+    QVERIFY(log0.boundValues.isEmpty());
+
+    const auto &log1 = log.at(1);
+    QCOMPARE(log1.query,
+             "alter table `firewalls` drop `created_at`, drop `updated_at`");
+    QVERIFY(log1.boundValues.isEmpty());
+
+    const auto &log2 = log.at(2);
+    QCOMPARE(log2.query,
+             "alter table `firewalls` drop `deleted_at`");
+    QVERIFY(log2.boundValues.isEmpty());
+
+    const auto &log3 = log.at(3);
+    QCOMPARE(log3.query,
+             QStringLiteral(
+                "create table `firewalls` ("
+                "`id` bigint unsigned not null auto_increment primary key, "
+                "`created_at` datetime(3) null, "
+                "`updated_at` datetime(3) null) "
+                "default character set %1 collate '%2' "
+                "engine = %3")
+             .arg(m_charset, m_collation, engineConfig));
+    QVERIFY(log3.boundValues.isEmpty());
 }
 
 void tst_MySql_SchemaBuilder::modifyTable() const

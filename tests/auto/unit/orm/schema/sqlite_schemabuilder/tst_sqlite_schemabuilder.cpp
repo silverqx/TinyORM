@@ -52,7 +52,8 @@ private Q_SLOTS:
     void createTable_Temporary() const;
     void createTable_Charset_Collation_Engine() const;
 
-    void timestamps_rememberToken_CreateAndDrop() const;
+    void timestamps_rememberToken_softDeletes_CreateAndDrop() const;
+    void datetimes_softDeletesDatetime_CreateAndDrop() const;
 
     void modifyTable() const;
     void modifyTable_Comment() const;
@@ -298,7 +299,7 @@ void tst_SQLite_SchemaBuilder::createTable_Charset_Collation_Engine() const
     QVERIFY(firstLog.boundValues.isEmpty());
 }
 
-void tst_SQLite_SchemaBuilder::timestamps_rememberToken_CreateAndDrop() const
+void tst_SQLite_SchemaBuilder::timestamps_rememberToken_softDeletes_CreateAndDrop() const
 {
     auto log = DB::connection(m_connection).pretend([](auto &connection)
     {
@@ -309,6 +310,7 @@ void tst_SQLite_SchemaBuilder::timestamps_rememberToken_CreateAndDrop() const
 
             table.timestamps();
             table.rememberToken();
+            table.softDeletes();
         });
 
         Schema::on(connection.getName())
@@ -316,6 +318,7 @@ void tst_SQLite_SchemaBuilder::timestamps_rememberToken_CreateAndDrop() const
         {
             table.dropTimestamps();
             table.dropRememberToken();
+            table.dropSoftDeletes();
         });
 
         Schema::on(connection.getName())
@@ -328,7 +331,7 @@ void tst_SQLite_SchemaBuilder::timestamps_rememberToken_CreateAndDrop() const
         });
     });
 
-    QCOMPARE(log.size(), 5);
+    QCOMPARE(log.size(), 6);
 
     const auto &log0 = log.at(0);
     QCOMPARE(log0.query,
@@ -336,7 +339,8 @@ void tst_SQLite_SchemaBuilder::timestamps_rememberToken_CreateAndDrop() const
              "\"id\" integer not null primary key autoincrement, "
              "\"created_at\" datetime, "
              "\"updated_at\" datetime, "
-             "\"remember_token\" varchar)");
+             "\"remember_token\" varchar, "
+             "\"deleted_at\" datetime)");
     QVERIFY(log0.boundValues.isEmpty());
 
     const auto &log1 = log.at(1);
@@ -352,6 +356,78 @@ void tst_SQLite_SchemaBuilder::timestamps_rememberToken_CreateAndDrop() const
     const auto &log3 = log.at(3);
     QCOMPARE(log3.query,
              R"(alter table "firewalls" drop column "remember_token")");
+    QVERIFY(log3.boundValues.isEmpty());
+
+    const auto &log4 = log.at(4);
+    QCOMPARE(log4.query,
+             R"(alter table "firewalls" drop column "deleted_at")");
+    QVERIFY(log4.boundValues.isEmpty());
+
+    const auto &log5 = log.at(5);
+    QCOMPARE(log5.query,
+             "create table \"firewalls\" ("
+             "\"id\" integer not null primary key autoincrement, "
+             "\"created_at\" datetime, "
+             "\"updated_at\" datetime)");
+    QVERIFY(log5.boundValues.isEmpty());
+}
+
+void tst_SQLite_SchemaBuilder::datetimes_softDeletesDatetime_CreateAndDrop() const
+{
+    /* On SQLite timestamp() and datetime() creates the DATETIME column type so
+       the result should be the same like the previous unit test. */
+    auto log = DB::connection(m_connection).pretend([](auto &connection)
+    {
+        Schema::on(connection.getName())
+                .create(Firewalls, [](Blueprint &table)
+        {
+            table.id();
+
+            table.datetimes();
+            table.softDeletesDatetime();
+        });
+
+        Schema::on(connection.getName())
+                .table(Firewalls, [](Blueprint &table)
+        {
+            table.dropDatetimes();
+            table.dropSoftDeletesDatetime();
+        });
+
+        Schema::on(connection.getName())
+                .create(Firewalls, [](Blueprint &table)
+        {
+            table.id();
+
+            // precision ignored with the SQLite grammar
+            table.datetimes(3);
+        });
+    });
+
+    QCOMPARE(log.size(), 5);
+
+    const auto &log0 = log.at(0);
+    QCOMPARE(log0.query,
+             "create table \"firewalls\" ("
+             "\"id\" integer not null primary key autoincrement, "
+             "\"created_at\" datetime, "
+             "\"updated_at\" datetime, "
+             "\"deleted_at\" datetime)");
+    QVERIFY(log0.boundValues.isEmpty());
+
+    const auto &log1 = log.at(1);
+    QCOMPARE(log1.query,
+             R"(alter table "firewalls" drop column "created_at")");
+    QVERIFY(log1.boundValues.isEmpty());
+
+    const auto &log2 = log.at(2);
+    QCOMPARE(log2.query,
+             R"(alter table "firewalls" drop column "updated_at")");
+    QVERIFY(log2.boundValues.isEmpty());
+
+    const auto &log3 = log.at(3);
+    QCOMPARE(log3.query,
+             R"(alter table "firewalls" drop column "deleted_at")");
     QVERIFY(log3.boundValues.isEmpty());
 
     const auto &log4 = log.at(4);
