@@ -1644,7 +1644,7 @@ QString Builder::stripTableForPluck(const Column &column)
     if (!columnString.contains(as))
         return QueryGrammar::unqualifyColumn(columnString);
 
-    return QueryGrammar::getAliasFromFrom(columnString);
+    return QueryGrammar::getAliasFromColumn(columnString);
 }
 
 /* Getters / Setters */

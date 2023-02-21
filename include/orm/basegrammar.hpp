@@ -85,6 +85,8 @@ namespace Query
         static QString getFromWithoutAlias(const QString &from);
         /*! Get an alias from the 'from' clause. */
         static QString getAliasFromFrom(const QString &from);
+        /*! Get an alias from the column name (select expression). */
+        inline static QString getAliasFromColumn(const QString &column);
 
     protected:
         /*! Convert the vector of column names into a wrapped comma delimited string. */
@@ -108,8 +110,9 @@ namespace Query
         /*! Wrap the given value segments. */
         QString wrapSegments(QStringList segments) const;
 
-        /*! Get individual segments from the 'from' clause. */
-        static QStringList getSegmentsFromFrom(const QString &from);
+        /*! Get individual segments from the aliased identifier ('from' clause or
+            column alias (select expression)). */
+        static QStringList getSegmentsFromAlias(const QString &aliasedExpression);
 
         // FEATURE qt6, use everywhere QLatin1String("") instead of = "", BUT Qt6 has char8_t ctor, so u"" can be used, I will wait with this problem silverqx
         /*! The grammar table prefix. */
@@ -139,6 +142,12 @@ namespace Query
     QString BaseGrammar::getTablePrefix() const
     {
         return m_tablePrefix;
+    }
+
+    QString BaseGrammar::getAliasFromColumn(const QString &column)
+    {
+        // The algorithm is the same but define this method anyway for better naming
+        return getAliasFromFrom(column);
     }
 
     template<ColumnContainer T>

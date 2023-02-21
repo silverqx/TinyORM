@@ -129,12 +129,12 @@ QString BaseGrammar::unqualifyColumn(const QString &column)
 
 QString BaseGrammar::getFromWithoutAlias(const QString &from)
 {
-    return std::move(getSegmentsFromFrom(from).first()); // clazy:exclude=detaching-temporary
+    return std::move(getSegmentsFromAlias(from).first()); // clazy:exclude=detaching-temporary
 }
 
 QString BaseGrammar::getAliasFromFrom(const QString &from)
 {
-    return std::move(getSegmentsFromFrom(from).last()); // clazy:exclude=detaching-temporary
+    return std::move(getSegmentsFromAlias(from).last()); // clazy:exclude=detaching-temporary
 }
 
 /* protected */
@@ -148,7 +148,7 @@ QString BaseGrammar::parameter(const QVariant &value)
 // NOLINTNEXTLINE(misc-no-recursion)
 QString BaseGrammar::wrapAliasedValue(const QString &value, const bool prefixAlias) const
 {
-    auto segments = getSegmentsFromFrom(value);
+    auto segments = getSegmentsFromAlias(value);
 
     /* If we are wrapping a table we need to prefix the alias with the table prefix
        as well in order to generate proper syntax. If this is a column of course
@@ -185,9 +185,9 @@ QString BaseGrammar::wrapSegments(QStringList segments) const
     return segments.join(DOT);
 }
 
-QStringList BaseGrammar::getSegmentsFromFrom(const QString &from)
+QStringList BaseGrammar::getSegmentsFromAlias(const QString &aliasedExpression)
 {
-    const auto segmentsView = QStringView(from)
+    const auto segmentsView = QStringView(aliasedExpression)
                               .split(QStringLiteral(" as "), Qt::KeepEmptyParts,
                                      Qt::CaseInsensitive);
 
