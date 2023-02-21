@@ -104,7 +104,7 @@ QVariant Builder::soleValue(const Column &column)
     return query.value(column_);
 }
 
-QVector<QVariant> Builder::pluck(const QString &column)
+QVector<QVariant> Builder::pluck(const Column &column)
 {
     /* First, we will need to select the results of the query accounting for the
        given column. Once we have the results, we will be able to take the results
@@ -1632,14 +1632,19 @@ QVector<OrderByItem> Builder::removeExistingOrdersFor(const QString &column) con
             | ranges::to<QVector<OrderByItem>>();
 }
 
-QString Builder::stripTableForPluck(const QString &column)
+QString Builder::stripTableForPluck(const Column &column)
 {
     static const auto as = QStringLiteral(" as ");
 
-    if (!column.contains(as))
-        return QueryGrammar::unqualifyColumn(column);
+    const auto columnString = std::holds_alternative<Expression>(column)
+                              ? QueryGrammar::getValue(
+                                    std::get<Expression>(column)).value<QString>()
+                              : std::get<QString>(column);
 
-    return QueryGrammar::getAliasFromFrom(column);
+    if (!columnString.contains(as))
+        return QueryGrammar::unqualifyColumn(columnString);
+
+    return QueryGrammar::getAliasFromFrom(columnString);
 }
 
 /* Getters / Setters */

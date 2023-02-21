@@ -62,10 +62,10 @@ namespace Tiny::Relations
         QVariant soleValue(const Column &column) const;
 
         /*! Get the vector with the values of a given column. */
-        QVector<QVariant> pluck(const QString &column) const;
+        QVector<QVariant> pluck(const Column &column) const;
         /*! Get the vector with the values of a given column. */
         template<typename T>
-        std::map<T, QVariant> pluck(const QString &column, const QString &key) const;
+        std::map<T, QVariant> pluck(const Column &column, const Column &key) const;
 
         /*! Concatenate values of a given column as a string. */
         QString implode(const QString &column, const QString &glue = "") const;
@@ -1058,7 +1058,7 @@ namespace Tiny::Relations
 
     template<class Model, class Related>
     QVector<QVariant>
-    RelationProxies<Model, Related>::pluck(const QString &column) const
+    RelationProxies<Model, Related>::pluck(const Column &column) const
     {
         return getQuery().pluck(column);
     }
@@ -1066,8 +1066,8 @@ namespace Tiny::Relations
     template<class Model, class Related>
     template<typename T>
     std::map<T, QVariant>
-    RelationProxies<Model, Related>::pluck(const QString &column,
-                                           const QString &key) const
+    RelationProxies<Model, Related>::pluck(const Column &column,
+                                           const Column &key) const
     {
         return getQuery().template pluck<T>(column, key);
     }

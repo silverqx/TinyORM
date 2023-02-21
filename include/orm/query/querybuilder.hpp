@@ -99,10 +99,10 @@ namespace Orm::Query
         QVariant soleValue(const Column &column);
 
         /*! Get the vector with the values of a given column. */
-        QVector<QVariant> pluck(const QString &column);
+        QVector<QVariant> pluck(const Column &column);
         /*! Get the vector with the values of a given column. */
         template<typename T>
-        std::map<T, QVariant> pluck(const QString &column, const QString &key);
+        std::map<T, QVariant> pluck(const Column &column, const Column &key);
 
         /*! Concatenate values of a given column as a string. */
         QString implode(const QString &column, const QString &glue = "");
@@ -894,7 +894,7 @@ namespace Orm::Query
         QVector<OrderByItem> removeExistingOrdersFor(const QString &column) const;
 
         /*! Strip off the table name or alias from a column identifier. */
-        static QString stripTableForPluck(const QString &column);
+        static QString stripTableForPluck(const Column &column);
 
         /* Getters / Setters */
         /*! Set the aggregate property without running the query. */
@@ -1026,7 +1026,7 @@ namespace Orm::Query
 
     template<typename T>
     std::map<T, QVariant>
-    Builder::pluck(const QString &column, const QString &key)
+    Builder::pluck(const Column &column, const Column &key)
     {
         /* First, we will need to select the results of the query accounting for the
            given column / key. Once we have the results, we will be able to take

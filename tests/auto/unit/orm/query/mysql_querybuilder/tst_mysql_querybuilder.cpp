@@ -82,6 +82,12 @@ private Q_SLOTS:
     void value() const;
     void value_ColumnExpression() const;
 
+    void pluck() const;
+    void pluck_ColumnExpression() const;
+
+    void pluck_Map() const;
+    void pluck_Map_ColumnExpression() const;
+
     void count() const;
     void count_Distinct() const;
     void min_Aggregate() const;
@@ -493,6 +499,70 @@ void tst_MySql_QueryBuilder::value_ColumnExpression() const
     QCOMPARE(log.size(), 1);
     QCOMPARE(firstLog.query,
              "select name from `torrents` limit 1");
+    QVERIFY(firstLog.boundValues.isEmpty());
+}
+
+void tst_MySql_QueryBuilder::pluck() const
+{
+    auto log = DB::connection(m_connection).pretend([](auto &connection)
+    {
+        connection.query()->from("torrents").pluck(NAME);
+    });
+
+    QVERIFY(!log.isEmpty());
+    const auto &firstLog = log.first();
+
+    QCOMPARE(log.size(), 1);
+    QCOMPARE(firstLog.query,
+             "select `name` from `torrents`");
+    QVERIFY(firstLog.boundValues.isEmpty());
+}
+
+void tst_MySql_QueryBuilder::pluck_ColumnExpression() const
+{
+    auto log = DB::connection(m_connection).pretend([](auto &connection)
+    {
+        connection.query()->from("torrents").pluck(Raw(NAME));
+    });
+
+    QVERIFY(!log.isEmpty());
+    const auto &firstLog = log.first();
+
+    QCOMPARE(log.size(), 1);
+    QCOMPARE(firstLog.query,
+             "select name from `torrents`");
+    QVERIFY(firstLog.boundValues.isEmpty());
+}
+
+void tst_MySql_QueryBuilder::pluck_Map() const
+{
+    auto log = DB::connection(m_connection).pretend([](auto &connection)
+    {
+        connection.query()->from("torrents").template pluck<quint64>(NAME, ID);
+    });
+
+    QVERIFY(!log.isEmpty());
+    const auto &firstLog = log.first();
+
+    QCOMPARE(log.size(), 1);
+    QCOMPARE(firstLog.query,
+             "select `name`, `id` from `torrents`");
+    QVERIFY(firstLog.boundValues.isEmpty());
+}
+
+void tst_MySql_QueryBuilder::pluck_Map_ColumnExpression() const
+{
+    auto log = DB::connection(m_connection).pretend([](auto &connection)
+    {
+        connection.query()->from("torrents").template pluck<quint64>(Raw(NAME), Raw(ID));
+    });
+
+    QVERIFY(!log.isEmpty());
+    const auto &firstLog = log.first();
+
+    QCOMPARE(log.size(), 1);
+    QCOMPARE(firstLog.query,
+             "select name, id from `torrents`");
     QVERIFY(firstLog.boundValues.isEmpty());
 }
 

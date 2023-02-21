@@ -43,10 +43,10 @@ namespace Tiny
         static QVariant soleValue(const Column &column);
 
         /*! Get the vector with the values of a given column. */
-        static QVector<QVariant> pluck(const QString &column);
+        static QVector<QVariant> pluck(const Column &column);
         /*! Get the vector with the values of a given column. */
         template<typename T>
-        static std::map<T, QVariant> pluck(const QString &column, const QString &key);
+        static std::map<T, QVariant> pluck(const Column &column, const Column &key);
 
         /*! Concatenate values of a given column as a string. */
         static QString implode(const QString &column, const QString &glue = "");
@@ -1050,7 +1050,7 @@ namespace Tiny
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     QVector<QVariant>
-    ModelProxies<Derived, AllRelations...>::pluck(const QString &column)
+    ModelProxies<Derived, AllRelations...>::pluck(const Column &column)
     {
         return query()->pluck(column);
     }
@@ -1058,8 +1058,8 @@ namespace Tiny
     template<typename Derived, AllRelationsConcept ...AllRelations>
     template<typename T>
     std::map<T, QVariant>
-    ModelProxies<Derived, AllRelations...>::pluck(const QString &column,
-                                                  const QString &key)
+    ModelProxies<Derived, AllRelations...>::pluck(const Column &column,
+                                                  const Column &key)
     {
         return query()->template pluck<T>(column, key);
     }

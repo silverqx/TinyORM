@@ -74,10 +74,10 @@ namespace Orm::Tiny
         QVariant soleValue(const Column &column);
 
         /*! Get the vector with the values of a given column. */
-        QVector<QVariant> pluck(const QString &column);
+        QVector<QVariant> pluck(const Column &column);
         /*! Get the vector with the values of a given column. */
         template<typename T>
-        std::map<T, QVariant> pluck(const QString &column, const QString &key);
+        std::map<T, QVariant> pluck(const Column &column, const Column &key);
 
         /*! Find a model by its primary key. */
         std::optional<Model>
@@ -434,7 +434,7 @@ namespace Orm::Tiny
     }
 
     template<typename Model>
-    QVector<QVariant> Builder<Model>::pluck(const QString &column)
+    QVector<QVariant> Builder<Model>::pluck(const Column &column)
     {
         auto result = toBase().pluck(column);
 
@@ -445,7 +445,7 @@ namespace Orm::Tiny
         /* If the column is qualified with a table or have an alias, we cannot use
            those directly in the "pluck" operations, we have to strip the table out or
            use the alias name instead. */
-        const auto unqualifiedColumn = QueryBuilder::stripTableForPluck(column);
+        const auto unqualifiedColumn = getQuery().stripTableForPluck(column);
 
         /* If the model has a mutator for the requested column, we will spin through
            the results and mutate the values so that the mutated version of these
@@ -465,7 +465,7 @@ namespace Orm::Tiny
     template<typename Model>
     template<typename T>
     std::map<T, QVariant>
-    Builder<Model>::pluck(const QString &column, const QString &key)
+    Builder<Model>::pluck(const Column &column, const Column &key)
     {
         auto result = toBase().template pluck<T>(column, key);
 
@@ -476,7 +476,7 @@ namespace Orm::Tiny
         /* If the column is qualified with a table or have an alias, we cannot use
            those directly in the "pluck" operations, we have to strip the table out or
            use the alias name instead. */
-        const auto unqualifiedColumn = QueryBuilder::stripTableForPluck(column);
+        const auto unqualifiedColumn = getQuery().stripTableForPluck(column);
 
         /* If the model has a mutator for the requested column, we will spin through
            the results and mutate the values so that the mutated version of these
