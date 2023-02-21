@@ -1103,13 +1103,15 @@ The SQLite prior to `v3.35.0` doesn't support dropping columns using the `ALTER 
 
 TinyORM provides several convenient methods related to dropping common types of columns. Each of these methods is described in the table below:
 
-| Command                          | Description |
-| -------------------------------- | ----------- |
-| `table.dropRememberToken();`     | Drop the `remember_token` column. |
-| `table.dropSoftDeletes();`       | Drop the `deleted_at` column. |
-| `table.dropSoftDeletesTz();`     | Alias of `dropSoftDeletes()` method. |
-| `table.dropTimestamps();`        | Drop the `created_at` and `updated_at` columns. |
-| `table.dropTimestampsTz();`      | Alias of `dropTimestamps()` method. |
+| Command                             | Description |
+| --------------------------------    | ----------- |
+| `table.dropRememberToken();`        | Drop the `remember_token` column. |
+| `table.dropSoftDeletes();`          | Drop the `deleted_at` column. |
+| `table.dropSoftDeletesDatetime();`  | Alias of `dropSoftDeletes()` method. |
+| `table.dropSoftDeletesTz();`        | Alias of `dropSoftDeletes()` method. |
+| `table.dropTimestamps();`           | Drop the `created_at` and `updated_at` columns. |
+| `table.dropTimestampsTz();`         | Alias of `dropTimestamps()` method. |
+| `table.dropDatetimes();`            | Alias of `dropTimestamps()` method. |
 
 ## Indexes
 

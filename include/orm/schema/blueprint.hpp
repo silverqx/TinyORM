@@ -78,11 +78,16 @@ namespace Grammars
         void dropTimestamps();
         /*! Indicate that the timestamp columns should be dropped. */
         inline void dropTimestampsTz();
+        /*! Indicate that the datetime columns should be dropped. */
+        inline void dropDatetimes();
 
         /*! Indicate that the soft delete column should be dropped. */
         inline void dropSoftDeletes(const QString &column = Orm::Constants::DELETED_AT);
         /*! Indicate that the soft delete column should be dropped. */
         inline void dropSoftDeletesTz(const QString &column = Orm::Constants::DELETED_AT);
+        /*! Indicate that the soft delete column should be dropped. */
+        inline void
+        dropSoftDeletesDatetime(const QString &column = Orm::Constants::DELETED_AT);
 
         /*! Indicate that the remember token column should be dropped. */
         inline void dropRememberToken();
@@ -520,12 +525,22 @@ namespace Grammars
         dropTimestamps();
     }
 
+    void Blueprint::dropDatetimes()
+    {
+        dropTimestamps();
+    }
+
     void Blueprint::dropSoftDeletes(const QString &column)
     {
         dropColumns(QVector<QString> {column});
     }
 
     void Blueprint::dropSoftDeletesTz(const QString &column)
+    {
+        dropSoftDeletes(column);
+    }
+
+    void Blueprint::dropSoftDeletesDatetime(const QString &column)
     {
         dropSoftDeletes(column);
     }
