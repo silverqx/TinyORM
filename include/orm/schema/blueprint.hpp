@@ -308,9 +308,9 @@ namespace Grammars
         /*! Create a new date column on the table. */
         ColumnDefinitionReference<> date(const QString &column);
         /*! Create a new date-time column on the table. */
-        ColumnDefinitionReference<> dateTime(const QString &column, int precision = 0);
+        ColumnDefinitionReference<> datetime(const QString &column, int precision = 0);
         /*! Create a new date-time column (with time zone) on the table. */
-        ColumnDefinitionReference<> dateTimeTz(const QString &column, int precision = 0);
+        ColumnDefinitionReference<> datetimeTz(const QString &column, int precision = 0);
 
         /*! Create a new time column on the table. */
         ColumnDefinitionReference<> time(const QString &column, int precision = 0);
@@ -705,15 +705,15 @@ namespace Grammars
 
     void Blueprint::datetimes(const int precision)
     {
-        dateTime(Orm::Constants::CREATED_AT, precision).nullable();
+        datetime(Orm::Constants::CREATED_AT, precision).nullable();
 
-        dateTime(Orm::Constants::UPDATED_AT, precision).nullable();
+        datetime(Orm::Constants::UPDATED_AT, precision).nullable();
     }
 
     ColumnDefinitionReference<>
     Blueprint::softDeletesDatetime(const QString &column, const int precision)
     {
-        return dateTime(column, precision).nullable();
+        return datetime(column, precision).nullable();
     }
 
     const QString &Blueprint::getTable() const noexcept

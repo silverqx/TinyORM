@@ -16,8 +16,8 @@ namespace Migrations
             {
                 table.id();
 
-                table.dateTime("datetime").nullable();
-                table.dateTimeTz("datetime_tz").nullable();
+                table.datetime("datetime").nullable();
+                table.datetimeTz("datetime_tz").nullable();
 
                 table.timestamp("timestamp").nullable();
                 table.timestampTz("timestamp_tz").nullable();

@@ -542,8 +542,8 @@ The schema builder blueprint offers a variety of methods that correspond to the 
 [binary](#column-method-binary)
 [boolean](#column-method-boolean)
 [Char](#column-method-Char)
-[dateTimeTz](#column-method-dateTimeTz)
-[dateTime](#column-method-dateTime)
+[datetimeTz](#column-method-datetimeTz)
+[datetime](#column-method-datetime)
 [datetimes](#column-method-datetimes)
 [date](#column-method-date)
 [decimal](#column-method-decimal)
@@ -641,19 +641,19 @@ The `Char` method creates a `CHAR` equivalent column with of a given length:
 
     table.Char(Orm::NAME, 100);
 
-#### `dateTimeTz()` {#column-method-dateTimeTz}
+#### `datetimeTz()` {#column-method-datetimeTz}
 
-The `dateTimeTz` method creates a `DATETIME` (with timezone) equivalent column with an optional precision (total digits):
+The `datetimeTz` method creates a `DATETIME` (with timezone) equivalent column with an optional precision (total digits):
 
     #include <orm/constants.hpp>
 
-    table.dateTimeTz(Orm::CREATED_AT, precision = 0);
+    table.datetimeTz(Orm::CREATED_AT, precision = 0);
 
-#### `dateTime()` {#column-method-dateTime}
+#### `datetime()` {#column-method-datetime}
 
-The `dateTime` method creates a `DATETIME` equivalent column with an optional precision (total digits):
+The `datetime` method creates a `DATETIME` equivalent column with an optional precision (total digits):
 
-    table.dateTime("created_at", precision = 0);
+    table.datetime("created_at", precision = 0);
 
 #### `datetimes()` {#column-method-datetimes}
 

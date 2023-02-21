@@ -352,13 +352,13 @@ ColumnDefinitionReference<> Blueprint::date(const QString &column)
 }
 
 ColumnDefinitionReference<>
-Blueprint::dateTime(const QString &column, const int precision)
+Blueprint::datetime(const QString &column, const int precision)
 {
     return addColumn(ColumnType::DateTime, column, {.precision = precision});
 }
 
 ColumnDefinitionReference<>
-Blueprint::dateTimeTz(const QString &column, const int precision)
+Blueprint::datetimeTz(const QString &column, const int precision)
 {
     return addColumn(ColumnType::DateTimeTz, column, {.precision = precision});
 }

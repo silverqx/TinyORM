@@ -22,7 +22,7 @@ namespace Migrations
                 table.string(NAME).unique().comment("Torrent name");
                 table.unsignedBigInteger(SIZE_).defaultValue("0");
                 table.unsignedSmallInteger("progress").defaultValue("0");
-                table.dateTime("added_on").useCurrent();
+                table.datetime("added_on").useCurrent();
                 table.string("hash", 40);
                 table.string("note").nullable();
 

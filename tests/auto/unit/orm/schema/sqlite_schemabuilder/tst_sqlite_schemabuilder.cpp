@@ -933,8 +933,8 @@ void tst_SQLite_SchemaBuilder::useCurrent() const
         Schema::on(connection.getName())
                 .create(Firewalls, [](Blueprint &table)
         {
-            table.dateTime("created");
-            table.dateTime("created_current").useCurrent();
+            table.datetime("created");
+            table.datetime("created_current").useCurrent();
 
             table.timestamp("created_t");
             table.timestamp("created_t_current").useCurrent();
@@ -961,9 +961,9 @@ void tst_SQLite_SchemaBuilder::useCurrentOnUpdate() const
         Schema::on(connection.getName())
                 .create(Firewalls, [](Blueprint &table)
         {
-            table.dateTime("updated");
+            table.datetime("updated");
             // SQLite doesn't support on update
-            table.dateTime("updated_current").useCurrentOnUpdate();
+            table.datetime("updated_current").useCurrentOnUpdate();
 
             table.timestamp("updated_t");
             table.timestamp("updated_t_current").useCurrentOnUpdate();

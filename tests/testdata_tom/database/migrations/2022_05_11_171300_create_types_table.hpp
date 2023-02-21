@@ -41,7 +41,7 @@ namespace Migrations
 
                 table.timestamp("timestamp").nullable();
 
-                table.dateTime("datetime").nullable();
+                table.datetime("datetime").nullable();
                 table.date("date").nullable();
 
                 table.binary("binary").nullable();
