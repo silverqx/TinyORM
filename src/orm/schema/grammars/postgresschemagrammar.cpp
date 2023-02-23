@@ -15,7 +15,7 @@ namespace Orm::SchemaNs::Grammars
 /* Compile methods for the SchemaBuilder */
 
 QString PostgresSchemaGrammar::compileCreateDatabase(
-            const QString &name, DatabaseConnection &connection) const
+        const QString &name, DatabaseConnection &connection) const
 {
     return QStringLiteral("create database %1 encoding %2")
             .arg(wrapValue(name),
