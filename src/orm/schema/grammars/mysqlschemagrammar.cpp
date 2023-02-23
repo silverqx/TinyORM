@@ -85,7 +85,7 @@ MySqlSchemaGrammar::compileCreate(const Blueprint &blueprint,
     // Primary SQL query for create table
     auto sqlCreateTable = compileCreateTable(blueprint);
 
-    // Add the encoding option to the SQL for the table
+    // Add the encoding option to the SQL query for the table
     compileCreateEncoding(sqlCreateTable, connection, blueprint);
 
     // Add storage engine declaration to the SQL query if has been supplied
