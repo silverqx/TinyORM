@@ -137,6 +137,8 @@ QString SchemaGrammar::wrapTable(const Blueprint &blueprint) const
     return BaseGrammar::wrapTable(blueprint.getTable());
 }
 
+/* protected */
+
 QStringList SchemaGrammar::getColumns(const Blueprint &blueprint) const
 {
     auto addedColumns = blueprint.getAddedColumns();
