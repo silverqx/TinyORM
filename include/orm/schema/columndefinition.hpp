@@ -192,7 +192,8 @@ namespace Orm::SchemaNs
         /*! Create a virtual generated column (MySQL/PostgreSQL/SQLite). */
         QString virtualAs     {};
 
-        /*! Set the starting value of an auto-incrementing field (MySQL/PostgreSQL). */
+        /*! Set the starting value of an auto-incrementing field (MySQL/PostgreSQL),
+            alias for the 'startingValue'. */
         std::optional<quint64> from          = std::nullopt;
         /*! Set the starting value of an auto-incrementing field (MySQL/PostgreSQL). */
         std::optional<quint64> startingValue = std::nullopt;

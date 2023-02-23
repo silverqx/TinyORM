@@ -66,7 +66,8 @@ namespace Orm::SchemaNs
         ColumnReferenceType &defaultValue(const QVariant &value);
         /*! Place the column "first" in the table (MySQL). */
         ColumnReferenceType &first();
-        /*! Set the starting value of an auto-incrementing field (MySQL / PostgreSQL). */
+        /*! Set the starting value of an auto-incrementing field (MySQL/PostgreSQL),
+            alias for the 'startingValue'. */
         ColumnReferenceType &from(int startingValue);
         /*! Create a SQL compliant identity column (PostgreSQL). */
         ColumnReferenceType &generatedAs(const QString &expression);
