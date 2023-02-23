@@ -10,9 +10,9 @@ TINYORM_BEGIN_COMMON_NAMESPACE
 namespace Orm::SchemaNs::Grammars
 {
 
-/* Compile methods for the SchemaBuilder */
-
 /* public */
+
+/* Compile methods for the SchemaBuilder */
 
 QString MySqlSchemaGrammar::compileCreateDatabase(
         const QString &name, DatabaseConnection &connection) const
