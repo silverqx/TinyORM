@@ -197,6 +197,8 @@ namespace Orm::SchemaNs
         QString comment       {};
         /*! Specify a "default" value for the column. */
         QVariant defaultValue {};
+        /*! Specifies a "on update" action (MySQL; used by the datetime and timestamp). */
+        QVariant onUpdate {};
         /*! Create a SQL compliant identity column (PostgreSQL). */
         QString generatedAs   {};
         /*! Create a stored generated column (MySQL/PostgreSQL/SQLite). */

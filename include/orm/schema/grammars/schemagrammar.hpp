@@ -130,7 +130,7 @@ namespace Grammars
         shouldAddAutoIncrementStartingValue(const ColumnDefinition &column) noexcept;
 
         /*! Get the SQL for the column data type. */
-        virtual QString getType(const ColumnDefinition &column) const = 0;
+        virtual QString getType(ColumnDefinition &column) const = 0;
         /*! Compile the blueprint's added column definitions. */
         QStringList getColumns(const Blueprint &blueprint) const;
 

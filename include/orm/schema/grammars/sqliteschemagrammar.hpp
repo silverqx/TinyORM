@@ -146,7 +146,7 @@ namespace Grammars
         QString escapeString(QString value) const override;
 
         /*! Get the SQL for the column data type. */
-        QString getType(const ColumnDefinition &column) const override;
+        QString getType(ColumnDefinition &column) const override;
 
         /*! Create the column definition for a char type. */
         QString typeChar(const ColumnDefinition &column) const;
@@ -189,17 +189,17 @@ namespace Grammars
         /*! Create the column definition for a date type. */
         QString typeDate(const ColumnDefinition &column) const;
         /*! Create the column definition for a date-time type. */
-        QString typeDateTime(const ColumnDefinition &column) const;
+        QString typeDateTime(ColumnDefinition &column) const;
         /*! Create the column definition for a date-time (with time zone) type. */
-        QString typeDateTimeTz(const ColumnDefinition &column) const;
+        QString typeDateTimeTz(ColumnDefinition &column) const;
         /*! Create the column definition for a time type. */
         QString typeTime(const ColumnDefinition &column) const;
         /*! Create the column definition for a time (with time zone) type. */
         QString typeTimeTz(const ColumnDefinition &column) const;
         /*! Create the column definition for a timestamp type. */
-        QString typeTimestamp(const ColumnDefinition &column) const;
+        QString typeTimestamp(ColumnDefinition &column) const;
         /*! Create the column definition for a timestamp (with time zone) type. */
-        QString typeTimestampTz(const ColumnDefinition &column) const;
+        QString typeTimestampTz(ColumnDefinition &column) const;
         /*! Create the column definition for a year type. */
         QString typeYear(const ColumnDefinition &column) const;
         /*! Create the column definition for a binary type. */

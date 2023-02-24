@@ -1243,10 +1243,10 @@ void tst_PostgreSQL_SchemaBuilder::useCurrent() const
              "create table \"firewalls\" ("
              "\"created\" timestamp(0) without time zone not null, "
              "\"created_current\" timestamp(0) without time zone "
-               "default CURRENT_TIMESTAMP not null, "
+               "not null default CURRENT_TIMESTAMP, "
              "\"created_t\" timestamp(0) without time zone not null, "
              "\"created_t_current\" timestamp(0) without time zone "
-               "default CURRENT_TIMESTAMP not null)");
+               "not null default CURRENT_TIMESTAMP)");
     QVERIFY(firstLog.boundValues.isEmpty());
 }
 

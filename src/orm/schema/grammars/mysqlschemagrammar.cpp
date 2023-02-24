@@ -325,9 +325,9 @@ QString MySqlSchemaGrammar::addModifiers(QString &&sql,
         &MySqlSchemaGrammar::modifyCollate,   &MySqlSchemaGrammar::modifyVirtualAs,
         &MySqlSchemaGrammar::modifyStoredAs,  &MySqlSchemaGrammar::modifyNullable,
         &MySqlSchemaGrammar::modifyInvisible, &MySqlSchemaGrammar::modifySrid,
-        &MySqlSchemaGrammar::modifyDefault,   &MySqlSchemaGrammar::modifyIncrement,
-        &MySqlSchemaGrammar::modifyComment,   &MySqlSchemaGrammar::modifyAfter,
-        &MySqlSchemaGrammar::modifyFirst,
+        &MySqlSchemaGrammar::modifyDefault,   &MySqlSchemaGrammar::modifyOnUpdate,
+        &MySqlSchemaGrammar::modifyIncrement, &MySqlSchemaGrammar::modifyComment,
+        &MySqlSchemaGrammar::modifyAfter,     &MySqlSchemaGrammar::modifyFirst,
     };
 
     for (const auto method : modifierMethods)
@@ -435,7 +435,7 @@ QString MySqlSchemaGrammar::escapeString(QString value) const
             .replace(SQUOTE, "''");
 }
 
-QString MySqlSchemaGrammar::getType(const ColumnDefinition &column) const
+QString MySqlSchemaGrammar::getType(ColumnDefinition &column) const
 {
     switch (column.type) {
     case ColumnType::Char:
@@ -679,26 +679,24 @@ QString MySqlSchemaGrammar::typeDate(const ColumnDefinition &/*unused*/) const /
     return QStringLiteral("date");
 }
 
-QString MySqlSchemaGrammar::typeDateTime(const ColumnDefinition &column) const // NOLINT(readability-convert-member-functions-to-static)
+QString MySqlSchemaGrammar::typeDateTime(ColumnDefinition &column) const // NOLINT(readability-convert-member-functions-to-static)
 {
-    auto columnType = column.precision > 0
-                      ? QStringLiteral("datetime(%1)").arg(column.precision)
-                      : QStringLiteral("datetime");
-
     const auto current = column.precision > 0
                          ? QStringLiteral("CURRENT_TIMESTAMP(%1)").arg(column.precision)
                          : QStringLiteral("CURRENT_TIMESTAMP");
 
-    columnType = column.useCurrent
-                 ? QStringLiteral("%1 default %2").arg(columnType, current)
-                 : columnType;
+    if (column.useCurrent)
+        column.defaultValue = Expression(current);
 
-    return column.useCurrentOnUpdate
-            ? QStringLiteral("%1 on update %2").arg(columnType, current)
-            : columnType;
+    if (column.useCurrentOnUpdate)
+        column.onUpdate = Expression(current);
+
+    return column.precision > 0
+            ? QStringLiteral("datetime(%1)").arg(column.precision)
+            : QStringLiteral("datetime");
 }
 
-QString MySqlSchemaGrammar::typeDateTimeTz(const ColumnDefinition &column) const
+QString MySqlSchemaGrammar::typeDateTimeTz(ColumnDefinition &column) const
 {
     return typeDateTime(column);
 }
@@ -714,29 +712,27 @@ QString MySqlSchemaGrammar::typeTimeTz(const ColumnDefinition &column) const
     return typeTime(column);
 }
 
-QString MySqlSchemaGrammar::typeTimestamp(const ColumnDefinition &column) const // NOLINT(readability-convert-member-functions-to-static)
+QString MySqlSchemaGrammar::typeTimestamp(ColumnDefinition &column) const // NOLINT(readability-convert-member-functions-to-static)
 {
-    /* The behavior if the precision is omitted (or 0 of course):
-       >0 is ok so the default will be: timestamp and the MySQL default is 0 if omitted.
-       The same as in the PostgreSQL grammar. */
-    auto columnType = column.precision > 0
-                      ? QStringLiteral("timestamp(%1)").arg(column.precision)
-                      : QStringLiteral("timestamp");
-
     const auto current = column.precision > 0
                          ? QStringLiteral("CURRENT_TIMESTAMP(%1)").arg(column.precision)
                          : QStringLiteral("CURRENT_TIMESTAMP");
 
-    columnType = column.useCurrent
-                 ? QStringLiteral("%1 default %2").arg(columnType, current)
-                 : columnType;
+    if (column.useCurrent)
+        column.defaultValue = Expression(current);
 
-    return column.useCurrentOnUpdate
-            ? QStringLiteral("%1 on update %2").arg(columnType, current)
-            : columnType;
+    if (column.useCurrentOnUpdate)
+        column.onUpdate = Expression(current);
+
+    /* The behavior if the precision is omitted (or 0 of course):
+       >0 is ok so the default will be: timestamp and the MySQL default is 0 if omitted.
+       The same as for the PostgreSQL grammar. */
+    return column.precision > 0
+            ? QStringLiteral("timestamp(%1)").arg(column.precision)
+            : QStringLiteral("timestamp");
 }
 
-QString MySqlSchemaGrammar::typeTimestampTz(const ColumnDefinition &column) const
+QString MySqlSchemaGrammar::typeTimestampTz(ColumnDefinition &column) const
 {
     return typeTimestamp(column);
 }
@@ -886,6 +882,17 @@ QString MySqlSchemaGrammar::modifyDefault(const ColumnDefinition &column) const
 
     // Default value is already quoted and escaped inside the getDefaultValue()
     return QStringLiteral(" default %1").arg(getDefaultValue(defaultValue));
+}
+
+QString MySqlSchemaGrammar::modifyOnUpdate(const ColumnDefinition &column) const
+{
+    const auto &onUpdate = column.onUpdate;
+
+    if (!onUpdate.isValid() || onUpdate.isNull())
+        return {};
+
+    // Default value is already quoted and escaped inside the getDefaultValue()
+    return QStringLiteral(" on update %1").arg(getDefaultValue(onUpdate));
 }
 
 QString MySqlSchemaGrammar::modifyIncrement(const ColumnDefinition &column) const // NOLINT(readability-convert-member-functions-to-static)

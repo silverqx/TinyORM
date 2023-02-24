@@ -1030,9 +1030,9 @@ void tst_MySql_SchemaBuilder::useCurrent() const
              QStringLiteral(
                 "create table `firewalls` ("
                 "`created` datetime not null, "
-                "`created_current` datetime default CURRENT_TIMESTAMP not null, "
+                "`created_current` datetime not null default CURRENT_TIMESTAMP, "
                 "`created_t` timestamp not null, "
-                "`created_t_current` timestamp default CURRENT_TIMESTAMP not null) "
+                "`created_t_current` timestamp not null default CURRENT_TIMESTAMP) "
                 "default character set %1 collate '%2' "
                 "engine = InnoDB")
              .arg(m_charset, m_collation));
@@ -1062,9 +1062,9 @@ void tst_MySql_SchemaBuilder::useCurrentOnUpdate() const
              QStringLiteral(
                 "create table `firewalls` ("
                 "`updated` datetime not null, "
-                "`updated_current` datetime on update CURRENT_TIMESTAMP not null, "
+                "`updated_current` datetime not null on update CURRENT_TIMESTAMP, "
                 "`updated_t` timestamp not null, "
-                "`updated_t_current` timestamp on update CURRENT_TIMESTAMP not null) "
+                "`updated_t_current` timestamp not null on update CURRENT_TIMESTAMP) "
                 "default character set %1 collate '%2' "
                 "engine = InnoDB")
              .arg(m_charset, m_collation));

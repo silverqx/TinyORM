@@ -405,7 +405,7 @@ QString SQLiteSchemaGrammar::escapeString(QString value) const // clazy:exclude=
     return value.replace(SQUOTE, QStringLiteral("''"));
 }
 
-QString SQLiteSchemaGrammar::getType(const ColumnDefinition &column) const
+QString SQLiteSchemaGrammar::getType(ColumnDefinition &column) const
 {
     switch (column.type) {
     case ColumnType::Char:
@@ -648,12 +648,12 @@ QString SQLiteSchemaGrammar::typeDate(const ColumnDefinition &/*unused*/) const 
     return QStringLiteral("date");
 }
 
-QString SQLiteSchemaGrammar::typeDateTime(const ColumnDefinition &column) const
+QString SQLiteSchemaGrammar::typeDateTime(ColumnDefinition &column) const
 {
     return typeTimestamp(column);
 }
 
-QString SQLiteSchemaGrammar::typeDateTimeTz(const ColumnDefinition &column) const
+QString SQLiteSchemaGrammar::typeDateTimeTz(ColumnDefinition &column) const
 {
     return typeDateTime(column);
 }
@@ -668,13 +668,15 @@ QString SQLiteSchemaGrammar::typeTimeTz(const ColumnDefinition &column) const
     return typeTime(column);
 }
 
-QString SQLiteSchemaGrammar::typeTimestamp(const ColumnDefinition &column) const // NOLINT(readability-convert-member-functions-to-static)
+QString SQLiteSchemaGrammar::typeTimestamp(ColumnDefinition &column) const // NOLINT(readability-convert-member-functions-to-static)
 {
-    return column.useCurrent ? QStringLiteral("datetime default CURRENT_TIMESTAMP")
-                             : QStringLiteral("datetime");
+    if (column.useCurrent)
+        column.defaultValue = Expression(QStringLiteral("CURRENT_TIMESTAMP"));
+
+    return QStringLiteral("datetime");
 }
 
-QString SQLiteSchemaGrammar::typeTimestampTz(const ColumnDefinition &column) const
+QString SQLiteSchemaGrammar::typeTimestampTz(ColumnDefinition &column) const
 {
     return typeTimestamp(column);
 }

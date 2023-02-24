@@ -418,7 +418,7 @@ QString PostgresSchemaGrammar::escapeString(QString value) const
     return value.replace(SQUOTE, QStringLiteral("''"));
 }
 
-QString PostgresSchemaGrammar::getType(const ColumnDefinition &column) const
+QString PostgresSchemaGrammar::getType(ColumnDefinition &column) const
 {
     switch (column.type) {
     case ColumnType::Char:
@@ -702,12 +702,12 @@ QString PostgresSchemaGrammar::typeDate(const ColumnDefinition &/*unused*/) cons
     return QStringLiteral("date");
 }
 
-QString PostgresSchemaGrammar::typeDateTime(const ColumnDefinition &column) const
+QString PostgresSchemaGrammar::typeDateTime(ColumnDefinition &column) const
 {
     return typeTimestamp(column);
 }
 
-QString PostgresSchemaGrammar::typeDateTimeTz(const ColumnDefinition &column) const
+QString PostgresSchemaGrammar::typeDateTimeTz(ColumnDefinition &column) const
 {
     return typeTimestampTz(column);
 }
@@ -726,31 +726,28 @@ QString PostgresSchemaGrammar::typeTimeTz(const ColumnDefinition &column) const 
                                       : EMPTY);
 }
 
-QString PostgresSchemaGrammar::typeTimestamp(const ColumnDefinition &column) const // NOLINT(readability-convert-member-functions-to-static)
+QString PostgresSchemaGrammar::typeTimestamp(ColumnDefinition &column) const // NOLINT(readability-convert-member-functions-to-static)
 {
-    auto columnType =
-            QStringLiteral("timestamp%1 without time zone")
+    if (column.useCurrent)
+        column.defaultValue = Expression(QStringLiteral("CURRENT_TIMESTAMP"));
+
+    return QStringLiteral("timestamp%1 without time zone")
             /* The behavior if the precision is omitted:
                >-1 is ok so the default will be timestamp(0), the same as
-               in the MySQL grammar. */
+               for the MySQL grammar. */
             .arg(column.precision > -1 ? QStringLiteral("(%1)").arg(column.precision)
                                        : EMPTY);
-
-    return column.useCurrent
-            ? QStringLiteral("%1 default CURRENT_TIMESTAMP").arg(columnType)
-            : std::move(columnType);
 }
 
-QString PostgresSchemaGrammar::typeTimestampTz(const ColumnDefinition &column) const // NOLINT(readability-convert-member-functions-to-static)
+QString PostgresSchemaGrammar::typeTimestampTz(ColumnDefinition &column) const // NOLINT(readability-convert-member-functions-to-static)
 {
-    auto columnType =
-            QStringLiteral("timestamp%1 with time zone")
+    if (column.useCurrent)
+        column.defaultValue = Expression(QStringLiteral("CURRENT_TIMESTAMP"));
+
+    // CUR schema, -1 vs 0, also tests silverqx
+    return QStringLiteral("timestamp%1 with time zone")
             .arg(column.precision > 0 ? QStringLiteral("(%1)").arg(column.precision)
                                       : EMPTY);
-
-    return column.useCurrent
-            ? QStringLiteral("%1 default CURRENT_TIMESTAMP").arg(columnType)
-            : std::move(columnType);
 }
 
 QString PostgresSchemaGrammar::typeYear(const ColumnDefinition &column) const
