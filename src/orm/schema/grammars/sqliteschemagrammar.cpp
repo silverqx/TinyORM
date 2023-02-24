@@ -798,7 +798,7 @@ QString SQLiteSchemaGrammar::modifyDefault(const ColumnDefinition &column) const
     )
         return {};
 
-    // Default value is already quoted and escaped
+    // Default value is already quoted and escaped inside the getDefaultValue()
     return QStringLiteral(" default %1").arg(getDefaultValue(defaultValue));
 }
 

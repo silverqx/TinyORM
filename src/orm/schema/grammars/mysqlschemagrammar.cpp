@@ -884,7 +884,7 @@ QString MySqlSchemaGrammar::modifyDefault(const ColumnDefinition &column) const
     if (!defaultValue.isValid() || defaultValue.isNull())
         return {};
 
-    // Default value is already quoted and escaped
+    // Default value is already quoted and escaped inside the getDefaultValue()
     return QStringLiteral(" default %1").arg(getDefaultValue(defaultValue));
 }
 
