@@ -406,10 +406,6 @@ namespace Grammars
         /*! Get the columns on the blueprint that should be changed. */
         QVector<ColumnDefinition> getChangedColumns() const;
 
-        /*! Determine if the blueprint has auto-increment columns. */
-        bool hasAutoIncrementColumn() const;
-        /*! Get the auto-increment column starting values. */
-        QVector<AutoIncrementColumnValue> autoIncrementStartingValues() const;
         /*! Determine if the blueprint has a create command. */
         bool creating() const;
 

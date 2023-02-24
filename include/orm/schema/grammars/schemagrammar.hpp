@@ -109,9 +109,25 @@ namespace Grammars
                             const DatabaseConnection &connection,
                             const Blueprint &blueprint) const = 0;
 
+        /*! Fluent command item. */
+        struct FluentCommandItem
+        {
+            /*! Fluent command name. */
+            QString commandName;
+            /*! Determine whether the fluent command values are set and are not empty. */
+            std::function<bool(const ColumnDefinition &column)> shouldAdd;
+        };
+
+        /*! Get the fluent commands for the grammar. */
+        virtual std::vector<FluentCommandItem> getFluentCommands() const = 0; // Can't be noexcept because of std::function<>
+
     protected:
         /*! Escape special characters (used by the defaultValue and comment). */
         virtual QString escapeString(QString value) const = 0;
+
+        /*! Determine whether should add an auto-incrementing fluent command. */
+        static bool
+        shouldAddAutoIncrementStartingValue(const ColumnDefinition &column) noexcept;
 
         /*! Get the SQL for the column data type. */
         virtual QString getType(const ColumnDefinition &column) const = 0;

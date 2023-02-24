@@ -173,7 +173,7 @@ namespace Seeders
 
         for (const auto &[sequence, id] : sequences)
             DB::connection().unprepared(
-                    QStringLiteral("ALTER SEQUENCE %1 RESTART WITH %2")
+                    QStringLiteral(R"(alter sequence "%1" restart with %2)")
                     .arg(sequence).arg(id));
     }
 

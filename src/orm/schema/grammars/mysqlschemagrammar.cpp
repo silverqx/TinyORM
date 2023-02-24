@@ -91,20 +91,7 @@ MySqlSchemaGrammar::compileCreate(const Blueprint &blueprint,
     // Add storage engine declaration to the SQL query if has been supplied
     compileCreateEngine(sqlCreateTable, connection, blueprint);
 
-    // Add autoIncrement starting values to the SQL query if have been supplied
-    auto autoIncrementStartingValues = compileAutoIncrementStartingValues(blueprint);
-
-    /* Prepare container with all sql queries, autoIncrement for every column uses
-       alter table, so separate SQL queries are provided for every column. */
-    QVector<QString> sql;
-    sql.reserve(2);
-
-    sql << std::move(sqlCreateTable);
-
-    if (!autoIncrementStartingValues.isEmpty())
-        sql << std::move(autoIncrementStartingValues);
-
-    return sql;
+    return {std::move(sqlCreateTable)};
 }
 
 QVector<QString> MySqlSchemaGrammar::compileRename(const Blueprint &blueprint,
@@ -117,25 +104,10 @@ QVector<QString> MySqlSchemaGrammar::compileRename(const Blueprint &blueprint,
 QVector<QString> MySqlSchemaGrammar::compileAdd(const Blueprint &blueprint,
                                                 const BasicCommand &/*unused*/) const
 {
-    auto columns = prefixArray(Add, getColumns(blueprint));
-
-    // Add autoIncrement starting values to the SQL query if have been supplied
-    auto autoIncrementStartingValues = compileAutoIncrementStartingValues(blueprint);
-
-    auto sqlAlterTable = QStringLiteral("alter table %1 %2")
-                         .arg(wrapTable(blueprint), columnizeWithoutWrap(columns));
-
-    /* Prepare container with all sql queries, autoIncrement for every column uses
-       alter table, so separate SQL queries are provided for every column. */
-    QVector<QString> sql;
-    sql.reserve(2);
-
-    sql << std::move(sqlAlterTable);
-
-    if (!autoIncrementStartingValues.isEmpty())
-        sql << std::move(autoIncrementStartingValues);
-
-    return sql;
+    return {QStringLiteral("alter table %1 %2")
+                .arg(wrapTable(blueprint),
+                     columnizeWithoutWrap(
+                         prefixArray(Add, getColumns(blueprint))))};
 }
 
 QVector<QString>
@@ -305,12 +277,15 @@ MySqlSchemaGrammar::invokeCompileMethod(const CommandDefinition &command,
 
         {RenameIndex,      bind(&MySqlSchemaGrammar::compileRenameIndex)},
 
+        // MySQL and PostgreSQL specific
+        {AutoIncrementStartingValue,
+                           bind(&MySqlSchemaGrammar::compileAutoIncrementStartingValue)},
+        {TableComment,     bind(&MySqlSchemaGrammar::compileTableComment)},
+
         /* PostgreSQL specific, this is not needed for MySQL, it uses modifier for column
            comments, the Comment command will never by invoked, but I'm adding
            for reference so it's clearly visible what's up. */
 //        {Comment,          nullptr},
-        // MySQL and PostgreSQL specific
-        {TableComment,     bind(&MySqlSchemaGrammar::compileTableComment)},
     };
 
     Q_ASSERT_X(cached.contains(name),
@@ -321,6 +296,14 @@ MySqlSchemaGrammar::invokeCompileMethod(const CommandDefinition &command,
                .toUtf8().constData());
 
     return std::invoke(cached.at(name), *this, blueprint, command);
+}
+
+std::vector<SchemaGrammar::FluentCommandItem>
+MySqlSchemaGrammar::getFluentCommands() const
+{
+    return {
+        {AutoIncrementStartingValue, shouldAddAutoIncrementStartingValue},
+    };
 }
 
 /* protected */
@@ -396,25 +379,13 @@ void MySqlSchemaGrammar::compileCreateEngine(
 }
 
 QVector<QString>
-MySqlSchemaGrammar::compileAutoIncrementStartingValues(const Blueprint &blueprint) const
+MySqlSchemaGrammar::compileAutoIncrementStartingValue(
+        const Blueprint &blueprint,
+        const AutoIncrementStartingValueCommand &command) const
 {
-    const auto autoIncrementStartingValues = blueprint.autoIncrementStartingValues();
-
-    // Nothing to compile
-    if (autoIncrementStartingValues.isEmpty())
-        return {};
-
-    return autoIncrementStartingValues
-            | ranges::views::transform([this, &blueprint](const auto &startingValue)
-                                       -> QString
-    {
-        Q_ASSERT(startingValue.value);
-
-        return QStringLiteral("alter table %1 auto_increment = %2")
+    return {QStringLiteral("alter table %1 auto_increment = %2")
                 .arg(wrapTable(blueprint))
-                .arg(*startingValue.value);
-    })
-            | ranges::to<QVector<QString>>();
+                .arg(command.startingValue)};
 }
 
 QString

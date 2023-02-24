@@ -37,7 +37,9 @@ namespace Constants
     // PostgreSQL specific command
     inline const QString Comment          = QStringLiteral("comment");
 
-    // MySQL and PostgreSQL specific command
+    // MySQL and PostgreSQL specific commands
+    inline const QString
+    AutoIncrementStartingValue            = QStringLiteral("autoIncrementStartingValue");
     inline const QString TableComment     = QStringLiteral("tableComment");
 
     // Indexes

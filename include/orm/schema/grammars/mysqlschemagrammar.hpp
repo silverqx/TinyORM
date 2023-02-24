@@ -11,6 +11,7 @@ TINYORM_BEGIN_COMMON_NAMESPACE
 
 namespace Orm::SchemaNs
 {
+    class AutoIncrementStartingValueCommand;
     class DropColumnsCommand;
     class RenameCommand;
 
@@ -131,6 +132,9 @@ namespace Grammars
                                              const DatabaseConnection &connection,
                                              const Blueprint &blueprint) const override;
 
+        /*! Get the fluent commands for the grammar. */
+        std::vector<FluentCommandItem> getFluentCommands() const override;
+
     protected:
         // BUG schema, change after upgrade to QtCreator with clang 13 silverqx
         /*! Expose column types. */
@@ -150,9 +154,11 @@ namespace Grammars
         static void
         compileCreateEngine(QString &sql, const DatabaseConnection &connection,
                             const Blueprint &blueprint);
-        /*! Compile the auto-incrementing column starting values. */
+        /*! Compile the auto-incrementing column starting value. */
         QVector<QString>
-        compileAutoIncrementStartingValues(const Blueprint &blueprint) const;
+        compileAutoIncrementStartingValue(
+                const Blueprint &blueprint,
+                const AutoIncrementStartingValueCommand &command) const;
 
         /*! Compile an index creation command. */
         QString compileKey(const Blueprint &blueprint, const IndexCommand &command,

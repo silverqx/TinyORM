@@ -5,7 +5,7 @@
 #include <range/v3/view/filter.hpp>
 
 #include "orm/databaseconnection.hpp"
-#include "orm/schema/grammars/postgresschemagrammar.hpp"
+#include "orm/macros/likely.hpp"
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
@@ -537,44 +537,6 @@ QVector<ColumnDefinition> Blueprint::getChangedColumns() const
     return added;
 }
 
-bool Blueprint::hasAutoIncrementColumn() const
-{
-    return ranges::contains(getAddedColumns(), true,
-                            [](const ColumnDefinition &column)
-    {
-        return column.autoIncrement;
-    });
-}
-
-QVector<AutoIncrementColumnValue> Blueprint::autoIncrementStartingValues() const
-{
-    if (!hasAutoIncrementColumn())
-        return {};
-
-    auto addedColumns = getAddedColumns();
-
-    // CUR1 ranges, check all pred and proj, now I understand where I have to use auto & or auto &&, note in bash_or_cmd c++ sheet silverqx
-    return addedColumns
-            | ranges::views::filter([](const auto &addedColumn)
-    {
-        return addedColumn.autoIncrement &&
-                (addedColumn.startingValue || addedColumn.from);
-    })
-            | ranges::views::transform([](auto &addedColumn)
-                                       -> AutoIncrementColumnValue
-    {
-        /* When value was not defined then init. it to std::nullopt and filter out
-           in the next operator| chain. */
-        return {std::move(addedColumn.name),
-                addedColumn.startingValue
-                    ? std::move(addedColumn.startingValue)
-                      /* Default value if a 'startingValue' was not defined, then use
-                         a 'from' value, can also be the std::nullopt. */
-                    : std::move(addedColumn.from)};
-    })
-        | ranges::to<QVector<AutoIncrementColumnValue>>();
-}
-
 bool Blueprint::creating() const
 {
     return ranges::contains(m_commands, Create, [](const auto &command)
@@ -692,14 +654,27 @@ void Blueprint::addFluentIndexes()
 
 void Blueprint::addFluentCommands(const SchemaGrammar &grammar)
 {
-    /* The PostgreSQL grammar is only one that has a fluent command, it is
-       the Comment command. */
-    if (dynamic_cast<const Grammars::PostgresSchemaGrammar *>(&grammar) == nullptr)
-        return;
+    /* Column auto-increment starting value (MySQL/PostgreSQL) and
+       a column comment (PostgreSQL) are all fluent commands. */
 
-    for (const auto &column : std::as_const(m_columns))
-        if (!column.comment.isEmpty())
-            addCommand<CommentCommand>({{}, Comment, column.name, column.comment});
+    // Get the fluent commands for the grammar
+    for (auto &&[commandName, shouldAdd] : grammar.getFluentCommands())
+        /* Loop over all columns and check if a new fluent command should be added
+           (check if command values are set and are not empty). */
+        for (const auto &column : std::as_const(m_columns))
+
+            // AutoIncrementStartingValue command (MySQL/PostgreSQL)
+            if (commandName == AutoIncrementStartingValue && shouldAdd(column)) T_LIKELY // NOLINT(bugprone-use-after-move)
+                addCommand<AutoIncrementStartingValueCommand>(
+                        {{}, std::move(commandName), column.name,
+                         column.startingValue ? *column.startingValue
+                                              // Alias for the 'startingValue'
+                                              : *column.from});
+
+            // Comment command (PostgreSQL)
+            else if (commandName == Comment && shouldAdd(column)) T_UNLIKELY
+                addCommand<CommentCommand>(
+                        {{}, std::move(commandName), column.name, column.comment});
 }
 
 IndexDefinitionReference

@@ -118,6 +118,9 @@ namespace Grammars
                             const DatabaseConnection &connection,
                             const Blueprint &blueprint) const override;
 
+        /*! Get the fluent commands for the grammar. */
+        inline std::vector<FluentCommandItem> getFluentCommands() const override;
+
     protected:
         /* Compile methods for commands */
         /*! Get the foreign key syntax for a table creation statement. */
@@ -245,6 +248,12 @@ namespace Grammars
     bool SQLiteSchemaGrammar::supportsSchemaTransactions() const noexcept
     {
         return false;
+    }
+
+    std::vector<SchemaGrammar::FluentCommandItem>
+    SQLiteSchemaGrammar::getFluentCommands() const
+    {
+        return {};
     }
 
     /* Compile methods for commands */

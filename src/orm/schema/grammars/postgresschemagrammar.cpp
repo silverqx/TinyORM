@@ -92,23 +92,11 @@ QString PostgresSchemaGrammar::compileColumnListing(const QString &/*unused*/) c
 QVector<QString>
 PostgresSchemaGrammar::compileCreate(const Blueprint &blueprint) const
 {
-    // Primary SQL query for create table
-    auto sqlCreateTable = compileCreateTable(blueprint);
-
-    // Add autoIncrement starting values to the SQL query if have been supplied
-    auto autoIncrementStartingValues = compileAutoIncrementStartingValues(blueprint);
-
-    /* Prepare container with all sql queries, autoIncrement for every column uses
-       alter table, so separate SQL queries are provided for every column. */
-    QVector<QString> sql;
-    sql.reserve(2);
-
-    sql << std::move(sqlCreateTable);
-
-    if (!autoIncrementStartingValues.isEmpty())
-        sql << std::move(autoIncrementStartingValues);
-
-    return sql;
+    return {QStringLiteral("%1 table %2 (%3)")
+                .arg(blueprint.isTemporary() ? QStringLiteral("create temporary")
+                                             : Create,
+                     wrapTable(blueprint),
+                     columnizeWithoutWrap(getColumns(blueprint)))};
 }
 
 QVector<QString>
@@ -123,25 +111,11 @@ QVector<QString>
 PostgresSchemaGrammar::compileAdd(const Blueprint &blueprint,
                                   const BasicCommand &/*unused*/) const
 {
-    auto columns = prefixArray("add column", getColumns(blueprint));
-
-    // Add autoIncrement starting values to the SQL query if have been supplied
-    auto autoIncrementStartingValues = compileAutoIncrementStartingValues(blueprint);
-
-    auto sqlAlterTable = QStringLiteral("alter table %1 %2")
-                         .arg(wrapTable(blueprint), columnizeWithoutWrap(columns));
-
-    /* Prepare container with all sql queries, autoIncrement for every column uses
-       alter table, so separate SQL queries are provided for every column. */
-    QVector<QString> sql;
-    sql.reserve(2);
-
-    sql << std::move(sqlAlterTable);
-
-    if (!autoIncrementStartingValues.isEmpty())
-        sql << std::move(autoIncrementStartingValues);
-
-    return sql;
+    return {QStringLiteral("alter table %1 %2")
+                .arg(wrapTable(blueprint),
+                     columnizeWithoutWrap(
+                         prefixArray(QStringLiteral("add column"),
+                                     getColumns(blueprint))))};
 }
 
 QVector<QString>
@@ -367,7 +341,10 @@ PostgresSchemaGrammar::invokeCompileMethod(const CommandDefinition &command,
 
         // PostgreSQL specific
         {Comment,          bind(&PostgresSchemaGrammar::compileComment)},
+
         // PostgreSQL and MySQL specific
+        {AutoIncrementStartingValue,
+                           bind(&PostgresSchemaGrammar::compileAutoIncrementStartingValue)},
         {TableComment,     bind(&PostgresSchemaGrammar::compileTableComment)},
     };
 
@@ -381,16 +358,17 @@ PostgresSchemaGrammar::invokeCompileMethod(const CommandDefinition &command,
     return std::invoke(cached.at(name), *this, blueprint, command);
 }
 
-/* protected */
-
-QString PostgresSchemaGrammar::compileCreateTable(const Blueprint &blueprint) const
+std::vector<SchemaGrammar::FluentCommandItem>
+PostgresSchemaGrammar::getFluentCommands() const
 {
-    return QStringLiteral("%1 table %2 (%3)")
-            .arg(blueprint.isTemporary() ? QStringLiteral("create temporary")
-                                         : Create,
-                 wrapTable(blueprint),
-                 columnizeWithoutWrap(getColumns(blueprint)));
+    return {
+        {AutoIncrementStartingValue, shouldAddAutoIncrementStartingValue},
+        {Comment, [](const ColumnDefinition &column)
+                  { return !column.comment.isEmpty() || column.change; }},
+    };
 }
+
+/* protected */
 
 QString PostgresSchemaGrammar::addModifiers(QString &&sql,
                                             const ColumnDefinition &column) const
@@ -408,26 +386,13 @@ QString PostgresSchemaGrammar::addModifiers(QString &&sql,
 }
 
 QVector<QString>
-PostgresSchemaGrammar::compileAutoIncrementStartingValues(const Blueprint &blueprint)
+PostgresSchemaGrammar::compileAutoIncrementStartingValue( // NOLINT(readability-convert-member-functions-to-static)
+        const Blueprint &blueprint,
+        const AutoIncrementStartingValueCommand &command) const
 {
-    const auto autoIncrementStartingValues = blueprint.autoIncrementStartingValues();
-
-    // Nothing to compile
-    if (autoIncrementStartingValues.isEmpty())
-        return {};
-
-    return autoIncrementStartingValues
-            | ranges::views::transform([&blueprint](const auto &startingValue)
-                                       -> QString
-    {
-        Q_ASSERT(startingValue.value);
-
-        return QStringLiteral(R"(alter sequence "%1_%2_seq" restart with %3)")
-                .arg(blueprint.getTable())
-                .arg(startingValue.columnName)
-                .arg(*startingValue.value);
-    })
-            | ranges::to<QVector<QString>>();
+    return {QStringLiteral(R"(alter sequence "%1_%2_seq" restart with %3)")
+                .arg(blueprint.getTable(), command.column)
+                .arg(command.startingValue)};
 }
 
 QVector<QString>

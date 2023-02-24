@@ -12,6 +12,7 @@ TINYORM_BEGIN_COMMON_NAMESPACE
 
 namespace Orm::SchemaNs
 {
+    class AutoIncrementStartingValueCommand;
     class CommentCommand;
     class DropColumnsCommand;
     class RenameCommand;
@@ -149,16 +150,21 @@ namespace Grammars
                             const DatabaseConnection &connection,
                             const Blueprint &blueprint) const override;
 
+        /*! Get the fluent commands for the grammar. */
+        std::vector<FluentCommandItem> getFluentCommands() const override;
+
     protected:
         /*! Create the main create table clause. */
-        QString compileCreateTable(const Blueprint &blueprint) const;
+//        QString compileCreateTable(const Blueprint &blueprint) const;
         /*! Add the column modifiers to the definition. */
         QString addModifiers(QString &&sql,
                              const ColumnDefinition &column) const override;
 
-        /*! Compile the auto-incrementing column starting values. */
-        static QVector<QString>
-        compileAutoIncrementStartingValues(const Blueprint &blueprint);
+        /*! Compile the auto-incrementing column starting value. */
+        QVector<QString>
+        compileAutoIncrementStartingValue(
+                const Blueprint &blueprint,
+                const AutoIncrementStartingValueCommand &command) const;
 
         /*! Compile a drop unique key command. */
         QVector<QString> compileDropConstraint(const Blueprint &blueprint,

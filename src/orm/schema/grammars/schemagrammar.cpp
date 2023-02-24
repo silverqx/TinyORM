@@ -139,6 +139,13 @@ QString SchemaGrammar::wrapTable(const Blueprint &blueprint) const
 
 /* protected */
 
+
+bool SchemaGrammar::shouldAddAutoIncrementStartingValue(
+        const ColumnDefinition &column) noexcept
+{
+    return column.autoIncrement && (column.startingValue || column.from);
+}
+
 QStringList SchemaGrammar::getColumns(const Blueprint &blueprint) const
 {
     auto addedColumns = blueprint.getAddedColumns();

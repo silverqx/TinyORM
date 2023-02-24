@@ -119,6 +119,18 @@ namespace Orm::SchemaNs
         QString comment;
     };
 
+    /*! Table auto-incrementing column starting value command (MySQL/PostgreSQL). */
+    class AutoIncrementStartingValueCommand : public CommandDefinition
+    {
+    public:
+        /*! Command name. */
+        QString name {};
+        /*! Column name. */
+        QString column;
+        /*! Starting value of an auto-incrementing field (MySQL/PostgreSQL). */
+        quint64 startingValue;
+    };
+
     /*! Table comment command for the MySQL and PostgreSQL. */
     class TableCommentCommand : public CommandDefinition
     {
