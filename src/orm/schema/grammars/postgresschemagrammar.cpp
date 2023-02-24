@@ -196,6 +196,7 @@ QVector<QString>
 PostgresSchemaGrammar::compileSpatialIndex(const Blueprint &blueprint,
                                            const IndexCommand &command) const
 {
+    // CUR schema, get rid of all const_cast<> in schema grammars silverqx
     const_cast<IndexCommand &>(command).algorithm = QStringLiteral("gist");
 
     return compileIndex(blueprint, command);
