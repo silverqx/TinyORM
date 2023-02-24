@@ -285,7 +285,10 @@ PostgresSchemaGrammar::compileComment(const Blueprint &blueprint,
 {
     return {QStringLiteral("comment on column %1.%2 is %3")
                 .arg(wrapTable(blueprint), BaseGrammar::wrap(command.column),
-                     quoteString(escapeString(command.comment)))};
+                     command.column.isEmpty()
+                     // Remove a column comment
+                     ? null_
+                     : quoteString(escapeString(command.comment)))};
 }
 
 QVector<QString>
