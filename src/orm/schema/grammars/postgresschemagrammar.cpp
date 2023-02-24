@@ -821,28 +821,27 @@ QString PostgresSchemaGrammar::typeMultiPolygonZ(const ColumnDefinition &column)
     return formatPostGisType(QStringLiteral("multipolygonz"), column);
 }
 
-QString PostgresSchemaGrammar::modifyVirtualAs(const ColumnDefinition &column) const // NOLINT(readability-convert-member-functions-to-static)
-{
-    if (column.virtualAs.isEmpty())
-        return {};
-
-    return QStringLiteral(" generated always as (%1)").arg(column.virtualAs);
-}
-
-QString PostgresSchemaGrammar::modifyStoredAs(const ColumnDefinition &column) const // NOLINT(readability-convert-member-functions-to-static)
-{
-    if (column.storedAs.isEmpty())
-        return {};
-
-    return QStringLiteral(" generated always as (%1) stored").arg(column.storedAs);
-}
-
 QString PostgresSchemaGrammar::modifyCollate(const ColumnDefinition &column) const
 {
     if (column.collation.isEmpty())
         return {};
 
     return QStringLiteral(" collate %1").arg(wrapValue(column.collation));
+}
+
+QString PostgresSchemaGrammar::modifyIncrement(const ColumnDefinition &column) const // NOLINT(readability-convert-member-functions-to-static)
+{
+    static const std::unordered_set serials {
+        ColumnType::BigInteger,   ColumnType::Integer,     ColumnType::MediumInteger,
+        ColumnType::SmallInteger, ColumnType::TinyInteger,
+    };
+
+    if ((serials.contains(column.type) || !column.generatedAs.isEmpty()) &&
+        column.autoIncrement
+    )
+        return QStringLiteral(" primary key");
+
+    return {};
 }
 
 QString PostgresSchemaGrammar::modifyNullable(const ColumnDefinition &column) const // NOLINT(readability-convert-member-functions-to-static)
@@ -861,19 +860,20 @@ QString PostgresSchemaGrammar::modifyDefault(const ColumnDefinition &column) con
     return QStringLiteral(" default %1").arg(getDefaultValue(defaultValue));
 }
 
-QString PostgresSchemaGrammar::modifyIncrement(const ColumnDefinition &column) const // NOLINT(readability-convert-member-functions-to-static)
+QString PostgresSchemaGrammar::modifyVirtualAs(const ColumnDefinition &column) const // NOLINT(readability-convert-member-functions-to-static)
 {
-    static const std::unordered_set serials {
-        ColumnType::BigInteger,   ColumnType::Integer,     ColumnType::MediumInteger,
-        ColumnType::SmallInteger, ColumnType::TinyInteger,
-    };
+    if (column.virtualAs.isEmpty())
+        return {};
 
-    if ((serials.contains(column.type) || !column.generatedAs.isEmpty()) &&
-        column.autoIncrement
-    )
-        return QStringLiteral(" primary key");
+    return QStringLiteral(" generated always as (%1)").arg(column.virtualAs);
+}
 
-    return {};
+QString PostgresSchemaGrammar::modifyStoredAs(const ColumnDefinition &column) const // NOLINT(readability-convert-member-functions-to-static)
+{
+    if (column.storedAs.isEmpty())
+        return {};
+
+    return QStringLiteral(" generated always as (%1) stored").arg(column.storedAs);
 }
 
 } // namespace Orm::SchemaNs::Grammars

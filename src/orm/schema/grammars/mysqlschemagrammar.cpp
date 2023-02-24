@@ -810,22 +810,6 @@ QString MySqlSchemaGrammar::typeComputed(const ColumnDefinition &/*unused*/) con
                 "modifiers.");
 }
 
-QString MySqlSchemaGrammar::modifyVirtualAs(const ColumnDefinition &column) const // NOLINT(readability-convert-member-functions-to-static)
-{
-    if (column.virtualAs.isEmpty())
-        return {};
-
-    return QStringLiteral(" as (%1)").arg(column.virtualAs);
-}
-
-QString MySqlSchemaGrammar::modifyStoredAs(const ColumnDefinition &column) const // NOLINT(readability-convert-member-functions-to-static)
-{
-    if (column.storedAs.isEmpty())
-        return {};
-
-    return QStringLiteral(" as (%1) stored").arg(column.storedAs);
-}
-
 QString MySqlSchemaGrammar::modifyUnsigned(const ColumnDefinition &column) const // NOLINT(readability-convert-member-functions-to-static)
 {
     if (!column.isUnsigned)
@@ -851,6 +835,22 @@ QString MySqlSchemaGrammar::modifyCollate(const ColumnDefinition &column) const 
     return QStringLiteral(" collate %1").arg(quoteString(column.collation));
 }
 
+QString MySqlSchemaGrammar::modifyVirtualAs(const ColumnDefinition &column) const // NOLINT(readability-convert-member-functions-to-static)
+{
+    if (column.virtualAs.isEmpty())
+        return {};
+
+    return QStringLiteral(" as (%1)").arg(column.virtualAs);
+}
+
+QString MySqlSchemaGrammar::modifyStoredAs(const ColumnDefinition &column) const // NOLINT(readability-convert-member-functions-to-static)
+{
+    if (column.storedAs.isEmpty())
+        return {};
+
+    return QStringLiteral(" as (%1) stored").arg(column.storedAs);
+}
+
 QString MySqlSchemaGrammar::modifyNullable(const ColumnDefinition &column) const // NOLINT(readability-convert-member-functions-to-static)
 {
     static const auto notNull = QStringLiteral(" not null");
@@ -871,6 +871,16 @@ QString MySqlSchemaGrammar::modifyInvisible(const ColumnDefinition &column) cons
         return {};
 
     return QStringLiteral(" invisible");
+}
+
+QString MySqlSchemaGrammar::modifySrid(const ColumnDefinition &column) const // NOLINT(readability-convert-member-functions-to-static)
+{
+    if (const auto &srid = column.srid;
+        srid && *srid > 0
+    )
+        return QStringLiteral(" srid %1").arg(*srid);
+
+    return {};
 }
 
 QString MySqlSchemaGrammar::modifyDefault(const ColumnDefinition &column) const
@@ -909,12 +919,13 @@ QString MySqlSchemaGrammar::modifyIncrement(const ColumnDefinition &column) cons
     return QStringLiteral(" auto_increment primary key");
 }
 
-QString MySqlSchemaGrammar::modifyFirst(const ColumnDefinition &column) const // NOLINT(readability-convert-member-functions-to-static)
+QString MySqlSchemaGrammar::modifyComment(const ColumnDefinition &column) const
 {
-    if (!column.first)
+    if (column.comment.isEmpty())
         return {};
 
-    return QStringLiteral(" first");
+    // All escaped special characters will be correctly saved in the comment
+    return QStringLiteral(" comment %1").arg(quoteString(escapeString(column.comment)));
 }
 
 QString MySqlSchemaGrammar::modifyAfter(const ColumnDefinition &column) const
@@ -925,23 +936,12 @@ QString MySqlSchemaGrammar::modifyAfter(const ColumnDefinition &column) const
     return QStringLiteral(" after %1").arg(BaseGrammar::wrap(column.after));
 }
 
-QString MySqlSchemaGrammar::modifyComment(const ColumnDefinition &column) const
+QString MySqlSchemaGrammar::modifyFirst(const ColumnDefinition &column) const // NOLINT(readability-convert-member-functions-to-static)
 {
-    if (column.comment.isEmpty())
+    if (!column.first)
         return {};
 
-    // All escaped special characters will be correctly saved in the comment
-    return QStringLiteral(" comment %1").arg(quoteString(escapeString(column.comment)));
-}
-
-QString MySqlSchemaGrammar::modifySrid(const ColumnDefinition &column) const // NOLINT(readability-convert-member-functions-to-static)
-{
-    if (const auto &srid = column.srid;
-        srid && *srid > 0
-    )
-        return QStringLiteral(" srid %1").arg(*srid);
-
-    return {};
+    return QStringLiteral(" first");
 }
 
 } // namespace Orm::SchemaNs::Grammars

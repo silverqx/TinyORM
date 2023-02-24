@@ -254,20 +254,22 @@ namespace Grammars
         /*! Create the column definition for a generated, computed column type. */
         QString typeComputed(const ColumnDefinition &column) const override;
 
-        /*! Get the SQL for a generated virtual column modifier. */
-        QString modifyVirtualAs(const ColumnDefinition &column) const;
-        /*! Get the SQL for a generated stored column modifier. */
-        QString modifyStoredAs(const ColumnDefinition &column) const;
         /*! Get the SQL for an unsigned column modifier. */
         QString modifyUnsigned(const ColumnDefinition &column) const;
         /*! Get the SQL for a character set column modifier. */
         QString modifyCharset(const ColumnDefinition &column) const;
         /*! Get the SQL for a collation column modifier. */
         QString modifyCollate(const ColumnDefinition &column) const;
+        /*! Get the SQL for a generated virtual column modifier. */
+        QString modifyVirtualAs(const ColumnDefinition &column) const;
+        /*! Get the SQL for a generated stored column modifier. */
+        QString modifyStoredAs(const ColumnDefinition &column) const;
         /*! Get the SQL for a nullable column modifier. */
         QString modifyNullable(const ColumnDefinition &column) const;
         /*! Get the SQL for an invisible column modifier. */
         QString modifyInvisible(const ColumnDefinition &column) const;
+        /*! Get the SQL for a SRID column modifier. */
+        QString modifySrid(const ColumnDefinition &column) const;
         /*! Get the SQL for a default column modifier. */
         QString modifyDefault(const ColumnDefinition &column) const;
         /*! Get the SQL for an "on update" column modifier (MySQL only;
@@ -275,14 +277,12 @@ namespace Grammars
         QString modifyOnUpdate(const ColumnDefinition &column) const;
         /*! Get the SQL for an auto-increment column modifier. */
         QString modifyIncrement(const ColumnDefinition &column) const;
-        /*! Get the SQL for a "first" column modifier. */
-        QString modifyFirst(const ColumnDefinition &column) const;
-        /*! Get the SQL for an "after" column modifier. */
-        QString modifyAfter(const ColumnDefinition &column) const;
         /*! Get the SQL for a "comment" column modifier. */
         QString modifyComment(const ColumnDefinition &column) const;
-        /*! Get the SQL for a SRID column modifier. */
-        QString modifySrid(const ColumnDefinition &column) const;
+        /*! Get the SQL for an "after" column modifier. */
+        QString modifyAfter(const ColumnDefinition &column) const;
+        /*! Get the SQL for a "first" column modifier. */
+        QString modifyFirst(const ColumnDefinition &column) const;
     };
 
     /* public */

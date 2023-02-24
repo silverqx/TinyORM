@@ -262,18 +262,18 @@ namespace Grammars
         /*! Create the column definition for a spatial MultiPolygonZ type. */
         QString typeMultiPolygonZ(const ColumnDefinition &column) const;
 
-        /*! Get the SQL for a generated virtual column modifier. */
-        QString modifyVirtualAs(const ColumnDefinition &column) const;
-        /*! Get the SQL for a generated stored column modifier. */
-        QString modifyStoredAs(const ColumnDefinition &column) const;
         /*! Get the SQL for a collation column modifier. */
         QString modifyCollate(const ColumnDefinition &column) const;
+        /*! Get the SQL for an auto-increment column modifier. */
+        QString modifyIncrement(const ColumnDefinition &column) const;
         /*! Get the SQL for a nullable column modifier. */
         QString modifyNullable(const ColumnDefinition &column) const;
         /*! Get the SQL for a default column modifier. */
         QString modifyDefault(const ColumnDefinition &column) const;
-        /*! Get the SQL for an auto-increment column modifier. */
-        QString modifyIncrement(const ColumnDefinition &column) const;
+        /*! Get the SQL for a generated virtual column modifier. */
+        QString modifyVirtualAs(const ColumnDefinition &column) const;
+        /*! Get the SQL for a generated stored column modifier. */
+        QString modifyStoredAs(const ColumnDefinition &column) const;
     };
 
     /* public */
