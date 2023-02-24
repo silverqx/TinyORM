@@ -1855,7 +1855,6 @@ TINYORM_END_COMMON_NAMESPACE
 // CUR use using inside classes where appropriate silverqx
 // CUR using namespace Orm::Constants; in ormtypes.hpp silverqx
 // CUR make all * to *const silverqx
-// CUR merge changes from latest Eloquent silverqx
 // CUR cmake/qmake run tests in parallel for tests that allow it silverqx
 // CUR study how to use acquire/release memory order for m_queryLogId atomic silverqx
 // FUTURE divide Query Builder and TinyOrm to own packages (dlls)? think about it 🤔 silverqx
