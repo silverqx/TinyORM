@@ -671,7 +671,7 @@ QString SQLiteSchemaGrammar::typeTimeTz(const ColumnDefinition &column) const
 QString SQLiteSchemaGrammar::typeTimestamp(ColumnDefinition &column) const // NOLINT(readability-convert-member-functions-to-static)
 {
     if (column.useCurrent)
-        column.defaultValue = Expression(QStringLiteral("CURRENT_TIMESTAMP"));
+        column.defaultValue = Expression(QStringLiteral("current_timestamp"));
 
     return QStringLiteral("datetime");
 }

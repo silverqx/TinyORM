@@ -1024,9 +1024,9 @@ void tst_SQLite_SchemaBuilder::useCurrent() const
     QCOMPARE(firstLog.query,
              "create table \"firewalls\" ("
              "\"created\" datetime not null, "
-             "\"created_current\" datetime not null default CURRENT_TIMESTAMP, "
+             "\"created_current\" datetime not null default current_timestamp, "
              "\"created_t\" datetime not null, "
-             "\"created_t_current\" datetime not null default CURRENT_TIMESTAMP)");
+             "\"created_t_current\" datetime not null default current_timestamp)");
     QVERIFY(firstLog.boundValues.isEmpty());
 }
 

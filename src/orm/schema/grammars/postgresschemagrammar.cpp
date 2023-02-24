@@ -729,7 +729,7 @@ QString PostgresSchemaGrammar::typeTimeTz(const ColumnDefinition &column) const 
 QString PostgresSchemaGrammar::typeTimestamp(ColumnDefinition &column) const // NOLINT(readability-convert-member-functions-to-static)
 {
     if (column.useCurrent)
-        column.defaultValue = Expression(QStringLiteral("CURRENT_TIMESTAMP"));
+        column.defaultValue = Expression(QStringLiteral("current_timestamp"));
 
     return QStringLiteral("timestamp%1 without time zone")
             /* The behavior if the precision is omitted:
@@ -742,7 +742,7 @@ QString PostgresSchemaGrammar::typeTimestamp(ColumnDefinition &column) const // 
 QString PostgresSchemaGrammar::typeTimestampTz(ColumnDefinition &column) const // NOLINT(readability-convert-member-functions-to-static)
 {
     if (column.useCurrent)
-        column.defaultValue = Expression(QStringLiteral("CURRENT_TIMESTAMP"));
+        column.defaultValue = Expression(QStringLiteral("current_timestamp"));
 
     // CUR schema, -1 vs 0, also tests silverqx
     return QStringLiteral("timestamp%1 with time zone")

@@ -682,8 +682,8 @@ QString MySqlSchemaGrammar::typeDate(const ColumnDefinition &/*unused*/) const /
 QString MySqlSchemaGrammar::typeDateTime(ColumnDefinition &column) const // NOLINT(readability-convert-member-functions-to-static)
 {
     const auto current = column.precision > 0
-                         ? QStringLiteral("CURRENT_TIMESTAMP(%1)").arg(column.precision)
-                         : QStringLiteral("CURRENT_TIMESTAMP");
+                         ? QStringLiteral("current_timestamp(%1)").arg(column.precision)
+                         : QStringLiteral("current_timestamp");
 
     if (column.useCurrent)
         column.defaultValue = Expression(current);
@@ -715,8 +715,8 @@ QString MySqlSchemaGrammar::typeTimeTz(const ColumnDefinition &column) const
 QString MySqlSchemaGrammar::typeTimestamp(ColumnDefinition &column) const // NOLINT(readability-convert-member-functions-to-static)
 {
     const auto current = column.precision > 0
-                         ? QStringLiteral("CURRENT_TIMESTAMP(%1)").arg(column.precision)
-                         : QStringLiteral("CURRENT_TIMESTAMP");
+                         ? QStringLiteral("current_timestamp(%1)").arg(column.precision)
+                         : QStringLiteral("current_timestamp");
 
     if (column.useCurrent)
         column.defaultValue = Expression(current);
