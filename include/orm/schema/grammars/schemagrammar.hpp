@@ -119,7 +119,7 @@ namespace Grammars
         };
 
         /*! Get the fluent commands for the grammar. */
-        virtual std::vector<FluentCommandItem> getFluentCommands() const = 0; // Can't be noexcept because of std::function<>
+        virtual const std::vector<FluentCommandItem> &getFluentCommands() const = 0; // Can't be noexcept because of std::function<>
 
     protected:
         /*! Escape special characters (used by the defaultValue and comment). */

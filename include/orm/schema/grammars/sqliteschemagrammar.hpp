@@ -119,7 +119,7 @@ namespace Grammars
                             const Blueprint &blueprint) const override;
 
         /*! Get the fluent commands for the grammar. */
-        inline std::vector<FluentCommandItem> getFluentCommands() const override;
+        inline const std::vector<FluentCommandItem> &getFluentCommands() const override;
 
     protected:
         /* Compile methods for commands */
@@ -250,10 +250,12 @@ namespace Grammars
         return false;
     }
 
-    std::vector<SchemaGrammar::FluentCommandItem>
+    const std::vector<SchemaGrammar::FluentCommandItem> &
     SQLiteSchemaGrammar::getFluentCommands() const
     {
-        return {};
+        static const std::vector<SchemaGrammar::FluentCommandItem> cached;
+
+        return cached;
     }
 
     /* Compile methods for commands */

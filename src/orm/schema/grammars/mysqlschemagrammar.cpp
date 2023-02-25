@@ -298,12 +298,14 @@ MySqlSchemaGrammar::invokeCompileMethod(const CommandDefinition &command,
     return std::invoke(cached.at(name), *this, blueprint, command);
 }
 
-std::vector<SchemaGrammar::FluentCommandItem>
+const std::vector<SchemaGrammar::FluentCommandItem> &
 MySqlSchemaGrammar::getFluentCommands() const
 {
-    return {
+    static const std::vector<SchemaGrammar::FluentCommandItem> cached {
         {AutoIncrementStartingValue, shouldAddAutoIncrementStartingValue},
     };
+
+    return cached;
 }
 
 /* protected */

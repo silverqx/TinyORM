@@ -151,7 +151,7 @@ namespace Grammars
                             const Blueprint &blueprint) const override;
 
         /*! Get the fluent commands for the grammar. */
-        std::vector<FluentCommandItem> getFluentCommands() const override;
+        const std::vector<FluentCommandItem> &getFluentCommands() const override;
 
     protected:
         /*! Create the main create table clause. */

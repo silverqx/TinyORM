@@ -658,23 +658,25 @@ void Blueprint::addFluentCommands(const SchemaGrammar &grammar)
        a column comment (PostgreSQL) are all fluent commands. */
 
     // Get the fluent commands for the grammar
-    for (auto &&[commandName, shouldAdd] : grammar.getFluentCommands())
+    for (const auto &[commandName, shouldAdd] : grammar.getFluentCommands())
         /* Loop over all columns and check if a new fluent command should be added
            (check if command values are set and are not empty). */
         for (const auto &column : std::as_const(m_columns))
 
             // AutoIncrementStartingValue command (MySQL/PostgreSQL)
-            if (commandName == AutoIncrementStartingValue && shouldAdd(column)) T_LIKELY // NOLINT(bugprone-use-after-move)
+            if (commandName == AutoIncrementStartingValue &&
+                std::invoke(shouldAdd, column)
+            ) T_LIKELY
                 addCommand<AutoIncrementStartingValueCommand>(
-                        {{}, std::move(commandName), column.name,
+                        {{}, commandName, column.name,
                          column.startingValue ? *column.startingValue
                                               // Alias for the 'startingValue'
                                               : *column.from});
 
             // Comment command (PostgreSQL)
-            else if (commandName == Comment && shouldAdd(column)) T_UNLIKELY
+            else if (commandName == Comment && std::invoke(shouldAdd, column)) T_UNLIKELY
                 addCommand<CommentCommand>(
-                        {{}, std::move(commandName), column.name, column.comment});
+                        {{}, commandName, column.name, column.comment});
 }
 
 IndexDefinitionReference

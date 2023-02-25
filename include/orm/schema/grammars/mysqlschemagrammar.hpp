@@ -133,7 +133,7 @@ namespace Grammars
                                              const Blueprint &blueprint) const override;
 
         /*! Get the fluent commands for the grammar. */
-        std::vector<FluentCommandItem> getFluentCommands() const override;
+        const std::vector<FluentCommandItem> &getFluentCommands() const override;
 
     protected:
         // BUG schema, change after upgrade to QtCreator with clang 13 silverqx

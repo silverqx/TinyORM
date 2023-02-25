@@ -359,14 +359,16 @@ PostgresSchemaGrammar::invokeCompileMethod(const CommandDefinition &command,
     return std::invoke(cached.at(name), *this, blueprint, command);
 }
 
-std::vector<SchemaGrammar::FluentCommandItem>
+const std::vector<SchemaGrammar::FluentCommandItem> &
 PostgresSchemaGrammar::getFluentCommands() const
 {
-    return {
+    static const std::vector<SchemaGrammar::FluentCommandItem> cached {
         {AutoIncrementStartingValue, shouldAddAutoIncrementStartingValue},
         {Comment, [](const ColumnDefinition &column)
                   { return !column.comment.isEmpty() || column.change; }},
     };
+
+    return cached;
 }
 
 /* protected */
