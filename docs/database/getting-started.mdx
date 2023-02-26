@@ -32,10 +32,17 @@ import {
 
 Almost every modern application interacts with a database. TinyORM makes interacting with a database extremely simple using raw SQL, a [fluent query builder](database/query-builder.mdx), and the [TinyORM](tinyorm/getting-started.mdx). Currently, TinyORM provides first-party support for three databases:
 
-- MySQL 5.7+ ([Version Policy](https://en.wikipedia.org/wiki/MySQL#Release_history))
-- MariaDB 10.3+ ([Version Policy](https://mariadb.org/about/#maintenance-policy))
-- PostgreSQL 11+ ([Version Policy](https://www.postgresql.org/support/versioning/))
-- SQLite 3.8.8+
+<div id='databases-supported-versions'>
+
+- MySQL `>=5.7` ([Version Policy](https://en.wikipedia.org/wiki/MySQL#Release_history))
+- MariaDB `>=10.3` ([Version Policy](https://mariadb.org/about/#maintenance-policy))
+- PostgreSQL `>=11` ([Version Policy](https://www.postgresql.org/support/versioning/))
+- SQLite `>=3.8.8`
+  - native rename column `>=3.25.0` ([docs](https://www.sqlite.org/lang_altertable.html#alter_table_rename_column) , [release notes](https://www.sqlite.org/releaselog/3_25_0.html))
+  - native drop column `>=3.35.0` ([docs](https://www.sqlite.org/lang_altertable.html#alter_table_drop_column), [release notes](https://www.sqlite.org/releaselog/3_35_0.html))
+  - generated columns `>=3.31.0` ([docs](https://www.sqlite.org/gencol.html), [release notes](https://www.sqlite.org/releaselog/3_31_0.html))
+
+</div>
 
 TinyORM internally uses `QtSql` module, you can look for [supported databases](https://doc.qt.io/qt/sql-driver.html#supported-databases).
 
