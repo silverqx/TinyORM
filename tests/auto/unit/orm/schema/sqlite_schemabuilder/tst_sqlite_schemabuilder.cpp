@@ -94,6 +94,11 @@ private Q_SLOTS:
     void useCurrent() const;
     void useCurrentOnUpdate() const;
 
+    void virtualAs_StoredAs_CreateTable() const;
+    void virtualAs_StoredAs_Nullable_CreateTable() const;
+    void virtualAs_StoredAs_ModifyTable() const;
+    void virtualAs_StoredAs_Nullable_ModifyTable() const;
+
     void indexes_Fluent() const;
     void indexes_Blueprint() const;
 
@@ -1057,6 +1062,118 @@ void tst_SQLite_SchemaBuilder::useCurrentOnUpdate() const
              "\"updated_t\" datetime not null, "
              "\"updated_t_current\" datetime not null)");
     QVERIFY(firstLog.boundValues.isEmpty());
+}
+
+void tst_SQLite_SchemaBuilder::virtualAs_StoredAs_CreateTable() const
+{
+    auto log = DB::connection(m_connection).pretend([](auto &connection)
+    {
+        Schema::on(connection.getName())
+                .create(Firewalls, [](Blueprint &table)
+        {
+            table.integer("price");
+            table.integer("discounted_virtual").virtualAs("price - 5");
+            table.integer("discounted_stored").storedAs(R"("price" - 5)");
+        });
+    });
+
+    QVERIFY(!log.isEmpty());
+    const auto &firstLog = log.first();
+
+    QCOMPARE(log.size(), 1);
+    QCOMPARE(firstLog.query,
+             "create table \"firewalls\" ("
+             "\"price\" integer not null, "
+             "\"discounted_virtual\" integer generated always as (price - 5) not null, "
+             "\"discounted_stored\" integer "
+               "generated always as (\"price\" - 5) stored not null)");
+    QVERIFY(firstLog.boundValues.isEmpty());
+}
+
+void tst_SQLite_SchemaBuilder::virtualAs_StoredAs_Nullable_CreateTable() const
+{
+    auto log = DB::connection(m_connection).pretend([](auto &connection)
+    {
+        Schema::on(connection.getName())
+                .create(Firewalls, [](Blueprint &table)
+        {
+            table.integer("price");
+            table.integer("discounted_virtual").virtualAs("price - 5").nullable();
+            table.integer("discounted_stored").storedAs(R"("price" - 5)").nullable();
+        });
+    });
+
+    QVERIFY(!log.isEmpty());
+    const auto &firstLog = log.first();
+
+    QCOMPARE(log.size(), 1);
+    QCOMPARE(firstLog.query,
+             "create table \"firewalls\" ("
+             "\"price\" integer not null, "
+             "\"discounted_virtual\" integer generated always as (price - 5), "
+             "\"discounted_stored\" integer "
+               "generated always as (\"price\" - 5) stored)");
+    QVERIFY(firstLog.boundValues.isEmpty());
+}
+
+void tst_SQLite_SchemaBuilder::virtualAs_StoredAs_ModifyTable() const
+{
+    auto log = DB::connection(m_connection).pretend([](auto &connection)
+    {
+        Schema::on(connection.getName())
+                .table(Firewalls, [](Blueprint &table)
+        {
+            table.integer("price");
+            table.integer("discounted_virtual").virtualAs("price - 5");
+            // SQLite doesn't support a stored in the add column clause, will be removed
+            table.integer("discounted_stored").storedAs(R"("price" - 5)");
+        });
+    });
+
+    QCOMPARE(log.size(), 2);
+
+    const auto &log0 = log.at(0);
+    QCOMPARE(log0.query,
+             "alter table \"firewalls\" "
+             "add column \"price\" integer not null");
+    QVERIFY(log0.boundValues.isEmpty());
+
+    const auto &log1 = log.at(1);
+    QCOMPARE(log1.query,
+             "alter table \"firewalls\" "
+             "add column \"discounted_virtual\" integer "
+               "generated always as (price - 5) not null");
+    QVERIFY(log1.boundValues.isEmpty());
+}
+
+void tst_SQLite_SchemaBuilder::virtualAs_StoredAs_Nullable_ModifyTable() const
+{
+    auto log = DB::connection(m_connection).pretend([](auto &connection)
+    {
+        Schema::on(connection.getName())
+                .table(Firewalls, [](Blueprint &table)
+        {
+            table.integer("price");
+            table.integer("discounted_virtual").virtualAs("price - 5").nullable();
+            // SQLite doesn't support a stored in the add column clause, will be removed
+            table.integer("discounted_stored").storedAs(R"("price" - 5)").nullable();
+        });
+    });
+
+    QCOMPARE(log.size(), 2);
+
+    const auto &log0 = log.at(0);
+    QCOMPARE(log0.query,
+             "alter table \"firewalls\" "
+             "add column \"price\" integer not null");
+    QVERIFY(log0.boundValues.isEmpty());
+
+    const auto &log1 = log.at(1);
+    QCOMPARE(log1.query,
+             "alter table \"firewalls\" "
+             "add column \"discounted_virtual\" integer "
+               "generated always as (price - 5)");
+    QVERIFY(log1.boundValues.isEmpty());
 }
 
 void tst_SQLite_SchemaBuilder::indexes_Fluent() const

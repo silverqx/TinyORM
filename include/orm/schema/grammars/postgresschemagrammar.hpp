@@ -176,8 +176,6 @@ namespace Grammars
         /*! Get the SQL for the column data type. */
         QString getType(ColumnDefinition &column) const override;
 
-        /*! Create the column definition for a generatable column. */
-        static QString generatableColumn(QString &&type, const ColumnDefinition &column);
         /*! Format the column definition for a PostGIS spatial type. */
         static QString formatPostGisType(QString &&type, const ColumnDefinition &column);
 
@@ -274,6 +272,8 @@ namespace Grammars
         QString modifyVirtualAs(const ColumnDefinition &column) const;
         /*! Get the SQL for a generated stored column modifier. */
         QString modifyStoredAs(const ColumnDefinition &column) const;
+        /*! Get the SQL for an identity column modifier. */
+        QString modifyGeneratedAs(const ColumnDefinition &column) const;
     };
 
     /* public */

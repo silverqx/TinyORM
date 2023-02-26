@@ -765,7 +765,7 @@ QString SQLiteSchemaGrammar::modifyVirtualAs(const ColumnDefinition &column) con
     if (column.virtualAs.isEmpty())
         return {};
 
-    return QStringLiteral(" as (%1)").arg(column.virtualAs);
+    return QStringLiteral(" generated always as (%1)").arg(column.virtualAs);
 }
 
 QString SQLiteSchemaGrammar::modifyStoredAs(const ColumnDefinition &column) const // NOLINT(readability-convert-member-functions-to-static)
@@ -774,21 +774,19 @@ QString SQLiteSchemaGrammar::modifyStoredAs(const ColumnDefinition &column) cons
     if (column.storedAs.isEmpty())
         return {};
 
-    return QStringLiteral(" as (%1) stored").arg(column.storedAs);
+    return QStringLiteral(" generated always as (%1) stored").arg(column.storedAs);
 }
 
 QString SQLiteSchemaGrammar::modifyNullable(const ColumnDefinition &column) const // NOLINT(readability-convert-member-functions-to-static)
 {
-    static const auto notNull = QStringLiteral(" not null");
-
-    if (column.virtualAs.isEmpty() && column.storedAs.isEmpty())
-        return column.nullable ? QString() : notNull;
-
-    // Don't set null for virtual/stored columns, set 'not null' only
-    if (column.nullable)
-        return {};
-
-    return notNull;
+    /* SQLite doesn't need any special logic for generated columns (virtualAs and
+       storedAs). Also, for the nullable columns return "" and not " null" because
+       SQLite documentation tells nothing about NULL during a column creation or addition,
+       it only describes the NOT NULL constraint. I have checked it and it also works
+       correctly with the NULL, but it can be ignored behind the scene because the NULL
+       is the default behavior. */
+    return column.nullable && *column.nullable ? QString("")
+                                               : QStringLiteral(" not null");
 }
 
 QString SQLiteSchemaGrammar::modifyDefault(const ColumnDefinition &column) const

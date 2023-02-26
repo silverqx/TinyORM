@@ -842,7 +842,7 @@ QString MySqlSchemaGrammar::modifyVirtualAs(const ColumnDefinition &column) cons
     if (column.virtualAs.isEmpty())
         return {};
 
-    return QStringLiteral(" as (%1)").arg(column.virtualAs);
+    return QStringLiteral(" generated always as (%1)").arg(column.virtualAs);
 }
 
 QString MySqlSchemaGrammar::modifyStoredAs(const ColumnDefinition &column) const // NOLINT(readability-convert-member-functions-to-static)
@@ -850,21 +850,30 @@ QString MySqlSchemaGrammar::modifyStoredAs(const ColumnDefinition &column) const
     if (column.storedAs.isEmpty())
         return {};
 
-    return QStringLiteral(" as (%1) stored").arg(column.storedAs);
+    return QStringLiteral(" generated always as (%1) stored").arg(column.storedAs);
 }
 
 QString MySqlSchemaGrammar::modifyNullable(const ColumnDefinition &column) const // NOLINT(readability-convert-member-functions-to-static)
 {
-    static const auto notNull = QStringLiteral(" not null");
+    // NOTE api different, I want the nullable to behave the same as everywhere else silverqx
+    /* MySQL doesn't need any special logic for generated columns (virtualAs and
+       storedAs), it accepts both, null and also not null for generated columns, I have
+       tried it. */
+    return column.nullable && *column.nullable ? QStringLiteral(" null")
+                                               : QStringLiteral(" not null");
 
-    if (column.virtualAs.isEmpty() && column.storedAs.isEmpty())
-        return column.nullable ? QStringLiteral(" null") : notNull;
+    // CUR schema, install and prepare MariaDB dev. env. and then finish this silverqx
+    // CUR mariadb, tests, workflows, everywhere silverqx
+//    static const auto notNull = QStringLiteral(" not null");
 
-    // Don't set null for virtual/stored columns, set 'not null' only
-    if (column.nullable)
-        return {};
+//    if (column.virtualAs.isEmpty() && column.storedAs.isEmpty())
+//        return column.nullable && *column.nullable ? QStringLiteral(" null") : notNull;
 
-    return notNull;
+//    // Don't set null for virtual/stored columns, set 'not null' only!
+//    if (column.nullable && !*column.nullable)
+//        return notNull;
+
+//    return {};
 }
 
 QString MySqlSchemaGrammar::modifyInvisible(const ColumnDefinition &column) const // NOLINT(readability-convert-member-functions-to-static)

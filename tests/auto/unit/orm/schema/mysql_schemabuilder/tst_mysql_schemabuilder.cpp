@@ -87,6 +87,16 @@ private Q_SLOTS:
     void useCurrent() const;
     void useCurrentOnUpdate() const;
 
+    void multipleAutoIncrementStartingValue_CreateTable() const;
+    void multipleAutoIncrementStartingValue_ModifyTable() const;
+
+    void virtualAs_StoredAs_CreateTable() const;
+    void virtualAs_StoredAs_Nullable_CreateTable() const;
+    void virtualAs_StoredAs_ModifyTable() const;
+    void virtualAs_StoredAs_Nullable_ModifyTable() const;
+
+    void virtualAs_StoredAs_WithCharset() const;
+
     void indexes_Fluent() const;
     void indexes_Blueprint() const;
 
@@ -1068,6 +1078,222 @@ void tst_MySql_SchemaBuilder::useCurrentOnUpdate() const
                 "default character set %1 collate '%2' "
                 "engine = InnoDB")
              .arg(m_charset, m_collation));
+    QVERIFY(firstLog.boundValues.isEmpty());
+}
+
+void tst_MySql_SchemaBuilder::multipleAutoIncrementStartingValue_CreateTable() const
+{
+    auto log = DB::connection(m_connection).pretend([](auto &connection)
+    {
+        Schema::on(connection.getName())
+                .create(Firewalls, [](Blueprint &table)
+        {
+            table.id().from(100);
+            table.string(NAME).from(200);
+        });
+    });
+
+    QCOMPARE(log.size(), 2);
+
+    const auto &log0 = log.at(0);
+    QCOMPARE(log0.query,
+             QStringLiteral(
+                 "create table `firewalls` ("
+                 "`id` bigint unsigned not null auto_increment primary key, "
+                 "`name` varchar(255) not null) "
+                 "default character set %1 collate '%2' "
+                 "engine = InnoDB")
+             .arg(m_charset, m_collation));
+    QVERIFY(log0.boundValues.isEmpty());
+
+    const auto &log1 = log.at(1);
+    QCOMPARE(log1.query,
+             "alter table `firewalls` auto_increment = 100");
+    QVERIFY(log1.boundValues.isEmpty());
+}
+
+void tst_MySql_SchemaBuilder::multipleAutoIncrementStartingValue_ModifyTable() const
+{
+    auto log = DB::connection(m_connection).pretend([](auto &connection)
+    {
+        Schema::on(connection.getName())
+                .table(Firewalls, [](Blueprint &table)
+        {
+            table.id().from(100);
+            table.string(NAME).from(200);
+        });
+    });
+
+    QCOMPARE(log.size(), 2);
+
+    const auto &log0 = log.at(0);
+    QCOMPARE(log0.query,
+             "alter table `firewalls` "
+             "add `id` bigint unsigned not null auto_increment primary key, "
+             "add `name` varchar(255) not null");
+    QVERIFY(log0.boundValues.isEmpty());
+
+    const auto &log1 = log.at(1);
+    QCOMPARE(log1.query,
+             "alter table `firewalls` auto_increment = 100");
+    QVERIFY(log1.boundValues.isEmpty());
+}
+
+void tst_MySql_SchemaBuilder::virtualAs_StoredAs_CreateTable() const
+{
+    auto log = DB::connection(m_connection).pretend([](auto &connection)
+    {
+        Schema::on(connection.getName())
+                .create(Firewalls, [](Blueprint &table)
+        {
+            table.string("first_name");
+            table.string("last_name");
+
+            table.string("full_name_virtual")
+                 .virtualAs("concat(`first_name`, ' ', `last_name`)");
+
+            table.string("full_name_stored")
+                 .storedAs("concat(`first_name`, ' ', `last_name`)");
+        });
+    });
+
+    QVERIFY(!log.isEmpty());
+    const auto &firstLog = log.first();
+
+    QCOMPARE(log.size(), 1);
+    QCOMPARE(firstLog.query,
+             QStringLiteral(
+                 "create table `firewalls` ("
+                 "`first_name` varchar(255) not null, "
+                 "`last_name` varchar(255) not null, "
+                 "`full_name_virtual` varchar(255) "
+                   "generated always as (concat(`first_name`, ' ', `last_name`)) "
+                   "not null, "
+                 "`full_name_stored` varchar(255) "
+                   "generated always as (concat(`first_name`, ' ', `last_name`)) stored "
+                   "not null) "
+                 "default character set %1 collate '%2' "
+                 "engine = InnoDB")
+             .arg(m_charset, m_collation));
+    QVERIFY(firstLog.boundValues.isEmpty());
+}
+
+void tst_MySql_SchemaBuilder::virtualAs_StoredAs_Nullable_CreateTable() const
+{
+    auto log = DB::connection(m_connection).pretend([](auto &connection)
+    {
+        Schema::on(connection.getName())
+                .create(Firewalls, [](Blueprint &table)
+        {
+            table.string("first_name");
+            table.string("last_name");
+
+            table.string("full_name_virtual")
+                 .virtualAs("concat(`first_name`, ' ', `last_name`)").nullable();
+
+            table.string("full_name_stored")
+                 .storedAs("concat(`first_name`, ' ', `last_name`)").nullable();
+        });
+    });
+
+    QVERIFY(!log.isEmpty());
+    const auto &firstLog = log.first();
+
+    QCOMPARE(log.size(), 1);
+    QCOMPARE(firstLog.query,
+             QStringLiteral(
+                 "create table `firewalls` ("
+                 "`first_name` varchar(255) not null, "
+                 "`last_name` varchar(255) not null, "
+                 "`full_name_virtual` varchar(255) "
+                   "generated always as (concat(`first_name`, ' ', `last_name`)) null, "
+                 "`full_name_stored` varchar(255) "
+                   "generated always as (concat(`first_name`, ' ', `last_name`)) stored "
+                   "null) "
+                 "default character set %1 collate '%2' "
+                 "engine = InnoDB")
+             .arg(m_charset, m_collation));
+    QVERIFY(firstLog.boundValues.isEmpty());
+}
+
+void tst_MySql_SchemaBuilder::virtualAs_StoredAs_ModifyTable() const
+{
+    auto log = DB::connection(m_connection).pretend([](auto &connection)
+    {
+        Schema::on(connection.getName())
+                .table(Firewalls, [](Blueprint &table)
+        {
+            table.integer("price");
+            table.integer("discounted_virtual").virtualAs("price - 5");
+            table.integer("discounted_stored").storedAs("`price` - 5");
+        });
+    });
+
+    QVERIFY(!log.isEmpty());
+    const auto &firstLog = log.first();
+
+    QCOMPARE(log.size(), 1);
+    QCOMPARE(firstLog.query,
+             "alter table `firewalls` "
+             "add `price` int not null, "
+             "add `discounted_virtual` int generated always as (price - 5) not null, "
+             "add `discounted_stored` int generated always as (`price` - 5) stored "
+               "not null");
+    QVERIFY(firstLog.boundValues.isEmpty());
+}
+
+void tst_MySql_SchemaBuilder::virtualAs_StoredAs_Nullable_ModifyTable() const
+{
+    auto log = DB::connection(m_connection).pretend([](auto &connection)
+    {
+        Schema::on(connection.getName())
+                .table(Firewalls, [](Blueprint &table)
+        {
+            table.integer("price");
+            table.integer("discounted_virtual").virtualAs("`price` - 5").nullable();
+            table.integer("discounted_stored").storedAs("price - 5").nullable();
+        });
+    });
+
+    QVERIFY(!log.isEmpty());
+    const auto &firstLog = log.first();
+
+    QCOMPARE(log.size(), 1);
+    QCOMPARE(firstLog.query,
+             "alter table `firewalls` "
+             "add `price` int not null, "
+             "add `discounted_virtual` int generated always as (`price` - 5) null, "
+             "add `discounted_stored` int generated always as (price - 5) stored "
+               "null");
+    QVERIFY(firstLog.boundValues.isEmpty());
+}
+
+void tst_MySql_SchemaBuilder::virtualAs_StoredAs_WithCharset() const
+{
+    auto log = DB::connection(m_connection).pretend([](auto &connection)
+    {
+        Schema::on(connection.getName())
+                .table(Firewalls, [](Blueprint &table)
+        {
+            table.string("url", 2083);
+            table.string("url_hash_virtual", 64).virtualAs("sha2(url, 256)")
+                 .charset("ascii");
+            table.string("url_hash_stored", 64).storedAs("sha2(`url`, 256)")
+                 .charset("ascii");
+        });
+    });
+
+    QVERIFY(!log.isEmpty());
+    const auto &firstLog = log.first();
+
+    QCOMPARE(log.size(), 1);
+    QCOMPARE(firstLog.query,
+             "alter table `firewalls` "
+             "add `url` varchar(2083) not null, "
+             "add `url_hash_virtual` varchar(64) character set 'ascii' "
+               "generated always as (sha2(url, 256)) not null, "
+             "add `url_hash_stored` varchar(64) character set 'ascii' "
+               "generated always as (sha2(`url`, 256)) stored not null");
     QVERIFY(firstLog.boundValues.isEmpty());
 }
 

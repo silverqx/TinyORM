@@ -211,6 +211,8 @@ namespace Orm::SchemaNs
         std::optional<quint64> from          = std::nullopt;
         /*! Set the starting value of an auto-incrementing field (MySQL/PostgreSQL). */
         std::optional<quint64> startingValue = std::nullopt;
+        /*! Allow NULL values to be inserted into the column. */
+        std::optional<bool> nullable         = std::nullopt; // Has to be optional because of virtualAs() and storedAs(), look at MySQL::modifyNullable()
 
         // Place boolean data members at the end to avoid excessive padding
         /*! Used as a modifier for generatedAs() (PostgreSQL). */
@@ -226,8 +228,6 @@ namespace Orm::SchemaNs
         bool isGeometry         = false;
         /*! Determine whether the INTEGER column is UNSIGNED (MySQL). */
         bool isUnsigned         = false;
-        /*! Allow NULL values to be inserted into the column. */
-        bool nullable           = false;
         /*! Set the TIMESTAMP column to use CURRENT_TIMESTAMP as default value. */
         bool useCurrent         = false;
         /*! Set the TIMESTAMP column to use CURRENT_TIMESTAMP when updating (MySQL). */

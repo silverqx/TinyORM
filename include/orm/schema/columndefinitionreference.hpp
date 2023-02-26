@@ -70,7 +70,7 @@ namespace Orm::SchemaNs
             alias for the 'startingValue'. */
         ColumnReferenceType &from(int startingValue);
         /*! Create a SQL compliant identity column (PostgreSQL). */
-        ColumnReferenceType &generatedAs(const QString &expression);
+        ColumnReferenceType &generatedAs(QString sequenceOptions = "");
         /*! Specify that the column should be invisible to "SELECT *" (MySQL). */
         ColumnReferenceType &invisible();
         /*! Determine whether to use the geography (default, false) or
@@ -220,9 +220,9 @@ namespace Orm::SchemaNs
 
     template<ColumnReferenceReturn R>
     typename ColumnDefinitionReference<R>::ColumnReferenceType &
-    ColumnDefinitionReference<R>::generatedAs(const QString &expression)
+    ColumnDefinitionReference<R>::generatedAs(QString sequenceOptions)
     {
-        m_columnDefinition.get().generatedAs = expression;
+        m_columnDefinition.get().generatedAs = std::move(sequenceOptions);
 
         return columnReference();
     }

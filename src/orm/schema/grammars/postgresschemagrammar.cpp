@@ -377,9 +377,10 @@ QString PostgresSchemaGrammar::addModifiers(QString &&sql,
                                             const ColumnDefinition &column) const
 {
     constexpr static std::array modifierMethods {
-        &PostgresSchemaGrammar::modifyCollate,   &PostgresSchemaGrammar::modifyIncrement,
-        &PostgresSchemaGrammar::modifyNullable,  &PostgresSchemaGrammar::modifyDefault,
-        &PostgresSchemaGrammar::modifyVirtualAs, &PostgresSchemaGrammar::modifyStoredAs,
+        &PostgresSchemaGrammar::modifyCollate,    &PostgresSchemaGrammar::modifyIncrement,
+        &PostgresSchemaGrammar::modifyNullable,   &PostgresSchemaGrammar::modifyDefault,
+        &PostgresSchemaGrammar::modifyVirtualAs,  &PostgresSchemaGrammar::modifyStoredAs,
+        &PostgresSchemaGrammar::modifyGeneratedAs,
     };
 
     for (const auto method : modifierMethods)
@@ -557,32 +558,6 @@ QString PostgresSchemaGrammar::getType(ColumnDefinition &column) const
 }
 
 QString
-PostgresSchemaGrammar::generatableColumn(QString &&type, const ColumnDefinition &column)
-{
-    if (!column.autoIncrement && column.generatedAs.isEmpty())
-        return std::move(type);
-
-    static const std::unordered_map<QString, QString> GeneratableMap {
-        {QStringLiteral("smallint"), QStringLiteral("smallserial")},
-        {QStringLiteral("integer"),  QStringLiteral("serial")},
-        {QStringLiteral("bigint"),   QStringLiteral("bigserial")},
-    };
-
-    if (column.autoIncrement && column.generatedAs.isEmpty())
-        return GeneratableMap.at(type);
-
-    QString options;
-
-    if (!column.generatedAs.isEmpty())
-        options = QStringLiteral(" (%1)").arg(column.generatedAs);
-
-    return QStringLiteral("%1 generated %2 as identity%3")
-            .arg(type,
-                 column.always ? QStringLiteral("always") : QStringLiteral("by default"),
-                 options);
-}
-
-QString
 PostgresSchemaGrammar::formatPostGisType(QString &&type, const ColumnDefinition &column)
 {
     if (!column.isGeometry)
@@ -630,27 +605,33 @@ QString PostgresSchemaGrammar::typeLongText(const ColumnDefinition &/*unused*/) 
 
 QString PostgresSchemaGrammar::typeBigInteger(const ColumnDefinition &column) const // NOLINT(readability-convert-member-functions-to-static)
 {
-    return generatableColumn("bigint", column);
+    return column.autoIncrement && column.generatedAs.isNull()
+            ? QStringLiteral("bigserial")
+            : QStringLiteral("bigint");
 }
 
 QString PostgresSchemaGrammar::typeInteger(const ColumnDefinition &column) const // NOLINT(readability-convert-member-functions-to-static)
 {
-    return generatableColumn("integer", column);
+    return column.autoIncrement && column.generatedAs.isNull()
+            ? QStringLiteral("serial")
+            : QStringLiteral("integer");
 }
 
 QString PostgresSchemaGrammar::typeMediumInteger(const ColumnDefinition &column) const // NOLINT(readability-convert-member-functions-to-static)
 {
-    return generatableColumn("integer", column);
+    return typeInteger(column);
 }
 
 QString PostgresSchemaGrammar::typeTinyInteger(const ColumnDefinition &column) const // NOLINT(readability-convert-member-functions-to-static)
 {
-    return generatableColumn("smallint", column);
+    return typeSmallInteger(column);
 }
 
 QString PostgresSchemaGrammar::typeSmallInteger(const ColumnDefinition &column) const // NOLINT(readability-convert-member-functions-to-static)
 {
-    return generatableColumn("smallint", column);
+    return column.autoIncrement && column.generatedAs.isNull()
+            ? QStringLiteral("smallserial")
+            : QStringLiteral("smallint");
 }
 
 QString PostgresSchemaGrammar::typeFloat(const ColumnDefinition &column) const
@@ -838,7 +819,7 @@ QString PostgresSchemaGrammar::modifyIncrement(const ColumnDefinition &column) c
         ColumnType::SmallInteger, ColumnType::TinyInteger,
     };
 
-    if ((serials.contains(column.type) || !column.generatedAs.isEmpty()) &&
+    if ((serials.contains(column.type) || !column.generatedAs.isNull()) &&
         column.autoIncrement
     )
         return QStringLiteral(" primary key");
@@ -848,7 +829,11 @@ QString PostgresSchemaGrammar::modifyIncrement(const ColumnDefinition &column) c
 
 QString PostgresSchemaGrammar::modifyNullable(const ColumnDefinition &column) const // NOLINT(readability-convert-member-functions-to-static)
 {
-    return column.nullable ? QStringLiteral(" null") : QStringLiteral(" not null");
+    /* PostgreSQL doesn't need any special logic for generated columns (virtualAs and
+       storedAs), it accepts both, null and also not null for generated columns, I have
+       tried it. */
+    return column.nullable && *column.nullable ? QStringLiteral(" null")
+                                               : QStringLiteral(" not null");
 }
 
 QString PostgresSchemaGrammar::modifyDefault(const ColumnDefinition &column) const
@@ -864,6 +849,8 @@ QString PostgresSchemaGrammar::modifyDefault(const ColumnDefinition &column) con
 
 QString PostgresSchemaGrammar::modifyVirtualAs(const ColumnDefinition &column) const // NOLINT(readability-convert-member-functions-to-static)
 {
+    /* Currently, PostgreSQL 15 doesn't support virtual generated columns, only stored,
+       so this is useless. */
     if (column.virtualAs.isEmpty())
         return {};
 
@@ -876,6 +863,22 @@ QString PostgresSchemaGrammar::modifyStoredAs(const ColumnDefinition &column) co
         return {};
 
     return QStringLiteral(" generated always as (%1) stored").arg(column.storedAs);
+}
+
+QString PostgresSchemaGrammar::modifyGeneratedAs(const ColumnDefinition &column) const // NOLINT(readability-convert-member-functions-to-static)
+{
+    // Nothing to do, generatedAs was not defined
+    if (column.generatedAs.isNull())
+        return {};
+
+    return QStringLiteral(" generated %1 as identity%2")
+            .arg(
+                // ALWAYS and BY DEFAULT clause
+                column.always ? QStringLiteral("always") : QStringLiteral("by default"),
+                // Sequence options clause
+                !column.generatedAs.isEmpty() ? QStringLiteral(" (%1)")
+                                                .arg(column.generatedAs)
+                                              : QString(""));
 }
 
 } // namespace Orm::SchemaNs::Grammars
