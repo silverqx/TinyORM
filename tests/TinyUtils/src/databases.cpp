@@ -136,7 +136,7 @@ Databases::createConnectionTemp(
 
 std::optional<QString>
 Databases::createConnectionTempFrom(const QString &fromConfiguration,
-                                ConnectionNameParts &&connection)
+                                    ConnectionNameParts &&connection)
 {
     const auto configuration = Databases::configuration(fromConfiguration);
 
