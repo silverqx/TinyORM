@@ -129,7 +129,6 @@ namespace Orm::Constants
     const QString UTF8Unicodeci   = QStringLiteral("utf8_unicode_ci");
     const QString UTF8MB40900aici = QStringLiteral("utf8mb4_0900_ai_ci");
     const QString UcsBasic        = QStringLiteral("ucs_basic");
-    const QString en_US           = QStringLiteral("en-US");
     const QString POSIX_          = QStringLiteral("POSIX");
     const QString NotImplemented  = QStringLiteral("Not implemented :/.");
 
