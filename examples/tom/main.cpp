@@ -93,6 +93,30 @@ std::shared_ptr<DatabaseManager> setupManager()
             {options_,        ConfigUtils::mysqlSslOptions()},
         }},
 
+        // MariaDB connection
+        {QStringLiteral("tinyorm_tom_maria"), { // shell:connection
+            {driver_,         QMYSQL},
+            {host_,           qEnvironmentVariable("DB_MARIA_HOST",      H127001)},
+            {port_,           qEnvironmentVariable("DB_MARIA_PORT",      P3306)},
+            {database_,       qEnvironmentVariable("DB_MARIA_DATABASE",  EMPTY)},
+            {username_,       qEnvironmentVariable("DB_MARIA_USERNAME",  EMPTY)},
+            {password_,       qEnvironmentVariable("DB_MARIA_PASSWORD",  EMPTY)},
+            {charset_,        qEnvironmentVariable("DB_MARIA_CHARSET",   UTF8MB4)},
+            {collation_,      qEnvironmentVariable("DB_MARIA_COLLATION",
+                                                   UTF8MB4Unicode520ci)},
+            // SYSTEM - set the time zone to your local MySQL server time zone
+            {timezone_,       TZ00},
+            // Specifies what time zone all QDateTime-s will have
+            {qt_timezone,     QVariant::fromValue(Qt::UTC)},
+            {prefix_,         EMPTY},
+            {prefix_indexes,  false},
+            {strict_,         true},
+            {isolation_level, QStringLiteral("REPEATABLE READ")}, // MySQL default is REPEATABLE READ for InnoDB
+            {engine_,         InnoDB},
+            {Version,         {}}, // Autodetect
+//            {options_,        ConfigUtils::mysqlSslOptions()},
+        }},
+
         // PostgreSQL connection
         {QStringLiteral("tinyorm_tom_postgres"), { // shell:connection
             {driver_,          QPSQL},

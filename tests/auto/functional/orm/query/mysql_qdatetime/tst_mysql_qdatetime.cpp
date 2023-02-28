@@ -30,7 +30,7 @@ class tst_MySql_QDateTime : public QObject // clazy:exclude=ctor-missing-parent-
     Q_OBJECT
 
 private Q_SLOTS:
-    void initTestCase();
+    void initTestCase() const;
 
     /* QDateTime with/without timezone */
     /* Raw QSqlQuery */
@@ -113,30 +113,32 @@ private Q_SLOTS:
 // NOLINTNEXTLINE(readability-redundant-access-specifiers)
 private:
     /* Common */
-    /*! Create QueryBuilder instance for the given connection. */
-    [[nodiscard]] std::shared_ptr<QueryBuilder> createQuery() const;
+    /*! Create a QueryBuilder instance for the given connection. */
+    [[nodiscard]] inline static std::shared_ptr<QueryBuilder>
+    createQuery(const QString &connection);
+    /*! Create a raw QSqlQuery instance for the given connection. */
+    [[nodiscard]] inline static QSqlQuery
+    createQtQuery(const QString &connection);
 
     /* QDateTime with/without timezone */
     /*! Set the MySQL timezone session variable to the UTC value. */
-    inline void setUtcTimezone() const;
+    inline static void setUtcTimezone(const QString &connection);
     /*! Set the MySQL timezone session variable to the +02:00 value. */
-    inline void set0200Timezone() const;
+    inline static void set0200Timezone(const QString &connection);
     /*! Set the qt_timezone to the QtTimeZoneType::DontConvert value. */
-    inline void setDontConvertTimezone() const;
+    inline static void setDontConvertTimezone(const QString &connection);
     /*! Set the MySQL timezone session variable to the given value. */
-    void setTimezone(const QString &timeZone, QtTimeZoneConfig &&qtTimeZone) const;
+    static void setTimezone(const QString &connection, const QString &timeZone,
+                            QtTimeZoneConfig &&qtTimeZone);
 
     /*! Get the UTC time zone string. */
-    inline const QString &utcTimezoneString() const;
+    inline static const QString &utcTimezoneString(const QString &connection);
     /*! Are MySQL time zone table populated? */
-    bool mysqlTimezoneTablesNotPopulated() const;
+    static bool mysqlTimezoneTablesNotPopulated(const QString &connection);
 
     /*! Restore the database after a QDateTime-related test. */
-    void restore(quint64 lastId, bool restoreTimezone = false) const;
-
-    /* Data members */
-    /*! Connection name used in this test case. */
-    QString m_connection {};
+    static void restore(const QString &connection, quint64 lastId,
+                        bool restoreTimezone = false);
 };
 
 /*! Time zone +02:00. */
@@ -154,14 +156,22 @@ Q_GLOBAL_STATIC_WITH_ARGS(QString, date, ("date"))
 /* private slots */
 
 // NOLINTBEGIN(readability-convert-member-functions-to-static)
-void tst_MySql_QDateTime::initTestCase()
+void tst_MySql_QDateTime::initTestCase() const
 {
-    m_connection = Databases::createConnection(Databases::MYSQL);
+    /* I want to test these QDateTime and timezones related logic on both, the MySQL and
+       also the MariaDB databases, to be sure that everything is ok. 🤓 */
+    const auto connections = Databases::createConnections({Databases::MYSQL,
+                                                           Databases::MARIADB});
 
-    if (m_connection.isEmpty())
-        QSKIP(TestUtils::AutoTestSkipped
-              .arg(TypeUtils::classPureBasename(*this), Databases::MYSQL)
-              .toUtf8().constData(), );
+    if (connections.isEmpty())
+        QSKIP(TestUtils::AutoTestSkippedAny.arg(TypeUtils::classPureBasename(*this))
+                                           .toUtf8().constData(), );
+
+    QTest::addColumn<QString>("connection");
+
+    // Run all tests for all supported database connections
+    for (const auto &connection : connections)
+        QTest::newRow(connection.toUtf8().constData()) << connection;
 }
 
 /* QDateTime with/without timezone */
@@ -173,11 +183,13 @@ void tst_MySql_QDateTime::initTestCase()
 void tst_MySql_QDateTime::
 insert_Qt_QDateTime_UtcTimezone_DatetimeColumn_UtcOnServer() const
 {
+    QFETCH_GLOBAL(QString, connection);
+
     quint64 lastId = 0;
 
     // Insert
     {
-        auto qtQuery = DB::connection(m_connection).getQtQuery();
+        auto qtQuery = createQtQuery(connection);
 
         QVERIFY(qtQuery.prepare("insert into `datetimes` (`datetime`) values (?)"));
 
@@ -196,7 +208,7 @@ insert_Qt_QDateTime_UtcTimezone_DatetimeColumn_UtcOnServer() const
 
     // Verify
     {
-        auto qtQuery = DB::connection(m_connection).getQtQuery();
+        auto qtQuery = createQtQuery(connection);
 
         QVERIFY(qtQuery.prepare(
                     "select `id`, `datetime` from `datetimes` where `id` = ?"));
@@ -230,17 +242,19 @@ insert_Qt_QDateTime_UtcTimezone_DatetimeColumn_UtcOnServer() const
     }
 
     // Restore
-    restore(lastId);
+    restore(connection, lastId);
 }
 
 void tst_MySql_QDateTime::
 insert_Qt_QDateTime_0200Timezone_DatetimeColumn_UtcOnServer() const
 {
+    QFETCH_GLOBAL(QString, connection);
+
     quint64 lastId = 0;
 
     // Insert
     {
-        auto qtQuery = DB::connection(m_connection).getQtQuery();
+        auto qtQuery = createQtQuery(connection);
 
         QVERIFY(qtQuery.prepare("insert into `datetimes` (`datetime`) values (?)"));
 
@@ -259,7 +273,7 @@ insert_Qt_QDateTime_0200Timezone_DatetimeColumn_UtcOnServer() const
 
     // Verify
     {
-        auto qtQuery = DB::connection(m_connection).getQtQuery();
+        auto qtQuery = createQtQuery(connection);
 
         QVERIFY(qtQuery.prepare(
                     "select `id`, `datetime` from `datetimes` where `id` = ?"));
@@ -293,16 +307,18 @@ insert_Qt_QDateTime_0200Timezone_DatetimeColumn_UtcOnServer() const
     }
 
     // Restore
-    restore(lastId);
+    restore(connection, lastId);
 }
 
 void tst_MySql_QDateTime::insert_Qt_QString_DatetimeColumn_UtcOnServer() const
 {
+    QFETCH_GLOBAL(QString, connection);
+
     quint64 lastId = 0;
 
     // Insert
     {
-        auto qtQuery = DB::connection(m_connection).getQtQuery();
+        auto qtQuery = createQtQuery(connection);
 
         QVERIFY(qtQuery.prepare("insert into `datetimes` (`datetime`) values (?)"));
 
@@ -320,7 +336,7 @@ void tst_MySql_QDateTime::insert_Qt_QString_DatetimeColumn_UtcOnServer() const
 
     // Verify
     {
-        auto qtQuery = DB::connection(m_connection).getQtQuery();
+        auto qtQuery = createQtQuery(connection);
 
         QVERIFY(qtQuery.prepare(
                     "select `id`, `datetime` from `datetimes` where `id` = ?"));
@@ -354,17 +370,19 @@ void tst_MySql_QDateTime::insert_Qt_QString_DatetimeColumn_UtcOnServer() const
     }
 
     // Restore
-    restore(lastId);
+    restore(connection, lastId);
 }
 
 void tst_MySql_QDateTime::
 insert_Qt_QDateTime_UtcTimezone_TimestampColumn_UtcOnServer() const
 {
+    QFETCH_GLOBAL(QString, connection);
+
     quint64 lastId = 0;
 
     // Insert
     {
-        auto qtQuery = DB::connection(m_connection).getQtQuery();
+        auto qtQuery = createQtQuery(connection);
 
         QVERIFY(qtQuery.prepare("insert into `datetimes` (`timestamp`) values (?)"));
 
@@ -383,7 +401,7 @@ insert_Qt_QDateTime_UtcTimezone_TimestampColumn_UtcOnServer() const
 
     // Verify
     {
-        auto qtQuery = DB::connection(m_connection).getQtQuery();
+        auto qtQuery = createQtQuery(connection);
 
         QVERIFY(qtQuery.prepare(
                     "select `id`, `timestamp` from `datetimes` where `id` = ?"));
@@ -417,17 +435,19 @@ insert_Qt_QDateTime_UtcTimezone_TimestampColumn_UtcOnServer() const
     }
 
     // Restore
-    restore(lastId);
+    restore(connection, lastId);
 }
 
 void tst_MySql_QDateTime::
 insert_Qt_QDateTime_0200Timezone_TimestampColumn_UtcOnServer() const
 {
+    QFETCH_GLOBAL(QString, connection);
+
     quint64 lastId = 0;
 
     // Insert
     {
-        auto qtQuery = DB::connection(m_connection).getQtQuery();
+        auto qtQuery = createQtQuery(connection);
 
         QVERIFY(qtQuery.prepare("insert into `datetimes` (`timestamp`) values (?)"));
 
@@ -446,7 +466,7 @@ insert_Qt_QDateTime_0200Timezone_TimestampColumn_UtcOnServer() const
 
     // Verify
     {
-        auto qtQuery = DB::connection(m_connection).getQtQuery();
+        auto qtQuery = createQtQuery(connection);
 
         QVERIFY(qtQuery.prepare(
                     "select `id`, `timestamp` from `datetimes` where `id` = ?"));
@@ -480,16 +500,18 @@ insert_Qt_QDateTime_0200Timezone_TimestampColumn_UtcOnServer() const
     }
 
     // Restore
-    restore(lastId);
+    restore(connection, lastId);
 }
 
 void tst_MySql_QDateTime::insert_Qt_QString_TimestampColumn_UtcOnServer() const
 {
+    QFETCH_GLOBAL(QString, connection);
+
     quint64 lastId = 0;
 
     // Insert
     {
-        auto qtQuery = DB::connection(m_connection).getQtQuery();
+        auto qtQuery = createQtQuery(connection);
 
         QVERIFY(qtQuery.prepare("insert into `datetimes` (`timestamp`) values (?)"));
 
@@ -508,7 +530,7 @@ void tst_MySql_QDateTime::insert_Qt_QString_TimestampColumn_UtcOnServer() const
 
     // Verify
     {
-        auto qtQuery = DB::connection(m_connection).getQtQuery();
+        auto qtQuery = createQtQuery(connection);
 
         QVERIFY(qtQuery.prepare(
                     "select `id`, `timestamp` from `datetimes` where `id` = ?"));
@@ -542,7 +564,7 @@ void tst_MySql_QDateTime::insert_Qt_QString_TimestampColumn_UtcOnServer() const
     }
 
     // Restore
-    restore(lastId);
+    restore(connection, lastId);
 }
 
 /* Server timezone +02:00 */
@@ -550,12 +572,14 @@ void tst_MySql_QDateTime::insert_Qt_QString_TimestampColumn_UtcOnServer() const
 void tst_MySql_QDateTime::
 insert_Qt_QDateTime_UtcTimezone_DatetimeColumn_0200OnServer() const
 {
-    set0200Timezone();
+    QFETCH_GLOBAL(QString, connection);
+
+    set0200Timezone(connection);
     quint64 lastId = 0;
 
     // Insert
     {
-        auto qtQuery = DB::connection(m_connection).getQtQuery();
+        auto qtQuery = createQtQuery(connection);
 
         QVERIFY(qtQuery.prepare("insert into `datetimes` (`datetime`) values (?)"));
 
@@ -574,7 +598,7 @@ insert_Qt_QDateTime_UtcTimezone_DatetimeColumn_0200OnServer() const
 
     // Verify
     {
-        auto qtQuery = DB::connection(m_connection).getQtQuery();
+        auto qtQuery = createQtQuery(connection);
 
         QVERIFY(qtQuery.prepare(
                     "select `id`, `datetime` from `datetimes` where `id` = ?"));
@@ -608,18 +632,20 @@ insert_Qt_QDateTime_UtcTimezone_DatetimeColumn_0200OnServer() const
     }
 
     // Restore
-    restore(lastId, true);
+    restore(connection, lastId, true);
 }
 
 void tst_MySql_QDateTime::
 insert_Qt_QDateTime_0200Timezone_DatetimeColumn_0200OnServer() const
 {
-    set0200Timezone();
+    QFETCH_GLOBAL(QString, connection);
+
+    set0200Timezone(connection);
     quint64 lastId = 0;
 
     // Insert
     {
-        auto qtQuery = DB::connection(m_connection).getQtQuery();
+        auto qtQuery = createQtQuery(connection);
 
         QVERIFY(qtQuery.prepare("insert into `datetimes` (`datetime`) values (?)"));
 
@@ -638,7 +664,7 @@ insert_Qt_QDateTime_0200Timezone_DatetimeColumn_0200OnServer() const
 
     // Verify
     {
-        auto qtQuery = DB::connection(m_connection).getQtQuery();
+        auto qtQuery = createQtQuery(connection);
 
         QVERIFY(qtQuery.prepare(
                     "select `id`, `datetime` from `datetimes` where `id` = ?"));
@@ -672,17 +698,19 @@ insert_Qt_QDateTime_0200Timezone_DatetimeColumn_0200OnServer() const
     }
 
     // Restore
-    restore(lastId, true);
+    restore(connection, lastId, true);
 }
 
 void tst_MySql_QDateTime::insert_Qt_QString_DatetimeColumn_0200OnServer() const
 {
-    set0200Timezone();
+    QFETCH_GLOBAL(QString, connection);
+
+    set0200Timezone(connection);
     quint64 lastId = 0;
 
     // Insert
     {
-        auto qtQuery = DB::connection(m_connection).getQtQuery();
+        auto qtQuery = createQtQuery(connection);
 
         QVERIFY(qtQuery.prepare("insert into `datetimes` (`datetime`) values (?)"));
 
@@ -700,7 +728,7 @@ void tst_MySql_QDateTime::insert_Qt_QString_DatetimeColumn_0200OnServer() const
 
     // Verify
     {
-        auto qtQuery = DB::connection(m_connection).getQtQuery();
+        auto qtQuery = createQtQuery(connection);
 
         QVERIFY(qtQuery.prepare(
                     "select `id`, `datetime` from `datetimes` where `id` = ?"));
@@ -734,18 +762,20 @@ void tst_MySql_QDateTime::insert_Qt_QString_DatetimeColumn_0200OnServer() const
     }
 
     // Restore
-    restore(lastId, true);
+    restore(connection, lastId, true);
 }
 
 void tst_MySql_QDateTime::
 insert_Qt_QDateTime_UtcTimezone_TimestampColumn_0200OnServer() const
 {
-    set0200Timezone();
+    QFETCH_GLOBAL(QString, connection);
+
+    set0200Timezone(connection);
     quint64 lastId = 0;
 
     // Insert
     {
-        auto qtQuery = DB::connection(m_connection).getQtQuery();
+        auto qtQuery = createQtQuery(connection);
 
         QVERIFY(qtQuery.prepare("insert into `datetimes` (`timestamp`) values (?)"));
 
@@ -764,7 +794,7 @@ insert_Qt_QDateTime_UtcTimezone_TimestampColumn_0200OnServer() const
 
     // Verify
     {
-        auto qtQuery = DB::connection(m_connection).getQtQuery();
+        auto qtQuery = createQtQuery(connection);
 
         QVERIFY(qtQuery.prepare(
                     "select `id`, `timestamp` from `datetimes` where `id` = ?"));
@@ -798,18 +828,20 @@ insert_Qt_QDateTime_UtcTimezone_TimestampColumn_0200OnServer() const
     }
 
     // Restore
-    restore(lastId, true);
+    restore(connection, lastId, true);
 }
 
 void tst_MySql_QDateTime::
 insert_Qt_QDateTime_0200Timezone_TimestampColumn_0200OnServer() const
 {
-    set0200Timezone();
+    QFETCH_GLOBAL(QString, connection);
+
+    set0200Timezone(connection);
     quint64 lastId = 0;
 
     // Insert
     {
-        auto qtQuery = DB::connection(m_connection).getQtQuery();
+        auto qtQuery = createQtQuery(connection);
 
         QVERIFY(qtQuery.prepare("insert into `datetimes` (`timestamp`) values (?)"));
 
@@ -828,7 +860,7 @@ insert_Qt_QDateTime_0200Timezone_TimestampColumn_0200OnServer() const
 
     // Verify
     {
-        auto qtQuery = DB::connection(m_connection).getQtQuery();
+        auto qtQuery = createQtQuery(connection);
 
         QVERIFY(qtQuery.prepare(
                     "select `id`, `timestamp` from `datetimes` where `id` = ?"));
@@ -862,17 +894,19 @@ insert_Qt_QDateTime_0200Timezone_TimestampColumn_0200OnServer() const
     }
 
     // Restore
-    restore(lastId, true);
+    restore(connection, lastId, true);
 }
 
 void tst_MySql_QDateTime::insert_Qt_QString_TimestampColumn_0200OnServer() const
 {
-    set0200Timezone();
+    QFETCH_GLOBAL(QString, connection);
+
+    set0200Timezone(connection);
     quint64 lastId = 0;
 
     // Insert
     {
-        auto qtQuery = DB::connection(m_connection).getQtQuery();
+        auto qtQuery = createQtQuery(connection);
 
         QVERIFY(qtQuery.prepare("insert into `datetimes` (`timestamp`) values (?)"));
 
@@ -890,7 +924,7 @@ void tst_MySql_QDateTime::insert_Qt_QString_TimestampColumn_0200OnServer() const
 
     // Verify
     {
-        auto qtQuery = DB::connection(m_connection).getQtQuery();
+        auto qtQuery = createQtQuery(connection);
 
         QVERIFY(qtQuery.prepare(
                     "select `id`, `timestamp` from `datetimes` where `id` = ?"));
@@ -924,7 +958,7 @@ void tst_MySql_QDateTime::insert_Qt_QString_TimestampColumn_0200OnServer() const
     }
 
     // Restore
-    restore(lastId, true);
+    restore(connection, lastId, true);
 }
 
 /* Orm::QueryBuilder */
@@ -934,14 +968,17 @@ void tst_MySql_QDateTime::insert_Qt_QString_TimestampColumn_0200OnServer() const
 void tst_MySql_QDateTime::
 insert_QDateTime_UtcTimezone_DatetimeColumn_UtcOnServer() const
 {
+    QFETCH_GLOBAL(QString, connection);
+
     // Insert
-    quint64 lastId = createQuery()->from(*datetimes).insertGetId(
+    quint64 lastId = createQuery(connection)->from(*datetimes).insertGetId(
                          {{*datetime,
                            QDateTime({2022, 8, 28}, {13, 14, 15}, Qt::UTC)}});
 
     // Verify
     {
-        auto query = createQuery()->from(*datetimes).find(lastId, {ID, *datetime});
+        auto query = createQuery(connection)->from(*datetimes)
+                     .find(lastId, {ID, *datetime});
 
         QCOMPARE(query.size(), 1);
 
@@ -965,20 +1002,23 @@ insert_QDateTime_UtcTimezone_DatetimeColumn_UtcOnServer() const
     }
 
     // Restore
-    restore(lastId);
+    restore(connection, lastId);
 }
 
 void tst_MySql_QDateTime::
 insert_QDateTime_0200Timezone_DatetimeColumn_UtcOnServer() const
 {
+    QFETCH_GLOBAL(QString, connection);
+
     // Insert
-    quint64 lastId = createQuery()->from(*datetimes).insertGetId(
+    quint64 lastId = createQuery(connection)->from(*datetimes).insertGetId(
                          {{*datetime,
                            QDateTime({2022, 8, 28}, {13, 14, 15}, *TimeZone0200)}});
 
     // Verify
     {
-        auto query = createQuery()->from(*datetimes).find(lastId, {ID, *datetime});
+        auto query = createQuery(connection)->from(*datetimes)
+                     .find(lastId, {ID, *datetime});
 
         QCOMPARE(query.size(), 1);
 
@@ -1002,18 +1042,21 @@ insert_QDateTime_0200Timezone_DatetimeColumn_UtcOnServer() const
     }
 
     // Restore
-    restore(lastId);
+    restore(connection, lastId);
 }
 
 void tst_MySql_QDateTime::insert_QString_DatetimeColumn_UtcOnServer() const
 {
+    QFETCH_GLOBAL(QString, connection);
+
     // Insert
-    quint64 lastId = createQuery()->from(*datetimes).insertGetId(
+    quint64 lastId = createQuery(connection)->from(*datetimes).insertGetId(
                          {{*datetime, QString("2022-08-28 13:14:15")}});
 
     // Verify
     {
-        auto query = createQuery()->from(*datetimes).find(lastId, {ID, *datetime});
+        auto query = createQuery(connection)->from(*datetimes)
+                     .find(lastId, {ID, *datetime});
 
         QCOMPARE(query.size(), 1);
 
@@ -1037,20 +1080,23 @@ void tst_MySql_QDateTime::insert_QString_DatetimeColumn_UtcOnServer() const
     }
 
     // Restore
-    restore(lastId);
+    restore(connection, lastId);
 }
 
 void tst_MySql_QDateTime::
 insert_QDateTime_UtcTimezone_TimestampColumn_UtcOnServer() const
 {
+    QFETCH_GLOBAL(QString, connection);
+
     // Insert
-    quint64 lastId = createQuery()->from(*datetimes).insertGetId(
+    quint64 lastId = createQuery(connection)->from(*datetimes).insertGetId(
                          {{*timestamp,
                            QDateTime({2022, 8, 28}, {13, 14, 15}, Qt::UTC)}});
 
     // Verify
     {
-        auto query = createQuery()->from(*datetimes).find(lastId, {ID, *timestamp});
+        auto query = createQuery(connection)->from(*datetimes)
+                     .find(lastId, {ID, *timestamp});
 
         QCOMPARE(query.size(), 1);
 
@@ -1074,20 +1120,23 @@ insert_QDateTime_UtcTimezone_TimestampColumn_UtcOnServer() const
     }
 
     // Restore
-    restore(lastId);
+    restore(connection, lastId);
 }
 
 void tst_MySql_QDateTime::
 insert_QDateTime_0200Timezone_TimestampColumn_UtcOnServer() const
 {
+    QFETCH_GLOBAL(QString, connection);
+
     // Insert
-    quint64 lastId = createQuery()->from(*datetimes).insertGetId(
+    quint64 lastId = createQuery(connection)->from(*datetimes).insertGetId(
                          {{*timestamp,
                            QDateTime({2022, 8, 28}, {13, 14, 15}, *TimeZone0200)}});
 
     // Verify
     {
-        auto query = createQuery()->from(*datetimes).find(lastId, {ID, *timestamp});
+        auto query = createQuery(connection)->from(*datetimes)
+                     .find(lastId, {ID, *timestamp});
 
         QCOMPARE(query.size(), 1);
 
@@ -1111,18 +1160,21 @@ insert_QDateTime_0200Timezone_TimestampColumn_UtcOnServer() const
     }
 
     // Restore
-    restore(lastId);
+    restore(connection, lastId);
 }
 
 void tst_MySql_QDateTime::insert_QString_TimestampColumn_UtcOnServer() const
 {
+    QFETCH_GLOBAL(QString, connection);
+
     // Insert
-    quint64 lastId = createQuery()->from(*datetimes).insertGetId(
+    quint64 lastId = createQuery(connection)->from(*datetimes).insertGetId(
                          {{*timestamp, QString("2022-08-28 13:14:15")}});
 
     // Verify
     {
-        auto query = createQuery()->from(*datetimes).find(lastId, {ID, *timestamp});
+        auto query = createQuery(connection)->from(*datetimes)
+                     .find(lastId, {ID, *timestamp});
 
         QCOMPARE(query.size(), 1);
 
@@ -1146,7 +1198,7 @@ void tst_MySql_QDateTime::insert_QString_TimestampColumn_UtcOnServer() const
     }
 
     // Restore
-    restore(lastId);
+    restore(connection, lastId);
 }
 
 /* Server timezone +02:00 */
@@ -1154,16 +1206,19 @@ void tst_MySql_QDateTime::insert_QString_TimestampColumn_UtcOnServer() const
 void tst_MySql_QDateTime::
 insert_QDateTime_UtcTimezone_DatetimeColumn_0200OnServer() const
 {
-    set0200Timezone();
+    QFETCH_GLOBAL(QString, connection);
+
+    set0200Timezone(connection);
 
     // Insert
-    quint64 lastId = createQuery()->from(*datetimes).insertGetId(
+    quint64 lastId = createQuery(connection)->from(*datetimes).insertGetId(
                          {{*datetime,
                            QDateTime({2022, 8, 28}, {13, 14, 15}, Qt::UTC)}});
 
     // Verify
     {
-        auto query = createQuery()->from(*datetimes).find(lastId, {ID, *datetime});
+        auto query = createQuery(connection)->from(*datetimes)
+                     .find(lastId, {ID, *datetime});
 
         QCOMPARE(query.size(), 1);
 
@@ -1187,22 +1242,25 @@ insert_QDateTime_UtcTimezone_DatetimeColumn_0200OnServer() const
     }
 
     // Restore
-    restore(lastId, true);
+    restore(connection, lastId, true);
 }
 
 void tst_MySql_QDateTime::
 insert_QDateTime_0200Timezone_DatetimeColumn_0200OnServer() const
 {
-    set0200Timezone();
+    QFETCH_GLOBAL(QString, connection);
+
+    set0200Timezone(connection);
 
     // Insert
-    quint64 lastId = createQuery()->from(*datetimes).insertGetId(
+    quint64 lastId = createQuery(connection)->from(*datetimes).insertGetId(
                          {{*datetime,
                            QDateTime({2022, 8, 28}, {13, 14, 15}, *TimeZone0200)}});
 
     // Verify
     {
-        auto query = createQuery()->from(*datetimes).find(lastId, {ID, *datetime});
+        auto query = createQuery(connection)->from(*datetimes)
+                     .find(lastId, {ID, *datetime});
 
         QCOMPARE(query.size(), 1);
 
@@ -1226,20 +1284,23 @@ insert_QDateTime_0200Timezone_DatetimeColumn_0200OnServer() const
     }
 
     // Restore
-    restore(lastId, true);
+    restore(connection, lastId, true);
 }
 
 void tst_MySql_QDateTime::insert_QString_DatetimeColumn_0200OnServer() const
 {
-    set0200Timezone();
+    QFETCH_GLOBAL(QString, connection);
+
+    set0200Timezone(connection);
 
     // Insert
-    quint64 lastId = createQuery()->from(*datetimes).insertGetId(
+    quint64 lastId = createQuery(connection)->from(*datetimes).insertGetId(
                          {{*datetime, QString("2022-08-28 13:14:15")}});
 
     // Verify
     {
-        auto query = createQuery()->from(*datetimes).find(lastId, {ID, *datetime});
+        auto query = createQuery(connection)->from(*datetimes)
+                     .find(lastId, {ID, *datetime});
 
         QCOMPARE(query.size(), 1);
 
@@ -1263,22 +1324,25 @@ void tst_MySql_QDateTime::insert_QString_DatetimeColumn_0200OnServer() const
     }
 
     // Restore
-    restore(lastId, true);
+    restore(connection, lastId, true);
 }
 
 void tst_MySql_QDateTime::
 insert_QDateTime_UtcTimezone_TimestampColumn_0200OnServer() const
 {
-    set0200Timezone();
+    QFETCH_GLOBAL(QString, connection);
+
+    set0200Timezone(connection);
 
     // Insert
-    quint64 lastId = createQuery()->from(*datetimes).insertGetId(
+    quint64 lastId = createQuery(connection)->from(*datetimes).insertGetId(
                          {{*timestamp,
                            QDateTime({2022, 8, 28}, {13, 14, 15}, Qt::UTC)}});
 
     // Verify
     {
-        auto query = createQuery()->from(*datetimes).find(lastId, {ID, *timestamp});
+        auto query = createQuery(connection)->from(*datetimes)
+                     .find(lastId, {ID, *timestamp});
 
         QCOMPARE(query.size(), 1);
 
@@ -1302,22 +1366,25 @@ insert_QDateTime_UtcTimezone_TimestampColumn_0200OnServer() const
     }
 
     // Restore
-    restore(lastId, true);
+    restore(connection, lastId, true);
 }
 
 void tst_MySql_QDateTime::
 insert_QDateTime_0200Timezone_TimestampColumn_0200OnServer() const
 {
-    set0200Timezone();
+    QFETCH_GLOBAL(QString, connection);
+
+    set0200Timezone(connection);
 
     // Insert
-    quint64 lastId = createQuery()->from(*datetimes).insertGetId(
+    quint64 lastId = createQuery(connection)->from(*datetimes).insertGetId(
                          {{*timestamp,
                            QDateTime({2022, 8, 28}, {13, 14, 15}, *TimeZone0200)}});
 
     // Verify
     {
-        auto query = createQuery()->from(*datetimes).find(lastId, {ID, *timestamp});
+        auto query = createQuery(connection)->from(*datetimes)
+                     .find(lastId, {ID, *timestamp});
 
         QCOMPARE(query.size(), 1);
 
@@ -1341,20 +1408,23 @@ insert_QDateTime_0200Timezone_TimestampColumn_0200OnServer() const
     }
 
     // Restore
-    restore(lastId, true);
+    restore(connection, lastId, true);
 }
 
 void tst_MySql_QDateTime::insert_QString_TimestampColumn_0200OnServer() const
 {
-    set0200Timezone();
+    QFETCH_GLOBAL(QString, connection);
+
+    set0200Timezone(connection);
 
     // Insert
-    quint64 lastId = createQuery()->from(*datetimes).insertGetId(
+    quint64 lastId = createQuery(connection)->from(*datetimes).insertGetId(
                          {{*timestamp, QString("2022-08-28 13:14:15")}});
 
     // Verify
     {
-        auto query = createQuery()->from(*datetimes).find(lastId, {ID, *timestamp});
+        auto query = createQuery(connection)->from(*datetimes)
+                     .find(lastId, {ID, *timestamp});
 
         QCOMPARE(query.size(), 1);
 
@@ -1378,7 +1448,7 @@ void tst_MySql_QDateTime::insert_QString_TimestampColumn_0200OnServer() const
     }
 
     // Restore
-    restore(lastId, true);
+    restore(connection, lastId, true);
 }
 
 /* QDate */
@@ -1389,11 +1459,13 @@ void tst_MySql_QDateTime::insert_QString_TimestampColumn_0200OnServer() const
 
 void tst_MySql_QDateTime::insert_Qt_QDate_UtcTimezone_DateColumn_UtcOnServer() const
 {
+    QFETCH_GLOBAL(QString, connection);
+
     quint64 lastId = 0;
 
     // Insert
     {
-        auto qtQuery = DB::connection(m_connection).getQtQuery();
+        auto qtQuery = createQtQuery(connection);
 
         QVERIFY(qtQuery.prepare("insert into `datetimes` (`date`) values (?)"));
 
@@ -1411,7 +1483,7 @@ void tst_MySql_QDateTime::insert_Qt_QDate_UtcTimezone_DateColumn_UtcOnServer() c
 
     // Verify
     {
-        auto qtQuery = DB::connection(m_connection).getQtQuery();
+        auto qtQuery = createQtQuery(connection);
 
         QVERIFY(qtQuery.prepare(
                     "select `id`, `date` from `datetimes` where `id` = ?"));
@@ -1440,16 +1512,18 @@ void tst_MySql_QDateTime::insert_Qt_QDate_UtcTimezone_DateColumn_UtcOnServer() c
     }
 
     // Restore
-    restore(lastId);
+    restore(connection, lastId);
 }
 
 void tst_MySql_QDateTime::insert_Qt_QString_DateColumn_UtcOnServer() const
 {
+    QFETCH_GLOBAL(QString, connection);
+
     quint64 lastId = 0;
 
     // Insert
     {
-        auto qtQuery = DB::connection(m_connection).getQtQuery();
+        auto qtQuery = createQtQuery(connection);
 
         QVERIFY(qtQuery.prepare("insert into `datetimes` (`date`) values (?)"));
 
@@ -1467,7 +1541,7 @@ void tst_MySql_QDateTime::insert_Qt_QString_DateColumn_UtcOnServer() const
 
     // Verify
     {
-        auto qtQuery = DB::connection(m_connection).getQtQuery();
+        auto qtQuery = createQtQuery(connection);
 
         QVERIFY(qtQuery.prepare(
                     "select `id`, `date` from `datetimes` where `id` = ?"));
@@ -1496,20 +1570,22 @@ void tst_MySql_QDateTime::insert_Qt_QString_DateColumn_UtcOnServer() const
     }
 
     // Restore
-    restore(lastId);
+    restore(connection, lastId);
 }
 
 /* Server timezone +02:00 */
 
 void tst_MySql_QDateTime::insert_Qt_QDate_UtcTimezone_DateColumn_0200OnServer() const
 {
-    set0200Timezone();
+    QFETCH_GLOBAL(QString, connection);
+
+    set0200Timezone(connection);
 
     quint64 lastId = 0;
 
     // Insert
     {
-        auto qtQuery = DB::connection(m_connection).getQtQuery();
+        auto qtQuery = createQtQuery(connection);
 
         QVERIFY(qtQuery.prepare("insert into `datetimes` (`date`) values (?)"));
 
@@ -1527,7 +1603,7 @@ void tst_MySql_QDateTime::insert_Qt_QDate_UtcTimezone_DateColumn_0200OnServer() 
 
     // Verify
     {
-        auto qtQuery = DB::connection(m_connection).getQtQuery();
+        auto qtQuery = createQtQuery(connection);
 
         QVERIFY(qtQuery.prepare(
                     "select `id`, `date` from `datetimes` where `id` = ?"));
@@ -1556,18 +1632,20 @@ void tst_MySql_QDateTime::insert_Qt_QDate_UtcTimezone_DateColumn_0200OnServer() 
     }
 
     // Restore
-    restore(lastId, true);
+    restore(connection, lastId, true);
 }
 
 void tst_MySql_QDateTime::insert_Qt_QString_DateColumn_0200OnServer() const
 {
-    set0200Timezone();
+    QFETCH_GLOBAL(QString, connection);
+
+    set0200Timezone(connection);
 
     quint64 lastId = 0;
 
     // Insert
     {
-        auto qtQuery = DB::connection(m_connection).getQtQuery();
+        auto qtQuery = createQtQuery(connection);
 
         QVERIFY(qtQuery.prepare("insert into `datetimes` (`date`) values (?)"));
 
@@ -1585,7 +1663,7 @@ void tst_MySql_QDateTime::insert_Qt_QString_DateColumn_0200OnServer() const
 
     // Verify
     {
-        auto qtQuery = DB::connection(m_connection).getQtQuery();
+        auto qtQuery = createQtQuery(connection);
 
         QVERIFY(qtQuery.prepare(
                     "select `id`, `date` from `datetimes` where `id` = ?"));
@@ -1614,7 +1692,7 @@ void tst_MySql_QDateTime::insert_Qt_QString_DateColumn_0200OnServer() const
     }
 
     // Restore
-    restore(lastId, true);
+    restore(connection, lastId, true);
 }
 
 /* Orm::QueryBuilder */
@@ -1623,13 +1701,16 @@ void tst_MySql_QDateTime::insert_Qt_QString_DateColumn_0200OnServer() const
 
 void tst_MySql_QDateTime::insert_QDate_UtcTimezone_DateColumn_UtcOnServer() const
 {
+    QFETCH_GLOBAL(QString, connection);
+
     // Insert
-    quint64 lastId = createQuery()->from(*datetimes).insertGetId(
+    quint64 lastId = createQuery(connection)->from(*datetimes).insertGetId(
                          {{*date, QDate(2022, 8, 28)}});
 
     // Verify
     {
-        auto query = createQuery()->from(*datetimes).find(lastId, {ID, *date});
+        auto query = createQuery(connection)->from(*datetimes)
+                     .find(lastId, {ID, *date});
 
         QCOMPARE(query.size(), 1);
 
@@ -1647,18 +1728,20 @@ void tst_MySql_QDateTime::insert_QDate_UtcTimezone_DateColumn_UtcOnServer() cons
     }
 
     // Restore
-    restore(lastId);
+    restore(connection, lastId);
 }
 
 void tst_MySql_QDateTime::insert_QString_DateColumn_UtcOnServer() const
 {
+    QFETCH_GLOBAL(QString, connection);
+
     // Insert
-    quint64 lastId = createQuery()->from(*datetimes).insertGetId(
+    quint64 lastId = createQuery(connection)->from(*datetimes).insertGetId(
                          {{*date, QString("2022-08-28")}});
 
     // Verify
     {
-        auto query = createQuery()->from(*datetimes).find(lastId, {ID, *date});
+        auto query = createQuery(connection)->from(*datetimes).find(lastId, {ID, *date});
 
         QCOMPARE(query.size(), 1);
 
@@ -1676,22 +1759,24 @@ void tst_MySql_QDateTime::insert_QString_DateColumn_UtcOnServer() const
     }
 
     // Restore
-    restore(lastId);
+    restore(connection, lastId);
 }
 
 /* Server timezone +02:00 */
 
 void tst_MySql_QDateTime::insert_QDate_UtcTimezone_DateColumn_0200OnServer() const
 {
-    set0200Timezone();
+    QFETCH_GLOBAL(QString, connection);
+
+    set0200Timezone(connection);
 
     // Insert
-    quint64 lastId = createQuery()->from(*datetimes).insertGetId(
+    quint64 lastId = createQuery(connection)->from(*datetimes).insertGetId(
                          {{*date, QDate(2022, 8, 28)}});
 
     // Verify
     {
-        auto query = createQuery()->from(*datetimes).find(lastId, {ID, *date});
+        auto query = createQuery(connection)->from(*datetimes).find(lastId, {ID, *date});
 
         QCOMPARE(query.size(), 1);
 
@@ -1709,20 +1794,22 @@ void tst_MySql_QDateTime::insert_QDate_UtcTimezone_DateColumn_0200OnServer() con
     }
 
     // Restore
-    restore(lastId, true);
+    restore(connection, lastId, true);
 }
 
 void tst_MySql_QDateTime::insert_QString_DateColumn_0200OnServer() const
 {
-    set0200Timezone();
+    QFETCH_GLOBAL(QString, connection);
+
+    set0200Timezone(connection);
 
     // Insert
-    quint64 lastId = createQuery()->from(*datetimes).insertGetId(
+    quint64 lastId = createQuery(connection)->from(*datetimes).insertGetId(
                          {{*date, QString("2022-08-28")}});
 
     // Verify
     {
-        auto query = createQuery()->from(*datetimes).find(lastId, {ID, *date});
+        auto query = createQuery(connection)->from(*datetimes).find(lastId, {ID, *date});
 
         QCOMPARE(query.size(), 1);
 
@@ -1740,7 +1827,7 @@ void tst_MySql_QDateTime::insert_QString_DateColumn_0200OnServer() const
     }
 
     // Restore
-    restore(lastId, true);
+    restore(connection, lastId, true);
 }
 
 /* Null values QDateTime / QDate */
@@ -1751,11 +1838,13 @@ void tst_MySql_QDateTime::insert_QString_DateColumn_0200OnServer() const
 
 void tst_MySql_QDateTime::insert_Qt_QDateTime_Null_DatetimeColumn_UtcOnServer() const
 {
+    QFETCH_GLOBAL(QString, connection);
+
     quint64 lastId = 0;
 
     // Insert
     {
-        auto qtQuery = DB::connection(m_connection).getQtQuery();
+        auto qtQuery = createQtQuery(connection);
 
         QVERIFY(qtQuery.prepare("insert into `datetimes` (`datetime`) values (?)"));
 
@@ -1773,7 +1862,7 @@ void tst_MySql_QDateTime::insert_Qt_QDateTime_Null_DatetimeColumn_UtcOnServer() 
 
     // Verify
     {
-        auto qtQuery = DB::connection(m_connection).getQtQuery();
+        auto qtQuery = createQtQuery(connection);
 
         QVERIFY(qtQuery.prepare(
                     "select `id`, `datetime` from `datetimes` where `id` = ?"));
@@ -1807,16 +1896,18 @@ void tst_MySql_QDateTime::insert_Qt_QDateTime_Null_DatetimeColumn_UtcOnServer() 
     }
 
     // Restore
-    restore(lastId);
+    restore(connection, lastId);
 }
 
 void tst_MySql_QDateTime::insert_Qt_QDate_Null_DateColumn_UtcOnServer() const
 {
+    QFETCH_GLOBAL(QString, connection);
+
     quint64 lastId = 0;
 
     // Insert
     {
-        auto qtQuery = DB::connection(m_connection).getQtQuery();
+        auto qtQuery = createQtQuery(connection);
 
         QVERIFY(qtQuery.prepare("insert into `datetimes` (`date`) values (?)"));
 
@@ -1834,7 +1925,7 @@ void tst_MySql_QDateTime::insert_Qt_QDate_Null_DateColumn_UtcOnServer() const
 
     // Verify
     {
-        auto qtQuery = DB::connection(m_connection).getQtQuery();
+        auto qtQuery = createQtQuery(connection);
 
         QVERIFY(qtQuery.prepare(
                     "select `id`, `date` from `datetimes` where `id` = ?"));
@@ -1863,20 +1954,22 @@ void tst_MySql_QDateTime::insert_Qt_QDate_Null_DateColumn_UtcOnServer() const
     }
 
     // Restore
-    restore(lastId);
+    restore(connection, lastId);
 }
 
 /* Server timezone +02:00 */
 
 void tst_MySql_QDateTime::insert_Qt_QDateTime_Null_DatetimeColumn_0200OnServer() const
 {
-    set0200Timezone();
+    QFETCH_GLOBAL(QString, connection);
+
+    set0200Timezone(connection);
 
     quint64 lastId = 0;
 
     // Insert
     {
-        auto qtQuery = DB::connection(m_connection).getQtQuery();
+        auto qtQuery = createQtQuery(connection);
 
         QVERIFY(qtQuery.prepare("insert into `datetimes` (`datetime`) values (?)"));
 
@@ -1894,7 +1987,7 @@ void tst_MySql_QDateTime::insert_Qt_QDateTime_Null_DatetimeColumn_0200OnServer()
 
     // Verify
     {
-        auto qtQuery = DB::connection(m_connection).getQtQuery();
+        auto qtQuery = createQtQuery(connection);
 
         QVERIFY(qtQuery.prepare(
                     "select `id`, `datetime` from `datetimes` where `id` = ?"));
@@ -1928,18 +2021,20 @@ void tst_MySql_QDateTime::insert_Qt_QDateTime_Null_DatetimeColumn_0200OnServer()
     }
 
     // Restore
-    restore(lastId, true);
+    restore(connection, lastId, true);
 }
 
 void tst_MySql_QDateTime::insert_Qt_QDate_Null_DateColumn_0200OnServer() const
 {
-    set0200Timezone();
+    QFETCH_GLOBAL(QString, connection);
+
+    set0200Timezone(connection);
 
     quint64 lastId = 0;
 
     // Insert
     {
-        auto qtQuery = DB::connection(m_connection).getQtQuery();
+        auto qtQuery = createQtQuery(connection);
 
         QVERIFY(qtQuery.prepare("insert into `datetimes` (`date`) values (?)"));
 
@@ -1957,7 +2052,7 @@ void tst_MySql_QDateTime::insert_Qt_QDate_Null_DateColumn_0200OnServer() const
 
     // Verify
     {
-        auto qtQuery = DB::connection(m_connection).getQtQuery();
+        auto qtQuery = createQtQuery(connection);
 
         QVERIFY(qtQuery.prepare(
                     "select `id`, `date` from `datetimes` where `id` = ?"));
@@ -1986,7 +2081,7 @@ void tst_MySql_QDateTime::insert_Qt_QDate_Null_DateColumn_0200OnServer() const
     }
 
     // Restore
-    restore(lastId, true);
+    restore(connection, lastId, true);
 }
 
 /* Orm::QueryBuilder */
@@ -1995,13 +2090,16 @@ void tst_MySql_QDateTime::insert_Qt_QDate_Null_DateColumn_0200OnServer() const
 
 void tst_MySql_QDateTime::insert_QDateTime_Null_DatetimeColumn_UtcOnServer() const
 {
+    QFETCH_GLOBAL(QString, connection);
+
     // Insert
-    quint64 lastId = createQuery()->from(*datetimes).insertGetId(
+    quint64 lastId = createQuery(connection)->from(*datetimes).insertGetId(
                          {{*datetime, NullVariant::QDateTime()}});
 
     // Verify
     {
-        auto query = createQuery()->from(*datetimes).find(lastId, {ID, *datetime});
+        auto query = createQuery(connection)->from(*datetimes)
+                     .find(lastId, {ID, *datetime});
 
         QCOMPARE(query.size(), 1);
 
@@ -2024,18 +2122,20 @@ void tst_MySql_QDateTime::insert_QDateTime_Null_DatetimeColumn_UtcOnServer() con
     }
 
     // Restore
-    restore(lastId);
+    restore(connection, lastId);
 }
 
 void tst_MySql_QDateTime::insert_QDate_Null_DateColumn_UtcOnServer() const
 {
+    QFETCH_GLOBAL(QString, connection);
+
     // Insert
-    quint64 lastId = createQuery()->from(*datetimes).insertGetId(
+    quint64 lastId = createQuery(connection)->from(*datetimes).insertGetId(
                          {{*date, NullVariant::QDate()}});
 
     // Verify
     {
-        auto query = createQuery()->from(*datetimes).find(lastId, {ID, *date});
+        auto query = createQuery(connection)->from(*datetimes).find(lastId, {ID, *date});
 
         QCOMPARE(query.size(), 1);
 
@@ -2053,22 +2153,25 @@ void tst_MySql_QDateTime::insert_QDate_Null_DateColumn_UtcOnServer() const
     }
 
     // Restore
-    restore(lastId);
+    restore(connection, lastId);
 }
 
 /* Server timezone +02:00 */
 
 void tst_MySql_QDateTime::insert_QDateTime_Null_DatetimeColumn_0200OnServer() const
 {
-    set0200Timezone();
+    QFETCH_GLOBAL(QString, connection);
+
+    set0200Timezone(connection);
 
     // Insert
-    quint64 lastId = createQuery()->from(*datetimes).insertGetId(
+    quint64 lastId = createQuery(connection)->from(*datetimes).insertGetId(
                          {{*datetime, NullVariant::QDateTime()}});
 
     // Verify
     {
-        auto query = createQuery()->from(*datetimes).find(lastId, {ID, *datetime});
+        auto query = createQuery(connection)->from(*datetimes)
+                     .find(lastId, {ID, *datetime});
 
         QCOMPARE(query.size(), 1);
 
@@ -2091,20 +2194,22 @@ void tst_MySql_QDateTime::insert_QDateTime_Null_DatetimeColumn_0200OnServer() co
     }
 
     // Restore
-    restore(lastId, true);
+    restore(connection, lastId, true);
 }
 
 void tst_MySql_QDateTime::insert_QDate_Null_DateColumn_0200OnServer() const
 {
-    set0200Timezone();
+    QFETCH_GLOBAL(QString, connection);
+
+    set0200Timezone(connection);
 
     // Insert
-    quint64 lastId = createQuery()->from(*datetimes).insertGetId(
+    quint64 lastId = createQuery(connection)->from(*datetimes).insertGetId(
                          {{*date, NullVariant::QDate()}});
 
     // Verify
     {
-        auto query = createQuery()->from(*datetimes).find(lastId, {ID, *date});
+        auto query = createQuery(connection)->from(*datetimes).find(lastId, {ID, *date});
 
         QCOMPARE(query.size(), 1);
 
@@ -2122,7 +2227,7 @@ void tst_MySql_QDateTime::insert_QDate_Null_DateColumn_0200OnServer() const
     }
 
     // Restore
-    restore(lastId, true);
+    restore(connection, lastId, true);
 }
 
 /* QtTimeZoneType::DontConvert */
@@ -2134,20 +2239,23 @@ void tst_MySql_QDateTime::insert_QDate_Null_DateColumn_0200OnServer() const
 void tst_MySql_QDateTime::
 insert_QDateTime_0300Timezone_DatetimeColumn_UtcOnServer_DontConvert() const
 {
-    setDontConvertTimezone();
+    QFETCH_GLOBAL(QString, connection);
 
-    QCOMPARE(DB::qtTimeZone(m_connection),
+    setDontConvertTimezone(connection);
+
+    QCOMPARE(DB::qtTimeZone(connection),
              QtTimeZoneConfig {QtTimeZoneType::DontConvert});
 
     // Insert
-    quint64 lastId = createQuery()->from(*datetimes).insertGetId(
+    quint64 lastId = createQuery(connection)->from(*datetimes).insertGetId(
                          {{*datetime,
                            QDateTime({2022, 8, 28}, {13, 14, 15},
                                      QTimeZone("UTC+03:00"))}});
 
     // Verify
     {
-        auto query = createQuery()->from(*datetimes).find(lastId, {ID, *datetime});
+        auto query = createQuery(connection)->from(*datetimes)
+                     .find(lastId, {ID, *datetime});
 
         QCOMPARE(query.size(), 1);
 
@@ -2169,7 +2277,7 @@ insert_QDateTime_0300Timezone_DatetimeColumn_UtcOnServer_DontConvert() const
     }
 
     // Restore
-    restore(lastId, true);
+    restore(connection, lastId, true);
 }
 // NOLINTEND(readability-convert-member-functions-to-static)
 
@@ -2178,54 +2286,60 @@ insert_QDateTime_0300Timezone_DatetimeColumn_UtcOnServer_DontConvert() const
 /* Common */
 
 std::shared_ptr<QueryBuilder>
-tst_MySql_QDateTime::createQuery() const
+tst_MySql_QDateTime::createQuery(const QString &connection)
 {
-    return DB::connection(m_connection).query();
+    return DB::query(connection);
+}
+
+QSqlQuery tst_MySql_QDateTime::createQtQuery(const QString &connection)
+{
+    return DB::qtQuery(connection);
 }
 
 /* QDateTime with/without timezone */
 
-void tst_MySql_QDateTime::setUtcTimezone() const
+void tst_MySql_QDateTime::setUtcTimezone(const QString &connection)
 {
-    setTimezone(utcTimezoneString(),
+    setTimezone(connection, utcTimezoneString(connection),
                 {QtTimeZoneType::QtTimeSpec, QVariant::fromValue(Qt::UTC)});
 }
 
-void tst_MySql_QDateTime::set0200Timezone() const
+void tst_MySql_QDateTime::set0200Timezone(const QString &connection)
 {
-    setTimezone(QStringLiteral("+02:00"), {QtTimeZoneType::QTimeZone,
-                                           QVariant::fromValue(*TimeZone0200)});
+    setTimezone(connection, QStringLiteral("+02:00"),
+                {QtTimeZoneType::QTimeZone, QVariant::fromValue(*TimeZone0200)});
 }
 
-void tst_MySql_QDateTime::setDontConvertTimezone() const
+void tst_MySql_QDateTime::setDontConvertTimezone(const QString &connection)
 {
-    setTimezone(utcTimezoneString(), {QtTimeZoneType::DontConvert});
+    setTimezone(connection, utcTimezoneString(connection), {QtTimeZoneType::DontConvert});
 }
 
-void tst_MySql_QDateTime::setTimezone(const QString &timeZone,
-                                      Orm::QtTimeZoneConfig &&qtTimeZone) const
+void tst_MySql_QDateTime::setTimezone(const QString &connection, const QString &timeZone,
+                                      Orm::QtTimeZoneConfig &&qtTimeZone)
 {
     const auto qtQuery = DB::unprepared(
                              QStringLiteral("set time_zone=\"%1\";").arg(timeZone),
-                             m_connection);
+                             connection);
 
     QVERIFY(!qtQuery.isValid() && qtQuery.isActive() && !qtQuery.isSelect());
 
-    DB::connection(m_connection).setQtTimeZone(std::move(qtTimeZone));
+    DB::connection(connection).setQtTimeZone(std::move(qtTimeZone));
 }
 
-const QString &tst_MySql_QDateTime::utcTimezoneString() const
+const QString &tst_MySql_QDateTime::utcTimezoneString(const QString &connection)
 {
-    Q_ASSERT(DB::driverName(m_connection) == QMYSQL);
+    Q_ASSERT(DB::driverName(connection) == QMYSQL);
 
-    return mysqlTimezoneTablesNotPopulated() ? TZ00 : UTC;
+    return mysqlTimezoneTablesNotPopulated(connection) ? TZ00 : UTC;
 }
 
-bool tst_MySql_QDateTime::mysqlTimezoneTablesNotPopulated() const
+bool
+tst_MySql_QDateTime::mysqlTimezoneTablesNotPopulated(const QString &connection)
 {
     auto qtQuery = DB::select(
                        QStringLiteral("select count(*) from `mysql`.`time_zone_name`"),
-                       {}, m_connection);
+                       {}, connection);
 
     if (!qtQuery.first())
         return true;
@@ -2236,10 +2350,11 @@ bool tst_MySql_QDateTime::mysqlTimezoneTablesNotPopulated() const
     return tzTableRows.value<quint64>() == 0;
 }
 
-void tst_MySql_QDateTime::restore(const quint64 lastId,
-                                  const bool restoreTimezone) const
+void tst_MySql_QDateTime::restore(const QString &connection, const quint64 lastId,
+                                  const bool restoreTimezone)
 {
-    const auto [affected, query] = createQuery()->from(*datetimes).remove(lastId);
+    const auto [affected, query] = createQuery(connection)->from(*datetimes)
+                                   .remove(lastId);
 
     QVERIFY(!query.lastError().isValid());
     QVERIFY(!query.isValid() && query.isActive() && !query.isSelect());
@@ -2249,7 +2364,7 @@ void tst_MySql_QDateTime::restore(const quint64 lastId,
         return;
 
     // Restore also the MySQL timezone session variable to auto tests default UTC value
-    setUtcTimezone();
+    setUtcTimezone(connection);
 }
 
 QTEST_MAIN(tst_MySql_QDateTime)

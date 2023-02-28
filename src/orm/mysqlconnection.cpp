@@ -128,11 +128,20 @@ bool MySqlConnection::useUpsertAlias()
     /* The MySQL >=8.0.19 supports aliases in the VALUES and SET clauses
        of INSERT INTO ... ON DUPLICATE KEY UPDATE statement for the row to be
        inserted and its columns. It also generates warning if old style used.
-       So set it to true to avoid this warning. */
+       So set it to true to avoid this warning.
+
+       Currently, the MariaDB 11.0.1 doesn't support aliases in the VALUES and
+       SET clauses, so the upsert alias is always disabled (false). */
 
     // Cache the value
-    m_useUpsertAlias = QVersionNumber::fromString(*m_version) >=
-                       QVersionNumber(8, 0, 19);
+    // MariaDB doesn't support the upsert alias
+    if (isMaria())
+        m_useUpsertAlias = false;
+
+    // MySQL >=8.0.19 does support the upsert alias, so force to use it
+    else
+        m_useUpsertAlias = QVersionNumber::fromString(*m_version) >=
+                           QVersionNumber(8, 0, 19);
 
     return *m_useUpsertAlias;
 }

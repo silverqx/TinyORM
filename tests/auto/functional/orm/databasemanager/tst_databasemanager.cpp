@@ -69,6 +69,7 @@ private Q_SLOTS:
     void removeConnection_NotConnected() const;
 
     void default_MySQL_ConfigurationValues() const;
+    void default_MariaDB_ConfigurationValues() const;
     void default_PostgreSQL_ConfigurationValues() const;
     void default_SQLite_ConfigurationValues() const;
 
@@ -212,6 +213,66 @@ void tst_DatabaseManager::default_MySQL_ConfigurationValues() const
     if (!connectionName)
         QSKIP(TestUtils::AutoTestSkipped
               .arg(TypeUtils::classPureBasename(*this), Databases::MYSQL)
+              .toUtf8().constData(), );
+
+    // Original configuration
+    // Connection isn't created and configuration options are not parsed yet
+    const auto &originalConfig = m_dm->originalConfig(*connectionName);
+    QCOMPARE(originalConfig,
+             QVariantHash({
+                 {driver_, "qmysql"},
+             }));
+
+    /* Force the creation of a connection and parse the connection configuration options.
+       The qt_timezone option is only parsed in the connection configuration,
+       the original configuration is untouched. */
+    m_dm->connection(*connectionName);
+    QCOMPARE(originalConfig,
+             QVariantHash({
+                 {driver_,        QMYSQL},
+                 {NAME,           *connectionName},
+                 {database_,      EMPTY},
+                 {prefix_,        EMPTY},
+                 {prefix_indexes, false},
+                 {options_,       QVariantHash()},
+                 {Version,        {}},
+             }));
+
+    // Connection configuration
+    QCOMPARE(m_dm->getConfig(*connectionName),
+             QVariantHash({
+                 {driver_,        QMYSQL},
+                 {NAME,           *connectionName},
+                 {database_,      EMPTY},
+                 {prefix_,        EMPTY},
+                 {prefix_indexes, false},
+                 {options_,       QVariantHash()},
+                 {Version,        {}},
+                 {qt_timezone,    QVariant::fromValue(
+                                      QtTimeZoneConfig {QtTimeZoneType::DontConvert, {}}
+                                  )},
+             }));
+
+    // Restore
+    QVERIFY(Databases::removeConnection(*connectionName));
+}
+
+void tst_DatabaseManager::default_MariaDB_ConfigurationValues() const
+{
+    /* The MariaDB connection should be absolutelly the same and should behave
+       the same as the MySQL connection. */
+
+    // Add a new database connection
+    const auto connectionName = Databases::createConnectionTemp(
+                                    Databases::MARIADB,
+                                    {ClassName, QString::fromUtf8(__func__)}, // NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
+    {
+        {driver_, "qmysql"},
+    });
+
+    if (!connectionName)
+        QSKIP(TestUtils::AutoTestSkipped
+              .arg(TypeUtils::classPureBasename(*this), Databases::MARIADB)
               .toUtf8().constData(), );
 
     // Original configuration

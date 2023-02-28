@@ -42,6 +42,7 @@ private Q_SLOTS:
     void pingDatabase() const;
 
     void isNotMaria_OnMySqlConnection() const;
+    void isMaria_OnMariaConnection() const;
 
     void transaction_Commit() const;
     void transaction_RollBack() const;
@@ -112,20 +113,30 @@ void tst_DatabaseConnection::isNotMaria_OnMySqlConnection() const
 {
     QFETCH_GLOBAL(QString, connection);
 
-    auto &connection_ = DB::connection(connection);
+    if (connection != Databases::MYSQL)
+        QSKIP(QStringLiteral(
+                  "The '%1' connection is not the connection to the MySQL database.")
+              .arg(connection).toUtf8().constData(), );
 
-    if (const auto driverName = connection_.driverName();
-        driverName != QMYSQL
-    )
-        QSKIP(QStringLiteral("The '%1' database driver doesn't implement isMaria() "
-                             "method.")
-              .arg(driverName).toUtf8().constData(), );
+    const auto isMaria = dynamic_cast<MySqlConnection &>(DB::connection(connection))
+                         .isMaria();
 
-    const auto expected = !(connection == Databases::MYSQL);
+    QCOMPARE(isMaria, false);
+}
 
-    const auto isMaria = dynamic_cast<MySqlConnection &>(connection_).isMaria();
+void tst_DatabaseConnection::isMaria_OnMariaConnection() const
+{
+    QFETCH_GLOBAL(QString, connection);
 
-    QCOMPARE(isMaria, expected);
+    if (connection != Databases::MARIADB)
+        QSKIP(QStringLiteral(
+                  "The '%1' connection is not the connection to the MariaDB database.")
+              .arg(connection).toUtf8().constData(), );
+
+    const auto isMaria = dynamic_cast<MySqlConnection &>(DB::connection(connection))
+                         .isMaria();
+
+    QCOMPARE(isMaria, true);
 }
 
 void tst_DatabaseConnection::transaction_Commit() const

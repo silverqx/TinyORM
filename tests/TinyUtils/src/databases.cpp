@@ -19,6 +19,7 @@ using Orm::Constants::UTC;
 using Orm::Constants::UTF8;
 using Orm::Constants::UTF8MB4;
 using Orm::Constants::UTF8MB40900aici;
+using Orm::Constants::UTF8MB4Unicode520ci;
 using Orm::Constants::Version;
 using Orm::Constants::application_name;
 using Orm::Constants::database_;
@@ -123,7 +124,9 @@ Databases::createConnectionTemp(
 
     const auto driver = configuration[driver_].value<QString>().toUpper();
 
-    if (!isDriverAvailable(driver) || allEnvVariablesEmpty(envVariables(driver)))
+    if (!isDriverAvailable(driver) ||
+        allEnvVariablesEmpty(envVariables(driver, connection))
+    )
         return std::nullopt;
 
     auto connectionName = connectionNameForTemp(connection, connectionParts);
@@ -239,6 +242,11 @@ Databases::createConfigurationsHash(const QStringList &connections)
         if (auto [config, envDefined] = mysqlConfiguration(); envDefined)
             m_configurations[MYSQL] = std::move(config);
 
+    // This connection must be to the MariaDB database server (not MySQL)
+    if (shouldCreateConnection(MARIADB, QMYSQL))
+        if (auto [config, envDefined] = mariaConfiguration(); envDefined)
+            m_configurations[MARIADB] = std::move(config);
+
     if (shouldCreateConnection(SQLITE, QSQLITE))
         if (auto [config, envDefined] = sqliteConfiguration(); envDefined)
             m_configurations[SQLITE] = std::move(config);
@@ -275,6 +283,47 @@ Databases::mysqlConfiguration()
         {engine_,         InnoDB},
         {Version,         {}}, // Autodetect
         {options_,        ConfigUtils::mysqlSslOptions()},
+        // FUTURE remove, when unit tested silverqx
+        // Example
+//        {options_, "MYSQL_OPT_CONNECT_TIMEOUT = 5 ; MYSQL_OPT_RECONNECT=1"},
+//        {options_, QVariantHash {{"MYSQL_OPT_RECONNECT", 1},
+//                                 {"MYSQL_OPT_READ_TIMEOUT", 10}}},
+    };
+
+    // All Environment variables are empty
+    if (allEnvVariablesEmpty(mysqlEnvVariables()))
+        return {std::cref(config), false};
+
+    // Environment variables are defined
+    return {std::cref(config), true};
+}
+
+std::pair<std::reference_wrapper<const QVariantHash>, bool>
+Databases::mariaConfiguration()
+{
+    /* This connection must be to the MySQL database server (not MariaDB), because
+       some auto tests depend on it and also the TinyOrmPlayground project. */
+    static const QVariantHash config {
+        {driver_,         QMYSQL},
+        {host_,           qEnvironmentVariable("DB_MARIA_HOST",      H127001)},
+        {port_,           qEnvironmentVariable("DB_MARIA_PORT",      P3306)},
+        {database_,       qEnvironmentVariable("DB_MARIA_DATABASE",  EMPTY)},
+        {username_,       qEnvironmentVariable("DB_MARIA_USERNAME",  ROOT)},
+        {password_,       qEnvironmentVariable("DB_MARIA_PASSWORD",  EMPTY)},
+        {charset_,        qEnvironmentVariable("DB_MARIA_CHARSET",   UTF8MB4)},
+        {collation_,      qEnvironmentVariable("DB_MARIA_COLLATION",
+                                               UTF8MB4Unicode520ci)},
+        // Very important for tests
+        {timezone_,       TZ00},
+        // Specifies what time zone all QDateTime-s will have
+        {qt_timezone,     QVariant::fromValue(Qt::UTC)},
+        {prefix_,         EMPTY},
+        {prefix_indexes,  false},
+        {strict_,         true},
+        {isolation_level, QStringLiteral("REPEATABLE READ")}, // MySQL default is REPEATABLE READ for InnoDB
+        {engine_,         InnoDB},
+        {Version,         {}}, // Autodetect
+//        {options_,        ConfigUtils::mysqlSslOptions()},
         // FUTURE remove, when unit tested silverqx
         // Example
 //        {options_, "MYSQL_OPT_CONNECT_TIMEOUT = 5 ; MYSQL_OPT_RECONNECT=1"},
@@ -351,10 +400,18 @@ Databases::postgresConfiguration()
     return {std::cref(config), true};
 }
 
-const std::vector<const char *> &Databases::envVariables(const QString &driver)
+const std::vector<const char *> &
+Databases::envVariables(const QString &driver, const QString &connection)
 {
-    if (driver == QMYSQL)
-        return mysqlEnvVariables();
+    if (driver == QMYSQL) {
+        if (connection == MYSQL)
+            return mysqlEnvVariables();
+
+        if (connection == MARIADB)
+            return mariaEnvVariables();
+
+        Q_UNREACHABLE();
+    }
 
     if (driver == QPSQL)
         return postgresEnvVariables();
@@ -371,6 +428,17 @@ const std::vector<const char *> &Databases::mysqlEnvVariables()
     static const std::vector<const char *> cached {
         "DB_MYSQL_HOST", "DB_MYSQL_PORT", "DB_MYSQL_DATABASE", "DB_MYSQL_USERNAME",
         "DB_MYSQL_PASSWORD", "DB_MYSQL_CHARSET", "DB_MYSQL_COLLATION"
+    };
+
+    return cached;
+}
+
+const std::vector<const char *> &Databases::mariaEnvVariables()
+{
+    // Environment variables to check if all are empty (no need to check SSL variables)
+    static const std::vector<const char *> cached {
+        "DB_MARIA_HOST", "DB_MARIA_PORT", "DB_MARIA_DATABASE", "DB_MARIA_USERNAME",
+        "DB_MARIA_PASSWORD", "DB_MARIA_CHARSET", "DB_MARIA_COLLATION"
     };
 
     return cached;

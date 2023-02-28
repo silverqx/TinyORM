@@ -157,6 +157,7 @@ void tst_Migrate::initTestCase()
        in the SQLite v3.35.0. */
     m_connections = Databases::createConnections(
                         {Databases::MYSQL,
+                         Databases::MARIADB,
                          Databases::POSTGRESQL,
 #if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
                          Databases::SQLITE

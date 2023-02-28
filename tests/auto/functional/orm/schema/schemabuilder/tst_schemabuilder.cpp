@@ -91,6 +91,8 @@ private:
     static std::optional<QString> alternativeConnection(const QString &connection);
     /*! Create a new alternative connection on the DatabaseExample database (MySQL). */
     static std::optional<QString> alternativeConnection_MySql();
+    /*! Create a new alternative connection on the DatabaseExample database (MariaDB). */
+    static std::optional<QString> alternativeConnection_Maria();
     /*! Create a new alternative connection on the DatabaseExample database
         (PostgreSQL). */
     static std::optional<QString> alternativeConnection_Postgres();
@@ -382,6 +384,7 @@ bool tst_SchemaBuilder::hasDatabase(const QString &database, const QString &conn
 {
     const auto driver = DB::driverName(connection);
 
+    // Is the same for the MySQL and MariaDB
     if (driver == QMYSQL)
         return hasDatabase_MySql(database, connection);
 
@@ -432,10 +435,12 @@ bool tst_SchemaBuilder::hasDatabase_Sqlite(const fspath &database)
     return fs::exists(database);
 }
 
-QVariant tst_SchemaBuilder::getTableComment(const QString &table, const QString &connection)
+QVariant tst_SchemaBuilder::getTableComment(const QString &table,
+                                            const QString &connection)
 {
     const auto driver = DB::driverName(connection);
 
+    // Is the same for the MySQL and MariaDB
     if (driver == QMYSQL)
         return getTableComment_MySql(table, connection);
 
@@ -480,8 +485,15 @@ tst_SchemaBuilder::alternativeConnection(const QString &connection)
 {
     const auto driver = DB::driverName(connection);
 
-    if (driver == QMYSQL)
-        return alternativeConnection_MySql();
+    if (driver == QMYSQL) {
+        if (connection == Databases::MYSQL)
+            return alternativeConnection_MySql();
+
+        if (connection == Databases::MARIADB)
+            return alternativeConnection_Maria();
+
+        Q_UNREACHABLE();
+    }
 
     if (driver == QPSQL)
         return alternativeConnection_Postgres();
@@ -498,6 +510,17 @@ std::optional<QString> tst_SchemaBuilder::alternativeConnection_MySql()
     auto connectionName =
             Databases::createConnectionTempFrom(
                 Databases::MYSQL, {ClassName, QString::fromUtf8(__func__)}, // NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
+                {{database_, DatabaseName}});
+
+    return connectionName;
+}
+
+std::optional<QString> tst_SchemaBuilder::alternativeConnection_Maria()
+{
+    // Add a new database connection
+    auto connectionName =
+            Databases::createConnectionTempFrom(
+                Databases::MARIADB, {ClassName, QString::fromUtf8(__func__)}, // NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
                 {{database_, DatabaseName}});
 
     return connectionName;

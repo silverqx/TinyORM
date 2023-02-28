@@ -135,6 +135,8 @@ private:
 // NOLINTBEGIN(readability-convert-member-functions-to-static)
 void tst_MySql_SchemaBuilder::initTestCase()
 {
+    /* No need to test with the MariaDB (MARIADB connection) because it will produce
+       the same output in 99% cases. */
     m_connection = Databases::createConnection(Databases::MYSQL);
 
     if (m_connection.isEmpty())

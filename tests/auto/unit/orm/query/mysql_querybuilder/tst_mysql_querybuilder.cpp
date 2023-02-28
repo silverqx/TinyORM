@@ -226,8 +226,10 @@ private Q_SLOTS:
     void upsert_UseUpsertAlias() const;
     void upsert_UseUpsertAlias_Disabled() const;
     void upsert_UseUpsertAlias_DefaultValue() const;
+    void upsert_UseUpsertAlias_Maria() const;
     void upsert_WithoutUpdate_UpdateAll_UseUpsertAlias() const;
     void upsert_WithoutUpdate_UpdateAll_UseUpsertAlias_Disabled() const;
+    void upsert_WithoutUpdate_UpdateAll_UseUpsertAlias_Maria() const;
 
     void remove() const;
     void remove_WithExpression() const;
@@ -252,6 +254,9 @@ private:
 // NOLINTBEGIN(readability-convert-member-functions-to-static)
 void tst_MySql_QueryBuilder::initTestCase()
 {
+    /* No need to test with the MariaDB (MARIADB connection) because it will produce
+       the same output in 99% cases, one exception is eg. the upsert() or
+       DatabaseConnection::version(). */
     m_connection = Databases::createConnection(Databases::MYSQL);
 
     if (m_connection.isEmpty())
@@ -3320,9 +3325,11 @@ void tst_MySql_QueryBuilder::update_WithExpression() const
 
 void tst_MySql_QueryBuilder::upsert_UseUpsertAlias() const
 {
+    const auto configVersion = QStringLiteral("8.0.19");
+
     // Need to be set before pretending
     auto &mysqlConnection = dynamic_cast<MySqlConnection &>(DB::connection(m_connection));
-    mysqlConnection.setConfigVersion("8.0.19");
+    mysqlConnection.setConfigVersion(configVersion);
 
     auto log = mysqlConnection.pretend([](auto &connection)
     {
@@ -3336,6 +3343,10 @@ void tst_MySql_QueryBuilder::upsert_UseUpsertAlias() const
     // MySQL >=8.0.19 uses upsert alias
     const auto useUpsertAlias = mysqlConnection.useUpsertAlias();
     QVERIFY(useUpsertAlias);
+
+    // Also verify other connection data members in the game
+    QCOMPARE(mysqlConnection.isMaria(), false);
+    QCOMPARE(mysqlConnection.version(), std::make_optional(configVersion));
 
     QCOMPARE(log.size(), 1);
 
@@ -3352,9 +3363,11 @@ void tst_MySql_QueryBuilder::upsert_UseUpsertAlias() const
 
 void tst_MySql_QueryBuilder::upsert_UseUpsertAlias_Disabled() const
 {
+    const auto configVersion = QStringLiteral("8.0.18");
+
     // Need to be set before pretending
     auto &mysqlConnection = dynamic_cast<MySqlConnection &>(DB::connection(m_connection));
-    mysqlConnection.setConfigVersion("8.0.18");
+    mysqlConnection.setConfigVersion(configVersion);
 
     auto log = mysqlConnection.pretend([](auto &connection)
     {
@@ -3368,6 +3381,10 @@ void tst_MySql_QueryBuilder::upsert_UseUpsertAlias_Disabled() const
     // MySQL <8.0.19 doesn't use upsert alias
     const auto useUpsertAlias = mysqlConnection.useUpsertAlias();
     QVERIFY(!useUpsertAlias);
+
+    // Also verify other connection data members in the game
+    QCOMPARE(mysqlConnection.isMaria(), false);
+    QCOMPARE(mysqlConnection.version(), std::make_optional(configVersion));
 
     QCOMPARE(log.size(), 1);
 
@@ -3398,7 +3415,48 @@ void tst_MySql_QueryBuilder::upsert_UseUpsertAlias_DefaultValue() const
            because no version was provided through the database configuration. */
         const auto useUpsertAlias = mysqlConnection.useUpsertAlias();
         QVERIFY(!useUpsertAlias);
+
+        // Also verify other connection data members in the game
+        QCOMPARE(mysqlConnection.isMaria(), false);
+        QCOMPARE(mysqlConnection.version(), std::nullopt);
     });
+
+    QCOMPARE(log.size(), 1);
+
+    const auto &log0 = log.at(0);
+    QCOMPARE(log0.query,
+             "insert into `tag_properties` (`color`, `position`, `tag_id`) "
+             "values (?, ?, ?), (?, ?, ?) "
+             "on duplicate key update `color` = values(`color`)");
+    QCOMPARE(log0.boundValues,
+             QVector<QVariant>({QVariant(QString("pink")),   QVariant(0), QVariant(1),
+                                QVariant(QString("purple")), QVariant(4), QVariant(1)}));
+}
+
+void tst_MySql_QueryBuilder::upsert_UseUpsertAlias_Maria() const
+{
+    const auto configVersion = QStringLiteral("11.0.1-MariaDB");
+
+    // Need to be set before pretending
+    auto &mysqlConnection = dynamic_cast<MySqlConnection &>(DB::connection(m_connection));
+    mysqlConnection.setConfigVersion(configVersion);
+
+    auto log = mysqlConnection.pretend([](auto &connection)
+    {
+        connection.query()->from("tag_properties")
+                .upsert({{{"tag_id", 1}, {"color", "pink"},   {"position", 0}},
+                         {{"tag_id", 1}, {"color", "purple"}, {"position", 4}}},
+                        {"position"},
+                        {"color"});
+    });
+
+    // MariaDB doesn't use/support the upsert alias
+    const auto useUpsertAlias = mysqlConnection.useUpsertAlias();
+    QVERIFY(!useUpsertAlias);
+
+    // Also verify other connection data members in the game
+    QCOMPARE(mysqlConnection.isMaria(), true);
+    QCOMPARE(mysqlConnection.version(), std::make_optional(configVersion));
 
     QCOMPARE(log.size(), 1);
 
@@ -3414,9 +3472,11 @@ void tst_MySql_QueryBuilder::upsert_UseUpsertAlias_DefaultValue() const
 
 void tst_MySql_QueryBuilder::upsert_WithoutUpdate_UpdateAll_UseUpsertAlias() const
 {
+    const auto configVersion = QStringLiteral("8.0.19");
+
     // Need to be set before pretending
     auto &mysqlConnection = dynamic_cast<MySqlConnection &>(DB::connection(m_connection));
-    mysqlConnection.setConfigVersion("8.0.19");
+    mysqlConnection.setConfigVersion(configVersion);
 
     auto log = mysqlConnection.pretend([](auto &connection)
     {
@@ -3429,6 +3489,10 @@ void tst_MySql_QueryBuilder::upsert_WithoutUpdate_UpdateAll_UseUpsertAlias() con
     // MySQL >=8.0.19 uses upsert alias
     const auto useUpsertAlias = mysqlConnection.useUpsertAlias();
     QVERIFY(useUpsertAlias);
+
+    // Also verify other connection data members in the game
+    QCOMPARE(mysqlConnection.isMaria(), false);
+    QCOMPARE(mysqlConnection.version(), configVersion);
 
     QVERIFY(!log.isEmpty());
     const auto &firstLog = log.first();
@@ -3449,9 +3513,11 @@ void tst_MySql_QueryBuilder::upsert_WithoutUpdate_UpdateAll_UseUpsertAlias() con
 void tst_MySql_QueryBuilder::
      upsert_WithoutUpdate_UpdateAll_UseUpsertAlias_Disabled() const
 {
+    const auto configVersion = QStringLiteral("8.0.18");
+
     // Need to be set before pretending
     auto &mysqlConnection = dynamic_cast<MySqlConnection &>(DB::connection(m_connection));
-    mysqlConnection.setConfigVersion("8.0.18");
+    mysqlConnection.setConfigVersion(configVersion);
 
     auto log = mysqlConnection.pretend([](auto &connection)
     {
@@ -3464,6 +3530,49 @@ void tst_MySql_QueryBuilder::
     // MySQL <8.0.19 doesn't use upsert alias
     const auto useUpsertAlias = mysqlConnection.useUpsertAlias();
     QVERIFY(!useUpsertAlias);
+
+    // Also verify other connection data members in the game
+    QCOMPARE(mysqlConnection.isMaria(), false);
+    QCOMPARE(mysqlConnection.version(), configVersion);
+
+    QVERIFY(!log.isEmpty());
+    const auto &firstLog = log.first();
+
+    QCOMPARE(log.size(), 1);
+    QCOMPARE(firstLog.query,
+             "insert into `tag_properties` (`color`, `position`, `tag_id`) "
+             "values (?, ?, ?), (?, ?, ?) "
+             "on duplicate key update `color` = values(`color`), "
+             "`position` = values(`position`), "
+             "`tag_id` = values(`tag_id`)");
+    QCOMPARE(firstLog.boundValues,
+             QVector<QVariant>({QVariant(QString("pink")),   QVariant(0), QVariant(2),
+                                QVariant(QString("purple")), QVariant(4), QVariant(1)}));
+}
+
+void tst_MySql_QueryBuilder::upsert_WithoutUpdate_UpdateAll_UseUpsertAlias_Maria() const
+{
+    const auto configVersion = QStringLiteral("11.0.1-MariaDB");
+
+    // Need to be set before pretending
+    auto &mysqlConnection = dynamic_cast<MySqlConnection &>(DB::connection(m_connection));
+    mysqlConnection.setConfigVersion(configVersion);
+
+    auto log = mysqlConnection.pretend([](auto &connection)
+    {
+        connection.query()->from("tag_properties")
+                .upsert({{{"tag_id", 2}, {"color", "pink"},   {"position", 0}},
+                         {{"tag_id", 1}, {"color", "purple"}, {"position", 4}}},
+                        {"position"});
+    });
+
+    // MariaDB doesn't use/support the upsert alias
+    const auto useUpsertAlias = mysqlConnection.useUpsertAlias();
+    QVERIFY(!useUpsertAlias);
+
+    // Also verify other connection data members in the game
+    QCOMPARE(mysqlConnection.isMaria(), true);
+    QCOMPARE(mysqlConnection.version(), configVersion);
 
     QVERIFY(!log.isEmpty());
     const auto &firstLog = log.first();

@@ -50,6 +50,8 @@ namespace TestUtils
 
         /*! MySQL connection name. */
         inline static const QString MYSQL      = "tinyorm_mysql_tests";
+        /*! MariaDB connection name. */
+        inline static const QString MARIADB    = "tinyorm_maria_tests";
         /*! SQLite connection name. */
         inline static const QString SQLITE     = "tinyorm_sqlite_tests";
         /*! PostgreSQL connection name. */
@@ -109,6 +111,9 @@ namespace TestUtils
         /*! Create MySQL configuration hash. */
         static std::pair<std::reference_wrapper<const QVariantHash>, bool>
         mysqlConfiguration();
+        /*! Create MariaDB configuration hash. */
+        static std::pair<std::reference_wrapper<const QVariantHash>, bool>
+        mariaConfiguration();
         /*! Create SQLite configuration hash. */
         static std::pair<std::reference_wrapper<const QVariantHash>, bool>
         sqliteConfiguration();
@@ -117,10 +122,13 @@ namespace TestUtils
         postgresConfiguration();
 
         /*! Get all env. variable names for the given driver. */
-        static const std::vector<const char *> &envVariables(const QString &driver);
+        static const std::vector<const char *> &
+        envVariables(const QString &driver, const QString &connection);
 
         /*! Get all MySQL environment variable names. */
         static const std::vector<const char *> &mysqlEnvVariables();
+        /*! Get all MariaDB environment variable names. */
+        static const std::vector<const char *> &mariaEnvVariables();
         /*! Get all SQLite environment variable names. */
         static const std::vector<const char *> &sqliteEnvVariables();
         /*! Get all PostgreSQL environment variable names. */
