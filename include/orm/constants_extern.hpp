@@ -136,9 +136,9 @@ namespace Orm::Constants
     SHAREDLIB_EXPORT extern const QString MyISAM;
     SHAREDLIB_EXPORT extern const QString postgres_;
 
-    SHAREDLIB_EXPORT extern const QString UTF8MB40900aici;
     SHAREDLIB_EXPORT extern const QString UTF8Generalci;
     SHAREDLIB_EXPORT extern const QString UTF8Unicodeci;
+    SHAREDLIB_EXPORT extern const QString UTF8MB40900aici;
     SHAREDLIB_EXPORT extern const QString UcsBasic;
     SHAREDLIB_EXPORT extern const QString en_US;
     SHAREDLIB_EXPORT extern const QString POSIX_;
