@@ -138,7 +138,9 @@ namespace Orm::Constants
 
     SHAREDLIB_EXPORT extern const QString UTF8Generalci;
     SHAREDLIB_EXPORT extern const QString UTF8Unicodeci;
+    SHAREDLIB_EXPORT extern const QString UTF8MB4Unicode520ci;
     SHAREDLIB_EXPORT extern const QString UTF8MB40900aici;
+    SHAREDLIB_EXPORT extern const QString Uca1400Nopadaici;
     SHAREDLIB_EXPORT extern const QString UcsBasic;
     SHAREDLIB_EXPORT extern const QString POSIX_;
     SHAREDLIB_EXPORT extern const QString NotImplemented;

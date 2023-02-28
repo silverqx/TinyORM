@@ -143,12 +143,14 @@ namespace Orm::Constants
     inline const QString MyISAM    = QStringLiteral("MyISAM");
     inline const QString postgres_ = QStringLiteral("postgres");
 
-    inline const QString UTF8Generalci   = QStringLiteral("utf8_general_ci");
-    inline const QString UTF8Unicodeci   = QStringLiteral("utf8_unicode_ci");
-    inline const QString UTF8MB40900aici = QStringLiteral("utf8mb4_0900_ai_ci");
-    inline const QString UcsBasic        = QStringLiteral("ucs_basic");
-    inline const QString POSIX_          = QStringLiteral("POSIX");
-    inline const QString NotImplemented  = QStringLiteral("Not implemented :/.");
+    inline const QString UTF8Generalci       = QStringLiteral("utf8_general_ci");
+    inline const QString UTF8Unicodeci       = QStringLiteral("utf8_unicode_ci");
+    inline const QString UTF8MB4Unicode520ci = QStringLiteral("utf8mb4_unicode_520_ci");
+    inline const QString UTF8MB40900aici     = QStringLiteral("utf8mb4_0900_ai_ci");
+    inline const QString Uca1400Nopadaici    = QStringLiteral("uca1400_nopad_ai_ci");
+    inline const QString UcsBasic            = QStringLiteral("ucs_basic");
+    inline const QString POSIX_              = QStringLiteral("POSIX");
+    inline const QString NotImplemented      = QStringLiteral("Not implemented :/.");
 
     // Comparison/logical/search operators
     inline const QString EQ    = QStringLiteral("=");
