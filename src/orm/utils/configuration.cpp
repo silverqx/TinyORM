@@ -151,6 +151,50 @@ QVariantHash &Configuration::minimizeMySqlTimeouts(QVariantHash &options)
     return options;
 }
 
+/* MariaDB section */
+
+namespace
+{
+    /*! MariaDB SSL options hash. */
+    QVariantHash getMariaSslOptions()
+    {
+        QVariantHash options;
+        options.reserve(3);
+
+        /* Don't make any special validation here like both the KEY and CERT has to be
+           set at once, simply set what is set in the environment variables. */
+        insertDbOption(options, SSL_CERT, qEnvironmentVariable("DB_MARIA_SSL_CERT"));
+        insertDbOption(options, SSL_KEY,  qEnvironmentVariable("DB_MARIA_SSL_KEY"));
+        insertDbOption(options, SSL_CA,   qEnvironmentVariable("DB_MARIA_SSL_CA"));
+
+        return options;
+    }
+} // namespace
+
+QVariantHash Configuration::mariaSslOptions()
+{
+    QVariantHash options;
+    options.reserve(8);
+
+    options.insert(getMariaSslOptions());
+
+    return options;
+}
+
+QVariantHash Configuration::insertMariaSslOptions(QVariantHash &&options)
+{
+    options.insert(getMariaSslOptions());
+
+    return std::move(options);
+}
+
+QVariantHash &Configuration::insertMariaSslOptions(QVariantHash &options)
+{
+    options.insert(getMariaSslOptions());
+
+    return options;
+}
+
 /* PostgreSQL section */
 
 namespace

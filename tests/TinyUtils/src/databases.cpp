@@ -323,7 +323,7 @@ Databases::mariaConfiguration()
         {isolation_level, QStringLiteral("REPEATABLE READ")}, // MySQL default is REPEATABLE READ for InnoDB
         {engine_,         InnoDB},
         {Version,         {}}, // Autodetect
-//        {options_,        ConfigUtils::mysqlSslOptions()},
+        {options_,        ConfigUtils::mariaSslOptions()},
         // FUTURE remove, when unit tested silverqx
         // Example
 //        {options_, "MYSQL_OPT_CONNECT_TIMEOUT = 5 ; MYSQL_OPT_RECONNECT=1"},

@@ -114,7 +114,7 @@ std::shared_ptr<DatabaseManager> setupManager()
             {isolation_level, QStringLiteral("REPEATABLE READ")}, // MySQL default is REPEATABLE READ for InnoDB
             {engine_,         InnoDB},
             {Version,         {}}, // Autodetect
-//            {options_,        ConfigUtils::mysqlSslOptions()},
+            {options_,        ConfigUtils::mariaSslOptions()},
         }},
 
         // PostgreSQL connection

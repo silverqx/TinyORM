@@ -53,6 +53,17 @@ namespace Utils
         /*! Set connect/read/write timeouts to 1sec (use only for localhost). */
         static QVariantHash &minimizeMySqlTimeouts(QVariantHash &options);
 
+        /* MariaDB section */
+        /*! Get a MariaDB SSL-related options hash (for TLS connection). */
+        static QVariantHash mariaSslOptions();
+        /*! Insert a MariaDB SSL-related options to the MySQL's options configuration. */
+        static QVariantHash insertMariaSslOptions(QVariantHash &&options);
+        /*! Insert a MariaDB SSL-related options to the MySQL's options configuration. */
+        static QVariantHash &insertMariaSslOptions(QVariantHash &options);
+
+        /*! Set connect/read/write timeouts to 1sec (use only for localhost). */
+        inline static QVariantHash &minimizeMariaTimeouts(QVariantHash &options);
+
         /* PostgreSQL section */
         /*! Get a PostgreSQL SSL-related options hash (for TLS connection). */
         static QVariantHash postgresSslOptions();
@@ -71,6 +82,14 @@ namespace Utils
         static void
         throwIfBadTimeZoneId(const QByteArray &ianaId, const QString &connection);
     };
+
+    /* public */
+
+    QVariantHash &Configuration::minimizeMariaTimeouts(QVariantHash &options)
+    {
+        // Logic is the same as for MySQL server
+        return minimizeMySqlTimeouts(options);
+    }
 
 } // namespace Utils
 } // namespace Orm
