@@ -12,6 +12,7 @@
     "tabulate",
     {
       "name": "qtbase",
+      "host": true,
       "default-features": false,
       "features": ["sql"]
     },
