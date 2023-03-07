@@ -1,0 +1,68 @@
+{
+  "$schema": "https://raw.githubusercontent.com/microsoft/vcpkg-tool/main/docs/vcpkg.schema.json",
+  "name": "tinyorm",
+  "version-semver": "0.28.0",
+  "description": "Modern C++ ORM library for the Qt framework",
+  "homepage": "https://github.com/silverqx/TinyORM",
+  "documentation": "https://www.tinyorm.org",
+  "maintainers": "Silver Zachara <silver.zachara@gmail.com>",
+  "supports": "!(uwp | arm | android | emscripten)",
+  "dependencies": [
+    "range-v3",
+    "tabulate",
+    {
+      "name": "qtbase",
+      "default-features": false,
+      "features": ["sql"]
+    },
+    {
+      "name": "vcpkg-cmake",
+      "host": true
+    },
+    {
+      "name": "vcpkg-cmake-config",
+      "host": true
+    }
+  ],
+  "default-features": [
+    "sql-mysql",
+    "sql-psql",
+    "sql-sqlite",
+    "mysqlping"
+  ],
+  "features": {
+    "sql-mysql": {
+      "description": "Enable Qt SQL Driver MySQL",
+      "dependencies": [
+        {
+          "name": "qtbase",
+          "features": ["sql-mysql"]
+        }
+      ]
+    },
+    "sql-psql": {
+      "description": "Enable Qt SQL Driver psql",
+      "dependencies": [
+        {
+          "name": "qtbase",
+          "features": ["sql-psql"]
+        }
+      ]
+    },
+    "sql-sqlite": {
+      "description": "Enable Qt SQL Driver sqlite",
+      "dependencies": [
+        {
+          "name": "qtbase",
+          "features": ["sql-sqlite"]
+        }
+      ]
+    },
+    "mysqlping": {
+      "description": "Install a MySQL client library to support the mysql_ping()",
+      "dependencies": [
+        "libmysql"
+      ]
+    }
+  }
+}
