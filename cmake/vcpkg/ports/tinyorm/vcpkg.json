@@ -1,7 +1,7 @@
 {
   "name": "tinyorm",
   "version-semver": "0.1.0",
-  "description": "C++ orm library for the Qt framwork",
+  "description": "Modern C++ ORM library for the Qt framework",
   "homepage": "https://github.com/silverqx/TinyORM",
   "documentation": "https://www.tinyorm.org",
   "maintainers": "Silver Zachara <silver.zachara@gmail.com>",
@@ -26,7 +26,7 @@
   ],
   "features": {
     "mysqlplugin": {
-      "description": "Build the sql plugin for connecting to MySQL databases",
+      "description": "Build the Qt sql plugin for connecting to MySQL databases",
       "dependencies": [
         {
           "name": "qt5-base",
@@ -35,7 +35,7 @@
       ]
     },
     "postgresqlplugin": {
-      "description": "Build the sql plugin for connecting to PostgreSQL databases",
+      "description": "Build the Qt sql plugin for connecting to PostgreSQL databases",
       "dependencies": [
         {
           "name": "qt5-base",
