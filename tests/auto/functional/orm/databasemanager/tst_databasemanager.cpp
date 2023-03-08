@@ -74,6 +74,7 @@ private Q_SLOTS:
     void default_SQLite_ConfigurationValues() const;
 
     void ssl_MySQL_ConfigurationValues() const;
+    void ssl_MariaDB_ConfigurationValues() const;
     void ssl_PostgreSQL_ConfigurationValues() const;
 
     void sqlite_MemoryDriver() const;
@@ -462,6 +463,95 @@ void tst_DatabaseManager::ssl_MySQL_ConfigurationValues() const
     if (!connectionName)
         QSKIP(TestUtils::AutoTestSkipped
               .arg(TypeUtils::classPureBasename(*this), Databases::MYSQL)
+              .toUtf8().constData(), );
+
+    // Original configuration
+    // Connection isn't created and configuration options are not parsed yet
+    const auto &originalConfig = m_dm->originalConfig(*connectionName);
+    QCOMPARE(originalConfig, initialConfiguration);
+
+    /* Force the creation of a connection and parse the connection configuration options.
+       The qt_timezone option is only parsed in the connection configuration,
+       the original configuration is untouched. */
+    m_dm->connection(*connectionName);
+    QCOMPARE(originalConfig,
+             QVariantHash({
+                 {driver_,        QMYSQL},
+                 {NAME,           *connectionName},
+                 {database_,      EMPTY},
+                 {prefix_,        EMPTY},
+                 {prefix_indexes, false},
+                 {Version,        {}},
+                 // The ssl_cert is only alias to the "SSL_CERT", looks nicer
+                 {ssl_cert,       sslCertValue},
+                 // Lowercase SSL-related option names in top-level configuration
+                 {"ssl_key",      sslKeyValue},
+                 {"ssl_ca",       sslCaValue},
+                 {options_,       QVariantHash({{SSL_CERT, sslCertOptionsValue},
+                                                {SSL_KEY,  sslKeyOptionsValue}})},
+             }));
+
+    // Connection configuration
+    QCOMPARE(m_dm->getConfig(*connectionName),
+             QVariantHash({
+                 {driver_,        QMYSQL},
+                 {NAME,           *connectionName},
+                 {database_,      EMPTY},
+                 {prefix_,        EMPTY},
+                 {prefix_indexes, false},
+                 {Version,        {}},
+                 {qt_timezone,    QVariant::fromValue(
+                                      QtTimeZoneConfig {QtTimeZoneType::DontConvert, {}}
+                                  )},
+                 // The ssl_cert is only alias to the "SSL_CERT", looks nicer
+                 {ssl_cert,       sslCertValue},
+                 // Lowercase SSL-related option names in top-level configuration
+                 {"ssl_key",      sslKeyValue},
+                 {"ssl_ca",       sslCaValue},
+                 {options_,       QVariantHash({{SSL_CERT, sslCertValue},
+                                                // Here will be uppercase
+                                                {SSL_KEY,  sslKeyValue},
+                                                {SSL_CA,   sslCaValue}})},
+             }));
+
+    // Restore
+    QVERIFY(Databases::removeConnection(*connectionName));
+}
+
+void tst_DatabaseManager::ssl_MariaDB_ConfigurationValues() const
+{
+    /* Also the MariaDB SSL-related configuration options should behave the same
+       as for the MySQL connection. */
+
+    // Prepare SSL configuration
+    // Top level
+    const auto sslCertValue = QStringLiteral("C:/example/maria-cert.pem");
+    const auto sslKeyValue  = QStringLiteral("C:/example/maria-key.pem");
+    const auto sslCaValue   = QStringLiteral("C:/example/maria-ca.pem");
+    // The 'options' level
+    const auto sslCertOptionsValue = QStringLiteral("D:/example/client-cert.pem");
+    const auto sslKeyOptionsValue  = QStringLiteral("D:/example/client-key.pem");
+
+    const QVariantHash initialConfiguration {
+        {driver_,   QMYSQL},
+        // The ssl_cert is only alias to the "SSL_CERT", looks nicer
+        {ssl_cert,  sslCertValue},
+        // Lowercase SSL-related option names in top-level configuration
+        {"ssl_key", sslKeyValue},
+        {"ssl_ca",  sslCaValue},
+        {options_,  QVariantHash({{SSL_CERT, sslCertOptionsValue},
+                                  {SSL_KEY,  sslKeyOptionsValue}})}
+    };
+
+    // Add a new database connection
+    const auto connectionName = Databases::createConnectionTemp(
+                                    Databases::MARIADB,
+                                    {ClassName, QString::fromUtf8(__func__)}, // NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
+                                    initialConfiguration);
+
+    if (!connectionName)
+        QSKIP(TestUtils::AutoTestSkipped
+              .arg(TypeUtils::classPureBasename(*this), Databases::MARIADB)
               .toUtf8().constData(), );
 
     // Original configuration
