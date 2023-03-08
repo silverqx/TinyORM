@@ -863,7 +863,6 @@ QString MySqlSchemaGrammar::modifyNullable(const ColumnDefinition &column) const
                                                : QStringLiteral(" not null");
 
     // CUR schema, install and prepare MariaDB dev. env. and then finish this silverqx
-    // CUR mariadb, tests, workflows, everywhere silverqx
 //    static const auto notNull = QStringLiteral(" not null");
 
 //    if (column.virtualAs.isEmpty() && column.storedAs.isEmpty())
