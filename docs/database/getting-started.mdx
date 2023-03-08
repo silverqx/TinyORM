@@ -14,8 +14,8 @@ import {
     bash, pwsh,
     bash_label, pwsh_label,
     database,
-    mysql, postgres, sqlite,
-    mysql_label, postgres_label, sqlite_label,
+    maria, mysql, postgres, sqlite,
+    maria_label, mysql_label, postgres_label, sqlite_label,
 } from '@theme/constants'
 
 # Database: Getting Started
@@ -131,6 +131,33 @@ You can create and configure a new database connection using the `create` method
     });
 
 </TabItem>
+<TabItem value={maria} label={maria_label}>
+
+    #include <orm/db.hpp>
+
+    using Orm::DB;
+
+    // Ownership of a shared_ptr()
+    auto manager = DB::create({
+        {"driver",          "QMYSQL"},
+        {"host",            qEnvironmentVariable("DB_HOST", "127.0.0.1")},
+        {"port",            qEnvironmentVariable("DB_PORT", "3306")},
+        {"database",        qEnvironmentVariable("DB_DATABASE", "")},
+        {"username",        qEnvironmentVariable("DB_USERNAME", "root")},
+        {"password",        qEnvironmentVariable("DB_PASSWORD", "")},
+        {"charset",         qEnvironmentVariable("DB_CHARSET", "utf8mb4")},
+        {"collation",       qEnvironmentVariable("DB_COLLATION", "utf8mb4_unicode_520_ci")},
+        {"timezone",        "+00:00"},
+        // Specifies what time zone all QDateTime-s will have
+        {"qt_timezone",     QVariant::fromValue(Qt::UTC)},
+        {"prefix",          ""},
+        {"prefix_indexes",  false},
+        {"strict",          true},
+        {"engine",          "InnoDB"},
+        {"options",         QVariantHash()},
+    });
+
+</TabItem>
 </Tabs>
 
 <Tabs className='tinyorm-configuration-full' groupId={database}>
@@ -241,6 +268,49 @@ You can create and configure a new database connection using the `create` method
         {return_qdatetime,        true},
         {prefix_,                 EMPTY},
         {prefix_indexes,          false},
+    });
+
+</TabItem>
+<TabItem value={maria} label={maria_label}>
+
+    #include <orm/db.hpp>
+    #include <orm/utils/configuration.hpp>
+
+    using Orm::DB;
+    using namespace Orm::Constants; // NOLINT(google-build-using-namespace)
+
+    using ConfigUtils = Orm::Utils::Configuration;
+
+    // Ownership of a shared_ptr()
+    auto manager = DB::create({
+        {driver_,         QMYSQL},
+        {host_,           qEnvironmentVariable("DB_HOST", H127001)},
+        {port_,           qEnvironmentVariable("DB_PORT", P3306)},
+        {database_,       qEnvironmentVariable("DB_DATABASE", EMPTY)},
+        {username_,       qEnvironmentVariable("DB_USERNAME", ROOT)},
+        {password_,       qEnvironmentVariable("DB_PASSWORD", EMPTY)},
+        {charset_,        qEnvironmentVariable("DB_CHARSET", UTF8MB4)},
+        {collation_,      qEnvironmentVariable("DB_COLLATION", UTF8MB4Unicode520ci)},
+        // SSL-related
+        {ssl_ca,          QStringLiteral("C:/maria/data/ca.pem")},
+        {ssl_cert,        QStringLiteral("C:/maria/data/client-cert.pem")},
+        {ssl_key,         QStringLiteral("C:/maria/data/client-key.pem")},
+        // Or
+    //    {options,         ConfigUtils::mariaSslOptions()},
+        {timezone_,       TZ00},
+        // Specifies what time zone all QDateTime-s will have
+        {qt_timezone,     QVariant::fromValue(Qt::UTC)},
+        {prefix_,         EMPTY},
+        {prefix_indexes,  false},
+        {strict_,         true},
+    //    {isolation_level, QStringLiteral("REPEATABLE READ")}, // MariaDB default is REPEATABLE READ for InnoDB
+        {engine_,         InnoDB},
+        {Version,         {}}, // Autodetect
+        {options_,        QVariantHash()},
+        // Examples
+    //    {options_,        QStringLiteral("MYSQL_OPT_CONNECT_TIMEOUT = 1 ; MYSQL_OPT_READ_TIMEOUT=1")},
+    //    {options_,        QVariantHash {{QStringLiteral("MYSQL_OPT_CONNECT_TIMEOUT"), 1},
+    //                                    {QStringLiteral("MYSQL_OPT_READ_TIMEOUT"),    1}}},
     });
 
 </TabItem>
