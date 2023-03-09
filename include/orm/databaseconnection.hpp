@@ -159,6 +159,9 @@ namespace Orm
         /*! Returns the database driver used to access the database connection. */
         QSqlDriver *driver();
 
+        /*! Reconnect to the database if a Qt connection is missing (doesn't create
+            a physical connection, only refreshs connection resolver). */
+        void reconnectIfMissingConnection() const;
         /*! Reconnect to the database (doesn't create physical connection, only refreshs
             a connection resolver). */
         void reconnect() const;
@@ -262,10 +265,6 @@ namespace Orm
         Return runQueryCallback(
                 const QString &queryString, const QVector<QVariant> &preparedBindings,
                 const RunCallback<Return> &callback) const;
-
-        /*! Reconnect to the database if a Qt connection is missing (doesn't create
-            a physical connection, only refreshs connection resolver). */
-        void reconnectIfMissingConnection() const;
 
         /*! The active QSqlDatabase connection name. */
         std::optional<Connectors::ConnectionName> m_qtConnection = std::nullopt;

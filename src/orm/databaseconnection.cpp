@@ -415,6 +415,24 @@ QSqlDriver *DatabaseConnection::driver()
     return getQtConnection().driver();
 }
 
+void DatabaseConnection::reconnectIfMissingConnection() const
+{
+    /* Calls a connection resolver defined
+       in the ConnectionFactory::createQSqlDatabaseResolver(), the connection resolver
+       is passed to the DatabaseConnection constructor and is always available. Only
+       one exception is when disconnect() is called, it resets connection resolver which
+       will be recreated (with the db connection of course) here, that is only one case
+       when the code below (reconnect() logic) is true as I'm aware of. */
+    if (m_qtConnectionResolver)
+        return;
+
+    /* This should never happen, but when it does, I want to know about that. If the
+       m_qtConnectionResolver is not set then m_qtConnection has to be std::nullopt. */
+    Q_ASSERT(!m_qtConnection);
+
+    reconnect();
+}
+
 void DatabaseConnection::reconnect() const
 {
     if (!m_reconnector)
@@ -587,24 +605,6 @@ void Orm::DatabaseConnection::useDefaultSchemaBuilder()
 void DatabaseConnection::useDefaultPostProcessor()
 {
     m_postProcessor = getDefaultPostProcessor();
-}
-
-void DatabaseConnection::reconnectIfMissingConnection() const
-{
-    /* Calls a connection resolver defined
-       in the ConnectionFactory::createQSqlDatabaseResolver(), the connection resolver
-       is passed to the DatabaseConnection constructor and is always available. Only
-       one exception is when disconnect() is called, it resets connection resolver which
-       will be recreated (with the db connection of course) here, that is only one case
-       when the code below (reconnect() logic) is true as I'm aware of. */
-    if (m_qtConnectionResolver)
-        return;
-
-    /* This should never happen, but when it does, I want to know about that. If the
-       m_qtConnectionResolver is not set then m_qtConnection has to be std::nullopt. */
-    Q_ASSERT(!m_qtConnection);
-
-    reconnect();
 }
 
 /* private */
