@@ -337,7 +337,7 @@ Databases::mariaConfiguration()
     };
 
     // All Environment variables are empty
-    if (allEnvVariablesEmpty(mysqlEnvVariables()))
+    if (allEnvVariablesEmpty(mariaEnvVariables()))
         return {std::cref(config), false};
 
     // Environment variables are defined
