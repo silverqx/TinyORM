@@ -48,7 +48,7 @@ std::unique_ptr<QueryGrammar> SQLiteConnection::getDefaultQueryGrammar() const
     return grammar;
 }
 
-std::unique_ptr<SchemaGrammar> SQLiteConnection::getDefaultSchemaGrammar() const
+std::unique_ptr<SchemaGrammar> SQLiteConnection::getDefaultSchemaGrammar()
 {
     // Ownership of a unique_ptr()
     auto grammar = std::make_unique<SchemaNs::Grammars::SQLiteSchemaGrammar>();

@@ -859,20 +859,16 @@ QString MySqlSchemaGrammar::modifyNullable(const ColumnDefinition &column) const
     /* MySQL doesn't need any special logic for generated columns (virtualAs and
        storedAs), it accepts both, null and also not null for generated columns, I have
        tried it. */
-    return column.nullable && *column.nullable ? QStringLiteral(" null")
-                                               : QStringLiteral(" not null");
+    if (!m_isMaria ||
+        (column.virtualAs.isEmpty() && column.storedAs.isEmpty())
+    )
+        return column.nullable && *column.nullable ? QStringLiteral(" null")
+                                                   : QStringLiteral(" not null");
 
-    // CUR schema, install and prepare MariaDB dev. env. and then finish this silverqx
-//    static const auto notNull = QStringLiteral(" not null");
-
-//    if (column.virtualAs.isEmpty() && column.storedAs.isEmpty())
-//        return column.nullable && *column.nullable ? QStringLiteral(" null") : notNull;
-
-//    // Don't set null for virtual/stored columns, set 'not null' only!
-//    if (column.nullable && !*column.nullable)
-//        return notNull;
-
-//    return {};
+    /* MariaDB doesn't support setting a nullable modifier (NULL or NOT NULL)
+       on generated columns, a query fails if nullable is set. The best that can be done
+       is to ignore it. 🫤 */
+    return {};
 }
 
 QString MySqlSchemaGrammar::modifyInvisible(const ColumnDefinition &column) const // NOLINT(readability-convert-member-functions-to-static)

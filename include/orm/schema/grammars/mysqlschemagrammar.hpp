@@ -24,8 +24,8 @@ namespace Grammars
         Q_DISABLE_COPY(MySqlSchemaGrammar)
 
     public:
-        /*! Default constructor. */
-        inline MySqlSchemaGrammar() = default;
+        /*! Constructor. */
+        inline explicit MySqlSchemaGrammar(bool isMaria = false);
         /*! Virtual destructor. */
         inline ~MySqlSchemaGrammar() override = default;
 
@@ -283,9 +283,17 @@ namespace Grammars
         QString modifyAfter(const ColumnDefinition &column) const;
         /*! Get the SQL for a "first" column modifier. */
         QString modifyFirst(const ColumnDefinition &column) const;
+
+    private:
+        /*! Is this the schema grammar for the MariaDB database server? */
+        bool m_isMaria;
     };
 
     /* public */
+
+    MySqlSchemaGrammar::MySqlSchemaGrammar(const bool isMaria)
+        : m_isMaria(isMaria)
+    {}
 
     bool MySqlSchemaGrammar::supportsSchemaTransactions() const noexcept
     {

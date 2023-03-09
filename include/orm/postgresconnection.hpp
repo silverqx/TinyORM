@@ -41,7 +41,7 @@ namespace Orm
         /*! Get the default query grammar instance. */
         std::unique_ptr<QueryGrammar> getDefaultQueryGrammar() const final;
         /*! Get the default schema grammar instance. */
-        std::unique_ptr<SchemaGrammar> getDefaultSchemaGrammar() const final;
+        std::unique_ptr<SchemaGrammar> getDefaultSchemaGrammar() final;
         /*! Get the default schema builder instance. */
         std::unique_ptr<SchemaBuilder> getDefaultSchemaBuilder() final;
         /*! Get the default post processor instance. */

@@ -19,6 +19,7 @@ using Orm::Constants::SIZE;
 using Orm::Constants::UTF8;
 using Orm::Constants::UTF8Generalci;
 using Orm::Constants::UTF8Unicodeci;
+using Orm::Constants::Version;
 using Orm::Constants::charset_;
 using Orm::Constants::collation_;
 using Orm::Constants::driver_;
@@ -90,12 +91,19 @@ private Q_SLOTS:
     void multipleAutoIncrementStartingValue_CreateTable() const;
     void multipleAutoIncrementStartingValue_ModifyTable() const;
 
+    /* MySQL generated columns */
     void virtualAs_StoredAs_CreateTable() const;
     void virtualAs_StoredAs_Nullable_CreateTable() const;
     void virtualAs_StoredAs_ModifyTable() const;
     void virtualAs_StoredAs_Nullable_ModifyTable() const;
 
     void virtualAs_StoredAs_WithCharset() const;
+
+    /* MariaDB generated columns */
+    void virtualAs_StoredAs_CreateTable_Maria() const;
+    void virtualAs_StoredAs_Nullable_CreateTable_Maria() const;
+    void virtualAs_StoredAs_ModifyTable_Maria() const;
+    void virtualAs_StoredAs_Nullable_ModifyTable_Maria() const;
 
     void indexes_Fluent() const;
     void indexes_Blueprint() const;
@@ -121,13 +129,31 @@ private:
     /*! Test case class name. */
     inline static const auto *ClassName = "tst_MySql_SchemaBuilder";
 
-    /*! Connection name used in this test case. */
+    /*! Get the MySQL connection name. */
+    static QString getMySqlConnectionName(QStringList &connections);
+    /*! Get the MariaDB connection name. */
+    static QString getMariaConnectionName(QStringList &connections);
+
+    /*! Initialize m_charset/Maria and m_collation/Maria for both, MySQL and MariaDB. */
+    void initializeCharsetAndCollation();
+
+    /* Default MySQL connection */
+    /*! Connection name used in this test case (default MYSQL connection). */
     QString m_connection {};
 
     /*! The charset set for the current MySQL connection (based on env. variable). */
     QString m_charset {};
     /*! The collation set for the current MySQL connection (based on env. variable). */
     QString m_collation {};
+
+    /* Second MariaDB connection */
+    /*! Second connection name used in this test case (MARIADB connection). */
+    QString m_connectionMaria {};
+
+    /*! The charset set for the second MariaDB connection (based on env. variable). */
+    QString m_charsetMaria {};
+    /*! The collation set for the second MariaDB connection (based on env. variable). */
+    QString m_collationMaria {};
 };
 
 /* private slots */
@@ -136,18 +162,27 @@ private:
 void tst_MySql_SchemaBuilder::initTestCase()
 {
     /* No need to test with the MariaDB (MARIADB connection) because it will produce
-       the same output in 99% cases. */
-    m_connection = Databases::createConnection(Databases::MYSQL);
+       the same output in 99% cases. I will create a new MARIADB connection as needed,
+       eg. see nullable modifier tests for generated columns.
+       Also, I can't use the setConfigVersion("11.0.1-MariaDB") technique here as
+       in the upsert tests because of the MySqlSchemaGrammar::m_isMaria,
+       the MySqlSchemaGrammar is instatiated only once for the DatabaseConnection. */
+    auto connections = Databases::createConnections({Databases::MYSQL,
+                                                     Databases::MARIADB});
 
+    // Initialize connection names
+    m_connection = getMySqlConnectionName(connections);
+    m_connectionMaria = getMariaConnectionName(connections);
+
+    // Also MariaDB related tests will be skiped if the MYSQL connection was not defined
     if (m_connection.isEmpty())
         QSKIP(TestUtils::AutoTestSkipped
               .arg(TypeUtils::classPureBasename(*this), Databases::MYSQL)
               .toUtf8().constData(), );
 
+
     // The charset and collation in all queries is set on the base of env. variables
-    const auto &connection = DB::connection(m_connection);
-    m_charset = connection.getConfig(charset_).value<QString>();
-    m_collation = connection.getConfig(collation_).value<QString>();
+    initializeCharsetAndCollation();
 }
 
 void tst_MySql_SchemaBuilder::createDatabase() const
@@ -1141,6 +1176,8 @@ void tst_MySql_SchemaBuilder::multipleAutoIncrementStartingValue_ModifyTable() c
     QVERIFY(log1.boundValues.isEmpty());
 }
 
+/* MySQL generated columns */
+
 void tst_MySql_SchemaBuilder::virtualAs_StoredAs_CreateTable() const
 {
     auto log = DB::connection(m_connection).pretend([](auto &connection)
@@ -1297,6 +1334,204 @@ void tst_MySql_SchemaBuilder::virtualAs_StoredAs_WithCharset() const
              "add `url_hash_stored` varchar(64) character set 'ascii' "
                "generated always as (sha2(`url`, 256)) stored not null");
     QVERIFY(firstLog.boundValues.isEmpty());
+}
+
+/* MariaDB generated columns */
+
+void tst_MySql_SchemaBuilder::virtualAs_StoredAs_CreateTable_Maria() const
+{
+    // Add a new MARIADB database connection
+    const auto connectionName = Databases::createConnectionTempFrom(
+                                    Databases::MARIADB,
+                                    {ClassName, QString::fromUtf8(__func__)}, // NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
+    {
+        // Force MariaDB version because autodetection can't work with pretended queries
+        {Version, "11.0.1-MariaDB"}
+    });
+
+    if (!connectionName)
+        QSKIP(TestUtils::AutoTestSkipped
+              .arg(TypeUtils::classPureBasename(*this), Databases::MARIADB)
+              .toUtf8().constData(), );
+
+    // Verify
+    auto log = DB::connection(*connectionName).pretend([](auto &connection)
+    {
+        Schema::on(connection.getName())
+                .create(Firewalls, [](Blueprint &table)
+        {
+            table.string("first_name");
+            table.string("last_name");
+
+            table.string("full_name_virtual")
+                 .virtualAs("concat(`first_name`, ' ', `last_name`)");
+
+            table.string("full_name_stored")
+                 .storedAs("concat(`first_name`, ' ', `last_name`)");
+        });
+    });
+
+    QVERIFY(!log.isEmpty());
+    const auto &firstLog = log.first();
+
+    QCOMPARE(log.size(), 1);
+    QCOMPARE(firstLog.query,
+             QStringLiteral(
+                 "create table `firewalls` ("
+                 "`first_name` varchar(255) not null, "
+                 "`last_name` varchar(255) not null, "
+                 "`full_name_virtual` varchar(255) "
+                   "generated always as (concat(`first_name`, ' ', `last_name`)), "
+                 "`full_name_stored` varchar(255) "
+                   "generated always as (concat(`first_name`, ' ', `last_name`)) stored) "
+                 "default character set %1 collate '%2' "
+                 "engine = InnoDB")
+             .arg(m_charsetMaria, m_collationMaria));
+    QVERIFY(firstLog.boundValues.isEmpty());
+
+    // Restore
+    QVERIFY(Databases::removeConnection(*connectionName));
+}
+
+void tst_MySql_SchemaBuilder::virtualAs_StoredAs_Nullable_CreateTable_Maria() const
+{
+    // Add a new MARIADB database connection
+    const auto connectionName = Databases::createConnectionTempFrom(
+                                    Databases::MARIADB,
+                                    {ClassName, QString::fromUtf8(__func__)}, // NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
+    {
+        // Force MariaDB version because autodetection can't work with pretended queries
+        {Version, "11.0.1-MariaDB"}
+    });
+
+    if (!connectionName)
+        QSKIP(TestUtils::AutoTestSkipped
+              .arg(TypeUtils::classPureBasename(*this), Databases::MARIADB)
+              .toUtf8().constData(), );
+
+    // Verify
+    auto log = DB::connection(*connectionName).pretend([](auto &connection)
+    {
+        Schema::on(connection.getName())
+                .create(Firewalls, [](Blueprint &table)
+        {
+            table.string("first_name");
+            table.string("last_name");
+
+            table.string("full_name_virtual")
+                 .virtualAs("concat(`first_name`, ' ', `last_name`)").nullable();
+
+            table.string("full_name_stored")
+                 .storedAs("concat(`first_name`, ' ', `last_name`)").nullable();
+        });
+    });
+
+    QVERIFY(!log.isEmpty());
+    const auto &firstLog = log.first();
+
+    QCOMPARE(log.size(), 1);
+    QCOMPARE(firstLog.query,
+             QStringLiteral(
+                 "create table `firewalls` ("
+                 "`first_name` varchar(255) not null, "
+                 "`last_name` varchar(255) not null, "
+                 "`full_name_virtual` varchar(255) "
+                   "generated always as (concat(`first_name`, ' ', `last_name`)), "
+                 "`full_name_stored` varchar(255) "
+                   "generated always as (concat(`first_name`, ' ', `last_name`)) stored) "
+                 "default character set %1 collate '%2' "
+                 "engine = InnoDB")
+             .arg(m_charsetMaria, m_collationMaria));
+    QVERIFY(firstLog.boundValues.isEmpty());
+
+    // Restore
+    QVERIFY(Databases::removeConnection(*connectionName));
+}
+
+void tst_MySql_SchemaBuilder::virtualAs_StoredAs_ModifyTable_Maria() const
+{
+    // Add a new MARIADB database connection
+    const auto connectionName = Databases::createConnectionTempFrom(
+                                    Databases::MARIADB,
+                                    {ClassName, QString::fromUtf8(__func__)}, // NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
+    {
+        // Force MariaDB version because autodetection can't work with pretended queries
+        {Version, "11.0.1-MariaDB"}
+    });
+
+    if (!connectionName)
+        QSKIP(TestUtils::AutoTestSkipped
+              .arg(TypeUtils::classPureBasename(*this), Databases::MARIADB)
+              .toUtf8().constData(), );
+
+    // Verify
+    auto log = DB::connection(*connectionName).pretend([](auto &connection)
+    {
+        Schema::on(connection.getName())
+                .table(Firewalls, [](Blueprint &table)
+        {
+            table.integer("price");
+            table.integer("discounted_virtual").virtualAs("price - 5");
+            table.integer("discounted_stored").storedAs("`price` - 5");
+        });
+    });
+
+    QVERIFY(!log.isEmpty());
+    const auto &firstLog = log.first();
+
+    QCOMPARE(log.size(), 1);
+    QCOMPARE(firstLog.query,
+             "alter table `firewalls` "
+             "add `price` int not null, "
+             "add `discounted_virtual` int generated always as (price - 5), "
+             "add `discounted_stored` int generated always as (`price` - 5) stored");
+    QVERIFY(firstLog.boundValues.isEmpty());
+
+    // Restore
+    QVERIFY(Databases::removeConnection(*connectionName));
+}
+
+void tst_MySql_SchemaBuilder::virtualAs_StoredAs_Nullable_ModifyTable_Maria() const
+{
+    // Add a new MARIADB database connection
+    const auto connectionName = Databases::createConnectionTempFrom(
+                                    Databases::MARIADB,
+                                    {ClassName, QString::fromUtf8(__func__)}, // NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
+    {
+        // Force MariaDB version because autodetection can't work with pretended queries
+        {Version, "11.0.1-MariaDB"}
+    });
+
+    if (!connectionName)
+        QSKIP(TestUtils::AutoTestSkipped
+              .arg(TypeUtils::classPureBasename(*this), Databases::MARIADB)
+              .toUtf8().constData(), );
+
+    // Verify
+    auto log = DB::connection(*connectionName).pretend([](auto &connection)
+    {
+        Schema::on(connection.getName())
+                .table(Firewalls, [](Blueprint &table)
+        {
+            table.integer("price");
+            table.integer("discounted_virtual").virtualAs("`price` - 5").nullable();
+            table.integer("discounted_stored").storedAs("price - 5").nullable();
+        });
+    });
+
+    QVERIFY(!log.isEmpty());
+    const auto &firstLog = log.first();
+
+    QCOMPARE(log.size(), 1);
+    QCOMPARE(firstLog.query,
+             "alter table `firewalls` "
+             "add `price` int not null, "
+             "add `discounted_virtual` int generated always as (`price` - 5), "
+             "add `discounted_stored` int generated always as (price - 5) stored");
+    QVERIFY(firstLog.boundValues.isEmpty());
+
+    // Restore
+    QVERIFY(Databases::removeConnection(*connectionName));
 }
 
 void tst_MySql_SchemaBuilder::indexes_Fluent() const
@@ -2089,6 +2324,55 @@ void tst_MySql_SchemaBuilder::dropForeign() const
     QVERIFY(log7.boundValues.isEmpty());
 }
 // NOLINTEND(readability-convert-member-functions-to-static)
+
+/* private */
+
+QString tst_MySql_SchemaBuilder::getMySqlConnectionName(QStringList &connections)
+{
+    if (connections.isEmpty())
+        return {};
+
+    for (auto &&connection : connections)
+        if (connection == Databases::MYSQL)
+            return std::move(connection);
+
+    return {};
+}
+
+QString tst_MySql_SchemaBuilder::getMariaConnectionName(QStringList &connections)
+{
+    if (connections.isEmpty())
+        return {};
+
+    for (auto &&connection : connections)
+        if (connection == Databases::MARIADB)
+            return std::move(connection);
+
+    return {};
+}
+
+void tst_MySql_SchemaBuilder::initializeCharsetAndCollation()
+{
+    // The charset and collation in all queries is set on the base of env. variables
+
+    // MySQL charset and collation
+    {
+        const auto &connection = DB::connection(m_connection);
+        m_charset = connection.getConfig(charset_).value<QString>();
+        m_collation = connection.getConfig(collation_).value<QString>();
+    }
+
+    // Nothing to do, env. variables for MariaDB were not defined
+    if (m_connectionMaria.isEmpty())
+        return;
+
+    // MariaDB charset and collation
+    {
+        const auto &connection = DB::connection(m_connectionMaria);
+        m_charsetMaria = connection.getConfig(charset_).value<QString>();
+        m_collationMaria = connection.getConfig(collation_).value<QString>();
+    }
+}
 
 QTEST_MAIN(tst_MySql_SchemaBuilder)
 

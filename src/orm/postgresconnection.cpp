@@ -80,7 +80,7 @@ std::unique_ptr<QueryGrammar> PostgresConnection::getDefaultQueryGrammar() const
     return grammar;
 }
 
-std::unique_ptr<SchemaGrammar> PostgresConnection::getDefaultSchemaGrammar() const
+std::unique_ptr<SchemaGrammar> PostgresConnection::getDefaultSchemaGrammar()
 {
     // Ownership of a unique_ptr()
     auto grammar = std::make_unique<SchemaNs::Grammars::PostgresSchemaGrammar>();

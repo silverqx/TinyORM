@@ -245,10 +245,10 @@ std::unique_ptr<QueryGrammar> MySqlConnection::getDefaultQueryGrammar() const
     return grammar;
 }
 
-std::unique_ptr<SchemaGrammar> MySqlConnection::getDefaultSchemaGrammar() const
+std::unique_ptr<SchemaGrammar> MySqlConnection::getDefaultSchemaGrammar()
 {
     // Ownership of a unique_ptr()
-    auto grammar = std::make_unique<SchemaNs::Grammars::MySqlSchemaGrammar>();
+    auto grammar = std::make_unique<SchemaNs::Grammars::MySqlSchemaGrammar>(isMaria());
 
     withTablePrefix(*grammar);
 
