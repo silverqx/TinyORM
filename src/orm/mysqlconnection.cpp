@@ -268,5 +268,3 @@ std::unique_ptr<QueryProcessor> MySqlConnection::getDefaultPostProcessor() const
 } // namespace Orm
 
 TINYORM_END_COMMON_NAMESPACE
-
-// TEST now add MariaDB tests, install mariadb add connection and run all the tests against mariadb too silverqx
