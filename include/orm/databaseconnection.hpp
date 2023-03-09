@@ -159,6 +159,9 @@ namespace Orm
         /*! Returns the database driver used to access the database connection. */
         QSqlDriver *driver();
 
+        /*! Force connection to the database (creates physical connection), doesn't have
+            to be called before querying a database. */
+        inline void connectEagerly();
         /*! Reconnect to the database if a Qt connection is missing (doesn't create
             a physical connection, only refreshs connection resolver). */
         void reconnectIfMissingConnection() const;
@@ -167,9 +170,6 @@ namespace Orm
         void reconnect() const;
         /*! Disconnect from the underlying Qt's connection. */
         void disconnect();
-        /*! Force connection to the database (creates physical connection), doesn't have
-            to be called before querying a database. */
-        inline void connectEagerly();
 
         /*! Get the query grammar used by the connection. */
         inline const QueryGrammar &getQueryGrammar() const;
