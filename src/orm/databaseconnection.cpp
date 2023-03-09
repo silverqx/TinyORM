@@ -7,6 +7,7 @@
 #include <QtSql/QSqlRecord>
 
 #include "orm/exceptions/multiplecolumnsselectederror.hpp"
+#include "orm/exceptions/lostconnectionerror.hpp"
 #include "orm/query/querybuilder.hpp"
 #include "orm/utils/configuration.hpp"
 #include "orm/utils/type.hpp"
@@ -436,7 +437,7 @@ void DatabaseConnection::reconnectIfMissingConnection() const
 void DatabaseConnection::reconnect() const
 {
     if (!m_reconnector)
-        throw Exceptions::RuntimeError(
+        throw Exceptions::LostConnectionError(
                 QStringLiteral("Lost connection and no reconnector available in %1().")
                 .arg(__tiny_func__));
 

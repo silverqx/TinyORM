@@ -49,6 +49,7 @@ function(tinyorm_sources out_headers out_sources)
         exceptions/invalidformaterror.hpp
         exceptions/invalidtemplateargumenterror.hpp
         exceptions/logicerror.hpp
+        exceptions/lostconnectionerror.hpp
         exceptions/multiplerecordsfounderror.hpp
         exceptions/ormerror.hpp
         exceptions/queryerror.hpp
