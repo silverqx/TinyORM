@@ -115,6 +115,11 @@ namespace
     }
 } // namespace
 
+/* Differences between following three methods:
+   1. Creates a totally new connection with custom configuration
+   2. Creates a new connection from our predefined configuration
+   3. Like 2. but allows to customize the configuration */
+
 std::optional<QString>
 Databases::createConnectionTemp(
         const QString &connection, ConnectionNameParts &&connectionParts,
