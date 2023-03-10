@@ -525,16 +525,16 @@ QVector<ColumnDefinition> Blueprint::getAddedColumns() const
 
 QVector<ColumnDefinition> Blueprint::getChangedColumns() const
 {
-    QVector<ColumnDefinition> added;
-    added.reserve(m_columns.size());
+    QVector<ColumnDefinition> changed;
+    changed.reserve(m_columns.size());
 
-    std::ranges::copy_if(m_columns, std::back_inserter(added),
+    std::ranges::copy_if(m_columns, std::back_inserter(changed),
                          [](const auto &column)
     {
         return column.change;
     });
 
-    return added;
+    return changed;
 }
 
 bool Blueprint::creating() const
