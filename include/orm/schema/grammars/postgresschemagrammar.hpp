@@ -291,7 +291,7 @@ namespace Grammars
             nameList.reserve(name.count(DOT));
 
             for (auto &&segment : name.split(DOT, Qt::KeepEmptyParts))
-                // Don't use the TRIM_QUOTES here to avoid include schema constants
+                // Don't use the TRIM_QUOTES here to avoid include of schema constants
                 nameList << StringUtils::trim(segment, QStringLiteral("'\""));
 
             return TMPL_DQUOTES.arg(nameList.join(QStringLiteral("\".\"")));
