@@ -154,8 +154,6 @@ namespace Grammars
         const std::vector<FluentCommandItem> &getFluentCommands() const override;
 
     protected:
-        /*! Create the main create table clause. */
-//        QString compileCreateTable(const Blueprint &blueprint) const;
         /*! Add the column modifiers to the definition. */
         QString addModifiers(QString &&sql,
                              const ColumnDefinition &column) const override;
