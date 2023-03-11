@@ -48,11 +48,11 @@ namespace Orm::Utils
         if (container.empty())
             return {};
 
-        QString columnized;
+        QString joined;
         // +4 serves as a reserve (for the reserve() 😂)
         const auto delimiterSize_ = delimiterSize<typename T::size_type>(delimiter);
-        columnized.reserve(static_cast<QString::size_type>(
-                               countStringSizes(container, delimiterSize_ + 4)));
+        joined.reserve(static_cast<QString::size_type>(
+                           countStringSizes(container, delimiterSize_ + 4)));
 
         auto end = container.cend();
         --end;
@@ -60,14 +60,14 @@ namespace Orm::Utils
 
         for (; it != end; ++it)
             // These append-s() are better for performance
-            columnized.append(*it)
-                      .append(std::forward<D>(delimiter));
+            joined.append(*it)
+                  .append(std::forward<D>(delimiter));
 
         Q_ASSERT(it == end);
 
-        columnized.append(*it);
+        joined.append(*it);
 
-        return columnized;
+        return joined;
     }
 
     template<QStringContainer T, typename SizeType>
