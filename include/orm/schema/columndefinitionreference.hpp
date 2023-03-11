@@ -89,13 +89,13 @@ namespace Orm::SchemaNs
         /*! Set the starting value of an auto-incrementing field (MySQL/PostgreSQL). */
         ColumnReferenceType &startingValue(int startingValue);
         /*! Create a stored generated column (MySQL/PostgreSQL/SQLite). */
-        ColumnReferenceType &storedAs(const QString &expression);
+        ColumnReferenceType &storedAs(QString expression);
         /*! Set the TIMESTAMP column to use CURRENT_TIMESTAMP as default value. */
         ColumnReferenceType &useCurrent();
         /*! Set the TIMESTAMP column to use CURRENT_TIMESTAMP when updating (MySQL). */
         ColumnReferenceType &useCurrentOnUpdate();
         /*! Create a virtual generated column (MySQL/PostgreSQL/SQLite). */
-        ColumnReferenceType &virtualAs(const QString &expression);
+        ColumnReferenceType &virtualAs(QString expression);
 
         /*! Add an index. */
         ColumnReferenceType &index(const QString &indexName = "");
@@ -295,9 +295,9 @@ namespace Orm::SchemaNs
 
     template<ColumnReferenceReturn R>
     typename ColumnDefinitionReference<R>::ColumnReferenceType &
-    ColumnDefinitionReference<R>::storedAs(const QString &expression)
+    ColumnDefinitionReference<R>::storedAs(QString expression)
     {
-        m_columnDefinition.get().storedAs = expression;
+        m_columnDefinition.get().storedAs = std::move(expression);
 
         return columnReference();
     }
@@ -322,9 +322,9 @@ namespace Orm::SchemaNs
 
     template<ColumnReferenceReturn R>
     typename ColumnDefinitionReference<R>::ColumnReferenceType &
-    ColumnDefinitionReference<R>::virtualAs(const QString &expression)
+    ColumnDefinitionReference<R>::virtualAs(QString expression)
     {
-        m_columnDefinition.get().virtualAs = expression;
+        m_columnDefinition.get().virtualAs = std::move(expression);
 
         return columnReference();
     }
