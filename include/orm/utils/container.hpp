@@ -61,6 +61,7 @@ namespace Orm::Utils
         for (; it != end; ++it)
             // These append-s() are better for performance
             joined.append(*it)
+                  // No need for the if statement if it's empty or null
                   .append(std::forward<D>(delimiter));
 
         Q_ASSERT(it == end);
