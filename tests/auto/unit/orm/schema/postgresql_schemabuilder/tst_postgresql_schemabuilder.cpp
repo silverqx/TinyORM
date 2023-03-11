@@ -1228,7 +1228,7 @@ and tab	end)");
 
     QCOMPARE(log.size(), 1);
     QCOMPARE(firstLog.query,
-             // String contains \t after tab word
+             // String contains \t after the tab word
              "create table \"firewalls\" ("
              "\"string\" varchar(255) not null "
              "default 'Text '' and \" or \\ newline\n"
