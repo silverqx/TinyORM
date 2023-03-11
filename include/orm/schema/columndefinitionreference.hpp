@@ -81,6 +81,9 @@ namespace Orm::SchemaNs
         /*! Allow NULL values to be inserted into the column. */
         ColumnReferenceType &nullable(bool value = true);
         /*! The spatial reference identifier (SRID) of a geometry identifies the SRS
+            in which the geometry is defined (MySQL/PostgreSQL), alias for the 'srid'. */
+        ColumnReferenceType &projection(quint32 value);
+        /*! The spatial reference identifier (SRID) of a geometry identifies the SRS
             in which the geometry is defined (MySQL/PostgreSQL). */
         ColumnReferenceType &srid(quint32 value);
         /*! Set the starting value of an auto-incrementing field (MySQL/PostgreSQL). */
@@ -259,6 +262,15 @@ namespace Orm::SchemaNs
     ColumnDefinitionReference<R>::nullable(const bool value)
     {
         m_columnDefinition.get().nullable = value;
+
+        return columnReference();
+    }
+
+    template<ColumnReferenceReturn R>
+    typename ColumnDefinitionReference<R>::ColumnReferenceType &
+    ColumnDefinitionReference<R>::projection(const quint32 value)
+    {
+        m_columnDefinition.get().srid = value;
 
         return columnReference();
     }
