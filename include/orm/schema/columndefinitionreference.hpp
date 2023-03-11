@@ -274,7 +274,7 @@ namespace Orm::SchemaNs
 
     template<ColumnReferenceReturn R>
     typename ColumnDefinitionReference<R>::ColumnReferenceType &
-            ColumnDefinitionReference<R>::srid(const quint32 value)
+    ColumnDefinitionReference<R>::srid(const quint32 value)
     {
         m_columnDefinition.get().srid = value;
 
