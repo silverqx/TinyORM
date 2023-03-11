@@ -903,16 +903,17 @@ void tst_MySql_SchemaBuilder::modifiers() const
                 .create(Firewalls, [](Blueprint &table)
         {
             table.bigInteger(ID).autoIncrement().isUnsigned().startingValue(5);
+            table.bigInteger("big_int").isUnsigned();
+            table.bigInteger("big_int1");
             table.string(NAME).defaultValue("guest");
             table.string("name1").nullable();
             table.string("name2").comment("name2 note");
-            table.string("name3");
+            table.string("name3", 191);
             table.string("name4").invisible();
             table.string("name5").charset(UTF8);
             table.string("name6").collation("utf8mb4_unicode_ci");
             table.string("name7").charset(UTF8).collation(UTF8Unicodeci);
-            table.bigInteger("big_int").isUnsigned();
-            table.bigInteger("big_int1");
+            table.Double("amount", 6, 2);
         });
         /* Tests from and also integerIncrements, this would of course fail on real DB
            as you can not have two primary keys. */
@@ -931,17 +932,18 @@ void tst_MySql_SchemaBuilder::modifiers() const
              QStringLiteral(
                 "create table `firewalls` ("
                 "`id` bigint unsigned not null auto_increment primary key, "
+                "`big_int` bigint unsigned not null, "
+                "`big_int1` bigint not null, "
                 "`name` varchar(255) not null default 'guest', "
                 "`name1` varchar(255) null, "
                 "`name2` varchar(255) not null comment 'name2 note', "
-                "`name3` varchar(255) not null, "
+                "`name3` varchar(191) not null, "
                 "`name4` varchar(255) not null invisible, "
                 "`name5` varchar(255) character set 'utf8' not null, "
                 "`name6` varchar(255) collate 'utf8mb4_unicode_ci' not null, "
                 "`name7` varchar(255) character set 'utf8' collate 'utf8_unicode_ci' "
                   "not null, "
-                "`big_int` bigint unsigned not null, "
-                "`big_int1` bigint not null) "
+                "`amount` double(6, 2) not null) "
                 "default character set %1 collate '%2' "
                 "engine = InnoDB")
              .arg(m_charset, m_collation));

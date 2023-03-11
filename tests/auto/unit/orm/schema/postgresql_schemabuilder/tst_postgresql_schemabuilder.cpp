@@ -1101,16 +1101,28 @@ void tst_PostgreSQL_SchemaBuilder::modifiers() const
                 .create(Firewalls, [](Blueprint &table)
         {
             table.bigInteger(ID).autoIncrement().startingValue(5);
-            table.bigInteger("big_int");
+            // PostgreSQL doesn't support signed modifier or numbers
+            table.bigInteger("big_int").isUnsigned();
+            table.bigInteger("big_int1");
             table.string(NAME).defaultValue("guest");
             table.string("name1").nullable();
             table.string("name2").comment("name2 note");
-            table.string("name3");
+            table.string("name3", 191);
+            // PostgreSQL doesn't support invisible columns
+//            table.string("name4").invisible().change();
             // PostgreSQL doesn't support charset on the column
             table.string("name5").charset(UTF8);
             table.string("name6").collation(UcsBasic);
             // PostgreSQL doesn't support charset on the column
             table.string("name7").charset(UTF8).collation(UcsBasic);
+            // PostgreSQL doesn't support renaming columns during the change() call
+//            table.string("name8_old", 64).renameTo("name8").change();
+            table.Double("amount", 6, 2);
+            table.multiPolygon("positions").srid(1234).storedAs("expression");
+            table.point("positions1").isGeometry().srid(1234);
+            table.timestamp("added_on").nullable(false).useCurrent();
+            // PostgreSQL doesn't support useCurrentOnUpdate()
+//            table.timestamp("updated_at", 4).useCurrent().useCurrentOnUpdate();
         });
         /* Tests from and also integerIncrements, this would of course fail on real DB
            as you can not have two primary keys. */
@@ -1128,13 +1140,20 @@ void tst_PostgreSQL_SchemaBuilder::modifiers() const
              "create table \"firewalls\" ("
              "\"id\" bigserial primary key not null, "
              "\"big_int\" bigint not null, "
+             "\"big_int1\" bigint not null, "
              "\"name\" varchar(255) not null default 'guest', "
              "\"name1\" varchar(255) null, "
              "\"name2\" varchar(255) not null, "
-             "\"name3\" varchar(255) not null, "
+             "\"name3\" varchar(191) not null, "
              "\"name5\" varchar(255) not null, "
              "\"name6\" varchar(255) collate \"ucs_basic\" not null, "
-             "\"name7\" varchar(255) collate \"ucs_basic\" not null)");
+             "\"name7\" varchar(255) collate \"ucs_basic\" not null, "
+             "\"amount\" double precision not null, "
+             "\"positions\" geography(multipolygon, 1234) not null "
+               "generated always as (expression) stored, "
+             "\"positions1\" geometry(point, 1234) not null, "
+             "\"added_on\" timestamp(0) without time zone not null "
+               "default current_timestamp)");
     QVERIFY(log0.boundValues.isEmpty());
 
     const auto &log1 = log.at(1);

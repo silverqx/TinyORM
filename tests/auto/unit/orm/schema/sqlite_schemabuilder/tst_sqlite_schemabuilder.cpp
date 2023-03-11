@@ -870,10 +870,14 @@ void tst_SQLite_SchemaBuilder::modifiers() const
             // comment ignored with the SQLite grammar
             table.string("name2").comment("name2 note");
             table.string("name3");
+            // SQLite doesn't support invisible columns
+//            table.string("name4").invisible().change();
             // charset/collation ignored with the SQLite grammar
             table.string("name5").charset(UTF8);
             table.string("name6").collation(UcsBasic);
             table.string("name7").charset(UTF8).collation(UcsBasic);
+            // SQLite doesn't support renaming columns during the change() call
+//            table.string("name8_old", 64).renameTo("name8").change();
         });
         /* Tests from and also integerIncrements, this would of course fail on real DB
            as you can not have two primary keys. */
