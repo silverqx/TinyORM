@@ -3,7 +3,6 @@
 #include <unordered_set>
 
 #include "orm/databaseconnection.hpp"
-#include "orm/macros/threadlocal.hpp"
 #include "orm/utils/type.hpp"
 
 TINYORM_BEGIN_COMMON_NAMESPACE
@@ -281,7 +280,6 @@ MySqlSchemaGrammar::invokeCompileMethod(const CommandDefinition &command,
        I have to map by QString instead of enum struct because a command.name is used
        to look up, I could use enum struct but I would have to map
        QString(command.name) -> enum. */
-    T_THREAD_LOCAL
     static const std::unordered_map<QString, CompileMemFn> cached {
         {Add,              bind(&MySqlSchemaGrammar::compileAdd)},
         {Rename,           bind(&MySqlSchemaGrammar::compileRename)},

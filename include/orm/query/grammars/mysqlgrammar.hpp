@@ -53,8 +53,7 @@ namespace Orm::Query::Grammars
         const QMap<SelectComponentType, SelectComponentValue> &
         getCompileMap() const override;
         /*! Map the WhereType to a Grammar::whereXx() methods. */
-        const std::function<QString(const WhereConditionItem &)> &
-        getWhereMethod(WhereType whereType) const override;
+        const WhereMemFn &getWhereMethod(WhereType whereType) const override;
 
         /*! Compile an update statement without joins into SQL. */
         QString

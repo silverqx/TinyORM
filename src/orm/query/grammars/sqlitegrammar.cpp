@@ -1,6 +1,5 @@
 #include "orm/query/grammars/sqlitegrammar.hpp"
 
-#include "orm/macros/threadlocal.hpp"
 #include "orm/query/querybuilder.hpp"
 
 TINYORM_BEGIN_COMMON_NAMESPACE
@@ -92,18 +91,20 @@ SQLiteGrammar::getCompileMap() const
        'this' reference and the compileMethod rvalue reference in the following lambda
        and simply save std::function<> in the SelectComponentValue's compileMethod data
        member. */
-    const auto bind = [this](auto &&compileMethod)
+    const auto bind = [](auto &&compileMethod)
     {
-        return [this,
-                compileMethod = std::forward<decltype (compileMethod)>(compileMethod)]
-               (const auto &query)
+        return [compileMethod = std::forward<decltype (compileMethod)>(compileMethod)]
+               (const Grammar &grammar, const QueryBuilder &query)
         {
-            return std::invoke(compileMethod, this, query);
+            /* We can be at 100% sure that this is the SQLiteGrammar instance because
+               this method is virtual; used the reinterpret_cast<> to avoid useless
+               and slower dynamic_cast<>. */
+            return std::invoke(compileMethod,
+                               reinterpret_cast<const SQLiteGrammar &>(grammar), query);
         };
     };
 
     // Pointers to a where member methods by whereType, yes yes c++ 😂
-    T_THREAD_LOCAL
     static const QMap<SelectComponentType, SelectComponentValue> cached {
         {SelectComponentType::AGGREGATE, {bind(&SQLiteGrammar::compileAggregate),
                         [](const auto &query)
@@ -134,27 +135,29 @@ SQLiteGrammar::getCompileMap() const
     return cached;
 }
 
-const std::function<QString(const WhereConditionItem &)> &
+const Grammar::WhereMemFn &
 SQLiteGrammar::getWhereMethod(const WhereType whereType) const
 {
     /* Needed, because some compileXx() methods are overloaded, this way I will capture
        'this' reference and the compileMethod rvalue reference in the following lambda
        and simply save std::function<> in the SelectComponentValue's compileMethod data
        member. */
-    const auto bind = [this](auto &&compileMethod)
+    const auto bind = [](auto &&compileMethod)
     {
-        return [this,
-                compileMethod = std::forward<decltype (compileMethod)>(compileMethod)]
-               (const auto &query)
+        return [compileMethod = std::forward<decltype (compileMethod)>(compileMethod)]
+               (const Grammar &grammar, const WhereConditionItem &query)
         {
-            return std::invoke(compileMethod, this, query);
+            /* We can be at 100% sure that this is the SQLiteGrammar instance because
+               this method is virtual; used the reinterpret_cast<> to avoid useless
+               and slower dynamic_cast<>. */
+            return std::invoke(compileMethod,
+                               reinterpret_cast<const SQLiteGrammar &>(grammar), query);
         };
     };
 
     // Pointers to a where member methods by whereType, yes yes c++ 😂
     // An order has to be the same as in enum struct WhereType
-    T_THREAD_LOCAL
-    static const QVector<std::function<QString(const WhereConditionItem &)>> cached {
+    static const QVector<WhereMemFn> cached {
         bind(&SQLiteGrammar::whereBasic),
         bind(&SQLiteGrammar::whereNested),
         bind(&SQLiteGrammar::whereColumn),
@@ -175,7 +178,6 @@ SQLiteGrammar::getWhereMethod(const WhereType whereType) const
         bind(&SQLiteGrammar::whereYear),
     };
 
-    T_THREAD_LOCAL
     static const auto size = cached.size();
 
     // Check if whereType is in the range, just for sure 😏

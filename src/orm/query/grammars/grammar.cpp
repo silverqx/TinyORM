@@ -194,7 +194,7 @@ QStringList Grammar::compileComponents(const QueryBuilder &query) const
 
     for (const auto &component : compileMap)
         if (component.isset && component.isset(query))
-            sql << std::invoke(component.compileMethod, query);
+            sql << std::invoke(component.compileMethod, *this, query);
 
     return sql;
 }
@@ -268,7 +268,7 @@ QStringList Grammar::compileWheresToVector(const QueryBuilder &query) const
 
     for (const auto &where : wheres)
         compiledWheres << SPACE_IN.arg(where.condition,
-                                       std::invoke(getWhereMethod(where.type), where));
+                                       std::invoke(getWhereMethod(where.type), *this, where));
 
     return compiledWheres;
 }

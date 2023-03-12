@@ -96,17 +96,19 @@ namespace Orm::Query::Grammars
         struct SelectComponentValue
         {
             /*! The component's compile method. */
-            std::function<QString(const QueryBuilder &)> compileMethod;
+            std::function<QString(const Grammar &, const QueryBuilder &)> compileMethod;
             /*! Determine whether the component is set and is not empty. */
             std::function<bool(const QueryBuilder &)> isset;
         };
+        /*! Alias type for the whereXx() methods. */
+        using WhereMemFn = std::function<QString(const Grammar &grammar,
+                                                 const WhereConditionItem &)>;
 
         /*! Map the ComponentType to a Grammar::compileXx() methods. */
         virtual const QMap<SelectComponentType, SelectComponentValue> &
         getCompileMap() const = 0;
         /*! Map the WhereType to a Grammar::whereXx() methods. */
-        virtual const std::function<QString(const WhereConditionItem &)> &
-        getWhereMethod(WhereType whereType) const = 0;
+        virtual const WhereMemFn &getWhereMethod(WhereType whereType) const = 0;
 
         /*! Determine whether the 'aggregate' component should be compiled. */
         static bool shouldCompileAggregate(const std::optional<AggregateItem> &aggregate);

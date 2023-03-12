@@ -3,7 +3,9 @@
 
 #include "orm/constants.hpp"
 #include "orm/databasemanager.hpp"
+#include "orm/db.hpp"
 #include "orm/exceptions/sqlitedatabasedoesnotexisterror.hpp"
+#include "orm/query/querybuilder.hpp"
 #include "orm/utils/type.hpp"
 
 #include "databases.hpp"
@@ -45,6 +47,7 @@ using Orm::Constants::sslrootcert;
 using Orm::Constants::username_;
 using Orm::Constants::verify_full;
 
+using Orm::DB;
 using Orm::DatabaseManager;
 using Orm::Exceptions::SQLiteDatabaseDoesNotExistError;
 using Orm::QtTimeZoneConfig;
@@ -77,6 +80,8 @@ private Q_SLOTS:
     void sqlite_CheckDatabaseExists_True() const;
     void sqlite_CheckDatabaseExists_False() const;
 
+    void addUseAndRemoveConnection_FiveTimes() const;
+
 // NOLINTNEXTLINE(readability-redundant-access-specifiers)
 private:
     /*! Test case class name. */
@@ -88,6 +93,8 @@ private:
 
     /*! The Database Manager used in this test case. */
     std::shared_ptr<DatabaseManager> m_dm {};
+    /*! Number of connections created in the initTestCase() method. */
+    QStringList::size_type m_initialConnectionsCount = 0;
 };
 
 /* private slots */
@@ -95,9 +102,17 @@ private:
 // NOLINTBEGIN(readability-convert-member-functions-to-static)
 void tst_DatabaseManager::initTestCase()
 {
-    // Default connection must be empty
-    m_dm = DatabaseManager::create(EMPTY);
+    const auto connections = Databases::createConnections({Databases::MYSQL});
 
+    if (connections.isEmpty())
+        QSKIP(TestUtils::AutoTestSkippedAny.arg(TypeUtils::classPureBasename(*this))
+                                           .toUtf8().constData(), );
+
+    m_dm = Databases::manager();
+    // Used to test and compare number of connections in DM (or opened connections)
+    m_initialConnectionsCount = connections.size();
+
+    // Default connection must be empty
     QVERIFY(m_dm->getDefaultConnection().isEmpty());
 }
 
@@ -137,7 +152,7 @@ void tst_DatabaseManager::removeConnection_Connected() const
     QCOMPARE(connection.driverName(), driverName);
     QCOMPARE(openedConnections.size(), 1);
     QCOMPARE(openedConnections.first(), *connectionName);
-    QCOMPARE(m_dm->connectionNames().size(), 1);
+    QCOMPARE(m_dm->connectionNames().size(), m_initialConnectionsCount + 1);
     QVERIFY(m_dm->getDefaultConnection().isEmpty());
 
     // Remove opened connection
@@ -145,7 +160,7 @@ void tst_DatabaseManager::removeConnection_Connected() const
 
     QVERIFY(m_dm->getDefaultConnection().isEmpty());
     QVERIFY(m_dm->openedConnectionNames().isEmpty());
-    QVERIFY(m_dm->connectionNames().isEmpty());
+    QCOMPARE(m_dm->connectionNames().size(), m_initialConnectionsCount);
 
     // Restore defaults
     m_dm->resetDefaultConnection();
@@ -171,14 +186,14 @@ void tst_DatabaseManager::removeConnection_NotConnected() const
     m_dm->setDefaultConnection(*connectionName);
 
     QVERIFY(m_dm->openedConnectionNames().isEmpty());
-    QCOMPARE(m_dm->connectionNames().size(), 1);
+    QCOMPARE(m_dm->connectionNames().size(), m_initialConnectionsCount + 1);
     QCOMPARE(m_dm->getDefaultConnection(), *connectionName);
 
     // Remove database connection that is not opened
     QVERIFY(Databases::removeConnection(*connectionName));
 
     QVERIFY(m_dm->openedConnectionNames().isEmpty());
-    QVERIFY(m_dm->connectionNames().isEmpty());
+    QCOMPARE(m_dm->connectionNames().size(), m_initialConnectionsCount);
     /* When the connection was also a default connection, then DM will reset
        the default connection. */
     QCOMPARE(m_dm->getDefaultConnection(), DatabaseConfiguration::defaultConnectionName);
@@ -617,6 +632,27 @@ void tst_DatabaseManager::sqlite_CheckDatabaseExists_False() const
     // Remove the SQLite database file
     QVERIFY(QFile::remove(checkDatabaseExistsFile()));
     QVERIFY(!QFile::exists(checkDatabaseExistsFile()));
+}
+
+void tst_DatabaseManager::addUseAndRemoveConnection_FiveTimes() const
+{
+    for (auto i = 0; i < 5; ++i) {
+        // Add a new MYSQL database connection
+        const auto connectionName =
+                Databases::createConnectionTempFrom(
+                    Databases::MYSQL, {ClassName, QString::fromUtf8(__func__)}); // NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
+
+        if (i == 0 && !connectionName)
+            QSKIP(TestUtils::AutoTestSkipped
+                  .arg(TypeUtils::classPureBasename(*this), Databases::MYSQL)
+                  .toUtf8().constData(), );
+
+        // Execute some database query
+        QCOMPARE(DB::table("users", *connectionName)->count(), 5);
+
+        // Restore
+        QVERIFY(Databases::removeConnection(*connectionName));
+    }
 }
 // NOLINTEND(readability-convert-member-functions-to-static)
 

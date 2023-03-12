@@ -9,7 +9,6 @@
 #include <range/v3/view/remove_if.hpp>
 
 #include "orm/exceptions/runtimeerror.hpp"
-#include "orm/macros/threadlocal.hpp"
 #include "orm/schema/blueprint.hpp"
 #include "orm/utils/type.hpp"
 
@@ -249,7 +248,6 @@ SQLiteSchemaGrammar::invokeCompileMethod(const CommandDefinition &command,
        I have to map by QString instead of enum struct because a command.name is used
        to look up, I could use enum struct but I would have to map
        QString(command.name) -> enum. */
-    T_THREAD_LOCAL
     static const std::unordered_map<QString, CompileMemFn> cached {
         {Add,              bind(&SQLiteSchemaGrammar::compileAdd)},
         {Rename,           bind(&SQLiteSchemaGrammar::compileRename)},

@@ -1,6 +1,5 @@
 #include "orm/query/grammars/mysqlgrammar.hpp"
 
-#include "orm/macros/threadlocal.hpp"
 #include "orm/mysqlconnection.hpp"
 #include "orm/query/querybuilder.hpp"
 
@@ -105,18 +104,20 @@ MySqlGrammar::getCompileMap() const
        'this' reference and the compileMethod rvalue reference in the following lambda
        and simply save std::function<> in the SelectComponentValue's compileMethod data
        member. */
-    const auto bind = [this](auto &&compileMethod)
+    const auto bind = [](auto &&compileMethod)
     {
-        return [this,
-                compileMethod = std::forward<decltype (compileMethod)>(compileMethod)]
-               (const auto &query)
+        return [compileMethod = std::forward<decltype (compileMethod)>(compileMethod)]
+               (const Grammar &grammar, const QueryBuilder &query)
         {
-            return std::invoke(compileMethod, this, query);
+            /* We can be at 100% sure that this is the MySqlGrammar instance because
+               this method is virtual; used the reinterpret_cast<> to avoid useless
+               and slower dynamic_cast<>. */
+            return std::invoke(compileMethod,
+                               reinterpret_cast<const MySqlGrammar &>(grammar), query);
         };
     };
 
     // Pointers to a where member methods by whereType, yes yes c++ 😂
-    T_THREAD_LOCAL
     static const QMap<SelectComponentType, SelectComponentValue> cached {
         {SelectComponentType::AGGREGATE, {bind(&MySqlGrammar::compileAggregate),
                         [](const auto &query)
@@ -148,28 +149,30 @@ MySqlGrammar::getCompileMap() const
     return cached;
 }
 
-const std::function<QString(const WhereConditionItem &)> &
+const Grammar::WhereMemFn &
 MySqlGrammar::getWhereMethod(const WhereType whereType) const
 {
     /* Needed, because some compileXx() methods are overloaded, this way I will capture
        'this' reference and the compileMethod rvalue reference in the following lambda
        and simply save std::function<> in the SelectComponentValue's compileMethod data
        member. */
-    const auto bind = [this](auto &&compileMethod)
+    const auto bind = [](auto &&compileMethod)
     {
-        return [this,
-                compileMethod = std::forward<decltype (compileMethod)>(compileMethod)]
-               (const auto &query)
+        return [compileMethod = std::forward<decltype (compileMethod)>(compileMethod)]
+               (const Grammar &grammar, const WhereConditionItem &where)
         {
-            return std::invoke(compileMethod, this, query);
+            /* We can be at 100% sure that this is the MySqlGrammar instance because
+               this method is virtual; used the reinterpret_cast<> to avoid useless
+               and slower dynamic_cast<>. */
+            return std::invoke(compileMethod,
+                               reinterpret_cast<const MySqlGrammar &>(grammar), where);
         };
     };
 
     // Pointers to a where member methods by whereType, yes yes c++ 😂
     // An order has to be the same as in enum struct WhereType
     // FUTURE QHash would has faster lookup, I should choose QHash, fix also another Grammars silverx
-    T_THREAD_LOCAL
-    static const QVector<std::function<QString(const WhereConditionItem &)>> cached {
+    static const QVector<WhereMemFn> cached {
         bind(&MySqlGrammar::whereBasic),
         bind(&MySqlGrammar::whereNested),
         bind(&MySqlGrammar::whereColumn),
@@ -190,7 +193,6 @@ MySqlGrammar::getWhereMethod(const WhereType whereType) const
         bind(&MySqlGrammar::whereYear),
     };
 
-    T_THREAD_LOCAL
     static const auto size = cached.size();
 
     // Check if whereType is in the range, just for sure 😏
