@@ -665,13 +665,15 @@ void Blueprint::addFluentCommands(const SchemaGrammar &grammar)
 
             // AutoIncrementStartingValue command (MySQL/PostgreSQL)
             if (commandName == AutoIncrementStartingValue &&
+                /* The column.startingValue || column.from is checked
+                   in SchemaGrammar::shouldAddAutoIncrementStartingValue(). */
                 std::invoke(shouldAdd, column)
             ) T_LIKELY
                 addCommand<AutoIncrementStartingValueCommand>(
                         {{}, commandName, column.name,
                          column.startingValue ? *column.startingValue
                                               // Alias for the 'startingValue'
-                                              : *column.from});
+                                              : *column.from}); // NOLINT(bugprone-unchecked-optional-access)
 
             // Comment command (PostgreSQL)
             else if (commandName == Comment && std::invoke(shouldAdd, column)) T_UNLIKELY
