@@ -102,7 +102,7 @@ QString MySqlConnector::getCollation(const QVariantHash &config)
 {
     return config.contains(collation_)
             ? QStringLiteral(" collate '%1'").arg(config[collation_].value<QString>())
-            : "";
+            : QString("");
 }
 
 void MySqlConnector::configureTimezone(const QSqlDatabase &connection,

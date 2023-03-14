@@ -128,7 +128,7 @@ QVector<QString> MySqlSchemaGrammar::compileChange(const Blueprint &blueprint,
                             wrap(column),
                             isRenaming ? QStringLiteral(" %1")
                                          .arg(BaseGrammar::wrap(column.renameTo))
-                                       : "",
+                                       : QString(""),
                             getType(column)),
                        column);
     }

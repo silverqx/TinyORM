@@ -15,6 +15,7 @@ TINYORM_BEGIN_COMMON_NAMESPACE
 using tabulate::Table;
 
 using Orm::Constants::ASTERISK;
+using Orm::Constants::EMPTY;
 using Orm::Constants::NEWLINE;
 using Orm::Constants::NOSPACE;
 using Orm::Constants::SPACE;
@@ -79,9 +80,9 @@ InteractsWithIO::line(const QString &string, const bool newline,
     const auto parsedString = parseOutput(string, isAnsiOutput(cout));
 
     if (style.isEmpty())
-        cout << NOSPACE.arg(parsedString, newline ? NEWLINE : "").toStdString();
+        cout << NOSPACE.arg(parsedString, newline ? NEWLINE : EMPTY).toStdString();
     else
-        cout << tmplStyled.arg(parsedString, newline ? NEWLINE : "", style)
+        cout << tmplStyled.arg(parsedString, newline ? NEWLINE : EMPTY, style)
                           .toStdString();
 
     return *this;
@@ -163,9 +164,9 @@ InteractsWithIO::wline(const QString &string, const bool newline,
     const auto parsedString = parseOutput(string, isAnsiWOutput(wcout));
 
     if (style.isEmpty())
-        wcout << NOSPACE.arg(parsedString, newline ? NEWLINE : "").toStdWString();
+        wcout << NOSPACE.arg(parsedString, newline ? NEWLINE : EMPTY).toStdWString();
     else
-        wcout << tmplStyled.arg(parsedString, newline ? NEWLINE : "", style)
+        wcout << tmplStyled.arg(parsedString, newline ? NEWLINE : EMPTY, style)
                            .toStdWString();
 
     return *this;

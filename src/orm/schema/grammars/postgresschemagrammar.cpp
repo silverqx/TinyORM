@@ -754,14 +754,14 @@ QString PostgresSchemaGrammar::typeTime(const ColumnDefinition &column) const //
 {
     return QStringLiteral("time%1 without time zone")
             .arg(column.precision > 0 ? QStringLiteral("(%1)").arg(column.precision)
-                                      : EMPTY);
+                                      : QString(""));
 }
 
 QString PostgresSchemaGrammar::typeTimeTz(const ColumnDefinition &column) const // NOLINT(readability-convert-member-functions-to-static)
 {
     return QStringLiteral("time%1 with time zone")
             .arg(column.precision > 0 ? QStringLiteral("(%1)").arg(column.precision)
-                                      : EMPTY);
+                                      : QString(""));
 }
 
 QString PostgresSchemaGrammar::typeTimestamp(ColumnDefinition &column) const // NOLINT(readability-convert-member-functions-to-static)
@@ -774,7 +774,7 @@ QString PostgresSchemaGrammar::typeTimestamp(ColumnDefinition &column) const // 
                >-1 is ok so the default will be timestamp(0), the same as
                for the MySQL grammar. */
             .arg(column.precision > -1 ? QStringLiteral("(%1)").arg(column.precision)
-                                       : EMPTY);
+                                       : QString(""));
 }
 
 QString PostgresSchemaGrammar::typeTimestampTz(ColumnDefinition &column) const // NOLINT(readability-convert-member-functions-to-static)
@@ -785,7 +785,7 @@ QString PostgresSchemaGrammar::typeTimestampTz(ColumnDefinition &column) const /
     // CUR schema, -1 vs 0, also tests silverqx
     return QStringLiteral("timestamp%1 with time zone")
             .arg(column.precision > 0 ? QStringLiteral("(%1)").arg(column.precision)
-                                      : EMPTY);
+                                      : QString(""));
 }
 
 QString PostgresSchemaGrammar::typeYear(const ColumnDefinition &column) const

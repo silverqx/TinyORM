@@ -721,7 +721,8 @@ QString ModelCreator::prepareInitializerListValues(const QStringList &list)
        If a list has >2 values then every value will be on a new line. */
 
     auto listJoined = ContainerUtils::join(
-                          wrapValues(list, listSize > 2 ? QString(8, SPACE) : EMPTY),
+                          wrapValues(list, listSize > 2 ? QString(8, SPACE)
+                                                        : QString("")),
                           listSize > 2 ? QStringLiteral(",\n") : COMMA);
 
     if (listSize > 2)
