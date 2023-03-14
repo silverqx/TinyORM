@@ -6,8 +6,8 @@
 
 #include <QtSql/QSqlRecord>
 
-#include "orm/exceptions/multiplecolumnsselectederror.hpp"
 #include "orm/exceptions/lostconnectionerror.hpp"
+#include "orm/exceptions/multiplecolumnsselectederror.hpp"
 #include "orm/query/querybuilder.hpp"
 #include "orm/utils/configuration.hpp"
 #include "orm/utils/type.hpp"

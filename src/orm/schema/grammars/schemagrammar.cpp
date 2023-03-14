@@ -55,7 +55,7 @@ QString SchemaGrammar::compileTableExists() const
     throw Exceptions::RuntimeError(NotImplemented);
 }
 
-QVector<QString> SchemaGrammar::compileChange(const Blueprint &/*unused*/,
+QVector<QString> SchemaGrammar::compileChange(const Blueprint &/*unused*/, // NOLINT(readability-convert-member-functions-to-static)
                                               const BasicCommand &/*unused*/) const
 {
     throw Exceptions::LogicError(
