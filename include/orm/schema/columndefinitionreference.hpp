@@ -51,7 +51,7 @@ namespace Orm::SchemaNs
         ColumnDefinitionReference &operator=(ColumnDefinitionReference &&) = delete;
 
         /*! Place the column "after" another column (MySQL). */
-        ColumnReferenceType &after(const QString &column);
+        ColumnReferenceType &after(QString column);
         /*! Used as a modifier for generatedAs() (PostgreSQL). */
         ColumnReferenceType &always();
         /*! Set INTEGER column as auto-increment (primary key). */
@@ -59,13 +59,13 @@ namespace Orm::SchemaNs
         /*! Change the column. */
         ColumnReferenceType &change();
         /*! Specify a character set for the column (MySQL). */
-        ColumnReferenceType &charset(const QString &charset);
+        ColumnReferenceType &charset(QString charset);
         /*! Specify a collation for the column (MySQL/PostgreSQL/SQL Server). */
-        ColumnReferenceType &collation(const QString &collation);
+        ColumnReferenceType &collation(QString collation);
         /*! Add a comment to the column (MySQL/PostgreSQL). */
-        ColumnReferenceType &comment(const QString &comment);
+        ColumnReferenceType &comment(QString comment);
         /*! Specify a "default" value for the column. */
-        ColumnReferenceType &defaultValue(const QVariant &value);
+        ColumnReferenceType &defaultValue(QVariant value);
         /*! Place the column "first" in the table (MySQL). */
         ColumnReferenceType &first();
         /*! Set the starting value of an auto-incrementing field (MySQL/PostgreSQL),
@@ -106,15 +106,15 @@ namespace Orm::SchemaNs
         ColumnReferenceType &virtualAs(QString expression);
 
         /*! Add an index. */
-        ColumnReferenceType &index(const QString &indexName = "");
+        ColumnReferenceType &index(QString indexName = "");
         /*! Add a primary index. */
         ColumnReferenceType &primary();
         /*! Add a fulltext index. */
-        ColumnReferenceType &fulltext(const QString &indexName = "");
+        ColumnReferenceType &fulltext(QString indexName = "");
         /*! Add a spatial index. */
-        ColumnReferenceType &spatialIndex(const QString &indexName = "");
+        ColumnReferenceType &spatialIndex(QString indexName = "");
         /*! Add a unique index. */
-        ColumnReferenceType &unique(const QString &indexName = "");
+        ColumnReferenceType &unique(QString indexName = "");
 
     protected:
         /*! Reference to a column definition. */
@@ -150,9 +150,9 @@ namespace Orm::SchemaNs
 
     template<ColumnReferenceReturn R>
     typename ColumnDefinitionReference<R>::ColumnReferenceType &
-    ColumnDefinitionReference<R>::after(const QString &column)
+    ColumnDefinitionReference<R>::after(QString column)
     {
-        m_columnDefinition.get().after = column;
+        m_columnDefinition.get().after = std::move(column);
 
         return columnReference();
     }
@@ -186,36 +186,36 @@ namespace Orm::SchemaNs
 
     template<ColumnReferenceReturn R>
     typename ColumnDefinitionReference<R>::ColumnReferenceType &
-    ColumnDefinitionReference<R>::charset(const QString &charset)
+    ColumnDefinitionReference<R>::charset(QString charset)
     {
-        m_columnDefinition.get().charset = charset;
+        m_columnDefinition.get().charset = std::move(charset);
 
         return columnReference();
     }
 
     template<ColumnReferenceReturn R>
     typename ColumnDefinitionReference<R>::ColumnReferenceType &
-    ColumnDefinitionReference<R>::collation(const QString &collation)
+    ColumnDefinitionReference<R>::collation(QString collation)
     {
-        m_columnDefinition.get().collation = collation;
+        m_columnDefinition.get().collation = std::move(collation);
 
         return columnReference();
     }
 
     template<ColumnReferenceReturn R>
     typename ColumnDefinitionReference<R>::ColumnReferenceType &
-    ColumnDefinitionReference<R>::comment(const QString &comment)
+    ColumnDefinitionReference<R>::comment(QString comment)
     {
-        m_columnDefinition.get().comment = comment;
+        m_columnDefinition.get().comment = std::move(comment);
 
         return columnReference();
     }
 
     template<ColumnReferenceReturn R>
     typename ColumnDefinitionReference<R>::ColumnReferenceType &
-    ColumnDefinitionReference<R>::defaultValue(const QVariant &value)
+    ColumnDefinitionReference<R>::defaultValue(QVariant value)
     {
-        m_columnDefinition.get().defaultValue = value;
+        m_columnDefinition.get().defaultValue = std::move(value);
 
         return columnReference();
     }
@@ -357,12 +357,12 @@ namespace Orm::SchemaNs
 
     template<ColumnReferenceReturn R>
     typename ColumnDefinitionReference<R>::ColumnReferenceType &
-    ColumnDefinitionReference<R>::index(const QString &indexName)
+    ColumnDefinitionReference<R>::index(QString indexName)
     {
         if (indexName.isEmpty())
             m_columnDefinition.get().index = true;
         else
-            m_columnDefinition.get().index = indexName;
+            m_columnDefinition.get().index = std::move(indexName);
 
         return columnReference();
     }
@@ -378,36 +378,36 @@ namespace Orm::SchemaNs
 
     template<ColumnReferenceReturn R>
     typename ColumnDefinitionReference<R>::ColumnReferenceType &
-    ColumnDefinitionReference<R>::fulltext(const QString &indexName)
+    ColumnDefinitionReference<R>::fulltext(QString indexName)
     {
         if (indexName.isEmpty())
             m_columnDefinition.get().fulltext = true;
         else
-            m_columnDefinition.get().fulltext = indexName;
+            m_columnDefinition.get().fulltext = std::move(indexName);
 
         return columnReference();
     }
 
     template<ColumnReferenceReturn R>
     typename ColumnDefinitionReference<R>::ColumnReferenceType &
-    ColumnDefinitionReference<R>::spatialIndex(const QString &indexName)
+    ColumnDefinitionReference<R>::spatialIndex(QString indexName)
     {
         if (indexName.isEmpty())
             m_columnDefinition.get().spatialIndex = true;
         else
-            m_columnDefinition.get().spatialIndex = indexName;
+            m_columnDefinition.get().spatialIndex = std::move(indexName);
 
         return columnReference();
     }
 
     template<ColumnReferenceReturn R>
     typename ColumnDefinitionReference<R>::ColumnReferenceType &
-    ColumnDefinitionReference<R>::unique(const QString &indexName)
+    ColumnDefinitionReference<R>::unique(QString indexName)
     {
         if (indexName.isEmpty())
             m_columnDefinition.get().unique = true;
         else
-            m_columnDefinition.get().unique = indexName;
+            m_columnDefinition.get().unique = std::move(indexName);
 
         return columnReference();
     }
