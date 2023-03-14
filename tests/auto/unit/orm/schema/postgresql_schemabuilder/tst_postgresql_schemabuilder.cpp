@@ -716,9 +716,7 @@ void tst_PostgreSQL_SchemaBuilder::dropAllTypes() const
 
 void tst_PostgreSQL_SchemaBuilder::getAllTables() const
 {
-    auto &connection = DB::connection(m_connection);
-
-    auto log = connection.pretend([](auto &connection_)
+    auto log = DB::connection(m_connection).pretend([](auto &connection_)
     {
         Schema::on(connection_.getName()).getAllTables();
     });
@@ -733,7 +731,8 @@ void tst_PostgreSQL_SchemaBuilder::getAllTables() const
                    "concat('\"', schemaname, '\".\"', tablename, '\"') as qualifiedname "
                  "from pg_catalog.pg_tables "
                  "where schemaname in ('%1')")
-             .arg(connection.getConfig(search_path).value<QString>())); // CUR now get schema name from config silverqx
+             .arg(DB::originalConfigValue(search_path, m_connection).value<QString>()));
+
     QVERIFY(firstLog.boundValues.isEmpty());
 }
 
