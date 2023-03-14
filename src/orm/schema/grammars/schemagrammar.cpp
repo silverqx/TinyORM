@@ -55,6 +55,13 @@ QString SchemaGrammar::compileTableExists() const
     throw Exceptions::RuntimeError(NotImplemented);
 }
 
+QVector<QString> SchemaGrammar::compileChange(const Blueprint &/*unused*/,
+                                              const BasicCommand &/*unused*/) const
+{
+    throw Exceptions::LogicError(
+                "This database driver does not support changing columns.");
+}
+
 /* Compile methods for commands */
 
 QVector<QString>

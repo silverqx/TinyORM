@@ -110,6 +110,33 @@ QVector<QString> MySqlSchemaGrammar::compileAdd(const Blueprint &blueprint,
                          prefixArray(Add, getColumns(blueprint))))};
 }
 
+QVector<QString> MySqlSchemaGrammar::compileChange(const Blueprint &blueprint,
+                                                   const BasicCommand &/*unused*/) const
+{
+    auto changedColumns = blueprint.getChangedColumns();
+
+    QVector<QString> columns;
+    columns.reserve(changedColumns.size());
+
+    for (auto &column : changedColumns) {
+        const auto isRenaming = !column.renameTo.isEmpty();
+
+        columns << addModifiers(
+                       QStringLiteral("%1 %2%3 %4")
+                       .arg(isRenaming ? QStringLiteral("change")
+                                       : QStringLiteral("modify"),
+                            wrap(column),
+                            isRenaming ? QStringLiteral(" %1")
+                                         .arg(BaseGrammar::wrap(column.renameTo))
+                                       : "",
+                            getType(column)),
+                       column);
+    }
+
+    return {QStringLiteral("alter table %1 %2").arg(wrapTable(blueprint),
+                                                    columnizeWithoutWrap(columns))};
+}
+
 QVector<QString>
 MySqlSchemaGrammar::compileDropColumn(const Blueprint &blueprint,
                                       const DropColumnsCommand &command) const
@@ -254,6 +281,7 @@ MySqlSchemaGrammar::invokeCompileMethod(const CommandDefinition &command,
        QString(command.name) -> enum. */
     static const std::unordered_map<QString, CompileMemFn> cached {
         {Add,              bind(&MySqlSchemaGrammar::compileAdd)},
+        {Change,           bind(&MySqlSchemaGrammar::compileChange)},
         {Rename,           bind(&MySqlSchemaGrammar::compileRename)},
         {Drop,             bind(&MySqlSchemaGrammar::compileDrop)},
         {DropIfExists,     bind(&MySqlSchemaGrammar::compileDropIfExists)},
@@ -839,18 +867,18 @@ QString MySqlSchemaGrammar::modifyCollate(const ColumnDefinition &column) const 
 
 QString MySqlSchemaGrammar::modifyVirtualAs(const ColumnDefinition &column) const // NOLINT(readability-convert-member-functions-to-static)
 {
-    if (column.virtualAs.isEmpty())
+    if (!column.virtualAs || column.virtualAs->isEmpty())
         return {};
 
-    return QStringLiteral(" generated always as (%1)").arg(column.virtualAs);
+    return QStringLiteral(" generated always as (%1)").arg(*column.virtualAs);
 }
 
 QString MySqlSchemaGrammar::modifyStoredAs(const ColumnDefinition &column) const // NOLINT(readability-convert-member-functions-to-static)
 {
-    if (column.storedAs.isEmpty())
+    if (!column.storedAs || column.storedAs->isEmpty())
         return {};
 
-    return QStringLiteral(" generated always as (%1) stored").arg(column.storedAs);
+    return QStringLiteral(" generated always as (%1) stored").arg(*column.storedAs);
 }
 
 QString MySqlSchemaGrammar::modifyNullable(const ColumnDefinition &column) const // NOLINT(readability-convert-member-functions-to-static)
@@ -860,7 +888,8 @@ QString MySqlSchemaGrammar::modifyNullable(const ColumnDefinition &column) const
        storedAs), it accepts both, null and also not null for generated columns, I have
        tried it. */
     if (!m_isMaria ||
-        (column.virtualAs.isEmpty() && column.storedAs.isEmpty())
+        ((!column.virtualAs || column.virtualAs->isEmpty()) &&
+         (!column.storedAs  || column.storedAs->isEmpty()))
     )
         return column.nullable && *column.nullable ? QStringLiteral(" null")
                                                    : QStringLiteral(" not null");

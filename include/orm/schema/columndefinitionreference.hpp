@@ -56,6 +56,8 @@ namespace Orm::SchemaNs
         ColumnReferenceType &always();
         /*! Set INTEGER column as auto-increment (primary key). */
         ColumnReferenceType &autoIncrement();
+        /*! Change the column. */
+        ColumnReferenceType &change();
         /*! Specify a character set for the column (MySQL). */
         ColumnReferenceType &charset(const QString &charset);
         /*! Specify a collation for the column (MySQL/PostgreSQL/SQL Server). */
@@ -83,18 +85,24 @@ namespace Orm::SchemaNs
         /*! The spatial reference identifier (SRID) of a geometry identifies the SRS
             in which the geometry is defined (MySQL/PostgreSQL), alias for the 'srid'. */
         ColumnReferenceType &projection(quint32 value);
+        /*! Rename a column, use with the change() method (MySQL). */
+        ColumnReferenceType &renameTo(QString columnName);
         /*! The spatial reference identifier (SRID) of a geometry identifies the SRS
             in which the geometry is defined (MySQL/PostgreSQL). */
         ColumnReferenceType &srid(quint32 value);
         /*! Set the starting value of an auto-incrementing field (MySQL/PostgreSQL). */
         ColumnReferenceType &startingValue(int startingValue);
-        /*! Create a stored generated column (MySQL/PostgreSQL/SQLite). */
+        /*! Create a stored generated column (MySQL/PostgreSQL/SQLite). With PostgreSQL
+            use an empty or null QString() to drop a generated column along with
+            the change() method call. */
         ColumnReferenceType &storedAs(QString expression);
         /*! Set the TIMESTAMP column to use CURRENT_TIMESTAMP as default value. */
         ColumnReferenceType &useCurrent();
         /*! Set the TIMESTAMP column to use CURRENT_TIMESTAMP when updating (MySQL). */
         ColumnReferenceType &useCurrentOnUpdate();
-        /*! Create a virtual generated column (MySQL/PostgreSQL/SQLite). */
+        /*! Create a virtual generated column (MySQL/PostgreSQL/SQLite). With PostgreSQL
+            use an empty or null QString() to drop a generated column along with
+            the change() method call. */
         ColumnReferenceType &virtualAs(QString expression);
 
         /*! Add an index. */
@@ -163,6 +171,15 @@ namespace Orm::SchemaNs
     ColumnDefinitionReference<R>::autoIncrement()
     {
         m_columnDefinition.get().autoIncrement = true;
+
+        return columnReference();
+    }
+
+    template<ColumnReferenceReturn R>
+    typename ColumnDefinitionReference<R>::ColumnReferenceType &
+    ColumnDefinitionReference<R>::change()
+    {
+        m_columnDefinition.get().change = true;
 
         return columnReference();
     }
@@ -271,6 +288,15 @@ namespace Orm::SchemaNs
     ColumnDefinitionReference<R>::projection(const quint32 value)
     {
         m_columnDefinition.get().srid = value;
+
+        return columnReference();
+    }
+
+    template<ColumnReferenceReturn R>
+    typename ColumnDefinitionReference<R>::ColumnReferenceType &
+    ColumnDefinitionReference<R>::renameTo(QString columnName)
+    {
+        m_columnDefinition.get().renameTo = std::move(columnName);
 
         return columnReference();
     }

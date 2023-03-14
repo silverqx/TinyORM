@@ -85,6 +85,8 @@ private Q_SLOTS:
     void modifier_defaultValue_WithBoolean() const;
     void modifier_defaultValue_Escaping() const;
 
+    void change_modifiers() const;
+
     void useCurrent() const;
     void useCurrentOnUpdate() const;
 
@@ -1054,6 +1056,88 @@ and tab	end)");
                 "engine = InnoDB")
              .arg(m_charset, m_collation));
     QVERIFY(firstLog.boundValues.isEmpty());
+}
+
+void tst_MySql_SchemaBuilder::change_modifiers() const
+{
+    auto log = DB::connection(m_connection).pretend([](auto &connection)
+    {
+        Schema::on(connection.getName())
+                .table(Firewalls, [](Blueprint &table)
+        {
+            table.bigInteger(ID).autoIncrement().isUnsigned().startingValue(5).change();
+            table.bigInteger("big_int").isUnsigned().change();
+            table.bigInteger("big_int1").change();
+            table.string(NAME).defaultValue("guest").change();
+            table.string("name1").nullable().change();
+            table.string("name2").comment("name2 note").change();
+            table.string("name3", 191).change();
+            table.string("name4").invisible().change();
+            table.string("name5").charset(UTF8).change();
+            table.string("name6").collation("utf8mb4_unicode_ci").change();
+            table.string("name7").charset(UTF8).collation(UTF8Unicodeci).change();
+            table.string("name8_old", 64).renameTo("name8").change();
+            table.Double("amount", 6, 2).change();
+            table.multiPolygon("positions").srid(1234).storedAs("expression").change();
+            table.multiPoint("positions1").srid(1234).virtualAs("expression").nullable()
+                 .change();
+            table.timestamp("added_on").nullable(false).useCurrent().change();
+            table.timestamp("updated_at", 4).useCurrent().useCurrentOnUpdate().change();
+        });
+        /* Tests from and also integerIncrements, this would of course fail on real DB
+           as you can not have two primary keys. */
+        Schema::on(connection.getName())
+                .table(Firewalls, [](Blueprint &table)
+        {
+            table.string(NAME).after("big_int").change();
+            table.integerIncrements(ID).from(15).first().change();
+        });
+    });
+
+    QCOMPARE(log.size(), 4);
+
+    const auto &log0 = log.at(0);
+    QCOMPARE(log0.query,
+             "alter table `firewalls` "
+             "modify `id` bigint unsigned not null auto_increment primary key, "
+             "modify `big_int` bigint unsigned not null, "
+             "modify `big_int1` bigint not null, "
+             "modify `name` varchar(255) not null default 'guest', "
+             "modify `name1` varchar(255) null, "
+             "modify `name2` varchar(255) not null comment 'name2 note', "
+             "modify `name3` varchar(191) not null, "
+             "modify `name4` varchar(255) not null invisible, "
+             "modify `name5` varchar(255) character set 'utf8' not null, "
+             "modify `name6` varchar(255) collate 'utf8mb4_unicode_ci' not null, "
+             "modify `name7` varchar(255) character set 'utf8' collate 'utf8_unicode_ci' "
+               "not null, "
+             "change `name8_old` `name8` varchar(64) not null, "
+             "modify `amount` double(6, 2) not null, "
+             "modify `positions` multipolygon generated always as (expression) stored "
+               "not null srid 1234, "
+             "modify `positions1` multipoint generated always as (expression) "
+             "null srid 1234, "
+             "modify `added_on` timestamp not null default current_timestamp, "
+             "modify `updated_at` timestamp(4) not null default current_timestamp(4) "
+               "on update current_timestamp(4)");
+    QVERIFY(log0.boundValues.isEmpty());
+
+    const auto &log1 = log.at(1);
+    QCOMPARE(log1.query,
+             "alter table `firewalls` auto_increment = 5");
+    QVERIFY(log1.boundValues.isEmpty());
+
+    const auto &log2 = log.at(2);
+    QCOMPARE(log2.query,
+             "alter table `firewalls` "
+             "modify `name` varchar(255) not null after `big_int`, "
+             "modify `id` int unsigned not null auto_increment primary key first");
+    QVERIFY(log2.boundValues.isEmpty());
+
+    const auto &log3 = log.at(3);
+    QCOMPARE(log3.query,
+             "alter table `firewalls` auto_increment = 15");
+    QVERIFY(log3.boundValues.isEmpty());
 }
 
 void tst_MySql_SchemaBuilder::useCurrent() const

@@ -1058,7 +1058,25 @@ When using the MySQL database, the `after` method may be used to add columns aft
 
 ### Modifying Columns
 
-Not implemented.
+The `change` method allows you to modify the type and attributes of existing columns. For example, you may wish to increase the size of a `string` column. To see the `change` method in action, let's increase the size of the `name` column from 25 to 50. To accomplish this, we simply define the new state of the column and then call the `change` method:
+
+    #include <orm/schema.hpp>
+
+    Schema::table("users", [](Blueprint &table)
+    {
+        table.string("name", 50).change();
+    });
+
+When modifying a column, you must explicitly include all of the modifiers you want to keep on the column definition - any missing attribute will be dropped. For example, to retain the `unsigned`, `default`, and `comment` attributes, you must call each modifier explicitly when changing the column:
+
+    Schema::table("users", [](Blueprint &table)
+    {
+        table.integer("votes").isUnsigned().defaultValue(1).comment("my comment").change();
+    });
+
+:::info
+The `change` method and modifying columns is not implemented for the `SQLite` database because it doesn't support modifying columns out of the box.
+:::
 
 #### Renaming Columns
 

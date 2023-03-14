@@ -253,6 +253,7 @@ SQLiteSchemaGrammar::invokeCompileMethod(const CommandDefinition &command,
        QString(command.name) -> enum. */
     static const std::unordered_map<QString, CompileMemFn> cached {
         {Add,              bind(&SQLiteSchemaGrammar::compileAdd)},
+        {Change,           bind(&SQLiteSchemaGrammar::compileChange)},
         {Rename,           bind(&SQLiteSchemaGrammar::compileRename)},
         {Drop,             bind(&SQLiteSchemaGrammar::compileDrop)},
         {DropIfExists,     bind(&SQLiteSchemaGrammar::compileDropIfExists)},
@@ -762,19 +763,19 @@ QString SQLiteSchemaGrammar::typeComputed(const ColumnDefinition &/*unused*/) co
 QString SQLiteSchemaGrammar::modifyVirtualAs(const ColumnDefinition &column) const // NOLINT(readability-convert-member-functions-to-static)
 {
     // FEATURE schema json silverqx
-    if (column.virtualAs.isEmpty())
+    if (!column.virtualAs || column.virtualAs->isEmpty())
         return {};
 
-    return QStringLiteral(" generated always as (%1)").arg(column.virtualAs);
+    return QStringLiteral(" generated always as (%1)").arg(*column.virtualAs);
 }
 
 QString SQLiteSchemaGrammar::modifyStoredAs(const ColumnDefinition &column) const // NOLINT(readability-convert-member-functions-to-static)
 {
     // FEATURE schema json silverqx
-    if (column.storedAs.isEmpty())
+    if (!column.storedAs || column.storedAs->isEmpty())
         return {};
 
-    return QStringLiteral(" generated always as (%1) stored").arg(column.storedAs);
+    return QStringLiteral(" generated always as (%1) stored").arg(*column.storedAs);
 }
 
 QString SQLiteSchemaGrammar::modifyNullable(const ColumnDefinition &column) const // NOLINT(readability-convert-member-functions-to-static)
@@ -793,8 +794,13 @@ QString SQLiteSchemaGrammar::modifyDefault(const ColumnDefinition &column) const
 {
     const auto &defaultValue = column.defaultValue;
 
+    /* From SQLite docs:
+       Generated columns may not have a default value (they may not use the "DEFAULT"
+       clause). The value of a generated column is always the value specified by
+       the expression that follows the "AS" keyword. */
     if (!defaultValue.isValid() || defaultValue.isNull() ||
-        !column.virtualAs.isEmpty() || !column.storedAs.isEmpty()
+        (column.virtualAs && !column.virtualAs->isEmpty()) ||
+        (column.storedAs  && !column.storedAs->isEmpty())
     )
         return {};
 

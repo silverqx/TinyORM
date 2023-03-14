@@ -117,6 +117,8 @@ namespace Orm::SchemaNs
         QString column;
         /*! Column comment value. */
         QString comment;
+        /*! Indicates whether a column will be changed or created. */
+        bool change = false;
     };
 
     /*! Table auto-incrementing column starting value command (MySQL/PostgreSQL). */
@@ -201,18 +203,20 @@ namespace Orm::SchemaNs
         QVariant onUpdate     {};
         /*! Create a SQL compliant identity column (PostgreSQL). */
         QString generatedAs   {};
-        /*! Create a stored generated column (MySQL/PostgreSQL/SQLite). */
-        QString storedAs      {};
-        /*! Create a virtual generated column (MySQL/PostgreSQL/SQLite). */
-        QString virtualAs     {};
+        /*! Rename a column, used with the change() method (MySQL). */
+        QString renameTo      {};
 
         /*! Set the starting value of an auto-incrementing field (MySQL/PostgreSQL),
             alias for the 'startingValue'. */
         std::optional<quint64> from          = std::nullopt;
+        /*! Allow NULL values to be inserted into the column. */
+        std::optional<bool> nullable         = std::nullopt; // Has to be optional because of virtualAs() and storedAs(), look at MySqlSchemaGrammar::modifyNullable()
         /*! Set the starting value of an auto-incrementing field (MySQL/PostgreSQL). */
         std::optional<quint64> startingValue = std::nullopt;
-        /*! Allow NULL values to be inserted into the column. */
-        std::optional<bool> nullable         = std::nullopt; // Has to be optional because of virtualAs() and storedAs(), look at MySQL::modifyNullable()
+        /*! Create a stored generated column (MySQL/PostgreSQL/SQLite). */
+        std::optional<QString> storedAs      = std::nullopt; // Has to be optional because of modifyStoredAs(), look at PostgresSchemaGrammar and tst_PostgreSQL_SchemaBuilder::drop_StoredAs() (to support "drop expression if exists")
+        /*! Create a virtual generated column (MySQL/PostgreSQL/SQLite). */
+        std::optional<QString> virtualAs     = std::nullopt; // Has to be optional because of modifyVirtualAs(), look at PostgresSchemaGrammar (to support "drop expression if exists")
 
         // Place boolean data members at the end to avoid excessive padding
         /*! Used as a modifier for generatedAs() (PostgreSQL). */

@@ -582,8 +582,8 @@ void Blueprint::addImpliedCommands(const SchemaGrammar &grammar)
     if (!getAddedColumns().isEmpty() && !creating())
         m_commands.emplace_front(createCommand<BasicCommand>({{}, Add}));
 
-//    if (!getChangedColumns().isEmpty() && !creating())
-//        m_commands.prepend(createCommand(Change));
+    if (!getChangedColumns().isEmpty() && !creating())
+        m_commands.emplace_front(createCommand<BasicCommand>({{}, Change}));
 
     addFluentIndexes();
 
@@ -676,7 +676,7 @@ void Blueprint::addFluentCommands(const SchemaGrammar &grammar)
             // Comment command (PostgreSQL)
             else if (commandName == Comment && std::invoke(shouldAdd, column)) T_UNLIKELY
                 addCommand<CommentCommand>(
-                        {{}, commandName, column.name, column.comment});
+                        {{}, commandName, column.name, column.comment, column.change});
 }
 
 IndexDefinitionReference

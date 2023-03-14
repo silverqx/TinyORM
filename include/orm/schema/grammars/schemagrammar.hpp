@@ -67,6 +67,10 @@ namespace Grammars
         virtual QString compileColumnListing(const QString &table = "") const = 0;
 
         /* Compile methods for commands */
+        /*! Compile a change column command. */
+        QVector<QString> compileChange(const Blueprint &blueprint,
+                                       const BasicCommand &command) const;
+
         /*! Compile a drop table command. */
         QVector<QString> compileDrop(const Blueprint &blueprint,
                                      const BasicCommand &command) const;

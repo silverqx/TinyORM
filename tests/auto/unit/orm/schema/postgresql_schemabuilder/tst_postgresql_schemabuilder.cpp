@@ -91,6 +91,8 @@ private Q_SLOTS:
     void modifier_defaultValue_WithBoolean() const;
     void modifier_defaultValue_Escaping() const;
 
+    void change_modifiers() const;
+
     void useCurrent() const;
     void useCurrentOnUpdate() const;
 
@@ -109,6 +111,10 @@ private Q_SLOTS:
     void virtualAs_StoredAs_Nullable_CreateTable() const;
     void virtualAs_StoredAs_ModifyTable() const;
     void virtualAs_StoredAs_Nullable_ModifyTable() const;
+
+    void change_VirtualAs_ThrowException() const;
+    void change_StoredAs_ThrowException() const;
+    void drop_StoredAs() const;
 
     void indexes_Fluent() const;
     void indexes_Blueprint() const;
@@ -1255,6 +1261,212 @@ and tab	end)");
     QVERIFY(firstLog.boundValues.isEmpty());
 }
 
+void tst_PostgreSQL_SchemaBuilder::change_modifiers() const
+{
+    auto log = DB::connection(m_connection).pretend([](auto &connection)
+    {
+        Schema::on(connection.getName())
+                .table(Firewalls, [](Blueprint &table)
+        {
+            table.bigInteger(ID).autoIncrement().startingValue(5).change();
+            // PostgreSQL doesn't support signed modifier or signed numbers
+            table.bigInteger("big_int").isUnsigned().change();
+            table.bigInteger("big_int1").change();
+            table.string(NAME).defaultValue("guest").change();
+            table.string("name1").nullable().change();
+            table.string("name2").comment("name2 note").change();
+            table.string("name3", 191).change();
+            // PostgreSQL doesn't support invisible columns
+//            table.string("name4").invisible().change();
+            // PostgreSQL doesn't support charset on the column
+            table.string("name5").charset(UTF8).change();
+            table.string("name6").collation(UcsBasic).change();
+            // PostgreSQL doesn't support charset on the column
+            table.string("name7").charset(UTF8).collation(UcsBasic).change();
+            // PostgreSQL doesn't support renaming columns during the change() call
+//            table.string("name8_old", 64).renameTo("name8").change();
+            table.Double("amount", 6, 2).change();
+            // PostgreSQL doesn't support changing generated columns
+//            table.multiPolygon("positions").srid(1234).storedAs("expression").change();
+            table.point("positions1").isGeometry().projection(1234).change();
+            table.timestamp("added_on").nullable(false).useCurrent().change();
+            // PostgreSQL doesn't support useCurrentOnUpdate()
+//            table.timestamp("updated_at", 4).useCurrent().useCurrentOnUpdate().change();
+        });
+        /* Tests from and also integerIncrements, this would of course fail on real DB
+           as you can not have two primary keys. */
+        Schema::on(connection.getName())
+                .table(Firewalls, [](Blueprint &table)
+        {
+            table.integerIncrements(ID).from(15).change();
+        });
+    });
+
+    // The following is really wild 🤯
+
+    QCOMPARE(log.size(), 18);
+
+    const auto &log0 = log.at(0);
+    QCOMPARE(log0.query,
+             "alter table \"firewalls\" "
+
+             "alter column \"id\" type bigserial, "
+             "alter column \"id\" set not null, "
+             "alter column \"id\" drop default, "
+             "alter column \"id\" drop identity if exists, "
+
+             "alter column \"big_int\" type bigint, "
+             "alter column \"big_int\" set not null, "
+             "alter column \"big_int\" drop default, "
+             "alter column \"big_int\" drop identity if exists, "
+
+             "alter column \"big_int1\" type bigint, "
+             "alter column \"big_int1\" set not null, "
+             "alter column \"big_int1\" drop default, "
+             "alter column \"big_int1\" drop identity if exists, "
+
+             "alter column \"name\" type varchar(255), "
+             "alter column \"name\" set not null, "
+             "alter column \"name\" set default 'guest', "
+             "alter column \"name\" drop identity if exists, "
+
+             "alter column \"name1\" type varchar(255), "
+             "alter column \"name1\" drop not null, "
+             "alter column \"name1\" drop default, "
+             "alter column \"name1\" drop identity if exists, "
+
+             "alter column \"name2\" type varchar(255), "
+             "alter column \"name2\" set not null, "
+             "alter column \"name2\" drop default, "
+             "alter column \"name2\" drop identity if exists, "
+
+             "alter column \"name3\" type varchar(191), "
+             "alter column \"name3\" set not null, "
+             "alter column \"name3\" drop default, "
+             "alter column \"name3\" drop identity if exists, "
+
+             "alter column \"name5\" type varchar(255), "
+             "alter column \"name5\" set not null, "
+             "alter column \"name5\" drop default, "
+             "alter column \"name5\" drop identity if exists, "
+
+             "alter column \"name6\" type varchar(255) collate \"ucs_basic\", "
+             "alter column \"name6\" set not null, "
+             "alter column \"name6\" drop default, "
+             "alter column \"name6\" drop identity if exists, "
+
+             "alter column \"name7\" type varchar(255) collate \"ucs_basic\", "
+             "alter column \"name7\" set not null, "
+             "alter column \"name7\" drop default, "
+             "alter column \"name7\" drop identity if exists, "
+
+             "alter column \"amount\" type double precision, "
+             "alter column \"amount\" set not null, "
+             "alter column \"amount\" drop default, "
+             "alter column \"amount\" drop identity if exists, "
+
+             "alter column \"positions1\" type geometry(point, 1234), "
+             "alter column \"positions1\" set not null, "
+             "alter column \"positions1\" drop default, "
+             "alter column \"positions1\" drop identity if exists, "
+
+             "alter column \"added_on\" type timestamp(0) without time zone, "
+             "alter column \"added_on\" set not null, "
+             "alter column \"added_on\" set default current_timestamp, "
+             "alter column \"added_on\" drop identity if exists");
+
+    QVERIFY(log0.boundValues.isEmpty());
+
+    const auto &log1 = log.at(1);
+    QCOMPARE(log1.query,
+             R"(alter sequence "firewalls_id_seq" restart with 5)");
+    QVERIFY(log1.boundValues.isEmpty());
+
+    const auto &log2 = log.at(2);
+    QCOMPARE(log2.query,
+             R"(comment on column "firewalls"."id" is null)");
+    QVERIFY(log2.boundValues.isEmpty());
+
+    const auto &log3 = log.at(3);
+    QCOMPARE(log3.query,
+             R"(comment on column "firewalls"."big_int" is null)");
+    QVERIFY(log3.boundValues.isEmpty());
+
+    const auto &log4 = log.at(4);
+    QCOMPARE(log4.query,
+             R"(comment on column "firewalls"."big_int1" is null)");
+    QVERIFY(log4.boundValues.isEmpty());
+
+    const auto &log5 = log.at(5);
+    QCOMPARE(log5.query,
+             R"(comment on column "firewalls"."name" is null)");
+    QVERIFY(log5.boundValues.isEmpty());
+
+    const auto &log6 = log.at(6);
+    QCOMPARE(log6.query,
+             R"(comment on column "firewalls"."name1" is null)");
+    QVERIFY(log6.boundValues.isEmpty());
+
+    const auto &log7 = log.at(7);
+    QCOMPARE(log7.query,
+             R"(comment on column "firewalls"."name2" is 'name2 note')");
+    QVERIFY(log7.boundValues.isEmpty());
+
+    const auto &log8 = log.at(8);
+    QCOMPARE(log8.query,
+             R"(comment on column "firewalls"."name3" is null)");
+    QVERIFY(log8.boundValues.isEmpty());
+
+    const auto &log9 = log.at(9);
+    QCOMPARE(log9.query,
+             R"(comment on column "firewalls"."name5" is null)");
+    QVERIFY(log9.boundValues.isEmpty());
+
+    const auto &log10 = log.at(10);
+    QCOMPARE(log10.query,
+             R"(comment on column "firewalls"."name6" is null)");
+    QVERIFY(log10.boundValues.isEmpty());
+
+    const auto &log11 = log.at(11);
+    QCOMPARE(log11.query,
+             R"(comment on column "firewalls"."name7" is null)");
+    QVERIFY(log11.boundValues.isEmpty());
+
+    const auto &log12 = log.at(12);
+    QCOMPARE(log12.query,
+             R"(comment on column "firewalls"."amount" is null)");
+    QVERIFY(log12.boundValues.isEmpty());
+
+    const auto &log13 = log.at(13);
+    QCOMPARE(log13.query,
+             R"(comment on column "firewalls"."positions1" is null)");
+    QVERIFY(log13.boundValues.isEmpty());
+
+    const auto &log14 = log.at(14);
+    QCOMPARE(log14.query,
+             R"(comment on column "firewalls"."added_on" is null)");
+    QVERIFY(log14.boundValues.isEmpty());
+
+    const auto &log15 = log.at(15);
+    QCOMPARE(log15.query,
+             "alter table \"firewalls\" "
+             "alter column \"id\" type serial, "
+             "alter column \"id\" set not null, "
+             "alter column \"id\" drop default, "
+             "alter column \"id\" drop identity if exists");
+    QVERIFY(log15.boundValues.isEmpty());
+
+    const auto &log16 = log.at(16);
+    QCOMPARE(log16.query,
+             R"(alter sequence "firewalls_id_seq" restart with 15)");
+    QVERIFY(log16.boundValues.isEmpty());
+
+    const auto &log17 = log.at(17);
+    QCOMPARE(log17.query,
+             R"(comment on column "firewalls"."id" is null)");
+    QVERIFY(log17.boundValues.isEmpty());
+}
+
 void tst_PostgreSQL_SchemaBuilder::useCurrent() const
 {
     auto log = DB::connection(m_connection).pretend([](auto &connection)
@@ -1634,6 +1846,70 @@ void tst_PostgreSQL_SchemaBuilder::virtualAs_StoredAs_Nullable_ModifyTable() con
              "add column \"discounted_stored\" integer null "
                "generated always as (\"price\" - 5) stored");
     QVERIFY(firstLog.boundValues.isEmpty());
+}
+
+void tst_PostgreSQL_SchemaBuilder::change_VirtualAs_ThrowException() const
+{
+    QVERIFY_EXCEPTION_THROWN(
+                DB::connection(m_connection).pretend([](auto &connection)
+    {
+        Schema::on(connection.getName())
+                .table(Firewalls, [](Blueprint &table)
+        {
+            /* Currently, PostgreSQL 15 doesn't support virtual generated columns,
+               only stored, but I test it anyway. Changing generated column must throw
+               exception, PostgreSQL doesn't support modifying generated columns. */
+            table.integer("discounted_virtual").virtualAs("price - 5").change();
+        });
+    }),
+                LogicError);
+}
+
+void tst_PostgreSQL_SchemaBuilder::change_StoredAs_ThrowException() const
+{
+    QVERIFY_EXCEPTION_THROWN(
+                DB::connection(m_connection).pretend([](auto &connection)
+    {
+        Schema::on(connection.getName())
+                .table(Firewalls, [](Blueprint &table)
+        {
+            /* Currently, PostgreSQL 15 doesn't support virtual generated columns,
+               only stored, but I test it anyway. Changing generated column must throw
+               exception, PostgreSQL doesn't support modifying generated columns. */
+            table.integer("discounted_virtual").storedAs("price - 5").change();
+        });
+    }),
+                LogicError);
+}
+
+void tst_PostgreSQL_SchemaBuilder::drop_StoredAs() const
+{
+    auto log = DB::connection(m_connection).pretend([](auto &connection)
+    {
+        Schema::on(connection.getName())
+                .table(Firewalls, [](Blueprint &table)
+        {
+            // Because of this the CommandDefinition::storedAs must be std::optional
+            table.integer("foo").storedAs(QString()).nullable().change();
+        });
+    });
+
+    QCOMPARE(log.size(), 2);
+
+    const auto &log0 = log.at(0);
+    QCOMPARE(log0.query,
+             "alter table \"firewalls\" "
+             "alter column \"foo\" type integer, "
+             "alter column \"foo\" drop not null, "
+             "alter column \"foo\" drop default, "
+             "alter column \"foo\" drop expression if exists, "
+             "alter column \"foo\" drop identity if exists");
+    QVERIFY(log0.boundValues.isEmpty());
+
+    const auto &log1 = log.at(1);
+    QCOMPARE(log1.query,
+             R"(comment on column "firewalls"."foo" is null)");
+    QVERIFY(log1.boundValues.isEmpty());
 }
 
 void tst_PostgreSQL_SchemaBuilder::indexes_Fluent() const

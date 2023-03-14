@@ -81,6 +81,9 @@ namespace Grammars
         /*! Compile an add column command. */
         QVector<QString> compileAdd(const Blueprint &blueprint,
                                     const BasicCommand &command) const;
+        /*! Compile a change column command. */
+        QVector<QString> compileChange(const Blueprint &blueprint,
+                                       const BasicCommand &command) const;
         /*! Compile a drop column command. */
         QVector<QString> compileDropColumn(const Blueprint &blueprint,
                                            const DropColumnsCommand &command) const;
@@ -157,6 +160,8 @@ namespace Grammars
         /*! Add the column modifiers to the definition. */
         QString addModifiers(QString &&sql,
                              const ColumnDefinition &column) const override;
+        /*! Add the column modifiers to the definition for "alter column" (change()). */
+        QVector<QString> getModifiersForChange(const ColumnDefinition &column) const;
 
         /*! Compile the auto-incrementing column starting value. */
         QVector<QString>
@@ -259,19 +264,36 @@ namespace Grammars
         QString typeMultiPolygonZ(const ColumnDefinition &column) const;
 
         /*! Get the SQL for a collation column modifier. */
-        QString modifyCollate(const ColumnDefinition &column) const;
+        QVector<QString> modifyCollate(const ColumnDefinition &column) const;
         /*! Get the SQL for an auto-increment column modifier. */
-        QString modifyIncrement(const ColumnDefinition &column) const;
+        QVector<QString> modifyIncrement(const ColumnDefinition &column) const;
         /*! Get the SQL for a nullable column modifier. */
-        QString modifyNullable(const ColumnDefinition &column) const;
+        QVector<QString> modifyNullable(const ColumnDefinition &column) const;
         /*! Get the SQL for a default column modifier. */
-        QString modifyDefault(const ColumnDefinition &column) const;
+        QVector<QString> modifyDefault(const ColumnDefinition &column) const;
         /*! Get the SQL for a generated virtual column modifier. */
-        QString modifyVirtualAs(const ColumnDefinition &column) const;
+        QVector<QString> modifyVirtualAs(const ColumnDefinition &column) const;
         /*! Get the SQL for a generated stored column modifier. */
-        QString modifyStoredAs(const ColumnDefinition &column) const;
+        QVector<QString> modifyStoredAs(const ColumnDefinition &column) const;
         /*! Get the SQL for an identity column modifier. */
-        QString modifyGeneratedAs(const ColumnDefinition &column) const;
+        QVector<QString> modifyGeneratedAs(const ColumnDefinition &column) const;
+
+    private:
+        /*! Throw if modifying a generated column using the change() method. */
+        static void throwIfModifyingGeneratedColumn();
+
+        /*! Modifier methods array for the "alter column" (change()). */
+        constexpr static std::array m_modifierMethodsForChange {
+            &PostgresSchemaGrammar::modifyIncrement,
+            &PostgresSchemaGrammar::modifyNullable,
+            &PostgresSchemaGrammar::modifyDefault,
+            &PostgresSchemaGrammar::modifyVirtualAs,
+            &PostgresSchemaGrammar::modifyStoredAs,
+            &PostgresSchemaGrammar::modifyGeneratedAs,
+        };
+        /*! Size of the modifier methods array. */
+        constexpr static auto
+        m_modifierMethodsForChangeSize = m_modifierMethodsForChange.size();
     };
 
     /* public */

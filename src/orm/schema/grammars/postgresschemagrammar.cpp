@@ -3,6 +3,8 @@
 #include <unordered_set>
 
 #include "orm/databaseconnection.hpp"
+#include "orm/exceptions/logicerror.hpp"
+#include "orm/macros/likely.hpp"
 #include "orm/utils/type.hpp"
 
 TINYORM_BEGIN_COMMON_NAMESPACE
@@ -116,6 +118,38 @@ PostgresSchemaGrammar::compileAdd(const Blueprint &blueprint,
                      columnizeWithoutWrap(
                          prefixArray(QStringLiteral("add column"),
                                      getColumns(blueprint))))};
+}
+
+QVector<QString>
+PostgresSchemaGrammar::compileChange(const Blueprint &blueprint,
+                                     const BasicCommand &/*unused*/) const
+{
+    auto changedColumns = blueprint.getChangedColumns();
+
+    QVector<QString> columns;
+    columns.reserve(changedColumns.size());
+
+    for (auto &column : changedColumns) {
+        QVector<QString> changes;
+        changes.reserve(m_modifierMethodsForChangeSize + 1);
+
+        const auto collate = modifyCollate(column);
+
+        // The column type with the collate has to be defined at once
+        changes << QStringLiteral("type %1%2")
+                   .arg(getType(column),
+                        collate.isEmpty() ? EMPTY : collate.constFirst());
+
+        // All other modifiers have to be alone so the "alter column" can be prepended
+        changes << getModifiersForChange(column);
+
+        columns << columnizeWithoutWrap(
+                       prefixArray(QStringLiteral("alter column %1").arg(wrap(column)),
+                                   changes));
+    }
+
+    return {QStringLiteral("alter table %1 %2").arg(wrapTable(blueprint),
+                                                    columnizeWithoutWrap(columns))};
 }
 
 QVector<QString>
@@ -258,12 +292,16 @@ QVector<QString>
 PostgresSchemaGrammar::compileComment(const Blueprint &blueprint,
                                       const CommentCommand &command) const
 {
+    const auto isCommentEmpty = command.comment.isEmpty();
+
+    if (isCommentEmpty && !command.change)
+        return {};
+
     return {QStringLiteral("comment on column %1.%2 is %3")
                 .arg(wrapTable(blueprint), BaseGrammar::wrap(command.column),
-                     command.column.isEmpty()
-                     // Remove a column comment
-                     ? null_
-                     : quoteString(escapeString(command.comment)))};
+                                     // Remove a column comment (used during change())
+                     isCommentEmpty ? null_
+                                    : quoteString(escapeString(command.comment)))};
 }
 
 QVector<QString>
@@ -317,6 +355,7 @@ PostgresSchemaGrammar::invokeCompileMethod(const CommandDefinition &command,
        QString(command.name) -> enum. */
     static const std::unordered_map<QString, CompileMemFn> cached {
         {Add,              bind(&PostgresSchemaGrammar::compileAdd)},
+        {Change,           bind(&PostgresSchemaGrammar::compileChange)},
         {Rename,           bind(&PostgresSchemaGrammar::compileRename)},
         {Drop,             bind(&PostgresSchemaGrammar::compileDrop)},
         {DropIfExists,     bind(&PostgresSchemaGrammar::compileDropIfExists)},
@@ -384,9 +423,25 @@ QString PostgresSchemaGrammar::addModifiers(QString &&sql,
     };
 
     for (const auto method : modifierMethods)
-        sql += std::invoke(method, this, column);
+        /* Postgres is different here, it returns a vector as it needs to return
+           2 modifiers from the modifyGeneratedAs(). */
+        sql += ContainerUtils::join(
+                   std::invoke(method, this, column), EMPTY);
 
     return std::move(sql);
+}
+
+QVector<QString>
+PostgresSchemaGrammar::getModifiersForChange(const ColumnDefinition &column) const
+{
+    QVector<QString> modifiers;
+    modifiers.reserve(static_cast<QVector<QString>::size_type>(
+                          m_modifierMethodsForChangeSize));
+
+    for (const auto method : m_modifierMethodsForChange)
+        modifiers << std::invoke(method, this, column);
+
+    return modifiers;
 }
 
 QVector<QString>
@@ -804,81 +859,143 @@ QString PostgresSchemaGrammar::typeMultiPolygonZ(const ColumnDefinition &column)
     return formatPostGisType(QStringLiteral("multipolygonz"), column);
 }
 
-QString PostgresSchemaGrammar::modifyCollate(const ColumnDefinition &column) const
+QVector<QString>
+PostgresSchemaGrammar::modifyCollate(const ColumnDefinition &column) const
 {
     if (column.collation.isEmpty())
         return {};
 
-    return QStringLiteral(" collate %1").arg(wrapValue(column.collation));
+    return {QStringLiteral(" collate %1").arg(wrapValue(column.collation))};
 }
 
-QString PostgresSchemaGrammar::modifyIncrement(const ColumnDefinition &column) const // NOLINT(readability-convert-member-functions-to-static)
+QVector<QString>
+PostgresSchemaGrammar::modifyIncrement(const ColumnDefinition &column) const // NOLINT(readability-convert-member-functions-to-static)
 {
     static const std::unordered_set serials {
         ColumnType::BigInteger,   ColumnType::Integer,     ColumnType::MediumInteger,
         ColumnType::SmallInteger, ColumnType::TinyInteger,
     };
 
-    if ((serials.contains(column.type) || !column.generatedAs.isNull()) &&
+    // I'm not going to invert this condition for the early return 🤯
+    if (!column.change &&
+        (serials.contains(column.type) || !column.generatedAs.isNull()) && // Can't be generatedAs.isEmpty()!
         column.autoIncrement
     )
-        return QStringLiteral(" primary key");
+        return {QStringLiteral(" primary key")};
 
     return {};
 }
 
-QString PostgresSchemaGrammar::modifyNullable(const ColumnDefinition &column) const // NOLINT(readability-convert-member-functions-to-static)
+QVector<QString>
+PostgresSchemaGrammar::modifyNullable(const ColumnDefinition &column) const // NOLINT(readability-convert-member-functions-to-static)
 {
+    if (column.change)
+        return {column.nullable && *column.nullable ? QStringLiteral("drop not null")
+                                                    : QStringLiteral("set not null")};
+
     /* PostgreSQL doesn't need any special logic for generated columns (virtualAs and
        storedAs), it accepts both, null and also not null for generated columns, I have
        tried it. */
-    return column.nullable && *column.nullable ? QStringLiteral(" null")
-                                               : QStringLiteral(" not null");
+    return {column.nullable && *column.nullable ? QStringLiteral(" null")
+                                                : QStringLiteral(" not null")};
 }
 
-QString PostgresSchemaGrammar::modifyDefault(const ColumnDefinition &column) const
+QVector<QString>
+PostgresSchemaGrammar::modifyDefault(const ColumnDefinition &column) const
 {
     const auto &defaultValue = column.defaultValue;
-
-    if (!defaultValue.isValid() || defaultValue.isNull())
-        return {};
+    const auto isNotValidOrNull = !defaultValue.isValid() || defaultValue.isNull();
 
     // Default value is already quoted and escaped inside the getDefaultValue()
-    return QStringLiteral(" default %1").arg(getDefaultValue(defaultValue));
+
+    if (column.change)
+        return {isNotValidOrNull ? QStringLiteral("drop default")
+                                 : QStringLiteral("set default %1")
+                                   .arg(getDefaultValue(defaultValue))};
+
+    if (isNotValidOrNull)
+        return {};
+
+    return {QStringLiteral(" default %1").arg(getDefaultValue(defaultValue))};
 }
 
-QString PostgresSchemaGrammar::modifyVirtualAs(const ColumnDefinition &column) const // NOLINT(readability-convert-member-functions-to-static)
+QVector<QString>
+PostgresSchemaGrammar::modifyVirtualAs(const ColumnDefinition &column) const // NOLINT(readability-convert-member-functions-to-static)
 {
     /* Currently, PostgreSQL 15 doesn't support virtual generated columns, only stored,
-       so this is useless. */
-    if (column.virtualAs.isEmpty())
+       so this method is useless. */
+
+    if (!column.virtualAs)
         return {};
 
-    return QStringLiteral(" generated always as (%1)").arg(column.virtualAs);
+    if (column.change) {
+        if (column.virtualAs->isEmpty()) T_LIKELY
+            return {QStringLiteral("drop expression if exists")};
+
+        else T_UNLIKELY
+            throwIfModifyingGeneratedColumn();
+    }
+
+    return {QStringLiteral(" generated always as (%1)").arg(*column.virtualAs)};
 }
 
-QString PostgresSchemaGrammar::modifyStoredAs(const ColumnDefinition &column) const // NOLINT(readability-convert-member-functions-to-static)
+QVector<QString>
+PostgresSchemaGrammar::modifyStoredAs(const ColumnDefinition &column) const // NOLINT(readability-convert-member-functions-to-static)
 {
-    if (column.storedAs.isEmpty())
+    if (!column.storedAs)
         return {};
 
-    return QStringLiteral(" generated always as (%1) stored").arg(column.storedAs);
+    if (column.change) {
+        if (column.storedAs->isEmpty()) T_LIKELY
+            return {QStringLiteral("drop expression if exists")};
+
+        else T_UNLIKELY
+            throwIfModifyingGeneratedColumn();
+    }
+
+    return {QStringLiteral(" generated always as (%1) stored").arg(*column.storedAs)};
 }
 
-QString PostgresSchemaGrammar::modifyGeneratedAs(const ColumnDefinition &column) const // NOLINT(readability-convert-member-functions-to-static)
+QVector<QString>
+PostgresSchemaGrammar::modifyGeneratedAs(const ColumnDefinition &column) const // NOLINT(readability-convert-member-functions-to-static)
 {
-    // Nothing to do, generatedAs was not defined
-    if (column.generatedAs.isNull())
-        return {};
+    QString sql;
+    sql.reserve(100);
 
-    return QStringLiteral(" generated %1 as identity%2")
-            .arg(
-                // ALWAYS and BY DEFAULT clause
-                column.always ? QStringLiteral("always") : QStringLiteral("by default"),
-                // Sequence options clause
-                !column.generatedAs.isEmpty() ? QStringLiteral(" (%1)")
-                                                .arg(column.generatedAs)
-                                              : QString(""));
+    /* generatedAs.isNull() mean it was not defined at all, and isEmpty() it was called
+       like generatedAs(). */
+    if (!column.generatedAs.isNull())
+        sql += QStringLiteral(" generated %1 as identity%2")
+               .arg(
+                   // ALWAYS and BY DEFAULT clause
+                   column.always ? QStringLiteral("always")
+                                 : QStringLiteral("by default"),
+                   // Sequence options clause
+                   !column.generatedAs.isEmpty() ? QStringLiteral(" (%1)")
+                                                   .arg(column.generatedAs)
+                                                 : QString(""));
+
+    if (column.change) {
+        QVector<QString> changes;
+        changes.reserve(2);
+
+        changes << QStringLiteral("drop identity if exists");
+
+        if (!sql.isEmpty())
+            changes << std::move(sql.prepend(Add));
+
+        return changes;
+    }
+
+    return {sql};
+}
+
+/* private */
+
+void PostgresSchemaGrammar::throwIfModifyingGeneratedColumn()
+{
+    throw Exceptions::LogicError(
+                "The PostgreSQL database does not support modifying generated columns.");
 }
 
 } // namespace Orm::SchemaNs::Grammars

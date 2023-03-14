@@ -73,6 +73,10 @@ namespace Grammars
         /*! Compile an add column command. */
         QVector<QString> compileAdd(const Blueprint &blueprint,
                                     const BasicCommand &command) const;
+        /*! Compile a change column command. */
+        QVector<QString> compileChange(const Blueprint &blueprint,
+                                       const BasicCommand &command) const;
+
         /*! Compile a drop column command. */
         QVector<QString> compileDropColumn(const Blueprint &blueprint,
                                            const DropColumnsCommand &command) const;
