@@ -666,7 +666,7 @@ void Blueprint::addFluentCommands(const SchemaGrammar &grammar)
             // AutoIncrementStartingValue command (MySQL/PostgreSQL)
             if (commandName == AutoIncrementStartingValue &&
                 /* The column.startingValue || column.from is checked
-                   in SchemaGrammar::shouldAddAutoIncrementStartingValue(). */
+                   in the SchemaGrammar::shouldAddAutoIncrementStartingValue(). */
                 std::invoke(shouldAdd, column)
             ) T_LIKELY
                 addCommand<AutoIncrementStartingValueCommand>(
