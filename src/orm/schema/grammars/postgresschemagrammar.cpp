@@ -605,14 +605,14 @@ QString PostgresSchemaGrammar::typeLongText(const ColumnDefinition &/*unused*/) 
 
 QString PostgresSchemaGrammar::typeBigInteger(const ColumnDefinition &column) const // NOLINT(readability-convert-member-functions-to-static)
 {
-    return column.autoIncrement && column.generatedAs.isNull()
+    return column.autoIncrement && column.generatedAs.isNull() // Can't be generatedAs.isEmpty()!
             ? QStringLiteral("bigserial")
             : QStringLiteral("bigint");
 }
 
 QString PostgresSchemaGrammar::typeInteger(const ColumnDefinition &column) const // NOLINT(readability-convert-member-functions-to-static)
 {
-    return column.autoIncrement && column.generatedAs.isNull()
+    return column.autoIncrement && column.generatedAs.isNull() // Can't be generatedAs.isEmpty()!
             ? QStringLiteral("serial")
             : QStringLiteral("integer");
 }
@@ -629,7 +629,7 @@ QString PostgresSchemaGrammar::typeTinyInteger(const ColumnDefinition &column) c
 
 QString PostgresSchemaGrammar::typeSmallInteger(const ColumnDefinition &column) const // NOLINT(readability-convert-member-functions-to-static)
 {
-    return column.autoIncrement && column.generatedAs.isNull()
+    return column.autoIncrement && column.generatedAs.isNull() // Can't be generatedAs.isEmpty()!
             ? QStringLiteral("smallserial")
             : QStringLiteral("smallint");
 }
