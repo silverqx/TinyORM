@@ -4,7 +4,6 @@
 #include "orm/db.hpp"
 #include "orm/exceptions/invalidargumenterror.hpp"
 #include "orm/mysqlconnection.hpp"
-#include "orm/query/querybuilder.hpp"
 #include "orm/utils/type.hpp"
 
 #include "databases.hpp"

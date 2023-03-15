@@ -6,7 +6,6 @@
 TINY_SYSTEM_HEADER
 
 #include <orm/db.hpp>
-#include <orm/query/querybuilder.hpp>
 #include <orm/utils/nullvariant.hpp>
 
 TINYORM_BEGIN_COMMON_NAMESPACE

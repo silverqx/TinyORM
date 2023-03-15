@@ -2,7 +2,6 @@
 #include <QtTest>
 
 #include "orm/db.hpp"
-#include "orm/query/querybuilder.hpp"
 #include "orm/utils/type.hpp"
 
 #include "databases.hpp"

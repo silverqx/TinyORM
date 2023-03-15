@@ -2,8 +2,6 @@
 #include <QtTest>
 
 #include "orm/db.hpp"
-#include "orm/query/querybuilder.hpp"
-#include "orm/utils/helpers.hpp"
 #include "orm/utils/nullvariant.hpp"
 #include "orm/utils/type.hpp"
 

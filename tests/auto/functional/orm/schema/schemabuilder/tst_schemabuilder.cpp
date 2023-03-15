@@ -5,7 +5,6 @@
 
 #include "orm/db.hpp"
 #include "orm/postgresconnection.hpp"
-#include "orm/query/querybuilder.hpp"
 #include "orm/schema.hpp"
 #include "orm/utils/type.hpp"
 

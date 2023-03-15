@@ -6,6 +6,7 @@
 TINY_SYSTEM_HEADER
 
 #include "orm/connectionresolverinterface.hpp"
+#include "orm/query/querybuilder.hpp" // IWYU pragma: export
 #include "orm/support/databaseconfiguration.hpp"
 #include "orm/support/databaseconnectionsmap.hpp"
 

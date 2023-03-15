@@ -2,13 +2,10 @@
 #include <QtSql/QSqlDriver>
 #include <QtTest>
 
-#include <typeinfo>
-
 #include "orm/db.hpp"
 #include "orm/exceptions/invalidargumenterror.hpp"
 #include "orm/exceptions/multiplerecordsfounderror.hpp"
 #include "orm/exceptions/recordsnotfounderror.hpp"
-#include "orm/query/querybuilder.hpp"
 #include "orm/utils/type.hpp"
 
 #include "databases.hpp"

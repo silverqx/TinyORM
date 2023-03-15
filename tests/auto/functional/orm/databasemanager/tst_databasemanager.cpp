@@ -1,11 +1,8 @@
 #include <QCoreApplication>
 #include <QtTest>
 
-#include "orm/constants.hpp"
 #include "orm/databasemanager.hpp"
-#include "orm/db.hpp"
 #include "orm/exceptions/sqlitedatabasedoesnotexisterror.hpp"
-#include "orm/query/querybuilder.hpp"
 #include "orm/utils/type.hpp"
 
 #include "databases.hpp"
@@ -799,7 +796,7 @@ void tst_DatabaseManager::addUseAndRemoveConnection_FiveTimes() const
                   .toUtf8().constData(), );
 
         // Execute some database query
-        QCOMPARE(DB::table("users", *connectionName)->count(), 5);
+        QCOMPARE(m_dm->table("users", *connectionName)->count(), 5);
 
         // Restore
         QVERIFY(Databases::removeConnection(*connectionName));
