@@ -160,11 +160,12 @@ QVector<QString>
 MySqlSchemaGrammar::compilePrimary(const Blueprint &blueprint,
                                    const IndexCommand &command) const
 {
-    // CUR schema, check this, why it is doing, I have to make command non-const, I have checked it and name is not used in the compileKey(), so it's unnecessary, ask at Laravel's github isssues silverqx
-//    command.name.clear();
-//    const_cast<IndexCommand &>(command).name.clear();
-
-    return {compileKey(blueprint, command, QStringLiteral("primary key"))};
+    return {QStringLiteral("alter table %1 add primary key %2(%3)")
+                .arg(wrapTable(blueprint),
+                     command.algorithm.isEmpty() ? QString("")
+                                                 : QStringLiteral("using %1")
+                                                   .arg(command.algorithm),
+                     columnize(command.columns))};
 }
 
 QVector<QString>
@@ -422,12 +423,11 @@ QString
 MySqlSchemaGrammar::compileKey(const Blueprint &blueprint, const IndexCommand &command,
                                const QString &type) const
 {
-    static const auto usingTmpl = QStringLiteral(" using %1");
-
     return QStringLiteral("alter table %1 add %2 %3%4(%5)")
             .arg(wrapTable(blueprint), type, BaseGrammar::wrap(command.index),
-                 command.algorithm.isEmpty() ? ""
-                                             : usingTmpl.arg(command.algorithm),
+                 command.algorithm.isEmpty() ? QString("")
+                                             : QStringLiteral(" using %1")
+                                               .arg(command.algorithm),
                  columnize(command.columns));
 }
 

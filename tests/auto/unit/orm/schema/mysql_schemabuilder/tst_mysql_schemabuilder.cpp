@@ -152,6 +152,9 @@ private Q_SLOTS:
     void indexes_Fluent() const;
     void indexes_Blueprint() const;
 
+    void add_PrimaryKey() const;
+    void add_PrimaryKey_WithAlgorithm() const;
+
     void renameIndex() const;
 
     void dropIndex_ByIndexName() const;
@@ -2529,6 +2532,46 @@ void tst_MySql_SchemaBuilder::indexes_Blueprint() const
     QVERIFY(log8.boundValues.isEmpty());
 }
 
+void tst_MySql_SchemaBuilder::add_PrimaryKey() const
+{
+    auto log = DB::connection(m_connection).pretend([](auto &connection)
+    {
+        Schema::on(connection.getName())
+                .table(Firewalls, [](Blueprint &table)
+        {
+            table.primary("id", "key_name");
+        });
+    });
+
+    QVERIFY(!log.isEmpty());
+    const auto &firstLog = log.first();
+
+    QCOMPARE(log.size(), 1);
+    QCOMPARE(firstLog.query,
+             "alter table `firewalls` add primary key (`id`)");
+    QVERIFY(firstLog.boundValues.isEmpty());
+}
+
+void tst_MySql_SchemaBuilder::add_PrimaryKey_WithAlgorithm() const
+{
+    auto log = DB::connection(m_connection).pretend([](auto &connection)
+    {
+        Schema::on(connection.getName())
+                .table(Firewalls, [](Blueprint &table)
+        {
+            table.primary("id", "key_name", "hash");
+        });
+    });
+
+    QVERIFY(!log.isEmpty());
+    const auto &firstLog = log.first();
+
+    QCOMPARE(log.size(), 1);
+    QCOMPARE(firstLog.query,
+             "alter table `firewalls` add primary key using hash(`id`)");
+    QVERIFY(firstLog.boundValues.isEmpty());
+}
+
 void tst_MySql_SchemaBuilder::renameIndex() const
 {
     auto log = DB::connection(m_connection).pretend([](auto &connection)
@@ -2618,7 +2661,7 @@ void tst_MySql_SchemaBuilder::dropIndex_ByIndexName() const
 
     const auto &log1 = log.at(1);
     QCOMPARE(log1.query,
-             "alter table `firewalls` add primary key `firewalls_id_primary`(`id`)");
+             "alter table `firewalls` add primary key (`id`)");
     QVERIFY(log1.boundValues.isEmpty());
 
     const auto &log2 = log.at(2);
@@ -2716,7 +2759,7 @@ void tst_MySql_SchemaBuilder::dropIndex_ByColumn() const
 
     const auto &log1 = log.at(1);
     QCOMPARE(log1.query,
-             "alter table `firewalls` add primary key `firewalls_id_primary`(`id`)");
+             "alter table `firewalls` add primary key (`id`)");
     QVERIFY(log1.boundValues.isEmpty());
 
     const auto &log2 = log.at(2);
@@ -2824,8 +2867,7 @@ void tst_MySql_SchemaBuilder::dropIndex_ByMultipleColumns() const
 
     const auto &log1 = log.at(1);
     QCOMPARE(log1.query,
-             "alter table `firewalls` "
-             "add primary key `firewalls_id_id1_primary`(`id`, `id1`)");
+             "alter table `firewalls` add primary key (`id`, `id1`)");
     QVERIFY(log1.boundValues.isEmpty());
 
     const auto &log2 = log.at(2);
