@@ -655,18 +655,18 @@ void tst_MySql_SchemaBuilder::modifyTable() const
     const auto &log0 = log.at(0);
     QCOMPARE(log0.query,
              "alter table `firewalls` "
-             "add `char` char(255) not null, "
-             "add `char_10` char(10) not null, "
-             "add `string` varchar(255) not null, "
-             "add `string_22` varchar(22) not null, "
-             "add `tiny_text` tinytext not null, "
-             "add `text` text not null, "
-             "add `medium_text` mediumtext not null, "
-             "add `long_text` longtext not null, "
-             "add `integer` int null, "
-             "add `tinyInteger` tinyint not null, "
-             "add `smallInteger` smallint not null, "
-             "add `mediumInteger` mediumint not null");
+             "add column `char` char(255) not null, "
+             "add column `char_10` char(10) not null, "
+             "add column `string` varchar(255) not null, "
+             "add column `string_22` varchar(22) not null, "
+             "add column `tiny_text` tinytext not null, "
+             "add column `text` text not null, "
+             "add column `medium_text` mediumtext not null, "
+             "add column `long_text` longtext not null, "
+             "add column `integer` int null, "
+             "add column `tinyInteger` tinyint not null, "
+             "add column `smallInteger` smallint not null, "
+             "add column `mediumInteger` mediumint not null");
     QVERIFY(log0.boundValues.isEmpty());
 
     const auto &log1 = log.at(1);
@@ -1004,8 +1004,8 @@ void tst_MySql_SchemaBuilder::modifiers() const
     const auto &log2 = log.at(2);
     QCOMPARE(log2.query,
              "alter table `firewalls` "
-             "add `name` varchar(255) not null after `big_int`, "
-             "add `id` int unsigned not null auto_increment primary key first");
+             "add column `name` varchar(255) not null after `big_int`, "
+             "add column `id` int unsigned not null auto_increment primary key first");
     QVERIFY(log2.boundValues.isEmpty());
 
     const auto &log3 = log.at(3);
@@ -1144,27 +1144,27 @@ void tst_MySql_SchemaBuilder::change_modifiers() const
     const auto &log0 = log.at(0);
     QCOMPARE(log0.query,
              "alter table `firewalls` "
-             "modify `id` bigint unsigned not null auto_increment primary key, "
-             "modify `big_int` bigint unsigned not null, "
-             "modify `big_int1` bigint not null, "
-             "modify `name` varchar(255) not null default 'guest', "
-             "modify `name1` varchar(255) null, "
-             "modify `name2` varchar(255) not null comment 'name2 note', "
-             "modify `name3` varchar(191) not null, "
-             "modify `name4` varchar(255) not null invisible, "
-             "modify `name5` varchar(255) character set 'utf8' not null, "
-             "modify `name6` varchar(255) collate 'utf8mb4_unicode_ci' not null, "
-             "modify `name7` varchar(255) character set 'utf8' collate 'utf8_unicode_ci' "
-               "not null, "
-             "change `name8_old` `name8` varchar(64) not null, "
-             "modify `amount` double(6, 2) not null, "
-             "modify `positions` multipolygon generated always as (expression) stored "
-               "not null srid 1234, "
-             "modify `positions1` multipoint generated always as (expression) "
-             "null srid 1234, "
-             "modify `added_on` timestamp not null default current_timestamp, "
-             "modify `updated_at` timestamp(4) not null default current_timestamp(4) "
-               "on update current_timestamp(4)");
+             "modify column `id` bigint unsigned not null auto_increment primary key, "
+             "modify column `big_int` bigint unsigned not null, "
+             "modify column `big_int1` bigint not null, "
+             "modify column `name` varchar(255) not null default 'guest', "
+             "modify column `name1` varchar(255) null, "
+             "modify column `name2` varchar(255) not null comment 'name2 note', "
+             "modify column `name3` varchar(191) not null, "
+             "modify column `name4` varchar(255) not null invisible, "
+             "modify column `name5` varchar(255) character set 'utf8' not null, "
+             "modify column `name6` varchar(255) collate 'utf8mb4_unicode_ci' not null, "
+             "modify column `name7` varchar(255) character set 'utf8' "
+               "collate 'utf8_unicode_ci' not null, "
+             "change column `name8_old` `name8` varchar(64) not null, "
+             "modify column `amount` double(6, 2) not null, "
+             "modify column `positions` multipolygon "
+               "generated always as (expression) stored not null srid 1234, "
+             "modify column `positions1` multipoint generated always as (expression) "
+               "null srid 1234, "
+             "modify column `added_on` timestamp not null default current_timestamp, "
+             "modify column `updated_at` timestamp(4) not null "
+               "default current_timestamp(4) on update current_timestamp(4)");
     QVERIFY(log0.boundValues.isEmpty());
 
     const auto &log1 = log.at(1);
@@ -1175,8 +1175,8 @@ void tst_MySql_SchemaBuilder::change_modifiers() const
     const auto &log2 = log.at(2);
     QCOMPARE(log2.query,
              "alter table `firewalls` "
-             "modify `name` varchar(255) not null after `big_int`, "
-             "modify `id` int unsigned not null auto_increment primary key first");
+             "modify column `name` varchar(255) not null after `big_int`, "
+             "modify column `id` int unsigned not null auto_increment primary key first");
     QVERIFY(log2.boundValues.isEmpty());
 
     const auto &log3 = log.at(3);
@@ -1297,8 +1297,8 @@ void tst_MySql_SchemaBuilder::multipleAutoIncrementStartingValue_ModifyTable() c
     const auto &log0 = log.at(0);
     QCOMPARE(log0.query,
              "alter table `firewalls` "
-             "add `id` bigint unsigned not null auto_increment primary key, "
-             "add `name` varchar(255) not null");
+             "add column `id` bigint unsigned not null auto_increment primary key, "
+             "add column `name` varchar(255) not null");
     QVERIFY(log0.boundValues.isEmpty());
 
     const auto &log1 = log.at(1);
@@ -1326,7 +1326,7 @@ void tst_MySql_SchemaBuilder::add_timestamp() const
     QCOMPARE(log.size(), 1);
     QCOMPARE(firstLog.query,
              "alter table `firewalls` "
-             "add `created_at` timestamp not null");
+             "add column `created_at` timestamp not null");
     QVERIFY(firstLog.boundValues.isEmpty());
 }
 
@@ -1347,7 +1347,7 @@ void tst_MySql_SchemaBuilder::add_timestamp_WithPrecision() const
     QCOMPARE(log.size(), 1);
     QCOMPARE(firstLog.query,
              "alter table `firewalls` "
-             "add `created_at` timestamp(1) not null");
+             "add column `created_at` timestamp(1) not null");
     QVERIFY(firstLog.boundValues.isEmpty());
 }
 
@@ -1368,7 +1368,7 @@ void tst_MySql_SchemaBuilder::add_timestamp_WithPrecision_StdNullopt() const
     QCOMPARE(log.size(), 1);
     QCOMPARE(firstLog.query,
              "alter table `firewalls` "
-             "add `created_at` timestamp not null");
+             "add column `created_at` timestamp not null");
     QVERIFY(firstLog.boundValues.isEmpty());
 }
 
@@ -1389,7 +1389,7 @@ void tst_MySql_SchemaBuilder::add_timestamp_WithPrecision_LowerThanZero() const
     QCOMPARE(log.size(), 1);
     QCOMPARE(firstLog.query,
              "alter table `firewalls` "
-             "add `created_at` timestamp not null");
+             "add column `created_at` timestamp not null");
     QVERIFY(firstLog.boundValues.isEmpty());
 }
 
@@ -1410,7 +1410,7 @@ void tst_MySql_SchemaBuilder::add_timestamp_WithDefaultValue() const
     QCOMPARE(log.size(), 1);
     QCOMPARE(firstLog.query,
              "alter table `firewalls` "
-             "add `created_at` timestamp not null default '2023-02-27 10:10:11'");
+             "add column `created_at` timestamp not null default '2023-02-27 10:10:11'");
     QVERIFY(firstLog.boundValues.isEmpty());
 }
 
@@ -1431,7 +1431,8 @@ void tst_MySql_SchemaBuilder::add_timestamp_WithPrecision_UseCurrent() const
     QCOMPARE(log.size(), 1);
     QCOMPARE(firstLog.query,
              "alter table `firewalls` "
-             "add `created_at` timestamp(1) not null default current_timestamp(1)");
+             "add column `created_at` timestamp(1) not null "
+               "default current_timestamp(1)");
     QVERIFY(firstLog.boundValues.isEmpty());
 }
 
@@ -1452,7 +1453,8 @@ void tst_MySql_SchemaBuilder::add_timestamp_WithPrecision_UseCurrentOnUpdate() c
     QCOMPARE(log.size(), 1);
     QCOMPARE(firstLog.query,
              "alter table `firewalls` "
-             "add `created_at` timestamp(1) not null on update current_timestamp(1)");
+             "add column `created_at` timestamp(1) not null "
+               "on update current_timestamp(1)");
     QVERIFY(firstLog.boundValues.isEmpty());
 }
 
@@ -1474,7 +1476,7 @@ void tst_MySql_SchemaBuilder::
     QCOMPARE(log.size(), 1);
     QCOMPARE(firstLog.query,
              "alter table `firewalls` "
-             "add `created_at` timestamp(1) not null default current_timestamp(1) "
+             "add column `created_at` timestamp(1) not null default current_timestamp(1) "
                "on update current_timestamp(1)");
     QVERIFY(firstLog.boundValues.isEmpty());
 }
@@ -1496,7 +1498,7 @@ void tst_MySql_SchemaBuilder::add_timestampTz() const
     QCOMPARE(log.size(), 1);
     QCOMPARE(firstLog.query,
              "alter table `firewalls` "
-             "add `created_at` timestamp not null");
+             "add column `created_at` timestamp not null");
     QVERIFY(firstLog.boundValues.isEmpty());
 }
 
@@ -1517,7 +1519,7 @@ void tst_MySql_SchemaBuilder::add_timestampTz_WithPrecision() const
     QCOMPARE(log.size(), 1);
     QCOMPARE(firstLog.query,
              "alter table `firewalls` "
-             "add `created_at` timestamp(1) not null");
+             "add column `created_at` timestamp(1) not null");
     QVERIFY(firstLog.boundValues.isEmpty());
 }
 
@@ -1538,7 +1540,7 @@ void tst_MySql_SchemaBuilder::add_timestampTz_WithPrecision_StdNullopt() const
     QCOMPARE(log.size(), 1);
     QCOMPARE(firstLog.query,
              "alter table `firewalls` "
-             "add `created_at` timestamp not null");
+             "add column `created_at` timestamp not null");
     QVERIFY(firstLog.boundValues.isEmpty());
 }
 
@@ -1559,7 +1561,7 @@ void tst_MySql_SchemaBuilder::add_timestampTz_WithPrecision_LowerThanZero() cons
     QCOMPARE(log.size(), 1);
     QCOMPARE(firstLog.query,
              "alter table `firewalls` "
-             "add `created_at` timestamp not null");
+             "add column `created_at` timestamp not null");
     QVERIFY(firstLog.boundValues.isEmpty());
 }
 
@@ -1582,7 +1584,7 @@ void tst_MySql_SchemaBuilder::add_datetime() const
     QCOMPARE(log.size(), 1);
     QCOMPARE(firstLog.query,
              "alter table `firewalls` "
-             "add `created_at` datetime not null");
+             "add column `created_at` datetime not null");
     QVERIFY(firstLog.boundValues.isEmpty());
 }
 
@@ -1603,7 +1605,7 @@ void tst_MySql_SchemaBuilder::add_datetime_WithPrecision() const
     QCOMPARE(log.size(), 1);
     QCOMPARE(firstLog.query,
              "alter table `firewalls` "
-             "add `created_at` datetime(1) not null");
+             "add column `created_at` datetime(1) not null");
     QVERIFY(firstLog.boundValues.isEmpty());
 }
 
@@ -1624,7 +1626,7 @@ void tst_MySql_SchemaBuilder::add_datetime_WithPrecision_StdNullopt() const
     QCOMPARE(log.size(), 1);
     QCOMPARE(firstLog.query,
              "alter table `firewalls` "
-             "add `created_at` datetime not null");
+             "add column `created_at` datetime not null");
     QVERIFY(firstLog.boundValues.isEmpty());
 }
 
@@ -1645,7 +1647,7 @@ void tst_MySql_SchemaBuilder::add_datetime_WithPrecision_LowerThanZero() const
     QCOMPARE(log.size(), 1);
     QCOMPARE(firstLog.query,
              "alter table `firewalls` "
-             "add `created_at` datetime not null");
+             "add column `created_at` datetime not null");
     QVERIFY(firstLog.boundValues.isEmpty());
 }
 
@@ -1666,7 +1668,7 @@ void tst_MySql_SchemaBuilder::add_datetime_WithDefaultValue() const
     QCOMPARE(log.size(), 1);
     QCOMPARE(firstLog.query,
              "alter table `firewalls` "
-             "add `created_at` datetime not null default '2023-02-27 10:10:11'");
+             "add column `created_at` datetime not null default '2023-02-27 10:10:11'");
     QVERIFY(firstLog.boundValues.isEmpty());
 }
 
@@ -1687,7 +1689,7 @@ void tst_MySql_SchemaBuilder::add_datetime_WithPrecision_UseCurrent() const
     QCOMPARE(log.size(), 1);
     QCOMPARE(firstLog.query,
              "alter table `firewalls` "
-             "add `created_at` datetime(1) not null default current_timestamp(1)");
+             "add column `created_at` datetime(1) not null default current_timestamp(1)");
     QVERIFY(firstLog.boundValues.isEmpty());
 }
 
@@ -1708,7 +1710,8 @@ void tst_MySql_SchemaBuilder::add_datetime_WithPrecision_UseCurrentOnUpdate() co
     QCOMPARE(log.size(), 1);
     QCOMPARE(firstLog.query,
              "alter table `firewalls` "
-             "add `created_at` datetime(1) not null on update current_timestamp(1)");
+             "add column `created_at` datetime(1) not null "
+               "on update current_timestamp(1)");
     QVERIFY(firstLog.boundValues.isEmpty());
 }
 
@@ -1730,7 +1733,7 @@ void tst_MySql_SchemaBuilder::
     QCOMPARE(log.size(), 1);
     QCOMPARE(firstLog.query,
              "alter table `firewalls` "
-             "add `created_at` datetime(1) not null default current_timestamp(1) "
+             "add column `created_at` datetime(1) not null default current_timestamp(1) "
                "on update current_timestamp(1)");
     QVERIFY(firstLog.boundValues.isEmpty());
 }
@@ -1752,7 +1755,7 @@ void tst_MySql_SchemaBuilder::add_datetimeTz() const
     QCOMPARE(log.size(), 1);
     QCOMPARE(firstLog.query,
              "alter table `firewalls` "
-             "add `created_at` datetime not null");
+             "add column `created_at` datetime not null");
     QVERIFY(firstLog.boundValues.isEmpty());
 }
 
@@ -1773,7 +1776,7 @@ void tst_MySql_SchemaBuilder::add_datetimeTz_WithPrecision() const
     QCOMPARE(log.size(), 1);
     QCOMPARE(firstLog.query,
              "alter table `firewalls` "
-             "add `created_at` datetime(1) not null");
+             "add column `created_at` datetime(1) not null");
     QVERIFY(firstLog.boundValues.isEmpty());
 }
 
@@ -1794,7 +1797,7 @@ void tst_MySql_SchemaBuilder::add_datetimeTz_WithPrecision_StdNullopt() const
     QCOMPARE(log.size(), 1);
     QCOMPARE(firstLog.query,
              "alter table `firewalls` "
-             "add `created_at` datetime not null");
+             "add column `created_at` datetime not null");
     QVERIFY(firstLog.boundValues.isEmpty());
 }
 
@@ -1815,7 +1818,7 @@ void tst_MySql_SchemaBuilder::add_datetimeTz_WithPrecision_LowerThanZero() const
     QCOMPARE(log.size(), 1);
     QCOMPARE(firstLog.query,
              "alter table `firewalls` "
-             "add `created_at` datetime not null");
+             "add column `created_at` datetime not null");
     QVERIFY(firstLog.boundValues.isEmpty());
 }
 
@@ -1838,7 +1841,7 @@ void tst_MySql_SchemaBuilder::add_time() const
     QCOMPARE(log.size(), 1);
     QCOMPARE(firstLog.query,
              "alter table `firewalls` "
-             "add `created_at` time not null");
+             "add column `created_at` time not null");
     QVERIFY(firstLog.boundValues.isEmpty());
 }
 
@@ -1859,7 +1862,7 @@ void tst_MySql_SchemaBuilder::add_time_WithPrecision() const
     QCOMPARE(log.size(), 1);
     QCOMPARE(firstLog.query,
              "alter table `firewalls` "
-             "add `created_at` time(1) not null");
+             "add column `created_at` time(1) not null");
     QVERIFY(firstLog.boundValues.isEmpty());
 }
 
@@ -1880,7 +1883,7 @@ void tst_MySql_SchemaBuilder::add_time_WithPrecision_StdNullopt() const
     QCOMPARE(log.size(), 1);
     QCOMPARE(firstLog.query,
              "alter table `firewalls` "
-             "add `created_at` time not null");
+             "add column `created_at` time not null");
     QVERIFY(firstLog.boundValues.isEmpty());
 }
 
@@ -1901,7 +1904,7 @@ void tst_MySql_SchemaBuilder::add_time_WithPrecision_LowerThanZero() const
     QCOMPARE(log.size(), 1);
     QCOMPARE(firstLog.query,
              "alter table `firewalls` "
-             "add `created_at` time not null");
+             "add column `created_at` time not null");
     QVERIFY(firstLog.boundValues.isEmpty());
 }
 
@@ -1922,7 +1925,7 @@ void tst_MySql_SchemaBuilder::add_timeTz() const
     QCOMPARE(log.size(), 1);
     QCOMPARE(firstLog.query,
              "alter table `firewalls` "
-             "add `created_at` time not null");
+             "add column `created_at` time not null");
     QVERIFY(firstLog.boundValues.isEmpty());
 }
 
@@ -1943,7 +1946,7 @@ void tst_MySql_SchemaBuilder::add_timeTz_WithPrecision() const
     QCOMPARE(log.size(), 1);
     QCOMPARE(firstLog.query,
              "alter table `firewalls` "
-             "add `created_at` time(1) not null");
+             "add column `created_at` time(1) not null");
     QVERIFY(firstLog.boundValues.isEmpty());
 }
 
@@ -1964,7 +1967,7 @@ void tst_MySql_SchemaBuilder::add_timeTz_WithPrecision_StdNullopt() const
     QCOMPARE(log.size(), 1);
     QCOMPARE(firstLog.query,
              "alter table `firewalls` "
-             "add `created_at` time not null");
+             "add column `created_at` time not null");
     QVERIFY(firstLog.boundValues.isEmpty());
 }
 
@@ -1985,7 +1988,7 @@ void tst_MySql_SchemaBuilder::add_timeTz_WithPrecision_LowerThanZero() const
     QCOMPARE(log.size(), 1);
     QCOMPARE(firstLog.query,
              "alter table `firewalls` "
-             "add `created_at` time not null");
+             "add column `created_at` time not null");
     QVERIFY(firstLog.boundValues.isEmpty());
 }
 
@@ -2087,10 +2090,11 @@ void tst_MySql_SchemaBuilder::virtualAs_StoredAs_ModifyTable() const
     QCOMPARE(log.size(), 1);
     QCOMPARE(firstLog.query,
              "alter table `firewalls` "
-             "add `price` int not null, "
-             "add `discounted_virtual` int generated always as (price - 5) not null, "
-             "add `discounted_stored` int generated always as (`price` - 5) stored "
-               "not null");
+             "add column `price` int not null, "
+             "add column `discounted_virtual` int "
+               "generated always as (price - 5) not null, "
+             "add column `discounted_stored` int "
+               "generated always as (`price` - 5) stored not null");
     QVERIFY(firstLog.boundValues.isEmpty());
 }
 
@@ -2113,9 +2117,10 @@ void tst_MySql_SchemaBuilder::virtualAs_StoredAs_Nullable_ModifyTable() const
     QCOMPARE(log.size(), 1);
     QCOMPARE(firstLog.query,
              "alter table `firewalls` "
-             "add `price` int not null, "
-             "add `discounted_virtual` int generated always as (`price` - 5) null, "
-             "add `discounted_stored` int generated always as (price - 5) stored "
+             "add column `price` int not null, "
+             "add column `discounted_virtual` int generated always as (`price` - 5) "
+               "null, "
+             "add column `discounted_stored` int generated always as (price - 5) stored "
                "null");
     QVERIFY(firstLog.boundValues.isEmpty());
 }
@@ -2141,10 +2146,10 @@ void tst_MySql_SchemaBuilder::virtualAs_StoredAs_WithCharset() const
     QCOMPARE(log.size(), 1);
     QCOMPARE(firstLog.query,
              "alter table `firewalls` "
-             "add `url` varchar(2083) not null, "
-             "add `url_hash_virtual` varchar(64) character set 'ascii' "
+             "add column `url` varchar(2083) not null, "
+             "add column `url_hash_virtual` varchar(64) character set 'ascii' "
                "generated always as (sha2(url, 256)) not null, "
-             "add `url_hash_stored` varchar(64) character set 'ascii' "
+             "add column `url_hash_stored` varchar(64) character set 'ascii' "
                "generated always as (sha2(`url`, 256)) stored not null");
     QVERIFY(firstLog.boundValues.isEmpty());
 }
@@ -2295,9 +2300,10 @@ void tst_MySql_SchemaBuilder::virtualAs_StoredAs_ModifyTable_Maria() const
     QCOMPARE(log.size(), 1);
     QCOMPARE(firstLog.query,
              "alter table `firewalls` "
-             "add `price` int not null, "
-             "add `discounted_virtual` int generated always as (price - 5), "
-             "add `discounted_stored` int generated always as (`price` - 5) stored");
+             "add column `price` int not null, "
+             "add column `discounted_virtual` int generated always as (price - 5), "
+             "add column `discounted_stored` int "
+               "generated always as (`price` - 5) stored");
     QVERIFY(firstLog.boundValues.isEmpty());
 
     // Restore
@@ -2338,9 +2344,9 @@ void tst_MySql_SchemaBuilder::virtualAs_StoredAs_Nullable_ModifyTable_Maria() co
     QCOMPARE(log.size(), 1);
     QCOMPARE(firstLog.query,
              "alter table `firewalls` "
-             "add `price` int not null, "
-             "add `discounted_virtual` int generated always as (`price` - 5), "
-             "add `discounted_stored` int generated always as (price - 5) stored");
+             "add column `price` int not null, "
+             "add column `discounted_virtual` int generated always as (`price` - 5), "
+             "add column `discounted_stored` int generated always as (price - 5) stored");
     QVERIFY(firstLog.boundValues.isEmpty());
 
     // Restore
@@ -2393,7 +2399,8 @@ void tst_MySql_SchemaBuilder::indexes_Fluent() const
 
     const auto &log1 = log.at(1);
     QCOMPARE(log1.query,
-             "alter table `firewalls` add unique `firewalls_name_u_unique`(`name_u`)");
+             "alter table `firewalls` "
+             "add unique index `firewalls_name_u_unique`(`name_u`)");
     QVERIFY(log1.boundValues.isEmpty());
 
     const auto &log2 = log.at(2);
@@ -2409,12 +2416,13 @@ void tst_MySql_SchemaBuilder::indexes_Fluent() const
     const auto &log4 = log.at(4);
     QCOMPARE(log4.query,
              "alter table `firewalls` "
-             "add fulltext `firewalls_name_f_fulltext`(`name_f`)");
+             "add fulltext index `firewalls_name_f_fulltext`(`name_f`)");
     QVERIFY(log4.boundValues.isEmpty());
 
     const auto &log5 = log.at(5);
     QCOMPARE(log5.query,
-             "alter table `firewalls` add fulltext `name_f_cn_fulltext`(`name_f_cn`)");
+             "alter table `firewalls` "
+             "add fulltext index `name_f_cn_fulltext`(`name_f_cn`)");
     QVERIFY(log5.boundValues.isEmpty());
 
     const auto &log6 = log.at(6);
@@ -2490,7 +2498,7 @@ void tst_MySql_SchemaBuilder::indexes_Blueprint() const
 
     const auto &log1 = log.at(1);
     QCOMPARE(log1.query,
-             "alter table `firewalls` add unique `name_u_unique`(`name_u`)");
+             "alter table `firewalls` add unique index `name_u_unique`(`name_u`)");
     QVERIFY(log1.boundValues.isEmpty());
 
     const auto &log2 = log.at(2);
@@ -2511,12 +2519,13 @@ void tst_MySql_SchemaBuilder::indexes_Blueprint() const
     const auto &log5 = log.at(5);
     QCOMPARE(log5.query,
              "alter table `firewalls` "
-             "add fulltext `firewalls_name_f_fulltext`(`name_f`)");
+             "add fulltext index `firewalls_name_f_fulltext`(`name_f`)");
     QVERIFY(log5.boundValues.isEmpty());
 
     const auto &log6 = log.at(6);
     QCOMPARE(log6.query,
-             "alter table `firewalls` add fulltext `name_f_cn_fulltext`(`name_f_cn`)");
+             "alter table `firewalls` "
+             "add fulltext index `name_f_cn_fulltext`(`name_f_cn`)");
     QVERIFY(log6.boundValues.isEmpty());
 
     const auto &log7 = log.at(7);
@@ -2606,7 +2615,7 @@ void tst_MySql_SchemaBuilder::renameIndex() const
 
     const auto &log1 = log.at(1);
     QCOMPARE(log1.query,
-             "alter table `firewalls` add unique `firewalls_name_unique`(`name`)");
+             "alter table `firewalls` add unique index `firewalls_name_unique`(`name`)");
     QVERIFY(log1.boundValues.isEmpty());
 
     const auto &log2 = log.at(2);
@@ -2666,7 +2675,8 @@ void tst_MySql_SchemaBuilder::dropIndex_ByIndexName() const
 
     const auto &log2 = log.at(2);
     QCOMPARE(log2.query,
-             "alter table `firewalls` add unique `firewalls_name_u_unique`(`name_u`)");
+             "alter table `firewalls` "
+             "add unique index `firewalls_name_u_unique`(`name_u`)");
     QVERIFY(log2.boundValues.isEmpty());
 
     const auto &log3 = log.at(3);
@@ -2677,7 +2687,7 @@ void tst_MySql_SchemaBuilder::dropIndex_ByIndexName() const
     const auto &log4 = log.at(4);
     QCOMPARE(log4.query,
              "alter table `firewalls` "
-             "add fulltext `firewalls_name_f_fulltext`(`name_f`)");
+             "add fulltext index `firewalls_name_f_fulltext`(`name_f`)");
     QVERIFY(log4.boundValues.isEmpty());
 
     const auto &log5 = log.at(5);
@@ -2764,7 +2774,8 @@ void tst_MySql_SchemaBuilder::dropIndex_ByColumn() const
 
     const auto &log2 = log.at(2);
     QCOMPARE(log2.query,
-             "alter table `firewalls` add unique `firewalls_name_u_unique`(`name_u`)");
+             "alter table `firewalls` "
+             "add unique index `firewalls_name_u_unique`(`name_u`)");
     QVERIFY(log2.boundValues.isEmpty());
 
     const auto &log3 = log.at(3);
@@ -2775,7 +2786,7 @@ void tst_MySql_SchemaBuilder::dropIndex_ByColumn() const
     const auto &log4 = log.at(4);
     QCOMPARE(log4.query,
              "alter table `firewalls` "
-             "add fulltext `firewalls_name_f_fulltext`(`name_f`)");
+             "add fulltext index `firewalls_name_f_fulltext`(`name_f`)");
     QVERIFY(log4.boundValues.isEmpty());
 
     const auto &log5 = log.at(5);
@@ -2873,7 +2884,7 @@ void tst_MySql_SchemaBuilder::dropIndex_ByMultipleColumns() const
     const auto &log2 = log.at(2);
     QCOMPARE(log2.query,
              "alter table `firewalls` "
-             "add unique `firewalls_name_u_name_u1_unique`(`name_u`, `name_u1`)");
+             "add unique index `firewalls_name_u_name_u1_unique`(`name_u`, `name_u1`)");
     QVERIFY(log2.boundValues.isEmpty());
 
     const auto &log3 = log.at(3);
@@ -2885,7 +2896,8 @@ void tst_MySql_SchemaBuilder::dropIndex_ByMultipleColumns() const
     const auto &log4 = log.at(4);
     QCOMPARE(log4.query,
              "alter table `firewalls` "
-             "add fulltext `firewalls_name_f_name_f1_fulltext`(`name_f`, `name_f1`)");
+             "add fulltext index "
+               "`firewalls_name_f_name_f1_fulltext`(`name_f`, `name_f1`)");
     QVERIFY(log4.boundValues.isEmpty());
 
     const auto &log5 = log.at(5);

@@ -270,7 +270,7 @@ void tst_Blueprint::unsignedDecimal_WithTotalAndPlaces() const
 
     QCOMPARE(blueprint.toSql(DB::connection(m_connection), MySqlSchemaGrammar()),
              QVector<QString> {"alter table `cars` "
-                               "add `money` decimal(10, 2) unsigned not null"});
+                               "add column `money` decimal(10, 2) unsigned not null"});
 }
 
 void tst_Blueprint::removeColumn() const
@@ -284,7 +284,7 @@ void tst_Blueprint::removeColumn() const
 
     QCOMPARE(blueprint.toSql(DB::connection(m_connection), MySqlSchemaGrammar()),
              QVector<QString> {"alter table `torrents` "
-                               "add `name` varchar(255) not null"});
+                               "add column `name` varchar(255) not null"});
 }
 
 void tst_Blueprint::softDeletes() const
@@ -296,7 +296,7 @@ void tst_Blueprint::softDeletes() const
 
     QCOMPARE(blueprint.toSql(DB::connection(m_connection), MySqlSchemaGrammar()),
              QVector<QString> {"alter table `torrents` "
-                               "add `deleted_at` timestamp null"});
+                               "add column `deleted_at` timestamp null"});
 }
 
 void tst_Blueprint::softDeletes_Custom_ColumnName() const
@@ -308,7 +308,7 @@ void tst_Blueprint::softDeletes_Custom_ColumnName() const
 
     QCOMPARE(blueprint.toSql(DB::connection(m_connection), MySqlSchemaGrammar()),
              QVector<QString> {"alter table `torrents` "
-                               "add `deleted_on` timestamp null"});
+                               "add column `deleted_on` timestamp null"});
 }
 
 void tst_Blueprint::dropSoftDeletes() const

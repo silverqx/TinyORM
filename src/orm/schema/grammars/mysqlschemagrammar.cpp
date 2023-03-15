@@ -107,7 +107,8 @@ QVector<QString> MySqlSchemaGrammar::compileAdd(const Blueprint &blueprint,
     return {QStringLiteral("alter table %1 %2")
                 .arg(wrapTable(blueprint),
                      columnizeWithoutWrap(
-                         prefixArray(Add, getColumns(blueprint))))};
+                         prefixArray(QStringLiteral("add column"),
+                                     getColumns(blueprint))))};
 }
 
 QVector<QString> MySqlSchemaGrammar::compileChange(const Blueprint &blueprint,
@@ -123,8 +124,8 @@ QVector<QString> MySqlSchemaGrammar::compileChange(const Blueprint &blueprint,
 
         columns << addModifiers(
                        QStringLiteral("%1 %2%3 %4")
-                       .arg(isRenaming ? QStringLiteral("change")
-                                       : QStringLiteral("modify"),
+                       .arg(isRenaming ? QStringLiteral("change column")
+                                       : QStringLiteral("modify column"),
                             wrap(column),
                             isRenaming ? QStringLiteral(" %1")
                                          .arg(BaseGrammar::wrap(column.renameTo))
@@ -172,7 +173,7 @@ QVector<QString>
 MySqlSchemaGrammar::compileUnique(const Blueprint &blueprint,
                                   const IndexCommand &command) const
 {
-    return {compileKey(blueprint, command, Unique)};
+    return {compileKey(blueprint, command, QStringLiteral("unique index"))};
 }
 
 QVector<QString>
@@ -186,7 +187,7 @@ QVector<QString>
 MySqlSchemaGrammar::compileFullText(const Blueprint &blueprint,
                                     const IndexCommand &command) const
 {
-    return {compileKey(blueprint, command, Fulltext)};
+    return {compileKey(blueprint, command, QStringLiteral("fulltext index"))};
 }
 
 QVector<QString>
