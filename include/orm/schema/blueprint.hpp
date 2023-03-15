@@ -700,24 +700,24 @@ namespace Grammars
     }
 
     ColumnDefinitionReference<>
-    Blueprint::unsignedFloat(const QString &column, const std::optional<int> total,
-                             const std::optional<int> places)
+    Blueprint::unsignedFloat(const QString &column, std::optional<int> total,
+                             std::optional<int> places)
     {
-        return Float(column, total, places, true);
+        return Float(column, std::move(total), std::move(places), true);
     }
 
     ColumnDefinitionReference<>
-    Blueprint::unsignedDouble(const QString &column, const std::optional<int> total,
-                              const std::optional<int> places)
+    Blueprint::unsignedDouble(const QString &column, std::optional<int> total,
+                              std::optional<int> places)
     {
-        return Double(column, total, places, true);
+        return Double(column, std::move(total), std::move(places), true);
     }
 
     ColumnDefinitionReference<>
-    Blueprint::unsignedDecimal(const QString &column, const std::optional<int> total,
-                               const std::optional<int> places)
+    Blueprint::unsignedDecimal(const QString &column, std::optional<int> total,
+                               std::optional<int> places)
     {
-        return decimal(column, total, places, true);
+        return decimal(column, std::move(total), std::move(places), true);
     }
 
     void Blueprint::datetimes(std::optional<int> precision)
