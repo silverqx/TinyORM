@@ -358,7 +358,7 @@ void Application::initializeEnvironment()
         m_environment = std::move(environmentOpt);
 
     else if (auto environmentEnv = QString::fromUtf8(m_environmentEnvName).isEmpty()
-                                   ? EMPTY
+                                   ? QString("")
                                    : qEnvironmentVariable(m_environmentEnvName);
              !environmentEnv.isEmpty()
     )

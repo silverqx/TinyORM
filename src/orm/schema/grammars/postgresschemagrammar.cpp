@@ -193,7 +193,7 @@ PostgresSchemaGrammar::compileIndex(const Blueprint &blueprint,
                                     const IndexCommand &command) const
 {
     const auto algorithm = command.algorithm.isEmpty()
-                           ? EMPTY
+                           ? QString("")
                            : QStringLiteral(" using %1").arg(command.algorithm);
 
     return {QStringLiteral("create index %1 on %2%3 (%4)")

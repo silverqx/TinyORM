@@ -20,7 +20,6 @@ TINYORM_BEGIN_COMMON_NAMESPACE
 namespace fs = std::filesystem;
 
 using Orm::Constants::DASH;
-using Orm::Constants::EMPTY;
 using Orm::Constants::EQ_C;
 using Orm::Constants::NEWLINE;
 using Orm::Constants::NOSPACE;
@@ -503,7 +502,7 @@ QString CompleteCommand::getOptionDefaultValue(const QCommandLineOption &option)
     Q_ASSERT(defaultValues.size() <= 1);
 
     return defaultValues.isEmpty()
-            ? EMPTY
+            ? QString("")
             : TomUtils::defaultValueText(defaultValues.constFirst());
 }
 

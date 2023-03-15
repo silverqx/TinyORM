@@ -24,7 +24,6 @@ using fspath = std::filesystem::path;
 
 using Orm::Constants::COMMA;
 using Orm::Constants::DOT;
-using Orm::Constants::EMPTY;
 using Orm::Constants::NEWLINE;
 using Orm::Constants::NOSPACE;
 using Orm::Constants::QUOTE;
@@ -441,7 +440,7 @@ ModelCreator::createBelongsToManyRelation(
         const auto relationName      = guessManyTypeRelationName(relatedClass);
         const auto parentComment     = guessSingularComment(parentClass);
         const auto relatedComment    = guessPluralComment(relatedClass);
-        const auto pivot             = isPivotClassEmpty ? EMPTY
+        const auto pivot             = isPivotClassEmpty ? QString("")
                                                          : NOSPACE.arg(COMMA, pivotClass);
 
         const auto relationCalls     = createRelationCalls(as, withPivot, withTimestamps);
@@ -553,7 +552,7 @@ QString ModelCreator::createRelationCalls(
     /*! Align a method call on the newline. */
     const auto relationCallsAlign = [](const auto &relationCalls)
     {
-        return relationCalls.isEmpty() ? EMPTY
+        return relationCalls.isEmpty() ? QString("")
                                        : QStringLiteral("%1%2%3")
                                          .arg(NEWLINE, QString(16, SPACE)).arg(DOT);
     };
