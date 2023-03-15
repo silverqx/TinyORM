@@ -158,6 +158,7 @@ private Q_SLOTS:
     void change_StoredAs_ThrowException() const;
     void drop_StoredAs() const;
 
+    /* Indexes */
     void indexes_Fluent() const;
     void indexes_Blueprint() const;
 
@@ -2644,6 +2645,8 @@ void tst_PostgreSQL_SchemaBuilder::drop_StoredAs() const
              R"(comment on column "firewalls"."foo" is null)");
     QVERIFY(log1.boundValues.isEmpty());
 }
+
+/* Indexes */
 
 void tst_PostgreSQL_SchemaBuilder::indexes_Fluent() const
 {

@@ -94,11 +94,13 @@ private Q_SLOTS:
     void useCurrent() const;
     void useCurrentOnUpdate() const;
 
+    /* Generated columns */
     void virtualAs_StoredAs_CreateTable() const;
     void virtualAs_StoredAs_Nullable_CreateTable() const;
     void virtualAs_StoredAs_ModifyTable() const;
     void virtualAs_StoredAs_Nullable_ModifyTable() const;
 
+    /* Indexes */
     void indexes_Fluent() const;
     void indexes_Blueprint() const;
 
@@ -1068,6 +1070,8 @@ void tst_SQLite_SchemaBuilder::useCurrentOnUpdate() const
     QVERIFY(firstLog.boundValues.isEmpty());
 }
 
+/* Generated columns */
+
 void tst_SQLite_SchemaBuilder::virtualAs_StoredAs_CreateTable() const
 {
     auto log = DB::connection(m_connection).pretend([](auto &connection)
@@ -1179,6 +1183,8 @@ void tst_SQLite_SchemaBuilder::virtualAs_StoredAs_Nullable_ModifyTable() const
                "generated always as (price - 5)");
     QVERIFY(log1.boundValues.isEmpty());
 }
+
+/* Indexes */
 
 void tst_SQLite_SchemaBuilder::indexes_Fluent() const
 {
