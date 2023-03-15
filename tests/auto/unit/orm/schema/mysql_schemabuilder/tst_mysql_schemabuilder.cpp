@@ -107,6 +107,7 @@ private Q_SLOTS:
     void virtualAs_StoredAs_ModifyTable_Maria() const;
     void virtualAs_StoredAs_Nullable_ModifyTable_Maria() const;
 
+    /* Indexes */
     void indexes_Fluent() const;
     void indexes_Blueprint() const;
 
@@ -1619,6 +1620,8 @@ void tst_MySql_SchemaBuilder::virtualAs_StoredAs_Nullable_ModifyTable_Maria() co
     // Restore
     QVERIFY(Databases::removeConnection(*connectionName));
 }
+
+/* Indexes */
 
 void tst_MySql_SchemaBuilder::indexes_Fluent() const
 {
