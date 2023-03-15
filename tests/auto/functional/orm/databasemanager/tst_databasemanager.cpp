@@ -44,7 +44,6 @@ using Orm::Constants::sslrootcert;
 using Orm::Constants::username_;
 using Orm::Constants::verify_full;
 
-using Orm::DB;
 using Orm::DatabaseManager;
 using Orm::Exceptions::SQLiteDatabaseDoesNotExistError;
 using Orm::QtTimeZoneConfig;
