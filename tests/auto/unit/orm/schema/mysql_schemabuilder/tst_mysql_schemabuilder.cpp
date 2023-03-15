@@ -36,6 +36,7 @@ using TypeUtils = Orm::Utils::Type;
 
 using TestUtils::Databases;
 
+// TEST future, divide tst_MySql_SchemaBuilder to two unit test cases, the new test case will be tst_MySql_SchemaGrammar, also divide them for SQLite and PostgreSQL databases silverqx
 class tst_MySql_SchemaBuilder : public QObject // clazy:exclude=ctor-missing-parent-argument
 {
     Q_OBJECT
