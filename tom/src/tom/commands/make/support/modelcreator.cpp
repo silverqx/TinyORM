@@ -15,7 +15,7 @@
 #include <orm/utils/container.hpp>
 #include <orm/utils/string.hpp>
 
-#include "tom/commands/make/modelcommandconcepts.hpp"
+#include "tom/commands/make/modelcommandconcepts.hpp" // IWYU pragma: keep
 #include "tom/commands/make/stubs/modelstubs.hpp"
 
 TINYORM_BEGIN_COMMON_NAMESPACE

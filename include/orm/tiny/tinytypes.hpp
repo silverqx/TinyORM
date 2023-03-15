@@ -9,7 +9,7 @@ TINY_SYSTEM_HEADER
 
 #include "orm/macros/export.hpp"
 #include "orm/ormtypes.hpp"
-#include "orm/tiny/tinyconcepts.hpp"
+#include "orm/tiny/tinyconcepts.hpp" // IWYU pragma: keep
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 

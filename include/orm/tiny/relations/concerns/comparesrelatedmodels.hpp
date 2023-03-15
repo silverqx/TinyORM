@@ -7,7 +7,7 @@ TINY_SYSTEM_HEADER
 
 #include <QVariant>
 
-#include "orm/tiny/tinyconcepts.hpp"
+#include "orm/tiny/tinyconcepts.hpp" // IWYU pragma: keep
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 

@@ -5,7 +5,7 @@
 #include "orm/macros/systemheader.hpp"
 TINY_SYSTEM_HEADER
 
-#include "orm/config.hpp"
+#include "orm/config.hpp" // IWYU pragma: keep
 
 #ifdef TINYORM_DEBUG
 #  include <QDebug>

@@ -2,7 +2,7 @@
 
 #include <QString>
 
-#include "orm/config.hpp"
+#include "orm/config.hpp" // IWYU pragma: keep
 
 #if !defined(__clang__) && \
     !defined(TINYORM_NO_DEBUG) && defined(_MSC_VER) && !defined(Q_OS_WINRT)

@@ -6,7 +6,7 @@
 TINY_SYSTEM_HEADER
 
 #include "orm/constants.hpp"
-#include "orm/ormconcepts.hpp"
+#include "orm/ormconcepts.hpp" // IWYU pragma: keep
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 

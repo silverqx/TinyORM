@@ -8,7 +8,7 @@ TINY_SYSTEM_HEADER
 #include "orm/exceptions/multiplerecordsfounderror.hpp"
 #include "orm/exceptions/recordsnotfounderror.hpp"
 #include "orm/ormtypes.hpp"
-#include "orm/tiny/tinyconcepts.hpp"
+#include "orm/tiny/tinyconcepts.hpp" // IWYU pragma: keep
 #include "orm/utils/query.hpp"
 #include "orm/utils/type.hpp"
 

@@ -8,7 +8,7 @@ TINY_SYSTEM_HEADER
 #include <QVariant>
 #include <QtSql/QSqlQuery>
 
-#include "orm/tiny/tinyconcepts.hpp"
+#include "orm/tiny/tinyconcepts.hpp" // IWYU pragma: keep
 #include "orm/utils/nullvariant.hpp"
 
 TINYORM_BEGIN_COMMON_NAMESPACE

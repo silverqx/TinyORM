@@ -9,9 +9,9 @@ TINY_SYSTEM_HEADER
 
 #include "tom/commands/make/concerns/prepareoptionvalues.hpp"
 #include "tom/commands/make/makecommand.hpp"
-#include "tom/commands/make/modelcommandconcepts.hpp"
+#include "tom/commands/make/modelcommandconcepts.hpp" // IWYU pragma: keep
 #include "tom/commands/make/support/modelcreator.hpp"
-#include "tom/tomconstants.hpp"
+#include "tom/tomconstants.hpp" // IWYU pragma: keep
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 

@@ -3,7 +3,7 @@
 #include <QVersionNumber>
 
 #include "orm/exceptions/invalidargumenterror.hpp"
-#include "orm/ormconcepts.hpp"
+#include "orm/ormconcepts.hpp" // IWYU pragma: keep
 #include "orm/ormtypes.hpp"
 #include "orm/utils/helpers.hpp"
 #include "orm/utils/type.hpp"

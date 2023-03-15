@@ -8,7 +8,7 @@ TINY_SYSTEM_HEADER
 #include <QDateTime>
 
 #include "orm/tiny/macros/crtpmodelwithbase.hpp"
-#include "orm/tiny/tinyconcepts.hpp"
+#include "orm/tiny/tinyconcepts.hpp" // IWYU pragma: keep
 #include "orm/utils/helpers.hpp"
 
 TINYORM_BEGIN_COMMON_NAMESPACE

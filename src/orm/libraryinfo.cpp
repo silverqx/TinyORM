@@ -1,6 +1,6 @@
 #include "orm/libraryinfo.hpp"
 
-#include "orm/config.hpp"
+#include "orm/config.hpp" // IWYU pragma: keep
 
 #include "orm/macros/archdetect.hpp"
 #include "orm/macros/compilerdetect.hpp"

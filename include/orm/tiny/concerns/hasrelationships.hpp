@@ -5,7 +5,7 @@
 #include "orm/macros/systemheader.hpp"
 TINY_SYSTEM_HEADER
 
-#include "orm/config.hpp"
+#include "orm/config.hpp" // IWYU pragma: keep
 
 #ifdef TINY_NO_INCOMPLETE_UNORDERED_MAP
 #  include <map>
