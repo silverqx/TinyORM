@@ -96,6 +96,8 @@ namespace Orm::SchemaNs
             use an empty or null QString() to drop a generated column along with
             the change() method call. */
         ColumnReferenceType &storedAs(QString expression);
+        /*! Set the INTEGER column as UNSIGNED (MySQL), alias for the 'isUnsigned'. */
+        ColumnReferenceType &Unsigned();
         /*! Set the TIMESTAMP column to use CURRENT_TIMESTAMP as default value. */
         ColumnReferenceType &useCurrent();
         /*! Set the TIMESTAMP column to use CURRENT_TIMESTAMP when updating (MySQL). */
@@ -324,6 +326,15 @@ namespace Orm::SchemaNs
     ColumnDefinitionReference<R>::storedAs(QString expression)
     {
         m_columnDefinition.get().storedAs = std::move(expression);
+
+        return columnReference();
+    }
+
+    template<ColumnReferenceReturn R>
+    typename ColumnDefinitionReference<R>::ColumnReferenceType &
+    ColumnDefinitionReference<R>::Unsigned()
+    {
+        m_columnDefinition.get().isUnsigned = true;
 
         return columnReference();
     }
