@@ -1,8 +1,6 @@
 #include <QCoreApplication>
 #include <QtTest>
 
-#include "orm/db.hpp"
-
 #include "databases.hpp"
 
 #include "models/torrent.hpp"
