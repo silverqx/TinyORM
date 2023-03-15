@@ -352,63 +352,66 @@ ColumnDefinitionReference<> Blueprint::date(const QString &column)
 }
 
 ColumnDefinitionReference<>
-Blueprint::datetime(const QString &column, const int precision)
+Blueprint::datetime(const QString &column, std::optional<int> precision)
 {
-    return addColumn(ColumnType::DateTime, column, {.precision = precision});
+    return addColumn(ColumnType::DateTime, column, {.precision = std::move(precision)});
 }
 
 ColumnDefinitionReference<>
-Blueprint::datetimeTz(const QString &column, const int precision)
+Blueprint::datetimeTz(const QString &column, std::optional<int> precision)
 {
-    return addColumn(ColumnType::DateTimeTz, column, {.precision = precision});
+    return addColumn(ColumnType::DateTimeTz, column, {.precision = std::move(precision)});
 }
 
-ColumnDefinitionReference<> Blueprint::time(const QString &column, const int precision)
+ColumnDefinitionReference<> Blueprint::time(const QString &column,
+                                            std::optional<int> precision)
 {
-    return addColumn(ColumnType::Time, column, {.precision = precision});
+    return addColumn(ColumnType::Time, column, {.precision = std::move(precision)});
 }
 
-ColumnDefinitionReference<> Blueprint::timeTz(const QString &column, const int precision)
+ColumnDefinitionReference<> Blueprint::timeTz(const QString &column,
+                                              std::optional<int> precision)
 {
-    return addColumn(ColumnType::TimeTz, column, {.precision = precision});
-}
-
-ColumnDefinitionReference<>
-Blueprint::timestamp(const QString &column, const int precision)
-{
-    return addColumn(ColumnType::Timestamp, column, {.precision = precision});
+    return addColumn(ColumnType::TimeTz, column, {.precision = std::move(precision)});
 }
 
 ColumnDefinitionReference<>
-Blueprint::timestampTz(const QString &column, const int precision)
+Blueprint::timestamp(const QString &column, std::optional<int> precision)
 {
-    return addColumn(ColumnType::TimestampTz, column, {.precision = precision});
+    return addColumn(ColumnType::Timestamp, column, {.precision = std::move(precision)});
 }
 
-void Blueprint::timestamps(const int precision)
+ColumnDefinitionReference<>
+Blueprint::timestampTz(const QString &column, std::optional<int> precision)
+{
+    return addColumn(ColumnType::TimestampTz, column,
+                     {.precision = std::move(precision)});
+}
+
+void Blueprint::timestamps(std::optional<int> precision)
 {
     timestamp(CREATED_AT, precision).nullable();
 
-    timestamp(UPDATED_AT, precision).nullable();
+    timestamp(UPDATED_AT, std::move(precision)).nullable();
 }
 
-void Blueprint::timestampsTz(const int precision)
+void Blueprint::timestampsTz(std::optional<int> precision)
 {
     timestampTz(CREATED_AT, precision).nullable();
 
-    timestampTz(UPDATED_AT, precision).nullable();
+    timestampTz(UPDATED_AT, std::move(precision)).nullable();
 }
 
 ColumnDefinitionReference<>
-Blueprint::softDeletes(const QString &column, const int precision)
+Blueprint::softDeletes(const QString &column, std::optional<int> precision)
 {
-    return timestamp(column, precision).nullable();
+    return timestamp(column, std::move(precision)).nullable();
 }
 
 ColumnDefinitionReference<>
-Blueprint::softDeletesTz(const QString &column, const int precision)
+Blueprint::softDeletesTz(const QString &column, std::optional<int> precision)
 {
-    return timestampTz(column, precision).nullable();
+    return timestampTz(column, std::move(precision)).nullable();
 }
 
 ColumnDefinitionReference<> Blueprint::year(const QString &column)

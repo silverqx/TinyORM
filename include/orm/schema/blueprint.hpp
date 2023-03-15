@@ -313,41 +313,47 @@ namespace Grammars
         /*! Create a new date column on the table. */
         ColumnDefinitionReference<> date(const QString &column);
         /*! Create a new date-time column on the table. */
-        ColumnDefinitionReference<> datetime(const QString &column, int precision = 0);
+        ColumnDefinitionReference<> datetime(const QString &column,
+                                             std::optional<int> precision = 0);
         /*! Create a new date-time column (with time zone) on the table. */
-        ColumnDefinitionReference<> datetimeTz(const QString &column, int precision = 0);
+        ColumnDefinitionReference<> datetimeTz(const QString &column,
+                                               std::optional<int> precision = 0);
 
         /*! Create a new time column on the table. */
-        ColumnDefinitionReference<> time(const QString &column, int precision = 0);
+        ColumnDefinitionReference<> time(const QString &column,
+                                         std::optional<int> precision = 0);
         /*! Create a new time column (with time zone) on the table. */
-        ColumnDefinitionReference<> timeTz(const QString &column, int precision = 0);
+        ColumnDefinitionReference<> timeTz(const QString &column,
+                                           std::optional<int> precision = 0);
 
         /*! Create a new timestamp column on the table. */
-        ColumnDefinitionReference<> timestamp(const QString &column, int precision = 0);
+        ColumnDefinitionReference<> timestamp(const QString &column,
+                                              std::optional<int> precision = 0);
         /*! Create a new timestamp (with time zone) column on the table. */
-        ColumnDefinitionReference<> timestampTz(const QString &column, int precision = 0);
+        ColumnDefinitionReference<> timestampTz(const QString &column,
+                                                std::optional<int> precision = 0);
 
         /*! Add nullable creation and update timestamps to the table. */
-        void timestamps(int precision = 0);
+        void timestamps(std::optional<int> precision = 0);
         /*! Add creation and update timestampTz columns to the table. */
-        void timestampsTz(int precision = 0);
+        void timestampsTz(std::optional<int> precision = 0);
 
         /*! Add creation and update datetime columns to the table. */
-        inline void datetimes(int precision = 0);
+        inline void datetimes(std::optional<int> precision = 0);
 
         /*! Add a "deleted at" timestamp for the table. */
         ColumnDefinitionReference<>
         softDeletes(const QString &column = Orm::Constants::DELETED_AT,
-                    int precision = 0);
+                    std::optional<int> precision = 0);
         /*! Add a "deleted at" timestampTz for the table. */
         ColumnDefinitionReference<>
         softDeletesTz(const QString &column = Orm::Constants::DELETED_AT,
-                      int precision = 0);
+                      std::optional<int> precision = 0);
 
         /*! Add a "deleted at" datetime column to the table. */
         inline ColumnDefinitionReference<>
         softDeletesDatetime(const QString &column = Orm::Constants::DELETED_AT,
-                            int precision = 0);
+                            std::optional<int> precision = 0);
 
         /*! Create a new year column on the table. */
         ColumnDefinitionReference<> year(const QString &column);
@@ -714,17 +720,17 @@ namespace Grammars
         return decimal(column, total, places, true);
     }
 
-    void Blueprint::datetimes(const int precision)
+    void Blueprint::datetimes(std::optional<int> precision)
     {
         datetime(Orm::Constants::CREATED_AT, precision).nullable();
 
-        datetime(Orm::Constants::UPDATED_AT, precision).nullable();
+        datetime(Orm::Constants::UPDATED_AT, std::move(precision)).nullable();
     }
 
     ColumnDefinitionReference<>
-    Blueprint::softDeletesDatetime(const QString &column, const int precision)
+    Blueprint::softDeletesDatetime(const QString &column, std::optional<int> precision)
     {
-        return datetime(column, precision).nullable();
+        return datetime(column, std::move(precision)).nullable();
     }
 
     const QString &Blueprint::getTable() const noexcept

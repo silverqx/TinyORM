@@ -753,15 +753,22 @@ QString PostgresSchemaGrammar::typeDateTimeTz(ColumnDefinition &column) const
 QString PostgresSchemaGrammar::typeTime(const ColumnDefinition &column) const // NOLINT(readability-convert-member-functions-to-static)
 {
     return QStringLiteral("time%1 without time zone")
-            .arg(column.precision > 0 ? QStringLiteral("(%1)").arg(column.precision)
-                                      : QString(""));
+            /* The behavior if the precision is omitted (or 0 of course):
+               PostgreSQL default is 6 if omitted, from docs: If no precision is
+               specified in a constant specification, it defaults to the precision
+               of the literal value (but not more than 6 digits).
+               So the >-1 is ok, the default will be time(0). */
+            .arg(column.precision && *column.precision > -1
+                 ? QStringLiteral("(%1)").arg(*column.precision)
+                 : QString(""));
 }
 
 QString PostgresSchemaGrammar::typeTimeTz(const ColumnDefinition &column) const // NOLINT(readability-convert-member-functions-to-static)
 {
     return QStringLiteral("time%1 with time zone")
-            .arg(column.precision > 0 ? QStringLiteral("(%1)").arg(column.precision)
-                                      : QString(""));
+            .arg(column.precision && *column.precision > -1
+                 ? QStringLiteral("(%1)").arg(*column.precision)
+                 : QString(""));
 }
 
 QString PostgresSchemaGrammar::typeTimestamp(ColumnDefinition &column) const // NOLINT(readability-convert-member-functions-to-static)
@@ -770,11 +777,14 @@ QString PostgresSchemaGrammar::typeTimestamp(ColumnDefinition &column) const // 
         column.defaultValue = Expression(QStringLiteral("current_timestamp"));
 
     return QStringLiteral("timestamp%1 without time zone")
-            /* The behavior if the precision is omitted:
-               >-1 is ok so the default will be timestamp(0), the same as
-               for the MySQL grammar. */
-            .arg(column.precision > -1 ? QStringLiteral("(%1)").arg(column.precision)
-                                       : QString(""));
+            /* The behavior if the precision is omitted (or 0 of course):
+               PostgreSQL default is 6 if omitted, from docs: If no precision is
+               specified in a constant specification, it defaults to the precision
+               of the literal value (but not more than 6 digits).
+               So the >-1 is ok, the default will be timestamp(0). */
+            .arg(column.precision && *column.precision > -1
+                 ? QStringLiteral("(%1)").arg(*column.precision)
+                 : QString(""));
 }
 
 QString PostgresSchemaGrammar::typeTimestampTz(ColumnDefinition &column) const // NOLINT(readability-convert-member-functions-to-static)
@@ -782,10 +792,10 @@ QString PostgresSchemaGrammar::typeTimestampTz(ColumnDefinition &column) const /
     if (column.useCurrent)
         column.defaultValue = Expression(QStringLiteral("current_timestamp"));
 
-    // CUR schema, -1 vs 0, also tests silverqx
     return QStringLiteral("timestamp%1 with time zone")
-            .arg(column.precision > 0 ? QStringLiteral("(%1)").arg(column.precision)
-                                      : QString(""));
+            .arg(column.precision && *column.precision > -1
+                 ? QStringLiteral("(%1)").arg(*column.precision)
+                 : QString(""));
 }
 
 QString PostgresSchemaGrammar::typeYear(const ColumnDefinition &column) const

@@ -93,6 +93,47 @@ private Q_SLOTS:
     void multipleAutoIncrementStartingValue_CreateTable() const;
     void multipleAutoIncrementStartingValue_ModifyTable() const;
 
+    /* Timestamps */
+    void add_timestamp() const;
+    void add_timestamp_WithPrecision() const;
+    void add_timestamp_WithPrecision_StdNullopt() const;
+    void add_timestamp_WithPrecision_LowerThanZero() const;
+    void add_timestamp_WithDefaultValue() const;
+    void add_timestamp_WithPrecision_UseCurrent() const;
+    void add_timestamp_WithPrecision_UseCurrentOnUpdate() const;
+    void add_timestamp_WithPrecision_UseCurrent_UseCurrentOnUpdate() const;
+
+    void add_timestampTz() const;
+    void add_timestampTz_WithPrecision() const;
+    void add_timestampTz_WithPrecision_StdNullopt() const;
+    void add_timestampTz_WithPrecision_LowerThanZero() const;
+
+    /* Datetime */
+    void add_datetime() const;
+    void add_datetime_WithPrecision() const;
+    void add_datetime_WithPrecision_StdNullopt() const;
+    void add_datetime_WithPrecision_LowerThanZero() const;
+    void add_datetime_WithDefaultValue() const;
+    void add_datetime_WithPrecision_UseCurrent() const;
+    void add_datetime_WithPrecision_UseCurrentOnUpdate() const;
+    void add_datetime_WithPrecision_UseCurrent_UseCurrentOnUpdate() const;
+
+    void add_datetimeTz() const;
+    void add_datetimeTz_WithPrecision() const;
+    void add_datetimeTz_WithPrecision_StdNullopt() const;
+    void add_datetimeTz_WithPrecision_LowerThanZero() const;
+
+    /* Time */
+    void add_time() const;
+    void add_time_WithPrecision() const;
+    void add_time_WithPrecision_StdNullopt() const;
+    void add_time_WithPrecision_LowerThanZero() const;
+
+    void add_timeTz() const;
+    void add_timeTz_WithPrecision() const;
+    void add_timeTz_WithPrecision_StdNullopt() const;
+    void add_timeTz_WithPrecision_LowerThanZero() const;
+
     /* MySQL generated columns */
     void virtualAs_StoredAs_CreateTable() const;
     void virtualAs_StoredAs_Nullable_CreateTable() const;
@@ -1261,6 +1302,688 @@ void tst_MySql_SchemaBuilder::multipleAutoIncrementStartingValue_ModifyTable() c
     QCOMPARE(log1.query,
              "alter table `firewalls` auto_increment = 100");
     QVERIFY(log1.boundValues.isEmpty());
+}
+
+/* Timestamps */
+
+void tst_MySql_SchemaBuilder::add_timestamp() const
+{
+    auto log = DB::connection(m_connection).pretend([](auto &connection)
+    {
+        Schema::on(connection.getName())
+                .table(Firewalls, [](Blueprint &table)
+        {
+            table.timestamp("created_at");
+        });
+    });
+
+    QVERIFY(!log.isEmpty());
+    const auto &firstLog = log.first();
+
+    QCOMPARE(log.size(), 1);
+    QCOMPARE(firstLog.query,
+             "alter table `firewalls` "
+             "add `created_at` timestamp not null");
+    QVERIFY(firstLog.boundValues.isEmpty());
+}
+
+void tst_MySql_SchemaBuilder::add_timestamp_WithPrecision() const
+{
+    auto log = DB::connection(m_connection).pretend([](auto &connection)
+    {
+        Schema::on(connection.getName())
+                .table(Firewalls, [](Blueprint &table)
+        {
+            table.timestamp("created_at", 1);
+        });
+    });
+
+    QVERIFY(!log.isEmpty());
+    const auto &firstLog = log.first();
+
+    QCOMPARE(log.size(), 1);
+    QCOMPARE(firstLog.query,
+             "alter table `firewalls` "
+             "add `created_at` timestamp(1) not null");
+    QVERIFY(firstLog.boundValues.isEmpty());
+}
+
+void tst_MySql_SchemaBuilder::add_timestamp_WithPrecision_StdNullopt() const
+{
+    auto log = DB::connection(m_connection).pretend([](auto &connection)
+    {
+        Schema::on(connection.getName())
+                .table(Firewalls, [](Blueprint &table)
+        {
+            table.timestamp("created_at", std::nullopt);
+        });
+    });
+
+    QVERIFY(!log.isEmpty());
+    const auto &firstLog = log.first();
+
+    QCOMPARE(log.size(), 1);
+    QCOMPARE(firstLog.query,
+             "alter table `firewalls` "
+             "add `created_at` timestamp not null");
+    QVERIFY(firstLog.boundValues.isEmpty());
+}
+
+void tst_MySql_SchemaBuilder::add_timestamp_WithPrecision_LowerThanZero() const
+{
+    auto log = DB::connection(m_connection).pretend([](auto &connection)
+    {
+        Schema::on(connection.getName())
+                .table(Firewalls, [](Blueprint &table)
+        {
+            table.timestamp("created_at", -1);
+        });
+    });
+
+    QVERIFY(!log.isEmpty());
+    const auto &firstLog = log.first();
+
+    QCOMPARE(log.size(), 1);
+    QCOMPARE(firstLog.query,
+             "alter table `firewalls` "
+             "add `created_at` timestamp not null");
+    QVERIFY(firstLog.boundValues.isEmpty());
+}
+
+void tst_MySql_SchemaBuilder::add_timestamp_WithDefaultValue() const
+{
+    auto log = DB::connection(m_connection).pretend([](auto &connection)
+    {
+        Schema::on(connection.getName())
+                .table(Firewalls, [](Blueprint &table)
+        {
+            table.timestamp("created_at").defaultValue("2023-02-27 10:10:11");
+        });
+    });
+
+    QVERIFY(!log.isEmpty());
+    const auto &firstLog = log.first();
+
+    QCOMPARE(log.size(), 1);
+    QCOMPARE(firstLog.query,
+             "alter table `firewalls` "
+             "add `created_at` timestamp not null default '2023-02-27 10:10:11'");
+    QVERIFY(firstLog.boundValues.isEmpty());
+}
+
+void tst_MySql_SchemaBuilder::add_timestamp_WithPrecision_UseCurrent() const
+{
+    auto log = DB::connection(m_connection).pretend([](auto &connection)
+    {
+        Schema::on(connection.getName())
+                .table(Firewalls, [](Blueprint &table)
+        {
+            table.timestamp("created_at", 1).useCurrent();
+        });
+    });
+
+    QVERIFY(!log.isEmpty());
+    const auto &firstLog = log.first();
+
+    QCOMPARE(log.size(), 1);
+    QCOMPARE(firstLog.query,
+             "alter table `firewalls` "
+             "add `created_at` timestamp(1) not null default current_timestamp(1)");
+    QVERIFY(firstLog.boundValues.isEmpty());
+}
+
+void tst_MySql_SchemaBuilder::add_timestamp_WithPrecision_UseCurrentOnUpdate() const
+{
+    auto log = DB::connection(m_connection).pretend([](auto &connection)
+    {
+        Schema::on(connection.getName())
+                .table(Firewalls, [](Blueprint &table)
+        {
+            table.timestamp("created_at", 1).useCurrentOnUpdate();
+        });
+    });
+
+    QVERIFY(!log.isEmpty());
+    const auto &firstLog = log.first();
+
+    QCOMPARE(log.size(), 1);
+    QCOMPARE(firstLog.query,
+             "alter table `firewalls` "
+             "add `created_at` timestamp(1) not null on update current_timestamp(1)");
+    QVERIFY(firstLog.boundValues.isEmpty());
+}
+
+void tst_MySql_SchemaBuilder::
+     add_timestamp_WithPrecision_UseCurrent_UseCurrentOnUpdate() const
+{
+    auto log = DB::connection(m_connection).pretend([](auto &connection)
+    {
+        Schema::on(connection.getName())
+                .table(Firewalls, [](Blueprint &table)
+        {
+            table.timestamp("created_at", 1).useCurrent().useCurrentOnUpdate();
+        });
+    });
+
+    QVERIFY(!log.isEmpty());
+    const auto &firstLog = log.first();
+
+    QCOMPARE(log.size(), 1);
+    QCOMPARE(firstLog.query,
+             "alter table `firewalls` "
+             "add `created_at` timestamp(1) not null default current_timestamp(1) "
+               "on update current_timestamp(1)");
+    QVERIFY(firstLog.boundValues.isEmpty());
+}
+
+void tst_MySql_SchemaBuilder::add_timestampTz() const
+{
+    auto log = DB::connection(m_connection).pretend([](auto &connection)
+    {
+        Schema::on(connection.getName())
+                .table(Firewalls, [](Blueprint &table)
+        {
+            table.timestampTz("created_at");
+        });
+    });
+
+    QVERIFY(!log.isEmpty());
+    const auto &firstLog = log.first();
+
+    QCOMPARE(log.size(), 1);
+    QCOMPARE(firstLog.query,
+             "alter table `firewalls` "
+             "add `created_at` timestamp not null");
+    QVERIFY(firstLog.boundValues.isEmpty());
+}
+
+void tst_MySql_SchemaBuilder::add_timestampTz_WithPrecision() const
+{
+    auto log = DB::connection(m_connection).pretend([](auto &connection)
+    {
+        Schema::on(connection.getName())
+                .table(Firewalls, [](Blueprint &table)
+        {
+            table.timestampTz("created_at", 1);
+        });
+    });
+
+    QVERIFY(!log.isEmpty());
+    const auto &firstLog = log.first();
+
+    QCOMPARE(log.size(), 1);
+    QCOMPARE(firstLog.query,
+             "alter table `firewalls` "
+             "add `created_at` timestamp(1) not null");
+    QVERIFY(firstLog.boundValues.isEmpty());
+}
+
+void tst_MySql_SchemaBuilder::add_timestampTz_WithPrecision_StdNullopt() const
+{
+    auto log = DB::connection(m_connection).pretend([](auto &connection)
+    {
+        Schema::on(connection.getName())
+                .table(Firewalls, [](Blueprint &table)
+        {
+            table.timestampTz("created_at", std::nullopt);
+        });
+    });
+
+    QVERIFY(!log.isEmpty());
+    const auto &firstLog = log.first();
+
+    QCOMPARE(log.size(), 1);
+    QCOMPARE(firstLog.query,
+             "alter table `firewalls` "
+             "add `created_at` timestamp not null");
+    QVERIFY(firstLog.boundValues.isEmpty());
+}
+
+void tst_MySql_SchemaBuilder::add_timestampTz_WithPrecision_LowerThanZero() const
+{
+    auto log = DB::connection(m_connection).pretend([](auto &connection)
+    {
+        Schema::on(connection.getName())
+                .table(Firewalls, [](Blueprint &table)
+        {
+            table.timestampTz("created_at", -1);
+        });
+    });
+
+    QVERIFY(!log.isEmpty());
+    const auto &firstLog = log.first();
+
+    QCOMPARE(log.size(), 1);
+    QCOMPARE(firstLog.query,
+             "alter table `firewalls` "
+             "add `created_at` timestamp not null");
+    QVERIFY(firstLog.boundValues.isEmpty());
+}
+
+/* Datetime */
+
+void tst_MySql_SchemaBuilder::add_datetime() const
+{
+    auto log = DB::connection(m_connection).pretend([](auto &connection)
+    {
+        Schema::on(connection.getName())
+                .table(Firewalls, [](Blueprint &table)
+        {
+            table.datetime("created_at");
+        });
+    });
+
+    QVERIFY(!log.isEmpty());
+    const auto &firstLog = log.first();
+
+    QCOMPARE(log.size(), 1);
+    QCOMPARE(firstLog.query,
+             "alter table `firewalls` "
+             "add `created_at` datetime not null");
+    QVERIFY(firstLog.boundValues.isEmpty());
+}
+
+void tst_MySql_SchemaBuilder::add_datetime_WithPrecision() const
+{
+    auto log = DB::connection(m_connection).pretend([](auto &connection)
+    {
+        Schema::on(connection.getName())
+                .table(Firewalls, [](Blueprint &table)
+        {
+            table.datetime("created_at", 1);
+        });
+    });
+
+    QVERIFY(!log.isEmpty());
+    const auto &firstLog = log.first();
+
+    QCOMPARE(log.size(), 1);
+    QCOMPARE(firstLog.query,
+             "alter table `firewalls` "
+             "add `created_at` datetime(1) not null");
+    QVERIFY(firstLog.boundValues.isEmpty());
+}
+
+void tst_MySql_SchemaBuilder::add_datetime_WithPrecision_StdNullopt() const
+{
+    auto log = DB::connection(m_connection).pretend([](auto &connection)
+    {
+        Schema::on(connection.getName())
+                .table(Firewalls, [](Blueprint &table)
+        {
+            table.datetime("created_at", std::nullopt);
+        });
+    });
+
+    QVERIFY(!log.isEmpty());
+    const auto &firstLog = log.first();
+
+    QCOMPARE(log.size(), 1);
+    QCOMPARE(firstLog.query,
+             "alter table `firewalls` "
+             "add `created_at` datetime not null");
+    QVERIFY(firstLog.boundValues.isEmpty());
+}
+
+void tst_MySql_SchemaBuilder::add_datetime_WithPrecision_LowerThanZero() const
+{
+    auto log = DB::connection(m_connection).pretend([](auto &connection)
+    {
+        Schema::on(connection.getName())
+                .table(Firewalls, [](Blueprint &table)
+        {
+            table.datetime("created_at", -1);
+        });
+    });
+
+    QVERIFY(!log.isEmpty());
+    const auto &firstLog = log.first();
+
+    QCOMPARE(log.size(), 1);
+    QCOMPARE(firstLog.query,
+             "alter table `firewalls` "
+             "add `created_at` datetime not null");
+    QVERIFY(firstLog.boundValues.isEmpty());
+}
+
+void tst_MySql_SchemaBuilder::add_datetime_WithDefaultValue() const
+{
+    auto log = DB::connection(m_connection).pretend([](auto &connection)
+    {
+        Schema::on(connection.getName())
+                .table(Firewalls, [](Blueprint &table)
+        {
+            table.datetime("created_at").defaultValue("2023-02-27 10:10:11");
+        });
+    });
+
+    QVERIFY(!log.isEmpty());
+    const auto &firstLog = log.first();
+
+    QCOMPARE(log.size(), 1);
+    QCOMPARE(firstLog.query,
+             "alter table `firewalls` "
+             "add `created_at` datetime not null default '2023-02-27 10:10:11'");
+    QVERIFY(firstLog.boundValues.isEmpty());
+}
+
+void tst_MySql_SchemaBuilder::add_datetime_WithPrecision_UseCurrent() const
+{
+    auto log = DB::connection(m_connection).pretend([](auto &connection)
+    {
+        Schema::on(connection.getName())
+                .table(Firewalls, [](Blueprint &table)
+        {
+            table.datetime("created_at", 1).useCurrent();
+        });
+    });
+
+    QVERIFY(!log.isEmpty());
+    const auto &firstLog = log.first();
+
+    QCOMPARE(log.size(), 1);
+    QCOMPARE(firstLog.query,
+             "alter table `firewalls` "
+             "add `created_at` datetime(1) not null default current_timestamp(1)");
+    QVERIFY(firstLog.boundValues.isEmpty());
+}
+
+void tst_MySql_SchemaBuilder::add_datetime_WithPrecision_UseCurrentOnUpdate() const
+{
+    auto log = DB::connection(m_connection).pretend([](auto &connection)
+    {
+        Schema::on(connection.getName())
+                .table(Firewalls, [](Blueprint &table)
+        {
+            table.datetime("created_at", 1).useCurrentOnUpdate();
+        });
+    });
+
+    QVERIFY(!log.isEmpty());
+    const auto &firstLog = log.first();
+
+    QCOMPARE(log.size(), 1);
+    QCOMPARE(firstLog.query,
+             "alter table `firewalls` "
+             "add `created_at` datetime(1) not null on update current_timestamp(1)");
+    QVERIFY(firstLog.boundValues.isEmpty());
+}
+
+void tst_MySql_SchemaBuilder::
+     add_datetime_WithPrecision_UseCurrent_UseCurrentOnUpdate() const
+{
+    auto log = DB::connection(m_connection).pretend([](auto &connection)
+    {
+        Schema::on(connection.getName())
+                .table(Firewalls, [](Blueprint &table)
+        {
+            table.datetime("created_at", 1).useCurrent().useCurrentOnUpdate();
+        });
+    });
+
+    QVERIFY(!log.isEmpty());
+    const auto &firstLog = log.first();
+
+    QCOMPARE(log.size(), 1);
+    QCOMPARE(firstLog.query,
+             "alter table `firewalls` "
+             "add `created_at` datetime(1) not null default current_timestamp(1) "
+               "on update current_timestamp(1)");
+    QVERIFY(firstLog.boundValues.isEmpty());
+}
+
+void tst_MySql_SchemaBuilder::add_datetimeTz() const
+{
+    auto log = DB::connection(m_connection).pretend([](auto &connection)
+    {
+        Schema::on(connection.getName())
+                .table(Firewalls, [](Blueprint &table)
+        {
+            table.datetimeTz("created_at");
+        });
+    });
+
+    QVERIFY(!log.isEmpty());
+    const auto &firstLog = log.first();
+
+    QCOMPARE(log.size(), 1);
+    QCOMPARE(firstLog.query,
+             "alter table `firewalls` "
+             "add `created_at` datetime not null");
+    QVERIFY(firstLog.boundValues.isEmpty());
+}
+
+void tst_MySql_SchemaBuilder::add_datetimeTz_WithPrecision() const
+{
+    auto log = DB::connection(m_connection).pretend([](auto &connection)
+    {
+        Schema::on(connection.getName())
+                .table(Firewalls, [](Blueprint &table)
+        {
+            table.datetimeTz("created_at", 1);
+        });
+    });
+
+    QVERIFY(!log.isEmpty());
+    const auto &firstLog = log.first();
+
+    QCOMPARE(log.size(), 1);
+    QCOMPARE(firstLog.query,
+             "alter table `firewalls` "
+             "add `created_at` datetime(1) not null");
+    QVERIFY(firstLog.boundValues.isEmpty());
+}
+
+void tst_MySql_SchemaBuilder::add_datetimeTz_WithPrecision_StdNullopt() const
+{
+    auto log = DB::connection(m_connection).pretend([](auto &connection)
+    {
+        Schema::on(connection.getName())
+                .table(Firewalls, [](Blueprint &table)
+        {
+            table.datetimeTz("created_at", std::nullopt);
+        });
+    });
+
+    QVERIFY(!log.isEmpty());
+    const auto &firstLog = log.first();
+
+    QCOMPARE(log.size(), 1);
+    QCOMPARE(firstLog.query,
+             "alter table `firewalls` "
+             "add `created_at` datetime not null");
+    QVERIFY(firstLog.boundValues.isEmpty());
+}
+
+void tst_MySql_SchemaBuilder::add_datetimeTz_WithPrecision_LowerThanZero() const
+{
+    auto log = DB::connection(m_connection).pretend([](auto &connection)
+    {
+        Schema::on(connection.getName())
+                .table(Firewalls, [](Blueprint &table)
+        {
+            table.datetimeTz("created_at", -1);
+        });
+    });
+
+    QVERIFY(!log.isEmpty());
+    const auto &firstLog = log.first();
+
+    QCOMPARE(log.size(), 1);
+    QCOMPARE(firstLog.query,
+             "alter table `firewalls` "
+             "add `created_at` datetime not null");
+    QVERIFY(firstLog.boundValues.isEmpty());
+}
+
+/* Time */
+
+void tst_MySql_SchemaBuilder::add_time() const
+{
+    auto log = DB::connection(m_connection).pretend([](auto &connection)
+    {
+        Schema::on(connection.getName())
+                .table(Firewalls, [](Blueprint &table)
+        {
+            table.time("created_at");
+        });
+    });
+
+    QVERIFY(!log.isEmpty());
+    const auto &firstLog = log.first();
+
+    QCOMPARE(log.size(), 1);
+    QCOMPARE(firstLog.query,
+             "alter table `firewalls` "
+             "add `created_at` time not null");
+    QVERIFY(firstLog.boundValues.isEmpty());
+}
+
+void tst_MySql_SchemaBuilder::add_time_WithPrecision() const
+{
+    auto log = DB::connection(m_connection).pretend([](auto &connection)
+    {
+        Schema::on(connection.getName())
+                .table(Firewalls, [](Blueprint &table)
+        {
+            table.time("created_at", 1);
+        });
+    });
+
+    QVERIFY(!log.isEmpty());
+    const auto &firstLog = log.first();
+
+    QCOMPARE(log.size(), 1);
+    QCOMPARE(firstLog.query,
+             "alter table `firewalls` "
+             "add `created_at` time(1) not null");
+    QVERIFY(firstLog.boundValues.isEmpty());
+}
+
+void tst_MySql_SchemaBuilder::add_time_WithPrecision_StdNullopt() const
+{
+    auto log = DB::connection(m_connection).pretend([](auto &connection)
+    {
+        Schema::on(connection.getName())
+                .table(Firewalls, [](Blueprint &table)
+        {
+            table.time("created_at", std::nullopt);
+        });
+    });
+
+    QVERIFY(!log.isEmpty());
+    const auto &firstLog = log.first();
+
+    QCOMPARE(log.size(), 1);
+    QCOMPARE(firstLog.query,
+             "alter table `firewalls` "
+             "add `created_at` time not null");
+    QVERIFY(firstLog.boundValues.isEmpty());
+}
+
+void tst_MySql_SchemaBuilder::add_time_WithPrecision_LowerThanZero() const
+{
+    auto log = DB::connection(m_connection).pretend([](auto &connection)
+    {
+        Schema::on(connection.getName())
+                .table(Firewalls, [](Blueprint &table)
+        {
+            table.time("created_at", -1);
+        });
+    });
+
+    QVERIFY(!log.isEmpty());
+    const auto &firstLog = log.first();
+
+    QCOMPARE(log.size(), 1);
+    QCOMPARE(firstLog.query,
+             "alter table `firewalls` "
+             "add `created_at` time not null");
+    QVERIFY(firstLog.boundValues.isEmpty());
+}
+
+void tst_MySql_SchemaBuilder::add_timeTz() const
+{
+    auto log = DB::connection(m_connection).pretend([](auto &connection)
+    {
+        Schema::on(connection.getName())
+                .table(Firewalls, [](Blueprint &table)
+        {
+            table.timeTz("created_at");
+        });
+    });
+
+    QVERIFY(!log.isEmpty());
+    const auto &firstLog = log.first();
+
+    QCOMPARE(log.size(), 1);
+    QCOMPARE(firstLog.query,
+             "alter table `firewalls` "
+             "add `created_at` time not null");
+    QVERIFY(firstLog.boundValues.isEmpty());
+}
+
+void tst_MySql_SchemaBuilder::add_timeTz_WithPrecision() const
+{
+    auto log = DB::connection(m_connection).pretend([](auto &connection)
+    {
+        Schema::on(connection.getName())
+                .table(Firewalls, [](Blueprint &table)
+        {
+            table.timeTz("created_at", 1);
+        });
+    });
+
+    QVERIFY(!log.isEmpty());
+    const auto &firstLog = log.first();
+
+    QCOMPARE(log.size(), 1);
+    QCOMPARE(firstLog.query,
+             "alter table `firewalls` "
+             "add `created_at` time(1) not null");
+    QVERIFY(firstLog.boundValues.isEmpty());
+}
+
+void tst_MySql_SchemaBuilder::add_timeTz_WithPrecision_StdNullopt() const
+{
+    auto log = DB::connection(m_connection).pretend([](auto &connection)
+    {
+        Schema::on(connection.getName())
+                .table(Firewalls, [](Blueprint &table)
+        {
+            table.timeTz("created_at", std::nullopt);
+        });
+    });
+
+    QVERIFY(!log.isEmpty());
+    const auto &firstLog = log.first();
+
+    QCOMPARE(log.size(), 1);
+    QCOMPARE(firstLog.query,
+             "alter table `firewalls` "
+             "add `created_at` time not null");
+    QVERIFY(firstLog.boundValues.isEmpty());
+}
+
+void tst_MySql_SchemaBuilder::add_timeTz_WithPrecision_LowerThanZero() const
+{
+    auto log = DB::connection(m_connection).pretend([](auto &connection)
+    {
+        Schema::on(connection.getName())
+                .table(Firewalls, [](Blueprint &table)
+        {
+            table.timeTz("created_at", -1);
+        });
+    });
+
+    QVERIFY(!log.isEmpty());
+    const auto &firstLog = log.first();
+
+    QCOMPARE(log.size(), 1);
+    QCOMPARE(firstLog.query,
+             "alter table `firewalls` "
+             "add `created_at` time not null");
+    QVERIFY(firstLog.boundValues.isEmpty());
 }
 
 /* MySQL generated columns */

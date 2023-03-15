@@ -166,7 +166,7 @@ namespace Orm::SchemaNs
         /*! Number of digits after the decimal point for floating-point types. */
         std::optional<int> places = std::nullopt;
         /*! Determine fractional Seconds in Time Values (MySQL 0-6). */
-        int precision = -1;
+        std::optional<int> precision = std::nullopt;
         /* srid max. value should be 2^32-1 as is described here, so unsigned int
            should be ok:
            https://dev.mysql.com/doc/refman/8.0/en/spatial-function-argument-handling.html */
