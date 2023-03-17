@@ -48,7 +48,7 @@ The TinyORM query builder uses `QSqlQuery` parameter binding to protect your app
 :::
 
 :::danger
-The `QMYSQL` Qt driver contains a bug, if your table includes a `json` column type, then you must explicitly name columns other than `json` columns instead of the `*` shorthand, otherwise, you will get an empty result, or all column values will be invalid QVariant-s, or it may even return half of the columns. The `QPSQL` driver returns correct results and doesn't have problem with `json` columns.
+The `QMYSQL` Qt driver contains a bug, if your table contains a `json` column type, then you must explicitly name columns other than `json` columns instead of the `*` shorthand, otherwise, you will get an empty result, or all column values will be invalid QVariant-s, or it may even return half of the columns. The `QPSQL` driver returns correct results and doesn't have problem with `json` columns. Should be fixed in the 5.15.12, 6.2.7, 6.5.0 [QTBUG-101680](https://bugreports.qt.io/browse/QTBUG-101680).
 :::
 
 ## Running Database Queries
