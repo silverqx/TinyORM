@@ -116,7 +116,8 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-${{ env.image_os }}-ccache-${{ env.cache_name }}-
       env:
-        cache_name: ${{ matrix.compiler.key }}-qt62
+        # Don't reuse the clang ccache cache from the linux-qt6.yml (prepended analyzers)
+        cache_name: analyzers-clang15-qt62
         cache_path: ${{ steps.ccache-initialize-cache.outputs.CachePath }}
         image_os: ${{ steps.ccache-initialize-cache.outputs.ImageOS }}
 
