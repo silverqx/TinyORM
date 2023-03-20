@@ -6,7 +6,10 @@ namespace Orm::Concerns
 {
 
 /* Hide the g_resolver pointer like in the guardedmodel.cpp to avoid different memory
-   addreses for the exe and dll, look also the note in the guardedmodel.cpp. */
+   addreses for the exe and dll, look also the note in the guardedmodel.cpp.
+   It also doesn't have to be tagged as the "thread_local" because it points to the DatabaseManager
+   and only one instance of the DatabaseManager is allowed per whole application, so it will
+   exist only in one thread. */
 
 /*! The connection resolver instance. */
 static ConnectionResolverInterface *g_resolver = nullptr;
