@@ -121,7 +121,7 @@ QString String::rtrim(const QString &string, const QString &characters)
 using SnakeCache = std::unordered_map<QString, QString>;
 
 /*! Snake cache for already computed strings. */
-Q_GLOBAL_STATIC(SnakeCache, snakeCache)
+Q_GLOBAL_STATIC(SnakeCache, snakeCache) // NOLINT(misc-use-anonymous-namespace)
 
 QString String::snake(QString string, const QChar delimiter)
 {
@@ -165,9 +165,9 @@ using StudlyCache = std::unordered_map<QString, QString>;
 using CamelCache  = std::unordered_map<QString, QString>;
 
 /*! Studly cache for already computed strings. */
-Q_GLOBAL_STATIC(StudlyCache, studlyCache)
+Q_GLOBAL_STATIC(StudlyCache, studlyCache) // NOLINT(misc-use-anonymous-namespace)
 /*! Camel cache for already computed strings. */
-Q_GLOBAL_STATIC(CamelCache, camelCache)
+Q_GLOBAL_STATIC(CamelCache, camelCache) // NOLINT(misc-use-anonymous-namespace)
 
 QString String::camel(QString string)
 {
