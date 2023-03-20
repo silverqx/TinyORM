@@ -71,6 +71,7 @@ DatabaseManager::create(const QString &defaultConnection)
 {
     checkInstance();
 
+    // Can't use the std::make_shared<> as it calls the private constructor
     return m_instance = std::shared_ptr<DatabaseManager>(
                             new DatabaseManager(defaultConnection));
 }
@@ -81,6 +82,7 @@ DatabaseManager::create(const QVariantHash &config, const QString &connection)
 {
     checkInstance();
 
+    // Can't use the std::make_shared<> as it calls the private constructor
     return m_instance = std::shared_ptr<DatabaseManager>(
                             new DatabaseManager(config, connection, connection));
 }
@@ -91,6 +93,7 @@ DatabaseManager::create(const ConfigurationsType &configs,
 {
     checkInstance();
 
+    // Can't use the std::make_shared<> as it calls the private constructor
     return m_instance = std::shared_ptr<DatabaseManager>(
                             new DatabaseManager(configs, defaultConnection));
 }
