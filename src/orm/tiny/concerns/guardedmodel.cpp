@@ -11,14 +11,17 @@ namespace Orm::Tiny::Concerns
 
 /* Extracting these guard related methods to own class allows to call
    GuardedModel::unguarded() regardless of a template parameters needed on the Model
-   class, before was needed to call Model<Torrent, Relations..>::unguarded().
+   class, before was needed to call Model<Torrent, Relations...>::unguarded().
    The g_unguarded variable has to live in the dll to work correctly, before it was
    inline static and it caused problems, it had different address if was called from
    the dll and from the application exe. */
 
-/*! Indicates if all mass assignment is enabled. */
-T_THREAD_LOCAL
-static bool g_unguarded = false;
+namespace
+{
+    /*! Indicates if all mass assignment is enabled. */
+    T_THREAD_LOCAL
+    bool g_unguarded = false;
+} // namespace
 
 /* public */
 
