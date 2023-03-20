@@ -23,7 +23,7 @@ win32 {
 
     QMAKE_SUBSTITUTES += $$quote(include/versionsdebug_qmake.hpp.in)
 
-    HEADERS += $$OUT_PWD/include/versionsdebug_qmake.hpp
+    HEADERS += $$quote($$OUT_PWD/include/versionsdebug_qmake.hpp)
 
     INCLUDEPATH += $$quote($$OUT_PWD/include/)
 
