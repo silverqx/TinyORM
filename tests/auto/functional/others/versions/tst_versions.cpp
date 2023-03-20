@@ -62,11 +62,11 @@ private:
     struct FileVersions
     {
         /*! ProductVersion. */
-        const QString productVersion;
+        QString productVersion;
         /*! FileVersion. */
-        const QString fileVersion;
+        QString fileVersion;
         /*! LegalCopyright. */
-        const QString copyright;
+        QString copyright;
     };
 
     /*! Obtain a ProductVersion and FileVersion strings from an exe/dll. */
