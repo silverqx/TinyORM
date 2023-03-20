@@ -27,9 +27,8 @@ win32 {
 
     INCLUDEPATH += $$quote($$OUT_PWD/include/)
 
-    # To find tom/include/version.hpp (don't need to include whole qmake/tom.pri)
-    tom_example:!disable_tom: \
-        INCLUDEPATH += $$quote($$TINYORM_SOURCE_TREE/tom/include/)
+    # To find tom/include/version.hpp (don't need to include whole qmake/tom.pri).
+    # INCLUDEPATH += tom/include/ is added in the TinyOrm.pri
 
     LIBS += -lVersion
 }
