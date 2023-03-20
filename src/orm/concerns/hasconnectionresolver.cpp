@@ -11,8 +11,11 @@ namespace Orm::Concerns
    and only one instance of the DatabaseManager is allowed per whole application, so it will
    exist only in one thread. */
 
-/*! The connection resolver instance. */
-static ConnectionResolverInterface *g_resolver = nullptr;
+namespace
+{
+    /*! The connection resolver instance. */
+    ConnectionResolverInterface *g_resolver = nullptr;
+} // namespace
 
 /* public */
 
