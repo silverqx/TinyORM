@@ -112,7 +112,7 @@ namespace Concerns
         int page = 1;
         int countModels = 0;
 
-        do {
+        do { // NOLINT(cppcoreguidelines-avoid-do-while)
             /* We'll execute the query for the given page and get the results. If there
                are no results we can just break and return. When there are results
                we will call the callback with the current chunk of these results. */
@@ -207,7 +207,7 @@ namespace Concerns
 
         QVariant lastId;
 
-        do {
+        do { // NOLINT(cppcoreguidelines-avoid-do-while)
             auto clone = builder().clone();
 
             /* We'll execute the query for the given page and get the results. If there
