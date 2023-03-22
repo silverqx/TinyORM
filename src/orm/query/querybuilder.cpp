@@ -1525,8 +1525,9 @@ Builder::addArrayOfWheres(const QVector<WhereColumnItem> &values,
 std::shared_ptr<JoinClause>
 Builder::newJoinClause(const Builder &query, const QString &type, const QString &table)
 {
-    /* It has to be shared pointer, because it can not be passed down to joinInternal()
-       in join() as incomplete type. */
+    /* It has to be std::shared_ptr<>, because it can not be passed down to the joinInternal()
+       in Builder::join() in querybuilder.hpp! as incomplete type, in the querybuilder.hpp is
+       the JoinClause incomplete type and if the std::unique_ptr<> is used it doesn't compile. */
     return std::make_shared<JoinClause>(query, type, table);
 }
 
