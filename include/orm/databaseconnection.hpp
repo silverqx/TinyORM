@@ -344,8 +344,8 @@ namespace Orm
         QString m_hostName;
 
         /*! Connection's driver name in printable format eg. QMYSQL -> MySQL. */
-        std::optional<std::reference_wrapper<
-                const QString>> m_driverNamePrintable = std::nullopt;
+        std::optional<std::reference_wrapper<const QString>>
+        m_driverNamePrintable = std::nullopt;
     };
 
     /* public */
