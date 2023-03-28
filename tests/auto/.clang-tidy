@@ -1,6 +1,3 @@
 ---
 Checks:              '-bugprone-unchecked-optional-access,-misc-const-correctness,-readability-function-cognitive-complexity'
 InheritParentConfig: true
-CheckOptions:
-  - key:             cppcoreguidelines-avoid-do-while.IgnoreMacros
-    value:           true
