@@ -1030,8 +1030,8 @@ namespace Orm::Tiny
        instance, a copy of the related model instance because it is created
        on the stack.
        The Relation instance creates a new TinyBuilder instance from the Related
-       model instance using the TinyBuilder::newQuery() and saves ownership as
-       the unique pointer.
+       model instance using the TinyBuilder::newQuery() and saves a ownership as
+       the shared pointer (because this class is copyable).
        Then eager constraints are applied to this newly created TinyBuilder and
        the result is returned back to the initial model.
        The result is transformed into models and these models are hydrated.
