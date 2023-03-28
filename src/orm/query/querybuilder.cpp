@@ -1305,8 +1305,13 @@ Builder &Builder::setBindings(QVector<QVariant> &&bindings, const BindingType ty
 
 std::shared_ptr<Builder> Builder::newQuery() const
 {
-    /* It has to be the shared pointer because it is returned to the user so instances
-       counting is necessary, also saved internally eg. in the TinyBuilder::m_query. */
+    /* It has to be the shared pointer because it is public so instances counting is necessary,
+       also saved internally eg. in the TinyBuilder::m_query or Relation::m_query.
+       Can't return the std::unique_ptr<Builder> because it makes problems
+       in the Builder::whereExists() because it also accepts the std::shared_ptr<Builder> and
+       passing eg. DB::query() to it if it would be std::unique_ptr<Builder> would be tricky.
+       So because of this all query() factories like DB::query(), Model::newQuery(),
+       DatabaseConnection::query() are returning std::shared_ptr<Builder> instead of unique_ptr. */
     return std::make_shared<Builder>(m_connection, m_grammar);
 }
 
