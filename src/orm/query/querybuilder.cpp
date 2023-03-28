@@ -1419,8 +1419,7 @@ Builder Builder::cloneWithout(const std::unordered_set<PropertyType> &properties
     return copy;
 }
 
-Builder Builder::cloneWithoutBindings(
-        const std::unordered_set<BindingType> &except) const
+Builder Builder::cloneWithoutBindings(const std::unordered_set<BindingType> &except) const
 {
     auto copy = *this;
 
