@@ -51,7 +51,7 @@ namespace Orm::Query
 
     public:
         /*! Constructor. */
-        Builder(DatabaseConnection &connection, const QueryGrammar &grammar);
+        Builder(DatabaseConnection &connection, std::shared_ptr<QueryGrammar> grammar);
         /* Need to be the polymorphic type because of dynamic_cast<>
            in the Grammar::concatenateWhereClauses(). */
         /*! Virtual destructor. */
@@ -727,7 +727,7 @@ namespace Orm::Query
         /*! Get a database connection. */
         inline DatabaseConnection &getConnection() const noexcept;
         /*! Get the query grammar instance. */
-        inline const QueryGrammar &getGrammar() const noexcept;
+        inline std::shared_ptr<QueryGrammar> getGrammar() const noexcept;
 
         /*! Get the current query value bindings as flattened QVector. */
         QVector<QVariant> getBindings() const;
@@ -944,7 +944,7 @@ namespace Orm::Query
         /*! The database connection instance. */
         DatabaseConnection &m_connection;
         /*! The database query grammar instance. */
-        const QueryGrammar &m_grammar;
+        std::shared_ptr<QueryGrammar> m_grammar;
 
         /*! The current query value bindings.
             Order is crucial here because of that QMap with an enum struct is used. */
@@ -1163,8 +1163,7 @@ namespace Orm::Query
     {
         const auto [queryString, bindings] = createSub(std::forward<T>(query));
 
-        return selectRaw(QStringLiteral("(%1) as %2").arg(queryString,
-                                                          m_grammar.wrap(as)),
+        return selectRaw(QStringLiteral("(%1) as %2").arg(queryString, m_grammar->wrap(as)),
                          bindings);
     }
 
@@ -1174,8 +1173,7 @@ namespace Orm::Query
     {
         const auto [queryString, bindings] = createSub(std::forward<T>(query));
 
-        return fromRaw(QStringLiteral("(%1) as %2").arg(queryString,
-                                                        m_grammar.wrapTable(as)),
+        return fromRaw(QStringLiteral("(%1) as %2").arg(queryString, m_grammar->wrapTable(as)),
                        bindings);
     }
 
@@ -1620,7 +1618,7 @@ namespace Orm::Query
     Builder::increment(const QString &column, const T amount,
                        const QVector<UpdateItem> &extra)
     {
-        const auto expression = QStringLiteral("%1 + %2").arg(m_grammar.wrap(column))
+        const auto expression = QStringLiteral("%1 + %2").arg(m_grammar->wrap(column))
                                 .arg(amount);
 
         QVector<UpdateItem> columns {{column, raw(expression)}};
@@ -1634,7 +1632,7 @@ namespace Orm::Query
     Builder::decrement(const QString &column, const T amount,
                        const QVector<UpdateItem> &extra)
     {
-        const auto expression = QStringLiteral("%1 - %2").arg(m_grammar.wrap(column))
+        const auto expression = QStringLiteral("%1 - %2").arg(m_grammar->wrap(column))
                                 .arg(amount);
 
         QVector<UpdateItem> columns {{column, raw(expression)}};
@@ -1650,7 +1648,7 @@ namespace Orm::Query
         return m_connection;
     }
 
-    const Builder::QueryGrammar &Builder::getGrammar() const noexcept
+    std::shared_ptr<Builder::QueryGrammar> Builder::getGrammar() const noexcept
     {
         return m_grammar;
     }

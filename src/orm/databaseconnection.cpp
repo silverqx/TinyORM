@@ -75,7 +75,7 @@ DatabaseConnection::DatabaseConnection(
 std::shared_ptr<QueryBuilder>
 DatabaseConnection::table(const QString &table, const QString &as)
 {
-    auto builder = std::make_shared<QueryBuilder>(*this, *m_queryGrammar);
+    auto builder = query();
 
     builder->from(table, as);
 
@@ -100,7 +100,11 @@ BaseGrammar &DatabaseConnection::withTablePrefix(BaseGrammar &grammar) const
 
 std::shared_ptr<QueryBuilder> DatabaseConnection::query()
 {
-    return std::make_shared<QueryBuilder>(*this, *m_queryGrammar);
+    /* Not needed because this class is abstract, but can happen if I forget to call
+       the useDefaultQueryGrammar() in descendants, so I leave this check here. */
+    Q_ASSERT(m_queryGrammar);
+
+    return std::make_shared<QueryBuilder>(*this, m_queryGrammar);
 }
 
 /* Running SQL Queries */

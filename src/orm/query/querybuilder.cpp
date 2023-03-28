@@ -19,9 +19,9 @@ namespace Orm::Query
 
 /* public */
 
-Builder::Builder(DatabaseConnection &connection, const QueryGrammar &grammar)
+Builder::Builder(DatabaseConnection &connection, std::shared_ptr<QueryGrammar> grammar)
     : m_connection(connection)
-    , m_grammar(grammar)
+    , m_grammar(std::move(grammar))
 {}
 
 /* Retrieving results */
@@ -147,7 +147,7 @@ QString Builder::implode(const QString &column, const QString &glue)
 
 QString Builder::toSql()
 {
-    return m_grammar.compileSelect(*this);
+    return m_grammar->compileSelect(*this);
 }
 
 namespace
@@ -183,7 +183,7 @@ Builder::insert(const QVector<QVariantMap> &values)
        in the same order for the record. We need to make sure this is the case
        so there are not any errors or problems when inserting these records. */
 
-    return m_connection.insert(m_grammar.compileInsert(*this, values),
+    return m_connection.insert(m_grammar->compileInsert(*this, values),
                                cleanBindings(flatValuesForInsert(values)));
 }
 
@@ -206,7 +206,7 @@ quint64 Builder::insertGetId(const QVariantMap &values, const QString &sequence)
     const QVector<QVariantMap> valuesVector {values};
 
     auto query = m_connection.insert(
-                     m_grammar.compileInsertGetId(*this, valuesVector, sequence),
+                     m_grammar->compileInsertGetId(*this, valuesVector, sequence),
                      cleanBindings(flatValuesForInsert(valuesVector)));
 
     // FEATURE dilemma primarykey, Model::KeyType vs QVariant, Processor::processInsertGetId() silverqx
@@ -220,7 +220,7 @@ Builder::insertOrIgnore(const QVector<QVariantMap> &values)
         return {0, std::nullopt};
 
     return m_connection.affectingStatement(
-                m_grammar.compileInsertOrIgnore(*this, values),
+                m_grammar->compileInsertOrIgnore(*this, values),
                 cleanBindings(flatValuesForInsert(values)));
 }
 
@@ -241,9 +241,8 @@ std::tuple<int, QSqlQuery>
 Builder::update(const QVector<UpdateItem> &values)
 {
     return m_connection.update(
-                m_grammar.compileUpdate(*this, values),
-                cleanBindings(m_grammar.prepareBindingsForUpdate(getRawBindings(),
-                                                                 values)));
+                m_grammar->compileUpdate(*this, values),
+                cleanBindings(m_grammar->prepareBindingsForUpdate(getRawBindings(), values)));
 }
 
 namespace
@@ -306,7 +305,7 @@ Builder::upsert(const QVector<QVariantMap> &values, const QStringList &uniqueBy,
                 .arg(__tiny_func__));
 
     return m_connection.affectingStatement(
-                m_grammar.compileUpsert(*this, values, uniqueBy, update),
+                m_grammar->compileUpsert(*this, values, uniqueBy, update),
                 cleanBindings(flatValuesForUpsert(values)));
 }
 
@@ -318,7 +317,7 @@ Builder::upsert(const QVector<QVariantMap> &values, const QStringList &uniqueBy)
     const auto update = values.constFirst().keys();
 
     return m_connection.affectingStatement(
-                m_grammar.compileUpsert(*this, values, uniqueBy, update),
+                m_grammar->compileUpsert(*this, values, uniqueBy, update),
                 cleanBindings(flatValuesForUpsert(values)));
 }
 
@@ -330,13 +329,13 @@ std::tuple<int, QSqlQuery> Builder::deleteRow()
 std::tuple<int, QSqlQuery> Builder::remove()
 {
     return m_connection.remove(
-            m_grammar.compileDelete(*this),
-            cleanBindings(m_grammar.prepareBindingsForDelete(getRawBindings())));
+            m_grammar->compileDelete(*this),
+            cleanBindings(m_grammar->prepareBindingsForDelete(getRawBindings())));
 }
 
 void Builder::truncate()
 {
-    for (auto &&[sql, bindings] : m_grammar.compileTruncate(*this))
+    for (auto &&[sql, bindings] : m_grammar->compileTruncate(*this))
         /* Postgres doesn't execute truncate statement as prepared query:
            https://www.postgresql.org/docs/13/sql-prepare.html */
         if (m_connection.driverName() == QPSQL)
@@ -364,7 +363,7 @@ QVariant Builder::aggregate(const QString &function,
 
 bool Builder::exists()
 {
-    auto results = m_connection.select(m_grammar.compileExists(*this), getBindings());
+    auto results = m_connection.select(m_grammar->compileExists(*this), getBindings());
 
     /* If the results have rows, we will get the row and see if the exists column is a
        boolean true. If there are no results for this query we will return false as
@@ -1024,7 +1023,7 @@ Builder &Builder::orderByDesc(const Column &column)
 
 Builder &Builder::inRandomOrder(const QString &seed)
 {
-    return orderByRaw(m_grammar.compileRandom(seed));
+    return orderByRaw(m_grammar->compileRandom(seed));
 }
 
 Builder &Builder::orderByRaw(const QString &sql, const QVector<QVariant> &bindings)
@@ -1440,7 +1439,7 @@ void Builder::throwIfInvalidOperator(const QString &comparison) const
     const auto comparison_ = comparison.toLower();
 
     if (getOperators().contains(comparison_) ||
-        m_grammar.getOperators().contains(comparison_)
+        m_grammar->getOperators().contains(comparison_)
     )
         return;
 
@@ -1721,7 +1720,7 @@ Builder &Builder::joinSubInternal(
     addBinding(std::move(bindings), BindingType::JOIN);
 
     return join(Expression(QStringLiteral("(%1) as %2").arg(queryString,
-                                                            m_grammar.wrapTable(as))),
+                                                            m_grammar->wrapTable(as))),
                 first, comparison, second, type, where);
 }
 
@@ -1735,7 +1734,7 @@ Builder &Builder::joinSubInternal(
     addBinding(std::move(bindings), BindingType::JOIN);
 
     return join(Expression(QStringLiteral("(%1) as %2").arg(queryString,
-                                                            m_grammar.wrapTable(as))),
+                                                            m_grammar->wrapTable(as))),
                 callback, type);
 }
 

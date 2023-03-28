@@ -286,7 +286,7 @@ namespace Orm
         ReconnectorType m_reconnector = nullptr;
 
         /*! The query grammar implementation. */
-        std::unique_ptr<QueryGrammar> m_queryGrammar = nullptr;
+        std::shared_ptr<QueryGrammar> m_queryGrammar = nullptr;
         /*! The schema grammar implementation. */
         std::unique_ptr<SchemaGrammar> m_schemaGrammar = nullptr;
         /*! The schema builder implementation. */
