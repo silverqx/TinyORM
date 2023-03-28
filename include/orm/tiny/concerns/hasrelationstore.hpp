@@ -111,7 +111,7 @@ namespace Orm::Tiny::Concerns
 
         private:
             /*! Store type held by relation store. */
-            const RelationStoreType m_storeType;
+            /*const*/ RelationStoreType m_storeType;
         };
 
         /*! The store for loading eager relations. */
@@ -266,7 +266,7 @@ namespace Orm::Tiny::Concerns
             const QString &m_comparison;
             /*! Required number of records, used during querying relationship
                 exitence. */
-            const qint64 m_count;
+            /*const*/ qint64 m_count;
             /*! Condition operator, used during querying relationship exitence. */
             const QString &m_condition;
             /*! Builder callback, used during querying relationship exitence. */

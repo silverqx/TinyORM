@@ -63,9 +63,9 @@ namespace Orm::Query
 
     private:
         /*! The type of join being performed. */
-        const QString m_type;
+        /*const*/ QString m_type;
         /*! The table the join clause is joining to. */
-        const JoinTable m_table;
+        /*const*/ JoinTable m_table;
     };
 
     const QString &

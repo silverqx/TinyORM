@@ -316,7 +316,7 @@ namespace Orm::Tiny
 //                           Args &&...parameters);
 
         /*! The base query builder instance. */
-        const std::shared_ptr<QueryBuilder> m_query;
+        /*const*/ std::shared_ptr<QueryBuilder> m_query;
         /* This can't be a reference because the model is created on the stack
            in Model::query(), then copied here and the original is destroyed
            immediately. */

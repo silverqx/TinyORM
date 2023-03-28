@@ -271,7 +271,7 @@ namespace Orm
         /*! The QSqlDatabase connection resolver. */
         std::function<Connectors::ConnectionName()> m_qtConnectionResolver;
         /*! The name of the connected database. */
-        const QString m_database;
+        /*const*/ QString m_database;
         /*! The table prefix for the connection. */
         QString m_tablePrefix;
         /*! Determine how the QDateTime time zone will be converted. */
@@ -281,7 +281,7 @@ namespace Orm
         /*! Determine whether to return the QDateTime or QString (SQLite only). */
         std::optional<bool> m_returnQDateTime = std::nullopt;
         /*! The database connection configuration options. */
-        const QVariantHash m_config;
+        /*const*/ QVariantHash m_config;
         /*! The reconnector instance for the connection. */
         ReconnectorType m_reconnector = nullptr;
 

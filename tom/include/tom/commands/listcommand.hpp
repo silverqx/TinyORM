@@ -82,7 +82,7 @@ namespace Tom::Commands
         getCommandsByNamespace(const QString &name) const;
 
         /*! Commands to exclude from the list. */
-        const std::unordered_set<QString> m_dontList {
+        /*const*/ std::unordered_set<QString> m_dontList {
             Tom::Constants::Complete,
         };
     };

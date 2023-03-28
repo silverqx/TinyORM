@@ -95,7 +95,7 @@ namespace Tom::Commands
         static QStringList getConnectionNamesFromFile();
 
         /*! Commands to exclude from the list. */
-        const std::unordered_set<QString> m_dontList {
+        /*const*/ std::unordered_set<QString> m_dontList {
             Tom::Constants::Complete,
         };
     };
