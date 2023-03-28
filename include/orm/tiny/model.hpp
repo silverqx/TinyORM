@@ -1074,7 +1074,7 @@ namespace Orm::Tiny
     std::unique_ptr<TinyBuilder<Derived>>
     Model<Derived, AllRelations...>::newQuery()
     {
-        // Ownership of the std::shared_ptr<QueryBuilder>
+        // Ownership of a unique_ptr()
         auto query = newQueryWithoutScopes();
 
         if constexpr (extendsSoftDeletes())
