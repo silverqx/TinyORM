@@ -16,7 +16,7 @@ TINY_SYSTEM_HEADER
 #include "orm/tiny/exceptions/massassignmenterror.hpp"
 #include "orm/tiny/macros/crtpmodel.hpp"
 #include "orm/tiny/modelproxies.hpp"
-#include "orm/tiny/tinybuilder.hpp"
+#include "orm/tiny/tinybuilder.hpp" // IWYU pragma: keep
 #ifdef TINYORM_TESTS_CODE
 #  include "orm/tiny/types/connectionoverride.hpp"
 #endif
