@@ -242,7 +242,8 @@ Builder::update(const QVector<UpdateItem> &values)
 {
     return m_connection.update(
                 m_grammar->compileUpdate(*this, values),
-                cleanBindings(m_grammar->prepareBindingsForUpdate(getRawBindings(), values)));
+                cleanBindings(m_grammar->prepareBindingsForUpdate(getRawBindings(),
+                                                                  values)));
 }
 
 namespace
@@ -1305,13 +1306,16 @@ Builder &Builder::setBindings(QVector<QVariant> &&bindings, const BindingType ty
 
 std::shared_ptr<Builder> Builder::newQuery() const
 {
-    /* It has to be the shared pointer because it is public so instances counting is necessary,
-       also saved internally eg. in the TinyBuilder::m_query or Relation::m_query.
+    /* It has to be the shared pointer because it is public so instances counting is
+       necessary, also saved internally eg. in the TinyBuilder::m_query or
+       Relation::m_query.
        Can't return the std::unique_ptr<Builder> because it makes problems
-       in the Builder::whereExists() because it also accepts the std::shared_ptr<Builder> and
-       passing eg. DB::query() to it if it would be std::unique_ptr<Builder> would be tricky.
+       in the Builder::whereExists() because it also accepts
+       the std::shared_ptr<Builder> and passing eg. DB::query() to it if it would be
+       std::unique_ptr<Builder> would be tricky.
        So because of this all query() factories like DB::query(), Model::newQuery(),
-       DatabaseConnection::query() are returning std::shared_ptr<Builder> instead of unique_ptr. */
+       the DatabaseConnection::query() are returning the std::shared_ptr<Builder> instead
+       of the unique_ptr. */
     return std::make_shared<Builder>(m_connection, m_grammar);
 }
 
@@ -1419,7 +1423,8 @@ Builder Builder::cloneWithout(const std::unordered_set<PropertyType> &properties
     return copy;
 }
 
-Builder Builder::cloneWithoutBindings(const std::unordered_set<BindingType> &except) const
+Builder Builder::cloneWithoutBindings(
+        const std::unordered_set<BindingType> &except) const
 {
     auto copy = *this;
 
@@ -1528,9 +1533,10 @@ Builder::addArrayOfWheres(const QVector<WhereColumnItem> &values,
 std::shared_ptr<JoinClause>
 Builder::newJoinClause(const Builder &query, const QString &type, const QString &table)
 {
-    /* It has to be std::shared_ptr<>, because it can not be passed down to the joinInternal()
-       in Builder::join() in querybuilder.hpp! as incomplete type, in the querybuilder.hpp is
-       the JoinClause incomplete type and if the std::unique_ptr<> is used it doesn't compile. */
+    /* It has to be std::shared_ptr<>, because it can not be passed down to
+       the joinInternal() in Builder::join() in querybuilder.hpp! as incomplete type,
+       in the querybuilder.hpp is the JoinClause incomplete type and if
+       the std::unique_ptr<> is used it doesn't compile. */
     return std::make_shared<JoinClause>(query, type, table);
 }
 

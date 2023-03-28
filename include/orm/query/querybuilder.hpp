@@ -1163,7 +1163,8 @@ namespace Orm::Query
     {
         const auto [queryString, bindings] = createSub(std::forward<T>(query));
 
-        return selectRaw(QStringLiteral("(%1) as %2").arg(queryString, m_grammar->wrap(as)),
+        return selectRaw(QStringLiteral("(%1) as %2").arg(queryString,
+                                                          m_grammar->wrap(as)),
                          bindings);
     }
 
@@ -1173,7 +1174,8 @@ namespace Orm::Query
     {
         const auto [queryString, bindings] = createSub(std::forward<T>(query));
 
-        return fromRaw(QStringLiteral("(%1) as %2").arg(queryString, m_grammar->wrapTable(as)),
+        return fromRaw(QStringLiteral("(%1) as %2").arg(queryString,
+                                                        m_grammar->wrapTable(as)),
                        bindings);
     }
 
