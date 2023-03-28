@@ -118,7 +118,7 @@ namespace Grammars
         /*! The database connection instance. */
         DatabaseConnection &m_connection;
         /*! The schema grammar instance. */
-        const SchemaGrammar &m_grammar;
+        std::shared_ptr<SchemaGrammar> m_grammar;
     };
 
     /* public */

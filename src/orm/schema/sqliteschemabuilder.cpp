@@ -59,7 +59,7 @@ void SQLiteSchemaBuilder::dropAllTables() const
     m_connection.selectFromWriteConnection(SQLiteSchemaGrammar::
                                            compileEnableWriteableSchema());
 
-    m_connection.selectFromWriteConnection(m_grammar.compileDropAllTables({}));
+    m_connection.selectFromWriteConnection(m_grammar->compileDropAllTables({}));
 
     m_connection.selectFromWriteConnection(SQLiteSchemaGrammar::
                                            compileDisableWriteableSchema());
@@ -74,7 +74,7 @@ void SQLiteSchemaBuilder::dropAllViews() const
     m_connection.selectFromWriteConnection(SQLiteSchemaGrammar::
                                            compileEnableWriteableSchema());
 
-    m_connection.selectFromWriteConnection(m_grammar.compileDropAllViews({}));
+    m_connection.selectFromWriteConnection(m_grammar->compileDropAllViews({}));
 
     m_connection.selectFromWriteConnection(SQLiteSchemaGrammar::
                                            compileDisableWriteableSchema());
@@ -85,12 +85,12 @@ void SQLiteSchemaBuilder::dropAllViews() const
 SqlQuery SQLiteSchemaBuilder::getAllTables() const
 {
     // TODO schema, use postprocessor processColumnListing() silverqx
-    return m_connection.selectFromWriteConnection(m_grammar.compileGetAllTables());
+    return m_connection.selectFromWriteConnection(m_grammar->compileGetAllTables());
 }
 
 SqlQuery SQLiteSchemaBuilder::getAllViews() const
 {
-    return m_connection.selectFromWriteConnection(m_grammar.compileGetAllViews());
+    return m_connection.selectFromWriteConnection(m_grammar->compileGetAllViews());
 }
 
 void SQLiteSchemaBuilder::refreshDatabaseFile() const

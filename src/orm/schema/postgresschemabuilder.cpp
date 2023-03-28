@@ -17,14 +17,14 @@ namespace Orm::SchemaNs
 std::optional<SqlQuery> PostgresSchemaBuilder::createDatabase(const QString &name) const
 {
     return m_connection.unprepared(
-                m_grammar.compileCreateDatabase(name, m_connection));
+                m_grammar->compileCreateDatabase(name, m_connection));
 }
 
 std::optional<SqlQuery>
 PostgresSchemaBuilder::dropDatabaseIfExists(const QString &name) const
 {
     return m_connection.unprepared(
-                m_grammar.compileDropDatabaseIfExists(name));
+                m_grammar->compileDropDatabaseIfExists(name));
 }
 
 void PostgresSchemaBuilder::dropAllTables() const
@@ -51,7 +51,7 @@ void PostgresSchemaBuilder::dropAllTables() const
     if (tables.isEmpty())
         return;
 
-    m_connection.unprepared(m_grammar.compileDropAllTables(tables));
+    m_connection.unprepared(m_grammar->compileDropAllTables(tables));
 }
 
 void PostgresSchemaBuilder::dropAllViews() const
@@ -78,7 +78,7 @@ void PostgresSchemaBuilder::dropAllViews() const
     if (views.isEmpty())
         return;
 
-    m_connection.unprepared(m_grammar.compileDropAllViews(views));
+    m_connection.unprepared(m_grammar->compileDropAllViews(views));
 }
 
 SqlQuery PostgresSchemaBuilder::getAllTables() const
@@ -92,7 +92,7 @@ SqlQuery PostgresSchemaBuilder::getAllTables() const
 
     // TODO schema, use postprocessor processColumnListing() silverqx
     return m_connection.selectFromWriteConnection(
-                m_grammar.compileGetAllTables(searchPath));
+                m_grammar->compileGetAllTables(searchPath));
 }
 
 SqlQuery PostgresSchemaBuilder::getAllViews() const
@@ -105,7 +105,7 @@ SqlQuery PostgresSchemaBuilder::getAllViews() const
     std::ranges::move(searchPathList, std::back_inserter(searchPath));
 
     return m_connection.selectFromWriteConnection(
-                m_grammar.compileGetAllViews(searchPath));
+                m_grammar->compileGetAllViews(searchPath));
 }
 
 QStringList PostgresSchemaBuilder::getColumnListing(const QString &table) const
@@ -115,7 +115,7 @@ QStringList PostgresSchemaBuilder::getColumnListing(const QString &table) const
     table_ = NOSPACE.arg(m_connection.getTablePrefix(), table_);
 
     auto query = m_connection.selectFromWriteConnection(
-                     m_grammar.compileColumnListing(),
+                     m_grammar->compileColumnListing(),
                      {std::move(database), std::move(schema), std::move(table_)});
 
     return m_connection.getPostProcessor().processColumnListing(query);
@@ -128,7 +128,7 @@ bool PostgresSchemaBuilder::hasTable(const QString &table) const
     table_ = NOSPACE.arg(m_connection.getTablePrefix(), table_);
 
     return m_connection.selectFromWriteConnection(
-                m_grammar.compileTableExists(),
+                m_grammar->compileTableExists(),
                 {std::move(database), std::move(schema), std::move(table_)}).size() > 0;
 }
 
@@ -257,7 +257,7 @@ QStringList PostgresSchemaBuilder::searchPath() const
 
 const Grammars::PostgresSchemaGrammar &PostgresSchemaBuilder::grammar() const
 {
-    return dynamic_cast<const Grammars::PostgresSchemaGrammar &>(m_grammar);
+    return dynamic_cast<const Grammars::PostgresSchemaGrammar &>(*m_grammar);
 }
 
 } // namespace Orm::SchemaNs

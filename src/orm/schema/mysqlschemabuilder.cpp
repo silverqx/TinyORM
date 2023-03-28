@@ -12,14 +12,14 @@ namespace Orm::SchemaNs
 std::optional<SqlQuery> MySqlSchemaBuilder::createDatabase(const QString &name) const
 {
     return m_connection.statement(
-                m_grammar.compileCreateDatabase(name, m_connection));
+                m_grammar->compileCreateDatabase(name, m_connection));
 }
 
 std::optional<SqlQuery>
 MySqlSchemaBuilder::dropDatabaseIfExists(const QString &name) const
 {
     return m_connection.statement(
-                m_grammar.compileDropDatabaseIfExists(name));
+                m_grammar->compileDropDatabaseIfExists(name));
 }
 
 void MySqlSchemaBuilder::dropAllTables() const
@@ -41,7 +41,7 @@ void MySqlSchemaBuilder::dropAllTables() const
 
     disableForeignKeyConstraints();
 
-    m_connection.statement(m_grammar.compileDropAllTables(tables));
+    m_connection.statement(m_grammar->compileDropAllTables(tables));
 
     enableForeignKeyConstraints();
 }
@@ -63,18 +63,18 @@ void MySqlSchemaBuilder::dropAllViews() const
 
     Q_ASSERT(!views.isEmpty());
 
-    m_connection.statement(m_grammar.compileDropAllViews(views));
+    m_connection.statement(m_grammar->compileDropAllViews(views));
 }
 
 SqlQuery MySqlSchemaBuilder::getAllTables() const
 {
     // TODO schema, use postprocessor processColumnListing() silverqx
-    return m_connection.selectFromWriteConnection(m_grammar.compileGetAllTables());
+    return m_connection.selectFromWriteConnection(m_grammar->compileGetAllTables());
 }
 
 SqlQuery MySqlSchemaBuilder::getAllViews() const
 {
-    return m_connection.selectFromWriteConnection(m_grammar.compileGetAllViews());
+    return m_connection.selectFromWriteConnection(m_grammar->compileGetAllViews());
 }
 
 QStringList MySqlSchemaBuilder::getColumnListing(const QString &table) const
@@ -82,7 +82,7 @@ QStringList MySqlSchemaBuilder::getColumnListing(const QString &table) const
     auto table_ = NOSPACE.arg(m_connection.getTablePrefix(), table);
 
     auto query = m_connection.selectFromWriteConnection(
-                     m_grammar.compileColumnListing(),
+                     m_grammar->compileColumnListing(),
                      {m_connection.getDatabaseName(), std::move(table_)});
 
     return m_connection.getPostProcessor().processColumnListing(query);
@@ -93,7 +93,7 @@ bool MySqlSchemaBuilder::hasTable(const QString &table) const
     auto table_ = NOSPACE.arg(m_connection.getTablePrefix(), table);
 
     return m_connection.selectFromWriteConnection(
-                m_grammar.compileTableExists(),
+                m_grammar->compileTableExists(),
                 {m_connection.getDatabaseName(), std::move(table_)}).size() > 0;
 }
 

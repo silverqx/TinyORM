@@ -467,14 +467,6 @@ void DatabaseConnection::disconnect()
     m_qtConnectionResolver = nullptr;
 }
 
-const SchemaGrammar &DatabaseConnection::getSchemaGrammar()
-{
-    if (!m_schemaGrammar)
-        useDefaultSchemaGrammar();
-
-    return *m_schemaGrammar;
-}
-
 SchemaBuilder &DatabaseConnection::getSchemaBuilder()
 {
     if (!m_schemaGrammar)
@@ -484,6 +476,14 @@ SchemaBuilder &DatabaseConnection::getSchemaBuilder()
         useDefaultSchemaBuilder();
 
     return *m_schemaBuilder;
+}
+
+std::shared_ptr<SchemaGrammar> DatabaseConnection::getSchemaGrammarShared()
+{
+    if (!m_schemaGrammar)
+        useDefaultSchemaGrammar();
+
+    return m_schemaGrammar;
 }
 
 DatabaseConnection &

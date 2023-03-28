@@ -18,7 +18,7 @@ namespace Orm::SchemaNs
 
 SchemaBuilder::SchemaBuilder(DatabaseConnection &connection)
     : m_connection(connection)
-    , m_grammar(connection.getSchemaGrammar())
+    , m_grammar(connection.getSchemaGrammarShared())
 {}
 
 std::optional<SqlQuery> SchemaBuilder::createDatabase(const QString &/*unused*/) const
@@ -144,12 +144,12 @@ SqlQuery SchemaBuilder::getAllViews() const
 
 SqlQuery SchemaBuilder::enableForeignKeyConstraints() const
 {
-    return m_connection.statement(m_grammar.compileEnableForeignKeyConstraints());
+    return m_connection.statement(m_grammar->compileEnableForeignKeyConstraints());
 }
 
 SqlQuery SchemaBuilder::disableForeignKeyConstraints() const
 {
-    return m_connection.statement(m_grammar.compileDisableForeignKeyConstraints());
+    return m_connection.statement(m_grammar->compileDisableForeignKeyConstraints());
 }
 
 void
@@ -165,7 +165,7 @@ SchemaBuilder::withoutForeignKeyConstraints(const std::function<void()> &callbac
 QStringList SchemaBuilder::getColumnListing(const QString &table) const
 {
     auto query = m_connection.selectFromWriteConnection(
-                     m_grammar.compileColumnListing(
+                     m_grammar->compileColumnListing(
                          NOSPACE.arg(m_connection.getTablePrefix(), table)));
 
     return m_connection.getPostProcessor().processColumnListing(query);
@@ -176,7 +176,7 @@ bool SchemaBuilder::hasTable(const QString &table) const
     const auto table_ = NOSPACE.arg(m_connection.getTablePrefix(), table);
 
     auto query = m_connection.selectFromWriteConnection(
-                     m_grammar.compileTableExists(), {table_});
+                     m_grammar->compileTableExists(), {table_});
 
     return QueryUtils::queryResultSize(query) > 0;
 }
@@ -219,7 +219,7 @@ Blueprint SchemaBuilder::createBlueprint(
 
 void SchemaBuilder::build(Blueprint &&blueprint) const
 {
-    blueprint.build(m_connection, m_grammar);
+    blueprint.build(m_connection, *m_grammar);
 }
 
 } // namespace Orm::SchemaNs

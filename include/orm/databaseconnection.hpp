@@ -176,11 +176,16 @@ namespace Orm
         /*! Get the query grammar used by the connection. */
         inline QueryGrammar &getQueryGrammar();
         /*! Get the schema grammar used by the connection. */
-        const SchemaGrammar &getSchemaGrammar();
+        inline const SchemaGrammar &getSchemaGrammar();
         /*! Get the schema builder used by the connection. */
         SchemaBuilder &getSchemaBuilder();
         /*! Get the query post processor used by the connection. */
         inline const QueryProcessor &getPostProcessor() const;
+
+        /*! Get the query grammar used by the connection as a std::shared_ptr. */
+        inline std::shared_ptr<QueryGrammar> getQueryGrammarShared();
+        /*! Get the schema grammar used by the connection as a std::shared_ptr. */
+        std::shared_ptr<SchemaGrammar> getSchemaGrammarShared();
 
         /*! Set the reconnect instance on the connection. */
         DatabaseConnection &setReconnector(const ReconnectorType &reconnector);
@@ -288,7 +293,7 @@ namespace Orm
         /*! The query grammar implementation. */
         std::shared_ptr<QueryGrammar> m_queryGrammar = nullptr;
         /*! The schema grammar implementation. */
-        std::unique_ptr<SchemaGrammar> m_schemaGrammar = nullptr;
+        std::shared_ptr<SchemaGrammar> m_schemaGrammar = nullptr;
         /*! The schema builder implementation. */
         std::unique_ptr<SchemaBuilder> m_schemaBuilder = nullptr;
         /*! The query post processor implementation. */
@@ -427,9 +432,19 @@ namespace Orm
         return *m_queryGrammar;
     }
 
+    const SchemaGrammar &DatabaseConnection::getSchemaGrammar()
+    {
+        return *getSchemaGrammarShared();
+    }
+
     const QueryProcessor &DatabaseConnection::getPostProcessor() const
     {
         return *m_postProcessor;
+    }
+
+    std::shared_ptr<QueryGrammar> DatabaseConnection::getQueryGrammarShared()
+    {
+        return m_queryGrammar;
     }
 
     const QVariantHash &DatabaseConnection::getConfig() const noexcept
