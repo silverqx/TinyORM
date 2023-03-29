@@ -250,7 +250,7 @@ namespace Concerns
         void throwIfEmptyDefaultConnection() const;
 
         /*! Current application argc. */
-        int &m_argc;
+        int &m_argc; // NOLINT(cppcoreguidelines-avoid-const-or-ref-data-members)
         /*! Current application argv. */
         char **m_argv;
 
