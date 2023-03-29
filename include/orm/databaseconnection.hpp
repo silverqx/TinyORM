@@ -49,9 +49,13 @@ namespace Orm
 
         // To access shouldCountElapsed() method
         friend Concerns::ManagesTransactions;
-        // TODO stackoverflow, changes friend declaration ABI compatibility?, if not following can be wrapped in ifdef TINYORM_MYSQL_PING silverqx
+        /* The friend declaration doesn't affect an ABI or binary compatibility so
+           wrapping it in the #ifdef is safe:
+           https://community.kde.org/Policies/Binary_Compatibility_Issues_With_C++ */
+#ifdef TINYORM_MYSQL_PING
         // To access logConnected()/logDisconnected() methods
         friend class MySqlConnection;
+#endif
 
     public:
         /*! Constructor. */
