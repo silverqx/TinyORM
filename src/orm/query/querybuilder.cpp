@@ -1315,7 +1315,7 @@ std::shared_ptr<Builder> Builder::newQuery() const
        std::unique_ptr<Builder> would be tricky.
        So because of this all query() factories like DB::query(), Model::newQuery(),
        the DatabaseConnection::query() are returning the std::shared_ptr<Builder> instead
-       of the unique_ptr. */
+       of the std::unique_ptr<Builder>. */
     return std::make_shared<Builder>(m_connection, m_grammar);
 }
 
