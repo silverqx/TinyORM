@@ -10,6 +10,7 @@
 using Orm::Constants::EMPTY;
 using Orm::Constants::H127001;
 using Orm::Constants::NAME;
+using Orm::Constants::NOSPACE;
 using Orm::Constants::P5432;
 using Orm::Constants::PUBLIC;
 using Orm::Constants::QMYSQL;
@@ -79,6 +80,7 @@ private Q_SLOTS:
     void sqlite_CheckDatabaseExists_False() const;
 
     void addUseAndRemoveConnection_FiveTimes() const;
+    void addUseAndRemoveThreeConnections_FiveTimes() const;
 
 // NOLINTNEXTLINE(readability-redundant-access-specifiers)
 private:
@@ -799,6 +801,40 @@ void tst_DatabaseManager::addUseAndRemoveConnection_FiveTimes() const
 
         // Restore
         QVERIFY(Databases::removeConnection(*connectionName));
+    }
+}
+
+void tst_DatabaseManager::addUseAndRemoveThreeConnections_FiveTimes() const
+{
+    for (auto i = 0; i < 5; ++i) {
+        // Add 3 new MYSQL database connections
+        const auto connectionName1 =
+            Databases::createConnectionTempFrom(
+                Databases::MYSQL, {ClassName, NOSPACE.arg(QString::fromUtf8(__func__), // NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
+                                                          QStringLiteral("1"))});
+        const auto connectionName2 =
+            Databases::createConnectionTempFrom(
+                Databases::MYSQL, {ClassName, NOSPACE.arg(QString::fromUtf8(__func__), // NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
+                                                          QStringLiteral("2"))});
+        const auto connectionName3 =
+            Databases::createConnectionTempFrom(
+                Databases::MYSQL, {ClassName, NOSPACE.arg(QString::fromUtf8(__func__), // NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
+                                                          QStringLiteral("3"))});
+
+        if (i == 0 && !connectionName1)
+            QSKIP(TestUtils::AutoTestSkipped
+                      .arg(TypeUtils::classPureBasename(*this), Databases::MYSQL)
+                      .toUtf8().constData(), );
+
+        // Execute some database query on connections
+        QCOMPARE(m_dm->table("users", *connectionName1)->count(), 5);
+        QCOMPARE(m_dm->table("users", *connectionName2)->count(), 5);
+        QCOMPARE(m_dm->table("users", *connectionName3)->count(), 5);
+
+        // Restore
+        QVERIFY(Databases::removeConnection(*connectionName3));
+        QVERIFY(Databases::removeConnection(*connectionName2));
+        QVERIFY(Databases::removeConnection(*connectionName1));
     }
 }
 // NOLINTEND(readability-convert-member-functions-to-static)
