@@ -727,7 +727,7 @@ namespace Orm::Query
         /*! Get a database connection. */
         inline DatabaseConnection &getConnection() const noexcept;
         /*! Get the query grammar instance. */
-        inline std::shared_ptr<QueryGrammar> getGrammar() const noexcept;
+        inline std::shared_ptr<QueryGrammar> getGrammarShared() const noexcept;
 
         /*! Get the current query value bindings as flattened QVector. */
         QVector<QVariant> getBindings() const;
@@ -1650,7 +1650,7 @@ namespace Orm::Query
         return m_connection;
     }
 
-    std::shared_ptr<Builder::QueryGrammar> Builder::getGrammar() const noexcept
+    std::shared_ptr<Builder::QueryGrammar> Builder::getGrammarShared() const noexcept
     {
         return m_grammar;
     }
