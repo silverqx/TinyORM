@@ -19,8 +19,10 @@ namespace Orm::Query
 
 /* public */
 
-Builder::Builder(DatabaseConnection &connection, std::shared_ptr<QueryGrammar> grammar)
-    : m_connection(connection)
+Builder::Builder(std::shared_ptr<DatabaseConnection> connection,
+                 std::shared_ptr<QueryGrammar> grammar
+)
+    : m_connection(std::move(connection))
     , m_grammar(std::move(grammar))
 {}
 
@@ -60,7 +62,7 @@ SqlQuery Builder::first(const QVector<Column> &columns)
 {
     auto query = take(1).get(columns);
 
-    if (m_connection.pretending())
+    if (m_connection->pretending())
         return query;
 
     query.first();
@@ -80,7 +82,7 @@ QVariant Builder::value(const Column &column)
 
     const auto query = first({column});
 
-    if (m_connection.pretending())
+    if (m_connection->pretending())
         return {};
 
     return query.value(column_);
@@ -98,7 +100,7 @@ QVariant Builder::soleValue(const Column &column)
 
     const auto query = sole({column});
 
-    if (m_connection.pretending())
+    if (m_connection->pretending())
         return {};
 
     return query.value(column_);
@@ -183,8 +185,8 @@ Builder::insert(const QVector<QVariantMap> &values)
        in the same order for the record. We need to make sure this is the case
        so there are not any errors or problems when inserting these records. */
 
-    return m_connection.insert(m_grammar->compileInsert(*this, values),
-                               cleanBindings(flatValuesForInsert(values)));
+    return m_connection->insert(m_grammar->compileInsert(*this, values),
+                                cleanBindings(flatValuesForInsert(values)));
 }
 
 std::optional<SqlQuery>
@@ -205,7 +207,7 @@ quint64 Builder::insertGetId(const QVariantMap &values, const QString &sequence)
 {
     const QVector<QVariantMap> valuesVector {values};
 
-    auto query = m_connection.insert(
+    auto query = m_connection->insert(
                      m_grammar->compileInsertGetId(*this, valuesVector, sequence),
                      cleanBindings(flatValuesForInsert(valuesVector)));
 
@@ -219,7 +221,7 @@ Builder::insertOrIgnore(const QVector<QVariantMap> &values)
     if (values.isEmpty())
         return {0, std::nullopt};
 
-    return m_connection.affectingStatement(
+    return m_connection->affectingStatement(
                 m_grammar->compileInsertOrIgnore(*this, values),
                 cleanBindings(flatValuesForInsert(values)));
 }
@@ -240,7 +242,7 @@ Builder::insertOrIgnore(const QVector<QString> &columns,
 std::tuple<int, QSqlQuery>
 Builder::update(const QVector<UpdateItem> &values)
 {
-    return m_connection.update(
+    return m_connection->update(
                 m_grammar->compileUpdate(*this, values),
                 cleanBindings(m_grammar->prepareBindingsForUpdate(getRawBindings(),
                                                                   values)));
@@ -305,7 +307,7 @@ Builder::upsert(const QVector<QVariantMap> &values, const QStringList &uniqueBy,
                     "please use the 'insert' method instead in %1().")
                 .arg(__tiny_func__));
 
-    return m_connection.affectingStatement(
+    return m_connection->affectingStatement(
                 m_grammar->compileUpsert(*this, values, uniqueBy, update),
                 cleanBindings(flatValuesForUpsert(values)));
 }
@@ -317,7 +319,7 @@ Builder::upsert(const QVector<QVariantMap> &values, const QStringList &uniqueBy)
     // Columns are obtained only from a first QMap
     const auto update = values.constFirst().keys();
 
-    return m_connection.affectingStatement(
+    return m_connection->affectingStatement(
                 m_grammar->compileUpsert(*this, values, uniqueBy, update),
                 cleanBindings(flatValuesForUpsert(values)));
 }
@@ -329,7 +331,7 @@ std::tuple<int, QSqlQuery> Builder::deleteRow()
 
 std::tuple<int, QSqlQuery> Builder::remove()
 {
-    return m_connection.remove(
+    return m_connection->remove(
             m_grammar->compileDelete(*this),
             cleanBindings(m_grammar->prepareBindingsForDelete(getRawBindings())));
 }
@@ -339,10 +341,10 @@ void Builder::truncate()
     for (auto &&[sql, bindings] : m_grammar->compileTruncate(*this))
         /* Postgres doesn't execute truncate statement as prepared query:
            https://www.postgresql.org/docs/13/sql-prepare.html */
-        if (m_connection.driverName() == QPSQL)
-            m_connection.unprepared(sql);
+        if (m_connection->driverName() == QPSQL)
+            m_connection->unprepared(sql);
         else
-            m_connection.statement(sql, bindings);
+            m_connection->statement(sql, bindings);
 }
 
 /* Select */
@@ -364,7 +366,7 @@ QVariant Builder::aggregate(const QString &function,
 
 bool Builder::exists()
 {
-    auto results = m_connection.select(m_grammar->compileExists(*this), getBindings());
+    auto results = m_connection->select(m_grammar->compileExists(*this), getBindings());
 
     /* If the results have rows, we will get the row and see if the exists column is a
        boolean true. If there are no results for this query we will return false as
@@ -1331,12 +1333,12 @@ std::shared_ptr<Builder> Builder::forNestedWhere() const
 
 Expression Builder::raw(const QVariant &value) const
 {
-    return m_connection.raw(value);
+    return m_connection->raw(value);
 }
 
 Expression Builder::raw(QVariant &&value) const noexcept
 {
-    return m_connection.raw(value);
+    return m_connection->raw(value);
 }
 
 Builder &Builder::addNestedWhereQuery(const std::shared_ptr<Builder> &query,
@@ -1682,7 +1684,7 @@ Builder &Builder::setAggregate(const QString &function, const QVector<Column> &c
 
 SqlQuery Builder::runSelect()
 {
-    return m_connection.select(toSql(), getBindings());
+    return m_connection->select(toSql(), getBindings());
 }
 
 Builder &Builder::joinInternal(

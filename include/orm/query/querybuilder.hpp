@@ -51,7 +51,8 @@ namespace Orm::Query
 
     public:
         /*! Constructor. */
-        Builder(DatabaseConnection &connection, std::shared_ptr<QueryGrammar> grammar);
+        Builder(std::shared_ptr<DatabaseConnection> connection,
+                std::shared_ptr<QueryGrammar> grammar);
         /* Need to be the polymorphic type because of dynamic_cast<>
            in the Grammar::concatenateWhereClauses(). */
         /*! Virtual destructor. */
@@ -726,7 +727,12 @@ namespace Orm::Query
         const QString &defaultKeyName() const noexcept;
         /*! Get a database connection. */
         inline DatabaseConnection &getConnection() const noexcept;
-        /*! Get the query grammar instance. */
+        /*! Get the query grammar reference. */
+        inline const QueryGrammar &getGrammar() const noexcept;
+
+        /*! Get a database connection as a std::shared_ptr. */
+        inline std::shared_ptr<DatabaseConnection> getConnectionShared() const noexcept;
+        /*! Get the query grammar instance as a std::shared_ptr. */
         inline std::shared_ptr<QueryGrammar> getGrammarShared() const noexcept;
 
         /*! Get the current query value bindings as flattened QVector. */
@@ -942,7 +948,7 @@ namespace Orm::Query
         static const QVector<QString> &getOperators();
 
         /*! The database connection instance. */
-        DatabaseConnection &m_connection;
+        std::shared_ptr<DatabaseConnection> m_connection;
         /*! The database query grammar instance. */
         std::shared_ptr<QueryGrammar> m_grammar;
 
@@ -1646,6 +1652,16 @@ namespace Orm::Query
     /* Getters / Setters */
 
     DatabaseConnection &Builder::getConnection() const noexcept
+    {
+        return *m_connection;
+    }
+
+    const Builder::QueryGrammar &Builder::getGrammar() const noexcept
+    {
+        return *m_grammar;
+    }
+
+    std::shared_ptr<DatabaseConnection> Builder::getConnectionShared() const noexcept
     {
         return m_connection;
     }

@@ -104,7 +104,7 @@ std::shared_ptr<QueryBuilder> DatabaseConnection::query()
        the useDefaultQueryGrammar() in descendants, so I leave this check here. */
     Q_ASSERT(m_queryGrammar);
 
-    return std::make_shared<QueryBuilder>(*this, m_queryGrammar);
+    return std::make_shared<QueryBuilder>(shared_from_this(), m_queryGrammar);
 }
 
 /* Running SQL Queries */
