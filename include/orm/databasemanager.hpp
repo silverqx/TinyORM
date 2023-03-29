@@ -378,7 +378,7 @@ namespace Query
         const QString &parseConnectionName(const QString &name) const;
 
         /*! Make the database connection instance. */
-        std::unique_ptr<DatabaseConnection>
+        std::shared_ptr<DatabaseConnection>
         makeConnection(const QString &connection);
 
         /*! Get the configuration for a connection. */
@@ -387,8 +387,8 @@ namespace Query
         void throwIfNoConfiguration(const QString &connection) const;
 
         /*! Prepare the database connection instance. */
-        std::unique_ptr<DatabaseConnection>
-        configure(std::unique_ptr<DatabaseConnection> &&connection) const;
+        std::shared_ptr<DatabaseConnection>
+        configure(std::shared_ptr<DatabaseConnection> &&connection) const;
 
         /*! Refresh an underlying QSqlDatabase connection resolver on a given
             TinyORM connection. */

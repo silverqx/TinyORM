@@ -16,16 +16,16 @@ using QueryUtils = Orm::Utils::Query;
 namespace Orm::SchemaNs
 {
 
-SchemaBuilder::SchemaBuilder(DatabaseConnection &connection)
-    : m_connection(connection)
-    , m_grammar(connection.getSchemaGrammarShared())
+SchemaBuilder::SchemaBuilder(std::shared_ptr<DatabaseConnection> connection)
+    : m_connection(std::move(connection))
+    , m_grammar(m_connection->getSchemaGrammarShared())
 {}
 
 std::optional<SqlQuery> SchemaBuilder::createDatabase(const QString &/*unused*/) const
 {
     throw Exceptions::LogicError(
                 QStringLiteral("%1 database driver does not support creating databases.")
-                .arg(m_connection.driverName()));
+                .arg(m_connection->driverName()));
 }
 
 std::optional<SqlQuery>
@@ -33,7 +33,7 @@ SchemaBuilder::dropDatabaseIfExists(const QString &/*unused*/) const
 {
     throw Exceptions::LogicError(
                 QStringLiteral("%1 database driver does not support dropping databases.")
-                .arg(m_connection.driverName()));
+                .arg(m_connection->driverName()));
 }
 
 void SchemaBuilder::create(const QString &table,
@@ -112,28 +112,28 @@ void SchemaBuilder::dropAllTables() const
     // CUR schema, solve this logic vs runtime exception silverqx
     throw Exceptions::LogicError(
                 QStringLiteral("%1 database driver does not support dropping all tables.")
-                .arg(m_connection.driverName()));
+                .arg(m_connection->driverName()));
 }
 
 void SchemaBuilder::dropAllViews() const
 {
     throw Exceptions::LogicError(
                 QStringLiteral("%1 database driver does not support dropping all views.")
-                .arg(m_connection.driverName()));
+                .arg(m_connection->driverName()));
 }
 
 void SchemaBuilder::dropAllTypes() const
 {
     throw Exceptions::LogicError(
                 QStringLiteral("%1 database driver does not support dropping all types.")
-                .arg(m_connection.driverName()));
+                .arg(m_connection->driverName()));
 }
 
 SqlQuery SchemaBuilder::getAllTables() const
 {
     throw Exceptions::LogicError(
                 QStringLiteral("%1 database driver does not support getting all tables.")
-                .arg(m_connection.driverName()));
+                .arg(m_connection->driverName()));
 }
 
 SqlQuery SchemaBuilder::getAllViews() const
@@ -143,12 +143,12 @@ SqlQuery SchemaBuilder::getAllViews() const
 
 SqlQuery SchemaBuilder::enableForeignKeyConstraints() const
 {
-    return m_connection.statement(m_grammar->compileEnableForeignKeyConstraints());
+    return m_connection->statement(m_grammar->compileEnableForeignKeyConstraints());
 }
 
 SqlQuery SchemaBuilder::disableForeignKeyConstraints() const
 {
-    return m_connection.statement(m_grammar->compileDisableForeignKeyConstraints());
+    return m_connection->statement(m_grammar->compileDisableForeignKeyConstraints());
 }
 
 void
@@ -163,18 +163,18 @@ SchemaBuilder::withoutForeignKeyConstraints(const std::function<void()> &callbac
 
 QStringList SchemaBuilder::getColumnListing(const QString &table) const
 {
-    auto query = m_connection.selectFromWriteConnection(
+    auto query = m_connection->selectFromWriteConnection(
                      m_grammar->compileColumnListing(
-                         NOSPACE.arg(m_connection.getTablePrefix(), table)));
+                         NOSPACE.arg(m_connection->getTablePrefix(), table)));
 
-    return m_connection.getPostProcessor().processColumnListing(query);
+    return m_connection->getPostProcessor().processColumnListing(query);
 }
 
 bool SchemaBuilder::hasTable(const QString &table) const
 {
-    const auto table_ = NOSPACE.arg(m_connection.getTablePrefix(), table);
+    const auto table_ = NOSPACE.arg(m_connection->getTablePrefix(), table);
 
-    auto query = m_connection.selectFromWriteConnection(
+    auto query = m_connection->selectFromWriteConnection(
                      m_grammar->compileTableExists(), {table_});
 
     return QueryUtils::queryResultSize(query) > 0;
@@ -209,8 +209,8 @@ bool SchemaBuilder::hasColumns(const QString &table,
 Blueprint SchemaBuilder::createBlueprint(
             const QString &table, const std::function<void(Blueprint &)> &callback) const
 {
-    auto prefix = m_connection.getConfig(prefix_indexes).value<bool>()
-                  ? m_connection.getConfig(prefix_).value<QString>()
+    auto prefix = m_connection->getConfig(prefix_indexes).value<bool>()
+                  ? m_connection->getConfig(prefix_).value<QString>()
                   : QString("");
 
     return Blueprint(table, callback, std::move(prefix));
@@ -218,7 +218,7 @@ Blueprint SchemaBuilder::createBlueprint(
 
 void SchemaBuilder::build(Blueprint &&blueprint) const
 {
-    blueprint.build(m_connection, *m_grammar);
+    blueprint.build(*m_connection, *m_grammar);
 }
 
 } // namespace Orm::SchemaNs

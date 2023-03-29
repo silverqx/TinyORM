@@ -35,7 +35,7 @@ using ConfigUtils = Orm::Utils::Configuration;
 namespace Orm
 {
 
-/* public */
+/* private */
 
 MySqlConnection::MySqlConnection(
         std::function<Connectors::ConnectionName()> &&connection,
@@ -54,6 +54,8 @@ MySqlConnection::MySqlConnection(
 
     useDefaultPostProcessor();
 }
+
+/* public */
 
 /* Getters / Setters */
 
@@ -257,7 +259,7 @@ std::unique_ptr<SchemaGrammar> MySqlConnection::getDefaultSchemaGrammar()
 
 std::unique_ptr<SchemaBuilder> MySqlConnection::getDefaultSchemaBuilder()
 {
-    return std::make_unique<SchemaNs::MySqlSchemaBuilder>(*this);
+    return std::make_unique<SchemaNs::MySqlSchemaBuilder>(shared_from_this());
 }
 
 std::unique_ptr<QueryProcessor> MySqlConnection::getDefaultPostProcessor() const

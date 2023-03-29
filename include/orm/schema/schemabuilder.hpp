@@ -33,7 +33,7 @@ namespace Grammars
 
     public:
         /*! Constructor. */
-        explicit SchemaBuilder(DatabaseConnection &connection);
+        explicit SchemaBuilder(std::shared_ptr<DatabaseConnection> connection);
         /*! Virtual destructor, this class is used so can not be pure. */
         inline virtual ~SchemaBuilder() = default;
 
@@ -116,7 +116,7 @@ namespace Grammars
         void build(Blueprint &&blueprint) const;
 
         /*! The database connection instance. */
-        DatabaseConnection &m_connection;
+        std::shared_ptr<DatabaseConnection> m_connection;
         /*! The schema grammar instance. */
         std::shared_ptr<SchemaGrammar> m_grammar;
     };
@@ -131,12 +131,12 @@ namespace Grammars
 
     DatabaseConnection &SchemaBuilder::getConnection()
     {
-        return m_connection;
+        return *m_connection;
     }
 
     const DatabaseConnection &SchemaBuilder::getConnection() const
     {
-        return m_connection;
+        return *m_connection;
     }
 
 } // namespace SchemaNs

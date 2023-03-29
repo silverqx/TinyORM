@@ -10,7 +10,7 @@ TINYORM_BEGIN_COMMON_NAMESPACE
 namespace Orm
 {
 
-/* public */
+/* private */
 
 SQLiteConnection::SQLiteConnection(
         std::function<Connectors::ConnectionName()> &&connection,
@@ -28,6 +28,8 @@ SQLiteConnection::SQLiteConnection(
 
     useDefaultPostProcessor();
 }
+
+/* public */
 
 SQLiteConnection &SQLiteConnection::setReturnQDateTime(const bool value)
 {
@@ -60,7 +62,7 @@ std::unique_ptr<SchemaGrammar> SQLiteConnection::getDefaultSchemaGrammar()
 
 std::unique_ptr<SchemaBuilder> SQLiteConnection::getDefaultSchemaBuilder()
 {
-    return std::make_unique<SchemaNs::SQLiteSchemaBuilder>(*this);
+    return std::make_unique<SchemaNs::SQLiteSchemaBuilder>(shared_from_this());
 }
 
 std::unique_ptr<QueryProcessor> SQLiteConnection::getDefaultPostProcessor() const

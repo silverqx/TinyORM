@@ -16,14 +16,14 @@ namespace Orm::SchemaNs
 
 std::optional<SqlQuery> PostgresSchemaBuilder::createDatabase(const QString &name) const
 {
-    return m_connection.unprepared(
-                m_grammar->compileCreateDatabase(name, m_connection));
+    return m_connection->unprepared(
+                m_grammar->compileCreateDatabase(name, *m_connection));
 }
 
 std::optional<SqlQuery>
 PostgresSchemaBuilder::dropDatabaseIfExists(const QString &name) const
 {
-    return m_connection.unprepared(
+    return m_connection->unprepared(
                 m_grammar->compileDropDatabaseIfExists(name));
 }
 
@@ -51,7 +51,7 @@ void PostgresSchemaBuilder::dropAllTables() const
     if (tables.isEmpty())
         return;
 
-    m_connection.unprepared(m_grammar->compileDropAllTables(tables));
+    m_connection->unprepared(m_grammar->compileDropAllTables(tables));
 }
 
 void PostgresSchemaBuilder::dropAllViews() const
@@ -78,7 +78,7 @@ void PostgresSchemaBuilder::dropAllViews() const
     if (views.isEmpty())
         return;
 
-    m_connection.unprepared(m_grammar->compileDropAllViews(views));
+    m_connection->unprepared(m_grammar->compileDropAllViews(views));
 }
 
 SqlQuery PostgresSchemaBuilder::getAllTables() const
@@ -91,7 +91,7 @@ SqlQuery PostgresSchemaBuilder::getAllTables() const
     std::ranges::move(searchPathList, std::back_inserter(searchPath));
 
     // TODO schema, use postprocessor processColumnListing() silverqx
-    return m_connection.selectFromWriteConnection(
+    return m_connection->selectFromWriteConnection(
                 m_grammar->compileGetAllTables(searchPath));
 }
 
@@ -104,7 +104,7 @@ SqlQuery PostgresSchemaBuilder::getAllViews() const
     searchPath.reserve(searchPathList.size());
     std::ranges::move(searchPathList, std::back_inserter(searchPath));
 
-    return m_connection.selectFromWriteConnection(
+    return m_connection->selectFromWriteConnection(
                 m_grammar->compileGetAllViews(searchPath));
 }
 
@@ -112,22 +112,22 @@ QStringList PostgresSchemaBuilder::getColumnListing(const QString &table) const
 {
     auto [database, schema, table_] = parseSchemaAndTable(table);
 
-    table_ = NOSPACE.arg(m_connection.getTablePrefix(), table_);
+    table_ = NOSPACE.arg(m_connection->getTablePrefix(), table_);
 
-    auto query = m_connection.selectFromWriteConnection(
+    auto query = m_connection->selectFromWriteConnection(
                      m_grammar->compileColumnListing(),
                      {std::move(database), std::move(schema), std::move(table_)});
 
-    return m_connection.getPostProcessor().processColumnListing(query);
+    return m_connection->getPostProcessor().processColumnListing(query);
 }
 
 bool PostgresSchemaBuilder::hasTable(const QString &table) const
 {
     auto [database, schema, table_] = parseSchemaAndTable(table);
 
-    table_ = NOSPACE.arg(m_connection.getTablePrefix(), table_);
+    table_ = NOSPACE.arg(m_connection->getTablePrefix(), table_);
 
-    return m_connection.selectFromWriteConnection(
+    return m_connection->selectFromWriteConnection(
                 m_grammar->compileTableExists(),
                 {std::move(database), std::move(schema), std::move(table_)}).size() > 0;
 }
@@ -140,8 +140,8 @@ PostgresSchemaBuilder::parseSchemaAndTable(const QString &reference) const
     auto parts = reference.split(DOT, Qt::KeepEmptyParts);
     Q_ASSERT(!parts.isEmpty() && parts.size() <= 3);
 
-    auto database = m_connection.getConfig(database_).value<QString>();
-    const auto &connection = m_connection.getName();
+    auto database = m_connection->getConfig(database_).value<QString>();
+    const auto &connection = m_connection->getName();
 
     /* Drop the database name as it can't be different than the database for the current
        connection anyway. Also throw if the database name differs from a database
@@ -226,7 +226,7 @@ QSet<QString> PostgresSchemaBuilder::excludedTables() const
        configuration option for the QPSQL driver. */
     const auto excludedTablesList = grammar().escapeNames(
                                         parseSearchPath(
-                                            m_connection.getConfig(dont_drop)));
+                                            m_connection->getConfig(dont_drop)));
 
     return {excludedTablesList.constBegin(), excludedTablesList.constEnd()};
 }
@@ -252,7 +252,7 @@ PostgresSchemaBuilder::columnValuesForDrop(QSqlQuery &query)
 
 QStringList PostgresSchemaBuilder::searchPath() const
 {
-    return dynamic_cast<PostgresConnection &>(m_connection).searchPath();
+    return dynamic_cast<PostgresConnection &>(*m_connection).searchPath();
 }
 
 const Grammars::PostgresSchemaGrammar &PostgresSchemaBuilder::grammar() const

@@ -17,15 +17,24 @@ namespace Orm
     {
         Q_DISABLE_COPY(MySqlConnection)
 
-    public:
-        /*! Constructor. */
+        /*! Private constructor. */
         explicit MySqlConnection(
                 std::function<Connectors::ConnectionName()> &&connection,
                 QString &&database = "", QString &&tablePrefix = "",
                 QtTimeZoneConfig &&qtTimeZone = {QtTimeZoneType::DontConvert},
                 QVariantHash &&config = {});
+
+    public:
         /*! Virtual destructor. */
         inline ~MySqlConnection() final = default;
+
+        /*! Factory method for MySQL database connection. */
+        [[nodiscard]] inline static
+        std::shared_ptr<MySqlConnection>
+        create(std::function<Connectors::ConnectionName()> &&connection,
+               QString &&database = "", QString &&tablePrefix = "",
+               QtTimeZoneConfig &&qtTimeZone = {QtTimeZoneType::DontConvert},
+               QVariantHash &&config = {});
 
         /* Getters / Setters */
         /*! Get the MySQL server version. */
@@ -62,6 +71,22 @@ namespace Orm
         /*! Determine whether to use the upsert alias (by MySQL version >=8.0.19). */
         std::optional<bool> m_useUpsertAlias = std::nullopt;
     };
+
+    /* public */
+
+    std::shared_ptr<MySqlConnection>
+    MySqlConnection::create(
+            std::function<Connectors::ConnectionName()> &&connection,
+            QString &&database, QString &&tablePrefix, QtTimeZoneConfig &&qtTimeZone,
+            QVariantHash &&config)
+    {
+        // Can't use the std::make_shared<> because the constructor is private
+        return std::shared_ptr<MySqlConnection>(
+                    new MySqlConnection(
+                        std::move(connection),  std::move(database),
+                        std::move(tablePrefix), std::move(qtTimeZone),
+                        std::move(config)));
+    }
 
 } // namespace Orm
 

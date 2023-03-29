@@ -20,7 +20,7 @@ namespace Orm::Connectors
 
 /* public */
 
-std::unique_ptr<DatabaseConnection>
+std::shared_ptr<DatabaseConnection>
 ConnectionFactory::make(QVariantHash &config, const ConnectionName &connection)
 {
     // Parse and prepare the database configuration
@@ -69,7 +69,7 @@ ConnectionFactory::parseConfiguration(QVariantHash &config,
             .parseConfiguration(config, connection);
 }
 
-std::unique_ptr<DatabaseConnection>
+std::shared_ptr<DatabaseConnection>
 ConnectionFactory::createSingleConnection(QVariantHash &&config)
 {
     // The config[return_qdatetime] is guaranteed to have a value for SQLite connection
@@ -132,30 +132,30 @@ ConnectionFactory::createQSqlDatabaseResolverWithoutHosts(
     };
 }
 
-std::unique_ptr<DatabaseConnection>
+std::shared_ptr<DatabaseConnection>
 ConnectionFactory::createConnection(
         QString &&driver, std::function<ConnectionName()> &&connection,
         QString &&database, QString &&tablePrefix, QtTimeZoneConfig &&qtTimeZone,
         QVariantHash &&config, std::optional<bool> &&returnQDateTime)
 {
     if (driver == QMYSQL)
-        return std::make_unique<MySqlConnection>(
+        return MySqlConnection::create(
                     std::move(connection), std::move(database), std::move(tablePrefix),
                     std::move(qtTimeZone), std::move(config));
 
     if (driver == QPSQL)
-        return std::make_unique<PostgresConnection>(
+        return PostgresConnection::create(
                     std::move(connection), std::move(database), std::move(tablePrefix),
                     std::move(qtTimeZone), std::move(config));
 
     if (driver == QSQLITE)
-        return std::make_unique<SQLiteConnection>(
+        return SQLiteConnection::create(
                     std::move(connection), std::move(database), std::move(tablePrefix),
                     std::move(qtTimeZone), std::move(returnQDateTime),
                     std::move(config));
 
 //    if (driver == "SQLSRV")
-//        return std::make_unique<SqlServerConnection>(
+//        return SqlServerConnection::create(
 //                    std::move(connection), std::move(database), std::move(tablePrefix),
 //                    std::move(qtTimeZone), std::move(config));
 

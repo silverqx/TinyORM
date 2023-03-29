@@ -19,15 +19,24 @@ namespace Orm
     {
         Q_DISABLE_COPY(PostgresConnection)
 
-    public:
-        /*! Constructor. */
+        /*! Private constructor. */
         explicit PostgresConnection(
                 std::function<Connectors::ConnectionName()> &&connection,
                 QString &&database = "", QString &&tablePrefix = "",
                 QtTimeZoneConfig &&qtTimeZone = {QtTimeZoneType::DontConvert},
                 QVariantHash &&config = {});
+
+    public:
         /*! Virtual destructor. */
         inline ~PostgresConnection() final = default;
+
+        /*! Factory method for PostgreSQL database connection. */
+        [[nodiscard]] inline static
+        std::shared_ptr<PostgresConnection>
+        create(std::function<Connectors::ConnectionName()> &&connection,
+               QString &&database = "", QString &&tablePrefix = "",
+               QtTimeZoneConfig &&qtTimeZone = {QtTimeZoneType::DontConvert},
+               QVariantHash &&config = {});
 
         /* Getters */
         /*! Get the PostgreSQL server 'search_path' for the current connection
@@ -56,6 +65,22 @@ namespace Orm
         /*! The PostgreSQL server 'search_path' for the current connection. */
         std::optional<QStringList> m_searchPath = std::nullopt;
     };
+
+    /* public */
+
+    std::shared_ptr<PostgresConnection>
+    PostgresConnection::create(
+            std::function<Connectors::ConnectionName()> &&connection,
+            QString &&database, QString &&tablePrefix, QtTimeZoneConfig &&qtTimeZone,
+            QVariantHash &&config)
+    {
+        // Can't use the std::make_shared<> because the constructor is private
+        return std::shared_ptr<PostgresConnection>(
+                    new PostgresConnection(
+                        std::move(connection),  std::move(database),
+                        std::move(tablePrefix), std::move(qtTimeZone),
+                        std::move(config)));
+    }
 
 } // namespace Orm
 

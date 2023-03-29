@@ -284,6 +284,21 @@ BasePivot:
   fromAttributes()
 
 
+Orm::DatabaseConnection smart pointers data members graph:
+----------------------------------------------------------
+
+The order is also correct in the following graph, I'm visualizing it to better understand and try
+to avoid shared pointers reference cycles.
+
+ - DatabaseConnection : public std::enable_shared_from_this<DatabaseConnection>
+   - shared_ptr<QueryGrammar>  m_queryGrammar
+   - shared_ptr<SchemaGrammar> m_schemaGrammar
+   - unique_ptr<SchemaBuilder> m_schemaBuilder
+     - shared_ptr<DatabaseConnection> m_connection
+     - shared_ptr<SchemaGrammar>      m_grammar
+   - unique_ptr<QueryProcessor>   m_postProcessor
+
+
 Todos to check in TinyOrm:
 --------------------------
 

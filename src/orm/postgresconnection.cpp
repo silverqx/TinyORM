@@ -12,7 +12,7 @@ TINYORM_BEGIN_COMMON_NAMESPACE
 namespace Orm
 {
 
-/* public */
+/* private */
 
 PostgresConnection::PostgresConnection(
         std::function<Connectors::ConnectionName()> &&connection,
@@ -30,6 +30,8 @@ PostgresConnection::PostgresConnection(
 
     useDefaultPostProcessor();
 }
+
+/* public */
 
 /* Getters */
 
@@ -92,7 +94,7 @@ std::unique_ptr<SchemaGrammar> PostgresConnection::getDefaultSchemaGrammar()
 
 std::unique_ptr<SchemaBuilder> PostgresConnection::getDefaultSchemaBuilder()
 {
-    return std::make_unique<SchemaNs::PostgresSchemaBuilder>(*this);
+    return std::make_unique<SchemaNs::PostgresSchemaBuilder>(shared_from_this());
 }
 
 std::unique_ptr<QueryProcessor> PostgresConnection::getDefaultPostProcessor() const

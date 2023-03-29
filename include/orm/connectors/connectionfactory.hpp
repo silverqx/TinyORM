@@ -32,7 +32,7 @@ namespace Connectors
         ~ConnectionFactory() = delete;
 
         /*! Establish a QSqlDatabase connection based on the configuration. */
-        static std::unique_ptr<DatabaseConnection>
+        static std::shared_ptr<DatabaseConnection>
         make(QVariantHash &config, const ConnectionName &connection);
 
         /*! Create a connector instance based on the configuration. */
@@ -45,7 +45,7 @@ namespace Connectors
         parseConfiguration(QVariantHash &config, const ConnectionName &connection);
 
         /*! Create a single database connection  instance. */
-        static std::unique_ptr<DatabaseConnection>
+        static std::shared_ptr<DatabaseConnection>
         createSingleConnection(QVariantHash &&config);
         /*! Create a new Closure that resolves to a QSqlDatabase instance
             ( only a connection name returned ). */
@@ -62,7 +62,7 @@ namespace Connectors
         createQSqlDatabaseResolverWithoutHosts(const QVariantHash &config);
 
         /*! Create a new connection instance. */
-        static std::unique_ptr<DatabaseConnection>
+        static std::shared_ptr<DatabaseConnection>
         createConnection(
                 QString &&driver, std::function<ConnectionName()> &&connection,
                 QString &&database, QString &&tablePrefix = "",

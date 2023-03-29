@@ -888,7 +888,7 @@ DatabaseManager::parseConnectionName(const QString &name) const
     return name.isEmpty() ? getDefaultConnection() : name;
 }
 
-std::unique_ptr<DatabaseConnection>
+std::shared_ptr<DatabaseConnection>
 DatabaseManager::makeConnection(const QString &connection)
 {
     auto &config = configuration(connection);
@@ -926,8 +926,8 @@ void DatabaseManager::throwIfNoConfiguration(const QString &connection) const
                 .arg(connection));
 }
 
-std::unique_ptr<DatabaseConnection>
-DatabaseManager::configure(std::unique_ptr<DatabaseConnection> &&connection) const
+std::shared_ptr<DatabaseConnection>
+DatabaseManager::configure(std::shared_ptr<DatabaseConnection> &&connection) const
 {
     /* Here we'll set a reconnector lambda. This reconnector can be any callable
        so we will set a Closure to reconnect from this manager with the name of

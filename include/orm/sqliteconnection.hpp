@@ -17,16 +17,26 @@ namespace Orm
     {
         Q_DISABLE_COPY(SQLiteConnection)
 
-    public:
-        /*! Constructor. */
+        /*! Private constructor. */
         explicit SQLiteConnection(
                 std::function<Connectors::ConnectionName()> &&connection,
                 QString &&database = "", QString &&tablePrefix = "",
                 QtTimeZoneConfig &&qtTimeZone = {QtTimeZoneType::DontConvert},
                 std::optional<bool> &&returnQDateTime = true,
                 QVariantHash &&config = {});
+
+    public:
         /*! Virtual destructor. */
         inline ~SQLiteConnection() final = default;
+
+        /*! Factory method for SQLite database connection. */
+        [[nodiscard]] inline static
+        std::shared_ptr<SQLiteConnection>
+        create(std::function<Connectors::ConnectionName()> &&connection,
+               QString &&database = "", QString &&tablePrefix = "",
+               QtTimeZoneConfig &&qtTimeZone = {QtTimeZoneType::DontConvert},
+               std::optional<bool> &&returnQDateTime = true,
+               QVariantHash &&config = {});
 
         /*! Determine whether to return the QDateTime or QString (SQLite only). */
         inline bool returnQDateTime() const noexcept;
@@ -45,6 +55,20 @@ namespace Orm
     };
 
     /* public */
+
+    std::shared_ptr<SQLiteConnection>
+    SQLiteConnection::create(
+            std::function<Connectors::ConnectionName()> &&connection,
+            QString &&database, QString &&tablePrefix, QtTimeZoneConfig &&qtTimeZone,
+            std::optional<bool> &&returnQDateTime, QVariantHash &&config)
+    {
+        // Can't use the std::make_shared<> because the constructor is private
+        return std::shared_ptr<SQLiteConnection>(
+                    new SQLiteConnection(
+                        std::move(connection),      std::move(database),
+                        std::move(tablePrefix),     std::move(qtTimeZone),
+                        std::move(returnQDateTime), std::move(config)));
+    }
 
     bool SQLiteConnection::returnQDateTime() const noexcept
     {

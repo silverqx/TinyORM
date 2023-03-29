@@ -43,7 +43,8 @@ namespace Orm
             public Concerns::DetectsLostConnections,
             public Concerns::ManagesTransactions,
             public Concerns::LogsQueries,
-            public Concerns::CountsQueries
+            public Concerns::CountsQueries,
+            public std::enable_shared_from_this<DatabaseConnection>
     {
         Q_DISABLE_COPY(DatabaseConnection)
 
@@ -57,20 +58,22 @@ namespace Orm
         friend class MySqlConnection;
 #endif
 
-    public:
-        /*! Constructor. */
+    protected:
+        /*! Protected constructor. */
         explicit DatabaseConnection(
                 std::function<Connectors::ConnectionName()> &&connection,
                 QString &&database = "", QString &&tablePrefix = "",
                 QtTimeZoneConfig &&qtTimeZone = {QtTimeZoneType::DontConvert},
                 QVariantHash &&config = {});
-        /*! Constructor for the SQLite connection. */
+        /*! Protected constructor for SQLite connection. */
         explicit DatabaseConnection(
                 std::function<Connectors::ConnectionName()> &&connection,
                 QString &&database = "", QString &&tablePrefix = "",
                 QtTimeZoneConfig &&qtTimeZone = {QtTimeZoneType::DontConvert},
                 std::optional<bool> &&returnQDateTime = true,
                 QVariantHash &&config = {});
+
+    public:
         /*! Pure virtual destructor. */
         inline ~DatabaseConnection() override = 0;
 
