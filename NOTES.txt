@@ -298,6 +298,20 @@ to avoid shared pointers reference cycles.
      - shared_ptr<SchemaGrammar>      m_grammar
    - unique_ptr<QueryProcessor>   m_postProcessor
 
+ - QueryBuilder
+   - std::shared_ptr<DatabaseConnection> m_connection
+   - std::shared_ptr<QueryGrammar>       m_grammar
+
+ - SchemaBuilder
+   - std::shared_ptr<DatabaseConnection> m_connection
+   - std::shared_ptr<QueryGrammar>       m_grammar
+
+ - Relation
+   - std::shared_ptr<Related> m_related
+
+ - TinyBuilder
+   - std::shared_ptr<QueryBuilder> m_query
+
 
 Todos to check in TinyOrm:
 --------------------------
