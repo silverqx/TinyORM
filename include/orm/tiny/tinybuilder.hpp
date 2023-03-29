@@ -245,8 +245,7 @@ namespace Orm::Tiny
         /*! Get the underlying query builder instance. */
         inline QueryBuilder &getQuery() const noexcept;
         /*! Get the underlying query builder instance as a std::shared_ptr. */
-        inline const std::shared_ptr<QueryBuilder> &
-        getQuerySharedPointer() const noexcept;
+        inline const std::shared_ptr<QueryBuilder> &getQueryShared() const noexcept;
 
         /*! Get a database connection. */
         inline DatabaseConnection &getConnection();
@@ -1131,7 +1130,7 @@ namespace Orm::Tiny
 
     template<typename Model>
     const std::shared_ptr<QueryBuilder> &
-    Builder<Model>::getQuerySharedPointer() const noexcept
+    Builder<Model>::getQueryShared() const noexcept
     {
         return m_query;
     }

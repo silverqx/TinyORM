@@ -1344,7 +1344,7 @@ namespace Tiny
 
         std::invoke(callback, *query);
 
-        getQuery().addNestedWhereQuery(query->getQuerySharedPointer(), condition);
+        getQuery().addNestedWhereQuery(query->getQueryShared(), condition);
 
         return builder();
     }

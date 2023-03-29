@@ -505,11 +505,10 @@ namespace Private
         hasQuery.applySoftDeletes();
 
         if (canUseExistsForExistenceCheck(comparison, count))
-            return query().addWhereExistsQuery(hasQuery.getQuerySharedPointer(),
-                                               condition,
+            return query().addWhereExistsQuery(hasQuery.getQueryShared(), condition,
                                                comparison == LT && count == 1);
 
-        return query().addWhereCountQuery(hasQuery.getQuerySharedPointer(), comparison,
+        return query().addWhereCountQuery(hasQuery.getQueryShared(), comparison,
                                           count, condition);
     }
 
