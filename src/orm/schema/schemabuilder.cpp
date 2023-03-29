@@ -39,9 +39,8 @@ SchemaBuilder::dropDatabaseIfExists(const QString &/*unused*/) const
 void SchemaBuilder::create(const QString &table,
                            const std::function<void(Blueprint &)> &callback) const
 {
-    build(Helpers::tap<Blueprint>(
-              createBlueprint(table),
-              [&callback](auto &blueprint)
+    build(Helpers::tap<Blueprint>(createBlueprint(table),
+                                  [&callback](auto &blueprint)
     {
         blueprint.create();
 
