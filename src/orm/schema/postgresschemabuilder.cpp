@@ -3,7 +3,7 @@
 #include <QSet>
 
 #include "orm/exceptions/searchpathemptyerror.hpp"
-#include "orm/postgresconnection.hpp"
+#include "orm/postgresconnection.hpp" // IWYU pragma: keep
 #include "orm/schema/grammars/postgresschemagrammar.hpp"
 #include "orm/utils/type.hpp"
 
