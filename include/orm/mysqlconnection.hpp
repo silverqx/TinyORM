@@ -12,7 +12,7 @@ TINYORM_BEGIN_COMMON_NAMESPACE
 namespace Orm
 {
 
-    /*! MySql database connection. */
+    /*! MySQL database connection. */
     class SHAREDLIB_EXPORT MySqlConnection final : public DatabaseConnection
     {
         Q_DISABLE_COPY(MySqlConnection)

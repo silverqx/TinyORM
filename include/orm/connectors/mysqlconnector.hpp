@@ -13,7 +13,7 @@ TINYORM_BEGIN_COMMON_NAMESPACE
 namespace Orm::Connectors
 {
 
-    /*! MySql connector. */
+    /*! MySQL connector. */
     class MySqlConnector final : public ConnectorInterface,
                                  public Connector
     {
@@ -50,7 +50,7 @@ namespace Orm::Connectors
         /*! Get the query to enable strict mode. */
         static QString strictMode(const QSqlDatabase &connection,
                                   const QVariantHash &config);
-        /*! Get the MySql server version. */
+        /*! Get the MySQL server version. */
         static QString getMySqlVersion(const QSqlDatabase &connection,
                                        const QVariantHash &config);
         /*! Set the custom modes on the connection. */

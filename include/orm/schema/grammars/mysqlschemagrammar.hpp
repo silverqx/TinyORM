@@ -18,7 +18,7 @@ namespace Orm::SchemaNs
 namespace Grammars
 {
 
-    /*! MySql schema grammar. */
+    /*! MySQL schema grammar. */
     class SHAREDLIB_EXPORT MySqlSchemaGrammar : public SchemaGrammar
     {
         Q_DISABLE_COPY(MySqlSchemaGrammar)

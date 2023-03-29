@@ -12,7 +12,7 @@ TINYORM_BEGIN_COMMON_NAMESPACE
 namespace Orm::Query::Grammars
 {
 
-    /*! MySql grammar. */
+    /*! MySQL grammar. */
     class SHAREDLIB_EXPORT MySqlGrammar : public Grammar
     {
         Q_DISABLE_COPY(MySqlGrammar)

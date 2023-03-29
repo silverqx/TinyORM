@@ -12,7 +12,7 @@ TINYORM_BEGIN_COMMON_NAMESPACE
 namespace Orm::SchemaNs
 {
 
-    /*! MySql schema builder class. */
+    /*! MySQL schema builder class. */
     class SHAREDLIB_EXPORT MySqlSchemaBuilder : public SchemaBuilder
     {
         Q_DISABLE_COPY(MySqlSchemaBuilder)
