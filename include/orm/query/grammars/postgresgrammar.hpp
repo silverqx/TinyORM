@@ -12,7 +12,7 @@ TINYORM_BEGIN_COMMON_NAMESPACE
 namespace Orm::Query::Grammars
 {
 
-    /*! PostgreSql grammar. */
+    /*! PostgreSQL grammar. */
     class SHAREDLIB_EXPORT PostgresGrammar : public Grammar
     {
         Q_DISABLE_COPY(PostgresGrammar)

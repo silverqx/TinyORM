@@ -17,7 +17,7 @@ namespace Grammars
     class PostgresSchemaGrammar;
 }
 
-    /*! PostgreSql schema builder class. */
+    /*! PostgreSQL schema builder class. */
     class SHAREDLIB_EXPORT PostgresSchemaBuilder : public SchemaBuilder,
                                                    protected Concerns::ParsesSearchPath
     {

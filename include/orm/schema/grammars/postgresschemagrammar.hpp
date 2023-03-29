@@ -20,7 +20,7 @@ namespace Orm::SchemaNs
 namespace Grammars
 {
 
-    /*! PostgreSql schemma grammar. */
+    /*! PostgreSQL schemma grammar. */
     class SHAREDLIB_EXPORT PostgresSchemaGrammar : public SchemaGrammar
     {
         Q_DISABLE_COPY(PostgresSchemaGrammar)

@@ -13,7 +13,7 @@ TINYORM_BEGIN_COMMON_NAMESPACE
 namespace Orm
 {
 
-    /*! PostgreSql database connection. */
+    /*! PostgreSQL database connection. */
     class SHAREDLIB_EXPORT PostgresConnection final : public DatabaseConnection,
                                                       public Concerns::ParsesSearchPath
     {
