@@ -1,6 +1,8 @@
 Increase/bump the release version:
 ----------------------------------
 
+- just simply search the current version number in all files eg. 0.29.3
+
 - increase in the following files
 
 include/orm/version.hpp
@@ -10,6 +12,12 @@ tom/include/tom/version.hpp
 - and also informational version in badges
 
 README.md
+docs/README.md
+
+- vcpkg ports version number
+
+cmake/vcpkg/ports/tinyorm/vcpkg.json
+cmake/vcpkg/ports/tinyorm-qt5/vcpkg.json
 
 
 Proxy methods that internally call the toBase() (applySoftDeletes):
