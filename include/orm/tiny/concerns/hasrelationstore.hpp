@@ -152,8 +152,8 @@ namespace Orm::Tiny::Concerns
 
         public:
             /*! Constructor. */
-            explicit PushRelationStore(HasRelationStore &hasRelationStore,
-                                       RelationsType<AllRelations...> &models);
+            PushRelationStore(HasRelationStore &hasRelationStore,
+                              RelationsType<AllRelations...> &models);
             /*! Virtual destructor. */
             inline virtual ~PushRelationStore() final = default;
 
@@ -174,8 +174,8 @@ namespace Orm::Tiny::Concerns
 
         public:
             /*! Constructor. */
-            explicit TouchOwnersRelationStore(HasRelationStore &hasRelationStore,
-                                              const QString &relation);
+            TouchOwnersRelationStore(HasRelationStore &hasRelationStore,
+                                     const QString &relation);
             /*! Virtual destructor. */
             inline virtual ~TouchOwnersRelationStore() final = default;
 
