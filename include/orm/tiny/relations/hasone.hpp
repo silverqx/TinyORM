@@ -132,12 +132,12 @@ namespace Orm::Tiny::Relations
         if (const auto key = this->getParentKey();
             !key.isValid() || key.isNull()
         )
-            return this->getDefaultFor(this->m_parent);
+            return this->getDefaultFor(*this->m_parent);
 
         // NRVO doesn't kick in so I have to move
         auto first = this->m_query->first();
 
-        return first ? std::move(first) : this->getDefaultFor(this->m_parent);
+        return first ? std::move(first) : this->getDefaultFor(*this->m_parent);
     }
 
     /* Others */

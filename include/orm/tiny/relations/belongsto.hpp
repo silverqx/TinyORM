@@ -26,6 +26,10 @@ namespace Orm::Tiny::Relations
         // To access getRelatedKeyFrom()
         friend Concerns::ComparesRelatedModels<Model, Related, BelongsTo>;
 
+        /*! Alias for the NotNull. */
+        template<typename T>
+        using NotNull = Orm::Utils::NotNull<T>;
+
     protected:
         /*! Protected constructor. */
         BelongsTo(std::unique_ptr<Related> &&related, Model &child,
@@ -120,7 +124,7 @@ namespace Orm::Tiny::Relations
                 const QVector<Column> &columns = {ASTERISK}) const override;
 
         /*! The child model instance of the relation. */
-        Model &m_child;
+        NotNull<Model *> m_child;
         /*! The foreign key of the parent model. */
         QString m_foreignKey;
         /*! The associated key on the parent model. */
@@ -183,7 +187,7 @@ namespace Orm::Tiny::Relations
         const auto &table = this->m_related->getTable();
 
         this->m_query->where(DOT_IN.arg(table, m_ownerKey), EQ,
-                             m_child.getAttribute(m_foreignKey));
+                             m_child->getAttribute(m_foreignKey));
     }
 
     template<class Model, class Related>
@@ -252,15 +256,15 @@ namespace Orm::Tiny::Relations
     BelongsTo<Model, Related>::getResults() const
     {
         // Model doesn't contain foreign key ( eg empty Model instance )
-        if (const auto foreign = m_child.getAttribute(m_foreignKey);
+        if (const auto foreign = m_child->getAttribute(m_foreignKey);
             !foreign.isValid() || foreign.isNull()
         )
-            return this->getDefaultFor(m_child);
+            return this->getDefaultFor(*m_child);
 
         // NRVO doesn't kick in so I have to move
         auto first = this->m_query->first();
 
-        return first ? std::move(first) : this->getDefaultFor(m_child);
+        return first ? std::move(first) : this->getDefaultFor(*m_child);
     }
 
     /* Updating relationship */
@@ -268,24 +272,24 @@ namespace Orm::Tiny::Relations
     template<class Model, class Related>
     Model &BelongsTo<Model, Related>::associate(const Related &model) const
     {
-        m_child.setAttribute(m_foreignKey,
-                             model.getAttribute(m_ownerKey));
+        m_child->setAttribute(m_foreignKey,
+                              model.getAttribute(m_ownerKey));
 
-        m_child.template setRelation<Related>(m_relationName, model);
+        m_child->template setRelation<Related>(m_relationName, model);
 
-        return m_child;
+        return *m_child;
     }
 
     // FEATURE dilemma primarykey, Model::KeyType vs QVariant silverqx
     template<class Model, class Related>
     Model &BelongsTo<Model, Related>::associate(const QVariant &id) const
     {
-        m_child.setAttribute(m_foreignKey, id);
+        m_child->setAttribute(m_foreignKey, id);
 
         // FEATURE relations, check if relation is loaded and if has the same id, if so, then don't unset relation; many months later I don't know if this is a good idea, how it will behave if the relation will not be unset? and comparing only ID is not enough there can be changed attributes or relations, I think best to no remove this and if I decide to remove it test it carefully silverqx
-        m_child.unsetRelation(m_relationName);
+        m_child->unsetRelation(m_relationName);
 
-        return m_child;
+        return *m_child;
     }
 
     template<class Model, class Related>
@@ -293,10 +297,10 @@ namespace Orm::Tiny::Relations
     {
         // TEST Model::save with null key silverqx
         // FEATURE dilemma primarykey, Model::KeyType vs QVariant, set to null, will be different for Qt5 (QVariant(QVariant::Type(qMetaTypeId<Model::KeyType>()))) and Qt6 (QVariant(QMetaType(qMetaTypeId<Model::KeyType>())))) ; ALSO current problem is, that I check that foreignKey !isValid || isNull, but when QVariant with type (Model::KeyType) and also with null is created by the above commands, then it is still null (isNull == true), but is considered as !!VALID!! (isValid == true) silverqx
-        m_child.setAttribute(m_foreignKey, {});
+        m_child->setAttribute(m_foreignKey, {});
 
         // TEST operations that are related on the Model::m_relation data member how they behave, when m_relations value contains the std::nullopt value silverqx
-        return m_child.template setRelation<Related>(m_relationName, std::nullopt);
+        return m_child->template setRelation<Related>(m_relationName, std::nullopt);
     }
 
     template<class Model, class Related>
@@ -310,13 +314,13 @@ namespace Orm::Tiny::Relations
     template<class Model, class Related>
     const Model &BelongsTo<Model, Related>::getChild() const noexcept
     {
-        return m_child;
+        return *m_child;
     }
 
     template<class Model, class Related>
     QVariant BelongsTo<Model, Related>::getParentKey() const
     {
-        return m_child.getAttribute(m_foreignKey);
+        return m_child->getAttribute(m_foreignKey);
     }
 
     template<class Model, class Related>
@@ -340,7 +344,7 @@ namespace Orm::Tiny::Relations
     template<class Model, class Related>
     QString BelongsTo<Model, Related>::getQualifiedForeignKeyName() const
     {
-        return m_child.qualifyColumn(m_foreignKey);
+        return m_child->qualifyColumn(m_foreignKey);
     }
 
     template<class Model, class Related>

@@ -12,6 +12,7 @@ TINY_SYSTEM_HEADER
 #include "orm/macros/threadlocal.hpp"
 #include "orm/tiny/relations/relationproxies.hpp"
 #include "orm/tiny/relations/relationtypes.hpp"
+#include "orm/utils/notnull.hpp"
 #include "orm/utils/type.hpp"
 
 TINYORM_BEGIN_COMMON_NAMESPACE
@@ -37,6 +38,9 @@ namespace Relations
 
         /*! Alias for the Expression. */
         using Expression = Orm::Query::Expression;
+        /*! Alias for the NotNull. */
+        template<typename T>
+        using NotNull = Orm::Utils::NotNull<T>;
 
     protected:
         /*! Protected constructor. */
@@ -158,7 +162,7 @@ namespace Relations
            It has to be the reference, because eg. BelongsTo::associate() directly
            modifies attributes of m_parent. */
         /*! The parent model instance. */
-        Model &m_parent;
+        NotNull<Model *> m_parent;
         /*! The related model instance. */
         std::shared_ptr<Related> m_related;
         /*! The key name of the related model. */
@@ -181,7 +185,7 @@ namespace Relations
     template<class Model, class Related>
     Relation<Model, Related>::Relation(std::unique_ptr<Related> &&related, Model &parent,
                                        const QString &relatedKey)
-        : m_parent(parent)
+        : m_parent(&parent)
         , m_related(std::move(related))
         , m_relatedKey(relatedKey.isEmpty() ? m_related->getKeyName() : relatedKey)
         , m_query(m_related->newQuery())
@@ -243,7 +247,7 @@ namespace Relations
     template<class Model, class Related>
     const Model &Relation<Model, Related>::getParent() const noexcept
     {
-        return m_parent;
+        return *m_parent;
     }
 
     template<class Model, class Related>
@@ -261,13 +265,13 @@ namespace Relations
     template<class Model, class Related>
     const QString &Relation<Model, Related>::createdAt() const
     {
-        return m_parent.getCreatedAtColumn();
+        return m_parent->getCreatedAtColumn();
     }
 
     template<class Model, class Related>
     const QString &Relation<Model, Related>::updatedAt() const
     {
-        return m_parent.getUpdatedAtColumn();
+        return m_parent->getUpdatedAtColumn();
     }
 
     template<class Model, class Related>
@@ -285,7 +289,7 @@ namespace Relations
     template<class Model, class Related>
     QString Relation<Model, Related>::getQualifiedParentKeyName() const
     {
-        return m_parent.getQualifiedKeyName();
+        return m_parent->getQualifiedKeyName();
     }
 
     template<class Model, class Related>

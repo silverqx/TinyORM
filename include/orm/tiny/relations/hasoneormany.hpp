@@ -173,13 +173,13 @@ namespace Orm::Tiny::Relations
     template<class Model, class Related>
     QVariant HasOneOrMany<Model, Related>::getParentKey() const
     {
-        return this->m_parent.getAttribute(m_localKey);
+        return this->m_parent->getAttribute(m_localKey);
     }
 
     template<class Model, class Related>
     QString HasOneOrMany<Model, Related>::getQualifiedParentKeyName() const
     {
-        return this->m_parent.qualifyColumn(m_localKey);
+        return this->m_parent->qualifyColumn(m_localKey);
     }
 
     template<class Model, class Related>

@@ -487,7 +487,7 @@ namespace Orm::Tiny::Relations
     BelongsToMany<Model, Related, PivotType>::getResults() const
     {
         // Model doesn't contain primary key ( eg empty Model instance )
-        if (const auto key = this->m_parent.getAttribute(m_parentKey);
+        if (const auto key = this->m_parent->getAttribute(m_parentKey);
             !key.isValid() || key.isNull()
         )
             return QVector<Related>();
@@ -544,7 +544,7 @@ namespace Orm::Tiny::Relations
     QString
     BelongsToMany<Model, Related, PivotType>::getQualifiedParentKeyName() const
     {
-        return this->m_parent.qualifyColumn(m_parentKey);
+        return this->m_parent->qualifyColumn(m_parentKey);
     }
 
     template<class Model, class Related, class PivotType>
@@ -655,7 +655,7 @@ namespace Orm::Tiny::Relations
     {
         // NOTE api different, checking the m_withTimestamps instead of m_pivotCreatedAt.isEmpty() silverqx
         return m_withTimestamps ? m_pivotCreatedAt
-                                : this->m_parent.getCreatedAtColumn();
+                                : this->m_parent->getCreatedAtColumn();
     }
 
     template<class Model, class Related, class PivotType>
@@ -663,7 +663,7 @@ namespace Orm::Tiny::Relations
     {
         // NOTE api different, checking the m_withTimestamps instead of m_pivotCreatedAt.isEmpty() silverqx
         return m_withTimestamps ? m_pivotUpdatedAt
-                                : this->m_parent.getUpdatedAtColumn();
+                                : this->m_parent->getUpdatedAtColumn();
     }
 
     template<class Model, class Related, class PivotType>
@@ -671,9 +671,9 @@ namespace Orm::Tiny::Relations
     {
         // BUG circular dependency when both models (Model and Related) has set up u_touches silverqx
         if (touchingParent())
-            this->m_parent.touch();
+            this->m_parent->touch();
 
-        if (this->m_parent.touches(m_relationName))
+        if (this->m_parent->touches(m_relationName))
             touch();
     }
 
@@ -1343,7 +1343,7 @@ namespace Orm::Tiny::Relations
     BelongsToMany<Model, Related, PivotType>::addWhereConstraints() const
     {
         this->m_query->where(getQualifiedForeignPivotKeyName(), EQ,
-                             this->m_parent.getAttribute(m_parentKey));
+                             this->m_parent->getAttribute(m_parentKey));
 
         return *this;
     }
