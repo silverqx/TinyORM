@@ -562,6 +562,7 @@ QStringList CompleteCommand::getConnectionNamesFromFile()
         return {};
 
     QStringList connectionNames;
+    connectionNames.reserve(16);
 
     std::ifstream mainFileStream("main.cpp");
 
