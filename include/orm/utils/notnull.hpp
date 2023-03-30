@@ -31,7 +31,7 @@ namespace Private
         : std::true_type
     {};
 
-    /*! Resolves to the more efficient of `const T` or `const T&`, in the context
+    /*! Resolves to the more efficient of "const T" or "const T &", in the context
         of returning a const-qualified value of type T.
         Copied from cppfront's implementation of the CppCoreGuidelines F.16
         (https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#Rf-in) */
