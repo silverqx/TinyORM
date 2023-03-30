@@ -41,7 +41,7 @@ QStringList PostgresConnection::searchPath(const bool flushCache)
 
     // Don't user the searchPathRaw.contains(username) here, any performance gain from it
 
-    const auto username = m_config[username_].value<QString>();
+    const auto username = std::as_const(m_config)[username_].value<QString>();
     Q_ASSERT(!username.isEmpty());
 
     // Resolve the $user variable
