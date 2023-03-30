@@ -13,7 +13,7 @@ TINY_SYSTEM_HEADER
 
 #include <range/v3/view/slice.hpp>
 
-#include "tom/config.hpp"
+#include "tom/config.hpp" // IWYU pragma: keep
 
 #include "tom/concerns/guesscommandname.hpp"
 #include "tom/concerns/interactswithio.hpp"
