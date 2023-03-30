@@ -625,11 +625,11 @@ namespace Private
     void QueriesRelationships<Model>::hasNestedInternalFromStore(
             std::unique_ptr<Relation<Related>> &&relation)
     {
-        /* Check if a template argument passed to nested has() agree with guessed Related
-           param. for a last nested relation. */
+        /* Check if a template argument passed to nested has() equals with the guessed
+           Related template argument for a last nested relation. */
         checkNestedRelationType<Related>();
 
-        /* Parameters to build hasNested() TinyBuilder instace are obtained from
+        /* Parameters for the hasNested() TinyBuilder instance are obtained from
            the nested store. */
         const auto &[comparison, count, callback] =
                 *Private::HasNestedStore::STORE<Related>.top();
