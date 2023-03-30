@@ -40,7 +40,7 @@ namespace Private
         {
             /*! Comparison operator. */
             const QString &comparison;
-            /*! Number to compare against. */
+            /*! Number value to compare against. */
             /*const*/ qint64 count;
             /*! User defined callback. */
             const std::function<void(TinyBuilder<Related> &)> &callback;
