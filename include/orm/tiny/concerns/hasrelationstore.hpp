@@ -140,13 +140,13 @@ namespace Orm::Tiny::Concerns
         private:
             /*! The Tiny builder instance to which the visited relation will be
                 dispatched. */
-            const Tiny::TinyBuilder<Derived> &m_builder;
+            NotNull<const Tiny::TinyBuilder<Derived> *> m_builder;
             /*! Models on which to do an eager load, hydrated models that were obtained
                 from the database and these models will be passed as parameter
                 to the TinyBuilder. */
-            QVector<Derived> &m_models;
+            NotNull<QVector<Derived> *> m_models;
             /*! The WithItem that will be passed as parameter to the TinyBuilder. */
-            const WithItem &m_relation;
+            NotNull<const WithItem *> m_relation;
         };
 
         /*! The store for the Model push() method. */
@@ -166,7 +166,7 @@ namespace Orm::Tiny::Concerns
             void visited(Method /*unused*/) const;
 
             /*! Models to push, the reference to the relation in the m_relations hash. */
-            RelationsType<AllRelations...> &m_models;
+            NotNull<RelationsType<AllRelations...> *> m_models;
             /*! The result of a push. */
             bool m_result = false;
         };
@@ -189,7 +189,7 @@ namespace Orm::Tiny::Concerns
 
             /*! Models to touch timestamps for, the reference to the relation name/key
                 in the m_relations hash. */
-            const QString &m_relation;
+            NotNull<const QString *> m_relation;
         };
 
         /*! The store for the lazy loading. */
@@ -267,19 +267,19 @@ namespace Orm::Tiny::Concerns
         private:
             /*! The QueriesRelationships instance to which the visited relation will be
                 dispatched. */
-            QueriesRelationships<Derived> &m_origin;
+            NotNull<QueriesRelationships<Derived> *> m_origin;
             /*! Comparison operator, used during querying relationship exitence. */
-            const QString &m_comparison;
+            NotNull<const QString *> m_comparison;
             /*! Required number of records, used during querying relationship
                 exitence. */
             /*const*/ qint64 m_count;
             /*! Condition operator, used during querying relationship exitence. */
-            const QString &m_condition;
+            NotNull<const QString *> m_condition;
             /*! Builder callback, used during querying relationship exitence. */
-            const std::function<void(
-                    QueriesRelationshipsCallback<Related> &)> &m_callback;
+            NotNull<const std::function<void(
+                    QueriesRelationshipsCallback<Related> &)> *> m_callback;
             /*! Nested relations for hasNested() method. */
-            std::optional<std::reference_wrapper<QStringList>> m_relations;
+            QStringList *m_relations;
         };
 
         /* Factory methods for Relation stores */
@@ -446,9 +446,9 @@ namespace Orm::Tiny::Concerns
             QVector<Derived> &models, const WithItem &relation
     )
         : BaseRelationStore(hasRelationStore, RelationStoreType::EAGER)
-        , m_builder(builder)
-        , m_models(models)
-        , m_relation(relation)
+        , m_builder(&builder)
+        , m_models(&models)
+        , m_relation(&relation)
     {}
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
@@ -479,8 +479,8 @@ namespace Orm::Tiny::Concerns
             return std::invoke(method, dummyModel);
         });
 
-        m_builder.eagerLoadRelationVisited(std::move(relationInstance),
-                                           m_models, m_relation);
+        m_builder->eagerLoadRelationVisited(std::move(relationInstance),
+                                            *m_models, *m_relation);
     }
 
     /* PushRelationStore */
@@ -491,7 +491,7 @@ namespace Orm::Tiny::Concerns
             RelationsType<AllRelations...> &models
     )
         : BaseRelationStore(hasRelationStore, RelationStoreType::PUSH)
-        , m_models(models)
+        , m_models(&models)
     {}
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
@@ -513,7 +513,7 @@ namespace Orm::Tiny::Concerns
             NotNull<HasRelationStore *> hasRelationStore, const QString &relation
     )
         : BaseRelationStore(hasRelationStore, RelationStoreType::TOUCH_OWNERS)
-        , m_relation(relation)
+        , m_relation(&relation)
     {}
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
@@ -611,12 +611,12 @@ namespace Orm::Tiny::Concerns
                             relations
                             ? RelationStoreType::QUERIES_RELATIONSHIPS_TINY_NESTED
                             : STORE_TYPE)
-        , m_origin(origin)
-        , m_comparison(comparison)
+        , m_origin(&origin)
+        , m_comparison(&comparison)
         , m_count(count)
-        , m_condition(condition)
-        , m_callback(callback)
-        , m_relations(relations)
+        , m_condition(&condition)
+        , m_callback(&callback)
+        , m_relations(relations ? &relations->get() : nullptr)
     {}
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
@@ -642,13 +642,13 @@ namespace Orm::Tiny::Concerns
 
         // Nested store type, used by hasNested()
         if (this->getStoreType() == RelationStoreType::QUERIES_RELATIONSHIPS_TINY_NESTED)
-            m_origin.template hasInternalVisited<RelatedFromMethod>(
-                        std::move(relationInstance), m_comparison, m_count, m_condition,
-                        *m_relations);
+            m_origin->template hasInternalVisited<RelatedFromMethod>(
+                        std::move(relationInstance), *m_comparison, m_count,
+                        *m_condition, *m_relations);
         else
-            m_origin.template has<RelatedFromMethod>(
-                        std::move(relationInstance), m_comparison, m_count, m_condition,
-                        m_callback);
+            m_origin->template has<RelatedFromMethod>(
+                        std::move(relationInstance), *m_comparison, m_count,
+                        *m_condition, *m_callback);
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>

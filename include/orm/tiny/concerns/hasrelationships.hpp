@@ -1091,7 +1091,7 @@ namespace Concerns
     template<typename Related>
     void HasRelationships<Derived, AllRelations...>::pushVisited()
     {
-        const RelationsType<AllRelations...> &models = this->pushStore().m_models;
+        const RelationsType<AllRelations...> &models = *this->pushStore().m_models;
 
         // Invoke pushVisited() on the base of hold alternative in the models
         if (std::holds_alternative<QVector<Related>>(models))
@@ -1111,7 +1111,7 @@ namespace Concerns
     {
         auto &pushStore = this->pushStore();
 
-        for (auto &model : std::get<QVector<Related>>(pushStore.m_models))
+        for (auto &model : std::get<QVector<Related>>(*pushStore.m_models))
             if (!model.push()) {
                 pushStore.m_result = false;
                 return;
@@ -1126,7 +1126,7 @@ namespace Concerns
     {
         auto &pushStore = this->pushStore();
 
-        auto &model = std::get<std::optional<Related>>(pushStore.m_models);
+        auto &model = std::get<std::optional<Related>>(*pushStore.m_models);
         Q_ASSERT(model);
 
         // Skip a null model, consider it as success
@@ -1160,7 +1160,7 @@ namespace Concerns
     void HasRelationships<Derived, AllRelations...>::touchOwnersVisited(
             Relation &&relation)
     {
-        const auto &relationName = this->touchOwnersStore().m_relation;
+        const auto &relationName = *this->touchOwnersStore().m_relation;
 
         relation->touch();
 
