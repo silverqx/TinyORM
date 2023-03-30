@@ -140,7 +140,7 @@ Application::Application(int &argc, char **argv, std::shared_ptr<DatabaseManager
                          const char *const environmentEnvName, QString migrationTable,
                          std::vector<std::shared_ptr<Migration>> migrations,
                          std::vector<std::shared_ptr<Seeder>> seeders)
-    : m_argc(argc)
+    : m_argc(&argc)
     , m_argv(argv)
     , m_db(std::move(db))
 #ifndef TINYTOM_TESTS_CODE
@@ -252,8 +252,8 @@ void Application::fixEmptyArgv()
 {
     constexpr static const auto *const empty = "";
 
-    if (m_argc == 0 || m_argv == nullptr) {
-        m_argc = 0;
+    if (*m_argc == 0 || m_argv == nullptr) {
+        *m_argc = 0;
         m_argv = const_cast<char **>(&empty);
     }
 }
@@ -548,9 +548,9 @@ std::shared_ptr<Migrator> Application::createMigrator() const
 QStringList Application::prepareArguments() const
 {
     QStringList arguments;
-    arguments.reserve(m_argc);
+    arguments.reserve(*m_argc);
 
-    for (QStringList::size_type i = 0; i < m_argc; ++i)
+    for (QStringList::size_type i = 0; i < *m_argc; ++i)
         arguments << QString::fromUtf8(m_argv[i]);
 
     return arguments;

@@ -13,6 +13,8 @@ TINY_SYSTEM_HEADER
 
 #include <range/v3/view/slice.hpp>
 
+#include <orm/utils/notnull.hpp>
+
 #include "tom/config.hpp" // IWYU pragma: keep
 
 #include "tom/concerns/guesscommandname.hpp"
@@ -72,6 +74,9 @@ namespace Concerns
         using ConnectionResolverInterface = Orm::ConnectionResolverInterface;
         /*! Alias for the DatabaseManager. */
         using DatabaseManager = Orm::DatabaseManager;
+        /*! Alias for the NotNull. */
+        template<typename T>
+        using NotNull = Orm::Utils::NotNull<T>;
 
     public:
         /*! Constructor. */
@@ -250,7 +255,7 @@ namespace Concerns
         void throwIfEmptyDefaultConnection() const;
 
         /*! Current application argc. */
-        int &m_argc; // NOLINT(cppcoreguidelines-avoid-const-or-ref-data-members)
+        NotNull<int *> m_argc;
         /*! Current application argv. */
         char **m_argv;
 
