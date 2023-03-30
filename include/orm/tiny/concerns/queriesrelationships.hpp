@@ -679,7 +679,7 @@ namespace Private
                           comparison, count, callback));
 #endif
 
-        Private::HasNestedStore::STORE_TYPEID.push(typeid (Related));
+        Private::HasNestedStore::STORE_TYPEID.emplace(typeid (Related));
     }
 
     template<typename Model>
