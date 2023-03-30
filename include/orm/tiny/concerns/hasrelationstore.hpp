@@ -70,6 +70,7 @@ namespace Orm::Tiny::Concerns
         };
 
         /* Forward declarations */
+        /*! The store for loading eager relations. */
         class EagerRelationStore;
         class PushRelationStore;
         class TouchOwnersRelationStore;
