@@ -11,6 +11,7 @@ TINY_SYSTEM_HEADER
 #include "orm/query/querybuilder.hpp"
 #include "orm/tiny/relations/relation.hpp"
 #include "orm/tiny/tinytypes.hpp"
+#include "orm/utils/notnull.hpp"
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
@@ -36,14 +37,18 @@ namespace Private
 
         /*! Arguments needed to save for the last relation in a hasNested(). */
         template<typename Related>
-        struct NestedStore
+        struct NestedStore // NOLINT(cppcoreguidelines-pro-type-member-init)
         {
+            /*! Alias for the NotNull. */
+            template<typename T>
+            using NotNull = Orm::Utils::NotNull<T>;
+
             /*! Comparison operator. */
-            const QString &comparison;
+            NotNull<const QString *> comparison;
             /*! Number value to compare against. */
             /*const*/ qint64 count;
             /*! User defined callback. */
-            const std::function<void(TinyBuilder<Related> &)> &callback;
+            NotNull<const std::function<void(TinyBuilder<Related> &)> *> callback;
         };
 
         // BUG clang and thread_local, gcc on MinGW doesn't work too silverqx
@@ -631,20 +636,20 @@ namespace Private
 
         /* Parameters for the hasNested() TinyBuilder instance are obtained from
            the nested store. */
-        const auto &[comparison, count, callback] =
+        const auto [comparison, count, callback] =
                 *Private::HasNestedStore::STORE<Related>.top();
 
         // Ownership of a unique_ptr()
-        const auto hasQuery = getHasQueryByExistenceCheck(comparison, count, *relation);
+        const auto hasQuery = getHasQueryByExistenceCheck(*comparison, count, *relation);
 
         /* Next we will call any given callback as an "anonymous" scope so they can get
            the proper logical grouping of the where clauses if needed by this TinyORM
            query builder. Then, we will be ready to finalize and return this query
            instance. */
-        if (callback)
-            std::invoke(callback, *hasQuery);
+        if (*callback)
+            std::invoke(*callback, *hasQuery);
 
-        addHasWhere(*hasQuery, *relation, comparison, count, AND);
+        addHasWhere(*hasQuery, *relation, *comparison, count, AND);
 
         destroyHasNestedStore<Related>();
     }
@@ -671,12 +676,12 @@ namespace Private
         Private::HasNestedStore::STORE<Related>
                 .push(std::shared_ptr<Private::HasNestedStore::NestedStore<Related>>(
                           new Private::HasNestedStore::NestedStore<Related> {
-                              comparison, count, callback}));
+                              &comparison, count, &callback}));
 #else
         Private::HasNestedStore::STORE<Related>
                 .push(std::make_shared<
                       Private::HasNestedStore::NestedStore<Related>>(
-                          comparison, count, callback));
+                          &comparison, count, &callback));
 #endif
 
         Private::HasNestedStore::STORE_TYPEID.emplace(typeid (Related));
