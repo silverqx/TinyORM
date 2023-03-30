@@ -37,7 +37,7 @@ namespace Private
         (https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#Rf-in) */
     template<typename T>
     using value_or_reference_return_t =
-            std::conditional_t<sizeof(T) < 2*sizeof(void*) &&
+            std::conditional_t<sizeof(T) < 2 * sizeof(void *) &&
                                std::is_trivially_copy_constructible<T>::value,
                                const T, const T &>;
 
