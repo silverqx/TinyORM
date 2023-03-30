@@ -43,7 +43,7 @@ namespace Private
 
 } // namespace Private
 
-    /*! Restricts a pointer or smart pointer to only hold non-null values.
+    /*! Restrict a pointer or smart pointer to only hold non-null values.
         Has zero size overhead over T.
         If T is a pointer (i.e. T == U*) then:
         - allow construction from U*
@@ -84,7 +84,7 @@ namespace Private
         NotNull(const NotNull &other) = default;
         NotNull &operator=(const NotNull &other) = default;
 
-        /*! Return the manager pointer. */
+        /*! Return the managed pointer. */
         constexpr Private::value_or_reference_return_t<T> get() const // NOLINT(readability-const-return-type)
         {
             return m_ptr;
