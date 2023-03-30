@@ -112,6 +112,7 @@ function(tinyorm_sources out_headers out_sources)
         utils/container.hpp
         utils/fs.hpp
         utils/helpers.hpp
+        utils/notnull.hpp
         utils/nullvariant.hpp
         utils/query.hpp
         utils/string.hpp

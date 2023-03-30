@@ -104,6 +104,7 @@ headersList += \
     $$PWD/orm/utils/container.hpp \
     $$PWD/orm/utils/fs.hpp \
     $$PWD/orm/utils/helpers.hpp \
+    $$PWD/orm/utils/notnull.hpp \
     $$PWD/orm/utils/nullvariant.hpp \
     $$PWD/orm/utils/query.hpp \
     $$PWD/orm/utils/string.hpp \
