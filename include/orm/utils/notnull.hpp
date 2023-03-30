@@ -85,7 +85,7 @@ namespace Private
         NotNull &operator=(const NotNull &other) = default;
 
         /*! Return the manager pointer. */
-        constexpr Private::value_or_reference_return_t<T> get() const
+        constexpr Private::value_or_reference_return_t<T> get() const // NOLINT(readability-const-return-type)
         {
             return m_ptr;
         }
