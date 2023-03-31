@@ -73,15 +73,16 @@ std::shared_ptr<DatabaseConnection>
 ConnectionFactory::createSingleConnection(QVariantHash &&config)
 {
     // The config[return_qdatetime] is guaranteed to have a value for SQLite connection
-    auto returnQDateTime = config[driver_] == QSQLITE
-                           ? std::make_optional(config[return_qdatetime].value<bool>())
-                           : std::nullopt;
+    const auto returnQDateTime = config[driver_] == QSQLITE
+                                 ? std::make_optional(config[return_qdatetime]
+                                                      .value<bool>())
+                                 : std::nullopt;
 
     return createConnection(
                 config[driver_].value<QString>(), createQSqlDatabaseResolver(config),
                 config[database_].value<QString>(), config[prefix_].value<QString>(),
                 config[qt_timezone].value<QtTimeZoneConfig>(),
-                std::move(config), std::move(returnQDateTime));
+                std::move(config), returnQDateTime);
 }
 
 std::function<ConnectionName()>
@@ -136,7 +137,7 @@ std::shared_ptr<DatabaseConnection>
 ConnectionFactory::createConnection(
         QString &&driver, std::function<ConnectionName()> &&connection,
         QString &&database, QString &&tablePrefix, QtTimeZoneConfig &&qtTimeZone,
-        QVariantHash &&config, std::optional<bool> &&returnQDateTime)
+        QVariantHash &&config, const std::optional<bool> returnQDateTime)
 {
     if (driver == QMYSQL)
         return MySqlConnection::create(
@@ -151,8 +152,7 @@ ConnectionFactory::createConnection(
     if (driver == QSQLITE)
         return SQLiteConnection::create(
                     std::move(connection), std::move(database), std::move(tablePrefix),
-                    std::move(qtTimeZone), std::move(returnQDateTime),
-                    std::move(config));
+                    std::move(qtTimeZone), returnQDateTime,     std::move(config));
 
 //    if (driver == "SQLSRV")
 //        return SqlServerConnection::create(

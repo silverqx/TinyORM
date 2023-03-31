@@ -59,14 +59,14 @@ DatabaseConnection::DatabaseConnection(
 DatabaseConnection::DatabaseConnection(
         std::function<Connectors::ConnectionName()> &&connection,
         QString &&database, QString &&tablePrefix, QtTimeZoneConfig &&qtTimeZone,
-        std::optional<bool> &&returnQDateTime, QVariantHash &&config
+        const std::optional<bool> returnQDateTime, QVariantHash &&config
 )
     : m_qtConnectionResolver(std::move(connection))
     , m_database(std::move(database))
     , m_tablePrefix(std::move(tablePrefix))
     , m_qtTimeZone(std::move(qtTimeZone))
     , m_isConvertingTimeZone(m_qtTimeZone.type != QtTimeZoneType::DontConvert)
-    , m_returnQDateTime(std::move(returnQDateTime))
+    , m_returnQDateTime(returnQDateTime)
     , m_config(std::move(config))
     , m_connectionName(getConfig(NAME).value<QString>())
     , m_hostName(getConfig(host_).value<QString>())

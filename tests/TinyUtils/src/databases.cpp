@@ -263,12 +263,12 @@ Databases::createConfigurationsHash(const QStringList &connections)
     return m_configurations;
 }
 
-std::pair<std::reference_wrapper<const QVariantHash>, bool>
+std::pair<QVariantHash, bool>
 Databases::mysqlConfiguration()
 {
     /* This connection must be to the MySQL database server (not MariaDB), because
        some auto tests depend on it and also the TinyOrmPlayground project. */
-    static const QVariantHash config {
+    QVariantHash config {
         {driver_,         QMYSQL},
         {host_,           qEnvironmentVariable("DB_MYSQL_HOST",      H127001)},
         {port_,           qEnvironmentVariable("DB_MYSQL_PORT",      P3306)},
@@ -297,18 +297,18 @@ Databases::mysqlConfiguration()
 
     // All Environment variables are empty
     if (allEnvVariablesEmpty(mysqlEnvVariables()))
-        return {std::cref(config), false};
+        return {std::move(config), false};
 
     // Environment variables are defined
-    return {std::cref(config), true};
+    return {std::move(config), true};
 }
 
-std::pair<std::reference_wrapper<const QVariantHash>, bool>
+std::pair<QVariantHash, bool>
 Databases::mariaConfiguration()
 {
     /* This connection must be to the MySQL database server (not MariaDB), because
        some auto tests depend on it and also the TinyOrmPlayground project. */
-    static const QVariantHash config {
+    QVariantHash config {
         {driver_,         QMYSQL},
         {host_,           qEnvironmentVariable("DB_MARIA_HOST",      H127001)},
         {port_,           qEnvironmentVariable("DB_MARIA_PORT",      P3306)},
@@ -338,16 +338,16 @@ Databases::mariaConfiguration()
 
     // All Environment variables are empty
     if (allEnvVariablesEmpty(mariaEnvVariables()))
-        return {std::cref(config), false};
+        return {std::move(config), false};
 
     // Environment variables are defined
-    return {std::cref(config), true};
+    return {std::move(config), true};
 }
 
-std::pair<std::reference_wrapper<const QVariantHash>, bool>
+std::pair<QVariantHash, bool>
 Databases::sqliteConfiguration()
 {
-    static const QVariantHash config {
+    QVariantHash config {
         {driver_,                 QSQLITE},
         {database_,               qEnvironmentVariable("DB_SQLITE_DATABASE",
                                                        TINYORM_SQLITE_DATABASE)},
@@ -365,16 +365,16 @@ Databases::sqliteConfiguration()
 
     // All Environment variables are empty
     if (allEnvVariablesEmpty(sqliteEnvVariables()))
-        return {std::cref(config), false};
+        return {std::move(config), false};
 
     // Environment variables are defined
-    return {std::cref(config), true};
+    return {std::move(config), true};
 }
 
-std::pair<std::reference_wrapper<const QVariantHash>, bool>
+std::pair<QVariantHash, bool>
 Databases::postgresConfiguration()
 {
-    static const QVariantHash config {
+    QVariantHash config {
         {driver_,            QPSQL},
         {application_name,   QStringLiteral("TinyORM tests (TinyUtils)")},
         {host_,              qEnvironmentVariable("DB_PGSQL_HOST",       H127001)},
@@ -398,10 +398,10 @@ Databases::postgresConfiguration()
 
     // All Environment variables are empty
     if (allEnvVariablesEmpty(postgresEnvVariables()))
-        return {std::cref(config), false};
+        return {std::move(config), false};
 
     // Environment variables are defined
-    return {std::cref(config), true};
+    return {std::move(config), true};
 }
 
 const std::vector<const char *> &

@@ -36,7 +36,7 @@ void ConfigurationOptionsParser::parseOptionsOption(QVariantHash &config) const
     parseDriverSpecificOptionsOption(preparedConfigOptions);
 
     // Swap the original 'options' with the newly prepared 'options' hash
-    configOptions = std::move(preparedConfigOptions);
+    configOptions = preparedConfigOptions; // std::move() is useless here
 }
 
 QString

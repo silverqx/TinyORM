@@ -109,16 +109,16 @@ namespace TestUtils
         createConfigurationsHash(const QStringList &connections);
 
         /*! Create MySQL configuration hash. */
-        static std::pair<std::reference_wrapper<const QVariantHash>, bool>
+        static std::pair<QVariantHash, bool>
         mysqlConfiguration();
         /*! Create MariaDB configuration hash. */
-        static std::pair<std::reference_wrapper<const QVariantHash>, bool>
+        static std::pair<QVariantHash, bool>
         mariaConfiguration();
         /*! Create SQLite configuration hash. */
-        static std::pair<std::reference_wrapper<const QVariantHash>, bool>
+        static std::pair<QVariantHash, bool>
         sqliteConfiguration();
         /*! Create PostgreSQL configuration hash. */
-        static std::pair<std::reference_wrapper<const QVariantHash>, bool>
+        static std::pair<QVariantHash, bool>
         postgresConfiguration();
 
         /*! Get all env. variable names for the given driver. */

@@ -47,7 +47,7 @@ bool ManagesTransactions::beginTransaction()
     m_inTransaction = true;
 
     // Queries execution time counter / Query statements counter
-    auto elapsed = countsQueries().hitTransactionalCounters(timer, countElapsed);
+    const auto elapsed = countsQueries().hitTransactionalCounters(timer, countElapsed);
 
     /* Once we have run the transaction query we will calculate the time
        that it took to run and then log the query and execution time.
@@ -55,7 +55,7 @@ bool ManagesTransactions::beginTransaction()
     if (databaseConnection().pretending())
         databaseConnection().logTransactionQueryForPretend(queryString);
     else
-        databaseConnection().logTransactionQuery(queryString, std::move(elapsed));
+        databaseConnection().logTransactionQuery(queryString, elapsed);
 
     return true;
 }
@@ -86,7 +86,7 @@ bool ManagesTransactions::commit()
     resetTransactions();
 
     // Queries execution time counter / Query statements counter
-    auto elapsed = countsQueries().hitTransactionalCounters(timer, countElapsed);
+    const auto elapsed = countsQueries().hitTransactionalCounters(timer, countElapsed);
 
     /* Once we have run the transaction query we will calculate the time
        that it took to run and then log the query and execution time.
@@ -94,7 +94,7 @@ bool ManagesTransactions::commit()
     if (databaseConnection().pretending())
         databaseConnection().logTransactionQueryForPretend(queryString);
     else
-        databaseConnection().logTransactionQuery(queryString, std::move(elapsed));
+        databaseConnection().logTransactionQuery(queryString, elapsed);
 
     return true;
 }
@@ -125,7 +125,7 @@ bool ManagesTransactions::rollBack()
     resetTransactions();
 
     // Queries execution time counter / Query statements counter
-    auto elapsed = countsQueries().hitTransactionalCounters(timer, countElapsed);
+    const auto elapsed = countsQueries().hitTransactionalCounters(timer, countElapsed);
 
     /* Once we have run the transaction query we will calculate the time
        that it took to run and then log the query and execution time.
@@ -133,7 +133,7 @@ bool ManagesTransactions::rollBack()
     if (databaseConnection().pretending())
         databaseConnection().logTransactionQueryForPretend(queryString);
     else
-        databaseConnection().logTransactionQuery(queryString, std::move(elapsed));
+        databaseConnection().logTransactionQuery(queryString, elapsed);
 
     return true;
 }
@@ -165,7 +165,7 @@ bool ManagesTransactions::savepoint(const QString &id)
     ++m_savepoints;
 
     // Queries execution time counter / Query statements counter
-    auto elapsed = countsQueries().hitTransactionalCounters(timer, countElapsed);
+    const auto elapsed = countsQueries().hitTransactionalCounters(timer, countElapsed);
 
     /* Once we have run the transaction query we will calculate the time
        that it took to run and then log the query and execution time.
@@ -173,7 +173,7 @@ bool ManagesTransactions::savepoint(const QString &id)
     if (databaseConnection().pretending())
         databaseConnection().logTransactionQueryForPretend(queryString);
     else
-        databaseConnection().logTransactionQuery(queryString, std::move(elapsed));
+        databaseConnection().logTransactionQuery(queryString, elapsed);
 
     return true;
 }
@@ -211,7 +211,7 @@ bool ManagesTransactions::rollbackToSavepoint(const QString &id)
     m_savepoints = std::max<std::size_t>(0, m_savepoints - 1);
 
     // Queries execution time counter / Query statements counter
-    auto elapsed = countsQueries().hitTransactionalCounters(timer, countElapsed);
+    const auto elapsed = countsQueries().hitTransactionalCounters(timer, countElapsed);
 
     /* Once we have run the transaction query we will calculate the time
        that it took to run and then log the query and execution time.
@@ -219,7 +219,7 @@ bool ManagesTransactions::rollbackToSavepoint(const QString &id)
     if (databaseConnection().pretending())
         databaseConnection().logTransactionQueryForPretend(queryString);
     else
-        databaseConnection().logTransactionQuery(queryString, std::move(elapsed));
+        databaseConnection().logTransactionQuery(queryString, elapsed);
 
     return true;
 }

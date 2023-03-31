@@ -226,7 +226,9 @@ namespace Orm::Tiny
         /*! Clone the Tiny query. */
         inline Builder clone() const;
         /*! Create a new instance of the model being queried. */
-        Model newModelInstance(const QVector<AttributeItem> &attributes = {});
+        Model newModelInstance(const QVector<AttributeItem> &attributes);
+        /*! Create a new instance of the model being queried. */
+        Model newModelInstance(QVector<AttributeItem> &&attributes = {});
 
         /*! Get the hydrated models without eager loading. */
         QVector<Model> getModels(const QVector<Column> &columns = {ASTERISK});
@@ -992,6 +994,13 @@ namespace Orm::Tiny
     Model Builder<Model>::newModelInstance(const QVector<AttributeItem> &attributes)
     {
         return m_model.newInstance(attributes)
+                .setConnection(m_query->getConnection().getName());
+    }
+
+    template<typename Model>
+    Model Builder<Model>::newModelInstance(QVector<AttributeItem> &&attributes)
+    {
+        return m_model.newInstance(std::move(attributes))
                 .setConnection(m_query->getConnection().getName());
     }
 

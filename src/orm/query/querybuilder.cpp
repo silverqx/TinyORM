@@ -1605,7 +1605,9 @@ Builder::createSub(const QString &query) noexcept
 std::pair<QString, QVector<QVariant>>
 Builder::createSub(QString &&query) noexcept
 {
-    return {std::move(query), {}};
+    /* Need to be explicit about the QVector<QVariant>() type to invoke
+       the std::pair<>'s move constructor so std::move(query) can hit. */
+    return {std::move(query), QVector<QVariant>()};
 }
 
 Builder &Builder::prependDatabaseNameIfCrossDatabaseQuery(Builder &query) const

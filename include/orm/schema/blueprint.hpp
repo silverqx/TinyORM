@@ -700,37 +700,38 @@ namespace Grammars
     }
 
     ColumnDefinitionReference<>
-    Blueprint::unsignedFloat(const QString &column, std::optional<int> total,
-                             std::optional<int> places)
+    Blueprint::unsignedFloat(const QString &column, const std::optional<int> total,
+                             const std::optional<int> places)
     {
-        return Float(column, std::move(total), std::move(places), true);
+        return Float(column, total, places, true);
     }
 
     ColumnDefinitionReference<>
-    Blueprint::unsignedDouble(const QString &column, std::optional<int> total,
-                              std::optional<int> places)
+    Blueprint::unsignedDouble(const QString &column, const std::optional<int> total,
+                              const std::optional<int> places)
     {
-        return Double(column, std::move(total), std::move(places), true);
+        return Double(column, total, places, true);
     }
 
     ColumnDefinitionReference<>
-    Blueprint::unsignedDecimal(const QString &column, std::optional<int> total,
-                               std::optional<int> places)
+    Blueprint::unsignedDecimal(const QString &column, const std::optional<int> total,
+                               const std::optional<int> places)
     {
-        return decimal(column, std::move(total), std::move(places), true);
+        return decimal(column, total, places, true);
     }
 
-    void Blueprint::datetimes(std::optional<int> precision)
+    void Blueprint::datetimes(const std::optional<int> precision)
     {
         datetime(Orm::Constants::CREATED_AT, precision).nullable();
 
-        datetime(Orm::Constants::UPDATED_AT, std::move(precision)).nullable();
+        datetime(Orm::Constants::UPDATED_AT, precision).nullable();
     }
 
     ColumnDefinitionReference<>
-    Blueprint::softDeletesDatetime(const QString &column, std::optional<int> precision)
+    Blueprint::softDeletesDatetime(const QString &column,
+                                   const std::optional<int> precision)
     {
-        return datetime(column, std::move(precision)).nullable();
+        return datetime(column, precision).nullable();
     }
 
     const QString &Blueprint::getTable() const noexcept

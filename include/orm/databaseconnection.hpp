@@ -75,7 +75,7 @@ namespace Orm
                 std::function<Connectors::ConnectionName()> &&connection,
                 QString &&database = "", QString &&tablePrefix = "",
                 QtTimeZoneConfig &&qtTimeZone = {QtTimeZoneType::DontConvert},
-                std::optional<bool> &&returnQDateTime = true,
+                std::optional<bool> returnQDateTime = true,
                 QVariantHash &&config = {});
 
     public:

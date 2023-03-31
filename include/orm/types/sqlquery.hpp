@@ -47,7 +47,8 @@ namespace Types
 
         /*! Constructor from the QSqlQuery type and time zone from the configuration. */
         SqlQuery(QSqlQuery &&other, const QtTimeZoneConfig &qtTimeZone,
-                 const QueryGrammar &queryGrammar, std::optional<bool> returnQDateTime);
+                 const QueryGrammar &queryGrammar,
+                 const std::optional<bool> returnQDateTime);
 
         /*! Return the value of field index in the current record. */
         inline QVariant value(int index) const;

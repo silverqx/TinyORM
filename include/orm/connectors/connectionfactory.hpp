@@ -68,7 +68,7 @@ namespace Connectors
                 QString &&database, QString &&tablePrefix = "",
                 QtTimeZoneConfig &&qtTimeZone = {QtTimeZoneType::DontConvert},
                 QVariantHash &&config = {},
-                std::optional<bool> &&returnQDateTime = std::nullopt);
+                std::optional<bool> returnQDateTime = std::nullopt);
 
         /*! Parse the hosts configuration item into the QStringList and validate hosts. */
         static QStringList parseHosts(const QVariantHash &config);

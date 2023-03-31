@@ -15,11 +15,11 @@ namespace Orm
 SQLiteConnection::SQLiteConnection(
         std::function<Connectors::ConnectionName()> &&connection,
         QString &&database, QString &&tablePrefix, QtTimeZoneConfig &&qtTimeZone,
-        std::optional<bool> &&returnQDateTime, QVariantHash &&config
+        const std::optional<bool> returnQDateTime, QVariantHash &&config
 )
     : DatabaseConnection(
           std::move(connection), std::move(database), std::move(tablePrefix),
-          std::move(qtTimeZone), std::move(returnQDateTime), std::move(config))
+          std::move(qtTimeZone), returnQDateTime,     std::move(config))
 {
     /* We need to initialize a query grammar that is a very important part
        of the database abstraction, so we initialize it to the default value

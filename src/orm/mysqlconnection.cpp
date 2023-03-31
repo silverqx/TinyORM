@@ -152,7 +152,7 @@ bool MySqlConnection::useUpsertAlias()
 void MySqlConnection::setConfigVersion(QString value) // NOLINT(performance-unnecessary-value-param)
 {
     // Override it through the config., this ensure that more code branches will be tested
-    const_cast<QVariantHash &>(m_config).insert(Version, std::move(value));
+    const_cast<QVariantHash &>(m_config).insert(Version, value);
 
     // We need to reset these to recomputed them again
     m_version = std::nullopt;

@@ -110,26 +110,26 @@ SqlQuery PostgresSchemaBuilder::getAllViews() const
 
 QStringList PostgresSchemaBuilder::getColumnListing(const QString &table) const
 {
-    auto [database, schema, table_] = parseSchemaAndTable(table);
+    const auto [database, schema, table_] = parseSchemaAndTable(table);
 
-    table_ = NOSPACE.arg(m_connection->getTablePrefix(), table_);
+    const auto tablePrefixed = NOSPACE.arg(m_connection->getTablePrefix(), table_);
 
     auto query = m_connection->selectFromWriteConnection(
                      m_grammar->compileColumnListing(),
-                     {std::move(database), std::move(schema), std::move(table_)});
+                     {database, schema, tablePrefixed});
 
     return m_connection->getPostProcessor().processColumnListing(query);
 }
 
 bool PostgresSchemaBuilder::hasTable(const QString &table) const
 {
-    auto [database, schema, table_] = parseSchemaAndTable(table);
+    const auto [database, schema, table_] = parseSchemaAndTable(table);
 
-    table_ = NOSPACE.arg(m_connection->getTablePrefix(), table_);
+    const auto tablePrefixed = NOSPACE.arg(m_connection->getTablePrefix(), table_);
 
     return m_connection->selectFromWriteConnection(
                 m_grammar->compileTableExists(),
-                {std::move(database), std::move(schema), std::move(table_)}).size() > 0;
+                {database, schema, tablePrefixed}).size() > 0;
 }
 
 /* protected */

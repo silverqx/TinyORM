@@ -22,7 +22,7 @@ namespace Orm
                 std::function<Connectors::ConnectionName()> &&connection,
                 QString &&database = "", QString &&tablePrefix = "",
                 QtTimeZoneConfig &&qtTimeZone = {QtTimeZoneType::DontConvert},
-                std::optional<bool> &&returnQDateTime = true,
+                std::optional<bool> returnQDateTime = true,
                 QVariantHash &&config = {});
 
     public:
@@ -35,7 +35,7 @@ namespace Orm
         create(std::function<Connectors::ConnectionName()> &&connection,
                QString &&database = "", QString &&tablePrefix = "",
                QtTimeZoneConfig &&qtTimeZone = {QtTimeZoneType::DontConvert},
-               std::optional<bool> &&returnQDateTime = true,
+               std::optional<bool> returnQDateTime = true,
                QVariantHash &&config = {});
 
         /*! Determine whether to return the QDateTime or QString (SQLite only). */
@@ -60,14 +60,14 @@ namespace Orm
     SQLiteConnection::create(
             std::function<Connectors::ConnectionName()> &&connection,
             QString &&database, QString &&tablePrefix, QtTimeZoneConfig &&qtTimeZone,
-            std::optional<bool> &&returnQDateTime, QVariantHash &&config)
+            const std::optional<bool> returnQDateTime, QVariantHash &&config)
     {
         // Can't use the std::make_shared<> because the constructor is private
         return std::shared_ptr<SQLiteConnection>(
                     new SQLiteConnection(
                         std::move(connection),      std::move(database),
                         std::move(tablePrefix),     std::move(qtTimeZone),
-                        std::move(returnQDateTime), std::move(config)));
+                        returnQDateTime,            std::move(config)));
     }
 
     bool SQLiteConnection::returnQDateTime() const noexcept

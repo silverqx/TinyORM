@@ -99,10 +99,10 @@ int UsingConnection::usingConnectionInternal(
         std::optional<std::reference_wrapper<MigrationRepository>> repository,
         const F &callback)
 {
-    auto previousConnection = m_connectionResolver->getDefaultConnection();
+    const auto previousConnection = m_connectionResolver->getDefaultConnection();
     /* Default connection can also be "" empty string, eg. auto tests are using empty
        string as the default connection. */
-    auto previousDebugSql = getConnectionDebugSql(previousConnection);
+    const auto previousDebugSql = getConnectionDebugSql(previousConnection);
 
     /* Case, when no connection name was passed on the command-line (--database argument),
        in this case, set a default/previous connection as a current connection. */
@@ -127,8 +127,7 @@ int UsingConnection::usingConnectionInternal(
         Q_UNREACHABLE();
 
     if (!isSameConnection)
-        setConnection(std::move(previousConnection), previousDebugSql,
-                      repository, true);
+        setConnection(previousConnection, previousDebugSql, repository, true);
 
     return exitCode;
 }

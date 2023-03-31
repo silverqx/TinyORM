@@ -79,22 +79,22 @@ SqlQuery MySqlSchemaBuilder::getAllViews() const
 
 QStringList MySqlSchemaBuilder::getColumnListing(const QString &table) const
 {
-    auto table_ = NOSPACE.arg(m_connection->getTablePrefix(), table);
+    const auto tablePrefixed = NOSPACE.arg(m_connection->getTablePrefix(), table);
 
     auto query = m_connection->selectFromWriteConnection(
                      m_grammar->compileColumnListing(),
-                     {m_connection->getDatabaseName(), std::move(table_)});
+                     {m_connection->getDatabaseName(), tablePrefixed});
 
     return m_connection->getPostProcessor().processColumnListing(query);
 }
 
 bool MySqlSchemaBuilder::hasTable(const QString &table) const
 {
-    auto table_ = NOSPACE.arg(m_connection->getTablePrefix(), table);
+    const auto tablePrefixed = NOSPACE.arg(m_connection->getTablePrefix(), table);
 
     return m_connection->selectFromWriteConnection(
                 m_grammar->compileTableExists(),
-                {m_connection->getDatabaseName(), std::move(table_)}).size() > 0;
+                {m_connection->getDatabaseName(), tablePrefixed}).size() > 0;
 }
 
 } // namespace Orm::SchemaNs

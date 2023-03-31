@@ -15,7 +15,9 @@ namespace Orm::Types
 /* public */
 
 SqlQuery::SqlQuery(QSqlQuery &&other, const QtTimeZoneConfig &qtTimeZone, // NOLINT(modernize-pass-by-value)
-                   const QueryGrammar &queryGrammar, std::optional<bool> returnQDateTime)
+                   const QueryGrammar &queryGrammar,
+                   const std::optional<bool> returnQDateTime
+)
     : QSqlQuery(std::move(other))
     , m_qtTimeZone(qtTimeZone)
     , m_isConvertingTimeZone(m_qtTimeZone.type != QtTimeZoneType::DontConvert)
@@ -23,7 +25,7 @@ SqlQuery::SqlQuery(QSqlQuery &&other, const QtTimeZoneConfig &qtTimeZone, // NOL
     // Following two are need by SQLite only
     , m_dateFormat(m_isSQLiteDb ? std::make_optional(queryGrammar.getDateFormat())
                                 : std::nullopt)
-    , m_returnQDateTime(std::move(returnQDateTime))
+    , m_returnQDateTime(returnQDateTime)
 {}
 
 /* private */

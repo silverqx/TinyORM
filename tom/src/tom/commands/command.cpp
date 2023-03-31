@@ -292,10 +292,11 @@ QString Command::argument(const ArgumentsSizeType index, const bool useDefault) 
         return positionalArguments.value(index);
 
     // Default value supported
-    auto defaultValue = positionalArgumentsRef.at(
-                            static_cast<ArgumentsStdSizeType>(index) - 1).defaultValue;
+    const auto defaultValue = positionalArgumentsRef.at(
+                                  static_cast<ArgumentsStdSizeType>(index) - 1)
+                              .defaultValue;
 
-    return positionalArguments.value(index, std::move(defaultValue));
+    return positionalArguments.value(index, defaultValue);
 }
 
 QString Command::argument(const QString &name, const bool useDefault) const

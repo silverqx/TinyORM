@@ -48,7 +48,11 @@ QStringList PostgresConnection::searchPath(const bool flushCache)
     return ranges::views::move(searchPathRaw)
             | ranges::views::transform([&username](QString &&schema)
     {
-        return schema == QStringLiteral("$user") ? username : std::move(schema);
+        // Don't use the ternary operator here so the std::move() can apply
+        if (schema == QStringLiteral("$user"))
+            return username;
+
+        return std::move(schema);
     })
             | ranges::to<QStringList>();
 }

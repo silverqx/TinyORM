@@ -216,7 +216,7 @@ namespace Tom::Commands::Make::Support
            the single value option. */
 
         // Will be shown in the warning
-        modelCommand().m_unusedBtmOptions.insert(std::move(option));
+        modelCommand().m_unusedBtmOptions.insert(option);
 
         /* Skip the value, only the first option's value is used (and
            m_wasValueSetPartial doesn't matter). */

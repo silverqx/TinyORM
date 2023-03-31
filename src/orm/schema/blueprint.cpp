@@ -296,30 +296,27 @@ ColumnDefinitionReference<> Blueprint::longText(const QString &column)
 
 // TODO schema, fix and unify real/double/float types with latest standard and remove deprecated APIs, what I have understood from the MySQL and PostgreSQL docs it should be like this; I should have real and double (double precision) types without any total, places or precision params and then I should have float type that should have precision param, currently this total and places params are depreceted as described in https://dev.mysql.com/doc/refman/8.0/en/floating-point-types.html and will be removed in future, also add this column types to tests and to the playground also check numeric/decimal type, its different animal silverqx
 ColumnDefinitionReference<>
-Blueprint::Float(const QString &column, std::optional<int> total,
-                 std::optional<int> places, const bool isUnsigned)
+Blueprint::Float(const QString &column, const std::optional<int> total,
+                 const std::optional<int> places, const bool isUnsigned)
 {
     return addColumn(ColumnType::Float, column,
-                     {.places = std::move(places), .total = std::move(total),
-                      .isUnsigned = isUnsigned});
+                     {.places = places, .total = total, .isUnsigned = isUnsigned});
 }
 
 ColumnDefinitionReference<>
-Blueprint::Double(const QString &column, std::optional<int> total,
-                  std::optional<int> places, const bool isUnsigned)
+Blueprint::Double(const QString &column, const std::optional<int> total,
+                  const std::optional<int> places, const bool isUnsigned)
 {
     return addColumn(ColumnType::Double, column,
-                     {.places = std::move(places), .total = std::move(total),
-                      .isUnsigned = isUnsigned});
+                     {.places = places, .total = total, .isUnsigned = isUnsigned});
 }
 
 ColumnDefinitionReference<>
-Blueprint::decimal(const QString &column, std::optional<int> total,
-                   std::optional<int> places, const bool isUnsigned)
+Blueprint::decimal(const QString &column, const std::optional<int> total,
+                   const std::optional<int> places, const bool isUnsigned)
 {
     return addColumn(ColumnType::Decimal, column,
-                     {.places = std::move(places), .total = std::move(total),
-                      .isUnsigned = isUnsigned});
+                     {.places = places, .total = total, .isUnsigned = isUnsigned});
 }
 
 ColumnDefinitionReference<> Blueprint::boolean(const QString &column)
@@ -355,66 +352,65 @@ ColumnDefinitionReference<> Blueprint::date(const QString &column)
 }
 
 ColumnDefinitionReference<>
-Blueprint::datetime(const QString &column, std::optional<int> precision)
+Blueprint::datetime(const QString &column, const std::optional<int> precision)
 {
-    return addColumn(ColumnType::DateTime, column, {.precision = std::move(precision)});
+    return addColumn(ColumnType::DateTime, column, {.precision = precision});
 }
 
 ColumnDefinitionReference<>
-Blueprint::datetimeTz(const QString &column, std::optional<int> precision)
+Blueprint::datetimeTz(const QString &column, const std::optional<int> precision)
 {
-    return addColumn(ColumnType::DateTimeTz, column, {.precision = std::move(precision)});
-}
-
-ColumnDefinitionReference<> Blueprint::time(const QString &column,
-                                            std::optional<int> precision)
-{
-    return addColumn(ColumnType::Time, column, {.precision = std::move(precision)});
-}
-
-ColumnDefinitionReference<> Blueprint::timeTz(const QString &column,
-                                              std::optional<int> precision)
-{
-    return addColumn(ColumnType::TimeTz, column, {.precision = std::move(precision)});
+    return addColumn(ColumnType::DateTimeTz, column, {.precision = precision});
 }
 
 ColumnDefinitionReference<>
-Blueprint::timestamp(const QString &column, std::optional<int> precision)
+Blueprint::time(const QString &column, const std::optional<int> precision)
 {
-    return addColumn(ColumnType::Timestamp, column, {.precision = std::move(precision)});
+    return addColumn(ColumnType::Time, column, {.precision = precision});
 }
 
 ColumnDefinitionReference<>
-Blueprint::timestampTz(const QString &column, std::optional<int> precision)
+Blueprint::timeTz(const QString &column, const std::optional<int> precision)
 {
-    return addColumn(ColumnType::TimestampTz, column,
-                     {.precision = std::move(precision)});
+    return addColumn(ColumnType::TimeTz, column, {.precision = precision});
 }
 
-void Blueprint::timestamps(std::optional<int> precision)
+ColumnDefinitionReference<>
+Blueprint::timestamp(const QString &column, const std::optional<int> precision)
+{
+    return addColumn(ColumnType::Timestamp, column, {.precision = precision});
+}
+
+ColumnDefinitionReference<>
+Blueprint::timestampTz(const QString &column, const std::optional<int> precision)
+{
+    return addColumn(ColumnType::TimestampTz, column, {.precision = precision});
+}
+
+void Blueprint::timestamps(const std::optional<int> precision)
 {
     timestamp(CREATED_AT, precision).nullable();
 
-    timestamp(UPDATED_AT, std::move(precision)).nullable();
+    timestamp(UPDATED_AT, precision).nullable();
 }
 
-void Blueprint::timestampsTz(std::optional<int> precision)
+void Blueprint::timestampsTz(const std::optional<int> precision)
 {
     timestampTz(CREATED_AT, precision).nullable();
 
-    timestampTz(UPDATED_AT, std::move(precision)).nullable();
+    timestampTz(UPDATED_AT, precision).nullable();
 }
 
 ColumnDefinitionReference<>
-Blueprint::softDeletes(const QString &column, std::optional<int> precision)
+Blueprint::softDeletes(const QString &column, const std::optional<int> precision)
 {
-    return timestamp(column, std::move(precision)).nullable();
+    return timestamp(column, precision).nullable();
 }
 
 ColumnDefinitionReference<>
-Blueprint::softDeletesTz(const QString &column, std::optional<int> precision)
+Blueprint::softDeletesTz(const QString &column, const std::optional<int> precision)
 {
-    return timestampTz(column, std::move(precision)).nullable();
+    return timestampTz(column, precision).nullable();
 }
 
 ColumnDefinitionReference<> Blueprint::year(const QString &column)
@@ -448,9 +444,9 @@ ColumnDefinitionReference<> Blueprint::geometry(const QString &column)
 }
 
 ColumnDefinitionReference<>
-Blueprint::point(const QString &column, std::optional<quint32> srid)
+Blueprint::point(const QString &column, const std::optional<quint32> srid)
 {
-    return addColumn(ColumnType::Point, column, {.srid = std::move(srid)});
+    return addColumn(ColumnType::Point, column, {.srid = srid});
 }
 
 ColumnDefinitionReference<> Blueprint::lineString(const QString &column)
