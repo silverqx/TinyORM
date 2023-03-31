@@ -130,7 +130,7 @@ Databases::createConnectionTemp(
     const auto driver = configuration[driver_].value<QString>().toUpper();
 
     if (!isDriverAvailable(driver) ||
-        allEnvVariablesEmpty(envVariables(driver, connection))
+        !envVariablesDefined(envVariables(driver, connection))
     )
         return std::nullopt;
 
@@ -203,12 +203,12 @@ bool Databases::removeConnection(const QString &connection)
     return m_dm->removeConnection(connection);
 }
 
-bool Databases::allEnvVariablesEmpty(const std::vector<const char *> &envVariables)
+bool Databases::envVariablesDefined(const std::vector<const char *> &envVariables)
 {
-    return std::all_of(envVariables.cbegin(), envVariables.cend(),
+    return std::any_of(envVariables.cbegin(), envVariables.cend(),
                        [](const char *envVariable)
     {
-        return qEnvironmentVariableIsEmpty(envVariable);
+        return !qEnvironmentVariableIsEmpty(envVariable);
     });
 }
 
@@ -295,12 +295,7 @@ Databases::mysqlConfiguration()
 //                                 {"MYSQL_OPT_READ_TIMEOUT", 10}}},
     };
 
-    // All Environment variables are empty
-    if (allEnvVariablesEmpty(mysqlEnvVariables()))
-        return {std::move(config), false};
-
-    // Environment variables are defined
-    return {std::move(config), true};
+    return {std::move(config), envVariablesDefined(mysqlEnvVariables())};
 }
 
 std::pair<QVariantHash, bool>
@@ -336,12 +331,7 @@ Databases::mariaConfiguration()
 //                                 {"MYSQL_OPT_READ_TIMEOUT", 10}}},
     };
 
-    // All Environment variables are empty
-    if (allEnvVariablesEmpty(mariaEnvVariables()))
-        return {std::move(config), false};
-
-    // Environment variables are defined
-    return {std::move(config), true};
+    return {std::move(config), envVariablesDefined(mariaEnvVariables())};
 }
 
 std::pair<QVariantHash, bool>
@@ -363,12 +353,7 @@ Databases::sqliteConfiguration()
         {prefix_indexes,          false},
     };
 
-    // All Environment variables are empty
-    if (allEnvVariablesEmpty(sqliteEnvVariables()))
-        return {std::move(config), false};
-
-    // Environment variables are defined
-    return {std::move(config), true};
+    return {std::move(config), envVariablesDefined(sqliteEnvVariables())};
 }
 
 std::pair<QVariantHash, bool>
@@ -396,12 +381,7 @@ Databases::postgresConfiguration()
         {options_,           ConfigUtils::postgresSslOptions()},
     };
 
-    // All Environment variables are empty
-    if (allEnvVariablesEmpty(postgresEnvVariables()))
-        return {std::move(config), false};
-
-    // Environment variables are defined
-    return {std::move(config), true};
+    return {std::move(config), envVariablesDefined(postgresEnvVariables())};
 }
 
 const std::vector<const char *> &

@@ -97,8 +97,8 @@ namespace TestUtils
         /*! Remove a database connection. */
         static bool removeConnection(const QString &connection);
 
-        /*! Check whether all environment variables are empty. */
-        static bool allEnvVariablesEmpty(const std::vector<const char *> &envVariables);
+        /*! Check whether environment variables are correctly set. */
+        static bool envVariablesDefined(const std::vector<const char *> &envVariables);
 
         /*! Get a reference to the database manager. */
         static const std::shared_ptr<Orm::DatabaseManager> &manager();
