@@ -232,8 +232,8 @@ namespace Concerns
     }
 
 #if defined(_MSC_VER) && !defined(__clang__)
-#pragma warning(push)
-#pragma warning(disable : 26813)
+#  pragma warning(push)
+#  pragma warning(disable : 26813)
 #endif
     bool InteractsWithIO::isQuietVerbosity() const noexcept
     {
@@ -260,7 +260,7 @@ namespace Concerns
         return m_verbosity == Debug;
     }
 #if defined(_MSC_VER) && !defined(__clang__)
-#pragma warning(pop)
+#  pragma warning(pop)
 #endif
 
 } // namespace Concerns
