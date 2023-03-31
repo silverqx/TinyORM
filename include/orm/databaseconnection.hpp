@@ -179,18 +179,18 @@ namespace Orm
         void disconnect();
 
         /*! Get the query grammar used by the connection. */
-        inline const QueryGrammar &getQueryGrammar() const;
+        inline const QueryGrammar &getQueryGrammar() const noexcept;
         /*! Get the query grammar used by the connection. */
-        inline QueryGrammar &getQueryGrammar();
+        inline QueryGrammar &getQueryGrammar() noexcept;
         /*! Get the schema grammar used by the connection. */
         inline const SchemaGrammar &getSchemaGrammar();
         /*! Get the schema builder used by the connection. */
         SchemaBuilder &getSchemaBuilder();
         /*! Get the query post processor used by the connection. */
-        inline const QueryProcessor &getPostProcessor() const;
+        inline const QueryProcessor &getPostProcessor() const noexcept;
 
         /*! Get the query grammar used by the connection as a std::shared_ptr. */
-        inline std::shared_ptr<QueryGrammar> getQueryGrammarShared();
+        inline std::shared_ptr<QueryGrammar> getQueryGrammarShared() const noexcept;
         /*! Get the schema grammar used by the connection as a std::shared_ptr. */
         std::shared_ptr<SchemaGrammar> getSchemaGrammarShared();
 
@@ -429,12 +429,12 @@ namespace Orm
         std::ignore = getQtConnection();
     }
 
-    const QueryGrammar &DatabaseConnection::getQueryGrammar() const
+    const QueryGrammar &DatabaseConnection::getQueryGrammar() const noexcept
     {
         return *m_queryGrammar;
     }
 
-    QueryGrammar &DatabaseConnection::getQueryGrammar()
+    QueryGrammar &DatabaseConnection::getQueryGrammar() noexcept
     {
         return *m_queryGrammar;
     }
@@ -444,12 +444,13 @@ namespace Orm
         return *getSchemaGrammarShared();
     }
 
-    const QueryProcessor &DatabaseConnection::getPostProcessor() const
+    const QueryProcessor &DatabaseConnection::getPostProcessor() const noexcept
     {
         return *m_postProcessor;
     }
 
-    std::shared_ptr<QueryGrammar> DatabaseConnection::getQueryGrammarShared()
+    std::shared_ptr<QueryGrammar>
+    DatabaseConnection::getQueryGrammarShared() const noexcept
     {
         return m_queryGrammar;
     }
