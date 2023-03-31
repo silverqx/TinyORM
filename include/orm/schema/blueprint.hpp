@@ -12,7 +12,7 @@ TINY_SYSTEM_HEADER
 #include "orm/schema/indexdefinitionreference.hpp"
 #include "orm/schema/schemaconstants.hpp"
 #ifndef TINYORM_DISABLE_ORM
-#  include "orm/tiny/tinytypes.hpp"
+#  include "orm/tiny/tinytypes.hpp" // IWYU pragma: keep
 #endif
 
 TINYORM_BEGIN_COMMON_NAMESPACE
