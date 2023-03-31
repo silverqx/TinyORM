@@ -31,8 +31,10 @@ namespace Orm
     /*! Alias for the SchemaGrammar. */
     using SchemaGrammar  = SchemaNs::Grammars::SchemaGrammar;
 
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wnon-virtual-dtor"
+#if defined(__GNUG__) && !defined(__clang__)
+#  pragma GCC diagnostic push
+#  pragma GCC diagnostic ignored "-Wnon-virtual-dtor"
+#endif
     /*! Database connection base class.
         TinyORM's DatabaseConnection never physically connects to the database after
         create()/reconnect() method calls, it only creates a connection resolver,
@@ -357,7 +359,9 @@ namespace Orm
         std::optional<std::reference_wrapper<const QString>>
         m_driverNamePrintable = std::nullopt;
     };
-#pragma GCC diagnostic pop
+#if defined(__GNUG__) && !defined(__clang__)
+#  pragma GCC diagnostic pop
+#endif
 
     /* public */
 
