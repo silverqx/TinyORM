@@ -396,7 +396,6 @@ Databases::postgresConfiguration()
         {options_,           ConfigUtils::postgresSslOptions()},
     };
 
-
     // All Environment variables are empty
     if (allEnvVariablesEmpty(postgresEnvVariables()))
         return {std::cref(config), false};
