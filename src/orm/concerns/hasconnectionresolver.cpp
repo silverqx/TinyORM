@@ -1,5 +1,7 @@
 #include "orm/concerns/hasconnectionresolver.hpp"
 
+#include <QtGlobal>
+
 TINYORM_BEGIN_COMMON_NAMESPACE
 
 namespace Orm::Concerns
@@ -21,6 +23,8 @@ namespace
 
 ConnectionResolverInterface *HasConnectionResolver::getConnectionResolver() noexcept
 {
+    Q_ASSERT(g_resolver != nullptr);
+
     return g_resolver;
 }
 
