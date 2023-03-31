@@ -108,7 +108,7 @@ void tst_DatabaseManager::initTestCase()
         QSKIP(TestUtils::AutoTestSkippedAny.arg(TypeUtils::classPureBasename(*this))
                                            .toUtf8().constData(), );
 
-    m_dm = Databases::manager();
+    m_dm = Databases::managerShared();
     // Used to test and compare number of connections in DM (or opened connections)
     m_initialConnectionsCount = connections.size();
 

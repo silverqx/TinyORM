@@ -76,7 +76,7 @@ void tst_PostgreSQL_Connection::initTestCase()
               .arg(TypeUtils::classPureBasename(*this), Databases::POSTGRESQL)
               .toUtf8().constData(), );
 
-    m_dm = Databases::manager();
+    m_dm = Databases::managerShared();
 
     // Default connection must be empty
     QVERIFY(m_dm->getDefaultConnection().isEmpty());

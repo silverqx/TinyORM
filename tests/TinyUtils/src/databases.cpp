@@ -212,17 +212,18 @@ bool Databases::envVariablesDefined(const std::vector<const char *> &envVariable
     });
 }
 
-const std::shared_ptr<DatabaseManager> &Databases::manager()
+Orm::DatabaseManager &Databases::manager()
 {
-    if (m_dm)
-        return m_dm;
+    throwIfNoManagerInstance();
 
-    throw RuntimeError(
-                QStringLiteral(
-                    "The DatabaseManager instance has not yet been created, create it "
-                    "by the Databases::createConnections/createConnection methods "
-                    "in %1().")
-                .arg(__tiny_func__));
+    return *m_dm;
+}
+
+std::shared_ptr<DatabaseManager> Databases::managerShared()
+{
+    throwIfNoManagerInstance();
+
+    return m_dm;
 }
 
 /* private */
@@ -487,6 +488,20 @@ void Databases::updateConfigurationForTemp(
         for (const auto &option : optionsToRemove)
             if (configuration.contains(option))
                 configuration.remove(option);
+}
+
+void Databases::throwIfNoManagerInstance()
+{
+    // Nothing to do, instance already exists
+    if (m_dm)
+        return;
+
+    throw RuntimeError(
+                QStringLiteral(
+                    "The DatabaseManager instance has not yet been created, create it "
+                    "by the Databases::createConnections/createConnection methods "
+                    "in %1().")
+                .arg(__tiny_func__));
 }
 
 void Databases::throwIfConnectionsInitialized()

@@ -101,7 +101,9 @@ namespace TestUtils
         static bool envVariablesDefined(const std::vector<const char *> &envVariables);
 
         /*! Get a reference to the database manager. */
-        static const std::shared_ptr<Orm::DatabaseManager> &manager();
+        static Orm::DatabaseManager &manager();
+        /*! Get a database manager instance. */
+        static std::shared_ptr<Orm::DatabaseManager> managerShared();
 
     private:
         /*! Create database configurations hash. */
@@ -144,7 +146,9 @@ namespace TestUtils
                 std::unordered_map<QString, QVariant> &&optionsToUpdate,
                 const std::vector<QString> &optionsToRemove);
 
-        /*! Throw exception when database connections were already initialized. */
+        /*! Throw exception if the database manager instance was not yet created. */
+        static void throwIfNoManagerInstance();
+        /*! Throw exception if database connections were already initialized. */
         static void throwIfConnectionsInitialized();
 
         /*! Shared pointer to the DatabaseManager instance. */

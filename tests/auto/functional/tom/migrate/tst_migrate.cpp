@@ -209,7 +209,7 @@ void tst_Migrate::cleanupTestCase() const
        depends on it. */
     for (const auto &connection : m_connections) {
         // Ownership of a unique_ptr()
-        const auto &schema = Databases::manager()->connection(connection)
+        const auto &schema = Databases::manager().connection(connection)
                              .getSchemaBuilder();
 
         // Nothing do cleanup, the migration repository was already uninstalled
@@ -792,7 +792,8 @@ int tst_Migrate::runCommand(int &argc, const std::vector<const char *> &argv)
     try {
         // env. should be always development so passed {} for env. name
         return TomApplication(argc, const_cast<char **>(argv.data()),
-                              Databases::manager(), "TOM_TESTS_ENV", MigrationsTable)
+                              Databases::managerShared(), "TOM_TESTS_ENV",
+                              MigrationsTable)
                 .migrations<CreatePostsTable,
                             AddFactorColumnToPostsTable,
                             CreatePropertiesTable,
@@ -837,7 +838,7 @@ void tst_Migrate::prepareDatabase() const
 {
     for (const auto &connection : m_connections) {
         // Ownership of a unique_ptr()
-        const auto &schema = Databases::manager()->connection(connection)
+        const auto &schema = Databases::manager().connection(connection)
                              .getSchemaBuilder();
 
         // Create the migrations table if needed
