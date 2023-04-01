@@ -125,68 +125,68 @@ QSqlQuery DatabaseManager::qtQuery(const QString &connection)
 }
 
 SqlQuery
-DatabaseManager::select(const QString &query, const QVector<QVariant> &bindings,
+DatabaseManager::select(const QString &query, QVector<QVariant> bindings,
                         const QString &connection)
 {
-    return this->connection(connection).select(query, bindings);
+    return this->connection(connection).select(query, std::move(bindings));
 }
 
 SqlQuery
 DatabaseManager::selectFromWriteConnection(
-        const QString &query, const QVector<QVariant> &bindings,
+        const QString &query, QVector<QVariant> bindings,
         const QString &connection)
 {
-    return this->connection(connection).selectFromWriteConnection(query, bindings);
+    return this->connection(connection)
+                .selectFromWriteConnection(query, std::move(bindings));
 }
 
 SqlQuery
-DatabaseManager::selectOne(const QString &query, const QVector<QVariant> &bindings,
+DatabaseManager::selectOne(const QString &query, QVector<QVariant> bindings,
                            const QString &connection)
 {
-    return this->connection(connection).selectOne(query, bindings);
+    return this->connection(connection).selectOne(query, std::move(bindings));
 }
 
 QVariant
-DatabaseManager::scalar(const QString &query, const QVector<QVariant> &bindings,
+DatabaseManager::scalar(const QString &query, QVector<QVariant> bindings,
                         const QString &connection)
 {
-    return this->connection(connection).scalar(query, bindings);
+    return this->connection(connection).scalar(query, std::move(bindings));
 }
 
 SqlQuery
-DatabaseManager::insert(const QString &query, const QVector<QVariant> &bindings,
+DatabaseManager::insert(const QString &query, QVector<QVariant> bindings,
                         const QString &connection)
 {
-    return this->connection(connection).insert(query, bindings);
+    return this->connection(connection).insert(query, std::move(bindings));
 }
 
 std::tuple<int, QSqlQuery>
-DatabaseManager::update(const QString &query, const QVector<QVariant> &bindings,
+DatabaseManager::update(const QString &query, QVector<QVariant> bindings,
                         const QString &connection)
 {
-    return this->connection(connection).update(query, bindings);
+    return this->connection(connection).update(query, std::move(bindings));
 }
 
 std::tuple<int, QSqlQuery>
-DatabaseManager::remove(const QString &query, const QVector<QVariant> &bindings,
+DatabaseManager::remove(const QString &query, QVector<QVariant> bindings,
                         const QString &connection)
 {
-    return this->connection(connection).remove(query, bindings);
+    return this->connection(connection).remove(query, std::move(bindings));
 }
 
 SqlQuery
-DatabaseManager::statement(const QString &query, const QVector<QVariant> &bindings,
+DatabaseManager::statement(const QString &query, QVector<QVariant> bindings,
                            const QString &connection)
 {
-    return this->connection(connection).statement(query, bindings);
+    return this->connection(connection).statement(query, std::move(bindings));
 }
 
 std::tuple<int, QSqlQuery>
-DatabaseManager::affectingStatement(
-            const QString &query, const QVector<QVariant> &bindings,
-            const QString &connection)
+DatabaseManager::affectingStatement(const QString &query, QVector<QVariant> bindings,
+                                    const QString &connection)
 {
-    return this->connection(connection).affectingStatement(query, bindings);
+    return this->connection(connection).affectingStatement(query, std::move(bindings));
 }
 
 SqlQuery DatabaseManager::unprepared(const QString &query,

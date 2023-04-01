@@ -344,7 +344,7 @@ void Builder::truncate()
         if (m_connection->driverName() == QPSQL)
             m_connection->unprepared(sql);
         else
-            m_connection->statement(sql, bindings);
+            m_connection->statement(sql, std::move(bindings));
 }
 
 /* Select */

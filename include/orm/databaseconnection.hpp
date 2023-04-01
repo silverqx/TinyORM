@@ -104,41 +104,35 @@ namespace Orm
         /* Running SQL Queries */
         /*! Run a select statement against the database. */
         SqlQuery
-        select(const QString &queryString,
-               const QVector<QVariant> &bindings = {});
+        select(const QString &queryString, QVector<QVariant> bindings = {});
         /*! Run a select statement against the database. */
         inline SqlQuery
         selectFromWriteConnection(const QString &queryString,
-                                  const QVector<QVariant> &bindings = {});
+                                  QVector<QVariant> bindings = {});
 
         /*! Run a select statement and return a single result. */
         SqlQuery
-        selectOne(const QString &queryString, const QVector<QVariant> &bindings = {});
+        selectOne(const QString &queryString, QVector<QVariant> bindings = {});
         /*! Run a select statement and return the first column of the first row. */
         QVariant
-        scalar(const QString &queryString, const QVector<QVariant> &bindings = {});
+        scalar(const QString &queryString, QVector<QVariant> bindings = {});
 
         /*! Run an insert statement against the database. */
         inline SqlQuery
-        insert(const QString &queryString,
-               const QVector<QVariant> &bindings = {});
+        insert(const QString &queryString, QVector<QVariant> bindings = {});
         /*! Run an update statement against the database. */
         inline std::tuple<int, QSqlQuery>
-        update(const QString &queryString,
-               const QVector<QVariant> &bindings = {});
+        update(const QString &queryString, QVector<QVariant> bindings = {});
         /*! Run a delete statement against the database. */
         inline std::tuple<int, QSqlQuery>
-        remove(const QString &queryString,
-               const QVector<QVariant> &bindings = {});
+        remove(const QString &queryString, QVector<QVariant> bindings = {});
 
         /*! Execute an SQL statement, should be used for DDL/DML queries, internally
             calls DatabaseConnection::recordsHaveBeenModified(). */
-        SqlQuery statement(const QString &queryString,
-                           const QVector<QVariant> &bindings = {});
+        SqlQuery statement(const QString &queryString, QVector<QVariant> bindings = {});
         /*! Run an SQL statement and get the number of rows affected (for DML queries). */
         std::tuple<int, QSqlQuery>
-        affectingStatement(const QString &queryString,
-                           const QVector<QVariant> &bindings = {});
+        affectingStatement(const QString &queryString, QVector<QVariant> bindings = {});
 
         /*! Run a raw, unprepared query against the database (good for DDL queries). */
         SqlQuery unprepared(const QString &queryString);
@@ -159,7 +153,7 @@ namespace Orm
         QSqlQuery getQtQuery();
 
         /*! Prepare the query bindings for execution. */
-        QVector<QVariant> prepareBindings(QVector<QVariant> bindings) const;
+        QVector<QVariant> &prepareBindings(QVector<QVariant> &bindings) const;
         /*! Bind values to their parameters in the given statement. */
         static void bindValues(QSqlQuery &query, const QVector<QVariant> &bindings);
 
@@ -275,7 +269,7 @@ namespace Orm
         /*! Run a SQL statement and log its execution context. */
         template<typename Return>
         Return run(
-                const QString &queryString, const QVector<QVariant> &bindings,
+                const QString &queryString, QVector<QVariant> &&bindings,
                 const QString &type, const RunCallback<Return> &callback);
         /*! Run a SQL statement. */
         template<typename Return>
@@ -388,32 +382,29 @@ namespace Orm
 
     SqlQuery
     DatabaseConnection::selectFromWriteConnection(const QString &queryString,
-                                                  const QVector<QVariant> &bindings)
+                                                  QVector<QVariant> bindings)
     {
         // This member function is used from the schema builders/post-processors only
         // FEATURE read/write connection silverqx
-        return select(queryString, bindings/*, false*/);
+        return select(queryString, std::move(bindings)/*, false*/);
     }
 
     SqlQuery
-    DatabaseConnection::insert(const QString &queryString,
-                               const QVector<QVariant> &bindings)
+    DatabaseConnection::insert(const QString &queryString, QVector<QVariant> bindings)
     {
-        return statement(queryString, bindings);
+        return statement(queryString, std::move(bindings));
     }
 
     std::tuple<int, QSqlQuery>
-    DatabaseConnection::update(const QString &queryString,
-                               const QVector<QVariant> &bindings)
+    DatabaseConnection::update(const QString &queryString, QVector<QVariant> bindings)
     {
-        return affectingStatement(queryString, bindings);
+        return affectingStatement(queryString, std::move(bindings));
     }
 
     std::tuple<int, QSqlQuery>
-    DatabaseConnection::remove(const QString &queryString,
-                               const QVector<QVariant> &bindings)
+    DatabaseConnection::remove(const QString &queryString, QVector<QVariant> bindings)
     {
-        return affectingStatement(queryString, bindings);
+        return affectingStatement(queryString, std::move(bindings));
     }
 
     /* Obtain connection instance */
@@ -522,7 +513,7 @@ namespace Orm
     template<typename Return>
     Return
     DatabaseConnection::run(
-            const QString &queryString, const QVector<QVariant> &bindings,
+            const QString &queryString, QVector<QVariant> &&bindings,
             const QString &type, const RunCallback<Return> &callback)
     {
         reconnectIfMissingConnection();
@@ -537,8 +528,9 @@ namespace Orm
         Return result;
 
         /* Prepare bindings early so they will be prepared only once (for performance
-           reasons). */
-        const auto preparedBindings = prepareBindings(bindings);
+           reasons). The weird preparedBindings return value is for better variable
+           naming. */
+        const auto &preparedBindings = prepareBindings(bindings);
 
         /* Here we will run this query. If an exception occurs we'll determine if it was
            caused by a connection that has been lost. If that is the cause, we'll try

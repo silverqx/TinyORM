@@ -110,11 +110,10 @@ std::shared_ptr<QueryBuilder> DatabaseConnection::query()
 /* Running SQL Queries */
 
 SqlQuery
-DatabaseConnection::select(const QString &queryString,
-                           const QVector<QVariant> &bindings)
+DatabaseConnection::select(const QString &queryString, QVector<QVariant> bindings)
 {
     auto queryResult = run<QSqlQuery>(
-                           queryString, bindings, Prepared,
+                           queryString, std::move(bindings), Prepared,
                            [this](const QString &queryString_,
                                   const QVector<QVariant> &preparedBindings)
                            -> QSqlQuery
@@ -149,10 +148,9 @@ DatabaseConnection::select(const QString &queryString,
 }
 
 SqlQuery
-DatabaseConnection::selectOne(const QString &queryString,
-                              const QVector<QVariant> &bindings)
+DatabaseConnection::selectOne(const QString &queryString, QVector<QVariant> bindings)
 {
-    auto query = select(queryString, bindings);
+    auto query = select(queryString, std::move(bindings));
 
     query.first();
 
@@ -160,9 +158,9 @@ DatabaseConnection::selectOne(const QString &queryString,
 }
 
 QVariant
-DatabaseConnection::scalar(const QString &queryString, const QVector<QVariant> &bindings)
+DatabaseConnection::scalar(const QString &queryString, QVector<QVariant> bindings)
 {
-    const auto query = selectOne(queryString, bindings);
+    const auto query = selectOne(queryString, std::move(bindings));
 
     // Nothing to do, the query should be positioned on the first row/record
     if (!query.isValid())
@@ -176,11 +174,11 @@ DatabaseConnection::scalar(const QString &queryString, const QVector<QVariant> &
     return query.value(0);
 }
 
-SqlQuery DatabaseConnection::statement(const QString &queryString,
-                                       const QVector<QVariant> &bindings)
+SqlQuery
+DatabaseConnection::statement(const QString &queryString, QVector<QVariant> bindings)
 {
     auto queryResult = run<QSqlQuery>(
-                           queryString, bindings, Prepared,
+                           queryString, std::move(bindings), Prepared,
                            [this](const QString &queryString_,
                                   const QVector<QVariant> &preparedBindings)
                            -> QSqlQuery
@@ -219,10 +217,10 @@ SqlQuery DatabaseConnection::statement(const QString &queryString,
 
 std::tuple<int, QSqlQuery>
 DatabaseConnection::affectingStatement(const QString &queryString,
-                                       const QVector<QVariant> &bindings)
+                                       QVector<QVariant> bindings)
 {
     return run<std::tuple<int, QSqlQuery>>(
-               queryString, bindings, Prepared,
+               queryString, std::move(bindings), Prepared,
                [this](const QString &queryString_,
                       const QVector<QVariant> &preparedBindings)
                -> std::tuple<int, QSqlQuery>
@@ -359,9 +357,8 @@ QSqlQuery DatabaseConnection::getQtQuery()
     return QSqlQuery(getQtConnection());
 }
 
-// TODO perf, modify bindings directly and return reference, debug impact silverqx
-QVector<QVariant>
-DatabaseConnection::prepareBindings(QVector<QVariant> bindings) const
+QVector<QVariant> &
+DatabaseConnection::prepareBindings(QVector<QVariant> &bindings) const
 {
     for (auto &binding : bindings) {
         // Nothing to convert
