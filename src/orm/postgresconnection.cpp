@@ -50,7 +50,7 @@ QStringList PostgresConnection::searchPath(const bool flushCache)
     {
         // Don't use the ternary operator here so the std::move() can apply
         if (schema == QStringLiteral("$user"))
-            return username;
+            return username; // NOLINT(performance-no-automatic-move)
 
         return std::move(schema);
     })
