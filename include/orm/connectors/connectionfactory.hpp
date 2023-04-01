@@ -23,7 +23,7 @@ namespace Connectors
     /*! Database connection factory. */
     class ConnectionFactory
     {
-        Q_DISABLE_COPY(ConnectionFactory)
+        Q_DISABLE_COPY_MOVE(ConnectionFactory)
 
     public:
         /*! Deleted default constructor, this is a pure library class. */

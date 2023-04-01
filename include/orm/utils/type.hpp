@@ -39,7 +39,7 @@ namespace Orm::Utils
     /*! Library class for types. */
     class SHAREDLIB_EXPORT Type
     {
-        Q_DISABLE_COPY(Type)
+        Q_DISABLE_COPY_MOVE(Type)
 
     public:
         /*! Deleted default constructor, this is a pure library class. */

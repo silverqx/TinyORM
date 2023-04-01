@@ -14,7 +14,7 @@ namespace TestUtils
     /*! Utility functions related to the filesystem. */
     class TINYUTILS_EXPORT Fs final
     {
-        Q_DISABLE_COPY(Fs)
+        Q_DISABLE_COPY_MOVE(Fs)
 
     public:
         /*! Deleted default constructor, this is a pure library class. */

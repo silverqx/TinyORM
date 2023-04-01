@@ -19,7 +19,7 @@ namespace Tom::Commands::Make::Support
     /*! Guess the table name by the passed argument on the command-line. */
     class TableGuesser
     {
-        Q_DISABLE_COPY(TableGuesser)
+        Q_DISABLE_COPY_MOVE(TableGuesser)
 
     public:
         /*! Deleted default constructor, this is a pure library class. */

@@ -18,7 +18,7 @@ namespace Orm::Utils
     /*! Library class for Thread specific code. */
     class SHAREDLIB_EXPORT Thread
     {
-        Q_DISABLE_COPY(Thread)
+        Q_DISABLE_COPY_MOVE(Thread)
 
     public:
         /*! Deleted default constructor, this is a pure library class. */

@@ -17,7 +17,7 @@ namespace Orm::Configurations
     /*! Configuration parser factory. */
     class ConfigurationParserFactory
     {
-        Q_DISABLE_COPY(ConfigurationParserFactory)
+        Q_DISABLE_COPY_MOVE(ConfigurationParserFactory)
 
     public:
         /*! Deleted default constructor, this is a pure library class. */

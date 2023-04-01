@@ -31,7 +31,7 @@ namespace Orm::Utils
     /*! Library class for database query. */
     class SHAREDLIB_EXPORT Query
     {
-        Q_DISABLE_COPY(Query)
+        Q_DISABLE_COPY_MOVE(Query)
 
         /*! Alias for the helper utils. */
         using Helpers = Orm::Utils::Helpers;

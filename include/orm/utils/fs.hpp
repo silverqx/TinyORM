@@ -18,7 +18,7 @@ namespace Orm::Utils
     /*! Filesystem library class. */
     class SHAREDLIB_EXPORT Fs
     {
-        Q_DISABLE_COPY(Fs)
+        Q_DISABLE_COPY_MOVE(Fs)
 
     public:
         /*! Deleted default constructor, this is a pure library class. */

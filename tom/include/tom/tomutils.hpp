@@ -19,7 +19,7 @@ namespace Tom
     /*! Tom common utilities library class. */
     class Utils
     {
-        Q_DISABLE_COPY(Utils)
+        Q_DISABLE_COPY_MOVE(Utils)
 
     public:
         /*! Deleted default constructor, this is a pure library class. */

@@ -19,7 +19,7 @@ namespace Tom::Commands::Make::Support
     /*! Seeder file generator (used by the make:seeder command). */
     class SeederCreator
     {
-        Q_DISABLE_COPY(SeederCreator)
+        Q_DISABLE_COPY_MOVE(SeederCreator)
 
         /*! Alias for the filesystem path. */
         using fspath = std::filesystem::path;

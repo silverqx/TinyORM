@@ -20,7 +20,7 @@ namespace Orm::Utils
     /*! Null QVariant-s library class. */
     class SHAREDLIB_EXPORT NullVariant
     {
-        Q_DISABLE_COPY(NullVariant)
+        Q_DISABLE_COPY_MOVE(NullVariant)
 
     public:
         /*! Deleted default constructor, this is a pure library class. */

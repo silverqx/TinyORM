@@ -22,7 +22,7 @@ namespace Utils
     /*! Database configuration related library class. */
     class SHAREDLIB_EXPORT Configuration
     {
-        Q_DISABLE_COPY(Configuration)
+        Q_DISABLE_COPY_MOVE(Configuration)
 
     public:
         /*! Deleted default constructor, this is a pure library class. */

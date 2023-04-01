@@ -20,7 +20,7 @@ namespace Orm::Tiny::Utils
     /*! Library class for the database attribute. */
     class SHAREDLIB_EXPORT Attribute
     {
-        Q_DISABLE_COPY(Attribute)
+        Q_DISABLE_COPY_MOVE(Attribute)
 
     public:
         /*! Deleted default constructor, this is a pure library class. */

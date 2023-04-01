@@ -38,7 +38,7 @@ namespace Utils
     /*! Helpers library class. */
     class SHAREDLIB_EXPORT Helpers
     {
-        Q_DISABLE_COPY(Helpers)
+        Q_DISABLE_COPY_MOVE(Helpers)
 
     public:
         /*! Deleted default constructor, this is a pure library class. */

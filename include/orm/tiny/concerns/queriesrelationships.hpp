@@ -29,7 +29,7 @@ namespace Private
     /*! Save arguments needed to build a query for last relation in hasNested(). */
     class HasNestedStore
     {
-        Q_DISABLE_COPY(HasNestedStore)
+        Q_DISABLE_COPY_MOVE(HasNestedStore)
 
         // Used by QueriesRelationships::hasNested()
         template<typename T>

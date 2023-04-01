@@ -19,7 +19,7 @@ namespace Tom::Commands::Make::Support
     /*! Migration file generator (used by the make:migration command). */
     class MigrationCreator
     {
-        Q_DISABLE_COPY(MigrationCreator)
+        Q_DISABLE_COPY_MOVE(MigrationCreator)
 
         /*! Alias for the filesystem path. */
         using fspath = std::filesystem::path;

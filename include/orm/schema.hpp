@@ -15,7 +15,7 @@ namespace Orm
     /*! Facade class for the Schema builder. */
     class SHAREDLIB_EXPORT Schema final
     {
-        Q_DISABLE_COPY(Schema)
+        Q_DISABLE_COPY_MOVE(Schema)
 
         /*! Alias for the Blueprint. */
         using Blueprint     = SchemaNs::Blueprint;

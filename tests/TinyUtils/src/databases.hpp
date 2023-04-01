@@ -33,7 +33,7 @@ namespace TestUtils
     /*! Database connections factory for unit tests (library class). */
     class TINYUTILS_EXPORT Databases
     {
-        Q_DISABLE_COPY(Databases)
+        Q_DISABLE_COPY_MOVE(Databases)
 
         /*! Alias for the DatabaseManager. */
         using DatabaseManager = Orm::DatabaseManager;

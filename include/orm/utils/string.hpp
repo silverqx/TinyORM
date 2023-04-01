@@ -18,7 +18,7 @@ namespace Orm::Utils
     /*! String related library class. */
     class SHAREDLIB_EXPORT String
     {
-        Q_DISABLE_COPY(String)
+        Q_DISABLE_COPY_MOVE(String)
 
     public:
         /*! Deleted default constructor, this is a pure library class. */

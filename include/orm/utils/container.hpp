@@ -16,7 +16,7 @@ namespace Orm::Utils
     /*! Containers related library class. */
     class Container
     {
-        Q_DISABLE_COPY(Container)
+        Q_DISABLE_COPY_MOVE(Container)
 
     public:
         /*! Deleted default constructor, this is a pure library class. */

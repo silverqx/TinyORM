@@ -15,7 +15,7 @@ namespace Orm
     /*! Facade class for the DatabaseManager. */
     class SHAREDLIB_EXPORT DB final
     {
-        Q_DISABLE_COPY(DB)
+        Q_DISABLE_COPY_MOVE(DB)
 
         /*! Type for the Database Configuration. */
         using Configuration = Orm::Support::DatabaseConfiguration;

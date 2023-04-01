@@ -20,7 +20,7 @@ namespace Types
     /*! Used by tests to override connection in the Model. */
     struct ConnectionOverride
     {
-        Q_DISABLE_COPY(ConnectionOverride)
+        Q_DISABLE_COPY_MOVE(ConnectionOverride)
 
         /*! Deleted default constructor. */
         ConnectionOverride() = delete;
