@@ -21,6 +21,8 @@ namespace Orm::Support
     public:
         /*! Default constructor. */
         inline DatabaseConnectionsMap() = default;
+        /*! Default destructor. */
+        inline ~DatabaseConnectionsMap() = default;
 
         /*! Type used to store database connections. */
         using ConnectionsType =

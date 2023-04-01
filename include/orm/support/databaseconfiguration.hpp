@@ -28,6 +28,8 @@ namespace Orm::Support
 
         /*! Default constructor. */
         inline DatabaseConfiguration() = default;
+        /*! Default destructor. */
+        inline ~DatabaseConfiguration() = default;
 
         /*! Default Database Connection Name, used as default value in method declarations
             only. */

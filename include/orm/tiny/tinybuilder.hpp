@@ -47,6 +47,8 @@ namespace Orm::Tiny
     public:
         /*! Constructor. */
         Builder(std::shared_ptr<QueryBuilder> &&query, const Model &model);
+        /*! Default destructor. */
+        inline ~Builder() = default;
 
         /*! Copy constructor (needed by the chunkById() -> clone() method). */
         inline Builder(const Builder &) = default;
