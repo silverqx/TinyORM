@@ -149,7 +149,7 @@ bool MySqlConnection::useUpsertAlias()
 }
 
 #ifdef TINYORM_TESTS_CODE
-void MySqlConnection::setConfigVersion(QString value) // NOLINT(performance-unnecessary-value-param)
+void MySqlConnection::setConfigVersion(const QString &value)
 {
     // Override it through the config., this ensure that more code branches will be tested
     const_cast<QVariantHash &>(m_config).insert(Version, value);

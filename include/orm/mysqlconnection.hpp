@@ -45,7 +45,7 @@ namespace Orm
         bool useUpsertAlias();
 #ifdef TINYORM_TESTS_CODE
         /*! Override the version database configuration value. */
-        void setConfigVersion(QString value);
+        void setConfigVersion(const QString &value);
 #endif
 
         /* Others */
