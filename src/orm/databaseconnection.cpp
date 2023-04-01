@@ -400,12 +400,8 @@ DatabaseConnection::prepareBindings(QVector<QVariant> bindings) const
 
 void DatabaseConnection::bindValues(QSqlQuery &query, const QVector<QVariant> &bindings)
 {
-    auto itBinding = bindings.constBegin();
-    while (itBinding != bindings.constEnd()) {
-        query.addBindValue(*itBinding);
-
-        ++itBinding;
-    }
+    for (const auto &binding : bindings)
+        query.addBindValue(binding);
 }
 
 bool DatabaseConnection::pingDatabase()
