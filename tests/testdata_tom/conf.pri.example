@@ -34,4 +34,7 @@ else:unix {
     # Use faster linkers
     clang: CONFIG *= use_lld_linker
     else: CONFIG *= use_gold_linker
+
+    # Or use mold linker
+#    QMAKE_LFLAGS *= -fuse-ld=mold
 }
