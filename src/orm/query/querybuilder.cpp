@@ -1413,7 +1413,7 @@ Builder Builder::cloneWithout(const std::unordered_set<PropertyType> &properties
     auto copy = *this;
 
     for (const auto property : properties)
-        switch (property) {
+        switch (property) { // NOLINT(hicpp-multiway-paths-covered)
         case PropertyType::COLUMNS:
             copy.m_columns.clear();
             break;
@@ -1431,7 +1431,7 @@ Builder Builder::cloneWithoutBindings(
     auto copy = *this;
 
     for (const auto bindingType : except)
-        switch (bindingType) {
+        switch (bindingType) { // NOLINT(hicpp-multiway-paths-covered)
         case BindingType::SELECT:
             copy.m_bindings[BindingType::SELECT].clear();
             break;
