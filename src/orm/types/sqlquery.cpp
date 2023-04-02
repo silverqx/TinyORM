@@ -2,7 +2,7 @@
 
 #include <QtSql/QSqlDriver>
 
-#include "orm/query/grammars/grammar.hpp"
+#include "orm/query/grammars/grammar.hpp" // IWYU pragma: keep
 #include "orm/utils/helpers.hpp"
 
 TINYORM_BEGIN_COMMON_NAMESPACE
