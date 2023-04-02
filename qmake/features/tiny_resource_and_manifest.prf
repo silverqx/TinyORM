@@ -78,13 +78,13 @@ defineReplace(tiny_configure_cmake_rc) {
     else: token = $$rcBasename
 
     # This solves the problem with the © character, problem with the encoding
-    # I have tried to solve this min. 5 times 🤬🤔
-    # Use utf8 on MinGW and ANSI with msvc Qt6, msvc Qt5 accepts utf8!
+    # I have tried to solve this min. 6 times 🤬🤔
+    # Use utf8 with Qt5 and ANSI with Qt6. I hope this is the last time I'm updating this.
     # The core of the problem is in the $$cat() and write_file() qmake functions they
     # don't know process UTF-8 encoded files, they use the ANSI encoding.
     # Few weeks later: I don't understand how the heck is possible that it works with
     # the msvc Qt5.
-    win32-msvc|win32-clang-msvc:greaterThan(QT_MAJOR_VERSION, 5): \
+    greaterThan(QT_MAJOR_VERSION, 5): \
         pragmaCodepage = DEFAULT
     else: \
         pragmaCodepage = 65001
