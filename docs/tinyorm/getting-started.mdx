@@ -257,7 +257,7 @@ To create unix timestamp columns using the [tom migrations](/database/migrations
 
 ##### Custom timestamp column names
 
-If you need to customize the names of the columns used to store the timestamps, you may define `CREATED_AT` and `UPDATED_AT` private static constants on your model:
+If you need to customize the names of the columns used to store the timestamps, you may define `CREATED_AT` and `UPDATED_AT` private getter methods on your model:
 
     #include <orm/tiny/model.hpp>
 
@@ -270,14 +270,10 @@ If you need to customize the names of the columns used to store the timestamps, 
 
     private:
         /*! The name of the "created at" column. */
-        inline static const QString CREATED_AT = QStringLiteral("creation_date");
+        inline static QString CREATED_AT() { return QStringLiteral("creation_date"); }
         /*! The name of the "updated at" column. */
-        inline static const QString UPDATED_AT = QStringLiteral("updated_date");
+        inline static QString UPDATED_AT() { return QStringLiteral("updated_date"); }
     };
-
-:::tip
-You can make these static constants non-inline and initialize them in the cpp file.
-:::
 
 #### Touching timestamps
 

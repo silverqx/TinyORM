@@ -39,12 +39,12 @@ class Torrent_GuardedAttribute final : public Model<Torrent_GuardedAttribute>
         "added_on",
         "hash",
         "note",
-        UPDATED_AT,
+        UPDATED_AT(),
     };
 
     /*! The attributes that aren't mass assignable. */
     inline static const QStringList u_guarded { // NOLINT(cppcoreguidelines-interfaces-global-init)
-        CREATED_AT,
+        CREATED_AT(),
     };
 };
 

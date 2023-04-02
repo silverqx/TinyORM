@@ -121,9 +121,9 @@ public:
 
 private:
     /*! The name of the "created at" column. */
-    inline static const QString &CREATED_AT = Orm::CREATED_AT; // NOLINT(cppcoreguidelines-interfaces-global-init)
+    inline static const QString &CREATED_AT() noexcept { return Orm::CREATED_AT; }
     /*! The name of the "updated at" column. */
-    inline static const QString &UPDATED_AT = Orm::UPDATED_AT; // NOLINT(cppcoreguidelines-interfaces-global-init)
+    inline static const QString &UPDATED_AT() noexcept { return Orm::UPDATED_AT; }
 
     /*! The table associated with the model. */
     QString u_table {"torrents"};
@@ -177,7 +177,7 @@ private:
         "added_on",
         "hash",
         "note",
-        UPDATED_AT,
+        UPDATED_AT(),
     };
 
     /*! The attributes that aren't mass assignable. */

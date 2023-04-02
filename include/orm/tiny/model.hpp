@@ -298,6 +298,12 @@ namespace Orm::Tiny
         bool exists = false;
 
     protected:
+        /* HasTimestamps */
+        /*! The name of the "created at" column. */
+        inline static const QString &CREATED_AT() noexcept;
+        /*! The name of the "updated at" column. */
+        inline static const QString &UPDATED_AT() noexcept;
+
         /* Model Instance methods */
         /*! Get a new query builder instance for the connection. */
         std::shared_ptr<QueryBuilder> newBaseQueryBuilder() const;
@@ -344,12 +350,6 @@ namespace Orm::Tiny
         QVector<QString> u_with;
         /*! The relationship counts that should be eager loaded on every query. */
 //        QVector<WithItem> u_withCount;
-
-        /* HasTimestamps */
-        /*! The name of the "created at" column. */
-        inline static const QString &CREATED_AT = Constants::CREATED_AT; // NOLINT(cppcoreguidelines-interfaces-global-init)
-        /*! The name of the "updated at" column. */
-        inline static const QString &UPDATED_AT = Constants::UPDATED_AT; // NOLINT(cppcoreguidelines-interfaces-global-init)
 
     private:
         /* Operations on a Model instance */
@@ -1397,6 +1397,22 @@ namespace Orm::Tiny
 
     /* protected */
 
+    /* HasTimestamps */
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    const QString &
+    Model<Derived, AllRelations...>::CREATED_AT() noexcept
+    {
+        return Orm::Constants::CREATED_AT;
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    const QString &
+    Model<Derived, AllRelations...>::UPDATED_AT() noexcept
+    {
+        return Orm::Constants::UPDATED_AT;
+    }
+
     /* Model Instance methods */
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
@@ -1786,14 +1802,14 @@ namespace Orm::Tiny
     const QString &
     Model<Derived, AllRelations...>::getUserCreatedAtColumn() noexcept
     {
-        return Derived::CREATED_AT;
+        return Derived::CREATED_AT();
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     const QString &
     Model<Derived, AllRelations...>::getUserUpdatedAtColumn() noexcept
     {
-        return Derived::UPDATED_AT;
+        return Derived::UPDATED_AT();
     }
 
     /* SoftDeletes */

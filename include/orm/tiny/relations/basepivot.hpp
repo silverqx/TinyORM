@@ -79,12 +79,6 @@ namespace Orm::Tiny::Relations
         /*! Determine whether the PivotType is a custom pivot. */
         constexpr static bool isCustomPivot();
 
-        /* HasTimestamps */
-        /*! The name of the "created at" column. */
-        inline static const QString CREATED_AT = Constants::CREATED_AT; // NOLINT(cppcoreguidelines-interfaces-global-init)
-        /*! The name of the "updated at" column. */
-        inline static const QString UPDATED_AT = Constants::UPDATED_AT; // NOLINT(cppcoreguidelines-interfaces-global-init)
-
     protected:
         /* AsPivot */
         /*! Set the keys for a select query. */
@@ -218,9 +212,9 @@ namespace Orm::Tiny::Relations
         for (const auto &attribute : attributes) {
             const auto &attributeKey = attribute.key;
 
-            if (attributeKey == PivotModel::CREATED_AT)
+            if (attributeKey == PivotModel::CREATED_AT())
                 hasCreatedAt = true;
-            else if (attributeKey == PivotModel::UPDATED_AT)
+            else if (attributeKey == PivotModel::UPDATED_AT())
                 hasUpdatedAt = true;
         }
 
