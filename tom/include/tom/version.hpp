@@ -10,7 +10,7 @@ TINY_SYSTEM_HEADER
 
 #define TINYTOM_VERSION_MAJOR 0
 #define TINYTOM_VERSION_MINOR 5
-#define TINYTOM_VERSION_BUGFIX 3
+#define TINYTOM_VERSION_BUGFIX 4
 #define TINYTOM_VERSION_BUILD 0
 // Should be empty for stable releases, and use hypen before for SemVer compatibility!
 #define TINYTOM_VERSION_STATUS ""
