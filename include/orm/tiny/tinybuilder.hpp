@@ -1313,7 +1313,11 @@ namespace Orm::Tiny
         progress.reserve(names.size());
 
         for (auto &&segment : names) {
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
+            progress << segment;
+#else
             progress << std::move(segment);
+#endif
 
             auto last = progress.join(DOT);
             const auto containsRelation = [&last](const auto &relation)

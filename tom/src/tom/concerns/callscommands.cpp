@@ -60,7 +60,11 @@ CallsCommands::createCommandLineArguments(
     newArguments.reserve(currentArguments.size() + arguments.size());
 
     // Absolute path of the exe name
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
+    newArguments << currentArguments.constFirst();
+#else
     newArguments << std::move(currentArguments.first());
+#endif
     // Command name
     newArguments << command;
 

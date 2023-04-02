@@ -18,7 +18,11 @@ SqlQuery::SqlQuery(QSqlQuery &&other, const QtTimeZoneConfig &qtTimeZone, // NOL
                    const QueryGrammar &queryGrammar,
                    const std::optional<bool> returnQDateTime
 )
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
+    : QSqlQuery(other)
+#else
     : QSqlQuery(std::move(other))
+#endif
     , m_qtTimeZone(qtTimeZone)
     , m_isConvertingTimeZone(m_qtTimeZone.type != QtTimeZoneType::DontConvert)
     , m_isSQLiteDb(driver()->dbmsType() == QSqlDriver::DbmsType::SQLite)

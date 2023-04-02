@@ -84,7 +84,11 @@ Utils::convertToQCommandLineOptionList(QList<CommandLineOption> &&options)
     result.reserve(options.size());
 
     for (auto &&option : options)
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
+        result << option;
+#else
         result << std::move(option);
+#endif
 
     return result;
 }

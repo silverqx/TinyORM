@@ -316,7 +316,11 @@ void Application::prependOptions(QList<CommandLineOption> &&options)
     m_options = std::move(options);
 
     // Common options after Command options
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
+    m_options << commonOptions;
+#else
     m_options << std::move(commonOptions);
+#endif
 }
 
 /* Run command */
