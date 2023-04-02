@@ -25,21 +25,21 @@ jobs:
         runnerWorkPath=$(realpath '${{ runner.workspace }}/..')
         echo "TinyRunnerWorkPath=$runnerWorkPath" >> $GITHUB_ENV
 
-    - name: add-apt-repository Clang 15
+    - name: add-apt-repository Clang 16
       run: >-
         wget -O- https://apt.llvm.org/llvm-snapshot.gpg.key |
-        sudo tee /etc/apt/trusted.gpg.d/llvm-15.asc > /dev/null
+        sudo tee /etc/apt/trusted.gpg.d/llvm-16.asc > /dev/null
 
         sudo add-apt-repository --yes
-        --sourceslist 'deb http://apt.llvm.org/jammy/ llvm-toolchain-jammy-15 main'
+        --sourceslist 'deb http://apt.llvm.org/jammy/ llvm-toolchain-jammy-16 main'
 
     - name: apt update
       run: |
         sudo apt update
 
-    - name: apt install clang-15, lld-15, g++-12, clang-tidy-15, and Qt 6.2.4 base
+    - name: apt install clang-16, lld-16, g++-12, clang-tidy-16, and Qt 6.2.4 base
       run: >-
-        sudo apt install --yes clang-15 lld-15 g++-12 clang-tidy-15
+        sudo apt install --yes clang-16 lld-16 g++-12 clang-tidy-16
         qt6-base-dev libqt6sql6-mysql libqt6sql6-sqlite libqt6sql6-psql
 
     - name: ninja install latest version
@@ -117,7 +117,7 @@ jobs:
           ${{ runner.os }}-${{ env.image_os }}-ccache-${{ env.cache_name }}-
       env:
         # Don't reuse the clang ccache cache from the linux-qt6.yml (prepended analyzers)
-        cache_name: analyzers-clang15-qt62
+        cache_name: analyzers-clang16-qt62
         cache_path: ${{ steps.ccache-initialize-cache.outputs.CachePath }}
         image_os: ${{ steps.ccache-initialize-cache.outputs.ImageOS }}
 
@@ -159,7 +159,7 @@ jobs:
         -B ../TinyORM-builds-cmake/build-clang-cmake-debug
         -G Ninja
         -D CMAKE_CXX_COMPILER_LAUNCHER:FILEPATH=/usr/local/bin/ccache
-        -D CMAKE_CXX_COMPILER:FILEPATH=/usr/bin/clang++-15
+        -D CMAKE_CXX_COMPILER:FILEPATH=/usr/bin/clang++-16
         -D CMAKE_TOOLCHAIN_FILE:FILEPATH="$VCPKG_INSTALLATION_ROOT/scripts/buildsystems/vcpkg.cmake"
         -D CMAKE_DISABLE_PRECOMPILE_HEADERS:BOOL=ON
         -D CMAKE_EXPORT_COMPILE_COMMANDS:BOOL=ON
@@ -235,7 +235,7 @@ jobs:
         ln --symbolic ../TinyORM-builds-cmake/build-clang-cmake-debug/compile_commands.json
         compile_commands.json
 
-        run-clang-tidy-15 '(?:examples|src|tests)[\\\/]+.+?[\\\/]+(?!mocs_)[\w_\-\+]+\.cpp$'
+        run-clang-tidy-16 '(?:examples|src|tests)[\\\/]+.+?[\\\/]+(?!mocs_)[\w_\-\+]+\.cpp$'
 
     # Disabled checks
     # Level 2      - qstring-allocations
