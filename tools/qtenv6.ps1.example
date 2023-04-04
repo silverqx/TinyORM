@@ -2,8 +2,8 @@
 
 Set-StrictMode -Version 3.0
 
-Write-Host 'Setting up environment for Qt 6.4.3 usage...' -ForegroundColor Magenta
+Write-Host 'Setting up environment for Qt 6.5.0 usage...' -ForegroundColor Magenta
 
-$env:Path = '<your_path_here>\Qt\6.4.3\msvc2019_64\bin;' + $env:Path
+$env:Path = '<your_path_here>\Qt\6.5.0\msvc2019_64\bin;' + $env:Path
 
 . <your_path_here>\dotfiles\bin\vcvars64.ps1
