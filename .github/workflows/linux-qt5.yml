@@ -304,7 +304,7 @@ jobs:
         -D CMAKE_CXX_COMPILER:FILEPATH='/usr/bin/${{ matrix.compiler.command }}'
         -D CMAKE_TOOLCHAIN_FILE:FILEPATH="$VCPKG_INSTALLATION_ROOT/scripts/buildsystems/vcpkg.cmake"
         -D CMAKE_DISABLE_PRECOMPILE_HEADERS:BOOL=ON
-        -D CMAKE_BUILD_TYPE:BOOL=Debug
+        -D CMAKE_BUILD_TYPE:STRING=Debug
         -D VERBOSE_CONFIGURE:BOOL=ON
         -D MATCH_EQUAL_EXPORTED_BUILDTREE:BOOL=OFF
         -D MYSQL_PING:BOOL=ON

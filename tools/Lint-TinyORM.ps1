@@ -99,7 +99,7 @@ if (-not (Test-Path $BuildPath\compile_commands.json)) {
         -S E:/c/qMedia/TinyOrm/TinyOrm `
         -B $BuildPath `
         -G 'Ninja' `
-        -D CMAKE_BUILD_TYPE:BOOL=$BuildType `
+        -D CMAKE_BUILD_TYPE:STRING=$BuildType `
         -D CMAKE_TOOLCHAIN_FILE:PATH=E:/c_libs/vcpkg/scripts/buildsystems/vcpkg.cmake `
         -D CMAKE_INSTALL_PREFIX:PATH=E:/c/qMedia/tmp/dummy `
         # -D CMAKE_CXX_COMPILER_LAUNCHER:FILEPATH='C:/Users/<username>/scoop/shims/ccache.exe' `
