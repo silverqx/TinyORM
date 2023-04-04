@@ -1,6 +1,6 @@
 {
   "name": "tinyorm-qt5",
-  "version-semver": "0.30.0",
+  "version-semver": "0.30.1",
   "description": "Modern C++ ORM library for the Qt framework",
   "homepage": "https://github.com/silverqx/TinyORM",
   "documentation": "https://www.tinyorm.org",
