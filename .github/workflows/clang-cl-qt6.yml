@@ -11,7 +11,7 @@
 # side, so the the server host name is matched against the CN (Common Name)
 # stored in the server certificate.
 
-name: clang-cl MSVC2022 Qt6.4
+name: clang-cl MSVC2022 Qt6.5
 
 on:
   pull_request:

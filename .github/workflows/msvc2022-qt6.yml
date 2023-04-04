@@ -12,7 +12,7 @@
 # on the libpq client side, so the the server host name is matched against the CN (Common Name)
 # stored in the server certificate.
 
-name: MSVC2022 Qt6.4
+name: MSVC2022 Qt6.5
 
 on:
   pull_request:
