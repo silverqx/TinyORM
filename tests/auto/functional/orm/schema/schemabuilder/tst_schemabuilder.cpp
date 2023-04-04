@@ -473,7 +473,9 @@ QVariant tst_SchemaBuilder::getTableComment_Postgres(const QString &table,
                          "select obj_description('%1.%2'::regclass) as table_comment")
                      .arg(schema, table));
 
-    Q_ASSERT(query.first());
+    [[maybe_unused]]
+    const auto ok = query.first();
+    Q_ASSERT(ok);
     Q_ASSERT(query.isValid());
 
     return query.value(QStringLiteral("table_comment"));
