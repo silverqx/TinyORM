@@ -51,13 +51,13 @@ private Q_SLOTS:
     void createTable() const;
     void createTable_Temporary() const;
     void createTable_Charset_Collation_Engine() const;
-    void createTable_Comment() const;
+    void createTable_WithComment() const;
 
     void timestamps_rememberToken_softDeletes_CreateAndDrop() const;
     void datetimes_softDeletesDatetime_CreateAndDrop() const;
 
     void modifyTable() const;
-    void modifyTable_Comment() const;
+    void modifyTable_WithComment() const;
 
     void dropTable() const;
     void dropTableIfExists() const;
@@ -438,7 +438,7 @@ void tst_MySql_SchemaBuilder::createTable_Charset_Collation_Engine() const
     QVERIFY(firstLog.boundValues.isEmpty());
 }
 
-void tst_MySql_SchemaBuilder::createTable_Comment() const
+void tst_MySql_SchemaBuilder::createTable_WithComment() const
 {
     auto log = DB::connection(m_connection).pretend([](auto &connection)
     {
@@ -696,7 +696,7 @@ void tst_MySql_SchemaBuilder::modifyTable() const
     QVERIFY(log5.boundValues.isEmpty());
 }
 
-void tst_MySql_SchemaBuilder::modifyTable_Comment() const
+void tst_MySql_SchemaBuilder::modifyTable_WithComment() const
 {
     auto log = DB::connection(m_connection).pretend([](auto &connection)
     {

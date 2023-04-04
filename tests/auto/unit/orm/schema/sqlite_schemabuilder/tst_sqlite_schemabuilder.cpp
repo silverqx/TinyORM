@@ -56,7 +56,7 @@ private Q_SLOTS:
     void datetimes_softDeletesDatetime_CreateAndDrop() const;
 
     void modifyTable() const;
-    void modifyTable_Comment() const;
+    void modifyTable_WithComment() const;
 
     void dropTable() const;
     void dropTableIfExists() const;
@@ -576,7 +576,7 @@ void tst_SQLite_SchemaBuilder::modifyTable() const
     QVERIFY(log18.boundValues.isEmpty());
 }
 
-void tst_SQLite_SchemaBuilder::modifyTable_Comment() const
+void tst_SQLite_SchemaBuilder::modifyTable_WithComment() const
 {
     auto log = DB::connection(m_connection).pretend([](auto &connection)
     {

@@ -51,8 +51,8 @@ private Q_SLOTS:
     void hasTable() const;
 
     /* Blueprint commands */
-    void createTable_Comment() const;
-    void modifyTable_Comment() const;
+    void createTable_WithComment() const;
+    void modifyTable_WithComment() const;
 
 // NOLINTNEXTLINE(readability-redundant-access-specifiers)
 private:
@@ -268,7 +268,7 @@ void tst_SchemaBuilder::hasTable() const
 
 /* Blueprint commands */
 
-void tst_SchemaBuilder::createTable_Comment() const
+void tst_SchemaBuilder::createTable_WithComment() const
 {
     QFETCH_GLOBAL(QString, connection);
 
@@ -300,7 +300,7 @@ void tst_SchemaBuilder::createTable_Comment() const
     QVERIFY(!Schema::on(connection).hasTable(Firewalls));
 }
 
-void tst_SchemaBuilder::modifyTable_Comment() const
+void tst_SchemaBuilder::modifyTable_WithComment() const
 {
     QFETCH_GLOBAL(QString, connection);
 
