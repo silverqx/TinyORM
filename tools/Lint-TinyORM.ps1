@@ -1,20 +1,19 @@
 #!/usr/bin/env pwsh
 
 Param(
-    [Parameter(Position = 0, Mandatory = $false,
+    [Parameter(Position = 0,
         HelpMessage = 'Specifies the cpp files to be processed, is joined with by the | ' +
             'character and used in the parenthesized regex eg. (file1|file2).')]
     [ValidateNotNullOrEmpty()]
     [string[]] $Files,
 
-    [Parameter(Mandatory = $false,
+    [Parameter(
         HelpMessage = 'Specifies the files paths to be processed, is joined with by the | ' +
             'character and used in the parenthesized regex eg. (folder1|folder2).')]
     [ValidateNotNullOrEmpty()]
     [string[]] $FilesPaths,
 
-    [Parameter(Mandatory = $false,
-        HelpMessage = 'Specifies the path to the cmake build folder, is pwd by default.')]
+    [Parameter(HelpMessage = 'Specifies the path to the cmake build folder, is pwd by default.')]
     [ValidateNotNullOrEmpty()]
     [string] $BuildPath = $($(Get-Location).Path),
 
@@ -36,7 +35,7 @@ Param(
     [ValidateNotNullOrEmpty()]
     [string] $BuildType = 'Debug',
 
-    [Parameter(Mandatory = $false,
+    [Parameter(
         HelpMessage = 'Specifies the checks filter, when not specified, use clang-tidy default ' +
             '(eg. -*,readability-magic-numbers to run only a specific check).')]
     [ValidateNotNullOrEmpty()]
