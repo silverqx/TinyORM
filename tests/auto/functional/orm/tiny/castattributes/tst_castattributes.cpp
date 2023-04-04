@@ -1043,7 +1043,7 @@ void tst_CastAttributes::defaultCast_timestamp_QSQLITE_OffReturnQDateTime() cons
 
     // Skip model cache (I will not create special cache logic for this)
     auto type = Type::on(connection)->find(1);
-    Q_ASSERT(type);
+    QVERIFY(type);
     QCOMPARE(type->getAttribute(ID).value<quint64>(), 1);
 
     auto attribute = type->getAttribute("timestamp");
@@ -1072,7 +1072,7 @@ void tst_CastAttributes::defaultCast_datetime_QSQLITE_OffReturnQDateTime() const
 
     // Skip model cache (I will not create special cache logic for this)
     auto type = Type::on(connection)->find(1);
-    Q_ASSERT(type);
+    QVERIFY(type);
     QCOMPARE(type->getAttribute(ID).value<quint64>(), 1);
 
     auto attribute = type->getAttribute("datetime");
@@ -1101,7 +1101,7 @@ void tst_CastAttributes::defaultCast_date_QSQLITE_OffReturnQDateTime() const
 
     // Skip model cache (I will not create special cache logic for this)
     auto type = Type::on(connection)->find(1);
-    Q_ASSERT(type);
+    QVERIFY(type);
     QCOMPARE(type->getAttribute(ID).value<quint64>(), 1);
 
     auto attribute = type->getAttribute("date");

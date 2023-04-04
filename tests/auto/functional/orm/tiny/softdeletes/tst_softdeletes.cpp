@@ -102,12 +102,12 @@ void tst_SoftDeletes::initTestCase()
 
 void tst_SoftDeletes::model_User_Extends_SoftDeletes()
 {
-    Q_ASSERT(User::extendsSoftDeletes());
+    QVERIFY(User::extendsSoftDeletes());
 }
 
 void tst_SoftDeletes::model_Setting_NotExtends_SoftDeletes()
 {
-    Q_ASSERT(!Setting::extendsSoftDeletes());
+    QVERIFY(!Setting::extendsSoftDeletes());
 }
 
 void tst_SoftDeletes::trashed() const
