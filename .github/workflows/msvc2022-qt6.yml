@@ -28,6 +28,15 @@ jobs:
 
     runs-on: windows-2022
 
+    strategy:
+      matrix:
+        build-type:
+          - key: debug
+            name: Debug
+
+          - key: release
+            name: Release
+
     steps:
     - uses: actions/checkout@v3
 
@@ -491,7 +500,7 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-${{ env.image_os }}-ccache-${{ env.cache_name }}-
       env:
-        cache_name: msvc2022-qt65
+        cache_name: msvc2022-qt65-${{ matrix.build-type.key }}
         cache_path: ${{ steps.ccache-initialize-cache.outputs.CachePath }}
         image_os: ${{ steps.ccache-initialize-cache.outputs.ImageOS }}
 
@@ -527,20 +536,21 @@ jobs:
       run: |
         cmake.exe --version
 
-    - name: TinyORM create build folder (msvc-cmake-debug)
-      run: |
-        New-Item -Type Directory '../TinyORM-builds-cmake/build-msvc-cmake-debug'
+    - name: TinyORM create build folder (msvc-cmake-${{ matrix.build-type.key }})
+      run: >-
+        New-Item -Type Directory
+        '../TinyORM-builds-cmake/build-msvc-cmake-${{ matrix.build-type.key }}'
 
-    - name: TinyORM cmake configure (msvc-cmake-debug)
+    - name: TinyORM cmake configure (msvc-cmake-${{ matrix.build-type.key }})
       run: >-
         cmake
         -S .
-        -B ../TinyORM-builds-cmake/build-msvc-cmake-debug
+        -B ../TinyORM-builds-cmake/build-msvc-cmake-${{ matrix.build-type.key }}
         -G Ninja
         -D CMAKE_CXX_COMPILER_LAUNCHER:FILEPATH='C:/ProgramData/chocolatey/bin/ccache.exe'
         -D CMAKE_TOOLCHAIN_FILE:FILEPATH="$env:VCPKG_INSTALLATION_ROOT/scripts/buildsystems/vcpkg.cmake"
         -D CMAKE_DISABLE_PRECOMPILE_HEADERS:BOOL=ON
-        -D CMAKE_BUILD_TYPE:STRING=Debug
+        -D CMAKE_BUILD_TYPE:STRING=${{ matrix.build-type.name }}
         -D VERBOSE_CONFIGURE:BOOL=ON
         -D MATCH_EQUAL_EXPORTED_BUILDTREE:BOOL=OFF
         -D MYSQL_PING:BOOL=ON
@@ -549,16 +559,18 @@ jobs:
         -D TOM:BOOL=ON
         -D TOM_EXAMPLE:BOOL=ON
 
-    - name: TinyORM cmake build ✨ (msvc-cmake-debug)
-      run: |
-        cmake.exe --build ../TinyORM-builds-cmake/build-msvc-cmake-debug --target all --parallel 2
+    - name: TinyORM cmake build ✨ (msvc-cmake-${{ matrix.build-type.key }})
+      run: >-
+        cmake.exe --build ../TinyORM-builds-cmake/build-msvc-cmake-${{ matrix.build-type.key }}
+        --target all --parallel 2
 
     - name: Ccache statistics
       run: |
         ccache.exe --show-stats -vv
 
     - name: Create and Seed tables for unit tests 🎉
-      working-directory: ../TinyORM-builds-cmake/build-msvc-cmake-debug/tests/testdata_tom
+      working-directory: >-
+        ../TinyORM-builds-cmake/build-msvc-cmake-${{ matrix.build-type.key }}/tests/testdata_tom
       run: >-
         $env:Path = '..\..;' + $env:Path
 
@@ -585,7 +597,7 @@ jobs:
         TOM_TESTDATA_ENV: testing
 
     - name: TinyORM execute ctest 🔥
-      working-directory: ../TinyORM-builds-cmake/build-msvc-cmake-debug
+      working-directory: ../TinyORM-builds-cmake/build-msvc-cmake-${{ matrix.build-type.key }}
       run: |
         ctest.exe --output-on-failure
       env:
@@ -608,7 +620,8 @@ jobs:
         TOM_TESTS_ENV: testing
 
     - name: Tom example test some commands (MySQL) 🚀
-      working-directory: ../TinyORM-builds-cmake/build-msvc-cmake-debug/examples/tom
+      working-directory: >-
+        ../TinyORM-builds-cmake/build-msvc-cmake-${{ matrix.build-type.key }}/examples/tom
       run: |
         $env:Path = '..\..;' + $env:Path
 
@@ -630,7 +643,8 @@ jobs:
         TOM_EXAMPLE_ENV: testing
 
     - name: Tom example test some commands (PostgreSQL) 🙌
-      working-directory: ../TinyORM-builds-cmake/build-msvc-cmake-debug/examples/tom
+      working-directory: >-
+        ../TinyORM-builds-cmake/build-msvc-cmake-${{ matrix.build-type.key }}/examples/tom
       run: |
         $env:Path = '..\..;' + $env:Path
 
@@ -649,7 +663,8 @@ jobs:
         TOM_EXAMPLE_ENV: testing
 
     - name: Tom example test some commands (SQLite) 🏁
-      working-directory: ../TinyORM-builds-cmake/build-msvc-cmake-debug/examples/tom
+      working-directory: >-
+        ../TinyORM-builds-cmake/build-msvc-cmake-${{ matrix.build-type.key }}/examples/tom
       run: |
         $env:Path = '..\..;' + $env:Path
 
