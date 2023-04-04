@@ -503,7 +503,7 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-${{ env.image_os }}-ccache-${{ env.cache_name }}-
       env:
-        cache_name: clang-cl-msvc2022-qt64
+        cache_name: clang-cl-msvc2022-qt65
         cache_path: ${{ steps.ccache-initialize-cache.outputs.CachePath }}
         image_os: ${{ steps.ccache-initialize-cache.outputs.ImageOS }}
 
