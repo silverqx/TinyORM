@@ -450,7 +450,7 @@ jobs:
       env:
         archive_filepath: ${{ steps.downloads-initialize-qmysql-dlls.outputs.Filepath }}
         cache_hash: ${{ steps.downloads-initialize-qmysql-dlls.outputs.Hash }}
-        cache_name: qmysql-dlls
+        cache_name: qmysql-dlls-qt6
 
     - name: QMYSQL driver dlls download (Qt 6.5.0)
       if: steps.downloads-cache-qmysql-dlls.outputs.cache-hit != 'true'
