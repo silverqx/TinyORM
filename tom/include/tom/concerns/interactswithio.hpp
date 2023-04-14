@@ -50,7 +50,7 @@ namespace Concerns
     public:
 #if TINY_TABULATE_VERSION >= QT_VERSION_CHECK(1, 5, 0)
         /*! Alias for the tabulate cell. */
-        using TableCell = tabulate::Table::Row_t;
+        using TableCell = tabulate::Table::Row_t::value_type;
 #elif TINY_TABULATE_VERSION == QT_VERSION_CHECK(1, 4, 0)
         /*! Alias for the tabulate cell. */
         using TableCell = std::variant<std::string, const char *, tabulate::Table>;
@@ -58,8 +58,14 @@ namespace Concerns
         /*! Alias for the tabulate cell. */
         using TableCell = std::variant<std::string, tabulate::Table>;
 #endif
+
+#if TINY_TABULATE_VERSION >= QT_VERSION_CHECK(1, 5, 0)
+        /*! Alias for the tabulate row. */
+        using TableRow = tabulate::Table::Row_t;
+#else
         /*! Alias for the tabulate row. */
         using TableRow = std::vector<TableCell>;
+#endif
 
         /*! Constructor. */
         explicit InteractsWithIO(const QCommandLineParser &parser);
