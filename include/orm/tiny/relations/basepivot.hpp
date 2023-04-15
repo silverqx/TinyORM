@@ -77,7 +77,7 @@ namespace Orm::Tiny::Relations
         PivotModel &setPivotKeys(const QString &foreignKey, const QString &relatedKey);
 
         /*! Determine whether the PivotType is a custom pivot. */
-        constexpr static bool isCustomPivot();
+        consteval static bool isCustomPivot();
 
     protected:
         /* AsPivot */
@@ -297,7 +297,7 @@ namespace Orm::Tiny::Relations
     }
 
     template<typename PivotModel>
-    constexpr bool BasePivot<PivotModel>::isCustomPivot()
+    consteval bool BasePivot<PivotModel>::isCustomPivot()
     {
         return !std::is_same_v<PivotModel, Relations::Pivot>;
     }

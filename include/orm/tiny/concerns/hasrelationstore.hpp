@@ -258,7 +258,7 @@ namespace Orm::Tiny::Concerns
 
         protected:
             /*! Store type initializer. */
-            constexpr static RelationStoreType initStoreType();
+            consteval static RelationStoreType initStoreType();
 
             /*! Served store type, this class can handle two store types. */
             T_THREAD_LOCAL
@@ -653,7 +653,7 @@ namespace Orm::Tiny::Concerns
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     template<typename Related>
-    constexpr typename
+    consteval typename
     HasRelationStore<Derived, AllRelations...>::RelationStoreType
     HasRelationStore<Derived, AllRelations...>::QueriesRelationshipsStore<Related>
                                               ::initStoreType()

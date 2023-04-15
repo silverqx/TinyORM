@@ -291,7 +291,7 @@ namespace Orm::Tiny
         /*! Qualify the given column name by the model's table. */
         QString qualifyColumn(const QString &column) const;
         /*! Determina whether the Derived Model extends the SoftDeletes. */
-        constexpr static bool extendsSoftDeletes();
+        consteval static bool extendsSoftDeletes();
 
         /* Data members */
         /*! Indicates if the model exists. */
@@ -1390,7 +1390,7 @@ namespace Orm::Tiny
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
-    constexpr bool Model<Derived, AllRelations...>::extendsSoftDeletes()
+    consteval bool Model<Derived, AllRelations...>::extendsSoftDeletes()
     {
         return std::is_base_of_v<SoftDeletes<Derived>, Derived>;
     }
