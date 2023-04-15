@@ -56,7 +56,7 @@ namespace Private
     {
     public:
         static_assert(Private::is_comparable_to_nullptr<T>::value,
-                      "T cannot be compared to nullptr.");
+                "The NotNull T template argument cannot be the nullptr.");
 
         template<typename U,
                  typename = std::enable_if_t<std::is_convertible<U, T>::value>>
