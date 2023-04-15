@@ -270,7 +270,7 @@ namespace Orm::Tiny
         /*! Apply the SoftDeletes where null condition for the deleted_at column. */
         Builder<Model> &applySoftDeletes();
         /*! Determine whether the Model the TinyBuilder manages extends SoftDeletes. */
-        consteval static bool extendsSoftDeletes() noexcept;
+        constexpr static bool extendsSoftDeletes() noexcept;
 
     protected:
         /*! Alias for the Expression. */
@@ -1194,7 +1194,7 @@ namespace Orm::Tiny
     }
 
     template<typename Model>
-    consteval bool Builder<Model>::extendsSoftDeletes() noexcept
+    constexpr bool Builder<Model>::extendsSoftDeletes() noexcept
     {
         return m_extendsSoftDeletes;
     }
