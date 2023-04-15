@@ -62,6 +62,9 @@ namespace Concerns
 #if TINY_TABULATE_VERSION >= QT_VERSION_CHECK(1, 5, 0)
         /*! Alias for the tabulate row. */
         using TableRow = tabulate::Table::Row_t;
+        // Check the type because we have no control over this type
+        static_assert (std::is_same_v<TableRow, std::vector<TableCell>>,
+                "The InteractsWithIO::TableRow must be the std::vector<TableCell> type.");
 #else
         /*! Alias for the tabulate row. */
         using TableRow = std::vector<TableCell>;
