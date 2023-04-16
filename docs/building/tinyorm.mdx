@@ -542,6 +542,10 @@ On `Linux`, you can install the `range-v3` library and some other [dependencies]
 I recommend creating a new [`Session`](https://doc.qt.io/qtcreator/creator-project-managing-sessions.html) in the `QtCreator`, this way you will have all the examples in one place and as a bonus, everything will be in the same place when you close and reopen `QtCreator IDE`. You can name it `tinyorm.org` or `TinyORM examples`, it is up to you.
 :::
 
+:::tip
+If you are using sessions, you can use a single `clangd` instance for all projects in this session in the `QtCreator IDE`. One significant advantage of this method is that the `.qtc_clangd/` folder will not be created in the build folder, but will be stored globally in the Roaming profile. You can enable it in the `Settings` - `C++` - `Clangd` - `Sessions with a single clangd instance`.
+:::
+
 #### Configure TinyORM
 
 Now you are ready to configure the `TinyORM` library. The `qmake` does not support auto-configuration of dependencies out of the box, to configure TinyORM's `qmake` build dependencies you have to copy the `conf.pri.example` file to the `conf.pri` and manually edit the `INCLUDEPATH` and `LIBS`. This way you can override any `qmake` build options or variables.
