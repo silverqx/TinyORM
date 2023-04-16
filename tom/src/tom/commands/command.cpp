@@ -174,10 +174,13 @@ QStringList Command::optionNames() const
 #if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
             optionNames.insert(nthOption, commasCount, optionName);
 #else
+            /* We need to save the index position because the nthOption iterator will be
+               invalidated after an insertion. */
+            const auto optionIdx = static_cast<int>(
+                                       std::distance(optionNames.cbegin(), nthOption));
+
             for (auto i = 0; i < commasCount ; ++i)
-                optionNames.insert(static_cast<int>(std::distance(optionNames.cbegin(),
-                                                                  nthOption)),
-                                   optionName);
+                optionNames.insert(optionIdx, optionName);
 #endif
             // Take into account also a newly inserted option names
             ++nthOptionIdx += static_cast<decltype (nthOptionIdx)>(commasCount);
