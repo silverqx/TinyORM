@@ -1,7 +1,7 @@
 Increase/bump the release version:
 ----------------------------------
 
-- just simply search the current version number in all files eg. 0.30.2
+- just simply search the current version number in all files eg. 0.30.3
 
 - increase in the following files
 
