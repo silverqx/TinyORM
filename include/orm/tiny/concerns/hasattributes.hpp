@@ -1411,7 +1411,7 @@ namespace Orm::Tiny::Concerns
            m_changes and m_original and it associated unordered_maps m_attributesHash,
            m_changesHash and m_originalHash. */
         for (auto i = from; i < attributes.size(); ++i)
-            // 'i' is the position
+            // 'i' is the position index
             attributesHash[attributes.at(i).key] = i;
     }
 
