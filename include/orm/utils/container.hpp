@@ -54,19 +54,24 @@ namespace Orm::Utils
         joined.reserve(static_cast<QString::size_type>(
                            countStringSizes(container, delimiterSize_ + 4)));
 
-        auto end = container.cend();
-        --end;
         auto it = container.cbegin();
+        const auto end = container.cend();
 
-        for (; it != end; ++it)
+        // Don't prepend a delimiter before the first item
+        if (it != end) {
+            joined.append(*it);
+            ++it;
+        }
+
+        while (it != end) {
             // These append-s() are better for performance
-            joined.append(*it)
-                  // No need for the if statement if it's empty or null
-                  .append(std::forward<D>(delimiter));
+            // No need to use the if statement if a delimiter is empty or null
+            joined.append(delimiter)
+                  .append(*it);
+            ++it;
+        }
 
         Q_ASSERT(it == end);
-
-        joined.append(*it);
 
         return joined;
     }

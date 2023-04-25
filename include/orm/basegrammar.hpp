@@ -172,21 +172,26 @@ namespace Query
         QString quoted;
         quoted.reserve(ContainerUtils::countStringSizes(values, 4) + 8);
 
-        auto end = values.constEnd();
-        --end;
         auto it = values.constBegin();
+        const auto end = values.constEnd();
 
-        for (; it < end; ++it)
+        // Don't prepend a comma before the first item
+        if (it != end) {
             quoted.append(SQUOTE)
                   .append(*it)
-                  .append(QStringLiteral("', "));
+                  .append(SQUOTE);
+            ++it;
+        }
+
+        while (it != end) {
+            // These append-s() are better for performance
+            quoted.append(QStringLiteral(", '"))
+                  .append(*it)
+                  .append(SQUOTE);
+            ++it;
+        }
 
         Q_ASSERT(it == end);
-
-        // These append-s() are better for performance
-        quoted.append(SQUOTE)
-              .append(*it)
-              .append(SQUOTE);
 
         return quoted;
     }
