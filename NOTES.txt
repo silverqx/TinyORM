@@ -1846,3 +1846,27 @@ art migrate --database=pgsql
 | login
 | set breakpoint and try query DB and check storage/app/sql.log if queries are logged correctly
 | done 🎉
+
+
+Performance:
+------------
+tests was done on std::vector<AttributeItem> with 1'000'000 values
+--
+
+ - appending using grow container when needed vs loop over input data, compute size and reserve
+   Result: reserve is 200% faster
+
+ - QString.append() vs QStringLiteral.arg()
+   Result: QString.append() is 50% faster
+
+ - moving vs copying data to the container
+   Result: moving is ~40-50% faster
+
+ - std::unordered_map lookup vs std::vector eg. with std::ranges::find_if
+   Result: unordered_map lookup is blazing fast 2.8s on 1'000'000 items;
+           std::vector with eg. std::ranges::find_if is unusable,
+           it so slow that on 1000 items it takes 1s, on 4000 items it takes 17s, and
+           on 100'000 items it takes forever, 1'000'000 items would take days 😮
+
+ - std::unordered_map<int, int> at() vs operator[] vs find()
+   Result: at() and operator[] are equally fast ~120ms, find() is ~35% slower
