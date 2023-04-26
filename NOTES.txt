@@ -1868,5 +1868,16 @@ tests was done on std::vector<AttributeItem> with 1'000'000 values
            it so slow that on 1000 items it takes 1s, on 4000 items it takes 17s, and
            on 100'000 items it takes forever, 1'000'000 items would take days 😮
 
+ - breaking point when the std::unordered_map takes performance advantage over manually
+   searching the std::vector:
+   Result for int (trivial types): ~1000 items - map 0ms and vector  1ms;
+                                   ~2000 items - map 0ms and vector  5ms;
+                                   ~4000 items - map 1ms and vector 21ms;
+   Result for QString:  ~200 items - map 0ms and vector  1ms;
+                        ~400 items - map 1ms and vector  7ms;
+                       ~1000 items - map 2ms and vector 52ms;
+   Conclusion: so for QString if the vector has more than 300 items then is good to initialize
+               the unordered_map and use fast lookup
+
  - std::unordered_map<int, int> at() vs operator[] vs find()
    Result: at() and operator[] are equally fast ~120ms, find() is ~35% slower
