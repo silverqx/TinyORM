@@ -49,7 +49,7 @@ namespace Tiny
         template<typename T>
         static std::map<T, QVariant> pluck(const Column &column, const Column &key);
 
-        /*! Concatenate values of a given column as a string. */
+        /*! Concatenate values of the given column as a string. */
         static QString implode(const QString &column, const QString &glue = "");
 
         /*! Find a model by its primary key. */

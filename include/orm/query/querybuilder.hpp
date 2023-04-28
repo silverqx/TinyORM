@@ -106,7 +106,7 @@ namespace Orm::Query
         template<typename T>
         std::map<T, QVariant> pluck(const Column &column, const Column &key);
 
-        /*! Concatenate values of a given column as a string. */
+        /*! Concatenate values of the given column as a string. */
         QString implode(const QString &column, const QString &glue = "");
 
         /*! Get the SQL representation of the query. */

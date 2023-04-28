@@ -53,7 +53,7 @@ namespace Tiny
 
         /* Proxy methods that internally call the toBase() (applySoftDeletes) */
         /* Retrieving results */
-        /*! Concatenate values of a given column as a string. */
+        /*! Concatenate values of the given column as a string. */
         QString implode(const QString &column, const QString &glue = "");
 
         /* Aggregates */

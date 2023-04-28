@@ -68,7 +68,7 @@ namespace Tiny::Relations
         template<typename T>
         std::map<T, QVariant> pluck(const Column &column, const Column &key) const;
 
-        /*! Concatenate values of a given column as a string. */
+        /*! Concatenate values of the given column as a string. */
         QString implode(const QString &column, const QString &glue = "") const;
 
         /*! Find a model by its primary key. */
