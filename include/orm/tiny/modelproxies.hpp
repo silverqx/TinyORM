@@ -44,7 +44,8 @@ namespace Tiny
 
         /*! Get the vector with the values of a given column. */
         static QVector<QVariant> pluck(const Column &column);
-        /*! Get the vector with the values of a given column. */
+        /*! Get the map with the values of a given column and keyed by the values
+            in the key column. */
         template<typename T>
         static std::map<T, QVariant> pluck(const Column &column, const Column &key);
 

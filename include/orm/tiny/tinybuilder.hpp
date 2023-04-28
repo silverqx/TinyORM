@@ -77,7 +77,8 @@ namespace Orm::Tiny
 
         /*! Get the vector with the values of a given column. */
         QVector<QVariant> pluck(const Column &column);
-        /*! Get the vector with the values of a given column. */
+        /*! Get the map with the values of a given column and keyed by the values
+            in the key column. */
         template<typename T>
         std::map<T, QVariant> pluck(const Column &column, const Column &key);
 
