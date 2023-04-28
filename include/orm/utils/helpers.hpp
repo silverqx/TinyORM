@@ -49,11 +49,11 @@ namespace Utils
         /*! Call the given callback with the given value then return the value. */
         template<typename T>
         static T &&tap(std::remove_reference_t<T> &&value,
-                       std::function<void(T &)> &&callback = nullptr) noexcept;
+                       std::function<void(T &)> &&callback = nullptr);
         /*! Call the given callback with the given value then return the value. */
         template<typename T>
         static T &&tap(std::remove_reference_t<T> &&value,
-                       std::function<void()> &&callback = nullptr) noexcept;
+                       std::function<void()> &&callback = nullptr);
 
         /*! Call repeatedly to incrementally create a hash value from several
             variables. */
@@ -92,8 +92,8 @@ namespace Utils
     /* public */
 
     template<typename T>
-    T &&Helpers::tap(std::remove_reference_t<T> &&value,
-                     std::function<void(T &)> &&callback) noexcept
+    T &&
+    Helpers::tap(std::remove_reference_t<T> &&value, std::function<void(T &)> &&callback)
     {
         if (callback)
             std::invoke(callback, value);
@@ -102,8 +102,8 @@ namespace Utils
     }
 
     template<typename T>
-    T &&Helpers::tap(std::remove_reference_t<T> &&value,
-                     std::function<void()> &&callback) noexcept
+    T &&
+    Helpers::tap(std::remove_reference_t<T> &&value, std::function<void()> &&callback)
     {
         if (callback)
             std::invoke(callback);
