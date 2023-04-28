@@ -153,7 +153,7 @@ namespace Types
         inline bool operator==(const SyncChanges &) const = default;
 
     protected:
-        /*! Cast the given key to primary key type. */
+        /*! Cast the given key to the primary key type. */
         template<typename T>
         inline T castKey(const QVariant &key) const;
 

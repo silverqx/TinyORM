@@ -202,7 +202,7 @@ namespace Concerns
         /*! Convert a QSqlRecord to the QVector<AttributeItem>. */
         QVector<AttributeItem> attributesFromRecord(const QSqlRecord &record) const;
 
-        /*! Cast the given key to primary key type. */
+        /*! Cast the given key to the primary key type. */
         template<typename T>
         T castKey(const QVariant &key) const;
 
