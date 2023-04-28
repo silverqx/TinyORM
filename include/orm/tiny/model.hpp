@@ -76,7 +76,7 @@ namespace Orm::Tiny
         using ModelTypeApply = T<Derived, AllRelations...>;
 
     public:
-        /*! The "type" of the primary key ID. */
+        /*! The "type" of the primary key (ID). */
         using KeyType = quint64;
 
         /*! The base model type. */

@@ -42,10 +42,10 @@ namespace Tiny
             the sole matching record. */
         static QVariant soleValue(const Column &column);
 
-        /*! Get the vector with the values of a given column. */
+        /*! Get a vector with values in the given column. */
         static QVector<QVariant> pluck(const Column &column);
-        /*! Get the map with the values of a given column and keyed by the values
-            in the key column. */
+        /*! Get a map with values in the given column and keyed by values in the key
+            column. */
         template<typename T>
         static std::map<T, QVariant> pluck(const Column &column, const Column &key);
 

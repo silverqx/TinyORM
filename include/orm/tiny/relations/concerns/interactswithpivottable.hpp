@@ -243,10 +243,10 @@ namespace Concerns
         /*! Detach models from the relationship using a custom class. */
         int detachUsingCustomClass(const QVector<QVariant> &ids) const;
 
-        /*! Obtain ids from the Related models. */
+        /*! Obtain IDs from the Related models. */
         QVector<QVariant>
         getRelatedIds(const QVector<std::reference_wrapper<Related>> &models) const;
-        /*! Obtain ids from the vector of pivot models. */
+        /*! Obtain IDs from the vector of pivot models. */
         QVector<QVariant>
         getRelatedIds(const QVector<PivotType> &pivots) const;
 
