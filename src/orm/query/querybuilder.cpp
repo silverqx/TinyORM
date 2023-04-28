@@ -135,16 +135,16 @@ QVector<QVariant> Builder::pluck(const Column &column)
 
 QString Builder::implode(const QString &column, const QString &glue)
 {
-    const auto itemsRaw = pluck(column);
+    const auto valuesRaw = pluck(column);
 
-    const auto items = itemsRaw
+    const auto values = valuesRaw
             | ranges::views::transform([](const auto &item)
     {
         return item.template value<QString>();
     })
             | ranges::to<QStringList>();
 
-    return items.join(glue);
+    return values.join(glue);
 }
 
 QString Builder::toSql()
