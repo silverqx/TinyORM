@@ -138,9 +138,9 @@ QString Builder::implode(const QString &column, const QString &glue)
     const auto valuesRaw = pluck(column);
 
     const auto values = valuesRaw
-            | ranges::views::transform([](const auto &item)
+            | ranges::views::transform([](const auto &value)
     {
-        return item.template value<QString>();
+        return value.template value<QString>();
     })
             | ranges::to<QStringList>();
 
