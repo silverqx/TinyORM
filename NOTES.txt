@@ -1881,3 +1881,22 @@ tests was done on std::vector<AttributeItem> with 1'000'000 values
 
  - std::unordered_map<int, int> at() vs operator[] vs find()
    Result: at() and operator[] are equally fast ~120ms, find() is ~35% slower
+
+
+Qt confusions notes:
+--------------------
+
+QVariant null vs invalid:
+
+ - null QVariant is valid
+ - invalid QVariant is also null!
+ - so checks like this (attribute.isNull() || !attribute.isValid()) are redundand because it would
+   be enough to only check (attribute.isNull()), but I'm checking both in most cases.
+
+    QVariant vnull {QMetaType(QMetaType::QString)};
+    QVariant vinvalid;
+
+    qDebug() << vnull.isNull();
+    qDebug() << !vnull.isValid();
+    qDebug() << vinvalid.isNull();
+    qDebug() << !vinvalid.isValid();
