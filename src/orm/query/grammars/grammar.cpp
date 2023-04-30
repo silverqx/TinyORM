@@ -151,11 +151,11 @@ QString Grammar::compileRandom(const QString &/*unused*/) const
     return QStringLiteral("RANDOM()");
 }
 
-const QVector<QString> &Grammar::getOperators() const
+const std::unordered_set<QString> &Grammar::getOperators() const
 {
     /* I make it this way, I don't declare it as pure virtual intentionally, this gives
        me oportunity to instantiate the Grammar class eg. in tests. */
-    static const QVector<QString> cachedOperators;
+    static const std::unordered_set<QString> cachedOperators;
 
     return cachedOperators;
 }

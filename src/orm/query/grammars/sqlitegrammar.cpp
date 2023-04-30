@@ -71,10 +71,10 @@ QString SQLiteGrammar::compileLock(const QueryBuilder &/*unused*/) const
     return EMPTY;
 }
 
-const QVector<QString> &SQLiteGrammar::getOperators() const
+const std::unordered_set<QString> &SQLiteGrammar::getOperators() const
 {
-    static const QVector<QString> cachedOperators {
-        EQ, LT, GT, LE, GE, NE_, NE,
+    static const std::unordered_set<QString> cachedOperators {
+        EQ, LT, GT, LE, GE, NE, NE_,
         LIKE, NLIKE, ILIKE,
         B_AND, B_OR, QLatin1String("<<"), QLatin1String(">>"),
     };

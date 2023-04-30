@@ -80,9 +80,9 @@ QString PostgresGrammar::compileLock(const QueryBuilder &query) const
     return std::get<QString>(lock);
 }
 
-const QVector<QString> &PostgresGrammar::getOperators() const
+const std::unordered_set<QString> &PostgresGrammar::getOperators() const
 {
-    static const QVector<QString> cachedOperators {
+    static const std::unordered_set<QString> cachedOperators {
         EQ, LT, GT, LE, GE, NE, NE_,
         LIKE, NLIKE, QLatin1String("between"), ILIKE, QLatin1String("not ilike"),
         "~", B_AND, B_OR, "#", "<<", ">>", "<<=", ">>=",

@@ -5,8 +5,6 @@
 #include "orm/macros/systemheader.hpp"
 TINY_SYSTEM_HEADER
 
-#include <unordered_set>
-
 #include "orm/query/concerns/buildsqueries.hpp"
 #include "orm/query/grammars/grammar.hpp"
 #include "orm/utils/query.hpp"
@@ -946,7 +944,7 @@ namespace Orm::Query
         void checkBindingType(BindingType type) const;
 
         /*! All of the available clause operators. */
-        static const QVector<QString> &getOperators();
+        static const std::unordered_set<QString> &getOperators();
 
         /*! The database connection instance. */
         std::shared_ptr<DatabaseConnection> m_connection;

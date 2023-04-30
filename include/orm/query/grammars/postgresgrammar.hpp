@@ -52,7 +52,7 @@ namespace Orm::Query::Grammars
         QString compileLock(const QueryBuilder &query) const override;
 
         /*! Get the grammar specific operators. */
-        const QVector<QString> &getOperators() const override;
+        const std::unordered_set<QString> &getOperators() const override;
 
         /*! Compile a basic where clause. */
         QString whereBasic(const WhereConditionItem &where) const;

@@ -6,6 +6,7 @@
 TINY_SYSTEM_HEADER
 
 #include <optional>
+#include <unordered_set>
 
 #include "orm/basegrammar.hpp"
 
@@ -74,7 +75,7 @@ namespace Orm::Query::Grammars
         virtual QString compileRandom(const QString &seed) const;
 
         /*! Get the grammar specific operators. */
-        virtual const QVector<QString> &getOperators() const;
+        virtual const std::unordered_set<QString> &getOperators() const;
 
     protected:
         /*! Select component types. */

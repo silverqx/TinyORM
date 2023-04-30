@@ -48,7 +48,7 @@ namespace Orm::Query::Grammars
         QString compileLock(const QueryBuilder &query) const override;
 
         /*! Get the grammar specific operators. */
-        const QVector<QString> &getOperators() const override;
+        const std::unordered_set<QString> &getOperators() const override;
 
     protected:
         /*! Map the ComponentType to a Grammar::compileXx() methods. */

@@ -79,9 +79,11 @@ QString MySqlGrammar::compileRandom(const QString &seed) const
     return QStringLiteral("RAND(%1)").arg(seed);
 }
 
-const QVector<QString> &MySqlGrammar::getOperators() const
+const std::unordered_set<QString> &MySqlGrammar::getOperators() const
 {
-    static const QVector<QString> cachedOperators {QLatin1String("sounds like")};
+    static const std::unordered_set<QString> cachedOperators {
+        QLatin1String("sounds like"),
+    };
 
     return cachedOperators;
 }

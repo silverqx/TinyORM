@@ -43,7 +43,7 @@ namespace Orm::Query::Grammars
         QString compileRandom(const QString &seed) const override;
 
         /*! Get the grammar specific operators. */
-        const QVector<QString> &getOperators() const override;
+        const std::unordered_set<QString> &getOperators() const override;
 
     protected:
         /*! Wrap a single string in keyword identifiers. */

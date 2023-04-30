@@ -1,7 +1,5 @@
 #include "orm/schema/grammars/postgresschemagrammar.hpp"
 
-#include <unordered_set>
-
 #include "orm/databaseconnection.hpp"
 #include "orm/exceptions/logicerror.hpp"
 #include "orm/macros/likely.hpp"

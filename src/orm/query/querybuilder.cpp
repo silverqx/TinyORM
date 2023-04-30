@@ -1781,10 +1781,10 @@ void Builder::checkBindingType(const BindingType type) const
                 .arg(__tiny_func__));
 }
 
-const QVector<QString> &Builder::getOperators()
+const std::unordered_set<QString> &Builder::getOperators()
 {
-    static const QVector<QString> cachedOperators {
-        EQ, LT, GT, LE, GE, NE_, NE, QLatin1String("<=>"),
+    static const std::unordered_set<QString> cachedOperators {
+        EQ, LT, GT, LE, GE, NE, NE_, QLatin1String("<=>"),
         LIKE, QLatin1String("like binary"), NLIKE, ILIKE,
         B_AND, B_OR, "^", "<<", ">>", "&~",
         QLatin1String("rlike"),  QLatin1String("not rlike"),
