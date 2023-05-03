@@ -387,6 +387,7 @@ namespace Orm::Tiny::Relations
                 std::is_same_v<RelationType, QVector<Related>>
             )
                 dictionary[foreign] << std::move(result);
+
             else
                 // Moves to the std::optional
                 dictionary.insert(foreign, std::move(result));
