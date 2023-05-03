@@ -990,7 +990,7 @@ namespace Concerns
             if (!std::holds_alternative<Result>(relationVariant))
                 throw Orm::Exceptions::InvalidTemplateArgumentError(
                         QStringLiteral(
-                            "The relation '%1' is many type relation, use "
+                            "The relation '%1' is many type relation, use the "
                             "%2<%3>() method overload without an 'Orm::One' tag.")
                         .arg(relation, source,
                              TypeUtils::classPureBasename<Related>()));
@@ -999,7 +999,7 @@ namespace Concerns
             if (!std::holds_alternative<Result>(relationVariant))
                 throw Orm::Exceptions::InvalidTemplateArgumentError(
                         QStringLiteral(
-                            "The relation '%1' is one type relation, use "
+                            "The relation '%1' is one type relation, use the "
                             "%2<%3, Orm::One>() method overload with an 'Orm::One' tag.")
                         .arg(relation, source,
                              TypeUtils::classPureBasename<Related>()));
