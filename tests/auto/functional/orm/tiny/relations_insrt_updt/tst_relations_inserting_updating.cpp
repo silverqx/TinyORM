@@ -278,10 +278,10 @@ void tst_Relations_Inserting_Updating::saveMany_OnHasOneOrMany() const
     QVERIFY(savedFile2[ID]->value<quint64>() > 9);
 
     // saveMany() have to return reference to the same 'models' vector
-    QVERIFY(reinterpret_cast<uintptr_t>(filesToSave.data())
-            != reinterpret_cast<uintptr_t>(&savedFile1));
-    QVERIFY(reinterpret_cast<uintptr_t>(&filesToSave[1])
-            != reinterpret_cast<uintptr_t>(&savedFile2));
+    QVERIFY(reinterpret_cast<uintptr_t>(filesToSave.data()) ==
+            reinterpret_cast<uintptr_t>(&savedFile1));
+    QVERIFY(reinterpret_cast<uintptr_t>(&filesToSave[1]) ==
+            reinterpret_cast<uintptr_t>(&savedFile2));
 
     // Obtain files and verify saved values
     auto file1Verify = TorrentPreviewableFile::find(savedFile1[ID]);
