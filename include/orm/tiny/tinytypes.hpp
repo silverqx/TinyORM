@@ -71,7 +71,7 @@ namespace Relations
 
     /*! Tag for Model::getRelationshipFromMethod() to return QVector<Related>
         type ( 'Many' relation types ), only internal type for now, used as the template
-        tag in the Model::pushVisited. */
+        tag in the HasRelationships::pushVisited. */
     struct Many {};
 
     /*! Options parameter type used in Model save() method. */
