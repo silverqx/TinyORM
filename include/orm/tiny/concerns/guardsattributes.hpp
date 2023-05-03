@@ -306,6 +306,7 @@ namespace Orm::Tiny::Concerns
             return attributes;
 
         QVector<AttributeItem> result;
+        result.reserve(attributes.size());
 
         for (const auto &attribute : attributes)
             if (fillable.contains(attribute.key))
@@ -325,6 +326,7 @@ namespace Orm::Tiny::Concerns
             return std::move(attributes);
 
         QVector<AttributeItem> result;
+        result.reserve(attributes.size());
 
         for (auto &attribute : attributes)
             if (fillable.contains(attribute.key))
