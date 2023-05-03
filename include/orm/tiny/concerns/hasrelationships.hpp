@@ -1170,7 +1170,9 @@ namespace Concerns
                                         typename Relation::element_type>)
         {
             for (auto *const relatedModel : getRelationValue<Related>(relationName))
-                // WARNING check and add note after, if many type relation QVector can contain nullptr silverqx
+                /* I have checked it more times and the getRelation/Value() related
+                   methods can't contain the nullptr in any case but I leave this check
+                   here anyway. */
                 if (relatedModel)
                     relatedModel->touchOwners();
         }
