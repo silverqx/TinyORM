@@ -922,7 +922,7 @@ namespace Concerns
 
         // Check relation type to avoid std::bad_variant_access
         checkRelationType<QVector<Related>, Related>(
-                    relationVariant, relation, "getRelation");
+                    relationVariant, relation, QStringLiteral("getRelation"));
 
         /* Obtain related models from data member hash as QVector, it is internal
            format and transform it into a Container of pointers to related models,
@@ -944,7 +944,7 @@ namespace Concerns
 
         // Check relation type to avoid std::bad_variant_access
         checkRelationType<std::optional<Related>, Related>(
-                    relationVariant, relation, "getRelation");
+                    relationVariant, relation, QStringLiteral("getRelation"));
 
         /* Obtain related model from data member hash and return it as a pointer or
            nullptr if no model is associated, so a user can directly modify this
@@ -974,7 +974,8 @@ namespace Concerns
         this->resetRelationStore();
 
         // Check relation type to avoid std::bad_variant_access
-        checkRelationType<Result, Related>(lazyResult, relation, "getRelationValue");
+        checkRelationType<Result, Related>(lazyResult, relation,
+                                           QStringLiteral("getRelationValue"));
 
         return std::get<Result>(lazyResult);
     }
