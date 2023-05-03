@@ -325,6 +325,7 @@ namespace Orm::Tiny::Relations
             const QVector<QVector<AttributeItem>> &records) const
     {
         QVector<Related> instances;
+        instances.reserve(records.size());
 
         for (const auto &record : records)
             instances << create(record);
@@ -338,6 +339,7 @@ namespace Orm::Tiny::Relations
             QVector<QVector<AttributeItem>> &&records) const
     {
         QVector<Related> instances;
+        instances.reserve(records.size());
 
         for (auto &&record : records)
             instances << create(std::move(record));
@@ -376,6 +378,7 @@ namespace Orm::Tiny::Relations
     HasOneOrMany<Model, Related>::buildDictionary(QVector<Related> &&results) const
     {
         QHash<typename Model::KeyType, RelationType> dictionary;
+        dictionary.reserve(results.size());
 
         for (auto &&result : results)
             if constexpr (

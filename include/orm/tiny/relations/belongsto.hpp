@@ -241,6 +241,7 @@ namespace Orm::Tiny::Relations
     BelongsTo<Model, Related>::buildDictionary(QVector<Related> &&results) const
     {
         QHash<typename Model::KeyType, Related> dictionary;
+        dictionary.reserve(results.size());
 
         /*! Build model dictionary keyed by the parent's primary key. */
         for (auto &&result : results)

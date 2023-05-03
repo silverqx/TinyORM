@@ -467,6 +467,7 @@ namespace Orm::Tiny::Relations
            of the relation so that we will easily and quickly match them to their
            parents without having a possibly slow inner loops for every models. */
         QHash<typename Model::KeyType, QVector<Related>> dictionary;
+        dictionary.reserve(results.size());
 
         /*! Build model dictionary keyed by the parent's primary key. */
         for (auto &&result : results) {
