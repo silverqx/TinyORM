@@ -303,8 +303,8 @@ function seedTables(string $connection): void
             [1, 'andrej', false, null,                   '2022-01-01 14:51:23', '2022-01-01 17:46:31', null],
             [2, 'silver', false, null,                   '2022-01-02 14:51:23', '2022-01-02 17:46:31', null],
             [3, 'peter',  true,  'no torrents no roles', '2022-01-03 14:51:23', '2022-01-03 17:46:31', null],
-            [5, 'obiwan', true,  'test SoftDeletes',     '2022-01-04 14:51:23', '2022-01-04 17:46:31', '2022-01-04 20:46:31'],
-            [4, 'jack',   true,  'test SoftDeletes',     '2022-01-05 14:51:23', '2022-01-05 17:46:31', '2022-01-05 20:46:31'],
+            [4, 'jack',   true,  'test SoftDeletes',     '2022-01-04 14:51:23', '2022-01-04 17:46:31', '2022-01-04 20:46:31'],
+            [5, 'obiwan', true,  'test SoftDeletes',     '2022-01-05 14:51:23', '2022-01-05 17:46:31', '2022-01-05 20:46:31'],
         ]));
 
     Capsule::table('roles', null, $connection)->insert(
