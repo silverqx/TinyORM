@@ -1061,7 +1061,7 @@ namespace Orm::Tiny::Relations
 
             return true;
         },
-                column, alias);
+            column, alias);
     }
 
     /* Inserting/Updating operations on the relationship */

@@ -269,7 +269,7 @@ namespace Concerns
 
             return true;
         },
-                column, alias);
+            column, alias);
     }
 
     template<ModelConcept Model>
