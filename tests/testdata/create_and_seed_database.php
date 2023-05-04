@@ -357,7 +357,7 @@ function seedTables(string $connection): void
             [6, 5,    0, 'test5_file1.mkv', 2048, 999,  NULL,                                    '2021-01-05 14:51:23', '2021-01-05 17:46:31'],
             [7, 5,    1, 'test5_file2.mkv', 2560, 890,  'for tst_BaseModel::remove()/destroy()', '2021-01-02 14:55:23', '2021-01-02 17:47:31'],
             [8, 5,    2, 'test5_file3.mkv', 2570, 896,  'for tst_BaseModel::destroy()',          '2021-01-02 14:56:23', '2021-01-02 17:48:31'],
-            [9, NULL, 0, 'test0_file0.mkv', 1440, 420,  'no torrent parent model',               '2021-01-02 14:56:23', '2021-01-02 17:48:31'],
+            [9, NULL, 0, 'test0_file0.mkv', 1440, 420,  'no torrent parent model',               '2021-01-06 14:57:23', '2021-01-06 17:49:31'],
         ]));
 
     Capsule::table('torrent_previewable_file_properties', null, $connection)->insert(
