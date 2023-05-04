@@ -890,7 +890,7 @@ namespace Orm::Tiny
         /* I have to make a copy here of this, because of eagerLoadRelations(),
            the solution would be to add a whole new chain for eager load relations,
            which will be able to work only on one Model &, but it is around
-           refactoring of 10-15 methods, or add a variant which can process
+           10-15 methods refactoring, or add a variant which can process
            QVector<std::reference_wrapper<Derived>>.
            For now, I have made a copy here and save it into the QVector and after
            that move relations from this copy to the real instance. */
