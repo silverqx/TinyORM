@@ -427,6 +427,15 @@ function seedTables(string $connection): void
             [4, 4, 'orange', 3, '2021-02-14 12:41:28', '2021-02-14 22:17:11'],
         ]));
 
+    // Insert
+//    Capsule::table('types', null, $connection)->insert(
+//        combineValues(['id', 'bool_true', 'bool_false', 'smallint', 'smallint_u', 'int', 'int_u', 'bigint', 'bigint_u', 'double', 'double_nan', 'double_infinity', 'decimal', 'decimal_nan', 'decimal_infinity', 'decimal_down', 'decimal_up', 'string', 'text', 'timestamp', 'datetime', 'date', 'binary'], [
+//            [1, true, false, 32760, 32761, 2147483640, 2147483641, 9223372036854775800, 9223372036854775801, 1000000.123, "double_nan", "double_infinity", 100000.12, "double_nan", "double_infinity", 100.124, 100.125, 'string text', 'text text', '2022-09-09 08:41:28', '2022-09-10 08:41:28', '2022-09-11', QByteArray::fromHex("517420697320677265617421")],
+//            [2, null, null, -32762, null, -2147483642, null, -9223372036854775802, null, -1000000.123, null, null, -100000.12, null, null, -100.125, -100.124, null, null, null, null, null, null],
+//            // All types null
+//            [3, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null],
+//        ]));
+
     Capsule::table('albums', null, $connection)->insert(
         combineValues(['id', 'name', 'note', 'created_at', 'updated_at'], [
             [1, 'album1', null,          '2023-01-01 12:12:14', '2023-02-01 16:54:28'],
@@ -470,6 +479,7 @@ function fixPostgresSequences(): void
         'file_property_properties_id_seq'            => 9,
         'torrent_tags_id_seq'                        => 6,
         'tag_properties_id_seq'                      => 5,
+//        'types_id_seq'                               => 4,
         'albums_id_seq'                              => 8,
         'album_images_id_seq'                        => 4,
     ];
