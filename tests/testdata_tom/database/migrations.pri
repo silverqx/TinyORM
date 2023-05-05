@@ -16,3 +16,5 @@ HEADERS += \
     $$PWD/migrations/2022_05_11_171200_create_tag_properties_table.hpp \
     $$PWD/migrations/2022_05_11_171300_create_types_table.hpp \
     $$PWD/migrations/2022_05_11_171400_create_datetime_table.hpp \
+    $$PWD/migrations/2022_05_11_171500_create_albums_table.hpp \
+    $$PWD/migrations/2022_05_11_171600_create_album_images_table.hpp \

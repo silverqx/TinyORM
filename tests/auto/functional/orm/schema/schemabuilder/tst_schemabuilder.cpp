@@ -199,10 +199,11 @@ void tst_SchemaBuilder::getAllTables() const
     const auto tablesActual = getAllTablesFor(connection);
 
     const QSet<QString> tablesExpected {
-        "datetimes", "file_property_properties", "migrations", "roles", "role_user",
-        "settings", "tag_properties", "tag_torrent", "torrents", "torrent_peers",
-        "torrent_previewable_files", "torrent_previewable_file_properties",
-        "torrent_tags", "types", "users", "user_phones"
+        "albums", "album_images", "datetimes", "file_property_properties",
+        "migrations", "roles", "role_user", "settings", "tag_properties",
+        "tag_torrent", "torrents", "torrent_peers", "torrent_previewable_files",
+        "torrent_previewable_file_properties", "torrent_tags", "types", "users",
+        "user_phones",
     };
 
     QCOMPARE(tablesActual, tablesExpected);

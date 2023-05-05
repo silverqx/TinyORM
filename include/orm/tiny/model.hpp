@@ -155,7 +155,7 @@ namespace Orm::Tiny
         static std::unique_ptr<TinyBuilder<Derived>> on(const QString &connection = "");
 
         /*! Get all of the models from the database. */
-        static QVector<Derived> all(const QVector<Column> &columns = {ASTERISK});
+        static ModelsCollection<Derived> all(const QVector<Column> &columns = {ASTERISK});
 
         /*! Destroy the models for the given IDs. */
         static std::size_t destroy(const QVector<QVariant> &ids);
@@ -655,7 +655,7 @@ namespace Orm::Tiny
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
-    QVector<Derived>
+    ModelsCollection<Derived>
     Model<Derived, AllRelations...>::all(const QVector<Column> &columns)
     {
         return query()->get(columns);
@@ -894,7 +894,7 @@ namespace Orm::Tiny
            QVector<std::reference_wrapper<Derived>>.
            For now, I have made a copy here and save it into the QVector and after
            that move relations from this copy to the real instance. */
-        QVector<Derived> models {model()};
+        ModelsCollection<Derived> models {model()};
 
         builder->eagerLoadRelations(models);
 

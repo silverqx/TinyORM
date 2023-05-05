@@ -2,6 +2,8 @@ TEMPLATE = subdirs
 
 SUBDIRS = \
     castattributes \
+    collection_models \
+    collection_relations \
     model \
     model_conn_indep \
     model_qdatetime \

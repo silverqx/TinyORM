@@ -140,6 +140,27 @@ namespace Seeders
                 {3, NullVariant::Bool(), NullVariant::Bool(), NullVariant::Short(), NullVariant::UShort(), NullVariant::Int(), NullVariant::UInt(), NullVariant::LongLong(), NullVariant::ULongLong(), NullVariant::Double(), NullVariant::Double(), NullVariant::Double(), NullVariant::Double(), NullVariant::Double(), NullVariant::Double(), NullVariant::Double(), NullVariant::Double(), NullVariant::QString(), NullVariant::QString(), NullVariant::QDateTime(), NullVariant::QDateTime(), NullVariant::QDateTime(), NullVariant::QByteArray()},
             });
 
+            DB::table("albums")->insert({ID, NAME, "note", CREATED_AT, UPDATED_AT},
+            {
+                {1, "album1", NullVariant::QString(), "2023-01-01 12:21:14", "2023-02-01 16:54:28"},
+                {2, "album2", NullVariant::QString(), "2023-01-02 12:21:14", "2023-02-02 16:54:28"},
+                {3, "album3", "album3 note",          "2023-01-03 12:21:14", "2023-02-03 16:54:28"},
+                {4, "album4", "no images",            "2023-01-04 12:21:14", "2023-02-04 16:54:28"},
+            });
+
+            DB::table("album_images")->insert({ID, "album_id", NAME, "ext", SIZE_, CREATED_AT, UPDATED_AT},
+            {
+                {1, 1,                        "album1_image1", "png", 726, "2023-03-01 15:24:37", "2023-04-01 14:35:47"},
+                {2, 2,                        "album2_image1", "png", 424, "2023-03-02 15:24:37", "2023-04-02 14:35:47"},
+                {3, 2,                        "album2_image2", "jpg", 512, "2023-03-03 15:24:37", "2023-04-03 14:35:47"},
+                {4, 2,                        "album2_image3", "jpg", 324, "2023-03-04 15:24:37", "2023-04-04 14:35:47"},
+                {5, 2,                        "album2_image4", "png", 654, "2023-03-05 15:24:37", "2023-04-05 14:35:47"},
+                {6, 2,                        "album2_image5", "gif", 294, "2023-03-06 15:24:37", "2023-04-06 14:35:47"},
+                {7, 3,                        "album3_image1", "jpg", 718, "2023-03-07 15:24:37", "2023-04-07 14:35:47"},
+                {8, NullVariant::ULongLong(), "image1",        "jpg", 498, "2023-03-08 15:24:37", "2023-04-08 14:35:47"},
+                {9, NullVariant::ULongLong(), "image2",        "jpg", 568, "2023-03-09 15:24:37", "2023-04-09 14:35:47"},
+            });
+
             // Fix sequence numbers for the PostgreSQL
             if (isPostgreSql)
                 fixPostgresSequences();
@@ -169,6 +190,8 @@ namespace Seeders
             {QStringLiteral("torrent_tags_id_seq"),                         6},
             {QStringLiteral("tag_properties_id_seq"),                       5},
             {QStringLiteral("types_id_seq"),                                4},
+            {QStringLiteral("albums_id_seq"),                               5},
+            {QStringLiteral("album_images_id_seq"),                         8},
         };
 
         for (const auto &[sequence, id] : sequences)

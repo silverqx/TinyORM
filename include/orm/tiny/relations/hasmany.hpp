@@ -40,20 +40,22 @@ namespace Orm::Tiny::Relations
 
         /* Relation related operations */
         /*! Initialize the relation on a set of models. */
-        QVector<Model> &
-        initRelation(QVector<Model> &models, const QString &relation) const override;
+        ModelsCollection<Model> &
+        initRelation(ModelsCollection<Model> &models,
+                     const QString &relation) const override;
 
         /*! Match the eagerly loaded results to their parents. */
-        inline void match(QVector<Model> &models, QVector<Related> &&results,
-                          const QString &relation) const override;
+        inline void
+        match(ModelsCollection<Model> &models, ModelsCollection<Related> &&results,
+              const QString &relation) const override;
 
         /*! Get the results of the relationship. */
-        std::variant<QVector<Related>, std::optional<Related>>
+        std::variant<ModelsCollection<Related>, std::optional<Related>>
         getResults() const override;
 
         /* TinyBuilder proxy methods */
         /*! Find multiple models by their primary keys. */
-        inline QVector<Related>
+        inline ModelsCollection<Related>
         findMany(const QVector<QVariant> &ids,
                  const QVector<Column> &columns = {ASTERISK}) const;
 
@@ -93,34 +95,34 @@ namespace Orm::Tiny::Relations
     /* Relation related operations */
 
     template<class Model, class Related>
-    QVector<Model> &
-    HasMany<Model, Related>::initRelation(QVector<Model> &models,
+    ModelsCollection<Model> &
+    HasMany<Model, Related>::initRelation(ModelsCollection<Model> &models,
                                           const QString &relation) const
     {
         for (auto &model : models)
-            model.template setRelation<Related>(relation, QVector<Related>());
+            model.template setRelation<Related>(relation, ModelsCollection<Related>());
 
         return models;
     }
 
     template<class Model, class Related>
     void HasMany<Model, Related>::match(
-            QVector<Model> &models, QVector<Related> &&results,
+            ModelsCollection<Model> &models, ModelsCollection<Related> &&results,
             const QString &relation) const
     {
-        this->template matchOneOrMany<QVector<Related>>(models, std::move(results),
-                                                        relation);
+        this->template matchOneOrMany<ModelsCollection<Related>>(
+                    models, std::move(results), relation);
     }
 
     template<class Model, class Related>
-    std::variant<QVector<Related>, std::optional<Related>>
+    std::variant<ModelsCollection<Related>, std::optional<Related>>
     HasMany<Model, Related>::getResults() const
     {
         // Model doesn't contain primary key ( eg. empty Model instance )
         if (const auto key = this->getParentKey();
             !key.isValid() || key.isNull()
         )
-            return QVector<Related>();
+            return ModelsCollection<Related>();
 
         return this->m_query->get();
     }
@@ -128,7 +130,7 @@ namespace Orm::Tiny::Relations
     /* TinyBuilder proxy methods */
 
     template<class Model, class Related>
-    QVector<Related>
+    ModelsCollection<Related>
     HasMany<Model, Related>::findMany(
             const QVector<QVariant> &ids, const QVector<Column> &columns) const
     {

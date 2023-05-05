@@ -150,6 +150,7 @@ headersList += \
         $$PWD/orm/tiny/tinyconcepts.hpp \
         $$PWD/orm/tiny/tinytypes.hpp \
         $$PWD/orm/tiny/types/connectionoverride.hpp \
+        $$PWD/orm/tiny/types/modelscollection.hpp \
         $$PWD/orm/tiny/types/syncchanges.hpp \
         $$PWD/orm/tiny/utils/attribute.hpp \
 

@@ -56,17 +56,18 @@ namespace Orm::Tiny::Relations
         void addConstraints() const override;
 
         /*! Set the constraints for an eager load of the relation. */
-        void addEagerConstraints(const QVector<Model> &models) override;
+        void addEagerConstraints(const ModelsCollection<Model> &models) override;
 
         /*! Initialize the relation on a set of models. */
-        QVector<Model> &
-        initRelation(QVector<Model> &models, const QString &relation) const override;
-
+        ModelsCollection<Model> &
+        initRelation(ModelsCollection<Model> &models,
+                     const QString &relation) const override;
         /*! Match the eagerly loaded results to their parents. */
-        void match(QVector<Model> &models, QVector<Related> &&results,
+        void match(ModelsCollection<Model> &models, ModelsCollection<Related> &&results,
                    const QString &relation) const override;
+
         /*! Get the results of the relationship. */
-        std::variant<QVector<Related>, std::optional<Related>>
+        std::variant<ModelsCollection<Related>, std::optional<Related>>
         getResults() const override;
 
         /* Updating relationship */
@@ -102,10 +103,11 @@ namespace Orm::Tiny::Relations
     protected:
         /* Relation related operations */
         /*! Gather the keys from a vector of related models. */
-        QVector<QVariant> getEagerModelKeys(const QVector<Model> &models) const;
+        QVector<QVariant> getEagerModelKeys(const ModelsCollection<Model> &models) const;
+
         /*! Build model dictionary keyed by the parent's primary key. */
         QHash<typename Model::KeyType, Related>
-        buildDictionary(QVector<Related> &&results) const;
+        buildDictionary(ModelsCollection<Related> &&results) const;
 
         /*! Make a new related instance for the given model. */
         inline Related newRelatedInstanceFor(const Model &/*unused*/) const override;
@@ -192,7 +194,7 @@ namespace Orm::Tiny::Relations
 
     template<class Model, class Related>
     void
-    BelongsTo<Model, Related>::addEagerConstraints(const QVector<Model> &models)
+    BelongsTo<Model, Related>::addEagerConstraints(const ModelsCollection<Model> &models)
     {
         /* We'll grab the primary key name of the related models since it could be set to
            a non-standard name and not "id". We will then construct the constraint for
@@ -202,8 +204,8 @@ namespace Orm::Tiny::Relations
     }
 
     template<class Model, class Related>
-    QVector<Model> &
-    BelongsTo<Model, Related>::initRelation(QVector<Model> &models,
+    ModelsCollection<Model> &
+    BelongsTo<Model, Related>::initRelation(ModelsCollection<Model> &models,
                                             const QString &relation) const
     {
         for (auto &model : models)
@@ -215,7 +217,7 @@ namespace Orm::Tiny::Relations
 
     template<class Model, class Related>
     void BelongsTo<Model, Related>::match(
-            QVector<Model> &models, QVector<Related> &&results,
+            ModelsCollection<Model> &models, ModelsCollection<Related> &&results,
             const QString &relation) const
     {
         /* First we will get to build a dictionary of the child models by their primary
@@ -238,7 +240,7 @@ namespace Orm::Tiny::Relations
 
     template<class Model, class Related>
     QHash<typename Model::KeyType, Related>
-    BelongsTo<Model, Related>::buildDictionary(QVector<Related> &&results) const
+    BelongsTo<Model, Related>::buildDictionary(ModelsCollection<Related> &&results) const
     {
         QHash<typename Model::KeyType, Related> dictionary;
         dictionary.reserve(results.size());
@@ -253,7 +255,7 @@ namespace Orm::Tiny::Relations
     }
 
     template<class Model, class Related>
-    std::variant<QVector<Related>, std::optional<Related>>
+    std::variant<ModelsCollection<Related>, std::optional<Related>>
     BelongsTo<Model, Related>::getResults() const
     {
         // Model doesn't contain foreign key ( eg empty Model instance )
@@ -369,7 +371,8 @@ namespace Orm::Tiny::Relations
 
     template<class Model, class Related>
     QVector<QVariant>
-    BelongsTo<Model, Related>::getEagerModelKeys(const QVector<Model> &models) const
+    BelongsTo<Model, Related>::getEagerModelKeys(
+            const ModelsCollection<Model> &models) const
     {
         QVector<QVariant> keys;
         keys.reserve(models.size());

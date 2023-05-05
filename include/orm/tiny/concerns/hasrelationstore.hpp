@@ -129,7 +129,7 @@ namespace Orm::Tiny::Concerns
             EagerRelationStore(
                     NotNull<HasRelationStore *> hasRelationStore,
                     const Tiny::TinyBuilder<Derived> &builder,
-                    QVector<Derived> &models, const WithItem &relation);
+                    ModelsCollection<Derived> &models, const WithItem &relation);
             /*! Virtual destructor. */
             inline virtual ~EagerRelationStore() final = default;
 
@@ -144,7 +144,7 @@ namespace Orm::Tiny::Concerns
             /*! Models on which to do an eager load, hydrated models that were obtained
                 from the database and these models will be passed as parameter
                 to the TinyBuilder. */
-            NotNull<QVector<Derived> *> m_models;
+            NotNull<ModelsCollection<Derived> *> m_models;
             /*! The WithItem that will be passed as parameter to the TinyBuilder. */
             NotNull<const WithItem *> m_relation;
         };
@@ -208,9 +208,9 @@ namespace Orm::Tiny::Concerns
             template<RelationshipMethod<Derived> Method>
             void visited(Method method);
 
-            // TODO templated LazyRelationStore by Container too, QVector to Container silverqx
+            // TODO templated LazyRelationStore by Container too, ModelsCollection to Container silverqx
             /*! The result of lazy load. */
-            std::variant<QVector<Related>, std::optional<Related>> m_result;
+            std::variant<ModelsCollection<Related>, std::optional<Related>> m_result;
         };
 
         /*! The store to obtain the related table name for BelongsToMany relation. */
@@ -286,7 +286,7 @@ namespace Orm::Tiny::Concerns
         /*! Factory method to create an eager store. */
         BaseRelationStore &
         createEagerStore(const Tiny::TinyBuilder<Derived> &builder,
-                         QVector<Derived> &models, const WithItem &relation);
+                         ModelsCollection<Derived> &models, const WithItem &relation);
         /*! Factory method to create the push store. */
         BaseRelationStore &createPushStore(RelationsType<AllRelations...> &models);
         /*! Factory method to create the touch owners store. */
@@ -443,7 +443,7 @@ namespace Orm::Tiny::Concerns
     HasRelationStore<Derived, AllRelations...>::EagerRelationStore::EagerRelationStore(
             NotNull<HasRelationStore *> hasRelationStore,
             const Tiny::TinyBuilder<Derived> &builder,
-            QVector<Derived> &models, const WithItem &relation
+            ModelsCollection<Derived> &models, const WithItem &relation
     )
         : BaseRelationStore(hasRelationStore, RelationStoreType::EAGER)
         , m_builder(&builder)
@@ -744,7 +744,7 @@ namespace Orm::Tiny::Concerns
     template<typename Derived, AllRelationsConcept ...AllRelations>
     typename HasRelationStore<Derived, AllRelations...>::BaseRelationStore &
     HasRelationStore<Derived, AllRelations...>::createEagerStore(
-            const Tiny::TinyBuilder<Derived> &builder, QVector<Derived> &models,
+            const Tiny::TinyBuilder<Derived> &builder, ModelsCollection<Derived> &models,
             const WithItem &relation)
     {
         m_relationStore.push(std::make_shared<EagerRelationStore>(

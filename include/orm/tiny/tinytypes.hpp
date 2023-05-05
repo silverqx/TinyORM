@@ -22,6 +22,11 @@ namespace Relations
     template<class Model, class Related>
     class Relation;
 }
+namespace Types
+{
+    template<DerivedModel Model>
+    class ModelsCollection;
+}
 
     template<typename Model>
     class Builder;
@@ -33,10 +38,14 @@ namespace Relations
     template<typename Derived, AllRelationsConcept ...AllRelations>
     class Model;
 
+    /*! Alias for the ModelsCollection. */
+    template<typename Model>
+    using ModelsCollection = Tiny::Types::ModelsCollection<Model>;
+
     /*! The type in which the relationships are stored. */
     template<AllRelationsConcept ...AllRelations>
     using RelationsType = std::variant<std::monostate,
-                                       QVector<AllRelations>...,
+                                       ModelsCollection<AllRelations>...,
                                        std::optional<AllRelations>...>;
 
     // TODO pretty print in the debugger silverqx
@@ -69,7 +78,7 @@ namespace Relations
         directly ( not container type ). */
     struct One {};
 
-    /*! Tag for Model::getRelationshipFromMethod() to return QVector<Related>
+    /*! Tag for Model::getRelationshipFromMethod() to return ModelsCollection<Related>
         type ( 'Many' relation types ), only internal type for now, used as the template
         tag in the HasRelationships::pushVisited. */
     struct Many {};

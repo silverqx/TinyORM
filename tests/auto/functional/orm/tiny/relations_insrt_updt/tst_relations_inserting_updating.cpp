@@ -20,6 +20,7 @@ using Orm::One;
 
 using Orm::Tiny::AttributeItem;
 using Orm::Tiny::ConnectionOverride;
+using Orm::Tiny::Types::ModelsCollection;
 
 using TypeUtils = Orm::Utils::Type;
 
@@ -263,9 +264,12 @@ void tst_Relations_Inserting_Updating::saveMany_OnHasOneOrMany() const
     });
     QVERIFY(!file2.exists);
 
-    QVector<TorrentPreviewableFile> filesToSave {std::move(file1), std::move(file2)};
+    ModelsCollection<TorrentPreviewableFile> filesToSave {
+        std::move(file1),
+        std::move(file2),
+    };
 
-    auto savedFiles = torrent->torrentFiles()->saveMany(filesToSave);
+    auto &savedFiles = torrent->torrentFiles()->saveMany(filesToSave);
     QCOMPARE(savedFiles.size(), 2);
 
     auto &savedFile1 = savedFiles[0];
@@ -393,8 +397,11 @@ void tst_Relations_Inserting_Updating::saveMany_OnHasOneOrMany_Failed() const
     auto file2 = file1;
     QVERIFY(!file2.exists);
 
-    QVector<TorrentPreviewableFile> filesToSave {std::move(file1), std::move(file2)};
-    QVector<TorrentPreviewableFile> savedFiles;
+    ModelsCollection<TorrentPreviewableFile> filesToSave {
+        std::move(file1),
+        std::move(file2),
+    };
+    ModelsCollection<TorrentPreviewableFile> savedFiles;
     QVERIFY_EXCEPTION_THROWN(savedFiles = torrent->torrentFiles()->saveMany(filesToSave),
                              QueryError);
     QVERIFY(savedFiles.isEmpty());
@@ -680,7 +687,7 @@ void tst_Relations_Inserting_Updating::createMany_OnHasOneOrMany_Failed() const
         std::move(file2Attributes),
     };
 
-    QVector<TorrentPreviewableFile> savedFiles;
+    ModelsCollection<TorrentPreviewableFile> savedFiles;
     QVERIFY_EXCEPTION_THROWN(savedFiles = torrent->torrentFiles()
                                           ->createMany(fileAttributesToSave),
                              QueryError);
@@ -698,7 +705,7 @@ tst_Relations_Inserting_Updating::createMany_OnHasOneOrMany_WithRValue_Failed() 
     QVERIFY(torrent);
     QVERIFY(torrent->exists);
 
-    QVector<TorrentPreviewableFile> savedFiles;
+    ModelsCollection<TorrentPreviewableFile> savedFiles;
     QVERIFY_EXCEPTION_THROWN(
                 savedFiles = torrent->torrentFiles()->createMany({{
                     {"file_index", 1},
@@ -859,7 +866,7 @@ void tst_Relations_Inserting_Updating::saveMany_OnBelongsToMany() const
     QVERIFY(!tag1.exists);
     QVERIFY(!tag2.exists);
 
-    QVector<Tag> tagsToSave {std::move(tag1), std::move(tag2)};
+    ModelsCollection<Tag> tagsToSave {std::move(tag1), std::move(tag2)};
 
     auto &savedTags = torrent->tags()->saveMany(tagsToSave, {{}, {{"active", false}}});
     QCOMPARE(savedTags.size(), 2);
@@ -995,8 +1002,8 @@ void tst_Relations_Inserting_Updating::saveMany_OnBelongsToMany_Failed() const
     auto tag2 = tag1;
     QVERIFY(!tag2.exists);
 
-    QVector<Tag> tagsToSave {std::move(tag1), std::move(tag2)};
-    QVector<Tag> savedTags;
+    ModelsCollection<Tag> tagsToSave {std::move(tag1), std::move(tag2)};
+    ModelsCollection<Tag> savedTags;
     QVERIFY_EXCEPTION_THROWN(savedTags = torrent->tags()->saveMany(tagsToSave),
                              QueryError);
     QVERIFY(savedTags.isEmpty());
@@ -1283,7 +1290,7 @@ void tst_Relations_Inserting_Updating::createMany_OnBelongsToMany_Failed() const
     QVector<QVector<AttributeItem>> tagAttribtues {{{NAME, "tag1"}},
                                                    {{NAME, "tag1"}}};
 
-    QVector<Tag> tags;
+    ModelsCollection<Tag> tags;
 
     QVERIFY_EXCEPTION_THROWN(tags = torrent->tags()->createMany(tagAttribtues,
                                                                 {{{"active", false}}}),
@@ -1310,7 +1317,7 @@ tst_Relations_Inserting_Updating::createMany_OnBelongsToMany_WithRValue_Failed()
     auto size = Tagged::whereEq("torrent_id", 5)->get({"torrent_id"}).size();
     QCOMPARE(size, 0);
 
-    QVector<Tag> tags;
+    ModelsCollection<Tag> tags;
 
     QVERIFY_EXCEPTION_THROWN(tags = torrent->tags()->createMany({{{NAME, "tag1"}},
                                                                  {{NAME, "tag1"}}},

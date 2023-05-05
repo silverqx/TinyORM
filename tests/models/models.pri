@@ -1,6 +1,8 @@
 INCLUDEPATH += $$PWD
 
 HEADERS += \
+    $$PWD/models/album.hpp \
+    $$PWD/models/albumimage.hpp \
     $$PWD/models/datetime.hpp \
     $$PWD/models/filepropertyproperty.hpp \
     $$PWD/models/massassignmentmodels.hpp \

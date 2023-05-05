@@ -39,6 +39,7 @@ using Orm::Tiny::Exceptions::RelationNotLoadedError;
 using Orm::Tiny::Relations::Pivot;
 using Orm::Tiny::Relations::Relation;
 using Orm::Tiny::TinyBuilder;
+using Orm::Tiny::Types::ModelsCollection;
 using Orm::Utils::Helpers;
 
 using QueryUtils = Orm::Utils::Query;
@@ -271,7 +272,7 @@ void tst_Model_Relations::getRelation_EagerLoad_ManyAndOne() const
     // TorrentPreviewableFileEager has many relation
     auto files = torrent->getRelation<TorrentPreviewableFileEager>("torrentFiles");
     QCOMPARE(files.size(), 2);
-    QCOMPARE(typeid (QVector<TorrentPreviewableFileEager *>), typeid (files));
+    QCOMPARE(typeid (ModelsCollection<TorrentPreviewableFileEager *>), typeid (files));
 
     // Expected file IDs
     QVector<QVariant> fileIds {2, 3};
@@ -330,7 +331,7 @@ void tst_Model_Relations::
     // Tag has many relation
     auto torrents = tag->getRelation<Torrent>("torrents");
     QCOMPARE(torrents.size(), 2);
-    QCOMPARE(typeid (QVector<Torrent *>), typeid (torrents));
+    QCOMPARE(typeid (ModelsCollection<Torrent *>), typeid (torrents));
 
     // Expected torrent IDs
     QVector<QVariant> torrentIds {2, 3};
@@ -379,7 +380,7 @@ void tst_Model_Relations::
     // Tag has many relation
     auto tags = torrent->getRelation<Tag>("tags");
     QCOMPARE(tags.size(), 4);
-    QCOMPARE(typeid (QVector<Tag *>), typeid (tags));
+    QCOMPARE(typeid (ModelsCollection<Tag *>), typeid (tags));
 
     // Expected tag IDs and pivot attribute 'active', tagId to active
     std::unordered_map<quint64, int> activeMap {{1, 1}, {2, 1}, {3, 0}, {4, 1}};
@@ -430,7 +431,7 @@ void tst_Model_Relations::
     // Tag has many relation
     auto torrents = tag->getRelation<Torrent>("torrents_WithoutPivotAttributes");
     QCOMPARE(torrents.size(), 2);
-    QCOMPARE(typeid (QVector<Torrent *>), typeid (torrents));
+    QCOMPARE(typeid (ModelsCollection<Torrent *>), typeid (torrents));
 
     // Expected torrent IDs
     QVector<QVariant> torrentIds {2, 3};
@@ -514,7 +515,7 @@ void tst_Model_Relations::getRelationValue_LazyLoad_ManyAndOne() const
     // TorrentPreviewableFile has many relation
     auto files = torrent->getRelationValue<TorrentPreviewableFile>("torrentFiles");
     QCOMPARE(files.size(), 2);
-    QCOMPARE(typeid (QVector<TorrentPreviewableFile *>), typeid (files));
+    QCOMPARE(typeid (ModelsCollection<TorrentPreviewableFile *>), typeid (files));
 
     // Expected file IDs
     QVector<QVariant> fileIds {2, 3};
@@ -573,7 +574,7 @@ void tst_Model_Relations::
     // Tag has many relation
     auto torrents = tag->getRelationValue<Torrent>("torrents");
     QCOMPARE(torrents.size(), 2);
-    QCOMPARE(typeid (QVector<Torrent *>), typeid (torrents));
+    QCOMPARE(typeid (ModelsCollection<Torrent *>), typeid (torrents));
 
     // Expected torrent IDs
     QVector<QVariant> torrentIds {2, 3};
@@ -622,7 +623,7 @@ void tst_Model_Relations::
     // Tag has many relation
     auto tags = torrent->getRelationValue<Tag>("tags");
     QCOMPARE(tags.size(), 4);
-    QCOMPARE(typeid (QVector<Tag *>), typeid (tags));
+    QCOMPARE(typeid (ModelsCollection<Tag *>), typeid (tags));
 
     // Expected tag IDs and pivot attribute 'active', tagId to active
     std::unordered_map<quint64, int> activeMap {{1, 1}, {2, 1}, {3, 0}, {4, 1}};
@@ -673,7 +674,7 @@ void tst_Model_Relations::
     // Tag has many relation
     auto torrents = tag->getRelationValue<Torrent>("torrents_WithoutPivotAttributes");
     QCOMPARE(torrents.size(), 2);
-    QCOMPARE(typeid (QVector<Torrent *>), typeid (torrents));
+    QCOMPARE(typeid (ModelsCollection<Torrent *>), typeid (torrents));
 
     // Expected torrent IDs
     QVector<QVariant> torrentIds {2, 3};
@@ -712,16 +713,16 @@ void tst_Model_Relations::getRelationValue_LazyLoad_Failed() const
 
     // Many relation
     QCOMPARE((Torrent().getRelationValue<TorrentPreviewableFile>("notExists")),
-             QVector<TorrentPreviewableFile *>());
+             ModelsCollection<TorrentPreviewableFile *>());
     // One relation
     QCOMPARE((Torrent().getRelationValue<TorrentPeer, One>("notExists")),
              nullptr);
     // One relation, obtained as QVector, also possible
     QCOMPARE((Torrent().getRelationValue<TorrentPeer>("notExists")),
-             QVector<TorrentPeer *>());
+             ModelsCollection<TorrentPeer *>());
     // Just to be sure try BelongsToMany relation
     QCOMPARE((Torrent().getRelationValue<Tag>("notExists")),
-             QVector<Tag *>());
+             ModelsCollection<Tag *>());
 }
 
 void tst_Model_Relations::u_with_Empty() const
@@ -765,7 +766,7 @@ void tst_Model_Relations::with_HasMany() const
 
     auto files = torrent->getRelation<TorrentPreviewableFile>("torrentFiles");
     QCOMPARE(files.size(), 2);
-    QCOMPARE(typeid (QVector<TorrentPreviewableFile *>), typeid (files));
+    QCOMPARE(typeid (ModelsCollection<TorrentPreviewableFile *>), typeid (files));
 
     // Expected file IDs
     QVector<QVariant> fileIds {2, 3};
@@ -808,7 +809,7 @@ void tst_Model_Relations::with_BelongsToMany() const
 
     auto tags = torrent->getRelation<Tag>("tags");
     QCOMPARE(tags.size(), 2);
-    QCOMPARE(typeid (QVector<Tag *>), typeid (tags));
+    QCOMPARE(typeid (ModelsCollection<Tag *>), typeid (tags));
 
     // Expected tag IDs
     QVector<QVariant> tagIds {2, 4};
@@ -860,7 +861,7 @@ void tst_Model_Relations::with_NestedRelations() const
     // TorrentPreviewableFile has many relation
     auto files = torrent->getRelation<TorrentPreviewableFile>("torrentFiles");
     QCOMPARE(files.size(), 2);
-    QCOMPARE(typeid (QVector<TorrentPreviewableFile *>), typeid (files));
+    QCOMPARE(typeid (ModelsCollection<TorrentPreviewableFile *>), typeid (files));
 
     // Expected file IDs
     QVector<QVariant> fileIds {2, 3};
@@ -907,7 +908,7 @@ void tst_Model_Relations::with_Vector_MoreRelations() const
     // TorrentPreviewableFile has many relation
     auto files = torrent->getRelation<TorrentPreviewableFile>("torrentFiles");
     QCOMPARE(files.size(), 2);
-    QCOMPARE(typeid (QVector<TorrentPreviewableFile *>), typeid (files));
+    QCOMPARE(typeid (ModelsCollection<TorrentPreviewableFile *>), typeid (files));
 
     // Expected file IDs
     QVector<QVariant> fileIds {2, 3};
@@ -948,7 +949,7 @@ void tst_Model_Relations::with_WithSelectConstraint() const
 
     auto files = torrent->getRelation<TorrentPreviewableFile>("torrentFiles");
     QCOMPARE(files.size(), 2);
-    QCOMPARE(typeid (QVector<TorrentPreviewableFile *>), typeid (files));
+    QCOMPARE(typeid (ModelsCollection<TorrentPreviewableFile *>), typeid (files));
 
     // Expected file IDs
     QVector<QVariant> fileIds {2, 3};
@@ -983,7 +984,7 @@ void tst_Model_Relations::with_WithSelectConstraint_WithWhitespaces() const
 
     auto files = torrent->getRelation<TorrentPreviewableFile>("torrentFiles");
     QCOMPARE(files.size(), 2);
-    QCOMPARE(typeid (QVector<TorrentPreviewableFile *>), typeid (files));
+    QCOMPARE(typeid (ModelsCollection<TorrentPreviewableFile *>), typeid (files));
 
     // Expected file IDs
     QVector<QVariant> fileIds {2, 3};
@@ -1017,7 +1018,7 @@ void tst_Model_Relations::with_WithSelectConstraint_BelongsToMany() const
 
     auto tags = torrent->getRelation<Tag>("tags");
     QCOMPARE(tags.size(), 2);
-    QCOMPARE(typeid (QVector<Tag *>), typeid (tags));
+    QCOMPARE(typeid (ModelsCollection<Tag *>), typeid (tags));
 
     // Expected tag IDs
     QVector<QVariant> tagIds {2, 4};
@@ -1080,7 +1081,7 @@ void tst_Model_Relations::with_WithLambdaConstraint() const
 
     auto files = torrent->getRelation<TorrentPreviewableFile>("torrentFiles");
     QCOMPARE(files.size(), 2);
-    QCOMPARE(typeid (QVector<TorrentPreviewableFile *>), typeid (files));
+    QCOMPARE(typeid (ModelsCollection<TorrentPreviewableFile *>), typeid (files));
 
     // Expected file IDs
     QVector<QVariant> fileIds {2, 3};
@@ -1117,7 +1118,7 @@ void tst_Model_Relations::with_WithLambdaConstraint_BelongsToMany() const
 
     auto tags = torrent->getRelation<Tag>("tags");
     QCOMPARE(tags.size(), 2);
-    QCOMPARE(typeid (QVector<Tag *>), typeid (tags));
+    QCOMPARE(typeid (ModelsCollection<Tag *>), typeid (tags));
 
     // Expected tag IDs
     QVector<QVariant> tagIds {2, 4};
@@ -1254,7 +1255,7 @@ void tst_Model_Relations::load() const
     // TorrentPreviewableFile has many relation
     auto files = torrent->getRelation<TorrentPreviewableFile>("torrentFiles");
     QCOMPARE(files.size(), 2);
-    QCOMPARE(typeid (QVector<TorrentPreviewableFile *>), typeid (files));
+    QCOMPARE(typeid (ModelsCollection<TorrentPreviewableFile *>), typeid (files));
 
     // Expected file IDs
     QVector<QVariant> fileIds {2, 3};
@@ -1289,7 +1290,7 @@ void tst_Model_Relations::load_WithSelectConstraint() const
 
     auto files = torrent->getRelation<TorrentPreviewableFile>("torrentFiles");
     QCOMPARE(files.size(), 2);
-    QCOMPARE(typeid (QVector<TorrentPreviewableFile *>), typeid (files));
+    QCOMPARE(typeid (ModelsCollection<TorrentPreviewableFile *>), typeid (files));
 
     // Expected file IDs
     QVector<QVariant> fileIds {2, 3};
@@ -1351,7 +1352,7 @@ void tst_Model_Relations::fresh() const
 
     auto files = freshTorrent->getRelation<TorrentPreviewableFile>("torrentFiles");
     QCOMPARE(files.size(), 2);
-    QCOMPARE(typeid (QVector<TorrentPreviewableFile *>), typeid (files));
+    QCOMPARE(typeid (ModelsCollection<TorrentPreviewableFile *>), typeid (files));
 
     // Expected file IDs
     QVector<QVariant> fileIds {2, 3};
@@ -1394,7 +1395,7 @@ void tst_Model_Relations::fresh_WithSelectConstraint() const
 
     auto files = freshTorrent->getRelation<TorrentPreviewableFile>("torrentFiles");
     QCOMPARE(files.size(), 2);
-    QCOMPARE(typeid (QVector<TorrentPreviewableFile *>), typeid (files));
+    QCOMPARE(typeid (ModelsCollection<TorrentPreviewableFile *>), typeid (files));
 
     // Expected file IDs
     QVector<QVariant> fileIds {2, 3};
@@ -2313,7 +2314,7 @@ void tst_Model_Relations::chunk_Relation() const
 
     ConnectionOverride::connection = connection;
 
-    using SizeType = QVector<FilePropertyProperty>::size_type;
+    using SizeType = ModelsCollection<FilePropertyProperty>::size_type;
 
     // <page, chunk_modelsCount>
     const std::unordered_map<int, SizeType> expectedRows {{1, 2}, {2, 1}};
@@ -2331,7 +2332,8 @@ void tst_Model_Relations::chunk_Relation() const
     auto result = TorrentPreviewableFileProperty::find(5)->filePropertyProperty()
                   ->orderBy(ID)
                   .chunk(2, [&compareResultSize, &ids]
-                            (QVector<FilePropertyProperty> &&models, const int page)
+                            (ModelsCollection<FilePropertyProperty> &&models,
+                             const int page)
     {
         compareResultSize(models.size(), page);
 
@@ -2468,7 +2470,7 @@ void tst_Model_Relations::chunkById_Relation() const
 
     ConnectionOverride::connection = connection;
 
-    using SizeType = QVector<FilePropertyProperty>::size_type;
+    using SizeType = ModelsCollection<FilePropertyProperty>::size_type;
 
     // <page, chunk_modelsCount>
     const std::unordered_map<int, SizeType> expectedRows {{1, 2}, {2, 1}};
@@ -2486,7 +2488,8 @@ void tst_Model_Relations::chunkById_Relation() const
     auto result = TorrentPreviewableFileProperty::find(5)->filePropertyProperty()
                   ->orderBy(ID)
                   .chunkById(2, [&compareResultSize, &ids]
-                                (QVector<FilePropertyProperty> &&models, const int page)
+                                (ModelsCollection<FilePropertyProperty> &&models,
+                                 const int page)
     {
         compareResultSize(models.size(), page);
 
@@ -2510,7 +2513,7 @@ void tst_Model_Relations::chunkById_WithAlias_Relation() const
 
     ConnectionOverride::connection = connection;
 
-    using SizeType = QVector<FilePropertyProperty>::size_type;
+    using SizeType = ModelsCollection<FilePropertyProperty>::size_type;
 
     // <page, chunk_modelsCount>
     const std::unordered_map<int, SizeType> expectedRows {{1, 2}, {2, 1}};
@@ -2529,7 +2532,8 @@ void tst_Model_Relations::chunkById_WithAlias_Relation() const
                   ->select({ASTERISK, "id as id_as"})
                   .orderBy(ID)
                   .chunkById(2, [&compareResultSize, &ids]
-                                (QVector<FilePropertyProperty> &&models, const int page)
+                                (ModelsCollection<FilePropertyProperty> &&models,
+                                 const int page)
     {
         compareResultSize(models.size(), page);
 
@@ -2860,7 +2864,7 @@ void tst_Model_Relations::chunk() const
 
     ConnectionOverride::connection = connection;
 
-    using SizeType = QVector<Tag>::size_type;
+    using SizeType = ModelsCollection<Tag>::size_type;
 
     // <page, chunk_modelsCount>
     const std::unordered_map<int, SizeType> expectedRows {{1, 2}, {2, 2}};
@@ -2877,7 +2881,7 @@ void tst_Model_Relations::chunk() const
 
     auto result = Torrent::find(2)->tags()->orderBy(ID)
                   .chunk(2, [&compareResultSize, &ids]
-                            (QVector<Tag> &&models, const int page)
+                            (ModelsCollection<Tag> &&models, const int page)
     {
         compareResultSize(models.size(), page);
 
@@ -2904,7 +2908,7 @@ void tst_Model_Relations::chunk_ReturnFalse() const
 
     ConnectionOverride::connection = connection;
 
-    using SizeType = QVector<Tag>::size_type;
+    using SizeType = ModelsCollection<Tag>::size_type;
 
     // <page, chunk_modelsCount> (I leave it here also in this test, doesn't matter much)
     const std::unordered_map<int, SizeType> expectedRows {{1, 2}, {2, 2}};
@@ -2921,7 +2925,7 @@ void tst_Model_Relations::chunk_ReturnFalse() const
 
     auto result = Torrent::find(2)->tags()->orderBy(ID)
                   .chunk(2, [&compareResultSize, &ids]
-                            (QVector<Tag> &&models, const int page)
+                            (ModelsCollection<Tag> &&models, const int page)
     {
         compareResultSize(models.size(), page);
 
@@ -2956,7 +2960,7 @@ void tst_Model_Relations::chunk_EnforceOrderBy() const
 
     ConnectionOverride::connection = connection;
 
-    using SizeType = QVector<Tag>::size_type;
+    using SizeType = ModelsCollection<Tag>::size_type;
 
     // <page, chunk_modelsCount>
     const std::unordered_map<int, SizeType> expectedRows {{1, 2}, {2, 2}};
@@ -2973,7 +2977,7 @@ void tst_Model_Relations::chunk_EnforceOrderBy() const
 
     auto result = Torrent::find(2)->tags()
                   ->chunk(2, [&compareResultSize, &ids]
-                             (QVector<Tag> &&models, const int page)
+                             (ModelsCollection<Tag> &&models, const int page)
     {
         compareResultSize(models.size(), page);
 
@@ -3006,7 +3010,7 @@ void tst_Model_Relations::chunk_EmptyResult() const
                                                     QStringLiteral("dummy-NON_EXISTENT"))
                   .orderBy(ID)
                   .chunk(2, [&callbackInvoked]
-                            (QVector<Tag> &&/*unused*/, const int /*unused*/)
+                            (ModelsCollection<Tag> &&/*unused*/, const int /*unused*/)
     {
         callbackInvoked = true;
 
@@ -3243,7 +3247,7 @@ void tst_Model_Relations::chunkMap_EmptyResult() const
     });
 
     QVERIFY(!callbackInvoked);
-    QVERIFY((std::is_same_v<decltype (result), QVector<Tag>>));
+    QVERIFY((std::is_same_v<decltype (result), ModelsCollection<Tag>>));
     QVERIFY(result.isEmpty());
 }
 
@@ -3371,7 +3375,7 @@ void tst_Model_Relations::chunkById() const
 
     ConnectionOverride::connection = connection;
 
-    using SizeType = QVector<Tag>::size_type;
+    using SizeType = ModelsCollection<Tag>::size_type;
 
     // <page, chunk_modelsCount>
     const std::unordered_map<int, SizeType> expectedRows {{1, 2}, {2, 2}};
@@ -3388,7 +3392,7 @@ void tst_Model_Relations::chunkById() const
 
     auto result = Torrent::find(2)->tags()->orderBy(ID)
                   .chunkById(2, [&compareResultSize, &ids]
-                                (QVector<Tag> &&models, const int page)
+                                (ModelsCollection<Tag> &&models, const int page)
     {
         compareResultSize(models.size(), page);
 
@@ -3415,7 +3419,7 @@ void tst_Model_Relations::chunkById_ReturnFalse() const
 
     ConnectionOverride::connection = connection;
 
-    using SizeType = QVector<Tag>::size_type;
+    using SizeType = ModelsCollection<Tag>::size_type;
 
     // <page, chunk_modelsCount> (I leave it here also in this test, doesn't matter much
     const std::unordered_map<int, SizeType> expectedRows {{1, 2}, {2, 2}};
@@ -3432,7 +3436,7 @@ void tst_Model_Relations::chunkById_ReturnFalse() const
 
     auto result = Torrent::find(2)->tags()->orderBy(ID)
                   .chunkById(2, [&compareResultSize, &ids]
-                                (QVector<Tag> &&models, const int page)
+                                (ModelsCollection<Tag> &&models, const int page)
     {
         compareResultSize(models.size(), page);
 
@@ -3470,7 +3474,8 @@ void tst_Model_Relations::chunkById_EmptyResult() const
                                                     QStringLiteral("dummy-NON_EXISTENT"))
                   .orderBy(ID)
                   .chunkById(2, [&callbackInvoked]
-                                (QVector<Tag> &&/*unused*/, const int /*unused*/)
+                                (ModelsCollection<Tag> &&/*unused*/,
+                                 const int /*unused*/)
     {
         callbackInvoked = true;
 
@@ -3487,7 +3492,7 @@ void tst_Model_Relations::chunkById_WithAlias() const
 
     ConnectionOverride::connection = connection;
 
-    using SizeType = QVector<Tag>::size_type;
+    using SizeType = ModelsCollection<Tag>::size_type;
 
     // <page, chunk_modelsCount>
     const std::unordered_map<int, SizeType> expectedRows {{1, 2}, {2, 2}};
@@ -3506,7 +3511,7 @@ void tst_Model_Relations::chunkById_WithAlias() const
                   ->select({ASTERISK, "torrent_tags.id as id_as"})
                   .orderBy(ID)
                   .chunkById(2, [&compareResultSize, &ids]
-                                (QVector<Tag> &&models, const int page)
+                                (ModelsCollection<Tag> &&models, const int page)
     {
         compareResultSize(models.size(), page);
 
@@ -3534,7 +3539,7 @@ void tst_Model_Relations::chunkById_ReturnFalse_WithAlias() const
 
     ConnectionOverride::connection = connection;
 
-    using SizeType = QVector<Tag>::size_type;
+    using SizeType = ModelsCollection<Tag>::size_type;
 
     // <page, chunk_modelsCount> (I leave it here also in this test, doesn't matter much
     const std::unordered_map<int, SizeType> expectedRows {{1, 2}, {2, 2}};
@@ -3553,7 +3558,7 @@ void tst_Model_Relations::chunkById_ReturnFalse_WithAlias() const
                   ->select({ASTERISK, "torrent_tags.id as id_as"})
                   .orderBy(ID)
                   .chunkById(2, [&compareResultSize, &ids]
-                                (QVector<Tag> &&models, const int page)
+                                (ModelsCollection<Tag> &&models, const int page)
     {
         compareResultSize(models.size(), page);
 
@@ -3593,7 +3598,8 @@ void tst_Model_Relations::chunkById_EmptyResult_WithAlias() const
                   .whereEq("torrent_tags.name", QStringLiteral("dummy-NON_EXISTENT"))
                   .orderBy(ID)
                   .chunkById(2, [&callbackInvoked]
-                                (QVector<Tag> &&/*unused*/, const int /*unused*/)
+                                (ModelsCollection<Tag> &&/*unused*/,
+                                 const int /*unused*/)
     {
         callbackInvoked = true;
 

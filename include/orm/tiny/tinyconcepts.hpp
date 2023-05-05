@@ -26,6 +26,18 @@ namespace Orm::Tiny
     template<typename T>
     concept ModelConcept = std::derived_from<T, IsModel>;
 
+    /*! Concept for Derived Model and Model * for ModelsCollection. */
+    template<typename T>
+    concept DerivedModel =
+            (!std::is_reference_v<T> &&
+             !std::is_const_v<std::remove_reference_t<T>>) &&
+            ((std::is_pointer_v<T> &&
+              std::derived_from<std::remove_pointer_t<T>, IsModel> &&
+              std::derived_from<std::remove_pointer_t<T>,
+                                typename std::remove_pointer_t<T>::BaseModelType>) ||
+            // The same check can't be used as the model classes are undefined here
+            !std::is_pointer_v<T>);
+
 } // namespace Orm::Tiny
 
 TINYORM_END_COMMON_NAMESPACE

@@ -5,8 +5,6 @@
 #include "orm/macros/systemheader.hpp"
 TINY_SYSTEM_HEADER
 
-#include <range/v3/view/transform.hpp>
-
 #include "orm/macros/likely.hpp"
 #include "orm/tiny/exceptions/modelnotfounderror.hpp"
 #include "orm/tiny/relations/concerns/interactswithpivottable.hpp"
@@ -74,18 +72,22 @@ namespace Orm::Tiny::Relations
         void addConstraints() const override;
 
         /*! Set the constraints for an eager load of the relation. */
-        void addEagerConstraints(const QVector<Model> &models) override;
+        void addEagerConstraints(const ModelsCollection<Model> &models) override;
+
         /*! Initialize the relation on a set of models. */
-        QVector<Model> &
-        initRelation(QVector<Model> &models, const QString &relation) const override;
+        ModelsCollection<Model> &
+        initRelation(ModelsCollection<Model> &models,
+                     const QString &relation) const override;
         /*! Match the eagerly loaded results to their parents. */
-        void match(QVector<Model> &models, QVector<Related> &&results,
+        void match(ModelsCollection<Model> &models, ModelsCollection<Related> &&results,
                    const QString &relation) const override;
+
         /*! Get the results of the relationship. */
-        std::variant<QVector<Related>, std::optional<Related>>
+        std::variant<ModelsCollection<Related>, std::optional<Related>>
         getResults() const override;
         /*! Execute the query as a "select" statement. */
-        QVector<Related> get(const QVector<Column> &columns = {ASTERISK}) const override;
+        ModelsCollection<Related>
+        get(const QVector<Column> &columns = {ASTERISK}) const override;
 
         /* Getters / Setters */
         /*! Get the fully qualified foreign key for the relation. */
@@ -150,7 +152,7 @@ namespace Orm::Tiny::Relations
         findOrFail(const QVariant &id,
                    const QVector<Column> &columns = {ASTERISK}) const override;
         /*! Find multiple models by their primary keys. */
-        QVector<Related>
+        ModelsCollection<Related>
         findMany(const QVector<QVariant> &ids,
                  const QVector<Column> &columns = {ASTERISK}) const;
 
@@ -216,14 +218,15 @@ namespace Orm::Tiny::Relations
         /* Builds Queries */
         /*! Chunk the results of the query. */
         bool chunk(int count,
-                   const std::function<bool(QVector<Related> &&models,
-                                            int page)> &callback) const override;
+                   const std::function<
+                       bool(ModelsCollection<Related> &&models, int page)> &callback
+        ) const override;
         /*! Execute a callback over each item while chunking. */
         bool each(const std::function<bool(Related &&model, int index)> &callback,
                   int count = 1000) const override;
 
         /*! Run a map over each item while chunking. */
-        QVector<Related>
+        ModelsCollection<Related>
         chunkMap(const std::function<Related(Related &&model)> &callback,
                  int count = 1000) const override;
         /*! Run a map over each item while chunking. */
@@ -235,7 +238,7 @@ namespace Orm::Tiny::Relations
         /*! Chunk the results of a query by comparing IDs. */
         bool chunkById(int count,
                        const std::function<
-                           bool(QVector<Related> &&models, int page)> &callback,
+                           bool(ModelsCollection<Related> &&models, int page)> &callback,
                        const QString &column = "",
                        const QString &alias = "") const override;
         /*! Execute a callback over each item while chunking by ID. */
@@ -255,12 +258,12 @@ namespace Orm::Tiny::Relations
              const QVector<AttributeItem> &pivotValues = {},
              bool touch = true) const;
         /*! Attach a vector of models to the parent instance. */
-        QVector<Related> &
-        saveMany(QVector<Related> &models,
+        ModelsCollection<Related> &
+        saveMany(ModelsCollection<Related> &models,
                  const QVector<QVector<AttributeItem>> &pivotValues = {}) const;
         /*! Attach a vector of models to the parent instance. */
-        QVector<Related>
-        saveMany(QVector<Related> &&models,
+        ModelsCollection<Related>
+        saveMany(ModelsCollection<Related> &&models,
                  const QVector<QVector<AttributeItem>> &pivotValues = {}) const;
 
         /*! Create a new instance of the related model. */
@@ -272,11 +275,11 @@ namespace Orm::Tiny::Relations
                        const QVector<AttributeItem> &pivotValues = {},
                        bool touch = true) const;
         /*! Create a vector of new instances of the related model. */
-        QVector<Related>
+        ModelsCollection<Related>
         createMany(const QVector<QVector<AttributeItem>> &records,
                    const QVector<QVector<AttributeItem>> &pivotValues = {}) const;
         /*! Create a vector of new instances of the related model. */
-        QVector<Related>
+        ModelsCollection<Related>
         createMany(QVector<QVector<AttributeItem>> &&records,
                    const QVector<QVector<AttributeItem>> &pivotValues = {}) const;
 
@@ -310,8 +313,8 @@ namespace Orm::Tiny::Relations
         const BelongsToMany &addWhereConstraints() const;
 
         /*! Build model dictionary keyed by the relation's foreign key. */
-        QHash<typename Model::KeyType, QVector<Related>>
-        buildDictionary(QVector<Related> &&results) const;
+        QHash<typename Model::KeyType, ModelsCollection<Related>>
+        buildDictionary(ModelsCollection<Related> &&results) const;
 
         /*! Prepare the query builder for query execution. */
         Builder<Related> &prepareQueryBuilder() const;
@@ -322,7 +325,7 @@ namespace Orm::Tiny::Relations
         QStringList aliasedPivotColumns() const;
 
         /*! Hydrate the pivot table relationship on the models. */
-        void hydratePivotRelation(QVector<Related> &models) const;
+        void hydratePivotRelation(ModelsCollection<Related> &models) const;
         /*! Get the pivot attributes from a model. */
         QVector<AttributeItem> migratePivotAttributes(Related &model) const;
 
@@ -421,26 +424,26 @@ namespace Orm::Tiny::Relations
 
     template<class Model, class Related, class PivotType>
     void BelongsToMany<Model, Related, PivotType>::addEagerConstraints(
-            const QVector<Model> &models)
+            const ModelsCollection<Model> &models)
     {
         this->whereInEager(getQualifiedForeignPivotKeyName(),
                            this->getKeys(models, m_parentKey));
     }
 
     template<class Model, class Related, class PivotType>
-    QVector<Model> &
+    ModelsCollection<Model> &
     BelongsToMany<Model, Related, PivotType>::initRelation(
-            QVector<Model> &models, const QString &relation) const
+            ModelsCollection<Model> &models, const QString &relation) const
     {
         for (auto &model : models)
-            model.template setRelation<Related>(relation, QVector<Related>());
+            model.template setRelation<Related>(relation, ModelsCollection<Related>());
 
         return models;
     }
 
     template<class Model, class Related, class PivotType>
     void BelongsToMany<Model, Related, PivotType>::match(
-            QVector<Model> &models, QVector<Related> &&results,
+            ModelsCollection<Model> &models, ModelsCollection<Related> &&results,
             const QString &relation) const
     {
         auto dictionary = buildDictionary(std::move(results));
@@ -459,14 +462,14 @@ namespace Orm::Tiny::Relations
     }
 
     template<class Model, class Related, class PivotType>
-    QHash<typename Model::KeyType, QVector<Related>>
+    QHash<typename Model::KeyType, ModelsCollection<Related>>
     BelongsToMany<Model, Related, PivotType>::buildDictionary(
-            QVector<Related> &&results) const
+            ModelsCollection<Related> &&results) const
     {
         /* First we will build a dictionary of child models keyed by the foreign key
            of the relation so that we will easily and quickly match them to their
            parents without having a possibly slow inner loops for every models. */
-        QHash<typename Model::KeyType, QVector<Related>> dictionary;
+        QHash<typename Model::KeyType, ModelsCollection<Related>> dictionary;
         dictionary.reserve(results.size());
 
         /*! Build model dictionary keyed by the parent's primary key. */
@@ -484,20 +487,20 @@ namespace Orm::Tiny::Relations
     }
 
     template<class Model, class Related, class PivotType>
-    std::variant<QVector<Related>, std::optional<Related>>
+    std::variant<ModelsCollection<Related>, std::optional<Related>>
     BelongsToMany<Model, Related, PivotType>::getResults() const
     {
         // Model doesn't contain primary key ( eg empty Model instance )
         if (const auto key = this->m_parent->getAttribute(m_parentKey);
             !key.isValid() || key.isNull()
         )
-            return QVector<Related>();
+            return ModelsCollection<Related>();
 
         return get();
     }
 
     template<class Model, class Related, class PivotType>
-    QVector<Related>
+    ModelsCollection<Related>
     BelongsToMany<Model, Related, PivotType>::get(const QVector<Column> &columns) const
     {
         /* First we'll add the proper select columns onto the query so it is run with
@@ -737,7 +740,7 @@ namespace Orm::Tiny::Relations
     }
 
     template<class Model, class Related, class PivotType>
-    QVector<Related>
+    ModelsCollection<Related>
     BelongsToMany<Model, Related, PivotType>::findMany(
             const QVector<QVariant> &ids, const QVector<Column> &columns) const
     {
@@ -949,11 +952,11 @@ namespace Orm::Tiny::Relations
     template<class Model, class Related, class PivotType>
     bool BelongsToMany<Model, Related, PivotType>::chunk(
             const int count,
-            const std::function<bool(QVector<Related> &&, int)> &callback) const
+            const std::function<bool(ModelsCollection<Related> &&, int)> &callback) const
     {
-        return prepareQueryBuilder().chunk(count,
-                                           [this, &callback]
-                                           (QVector<Related> &&models, const int page)
+        return prepareQueryBuilder()
+                .chunk(count, [this, &callback]
+                              (ModelsCollection<Related> &&models, const int page)
         {
             hydratePivotRelation(models);
 
@@ -965,7 +968,8 @@ namespace Orm::Tiny::Relations
     bool BelongsToMany<Model, Related, PivotType>::each(
             const std::function<bool(Related &&, int)> &callback, const int count) const
     {
-        return chunk(count, [&callback](QVector<Related> &&models, const int /*unused*/)
+        return chunk(count, [&callback]
+                            (ModelsCollection<Related> &&models, const int /*unused*/)
         {
             int index = 0;
 
@@ -980,14 +984,16 @@ namespace Orm::Tiny::Relations
     }
 
     template<class Model, class Related, class PivotType>
-    QVector<Related>
+    ModelsCollection<Related>
     BelongsToMany<Model, Related, PivotType>::chunkMap(
             const std::function<Related(Related &&)> &callback, const int count) const
     {
-        QVector<Related> result;
+        ModelsCollection<Related> result;
+        // Reserve the first page, it can help reallocations at the beginning
+        result.reserve(static_cast<ModelsCollection<Related>::size_type>(count));
 
         chunk(count, [&result, &callback]
-                     (QVector<Related> &&models, const int /*unused*/)
+                     (ModelsCollection<Related> &&models, const int /*unused*/)
         {
             for (auto &&model : models)
                 result << std::invoke(callback, std::move(model));
@@ -1005,9 +1011,11 @@ namespace Orm::Tiny::Relations
             const std::function<T(Related &&)> &callback, const int count) const
     {
         QVector<T> result;
+        // Reserve the first page, it can help reallocations at the beginning
+        result.reserve(static_cast<QVector<T>::size_type>(count));
 
         chunk(count, [&result, &callback]
-                     (QVector<Related> &&models, const int /*unused*/)
+                     (ModelsCollection<Related> &&models, const int /*unused*/)
         {
             for (auto &&model : models)
                 result << std::invoke(callback, std::move(model));
@@ -1021,7 +1029,7 @@ namespace Orm::Tiny::Relations
     template<class Model, class Related, class PivotType>
     bool BelongsToMany<Model, Related, PivotType>::chunkById(
             const int count,
-            const std::function<bool(QVector<Related> &&, int)> &callback,
+            const std::function<bool(ModelsCollection<Related> &&, int)> &callback,
             const QString &column, const QString &alias) const
     {
         const auto &relatedKeyName = this->getRelatedKeyName();
@@ -1033,7 +1041,7 @@ namespace Orm::Tiny::Relations
 
         return prepareQueryBuilder()
                 .chunkById(count, [this, &callback]
-                                  (QVector<Related> &&models, const int page)
+                                  (ModelsCollection<Related> &&models, const int page)
         {
             hydratePivotRelation(models);
 
@@ -1048,7 +1056,7 @@ namespace Orm::Tiny::Relations
             const int count, const QString &column, const QString &alias) const
     {
         return chunkById(count, [&callback, count]
-                                (QVector<Related> &&models, const int page)
+                                (ModelsCollection<Related> &&models, const int page)
         {
             int index = 0;
 
@@ -1093,9 +1101,9 @@ namespace Orm::Tiny::Relations
     }
 
     template<class Model, class Related, class PivotType>
-    QVector<Related> &
+    ModelsCollection<Related> &
     BelongsToMany<Model, Related, PivotType>::saveMany(
-            QVector<Related> &models,
+            ModelsCollection<Related> &models,
             const QVector<QVector<AttributeItem>> &pivotValues) const
     {
         using SizeType = std::remove_cvref_t<decltype (pivotValues)>::size_type;
@@ -1114,9 +1122,9 @@ namespace Orm::Tiny::Relations
     }
 
     template<class Model, class Related, class PivotType>
-    QVector<Related>
+    ModelsCollection<Related>
     BelongsToMany<Model, Related, PivotType>::saveMany(
-            QVector<Related> &&models,
+            ModelsCollection<Related> &&models,
             const QVector<QVector<AttributeItem>> &pivotValues) const
     {
         using SizeType = std::remove_cvref_t<decltype (pivotValues)>::size_type;
@@ -1171,14 +1179,14 @@ namespace Orm::Tiny::Relations
     }
 
     template<class Model, class Related, class PivotType>
-    QVector<Related>
+    ModelsCollection<Related>
     BelongsToMany<Model, Related, PivotType>::createMany(
             const QVector<QVector<AttributeItem>> &records,
             const QVector<QVector<AttributeItem>> &pivotValues) const
     {
         const auto recordsSize = records.size();
 
-        QVector<Related> instances;
+        ModelsCollection<Related> instances;
         instances.reserve(recordsSize);
 
         using SizeType = std::remove_cvref_t<decltype (pivotValues)>::size_type;
@@ -1196,14 +1204,14 @@ namespace Orm::Tiny::Relations
     }
 
     template<class Model, class Related, class PivotType>
-    QVector<Related>
+    ModelsCollection<Related>
     BelongsToMany<Model, Related, PivotType>::createMany(
             QVector<QVector<AttributeItem>> &&records,
             const QVector<QVector<AttributeItem>> &pivotValues) const
     {
         const auto recordsSize = records.size();
 
-        QVector<Related> instances;
+        ModelsCollection<Related> instances;
         instances.reserve(recordsSize);
 
         using SizeType = std::remove_cvref_t<decltype (pivotValues)>::size_type;
@@ -1412,7 +1420,7 @@ namespace Orm::Tiny::Relations
 
     template<class Model, class Related, class PivotType>
     void BelongsToMany<Model, Related, PivotType>::hydratePivotRelation(
-            QVector<Related> &models) const
+            ModelsCollection<Related> &models) const
     {
         /* To hydrate the pivot relationship, we will just gather the pivot attributes
            and create a new Pivot model, which is basically a dynamic model that we

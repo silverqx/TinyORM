@@ -41,7 +41,7 @@ namespace Orm::Tiny::Relations
         void addConstraints() const override;
 
         /*! Set the constraints for an eager load of the relation. */
-        void addEagerConstraints(const QVector<Model> &models) override;
+        void addEagerConstraints(const ModelsCollection<Model> &models) override;
 
         /* Getters / Setters */
         /*! Get the key value of the parent's local key. */
@@ -76,31 +76,33 @@ namespace Orm::Tiny::Relations
         /*! Attach a model instance to the parent model. */
         std::tuple<bool, Related> save(Related &&model) const;
         /*! Attach a vector of models to the parent instance. */
-        QVector<Related> &saveMany(QVector<Related> &models) const;
+        ModelsCollection<Related> &saveMany(ModelsCollection<Related> &models) const;
         /*! Attach a vector of models to the parent instance. */
-        QVector<Related> saveMany(QVector<Related> &&models) const;
+        ModelsCollection<Related> saveMany(ModelsCollection<Related> &&models) const;
 
         /*! Create a new instance of the related model. */
         Related create(const QVector<AttributeItem> &attributes = {}) const;
         /*! Create a new instance of the related model. */
         Related create(QVector<AttributeItem> &&attributes = {}) const;
         /*! Create a vector of new instances of the related model. */
-        QVector<Related>
+        ModelsCollection<Related>
         createMany(const QVector<QVector<AttributeItem>> &records) const;
         /*! Create a vector of new instances of the related model. */
-        QVector<Related>
+        ModelsCollection<Related>
         createMany(QVector<QVector<AttributeItem>> &&records) const;
 
     protected:
         /* Relation related operations */
         /*! Match the eagerly loaded results to their many parents. */
         template<typename RelationType>
-        void matchOneOrMany(QVector<Model> &models, QVector<Related> &&results,
-                            const QString &relation) const;
+        void matchOneOrMany(
+                ModelsCollection<Model> &models, ModelsCollection<Related> &&results,
+                const QString &relation) const;
+
         /*! Build model dictionary keyed by the relation's foreign key. */
         template<typename RelationType>
         QHash<typename Model::KeyType, RelationType>
-        buildDictionary(QVector<Related> &&results) const;
+        buildDictionary(ModelsCollection<Related> &&results) const;
 
         /* Getters / Setters */
         /*! Get the plain foreign key. */
@@ -162,8 +164,8 @@ namespace Orm::Tiny::Relations
     }
 
     template<class Model, class Related>
-    void
-    HasOneOrMany<Model, Related>::addEagerConstraints(const QVector<Model> &models)
+    void HasOneOrMany<Model, Related>::addEagerConstraints(
+            const ModelsCollection<Model> &models)
     {
         this->whereInEager(m_foreignKey, this->getKeys(models, m_localKey));
     }
@@ -274,8 +276,8 @@ namespace Orm::Tiny::Relations
     }
 
     template<class Model, class Related>
-    QVector<Related> &
-    HasOneOrMany<Model, Related>::saveMany(QVector<Related> &models) const
+    ModelsCollection<Related> &
+    HasOneOrMany<Model, Related>::saveMany(ModelsCollection<Related> &models) const
     {
         for (auto &model : models)
             save(model);
@@ -284,8 +286,8 @@ namespace Orm::Tiny::Relations
     }
 
     template<class Model, class Related>
-    QVector<Related>
-    HasOneOrMany<Model, Related>::saveMany(QVector<Related> &&models) const
+    ModelsCollection<Related>
+    HasOneOrMany<Model, Related>::saveMany(ModelsCollection<Related> &&models) const
     {
         for (auto &model : models)
             save(model);
@@ -320,11 +322,11 @@ namespace Orm::Tiny::Relations
     }
 
     template<class Model, class Related>
-    QVector<Related>
+    ModelsCollection<Related>
     HasOneOrMany<Model, Related>::createMany(
             const QVector<QVector<AttributeItem>> &records) const
     {
-        QVector<Related> instances;
+        ModelsCollection<Related> instances;
         instances.reserve(records.size());
 
         for (const auto &record : records)
@@ -334,11 +336,11 @@ namespace Orm::Tiny::Relations
     }
 
     template<class Model, class Related>
-    QVector<Related>
+    ModelsCollection<Related>
     HasOneOrMany<Model, Related>::createMany(
             QVector<QVector<AttributeItem>> &&records) const
     {
-        QVector<Related> instances;
+        ModelsCollection<Related> instances;
         instances.reserve(records.size());
 
         for (auto &&record : records)
@@ -354,7 +356,7 @@ namespace Orm::Tiny::Relations
     template<class Model, class Related>
     template<typename RelationType>
     void HasOneOrMany<Model, Related>::matchOneOrMany(
-            QVector<Model> &models, QVector<Related> &&results,
+            ModelsCollection<Model> &models, ModelsCollection<Related> &&results,
             const QString &relation) const
     {
         auto dictionary = buildDictionary<RelationType>(std::move(results));
@@ -375,7 +377,8 @@ namespace Orm::Tiny::Relations
     template<class Model, class Related>
     template<typename RelationType>
     QHash<typename Model::KeyType, RelationType>
-    HasOneOrMany<Model, Related>::buildDictionary(QVector<Related> &&results) const
+    HasOneOrMany<Model, Related>::buildDictionary(
+            ModelsCollection<Related> &&results) const
     {
         QHash<typename Model::KeyType, RelationType> dictionary;
         dictionary.reserve(results.size());
@@ -384,7 +387,7 @@ namespace Orm::Tiny::Relations
             if constexpr (
                 const auto foreign = result.getAttribute(getForeignKeyName())
                                      .template value<typename Model::KeyType>();
-                std::is_same_v<RelationType, QVector<Related>>
+                std::is_same_v<RelationType, ModelsCollection<Related>>
             )
                 dictionary[foreign] << std::move(result);
 

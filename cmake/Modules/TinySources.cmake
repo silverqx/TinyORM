@@ -159,6 +159,7 @@ function(tinyorm_sources out_headers out_sources)
             tiny/tinyconcepts.hpp
             tiny/tinytypes.hpp
             tiny/types/connectionoverride.hpp
+            tiny/types/modelscollection.hpp
             tiny/types/syncchanges.hpp
             tiny/utils/attribute.hpp
         )
@@ -411,6 +412,8 @@ function(tiny_model_sources out_headers out_sources)
     set(headers)
 
     list(APPEND headers
+        album.hpp
+        albumimage.hpp
         datetime.hpp
         filepropertyproperty.hpp
         massassignmentmodels.hpp
@@ -543,6 +546,8 @@ function(tiny_tom_testdata_database_sources out_headers)
         migrations/2022_05_11_171200_create_tag_properties_table.hpp
         migrations/2022_05_11_171300_create_types_table.hpp
         migrations/2022_05_11_171400_create_datetime_table.hpp
+        migrations/2022_05_11_171500_create_albums_table.hpp
+        migrations/2022_05_11_171600_create_album_images_table.hpp
 
         # Seeders
         seeders/databaseseeder.hpp

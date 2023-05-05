@@ -27,6 +27,7 @@ using Orm::One;
 using Orm::Tiny::AttributeItem;
 using Orm::Tiny::ConnectionOverride;
 using Orm::Tiny::Exceptions::MassAssignmentError;
+using Orm::Tiny::Types::ModelsCollection;
 
 using AttributeUtils = Orm::Tiny::Utils::Attribute;
 using TypeUtils = Orm::Utils::Type;
@@ -1299,7 +1300,7 @@ void tst_Model_Connection_Independent::only_NonExistentAttribute() const
 
 void tst_Model_Connection_Independent::chunk() const
 {
-    using SizeType = QVector<FilePropertyProperty>::size_type;
+    using SizeType = ModelsCollection<FilePropertyProperty>::size_type;
 
     // <page, chunk_modelsCount>
     const std::unordered_map<int, SizeType> expectedRows {{1, 3}, {2, 3}, {3, 2}};
@@ -1316,7 +1317,8 @@ void tst_Model_Connection_Independent::chunk() const
 
     auto result = FilePropertyProperty::orderBy(ID)
                   ->chunk(3, [&compareResultSize, &ids]
-                             (QVector<FilePropertyProperty> &&models, const int page)
+                             (ModelsCollection<FilePropertyProperty> &&models,
+                              const int page)
     {
         compareResultSize(models.size(), page);
 
@@ -1336,7 +1338,7 @@ void tst_Model_Connection_Independent::chunk() const
 
 void tst_Model_Connection_Independent::chunk_ReturnFalse() const
 {
-    using SizeType = QVector<FilePropertyProperty>::size_type;
+    using SizeType = ModelsCollection<FilePropertyProperty>::size_type;
 
     // <page, chunk_modelsCount> (I leave it here also in this test, doesn't matter much)
     const std::unordered_map<int, SizeType> expectedRows {{1, 3}, {2, 3}, {3, 2}};
@@ -1353,7 +1355,8 @@ void tst_Model_Connection_Independent::chunk_ReturnFalse() const
 
     auto result = FilePropertyProperty::orderBy(ID)
                   ->chunk(3, [&compareResultSize, &ids]
-                             (QVector<FilePropertyProperty> &&models, const int page)
+                             (ModelsCollection<FilePropertyProperty> &&models,
+                              const int page)
     {
         compareResultSize(models.size(), page);
 
@@ -1382,7 +1385,7 @@ void tst_Model_Connection_Independent::chunk_EnforceOrderBy() const
     /* The TinBuilder version doesn't throws exception if the 'order by' clause is not
        specified, instead it adds a generic 'order by' clause
        on the Model::getQualifiedKeyName() (it sorts by the primary key by default). */
-    using SizeType = QVector<FilePropertyProperty>::size_type;
+    using SizeType = ModelsCollection<FilePropertyProperty>::size_type;
 
     // <page, chunk_modelsCount>
     const std::unordered_map<int, SizeType> expectedRows {{1, 3}, {2, 3}, {3, 2}};
@@ -1399,7 +1402,8 @@ void tst_Model_Connection_Independent::chunk_EnforceOrderBy() const
 
     auto result = FilePropertyProperty::chunk(
                       3, [&compareResultSize, &ids]
-                         (QVector<FilePropertyProperty> &&models, const int page)
+                         (ModelsCollection<FilePropertyProperty> &&models,
+                          const int page)
     {
         compareResultSize(models.size(), page);
 
@@ -1425,7 +1429,7 @@ void tst_Model_Connection_Independent::chunk_EmptyResult() const
                                                 QStringLiteral("dummy-NON_EXISTENT"))
                   ->orderBy(ID)
                   .chunk(3, [&callbackInvoked]
-                            (QVector<FilePropertyProperty> &&/*unused*/,
+                            (ModelsCollection<FilePropertyProperty> &&/*unused*/,
                              const int /*unused*/)
     {
         callbackInvoked = true;
@@ -1653,7 +1657,7 @@ void tst_Model_Connection_Independent::chunkMap_EmptyResult() const
     });
 
     QVERIFY(!callbackInvoked);
-    QVERIFY((std::is_same_v<decltype (result), QVector<FilePropertyProperty>>));
+    QVERIFY((std::is_same_v<decltype (result), ModelsCollection<FilePropertyProperty>>));
     QVERIFY(result.isEmpty());
 }
 
@@ -1731,7 +1735,7 @@ void tst_Model_Connection_Independent::chunkMap_EmptyResult_TemplatedReturnValue
 
 void tst_Model_Connection_Independent::chunkById() const
 {
-    using SizeType = QVector<FilePropertyProperty>::size_type;
+    using SizeType = ModelsCollection<FilePropertyProperty>::size_type;
 
     // <page, chunk_modelsCount>
     const std::unordered_map<int, SizeType> expectedRows {{1, 3}, {2, 3}, {3, 2}};
@@ -1748,7 +1752,8 @@ void tst_Model_Connection_Independent::chunkById() const
 
     auto result = FilePropertyProperty::orderBy(ID)
                   ->chunkById(3, [&compareResultSize, &ids]
-                                 (QVector<FilePropertyProperty> &&models, const int page)
+                                 (ModelsCollection<FilePropertyProperty> &&models,
+                                  const int page)
     {
         compareResultSize(models.size(), page);
 
@@ -1768,7 +1773,7 @@ void tst_Model_Connection_Independent::chunkById() const
 
 void tst_Model_Connection_Independent::chunkById_ReturnFalse() const
 {
-    using SizeType = QVector<FilePropertyProperty>::size_type;
+    using SizeType = ModelsCollection<FilePropertyProperty>::size_type;
 
     // <page, chunk_modelsCount> (I leave it here also in this test, doesn't matter much
     const std::unordered_map<int, SizeType> expectedRows {{1, 3}, {2, 3}, {3, 2}};
@@ -1785,7 +1790,8 @@ void tst_Model_Connection_Independent::chunkById_ReturnFalse() const
 
     auto result = FilePropertyProperty::orderBy(ID)
                   ->chunkById(3, [&compareResultSize, &ids]
-                                (QVector<FilePropertyProperty> &&models, const int page)
+                                 (ModelsCollection<FilePropertyProperty> &&models,
+                                  const int page)
     {
         compareResultSize(models.size(), page);
 
@@ -1817,7 +1823,7 @@ void tst_Model_Connection_Independent::chunkById_EmptyResult() const
                                                 QStringLiteral("dummy-NON_EXISTENT"))
                   ->orderBy(ID)
                   .chunkById(3, [&callbackInvoked]
-                                (QVector<FilePropertyProperty> &&/*unused*/,
+                                (ModelsCollection<FilePropertyProperty> &&/*unused*/,
                                  const int /*unused*/)
     {
         callbackInvoked = true;
@@ -1831,7 +1837,7 @@ void tst_Model_Connection_Independent::chunkById_EmptyResult() const
 
 void tst_Model_Connection_Independent::chunkById_WithAlias() const
 {
-    using SizeType = QVector<FilePropertyProperty>::size_type;
+    using SizeType = ModelsCollection<FilePropertyProperty>::size_type;
 
     // <page, chunk_modelsCount>
     const std::unordered_map<int, SizeType> expectedRows {{1, 3}, {2, 3}, {3, 2}};
@@ -1849,7 +1855,8 @@ void tst_Model_Connection_Independent::chunkById_WithAlias() const
     auto result = FilePropertyProperty::select({ASTERISK, "id as id_as"})
                   ->orderBy(ID)
                   .chunkById(3, [&compareResultSize, &ids]
-                                (QVector<FilePropertyProperty> &&models, const int page)
+                                (ModelsCollection<FilePropertyProperty> &&models,
+                                 const int page)
     {
         compareResultSize(models.size(), page);
 
@@ -1870,7 +1877,7 @@ void tst_Model_Connection_Independent::chunkById_WithAlias() const
 
 void tst_Model_Connection_Independent::chunkById_ReturnFalse_WithAlias() const
 {
-    using SizeType = QVector<FilePropertyProperty>::size_type;
+    using SizeType = ModelsCollection<FilePropertyProperty>::size_type;
 
     // <page, chunk_modelsCount> (I leave it here also in this test, doesn't matter much
     const std::unordered_map<int, SizeType> expectedRows {{1, 3}, {2, 3}, {3, 2}};
@@ -1888,7 +1895,8 @@ void tst_Model_Connection_Independent::chunkById_ReturnFalse_WithAlias() const
     auto result = FilePropertyProperty::select({ASTERISK, "id as id_as"})
                   ->orderBy(ID)
                   .chunkById(3, [&compareResultSize, &ids]
-                                (QVector<FilePropertyProperty> &&models, const int page)
+                                (ModelsCollection<FilePropertyProperty> &&models,
+                                 const int page)
     {
         compareResultSize(models.size(), page);
 
@@ -1921,7 +1929,7 @@ void tst_Model_Connection_Independent::chunkById_EmptyResult_WithAlias() const
                   ->whereEq(NAME, QStringLiteral("dummy-NON_EXISTENT"))
                   .orderBy(ID)
                   .chunkById(3, [&callbackInvoked]
-                                (QVector<FilePropertyProperty> &&/*unused*/,
+                                (ModelsCollection<FilePropertyProperty> &&/*unused*/,
                                  const int /*unused*/)
     {
         callbackInvoked = true;

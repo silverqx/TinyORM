@@ -287,6 +287,25 @@ function createTables(string $connection): void
         $table->foreign('tag_id')->references('id')->on('torrent_tags')
             ->cascadeOnUpdate()->cascadeOnDelete();
     });
+
+    $schema->create('albums', function (Blueprint $table) {
+        $table->id();
+        $table->string('name')->unique();
+        $table->string('note')->nullable();
+        $table->timestamps();
+    });
+
+    $schema->create('album_images', function (Blueprint $table) {
+        $table->id();
+        $table->unsignedBigInteger('album_id')->nullable();
+        $table->string('name')->unique();
+        $table->string('ext');
+        $table->unsignedBigInteger('size');
+        $table->timestamps();
+
+        $table->foreign('album_id')->references('id')->on('torrents')
+            ->cascadeOnUpdate()->cascadeOnDelete();
+    });
 }
 
 /**
@@ -407,6 +426,27 @@ function seedTables(string $connection): void
             [3, 3, 'red',    2, '2021-02-13 12:41:28', '2021-02-13 22:17:11'],
             [4, 4, 'orange', 3, '2021-02-14 12:41:28', '2021-02-14 22:17:11'],
         ]));
+
+    Capsule::table('albums', null, $connection)->insert(
+        combineValues(['id', 'name', 'note', 'created_at', 'updated_at'], [
+            [1, 'album1', null,          '2023-01-01 12:12:14', '2023-02-01 16:54:28'],
+            [2, 'album2', null,          '2023-01-02 12:12:14', '2023-02-02 16:54:28'],
+            [3, 'album3', 'album3 note', '2023-01-03 12:12:14', '2023-02-03 16:54:28'],
+            [4, 'album4', 'no images',   '2023-01-04 12:12:14', '2023-02-04 16:54:28'],
+        ]));
+
+    Capsule::table('album_images', null, $connection)->insert(
+        combineValues(['id', 'album_id', 'name', 'ext', 'size', 'created_at', 'updated_at'], [
+            [1, 1,    'album1_image1', 'png', 726, '2023-03-01 15:24:37', '2023-04-01 14:35:47'],
+            [2, 2,    'album2_image1', 'png', 424, '2023-03-02 15:24:37', '2023-04-02 14:35:47'],
+            [3, 2,    'album2_image2', 'jpg', 512, '2023-03-03 15:24:37', '2023-04-03 14:35:47'],
+            [4, 2,    'album2_image3', 'jpg', 324, '2023-03-04 15:24:37', '2023-04-04 14:35:47'],
+            [5, 2,    'album2_image4', 'png', 654, '2023-03-05 15:24:37', '2023-04-05 14:35:47'],
+            [6, 2,    'album2_image5', 'gif', 294, '2023-03-06 15:24:37', '2023-04-06 14:35:47'],
+            [7, 3,    'album3_image1', 'jpg', 718, '2023-03-07 15:24:37', '2023-04-07 14:35:47'],
+            [8, null, 'image1',        'jpg', 498, '2023-03-08 15:24:37', '2023-04-08 14:35:47'],
+            [9, null, 'image2',        'jpg', 568, '2023-03-09 15:24:37', '2023-04-09 14:35:47'],
+        ]));
 }
 
 /**
@@ -430,6 +470,8 @@ function fixPostgresSequences(): void
         'file_property_properties_id_seq'            => 9,
         'torrent_tags_id_seq'                        => 6,
         'tag_properties_id_seq'                      => 5,
+        'albums_id_seq'                              => 8,
+        'album_images_id_seq'                        => 4,
     ];
 
     foreach ($sequences as $sequence => $id)

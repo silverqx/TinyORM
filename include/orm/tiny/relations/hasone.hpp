@@ -47,15 +47,17 @@ namespace Orm::Tiny::Relations
 
         /* Relation related operations */
         /*! Initialize the relation on a set of models. */
-        QVector<Model> &
-        initRelation(QVector<Model> &models, const QString &relation) const override;
+        ModelsCollection<Model> &
+        initRelation(ModelsCollection<Model> &models,
+                     const QString &relation) const override;
 
         /*! Match the eagerly loaded results to their parents. */
-        inline void match(QVector<Model> &models, QVector<Related> &&results,
-                          const QString &relation) const override;
+        inline void
+        match(ModelsCollection<Model> &models, ModelsCollection<Related> &&results,
+              const QString &relation) const override;
 
         /*! Get the results of the relationship. */
-        std::variant<QVector<Related>, std::optional<Related>>
+        std::variant<ModelsCollection<Related>, std::optional<Related>>
         getResults() const override;
 
         /* Others */
@@ -104,8 +106,8 @@ namespace Orm::Tiny::Relations
     /* Relation related operations */
 
     template<class Model, class Related>
-    QVector<Model> &
-    HasOne<Model, Related>::initRelation(QVector<Model> &models,
+    ModelsCollection<Model> &
+    HasOne<Model, Related>::initRelation(ModelsCollection<Model> &models,
                                          const QString &relation) const
     {
         for (auto &model : models)
@@ -117,7 +119,7 @@ namespace Orm::Tiny::Relations
 
     template<class Model, class Related>
     void HasOne<Model, Related>::match(
-            QVector<Model> &models, QVector<Related> &&results,
+            ModelsCollection<Model> &models, ModelsCollection<Related> &&results,
             const QString &relation) const
     {
         this->template matchOneOrMany<std::optional<Related>>(models, std::move(results),
@@ -125,7 +127,7 @@ namespace Orm::Tiny::Relations
     }
 
     template<class Model, class Related>
-    std::variant<QVector<Related>, std::optional<Related>>
+    std::variant<ModelsCollection<Related>, std::optional<Related>>
     HasOne<Model, Related>::getResults() const
     {
         // Model doesn't contain primary key ( eg empty Model instance )

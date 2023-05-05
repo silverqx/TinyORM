@@ -6,7 +6,7 @@
 TINY_SYSTEM_HEADER
 
 #include "orm/ormconcepts.hpp"
-#include "orm/tiny/tinytypes.hpp"
+#include "orm/tiny/types/modelscollection.hpp"
 #include "orm/types/sqlquery.hpp"
 
 TINYORM_BEGIN_COMMON_NAMESPACE
@@ -62,7 +62,7 @@ namespace Tiny
         static Derived
         findOrFail(const QVariant &id, const QVector<Column> &columns = {ASTERISK});
         /*! Find multiple models by their primary keys. */
-        static QVector<Derived>
+        static ModelsCollection<Derived>
         findMany(const QVector<QVariant> &ids,
                  const QVector<Column> &columns = {ASTERISK});
 
@@ -859,14 +859,15 @@ namespace Tiny
         /*! Chunk the results of the query. */
         static bool
         chunk(int count,
-              const std::function<bool(QVector<Derived> &&models, int page)> &callback);
+              const std::function<
+                  bool(ModelsCollection<Derived> &&models, int page)> &callback);
         /*! Execute a callback over each item while chunking. */
         static bool
         each(const std::function<bool(Derived &&model, int index)> &callback,
              int count = 1000);
 
         /*! Run a map over each item while chunking. */
-        static QVector<Derived>
+        static ModelsCollection<Derived>
         chunkMap(const std::function<Derived(Derived &&model)> &callback,
                  int count = 1000);
         /*! Run a map over each item while chunking. */
@@ -878,7 +879,7 @@ namespace Tiny
         static bool
         chunkById(int count,
                   const std::function<
-                      bool(QVector<Derived> &&models, int page)> &callback,
+                      bool(ModelsCollection<Derived> &&models, int page)> &callback,
                   const QString &column = "", const QString &alias = "");
         /*! Execute a callback over each item while chunking by ID. */
         static bool
@@ -1091,7 +1092,7 @@ namespace Tiny
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
-    QVector<Derived>
+    ModelsCollection<Derived>
     ModelProxies<Derived, AllRelations...>::findMany(const QVector<QVariant> &ids,
                                                      const QVector<Column> &columns)
     {
@@ -3328,7 +3329,7 @@ namespace Tiny
     template<typename Derived, AllRelationsConcept ...AllRelations>
     bool ModelProxies<Derived, AllRelations...>::chunk(
             const int count,
-            const std::function<bool(QVector<Derived> &&, int)> &callback)
+            const std::function<bool(ModelsCollection<Derived> &&, int)> &callback)
     {
         return query()->chunk(count, callback);
     }
@@ -3341,7 +3342,7 @@ namespace Tiny
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
-    QVector<Derived>
+    ModelsCollection<Derived>
     ModelProxies<Derived, AllRelations...>::chunkMap(
             const std::function<Derived(Derived &&)> &callback, const int count)
     {
@@ -3360,7 +3361,7 @@ namespace Tiny
     template<typename Derived, AllRelationsConcept ...AllRelations>
     bool ModelProxies<Derived, AllRelations...>::chunkById(
             const int count,
-            const std::function<bool(QVector<Derived> &&, int)> &callback,
+            const std::function<bool(ModelsCollection<Derived> &&, int)> &callback,
             const QString &column, const QString &alias)
     {
         return query()->chunkById(count, callback, column, alias);

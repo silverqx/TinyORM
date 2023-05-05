@@ -27,6 +27,7 @@ using Orm::Exceptions::QueryError;
 using Orm::Tiny::ConnectionOverride;
 using Orm::Tiny::Exceptions::ModelNotFoundError;
 using Orm::Tiny::Model;
+using Orm::Tiny::Types::ModelsCollection;
 using Orm::Utils::Helpers;
 using Orm::Utils::NullVariant;
 
@@ -81,6 +82,9 @@ private Q_SLOTS:
     void findOrNew_NotFound() const;
     void findOrFail_Found() const;
     void findOrFail_NotFoundFailed() const;
+
+    void findMany() const;
+    void findMany_Empty() const;
 
     void findOr() const;
     void findOr_WithReturnType() const;
@@ -824,6 +828,34 @@ void tst_Model::findOrFail_NotFoundFailed() const
                              ModelNotFoundError);
     QVERIFY_EXCEPTION_THROWN(Torrent::findOrFail(999999, {ID, NAME}),
                              ModelNotFoundError);
+}
+
+void tst_Model::findMany() const
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
+    auto torrents = Torrent::findMany({2, 3, 5});
+    QCOMPARE(torrents.size(), 3);
+    QCOMPARE(typeid (ModelsCollection<Torrent>), typeid (torrents));
+
+    const std::unordered_set<quint64> expectedIds {2, 3, 5};
+
+    for (const auto &torrent : torrents)
+        QVERIFY(expectedIds.contains(torrent[ID].template value<quint64>()));
+}
+
+void tst_Model::findMany_Empty() const
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
+    auto torrents = Torrent::findMany({});
+
+    QCOMPARE(typeid (ModelsCollection<Torrent>), typeid (torrents));
+    QVERIFY(torrents.isEmpty());
 }
 
 void tst_Model::findOr() const

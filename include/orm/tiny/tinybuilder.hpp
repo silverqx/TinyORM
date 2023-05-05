@@ -8,7 +8,6 @@ TINY_SYSTEM_HEADER
 #include <QtSql/QSqlRecord>
 
 #include <range/v3/action/transform.hpp>
-#include <range/v3/algorithm/contains.hpp>
 
 #include "orm/databaseconnection.hpp"
 #include "orm/tiny/concerns/buildsqueries.hpp"
@@ -67,7 +66,7 @@ namespace Orm::Tiny
 
         /* Retrieving results */
         /*! Execute the query as a "select" statement. */
-        QVector<Model> get(const QVector<Column> &columns = {ASTERISK});
+        ModelsCollection<Model> get(const QVector<Column> &columns = {ASTERISK});
 
         /*! Get a single column's value from the first result of a query. */
         QVariant value(const Column &column);
@@ -91,7 +90,7 @@ namespace Orm::Tiny
         Model findOrFail(const QVariant &id,
                          const QVector<Column> &columns = {ASTERISK});
         /*! Find multiple models by their primary keys. */
-        QVector<Model>
+        ModelsCollection<Model>
         findMany(const QVector<QVariant> &ids,
                  const QVector<Column> &columns = {ASTERISK});
 
@@ -234,16 +233,17 @@ namespace Orm::Tiny
         Model newModelInstance(QVector<AttributeItem> &&attributes = {});
 
         /*! Get the hydrated models without eager loading. */
-        QVector<Model> getModels(const QVector<Column> &columns = {ASTERISK});
+        ModelsCollection<Model> getModels(const QVector<Column> &columns = {ASTERISK});
 
         /*! Eager load the relationships for the models. */
-        void eagerLoadRelations(QVector<Model> &models);
+        void eagerLoadRelations(ModelsCollection<Model> &models);
         /*! Eagerly load the relationship on a set of models. */
         template<typename Relation>
-        void eagerLoadRelationVisited(Relation &&relation, QVector<Model> &models,
-                                      const WithItem &relationItem) const;
+        void
+        eagerLoadRelationVisited(Relation &&relation, ModelsCollection<Model> &models,
+                                 const WithItem &relationItem) const;
         /*! Create a vector of models from the SqlQuery. */
-        QVector<Model> hydrate(SqlQuery &&result);
+        ModelsCollection<Model> hydrate(SqlQuery &&result);
 
         /*! Get the model instance being queried. */
         inline Model &getModel() noexcept;
@@ -366,14 +366,13 @@ namespace Orm::Tiny
 
     /* Retrieving results */
 
-    // TODO now name QVector<Model> model collections by using, eg CollectionType silverqx
     template<typename Model>
-    QVector<Model>
+    ModelsCollection<Model>
     Builder<Model>::get(const QVector<Column> &columns)
     {
         applySoftDeletes();
 
-        auto models = getModels(columns);
+        ModelsCollection<Model> models = getModels(columns);
 
         /* If we actually found models we will also eager load any relationships that
            have been specified as needing to be eager loaded, which will solve the
@@ -529,7 +528,7 @@ namespace Orm::Tiny
     }
 
     template<typename Model>
-    QVector<Model>
+    ModelsCollection<Model>
     Builder<Model>::findMany(const QVector<QVariant> &ids,
                              const QVector<Column> &columns)
     {
@@ -1008,7 +1007,7 @@ namespace Orm::Tiny
     }
 
     template<typename Model>
-    QVector<Model>
+    ModelsCollection<Model>
     Builder<Model>::getModels(const QVector<Column> &columns)
     {
         return hydrate(m_query->get(columns));
@@ -1050,7 +1049,7 @@ namespace Orm::Tiny
        hash. */
 
     template<typename Model>
-    void Builder<Model>::eagerLoadRelations(QVector<Model> &models)
+    void Builder<Model>::eagerLoadRelations(ModelsCollection<Model> &models)
     {
         if (m_eagerLoad.isEmpty())
             return;
@@ -1069,7 +1068,7 @@ namespace Orm::Tiny
     template<typename Model>
     template<typename Relation>
     void Builder<Model>::eagerLoadRelationVisited(
-            Relation &&relation, QVector<Model> &models,
+            Relation &&relation, ModelsCollection<Model> &models,
             const WithItem &relationItem) const
     {
         /* First we will "back up" the existing where conditions (Relation::noConstraints)
@@ -1102,12 +1101,12 @@ namespace Orm::Tiny
     }
 
     template<typename Model>
-    QVector<Model>
+    ModelsCollection<Model>
     Builder<Model>::hydrate(SqlQuery &&result)
     {
         auto instance = newModelInstance();
 
-        QVector<Model> models;
+        ModelsCollection<Model> models;
         models.reserve(QueryUtils::queryResultSize(result));
 
         const auto fieldsCount = result.record().count();

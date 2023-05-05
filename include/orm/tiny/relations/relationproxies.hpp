@@ -6,7 +6,7 @@
 TINY_SYSTEM_HEADER
 
 #include "orm/ormconcepts.hpp"
-#include "orm/tiny/tinytypes.hpp"
+#include "orm/tiny/types/modelscollection.hpp"
 #include "orm/types/sqlquery.hpp"
 
 TINYORM_BEGIN_COMMON_NAMESPACE
@@ -853,14 +853,14 @@ namespace Tiny::Relations
         virtual bool
         chunk(int count,
               const std::function<
-                  bool(QVector<Related> &&models, int page)> &callback) const;
+                  bool(ModelsCollection<Related> &&models, int page)> &callback) const;
         /*! Execute a callback over each item while chunking. */
         virtual bool
         each(const std::function<bool(Related &&model, int index)> &callback,
              int count = 1000) const;
 
         /*! Run a map over each item while chunking. */
-        virtual QVector<Related>
+        virtual ModelsCollection<Related>
         chunkMap(const std::function<Related(Related &&model)> &callback,
                  int count = 1000) const;
         /*! Run a map over each item while chunking. */
@@ -873,7 +873,7 @@ namespace Tiny::Relations
         virtual bool
         chunkById(int count,
                   const std::function<
-                      bool(QVector<Related> &&models, int page)> &callback,
+                      bool(ModelsCollection<Related> &&models, int page)> &callback,
                   const QString &column = "", const QString &alias = "") const;
         /*! Execute a callback over each item while chunking by ID. */
         virtual bool
@@ -3093,7 +3093,7 @@ namespace Tiny::Relations
     template<class Model, class Related>
     bool RelationProxies<Model, Related>::chunk(
             const int count,
-            const std::function<bool(QVector<Related> &&, int)> &callback) const
+            const std::function<bool(ModelsCollection<Related> &&, int)> &callback) const
     {
         return getQuery().chunk(count, callback);
     }
@@ -3106,7 +3106,7 @@ namespace Tiny::Relations
     }
 
     template<class Model, class Related>
-    QVector<Related>
+    ModelsCollection<Related>
     RelationProxies<Model, Related>::chunkMap(
             const std::function<Related(Related &&)> &callback, const int count) const
     {
@@ -3125,7 +3125,7 @@ namespace Tiny::Relations
     template<class Model, class Related>
     bool RelationProxies<Model, Related>::chunkById(
             const int count,
-            const std::function<bool(QVector<Related> &&, int)> &callback,
+            const std::function<bool(ModelsCollection<Related> &&, int)> &callback,
             const QString &column, const QString &alias) const
     {
         return getQuery().chunkById(count, callback, column, alias);

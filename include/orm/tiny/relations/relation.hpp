@@ -13,7 +13,6 @@ TINY_SYSTEM_HEADER
 #include "orm/tiny/relations/relationproxies.hpp"
 #include "orm/tiny/relations/relationtypes.hpp"
 #include "orm/utils/notnull.hpp"
-#include "orm/utils/type.hpp"
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
@@ -77,21 +76,24 @@ namespace Relations
                       std::unique_ptr<Relation<Model, Related>>()> &callback);
 
         /*! Set the constraints for an eager load of the relation. */
-        virtual void addEagerConstraints(const QVector<Model> &models) = 0;
+        virtual void addEagerConstraints(const ModelsCollection<Model> &models) = 0;
+
         /*! Initialize the relation on a set of models. */
-        virtual QVector<Model> &
-        initRelation(QVector<Model> &models, const QString &relation) const = 0;
+        virtual ModelsCollection<Model> &
+        initRelation(ModelsCollection<Model> &models, const QString &relation) const = 0;
         /*! Match the eagerly loaded results to their parents. */
-        virtual void match(QVector<Model> &models, QVector<Related> &&results,
-                           const QString &relation) const = 0;
+        virtual void
+        match(ModelsCollection<Model> &models, ModelsCollection<Related> &&results,
+              const QString &relation) const = 0;
+
         /*! Get the results of the relationship. */
-        virtual std::variant<QVector<Related>, std::optional<Related>>
+        virtual std::variant<ModelsCollection<Related>, std::optional<Related>>
         getResults() const = 0;
 
         /*! Get the relationship for eager loading. */
-        inline QVector<Related> getEager() const;
+        inline ModelsCollection<Related> getEager() const;
         /*! Execute the query as a "select" statement. */
-        inline virtual QVector<Related>
+        inline virtual ModelsCollection<Related>
         get(const QVector<Column> &columns = {ASTERISK}) const;
 
         /* Getters / Setters */
@@ -141,7 +143,7 @@ namespace Relations
 
         /*! Get all of the primary keys for the vector of models. */
         QVector<QVariant>
-        getKeys(const QVector<Model> &models, const QString &key = "") const;
+        getKeys(const ModelsCollection<Model> &models, const QString &key = "") const;
 
         /* Querying Relationship Existence/Absence */
         /*! Add the constraints for an internal relationship existence query.
@@ -213,7 +215,7 @@ namespace Relations
     }
 
     template<class Model, class Related>
-    QVector<Related>
+    ModelsCollection<Related>
     Relation<Model, Related>::getEager() const
     {
         // Avoid querying the database if the keys are empty (IN () aka. where 0 = 1)
@@ -224,7 +226,7 @@ namespace Relations
     }
 
     template<class Model, class Related>
-    QVector<Related>
+    ModelsCollection<Related>
     Relation<Model, Related>::get(const QVector<Column> &columns) const
     {
         return m_query->get(columns);
@@ -349,7 +351,7 @@ namespace Relations
 
     template<class Model, class Related>
     QVector<QVariant>
-    Relation<Model, Related>::getKeys(const QVector<Model> &models,
+    Relation<Model, Related>::getKeys(const ModelsCollection<Model> &models,
                                       const QString &key) const
     {
         QVector<QVariant> keys;

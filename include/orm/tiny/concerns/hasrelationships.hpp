@@ -9,10 +9,10 @@ TINY_SYSTEM_HEADER
 
 #ifdef TINY_NO_INCOMPLETE_UNORDERED_MAP
 #  include <map>
-#else
-#  include <unordered_map>
+// Leaving only for reference, the unordered_map is included in the modelscollection.hpp
+//#else
+//#  include <unordered_map>
 #endif
-#include <unordered_set>
 
 #include <range/v3/algorithm/contains.hpp>
 
@@ -60,7 +60,7 @@ namespace Concerns
         /*! Get a relationship for Many types relation (load a relationship lazily if
             not loaded). */
         template<typename Related,
-                 template<typename> typename Container = QVector>
+                 template<typename> typename Container = ModelsCollection>
         const Container<Related *>
         getRelationValue(const QString &relation);
         /*! Get a relationship for a One type relation (load a relationship lazily if
@@ -71,7 +71,7 @@ namespace Concerns
 
         /*! Get a specified relationship (throw if a relationship is not loaded). */
         template<typename Related,
-                 template<typename> typename Container = QVector>
+                 template<typename> typename Container = ModelsCollection>
         const Container<Related *>
         getRelation(const QString &relation);
         /*! Get a specified relationship as Related type, for use with HasOne and
@@ -84,10 +84,12 @@ namespace Concerns
 
         /*! Set the given relationship on the model. */
         template<typename Related>
-        Derived &setRelation(const QString &relation, const QVector<Related> &models);
+        Derived &setRelation(const QString &relation,
+                             const ModelsCollection<Related> &models);
         /*! Set the given relationship on the model. */
         template<typename Related>
-        Derived &setRelation(const QString &relation, QVector<Related> &&models);
+        Derived &setRelation(const QString &relation,
+                             ModelsCollection<Related> &&models);
 
         /*! Set the given relationship on the model. */
         template<typename Related>
@@ -170,7 +172,7 @@ namespace Concerns
 
         /*! Get a relationship value from a method. */
         template<class Related,
-                 template<typename> typename Container = QVector>
+                 template<typename> typename Container = ModelsCollection>
         Container<Related *>
         getRelationshipFromMethod(const QString &relation);
         /*! Get a relationship value from a method. */
@@ -269,7 +271,7 @@ namespace Concerns
         /*! Obtain related models from "relationships" data member hash
             without any checks. */
         template<class Related,
-                 template<typename> typename Container = QVector>
+                 template<typename> typename Container = ModelsCollection>
         Container<Related *>
         getRelationFromHash(const QString &relation);
         /*! Obtain related models from "relationships" data member hash
@@ -296,7 +298,7 @@ namespace Concerns
         /*! Obtain a relationship instance for eager loading. */
         void eagerLoadRelationWithVisitor(
                 const WithItem &relation, const TinyBuilder<Derived> &builder,
-                QVector<Derived> &models);
+                ModelsCollection<Derived> &models);
 
         /* Get related table for belongs to many relation store related */
         /*! Get Related model table name if the relation is BelongsToMany, otherwise
@@ -441,7 +443,7 @@ namespace Concerns
     template<typename Related>
     Derived &
     HasRelationships<Derived, AllRelations...>::setRelation(
-            const QString &relation, const QVector<Related> &models)
+            const QString &relation, const ModelsCollection<Related> &models)
     {
         m_relations[relation] = models;
 
@@ -452,7 +454,7 @@ namespace Concerns
     template<typename Related>
     Derived &
     HasRelationships<Derived, AllRelations...>::setRelation(
-            const QString &relation, QVector<Related> &&models)
+            const QString &relation, ModelsCollection<Related> &&models)
     {
         m_relations[relation] = std::move(models);
 
@@ -714,7 +716,7 @@ namespace Concerns
         // Obtain related models
         auto relatedModels =
                 getRelationshipFromMethodWithVisitor<Related,
-                                                     QVector<Related>>(relation);
+                                                     ModelsCollection<Related>>(relation);
 
         setRelation(relation, std::move(relatedModels));
 
@@ -921,15 +923,15 @@ namespace Concerns
         auto &relationVariant = m_relations.find(relation)->second;
 
         // Check relation type to avoid std::bad_variant_access
-        checkRelationType<QVector<Related>, Related>(
+        checkRelationType<ModelsCollection<Related>, Related>(
                     relationVariant, relation, QStringLiteral("getRelation"));
 
-        /* Obtain related models from data member hash as QVector, it is internal
-           format and transform it into a Container of pointers to related models,
-           so a user can directly modify these models and push or save them
-           afterward. */
+        /* Obtain related models from data member hash as the ModelsCollection,
+           it is internal format and transform it into a Container of pointers
+           to related models, so a user can directly modify these models and push or
+           save them afterward. */
         namespace views = ranges::views;
-        return std::get<QVector<Related>>(relationVariant)
+        return std::get<ModelsCollection<Related>>(relationVariant)
                 | views::transform([](Related &model) -> Related * { return &model; })
                 | ranges::to<Container<Related *>>();
     }
@@ -995,7 +997,7 @@ namespace Concerns
                         .arg(relation, source,
                              TypeUtils::classPureBasename<Related>()));
 
-        } else if constexpr (std::is_same_v<Result, QVector<Related>>) {
+        } else if constexpr (std::is_same_v<Result, ModelsCollection<Related>>) {
             if (!std::holds_alternative<Result>(relationVariant))
                 throw Orm::Exceptions::InvalidTemplateArgumentError(
                         QStringLiteral(
@@ -1025,7 +1027,7 @@ namespace Concerns
     template<typename Derived, AllRelationsConcept ...AllRelations>
     void HasRelationships<Derived, AllRelations...>::eagerLoadRelationWithVisitor(
             const WithItem &relation, const TinyBuilder<Derived> &builder,
-            QVector<Derived> &models)
+            ModelsCollection<Derived> &models)
     {
         // Throw excpetion if a relation is not defined
         validateUserRelation(relation.name);
@@ -1095,7 +1097,7 @@ namespace Concerns
         const RelationsType<AllRelations...> &models = *this->pushStore().m_models;
 
         // Invoke pushVisited() on the base of hold alternative in the models
-        if (std::holds_alternative<QVector<Related>>(models))
+        if (std::holds_alternative<ModelsCollection<Related>>(models))
             pushVisited<Related, Many>();
 
         else if (std::holds_alternative<std::optional<Related>>(models))
@@ -1112,7 +1114,7 @@ namespace Concerns
     {
         auto &pushStore = this->pushStore();
 
-        for (auto &model : std::get<QVector<Related>>(*pushStore.m_models))
+        for (auto &model : std::get<ModelsCollection<Related>>(*pushStore.m_models))
             if (!model.push()) {
                 pushStore.m_result = false;
                 return;

@@ -7,10 +7,8 @@ TINY_SYSTEM_HEADER
 
 #include "orm/exceptions/multiplerecordsfounderror.hpp"
 #include "orm/exceptions/recordsnotfounderror.hpp"
-#include "orm/ormtypes.hpp"
-#include "orm/tiny/tinyconcepts.hpp" // IWYU pragma: keep
+#include "orm/tiny/types/modelscollection.hpp"
 #include "orm/utils/query.hpp"
-#include "orm/utils/type.hpp"
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
@@ -48,13 +46,13 @@ namespace Concerns
         /*! Chunk the results of the query. */
         bool chunk(int count,
                    const std::function<
-                       bool(QVector<Model> &&models, int page)> &callback);
+                       bool(ModelsCollection<Model> &&models, int page)> &callback);
         /*! Execute a callback over each item while chunking. */
         bool each(const std::function<bool(Model &&model, int index)> &callback,
                   int count = 1000);
 
         /*! Run a map over each item while chunking. */
-        QVector<Model>
+        ModelsCollection<Model>
         chunkMap(const std::function<Model(Model &&model)> &callback, int count = 1000);
         /*! Run a map over each item while chunking. */
         template<typename T>
@@ -64,7 +62,7 @@ namespace Concerns
         /*! Chunk the results of a query by comparing IDs. */
         bool chunkById(int count,
                        const std::function<
-                           bool(QVector<Model> &&models, int page)> &callback,
+                           bool(ModelsCollection<Model> &&models, int page)> &callback,
                        const QString &column = "", const QString &alias = "");
         /*! Execute a callback over each item while chunking by ID. */
         bool eachById(const std::function<bool(Model &&model, int index)> &callback,
@@ -91,11 +89,11 @@ namespace Concerns
        if constexpr() statements because the SqlQuery can not be iterated using
        the ranged-loop or with iterators, BUT there was a big confusion with parameter
        types passed to the chunk/each() methods, the QueryBuilder needs SqlQuery & and
-       TinyBuilder Model && or QVector<Model> && and that is a big confusing problem.
-       I was able to compute these types using the metaprogramming at compile time and
-       I named them eg. Results but you know nothing from this 'Results' type, so when
-       a user fastly looks into the .hpp file it would be fucked up about how these
-       chunk/each methods work and what type of callback he needs to define.
+       TinyBuilder Model && or ModelsCollection<Model> && and that is a big confusing
+       problem. I was able to compute these types using the metaprogramming at compile
+       time and I named them eg. Results but you know nothing from this 'Results' type,
+       so when a user fastly looks into the .hpp file it would be fucked up about how
+       these chunk/each methods work and what type of callback he needs to define.
        So I have decided to divide it like it's now to the QueryBuilder::BuildsQueries
        and TinyBuilder::BuildsQueries, now is everything crystal clear.
        Clear and nice code has much higher priority for me and because of that I can
@@ -105,7 +103,8 @@ namespace Concerns
 
     template<ModelConcept Model>
     bool BuildsQueries<Model>::chunk(
-            const int count, const std::function<bool(QVector<Model> &&, int)> &callback)
+            const int count,
+            const std::function<bool(ModelsCollection<Model> &&, int)> &callback)
     {
         builder().enforceOrderBy();
 
@@ -143,7 +142,8 @@ namespace Concerns
     bool BuildsQueries<Model>::each(const std::function<bool(Model &&, int)> &callback,
                                     const int count)
     {
-        return chunk(count, [&callback](QVector<Model> &&models, const int /*unused*/)
+        return chunk(count, [&callback]
+                            (ModelsCollection<Model> &&models, const int /*unused*/)
         {
             int index = 0;
 
@@ -158,13 +158,16 @@ namespace Concerns
     }
 
     template<ModelConcept Model>
-    QVector<Model>
+    ModelsCollection<Model>
     BuildsQueries<Model>::chunkMap(const std::function<Model(Model &&)> &callback,
                                    const int count)
     {
-        QVector<Model> result;
+        ModelsCollection<Model> result;
+        // Reserve the first page, it can help reallocations at the beginning
+        result.reserve(static_cast<ModelsCollection<Model>::size_type>(count));
 
-        chunk(count, [&result, &callback](QVector<Model> &&models, const int /*unused*/)
+        chunk(count, [&result, &callback]
+                     (ModelsCollection<Model> &&models, const int /*unused*/)
         {
             for (auto &&model : models)
                 result << std::invoke(callback, std::move(model));
@@ -182,8 +185,11 @@ namespace Concerns
                                    const int count)
     {
         QVector<T> result;
+        // Reserve the first page, it can help reallocations at the beginning
+        result.reserve(static_cast<QVector<T>::size_type>(count));
 
-        chunk(count, [&result, &callback](QVector<Model> &&models, const int /*unused*/)
+        chunk(count, [&result, &callback]
+                     (ModelsCollection<Model> &&models, const int /*unused*/)
         {
             for (auto &&model : models)
                 result << std::invoke(callback, std::move(model));
@@ -196,7 +202,8 @@ namespace Concerns
 
     template<ModelConcept Model>
     bool BuildsQueries<Model>::chunkById(
-            const int count, const std::function<bool(QVector<Model> &&, int)> &callback,
+            const int count,
+            const std::function<bool(ModelsCollection<Model> &&, int)> &callback,
             const QString &column, const QString &alias)
     {
         const auto columnName = column.isEmpty() ? builder().defaultKeyName() : column;
@@ -256,7 +263,7 @@ namespace Concerns
             const int count, const QString &column, const QString &alias)
     {
         return chunkById(count, [&callback, count]
-                                (QVector<Model> &&models, const int page)
+                                (ModelsCollection<Model> &&models, const int page)
         {
             int index = 0;
 
