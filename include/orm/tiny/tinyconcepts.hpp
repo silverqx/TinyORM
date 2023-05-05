@@ -24,7 +24,8 @@ namespace Orm::Tiny
 
     /*! Concept to check whether a passed type is the model class. */
     template<typename T>
-    concept ModelConcept = std::derived_from<T, IsModel>;
+    concept ModelConcept = std::derived_from<T, IsModel> &&
+                           std::derived_from<T, typename T::BaseModelType>;
 
     /*! Concept for Derived Model and Model * for ModelsCollection. */
     template<typename T>
