@@ -11,6 +11,7 @@
 
 using Orm::Constants::AND;
 using Orm::Constants::LIKE;
+using Orm::Constants::NAME;
 using Orm::Constants::OR;
 using Orm::Constants::SIZE;
 
@@ -1083,7 +1084,7 @@ void tst_MySql_TinyBuilder::has_Basic_TinyBuilder_OnBelongsToMany() const
     {
         QVERIFY((std::is_same_v<decltype (query), TinyBuilder<Tag> &>));
 
-        query.where("name", LIKE, "tag%");
+        query.where(NAME, LIKE, "tag%");
     });
 
     QCOMPARE(builder->toSql(),
@@ -1105,7 +1106,7 @@ void tst_MySql_TinyBuilder::has_Count_QueryBuilder_OnBelongsToMany() const
     {
         QVERIFY((std::is_same_v<decltype (query), QueryBuilder &>));
 
-        query.where("name", LIKE, "tag%");
+        query.where(NAME, LIKE, "tag%");
     });
 
     QCOMPARE(builder->toSql(),
@@ -1127,7 +1128,7 @@ void tst_MySql_TinyBuilder::has_Count_TinyBuilder_OnBelongsToMany() const
     {
         QVERIFY((std::is_same_v<decltype (query), TinyBuilder<Tag> &>));
 
-        query.where("name", LIKE, "tag%");
+        query.where(NAME, LIKE, "tag%");
     });
 
     QCOMPARE(builder->toSql(),

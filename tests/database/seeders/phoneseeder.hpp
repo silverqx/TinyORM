@@ -27,12 +27,12 @@ namespace Seeders
         {
 #ifdef TINYORM_DISABLE_ORM
             DB::table("phones")->insert({
-                {{"name", "1. phone"}},
-                {{"name", "2. phone"}},
+                {{NAME, "1. phone"}},
+                {{NAME, "2. phone"}},
             });
 #else
             // This tests GuardedModel::unguarded()
-            Models::Phone::create({{"name", QDateTime::currentDateTime()}});
+            Models::Phone::create({{NAME, QDateTime::currentDateTime()}});
 #endif
         }
     };

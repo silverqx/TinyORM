@@ -518,7 +518,7 @@ void tst_Model_Connection_Independent::replicate() const
 void tst_Model_Connection_Independent::replicate_WithCreate() const
 {
     // Following is the most used case for the replicate method so I will test it
-    auto user = User::create({{"name", "xyz"},
+    auto user = User::create({{NAME, "xyz"},
                               {"is_banned", true},
                               {NOTE, "test replicate"}});
     QVERIFY(user.exists);
@@ -801,7 +801,7 @@ void tst_Model_Connection_Independent::notEqualComparison() const
         // Check before change
         QVERIFY(*torrent1_1 == *torrent1_2);
 
-        torrent1_2->setAttribute("name", "test1 changed");
+        torrent1_2->setAttribute(NAME, "test1 changed");
 
         QVERIFY(*torrent1_1 != *torrent1_2);
     }
@@ -2129,7 +2129,7 @@ void tst_Model_Connection_Independent::sole() const
 void tst_Model_Connection_Independent::sole_RecordsNotFoundError() const
 {
     QVERIFY_EXCEPTION_THROWN(
-            FilePropertyProperty::whereEq("name", "dummy-NON_EXISTENT")->sole(),
+            FilePropertyProperty::whereEq(NAME, "dummy-NON_EXISTENT")->sole(),
             RecordsNotFoundError);
 }
 
@@ -2144,7 +2144,7 @@ void tst_Model_Connection_Independent::sole_Pretending() const
 {
     auto log = DB::connection(m_connection).pretend([]()
     {
-        FilePropertyProperty::whereEq("name", "dummy-NON_EXISTENT")->sole();
+        FilePropertyProperty::whereEq(NAME, "dummy-NON_EXISTENT")->sole();
     });
 
     QVERIFY(!log.isEmpty());
@@ -2169,7 +2169,7 @@ void tst_Model_Connection_Independent::soleValue() const
 void tst_Model_Connection_Independent::soleValue_RecordsNotFoundError() const
 {
     QVERIFY_EXCEPTION_THROWN(
-            FilePropertyProperty::whereEq("name", "dummy-NON_EXISTENT")->soleValue(NAME),
+            FilePropertyProperty::whereEq(NAME, "dummy-NON_EXISTENT")->soleValue(NAME),
             RecordsNotFoundError);
 }
 
@@ -2184,7 +2184,7 @@ void tst_Model_Connection_Independent::soleValue_Pretending() const
 {
     auto log = DB::connection(m_connection).pretend([]()
     {
-        FilePropertyProperty::whereEq("name", "dummy-NON_EXISTENT")->soleValue(NAME);
+        FilePropertyProperty::whereEq(NAME, "dummy-NON_EXISTENT")->soleValue(NAME);
     });
 
     QVERIFY(!log.isEmpty());

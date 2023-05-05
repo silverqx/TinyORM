@@ -3647,7 +3647,7 @@ void tst_MySql_QueryBuilder::sole() const
 {
     auto log = DB::connection(m_connection).pretend([](auto &connection)
     {
-        connection.query()->from("torrents").whereEq("name", "dummy-NON_EXISTENT").sole();
+        connection.query()->from("torrents").whereEq(NAME, "dummy-NON_EXISTENT").sole();
     });
 
     QVERIFY(!log.isEmpty());
@@ -3665,7 +3665,7 @@ void tst_MySql_QueryBuilder::soleValue() const
     auto log = DB::connection(m_connection).pretend([](auto &connection)
     {
         connection.query()->from("torrents")
-                .whereEq("name", "dummy-NON_EXISTENT")
+                .whereEq(NAME, "dummy-NON_EXISTENT")
                 .soleValue(NAME);
     });
 

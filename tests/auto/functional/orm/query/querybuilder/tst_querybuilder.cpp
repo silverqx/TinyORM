@@ -1582,7 +1582,7 @@ void tst_QueryBuilder::sole_RecordsNotFoundError() const
 
     QVERIFY_EXCEPTION_THROWN(
             createQuery(connection)->from("torrents")
-                .whereEq("name", "dummy-NON_EXISTENT")
+                .whereEq(NAME, "dummy-NON_EXISTENT")
                 .sole(),
             RecordsNotFoundError);
 }
@@ -1614,7 +1614,7 @@ void tst_QueryBuilder::soleValue_RecordsNotFoundError() const
 
     QVERIFY_EXCEPTION_THROWN(
             createQuery(connection)->from("torrents")
-                .whereEq("name", "dummy-NON_EXISTENT")
+                .whereEq(NAME, "dummy-NON_EXISTENT")
                 .soleValue(NAME),
             RecordsNotFoundError);
 }
