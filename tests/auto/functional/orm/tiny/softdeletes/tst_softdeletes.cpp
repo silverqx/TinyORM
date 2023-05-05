@@ -11,6 +11,7 @@
 using Orm::Constants::DELETED_AT;
 using Orm::Constants::ID;
 using Orm::Constants::NAME;
+using Orm::Constants::NOTE;
 using Orm::Constants::UPDATED_AT;
 
 using Orm::Tiny::ConnectionOverride;
@@ -1256,7 +1257,7 @@ void tst_SoftDeletes::forceDelete_Trashed_OnModel() const
     // Create test user
     auto user = User::create({{NAME, "liltrash"},
                               {"is_banned", false},
-                              {"note", "forceDelete test"}});
+                              {NOTE, "forceDelete test"}});
 
     QVERIFY(user.exists);
     QVERIFY(!user.trashed());
@@ -1279,14 +1280,14 @@ void tst_SoftDeletes::forceDelete_Trashed_OnTinyBuilder() const
     // Create test users
     auto user1 = User::create({{NAME, "liltrash"},
                                {"is_banned", false},
-                               {"note", "forceDelete test"}});
+                               {NOTE, "forceDelete test"}});
     QVERIFY(user1.exists);
     QVERIFY(!user1.trashed());
     QVERIFY(User::withTrashed()->whereKey(user1.getKey()).exists());
 
     auto user2 = User::create({{NAME, "loltrash"},
                                {"is_banned", false},
-                               {"note", "forceDelete test"}});
+                               {NOTE, "forceDelete test"}});
     QVERIFY(user2.exists);
     QVERIFY(!user2.trashed());
     QVERIFY(User::withTrashed()->whereKey(user2.getKey()).exists());
@@ -1316,7 +1317,7 @@ void tst_SoftDeletes::forceDelete_NotTrashed_OnModel() const
     // Create test user
     auto user = User::create({{NAME, "lilnot-trash"},
                               {"is_banned", false},
-                              {"note", "forceDelete test"}});
+                              {NOTE, "forceDelete test"}});
 
     QVERIFY(user.exists);
     QVERIFY(!user.trashed());
@@ -1334,14 +1335,14 @@ void tst_SoftDeletes::forceDelete_NotTrashed_OnTinyBuilder() const
     // Create test users
     auto user1 = User::create({{NAME, "liltrash"},
                                {"is_banned", false},
-                               {"note", "forceDelete test"}});
+                               {NOTE, "forceDelete test"}});
     QVERIFY(user1.exists);
     QVERIFY(!user1.trashed());
     QVERIFY(User::withTrashed()->whereKey(user1.getKey()).exists());
 
     auto user2 = User::create({{NAME, "loltrash"},
                                {"is_banned", false},
-                               {"note", "forceDelete test"}});
+                               {NOTE, "forceDelete test"}});
     QVERIFY(user2.exists);
     QVERIFY(!user2.trashed());
     QVERIFY(User::withTrashed()->whereKey(user2.getKey()).exists());

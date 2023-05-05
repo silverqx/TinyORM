@@ -16,6 +16,7 @@ using Orm::Constants::ID;
 using Orm::Constants::LEFT;
 using Orm::Constants::LIKE;
 using Orm::Constants::NAME;
+using Orm::Constants::NOTE;
 using Orm::Constants::OR;
 using Orm::Constants::SIZE;
 
@@ -1136,7 +1137,7 @@ void tst_SQLite_QueryBuilder::whereColumn() const
     auto builder = createQuery();
 
     builder->select("*").from("torrent_previewable_files")
-            .whereColumn("filepath", "=", "note")
+            .whereColumn("filepath", "=", NOTE)
             .whereColumn(SIZE, ">=", "progress");
     QCOMPARE(builder->toSql(),
              "select * from \"torrent_previewable_files\" where \"filepath\" = \"note\" "
@@ -1151,7 +1152,7 @@ void tst_SQLite_QueryBuilder::orWhereColumn() const
         auto builder = createQuery();
 
         builder->select("*").from("torrent_previewable_files")
-                .whereColumnEq("filepath", "note")
+                .whereColumnEq("filepath", NOTE)
                 .orWhereColumnEq(SIZE, "progress");
         QCOMPARE(builder->toSql(),
                  "select * from \"torrent_previewable_files\" "
@@ -1164,7 +1165,7 @@ void tst_SQLite_QueryBuilder::orWhereColumn() const
         auto builder = createQuery();
 
         builder->select("*").from("torrent_previewable_files")
-                .whereColumnEq("filepath", "note")
+                .whereColumnEq("filepath", NOTE)
                 .orWhereColumn(SIZE, ">", "progress");
         QCOMPARE(builder->toSql(),
                  "select * from \"torrent_previewable_files\" "
@@ -1194,7 +1195,7 @@ void tst_SQLite_QueryBuilder::whereColumn_WithVectorValue() const
         auto builder = createQuery();
 
         builder->select("*").from("torrent_previewable_files")
-                .whereColumn({{"filepath", "note"},
+                .whereColumn({{"filepath", NOTE},
                               {SIZE, "progress", ">"}});
         QCOMPARE(builder->toSql(),
                  "select * from \"torrent_previewable_files\" "
@@ -1207,7 +1208,7 @@ void tst_SQLite_QueryBuilder::whereColumn_WithVectorValue() const
         auto builder = createQuery();
 
         builder->select("*").from("torrent_previewable_files")
-                .whereColumn({{"filepath", "note"},
+                .whereColumn({{"filepath", NOTE},
                               {SIZE, "progress", ">", "or"}});
         QCOMPARE(builder->toSql(),
                  "select * from \"torrent_previewable_files\" "
@@ -1223,7 +1224,7 @@ void tst_SQLite_QueryBuilder::orWhereColumn_WithVectorValue() const
         auto builder = createQuery();
 
         builder->select("*").from("torrent_previewable_files").whereEq(ID, 2)
-                .orWhereColumn({{"filepath", "note"},
+                .orWhereColumn({{"filepath", NOTE},
                                 {SIZE, "progress", ">"}});
         QCOMPARE(builder->toSql(),
                  "select * from \"torrent_previewable_files\" "
@@ -1237,7 +1238,7 @@ void tst_SQLite_QueryBuilder::orWhereColumn_WithVectorValue() const
         auto builder = createQuery();
 
         builder->select("*").from("torrent_previewable_files").whereEq(ID, 2)
-                .orWhereColumn({{"filepath", "note"},
+                .orWhereColumn({{"filepath", NOTE},
                                 {SIZE, "progress", ">", "and"}});
         QCOMPARE(builder->toSql(),
                  "select * from \"torrent_previewable_files\" "
@@ -1251,7 +1252,7 @@ void tst_SQLite_QueryBuilder::orWhereColumn_WithVectorValue() const
         auto builder = createQuery();
 
         builder->select("*").from("torrent_previewable_files").whereEq(ID, 2)
-                .orWhereColumn({{"filepath", "note"},
+                .orWhereColumn({{"filepath", NOTE},
                                 {SIZE, "progress", ">", "or"}});
         QCOMPARE(builder->toSql(),
                  "select * from \"torrent_previewable_files\" "

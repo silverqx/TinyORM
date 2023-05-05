@@ -8,6 +8,7 @@
 #include "databases.hpp"
 
 using Orm::Constants::NAME;
+using Orm::Constants::NOTE;
 using Orm::Constants::SIZE;
 
 using Orm::DB;
@@ -96,7 +97,7 @@ void tst_Blueprint::index_DefaultNames() const
     // FullText
     {
         Blueprint blueprint("torrents");
-        blueprint.fullText("note");
+        blueprint.fullText(NOTE);
         const auto &commands = blueprint.getCommands();
 
         QCOMPARE(reinterpret_cast<const IndexCommand &>(*commands.front()).index,
@@ -136,7 +137,7 @@ void tst_Blueprint::index_DefaultNames_WithPrefix() const
     // FullText
     {
         Blueprint blueprint("torrents", nullptr, "prefix_");
-        blueprint.fullText("note");
+        blueprint.fullText(NOTE);
         const auto &commands = blueprint.getCommands();
 
         QCOMPARE(reinterpret_cast<const IndexCommand &>(*commands.front()).index,
@@ -175,7 +176,7 @@ void tst_Blueprint::dropIndex_ByColumns_DefaultNames() const
     // FullText
     {
         Blueprint blueprint("torrents");
-        blueprint.dropFullText({"note"});
+        blueprint.dropFullText({NOTE});
         const auto &commands = blueprint.getCommands();
 
         QCOMPARE(reinterpret_cast<const IndexCommand &>(*commands.front()).index,
@@ -214,7 +215,7 @@ void tst_Blueprint::dropIndex_ByColumns_DefaultNames_WithPrefix() const
     // FullText
     {
         Blueprint blueprint("torrents", nullptr, "prefix_");
-        blueprint.dropFullText({"note"});
+        blueprint.dropFullText({NOTE});
         const auto &commands = blueprint.getCommands();
 
         QCOMPARE(reinterpret_cast<const IndexCommand &>(*commands.front()).index,
@@ -253,11 +254,11 @@ void tst_Blueprint::dropIndex_ByIndexName() const
     // FullText
     {
         Blueprint blueprint("torrents");
-        blueprint.dropFullText("note");
+        blueprint.dropFullText(NOTE);
         const auto &commands = blueprint.getCommands();
 
         QCOMPARE(reinterpret_cast<const IndexCommand &>(*commands.front()).index,
-                 "note");
+                 NOTE);
     }
 }
 

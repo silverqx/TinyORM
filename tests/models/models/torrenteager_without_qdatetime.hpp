@@ -8,6 +8,7 @@ namespace Models
 {
 
 using Orm::Constants::NAME;
+using Orm::Constants::NOTE;
 using Orm::Constants::SIZE;
 
 using Orm::Tiny::AttributeItem;
@@ -36,7 +37,7 @@ class TorrentEager_Without_QDateTime final :
         "progress",
         "added_on",
         "hash",
-        "note",
+        NOTE,
     };
 
     /*! The attributes that should be mutated to dates. */

@@ -25,7 +25,7 @@ namespace Migrations
                 table.unsignedBigInteger(SIZE_);
                 table.unsignedSmallInteger("progress");
 
-                table.string("note").nullable();
+                table.string(NOTE).nullable();
 
                 table.timestamps();
             });

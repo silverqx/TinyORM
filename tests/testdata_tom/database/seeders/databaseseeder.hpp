@@ -11,7 +11,7 @@ namespace Seeders
         /*! Run the database seeders. */
         void run() override
         {
-            DB::table("users")->insert({ID, NAME, "is_banned", "note", CREATED_AT, UPDATED_AT, DELETED_AT},
+            DB::table("users")->insert({ID, NAME, "is_banned", NOTE, CREATED_AT, UPDATED_AT, DELETED_AT},
             {
                 {1, "andrej", false, NullVariant::QString(), "2022-01-01 14:51:23", "2022-01-01 17:46:31", NullVariant::QDateTime()},
                 {2, "silver", false, NullVariant::QString(), "2022-01-02 14:51:23", "2022-01-02 17:46:31", NullVariant::QDateTime()},
@@ -42,7 +42,7 @@ namespace Seeders
                 {3, 3, "905111999"},
             });
 
-            DB::table("torrents")->insert({ID, "user_id", NAME, SIZE_, "progress", "added_on", "hash", "note", CREATED_AT, UPDATED_AT},
+            DB::table("torrents")->insert({ID, "user_id", NAME, SIZE_, "progress", "added_on", "hash", NOTE, CREATED_AT, UPDATED_AT},
             {
                 {1, 1, "test1", 11, 100, "2020-08-01 20:11:10", "1579e3af2768cdf52ec84c1f320333f68401dc6e", NullVariant::QString(),           "2016-06-01 08:08:23", "2021-01-01 18:46:31"},
                 {2, 1, "test2", 12, 200, "2020-08-02 20:11:10", "2579e3af2768cdf52ec84c1f320333f68401dc6e", NullVariant::QString(),           "2017-07-02 08:09:23", "2021-01-02 18:46:31"},
@@ -60,7 +60,7 @@ namespace Seeders
                 {4, 4, NullVariant::Int(), 4, 4, 4, "2021-01-04 14:51:23", "2021-01-04 17:46:31"},
             });
 
-            DB::table("torrent_previewable_files")->insert({ID, "torrent_id", "file_index", "filepath", SIZE_, "progress", "note", CREATED_AT, UPDATED_AT},
+            DB::table("torrent_previewable_files")->insert({ID, "torrent_id", "file_index", "filepath", SIZE_, "progress", NOTE, CREATED_AT, UPDATED_AT},
             {
                 {1, 1,                        0, "test1_file1.mkv", 1024, 200,  "no file properties",                    "2021-01-01 14:51:23", "2021-01-01 17:46:31"},
                 {2, 2,                        0, "test2_file1.mkv", 2048, 870,  NullVariant::QString(),                  "2021-01-02 14:51:23", "2021-01-02 17:46:31"},
@@ -94,7 +94,7 @@ namespace Seeders
                 {8, 5, "test5_file1_property3", 8, "2021-01-08 14:51:23", "2021-01-08 17:46:31"},
             });
 
-            DB::table("torrent_tags")->insert({ID, NAME, "note", CREATED_AT, UPDATED_AT},
+            DB::table("torrent_tags")->insert({ID, NAME, NOTE, CREATED_AT, UPDATED_AT},
             {
                 {1, "tag1", NullVariant::QString(), "2021-01-11 11:51:28", "2021-01-11 23:47:11"},
                 {2, "tag2", NullVariant::QString(), "2021-01-12 11:51:28", "2021-01-12 23:47:11"},
@@ -140,7 +140,7 @@ namespace Seeders
                 {3, NullVariant::Bool(), NullVariant::Bool(), NullVariant::Short(), NullVariant::UShort(), NullVariant::Int(), NullVariant::UInt(), NullVariant::LongLong(), NullVariant::ULongLong(), NullVariant::Double(), NullVariant::Double(), NullVariant::Double(), NullVariant::Double(), NullVariant::Double(), NullVariant::Double(), NullVariant::Double(), NullVariant::Double(), NullVariant::QString(), NullVariant::QString(), NullVariant::QDateTime(), NullVariant::QDateTime(), NullVariant::QDateTime(), NullVariant::QByteArray()},
             });
 
-            DB::table("albums")->insert({ID, NAME, "note", CREATED_AT, UPDATED_AT},
+            DB::table("albums")->insert({ID, NAME, NOTE, CREATED_AT, UPDATED_AT},
             {
                 {1, "album1", NullVariant::QString(), "2023-01-01 12:21:14", "2023-02-01 16:54:28"},
                 {2, "album2", NullVariant::QString(), "2023-01-02 12:21:14", "2023-02-02 16:54:28"},

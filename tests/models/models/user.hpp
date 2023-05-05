@@ -13,6 +13,9 @@
 namespace Models
 {
 
+using Orm::Constants::NAME;
+using Orm::Constants::NOTE;
+
 using Orm::Tiny::CastItem;
 using Orm::Tiny::CastType;
 using Orm::Tiny::Model;
@@ -71,7 +74,7 @@ private:
     inline static const QStringList u_fillable { // NOLINT(cppcoreguidelines-interfaces-global-init)
         NAME,
         "is_banned",
-        "note",
+        NOTE,
     };
 
     /*! Indicates whether the model should be timestamped. */

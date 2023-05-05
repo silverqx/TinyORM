@@ -11,6 +11,7 @@
 
 using Orm::Constants::ID;
 using Orm::Constants::NAME;
+using Orm::Constants::NOTE;
 using Orm::Constants::QMYSQL;
 using Orm::Constants::QPSQL;
 using Orm::Constants::QSQLITE;
@@ -155,7 +156,7 @@ void tst_DatabaseConnection::transaction_Commit() const
     QVERIFY(DB::connection(connection).inTransaction());
 
     auto id = builder->from("users").insertGetId({{NAME, nameValue},
-                                                  {"note", noteValue}});
+                                                  {NOTE, noteValue}});
 
     DB::commit(connection);
 
@@ -168,7 +169,7 @@ void tst_DatabaseConnection::transaction_Commit() const
 
     QCOMPARE(query.value(ID).value<quint64>(), id);
     QCOMPARE(query.value(NAME).value<QString>(), nameValue);
-    QCOMPARE(query.value("note").value<QString>(), noteValue);
+    QCOMPARE(query.value(NOTE).value<QString>(), noteValue);
 
     // Clean up
     builder->remove(id);
@@ -191,7 +192,7 @@ void tst_DatabaseConnection::transaction_RollBack() const
     QVERIFY(DB::connection(connection).inTransaction());
 
     auto id = builder->from("users").insertGetId({{NAME, nameValue},
-                                                  {"note", noteValue}});
+                                                  {NOTE, noteValue}});
 
     DB::rollBack(connection);
 
@@ -237,7 +238,7 @@ void tst_DatabaseConnection::transaction_Commit_Double() const
         QVERIFY(DB::connection(connection).inTransaction());
 
         id1 = builder->from("users").insertGetId({{NAME, nameValue},
-                                                  {"note", noteValue}});
+                                                  {NOTE, noteValue}});
 
         DB::commit(connection);
 
@@ -250,7 +251,7 @@ void tst_DatabaseConnection::transaction_Commit_Double() const
 
         QCOMPARE(query.value(ID).value<quint64>(), id1);
         QCOMPARE(query.value(NAME).value<QString>(), nameValue);
-        QCOMPARE(query.value("note").value<QString>(), noteValue);
+        QCOMPARE(query.value(NOTE).value<QString>(), noteValue);
     }
     // Second commit
     {
@@ -267,7 +268,7 @@ void tst_DatabaseConnection::transaction_Commit_Double() const
         QVERIFY(DB::connection(connection).inTransaction());
 
         id2 = builder->from("users").insertGetId({{NAME, nameValue},
-                                                  {"note", noteValue}});
+                                                  {NOTE, noteValue}});
 
         DB::commit(connection);
 
@@ -280,7 +281,7 @@ void tst_DatabaseConnection::transaction_Commit_Double() const
 
         QCOMPARE(query.value(ID).value<quint64>(), id2);
         QCOMPARE(query.value(NAME).value<QString>(), nameValue);
-        QCOMPARE(query.value("note").value<QString>(), noteValue);
+        QCOMPARE(query.value(NOTE).value<QString>(), noteValue);
     }
 
     // Clean up
@@ -308,7 +309,7 @@ void tst_DatabaseConnection::transaction_RollBack_Double() const
         QVERIFY(DB::connection(connection).inTransaction());
 
         auto id = builder->from("users").insertGetId({{NAME, nameValue},
-                                                      {"note", noteValue}});
+                                                      {NOTE, noteValue}});
 
         DB::rollBack(connection);
 
@@ -340,7 +341,7 @@ void tst_DatabaseConnection::transaction_RollBack_Double() const
         QVERIFY(DB::connection(connection).inTransaction());
 
         auto id = builder->from("users").insertGetId({{NAME, nameValue},
-                                                      {"note", noteValue}});
+                                                      {NOTE, noteValue}});
 
         DB::rollBack(connection);
 
@@ -384,7 +385,7 @@ void tst_DatabaseConnection::transaction_Savepoints_Commit_AllSuccess() const
     QVERIFY(DB::connection(connection).inTransaction());
 
     idsSuccess << builder->from("users").insertGetId({{NAME, nameValues.at(0)},
-                                                      {"note", noteValue}});
+                                                      {NOTE, noteValue}});
 
     DB::savepoint(1, connection);
 
@@ -393,7 +394,7 @@ void tst_DatabaseConnection::transaction_Savepoints_Commit_AllSuccess() const
     QVERIFY(DB::connection(connection).inTransaction());
 
     idsSuccess << builder->from("users").insertGetId({{NAME, nameValues.at(1)},
-                                                      {"note", noteValue}});
+                                                      {NOTE, noteValue}});
 
     DB::savepoint(2, connection);
 
@@ -402,7 +403,7 @@ void tst_DatabaseConnection::transaction_Savepoints_Commit_AllSuccess() const
     QVERIFY(DB::connection(connection).inTransaction());
 
     idsSuccess << builder->from("users").insertGetId({{NAME, nameValues.at(2)},
-                                                      {"note", noteValue}});
+                                                      {NOTE, noteValue}});
 
     DB::commit(connection);
 
@@ -431,7 +432,7 @@ void tst_DatabaseConnection::transaction_Savepoints_Commit_AllSuccess() const
 
         QVERIFY(idsSuccess.contains(id));
         QCOMPARE(query.value(NAME).value<QString>(), nameValues.at(nameIndex));
-        QCOMPARE(query.value("note").value<QString>(), noteValue);
+        QCOMPARE(query.value(NOTE).value<QString>(), noteValue);
     }
 
     QVERIFY(!query.seek(QSql::BeforeFirstRow));
@@ -471,7 +472,7 @@ void tst_DatabaseConnection::transaction_Savepoints_Commit_OneFailed() const
     QVERIFY(DB::connection(connection).inTransaction());
 
     idsSuccess << builder->from("users").insertGetId({{NAME, nameValuesSuccess.at(0)},
-                                                      {"note", noteValue}});
+                                                      {NOTE, noteValue}});
 
     DB::savepoint(1, connection);
 
@@ -480,7 +481,7 @@ void tst_DatabaseConnection::transaction_Savepoints_Commit_OneFailed() const
     QVERIFY(DB::connection(connection).inTransaction());
 
     idsFailed << builder->from("users").insertGetId({{NAME, nameValuesFailed.at(0)},
-                                                     {"note", noteValue}});
+                                                     {NOTE, noteValue}});
 
     DB::rollbackToSavepoint(1, connection);
 
@@ -495,7 +496,7 @@ void tst_DatabaseConnection::transaction_Savepoints_Commit_OneFailed() const
     QVERIFY(DB::connection(connection).inTransaction());
 
     idsSuccess << builder->from("users").insertGetId({{NAME, nameValuesSuccess.at(1)},
-                                                      {"note", noteValue}});
+                                                      {NOTE, noteValue}});
 
     DB::commit(connection);
 
@@ -525,7 +526,7 @@ void tst_DatabaseConnection::transaction_Savepoints_Commit_OneFailed() const
 
         QVERIFY(idsSuccess.contains(id));
         QCOMPARE(query.value(NAME).value<QString>(), nameValuesSuccess.at(nameIndex));
-        QCOMPARE(query.value("note").value<QString>(), noteValue);
+        QCOMPARE(query.value(NOTE).value<QString>(), noteValue);
     }
 
     QVERIFY(!query.seek(QSql::BeforeFirstRow));
@@ -568,7 +569,7 @@ void tst_DatabaseConnection::transaction_Savepoints_Commit_AllFailed() const
 
     idsFailed << builder->from("users").insertGetId({{NAME, nameValues.at(0)},
                                                      {"is_banned", true},
-                                                     {"note", noteValue}});
+                                                     {NOTE, noteValue}});
 
     DB::rollbackToSavepoint(0, connection);
 
@@ -584,7 +585,7 @@ void tst_DatabaseConnection::transaction_Savepoints_Commit_AllFailed() const
 
     idsFailed << builder->from("users").insertGetId({{NAME, nameValues.at(1)},
                                                      {"is_banned", true},
-                                                     {"note", noteValue}});
+                                                     {NOTE, noteValue}});
 
     DB::rollbackToSavepoint(1, connection);
 
@@ -600,7 +601,7 @@ void tst_DatabaseConnection::transaction_Savepoints_Commit_AllFailed() const
 
     idsFailed << builder->from("users").insertGetId({{NAME, nameValues.at(2)},
                                                      {"is_banned", true},
-                                                     {"note", noteValue}});
+                                                     {NOTE, noteValue}});
 
     DB::rollbackToSavepoint(2, connection);
 
@@ -663,7 +664,7 @@ void tst_DatabaseConnection::transaction_Savepoints_Commit_AllFailed_Double() co
         QVERIFY(DB::connection(connection).inTransaction());
 
         idsFailed << builder->from("users").insertGetId({{NAME, nameValues.at(0)},
-                                                         {"note", noteValue}});
+                                                         {NOTE, noteValue}});
 
         DB::rollbackToSavepoint(0, connection);
 
@@ -678,7 +679,7 @@ void tst_DatabaseConnection::transaction_Savepoints_Commit_AllFailed_Double() co
         QVERIFY(DB::connection(connection).inTransaction());
 
         idsFailed << builder->from("users").insertGetId({{NAME, nameValues.at(1)},
-                                                         {"note", noteValue}});
+                                                         {NOTE, noteValue}});
 
         DB::rollbackToSavepoint(1, connection);
 
@@ -693,7 +694,7 @@ void tst_DatabaseConnection::transaction_Savepoints_Commit_AllFailed_Double() co
         QVERIFY(DB::connection(connection).inTransaction());
 
         idsFailed << builder->from("users").insertGetId({{NAME, nameValues.at(2)},
-                                                         {"note", noteValue}});
+                                                         {NOTE, noteValue}});
 
         DB::rollbackToSavepoint(2, connection);
 
@@ -751,7 +752,7 @@ void tst_DatabaseConnection::transaction_Savepoints_Commit_AllFailed_Double() co
         QVERIFY(DB::connection(connection).inTransaction());
 
         idsFailed << builder->from("users").insertGetId({{NAME, nameValues.at(0)},
-                                                         {"note", noteValue}});
+                                                         {NOTE, noteValue}});
 
         DB::rollbackToSavepoint(0, connection);
 
@@ -766,7 +767,7 @@ void tst_DatabaseConnection::transaction_Savepoints_Commit_AllFailed_Double() co
         QVERIFY(DB::connection(connection).inTransaction());
 
         idsFailed << builder->from("users").insertGetId({{NAME, nameValues.at(1)},
-                                                         {"note", noteValue}});
+                                                         {NOTE, noteValue}});
 
         DB::rollbackToSavepoint(1, connection);
 
@@ -781,7 +782,7 @@ void tst_DatabaseConnection::transaction_Savepoints_Commit_AllFailed_Double() co
         QVERIFY(DB::connection(connection).inTransaction());
 
         idsFailed << builder->from("users").insertGetId({{NAME, nameValues.at(2)},
-                                                         {"note", noteValue}});
+                                                         {NOTE, noteValue}});
 
         DB::rollbackToSavepoint(2, connection);
 

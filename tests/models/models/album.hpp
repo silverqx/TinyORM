@@ -10,6 +10,7 @@ namespace Models
 {
 
 using Orm::Constants::NAME;
+using Orm::Constants::NOTE;
 
 using Orm::Tiny::Model;
 using Orm::Tiny::Relations::HasMany;
@@ -44,7 +45,7 @@ private:
     /*! The attributes that are mass assignable. */
     inline static const QStringList u_fillable { // NOLINT(cppcoreguidelines-interfaces-global-init)
         NAME,
-        "note",
+        NOTE,
     };
 };
 

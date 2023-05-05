@@ -17,7 +17,7 @@ namespace Migrations
                 table.id();
 
                 table.string(NAME).unique();
-                table.string("note").nullable();
+                table.string(NOTE).nullable();
 
                 table.timestamps();
             });

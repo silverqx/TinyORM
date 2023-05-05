@@ -8,6 +8,7 @@ namespace Models
 {
 
 using Orm::Constants::NAME;
+using Orm::Constants::NOTE;
 using Orm::Constants::SIZE;
 
 using Orm::Tiny::Model;
@@ -38,7 +39,7 @@ class Torrent_GuardedAttribute final : public Model<Torrent_GuardedAttribute>
         "progress",
         "added_on",
         "hash",
-        "note",
+        NOTE,
         UPDATED_AT(),
     };
 

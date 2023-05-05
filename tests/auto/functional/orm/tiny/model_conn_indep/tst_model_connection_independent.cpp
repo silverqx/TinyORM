@@ -16,6 +16,7 @@ using Orm::Constants::ASTERISK;
 using Orm::Constants::CREATED_AT;
 using Orm::Constants::ID;
 using Orm::Constants::NAME;
+using Orm::Constants::NOTE;
 using Orm::Constants::SIZE;
 
 using Orm::DB;
@@ -209,7 +210,7 @@ defaultAttributeValues_WithQDateTime_ConvertingAttributesCtor() const
     // Attributes converting ctor must throw because of the QDateTime
     QVERIFY_EXCEPTION_THROWN(TorrentEager({
                                  {NAME, "test22"},
-                                 {"note", "Torrent::instance()"},
+                                 {NOTE, "Torrent::instance()"},
                              }),
                              InvalidArgumentError);
 }
@@ -221,7 +222,7 @@ defaultAttributeValues_WithQDateTime_ListInitializationCtor() const
        because of the QDateTime. */
     QVERIFY_EXCEPTION_THROWN((TorrentEager {
                                  {NAME, "test22"},
-                                 {"note", "Torrent::instance()"},
+                                 {NOTE, "Torrent::instance()"},
                              }),
                              InvalidArgumentError);
 }
@@ -252,7 +253,7 @@ defaultAttributeValues_WithQDateTime_InstanceAttributesMethod() const
     // The Model::instance(attributes) must work well
     auto torrent = TorrentEager::instance({
         {NAME, name},
-        {"note", note},
+        {NOTE, note},
     });
 
     QVERIFY(!torrent.exists);
@@ -261,7 +262,7 @@ defaultAttributeValues_WithQDateTime_InstanceAttributesMethod() const
     QCOMPARE(torrent["added_on"],
              QVariant(QDateTime({2021, 4, 1}, {15, 10, 10}, Qt::UTC)));
     QCOMPARE(torrent[NAME], QVariant(name));
-    QCOMPARE(torrent["note"], QVariant(note));
+    QCOMPARE(torrent[NOTE], QVariant(note));
     QCOMPARE(torrent.getAttributes().size(), 5);
 
     // Check also the connection name
@@ -309,7 +310,7 @@ defaultAttributeValues_WithQDateTime_InstanceAttributesMethod_WithConnection() c
     // The Model::instance(attributes) must work well (with connection override)
     auto torrent = TorrentEager::instance({
         {NAME, name},
-        {"note", note},
+        {NOTE, note},
     },
         connectionForInstance);
 
@@ -319,7 +320,7 @@ defaultAttributeValues_WithQDateTime_InstanceAttributesMethod_WithConnection() c
     QCOMPARE(torrent["added_on"],
              QVariant(QDateTime({2021, 4, 1}, {15, 10, 10}, Qt::UTC)));
     QCOMPARE(torrent[NAME], QVariant(name));
-    QCOMPARE(torrent["note"], QVariant(note));
+    QCOMPARE(torrent[NOTE], QVariant(note));
     QCOMPARE(torrent.getAttributes().size(), 5);
 
     /* Reset the global connection override to be able test the Model::instance()
@@ -354,14 +355,14 @@ defaultAttributeValues_WithoutQDateTime_ConvertingAttributesCtor() const
     // The converting attributes ctor without QDateTime must work well
     TorrentEager_Without_QDateTime torrent({
         {NAME, name},
-        {"note", note},
+        {NOTE, note},
     });
 
     QVERIFY(!torrent.exists);
     QCOMPARE(torrent[SIZE], QVariant(0));
     QCOMPARE(torrent["progress"], QVariant(0));
     QCOMPARE(torrent[NAME], QVariant(name));
-    QCOMPARE(torrent["note"], QVariant(note));
+    QCOMPARE(torrent[NOTE], QVariant(note));
     QCOMPARE(torrent.getAttributes().size(), 4);
 
     // Check also the connection name
@@ -378,14 +379,14 @@ defaultAttributeValues_WithoutQDateTime_ListInitializationCtor() const
        using the std::initializer_list<AttributeItem> must work well. */
     TorrentEager_Without_QDateTime torrent {
         {NAME, name},
-        {"note", note},
+        {NOTE, note},
     };
 
     QVERIFY(!torrent.exists);
     QCOMPARE(torrent[SIZE], QVariant(0));
     QCOMPARE(torrent["progress"], QVariant(0));
     QCOMPARE(torrent[NAME], QVariant(name));
-    QCOMPARE(torrent["note"], QVariant(note));
+    QCOMPARE(torrent[NOTE], QVariant(note));
     QCOMPARE(torrent.getAttributes().size(), 4);
 
     // Check also the connection name
@@ -418,7 +419,7 @@ defaultAttributeValues_WithQDateTime_InstanceHeapAttributesMethod() const
     // The Model::instance(attributes) must work well
     auto torrent = TorrentEager::instanceHeap({
         {NAME, name},
-        {"note", note},
+        {NOTE, note},
     });
 
     QVERIFY(!torrent->exists);
@@ -427,7 +428,7 @@ defaultAttributeValues_WithQDateTime_InstanceHeapAttributesMethod() const
     QCOMPARE((*torrent)["added_on"],
              QVariant(QDateTime({2021, 4, 1}, {15, 10, 10}, Qt::UTC)));
     QCOMPARE((*torrent)[NAME], QVariant(name));
-    QCOMPARE((*torrent)["note"], QVariant(note));
+    QCOMPARE((*torrent)[NOTE], QVariant(note));
     QCOMPARE(torrent->getAttributes().size(), 5);
 
     // Check also the connection name
@@ -475,7 +476,7 @@ defaultAttributeValues_WithQDateTime_InstanceHeapAttributesMethod_WithConnection
     // The Model::instance(attributes) must work well (with connection override)
     auto torrent = TorrentEager::instanceHeap({
         {NAME, name},
-        {"note", note},
+        {NOTE, note},
     },
         connectionForInstance);
 
@@ -485,7 +486,7 @@ defaultAttributeValues_WithQDateTime_InstanceHeapAttributesMethod_WithConnection
     QCOMPARE((*torrent)["added_on"],
              QVariant(QDateTime({2021, 4, 1}, {15, 10, 10}, Qt::UTC)));
     QCOMPARE((*torrent)[NAME], QVariant(name));
-    QCOMPARE((*torrent)["note"], QVariant(note));
+    QCOMPARE((*torrent)[NOTE], QVariant(note));
     QCOMPARE(torrent->getAttributes().size(), 5);
 
     /* Reset the global connection override to be able test the Model::instance()
@@ -519,7 +520,7 @@ void tst_Model_Connection_Independent::replicate_WithCreate() const
     // Following is the most used case for the replicate method so I will test it
     auto user = User::create({{"name", "xyz"},
                               {"is_banned", true},
-                              {"note", "test replicate"}});
+                              {NOTE, "test replicate"}});
     QVERIFY(user.exists);
 
     std::unordered_set except {NAME};

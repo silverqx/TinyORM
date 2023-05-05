@@ -11,6 +11,7 @@ namespace Models
 {
 
 using Orm::Constants::NAME;
+using Orm::Constants::NOTE;
 using Orm::Constants::SIZE;
 
 using Orm::Tiny::Model;
@@ -126,7 +127,7 @@ private:
         "filepath",
         SIZE,
         "progress",
-        "note",
+        NOTE,
     };
 };
 

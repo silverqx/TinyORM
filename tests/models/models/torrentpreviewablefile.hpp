@@ -11,6 +11,7 @@ namespace Models
 {
 
 using Orm::Constants::NAME;
+using Orm::Constants::NOTE;
 using Orm::Constants::SIZE;
 
 using Orm::Tiny::Relations::BelongsTo;
@@ -114,7 +115,7 @@ private:
         "filepath",
         SIZE,
         "progress",
-        "note",
+        NOTE,
     };
 
     /*! All of the relationships to be touched. */

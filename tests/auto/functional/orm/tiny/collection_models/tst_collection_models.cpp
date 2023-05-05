@@ -12,6 +12,7 @@ using Orm::Constants::GT;
 using Orm::Constants::ID;
 using Orm::Constants::NAME;
 using Orm::Constants::NE;
+using Orm::Constants::NOTE;
 using Orm::Constants::SIZE_;
 using Orm::Constants::SPACE_IN;
 
@@ -334,7 +335,7 @@ void tst_Collection_Models::implode_Note_ColumnWithNull() const
     QCOMPARE(typeid (ModelsCollection<Album>), typeid (albums));
 
     // Get result
-    const auto result = albums.implode("note", COMMA);
+    const auto result = albums.implode(NOTE, COMMA);
 
     // Verify
     QCOMPARE(result, QString(", , album3 note, no images"));
@@ -1109,7 +1110,7 @@ void tst_Collection_Models::whereNull_QString() const
     QCOMPARE(typeid (ModelsCollection<Album>), typeid (albums));
 
     // Get result
-    const auto result = albums.whereNull("note");
+    const auto result = albums.whereNull(NOTE);
 
     // Verify
     QCOMPARE(result.size(), 2);
@@ -1123,7 +1124,7 @@ void tst_Collection_Models::whereNotNull_QString() const
     QCOMPARE(typeid (ModelsCollection<Album>), typeid (albums));
 
     // Get result
-    const auto result = albums.whereNotNull("note");
+    const auto result = albums.whereNotNull(NOTE);
 
     // Verify
     QCOMPARE(result.size(), 2);

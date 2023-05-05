@@ -20,6 +20,7 @@ using Orm::Constants::LEFT;
 using Orm::Constants::LIKE;
 using Orm::Constants::LT;
 using Orm::Constants::NAME;
+using Orm::Constants::NOTE;
 using Orm::Constants::OR;
 using Orm::Constants::SIZE;
 
@@ -607,7 +608,7 @@ void tst_MySql_QueryBuilder::count_Distinct() const
     {
         auto log = DB::connection(m_connection).pretend([](auto &connection)
         {
-            connection.query()->from("torrents").distinct().count({SIZE, "note"});
+            connection.query()->from("torrents").distinct().count({SIZE, NOTE});
         });
 
         QVERIFY(!log.isEmpty());
@@ -623,7 +624,7 @@ void tst_MySql_QueryBuilder::count_Distinct() const
     {
         auto log = DB::connection(m_connection).pretend([](auto &connection)
         {
-            connection.query()->from("torrents").distinct({SIZE, "note"}).count();
+            connection.query()->from("torrents").distinct({SIZE, NOTE}).count();
         });
 
         QVERIFY(!log.isEmpty());
@@ -2070,7 +2071,7 @@ void tst_MySql_QueryBuilder::whereColumn() const
     auto builder = createQuery();
 
     builder->select("*").from("torrent_previewable_files")
-            .whereColumn("filepath", "=", "note")
+            .whereColumn("filepath", "=", NOTE)
             .whereColumn(SIZE, ">=", "progress");
     QCOMPARE(builder->toSql(),
              "select * from `torrent_previewable_files` where `filepath` = `note` "
@@ -2085,7 +2086,7 @@ void tst_MySql_QueryBuilder::orWhereColumn() const
         auto builder = createQuery();
 
         builder->select("*").from("torrent_previewable_files")
-                .whereColumnEq("filepath", "note")
+                .whereColumnEq("filepath", NOTE)
                 .orWhereColumnEq(SIZE, "progress");
         QCOMPARE(builder->toSql(),
                  "select * from `torrent_previewable_files` where `filepath` = `note` "
@@ -2098,7 +2099,7 @@ void tst_MySql_QueryBuilder::orWhereColumn() const
         auto builder = createQuery();
 
         builder->select("*").from("torrent_previewable_files")
-                .whereColumnEq("filepath", "note")
+                .whereColumnEq("filepath", NOTE)
                 .orWhereColumn(SIZE, ">", "progress");
         QCOMPARE(builder->toSql(),
                  "select * from `torrent_previewable_files` where `filepath` = `note` "
@@ -2128,7 +2129,7 @@ void tst_MySql_QueryBuilder::whereColumn_WithVectorValue() const
         auto builder = createQuery();
 
         builder->select("*").from("torrent_previewable_files")
-                .whereColumn({{"filepath", "note"},
+                .whereColumn({{"filepath", NOTE},
                               {SIZE, "progress", ">"}});
         QCOMPARE(builder->toSql(),
                  "select * from `torrent_previewable_files` where (`filepath` = `note` "
@@ -2141,7 +2142,7 @@ void tst_MySql_QueryBuilder::whereColumn_WithVectorValue() const
         auto builder = createQuery();
 
         builder->select("*").from("torrent_previewable_files")
-                .whereColumn({{"filepath", "note"},
+                .whereColumn({{"filepath", NOTE},
                               {SIZE, "progress", ">", "or"}});
         QCOMPARE(builder->toSql(),
                  "select * from `torrent_previewable_files` where (`filepath` = `note` "
@@ -2157,7 +2158,7 @@ void tst_MySql_QueryBuilder::orWhereColumn_WithVectorValue() const
         auto builder = createQuery();
 
         builder->select("*").from("torrent_previewable_files").whereEq(ID, 2)
-                .orWhereColumn({{"filepath", "note"},
+                .orWhereColumn({{"filepath", NOTE},
                                 {SIZE, "progress", ">"}});
         QCOMPARE(builder->toSql(),
                  "select * from `torrent_previewable_files` "
@@ -2170,7 +2171,7 @@ void tst_MySql_QueryBuilder::orWhereColumn_WithVectorValue() const
         auto builder = createQuery();
 
         builder->select("*").from("torrent_previewable_files").whereEq(ID, 2)
-                .orWhereColumn({{"filepath", "note"},
+                .orWhereColumn({{"filepath", NOTE},
                                 {SIZE, "progress", ">", "and"}});
         QCOMPARE(builder->toSql(),
                  "select * from `torrent_previewable_files` "
@@ -2183,7 +2184,7 @@ void tst_MySql_QueryBuilder::orWhereColumn_WithVectorValue() const
         auto builder = createQuery();
 
         builder->select("*").from("torrent_previewable_files").whereEq(ID, 2)
-                .orWhereColumn({{"filepath", "note"},
+                .orWhereColumn({{"filepath", NOTE},
                                 {SIZE, "progress", ">", "or"}});
         QCOMPARE(builder->toSql(),
                  "select * from `torrent_previewable_files` "

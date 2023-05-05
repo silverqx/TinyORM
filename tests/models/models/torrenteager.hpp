@@ -11,6 +11,7 @@ namespace Models
 {
 
 using Orm::Constants::NAME;
+using Orm::Constants::NOTE;
 using Orm::Constants::SIZE;
 
 using Orm::Tiny::AttributeItem;
@@ -71,7 +72,7 @@ private:
         "progress",
         "added_on",
         "hash",
-        "note",
+        NOTE,
     };
 
     /*! The attributes that should be mutated to dates. */

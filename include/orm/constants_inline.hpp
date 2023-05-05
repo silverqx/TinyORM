@@ -56,6 +56,7 @@ namespace Orm::Constants
     inline const QString Unprepared   = QStringLiteral("unprepared");
     inline const QString null_        = QStringLiteral("null");
     inline const QString Version      = QStringLiteral("version");
+    inline const QString NOTE         = QStringLiteral("note");
 
     // Templates
     inline const QString TMPL_ONE     = QStringLiteral("%1");
