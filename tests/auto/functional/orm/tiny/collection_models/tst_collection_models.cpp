@@ -1461,7 +1461,7 @@ void tst_Collection_Models::each_lvalue() const
     QVERIFY(verifyIds(images, {2, 3, 4, 5, 6}));
 
     // Get result
-    std::vector<quint64> expectedIds;
+    QVector<quint64> expectedIds;
     expectedIds.reserve(images.size());
 
     ModelsCollection<AlbumImage> &result = images.each([&expectedIds]
@@ -1477,7 +1477,7 @@ void tst_Collection_Models::each_lvalue() const
     QVERIFY(reinterpret_cast<uintptr_t>(&result) ==
             reinterpret_cast<uintptr_t>(&images));
     QCOMPARE(expectedIds.size(), 5);
-    QCOMPARE(std::vector<quint64>({2, 3, 4, 5, 6}), expectedIds);
+    QCOMPARE(QVector<quint64>({2, 3, 4, 5, 6}), expectedIds);
 }
 
 /*! ExpectedItem used in the each() related tests. */
@@ -1500,7 +1500,7 @@ void tst_Collection_Models::each_lvalue_index() const
     QVERIFY(verifyIds(images, {2, 3, 4, 5, 6}));
 
     // Get result
-    std::vector<ExpectedItem> expectedIds;
+    QVector<ExpectedItem> expectedIds;
     expectedIds.reserve(images.size());
 
     ModelsCollection<AlbumImage> &result =
@@ -1517,7 +1517,7 @@ void tst_Collection_Models::each_lvalue_index() const
     QVERIFY(reinterpret_cast<uintptr_t>(&result) ==
             reinterpret_cast<uintptr_t>(&images));
     QCOMPARE(expectedIds.size(), 5);
-    QCOMPARE(std::vector<ExpectedItem>({{2, 0}, {3, 1}, {4, 2}, {5, 3}, {6, 4}}),
+    QCOMPARE(QVector<ExpectedItem>({{2, 0}, {3, 1}, {4, 2}, {5, 3}, {6, 4}}),
              expectedIds);
 }
 
@@ -1529,7 +1529,7 @@ void tst_Collection_Models::each_lvalue_bool() const
     QVERIFY(verifyIds(images, {2, 3, 4, 5, 6}));
 
     // Get result
-    std::vector<quint64> expectedIds;
+    QVector<quint64> expectedIds;
     expectedIds.reserve(images.size());
 
     ModelsCollection<AlbumImage> &result =
@@ -1553,7 +1553,7 @@ void tst_Collection_Models::each_lvalue_bool() const
     QVERIFY(reinterpret_cast<uintptr_t>(&result) ==
             reinterpret_cast<uintptr_t>(&images));
     QCOMPARE(expectedIds.size(), 3);
-    QCOMPARE(std::vector<quint64>({2, 3, 4}), expectedIds);
+    QCOMPARE(QVector<quint64>({2, 3, 4}), expectedIds);
 }
 
 void tst_Collection_Models::each_lvalue_bool_index() const
@@ -1564,7 +1564,7 @@ void tst_Collection_Models::each_lvalue_bool_index() const
     QVERIFY(verifyIds(images, {2, 3, 4, 5, 6}));
 
     // Get result
-    std::vector<ExpectedItem> expectedIds;
+    QVector<ExpectedItem> expectedIds;
     expectedIds.reserve(images.size());
 
     ModelsCollection<AlbumImage> &result =
@@ -1587,7 +1587,7 @@ void tst_Collection_Models::each_lvalue_bool_index() const
     QVERIFY(reinterpret_cast<uintptr_t>(&result) ==
             reinterpret_cast<uintptr_t>(&images));
     QCOMPARE(expectedIds.size(), 3);
-    QCOMPARE(std::vector<ExpectedItem>({{2, 0}, {3, 1}, {4, 2}}),
+    QCOMPARE(QVector<ExpectedItem>({{2, 0}, {3, 1}, {4, 2}}),
              expectedIds);
 }
 
@@ -1599,7 +1599,7 @@ void tst_Collection_Models::each_rvalue() const
     QVERIFY(verifyIds(images, {2, 3, 4, 5, 6}));
 
     // Get result
-    std::vector<quint64> expectedIds;
+    QVector<quint64> expectedIds;
     expectedIds.reserve(images.size());
 
     ModelsCollection<AlbumImage> result =
@@ -1612,7 +1612,7 @@ void tst_Collection_Models::each_rvalue() const
     // Verify
     QVERIFY((std::is_same_v<decltype (result), decltype (images)>));
     QCOMPARE(expectedIds.size(), 5);
-    QCOMPARE(std::vector<quint64>({2, 3, 4, 5, 6}), expectedIds);
+    QCOMPARE(QVector<quint64>({2, 3, 4, 5, 6}), expectedIds);
 }
 
 void tst_Collection_Models::each_rvalue_index() const
@@ -1623,7 +1623,7 @@ void tst_Collection_Models::each_rvalue_index() const
     QVERIFY(verifyIds(images, {2, 3, 4, 5, 6}));
 
     // Get result
-    std::vector<ExpectedItem> expectedIds;
+    QVector<ExpectedItem> expectedIds;
     expectedIds.reserve(images.size());
 
     ModelsCollection<AlbumImage> result =
@@ -1636,7 +1636,7 @@ void tst_Collection_Models::each_rvalue_index() const
     // Verify
     QVERIFY((std::is_same_v<decltype (result), decltype (images)>));
     QCOMPARE(expectedIds.size(), 5);
-    QCOMPARE(std::vector<ExpectedItem>({{2, 0}, {3, 1}, {4, 2}, {5, 3}, {6, 4}}),
+    QCOMPARE(QVector<ExpectedItem>({{2, 0}, {3, 1}, {4, 2}, {5, 3}, {6, 4}}),
              expectedIds);
 }
 
@@ -1648,7 +1648,7 @@ void tst_Collection_Models::each_rvalue_bool() const
     QVERIFY(verifyIds(images, {2, 3, 4, 5, 6}));
 
     // Get result
-    std::vector<quint64> expectedIds;
+    QVector<quint64> expectedIds;
     expectedIds.reserve(images.size());
 
     ModelsCollection<AlbumImage> result =
@@ -1668,7 +1668,7 @@ void tst_Collection_Models::each_rvalue_bool() const
     // Verify
     QVERIFY((std::is_same_v<decltype (result), decltype (images)>));
     QCOMPARE(expectedIds.size(), 3);
-    QCOMPARE(std::vector<quint64>({2, 3, 4}), expectedIds);
+    QCOMPARE(QVector<quint64>({2, 3, 4}), expectedIds);
 }
 
 void tst_Collection_Models::each_rvalue_bool_index() const
@@ -1679,7 +1679,7 @@ void tst_Collection_Models::each_rvalue_bool_index() const
     QVERIFY(verifyIds(images, {2, 3, 4, 5, 6}));
 
     // Get result
-    std::vector<ExpectedItem> expectedIds;
+    QVector<ExpectedItem> expectedIds;
     expectedIds.reserve(images.size());
 
     ModelsCollection<AlbumImage> result =
@@ -1698,7 +1698,7 @@ void tst_Collection_Models::each_rvalue_bool_index() const
     // Verify
     QVERIFY((std::is_same_v<decltype (result), decltype (images)>));
     QCOMPARE(expectedIds.size(), 3);
-    QCOMPARE(std::vector<ExpectedItem>({{2, 0}, {3, 1}, {4, 2}}),
+    QCOMPARE(QVector<ExpectedItem>({{2, 0}, {3, 1}, {4, 2}}),
              expectedIds);
 }
 
