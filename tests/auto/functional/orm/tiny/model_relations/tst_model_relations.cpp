@@ -1472,14 +1472,14 @@ void tst_Model_Relations::refresh_EagerLoad_OnlyRelations() const
     /* Values in the std::unordered_map container has to be the same, because
        only loaded relations will be replaced with std::move directly
        to the relation std::variant reference in the Model::load() method. */
-    QVERIFY(relationFilesKeyOriginal
-            == reinterpret_cast<uintptr_t>(&relations.find("torrentFiles")->first));
-    QVERIFY(relationFilesValueOriginal
-            == reinterpret_cast<uintptr_t>(&relations.find("torrentFiles")->second));
-    QVERIFY(relationPeerKeyOriginal
-            == reinterpret_cast<uintptr_t>(&relations.find("torrentPeer")->first));
-    QVERIFY(relationPeerValueOriginal
-            == reinterpret_cast<uintptr_t>(&relations.find("torrentPeer")->second));
+    QVERIFY(relationFilesKeyOriginal ==
+            reinterpret_cast<uintptr_t>(&relations.find("torrentFiles")->first));
+    QVERIFY(relationFilesValueOriginal ==
+            reinterpret_cast<uintptr_t>(&relations.find("torrentFiles")->second));
+    QVERIFY(relationPeerKeyOriginal ==
+            reinterpret_cast<uintptr_t>(&relations.find("torrentPeer")->first));
+    QVERIFY(relationPeerValueOriginal ==
+            reinterpret_cast<uintptr_t>(&relations.find("torrentPeer")->second));
 
     // Validate refreshed attributes in relations
     auto filesRefreshed =
@@ -1548,14 +1548,14 @@ void tst_Model_Relations::refresh_LazyLoad_OnlyRelations() const
     /* Values in the std::unordered_map container has to be the same, because
        only loaded relations will be replaced with std::move directly
        to the relation std::variant reference in the Model::load() method. */
-    QVERIFY(relationFilesKeyOriginal
-            == reinterpret_cast<uintptr_t>(&relations.find("torrentFiles")->first));
-    QVERIFY(relationFilesValueOriginal
-            == reinterpret_cast<uintptr_t>(&relations.find("torrentFiles")->second));
-    QVERIFY(relationPeerKeyOriginal
-            == reinterpret_cast<uintptr_t>(&relations.find("torrentPeer")->first));
-    QVERIFY(relationPeerValueOriginal
-            == reinterpret_cast<uintptr_t>(&relations.find("torrentPeer")->second));
+    QVERIFY(relationFilesKeyOriginal ==
+            reinterpret_cast<uintptr_t>(&relations.find("torrentFiles")->first));
+    QVERIFY(relationFilesValueOriginal ==
+            reinterpret_cast<uintptr_t>(&relations.find("torrentFiles")->second));
+    QVERIFY(relationPeerKeyOriginal ==
+            reinterpret_cast<uintptr_t>(&relations.find("torrentPeer")->first));
+    QVERIFY(relationPeerValueOriginal ==
+            reinterpret_cast<uintptr_t>(&relations.find("torrentPeer")->second));
 
     // Validate refreshed attributes in relations
     auto filesRefreshed =
