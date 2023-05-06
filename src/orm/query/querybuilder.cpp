@@ -1350,7 +1350,14 @@ Builder &Builder::addNestedWhereQuery(const std::shared_ptr<Builder> &query,
     m_wheres.append({.column = {}, .condition = condition, .type = WhereType::NESTED,
                      .nestedQuery = query});
 
+#if defined(__GNUG__) && !defined(__clang__)
+#  pragma GCC diagnostic push
+#  pragma GCC diagnostic ignored "-Wdangling-reference"
+#endif
     const auto &whereBindings = query->getRawBindings().find(BindingType::WHERE).value();
+#if defined(__GNUG__) && !defined(__clang__)
+#  pragma GCC diagnostic pop
+#endif
 
     addBinding(whereBindings, BindingType::WHERE);
 

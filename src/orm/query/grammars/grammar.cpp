@@ -78,7 +78,14 @@ QVector<QVariant>
 Grammar::prepareBindingsForUpdate(const BindingsMap &bindings, // NOLINT(readability-convert-member-functions-to-static)
                                   const QVector<UpdateItem> &values) const
 {
+#if defined(__GNUG__) && !defined(__clang__)
+#  pragma GCC diagnostic push
+#  pragma GCC diagnostic ignored "-Wdangling-reference"
+#endif
     const auto &joinBindings = bindings.find(BindingType::JOIN).value();
+#if defined(__GNUG__) && !defined(__clang__)
+#  pragma GCC diagnostic pop
+#endif
 
     QVector<QVariant> preparedBindings;
     preparedBindings.reserve(
