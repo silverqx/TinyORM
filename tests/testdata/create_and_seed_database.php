@@ -288,6 +288,40 @@ function createTables(string $connection): void
             ->cascadeOnUpdate()->cascadeOnDelete();
     });
 
+    $schema->create('types', function (Blueprint $table) {
+        $table->id();
+
+        $table->boolean('bool_true')->nullable();
+        $table->boolean('bool_false')->nullable();
+
+        $table->smallInteger('smallint')->nullable();
+        $table->unsignedSmallInteger('smallint_u')->nullable();
+        $table->integer('int')->nullable();
+        $table->unsignedInteger('int_u')->nullable();
+        $table->bigInteger('bigint')->nullable();
+        $table->unsignedBigInteger('bigint_u')->nullable();
+
+        $table->double('double')->nullable();
+        $table->double('double_nan')->nullable();
+        $table->double('double_infinity')->nullable();
+
+        $table->decimal('decimal')->nullable();
+        $table->decimal('decimal_nan')->nullable();
+        $table->decimal('decimal_infinity', 0, 0)->nullable();
+        $table->decimal('decimal_down')->nullable();
+        $table->decimal('decimal_up')->nullable();
+
+        $table->string('string')->nullable();
+        $table->text('text')->nullable();
+
+        $table->timestamp('timestamp')->nullable();
+
+        $table->datetime('datetime')->nullable();
+        $table->date('date')->nullable();
+
+        $table->binary('binary')->nullable();
+    });
+
     $schema->create('albums', function (Blueprint $table) {
         $table->id();
         $table->string('name')->unique();
