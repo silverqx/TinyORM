@@ -176,7 +176,7 @@ void tst_Blueprint::dropIndex_ByColumns_DefaultNames() const
     // FullText
     {
         Blueprint blueprint("torrents");
-        blueprint.dropFullText({NOTE});
+        blueprint.dropFullText(QVector<QString> {NOTE});
         const auto &commands = blueprint.getCommands();
 
         QCOMPARE(reinterpret_cast<const IndexCommand &>(*commands.front()).index,
@@ -215,7 +215,7 @@ void tst_Blueprint::dropIndex_ByColumns_DefaultNames_WithPrefix() const
     // FullText
     {
         Blueprint blueprint("torrents", nullptr, "prefix_");
-        blueprint.dropFullText({NOTE});
+        blueprint.dropFullText(QVector<QString> {NOTE});
         const auto &commands = blueprint.getCommands();
 
         QCOMPARE(reinterpret_cast<const IndexCommand &>(*commands.front()).index,
