@@ -47,8 +47,7 @@ namespace Orm::Constants
     SHAREDLIB_EXPORT extern const QString DESC;
     SHAREDLIB_EXPORT extern const QString ID;
     SHAREDLIB_EXPORT extern const QString NAME;
-    SHAREDLIB_EXPORT extern const QString SIZE;
-    SHAREDLIB_EXPORT extern const QString &SIZE_;
+    SHAREDLIB_EXPORT extern const QString SIZE_; // SIZE collides with a symbol in the Windows header files
     SHAREDLIB_EXPORT extern const QString CREATED_AT;
     SHAREDLIB_EXPORT extern const QString UPDATED_AT;
     SHAREDLIB_EXPORT extern const QString DELETED_AT;
