@@ -13,7 +13,7 @@ using Orm::Constants::AND;
 using Orm::Constants::LIKE;
 using Orm::Constants::NAME;
 using Orm::Constants::OR;
-using Orm::Constants::SIZE;
+using Orm::Constants::SIZE_;
 
 using Orm::DB;
 using Orm::Exceptions::InvalidArgumentError;
@@ -850,7 +850,7 @@ void tst_MySql_TinyBuilder::
             QVERIFY((std::is_same_v<decltype (query1),
                      TinyBuilder<TorrentPreviewableFileProperty> &>));
 
-            query1.where(SIZE, ">", 1);
+            query1.where(SIZE_, ">", 1);
         });
     });
 
@@ -862,7 +862,7 @@ void tst_MySql_TinyBuilder::
         QVERIFY((std::is_same_v<decltype (query),
                  TinyBuilder<TorrentPreviewableFileProperty> &>));
 
-        query.where(SIZE, ">", 1);
+        query.where(SIZE_, ">", 1);
     });
 
     QCOMPARE(builder1->toSql(), builder2->toSql());
@@ -1028,7 +1028,7 @@ void tst_MySql_TinyBuilder::has_QueryBuilder_OnBelongsTo() const
     {
         QVERIFY((std::is_same_v<decltype (query), QueryBuilder &>));
 
-        query.where(SIZE, ">", 5);
+        query.where(SIZE_, ">", 5);
     });
 
     QCOMPARE(builder->toSql(),
@@ -1058,7 +1058,7 @@ void tst_MySql_TinyBuilder::hasNested_Count_TinyBuilder_OnBelongsTo_NestedAsLast
     {
         QVERIFY((std::is_same_v<decltype (query), TinyBuilder<Torrent> &>));
 
-        query.where(SIZE, ">", 6);
+        query.where(SIZE_, ">", 6);
     });
 
     QCOMPARE(builder->toSql(),

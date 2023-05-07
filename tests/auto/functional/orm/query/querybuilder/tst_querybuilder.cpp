@@ -20,7 +20,7 @@ using Orm::Constants::LT;
 using Orm::Constants::NAME;
 using Orm::Constants::OR;
 using Orm::Constants::QMYSQL;
-using Orm::Constants::SIZE;
+using Orm::Constants::SIZE_;
 
 using Orm::DB;
 using Orm::Exceptions::InvalidArgumentError;
@@ -316,7 +316,7 @@ void tst_QueryBuilder::pluck() const
     {
         auto builder = createQuery(connection);
 
-        auto result = builder->from("torrents").pluck<QString>(SIZE, NAME);
+        auto result = builder->from("torrents").pluck<QString>(SIZE_, NAME);
 
         std::map<QString, QVariant> expected {
             {"test1", 11}, {"test2", 12}, {"test3", 13}, {"test4", 14},

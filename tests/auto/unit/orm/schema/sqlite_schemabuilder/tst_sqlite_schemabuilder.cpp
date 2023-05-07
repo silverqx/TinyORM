@@ -21,7 +21,7 @@ using fspath = std::filesystem::path;
 
 using Orm::Constants::ID;
 using Orm::Constants::NAME;
-using Orm::Constants::SIZE;
+using Orm::Constants::SIZE_;
 using Orm::Constants::UTF8;
 using Orm::Constants::UcsBasic;
 
@@ -656,7 +656,7 @@ void tst_SQLite_SchemaBuilder::dropColumns() const
     {
         auto log = DB::connection(m_connection).pretend([](auto &connection)
         {
-            Schema::on(connection.getName()).dropColumns(Firewalls, {NAME, SIZE});
+            Schema::on(connection.getName()).dropColumns(Firewalls, {NAME, SIZE_});
         });
 
         QCOMPARE(log.size(), 2);
@@ -674,7 +674,7 @@ void tst_SQLite_SchemaBuilder::dropColumns() const
     {
         auto log = DB::connection(m_connection).pretend([](auto &connection)
         {
-            Schema::on(connection.getName()).dropColumns(Firewalls, NAME, SIZE);
+            Schema::on(connection.getName()).dropColumns(Firewalls, NAME, SIZE_);
         });
 
         QCOMPARE(log.size(), 2);

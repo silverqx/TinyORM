@@ -18,7 +18,7 @@ using Orm::Constants::LIKE;
 using Orm::Constants::NAME;
 using Orm::Constants::NOTE;
 using Orm::Constants::OR;
-using Orm::Constants::SIZE;
+using Orm::Constants::SIZE_;
 
 using Orm::DB;
 using Orm::Query::Expression;
@@ -375,7 +375,7 @@ void tst_SQLite_QueryBuilder::addSelect() const
     QCOMPARE(builder->toSql(),
              "select \"id\", \"name\" from \"torrents\"");
 
-    builder->addSelect(SIZE);
+    builder->addSelect(SIZE_);
     QCOMPARE(builder->toSql(),
              "select \"id\", \"name\", \"size\" from \"torrents\"");
 
@@ -419,7 +419,7 @@ void tst_SQLite_QueryBuilder::distinct() const
     QCOMPARE(builder->toSql(),
              "select distinct * from \"torrents\"");
 
-    builder->select({NAME, SIZE});
+    builder->select({NAME, SIZE_});
     QCOMPARE(builder->toSql(),
              "select distinct \"name\", \"size\" from \"torrents\"");
 }
@@ -847,7 +847,7 @@ void tst_SQLite_QueryBuilder::where_WithVectorValue() const
     {
         auto builder = createQuery();
 
-        builder->select("*").from("torrents").where({{ID, 3}, {SIZE, 10, ">"}});
+        builder->select("*").from("torrents").where({{ID, 3}, {SIZE_, 10, ">"}});
         QCOMPARE(builder->toSql(),
                  "select * from \"torrents\" where (\"id\" = ? and \"size\" > ?)");
         QCOMPARE(builder->getBindings(),
@@ -857,7 +857,7 @@ void tst_SQLite_QueryBuilder::where_WithVectorValue() const
     {
         auto builder = createQuery();
 
-        builder->select("*").from("torrents").where({{ID, 3}, {SIZE, 10, ">"}})
+        builder->select("*").from("torrents").where({{ID, 3}, {SIZE_, 10, ">"}})
                 .where({{"progress", 100, ">="}});
         QCOMPARE(builder->toSql(),
                  "select * from \"torrents\" where (\"id\" = ? and \"size\" > ?) "
@@ -872,7 +872,7 @@ void tst_SQLite_QueryBuilder::where_WithVectorValue_DefaultCondition() const
     auto builder = createQuery();
 
     builder->select("*").from("torrents").where({{"progress", 100, ">="}})
-            .where({{ID, 3}, {SIZE, 10, ">"}}, AND, OR);
+            .where({{ID, 3}, {SIZE_, 10, ">"}}, AND, OR);
     QCOMPARE(builder->toSql(),
              "select * from \"torrents\" where (\"progress\" >= ?) and "
              "(\"id\" = ? or \"size\" > ?)");
@@ -983,7 +983,7 @@ void tst_SQLite_QueryBuilder::whereNot_WithVectorValue_DefaultCondition() const
     auto builder = createQuery();
 
     builder->select("*").from("torrents").whereNot({{"progress", 100, ">="}})
-            .whereNot({{ID, 3}, {SIZE, 10, ">"}}, AND, OR);
+            .whereNot({{ID, 3}, {SIZE_, 10, ">"}}, AND, OR);
     QCOMPARE(builder->toSql(),
              "select * from \"torrents\" where not (\"progress\" >= ?) and "
              "not (\"id\" = ? or \"size\" > ?)");
@@ -1032,7 +1032,7 @@ void tst_SQLite_QueryBuilder::orWhere_WithVectorValue() const
 {
     auto builder = createQuery();
 
-    builder->select("*").from("torrents").where({{ID, 3}, {SIZE, 10, ">"}})
+    builder->select("*").from("torrents").where({{ID, 3}, {SIZE_, 10, ">"}})
             .orWhere({{"progress", 100, ">="}});
     QCOMPARE(builder->toSql(),
              "select * from \"torrents\" where (\"id\" = ? and \"size\" > ?) or "
@@ -1046,7 +1046,7 @@ void tst_SQLite_QueryBuilder::orWhere_WithVectorValue_DefaultCondition() const
     auto builder = createQuery();
 
     builder->select("*").from("torrents").where({{"progress", 100, ">="}})
-            .orWhere({{ID, 3}, {SIZE, 10, ">"}}, AND);
+            .orWhere({{ID, 3}, {SIZE_, 10, ">"}}, AND);
     QCOMPARE(builder->toSql(),
              "select * from \"torrents\" where (\"progress\" >= ?) or "
              "(\"id\" = ? and \"size\" > ?)");
@@ -1098,7 +1098,7 @@ void tst_SQLite_QueryBuilder::orWhereNot_WithVectorValue() const
 {
     auto builder = createQuery();
 
-    builder->select("*").from("torrents").whereNot({{ID, 3}, {SIZE, 10, ">"}})
+    builder->select("*").from("torrents").whereNot({{ID, 3}, {SIZE_, 10, ">"}})
             .orWhereNot({{"progress", 100, ">="}});
     QCOMPARE(builder->toSql(),
              "select * from \"torrents\" where not (\"id\" = ? and \"size\" > ?) or "
@@ -1112,7 +1112,7 @@ void tst_SQLite_QueryBuilder::orWhereNot_WithVectorValue_DefaultCondition() cons
     auto builder = createQuery();
 
     builder->select("*").from("torrents").whereNot({{"progress", 100, ">="}})
-            .orWhereNot({{ID, 3}, {SIZE, 10, ">"}}, AND);
+            .orWhereNot({{ID, 3}, {SIZE_, 10, ">"}}, AND);
     QCOMPARE(builder->toSql(),
              "select * from \"torrents\" where not (\"progress\" >= ?) or "
              "not (\"id\" = ? and \"size\" > ?)");
@@ -1138,7 +1138,7 @@ void tst_SQLite_QueryBuilder::whereColumn() const
 
     builder->select("*").from("torrent_previewable_files")
             .whereColumn("filepath", "=", NOTE)
-            .whereColumn(SIZE, ">=", "progress");
+            .whereColumn(SIZE_, ">=", "progress");
     QCOMPARE(builder->toSql(),
              "select * from \"torrent_previewable_files\" where \"filepath\" = \"note\" "
              "and \"size\" >= \"progress\"");
@@ -1153,7 +1153,7 @@ void tst_SQLite_QueryBuilder::orWhereColumn() const
 
         builder->select("*").from("torrent_previewable_files")
                 .whereColumnEq("filepath", NOTE)
-                .orWhereColumnEq(SIZE, "progress");
+                .orWhereColumnEq(SIZE_, "progress");
         QCOMPARE(builder->toSql(),
                  "select * from \"torrent_previewable_files\" "
                  "where \"filepath\" = \"note\" or \"size\" = \"progress\"");
@@ -1166,7 +1166,7 @@ void tst_SQLite_QueryBuilder::orWhereColumn() const
 
         builder->select("*").from("torrent_previewable_files")
                 .whereColumnEq("filepath", NOTE)
-                .orWhereColumn(SIZE, ">", "progress");
+                .orWhereColumn(SIZE_, ">", "progress");
         QCOMPARE(builder->toSql(),
                  "select * from \"torrent_previewable_files\" "
                  "where \"filepath\" = \"note\" or \"size\" > \"progress\"");
@@ -1181,7 +1181,7 @@ void tst_SQLite_QueryBuilder::orWhereColumn_ColumnExpression() const
 
     builder->select("*").from("torrent_previewable_files")
             .whereColumnEq(Raw("filepath"), Raw("\"note\""))
-            .orWhereColumn(Raw(SIZE), ">", Raw("progress"));
+            .orWhereColumn(Raw(SIZE_), ">", Raw("progress"));
     QCOMPARE(builder->toSql(),
              "select * from \"torrent_previewable_files\" where filepath = \"note\" "
              "or size > progress");
@@ -1196,7 +1196,7 @@ void tst_SQLite_QueryBuilder::whereColumn_WithVectorValue() const
 
         builder->select("*").from("torrent_previewable_files")
                 .whereColumn({{"filepath", NOTE},
-                              {SIZE, "progress", ">"}});
+                              {SIZE_, "progress", ">"}});
         QCOMPARE(builder->toSql(),
                  "select * from \"torrent_previewable_files\" "
                  "where (\"filepath\" = \"note\" and \"size\" > \"progress\")");
@@ -1209,7 +1209,7 @@ void tst_SQLite_QueryBuilder::whereColumn_WithVectorValue() const
 
         builder->select("*").from("torrent_previewable_files")
                 .whereColumn({{"filepath", NOTE},
-                              {SIZE, "progress", ">", "or"}});
+                              {SIZE_, "progress", ">", "or"}});
         QCOMPARE(builder->toSql(),
                  "select * from \"torrent_previewable_files\" "
                  "where (\"filepath\" = \"note\" or \"size\" > \"progress\")");
@@ -1225,7 +1225,7 @@ void tst_SQLite_QueryBuilder::orWhereColumn_WithVectorValue() const
 
         builder->select("*").from("torrent_previewable_files").whereEq(ID, 2)
                 .orWhereColumn({{"filepath", NOTE},
-                                {SIZE, "progress", ">"}});
+                                {SIZE_, "progress", ">"}});
         QCOMPARE(builder->toSql(),
                  "select * from \"torrent_previewable_files\" "
                  "where \"id\" = ? or (\"filepath\" = \"note\" "
@@ -1239,7 +1239,7 @@ void tst_SQLite_QueryBuilder::orWhereColumn_WithVectorValue() const
 
         builder->select("*").from("torrent_previewable_files").whereEq(ID, 2)
                 .orWhereColumn({{"filepath", NOTE},
-                                {SIZE, "progress", ">", "and"}});
+                                {SIZE_, "progress", ">", "and"}});
         QCOMPARE(builder->toSql(),
                  "select * from \"torrent_previewable_files\" "
                  "where \"id\" = ? or (\"filepath\" = \"note\" "
@@ -1253,7 +1253,7 @@ void tst_SQLite_QueryBuilder::orWhereColumn_WithVectorValue() const
 
         builder->select("*").from("torrent_previewable_files").whereEq(ID, 2)
                 .orWhereColumn({{"filepath", NOTE},
-                                {SIZE, "progress", ">", "or"}});
+                                {SIZE_, "progress", ">", "or"}});
         QCOMPARE(builder->toSql(),
                  "select * from \"torrent_previewable_files\" "
                  "where \"id\" = ? or (\"filepath\" = \"note\" "
@@ -1269,7 +1269,7 @@ void tst_SQLite_QueryBuilder::orWhereColumn_WithVectorValue_ColumnExpression() c
 
     builder->select("*").from("torrent_previewable_files").whereEq(ID, 2)
             .orWhereColumn({{Raw("filepath"), Raw("\"note\"")},
-                            {SIZE, Raw("progress"), ">"}});
+                            {SIZE_, Raw("progress"), ">"}});
     QCOMPARE(builder->toSql(),
              "select * from \"torrent_previewable_files\" "
              "where \"id\" = ? or (filepath = \"note\" or \"size\" > progress)");
@@ -1827,7 +1827,7 @@ void tst_SQLite_QueryBuilder::insert() const
 {
     auto log = DB::connection(m_connection).pretend([](auto &connection)
     {
-        connection.query()->from("torrents").insert({{NAME, "xyz"}, {SIZE, 6}});
+        connection.query()->from("torrents").insert({{NAME, "xyz"}, {SIZE_, 6}});
     });
 
     QVERIFY(!log.isEmpty());
@@ -1845,7 +1845,7 @@ void tst_SQLite_QueryBuilder::insert_WithExpression() const
     auto log = DB::connection(m_connection).pretend([](auto &connection)
     {
         connection.query()->from("torrents")
-                .insert({{NAME, DB::raw("'xyz'")}, {SIZE, 6},
+                .insert({{NAME, DB::raw("'xyz'")}, {SIZE_, 6},
                          {"progress", DB::raw(2)}});
     });
 
@@ -1866,7 +1866,7 @@ void tst_SQLite_QueryBuilder::update() const
     {
         const auto [affected, query] = connection.query()->from("torrents")
                                        .whereEq(ID, 10)
-                                       .update({{NAME, "xyz"}, {SIZE, 6}});
+                                       .update({{NAME, "xyz"}, {SIZE_, 6}});
 
         // Affecting statements must return -1 if pretending
         QVERIFY(affected == -1);
@@ -1890,7 +1890,7 @@ void tst_SQLite_QueryBuilder::update_WithExpression() const
     {
         connection.query()->from("torrents")
                 .whereEq(ID, 10)
-                .update({{NAME, DB::raw("'xyz'")}, {SIZE, 6},
+                .update({{NAME, DB::raw("'xyz'")}, {SIZE_, 6},
                          {"progress", DB::raw(2)}});
     });
 

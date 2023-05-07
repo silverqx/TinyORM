@@ -15,7 +15,7 @@ using Orm::Constants::ID;
 using Orm::Constants::NAME;
 using Orm::Constants::PUBLIC;
 using Orm::Constants::QPSQL;
-using Orm::Constants::SIZE;
+using Orm::Constants::SIZE_;
 using Orm::Constants::UTF8;
 using Orm::Constants::UcsBasic;
 using Orm::Constants::charset_;
@@ -709,7 +709,7 @@ void tst_PostgreSQL_SchemaBuilder::dropColumns() const
     {
         auto log = DB::connection(m_connection).pretend([](auto &connection)
         {
-            Schema::on(connection.getName()).dropColumns(Firewalls, {NAME, SIZE});
+            Schema::on(connection.getName()).dropColumns(Firewalls, {NAME, SIZE_});
         });
 
         QVERIFY(!log.isEmpty());
@@ -723,7 +723,7 @@ void tst_PostgreSQL_SchemaBuilder::dropColumns() const
     {
         auto log = DB::connection(m_connection).pretend([](auto &connection)
         {
-            Schema::on(connection.getName()).dropColumns(Firewalls, NAME, SIZE);
+            Schema::on(connection.getName()).dropColumns(Firewalls, NAME, SIZE_);
         });
 
         QVERIFY(!log.isEmpty());
@@ -2405,7 +2405,7 @@ void tst_PostgreSQL_SchemaBuilder::generatedAs_NotPrimaryKey() const
         Schema::on(connection.getName())
                 .table(Firewalls, [](Blueprint &table)
         {
-            table.integer(SIZE).generatedAs();
+            table.integer(SIZE_).generatedAs();
         });
     });
 

@@ -9,7 +9,7 @@
 
 using Orm::Constants::NAME;
 using Orm::Constants::NOTE;
-using Orm::Constants::SIZE;
+using Orm::Constants::SIZE_;
 
 using Orm::DB;
 
@@ -79,7 +79,7 @@ void tst_Blueprint::index_DefaultNames() const
     // Index
     {
         Blueprint blueprint("torrents");
-        blueprint.index(SIZE);
+        blueprint.index(SIZE_);
         const auto &commands = blueprint.getCommands();
 
         QCOMPARE(reinterpret_cast<const IndexCommand &>(*commands.front()).index,
@@ -119,7 +119,7 @@ void tst_Blueprint::index_DefaultNames_WithPrefix() const
     // Index
     {
         Blueprint blueprint("torrents", nullptr, "prefix_");
-        blueprint.index(SIZE);
+        blueprint.index(SIZE_);
         const auto &commands = blueprint.getCommands();
 
         QCOMPARE(reinterpret_cast<const IndexCommand &>(*commands.front()).index,
@@ -158,7 +158,7 @@ void tst_Blueprint::dropIndex_ByColumns_DefaultNames() const
     // Index
     {
         Blueprint blueprint("torrents");
-        blueprint.dropIndex(QVector<QString> {SIZE});
+        blueprint.dropIndex(QVector<QString> {SIZE_});
         const auto &commands = blueprint.getCommands();
 
         QCOMPARE(reinterpret_cast<const IndexCommand &>(*commands.front()).index,
@@ -197,7 +197,7 @@ void tst_Blueprint::dropIndex_ByColumns_DefaultNames_WithPrefix() const
     // Index
     {
         Blueprint blueprint("torrents", nullptr, "prefix_");
-        blueprint.dropIndex(QVector<QString> {SIZE});
+        blueprint.dropIndex(QVector<QString> {SIZE_});
         const auto &commands = blueprint.getCommands();
 
         QCOMPARE(reinterpret_cast<const IndexCommand &>(*commands.front()).index,
@@ -236,11 +236,11 @@ void tst_Blueprint::dropIndex_ByIndexName() const
     // Index
     {
         Blueprint blueprint("torrents");
-        blueprint.dropIndex(SIZE);
+        blueprint.dropIndex(SIZE_);
         const auto &commands = blueprint.getCommands();
 
         QCOMPARE(reinterpret_cast<const IndexCommand &>(*commands.front()).index,
-                 SIZE);
+                 SIZE_);
     }
     // SpatialIndex
     {
@@ -279,8 +279,8 @@ void tst_Blueprint::removeColumn() const
     Blueprint blueprint("torrents", [](Blueprint &table)
     {
         table.string(NAME);
-        table.integer(SIZE);
-        table.removeColumn(SIZE);
+        table.integer(SIZE_);
+        table.removeColumn(SIZE_);
     });
 
     QCOMPARE(blueprint.toSql(DB::connection(m_connection), MySqlSchemaGrammar()),

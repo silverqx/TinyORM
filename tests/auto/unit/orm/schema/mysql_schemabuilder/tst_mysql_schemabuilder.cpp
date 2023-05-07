@@ -15,7 +15,7 @@ using Orm::Constants::ID;
 using Orm::Constants::MyISAM;
 using Orm::Constants::NAME;
 using Orm::Constants::QMYSQL;
-using Orm::Constants::SIZE;
+using Orm::Constants::SIZE_;
 using Orm::Constants::UTF8;
 using Orm::Constants::UTF8Generalci;
 using Orm::Constants::UTF8Unicodeci;
@@ -780,7 +780,7 @@ void tst_MySql_SchemaBuilder::dropColumns() const
     {
         auto log = DB::connection(m_connection).pretend([](auto &connection)
         {
-            Schema::on(connection.getName()).dropColumns(Firewalls, {NAME, SIZE});
+            Schema::on(connection.getName()).dropColumns(Firewalls, {NAME, SIZE_});
         });
 
         QVERIFY(!log.isEmpty());
@@ -793,7 +793,7 @@ void tst_MySql_SchemaBuilder::dropColumns() const
     {
         auto log = DB::connection(m_connection).pretend([](auto &connection)
         {
-            Schema::on(connection.getName()).dropColumns(Firewalls, NAME, SIZE);
+            Schema::on(connection.getName()).dropColumns(Firewalls, NAME, SIZE_);
         });
 
         QVERIFY(!log.isEmpty());

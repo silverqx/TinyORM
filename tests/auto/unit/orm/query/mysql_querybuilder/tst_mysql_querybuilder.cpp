@@ -22,7 +22,7 @@ using Orm::Constants::LT;
 using Orm::Constants::NAME;
 using Orm::Constants::NOTE;
 using Orm::Constants::OR;
-using Orm::Constants::SIZE;
+using Orm::Constants::SIZE_;
 
 using Orm::DB;
 using Orm::Exceptions::InvalidArgumentError;
@@ -592,7 +592,7 @@ void tst_MySql_QueryBuilder::count_Distinct() const
     {
         auto log = DB::connection(m_connection).pretend([](auto &connection)
         {
-            connection.query()->from("torrents").distinct().count(SIZE);
+            connection.query()->from("torrents").distinct().count(SIZE_);
         });
 
         QVERIFY(!log.isEmpty());
@@ -608,7 +608,7 @@ void tst_MySql_QueryBuilder::count_Distinct() const
     {
         auto log = DB::connection(m_connection).pretend([](auto &connection)
         {
-            connection.query()->from("torrents").distinct().count({SIZE, NOTE});
+            connection.query()->from("torrents").distinct().count({SIZE_, NOTE});
         });
 
         QVERIFY(!log.isEmpty());
@@ -624,7 +624,7 @@ void tst_MySql_QueryBuilder::count_Distinct() const
     {
         auto log = DB::connection(m_connection).pretend([](auto &connection)
         {
-            connection.query()->from("torrents").distinct({SIZE, NOTE}).count();
+            connection.query()->from("torrents").distinct({SIZE_, NOTE}).count();
         });
 
         QVERIFY(!log.isEmpty());
@@ -641,7 +641,7 @@ void tst_MySql_QueryBuilder::min_Aggregate() const
 {
     auto log = DB::connection(m_connection).pretend([](auto &connection)
     {
-        connection.query()->from("torrents").min(SIZE);
+        connection.query()->from("torrents").min(SIZE_);
     });
 
     QVERIFY(!log.isEmpty());
@@ -657,7 +657,7 @@ void tst_MySql_QueryBuilder::min_Aggregate_ColumnExpression() const
 {
     auto log = DB::connection(m_connection).pretend([](auto &connection)
     {
-        connection.query()->from("torrents").min(Raw(SIZE));
+        connection.query()->from("torrents").min(Raw(SIZE_));
     });
 
     QVERIFY(!log.isEmpty());
@@ -673,7 +673,7 @@ void tst_MySql_QueryBuilder::max_Aggregate() const
 {
     auto log = DB::connection(m_connection).pretend([](auto &connection)
     {
-        connection.query()->from("torrents").max(SIZE);
+        connection.query()->from("torrents").max(SIZE_);
     });
 
     QVERIFY(!log.isEmpty());
@@ -689,7 +689,7 @@ void tst_MySql_QueryBuilder::sum_Aggregate() const
 {
     auto log = DB::connection(m_connection).pretend([](auto &connection)
     {
-        connection.query()->from("torrents").sum(SIZE);
+        connection.query()->from("torrents").sum(SIZE_);
     });
 
     QVERIFY(!log.isEmpty());
@@ -705,7 +705,7 @@ void tst_MySql_QueryBuilder::average_Aggregate() const
 {
     auto log = DB::connection(m_connection).pretend([](auto &connection)
     {
-        connection.query()->from("torrents").avg(SIZE);
+        connection.query()->from("torrents").avg(SIZE_);
     });
 
     QVERIFY(!log.isEmpty());
@@ -799,7 +799,7 @@ void tst_MySql_QueryBuilder::addSelect() const
     QCOMPARE(builder->toSql(),
              "select `id`, `name` from `torrents`");
 
-    builder->addSelect(SIZE);
+    builder->addSelect(SIZE_);
     QCOMPARE(builder->toSql(),
              "select `id`, `name`, `size` from `torrents`");
 
@@ -957,7 +957,7 @@ void tst_MySql_QueryBuilder::distinct() const
     QCOMPARE(builder->toSql(),
              "select distinct * from `torrents`");
 
-    builder->select({NAME, SIZE});
+    builder->select({NAME, SIZE_});
     QCOMPARE(builder->toSql(),
              "select distinct `name`, `size` from `torrents`");
 }
@@ -1386,7 +1386,7 @@ void tst_MySql_QueryBuilder::where_WithVectorValue() const
     {
         auto builder = createQuery();
 
-        builder->select("*").from("torrents").where({{ID, 3}, {SIZE, 10, ">"}});
+        builder->select("*").from("torrents").where({{ID, 3}, {SIZE_, 10, ">"}});
         QCOMPARE(builder->toSql(),
                  "select * from `torrents` where (`id` = ? and `size` > ?)");
         QCOMPARE(builder->getBindings(),
@@ -1396,7 +1396,7 @@ void tst_MySql_QueryBuilder::where_WithVectorValue() const
     {
         auto builder = createQuery();
 
-        builder->select("*").from("torrents").where({{ID, 3}, {SIZE, 10, ">"}})
+        builder->select("*").from("torrents").where({{ID, 3}, {SIZE_, 10, ">"}})
                 .where({{"progress", 100, ">="}});
         QCOMPARE(builder->toSql(),
                  "select * from `torrents` where (`id` = ? and `size` > ?) "
@@ -1412,7 +1412,7 @@ void tst_MySql_QueryBuilder::where_WithVectorValue_DefaultCondition() const
 
     builder->select("*").from("torrents")
             .where({{"progress", 100, ">="}})
-            .where({{ID, 3}, {SIZE, 10, ">"}}, AND, OR);
+            .where({{ID, 3}, {SIZE_, 10, ">"}}, AND, OR);
     QCOMPARE(builder->toSql(),
              "select * from `torrents` where (`progress` >= ?) and "
              "(`id` = ? or `size` > ?)");
@@ -1594,7 +1594,7 @@ void tst_MySql_QueryBuilder::whereNot_WithVectorValue() const
     {
         auto builder = createQuery();
 
-        builder->select("*").from("torrents").whereNot({{ID, 3}, {SIZE, 10, ">"}});
+        builder->select("*").from("torrents").whereNot({{ID, 3}, {SIZE_, 10, ">"}});
         QCOMPARE(builder->toSql(),
                  "select * from `torrents` where not (`id` = ? and `size` > ?)");
         QCOMPARE(builder->getBindings(),
@@ -1604,7 +1604,7 @@ void tst_MySql_QueryBuilder::whereNot_WithVectorValue() const
     {
         auto builder = createQuery();
 
-        builder->select("*").from("torrents").whereNot({{ID, 3}, {SIZE, 10, ">"}})
+        builder->select("*").from("torrents").whereNot({{ID, 3}, {SIZE_, 10, ">"}})
                 .whereNot({{"progress", 100, ">="}});
         QCOMPARE(builder->toSql(),
                  "select * from `torrents` where not (`id` = ? and `size` > ?) "
@@ -1620,7 +1620,7 @@ void tst_MySql_QueryBuilder::whereNot_WithVectorValue_DefaultCondition() const
 
     builder->select("*").from("torrents")
             .whereNot({{"progress", 100, ">="}})
-            .whereNot({{ID, 3}, {SIZE, 10, ">"}}, AND, OR);
+            .whereNot({{ID, 3}, {SIZE_, 10, ">"}}, AND, OR);
     QCOMPARE(builder->toSql(),
              "select * from `torrents` where not (`progress` >= ?) and "
              "not (`id` = ? or `size` > ?)");
@@ -1731,7 +1731,7 @@ void tst_MySql_QueryBuilder::orWhere_WithVectorValue() const
 {
     auto builder = createQuery();
 
-    builder->select("*").from("torrents").where({{ID, 3}, {SIZE, 10, ">"}})
+    builder->select("*").from("torrents").where({{ID, 3}, {SIZE_, 10, ">"}})
             .orWhere({{"progress", 100, ">="}});
     QCOMPARE(builder->toSql(),
              "select * from `torrents` where (`id` = ? and `size` > ?) or "
@@ -1745,7 +1745,7 @@ void tst_MySql_QueryBuilder::orWhere_WithVectorValue_DefaultCondition() const
     auto builder = createQuery();
 
     builder->select("*").from("torrents").where({{"progress", 100, ">="}})
-            .orWhere({{ID, 3}, {SIZE, 10, ">"}}, AND);
+            .orWhere({{ID, 3}, {SIZE_, 10, ">"}}, AND);
     QCOMPARE(builder->toSql(),
              "select * from `torrents` where (`progress` >= ?) or "
              "(`id` = ? and `size` > ?)");
@@ -1916,7 +1916,7 @@ void tst_MySql_QueryBuilder::orWhereNot_WithVectorValue() const
 {
     auto builder = createQuery();
 
-    builder->select("*").from("torrents").whereNot({{ID, 3}, {SIZE, 10, ">"}})
+    builder->select("*").from("torrents").whereNot({{ID, 3}, {SIZE_, 10, ">"}})
             .orWhereNot({{"progress", 100, ">="}});
     QCOMPARE(builder->toSql(),
              "select * from `torrents` where not (`id` = ? and `size` > ?) or "
@@ -1930,7 +1930,7 @@ void tst_MySql_QueryBuilder::orWhereNot_WithVectorValue_DefaultCondition() const
     auto builder = createQuery();
 
     builder->select("*").from("torrents").whereNot({{"progress", 100, ">="}})
-            .orWhereNot({{ID, 3}, {SIZE, 10, ">"}}, AND);
+            .orWhereNot({{ID, 3}, {SIZE_, 10, ">"}}, AND);
     QCOMPARE(builder->toSql(),
              "select * from `torrents` where not (`progress` >= ?) or "
              "not (`id` = ? and `size` > ?)");
@@ -2072,7 +2072,7 @@ void tst_MySql_QueryBuilder::whereColumn() const
 
     builder->select("*").from("torrent_previewable_files")
             .whereColumn("filepath", "=", NOTE)
-            .whereColumn(SIZE, ">=", "progress");
+            .whereColumn(SIZE_, ">=", "progress");
     QCOMPARE(builder->toSql(),
              "select * from `torrent_previewable_files` where `filepath` = `note` "
              "and `size` >= `progress`");
@@ -2087,7 +2087,7 @@ void tst_MySql_QueryBuilder::orWhereColumn() const
 
         builder->select("*").from("torrent_previewable_files")
                 .whereColumnEq("filepath", NOTE)
-                .orWhereColumnEq(SIZE, "progress");
+                .orWhereColumnEq(SIZE_, "progress");
         QCOMPARE(builder->toSql(),
                  "select * from `torrent_previewable_files` where `filepath` = `note` "
                  "or `size` = `progress`");
@@ -2100,7 +2100,7 @@ void tst_MySql_QueryBuilder::orWhereColumn() const
 
         builder->select("*").from("torrent_previewable_files")
                 .whereColumnEq("filepath", NOTE)
-                .orWhereColumn(SIZE, ">", "progress");
+                .orWhereColumn(SIZE_, ">", "progress");
         QCOMPARE(builder->toSql(),
                  "select * from `torrent_previewable_files` where `filepath` = `note` "
                  "or `size` > `progress`");
@@ -2115,7 +2115,7 @@ void tst_MySql_QueryBuilder::orWhereColumn_ColumnExpression() const
 
     builder->select("*").from("torrent_previewable_files")
             .whereColumnEq(Raw("filepath"), Raw("`note`"))
-            .orWhereColumn(Raw(SIZE), ">", Raw("progress"));
+            .orWhereColumn(Raw(SIZE_), ">", Raw("progress"));
     QCOMPARE(builder->toSql(),
              "select * from `torrent_previewable_files` where filepath = `note` "
              "or size > progress");
@@ -2130,7 +2130,7 @@ void tst_MySql_QueryBuilder::whereColumn_WithVectorValue() const
 
         builder->select("*").from("torrent_previewable_files")
                 .whereColumn({{"filepath", NOTE},
-                              {SIZE, "progress", ">"}});
+                              {SIZE_, "progress", ">"}});
         QCOMPARE(builder->toSql(),
                  "select * from `torrent_previewable_files` where (`filepath` = `note` "
                  "and `size` > `progress`)");
@@ -2143,7 +2143,7 @@ void tst_MySql_QueryBuilder::whereColumn_WithVectorValue() const
 
         builder->select("*").from("torrent_previewable_files")
                 .whereColumn({{"filepath", NOTE},
-                              {SIZE, "progress", ">", "or"}});
+                              {SIZE_, "progress", ">", "or"}});
         QCOMPARE(builder->toSql(),
                  "select * from `torrent_previewable_files` where (`filepath` = `note` "
                  "or `size` > `progress`)");
@@ -2159,7 +2159,7 @@ void tst_MySql_QueryBuilder::orWhereColumn_WithVectorValue() const
 
         builder->select("*").from("torrent_previewable_files").whereEq(ID, 2)
                 .orWhereColumn({{"filepath", NOTE},
-                                {SIZE, "progress", ">"}});
+                                {SIZE_, "progress", ">"}});
         QCOMPARE(builder->toSql(),
                  "select * from `torrent_previewable_files` "
                  "where `id` = ? or (`filepath` = `note` or `size` > `progress`)");
@@ -2172,7 +2172,7 @@ void tst_MySql_QueryBuilder::orWhereColumn_WithVectorValue() const
 
         builder->select("*").from("torrent_previewable_files").whereEq(ID, 2)
                 .orWhereColumn({{"filepath", NOTE},
-                                {SIZE, "progress", ">", "and"}});
+                                {SIZE_, "progress", ">", "and"}});
         QCOMPARE(builder->toSql(),
                  "select * from `torrent_previewable_files` "
                  "where `id` = ? or (`filepath` = `note` and `size` > `progress`)");
@@ -2185,7 +2185,7 @@ void tst_MySql_QueryBuilder::orWhereColumn_WithVectorValue() const
 
         builder->select("*").from("torrent_previewable_files").whereEq(ID, 2)
                 .orWhereColumn({{"filepath", NOTE},
-                                {SIZE, "progress", ">", "or"}});
+                                {SIZE_, "progress", ">", "or"}});
         QCOMPARE(builder->toSql(),
                  "select * from `torrent_previewable_files` "
                  "where `id` = ? or (`filepath` = `note` or `size` > `progress`)");
@@ -2200,7 +2200,7 @@ void tst_MySql_QueryBuilder::orWhereColumn_WithVectorValue_ColumnExpression() co
 
     builder->select("*").from("torrent_previewable_files").whereEq(ID, 2)
             .orWhereColumn({{Raw("filepath"), Raw("`note`")},
-                            {SIZE, Raw("progress"), ">"}});
+                            {SIZE_, Raw("progress"), ">"}});
     QCOMPARE(builder->toSql(),
              "select * from `torrent_previewable_files` "
              "where `id` = ? or (filepath = `note` or `size` > progress)");
@@ -2695,7 +2695,7 @@ void tst_MySql_QueryBuilder::whereExists() const
         builder->select("*").from("torrent_peers").where(ID, LT, 7)
                 .whereExists([](Builder &query)
         {
-            query.from("torrents").where(SIZE, LT, 15);
+            query.from("torrents").where(SIZE_, LT, 15);
         });
 
         QCOMPARE(builder->toSql(),
@@ -2710,7 +2710,7 @@ void tst_MySql_QueryBuilder::whereExists() const
 
         builder->select("*").from("torrent_peers").where(ID, LT, 7)
                 .whereExists(createQuery()->from("torrents")
-                                           .where(SIZE, LT, 15));
+                                           .where(SIZE_, LT, 15));
 
         QCOMPARE(builder->toSql(),
                  "select * from `torrent_peers` where `id` < ? and "
@@ -2724,7 +2724,7 @@ void tst_MySql_QueryBuilder::whereExists() const
 
         // Ownership of the std::shared_ptr<QueryBuilder>
         const auto builderForExists = createQuery();
-        builderForExists->from("torrents").where(SIZE, LT, 15);
+        builderForExists->from("torrents").where(SIZE_, LT, 15);
 
         builder->select("*").from("torrent_peers").where(ID, LT, 7)
                 .whereExists(builderForExists);
@@ -2746,7 +2746,7 @@ void tst_MySql_QueryBuilder::whereNotExists() const
         builder->select("*").from("torrent_peers").where(ID, LT, 7)
                 .whereNotExists([](Builder &query)
         {
-            query.from("torrents").where(SIZE, LT, 15);
+            query.from("torrents").where(SIZE_, LT, 15);
         });
 
         QCOMPARE(builder->toSql(),
@@ -2761,7 +2761,7 @@ void tst_MySql_QueryBuilder::whereNotExists() const
 
         builder->select("*").from("torrent_peers").where(ID, LT, 7)
                 .whereNotExists(createQuery()->from("torrents")
-                                              .where(SIZE, LT, 15));
+                                              .where(SIZE_, LT, 15));
 
         QCOMPARE(builder->toSql(),
                  "select * from `torrent_peers` where `id` < ? and "
@@ -2775,7 +2775,7 @@ void tst_MySql_QueryBuilder::whereNotExists() const
 
         // Ownership of the std::shared_ptr<QueryBuilder>
         const auto builderForExists = createQuery();
-        builderForExists->from("torrents").where(SIZE, LT, 15);
+        builderForExists->from("torrents").where(SIZE_, LT, 15);
 
         builder->select("*").from("torrent_peers").where(ID, LT, 7)
                 .whereNotExists(builderForExists);
@@ -2797,7 +2797,7 @@ void tst_MySql_QueryBuilder::orWhereExists() const
         builder->select("*").from("torrent_peers").where(ID, LT, 7)
                 .orWhereExists([](Builder &query)
         {
-            query.from("torrents").where(SIZE, LT, 15);
+            query.from("torrents").where(SIZE_, LT, 15);
         });
 
         QCOMPARE(builder->toSql(),
@@ -2812,7 +2812,7 @@ void tst_MySql_QueryBuilder::orWhereExists() const
 
         builder->select("*").from("torrent_peers").where(ID, LT, 7)
                 .orWhereExists(createQuery()->from("torrents")
-                                             .where(SIZE, LT, 15));
+                                             .where(SIZE_, LT, 15));
 
         QCOMPARE(builder->toSql(),
                  "select * from `torrent_peers` where `id` < ? or "
@@ -2826,7 +2826,7 @@ void tst_MySql_QueryBuilder::orWhereExists() const
 
         // Ownership of the std::shared_ptr<QueryBuilder>
         const auto builderForExists = createQuery();
-        builderForExists->from("torrents").where(SIZE, LT, 15);
+        builderForExists->from("torrents").where(SIZE_, LT, 15);
 
         builder->select("*").from("torrent_peers").where(ID, LT, 7)
                 .orWhereExists(builderForExists);
@@ -2848,7 +2848,7 @@ void tst_MySql_QueryBuilder::orWhereNotExists() const
         builder->select("*").from("torrent_peers").where(ID, LT, 7)
                 .orWhereNotExists([](Builder &query)
         {
-            query.from("torrents").where(SIZE, LT, 15);
+            query.from("torrents").where(SIZE_, LT, 15);
         });
 
         QCOMPARE(builder->toSql(),
@@ -2863,7 +2863,7 @@ void tst_MySql_QueryBuilder::orWhereNotExists() const
 
         builder->select("*").from("torrent_peers").where(ID, LT, 7)
                 .orWhereNotExists(createQuery()->from("torrents")
-                                                .where(SIZE, LT, 15));
+                                                .where(SIZE_, LT, 15));
 
         QCOMPARE(builder->toSql(),
                  "select * from `torrent_peers` where `id` < ? or "
@@ -2877,7 +2877,7 @@ void tst_MySql_QueryBuilder::orWhereNotExists() const
 
         // Ownership of the std::shared_ptr<QueryBuilder>
         const auto builderForExists = createQuery();
-        builderForExists->from("torrents").where(SIZE, LT, 15);
+        builderForExists->from("torrents").where(SIZE_, LT, 15);
 
         builder->select("*").from("torrent_peers").where(ID, LT, 7)
                 .orWhereNotExists(builderForExists);
@@ -2896,7 +2896,7 @@ void tst_MySql_QueryBuilder::whereRowValues() const
         auto builder = createQuery();
 
         builder->select("*").from("torrents")
-                .whereRowValues({NAME, SIZE}, EQ, {"test3", 3});
+                .whereRowValues({NAME, SIZE_}, EQ, {"test3", 3});
         QCOMPARE(builder->toSql(),
                  "select * from `torrents` where (`name`, `size`) = (?, ?)");
         QCOMPARE(builder->getBindings(),
@@ -2907,7 +2907,7 @@ void tst_MySql_QueryBuilder::whereRowValues() const
         auto builder = createQuery();
 
         builder->select("*").from("torrents")
-                .whereRowValuesEq({NAME, SIZE}, {"test3", 3});
+                .whereRowValuesEq({NAME, SIZE_}, {"test3", 3});
         QCOMPARE(builder->toSql(),
                  "select * from `torrents` where (`name`, `size`) = (?, ?)");
         QCOMPARE(builder->getBindings(),
@@ -2918,7 +2918,7 @@ void tst_MySql_QueryBuilder::whereRowValues() const
         auto builder = createQuery();
 
         builder->select("*").from("torrents")
-                .whereRowValues({SIZE, "progress"}, GT, {3, 50});
+                .whereRowValues({SIZE_, "progress"}, GT, {3, 50});
         QCOMPARE(builder->toSql(),
                  "select * from `torrents` where (`size`, `progress`) > (?, ?)");
         QCOMPARE(builder->getBindings(),
@@ -2929,7 +2929,7 @@ void tst_MySql_QueryBuilder::whereRowValues() const
         auto builder = createQuery();
 
         builder->select("*").from("torrents").where(ID, EQ, 1)
-                .orWhereRowValuesEq({NAME, SIZE}, {"test3", 3});
+                .orWhereRowValuesEq({NAME, SIZE_}, {"test3", 3});
         QCOMPARE(builder->toSql(),
                  "select * from `torrents` where `id` = ? or (`name`, `size`) = (?, ?)");
         QCOMPARE(builder->getBindings(),
@@ -2961,7 +2961,7 @@ void tst_MySql_QueryBuilder::whereRowValues_ColumnExpression() const
     auto builder = createQuery();
 
     builder->select("*").from("torrents").where(ID, EQ, 1)
-            .orWhereRowValues({Raw(NAME), SIZE}, EQ, {"test3", 3});
+            .orWhereRowValues({Raw(NAME), SIZE_}, EQ, {"test3", 3});
     QCOMPARE(builder->toSql(),
              "select * from `torrents` where `id` = ? or (name, `size`) = (?, ?)");
     QCOMPARE(builder->getBindings(),
@@ -2975,7 +2975,7 @@ void tst_MySql_QueryBuilder::whereRowValues_ValueExpression() const
         auto builder = createQuery();
 
         builder->select("*").from("torrents")
-                .whereRowValues({NAME, SIZE}, EQ, {"test3", Raw(3)});
+                .whereRowValues({NAME, SIZE_}, EQ, {"test3", Raw(3)});
         QCOMPARE(builder->toSql(),
                  "select * from `torrents` where (`name`, `size`) = (?, 3)");
         QCOMPARE(builder->getBindings(),
@@ -2986,7 +2986,7 @@ void tst_MySql_QueryBuilder::whereRowValues_ValueExpression() const
         auto builder = createQuery();
 
         builder->select("*").from("torrents")
-                .whereRowValues({NAME, SIZE}, EQ, {Raw("'test3'"), 3});
+                .whereRowValues({NAME, SIZE_}, EQ, {Raw("'test3'"), 3});
         QCOMPARE(builder->toSql(),
                  "select * from `torrents` where (`name`, `size`) = ('test3', ?)");
         QCOMPARE(builder->getBindings(),
@@ -2997,7 +2997,7 @@ void tst_MySql_QueryBuilder::whereRowValues_ValueExpression() const
         auto builder = createQuery();
 
         builder->select("*").from("torrents")
-                .whereRowValuesEq({NAME, SIZE}, {Raw("'test3'"), Raw(3)});
+                .whereRowValuesEq({NAME, SIZE_}, {Raw("'test3'"), Raw(3)});
         QCOMPARE(builder->toSql(),
                  "select * from `torrents` where (`name`, `size`) = ('test3', 3)");
         QVERIFY(builder->getBindings().isEmpty());
@@ -3246,7 +3246,7 @@ void tst_MySql_QueryBuilder::insert() const
 {
     auto log = DB::connection(m_connection).pretend([](auto &connection)
     {
-        connection.query()->from("torrents").insert({{NAME, "xyz"}, {SIZE, 6}});
+        connection.query()->from("torrents").insert({{NAME, "xyz"}, {SIZE_, 6}});
     });
 
     QVERIFY(!log.isEmpty());
@@ -3264,7 +3264,7 @@ void tst_MySql_QueryBuilder::insert_WithExpression() const
     auto log = DB::connection(m_connection).pretend([](auto &connection)
     {
         connection.query()->from("torrents")
-                .insert({{NAME, DB::raw("'xyz'")}, {SIZE, 6},
+                .insert({{NAME, DB::raw("'xyz'")}, {SIZE_, 6},
                          {"progress", DB::raw(2)}});
     });
 
@@ -3284,7 +3284,7 @@ void tst_MySql_QueryBuilder::update() const
     {
         const auto [affected, query] = connection.query()->from("torrents")
                                        .whereEq(ID, 10)
-                                       .update({{NAME, "xyz"}, {SIZE, 6}});
+                                       .update({{NAME, "xyz"}, {SIZE_, 6}});
 
         // Affecting statements must return -1 if pretending
         QVERIFY(affected == -1);
@@ -3308,7 +3308,7 @@ void tst_MySql_QueryBuilder::update_WithExpression() const
     {
         connection.query()->from("torrents")
                 .whereEq(ID, 10)
-                .update({{NAME, DB::raw("'xyz'")}, {SIZE, 6},
+                .update({{NAME, DB::raw("'xyz'")}, {SIZE_, 6},
                          {"progress", DB::raw(2)}});
     });
 
