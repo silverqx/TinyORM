@@ -10,7 +10,7 @@ namespace Models
 {
 
 using Orm::Constants::NOTE;
-using Orm::Constants::SIZE;
+using Orm::Constants::SIZE_;
 
 using Orm::Tiny::Model;
 using Orm::Tiny::Relations::HasOne;
@@ -49,7 +49,7 @@ private:
     inline static QStringList u_fillable { // NOLINT(cppcoreguidelines-interfaces-global-init)
         "file_index",
         "filepath",
-        SIZE,
+        SIZE_,
         "progress",
         NOTE,
     };

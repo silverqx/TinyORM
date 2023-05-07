@@ -11,7 +11,7 @@ namespace Models
 
 using Orm::Constants::ID;
 using Orm::Constants::NAME;
-using Orm::Constants::SIZE;
+using Orm::Constants::SIZE_;
 
 using Orm::Tiny::Model;
 using Orm::Tiny::Relations::BelongsTo;
@@ -48,7 +48,7 @@ private:
         ID,
         NAME,
         "ext",
-        SIZE,
+        SIZE_,
     };
 };
 

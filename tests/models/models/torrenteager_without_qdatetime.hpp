@@ -9,7 +9,7 @@ namespace Models
 
 using Orm::Constants::NAME;
 using Orm::Constants::NOTE;
-using Orm::Constants::SIZE;
+using Orm::Constants::SIZE_;
 
 using Orm::Tiny::AttributeItem;
 using Orm::Tiny::Model;
@@ -26,14 +26,14 @@ class TorrentEager_Without_QDateTime final :
 
     /*! The model's default values for attributes. */
     inline static const QVector<AttributeItem> u_attributes { // NOLINT(cppcoreguidelines-interfaces-global-init)
-        {SIZE,       0},
+        {SIZE_,      0},
         {"progress", 0},
     };
 
     /*! The attributes that are mass assignable. */
     inline static const QStringList u_fillable { // NOLINT(cppcoreguidelines-interfaces-global-init)
         NAME,
-        SIZE,
+        SIZE_,
         "progress",
         "added_on",
         "hash",

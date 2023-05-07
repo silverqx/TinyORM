@@ -12,7 +12,7 @@ namespace Models
 
 using Orm::Constants::NAME;
 using Orm::Constants::NOTE;
-using Orm::Constants::SIZE;
+using Orm::Constants::SIZE_;
 
 using Orm::Tiny::Relations::BelongsTo;
 using Orm::Tiny::Relations::HasOne;
@@ -54,7 +54,7 @@ public:
         // Ownership of a unique_ptr()
         auto relation = belongsTo<Torrent>();
 
-        relation->withDefault({{NAME, "default_torrent_name"}, {SIZE, 123}});
+        relation->withDefault({{NAME, "default_torrent_name"}, {SIZE_, 123}});
 
         return relation;
     }
@@ -83,7 +83,7 @@ public:
     {
         auto relation = hasOne<TorrentPreviewableFileProperty>("previewable_file_id");
 
-        relation->withDefault({{NAME, "default_fileproperty_name"}, {SIZE, 321}});
+        relation->withDefault({{NAME, "default_fileproperty_name"}, {SIZE_, 321}});
 
         return relation;
     }
@@ -113,7 +113,7 @@ private:
     inline static QStringList u_fillable { // NOLINT(cppcoreguidelines-interfaces-global-init)
         "file_index",
         "filepath",
-        SIZE,
+        SIZE_,
         "progress",
         NOTE,
     };
