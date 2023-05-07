@@ -48,12 +48,14 @@ namespace Utils
 
         /*! Call the given callback with the given value then return the value. */
         template<typename T>
-        static T &&tap(std::remove_reference_t<T> &&value,
-                       std::function<void(T &)> &&callback = nullptr);
+        static T &&
+        tap(T &&value, std::function<void(T &)> &&callback = nullptr)
+        requires (!std::is_reference_v<T>);
         /*! Call the given callback with the given value then return the value. */
         template<typename T>
-        static T &&tap(std::remove_reference_t<T> &&value,
-                       std::function<void()> &&callback = nullptr);
+        static T &&
+        tap(T &&value, std::function<void()> &&callback = nullptr)
+        requires (!std::is_reference_v<T>);
 
         /*! Call repeatedly to incrementally create a hash value from several
             variables. */
@@ -93,22 +95,28 @@ namespace Utils
 
     template<typename T>
     T &&
-    Helpers::tap(std::remove_reference_t<T> &&value, std::function<void(T &)> &&callback)
+    Helpers::tap(T &&value, std::function<void(T &)> &&callback)
+    requires (!std::is_reference_v<T>)
     {
         if (callback)
             std::invoke(callback, value);
 
-        return std::move(value);
+        /* forward not needed, also the std::move() would be ok (treated by constraint),
+           forward prevents clang warning. */
+        return std::forward<T>(value);
     }
 
     template<typename T>
     T &&
-    Helpers::tap(std::remove_reference_t<T> &&value, std::function<void()> &&callback)
+    Helpers::tap(T &&value, std::function<void()> &&callback)
+    requires (!std::is_reference_v<T>)
     {
         if (callback)
             std::invoke(callback);
 
-        return std::move(value);
+        /* forward not needed, also the std::move() would be ok (treated by constraint),
+           forward prevents clang warning. */
+        return std::forward<T>(value);
     }
 
     template<typename T>
