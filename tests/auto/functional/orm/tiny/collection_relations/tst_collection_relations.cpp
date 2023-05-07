@@ -2101,13 +2101,13 @@ void tst_Collection_Relations::tap_lvalue() const
 
     ModelsCollection<AlbumImage *> &result =
             images.tap([&callbackInvoked, &imagesInCallbackAddress]
-                       (ModelsCollection<AlbumImage *> &images_)
+                       (ModelsCollection<AlbumImage *> &imagesRef)
     {
         callbackInvoked = true;
-        imagesInCallbackAddress = reinterpret_cast<uintptr_t>(&images_);
+        imagesInCallbackAddress = reinterpret_cast<uintptr_t>(&imagesRef);
 
         // Change the name, append " NEW"
-        auto &image4 = *images_.at(2);
+        auto &image4 = *imagesRef.at(2);
         image4[NAME] = SPACE_IN.arg(image4.getAttribute(NAME).template value<QString>(),
                                     QStringLiteral("NEW"));
     });
@@ -2138,12 +2138,12 @@ void tst_Collection_Relations::tap_rvalue() const
 
     ModelsCollection<AlbumImage *> result =
             std::move(imagesInit).tap([&callbackInvoked]
-                                      (ModelsCollection<AlbumImage *> &images_)
+                                      (ModelsCollection<AlbumImage *> &imagesRef)
     {
         callbackInvoked = true;
 
         // Change the name, append " NEW"
-        auto &image2_ = *images_.first();
+        auto &image2_ = *imagesRef.first();
         image2_[NAME] = SPACE_IN.arg(image2_.getAttribute(NAME).template value<QString>(),
                                      QStringLiteral("NEW"));
     });
