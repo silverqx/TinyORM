@@ -28,6 +28,8 @@ namespace Orm::Tiny::Relations
 
         /*! Alias for the attribute utils. */
         using AttributeUtils = Orm::Tiny::Utils::Attribute;
+        /*! Alias for query utils. */
+        using QueryUtils = Orm::Utils::Query;
         /*! Alias for the type utils. */
         using TypeUtils = Orm::Utils::Type;
 
@@ -1283,10 +1285,12 @@ namespace Orm::Tiny::Relations
     QVector<QVariant>
     BelongsToMany<Model, Related, PivotType>::allRelatedIds() const
     {
-        QVector<QVariant> ids;
-
         // Ownership of the std::shared_ptr<QueryBuilder>
         auto query = this->newPivotQuery()->get({m_relatedPivotKey});
+
+        QVector<QVariant> ids;
+        ids.reserve(static_cast<QVector<QVariant>::size_type>(
+                        QueryUtils::queryResultSize(query)));
 
         while (query.next())
             ids << query.value(m_relatedPivotKey);
