@@ -1090,7 +1090,7 @@ Builder &Builder::offset(const int value)
 {
     Q_ASSERT(value >= 0);
 
-    m_offset = std::max(0, value);
+    m_offset = std::max<decltype (value)>(0, value);
 
     return *this;
 }

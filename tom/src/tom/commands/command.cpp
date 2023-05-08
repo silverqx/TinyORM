@@ -141,9 +141,10 @@ QStringList Command::optionNames() const
     const auto optionNamesSize = optionNames.size();
     // Number of a new option names can be estimated by counting the , characters
     optionNames.reserve(
-                std::max(optionNamesSize * 2,
-                         optionNamesSize + application().arguments().join(SPACE)
-                                           .count(regex)) + 1); // +1 for sure
+                std::max<decltype (optionNames)::size_type>(
+                    optionNamesSize * 2,
+                    optionNamesSize + application().arguments().join(SPACE)
+                                      .count(regex)) + 1); // +1 for sure
 
     /* Allows to loop through all values for every (unique) option name defined
        on the command-line. */

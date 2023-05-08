@@ -208,7 +208,7 @@ bool ManagesTransactions::rollbackToSavepoint(const QString &id)
                     databaseConnection().getRawQtConnection().lastError());
     }
 
-    m_savepoints = std::max<std::size_t>(0, m_savepoints - 1);
+    m_savepoints = std::max<decltype (m_savepoints)>(0, m_savepoints - 1);
 
     // Queries execution time counter / Query statements counter
     const auto elapsed = countsQueries().hitTransactionalCounters(timer, countElapsed);
