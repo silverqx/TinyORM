@@ -3,8 +3,6 @@
 #include <orm/constants.hpp>
 #include <orm/utils/string.hpp>
 
-#include "tom/application.hpp"
-#include "tom/commands/command.hpp"
 #include "tom/concerns/interactswithio.hpp"
 #include "tom/exceptions/runtimeerror.hpp"
 #include "tom/tomconstants.hpp"
