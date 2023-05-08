@@ -219,33 +219,34 @@ namespace Orm::Tiny::Relations
 
         /* Builds Queries */
         /*! Chunk the results of the query. */
-        bool chunk(int count,
+        bool chunk(qint64 count,
                    const std::function<
-                       bool(ModelsCollection<Related> &&models, int page)> &callback
+                       bool(ModelsCollection<Related> &&models, qint64 page)> &callback
         ) const override;
         /*! Execute a callback over each item while chunking. */
-        bool each(const std::function<bool(Related &&model, int index)> &callback,
-                  int count = 1000) const override;
+        bool each(const std::function<bool(Related &&model, qint64 index)> &callback,
+                  qint64 count = 1000) const override;
 
         /*! Run a map over each item while chunking. */
         ModelsCollection<Related>
         chunkMap(const std::function<Related(Related &&model)> &callback,
-                 int count = 1000) const override;
+                 qint64 count = 1000) const override;
         /*! Run a map over each item while chunking. */
         template<typename T>
         QVector<T>
         chunkMap(const std::function<T(Related &&model)> &callback,
-                 int count = 1000) const;
+                 qint64 count = 1000) const;
 
         /*! Chunk the results of a query by comparing IDs. */
-        bool chunkById(int count,
-                       const std::function<
-                           bool(ModelsCollection<Related> &&models, int page)> &callback,
-                       const QString &column = "",
-                       const QString &alias = "") const override;
+        bool
+        chunkById(qint64 count,
+                  const std::function<
+                      bool(ModelsCollection<Related> &&models, qint64 page)> &callback,
+                  const QString &column = "",
+                  const QString &alias = "") const override;
         /*! Execute a callback over each item while chunking by ID. */
-        bool eachById(const std::function<bool(Related &&model, int index)> &callback,
-                      int count = 1000, const QString &column = "",
+        bool eachById(const std::function<bool(Related &&model, qint64 index)> &callback,
+                      qint64 count = 1000, const QString &column = "",
                       const QString &alias = "") const override;
 
         /* Inserting/Updating operations on the relationship */
@@ -953,12 +954,13 @@ namespace Orm::Tiny::Relations
 
     template<class Model, class Related, class PivotType>
     bool BelongsToMany<Model, Related, PivotType>::chunk(
-            const int count,
-            const std::function<bool(ModelsCollection<Related> &&, int)> &callback) const
+            const qint64 count,
+            const std::function<
+                bool(ModelsCollection<Related> &&, qint64)> &callback) const
     {
         return prepareQueryBuilder()
                 .chunk(count, [this, &callback]
-                              (ModelsCollection<Related> &&models, const int page)
+                              (ModelsCollection<Related> &&models, const qint64 page)
         {
             hydratePivotRelation(models);
 
@@ -968,12 +970,13 @@ namespace Orm::Tiny::Relations
 
     template<class Model, class Related, class PivotType>
     bool BelongsToMany<Model, Related, PivotType>::each(
-            const std::function<bool(Related &&, int)> &callback, const int count) const
+            const std::function<bool(Related &&, qint64)> &callback,
+            const qint64 count) const
     {
         return chunk(count, [&callback]
-                            (ModelsCollection<Related> &&models, const int /*unused*/)
+                            (ModelsCollection<Related> &&models, const qint64 /*unused*/)
         {
-            int index = 0;
+            qint64 index = 0;
 
             for (auto &&model : models)
                 if (const auto result = std::invoke(callback, std::move(model), index++);
@@ -988,14 +991,14 @@ namespace Orm::Tiny::Relations
     template<class Model, class Related, class PivotType>
     ModelsCollection<Related>
     BelongsToMany<Model, Related, PivotType>::chunkMap(
-            const std::function<Related(Related &&)> &callback, const int count) const
+            const std::function<Related(Related &&)> &callback, const qint64 count) const
     {
         ModelsCollection<Related> result;
         // Reserve the first page, it can help reallocations at the beginning
         result.reserve(static_cast<ModelsCollection<Related>::size_type>(count));
 
         chunk(count, [&result, &callback]
-                     (ModelsCollection<Related> &&models, const int /*unused*/)
+                     (ModelsCollection<Related> &&models, const qint64 /*unused*/)
         {
             for (auto &&model : models)
                 result << std::invoke(callback, std::move(model));
@@ -1010,14 +1013,14 @@ namespace Orm::Tiny::Relations
     template<typename T>
     QVector<T>
     BelongsToMany<Model, Related, PivotType>::chunkMap(
-            const std::function<T(Related &&)> &callback, const int count) const
+            const std::function<T(Related &&)> &callback, const qint64 count) const
     {
         QVector<T> result;
         // Reserve the first page, it can help reallocations at the beginning
         result.reserve(static_cast<QVector<T>::size_type>(count));
 
         chunk(count, [&result, &callback]
-                     (ModelsCollection<Related> &&models, const int /*unused*/)
+                     (ModelsCollection<Related> &&models, const qint64 /*unused*/)
         {
             for (auto &&model : models)
                 result << std::invoke(callback, std::move(model));
@@ -1030,8 +1033,8 @@ namespace Orm::Tiny::Relations
 
     template<class Model, class Related, class PivotType>
     bool BelongsToMany<Model, Related, PivotType>::chunkById(
-            const int count,
-            const std::function<bool(ModelsCollection<Related> &&, int)> &callback,
+            const qint64 count,
+            const std::function<bool(ModelsCollection<Related> &&, qint64)> &callback,
             const QString &column, const QString &alias) const
     {
         const auto &relatedKeyName = this->getRelatedKeyName();
@@ -1043,7 +1046,7 @@ namespace Orm::Tiny::Relations
 
         return prepareQueryBuilder()
                 .chunkById(count, [this, &callback]
-                                  (ModelsCollection<Related> &&models, const int page)
+                                  (ModelsCollection<Related> &&models, const qint64 page)
         {
             hydratePivotRelation(models);
 
@@ -1054,13 +1057,13 @@ namespace Orm::Tiny::Relations
 
     template<class Model, class Related, class PivotType>
     bool BelongsToMany<Model, Related, PivotType>::eachById(
-            const std::function<bool(Related &&, int)> &callback,
-            const int count, const QString &column, const QString &alias) const
+            const std::function<bool(Related &&, qint64)> &callback,
+            const qint64 count, const QString &column, const QString &alias) const
     {
         return chunkById(count, [&callback, count]
-                                (ModelsCollection<Related> &&models, const int page)
+                                (ModelsCollection<Related> &&models, const qint64 page)
         {
-            int index = 0;
+            qint64 index = 0;
 
             for (auto &&model : models)
                 if (const auto result = std::invoke(callback, std::move(model),

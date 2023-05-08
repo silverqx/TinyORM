@@ -15,13 +15,13 @@ namespace Orm::Query::Concerns
 
 /* public */
 
-bool BuildsQueries::chunk(const int count,
-                          const std::function<bool(SqlQuery &, int)> &callback)
+bool BuildsQueries::chunk(const qint64 count,
+                          const std::function<bool(SqlQuery &, qint64)> &callback)
 {
     builder().enforceOrderBy();
 
-    int page = 1;
-    int countResults = 0;
+    qint64 page = 1;
+    qint64 countResults = 0;
 
     do { // NOLINT(cppcoreguidelines-avoid-do-while)
         /* We'll execute the query for the given page and get the results. If there are
@@ -29,7 +29,7 @@ bool BuildsQueries::chunk(const int count,
            we will call the callback with the current chunk of these results here. */
         auto results = builder().forPage(page, count).get();
 
-        countResults = QueryUtils::queryResultSize(results);
+        countResults = static_cast<qint64>(QueryUtils::queryResultSize(results));
 
         if (countResults == 0)
             break;
@@ -49,12 +49,12 @@ bool BuildsQueries::chunk(const int count,
     return true;
 }
 
-bool BuildsQueries::each(const std::function<bool(SqlQuery &, int)> &callback,
-                         const int count)
+bool BuildsQueries::each(const std::function<bool(SqlQuery &, qint64)> &callback,
+                         const qint64 count)
 {
-    return chunk(count, [&callback](SqlQuery &results, const int /*unused*/)
+    return chunk(count, [&callback](SqlQuery &results, const qint64 /*unused*/)
     {
-        int index = 0;
+        qint64 index = 0;
 
         while (results.next())
             if (const auto result = std::invoke(callback, results, index++);
@@ -69,7 +69,7 @@ bool BuildsQueries::each(const std::function<bool(SqlQuery &, int)> &callback,
 /* This is trash as the QSqlQuery is passed to the callback, I need to pass something
    like std::map<std::pair<int, QString>, QVariant> so an user can modify it and return */
 //QVector<QSqlQuery>
-//BuildsQueries::chunkMap(const std::function<void(QSqlQuery &)> &callback, const int count)
+//BuildsQueries::chunkMap(const std::function<void(QSqlQuery &)> &callback, const qint64 count)
 //{
 //    /* This method is weird, it should return one merged collection with all rows, but
 //       it's impossible to merge more QSqlQuery-ies into the one QSqlQuery, so I have
@@ -83,7 +83,7 @@ bool BuildsQueries::each(const std::function<bool(SqlQuery &, int)> &callback,
 //       processed/looped then move a whole QSqlQuery into the result vector. */
 //    QVector<QSqlQuery> result;
 
-//    chunk(count, [&result, &callback](QSqlQuery &results, const int /*unused*/)
+//    chunk(count, [&result, &callback](QSqlQuery &results, const qint64 /*unused*/)
 //    {
 //        while (results.next())
 //            std::invoke(callback, results);
@@ -97,14 +97,14 @@ bool BuildsQueries::each(const std::function<bool(SqlQuery &, int)> &callback,
 //}
 
 bool BuildsQueries::chunkById(
-        const int count, const std::function<bool(SqlQuery &, int)> &callback,
+        const qint64 count, const std::function<bool(SqlQuery &, qint64)> &callback,
         const QString &column, const QString &alias)
 {
     const auto columnName = column.isEmpty() ? builder().defaultKeyName() : column;
     const auto aliasName = alias.isEmpty() ? columnName : alias;
 
-    int page = 1;
-    int countResults = 0;
+    qint64 page = 1;
+    qint64 countResults = 0;
 
     QVariant lastId;
 
@@ -116,7 +116,7 @@ bool BuildsQueries::chunkById(
            we will call the callback with the current chunk of these results here. */
         auto results = clone.forPageAfterId(count, lastId, columnName, true).get();
 
-        countResults = QueryUtils::queryResultSize(results);
+        countResults = static_cast<qint64>(QueryUtils::queryResultSize(results));
 
         if (countResults == 0)
             break;
@@ -153,12 +153,12 @@ bool BuildsQueries::chunkById(
 }
 
 bool BuildsQueries::eachById(
-        const std::function<bool(SqlQuery &, int)> &callback,
-        const int count, const QString &column, const QString &alias)
+        const std::function<bool(SqlQuery &, qint64)> &callback,
+        const qint64 count, const QString &column, const QString &alias)
 {
-    return chunkById(count, [&callback, count](SqlQuery &results, const int page)
+    return chunkById(count, [&callback, count](SqlQuery &results, const qint64 page)
     {
-        int index = 0;
+        qint64 index = 0;
 
         while (results.next())
             if (const auto result = std::invoke(callback, results,

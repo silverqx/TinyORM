@@ -670,22 +670,22 @@ namespace Orm::Query
         Builder &reorder(const Column &column, const QString &direction = ASC);
 
         /*! Set the "limit" value of the query. */
-        Builder &limit(int value);
+        Builder &limit(qint64 value);
         /*! Alias to set the "limit" value of the query. */
-        Builder &take(int value);
+        Builder &take(qint64 value);
         /*! Set the "offset" value of the query. */
-        Builder &offset(int value);
+        Builder &offset(qint64 value);
         /*! Alias to set the "offset" value of the query. */
-        Builder &skip(int value);
+        Builder &skip(qint64 value);
         /*! Set the limit and offset for a given page. */
-        Builder &forPage(int page, int perPage = 30);
+        Builder &forPage(qint64 page, qint64 perPage = 30);
 
         /*! Constrain the query to the previous "page" of results before a given ID. */
-        Builder &forPageBeforeId(int perPage = 30, const QVariant &lastId = {},
+        Builder &forPageBeforeId(qint64 perPage = 30, const QVariant &lastId = {},
                                  const QString &column = Orm::Constants::ID,
                                  bool prependOrder = false);
         /*! Constrain the query to the next "page" of results after a given ID. */
-        Builder &forPageAfterId(int perPage = 30, const QVariant &lastId = {},
+        Builder &forPageAfterId(qint64 perPage = 30, const QVariant &lastId = {},
                                 const QString &column = Orm::Constants::ID,
                                 bool prependOrder = false);
 
@@ -784,9 +784,9 @@ namespace Orm::Query
         /*! Get the orderings for the query. */
         inline const QVector<OrderByItem> &getOrders() const noexcept;
         /*! Get the maximum number of records to return. */
-        inline int getLimit() const noexcept;
+        inline qint64 getLimit() const noexcept;
         /*! Get the number of records to skip. */
-        inline int getOffset() const noexcept;
+        inline qint64 getOffset() const noexcept;
         /*! Get the row locking. */
         inline const std::variant<std::monostate, bool, QString> &
         getLock() const noexcept;
@@ -984,9 +984,9 @@ namespace Orm::Query
         /*! The orderings for the query. */
         QVector<OrderByItem> m_orders {};
         /*! The maximum number of records to return. */
-        int m_limit = -1;
+        qint64 m_limit = -1;
         /*! The number of records to skip. */
-        int m_offset = -1;
+        qint64 m_offset = -1;
         /*! Indicates whether row locking is being used. */
         std::variant<std::monostate, bool, QString> m_lock {};
     };
@@ -1756,12 +1756,12 @@ namespace Orm::Query
         return m_orders;
     }
 
-    int Builder::getLimit() const noexcept
+    qint64 Builder::getLimit() const noexcept
     {
         return m_limit;
     }
 
-    int Builder::getOffset() const noexcept
+    qint64 Builder::getOffset() const noexcept
     {
         return m_offset;
     }

@@ -810,28 +810,28 @@ namespace Tiny
 
         /*! Set the "limit" value of the query. */
         static std::unique_ptr<TinyBuilder<Derived>>
-        limit(int value);
+        limit(qint64 value);
         /*! Alias to set the "limit" value of the query. */
         static std::unique_ptr<TinyBuilder<Derived>>
-        take(int value);
+        take(qint64 value);
         /*! Set the "offset" value of the query. */
         static std::unique_ptr<TinyBuilder<Derived>>
-        offset(int value);
+        offset(qint64 value);
         /*! Alias to set the "offset" value of the query. */
         static std::unique_ptr<TinyBuilder<Derived>>
-        skip(int value);
+        skip(qint64 value);
         /*! Set the limit and offset for a given page. */
         static std::unique_ptr<TinyBuilder<Derived>>
-        forPage(int page, int perPage = 30);
+        forPage(qint64 page, qint64 perPage = 30);
 
         /*! Constrain the query to the previous "page" of results before a given ID. */
         static std::unique_ptr<TinyBuilder<Derived>>
-        forPageBeforeId(int perPage = 30, const QVariant &lastId = {},
+        forPageBeforeId(qint64 perPage = 30, const QVariant &lastId = {},
                         const QString &column = Orm::Constants::ID,
                         bool prependOrder = false);
         /*! Constrain the query to the next "page" of results after a given ID. */
         static std::unique_ptr<TinyBuilder<Derived>>
-        forPageAfterId(int perPage = 30, const QVariant &lastId = {},
+        forPageAfterId(qint64 perPage = 30, const QVariant &lastId = {},
                        const QString &column = Orm::Constants::ID,
                        bool prependOrder = false);
 
@@ -858,33 +858,33 @@ namespace Tiny
         /* Builds Queries */
         /*! Chunk the results of the query. */
         static bool
-        chunk(int count,
+        chunk(qint64 count,
               const std::function<
-                  bool(ModelsCollection<Derived> &&models, int page)> &callback);
+                  bool(ModelsCollection<Derived> &&models, qint64 page)> &callback);
         /*! Execute a callback over each item while chunking. */
         static bool
-        each(const std::function<bool(Derived &&model, int index)> &callback,
-             int count = 1000);
+        each(const std::function<bool(Derived &&model, qint64 index)> &callback,
+             qint64 count = 1000);
 
         /*! Run a map over each item while chunking. */
         static ModelsCollection<Derived>
         chunkMap(const std::function<Derived(Derived &&model)> &callback,
-                 int count = 1000);
+                 qint64 count = 1000);
         /*! Run a map over each item while chunking. */
         template<typename T>
         static QVector<T>
-        chunkMap(const std::function<T(Derived &&model)> &callback, int count = 1000);
+        chunkMap(const std::function<T(Derived &&model)> &callback, qint64 count = 1000);
 
         /*! Chunk the results of a query by comparing IDs. */
         static bool
-        chunkById(int count,
+        chunkById(qint64 count,
                   const std::function<
-                      bool(ModelsCollection<Derived> &&models, int page)> &callback,
+                      bool(ModelsCollection<Derived> &&models, qint64 page)> &callback,
                   const QString &column = "", const QString &alias = "");
         /*! Execute a callback over each item while chunking by ID. */
         static bool
-        eachById(const std::function<bool(Derived &&model, int index)> &callback,
-                 int count = 1000, const QString &column = "",
+        eachById(const std::function<bool(Derived &&model, qint64 index)> &callback,
+                 qint64 count = 1000, const QString &column = "",
                  const QString &alias = "");
 
         /*! Execute the query and get the first result if it's the sole matching
@@ -3177,7 +3177,7 @@ namespace Tiny
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     std::unique_ptr<TinyBuilder<Derived>>
-    ModelProxies<Derived, AllRelations...>::limit(const int value)
+    ModelProxies<Derived, AllRelations...>::limit(const qint64 value)
     {
         auto builder = query();
 
@@ -3188,7 +3188,7 @@ namespace Tiny
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     std::unique_ptr<TinyBuilder<Derived>>
-    ModelProxies<Derived, AllRelations...>::take(const int value)
+    ModelProxies<Derived, AllRelations...>::take(const qint64 value)
     {
         auto builder = query();
 
@@ -3199,7 +3199,7 @@ namespace Tiny
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     std::unique_ptr<TinyBuilder<Derived>>
-    ModelProxies<Derived, AllRelations...>::offset(const int value)
+    ModelProxies<Derived, AllRelations...>::offset(const qint64 value)
     {
         auto builder = query();
 
@@ -3210,7 +3210,7 @@ namespace Tiny
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     std::unique_ptr<TinyBuilder<Derived>>
-    ModelProxies<Derived, AllRelations...>::skip(const int value)
+    ModelProxies<Derived, AllRelations...>::skip(const qint64 value)
     {
         auto builder = query();
 
@@ -3221,7 +3221,8 @@ namespace Tiny
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     std::unique_ptr<TinyBuilder<Derived>>
-    ModelProxies<Derived, AllRelations...>::forPage(const int page, const int perPage)
+    ModelProxies<Derived, AllRelations...>::forPage(const qint64 page,
+                                                    const qint64 perPage)
     {
         auto builder = query();
 
@@ -3233,7 +3234,7 @@ namespace Tiny
     template<typename Derived, AllRelationsConcept ...AllRelations>
     std::unique_ptr<TinyBuilder<Derived>>
     ModelProxies<Derived, AllRelations...>::forPageBeforeId(
-            const int perPage, const QVariant &lastId, const QString &column,
+            const qint64 perPage, const QVariant &lastId, const QString &column,
             const bool prependOrder)
     {
         auto builder = query();
@@ -3246,7 +3247,7 @@ namespace Tiny
     template<typename Derived, AllRelationsConcept ...AllRelations>
     std::unique_ptr<TinyBuilder<Derived>>
     ModelProxies<Derived, AllRelations...>::forPageAfterId(
-            const int perPage, const QVariant &lastId, const QString &column,
+            const qint64 perPage, const QVariant &lastId, const QString &column,
             const bool prependOrder)
     {
         auto builder = query();
@@ -3328,15 +3329,15 @@ namespace Tiny
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     bool ModelProxies<Derived, AllRelations...>::chunk(
-            const int count,
-            const std::function<bool(ModelsCollection<Derived> &&, int)> &callback)
+            const qint64 count,
+            const std::function<bool(ModelsCollection<Derived> &&, qint64)> &callback)
     {
         return query()->chunk(count, callback);
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     bool ModelProxies<Derived, AllRelations...>::each(
-            const std::function<bool(Derived &&, int)> &callback, const int count)
+            const std::function<bool(Derived &&, qint64)> &callback, const qint64 count)
     {
         return query()->each(callback, count);
     }
@@ -3344,7 +3345,7 @@ namespace Tiny
     template<typename Derived, AllRelationsConcept ...AllRelations>
     ModelsCollection<Derived>
     ModelProxies<Derived, AllRelations...>::chunkMap(
-            const std::function<Derived(Derived &&)> &callback, const int count)
+            const std::function<Derived(Derived &&)> &callback, const qint64 count)
     {
         return query()->chunkMap(callback, count);
     }
@@ -3353,15 +3354,15 @@ namespace Tiny
     template<typename T>
     QVector<T>
     ModelProxies<Derived, AllRelations...>::chunkMap(
-            const std::function<T(Derived &&)> &callback, const int count)
+            const std::function<T(Derived &&)> &callback, const qint64 count)
     {
         return query()->template chunkMap<T>(callback, count);
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     bool ModelProxies<Derived, AllRelations...>::chunkById(
-            const int count,
-            const std::function<bool(ModelsCollection<Derived> &&, int)> &callback,
+            const qint64 count,
+            const std::function<bool(ModelsCollection<Derived> &&, qint64)> &callback,
             const QString &column, const QString &alias)
     {
         return query()->chunkById(count, callback, column, alias);
@@ -3369,8 +3370,8 @@ namespace Tiny
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     bool ModelProxies<Derived, AllRelations...>::eachById(
-            const std::function<bool(Derived &&, int)> &callback,
-            const int count, const QString &column, const QString &alias)
+            const std::function<bool(Derived &&, qint64)> &callback,
+            const qint64 count, const QString &column, const QString &alias)
     {
         return query()->eachById(callback, count, column, alias);
     }

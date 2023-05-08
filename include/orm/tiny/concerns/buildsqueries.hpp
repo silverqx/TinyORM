@@ -44,29 +44,30 @@ namespace Concerns
         BuildsQueries &operator=(BuildsQueries &&) = delete;
 
         /*! Chunk the results of the query. */
-        bool chunk(int count,
+        bool chunk(qint64 count,
                    const std::function<
-                       bool(ModelsCollection<Model> &&models, int page)> &callback);
+                       bool(ModelsCollection<Model> &&models, qint64 page)> &callback);
         /*! Execute a callback over each item while chunking. */
-        bool each(const std::function<bool(Model &&model, int index)> &callback,
-                  int count = 1000);
+        bool each(const std::function<bool(Model &&model, qint64 index)> &callback,
+                  qint64 count = 1000);
 
         /*! Run a map over each item while chunking. */
         ModelsCollection<Model>
-        chunkMap(const std::function<Model(Model &&model)> &callback, int count = 1000);
+        chunkMap(const std::function<Model(Model &&model)> &callback,
+                 qint64 count = 1000);
         /*! Run a map over each item while chunking. */
         template<typename T>
         QVector<T>
-        chunkMap(const std::function<T(Model &&model)> &callback, int count = 1000);
+        chunkMap(const std::function<T(Model &&model)> &callback, qint64 count = 1000);
 
         /*! Chunk the results of a query by comparing IDs. */
-        bool chunkById(int count,
+        bool chunkById(qint64 count,
                        const std::function<
-                           bool(ModelsCollection<Model> &&models, int page)> &callback,
+                           bool(ModelsCollection<Model> &&models, qint64 page)> &callback,
                        const QString &column = "", const QString &alias = "");
         /*! Execute a callback over each item while chunking by ID. */
-        bool eachById(const std::function<bool(Model &&model, int index)> &callback,
-                      int count = 1000, const QString &column = "",
+        bool eachById(const std::function<bool(Model &&model, qint64 index)> &callback,
+                      qint64 count = 1000, const QString &column = "",
                       const QString &alias = "");
 
         /*! Execute the query and get the first result if it's the sole matching
@@ -103,13 +104,13 @@ namespace Concerns
 
     template<ModelConcept Model>
     bool BuildsQueries<Model>::chunk(
-            const int count,
-            const std::function<bool(ModelsCollection<Model> &&, int)> &callback)
+            const qint64 count,
+            const std::function<bool(ModelsCollection<Model> &&, qint64)> &callback)
     {
         builder().enforceOrderBy();
 
-        int page = 1;
-        int countModels = 0;
+        qint64 page = 1;
+        qint64 countModels = 0;
 
         do { // NOLINT(cppcoreguidelines-avoid-do-while)
             /* We'll execute the query for the given page and get the results. If there
@@ -117,7 +118,7 @@ namespace Concerns
                we will call the callback with the current chunk of these results. */
             auto models = builder().forPage(page, count).get();
 
-            countModels = models.size();
+            countModels = static_cast<qint64>(models.size());
 
             if (countModels == 0)
                 break;
@@ -139,13 +140,13 @@ namespace Concerns
     }
 
     template<ModelConcept Model>
-    bool BuildsQueries<Model>::each(const std::function<bool(Model &&, int)> &callback,
-                                    const int count)
+    bool BuildsQueries<Model>::each(const std::function<bool(Model &&, qint64)> &callback,
+                                    const qint64 count)
     {
         return chunk(count, [&callback]
-                            (ModelsCollection<Model> &&models, const int /*unused*/)
+                            (ModelsCollection<Model> &&models, const qint64 /*unused*/)
         {
-            int index = 0;
+            qint64 index = 0;
 
             for (auto &&model : models)
                 if (const auto result = std::invoke(callback, std::move(model), index++);
@@ -160,14 +161,14 @@ namespace Concerns
     template<ModelConcept Model>
     ModelsCollection<Model>
     BuildsQueries<Model>::chunkMap(const std::function<Model(Model &&)> &callback,
-                                   const int count)
+                                   const qint64 count)
     {
         ModelsCollection<Model> result;
         // Reserve the first page, it can help reallocations at the beginning
         result.reserve(static_cast<ModelsCollection<Model>::size_type>(count));
 
         chunk(count, [&result, &callback]
-                     (ModelsCollection<Model> &&models, const int /*unused*/)
+                     (ModelsCollection<Model> &&models, const qint64 /*unused*/)
         {
             for (auto &&model : models)
                 result << std::invoke(callback, std::move(model));
@@ -182,14 +183,14 @@ namespace Concerns
     template<typename T>
     QVector<T>
     BuildsQueries<Model>::chunkMap(const std::function<T(Model &&)> &callback,
-                                   const int count)
+                                   const qint64 count)
     {
         QVector<T> result;
         // Reserve the first page, it can help reallocations at the beginning
         result.reserve(static_cast<QVector<T>::size_type>(count));
 
         chunk(count, [&result, &callback]
-                     (ModelsCollection<Model> &&models, const int /*unused*/)
+                     (ModelsCollection<Model> &&models, const qint64 /*unused*/)
         {
             for (auto &&model : models)
                 result << std::invoke(callback, std::move(model));
@@ -202,15 +203,15 @@ namespace Concerns
 
     template<ModelConcept Model>
     bool BuildsQueries<Model>::chunkById(
-            const int count,
-            const std::function<bool(ModelsCollection<Model> &&, int)> &callback,
+            const qint64 count,
+            const std::function<bool(ModelsCollection<Model> &&, qint64)> &callback,
             const QString &column, const QString &alias)
     {
         const auto columnName = column.isEmpty() ? builder().defaultKeyName() : column;
         const auto aliasName = alias.isEmpty() ? columnName : alias;
 
-        int page = 1;
-        int countModels = 0;
+        qint64 page = 1;
+        qint64 countModels = 0;
 
         QVariant lastId;
 
@@ -222,7 +223,7 @@ namespace Concerns
                we will call the callback with the current chunk of these results. */
             auto models = clone.forPageAfterId(count, lastId, columnName, true).get();
 
-            countModels = models.size();
+            countModels = static_cast<qint64>(models.size());
 
             if (countModels == 0)
                 break;
@@ -259,13 +260,13 @@ namespace Concerns
 
     template<ModelConcept Model>
     bool BuildsQueries<Model>::eachById(
-            const std::function<bool(Model &&, int)> &callback,
-            const int count, const QString &column, const QString &alias)
+            const std::function<bool(Model &&, qint64)> &callback,
+            const qint64 count, const QString &column, const QString &alias)
     {
         return chunkById(count, [&callback, count]
-                                (ModelsCollection<Model> &&models, const int page)
+                                (ModelsCollection<Model> &&models, const qint64 page)
         {
-            int index = 0;
+            qint64 index = 0;
 
             for (auto &&model : models)
                 if (const auto result = std::invoke(callback, std::move(model),

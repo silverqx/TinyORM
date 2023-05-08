@@ -795,24 +795,24 @@ namespace Tiny::Relations
                 const Column &column, const QString &direction = ASC) const;
 
         /*! Set the "limit" value of the query. */
-        const Relation<Model, Related> &limit(int value) const;
+        const Relation<Model, Related> &limit(qint64 value) const;
         /*! Alias to set the "limit" value of the query. */
-        const Relation<Model, Related> &take(int value) const;
+        const Relation<Model, Related> &take(qint64 value) const;
         /*! Set the "offset" value of the query. */
-        const Relation<Model, Related> &offset(int value) const;
+        const Relation<Model, Related> &offset(qint64 value) const;
         /*! Alias to set the "offset" value of the query. */
-        const Relation<Model, Related> &skip(int value) const;
+        const Relation<Model, Related> &skip(qint64 value) const;
         /*! Set the limit and offset for a given page. */
-        const Relation<Model, Related> &forPage(int page, int perPage = 30) const;
+        const Relation<Model, Related> &forPage(qint64 page, qint64 perPage = 30) const;
 
         /*! Constrain the query to the previous "page" of results before a given ID. */
         const Relation<Model, Related> &
-        forPageBeforeId(int perPage = 30, const QVariant &lastId = {},
+        forPageBeforeId(qint64 perPage = 30, const QVariant &lastId = {},
                         const QString &column = Orm::Constants::ID,
                         bool prependOrder = false) const;
         /*! Constrain the query to the next "page" of results after a given ID. */
         const Relation<Model, Related> &
-        forPageAfterId(int perPage = 30, const QVariant &lastId = {},
+        forPageAfterId(qint64 perPage = 30, const QVariant &lastId = {},
                        const QString &column = Orm::Constants::ID,
                        bool prependOrder = false) const;
 
@@ -851,34 +851,34 @@ namespace Tiny::Relations
         /* Builds Queries */
         /*! Chunk the results of the query. */
         virtual bool
-        chunk(int count,
+        chunk(qint64 count,
               const std::function<
-                  bool(ModelsCollection<Related> &&models, int page)> &callback) const;
+                  bool(ModelsCollection<Related> &&models, qint64 page)> &callback) const;
         /*! Execute a callback over each item while chunking. */
         virtual bool
-        each(const std::function<bool(Related &&model, int index)> &callback,
-             int count = 1000) const;
+        each(const std::function<bool(Related &&model, qint64 index)> &callback,
+             qint64 count = 1000) const;
 
         /*! Run a map over each item while chunking. */
         virtual ModelsCollection<Related>
         chunkMap(const std::function<Related(Related &&model)> &callback,
-                 int count = 1000) const;
+                 qint64 count = 1000) const;
         /*! Run a map over each item while chunking. */
         template<typename T>
         QVector<T>
         chunkMap(const std::function<T(Related &&model)> &callback,
-                 int count = 1000) const;
+                 qint64 count = 1000) const;
 
         /*! Chunk the results of a query by comparing IDs. */
         virtual bool
-        chunkById(int count,
+        chunkById(qint64 count,
                   const std::function<
-                      bool(ModelsCollection<Related> &&models, int page)> &callback,
+                      bool(ModelsCollection<Related> &&models, qint64 page)> &callback,
                   const QString &column = "", const QString &alias = "") const;
         /*! Execute a callback over each item while chunking by ID. */
         virtual bool
-        eachById(const std::function<bool(Related &&model, int index)> &callback,
-                 int count = 1000, const QString &column = "",
+        eachById(const std::function<bool(Related &&model, qint64 index)> &callback,
+                 qint64 count = 1000, const QString &column = "",
                  const QString &alias = "") const;
 
         /*! Execute the query and get the first result if it's the sole matching
@@ -2932,7 +2932,7 @@ namespace Tiny::Relations
 
     template<class Model, class Related>
     const Relation<Model, Related> &
-    RelationProxies<Model, Related>::limit(const int value) const
+    RelationProxies<Model, Related>::limit(const qint64 value) const
     {
         getQuery().limit(value);
 
@@ -2941,7 +2941,7 @@ namespace Tiny::Relations
 
     template<class Model, class Related>
     const Relation<Model, Related> &
-    RelationProxies<Model, Related>::take(const int value) const
+    RelationProxies<Model, Related>::take(const qint64 value) const
     {
         getQuery().take(value);
 
@@ -2950,7 +2950,7 @@ namespace Tiny::Relations
 
     template<class Model, class Related>
     const Relation<Model, Related> &
-    RelationProxies<Model, Related>::offset(const int value) const
+    RelationProxies<Model, Related>::offset(const qint64 value) const
     {
         getQuery().offset(value);
 
@@ -2959,7 +2959,7 @@ namespace Tiny::Relations
 
     template<class Model, class Related>
     const Relation<Model, Related> &
-    RelationProxies<Model, Related>::skip(const int value) const
+    RelationProxies<Model, Related>::skip(const qint64 value) const
     {
         getQuery().skip(value);
 
@@ -2968,7 +2968,8 @@ namespace Tiny::Relations
 
     template<class Model, class Related>
     const Relation<Model, Related> &
-    RelationProxies<Model, Related>::forPage(const int page, const int perPage) const
+    RelationProxies<Model, Related>::forPage(const qint64 page,
+                                             const qint64 perPage) const
     {
         getQuery().forPage(page, perPage);
 
@@ -2978,7 +2979,7 @@ namespace Tiny::Relations
     template<class Model, class Related>
     const Relation<Model, Related> &
     RelationProxies<Model, Related>::forPageBeforeId(
-            const int perPage, const QVariant &lastId, const QString &column,
+            const qint64 perPage, const QVariant &lastId, const QString &column,
             const bool prependOrder) const
     {
         getQuery().forPageBeforeId(perPage, lastId, column, prependOrder);
@@ -2989,7 +2990,7 @@ namespace Tiny::Relations
     template<class Model, class Related>
     const Relation<Model, Related> &
     RelationProxies<Model, Related>::forPageAfterId(
-            const int perPage, const QVariant &lastId, const QString &column,
+            const qint64 perPage, const QVariant &lastId, const QString &column,
             const bool prependOrder) const
     {
         getQuery().forPageAfterId(perPage, lastId, column, prependOrder);
@@ -3092,15 +3093,17 @@ namespace Tiny::Relations
     /* Builds Queries */
     template<class Model, class Related>
     bool RelationProxies<Model, Related>::chunk(
-            const int count,
-            const std::function<bool(ModelsCollection<Related> &&, int)> &callback) const
+            const qint64 count,
+            const std::function<
+                bool(ModelsCollection<Related> &&, qint64)> &callback) const
     {
         return getQuery().chunk(count, callback);
     }
 
     template<class Model, class Related>
     bool RelationProxies<Model, Related>::each(
-            const std::function<bool(Related &&, int)> &callback, const int count) const
+            const std::function<bool(Related &&, qint64)> &callback,
+            const qint64 count) const
     {
         return getQuery().each(callback, count);
     }
@@ -3108,7 +3111,7 @@ namespace Tiny::Relations
     template<class Model, class Related>
     ModelsCollection<Related>
     RelationProxies<Model, Related>::chunkMap(
-            const std::function<Related(Related &&)> &callback, const int count) const
+            const std::function<Related(Related &&)> &callback, const qint64 count) const
     {
         return getQuery().chunkMap(callback, count);
     }
@@ -3117,15 +3120,15 @@ namespace Tiny::Relations
     template<typename T>
     QVector<T>
     RelationProxies<Model, Related>::chunkMap(
-            const std::function<T(Related &&)> &callback, const int count) const
+            const std::function<T(Related &&)> &callback, const qint64 count) const
     {
         return getQuery().template chunkMap<T>(callback, count);
     }
 
     template<class Model, class Related>
     bool RelationProxies<Model, Related>::chunkById(
-            const int count,
-            const std::function<bool(ModelsCollection<Related> &&, int)> &callback,
+            const qint64 count,
+            const std::function<bool(ModelsCollection<Related> &&, qint64)> &callback,
             const QString &column, const QString &alias) const
     {
         return getQuery().chunkById(count, callback, column, alias);
@@ -3133,8 +3136,8 @@ namespace Tiny::Relations
 
     template<class Model, class Related>
     bool RelationProxies<Model, Related>::eachById(
-            const std::function<bool(Related &&, int)> &callback,
-            const int count, const QString &column, const QString &alias) const
+            const std::function<bool(Related &&, qint64)> &callback,
+            const qint64 count, const QString &column, const QString &alias) const
     {
         return getQuery().eachById(callback, count, column, alias);
     }

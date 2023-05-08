@@ -637,24 +637,24 @@ namespace Tiny
                                     const QString &direction = ASC);
 
         /*! Set the "limit" value of the query. */
-        TinyBuilder<Model> &limit(int value);
+        TinyBuilder<Model> &limit(qint64 value);
         /*! Alias to set the "limit" value of the query. */
-        TinyBuilder<Model> &take(int value);
+        TinyBuilder<Model> &take(qint64 value);
         /*! Set the "offset" value of the query. */
-        TinyBuilder<Model> &offset(int value);
+        TinyBuilder<Model> &offset(qint64 value);
         /*! Alias to set the "offset" value of the query. */
-        TinyBuilder<Model> &skip(int value);
+        TinyBuilder<Model> &skip(qint64 value);
         /*! Set the limit and offset for a given page. */
-        TinyBuilder<Model> &forPage(int page, int perPage = 30);
+        TinyBuilder<Model> &forPage(qint64 page, qint64 perPage = 30);
 
         /*! Constrain the query to the previous "page" of results before a given ID. */
         TinyBuilder<Model> &
-        forPageBeforeId(int perPage = 30, const QVariant &lastId = {},
+        forPageBeforeId(qint64 perPage = 30, const QVariant &lastId = {},
                         const QString &column = Orm::Constants::ID,
                         bool prependOrder = false);
         /*! Constrain the query to the next "page" of results after a given ID. */
         TinyBuilder<Model> &
-        forPageAfterId(int perPage = 30, const QVariant &lastId = {},
+        forPageAfterId(qint64 perPage = 30, const QVariant &lastId = {},
                        const QString &column = Orm::Constants::ID,
                        bool prependOrder = false);
 
@@ -2147,7 +2147,7 @@ namespace Tiny
 
     template<typename Model>
     TinyBuilder<Model> &
-    BuilderProxies<Model>::limit(const int value)
+    BuilderProxies<Model>::limit(const qint64 value)
     {
         getQuery().limit(value);
         return builder();
@@ -2155,14 +2155,14 @@ namespace Tiny
 
     template<typename Model>
     TinyBuilder<Model> &
-    BuilderProxies<Model>::take(const int value)
+    BuilderProxies<Model>::take(const qint64 value)
     {
         return limit(value);
     }
 
     template<typename Model>
     TinyBuilder<Model> &
-    BuilderProxies<Model>::offset(const int value)
+    BuilderProxies<Model>::offset(const qint64 value)
     {
         getQuery().offset(value);
         return builder();
@@ -2170,14 +2170,14 @@ namespace Tiny
 
     template<typename Model>
     TinyBuilder<Model> &
-    BuilderProxies<Model>::skip(const int value)
+    BuilderProxies<Model>::skip(const qint64 value)
     {
         return offset(value);
     }
 
     template<typename Model>
     TinyBuilder<Model> &
-    BuilderProxies<Model>::forPage(const int page, const int perPage)
+    BuilderProxies<Model>::forPage(const qint64 page, const qint64 perPage)
     {
         getQuery().forPage(page, perPage);
         return builder();
@@ -2185,7 +2185,7 @@ namespace Tiny
 
     template<typename Model>
     TinyBuilder<Model> &
-    BuilderProxies<Model>::forPageBeforeId(const int perPage, const QVariant &lastId,
+    BuilderProxies<Model>::forPageBeforeId(const qint64 perPage, const QVariant &lastId,
                                            const QString &column, const bool prependOrder)
     {
         getQuery().forPageBeforeId(perPage, lastId, column, prependOrder);
@@ -2194,7 +2194,7 @@ namespace Tiny
 
     template<typename Model>
     TinyBuilder<Model> &
-    BuilderProxies<Model>::forPageAfterId(const int perPage, const QVariant &lastId,
+    BuilderProxies<Model>::forPageAfterId(const qint64 perPage, const QVariant &lastId,
                                           const QString &column, const bool prependOrder)
     {
         getQuery().forPageAfterId(perPage, lastId, column, prependOrder);

@@ -1067,7 +1067,7 @@ Builder &Builder::reorder(const Column &column, const QString &direction)
     return orderBy(column, direction);
 }
 
-Builder &Builder::limit(const int value)
+Builder &Builder::limit(const qint64 value)
 {
     /* I checked negative limit/offset, MySQL and PostgreSQL throws an error,
        SQLite accepts a negative value, but it has no effect and Microsoft SQL Server
@@ -1081,12 +1081,12 @@ Builder &Builder::limit(const int value)
     return *this;
 }
 
-Builder &Builder::take(const int value)
+Builder &Builder::take(const qint64 value)
 {
     return limit(value);
 }
 
-Builder &Builder::offset(const int value)
+Builder &Builder::offset(const qint64 value)
 {
     Q_ASSERT(value >= 0);
 
@@ -1095,18 +1095,18 @@ Builder &Builder::offset(const int value)
     return *this;
 }
 
-Builder &Builder::skip(const int value)
+Builder &Builder::skip(const qint64 value)
 {
     return offset(value);
 }
 
-Builder &Builder::forPage(const int page, const int perPage)
+Builder &Builder::forPage(const qint64 page, const qint64 perPage)
 {
     return offset((page - 1) * perPage).limit(perPage);
 }
 
 // NOTE api little different, added bool prependOrder parameter silverqx
-Builder &Builder::forPageBeforeId(const int perPage, const QVariant &lastId,
+Builder &Builder::forPageBeforeId(const qint64 perPage, const QVariant &lastId,
                                   const QString &column, const bool prependOrder)
 {
     m_orders = removeExistingOrdersFor(column);
@@ -1123,7 +1123,7 @@ Builder &Builder::forPageBeforeId(const int perPage, const QVariant &lastId,
 }
 
 // NOTE api little different, added bool prependOrder parameter silverqx
-Builder &Builder::forPageAfterId(const int perPage, const QVariant &lastId,
+Builder &Builder::forPageAfterId(const qint64 perPage, const QVariant &lastId,
                                  const QString &column, const bool prependOrder)
 {
     m_orders = removeExistingOrdersFor(column);

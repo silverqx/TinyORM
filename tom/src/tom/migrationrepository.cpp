@@ -58,7 +58,7 @@ std::vector<MigrationItem> MigrationRepository::getMigrations(const int steps) c
     auto query = table()->where(batch_, GE, 1)
                  .orderBy(batch_, DESC)
                  .orderBy(migration_, DESC)
-                 .take(steps)
+                 .take(static_cast<qint64>(steps))
                  .get();
 
     return hydrateMigrations(query);
