@@ -94,18 +94,15 @@ QStringList PrintsOptions::createOptionNamesList(const QCommandLineOption &optio
 
 int PrintsOptions::optionsMaxSize() const
 {
-    using SizeType = QString::size_type;
-
-    SizeType optionsMaxSize = 0;
+    int optionsMaxSize = 0;
 
     for (const auto &option : options()) {
 
         validateOption(option);
 
-        optionsMaxSize = std::max<SizeType>(
-                             optionsMaxSize,
-                             static_cast<int>(createOptionNamesList(option)
-                                              .join(COMMA).size()));
+        optionsMaxSize = std::max<int>(optionsMaxSize,
+                                       static_cast<int>(createOptionNamesList(option)
+                                                        .join(COMMA).size()));
     }
 
     return optionsMaxSize;
