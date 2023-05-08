@@ -1900,3 +1900,9 @@ QVariant null vs invalid:
     qDebug() << !vnull.isValid();
     qDebug() << vinvalid.isNull();
     qDebug() << !vinvalid.isValid();
+
+
+c++ library confusions:
+-----------------------
+
+ - std::unordred_map reserve() vs ctor(size_type), they are the same
