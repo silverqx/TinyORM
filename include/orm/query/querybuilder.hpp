@@ -1038,10 +1038,8 @@ namespace Orm::Query
            the results and get the exact data that was requested for the query. */
         auto query = get({column, key});
 
-        const auto size = QueryUtils::queryResultSize(query);
-
         // Empty result
-        if (size == 0)
+        if (QueryUtils::queryResultSize(query) == 0)
             return {};
 
         /* If the column is qualified with a table or have an alias, we cannot use

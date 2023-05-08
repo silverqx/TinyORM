@@ -823,7 +823,8 @@ namespace Concerns
         auto query = newPivotQuery()->get();
 
         QVector<PivotType> pivots;
-        pivots.reserve(QueryUtils::queryResultSize(query));
+        pivots.reserve(static_cast<decltype (pivots)::size_type>(
+                           QueryUtils::queryResultSize(query)));
 
         while (query.next())
             // std::move() is really needed here

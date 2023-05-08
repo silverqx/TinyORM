@@ -13,7 +13,8 @@ namespace Orm::Query::Processors
 QStringList Processor::processColumnListing(SqlQuery &query) const
 {
     QStringList columns;
-    columns.reserve(QueryUtils::queryResultSize(query));
+    columns.reserve(static_cast<decltype (columns)::size_type>(
+                        QueryUtils::queryResultSize(query)));
 
     while (query.next())
         columns << query.value("column_name").value<QString>();

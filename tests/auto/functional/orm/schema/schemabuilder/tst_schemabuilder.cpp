@@ -359,7 +359,8 @@ QSet<QString> tst_SchemaBuilder::getAllTablesFor(const QString &connection)
     auto query = Schema::on(connection).getAllTables();
 
     QSet<QString> tablesActual;
-    tablesActual.reserve(QueryUtils::queryResultSize(query));
+    tablesActual.reserve(static_cast<decltype (tablesActual)::size_type>(
+                             QueryUtils::queryResultSize(query)));
 
     while (query.next())
         tablesActual << query.value(0).value<QString>();
@@ -372,7 +373,8 @@ QSet<QString> tst_SchemaBuilder::getAllViewsFor(const QString &connection)
     auto query = Schema::on(connection).getAllViews();
 
     QSet<QString> views;
-    views.reserve(QueryUtils::queryResultSize(query));
+    views.reserve(static_cast<decltype (views)::size_type>(
+                      QueryUtils::queryResultSize(query)));
 
     while (query.next())
         views << query.value(0).value<QString>();
