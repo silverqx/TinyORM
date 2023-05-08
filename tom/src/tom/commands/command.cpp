@@ -12,7 +12,6 @@
 #include "tom/application.hpp"
 #include "tom/tomconstants.hpp"
 #include "tom/tomutils.hpp"
-#include "tom/version.hpp"
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
