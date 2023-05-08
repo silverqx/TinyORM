@@ -922,7 +922,8 @@ namespace Orm::Tiny
         /* The model's type doesn't have to be checked because this check checks, if
            two models have the same ID and belong to the same table.
            So if the type will be different and will be the same ID and table, then
-           it returns true. */
+           it returns true, and this is good! The same ID and table name guarantee
+           that it's the same record. */
         return model &&
                // First compare the same table (same model type)
                this->model().getTable() == model->getTable() &&
