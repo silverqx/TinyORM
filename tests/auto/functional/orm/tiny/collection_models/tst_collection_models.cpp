@@ -1468,7 +1468,11 @@ void tst_Collection_Models::each_lvalue() const
     ModelsCollection<AlbumImage> &result = images.each([&expectedIds]
                                                        (AlbumImage *const image)
     {
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
         expectedIds.emplace_back(getKeyCasted(image));
+#else
+        expectedIds.append(getKeyCasted(image));
+#endif
     });
 
     // Verify
@@ -1508,7 +1512,11 @@ void tst_Collection_Models::each_lvalue_index() const
             images.each([&expectedIds]
                         (AlbumImage *const image, const auto index)
     {
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
         expectedIds.emplace_back(getKeyCasted(image), index);
+#else
+        expectedIds.append({getKeyCasted(image), index});
+#endif
     });
 
     // Verify
@@ -1542,7 +1550,11 @@ void tst_Collection_Models::each_lvalue_bool() const
         if (getKeyCasted(image) == 5)
             return false;
 
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
         expectedIds.emplace_back(getKeyCasted(image));
+#else
+        expectedIds.append(getKeyCasted(image));
+#endif
 
         return true;
     });
@@ -1576,7 +1588,11 @@ void tst_Collection_Models::each_lvalue_bool_index() const
         if (index == 3)
             return false;
 
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
         expectedIds.emplace_back(getKeyCasted(image), index);
+#else
+        expectedIds.append({getKeyCasted(image), index});
+#endif
 
         return true;
     });
@@ -1607,7 +1623,11 @@ void tst_Collection_Models::each_rvalue() const
             std::move(images).each([&expectedIds]
                                    (AlbumImage *const image)
     {
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
         expectedIds.emplace_back(getKeyCasted(image));
+#else
+        expectedIds.append(getKeyCasted(image));
+#endif
     });
 
     // Verify
@@ -1631,7 +1651,11 @@ void tst_Collection_Models::each_rvalue_index() const
             std::move(images).each([&expectedIds]
                                    (AlbumImage *const image, const auto index)
     {
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
         expectedIds.emplace_back(getKeyCasted(image), index);
+#else
+        expectedIds.append({getKeyCasted(image), index});
+#endif
     });
 
     // Verify
@@ -1661,7 +1685,11 @@ void tst_Collection_Models::each_rvalue_bool() const
         if (getKeyCasted(image) == 5)
             return false;
 
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
         expectedIds.emplace_back(getKeyCasted(image));
+#else
+        expectedIds.append(getKeyCasted(image));
+#endif
 
         return true;
     });
@@ -1691,7 +1719,11 @@ void tst_Collection_Models::each_rvalue_bool_index() const
         if (index == 3)
             return false;
 
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
         expectedIds.emplace_back(getKeyCasted(image), index);
+#else
+        expectedIds.append({getKeyCasted(image), index});
+#endif
 
         return true;
     });
