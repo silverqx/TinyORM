@@ -29,8 +29,7 @@ bool BuildsQueries::chunk(const qint64 count,
            we will call the callback with the current chunk of these results here. */
         auto results = builder().forPage(page, count).get();
 
-        countResults = static_cast<decltype (count)>(
-                           QueryUtils::queryResultSize(results));
+        countResults = static_cast<qint64>(QueryUtils::queryResultSize(results));
 
         if (countResults == 0)
             break;
@@ -117,8 +116,7 @@ bool BuildsQueries::chunkById(
            we will call the callback with the current chunk of these results here. */
         auto results = clone.forPageAfterId(count, lastId, columnName, true).get();
 
-        countResults = static_cast<decltype (count)>(
-                           QueryUtils::queryResultSize(results));
+        countResults = static_cast<qint64>(QueryUtils::queryResultSize(results));
 
         if (countResults == 0)
             break;
