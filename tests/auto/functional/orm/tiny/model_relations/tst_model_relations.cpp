@@ -111,6 +111,7 @@ private Q_SLOTS:
 
     void load() const;
     void load_WithSelectConstraint() const;
+    void load_WithLambdaConstraint() const;
     void load_NonExistentRelation_Failed() const;
 
     void fresh() const;
@@ -1287,6 +1288,47 @@ void tst_Model_Relations::load_WithSelectConstraint() const
     QVERIFY(torrent->getRelations().empty());
 
     torrent->load("torrentFiles:id,torrent_id,filepath");
+
+    auto files = torrent->getRelation<TorrentPreviewableFile>("torrentFiles");
+    QCOMPARE(files.size(), 2);
+    QCOMPARE(typeid (ModelsCollection<TorrentPreviewableFile *>), typeid (files));
+
+    // Expected file IDs
+    QVector<QVariant> fileIds {2, 3};
+    for (auto *file : files) {
+        QVERIFY(file);
+        QVERIFY(file->exists);
+
+        // Check whether constraints was correctly applied
+        const auto &attributes = file->getAttributes();
+        QCOMPARE(attributes.size(), 3);
+
+        const QVector<QString> expectedAttributes {ID, "torrent_id", "filepath"};
+        for (const auto &attribute : attributes)
+            expectedAttributes.contains(attribute.key);
+
+        QCOMPARE(file->getAttribute("torrent_id"), torrent->getAttribute(ID));
+        QVERIFY(fileIds.contains(file->getAttribute(ID)));
+        QCOMPARE(typeid (TorrentPreviewableFile *), typeid (file));
+    }
+}
+
+void tst_Model_Relations::load_WithLambdaConstraint() const
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
+    auto torrent = Torrent::find(2);
+    QVERIFY(torrent);
+    QVERIFY(torrent->exists);
+
+    QVERIFY(torrent->getRelations().empty());
+
+    torrent->load({{"torrentFiles", [](auto &query)
+                    {
+                        query.select({ID, "torrent_id", "filepath"});
+                    }}});
 
     auto files = torrent->getRelation<TorrentPreviewableFile>("torrentFiles");
     QCOMPARE(files.size(), 2);
