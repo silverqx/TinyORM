@@ -111,7 +111,7 @@ private Q_SLOTS:
 
     void load() const;
     void load_WithSelectConstraint() const;
-    void load_Failed() const;
+    void load_NonExistentRelation_Failed() const;
 
     void fresh() const;
     void fresh_WithSelectConstraint() const;
@@ -1312,7 +1312,7 @@ void tst_Model_Relations::load_WithSelectConstraint() const
     }
 }
 
-void tst_Model_Relations::load_Failed() const
+void tst_Model_Relations::load_NonExistentRelation_Failed() const
 {
     QFETCH_GLOBAL(QString, connection);
 
