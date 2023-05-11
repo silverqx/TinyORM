@@ -152,11 +152,9 @@ namespace Types
         mapWithKeys(const std::function<std::pair<K, V>(ModelRawType *)> &callback);
 
         /*! Return only the models from the collection with specified keys. */
-        ModelsCollection<ModelRawType *>
-        only(const std::unordered_set<KeyType> &ids);
+        ModelsCollection<ModelRawType *> only(const std::unordered_set<KeyType> &ids);
         /*! Return all models in the collection except the models with specified keys. */
-        ModelsCollection<ModelRawType *>
-        except(const std::unordered_set<KeyType> &ids);
+        ModelsCollection<ModelRawType *> except(const std::unordered_set<KeyType> &ids);
 
         /*! Get a vector with the values in the given column. */
         QVector<QVariant> pluck(const QString &column);
@@ -211,8 +209,7 @@ namespace Types
         where(const QString &key, const QString &comparison, V value);
         /*! Filter items by the given key value pair. */
         template<typename V>
-        ModelsCollection<ModelRawType *>
-        whereEq(const QString &key, V value);
+        ModelsCollection<ModelRawType *> whereEq(const QString &key, V value);
 
         /*! Filter items where the value for the given key is the null QVariant. */
         ModelsCollection<ModelRawType *> whereNull(const QString &key);
@@ -241,16 +238,13 @@ namespace Types
 
         /*! Get the first item by the given key value pair. */
         template<typename V>
-        ModelRawType *
-        firstWhere(const QString &key, const QString &comparison, V value);
+        ModelRawType *firstWhere(const QString &key, const QString &comparison, V value);
         /*! Get the first item by the given key value pair. */
         template<typename V>
-        ModelRawType *
-        firstWhereEq(const QString &key, V value);
+        ModelRawType *firstWhereEq(const QString &key, V value);
 
         /*! Get a single key's value from the first matching item in the collection. */
-        QVariant
-        value(const QString &key, const QVariant &defaultValue = {}) const;
+        QVariant value(const QString &key, const QVariant &defaultValue = {}) const;
         /*! Get a single key's value from the first matching item in the collection. */
         template<typename T>
         T value(const QString &key, const T &defaultValue = {}) const;
