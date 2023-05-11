@@ -480,7 +480,7 @@ namespace Types
     ModelsCollection<Model>::first(const std::function<bool(ModelRawType *)> &callback,
                                    ModelRawType *const defaultModel)
     {
-        if (this->empty())
+        if (this->isEmpty())
             return defaultModel;
 
         for (ModelLoopType model : *this)
@@ -591,7 +591,7 @@ namespace Types
             const std::function<std::pair<K, V>(ModelRawType *)> &callback)
     {
         // Nothing to do
-        if (this->empty())
+        if (this->isEmpty())
             return {};
 
         std::unordered_map<K, V> result;
@@ -980,7 +980,7 @@ namespace Types
                                    const QVariant &defaultValue) const
     {
         // Nothing to do
-        if (this->empty())
+        if (this->isEmpty())
             return defaultValue;
 
         const ModelRawType *const model = toPointer(StorageType::constFirst());
@@ -996,7 +996,7 @@ namespace Types
     T ModelsCollection<Model>::value(const QString &key, const T &defaultValue) const
     {
         // Nothing to do
-        if (this->empty())
+        if (this->isEmpty())
             return defaultValue;
 
         const ModelRawType *const model = toPointer(StorageType::constFirst());
