@@ -83,7 +83,7 @@ namespace Types
 
         /* Constructors */
         /*! Converting constructor from the QVector<Model>. */
-        inline ModelsCollection(const QVector<Model> &models) // NOLINT(google-explicit-constructor)
+        ModelsCollection(const QVector<Model> &models) // NOLINT(google-explicit-constructor)
         requires (!std::is_pointer_v<Model>);
 
         /* Redeclared overriden methods from the base class */
@@ -113,53 +113,53 @@ namespace Types
 
         /* BaseCollection */
         /*! Run a filter over each of the items in the collection. */
-        inline ModelsCollection<ModelRawType *>
+        ModelsCollection<ModelRawType *>
         filter(const std::function<bool(ModelRawType *, size_type)> &callback);
         /*! Run a filter over each of the items in the collection. */
-        inline ModelsCollection<ModelRawType *>
+        ModelsCollection<ModelRawType *>
         filter(const std::function<bool(ModelRawType *)> &callback);
         /*! Run a filter over each of the items in the collection (removes nullptr-s). */
-        inline ModelsCollection<ModelRawType *>
+        ModelsCollection<ModelRawType *>
         filter() const requires std::is_pointer_v<Model>;
 
         /*! Get a first item from the collection passing the given truth test. */
-        inline ModelRawType *
+        ModelRawType *
         first(const std::function<bool(ModelRawType *)> &callback,
               ModelRawType *defaultModel = nullptr);
 
         /*! Concatenate values of the given column as a string. */
-        inline QString implode(const QString &column, const QString &glue = "");
+        QString implode(const QString &column, const QString &glue = "");
 
         /* Collection */
         /*! Get a vector of primary keys. */
-        inline QVector<QVariant> modelKeys() const;
+        QVector<QVariant> modelKeys() const;
         /*! Get a vector of primary keys. */
         template<typename T>
-        inline QVector<T> modelKeys() const;
+        QVector<T> modelKeys() const;
 
         /*! Run a map over each of the items. */
-        inline ModelsCollection<ModelRawType *>
+        ModelsCollection<ModelRawType *>
         map(const std::function<ModelRawType *(ModelRawType *, size_type)> &callback);
         /*! Run a map over each of the items. */
-        inline ModelsCollection<ModelRawType *>
+        ModelsCollection<ModelRawType *>
         map(const std::function<ModelRawType *(ModelRawType *)> &callback);
 
         /*! Run an associative map over each of the items (keyed by primary key). */
-        inline std::unordered_map<KeyType, ModelRawType *> mapWithModelKeys();
+        std::unordered_map<KeyType, ModelRawType *> mapWithModelKeys();
         /*! Run an associative map over each of the items (key by the K template). */
         template<typename K, typename V>
         std::unordered_map<K, V>
         mapWithKeys(const std::function<std::pair<K, V>(ModelRawType *)> &callback);
 
         /*! Return only the models from the collection with specified keys. */
-        inline ModelsCollection<ModelRawType *>
+        ModelsCollection<ModelRawType *>
         only(const std::unordered_set<KeyType> &ids);
         /*! Return all models in the collection except the models with specified keys. */
-        inline ModelsCollection<ModelRawType *>
+        ModelsCollection<ModelRawType *>
         except(const std::unordered_set<KeyType> &ids);
 
         /*! Get a vector with the values in the given column. */
-        inline QVector<QVariant> pluck(const QString &column);
+        QVector<QVariant> pluck(const QString &column);
         /*! Get a map with values in the given column and keyed by values in the key
             column (attribute). */
         template<typename T>
@@ -170,28 +170,28 @@ namespace Types
         /*! Determine if the collection contains a model with the given ID. */
         inline bool contains(const QVariant &id);
         /*! Determine if the collection contains a model using the given callback. */
-        inline bool contains(const std::function<bool(ModelRawType *)> &callback);
+        bool contains(const std::function<bool(ModelRawType *)> &callback);
         /*! Determine if the model exists in the collection (using the Model::is()). */
-        inline bool contains(const std::optional<ModelRawType> &model);
+        bool contains(const std::optional<ModelRawType> &model);
 
         /*! Determine if the collection doesn't contain a model with the given ID. */
-        inline bool doesntContain(KeyType id);
+        bool doesntContain(KeyType id);
         /*! Determine if the collection doesn't contain a model with the given ID. */
-        inline bool doesntContain(const QVariant &id);
+        bool doesntContain(const QVariant &id);
         /*! Determine if the collection doesn't contain a model using the given
             callback. */
-        inline bool doesntContain(const std::function<bool(ModelRawType *)> &callback);
+        bool doesntContain(const std::function<bool(ModelRawType *)> &callback);
         /*! Determine if the model doesn't exist in the collection (using
             the Model::is()). */
-        inline bool doesntContain(const std::optional<ModelRawType> &model);
+        bool doesntContain(const std::optional<ModelRawType> &model);
 
         /*! Find a model in the collection by key. */
-        inline ModelRawType *find(KeyType id, ModelRawType *defaultModel = nullptr);
+        ModelRawType *find(KeyType id, ModelRawType *defaultModel = nullptr);
         /*! Find a model in the collection by another model (using its ID). */
-        inline ModelRawType *
+        ModelRawType *
         find(const ModelRawType &model, ModelRawType *defaultModel = nullptr);
         /*! Find models in the collection by the given IDs. */
-        inline ModelsCollection<ModelRawType *>
+        ModelsCollection<ModelRawType *>
         find(const std::unordered_set<KeyType> &ids);
 
         /*! Get the TinyBuilder from the collection. */
@@ -199,10 +199,10 @@ namespace Types
 
         /* EnumeratesValues */
         /*! Create a collection of all items that do not pass a given truth test. */
-        inline ModelsCollection<ModelRawType *>
+        ModelsCollection<ModelRawType *>
         reject(const std::function<bool(ModelRawType *, size_type)> &callback);
         /*! Create a collection of all items that do not pass a given truth test. */
-        inline ModelsCollection<ModelRawType *>
+        ModelsCollection<ModelRawType *>
         reject(const std::function<bool(ModelRawType *)> &callback);
 
         /*! Filter items by the given key value pair. */
@@ -215,9 +215,9 @@ namespace Types
         whereEq(const QString &key, V value);
 
         /*! Filter items where the value for the given key is the null QVariant. */
-        inline ModelsCollection<ModelRawType *> whereNull(const QString &key);
+        ModelsCollection<ModelRawType *> whereNull(const QString &key);
         /*! Filter items where the value for the given key is not the null QVariant. */
-        inline ModelsCollection<ModelRawType *> whereNotNull(const QString &key);
+        ModelsCollection<ModelRawType *> whereNotNull(const QString &key);
 
         /*! Filter items by the given key values pair. */
         template<typename T>
@@ -249,47 +249,47 @@ namespace Types
         firstWhereEq(const QString &key, V value);
 
         /*! Get a single key's value from the first matching item in the collection. */
-        inline QVariant
+        QVariant
         value(const QString &key, const QVariant &defaultValue = {}) const;
         /*! Get a single key's value from the first matching item in the collection. */
         template<typename T>
         T value(const QString &key, const T &defaultValue = {}) const;
 
         /*! Execute a callback over each item. */
-        inline ModelsCollection &
+        ModelsCollection &
         each(const std::function<void(ModelRawType *)> &callback) &;
         /*! Execute a callback over each item. */
-        inline ModelsCollection &
+        ModelsCollection &
         each(const std::function<void(ModelRawType *, size_type)> &callback) &;
         /*! Execute a callback over each item. */
-        inline ModelsCollection &
+        ModelsCollection &
         each(EachBoolCallbackType tag,
              const std::function<bool(ModelRawType *)> &callback) &;
         /*! Execute a callback over each item. */
-        inline ModelsCollection &
+        ModelsCollection &
         each(EachBoolCallbackType tag,
              const std::function<bool(ModelRawType *, size_type)> &callback) &;
 
         /*! Execute a callback over each item. */
-        inline ModelsCollection &&
+        ModelsCollection &&
         each(const std::function<void(ModelRawType *)> &callback) &&;
         /*! Execute a callback over each item. */
-        inline ModelsCollection &&
+        ModelsCollection &&
         each(const std::function<void(ModelRawType *, size_type)> &callback) &&;
         /*! Execute a callback over each item. */
-        inline ModelsCollection &&
+        ModelsCollection &&
         each(EachBoolCallbackType tag,
              const std::function<bool(ModelRawType *)> &callback) &&;
         /*! Execute a callback over each item. */
-        inline ModelsCollection &&
+        ModelsCollection &&
         each(EachBoolCallbackType tag,
              const std::function<bool(ModelRawType *, size_type)> &callback) &&;
 
         /*! Pass the collection to the given callback and then return it. */
-        inline ModelsCollection &
+        ModelsCollection &
         tap(const std::function<void(ModelsCollection &)> &callback) &;
         /*! Pass the collection to the given callback and then return it. */
-        inline ModelsCollection &&
+        ModelsCollection &&
         tap(const std::function<void(ModelsCollection &)> &callback) &&;
 
     protected:
@@ -320,7 +320,7 @@ namespace Types
         inline static KeyType getKeyCasted(const ModelRawType &model);
 
         /*! Get the value of the model's primary key. */
-        inline static QVariant getKey(const ModelRawType *model);
+        static QVariant getKey(const ModelRawType *model);
         /*! Get the value of the model's primary key. */
         inline static QVariant getKey(const ModelRawType &model);
 
@@ -330,14 +330,14 @@ namespace Types
         operatorForWhere(const QString &key, const QString &comparison, V value) const;
 
         /*! Convert the Collection<ModelRawType> to the Collection<ModelRawType *>. */
-        inline ModelsCollection<ModelRawType *>
+        ModelsCollection<ModelRawType *>
         toPointersCollection() requires (!std::is_pointer_v<Model>);
         /*! Convert to the Collection<ModelRawType *>, return itself (no-op overload). */
         inline ModelsCollection<ModelRawType *>
         toPointersCollection() const noexcept requires std::is_pointer_v<Model>;
 
         /*! Throw if the given operator is not valid for the where() method. */
-        inline static void throwIfInvalidWhereOperator(const QString &comparison);
+        static void throwIfInvalidWhereOperator(const QString &comparison);
     };
 
     /* public */
