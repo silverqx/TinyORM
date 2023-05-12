@@ -962,9 +962,9 @@ void tst_Model_Relations::with_WithSelectConstraint() const
         const auto &attributes = file->getAttributes();
         QCOMPARE(attributes.size(), 3);
 
-        const QVector<QString> expectedAttributes {ID, "torrent_id", "filepath"};
+        std::unordered_set<QString> expectedAttributes {ID, "torrent_id", "filepath"};
         for (const auto &attribute : attributes)
-            expectedAttributes.contains(attribute.key);
+            QVERIFY(expectedAttributes.contains(attribute.key));
 
         QCOMPARE(file->getAttribute("torrent_id"), torrent->getAttribute(ID));
         QVERIFY(fileIds.contains(file->getAttribute(ID)));
@@ -997,9 +997,9 @@ void tst_Model_Relations::with_WithSelectConstraint_WithWhitespaces() const
         const auto &attributes = file->getAttributes();
         QCOMPARE(attributes.size(), 3);
 
-        const QVector<QString> expectedAttributes {ID, "torrent_id", "filepath"};
+        std::unordered_set<QString> expectedAttributes {ID, "torrent_id", "filepath"};
         for (const auto &attribute : attributes)
-            expectedAttributes.contains(attribute.key);
+            QVERIFY(expectedAttributes.contains(attribute.key));
 
         QCOMPARE(file->getAttribute("torrent_id"), torrent->getAttribute(ID));
         QVERIFY(fileIds.contains(file->getAttribute(ID)));
@@ -1031,9 +1031,9 @@ void tst_Model_Relations::with_WithSelectConstraint_BelongsToMany() const
         const auto &attributes = tag->getAttributes();
         QCOMPARE(attributes.size(), 2);
 
-        const QVector<QString> expectedAttributes {ID, NAME};
+        std::unordered_set<QString> expectedAttributes {ID, NAME};
         for (const auto &attribute : attributes)
-            expectedAttributes.contains(attribute.key);
+            QVERIFY(expectedAttributes.contains(attribute.key));
 
         QVERIFY(tagIds.contains(tag->getAttribute(ID)));
         QCOMPARE(typeid (Tag *), typeid (tag));
@@ -1094,9 +1094,9 @@ void tst_Model_Relations::with_WithLambdaConstraint() const
         const auto &attributes = file->getAttributes();
         QCOMPARE(attributes.size(), 3);
 
-        const QVector<QString> expectedAttributes {ID, "torrent_id", "filepath"};
+        std::unordered_set<QString> expectedAttributes {ID, "torrent_id", "filepath"};
         for (const auto &attribute : attributes)
-            expectedAttributes.contains(attribute.key);
+            QVERIFY(expectedAttributes.contains(attribute.key));
 
         QCOMPARE(file->getAttribute("torrent_id"), torrent->getAttribute(ID));
         QVERIFY(fileIds.contains(file->getAttribute(ID)));
@@ -1131,9 +1131,9 @@ void tst_Model_Relations::with_WithLambdaConstraint_BelongsToMany() const
         const auto &attributes = tag->getAttributes();
         QCOMPARE(attributes.size(), 2);
 
-        const QVector<QString> expectedAttributes {ID, NAME};
+        std::unordered_set<QString> expectedAttributes {ID, NAME};
         for (const auto &attribute : attributes)
-            expectedAttributes.contains(attribute.key);
+            QVERIFY(expectedAttributes.contains(attribute.key));
 
         QVERIFY(tagIds.contains(tag->getAttribute(ID)));
         QCOMPARE(typeid (Tag *), typeid (tag));
@@ -1303,9 +1303,9 @@ void tst_Model_Relations::load_WithSelectConstraint() const
         const auto &attributes = file->getAttributes();
         QCOMPARE(attributes.size(), 3);
 
-        const QVector<QString> expectedAttributes {ID, "torrent_id", "filepath"};
+        std::unordered_set<QString> expectedAttributes {ID, "torrent_id", "filepath"};
         for (const auto &attribute : attributes)
-            expectedAttributes.contains(attribute.key);
+            QVERIFY(expectedAttributes.contains(attribute.key));
 
         QCOMPARE(file->getAttribute("torrent_id"), torrent->getAttribute(ID));
         QVERIFY(fileIds.contains(file->getAttribute(ID)));
@@ -1344,9 +1344,9 @@ void tst_Model_Relations::load_WithLambdaConstraint() const
         const auto &attributes = file->getAttributes();
         QCOMPARE(attributes.size(), 3);
 
-        const QVector<QString> expectedAttributes {ID, "torrent_id", "filepath"};
+        std::unordered_set<QString> expectedAttributes {ID, "torrent_id", "filepath"};
         for (const auto &attribute : attributes)
-            expectedAttributes.contains(attribute.key);
+            QVERIFY(expectedAttributes.contains(attribute.key));
 
         QCOMPARE(file->getAttribute("torrent_id"), torrent->getAttribute(ID));
         QVERIFY(fileIds.contains(file->getAttribute(ID)));
@@ -1449,9 +1449,9 @@ void tst_Model_Relations::fresh_WithSelectConstraint() const
         const auto &attributes = file->getAttributes();
         QCOMPARE(attributes.size(), 3);
 
-        const QVector<QString> expectedAttributes {ID, "torrent_id", "filepath"};
+        std::unordered_set<QString> expectedAttributes {ID, "torrent_id", "filepath"};
         for (const auto &attribute : attributes)
-            expectedAttributes.contains(attribute.key);
+            QVERIFY(expectedAttributes.contains(attribute.key));
 
         QCOMPARE(file->getAttribute("torrent_id"), torrent->getAttribute(ID));
         QVERIFY(fileIds.contains(file->getAttribute(ID)));
