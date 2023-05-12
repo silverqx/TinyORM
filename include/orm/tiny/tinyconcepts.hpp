@@ -30,8 +30,7 @@ namespace Orm::Tiny
     /*! Concept for Derived Model and Model * for ModelsCollection. */
     template<typename T>
     concept DerivedModel =
-            (!std::is_reference_v<T> &&
-             !std::is_const_v<std::remove_reference_t<T>>) &&
+            (!std::is_reference_v<T> && !std::is_const_v<T>) &&
             ((std::is_pointer_v<T> &&
               std::derived_from<std::remove_pointer_t<T>, IsModel> &&
               std::derived_from<std::remove_pointer_t<T>,
