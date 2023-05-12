@@ -36,8 +36,8 @@ namespace Orm::Tiny
               std::derived_from<std::remove_pointer_t<T>, IsModel> &&
               std::derived_from<std::remove_pointer_t<T>,
                                 typename std::remove_pointer_t<T>::BaseModelType>) ||
-            // The same check can't be used as the model classes are undefined here
-            !std::is_pointer_v<T>);
+             // The same check can't be used as the model classes are undefined here
+             !std::is_pointer_v<T>);
 
 } // namespace Orm::Tiny
 
