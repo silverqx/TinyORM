@@ -62,7 +62,13 @@ namespace Types
 
         /*! Model raw type, without the pointer. */
         using ModelRawType    = std::remove_pointer_t<value_type>;
-
+        /*! Model type used in the for-ranged loops. */
+        using ModelLoopType   = std::conditional_t<std::is_pointer_v<Model>,
+                                                   ModelRawType *const, ModelRawType &>;
+        /*! Const Model type used in the for-ranged loops. */
+        using ConstModelLoopType = std::conditional_t<std::is_pointer_v<Model>,
+                                                      const ModelRawType *const,
+                                                      const ModelRawType &>;
 #if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
         using parameter_type  = typename StorageType::parameter_type;
 #else
@@ -287,14 +293,6 @@ namespace Types
         tap(const std::function<void(ModelsCollection &)> &callback) &&;
 
     protected:
-        /*! Model type used in the for-ranged loops. */
-        using ModelLoopType = std::conditional_t<std::is_pointer_v<Model>,
-                                                 ModelRawType *const, ModelRawType &>;
-        /*! Const Model type used in the for-ranged loops. */
-        using ConstModelLoopType = std::conditional_t<std::is_pointer_v<Model>,
-                                                      const ModelRawType *const,
-                                                      const ModelRawType &>;
-
         /*! Convert the Model pointer to the pointer (no-op). */
         constexpr static ModelRawType *toPointer(ModelRawType *model) noexcept;
         /*! Convert the Model pointer to the pointer (no-op). */
