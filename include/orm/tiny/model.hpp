@@ -878,8 +878,7 @@ namespace Orm::Tiny
     // FUTURE LoadItem for Model::load() even it will have the same implmentation, or common parent and inherit silverqx
     template<typename Derived, AllRelationsConcept ...AllRelations>
     Derived &
-    Model<Derived, AllRelations...>::load(
-            const QVector<WithItem> &relations)
+    Model<Derived, AllRelations...>::load(const QVector<WithItem> &relations)
     {
         // Ownership of a unique_ptr()
         auto builder = newQueryWithoutRelationships();
@@ -909,7 +908,8 @@ namespace Orm::Tiny
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
-    Derived &Model<Derived, AllRelations...>::load(const QString &relation)
+    Derived &
+    Model<Derived, AllRelations...>::load(const QString &relation)
     {
         return load(QVector<WithItem> {{relation}});
     }
