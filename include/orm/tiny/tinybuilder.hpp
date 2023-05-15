@@ -238,11 +238,15 @@ namespace Orm::Tiny
         /*! Eager load the relationships for the models. */
         template<SameDerivedModel<Model> CollectionModel>
         void eagerLoadRelations(ModelsCollection<CollectionModel> &models);
+        /*! Eager load the relationships on the model. */
+        void eagerLoadRelations(Model &model);
+
         /*! Eagerly load the relationship on a set of models. */
         template<typename Relation, SameDerivedModel<Model> CollectionModel>
         void eagerLoadRelationVisited(
                 Relation &&relation, ModelsCollection<CollectionModel> &models,
                 const WithItem &relationItem) const;
+
         /*! Create a vector of models from the SqlQuery. */
         ModelsCollection<Model> hydrate(SqlQuery &&result);
 
@@ -1047,12 +1051,14 @@ namespace Orm::Tiny
        the result is returned back to the initial model.
        The result is transformed into models and these models are hydrated.
        Hydrated models are saved to the templated Model::m_relations data member
-       hash. */
+       hash.
+       Also, look the NOTES.txt for eagerLoadRelations() and Model::load() history. */
 
     template<typename Model>
     template<SameDerivedModel<Model> CollectionModel>
     void Builder<Model>::eagerLoadRelations(ModelsCollection<CollectionModel> &models)
     {
+        // Nothing to load
         if (m_eagerLoad.isEmpty())
             return;
 
@@ -1065,6 +1071,25 @@ namespace Orm::Tiny
                    through the visitor pattern which obtains also the Related type.
                    After the visitation the eagerLoadRelationVisited() will be called. */
                 m_model.eagerLoadRelationWithVisitor(relation, *this, models);
+    }
+
+    template<typename Model>
+    void Builder<Model>::eagerLoadRelations(Model &model)
+    {
+        // Nothing to load
+        if (m_eagerLoad.isEmpty())
+            return;
+
+        /* The eagerLoadRelations() methods chain can only operate on a ModelsCollection
+           it can't accept a single Model instance, would be possible to create
+           a templated EagerRelationStore that would accept a single Model but the effort
+           is not worth it.
+           Also, I checked now what would be required to implement this and it would be
+           really sketchy as all methods like addEagerConstraints(), initRelation(),
+           match(), getKeys() would have to be able to operate on a single Model. */
+        ModelsCollection<Model *> models {&model};
+
+        eagerLoadRelations(models);
     }
 
     template<typename Model>

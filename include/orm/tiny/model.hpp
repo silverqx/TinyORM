@@ -883,26 +883,8 @@ namespace Orm::Tiny
         // Ownership of a unique_ptr()
         auto builder = newQueryWithoutRelationships();
 
-        builder->with(relations);
-
-        // FUTURE make possible to pass single model to eagerLoadRelations() and whole relation flow, I indicative counted how many methods would have to rewrite and it is around 12 methods silverqx
-        /* I have to make a copy here of this, because of eagerLoadRelations(),
-           the solution would be to add a whole new chain for eager load relations,
-           which will be able to work only on one Model &, but it is around
-           10-15 methods refactoring, or add a variant which can process
-           QVector<std::reference_wrapper<Derived>>.
-           For now, I have made a copy here and save it into the QVector and after
-           that move relations from this copy to the real instance. */
-        ModelsCollection<Derived> models {model()};
-
-        builder->eagerLoadRelations(models);
-
-        /* Replace only relations which was passed to this method, leave other
-           relations untouched.
-           They do not need to be removed before 'eagerLoadRelations(models)'
-           call, because only the relations passed to the 'with' at the beginning
-           will be loaded anyway. */
-        this->replaceRelations(models.first().getRelations(), relations);
+        builder->with(relations)
+                .eagerLoadRelations(model());
 
         return model();
     }
