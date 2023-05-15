@@ -64,6 +64,7 @@ namespace Orm::Tiny::Concerns
         enum struct RelationStoreType
         {
             EAGER,
+            EAGER_POINTERS,
             PUSH,
             TOUCH_OWNERS,
             LAZY_RESULTS,
@@ -75,6 +76,7 @@ namespace Orm::Tiny::Concerns
 
         /* Forward declarations */
         /*! The store for loading eager relations. */
+        template<SameDerivedModel<Derived> CollectionModel>
         class EagerRelationStore;
         class PushRelationStore;
         class TouchOwnersRelationStore;
@@ -120,6 +122,7 @@ namespace Orm::Tiny::Concerns
         };
 
         /*! The store for loading eager relations. */
+        template<SameDerivedModel<Derived> CollectionModel>
         class EagerRelationStore final : public BaseRelationStore
         {
             Q_DISABLE_COPY(EagerRelationStore)
@@ -129,7 +132,7 @@ namespace Orm::Tiny::Concerns
             EagerRelationStore(
                     NotNull<HasRelationStore *> hasRelationStore,
                     const Tiny::TinyBuilder<Derived> &builder,
-                    ModelsCollection<Derived> &models, const WithItem &relation);
+                    ModelsCollection<CollectionModel> &models, const WithItem &relation);
             /*! Virtual destructor. */
             inline virtual ~EagerRelationStore() final = default;
 
@@ -144,7 +147,7 @@ namespace Orm::Tiny::Concerns
             /*! Models on which to do an eager load, hydrated models that were obtained
                 from the database and these models will be passed as parameter
                 to the TinyBuilder. */
-            NotNull<ModelsCollection<Derived> *> m_models;
+            NotNull<ModelsCollection<CollectionModel> *> m_models;
             /*! The WithItem that will be passed as parameter to the TinyBuilder. */
             NotNull<const WithItem *> m_relation;
         };
@@ -284,9 +287,11 @@ namespace Orm::Tiny::Concerns
 
         /* Factory methods for Relation stores */
         /*! Factory method to create an eager store. */
+        template<SameDerivedModel<Derived> CollectionModel>
         BaseRelationStore &
-        createEagerStore(const Tiny::TinyBuilder<Derived> &builder,
-                         ModelsCollection<Derived> &models, const WithItem &relation);
+        createEagerStore(
+                const Tiny::TinyBuilder<Derived> &builder,
+                ModelsCollection<CollectionModel> &models, const WithItem &relation);
         /*! Factory method to create the push store. */
         BaseRelationStore &createPushStore(RelationsType<AllRelations...> &models);
         /*! Factory method to create the touch owners store. */
@@ -380,7 +385,11 @@ namespace Orm::Tiny::Concerns
 
         switch (storeType) {
         case RelationStoreType::EAGER:
-            static_cast<EagerRelationStore *>(this)->visited(method);
+            static_cast<EagerRelationStore<Derived> *>(this)->visited(method);
+            break;
+
+        case RelationStoreType::EAGER_POINTERS:
+            static_cast<EagerRelationStore<Derived *> *>(this)->visited(method);
             break;
 
         case RelationStoreType::TOUCH_OWNERS:
@@ -440,20 +449,26 @@ namespace Orm::Tiny::Concerns
     /* EagerRelationStore */
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
-    HasRelationStore<Derived, AllRelations...>::EagerRelationStore::EagerRelationStore(
+    template<SameDerivedModel<Derived> CollectionModel>
+    HasRelationStore<Derived, AllRelations...>::EagerRelationStore<CollectionModel>
+                                              ::EagerRelationStore(
             NotNull<HasRelationStore *> hasRelationStore,
             const Tiny::TinyBuilder<Derived> &builder,
-            ModelsCollection<Derived> &models, const WithItem &relation
+            ModelsCollection<CollectionModel> &models, const WithItem &relation
     )
-        : BaseRelationStore(hasRelationStore, RelationStoreType::EAGER)
+        : BaseRelationStore(hasRelationStore, std::is_pointer_v<CollectionModel>
+                                              ? RelationStoreType::EAGER_POINTERS
+                                              : RelationStoreType::EAGER)
         , m_builder(&builder)
         , m_models(&models)
         , m_relation(&relation)
     {}
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
+    template<SameDerivedModel<Derived> CollectionModel>
     template<RelationshipMethod<Derived> Method>
-    void HasRelationStore<Derived, AllRelations...>::EagerRelationStore::visited(
+    void HasRelationStore<Derived, AllRelations...>::EagerRelationStore<CollectionModel>
+                                                   ::visited(
             const Method method) const
     {
         using Related = typename std::invoke_result_t<Method, Derived>
@@ -742,12 +757,13 @@ namespace Orm::Tiny::Concerns
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
+    template<SameDerivedModel<Derived> CollectionModel>
     typename HasRelationStore<Derived, AllRelations...>::BaseRelationStore &
     HasRelationStore<Derived, AllRelations...>::createEagerStore(
-            const Tiny::TinyBuilder<Derived> &builder, ModelsCollection<Derived> &models,
-            const WithItem &relation)
+            const Tiny::TinyBuilder<Derived> &builder,
+            ModelsCollection<CollectionModel> &models, const WithItem &relation)
     {
-        m_relationStore.push(std::make_shared<EagerRelationStore>(
+        m_relationStore.push(std::make_shared<EagerRelationStore<CollectionModel>>(
                                  this, builder, models, relation));
 
         return *m_relationStore.top();

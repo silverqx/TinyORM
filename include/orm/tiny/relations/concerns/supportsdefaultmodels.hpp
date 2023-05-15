@@ -49,6 +49,8 @@ namespace Orm::Tiny::Relations::Concerns
 
         /*! Get the default value for this relation. */
         std::optional<Related> getDefaultFor(const Model &parent) const;
+        /*! Get the default value for this relation. */
+        inline std::optional<Related> getDefaultFor(const Model *parent) const;
 
         /*! Indicates if a default model instance should be used. */
         std::variant<bool, QVector<AttributeItem>/*, Callback*/> m_withDefault = false;
@@ -146,6 +148,14 @@ namespace Orm::Tiny::Relations::Concerns
 
         // holds bool and has the true value
         return instance;
+    }
+
+    template<class Model, class Related, template<class, class> class RelationType>
+    std::optional<Related>
+    SupportsDefaultModels<Model, Related, RelationType>::getDefaultFor(
+            const Model *const parent) const
+    {
+        return getDefaultFor(*parent);
     }
 
     /* private */

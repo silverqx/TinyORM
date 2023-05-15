@@ -75,15 +75,28 @@ namespace Relations
         noConstraints(const std::function<
                       std::unique_ptr<Relation<Model, Related>>()> &callback);
 
+        // Note at the bottom of the file
         /*! Set the constraints for an eager load of the relation. */
         virtual void addEagerConstraints(const ModelsCollection<Model> &models) = 0;
+        /*! Set the constraints for an eager load of the relation. */
+        virtual void addEagerConstraints(const ModelsCollection<Model *> &models) = 0;
 
         /*! Initialize the relation on a set of models. */
         virtual ModelsCollection<Model> &
-        initRelation(ModelsCollection<Model> &models, const QString &relation) const = 0;
+        initRelation(ModelsCollection<Model> &models,
+                     const QString &relation) const = 0;
+        /*! Initialize the relation on a set of models. */
+        virtual ModelsCollection<Model *> &
+        initRelation(ModelsCollection<Model *> &models,
+                     const QString &relation) const = 0;
+
         /*! Match the eagerly loaded results to their parents. */
         virtual void
         match(ModelsCollection<Model> &models, ModelsCollection<Related> &&results,
+              const QString &relation) const = 0;
+        /*! Match the eagerly loaded results to their parents. */
+        virtual void
+        match(ModelsCollection<Model *> &models, ModelsCollection<Related> &&results,
               const QString &relation) const = 0;
 
         /*! Get the results of the relationship. */
@@ -142,8 +155,19 @@ namespace Relations
         void whereInEager(const QString &key, const QVector<QVariant> &modelKeys);
 
         /*! Get all of the primary keys for the vector of models. */
+        template<SameDerivedModel<Model> CollectionModel>
         QVector<QVariant>
-        getKeys(const ModelsCollection<Model> &models, const QString &key = "") const;
+        getKeys(const ModelsCollection<CollectionModel> &models,
+                const QString &key = "") const;
+
+        /*! Convert the Model pointer to the pointer (no-op). */
+        constexpr static Model *toPointer(Model *model);
+        /*! Convert the Model pointer to the pointer (no-op). */
+        constexpr static const Model *toPointer(const Model *model);
+        /*! Convert the Model reference to the pointer. */
+        inline static Model *toPointer(Model &model) noexcept;
+        /*! Convert the const Model reference to the pointer. */
+        inline static const Model *toPointer(const Model &model) noexcept;
 
         /* Querying Relationship Existence/Absence */
         /*! Add the constraints for an internal relationship existence query.
@@ -350,22 +374,59 @@ namespace Relations
     }
 
     template<class Model, class Related>
+    template<SameDerivedModel<Model> CollectionModel>
     QVector<QVariant>
-    Relation<Model, Related>::getKeys(const ModelsCollection<Model> &models,
+    Relation<Model, Related>::getKeys(const ModelsCollection<CollectionModel> &models,
                                       const QString &key) const
     {
         QVector<QVariant> keys;
         keys.reserve(models.size());
 
-        for (const auto &model : models)
-            keys.append(key.isEmpty() ? model.getKey()
-                                      : model.getAttribute(key));
+        /*! Const Model type used in the for-ranged loops. */
+        using ConstModelLoopType = typename ModelsCollection<CollectionModel>::
+                                            ConstModelLoopType;
+
+        for (ConstModelLoopType model : models)
+            keys.append(key.isEmpty() ? toPointer(model)->getKey()
+                                      : toPointer(model)->getAttribute(key));
 
         return keys |= ranges::actions::sort(ranges::less {}, [](const auto &key_)
         {
             return key_.template value<typename Model::KeyType>();
         })
                 | ranges::actions::unique;
+    }
+
+    template<class Model, class Related>
+    constexpr Model *
+    Relation<Model, Related>::toPointer(Model *const model)
+    {
+        Q_CHECK_PTR(model);
+
+        return model;
+    }
+
+    template<class Model, class Related>
+    constexpr const Model *
+    Relation<Model, Related>::toPointer(const Model *const model)
+    {
+        Q_CHECK_PTR(model);
+
+        return model;
+    }
+
+    template<class Model, class Related>
+    Model *
+    Relation<Model, Related>::toPointer(Model &model) noexcept
+    {
+        return &model;
+    }
+
+    template<class Model, class Related>
+    const Model *
+    Relation<Model, Related>::toPointer(const Model &model) noexcept
+    {
+        return &model;
     }
 
     /* Querying Relationship Existence/Absence */
@@ -403,3 +464,9 @@ namespace Relations
 TINYORM_END_COMMON_NAMESPACE
 
 #endif // ORM_TINY_RELATIONS_RELATION_HPP
+
+/* I don't use templated versions of the addEagerConstraints(), initRelation(), and
+   match() because the std::unique_ptr<Relation<>> can be returned from the relationship
+   methods (instead of eg. std::unique_ptr<HasMany<>>) and this is only possible because
+   of polymorphism. It can be considered an additional feature and would be lost if
+   the templated version of these methods were used. */

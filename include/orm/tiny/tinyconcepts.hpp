@@ -41,6 +41,12 @@ namespace Orm::Tiny
              // The same check can't be used as the model classes are undefined here
              !std::is_pointer_v<T>);
 
+    /*! Concept for Derived Model and Model * for ModelsCollection that has to be
+        the same as another Derived Model. */
+    template<typename T, typename U>
+    concept SameDerivedModel = DerivedModel<T> && DerivedModel<U> &&
+                               std::same_as<std::remove_pointer_t<T>, U>;
+
 } // namespace Orm::Tiny
 
 TINYORM_END_COMMON_NAMESPACE

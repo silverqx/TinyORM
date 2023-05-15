@@ -236,12 +236,13 @@ namespace Orm::Tiny
         ModelsCollection<Model> getModels(const QVector<Column> &columns = {ASTERISK});
 
         /*! Eager load the relationships for the models. */
-        void eagerLoadRelations(ModelsCollection<Model> &models);
+        template<SameDerivedModel<Model> CollectionModel>
+        void eagerLoadRelations(ModelsCollection<CollectionModel> &models);
         /*! Eagerly load the relationship on a set of models. */
-        template<typename Relation>
-        void
-        eagerLoadRelationVisited(Relation &&relation, ModelsCollection<Model> &models,
-                                 const WithItem &relationItem) const;
+        template<typename Relation, SameDerivedModel<Model> CollectionModel>
+        void eagerLoadRelationVisited(
+                Relation &&relation, ModelsCollection<CollectionModel> &models,
+                const WithItem &relationItem) const;
         /*! Create a vector of models from the SqlQuery. */
         ModelsCollection<Model> hydrate(SqlQuery &&result);
 
@@ -1049,7 +1050,8 @@ namespace Orm::Tiny
        hash. */
 
     template<typename Model>
-    void Builder<Model>::eagerLoadRelations(ModelsCollection<Model> &models)
+    template<SameDerivedModel<Model> CollectionModel>
+    void Builder<Model>::eagerLoadRelations(ModelsCollection<CollectionModel> &models)
     {
         if (m_eagerLoad.isEmpty())
             return;
@@ -1066,9 +1068,9 @@ namespace Orm::Tiny
     }
 
     template<typename Model>
-    template<typename Relation>
+    template<typename Relation, SameDerivedModel<Model> CollectionModel>
     void Builder<Model>::eagerLoadRelationVisited(
-            Relation &&relation, ModelsCollection<Model> &models,
+            Relation &&relation, ModelsCollection<CollectionModel> &models,
             const WithItem &relationItem) const
     {
         /* First we will "back up" the existing where conditions (Relation::noConstraints)

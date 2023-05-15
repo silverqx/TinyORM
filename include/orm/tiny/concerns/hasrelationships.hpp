@@ -296,9 +296,10 @@ namespace Concerns
 
         /* Eager load relation store related */
         /*! Obtain a relationship instance for eager loading. */
+        template<SameDerivedModel<Derived> CollectionModel>
         void eagerLoadRelationWithVisitor(
                 const WithItem &relation, const TinyBuilder<Derived> &builder,
-                ModelsCollection<Derived> &models);
+                ModelsCollection<CollectionModel> &models);
 
         /* Get related table for belongs to many relation store related */
         /*! Get Related model table name if the relation is BelongsToMany, otherwise
@@ -1025,9 +1026,10 @@ namespace Concerns
     /* Eager load relation store related */
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
+    template<SameDerivedModel<Derived> CollectionModel>
     void HasRelationships<Derived, AllRelations...>::eagerLoadRelationWithVisitor(
             const WithItem &relation, const TinyBuilder<Derived> &builder,
-            ModelsCollection<Derived> &models)
+            ModelsCollection<CollectionModel> &models)
     {
         // Throw excpetion if a relation is not defined
         validateUserRelation(relation.name);

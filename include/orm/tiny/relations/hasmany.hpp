@@ -40,13 +40,21 @@ namespace Orm::Tiny::Relations
 
         /* Relation related operations */
         /*! Initialize the relation on a set of models. */
-        ModelsCollection<Model> &
+        inline ModelsCollection<Model> &
         initRelation(ModelsCollection<Model> &models,
+                     const QString &relation) const override;
+        /*! Initialize the relation on a set of models. */
+        inline ModelsCollection<Model *> &
+        initRelation(ModelsCollection<Model *> &models,
                      const QString &relation) const override;
 
         /*! Match the eagerly loaded results to their parents. */
         inline void
         match(ModelsCollection<Model> &models, ModelsCollection<Related> &&results,
+              const QString &relation) const override;
+        /*! Match the eagerly loaded results to their parents. */
+        inline void
+        match(ModelsCollection<Model *> &models, ModelsCollection<Related> &&results,
               const QString &relation) const override;
 
         /*! Get the results of the relationship. */
@@ -62,6 +70,14 @@ namespace Orm::Tiny::Relations
         /* Others */
         /*! The textual representation of the Relation type. */
         inline const QString &relationTypeName() const override;
+
+    private:
+        /* Relation related operations */
+        /*! Initialize the relation on a set of models, common code. */
+        template<SameDerivedModel<Model> CollectionModel>
+        ModelsCollection<CollectionModel> &
+        initRelationInternal(ModelsCollection<CollectionModel> &models,
+                             const QString &relation) const;
     };
 
     /* protected */
@@ -99,15 +115,29 @@ namespace Orm::Tiny::Relations
     HasMany<Model, Related>::initRelation(ModelsCollection<Model> &models,
                                           const QString &relation) const
     {
-        for (auto &model : models)
-            model.template setRelation<Related>(relation, ModelsCollection<Related>());
+        return initRelationInternal(models, relation);
+    }
 
-        return models;
+    template<class Model, class Related>
+    ModelsCollection<Model *> &
+    HasMany<Model, Related>::initRelation(ModelsCollection<Model *> &models,
+                                          const QString &relation) const
+    {
+        return initRelationInternal(models, relation);
     }
 
     template<class Model, class Related>
     void HasMany<Model, Related>::match(
             ModelsCollection<Model> &models, ModelsCollection<Related> &&results,
+            const QString &relation) const
+    {
+        this->template matchOneOrMany<ModelsCollection<Related>>(
+                    models, std::move(results), relation);
+    }
+
+    template<class Model, class Related>
+    void HasMany<Model, Related>::match(
+            ModelsCollection<Model *> &models, ModelsCollection<Related> &&results,
             const QString &relation) const
     {
         this->template matchOneOrMany<ModelsCollection<Related>>(
@@ -144,6 +174,28 @@ namespace Orm::Tiny::Relations
     {
         static const auto cached = QStringLiteral("HasMany");
         return cached;
+    }
+
+    /* private */
+
+    /* Relation related operations */
+
+    template<class Model, class Related>
+    template<SameDerivedModel<Model> CollectionModel>
+    ModelsCollection<CollectionModel> &
+    HasMany<Model, Related>::initRelationInternal(
+            ModelsCollection<CollectionModel> &models,
+            const QString &relation) const
+    {
+        /*! Model type used in the for-ranged loops. */
+        using ModelLoopType = typename ModelsCollection<CollectionModel>::ModelLoopType;
+
+        for (ModelLoopType model : models)
+            Relation<Model,Related>::toPointer(model)
+                    ->template setRelation<Related>(relation,
+                                                    ModelsCollection<Related>());
+
+        return models;
     }
 
 } // namespace Orm::Tiny::Relations

@@ -74,15 +74,27 @@ namespace Orm::Tiny::Relations
         void addConstraints() const override;
 
         /*! Set the constraints for an eager load of the relation. */
-        void addEagerConstraints(const ModelsCollection<Model> &models) override;
+        inline void addEagerConstraints(const ModelsCollection<Model> &models) override;
+        /*! Set the constraints for an eager load of the relation. */
+        inline void addEagerConstraints(const ModelsCollection<Model *> &models) override;
 
         /*! Initialize the relation on a set of models. */
-        ModelsCollection<Model> &
+        inline ModelsCollection<Model> &
         initRelation(ModelsCollection<Model> &models,
                      const QString &relation) const override;
+        /*! Initialize the relation on a set of models. */
+        inline ModelsCollection<Model *> &
+        initRelation(ModelsCollection<Model *> &models,
+                     const QString &relation) const override;
+
         /*! Match the eagerly loaded results to their parents. */
-        void match(ModelsCollection<Model> &models, ModelsCollection<Related> &&results,
-                   const QString &relation) const override;
+        inline void
+        match(ModelsCollection<Model> &models, ModelsCollection<Related> &&results,
+              const QString &relation) const override;
+        /*! Match the eagerly loaded results to their parents. */
+        inline void
+        match(ModelsCollection<Model *> &models, ModelsCollection<Related> &&results,
+              const QString &relation) const override;
 
         /*! Get the results of the relationship. */
         std::variant<ModelsCollection<Related>, std::optional<Related>>
@@ -373,6 +385,23 @@ namespace Orm::Tiny::Relations
         QString m_pivotCreatedAt;
         /*! The custom pivot table column for the updated_at timestamp. */
         QString m_pivotUpdatedAt;
+
+    private:
+        /* Relation related operations */
+        /*! Set the constraints for an eager load of the relation, common code. */
+        template<SameDerivedModel<Model> CollectionModel>
+        void addEagerConstraintsInternal(const ModelsCollection<CollectionModel> &models);
+
+        /*! Initialize the relation on a set of models, common code. */
+        template<SameDerivedModel<Model> CollectionModel>
+        ModelsCollection<CollectionModel> &
+        initRelationInternal(ModelsCollection<CollectionModel> &models,
+                             const QString &relation) const;
+        /*! Match the eagerly loaded results to their parents. */
+        template<SameDerivedModel<Model> CollectionModel>
+        void matchInternal(
+                ModelsCollection<CollectionModel> &models,
+                ModelsCollection<Related> &&results, const QString &relation) const;
     };
 
     /* protected */
@@ -429,8 +458,14 @@ namespace Orm::Tiny::Relations
     void BelongsToMany<Model, Related, PivotType>::addEagerConstraints(
             const ModelsCollection<Model> &models)
     {
-        this->whereInEager(getQualifiedForeignPivotKeyName(),
-                           this->getKeys(models, m_parentKey));
+        addEagerConstraintsInternal(models);
+    }
+
+    template<class Model, class Related, class PivotType>
+    void BelongsToMany<Model, Related, PivotType>::addEagerConstraints(
+            const ModelsCollection<Model *> &models)
+    {
+        addEagerConstraintsInternal(models);
     }
 
     template<class Model, class Related, class PivotType>
@@ -438,10 +473,15 @@ namespace Orm::Tiny::Relations
     BelongsToMany<Model, Related, PivotType>::initRelation(
             ModelsCollection<Model> &models, const QString &relation) const
     {
-        for (auto &model : models)
-            model.template setRelation<Related>(relation, ModelsCollection<Related>());
+        return initRelationInternal(models, relation);
+    }
 
-        return models;
+    template<class Model, class Related, class PivotType>
+    ModelsCollection<Model *> &
+    BelongsToMany<Model, Related, PivotType>::initRelation(
+            ModelsCollection<Model *> &models, const QString &relation) const
+    {
+        return initRelationInternal(models, relation);
     }
 
     template<class Model, class Related, class PivotType>
@@ -449,19 +489,15 @@ namespace Orm::Tiny::Relations
             ModelsCollection<Model> &models, ModelsCollection<Related> &&results,
             const QString &relation) const
     {
-        auto dictionary = buildDictionary(std::move(results));
+        matchInternal(models, std::move(results), relation);
+    }
 
-        /* Once we have the dictionary of child objects, we can easily match the
-           children back to their parent using the dictionary and the keys on the
-           the parent models. Then we will return the hydrated models back out. */
-        for (auto &model : models)
-            if (const auto key = model.getAttribute(m_parentKey)
-                .template value<typename Model::KeyType>();
-                dictionary.contains(key)
-            )
-                model.template setRelation<Related>(
-                            relation,
-                            std::move(dictionary.find(key).value()));
+    template<class Model, class Related, class PivotType>
+    void BelongsToMany<Model, Related, PivotType>::match(
+            ModelsCollection<Model *> &models, ModelsCollection<Related> &&results,
+            const QString &relation) const
+    {
+        matchInternal(models, std::move(results), relation);
     }
 
     template<class Model, class Related, class PivotType>
@@ -1512,6 +1548,63 @@ namespace Orm::Tiny::Relations
 
         return Relation<Model, Related>::getRelationExistenceQuery(
                     std::move(query), parentQuery, columns);
+    }
+
+    /* private */
+
+    /* Relation related operations */
+
+    template<class Model, class Related, class PivotType>
+    template<SameDerivedModel<Model> CollectionModel>
+    void BelongsToMany<Model, Related, PivotType>::addEagerConstraintsInternal(
+            const ModelsCollection<CollectionModel> &models)
+    {
+        this->whereInEager(getQualifiedForeignPivotKeyName(),
+                           this->getKeys(models, m_parentKey));
+    }
+
+    template<class Model, class Related, class PivotType>
+    template<SameDerivedModel<Model> CollectionModel>
+    ModelsCollection<CollectionModel> &
+    BelongsToMany<Model, Related, PivotType>::initRelationInternal(
+            ModelsCollection<CollectionModel> &models,
+            const QString &relation) const
+    {
+        /*! Model type used in the for-ranged loops. */
+        using ModelLoopType = typename ModelsCollection<CollectionModel>::ModelLoopType;
+
+        for (ModelLoopType model : models)
+            Relation<Model,Related>::toPointer(model)
+                    ->template setRelation<Related>(relation,
+                                                    ModelsCollection<Related>());
+
+        return models;
+    }
+
+    template<class Model, class Related, class PivotType>
+    template<SameDerivedModel<Model> CollectionModel>
+    void BelongsToMany<Model, Related, PivotType>::matchInternal(
+            ModelsCollection<CollectionModel> &models,
+            ModelsCollection<Related> &&results, const QString &relation) const
+    {
+        auto dictionary = buildDictionary(std::move(results));
+
+        /*! Model type used in the for-ranged loops. */
+        using ModelLoopType = typename ModelsCollection<CollectionModel>::ModelLoopType;
+
+        /* Once we have the dictionary of child objects, we can easily match the
+           children back to their parent using the dictionary and the keys on the
+           the parent models. Then we will return the hydrated models back out. */
+        for (ModelLoopType model : models) {
+            auto *const modelPointer = Relation<Model,Related>::toPointer(model);
+
+            if (const auto key = modelPointer->getAttribute(m_parentKey)
+                .template value<typename Model::KeyType>();
+                dictionary.contains(key)
+            )
+                modelPointer->template setRelation<Related>(
+                            relation, std::move(dictionary.find(key).value()));
+        }
     }
 
 } // namespace Orm::Tiny::Relations

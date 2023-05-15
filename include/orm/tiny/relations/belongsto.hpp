@@ -56,15 +56,27 @@ namespace Orm::Tiny::Relations
         void addConstraints() const override;
 
         /*! Set the constraints for an eager load of the relation. */
-        void addEagerConstraints(const ModelsCollection<Model> &models) override;
+        inline void addEagerConstraints(const ModelsCollection<Model> &models) override;
+        /*! Set the constraints for an eager load of the relation. */
+        inline void addEagerConstraints(const ModelsCollection<Model *> &models) override;
 
         /*! Initialize the relation on a set of models. */
-        ModelsCollection<Model> &
+        inline ModelsCollection<Model> &
         initRelation(ModelsCollection<Model> &models,
                      const QString &relation) const override;
+        /*! Initialize the relation on a set of models. */
+        inline ModelsCollection<Model *> &
+        initRelation(ModelsCollection<Model *> &models,
+                     const QString &relation) const override;
+
         /*! Match the eagerly loaded results to their parents. */
-        void match(ModelsCollection<Model> &models, ModelsCollection<Related> &&results,
-                   const QString &relation) const override;
+        inline void
+        match(ModelsCollection<Model> &models, ModelsCollection<Related> &&results,
+              const QString &relation) const override;
+        /*! Match the eagerly loaded results to their parents. */
+        inline void
+        match(ModelsCollection<Model *> &models, ModelsCollection<Related> &&results,
+              const QString &relation) const override;
 
         /*! Get the results of the relationship. */
         std::variant<ModelsCollection<Related>, std::optional<Related>>
@@ -103,7 +115,9 @@ namespace Orm::Tiny::Relations
     protected:
         /* Relation related operations */
         /*! Gather the keys from a vector of related models. */
-        QVector<QVariant> getEagerModelKeys(const ModelsCollection<Model> &models) const;
+        template<SameDerivedModel<Model> CollectionModel>
+        QVector<QVariant>
+        getEagerModelKeys(const ModelsCollection<CollectionModel> &models) const;
 
         /*! Build model dictionary keyed by the parent's primary key. */
         QHash<typename Model::KeyType, Related>
@@ -136,6 +150,23 @@ namespace Orm::Tiny::Relations
         /*! The count of self joins. */
         T_THREAD_LOCAL
         inline static int selfJoinCount = 0;
+
+    private:
+        /* Relation related operations */
+        /*! Set the constraints for an eager load of the relation, common code. */
+        template<SameDerivedModel<Model> CollectionModel>
+        void addEagerConstraintsInternal(const ModelsCollection<CollectionModel> &models);
+
+        /*! Initialize the relation on a set of models, common code. */
+        template<SameDerivedModel<Model> CollectionModel>
+        ModelsCollection<CollectionModel> &
+        initRelationInternal(ModelsCollection<CollectionModel> &models,
+                             const QString &relation) const;
+        /*! Match the eagerly loaded results to their parents. */
+        template<SameDerivedModel<Model> CollectionModel>
+        void matchInternal(
+                ModelsCollection<CollectionModel> &models,
+                ModelsCollection<Related> &&results, const QString &relation) const;
     };
 
     /* protected */
@@ -196,11 +227,14 @@ namespace Orm::Tiny::Relations
     void
     BelongsTo<Model, Related>::addEagerConstraints(const ModelsCollection<Model> &models)
     {
-        /* We'll grab the primary key name of the related models since it could be set to
-           a non-standard name and not "id". We will then construct the constraint for
-           our eagerly loading query so it returns the proper models from execution. */
-        this->whereInEager(DOT_IN.arg(this->m_related->getTable(), m_ownerKey),
-                           getEagerModelKeys(models));
+        addEagerConstraintsInternal(models);
+    }
+
+    template<class Model, class Related>
+    void BelongsTo<Model, Related>::addEagerConstraints(
+            const ModelsCollection<Model *> &models)
+    {
+        addEagerConstraintsInternal(models);
     }
 
     template<class Model, class Related>
@@ -208,11 +242,15 @@ namespace Orm::Tiny::Relations
     BelongsTo<Model, Related>::initRelation(ModelsCollection<Model> &models,
                                             const QString &relation) const
     {
-        for (auto &model : models)
-            model.template setRelation<Related>(relation,
-                                                this->getDefaultFor(model));
+        return initRelationInternal(models, relation);
+    }
 
-        return models;
+    template<class Model, class Related>
+    ModelsCollection<Model *> &
+    BelongsTo<Model, Related>::initRelation(ModelsCollection<Model *> &models,
+                                            const QString &relation) const
+    {
+        return initRelationInternal(models, relation);
     }
 
     template<class Model, class Related>
@@ -220,22 +258,15 @@ namespace Orm::Tiny::Relations
             ModelsCollection<Model> &models, ModelsCollection<Related> &&results,
             const QString &relation) const
     {
-        /* First we will get to build a dictionary of the child models by their primary
-           key of the relationship, then we can easily match the children back onto
-           the parents using that dictionary and the primary key of the children. */
-        auto dictionary = buildDictionary(std::move(results));
+        matchInternal(models, std::move(results), relation);
+    }
 
-        /* Once we have the dictionary constructed, we can loop through all the parents
-           and match back onto their children using these keys of the dictionary and
-           the primary key of the children to map them onto the correct instances. */
-        for (auto &model : models)
-            if (const auto foreign = model.getAttribute(m_foreignKey)
-                .template value<typename Model::KeyType>();
-                dictionary.contains(foreign)
-            )
-                model.setRelation(relation,
-                                  std::optional<Related>(
-                                      std::move(dictionary.find(foreign).value())));
+    template<class Model, class Related>
+    void BelongsTo<Model, Related>::match(
+            ModelsCollection<Model *> &models, ModelsCollection<Related> &&results,
+            const QString &relation) const
+    {
+        matchInternal(models, std::move(results), relation);
     }
 
     template<class Model, class Related>
@@ -370,18 +401,24 @@ namespace Orm::Tiny::Relations
     /* Relation related operations */
 
     template<class Model, class Related>
+    template<SameDerivedModel<Model> CollectionModel>
     QVector<QVariant>
     BelongsTo<Model, Related>::getEagerModelKeys(
-            const ModelsCollection<Model> &models) const
+            const ModelsCollection<CollectionModel> &models) const
     {
         QVector<QVariant> keys;
         keys.reserve(models.size());
 
+        /*! Const Model type used in the for-ranged loops. */
+        using ConstModelLoopType = typename ModelsCollection<CollectionModel>::
+                                            ConstModelLoopType;
+
         /* First we need to gather all of the keys from the parent models so we know what
            to query for via the eager loading query. We will add them to the vector then
            execute a "where in" statement to gather up all of those related records. */
-        for (const auto &model : models) {
-            auto value = model.getAttribute(m_foreignKey);
+        for (ConstModelLoopType model : models) {
+            auto value = Relation<Model,Related>::toPointer(model)
+                         ->getAttribute(m_foreignKey);
 
             if (value.isValid() && !value.isNull())
                 // TODO add support for non-int primary keys, ranges::actions doesn't accept QVariant container silverqx
@@ -429,6 +466,71 @@ namespace Orm::Tiny::Relations
                                              query->qualifyColumn(m_ownerKey));
 
         return std::move(query);
+    }
+
+    /* private */
+
+    /* Relation related operations */
+
+    template<class Model, class Related>
+    template<SameDerivedModel<Model> CollectionModel>
+    void BelongsTo<Model, Related>::addEagerConstraintsInternal(
+            const ModelsCollection<CollectionModel> &models)
+    {
+        /* We'll grab the primary key name of the related models since it could be set to
+           a non-standard name and not "id". We will then construct the constraint for
+           our eagerly loading query so it returns the proper models from execution. */
+        this->whereInEager(DOT_IN.arg(this->m_related->getTable(), m_ownerKey),
+                           getEagerModelKeys(models));
+    }
+
+    template<class Model, class Related>
+    template<SameDerivedModel<Model> CollectionModel>
+    ModelsCollection<CollectionModel> &
+    BelongsTo<Model, Related>::initRelationInternal(
+            ModelsCollection<CollectionModel> &models,
+            const QString &relation) const
+    {
+        /*! Model type used in the for-ranged loops. */
+        using ModelLoopType = typename ModelsCollection<CollectionModel>::ModelLoopType;
+
+        for (ModelLoopType model : models)
+            Relation<Model,Related>::toPointer(model)
+                    ->template setRelation<Related>(relation,
+                                                    this->getDefaultFor(model));
+
+        return models;
+    }
+
+    template<class Model, class Related>
+    template<SameDerivedModel<Model> CollectionModel>
+    void BelongsTo<Model, Related>::matchInternal(
+            ModelsCollection<CollectionModel> &models,
+            ModelsCollection<Related> &&results, const QString &relation) const
+    {
+        /* First we will get to build a dictionary of the child models by their primary
+           key of the relationship, then we can easily match the children back onto
+           the parents using that dictionary and the primary key of the children. */
+        auto dictionary = buildDictionary(std::move(results));
+
+        /*! Model type used in the for-ranged loops. */
+        using ModelLoopType = typename ModelsCollection<CollectionModel>::ModelLoopType;
+
+        /* Once we have the dictionary constructed, we can loop through all the parents
+           and match back onto their children using these keys of the dictionary and
+           the primary key of the children to map them onto the correct instances. */
+        for (ModelLoopType model : models) {
+            auto *const modelPointer = Relation<Model,Related>::toPointer(model);
+
+            if (const auto foreign = modelPointer->getAttribute(m_foreignKey)
+                .template value<typename Model::KeyType>();
+                dictionary.contains(foreign)
+            )
+                modelPointer->setRelation(
+                            relation,
+                            std::optional<Related>(
+                                std::move(dictionary.find(foreign).value())));
+        }
     }
 
 } // namespace Orm::Tiny::Relations

@@ -41,7 +41,9 @@ namespace Orm::Tiny::Relations
         void addConstraints() const override;
 
         /*! Set the constraints for an eager load of the relation. */
-        void addEagerConstraints(const ModelsCollection<Model> &models) override;
+        inline void addEagerConstraints(const ModelsCollection<Model> &models) override;
+        /*! Set the constraints for an eager load of the relation. */
+        inline void addEagerConstraints(const ModelsCollection<Model *> &models) override;
 
         /* Getters / Setters */
         /*! Get the key value of the parent's local key. */
@@ -94,10 +96,10 @@ namespace Orm::Tiny::Relations
     protected:
         /* Relation related operations */
         /*! Match the eagerly loaded results to their many parents. */
-        template<typename RelationType>
+        template<typename RelationType, SameDerivedModel<Model> CollectionModel>
         void matchOneOrMany(
-                ModelsCollection<Model> &models, ModelsCollection<Related> &&results,
-                const QString &relation) const;
+                ModelsCollection<CollectionModel> &models,
+                ModelsCollection<Related> &&results, const QString &relation) const;
 
         /*! Build model dictionary keyed by the relation's foreign key. */
         template<typename RelationType>
@@ -131,6 +133,12 @@ namespace Orm::Tiny::Relations
         /*! The count of self joins. */
         T_THREAD_LOCAL
         inline static int selfJoinCount = 0;
+
+    private:
+        /* Relation related operations */
+        /*! Set the constraints for an eager load of the relation, common code. */
+        template<SameDerivedModel<Model> CollectionModel>
+        void addEagerConstraintsInternal(const ModelsCollection<CollectionModel> &models);
     };
 
     /* protected */
@@ -167,7 +175,14 @@ namespace Orm::Tiny::Relations
     void HasOneOrMany<Model, Related>::addEagerConstraints(
             const ModelsCollection<Model> &models)
     {
-        this->whereInEager(m_foreignKey, this->getKeys(models, m_localKey));
+        addEagerConstraintsInternal(models);
+    }
+
+    template<class Model, class Related>
+    void HasOneOrMany<Model, Related>::addEagerConstraints(
+            const ModelsCollection<Model *> &models)
+    {
+        addEagerConstraintsInternal(models);
     }
 
     /* Getters / Setters */
@@ -354,23 +369,28 @@ namespace Orm::Tiny::Relations
     /* Relation related operations */
 
     template<class Model, class Related>
-    template<typename RelationType>
+    template<typename RelationType, SameDerivedModel<Model> CollectionModel>
     void HasOneOrMany<Model, Related>::matchOneOrMany(
-            ModelsCollection<Model> &models, ModelsCollection<Related> &&results,
-            const QString &relation) const
+            ModelsCollection<CollectionModel> &models,
+            ModelsCollection<Related> &&results, const QString &relation) const
     {
         auto dictionary = buildDictionary<RelationType>(std::move(results));
+
+        /*! Model type used in the for-ranged loops. */
+        using ModelLoopType = typename ModelsCollection<CollectionModel>::ModelLoopType;
 
         /* Once we have the dictionary we can simply spin through the parent models to
            link them up with their children using the keyed dictionary to make the
            matching very convenient and easy work. Then we'll just return them. */
-        for (auto &model : models) {
-            if (const auto key = model.getAttribute(m_localKey)
+        for (ModelLoopType model : models) {
+            auto *const modelPointer = Relation<Model,Related>::toPointer(model);
+
+            if (const auto key = modelPointer->getAttribute(m_localKey)
                                  .template value<typename Model::KeyType>();
                 dictionary.contains(key)
             )
-                model.setRelation(relation,
-                                  std::move(dictionary.find(key).value()));
+                modelPointer->setRelation(relation,
+                                          std::move(dictionary.find(key).value()));
         }
     }
 
@@ -442,6 +462,18 @@ namespace Orm::Tiny::Relations
 
         return Relation<Model, Related>::getRelationExistenceQuery(
                     std::move(query), parentQuery, columns);
+    }
+
+    /* private */
+
+    /* Relation related operations */
+
+    template<class Model, class Related>
+    template<SameDerivedModel<Model> CollectionModel>
+    void HasOneOrMany<Model, Related>::addEagerConstraintsInternal(
+            const ModelsCollection<CollectionModel> &models)
+    {
+        this->whereInEager(m_foreignKey, this->getKeys(models, m_localKey));
     }
 
 } // namespace Orm::Tiny::Relations
