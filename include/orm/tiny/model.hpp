@@ -875,7 +875,7 @@ namespace Orm::Tiny
         return model();
     }
 
-    // FUTURE LoadItem for Model::load() even it will have the same implmentation, or common parent and inherit silverqx
+    // FUTURE LoadItem for Model::load() even it will have the same implementation, or common parent and inherit silverqx
     template<typename Derived, AllRelationsConcept ...AllRelations>
     Derived &
     Model<Derived, AllRelations...>::load(const QVector<WithItem> &relations)
