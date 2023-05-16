@@ -215,8 +215,8 @@ namespace Orm::Tiny::Relations
             return;
 
         /* For belongs to relationships, which are essentially the inverse of has one
-               or has many relationships, we need to actually query on the primary key
-               of the related models matching on the foreign key that's on a parent. */
+           or has many relationships, we need to actually query on the primary key
+           of the related models matching on the foreign key that's on a parent. */
         const auto &table = this->m_related->getTable();
 
         this->m_query->where(DOT_IN.arg(table, m_ownerKey), EQ,
