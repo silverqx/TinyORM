@@ -401,6 +401,7 @@ namespace Relations
     constexpr Model *
     Relation<Model, Related>::toPointer(Model *const model)
     {
+        // I don't have enough courage to remove this
         Q_CHECK_PTR(model);
 
         return model;
@@ -410,6 +411,7 @@ namespace Relations
     constexpr const Model *
     Relation<Model, Related>::toPointer(const Model *const model)
     {
+        // I don't have enough courage to remove this
         Q_CHECK_PTR(model);
 
         return model;
