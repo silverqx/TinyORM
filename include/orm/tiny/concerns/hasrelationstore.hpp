@@ -106,7 +106,6 @@ namespace Orm::Tiny::Concerns
             /*! Called from Model::u_relations to pass reference to the relation
                 method, an enter point of the visitation. */
             template<RelationshipMethod<Derived> Method>
-            requires std::is_member_function_pointer_v<Method>
             void operator()(Method method);
 
         protected:
@@ -377,7 +376,6 @@ namespace Orm::Tiny::Concerns
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     template<RelationshipMethod<Derived> Method>
-    requires std::is_member_function_pointer_v<Method>
     void HasRelationStore<Derived, AllRelations...>::BaseRelationStore
                                                    ::operator()(const Method method)
     {
