@@ -1281,7 +1281,7 @@ TINYORM_END_COMMON_NAMESPACE
 /* The nullptr-s are not handled in the ModelsCollection class because eg.
    the ModelsCollection<Post> can't contain them and the pointer version
    the ModelsCollection<Post *> returned from the Model::getRelation() related
-   methods can't contain nullptr as well, these type of methods doesn't return
-   vector-s with the nullptr inside.
+   methods can't contain nullptr as well, these type of methods don't return
+   vector-s with the nullptr-s inside.
    If you have created vector that contains nullptr-s use the filter() method
    to remove them. */
