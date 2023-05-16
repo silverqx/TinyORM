@@ -977,6 +977,7 @@ namespace Types
 
         const ModelRawType *const model = toPointer(StorageType::constFirst());
 
+        // Only one place where the nullptr is checked, it's needed
         if (model == nullptr || !model->getAttributesHash().contains(key))
             return defaultValue;
 
@@ -993,6 +994,7 @@ namespace Types
 
         const ModelRawType *const model = toPointer(StorageType::constFirst());
 
+        // Only one place where the nullptr is checked, it's needed
         if (model == nullptr || !model->getAttributesHash().contains(key))
             return defaultValue;
 
@@ -1118,6 +1120,7 @@ namespace Types
     constexpr typename ModelsCollection<Model>::ModelRawType *
     ModelsCollection<Model>::toPointer(ModelRawType *const model) noexcept
     {
+        // Don't handle the nullptr
         return model;
     }
 
@@ -1125,6 +1128,7 @@ namespace Types
     constexpr const typename ModelsCollection<Model>::ModelRawType *
     ModelsCollection<Model>::toPointer(const ModelRawType *const model) noexcept
     {
+        // Don't handle the nullptr
         return model;
     }
 
