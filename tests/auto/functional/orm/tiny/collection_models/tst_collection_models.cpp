@@ -196,10 +196,14 @@ private:
     QString m_connection {};
 };
 
+/*! QString constant "album_id" (perf. reason, one time initialization). */
+Q_GLOBAL_STATIC_WITH_ARGS(QString, album_id_s, ("album_id")) // NOLINT(misc-use-anonymous-namespace)
 /*! Orm::Column constant "album_id" (perf. reason, one time initialization). */
-Q_GLOBAL_STATIC_WITH_ARGS(Orm::Column, album_id, ("album_id")) // NOLINT(misc-use-anonymous-namespace)
+Q_GLOBAL_STATIC_WITH_ARGS(Orm::Column, album_id, (std::in_place_index<0>, "album_id")) // NOLINT(misc-use-anonymous-namespace)
 /*! QString constant "albumImages" (perf. reason, one time initialization). */
 Q_GLOBAL_STATIC_WITH_ARGS(QString, albumImages, ("albumImages")) // NOLINT(misc-use-anonymous-namespace)
+/*! QString constant "ext" (perf. reason, one time initialization). */
+Q_GLOBAL_STATIC_WITH_ARGS(QString, ext, ("ext")) // NOLINT(misc-use-anonymous-namespace)
 
 /* private slots */
 
@@ -1085,7 +1089,7 @@ void tst_Collection_Models::load_lvalue() const
         for (AlbumImage *const image : images) {
             QVERIFY(image);
             QVERIFY(image->exists);
-            QCOMPARE(image->getAttribute("album_id"), albumId);
+            QCOMPARE(image->getAttribute(*album_id_s), albumId);
             QVERIFY(expectedImage.imagesId.contains(
                         image->getKey().value<AlbumImage::KeyType>()));
             QCOMPARE(typeid (AlbumImage *), typeid (image));
@@ -1149,11 +1153,11 @@ void tst_Collection_Models::load_lvalue_WithSelectConstraint() const
             const auto &attributes = image->getAttributes();
             QCOMPARE(attributes.size(), 3);
 
-            std::unordered_set<QString> expectedAttributes {ID, "album_id", "ext"};
+            std::unordered_set<QString> expectedAttributes {ID, *album_id_s, *ext};
             for (const auto &attribute : attributes)
                 QVERIFY(expectedAttributes.contains(attribute.key));
 
-            QCOMPARE(image->getAttribute("album_id"), albumId);
+            QCOMPARE(image->getAttribute(*album_id_s), albumId);
             QVERIFY(expectedImage.imagesId.contains(
                         image->getKey().value<AlbumImage::KeyType>()));
             QCOMPARE(typeid (AlbumImage *), typeid (image));
@@ -1176,9 +1180,9 @@ void tst_Collection_Models::load_lvalue_WithLambdaConstraint() const
 
     // Load the albumImages hasMany relation
     ModelsCollection<Album> &result =
-            albums.load({{"albumImages", [](auto &query)
+            albums.load({{*albumImages, [](auto &query)
                           {
-                              query.select({ID, "album_id", SIZE_});
+                              query.select({ID, *album_id_s, SIZE_});
                           }}});
     // Both must be lvalue references because of that the decltype ((images)) is used
     QVERIFY((std::is_same_v<decltype (result), decltype ((albums))>));
@@ -1221,11 +1225,11 @@ void tst_Collection_Models::load_lvalue_WithLambdaConstraint() const
             const auto &attributes = image->getAttributes();
             QCOMPARE(attributes.size(), 3);
 
-            std::unordered_set<QString> expectedAttributes {ID, "album_id", SIZE_};
+            std::unordered_set<QString> expectedAttributes {ID, *album_id_s, SIZE_};
             for (const auto &attribute : attributes)
                 QVERIFY(expectedAttributes.contains(attribute.key));
 
-            QCOMPARE(image->getAttribute("album_id"), albumId);
+            QCOMPARE(image->getAttribute(*album_id_s), albumId);
             QVERIFY(expectedImage.imagesId.contains(
                         image->getKey().value<AlbumImage::KeyType>()));
             QCOMPARE(typeid (AlbumImage *), typeid (image));
@@ -1316,7 +1320,7 @@ void tst_Collection_Models::load_rvalue() const
         for (AlbumImage *const image : images) {
             QVERIFY(image);
             QVERIFY(image->exists);
-            QCOMPARE(image->getAttribute("album_id"), albumId);
+            QCOMPARE(image->getAttribute(*album_id_s), albumId);
             QVERIFY(expectedImage.imagesId.contains(
                         image->getKey().value<AlbumImage::KeyType>()));
             QCOMPARE(typeid (AlbumImage *), typeid (image));
@@ -1387,11 +1391,11 @@ void tst_Collection_Models::load_rvalue_WithSelectConstraint() const
             const auto &attributes = image->getAttributes();
             QCOMPARE(attributes.size(), 3);
 
-            std::unordered_set<QString> expectedAttributes {ID, "album_id", "ext"};
+            std::unordered_set<QString> expectedAttributes {ID, *album_id_s, *ext};
             for (const auto &attribute : attributes)
                 QVERIFY(expectedAttributes.contains(attribute.key));
 
-            QCOMPARE(image->getAttribute("album_id"), albumId);
+            QCOMPARE(image->getAttribute(*album_id_s), albumId);
             QVERIFY(expectedImage.imagesId.contains(
                         image->getKey().value<AlbumImage::KeyType>()));
             QCOMPARE(typeid (AlbumImage *), typeid (image));
@@ -1414,9 +1418,9 @@ void tst_Collection_Models::load_rvalue_WithLambdaConstraint() const
 
     // Load the albumImages hasMany relation
     ModelsCollection<Album> &&result =
-            std::move(albums).load({{"albumImages", [](auto &query)
+            std::move(albums).load({{*albumImages, [](auto &query)
                                      {
-                                         query.select({ID, "album_id", SIZE_});
+                                         query.select({ID, *album_id_s, SIZE_});
                                      }}});
     /* In 99% cases it must be the same ModelsCollection (the same memory address) but
        I'm disabling the QVERIFY check because this is compiler specific, if the result
@@ -1465,11 +1469,11 @@ void tst_Collection_Models::load_rvalue_WithLambdaConstraint() const
             const auto &attributes = image->getAttributes();
             QCOMPARE(attributes.size(), 3);
 
-            std::unordered_set<QString> expectedAttributes {ID, "album_id", SIZE_};
+            std::unordered_set<QString> expectedAttributes {ID, *album_id_s, SIZE_};
             for (const auto &attribute : attributes)
                 QVERIFY(expectedAttributes.contains(attribute.key));
 
-            QCOMPARE(image->getAttribute("album_id"), albumId);
+            QCOMPARE(image->getAttribute(*album_id_s), albumId);
             QVERIFY(expectedImage.imagesId.contains(
                         image->getKey().value<AlbumImage::KeyType>()));
             QCOMPARE(typeid (AlbumImage *), typeid (image));
@@ -1635,7 +1639,7 @@ void tst_Collection_Models::whereNull_quint64() const
     QVERIFY(verifyIds(images, {6, 7, 8, 9}));
 
     // Get result
-    const auto result = images.whereNull("album_id");
+    const auto result = images.whereNull(*album_id_s);
 
     // Verify
     QCOMPARE(result.size(), 2);
@@ -1650,7 +1654,7 @@ void tst_Collection_Models::whereNotNull_quint64() const
     QVERIFY(verifyIds(images, {6, 7, 8, 9}));
 
     // Get result
-    const auto result = images.whereNotNull("album_id");
+    const auto result = images.whereNotNull(*album_id_s);
 
     // Verify
     QCOMPARE(result.size(), 2);
@@ -1665,7 +1669,7 @@ void tst_Collection_Models::whereIn_QString() const
     QVERIFY(verifyIds(images, {1, 2, 3, 4, 5, 6, 7, 8, 9}));
 
     // Get result
-    const auto result = images.whereIn<QString>("ext", {"png", "gif"});
+    const auto result = images.whereIn<QString>(*ext, {"png", "gif"});
 
     // Verify
     QCOMPARE(result.size(), 4);
@@ -1680,7 +1684,7 @@ void tst_Collection_Models::whereIn_quint64() const
     QVERIFY(verifyIds(images, {1, 2, 3, 4, 5, 6, 7, 8, 9}));
 
     // Get result
-    const auto result = images.whereIn<quint64>("album_id", {2, 3});
+    const auto result = images.whereIn<quint64>(*album_id_s, {2, 3});
 
     // Verify
     QCOMPARE(result.size(), 6);
@@ -1709,7 +1713,7 @@ void tst_Collection_Models::whereNotIn_QString() const
     QVERIFY(verifyIds(images, {1, 2, 3, 4, 5, 6, 7, 8, 9}));
 
     // Get result
-    const auto result = images.whereNotIn<QString>("ext", {"png", "gif"});
+    const auto result = images.whereNotIn<QString>(*ext, {"png", "gif"});
 
     // Verify
     QCOMPARE(result.size(), 5);
@@ -1724,7 +1728,7 @@ void tst_Collection_Models::whereNotIn_quint64() const
     QVERIFY(verifyIds(images, {1, 2, 3, 4, 5, 6, 7, 8, 9}));
 
     // Get result
-    const auto result = images.whereNotIn<quint64>("album_id", {2, 3});
+    const auto result = images.whereNotIn<quint64>(*album_id_s, {2, 3});
 
     // Verify
     QCOMPARE(result.size(), 3);
