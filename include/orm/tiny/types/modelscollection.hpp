@@ -305,10 +305,10 @@ namespace Types
 
     protected:
         /*! Convert the Model pointer to the pointer (no-op). */
-        constexpr static ModelRawType *toPointer(ModelRawType *model) noexcept;
+        constexpr static ModelRawType *toPointer(ModelRawType *model);
         /*! Convert the Model pointer to the pointer (no-op). */
         constexpr static const ModelRawType *
-        toPointer(const ModelRawType *model) noexcept;
+        toPointer(const ModelRawType *model);
         /*! Convert the Model reference to the pointer. */
         inline static ModelRawType *toPointer(ModelRawType &model) noexcept;
         /*! Convert the const Model reference to the pointer. */
@@ -1179,7 +1179,7 @@ namespace Types
 
     template<DerivedCollectionModel Model>
     constexpr typename ModelsCollection<Model>::ModelRawType *
-    ModelsCollection<Model>::toPointer(ModelRawType *const model) noexcept
+    ModelsCollection<Model>::toPointer(ModelRawType *const model)
     {
         // I don't have enough courage to remove this
         Q_CHECK_PTR(model);
@@ -1189,7 +1189,7 @@ namespace Types
 
     template<DerivedCollectionModel Model>
     constexpr const typename ModelsCollection<Model>::ModelRawType *
-    ModelsCollection<Model>::toPointer(const ModelRawType *const model) noexcept
+    ModelsCollection<Model>::toPointer(const ModelRawType *const model)
     {
         // I don't have enough courage to remove this
         Q_CHECK_PTR(model);
