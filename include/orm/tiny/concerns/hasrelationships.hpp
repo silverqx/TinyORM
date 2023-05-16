@@ -239,7 +239,7 @@ namespace Concerns
         /*! Compare the u_relations hash (size and keys only). */
         static bool compareURelations(
                     const QHash<QString, RelationVisitor> &left,
-                    const QHash<QString, RelationVisitor> &right) noexcept;
+                    const QHash<QString, RelationVisitor> &right);
 
         /* Data members */
         /*! Map of relation names to methods. */
@@ -891,7 +891,7 @@ namespace Concerns
     template<typename Derived, AllRelationsConcept ...AllRelations>
     bool HasRelationships<Derived, AllRelations...>::compareURelations(
             const QHash<QString, RelationVisitor> &left,
-            const QHash<QString, RelationVisitor> &right) noexcept
+            const QHash<QString, RelationVisitor> &right)
     {
         if (left.size() != right.size())
             return false;
