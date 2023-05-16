@@ -389,16 +389,16 @@ namespace Orm::Tiny::Relations
     private:
         /* Relation related operations */
         /*! Set the constraints for an eager load of the relation, common code. */
-        template<SameDerivedModel<Model> CollectionModel>
+        template<SameDerivedCollectionModel<Model> CollectionModel>
         void addEagerConstraintsInternal(const ModelsCollection<CollectionModel> &models);
 
         /*! Initialize the relation on a set of models, common code. */
-        template<SameDerivedModel<Model> CollectionModel>
+        template<SameDerivedCollectionModel<Model> CollectionModel>
         ModelsCollection<CollectionModel> &
         initRelationInternal(ModelsCollection<CollectionModel> &models,
                              const QString &relation) const;
         /*! Match the eagerly loaded results to their parents. */
-        template<SameDerivedModel<Model> CollectionModel>
+        template<SameDerivedCollectionModel<Model> CollectionModel>
         void matchInternal(
                 ModelsCollection<CollectionModel> &models,
                 ModelsCollection<Related> &&results, const QString &relation) const;
@@ -1555,7 +1555,7 @@ namespace Orm::Tiny::Relations
     /* Relation related operations */
 
     template<class Model, class Related, class PivotType>
-    template<SameDerivedModel<Model> CollectionModel>
+    template<SameDerivedCollectionModel<Model> CollectionModel>
     void BelongsToMany<Model, Related, PivotType>::addEagerConstraintsInternal(
             const ModelsCollection<CollectionModel> &models)
     {
@@ -1564,7 +1564,7 @@ namespace Orm::Tiny::Relations
     }
 
     template<class Model, class Related, class PivotType>
-    template<SameDerivedModel<Model> CollectionModel>
+    template<SameDerivedCollectionModel<Model> CollectionModel>
     ModelsCollection<CollectionModel> &
     BelongsToMany<Model, Related, PivotType>::initRelationInternal(
             ModelsCollection<CollectionModel> &models,
@@ -1582,7 +1582,7 @@ namespace Orm::Tiny::Relations
     }
 
     template<class Model, class Related, class PivotType>
-    template<SameDerivedModel<Model> CollectionModel>
+    template<SameDerivedCollectionModel<Model> CollectionModel>
     void BelongsToMany<Model, Related, PivotType>::matchInternal(
             ModelsCollection<CollectionModel> &models,
             ModelsCollection<Related> &&results, const QString &relation) const

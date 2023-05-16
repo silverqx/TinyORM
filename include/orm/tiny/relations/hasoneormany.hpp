@@ -96,7 +96,7 @@ namespace Orm::Tiny::Relations
     protected:
         /* Relation related operations */
         /*! Match the eagerly loaded results to their many parents. */
-        template<typename RelationType, SameDerivedModel<Model> CollectionModel>
+        template<typename RelationType, SameDerivedCollectionModel<Model> CollectionModel>
         void matchOneOrMany(
                 ModelsCollection<CollectionModel> &models,
                 ModelsCollection<Related> &&results, const QString &relation) const;
@@ -137,7 +137,7 @@ namespace Orm::Tiny::Relations
     private:
         /* Relation related operations */
         /*! Set the constraints for an eager load of the relation, common code. */
-        template<SameDerivedModel<Model> CollectionModel>
+        template<SameDerivedCollectionModel<Model> CollectionModel>
         void addEagerConstraintsInternal(const ModelsCollection<CollectionModel> &models);
     };
 
@@ -369,7 +369,7 @@ namespace Orm::Tiny::Relations
     /* Relation related operations */
 
     template<class Model, class Related>
-    template<typename RelationType, SameDerivedModel<Model> CollectionModel>
+    template<typename RelationType, SameDerivedCollectionModel<Model> CollectionModel>
     void HasOneOrMany<Model, Related>::matchOneOrMany(
             ModelsCollection<CollectionModel> &models,
             ModelsCollection<Related> &&results, const QString &relation) const
@@ -469,7 +469,7 @@ namespace Orm::Tiny::Relations
     /* Relation related operations */
 
     template<class Model, class Related>
-    template<SameDerivedModel<Model> CollectionModel>
+    template<SameDerivedCollectionModel<Model> CollectionModel>
     void HasOneOrMany<Model, Related>::addEagerConstraintsInternal(
             const ModelsCollection<CollectionModel> &models)
     {

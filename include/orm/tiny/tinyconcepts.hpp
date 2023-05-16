@@ -29,7 +29,7 @@ namespace Orm::Tiny
 
     /*! Concept for Derived Model and Model * for ModelsCollection. */
     template<typename T>
-    concept DerivedModel =
+    concept DerivedCollectionModel =
             // Common for all
             (!std::is_reference_v<T> && !std::is_const_v<T>) &&
              // For the Model *
@@ -44,8 +44,9 @@ namespace Orm::Tiny
     /*! Concept for Derived Model and Model * for ModelsCollection that has to be
         the same as another Derived Model. */
     template<typename T, typename U>
-    concept SameDerivedModel = DerivedModel<T> && DerivedModel<U> &&
-                               std::same_as<std::remove_pointer_t<T>, U>;
+    concept SameDerivedCollectionModel = DerivedCollectionModel<T> &&
+                                         DerivedCollectionModel<U> &&
+                                         std::same_as<std::remove_pointer_t<T>, U>;
 
 } // namespace Orm::Tiny
 

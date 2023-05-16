@@ -155,7 +155,7 @@ namespace Relations
         void whereInEager(const QString &key, const QVector<QVariant> &modelKeys);
 
         /*! Get all of the primary keys for the vector of models. */
-        template<SameDerivedModel<Model> CollectionModel>
+        template<SameDerivedCollectionModel<Model> CollectionModel>
         QVector<QVariant>
         getKeys(const ModelsCollection<CollectionModel> &models,
                 const QString &key = "") const;
@@ -374,7 +374,7 @@ namespace Relations
     }
 
     template<class Model, class Related>
-    template<SameDerivedModel<Model> CollectionModel>
+    template<SameDerivedCollectionModel<Model> CollectionModel>
     QVector<QVariant>
     Relation<Model, Related>::getKeys(const ModelsCollection<CollectionModel> &models,
                                       const QString &key) const

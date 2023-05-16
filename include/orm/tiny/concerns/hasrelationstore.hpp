@@ -76,7 +76,7 @@ namespace Orm::Tiny::Concerns
 
         /* Forward declarations */
         /*! The store for loading eager relations. */
-        template<SameDerivedModel<Derived> CollectionModel>
+        template<SameDerivedCollectionModel<Derived> CollectionModel>
         class EagerRelationStore;
         class PushRelationStore;
         class TouchOwnersRelationStore;
@@ -122,7 +122,7 @@ namespace Orm::Tiny::Concerns
         };
 
         /*! The store for loading eager relations. */
-        template<SameDerivedModel<Derived> CollectionModel>
+        template<SameDerivedCollectionModel<Derived> CollectionModel>
         class EagerRelationStore final : public BaseRelationStore
         {
             Q_DISABLE_COPY(EagerRelationStore)
@@ -287,7 +287,7 @@ namespace Orm::Tiny::Concerns
 
         /* Factory methods for Relation stores */
         /*! Factory method to create an eager store. */
-        template<SameDerivedModel<Derived> CollectionModel>
+        template<SameDerivedCollectionModel<Derived> CollectionModel>
         BaseRelationStore &
         createEagerStore(
                 const Tiny::TinyBuilder<Derived> &builder,
@@ -449,7 +449,7 @@ namespace Orm::Tiny::Concerns
     /* EagerRelationStore */
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
-    template<SameDerivedModel<Derived> CollectionModel>
+    template<SameDerivedCollectionModel<Derived> CollectionModel>
     HasRelationStore<Derived, AllRelations...>::EagerRelationStore<CollectionModel>
                                               ::EagerRelationStore(
             NotNull<HasRelationStore *> hasRelationStore,
@@ -465,7 +465,7 @@ namespace Orm::Tiny::Concerns
     {}
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
-    template<SameDerivedModel<Derived> CollectionModel>
+    template<SameDerivedCollectionModel<Derived> CollectionModel>
     template<RelationshipMethod<Derived> Method>
     void HasRelationStore<Derived, AllRelations...>::EagerRelationStore<CollectionModel>
                                                    ::visited(
@@ -757,7 +757,7 @@ namespace Orm::Tiny::Concerns
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
-    template<SameDerivedModel<Derived> CollectionModel>
+    template<SameDerivedCollectionModel<Derived> CollectionModel>
     typename HasRelationStore<Derived, AllRelations...>::BaseRelationStore &
     HasRelationStore<Derived, AllRelations...>::createEagerStore(
             const Tiny::TinyBuilder<Derived> &builder,

@@ -296,7 +296,7 @@ namespace Concerns
 
         /* Eager load relation store related */
         /*! Obtain a relationship instance for eager loading. */
-        template<SameDerivedModel<Derived> CollectionModel>
+        template<SameDerivedCollectionModel<Derived> CollectionModel>
         void eagerLoadRelationWithVisitor(
                 const WithItem &relation, const TinyBuilder<Derived> &builder,
                 ModelsCollection<CollectionModel> &models);
@@ -1026,7 +1026,7 @@ namespace Concerns
     /* Eager load relation store related */
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
-    template<SameDerivedModel<Derived> CollectionModel>
+    template<SameDerivedCollectionModel<Derived> CollectionModel>
     void HasRelationships<Derived, AllRelations...>::eagerLoadRelationWithVisitor(
             const WithItem &relation, const TinyBuilder<Derived> &builder,
             ModelsCollection<CollectionModel> &models)

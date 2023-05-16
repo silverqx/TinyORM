@@ -84,7 +84,7 @@ namespace Orm::Tiny::Relations
     private:
         /* Relation related operations */
         /*! Initialize the relation on a set of models, common code. */
-        template<SameDerivedModel<Model> CollectionModel>
+        template<SameDerivedCollectionModel<Model> CollectionModel>
         ModelsCollection<CollectionModel> &
         initRelationInternal(ModelsCollection<CollectionModel> &models,
                              const QString &relation) const;
@@ -206,7 +206,7 @@ namespace Orm::Tiny::Relations
     /* Relation related operations */
 
     template<class Model, class Related>
-    template<SameDerivedModel<Model> CollectionModel>
+    template<SameDerivedCollectionModel<Model> CollectionModel>
     ModelsCollection<CollectionModel> &
     HasOne<Model, Related>::initRelationInternal(
             ModelsCollection<CollectionModel> &models,

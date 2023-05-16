@@ -24,7 +24,7 @@ namespace Relations
 }
 namespace Types
 {
-    template<DerivedModel Model>
+    template<DerivedCollectionModel Model>
     class ModelsCollection;
 }
 

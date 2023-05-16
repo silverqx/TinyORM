@@ -42,7 +42,7 @@ namespace Types
     };
 
     /*! Models collection (QVector) with additional handy methods. */
-    template<DerivedModel Model>
+    template<DerivedCollectionModel Model>
     class ModelsCollection : public QVector<Model>
     {
     public:
@@ -336,7 +336,7 @@ namespace Types
 
     /* Constructors */
 
-    template<DerivedModel Model>
+    template<DerivedCollectionModel Model>
     ModelsCollection<Model>::ModelsCollection(const QVector<Model> &models)
     requires (!std::is_pointer_v<Model>)
     {
@@ -347,35 +347,35 @@ namespace Types
     /* Redeclared overriden methods from the base class */
 
 #if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
-    template<DerivedModel Model>
+    template<DerivedCollectionModel Model>
     Model &
     ModelsCollection<Model>::first()
     {
         return StorageType::first();
     }
 
-    template<DerivedModel Model>
+    template<DerivedCollectionModel Model>
     const Model &
     ModelsCollection<Model>::first() const noexcept
     {
         return StorageType::first();
     }
 
-    template<DerivedModel Model>
+    template<DerivedCollectionModel Model>
     ModelsCollection<Model>
     ModelsCollection<Model>::first(const size_type count) const
     {
         return StorageType::first(count);
     }
 
-    template<DerivedModel Model>
+    template<DerivedCollectionModel Model>
     Model
     ModelsCollection<Model>::value(const size_type index) const
     {
         return StorageType::value(index);
     }
 
-    template<DerivedModel Model>
+    template<DerivedCollectionModel Model>
     Model
     ModelsCollection<Model>::value(const size_type index,
                                    parameter_type defaultValue) const
@@ -383,28 +383,28 @@ namespace Types
         return StorageType::value(index, defaultValue);
     }
 #else
-    template<DerivedModel Model>
+    template<DerivedCollectionModel Model>
     Model &
     ModelsCollection<Model>::first()
     {
         return StorageType::first();
     }
 
-    template<DerivedModel Model>
+    template<DerivedCollectionModel Model>
     const Model &
     ModelsCollection<Model>::first() const
     {
         return StorageType::first();
     }
 
-    template<DerivedModel Model>
+    template<DerivedCollectionModel Model>
     Model
     ModelsCollection<Model>::value(const size_type index) const
     {
         return StorageType::value(index);
     }
 
-    template<DerivedModel Model>
+    template<DerivedCollectionModel Model>
     Model
     ModelsCollection<Model>::value(const size_type index,
                                    parameter_type defaultValue) const
@@ -415,7 +415,7 @@ namespace Types
 
     /* BaseCollection */
 
-    template<DerivedModel Model>
+    template<DerivedCollectionModel Model>
     ModelsCollection<typename ModelsCollection<Model>::ModelRawType *>
     ModelsCollection<Model>::filter(
             const std::function<bool(ModelRawType *, size_type)> &callback)
@@ -435,7 +435,7 @@ namespace Types
         return result;
     }
 
-    template<DerivedModel Model>
+    template<DerivedCollectionModel Model>
     ModelsCollection<typename ModelsCollection<Model>::ModelRawType *>
     ModelsCollection<Model>::filter(
             const std::function<bool(ModelRawType *)> &callback)
@@ -453,7 +453,7 @@ namespace Types
         return result;
     }
 
-    template<DerivedModel Model>
+    template<DerivedCollectionModel Model>
     ModelsCollection<typename ModelsCollection<Model>::ModelRawType *>
     ModelsCollection<Model>::filter() const requires std::is_pointer_v<Model>
     {
@@ -467,7 +467,7 @@ namespace Types
         return result;
     }
 
-    template<DerivedModel Model>
+    template<DerivedCollectionModel Model>
     typename ModelsCollection<Model>::ModelRawType *
     ModelsCollection<Model>::first(const std::function<bool(ModelRawType *)> &callback,
                                    ModelRawType *const defaultModel)
@@ -485,7 +485,7 @@ namespace Types
         return defaultModel;
     }
 
-    template<DerivedModel Model>
+    template<DerivedCollectionModel Model>
     QString
     ModelsCollection<Model>::implode(const QString &column, const QString &glue)
     {
@@ -504,7 +504,7 @@ namespace Types
 
     /* Collection */
 
-    template<DerivedModel Model>
+    template<DerivedCollectionModel Model>
     QVector<QVariant>
     ModelsCollection<Model>::modelKeys() const
     {
@@ -516,7 +516,7 @@ namespace Types
                 | ranges::to<QVector<QVariant>>();
     }
 
-    template<DerivedModel Model>
+    template<DerivedCollectionModel Model>
     template<typename T>
     QVector<T>
     ModelsCollection<Model>::modelKeys() const
@@ -529,7 +529,7 @@ namespace Types
                 | ranges::to<QVector<T>>();
     }
 
-    template<DerivedModel Model>
+    template<DerivedCollectionModel Model>
     ModelsCollection<typename ModelsCollection<Model>::ModelRawType *>
     ModelsCollection<Model>::map(
             const std::function<ModelRawType *(ModelRawType *, size_type)> &callback)
@@ -547,7 +547,7 @@ namespace Types
         return result;
     }
 
-    template<DerivedModel Model>
+    template<DerivedCollectionModel Model>
     ModelsCollection<typename ModelsCollection<Model>::ModelRawType *>
     ModelsCollection<Model>::map(
             const std::function<ModelRawType *(ModelRawType *)> &callback)
@@ -562,7 +562,7 @@ namespace Types
         return result;
     }
 
-    template<DerivedModel Model>
+    template<DerivedCollectionModel Model>
     std::unordered_map<typename ModelsCollection<Model>::KeyType,
                        typename ModelsCollection<Model>::ModelRawType *>
     ModelsCollection<Model>::mapWithModelKeys()
@@ -576,7 +576,7 @@ namespace Types
                 | ranges::to<std::unordered_map<KeyType, ModelRawType *>>();
     }
 
-    template<DerivedModel Model>
+    template<DerivedCollectionModel Model>
     template<typename K, typename V>
     std::unordered_map<K, V>
     ModelsCollection<Model>::mapWithKeys(
@@ -596,7 +596,7 @@ namespace Types
         return result;
     }
 
-    template<DerivedModel Model>
+    template<DerivedCollectionModel Model>
     ModelsCollection<typename ModelsCollection<Model>::ModelRawType *>
     ModelsCollection<Model>::only(const std::unordered_set<KeyType> &ids)
     {
@@ -616,7 +616,7 @@ namespace Types
         return result;
     }
 
-    template<DerivedModel Model>
+    template<DerivedCollectionModel Model>
     ModelsCollection<typename ModelsCollection<Model>::ModelRawType *>
     ModelsCollection<Model>::except(const std::unordered_set<KeyType> &ids)
     {
@@ -639,7 +639,7 @@ namespace Types
         return result;
     }
 
-    template<DerivedModel Model>
+    template<DerivedCollectionModel Model>
     QVector<QVariant>
     ModelsCollection<Model>::pluck(const QString &column)
     {
@@ -661,7 +661,7 @@ namespace Types
         return result;
     }
 
-    template<DerivedModel Model>
+    template<DerivedCollectionModel Model>
     template<typename T>
     std::map<T, QVariant>
     ModelsCollection<Model>::pluck(const QString &column, const QString &key)
@@ -687,7 +687,7 @@ namespace Types
         return result;
     }
 
-    template<DerivedModel Model>
+    template<DerivedCollectionModel Model>
     bool ModelsCollection<Model>::contains(const KeyType id)
     {
         return ranges::contains(*this, true, [id](ModelLoopType model)
@@ -696,14 +696,14 @@ namespace Types
         });
     }
 
-    template<DerivedModel Model>
+    template<DerivedCollectionModel Model>
     bool ModelsCollection<Model>::contains(const QVariant &id)
     {
         // Don't handle the null and not valid
         return contains(castKey(id));
     }
 
-    template<DerivedModel Model>
+    template<DerivedCollectionModel Model>
     bool
     ModelsCollection<Model>::contains(
             const std::function<bool(ModelRawType *)> &callback)
@@ -716,7 +716,7 @@ namespace Types
         return false;
     }
 
-    template<DerivedModel Model>
+    template<DerivedCollectionModel Model>
     bool ModelsCollection<Model>::contains(const std::optional<ModelRawType> &model)
     {
         // Early return
@@ -729,19 +729,19 @@ namespace Types
         });
     }
 
-    template<DerivedModel Model>
+    template<DerivedCollectionModel Model>
     bool ModelsCollection<Model>::doesntContain(const KeyType id)
     {
         return !contains(id);
     }
 
-    template<DerivedModel Model>
+    template<DerivedCollectionModel Model>
     bool ModelsCollection<Model>::doesntContain(const QVariant &id)
     {
         return !contains(castKey(id));
     }
 
-    template<DerivedModel Model>
+    template<DerivedCollectionModel Model>
     bool
     ModelsCollection<Model>::doesntContain(
             const std::function<bool(ModelRawType *)> &callback)
@@ -749,13 +749,13 @@ namespace Types
         return !contains(callback);
     }
 
-    template<DerivedModel Model>
+    template<DerivedCollectionModel Model>
     bool ModelsCollection<Model>::doesntContain(const std::optional<ModelRawType> &model)
     {
         return !contains(model);
     }
 
-    template<DerivedModel Model>
+    template<DerivedCollectionModel Model>
     typename ModelsCollection<Model>::ModelRawType *
     ModelsCollection<Model>::find(const KeyType id, ModelRawType *const defaultModel)
     {
@@ -766,7 +766,7 @@ namespace Types
         return defaultModel;
     }
 
-    template<DerivedModel Model>
+    template<DerivedCollectionModel Model>
     typename ModelsCollection<Model>::ModelRawType *
     ModelsCollection<Model>::find(const ModelRawType &model,
                                   ModelRawType *const defaultModel)
@@ -778,14 +778,14 @@ namespace Types
         return defaultModel;
     }
 
-    template<DerivedModel Model>
+    template<DerivedCollectionModel Model>
     ModelsCollection<typename ModelsCollection<Model>::ModelRawType *>
     ModelsCollection<Model>::find(const std::unordered_set<KeyType> &ids)
     {
         return only(ids);
     }
 
-    template<DerivedModel Model>
+    template<DerivedCollectionModel Model>
     std::unique_ptr<TinyBuilder<typename ModelsCollection<Model>::ModelRawType>>
     ModelsCollection<Model>::toQuery()
     {
@@ -803,7 +803,7 @@ namespace Types
 
     /* EnumeratesValues */
 
-    template<DerivedModel Model>
+    template<DerivedCollectionModel Model>
     ModelsCollection<typename ModelsCollection<Model>::ModelRawType *>
     ModelsCollection<Model>::reject(
             const std::function<bool(ModelRawType *, size_type)> &callback)
@@ -823,7 +823,7 @@ namespace Types
         return result;
     }
 
-    template<DerivedModel Model>
+    template<DerivedCollectionModel Model>
     ModelsCollection<typename ModelsCollection<Model>::ModelRawType *>
     ModelsCollection<Model>::reject(const std::function<bool(ModelRawType *)> &callback)
     {
@@ -840,7 +840,7 @@ namespace Types
         return result;
     }
 
-    template<DerivedModel Model>
+    template<DerivedCollectionModel Model>
     template<typename V>
     ModelsCollection<typename ModelsCollection<Model>::ModelRawType *>
     ModelsCollection<Model>::where(const QString &key, const QString &comparison,
@@ -849,7 +849,7 @@ namespace Types
         return filter(operatorForWhere(key, comparison, std::move(value)));
     }
 
-    template<DerivedModel Model>
+    template<DerivedCollectionModel Model>
     template<typename V>
     ModelsCollection<typename ModelsCollection<Model>::ModelRawType *>
     ModelsCollection<Model>::whereEq(const QString &key, V value)
@@ -857,7 +857,7 @@ namespace Types
         return filter(operatorForWhere(key, EQ, std::move(value)));
     }
 
-    template<DerivedModel Model>
+    template<DerivedCollectionModel Model>
     ModelsCollection<typename ModelsCollection<Model>::ModelRawType *>
     ModelsCollection<Model>::whereNull(const QString &key)
     {
@@ -867,7 +867,7 @@ namespace Types
         });
     }
 
-    template<DerivedModel Model>
+    template<DerivedCollectionModel Model>
     ModelsCollection<typename ModelsCollection<Model>::ModelRawType *>
     ModelsCollection<Model>::whereNotNull(const QString &key)
     {
@@ -877,7 +877,7 @@ namespace Types
         });
     }
 
-    template<DerivedModel Model>
+    template<DerivedCollectionModel Model>
     template<typename T>
     ModelsCollection<typename ModelsCollection<Model>::ModelRawType *>
     ModelsCollection<Model>::whereIn(const QString &key,
@@ -893,7 +893,7 @@ namespace Types
         });
     }
 
-    template<DerivedModel Model>
+    template<DerivedCollectionModel Model>
     template<typename T>
     ModelsCollection<typename ModelsCollection<Model>::ModelRawType *>
     ModelsCollection<Model>::whereNotIn(const QString &key,
@@ -909,7 +909,7 @@ namespace Types
         });
     }
 
-    template<DerivedModel Model>
+    template<DerivedCollectionModel Model>
     template<typename T>
     ModelsCollection<typename ModelsCollection<Model>::ModelRawType *>
     ModelsCollection<Model>::whereBetween(
@@ -929,7 +929,7 @@ namespace Types
         });
     }
 
-    template<DerivedModel Model>
+    template<DerivedCollectionModel Model>
     template<typename T>
     ModelsCollection<typename ModelsCollection<Model>::ModelRawType *>
     ModelsCollection<Model>::whereNotBetween(
@@ -949,7 +949,7 @@ namespace Types
         });
     }
 
-    template<DerivedModel Model>
+    template<DerivedCollectionModel Model>
     template<typename V>
     typename ModelsCollection<Model>::ModelRawType *
     ModelsCollection<Model>::firstWhere(const QString &key, const QString &comparison,
@@ -958,7 +958,7 @@ namespace Types
         return first(operatorForWhere(key, comparison, std::move(value)));
     }
 
-    template<DerivedModel Model>
+    template<DerivedCollectionModel Model>
     template<typename V>
     typename ModelsCollection<Model>::ModelRawType *
     ModelsCollection<Model>::firstWhereEq(const QString &key, V value)
@@ -966,7 +966,7 @@ namespace Types
         return first(operatorForWhere(key, EQ, std::move(value)));
     }
 
-    template<DerivedModel Model>
+    template<DerivedCollectionModel Model>
     QVariant
     ModelsCollection<Model>::value(const QString &key,
                                    const QVariant &defaultValue) const
@@ -984,7 +984,7 @@ namespace Types
         return model->getAttribute(key);
     }
 
-    template<DerivedModel Model>
+    template<DerivedCollectionModel Model>
     template<typename T>
     T ModelsCollection<Model>::value(const QString &key, const T &defaultValue) const
     {
@@ -1001,7 +1001,7 @@ namespace Types
         return model->getAttribute(key).template value<T>();
     }
 
-    template<DerivedModel Model>
+    template<DerivedCollectionModel Model>
     ModelsCollection<Model> &
     ModelsCollection<Model>::each(const std::function<void(ModelRawType *)> &callback) &
     {
@@ -1011,7 +1011,7 @@ namespace Types
         return *this;
     }
 
-    template<DerivedModel Model>
+    template<DerivedCollectionModel Model>
     ModelsCollection<Model> &
     ModelsCollection<Model>::each(
             const std::function<void(ModelRawType *, size_type)> &callback) &
@@ -1022,7 +1022,7 @@ namespace Types
         return *this;
     }
 
-    template<DerivedModel Model>
+    template<DerivedCollectionModel Model>
     ModelsCollection<Model> &
     ModelsCollection<Model>::each(const EachBoolCallbackType /*unused */,
                                   const std::function<bool(ModelRawType *)> &callback) &
@@ -1034,7 +1034,7 @@ namespace Types
         return *this;
     }
 
-    template<DerivedModel Model>
+    template<DerivedCollectionModel Model>
     ModelsCollection<Model> &
     ModelsCollection<Model>::each(
             const EachBoolCallbackType /*unused */,
@@ -1047,7 +1047,7 @@ namespace Types
         return *this;
     }
 
-    template<DerivedModel Model>
+    template<DerivedCollectionModel Model>
     ModelsCollection<Model> &&
     ModelsCollection<Model>::each(const std::function<void(ModelRawType *)> &callback) &&
     {
@@ -1057,7 +1057,7 @@ namespace Types
         return std::move(*this);
     }
 
-    template<DerivedModel Model>
+    template<DerivedCollectionModel Model>
     ModelsCollection<Model> &&
     ModelsCollection<Model>::each(
             const std::function<void(ModelRawType *, size_type)> &callback) &&
@@ -1068,7 +1068,7 @@ namespace Types
         return std::move(*this);
     }
 
-    template<DerivedModel Model>
+    template<DerivedCollectionModel Model>
     ModelsCollection<Model> &&
     ModelsCollection<Model>::each(
             const EachBoolCallbackType /*unused */,
@@ -1081,7 +1081,7 @@ namespace Types
         return std::move(*this);
     }
 
-    template<DerivedModel Model>
+    template<DerivedCollectionModel Model>
     ModelsCollection<Model> &&
     ModelsCollection<Model>::each(
             const EachBoolCallbackType /*unused */,
@@ -1094,7 +1094,7 @@ namespace Types
         return std::move(*this);
     }
 
-    template<DerivedModel Model>
+    template<DerivedCollectionModel Model>
     ModelsCollection<Model> &
     ModelsCollection<Model>::tap(
             const std::function<void(ModelsCollection &)> &callback) &
@@ -1104,7 +1104,7 @@ namespace Types
         return *this;
     }
 
-    template<DerivedModel Model>
+    template<DerivedCollectionModel Model>
     ModelsCollection<Model> &&
     ModelsCollection<Model>::tap(
             const std::function<void(ModelsCollection &)> &callback) &&
@@ -1116,7 +1116,7 @@ namespace Types
 
     /* protected */
 
-    template<DerivedModel Model>
+    template<DerivedCollectionModel Model>
     constexpr typename ModelsCollection<Model>::ModelRawType *
     ModelsCollection<Model>::toPointer(ModelRawType *const model) noexcept
     {
@@ -1126,7 +1126,7 @@ namespace Types
         return model;
     }
 
-    template<DerivedModel Model>
+    template<DerivedCollectionModel Model>
     constexpr const typename ModelsCollection<Model>::ModelRawType *
     ModelsCollection<Model>::toPointer(const ModelRawType *const model) noexcept
     {
@@ -1136,42 +1136,42 @@ namespace Types
         return model;
     }
 
-    template<DerivedModel Model>
+    template<DerivedCollectionModel Model>
     typename ModelsCollection<Model>::ModelRawType *
     ModelsCollection<Model>::toPointer(ModelRawType &model) noexcept
     {
         return &model;
     }
 
-    template<DerivedModel Model>
+    template<DerivedCollectionModel Model>
     const typename ModelsCollection<Model>::ModelRawType *
     ModelsCollection<Model>::toPointer(const ModelRawType &model) noexcept
     {
         return &model;
     }
 
-    template<DerivedModel Model>
+    template<DerivedCollectionModel Model>
     ModelsCollection<Model>::KeyType
     ModelsCollection<Model>::castKey(const QVariant &key)
     {
         return key.template value<KeyType>();
     }
 
-    template<DerivedModel Model>
+    template<DerivedCollectionModel Model>
     ModelsCollection<Model>::KeyType
     ModelsCollection<Model>::getKeyCasted(const ModelRawType *const model)
     {
         return castKey(getKey(model));
     }
 
-    template<DerivedModel Model>
+    template<DerivedCollectionModel Model>
     ModelsCollection<Model>::KeyType
     ModelsCollection<Model>::getKeyCasted(const ModelRawType &model)
     {
         return castKey(getKey(model));
     }
 
-    template<DerivedModel Model>
+    template<DerivedCollectionModel Model>
     QVariant
     ModelsCollection<Model>::getKey(const ModelRawType *const model)
     {
@@ -1180,14 +1180,14 @@ namespace Types
         return model->getKey();
     }
 
-    template<DerivedModel Model>
+    template<DerivedCollectionModel Model>
     QVariant
     ModelsCollection<Model>::getKey(const ModelRawType &model)
     {
         return model.getKey();
     }
 
-    template<DerivedModel Model>
+    template<DerivedCollectionModel Model>
     template<typename V>
     std::function<bool(typename ModelsCollection<Model>::ModelRawType *)>
     ModelsCollection<Model>::operatorForWhere(
@@ -1226,7 +1226,7 @@ namespace Types
         };
     }
 
-    template<DerivedModel Model>
+    template<DerivedCollectionModel Model>
     ModelsCollection<typename ModelsCollection<Model>::ModelRawType *>
     ModelsCollection<Model>::toPointersCollection() requires (!std::is_pointer_v<Model>)
     {
@@ -1239,7 +1239,7 @@ namespace Types
         return result;
     }
 
-    template<DerivedModel Model>
+    template<DerivedCollectionModel Model>
     ModelsCollection<typename ModelsCollection<Model>::ModelRawType *>
     ModelsCollection<Model>::toPointersCollection() const noexcept
     requires std::is_pointer_v<Model>
@@ -1247,7 +1247,7 @@ namespace Types
         return *this;
     }
 
-    template<DerivedModel Model>
+    template<DerivedCollectionModel Model>
     void ModelsCollection<Model>::throwIfInvalidWhereOperator(const QString &comparison)
     {
         const std::unordered_set<QString> allowedOperators {

@@ -236,13 +236,13 @@ namespace Orm::Tiny
         ModelsCollection<Model> getModels(const QVector<Column> &columns = {ASTERISK});
 
         /*! Eager load the relationships for the models. */
-        template<SameDerivedModel<Model> CollectionModel>
+        template<SameDerivedCollectionModel<Model> CollectionModel>
         void eagerLoadRelations(ModelsCollection<CollectionModel> &models);
         /*! Eager load the relationships on the model. */
         void eagerLoadRelations(Model &model);
 
         /*! Eagerly load the relationship on a set of models. */
-        template<typename Relation, SameDerivedModel<Model> CollectionModel>
+        template<typename Relation, SameDerivedCollectionModel<Model> CollectionModel>
         void eagerLoadRelationVisited(
                 Relation &&relation, ModelsCollection<CollectionModel> &models,
                 const WithItem &relationItem) const;
@@ -1055,7 +1055,7 @@ namespace Orm::Tiny
        Also, look the NOTES.txt for eagerLoadRelations() and Model::load() history. */
 
     template<typename Model>
-    template<SameDerivedModel<Model> CollectionModel>
+    template<SameDerivedCollectionModel<Model> CollectionModel>
     void Builder<Model>::eagerLoadRelations(ModelsCollection<CollectionModel> &models)
     {
         // Nothing to load
@@ -1093,7 +1093,7 @@ namespace Orm::Tiny
     }
 
     template<typename Model>
-    template<typename Relation, SameDerivedModel<Model> CollectionModel>
+    template<typename Relation, SameDerivedCollectionModel<Model> CollectionModel>
     void Builder<Model>::eagerLoadRelationVisited(
             Relation &&relation, ModelsCollection<CollectionModel> &models,
             const WithItem &relationItem) const
