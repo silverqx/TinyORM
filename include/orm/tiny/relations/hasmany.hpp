@@ -149,8 +149,8 @@ namespace Orm::Tiny::Relations
     HasMany<Model, Related>::getResults() const
     {
         // If a Model doesn't contain primary key (eg. empty Model instance)
-        if (const auto key = this->getParentKey();
-            !key.isValid() || key.isNull()
+        if (const auto parentKey = this->getParentKey();
+            !parentKey.isValid() || parentKey.isNull()
         )
             return ModelsCollection<Related>();
 

@@ -530,8 +530,8 @@ namespace Orm::Tiny::Relations
     BelongsToMany<Model, Related, PivotType>::getResults() const
     {
         // If a Model doesn't contain primary key (eg. empty Model instance)
-        if (const auto key = this->m_parent->getAttribute(m_parentKey);
-            !key.isValid() || key.isNull()
+        if (const auto parentKey = this->m_parent->getAttribute(m_parentKey);
+            !parentKey.isValid() || parentKey.isNull()
         )
             return ModelsCollection<Related>();
 
@@ -1598,12 +1598,12 @@ namespace Orm::Tiny::Relations
         for (ModelLoopType model : models) {
             auto *const modelPointer = Relation<Model,Related>::toPointer(model);
 
-            if (const auto key = modelPointer->getAttribute(m_parentKey)
+            if (const auto parentKey = modelPointer->getAttribute(m_parentKey)
                 .template value<typename Model::KeyType>();
-                dictionary.contains(key)
+                dictionary.contains(parentKey)
             )
                 modelPointer->template setRelation<Related>(
-                            relation, std::move(dictionary.find(key).value()));
+                            relation, std::move(dictionary.find(parentKey).value()));
         }
     }
 

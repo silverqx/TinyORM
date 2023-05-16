@@ -290,8 +290,8 @@ namespace Orm::Tiny::Relations
     BelongsTo<Model, Related>::getResults() const
     {
         // Model doesn't contain foreign key ( eg empty Model instance )
-        if (const auto foreign = m_child->getAttribute(m_foreignKey);
-            !foreign.isValid() || foreign.isNull()
+        if (const auto foreignKey = m_child->getAttribute(m_foreignKey);
+            !foreignKey.isValid() || foreignKey.isNull()
         )
             return this->getDefaultFor(*m_child);
 
@@ -522,14 +522,14 @@ namespace Orm::Tiny::Relations
         for (ModelLoopType model : models) {
             auto *const modelPointer = Relation<Model,Related>::toPointer(model);
 
-            if (const auto foreign = modelPointer->getAttribute(m_foreignKey)
-                .template value<typename Model::KeyType>();
-                dictionary.contains(foreign)
+            if (const auto foreignKey = modelPointer->getAttribute(m_foreignKey)
+                                        .template value<typename Model::KeyType>();
+                dictionary.contains(foreignKey)
             )
                 modelPointer->setRelation(
                             relation,
                             std::optional<Related>(
-                                std::move(dictionary.find(foreign).value())));
+                                std::move(dictionary.find(foreignKey).value())));
         }
     }
 

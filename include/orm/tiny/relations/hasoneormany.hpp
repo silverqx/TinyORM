@@ -385,12 +385,12 @@ namespace Orm::Tiny::Relations
         for (ModelLoopType model : models) {
             auto *const modelPointer = Relation<Model,Related>::toPointer(model);
 
-            if (const auto key = modelPointer->getAttribute(m_localKey)
-                                 .template value<typename Model::KeyType>();
-                dictionary.contains(key)
+            if (const auto parentKey = modelPointer->getAttribute(m_localKey)
+                                       .template value<typename Model::KeyType>();
+                dictionary.contains(parentKey)
             )
                 modelPointer->setRelation(relation,
-                                          std::move(dictionary.find(key).value()));
+                                          std::move(dictionary.find(parentKey).value()));
         }
     }
 
@@ -405,15 +405,15 @@ namespace Orm::Tiny::Relations
 
         for (auto &&result : results)
             if constexpr (
-                const auto foreign = result.getAttribute(getForeignKeyName())
-                                     .template value<typename Model::KeyType>();
+                const auto foreignKey = result.getAttribute(getForeignKeyName())
+                                        .template value<typename Model::KeyType>();
                 std::is_same_v<RelationType, ModelsCollection<Related>>
             )
-                dictionary[foreign] << std::move(result);
+                dictionary[foreignKey] << std::move(result);
 
             else
                 // Moves to the std::optional
-                dictionary.insert(foreign, std::move(result));
+                dictionary.insert(foreignKey, std::move(result));
 
         return dictionary;
     }
