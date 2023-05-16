@@ -278,9 +278,14 @@ namespace Orm::Tiny::Relations
 
         /*! Build model dictionary keyed by the parent's primary key. */
         for (auto &&result : results)
-            dictionary.insert(result.getAttribute(m_ownerKey)
-                              .template value<typename Model::KeyType>(),
-                              std::move(result));
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+            dictionary.emplace(
+#else
+            dictionary.insert(
+#endif
+                        result.getAttribute(m_ownerKey)
+                        .template value<typename Model::KeyType>(),
+                        std::move(result));
 
         return dictionary;
     }

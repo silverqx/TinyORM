@@ -412,8 +412,12 @@ namespace Orm::Tiny::Relations
                 dictionary[foreignKey] << std::move(result);
 
             else
-                // Moves to the std::optional
+                // Move to the std::optional
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+                dictionary.emplace(foreignKey, std::move(result));
+#else
                 dictionary.insert(foreignKey, std::move(result));
+#endif
 
         return dictionary;
     }
