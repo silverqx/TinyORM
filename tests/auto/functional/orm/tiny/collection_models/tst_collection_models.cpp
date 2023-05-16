@@ -18,6 +18,7 @@ using Orm::Constants::SPACE_IN;
 
 using Orm::Exceptions::InvalidArgumentError;
 using Orm::Tiny::ConnectionOverride;
+using Orm::Tiny::Exceptions::RelationNotFoundError;
 using Orm::Tiny::Types::ModelsCollection;
 
 using TypeUtils = Orm::Utils::Type;
@@ -90,6 +91,17 @@ private Q_SLOTS:
     void find_Ids() const;
 
     void toQuery() const;
+
+    /* Collection - Relations related */
+    void load_lvalue() const;
+    void load_lvalue_WithSelectConstraint() const;
+    void load_lvalue_WithLambdaConstraint() const;
+    void load_lvalue_NonExistentRelation_Failed() const;
+
+    void load_rvalue() const;
+    void load_rvalue_WithSelectConstraint() const;
+    void load_rvalue_WithLambdaConstraint() const;
+    void load_rvalue_NonExistentRelation_Failed() const;
 
     /* EnumeratesValues */
     void reject() const;
@@ -186,6 +198,8 @@ private:
 
 /*! Orm::Column constant "album_id" (perf. reason, one time initialization). */
 Q_GLOBAL_STATIC_WITH_ARGS(Orm::Column, album_id, ("album_id")) // NOLINT(misc-use-anonymous-namespace)
+/*! QString constant "albumImages" (perf. reason, one time initialization). */
+Q_GLOBAL_STATIC_WITH_ARGS(QString, albumImages, ("albumImages")) // NOLINT(misc-use-anonymous-namespace)
 
 /* private slots */
 
@@ -1005,6 +1019,488 @@ void tst_Collection_Models::toQuery() const
     QCOMPARE(typeid (ModelsCollection<AlbumImage>), typeid (images));
     QVERIFY(verifyIds(images, {2, 3, 4, 5, 6}));
     QCOMPARE(result.constFirst().getAttributes().size(), 7);
+}
+
+/* Collection - Relations related */
+
+/*! Expected album images many type relation after the load() method invoked. */
+struct ExpectedImages
+{
+    /*! Determine whether a album has images. */
+    bool hasImages;
+    /*! Number of images. */
+    std::size_t imagesSize;
+    /*! Images ID. */
+    std::unordered_set<AlbumImage::KeyType> imagesId;
+};
+
+void tst_Collection_Models::load_lvalue() const
+{
+    auto albums = Album::without(*albumImages)->findMany({1, 2, 4});
+    QCOMPARE(albums.size(), 3);
+    QCOMPARE(typeid (ModelsCollection<Album>), typeid (albums));
+    QVERIFY(verifyIds(albums, {1, 2, 4}));
+
+    // Verify before
+    QVERIFY(std::ranges::all_of(albums, [](const Album &album)
+    {
+        return album.getRelations().empty();
+    }));
+
+    // Load the albumImages hasMany relation
+    ModelsCollection<Album> &result = albums.load(*albumImages);
+    // Both must be lvalue references because of that the decltype ((images)) is used
+    QVERIFY((std::is_same_v<decltype (result), decltype ((albums))>));
+    // It must be the same ModelsCollection (the same memory address)
+    QVERIFY(reinterpret_cast<uintptr_t>(&result) ==
+            reinterpret_cast<uintptr_t>(&albums));
+
+    // Prepare - AlbumImage::KeyType is Album ID
+    std::unordered_map<AlbumImage::KeyType, ExpectedImages> expectedImages {
+        {1, {true,  1, {1}}},
+        {2, {true,  5, {2, 3, 4, 5, 6}}},
+        {4, {false, 0, {}}},
+    };
+
+    // Verify after, both the result and also original albums vector
+    // Original albums collection
+    for (Album &album : albums) {
+        const auto albumId = album.getKey();
+        const auto &expectedImage = expectedImages.at(albumId.value<Album::KeyType>());
+
+        if (expectedImage.hasImages) {
+            QVERIFY(!album.getRelations().empty());
+            const auto &relations = album.getRelations();
+            QCOMPARE(relations.size(), 1);
+            QVERIFY(relations.contains(*albumImages));
+        } else
+            QVERIFY(!album.getRelations().empty());
+
+        // AlbumImage has many relation
+        auto images = album.getRelation<AlbumImage>(*albumImages);
+        QCOMPARE(images.size(), expectedImage.imagesSize);
+        QCOMPARE(typeid (ModelsCollection<AlbumImage *>), typeid (images));
+
+        // Expected image IDs
+        for (AlbumImage *const image : images) {
+            QVERIFY(image);
+            QVERIFY(image->exists);
+            QCOMPARE(image->getAttribute("album_id"), albumId);
+            QVERIFY(expectedImage.imagesId.contains(
+                        image->getKey().value<AlbumImage::KeyType>()));
+            QCOMPARE(typeid (AlbumImage *), typeid (image));
+        }
+    }
+}
+
+void tst_Collection_Models::load_lvalue_WithSelectConstraint() const
+{
+    auto albums = Album::without(*albumImages)->findMany({1, 2, 4});
+    QCOMPARE(albums.size(), 3);
+    QCOMPARE(typeid (ModelsCollection<Album>), typeid (albums));
+    QVERIFY(verifyIds(albums, {1, 2, 4}));
+
+    // Verify before
+    QVERIFY(std::ranges::all_of(albums, [](const Album &album)
+    {
+        return album.getRelations().empty();
+    }));
+
+    // Load the albumImages hasMany relation
+    ModelsCollection<Album> &result = albums.load("albumImages:id,album_id,ext");
+    // Both must be lvalue references because of that the decltype ((images)) is used
+    QVERIFY((std::is_same_v<decltype (result), decltype ((albums))>));
+    // It must be the same ModelsCollection (the same memory address)
+    QVERIFY(reinterpret_cast<uintptr_t>(&result) ==
+            reinterpret_cast<uintptr_t>(&albums));
+
+    // Prepare - AlbumImage::KeyType is Album ID
+    std::unordered_map<AlbumImage::KeyType, ExpectedImages> expectedImages {
+        {1, {true,  1, {1}}},
+        {2, {true,  5, {2, 3, 4, 5, 6}}},
+        {4, {false, 0, {}}},
+    };
+
+    // Verify after, both the result and also original albums vector
+    // Original albums collection
+    for (Album &album : albums) {
+        const auto albumId = album.getKey();
+        const auto &expectedImage = expectedImages.at(albumId.value<Album::KeyType>());
+
+        if (expectedImage.hasImages) {
+            QVERIFY(!album.getRelations().empty());
+            const auto &relations = album.getRelations();
+            QCOMPARE(relations.size(), 1);
+            QVERIFY(relations.contains(*albumImages));
+        } else
+            QVERIFY(!album.getRelations().empty());
+
+        // AlbumImage has many relation
+        auto images = album.getRelation<AlbumImage>(*albumImages);
+        QCOMPARE(images.size(), expectedImage.imagesSize);
+        QCOMPARE(typeid (ModelsCollection<AlbumImage *>), typeid (images));
+
+        // Expected image IDs
+        for (AlbumImage *const image : images) {
+            QVERIFY(image);
+            QVERIFY(image->exists);
+
+            // Check whether constraints was correctly applied
+            const auto &attributes = image->getAttributes();
+            QCOMPARE(attributes.size(), 3);
+
+            std::unordered_set<QString> expectedAttributes {ID, "album_id", "ext"};
+            for (const auto &attribute : attributes)
+                QVERIFY(expectedAttributes.contains(attribute.key));
+
+            QCOMPARE(image->getAttribute("album_id"), albumId);
+            QVERIFY(expectedImage.imagesId.contains(
+                        image->getKey().value<AlbumImage::KeyType>()));
+            QCOMPARE(typeid (AlbumImage *), typeid (image));
+        }
+    }
+}
+
+void tst_Collection_Models::load_lvalue_WithLambdaConstraint() const
+{
+    auto albums = Album::without(*albumImages)->findMany({1, 2, 4});
+    QCOMPARE(albums.size(), 3);
+    QCOMPARE(typeid (ModelsCollection<Album>), typeid (albums));
+    QVERIFY(verifyIds(albums, {1, 2, 4}));
+
+    // Verify before
+    QVERIFY(std::ranges::all_of(albums, [](const Album &album)
+    {
+        return album.getRelations().empty();
+    }));
+
+    // Load the albumImages hasMany relation
+    ModelsCollection<Album> &result =
+            albums.load({{"albumImages", [](auto &query)
+                          {
+                              query.select({ID, "album_id", SIZE_});
+                          }}});
+    // Both must be lvalue references because of that the decltype ((images)) is used
+    QVERIFY((std::is_same_v<decltype (result), decltype ((albums))>));
+    // It must be the same ModelsCollection (the same memory address)
+    QVERIFY(reinterpret_cast<uintptr_t>(&result) ==
+            reinterpret_cast<uintptr_t>(&albums));
+
+    // Prepare - AlbumImage::KeyType is Album ID
+    std::unordered_map<AlbumImage::KeyType, ExpectedImages> expectedImages {
+        {1, {true,  1, {1}}},
+        {2, {true,  5, {2, 3, 4, 5, 6}}},
+        {4, {false, 0, {}}},
+    };
+
+    // Verify after, both the result and also original albums vector
+    // Original albums collection
+    for (Album &album : albums) {
+        const auto albumId = album.getKey();
+        const auto &expectedImage = expectedImages.at(albumId.value<Album::KeyType>());
+
+        if (expectedImage.hasImages) {
+            QVERIFY(!album.getRelations().empty());
+            const auto &relations = album.getRelations();
+            QCOMPARE(relations.size(), 1);
+            QVERIFY(relations.contains(*albumImages));
+        } else
+            QVERIFY(!album.getRelations().empty());
+
+        // AlbumImage has many relation
+        auto images = album.getRelation<AlbumImage>(*albumImages);
+        QCOMPARE(images.size(), expectedImage.imagesSize);
+        QCOMPARE(typeid (ModelsCollection<AlbumImage *>), typeid (images));
+
+        // Expected image IDs
+        for (AlbumImage *const image : images) {
+            QVERIFY(image);
+            QVERIFY(image->exists);
+
+            // Check whether constraints was correctly applied
+            const auto &attributes = image->getAttributes();
+            QCOMPARE(attributes.size(), 3);
+
+            std::unordered_set<QString> expectedAttributes {ID, "album_id", SIZE_};
+            for (const auto &attribute : attributes)
+                QVERIFY(expectedAttributes.contains(attribute.key));
+
+            QCOMPARE(image->getAttribute("album_id"), albumId);
+            QVERIFY(expectedImage.imagesId.contains(
+                        image->getKey().value<AlbumImage::KeyType>()));
+            QCOMPARE(typeid (AlbumImage *), typeid (image));
+        }
+    }
+}
+
+void tst_Collection_Models::load_lvalue_NonExistentRelation_Failed() const
+{
+    auto albums = Album::without(*albumImages)->findMany({1, 2});
+    QCOMPARE(albums.size(), 2);
+    QCOMPARE(typeid (ModelsCollection<Album>), typeid (albums));
+    QVERIFY(verifyIds(albums, {1, 2}));
+
+    // Prepare
+    const auto verify = [&albums]
+    {
+        QVERIFY(std::ranges::all_of(albums, [](const Album &album)
+        {
+            return album.getRelations().empty();
+        }));
+    };
+
+    // Verify before
+    verify();
+
+    QVERIFY_EXCEPTION_THROWN(albums.load("albumImages-NON_EXISTENT"),
+                             RelationNotFoundError);
+
+    // Verify after
+    verify();
+}
+
+void tst_Collection_Models::load_rvalue() const
+{
+    auto albums = Album::without(*albumImages)->findMany({1, 2, 4});
+    QCOMPARE(albums.size(), 3);
+    QCOMPARE(typeid (ModelsCollection<Album>), typeid (albums));
+    QVERIFY(verifyIds(albums, {1, 2, 4}));
+
+    // Verify before
+    QVERIFY(std::ranges::all_of(albums, [](const Album &album)
+    {
+        return album.getRelations().empty();
+    }));
+
+    // Load the albumImages hasMany relation
+    ModelsCollection<Album> &&result = std::move(albums).load(*albumImages);
+    /* In 99% cases it must be the same ModelsCollection (the same memory address) but
+       I'm disabling the QVERIFY check because this is compiler specific, if the result
+       is rvalue then the albums will be constructed in-place and no moves will be done,
+       the compiler optimizes it out, if the result would be just only result without
+       the rvalue reference then the move constructor would be called.
+       Another thing is that I need to call std::move(albums).load() because I need to
+       verify the albums, the real world scenario would be:
+       Album::without(*albumImages)->findMany({1, 2, 4}).load("albumImages")
+       At the end of the day both command statements are the same. */
+//    QVERIFY(reinterpret_cast<uintptr_t>(&result) ==
+//            reinterpret_cast<uintptr_t>(&albums));
+
+    // Prepare - AlbumImage::KeyType is Album ID
+    std::unordered_map<AlbumImage::KeyType, ExpectedImages> expectedImages {
+        {1, {true,  1, {1}}},
+        {2, {true,  5, {2, 3, 4, 5, 6}}},
+        {4, {false, 0, {}}},
+    };
+
+    // Verify after, both the result and also original albums vector
+    // Original albums collection
+    for (Album &album : result) {
+        const auto albumId = album.getKey();
+        const auto &expectedImage = expectedImages.at(albumId.value<Album::KeyType>());
+
+        if (expectedImage.hasImages) {
+            QVERIFY(!album.getRelations().empty());
+            const auto &relations = album.getRelations();
+            QCOMPARE(relations.size(), 1);
+            QVERIFY(relations.contains(*albumImages));
+        } else
+            QVERIFY(!album.getRelations().empty());
+
+        // AlbumImage has many relation
+        auto images = album.getRelation<AlbumImage>(*albumImages);
+        QCOMPARE(images.size(), expectedImage.imagesSize);
+        QCOMPARE(typeid (ModelsCollection<AlbumImage *>), typeid (images));
+
+        // Expected image IDs
+        for (AlbumImage *const image : images) {
+            QVERIFY(image);
+            QVERIFY(image->exists);
+            QCOMPARE(image->getAttribute("album_id"), albumId);
+            QVERIFY(expectedImage.imagesId.contains(
+                        image->getKey().value<AlbumImage::KeyType>()));
+            QCOMPARE(typeid (AlbumImage *), typeid (image));
+        }
+    }
+}
+
+void tst_Collection_Models::load_rvalue_WithSelectConstraint() const
+{
+    auto albums = Album::without(*albumImages)->findMany({1, 2, 4});
+    QCOMPARE(albums.size(), 3);
+    QCOMPARE(typeid (ModelsCollection<Album>), typeid (albums));
+    QVERIFY(verifyIds(albums, {1, 2, 4}));
+
+    // Verify before
+    QVERIFY(std::ranges::all_of(albums, [](const Album &album)
+    {
+        return album.getRelations().empty();
+    }));
+
+    // Load the albumImages hasMany relation
+    ModelsCollection<Album> &&result = std::move(albums)
+                                       .load("albumImages:id,album_id,ext");
+    /* In 99% cases it must be the same ModelsCollection (the same memory address) but
+       I'm disabling the QVERIFY check because this is compiler specific, if the result
+       is rvalue then the albums will be constructed in-place and no moves will be done,
+       the compiler optimizes it out, if the result would be just only result without
+       the rvalue reference then the move constructor would be called.
+       Another thing is that I need to call std::move(albums).load() because I need to
+       verify the albums, the real world scenario would be:
+       Album::without(*albumImages)->findMany({1, 2, 4}).load("albumImages")
+       At the end of the day both command statements are the same. */
+//    QVERIFY(reinterpret_cast<uintptr_t>(&result) ==
+//            reinterpret_cast<uintptr_t>(&albums));
+
+    // Prepare - AlbumImage::KeyType is Album ID
+    std::unordered_map<AlbumImage::KeyType, ExpectedImages> expectedImages {
+        {1, {true,  1, {1}}},
+        {2, {true,  5, {2, 3, 4, 5, 6}}},
+        {4, {false, 0, {}}},
+    };
+
+    // Verify after, both the result and also original albums vector
+    // Original albums collection
+    for (Album &album : result) {
+        const auto albumId = album.getKey();
+        const auto &expectedImage = expectedImages.at(albumId.value<Album::KeyType>());
+
+        if (expectedImage.hasImages) {
+            QVERIFY(!album.getRelations().empty());
+            const auto &relations = album.getRelations();
+            QCOMPARE(relations.size(), 1);
+            QVERIFY(relations.contains(*albumImages));
+        } else
+            QVERIFY(!album.getRelations().empty());
+
+        // AlbumImage has many relation
+        auto images = album.getRelation<AlbumImage>(*albumImages);
+        QCOMPARE(images.size(), expectedImage.imagesSize);
+        QCOMPARE(typeid (ModelsCollection<AlbumImage *>), typeid (images));
+
+        // Expected image IDs
+        for (AlbumImage *const image : images) {
+            QVERIFY(image);
+            QVERIFY(image->exists);
+
+            // Check whether constraints was correctly applied
+            const auto &attributes = image->getAttributes();
+            QCOMPARE(attributes.size(), 3);
+
+            std::unordered_set<QString> expectedAttributes {ID, "album_id", "ext"};
+            for (const auto &attribute : attributes)
+                QVERIFY(expectedAttributes.contains(attribute.key));
+
+            QCOMPARE(image->getAttribute("album_id"), albumId);
+            QVERIFY(expectedImage.imagesId.contains(
+                        image->getKey().value<AlbumImage::KeyType>()));
+            QCOMPARE(typeid (AlbumImage *), typeid (image));
+        }
+    }
+}
+
+void tst_Collection_Models::load_rvalue_WithLambdaConstraint() const
+{
+    auto albums = Album::without(*albumImages)->findMany({1, 2, 4});
+    QCOMPARE(albums.size(), 3);
+    QCOMPARE(typeid (ModelsCollection<Album>), typeid (albums));
+    QVERIFY(verifyIds(albums, {1, 2, 4}));
+
+    // Verify before
+    QVERIFY(std::ranges::all_of(albums, [](const Album &album)
+    {
+        return album.getRelations().empty();
+    }));
+
+    // Load the albumImages hasMany relation
+    ModelsCollection<Album> &&result =
+            std::move(albums).load({{"albumImages", [](auto &query)
+                                     {
+                                         query.select({ID, "album_id", SIZE_});
+                                     }}});
+    /* In 99% cases it must be the same ModelsCollection (the same memory address) but
+       I'm disabling the QVERIFY check because this is compiler specific, if the result
+       is rvalue then the albums will be constructed in-place and no moves will be done,
+       the compiler optimizes it out, if the result would be just only result without
+       the rvalue reference then the move constructor would be called.
+       Another thing is that I need to call std::move(albums).load() because I need to
+       verify the albums, the real world scenario would be:
+       Album::without(*albumImages)->findMany({1, 2, 4}).load("albumImages")
+       At the end of the day both command statements are the same. */
+//    QVERIFY(reinterpret_cast<uintptr_t>(&result) ==
+//            reinterpret_cast<uintptr_t>(&albums));
+
+    // Prepare - AlbumImage::KeyType is Album ID
+    std::unordered_map<AlbumImage::KeyType, ExpectedImages> expectedImages {
+        {1, {true,  1, {1}}},
+        {2, {true,  5, {2, 3, 4, 5, 6}}},
+        {4, {false, 0, {}}},
+    };
+
+    // Verify after, both the result and also original albums vector
+    // Original albums collection
+    for (Album &album : result) {
+        const auto albumId = album.getKey();
+        const auto &expectedImage = expectedImages.at(albumId.value<Album::KeyType>());
+
+        if (expectedImage.hasImages) {
+            QVERIFY(!album.getRelations().empty());
+            const auto &relations = album.getRelations();
+            QCOMPARE(relations.size(), 1);
+            QVERIFY(relations.contains(*albumImages));
+        } else
+            QVERIFY(!album.getRelations().empty());
+
+        // AlbumImage has many relation
+        auto images = album.getRelation<AlbumImage>(*albumImages);
+        QCOMPARE(images.size(), expectedImage.imagesSize);
+        QCOMPARE(typeid (ModelsCollection<AlbumImage *>), typeid (images));
+
+        // Expected image IDs
+        for (AlbumImage *const image : images) {
+            QVERIFY(image);
+            QVERIFY(image->exists);
+
+            // Check whether constraints was correctly applied
+            const auto &attributes = image->getAttributes();
+            QCOMPARE(attributes.size(), 3);
+
+            std::unordered_set<QString> expectedAttributes {ID, "album_id", SIZE_};
+            for (const auto &attribute : attributes)
+                QVERIFY(expectedAttributes.contains(attribute.key));
+
+            QCOMPARE(image->getAttribute("album_id"), albumId);
+            QVERIFY(expectedImage.imagesId.contains(
+                        image->getKey().value<AlbumImage::KeyType>()));
+            QCOMPARE(typeid (AlbumImage *), typeid (image));
+        }
+    }
+}
+
+void tst_Collection_Models::load_rvalue_NonExistentRelation_Failed() const
+{
+    auto albums = Album::without(*albumImages)->findMany({1, 2});
+    QCOMPARE(albums.size(), 2);
+    QCOMPARE(typeid (ModelsCollection<Album>), typeid (albums));
+    QVERIFY(verifyIds(albums, {1, 2}));
+
+    // Prepare
+    const auto verify = [&albums]
+    {
+        QVERIFY(std::ranges::all_of(albums, [](const Album &album)
+        {
+            return album.getRelations().empty();
+        }));
+    };
+
+    // Verify before
+    verify();
+
+    QVERIFY_EXCEPTION_THROWN(std::move(albums).load("albumImages-NON_EXISTENT"),
+                             RelationNotFoundError);
+
+    // Verify after
+    verify();
 }
 
 /* EnumeratesValues */

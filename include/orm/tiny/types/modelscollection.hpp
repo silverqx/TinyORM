@@ -201,6 +201,17 @@ namespace Types
         /*! Get the TinyBuilder from the collection. */
         std::unique_ptr<TinyBuilder<ModelRawType>> toQuery();
 
+        /* Collection - Relations related */
+        /*! Load a set of relationships onto the collection. */
+        ModelsCollection &load(const QVector<WithItem> &relations) &;
+        /*! Load a set of relationships onto the collection. */
+        inline ModelsCollection &load(const QString &relation) &;
+
+        /*! Load a set of relationships onto the collection. */
+        ModelsCollection &&load(const QVector<WithItem> &relations) &&;
+        /*! Load a set of relationships onto the collection. */
+        inline ModelsCollection &&load(const QString &relation) &&;
+
         /* EnumeratesValues */
         /*! Create a collection of all items that do not pass a given truth test. */
         ModelsCollection<ModelRawType *>
@@ -799,6 +810,56 @@ namespace Types
         builder->whereKey(modelKeys<QVariant>());
 
         return builder;
+    }
+
+    /* Collection - Relations related */
+
+    template<DerivedCollectionModel Model>
+    ModelsCollection<Model> &
+    ModelsCollection<Model>::load(const QVector<WithItem> &relations) &
+    {
+        // Nothing to do
+        if (this->isEmpty())
+            return *this;
+
+        // Don't handle the nullptr
+        // Ownership of a unique_ptr()
+        auto builder = toPointer(first())->newQueryWithoutRelationships();
+
+        builder->with(relations).eagerLoadRelations(*this);
+
+        return *this;
+    }
+
+    template<DerivedCollectionModel Model>
+    ModelsCollection<Model> &
+    ModelsCollection<Model>::load(const QString &relation) &
+    {
+        return load(QVector<WithItem> {{relation}});
+    }
+
+    template<DerivedCollectionModel Model>
+    ModelsCollection<Model> &&
+    ModelsCollection<Model>::load(const QVector<WithItem> &relations) &&
+    {
+        // Nothing to do
+        if (this->isEmpty())
+            return std::move(*this);
+
+        // Don't handle the nullptr
+        // Ownership of a unique_ptr()
+        auto builder = toPointer(first())->newQueryWithoutRelationships();
+
+        builder->with(relations).eagerLoadRelations(*this);
+
+        return std::move(*this);
+    }
+
+    template<DerivedCollectionModel Model>
+    ModelsCollection<Model> &&
+    ModelsCollection<Model>::load(const QString &relation) &&
+    {
+        return std::move(*this).load(QVector<WithItem> {{relation}});
     }
 
     /* EnumeratesValues */
