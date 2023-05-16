@@ -84,7 +84,7 @@ const std::unordered_set<QString> &SQLiteGrammar::getOperators() const
 
 /* protected */
 
-const QMap<Grammar::SelectComponentType, Grammar::SelectComponentValue> &
+const QVector<Grammar::SelectComponentValue> &
 SQLiteGrammar::getCompileMap() const
 {
     /* Needed, because some compileXx() methods are overloaded, this way I will capture
@@ -104,32 +104,30 @@ SQLiteGrammar::getCompileMap() const
         };
     };
 
-    // Pointers to a where member methods by whereType, yes yes c++ 😂
-    static const QMap<SelectComponentType, SelectComponentValue> cached {
-        {SelectComponentType::AGGREGATE, {bind(&SQLiteGrammar::compileAggregate),
-                        [](const auto &query)
-                        { return shouldCompileAggregate(query.getAggregate()); }}},
-        {SelectComponentType::COLUMNS,   {bind(&SQLiteGrammar::compileColumns),
-                        [](const auto &query) { return shouldCompileColumns(query); }}},
-        {SelectComponentType::FROM,      {bind(&SQLiteGrammar::compileFrom),
-                        [](const auto &query)
-                        { return shouldCompileFrom(query.getFrom()); }}},
-        {SelectComponentType::JOINS,     {bind(&SQLiteGrammar::compileJoins),
-                        [](const auto &query) { return !query.getJoins().isEmpty(); }}},
-        {SelectComponentType::WHERES,    {bind(&SQLiteGrammar::compileWheres),
-                        [](const auto &query) { return !query.getWheres().isEmpty(); }}},
-        {SelectComponentType::GROUPS,    {bind(&SQLiteGrammar::compileGroups),
-                        [](const auto &query) { return !query.getGroups().isEmpty(); }}},
-        {SelectComponentType::HAVINGS,   {bind(&SQLiteGrammar::compileHavings),
-                        [](const auto &query) { return !query.getHavings().isEmpty(); }}},
-        {SelectComponentType::ORDERS,    {bind(&SQLiteGrammar::compileOrders),
-                        [](const auto &query) { return !query.getOrders().isEmpty(); }}},
-        {SelectComponentType::LIMIT,     {bind(&SQLiteGrammar::compileLimit),
-                        [](const auto &query) { return query.getLimit() > -1; }}},
-        {SelectComponentType::OFFSET,    {bind(&SQLiteGrammar::compileOffset),
-                        [](const auto &query) { return query.getOffset() > -1; }}},
-        {SelectComponentType::LOCK,      {bind(&SQLiteGrammar::compileLock),
-                        [](const auto &query) { return query.getLock().index() != 0; }}},
+    // Pointers to compile methods, yes yes c++ 😂
+    static const QVector<SelectComponentValue> cached {
+        {bind(&SQLiteGrammar::compileAggregate),
+         [](const auto &query) { return shouldCompileAggregate(query.getAggregate()); }},
+        {bind(&SQLiteGrammar::compileColumns),
+         [](const auto &query) { return shouldCompileColumns(query); }},
+        {bind(&SQLiteGrammar::compileFrom),
+         [](const auto &query) { return shouldCompileFrom(query.getFrom()); }},
+        {bind(&SQLiteGrammar::compileJoins),
+         [](const auto &query) { return !query.getJoins().isEmpty(); }},
+        {bind(&SQLiteGrammar::compileWheres),
+         [](const auto &query) { return !query.getWheres().isEmpty(); }},
+        {bind(&SQLiteGrammar::compileGroups),
+         [](const auto &query) { return !query.getGroups().isEmpty(); }},
+        {bind(&SQLiteGrammar::compileHavings),
+         [](const auto &query) { return !query.getHavings().isEmpty(); }},
+        {bind(&SQLiteGrammar::compileOrders),
+         [](const auto &query) { return !query.getOrders().isEmpty(); }},
+        {bind(&SQLiteGrammar::compileLimit),
+         [](const auto &query) { return query.getLimit() > -1; }},
+        {bind(&SQLiteGrammar::compileOffset),
+         [](const auto &query) { return query.getOffset() > -1; }},
+        {bind(&SQLiteGrammar::compileLock),
+         [](const auto &query) { return query.getLock().index() != 0; }},
     };
 
     return cached;

@@ -1475,6 +1475,28 @@ public:
 };
 
 
+Grammar::SelectComponentType:
+-----------------------------
+
+ - if by any chance will be needed in the future
+
+/*! Select component types. */
+enum struct SelectComponentType
+{
+     AGGREGATE,
+     COLUMNS,
+     FROM,
+     JOINS,
+     WHERES,
+     GROUPS,
+     HAVINGS,
+     ORDERS,
+     LIMIT,
+     OFFSET,
+     LOCK,
+};
+
+
 EntityManager.hpp:
 ------------------
 

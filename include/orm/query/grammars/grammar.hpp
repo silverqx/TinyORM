@@ -78,21 +78,6 @@ namespace Orm::Query::Grammars
         virtual const std::unordered_set<QString> &getOperators() const;
 
     protected:
-        /*! Select component types. */
-        enum struct SelectComponentType
-        {
-             AGGREGATE,
-             COLUMNS,
-             FROM,
-             JOINS,
-             WHERES,
-             GROUPS,
-             HAVINGS,
-             ORDERS,
-             LIMIT,
-             OFFSET,
-             LOCK,
-        };
         /*! The select component compile method and whether the component was set. */
         struct SelectComponentValue
         {
@@ -106,8 +91,7 @@ namespace Orm::Query::Grammars
                                                  const WhereConditionItem &)>;
 
         /*! Map the ComponentType to a Grammar::compileXx() methods. */
-        virtual const QMap<SelectComponentType, SelectComponentValue> &
-        getCompileMap() const = 0;
+        virtual const QVector<SelectComponentValue> &getCompileMap() const = 0;
         /*! Map the WhereType to a Grammar::whereXx() methods. */
         virtual const WhereMemFn &getWhereMethod(WhereType whereType) const = 0;
 

@@ -192,9 +192,12 @@ bool Grammar::shouldCompileFrom(const FromClause &from)
 QStringList Grammar::compileComponents(const QueryBuilder &query) const
 {
     const auto &compileMap = getCompileMap();
+
     /* This is not 100% correct as the getCompileMap() is virtual, but it's guaranteed
        that all compileMap-s have the same size, so it's safe to cache this size. */
     static const auto compileMapSize = compileMap.size();
+    // The same size for all instances has to be guaranteed as it's static
+    Q_ASSERT(compileMapSize == 11);
 
     QStringList sql;
     sql.reserve(compileMapSize);

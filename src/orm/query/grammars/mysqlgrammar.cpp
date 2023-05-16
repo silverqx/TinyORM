@@ -99,7 +99,7 @@ QString MySqlGrammar::wrapValue(QString value) const
                                                     QStringLiteral("``")));
 }
 
-const QMap<Grammar::SelectComponentType, Grammar::SelectComponentValue> &
+const QVector<Grammar::SelectComponentValue> &
 MySqlGrammar::getCompileMap() const
 {
     /* Needed, because some compileXx() methods are overloaded, this way I will capture
@@ -119,32 +119,30 @@ MySqlGrammar::getCompileMap() const
         };
     };
 
-    // Pointers to a where member methods by whereType, yes yes c++ 😂
-    static const QMap<SelectComponentType, SelectComponentValue> cached {
-        {SelectComponentType::AGGREGATE, {bind(&MySqlGrammar::compileAggregate),
-                        [](const auto &query)
-                        { return shouldCompileAggregate(query.getAggregate()); }}},
-        {SelectComponentType::COLUMNS,   {bind(&MySqlGrammar::compileColumns),
-                        [](const auto &query) { return shouldCompileColumns(query); }}},
-        {SelectComponentType::FROM,      {bind(&MySqlGrammar::compileFrom),
-                        [](const auto &query)
-                        { return shouldCompileFrom(query.getFrom()); }}},
-        {SelectComponentType::JOINS,     {bind(&MySqlGrammar::compileJoins),
-                        [](const auto &query) { return !query.getJoins().isEmpty(); }}},
-        {SelectComponentType::WHERES,    {bind(&MySqlGrammar::compileWheres),
-                        [](const auto &query) { return !query.getWheres().isEmpty(); }}},
-        {SelectComponentType::GROUPS,    {bind(&MySqlGrammar::compileGroups),
-                        [](const auto &query) { return !query.getGroups().isEmpty(); }}},
-        {SelectComponentType::HAVINGS,   {bind(&MySqlGrammar::compileHavings),
-                        [](const auto &query) { return !query.getHavings().isEmpty(); }}},
-        {SelectComponentType::ORDERS,    {bind(&MySqlGrammar::compileOrders),
-                        [](const auto &query) { return !query.getOrders().isEmpty(); }}},
-        {SelectComponentType::LIMIT,     {bind(&MySqlGrammar::compileLimit),
-                        [](const auto &query) { return query.getLimit() > -1; }}},
-        {SelectComponentType::OFFSET,    {bind(&MySqlGrammar::compileOffset),
-                        [](const auto &query) { return query.getOffset() > -1; }}},
-        {SelectComponentType::LOCK,      {bind(&MySqlGrammar::compileLock),
-                        [](const auto &query) { return query.getLock().index() != 0; }}},
+    // Pointers to compile methods, yes yes c++ 😂
+    static const QVector<SelectComponentValue> cached {
+        {bind(&MySqlGrammar::compileAggregate),
+         [](const auto &query) { return shouldCompileAggregate(query.getAggregate()); }},
+        {bind(&MySqlGrammar::compileColumns),
+         [](const auto &query) { return shouldCompileColumns(query); }},
+        {bind(&MySqlGrammar::compileFrom),
+         [](const auto &query) { return shouldCompileFrom(query.getFrom()); }},
+        {bind(&MySqlGrammar::compileJoins),
+         [](const auto &query) { return !query.getJoins().isEmpty(); }},
+        {bind(&MySqlGrammar::compileWheres),
+         [](const auto &query) { return !query.getWheres().isEmpty(); }},
+        {bind(&MySqlGrammar::compileGroups),
+         [](const auto &query) { return !query.getGroups().isEmpty(); }},
+        {bind(&MySqlGrammar::compileHavings),
+         [](const auto &query) { return !query.getHavings().isEmpty(); }},
+        {bind(&MySqlGrammar::compileOrders),
+         [](const auto &query) { return !query.getOrders().isEmpty(); }},
+        {bind(&MySqlGrammar::compileLimit),
+         [](const auto &query) { return query.getLimit() > -1; }},
+        {bind(&MySqlGrammar::compileOffset),
+         [](const auto &query) { return query.getOffset() > -1; }},
+        {bind(&MySqlGrammar::compileLock),
+         [](const auto &query) { return query.getLock().index() != 0; }},
     };
 
     // TODO correct way to return const & for cached (static) local variable for QHash/QMap, check all 👿🤔 silverqx

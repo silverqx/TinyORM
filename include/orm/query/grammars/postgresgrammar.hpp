@@ -59,8 +59,7 @@ namespace Orm::Query::Grammars
 
     protected:
         /*! Map the ComponentType to a Grammar::compileXx() methods. */
-        const QMap<SelectComponentType, SelectComponentValue> &
-        getCompileMap() const override;
+        const QVector<SelectComponentValue> &getCompileMap() const override;
         /*! Map the WhereType to a Grammar::whereXx() methods. */
         const WhereMemFn &getWhereMethod(WhereType whereType) const override;
 

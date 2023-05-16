@@ -105,7 +105,7 @@ QString PostgresGrammar::whereBasic(const WhereConditionItem &where) const
 
 /* protected */
 
-const QMap<Grammar::SelectComponentType, Grammar::SelectComponentValue> &
+const QVector<Grammar::SelectComponentValue> &
 PostgresGrammar::getCompileMap() const
 {
     /* Needed, because some compileXx() methods are overloaded, this way I will capture
@@ -125,32 +125,30 @@ PostgresGrammar::getCompileMap() const
         };
     };
 
-    // Pointers to a where member methods by whereType, yes yes c++ 😂
-    static const QMap<SelectComponentType, SelectComponentValue> cached {
-        {SelectComponentType::AGGREGATE, {bind(&PostgresGrammar::compileAggregate),
-                        [](const auto &query)
-                        { return shouldCompileAggregate(query.getAggregate()); }}},
-        {SelectComponentType::COLUMNS,   {bind(&PostgresGrammar::compileColumns),
-                        [](const auto &query) { return shouldCompileColumns(query); }}},
-        {SelectComponentType::FROM,      {bind(&PostgresGrammar::compileFrom),
-                        [](const auto &query)
-                        { return shouldCompileFrom(query.getFrom()); }}},
-        {SelectComponentType::JOINS,     {bind(&PostgresGrammar::compileJoins),
-                        [](const auto &query) { return !query.getJoins().isEmpty(); }}},
-        {SelectComponentType::WHERES,    {bind(&PostgresGrammar::compileWheres),
-                        [](const auto &query) { return !query.getWheres().isEmpty(); }}},
-        {SelectComponentType::GROUPS,    {bind(&PostgresGrammar::compileGroups),
-                        [](const auto &query) { return !query.getGroups().isEmpty(); }}},
-        {SelectComponentType::HAVINGS,   {bind(&PostgresGrammar::compileHavings),
-                        [](const auto &query) { return !query.getHavings().isEmpty(); }}},
-        {SelectComponentType::ORDERS,    {bind(&PostgresGrammar::compileOrders),
-                        [](const auto &query) { return !query.getOrders().isEmpty(); }}},
-        {SelectComponentType::LIMIT,     {bind(&PostgresGrammar::compileLimit),
-                        [](const auto &query) { return query.getLimit() > -1; }}},
-        {SelectComponentType::OFFSET,    {bind(&PostgresGrammar::compileOffset),
-                        [](const auto &query) { return query.getOffset() > -1; }}},
-        {SelectComponentType::LOCK,      {bind(&PostgresGrammar::compileLock),
-                        [](const auto &query) { return query.getLock().index() != 0; }}},
+    // Pointers to compile methods, yes yes c++ 😂
+    static const QVector<SelectComponentValue> cached {
+        {bind(&PostgresGrammar::compileAggregate),
+         [](const auto &query) { return shouldCompileAggregate(query.getAggregate()); }},
+        {bind(&PostgresGrammar::compileColumns),
+         [](const auto &query) { return shouldCompileColumns(query); }},
+        {bind(&PostgresGrammar::compileFrom),
+         [](const auto &query) { return shouldCompileFrom(query.getFrom()); }},
+        {bind(&PostgresGrammar::compileJoins),
+         [](const auto &query) { return !query.getJoins().isEmpty(); }},
+        {bind(&PostgresGrammar::compileWheres),
+         [](const auto &query) { return !query.getWheres().isEmpty(); }},
+        {bind(&PostgresGrammar::compileGroups),
+         [](const auto &query) { return !query.getGroups().isEmpty(); }},
+        {bind(&PostgresGrammar::compileHavings),
+         [](const auto &query) { return !query.getHavings().isEmpty(); }},
+        {bind(&PostgresGrammar::compileOrders),
+         [](const auto &query) { return !query.getOrders().isEmpty(); }},
+        {bind(&PostgresGrammar::compileLimit),
+         [](const auto &query) { return query.getLimit() > -1; }},
+        {bind(&PostgresGrammar::compileOffset),
+         [](const auto &query) { return query.getOffset() > -1; }},
+        {bind(&PostgresGrammar::compileLock),
+         [](const auto &query) { return query.getLock().index() != 0; }},
     };
 
     return cached;
