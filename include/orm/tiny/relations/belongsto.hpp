@@ -214,8 +214,8 @@ namespace Orm::Tiny::Relations
         if (!this->constraints)
             return;
 
-        /* For belongs to relationships, which are essentially the inverse of has one
-           or has many relationships, we need to actually query on the primary key
+        /* For belongs to relationships, which are essentially the inverse of has-one
+           or has-many relationships, we need to actually query on the primary key
            of the related models matching on the foreign key that's on a parent. */
         const auto &table = this->m_related->getTable();
 

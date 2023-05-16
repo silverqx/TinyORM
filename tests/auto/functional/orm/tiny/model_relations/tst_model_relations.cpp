@@ -270,7 +270,7 @@ void tst_Model_Relations::getRelation_EagerLoad_ManyAndOne() const
     QVERIFY(torrent);
     QVERIFY(torrent->exists);
 
-    // TorrentPreviewableFileEager has many relation
+    // TorrentPreviewableFileEager has-many relation
     auto files = torrent->getRelation<TorrentPreviewableFileEager>("torrentFiles");
     QCOMPARE(files.size(), 2);
     QCOMPARE(typeid (ModelsCollection<TorrentPreviewableFileEager *>), typeid (files));
@@ -286,7 +286,7 @@ void tst_Model_Relations::getRelation_EagerLoad_ManyAndOne() const
         QVERIFY(fileIds.contains(file->getAttribute(ID)));
         QCOMPARE(typeid (TorrentPreviewableFileEager *), typeid (file));
 
-        /* TorrentPreviewableFilePropertyEager has one relation, loaded by
+        /* TorrentPreviewableFilePropertyEager has-one relation, loaded by
            dot notation in the u_with data member. */
         auto *fileProperty =
                 file->getRelation<TorrentPreviewableFilePropertyEager, One>(
@@ -329,7 +329,7 @@ void tst_Model_Relations::
     QVERIFY(tag);
     QVERIFY(tag->exists);
 
-    // Tag has many relation
+    // Tag has-many relation
     auto torrents = tag->getRelation<Torrent>("torrents");
     QCOMPARE(torrents.size(), 2);
     QCOMPARE(typeid (ModelsCollection<Torrent *>), typeid (torrents));
@@ -378,7 +378,7 @@ void tst_Model_Relations::
     QVERIFY(torrent);
     QVERIFY(torrent->exists);
 
-    // Tag has many relation
+    // Tag has-many relation
     auto tags = torrent->getRelation<Tag>("tags");
     QCOMPARE(tags.size(), 4);
     QCOMPARE(typeid (ModelsCollection<Tag *>), typeid (tags));
@@ -429,7 +429,7 @@ void tst_Model_Relations::
     QVERIFY(tag);
     QVERIFY(tag->exists);
 
-    // Tag has many relation
+    // Tag has-many relation
     auto torrents = tag->getRelation<Torrent>("torrents_WithoutPivotAttributes");
     QCOMPARE(torrents.size(), 2);
     QCOMPARE(typeid (ModelsCollection<Torrent *>), typeid (torrents));
@@ -513,7 +513,7 @@ void tst_Model_Relations::getRelationValue_LazyLoad_ManyAndOne() const
     QVERIFY(torrent);
     QVERIFY(torrent->exists);
 
-    // TorrentPreviewableFile has many relation
+    // TorrentPreviewableFile has-many relation
     auto files = torrent->getRelationValue<TorrentPreviewableFile>("torrentFiles");
     QCOMPARE(files.size(), 2);
     QCOMPARE(typeid (ModelsCollection<TorrentPreviewableFile *>), typeid (files));
@@ -529,7 +529,7 @@ void tst_Model_Relations::getRelationValue_LazyLoad_ManyAndOne() const
         QVERIFY(fileIds.contains(file->getAttribute(ID)));
         QCOMPARE(typeid (TorrentPreviewableFile *), typeid (file));
 
-        /* TorrentPreviewableFileProperty has one relation, loaded by
+        /* TorrentPreviewableFileProperty has-one relation, loaded by
            dot notation in the u_with data member. */
         auto *fileProperty =
                 file->getRelationValue<TorrentPreviewableFileProperty, One>(
@@ -572,7 +572,7 @@ void tst_Model_Relations::
     QVERIFY(tag);
     QVERIFY(tag->exists);
 
-    // Tag has many relation
+    // Tag has-many relation
     auto torrents = tag->getRelationValue<Torrent>("torrents");
     QCOMPARE(torrents.size(), 2);
     QCOMPARE(typeid (ModelsCollection<Torrent *>), typeid (torrents));
@@ -621,7 +621,7 @@ void tst_Model_Relations::
     QVERIFY(torrent);
     QVERIFY(torrent->exists);
 
-    // Tag has many relation
+    // Tag has-many relation
     auto tags = torrent->getRelationValue<Tag>("tags");
     QCOMPARE(tags.size(), 4);
     QCOMPARE(typeid (ModelsCollection<Tag *>), typeid (tags));
@@ -672,7 +672,7 @@ void tst_Model_Relations::
     QVERIFY(tag);
     QVERIFY(tag->exists);
 
-    // Tag has many relation
+    // Tag has-many relation
     auto torrents = tag->getRelationValue<Torrent>("torrents_WithoutPivotAttributes");
     QCOMPARE(torrents.size(), 2);
     QCOMPARE(typeid (ModelsCollection<Torrent *>), typeid (torrents));
@@ -859,7 +859,7 @@ void tst_Model_Relations::with_NestedRelations() const
     QVERIFY(torrent);
     QVERIFY(torrent->exists);
 
-    // TorrentPreviewableFile has many relation
+    // TorrentPreviewableFile has-many relation
     auto files = torrent->getRelation<TorrentPreviewableFile>("torrentFiles");
     QCOMPARE(files.size(), 2);
     QCOMPARE(typeid (ModelsCollection<TorrentPreviewableFile *>), typeid (files));
@@ -875,7 +875,7 @@ void tst_Model_Relations::with_NestedRelations() const
         QVERIFY(fileIds.contains(file->getAttribute(ID)));
         QCOMPARE(typeid (TorrentPreviewableFile *), typeid (file));
 
-        /* TorrentPreviewableFileProperty has one relation, loaded by
+        /* TorrentPreviewableFileProperty has-one relation, loaded by
            dot notation in the u_with data member. */
         auto *fileProperty =
                 file->getRelation<TorrentPreviewableFileProperty, One>(
@@ -899,14 +899,14 @@ void tst_Model_Relations::with_Vector_MoreRelations() const
     QVERIFY(torrent);
     QVERIFY(torrent->exists);
 
-    // TorrentPeer has one relation
+    // TorrentPeer has-one relation
     auto *peer = torrent->getRelation<TorrentPeer, One>("torrentPeer");
     QVERIFY(peer);
     QVERIFY(peer->exists);
     QCOMPARE(peer->getAttribute(ID), QVariant(2));
     QCOMPARE(peer->getAttribute("torrent_id"), torrent->getAttribute(ID));
 
-    // TorrentPreviewableFile has many relation
+    // TorrentPreviewableFile has-many relation
     auto files = torrent->getRelation<TorrentPreviewableFile>("torrentFiles");
     QCOMPARE(files.size(), 2);
     QCOMPARE(typeid (ModelsCollection<TorrentPreviewableFile *>), typeid (files));
@@ -1245,7 +1245,7 @@ void tst_Model_Relations::load() const
     QVERIFY(relations.contains("torrentFiles"));
     QVERIFY(relations.contains("torrentPeer"));
 
-    // TorrentPeer has one relation
+    // TorrentPeer has-one relation
     auto *peer = torrent->getRelation<TorrentPeer, One>("torrentPeer");
     QVERIFY(peer);
     QVERIFY(peer->exists);
@@ -1253,7 +1253,7 @@ void tst_Model_Relations::load() const
     QCOMPARE(peer->getAttribute(ID), QVariant(2));
     QCOMPARE(typeid (TorrentPeer *), typeid (peer));
 
-    // TorrentPreviewableFile has many relation
+    // TorrentPreviewableFile has-many relation
     auto files = torrent->getRelation<TorrentPreviewableFile>("torrentFiles");
     QCOMPARE(files.size(), 2);
     QCOMPARE(typeid (ModelsCollection<TorrentPreviewableFile *>), typeid (files));

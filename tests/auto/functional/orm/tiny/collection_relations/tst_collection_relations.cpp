@@ -1270,7 +1270,7 @@ void tst_Collection_Relations::load_lvalue() const
         } else
             QVERIFY(!album->getRelations().empty());
 
-        // AlbumImage has many relation
+        // AlbumImage has-many relation
         auto images = album->getRelation<AlbumImage>(Common::albumImages);
         QCOMPARE(images.size(), expectedImage.imagesSize);
         QCOMPARE(typeid (ModelsCollection<AlbumImage *>), typeid (images));
@@ -1334,7 +1334,7 @@ void tst_Collection_Relations::load_lvalue_WithSelectConstraint() const
         } else
             QVERIFY(!album->getRelations().empty());
 
-        // AlbumImage has many relation
+        // AlbumImage has-many relation
         auto images = album->getRelation<AlbumImage>(Common::albumImages);
         QCOMPARE(images.size(), expectedImage.imagesSize);
         QCOMPARE(typeid (ModelsCollection<AlbumImage *>), typeid (images));
@@ -1413,7 +1413,7 @@ void tst_Collection_Relations::load_lvalue_WithLambdaConstraint() const
         } else
             QVERIFY(!album->getRelations().empty());
 
-        // AlbumImage has many relation
+        // AlbumImage has-many relation
         auto images = album->getRelation<AlbumImage>(Common::albumImages);
         QCOMPARE(images.size(), expectedImage.imagesSize);
         QCOMPARE(typeid (ModelsCollection<AlbumImage *>), typeid (images));
@@ -1524,7 +1524,7 @@ void tst_Collection_Relations::load_rvalue() const
         } else
             QVERIFY(!album->getRelations().empty());
 
-        // AlbumImage has many relation
+        // AlbumImage has-many relation
         auto images = album->getRelation<AlbumImage>(Common::albumImages);
         QCOMPARE(images.size(), expectedImage.imagesSize);
         QCOMPARE(typeid (ModelsCollection<AlbumImage *>), typeid (images));
@@ -1595,7 +1595,7 @@ void tst_Collection_Relations::load_rvalue_WithSelectConstraint() const
         } else
             QVERIFY(!album->getRelations().empty());
 
-        // AlbumImage has many relation
+        // AlbumImage has-many relation
         auto images = album->getRelation<AlbumImage>(Common::albumImages);
         QCOMPARE(images.size(), expectedImage.imagesSize);
         QCOMPARE(typeid (ModelsCollection<AlbumImage *>), typeid (images));
@@ -1682,7 +1682,7 @@ void tst_Collection_Relations::load_rvalue_WithLambdaConstraint() const
         } else
             QVERIFY(!album->getRelations().empty());
 
-        // AlbumImage has many relation
+        // AlbumImage has-many relation
         auto images = album->getRelation<AlbumImage>(Common::albumImages);
         QCOMPARE(images.size(), expectedImage.imagesSize);
         QCOMPARE(typeid (ModelsCollection<AlbumImage *>), typeid (images));
