@@ -39,13 +39,13 @@ namespace Tom::Commands::Make
     /*! Relationship methods order defined on the command-line. */
     struct RelationsOrder
     {
-        /*! Oder of one-to-one relations. */
+        /*! Order of one-to-one relations. */
         std::vector<std::size_t> oneToOne {};
-        /*! Oder of one-to-many relations. */
+        /*! Order of one-to-many relations. */
         std::vector<std::size_t> oneToMany {};
-        /*! Oder of belongs-to relations. */
+        /*! Order of belongs-to relations. */
         std::vector<std::size_t> belongsTo {};
-        /*! Oder of belongs-to-many relations. */
+        /*! Order of belongs-to-many relations. */
         std::vector<std::size_t> belongsToMany {};
     };
 
