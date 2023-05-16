@@ -529,7 +529,7 @@ namespace Orm::Tiny::Relations
     std::variant<ModelsCollection<Related>, std::optional<Related>>
     BelongsToMany<Model, Related, PivotType>::getResults() const
     {
-        // Model doesn't contain primary key ( eg empty Model instance )
+        // If a Model doesn't contain primary key (eg. empty Model instance)
         if (const auto key = this->m_parent->getAttribute(m_parentKey);
             !key.isValid() || key.isNull()
         )

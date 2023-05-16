@@ -148,7 +148,7 @@ namespace Orm::Tiny::Relations
     std::variant<ModelsCollection<Related>, std::optional<Related>>
     HasMany<Model, Related>::getResults() const
     {
-        // Model doesn't contain primary key ( eg. empty Model instance )
+        // If a Model doesn't contain primary key (eg. empty Model instance)
         if (const auto key = this->getParentKey();
             !key.isValid() || key.isNull()
         )
