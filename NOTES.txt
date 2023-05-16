@@ -1288,6 +1288,42 @@ DatabaseConnection debug code:
 }
 
 
+ModelsCollection<std::reference_wrapper<Model>>:
+------------------------------------------------
+
+/*! Converting constructor from the ModelsCollection<Model>. */
+ModelsCollection(ModelsCollection<std::unwrap_reference_t<Model>> &models) // NOLINT(google-explicit-constructor)
+requires (!std::is_pointer_v<Model> &&
+          std::same_as<Model, std::reference_wrapper<ModelRawType>>)
+{
+    ModelsCollection<std::reference_wrapper<ModelRawType>> result;
+    result.reserve(models.size());
+
+    for (ModelRawType &model : models)
+        this->emplace_back(model);
+}
+
+
+ModelsCollection::operator==():
+-------------------------------
+
+/* Others */
+/*! Equality comparison operator for the ModelsCollection. */
+inline bool operator==(const ModelsCollection<Model> &) const = default;
+bool operator==(const ModelsCollection<ModelRawType *> &other) const
+requires (!std::is_pointer_v<Model>)
+{
+    if (this->size() != other.size())
+        return false;
+
+    for (size_type index = 0; index < this->size(); ++index)
+        if (this->at(index) != *other.at(index))
+            return false;
+
+    return true;
+}
+
+
 tmp notes:
 ----------
 
