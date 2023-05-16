@@ -22,6 +22,7 @@ project(${TinyUtils_ns}
 # ---
 
 add_library(${TinyUtils_target}
+    src/common/collection.hpp
     src/databases.hpp
     src/export.hpp
     src/fs.hpp

@@ -2,6 +2,7 @@
 #include <QtSql/QSqlDriver>
 #include <QtTest>
 
+#include "common/collection.hpp"
 #include "databases.hpp"
 
 #include "models/albumimage.hpp"
@@ -24,6 +25,8 @@ using Orm::Tiny::Types::ModelsCollection;
 using TypeUtils = Orm::Utils::Type;
 
 using TestUtils::Databases;
+
+using Common = TestUtils::Common::Collection;
 
 using Models::Album;
 using Models::AlbumImage;
@@ -159,51 +162,9 @@ private Q_SLOTS:
 
 // NOLINTNEXTLINE(readability-redundant-access-specifiers)
 private:
-    /*! Verify primary key IDs in the given collection. */
-    template<typename M>
-    static bool
-    verifyIds(const ModelsCollection<M *> &actual,
-              const std::unordered_set<quint64> &expected);
-    /*! Verify primary key IDs in the given collection. */
-    template<typename M>
-    static bool
-    verifyIds(const ModelsCollection<M> &actual,
-              const std::unordered_set<quint64> &expected);
-    /*! Verify primary key IDs in the given vector. */
-    inline static bool
-    verifyIds(const QVector<quint64> &actual,
-              const std::unordered_set<quint64> &expected);
-    /*! Verify primary key IDs in the given vector. */
-    template<typename T>
-    static bool
-    verifyIdsQVariant(const QVector<QVariant> &actual,
-                      const std::unordered_set<T> &expected);
-
-    /*! Verify attribute values in the given vector. */
-    template<typename T, typename M>
-    static bool
-    verifyAttributeValues(const QString &attribute, const ModelsCollection<M *> &actual,
-                          const std::unordered_set<T> &expected);
-
-    /*! Get the value of the model's primary key casted to the Derived::KeyType. */
-    template<typename M>
-    static typename M::KeyType getKeyCasted(M *model);
-    /*! Get the value of the model's primary key casted to the Derived::KeyType. */
-    template<typename M>
-    static typename M::KeyType getKeyCasted(const M &model);
-
     /*! Connection name used in this test case. */
     QString m_connection {};
 };
-
-/*! QString constant "album_id" (perf. reason, one time initialization). */
-Q_GLOBAL_STATIC_WITH_ARGS(QString, album_id_s, ("album_id")) // NOLINT(misc-use-anonymous-namespace)
-/*! Orm::Column constant "album_id" (perf. reason, one time initialization). */
-Q_GLOBAL_STATIC_WITH_ARGS(Orm::Column, album_id, (std::in_place_index<0>, "album_id")) // NOLINT(misc-use-anonymous-namespace)
-/*! QString constant "albumImages" (perf. reason, one time initialization). */
-Q_GLOBAL_STATIC_WITH_ARGS(QString, albumImages, ("albumImages")) // NOLINT(misc-use-anonymous-namespace)
-/*! QString constant "ext" (perf. reason, one time initialization). */
-Q_GLOBAL_STATIC_WITH_ARGS(QString, ext, ("ext")) // NOLINT(misc-use-anonymous-namespace)
 
 /* private slots */
 
@@ -229,69 +190,69 @@ void tst_Collection_Models::cleanupTestCase() const
 
 void tst_Collection_Models::filter() const
 {
-    auto images = AlbumImage::whereEq(*album_id, 2)->get();
+    auto images = AlbumImage::whereEq(Common::album_id, 2)->get();
     QCOMPARE(images.size(), 5);
     QCOMPARE(typeid (ModelsCollection<AlbumImage>), typeid (images));
-    QVERIFY(verifyIds(images, {2, 3, 4, 5, 6}));
+    QVERIFY(Common::verifyIds(images, {2, 3, 4, 5, 6}));
 
     // Get result
     const auto result = images.filter([](AlbumImage *const image)
     {
-        const auto id = getKeyCasted(image);
+        const auto id = Common::getKeyCasted(image);
         return id == 3 || id == 5;
     });
 
     // Verify
     QCOMPARE(result.size(), 2);
-    QVERIFY(verifyIds(result, {3, 5}));
+    QVERIFY(Common::verifyIds(result, {3, 5}));
 }
 
 void tst_Collection_Models::filter_WithIndex() const
 {
-    auto images = AlbumImage::whereEq(*album_id, 2)->get();
+    auto images = AlbumImage::whereEq(Common::album_id, 2)->get();
     QCOMPARE(images.size(), 5);
     QCOMPARE(typeid (ModelsCollection<AlbumImage>), typeid (images));
-    QVERIFY(verifyIds(images, {2, 3, 4, 5, 6}));
+    QVERIFY(Common::verifyIds(images, {2, 3, 4, 5, 6}));
 
     // Get result
     const auto result = images.filter([](AlbumImage *const image, const auto index)
     {
-        return getKeyCasted(image) == 3 || index == 2;
+        return Common::getKeyCasted(image) == 3 || index == 2;
     });
 
     // Verify
     QCOMPARE(result.size(), 2);
-    QVERIFY(verifyIds(result, {3, 4}));
+    QVERIFY(Common::verifyIds(result, {3, 4}));
 }
 
 void tst_Collection_Models::first() const
 {
-    auto images = AlbumImage::whereEq(*album_id, 2)->get();
+    auto images = AlbumImage::whereEq(Common::album_id, 2)->get();
     QCOMPARE(images.size(), 5);
     QCOMPARE(typeid (ModelsCollection<AlbumImage>), typeid (images));
-    QVERIFY(verifyIds(images, {2, 3, 4, 5, 6}));
+    QVERIFY(Common::verifyIds(images, {2, 3, 4, 5, 6}));
 
     // Get result
     AlbumImage *const result = images.first([](AlbumImage *const image)
     {
-        return getKeyCasted(image) == 3;
+        return Common::getKeyCasted(image) == 3;
     });
 
     // Verify
-    QCOMPARE(getKeyCasted(result), 3);
+    QCOMPARE(Common::getKeyCasted(result), 3);
 }
 
 void tst_Collection_Models::first_NotFound_nullptr() const
 {
-    auto images = AlbumImage::whereEq(*album_id, 2)->get();
+    auto images = AlbumImage::whereEq(Common::album_id, 2)->get();
     QCOMPARE(images.size(), 5);
     QCOMPARE(typeid (ModelsCollection<AlbumImage>), typeid (images));
-    QVERIFY(verifyIds(images, {2, 3, 4, 5, 6}));
+    QVERIFY(Common::verifyIds(images, {2, 3, 4, 5, 6}));
 
     // Get result
     AlbumImage *const result = images.first([](AlbumImage *const image)
     {
-        return getKeyCasted(image) == 30;
+        return Common::getKeyCasted(image) == 30;
     });
 
     // Verify
@@ -300,29 +261,29 @@ void tst_Collection_Models::first_NotFound_nullptr() const
 
 void tst_Collection_Models::first_NotFound_DefaultModel() const
 {
-    auto images = AlbumImage::whereEq(*album_id, 2)->get();
+    auto images = AlbumImage::whereEq(Common::album_id, 2)->get();
     QCOMPARE(images.size(), 5);
     QCOMPARE(typeid (ModelsCollection<AlbumImage>), typeid (images));
-    QVERIFY(verifyIds(images, {2, 3, 4, 5, 6}));
+    QVERIFY(Common::verifyIds(images, {2, 3, 4, 5, 6}));
 
     // Get result
     AlbumImage *const result = images.first([](AlbumImage *const image)
     {
-        return getKeyCasted(image) == 30;
+        return Common::getKeyCasted(image) == 30;
     },
         &images[2]);
 
     // Verify
     QVERIFY(result != nullptr);
-    QCOMPARE(getKeyCasted(result), 4);
+    QCOMPARE(Common::getKeyCasted(result), 4);
 }
 
 void tst_Collection_Models::implode_Name() const
 {
-    auto images = AlbumImage::whereEq(*album_id, 2)->get();
+    auto images = AlbumImage::whereEq(Common::album_id, 2)->get();
     QCOMPARE(images.size(), 5);
     QCOMPARE(typeid (ModelsCollection<AlbumImage>), typeid (images));
-    QVERIFY(verifyIds(images, {2, 3, 4, 5, 6}));
+    QVERIFY(Common::verifyIds(images, {2, 3, 4, 5, 6}));
 
     // Get result
     const auto result = images.implode(NAME, COMMA);
@@ -334,10 +295,10 @@ void tst_Collection_Models::implode_Name() const
 
 void tst_Collection_Models::implode_Id() const
 {
-    auto images = AlbumImage::whereEq(*album_id, 2)->get();
+    auto images = AlbumImage::whereEq(Common::album_id, 2)->get();
     QCOMPARE(images.size(), 5);
     QCOMPARE(typeid (ModelsCollection<AlbumImage>), typeid (images));
-    QVERIFY(verifyIds(images, {2, 3, 4, 5, 6}));
+    QVERIFY(Common::verifyIds(images, {2, 3, 4, 5, 6}));
 
     // Get result
     const auto result = images.implode(ID, COMMA);
@@ -363,45 +324,45 @@ void tst_Collection_Models::implode_Note_ColumnWithNull() const
 
 void tst_Collection_Models::modelKeys_QVariant() const
 {
-    auto images = AlbumImage::whereEq(*album_id, 2)->get();
+    auto images = AlbumImage::whereEq(Common::album_id, 2)->get();
     QCOMPARE(images.size(), 5);
     QCOMPARE(typeid (ModelsCollection<AlbumImage>), typeid (images));
-    QVERIFY(verifyIds(images, {2, 3, 4, 5, 6}));
+    QVERIFY(Common::verifyIds(images, {2, 3, 4, 5, 6}));
 
     // Get result
     const auto result = images.modelKeys();
 
     // Verify
     QCOMPARE(result.size(), 5);
-    QVERIFY(verifyIdsQVariant<quint64>(result, {2, 3, 4, 5, 6}));
+    QVERIFY(Common::verifyIdsQVariant<quint64>(result, {2, 3, 4, 5, 6}));
 }
 
 void tst_Collection_Models::modelKeys_quint64() const
 {
-    auto images = AlbumImage::whereEq(*album_id, 2)->get();
+    auto images = AlbumImage::whereEq(Common::album_id, 2)->get();
     QCOMPARE(images.size(), 5);
     QCOMPARE(typeid (ModelsCollection<AlbumImage>), typeid (images));
-    QVERIFY(verifyIds(images, {2, 3, 4, 5, 6}));
+    QVERIFY(Common::verifyIds(images, {2, 3, 4, 5, 6}));
 
     // Get result
     const auto result = images.modelKeys<quint64>();
 
     // Verify
     QCOMPARE(result.size(), 5);
-    QVERIFY(verifyIds(result, {2, 3, 4, 5, 6}));
+    QVERIFY(Common::verifyIds(result, {2, 3, 4, 5, 6}));
 }
 
 void tst_Collection_Models::map() const
 {
-    auto images = AlbumImage::whereEq(*album_id, 2)->get();
+    auto images = AlbumImage::whereEq(Common::album_id, 2)->get();
     QCOMPARE(images.size(), 5);
     QCOMPARE(typeid (ModelsCollection<AlbumImage>), typeid (images));
-    QVERIFY(verifyIds(images, {2, 3, 4, 5, 6}));
+    QVERIFY(Common::verifyIds(images, {2, 3, 4, 5, 6}));
 
     // Get result
     const auto result = images.map([](AlbumImage *const image)
     {
-        if (const auto id = getKeyCasted(image);
+        if (const auto id = Common::getKeyCasted(image);
             id == 3 || id == 6
         )
             (*image)[NAME] = QStringLiteral("%1_id_%2")
@@ -412,23 +373,23 @@ void tst_Collection_Models::map() const
 
     // Verify
     QCOMPARE(result.size(), 5);
-    QVERIFY(verifyIds(result, {2, 3, 4, 5, 6}));
-    QVERIFY(verifyAttributeValues<QString>(
+    QVERIFY(Common::verifyIds(result, {2, 3, 4, 5, 6}));
+    QVERIFY(Common::verifyAttributeValues<QString>(
                 NAME, result, {"album2_image1", "album2_image2_id_3", "album2_image3",
                                "album2_image4", "album2_image5_id_6"}));
 }
 
 void tst_Collection_Models::map_WithIndex() const
 {
-    auto images = AlbumImage::whereEq(*album_id, 2)->get();
+    auto images = AlbumImage::whereEq(Common::album_id, 2)->get();
     QCOMPARE(images.size(), 5);
     QCOMPARE(typeid (ModelsCollection<AlbumImage>), typeid (images));
-    QVERIFY(verifyIds(images, {2, 3, 4, 5, 6}));
+    QVERIFY(Common::verifyIds(images, {2, 3, 4, 5, 6}));
 
     // Get result
     const auto result = images.map([](AlbumImage *const image, const auto index)
     {
-        if (const auto id = getKeyCasted(image);
+        if (const auto id = Common::getKeyCasted(image);
             id == 2
         )
             (*image)[NAME] = QStringLiteral("%1_id_%2")
@@ -445,18 +406,18 @@ void tst_Collection_Models::map_WithIndex() const
 
     // Verify
     QCOMPARE(result.size(), 5);
-    QVERIFY(verifyIds(result, {2, 3, 4, 5, 6}));
-    QVERIFY(verifyAttributeValues<QString>(
+    QVERIFY(Common::verifyIds(result, {2, 3, 4, 5, 6}));
+    QVERIFY(Common::verifyAttributeValues<QString>(
                 NAME, result, {"album2_image1_id_2", "album2_image2", "album2_image3",
                                "album2_image4_index_3", "album2_image5"}));
 }
 
 void tst_Collection_Models::mapWithModelKeys() const
 {
-    auto images = AlbumImage::whereEq(*album_id, 2)->get();
+    auto images = AlbumImage::whereEq(Common::album_id, 2)->get();
     QCOMPARE(images.size(), 5);
     QCOMPARE(typeid (ModelsCollection<AlbumImage>), typeid (images));
-    QVERIFY(verifyIds(images, {2, 3, 4, 5, 6}));
+    QVERIFY(Common::verifyIds(images, {2, 3, 4, 5, 6}));
 
     // Get result
     const auto result = images.mapWithModelKeys();
@@ -476,17 +437,17 @@ void tst_Collection_Models::mapWithModelKeys() const
 
 void tst_Collection_Models::mapWithKeys_IdAndName() const
 {
-    auto images = AlbumImage::whereEq(*album_id, 2)->get();
+    auto images = AlbumImage::whereEq(Common::album_id, 2)->get();
     QCOMPARE(images.size(), 5);
     QCOMPARE(typeid (ModelsCollection<AlbumImage>), typeid (images));
-    QVERIFY(verifyIds(images, {2, 3, 4, 5, 6}));
+    QVERIFY(Common::verifyIds(images, {2, 3, 4, 5, 6}));
 
     // Get result
     const auto result =
             images.mapWithKeys<quint64, QString>(
                 [](AlbumImage *const image) -> std::pair<quint64, QString>
     {
-        return {getKeyCasted(image),
+        return {Common::getKeyCasted(image),
                 image->getAttribute(NAME).template value<QString>()};
     });
 
@@ -505,10 +466,10 @@ void tst_Collection_Models::mapWithKeys_IdAndName() const
 
 void tst_Collection_Models::mapWithKeys_NameAndId() const
 {
-    auto images = AlbumImage::whereEq(*album_id, 2)->get();
+    auto images = AlbumImage::whereEq(Common::album_id, 2)->get();
     QCOMPARE(images.size(), 5);
     QCOMPARE(typeid (ModelsCollection<AlbumImage>), typeid (images));
-    QVERIFY(verifyIds(images, {2, 3, 4, 5, 6}));
+    QVERIFY(Common::verifyIds(images, {2, 3, 4, 5, 6}));
 
     // Get result
     const auto result =
@@ -516,7 +477,7 @@ void tst_Collection_Models::mapWithKeys_NameAndId() const
                 [](AlbumImage *const image) -> std::pair<QString, quint64>
     {
         return {image->getAttribute(NAME).template value<QString>(),
-                getKeyCasted(image)};
+                Common::getKeyCasted(image)};
     });
 
     // Verify
@@ -534,17 +495,17 @@ void tst_Collection_Models::mapWithKeys_NameAndId() const
 
 void tst_Collection_Models::mapWithKeys_IdAndModelPointer() const
 {
-    auto images = AlbumImage::whereEq(*album_id, 2)->get();
+    auto images = AlbumImage::whereEq(Common::album_id, 2)->get();
     QCOMPARE(images.size(), 5);
     QCOMPARE(typeid (ModelsCollection<AlbumImage>), typeid (images));
-    QVERIFY(verifyIds(images, {2, 3, 4, 5, 6}));
+    QVERIFY(Common::verifyIds(images, {2, 3, 4, 5, 6}));
 
     // Get result
     const auto result =
             images.mapWithKeys<quint64, AlbumImage *>(
                 [](AlbumImage *const image) -> std::pair<quint64, AlbumImage *>
     {
-        return {getKeyCasted(image), image};
+        return {Common::getKeyCasted(image), image};
     });
 
     // Verify
@@ -562,17 +523,17 @@ void tst_Collection_Models::mapWithKeys_IdAndModelPointer() const
 
 void tst_Collection_Models::mapWithKeys_IdAndModel() const
 {
-    auto images = AlbumImage::whereEq(*album_id, 2)->get();
+    auto images = AlbumImage::whereEq(Common::album_id, 2)->get();
     QCOMPARE(images.size(), 5);
     QCOMPARE(typeid (ModelsCollection<AlbumImage>), typeid (images));
-    QVERIFY(verifyIds(images, {2, 3, 4, 5, 6}));
+    QVERIFY(Common::verifyIds(images, {2, 3, 4, 5, 6}));
 
     // Get result
     const auto result =
             images.mapWithKeys<quint64, AlbumImage>(
                 [](AlbumImage *const image) -> std::pair<quint64, AlbumImage>
     {
-        return {getKeyCasted(image), *image};
+        return {Common::getKeyCasted(image), *image};
     });
 
     // Verify
@@ -590,10 +551,10 @@ void tst_Collection_Models::mapWithKeys_IdAndModel() const
 
 void tst_Collection_Models::only() const
 {
-    auto images = AlbumImage::whereEq(*album_id, 2)->get();
+    auto images = AlbumImage::whereEq(Common::album_id, 2)->get();
     QCOMPARE(images.size(), 5);
     QCOMPARE(typeid (ModelsCollection<AlbumImage>), typeid (images));
-    QVERIFY(verifyIds(images, {2, 3, 4, 5, 6}));
+    QVERIFY(Common::verifyIds(images, {2, 3, 4, 5, 6}));
 
     // Get result
     const auto result = images.only({6, 2, 5, 10, 2});
@@ -611,10 +572,10 @@ void tst_Collection_Models::only() const
 
 void tst_Collection_Models::only_Empty() const
 {
-    auto images = AlbumImage::whereEq(*album_id, 2)->get();
+    auto images = AlbumImage::whereEq(Common::album_id, 2)->get();
     QCOMPARE(images.size(), 5);
     QCOMPARE(typeid (ModelsCollection<AlbumImage>), typeid (images));
-    QVERIFY(verifyIds(images, {2, 3, 4, 5, 6}));
+    QVERIFY(Common::verifyIds(images, {2, 3, 4, 5, 6}));
 
     // Get result
     const auto result = images.only({});
@@ -625,10 +586,10 @@ void tst_Collection_Models::only_Empty() const
 
 void tst_Collection_Models::except() const
 {
-    auto images = AlbumImage::whereEq(*album_id, 2)->get();
+    auto images = AlbumImage::whereEq(Common::album_id, 2)->get();
     QCOMPARE(images.size(), 5);
     QCOMPARE(typeid (ModelsCollection<AlbumImage>), typeid (images));
-    QVERIFY(verifyIds(images, {2, 3, 4, 5, 6}));
+    QVERIFY(Common::verifyIds(images, {2, 3, 4, 5, 6}));
 
     // Get result
     const auto result = images.except({5, 2, 10, 2});
@@ -646,10 +607,10 @@ void tst_Collection_Models::except() const
 
 void tst_Collection_Models::except_Empty() const
 {
-    auto images = AlbumImage::whereEq(*album_id, 2)->get();
+    auto images = AlbumImage::whereEq(Common::album_id, 2)->get();
     QCOMPARE(images.size(), 5);
     QCOMPARE(typeid (ModelsCollection<AlbumImage>), typeid (images));
-    QVERIFY(verifyIds(images, {2, 3, 4, 5, 6}));
+    QVERIFY(Common::verifyIds(images, {2, 3, 4, 5, 6}));
 
     // Get result
     const auto result = images.except({});
@@ -669,10 +630,10 @@ void tst_Collection_Models::except_Empty() const
 
 void tst_Collection_Models::pluck() const
 {
-    auto images = AlbumImage::whereEq(*album_id, 2)->get();
+    auto images = AlbumImage::whereEq(Common::album_id, 2)->get();
     QCOMPARE(images.size(), 5);
     QCOMPARE(typeid (ModelsCollection<AlbumImage>), typeid (images));
-    QVERIFY(verifyIds(images, {2, 3, 4, 5, 6}));
+    QVERIFY(Common::verifyIds(images, {2, 3, 4, 5, 6}));
 
     // Get result
     const auto result = images.pluck(NAME);
@@ -692,10 +653,10 @@ void tst_Collection_Models::pluck() const
 
 void tst_Collection_Models::pluck_KeyedById() const
 {
-    auto images = AlbumImage::whereEq(*album_id, 2)->get();
+    auto images = AlbumImage::whereEq(Common::album_id, 2)->get();
     QCOMPARE(images.size(), 5);
     QCOMPARE(typeid (ModelsCollection<AlbumImage>), typeid (images));
-    QVERIFY(verifyIds(images, {2, 3, 4, 5, 6}));
+    QVERIFY(Common::verifyIds(images, {2, 3, 4, 5, 6}));
 
     // Get result
     const auto result = images.pluck<quint64>(NAME, ID);
@@ -715,10 +676,10 @@ void tst_Collection_Models::pluck_KeyedById() const
 
 void tst_Collection_Models::contains_ById() const
 {
-    auto images = AlbumImage::whereEq(*album_id, 2)->get();
+    auto images = AlbumImage::whereEq(Common::album_id, 2)->get();
     QCOMPARE(images.size(), 5);
     QCOMPARE(typeid (ModelsCollection<AlbumImage>), typeid (images));
-    QVERIFY(verifyIds(images, {2, 3, 4, 5, 6}));
+    QVERIFY(Common::verifyIds(images, {2, 3, 4, 5, 6}));
 
     // Verify
     QVERIFY(images.contains(2));
@@ -730,10 +691,10 @@ void tst_Collection_Models::contains_ById() const
 
 void tst_Collection_Models::contains_ById_QVariant() const
 {
-    auto images = AlbumImage::whereEq(*album_id, 2)->get();
+    auto images = AlbumImage::whereEq(Common::album_id, 2)->get();
     QCOMPARE(images.size(), 5);
     QCOMPARE(typeid (ModelsCollection<AlbumImage>), typeid (images));
-    QVERIFY(verifyIds(images, {2, 3, 4, 5, 6}));
+    QVERIFY(Common::verifyIds(images, {2, 3, 4, 5, 6}));
 
     // Verify
     QVERIFY(images.contains(QVariant(2)));
@@ -745,10 +706,10 @@ void tst_Collection_Models::contains_ById_QVariant() const
 
 void tst_Collection_Models::contains_Callback() const
 {
-    auto images = AlbumImage::whereEq(*album_id, 2)->get();
+    auto images = AlbumImage::whereEq(Common::album_id, 2)->get();
     QCOMPARE(images.size(), 5);
     QCOMPARE(typeid (ModelsCollection<AlbumImage>), typeid (images));
-    QVERIFY(verifyIds(images, {2, 3, 4, 5, 6}));
+    QVERIFY(Common::verifyIds(images, {2, 3, 4, 5, 6}));
 
     // Verify
     QVERIFY(images.contains([](AlbumImage *const image)
@@ -775,10 +736,10 @@ void tst_Collection_Models::contains_Callback() const
 
 void tst_Collection_Models::contains_Model() const
 {
-    auto images = AlbumImage::whereEq(*album_id, 2)->get();
+    auto images = AlbumImage::whereEq(Common::album_id, 2)->get();
     QCOMPARE(images.size(), 5);
     QCOMPARE(typeid (ModelsCollection<AlbumImage>), typeid (images));
-    QVERIFY(verifyIds(images, {2, 3, 4, 5, 6}));
+    QVERIFY(Common::verifyIds(images, {2, 3, 4, 5, 6}));
 
     // Verify
     QVERIFY(images.contains(images[0]));
@@ -796,10 +757,10 @@ void tst_Collection_Models::contains_Model() const
 
 void tst_Collection_Models::doesntContain_ById() const
 {
-    auto images = AlbumImage::whereEq(*album_id, 2)->get();
+    auto images = AlbumImage::whereEq(Common::album_id, 2)->get();
     QCOMPARE(images.size(), 5);
     QCOMPARE(typeid (ModelsCollection<AlbumImage>), typeid (images));
-    QVERIFY(verifyIds(images, {2, 3, 4, 5, 6}));
+    QVERIFY(Common::verifyIds(images, {2, 3, 4, 5, 6}));
 
     // Verify
     QVERIFY(images.doesntContain(1));
@@ -811,10 +772,10 @@ void tst_Collection_Models::doesntContain_ById() const
 
 void tst_Collection_Models::doesntContain_ById_QVariant() const
 {
-    auto images = AlbumImage::whereEq(*album_id, 2)->get();
+    auto images = AlbumImage::whereEq(Common::album_id, 2)->get();
     QCOMPARE(images.size(), 5);
     QCOMPARE(typeid (ModelsCollection<AlbumImage>), typeid (images));
-    QVERIFY(verifyIds(images, {2, 3, 4, 5, 6}));
+    QVERIFY(Common::verifyIds(images, {2, 3, 4, 5, 6}));
 
     // Verify
     QVERIFY(images.doesntContain(QVariant(1)));
@@ -826,10 +787,10 @@ void tst_Collection_Models::doesntContain_ById_QVariant() const
 
 void tst_Collection_Models::doesntContain_Callback() const
 {
-    auto images = AlbumImage::whereEq(*album_id, 2)->get();
+    auto images = AlbumImage::whereEq(Common::album_id, 2)->get();
     QCOMPARE(images.size(), 5);
     QCOMPARE(typeid (ModelsCollection<AlbumImage>), typeid (images));
-    QVERIFY(verifyIds(images, {2, 3, 4, 5, 6}));
+    QVERIFY(Common::verifyIds(images, {2, 3, 4, 5, 6}));
 
     // Verify
     QVERIFY(images.doesntContain([](AlbumImage *const image)
@@ -868,10 +829,10 @@ void tst_Collection_Models::doesntContain_Callback() const
 
 void tst_Collection_Models::doesntContain_Model() const
 {
-    auto images = AlbumImage::whereEq(*album_id, 2)->get();
+    auto images = AlbumImage::whereEq(Common::album_id, 2)->get();
     QCOMPARE(images.size(), 5);
     QCOMPARE(typeid (ModelsCollection<AlbumImage>), typeid (images));
-    QVERIFY(verifyIds(images, {2, 3, 4, 5, 6}));
+    QVERIFY(Common::verifyIds(images, {2, 3, 4, 5, 6}));
 
     // Verify
     QVERIFY(!images.doesntContain(images[0]));
@@ -889,10 +850,10 @@ void tst_Collection_Models::doesntContain_Model() const
 
 void tst_Collection_Models::find() const
 {
-    auto images = AlbumImage::whereEq(*album_id, 2)->get();
+    auto images = AlbumImage::whereEq(Common::album_id, 2)->get();
     QCOMPARE(images.size(), 5);
     QCOMPARE(typeid (ModelsCollection<AlbumImage>), typeid (images));
-    QVERIFY(verifyIds(images, {2, 3, 4, 5, 6}));
+    QVERIFY(Common::verifyIds(images, {2, 3, 4, 5, 6}));
 
     // Get result
     AlbumImage *const result = images.find(4);
@@ -905,10 +866,10 @@ void tst_Collection_Models::find() const
 
 void tst_Collection_Models::find_NotFound_nullptr() const
 {
-    auto images = AlbumImage::whereEq(*album_id, 2)->get();
+    auto images = AlbumImage::whereEq(Common::album_id, 2)->get();
     QCOMPARE(images.size(), 5);
     QCOMPARE(typeid (ModelsCollection<AlbumImage>), typeid (images));
-    QVERIFY(verifyIds(images, {2, 3, 4, 5, 6}));
+    QVERIFY(Common::verifyIds(images, {2, 3, 4, 5, 6}));
 
     // Get result
     AlbumImage *const result = images.find(40);
@@ -919,10 +880,10 @@ void tst_Collection_Models::find_NotFound_nullptr() const
 
 void tst_Collection_Models::find_NotFound_DefaultModel() const
 {
-    auto images = AlbumImage::whereEq(*album_id, 2)->get();
+    auto images = AlbumImage::whereEq(Common::album_id, 2)->get();
     QCOMPARE(images.size(), 5);
     QCOMPARE(typeid (ModelsCollection<AlbumImage>), typeid (images));
-    QVERIFY(verifyIds(images, {2, 3, 4, 5, 6}));
+    QVERIFY(Common::verifyIds(images, {2, 3, 4, 5, 6}));
 
     // Get result
     AlbumImage *const result = images.find(40, &images[3]);
@@ -935,10 +896,10 @@ void tst_Collection_Models::find_NotFound_DefaultModel() const
 
 void tst_Collection_Models::find_Model() const
 {
-    auto images = AlbumImage::whereEq(*album_id, 2)->get();
+    auto images = AlbumImage::whereEq(Common::album_id, 2)->get();
     QCOMPARE(images.size(), 5);
     QCOMPARE(typeid (ModelsCollection<AlbumImage>), typeid (images));
-    QVERIFY(verifyIds(images, {2, 3, 4, 5, 6}));
+    QVERIFY(Common::verifyIds(images, {2, 3, 4, 5, 6}));
 
     // Get result
     AlbumImage *const result = images.find(images.at(2));
@@ -951,10 +912,10 @@ void tst_Collection_Models::find_Model() const
 
 void tst_Collection_Models::find_Model_NotFound_nullptr() const
 {
-    auto images = AlbumImage::whereEq(*album_id, 2)->get();
+    auto images = AlbumImage::whereEq(Common::album_id, 2)->get();
     QCOMPARE(images.size(), 5);
     QCOMPARE(typeid (ModelsCollection<AlbumImage>), typeid (images));
-    QVERIFY(verifyIds(images, {2, 3, 4, 5, 6}));
+    QVERIFY(Common::verifyIds(images, {2, 3, 4, 5, 6}));
 
     // Prepare
     AlbumImage image40 = images.at(0);
@@ -969,10 +930,10 @@ void tst_Collection_Models::find_Model_NotFound_nullptr() const
 
 void tst_Collection_Models::find_Model_NotFound_DefaultModel() const
 {
-    auto images = AlbumImage::whereEq(*album_id, 2)->get();
+    auto images = AlbumImage::whereEq(Common::album_id, 2)->get();
     QCOMPARE(images.size(), 5);
     QCOMPARE(typeid (ModelsCollection<AlbumImage>), typeid (images));
-    QVERIFY(verifyIds(images, {2, 3, 4, 5, 6}));
+    QVERIFY(Common::verifyIds(images, {2, 3, 4, 5, 6}));
 
     // Prepare
     AlbumImage image40 = images.at(0);
@@ -989,10 +950,10 @@ void tst_Collection_Models::find_Model_NotFound_DefaultModel() const
 
 void tst_Collection_Models::find_Ids() const
 {
-    auto images = AlbumImage::whereEq(*album_id, 2)->get();
+    auto images = AlbumImage::whereEq(Common::album_id, 2)->get();
     QCOMPARE(images.size(), 5);
     QCOMPARE(typeid (ModelsCollection<AlbumImage>), typeid (images));
-    QVERIFY(verifyIds(images, {2, 3, 4, 5, 6}));
+    QVERIFY(Common::verifyIds(images, {2, 3, 4, 5, 6}));
 
     // Get result
     const auto result = images.find({6, 3, 5, 6});
@@ -1010,10 +971,10 @@ void tst_Collection_Models::find_Ids() const
 
 void tst_Collection_Models::toQuery() const
 {
-    auto images = AlbumImage::whereEq(*album_id, 2)->get();
+    auto images = AlbumImage::whereEq(Common::album_id, 2)->get();
     QCOMPARE(images.size(), 5);
     QCOMPARE(typeid (ModelsCollection<AlbumImage>), typeid (images));
-    QVERIFY(verifyIds(images, {2, 3, 4, 5, 6}));
+    QVERIFY(Common::verifyIds(images, {2, 3, 4, 5, 6}));
 
     // Get result
     const auto result = images.toQuery()->get();
@@ -1021,7 +982,7 @@ void tst_Collection_Models::toQuery() const
     // Verify
     QCOMPARE(images.size(), 5);
     QCOMPARE(typeid (ModelsCollection<AlbumImage>), typeid (images));
-    QVERIFY(verifyIds(images, {2, 3, 4, 5, 6}));
+    QVERIFY(Common::verifyIds(images, {2, 3, 4, 5, 6}));
     QCOMPARE(result.constFirst().getAttributes().size(), 7);
 }
 
@@ -1040,10 +1001,10 @@ struct ExpectedImages
 
 void tst_Collection_Models::load_lvalue() const
 {
-    auto albums = Album::without(*albumImages)->findMany({1, 2, 4});
+    auto albums = Album::without(Common::albumImages)->findMany({1, 2, 4});
     QCOMPARE(albums.size(), 3);
     QCOMPARE(typeid (ModelsCollection<Album>), typeid (albums));
-    QVERIFY(verifyIds(albums, {1, 2, 4}));
+    QVERIFY(Common::verifyIds(albums, {1, 2, 4}));
 
     // Verify before
     QVERIFY(std::ranges::all_of(albums, [](const Album &album)
@@ -1052,7 +1013,7 @@ void tst_Collection_Models::load_lvalue() const
     }));
 
     // Load the albumImages hasMany relation
-    ModelsCollection<Album> &result = albums.load(*albumImages);
+    ModelsCollection<Album> &result = albums.load(Common::albumImages);
     // Both must be lvalue references because of that the decltype ((images)) is used
     QVERIFY((std::is_same_v<decltype (result), decltype ((albums))>));
     // It must be the same ModelsCollection (the same memory address)
@@ -1076,12 +1037,12 @@ void tst_Collection_Models::load_lvalue() const
             QVERIFY(!album.getRelations().empty());
             const auto &relations = album.getRelations();
             QCOMPARE(relations.size(), 1);
-            QVERIFY(relations.contains(*albumImages));
+            QVERIFY(relations.contains(Common::albumImages));
         } else
             QVERIFY(!album.getRelations().empty());
 
         // AlbumImage has many relation
-        auto images = album.getRelation<AlbumImage>(*albumImages);
+        auto images = album.getRelation<AlbumImage>(Common::albumImages);
         QCOMPARE(images.size(), expectedImage.imagesSize);
         QCOMPARE(typeid (ModelsCollection<AlbumImage *>), typeid (images));
 
@@ -1089,7 +1050,7 @@ void tst_Collection_Models::load_lvalue() const
         for (AlbumImage *const image : images) {
             QVERIFY(image);
             QVERIFY(image->exists);
-            QCOMPARE(image->getAttribute(*album_id_s), albumId);
+            QCOMPARE(image->getAttribute(Common::album_id_s), albumId);
             QVERIFY(expectedImage.imagesId.contains(
                         image->getKey().value<AlbumImage::KeyType>()));
             QCOMPARE(typeid (AlbumImage *), typeid (image));
@@ -1099,10 +1060,10 @@ void tst_Collection_Models::load_lvalue() const
 
 void tst_Collection_Models::load_lvalue_WithSelectConstraint() const
 {
-    auto albums = Album::without(*albumImages)->findMany({1, 2, 4});
+    auto albums = Album::without(Common::albumImages)->findMany({1, 2, 4});
     QCOMPARE(albums.size(), 3);
     QCOMPARE(typeid (ModelsCollection<Album>), typeid (albums));
-    QVERIFY(verifyIds(albums, {1, 2, 4}));
+    QVERIFY(Common::verifyIds(albums, {1, 2, 4}));
 
     // Verify before
     QVERIFY(std::ranges::all_of(albums, [](const Album &album)
@@ -1135,12 +1096,12 @@ void tst_Collection_Models::load_lvalue_WithSelectConstraint() const
             QVERIFY(!album.getRelations().empty());
             const auto &relations = album.getRelations();
             QCOMPARE(relations.size(), 1);
-            QVERIFY(relations.contains(*albumImages));
+            QVERIFY(relations.contains(Common::albumImages));
         } else
             QVERIFY(!album.getRelations().empty());
 
         // AlbumImage has many relation
-        auto images = album.getRelation<AlbumImage>(*albumImages);
+        auto images = album.getRelation<AlbumImage>(Common::albumImages);
         QCOMPARE(images.size(), expectedImage.imagesSize);
         QCOMPARE(typeid (ModelsCollection<AlbumImage *>), typeid (images));
 
@@ -1153,11 +1114,13 @@ void tst_Collection_Models::load_lvalue_WithSelectConstraint() const
             const auto &attributes = image->getAttributes();
             QCOMPARE(attributes.size(), 3);
 
-            std::unordered_set<QString> expectedAttributes {ID, *album_id_s, *ext};
+            std::unordered_set<QString> expectedAttributes {
+                ID, Common::album_id_s, Common::ext,
+            };
             for (const auto &attribute : attributes)
                 QVERIFY(expectedAttributes.contains(attribute.key));
 
-            QCOMPARE(image->getAttribute(*album_id_s), albumId);
+            QCOMPARE(image->getAttribute(Common::album_id_s), albumId);
             QVERIFY(expectedImage.imagesId.contains(
                         image->getKey().value<AlbumImage::KeyType>()));
             QCOMPARE(typeid (AlbumImage *), typeid (image));
@@ -1167,10 +1130,10 @@ void tst_Collection_Models::load_lvalue_WithSelectConstraint() const
 
 void tst_Collection_Models::load_lvalue_WithLambdaConstraint() const
 {
-    auto albums = Album::without(*albumImages)->findMany({1, 2, 4});
+    auto albums = Album::without(Common::albumImages)->findMany({1, 2, 4});
     QCOMPARE(albums.size(), 3);
     QCOMPARE(typeid (ModelsCollection<Album>), typeid (albums));
-    QVERIFY(verifyIds(albums, {1, 2, 4}));
+    QVERIFY(Common::verifyIds(albums, {1, 2, 4}));
 
     // Verify before
     QVERIFY(std::ranges::all_of(albums, [](const Album &album)
@@ -1180,9 +1143,9 @@ void tst_Collection_Models::load_lvalue_WithLambdaConstraint() const
 
     // Load the albumImages hasMany relation
     ModelsCollection<Album> &result =
-            albums.load({{*albumImages, [](auto &query)
+            albums.load({{Common::albumImages, [](auto &query)
                           {
-                              query.select({ID, *album_id_s, SIZE_});
+                              query.select({ID, Common::album_id_s, SIZE_});
                           }}});
     // Both must be lvalue references because of that the decltype ((images)) is used
     QVERIFY((std::is_same_v<decltype (result), decltype ((albums))>));
@@ -1207,12 +1170,12 @@ void tst_Collection_Models::load_lvalue_WithLambdaConstraint() const
             QVERIFY(!album.getRelations().empty());
             const auto &relations = album.getRelations();
             QCOMPARE(relations.size(), 1);
-            QVERIFY(relations.contains(*albumImages));
+            QVERIFY(relations.contains(Common::albumImages));
         } else
             QVERIFY(!album.getRelations().empty());
 
         // AlbumImage has many relation
-        auto images = album.getRelation<AlbumImage>(*albumImages);
+        auto images = album.getRelation<AlbumImage>(Common::albumImages);
         QCOMPARE(images.size(), expectedImage.imagesSize);
         QCOMPARE(typeid (ModelsCollection<AlbumImage *>), typeid (images));
 
@@ -1225,11 +1188,13 @@ void tst_Collection_Models::load_lvalue_WithLambdaConstraint() const
             const auto &attributes = image->getAttributes();
             QCOMPARE(attributes.size(), 3);
 
-            std::unordered_set<QString> expectedAttributes {ID, *album_id_s, SIZE_};
+            std::unordered_set<QString> expectedAttributes {
+                ID, Common::album_id_s, SIZE_,
+            };
             for (const auto &attribute : attributes)
                 QVERIFY(expectedAttributes.contains(attribute.key));
 
-            QCOMPARE(image->getAttribute(*album_id_s), albumId);
+            QCOMPARE(image->getAttribute(Common::album_id_s), albumId);
             QVERIFY(expectedImage.imagesId.contains(
                         image->getKey().value<AlbumImage::KeyType>()));
             QCOMPARE(typeid (AlbumImage *), typeid (image));
@@ -1239,10 +1204,10 @@ void tst_Collection_Models::load_lvalue_WithLambdaConstraint() const
 
 void tst_Collection_Models::load_lvalue_NonExistentRelation_Failed() const
 {
-    auto albums = Album::without(*albumImages)->findMany({1, 2});
+    auto albums = Album::without(Common::albumImages)->findMany({1, 2});
     QCOMPARE(albums.size(), 2);
     QCOMPARE(typeid (ModelsCollection<Album>), typeid (albums));
-    QVERIFY(verifyIds(albums, {1, 2}));
+    QVERIFY(Common::verifyIds(albums, {1, 2}));
 
     // Prepare
     const auto verify = [&albums]
@@ -1265,10 +1230,10 @@ void tst_Collection_Models::load_lvalue_NonExistentRelation_Failed() const
 
 void tst_Collection_Models::load_rvalue() const
 {
-    auto albums = Album::without(*albumImages)->findMany({1, 2, 4});
+    auto albums = Album::without(Common::albumImages)->findMany({1, 2, 4});
     QCOMPARE(albums.size(), 3);
     QCOMPARE(typeid (ModelsCollection<Album>), typeid (albums));
-    QVERIFY(verifyIds(albums, {1, 2, 4}));
+    QVERIFY(Common::verifyIds(albums, {1, 2, 4}));
 
     // Verify before
     QVERIFY(std::ranges::all_of(albums, [](const Album &album)
@@ -1277,7 +1242,7 @@ void tst_Collection_Models::load_rvalue() const
     }));
 
     // Load the albumImages hasMany relation
-    ModelsCollection<Album> &&result = std::move(albums).load(*albumImages);
+    ModelsCollection<Album> &&result = std::move(albums).load(Common::albumImages);
     /* In 99% cases it must be the same ModelsCollection (the same memory address) but
        I'm disabling the QVERIFY check because this is compiler specific, if the result
        is rvalue then the albums will be constructed in-place and no moves will be done,
@@ -1285,7 +1250,7 @@ void tst_Collection_Models::load_rvalue() const
        the rvalue reference then the move constructor would be called.
        Another thing is that I need to call std::move(albums).load() because I need to
        verify the albums, the real world scenario would be:
-       Album::without(*albumImages)->findMany({1, 2, 4}).load("albumImages")
+       Album::without(Common::albumImages)->findMany({1, 2, 4}).load("albumImages")
        At the end of the day both command statements are the same. */
 //    QVERIFY(reinterpret_cast<uintptr_t>(&result) ==
 //            reinterpret_cast<uintptr_t>(&albums));
@@ -1307,12 +1272,12 @@ void tst_Collection_Models::load_rvalue() const
             QVERIFY(!album.getRelations().empty());
             const auto &relations = album.getRelations();
             QCOMPARE(relations.size(), 1);
-            QVERIFY(relations.contains(*albumImages));
+            QVERIFY(relations.contains(Common::albumImages));
         } else
             QVERIFY(!album.getRelations().empty());
 
         // AlbumImage has many relation
-        auto images = album.getRelation<AlbumImage>(*albumImages);
+        auto images = album.getRelation<AlbumImage>(Common::albumImages);
         QCOMPARE(images.size(), expectedImage.imagesSize);
         QCOMPARE(typeid (ModelsCollection<AlbumImage *>), typeid (images));
 
@@ -1320,7 +1285,7 @@ void tst_Collection_Models::load_rvalue() const
         for (AlbumImage *const image : images) {
             QVERIFY(image);
             QVERIFY(image->exists);
-            QCOMPARE(image->getAttribute(*album_id_s), albumId);
+            QCOMPARE(image->getAttribute(Common::album_id_s), albumId);
             QVERIFY(expectedImage.imagesId.contains(
                         image->getKey().value<AlbumImage::KeyType>()));
             QCOMPARE(typeid (AlbumImage *), typeid (image));
@@ -1330,10 +1295,10 @@ void tst_Collection_Models::load_rvalue() const
 
 void tst_Collection_Models::load_rvalue_WithSelectConstraint() const
 {
-    auto albums = Album::without(*albumImages)->findMany({1, 2, 4});
+    auto albums = Album::without(Common::albumImages)->findMany({1, 2, 4});
     QCOMPARE(albums.size(), 3);
     QCOMPARE(typeid (ModelsCollection<Album>), typeid (albums));
-    QVERIFY(verifyIds(albums, {1, 2, 4}));
+    QVERIFY(Common::verifyIds(albums, {1, 2, 4}));
 
     // Verify before
     QVERIFY(std::ranges::all_of(albums, [](const Album &album)
@@ -1351,7 +1316,7 @@ void tst_Collection_Models::load_rvalue_WithSelectConstraint() const
        the rvalue reference then the move constructor would be called.
        Another thing is that I need to call std::move(albums).load() because I need to
        verify the albums, the real world scenario would be:
-       Album::without(*albumImages)->findMany({1, 2, 4}).load("albumImages")
+       Album::without(Common::albumImages)->findMany({1, 2, 4}).load("albumImages")
        At the end of the day both command statements are the same. */
 //    QVERIFY(reinterpret_cast<uintptr_t>(&result) ==
 //            reinterpret_cast<uintptr_t>(&albums));
@@ -1373,12 +1338,12 @@ void tst_Collection_Models::load_rvalue_WithSelectConstraint() const
             QVERIFY(!album.getRelations().empty());
             const auto &relations = album.getRelations();
             QCOMPARE(relations.size(), 1);
-            QVERIFY(relations.contains(*albumImages));
+            QVERIFY(relations.contains(Common::albumImages));
         } else
             QVERIFY(!album.getRelations().empty());
 
         // AlbumImage has many relation
-        auto images = album.getRelation<AlbumImage>(*albumImages);
+        auto images = album.getRelation<AlbumImage>(Common::albumImages);
         QCOMPARE(images.size(), expectedImage.imagesSize);
         QCOMPARE(typeid (ModelsCollection<AlbumImage *>), typeid (images));
 
@@ -1391,11 +1356,13 @@ void tst_Collection_Models::load_rvalue_WithSelectConstraint() const
             const auto &attributes = image->getAttributes();
             QCOMPARE(attributes.size(), 3);
 
-            std::unordered_set<QString> expectedAttributes {ID, *album_id_s, *ext};
+            std::unordered_set<QString> expectedAttributes {
+                ID, Common::album_id_s, Common::ext,
+            };
             for (const auto &attribute : attributes)
                 QVERIFY(expectedAttributes.contains(attribute.key));
 
-            QCOMPARE(image->getAttribute(*album_id_s), albumId);
+            QCOMPARE(image->getAttribute(Common::album_id_s), albumId);
             QVERIFY(expectedImage.imagesId.contains(
                         image->getKey().value<AlbumImage::KeyType>()));
             QCOMPARE(typeid (AlbumImage *), typeid (image));
@@ -1405,10 +1372,10 @@ void tst_Collection_Models::load_rvalue_WithSelectConstraint() const
 
 void tst_Collection_Models::load_rvalue_WithLambdaConstraint() const
 {
-    auto albums = Album::without(*albumImages)->findMany({1, 2, 4});
+    auto albums = Album::without(Common::albumImages)->findMany({1, 2, 4});
     QCOMPARE(albums.size(), 3);
     QCOMPARE(typeid (ModelsCollection<Album>), typeid (albums));
-    QVERIFY(verifyIds(albums, {1, 2, 4}));
+    QVERIFY(Common::verifyIds(albums, {1, 2, 4}));
 
     // Verify before
     QVERIFY(std::ranges::all_of(albums, [](const Album &album)
@@ -1418,9 +1385,9 @@ void tst_Collection_Models::load_rvalue_WithLambdaConstraint() const
 
     // Load the albumImages hasMany relation
     ModelsCollection<Album> &&result =
-            std::move(albums).load({{*albumImages, [](auto &query)
+            std::move(albums).load({{Common::albumImages, [](auto &query)
                                      {
-                                         query.select({ID, *album_id_s, SIZE_});
+                                         query.select({ID, Common::album_id_s, SIZE_});
                                      }}});
     /* In 99% cases it must be the same ModelsCollection (the same memory address) but
        I'm disabling the QVERIFY check because this is compiler specific, if the result
@@ -1429,7 +1396,7 @@ void tst_Collection_Models::load_rvalue_WithLambdaConstraint() const
        the rvalue reference then the move constructor would be called.
        Another thing is that I need to call std::move(albums).load() because I need to
        verify the albums, the real world scenario would be:
-       Album::without(*albumImages)->findMany({1, 2, 4}).load("albumImages")
+       Album::without(Common::albumImages)->findMany({1, 2, 4}).load("albumImages")
        At the end of the day both command statements are the same. */
 //    QVERIFY(reinterpret_cast<uintptr_t>(&result) ==
 //            reinterpret_cast<uintptr_t>(&albums));
@@ -1451,12 +1418,12 @@ void tst_Collection_Models::load_rvalue_WithLambdaConstraint() const
             QVERIFY(!album.getRelations().empty());
             const auto &relations = album.getRelations();
             QCOMPARE(relations.size(), 1);
-            QVERIFY(relations.contains(*albumImages));
+            QVERIFY(relations.contains(Common::albumImages));
         } else
             QVERIFY(!album.getRelations().empty());
 
         // AlbumImage has many relation
-        auto images = album.getRelation<AlbumImage>(*albumImages);
+        auto images = album.getRelation<AlbumImage>(Common::albumImages);
         QCOMPARE(images.size(), expectedImage.imagesSize);
         QCOMPARE(typeid (ModelsCollection<AlbumImage *>), typeid (images));
 
@@ -1469,11 +1436,13 @@ void tst_Collection_Models::load_rvalue_WithLambdaConstraint() const
             const auto &attributes = image->getAttributes();
             QCOMPARE(attributes.size(), 3);
 
-            std::unordered_set<QString> expectedAttributes {ID, *album_id_s, SIZE_};
+            std::unordered_set<QString> expectedAttributes {
+                ID, Common::album_id_s, SIZE_,
+            };
             for (const auto &attribute : attributes)
                 QVERIFY(expectedAttributes.contains(attribute.key));
 
-            QCOMPARE(image->getAttribute(*album_id_s), albumId);
+            QCOMPARE(image->getAttribute(Common::album_id_s), albumId);
             QVERIFY(expectedImage.imagesId.contains(
                         image->getKey().value<AlbumImage::KeyType>()));
             QCOMPARE(typeid (AlbumImage *), typeid (image));
@@ -1483,10 +1452,10 @@ void tst_Collection_Models::load_rvalue_WithLambdaConstraint() const
 
 void tst_Collection_Models::load_rvalue_NonExistentRelation_Failed() const
 {
-    auto albums = Album::without(*albumImages)->findMany({1, 2});
+    auto albums = Album::without(Common::albumImages)->findMany({1, 2});
     QCOMPARE(albums.size(), 2);
     QCOMPARE(typeid (ModelsCollection<Album>), typeid (albums));
-    QVERIFY(verifyIds(albums, {1, 2}));
+    QVERIFY(Common::verifyIds(albums, {1, 2}));
 
     // Prepare
     const auto verify = [&albums]
@@ -1511,92 +1480,92 @@ void tst_Collection_Models::load_rvalue_NonExistentRelation_Failed() const
 
 void tst_Collection_Models::reject() const
 {
-    auto images = AlbumImage::whereEq(*album_id, 2)->get();
+    auto images = AlbumImage::whereEq(Common::album_id, 2)->get();
     QCOMPARE(images.size(), 5);
     QCOMPARE(typeid (ModelsCollection<AlbumImage>), typeid (images));
-    QVERIFY(verifyIds(images, {2, 3, 4, 5, 6}));
+    QVERIFY(Common::verifyIds(images, {2, 3, 4, 5, 6}));
 
     // Get result
     const auto result = images.reject([](AlbumImage *const image)
     {
-        const auto id = getKeyCasted(image);
+        const auto id = Common::getKeyCasted(image);
         return id == 3 || id == 5;
     });
 
     // Verify
     QCOMPARE(result.size(), 3);
-    QVERIFY(verifyIds(result, {2, 4, 6}));
+    QVERIFY(Common::verifyIds(result, {2, 4, 6}));
 }
 
 void tst_Collection_Models::reject_WithIndex() const
 {
-    auto images = AlbumImage::whereEq(*album_id, 2)->get();
+    auto images = AlbumImage::whereEq(Common::album_id, 2)->get();
     QCOMPARE(images.size(), 5);
     QCOMPARE(typeid (ModelsCollection<AlbumImage>), typeid (images));
-    QVERIFY(verifyIds(images, {2, 3, 4, 5, 6}));
+    QVERIFY(Common::verifyIds(images, {2, 3, 4, 5, 6}));
 
     // Get result
     const auto result = images.reject([](AlbumImage *const image, const auto index)
     {
-        return getKeyCasted(image) == 3 || index == 2;
+        return Common::getKeyCasted(image) == 3 || index == 2;
     });
 
     // Verify
     QCOMPARE(result.size(), 3);
-    QVERIFY(verifyIds(result, {2, 5, 6}));
+    QVERIFY(Common::verifyIds(result, {2, 5, 6}));
 }
 
 void tst_Collection_Models::where_QString_EQ() const
 {
-    auto images = AlbumImage::whereEq(*album_id, 2)->get();
+    auto images = AlbumImage::whereEq(Common::album_id, 2)->get();
     QCOMPARE(images.size(), 5);
     QCOMPARE(typeid (ModelsCollection<AlbumImage>), typeid (images));
-    QVERIFY(verifyIds(images, {2, 3, 4, 5, 6}));
+    QVERIFY(Common::verifyIds(images, {2, 3, 4, 5, 6}));
 
     // Get result
     const auto result = images.whereEq<QString>(NAME, "album2_image3");
 
     // Verify
     QCOMPARE(result.size(), 1);
-    QVERIFY(verifyIds(result, {4}));
+    QVERIFY(Common::verifyIds(result, {4}));
 }
 
 void tst_Collection_Models::where_quint64_NE() const
 {
-    auto images = AlbumImage::whereEq(*album_id, 2)->get();
+    auto images = AlbumImage::whereEq(Common::album_id, 2)->get();
     QCOMPARE(images.size(), 5);
     QCOMPARE(typeid (ModelsCollection<AlbumImage>), typeid (images));
-    QVERIFY(verifyIds(images, {2, 3, 4, 5, 6}));
+    QVERIFY(Common::verifyIds(images, {2, 3, 4, 5, 6}));
 
     // Get result
     const auto result = images.where(ID, NE, 4);
 
     // Verify
     QCOMPARE(result.size(), 4);
-    QVERIFY(verifyIds(result, {2, 3, 5, 6}));
+    QVERIFY(Common::verifyIds(result, {2, 3, 5, 6}));
 }
 
 void tst_Collection_Models::where_quint64_GT() const
 {
-    auto images = AlbumImage::whereEq(*album_id, 2)->get();
+    auto images = AlbumImage::whereEq(Common::album_id, 2)->get();
     QCOMPARE(images.size(), 5);
     QCOMPARE(typeid (ModelsCollection<AlbumImage>), typeid (images));
-    QVERIFY(verifyIds(images, {2, 3, 4, 5, 6}));
+    QVERIFY(Common::verifyIds(images, {2, 3, 4, 5, 6}));
 
     // Get result
     const auto result = images.where(ID, GT, 3);
 
     // Verify
     QCOMPARE(result.size(), 3);
-    QVERIFY(verifyIds(result, {4, 5, 6}));
+    QVERIFY(Common::verifyIds(result, {4, 5, 6}));
 }
 
 void tst_Collection_Models::where_InvalidComparisonOperator_ThrowException() const
 {
-    auto images = AlbumImage::whereEq(*album_id, 2)->get();
+    auto images = AlbumImage::whereEq(Common::album_id, 2)->get();
     QCOMPARE(images.size(), 5);
     QCOMPARE(typeid (ModelsCollection<AlbumImage>), typeid (images));
-    QVERIFY(verifyIds(images, {2, 3, 4, 5, 6}));
+    QVERIFY(Common::verifyIds(images, {2, 3, 4, 5, 6}));
 
     // Verify
     QVERIFY_EXCEPTION_THROWN(images.where(ID, "dummy-NON_EXISTENT", 10),
@@ -1614,7 +1583,7 @@ void tst_Collection_Models::whereNull_QString() const
 
     // Verify
     QCOMPARE(result.size(), 2);
-    QVERIFY(verifyIds(result, {1, 2}));
+    QVERIFY(Common::verifyIds(result, {1, 2}));
 }
 
 void tst_Collection_Models::whereNotNull_QString() const
@@ -1628,7 +1597,7 @@ void tst_Collection_Models::whereNotNull_QString() const
 
     // Verify
     QCOMPARE(result.size(), 2);
-    QVERIFY(verifyIds(result, {3, 4}));
+    QVERIFY(Common::verifyIds(result, {3, 4}));
 }
 
 void tst_Collection_Models::whereNull_quint64() const
@@ -1636,14 +1605,14 @@ void tst_Collection_Models::whereNull_quint64() const
     auto images = AlbumImage::where(ID, GE, 6)->get();
     QCOMPARE(images.size(), 4);
     QCOMPARE(typeid (ModelsCollection<AlbumImage>), typeid (images));
-    QVERIFY(verifyIds(images, {6, 7, 8, 9}));
+    QVERIFY(Common::verifyIds(images, {6, 7, 8, 9}));
 
     // Get result
-    const auto result = images.whereNull(*album_id_s);
+    const auto result = images.whereNull(Common::album_id_s);
 
     // Verify
     QCOMPARE(result.size(), 2);
-    QVERIFY(verifyIds(result, {8, 9}));
+    QVERIFY(Common::verifyIds(result, {8, 9}));
 }
 
 void tst_Collection_Models::whereNotNull_quint64() const
@@ -1651,14 +1620,14 @@ void tst_Collection_Models::whereNotNull_quint64() const
     auto images = AlbumImage::where(ID, GE, 6)->get();
     QCOMPARE(images.size(), 4);
     QCOMPARE(typeid (ModelsCollection<AlbumImage>), typeid (images));
-    QVERIFY(verifyIds(images, {6, 7, 8, 9}));
+    QVERIFY(Common::verifyIds(images, {6, 7, 8, 9}));
 
     // Get result
-    const auto result = images.whereNotNull(*album_id_s);
+    const auto result = images.whereNotNull(Common::album_id_s);
 
     // Verify
     QCOMPARE(result.size(), 2);
-    QVERIFY(verifyIds(result, {6, 7}));
+    QVERIFY(Common::verifyIds(result, {6, 7}));
 }
 
 void tst_Collection_Models::whereIn_QString() const
@@ -1666,14 +1635,14 @@ void tst_Collection_Models::whereIn_QString() const
     auto images = AlbumImage::all();
     QCOMPARE(images.size(), 9);
     QCOMPARE(typeid (ModelsCollection<AlbumImage>), typeid (images));
-    QVERIFY(verifyIds(images, {1, 2, 3, 4, 5, 6, 7, 8, 9}));
+    QVERIFY(Common::verifyIds(images, {1, 2, 3, 4, 5, 6, 7, 8, 9}));
 
     // Get result
-    const auto result = images.whereIn<QString>(*ext, {"png", "gif"});
+    const auto result = images.whereIn<QString>(Common::ext, {"png", "gif"});
 
     // Verify
     QCOMPARE(result.size(), 4);
-    QVERIFY(verifyIds(result, {1, 2, 5, 6}));
+    QVERIFY(Common::verifyIds(result, {1, 2, 5, 6}));
 }
 
 void tst_Collection_Models::whereIn_quint64() const
@@ -1681,14 +1650,14 @@ void tst_Collection_Models::whereIn_quint64() const
     auto images = AlbumImage::all();
     QCOMPARE(images.size(), 9);
     QCOMPARE(typeid (ModelsCollection<AlbumImage>), typeid (images));
-    QVERIFY(verifyIds(images, {1, 2, 3, 4, 5, 6, 7, 8, 9}));
+    QVERIFY(Common::verifyIds(images, {1, 2, 3, 4, 5, 6, 7, 8, 9}));
 
     // Get result
-    const auto result = images.whereIn<quint64>(*album_id_s, {2, 3});
+    const auto result = images.whereIn<quint64>(Common::album_id_s, {2, 3});
 
     // Verify
     QCOMPARE(result.size(), 6);
-    QVERIFY(verifyIds(result, {2, 3, 4, 5, 6, 7}));
+    QVERIFY(Common::verifyIds(result, {2, 3, 4, 5, 6, 7}));
 }
 
 void tst_Collection_Models::whereIn_Empty() const
@@ -1696,7 +1665,7 @@ void tst_Collection_Models::whereIn_Empty() const
     auto albums = Album::all();
     QCOMPARE(albums.size(), 4);
     QCOMPARE(typeid (ModelsCollection<Album>), typeid (albums));
-    QVERIFY(verifyIds(albums, {1, 2, 3, 4}));
+    QVERIFY(Common::verifyIds(albums, {1, 2, 3, 4}));
 
     // Get result
     const auto result = albums.whereIn<quint64>(ID, {});
@@ -1710,14 +1679,14 @@ void tst_Collection_Models::whereNotIn_QString() const
     auto images = AlbumImage::all();
     QCOMPARE(images.size(), 9);
     QCOMPARE(typeid (ModelsCollection<AlbumImage>), typeid (images));
-    QVERIFY(verifyIds(images, {1, 2, 3, 4, 5, 6, 7, 8, 9}));
+    QVERIFY(Common::verifyIds(images, {1, 2, 3, 4, 5, 6, 7, 8, 9}));
 
     // Get result
-    const auto result = images.whereNotIn<QString>(*ext, {"png", "gif"});
+    const auto result = images.whereNotIn<QString>(Common::ext, {"png", "gif"});
 
     // Verify
     QCOMPARE(result.size(), 5);
-    QVERIFY(verifyIds(result, {3, 4, 7, 8, 9}));
+    QVERIFY(Common::verifyIds(result, {3, 4, 7, 8, 9}));
 }
 
 void tst_Collection_Models::whereNotIn_quint64() const
@@ -1725,14 +1694,14 @@ void tst_Collection_Models::whereNotIn_quint64() const
     auto images = AlbumImage::all();
     QCOMPARE(images.size(), 9);
     QCOMPARE(typeid (ModelsCollection<AlbumImage>), typeid (images));
-    QVERIFY(verifyIds(images, {1, 2, 3, 4, 5, 6, 7, 8, 9}));
+    QVERIFY(Common::verifyIds(images, {1, 2, 3, 4, 5, 6, 7, 8, 9}));
 
     // Get result
-    const auto result = images.whereNotIn<quint64>(*album_id_s, {2, 3});
+    const auto result = images.whereNotIn<quint64>(Common::album_id_s, {2, 3});
 
     // Verify
     QCOMPARE(result.size(), 3);
-    QVERIFY(verifyIds(result, {1, 8, 9}));
+    QVERIFY(Common::verifyIds(result, {1, 8, 9}));
 }
 
 void tst_Collection_Models::whereNotIn_Empty() const
@@ -1740,97 +1709,97 @@ void tst_Collection_Models::whereNotIn_Empty() const
     auto albums = Album::all();
     QCOMPARE(albums.size(), 4);
     QCOMPARE(typeid (ModelsCollection<Album>), typeid (albums));
-    QVERIFY(verifyIds(albums, {1, 2, 3, 4}));
+    QVERIFY(Common::verifyIds(albums, {1, 2, 3, 4}));
 
     // Get result
     const auto result = albums.whereNotIn<quint64>(ID, {});
 
     // Verify
     QCOMPARE(result.size(), 4);
-    QVERIFY(verifyIds(result, {1, 2, 3, 4}));
+    QVERIFY(Common::verifyIds(result, {1, 2, 3, 4}));
 }
 
 void tst_Collection_Models::whereBetween() const
 {
-    auto images = AlbumImage::whereEq(*album_id, 2)->get();
+    auto images = AlbumImage::whereEq(Common::album_id, 2)->get();
     QCOMPARE(images.size(), 5);
     QCOMPARE(typeid (ModelsCollection<AlbumImage>), typeid (images));
-    QVERIFY(verifyIds(images, {2, 3, 4, 5, 6}));
+    QVERIFY(Common::verifyIds(images, {2, 3, 4, 5, 6}));
 
     // Get result
     const auto result = images.whereBetween<quint64>(ID, {3, 5});
 
     // Verify
     QCOMPARE(result.size(), 3);
-    QVERIFY(verifyIds(result, {3, 4, 5}));
+    QVERIFY(Common::verifyIds(result, {3, 4, 5}));
 }
 
 void tst_Collection_Models::whereNotBetween() const
 {
-    auto images = AlbumImage::whereEq(*album_id, 2)->get();
+    auto images = AlbumImage::whereEq(Common::album_id, 2)->get();
     QCOMPARE(images.size(), 5);
     QCOMPARE(typeid (ModelsCollection<AlbumImage>), typeid (images));
-    QVERIFY(verifyIds(images, {2, 3, 4, 5, 6}));
+    QVERIFY(Common::verifyIds(images, {2, 3, 4, 5, 6}));
 
     // Get result
     const auto result = images.whereNotBetween<quint64>(ID, {3, 5});
 
     // Verify
     QCOMPARE(result.size(), 2);
-    QVERIFY(verifyIds(result, {2, 6}));
+    QVERIFY(Common::verifyIds(result, {2, 6}));
 }
 
 void tst_Collection_Models::firstWhere_QString() const
 {
-    auto images = AlbumImage::whereEq(*album_id, 2)->get();
+    auto images = AlbumImage::whereEq(Common::album_id, 2)->get();
     QCOMPARE(images.size(), 5);
     QCOMPARE(typeid (ModelsCollection<AlbumImage>), typeid (images));
-    QVERIFY(verifyIds(images, {2, 3, 4, 5, 6}));
+    QVERIFY(Common::verifyIds(images, {2, 3, 4, 5, 6}));
 
     // Get result
     AlbumImage *const result = images.firstWhereEq<QString>(NAME, "album2_image3");
 
     // Verify
     QVERIFY(result != nullptr);
-    QCOMPARE(getKeyCasted(result), 4);
+    QCOMPARE(Common::getKeyCasted(result), 4);
 }
 
 void tst_Collection_Models::firstWhere_quint64_NE() const
 {
-    auto images = AlbumImage::whereEq(*album_id, 2)->get();
+    auto images = AlbumImage::whereEq(Common::album_id, 2)->get();
     QCOMPARE(images.size(), 5);
     QCOMPARE(typeid (ModelsCollection<AlbumImage>), typeid (images));
-    QVERIFY(verifyIds(images, {2, 3, 4, 5, 6}));
+    QVERIFY(Common::verifyIds(images, {2, 3, 4, 5, 6}));
 
     // Get result
     AlbumImage *const result = images.firstWhere<quint64>(ID, NE, 2);
 
     // Verify
     QVERIFY(result != nullptr);
-    QCOMPARE(getKeyCasted(result), 3);
+    QCOMPARE(Common::getKeyCasted(result), 3);
 }
 
 void tst_Collection_Models::firstWhere_quint64_GE() const
 {
-    auto images = AlbumImage::whereEq(*album_id, 2)->get();
+    auto images = AlbumImage::whereEq(Common::album_id, 2)->get();
     QCOMPARE(images.size(), 5);
     QCOMPARE(typeid (ModelsCollection<AlbumImage>), typeid (images));
-    QVERIFY(verifyIds(images, {2, 3, 4, 5, 6}));
+    QVERIFY(Common::verifyIds(images, {2, 3, 4, 5, 6}));
 
     // Get result
     AlbumImage *const result = images.firstWhere<quint64>(ID, GE, 4);
 
     // Verify
     QVERIFY(result != nullptr);
-    QCOMPARE(getKeyCasted(result), 4);
+    QCOMPARE(Common::getKeyCasted(result), 4);
 }
 
 void tst_Collection_Models::firstWhere_NotFound_nullptr() const
 {
-    auto images = AlbumImage::whereEq(*album_id, 2)->get();
+    auto images = AlbumImage::whereEq(Common::album_id, 2)->get();
     QCOMPARE(images.size(), 5);
     QCOMPARE(typeid (ModelsCollection<AlbumImage>), typeid (images));
-    QVERIFY(verifyIds(images, {2, 3, 4, 5, 6}));
+    QVERIFY(Common::verifyIds(images, {2, 3, 4, 5, 6}));
 
     // Get result
     AlbumImage *const result = images.firstWhere<quint64>(ID, GE, 40);
@@ -1841,10 +1810,10 @@ void tst_Collection_Models::firstWhere_NotFound_nullptr() const
 
 void tst_Collection_Models::value_QVariant() const
 {
-    auto images = AlbumImage::whereEq(*album_id, 2)->get();
+    auto images = AlbumImage::whereEq(Common::album_id, 2)->get();
     QCOMPARE(images.size(), 5);
     QCOMPARE(typeid (ModelsCollection<AlbumImage>), typeid (images));
-    QVERIFY(verifyIds(images, {2, 3, 4, 5, 6}));
+    QVERIFY(Common::verifyIds(images, {2, 3, 4, 5, 6}));
 
     // Get result
     const auto result = images.value(NAME);
@@ -1856,10 +1825,10 @@ void tst_Collection_Models::value_QVariant() const
 
 void tst_Collection_Models::value_QVariant_NonExistentAttribute() const
 {
-    auto images = AlbumImage::whereEq(*album_id, 2)->get();
+    auto images = AlbumImage::whereEq(Common::album_id, 2)->get();
     QCOMPARE(images.size(), 5);
     QCOMPARE(typeid (ModelsCollection<AlbumImage>), typeid (images));
-    QVERIFY(verifyIds(images, {2, 3, 4, 5, 6}));
+    QVERIFY(Common::verifyIds(images, {2, 3, 4, 5, 6}));
 
     // Get result
     const auto result = images.value("dummy-NON_EXISTENT");
@@ -1871,10 +1840,10 @@ void tst_Collection_Models::value_QVariant_NonExistentAttribute() const
 
 void tst_Collection_Models::value_QVariant_NonExistentAttribute_DefaultValue() const
 {
-    auto images = AlbumImage::whereEq(*album_id, 2)->get();
+    auto images = AlbumImage::whereEq(Common::album_id, 2)->get();
     QCOMPARE(images.size(), 5);
     QCOMPARE(typeid (ModelsCollection<AlbumImage>), typeid (images));
-    QVERIFY(verifyIds(images, {2, 3, 4, 5, 6}));
+    QVERIFY(Common::verifyIds(images, {2, 3, 4, 5, 6}));
 
     // Get result
     const auto result = images.value("dummy-NON_EXISTENT", "default-value");
@@ -1896,10 +1865,10 @@ void tst_Collection_Models::value_QVariant_EmptyCollection() const
 
 void tst_Collection_Models::value_quint64() const
 {
-    auto images = AlbumImage::whereEq(*album_id, 2)->get();
+    auto images = AlbumImage::whereEq(Common::album_id, 2)->get();
     QCOMPARE(images.size(), 5);
     QCOMPARE(typeid (ModelsCollection<AlbumImage>), typeid (images));
-    QVERIFY(verifyIds(images, {2, 3, 4, 5, 6}));
+    QVERIFY(Common::verifyIds(images, {2, 3, 4, 5, 6}));
 
     // Get result
     const auto result = images.value<quint64>(SIZE_);
@@ -1911,10 +1880,10 @@ void tst_Collection_Models::value_quint64() const
 
 void tst_Collection_Models::value_quint64_NonExistentAttribute_DefaultValue() const
 {
-    auto images = AlbumImage::whereEq(*album_id, 2)->get();
+    auto images = AlbumImage::whereEq(Common::album_id, 2)->get();
     QCOMPARE(images.size(), 5);
     QCOMPARE(typeid (ModelsCollection<AlbumImage>), typeid (images));
-    QVERIFY(verifyIds(images, {2, 3, 4, 5, 6}));
+    QVERIFY(Common::verifyIds(images, {2, 3, 4, 5, 6}));
 
     // Get result
     const auto result = images.value<quint64>("dummy-NON_EXISTENT", 0);
@@ -1926,10 +1895,10 @@ void tst_Collection_Models::value_quint64_NonExistentAttribute_DefaultValue() co
 
 void tst_Collection_Models::value_QString() const
 {
-    auto images = AlbumImage::whereEq(*album_id, 2)->get();
+    auto images = AlbumImage::whereEq(Common::album_id, 2)->get();
     QCOMPARE(images.size(), 5);
     QCOMPARE(typeid (ModelsCollection<AlbumImage>), typeid (images));
-    QVERIFY(verifyIds(images, {2, 3, 4, 5, 6}));
+    QVERIFY(Common::verifyIds(images, {2, 3, 4, 5, 6}));
 
     // Get result
     const auto result = images.value<QString>(NAME);
@@ -1941,10 +1910,10 @@ void tst_Collection_Models::value_QString() const
 
 void tst_Collection_Models::value_QString_NonExistentAttribute_DefaultValue() const
 {
-    auto images = AlbumImage::whereEq(*album_id, 2)->get();
+    auto images = AlbumImage::whereEq(Common::album_id, 2)->get();
     QCOMPARE(images.size(), 5);
     QCOMPARE(typeid (ModelsCollection<AlbumImage>), typeid (images));
-    QVERIFY(verifyIds(images, {2, 3, 4, 5, 6}));
+    QVERIFY(Common::verifyIds(images, {2, 3, 4, 5, 6}));
 
     // Get result
     const auto result = images.value<QString>("dummy-NON_EXISTENT", "default-value");
@@ -1956,10 +1925,10 @@ void tst_Collection_Models::value_QString_NonExistentAttribute_DefaultValue() co
 
 void tst_Collection_Models::each_lvalue() const
 {
-    auto images = AlbumImage::whereEq(*album_id, 2)->get();
+    auto images = AlbumImage::whereEq(Common::album_id, 2)->get();
     QCOMPARE(images.size(), 5);
     QCOMPARE(typeid (ModelsCollection<AlbumImage>), typeid (images));
-    QVERIFY(verifyIds(images, {2, 3, 4, 5, 6}));
+    QVERIFY(Common::verifyIds(images, {2, 3, 4, 5, 6}));
 
     // Get result
     QVector<quint64> expectedIds;
@@ -1969,9 +1938,9 @@ void tst_Collection_Models::each_lvalue() const
                                                        (AlbumImage *const image)
     {
 #if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
-        expectedIds.emplace_back(getKeyCasted(image));
+        expectedIds.emplace_back(Common::getKeyCasted(image));
 #else
-        expectedIds.append(getKeyCasted(image));
+        expectedIds.append(Common::getKeyCasted(image));
 #endif
     });
 
@@ -1999,10 +1968,10 @@ struct ExpectedItem
 
 void tst_Collection_Models::each_lvalue_index() const
 {
-    auto images = AlbumImage::whereEq(*album_id, 2)->get();
+    auto images = AlbumImage::whereEq(Common::album_id, 2)->get();
     QCOMPARE(images.size(), 5);
     QCOMPARE(typeid (ModelsCollection<AlbumImage>), typeid (images));
-    QVERIFY(verifyIds(images, {2, 3, 4, 5, 6}));
+    QVERIFY(Common::verifyIds(images, {2, 3, 4, 5, 6}));
 
     // Get result
     QVector<ExpectedItem> expectedIds;
@@ -2013,9 +1982,9 @@ void tst_Collection_Models::each_lvalue_index() const
                         (AlbumImage *const image, const auto index)
     {
 #if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
-        expectedIds.emplace_back(getKeyCasted(image), index);
+        expectedIds.emplace_back(Common::getKeyCasted(image), index);
 #else
-        expectedIds.append({getKeyCasted(image), index});
+        expectedIds.append({Common::getKeyCasted(image), index});
 #endif
     });
 
@@ -2032,10 +2001,10 @@ void tst_Collection_Models::each_lvalue_index() const
 
 void tst_Collection_Models::each_lvalue_bool() const
 {
-    auto images = AlbumImage::whereEq(*album_id, 2)->get();
+    auto images = AlbumImage::whereEq(Common::album_id, 2)->get();
     QCOMPARE(images.size(), 5);
     QCOMPARE(typeid (ModelsCollection<AlbumImage>), typeid (images));
-    QVERIFY(verifyIds(images, {2, 3, 4, 5, 6}));
+    QVERIFY(Common::verifyIds(images, {2, 3, 4, 5, 6}));
 
     // Get result
     QVector<quint64> expectedIds;
@@ -2047,13 +2016,13 @@ void tst_Collection_Models::each_lvalue_bool() const
                         (AlbumImage *const image) -> bool
     {
         // Exit/break the each() looping
-        if (getKeyCasted(image) == 5)
+        if (Common::getKeyCasted(image) == 5)
             return false;
 
 #if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
-        expectedIds.emplace_back(getKeyCasted(image));
+        expectedIds.emplace_back(Common::getKeyCasted(image));
 #else
-        expectedIds.append(getKeyCasted(image));
+        expectedIds.append(Common::getKeyCasted(image));
 #endif
 
         return true;
@@ -2071,10 +2040,10 @@ void tst_Collection_Models::each_lvalue_bool() const
 
 void tst_Collection_Models::each_lvalue_bool_index() const
 {
-    auto images = AlbumImage::whereEq(*album_id, 2)->get();
+    auto images = AlbumImage::whereEq(Common::album_id, 2)->get();
     QCOMPARE(images.size(), 5);
     QCOMPARE(typeid (ModelsCollection<AlbumImage>), typeid (images));
-    QVERIFY(verifyIds(images, {2, 3, 4, 5, 6}));
+    QVERIFY(Common::verifyIds(images, {2, 3, 4, 5, 6}));
 
     // Get result
     QVector<ExpectedItem> expectedIds;
@@ -2089,9 +2058,9 @@ void tst_Collection_Models::each_lvalue_bool_index() const
             return false;
 
 #if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
-        expectedIds.emplace_back(getKeyCasted(image), index);
+        expectedIds.emplace_back(Common::getKeyCasted(image), index);
 #else
-        expectedIds.append({getKeyCasted(image), index});
+        expectedIds.append({Common::getKeyCasted(image), index});
 #endif
 
         return true;
@@ -2110,10 +2079,10 @@ void tst_Collection_Models::each_lvalue_bool_index() const
 
 void tst_Collection_Models::each_rvalue() const
 {
-    auto images = AlbumImage::whereEq(*album_id, 2)->get();
+    auto images = AlbumImage::whereEq(Common::album_id, 2)->get();
     QCOMPARE(images.size(), 5);
     QCOMPARE(typeid (ModelsCollection<AlbumImage>), typeid (images));
-    QVERIFY(verifyIds(images, {2, 3, 4, 5, 6}));
+    QVERIFY(Common::verifyIds(images, {2, 3, 4, 5, 6}));
 
     // Get result
     QVector<quint64> expectedIds;
@@ -2124,9 +2093,9 @@ void tst_Collection_Models::each_rvalue() const
                                    (AlbumImage *const image)
     {
 #if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
-        expectedIds.emplace_back(getKeyCasted(image));
+        expectedIds.emplace_back(Common::getKeyCasted(image));
 #else
-        expectedIds.append(getKeyCasted(image));
+        expectedIds.append(Common::getKeyCasted(image));
 #endif
     });
 
@@ -2138,10 +2107,10 @@ void tst_Collection_Models::each_rvalue() const
 
 void tst_Collection_Models::each_rvalue_index() const
 {
-    auto images = AlbumImage::whereEq(*album_id, 2)->get();
+    auto images = AlbumImage::whereEq(Common::album_id, 2)->get();
     QCOMPARE(images.size(), 5);
     QCOMPARE(typeid (ModelsCollection<AlbumImage>), typeid (images));
-    QVERIFY(verifyIds(images, {2, 3, 4, 5, 6}));
+    QVERIFY(Common::verifyIds(images, {2, 3, 4, 5, 6}));
 
     // Get result
     QVector<ExpectedItem> expectedIds;
@@ -2152,9 +2121,9 @@ void tst_Collection_Models::each_rvalue_index() const
                                    (AlbumImage *const image, const auto index)
     {
 #if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
-        expectedIds.emplace_back(getKeyCasted(image), index);
+        expectedIds.emplace_back(Common::getKeyCasted(image), index);
 #else
-        expectedIds.append({getKeyCasted(image), index});
+        expectedIds.append({Common::getKeyCasted(image), index});
 #endif
     });
 
@@ -2167,10 +2136,10 @@ void tst_Collection_Models::each_rvalue_index() const
 
 void tst_Collection_Models::each_rvalue_bool() const
 {
-    auto images = AlbumImage::whereEq(*album_id, 2)->get();
+    auto images = AlbumImage::whereEq(Common::album_id, 2)->get();
     QCOMPARE(images.size(), 5);
     QCOMPARE(typeid (ModelsCollection<AlbumImage>), typeid (images));
-    QVERIFY(verifyIds(images, {2, 3, 4, 5, 6}));
+    QVERIFY(Common::verifyIds(images, {2, 3, 4, 5, 6}));
 
     // Get result
     QVector<quint64> expectedIds;
@@ -2182,13 +2151,13 @@ void tst_Collection_Models::each_rvalue_bool() const
                                    (AlbumImage *const image) -> bool
     {
         // Exit/break the each() looping
-        if (getKeyCasted(image) == 5)
+        if (Common::getKeyCasted(image) == 5)
             return false;
 
 #if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
-        expectedIds.emplace_back(getKeyCasted(image));
+        expectedIds.emplace_back(Common::getKeyCasted(image));
 #else
-        expectedIds.append(getKeyCasted(image));
+        expectedIds.append(Common::getKeyCasted(image));
 #endif
 
         return true;
@@ -2202,10 +2171,10 @@ void tst_Collection_Models::each_rvalue_bool() const
 
 void tst_Collection_Models::each_rvalue_bool_index() const
 {
-    auto images = AlbumImage::whereEq(*album_id, 2)->get();
+    auto images = AlbumImage::whereEq(Common::album_id, 2)->get();
     QCOMPARE(images.size(), 5);
     QCOMPARE(typeid (ModelsCollection<AlbumImage>), typeid (images));
-    QVERIFY(verifyIds(images, {2, 3, 4, 5, 6}));
+    QVERIFY(Common::verifyIds(images, {2, 3, 4, 5, 6}));
 
     // Get result
     QVector<ExpectedItem> expectedIds;
@@ -2220,9 +2189,9 @@ void tst_Collection_Models::each_rvalue_bool_index() const
             return false;
 
 #if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
-        expectedIds.emplace_back(getKeyCasted(image), index);
+        expectedIds.emplace_back(Common::getKeyCasted(image), index);
 #else
-        expectedIds.append({getKeyCasted(image), index});
+        expectedIds.append({Common::getKeyCasted(image), index});
 #endif
 
         return true;
@@ -2237,10 +2206,10 @@ void tst_Collection_Models::each_rvalue_bool_index() const
 
 void tst_Collection_Models::tap_lvalue() const
 {
-    auto images = AlbumImage::whereEq(*album_id, 2)->get();
+    auto images = AlbumImage::whereEq(Common::album_id, 2)->get();
     QCOMPARE(images.size(), 5);
     QCOMPARE(typeid (ModelsCollection<AlbumImage>), typeid (images));
-    QVERIFY(verifyIds(images, {2, 3, 4, 5, 6}));
+    QVERIFY(Common::verifyIds(images, {2, 3, 4, 5, 6}));
 
     // Get result
     auto callbackInvoked = false;
@@ -2269,7 +2238,7 @@ void tst_Collection_Models::tap_lvalue() const
     QVERIFY(imagesInCallbackAddress == imagesAddress);
     // Collection content
     QCOMPARE(result.size(), 5);
-    QVERIFY(verifyIds(result, {2, 3, 4, 5, 6}));
+    QVERIFY(Common::verifyIds(result, {2, 3, 4, 5, 6}));
     // Verify the changed name
     QCOMPARE(result.at(2).getAttribute(NAME), QVariant("album2_image3 NEW"));
 }
@@ -2301,78 +2270,11 @@ void tst_Collection_Models::tap_rvalue() const
     QVERIFY(callbackInvoked);
     // Collection content
     QCOMPARE(result.size(), 1);
-    QVERIFY(verifyIds(result, {2}));
+    QVERIFY(Common::verifyIds(result, {2}));
     // Verify the changed name
     QCOMPARE(result.first().getAttribute(NAME), QVariant("image2 NEW"));
 }
 // NOLINTEND(readability-convert-member-functions-to-static)
-
-/* private */
-
-template<typename M>
-bool tst_Collection_Models::verifyIds(const ModelsCollection<M *> &actual,
-                                      const std::unordered_set<quint64> &expected)
-{
-    return std::ranges::all_of(actual, [&expected](M *const model)
-    {
-        return expected.contains(getKeyCasted(model));
-    });
-}
-
-template<typename M>
-bool tst_Collection_Models::verifyIds(const ModelsCollection<M> &actual,
-                                      const std::unordered_set<quint64> &expected)
-{
-    return std::ranges::all_of(actual, [&expected](const M &model)
-    {
-        return expected.contains(getKeyCasted(model));
-    });
-}
-
-bool tst_Collection_Models::verifyIds(const QVector<quint64> &actual,
-                                      const std::unordered_set<quint64> &expected)
-{
-    return std::ranges::all_of(actual, [&expected](const quint64 id)
-    {
-        return expected.contains(id);
-    });
-}
-
-template<typename T>
-bool tst_Collection_Models::verifyIdsQVariant(const QVector<QVariant> &actual,
-                                              const std::unordered_set<T> &expected)
-{
-    return std::ranges::all_of(actual, [&expected](const QVariant &id)
-    {
-        return expected.contains(id.template value<T>());
-    });
-}
-
-template<typename T, typename M>
-bool tst_Collection_Models::verifyAttributeValues(
-        const QString &attribute, const ModelsCollection<M *> &actual,
-        const std::unordered_set<T> &expected)
-{
-    return std::ranges::all_of(actual,
-                               [&attribute, &expected](M *const model)
-    {
-        return expected.contains(model->getAttribute(attribute).template value<T>());
-    });
-}
-
-template<typename M>
-typename M::KeyType
-tst_Collection_Models::getKeyCasted(M *const model)
-{
-    return model->getKey().template value<typename M::KeyType>();
-}
-
-template<typename M>
-typename M::KeyType
-tst_Collection_Models::getKeyCasted(const M &model)
-{
-    return model.getKey().template value<typename M::KeyType>();
-}
 
 QTEST_MAIN(tst_Collection_Models)
 
