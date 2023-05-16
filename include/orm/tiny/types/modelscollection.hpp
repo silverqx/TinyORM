@@ -1120,7 +1120,9 @@ namespace Types
     constexpr typename ModelsCollection<Model>::ModelRawType *
     ModelsCollection<Model>::toPointer(ModelRawType *const model) noexcept
     {
-        // Don't handle the nullptr
+        // I don't have enough courage to remove this
+        Q_CHECK_PTR(model);
+
         return model;
     }
 
@@ -1128,7 +1130,9 @@ namespace Types
     constexpr const typename ModelsCollection<Model>::ModelRawType *
     ModelsCollection<Model>::toPointer(const ModelRawType *const model) noexcept
     {
-        // Don't handle the nullptr
+        // I don't have enough courage to remove this
+        Q_CHECK_PTR(model);
+
         return model;
     }
 
