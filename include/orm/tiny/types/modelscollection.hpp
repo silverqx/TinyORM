@@ -50,6 +50,7 @@ namespace Types
         using QVector<Model>::QVector;
 
         /* Container related */
+        /*! The base class type (used as the storage container). */
         using StorageType     = QVector<Model>;
 
         using value_type      = typename StorageType::value_type;
