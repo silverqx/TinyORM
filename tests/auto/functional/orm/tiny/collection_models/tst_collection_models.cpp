@@ -39,7 +39,7 @@ private Q_SLOTS:
     void initTestCase();
     void cleanupTestCase() const;
 
-    /* Others */
+    /* Comparison operators */
     void equalComparison() const;
     void notEqualComparison() const;
 
@@ -193,7 +193,10 @@ void tst_Collection_Models::cleanupTestCase() const
     ConnectionOverride::connection.clear();
 }
 
-/* Others */
+/* Comparison operators */
+
+/* In the following equality operator==() tests are real types used instead
+   of the auto to clearly see what's up. */
 
 void tst_Collection_Models::equalComparison() const
 {
@@ -211,7 +214,7 @@ void tst_Collection_Models::equalComparison() const
     QVERIFY(images2_1 == images2_2);
 
     // The same models' addresses (used Models' pointers comparison)
-    const auto &images2_3 = images2_1;
+    const ModelsCollection<AlbumImage> &images2_3 = images2_1;
     QVERIFY(images2_1 == images2_3);
 }
 
@@ -240,12 +243,14 @@ void tst_Collection_Models::notEqualComparison() const
 
 void tst_Collection_Models::equalComparison_WithPointersCollection() const
 {
-    auto images2_1 = AlbumImage::whereEq(Common::album_id, 2)->get();
+    ModelsCollection<AlbumImage>
+    images2_1 = AlbumImage::whereEq(Common::album_id, 2)->get();
     QCOMPARE(images2_1.size(), 5);
     QCOMPARE(typeid (ModelsCollection<AlbumImage>), typeid (images2_1));
     QVERIFY(Common::verifyIds(images2_1, {2, 3, 4, 5, 6}));
 
-    auto images2_2 = AlbumImage::whereEq(Common::album_id, 2)->get();
+    ModelsCollection<AlbumImage>
+    images2_2 = AlbumImage::whereEq(Common::album_id, 2)->get();
     QCOMPARE(images2_2.size(), 5);
     QCOMPARE(typeid (ModelsCollection<AlbumImage>), typeid (images2_2));
     QVERIFY(Common::verifyIds(images2_2, {2, 3, 4, 5, 6}));
@@ -266,12 +271,14 @@ void tst_Collection_Models::equalComparison_WithPointersCollection() const
 
 void tst_Collection_Models::notEqualComparison_WithPointersCollection() const
 {
-    auto images1 = AlbumImage::whereEq(Common::album_id, 1)->get();
+    ModelsCollection<AlbumImage>
+    images1 = AlbumImage::whereEq(Common::album_id, 1)->get();
     QCOMPARE(images1.size(), 1);
     QCOMPARE(typeid (ModelsCollection<AlbumImage>), typeid (images1));
     QVERIFY(Common::verifyIds(images1, {1}));
 
-    auto images2_1 = AlbumImage::whereEq(Common::album_id, 2)->get();
+    ModelsCollection<AlbumImage>
+    images2_1 = AlbumImage::whereEq(Common::album_id, 2)->get();
     QCOMPARE(images2_1.size(), 5);
     QCOMPARE(typeid (ModelsCollection<AlbumImage>), typeid (images2_1));
     QVERIFY(Common::verifyIds(images2_1, {2, 3, 4, 5, 6}));
@@ -283,7 +290,7 @@ void tst_Collection_Models::notEqualComparison_WithPointersCollection() const
     QVERIFY(images1 != images2_1_Init);
 
     // Make a copy and change one model (used Model::operator==() for comparing)
-    auto images2_2 = images2_1;
+    ModelsCollection<AlbumImage> images2_2 = images2_1;
     ModelsCollection<AlbumImage *> images2_2_Init {
         &images2_2[0], &images2_2[1], &images2_2[2], &images2_2[3], &images2_2[4], // NOLINT(readability-container-data-pointer)
     };
