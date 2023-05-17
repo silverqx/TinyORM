@@ -39,6 +39,13 @@ private Q_SLOTS:
     void initTestCase();
     void cleanupTestCase() const;
 
+    /* Others */
+    void equalComparison() const;
+    void notEqualComparison() const;
+
+    void equalComparison_WithModelsCollection() const;
+    void notEqualComparison_WithModelsCollection() const;
+
     /* BaseCollection */
     void filter() const;
     void filter_WithIndex() const;
@@ -183,6 +190,145 @@ void tst_Collection_Relations::cleanupTestCase() const
 {
     // Reset connection override
     ConnectionOverride::connection.clear();
+}
+
+/* Others */
+
+void tst_Collection_Relations::equalComparison() const
+{
+    auto album2_1 = Album::find(2);
+    QVERIFY(album2_1);
+    QVERIFY(album2_1->exists);
+    QCOMPARE(album2_1->getAttribute(ID), QVariant(2));
+
+    auto images2_1 = album2_1->getRelation<AlbumImage>(Common::albumImages);
+    QCOMPARE(images2_1.size(), 5);
+    QCOMPARE(typeid (ModelsCollection<AlbumImage *>), typeid (images2_1));
+    QVERIFY(Common::verifyIds(images2_1, {2, 3, 4, 5, 6}));
+
+    auto album2_2 = Album::find(2);
+    QVERIFY(album2_2);
+    QVERIFY(album2_2->exists);
+    QCOMPARE(album2_2->getAttribute(ID), QVariant(2));
+
+    auto images2_2 = album2_2->getRelation<AlbumImage>(Common::albumImages);
+    QCOMPARE(images2_2.size(), 5);
+    QCOMPARE(typeid (ModelsCollection<AlbumImage *>), typeid (images2_2));
+    QVERIFY(Common::verifyIds(images2_2, {2, 3, 4, 5, 6}));
+
+    // Different collections with the same models (used Model::operator==() for comparing)
+    QVERIFY(images2_1 == images2_2);
+
+    // The same models' addresses (used Models' pointers comparison)
+    const auto &images2_3 = images2_1;
+    QVERIFY(images2_1 == images2_3);
+}
+
+void tst_Collection_Relations::notEqualComparison() const
+{
+    auto album1 = Album::find(1);
+    QVERIFY(album1);
+    QVERIFY(album1->exists);
+    QCOMPARE(album1->getAttribute(ID), QVariant(1));
+
+    auto images1 = album1->getRelation<AlbumImage>(Common::albumImages);
+    QCOMPARE(images1.size(), 1);
+    QCOMPARE(typeid (ModelsCollection<AlbumImage *>), typeid (images1));
+    QVERIFY(Common::verifyIds(images1, {1}));
+
+    auto album2_1 = Album::find(2);
+    QVERIFY(album2_1);
+    QVERIFY(album2_1->exists);
+    QCOMPARE(album2_1->getAttribute(ID), QVariant(2));
+
+    auto images2_1 = album2_1->getRelation<AlbumImage>(Common::albumImages);
+    QCOMPARE(images2_1.size(), 5);
+    QCOMPARE(typeid (ModelsCollection<AlbumImage *>), typeid (images2_1));
+    QVERIFY(Common::verifyIds(images2_1, {2, 3, 4, 5, 6}));
+
+    // Different collections size
+    QVERIFY(images1 != images2_1);
+
+    // Get a fresh images and change one model (used Model::operator==() for comparing)
+    auto album2_2 = Album::find(2);
+    QVERIFY(album2_2);
+    QVERIFY(album2_2->exists);
+    QCOMPARE(album2_2->getAttribute(ID), QVariant(2));
+
+    auto images2_2 = album2_2->getRelation<AlbumImage>(Common::albumImages);
+    QCOMPARE(images2_2.size(), 5);
+    QCOMPARE(typeid (ModelsCollection<AlbumImage *>), typeid (images2_2));
+    QVERIFY(Common::verifyIds(images2_2, {2, 3, 4, 5, 6}));
+
+    QVERIFY(images2_1 == images2_2);
+    (*images2_2[1])[Common::ext] = "png";
+    QVERIFY(images2_1 != images2_2);
+}
+
+void tst_Collection_Relations::equalComparison_WithModelsCollection() const
+{
+    auto album2_1 = Album::find(2);
+    QVERIFY(album2_1);
+    QVERIFY(album2_1->exists);
+    QCOMPARE(album2_1->getAttribute(ID), QVariant(2));
+
+    auto images2_1 = album2_1->getRelation<AlbumImage>(Common::albumImages);
+    QCOMPARE(images2_1.size(), 5);
+    QCOMPARE(typeid (ModelsCollection<AlbumImage *>), typeid (images2_1));
+    QVERIFY(Common::verifyIds(images2_1, {2, 3, 4, 5, 6}));
+
+    auto images2_2 = AlbumImage::whereEq(Common::album_id, 2)->get();
+    QCOMPARE(images2_2.size(), 5);
+    QCOMPARE(typeid (ModelsCollection<AlbumImage>), typeid (images2_2));
+    QVERIFY(Common::verifyIds(images2_2, {2, 3, 4, 5, 6}));
+
+    // Different collections with the same models (used Model::operator==() for comparing)
+    QVERIFY(images2_1 == images2_2);
+
+    // The same models' addresses (used Models' pointers comparison)
+    ModelsCollection<AlbumImage *> images2_2_Init {
+        &images2_2[0], &images2_2[1], &images2_2[2], &images2_2[3], &images2_2[4], // NOLINT(readability-container-data-pointer)
+    };
+    /* The images2_2_Init must be on the left side to invoke the correct operator==()
+       overload. */
+    QVERIFY(images2_2_Init == images2_2);
+}
+
+void tst_Collection_Relations::notEqualComparison_WithModelsCollection() const
+{
+    auto album1 = Album::find(1);
+    QVERIFY(album1);
+    QVERIFY(album1->exists);
+    QCOMPARE(album1->getAttribute(ID), QVariant(1));
+
+    auto images1 = album1->getRelation<AlbumImage>(Common::albumImages);
+    QCOMPARE(images1.size(), 1);
+    QCOMPARE(typeid (ModelsCollection<AlbumImage *>), typeid (images1));
+    QVERIFY(Common::verifyIds(images1, {1}));
+
+    auto images2_1 = AlbumImage::whereEq(Common::album_id, 2)->get();
+    QCOMPARE(images2_1.size(), 5);
+    QCOMPARE(typeid (ModelsCollection<AlbumImage>), typeid (images2_1));
+    QVERIFY(Common::verifyIds(images2_1, {2, 3, 4, 5, 6}));
+
+    // Different collections size
+    QVERIFY(images1 != images2_1);
+
+    // Get a fresh images and change one model (used Model::operator==() for comparing)
+    auto album2_2 = Album::find(2);
+    QVERIFY(album2_2);
+    QVERIFY(album2_2->exists);
+    QCOMPARE(album2_2->getAttribute(ID), QVariant(2));
+
+    auto images2_2 = album2_2->getRelation<AlbumImage>(Common::albumImages);
+    QCOMPARE(images2_2.size(), 5);
+    QCOMPARE(typeid (ModelsCollection<AlbumImage *>), typeid (images2_2));
+    QVERIFY(Common::verifyIds(images2_2, {2, 3, 4, 5, 6}));
+
+    // The images2_2 must be on the left side to invoke the correct operator==() overload
+    QVERIFY(images2_2 == images2_1);
+    images2_1[1][Common::ext] = "png";
+    QVERIFY(images2_2 != images2_1);
 }
 
 /* BaseCollection */

@@ -92,6 +92,21 @@ namespace Types
         ModelsCollection(const QVector<Model> &models) // NOLINT(google-explicit-constructor)
         requires (!std::is_pointer_v<Model>);
 
+        /* Comparison operators */
+        /*! Equality comparison operator for the ModelsCollection. */
+        bool operator==(const ModelsCollection<ModelRawType> &other) const
+        requires (!std::is_pointer_v<Model>);
+        /*! Equality comparison operator for the ModelsCollection. */
+        bool operator==(const ModelsCollection<ModelRawType *> &other) const
+        requires std::is_pointer_v<Model>;
+
+        /*! Equality comparison operator for the ModelsCollection. */
+        bool operator==(const ModelsCollection<ModelRawType *> &other) const
+        requires (!std::is_pointer_v<Model>);
+        /*! Equality comparison operator for the ModelsCollection. */
+        bool operator==(const ModelsCollection<ModelRawType> &other) const
+        requires std::is_pointer_v<Model>;
+
         /* Redeclared overriden methods from the base class */
 #if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
         /*! Returns a reference to the first item in the list. */
@@ -353,6 +368,114 @@ namespace Types
     {
         for (const auto &model : models)
             this->push_back(model);
+    }
+
+    /* Comparison operators */
+
+    template<DerivedCollectionModel Model>
+    bool ModelsCollection<Model>::operator==(
+            const ModelsCollection<ModelRawType> &other) const
+    requires (!std::is_pointer_v<Model>)
+    {
+        const auto size = this->size();
+
+        // Nothing to compare, if the size of collections differ
+        if (size != other.size())
+            return false;
+
+        for (size_type index = 0; index < size; ++index) {
+            const ModelRawType &model = this->at(index);
+            const ModelRawType &otherModel = other.at(index);
+
+            /* First compare pointer addresses; if they are the same, then it's at 100%
+               the same model; if pointer addresses differ, then compare models using
+               the operator==(). */
+            if (std::addressof(model) != std::addressof(otherModel) &&
+                model != otherModel
+            )
+                return false;
+        }
+
+        return true;
+    }
+
+    template<DerivedCollectionModel Model>
+    bool ModelsCollection<Model>::operator==(
+            const ModelsCollection<ModelRawType *> &other) const
+    requires std::is_pointer_v<Model>
+    {
+        const auto size = this->size();
+
+        // Nothing to compare, if the size of collections differ
+        if (size != other.size())
+            return false;
+
+        for (size_type index = 0; index < size; ++index) {
+            const ModelRawType *const model = this->at(index);
+            const ModelRawType *const otherModel = other.at(index);
+
+            /* First compare pointer addresses; if they are the same, then it's at 100%
+               the same model; if pointer addresses differ, then compare models using
+               the operator==(). */
+            if (model != otherModel && *model != *otherModel)
+                return false;
+        }
+
+        return true;
+    }
+
+    /* The following two overloads allow comparing of:
+       ModelsCollection<Model>   == ModelsCollection<Model *>
+       ModelsCollection<Model *> == ModelsCollection<Model> */
+
+    template<DerivedCollectionModel Model>
+    bool ModelsCollection<Model>::operator==(
+            const ModelsCollection<ModelRawType *> &other) const
+    requires (!std::is_pointer_v<Model>)
+    {
+        const auto size = this->size();
+
+        // Nothing to compare, if the size of collections differ
+        if (size != other.size())
+            return false;
+
+        for (size_type index = 0; index < size; ++index) {
+            const ModelRawType &model = this->at(index);
+            const ModelRawType *const otherModel = other.at(index);
+
+            /* First compare pointer addresses; if they are the same, then it's at 100%
+               the same model; if pointer addresses differ, then compare models using
+               the operator==(). */
+            if (std::addressof(model) != otherModel && model != *otherModel)
+                return false;
+        }
+
+        return true;
+    }
+
+    template<DerivedCollectionModel Model>
+    bool ModelsCollection<Model>::operator==(
+            const ModelsCollection<ModelRawType> &other) const
+    requires std::is_pointer_v<Model>
+    {
+        const auto size = this->size();
+
+        // Nothing to compare, if the size of collections differ
+        if (size != other.size())
+            return false;
+
+        for (size_type index = 0; index < size; ++index) {
+            const ModelRawType *const model = this->at(index);
+            const ModelRawType &otherModel = other.at(index);
+
+            /* First compare pointer addresses; if they are the same, then it's at 100%
+               the same model; if pointer addresses differ, then compare models using
+               the operator==(). */
+            if (model != std::addressof(otherModel) && *model != otherModel)
+                return false;
+        }
+
+        return true;
     }
 
     /* Redeclared overriden methods from the base class */

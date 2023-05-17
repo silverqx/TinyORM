@@ -39,6 +39,13 @@ private Q_SLOTS:
     void initTestCase();
     void cleanupTestCase() const;
 
+    /* Others */
+    void equalComparison() const;
+    void notEqualComparison() const;
+
+    void equalComparison_WithPointersCollection() const;
+    void notEqualComparison_WithPointersCollection() const;
+
     /* BaseCollection */
     void filter() const;
     void filter_WithIndex() const;
@@ -184,6 +191,107 @@ void tst_Collection_Models::cleanupTestCase() const
 {
     // Reset connection override
     ConnectionOverride::connection.clear();
+}
+
+/* Others */
+
+void tst_Collection_Models::equalComparison() const
+{
+    auto images2_1 = AlbumImage::whereEq(Common::album_id, 2)->get();
+    QCOMPARE(images2_1.size(), 5);
+    QCOMPARE(typeid (ModelsCollection<AlbumImage>), typeid (images2_1));
+    QVERIFY(Common::verifyIds(images2_1, {2, 3, 4, 5, 6}));
+
+    auto images2_2 = AlbumImage::whereEq(Common::album_id, 2)->get();
+    QCOMPARE(images2_2.size(), 5);
+    QCOMPARE(typeid (ModelsCollection<AlbumImage>), typeid (images2_2));
+    QVERIFY(Common::verifyIds(images2_2, {2, 3, 4, 5, 6}));
+
+    // Different collections with the same models (used Model::operator==() for comparing)
+    QVERIFY(images2_1 == images2_2);
+
+    // The same models' addresses (used Models' pointers comparison)
+    const auto &images2_3 = images2_1;
+    QVERIFY(images2_1 == images2_3);
+}
+
+void tst_Collection_Models::notEqualComparison() const
+{
+    auto images1 = AlbumImage::whereEq(Common::album_id, 1)->get();
+    QCOMPARE(images1.size(), 1);
+    QCOMPARE(typeid (ModelsCollection<AlbumImage>), typeid (images1));
+    QVERIFY(Common::verifyIds(images1, {1}));
+
+    auto images2_1 = AlbumImage::whereEq(Common::album_id, 2)->get();
+    QCOMPARE(images2_1.size(), 5);
+    QCOMPARE(typeid (ModelsCollection<AlbumImage>), typeid (images2_1));
+    QVERIFY(Common::verifyIds(images2_1, {2, 3, 4, 5, 6}));
+
+    // Different collections size
+    QVERIFY(images1 != images2_1);
+
+    // Make a copy and change one model (used Model::operator==() for comparing)
+    auto images2_2 = images2_1;
+
+    QVERIFY(images2_1 == images2_2);
+    images2_2[1][Common::ext] = "png";
+    QVERIFY(images2_1 != images2_2);
+}
+
+void tst_Collection_Models::equalComparison_WithPointersCollection() const
+{
+    auto images2_1 = AlbumImage::whereEq(Common::album_id, 2)->get();
+    QCOMPARE(images2_1.size(), 5);
+    QCOMPARE(typeid (ModelsCollection<AlbumImage>), typeid (images2_1));
+    QVERIFY(Common::verifyIds(images2_1, {2, 3, 4, 5, 6}));
+
+    auto images2_2 = AlbumImage::whereEq(Common::album_id, 2)->get();
+    QCOMPARE(images2_2.size(), 5);
+    QCOMPARE(typeid (ModelsCollection<AlbumImage>), typeid (images2_2));
+    QVERIFY(Common::verifyIds(images2_2, {2, 3, 4, 5, 6}));
+
+    // Different collections with the same models (used Model::operator==() for comparing)
+    ModelsCollection<AlbumImage *> images2_2_Init {
+        &images2_2[0], &images2_2[1], &images2_2[2], &images2_2[3], &images2_2[4], // NOLINT(readability-container-data-pointer)
+    };
+    QVERIFY(images2_1 == images2_2_Init);
+
+    // The same models' addresses (used Models' pointers comparison)
+    ModelsCollection<AlbumImage *> images2_1_Init {
+        &images2_1[0], &images2_1[1], &images2_1[2], &images2_1[3], &images2_1[4], // NOLINT(readability-container-data-pointer)
+    };
+    // The images2_1 must be on the left side to invoke the correct operator==() overload
+    QVERIFY(images2_1 == images2_1_Init);
+}
+
+void tst_Collection_Models::notEqualComparison_WithPointersCollection() const
+{
+    auto images1 = AlbumImage::whereEq(Common::album_id, 1)->get();
+    QCOMPARE(images1.size(), 1);
+    QCOMPARE(typeid (ModelsCollection<AlbumImage>), typeid (images1));
+    QVERIFY(Common::verifyIds(images1, {1}));
+
+    auto images2_1 = AlbumImage::whereEq(Common::album_id, 2)->get();
+    QCOMPARE(images2_1.size(), 5);
+    QCOMPARE(typeid (ModelsCollection<AlbumImage>), typeid (images2_1));
+    QVERIFY(Common::verifyIds(images2_1, {2, 3, 4, 5, 6}));
+
+    // Different collections size
+    ModelsCollection<AlbumImage *> images2_1_Init {
+        &images2_1[0], &images2_1[1], &images2_1[2], &images2_1[3], &images2_1[4], // NOLINT(readability-container-data-pointer)
+    };
+    QVERIFY(images1 != images2_1_Init);
+
+    // Make a copy and change one model (used Model::operator==() for comparing)
+    auto images2_2 = images2_1;
+    ModelsCollection<AlbumImage *> images2_2_Init {
+        &images2_2[0], &images2_2[1], &images2_2[2], &images2_2[3], &images2_2[4], // NOLINT(readability-container-data-pointer)
+    };
+
+    // The images2_1 must be on the left side to invoke the correct operator==() overload
+    QVERIFY(images2_1 == images2_2_Init);
+    images2_2[1][Common::ext] = "png";
+    QVERIFY(images2_1 != images2_2_Init);
 }
 
 /* BaseCollection */
