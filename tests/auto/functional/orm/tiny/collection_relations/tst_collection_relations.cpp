@@ -287,7 +287,11 @@ void tst_Collection_Relations::equalComparison_WithModelsCollection() const
 
     // The same models' addresses (used Models' pointers comparison)
     ModelsCollection<AlbumImage *> images2_2_Init {
-        &images2_2[0], &images2_2[1], &images2_2[2], &images2_2[3], &images2_2[4], // NOLINT(readability-container-data-pointer)
+        &images2_2[0], // NOLINT(readability-container-data-pointer)
+        &images2_2[1],
+        &images2_2[2],
+        &images2_2[3],
+        &images2_2[4],
     };
     /* The images2_2_Init must be on the left side to invoke the correct operator==()
        overload. */
@@ -1378,7 +1382,8 @@ void tst_Collection_Relations::load_lvalue() const
 
     // Prepare
     ModelsCollection<Album *> albumsInit {
-        albums.data(), &albums[1],
+        &albums[0], // NOLINT(readability-container-data-pointer)
+        &albums[1],
     };
 
     // Verify before
@@ -1442,7 +1447,8 @@ void tst_Collection_Relations::load_lvalue_WithSelectConstraint() const
 
     // Prepare
     ModelsCollection<Album *> albumsInit {
-        albums.data(), &albums[1],
+        &albums[0], // NOLINT(readability-container-data-pointer)
+        &albums[1],
     };
 
     // Verify before
@@ -1517,7 +1523,8 @@ void tst_Collection_Relations::load_lvalue_WithLambdaConstraint() const
 
     // Prepare
     ModelsCollection<Album *> albumsInit {
-        albums.data(), &albums[1],
+        &albums[0], // NOLINT(readability-container-data-pointer)
+        &albums[1],
     };
 
     // Verify before
@@ -1596,7 +1603,8 @@ void tst_Collection_Relations::load_lvalue_NonExistentRelation_Failed() const
 
     // Prepare
     ModelsCollection<Album *> albumsInit {
-        albums.data(), &albums[1],
+        &albums[0], // NOLINT(readability-container-data-pointer)
+        &albums[1],
     };
 
     const auto verify = [&albumsInit]
@@ -1626,7 +1634,8 @@ void tst_Collection_Relations::load_rvalue() const
 
     // Prepare
     ModelsCollection<Album *> albumsInit {
-        albums.data(), &albums[1],
+        &albums[0], // NOLINT(readability-container-data-pointer)
+        &albums[1],
     };
 
     // Verify before
@@ -1696,7 +1705,8 @@ void tst_Collection_Relations::load_rvalue_WithSelectConstraint() const
 
     // Prepare
     ModelsCollection<Album *> albumsInit {
-        albums.data(), &albums[1],
+        &albums[0], // NOLINT(readability-container-data-pointer)
+        &albums[1],
     };
 
     // Verify before
@@ -1778,7 +1788,8 @@ void tst_Collection_Relations::load_rvalue_WithLambdaConstraint() const
 
     // Prepare
     ModelsCollection<Album *> albumsInit {
-        albums.data(), &albums[1],
+        &albums[0], // NOLINT(readability-container-data-pointer)
+        &albums[1],
     };
 
     // Verify before
@@ -1865,7 +1876,8 @@ void tst_Collection_Relations::load_rvalue_NonExistentRelation_Failed() const
 
     // Prepare
     ModelsCollection<Album *> albumsInit {
-        albums.data(), &albums[1],
+        &albums[0], // NOLINT(readability-container-data-pointer)
+        &albums[1],
     };
 
     const auto verify = [&albumsInit]
@@ -2631,7 +2643,11 @@ void tst_Collection_Relations::each_rvalue() const
 
     // Prepare
     ModelsCollection<AlbumImage *> imagesInit {
-        images.data(), &images[1], &images[2], &images[3], &images[4],
+        &images[0], // NOLINT(readability-container-data-pointer)
+        &images[1],
+        &images[2],
+        &images[3],
+        &images[4],
     };
 
     // Get result
@@ -2664,7 +2680,11 @@ void tst_Collection_Relations::each_rvalue_index() const
 
     // Prepare
     ModelsCollection<AlbumImage *> imagesInit {
-        images.data(), &images[1], &images[2], &images[3], &images[4],
+        &images[0], // NOLINT(readability-container-data-pointer)
+        &images[1],
+        &images[2],
+        &images[3],
+        &images[4],
     };
 
     // Get result
@@ -2698,7 +2718,11 @@ void tst_Collection_Relations::each_rvalue_bool() const
 
     // Prepare
     ModelsCollection<AlbumImage *> imagesInit {
-        images.data(), &images[1], &images[2], &images[3], &images[4],
+        &images[0], // NOLINT(readability-container-data-pointer)
+        &images[1],
+        &images[2],
+        &images[3],
+        &images[4],
     };
 
     // Get result
@@ -2737,7 +2761,11 @@ void tst_Collection_Relations::each_rvalue_bool_index() const
 
     // Prepare
     ModelsCollection<AlbumImage *> imagesInit {
-        images.data(), &images[1], &images[2], &images[3], &images[4],
+        &images[0], // NOLINT(readability-container-data-pointer)
+        &images[1],
+        &images[2],
+        &images[3],
+        &images[4],
     };
 
     // Get result

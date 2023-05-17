@@ -534,7 +534,7 @@ void tst_Collection_Models::mapWithModelKeys() const
     QCOMPARE(result.size(), 5);
 
     std::unordered_map<quint64, AlbumImage *> expected {
-        {2, images.data()},
+        {2, &images[0]}, // NOLINT(readability-container-data-pointer)
         {3, &images[1]},
         {4, &images[2]},
         {5, &images[3]},
@@ -671,7 +671,7 @@ void tst_Collection_Models::only() const
     QCOMPARE(result.size(), 3);
 
     ModelsCollection<AlbumImage *> expected {
-        images.data(),
+        &images[0], // NOLINT(readability-container-data-pointer)
         &images[3],
         &images[4],
     };
@@ -727,7 +727,7 @@ void tst_Collection_Models::except_Empty() const
     QCOMPARE(result.size(), 5);
 
     ModelsCollection<AlbumImage *> expected {
-        images.data(),
+        &images[0], // NOLINT(readability-container-data-pointer)
         &images[1],
         &images[2],
         &images[3],
