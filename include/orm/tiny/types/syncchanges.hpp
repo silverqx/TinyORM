@@ -404,6 +404,7 @@ namespace Types
 
 } // namespace Types
 
+    /*! Alias for the SyncChanges. */
     using SyncChanges = Tiny::Types::SyncChanges;
 
 } // namespace Tiny
