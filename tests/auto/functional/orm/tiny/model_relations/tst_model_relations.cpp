@@ -393,8 +393,8 @@ void tst_Model_Relations::
         QVERIFY(activeMap.contains(tagId));
         QCOMPARE(typeid (Tag *), typeid (tag));
 
-        /* Custom Pivot relation as the Tagged class, under the 'tagged'
-           key in the m_relations hash. */
+        /* Custom Pivot relation as the Tagged class, under the 'tagged' key
+           in the m_relations hash. */
         auto *tagged = tag->getRelation<Tagged, One>("tagged");
         QVERIFY(tagged);
         QVERIFY(tagged->exists);
@@ -636,8 +636,8 @@ void tst_Model_Relations::
         QVERIFY(activeMap.contains(tagId));
         QCOMPARE(typeid (Tag *), typeid (tag));
 
-        /* Custom Pivot relation as the Tagged class, under the 'tagged'
-           key in the m_relations hash. */
+        /* Custom Pivot relation as the Tagged class, under the 'tagged' key
+           in the m_relations hash. */
         auto *tagged = tag->getRelation<Tagged, One>("tagged");
         QVERIFY(tagged);
         QVERIFY(tagged->exists);
@@ -2884,8 +2884,8 @@ namespace
     /*! Verify whether the custom Tagged pivot attribute was correctly hydrated. */
     const auto verifyTaggedPivot = [](Tag &tag)
     {
-        /* Custom Pivot relation as the Tagged class, under the 'tagged'
-           key in the m_relations hash. */
+        /* Custom Pivot relation as the Tagged class, under the 'tagged' key
+           in the m_relations hash. */
         auto *tagged = tag.getRelation<Tagged, One>("tagged");
         QVERIFY(tagged);
         QVERIFY(tagged->exists);
