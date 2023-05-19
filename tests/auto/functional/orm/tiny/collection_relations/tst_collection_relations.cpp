@@ -1425,8 +1425,6 @@ void tst_Collection_Relations::toQuery() const
 /*! Expected album images many type relation after the load() method invoked. */
 struct ExpectedImages
 {
-    /*! Determine whether a album has images. */
-    bool hasImages;
     /*! Number of images. */
     std::size_t imagesSize;
     /*! Images ID. */
@@ -1462,9 +1460,9 @@ void tst_Collection_Relations::load_lvalue() const
 
     // Prepare - AlbumImage::KeyType is Album ID
     std::unordered_map<AlbumImage::KeyType, ExpectedImages> expectedImages {
-        {1, {true,  1, {1}}},
-        {2, {true,  5, {2, 3, 4, 5, 6}}},
-        {4, {false, 0, {}}},
+        {1, {1, {1}}},
+        {2, {5, {2, 3, 4, 5, 6}}},
+        {4, {0, {}}},
     };
 
     // Verify after, both the result and also original albums vector
@@ -1473,13 +1471,11 @@ void tst_Collection_Relations::load_lvalue() const
         const auto albumId = album->getKey();
         const auto &expectedImage = expectedImages.at(albumId.value<Album::KeyType>());
 
-        if (expectedImage.hasImages) {
-            QVERIFY(!album->getRelations().empty());
-            const auto &relations = album->getRelations();
-            QCOMPARE(relations.size(), 1);
-            QVERIFY(relations.contains(Common::albumImages));
-        } else
-            QVERIFY(!album->getRelations().empty());
+        QVERIFY(album->relationLoaded(Common::albumImages));
+        QVERIFY(!album->getRelations().empty());
+        const auto &relations = album->getRelations();
+        QCOMPARE(relations.size(), 1);
+        QVERIFY(relations.contains(Common::albumImages));
 
         // AlbumImage has-many relation
         auto images = album->getRelation<AlbumImage>(Common::albumImages);
@@ -1527,9 +1523,9 @@ void tst_Collection_Relations::load_lvalue_WithSelectConstraint() const
 
     // Prepare - AlbumImage::KeyType is Album ID
     std::unordered_map<AlbumImage::KeyType, ExpectedImages> expectedImages {
-        {1, {true,  1, {1}}},
-        {2, {true,  5, {2, 3, 4, 5, 6}}},
-        {4, {false, 0, {}}},
+        {1, {1, {1}}},
+        {2, {5, {2, 3, 4, 5, 6}}},
+        {4, {0, {}}},
     };
 
     // Verify after, both the result and also original albums vector
@@ -1538,13 +1534,11 @@ void tst_Collection_Relations::load_lvalue_WithSelectConstraint() const
         const auto albumId = album->getKey();
         const auto &expectedImage = expectedImages.at(albumId.value<Album::KeyType>());
 
-        if (expectedImage.hasImages) {
-            QVERIFY(!album->getRelations().empty());
-            const auto &relations = album->getRelations();
-            QCOMPARE(relations.size(), 1);
-            QVERIFY(relations.contains(Common::albumImages));
-        } else
-            QVERIFY(!album->getRelations().empty());
+        QVERIFY(album->relationLoaded(Common::albumImages));
+        QVERIFY(!album->getRelations().empty());
+        const auto &relations = album->getRelations();
+        QCOMPARE(relations.size(), 1);
+        QVERIFY(relations.contains(Common::albumImages));
 
         // AlbumImage has-many relation
         auto images = album->getRelation<AlbumImage>(Common::albumImages);
@@ -1607,9 +1601,9 @@ void tst_Collection_Relations::load_lvalue_WithLambdaConstraint() const
 
     // Prepare - AlbumImage::KeyType is Album ID
     std::unordered_map<AlbumImage::KeyType, ExpectedImages> expectedImages {
-        {1, {true,  1, {1}}},
-        {2, {true,  5, {2, 3, 4, 5, 6}}},
-        {4, {false, 0, {}}},
+        {1, {1, {1}}},
+        {2, {5, {2, 3, 4, 5, 6}}},
+        {4, {0, {}}},
     };
 
     // Verify after, both the result and also original albums vector
@@ -1618,13 +1612,11 @@ void tst_Collection_Relations::load_lvalue_WithLambdaConstraint() const
         const auto albumId = album->getKey();
         const auto &expectedImage = expectedImages.at(albumId.value<Album::KeyType>());
 
-        if (expectedImage.hasImages) {
-            QVERIFY(!album->getRelations().empty());
-            const auto &relations = album->getRelations();
-            QCOMPARE(relations.size(), 1);
-            QVERIFY(relations.contains(Common::albumImages));
-        } else
-            QVERIFY(!album->getRelations().empty());
+        QVERIFY(album->relationLoaded(Common::albumImages));
+        QVERIFY(!album->getRelations().empty());
+        const auto &relations = album->getRelations();
+        QCOMPARE(relations.size(), 1);
+        QVERIFY(relations.contains(Common::albumImages));
 
         // AlbumImage has-many relation
         auto images = album->getRelation<AlbumImage>(Common::albumImages);
@@ -1720,9 +1712,9 @@ void tst_Collection_Relations::load_rvalue() const
 
     // Prepare - AlbumImage::KeyType is Album ID
     std::unordered_map<AlbumImage::KeyType, ExpectedImages> expectedImages {
-        {1, {true,  1, {1}}},
-        {2, {true,  5, {2, 3, 4, 5, 6}}},
-        {4, {false, 0, {}}},
+        {1, {1, {1}}},
+        {2, {5, {2, 3, 4, 5, 6}}},
+        {4, {0, {}}},
     };
 
     // Verify after, both the result and also original albums vector
@@ -1731,13 +1723,11 @@ void tst_Collection_Relations::load_rvalue() const
         const auto albumId = album->getKey();
         const auto &expectedImage = expectedImages.at(albumId.value<Album::KeyType>());
 
-        if (expectedImage.hasImages) {
-            QVERIFY(!album->getRelations().empty());
-            const auto &relations = album->getRelations();
-            QCOMPARE(relations.size(), 1);
-            QVERIFY(relations.contains(Common::albumImages));
-        } else
-            QVERIFY(!album->getRelations().empty());
+        QVERIFY(album->relationLoaded(Common::albumImages));
+        QVERIFY(!album->getRelations().empty());
+        const auto &relations = album->getRelations();
+        QCOMPARE(relations.size(), 1);
+        QVERIFY(relations.contains(Common::albumImages));
 
         // AlbumImage has-many relation
         auto images = album->getRelation<AlbumImage>(Common::albumImages);
@@ -1792,9 +1782,9 @@ void tst_Collection_Relations::load_rvalue_WithSelectConstraint() const
 
     // Prepare - AlbumImage::KeyType is Album ID
     std::unordered_map<AlbumImage::KeyType, ExpectedImages> expectedImages {
-        {1, {true,  1, {1}}},
-        {2, {true,  5, {2, 3, 4, 5, 6}}},
-        {4, {false, 0, {}}},
+        {1, {1, {1}}},
+        {2, {5, {2, 3, 4, 5, 6}}},
+        {4, {0, {}}},
     };
 
     // Verify after, both the result and also original albums vector
@@ -1803,13 +1793,11 @@ void tst_Collection_Relations::load_rvalue_WithSelectConstraint() const
         const auto albumId = album->getKey();
         const auto &expectedImage = expectedImages.at(albumId.value<Album::KeyType>());
 
-        if (expectedImage.hasImages) {
-            QVERIFY(!album->getRelations().empty());
-            const auto &relations = album->getRelations();
-            QCOMPARE(relations.size(), 1);
-            QVERIFY(relations.contains(Common::albumImages));
-        } else
-            QVERIFY(!album->getRelations().empty());
+        QVERIFY(album->relationLoaded(Common::albumImages));
+        QVERIFY(!album->getRelations().empty());
+        const auto &relations = album->getRelations();
+        QCOMPARE(relations.size(), 1);
+        QVERIFY(relations.contains(Common::albumImages));
 
         // AlbumImage has-many relation
         auto images = album->getRelation<AlbumImage>(Common::albumImages);
@@ -1880,9 +1868,9 @@ void tst_Collection_Relations::load_rvalue_WithLambdaConstraint() const
 
     // Prepare - AlbumImage::KeyType is Album ID
     std::unordered_map<AlbumImage::KeyType, ExpectedImages> expectedImages {
-        {1, {true,  1, {1}}},
-        {2, {true,  5, {2, 3, 4, 5, 6}}},
-        {4, {false, 0, {}}},
+        {1, {1, {1}}},
+        {2, {5, {2, 3, 4, 5, 6}}},
+        {4, {0, {}}},
     };
 
     // Verify after, both the result and also original albums vector
@@ -1891,13 +1879,11 @@ void tst_Collection_Relations::load_rvalue_WithLambdaConstraint() const
         const auto albumId = album->getKey();
         const auto &expectedImage = expectedImages.at(albumId.value<Album::KeyType>());
 
-        if (expectedImage.hasImages) {
-            QVERIFY(!album->getRelations().empty());
-            const auto &relations = album->getRelations();
-            QCOMPARE(relations.size(), 1);
-            QVERIFY(relations.contains(Common::albumImages));
-        } else
-            QVERIFY(!album->getRelations().empty());
+        QVERIFY(album->relationLoaded(Common::albumImages));
+        QVERIFY(!album->getRelations().empty());
+        const auto &relations = album->getRelations();
+        QCOMPARE(relations.size(), 1);
+        QVERIFY(relations.contains(Common::albumImages));
 
         // AlbumImage has-many relation
         auto images = album->getRelation<AlbumImage>(Common::albumImages);
