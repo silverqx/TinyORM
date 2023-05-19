@@ -9,7 +9,9 @@ TINY_SYSTEM_HEADER
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
-namespace Orm::Tiny::Relations
+namespace Orm
+{
+namespace Tiny::Relations
 {
 
     /*! Basic Pivot class. */
@@ -32,7 +34,12 @@ namespace Orm::Tiny::Relations
         inline static QStringList u_guarded;
     };
 
-} // namespace Orm::Tiny::Relations
+} // namespace Tiny::Relations
+
+    /*! Alias for the Pivot, shortcut alias. */
+    using Pivot = Tiny::Relations::Pivot;
+
+} // namespace Orm
 
 TINYORM_END_COMMON_NAMESPACE
 
