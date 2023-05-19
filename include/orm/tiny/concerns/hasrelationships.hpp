@@ -301,7 +301,7 @@ namespace Concerns
                 const WithItem &relation, const TinyBuilder<Derived> &builder,
                 ModelsCollection<CollectionModel> &models);
 
-        /* Get related table for belongs to many relation store related */
+        /* Get related table for belongs-to-many relation store related */
         /*! Get Related model table name if the relation is BelongsToMany, otherwise
             return empty std::optional. */
         std::optional<QString>
@@ -1042,7 +1042,7 @@ namespace Concerns
         this->resetRelationStore();
     }
 
-    /* Get related table for belongs to many relation store related */
+    /* Get related table for belongs-to-many relation store related */
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     std::optional<QString>

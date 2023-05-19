@@ -33,7 +33,7 @@ namespace Tiny
 namespace Types
 {
 
-    /*! Result of the sync() related methods in belongs to many relation type. */
+    /*! Result of the sync() related methods in belongs-to-many relation type. */
     class SyncChanges
     {
     public:

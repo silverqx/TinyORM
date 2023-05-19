@@ -1045,10 +1045,10 @@ void tst_MySql_TinyBuilder::hasNested_Count_TinyBuilder_OnBelongsTo_NestedAsLast
     /* Also following tests can be counted as part of BelongsTo tests:
       'hasNested_Count_OnBelongsToMany_NestedAsLast' has BelongsTo type relation as
       first relation in hasNested() call - 'torrent.tags' ( torrent
-      belongs to torrentPeer ).
+      belongs-to torrentPeer ).
       'hasNested_Count_OnBelongsToMany_NestedInMiddle' has BelongsTo type relation as
       first relation in hasNested() call - 'torrent.tags.tagProperty' ( torrent
-      belongs to torrentPeer ).
+      belongs-to torrentPeer ).
       This note has nothing to do with the this/current test method. */
 
     auto builder = createTinyQuery<TorrentPreviewableFileProperty>();

@@ -351,7 +351,7 @@ namespace Orm::Tiny::Relations
         QString guessInverseRelation() const;
 
         /* Others */
-        /*! Clone the belongs to many relation. */
+        /*! Clone the belongs-to-many relation. */
         inline BelongsToMany<Model, Related, PivotType> clone() const;
 
         /* Querying Relationship Existence/Absence */
