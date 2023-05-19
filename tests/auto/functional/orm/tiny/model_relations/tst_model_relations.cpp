@@ -734,7 +734,7 @@ void tst_Model_Relations::u_with_Empty() const
 
     Torrent torrent;
 
-    QCOMPARE(torrent.getRelations().size(), static_cast<std::size_t>(0));
+    QVERIFY(torrent.getRelations().empty());
 }
 
 void tst_Model_Relations::with_HasOne() const
