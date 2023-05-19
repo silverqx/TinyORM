@@ -167,7 +167,7 @@ void tst_Model_Return_Relation::
     QCOMPARE(tags.size(), 4);
     QCOMPARE(typeid (ModelsCollection<Tag_ReturnRelation *>), typeid (tags));
 
-    // Expected tag IDs and pivot attribute 'active', tagId to active
+    // Expected tag IDs and pivot attribute 'active', maps tagId to active
     std::unordered_map<quint64, int> activeMap {{1, 1}, {2, 1}, {3, 0}, {4, 1}};
 
     for (auto *const tag : tags) {
@@ -219,7 +219,7 @@ void tst_Model_Return_Relation::
     QCOMPARE(tags.size(), 4);
     QCOMPARE(typeid (ModelsCollection<Tag *>), typeid (tags));
 
-    // Expected tag IDs and pivot attribute 'active', tagId to active
+    // Expected tag IDs and pivot attribute 'active', maps tagId to active
     std::unordered_map<quint64, int> activeMap {{1, 1}, {2, 1}, {3, 0}, {4, 1}};
 
     for (auto *const tag : tags) {
@@ -335,7 +335,7 @@ void tst_Model_Return_Relation::
     QCOMPARE(tags.size(), 4);
     QCOMPARE(typeid (ModelsCollection<Tag_ReturnRelation *>), typeid (tags));
 
-    // Expected tag IDs and pivot attribute 'active', tagId to active
+    // Expected tag IDs and pivot attribute 'active', maps tagId to active
     std::unordered_map<quint64, int> activeMap {{1, 1}, {2, 1}, {3, 0}, {4, 1}};
 
     for (auto *const tag : tags) {
@@ -388,7 +388,7 @@ void tst_Model_Return_Relation::
     QCOMPARE(tags.size(), 4);
     QCOMPARE(typeid (ModelsCollection<Tag *>), typeid (tags));
 
-    // Expected tag IDs and pivot attribute 'active', tagId to active
+    // Expected tag IDs and pivot attribute 'active', maps tagId to active
     std::unordered_map<quint64, int> activeMap {{1, 1}, {2, 1}, {3, 0}, {4, 1}};
 
     for (auto *const tag : tags) {
