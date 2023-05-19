@@ -1368,6 +1368,7 @@ void tst_Relations_Inserting_Updating::associate_WithModel() const
     // Copy of the associated model have to be set on the file
     QCOMPARE(fileRelations.size(), static_cast<std::size_t>(1));
     QVERIFY(fileRelations.contains(file.torrent()->getRelationName()));
+    QVERIFY(file.relationLoaded("torrent"));
 
     auto *verifyTorrent5 = file.getRelation<Torrent, One>("torrent");
     QVERIFY(verifyTorrent5);
@@ -1379,6 +1380,7 @@ void tst_Relations_Inserting_Updating::associate_WithModel() const
     file.save();
 
     // Little useless, but will be absolutely sure that nothing changed
+    QVERIFY(file.relationLoaded("torrent"));
     verifyTorrent5 = file.getRelation<Torrent, One>("torrent");
     QVERIFY(verifyTorrent5);
     QVERIFY(verifyTorrent5->exists);
@@ -1479,6 +1481,7 @@ void tst_Relations_Inserting_Updating::associate_WithId_ShouldUnsetRelation() co
     // Copy of the associated model have to be set on the file
     QCOMPARE(fileRelations.size(), static_cast<std::size_t>(1));
     QVERIFY(fileRelations.contains(file.torrent()->getRelationName()));
+    QVERIFY(file.relationLoaded("torrent"));
 
     auto *verifyTorrent5 = file.getRelation<Torrent, One>("torrent");
     QVERIFY(verifyTorrent5);
@@ -1534,6 +1537,7 @@ void tst_Relations_Inserting_Updating::dissociate() const
     // Copy of the associated model have to be set on the file
     QCOMPARE(fileRelations.size(), static_cast<std::size_t>(1));
     QVERIFY(fileRelations.contains(file.torrent()->getRelationName()));
+    QVERIFY(file.relationLoaded("torrent"));
 
     auto *verifyTorrent5 = file.getRelation<Torrent, One>("torrent");
     QVERIFY(verifyTorrent5);
@@ -1554,6 +1558,7 @@ void tst_Relations_Inserting_Updating::dissociate() const
     // Relation have to be set to std::nullopt internally
     QCOMPARE(fileRelations.size(), static_cast<std::size_t>(1));
     QVERIFY(fileRelations.contains(file.torrent()->getRelationName()));
+    QVERIFY(file.relationLoaded("torrent"));
 
     verifyTorrent5 = file.getRelation<Torrent, One>("torrent");
     QVERIFY(verifyTorrent5 == nullptr);
