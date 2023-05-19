@@ -161,7 +161,7 @@ void tst_Model_Return_Relation::
     const auto torrentId = torrent->getKey();
     QCOMPARE(torrentId, QVariant(2));
 
-    // Tag has-many relation (basic pivot)
+    // Tag belongs-to-many relation (basic pivot)
     QVERIFY(torrent->relationLoaded("tags"));
     auto tags = torrent->getRelationValue<Tag_ReturnRelation>("tags");
     QCOMPARE(tags.size(), 4);
@@ -213,7 +213,7 @@ void tst_Model_Return_Relation::
     const auto torrentId = torrent->getKey();
     QCOMPARE(torrentId, QVariant(2));
 
-    // Tag has-many relation (custom Tagged pivot)
+    // Tag belongs-to-many relation (custom Tagged pivot)
     QVERIFY(torrent->relationLoaded("tagsCustom"));
     auto tags = torrent->getRelationValue<Tag>("tagsCustom");
     QCOMPARE(tags.size(), 4);
@@ -328,7 +328,7 @@ void tst_Model_Return_Relation::
     const auto torrentId = torrent->getKey();
     QCOMPARE(torrentId, QVariant(2));
 
-    // Tag has-many relation (basic pivot)
+    // Tag belongs-to-many relation (basic pivot)
     QVERIFY(!torrent->relationLoaded("tags"));
     auto tags = torrent->getRelationValue<Tag_ReturnRelation>("tags");
     QVERIFY(torrent->relationLoaded("tags"));
@@ -381,7 +381,7 @@ void tst_Model_Return_Relation::
     const auto torrentId = torrent->getKey();
     QCOMPARE(torrentId, QVariant(2));
 
-    // Tag has-many relation (custom Tagged pivot)
+    // Tag belongs-to-many relation (custom Tagged pivot)
     QVERIFY(!torrent->relationLoaded("tagsCustom"));
     auto tags = torrent->getRelationValue<Tag>("tagsCustom");
     QVERIFY(torrent->relationLoaded("tagsCustom"));

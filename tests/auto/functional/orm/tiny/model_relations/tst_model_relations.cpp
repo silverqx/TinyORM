@@ -329,7 +329,7 @@ void tst_Model_Relations::
     QVERIFY(tag);
     QVERIFY(tag->exists);
 
-    // Tag has-many relation
+    // Torrent belongs-to-many relation (basic pivot)
     auto torrents = tag->getRelation<Torrent>("torrents");
     QCOMPARE(torrents.size(), 2);
     QCOMPARE(typeid (ModelsCollection<Torrent *>), typeid (torrents));
@@ -378,7 +378,7 @@ void tst_Model_Relations::
     QVERIFY(torrent);
     QVERIFY(torrent->exists);
 
-    // Tag has-many relation
+    // Tag belongs-to-many relation (custom Tagged pivot)
     auto tags = torrent->getRelation<Tag>("tags");
     QCOMPARE(tags.size(), 4);
     QCOMPARE(typeid (ModelsCollection<Tag *>), typeid (tags));
@@ -429,7 +429,7 @@ void tst_Model_Relations::
     QVERIFY(tag);
     QVERIFY(tag->exists);
 
-    // Tag has-many relation
+    // Torrent belongs-to-many relation (basic pivot)
     auto torrents = tag->getRelation<Torrent>("torrents_WithoutPivotAttributes");
     QCOMPARE(torrents.size(), 2);
     QCOMPARE(typeid (ModelsCollection<Torrent *>), typeid (torrents));
@@ -572,7 +572,7 @@ void tst_Model_Relations::
     QVERIFY(tag);
     QVERIFY(tag->exists);
 
-    // Tag has-many relation
+    // Torrent belongs-to-many relation (basic pivot)
     auto torrents = tag->getRelationValue<Torrent>("torrents");
     QCOMPARE(torrents.size(), 2);
     QCOMPARE(typeid (ModelsCollection<Torrent *>), typeid (torrents));
@@ -621,7 +621,7 @@ void tst_Model_Relations::
     QVERIFY(torrent);
     QVERIFY(torrent->exists);
 
-    // Tag has-many relation
+    // Tag belongs-to-many relation (custom Tagged pivot)
     auto tags = torrent->getRelationValue<Tag>("tags");
     QCOMPARE(tags.size(), 4);
     QCOMPARE(typeid (ModelsCollection<Tag *>), typeid (tags));
@@ -672,7 +672,7 @@ void tst_Model_Relations::
     QVERIFY(tag);
     QVERIFY(tag->exists);
 
-    // Tag has-many relation
+    // Torrent belongs-to-many relation (basic pivot)
     auto torrents = tag->getRelationValue<Torrent>("torrents_WithoutPivotAttributes");
     QCOMPARE(torrents.size(), 2);
     QCOMPARE(typeid (ModelsCollection<Torrent *>), typeid (torrents));
