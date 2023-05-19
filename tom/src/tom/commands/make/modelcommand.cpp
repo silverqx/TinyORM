@@ -20,6 +20,7 @@ using fspath = std::filesystem::path;
 
 using Orm::Constants::NAME;
 using Orm::Constants::NOSPACE;
+using Orm::Constants::pivot_;
 
 using ContainerUtils = Orm::Utils::Container;
 using StringUtils = Orm::Utils::String;
@@ -58,7 +59,6 @@ using Tom::Constants::one_to_many;
 using Tom::Constants::one_to_many_up;
 using Tom::Constants::path_;
 using Tom::Constants::path_up;
-using Tom::Constants::pivot_;
 using Tom::Constants::pivot_inverse;
 using Tom::Constants::pivot_inverse_up;
 using Tom::Constants::pivot_model;

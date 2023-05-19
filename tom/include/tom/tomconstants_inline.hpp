@@ -121,7 +121,6 @@ namespace Tom::Constants
     inline const QString dates                = QStringLiteral("dates");
     inline const QString touches              = QStringLiteral("touches");
     inline const QString pivot_model          = QStringLiteral("pivot-model");
-    inline const QString pivot_               = QStringLiteral("pivot");
     inline const QString pivot_inverse        = QStringLiteral("pivot-inverse");
     inline const QString as_                  = QStringLiteral("as");
     inline const QString with_timestamps      = QStringLiteral("with-timestamps");

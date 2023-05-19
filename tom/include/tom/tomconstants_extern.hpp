@@ -122,7 +122,6 @@ namespace Tom::Constants
     SHAREDLIB_EXPORT extern const QString dates;
     SHAREDLIB_EXPORT extern const QString touches;
     SHAREDLIB_EXPORT extern const QString pivot_model;
-    SHAREDLIB_EXPORT extern const QString pivot_;
     SHAREDLIB_EXPORT extern const QString pivot_inverse;
     SHAREDLIB_EXPORT extern const QString as_;
     SHAREDLIB_EXPORT extern const QString with_timestamps;
