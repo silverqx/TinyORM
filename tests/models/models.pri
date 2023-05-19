@@ -11,9 +11,11 @@ HEADERS += \
     $$PWD/models/roleuser.hpp \
     $$PWD/models/setting.hpp \
     $$PWD/models/tag.hpp \
+    $$PWD/models/tag_returnrelation.hpp \
     $$PWD/models/tagged.hpp \
     $$PWD/models/tagproperty.hpp \
     $$PWD/models/torrent.hpp \
+    $$PWD/models/torrent_returnrelation.hpp \
     $$PWD/models/torrenteager.hpp \
     $$PWD/models/torrenteager_failed.hpp \
     $$PWD/models/torrenteager_withdefault.hpp \
