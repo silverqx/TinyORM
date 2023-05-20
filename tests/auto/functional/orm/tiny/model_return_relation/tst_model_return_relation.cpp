@@ -173,7 +173,7 @@ void tst_Model_Return_Relation::
     for (auto *const tag : tags) {
         QVERIFY(tag);
         QVERIFY(tag->exists);
-        const auto tagId = tag->getKey().template value<quint64>();
+        const auto tagId = tag->getKeyCasted();
         QVERIFY(activeMap.contains(tagId));
         QCOMPARE(typeid (Tag_ReturnRelation *), typeid (tag));
 
@@ -197,8 +197,7 @@ void tst_Model_Return_Relation::
 
         QCOMPARE(pivot->getAttribute("torrent_id"), torrentId);
         // With pivot attributes, active
-        QCOMPARE(pivot->getAttribute("active").template value<int>(),
-                 activeMap.at(tagId));
+        QCOMPARE(pivot->getAttribute<int>("active"), activeMap.at(tagId));
         QVERIFY(attributesHash.contains(CREATED_AT));
         QVERIFY(attributesHash.contains(UPDATED_AT));
     }
@@ -225,7 +224,7 @@ void tst_Model_Return_Relation::
     for (auto *const tag : tags) {
         QVERIFY(tag);
         QVERIFY(tag->exists);
-        const auto tagId = tag->getKey().template value<quint64>();
+        const auto tagId = tag->getKeyCasted();
         QVERIFY(activeMap.contains(tagId));
         QCOMPARE(typeid (Tag *), typeid (tag));
 
@@ -249,8 +248,7 @@ void tst_Model_Return_Relation::
 
         QCOMPARE(tagged->getAttribute("torrent_id"), torrentId);
         // With pivot attributes, active
-        QCOMPARE(tagged->getAttribute("active").template value<int>(),
-                 activeMap.at(tagId));
+        QCOMPARE(tagged->getAttribute<int>("active"), activeMap.at(tagId));
         QVERIFY(attributesHash.contains(CREATED_AT));
         QVERIFY(attributesHash.contains(UPDATED_AT));
     }
@@ -341,7 +339,7 @@ void tst_Model_Return_Relation::
     for (auto *const tag : tags) {
         QVERIFY(tag);
         QVERIFY(tag->exists);
-        const auto tagId = tag->getKey().template value<quint64>();
+        const auto tagId = tag->getKeyCasted();
         QVERIFY(activeMap.contains(tagId));
         QCOMPARE(typeid (Tag_ReturnRelation *), typeid (tag));
 
@@ -365,8 +363,7 @@ void tst_Model_Return_Relation::
 
         QCOMPARE(pivot->getAttribute("torrent_id"), torrentId);
         // With pivot attributes, active
-        QCOMPARE(pivot->getAttribute("active").template value<int>(),
-                 activeMap.at(tagId));
+        QCOMPARE(pivot->getAttribute<int>("active"), activeMap.at(tagId));
         QVERIFY(attributesHash.contains(CREATED_AT));
         QVERIFY(attributesHash.contains(UPDATED_AT));
     }
@@ -394,7 +391,7 @@ void tst_Model_Return_Relation::
     for (auto *const tag : tags) {
         QVERIFY(tag);
         QVERIFY(tag->exists);
-        const auto tagId = tag->getKey().template value<quint64>();
+        const auto tagId = tag->getKeyCasted();
         QVERIFY(activeMap.contains(tagId));
         QCOMPARE(typeid (Tag *), typeid (tag));
 
@@ -418,8 +415,7 @@ void tst_Model_Return_Relation::
 
         QCOMPARE(tagged->getAttribute("torrent_id"), torrentId);
         // With pivot attributes, active
-        QCOMPARE(tagged->getAttribute("active").template value<int>(),
-                 activeMap.at(tagId));
+        QCOMPARE(tagged->getAttribute<int>("active"), activeMap.at(tagId));
         QVERIFY(attributesHash.contains(CREATED_AT));
         QVERIFY(attributesHash.contains(UPDATED_AT));
     }

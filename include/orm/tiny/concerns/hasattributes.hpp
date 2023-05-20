@@ -69,6 +69,9 @@ namespace Orm::Tiny::Concerns
         inline const std::unordered_map<QString, int> &getAttributesHash() const;
         /*! Get an attribute from the model. */
         QVariant getAttribute(const QString &key) const;
+        /*! Get an attribute from the model casted to the given type. */
+        template<typename T>
+        T getAttribute(const QString &key) const;
         /*! Get a plain attribute (not a relationship). */
         QVariant getAttributeValue(const QString &key) const;
         /*! Get an attribute from the m_attributes vector. */
@@ -494,6 +497,13 @@ namespace Orm::Tiny::Concerns
         // NOTE api different silverqx
         return {};
 //        return $this->getRelationValue($key);
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    template<typename T>
+    T HasAttributes<Derived, AllRelations...>::getAttribute(const QString &key) const
+    {
+        return getAttribute(key).template value<T>();
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>

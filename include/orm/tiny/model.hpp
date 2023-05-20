@@ -280,6 +280,8 @@ namespace Orm::Tiny
         inline QString getQualifiedKeyName() const;
         /*! Get the value of the model's primary key. */
         inline QVariant getKey() const;
+        /*! Get the value of the model's primary key casted to the Derived::KeyType. */
+        inline auto getKeyCasted() const;
         /*! Get the value indicating whether the IDs are incrementing. */
         inline bool getIncrementing() const;
         /*! Set whether IDs are incrementing. */
@@ -1333,6 +1335,13 @@ namespace Orm::Tiny
     Model<Derived, AllRelations...>::getKey() const
     {
         return this->getAttribute(getKeyName());
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    auto
+    Model<Derived, AllRelations...>::getKeyCasted() const
+    {
+        return getKey().template value<typename Derived::KeyType>();
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
