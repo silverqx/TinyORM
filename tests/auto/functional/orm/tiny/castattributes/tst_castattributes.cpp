@@ -10,7 +10,6 @@
 
 #include "models/type.hpp"
 
-using Orm::Constants::ID;
 using Orm::Constants::QMYSQL;
 using Orm::Constants::QPSQL;
 using Orm::Constants::QSQLITE;
@@ -436,7 +435,7 @@ void tst_CastAttributes::withCasts_OnTinyBuilder() const
 
     QVERIFY(type);
     QVERIFY(type->exists);
-    QCOMPARE(type->getAttribute(Orm::ID).value<quint64>(), 1);
+    QCOMPARE(type->getKeyCasted(), 1);
 
     auto attribute = type->getAttribute("smallint");
     auto typeId = Helpers::qVariantTypeId(attribute);
@@ -465,7 +464,7 @@ void tst_CastAttributes::withCasts_OnModel() const
 
     QVERIFY(type);
     QVERIFY(type->exists);
-    QCOMPARE(type->getAttribute(Orm::ID).value<quint64>(), 1);
+    QCOMPARE(type->getKeyCasted(), 1);
 
     auto attribute = type->getAttribute("smallint");
     auto typeId = Helpers::qVariantTypeId(attribute);
@@ -1043,7 +1042,7 @@ void tst_CastAttributes::defaultCast_timestamp_QSQLITE_OffReturnQDateTime() cons
     // Skip model cache (I will not create special cache logic for this)
     auto type = Type::on(connection)->find(1);
     QVERIFY(type);
-    QCOMPARE(type->getAttribute(ID).value<quint64>(), 1);
+    QCOMPARE(type->getKeyCasted(), 1);
 
     auto attribute = type->getAttribute("timestamp");
     auto typeId = Helpers::qVariantTypeId(attribute);
@@ -1072,7 +1071,7 @@ void tst_CastAttributes::defaultCast_datetime_QSQLITE_OffReturnQDateTime() const
     // Skip model cache (I will not create special cache logic for this)
     auto type = Type::on(connection)->find(1);
     QVERIFY(type);
-    QCOMPARE(type->getAttribute(ID).value<quint64>(), 1);
+    QCOMPARE(type->getKeyCasted(), 1);
 
     auto attribute = type->getAttribute("datetime");
     auto typeId = Helpers::qVariantTypeId(attribute);
@@ -1101,7 +1100,7 @@ void tst_CastAttributes::defaultCast_date_QSQLITE_OffReturnQDateTime() const
     // Skip model cache (I will not create special cache logic for this)
     auto type = Type::on(connection)->find(1);
     QVERIFY(type);
-    QCOMPARE(type->getAttribute(ID).value<quint64>(), 1);
+    QCOMPARE(type->getKeyCasted(), 1);
 
     auto attribute = type->getAttribute("date");
     auto typeId = Helpers::qVariantTypeId(attribute);

@@ -282,8 +282,8 @@ void tst_Model_Relations::getRelation_EagerLoad_ManyAndOne() const
     for (auto *file : files) {
         QVERIFY(file);
         QVERIFY(file->exists);
-        QCOMPARE(file->getAttribute("torrent_id"), torrent->getAttribute(ID));
-        QVERIFY(fileIds.contains(file->getAttribute(ID)));
+        QCOMPARE(file->getAttribute("torrent_id"), torrent->getKey());
+        QVERIFY(fileIds.contains(file->getKey()));
         QCOMPARE(typeid (TorrentPreviewableFileEager *), typeid (file));
 
         /* TorrentPreviewableFilePropertyEager has-one relation, loaded by
@@ -294,9 +294,8 @@ void tst_Model_Relations::getRelation_EagerLoad_ManyAndOne() const
         QVERIFY(fileProperty);
         QVERIFY(fileProperty->exists);
         QCOMPARE(typeid (TorrentPreviewableFilePropertyEager *), typeid (fileProperty));
-        QVERIFY(filePropertyIds.contains(fileProperty->getAttribute(ID)));
-        QCOMPARE(fileProperty->getAttribute("previewable_file_id"),
-                 file->getAttribute(ID));
+        QVERIFY(filePropertyIds.contains(fileProperty->getKey()));
+        QCOMPARE(fileProperty->getAttribute("previewable_file_id"), file->getKey());
     }
 }
 
@@ -314,7 +313,7 @@ void tst_Model_Relations::getRelation_EagerLoad_BelongsTo() const
     // TorrentEager belongs to relation
     auto *torrent = torrentPeer->getRelation<TorrentEager, One>("torrent");
     QVERIFY(torrent);
-    QCOMPARE(torrent->getAttribute(ID), torrentPeer->getAttribute("torrent_id"));
+    QCOMPARE(torrent->getKey(), torrentPeer->getAttribute("torrent_id"));
     QCOMPARE(typeid (TorrentEager *), typeid (torrent));
 }
 
@@ -340,7 +339,7 @@ void tst_Model_Relations::
     for (auto *torrent : torrents) {
         QVERIFY(torrent);
         QVERIFY(torrent->exists);
-        QVERIFY(torrentIds.contains(torrent->getAttribute(ID)));
+        QVERIFY(torrentIds.contains(torrent->getKey()));
         QCOMPARE(typeid (Torrent *), typeid (torrent));
 
         // Pivot relation
@@ -389,7 +388,7 @@ void tst_Model_Relations::
     for (auto *tag : tags) {
         QVERIFY(tag);
         QVERIFY(tag->exists);
-        const auto tagId = tag->getAttribute(ID).value<quint64>();
+        const auto tagId = tag->getKeyCasted();
         QVERIFY(activeMap.contains(tagId));
         QCOMPARE(typeid (Tag *), typeid (tag));
 
@@ -440,7 +439,7 @@ void tst_Model_Relations::
     for (auto *torrent : torrents) {
         QVERIFY(torrent);
         QVERIFY(torrent->exists);
-        QVERIFY(torrentIds.contains(torrent->getAttribute(ID)));
+        QVERIFY(torrentIds.contains(torrent->getKey()));
         QCOMPARE(typeid (Torrent *), typeid (torrent));
 
         // Pivot relation
@@ -525,8 +524,8 @@ void tst_Model_Relations::getRelationValue_LazyLoad_ManyAndOne() const
     for (auto *file : files) {
         QVERIFY(file);
         QVERIFY(file->exists);
-        QCOMPARE(file->getAttribute("torrent_id"), torrent->getAttribute(ID));
-        QVERIFY(fileIds.contains(file->getAttribute(ID)));
+        QCOMPARE(file->getAttribute("torrent_id"), torrent->getKey());
+        QVERIFY(fileIds.contains(file->getKey()));
         QCOMPARE(typeid (TorrentPreviewableFile *), typeid (file));
 
         /* TorrentPreviewableFileProperty has-one relation, loaded by
@@ -537,9 +536,8 @@ void tst_Model_Relations::getRelationValue_LazyLoad_ManyAndOne() const
         QVERIFY(fileProperty);
         QVERIFY(fileProperty->exists);
         QCOMPARE(typeid (TorrentPreviewableFileProperty *), typeid (fileProperty));
-        QVERIFY(filePropertyIds.contains(fileProperty->getAttribute(ID)));
-        QCOMPARE(fileProperty->getAttribute("previewable_file_id"),
-                 file->getAttribute(ID));
+        QVERIFY(filePropertyIds.contains(fileProperty->getKey()));
+        QCOMPARE(fileProperty->getAttribute("previewable_file_id"), file->getKey());
     }
 }
 
@@ -557,7 +555,7 @@ void tst_Model_Relations::getRelationValue_LazyLoad_BelongsTo() const
     // Torrent belongs to relation
     auto *torrent = torrentPeer->getRelationValue<Torrent, One>("torrent");
     QVERIFY(torrent);
-    QCOMPARE(torrent->getAttribute(ID), QVariant(2));
+    QCOMPARE(torrent->getKey(), QVariant(2));
     QCOMPARE(typeid (Torrent *), typeid (torrent));
 }
 
@@ -583,7 +581,7 @@ void tst_Model_Relations::
     for (auto *torrent : torrents) {
         QVERIFY(torrent);
         QVERIFY(torrent->exists);
-        QVERIFY(torrentIds.contains(torrent->getAttribute(ID)));
+        QVERIFY(torrentIds.contains(torrent->getKey()));
         QCOMPARE(typeid (Torrent *), typeid (torrent));
 
         // Pivot relation
@@ -632,7 +630,7 @@ void tst_Model_Relations::
     for (auto *tag : tags) {
         QVERIFY(tag);
         QVERIFY(tag->exists);
-        const auto tagId = tag->getAttribute(ID).value<quint64>();
+        const auto tagId = tag->getKeyCasted();
         QVERIFY(activeMap.contains(tagId));
         QCOMPARE(typeid (Tag *), typeid (tag));
 
@@ -683,7 +681,7 @@ void tst_Model_Relations::
     for (auto *torrent : torrents) {
         QVERIFY(torrent);
         QVERIFY(torrent->exists);
-        QVERIFY(torrentIds.contains(torrent->getAttribute(ID)));
+        QVERIFY(torrentIds.contains(torrent->getKey()));
         QCOMPARE(typeid (Torrent *), typeid (torrent));
 
         // Pivot relation
@@ -750,8 +748,8 @@ void tst_Model_Relations::with_HasOne() const
     auto *peer = torrent->getRelation<TorrentPeer, One>("torrentPeer");
     QVERIFY(peer);
     QVERIFY(peer->exists);
-    QCOMPARE(peer->getAttribute(ID), QVariant(2));
-    QCOMPARE(peer->getAttribute("torrent_id"), torrent->getAttribute(ID));
+    QCOMPARE(peer->getKey(), QVariant(2));
+    QCOMPARE(peer->getAttribute("torrent_id"), torrent->getKey());
     QCOMPARE(typeid (TorrentPeer *), typeid (peer));
 }
 
@@ -774,8 +772,8 @@ void tst_Model_Relations::with_HasMany() const
     for (auto *file : files) {
         QVERIFY(file);
         QVERIFY(file->exists);
-        QCOMPARE(file->getAttribute("torrent_id"), torrent->getAttribute(ID));
-        QVERIFY(fileIds.contains(file->getAttribute(ID)));
+        QCOMPARE(file->getAttribute("torrent_id"), torrent->getKey());
+        QVERIFY(fileIds.contains(file->getKey()));
         QCOMPARE(typeid (TorrentPreviewableFile *), typeid (file));
     }
 }
@@ -794,7 +792,7 @@ void tst_Model_Relations::with_BelongsTo() const
     auto *file = fileProperty->getRelation<TorrentPreviewableFile, One>("torrentFile");
     QVERIFY(file);
     QVERIFY(file->exists);
-    QCOMPARE(file->getAttribute(ID), QVariant(3));
+    QCOMPARE(file->getKey(), QVariant(3));
     QCOMPARE(typeid (TorrentPreviewableFile *), typeid (file));
 }
 
@@ -817,7 +815,7 @@ void tst_Model_Relations::with_BelongsToMany() const
     for (auto *tag : tags) {
         QVERIFY(tag);
         QVERIFY(tag->exists);
-        QVERIFY(tagIds.contains(tag->getAttribute(ID)));
+        QVERIFY(tagIds.contains(tag->getKey()));
         QCOMPARE(typeid (Tag *), typeid (tag));
 
         const auto &relations = tag->getRelations();
@@ -871,8 +869,8 @@ void tst_Model_Relations::with_NestedRelations() const
     for (auto *file : files) {
         QVERIFY(file);
         QVERIFY(file->exists);
-        QCOMPARE(file->getAttribute("torrent_id"), torrent->getAttribute(ID));
-        QVERIFY(fileIds.contains(file->getAttribute(ID)));
+        QCOMPARE(file->getAttribute("torrent_id"), torrent->getKey());
+        QVERIFY(fileIds.contains(file->getKey()));
         QCOMPARE(typeid (TorrentPreviewableFile *), typeid (file));
 
         /* TorrentPreviewableFileProperty has-one relation, loaded by
@@ -883,9 +881,8 @@ void tst_Model_Relations::with_NestedRelations() const
         QVERIFY(fileProperty);
         QVERIFY(fileProperty->exists);
         QCOMPARE(typeid (TorrentPreviewableFileProperty *), typeid (fileProperty));
-        QVERIFY(filePropertyIds.contains(fileProperty->getAttribute(ID)));
-        QCOMPARE(fileProperty->getAttribute("previewable_file_id"),
-                 file->getAttribute(ID));
+        QVERIFY(filePropertyIds.contains(fileProperty->getKey()));
+        QCOMPARE(fileProperty->getAttribute("previewable_file_id"), file->getKey());
     }
 }
 
@@ -903,8 +900,8 @@ void tst_Model_Relations::with_Vector_MoreRelations() const
     auto *peer = torrent->getRelation<TorrentPeer, One>("torrentPeer");
     QVERIFY(peer);
     QVERIFY(peer->exists);
-    QCOMPARE(peer->getAttribute(ID), QVariant(2));
-    QCOMPARE(peer->getAttribute("torrent_id"), torrent->getAttribute(ID));
+    QCOMPARE(peer->getKey(), QVariant(2));
+    QCOMPARE(peer->getAttribute("torrent_id"), torrent->getKey());
 
     // TorrentPreviewableFile has-many relation
     auto files = torrent->getRelation<TorrentPreviewableFile>("torrentFiles");
@@ -916,8 +913,8 @@ void tst_Model_Relations::with_Vector_MoreRelations() const
     for (auto *file : files) {
         QVERIFY(file);
         QVERIFY(file->exists);
-        QCOMPARE(file->getAttribute("torrent_id"), torrent->getAttribute(ID));
-        QVERIFY(fileIds.contains(file->getAttribute(ID)));
+        QCOMPARE(file->getAttribute("torrent_id"), torrent->getKey());
+        QVERIFY(fileIds.contains(file->getKey()));
         QCOMPARE(typeid (TorrentPreviewableFile *), typeid (file));
 
         // No TorrentPreviewableFileProperty loaded
@@ -966,8 +963,8 @@ void tst_Model_Relations::with_WithSelectConstraint() const
         for (const auto &attribute : attributes)
             QVERIFY(expectedAttributes.contains(attribute.key));
 
-        QCOMPARE(file->getAttribute("torrent_id"), torrent->getAttribute(ID));
-        QVERIFY(fileIds.contains(file->getAttribute(ID)));
+        QCOMPARE(file->getAttribute("torrent_id"), torrent->getKey());
+        QVERIFY(fileIds.contains(file->getKey()));
         QCOMPARE(typeid (TorrentPreviewableFile *), typeid (file));
     }
 }
@@ -1001,8 +998,8 @@ void tst_Model_Relations::with_WithSelectConstraint_WithWhitespaces() const
         for (const auto &attribute : attributes)
             QVERIFY(expectedAttributes.contains(attribute.key));
 
-        QCOMPARE(file->getAttribute("torrent_id"), torrent->getAttribute(ID));
-        QVERIFY(fileIds.contains(file->getAttribute(ID)));
+        QCOMPARE(file->getAttribute("torrent_id"), torrent->getKey());
+        QVERIFY(fileIds.contains(file->getKey()));
         QCOMPARE(typeid (TorrentPreviewableFile *), typeid (file));
     }
 }
@@ -1035,7 +1032,7 @@ void tst_Model_Relations::with_WithSelectConstraint_BelongsToMany() const
         for (const auto &attribute : attributes)
             QVERIFY(expectedAttributes.contains(attribute.key));
 
-        QVERIFY(tagIds.contains(tag->getAttribute(ID)));
+        QVERIFY(tagIds.contains(tag->getKey()));
         QCOMPARE(typeid (Tag *), typeid (tag));
 
         const auto &relations = tag->getRelations();
@@ -1098,8 +1095,8 @@ void tst_Model_Relations::with_WithLambdaConstraint() const
         for (const auto &attribute : attributes)
             QVERIFY(expectedAttributes.contains(attribute.key));
 
-        QCOMPARE(file->getAttribute("torrent_id"), torrent->getAttribute(ID));
-        QVERIFY(fileIds.contains(file->getAttribute(ID)));
+        QCOMPARE(file->getAttribute("torrent_id"), torrent->getKey());
+        QVERIFY(fileIds.contains(file->getKey()));
         QCOMPARE(typeid (TorrentPreviewableFile *), typeid (file));
     }
 }
@@ -1135,7 +1132,7 @@ void tst_Model_Relations::with_WithLambdaConstraint_BelongsToMany() const
         for (const auto &attribute : attributes)
             QVERIFY(expectedAttributes.contains(attribute.key));
 
-        QVERIFY(tagIds.contains(tag->getAttribute(ID)));
+        QVERIFY(tagIds.contains(tag->getKey()));
         QCOMPARE(typeid (Tag *), typeid (tag));
 
         const auto &relations = tag->getRelations();
@@ -1249,8 +1246,8 @@ void tst_Model_Relations::load() const
     auto *peer = torrent->getRelation<TorrentPeer, One>("torrentPeer");
     QVERIFY(peer);
     QVERIFY(peer->exists);
-    QCOMPARE(peer->getAttribute("torrent_id"), torrent->getAttribute(ID));
-    QCOMPARE(peer->getAttribute(ID), QVariant(2));
+    QCOMPARE(peer->getAttribute("torrent_id"), torrent->getKey());
+    QCOMPARE(peer->getKey(), QVariant(2));
     QCOMPARE(typeid (TorrentPeer *), typeid (peer));
 
     // TorrentPreviewableFile has-many relation
@@ -1263,8 +1260,8 @@ void tst_Model_Relations::load() const
     for (auto *file : files) {
         QVERIFY(file);
         QVERIFY(file->exists);
-        QCOMPARE(file->getAttribute("torrent_id"), torrent->getAttribute(ID));
-        QVERIFY(fileIds.contains(file->getAttribute(ID)));
+        QCOMPARE(file->getAttribute("torrent_id"), torrent->getKey());
+        QVERIFY(fileIds.contains(file->getKey()));
         QCOMPARE(typeid (TorrentPreviewableFile *), typeid (file));
 
         // No TorrentPreviewableFileProperty loaded
@@ -1307,8 +1304,8 @@ void tst_Model_Relations::load_WithSelectConstraint() const
         for (const auto &attribute : attributes)
             QVERIFY(expectedAttributes.contains(attribute.key));
 
-        QCOMPARE(file->getAttribute("torrent_id"), torrent->getAttribute(ID));
-        QVERIFY(fileIds.contains(file->getAttribute(ID)));
+        QCOMPARE(file->getAttribute("torrent_id"), torrent->getKey());
+        QVERIFY(fileIds.contains(file->getKey()));
         QCOMPARE(typeid (TorrentPreviewableFile *), typeid (file));
     }
 }
@@ -1348,8 +1345,8 @@ void tst_Model_Relations::load_WithLambdaConstraint() const
         for (const auto &attribute : attributes)
             QVERIFY(expectedAttributes.contains(attribute.key));
 
-        QCOMPARE(file->getAttribute("torrent_id"), torrent->getAttribute(ID));
-        QVERIFY(fileIds.contains(file->getAttribute(ID)));
+        QCOMPARE(file->getAttribute("torrent_id"), torrent->getKey());
+        QVERIFY(fileIds.contains(file->getKey()));
         QCOMPARE(typeid (TorrentPreviewableFile *), typeid (file));
     }
 }
@@ -1378,7 +1375,7 @@ void tst_Model_Relations::fresh() const
     auto torrent = Torrent::find(2);
     QVERIFY(torrent);
     QVERIFY(torrent->exists);
-    QCOMPARE(torrent->getAttribute(ID), QVariant(2));
+    QCOMPARE(torrent->getKey(), QVariant(2));
 
     QVERIFY(torrent->getRelations().empty());
 
@@ -1389,7 +1386,7 @@ void tst_Model_Relations::fresh() const
     QVERIFY(freshTorrent);
     QVERIFY(&*torrent != &*freshTorrent);
     QVERIFY(freshTorrent->exists);
-    QCOMPARE(freshTorrent->getAttribute(ID), (*torrent)[ID]);
+    QCOMPARE(freshTorrent->getKey(), (*torrent)[ID]);
     QCOMPARE(freshTorrent->getAttribute(NAME), QVariant("test2"));
 
     auto files = freshTorrent->getRelation<TorrentPreviewableFile>("torrentFiles");
@@ -1406,8 +1403,8 @@ void tst_Model_Relations::fresh() const
         const auto &attributes = file->getAttributes();
         QCOMPARE(attributes.size(), 9);
 
-        QCOMPARE(file->getAttribute("torrent_id"), torrent->getAttribute(ID));
-        QVERIFY(fileIds.contains(file->getAttribute(ID)));
+        QCOMPARE(file->getAttribute("torrent_id"), torrent->getKey());
+        QVERIFY(fileIds.contains(file->getKey()));
         QCOMPARE(typeid (TorrentPreviewableFile *), typeid (file));
     }
 }
@@ -1421,7 +1418,7 @@ void tst_Model_Relations::fresh_WithSelectConstraint() const
     auto torrent = Torrent::find(2);
     QVERIFY(torrent);
     QVERIFY(torrent->exists);
-    QCOMPARE(torrent->getAttribute(ID), QVariant(2));
+    QCOMPARE(torrent->getKey(), QVariant(2));
 
     QVERIFY(torrent->getRelations().empty());
 
@@ -1432,7 +1429,7 @@ void tst_Model_Relations::fresh_WithSelectConstraint() const
     QVERIFY(freshTorrent);
     QVERIFY(&*torrent != &*freshTorrent);
     QVERIFY(freshTorrent->exists);
-    QCOMPARE(freshTorrent->getAttribute(ID), (*torrent)[ID]);
+    QCOMPARE(freshTorrent->getKey(), (*torrent)[ID]);
     QCOMPARE(freshTorrent->getAttribute(NAME), QVariant("test2"));
 
     auto files = freshTorrent->getRelation<TorrentPreviewableFile>("torrentFiles");
@@ -1453,8 +1450,8 @@ void tst_Model_Relations::fresh_WithSelectConstraint() const
         for (const auto &attribute : attributes)
             QVERIFY(expectedAttributes.contains(attribute.key));
 
-        QCOMPARE(file->getAttribute("torrent_id"), torrent->getAttribute(ID));
-        QVERIFY(fileIds.contains(file->getAttribute(ID)));
+        QCOMPARE(file->getAttribute("torrent_id"), torrent->getKey());
+        QVERIFY(fileIds.contains(file->getKey()));
         QCOMPARE(typeid (TorrentPreviewableFile *), typeid (file));
     }
 }
@@ -2411,7 +2408,7 @@ void tst_Model_Relations::each_Relation() const
                         (FilePropertyProperty &&model, const qint64 index)
     {
         indexes.emplace_back(index);
-        ids.emplace_back(model.getAttribute(ID).template value<quint64>());
+        ids.emplace_back(model.getKeyCasted());
 
         return true;
     });
@@ -2475,7 +2472,7 @@ void tst_Model_Relations::chunkMap_Relation() const
             | ranges::views::transform([](const FilePropertyProperty &model)
                                        -> IdAndName
     {
-        return {model.getAttribute(ID).value<quint64>(),
+        return {model.getKeyCasted(),
                 model.getAttribute(NAME).value<QString>()};
     })
             | ranges::to<QVector<IdAndName>>();
@@ -2538,7 +2535,7 @@ void tst_Model_Relations::chunkById_Relation() const
         compareResultSize(models.size(), page);
 
         for (auto &&fileProperty : models)
-            ids.emplace_back(fileProperty.getAttribute(ID).value<quint64>());
+            ids.emplace_back(fileProperty.getKeyCasted());
 
         return true;
     });
@@ -2583,7 +2580,7 @@ void tst_Model_Relations::chunkById_WithAlias_Relation() const
         compareResultSize(models.size(), page);
 
         for (auto &&tag : models)
-            ids.emplace_back(tag.getAttribute(ID).value<quint64>());
+            ids.emplace_back(tag.getKeyCasted());
 
         return true;
     },
@@ -2614,7 +2611,7 @@ void tst_Model_Relations::eachById_Relation() const
                             (FilePropertyProperty &&model, const qint64 index)
     {
         indexes.emplace_back(index);
-        ids.emplace_back(model.getAttribute(ID).value<quint64>());
+        ids.emplace_back(model.getKeyCasted());
 
         return true;
     });
@@ -2648,7 +2645,7 @@ void tst_Model_Relations::eachById_WithAlias_Relation() const
                             (FilePropertyProperty &&model, const qint64 index)
     {
         indexes.emplace_back(index);
-        ids.emplace_back(model.getAttribute(ID).value<quint64>());
+        ids.emplace_back(model.getKeyCasted());
 
         return true;
     },
@@ -2673,7 +2670,7 @@ void tst_Model_Relations::find() const
 
     auto tag = Torrent::find(3)->tags()->find(2);
     QVERIFY(tag);
-    QCOMPARE(tag->getAttribute(ID), QVariant(2));
+    QCOMPARE(tag->getKey(), QVariant(2));
     QCOMPARE(tag->getAttribute(NAME), QVariant("tag2"));
 }
 
@@ -2716,7 +2713,7 @@ void tst_Model_Relations::findOr() const
 
         QVERIFY(tag);
         QVERIFY(!callbackInvoked);
-        QCOMPARE(tag->getAttribute(ID), QVariant(2));
+        QCOMPARE(tag->getKey(), QVariant(2));
         QCOMPARE(tag->getAttribute(NAME), QVariant("tag2"));
     }
 }
@@ -2757,7 +2754,7 @@ void tst_Model_Relations::findOr_WithReturnType() const
 
         QVERIFY(tag);
         QCOMPARE(result, 0);
-        QCOMPARE(tag->getAttribute(ID), QVariant(2));
+        QCOMPARE(tag->getKey(), QVariant(2));
         QCOMPARE(tag->getAttribute(NAME), QVariant("tag2"));
     }
 }
@@ -2770,7 +2767,7 @@ void tst_Model_Relations::first() const
 
     auto tag = Torrent::find(3)->tags()->whereKey(2).first();
     QVERIFY(tag);
-    QCOMPARE(tag->getAttribute(ID), QVariant(2));
+    QCOMPARE(tag->getKey(), QVariant(2));
     QCOMPARE(tag->getAttribute(NAME), QVariant("tag2"));
 }
 
@@ -2814,7 +2811,7 @@ void tst_Model_Relations::firstOr() const
 
         QVERIFY(tag);
         QVERIFY(!callbackInvoked);
-        QCOMPARE(tag->getAttribute(ID), QVariant(2));
+        QCOMPARE(tag->getKey(), QVariant(2));
         QCOMPARE(tag->getAttribute(NAME), QVariant("tag2"));
     }
 }
@@ -2857,7 +2854,7 @@ void tst_Model_Relations::firstOr_WithReturnType() const
 
         QVERIFY(tag);
         QCOMPARE(result, 0);
-        QCOMPARE(tag->getAttribute(ID), QVariant(2));
+        QCOMPARE(tag->getKey(), QVariant(2));
         QCOMPARE(tag->getAttribute(NAME), QVariant("tag2"));
     }
 }
@@ -2873,7 +2870,7 @@ void tst_Model_Relations::whereRowValues() const
                .first();
 
     QVERIFY(tag);
-    QCOMPARE(tag->getAttribute(ID), QVariant(1));
+    QCOMPARE(tag->getKey(), QVariant(1));
     QCOMPARE(tag->getAttribute(NAME), QVariant("tag1"));
 }
 
@@ -3085,7 +3082,7 @@ void tst_Model_Relations::each() const
                         (Tag &&model, const qint64 index)
     {
         indexes.emplace_back(index);
-        ids.emplace_back(model.getAttribute(ID).template value<quint64>());
+        ids.emplace_back(model.getKeyCasted());
 
         verifyTaggedPivot(model);
 
@@ -3119,7 +3116,7 @@ void tst_Model_Relations::each_ReturnFalse() const
                         (Tag &&model, const qint64 index)
     {
         indexes.emplace_back(index);
-        ids.emplace_back(model.getAttribute(ID).template value<quint64>());
+        ids.emplace_back(model.getKeyCasted());
 
         verifyTaggedPivot(model);
 
@@ -3156,7 +3153,7 @@ void tst_Model_Relations::each_EnforceOrderBy() const
                          (Tag &&model, const qint64 index)
     {
         indexes.emplace_back(index);
-        ids.emplace_back(model.getAttribute(ID).template value<quint64>());
+        ids.emplace_back(model.getKeyCasted());
 
         verifyTaggedPivot(model);
 
@@ -3227,7 +3224,7 @@ void tst_Model_Relations::chunkMap() const
     auto resultTransformed = result
             | ranges::views::transform([](const Tag &model) -> IdAndName
     {
-        return {model.getAttribute(ID).value<quint64>(),
+        return {model.getKeyCasted(),
                 model.getAttribute(NAME).value<QString>()};
     })
             | ranges::to<QVector<IdAndName>>();
@@ -3268,7 +3265,7 @@ void tst_Model_Relations::chunkMap_EnforceOrderBy() const
     auto resultTransformed = result
             | ranges::views::transform([](const Tag &model) -> IdAndName
     {
-        return {model.getAttribute(ID).value<quint64>(),
+        return {model.getKeyCasted(),
                 model.getAttribute(NAME).value<QString>()};
     })
             | ranges::to<QVector<IdAndName>>();
@@ -3446,7 +3443,7 @@ void tst_Model_Relations::chunkById() const
         compareResultSize(models.size(), page);
 
         for (auto &&tag : models) {
-            ids.emplace_back(tag.getAttribute(ID).value<quint64>());
+            ids.emplace_back(tag.getKeyCasted());
 
             verifyTaggedPivot(tag);
         }
@@ -3491,7 +3488,7 @@ void tst_Model_Relations::chunkById_ReturnFalse() const
         compareResultSize(models.size(), page);
 
         for (auto &&tag : models) {
-            auto id = tag.getAttribute(ID).value<quint64>();
+            auto id = tag.getKeyCasted();
             ids.emplace_back(id);
 
             verifyTaggedPivot(tag);
@@ -3567,7 +3564,7 @@ void tst_Model_Relations::chunkById_WithAlias() const
         compareResultSize(models.size(), page);
 
         for (auto &&tag : models) {
-            ids.emplace_back(tag.getAttribute(ID).value<quint64>());
+            ids.emplace_back(tag.getKeyCasted());
 
             verifyTaggedPivot(tag);
         }
@@ -3615,7 +3612,7 @@ void tst_Model_Relations::chunkById_ReturnFalse_WithAlias() const
         compareResultSize(models.size(), page);
 
         for (auto &&tag : models) {
-            auto id = tag.getAttribute(ID).value<quint64>();
+            auto id = tag.getKeyCasted();
             ids.emplace_back(id);
 
             verifyTaggedPivot(tag);
@@ -3680,7 +3677,7 @@ void tst_Model_Relations::eachById() const
                             (Tag &&model, const qint64 index)
     {
         indexes.emplace_back(index);
-        ids.emplace_back(model.getAttribute(ID).value<quint64>());
+        ids.emplace_back(model.getKeyCasted());
 
         verifyTaggedPivot(model);
 
@@ -3715,7 +3712,7 @@ void tst_Model_Relations::eachById_ReturnFalse() const
                             (Tag &&model, const qint64 index)
     {
         indexes.emplace_back(index);
-        ids.emplace_back(model.getAttribute(ID).value<quint64>());
+        ids.emplace_back(model.getKeyCasted());
 
         verifyTaggedPivot(model);
 
@@ -3774,7 +3771,7 @@ void tst_Model_Relations::eachById_WithAlias() const
                             (Tag &&model, const qint64 index)
     {
         indexes.emplace_back(index);
-        ids.emplace_back(model.getAttribute(ID).value<quint64>());
+        ids.emplace_back(model.getKeyCasted());
 
         verifyTaggedPivot(model);
 
@@ -3811,7 +3808,7 @@ void tst_Model_Relations::eachById_ReturnFalse_WithAlias() const
                             (Tag &&model, const qint64 index)
     {
         indexes.emplace_back(index);
-        ids.emplace_back(model.getAttribute(ID).value<quint64>());
+        ids.emplace_back(model.getKeyCasted());
 
         verifyTaggedPivot(model);
 
@@ -3986,7 +3983,7 @@ void tst_Model_Relations::withCasts_OnRelation_OneToMany() const
 
     QVERIFY(torrentFile);
     QVERIFY(torrentFile->exists);
-    QCOMPARE(torrentFile->getAttribute(ID).value<quint64>(), 1);
+    QCOMPARE(torrentFile->getKeyCasted(), 1);
 
     auto attribute = torrentFile->getAttribute("progress");
 
@@ -4019,9 +4016,9 @@ void tst_Model_Relations::withCasts_OnRelation_ManyToMany() const
 
     QVERIFY(tag);
     QVERIFY(tag->exists);
-    QCOMPARE(tag->getAttribute(ID).value<quint64>(), 1);
+    QCOMPARE(tag->getKeyCasted(), 1);
 
-    auto attribute = tag->getAttribute(ID);
+    auto attribute = tag->getKey();
 
     auto typeId = Helpers::qVariantTypeId(attribute);
 
@@ -4051,7 +4048,7 @@ void tst_Model_Relations::u_casts_OnCustomPivotModel_ManyToMany() const
 
     QVERIFY(tag);
     QVERIFY(tag->exists);
-    QCOMPARE(tag->getAttribute(ID).value<quint64>(), 1);
+    QCOMPARE(tag->getKeyCasted(), 1);
 
     auto *tagged = tag->getRelation<Tagged, One>("tagged");
     QVERIFY(tagged);
@@ -4093,7 +4090,7 @@ timezone_TimestampAttribute_UtcOnServer_OnCustomPivotModel_ManyToMany() const
 
     QVERIFY(tag);
     QVERIFY(tag->exists);
-    QCOMPARE(tag->getAttribute(ID).value<quint64>(), 1);
+    QCOMPARE(tag->getKeyCasted(), 1);
 
     auto *tagged = tag->getRelation<Tagged, One>("tagged");
     QVERIFY(tagged);
@@ -4139,7 +4136,7 @@ timezone_TimestampAttribute_UtcOnServer_DontConvert_OnCustomPivot_MtM() const
 
     QVERIFY(tag);
     QVERIFY(tag->exists);
-    QCOMPARE(tag->getAttribute(ID).value<quint64>(), 1);
+    QCOMPARE(tag->getKeyCasted(), 1);
 
     auto *tagged = tag->getRelation<Tagged, One>("tagged");
     QVERIFY(tagged);

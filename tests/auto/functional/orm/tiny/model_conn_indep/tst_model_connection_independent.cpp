@@ -629,7 +629,7 @@ void tst_Model_Connection_Independent::subscriptOperator_OnLhs() const
     auto torrent = Torrent::find(2);
     QVERIFY(torrent->exists);
 
-    QCOMPARE(torrent->getAttribute(ID), QVariant(2));
+    QCOMPARE(torrent->getKey(), QVariant(2));
     QCOMPARE(torrent->getAttribute(NAME), QVariant("test2"));
     QCOMPARE(torrent->getAttribute(SIZE_), QVariant(12));
 
@@ -648,7 +648,7 @@ void tst_Model_Connection_Independent::
     auto torrent2 = Torrent::find(2);
     QVERIFY(torrent2->exists);
 
-    QCOMPARE(torrent2->getAttribute(ID), QVariant(2));
+    QCOMPARE(torrent2->getKey(), QVariant(2));
     QCOMPARE(torrent2->getAttribute(NAME), QVariant("test2"));
 
     auto attributeReference = (*torrent2)[NAME];
@@ -657,7 +657,7 @@ void tst_Model_Connection_Independent::
     auto torrent3 = Torrent::find(3);
     QVERIFY(torrent3->exists);
 
-    QCOMPARE(torrent3->getAttribute(ID), QVariant(3));
+    QCOMPARE(torrent3->getKey(), QVariant(3));
     QCOMPARE(torrent3->getAttribute(NAME), QVariant("test3"));
 
     (*torrent3)[NAME] = attributeReference;
@@ -1247,7 +1247,7 @@ void tst_Model_Connection_Independent::whereRowValues() const
     auto tag = Torrent::whereRowValuesEq({ID, NAME}, {3, "test3"})->first();
 
     QVERIFY(tag);
-    QCOMPARE(tag->getAttribute(ID), QVariant(3));
+    QCOMPARE(tag->getKey(), QVariant(3));
     QCOMPARE(tag->getAttribute(NAME), QVariant("test3"));
 }
 
@@ -1457,7 +1457,7 @@ void tst_Model_Connection_Independent::each() const
                          (FilePropertyProperty &&model, const qint64 index)
     {
         indexes.emplace_back(index);
-        ids.emplace_back(model.getAttribute(ID).template value<quint64>());
+        ids.emplace_back(model.getKeyCasted());
 
         return true;
     });
@@ -1485,7 +1485,7 @@ void tst_Model_Connection_Independent::each_ReturnFalse() const
                          (FilePropertyProperty &&model, const qint64 index)
     {
         indexes.emplace_back(index);
-        ids.emplace_back(model.getAttribute(ID).template value<quint64>());
+        ids.emplace_back(model.getKeyCasted());
 
         return index != 4; // false/interrupt on 4
     });
@@ -1516,7 +1516,7 @@ void tst_Model_Connection_Independent::each_EnforceOrderBy() const
                       (FilePropertyProperty &&model, const qint64 index)
     {
         indexes.emplace_back(index);
-        ids.emplace_back(model.getAttribute(ID).template value<quint64>());
+        ids.emplace_back(model.getKeyCasted());
 
         return true;
     });
@@ -1599,7 +1599,7 @@ void tst_Model_Connection_Independent::chunkMap() const
             | ranges::views::transform([](const FilePropertyProperty &model)
                                        -> IdAndName
     {
-        return {model.getAttribute(ID).value<quint64>(),
+        return {model.getKeyCasted(),
                 model.getAttribute(NAME).value<QString>()};
     })
             | ranges::to<QVector<IdAndName>>();
@@ -1639,7 +1639,7 @@ void tst_Model_Connection_Independent::chunkMap_EnforceOrderBy() const
             | ranges::views::transform([](const FilePropertyProperty &model)
                                        -> IdAndName
     {
-        return {model.getAttribute(ID).value<quint64>(),
+        return {model.getKeyCasted(),
                 model.getAttribute(NAME).value<QString>()};
     })
             | ranges::to<QVector<IdAndName>>();
@@ -1765,7 +1765,7 @@ void tst_Model_Connection_Independent::chunkById() const
         compareResultSize(models.size(), page);
 
         for (auto &&tag : models)
-            ids.emplace_back(tag.getAttribute(ID).value<quint64>());
+            ids.emplace_back(tag.getKeyCasted());
 
         return true;
     });
@@ -1804,7 +1804,7 @@ void tst_Model_Connection_Independent::chunkById_ReturnFalse() const
         compareResultSize(models.size(), page);
 
         for (auto &&tag : models) {
-            auto id = tag.getAttribute(ID).value<quint64>();
+            auto id = tag.getKeyCasted();
             ids.emplace_back(id);
 
             // Interrupt chunk-ing
@@ -1870,7 +1870,7 @@ void tst_Model_Connection_Independent::chunkById_WithAlias() const
         compareResultSize(models.size(), page);
 
         for (auto &&tag : models)
-            ids.emplace_back(tag.getAttribute(ID).value<quint64>());
+            ids.emplace_back(tag.getKeyCasted());
 
         return true;
     },
@@ -1911,7 +1911,7 @@ void tst_Model_Connection_Independent::chunkById_ReturnFalse_WithAlias() const
         compareResultSize(models.size(), page);
 
         for (auto &&tag : models) {
-            auto id = tag.getAttribute(ID).value<quint64>();
+            auto id = tag.getKeyCasted();
             ids.emplace_back(id);
 
             // Interrupt chunk-ing
@@ -1964,7 +1964,7 @@ void tst_Model_Connection_Independent::eachById() const
                              (FilePropertyProperty &&model, const qint64 index)
     {
         indexes.emplace_back(index);
-        ids.emplace_back(model.getAttribute(ID).value<quint64>());
+        ids.emplace_back(model.getKeyCasted());
 
         return true;
     });
@@ -1992,7 +1992,7 @@ void tst_Model_Connection_Independent::eachById_ReturnFalse() const
                              (FilePropertyProperty &&model, const qint64 index)
     {
         indexes.emplace_back(index);
-        ids.emplace_back(model.getAttribute(ID).value<quint64>());
+        ids.emplace_back(model.getKeyCasted());
 
         return index != 4; // false/interrupt on 4
     });
@@ -2040,7 +2040,7 @@ void tst_Model_Connection_Independent::eachById_WithAlias() const
                             (FilePropertyProperty &&model, const qint64 index)
     {
         indexes.emplace_back(index);
-        ids.emplace_back(model.getAttribute(ID).value<quint64>());
+        ids.emplace_back(model.getKeyCasted());
 
         return true;
     },
@@ -2070,7 +2070,7 @@ void tst_Model_Connection_Independent::eachById_ReturnFalse_WithAlias() const
                             (FilePropertyProperty &&model, const qint64 index)
     {
         indexes.emplace_back(index);
-        ids.emplace_back(model.getAttribute(ID).value<quint64>());
+        ids.emplace_back(model.getKeyCasted());
 
         return index != 4; // false/interrupt on 4
     },

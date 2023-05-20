@@ -173,8 +173,8 @@ void tst_Model::save_Insert() const
     QVERIFY(torrent.exists);
 
     // Check attributes after save
-    QVERIFY(torrent.getAttribute(ID).isValid());
-    QVERIFY(torrent.getAttribute(ID).value<quint64>() > 6);
+    QVERIFY(torrent.getKey().isValid());
+    QVERIFY(torrent.getKeyCasted() > 6);
     QCOMPARE(torrent.getAttribute(NAME), QVariant("test50"));
     QCOMPARE(torrent.getAttribute(SIZE_), QVariant(50));
     QCOMPARE(torrent.getAttribute("progress"), QVariant(50));
@@ -185,12 +185,12 @@ void tst_Model::save_Insert() const
     QVERIFY(torrent.getAttribute(UPDATED_AT).isValid());
 
     // Get the fresh model from the database
-    auto torrentToVerify = Torrent::find(torrent.getAttribute(ID));
+    auto torrentToVerify = Torrent::find(torrent.getKey());
     QVERIFY(torrentToVerify);
     QVERIFY(torrentToVerify->exists);
 
     // And check attributes again
-    QCOMPARE(torrentToVerify->getAttribute(ID), torrent.getAttribute(ID));
+    QCOMPARE(torrentToVerify->getKey(), torrent.getKey());
     QCOMPARE(torrentToVerify->getAttribute(NAME), QVariant("test50"));
     QCOMPARE(torrentToVerify->getAttribute(SIZE_), QVariant(50));
     QCOMPARE(torrentToVerify->getAttribute("progress"), QVariant(50));
@@ -224,8 +224,8 @@ void tst_Model::save_Insert_WithDefaultValues() const
     QVERIFY(torrent.exists);
 
     // Check attributes after save
-    QVERIFY(torrent.getAttribute(ID).isValid());
-    QVERIFY(torrent.getAttribute(ID).value<quint64>() > 6);
+    QVERIFY(torrent.getKey().isValid());
+    QVERIFY(torrent.getKeyCasted() > 6);
     QCOMPARE(torrent.getAttribute(NAME), QVariant("test51"));
     QCOMPARE(torrent.getAttribute("added_on"), QVariant(addedOn));
     QCOMPARE(torrent.getAttribute("hash"),
@@ -234,13 +234,13 @@ void tst_Model::save_Insert_WithDefaultValues() const
     QVERIFY(torrent.getAttribute(UPDATED_AT).isValid());
 
     // Get the fresh model from the database
-    auto torrentToVerify = Torrent::find(torrent.getAttribute(ID));
+    auto torrentToVerify = Torrent::find(torrent.getKey());
     QVERIFY(torrentToVerify);
     QVERIFY(torrentToVerify->exists);
 
     // And check attributes again
-    QVERIFY(torrentToVerify->getAttribute(ID).isValid());
-    QVERIFY(torrentToVerify->getAttribute(ID).value<quint64>() > 6);
+    QVERIFY(torrentToVerify->getKey().isValid());
+    QVERIFY(torrentToVerify->getKeyCasted() > 6);
     QCOMPARE(torrentToVerify->getAttribute(NAME), QVariant("test51"));
     QCOMPARE(torrentToVerify->getAttribute(SIZE_), QVariant(0));
     QCOMPARE(torrentToVerify->getAttribute("progress"), QVariant(0));
@@ -272,7 +272,7 @@ void tst_Model::save_Insert_TableWithoutAutoincrementKey() const
     QVERIFY(setting.exists);
 
     // Check attributes after save
-    QVERIFY(!setting.getAttribute(ID).isValid());
+    QVERIFY(!setting.getKey().isValid());
     QCOMPARE(setting.getAttribute(NAME), QVariant("setting1"));
     QCOMPARE(setting.getAttribute("value"), QVariant("value1"));
     QVERIFY(setting.getAttribute(CREATED_AT).isValid());
@@ -284,7 +284,7 @@ void tst_Model::save_Insert_TableWithoutAutoincrementKey() const
     QVERIFY(settingToVerify->exists);
 
     // And check attributes again
-    QVERIFY(!settingToVerify->getAttribute(ID).isValid());
+    QVERIFY(!settingToVerify->getKey().isValid());
     QCOMPARE(settingToVerify->getAttribute(NAME), QVariant("setting1"));
     QCOMPARE(settingToVerify->getAttribute("value"), QVariant("value1"));
     QVERIFY(settingToVerify->getAttribute(CREATED_AT).isValid());
@@ -306,7 +306,7 @@ void tst_Model::save_Update_Success() const
     auto torrentFile = TorrentPreviewableFile::find(4);
     QVERIFY(torrentFile);
     QVERIFY(torrentFile->exists);
-    QCOMPARE(torrentFile->getAttribute(ID), QVariant(4));
+    QCOMPARE(torrentFile->getKey(), QVariant(4));
 
     torrentFile->setAttribute("filepath", "test3_file1-updated.mkv")
             .setAttribute(SIZE_, 5570)
@@ -421,7 +421,7 @@ void tst_Model::destroy() const
     auto torrentFile = TorrentPreviewableFile::find(8);
 
     QVERIFY(torrentFile);
-    QCOMPARE(torrentFile->getAttribute(ID), QVariant(8));
+    QCOMPARE(torrentFile->getKey(), QVariant(8));
     QVERIFY(torrentFile->exists);
 
     // Delete record
@@ -459,8 +459,8 @@ void tst_Model::destroyWithVector() const
     auto &torrentFile8 = torrentFiles[1];
 
     QCOMPARE(torrentFiles.size(), 2);
-    QCOMPARE(torrentFile7.getAttribute(ID), QVariant(7));
-    QCOMPARE(torrentFile8.getAttribute(ID), QVariant(8));
+    QCOMPARE(torrentFile7.getKey(), QVariant(7));
+    QCOMPARE(torrentFile8.getKey(), QVariant(8));
     QVERIFY(torrentFile7.exists);
     QVERIFY(torrentFile8.exists);
 
@@ -582,7 +582,7 @@ void tst_Model::where() const
     {
         auto torrent = Torrent::where(ID, "=", 3)->first();
         QVERIFY(torrent);
-        QCOMPARE(torrent->getAttribute(ID), QVariant(3));
+        QCOMPARE(torrent->getKey(), QVariant(3));
     }
     {
         auto torrents = Torrent::where(ID, ">=", 3)->get();
@@ -591,7 +591,7 @@ void tst_Model::where() const
 
         const QVector<QVariant> expectedIds {3, 4, 5, 6};
         for (const auto &torrent : torrents)
-            QVERIFY(expectedIds.contains(torrent.getAttribute(ID)));
+            QVERIFY(expectedIds.contains(torrent.getKey()));
     }
 }
 
@@ -605,13 +605,13 @@ void tst_Model::whereEq() const
     {
         auto torrent = Torrent::whereEq(ID, 3)->first();
         QVERIFY(torrent);
-        QCOMPARE(torrent->getAttribute(ID), QVariant(3));
+        QCOMPARE(torrent->getKey(), QVariant(3));
     }
     // string
     {
         auto torrent = Torrent::whereEq(NAME, "test3")->first();
         QVERIFY(torrent);
-        QCOMPARE(torrent->getAttribute(ID), QVariant(3));
+        QCOMPARE(torrent->getKey(), QVariant(3));
     }
     // QDateTime
     {
@@ -619,7 +619,7 @@ void tst_Model::whereEq() const
                                         QDateTime({2020, 8, 1}, {20, 11, 10}, Qt::UTC))
                        ->first();
         QVERIFY(torrent);
-        QCOMPARE(torrent->getAttribute(ID), QVariant(1));
+        QCOMPARE(torrent->getKey(), QVariant(1));
     }
 }
 
@@ -632,7 +632,7 @@ void tst_Model::where_WithVector() const
     {
         auto torrent = Torrent::where({{ID, 3}})->first();
         QVERIFY(torrent);
-        QCOMPARE(torrent->getAttribute(ID), QVariant(3));
+        QCOMPARE(torrent->getKey(), QVariant(3));
     }
     {
         auto torrents = Torrent::where({{ID, 3, ">="}})->get();
@@ -659,7 +659,7 @@ void tst_Model::where_WithVector_Condition() const
     {
         auto torrents = Torrent::where({{SIZE_, 14}, {"progress", 400}})->get();
         QCOMPARE(torrents.size(), 1);
-        QCOMPARE(torrents.at(0).getAttribute(ID), QVariant(4));
+        QCOMPARE(torrents.at(0).getKey(), QVariant(4));
     }
     {
         auto torrents = Torrent::where({{SIZE_, 13}, {SIZE_, 14, "=", "or"}})->get();
@@ -674,7 +674,7 @@ void tst_Model::where_WithVector_Condition() const
                         ->where("progress", "=", 400)
                         .get();
         QCOMPARE(torrents.size(), 1);
-        QCOMPARE(torrents.at(0).getAttribute(ID), QVariant(4));
+        QCOMPARE(torrents.at(0).getKey(), QVariant(4));
     }
 }
 
@@ -742,7 +742,7 @@ void tst_Model::find() const
 
     auto torrent = Torrent::find(3);
     QVERIFY(torrent);
-    QCOMPARE(torrent->getAttribute(ID), QVariant(3));
+    QCOMPARE(torrent->getKey(), QVariant(3));
     QCOMPARE(torrent->getAttribute(NAME), QVariant("test3"));
 }
 
@@ -896,7 +896,7 @@ void tst_Model::findOr() const
 
         QVERIFY(torrent);
         QVERIFY(!callbackInvoked);
-        QCOMPARE(torrent->getAttribute(ID), QVariant(1));
+        QCOMPARE(torrent->getKey(), QVariant(1));
         QCOMPARE(torrent->getAttribute(NAME), QVariant("test1"));
     }
 }
@@ -936,7 +936,7 @@ void tst_Model::findOr_WithReturnType() const
 
         QVERIFY(torrent);
         QCOMPARE(result, 0);
-        QCOMPARE(torrent->getAttribute(ID), QVariant(1));
+        QCOMPARE(torrent->getKey(), QVariant(1));
         QCOMPARE(torrent->getAttribute(NAME), QVariant("test1"));
     }
 }
@@ -949,7 +949,7 @@ void tst_Model::first() const
 
     auto torrent = Torrent::whereKey(3)->first();
     QVERIFY(torrent);
-    QCOMPARE(torrent->getAttribute(ID), QVariant(3));
+    QCOMPARE(torrent->getKey(), QVariant(3));
     QCOMPARE(torrent->getAttribute(NAME), QVariant("test3"));
 }
 
@@ -991,7 +991,7 @@ void tst_Model::firstOr() const
 
         QVERIFY(torrent);
         QVERIFY(!callbackInvoked);
-        QCOMPARE(torrent->getAttribute(ID), QVariant(1));
+        QCOMPARE(torrent->getKey(), QVariant(1));
         QCOMPARE(torrent->getAttribute(NAME), QVariant("test1"));
     }
 }
@@ -1031,7 +1031,7 @@ void tst_Model::firstOr_WithReturnType() const
 
         QVERIFY(torrent);
         QCOMPARE(result, 0);
-        QCOMPARE(torrent->getAttribute(ID), QVariant(1));
+        QCOMPARE(torrent->getKey(), QVariant(1));
         QCOMPARE(torrent->getAttribute(NAME), QVariant("test1"));
     }
 }
@@ -1245,7 +1245,7 @@ void tst_Model::fresh_OnlyAttributes() const
         auto torrent = Torrent::find(3);
         QVERIFY(torrent);
         QVERIFY(torrent->exists);
-        QCOMPARE(torrent->getAttribute(ID), QVariant(3));
+        QCOMPARE(torrent->getKey(), QVariant(3));
 
         torrent->setAttribute(NAME, "test3 fresh");
         QCOMPARE(torrent->getAttribute(NAME), QVariant("test3 fresh"));
@@ -1254,7 +1254,7 @@ void tst_Model::fresh_OnlyAttributes() const
         QVERIFY(freshTorrent);
         QVERIFY(&*torrent != &*freshTorrent);
         QVERIFY(freshTorrent->exists);
-        QCOMPARE(freshTorrent->getAttribute(ID), QVariant(3));
+        QCOMPARE(freshTorrent->getKey(), QVariant(3));
         QCOMPARE(freshTorrent->getAttribute(NAME), QVariant("test3"));
     }
 }
@@ -1276,7 +1276,7 @@ void tst_Model::refresh_OnlyAttributes() const
         auto torrent = Torrent::find(3);
         QVERIFY(torrent);
         QVERIFY(torrent->exists);
-        QCOMPARE(torrent->getAttribute(ID), QVariant(3));
+        QCOMPARE(torrent->getKey(), QVariant(3));
 
         auto original = torrent->getAttribute(NAME);
         QCOMPARE(original, QVariant("test3"));
@@ -1288,7 +1288,7 @@ void tst_Model::refresh_OnlyAttributes() const
 
         QVERIFY(&*torrent == &refreshedTorrent);
         QVERIFY(refreshedTorrent.exists);
-        QCOMPARE(refreshedTorrent.getAttribute(ID), torrent->getAttribute(ID));
+        QCOMPARE(refreshedTorrent.getKey(), torrent->getKey());
         QCOMPARE(refreshedTorrent.getAttribute(NAME), original);
     }
 }

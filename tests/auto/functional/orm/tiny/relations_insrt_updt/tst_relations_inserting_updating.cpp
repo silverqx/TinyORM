@@ -1363,7 +1363,7 @@ void tst_Relations_Inserting_Updating::associate_WithModel() const
 
     const auto &torrentForeignKeyName = torrent->getForeignKey();
     QVERIFY(file.getAttributesHash().contains(torrentForeignKeyName));
-    QCOMPARE(file[torrentForeignKeyName], torrent->getAttribute(ID));
+    QCOMPARE(file[torrentForeignKeyName], torrent->getKey());
 
     // Copy of the associated model have to be set on the file
     QCOMPARE(fileRelations.size(), static_cast<std::size_t>(1));
@@ -1428,7 +1428,7 @@ void tst_Relations_Inserting_Updating::associate_WithId() const
 
     const auto &torrentForeignKeyName = torrent->getForeignKey();
     QVERIFY(file.getAttributesHash().contains(torrentForeignKeyName));
-    QCOMPARE(file[torrentForeignKeyName], torrent->getAttribute(ID));
+    QCOMPARE(file[torrentForeignKeyName], torrent->getKey());
 
     // This is only difference, associate with Id should unset relation model
     QVERIFY(fileRelations.empty());
@@ -1476,7 +1476,7 @@ void tst_Relations_Inserting_Updating::associate_WithId_ShouldUnsetRelation() co
 
     const auto &torrentForeignKeyName = torrent->getForeignKey();
     QVERIFY(file.getAttributesHash().contains(torrentForeignKeyName));
-    QCOMPARE(file[torrentForeignKeyName], torrent->getAttribute(ID));
+    QCOMPARE(file[torrentForeignKeyName], torrent->getKey());
 
     // Copy of the associated model have to be set on the file
     QCOMPARE(fileRelations.size(), static_cast<std::size_t>(1));
@@ -1532,7 +1532,7 @@ void tst_Relations_Inserting_Updating::dissociate() const
 
     const auto &torrentForeignKeyName = torrent->getForeignKey();
     QVERIFY(file.getAttributesHash().contains(torrentForeignKeyName));
-    QCOMPARE(file[torrentForeignKeyName], torrent->getAttribute(ID));
+    QCOMPARE(file[torrentForeignKeyName], torrent->getKey());
 
     // Copy of the associated model have to be set on the file
     QCOMPARE(fileRelations.size(), static_cast<std::size_t>(1));

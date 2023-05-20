@@ -829,23 +829,23 @@ void tst_Collection_Models::contains_Callback() const
     // Verify
     QVERIFY(images.contains([](AlbumImage *const image)
     {
-        return image->getAttribute(ID).template value<quint64>() == 2;
+        return image->getKeyCasted() == 2;
     }));
     QVERIFY(images.contains([](AlbumImage *const image)
     {
-        return image->getAttribute(ID).template value<quint64>() == 6;
+        return image->getKeyCasted() == 6;
     }));
     QVERIFY(images.contains([](AlbumImage *const image)
     {
-        return image->getAttribute(ID).template value<quint64>() != 1;
+        return image->getKeyCasted() != 1;
     }));
     QVERIFY(images.contains([](AlbumImage *const image)
     {
-        return image->getAttribute(ID).template value<quint64>() != 7;
+        return image->getKeyCasted() != 7;
     }));
     QVERIFY(images.contains([](AlbumImage *const image)
     {
-        return image->getAttribute(ID).template value<quint64>() != 20;
+        return image->getKeyCasted() != 20;
     }));
 }
 
@@ -910,15 +910,15 @@ void tst_Collection_Models::doesntContain_Callback() const
     // Verify
     QVERIFY(images.doesntContain([](AlbumImage *const image)
     {
-        return image->getAttribute(ID).template value<quint64>() == 1;
+        return image->getKeyCasted() == 1;
     }));
     QVERIFY(images.doesntContain([](AlbumImage *const image)
     {
-        return image->getAttribute(ID).template value<quint64>() == 7;
+        return image->getKeyCasted() == 7;
     }));
     QVERIFY(images.doesntContain([](AlbumImage *const image)
     {
-        return image->getAttribute(ID).template value<quint64>() == 20;
+        return image->getKeyCasted() == 20;
     }));
     /* All the following conditions are correct, I have investigated it and even if
        it's weird they are correct; simply this is how the mathematic works.
@@ -926,19 +926,19 @@ void tst_Collection_Models::doesntContain_Callback() const
        used inside the callback. */
     QVERIFY(!images.doesntContain([](AlbumImage *const image)
     {
-        return image->getAttribute(ID).template value<quint64>() == 2;
+        return image->getKeyCasted() == 2;
     }));
     QVERIFY(!images.doesntContain([](AlbumImage *const image)
     {
-        return image->getAttribute(ID).template value<quint64>() != 2;
+        return image->getKeyCasted() != 2;
     }));
     QVERIFY(!images.doesntContain([](AlbumImage *const image)
     {
-        return image->getAttribute(ID).template value<quint64>() == 6;
+        return image->getKeyCasted() == 6;
     }));
     QVERIFY(!images.doesntContain([](AlbumImage *const image)
     {
-        return image->getAttribute(ID).template value<quint64>() != 6;
+        return image->getKeyCasted() != 6;
     }));
 }
 
@@ -976,7 +976,7 @@ void tst_Collection_Models::find() const
     // Verify
     QVERIFY(result);
     QVERIFY(result->exists);
-    QCOMPARE(result->getAttribute(ID), QVariant(4));
+    QCOMPARE(result->getKey(), QVariant(4));
 }
 
 void tst_Collection_Models::find_NotFound_nullptr() const
@@ -1006,7 +1006,7 @@ void tst_Collection_Models::find_NotFound_DefaultModel() const
     // Verify
     QVERIFY(result);
     QVERIFY(result->exists);
-    QCOMPARE(result->getAttribute(ID), QVariant(5));
+    QCOMPARE(result->getKey(), QVariant(5));
 }
 
 void tst_Collection_Models::find_Model() const
@@ -1022,7 +1022,7 @@ void tst_Collection_Models::find_Model() const
     // Verify
     QVERIFY(result);
     QVERIFY(result->exists);
-    QCOMPARE(result->getAttribute(ID), QVariant(4));
+    QCOMPARE(result->getKey(), QVariant(4));
 }
 
 void tst_Collection_Models::find_Model_NotFound_nullptr() const
@@ -1060,7 +1060,7 @@ void tst_Collection_Models::find_Model_NotFound_DefaultModel() const
     // Verify
     QVERIFY(result);
     QVERIFY(result->exists);
-    QCOMPARE(result->getAttribute(ID), QVariant(5));
+    QCOMPARE(result->getKey(), QVariant(5));
 }
 
 void tst_Collection_Models::find_Ids() const
