@@ -1076,7 +1076,7 @@ namespace Types
 
         return filter([&key, &values](ModelRawType *const model)
         {
-            return values.contains(model->getAttribute(key).template value<T>());
+            return values.contains(model->template getAttribute<T>(key));
         });
     }
 
@@ -1092,7 +1092,7 @@ namespace Types
 
         return reject([&key, &values](ModelRawType *const model)
         {
-            return values.contains(model->getAttribute(key).template value<T>());
+            return values.contains(model->template getAttribute<T>(key));
         });
     }
 
@@ -1185,7 +1185,7 @@ namespace Types
         if (model == nullptr || !model->getAttributesHash().contains(key))
             return defaultValue;
 
-        return model->getAttribute(key).template value<T>();
+        return model->template getAttribute<T>(key);
     }
 
     template<DerivedCollectionModel Model>
