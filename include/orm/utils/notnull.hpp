@@ -128,51 +128,51 @@ namespace Private
     }
 
     template<typename T, typename U>
-    auto operator==(const NotNull<T> &lhs,
-                    const NotNull<U> &rhs) noexcept(noexcept(lhs.get() == rhs.get()))
-        -> decltype (lhs.get() == rhs.get())
+    auto operator==(const NotNull<T> &left,
+                    const NotNull<U> &right) noexcept(noexcept(left.get() == right.get()))
+        -> decltype (left.get() == right.get())
     {
-        return lhs.get() == rhs.get();
+        return left.get() == right.get();
     }
 
     template<typename T, typename U>
-    auto operator!=(const NotNull<T> &lhs,
-                    const NotNull<U> &rhs) noexcept(noexcept(lhs.get() != rhs.get()))
-        -> decltype (lhs.get() != rhs.get())
+    auto operator!=(const NotNull<T> &left,
+                    const NotNull<U> &right) noexcept(noexcept(left.get() != right.get()))
+        -> decltype (left.get() != right.get())
     {
-        return lhs.get() != rhs.get();
+        return left.get() != right.get();
     }
 
     template<typename T, typename U>
-    auto operator<(const NotNull<T> &lhs,
-                   const NotNull<U> &rhs) noexcept(noexcept(lhs.get() < rhs.get()))
-        -> decltype (lhs.get() < rhs.get())
+    auto operator<(const NotNull<T> &left,
+                   const NotNull<U> &right) noexcept(noexcept(left.get() < right.get()))
+        -> decltype (left.get() < right.get())
     {
-        return lhs.get() < rhs.get();
+        return left.get() < right.get();
     }
 
     template<typename T, typename U>
-    auto operator<=(const NotNull<T> &lhs,
-                    const NotNull<U> &rhs) noexcept(noexcept(lhs.get() <= rhs.get()))
-        -> decltype (lhs.get() <= rhs.get())
+    auto operator<=(const NotNull<T> &left,
+                    const NotNull<U> &right) noexcept(noexcept(left.get() <= right.get()))
+        -> decltype (left.get() <= right.get())
     {
-        return lhs.get() <= rhs.get();
+        return left.get() <= right.get();
     }
 
     template<typename T, typename U>
-    auto operator>(const NotNull<T> &lhs,
-                   const NotNull<U> &rhs) noexcept(noexcept(lhs.get() > rhs.get()))
-        -> decltype (lhs.get() > rhs.get())
+    auto operator>(const NotNull<T> &left,
+                   const NotNull<U> &right) noexcept(noexcept(left.get() > right.get()))
+        -> decltype (left.get() > right.get())
     {
-        return lhs.get() > rhs.get();
+        return left.get() > right.get();
     }
 
     template<typename T, typename U>
-    auto operator>=(const NotNull<T> &lhs,
-                    const NotNull<U> &rhs) noexcept(noexcept(lhs.get() >= rhs.get()))
-        -> decltype (lhs.get() >= rhs.get())
+    auto operator>=(const NotNull<T> &left,
+                    const NotNull<U> &right) noexcept(noexcept(left.get() >= right.get()))
+        -> decltype (left.get() >= right.get())
     {
-        return lhs.get() >= rhs.get();
+        return left.get() >= right.get();
     }
 
     // More unwanted operators
