@@ -418,7 +418,6 @@ Many-to-many relationships are defined by writing a method that returns the resu
     #ifndef USER_HPP
     #define USER_HPP
 
-    #include <orm/tiny/model.hpp>
     #include <orm/tiny/relations/pivot.hpp>
 
     #include "models/role.hpp"
@@ -484,7 +483,6 @@ To define the "inverse" of a many-to-many relationship, you should define a meth
     #ifndef ROLE_HPP
     #define ROLE_HPP
 
-    #include <orm/tiny/model.hpp>
     #include <orm/tiny/relations/pivot.hpp>
 
     using Orm::Tiny::Model;
@@ -596,7 +594,6 @@ Custom many-to-many pivot models should extend the `Orm::Tiny::Relations::BasePi
     #ifndef USER_HPP
     #define USER_HPP
 
-    #include <orm/tiny/model.hpp>
     #include <orm/tiny/relations/pivot.hpp>
 
     #include "models/role.hpp"
