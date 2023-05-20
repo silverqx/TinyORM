@@ -5,7 +5,6 @@
 #ifdef PROJECT_TINYORM_PLAYGROUND
 #  include "orm/db.hpp"
 #endif
-#include "orm/tiny/model.hpp"
 #include "orm/tiny/relations/pivot.hpp"
 //#include "orm/tiny/softdeletes.hpp"
 

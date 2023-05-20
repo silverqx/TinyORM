@@ -2,7 +2,6 @@
 #ifndef MODELS_TAG_HPP
 #define MODELS_TAG_HPP
 
-#include "orm/tiny/model.hpp"
 #include "orm/tiny/relations/pivot.hpp"
 
 #include "models/tagged.hpp"
