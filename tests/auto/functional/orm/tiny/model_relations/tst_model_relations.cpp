@@ -2473,7 +2473,7 @@ void tst_Model_Relations::chunkMap_Relation() const
                                        -> IdAndName
     {
         return {model.getKeyCasted(),
-                model.getAttribute(NAME).value<QString>()};
+                model.getAttribute<QString>(NAME)};
     })
             | ranges::to<QVector<IdAndName>>();
 
@@ -3225,7 +3225,7 @@ void tst_Model_Relations::chunkMap() const
             | ranges::views::transform([](const Tag &model) -> IdAndName
     {
         return {model.getKeyCasted(),
-                model.getAttribute(NAME).value<QString>()};
+                model.getAttribute<QString>(NAME)};
     })
             | ranges::to<QVector<IdAndName>>();
 
@@ -3266,7 +3266,7 @@ void tst_Model_Relations::chunkMap_EnforceOrderBy() const
             | ranges::views::transform([](const Tag &model) -> IdAndName
     {
         return {model.getKeyCasted(),
-                model.getAttribute(NAME).value<QString>()};
+                model.getAttribute<QString>(NAME)};
     })
             | ranges::to<QVector<IdAndName>>();
 
@@ -3918,14 +3918,14 @@ void tst_Model_Relations::upsert() const
 
         // Timestamps must be compared manually
         auto tagProperty1 = tagProperties.at(0);
-        QCOMPARE(tagProperty1.getAttribute(createdAtColumn).value<QDateTime>(),
+        QCOMPARE(tagProperty1.getAttribute<QDateTime>(createdAtColumn),
                  createdAtOriginal);
-        QVERIFY(tagProperty1.getAttribute(updatedAtColumn).value<QDateTime>() >=
+        QVERIFY(tagProperty1.getAttribute<QDateTime>(updatedAtColumn) >=
                 timeBeforeUpdate);
         auto tagProperty2 = tagProperties.at(1);
-        QVERIFY(tagProperty2.getAttribute(createdAtColumn).value<QDateTime>() >=
+        QVERIFY(tagProperty2.getAttribute<QDateTime>(createdAtColumn) >=
                 timeBeforeUpdate);
-        QVERIFY(tagProperty1.getAttribute(updatedAtColumn).value<QDateTime>() >=
+        QVERIFY(tagProperty1.getAttribute<QDateTime>(updatedAtColumn) >=
                 timeBeforeUpdate);
     }
 

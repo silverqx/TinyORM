@@ -121,7 +121,7 @@ namespace TestUtils::Common
         return std::ranges::all_of(actual,
                                    [&attribute, &expected](M *const model)
         {
-            return expected.contains(model->getAttribute(attribute).template value<T>());
+            return expected.contains(model->template getAttribute<T>(attribute));
         });
     }
 

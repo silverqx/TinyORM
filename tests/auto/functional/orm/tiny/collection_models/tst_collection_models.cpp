@@ -481,7 +481,7 @@ void tst_Collection_Models::map() const
             id == 3 || id == 6
         )
             (*image)[NAME] = QStringLiteral("%1_id_%2")
-                             .arg(image->getAttribute(NAME).template value<QString>())
+                             .arg(image->getAttribute<QString>(NAME))
                              .arg(id);
         return image;
     });
@@ -508,12 +508,12 @@ void tst_Collection_Models::map_WithIndex() const
             id == 2
         )
             (*image)[NAME] = QStringLiteral("%1_id_%2")
-                             .arg(image->getAttribute(NAME).template value<QString>())
+                             .arg(image->getAttribute<QString>(NAME))
                              .arg(id);
 
         else if (index == 3)
             (*image)[NAME] = QStringLiteral("%1_index_%2")
-                             .arg(image->getAttribute(NAME).template value<QString>())
+                             .arg(image->getAttribute<QString>(NAME))
                              .arg(index);
 
         return image;
@@ -562,19 +562,18 @@ void tst_Collection_Models::mapWithKeys_IdAndName() const
             images.mapWithKeys<quint64, QString>(
                 [](AlbumImage *const image) -> std::pair<quint64, QString>
     {
-        return {Common::getKeyCasted(image),
-                image->getAttribute(NAME).template value<QString>()};
+        return {Common::getKeyCasted(image), image->getAttribute<QString>(NAME)};
     });
 
     // Verify
     QCOMPARE(result.size(), 5);
 
     std::unordered_map<quint64, QString> expected {
-        {2, images[0].getAttribute(NAME).template value<QString>()},
-        {3, images[1].getAttribute(NAME).template value<QString>()},
-        {4, images[2].getAttribute(NAME).template value<QString>()},
-        {5, images[3].getAttribute(NAME).template value<QString>()},
-        {6, images[4].getAttribute(NAME).template value<QString>()},
+        {2, images[0].getAttribute<QString>(NAME)},
+        {3, images[1].getAttribute<QString>(NAME)},
+        {4, images[2].getAttribute<QString>(NAME)},
+        {5, images[3].getAttribute<QString>(NAME)},
+        {6, images[4].getAttribute<QString>(NAME)},
     };
     QCOMPARE(result, expected);
 }
@@ -591,19 +590,18 @@ void tst_Collection_Models::mapWithKeys_NameAndId() const
             images.mapWithKeys<QString, quint64>(
                 [](AlbumImage *const image) -> std::pair<QString, quint64>
     {
-        return {image->getAttribute(NAME).template value<QString>(),
-                Common::getKeyCasted(image)};
+        return {image->getAttribute<QString>(NAME), Common::getKeyCasted(image)};
     });
 
     // Verify
     QCOMPARE(result.size(), 5);
 
     std::unordered_map<QString, quint64> expected {
-        {images[0].getAttribute(NAME).template value<QString>(), 2},
-        {images[1].getAttribute(NAME).template value<QString>(), 3},
-        {images[2].getAttribute(NAME).template value<QString>(), 4},
-        {images[3].getAttribute(NAME).template value<QString>(), 5},
-        {images[4].getAttribute(NAME).template value<QString>(), 6},
+        {images[0].getAttribute<QString>(NAME), 2},
+        {images[1].getAttribute<QString>(NAME), 3},
+        {images[2].getAttribute<QString>(NAME), 4},
+        {images[3].getAttribute<QString>(NAME), 5},
+        {images[4].getAttribute<QString>(NAME), 6},
     };
     QCOMPARE(result, expected);
 }
@@ -2325,7 +2323,7 @@ void tst_Collection_Models::tap_lvalue() const
 
         // Change the name, append " NEW"
         auto &image4 = imagesRef[2];
-        image4[NAME] = SPACE_IN.arg(image4.getAttribute(NAME).template value<QString>(),
+        image4[NAME] = SPACE_IN.arg(image4.getAttribute<QString>(NAME),
                                     QStringLiteral("NEW"));
     });
 
@@ -2362,7 +2360,7 @@ void tst_Collection_Models::tap_rvalue() const
 
         // Change the name, append " NEW"
         auto &image2 = imagesRef.first();
-        image2[NAME] = SPACE_IN.arg(image2.getAttribute(NAME).template value<QString>(),
+        image2[NAME] = SPACE_IN.arg(image2.getAttribute<QString>(NAME),
                                     QStringLiteral("NEW"));
     });
 

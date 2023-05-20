@@ -234,8 +234,8 @@ void tst_SoftDeletes::restore_remove_OnModel() const
         QVERIFY(user);
         QVERIFY(user->exists);
         QCOMPARE(user->getKeyCasted(), static_cast<quint64>(5));
-        QCOMPARE(user->getAttribute(UPDATED_AT).value<QDateTime>(), UpdatedAt5Original);
-        QCOMPARE(user->getAttribute(DELETED_AT).value<QDateTime>(), DeletedAt5Original);
+        QCOMPARE(user->getAttribute<QDateTime>(UPDATED_AT), UpdatedAt5Original);
+        QCOMPARE(user->getAttribute<QDateTime>(DELETED_AT), DeletedAt5Original);
         QVERIFY(user->trashed());
 
         auto timeBeforeRestore = QDateTime::currentDateTimeUtc();
@@ -251,9 +251,8 @@ void tst_SoftDeletes::restore_remove_OnModel() const
 
         QVERIFY(user->exists);
         QCOMPARE(user->getKeyCasted(), static_cast<quint64>(5));
-        QVERIFY(user->getAttribute(UPDATED_AT).value<QDateTime>() >=
-                timeBeforeRestore);
-        QCOMPARE(user->getAttribute(DELETED_AT).value<QDateTime>(), QDateTime());
+        QVERIFY(user->getAttribute<QDateTime>(UPDATED_AT) >= timeBeforeRestore);
+        QCOMPARE(user->getAttribute<QDateTime>(DELETED_AT), QDateTime());
         QVERIFY(!user->trashed());
 
         // Validate also a user record in the database after the restore
@@ -263,10 +262,9 @@ void tst_SoftDeletes::restore_remove_OnModel() const
             QVERIFY(userValidate);
             QVERIFY(userValidate->exists);
             QCOMPARE(userValidate->getKeyCasted(), static_cast<quint64>(5));
-            QVERIFY(userValidate->getAttribute(UPDATED_AT).value<QDateTime>() >=
+            QVERIFY(userValidate->getAttribute<QDateTime>(UPDATED_AT) >=
                     timeBeforeRestore);
-            QCOMPARE(userValidate->getAttribute(DELETED_AT).value<QDateTime>(),
-                     QDateTime());
+            QCOMPARE(userValidate->getAttribute<QDateTime>(DELETED_AT), QDateTime());
             QVERIFY(!userValidate->trashed());
         }
 
@@ -283,8 +281,8 @@ void tst_SoftDeletes::restore_remove_OnModel() const
 
         QVERIFY(user->exists);
         QCOMPARE(user->getKeyCasted(), static_cast<quint64>(5));
-        QVERIFY(user->getAttribute(UPDATED_AT).value<QDateTime>() >= timeBeforeRemove);
-        QVERIFY(user->getAttribute(DELETED_AT).value<QDateTime>() >= timeBeforeRemove);
+        QVERIFY(user->getAttribute<QDateTime>(UPDATED_AT) >= timeBeforeRemove);
+        QVERIFY(user->getAttribute<QDateTime>(DELETED_AT) >= timeBeforeRemove);
         QVERIFY(user->trashed());
 
         // Validate also a user record in the database after the remove
@@ -294,9 +292,9 @@ void tst_SoftDeletes::restore_remove_OnModel() const
             QVERIFY(userValidate);
             QVERIFY(userValidate->exists);
             QCOMPARE(userValidate->getKeyCasted(), static_cast<quint64>(5));
-            QVERIFY(userValidate->getAttribute(UPDATED_AT).value<QDateTime>() >=
+            QVERIFY(userValidate->getAttribute<QDateTime>(UPDATED_AT) >=
                     timeBeforeRemove);
-            QVERIFY(userValidate->getAttribute(DELETED_AT).value<QDateTime>() >=
+            QVERIFY(userValidate->getAttribute<QDateTime>(DELETED_AT) >=
                     timeBeforeRemove);
             QVERIFY(userValidate->trashed());
         }
@@ -314,9 +312,9 @@ void tst_SoftDeletes::restore_remove_OnModel() const
             QVERIFY(userValidate);
             QVERIFY(userValidate->exists);
             QCOMPARE(userValidate->getKeyCasted(), static_cast<quint64>(5));
-            QCOMPARE(userValidate->getAttribute(UPDATED_AT).value<QDateTime>(),
+            QCOMPARE(userValidate->getAttribute<QDateTime>(UPDATED_AT),
                      UpdatedAt5Original);
-            QCOMPARE(userValidate->getAttribute(DELETED_AT).value<QDateTime>(),
+            QCOMPARE(userValidate->getAttribute<QDateTime>(DELETED_AT),
                      DeletedAt5Original);
             QVERIFY(userValidate->trashed());
         }
@@ -344,8 +342,8 @@ void tst_SoftDeletes::restore_remove_OnTinyBuilder() const
         for (const auto &user : users)
             actualValues.append({user.exists,
                                  user.getKeyCasted(),
-                                 user.getAttribute(UPDATED_AT).value<QDateTime>(),
-                                 user.getAttribute(DELETED_AT).value<QDateTime>(),
+                                 user.getAttribute<QDateTime>(UPDATED_AT),
+                                 user.getAttribute<QDateTime>(DELETED_AT),
                                  user.trashed()});
 
         QCOMPARE(actualValues, expectedValues);
@@ -379,9 +377,8 @@ void tst_SoftDeletes::restore_remove_OnTinyBuilder() const
 
         for (const auto &user : users) {
             QVERIFY(user.exists);
-            QVERIFY(user.getAttribute(UPDATED_AT).value<QDateTime>() >=
-                    timeBeforeRestore);
-            QCOMPARE(user.getAttribute(DELETED_AT).value<QDateTime>(), QDateTime());
+            QVERIFY(user.getAttribute<QDateTime>(UPDATED_AT) >= timeBeforeRestore);
+            QCOMPARE(user.getAttribute<QDateTime>(DELETED_AT), QDateTime());
             QVERIFY(!user.trashed());
 
             actualIds << user.getKeyCasted();
@@ -418,10 +415,8 @@ void tst_SoftDeletes::restore_remove_OnTinyBuilder() const
 
         for (const auto &user : users) {
             QVERIFY(user.exists);
-            QVERIFY(user.getAttribute(UPDATED_AT).value<QDateTime>() >=
-                    timeBeforeRemove);
-            QVERIFY(user.getAttribute(DELETED_AT).value<QDateTime>() >=
-                    timeBeforeRemove);
+            QVERIFY(user.getAttribute<QDateTime>(UPDATED_AT) >= timeBeforeRemove);
+            QVERIFY(user.getAttribute<QDateTime>(DELETED_AT) >= timeBeforeRemove);
             QVERIFY(user.trashed());
 
             actualIds << user.getKeyCasted();
@@ -466,8 +461,8 @@ void tst_SoftDeletes::restore_remove_OnTinyBuilder() const
         for (const auto &user : users)
             actualValues.append({user.exists,
                                  user.getKeyCasted(),
-                                 user.getAttribute(UPDATED_AT).value<QDateTime>(),
-                                 user.getAttribute(DELETED_AT).value<QDateTime>(),
+                                 user.getAttribute<QDateTime>(UPDATED_AT),
+                                 user.getAttribute<QDateTime>(DELETED_AT),
                                  user.trashed()});
 
         QCOMPARE(actualValues, expectedValues);
@@ -483,8 +478,8 @@ void tst_SoftDeletes::restore_Trashed_OnModel() const
         QVERIFY(user);
         QVERIFY(user->exists);
         QVERIFY(user->trashed());
-        QCOMPARE(user->getAttribute(UPDATED_AT).value<QDateTime>(), UpdatedAt5Original);
-        QCOMPARE(user->getAttribute(DELETED_AT).value<QDateTime>(), DeletedAt5Original);
+        QCOMPARE(user->getAttribute<QDateTime>(UPDATED_AT), UpdatedAt5Original);
+        QCOMPARE(user->getAttribute<QDateTime>(DELETED_AT), DeletedAt5Original);
     }
     // Restore
     {
@@ -506,9 +501,8 @@ void tst_SoftDeletes::restore_Trashed_OnModel() const
 
         QVERIFY(user->exists);
         QVERIFY(!user->trashed());
-        QVERIFY(user->getAttribute(UPDATED_AT).value<QDateTime>() >=
-                timeBeforeRestore);
-        QCOMPARE(user->getAttribute(DELETED_AT).value<QDateTime>(), QDateTime());
+        QVERIFY(user->getAttribute<QDateTime>(UPDATED_AT) >= timeBeforeRestore);
+        QCOMPARE(user->getAttribute<QDateTime>(DELETED_AT), QDateTime());
     }
 
     // Validate a user record in db
@@ -532,9 +526,9 @@ void tst_SoftDeletes::restore_Trashed_OnModel() const
             QVERIFY(userValidate);
             QVERIFY(userValidate->exists);
             QCOMPARE(userValidate->getKeyCasted(), static_cast<quint64>(5));
-            QCOMPARE(userValidate->getAttribute(UPDATED_AT).value<QDateTime>(),
+            QCOMPARE(userValidate->getAttribute<QDateTime>(UPDATED_AT),
                      UpdatedAt5Original);
-            QCOMPARE(userValidate->getAttribute(DELETED_AT).value<QDateTime>(),
+            QCOMPARE(userValidate->getAttribute<QDateTime>(DELETED_AT),
                      DeletedAt5Original);
             QVERIFY(userValidate->trashed());
         }
@@ -561,8 +555,8 @@ void tst_SoftDeletes::restore_Trashed_OnTinyBuilder() const
         for (const auto &user : users)
             actualValues.append({user.exists,
                                  user.getKeyCasted(),
-                                 user.getAttribute(UPDATED_AT).value<QDateTime>(),
-                                 user.getAttribute(DELETED_AT).value<QDateTime>(),
+                                 user.getAttribute<QDateTime>(UPDATED_AT),
+                                 user.getAttribute<QDateTime>(DELETED_AT),
                                  user.trashed()});
 
         QCOMPARE(actualValues, expectedValues);
@@ -596,9 +590,8 @@ void tst_SoftDeletes::restore_Trashed_OnTinyBuilder() const
 
         for (const auto &user : users) {
             QVERIFY(user.exists);
-            QVERIFY(user.getAttribute(UPDATED_AT).value<QDateTime>() >=
-                    timeBeforeRestore);
-            QCOMPARE(user.getAttribute(DELETED_AT).value<QDateTime>(), QDateTime());
+            QVERIFY(user.getAttribute<QDateTime>(UPDATED_AT) >= timeBeforeRestore);
+            QCOMPARE(user.getAttribute<QDateTime>(DELETED_AT), QDateTime());
             QVERIFY(!user.trashed());
 
             actualIds << user.getKeyCasted();
@@ -643,8 +636,8 @@ void tst_SoftDeletes::restore_Trashed_OnTinyBuilder() const
         for (const auto &user : users)
             actualValues.append({user.exists,
                                  user.getKeyCasted(),
-                                 user.getAttribute(UPDATED_AT).value<QDateTime>(),
-                                 user.getAttribute(DELETED_AT).value<QDateTime>(),
+                                 user.getAttribute<QDateTime>(UPDATED_AT),
+                                 user.getAttribute<QDateTime>(DELETED_AT),
                                  user.trashed()});
 
         QCOMPARE(actualValues, expectedValues);
@@ -664,7 +657,7 @@ void tst_SoftDeletes::restore_NotTrashed_OnModel() const
         QVERIFY(user->restore());
         QVERIFY(user->exists);
         QVERIFY(!user->trashed());
-        QCOMPARE(user->getAttribute(DELETED_AT).value<QDateTime>(), QDateTime());
+        QCOMPARE(user->getAttribute<QDateTime>(DELETED_AT), QDateTime());
     }
 
     // Restore NOT TRASHED (need to test also this scenario 🤯)
@@ -683,7 +676,7 @@ void tst_SoftDeletes::restore_NotTrashed_OnModel() const
            the records aren't trashed because of course, the TinyBuilder doesn't track
            dirty attributes.
            I think this was the reason for occasional failure of this test (5% rate). */
-        auto timeBeforeRestore = user->getAttribute(UPDATED_AT).value<QDateTime>();
+        auto timeBeforeRestore = user->getAttribute<QDateTime>(UPDATED_AT);
 
         // Restore
         QVERIFY(user->restore());
@@ -691,8 +684,8 @@ void tst_SoftDeletes::restore_NotTrashed_OnModel() const
         QVERIFY(user->exists);
         QVERIFY(!user->trashed());
         // They must be EQUAL because NO update was performed
-        QVERIFY(user->getAttribute(UPDATED_AT).value<QDateTime>() == timeBeforeRestore);
-        QCOMPARE(user->getAttribute(DELETED_AT).value<QDateTime>(), QDateTime());
+        QVERIFY(user->getAttribute<QDateTime>(UPDATED_AT) == timeBeforeRestore);
+        QCOMPARE(user->getAttribute<QDateTime>(DELETED_AT), QDateTime());
     }
 
     // Validate a user record in db
@@ -716,9 +709,9 @@ void tst_SoftDeletes::restore_NotTrashed_OnModel() const
             QVERIFY(userValidate);
             QVERIFY(userValidate->exists);
             QCOMPARE(userValidate->getKeyCasted(), static_cast<quint64>(5));
-            QCOMPARE(userValidate->getAttribute(UPDATED_AT).value<QDateTime>(),
+            QCOMPARE(userValidate->getAttribute<QDateTime>(UPDATED_AT),
                      UpdatedAt5Original);
-            QCOMPARE(userValidate->getAttribute(DELETED_AT).value<QDateTime>(),
+            QCOMPARE(userValidate->getAttribute<QDateTime>(DELETED_AT),
                      DeletedAt5Original);
             QVERIFY(userValidate->trashed());
         }
@@ -760,9 +753,8 @@ void tst_SoftDeletes::restore_NotTrashed_OnTinyBuilder() const
 
             for (const auto &user : users) {
                 QVERIFY(user.exists);
-                QVERIFY(user.getAttribute(UPDATED_AT).value<QDateTime>() >=
-                        timeBeforeRestore);
-                QCOMPARE(user.getAttribute(DELETED_AT).value<QDateTime>(), QDateTime());
+                QVERIFY(user.getAttribute<QDateTime>(UPDATED_AT) >= timeBeforeRestore);
+                QCOMPARE(user.getAttribute<QDateTime>(DELETED_AT), QDateTime());
                 QVERIFY(!user.trashed());
 
                 actualIds << user.getKeyCasted();
@@ -800,9 +792,8 @@ void tst_SoftDeletes::restore_NotTrashed_OnTinyBuilder() const
 
         for (const auto &user : users) {
             QVERIFY(user.exists);
-            QVERIFY(user.getAttribute(UPDATED_AT).value<QDateTime>() >=
-                    timeBeforeRestore);
-            QCOMPARE(user.getAttribute(DELETED_AT).value<QDateTime>(), QDateTime());
+            QVERIFY(user.getAttribute<QDateTime>(UPDATED_AT) >= timeBeforeRestore);
+            QCOMPARE(user.getAttribute<QDateTime>(DELETED_AT), QDateTime());
             QVERIFY(!user.trashed());
 
             actualIds << user.getKeyCasted();
@@ -847,8 +838,8 @@ void tst_SoftDeletes::restore_NotTrashed_OnTinyBuilder() const
         for (const auto &user : users)
             actualValues.append({user.exists,
                                  user.getKeyCasted(),
-                                 user.getAttribute(UPDATED_AT).value<QDateTime>(),
-                                 user.getAttribute(DELETED_AT).value<QDateTime>(),
+                                 user.getAttribute<QDateTime>(UPDATED_AT),
+                                 user.getAttribute<QDateTime>(DELETED_AT),
                                  user.trashed()});
 
         QCOMPARE(actualValues, expectedValues);
@@ -864,8 +855,8 @@ void tst_SoftDeletes::remove_Trashed_OnModel() const
         QVERIFY(user);
         QVERIFY(user->exists);
         QVERIFY(user->trashed());
-        QCOMPARE(user->getAttribute(UPDATED_AT).value<QDateTime>(), UpdatedAt5Original);
-        QCOMPARE(user->getAttribute(DELETED_AT).value<QDateTime>(), DeletedAt5Original);
+        QCOMPARE(user->getAttribute<QDateTime>(UPDATED_AT), UpdatedAt5Original);
+        QCOMPARE(user->getAttribute<QDateTime>(DELETED_AT), DeletedAt5Original);
     }
 
     auto timeBeforeRemove = QDateTime::currentDateTimeUtc();
@@ -888,10 +879,8 @@ void tst_SoftDeletes::remove_Trashed_OnModel() const
 
         QVERIFY(user->exists);
         QVERIFY(user->trashed());
-        QVERIFY(user->getAttribute(UPDATED_AT).value<QDateTime>() >=
-                timeBeforeRemove);
-        QVERIFY(user->getAttribute(DELETED_AT).value<QDateTime>() >=
-                timeBeforeRemove);
+        QVERIFY(user->getAttribute<QDateTime>(UPDATED_AT) >= timeBeforeRemove);
+        QVERIFY(user->getAttribute<QDateTime>(DELETED_AT) >= timeBeforeRemove);
     }
 
     // Validate a user record in db
@@ -901,10 +890,8 @@ void tst_SoftDeletes::remove_Trashed_OnModel() const
         QVERIFY(user);
         QVERIFY(user->exists);
         QVERIFY(user->trashed());
-        QVERIFY(user->getAttribute(UPDATED_AT).value<QDateTime>() >=
-                timeBeforeRemove);
-        QVERIFY(user->getAttribute(DELETED_AT).value<QDateTime>() >=
-                timeBeforeRemove);
+        QVERIFY(user->getAttribute<QDateTime>(UPDATED_AT) >= timeBeforeRemove);
+        QVERIFY(user->getAttribute<QDateTime>(DELETED_AT) >= timeBeforeRemove);
 
         // Restore db
         QVERIFY(user);
@@ -919,9 +906,9 @@ void tst_SoftDeletes::remove_Trashed_OnModel() const
             QVERIFY(userValidate);
             QVERIFY(userValidate->exists);
             QCOMPARE(userValidate->getKeyCasted(), static_cast<quint64>(5));
-            QCOMPARE(userValidate->getAttribute(UPDATED_AT).value<QDateTime>(),
+            QCOMPARE(userValidate->getAttribute<QDateTime>(UPDATED_AT),
                      UpdatedAt5Original);
-            QCOMPARE(userValidate->getAttribute(DELETED_AT).value<QDateTime>(),
+            QCOMPARE(userValidate->getAttribute<QDateTime>(DELETED_AT),
                      DeletedAt5Original);
             QVERIFY(userValidate->trashed());
         }
@@ -948,8 +935,8 @@ void tst_SoftDeletes::remove_Trashed_OnTinyBuilder() const
         for (const auto &user : users)
             actualValues.append({user.exists,
                                  user.getKeyCasted(),
-                                 user.getAttribute(UPDATED_AT).value<QDateTime>(),
-                                 user.getAttribute(DELETED_AT).value<QDateTime>(),
+                                 user.getAttribute<QDateTime>(UPDATED_AT),
+                                 user.getAttribute<QDateTime>(DELETED_AT),
                                  user.trashed()});
 
         QCOMPARE(actualValues, expectedValues);
@@ -983,10 +970,8 @@ void tst_SoftDeletes::remove_Trashed_OnTinyBuilder() const
 
         for (const auto &user : users) {
             QVERIFY(user.exists);
-            QVERIFY(user.getAttribute(UPDATED_AT).value<QDateTime>() >=
-                    timeBeforeRemove);
-            QVERIFY(user.getAttribute(DELETED_AT).value<QDateTime>() >=
-                    timeBeforeRemove);
+            QVERIFY(user.getAttribute<QDateTime>(UPDATED_AT) >= timeBeforeRemove);
+            QVERIFY(user.getAttribute<QDateTime>(DELETED_AT) >= timeBeforeRemove);
             QVERIFY(user.trashed());
 
             actualIds << user.getKeyCasted();
@@ -1031,8 +1016,8 @@ void tst_SoftDeletes::remove_Trashed_OnTinyBuilder() const
         for (const auto &user : users)
             actualValues.append({user.exists,
                                  user.getKeyCasted(),
-                                 user.getAttribute(UPDATED_AT).value<QDateTime>(),
-                                 user.getAttribute(DELETED_AT).value<QDateTime>(),
+                                 user.getAttribute<QDateTime>(UPDATED_AT),
+                                 user.getAttribute<QDateTime>(DELETED_AT),
                                  user.trashed()});
 
         QCOMPARE(actualValues, expectedValues);
@@ -1052,7 +1037,7 @@ void tst_SoftDeletes::remove_NotTrashed_OnModel() const
         QVERIFY(user->restore());
         QVERIFY(user->exists);
         QVERIFY(!user->trashed());
-        QCOMPARE(user->getAttribute(DELETED_AT).value<QDateTime>(), QDateTime());
+        QCOMPARE(user->getAttribute<QDateTime>(DELETED_AT), QDateTime());
     }
 
     auto timeBeforeRemove = QDateTime::currentDateTimeUtc();
@@ -1075,10 +1060,8 @@ void tst_SoftDeletes::remove_NotTrashed_OnModel() const
 
         QVERIFY(user->exists);
         QVERIFY(user->trashed());
-        QVERIFY(user->getAttribute(UPDATED_AT).value<QDateTime>() >=
-                timeBeforeRemove);
-        QVERIFY(user->getAttribute(DELETED_AT).value<QDateTime>() >=
-                timeBeforeRemove);
+        QVERIFY(user->getAttribute<QDateTime>(UPDATED_AT) >= timeBeforeRemove);
+        QVERIFY(user->getAttribute<QDateTime>(DELETED_AT) >= timeBeforeRemove);
     }
 
     // Validate a user record in db
@@ -1088,10 +1071,8 @@ void tst_SoftDeletes::remove_NotTrashed_OnModel() const
         QVERIFY(user);
         QVERIFY(user->exists);
         QVERIFY(user->trashed());
-        QVERIFY(user->getAttribute(UPDATED_AT).value<QDateTime>() >=
-                timeBeforeRemove);
-        QVERIFY(user->getAttribute(DELETED_AT).value<QDateTime>() >=
-                timeBeforeRemove);
+        QVERIFY(user->getAttribute<QDateTime>(UPDATED_AT) >= timeBeforeRemove);
+        QVERIFY(user->getAttribute<QDateTime>(DELETED_AT) >= timeBeforeRemove);
 
         // Restore db
         QVERIFY(user);
@@ -1106,9 +1087,9 @@ void tst_SoftDeletes::remove_NotTrashed_OnModel() const
             QVERIFY(userValidate);
             QVERIFY(userValidate->exists);
             QCOMPARE(userValidate->getKeyCasted(), static_cast<quint64>(5));
-            QCOMPARE(userValidate->getAttribute(UPDATED_AT).value<QDateTime>(),
+            QCOMPARE(userValidate->getAttribute<QDateTime>(UPDATED_AT),
                      UpdatedAt5Original);
-            QCOMPARE(userValidate->getAttribute(DELETED_AT).value<QDateTime>(),
+            QCOMPARE(userValidate->getAttribute<QDateTime>(DELETED_AT),
                      DeletedAt5Original);
             QVERIFY(userValidate->trashed());
         }
@@ -1147,9 +1128,8 @@ void tst_SoftDeletes::remove_NotTrashed_OnTinyBuilder() const
 
             for (const auto &user : users) {
                 QVERIFY(user.exists);
-                QVERIFY(user.getAttribute(UPDATED_AT).value<QDateTime>() >=
-                        timeBeforeRestore);
-                QCOMPARE(user.getAttribute(DELETED_AT).value<QDateTime>(), QDateTime());
+                QVERIFY(user.getAttribute<QDateTime>(UPDATED_AT) >= timeBeforeRestore);
+                QCOMPARE(user.getAttribute<QDateTime>(DELETED_AT), QDateTime());
                 QVERIFY(!user.trashed());
 
                 actualIds << user.getKeyCasted();
@@ -1187,10 +1167,8 @@ void tst_SoftDeletes::remove_NotTrashed_OnTinyBuilder() const
 
         for (const auto &user : users) {
             QVERIFY(user.exists);
-            QVERIFY(user.getAttribute(UPDATED_AT).value<QDateTime>() >=
-                    timeBeforeRemove);
-            QVERIFY(user.getAttribute(DELETED_AT).value<QDateTime>() >=
-                    timeBeforeRemove);
+            QVERIFY(user.getAttribute<QDateTime>(UPDATED_AT) >= timeBeforeRemove);
+            QVERIFY(user.getAttribute<QDateTime>(DELETED_AT) >= timeBeforeRemove);
             QVERIFY(user.trashed());
 
             actualIds << user.getKeyCasted();
@@ -1235,8 +1213,8 @@ void tst_SoftDeletes::remove_NotTrashed_OnTinyBuilder() const
         for (const auto &user : users)
             actualValues.append({user.exists,
                                  user.getKeyCasted(),
-                                 user.getAttribute(UPDATED_AT).value<QDateTime>(),
-                                 user.getAttribute(DELETED_AT).value<QDateTime>(),
+                                 user.getAttribute<QDateTime>(UPDATED_AT),
+                                 user.getAttribute<QDateTime>(DELETED_AT),
                                  user.trashed()});
 
         QCOMPARE(actualValues, expectedValues);

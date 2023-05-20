@@ -1600,7 +1600,7 @@ void tst_Model_Connection_Independent::chunkMap() const
                                        -> IdAndName
     {
         return {model.getKeyCasted(),
-                model.getAttribute(NAME).value<QString>()};
+                model.getAttribute<QString>(NAME)};
     })
             | ranges::to<QVector<IdAndName>>();
 
@@ -1640,7 +1640,7 @@ void tst_Model_Connection_Independent::chunkMap_EnforceOrderBy() const
                                        -> IdAndName
     {
         return {model.getKeyCasted(),
-                model.getAttribute(NAME).value<QString>()};
+                model.getAttribute<QString>(NAME)};
     })
             | ranges::to<QVector<IdAndName>>();
 
