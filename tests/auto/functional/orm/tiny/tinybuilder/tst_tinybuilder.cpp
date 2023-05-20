@@ -248,8 +248,7 @@ void tst_TinyBuilder::update() const
     auto torrentVerify = Torrent::find(4);
     QVERIFY(torrentVerify->exists);
     QCOMPARE(torrentVerify->getAttribute("progress"), QVariant(447));
-    QVERIFY(torrentVerify->getAttribute<QDateTime>(updatedAtColumn)
-            >= timeBeforeUpdate);
+    QVERIFY(torrentVerify->getAttribute<QDateTime>(updatedAtColumn) >= timeBeforeUpdate);
 
     // Revert value back
     auto [affectedRevert, queryRevert] =
@@ -304,8 +303,8 @@ void tst_TinyBuilder::update_SameValue() const
     // Verify value in the database
     auto torrentVerify = Torrent::find(5);
     QVERIFY(torrentVerify->exists);
-    QVERIFY(torrentVerify->getAttribute<QDateTime>(torrent->getUpdatedAtColumn())
-            >= timeBeforeUpdate);
+    QVERIFY(torrentVerify->getAttribute<QDateTime>(torrent->getUpdatedAtColumn()) >=
+            timeBeforeUpdate);
 }
 // NOLINTEND(readability-convert-member-functions-to-static)
 

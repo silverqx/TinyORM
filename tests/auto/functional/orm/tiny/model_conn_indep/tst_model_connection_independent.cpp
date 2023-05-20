@@ -2123,8 +2123,8 @@ void tst_Model_Connection_Independent::tap() const
     QVERIFY((std::is_same_v<decltype (tappedBuilder), decltype (*builder)>));
     QVERIFY(callbackInvoked);
     // It must be the same TinyBuilder (the same memory address)
-    QVERIFY(reinterpret_cast<uintptr_t>(&*builder)
-            == reinterpret_cast<uintptr_t>(&tappedBuilder));
+    QVERIFY(reinterpret_cast<uintptr_t>(&*builder) ==
+            reinterpret_cast<uintptr_t>(&tappedBuilder));
 }
 
 void tst_Model_Connection_Independent::sole() const
