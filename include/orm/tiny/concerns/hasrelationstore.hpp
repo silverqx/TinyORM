@@ -140,6 +140,12 @@ namespace Orm::Tiny::Concerns
             void visited(Method method) const;
 
         private:
+            /*! Store type initializer. */
+            constexpr static RelationStoreType initStoreType(); // thread_local not needed
+
+            /*! Currently served store type, this class can handle two store types. */
+            constexpr static const RelationStoreType STORE_TYPE = initStoreType();
+
             /*! The Tiny builder instance to which the visited relation will be
                 dispatched. */
             NotNull<const Tiny::TinyBuilder<Derived> *> m_builder;
@@ -453,9 +459,7 @@ namespace Orm::Tiny::Concerns
             const Tiny::TinyBuilder<Derived> &builder,
             ModelsCollection<CollectionModel> &models, const WithItem &relation
     )
-        : BaseRelationStore(hasRelationStore, std::is_pointer_v<CollectionModel>
-                                              ? RelationStoreType::EAGER_POINTERS
-                                              : RelationStoreType::EAGER)
+        : BaseRelationStore(hasRelationStore, STORE_TYPE)
         , m_builder(&builder)
         , m_models(&models)
         , m_relation(&relation)
@@ -494,6 +498,22 @@ namespace Orm::Tiny::Concerns
         m_builder->eagerLoadRelationVisited(std::move(relationInstance),
                                             *m_models, *m_relation);
     }
+
+    /* private */
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    template<SameDerivedCollectionModel<Derived> CollectionModel>
+    constexpr typename
+    HasRelationStore<Derived, AllRelations...>::RelationStoreType
+    HasRelationStore<Derived, AllRelations...>::EagerRelationStore<CollectionModel>
+                                              ::initStoreType()
+    {
+        if constexpr (std::is_pointer_v<CollectionModel>)
+            return RelationStoreType::EAGER_POINTERS;
+        else
+            return RelationStoreType::EAGER;
+    }
+
 
     /* PushRelationStore */
 
