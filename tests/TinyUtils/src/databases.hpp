@@ -93,6 +93,9 @@ namespace TestUtils
         static std::optional<std::reference_wrapper<const QVariantHash>>
         configuration(const QString &connection);
 
+        /*! Determine whether a configuration for the given connection was defined. */
+        static bool hasConfiguration(const QString &connection);
+
         /* Common */
         /*! Remove a database connection. */
         static bool removeConnection(const QString &connection);

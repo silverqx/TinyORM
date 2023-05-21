@@ -196,6 +196,11 @@ Databases::configuration(const QString &connection)
     return m_configurations.at(connection);
 }
 
+bool Databases::hasConfiguration(const QString &connection)
+{
+    return m_configurations.contains(connection);
+}
+
 /* Common */
 
 bool Databases::removeConnection(const QString &connection)
