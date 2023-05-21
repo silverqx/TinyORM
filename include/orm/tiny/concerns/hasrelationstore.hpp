@@ -354,6 +354,85 @@ namespace Orm::Tiny::Concerns
         std::stack<std::shared_ptr<BaseRelationStore>> m_relationStore;
     };
 
+    /* HasRelationStore */
+
+    /* private */
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    HasRelationStore<Derived, AllRelations...>::HasRelationStore( // NOLINT(modernize-use-equals-delete)
+#ifdef TINYORM_DEBUG
+            const HasRelationStore &other)
+    {
+        // This is real porn 😂
+        Q_ASSERT_X(m_relationStore.empty() && other.m_relationStore.empty(),
+                   "Relation store copy constructor",
+                   relationStoreCopyMoveTemplate(CopyMoveTemplateType::COPY)
+                   .toUtf8().constData());
+
+        m_relationStore = {};
+    }
+#else
+            const HasRelationStore &/*unused*/)
+        : m_relationStore()
+    {}
+#endif
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    HasRelationStore<Derived, AllRelations...> &
+    HasRelationStore<Derived, AllRelations...>::operator=( // NOLINT(modernize-use-equals-delete)
+#ifdef TINYORM_DEBUG
+            const HasRelationStore &other)
+    {
+        Q_ASSERT_X(m_relationStore.empty() && other.m_relationStore.empty(),
+                   "Relation store copy assignment",
+                   relationStoreCopyMoveTemplate(CopyMoveTemplateType::COPY)
+                   .toUtf8().constData());
+#else
+            const HasRelationStore &/*unused*/)
+    {
+#endif
+        m_relationStore = {};
+
+        return *this;
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    HasRelationStore<Derived, AllRelations...>::HasRelationStore( // NOLINT(modernize-use-equals-delete)
+#ifdef TINYORM_DEBUG
+            HasRelationStore &&other) noexcept
+    {
+        Q_ASSERT_X(m_relationStore.empty() && other.m_relationStore.empty(),
+                   "Relation store move constructor",
+                   relationStoreCopyMoveTemplate(CopyMoveTemplateType::MOVE)
+                   .toUtf8().constData());
+
+        m_relationStore = {};
+    }
+#else
+            HasRelationStore &&/*unused*/) noexcept
+        : m_relationStore()
+    {}
+#endif
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    HasRelationStore<Derived, AllRelations...> &
+    HasRelationStore<Derived, AllRelations...>::operator=( // NOLINT(modernize-use-equals-delete)
+#ifdef TINYORM_DEBUG
+            HasRelationStore &&other) noexcept
+    {
+        Q_ASSERT_X(m_relationStore.empty() && other.m_relationStore.empty(),
+                   "Relation store move assignment",
+                   relationStoreCopyMoveTemplate(CopyMoveTemplateType::MOVE)
+                   .toUtf8().constData());
+#else
+            HasRelationStore &&/*unused*/) noexcept
+    {
+#endif
+        m_relationStore = {};
+
+        return *this;
+    }
+
     /* BaseRelationStore */
 
     /* protected */
@@ -717,80 +796,7 @@ namespace Orm::Tiny::Concerns
 
     /* HasRelationStore */
 
-    template<typename Derived, AllRelationsConcept ...AllRelations>
-    HasRelationStore<Derived, AllRelations...>::HasRelationStore( // NOLINT(modernize-use-equals-delete)
-#ifdef TINYORM_DEBUG
-            const HasRelationStore &other)
-    {
-        // This is real porn 😂
-        Q_ASSERT_X(m_relationStore.empty() && other.m_relationStore.empty(),
-                   "Relation store copy constructor",
-                   relationStoreCopyMoveTemplate(CopyMoveTemplateType::COPY)
-                   .toUtf8().constData());
-
-        m_relationStore = {};
-    }
-#else
-            const HasRelationStore &/*unused*/)
-        : m_relationStore()
-    {}
-#endif
-
-    template<typename Derived, AllRelationsConcept ...AllRelations>
-    HasRelationStore<Derived, AllRelations...> &
-    HasRelationStore<Derived, AllRelations...>::operator=( // NOLINT(modernize-use-equals-delete)
-#ifdef TINYORM_DEBUG
-            const HasRelationStore &other)
-    {
-        Q_ASSERT_X(m_relationStore.empty() && other.m_relationStore.empty(),
-                   "Relation store copy assignment",
-                   relationStoreCopyMoveTemplate(CopyMoveTemplateType::COPY)
-                   .toUtf8().constData());
-#else
-            const HasRelationStore &/*unused*/)
-    {
-#endif
-        m_relationStore = {};
-
-        return *this;
-    }
-
-    template<typename Derived, AllRelationsConcept ...AllRelations>
-    HasRelationStore<Derived, AllRelations...>::HasRelationStore( // NOLINT(modernize-use-equals-delete)
-#ifdef TINYORM_DEBUG
-            HasRelationStore &&other) noexcept
-    {
-        Q_ASSERT_X(m_relationStore.empty() && other.m_relationStore.empty(),
-                   "Relation store move constructor",
-                   relationStoreCopyMoveTemplate(CopyMoveTemplateType::MOVE)
-                   .toUtf8().constData());
-
-        m_relationStore = {};
-    }
-#else
-            HasRelationStore &&/*unused*/) noexcept
-        : m_relationStore()
-    {}
-#endif
-
-    template<typename Derived, AllRelationsConcept ...AllRelations>
-    HasRelationStore<Derived, AllRelations...> &
-    HasRelationStore<Derived, AllRelations...>::operator=( // NOLINT(modernize-use-equals-delete)
-#ifdef TINYORM_DEBUG
-            HasRelationStore &&other) noexcept
-    {
-        Q_ASSERT_X(m_relationStore.empty() && other.m_relationStore.empty(),
-                   "Relation store move assignment",
-                   relationStoreCopyMoveTemplate(CopyMoveTemplateType::MOVE)
-                   .toUtf8().constData());
-#else
-            HasRelationStore &&/*unused*/) noexcept
-    {
-#endif
-        m_relationStore = {};
-
-        return *this;
-    }
+    /* private */
 
     /* Factory methods for Relation stores */
 
