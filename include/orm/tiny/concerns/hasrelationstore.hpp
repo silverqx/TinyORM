@@ -358,10 +358,6 @@ namespace Orm::Tiny::Concerns
     /* BaseRelationStore */
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
-    HasRelationStore<Derived, AllRelations...>::BaseRelationStore
-                                              ::~BaseRelationStore() = default;
-
-    template<typename Derived, AllRelationsConcept ...AllRelations>
     HasRelationStore<Derived, AllRelations...>::BaseRelationStore::BaseRelationStore(
             NotNull<HasRelationStore *> hasRelationStore,
             const RelationStoreType storeType
@@ -369,6 +365,10 @@ namespace Orm::Tiny::Concerns
         : m_hasRelationStore(hasRelationStore)
         , m_storeType(storeType)
     {}
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    HasRelationStore<Derived, AllRelations...>::BaseRelationStore
+                                              ::~BaseRelationStore() = default;
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     void HasRelationStore<Derived, AllRelations...>::BaseRelationStore
