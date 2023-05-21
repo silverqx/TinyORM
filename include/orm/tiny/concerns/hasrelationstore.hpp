@@ -264,14 +264,13 @@ namespace Orm::Tiny::Concerns
             template<typename RelatedFromMethod, typename Method>
             void visited(Method method);
 
-        protected:
+        private:
             /*! Store type initializer. */
             constexpr static RelationStoreType initStoreType();
 
             /*! Currently served store type, this class can handle two store types. */
             constexpr static const RelationStoreType STORE_TYPE = initStoreType(); // thread_local not needed
 
-        private:
             /*! The QueriesRelationships instance to which the visited relation will be
                 dispatched. */
             NotNull<QueriesRelationships<Derived> *> m_origin;
