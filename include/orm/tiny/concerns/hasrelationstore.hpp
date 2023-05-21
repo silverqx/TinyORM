@@ -356,6 +356,8 @@ namespace Orm::Tiny::Concerns
 
     /* BaseRelationStore */
 
+    /* protected */
+
     template<typename Derived, AllRelationsConcept ...AllRelations>
     HasRelationStore<Derived, AllRelations...>::BaseRelationStore::BaseRelationStore(
             NotNull<HasRelationStore *> hasRelationStore,
@@ -364,6 +366,8 @@ namespace Orm::Tiny::Concerns
         : m_hasRelationStore(hasRelationStore)
         , m_storeType(storeType)
     {}
+
+    /* public */
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     HasRelationStore<Derived, AllRelations...>::BaseRelationStore
@@ -441,6 +445,8 @@ namespace Orm::Tiny::Concerns
         }
     }
 
+    /* protected */
+
     template<typename Derived, AllRelationsConcept ...AllRelations>
     typename HasRelationStore<Derived, AllRelations...>::RelationStoreType
     HasRelationStore<Derived, AllRelations...>::BaseRelationStore::getStoreType() const
@@ -449,6 +455,8 @@ namespace Orm::Tiny::Concerns
     }
 
     /* EagerRelationStore */
+
+    /* public */
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     template<SameDerivedCollectionModel<Derived> CollectionModel>
@@ -516,6 +524,8 @@ namespace Orm::Tiny::Concerns
 
     /* PushRelationStore */
 
+    /* public */
+
     template<typename Derived, AllRelationsConcept ...AllRelations>
     HasRelationStore<Derived, AllRelations...>::PushRelationStore::PushRelationStore(
             NotNull<HasRelationStore *> hasRelationStore,
@@ -537,6 +547,8 @@ namespace Orm::Tiny::Concerns
     }
 
     /* TouchOwnersRelationStore */
+
+    /* public */
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     HasRelationStore<Derived, AllRelations...>::TouchOwnersRelationStore
@@ -563,6 +575,8 @@ namespace Orm::Tiny::Concerns
 
     /* LazyRelationStore */
 
+    /* public */
+
     template<typename Derived, AllRelationsConcept ...AllRelations>
     template<typename Related>
     HasRelationStore<Derived, AllRelations...>::LazyRelationStore<Related>
@@ -583,6 +597,8 @@ namespace Orm::Tiny::Concerns
     }
 
     /* BelongsToManyRelatedTableStore */
+
+    /* public */
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     HasRelationStore<Derived, AllRelations...>::BelongsToManyRelatedTableStore
@@ -627,6 +643,8 @@ namespace Orm::Tiny::Concerns
        can handle 3 store types, the nested store type is used on the base of ctor's
        'relations' argument.
     */
+
+    /* public */
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     template<typename Related>
@@ -681,6 +699,8 @@ namespace Orm::Tiny::Concerns
                         std::move(relationInstance), *m_comparison, m_count,
                         *m_condition, *m_callback);
     }
+
+    /* private */
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     template<typename Related>
@@ -772,6 +792,8 @@ namespace Orm::Tiny::Concerns
         return *this;
     }
 
+    /* Factory methods for Relation stores */
+
     template<typename Derived, AllRelationsConcept ...AllRelations>
     template<SameDerivedCollectionModel<Derived> CollectionModel>
     typename HasRelationStore<Derived, AllRelations...>::BaseRelationStore &
@@ -846,6 +868,8 @@ namespace Orm::Tiny::Concerns
     {
         m_relationStore.pop();
     }
+
+    /* Getters for Relation stores */
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     typename HasRelationStore<Derived, AllRelations...>::PushRelationStore &
@@ -922,6 +946,7 @@ namespace Orm::Tiny::Concerns
     }
 
     /* Static cast this to a child's instance type (CRTP) */
+
     TINY_CRTP_MODEL_WITH_BASE_DEFINITIONS(HasRelationStore)
 
 } // namespace Orm::Tiny::Concerns
