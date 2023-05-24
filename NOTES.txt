@@ -411,6 +411,38 @@ Features related/to implement:
  - tom                   : tom migrations related
 
 
+Upgrade the Qt to new version:
+------------------------------
+
+ - run the QtCreator and do the PrintScreen of the Settings - Kits - Kits
+ - close the QtCreator
+ - run the Qt Maintenance Tool and add a new Qt version and also remove the old Qt version if want
+ - remove the old C:\Qt\x.y.z version folder (leftovers)
+ - open dotfiles in the vscode and file/replace all occurences of x.y.z and x_y_z to the new version; commit - upgraded to Qt vx.y.z
+ - build the QMYSQL driver - qtbuild-qmysql-driver.ps1 6.5.1
+ - open the QtCreator
+   - fix all the Settings - Kits - Kits Qt versions
+   - open the Projects mode (ctrl+5) for TinyORM and TinyOrmPlayground and disable/enable kit to update all build paths
+ - rebuild TinyORM and invoke unit tests
+
+GitHub Action workflows:
+
+ - open TinyORM in the vscode and file/replace all occurences of x.y.z and x_y_z to the new version
+ - commit - workflows upgraded to Qt vx.y.z
+ - TinyOrm-files:
+   - 7zip the qsqlmysql.dll, qsqlmysql.pdb, qsqlmysqld.dll, qsqlmysqld.pdb to the TinyOrm-files/qmysql_dlls-x.y.z.7z
+   - remove the old TinyOrm-files/qmysql_dlls-x.y.z.7z file
+   - generate the new hash - .\tools\Get-DownloadsHash.ps1 -Platform Linux, Windows
+   - commit - upgraded to Qt v6.5.1
+ - update the URL_QMYSQL_DLLS_MSVC_X64_x_y_z GitHub secret
+
+MySQL Timezone tables:
+
+ - update the URL_MYSQL_TIMEZONE_TABLES GitHub secret
+ - download from https://dev.mysql.com/downloads/timezones.html
+ - pick the posix version without the leap second
+
+
 Versions info:
 --------------
 
