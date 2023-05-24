@@ -2,6 +2,16 @@
 
 #include <QVariant>
 
+/* Is much faster to instantiate the QVariant only once and cache it like returning
+   by value, even if the recipient of the QVariant value is expecting the rvalue.
+   I have tested it with the for loop using 1'000'000 iterations.
+   It's like 5ms vs 180ms or 84ms, the 5ms is of course with the cached QVariant and
+   the higher elapsed times are for returning the QVariant by value with different
+   combinations of rvalue or passing by value on the recipient side (eg. to some
+   function).
+   I wanted to refactor this to returning by value because practically all NullVariant
+   method calls are used as factory methods but I denied it after I tested it. */
+
 TINYORM_BEGIN_COMMON_NAMESPACE
 
 namespace Orm::Utils
