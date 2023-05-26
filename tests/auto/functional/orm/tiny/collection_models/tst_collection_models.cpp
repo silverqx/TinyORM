@@ -46,7 +46,12 @@ private Q_SLOTS:
     void equalComparison_WithPointersCollection() const;
     void notEqualComparison_WithPointersCollection() const;
 
+    /* Redeclared overriden methods from the base class */
+    void isEmpty() const;
+
     /* BaseCollection */
+    void isNotEmpty() const;
+
     void filter() const;
     void filter_WithIndex() const;
 
@@ -301,7 +306,33 @@ void tst_Collection_Models::notEqualComparison_WithPointersCollection() const
     QVERIFY(images2_1 != images2_2_Init);
 }
 
+/* Redeclared overriden methods from the base class */
+
+void tst_Collection_Models::isEmpty() const
+{
+    auto images = AlbumImage::whereEq(Common::album_id, 2)->get();
+    QCOMPARE(images.size(), 5);
+    QCOMPARE(typeid (ModelsCollection<AlbumImage>), typeid (images));
+    QVERIFY(Common::verifyIds(images, {2, 3, 4, 5, 6}));
+
+    QVERIFY(!images.isEmpty());
+
+    QVERIFY(ModelsCollection<Album>().isEmpty());
+}
+
 /* BaseCollection */
+
+void tst_Collection_Models::isNotEmpty() const
+{
+    auto images = AlbumImage::whereEq(Common::album_id, 2)->get();
+    QCOMPARE(images.size(), 5);
+    QCOMPARE(typeid (ModelsCollection<AlbumImage>), typeid (images));
+    QVERIFY(Common::verifyIds(images, {2, 3, 4, 5, 6}));
+
+    QVERIFY(images.isNotEmpty());
+
+    QVERIFY(!ModelsCollection<Album>().isNotEmpty());
+}
 
 void tst_Collection_Models::filter() const
 {

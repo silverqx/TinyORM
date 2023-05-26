@@ -46,7 +46,12 @@ private Q_SLOTS:
     void equalComparison_WithModelsCollection() const;
     void notEqualComparison_WithModelsCollection() const;
 
+    /* Redeclared overriden methods from the base class */
+    void isEmpty() const;
+
     /* BaseCollection */
+    void isNotEmpty() const;
+
     void filter() const;
     void filter_WithIndex() const;
     void filter_Remove_nullptr() const;
@@ -356,7 +361,45 @@ void tst_Collection_Relations::notEqualComparison_WithModelsCollection() const
     QVERIFY(images2_2 != images2_1);
 }
 
+/* Redeclared overriden methods from the base class */
+
+void tst_Collection_Relations::isEmpty() const
+{
+    auto album = Album::find(2);
+    QVERIFY(album);
+    QVERIFY(album->exists);
+    QCOMPARE(album->getKey(), QVariant(2));
+    QVERIFY(album->relationLoaded(Common::albumImages));
+
+    auto images = album->getRelation<AlbumImage>(Common::albumImages);
+    QCOMPARE(images.size(), 5);
+    QCOMPARE(typeid (ModelsCollection<AlbumImage *>), typeid (images));
+    QVERIFY(Common::verifyIds(images, {2, 3, 4, 5, 6}));
+
+    QVERIFY(!images.isEmpty());
+
+    QVERIFY(ModelsCollection<Album *>().isEmpty());
+}
+
 /* BaseCollection */
+
+void tst_Collection_Relations::isNotEmpty() const
+{
+    auto album = Album::find(2);
+    QVERIFY(album);
+    QVERIFY(album->exists);
+    QCOMPARE(album->getKey(), QVariant(2));
+    QVERIFY(album->relationLoaded(Common::albumImages));
+
+    auto images = album->getRelation<AlbumImage>(Common::albumImages);
+    QCOMPARE(images.size(), 5);
+    QCOMPARE(typeid (ModelsCollection<AlbumImage *>), typeid (images));
+    QVERIFY(Common::verifyIds(images, {2, 3, 4, 5, 6}));
+
+    QVERIFY(images.isNotEmpty());
+
+    QVERIFY(!ModelsCollection<Album *>().isNotEmpty());
+}
 
 void tst_Collection_Relations::filter() const
 {

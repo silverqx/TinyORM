@@ -154,6 +154,9 @@ namespace Types
         /*! Concatenate values of the given column as a string. */
         QString implode(const QString &column, const QString &glue = "");
 
+        /*! Determine if the collection is not empty. */
+        inline bool isNotEmpty() const noexcept;
+
         /* Collection */
         /*! Get a vector of primary keys. */
         QVector<QVariant> modelKeys() const;
@@ -637,6 +640,12 @@ namespace Types
                 | ranges::to<QStringList>();
 
         return values.join(glue);
+    }
+
+    template<DerivedCollectionModel Model>
+    bool ModelsCollection<Model>::isNotEmpty() const noexcept
+    {
+        return !StorageType::isEmpty();
     }
 
     /* Collection */
