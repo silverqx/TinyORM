@@ -714,7 +714,7 @@ void tst_Collection_Models::mapWithKeys_IdAndModelPointer() const
     QCOMPARE(result.size(), 5);
 
     std::unordered_map<quint64, AlbumImage *> expected {
-        {2, &images[0]},
+        {2, &images[0]}, // NOLINT(readability-container-data-pointer)
         {3, &images[1]},
         {4, &images[2]},
         {5, &images[3]},
