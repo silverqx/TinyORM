@@ -113,38 +113,40 @@ namespace Types
 
         /* Redeclared overriden methods from the base class */
 #if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
-        /*! Returns a reference to the first model in the list. */
+        /*! Returns a reference to the first model in the collection. */
         inline Model &first();
-        /*! Returns a reference to the first model in the list. */
+        /*! Returns a reference to the first model in the collection. */
         inline const Model &first() const noexcept;
-        /*! Returns a sub-list that contains the first n models of this list. */
+        /*! Returns a sub-collection that contains the first n models of this
+            collection. */
         inline ModelsCollection<Model> first(size_type count) const;
 
-        /*! Returns a reference to the last model in the list. */
+        /*! Returns a reference to the last model in the collection. */
         inline Model &last();
-        /*! Returns a reference to the last model in the list. */
+        /*! Returns a reference to the last model in the collection. */
         inline const Model &last() const noexcept;
-        /*! Returns a sub-list that contains the last n models of this list. */
+        /*! Returns a sub-collection that contains the last n models of this
+            collection. */
         inline ModelsCollection<Model> last(size_type count) const;
 
-        /*! Returns the value at index position i in the list. */
+        /*! Returns the value at index position i in the collection. */
         inline Model value(size_type index) const;
-        /*! Returns the value at index position i in the list. */
+        /*! Returns the value at index position i in the collection. */
         inline Model value(size_type index, parameter_type defaultValue) const;
 #else
-        /*! Returns a reference to the first model in the list. */
+        /*! Returns a reference to the first model in the collection. */
         inline Model &first();
-        /*! Returns a reference to the first model in the list. */
+        /*! Returns a reference to the first model in the collection. */
         inline const Model &first() const;
 
-        /*! Returns a reference to the last model in the list. */
+        /*! Returns a reference to the last model in the collection. */
         inline Model &last();
-        /*! Returns a reference to the last model in the list. */
+        /*! Returns a reference to the last model in the collection. */
         inline const Model &last() const;
 
-        /*! Returns the value at index position i in the list. */
+        /*! Returns the value at index position i in the collection. */
         inline Model value(size_type index) const;
-        /*! Returns the value at index position i in the list. */
+        /*! Returns the value at index position i in the collection. */
         inline Model value(size_type index, parameter_type defaultValue) const;
 #endif
 
