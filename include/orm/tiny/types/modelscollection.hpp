@@ -772,7 +772,7 @@ namespace Types
         result.reserve(this->size());
 
         for (ModelLoopType model : *this)
-            // Don't handle the nullptr
+                                                   // Don't handle the nullptr
             result.push_back(std::invoke(callback, toPointer(model)));
 
         return result;
