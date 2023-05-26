@@ -422,6 +422,7 @@ Upgrade the Qt to new version:
  - build the QMYSQL driver - qtbuild-qmysql-driver.ps1 6.5.1
  - open the QtCreator
    - fix all the Settings - Kits - Kits Qt versions
+   - fix the Settings - Debugger - Source Paths Mapping
    - open the Projects mode (ctrl+5) for TinyORM and TinyOrmPlayground and disable/enable kit to update all build paths
  - rebuild TinyORM and invoke unit tests
 
