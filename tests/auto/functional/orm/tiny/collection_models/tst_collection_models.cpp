@@ -59,6 +59,10 @@ private Q_SLOTS:
     void first_NotFound_nullptr() const;
     void first_NotFound_DefaultModel() const;
 
+    void last() const;
+    void last_NotFound_nullptr() const;
+    void last_NotFound_DefaultModel() const;
+
     void implode_Name() const;
     void implode_Id() const;
     void implode_Note_ColumnWithNull() const;
@@ -414,6 +418,59 @@ void tst_Collection_Models::first_NotFound_DefaultModel() const
 
     // Get result
     AlbumImage *const result = images.first([](AlbumImage *const image)
+    {
+        return Common::getKeyCasted(image) == 30;
+    },
+        &images[2]);
+
+    // Verify
+    QVERIFY(result != nullptr);
+    QCOMPARE(Common::getKeyCasted(result), 4);
+}
+
+void tst_Collection_Models::last() const
+{
+    auto images = AlbumImage::whereEq(Common::album_id, 2)->get();
+    QCOMPARE(images.size(), 5);
+    QCOMPARE(typeid (ModelsCollection<AlbumImage>), typeid (images));
+    QVERIFY(Common::verifyIds(images, {2, 3, 4, 5, 6}));
+
+    // Get result
+    AlbumImage *const result = images.last([](AlbumImage *const image)
+    {
+        return Common::getKeyCasted(image) == 4;
+    });
+
+    // Verify
+    QCOMPARE(Common::getKeyCasted(result), 4);
+}
+
+void tst_Collection_Models::last_NotFound_nullptr() const
+{
+    auto images = AlbumImage::whereEq(Common::album_id, 2)->get();
+    QCOMPARE(images.size(), 5);
+    QCOMPARE(typeid (ModelsCollection<AlbumImage>), typeid (images));
+    QVERIFY(Common::verifyIds(images, {2, 3, 4, 5, 6}));
+
+    // Get result
+    AlbumImage *const result = images.last([](AlbumImage *const image)
+    {
+        return Common::getKeyCasted(image) == 30;
+    });
+
+    // Verify
+    QVERIFY(result == nullptr);
+}
+
+void tst_Collection_Models::last_NotFound_DefaultModel() const
+{
+    auto images = AlbumImage::whereEq(Common::album_id, 2)->get();
+    QCOMPARE(images.size(), 5);
+    QCOMPARE(typeid (ModelsCollection<AlbumImage>), typeid (images));
+    QVERIFY(Common::verifyIds(images, {2, 3, 4, 5, 6}));
+
+    // Get result
+    AlbumImage *const result = images.last([](AlbumImage *const image)
     {
         return Common::getKeyCasted(image) == 30;
     },

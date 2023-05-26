@@ -12,6 +12,7 @@ TINY_SYSTEM_HEADER
 
 #include <range/v3/algorithm/contains.hpp>
 #include <range/v3/range/conversion.hpp>
+#include <range/v3/view/reverse.hpp>
 #include <range/v3/view/transform.hpp>
 
 #include "orm/exceptions/invalidargumenterror.hpp"
@@ -150,6 +151,10 @@ namespace Types
         ModelRawType *
         first(const std::function<bool(ModelRawType *)> &callback,
               ModelRawType *defaultModel = nullptr);
+        /*! Get a last item from the collection passing the given truth test. */
+        ModelRawType *
+        last(const std::function<bool(ModelRawType *)> &callback,
+             ModelRawType *defaultModel = nullptr);
 
         /*! Concatenate values of the given column as a string. */
         QString implode(const QString &column, const QString &glue = "");
@@ -616,6 +621,24 @@ namespace Types
             return defaultModel;
 
         for (ModelLoopType model : *this)
+            // Don't handle the nullptr
+            if (ModelRawType *const modelPointer = toPointer(model);
+                std::invoke(callback, modelPointer)
+            )
+                return modelPointer;
+
+        return defaultModel;
+    }
+
+    template<DerivedCollectionModel Model>
+    typename ModelsCollection<Model>::ModelRawType *
+    ModelsCollection<Model>::last(const std::function<bool(ModelRawType *)> &callback,
+                                  ModelRawType *const defaultModel)
+    {
+        if (this->isEmpty())
+            return defaultModel;
+
+        for (ModelLoopType model : *this | ranges::views::reverse)
             // Don't handle the nullptr
             if (ModelRawType *const modelPointer = toPointer(model);
                 std::invoke(callback, modelPointer)
