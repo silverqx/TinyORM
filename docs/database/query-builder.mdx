@@ -167,7 +167,7 @@ If you are updating database records while chunking results, your chunk results 
         });
 
 :::caution
-When updating or deleting records inside the chunk callback, any changes to the primary key or foreign keys could affect the chunk query. This could potentially result in records not being included in the chunked results, it can be avoided using the `chunkById` method.
+When updating or deleting records inside the chunk lambda expression, any changes to the primary key or foreign keys could affect the chunk query. This could potentially result in records not being included in the chunked results, it can be avoided using the `chunkById` method.
 :::
 
 ### Aggregates
