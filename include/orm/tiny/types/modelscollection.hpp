@@ -113,18 +113,18 @@ namespace Types
 
         /* Redeclared overriden methods from the base class */
 #if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
-        /*! Returns a reference to the first item in the list. */
+        /*! Returns a reference to the first model in the list. */
         inline Model &first();
-        /*! Returns a reference to the first item in the list. */
+        /*! Returns a reference to the first model in the list. */
         inline const Model &first() const noexcept;
-        /*! Returns a sub-list that contains the first n elements of this list. */
+        /*! Returns a sub-list that contains the first n models of this list. */
         inline ModelsCollection<Model> first(size_type count) const;
 
-        /*! Returns a reference to the last item in the list. */
+        /*! Returns a reference to the last model in the list. */
         inline Model &last();
-        /*! Returns a reference to the last item in the list. */
+        /*! Returns a reference to the last model in the list. */
         inline const Model &last() const noexcept;
-        /*! Returns a sub-list that contains the last n elements of this list. */
+        /*! Returns a sub-list that contains the last n models of this list. */
         inline ModelsCollection<Model> last(size_type count) const;
 
         /*! Returns the value at index position i in the list. */
@@ -132,14 +132,14 @@ namespace Types
         /*! Returns the value at index position i in the list. */
         inline Model value(size_type index, parameter_type defaultValue) const;
 #else
-        /*! Returns a reference to the first item in the list. */
+        /*! Returns a reference to the first model in the list. */
         inline Model &first();
-        /*! Returns a reference to the first item in the list. */
+        /*! Returns a reference to the first model in the list. */
         inline const Model &first() const;
 
-        /*! Returns a reference to the last item in the list. */
+        /*! Returns a reference to the last model in the list. */
         inline Model &last();
-        /*! Returns a reference to the last item in the list. */
+        /*! Returns a reference to the last model in the list. */
         inline const Model &last() const;
 
         /*! Returns the value at index position i in the list. */
@@ -149,21 +149,21 @@ namespace Types
 #endif
 
         /* BaseCollection */
-        /*! Run a filter over each of the items in the collection. */
+        /*! Run a filter over each of the models in the collection. */
         ModelsCollection<ModelRawType *>
         filter(const std::function<bool(ModelRawType *, size_type)> &callback);
-        /*! Run a filter over each of the items in the collection. */
+        /*! Run a filter over each of the models in the collection. */
         ModelsCollection<ModelRawType *>
         filter(const std::function<bool(ModelRawType *)> &callback);
-        /*! Run a filter over each of the items in the collection (removes nullptr-s). */
+        /*! Run a filter over each of the models in the collection (removes nullptr-s). */
         ModelsCollection<ModelRawType *>
         filter() const requires IsPointersCollection;
 
-        /*! Get a first item from the collection passing the given truth test. */
+        /*! Get a first model from the collection passing the given truth test. */
         ModelRawType *
         first(const std::function<bool(ModelRawType *)> &callback,
               ModelRawType *defaultModel = nullptr);
-        /*! Get a last item from the collection passing the given truth test. */
+        /*! Get a last model from the collection passing the given truth test. */
         ModelRawType *
         last(const std::function<bool(ModelRawType *)> &callback,
              ModelRawType *defaultModel = nullptr);
@@ -181,16 +181,16 @@ namespace Types
         template<typename T>
         QVector<T> modelKeys() const;
 
-        /*! Run a map over each of the items. */
+        /*! Run a map over each of the models. */
         ModelsCollection<ModelRawType *>
         map(const std::function<ModelRawType *(ModelRawType *, size_type)> &callback);
-        /*! Run a map over each of the items. */
+        /*! Run a map over each of the models. */
         ModelsCollection<ModelRawType *>
         map(const std::function<ModelRawType *(ModelRawType *)> &callback);
 
-        /*! Run an associative map over each of the items (keyed by primary key). */
+        /*! Run an associative map over each of the models (keyed by primary key). */
         std::unordered_map<KeyType, ModelRawType *> mapWithModelKeys();
-        /*! Run an associative map over each of the items (key by the K template). */
+        /*! Run an associative map over each of the models (key by the K template). */
         template<typename K, typename V>
         std::unordered_map<K, V>
         mapWithKeys(const std::function<std::pair<K, V>(ModelRawType *)> &callback);
@@ -251,85 +251,85 @@ namespace Types
         inline ModelsCollection &&load(const QString &relation) &&;
 
         /* EnumeratesValues */
-        /*! Create a collection of all items that do not pass a given truth test. */
+        /*! Create a collection of all models that do not pass a given truth test. */
         ModelsCollection<ModelRawType *>
         reject(const std::function<bool(ModelRawType *, size_type)> &callback);
-        /*! Create a collection of all items that do not pass a given truth test. */
+        /*! Create a collection of all models that do not pass a given truth test. */
         ModelsCollection<ModelRawType *>
         reject(const std::function<bool(ModelRawType *)> &callback);
 
-        /*! Filter items by the given key value pair. */
+        /*! Filter models by the given key value pair. */
         template<typename V>
         ModelsCollection<ModelRawType *>
         where(const QString &key, const QString &comparison, V value);
-        /*! Filter items by the given key value pair. */
+        /*! Filter models by the given key value pair. */
         template<typename V>
         ModelsCollection<ModelRawType *> whereEq(const QString &key, V value);
 
-        /*! Filter items where the value for the given key is the null QVariant. */
+        /*! Filter models where the value for the given key is the null QVariant. */
         ModelsCollection<ModelRawType *> whereNull(const QString &key);
-        /*! Filter items where the value for the given key is not the null QVariant. */
+        /*! Filter models where the value for the given key is not the null QVariant. */
         ModelsCollection<ModelRawType *> whereNotNull(const QString &key);
 
-        /*! Filter items by the given key values pair. */
+        /*! Filter models by the given key values pair. */
         template<typename T>
         ModelsCollection<ModelRawType *>
         whereIn(const QString &key, const std::unordered_set<T> &values);
-        /*! Filter items by the given key values pair. */
+        /*! Filter models by the given key values pair. */
         template<typename T>
         ModelsCollection<ModelRawType *>
         whereNotIn(const QString &key, const std::unordered_set<T> &values);
 
-        /*! Filter items such that the value of the given key is between the given
+        /*! Filter models such that the value of the given key is between the given
             values. */
         template<typename T>
         ModelsCollection<ModelRawType *>
         whereBetween(const QString &key, const WhereBetweenCollectionItem<T> &values);
-        /*! Filter items such that the value of the given key is not between the given
+        /*! Filter models such that the value of the given key is not between the given
             values. */
         template<typename T>
         ModelsCollection<ModelRawType *>
         whereNotBetween(const QString &key, const WhereBetweenCollectionItem<T> &values);
 
-        /*! Get the first item by the given key value pair. */
+        /*! Get the first model by the given key value pair. */
         template<typename V>
         ModelRawType *firstWhere(const QString &key, const QString &comparison, V value);
-        /*! Get the first item by the given key value pair. */
+        /*! Get the first model by the given key value pair. */
         template<typename V>
         ModelRawType *firstWhereEq(const QString &key, V value);
 
-        /*! Get a single key's value from the first matching item in the collection. */
+        /*! Get a single key's value from the first matching model in the collection. */
         QVariant value(const QString &key, const QVariant &defaultValue = {}) const;
-        /*! Get a single key's value from the first matching item in the collection. */
+        /*! Get a single key's value from the first matching model in the collection. */
         template<typename T>
         T value(const QString &key, const T &defaultValue = {}) const;
 
-        /*! Execute a callback over each item. */
+        /*! Execute a callback over each model. */
         ModelsCollection &
         each(const std::function<void(ModelRawType *)> &callback) &;
-        /*! Execute a callback over each item. */
+        /*! Execute a callback over each model. */
         ModelsCollection &
         each(const std::function<void(ModelRawType *, size_type)> &callback) &;
-        /*! Execute a callback over each item. */
+        /*! Execute a callback over each model. */
         ModelsCollection &
         each(EachBoolCallbackType tag,
              const std::function<bool(ModelRawType *)> &callback) &;
-        /*! Execute a callback over each item. */
+        /*! Execute a callback over each model. */
         ModelsCollection &
         each(EachBoolCallbackType tag,
              const std::function<bool(ModelRawType *, size_type)> &callback) &;
 
-        /*! Execute a callback over each item. */
+        /*! Execute a callback over each model. */
         ModelsCollection &&
         each(const std::function<void(ModelRawType *)> &callback) &&;
-        /*! Execute a callback over each item. */
+        /*! Execute a callback over each model. */
         ModelsCollection &&
         each(const std::function<void(ModelRawType *, size_type)> &callback) &&;
-        /*! Execute a callback over each item. */
+        /*! Execute a callback over each model. */
         ModelsCollection &&
         each(EachBoolCallbackType tag,
              const std::function<bool(ModelRawType *)> &callback) &&;
-        /*! Execute a callback over each item. */
+        /*! Execute a callback over each model. */
         ModelsCollection &&
         each(EachBoolCallbackType tag,
              const std::function<bool(ModelRawType *, size_type)> &callback) &&;
