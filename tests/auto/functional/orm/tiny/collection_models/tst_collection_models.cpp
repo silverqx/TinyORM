@@ -88,6 +88,7 @@ private Q_SLOTS:
 
     void pluck() const;
     void pluck_KeyedById() const;
+    void pluck_KeyedById_LastDuplicate() const;
 
     void contains_ById() const;
     void contains_ById_QVariant() const;
@@ -869,6 +870,36 @@ void tst_Collection_Models::pluck_KeyedById() const
         {2, QString("album2_image1")},
         {3, QString("album2_image2")},
         {4, QString("album2_image3")},
+        {5, QString("album2_image4")},
+        {6, QString("album2_image5")},
+    };
+    QCOMPARE(result, expected);
+}
+
+void tst_Collection_Models::pluck_KeyedById_LastDuplicate() const
+{
+    auto images = AlbumImage::whereEq(Common::album_id, 2)->get();
+    QCOMPARE(images.size(), 5);
+    QCOMPARE(typeid (ModelsCollection<AlbumImage>), typeid (images));
+    QVERIFY(Common::verifyIds(images, {2, 3, 4, 5, 6}));
+
+    // Prepare
+    /* Even if this is not technically right because of the duplicate primary key, it
+       tests what we need to test, so no reason to rewrite it with a better example. */
+    images << images.at(2);
+    images.last()[NAME] = "album2_image6";
+    QVERIFY(Common::verifyIds(images, {2, 3, 4, 5, 6, 4}));
+
+    // Get result
+    const auto result = images.pluck<quint64>(NAME, ID);
+
+    // Verify
+    QCOMPARE(result.size(), 5);
+
+    std::map<quint64, QVariant> expected {
+        {2, QString("album2_image1")},
+        {3, QString("album2_image2")},
+        {4, QString("album2_image6")}, // Must be assigned again
         {5, QString("album2_image4")},
         {6, QString("album2_image5")},
     };

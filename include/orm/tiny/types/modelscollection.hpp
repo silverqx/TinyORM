@@ -893,10 +893,10 @@ namespace Types
             ) {
                 const auto &attributes = modelPointer->getAttributes();
 
-                               // Don't handle the null and not valid
-                result.emplace(attributes.at(attributesHash.at(key))
-                                         .value.template value<T>(),
-                               attributes.at(attributesHash.at(column)).value);
+                                        // Don't handle the null and not valid
+                result.insert_or_assign(attributes.at(attributesHash.at(key))
+                                                  .value.template value<T>(),
+                                        attributes.at(attributesHash.at(column)).value);
             }
         }
 
