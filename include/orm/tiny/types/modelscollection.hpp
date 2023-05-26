@@ -120,6 +120,13 @@ namespace Types
         /*! Returns a sub-list that contains the first n elements of this list. */
         inline ModelsCollection<Model> first(size_type count) const;
 
+        /*! Returns a reference to the last item in the list. */
+        inline Model &last();
+        /*! Returns a reference to the last item in the list. */
+        inline const Model &last() const noexcept;
+        /*! Returns a sub-list that contains the last n elements of this list. */
+        inline ModelsCollection<Model> last(size_type count) const;
+
         /*! Returns the value at index position i in the list. */
         inline Model value(size_type index) const;
         /*! Returns the value at index position i in the list. */
@@ -129,6 +136,11 @@ namespace Types
         inline Model &first();
         /*! Returns a reference to the first item in the list. */
         inline const Model &first() const;
+
+        /*! Returns a reference to the last item in the list. */
+        inline Model &last();
+        /*! Returns a reference to the last item in the list. */
+        inline const Model &last() const;
 
         /*! Returns the value at index position i in the list. */
         inline Model value(size_type index) const;
@@ -514,6 +526,27 @@ namespace Types
     }
 
     template<DerivedCollectionModel Model>
+    Model &
+    ModelsCollection<Model>::last()
+    {
+        return StorageType::last();
+    }
+
+    template<DerivedCollectionModel Model>
+    const Model &
+    ModelsCollection<Model>::last() const noexcept
+    {
+        return StorageType::last();
+    }
+
+    template<DerivedCollectionModel Model>
+    ModelsCollection<Model>
+    ModelsCollection<Model>::last(const size_type count) const
+    {
+        return StorageType::last(count);
+    }
+
+    template<DerivedCollectionModel Model>
     Model
     ModelsCollection<Model>::value(const size_type index) const
     {
@@ -540,6 +573,20 @@ namespace Types
     ModelsCollection<Model>::first() const
     {
         return StorageType::first();
+    }
+
+    template<DerivedCollectionModel Model>
+    Model &
+    ModelsCollection<Model>::last()
+    {
+        return StorageType::last();
+    }
+
+    template<DerivedCollectionModel Model>
+    const Model &
+    ModelsCollection<Model>::last() const
+    {
+        return StorageType::last();
     }
 
     template<DerivedCollectionModel Model>
