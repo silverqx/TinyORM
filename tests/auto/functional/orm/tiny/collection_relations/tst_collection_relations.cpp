@@ -75,6 +75,9 @@ private Q_SLOTS:
     void map() const;
     void map_WithIndex() const;
 
+    void map_CustomReturnType() const;
+    void map_CustomReturnType_WithIndex() const;
+
     void mapWithModelKeys() const;
 
     void mapWithKeys_IdAndName() const;
@@ -802,6 +805,81 @@ void tst_Collection_Relations::map_WithIndex() const
     QVERIFY(Common::verifyAttributeValues<QString>(
                 NAME, result, {"album2_image1_id_2", "album2_image2", "album2_image3",
                                "album2_image4_index_3", "album2_image5"}));
+}
+
+void tst_Collection_Relations::map_CustomReturnType() const
+{
+    auto album = Album::find(2);
+    QVERIFY(album);
+    QVERIFY(album->exists);
+    QCOMPARE(album->getKey(), QVariant(2));
+    QVERIFY(album->relationLoaded(Common::albumImages));
+
+    auto images = album->getRelation<AlbumImage>(Common::albumImages);
+    QCOMPARE(images.size(), 5);
+    QCOMPARE(typeid (ModelsCollection<AlbumImage *>), typeid (images));
+    QVERIFY(Common::verifyIds(images, {2, 3, 4, 5, 6}));
+
+    // Get result
+    const auto result = images.map<QString>([](AlbumImage *const image)
+    {
+        const auto nameRef = (*image)[NAME];
+
+        if (const auto id = Common::getKeyCasted(image);
+            id == 3 || id == 6
+        )
+            nameRef = QStringLiteral("%1_id_%2")
+                      .arg(image->getAttribute<QString>(NAME))
+                      .arg(id);
+
+        return nameRef->value<QString>();
+    });
+
+    // Verify
+    QCOMPARE(result.size(), 5);
+    QVector<QString> expected {"album2_image1", "album2_image2_id_3", "album2_image3",
+                               "album2_image4", "album2_image5_id_6"};
+    QCOMPARE(result, expected);
+}
+
+void tst_Collection_Relations::map_CustomReturnType_WithIndex() const
+{
+    auto album = Album::find(2);
+    QVERIFY(album);
+    QVERIFY(album->exists);
+    QCOMPARE(album->getKey(), QVariant(2));
+    QVERIFY(album->relationLoaded(Common::albumImages));
+
+    auto images = album->getRelation<AlbumImage>(Common::albumImages);
+    QCOMPARE(images.size(), 5);
+    QCOMPARE(typeid (ModelsCollection<AlbumImage *>), typeid (images));
+    QVERIFY(Common::verifyIds(images, {2, 3, 4, 5, 6}));
+
+    // Get result
+    const auto result = images.map<QString>([](AlbumImage *const image, const auto index)
+    {
+        const auto nameRef = (*image)[NAME];
+
+        if (const auto id = Common::getKeyCasted(image);
+            id == 2
+        )
+            nameRef = QStringLiteral("%1_id_%2")
+                      .arg(image->getAttribute<QString>(NAME))
+                      .arg(id);
+
+        else if (index == 3)
+            nameRef = QStringLiteral("%1_index_%2")
+                      .arg(image->getAttribute<QString>(NAME))
+                      .arg(index);
+
+        return nameRef->value<QString>();
+    });
+
+    // Verify
+    QCOMPARE(result.size(), 5);
+    QVector<QString> expected {"album2_image1_id_2", "album2_image2", "album2_image3",
+                               "album2_image4_index_3", "album2_image5"};
+    QCOMPARE(result, expected);
 }
 
 void tst_Collection_Relations::mapWithModelKeys() const

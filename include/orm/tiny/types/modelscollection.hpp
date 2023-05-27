@@ -190,6 +190,13 @@ namespace Types
         ModelsCollection<ModelRawType *>
         map(const std::function<ModelRawType *(ModelRawType *)> &callback);
 
+        /*! Run a map over each of the models. */
+        template<typename T>
+        QVector<T> map(const std::function<T(ModelRawType *, size_type)> &callback);
+        /*! Run a map over each of the models. */
+        template<typename T>
+        QVector<T> map(const std::function<T(ModelRawType *)> &callback);
+
         /*! Run an associative map over each of the models (keyed by primary key). */
         std::unordered_map<KeyType, ModelRawType *> mapWithModelKeys();
         /*! Run an associative map over each of the models (key by the K template). */
@@ -776,6 +783,40 @@ namespace Types
         for (ModelLoopType model : *this)
                                                    // Don't handle the nullptr
             result.push_back(std::invoke(callback, toPointer(model)));
+
+        return result;
+    }
+
+    template<DerivedCollectionModel Model>
+    template<typename T>
+    QVector<T>
+    ModelsCollection<Model>::map(
+            const std::function<T(ModelRawType *, size_type)> &callback)
+    {
+        const auto size = this->size();
+
+        QVector<T> result;
+        result.reserve(size);
+
+        for (size_type index = 0; index < size; ++index)
+            result.emplace_back(std::invoke(callback,
+                                            // Don't handle the nullptr
+                                            toPointer(this->operator[](index)), index));
+
+        return result;
+    }
+
+    template<DerivedCollectionModel Model>
+    template<typename T>
+    QVector<T>
+    ModelsCollection<Model>::map(const std::function<T(ModelRawType *)> &callback)
+    {
+        QVector<T> result;
+        result.reserve(this->size());
+
+        for (ModelLoopType model : *this)
+            // Don't handle the nullptr
+            result.emplace_back(std::invoke(callback, toPointer(model)));
 
         return result;
     }
