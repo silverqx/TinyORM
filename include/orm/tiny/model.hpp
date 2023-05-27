@@ -195,9 +195,15 @@ namespace Orm::Tiny
         Derived &refresh();
 
         /*! Eager load relations on the model. */
+        template<typename = void>
         Derived &load(const QVector<WithItem> &relations);
         /*! Eager load relations on the model. */
-        Derived &load(const QString &relation);
+        template<typename = void>
+        Derived &load(QString relation);
+        /*! Eager load relations on the model. */
+        Derived &load(const QVector<QString> &relations);
+        /*! Eager load relations on the model. */
+        Derived &load(QVector<QString> &&relations);
 
         /*! Determine if two models have the same ID and belong to the same table. */
         template<ModelConcept ModelToCompare>
@@ -878,6 +884,7 @@ namespace Orm::Tiny
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
+    template<typename>
     Derived &
     Model<Derived, AllRelations...>::load(const QVector<WithItem> &relations)
     {
@@ -891,10 +898,37 @@ namespace Orm::Tiny
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
+    template<typename>
     Derived &
-    Model<Derived, AllRelations...>::load(const QString &relation)
+    Model<Derived, AllRelations...>::load(QString relation)
     {
-        return load(QVector<WithItem> {{relation}});
+        return load(QVector<WithItem> {{std::move(relation)}});
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    Derived &
+    Model<Derived, AllRelations...>::load(const QVector<QString> &relations)
+    {
+        QVector<WithItem> relationsConverted;
+        relationsConverted.reserve(relations.size());
+
+        for (const auto &relation : relations)
+            relationsConverted.append({relation});
+
+        return load(relationsConverted);
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    Derived &
+    Model<Derived, AllRelations...>::load(QVector<QString> &&relations)
+    {
+        QVector<WithItem> relationsConverted;
+        relationsConverted.reserve(relations.size());
+
+        for (auto &&relation : relations)
+            relationsConverted.append({std::move(relation)});
+
+        return load(relationsConverted);
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>

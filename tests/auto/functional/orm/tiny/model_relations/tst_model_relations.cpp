@@ -109,7 +109,11 @@ private Q_SLOTS:
 
     void withOnly() const;
 
-    void load() const;
+    void load_QVector_WithItem() const;
+    void load_QVector_QString_lvalue() const;
+    void load_QVector_QString_rvalue() const;
+    void load_QString() const;
+
     void load_WithSelectConstraint() const;
     void load_WithLambdaConstraint() const;
     void load_NonExistentRelation_Failed() const;
@@ -1225,7 +1229,7 @@ void tst_Model_Relations::withOnly() const
     QCOMPARE(relations.size(), static_cast<std::size_t>(1));
 }
 
-void tst_Model_Relations::load() const
+void tst_Model_Relations::load_QVector_WithItem() const
 {
     QFETCH_GLOBAL(QString, connection);
 
@@ -1270,6 +1274,126 @@ void tst_Model_Relations::load() const
                          "fileProperty")),
                     RuntimeError);
     }
+}
+
+void tst_Model_Relations::load_QVector_QString_lvalue() const
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
+    auto torrent = Torrent::find(2);
+    QVERIFY(torrent);
+    QVERIFY(torrent->exists);
+    QCOMPARE(torrent->getKey(), QVariant(2));
+
+    QVERIFY(torrent->getRelations().empty());
+
+    const QVector<QString> relations {"torrentFiles", "torrentPeer"};
+    torrent->load(relations);
+
+    QVERIFY(torrent->relationLoaded("torrentFiles"));
+    QVERIFY(torrent->relationLoaded("torrentPeer"));
+    QCOMPARE(torrent->getRelations().size(), 2);
+
+    // TorrentPeer has-one relation
+    auto *peer = torrent->getRelation<TorrentPeer, One>("torrentPeer");
+    QVERIFY(peer);
+    QVERIFY(peer->exists);
+    QCOMPARE(peer->getAttribute("torrent_id"), torrent->getKey());
+    QCOMPARE(peer->getKey(), QVariant(2));
+    QCOMPARE(typeid (TorrentPeer *), typeid (peer));
+
+    // TorrentPreviewableFile has-many relation
+    auto files = torrent->getRelation<TorrentPreviewableFile>("torrentFiles");
+    QCOMPARE(files.size(), 2);
+    QCOMPARE(typeid (ModelsCollection<TorrentPreviewableFile *>), typeid (files));
+
+    // Expected file IDs
+    QVector<QVariant> fileIds {2, 3};
+    for (auto *file : files) {
+        QVERIFY(file);
+        QVERIFY(file->exists);
+        QCOMPARE(file->getAttribute("torrent_id"), torrent->getKey());
+        QVERIFY(fileIds.contains(file->getKey()));
+        QCOMPARE(typeid (TorrentPreviewableFile *), typeid (file));
+
+        // No TorrentPreviewableFileProperty loaded
+        QVERIFY(file->getRelations().empty());
+    }
+}
+
+void tst_Model_Relations::load_QVector_QString_rvalue() const
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
+    auto torrent = Torrent::find(2);
+    QVERIFY(torrent);
+    QVERIFY(torrent->exists);
+    QCOMPARE(torrent->getKey(), QVariant(2));
+
+    QVERIFY(torrent->getRelations().empty());
+
+    torrent->load({"torrentFiles", "torrentPeer"});
+
+    QVERIFY(torrent->relationLoaded("torrentFiles"));
+    QVERIFY(torrent->relationLoaded("torrentPeer"));
+    QCOMPARE(torrent->getRelations().size(), 2);
+
+    // TorrentPeer has-one relation
+    auto *peer = torrent->getRelation<TorrentPeer, One>("torrentPeer");
+    QVERIFY(peer);
+    QVERIFY(peer->exists);
+    QCOMPARE(peer->getAttribute("torrent_id"), torrent->getKey());
+    QCOMPARE(peer->getKey(), QVariant(2));
+    QCOMPARE(typeid (TorrentPeer *), typeid (peer));
+
+    // TorrentPreviewableFile has-many relation
+    auto files = torrent->getRelation<TorrentPreviewableFile>("torrentFiles");
+    QCOMPARE(files.size(), 2);
+    QCOMPARE(typeid (ModelsCollection<TorrentPreviewableFile *>), typeid (files));
+
+    // Expected file IDs
+    QVector<QVariant> fileIds {2, 3};
+    for (auto *file : files) {
+        QVERIFY(file);
+        QVERIFY(file->exists);
+        QCOMPARE(file->getAttribute("torrent_id"), torrent->getKey());
+        QVERIFY(fileIds.contains(file->getKey()));
+        QCOMPARE(typeid (TorrentPreviewableFile *), typeid (file));
+
+        // No TorrentPreviewableFileProperty loaded
+        QVERIFY(file->getRelations().empty());
+    }
+}
+
+void tst_Model_Relations::load_QString() const
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
+    auto torrent = Torrent::find(2);
+    QVERIFY(torrent);
+    QVERIFY(torrent->exists);
+    QCOMPARE(torrent->getKey(), QVariant(2));
+
+    QVERIFY(torrent->getRelations().empty());
+
+    torrent->load("torrentPeer");
+
+    QVERIFY(torrent->relationLoaded("torrentPeer"));
+    QCOMPARE(torrent->getRelations().size(), 1);
+
+    // TorrentPeer has-one relation
+    auto *peer = torrent->getRelation<TorrentPeer, One>("torrentPeer");
+    QVERIFY(peer);
+    QVERIFY(peer->exists);
+    QCOMPARE(peer->getAttribute("torrent_id"), torrent->getKey());
+    QCOMPARE(peer->getKey(), QVariant(2));
+    QCOMPARE(typeid (TorrentPeer *), typeid (peer));
 }
 
 void tst_Model_Relations::load_WithSelectConstraint() const
