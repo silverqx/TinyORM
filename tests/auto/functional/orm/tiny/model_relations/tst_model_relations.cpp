@@ -1236,15 +1236,17 @@ void tst_Model_Relations::load_QVector_WithItem() const
     ConnectionOverride::connection = connection;
 
     auto torrent = Torrent::find(2);
+    QVERIFY(torrent);
+    QVERIFY(torrent->exists);
+    QCOMPARE(torrent->getKey(), QVariant(2));
 
     QVERIFY(torrent->getRelations().empty());
 
     torrent->load({{"torrentFiles"}, {"torrentPeer"}});
 
-    const auto &relations = torrent->getRelations();
-    QCOMPARE(relations.size(), 2);
-    QVERIFY(relations.contains("torrentFiles"));
-    QVERIFY(relations.contains("torrentPeer"));
+    QVERIFY(torrent->relationLoaded("torrentFiles"));
+    QVERIFY(torrent->relationLoaded("torrentPeer"));
+    QCOMPARE(torrent->getRelations().size(), 2);
 
     // TorrentPeer has-one relation
     auto *peer = torrent->getRelation<TorrentPeer, One>("torrentPeer");
@@ -1269,10 +1271,7 @@ void tst_Model_Relations::load_QVector_WithItem() const
         QCOMPARE(typeid (TorrentPreviewableFile *), typeid (file));
 
         // No TorrentPreviewableFileProperty loaded
-        QVERIFY_EXCEPTION_THROWN(
-                    (file->getRelation<TorrentPreviewableFileProperty, One>(
-                         "fileProperty")),
-                    RuntimeError);
+        QVERIFY(file->getRelations().empty());
     }
 }
 
@@ -1405,10 +1404,14 @@ void tst_Model_Relations::load_WithSelectConstraint() const
     auto torrent = Torrent::find(2);
     QVERIFY(torrent);
     QVERIFY(torrent->exists);
+    QCOMPARE(torrent->getKey(), QVariant(2));
 
     QVERIFY(torrent->getRelations().empty());
 
     torrent->load("torrentFiles:id,torrent_id,filepath");
+
+    QVERIFY(torrent->relationLoaded("torrentFiles"));
+    QCOMPARE(torrent->getRelations().size(), 1);
 
     auto files = torrent->getRelation<TorrentPreviewableFile>("torrentFiles");
     QCOMPARE(files.size(), 2);
@@ -1431,6 +1434,7 @@ void tst_Model_Relations::load_WithSelectConstraint() const
         QCOMPARE(file->getAttribute("torrent_id"), torrent->getKey());
         QVERIFY(fileIds.contains(file->getKey()));
         QCOMPARE(typeid (TorrentPreviewableFile *), typeid (file));
+        QVERIFY(file->getRelations().empty());
     }
 }
 
@@ -1443,6 +1447,7 @@ void tst_Model_Relations::load_WithLambdaConstraint() const
     auto torrent = Torrent::find(2);
     QVERIFY(torrent);
     QVERIFY(torrent->exists);
+    QCOMPARE(torrent->getKey(), QVariant(2));
 
     QVERIFY(torrent->getRelations().empty());
 
@@ -1450,6 +1455,9 @@ void tst_Model_Relations::load_WithLambdaConstraint() const
                     {
                         query.select({ID, "torrent_id", "filepath"});
                     }}});
+
+    QVERIFY(torrent->relationLoaded("torrentFiles"));
+    QCOMPARE(torrent->getRelations().size(), 1);
 
     auto files = torrent->getRelation<TorrentPreviewableFile>("torrentFiles");
     QCOMPARE(files.size(), 2);
@@ -1472,6 +1480,7 @@ void tst_Model_Relations::load_WithLambdaConstraint() const
         QCOMPARE(file->getAttribute("torrent_id"), torrent->getKey());
         QVERIFY(fileIds.contains(file->getKey()));
         QCOMPARE(typeid (TorrentPreviewableFile *), typeid (file));
+        QVERIFY(file->getRelations().empty());
     }
 }
 
