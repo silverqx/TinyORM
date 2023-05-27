@@ -318,7 +318,7 @@ Once the relationship has been defined, we can retrieve a comment's parent post 
 
     auto comment = Comment::find(1);
 
-    return comment->getRelationValue<Post, Orm::One>("post")->getAttribute("title").toString();
+    return comment->getRelationValue<Post, Orm::One>("post")->getAttribute<QString>("title");
 
 In the example above, TinyORM will attempt to find a `Post` model that has an `id` which matches the `post_id` column on the `Comment` model.
 
@@ -457,7 +457,7 @@ Once the relationship is defined, you may access the user's roles as the `QVecto
     auto user = User::find(1);
 
     for (auto *role : user->getRelationValue<Role>("roles"))
-        qDebug() << role->getAttribute("id").toULongLong();
+        qDebug() << role->getAttribute<quint64>("id");
 
 Since all relationships also serve as query builders, you may add further constraints to the relationship query by calling the `roles` method and continuing to chain conditions onto the query:
 
@@ -954,7 +954,7 @@ Now, let's retrieve all books and their authors:
 
     for (auto &book : books)
         qDebug() << book.getRelationValue<Author, Orm::One>("author")
-                        ->getAttribute("name").toString();
+                    ->getAttribute<QString>("name");
 
 This loop will execute one query to retrieve all of the books within the database table, then another query for each book in order to retrieve the book's author. So, if we have 25 books, the code above would run 26 queries: one for the original book, and 25 additional queries to retrieve the author of each book.
 
@@ -964,7 +964,7 @@ Thankfully, we can use eager loading to reduce this operation to just two querie
 
     for (auto &book : books)
         qDebug() << book.getRelation<Author, Orm::One>("author")
-                        ->getAttribute("name").toString();
+                    ->getAttribute<QString>("name");
 
 For this operation, only two queries will be executed - one query to retrieve all of the books and one query to retrieve all of the authors for all of the books:
 
