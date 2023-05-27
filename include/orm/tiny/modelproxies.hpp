@@ -144,7 +144,7 @@ namespace Tiny
         /*! Begin querying a model with eager loading. */
         template<typename = void>
         static std::unique_ptr<TinyBuilder<Derived>>
-        with(const QString &relation);
+        with(QString relation);
         /*! Begin querying a model with eager loading. */
         static std::unique_ptr<TinyBuilder<Derived>>
         with(const QVector<QString> &relations);
@@ -157,16 +157,26 @@ namespace Tiny
         without(const QVector<QString> &relations);
         /*! Prevent the specified relations from being eager loaded. */
         static std::unique_ptr<TinyBuilder<Derived>>
-        without(const QString &relation);
+        without(QString relation);
 
         /*! Set the relationships that should be eager loaded while removing
             any previously added eager loading specifications. */
+        template<typename = void>
         static std::unique_ptr<TinyBuilder<Derived>>
         withOnly(const QVector<WithItem> &relations);
         /*! Set the relationship that should be eager loaded while removing
             any previously added eager loading specifications. */
+        template<typename = void>
         static std::unique_ptr<TinyBuilder<Derived>>
-        withOnly(const QString &relation);
+        withOnly(QString relation);
+        /*! Set the relationships that should be eager loaded while removing
+            any previously added eager loading specifications. */
+        static std::unique_ptr<TinyBuilder<Derived>>
+        withOnly(const QVector<QString> &relations);
+        /*! Set the relationship that should be eager loaded while removing
+            any previously added eager loading specifications. */
+        static std::unique_ptr<TinyBuilder<Derived>>
+        withOnly(QVector<QString> &&relations);
 
         /* Insert, Update, Delete */
         /*! Save a new model and return the instance. */
@@ -1275,9 +1285,9 @@ namespace Tiny
     template<typename Derived, AllRelationsConcept ...AllRelations>
     template<typename>
     std::unique_ptr<TinyBuilder<Derived>>
-    ModelProxies<Derived, AllRelations...>::with(const QString &relation)
+    ModelProxies<Derived, AllRelations...>::with(QString relation)
     {
-        return with(QVector<WithItem> {{relation}});
+        return with(QVector<WithItem> {{std::move(relation)}});
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
@@ -1315,12 +1325,13 @@ namespace Tiny
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     std::unique_ptr<TinyBuilder<Derived>>
-    ModelProxies<Derived, AllRelations...>::without(const QString &relation)
+    ModelProxies<Derived, AllRelations...>::without(QString relation)
     {
-        return without(QVector<QString> {relation});
+        return without(QVector<QString> {std::move(relation)});
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
+    template<typename>
     std::unique_ptr<TinyBuilder<Derived>>
     ModelProxies<Derived, AllRelations...>::withOnly(const QVector<WithItem> &relations)
     {
@@ -1332,10 +1343,33 @@ namespace Tiny
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
+    template<typename>
     std::unique_ptr<TinyBuilder<Derived>>
-    ModelProxies<Derived, AllRelations...>::withOnly(const QString &relation)
+    ModelProxies<Derived, AllRelations...>::withOnly(QString relation)
     {
-        return withOnly(QVector<WithItem> {{relation}});
+        return withOnly(QVector<WithItem> {{std::move(relation)}});
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    std::unique_ptr<TinyBuilder<Derived>>
+    ModelProxies<Derived, AllRelations...>::withOnly(const QVector<QString> &relations)
+    {
+        auto builder = query();
+
+        builder->withOnly(relations);
+
+        return builder;
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    std::unique_ptr<TinyBuilder<Derived>>
+    ModelProxies<Derived, AllRelations...>::withOnly(QVector<QString> &&relations)
+    {
+        auto builder = query();
+
+        builder->withOnly(std::move(relations));
+
+        return builder;
     }
 
     /* Insert, Update, Delete */

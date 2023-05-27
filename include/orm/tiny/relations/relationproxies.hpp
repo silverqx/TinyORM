@@ -155,7 +155,7 @@ namespace Tiny::Relations
         const Relation<Model, Related> &with(const QVector<WithItem> &relations) const;
         /*! Set the relationships that should be eager loaded. */
         template<typename = void>
-        const Relation<Model, Related> &with(const QString &relation) const;
+        const Relation<Model, Related> &with(QString relation) const;
         /*! Begin querying a model with eager loading. */
         const Relation<Model, Related> &with(const QVector<QString> &relations) const;
         /*! Begin querying a model with eager loading. */
@@ -164,15 +164,23 @@ namespace Tiny::Relations
         /*! Prevent the specified relations from being eager loaded. */
         const Relation<Model, Related> &without(const QVector<QString> &relations) const;
         /*! Prevent the specified relations from being eager loaded. */
-        const Relation<Model, Related> &without(const QString &relation) const;
+        const Relation<Model, Related> &without(QString relation) const;
 
         /*! Set the relationships that should be eager loaded while removing
             any previously added eager loading specifications. */
+        template<typename = void>
         const Relation<Model, Related> &
         withOnly(const QVector<WithItem> &relations) const;
         /*! Set the relationship that should be eager loaded while removing
             any previously added eager loading specifications. */
-        const Relation<Model, Related> &withOnly(const QString &relation) const;
+        template<typename = void>
+        const Relation<Model, Related> &withOnly(QString relation) const;
+        /*! Set the relationships that should be eager loaded while removing
+            any previously added eager loading specifications. */
+        const Relation<Model, Related> &withOnly(const QVector<QString> &relations) const;
+        /*! Set the relationship that should be eager loaded while removing
+            any previously added eager loading specifications. */
+        const Relation<Model, Related> &withOnly(QVector<QString> &&relations) const;
 
         /* Insert, Update, Delete */
         /*! Create or update a related record matching the attributes, and fill it
@@ -1271,9 +1279,9 @@ namespace Tiny::Relations
     template<class Model, class Related>
     template<typename>
     const Relation<Model, Related> &
-    RelationProxies<Model, Related>::with(const QString &relation) const
+    RelationProxies<Model, Related>::with(QString relation) const
     {
-        getQuery().with(relation);
+        getQuery().with(std::move(relation));
 
         return this->relation();
     }
@@ -1307,14 +1315,15 @@ namespace Tiny::Relations
 
     template<class Model, class Related>
     const Relation<Model, Related> &
-    RelationProxies<Model, Related>::without(const QString &relation) const
+    RelationProxies<Model, Related>::without(QString relation) const
     {
-        getQuery().without(relation);
+        getQuery().without(std::move(relation));
 
         return this->relation();
     }
 
     template<class Model, class Related>
+    template<typename>
     const Relation<Model, Related> &
     RelationProxies<Model, Related>::withOnly(const QVector<WithItem> &relations) const
     {
@@ -1324,12 +1333,31 @@ namespace Tiny::Relations
     }
 
     template<class Model, class Related>
+    template<typename>
     const Relation<Model, Related> &
-    RelationProxies<Model, Related>::withOnly(const QString &relation) const
+    RelationProxies<Model, Related>::withOnly(QString relation) const
     {
-        getQuery().withOnly(relation);
+        getQuery().withOnly(std::move(relation));
 
         return this->relation();
+    }
+
+    template<class Model, class Related>
+    const Relation<Model, Related> &
+    RelationProxies<Model, Related>::withOnly(const QVector<QString> &relations) const
+    {
+        getQuery().withOnly(relations);
+
+        return relation();
+    }
+
+    template<class Model, class Related>
+    const Relation<Model, Related> &
+    RelationProxies<Model, Related>::withOnly(QVector<QString> &&relations) const
+    {
+        getQuery().withOnly(std::move(relations));
+
+        return relation();
     }
 
     /* Insert, Update, Delete */
