@@ -134,6 +134,7 @@ private Q_SLOTS:
     void where_QString_EQ() const;
     void where_quint64_NE() const;
     void where_quint64_GT() const;
+    void where_WithNullQVariant() const;
     void where_InvalidComparisonOperator_ThrowException() const;
 
     void whereNull_QString() const;
@@ -2288,6 +2289,30 @@ void tst_Collection_Relations::where_quint64_GT() const
     // Verify
     QCOMPARE(result.size(), 3);
     QVERIFY(Common::verifyIds(result, {4, 5, 6}));
+}
+
+void tst_Collection_Relations::where_WithNullQVariant() const
+{
+    auto album = Album::find(2);
+    QVERIFY(album);
+    QVERIFY(album->exists);
+    QCOMPARE(album->getKey(), QVariant(2));
+    QVERIFY(album->relationLoaded(Common::albumImages));
+
+    auto images = album->getRelation<AlbumImage>(Common::albumImages);
+    QCOMPARE(images.size(), 5);
+    QCOMPARE(typeid (ModelsCollection<AlbumImage *>), typeid (images));
+    QVERIFY(Common::verifyIds(images, {2, 3, 4, 5, 6}));
+
+    // Prepare
+    (*images[1])[NAME] = NullVariant::QString();
+
+    // Get result
+    const auto result = images.whereEq<QString>(NAME, "album2_image3");
+
+    // Verify
+    QCOMPARE(result.size(), 1);
+    QVERIFY(Common::verifyIds(result, {4}));
 }
 
 void tst_Collection_Relations::where_InvalidComparisonOperator_ThrowException() const
