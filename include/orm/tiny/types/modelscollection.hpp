@@ -267,51 +267,54 @@ namespace Types
         ModelsCollection<ModelRawType *>
         reject(const std::function<bool(ModelRawType *)> &callback);
 
-        /*! Filter models by the given key value pair. */
+        /*! Filter models by the given column value pair. */
         template<typename V>
         ModelsCollection<ModelRawType *>
-        where(const QString &key, const QString &comparison, V value);
-        /*! Filter models by the given key value pair. */
+        where(const QString &column, const QString &comparison, V value);
+        /*! Filter models by the given column value pair. */
         template<typename V>
-        ModelsCollection<ModelRawType *> whereEq(const QString &key, V value);
+        ModelsCollection<ModelRawType *> whereEq(const QString &column, V value);
 
-        /*! Filter models where the value for the given key is the null QVariant. */
-        ModelsCollection<ModelRawType *> whereNull(const QString &key);
-        /*! Filter models where the value for the given key is not the null QVariant. */
-        ModelsCollection<ModelRawType *> whereNotNull(const QString &key);
+        /*! Filter models where the value for the given column is the null QVariant. */
+        ModelsCollection<ModelRawType *> whereNull(const QString &column);
+        /*! Filter models where the value for the given column is not the null
+            QVariant. */
+        ModelsCollection<ModelRawType *> whereNotNull(const QString &column);
 
-        /*! Filter models by the given key values pair. */
+        /*! Filter models by the given column values pair. */
         template<typename T>
         ModelsCollection<ModelRawType *>
-        whereIn(const QString &key, const std::unordered_set<T> &values);
-        /*! Filter models by the given key values pair. */
+        whereIn(const QString &column, const std::unordered_set<T> &values);
+        /*! Filter models by the given column values pair. */
         template<typename T>
         ModelsCollection<ModelRawType *>
-        whereNotIn(const QString &key, const std::unordered_set<T> &values);
+        whereNotIn(const QString &column, const std::unordered_set<T> &values);
 
-        /*! Filter models such that the value of the given key is between the given
+        /*! Filter models such that the value of the given column is between the given
             values. */
         template<typename T>
         ModelsCollection<ModelRawType *>
-        whereBetween(const QString &key, const WhereBetweenCollectionItem<T> &values);
-        /*! Filter models such that the value of the given key is not between the given
-            values. */
+        whereBetween(const QString &column, const WhereBetweenCollectionItem<T> &values);
+        /*! Filter models such that the value of the given column is not between
+            the given values. */
         template<typename T>
         ModelsCollection<ModelRawType *>
-        whereNotBetween(const QString &key, const WhereBetweenCollectionItem<T> &values);
+        whereNotBetween(const QString &column,
+                        const WhereBetweenCollectionItem<T> &values);
 
-        /*! Get the first model by the given key value pair. */
+        /*! Get the first model by the given column value pair. */
         template<typename V>
-        ModelRawType *firstWhere(const QString &key, const QString &comparison, V value);
-        /*! Get the first model by the given key value pair. */
+        ModelRawType *
+        firstWhere(const QString &column, const QString &comparison, V value);
+        /*! Get the first model by the given column value pair. */
         template<typename V>
-        ModelRawType *firstWhereEq(const QString &key, V value);
+        ModelRawType *firstWhereEq(const QString &column, V value);
 
-        /*! Get a single key's value from the first matching model in the collection. */
-        QVariant value(const QString &key, const QVariant &defaultValue = {}) const;
-        /*! Get a single key's value from the first matching model in the collection. */
+        /*! Get a single column value from the first matching model in the collection. */
+        QVariant value(const QString &column, const QVariant &defaultValue = {}) const;
+        /*! Get a single column value from the first matching model in the collection. */
         template<typename T>
-        T value(const QString &key, const T &defaultValue = {}) const;
+        T value(const QString &column, const T &defaultValue = {}) const;
 
         /*! Execute a callback over each model. */
         ModelsCollection &
@@ -377,7 +380,7 @@ namespace Types
         /*! Get an operator checker callback. */
         template<typename V>
         std::function<bool(ModelRawType *)>
-        operatorForWhere(const QString &key, const QString &comparison, V value) const;
+        operatorForWhere(const QString &column, const QString &comparison, V value) const;
 
         /*! Convert the Collection<ModelRawType> to the Collection<ModelRawType *>. */
         ModelsCollection<ModelRawType *>
@@ -1152,69 +1155,69 @@ namespace Types
     template<DerivedCollectionModel Model>
     template<typename V>
     ModelsCollection<typename ModelsCollection<Model>::ModelRawType *>
-    ModelsCollection<Model>::where(const QString &key, const QString &comparison,
+    ModelsCollection<Model>::where(const QString &column, const QString &comparison,
                                    V value)
     {
-        return filter(operatorForWhere(key, comparison, std::move(value)));
+        return filter(operatorForWhere(column, comparison, std::move(value)));
     }
 
     template<DerivedCollectionModel Model>
     template<typename V>
     ModelsCollection<typename ModelsCollection<Model>::ModelRawType *>
-    ModelsCollection<Model>::whereEq(const QString &key, V value)
+    ModelsCollection<Model>::whereEq(const QString &column, V value)
     {
-        return filter(operatorForWhere(key, EQ, std::move(value)));
+        return filter(operatorForWhere(column, EQ, std::move(value)));
     }
 
     template<DerivedCollectionModel Model>
     ModelsCollection<typename ModelsCollection<Model>::ModelRawType *>
-    ModelsCollection<Model>::whereNull(const QString &key)
+    ModelsCollection<Model>::whereNull(const QString &column)
     {
-        return filter([&key](ModelRawType *const model)
+        return filter([&column](ModelRawType *const model)
         {
-            return model->getAttribute(key).isNull();
+            return model->getAttribute(column).isNull();
         });
     }
 
     template<DerivedCollectionModel Model>
     ModelsCollection<typename ModelsCollection<Model>::ModelRawType *>
-    ModelsCollection<Model>::whereNotNull(const QString &key)
+    ModelsCollection<Model>::whereNotNull(const QString &column)
     {
-        return filter([&key](ModelRawType *const model)
+        return filter([&column](ModelRawType *const model)
         {
-            return !model->getAttribute(key).isNull();
+            return !model->getAttribute(column).isNull();
         });
     }
 
     template<DerivedCollectionModel Model>
     template<typename T>
     ModelsCollection<typename ModelsCollection<Model>::ModelRawType *>
-    ModelsCollection<Model>::whereIn(const QString &key,
+    ModelsCollection<Model>::whereIn(const QString &column,
                                      const std::unordered_set<T> &values)
     {
         // Nothing to do, no values passed
         if (values.empty())
             return {};
 
-        return filter([&key, &values](ModelRawType *const model)
+        return filter([&column, &values](ModelRawType *const model)
         {
-            return values.contains(model->template getAttribute<T>(key));
+            return values.contains(model->template getAttribute<T>(column));
         });
     }
 
     template<DerivedCollectionModel Model>
     template<typename T>
     ModelsCollection<typename ModelsCollection<Model>::ModelRawType *>
-    ModelsCollection<Model>::whereNotIn(const QString &key,
+    ModelsCollection<Model>::whereNotIn(const QString &column,
                                         const std::unordered_set<T> &values)
     {
         // Nothing to do, no values passed, return a copy
         if (values.empty())
             return toPointersCollection();
 
-        return reject([&key, &values](ModelRawType *const model)
+        return reject([&column, &values](ModelRawType *const model)
         {
-            return values.contains(model->template getAttribute<T>(key));
+            return values.contains(model->template getAttribute<T>(column));
         });
     }
 
@@ -1222,11 +1225,11 @@ namespace Types
     template<typename T>
     ModelsCollection<typename ModelsCollection<Model>::ModelRawType *>
     ModelsCollection<Model>::whereBetween(
-            const QString &key, const WhereBetweenCollectionItem<T> &values)
+            const QString &column, const WhereBetweenCollectionItem<T> &values)
     {
-        return filter([&key, &values](ModelRawType *const model)
+        return filter([&column, &values](ModelRawType *const model)
         {
-            const auto attribute = model->getAttribute(key);
+            const auto attribute = model->getAttribute(column);
 
             // Null or invalid attributes can't be handled in any other way anyway
             if (attribute.isNull() || !attribute.isValid())
@@ -1242,11 +1245,11 @@ namespace Types
     template<typename T>
     ModelsCollection<typename ModelsCollection<Model>::ModelRawType *>
     ModelsCollection<Model>::whereNotBetween(
-            const QString &key, const WhereBetweenCollectionItem<T> &values)
+            const QString &column, const WhereBetweenCollectionItem<T> &values)
     {
-        return filter([&key, &values](ModelRawType *const model)
+        return filter([&column, &values](ModelRawType *const model)
         {
-            const auto attribute = model->getAttribute(key);
+            const auto attribute = model->getAttribute(column);
 
             // Null or invalid attributes can't be handled in any other way anyway
             if (attribute.isNull() || !attribute.isValid())
@@ -1261,23 +1264,23 @@ namespace Types
     template<DerivedCollectionModel Model>
     template<typename V>
     typename ModelsCollection<Model>::ModelRawType *
-    ModelsCollection<Model>::firstWhere(const QString &key, const QString &comparison,
+    ModelsCollection<Model>::firstWhere(const QString &column, const QString &comparison,
                                         V value)
     {
-        return first(operatorForWhere(key, comparison, std::move(value)));
+        return first(operatorForWhere(column, comparison, std::move(value)));
     }
 
     template<DerivedCollectionModel Model>
     template<typename V>
     typename ModelsCollection<Model>::ModelRawType *
-    ModelsCollection<Model>::firstWhereEq(const QString &key, V value)
+    ModelsCollection<Model>::firstWhereEq(const QString &column, V value)
     {
-        return first(operatorForWhere(key, EQ, std::move(value)));
+        return first(operatorForWhere(column, EQ, std::move(value)));
     }
 
     template<DerivedCollectionModel Model>
     QVariant
-    ModelsCollection<Model>::value(const QString &key,
+    ModelsCollection<Model>::value(const QString &column,
                                    const QVariant &defaultValue) const
     {
         // Nothing to do
@@ -1287,15 +1290,15 @@ namespace Types
         const ModelRawType *const model = toPointer(StorageType::constFirst());
 
         // Only one place where the nullptr is checked, it's needed
-        if (model == nullptr || !model->getAttributesHash().contains(key))
+        if (model == nullptr || !model->getAttributesHash().contains(column))
             return defaultValue;
 
-        return model->getAttribute(key);
+        return model->getAttribute(column);
     }
 
     template<DerivedCollectionModel Model>
     template<typename T>
-    T ModelsCollection<Model>::value(const QString &key, const T &defaultValue) const
+    T ModelsCollection<Model>::value(const QString &column, const T &defaultValue) const
     {
         // Nothing to do
         if (this->isEmpty())
@@ -1304,10 +1307,10 @@ namespace Types
         const ModelRawType *const model = toPointer(StorageType::constFirst());
 
         // Only one place where the nullptr is checked, it's needed
-        if (model == nullptr || !model->getAttributesHash().contains(key))
+        if (model == nullptr || !model->getAttributesHash().contains(column))
             return defaultValue;
 
-        return model->template getAttribute<T>(key);
+        return model->template getAttribute<T>(column);
     }
 
     template<DerivedCollectionModel Model>
@@ -1500,13 +1503,14 @@ namespace Types
     template<typename V>
     std::function<bool(typename ModelsCollection<Model>::ModelRawType *)>
     ModelsCollection<Model>::operatorForWhere(
-            const QString &key, const QString &comparison, V value) const
+            const QString &column, const QString &comparison, V value) const
     {
         throwIfInvalidWhereOperator(comparison);
 
-        return [&key, &comparison, value = std::move(value)](ModelRawType *const model)
+        return [&column, &comparison, value = std::move(value)]
+               (ModelRawType *const model)
         {
-            const auto attribute = model->getAttribute(key);
+            const auto attribute = model->getAttribute(column);
             const auto retrieved = attribute.template value<V>();
 
             static_assert (std::is_convertible_v<decltype (retrieved), V>,
