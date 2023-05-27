@@ -1,0 +1,781 @@
+---
+sidebar_position: 2
+sidebar_label: Collections
+description: The ModelsCollection is specialized container which provides a fluent, convenient wrapper for working with vector of models. Is much more powerful than vectors and expose a variety of map / reduce operations that may be chained using an intuitive interface. All TinyORM methods that return more than one model result will return instances of the ModelsCollection class.
+keywords: [c++ orm, orm, collections, collection, model, tinyorm]
+---
+
+# TinyORM: Collections
+
+- [Introduction](#introduction)
+    - [Creating Collections](#creating-collections)
+- [Available Methods](#available-methods)
+
+## Introduction
+
+The `Orm::Tiny::Types::ModelsCollection` is specialized container which provides a fluent, convenient wrapper for working with vector of models. All TinyORM methods that return more than one model result, will return instances of the `ModelsCollection` class, including results retrieved via the `get` method or methods that return relationships like the `getRelation` and `getRelationValue`.
+
+The `ModelsCollection` class extends `QVector<Model>`, so it naturally inherits dozens of methods used to work with the underlying vector of TinyORM models. Be sure to review the [`QList`](https://doc.qt.io/qt-6/qlist.html) documentation to learn all about these helpful methods!
+
+:::info
+The `ModelsCollection` template parameter can be declared only with the model type or a model type pointer, it also can't be `const` and can't be a reference. It's constrained using the `DerivedCollectionModel` concept.
+:::
+
+You can iterate over the `ModelsCollection` the same way as over the `QVector`:
+
+    using Models::User;
+
+    ModelsCollection<User> users = User::whereEq("active", true)->get();
+
+    for (const auto &user : users)
+        qDebug() << user.getAttribute<QString>("name");
+
+However, as previously mentioned, collections are much more powerful than vectors and expose a variety of map / reduce operations that may be chained using an intuitive interface. For example, we may remove all active users and then gather the first name of each remaining user:
+
+    auto names = User::all().reject([](User *const user)
+    {
+        return user->getAttribute<bool>("active");
+    })
+        .pluck("name");
+
+As you can see, the `ModelsCollection` class allows you to chain its methods to perform fluent mapping and reducing of the underlying vector. In general, collections are immutable, meaning every `ModelsCollection` method returns an entirely new `ModelsCollection` instance.
+
+:::info
+The `ModelsCollection<Model>` is returning from the Models' methods like `get`, `all`, `findMany`, `chunk`; the `ModelsCollection<Model *>` is returning from the relationship-related methods as `getRelation` and `getRelationValue`.
+:::
+
+#### Collection Conversion
+
+While most TinyORM collection methods return a new instance of `ModelsCollection`, the `modelKeys`, `mapWithKeys`, and `pluck` methods return a base QVector or std unordered/map instances. Likewise, one of the `map` methods overload returns the `QVector<T>`.
+
+### Creating Collections
+
+Creating a `ModelsCollection` is as simple as:
+
+    ModelsCollection<User> users {
+        {{"name", "Kate"}, {"votes", 150}},
+        {{"name", "John"}, {"votes", 200}},
+    };
+
+You can also create a collection of pointers, eg. `ModelsCollection<User *>`:
+
+    ModelsCollection<User *> userPointers {
+        &users[0], &users[1],
+    };
+
+The `ModelsCollection<Model>` is implicitly convertible and assignable from the `QVector<Model>`:
+
+    QVector<User> usersVector {
+        {{"name", "Kate"}, {"votes", 150}},
+        {{"name", "John"}, {"votes", 200}},
+    };
+
+    ModelsCollection<User> users(usersVector);
+    users = usersVector;
+
+:::note
+The results of [TinyORM](tinyorm/getting-started.mdx) queries are always returned as `ModelsCollection` instances.
+:::
+
+## Available Methods
+
+For the majority of the remaining collection documentation, we'll discuss each method available on the `ModelsCollection` class. Remember, all of these methods may be chained to fluently manipulate the underlying vector.
+
+Furthermore, almost every method returns a new `ModelsCollection` instance, allowing you to preserve the original copy of the collection when necessary:
+
+<div class="collection-methods-list">
+
+[contains](#method-contains)
+[doesntContain](#method-doesntcontain)
+[each](#method-each)
+[except](#method-except)
+[filter](#method-filter)
+[find](#method-find)
+[first](#method-first)
+[firstWhere](#method-first-where)
+[implode](#method-implode)
+[isEmpty](#method-isempty)
+[isNotEmpty](#method-isnotempty)
+[last](#method-last)
+[load](#method-load)
+[map](#method-map)
+[mapWithKeys](#method-mapwithkeys)
+[mapWithModelKeys](#method-mapwithmodelkeys)
+[modelKeys](#method-modelkeys)
+[only](#method-only)
+[pluck](#method-pluck)
+[reject](#method-reject)
+[tap](#method-tap)
+[toQuery](#method-toquery)
+[value](#method-value)
+[where](#method-where)
+[whereBetween](#method-wherebetween)
+[whereIn](#method-wherein)
+[whereNotBetween](#method-wherenotbetween)
+[whereNotIn](#method-wherenotin)
+[whereNotNull](#method-wherenotnull)
+[whereNull](#method-wherenull)
+
+</div>
+
+:::note
+For a better understanding of the following examples, many of the variable declarations below use actual types instead of the `auto` keyword.
+:::
+
+<div class='collection-methods'>
+
+#### `contains()` {#method-contains}
+
+The `contains` method may be used to determine if a given model instance is contained by the collection. This method accepts a primary key or a model instance:
+
+    users.contains(1);
+
+    users.contains(User::find(1));
+
+Alternatively, you may pass a lambda expression to the `contains` method to determine if a model exists in the collection matching a given truth test:
+
+    users.contains([](User *const user)
+    {
+        return user->getKeyCasted() == 2;
+    });
+
+For the inverse of `contains`, see the [doesntContain](#method-doesntcontain) method.
+
+#### `doesntContain()` {#method-doesntcontain}
+
+The `doesntContain` method determines whether the collection does not contain a given item. This method accepts a primary key or a model instance:
+
+    users.doesntContain(1);
+
+    users.doesntContain(User::find(1));
+
+Alternatively, you may pass a lambda expression to the `doesntContain` method to determine if a model does not exist in the collection matching a given truth test:
+
+    users.doesntContain([](User *const user)
+    {
+        return user->getKeyCasted() == 2;
+    });
+
+For the inverse of `doesntContain`, see the [contains](#method-contains) method.
+
+#### `each()` {#method-each}
+
+The `each` method iterates over the models in the collection and passes each model to the lambda expression:
+
+    ModelsCollection<User> users = Post::whereEq("user_id", 1)->get();
+
+    users.each([](User *const user)
+    {
+        // ...
+    });
+
+If you would like to stop iterating through the models, you may return `false` from your lambda expression:
+
+    users.each([](User *const user)
+    {
+        if (/* condition */)
+            return false;
+
+        // Some logic
+
+        return true;
+    });
+
+You may also pass the lambda expression with two parameters, whereas the second one is an index:
+
+    users.each([](User *const user, const std::size_t index)
+    {
+        // ...
+    });
+
+The `each` method returns an lvalue __reference__ to the currently processed collection.
+
+It can be also called on `ModelsCollection` rvalues, it returns an rvalue reference in this case.
+
+#### `except()` {#method-except}
+
+The `except` method returns all of the models that do not have the given primary keys:
+
+    ModelsCollection<User *> usersResult = users.except({1, 2, 3});
+
+All of the models are returned if the `ids` argument is empty `except({})`.
+
+The order of models in the collection is preserved.
+
+For the inverse of `except`, see the [only](#method-only) method.
+
+#### `filter()` {#method-filter}
+
+The `filter` method filters the collection using the lambda expression, keeping only those models that pass a given truth test:
+
+    auto usersBanned = users.filter([](User *const user)
+    {
+        return user->getAttribute<bool>("is_banned");
+    });
+
+You may also pass the lambda expression with two parameters, whereas the second one is an index:
+
+    auto usersBanned = users.filter([](User *const user,
+                                       const std::size_t index)
+    {
+        return index < 10 && user->getAttribute<bool>("is_banned");
+    });
+
+If no lambda expression is supplied, all models of the collection that are equivalent to the `nullptr` will be removed:
+
+    ModelsCollection<User> usersRaw = User::findMany({1, 2});
+    ModelsCollection<User *> users {&usersRaw[0], nullptr, &usersRaw[1]};
+
+    ModelsCollection<User *> filtered = users.filter();
+
+    // {1, 2}
+
+For the inverse of `filter`, see the [reject](#method-reject) method.
+
+#### `find()` {#method-find}
+
+The `find` method returns the model that has a primary key matching the given key:
+
+    User *const user = users.find(1);
+
+If you pass a model instance, `find` will attempt to return a model matching the primary key:
+
+    User *user = users.find(anotherUser);
+
+The two overloads above also accept the second `defaultModel` model argument, which will be returned if a model was not found in the collection, its default value is the `nullptr`.
+
+Alternatively, may pass more IDs and `find` will return all models which have a primary key within the given unordered set:
+
+    ModelsCollection<User *> usersMany = users.find({1, 2});
+
+This overload internally calls the [`only`](#method-only) method.
+
+#### `first()` {#method-first}
+
+The `first` method returns the first model in the collection that passes a given truth test:
+
+    ModelsCollection<User> users {
+        {{"name", "Kate"}, {"votes", 150}},
+        {{"name", "John"}, {"votes", 200}},
+        {{"name", "Jack"}, {"votes", 400}},
+    };
+
+    User *user = users.first([](User *const user)
+    {
+        return user->getAttribute<quint64>("votes") > 150;
+    });
+
+    // {{"name", "John"}, {"votes", 200}}
+
+If no model passes a given truth test then the value of the second `defaultModel` argument will be returned, its default value is the `nullptr`.
+
+    using NullVariant = Orm::Utils::NullVariant;
+
+    User defaultUser {{"name", NullVariant::QString()},
+                      {"votes", NullVariant::ULongLong()}};
+
+    User *user = users.first([](User *const user)
+    {
+        return user->getAttribute<quint64>("votes") > 500;
+    },
+        &defaultUser);
+
+    /*
+        {{"name", NullVariant::QString()},
+         {"votes", NullVariant::ULongLong()}}
+    */
+
+You can also call all `first` overloads provided by the [`QList::first`](https://doc.qt.io/qt-6/qlist.html#first).
+
+#### `firstWhere()` {#method-first-where}
+
+The `firstWhere` method returns the first model in the collection with the given column / value pair:
+
+    using NullVariant = Orm::Utils::NullVariant;
+
+    ModelsCollection<User> users {
+        {{"name", "Leon"}, {"age", NullVariant::UShort()}},
+        {{"name", "Jill"}, {"age", 14}},
+        {{"name", "Jack"}, {"age", 23}},
+        {{"name", "Jill"}, {"age", 84}},
+    };
+
+    auto user = users.firstWhereEq("name", "Linda");
+
+    // {{"name", "Jill"}, {"age", 14}}
+
+You may also call the `firstWhere` method with a comparison operator:
+
+    users.firstWhere("age", ">=", 18);
+
+    // {{"name", "Jack"}, {"age", 23}}
+
+#### `implode()` {#method-implode}
+
+The `implode` method joins attributes by the given column and the "glue" string you wish to place between the values:
+
+    ModelsCollection<Product> products {
+        {{"product", "Desk"},  {"price", 200}},
+        {{"product", "Chair"}, {"price", 100}},
+    };
+
+    products.implode("product", ", ");
+
+    // {Desk, Chair}
+
+The default "glue" value is an empty string "".
+
+#### `isEmpty()` {#method-isempty}
+
+The `isEmpty` method returns `true` if the collection is empty; otherwise, `false` is returned:
+
+    ModelsCollection<User>().isEmpty();
+
+    // true
+
+#### `isNotEmpty()` {#method-isnotempty}
+
+The `isNotEmpty` method returns `true` if the collection is not empty; otherwise, `false` is returned:
+
+    ModelsCollection<User>().isNotEmpty();
+
+    // false
+
+#### `last()` {#method-last}
+
+The `last` method returns the last model in the collection that passes a given truth test:
+
+    ModelsCollection<User> users {
+        {{"name", "Kate"}, {"votes", 150}},
+        {{"name", "John"}, {"votes", 200}},
+        {{"name", "Jack"}, {"votes", 400}},
+        {{"name", "Rose"}, {"votes", 350}},
+    };
+
+    User *user = users.last([](User *const user)
+    {
+        return user->getAttribute<quint64>("votes") < 300;
+    });
+
+    // {{"name", "John"}, {"votes", 200}}
+
+If no model passes a given truth test then the value of the second `defaultModel` argument will be returned, its default value is the `nullptr`.
+
+    using NullVariant = Orm::Utils::NullVariant;
+
+    User defaultUser {{"name",  NullVariant::QString()},
+                      {"votes", NullVariant::ULongLong()}};
+
+    User *user = users.last([](User *const user)
+    {
+        return user->getAttribute<quint64>("votes") < 100;
+    },
+        &defaultUser);
+
+    /*
+        {{"name", NullVariant::QString()},
+         {"votes", NullVariant::ULongLong()}}
+    */
+
+You can also call all `last` overloads provided by the [`QList::last`](https://doc.qt.io/qt-6/qlist.html#last).
+
+#### `load()` {#method-load}
+
+The `load` method eager loads the given relationships for all models in the collection:
+
+    users.load({{"comments"}, {"posts"}});
+
+    users.load("comments.author");
+
+    users.load({{"comments"}, {"posts", [](auto &query)
+    {
+        query.whereEq("active", true);
+    }}});
+
+The behavior is the same as for TinyBuilder's [`load`](relationships.mdx#lazy-eager-loading) method.
+
+#### `map()` {#method-map}
+
+The `map` method iterates through the collection and passes each model to the given lambda expression. The lambda expression is free to modify the model and return it, thus forming a new collection of modified models:
+
+    ModelsCollection<User> users {
+        {{"name", "John"}, {"votes", 200}},
+        {{"name", "Jack"}, {"votes", 400}},
+    };
+
+    auto usersAdded = users.map([](User *const user)
+    {
+        if (user->getAttribute<QString>("name") == "John")
+            (*user)["votes"] = user->getAttribute<quint64>("votes") + 1;
+
+        return user;
+    });
+
+    /*
+        {
+            {{"name", "John"}, {"price", 201}},
+            {{"name", "Jack"}, {"price", 400}},
+        }
+    */
+
+The second `map` overload allows to return the `QVector<T>`:
+
+    QVector<quint64> usersAdded = users.map<quint64>([](User *const user)
+    {
+        const auto votesRef = (*user)["votes"];
+
+        if (user->getAttribute<QString>("name") == "John")
+             votesRef = user->getAttribute<quint64>("votes") + 1;
+
+        return votesRef->value<quint64>();
+    });
+
+    // {201, 400}
+
+Both overloads allow to pass the lambda expression with two arguments, whereas the second argument can be an index of the `std::size_t` type.
+
+:::caution
+Like most other collection methods, `map` returns a new collection instance; it does not modify the collection it is called on. If you want to modify the original collection in place, use the [`each`](#method-each) method.
+:::
+
+#### `mapWithKeys()` {#method-mapwithkeys}
+
+The `mapWithKeys` method iterates through the collection and passes each model to the given lambda expression. It returns the `std::unordered_map<K, V>` and the lambda expression should return the `std::pair<K, V>` containing a single column / value pair:
+
+    ModelsCollection<User> users {
+        {{"id", 1}, {"name", "John"}, {"email", "john@example.com"}},
+        {{"id", 2}, {"name", "Jill"}, {"email", "jill@example.com"}},
+    };
+
+    auto usersMap = users.mapWithKeys<quint64, QString>(
+                        [](User *const user) -> std::pair<quint64, QString>
+    {
+        return {user->getKeyCasted(), user->getAttribute<QString>("name")};
+    });
+
+    // {{1, 'John'}, {2, 'Jill'}}
+
+You can also map IDs to the model pointers:
+
+    auto usersMap = users.mapWithKeys<quint64, User *>(
+                        [](User *const user) -> std::pair<quint64, User *>
+    {
+        return {user->getKeyCasted(), user};
+    });
+
+#### `mapWithModelKeys()` {#method-mapwithmodelkeys}
+
+The `mapWithModelKeys` maps the primary keys to the `Model *`, it returns the `std::unordered_map<Model::KeyType, Model *>`:
+
+    auto usersMap = users.mapWithModelKeys();
+
+#### `modelKeys()` {#method-modelkeys}
+
+The `modelKeys` method returns the primary keys for all models in the collection:
+
+    ModelsCollection<User> users {
+        {{"id", 1}, {"name", "John"}},
+        {{"id", 2}, {"name", "Jill"}},
+        {{"id", 3}, {"name", "Kate"}},
+        {{"id", 5}, {"name", "Rose"}},
+    };
+
+    users.modelKeys(); // Returns QVector<QVariant>
+    users.modelKeys<quint64>();
+
+    // {1, 2, 3, 5}
+
+#### `only()` {#method-only}
+
+The `only` method returns all of the models that have the given primary keys:
+
+    ModelsCollection<User *> usersResult = users.only({1, 2, 3});
+
+An empty collection is returned if the `ids` argument is empty `only({})`.
+
+The order of models in the collection is preserved.
+
+For the inverse of `only`, see the [except](#method-except) method.
+
+#### `pluck()` {#method-pluck}
+
+The `pluck` method retrieves all of the values for a given column, the following overload returns the `QVector<QVariant>`:
+
+    ModelsCollection<Product> products {
+        {{"id", 1}, {"name", "Desk"}},
+        {{"id", 2}, {"name", "Chair"}},
+    };
+
+    auto plucked = products.pluck("name");
+
+    // {Desk, Chair}
+
+You may also specify how you wish the resulting collection to be keyed, this overload returns the `std::map<T, QVariant>`:
+
+    auto plucked = products.pluck<quint64>("name", "id");
+
+    // {{1, "Desk"}, {2, "Chair"}}
+
+If duplicate keys exist, the last matching attribute will be inserted into the plucked collection:
+
+    ModelsCollection<Product> collection {
+        {{"brand", "Tesla"},  {"color", "red"}},
+        {{"brand", "Pagani"}, {"color", "white"}},
+        {{"brand", "Tesla"},  {"color", "black"}},
+        {{"brand", "Pagani"}, {"color", "orange"}},
+    };
+
+    auto plucked = collection.pluck<QString>("color", "brand");
+
+    // {{'Tesla', 'black'}, {'Pagani', 'orange"}}
+
+#### `reject()` {#method-reject}
+
+The `reject` method filters the collection using the given lambda expression. The lambda should return `true` if the model should be removed from the resulting collection:
+
+    auto usersWithNote = users.reject([](User *const user)
+    {
+        return user->getAttribute("note").isNull();
+    });
+
+You may also pass the lambda expression with two arguments, whereas the second argument can be an index of the `std::size_t` type.
+
+For the inverse of the `reject` method, see the [`filter`](#method-filter) method.
+
+#### `tap()` {#method-tap}
+
+The `tap` method passes a collection to the given lambda expression, allowing you to "tap" into the collection at a specific point and do something with the models while not affecting the collection itself:
+
+    using Models::User;
+
+    auto users = User::whereEq("status", "VIP")->get();
+
+    users.tap([](ModelsCollection<User> &usersRef)
+    {
+        // ...
+    });
+
+The `tap` method returns an lvalue __reference__ to the currently processed collection.
+
+It can be also called on `ModelsCollection` rvalues, it returns an rvalue reference in this case.
+
+#### `toQuery()` {#method-toquery}
+
+The `toQuery` method returns the `TinyBuilder` instance containing a `whereIn` constraint with the collection models' primary keys:
+
+    using Models::User;
+
+    ModelsCollection<User> users = User::whereEq("status", "VIP")->get();
+
+    users.toQuery()->update({
+        {"status", "Administrator"},
+    });
+
+#### `value()` {#method-value}
+
+The `value` method retrieves a given value from the first model of the collection:
+
+    ModelsCollection<User> users {
+        {{"name", "John"}, {"votes", 200}},
+        {{"name", "Jack"}, {"votes", 400}},
+    };
+
+    QVariant votes = users.value("votes");
+
+    // 200
+
+Alternatively, you can cast an obtained `QVariant` value to the given type by the second `value` overload:
+
+    quint64 votes = users.value<quint64>("votes");
+
+The `value` method also accepts the second `defaultValue` argument, which will be returned if a collection is empty, the first model is `nullptr`, or a model doesn't contain the given column:
+
+    auto votes = ModelsCollection<User>().value("votes", 0);
+
+    // 0
+
+You can also call all `value` overloads provided by the [`QList::value`](https://doc.qt.io/qt-6/qlist.html#value).
+
+#### `where()` {#method-where}
+
+The `where` method filters the collection by a given column / value pair:
+
+    ModelsCollection<Product> products {
+        {{"product", "Desk"},     {"price", 200}},
+        {{"product", "Chair"},    {"price", 100}},
+        {{"product", "Bookcase"}, {"price", 150}},
+        {{"product", "Door"},     {"price", 100}},
+    };
+
+    auto filtered = products.where("price", "=", 100);
+
+    /*
+        {
+            {{"product", "Chair"}, {"price", 100}},
+            {{"product", "Door"},  {"price", 100}},
+        }
+    */
+
+For convenience, if you want to verify that a column is `=` to a given value, you may call `whereEq` method. Similar `XxxEq` methods are also defined for other commands:
+
+    auto filtered = products.whereEq("price", 100);
+
+Optionally, you may pass a comparison operator as the second argument.<br/>Supported operators are `=`, `!=`, `<`, `>`, `<=`, and `>=`:
+
+    ModelsCollection<Product> products {
+        {{"product", "Desk"},     {"price", 200}},
+        {{"product", "Chair"},    {"price", 100}},
+        {{"product", "Bookcase"}, {"price", 150}},
+        {{"product", "Door"},     {"price", 250}},
+    };
+
+    auto filtered = products.where("price", ">", 150);
+
+    /*
+        {
+            {{"product", "Desk"}, {"price", 200}},
+            {{"product", "Door"}, {"price", 250}},
+        }
+    */
+
+#### `whereBetween()` {#method-wherebetween}
+
+The `whereBetween` method filters the collection by determining if a specified models' attribute value is within a given range:
+
+    ModelsCollection<Product> products {
+        {{"product", "Desk"},     {"price", 200}},
+        {{"product", "Chair"},    {"price",  80}},
+        {{"product", "Bookcase"}, {"price", 150}},
+        {{"product", "Pencil"},   {"price",  30}},
+        {{"product", "Door"},     {"price", 100}},
+    };
+
+    auto filtered = products.whereBetween<quint64>("price", {100, 200});
+
+    /*
+        {
+            {{"product", "Desk"},     {"price", 200}},
+            {{"product", "Bookcase"}, {"price", 150}},
+            {{"product", "Door"},     {"price", 100}},
+        }
+    */
+
+#### `whereIn()` {#method-wherein}
+
+The `whereIn` method filters models from the collection that have a specified attribute value that is contained within the given unordered set:
+
+    ModelsCollection<Product> products {
+        {{"product", "Desk"},     {"price", 200}},
+        {{"product", "Chair"},    {"price", 100}},
+        {{"product", "Bookcase"}, {"price", 150}},
+        {{"product", "Door"},     {"price", 250}},
+    };
+
+    auto filtered = products.whereIn<quint64>("price", {100, 200});
+
+    /*
+        {
+            {{"product", "Desk"},  {"price", 200}},
+            {{"product", "Chair"}, {"price", 100}},
+        }
+    */
+
+An empty collection is returned if the `values` argument is empty `whereIn("price", {})`.
+
+The order of models in the collection is preserved.
+
+#### `whereNotBetween()` {#method-wherenotbetween}
+
+The `whereNotBetween` method filters the collection by determining if a specified models' attribute value is outside of a given range:
+
+    ModelsCollection<Product> products {
+        {{"product", "Desk"},     {"price", 200}},
+        {{"product", "Chair"},    {"price",  80}},
+        {{"product", "Bookcase"}, {"price", 150}},
+        {{"product", "Pencil"},   {"price",  30}},
+        {{"product", "Door"},     {"price", 100}},
+    };
+
+    auto filtered = products.whereNotBetween<quint64>("price", {100, 200});
+
+    /*
+        {
+            {{"product", "Chair"},  {"price", 80}},
+            {{"product", "Pencil"}, {"price", 30}},
+        }
+    */
+
+#### `whereNotIn()` {#method-wherenotin}
+
+The `whereNotIn` method removes models from the collection that have a specified attribute value that is contained within the given unordered set:
+
+    ModelsCollection<Product> products {
+        {{"product", "Desk"},     {"price", 200}},
+        {{"product", "Chair"},    {"price", 100}},
+        {{"product", "Bookcase"}, {"price", 150}},
+        {{"product", "Door"},     {"price", 250}},
+    };
+
+    auto filtered = products.whereNotIn<quint64>("price", {100, 200});
+
+    /*
+        {
+            {{"product", "Bookcase"},  {"price", 150}},
+            {{"product", "Door"},      {"price", 250}},
+        }
+    */
+
+All of the models are returned if the `values` argument is empty `whereNotIn("price", {})`.
+
+The order of models in the collection is preserved.
+
+#### `whereNotNull()` {#method-wherenotnull}
+
+The `whereNotNull` method returns models from the collection where the given column is not `null` QVariant:
+
+    #include <orm/utils/nullvariant.hpp>
+
+    using NullVariant = Orm::Utils::NullVariant;
+
+    ModelsCollection<User> users {
+        {{"name", "John"}},
+        {{"name", NullVariant::QString()}},
+        {{"name", "Jack"}},
+    };
+
+    auto filtered = users.whereNotNull("name");
+
+    /*
+        {
+            {{"name", "John"}},
+            {{"name", "Jack"}},
+        }
+    */
+
+:::note
+The `NullVariant` class returns the correct `null` QVariant for both Qt 5 `QVariant(QVariant::String)` and also Qt 6 `QVariant(QMetaType(QMetaType::QString))`.
+:::
+
+#### `whereNull()` {#method-wherenull}
+
+The `whereNull` method returns models from the collection where the given column is `null` QVariant:
+
+    #include <orm/utils/nullvariant.hpp>
+
+    using NullVariant = Orm::Utils::NullVariant;
+
+    ModelsCollection<User> users {
+        {{"name", "John"}},
+        {{"name", NullVariant::QString()}},
+        {{"name", "Jack"}},
+    };
+
+    auto filtered = users.whereNotNull("name");
+
+    // {{"name", NullVariant::QString()}}
+
+:::note
+The `NullVariant` class returns the correct `null` QVariant for both Qt 5 `QVariant(QVariant::String)` and also Qt 6 `QVariant(QMetaType(QMetaType::QString))`.
+:::
+
+</div>

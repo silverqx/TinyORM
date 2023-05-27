@@ -40,6 +40,7 @@ Whole library is documented as markdown documents:
 - [TinyORM](/docs/tinyorm#tinyorm)
   - [Getting Started](/docs/tinyorm/getting-started.mdx#tinyorm-getting-started)
   - [Relationships](/docs/tinyorm/relationships.mdx#tinyorm-relationships)
+  - [Collections](/docs/tinyorm/collections.mdx#tinyorm-collections)
   - [Casts](/docs/tinyorm/casts.mdx#tinyorm-casting)
 - [Building](/docs/building#building)
   - [TinyORM](/docs/building/tinyorm.mdx#building-tinyorm)
