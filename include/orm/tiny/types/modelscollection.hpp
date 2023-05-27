@@ -95,6 +95,16 @@ namespace Types
         /*! Converting constructor from the QVector<Model>. */
         ModelsCollection(const QVector<Model> &models) // NOLINT(google-explicit-constructor)
         requires (!IsPointersCollection);
+        /*! Converting constructor from the QVector<Model>. */
+        ModelsCollection(QVector<Model> &&models) noexcept // NOLINT(google-explicit-constructor)
+        requires (!IsPointersCollection);
+
+        /*! Converting copy assignment operator from the QVector<Model>. */
+        ModelsCollection<Model> &operator=(const QVector<Model> &models)
+        requires (!IsPointersCollection);
+        /*! Converting move assignment operator from the QVector<Model>. */
+        ModelsCollection<Model> &operator=(QVector<Model> &&models) noexcept
+        requires (!IsPointersCollection);
 
         /* Comparison operators */
         /*! Equality comparison operator for the ModelsCollection. */
@@ -404,6 +414,36 @@ namespace Types
     {
         for (const auto &model : models)
             this->push_back(model);
+    }
+
+    template<DerivedCollectionModel Model>
+    ModelsCollection<Model>::ModelsCollection(QVector<Model> &&models) noexcept
+    requires (!IsPointersCollection)
+    {
+        for (auto &&model : models)
+            this->push_back(std::move(model));
+    }
+
+    template<DerivedCollectionModel Model>
+    ModelsCollection<Model> &
+    ModelsCollection<Model>::operator=(const QVector<Model> &models)
+    requires (!IsPointersCollection)
+    {
+        for (const auto &model : models)
+            this->push_back(model);
+
+        return *this;
+    }
+
+    template<DerivedCollectionModel Model>
+    ModelsCollection<Model> &
+    ModelsCollection<Model>::operator=(QVector<Model> &&models) noexcept
+    requires (!IsPointersCollection)
+    {
+        for (auto &&model : models)
+            this->push_back(std::move(model));
+
+        return *this;
     }
 
     /* Comparison operators */
