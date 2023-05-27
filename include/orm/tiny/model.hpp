@@ -201,9 +201,9 @@ namespace Orm::Tiny
         template<typename = void>
         Derived &load(QString relation);
         /*! Eager load relations on the model. */
-        Derived &load(const QVector<QString> &relations);
+        inline Derived &load(const QVector<QString> &relations);
         /*! Eager load relations on the model. */
-        Derived &load(QVector<QString> &&relations);
+        inline Derived &load(QVector<QString> &&relations);
 
         /*! Determine if two models have the same ID and belong to the same table. */
         template<ModelConcept ModelToCompare>
@@ -909,26 +909,14 @@ namespace Orm::Tiny
     Derived &
     Model<Derived, AllRelations...>::load(const QVector<QString> &relations)
     {
-        QVector<WithItem> relationsConverted;
-        relationsConverted.reserve(relations.size());
-
-        for (const auto &relation : relations)
-            relationsConverted.append({relation});
-
-        return load(relationsConverted);
+        return load(WithItem::fromStringVector(relations));
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     Derived &
     Model<Derived, AllRelations...>::load(QVector<QString> &&relations)
     {
-        QVector<WithItem> relationsConverted;
-        relationsConverted.reserve(relations.size());
-
-        for (auto &&relation : relations)
-            relationsConverted.append({std::move(relation)});
-
-        return load(relationsConverted);
+        return load(WithItem::fromStringVector(std::move(relations)));
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>

@@ -64,10 +64,15 @@ namespace Types
     operator==(const AttributeItem &left, const AttributeItem &right);
 
     /*! Eager load relation item. */
-    struct WithItem
+    struct SHAREDLIB_EXPORT WithItem
     {
         QString name;
         std::function<void(QueryBuilder &)> constraints = nullptr;
+
+        /*! Create the QVector<WithItem> from the QVector<QString>. */
+        static QVector<WithItem> fromStringVector(const QVector<QString> &relations);
+        /*! Create the QVector<WithItem> from the QVector<QString>. */
+        static QVector<WithItem> fromStringVector(QVector<QString> &&relations);
     };
 
     /*! Equality comparison operator for the WithItem. */

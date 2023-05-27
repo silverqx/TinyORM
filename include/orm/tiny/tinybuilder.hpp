@@ -163,23 +163,31 @@ namespace Orm::Tiny
         Builder &with(const QVector<WithItem> &relations);
         /*! Set the relationships that should be eager loaded. */
         template<typename = void>
-        Builder &with(const QString &relation);
+        Builder &with(QString relation);
         /*! Set the relationships that should be eager loaded. */
-        Builder &with(const QVector<QString> &relations);
+        inline Builder &with(const QVector<QString> &relations);
         /*! Set the relationships that should be eager loaded. */
-        Builder &with(QVector<QString> &&relations);
+        inline Builder &with(QVector<QString> &&relations);
 
         /*! Prevent the specified relations from being eager loaded. */
         Builder &without(const QVector<QString> &relations);
         /*! Prevent the specified relations from being eager loaded. */
-        Builder &without(const QString &relation);
+        inline Builder &without(QString relation);
 
         /*! Set the relationships that should be eager loaded while removing
             any previously added eager loading specifications. */
+        template<typename = void>
         Builder &withOnly(const QVector<WithItem> &relations);
         /*! Set the relationship that should be eager loaded while removing
             any previously added eager loading specifications. */
-        Builder &withOnly(const QString &relation);
+        template<typename = void>
+        Builder &withOnly(QString relation);
+        /*! Set the relationships that should be eager loaded while removing
+            any previously added eager loading specifications. */
+        inline Builder &withOnly(const QVector<QString> &relations);
+        /*! Set the relationships that should be eager loaded while removing
+            any previously added eager loading specifications. */
+        inline Builder &withOnly(QVector<QString> &&relations);
 
         /* Insert, Update, Delete */
         /*! Save a new model and return the instance. */
@@ -774,35 +782,23 @@ namespace Orm::Tiny
     template<typename Model>
     template<typename>
     Builder<Model> &
-    Builder<Model>::with(const QString &relation)
+    Builder<Model>::with(QString relation)
     {
-        return with(QVector<WithItem> {{relation}});
+        return with(QVector<WithItem> {{std::move(relation)}});
     }
 
     template<typename Model>
     Builder<Model> &
     Builder<Model>::with(const QVector<QString> &relations)
     {
-        QVector<WithItem> relationsConverted;
-        relationsConverted.reserve(relations.size());
-
-        for (const auto &relation : relations)
-            relationsConverted.append({relation});
-
-        return with(relationsConverted);
+        return with(WithItem::fromStringVector(relations));
     }
 
     template<typename Model>
     Builder<Model> &
     Builder<Model>::with(QVector<QString> &&relations)
     {
-        QVector<WithItem> relationsConverted;
-        relationsConverted.reserve(relations.size());
-
-        for (auto &relation : relations)
-            relationsConverted.append({std::move(relation)});
-
-        return with(relationsConverted);
+        return with(WithItem::fromStringVector(std::move(relations)));
     }
 
     template<typename Model>
@@ -822,12 +818,13 @@ namespace Orm::Tiny
 
     template<typename Model>
     Builder<Model> &
-    Builder<Model>::without(const QString &relation)
+    Builder<Model>::without(QString relation)
     {
-        return without(QVector<QString> {relation});
+        return without(QVector<QString> {std::move(relation)});
     }
 
     template<typename Model>
+    template<typename>
     Builder<Model> &
     Builder<Model>::withOnly(const QVector<WithItem> &relations)
     {
@@ -837,10 +834,25 @@ namespace Orm::Tiny
     }
 
     template<typename Model>
+    template<typename>
     Builder<Model> &
-    Builder<Model>::withOnly(const QString &relation)
+    Builder<Model>::withOnly(QString relation)
     {
-        return withOnly(QVector<WithItem> {{relation}});
+        return withOnly(QVector<WithItem> {{std::move(relation)}});
+    }
+
+    template<typename Model>
+    Builder<Model> &
+    Builder<Model>::withOnly(const QVector<QString> &relations)
+    {
+        return withOnly(WithItem::fromStringVector(relations));
+    }
+
+    template<typename Model>
+    Builder<Model> &
+    Builder<Model>::withOnly(QVector<QString> &&relations)
+    {
+        return withOnly(WithItem::fromStringVector(std::move(relations)));
     }
 
     /* Insert, Update, Delete */

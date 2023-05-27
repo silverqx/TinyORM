@@ -23,6 +23,30 @@ bool operator==(const AttributeItem &left, const AttributeItem &right)
 
 /* public */
 
+QVector<WithItem>
+WithItem::fromStringVector(const QVector<QString> &relations)
+{
+    QVector<WithItem> relationsConverted;
+    relationsConverted.reserve(relations.size());
+
+    for (const auto &relation : relations)
+        relationsConverted.append({relation});
+
+    return relationsConverted;
+}
+
+QVector<WithItem>
+WithItem::fromStringVector(QVector<QString> &&relations)
+{
+    QVector<WithItem> relationsConverted;
+    relationsConverted.reserve(relations.size());
+
+    for (auto &&relation : relations)
+        relationsConverted.append({std::move(relation)});
+
+    return relationsConverted;
+}
+
 bool operator==(const WithItem &left, const WithItem &right)
 {
     return left.name == right.name;
