@@ -529,7 +529,7 @@ As you have already learned, working with many-to-many relations requires the pr
 
     for (auto *role : user->getRelationValue<Role>("roles"))
         qDebug() << role->getRelation<Pivot, Orm::One>("pivot")
-                        ->getAttribute("created_at");
+                    ->getAttribute("created_at");
 
 Notice that each `Role` model we retrieve has automatically assigned a `pivot` relationship. This relation contains a model representing the intermediate table and it is an instance of the `Orm::Tiny::Relations::Pivot` model class.
 
@@ -582,7 +582,7 @@ Once the custom intermediate table relation name has been specified, you may acc
     for (auto &user : users)
         for (auto *podcast : user.getRelation<Podcast>("podcasts"))
             qDebug() << podcast->getRelation<Pivot, Orm::One>("subscription")
-                               ->getAttribute("created_at");
+                        ->getAttribute("created_at");
 
 ### Defining Custom Intermediate Table Models
 
@@ -692,7 +692,7 @@ Once the custom pivot model `RoleUser` has been defined, `getRelation` or `getRe
     for (auto &user : users)
         for (auto *role : user.getRelation<Role>("roles"))
             qDebug() << role->getRelation<RoleUser, Orm::One>("pivot")
-                            ->getAttribute("created_at");
+                        ->getAttribute("created_at");
 
 :::caution
 Custom Pivot models may not use the `SoftDeletes` base class. If you need to soft delete pivot records consider converting your pivot model to an actual TinyORM model.

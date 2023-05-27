@@ -181,7 +181,8 @@ And paste the following code.
         auto posts = DB::select("select * from posts");
 
         while(posts.next())
-            qDebug() << posts.value("id").toULongLong() << posts.value("name").toString();
+            qDebug() << posts.value("id").toULongLong()
+                     << posts.value("name").toString();
     }
 
 ## Hello world with CMake
