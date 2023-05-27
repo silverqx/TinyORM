@@ -18,7 +18,7 @@ The following list fastly summarizes all the `TinyORM` features.
 - __simple database connections management__ 🧬
   - database manager that helps with the database connections management
   - `Orm::DB` facade class for nicer and shorter syntax
-  - MySQL, SQLite, and PostgreSQL support for all features
+  - MySQL, MariaDB, SQLite, and PostgreSQL support for __all__ features 💎
   - multi-threading support 👀
   - __SSL__ connections support 🔒
 - __impressive query builder__ 🔧
@@ -34,8 +34,9 @@ The following list fastly summarizes all the `TinyORM` features.
   - __correct QDateTime time zone__ using the `qt_timezone` connection configuration option 📅 (returned QDateTime instances will have the correct time zone, and also works for an ORM)
     - this feature allows you to set up the database server time zone to the UTC and all returned QDateTime instances will have the correct UTC time zone
 - __clever ORM with all relation types support__ 🎉
-  - one-to-one, one-to-many, and many-to-many relation types (also inverse relationships)
+  - one-to-one, one-to-many, and many-to-many relation types (also inverse relationships) 🧨
   - eager and lazy loading with custom select and constraints 🚀
+  - fluent `ModelsCollection` that expose a variety of map / reduce operations that may be chained using an intuitive interface ✨
   - all query builder methods are proxied from the model instances and also from the relation instances back to the query builder 🤯 (everything that can be called on the query builder can also be called on the model and relation instances)
   - clean active record pattern
   - advanced features like timestamps, touching parent timestamps, __soft deleting__, default models, default model attributes, and attribute casting
