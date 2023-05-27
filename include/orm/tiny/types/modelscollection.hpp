@@ -204,9 +204,10 @@ namespace Types
         std::unordered_map<K, V>
         mapWithKeys(const std::function<std::pair<K, V>(ModelRawType *)> &callback);
 
-        /*! Return only the models from the collection with specified keys. */
+        /*! Return only the models from the collection with specified primary keys. */
         ModelsCollection<ModelRawType *> only(const std::unordered_set<KeyType> &ids);
-        /*! Return all models in the collection except the models with specified keys. */
+        /*! Return all models in the collection except the models with specified
+            primary keys. */
         ModelsCollection<ModelRawType *> except(const std::unordered_set<KeyType> &ids);
 
         /*! Get a vector with the values in the given column. */
@@ -236,7 +237,7 @@ namespace Types
             the Model::is()). */
         bool doesntContain(const std::optional<ModelRawType> &model);
 
-        /*! Find a model in the collection by key. */
+        /*! Find a model in the collection by primary key. */
         ModelRawType *find(KeyType id, ModelRawType *defaultModel = nullptr);
         /*! Find a model in the collection by another model (using its ID). */
         ModelRawType *
@@ -1514,7 +1515,7 @@ namespace Types
             const auto retrieved = attribute.template value<V>();
 
             static_assert (std::is_convertible_v<decltype (retrieved), V>,
-                    "The retrieved attribute (using the key) is not convertible "
+                    "The retrieved attribute value (using the key) is not convertible "
                     "to the V type for comparison.");
 
             // Null or invalid attributes can't be handled in any other way anyway
