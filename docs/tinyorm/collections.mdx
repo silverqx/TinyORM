@@ -510,6 +510,10 @@ The `pluck` method retrieves all of the values for a given column, the following
 
     // {Desk, Chair}
 
+The second overload allows returning the custom type `QVector<T>`:
+
+    auto plucked = products.pluck<QString>("name");
+
 You may also specify how you wish the resulting collection to be keyed, this overload returns the `std::map<T, QVariant>`:
 
     auto plucked = products.pluck<quint64>("name", "id");

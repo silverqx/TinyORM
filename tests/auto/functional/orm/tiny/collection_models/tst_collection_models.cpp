@@ -91,6 +91,7 @@ private Q_SLOTS:
     void except_Empty() const;
 
     void pluck() const;
+    void pluck_CustomType() const;
     void pluck_KeyedById() const;
     void pluck_KeyedById_LastDuplicate() const;
 
@@ -912,6 +913,30 @@ void tst_Collection_Models::pluck() const
     QCOMPARE(result.size(), 5);
 
     QVector<QVariant> expected {
+        QString("album2_image1"),
+        QString("album2_image2"),
+        QString("album2_image3"),
+        QString("album2_image4"),
+        QString("album2_image5"),
+    };
+    QCOMPARE(result, expected);
+}
+
+void tst_Collection_Models::pluck_CustomType() const
+{
+    auto images = AlbumImage::whereEq(Common::album_id, 2)->get();
+    QCOMPARE(images.size(), 5);
+    QCOMPARE(typeid (ModelsCollection<AlbumImage>), typeid (images));
+    QVERIFY(Common::verifyIds(images, {2, 3, 4, 5, 6}));
+
+    // Get result
+    const auto result = images.pluck<QString>(NAME);
+
+    // Verify
+    QCOMPARE(result.size(), 5);
+    QCOMPARE(typeid (result), typeid (QVector<QString>));
+
+    QVector<QString> expected {
         QString("album2_image1"),
         QString("album2_image2"),
         QString("album2_image3"),

@@ -222,6 +222,9 @@ namespace Types
 
         /*! Get a vector with the values in the given column. */
         QVector<QVariant> pluck(const QString &column);
+        /*! Get a vector with the values in the given column. */
+        template<typename T>
+        QVector<T> pluck(const QString &column);
         /*! Get a map with values in the given column and keyed by values in the key
             column (attribute). */
         template<typename T>
@@ -959,6 +962,29 @@ namespace Types
                 // Don't handle the null and not valid
                 result << modelPointer->getAttributes().at(attributesHash.at(column))
                           .value;
+        }
+
+        return result;
+    }
+
+    template<DerivedCollectionModel Model>
+    template<typename T>
+    QVector<T>
+    ModelsCollection<Model>::pluck(const QString &column)
+    {
+        QVector<T> result;
+        result.reserve(this->size());
+
+        for (ModelLoopType model : *this) {
+            ModelRawType *const modelPointer = toPointer(model);
+
+            // Don't handle the nullptr
+            if (const auto &attributesHash = modelPointer->getAttributesHash();
+                attributesHash.contains(column)
+            )
+                // Don't handle the null and not valid
+                result << modelPointer->getAttributes().at(attributesHash.at(column))
+                          .value.template value<T>();
         }
 
         return result;
