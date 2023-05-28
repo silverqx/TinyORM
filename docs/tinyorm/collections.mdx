@@ -383,7 +383,7 @@ You can also call all `last` overloads provided by the [`QList::last`](https://d
 
 The `load` method eager loads the given relationships for all models in the collection:
 
-    users.load({{"comments"}, {"posts"}});
+    users.load({"comments", "posts"});
 
     users.load("comments.author");
 

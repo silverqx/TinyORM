@@ -978,7 +978,7 @@ select * from authors where id in (1, 2, 3, 4, 5, ...)
 
 Sometimes you may need to eager load several different relationships. To do so, just pass a `QVector<Orm::WithItem>` of relationships to the `with` method:
 
-    auto books = Book::with({{"author"}, {"publisher"}})->get();
+    auto books = Book::with({"author", "publisher"})->get();
 
 #### Nested Eager Loading
 
@@ -1071,7 +1071,7 @@ Sometimes you may need to eager load a relationship after the parent model has a
 
 You may load more relationships at once, to do so, just pass a `QVector<Orm::WithItem>` of relationships to the `load` method:
 
-    Book::find(1)->load({{"author"}, {"publisher"}});
+    Book::find(1)->load({"author", "publisher"});
 
 :::note
 So far, this only works on models, not on containers returned from Model's `get` or `all` methods.
