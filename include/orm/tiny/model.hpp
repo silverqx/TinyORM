@@ -1093,21 +1093,12 @@ namespace Orm::Tiny
     std::unique_ptr<TinyBuilder<Derived>>
     Model<Derived, AllRelations...>::newQueryWithoutScopes()
     {
-        // Transform the QString vector to the WithItem vector
-        const auto &relations = model().u_with;
-
-        QVector<WithItem> relationsConverted;
-        relationsConverted.reserve(relations.size());
-
-        for (const auto &relation : relations)
-            relationsConverted.append({relation});
-
         // Ownership of a unique_ptr()
-        auto tinyBuilder = newModelQuery();
+        auto builder = newModelQuery();
 
-        tinyBuilder->with(std::move(relationsConverted));
+        builder->with(model().u_with);
 
-        return tinyBuilder;
+        return builder;
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
