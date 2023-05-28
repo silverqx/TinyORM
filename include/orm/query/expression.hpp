@@ -39,7 +39,7 @@ namespace Orm::Query
         /*! Move assignment operator. */
         inline Expression &operator=(Expression &&) noexcept = default;
 
-        /*! Converting operator, QVariant(Expression). */
+        /*! Converting operator to the QVariant. */
         inline operator QVariant() const; // NOLINT(google-explicit-constructor)
 
         /*! Obtain expression's value. */

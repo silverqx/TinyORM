@@ -171,7 +171,7 @@ namespace Orm::Tiny::Concerns
             inline QVariant value() const;
             /*! Accesses the contained value. */
             inline QVariant operator*() const;
-            /*! Converting operator to the QVariant type. */
+            /*! Converting operator to the QVariant. */
             inline operator QVariant() const; // NOLINT(google-explicit-constructor)
 
         private:
