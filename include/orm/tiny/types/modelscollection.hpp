@@ -264,14 +264,26 @@ namespace Types
 
         /* Collection - Relations related */
         /*! Load a set of relationships onto the collection. */
+        template<typename = void>
         ModelsCollection &load(const QVector<WithItem> &relations) &;
         /*! Load a set of relationships onto the collection. */
-        inline ModelsCollection &load(const QString &relation) &;
+        template<typename = void>
+        ModelsCollection &load(const QString &relation) &;
+        /*! Load a set of relationships onto the collection. */
+        inline ModelsCollection &load(const QVector<QString> &relations) &;
+        /*! Load a set of relationships onto the collection. */
+        inline ModelsCollection &load(QVector<QString> &&relations) &;
 
         /*! Load a set of relationships onto the collection. */
+        template<typename = void>
         ModelsCollection &&load(const QVector<WithItem> &relations) &&;
         /*! Load a set of relationships onto the collection. */
-        inline ModelsCollection &&load(const QString &relation) &&;
+        template<typename = void>
+        ModelsCollection &&load(const QString &relation) &&;
+        /*! Load a set of relationships onto the collection. */
+        inline ModelsCollection &load(const QVector<QString> &relations) &&;
+        /*! Load a set of relationships onto the collection. */
+        inline ModelsCollection &load(QVector<QString> &&relations) &&;
 
         /* EnumeratesValues */
         /*! Create a collection of all models that do not pass a given truth test. */
@@ -1133,6 +1145,7 @@ namespace Types
     /* Collection - Relations related */
 
     template<DerivedCollectionModel Model>
+    template<typename>
     ModelsCollection<Model> &
     ModelsCollection<Model>::load(const QVector<WithItem> &relations) &
     {
@@ -1150,6 +1163,7 @@ namespace Types
     }
 
     template<DerivedCollectionModel Model>
+    template<typename>
     ModelsCollection<Model> &
     ModelsCollection<Model>::load(const QString &relation) &
     {
@@ -1157,6 +1171,21 @@ namespace Types
     }
 
     template<DerivedCollectionModel Model>
+    ModelsCollection<Model> &
+    ModelsCollection<Model>::load(const QVector<QString> &relations) &
+    {
+        return load(WithItem::fromStringVector(relations));
+    }
+
+    template<DerivedCollectionModel Model>
+    ModelsCollection<Model> &
+    ModelsCollection<Model>::load(QVector<QString> &&relations) &
+    {
+        return load(WithItem::fromStringVector(std::move(relations)));
+    }
+
+    template<DerivedCollectionModel Model>
+    template<typename>
     ModelsCollection<Model> &&
     ModelsCollection<Model>::load(const QVector<WithItem> &relations) &&
     {
@@ -1174,10 +1203,25 @@ namespace Types
     }
 
     template<DerivedCollectionModel Model>
+    template<typename>
     ModelsCollection<Model> &&
     ModelsCollection<Model>::load(const QString &relation) &&
     {
         return std::move(*this).load(QVector<WithItem> {{relation}});
+    }
+
+    template<DerivedCollectionModel Model>
+    ModelsCollection<Model> &
+    ModelsCollection<Model>::load(const QVector<QString> &relations) &&
+    {
+        return load(WithItem::fromStringVector(relations));
+    }
+
+    template<DerivedCollectionModel Model>
+    ModelsCollection<Model> &
+    ModelsCollection<Model>::load(QVector<QString> &&relations) &&
+    {
+        return load(WithItem::fromStringVector(std::move(relations)));
     }
 
     /* EnumeratesValues */
