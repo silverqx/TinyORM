@@ -425,7 +425,7 @@ namespace Types
         /*! Convert the Collection<ModelRawType> to the Collection<ModelRawType *>. */
         ModelsCollection<ModelRawType *>
         toPointersCollection() requires (!IsPointersCollection);
-        /*! Convert to the Collection<ModelRawType *>, return itself (no-op overload). */
+        /*! Convert to the Collection<ModelRawType *>, return itself (no-op). */
         inline ModelsCollection<ModelRawType *>
         toPointersCollection() const noexcept requires IsPointersCollection;
 
