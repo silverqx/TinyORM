@@ -396,19 +396,19 @@ The behavior is the same as for TinyBuilder's [`load`](relationships.mdx#lazy-ea
 
 #### `map()` {#method-map}
 
-The `map` method iterates through the collection and passes each model to the given lambda expression. The lambda expression is free to modify the model and return it, thus forming a new collection of modified models:
+The `map` method iterates through the collection and passes a __copy__ of each model to the given lambda expression. The lambda expression is free to modify the model and return it, thus forming a new collection of modified models:
 
     ModelsCollection<User> users {
         {{"name", "John"}, {"votes", 200}},
         {{"name", "Jack"}, {"votes", 400}},
     };
 
-    auto usersAdded = users.map([](User *const user)
+    auto usersAdded = users.map([](User &&userCopy)
     {
-        if (user->getAttribute<QString>("name") == "John")
-            (*user)["votes"] = user->getAttribute<quint64>("votes") + 1;
+        if (userCopy.getAttribute<QString>("name") == "John")
+            userCopy["votes"] = userCopy.getAttribute<quint64>("votes") + 1;
 
-        return user;
+        return std::move(userCopy);
     });
 
     /*
@@ -420,12 +420,12 @@ The `map` method iterates through the collection and passes each model to the gi
 
 The second `map` overload allows to return the `QVector<T>`:
 
-    QVector<quint64> usersAdded = users.map<quint64>([](User *const user)
+    QVector<quint64> usersAdded = users.map<quint64>([](User &&userCopy)
     {
-        const auto votesRef = (*user)["votes"];
+        const auto votesRef = userCopy["votes"];
 
-        if (user->getAttribute<QString>("name") == "John")
-             votesRef = user->getAttribute<quint64>("votes") + 1;
+        if (userCopy.getAttribute<QString>("name") == "John")
+             votesRef = userCopy.getAttribute<quint64>("votes") + 1;
 
         return votesRef->value<quint64>();
     });
@@ -436,6 +436,10 @@ Both overloads allow to pass the lambda expression with two arguments, whereas t
 
 :::caution
 Like most other collection methods, `map` returns a new collection instance; it does not modify the collection it is called on. If you want to modify the original collection in place, use the [`each`](#method-each) method.
+:::
+
+:::info
+The model copy is passed to the lambda expression even if the `map` iterates over a collection of model pointers `ModelsCollection<Model *>`. The models are dereferenced behind the scene.
 :::
 
 #### `mapWithKeys()` {#method-mapwithkeys}

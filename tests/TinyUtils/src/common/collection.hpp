@@ -61,7 +61,7 @@ namespace TestUtils::Common
         template<typename T, typename M>
         static bool
         verifyAttributeValues(
-                const QString &attribute, const ModelsCollection<M *> &actual,
+                const QString &attribute, const ModelsCollection<M> &actual,
                 const std::unordered_set<T> &expected);
 
         /*! Get the value of the model's primary key casted to the Derived::KeyType. */
@@ -115,13 +115,13 @@ namespace TestUtils::Common
 
     template<typename T, typename M>
     bool Collection::verifyAttributeValues(
-            const QString &attribute, const ModelsCollection<M *> &actual,
+            const QString &attribute, const ModelsCollection<M> &actual,
             const std::unordered_set<T> &expected)
     {
         return std::ranges::all_of(actual,
-                                   [&attribute, &expected](M *const model)
+                                   [&attribute, &expected](const M &model)
         {
-            return expected.contains(model->template getAttribute<T>(attribute));
+            return expected.contains(model.template getAttribute<T>(attribute));
         });
     }
 

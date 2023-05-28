@@ -194,18 +194,20 @@ namespace Types
         QVector<T> modelKeys() const;
 
         /*! Run a map over each of the models. */
-        ModelsCollection<ModelRawType *>
-        map(const std::function<ModelRawType *(ModelRawType *, size_type)> &callback);
+        ModelsCollection<ModelRawType>
+        map(const std::function<ModelRawType(ModelRawType &&modelCopy,
+                                             size_type)> &callback);
         /*! Run a map over each of the models. */
-        ModelsCollection<ModelRawType *>
-        map(const std::function<ModelRawType *(ModelRawType *)> &callback);
+        ModelsCollection<ModelRawType>
+        map(const std::function<ModelRawType(ModelRawType &&modelCopy)> &callback);
 
         /*! Run a map over each of the models. */
         template<typename T>
-        QVector<T> map(const std::function<T(ModelRawType *, size_type)> &callback);
+        QVector<T> map(const std::function<T(ModelRawType &&modelCopy,
+                                             size_type)> &callback);
         /*! Run a map over each of the models. */
         template<typename T>
-        QVector<T> map(const std::function<T(ModelRawType *)> &callback);
+        QVector<T> map(const std::function<T(ModelRawType &&modelCopy)> &callback);
 
         /*! Run an associative map over each of the models (keyed by primary key). */
         std::unordered_map<KeyType, ModelRawType *> mapWithModelKeys();
@@ -414,6 +416,11 @@ namespace Types
         /*! Convert to the Collection<ModelRawType *>, return itself (no-op overload). */
         inline ModelsCollection<ModelRawType *>
         toPointersCollection() const noexcept requires IsPointersCollection;
+
+        /*! Return a model copy. */
+        inline static ModelRawType getModelCopy(const ModelRawType &model);
+        /*! Return a model copy. */
+        inline static ModelRawType getModelCopy(const ModelRawType *model);
 
         /*! Throw if the given operator is not valid for the where() method. */
         static void throwIfInvalidWhereOperator(const QString &comparison);
@@ -814,34 +821,35 @@ namespace Types
     }
 
     template<DerivedCollectionModel Model>
-    ModelsCollection<typename ModelsCollection<Model>::ModelRawType *>
+    ModelsCollection<typename ModelsCollection<Model>::ModelRawType>
     ModelsCollection<Model>::map(
-            const std::function<ModelRawType *(ModelRawType *, size_type)> &callback)
+            const std::function<ModelRawType(ModelRawType &&modelCopy,
+                                             size_type)> &callback)
     {
         const auto size = this->size();
 
-        ModelsCollection<ModelRawType *> result;
+        ModelsCollection<ModelRawType> result;
         result.reserve(size);
 
         for (size_type index = 0; index < size; ++index)
-            result.push_back(std::invoke(callback,
-                                         // Don't handle the nullptr
-                                         toPointer(this->operator[](index)), index));
+            result.push_back(std::invoke(callback, getModelCopy(this->operator[](index)),
+                                         index));
 
         return result;
     }
 
     template<DerivedCollectionModel Model>
-    ModelsCollection<typename ModelsCollection<Model>::ModelRawType *>
+    ModelsCollection<typename ModelsCollection<Model>::ModelRawType>
     ModelsCollection<Model>::map(
-            const std::function<ModelRawType *(ModelRawType *)> &callback)
+            const std::function<ModelRawType(ModelRawType &&modelCopy)> &callback)
     {
-        ModelsCollection<ModelRawType *> result;
-        result.reserve(this->size());
+        const auto size = this->size();
 
-        for (ModelLoopType model : *this)
-                                                   // Don't handle the nullptr
-            result.push_back(std::invoke(callback, toPointer(model)));
+        ModelsCollection<ModelRawType> result;
+        result.reserve(size);
+
+        for (auto &&model : *this)
+            result.push_back(std::invoke(callback, getModelCopy(model)));
 
         return result;
     }
@@ -850,7 +858,7 @@ namespace Types
     template<typename T>
     QVector<T>
     ModelsCollection<Model>::map(
-            const std::function<T(ModelRawType *, size_type)> &callback)
+            const std::function<T(ModelRawType &&modelCopy, size_type)> &callback)
     {
         const auto size = this->size();
 
@@ -858,9 +866,9 @@ namespace Types
         result.reserve(size);
 
         for (size_type index = 0; index < size; ++index)
-            result.emplace_back(std::invoke(callback,
-                                            // Don't handle the nullptr
-                                            toPointer(this->operator[](index)), index));
+            result.emplace_back(
+                        std::invoke(callback, getModelCopy(this->operator[](index)),
+                                    index));
 
         return result;
     }
@@ -868,14 +876,16 @@ namespace Types
     template<DerivedCollectionModel Model>
     template<typename T>
     QVector<T>
-    ModelsCollection<Model>::map(const std::function<T(ModelRawType *)> &callback)
+    ModelsCollection<Model>::map(
+            const std::function<T(ModelRawType &&modelCopy)> &callback)
     {
-        QVector<T> result;
-        result.reserve(this->size());
+        const auto size = this->size();
 
-        for (ModelLoopType model : *this)
-            // Don't handle the nullptr
-            result.emplace_back(std::invoke(callback, toPointer(model)));
+        QVector<T> result;
+        result.reserve(size);
+
+        for (auto &&model : *this)
+            result.emplace_back(std::invoke(callback, getModelCopy(model)));
 
         return result;
     }
@@ -1669,6 +1679,22 @@ namespace Types
     requires IsPointersCollection
     {
         return *this;
+    }
+
+    template<DerivedCollectionModel Model>
+    typename ModelsCollection<Model>::ModelRawType
+    ModelsCollection<Model>::getModelCopy(const ModelRawType &model)
+    {
+        return model;
+    }
+
+    template<DerivedCollectionModel Model>
+    typename ModelsCollection<Model>::ModelRawType
+    ModelsCollection<Model>::getModelCopy(const ModelRawType *const model)
+    {
+        Q_CHECK_PTR(model);
+
+        return *model;
     }
 
     template<DerivedCollectionModel Model>
