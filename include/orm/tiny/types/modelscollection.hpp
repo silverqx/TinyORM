@@ -92,6 +92,7 @@ namespace Types
         using KeyType = typename std::remove_pointer_t<value_type>::KeyType;
 
         /* Constructors */
+        /* From QVector<Model> */
         /*! Converting constructor from the QVector<Model>. */
         ModelsCollection(const QVector<Model> &models) // NOLINT(google-explicit-constructor)
         requires (!IsPointersCollection);
@@ -440,6 +441,8 @@ namespace Types
     /* public */
 
     /* Constructors */
+
+    /* From QVector<Model> */
 
     template<DerivedCollectionModel Model>
     ModelsCollection<Model>::ModelsCollection(const QVector<Model> &models)
