@@ -759,7 +759,8 @@ void tst_Collection_Relations::map() const
             imageCopy[NAME] = QStringLiteral("%1_id_%2")
                               .arg(imageCopy.getAttribute<QString>(NAME))
                               .arg(id);
-        return imageCopy;
+
+        return std::move(imageCopy);
     });
 
     // Verify
@@ -801,7 +802,7 @@ void tst_Collection_Relations::map_WithIndex() const
                               .arg(imageCopy.getAttribute<QString>(NAME))
                               .arg(index);
 
-        return imageCopy;
+        return std::move(imageCopy);
     });
 
     // Verify
