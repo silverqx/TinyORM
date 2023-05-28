@@ -270,7 +270,7 @@ namespace Types
         ModelsCollection &load(const QVector<WithItem> &relations) &;
         /*! Load a set of relationships onto the collection. */
         template<typename = void>
-        ModelsCollection &load(const QString &relation) &;
+        ModelsCollection &load(QString relation) &;
         /*! Load a set of relationships onto the collection. */
         inline ModelsCollection &load(const QVector<QString> &relations) &;
         /*! Load a set of relationships onto the collection. */
@@ -281,7 +281,7 @@ namespace Types
         ModelsCollection &&load(const QVector<WithItem> &relations) &&;
         /*! Load a set of relationships onto the collection. */
         template<typename = void>
-        ModelsCollection &&load(const QString &relation) &&;
+        ModelsCollection &&load(QString relation) &&;
         /*! Load a set of relationships onto the collection. */
         inline ModelsCollection &load(const QVector<QString> &relations) &&;
         /*! Load a set of relationships onto the collection. */
@@ -1175,9 +1175,9 @@ namespace Types
     template<DerivedCollectionModel Model>
     template<typename>
     ModelsCollection<Model> &
-    ModelsCollection<Model>::load(const QString &relation) &
+    ModelsCollection<Model>::load(QString relation) &
     {
-        return load(QVector<WithItem> {{relation}});
+        return load(QVector<WithItem> {{std::move(relation)}});
     }
 
     template<DerivedCollectionModel Model>
@@ -1215,9 +1215,9 @@ namespace Types
     template<DerivedCollectionModel Model>
     template<typename>
     ModelsCollection<Model> &&
-    ModelsCollection<Model>::load(const QString &relation) &&
+    ModelsCollection<Model>::load(QString relation) &&
     {
-        return std::move(*this).load(QVector<WithItem> {{relation}});
+        return std::move(*this).load(QVector<WithItem> {{std::move(relation)}});
     }
 
     template<DerivedCollectionModel Model>
