@@ -190,6 +190,9 @@ private Q_SLOTS:
     void tap_lvalue() const;
     void tap_rvalue() const;
 
+    /* Others */
+    void toPointers() const;
+
 // NOLINTNEXTLINE(readability-redundant-access-specifiers)
 private:
     /*! Connection name used in this test case. */
@@ -2838,6 +2841,21 @@ void tst_Collection_Models::tap_rvalue() const
     QVERIFY(Common::verifyIds(result, {2}));
     // Verify the changed name
     QCOMPARE(result.first().getAttribute(NAME), QVariant("image2 NEW"));
+}
+
+/* Others */
+
+void tst_Collection_Models::toPointers() const
+{
+    auto images = AlbumImage::whereEq(Common::album_id, 2)->get();
+    QCOMPARE(images.size(), 5);
+    QCOMPARE(typeid (images), typeid (ModelsCollection<AlbumImage>));
+    QVERIFY(Common::verifyIds(images, {2, 3, 4, 5, 6}));
+
+    auto imagesPointers = images.toPointers();
+
+    QCOMPARE(typeid (imagesPointers), typeid (ModelsCollection<AlbumImage *>));
+    QVERIFY(Common::verifyIds(imagesPointers, {2, 3, 4, 5, 6}));
 }
 // NOLINTEND(readability-convert-member-functions-to-static)
 

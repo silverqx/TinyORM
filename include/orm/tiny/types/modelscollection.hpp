@@ -107,6 +107,19 @@ namespace Types
         ModelsCollection<Model> &operator=(QVector<Model> &&models) noexcept
         requires (!IsPointersCollection);
 
+        /* To ModelsCollection<Model> */
+        /*! Converting method to the ModelsCollection<ModelRawType>. */
+        inline ModelsCollection<ModelRawType> toModels() &
+        requires IsPointersCollection;
+        /*! Converting method to the ModelsCollection<ModelRawType>. */
+        inline ModelsCollection<ModelRawType> toModels() &&
+        requires IsPointersCollection;
+
+        /* To ModelsCollection<Model *> */
+        /*! Converting method to the ModelsCollection<ModelRawType *>. */
+        inline ModelsCollection<ModelRawType *> toPointers()
+        requires (!IsPointersCollection);
+
         /* Comparison operators */
         /*! Equality comparison operator for the ModelsCollection. */
         bool operator==(const ModelsCollection<ModelRawType> &other) const
@@ -480,6 +493,46 @@ namespace Types
             this->push_back(std::move(model));
 
         return *this;
+    }
+
+    /* To ModelsCollection<Model> */
+
+    template<DerivedCollectionModel Model>
+    ModelsCollection<typename ModelsCollection<Model>::ModelRawType>
+    ModelsCollection<Model>::toModels() &
+    requires IsPointersCollection
+    {
+        ModelsCollection<ModelRawType> result;
+        result.reserve(this->size());
+
+        for (ModelRawType *const model : *this)
+            result.push_back(*model);
+
+        return result;
+    }
+
+    template<DerivedCollectionModel Model>
+    ModelsCollection<typename ModelsCollection<Model>::ModelRawType>
+    ModelsCollection<Model>::toModels() &&
+    requires IsPointersCollection
+    {
+        ModelsCollection<ModelRawType> result;
+        result.reserve(this->size());
+
+        for (ModelRawType *const model : *this)
+            result.push_back(std::move(*model));
+
+        return result;
+    }
+
+    /* To ModelsCollection<Model *> */
+
+    template<DerivedCollectionModel Model>
+    ModelsCollection<typename ModelsCollection<Model>::ModelRawType *>
+    ModelsCollection<Model>::toPointers()
+    requires (!IsPointersCollection)
+    {
+        return toPointersCollection();
     }
 
     /* Comparison operators */

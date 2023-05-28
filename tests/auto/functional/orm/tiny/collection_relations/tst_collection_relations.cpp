@@ -188,6 +188,9 @@ private Q_SLOTS:
     void tap_lvalue() const;
     void tap_rvalue() const;
 
+    /* Others */
+    void toModels() const;
+
 // NOLINTNEXTLINE(readability-redundant-access-specifiers)
 private:
     /*! Connection name used in this test case. */
@@ -3505,6 +3508,29 @@ void tst_Collection_Relations::tap_rvalue() const
     QVERIFY(Common::verifyIds(result, {2}));
     // Verify the changed name
     QCOMPARE(result.first()->getAttribute(NAME), QVariant("image2 NEW"));
+}
+
+/* Others */
+
+void tst_Collection_Relations::toModels() const
+{
+    auto album = Album::find(2);
+    QVERIFY(album);
+    QVERIFY(album->exists);
+    QCOMPARE(album->getKey(), QVariant(2));
+    QVERIFY(album->relationLoaded(Common::albumImages));
+
+    auto images = album->getRelation<AlbumImage>(Common::albumImages);
+    QCOMPARE(images.size(), 5);
+    QCOMPARE(typeid (images), typeid (ModelsCollection<AlbumImage *>));
+    QVERIFY(Common::verifyIds(images, {2, 3, 4, 5, 6}));
+    QCOMPARE(images.at(2)->getAttribute(NAME), QVariant("album2_image3"));
+
+
+    auto imagesModels = images.toModels();
+
+    QCOMPARE(typeid (imagesModels), typeid (ModelsCollection<AlbumImage>));
+    QVERIFY(Common::verifyIds(imagesModels, {2, 3, 4, 5, 6}));
 }
 // NOLINTEND(readability-convert-member-functions-to-static)
 
