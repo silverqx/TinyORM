@@ -1442,7 +1442,7 @@ void tst_Collection_Models::load_lvalue_WithSelectConstraint() const
             QVERIFY(image);
             QVERIFY(image->exists);
 
-            // Check whether constraints was correctly applied
+            // Check whether constraints were correctly applied
             const auto &attributes = image->getAttributes();
             QCOMPARE(attributes.size(), 3);
 
@@ -1514,7 +1514,7 @@ void tst_Collection_Models::load_lvalue_WithLambdaConstraint() const
             QVERIFY(image);
             QVERIFY(image->exists);
 
-            // Check whether constraints was correctly applied
+            // Check whether constraints were correctly applied
             const auto &attributes = image->getAttributes();
             QCOMPARE(attributes.size(), 3);
 
@@ -1678,7 +1678,7 @@ void tst_Collection_Models::load_rvalue_WithSelectConstraint() const
             QVERIFY(image);
             QVERIFY(image->exists);
 
-            // Check whether constraints was correctly applied
+            // Check whether constraints were correctly applied
             const auto &attributes = image->getAttributes();
             QCOMPARE(attributes.size(), 3);
 
@@ -1756,7 +1756,7 @@ void tst_Collection_Models::load_rvalue_WithLambdaConstraint() const
             QVERIFY(image);
             QVERIFY(image->exists);
 
-            // Check whether constraints was correctly applied
+            // Check whether constraints were correctly applied
             const auto &attributes = image->getAttributes();
             QCOMPARE(attributes.size(), 3);
 

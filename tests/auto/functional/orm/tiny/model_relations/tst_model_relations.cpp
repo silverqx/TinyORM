@@ -959,7 +959,7 @@ void tst_Model_Relations::with_WithSelectConstraint() const
         QVERIFY(file);
         QVERIFY(file->exists);
 
-        // Check whether constraints was correctly applied
+        // Check whether constraints were correctly applied
         const auto &attributes = file->getAttributes();
         QCOMPARE(attributes.size(), 3);
 
@@ -994,7 +994,7 @@ void tst_Model_Relations::with_WithSelectConstraint_WithWhitespaces() const
         QVERIFY(file);
         QVERIFY(file->exists);
 
-        // Check whether constraints was correctly applied
+        // Check whether constraints were correctly applied
         const auto &attributes = file->getAttributes();
         QCOMPARE(attributes.size(), 3);
 
@@ -1028,7 +1028,7 @@ void tst_Model_Relations::with_WithSelectConstraint_BelongsToMany() const
         QVERIFY(tag);
         QVERIFY(tag->exists);
 
-        // Check whether constraints was correctly applied
+        // Check whether constraints were correctly applied
         const auto &attributes = tag->getAttributes();
         QCOMPARE(attributes.size(), 2);
 
@@ -1091,7 +1091,7 @@ void tst_Model_Relations::with_WithLambdaConstraint() const
         QVERIFY(file);
         QVERIFY(file->exists);
 
-        // Check whether constraints was correctly applied
+        // Check whether constraints were correctly applied
         const auto &attributes = file->getAttributes();
         QCOMPARE(attributes.size(), 3);
 
@@ -1128,7 +1128,7 @@ void tst_Model_Relations::with_WithLambdaConstraint_BelongsToMany() const
         QVERIFY(tag);
         QVERIFY(tag->exists);
 
-        // Check whether constraints was correctly applied
+        // Check whether constraints were correctly applied
         const auto &attributes = tag->getAttributes();
         QCOMPARE(attributes.size(), 2);
 
@@ -1423,7 +1423,7 @@ void tst_Model_Relations::load_WithSelectConstraint() const
         QVERIFY(file);
         QVERIFY(file->exists);
 
-        // Check whether constraints was correctly applied
+        // Check whether constraints were correctly applied
         const auto &attributes = file->getAttributes();
         QCOMPARE(attributes.size(), 3);
 
@@ -1469,7 +1469,7 @@ void tst_Model_Relations::load_WithLambdaConstraint() const
         QVERIFY(file);
         QVERIFY(file->exists);
 
-        // Check whether constraints was correctly applied
+        // Check whether constraints were correctly applied
         const auto &attributes = file->getAttributes();
         QCOMPARE(attributes.size(), 3);
 
@@ -1532,7 +1532,7 @@ void tst_Model_Relations::fresh() const
         QVERIFY(file);
         QVERIFY(file->exists);
 
-        // Check whether constraints was correctly applied
+        // Check whether constraints were correctly applied
         const auto &attributes = file->getAttributes();
         QCOMPARE(attributes.size(), 9);
 
@@ -1575,7 +1575,7 @@ void tst_Model_Relations::fresh_WithSelectConstraint() const
         QVERIFY(file);
         QVERIFY(file->exists);
 
-        // Check whether constraints was correctly applied
+        // Check whether constraints were correctly applied
         const auto &attributes = file->getAttributes();
         QCOMPARE(attributes.size(), 3);
 
