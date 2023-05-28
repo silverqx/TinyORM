@@ -838,7 +838,7 @@ void tst_Model::findMany() const
 
     auto torrents = Torrent::findMany({2, 3, 5});
     QCOMPARE(torrents.size(), 3);
-    QCOMPARE(typeid (ModelsCollection<Torrent>), typeid (torrents));
+    QCOMPARE(typeid (torrents), typeid (ModelsCollection<Torrent>));
 
     const std::unordered_set<quint64> expectedIds {2, 3, 5};
 
@@ -854,7 +854,7 @@ void tst_Model::findMany_Empty() const
 
     auto torrents = Torrent::findMany({});
 
-    QCOMPARE(typeid (ModelsCollection<Torrent>), typeid (torrents));
+    QCOMPARE(typeid (torrents), typeid (ModelsCollection<Torrent>));
     QVERIFY(torrents.isEmpty());
 }
 

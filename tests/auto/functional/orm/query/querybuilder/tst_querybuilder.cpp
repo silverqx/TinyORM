@@ -1322,7 +1322,7 @@ void tst_QueryBuilder::count() const
 
         auto count = builder->from("torrent_peers").count();
 
-        QCOMPARE(typeid (quint64), typeid (count));
+        QCOMPARE(typeid (count), typeid (quint64));
         QCOMPARE(count, static_cast<quint64>(4));
     }
 
@@ -1332,7 +1332,7 @@ void tst_QueryBuilder::count() const
 
         auto count = builder->from("torrent_peers").count("seeds");
 
-        QCOMPARE(typeid (quint64), typeid (count));
+        QCOMPARE(typeid (count), typeid (quint64));
         QCOMPARE(count, static_cast<quint64>(3));
     }
 }
@@ -1347,7 +1347,7 @@ void tst_QueryBuilder::count_Distinct() const
                  .distinct()
                  .count("file_property_id");
 
-    QCOMPARE(typeid (quint64), typeid (count));
+    QCOMPARE(typeid (count), typeid (quint64));
     QCOMPARE(count, static_cast<quint64>(5));
 }
 

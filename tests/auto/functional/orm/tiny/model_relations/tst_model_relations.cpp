@@ -277,7 +277,7 @@ void tst_Model_Relations::getRelation_EagerLoad_ManyAndOne() const
     // TorrentPreviewableFileEager has-many relation
     auto files = torrent->getRelation<TorrentPreviewableFileEager>("torrentFiles");
     QCOMPARE(files.size(), 2);
-    QCOMPARE(typeid (ModelsCollection<TorrentPreviewableFileEager *>), typeid (files));
+    QCOMPARE(typeid (files), typeid (ModelsCollection<TorrentPreviewableFileEager *>));
 
     // Expected file IDs
     QVector<QVariant> fileIds {2, 3};
@@ -288,7 +288,7 @@ void tst_Model_Relations::getRelation_EagerLoad_ManyAndOne() const
         QVERIFY(file->exists);
         QCOMPARE(file->getAttribute("torrent_id"), torrent->getKey());
         QVERIFY(fileIds.contains(file->getKey()));
-        QCOMPARE(typeid (TorrentPreviewableFileEager *), typeid (file));
+        QCOMPARE(typeid (file), typeid (TorrentPreviewableFileEager *));
 
         /* TorrentPreviewableFilePropertyEager has-one relation, loaded by
            dot notation in the u_with data member. */
@@ -297,7 +297,7 @@ void tst_Model_Relations::getRelation_EagerLoad_ManyAndOne() const
                     "fileProperty");
         QVERIFY(fileProperty);
         QVERIFY(fileProperty->exists);
-        QCOMPARE(typeid (TorrentPreviewableFilePropertyEager *), typeid (fileProperty));
+        QCOMPARE(typeid (fileProperty), typeid (TorrentPreviewableFilePropertyEager *));
         QVERIFY(filePropertyIds.contains(fileProperty->getKey()));
         QCOMPARE(fileProperty->getAttribute("previewable_file_id"), file->getKey());
     }
@@ -318,7 +318,7 @@ void tst_Model_Relations::getRelation_EagerLoad_BelongsTo() const
     auto *torrent = torrentPeer->getRelation<TorrentEager, One>("torrent");
     QVERIFY(torrent);
     QCOMPARE(torrent->getKey(), torrentPeer->getAttribute("torrent_id"));
-    QCOMPARE(typeid (TorrentEager *), typeid (torrent));
+    QCOMPARE(typeid (torrent), typeid (TorrentEager *));
 }
 
 void tst_Model_Relations::
@@ -335,7 +335,7 @@ void tst_Model_Relations::
     // Torrent belongs-to-many relation (basic pivot)
     auto torrents = tag->getRelation<Torrent>("torrents");
     QCOMPARE(torrents.size(), 2);
-    QCOMPARE(typeid (ModelsCollection<Torrent *>), typeid (torrents));
+    QCOMPARE(typeid (torrents), typeid (ModelsCollection<Torrent *>));
 
     // Expected torrent IDs
     QVector<QVariant> torrentIds {2, 3};
@@ -344,13 +344,13 @@ void tst_Model_Relations::
         QVERIFY(torrent);
         QVERIFY(torrent->exists);
         QVERIFY(torrentIds.contains(torrent->getKey()));
-        QCOMPARE(typeid (Torrent *), typeid (torrent));
+        QCOMPARE(typeid (torrent), typeid (Torrent *));
 
         // Pivot relation
         auto *pivot = torrent->getRelation<Pivot, One>("pivot");
         QVERIFY(pivot);
         QVERIFY(pivot->exists);
-        QCOMPARE(typeid (Pivot *), typeid (pivot));
+        QCOMPARE(typeid (pivot), typeid (Pivot *));
 
         QVERIFY(pivot->usesTimestamps());
         QVERIFY(!pivot->getIncrementing());
@@ -384,7 +384,7 @@ void tst_Model_Relations::
     // Tag belongs-to-many relation (custom Tagged pivot)
     auto tags = torrent->getRelation<Tag>("tags");
     QCOMPARE(tags.size(), 4);
-    QCOMPARE(typeid (ModelsCollection<Tag *>), typeid (tags));
+    QCOMPARE(typeid (tags), typeid (ModelsCollection<Tag *>));
 
     // Expected tag IDs and pivot attribute 'active', maps tagId to active
     std::unordered_map<quint64, int> activeMap {{1, 1}, {2, 1}, {3, 0}, {4, 1}};
@@ -394,14 +394,14 @@ void tst_Model_Relations::
         QVERIFY(tag->exists);
         const auto tagId = tag->getKeyCasted();
         QVERIFY(activeMap.contains(tagId));
-        QCOMPARE(typeid (Tag *), typeid (tag));
+        QCOMPARE(typeid (tag), typeid (Tag *));
 
         /* Custom Pivot relation as the Tagged class, under the 'tagged' key
            in the m_relations hash. */
         auto *tagged = tag->getRelation<Tagged, One>("tagged");
         QVERIFY(tagged);
         QVERIFY(tagged->exists);
-        QCOMPARE(typeid (Tagged *), typeid (tagged));
+        QCOMPARE(typeid (tagged), typeid (Tagged *));
 
         QVERIFY(tagged->usesTimestamps());
         QVERIFY(!tagged->getIncrementing());
@@ -435,7 +435,7 @@ void tst_Model_Relations::
     // Torrent belongs-to-many relation (basic pivot)
     auto torrents = tag->getRelation<Torrent>("torrents_WithoutPivotAttributes");
     QCOMPARE(torrents.size(), 2);
-    QCOMPARE(typeid (ModelsCollection<Torrent *>), typeid (torrents));
+    QCOMPARE(typeid (torrents), typeid (ModelsCollection<Torrent *>));
 
     // Expected torrent IDs
     QVector<QVariant> torrentIds {2, 3};
@@ -444,13 +444,13 @@ void tst_Model_Relations::
         QVERIFY(torrent);
         QVERIFY(torrent->exists);
         QVERIFY(torrentIds.contains(torrent->getKey()));
-        QCOMPARE(typeid (Torrent *), typeid (torrent));
+        QCOMPARE(typeid (torrent), typeid (Torrent *));
 
         // Pivot relation
         auto *pivot = torrent->getRelation<Pivot, One>("pivot");
         QVERIFY(pivot);
         QVERIFY(pivot->exists);
-        QCOMPARE(typeid (Pivot *), typeid (pivot));
+        QCOMPARE(typeid (pivot), typeid (Pivot *));
 
         QVERIFY(!pivot->usesTimestamps());
         QVERIFY(!pivot->getIncrementing());
@@ -519,7 +519,7 @@ void tst_Model_Relations::getRelationValue_LazyLoad_ManyAndOne() const
     // TorrentPreviewableFile has-many relation
     auto files = torrent->getRelationValue<TorrentPreviewableFile>("torrentFiles");
     QCOMPARE(files.size(), 2);
-    QCOMPARE(typeid (ModelsCollection<TorrentPreviewableFile *>), typeid (files));
+    QCOMPARE(typeid (files), typeid (ModelsCollection<TorrentPreviewableFile *>));
 
     // Expected file IDs
     QVector<QVariant> fileIds {2, 3};
@@ -530,7 +530,7 @@ void tst_Model_Relations::getRelationValue_LazyLoad_ManyAndOne() const
         QVERIFY(file->exists);
         QCOMPARE(file->getAttribute("torrent_id"), torrent->getKey());
         QVERIFY(fileIds.contains(file->getKey()));
-        QCOMPARE(typeid (TorrentPreviewableFile *), typeid (file));
+        QCOMPARE(typeid (file), typeid (TorrentPreviewableFile *));
 
         /* TorrentPreviewableFileProperty has-one relation, loaded by
            dot notation in the u_with data member. */
@@ -539,7 +539,7 @@ void tst_Model_Relations::getRelationValue_LazyLoad_ManyAndOne() const
                     "fileProperty");
         QVERIFY(fileProperty);
         QVERIFY(fileProperty->exists);
-        QCOMPARE(typeid (TorrentPreviewableFileProperty *), typeid (fileProperty));
+        QCOMPARE(typeid (fileProperty), typeid (TorrentPreviewableFileProperty *));
         QVERIFY(filePropertyIds.contains(fileProperty->getKey()));
         QCOMPARE(fileProperty->getAttribute("previewable_file_id"), file->getKey());
     }
@@ -560,7 +560,7 @@ void tst_Model_Relations::getRelationValue_LazyLoad_BelongsTo() const
     auto *torrent = torrentPeer->getRelationValue<Torrent, One>("torrent");
     QVERIFY(torrent);
     QCOMPARE(torrent->getKey(), QVariant(2));
-    QCOMPARE(typeid (Torrent *), typeid (torrent));
+    QCOMPARE(typeid (torrent), typeid (Torrent *));
 }
 
 void tst_Model_Relations::
@@ -577,7 +577,7 @@ void tst_Model_Relations::
     // Torrent belongs-to-many relation (basic pivot)
     auto torrents = tag->getRelationValue<Torrent>("torrents");
     QCOMPARE(torrents.size(), 2);
-    QCOMPARE(typeid (ModelsCollection<Torrent *>), typeid (torrents));
+    QCOMPARE(typeid (torrents), typeid (ModelsCollection<Torrent *>));
 
     // Expected torrent IDs
     QVector<QVariant> torrentIds {2, 3};
@@ -586,13 +586,13 @@ void tst_Model_Relations::
         QVERIFY(torrent);
         QVERIFY(torrent->exists);
         QVERIFY(torrentIds.contains(torrent->getKey()));
-        QCOMPARE(typeid (Torrent *), typeid (torrent));
+        QCOMPARE(typeid (torrent), typeid (Torrent *));
 
         // Pivot relation
         auto *pivot = torrent->getRelation<Pivot, One>("pivot");
         QVERIFY(pivot);
         QVERIFY(pivot->exists);
-        QCOMPARE(typeid (Pivot *), typeid (pivot));
+        QCOMPARE(typeid (pivot), typeid (Pivot *));
 
         QVERIFY(pivot->usesTimestamps());
         QVERIFY(!pivot->getIncrementing());
@@ -626,7 +626,7 @@ void tst_Model_Relations::
     // Tag belongs-to-many relation (custom Tagged pivot)
     auto tags = torrent->getRelationValue<Tag>("tags");
     QCOMPARE(tags.size(), 4);
-    QCOMPARE(typeid (ModelsCollection<Tag *>), typeid (tags));
+    QCOMPARE(typeid (tags), typeid (ModelsCollection<Tag *>));
 
     // Expected tag IDs and pivot attribute 'active', maps tagId to active
     std::unordered_map<quint64, int> activeMap {{1, 1}, {2, 1}, {3, 0}, {4, 1}};
@@ -636,14 +636,14 @@ void tst_Model_Relations::
         QVERIFY(tag->exists);
         const auto tagId = tag->getKeyCasted();
         QVERIFY(activeMap.contains(tagId));
-        QCOMPARE(typeid (Tag *), typeid (tag));
+        QCOMPARE(typeid (tag), typeid (Tag *));
 
         /* Custom Pivot relation as the Tagged class, under the 'tagged' key
            in the m_relations hash. */
         auto *tagged = tag->getRelation<Tagged, One>("tagged");
         QVERIFY(tagged);
         QVERIFY(tagged->exists);
-        QCOMPARE(typeid (Tagged *), typeid (tagged));
+        QCOMPARE(typeid (tagged), typeid (Tagged *));
 
         QVERIFY(tagged->usesTimestamps());
         QVERIFY(!tagged->getIncrementing());
@@ -677,7 +677,7 @@ void tst_Model_Relations::
     // Torrent belongs-to-many relation (basic pivot)
     auto torrents = tag->getRelationValue<Torrent>("torrents_WithoutPivotAttributes");
     QCOMPARE(torrents.size(), 2);
-    QCOMPARE(typeid (ModelsCollection<Torrent *>), typeid (torrents));
+    QCOMPARE(typeid (torrents), typeid (ModelsCollection<Torrent *>));
 
     // Expected torrent IDs
     QVector<QVariant> torrentIds {2, 3};
@@ -686,13 +686,13 @@ void tst_Model_Relations::
         QVERIFY(torrent);
         QVERIFY(torrent->exists);
         QVERIFY(torrentIds.contains(torrent->getKey()));
-        QCOMPARE(typeid (Torrent *), typeid (torrent));
+        QCOMPARE(typeid (torrent), typeid (Torrent *));
 
         // Pivot relation
         auto *pivot = torrent->getRelation<Pivot, One>("pivot");
         QVERIFY(pivot);
         QVERIFY(pivot->exists);
-        QCOMPARE(typeid (Pivot *), typeid (pivot));
+        QCOMPARE(typeid (pivot), typeid (Pivot *));
 
         QVERIFY(!pivot->usesTimestamps());
         QVERIFY(!pivot->getIncrementing());
@@ -754,7 +754,7 @@ void tst_Model_Relations::with_HasOne() const
     QVERIFY(peer->exists);
     QCOMPARE(peer->getKey(), QVariant(2));
     QCOMPARE(peer->getAttribute("torrent_id"), torrent->getKey());
-    QCOMPARE(typeid (TorrentPeer *), typeid (peer));
+    QCOMPARE(typeid (peer), typeid (TorrentPeer *));
 }
 
 void tst_Model_Relations::with_HasMany() const
@@ -769,7 +769,7 @@ void tst_Model_Relations::with_HasMany() const
 
     auto files = torrent->getRelation<TorrentPreviewableFile>("torrentFiles");
     QCOMPARE(files.size(), 2);
-    QCOMPARE(typeid (ModelsCollection<TorrentPreviewableFile *>), typeid (files));
+    QCOMPARE(typeid (files), typeid (ModelsCollection<TorrentPreviewableFile *>));
 
     // Expected file IDs
     QVector<QVariant> fileIds {2, 3};
@@ -778,7 +778,7 @@ void tst_Model_Relations::with_HasMany() const
         QVERIFY(file->exists);
         QCOMPARE(file->getAttribute("torrent_id"), torrent->getKey());
         QVERIFY(fileIds.contains(file->getKey()));
-        QCOMPARE(typeid (TorrentPreviewableFile *), typeid (file));
+        QCOMPARE(typeid (file), typeid (TorrentPreviewableFile *));
     }
 }
 
@@ -797,7 +797,7 @@ void tst_Model_Relations::with_BelongsTo() const
     QVERIFY(file);
     QVERIFY(file->exists);
     QCOMPARE(file->getKey(), QVariant(3));
-    QCOMPARE(typeid (TorrentPreviewableFile *), typeid (file));
+    QCOMPARE(typeid (file), typeid (TorrentPreviewableFile *));
 }
 
 void tst_Model_Relations::with_BelongsToMany() const
@@ -812,7 +812,7 @@ void tst_Model_Relations::with_BelongsToMany() const
 
     auto tags = torrent->getRelation<Tag>("tags");
     QCOMPARE(tags.size(), 2);
-    QCOMPARE(typeid (ModelsCollection<Tag *>), typeid (tags));
+    QCOMPARE(typeid (tags), typeid (ModelsCollection<Tag *>));
 
     // Expected tag IDs
     QVector<QVariant> tagIds {2, 4};
@@ -820,7 +820,7 @@ void tst_Model_Relations::with_BelongsToMany() const
         QVERIFY(tag);
         QVERIFY(tag->exists);
         QVERIFY(tagIds.contains(tag->getKey()));
-        QCOMPARE(typeid (Tag *), typeid (tag));
+        QCOMPARE(typeid (tag), typeid (Tag *));
 
         const auto &relations = tag->getRelations();
         QCOMPARE(relations.size(), static_cast<std::size_t>(2));
@@ -831,7 +831,7 @@ void tst_Model_Relations::with_BelongsToMany() const
         auto *tagged = tag->getRelation<Tagged, One>("tagged");
         QVERIFY(tagged);
         QVERIFY(tagged->exists);
-        QCOMPARE(typeid (Tagged *), typeid (tagged));
+        QCOMPARE(typeid (tagged), typeid (Tagged *));
 
         QVERIFY(tagged->usesTimestamps());
         QVERIFY(!tagged->getIncrementing());
@@ -864,7 +864,7 @@ void tst_Model_Relations::with_NestedRelations() const
     // TorrentPreviewableFile has-many relation
     auto files = torrent->getRelation<TorrentPreviewableFile>("torrentFiles");
     QCOMPARE(files.size(), 2);
-    QCOMPARE(typeid (ModelsCollection<TorrentPreviewableFile *>), typeid (files));
+    QCOMPARE(typeid (files), typeid (ModelsCollection<TorrentPreviewableFile *>));
 
     // Expected file IDs
     QVector<QVariant> fileIds {2, 3};
@@ -875,7 +875,7 @@ void tst_Model_Relations::with_NestedRelations() const
         QVERIFY(file->exists);
         QCOMPARE(file->getAttribute("torrent_id"), torrent->getKey());
         QVERIFY(fileIds.contains(file->getKey()));
-        QCOMPARE(typeid (TorrentPreviewableFile *), typeid (file));
+        QCOMPARE(typeid (file), typeid (TorrentPreviewableFile *));
 
         /* TorrentPreviewableFileProperty has-one relation, loaded by
            dot notation in the u_with data member. */
@@ -884,7 +884,7 @@ void tst_Model_Relations::with_NestedRelations() const
                     "fileProperty");
         QVERIFY(fileProperty);
         QVERIFY(fileProperty->exists);
-        QCOMPARE(typeid (TorrentPreviewableFileProperty *), typeid (fileProperty));
+        QCOMPARE(typeid (fileProperty), typeid (TorrentPreviewableFileProperty *));
         QVERIFY(filePropertyIds.contains(fileProperty->getKey()));
         QCOMPARE(fileProperty->getAttribute("previewable_file_id"), file->getKey());
     }
@@ -910,7 +910,7 @@ void tst_Model_Relations::with_Vector_MoreRelations() const
     // TorrentPreviewableFile has-many relation
     auto files = torrent->getRelation<TorrentPreviewableFile>("torrentFiles");
     QCOMPARE(files.size(), 2);
-    QCOMPARE(typeid (ModelsCollection<TorrentPreviewableFile *>), typeid (files));
+    QCOMPARE(typeid (files), typeid (ModelsCollection<TorrentPreviewableFile *>));
 
     // Expected file IDs
     QVector<QVariant> fileIds {2, 3};
@@ -919,7 +919,7 @@ void tst_Model_Relations::with_Vector_MoreRelations() const
         QVERIFY(file->exists);
         QCOMPARE(file->getAttribute("torrent_id"), torrent->getKey());
         QVERIFY(fileIds.contains(file->getKey()));
-        QCOMPARE(typeid (TorrentPreviewableFile *), typeid (file));
+        QCOMPARE(typeid (file), typeid (TorrentPreviewableFile *));
 
         // No TorrentPreviewableFileProperty loaded
         QVERIFY_EXCEPTION_THROWN(
@@ -951,7 +951,7 @@ void tst_Model_Relations::with_WithSelectConstraint() const
 
     auto files = torrent->getRelation<TorrentPreviewableFile>("torrentFiles");
     QCOMPARE(files.size(), 2);
-    QCOMPARE(typeid (ModelsCollection<TorrentPreviewableFile *>), typeid (files));
+    QCOMPARE(typeid (files), typeid (ModelsCollection<TorrentPreviewableFile *>));
 
     // Expected file IDs
     QVector<QVariant> fileIds {2, 3};
@@ -969,7 +969,7 @@ void tst_Model_Relations::with_WithSelectConstraint() const
 
         QCOMPARE(file->getAttribute("torrent_id"), torrent->getKey());
         QVERIFY(fileIds.contains(file->getKey()));
-        QCOMPARE(typeid (TorrentPreviewableFile *), typeid (file));
+        QCOMPARE(typeid (file), typeid (TorrentPreviewableFile *));
     }
 }
 
@@ -986,7 +986,7 @@ void tst_Model_Relations::with_WithSelectConstraint_WithWhitespaces() const
 
     auto files = torrent->getRelation<TorrentPreviewableFile>("torrentFiles");
     QCOMPARE(files.size(), 2);
-    QCOMPARE(typeid (ModelsCollection<TorrentPreviewableFile *>), typeid (files));
+    QCOMPARE(typeid (files), typeid (ModelsCollection<TorrentPreviewableFile *>));
 
     // Expected file IDs
     QVector<QVariant> fileIds {2, 3};
@@ -1004,7 +1004,7 @@ void tst_Model_Relations::with_WithSelectConstraint_WithWhitespaces() const
 
         QCOMPARE(file->getAttribute("torrent_id"), torrent->getKey());
         QVERIFY(fileIds.contains(file->getKey()));
-        QCOMPARE(typeid (TorrentPreviewableFile *), typeid (file));
+        QCOMPARE(typeid (file), typeid (TorrentPreviewableFile *));
     }
 }
 
@@ -1020,7 +1020,7 @@ void tst_Model_Relations::with_WithSelectConstraint_BelongsToMany() const
 
     auto tags = torrent->getRelation<Tag>("tags");
     QCOMPARE(tags.size(), 2);
-    QCOMPARE(typeid (ModelsCollection<Tag *>), typeid (tags));
+    QCOMPARE(typeid (tags), typeid (ModelsCollection<Tag *>));
 
     // Expected tag IDs
     QVector<QVariant> tagIds {2, 4};
@@ -1037,7 +1037,7 @@ void tst_Model_Relations::with_WithSelectConstraint_BelongsToMany() const
             QVERIFY(expectedAttributes.contains(attribute.key));
 
         QVERIFY(tagIds.contains(tag->getKey()));
-        QCOMPARE(typeid (Tag *), typeid (tag));
+        QCOMPARE(typeid (tag), typeid (Tag *));
 
         const auto &relations = tag->getRelations();
         QCOMPARE(relations.size(), static_cast<std::size_t>(2));
@@ -1048,7 +1048,7 @@ void tst_Model_Relations::with_WithSelectConstraint_BelongsToMany() const
         auto *tagged = tag->getRelation<Tagged, One>("tagged");
         QVERIFY(tagged);
         QVERIFY(tagged->exists);
-        QCOMPARE(typeid (Tagged *), typeid (tagged));
+        QCOMPARE(typeid (tagged), typeid (Tagged *));
 
         QVERIFY(tagged->usesTimestamps());
         QVERIFY(!tagged->getIncrementing());
@@ -1083,7 +1083,7 @@ void tst_Model_Relations::with_WithLambdaConstraint() const
 
     auto files = torrent->getRelation<TorrentPreviewableFile>("torrentFiles");
     QCOMPARE(files.size(), 2);
-    QCOMPARE(typeid (ModelsCollection<TorrentPreviewableFile *>), typeid (files));
+    QCOMPARE(typeid (files), typeid (ModelsCollection<TorrentPreviewableFile *>));
 
     // Expected file IDs
     QVector<QVariant> fileIds {2, 3};
@@ -1101,7 +1101,7 @@ void tst_Model_Relations::with_WithLambdaConstraint() const
 
         QCOMPARE(file->getAttribute("torrent_id"), torrent->getKey());
         QVERIFY(fileIds.contains(file->getKey()));
-        QCOMPARE(typeid (TorrentPreviewableFile *), typeid (file));
+        QCOMPARE(typeid (file), typeid (TorrentPreviewableFile *));
     }
 }
 
@@ -1120,7 +1120,7 @@ void tst_Model_Relations::with_WithLambdaConstraint_BelongsToMany() const
 
     auto tags = torrent->getRelation<Tag>("tags");
     QCOMPARE(tags.size(), 2);
-    QCOMPARE(typeid (ModelsCollection<Tag *>), typeid (tags));
+    QCOMPARE(typeid (tags), typeid (ModelsCollection<Tag *>));
 
     // Expected tag IDs
     QVector<QVariant> tagIds {2, 4};
@@ -1137,7 +1137,7 @@ void tst_Model_Relations::with_WithLambdaConstraint_BelongsToMany() const
             QVERIFY(expectedAttributes.contains(attribute.key));
 
         QVERIFY(tagIds.contains(tag->getKey()));
-        QCOMPARE(typeid (Tag *), typeid (tag));
+        QCOMPARE(typeid (tag), typeid (Tag *));
 
         const auto &relations = tag->getRelations();
         QCOMPARE(relations.size(), static_cast<std::size_t>(2));
@@ -1148,7 +1148,7 @@ void tst_Model_Relations::with_WithLambdaConstraint_BelongsToMany() const
         auto *tagged = tag->getRelation<Tagged, One>("tagged");
         QVERIFY(tagged);
         QVERIFY(tagged->exists);
-        QCOMPARE(typeid (Tagged *), typeid (tagged));
+        QCOMPARE(typeid (tagged), typeid (Tagged *));
 
         QVERIFY(tagged->usesTimestamps());
         QVERIFY(!tagged->getIncrementing());
@@ -1254,12 +1254,12 @@ void tst_Model_Relations::load_QVector_WithItem() const
     QVERIFY(peer->exists);
     QCOMPARE(peer->getAttribute("torrent_id"), torrent->getKey());
     QCOMPARE(peer->getKey(), QVariant(2));
-    QCOMPARE(typeid (TorrentPeer *), typeid (peer));
+    QCOMPARE(typeid (peer), typeid (TorrentPeer *));
 
     // TorrentPreviewableFile has-many relation
     auto files = torrent->getRelation<TorrentPreviewableFile>("torrentFiles");
     QCOMPARE(files.size(), 2);
-    QCOMPARE(typeid (ModelsCollection<TorrentPreviewableFile *>), typeid (files));
+    QCOMPARE(typeid (files), typeid (ModelsCollection<TorrentPreviewableFile *>));
 
     // Expected file IDs
     QVector<QVariant> fileIds {2, 3};
@@ -1268,7 +1268,7 @@ void tst_Model_Relations::load_QVector_WithItem() const
         QVERIFY(file->exists);
         QCOMPARE(file->getAttribute("torrent_id"), torrent->getKey());
         QVERIFY(fileIds.contains(file->getKey()));
-        QCOMPARE(typeid (TorrentPreviewableFile *), typeid (file));
+        QCOMPARE(typeid (file), typeid (TorrentPreviewableFile *));
 
         // No TorrentPreviewableFileProperty loaded
         QVERIFY(file->getRelations().empty());
@@ -1301,12 +1301,12 @@ void tst_Model_Relations::load_QVector_QString_lvalue() const
     QVERIFY(peer->exists);
     QCOMPARE(peer->getAttribute("torrent_id"), torrent->getKey());
     QCOMPARE(peer->getKey(), QVariant(2));
-    QCOMPARE(typeid (TorrentPeer *), typeid (peer));
+    QCOMPARE(typeid (peer), typeid (TorrentPeer *));
 
     // TorrentPreviewableFile has-many relation
     auto files = torrent->getRelation<TorrentPreviewableFile>("torrentFiles");
     QCOMPARE(files.size(), 2);
-    QCOMPARE(typeid (ModelsCollection<TorrentPreviewableFile *>), typeid (files));
+    QCOMPARE(typeid (files), typeid (ModelsCollection<TorrentPreviewableFile *>));
 
     // Expected file IDs
     QVector<QVariant> fileIds {2, 3};
@@ -1315,7 +1315,7 @@ void tst_Model_Relations::load_QVector_QString_lvalue() const
         QVERIFY(file->exists);
         QCOMPARE(file->getAttribute("torrent_id"), torrent->getKey());
         QVERIFY(fileIds.contains(file->getKey()));
-        QCOMPARE(typeid (TorrentPreviewableFile *), typeid (file));
+        QCOMPARE(typeid (file), typeid (TorrentPreviewableFile *));
 
         // No TorrentPreviewableFileProperty loaded
         QVERIFY(file->getRelations().empty());
@@ -1347,12 +1347,12 @@ void tst_Model_Relations::load_QVector_QString_rvalue() const
     QVERIFY(peer->exists);
     QCOMPARE(peer->getAttribute("torrent_id"), torrent->getKey());
     QCOMPARE(peer->getKey(), QVariant(2));
-    QCOMPARE(typeid (TorrentPeer *), typeid (peer));
+    QCOMPARE(typeid (peer), typeid (TorrentPeer *));
 
     // TorrentPreviewableFile has-many relation
     auto files = torrent->getRelation<TorrentPreviewableFile>("torrentFiles");
     QCOMPARE(files.size(), 2);
-    QCOMPARE(typeid (ModelsCollection<TorrentPreviewableFile *>), typeid (files));
+    QCOMPARE(typeid (files), typeid (ModelsCollection<TorrentPreviewableFile *>));
 
     // Expected file IDs
     QVector<QVariant> fileIds {2, 3};
@@ -1361,7 +1361,7 @@ void tst_Model_Relations::load_QVector_QString_rvalue() const
         QVERIFY(file->exists);
         QCOMPARE(file->getAttribute("torrent_id"), torrent->getKey());
         QVERIFY(fileIds.contains(file->getKey()));
-        QCOMPARE(typeid (TorrentPreviewableFile *), typeid (file));
+        QCOMPARE(typeid (file), typeid (TorrentPreviewableFile *));
 
         // No TorrentPreviewableFileProperty loaded
         QVERIFY(file->getRelations().empty());
@@ -1392,7 +1392,7 @@ void tst_Model_Relations::load_QString() const
     QVERIFY(peer->exists);
     QCOMPARE(peer->getAttribute("torrent_id"), torrent->getKey());
     QCOMPARE(peer->getKey(), QVariant(2));
-    QCOMPARE(typeid (TorrentPeer *), typeid (peer));
+    QCOMPARE(typeid (peer), typeid (TorrentPeer *));
 }
 
 void tst_Model_Relations::load_WithSelectConstraint() const
@@ -1415,7 +1415,7 @@ void tst_Model_Relations::load_WithSelectConstraint() const
 
     auto files = torrent->getRelation<TorrentPreviewableFile>("torrentFiles");
     QCOMPARE(files.size(), 2);
-    QCOMPARE(typeid (ModelsCollection<TorrentPreviewableFile *>), typeid (files));
+    QCOMPARE(typeid (files), typeid (ModelsCollection<TorrentPreviewableFile *>));
 
     // Expected file IDs
     QVector<QVariant> fileIds {2, 3};
@@ -1433,7 +1433,7 @@ void tst_Model_Relations::load_WithSelectConstraint() const
 
         QCOMPARE(file->getAttribute("torrent_id"), torrent->getKey());
         QVERIFY(fileIds.contains(file->getKey()));
-        QCOMPARE(typeid (TorrentPreviewableFile *), typeid (file));
+        QCOMPARE(typeid (file), typeid (TorrentPreviewableFile *));
         QVERIFY(file->getRelations().empty());
     }
 }
@@ -1461,7 +1461,7 @@ void tst_Model_Relations::load_WithLambdaConstraint() const
 
     auto files = torrent->getRelation<TorrentPreviewableFile>("torrentFiles");
     QCOMPARE(files.size(), 2);
-    QCOMPARE(typeid (ModelsCollection<TorrentPreviewableFile *>), typeid (files));
+    QCOMPARE(typeid (files), typeid (ModelsCollection<TorrentPreviewableFile *>));
 
     // Expected file IDs
     QVector<QVariant> fileIds {2, 3};
@@ -1479,7 +1479,7 @@ void tst_Model_Relations::load_WithLambdaConstraint() const
 
         QCOMPARE(file->getAttribute("torrent_id"), torrent->getKey());
         QVERIFY(fileIds.contains(file->getKey()));
-        QCOMPARE(typeid (TorrentPreviewableFile *), typeid (file));
+        QCOMPARE(typeid (file), typeid (TorrentPreviewableFile *));
         QVERIFY(file->getRelations().empty());
     }
 }
@@ -1524,7 +1524,7 @@ void tst_Model_Relations::fresh() const
 
     auto files = freshTorrent->getRelation<TorrentPreviewableFile>("torrentFiles");
     QCOMPARE(files.size(), 2);
-    QCOMPARE(typeid (ModelsCollection<TorrentPreviewableFile *>), typeid (files));
+    QCOMPARE(typeid (files), typeid (ModelsCollection<TorrentPreviewableFile *>));
 
     // Expected file IDs
     QVector<QVariant> fileIds {2, 3};
@@ -1538,7 +1538,7 @@ void tst_Model_Relations::fresh() const
 
         QCOMPARE(file->getAttribute("torrent_id"), torrent->getKey());
         QVERIFY(fileIds.contains(file->getKey()));
-        QCOMPARE(typeid (TorrentPreviewableFile *), typeid (file));
+        QCOMPARE(typeid (file), typeid (TorrentPreviewableFile *));
     }
 }
 
@@ -1567,7 +1567,7 @@ void tst_Model_Relations::fresh_WithSelectConstraint() const
 
     auto files = freshTorrent->getRelation<TorrentPreviewableFile>("torrentFiles");
     QCOMPARE(files.size(), 2);
-    QCOMPARE(typeid (ModelsCollection<TorrentPreviewableFile *>), typeid (files));
+    QCOMPARE(typeid (files), typeid (ModelsCollection<TorrentPreviewableFile *>));
 
     // Expected file IDs
     QVector<QVariant> fileIds {2, 3};
@@ -1585,7 +1585,7 @@ void tst_Model_Relations::fresh_WithSelectConstraint() const
 
         QCOMPARE(file->getAttribute("torrent_id"), torrent->getKey());
         QVERIFY(fileIds.contains(file->getKey()));
-        QCOMPARE(typeid (TorrentPreviewableFile *), typeid (file));
+        QCOMPARE(typeid (file), typeid (TorrentPreviewableFile *));
     }
 }
 
@@ -1932,7 +1932,7 @@ void tst_Model_Relations::where_WithCallback() const
     for (auto &file : files) {
         QVERIFY(file.exists);
         QVERIFY(fileIds.contains(file[ID]));
-        QCOMPARE(typeid (TorrentPreviewableFile), typeid (file));
+        QCOMPARE(typeid (file), typeid (TorrentPreviewableFile));
     }
 }
 
@@ -1957,7 +1957,7 @@ void tst_Model_Relations::orWhere_WithCallback() const
     for (auto &file : files) {
         QVERIFY(file.exists);
         QVERIFY(fileIds.contains(file[ID]));
-        QCOMPARE(typeid (TorrentPreviewableFile), typeid (file));
+        QCOMPARE(typeid (file), typeid (TorrentPreviewableFile));
     }
 }
 
@@ -2056,7 +2056,7 @@ void tst_Model_Relations::withDefaultModel_LazyLoad_Bool_HasOne() const
 
     QVERIFY(fileProperty != nullptr);
     QVERIFY(!fileProperty->exists);
-    QCOMPARE(typeid (TorrentPreviewableFileProperty *), typeid (fileProperty));
+    QCOMPARE(typeid (fileProperty), typeid (TorrentPreviewableFileProperty *));
     QCOMPARE(fileProperty->getAttributes().size(), 1);
     QCOMPARE((*fileProperty)["previewable_file_id"], QVariant(7));
 }
@@ -2076,7 +2076,7 @@ void tst_Model_Relations::withDefaultModel_LazyLoad_AttributesVector_HasOne() co
 
     QVERIFY(fileProperty != nullptr);
     QVERIFY(!fileProperty->exists);
-    QCOMPARE(typeid (TorrentPreviewableFileProperty *), typeid (fileProperty));
+    QCOMPARE(typeid (fileProperty), typeid (TorrentPreviewableFileProperty *));
     QCOMPARE(fileProperty->getAttributes().size(), 3);
     QCOMPARE((*fileProperty)["previewable_file_id"], QVariant(7));
     QCOMPARE((*fileProperty)[NAME], QVariant("default_fileproperty_name"));
@@ -2097,7 +2097,7 @@ void tst_Model_Relations::withDefaultModel_LazyLoad_Bool_BelongsTo() const
 
     QVERIFY(torrent != nullptr);
     QVERIFY(!torrent->exists);
-    QCOMPARE(typeid (Torrent *), typeid (torrent));
+    QCOMPARE(typeid (torrent), typeid (Torrent *));
     QCOMPARE(torrent->getAttributes().size(), 0);
 }
 
@@ -2115,7 +2115,7 @@ void tst_Model_Relations::withDefaultModel_LazyLoad_AttributesVector_BelongsTo()
 
     QVERIFY(torrent != nullptr);
     QVERIFY(!torrent->exists);
-    QCOMPARE(typeid (Torrent *), typeid (torrent));
+    QCOMPARE(typeid (torrent), typeid (Torrent *));
     QCOMPARE(torrent->getAttributes().size(), 2);
     QCOMPARE((*torrent)[NAME], QVariant("default_torrent_name"));
     QCOMPARE((*torrent)[SIZE_], QVariant(123));
@@ -2136,7 +2136,7 @@ void tst_Model_Relations::withDefaultModel_EagerLoad_Bool_HasOne() const
 
     QVERIFY(fileProperty != nullptr);
     QVERIFY(!fileProperty->exists);
-    QCOMPARE(typeid (TorrentPreviewableFilePropertyEager *), typeid (fileProperty));
+    QCOMPARE(typeid (fileProperty), typeid (TorrentPreviewableFilePropertyEager *));
     QCOMPARE(fileProperty->getAttributes().size(), 1);
     QCOMPARE((*fileProperty)["previewable_file_id"], QVariant(7));
 }
@@ -2156,7 +2156,7 @@ void tst_Model_Relations::withDefaultModel_EagerLoad_AttributesVector_HasOne() c
 
     QVERIFY(fileProperty != nullptr);
     QVERIFY(!fileProperty->exists);
-    QCOMPARE(typeid (TorrentPreviewableFilePropertyEager *), typeid (fileProperty));
+    QCOMPARE(typeid (fileProperty), typeid (TorrentPreviewableFilePropertyEager *));
     QCOMPARE(fileProperty->getAttributes().size(), 3);
     QCOMPARE((*fileProperty)["previewable_file_id"], QVariant(7));
     QCOMPARE((*fileProperty)[NAME], QVariant("default_fileproperty_name"));
@@ -2178,7 +2178,7 @@ void tst_Model_Relations::withDefaultModel_EagerLoad_Bool_BelongsTo() const
 
     QVERIFY(torrent != nullptr);
     QVERIFY(!torrent->exists);
-    QCOMPARE(typeid (TorrentEager_WithDefault *), typeid (torrent));
+    QCOMPARE(typeid (torrent), typeid (TorrentEager_WithDefault *));
     QCOMPARE(torrent->getAttributes().size(), 0);
 }
 
@@ -2197,7 +2197,7 @@ void tst_Model_Relations::withDefaultModel_EagerLoad_AttributesVector_BelongsTo(
 
     QVERIFY(torrent != nullptr);
     QVERIFY(!torrent->exists);
-    QCOMPARE(typeid (TorrentEager_WithDefault *), typeid (torrent));
+    QCOMPARE(typeid (torrent), typeid (TorrentEager_WithDefault *));
     QCOMPARE(torrent->getAttributes().size(), 2);
     QCOMPARE((*torrent)[NAME], QVariant("default_torrent_name"));
     QCOMPARE((*torrent)[SIZE_], QVariant(123));
@@ -3019,7 +3019,7 @@ namespace
         auto *tagged = tag.getRelation<Tagged, One>("tagged");
         QVERIFY(tagged);
         QVERIFY(tagged->exists);
-        QCOMPARE(typeid (Tagged *), typeid (tagged));
+        QCOMPARE(typeid (tagged), typeid (Tagged *));
 
         QCOMPARE(tagged->getForeignKey(), QString("torrent_id"));
         QCOMPARE(tagged->getRelatedKey(), QString("tag_id"));

@@ -105,7 +105,7 @@ void tst_Model_Return_Relation::getRelation_EagerLoad_HasOne() const
     QVERIFY(torrentPeer->exists);
     QCOMPARE(torrentPeer->getKey(), QVariant(2));
     QCOMPARE(torrentPeer->getAttribute("torrent_id"), QVariant(2));
-    QCOMPARE(typeid (TorrentPeer *), typeid (torrentPeer));
+    QCOMPARE(typeid (torrentPeer), typeid (TorrentPeer *));
 }
 
 void tst_Model_Return_Relation::getRelation_EagerLoad_HasMany() const
@@ -120,7 +120,7 @@ void tst_Model_Return_Relation::getRelation_EagerLoad_HasMany() const
     QVERIFY(torrent->relationLoaded("torrentFiles"));
     auto files = torrent->getRelationValue<TorrentPreviewableFile>("torrentFiles");
     QCOMPARE(files.size(), 2);
-    QCOMPARE(typeid (ModelsCollection<TorrentPreviewableFile *>), typeid (files));
+    QCOMPARE(typeid (files), typeid (ModelsCollection<TorrentPreviewableFile *>));
 
     // Expected file IDs
     QVector<QVariant> fileIds {2, 3};
@@ -130,7 +130,7 @@ void tst_Model_Return_Relation::getRelation_EagerLoad_HasMany() const
         QVERIFY(file->exists);
         QCOMPARE(file->getAttribute("torrent_id"), torrentId);
         QVERIFY(fileIds.contains(file->getKey()));
-        QCOMPARE(typeid (TorrentPreviewableFile *), typeid (file));
+        QCOMPARE(typeid (file), typeid (TorrentPreviewableFile *));
     }
 }
 
@@ -148,7 +148,7 @@ void tst_Model_Return_Relation::getRelation_EagerLoad_BelongsTo() const
     QVERIFY(user);
     QVERIFY(user->exists);
     QCOMPARE(user->getKey(), QVariant(1));
-    QCOMPARE(typeid (User *), typeid (user));
+    QCOMPARE(typeid (user), typeid (User *));
 
 }
 
@@ -165,7 +165,7 @@ void tst_Model_Return_Relation::
     QVERIFY(torrent->relationLoaded("tags"));
     auto tags = torrent->getRelationValue<Tag_ReturnRelation>("tags");
     QCOMPARE(tags.size(), 4);
-    QCOMPARE(typeid (ModelsCollection<Tag_ReturnRelation *>), typeid (tags));
+    QCOMPARE(typeid (tags), typeid (ModelsCollection<Tag_ReturnRelation *>));
 
     // Expected tag IDs and pivot attribute 'active', maps tagId to active
     std::unordered_map<quint64, int> activeMap {{1, 1}, {2, 1}, {3, 0}, {4, 1}};
@@ -175,7 +175,7 @@ void tst_Model_Return_Relation::
         QVERIFY(tag->exists);
         const auto tagId = tag->getKeyCasted();
         QVERIFY(activeMap.contains(tagId));
-        QCOMPARE(typeid (Tag_ReturnRelation *), typeid (tag));
+        QCOMPARE(typeid (tag), typeid (Tag_ReturnRelation *));
 
         /* Custom Pivot relation as the Tagged class, under the 'tagged' key
            in the m_relations hash. */
@@ -183,7 +183,7 @@ void tst_Model_Return_Relation::
         auto *pivot = tag->getRelation<Pivot, One>("pivot");
         QVERIFY(pivot);
         QVERIFY(pivot->exists);
-        QCOMPARE(typeid (Pivot *), typeid (pivot));
+        QCOMPARE(typeid (pivot), typeid (Pivot *));
 
         QVERIFY(pivot->usesTimestamps());
         QVERIFY(!pivot->getIncrementing());
@@ -216,7 +216,7 @@ void tst_Model_Return_Relation::
     QVERIFY(torrent->relationLoaded("tagsCustom"));
     auto tags = torrent->getRelationValue<Tag>("tagsCustom");
     QCOMPARE(tags.size(), 4);
-    QCOMPARE(typeid (ModelsCollection<Tag *>), typeid (tags));
+    QCOMPARE(typeid (tags), typeid (ModelsCollection<Tag *>));
 
     // Expected tag IDs and pivot attribute 'active', maps tagId to active
     std::unordered_map<quint64, int> activeMap {{1, 1}, {2, 1}, {3, 0}, {4, 1}};
@@ -226,7 +226,7 @@ void tst_Model_Return_Relation::
         QVERIFY(tag->exists);
         const auto tagId = tag->getKeyCasted();
         QVERIFY(activeMap.contains(tagId));
-        QCOMPARE(typeid (Tag *), typeid (tag));
+        QCOMPARE(typeid (tag), typeid (Tag *));
 
         /* Custom Pivot relation as the Tagged class, under the 'tagged' key
            in the m_relations hash. */
@@ -234,7 +234,7 @@ void tst_Model_Return_Relation::
         auto *tagged = tag->getRelation<Tagged, One>("tagged");
         QVERIFY(tagged);
         QVERIFY(tagged->exists);
-        QCOMPARE(typeid (Tagged *), typeid (tagged));
+        QCOMPARE(typeid (tagged), typeid (Tagged *));
 
         QVERIFY(tagged->usesTimestamps());
         QVERIFY(!tagged->getIncrementing());
@@ -269,7 +269,7 @@ void tst_Model_Return_Relation::getRelationValue_LazyLoad_HasOne() const
     QVERIFY(torrentPeer->exists);
     QCOMPARE(torrentPeer->getKey(), QVariant(2));
     QCOMPARE(torrentPeer->getAttribute("torrent_id"), QVariant(2));
-    QCOMPARE(typeid (TorrentPeer *), typeid (torrentPeer));
+    QCOMPARE(typeid (torrentPeer), typeid (TorrentPeer *));
 }
 
 void tst_Model_Return_Relation::getRelationValue_LazyLoad_HasMany() const
@@ -285,7 +285,7 @@ void tst_Model_Return_Relation::getRelationValue_LazyLoad_HasMany() const
     auto files = torrent->getRelationValue<TorrentPreviewableFile>("torrentFiles");
     QVERIFY(torrent->relationLoaded("torrentFiles"));
     QCOMPARE(files.size(), 2);
-    QCOMPARE(typeid (ModelsCollection<TorrentPreviewableFile *>), typeid (files));
+    QCOMPARE(typeid (files), typeid (ModelsCollection<TorrentPreviewableFile *>));
 
     // Expected file IDs
     QVector<QVariant> fileIds {2, 3};
@@ -295,7 +295,7 @@ void tst_Model_Return_Relation::getRelationValue_LazyLoad_HasMany() const
         QVERIFY(file->exists);
         QCOMPARE(file->getAttribute("torrent_id"), torrentId);
         QVERIFY(fileIds.contains(file->getKey()));
-        QCOMPARE(typeid (TorrentPreviewableFile *), typeid (file));
+        QCOMPARE(typeid (file), typeid (TorrentPreviewableFile *));
     }
 }
 
@@ -314,7 +314,7 @@ void tst_Model_Return_Relation::getRelationValue_LazyLoad_BelongsTo() const
     QVERIFY(user);
     QVERIFY(user->exists);
     QCOMPARE(user->getKey(), QVariant(1));
-    QCOMPARE(typeid (User *), typeid (user));
+    QCOMPARE(typeid (user), typeid (User *));
 }
 
 void tst_Model_Return_Relation::
@@ -331,7 +331,7 @@ void tst_Model_Return_Relation::
     auto tags = torrent->getRelationValue<Tag_ReturnRelation>("tags");
     QVERIFY(torrent->relationLoaded("tags"));
     QCOMPARE(tags.size(), 4);
-    QCOMPARE(typeid (ModelsCollection<Tag_ReturnRelation *>), typeid (tags));
+    QCOMPARE(typeid (tags), typeid (ModelsCollection<Tag_ReturnRelation *>));
 
     // Expected tag IDs and pivot attribute 'active', maps tagId to active
     std::unordered_map<quint64, int> activeMap {{1, 1}, {2, 1}, {3, 0}, {4, 1}};
@@ -341,7 +341,7 @@ void tst_Model_Return_Relation::
         QVERIFY(tag->exists);
         const auto tagId = tag->getKeyCasted();
         QVERIFY(activeMap.contains(tagId));
-        QCOMPARE(typeid (Tag_ReturnRelation *), typeid (tag));
+        QCOMPARE(typeid (tag), typeid (Tag_ReturnRelation *));
 
         /* Custom Pivot relation as the Tagged class, under the 'tagged' key
            in the m_relations hash. */
@@ -349,7 +349,7 @@ void tst_Model_Return_Relation::
         auto *pivot = tag->getRelation<Pivot, One>("pivot");
         QVERIFY(pivot);
         QVERIFY(pivot->exists);
-        QCOMPARE(typeid (Pivot *), typeid (pivot));
+        QCOMPARE(typeid (pivot), typeid (Pivot *));
 
         QVERIFY(pivot->usesTimestamps());
         QVERIFY(!pivot->getIncrementing());
@@ -383,7 +383,7 @@ void tst_Model_Return_Relation::
     auto tags = torrent->getRelationValue<Tag>("tagsCustom");
     QVERIFY(torrent->relationLoaded("tagsCustom"));
     QCOMPARE(tags.size(), 4);
-    QCOMPARE(typeid (ModelsCollection<Tag *>), typeid (tags));
+    QCOMPARE(typeid (tags), typeid (ModelsCollection<Tag *>));
 
     // Expected tag IDs and pivot attribute 'active', maps tagId to active
     std::unordered_map<quint64, int> activeMap {{1, 1}, {2, 1}, {3, 0}, {4, 1}};
@@ -393,7 +393,7 @@ void tst_Model_Return_Relation::
         QVERIFY(tag->exists);
         const auto tagId = tag->getKeyCasted();
         QVERIFY(activeMap.contains(tagId));
-        QCOMPARE(typeid (Tag *), typeid (tag));
+        QCOMPARE(typeid (tag), typeid (Tag *));
 
         /* Custom Pivot relation as the Tagged class, under the 'tagged' key
            in the m_relations hash. */
@@ -401,7 +401,7 @@ void tst_Model_Return_Relation::
         auto *tagged = tag->getRelation<Tagged, One>("tagged");
         QVERIFY(tagged);
         QVERIFY(tagged->exists);
-        QCOMPARE(typeid (Tagged *), typeid (tagged));
+        QCOMPARE(typeid (tagged), typeid (Tagged *));
 
         QVERIFY(tagged->usesTimestamps());
         QVERIFY(!tagged->getIncrementing());

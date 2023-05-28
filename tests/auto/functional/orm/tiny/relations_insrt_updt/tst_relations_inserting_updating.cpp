@@ -1373,7 +1373,7 @@ void tst_Relations_Inserting_Updating::associate_WithModel() const
     auto *verifyTorrent5 = file.getRelation<Torrent, One>("torrent");
     QVERIFY(verifyTorrent5);
     QVERIFY(verifyTorrent5->exists);
-    QCOMPARE(typeid (Torrent *), typeid (verifyTorrent5));
+    QCOMPARE(typeid (verifyTorrent5), typeid (Torrent *));
     QVERIFY(verifyTorrent5->is(torrent));
     QVERIFY(torrent == *verifyTorrent5);
 
@@ -1384,7 +1384,7 @@ void tst_Relations_Inserting_Updating::associate_WithModel() const
     verifyTorrent5 = file.getRelation<Torrent, One>("torrent");
     QVERIFY(verifyTorrent5);
     QVERIFY(verifyTorrent5->exists);
-    QCOMPARE(typeid (Torrent *), typeid (verifyTorrent5));
+    QCOMPARE(typeid (verifyTorrent5), typeid (Torrent *));
     QVERIFY(verifyTorrent5->is(torrent));
     QVERIFY(torrent == *verifyTorrent5);
 
@@ -1486,7 +1486,7 @@ void tst_Relations_Inserting_Updating::associate_WithId_ShouldUnsetRelation() co
     auto *verifyTorrent5 = file.getRelation<Torrent, One>("torrent");
     QVERIFY(verifyTorrent5);
     QVERIFY(verifyTorrent5->exists);
-    QCOMPARE(typeid (Torrent *), typeid (verifyTorrent5));
+    QCOMPARE(typeid (verifyTorrent5), typeid (Torrent *));
     QVERIFY(verifyTorrent5->is(torrent));
     QVERIFY(torrent == *verifyTorrent5);
 
@@ -1542,7 +1542,7 @@ void tst_Relations_Inserting_Updating::dissociate() const
     auto *verifyTorrent5 = file.getRelation<Torrent, One>("torrent");
     QVERIFY(verifyTorrent5);
     QVERIFY(verifyTorrent5->exists);
-    QCOMPARE(typeid (Torrent *), typeid (verifyTorrent5));
+    QCOMPARE(typeid (verifyTorrent5), typeid (Torrent *));
     QVERIFY(verifyTorrent5->is(torrent));
     QVERIFY(torrent == *verifyTorrent5);
 
@@ -1600,7 +1600,7 @@ void tst_Relations_Inserting_Updating::attach_BasicPivot_WithIds() const
 
     for (auto &tagged : taggeds) {
         QVERIFY(tagged.exists);
-        QCOMPARE(typeid (Tagged), typeid (tagged));
+        QCOMPARE(typeid (tagged), typeid (Tagged));
 
         QCOMPARE(tagged.getAttributes().size(), 5);
 
@@ -1650,7 +1650,7 @@ void tst_Relations_Inserting_Updating::attach_BasicPivot_WithModels() const
 
     for (auto &tagged : taggeds) {
         QVERIFY(tagged.exists);
-        QCOMPARE(typeid (Tagged), typeid (tagged));
+        QCOMPARE(typeid (tagged), typeid (Tagged));
 
         QCOMPARE(tagged.getAttributes().size(), 5);
 
@@ -1696,7 +1696,7 @@ void tst_Relations_Inserting_Updating::attach_CustomPivot_WithIds() const
 
     for (auto &tagged : taggeds) {
         QVERIFY(tagged.exists);
-        QCOMPARE(typeid (Tagged), typeid (tagged));
+        QCOMPARE(typeid (tagged), typeid (Tagged));
 
         QCOMPARE(tagged.getAttributes().size(), 5);
 
@@ -1742,7 +1742,7 @@ void tst_Relations_Inserting_Updating::attach_CustomPivot_WithModels() const
 
     for (auto &tagged : taggeds) {
         QVERIFY(tagged.exists);
-        QCOMPARE(typeid (Tagged), typeid (tagged));
+        QCOMPARE(typeid (tagged), typeid (Tagged));
 
         QCOMPARE(tagged.getAttributes().size(), 5);
 
@@ -1798,7 +1798,7 @@ void tst_Relations_Inserting_Updating::attach_BasicPivot_IdsWithAttributes() con
 
     for (auto &tagged : taggeds) {
         QVERIFY(tagged.exists);
-        QCOMPARE(typeid (Tagged), typeid (tagged));
+        QCOMPARE(typeid (tagged), typeid (Tagged));
 
         QCOMPARE(tagged.getAttributes().size(), 5);
 
@@ -1852,7 +1852,7 @@ void tst_Relations_Inserting_Updating::attach_CustomPivot_IdsWithAttributes() co
 
     for (auto &tagged : taggeds) {
         QVERIFY(tagged.exists);
-        QCOMPARE(typeid (Tagged), typeid (tagged));
+        QCOMPARE(typeid (tagged), typeid (Tagged));
 
         QCOMPARE(tagged.getAttributes().size(), 5);
 
@@ -1904,7 +1904,7 @@ void tst_Relations_Inserting_Updating::detach_BasicPivot_WithIds() const
 
     for (auto &tagged : taggeds) {
         QVERIFY(tagged.exists);
-        QCOMPARE(typeid (Tagged), typeid (tagged));
+        QCOMPARE(typeid (tagged), typeid (Tagged));
 
         QCOMPARE(tagged.getAttributes().size(), 5);
 
@@ -1965,7 +1965,7 @@ void tst_Relations_Inserting_Updating::detach_BasicPivot_WithModels() const
 
     for (auto &tagged : taggeds) {
         QVERIFY(tagged.exists);
-        QCOMPARE(typeid (Tagged), typeid (tagged));
+        QCOMPARE(typeid (tagged), typeid (Tagged));
 
         QCOMPARE(tagged.getAttributes().size(), 5);
 
@@ -2025,7 +2025,7 @@ void tst_Relations_Inserting_Updating::detach_BasicPivot_All() const
 
     for (auto &tagged : taggeds) {
         QVERIFY(tagged.exists);
-        QCOMPARE(typeid (Tagged), typeid (tagged));
+        QCOMPARE(typeid (tagged), typeid (Tagged));
 
         QCOMPARE(tagged.getAttributes().size(), 5);
 
@@ -2081,7 +2081,7 @@ void tst_Relations_Inserting_Updating::detach_CustomPivot_WithIds() const
 
     for (auto &tagged : taggeds) {
         QVERIFY(tagged.exists);
-        QCOMPARE(typeid (Tagged), typeid (tagged));
+        QCOMPARE(typeid (tagged), typeid (Tagged));
 
         QCOMPARE(tagged.getAttributes().size(), 5);
 
@@ -2137,7 +2137,7 @@ void tst_Relations_Inserting_Updating::detach_CustomPivot_WithModels() const
 
     for (auto &tagged : taggeds) {
         QVERIFY(tagged.exists);
-        QCOMPARE(typeid (Tagged), typeid (tagged));
+        QCOMPARE(typeid (tagged), typeid (Tagged));
 
         QCOMPARE(tagged.getAttributes().size(), 5);
 
@@ -2193,7 +2193,7 @@ void tst_Relations_Inserting_Updating::detach_CustomPivot_All() const
 
     for (auto &tagged : taggeds) {
         QVERIFY(tagged.exists);
-        QCOMPARE(typeid (Tagged), typeid (tagged));
+        QCOMPARE(typeid (tagged), typeid (Tagged));
 
         QCOMPARE(tagged.getAttributes().size(), 5);
 
@@ -2452,7 +2452,7 @@ void tst_Relations_Inserting_Updating::sync_BasicPivot_WithIds() const
 
     for (auto &tagged : taggeds) {
         QVERIFY(tagged.exists);
-        QCOMPARE(typeid (Tagged), typeid (tagged));
+        QCOMPARE(typeid (tagged), typeid (Tagged));
 
         QCOMPARE(tagged.getAttributes().size(), 5);
 
@@ -2503,7 +2503,7 @@ void tst_Relations_Inserting_Updating::sync_BasicPivot_WithIds() const
 
     for (auto &tagged : taggeds) {
         QVERIFY(tagged.exists);
-        QCOMPARE(typeid (Tagged), typeid (tagged));
+        QCOMPARE(typeid (tagged), typeid (Tagged));
 
         QCOMPARE(tagged.getAttributes().size(), 5);
 
@@ -2571,7 +2571,7 @@ void tst_Relations_Inserting_Updating::sync_BasicPivot_IdsWithAttributes() const
 
     for (auto &tagged : taggeds) {
         QVERIFY(tagged.exists);
-        QCOMPARE(typeid (Tagged), typeid (tagged));
+        QCOMPARE(typeid (tagged), typeid (Tagged));
 
         QCOMPARE(tagged.getAttributes().size(), 5);
 
@@ -2627,7 +2627,7 @@ void tst_Relations_Inserting_Updating::sync_BasicPivot_IdsWithAttributes() const
 
     for (auto &tagged : taggeds) {
         QVERIFY(tagged.exists);
-        QCOMPARE(typeid (Tagged), typeid (tagged));
+        QCOMPARE(typeid (tagged), typeid (Tagged));
 
         QCOMPARE(tagged.getAttributes().size(), 5);
 
@@ -2683,7 +2683,7 @@ void tst_Relations_Inserting_Updating::sync_CustomPivot_WithIds() const
 
     for (auto &tagged : taggeds) {
         QVERIFY(tagged.exists);
-        QCOMPARE(typeid (Tagged), typeid (tagged));
+        QCOMPARE(typeid (tagged), typeid (Tagged));
 
         QCOMPARE(tagged.getAttributes().size(), 5);
 
@@ -2732,7 +2732,7 @@ void tst_Relations_Inserting_Updating::sync_CustomPivot_WithIds() const
 
     for (auto &tagged : taggeds) {
         QVERIFY(tagged.exists);
-        QCOMPARE(typeid (Tagged), typeid (tagged));
+        QCOMPARE(typeid (tagged), typeid (Tagged));
 
         QCOMPARE(tagged.getAttributes().size(), 5);
 
@@ -2788,7 +2788,7 @@ void tst_Relations_Inserting_Updating::sync_CustomPivot_IdsWithAttributes() cons
 
     for (auto &tagged : taggeds) {
         QVERIFY(tagged.exists);
-        QCOMPARE(typeid (Tagged), typeid (tagged));
+        QCOMPARE(typeid (tagged), typeid (Tagged));
 
         QCOMPARE(tagged.getAttributes().size(), 5);
 
@@ -2843,7 +2843,7 @@ void tst_Relations_Inserting_Updating::sync_CustomPivot_IdsWithAttributes() cons
 
     for (auto &tagged : taggeds) {
         QVERIFY(tagged.exists);
-        QCOMPARE(typeid (Tagged), typeid (tagged));
+        QCOMPARE(typeid (tagged), typeid (Tagged));
 
         QCOMPARE(tagged.getAttributes().size(), 5);
 
@@ -2911,7 +2911,7 @@ void tst_Relations_Inserting_Updating::syncWithoutDetaching_BasicPivot_WithIds()
 
     for (auto &tagged : taggeds) {
         QVERIFY(tagged.exists);
-        QCOMPARE(typeid (Tagged), typeid (tagged));
+        QCOMPARE(typeid (tagged), typeid (Tagged));
 
         QCOMPARE(tagged.getAttributes().size(), 5);
 
@@ -2959,7 +2959,7 @@ void tst_Relations_Inserting_Updating::syncWithoutDetaching_BasicPivot_WithIds()
 
     for (auto &tagged : taggeds) {
         QVERIFY(tagged.exists);
-        QCOMPARE(typeid (Tagged), typeid (tagged));
+        QCOMPARE(typeid (tagged), typeid (Tagged));
 
         QCOMPARE(tagged.getAttributes().size(), 5);
 
@@ -3028,7 +3028,7 @@ void tst_Relations_Inserting_Updating::
 
     for (auto &tagged : taggeds) {
         QVERIFY(tagged.exists);
-        QCOMPARE(typeid (Tagged), typeid (tagged));
+        QCOMPARE(typeid (tagged), typeid (Tagged));
 
         QCOMPARE(tagged.getAttributes().size(), 5);
 
@@ -3081,7 +3081,7 @@ void tst_Relations_Inserting_Updating::
 
     for (auto &tagged : taggeds) {
         QVERIFY(tagged.exists);
-        QCOMPARE(typeid (Tagged), typeid (tagged));
+        QCOMPARE(typeid (tagged), typeid (Tagged));
 
         QCOMPARE(tagged.getAttributes().size(), 5);
 
@@ -3137,7 +3137,7 @@ void tst_Relations_Inserting_Updating::syncWithoutDetaching_CustomPivot_WithIds(
 
     for (auto &tagged : taggeds) {
         QVERIFY(tagged.exists);
-        QCOMPARE(typeid (Tagged), typeid (tagged));
+        QCOMPARE(typeid (tagged), typeid (Tagged));
 
         QCOMPARE(tagged.getAttributes().size(), 5);
 
@@ -3184,7 +3184,7 @@ void tst_Relations_Inserting_Updating::syncWithoutDetaching_CustomPivot_WithIds(
 
     for (auto &tagged : taggeds) {
         QVERIFY(tagged.exists);
-        QCOMPARE(typeid (Tagged), typeid (tagged));
+        QCOMPARE(typeid (tagged), typeid (Tagged));
 
         QCOMPARE(tagged.getAttributes().size(), 5);
 
@@ -3241,7 +3241,7 @@ void tst_Relations_Inserting_Updating::
 
     for (auto &tagged : taggeds) {
         QVERIFY(tagged.exists);
-        QCOMPARE(typeid (Tagged), typeid (tagged));
+        QCOMPARE(typeid (tagged), typeid (Tagged));
 
         QCOMPARE(tagged.getAttributes().size(), 5);
 
@@ -3293,7 +3293,7 @@ void tst_Relations_Inserting_Updating::
 
     for (auto &tagged : taggeds) {
         QVERIFY(tagged.exists);
-        QCOMPARE(typeid (Tagged), typeid (tagged));
+        QCOMPARE(typeid (tagged), typeid (Tagged));
 
         QCOMPARE(tagged.getAttributes().size(), 5);
 
