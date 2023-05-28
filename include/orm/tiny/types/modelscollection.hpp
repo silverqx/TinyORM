@@ -265,6 +265,17 @@ namespace Types
         std::unique_ptr<TinyBuilder<ModelRawType>> toQuery();
 
         /* Collection - Relations related */
+        /*! Reload a fresh model instance from the database for all the entities. */
+        template<typename = void>
+        ModelsCollection<ModelRawType> fresh(const QVector<WithItem> &relations = {});
+        /*! Reload a fresh model instance from the database for all the entities. */
+        template<typename = void>
+        ModelsCollection<ModelRawType> fresh(QString relation);
+        /*! Reload a fresh model instance from the database for all the entities. */
+        ModelsCollection<ModelRawType> fresh(const QVector<QString> &relations);
+        /*! Reload a fresh model instance from the database for all the entities. */
+        ModelsCollection<ModelRawType> fresh(QVector<QString> &&relations);
+
         /*! Load a set of relationships onto the collection. */
         template<typename = void>
         ModelsCollection &load(const QVector<WithItem> &relations) &;
@@ -1153,6 +1164,56 @@ namespace Types
     }
 
     /* Collection - Relations related */
+
+    template<DerivedCollectionModel Model>
+    template<typename>
+    ModelsCollection<typename ModelsCollection<Model>::ModelRawType>
+    ModelsCollection<Model>::fresh(const QVector<WithItem> &relations)
+    {
+        // Nothing to do
+        if (this->isEmpty())
+            return {};
+
+        // Don't handle the nullptr
+        // Ownership of a unique_ptr()
+        auto freshModelsRaw = toPointer(first())->newQueryWithoutScopes()
+                              ->with(relations)
+                              .whereKey(modelKeys<QVariant>())
+                              .get();
+
+        const auto freshModels = freshModelsRaw.mapWithModelKeys();
+
+        return filter([&freshModels](ModelRawType *const model)
+        {
+            return model->exists && freshModels.contains(model->getKeyCasted());
+        })
+            .map([&freshModels](ModelRawType &&model)
+        {
+            return *freshModels.at(model.getKeyCasted());
+        });
+    }
+
+    template<DerivedCollectionModel Model>
+    template<typename>
+    ModelsCollection<typename ModelsCollection<Model>::ModelRawType>
+    ModelsCollection<Model>::fresh(QString relation)
+    {
+        return fresh(QVector<WithItem> {{std::move(relation)}});
+    }
+
+    template<DerivedCollectionModel Model>
+    ModelsCollection<typename ModelsCollection<Model>::ModelRawType>
+    ModelsCollection<Model>::fresh(const QVector<QString> &relations)
+    {
+        return fresh(WithItem::fromStringVector(relations));
+    }
+
+    template<DerivedCollectionModel Model>
+    ModelsCollection<typename ModelsCollection<Model>::ModelRawType>
+    ModelsCollection<Model>::fresh(QVector<QString> &&relations)
+    {
+        return fresh(WithItem::fromStringVector(std::move(relations)));
+    }
 
     template<DerivedCollectionModel Model>
     template<typename>

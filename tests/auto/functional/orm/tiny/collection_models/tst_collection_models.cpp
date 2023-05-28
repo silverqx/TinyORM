@@ -18,6 +18,7 @@ using Orm::Constants::SIZE_;
 using Orm::Constants::SPACE_IN;
 
 using Orm::Exceptions::InvalidArgumentError;
+using Orm::One;
 using Orm::Tiny::ConnectionOverride;
 using Orm::Tiny::Exceptions::RelationNotFoundError;
 using Orm::Tiny::Types::ModelsCollection;
@@ -118,6 +119,12 @@ private Q_SLOTS:
     void toQuery() const;
 
     /* Collection - Relations related */
+    void fresh_QVector_WithItem() const;
+    void fresh_WithSelectConstraint() const;
+    void fresh_QString() const;
+    void fresh_EmptyCollection() const;
+    void fresh_EmptyRelations() const;
+
     void load_lvalue() const;
     void load_lvalue_WithSelectConstraint() const;
     void load_lvalue_WithLambdaConstraint() const;
@@ -1322,6 +1329,222 @@ void tst_Collection_Models::toQuery() const
     QCOMPARE(typeid (images), typeid (ModelsCollection<AlbumImage>));
     QVERIFY(Common::verifyIds(images, {2, 3, 4, 5, 6}));
     QCOMPARE(result.constFirst().getAttributes().size(), 7);
+}
+
+void tst_Collection_Models::fresh_QVector_WithItem() const
+{
+    auto images = AlbumImage::whereIn(ID, {1, 2, 3})->get();
+    QCOMPARE(images.size(), 3);
+    QCOMPARE(typeid (images), typeid (ModelsCollection<AlbumImage>));
+    QVERIFY(Common::verifyIds(images, {1, 2, 3}));
+
+    // Verify before
+    for (auto &image : images) {
+        QVERIFY(image.getRelations().empty());
+
+        const auto nameRef = image[NAME];
+        const auto nameNew = SPACE_IN.arg(nameRef->value<QString>(), "fresh");
+        nameRef = nameNew;
+        QCOMPARE(image.getAttribute<QString>(NAME), nameNew);
+    }
+
+    // Load fresh models with the album relationship
+    auto imagesFresh = images.fresh({{"album", [](auto &query)
+                                      {
+                                          query.select({ID, NAME});
+                                      }}});
+    QCOMPARE(imagesFresh.size(), 3);
+    QCOMPARE(typeid (imagesFresh), typeid (ModelsCollection<AlbumImage>));
+    QVERIFY(Common::verifyIds(imagesFresh, {1, 2, 3}));
+
+    // Verify
+    QVector<QString> actualNames;
+    actualNames.reserve(imagesFresh.size());
+
+    ModelsCollection<AlbumImage>::size_type index = 0;
+
+    for (auto &image : imagesFresh) {
+        QVERIFY(image.exists);
+        QVERIFY(&images[index] != &image);
+
+        // Check relations
+        QVERIFY(image.relationLoaded("album"));
+        QCOMPARE(image.getRelations().size(), 1);
+
+        actualNames << image.getAttribute<QString>(NAME);
+
+        // Check whether constraints were correctly applied
+        auto *album = image.getRelation<Album, One>("album");
+        const auto &attributes = album->getAttributes();
+        QCOMPARE(attributes.size(), 2);
+
+        std::unordered_set<QString> expectedAttributes {ID, NAME};
+        for (const auto &attribute : attributes)
+            QVERIFY(expectedAttributes.contains(attribute.key));
+
+        ++index;
+    }
+
+    QVector<QString> expectedNames {
+        "album1_image1", "album2_image1", "album2_image2",
+    };
+    QCOMPARE(actualNames, expectedNames);
+}
+
+void tst_Collection_Models::fresh_WithSelectConstraint() const
+{
+    auto images = AlbumImage::whereIn(ID, {1, 2, 3})->get();
+    QCOMPARE(images.size(), 3);
+    QCOMPARE(typeid (images), typeid (ModelsCollection<AlbumImage>));
+    QVERIFY(Common::verifyIds(images, {1, 2, 3}));
+
+    // Verify before
+    for (auto &image : images) {
+        QVERIFY(image.getRelations().empty());
+
+        const auto nameRef = image[NAME];
+        const auto nameNew = SPACE_IN.arg(nameRef->value<QString>(), "fresh");
+        nameRef = nameNew;
+        QCOMPARE(image.getAttribute<QString>(NAME), nameNew);
+    }
+
+    // Load fresh models with the album relationship
+    auto imagesFresh = images.fresh("album:id,name");
+    QCOMPARE(imagesFresh.size(), 3);
+    QCOMPARE(typeid (imagesFresh), typeid (ModelsCollection<AlbumImage>));
+    QVERIFY(Common::verifyIds(imagesFresh, {1, 2, 3}));
+
+    // Verify
+    QVector<QString> actualNames;
+    actualNames.reserve(imagesFresh.size());
+
+    ModelsCollection<AlbumImage>::size_type index = 0;
+
+    for (auto &image : imagesFresh) {
+        QVERIFY(image.exists);
+        QVERIFY(&images[index] != &image);
+
+        // Check relations
+        QVERIFY(image.relationLoaded("album"));
+        QCOMPARE(image.getRelations().size(), 1);
+
+        actualNames << image.getAttribute<QString>(NAME);
+
+        // Check whether constraints were correctly applied
+        auto *album = image.getRelation<Album, One>("album");
+        const auto &attributes = album->getAttributes();
+        QCOMPARE(attributes.size(), 2);
+
+        std::unordered_set<QString> expectedAttributes {ID, NAME};
+        for (const auto &attribute : attributes)
+            QVERIFY(expectedAttributes.contains(attribute.key));
+
+        ++index;
+    }
+
+    QVector<QString> expectedNames {
+        "album1_image1", "album2_image1", "album2_image2",
+    };
+    QCOMPARE(actualNames, expectedNames);
+}
+
+void tst_Collection_Models::fresh_QString() const
+{
+    auto images = AlbumImage::whereIn(ID, {1, 2, 3})->get();
+    QCOMPARE(images.size(), 3);
+    QCOMPARE(typeid (images), typeid (ModelsCollection<AlbumImage>));
+    QVERIFY(Common::verifyIds(images, {1, 2, 3}));
+
+    // Verify before
+    for (auto &image : images) {
+        QVERIFY(image.getRelations().empty());
+
+        const auto nameRef = image[NAME];
+        const auto nameNew = SPACE_IN.arg(nameRef->value<QString>(), "fresh");
+        nameRef = nameNew;
+        QCOMPARE(image.getAttribute<QString>(NAME), nameNew);
+    }
+
+    // Load fresh models with the album relationship
+    auto imagesFresh = images.fresh("album");
+    QCOMPARE(imagesFresh.size(), 3);
+    QCOMPARE(typeid (imagesFresh), typeid (ModelsCollection<AlbumImage>));
+    QVERIFY(Common::verifyIds(imagesFresh, {1, 2, 3}));
+
+    // Verify
+    QVector<QString> actualNames;
+    actualNames.reserve(imagesFresh.size());
+
+    ModelsCollection<AlbumImage>::size_type index = 0;
+
+    for (const auto &image : imagesFresh) {
+        QVERIFY(image.exists);
+        QVERIFY(&images[index] != &image);
+        QVERIFY(image.relationLoaded("album"));
+        QCOMPARE(image.getRelations().size(), 1);
+
+        actualNames << image.getAttribute<QString>(NAME);
+
+        ++index;
+    }
+
+    QVector<QString> expectedNames {
+        "album1_image1", "album2_image1", "album2_image2",
+    };
+    QCOMPARE(actualNames, expectedNames);
+}
+
+void tst_Collection_Models::fresh_EmptyCollection() const
+{
+    auto albums = ModelsCollection<Album>().fresh("albumImages");
+
+    QCOMPARE(typeid (albums), typeid (ModelsCollection<Album>));
+    QVERIFY(albums.isEmpty());
+}
+
+void tst_Collection_Models::fresh_EmptyRelations() const
+{
+    auto images = AlbumImage::whereIn(ID, {1, 2, 3})->get();
+    QCOMPARE(images.size(), 3);
+    QCOMPARE(typeid (images), typeid (ModelsCollection<AlbumImage>));
+    QVERIFY(Common::verifyIds(images, {1, 2, 3}));
+
+    // Verify before
+    for (auto &image : images) {
+        QVERIFY(image.getRelations().empty());
+
+        const auto nameRef = image[NAME];
+        const auto nameNew = SPACE_IN.arg(nameRef->value<QString>(), "fresh");
+        nameRef = nameNew;
+        QCOMPARE(image.getAttribute<QString>(NAME), nameNew);
+    }
+
+    // Load fresh models without any relationships
+    auto imagesFresh = images.fresh();
+    QCOMPARE(imagesFresh.size(), 3);
+    QCOMPARE(typeid (imagesFresh), typeid (ModelsCollection<AlbumImage>));
+    QVERIFY(Common::verifyIds(imagesFresh, {1, 2, 3}));
+
+    // Verify
+    QVector<QString> actualNames;
+    actualNames.reserve(imagesFresh.size());
+
+    ModelsCollection<AlbumImage>::size_type index = 0;
+
+    for (const auto &image : imagesFresh) {
+        QVERIFY(image.exists);
+        QVERIFY(&images[index] != &image);
+        QVERIFY(image.getRelations().empty());
+
+        actualNames << image.getAttribute<QString>(NAME);
+
+        ++index;
+    }
+
+    QVector<QString> expectedNames {
+        "album1_image1", "album2_image1", "album2_image2",
+    };
+    QCOMPARE(actualNames, expectedNames);
 }
 
 /* Collection - Relations related */

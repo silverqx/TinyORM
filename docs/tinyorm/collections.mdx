@@ -93,6 +93,7 @@ Furthermore, almost every method returns a new `ModelsCollection` instance, allo
 [find](#method-find)
 [first](#method-first)
 [firstWhere](#method-first-where)
+[fresh](#method-fresh)
 [implode](#method-implode)
 [isEmpty](#method-isempty)
 [isNotEmpty](#method-isnotempty)
@@ -309,6 +310,20 @@ You may also call the `firstWhere` method with a comparison operator:
     users.firstWhere("age", ">=", 18);
 
     // {{"name", "Jack"}, {"age", 23}}
+
+#### `fresh()` {#method-fresh}
+
+The `fresh` method retrieves a fresh instance of each model in the collection from the database. In addition, any specified relationships will be eager loaded:
+
+    auto usersFresh = users.fresh();
+
+    auto usersFresh = users.fresh("comments");
+
+    auto usersFresh = users.fresh("posts:id,name");
+
+    auto usersFresh = users.fresh({"comments", "posts:id,name"});
+
+The `relations` argument format is the same as for TinyBuilder's [`load`](relationships.mdx#lazy-eager-loading) method.
 
 #### `implode()` {#method-implode}
 
