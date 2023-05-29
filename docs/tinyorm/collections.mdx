@@ -106,6 +106,14 @@ Furthermore, almost every method returns a new `ModelsCollection` instance, allo
 [only](#method-only)
 [pluck](#method-pluck)
 [reject](#method-reject)
+[sort](#method-sort)
+[sortBy](#method-sortby)
+[sortByDesc](#method-sortbydesc)
+[sortDesc](#method-sortdesc)
+[stableSort](#method-stablesort)
+[stableSortBy](#method-stablesortby)
+[stableSortByDesc](#method-stablesortbydesc)
+[stableSortDesc](#method-stablesortdesc)
 [tap](#method-tap)
 [toQuery](#method-toquery)
 [value](#method-value)
@@ -564,6 +572,115 @@ The `reject` method filters the collection using the given lambda expression. Th
 You may also pass the lambda expression with two arguments, whereas the second argument can be an index of the `std::size_t` type.
 
 For the inverse of the `reject` method, see the [`filter`](#method-filter) method.
+
+#### `sort()` {#method-sort}
+
+The `sort` method sorts the models collection by primary keys:
+
+    ModelsCollection<User> users {
+        {{"id", 2}, {"name", "Kate"}},
+        {{"id", 3}, {"name", "John"}},
+        {{"id", 1}, {"name", "Jack"}},
+    };
+
+    auto sorted = users.sort();
+
+    /*
+        {
+            {{"id", 1}, {"name", "Jack"}},
+            {{"id", 2}, {"name", "Kate"}},
+            {{"id", 3}, {"name", "John"}},
+        }
+    */
+
+You may pass a predicate and projection callbacks to the `sort` method with your own algorithms. Refer to the CPP reference documentation on [`ranges::sort`](https://en.cppreference.com/w/cpp/algorithm/ranges/sort), which is what the `sort` method calls internally.
+
+The order of equal elements is not guaranteed to be preserved.
+
+:::info
+You can use the [stable](#method-stablesort) sort method variants to preserve the order of equal models.
+:::
+
+#### `sortBy()` {#method-sortby}
+
+The `sortBy` method sorts the collection by the given column, this overload needs the template argument so it can cast the attribute value before comparing:
+
+    ModelsCollection<User> users {
+        {{"name", "Kate"}, {"votes", 150}},
+        {{"name", "John"}, {"votes", 200}},
+        {{"name", "Jack"}, {"votes", 400}},
+    };
+
+    auto sorted = users.sortBy<QString>("name");
+
+    /*
+        {
+            {{"name", "Jack"}, {"votes", 400}},
+            {{"name", "John"}, {"votes", 200}},
+            {{"name", "Kate"}, {"votes", 150}},
+        }
+    */
+
+You may pass the projection callback to determine how to sort the collection's models:
+
+    auto sorted = users.sortBy([](User *const user)
+    {
+        return user->getAttribute<quint64>("votes");
+    });
+
+    /*
+        {
+            {{"name", "Kate"}, {"votes", 150}},
+            {{"name", "John"}, {"votes", 200}},
+            {{"name", "Jack"}, {"votes", 400}},
+        }
+    */
+
+The order of equal elements is not guaranteed to be preserved.
+
+#### `sortByDesc()` {#method-sortbydesc}
+
+This method has the same signature as the [`sortBy`](#method-sortby) method but will sort the collection in the opposite order.
+
+The order of equal elements is not guaranteed to be preserved.
+
+#### `sortDesc()` {#method-sortdesc}
+
+This method will sort the collection in the opposite order as the [`sort`](#method-sort) method:
+
+    ModelsCollection<User> users {
+        {{"id", 2}, {"name", "Kate"}},
+        {{"id", 3}, {"name", "John"}},
+        {{"id", 1}, {"name", "Jack"}},
+    };
+
+    auto sorted = users.sortDesc();
+
+    /*
+        {
+            {{"id", 3}, {"name", "John"}},
+            {{"id", 2}, {"name", "Kate"}},
+            {{"id", 1}, {"name", "Jack"}},
+        }
+    */
+
+The order of equal elements is not guaranteed to be preserved.
+
+#### `stableSort()` {#method-stablesort}
+
+This method has the same signature as the [`sort`](#method-sort) method but will preserve the order of equal elements (guaranteed to be preserved).
+
+#### `stableSortBy()` {#method-stablesortby}
+
+This method has the same signature as the [`sortBy`](#method-sortby) method but will preserve the order of equal elements (guaranteed to be preserved).
+
+#### `stableSortByDesc()` {#method-stablesortbydesc}
+
+This method has the same signature as the [`sortByDesc`](#method-sortbydesc) method but will sort the collection in the opposite order and preserve the order of equal elements (guaranteed to be preserved).
+
+#### `stableSortDesc()` {#method-stablesortdesc}
+
+This method has the same signature as the [`sortDesc`](#method-sortdesc) method but will sort the collection in the opposite order and preserve the order of equal elements (guaranteed to be preserved).
 
 #### `tap()` {#method-tap}
 

@@ -215,6 +215,10 @@ namespace Orm::Tiny
         /*! Equality comparison operator for the Model. */
         bool operator==(const Model &right) const;
 
+        /*! Three-way comparison operator for the Model. */
+        std::strong_ordering operator<=>(const Model &right) const
+        requires std::is_integral_v<typename Derived::KeyType>;
+
         /*! Fill the model with a vector of attributes. */
         Derived &fill(const QVector<AttributeItem> &attributes);
         /*! Fill the model with a vector of attributes. */
@@ -996,6 +1000,23 @@ namespace Orm::Tiny
 
         return model().u_touches    == derivedRight.u_touches   &&
                model().u_timestamps == derivedRight.u_timestamps;
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    std::strong_ordering
+    Model<Derived, AllRelations...>::operator<=>(const Model &right) const
+    requires std::is_integral_v<typename Derived::KeyType>
+    {
+        const auto leftKey = getKeyCasted();
+        const auto rightKey = right.getKeyCasted();
+
+        // Move models with the null, invalid, or undefined primary keys to the bottom
+        if (leftKey == 0)
+            return std::strong_ordering::greater;
+        if (rightKey == 0)
+            return std::strong_ordering::less;
+
+        return leftKey <=> rightKey;
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>

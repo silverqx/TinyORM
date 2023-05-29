@@ -11,6 +11,7 @@ TINY_SYSTEM_HEADER
 #include <unordered_set>
 
 #include <range/v3/algorithm/contains.hpp>
+#include <range/v3/algorithm/stable_sort.hpp>
 #include <range/v3/range/conversion.hpp>
 #include <range/v3/view/reverse.hpp>
 #include <range/v3/view/transform.hpp>
@@ -40,6 +41,29 @@ namespace Types
     {
         T min {};
         T max {};
+    };
+
+    /*! Function object for performing models comparison. */
+    struct ModelsLess
+    {
+        /*! Accepts arguments of arbitrary types and uses perfect forwarding. */
+        using is_transparent = void;
+
+        /*! Compare models call operator. */
+        template<typename T, typename U>
+        requires ranges::totally_ordered_with<T, U>
+        constexpr bool operator()(T &&left, U &&right) const
+        {
+            using V = std::remove_reference_t<T>;
+
+            if constexpr (std::is_pointer_v<V> &&
+                          std::is_base_of_v<IsModel, std::remove_pointer_t<V>>
+            )
+                return *left < *right;
+
+            else
+                return std::forward<T>(left) < std::forward<U>(right);
+        }
     };
 
     /*! Models collection (QVector) with additional handy methods. */
@@ -274,6 +298,62 @@ namespace Types
         /*! Find models in the collection by the given IDs. */
         ModelsCollection<ModelRawType *>
         find(const std::unordered_set<KeyType> &ids);
+
+        /*! Sort the collection by the given comparison callback and projection. */
+        template<typename C = ModelsLess, typename P = ranges::identity>
+        ModelsCollection<ModelRawType *>
+        sort(C comparison = C{}, P projection = P{}, bool descending = false);
+        /*! Sort the collection by the given comparison callback and projection
+            in descending order. */
+        template<typename C = ModelsLess, typename P = ranges::identity>
+        ModelsCollection<ModelRawType *>
+        sortDesc(C comparison = C{}, P projection = P{});
+
+        /*! Sort the collection by the given column. */
+        template<typename T>
+        ModelsCollection<ModelRawType *>
+        sortBy(const QString &column, bool descending = false);
+        /*! Sort the collection by the given column in descending order. */
+        template<typename T>
+        ModelsCollection<ModelRawType *>
+        sortByDesc(const QString &column);
+
+        /*! Sort the collection using the given projection. */
+        template<typename P>
+        ModelsCollection<ModelRawType *>
+        sortBy(P projection, bool descending = false);
+        /*! Sort the collection using the given projection in descending order. */
+        template<typename P>
+        ModelsCollection<ModelRawType *>
+        sortByDesc(P projection);
+
+        /*! Stable sort the collection by the given comparison callback and projection. */
+        template<typename C = ModelsLess, typename P = ranges::identity>
+        ModelsCollection<ModelRawType *>
+        stableSort(C comparison = C{}, P projection = P{}, bool descending = false);
+        /*! Stable sort the collection by the given comparison callback and projection
+            in descending order. */
+        template<typename C = ModelsLess, typename P = ranges::identity>
+        ModelsCollection<ModelRawType *>
+        stableSortDesc(C comparison = C{}, P projection = P{});
+
+        /*! Stable sort the collection by the given column. */
+        template<typename T>
+        ModelsCollection<ModelRawType *>
+        stableSortBy(const QString &column, bool descending = false);
+        /*! Stable sort the collection by the given column in descending order. */
+        template<typename T>
+        ModelsCollection<ModelRawType *>
+        stableSortByDesc(const QString &column);
+
+        /*! Stable sort the collection using the given projection. */
+        template<typename P>
+        ModelsCollection<ModelRawType *>
+        stableSortBy(P projection, bool descending = false);
+        /*! Stable sort the collection using the given projection in descending order. */
+        template<typename P>
+        ModelsCollection<ModelRawType *>
+        stableSortByDesc(P projection);
 
         /*! Get the TinyBuilder from the collection. */
         std::unique_ptr<TinyBuilder<ModelRawType>> toQuery();
@@ -1201,6 +1281,161 @@ namespace Types
     ModelsCollection<Model>::find(const std::unordered_set<KeyType> &ids)
     {
         return only(ids);
+    }
+
+    /* No need to use views in the following sort algorithms as they operates
+       on pointers collection so they are cheap. */
+
+    template<DerivedCollectionModel Model>
+    template<typename C, typename P>
+    ModelsCollection<typename ModelsCollection<Model>::ModelRawType *>
+    ModelsCollection<Model>::sort(C comparison, P projection, const bool descending)
+    {
+        auto result = toPointersCollection();
+
+                             // To correctly support the descending parameter
+        ranges::sort(result, [comparison = std::move(comparison), &descending]
+                             (auto &&left, auto &&right)
+        {
+            /* The XOR is like magic here, if the descending is false it behaves as if
+               it wasn't there, but if the descending is true it returns negated values,
+               the result is that it behaves as left > right if the descending is true.
+               Nice table at https://en.wikipedia.org/wiki/XOR_gate */
+            return descending ^ std::invoke(std::move(comparison),
+                                            std::forward<decltype (left)>(left),
+                                            std::forward<decltype (right)>(right));
+        }, std::move(projection));
+
+        return result;
+    }
+
+    template<DerivedCollectionModel Model>
+    template<typename C, typename P>
+    ModelsCollection<typename ModelsCollection<Model>::ModelRawType *>
+    ModelsCollection<Model>::sortDesc(C comparison, P projection)
+    {
+        return sort(std::move(comparison), std::move(projection), true);
+    }
+
+    template<DerivedCollectionModel Model>
+    template<typename T>
+    ModelsCollection<typename ModelsCollection<Model>::ModelRawType *>
+    ModelsCollection<Model>::sortBy(const QString &column, const bool descending)
+    {
+        auto result = toPointersCollection();
+
+        ranges::sort(result, [&column, descending](ModelRawType *const left,
+                                                   ModelRawType *const right)
+        {
+            /* The XOR is like magic here, if the descending is false it behaves as if
+               it wasn't there, but if the descending is true it returns negated values,
+               the result is that it behaves as left > right if the descending is true.
+               Nice table at https://en.wikipedia.org/wiki/XOR_gate */
+            return descending ^ (left->template getAttribute<T>(column) <
+                                 right->template getAttribute<T>(column));
+        });
+
+        return result;
+    }
+
+    template<DerivedCollectionModel Model>
+    template<typename T>
+    ModelsCollection<typename ModelsCollection<Model>::ModelRawType *>
+    ModelsCollection<Model>::sortByDesc(const QString &column)
+    {
+        return sortBy<T>(column, true);
+    }
+
+    template<DerivedCollectionModel Model>
+    template<typename P>
+    ModelsCollection<typename ModelsCollection<Model>::ModelRawType *>
+    ModelsCollection<Model>::sortBy(P projection, const bool descending)
+    {
+        return sort({}, std::move(projection), descending);
+    }
+
+    template<DerivedCollectionModel Model>
+    template<typename P>
+    ModelsCollection<typename ModelsCollection<Model>::ModelRawType *>
+    ModelsCollection<Model>::sortByDesc(P projection)
+    {
+        return sort({}, std::move(projection), true);
+    }
+
+    template<DerivedCollectionModel Model>
+    template<typename C, typename P>
+    ModelsCollection<typename ModelsCollection<Model>::ModelRawType *>
+    ModelsCollection<Model>::stableSort(C comparison, P projection, const bool descending)
+    {
+        auto result = toPointersCollection();
+
+                                    // To correctly support the descending parameter
+        ranges::stable_sort(result, [comparison = std::move(comparison), &descending]
+                                    (auto &&left, auto &&right)
+        {
+            /* The XOR is like magic here, if the descending is false it behaves as if
+               it wasn't there, but if the descending is true it returns negated values,
+               the result is that it behaves as left > right if the descending is true.
+               Nice table at https://en.wikipedia.org/wiki/XOR_gate */
+            return descending ^ std::invoke(std::move(comparison),
+                                            std::forward<decltype (left)>(left),
+                                            std::forward<decltype (right)>(right));
+        }, std::move(projection));
+
+        return result;
+    }
+
+    template<DerivedCollectionModel Model>
+    template<typename C, typename P>
+    ModelsCollection<typename ModelsCollection<Model>::ModelRawType *>
+    ModelsCollection<Model>::stableSortDesc(C comparison, P projection)
+    {
+        return stableSort(std::move(comparison), std::move(projection), true);
+    }
+
+    template<DerivedCollectionModel Model>
+    template<typename T>
+    ModelsCollection<typename ModelsCollection<Model>::ModelRawType *>
+    ModelsCollection<Model>::stableSortBy(const QString &column, const bool descending)
+    {
+        auto result = toPointersCollection();
+
+        ranges::stable_sort(result, [&column, descending](ModelRawType *const left,
+                                                          ModelRawType *const right)
+        {
+            /* The XOR is like magic here, if the descending is false it behaves as if
+               it wasn't there, but if the descending is true it returns negated values,
+               the result is that it behaves as left > right if the descending is true.
+               Nice table at https://en.wikipedia.org/wiki/XOR_gate */
+            return descending ^ (left->template getAttribute<T>(column) <
+                                 right->template getAttribute<T>(column));
+        });
+
+        return result;
+    }
+
+    template<DerivedCollectionModel Model>
+    template<typename T>
+    ModelsCollection<typename ModelsCollection<Model>::ModelRawType *>
+    ModelsCollection<Model>::stableSortByDesc(const QString &column)
+    {
+        return stableSortBy<T>(column, true);
+    }
+
+    template<DerivedCollectionModel Model>
+    template<typename P>
+    ModelsCollection<typename ModelsCollection<Model>::ModelRawType *>
+    ModelsCollection<Model>::stableSortBy(P projection, const bool descending)
+    {
+        return stableSort({}, std::move(projection), descending);
+    }
+
+    template<DerivedCollectionModel Model>
+    template<typename P>
+    ModelsCollection<typename ModelsCollection<Model>::ModelRawType *>
+    ModelsCollection<Model>::stableSortByDesc(P projection)
+    {
+        return stableSort({}, std::move(projection), true);
     }
 
     template<DerivedCollectionModel Model>
