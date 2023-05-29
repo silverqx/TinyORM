@@ -121,7 +121,7 @@ fspath MakeCommand::guessPathForMakeByPwd(
        until the pwd ends with some folder name.
        In the second stage, all the remaining folder names have to be found in the pwd,
        so it validates that we are somewhere in the defaultPath. */
-    for (const auto &folder : ranges::reverse_view(defaultPathList)) {
+    for (const auto &folder : defaultPathList | ranges::views::reverse) {
         verifyRemainingPath.prepend(folder).prepend(fspath::preferred_separator);
 
         const auto pwdEndWithTmp = pwdStr.endsWith(verifyRemainingPath);
