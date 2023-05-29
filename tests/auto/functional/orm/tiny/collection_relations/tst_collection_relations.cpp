@@ -327,13 +327,7 @@ void tst_Collection_Relations::equalComparison_WithModelsCollection() const
     QVERIFY(images2_1 == images2_2);
 
     // The same models' addresses (used Models' pointers comparison)
-    ModelsCollection<AlbumImage *> images2_2_Init {
-        &images2_2[0], // NOLINT(readability-container-data-pointer)
-        &images2_2[1],
-        &images2_2[2],
-        &images2_2[3],
-        &images2_2[4],
-    };
+    ModelsCollection<AlbumImage *> images2_2_Init = images2_2.toPointers();
     /* The images2_2_Init must be on the left side to invoke the correct operator==()
        overload. */
     QVERIFY(images2_2_Init == images2_2);
@@ -1717,11 +1711,7 @@ void tst_Collection_Relations::fresh_QVector_WithItem() const
     QVERIFY(Common::verifyIds(images, {1, 2, 3}));
 
     // Prepare
-    ModelsCollection<AlbumImage *> imagesInit {
-        &images[0], // NOLINT(readability-container-data-pointer)
-        &images[1],
-        &images[2],
-    };
+    ModelsCollection<AlbumImage *> imagesInit = images.toPointers();
 
     // Verify before
     for (auto *const image : imagesInit) {
@@ -1785,11 +1775,7 @@ void tst_Collection_Relations::fresh_WithSelectConstraint() const
     QVERIFY(Common::verifyIds(images, {1, 2, 3}));
 
     // Prepare
-    ModelsCollection<AlbumImage *> imagesInit {
-        &images[0], // NOLINT(readability-container-data-pointer)
-        &images[1],
-        &images[2],
-    };
+    ModelsCollection<AlbumImage *> imagesInit = images.toPointers();
 
     // Verify before
     for (auto *const image : imagesInit) {
@@ -1850,11 +1836,7 @@ void tst_Collection_Relations::fresh_QString() const
     QVERIFY(Common::verifyIds(images, {1, 2, 3}));
 
     // Prepare
-    ModelsCollection<AlbumImage *> imagesInit {
-        &images[0], // NOLINT(readability-container-data-pointer)
-        &images[1],
-        &images[2],
-    };
+    ModelsCollection<AlbumImage *> imagesInit = images.toPointers();
 
     // Verify before
     for (auto *const image : imagesInit) {
@@ -1912,11 +1894,7 @@ void tst_Collection_Relations::fresh_EmptyRelations() const
     QVERIFY(Common::verifyIds(images, {1, 2, 3}));
 
     // Prepare
-    ModelsCollection<AlbumImage *> imagesInit {
-        &images[0], // NOLINT(readability-container-data-pointer)
-        &images[1],
-        &images[2],
-    };
+    ModelsCollection<AlbumImage *> imagesInit = images.toPointers();
 
     // Verify before
     for (auto *const image : imagesInit) {
@@ -2189,10 +2167,7 @@ void tst_Collection_Relations::load_lvalue_NonExistentRelation_Failed() const
     QVERIFY(Common::verifyIds(albums, {1, 2}));
 
     // Prepare
-    ModelsCollection<Album *> albumsInit {
-        &albums[0], // NOLINT(readability-container-data-pointer)
-        &albums[1],
-    };
+    ModelsCollection<Album *> albumsInit = albums.toPointers();
 
     const auto verify = [&albumsInit]
     {
@@ -2456,10 +2431,7 @@ void tst_Collection_Relations::load_rvalue_NonExistentRelation_Failed() const
     QVERIFY(Common::verifyIds(albums, {1, 2}));
 
     // Prepare
-    ModelsCollection<Album *> albumsInit {
-        &albums[0], // NOLINT(readability-container-data-pointer)
-        &albums[1],
-    };
+    ModelsCollection<Album *> albumsInit = albums.toPointers();
 
     const auto verify = [&albumsInit]
     {
@@ -3278,13 +3250,7 @@ void tst_Collection_Relations::each_rvalue() const
     QVERIFY(Common::verifyIds(images, {2, 3, 4, 5, 6}));
 
     // Prepare
-    ModelsCollection<AlbumImage *> imagesInit {
-        &images[0], // NOLINT(readability-container-data-pointer)
-        &images[1],
-        &images[2],
-        &images[3],
-        &images[4],
-    };
+    ModelsCollection<AlbumImage *> imagesInit = images.toPointers();
 
     // Get result
     QVector<quint64> expectedIds;
@@ -3315,13 +3281,7 @@ void tst_Collection_Relations::each_rvalue_index() const
     QVERIFY(Common::verifyIds(images, {2, 3, 4, 5, 6}));
 
     // Prepare
-    ModelsCollection<AlbumImage *> imagesInit {
-        &images[0], // NOLINT(readability-container-data-pointer)
-        &images[1],
-        &images[2],
-        &images[3],
-        &images[4],
-    };
+    ModelsCollection<AlbumImage *> imagesInit = images.toPointers();
 
     // Get result
     QVector<ExpectedItem> expectedIds;
@@ -3353,13 +3313,7 @@ void tst_Collection_Relations::each_rvalue_bool() const
     QVERIFY(Common::verifyIds(images, {2, 3, 4, 5, 6}));
 
     // Prepare
-    ModelsCollection<AlbumImage *> imagesInit {
-        &images[0], // NOLINT(readability-container-data-pointer)
-        &images[1],
-        &images[2],
-        &images[3],
-        &images[4],
-    };
+    ModelsCollection<AlbumImage *> imagesInit = images.toPointers();
 
     // Get result
     QVector<quint64> expectedIds;
@@ -3396,13 +3350,7 @@ void tst_Collection_Relations::each_rvalue_bool_index() const
     QVERIFY(Common::verifyIds(images, {2, 3, 4, 5, 6}));
 
     // Prepare
-    ModelsCollection<AlbumImage *> imagesInit {
-        &images[0], // NOLINT(readability-container-data-pointer)
-        &images[1],
-        &images[2],
-        &images[3],
-        &images[4],
-    };
+    ModelsCollection<AlbumImage *> imagesInit = images.toPointers();
 
     // Get result
     QVector<ExpectedItem> expectedIds;

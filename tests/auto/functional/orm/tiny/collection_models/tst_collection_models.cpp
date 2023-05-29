@@ -282,15 +282,11 @@ void tst_Collection_Models::equalComparison_WithPointersCollection() const
     QVERIFY(Common::verifyIds(images2_2, {2, 3, 4, 5, 6}));
 
     // Different collections with the same models (used Model::operator==() for comparing)
-    ModelsCollection<AlbumImage *> images2_2_Init {
-        &images2_2[0], &images2_2[1], &images2_2[2], &images2_2[3], &images2_2[4], // NOLINT(readability-container-data-pointer)
-    };
+    ModelsCollection<AlbumImage *> images2_2_Init = images2_2.toPointers();
     QVERIFY(images2_1 == images2_2_Init);
 
     // The same models' addresses (used Models' pointers comparison)
-    ModelsCollection<AlbumImage *> images2_1_Init {
-        &images2_1[0], &images2_1[1], &images2_1[2], &images2_1[3], &images2_1[4], // NOLINT(readability-container-data-pointer)
-    };
+    ModelsCollection<AlbumImage *> images2_1_Init = images2_1.toPointers();
     // The images2_1 must be on the left side to invoke the correct operator==() overload
     QVERIFY(images2_1 == images2_1_Init);
 }
@@ -310,16 +306,12 @@ void tst_Collection_Models::notEqualComparison_WithPointersCollection() const
     QVERIFY(Common::verifyIds(images2_1, {2, 3, 4, 5, 6}));
 
     // Different collections size
-    ModelsCollection<AlbumImage *> images2_1_Init {
-        &images2_1[0], &images2_1[1], &images2_1[2], &images2_1[3], &images2_1[4], // NOLINT(readability-container-data-pointer)
-    };
+    ModelsCollection<AlbumImage *> images2_1_Init = images2_1.toPointers();
     QVERIFY(images1 != images2_1_Init);
 
     // Make a copy and change one model (used Model::operator==() for comparing)
     ModelsCollection<AlbumImage> images2_2 = images2_1;
-    ModelsCollection<AlbumImage *> images2_2_Init {
-        &images2_2[0], &images2_2[1], &images2_2[2], &images2_2[3], &images2_2[4], // NOLINT(readability-container-data-pointer)
-    };
+    ModelsCollection<AlbumImage *> images2_2_Init = images2_2.toPointers();
 
     // The images2_1 must be on the left side to invoke the correct operator==() overload
     QVERIFY(images2_1 == images2_2_Init);
