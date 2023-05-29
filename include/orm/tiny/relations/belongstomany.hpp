@@ -511,7 +511,7 @@ namespace Orm::Tiny::Relations
         QHash<typename Model::KeyType, ModelsCollection<Related>> dictionary;
         dictionary.reserve(results.size());
 
-        /*! Build model dictionary keyed by the parent's primary key. */
+        // Build model dictionary keyed by the parent's primary key
         for (auto &&result : results) {
 
             const auto foreignPivotKey =
