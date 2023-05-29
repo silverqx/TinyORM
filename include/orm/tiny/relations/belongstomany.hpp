@@ -1603,6 +1603,8 @@ namespace Orm::Tiny::Relations
                 dictionary.contains(parentKey)
             )
                 modelPointer->template setRelation<Related>(
+                            /* Is safe to move as the hash is keyed by IDs so every ID
+                               has its own related models prepared. */
                             relation, std::move(dictionary.find(parentKey).value()));
         }
     }

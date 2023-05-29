@@ -516,7 +516,7 @@ namespace Orm::Tiny::Relations
         /* First we will get to build a dictionary of the child models by their primary
            key of the relationship, then we can easily match the children back onto
            the parents using that dictionary and the primary key of the children. */
-        auto dictionary = buildDictionary(std::move(results));
+        const auto dictionary = buildDictionary(std::move(results));
 
         /*! Model type used in the for-ranged loops. */
         using ModelLoopType = typename ModelsCollection<CollectionModel>::ModelLoopType;
@@ -533,8 +533,10 @@ namespace Orm::Tiny::Relations
             )
                 modelPointer->setRelation(
                             relation,
-                            std::optional<Related>(
-                                std::move(dictionary.find(foreignKey).value())));
+                            std::make_optional<Related>(
+                                /* Don't move here! as one Related model can be set
+                                   on more parent models. */
+                                dictionary.find(foreignKey).value()));
         }
     }
 

@@ -389,6 +389,11 @@ namespace Orm::Tiny::Relations
                                        .template value<typename Model::KeyType>();
                 dictionary.contains(parentKey)
             )
+                /* HasMany - is safe to move as the hash is keyed by IDs so every ID
+                             has its own related models prepared.
+                   HasOne  - is also safe to move as the hash is keyed by IDs so every ID
+                             has its own related model prepared and this related model
+                             will not be assigned to any other parent model. */
                 modelPointer->setRelation(relation,
                                           std::move(dictionary.find(parentKey).value()));
         }
