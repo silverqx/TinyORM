@@ -10,8 +10,10 @@ TINY_SYSTEM_HEADER
 #include <unordered_map>
 #include <unordered_set>
 
+#include <range/v3/action/erase.hpp>
 #include <range/v3/algorithm/contains.hpp>
 #include <range/v3/algorithm/stable_sort.hpp>
+#include <range/v3/algorithm/unique.hpp>
 #include <range/v3/range/conversion.hpp>
 #include <range/v3/view/reverse.hpp>
 #include <range/v3/view/transform.hpp>
@@ -354,6 +356,20 @@ namespace Types
         template<typename P>
         ModelsCollection<ModelRawType *>
         stableSortByDesc(P projection);
+
+        /*! Return only the unique models from the SORTED collection. */
+        ModelsCollection<ModelRawType *> unique(bool sort = true);
+        /*! Return only the unique models from the SORTED collection by the given
+            column. */
+        template<typename T>
+        ModelsCollection<ModelRawType *> uniqueBy(const QString &column,
+                                                  bool sort = true);
+
+        /*! Return only the unique models from the collection. */
+        ModelsCollection<ModelRawType *> uniqueRelaxed();
+        /*! Return only the unique models from the collection by the given column. */
+        template<typename T>
+        ModelsCollection<ModelRawType *> uniqueRelaxedBy(const QString &column);
 
         /*! Get the TinyBuilder from the collection. */
         std::unique_ptr<TinyBuilder<ModelRawType>> toQuery();
@@ -1436,6 +1452,92 @@ namespace Types
     ModelsCollection<Model>::stableSortByDesc(P projection)
     {
         return stableSort({}, std::move(projection), true);
+    }
+
+    template<DerivedCollectionModel Model>
+    ModelsCollection<typename ModelsCollection<Model>::ModelRawType *>
+    ModelsCollection<Model>::unique(const bool sort)
+    {
+        // Nothing to do
+        if (this->isEmpty())
+            return {};
+
+        return uniqueBy<typename ModelRawType::KeyType>(
+                    toPointer(StorageType::constFirst())->getKeyName(), sort);
+    }
+
+    template<DerivedCollectionModel Model>
+    template<typename T>
+    ModelsCollection<typename ModelsCollection<Model>::ModelRawType *>
+    ModelsCollection<Model>::uniqueBy(const QString &column, const bool sort)
+    {
+        // Nothing to do
+        if (this->isEmpty())
+            return {};
+
+        auto result = toPointersCollection();
+
+        if (sort)
+            ranges::sort(result, [&column](ModelRawType *const left,
+                                           ModelRawType *const right)
+            {
+                return left->template getAttribute<T>(column) <
+                       right->template getAttribute<T>(column);
+            });
+
+        const auto it = ranges::unique(result, [&column](ModelRawType *const left,
+                                                         ModelRawType *const right)
+        {
+            return left->template getAttribute<T>(column) ==
+                   right->template getAttribute<T>(column);
+        });
+        // Remove duplicates from the end
+        ranges::erase(result, it, ranges::cend(result));
+
+        return result;
+    }
+
+    template<DerivedCollectionModel Model>
+    ModelsCollection<typename ModelsCollection<Model>::ModelRawType *>
+    ModelsCollection<Model>::uniqueRelaxed()
+    {
+        // Nothing to do
+        if (this->isEmpty())
+            return {};
+
+        return uniqueRelaxedBy<typename ModelRawType::KeyType>(
+                    toPointer(StorageType::constFirst())->getKeyName());
+    }
+
+    template<DerivedCollectionModel Model>
+    template<typename T>
+    ModelsCollection<typename ModelsCollection<Model>::ModelRawType *>
+    ModelsCollection<Model>::uniqueRelaxedBy(const QString &column)
+    {
+        // Nothing to do
+        if (this->isEmpty())
+            return {};
+
+        const auto size = this->size();
+
+        ModelsCollection<ModelRawType *> result;
+        result.reserve(size);
+
+        std::unordered_set<T> values;
+        result.reserve(static_cast<std::unordered_set<T>::size_type>(size));
+
+        for (ModelLoopType model : *this) {
+            ModelRawType *const modelPointer = toPointer(model);
+            auto value = modelPointer->template getAttribute<T>(column);
+
+            if (values.contains(value))
+                continue;
+
+            result << modelPointer;
+            values.insert(std::move(value));
+        }
+
+        return result;
     }
 
     template<DerivedCollectionModel Model>

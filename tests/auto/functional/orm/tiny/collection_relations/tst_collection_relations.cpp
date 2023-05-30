@@ -147,6 +147,15 @@ private Q_SLOTS:
     void stableSortBy_Projection() const;
     void stableSortByDesc_Projection() const;
 
+    void unique() const;
+    void unique_NoSorting() const;
+
+    void uniqueBy() const;
+    void uniqueBy_NoSorting() const;
+
+    void uniqueRelaxed() const;
+    void uniqueRelaxedBy() const;
+
     void toQuery() const;
 
     /* Collection - Relations related */
@@ -2239,6 +2248,151 @@ void tst_Collection_Relations::stableSortByDesc_Projection() const
         {{NAME, "album1"}, {SIZE_, 1}, {NOTE, "a"}},
     };
     QCOMPARE(sorted, expectedAlbums);
+}
+
+void tst_Collection_Relations::unique() const
+{
+    ModelsCollection<Album> albums {
+        {{ID, 2}, {NAME, "album2"}},
+        {{ID, 1}, {NAME, "album1"}},
+        {{ID, 2}, {NAME, "album2"}},
+        {{ID, 1}, {NAME, "album1"}},
+        {{ID, 4}, {NAME, "album4"}},
+        {{ID, 3}, {NAME, "album3"}},
+    };
+    auto albumsInit = albums.toPointers();
+
+    auto unique = albumsInit.unique();
+    QCOMPARE(typeid (unique), typeid (ModelsCollection<Album *>));
+
+    ModelsCollection<Album> expectedAlbums {
+        {{ID, 1}, {NAME, "album1"}},
+        {{ID, 2}, {NAME, "album2"}},
+        {{ID, 3}, {NAME, "album3"}},
+        {{ID, 4}, {NAME, "album4"}},
+    };
+    QCOMPARE(unique, expectedAlbums);
+}
+
+void tst_Collection_Relations::unique_NoSorting() const
+{
+    ModelsCollection<Album> albums {
+        {{ID, 2}, {NAME, "album2"}},
+        {{ID, 1}, {NAME, "album1"}},
+        {{ID, 2}, {NAME, "album2"}},
+        {{ID, 1}, {NAME, "album1"}},
+        {{ID, 4}, {NAME, "album4"}},
+        {{ID, 3}, {NAME, "album3"}},
+    };
+    auto albumsInit = albums.toPointers();
+
+    auto unique = albumsInit.sort().unique(false);
+    QCOMPARE(typeid (unique), typeid (ModelsCollection<Album *>));
+
+    ModelsCollection<Album> expectedAlbums {
+        {{ID, 1}, {NAME, "album1"}},
+        {{ID, 2}, {NAME, "album2"}},
+        {{ID, 3}, {NAME, "album3"}},
+        {{ID, 4}, {NAME, "album4"}},
+    };
+    QCOMPARE(unique, expectedAlbums);
+}
+
+void tst_Collection_Relations::uniqueBy() const
+{
+    ModelsCollection<Album> albums {
+        {{NAME, "album2"}},
+        {{NAME, "album1"}},
+        {{NAME, "album2"}},
+        {{NAME, "album1"}},
+        {{NAME, "album4"}},
+        {{NAME, "album3"}},
+    };
+    auto albumsInit = albums.toPointers();
+
+    auto unique = albumsInit.uniqueBy<QString>(NAME);
+    QCOMPARE(typeid (unique), typeid (ModelsCollection<Album *>));
+
+    ModelsCollection<Album> expectedAlbums {
+        {{NAME, "album1"}},
+        {{NAME, "album2"}},
+        {{NAME, "album3"}},
+        {{NAME, "album4"}},
+    };
+    QCOMPARE(unique, expectedAlbums);
+}
+
+void tst_Collection_Relations::uniqueBy_NoSorting() const
+{
+    ModelsCollection<Album> albums {
+        {{NAME, "album2"}},
+        {{NAME, "album1"}},
+        {{NAME, "album2"}},
+        {{NAME, "album1"}},
+        {{NAME, "album4"}},
+        {{NAME, "album3"}},
+    };
+    auto albumsInit = albums.toPointers();
+
+    auto unique = albumsInit.sortBy<QString>(NAME)
+                            .uniqueBy<QString>(NAME, false);
+    QCOMPARE(typeid (unique), typeid (ModelsCollection<Album *>));
+
+    ModelsCollection<Album> expectedAlbums {
+        {{NAME, "album1"}},
+        {{NAME, "album2"}},
+        {{NAME, "album3"}},
+        {{NAME, "album4"}},
+    };
+    QCOMPARE(unique, expectedAlbums);
+}
+
+void tst_Collection_Relations::uniqueRelaxed() const
+{
+    ModelsCollection<Album> albums {
+        {{ID, 2}, {NAME, "album2"}},
+        {{ID, 1}, {NAME, "album1"}},
+        {{ID, 2}, {NAME, "album2"}},
+        {{ID, 1}, {NAME, "album1"}},
+        {{ID, 4}, {NAME, "album4"}},
+        {{ID, 3}, {NAME, "album3"}},
+    };
+    auto albumsInit = albums.toPointers();
+
+    auto unique = albumsInit.uniqueRelaxed();
+    QCOMPARE(typeid (unique), typeid (ModelsCollection<Album *>));
+
+    ModelsCollection<Album> expectedAlbums {
+        {{ID, 2}, {NAME, "album2"}},
+        {{ID, 1}, {NAME, "album1"}},
+        {{ID, 4}, {NAME, "album4"}},
+        {{ID, 3}, {NAME, "album3"}},
+    };
+    QCOMPARE(unique, expectedAlbums);
+}
+
+void tst_Collection_Relations::uniqueRelaxedBy() const
+{
+    ModelsCollection<Album> albums {
+        {{NAME, "album2"}},
+        {{NAME, "album1"}},
+        {{NAME, "album2"}},
+        {{NAME, "album1"}},
+        {{NAME, "album4"}},
+        {{NAME, "album3"}},
+    };
+    auto albumsInit = albums.toPointers();
+
+    auto unique = albumsInit.uniqueRelaxedBy<QString>(NAME);
+    QCOMPARE(typeid (unique), typeid (ModelsCollection<Album *>));
+
+    ModelsCollection<Album> expectedAlbums {
+        {{NAME, "album2"}},
+        {{NAME, "album1"}},
+        {{NAME, "album4"}},
+        {{NAME, "album3"}},
+    };
+    QCOMPARE(unique, expectedAlbums);
 }
 
 void tst_Collection_Relations::toQuery() const

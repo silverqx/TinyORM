@@ -116,6 +116,10 @@ Furthermore, almost every method returns a new `ModelsCollection` instance, allo
 [stableSortDesc](#method-stablesortdesc)
 [tap](#method-tap)
 [toQuery](#method-toquery)
+[unique](#method-unique)
+[uniqueBy](#method-uniqueby)
+[uniqueRelaxed](#method-uniquerelaxed)
+[uniqueRelaxedBy](#method-uniquerelaxedby)
 [value](#method-value)
 [where](#method-where)
 [whereBetween](#method-wherebetween)
@@ -710,6 +714,115 @@ The `toQuery` method returns the `TinyBuilder` instance containing a `whereIn` c
     users.toQuery()->update({
         {"status", "Administrator"},
     });
+
+#### `unique()` {#method-unique}
+
+The `unique` method returns all of the unique models in the __sorted__ collection. Any models with the same primary key as another model in the collection are removed:
+
+    ModelsCollection<User> users {
+        {{"id", 2}, {"name", "Kate"}},
+        {{"id", 1}, {"name", "Jack"}},
+        {{"id", 3}, {"name", "John"}},
+        {{"id", 1}, {"name", "Jack"}},
+    };
+
+    auto unique = users.unique();
+
+    /*
+        {
+            {{"id", 1}, {"name", "Jack"}},
+            {{"id", 2}, {"name", "Kate"}},
+            {{"id", 3}, {"name", "John"}},
+        }
+    */
+
+It sorts the collection internally because the [`ranges::unique`](https://en.cppreference.com/w/cpp/algorithm/ranges/unique) can correctly operate only on the sorted container. You can disable it by passing `false` using the first `sort` parameter:
+
+    auto unique = users.sort().unique(false);
+
+    /*
+        {
+            {{"id", 1}, {"name", "Jack"}},
+            {{"id", 2}, {"name", "Kate"}},
+            {{"id", 3}, {"name", "John"}},
+        }
+    */
+
+#### `uniqueBy()` {#method-uniqueby}
+
+The `uniqueBy` method returns all of the unique models in the __sorted__ collection by the given column. Any models with the same column value as another model in the collection are removed. It needs the template argument, so it can cast the attribute value before comparing:
+
+    ModelsCollection<User> users {
+        {{"name", "Kate"}},
+        {{"name", "Jack"}},
+        {{"name", "John"}},
+        {{"name", "Jack"}},
+    };
+
+    auto unique = users.uniqueBy<QString>("name");
+
+    /*
+        {
+            {{"name", "Jack"}},
+            {{"name", "John"}},
+            {{"name", "Kate"}},
+        }
+    */
+
+It sorts the collection internally because the [`ranges::unique`](https://en.cppreference.com/w/cpp/algorithm/ranges/unique) can correctly operate only on the sorted container. You can disable it by passing `false` using the second `sort` parameter:
+
+    auto unique = users.sortBy<QString>("name")
+                       .uniqueBy<QString>("name", false);
+
+    /*
+        {
+            {{"name", "Jack"}},
+            {{"name", "John"}},
+            {{"name", "Kate"}},
+        }
+    */
+
+#### `uniqueRelaxed()` {#method-uniquerelaxed}
+
+The `uniqueRelaxed` method returns all of the unique models in the collection, it doesn't need a sorted collection. Any models with the same primary key as another model in the collection are removed:
+
+    ModelsCollection<User> users {
+        {{"id", 2}, {"name", "Kate"}},
+        {{"id", 1}, {"name", "Jack"}},
+        {{"id", 3}, {"name", "John"}},
+        {{"id", 1}, {"name", "Jack"}},
+    };
+
+    auto unique = users.uniqueRelaxed();
+
+    /*
+        {
+            {{"id", 2}, {"name", "Kate"}},
+            {{"id", 1}, {"name", "Jack"}},
+            {{"id", 3}, {"name", "John"}},
+        }
+    */
+
+#### `uniqueRelaxedBy()` {#method-uniquerelaxedby}
+
+The `uniqueRelaxedBy` method returns all of the unique models in the collection by the given column, it doesn't need a sorted collection, but it needs the template argument, so it can cast the attribute value before comparing:
+
+    ModelsCollection<User> users {
+        {{"name", "Kate"}},
+        {{"name", "Jack"}},
+        {{"name", "John"}},
+        {{"name", "Jack"}},
+    };
+
+    auto unique = users.uniqueRelaxedBy<QString>("name");
+
+    /*
+        {
+            {{"name", "Kate"}},
+            {{"name", "Jack"}},
+            {{"name", "John"}},
+        }
+    */
 
 #### `value()` {#method-value}
 
