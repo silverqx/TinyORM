@@ -117,8 +117,8 @@ private Q_SLOTS:
 
     void find_Ids() const;
 
-    void sort_WithoutArguments() const;
-    void sortDesc_WithoutArguments() const;
+    void sort() const;
+    void sortDesc() const;
 
     void sort_WithCallback() const;
     void sortDesc_WithCallback() const;
@@ -132,8 +132,8 @@ private Q_SLOTS:
     void sortBy_Projection() const;
     void sortByDesc_Projection() const;
 
-    void stableSort_WithoutArguments() const;
-    void stableSortDesc_WithoutArguments() const;
+    void stableSort() const;
+    void stableSortDesc() const;
 
     void stableSort_WithCallback() const;
     void stableSortDesc_WithCallback() const;
@@ -1709,7 +1709,7 @@ void tst_Collection_Relations::find_Ids() const
     QCOMPARE(result, expected);
 }
 
-void tst_Collection_Relations::sort_WithoutArguments() const
+void tst_Collection_Relations::sort() const
 {
     ModelsCollection<Album> albums {
         {{ID, 3}, {NAME, "album3"}},
@@ -1736,7 +1736,7 @@ void tst_Collection_Relations::sort_WithoutArguments() const
     QCOMPARE(sorted, expectedAlbums);
 }
 
-void tst_Collection_Relations::sortDesc_WithoutArguments() const
+void tst_Collection_Relations::sortDesc() const
 {
     ModelsCollection<Album> albums {
         {{ID, 3}, {NAME, "album3"}},
@@ -1967,7 +1967,7 @@ void tst_Collection_Relations::sortByDesc_Projection() const
     QCOMPARE(sorted, expectedAlbums);
 }
 
-void tst_Collection_Relations::stableSort_WithoutArguments() const
+void tst_Collection_Relations::stableSort() const
 {
     ModelsCollection<Album> albums {
         {{ID, 3}, {NAME, "album3"}},
@@ -1994,7 +1994,7 @@ void tst_Collection_Relations::stableSort_WithoutArguments() const
     QCOMPARE(sorted, expectedAlbums);
 }
 
-void tst_Collection_Relations::stableSortDesc_WithoutArguments() const
+void tst_Collection_Relations::stableSortDesc() const
 {
     ModelsCollection<Album> albums {
         {{ID, 3}, {NAME, "album3"}},
