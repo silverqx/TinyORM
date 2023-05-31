@@ -55,6 +55,7 @@ namespace Types
         template<typename T, typename U>
         requires ranges::totally_ordered_with<T, U>
         constexpr bool operator()(T &&left, U &&right) const
+        noexcept(noexcept(std::forward<T>(left) < std::forward<U>(right)))
         {
             using V = std::remove_reference_t<T>;
 
