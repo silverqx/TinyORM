@@ -937,6 +937,10 @@ namespace Types
     QString
     ModelsCollection<Model>::implode(const QString &column, const QString &glue)
     {
+        // Nothing to do
+        if (this->isEmpty())
+            return {};
+
         const auto valuesRaw = pluck(column);
 
         const auto values = valuesRaw
@@ -1073,10 +1077,6 @@ namespace Types
     ModelsCollection<Model>::mapWithKeys(
             const std::function<std::pair<K, V>(ModelRawType *)> &callback)
     {
-        // Nothing to do
-        if (this->isEmpty())
-            return {};
-
         std::unordered_map<K, V> result;
         result.reserve(this->size());
 
@@ -1307,6 +1307,10 @@ namespace Types
     ModelsCollection<typename ModelsCollection<Model>::ModelRawType *>
     ModelsCollection<Model>::sort(C comparison, P projection, const bool descending)
     {
+        // Nothing to do
+        if (this->isEmpty())
+            return {};
+
         auto result = toPointersCollection();
 
                              // To correctly support the descending parameter
@@ -1338,6 +1342,10 @@ namespace Types
     ModelsCollection<typename ModelsCollection<Model>::ModelRawType *>
     ModelsCollection<Model>::sortBy(const QString &column, const bool descending)
     {
+        // Nothing to do
+        if (this->isEmpty())
+            return {};
+
         auto result = toPointersCollection();
 
         ranges::sort(result, [&column, descending](ModelRawType *const left,
@@ -1383,6 +1391,10 @@ namespace Types
     ModelsCollection<typename ModelsCollection<Model>::ModelRawType *>
     ModelsCollection<Model>::stableSort(C comparison, P projection, const bool descending)
     {
+        // Nothing to do
+        if (this->isEmpty())
+            return {};
+
         auto result = toPointersCollection();
 
                                     // To correctly support the descending parameter
@@ -1414,6 +1426,10 @@ namespace Types
     ModelsCollection<typename ModelsCollection<Model>::ModelRawType *>
     ModelsCollection<Model>::stableSortBy(const QString &column, const bool descending)
     {
+        // Nothing to do
+        if (this->isEmpty())
+            return {};
+
         auto result = toPointersCollection();
 
         ranges::stable_sort(result, [&column, descending](ModelRawType *const left,
