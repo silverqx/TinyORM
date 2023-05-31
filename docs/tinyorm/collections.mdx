@@ -599,6 +599,37 @@ The `sort` method sorts the models collection by primary keys:
 
 You may pass a predicate and projection callbacks to the `sort` method with your own algorithms. Refer to the CPP reference documentation on [`ranges::sort`](https://en.cppreference.com/w/cpp/algorithm/ranges/sort), which is what the `sort` method calls internally.
 
+You can eg. sort by multiple columns, for an alternative method of multi-column sorting look at [sortBy](#method-sortby):
+
+    ModelsCollection<User> users {
+        {{"name", "Kate"}, {"votes", 350}},
+        {{"name", "John"}, {"votes", 200}},
+        {{"name", "John"}, {"votes", 150}},
+        {{"name", "Kate"}, {"votes", 200}},
+    };
+
+    auto sorted = users.sort([](const User *const left,
+                                const User *const right)
+    {
+        const auto leftValue = left->getAttribute<QString>("name");
+        const auto rightValue = right->getAttribute<QString>("name");
+
+        if (leftValue == rightValue)
+            return left->getAttribute<quint64>("votes") <
+                   right->getAttribute<quint64>("votes");
+
+        return leftValue < rightValue;
+    });
+
+    /*
+        {
+            {{"name", "John"}, {"votes", 150}},
+            {{"name", "John"}, {"votes", 200}},
+            {{"name", "Kate"}, {"votes", 200}},
+            {{"name", "Kate"}, {"votes", 350}},
+        }
+    */
+
 The order of equal elements is not guaranteed to be preserved.
 
 :::info
@@ -639,6 +670,43 @@ You may pass the projection callback to determine how to sort the collection's m
             {{"name", "Jack"}, {"votes", 400}},
         }
     */
+
+If you would like to sort your collection by multiple columns, you may pass a vector of comparison lambda expressions that define each sort operation to the `sortBy` method, in the following example is the `name` column sorted in ascending order and the second `votes` column is sorted in descending order:
+
+    using AttributeUtils = Orm::Tiny::Utils::Attribute;
+
+    ModelsCollection<User> users {
+        {{"name", "Kate"}, {"votes", 350}},
+        {{"name", "John"}, {"votes", 200}},
+        {{"name", "John"}, {"votes", 150}},
+        {{"name", "Kate"}, {"votes", 200}},
+    };
+
+    auto sorted = users.sortBy({
+        [](const User *const left, const User *const right)
+        {
+            return AttributeUtils::compareForSortBy(
+                    left->getAttribute<QString>("name"),
+                    right->getAttribute<QString>("name"));
+        },
+        [](const User *const left, const User *const right)
+        {
+            return AttributeUtils::compareForSortByDesc(
+                    left->getAttribute<quint64>("votes"),
+                    right->getAttribute<quint64>("votes"));
+        },
+    });
+
+    /*
+        {
+            {{"name", "John"}, {"votes", 200}},
+            {{"name", "John"}, {"votes", 150}},
+            {{"name", "Kate"}, {"votes", 350}},
+            {{"name", "Kate"}, {"votes", 200}},
+        }
+    */
+
+The `AttributeUtils::compareForSortBy` and `compareForSortByDesc` methods are helper methods, they are needed because the Qt framework doesn't define `<=>` spaceship operator on its types, it doesn't support the three-way comparison.
 
 The order of equal elements is not guaranteed to be preserved.
 

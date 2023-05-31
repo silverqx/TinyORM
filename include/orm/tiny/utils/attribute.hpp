@@ -61,6 +61,22 @@ namespace Orm::Tiny::Utils
         static QVector<AttributeItem>
         exceptAttributesForReplicate(const Model &model,
                                      const std::unordered_set<QString> &except = {});
+
+        /*! Compare attributes helper function for the ModelsCollection::sortBy(). */
+        template<typename T, typename U>
+        requires ranges::totally_ordered_with<T, U>
+        static std::strong_ordering compareForSortBy(T &&left, U &&right)
+        noexcept(noexcept(std::forward<T>(left) == std::forward<U>(right)) &&
+                 noexcept(std::forward<T>(left) < std::forward<U>(right)) &&
+                 noexcept(std::forward<T>(left) > std::forward<U>(right)));
+        /*! Compare attributes in the descending oder helper function
+            for the ModelsCollection::sortBy(). */
+        template<typename T, typename U>
+        requires ranges::totally_ordered_with<T, U>
+        static std::strong_ordering compareForSortByDesc(T &&left, U &&right)
+        noexcept(noexcept(std::forward<T>(left) == std::forward<U>(right)) &&
+                 noexcept(std::forward<T>(left) < std::forward<U>(right)) &&
+                 noexcept(std::forward<T>(left) > std::forward<U>(right)));
     };
 
     /* public */
@@ -97,6 +113,40 @@ namespace Orm::Tiny::Utils
             return !exceptMerged.contains(attribute.key);
         })
                 | ranges::to<QVector<AttributeItem>>();
+    }
+
+    template<typename T, typename U>
+    requires ranges::totally_ordered_with<T, U>
+    std::strong_ordering Attribute::compareForSortBy(T &&left, U &&right)
+    noexcept(noexcept(std::forward<T>(left) == std::forward<U>(right)) &&
+             noexcept(std::forward<T>(left) < std::forward<U>(right)) &&
+             noexcept(std::forward<T>(left) > std::forward<U>(right)))
+    {
+        if (std::forward<T>(left) == std::forward<U>(right))
+            return std::strong_ordering::equal;
+        if (std::forward<T>(left) < std::forward<U>(right))
+            return std::strong_ordering::less;
+        if (std::forward<T>(left) > std::forward<U>(right))
+            return std::strong_ordering::greater;
+
+        Q_UNREACHABLE();
+    }
+
+    template<typename T, typename U>
+    requires ranges::totally_ordered_with<T, U>
+    std::strong_ordering Attribute::compareForSortByDesc(T &&left, U &&right)
+    noexcept(noexcept(std::forward<T>(left) == std::forward<U>(right)) &&
+             noexcept(std::forward<T>(left) < std::forward<U>(right)) &&
+             noexcept(std::forward<T>(left) > std::forward<U>(right)))
+    {
+        if (std::forward<T>(left) == std::forward<U>(right))
+            return std::strong_ordering::equal;
+        if (std::forward<T>(left) < std::forward<U>(right))
+            return std::strong_ordering::greater;
+        if (std::forward<T>(left) > std::forward<U>(right))
+            return std::strong_ordering::less;
+
+        Q_UNREACHABLE();
     }
 
 } // namespace Orm::Tiny::Utils

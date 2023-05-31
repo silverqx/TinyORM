@@ -12,6 +12,7 @@ namespace Models
 using Orm::Constants::ID;
 using Orm::Constants::NAME;
 using Orm::Constants::NOTE;
+using Orm::Constants::SIZE_;
 
 using Orm::Tiny::Model;
 using Orm::Tiny::Relations::HasMany;
@@ -48,6 +49,7 @@ private:
         ID,
         NAME,
         NOTE,
+        SIZE_, // Database table doesn't contain the size column but I need it in tests
     };
 };
 

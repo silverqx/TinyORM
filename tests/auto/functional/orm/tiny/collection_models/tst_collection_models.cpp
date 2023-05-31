@@ -26,6 +26,8 @@ using Orm::Utils::NullVariant;
 
 using TypeUtils = Orm::Utils::Type;
 
+using AttributeUtils = Orm::Tiny::Utils::Attribute;
+
 using TestUtils::Databases;
 
 using Common = TestUtils::Common::Collection;
@@ -128,6 +130,9 @@ private Q_SLOTS:
     void sortBy() const;
     void sortByDesc() const;
 
+    void sortBy_MoreColumns() const;
+    void sortBy_MoreColumns_SecondDescending() const;
+
     void sortBy_Projection() const;
     void sortByDesc_Projection() const;
 
@@ -142,6 +147,9 @@ private Q_SLOTS:
 
     void stableSortBy() const;
     void stableSortByDesc() const;
+
+    void stableSortBy_MoreColumns() const;
+    void stableSortBy_MoreColumns_SecondDescending() const;
 
     void stableSortBy_Projection() const;
     void stableSortByDesc_Projection() const;
@@ -1548,6 +1556,93 @@ void tst_Collection_Models::sortByDesc() const
     QCOMPARE(sorted, expectedAlbums);
 }
 
+void tst_Collection_Models::sortBy_MoreColumns() const
+{
+    ModelsCollection<Album> albums {
+        {{NAME, "album3"}, {SIZE_, 1}},
+        {{NAME, "album1"}, {SIZE_, 1}},
+        {{NAME, "album2"}, {SIZE_, 3}},
+        {{NAME, "album2"}, {SIZE_, 4}},
+        {{NAME, "album4"}, {SIZE_, 1}},
+        {{NAME, "album2"}, {SIZE_, 2}},
+        {{NAME, "album4"}, {SIZE_, 2}},
+        {{NAME, "album1"}, {SIZE_, 2}},
+        {{NAME, "album2"}, {SIZE_, 1}},
+    };
+
+    auto sorted = albums.sortBy(
+    {
+        [](const Album *const left, const Album *const right)
+        {
+            return AttributeUtils::compareForSortBy(left->getAttribute<QString>(NAME),
+                                                    right->getAttribute<QString>(NAME));
+        },
+        [](const Album *const left, const Album *const right)
+        {
+            return AttributeUtils::compareForSortBy(left->getAttribute<quint64>(SIZE_),
+                                                    right->getAttribute<quint64>(SIZE_));
+        },
+    });
+    QCOMPARE(typeid (sorted), typeid (ModelsCollection<Album *>));
+
+    ModelsCollection<Album> expectedAlbums {
+        {{NAME, "album1"}, {SIZE_, 1}},
+        {{NAME, "album1"}, {SIZE_, 2}},
+        {{NAME, "album2"}, {SIZE_, 1}},
+        {{NAME, "album2"}, {SIZE_, 2}},
+        {{NAME, "album2"}, {SIZE_, 3}},
+        {{NAME, "album2"}, {SIZE_, 4}},
+        {{NAME, "album3"}, {SIZE_, 1}},
+        {{NAME, "album4"}, {SIZE_, 1}},
+        {{NAME, "album4"}, {SIZE_, 2}},
+    };
+    QCOMPARE(sorted, expectedAlbums);
+}
+
+void tst_Collection_Models::sortBy_MoreColumns_SecondDescending() const
+{
+    ModelsCollection<Album> albums {
+        {{NAME, "album3"}, {SIZE_, 1}},
+        {{NAME, "album1"}, {SIZE_, 1}},
+        {{NAME, "album2"}, {SIZE_, 3}},
+        {{NAME, "album2"}, {SIZE_, 4}},
+        {{NAME, "album4"}, {SIZE_, 1}},
+        {{NAME, "album2"}, {SIZE_, 2}},
+        {{NAME, "album4"}, {SIZE_, 2}},
+        {{NAME, "album1"}, {SIZE_, 2}},
+        {{NAME, "album2"}, {SIZE_, 1}},
+    };
+
+    auto sorted = albums.sortBy(
+    {
+        [](const Album *const left, const Album *const right)
+        {
+            return AttributeUtils::compareForSortBy(left->getAttribute<QString>(NAME),
+                                                    right->getAttribute<QString>(NAME));
+        },
+        [](const Album *const left, const Album *const right)
+        {
+            return AttributeUtils::compareForSortByDesc(
+                              left->getAttribute<quint64>(SIZE_),
+                              right->getAttribute<quint64>(SIZE_));
+        },
+    });
+    QCOMPARE(typeid (sorted), typeid (ModelsCollection<Album *>));
+
+    ModelsCollection<Album> expectedAlbums {
+        {{NAME, "album1"}, {SIZE_, 2}},
+        {{NAME, "album1"}, {SIZE_, 1}},
+        {{NAME, "album2"}, {SIZE_, 4}},
+        {{NAME, "album2"}, {SIZE_, 3}},
+        {{NAME, "album2"}, {SIZE_, 2}},
+        {{NAME, "album2"}, {SIZE_, 1}},
+        {{NAME, "album3"}, {SIZE_, 1}},
+        {{NAME, "album4"}, {SIZE_, 2}},
+        {{NAME, "album4"}, {SIZE_, 1}},
+    };
+    QCOMPARE(sorted, expectedAlbums);
+}
+
 void tst_Collection_Models::sortBy_Projection() const
 {
     ModelsCollection<Album> albums {
@@ -1804,6 +1899,101 @@ void tst_Collection_Models::stableSortByDesc() const
         {{NAME, "album3"}, {SIZE_, 2}},
         {{NAME, "album2"}, {SIZE_, 1}},
         {{NAME, "album1"}, {SIZE_, 1}},
+    };
+    QCOMPARE(sorted, expectedAlbums);
+}
+
+void tst_Collection_Models::stableSortBy_MoreColumns() const
+{
+    ModelsCollection<Album> albums {
+        {{NAME, "album3"}, {SIZE_, 1}, {NOTE, ""}},
+        {{NAME, "album5"}, {SIZE_, 1}, {NOTE, "b"}}, // stable sort must guarantee this order
+        {{NAME, "album1"}, {SIZE_, 1}, {NOTE, ""}},
+        {{NAME, "album5"}, {SIZE_, 1}, {NOTE, "a"}},
+        {{NAME, "album2"}, {SIZE_, 3}, {NOTE, ""}},
+        {{NAME, "album2"}, {SIZE_, 4}, {NOTE, ""}},
+        {{NAME, "album4"}, {SIZE_, 1}, {NOTE, ""}},
+        {{NAME, "album2"}, {SIZE_, 2}, {NOTE, ""}},
+        {{NAME, "album4"}, {SIZE_, 2}, {NOTE, ""}},
+        {{NAME, "album1"}, {SIZE_, 2}, {NOTE, ""}},
+        {{NAME, "album2"}, {SIZE_, 1}, {NOTE, ""}},
+    };
+
+    auto sorted = albums.stableSortBy(
+    {
+        [](const Album *const left, const Album *const right)
+        {
+            return AttributeUtils::compareForSortBy(left->getAttribute<QString>(NAME),
+                                                    right->getAttribute<QString>(NAME));
+        },
+        [](const Album *const left, const Album *const right)
+        {
+            return AttributeUtils::compareForSortBy(left->getAttribute<quint64>(SIZE_),
+                                                    right->getAttribute<quint64>(SIZE_));
+        },
+    });
+    QCOMPARE(typeid (sorted), typeid (ModelsCollection<Album *>));
+
+    ModelsCollection<Album> expectedAlbums {
+        {{NAME, "album1"}, {SIZE_, 1}, {NOTE, ""}},
+        {{NAME, "album1"}, {SIZE_, 2}, {NOTE, ""}},
+        {{NAME, "album2"}, {SIZE_, 1}, {NOTE, ""}},
+        {{NAME, "album2"}, {SIZE_, 2}, {NOTE, ""}},
+        {{NAME, "album2"}, {SIZE_, 3}, {NOTE, ""}},
+        {{NAME, "album2"}, {SIZE_, 4}, {NOTE, ""}},
+        {{NAME, "album3"}, {SIZE_, 1}, {NOTE, ""}},
+        {{NAME, "album4"}, {SIZE_, 1}, {NOTE, ""}},
+        {{NAME, "album4"}, {SIZE_, 2}, {NOTE, ""}},
+        {{NAME, "album5"}, {SIZE_, 1}, {NOTE, "b"}}, // stable sort must guarantee this order
+        {{NAME, "album5"}, {SIZE_, 1}, {NOTE, "a"}},
+    };
+    QCOMPARE(sorted, expectedAlbums);
+}
+
+void tst_Collection_Models::stableSortBy_MoreColumns_SecondDescending() const
+{
+    ModelsCollection<Album> albums {
+        {{NAME, "album3"}, {SIZE_, 1}, {NOTE, ""}},
+        {{NAME, "album5"}, {SIZE_, 1}, {NOTE, "b"}}, // stable sort must guarantee this order
+        {{NAME, "album1"}, {SIZE_, 1}, {NOTE, ""}},
+        {{NAME, "album5"}, {SIZE_, 1}, {NOTE, "a"}},
+        {{NAME, "album2"}, {SIZE_, 3}, {NOTE, ""}},
+        {{NAME, "album2"}, {SIZE_, 4}, {NOTE, ""}},
+        {{NAME, "album4"}, {SIZE_, 1}, {NOTE, ""}},
+        {{NAME, "album2"}, {SIZE_, 2}, {NOTE, ""}},
+        {{NAME, "album4"}, {SIZE_, 2}, {NOTE, ""}},
+        {{NAME, "album1"}, {SIZE_, 2}, {NOTE, ""}},
+        {{NAME, "album2"}, {SIZE_, 1}, {NOTE, ""}},
+    };
+
+    auto sorted = albums.stableSortBy(
+    {
+        [](const Album *const left, const Album *const right)
+        {
+            return AttributeUtils::compareForSortBy(left->getAttribute<QString>(NAME),
+                                                    right->getAttribute<QString>(NAME));
+        },
+        [](const Album *const left, const Album *const right)
+        {
+            return AttributeUtils::compareForSortByDesc(
+                              left->getAttribute<quint64>(SIZE_),
+                              right->getAttribute<quint64>(SIZE_));
+        },
+    });
+    QCOMPARE(typeid (sorted), typeid (ModelsCollection<Album *>));
+
+    ModelsCollection<Album> expectedAlbums {
+        {{NAME, "album1"}, {SIZE_, 2}, {NOTE, ""}},
+        {{NAME, "album1"}, {SIZE_, 1}, {NOTE, ""}},
+        {{NAME, "album2"}, {SIZE_, 4}, {NOTE, ""}},
+        {{NAME, "album2"}, {SIZE_, 3}, {NOTE, ""}},
+        {{NAME, "album2"}, {SIZE_, 2}, {NOTE, ""}},
+        {{NAME, "album2"}, {SIZE_, 1}, {NOTE, ""}},
+        {{NAME, "album3"}, {SIZE_, 1}, {NOTE, ""}},
+        {{NAME, "album4"}, {SIZE_, 2}, {NOTE, ""}},
+        {{NAME, "album4"}, {SIZE_, 1}, {NOTE, ""}},
+        {{NAME, "album5"}, {SIZE_, 1}, {NOTE, "b"}}, // stable sort must guarantee this order
+        {{NAME, "album5"}, {SIZE_, 1}, {NOTE, "a"}},
     };
     QCOMPARE(sorted, expectedAlbums);
 }

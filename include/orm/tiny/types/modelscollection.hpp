@@ -321,6 +321,12 @@ namespace Types
         ModelsCollection<ModelRawType *>
         sortByDesc(const QString &column);
 
+        /*! Sort the collection by the given callback (supports multi-columns sorting). */
+        ModelsCollection<ModelRawType *>
+        sortBy(const QVector<std::function<
+               std::strong_ordering(const ModelRawType *,
+                                    const ModelRawType *)>> &callbacks);
+
         /*! Sort the collection using the given projection. */
         template<typename P>
         ModelsCollection<ModelRawType *>
@@ -348,6 +354,12 @@ namespace Types
         template<typename T>
         ModelsCollection<ModelRawType *>
         stableSortByDesc(const QString &column);
+
+        /*! Sort the collection by the given callback (supports multi-columns sorting). */
+        ModelsCollection<ModelRawType *>
+        stableSortBy(const QVector<std::function<
+                     std::strong_ordering(const ModelRawType *,
+                                          const ModelRawType *)>> &callbacks);
 
         /*! Stable sort the collection using the given projection. */
         template<typename P>
@@ -1372,6 +1384,38 @@ namespace Types
     }
 
     template<DerivedCollectionModel Model>
+    ModelsCollection<typename ModelsCollection<Model>::ModelRawType *>
+    ModelsCollection<Model>::sortBy(
+            const QVector<std::function<
+                std::strong_ordering(const ModelRawType *,
+                                     const ModelRawType *)>> &callbacks)
+    {
+        // Nothing to do
+        if (this->isEmpty())
+            return {};
+
+        auto result = toPointersCollection();
+
+        std::ranges::sort(result, [&callbacks](const ModelRawType *const left,
+                                               const ModelRawType *const right)
+        {
+            for (const auto &callback : callbacks) {
+                const auto compared = std::invoke(callback, left, right);
+
+                // If the values are the same then sort by the next callback
+                if (compared == std::strong_ordering::equal)
+                    continue;
+
+                return compared == std::strong_ordering::less;
+            }
+
+            return false;
+        });
+
+        return result;
+    }
+
+    template<DerivedCollectionModel Model>
     template<typename P>
     ModelsCollection<typename ModelsCollection<Model>::ModelRawType *>
     ModelsCollection<Model>::sortBy(P projection, const bool descending)
@@ -1453,6 +1497,38 @@ namespace Types
     ModelsCollection<Model>::stableSortByDesc(const QString &column)
     {
         return stableSortBy<T>(column, true);
+    }
+
+    template<DerivedCollectionModel Model>
+    ModelsCollection<typename ModelsCollection<Model>::ModelRawType *>
+    ModelsCollection<Model>::stableSortBy(
+            const QVector<std::function<
+                std::strong_ordering(const ModelRawType *,
+                                     const ModelRawType *)>> &callbacks)
+    {
+        // Nothing to do
+        if (this->isEmpty())
+            return {};
+
+        auto result = toPointersCollection();
+
+        std::ranges::stable_sort(result, [&callbacks](const ModelRawType *const left,
+                                                      const ModelRawType *const right)
+        {
+            for (const auto &callback : callbacks) {
+                const auto compared = std::invoke(callback, left, right);
+
+                // If the values are the same then sort by the next callback
+                if (compared == std::strong_ordering::equal)
+                    continue;
+
+                return compared == std::strong_ordering::less;
+            }
+
+            return false;
+        });
+
+        return result;
     }
 
     template<DerivedCollectionModel Model>
