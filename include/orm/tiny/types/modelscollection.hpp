@@ -1458,7 +1458,7 @@ namespace Types
     ModelsCollection<typename ModelsCollection<Model>::ModelRawType *>
     ModelsCollection<Model>::unique(const bool sort)
     {
-        // Nothing to do
+        // Nothing to do, needed because of constFirst()
         if (this->isEmpty())
             return {};
 
@@ -1501,7 +1501,7 @@ namespace Types
     ModelsCollection<typename ModelsCollection<Model>::ModelRawType *>
     ModelsCollection<Model>::uniqueRelaxed()
     {
-        // Nothing to do
+        // Nothing to do, needed because of constFirst()
         if (this->isEmpty())
             return {};
 
