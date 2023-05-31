@@ -147,7 +147,7 @@ The `contains` method may be used to determine if a given model instance is cont
 
 Alternatively, you may pass a lambda expression to the `contains` method to determine if a model exists in the collection matching a given truth test:
 
-    users.contains([](User *const user)
+    users.contains([](const User *const user)
     {
         return user->getKeyCasted() == 2;
     });
@@ -164,7 +164,7 @@ The `doesntContain` method determines whether the collection does not contain a 
 
 Alternatively, you may pass a lambda expression to the `doesntContain` method to determine if a model does not exist in the collection matching a given truth test:
 
-    users.doesntContain([](User *const user)
+    users.doesntContain([](const User *const user)
     {
         return user->getKeyCasted() == 2;
     });
@@ -221,14 +221,14 @@ For the inverse of `except`, see the [only](#method-only) method.
 
 The `filter` method filters the collection using the lambda expression, keeping only those models that pass a given truth test:
 
-    auto usersBanned = users.filter([](User *const user)
+    auto usersBanned = users.filter([](const User *const user)
     {
         return user->getAttribute<bool>("is_banned");
     });
 
 You may also pass the lambda expression with two parameters, whereas the second one is an index:
 
-    auto usersBanned = users.filter([](User *const user,
+    auto usersBanned = users.filter([](const User *const user,
                                        const std::size_t index)
     {
         return index < 10 && user->getAttribute<bool>("is_banned");
@@ -568,7 +568,7 @@ If duplicate keys exist, the last matching attribute will be inserted into the p
 
 The `reject` method filters the collection using the given lambda expression. The lambda should return `true` if the model should be removed from the resulting collection:
 
-    auto usersWithNote = users.reject([](User *const user)
+    auto usersWithNote = users.reject([](const User *const user)
     {
         return user->getAttribute("note").isNull();
     });

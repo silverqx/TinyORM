@@ -394,7 +394,7 @@ void tst_Collection_Models::filter() const
     QVERIFY(Common::verifyIds(images, {2, 3, 4, 5, 6}));
 
     // Get result
-    const auto result = images.filter([](AlbumImage *const image)
+    const auto result = images.filter([](const AlbumImage *const image)
     {
         const auto id = Common::getKeyCasted(image);
         return id == 3 || id == 5;
@@ -413,7 +413,7 @@ void tst_Collection_Models::filter_WithIndex() const
     QVERIFY(Common::verifyIds(images, {2, 3, 4, 5, 6}));
 
     // Get result
-    const auto result = images.filter([](AlbumImage *const image, const auto index)
+    const auto result = images.filter([](const AlbumImage *const image, const auto index)
     {
         return Common::getKeyCasted(image) == 3 || index == 2;
     });
@@ -1091,23 +1091,23 @@ void tst_Collection_Models::contains_Callback() const
     QVERIFY(Common::verifyIds(images, {2, 3, 4, 5, 6}));
 
     // Verify
-    QVERIFY(images.contains([](AlbumImage *const image)
+    QVERIFY(images.contains([](const AlbumImage *const image)
     {
         return image->getKeyCasted() == 2;
     }));
-    QVERIFY(images.contains([](AlbumImage *const image)
+    QVERIFY(images.contains([](const AlbumImage *const image)
     {
         return image->getKeyCasted() == 6;
     }));
-    QVERIFY(images.contains([](AlbumImage *const image)
+    QVERIFY(images.contains([](const AlbumImage *const image)
     {
         return image->getKeyCasted() != 1;
     }));
-    QVERIFY(images.contains([](AlbumImage *const image)
+    QVERIFY(images.contains([](const AlbumImage *const image)
     {
         return image->getKeyCasted() != 7;
     }));
-    QVERIFY(images.contains([](AlbumImage *const image)
+    QVERIFY(images.contains([](const AlbumImage *const image)
     {
         return image->getKeyCasted() != 20;
     }));
@@ -1172,15 +1172,15 @@ void tst_Collection_Models::doesntContain_Callback() const
     QVERIFY(Common::verifyIds(images, {2, 3, 4, 5, 6}));
 
     // Verify
-    QVERIFY(images.doesntContain([](AlbumImage *const image)
+    QVERIFY(images.doesntContain([](const AlbumImage *const image)
     {
         return image->getKeyCasted() == 1;
     }));
-    QVERIFY(images.doesntContain([](AlbumImage *const image)
+    QVERIFY(images.doesntContain([](const AlbumImage *const image)
     {
         return image->getKeyCasted() == 7;
     }));
-    QVERIFY(images.doesntContain([](AlbumImage *const image)
+    QVERIFY(images.doesntContain([](const AlbumImage *const image)
     {
         return image->getKeyCasted() == 20;
     }));
@@ -1188,19 +1188,19 @@ void tst_Collection_Models::doesntContain_Callback() const
        it's weird they are correct; simply this is how the mathematic works.
        So the conclusion is that this doesntContain(callback) is weird if the != is
        used inside the callback. */
-    QVERIFY(!images.doesntContain([](AlbumImage *const image)
+    QVERIFY(!images.doesntContain([](const AlbumImage *const image)
     {
         return image->getKeyCasted() == 2;
     }));
-    QVERIFY(!images.doesntContain([](AlbumImage *const image)
+    QVERIFY(!images.doesntContain([](const AlbumImage *const image)
     {
         return image->getKeyCasted() != 2;
     }));
-    QVERIFY(!images.doesntContain([](AlbumImage *const image)
+    QVERIFY(!images.doesntContain([](const AlbumImage *const image)
     {
         return image->getKeyCasted() == 6;
     }));
-    QVERIFY(!images.doesntContain([](AlbumImage *const image)
+    QVERIFY(!images.doesntContain([](const AlbumImage *const image)
     {
         return image->getKeyCasted() != 6;
     }));
@@ -2718,7 +2718,7 @@ void tst_Collection_Models::reject() const
     QVERIFY(Common::verifyIds(images, {2, 3, 4, 5, 6}));
 
     // Get result
-    const auto result = images.reject([](AlbumImage *const image)
+    const auto result = images.reject([](const AlbumImage *const image)
     {
         const auto id = Common::getKeyCasted(image);
         return id == 3 || id == 5;
@@ -2737,7 +2737,7 @@ void tst_Collection_Models::reject_WithIndex() const
     QVERIFY(Common::verifyIds(images, {2, 3, 4, 5, 6}));
 
     // Get result
-    const auto result = images.reject([](AlbumImage *const image, const auto index)
+    const auto result = images.reject([](const AlbumImage *const image, const auto index)
     {
         return Common::getKeyCasted(image) == 3 || index == 2;
     });
