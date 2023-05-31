@@ -204,10 +204,10 @@ namespace Types
         /* BaseCollection */
         /*! Run a filter over each of the models in the collection. */
         ModelsCollection<ModelRawType *>
-        filter(const std::function<bool(ModelRawType *, size_type)> &callback);
+        filter(const std::function<bool(const ModelRawType *, size_type)> &callback);
         /*! Run a filter over each of the models in the collection. */
         ModelsCollection<ModelRawType *>
-        filter(const std::function<bool(ModelRawType *)> &callback);
+        filter(const std::function<bool(const ModelRawType *)> &callback);
         /*! Run a filter over each of the models in the collection (removes nullptr-s). */
         ModelsCollection<ModelRawType *>
         filter() const requires IsPointersCollection;
@@ -278,7 +278,7 @@ namespace Types
         /*! Determine if the collection contains a model with the given ID. */
         inline bool contains(const QVariant &id);
         /*! Determine if the collection contains a model using the given callback. */
-        bool contains(const std::function<bool(ModelRawType *)> &callback);
+        bool contains(const std::function<bool(const ModelRawType *)> &callback);
         /*! Determine if the model exists in the collection (using the Model::is()). */
         bool contains(const std::optional<ModelRawType> &model);
 
@@ -288,7 +288,7 @@ namespace Types
         bool doesntContain(const QVariant &id);
         /*! Determine if the collection doesn't contain a model using the given
             callback. */
-        bool doesntContain(const std::function<bool(ModelRawType *)> &callback);
+        bool doesntContain(const std::function<bool(const ModelRawType *)> &callback);
         /*! Determine if the model doesn't exist in the collection (using
             the Model::is()). */
         bool doesntContain(const std::optional<ModelRawType> &model);
@@ -412,10 +412,10 @@ namespace Types
         /* EnumeratesValues */
         /*! Create a collection of all models that do not pass a given truth test. */
         ModelsCollection<ModelRawType *>
-        reject(const std::function<bool(ModelRawType *, size_type)> &callback);
+        reject(const std::function<bool(const ModelRawType *, size_type)> &callback);
         /*! Create a collection of all models that do not pass a given truth test. */
         ModelsCollection<ModelRawType *>
-        reject(const std::function<bool(ModelRawType *)> &callback);
+        reject(const std::function<bool(const ModelRawType *)> &callback);
 
         /*! Filter models by the given column value pair. */
         template<typename V>
@@ -529,7 +529,7 @@ namespace Types
 
         /*! Get an operator checker callback. */
         template<typename V>
-        std::function<bool(ModelRawType *)>
+        std::function<bool(const ModelRawType *)>
         operatorForWhere(const QString &column, const QString &comparison, V value) const;
 
         /*! Convert the Collection<ModelRawType> to the Collection<ModelRawType *>. */
@@ -849,7 +849,7 @@ namespace Types
     template<DerivedCollectionModel Model>
     ModelsCollection<typename ModelsCollection<Model>::ModelRawType *>
     ModelsCollection<Model>::filter(
-            const std::function<bool(ModelRawType *, size_type)> &callback)
+            const std::function<bool(const ModelRawType *, size_type)> &callback)
     {
         const auto size = this->size();
 
@@ -869,7 +869,7 @@ namespace Types
     template<DerivedCollectionModel Model>
     ModelsCollection<typename ModelsCollection<Model>::ModelRawType *>
     ModelsCollection<Model>::filter(
-            const std::function<bool(ModelRawType *)> &callback)
+            const std::function<bool(const ModelRawType *)> &callback)
     {
         ModelsCollection<ModelRawType *> result;
         result.reserve(this->size());
@@ -1183,8 +1183,8 @@ namespace Types
     {
         std::map<T, QVariant> result;
 
-        for (ModelLoopType model : *this) {
-            ModelRawType *const modelPointer = toPointer(model);
+        for (ConstModelLoopType model : *this) {
+            const ModelRawType *const modelPointer = toPointer(model);
 
             // Don't handle the nullptr
             if (const auto &attributesHash = modelPointer->getAttributesHash();
@@ -1205,7 +1205,7 @@ namespace Types
     template<DerivedCollectionModel Model>
     bool ModelsCollection<Model>::contains(const KeyType id)
     {
-        return ranges::contains(*this, true, [id](ModelLoopType model)
+        return ranges::contains(*this, true, [id](ConstModelLoopType model)
         {
             return getKeyCasted(model) == id;
         });
@@ -1221,9 +1221,9 @@ namespace Types
     template<DerivedCollectionModel Model>
     bool
     ModelsCollection<Model>::contains(
-            const std::function<bool(ModelRawType *)> &callback)
+            const std::function<bool(const ModelRawType *)> &callback)
     {
-        for (ModelLoopType model : *this)
+        for (ConstModelLoopType model : *this)
             // Don't handle the nullptr
             if (std::invoke(callback, toPointer(model)))
                 return true;
@@ -1259,7 +1259,7 @@ namespace Types
     template<DerivedCollectionModel Model>
     bool
     ModelsCollection<Model>::doesntContain(
-            const std::function<bool(ModelRawType *)> &callback)
+            const std::function<bool(const ModelRawType *)> &callback)
     {
         return !contains(callback);
     }
@@ -1349,8 +1349,8 @@ namespace Types
 
         auto result = toPointersCollection();
 
-        ranges::sort(result, [&column, descending](ModelRawType *const left,
-                                                   ModelRawType *const right)
+        ranges::sort(result, [&column, descending](const ModelRawType *const left,
+                                                   const ModelRawType *const right)
         {
             /* The XOR is like magic here, if the descending is false it behaves as if
                it wasn't there, but if the descending is true it returns negated values,
@@ -1433,8 +1433,8 @@ namespace Types
 
         auto result = toPointersCollection();
 
-        ranges::stable_sort(result, [&column, descending](ModelRawType *const left,
-                                                          ModelRawType *const right)
+        ranges::stable_sort(result, [&column, descending](const ModelRawType *const left,
+                                                          const ModelRawType *const right)
         {
             /* The XOR is like magic here, if the descending is false it behaves as if
                it wasn't there, but if the descending is true it returns negated values,
@@ -1495,15 +1495,15 @@ namespace Types
         auto result = toPointersCollection();
 
         if (sort)
-            ranges::sort(result, [&column](ModelRawType *const left,
-                                           ModelRawType *const right)
+            ranges::sort(result, [&column](const ModelRawType *const left,
+                                           const ModelRawType *const right)
             {
                 return left->template getAttribute<T>(column) <
                        right->template getAttribute<T>(column);
             });
 
-        const auto it = ranges::unique(result, [&column](ModelRawType *const left,
-                                                         ModelRawType *const right)
+        const auto it = ranges::unique(result, [&column](const ModelRawType *const left,
+                                                         const ModelRawType *const right)
         {
             return left->template getAttribute<T>(column) ==
                    right->template getAttribute<T>(column);
@@ -1593,7 +1593,7 @@ namespace Types
 
         const auto freshModels = freshModelsRaw.mapWithModelKeys();
 
-        return filter([&freshModels](ModelRawType *const model)
+        return filter([&freshModels](const ModelRawType *const model)
         {
             return model->exists && freshModels.contains(model->getKeyCasted());
         })
@@ -1710,7 +1710,7 @@ namespace Types
     template<DerivedCollectionModel Model>
     ModelsCollection<typename ModelsCollection<Model>::ModelRawType *>
     ModelsCollection<Model>::reject(
-            const std::function<bool(ModelRawType *, size_type)> &callback)
+            const std::function<bool(const ModelRawType *, size_type)> &callback)
     {
         const auto size = this->size();
 
@@ -1729,7 +1729,8 @@ namespace Types
 
     template<DerivedCollectionModel Model>
     ModelsCollection<typename ModelsCollection<Model>::ModelRawType *>
-    ModelsCollection<Model>::reject(const std::function<bool(ModelRawType *)> &callback)
+    ModelsCollection<Model>::reject(
+            const std::function<bool(const ModelRawType *)> &callback)
     {
         ModelsCollection<ModelRawType *> result;
         result.reserve(this->size());
@@ -1765,7 +1766,7 @@ namespace Types
     ModelsCollection<typename ModelsCollection<Model>::ModelRawType *>
     ModelsCollection<Model>::whereNull(const QString &column)
     {
-        return filter([&column](ModelRawType *const model)
+        return filter([&column](const ModelRawType *const model)
         {
             return model->getAttribute(column).isNull();
         });
@@ -1775,7 +1776,7 @@ namespace Types
     ModelsCollection<typename ModelsCollection<Model>::ModelRawType *>
     ModelsCollection<Model>::whereNotNull(const QString &column)
     {
-        return filter([&column](ModelRawType *const model)
+        return filter([&column](const ModelRawType *const model)
         {
             return !model->getAttribute(column).isNull();
         });
@@ -1791,7 +1792,7 @@ namespace Types
         if (values.empty())
             return {};
 
-        return filter([&column, &values](ModelRawType *const model)
+        return filter([&column, &values](const ModelRawType *const model)
         {
             return values.contains(model->template getAttribute<T>(column));
         });
@@ -1807,7 +1808,7 @@ namespace Types
         if (values.empty())
             return toPointersCollection();
 
-        return reject([&column, &values](ModelRawType *const model)
+        return reject([&column, &values](const ModelRawType *const model)
         {
             return values.contains(model->template getAttribute<T>(column));
         });
@@ -1819,7 +1820,7 @@ namespace Types
     ModelsCollection<Model>::whereBetween(
             const QString &column, const WhereBetweenCollectionItem<T> &values)
     {
-        return filter([&column, &values](ModelRawType *const model)
+        return filter([&column, &values](const ModelRawType *const model)
         {
             const auto attribute = model->getAttribute(column);
 
@@ -1839,7 +1840,7 @@ namespace Types
     ModelsCollection<Model>::whereNotBetween(
             const QString &column, const WhereBetweenCollectionItem<T> &values)
     {
-        return filter([&column, &values](ModelRawType *const model)
+        return filter([&column, &values](const ModelRawType *const model)
         {
             const auto attribute = model->getAttribute(column);
 
@@ -2093,14 +2094,14 @@ namespace Types
 
     template<DerivedCollectionModel Model>
     template<typename V>
-    std::function<bool(typename ModelsCollection<Model>::ModelRawType *)>
+    std::function<bool(typename ModelsCollection<Model>::ModelRawType const *)>
     ModelsCollection<Model>::operatorForWhere(
             const QString &column, const QString &comparison, V value) const
     {
         throwIfInvalidWhereOperator(comparison);
 
         return [&column, &comparison, value = std::move(value)]
-               (ModelRawType *const model)
+               (const ModelRawType *const model)
         {
             const auto attribute = model->getAttribute(column);
             const auto retrieved = attribute.template value<V>();
