@@ -1046,9 +1046,14 @@ namespace Types
         result.reserve(size);
 
         for (size_type index = 0; index < size; ++index)
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
             result.emplace_back(
                         std::invoke(callback, getModelCopy(this->operator[](index)),
                                     index));
+#else
+            result.append(std::invoke(callback, getModelCopy(this->operator[](index)),
+                                      index));
+#endif
 
         return result;
     }
@@ -1065,7 +1070,11 @@ namespace Types
         result.reserve(size);
 
         for (auto &&model : *this)
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
             result.emplace_back(std::invoke(callback, getModelCopy(model)));
+#else
+            result.append(std::invoke(callback, getModelCopy(model)));
+#endif
 
         return result;
     }
@@ -1585,7 +1594,7 @@ namespace Types
                    right->template getAttribute<T>(column);
         });
         // Remove duplicates from the end
-        ranges::erase(result, it, ranges::cend(result));
+        ranges::erase(result, it, ranges::end(result));
 
         return result;
     }
