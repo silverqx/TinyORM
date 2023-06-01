@@ -348,7 +348,7 @@ Use the `Model::instance` or `Model::instanceHeap` related methods to instantiat
 
 If your Default Attribute Values or attributes that you can pass to the `Model` constructor contain the `QDateTime` instance, then `TinyORM` throws an exception. You have to use the `Model::instance` related methods to create such a Model.
 
-Virtually everything important is covered in the thrown exception, but let me summarize. The problem is that the `QDateTime` instance is converted to a string based on the `Model::u_dateFormat`, or if not defined, the date format from `Orm::Query::Grammars::Grammar` will be used. This `QueryGrammar` is obtained from `Orm::DatabaseConnection` and because of that TinyORM needs to know the __connection name__ and that's the crux of this problem. You can define your connection name using the `Model::u_connection` in your derived model class, but this derived model __is not yet initialized__, so the `Model::u_connection` is also not initialized.
+Virtually everything important is covered in the thrown exception, but let me summarize it. The problem is that the `QDateTime` instance is converted to a string based on the `Model::u_dateFormat`, or if not defined, the date format from `Orm::Query::Grammars::Grammar` will be used. This `QueryGrammar` is obtained from `Orm::DatabaseConnection` and because of that TinyORM needs to know the __connection name__ and that's the crux of this problem. You can define your connection name using the `Model::u_connection` in your derived model class, but this derived model __is not yet initialized__, so the `Model::u_connection` is also not initialized.
 
 So if the `Model::u_connection` is not yet initialized, `TinyORM` can't obtain the `Orm::DatabaseConnection` -> `QueryGrammar` -> `dateFormat`.
 
