@@ -4342,14 +4342,14 @@ void tst_Collection_Relations::tap_rvalue() const
 {
     // Prepare
     AlbumImage image2 {{ID, 2}, {NAME, QStringLiteral("image2")}};
-    ModelsCollection<AlbumImage *> imagesInit {&image2};
+    ModelsCollection<AlbumImage *> images {&image2};
 
     // Get result
     auto callbackInvoked = false;
 
     ModelsCollection<AlbumImage *> result =
-            std::move(imagesInit).tap([&callbackInvoked]
-                                      (ModelsCollection<AlbumImage *> &imagesRef)
+            std::move(images).tap([&callbackInvoked]
+                                  (ModelsCollection<AlbumImage *> &imagesRef)
     {
         callbackInvoked = true;
 
@@ -4360,7 +4360,7 @@ void tst_Collection_Relations::tap_rvalue() const
     });
 
     // Verify
-    QVERIFY((std::is_same_v<decltype (result), decltype (imagesInit)>));
+    QVERIFY((std::is_same_v<decltype (result), decltype (images)>));
     QVERIFY(callbackInvoked);
     // Collection content
     QCOMPARE(result.size(), 1);

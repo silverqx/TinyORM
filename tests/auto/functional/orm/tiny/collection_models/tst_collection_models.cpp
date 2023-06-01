@@ -3686,7 +3686,7 @@ void tst_Collection_Models::tap_lvalue() const
 void tst_Collection_Models::tap_rvalue() const
 {
     // Prepare
-    ModelsCollection<AlbumImage> imagesInit = Orm::collect<AlbumImage>({
+    ModelsCollection<AlbumImage> images = Orm::collect<AlbumImage>({
         {{ID, 2}, {NAME, QStringLiteral("image2")}},
     });
 
@@ -3694,8 +3694,8 @@ void tst_Collection_Models::tap_rvalue() const
     auto callbackInvoked = false;
 
     ModelsCollection<AlbumImage> result =
-            std::move(imagesInit).tap([&callbackInvoked]
-                                      (ModelsCollection<AlbumImage> &imagesRef)
+            std::move(images).tap([&callbackInvoked]
+                                  (ModelsCollection<AlbumImage> &imagesRef)
     {
         callbackInvoked = true;
 
@@ -3706,7 +3706,7 @@ void tst_Collection_Models::tap_rvalue() const
     });
 
     // Verify
-    QVERIFY((std::is_same_v<decltype (result), decltype (imagesInit)>));
+    QVERIFY((std::is_same_v<decltype (result), decltype (images)>));
     QVERIFY(callbackInvoked);
     // Collection content
     QCOMPARE(result.size(), 1);
