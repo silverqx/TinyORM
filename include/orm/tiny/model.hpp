@@ -1752,14 +1752,14 @@ namespace Orm::Tiny
     std::unordered_map<QString, CastItem> &
     Model<Derived, AllRelations...>::getUserCasts()
     {
-        return model().u_casts;
+        return Derived::u_casts;
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     const std::unordered_map<QString, CastItem> &
     Model<Derived, AllRelations...>::getUserCasts() const
     {
-        return model().u_casts;
+        return Derived::u_casts;
     }
 
     /* GuardsAttributes */

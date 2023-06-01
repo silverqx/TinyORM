@@ -18,9 +18,9 @@ Attribute casting allows you to transform TinyORM attribute values when you retr
 
 ## Attribute Casting
 
-Attribute casting provides functionality that allows converting model attributes to the appropriate `QVariant` __metatype__ when it is accessed via your TinyORM model. The core of this functionality is a model's `u_casts` data member that provides a convenient method of converting attributes' `QVariant` __internal types__ to the defined cast types.
+Attribute casting provides functionality that allows converting model attributes to the appropriate `QVariant` __metatype__ when it is accessed via your TinyORM model. The core of this functionality is a model's `u_casts` static data member that provides a convenient method of converting attributes' `QVariant` __internal types__ to the defined cast types.
 
-The `u_casts` data member should be the `std::unordered_map<QString, Orm::CastItem>` where the key is the name of the attribute being cast and the value is the type you wish to cast the column to. The supported cast types are:
+The `u_casts` static data member should be the `std::unordered_map<QString, Orm::CastItem>` where the key is the name of the attribute being cast and the value is the type you wish to cast the column to. The supported cast types are:
 
 <div id="casts-types-list">
 
@@ -63,7 +63,7 @@ To demonstrate attribute casting, let's cast the `is_admin` attribute, which is 
         using Model::Model;
 
         /*! The attributes that should be cast. */
-        std::unordered_map<QString, CastItem> u_casts {
+        inline static std::unordered_map<QString, CastItem> u_casts {
             {"is_admin", CastType::Boolean},
         };
     };
@@ -98,7 +98,7 @@ Attributes that are `null` __will also be__ cast so that the `QVariant`'s intern
 
 ### Date Casting
 
-By default, TinyORM will cast the `created_at` and `updated_at` columns to instances of `QDateTime`. You may cast additional date attributes by defining additional date casts within your model's `u_casts` data member unordered map. Typically, dates should be cast using the `CastType::QDateTime`, `CastType::QDate`, or `CastType::Timestamp` cast types.
+By default, TinyORM will cast the `created_at` and `updated_at` columns to instances of `QDateTime`. You may cast additional date attributes by defining additional date casts within your model's `u_casts` static data member unordered map. Typically, dates should be cast using the `CastType::QDateTime`, `CastType::QDate`, or `CastType::Timestamp` cast types.
 
 When a database column is of the date type, you may set the corresponding model attribute value to a UNIX timestamp, date string (`Y-m-d`), date-time string, or a `QDateTime` instance. The date's value will be correctly converted and stored in your database.<br/>
 The same is true for the datetime or timestamp database column types, you can set the corresponding model attribute value to a UNIX timestamp, date-time string, or a `QDateTime` instance.

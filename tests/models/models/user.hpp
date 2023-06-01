@@ -80,7 +80,7 @@ private:
     bool u_timestamps = true;
 
     /*! The attributes that should be cast. */
-    std::unordered_map<QString, CastItem> u_casts {
+    inline static std::unordered_map<QString, CastItem> u_casts {
         {"is_banned", CastType::Boolean},
     };
 };

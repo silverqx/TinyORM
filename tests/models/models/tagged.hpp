@@ -26,7 +26,7 @@ class Tagged final : public BasePivot<Tagged>
 //    bool u_incrementing = true;
 
     /*! The attributes that should be cast. */
-    std::unordered_map<QString, CastItem> u_casts {
+    inline static std::unordered_map<QString, CastItem> u_casts {
         {"active", CastType::Boolean},
     };
 

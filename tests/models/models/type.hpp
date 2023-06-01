@@ -20,7 +20,7 @@ class Type final : public Model<Type>
     QString u_table {"types"};
 
     /*! The attributes that should be cast. */
-    std::unordered_map<QString, CastItem> u_casts {};
+    inline static std::unordered_map<QString, CastItem> u_casts {};
 };
 
 } // namespace Models

@@ -201,7 +201,7 @@ private:
 //    QStringList u_touches {"relation_name"};
 
     /*! The attributes that should be cast. */
-//    std::unordered_map<QString, CastItem> u_casts {
+//    inline static std::unordered_map<QString, CastItem> u_casts {
 //        {NAME,       CastType::QString},
 //        {"progress", CastType::UShort},
 //        // Showcase only, the Torrent model doesn't have the decimal column

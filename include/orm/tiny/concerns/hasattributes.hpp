@@ -329,8 +329,12 @@ namespace Orm::Tiny::Concerns
         inline static QStringList u_dates;
 
         /* Casting Attributes */
+        /* Has to be static because of setAttribute - isDateAttribute - ... - getCasts:
+           auto casts = model.getUserCasts()
+           Called from Models ctor. */
         /*! The attributes that should be cast. */
-        std::unordered_map<QString, CastItem> u_casts;
+        T_THREAD_LOCAL
+        inline static std::unordered_map<QString, CastItem> u_casts;
 
         /*! Determine how the QDateTime time zone will be converted. */
         mutable std::optional<QtTimeZoneConfig> m_qtTimeZone = std::nullopt;

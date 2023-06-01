@@ -23,7 +23,7 @@ class RoleUser final : public BasePivot<RoleUser>
     bool u_timestamps = false;
 
     /*! The attributes that should be cast. */
-    std::unordered_map<QString, CastItem> u_casts {
+    inline static std::unordered_map<QString, CastItem> u_casts {
         {"active", CastType::Boolean},
     };
 };
