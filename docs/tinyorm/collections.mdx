@@ -769,14 +769,21 @@ This method has the same signature as the [`sortDesc`](#method-sortdesc) method 
 
 The `tap` method passes a collection to the given lambda expression, allowing you to "tap" into the collection at a specific point and do something with the models while not affecting the collection itself:
 
-    using Models::User;
+    ModelsCollection<User> users {
+        {{"id", 2}, {"name", "Kate"}},
+        {{"id", 3}, {"name", "John"}},
+        {{"id", 1}, {"name", "Jack"}},
+    };
 
-    auto users = User::whereEq("status", "VIP")->get();
-
-    users.tap([](ModelsCollection<User> &usersRef)
+    users.sort()
+         .tap([](/*const */ModelsCollection<User *> &usersRef)
     {
-        // ...
-    });
+        qDebug() << "IDs after sorting:"
+                 << usersRef.template modelKeys<quint64>();
+    })
+        .value<quint64>("id");
+
+    // 1
 
 The `tap` method returns an lvalue __reference__ to the currently processed collection.
 
