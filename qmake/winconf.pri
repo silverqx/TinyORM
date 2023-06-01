@@ -50,7 +50,7 @@ win32-msvc|win32-clang-msvc {
 # ---
 
 win32-msvc {
-    QMAKE_CXXFLAGS += -bigobj
+    QMAKE_CXXFLAGS += -guard:cf -bigobj
     QMAKE_CXXFLAGS_DEBUG += -RTC1 -sdl
     QMAKE_CXXFLAGS_WARN_ON = -external:anglebrackets -external:W0 -WX -W4 -wd4702
 }
@@ -64,7 +64,6 @@ win32-clang-msvc {
 
 win32-msvc|win32-clang-msvc {
     # I don't use -MP flag, because using jom
-    QMAKE_CXXFLAGS += -guard:cf
     QMAKE_LFLAGS += /guard:cf /WX
     # Looks like clang-cl does know nothing about these, for now enabling
     QMAKE_LFLAGS_RELEASE += /OPT:REF,ICF=5
