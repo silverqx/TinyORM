@@ -3230,7 +3230,12 @@ tst_CastAttributes::model(const QString &connection, const RowType rowType) cons
                     "connection and ID(%3) failed in %2().")
                 .arg(connection, __tiny_func__).arg(id));
 
-    return itType->second;
+    /* The u_casts has to be reset everytime since the u_casts is static because
+       if the u_casts is modified for eg. MySQL connection test and right after is
+       executed the same unit test for eg. SQLite connection then we need the u_casts
+       static data member clean.
+       This was not needed when the u_casts was normal data member. 😔 */
+    return resetCasts(itType->second);
 }
 
 Type &
