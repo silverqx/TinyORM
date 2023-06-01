@@ -1358,13 +1358,13 @@ void tst_Collection_Models::find_Ids() const
 
 void tst_Collection_Models::sort() const
 {
-    ModelsCollection<Album> albums {
+    ModelsCollection<Album> albums = Orm::collect<Album>({
         {{ID, 3}, {NAME, "album3"}},
         {{ID, 1}, {NAME, "album1"}},
         {{ID, 4}, {NAME, "album4"}},
         {         {NAME, "album"}},
         {{ID, 2}, {NAME, "album2"}},
-    };
+    });
 
     auto sorted = albums.sort();
     for (auto *m : sorted) {
@@ -1372,25 +1372,25 @@ void tst_Collection_Models::sort() const
     }
     QCOMPARE(typeid (sorted), typeid (ModelsCollection<Album *>));
 
-    ModelsCollection<Album> expectedAlbums {
+    ModelsCollection<Album> expectedAlbums = Orm::collect<Album>({
         {{ID, 1}, {NAME, "album1"}},
         {{ID, 2}, {NAME, "album2"}},
         {{ID, 3}, {NAME, "album3"}},
         {{ID, 4}, {NAME, "album4"}},
         {         {NAME, "album"}},
-    };
+    });
     QCOMPARE(sorted, expectedAlbums);
 }
 
 void tst_Collection_Models::sortDesc() const
 {
-    ModelsCollection<Album> albums {
+    ModelsCollection<Album> albums = Orm::collect<Album>({
         {{ID, 3}, {NAME, "album3"}},
         {{ID, 1}, {NAME, "album1"}},
         {{ID, 4}, {NAME, "album4"}},
         {         {NAME, "album"}},
         {{ID, 2}, {NAME, "album2"}},
-    };
+    });
 
     auto sorted = albums.sortDesc();
     for (auto *m : sorted) {
@@ -1398,24 +1398,24 @@ void tst_Collection_Models::sortDesc() const
     }
     QCOMPARE(typeid (sorted), typeid (ModelsCollection<Album *>));
 
-    ModelsCollection<Album> expectedAlbums {
+    ModelsCollection<Album> expectedAlbums = Orm::collect<Album>({
         {         {NAME, "album"}},
         {{ID, 4}, {NAME, "album4"}},
         {{ID, 3}, {NAME, "album3"}},
         {{ID, 2}, {NAME, "album2"}},
         {{ID, 1}, {NAME, "album1"}},
-    };
+    });
     QCOMPARE(sorted, expectedAlbums);
 }
 
 void tst_Collection_Models::sort_WithCallback() const
 {
-    ModelsCollection<Album> albums {
+    ModelsCollection<Album> albums = Orm::collect<Album>({
         {{NAME, "album3"}},
         {{NAME, "album1"}},
         {{NAME, "album4"}},
         {{NAME, "album2"}},
-    };
+    });
 
     auto sorted = albums.sort([](Album *const left, Album *const right)
     {
@@ -1424,23 +1424,23 @@ void tst_Collection_Models::sort_WithCallback() const
     });
     QCOMPARE(typeid (sorted), typeid (ModelsCollection<Album *>));
 
-    ModelsCollection<Album> expectedAlbums {
+    ModelsCollection<Album> expectedAlbums = Orm::collect<Album>({
         {{NAME, "album1"}},
         {{NAME, "album2"}},
         {{NAME, "album3"}},
         {{NAME, "album4"}},
-    };
+    });
     QCOMPARE(sorted, expectedAlbums);
 }
 
 void tst_Collection_Models::sortDesc_WithCallback() const
 {
-    ModelsCollection<Album> albums {
+    ModelsCollection<Album> albums = Orm::collect<Album>({
         {{NAME, "album3"}},
         {{NAME, "album1"}},
         {{NAME, "album4"}},
         {{NAME, "album2"}},
-    };
+    });
 
     auto sorted = albums.sortDesc([](Album *const left, Album *const right)
     {
@@ -1449,23 +1449,23 @@ void tst_Collection_Models::sortDesc_WithCallback() const
     });
     QCOMPARE(typeid (sorted), typeid (ModelsCollection<Album *>));
 
-    ModelsCollection<Album> expectedAlbums {
+    ModelsCollection<Album> expectedAlbums = Orm::collect<Album>({
         {{NAME, "album4"}},
         {{NAME, "album3"}},
         {{NAME, "album2"}},
         {{NAME, "album1"}},
-    };
+    });
     QCOMPARE(sorted, expectedAlbums);
 }
 
 void tst_Collection_Models::sort_WithCallbackAndProjection() const
 {
-    ModelsCollection<Album> albums {
+    ModelsCollection<Album> albums = Orm::collect<Album>({
         {{NAME, "album3"}},
         {{NAME, "album1"}},
         {{NAME, "album4"}},
         {{NAME, "album2"}},
-    };
+    });
 
     auto sorted = albums.sort([](const QString &left, const QString &right)
     {
@@ -1477,23 +1477,23 @@ void tst_Collection_Models::sort_WithCallbackAndProjection() const
     });
     QCOMPARE(typeid (sorted), typeid (ModelsCollection<Album *>));
 
-    ModelsCollection<Album> expectedAlbums {
+    ModelsCollection<Album> expectedAlbums = Orm::collect<Album>({
         {{NAME, "album1"}},
         {{NAME, "album2"}},
         {{NAME, "album3"}},
         {{NAME, "album4"}},
-    };
+    });
     QCOMPARE(sorted, expectedAlbums);
 }
 
 void tst_Collection_Models::sortDesc_WithCallbackProjection() const
 {
-    ModelsCollection<Album> albums {
+    ModelsCollection<Album> albums = Orm::collect<Album>({
         {{NAME, "album3"}},
         {{NAME, "album1"}},
         {{NAME, "album4"}},
         {{NAME, "album2"}},
-    };
+    });
 
     auto sorted = albums.sortDesc([](const QString &left, const QString &right)
     {
@@ -1505,60 +1505,60 @@ void tst_Collection_Models::sortDesc_WithCallbackProjection() const
     });
     QCOMPARE(typeid (sorted), typeid (ModelsCollection<Album *>));
 
-    ModelsCollection<Album> expectedAlbums {
+    ModelsCollection<Album> expectedAlbums = Orm::collect<Album>({
         {{NAME, "album4"}},
         {{NAME, "album3"}},
         {{NAME, "album2"}},
         {{NAME, "album1"}},
-    };
+    });
     QCOMPARE(sorted, expectedAlbums);
 }
 
 void tst_Collection_Models::sortBy() const
 {
-    ModelsCollection<Album> albums {
+    ModelsCollection<Album> albums = Orm::collect<Album>({
         {{NAME, "album3"}},
         {{NAME, "album1"}},
         {{NAME, "album4"}},
         {{NAME, "album2"}},
-    };
+    });
 
     auto sorted = albums.sortBy<QString>(NAME);
     QCOMPARE(typeid (sorted), typeid (ModelsCollection<Album *>));
 
-    ModelsCollection<Album> expectedAlbums {
+    ModelsCollection<Album> expectedAlbums = Orm::collect<Album>({
         {{NAME, "album1"}},
         {{NAME, "album2"}},
         {{NAME, "album3"}},
         {{NAME, "album4"}},
-    };
+    });
     QCOMPARE(sorted, expectedAlbums);
 }
 
 void tst_Collection_Models::sortByDesc() const
 {
-    ModelsCollection<Album> albums {
+    ModelsCollection<Album> albums = Orm::collect<Album>({
         {{NAME, "album3"}},
         {{NAME, "album1"}},
         {{NAME, "album4"}},
         {{NAME, "album2"}},
-    };
+    });
 
     auto sorted = albums.sortByDesc<QString>(NAME);
     QCOMPARE(typeid (sorted), typeid (ModelsCollection<Album *>));
 
-    ModelsCollection<Album> expectedAlbums {
+    ModelsCollection<Album> expectedAlbums = Orm::collect<Album>({
         {{NAME, "album4"}},
         {{NAME, "album3"}},
         {{NAME, "album2"}},
         {{NAME, "album1"}},
-    };
+    });
     QCOMPARE(sorted, expectedAlbums);
 }
 
 void tst_Collection_Models::sortBy_MoreColumns() const
 {
-    ModelsCollection<Album> albums {
+    ModelsCollection<Album> albums = Orm::collect<Album>({
         {{NAME, "album3"}, {SIZE_, 1}},
         {{NAME, "album1"}, {SIZE_, 1}},
         {{NAME, "album2"}, {SIZE_, 3}},
@@ -1568,7 +1568,7 @@ void tst_Collection_Models::sortBy_MoreColumns() const
         {{NAME, "album4"}, {SIZE_, 2}},
         {{NAME, "album1"}, {SIZE_, 2}},
         {{NAME, "album2"}, {SIZE_, 1}},
-    };
+    });
 
     auto sorted = albums.sortBy(
     {
@@ -1585,7 +1585,7 @@ void tst_Collection_Models::sortBy_MoreColumns() const
     });
     QCOMPARE(typeid (sorted), typeid (ModelsCollection<Album *>));
 
-    ModelsCollection<Album> expectedAlbums {
+    ModelsCollection<Album> expectedAlbums = Orm::collect<Album>({
         {{NAME, "album1"}, {SIZE_, 1}},
         {{NAME, "album1"}, {SIZE_, 2}},
         {{NAME, "album2"}, {SIZE_, 1}},
@@ -1595,13 +1595,13 @@ void tst_Collection_Models::sortBy_MoreColumns() const
         {{NAME, "album3"}, {SIZE_, 1}},
         {{NAME, "album4"}, {SIZE_, 1}},
         {{NAME, "album4"}, {SIZE_, 2}},
-    };
+    });
     QCOMPARE(sorted, expectedAlbums);
 }
 
 void tst_Collection_Models::sortBy_MoreColumns_SecondDescending() const
 {
-    ModelsCollection<Album> albums {
+    ModelsCollection<Album> albums = Orm::collect<Album>({
         {{NAME, "album3"}, {SIZE_, 1}},
         {{NAME, "album1"}, {SIZE_, 1}},
         {{NAME, "album2"}, {SIZE_, 3}},
@@ -1611,7 +1611,7 @@ void tst_Collection_Models::sortBy_MoreColumns_SecondDescending() const
         {{NAME, "album4"}, {SIZE_, 2}},
         {{NAME, "album1"}, {SIZE_, 2}},
         {{NAME, "album2"}, {SIZE_, 1}},
-    };
+    });
 
     auto sorted = albums.sortBy(
     {
@@ -1629,7 +1629,7 @@ void tst_Collection_Models::sortBy_MoreColumns_SecondDescending() const
     });
     QCOMPARE(typeid (sorted), typeid (ModelsCollection<Album *>));
 
-    ModelsCollection<Album> expectedAlbums {
+    ModelsCollection<Album> expectedAlbums = Orm::collect<Album>({
         {{NAME, "album1"}, {SIZE_, 2}},
         {{NAME, "album1"}, {SIZE_, 1}},
         {{NAME, "album2"}, {SIZE_, 4}},
@@ -1639,18 +1639,18 @@ void tst_Collection_Models::sortBy_MoreColumns_SecondDescending() const
         {{NAME, "album3"}, {SIZE_, 1}},
         {{NAME, "album4"}, {SIZE_, 2}},
         {{NAME, "album4"}, {SIZE_, 1}},
-    };
+    });
     QCOMPARE(sorted, expectedAlbums);
 }
 
 void tst_Collection_Models::sortBy_Projection() const
 {
-    ModelsCollection<Album> albums {
+    ModelsCollection<Album> albums = Orm::collect<Album>({
         {{NAME, "album3"}, {NOTE, "aaa"}},
         {{NAME, "album1"}, {NOTE, "a"}},
         {{NAME, "album4"}, {NOTE, "aaaa"}},
         {{NAME, "album2"}, {NOTE, "aa"}},
-    };
+    });
 
     auto sorted = albums.sortBy([](Album *const album)
     {
@@ -1658,23 +1658,23 @@ void tst_Collection_Models::sortBy_Projection() const
     });
     QCOMPARE(typeid (sorted), typeid (ModelsCollection<Album *>));
 
-    ModelsCollection<Album> expectedAlbums {
+    ModelsCollection<Album> expectedAlbums = Orm::collect<Album>({
         {{NAME, "album1"}, {NOTE, "a"}},
         {{NAME, "album2"}, {NOTE, "aa"}},
         {{NAME, "album3"}, {NOTE, "aaa"}},
         {{NAME, "album4"}, {NOTE, "aaaa"}},
-    };
+    });
     QCOMPARE(sorted, expectedAlbums);
 }
 
 void tst_Collection_Models::sortByDesc_Projection() const
 {
-    ModelsCollection<Album> albums {
+    ModelsCollection<Album> albums = Orm::collect<Album>({
         {{NAME, "album3"}, {NOTE, "aaa"}},
         {{NAME, "album1"}, {NOTE, "a"}},
         {{NAME, "album4"}, {NOTE, "aaaa"}},
         {{NAME, "album2"}, {NOTE, "aa"}},
-    };
+    });
 
     auto sorted = albums.sortByDesc([](Album *const album)
     {
@@ -1682,24 +1682,24 @@ void tst_Collection_Models::sortByDesc_Projection() const
     });
     QCOMPARE(typeid (sorted), typeid (ModelsCollection<Album *>));
 
-    ModelsCollection<Album> expectedAlbums {
+    ModelsCollection<Album> expectedAlbums = Orm::collect<Album>({
         {{NAME, "album4"}, {NOTE, "aaaa"}},
         {{NAME, "album3"}, {NOTE, "aaa"}},
         {{NAME, "album2"}, {NOTE, "aa"}},
         {{NAME, "album1"}, {NOTE, "a"}},
-    };
+    });
     QCOMPARE(sorted, expectedAlbums);
 }
 
 void tst_Collection_Models::stableSort() const
 {
-    ModelsCollection<Album> albums {
+    ModelsCollection<Album> albums = Orm::collect<Album>({
         {{ID, 3}, {NAME, "album3"}},
         {{ID, 1}, {NAME, "album1"}},
         {{ID, 4}, {NAME, "album4"}},
         {         {NAME, "album"}},
         {{ID, 2}, {NAME, "album2"}},
-    };
+    });
 
     auto sorted = albums.stableSort();
     for (auto *m : sorted) {
@@ -1707,25 +1707,25 @@ void tst_Collection_Models::stableSort() const
     }
     QCOMPARE(typeid (sorted), typeid (ModelsCollection<Album *>));
 
-    ModelsCollection<Album> expectedAlbums {
+    ModelsCollection<Album> expectedAlbums = Orm::collect<Album>({
         {{ID, 1}, {NAME, "album1"}},
         {{ID, 2}, {NAME, "album2"}},
         {{ID, 3}, {NAME, "album3"}},
         {{ID, 4}, {NAME, "album4"}},
         {         {NAME, "album"}},
-    };
+    });
     QCOMPARE(sorted, expectedAlbums);
 }
 
 void tst_Collection_Models::stableSortDesc() const
 {
-    ModelsCollection<Album> albums {
+    ModelsCollection<Album> albums = Orm::collect<Album>({
         {{ID, 3}, {NAME, "album3"}},
         {{ID, 1}, {NAME, "album1"}},
         {{ID, 4}, {NAME, "album4"}},
         {         {NAME, "album"}},
         {{ID, 2}, {NAME, "album2"}},
-    };
+    });
 
     auto sorted = albums.stableSortDesc();
     for (auto *m : sorted) {
@@ -1733,25 +1733,25 @@ void tst_Collection_Models::stableSortDesc() const
     }
     QCOMPARE(typeid (sorted), typeid (ModelsCollection<Album *>));
 
-    ModelsCollection<Album> expectedAlbums {
+    ModelsCollection<Album> expectedAlbums = Orm::collect<Album>({
         {         {NAME, "album"}},
         {{ID, 4}, {NAME, "album4"}},
         {{ID, 3}, {NAME, "album3"}},
         {{ID, 2}, {NAME, "album2"}},
         {{ID, 1}, {NAME, "album1"}},
-    };
+    });
     QCOMPARE(sorted, expectedAlbums);
 }
 
 void tst_Collection_Models::stableSort_WithCallback() const
 {
-    ModelsCollection<Album> albums {
+    ModelsCollection<Album> albums = Orm::collect<Album>({
         {{NAME, "album3"}, {SIZE_, 2}}, // stable sort must guarantee this order
         {{NAME, "album3"}, {SIZE_, 1}},
         {{NAME, "album1"}, {SIZE_, 1}},
         {{NAME, "album4"}, {SIZE_, 1}},
         {{NAME, "album2"}, {SIZE_, 1}},
-    };
+    });
 
     auto sorted = albums.stableSort([](Album *const left, Album *const right)
     {
@@ -1760,25 +1760,25 @@ void tst_Collection_Models::stableSort_WithCallback() const
     });
     QCOMPARE(typeid (sorted), typeid (ModelsCollection<Album *>));
 
-    ModelsCollection<Album> expectedAlbums {
+    ModelsCollection<Album> expectedAlbums = Orm::collect<Album>({
         {{NAME, "album1"}, {SIZE_, 1}},
         {{NAME, "album2"}, {SIZE_, 1}},
         {{NAME, "album3"}, {SIZE_, 2}}, // stable sort must guarantee this order
         {{NAME, "album3"}, {SIZE_, 1}},
         {{NAME, "album4"}, {SIZE_, 1}},
-    };
+    });
     QCOMPARE(sorted, expectedAlbums);
 }
 
 void tst_Collection_Models::stableSortDesc_WithCallback() const
 {
-    ModelsCollection<Album> albums {
+    ModelsCollection<Album> albums = Orm::collect<Album>({
         {{NAME, "album3"}, {SIZE_, 2}}, // stable sort must guarantee this order
         {{NAME, "album3"}, {SIZE_, 1}},
         {{NAME, "album1"}, {SIZE_, 1}},
         {{NAME, "album4"}, {SIZE_, 1}},
         {{NAME, "album2"}, {SIZE_, 1}},
-    };
+    });
 
     auto sorted = albums.stableSortDesc([](Album *const left, Album *const right)
     {
@@ -1787,25 +1787,25 @@ void tst_Collection_Models::stableSortDesc_WithCallback() const
     });
     QCOMPARE(typeid (sorted), typeid (ModelsCollection<Album *>));
 
-    ModelsCollection<Album> expectedAlbums {
+    ModelsCollection<Album> expectedAlbums = Orm::collect<Album>({
         {{NAME, "album4"}, {SIZE_, 1}},
         {{NAME, "album3"}, {SIZE_, 1}},
         {{NAME, "album3"}, {SIZE_, 2}}, // stable sort must guarantee this order
         {{NAME, "album2"}, {SIZE_, 1}},
         {{NAME, "album1"}, {SIZE_, 1}},
-    };
+    });
     QCOMPARE(sorted, expectedAlbums);
 }
 
 void tst_Collection_Models::stableSort_WithProjection() const
 {
-    ModelsCollection<Album> albums {
+    ModelsCollection<Album> albums = Orm::collect<Album>({
         {{NAME, "album3"}, {SIZE_, 2}}, // stable sort must guarantee this order
         {{NAME, "album3"}, {SIZE_, 1}},
         {{NAME, "album1"}, {SIZE_, 1}},
         {{NAME, "album4"}, {SIZE_, 1}},
         {{NAME, "album2"}, {SIZE_, 1}},
-    };
+    });
 
     auto sorted = albums.stableSort([](const QString &left, const QString &right)
     {
@@ -1817,25 +1817,25 @@ void tst_Collection_Models::stableSort_WithProjection() const
     });
     QCOMPARE(typeid (sorted), typeid (ModelsCollection<Album *>));
 
-    ModelsCollection<Album> expectedAlbums {
+    ModelsCollection<Album> expectedAlbums = Orm::collect<Album>({
         {{NAME, "album1"}, {SIZE_, 1}},
         {{NAME, "album2"}, {SIZE_, 1}},
         {{NAME, "album3"}, {SIZE_, 2}}, // stable sort must guarantee this order
         {{NAME, "album3"}, {SIZE_, 1}},
         {{NAME, "album4"}, {SIZE_, 1}},
-    };
+    });
     QCOMPARE(sorted, expectedAlbums);
 }
 
 void tst_Collection_Models::stableSortDesc_WithProjection() const
 {
-    ModelsCollection<Album> albums {
+    ModelsCollection<Album> albums = Orm::collect<Album>({
         {{NAME, "album3"}, {SIZE_, 2}}, // stable sort must guarantee this order
         {{NAME, "album3"}, {SIZE_, 1}},
         {{NAME, "album1"}, {SIZE_, 1}},
         {{NAME, "album4"}, {SIZE_, 1}},
         {{NAME, "album2"}, {SIZE_, 1}},
-    };
+    });
 
     auto sorted = albums.stableSortDesc([](const QString &left, const QString &right)
     {
@@ -1847,65 +1847,65 @@ void tst_Collection_Models::stableSortDesc_WithProjection() const
     });
     QCOMPARE(typeid (sorted), typeid (ModelsCollection<Album *>));
 
-    ModelsCollection<Album> expectedAlbums {
+    ModelsCollection<Album> expectedAlbums = Orm::collect<Album>({
         {{NAME, "album4"}, {SIZE_, 1}},
         {{NAME, "album3"}, {SIZE_, 1}},
         {{NAME, "album3"}, {SIZE_, 2}}, // stable sort must guarantee this order
         {{NAME, "album2"}, {SIZE_, 1}},
         {{NAME, "album1"}, {SIZE_, 1}},
-    };
+    });
     QCOMPARE(sorted, expectedAlbums);
 }
 
 void tst_Collection_Models::stableSortBy() const
 {
-    ModelsCollection<Album> albums {
+    ModelsCollection<Album> albums = Orm::collect<Album>({
         {{NAME, "album3"}, {SIZE_, 2}}, // stable sort must guarantee this order
         {{NAME, "album3"}, {SIZE_, 1}},
         {{NAME, "album1"}, {SIZE_, 1}},
         {{NAME, "album4"}, {SIZE_, 1}},
         {{NAME, "album2"}, {SIZE_, 1}},
-    };
+    });
 
     auto sorted = albums.stableSortBy<QString>(NAME);
     QCOMPARE(typeid (sorted), typeid (ModelsCollection<Album *>));
 
-    ModelsCollection<Album> expectedAlbums {
+    ModelsCollection<Album> expectedAlbums = Orm::collect<Album>({
         {{NAME, "album1"}, {SIZE_, 1}},
         {{NAME, "album2"}, {SIZE_, 1}},
         {{NAME, "album3"}, {SIZE_, 2}}, // stable sort must guarantee this order
         {{NAME, "album3"}, {SIZE_, 1}},
         {{NAME, "album4"}, {SIZE_, 1}},
-    };
+    });
     QCOMPARE(sorted, expectedAlbums);
 }
 
 void tst_Collection_Models::stableSortByDesc() const
 {
-    ModelsCollection<Album> albums {
+    ModelsCollection<Album> albums = Orm::collect<Album>({
         {{NAME, "album3"}, {SIZE_, 2}}, // stable sort must guarantee this order
         {{NAME, "album3"}, {SIZE_, 1}},
         {{NAME, "album1"}, {SIZE_, 1}},
         {{NAME, "album4"}, {SIZE_, 1}},
         {{NAME, "album2"}, {SIZE_, 1}},
-    };
+    });
 
     auto sorted = albums.stableSortByDesc<QString>(NAME);
     QCOMPARE(typeid (sorted), typeid (ModelsCollection<Album *>));
 
-    ModelsCollection<Album> expectedAlbums {
+    ModelsCollection<Album> expectedAlbums = Orm::collect<Album>({
         {{NAME, "album4"}, {SIZE_, 1}},
         {{NAME, "album3"}, {SIZE_, 1}}, // stable sort must guarantee this order
         {{NAME, "album3"}, {SIZE_, 2}},
         {{NAME, "album2"}, {SIZE_, 1}},
         {{NAME, "album1"}, {SIZE_, 1}},
-    };
+    });
     QCOMPARE(sorted, expectedAlbums);
 }
 
 void tst_Collection_Models::stableSortBy_MoreColumns() const
 {
-    ModelsCollection<Album> albums {
+    ModelsCollection<Album> albums = Orm::collect<Album>({
         {{NAME, "album3"}, {SIZE_, 1}, {NOTE, ""}},
         {{NAME, "album5"}, {SIZE_, 1}, {NOTE, "b"}}, // stable sort must guarantee this order
         {{NAME, "album1"}, {SIZE_, 1}, {NOTE, ""}},
@@ -1917,7 +1917,7 @@ void tst_Collection_Models::stableSortBy_MoreColumns() const
         {{NAME, "album4"}, {SIZE_, 2}, {NOTE, ""}},
         {{NAME, "album1"}, {SIZE_, 2}, {NOTE, ""}},
         {{NAME, "album2"}, {SIZE_, 1}, {NOTE, ""}},
-    };
+    });
 
     auto sorted = albums.stableSortBy(
     {
@@ -1934,7 +1934,7 @@ void tst_Collection_Models::stableSortBy_MoreColumns() const
     });
     QCOMPARE(typeid (sorted), typeid (ModelsCollection<Album *>));
 
-    ModelsCollection<Album> expectedAlbums {
+    ModelsCollection<Album> expectedAlbums = Orm::collect<Album>({
         {{NAME, "album1"}, {SIZE_, 1}, {NOTE, ""}},
         {{NAME, "album1"}, {SIZE_, 2}, {NOTE, ""}},
         {{NAME, "album2"}, {SIZE_, 1}, {NOTE, ""}},
@@ -1946,13 +1946,13 @@ void tst_Collection_Models::stableSortBy_MoreColumns() const
         {{NAME, "album4"}, {SIZE_, 2}, {NOTE, ""}},
         {{NAME, "album5"}, {SIZE_, 1}, {NOTE, "b"}}, // stable sort must guarantee this order
         {{NAME, "album5"}, {SIZE_, 1}, {NOTE, "a"}},
-    };
+    });
     QCOMPARE(sorted, expectedAlbums);
 }
 
 void tst_Collection_Models::stableSortBy_MoreColumns_SecondDescending() const
 {
-    ModelsCollection<Album> albums {
+    ModelsCollection<Album> albums = Orm::collect<Album>({
         {{NAME, "album3"}, {SIZE_, 1}, {NOTE, ""}},
         {{NAME, "album5"}, {SIZE_, 1}, {NOTE, "b"}}, // stable sort must guarantee this order
         {{NAME, "album1"}, {SIZE_, 1}, {NOTE, ""}},
@@ -1964,7 +1964,7 @@ void tst_Collection_Models::stableSortBy_MoreColumns_SecondDescending() const
         {{NAME, "album4"}, {SIZE_, 2}, {NOTE, ""}},
         {{NAME, "album1"}, {SIZE_, 2}, {NOTE, ""}},
         {{NAME, "album2"}, {SIZE_, 1}, {NOTE, ""}},
-    };
+    });
 
     auto sorted = albums.stableSortBy(
     {
@@ -1982,7 +1982,7 @@ void tst_Collection_Models::stableSortBy_MoreColumns_SecondDescending() const
     });
     QCOMPARE(typeid (sorted), typeid (ModelsCollection<Album *>));
 
-    ModelsCollection<Album> expectedAlbums {
+    ModelsCollection<Album> expectedAlbums = Orm::collect<Album>({
         {{NAME, "album1"}, {SIZE_, 2}, {NOTE, ""}},
         {{NAME, "album1"}, {SIZE_, 1}, {NOTE, ""}},
         {{NAME, "album2"}, {SIZE_, 4}, {NOTE, ""}},
@@ -1994,19 +1994,19 @@ void tst_Collection_Models::stableSortBy_MoreColumns_SecondDescending() const
         {{NAME, "album4"}, {SIZE_, 1}, {NOTE, ""}},
         {{NAME, "album5"}, {SIZE_, 1}, {NOTE, "b"}}, // stable sort must guarantee this order
         {{NAME, "album5"}, {SIZE_, 1}, {NOTE, "a"}},
-    };
+    });
     QCOMPARE(sorted, expectedAlbums);
 }
 
 void tst_Collection_Models::stableSortBy_Projection() const
 {
-    ModelsCollection<Album> albums {
+    ModelsCollection<Album> albums = Orm::collect<Album>({
         {{NAME, "album3"}, {SIZE_, 2}, {NOTE, "aaa"}}, // stable sort must guarantee this order
         {{NAME, "album3"}, {SIZE_, 1}, {NOTE, "aaa"}},
         {{NAME, "album1"}, {SIZE_, 1}, {NOTE, "a"}},
         {{NAME, "album4"}, {SIZE_, 1}, {NOTE, "aaaaa"}},
         {{NAME, "album2"}, {SIZE_, 1}, {NOTE, "aa"}},
-    };
+    });
 
     auto sorted = albums.stableSortBy([](Album *const album)
     {
@@ -2014,25 +2014,25 @@ void tst_Collection_Models::stableSortBy_Projection() const
     });
     QCOMPARE(typeid (sorted), typeid (ModelsCollection<Album *>));
 
-    ModelsCollection<Album> expectedAlbums {
+    ModelsCollection<Album> expectedAlbums = Orm::collect<Album>({
         {{NAME, "album1"}, {SIZE_, 1}, {NOTE, "a"}},
         {{NAME, "album2"}, {SIZE_, 1}, {NOTE, "aa"}},
         {{NAME, "album3"}, {SIZE_, 2}, {NOTE, "aaa"}}, // stable sort must guarantee this order
         {{NAME, "album3"}, {SIZE_, 1}, {NOTE, "aaa"}},
         {{NAME, "album4"}, {SIZE_, 1}, {NOTE, "aaaaa"}},
-    };
+    });
     QCOMPARE(sorted, expectedAlbums);
 }
 
 void tst_Collection_Models::stableSortByDesc_Projection() const
 {
-    ModelsCollection<Album> albums {
+    ModelsCollection<Album> albums = Orm::collect<Album>({
         {{NAME, "album3"}, {SIZE_, 2}, {NOTE, "aaa"}}, // stable sort must guarantee this order
         {{NAME, "album3"}, {SIZE_, 1}, {NOTE, "aaa"}},
         {{NAME, "album1"}, {SIZE_, 1}, {NOTE, "a"}},
         {{NAME, "album4"}, {SIZE_, 1}, {NOTE, "aaaaa"}},
         {{NAME, "album2"}, {SIZE_, 1}, {NOTE, "aa"}},
-    };
+    });
 
     auto sorted = albums.stableSortByDesc([](Album *const album)
     {
@@ -2040,152 +2040,152 @@ void tst_Collection_Models::stableSortByDesc_Projection() const
     });
     QCOMPARE(typeid (sorted), typeid (ModelsCollection<Album *>));
 
-    ModelsCollection<Album> expectedAlbums {
+    ModelsCollection<Album> expectedAlbums = Orm::collect<Album>({
         {{NAME, "album4"}, {SIZE_, 1}, {NOTE, "aaaaa"}},
         {{NAME, "album3"}, {SIZE_, 1}, {NOTE, "aaa"}},
         {{NAME, "album3"}, {SIZE_, 2}, {NOTE, "aaa"}}, // stable sort must guarantee this order
         {{NAME, "album2"}, {SIZE_, 1}, {NOTE, "aa"}},
         {{NAME, "album1"}, {SIZE_, 1}, {NOTE, "a"}},
-    };
+    });
     QCOMPARE(sorted, expectedAlbums);
 }
 
 void tst_Collection_Models::unique() const
 {
-    ModelsCollection<Album> albums {
+    ModelsCollection<Album> albums = Orm::collect<Album>({
         {{ID, 2}, {NAME, "album2"}},
         {{ID, 1}, {NAME, "album1"}},
         {{ID, 2}, {NAME, "album2"}},
         {{ID, 1}, {NAME, "album1"}},
         {{ID, 4}, {NAME, "album4"}},
         {{ID, 3}, {NAME, "album3"}},
-    };
+    });
 
     auto unique = albums.unique();
     QCOMPARE(typeid (unique), typeid (ModelsCollection<Album *>));
 
-    ModelsCollection<Album> expectedAlbums {
+    ModelsCollection<Album> expectedAlbums = Orm::collect<Album>({
         {{ID, 1}, {NAME, "album1"}},
         {{ID, 2}, {NAME, "album2"}},
         {{ID, 3}, {NAME, "album3"}},
         {{ID, 4}, {NAME, "album4"}},
-    };
+    });
     QCOMPARE(unique, expectedAlbums);
 }
 
 void tst_Collection_Models::unique_NoSorting() const
 {
-    ModelsCollection<Album> albums {
+    ModelsCollection<Album> albums = Orm::collect<Album>({
         {{ID, 2}, {NAME, "album2"}},
         {{ID, 1}, {NAME, "album1"}},
         {{ID, 2}, {NAME, "album2"}},
         {{ID, 1}, {NAME, "album1"}},
         {{ID, 4}, {NAME, "album4"}},
         {{ID, 3}, {NAME, "album3"}},
-    };
+    });
 
     auto unique = albums.sort().unique(false);
     QCOMPARE(typeid (unique), typeid (ModelsCollection<Album *>));
 
-    ModelsCollection<Album> expectedAlbums {
+    ModelsCollection<Album> expectedAlbums = Orm::collect<Album>({
         {{ID, 1}, {NAME, "album1"}},
         {{ID, 2}, {NAME, "album2"}},
         {{ID, 3}, {NAME, "album3"}},
         {{ID, 4}, {NAME, "album4"}},
-    };
+    });
     QCOMPARE(unique, expectedAlbums);
 }
 
 void tst_Collection_Models::uniqueBy() const
 {
-    ModelsCollection<Album> albums {
+    ModelsCollection<Album> albums = Orm::collect<Album>({
         {{NAME, "album2"}},
         {{NAME, "album1"}},
         {{NAME, "album2"}},
         {{NAME, "album1"}},
         {{NAME, "album4"}},
         {{NAME, "album3"}},
-    };
+    });
 
     auto unique = albums.uniqueBy<QString>(NAME);
     QCOMPARE(typeid (unique), typeid (ModelsCollection<Album *>));
 
-    ModelsCollection<Album> expectedAlbums {
+    ModelsCollection<Album> expectedAlbums = Orm::collect<Album>({
         {{NAME, "album1"}},
         {{NAME, "album2"}},
         {{NAME, "album3"}},
         {{NAME, "album4"}},
-    };
+    });
     QCOMPARE(unique, expectedAlbums);
 }
 
 void tst_Collection_Models::uniqueBy_NoSorting() const
 {
-    ModelsCollection<Album> albums {
+    ModelsCollection<Album> albums = Orm::collect<Album>({
         {{NAME, "album2"}},
         {{NAME, "album1"}},
         {{NAME, "album2"}},
         {{NAME, "album1"}},
         {{NAME, "album4"}},
         {{NAME, "album3"}},
-    };
+    });
 
     auto unique = albums.sortBy<QString>(NAME)
                         .uniqueBy<QString>(NAME, false);
     QCOMPARE(typeid (unique), typeid (ModelsCollection<Album *>));
 
-    ModelsCollection<Album> expectedAlbums {
+    ModelsCollection<Album> expectedAlbums = Orm::collect<Album>({
         {{NAME, "album1"}},
         {{NAME, "album2"}},
         {{NAME, "album3"}},
         {{NAME, "album4"}},
-    };
+    });
     QCOMPARE(unique, expectedAlbums);
 }
 
 void tst_Collection_Models::uniqueRelaxed() const
 {
-    ModelsCollection<Album> albums {
+    ModelsCollection<Album> albums = Orm::collect<Album>({
         {{ID, 2}, {NAME, "album2"}},
         {{ID, 1}, {NAME, "album1"}},
         {{ID, 2}, {NAME, "album2"}},
         {{ID, 1}, {NAME, "album1"}},
         {{ID, 4}, {NAME, "album4"}},
         {{ID, 3}, {NAME, "album3"}},
-    };
+    });
 
     auto unique = albums.uniqueRelaxed();
     QCOMPARE(typeid (unique), typeid (ModelsCollection<Album *>));
 
-    ModelsCollection<Album> expectedAlbums {
+    ModelsCollection<Album> expectedAlbums = Orm::collect<Album>({
         {{ID, 2}, {NAME, "album2"}},
         {{ID, 1}, {NAME, "album1"}},
         {{ID, 4}, {NAME, "album4"}},
         {{ID, 3}, {NAME, "album3"}},
-    };
+    });
     QCOMPARE(unique, expectedAlbums);
 }
 
 void tst_Collection_Models::uniqueRelaxedBy() const
 {
-    ModelsCollection<Album> albums {
+    ModelsCollection<Album> albums = Orm::collect<Album>({
         {{NAME, "album2"}},
         {{NAME, "album1"}},
         {{NAME, "album2"}},
         {{NAME, "album1"}},
         {{NAME, "album4"}},
         {{NAME, "album3"}},
-    };
+    });
 
     auto unique = albums.uniqueRelaxedBy<QString>(NAME);
     QCOMPARE(typeid (unique), typeid (ModelsCollection<Album *>));
 
-    ModelsCollection<Album> expectedAlbums {
+    ModelsCollection<Album> expectedAlbums = Orm::collect<Album>({
         {{NAME, "album2"}},
         {{NAME, "album1"}},
         {{NAME, "album4"}},
         {{NAME, "album3"}},
-    };
+    });
     QCOMPARE(unique, expectedAlbums);
 }
 
@@ -3686,9 +3686,9 @@ void tst_Collection_Models::tap_lvalue() const
 void tst_Collection_Models::tap_rvalue() const
 {
     // Prepare
-    ModelsCollection<AlbumImage> imagesInit {
+    ModelsCollection<AlbumImage> imagesInit = Orm::collect<AlbumImage>({
         {{ID, 2}, {NAME, QStringLiteral("image2")}},
-    };
+    });
 
     // Get result
     auto callbackInvoked = false;

@@ -2278,6 +2278,64 @@ namespace Types
     /*! Instance of the EachBoolCallbackType. */
     inline constexpr Tiny::Types::EachBoolCallbackType EachBoolCallback {};
 
+    /*! Create a ModelsCollection from the given attributes. */
+    template<Tiny::ModelConcept Model>
+    Tiny::Types::ModelsCollection<Model>
+    collect(const QVector<QVector<Tiny::AttributeItem>> &attributesList)
+    {
+        Tiny::Types::ModelsCollection<Model> result;
+        result.reserve(attributesList.size());
+
+        for (const auto &attributes : attributesList)
+            result << Model::instance(attributes);
+
+        return result;
+    }
+
+    /*! Create a ModelsCollection from the given attributes. */
+    template<Tiny::ModelConcept Model>
+    Tiny::Types::ModelsCollection<Model>
+    collect(const QVector<QVector<Tiny::AttributeItem>> &attributesList,
+            const QString &connection)
+    {
+        Tiny::Types::ModelsCollection<Model> result;
+        result.reserve(attributesList.size());
+
+        for (const auto &attributes : attributesList)
+            result << Model::instance(attributes, connection);
+
+        return result;
+    }
+
+    /*! Create a ModelsCollection from the given attributes. */
+    template<Tiny::ModelConcept Model>
+    Tiny::Types::ModelsCollection<Model>
+    collect(QVector<QVector<Tiny::AttributeItem>> &&attributesList)
+    {
+        Tiny::Types::ModelsCollection<Model> result;
+        result.reserve(attributesList.size());
+
+        for (auto &&attributes : attributesList)
+            result << Model::instance(std::move(attributes));
+
+        return result;
+    }
+
+    /*! Create a ModelsCollection from the given attributes. */
+    template<Tiny::ModelConcept Model>
+    Tiny::Types::ModelsCollection<Model>
+    collect(QVector<QVector<Tiny::AttributeItem>> &&attributesList,
+            const QString &connection)
+    {
+        Tiny::Types::ModelsCollection<Model> result;
+        result.reserve(attributesList.size());
+
+        for (auto &&attributes : attributesList)
+            result << Model::instance(std::move(attributes), connection);
+
+        return result;
+    }
+
 } // namespace Orm
 
 TINYORM_END_COMMON_NAMESPACE

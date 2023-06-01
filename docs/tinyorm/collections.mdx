@@ -73,6 +73,17 @@ The `ModelsCollection<Model>` is implicitly convertible and assignable from the 
     ModelsCollection<User> users(usersVector);
     users = usersVector;
 
+Alternatively, you can use the `Orm::collect<Model>` helper function to create a `ModelsCollection` from the given attributes:
+
+    ModelsCollection<User> users = Orm::collect<User>({
+        {{"name", "Kate"}, {"added_on", QDateTime::currentDateTimeUtc()}},
+        {{"name", "John"}, {"added_on", QDateTime({2023, 6, 1}, {13, 46, 15}, Qt::UTC)}},
+    });
+
+:::caution
+The `Orm::collect<Model>` function is __mandatory__ if your attributes contain the `QDateTime` instance, you can read more about this problem [here](tinyorm/getting-started.mdx#qdatetime-and-connection-name-problem).
+:::
+
 :::note
 The results of [TinyORM](tinyorm/getting-started.mdx) queries are always returned as `ModelsCollection` instances.
 :::
