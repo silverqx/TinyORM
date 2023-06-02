@@ -1031,7 +1031,7 @@ namespace Orm::Tiny::Relations
     {
         ModelsCollection<Related> result;
         // Reserve the first page, it can help reallocations at the beginning
-        result.reserve(static_cast<ModelsCollection<Related>::size_type>(count));
+        result.reserve(static_cast<typename ModelsCollection<Related>::size_type>(count));
 
         chunk(count, [&result, &callback]
                      (ModelsCollection<Related> &&models, const qint64 /*unused*/)
@@ -1053,7 +1053,7 @@ namespace Orm::Tiny::Relations
     {
         QVector<T> result;
         // Reserve the first page, it can help reallocations at the beginning
-        result.reserve(static_cast<QVector<T>::size_type>(count));
+        result.reserve(static_cast<typename QVector<T>::size_type>(count));
 
         chunk(count, [&result, &callback]
                      (ModelsCollection<Related> &&models, const qint64 /*unused*/)

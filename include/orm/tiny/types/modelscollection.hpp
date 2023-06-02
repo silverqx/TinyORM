@@ -1627,7 +1627,7 @@ namespace Types
         result.reserve(size);
 
         std::unordered_set<T> values;
-        result.reserve(static_cast<std::unordered_set<T>::size_type>(size));
+        result.reserve(static_cast<typename std::unordered_set<T>::size_type>(size));
 
         for (ModelLoopType model : *this) {
             ModelRawType *const modelPointer = toPointer(model);
@@ -2142,21 +2142,21 @@ namespace Types
     }
 
     template<DerivedCollectionModel Model>
-    ModelsCollection<Model>::KeyType
+    typename ModelsCollection<Model>::KeyType
     ModelsCollection<Model>::castKey(const QVariant &key)
     {
         return key.template value<KeyType>();
     }
 
     template<DerivedCollectionModel Model>
-    ModelsCollection<Model>::KeyType
+    typename ModelsCollection<Model>::KeyType
     ModelsCollection<Model>::getKeyCasted(const ModelRawType *const model)
     {
         return castKey(getKey(model));
     }
 
     template<DerivedCollectionModel Model>
-    ModelsCollection<Model>::KeyType
+    typename ModelsCollection<Model>::KeyType
     ModelsCollection<Model>::getKeyCasted(const ModelRawType &model)
     {
         return castKey(getKey(model));

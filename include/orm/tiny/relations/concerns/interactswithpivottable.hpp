@@ -823,7 +823,7 @@ namespace Concerns
         auto query = newPivotQuery()->get();
 
         QVector<PivotType> pivots;
-        pivots.reserve(static_cast<decltype (pivots)::size_type>(
+        pivots.reserve(static_cast<typename decltype (pivots)::size_type>(
                            QueryUtils::queryResultSize(query)));
 
         while (query.next())

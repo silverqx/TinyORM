@@ -1146,7 +1146,7 @@ namespace Orm::Tiny
         auto instance = newModelInstance();
 
         ModelsCollection<Model> models;
-        models.reserve(static_cast<decltype (models)::size_type>(
+        models.reserve(static_cast<typename decltype (models)::size_type>(
                            QueryUtils::queryResultSize(result)));
 
         const auto fieldsCount = result.record().count();
