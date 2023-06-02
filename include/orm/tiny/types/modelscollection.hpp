@@ -122,45 +122,45 @@ namespace Types
         /* From QVector<Model> */
         /*! Converting constructor from the QVector<Model>. */
         ModelsCollection(const QVector<Model> &models) // NOLINT(google-explicit-constructor)
-        requires (!IsPointersCollection);
+        requires (!ModelsCollection<Model>::IsPointersCollection);
         /*! Converting constructor from the QVector<Model>. */
         ModelsCollection(QVector<Model> &&models) noexcept // NOLINT(google-explicit-constructor)
-        requires (!IsPointersCollection);
+        requires (!ModelsCollection<Model>::IsPointersCollection);
 
         /*! Converting copy assignment operator from the QVector<Model>. */
         ModelsCollection<Model> &operator=(const QVector<Model> &models)
-        requires (!IsPointersCollection);
+        requires (!ModelsCollection<Model>::IsPointersCollection);
         /*! Converting move assignment operator from the QVector<Model>. */
         ModelsCollection<Model> &operator=(QVector<Model> &&models) noexcept
-        requires (!IsPointersCollection);
+        requires (!ModelsCollection<Model>::IsPointersCollection);
 
         /* To ModelsCollection<Model> */
         /*! Converting method to the ModelsCollection<ModelRawType>. */
         inline ModelsCollection<ModelRawType> toModels() &
-        requires IsPointersCollection;
+        requires ModelsCollection<Model>::IsPointersCollection;
         /*! Converting method to the ModelsCollection<ModelRawType>. */
         inline ModelsCollection<ModelRawType> toModels() &&
-        requires IsPointersCollection;
+        requires ModelsCollection<Model>::IsPointersCollection;
 
         /* To ModelsCollection<Model *> */
         /*! Converting method to the ModelsCollection<ModelRawType *>. */
         inline ModelsCollection<ModelRawType *> toPointers()
-        requires (!IsPointersCollection);
+        requires (!ModelsCollection<Model>::IsPointersCollection);
 
         /* Comparison operators */
         /*! Equality comparison operator for the ModelsCollection. */
         bool operator==(const ModelsCollection<ModelRawType> &other) const
-        requires (!IsPointersCollection);
+        requires (!ModelsCollection<Model>::IsPointersCollection);
         /*! Equality comparison operator for the ModelsCollection. */
         bool operator==(const ModelsCollection<ModelRawType *> &other) const
-        requires IsPointersCollection;
+        requires ModelsCollection<Model>::IsPointersCollection;
 
         /*! Equality comparison operator for the ModelsCollection. */
         bool operator==(const ModelsCollection<ModelRawType *> &other) const
-        requires (!IsPointersCollection);
+        requires (!ModelsCollection<Model>::IsPointersCollection);
         /*! Equality comparison operator for the ModelsCollection. */
         bool operator==(const ModelsCollection<ModelRawType> &other) const
-        requires IsPointersCollection;
+        requires ModelsCollection<Model>::IsPointersCollection;
 
         /* Redeclared overriden methods from the base class */
 #if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
@@ -210,7 +210,7 @@ namespace Types
         filter(const std::function<bool(const ModelRawType *)> &callback);
         /*! Run a filter over each of the models in the collection (removes nullptr-s). */
         ModelsCollection<ModelRawType *>
-        filter() const requires IsPointersCollection;
+        filter() const requires ModelsCollection<Model>::IsPointersCollection;
 
         /*! Get a first model from the collection passing the given truth test. */
         ModelRawType *
@@ -546,10 +546,11 @@ namespace Types
 
         /*! Convert the Collection<ModelRawType> to the Collection<ModelRawType *>. */
         ModelsCollection<ModelRawType *>
-        toPointersCollection() requires (!IsPointersCollection);
+        toPointersCollection() requires (!ModelsCollection<Model>::IsPointersCollection);
         /*! Convert to the Collection<ModelRawType *>, return itself (no-op). */
         inline ModelsCollection<ModelRawType *>
-        toPointersCollection() const noexcept requires IsPointersCollection;
+        toPointersCollection() const noexcept
+        requires ModelsCollection<Model>::IsPointersCollection;
 
         /*! Return a model copy. */
         inline static ModelRawType getModelCopy(const ModelRawType &model);
