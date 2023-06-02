@@ -2,6 +2,8 @@
 
 #include <QRegularExpression>
 
+#include <unordered_set>
+
 #include <range/v3/view/filter.hpp>
 #include <range/v3/view/move.hpp>
 #include <range/v3/view/remove_if.hpp>
