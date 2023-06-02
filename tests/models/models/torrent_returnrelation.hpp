@@ -80,7 +80,7 @@ public:
     std::unique_ptr<Relation<Torrent_ReturnRelation, User>>
     user()
     {
-        return belongsTo<User>({}, {}, QString::fromUtf8(__func__));
+        return belongsTo<User>({}, {}, QString::fromUtf8(__func__)); // NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
     }
 
 private:
