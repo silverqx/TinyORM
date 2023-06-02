@@ -94,16 +94,16 @@ namespace Types
         /*! Model raw type, without the pointer. */
         using ModelRawType    = std::remove_pointer_t<value_type>;
         /*! Model type used in the for-ranged loops. */
-        using ModelLoopType   = std::conditional_t<IsPointersCollection,
+        using ModelLoopType   = std::conditional_t<std::is_pointer_v<Model>,
                                                    ModelRawType *const, ModelRawType &>;
         /*! Const Model type used in the for-ranged loops. */
-        using ConstModelLoopType = std::conditional_t<IsPointersCollection,
+        using ConstModelLoopType = std::conditional_t<std::is_pointer_v<Model>,
                                                       const ModelRawType *const,
                                                       const ModelRawType &>;
 #if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
         using parameter_type  = typename StorageType::parameter_type;
 #else
-        using parameter_type  = std::conditional_t<IsPointersCollection,
+        using parameter_type  = std::conditional_t<std::is_pointer_v<Model>,
                                                    ModelRawType *, const ModelRawType &>;
 #endif
 
@@ -122,45 +122,45 @@ namespace Types
         /* From QVector<Model> */
         /*! Converting constructor from the QVector<Model>. */
         ModelsCollection(const QVector<Model> &models) // NOLINT(google-explicit-constructor)
-        requires (!ModelsCollection<Model>::IsPointersCollection);
+        requires (!std::is_pointer_v<Model>);
         /*! Converting constructor from the QVector<Model>. */
         ModelsCollection(QVector<Model> &&models) noexcept // NOLINT(google-explicit-constructor)
-        requires (!ModelsCollection<Model>::IsPointersCollection);
+        requires (!std::is_pointer_v<Model>);
 
         /*! Converting copy assignment operator from the QVector<Model>. */
         ModelsCollection<Model> &operator=(const QVector<Model> &models)
-        requires (!ModelsCollection<Model>::IsPointersCollection);
+        requires (!std::is_pointer_v<Model>);
         /*! Converting move assignment operator from the QVector<Model>. */
         ModelsCollection<Model> &operator=(QVector<Model> &&models) noexcept
-        requires (!ModelsCollection<Model>::IsPointersCollection);
+        requires (!std::is_pointer_v<Model>);
 
         /* To ModelsCollection<Model> */
         /*! Converting method to the ModelsCollection<ModelRawType>. */
         inline ModelsCollection<ModelRawType> toModels() &
-        requires ModelsCollection<Model>::IsPointersCollection;
+        requires std::is_pointer_v<Model>;
         /*! Converting method to the ModelsCollection<ModelRawType>. */
         inline ModelsCollection<ModelRawType> toModels() &&
-        requires ModelsCollection<Model>::IsPointersCollection;
+        requires std::is_pointer_v<Model>;
 
         /* To ModelsCollection<Model *> */
         /*! Converting method to the ModelsCollection<ModelRawType *>. */
         inline ModelsCollection<ModelRawType *> toPointers()
-        requires (!ModelsCollection<Model>::IsPointersCollection);
+        requires (!std::is_pointer_v<Model>);
 
         /* Comparison operators */
         /*! Equality comparison operator for the ModelsCollection. */
         bool operator==(const ModelsCollection<ModelRawType> &other) const
-        requires (!ModelsCollection<Model>::IsPointersCollection);
+        requires (!std::is_pointer_v<Model>);
         /*! Equality comparison operator for the ModelsCollection. */
         bool operator==(const ModelsCollection<ModelRawType *> &other) const
-        requires ModelsCollection<Model>::IsPointersCollection;
+        requires std::is_pointer_v<Model>;
 
         /*! Equality comparison operator for the ModelsCollection. */
         bool operator==(const ModelsCollection<ModelRawType *> &other) const
-        requires (!ModelsCollection<Model>::IsPointersCollection);
+        requires (!std::is_pointer_v<Model>);
         /*! Equality comparison operator for the ModelsCollection. */
         bool operator==(const ModelsCollection<ModelRawType> &other) const
-        requires ModelsCollection<Model>::IsPointersCollection;
+        requires std::is_pointer_v<Model>;
 
         /* Redeclared overriden methods from the base class */
 #if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
@@ -210,7 +210,7 @@ namespace Types
         filter(const std::function<bool(const ModelRawType *)> &callback);
         /*! Run a filter over each of the models in the collection (removes nullptr-s). */
         ModelsCollection<ModelRawType *>
-        filter() const requires ModelsCollection<Model>::IsPointersCollection;
+        filter() const requires std::is_pointer_v<Model>;
 
         /*! Get a first model from the collection passing the given truth test. */
         ModelRawType *
@@ -546,11 +546,10 @@ namespace Types
 
         /*! Convert the Collection<ModelRawType> to the Collection<ModelRawType *>. */
         ModelsCollection<ModelRawType *>
-        toPointersCollection() requires (!ModelsCollection<Model>::IsPointersCollection);
+        toPointersCollection() requires (!std::is_pointer_v<Model>);
         /*! Convert to the Collection<ModelRawType *>, return itself (no-op). */
         inline ModelsCollection<ModelRawType *>
-        toPointersCollection() const noexcept
-        requires ModelsCollection<Model>::IsPointersCollection;
+        toPointersCollection() const noexcept requires std::is_pointer_v<Model>;
 
         /*! Return a model copy. */
         inline static ModelRawType getModelCopy(const ModelRawType &model);
@@ -569,7 +568,7 @@ namespace Types
 
     template<DerivedCollectionModel Model>
     ModelsCollection<Model>::ModelsCollection(const QVector<Model> &models)
-    requires (!ModelsCollection<Model>::IsPointersCollection)
+    requires (!std::is_pointer_v<Model>)
     {
         for (const auto &model : models)
             this->push_back(model);
@@ -577,7 +576,7 @@ namespace Types
 
     template<DerivedCollectionModel Model>
     ModelsCollection<Model>::ModelsCollection(QVector<Model> &&models) noexcept
-    requires (!ModelsCollection<Model>::IsPointersCollection)
+    requires (!std::is_pointer_v<Model>)
     {
         for (auto &&model : models)
             this->push_back(std::move(model));
@@ -586,7 +585,7 @@ namespace Types
     template<DerivedCollectionModel Model>
     ModelsCollection<Model> &
     ModelsCollection<Model>::operator=(const QVector<Model> &models)
-    requires (!ModelsCollection<Model>::IsPointersCollection)
+    requires (!std::is_pointer_v<Model>)
     {
         for (const auto &model : models)
             this->push_back(model);
@@ -597,7 +596,7 @@ namespace Types
     template<DerivedCollectionModel Model>
     ModelsCollection<Model> &
     ModelsCollection<Model>::operator=(QVector<Model> &&models) noexcept
-    requires (!ModelsCollection<Model>::IsPointersCollection)
+    requires (!std::is_pointer_v<Model>)
     {
         for (auto &&model : models)
             this->push_back(std::move(model));
@@ -610,7 +609,7 @@ namespace Types
     template<DerivedCollectionModel Model>
     ModelsCollection<typename ModelsCollection<Model>::ModelRawType>
     ModelsCollection<Model>::toModels() &
-    requires ModelsCollection<Model>::IsPointersCollection
+    requires std::is_pointer_v<Model>
     {
         ModelsCollection<ModelRawType> result;
         result.reserve(this->size());
@@ -624,7 +623,7 @@ namespace Types
     template<DerivedCollectionModel Model>
     ModelsCollection<typename ModelsCollection<Model>::ModelRawType>
     ModelsCollection<Model>::toModels() &&
-    requires ModelsCollection<Model>::IsPointersCollection
+    requires std::is_pointer_v<Model>
     {
         ModelsCollection<ModelRawType> result;
         result.reserve(this->size());
@@ -640,7 +639,7 @@ namespace Types
     template<DerivedCollectionModel Model>
     ModelsCollection<typename ModelsCollection<Model>::ModelRawType *>
     ModelsCollection<Model>::toPointers()
-    requires (!ModelsCollection<Model>::IsPointersCollection)
+    requires (!std::is_pointer_v<Model>)
     {
         return toPointersCollection();
     }
@@ -650,7 +649,7 @@ namespace Types
     template<DerivedCollectionModel Model>
     bool ModelsCollection<Model>::operator==(
             const ModelsCollection<ModelRawType> &other) const
-    requires (!ModelsCollection<Model>::IsPointersCollection)
+    requires (!std::is_pointer_v<Model>)
     {
         const auto size = this->size();
 
@@ -677,7 +676,7 @@ namespace Types
     template<DerivedCollectionModel Model>
     bool ModelsCollection<Model>::operator==(
             const ModelsCollection<ModelRawType *> &other) const
-    requires ModelsCollection<Model>::IsPointersCollection
+    requires std::is_pointer_v<Model>
     {
         const auto size = this->size();
 
@@ -706,7 +705,7 @@ namespace Types
     template<DerivedCollectionModel Model>
     bool ModelsCollection<Model>::operator==(
             const ModelsCollection<ModelRawType *> &other) const
-    requires (!ModelsCollection<Model>::IsPointersCollection)
+    requires (!std::is_pointer_v<Model>)
     {
         const auto size = this->size();
 
@@ -731,7 +730,7 @@ namespace Types
     template<DerivedCollectionModel Model>
     bool ModelsCollection<Model>::operator==(
             const ModelsCollection<ModelRawType> &other) const
-    requires ModelsCollection<Model>::IsPointersCollection
+    requires std::is_pointer_v<Model>
     {
         const auto size = this->size();
 
@@ -900,7 +899,7 @@ namespace Types
     template<DerivedCollectionModel Model>
     ModelsCollection<typename ModelsCollection<Model>::ModelRawType *>
     ModelsCollection<Model>::filter() const
-    requires ModelsCollection<Model>::IsPointersCollection
+    requires std::is_pointer_v<Model>
     {
         ModelsCollection<ModelRawType *> result;
         result.reserve(this->size());
@@ -2222,7 +2221,7 @@ namespace Types
     template<DerivedCollectionModel Model>
     ModelsCollection<typename ModelsCollection<Model>::ModelRawType *>
     ModelsCollection<Model>::toPointersCollection()
-    requires (!ModelsCollection<Model>::IsPointersCollection)
+    requires (!std::is_pointer_v<Model>)
     {
         ModelsCollection<ModelRawType *> result;
         result.reserve(this->size());
@@ -2236,7 +2235,7 @@ namespace Types
     template<DerivedCollectionModel Model>
     ModelsCollection<typename ModelsCollection<Model>::ModelRawType *>
     ModelsCollection<Model>::toPointersCollection() const noexcept
-    requires ModelsCollection<Model>::IsPointersCollection
+    requires std::is_pointer_v<Model>
     {
         return *this;
     }
