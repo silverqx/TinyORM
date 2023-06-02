@@ -24,7 +24,6 @@ using TestUtils::Databases;
 using Common = TestUtils::Common::Collection;
 
 using Models::Phone;
-using Models::Pivot;
 using Models::Role;
 using Models::Tag;
 using Models::Torrent;
