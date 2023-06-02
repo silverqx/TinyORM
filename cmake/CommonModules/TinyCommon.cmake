@@ -85,7 +85,6 @@ ${TINY_UNPARSED_ARGUMENTS}")
             /nologo
             # Is safer to provide this explicitly, qmake do it for msvc too
             /EHsc
-            /guard:cf
             /utf-8
             # Has to be enabled explicitly
             # https://devblogs.microsoft.com/cppblog/msvc-now-correctly-reports-__cplusplus/
@@ -101,6 +100,9 @@ ${TINY_UNPARSED_ARGUMENTS}")
                 # Set by default by c++20 but from VS 16.11, can be removed when
                 # minMsvcReqVersion will be >= 16.11
                 /permissive-
+                # clang-cl 16 throws -Wunused-command-line-argument, so provide it
+                # only for the MSVC
+                /guard:cf
                 /bigobj
                 # Standards-conforming behavior
                 /Zc:wchar_t,rvalueCast,inline
