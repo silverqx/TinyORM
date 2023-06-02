@@ -4024,6 +4024,8 @@ struct ExpectedItem
     inline bool operator==(const ExpectedItem &) const = default; // clazy:exclude=function-args-by-value
 };
 
+Q_DECLARE_TYPEINFO(ExpectedItem, Q_PRIMITIVE_TYPE);
+
 void tst_Collection_Relations::each_lvalue_index() const
 {
     auto album = Album::find(2);

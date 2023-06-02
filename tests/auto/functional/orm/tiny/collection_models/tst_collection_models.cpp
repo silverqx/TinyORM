@@ -3406,6 +3406,8 @@ struct ExpectedItem
     inline bool operator==(const ExpectedItem &) const = default; // clazy:exclude=function-args-by-value
 };
 
+Q_DECLARE_TYPEINFO(ExpectedItem, Q_PRIMITIVE_TYPE);
+
 void tst_Collection_Models::each_lvalue_index() const
 {
     auto images = AlbumImage::whereEq(Common::album_id, 2)->get();
