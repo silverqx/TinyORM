@@ -568,7 +568,7 @@ namespace Types
 
     template<DerivedCollectionModel Model>
     ModelsCollection<Model>::ModelsCollection(const QVector<Model> &models)
-    requires (!IsPointersCollection)
+    requires (!ModelsCollection<Model>::IsPointersCollection)
     {
         for (const auto &model : models)
             this->push_back(model);
@@ -576,7 +576,7 @@ namespace Types
 
     template<DerivedCollectionModel Model>
     ModelsCollection<Model>::ModelsCollection(QVector<Model> &&models) noexcept
-    requires (!IsPointersCollection)
+    requires (!ModelsCollection<Model>::IsPointersCollection)
     {
         for (auto &&model : models)
             this->push_back(std::move(model));
@@ -585,7 +585,7 @@ namespace Types
     template<DerivedCollectionModel Model>
     ModelsCollection<Model> &
     ModelsCollection<Model>::operator=(const QVector<Model> &models)
-    requires (!IsPointersCollection)
+    requires (!ModelsCollection<Model>::IsPointersCollection)
     {
         for (const auto &model : models)
             this->push_back(model);
@@ -596,7 +596,7 @@ namespace Types
     template<DerivedCollectionModel Model>
     ModelsCollection<Model> &
     ModelsCollection<Model>::operator=(QVector<Model> &&models) noexcept
-    requires (!IsPointersCollection)
+    requires (!ModelsCollection<Model>::IsPointersCollection)
     {
         for (auto &&model : models)
             this->push_back(std::move(model));
@@ -609,7 +609,7 @@ namespace Types
     template<DerivedCollectionModel Model>
     ModelsCollection<typename ModelsCollection<Model>::ModelRawType>
     ModelsCollection<Model>::toModels() &
-    requires IsPointersCollection
+    requires ModelsCollection<Model>::IsPointersCollection
     {
         ModelsCollection<ModelRawType> result;
         result.reserve(this->size());
@@ -623,7 +623,7 @@ namespace Types
     template<DerivedCollectionModel Model>
     ModelsCollection<typename ModelsCollection<Model>::ModelRawType>
     ModelsCollection<Model>::toModels() &&
-    requires IsPointersCollection
+    requires ModelsCollection<Model>::IsPointersCollection
     {
         ModelsCollection<ModelRawType> result;
         result.reserve(this->size());
@@ -639,7 +639,7 @@ namespace Types
     template<DerivedCollectionModel Model>
     ModelsCollection<typename ModelsCollection<Model>::ModelRawType *>
     ModelsCollection<Model>::toPointers()
-    requires (!IsPointersCollection)
+    requires (!ModelsCollection<Model>::IsPointersCollection)
     {
         return toPointersCollection();
     }
@@ -649,7 +649,7 @@ namespace Types
     template<DerivedCollectionModel Model>
     bool ModelsCollection<Model>::operator==(
             const ModelsCollection<ModelRawType> &other) const
-    requires (!IsPointersCollection)
+    requires (!ModelsCollection<Model>::IsPointersCollection)
     {
         const auto size = this->size();
 
@@ -676,7 +676,7 @@ namespace Types
     template<DerivedCollectionModel Model>
     bool ModelsCollection<Model>::operator==(
             const ModelsCollection<ModelRawType *> &other) const
-    requires IsPointersCollection
+    requires ModelsCollection<Model>::IsPointersCollection
     {
         const auto size = this->size();
 
@@ -705,7 +705,7 @@ namespace Types
     template<DerivedCollectionModel Model>
     bool ModelsCollection<Model>::operator==(
             const ModelsCollection<ModelRawType *> &other) const
-    requires (!IsPointersCollection)
+    requires (!ModelsCollection<Model>::IsPointersCollection)
     {
         const auto size = this->size();
 
@@ -730,7 +730,7 @@ namespace Types
     template<DerivedCollectionModel Model>
     bool ModelsCollection<Model>::operator==(
             const ModelsCollection<ModelRawType> &other) const
-    requires IsPointersCollection
+    requires ModelsCollection<Model>::IsPointersCollection
     {
         const auto size = this->size();
 
@@ -898,7 +898,8 @@ namespace Types
 
     template<DerivedCollectionModel Model>
     ModelsCollection<typename ModelsCollection<Model>::ModelRawType *>
-    ModelsCollection<Model>::filter() const requires IsPointersCollection
+    ModelsCollection<Model>::filter() const
+    requires ModelsCollection<Model>::IsPointersCollection
     {
         ModelsCollection<ModelRawType *> result;
         result.reserve(this->size());
@@ -2219,7 +2220,8 @@ namespace Types
 
     template<DerivedCollectionModel Model>
     ModelsCollection<typename ModelsCollection<Model>::ModelRawType *>
-    ModelsCollection<Model>::toPointersCollection() requires (!IsPointersCollection)
+    ModelsCollection<Model>::toPointersCollection()
+    requires (!ModelsCollection<Model>::IsPointersCollection)
     {
         ModelsCollection<ModelRawType *> result;
         result.reserve(this->size());
@@ -2233,7 +2235,7 @@ namespace Types
     template<DerivedCollectionModel Model>
     ModelsCollection<typename ModelsCollection<Model>::ModelRawType *>
     ModelsCollection<Model>::toPointersCollection() const noexcept
-    requires IsPointersCollection
+    requires ModelsCollection<Model>::IsPointersCollection
     {
         return *this;
     }
