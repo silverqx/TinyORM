@@ -249,7 +249,7 @@ ModelCreator::createOneToOneRelation(
                 .replace(QStringLiteral("{{ relationArguments }}"), relationArguments)
                 .replace(QStringLiteral("{{relationArguments}}"),   relationArguments);
 
-#ifdef __clang__
+#if defined(__clang__) && __clang_major__ < 16
         result.push_back({relationOrder, std::move(content)});
 #else
         result.emplace_back(relationOrder, std::move(content));
@@ -304,7 +304,7 @@ ModelCreator::createOneToManyRelation(
                 .replace(QStringLiteral("{{ relationArguments }}"), relationArguments)
                 .replace(QStringLiteral("{{relationArguments}}"),   relationArguments);
 
-#ifdef __clang__
+#if defined(__clang__) && __clang_major__ < 16
         result.push_back({relationOrder, std::move(content)});
 #else
         result.emplace_back(relationOrder, std::move(content));
@@ -360,7 +360,7 @@ ModelCreator::createBelongsToRelation(
                 .replace(QStringLiteral("{{ relationArguments }}"), relationArguments)
                 .replace(QStringLiteral("{{relationArguments}}"),   relationArguments);
 
-#ifdef __clang__
+#if defined(__clang__) && __clang_major__ < 16
         result.push_back({relationOrder, std::move(content)});
 #else
         result.emplace_back(relationOrder, std::move(content));
@@ -470,7 +470,7 @@ ModelCreator::createBelongsToManyRelation(
                 .replace(QStringLiteral("{{ relationArguments }}"), relationArguments)
                 .replace(QStringLiteral("{{relationArguments}}"),   relationArguments);
 
-#ifdef __clang__
+#if defined(__clang__) && __clang_major__ < 16
         result.push_back({relationOrder, std::move(content)});
 #else
         result.emplace_back(relationOrder, std::move(content));
@@ -838,7 +838,7 @@ ModelCreator::createOneToOneRelationItem(
                        .replace(QStringLiteral("{{ spaceAlign }}"),   spaceAlign)
                        .replace(QStringLiteral("{{spaceAlign}}"),     spaceAlign);
 
-#ifdef __clang__
+#if defined(__clang__) && __clang_major__ < 16
         result.push_back({relationOrder, std::move(content)});
 #else
         result.emplace_back(relationOrder, std::move(content));
@@ -876,7 +876,7 @@ ModelCreator::createOneToManyRelationItem(
                        .replace(QStringLiteral("{{ spaceAlign }}"),   spaceAlign)
                        .replace(QStringLiteral("{{spaceAlign}}"),     spaceAlign);
 
-#ifdef __clang__
+#if defined(__clang__) && __clang_major__ < 16
         result.push_back({relationOrder, std::move(content)});
 #else
         result.emplace_back(relationOrder, std::move(content));
@@ -914,7 +914,7 @@ ModelCreator::createBelongsToRelationItem(
                        .replace(QStringLiteral("{{ spaceAlign }}"),   spaceAlign)
                        .replace(QStringLiteral("{{spaceAlign}}"),     spaceAlign);
 
-#ifdef __clang__
+#if defined(__clang__) && __clang_major__ < 16
         result.push_back({relationOrder, std::move(content)});
 #else
         result.emplace_back(relationOrder, std::move(content));
@@ -952,7 +952,7 @@ ModelCreator::createBelongsToManyRelationItem(
                        .replace(QStringLiteral("{{ spaceAlign }}"),   spaceAlign)
                        .replace(QStringLiteral("{{spaceAlign}}"),     spaceAlign);
 
-#ifdef __clang__
+#if defined(__clang__) && __clang_major__ < 16
         result.push_back({relationOrder, std::move(content)});
 #else
         result.emplace_back(relationOrder, std::move(content));

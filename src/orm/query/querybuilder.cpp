@@ -1673,7 +1673,7 @@ QString Builder::stripTableForPluck(const Column &column)
 Builder &Builder::setAggregate(const QString &function, const QVector<Column> &columns)
 {
 // TODO clang13 doesn't support in_place construction of aggregates in std::optional.emplace() 😲, gcc and msvc are ok silverqx
-#ifdef __clang__
+#if defined(__clang__) && __clang_major__ < 16
     m_aggregate = {function, columns};
 #else
     // Also destructs an old value in the std::optional

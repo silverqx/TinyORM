@@ -171,7 +171,7 @@ MigrationRepository::hydrateMigrations(SqlQuery &query)
     std::vector<MigrationItem> migration;
 
     while (query.next())
-#ifdef __clang__
+#if defined(__clang__) && __clang_major__ < 16
         migration.emplace_back(
                     MigrationItem {query.value(ID).value<quint64>(),
                                    query.value(migration_).value<QString>(),

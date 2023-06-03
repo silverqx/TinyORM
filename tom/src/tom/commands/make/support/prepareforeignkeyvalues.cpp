@@ -156,7 +156,7 @@ void PrepareForeignKeyValues::insertForeignKeyValueBtm()
 
     // First value
     if (!m_wasForeignKeySetPartial) {
-#ifdef __clang__
+#if defined(__clang__) && __clang_major__ < 16
         m_preparedValues.belongsToMany.push_back({{}, value});
 #else
         m_preparedValues.belongsToMany.emplace_back<QString>({}, value);

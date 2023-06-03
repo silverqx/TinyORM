@@ -945,7 +945,7 @@ namespace Tiny
             const std::function<void(TinyBuilder<Related> &)> &callback = nullptr);
 
         /*! Add a relationship count / exists condition to the query. */
-#ifdef __clang__
+#if defined(__clang__) && __clang_major__ < 16
         template<typename Related, typename Method,
                  std::enable_if_t<std::is_member_function_pointer_v<Method>, bool> = true>
 #else
@@ -990,7 +990,7 @@ namespace Tiny
 
         /*! Add a relationship count / exists condition to the query with where
             clauses. */
-#ifdef __clang__
+#if defined(__clang__) && __clang_major__ < 16
         template<typename Related, typename Method,
                  std::enable_if_t<std::is_member_function_pointer_v<Method>, bool> = true>
 #else
@@ -3517,7 +3517,7 @@ namespace Tiny
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
-#ifdef __clang__
+#if defined(__clang__) && __clang_major__ < 16
     template<typename Related, typename Method,
              std::enable_if_t<std::is_member_function_pointer_v<Method>, bool>>
 #else
@@ -3596,7 +3596,7 @@ namespace Tiny
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
-#ifdef __clang__
+#if defined(__clang__) && __clang_major__ < 16
     template<typename Related, typename Method,
              std::enable_if_t<std::is_member_function_pointer_v<Method>, bool>>
 #else
