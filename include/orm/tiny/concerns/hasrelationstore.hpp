@@ -75,8 +75,13 @@ namespace Orm::Tiny::Concerns
         };
 
         /* Forward declarations */
+#if defined(__clang__) && __clang_major__ >= 16
         /*! The store for loading eager relations. */
         template<SameDerivedCollectionModel<Derived> CollectionModel>
+#else
+        /*! The store for loading eager relations. */
+        template<typename CollectionModel>
+#endif
         class EagerRelationStore;
         class PushRelationStore;
         class TouchOwnersRelationStore;
@@ -120,8 +125,15 @@ namespace Orm::Tiny::Concerns
             /*const*/ RelationStoreType m_storeType;
         };
 
+        /* clang <16 crash during compilation during the EagerRelationStore template
+           instantiation, may be it has a problem with the forward declaration above. */
+#if defined(__clang__) && __clang_major__ >= 16
         /*! The store for loading eager relations. */
         template<SameDerivedCollectionModel<Derived> CollectionModel>
+#else
+        /*! The store for loading eager relations. */
+        template<typename CollectionModel>
+#endif
         class EagerRelationStore final : public BaseRelationStore
         {
             Q_DISABLE_COPY(EagerRelationStore)
@@ -538,7 +550,11 @@ namespace Orm::Tiny::Concerns
     /* public */
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
+#if defined(__clang__) && __clang_major__ >= 16
     template<SameDerivedCollectionModel<Derived> CollectionModel>
+#else
+    template<typename CollectionModel>
+#endif
     HasRelationStore<Derived, AllRelations...>::EagerRelationStore<CollectionModel>
                                               ::EagerRelationStore(
             NotNull<HasRelationStore *> hasRelationStore,
@@ -552,7 +568,11 @@ namespace Orm::Tiny::Concerns
     {}
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
+#if defined(__clang__) && __clang_major__ >= 16
     template<SameDerivedCollectionModel<Derived> CollectionModel>
+#else
+    template<typename CollectionModel>
+#endif
     template<RelationshipMethod<Derived> Method>
     void HasRelationStore<Derived, AllRelations...>::EagerRelationStore<CollectionModel>
                                                    ::visited(
@@ -588,7 +608,11 @@ namespace Orm::Tiny::Concerns
     /* private */
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
+#if defined(__clang__) && __clang_major__ >= 16
     template<SameDerivedCollectionModel<Derived> CollectionModel>
+#else
+    template<typename CollectionModel>
+#endif
     constexpr typename
     HasRelationStore<Derived, AllRelations...>::RelationStoreType
     HasRelationStore<Derived, AllRelations...>::EagerRelationStore<CollectionModel>
