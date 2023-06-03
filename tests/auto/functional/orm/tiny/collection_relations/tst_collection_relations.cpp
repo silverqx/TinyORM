@@ -4047,10 +4047,10 @@ void tst_Collection_Relations::each_lvalue_index() const
             images.each([&expectedIds]
                         (AlbumImage *const image, const auto index)
     {
-#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
-        expectedIds.emplace_back(Common::getKeyCasted(image), index);
-#else
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0) || (defined(__clang__) && __clang_major__ < 16)
         expectedIds.append({Common::getKeyCasted(image), index});
+#else
+        expectedIds.emplace_back(Common::getKeyCasted(image), index);
 #endif
     });
 
