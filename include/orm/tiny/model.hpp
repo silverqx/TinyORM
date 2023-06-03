@@ -1931,3 +1931,4 @@ TINYORM_END_COMMON_NAMESPACE
 // CUR mariadb workflows silverqx
 // TODO next thing I should implement is Model::toArray() or toVector() and toJson(), Serializing Models & Collections and then JsonResource for simpler general serialization silverqx
 // TODO model, HidesAttributes and ModelsCollection::makeVisible/Hidden, ... silverqx
+
