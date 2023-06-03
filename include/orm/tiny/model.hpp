@@ -217,7 +217,7 @@ namespace Orm::Tiny
 
 #if defined(__clang__) && __clang_major__ >= 16
         /*! Three-way comparison operator for the Model. */
-        std::strong_ordering operator<=>(const Model &right) const;
+        std::strong_ordering operator<=>(const Model &right) const
         requires std::is_integral_v<typename Derived::KeyType>;
 #else
         /*! Three-way comparison operator for the Model. */
