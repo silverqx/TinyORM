@@ -72,6 +72,9 @@ private Q_SLOTS:
     void implode_Note_ColumnWithNull() const;
 
     /* Collection */
+    void toBase() const;
+    void all() const;
+
     void modelKeys_QVariant() const;
     void modelKeys_quint64() const;
 
@@ -577,6 +580,39 @@ void tst_Collection_Models::implode_Note_ColumnWithNull() const
 
     // Verify
     QCOMPARE(result, QString(", , album3 note, no images"));
+}
+
+void tst_Collection_Models::toBase() const
+{
+    // The toBase() is currently an alias to the all() so the testing code is the same
+    auto images = AlbumImage::whereEq(Common::album_id, 2)->get();
+    QCOMPARE(images.size(), 5);
+    QCOMPARE(typeid (images), typeid (ModelsCollection<AlbumImage>));
+    QVERIFY(Common::verifyIds(images, {2, 3, 4, 5, 6}));
+
+    // Get result
+    const auto result = images.all();
+
+    // Verify
+    QCOMPARE(typeid (result), typeid (QVector<AlbumImage>));
+    QCOMPARE(result.size(), 5);
+    QVERIFY(Common::verifyIds(result, {2, 3, 4, 5, 6}));
+}
+
+void tst_Collection_Models::all() const
+{
+    auto images = AlbumImage::whereEq(Common::album_id, 2)->get();
+    QCOMPARE(images.size(), 5);
+    QCOMPARE(typeid (images), typeid (ModelsCollection<AlbumImage>));
+    QVERIFY(Common::verifyIds(images, {2, 3, 4, 5, 6}));
+
+    // Get result
+    const auto result = images.all();
+
+    // Verify
+    QCOMPARE(typeid (result), typeid (QVector<AlbumImage>));
+    QCOMPARE(result.size(), 5);
+    QVERIFY(Common::verifyIds(result, {2, 3, 4, 5, 6}));
 }
 
 /* Collection */

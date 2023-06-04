@@ -228,6 +228,11 @@ namespace Types
         inline bool isNotEmpty() const noexcept;
 
         /* Collection */
+        /*! Get a base vector instance from this collection.*/
+        inline QVector<Model> toBase() const;
+        /*! Get all of the models in the collection. */
+        QVector<Model> all() const;
+
         /*! Get a vector of primary keys. */
         QVector<QVariant> modelKeys() const;
         /*! Get a vector of primary keys. */
@@ -975,6 +980,20 @@ namespace Types
     }
 
     /* Collection */
+
+    template<DerivedCollectionModel Model>
+    QVector<Model>
+    ModelsCollection<Model>::toBase() const
+    {
+        return all();
+    }
+
+    template<DerivedCollectionModel Model>
+    QVector<Model>
+    ModelsCollection<Model>::all() const
+    {
+        return *this;
+    }
 
     template<DerivedCollectionModel Model>
     QVector<QVariant>

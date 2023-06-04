@@ -48,6 +48,11 @@ namespace TestUtils::Common
         verifyIds(const ModelsCollection<M> &actual,
                   const std::unordered_set<quint64> &expected);
         /*! Verify primary key IDs in the given vector. */
+        template<typename M>
+        static bool
+        verifyIds(const QVector<M> &actual,
+                  const std::unordered_set<quint64> &expected);
+        /*! Verify primary key IDs in the given vector. */
         inline static bool
         verifyIds(const QVector<quint64> &actual,
                   const std::unordered_set<quint64> &expected);
@@ -86,6 +91,16 @@ namespace TestUtils::Common
 
     template<typename M>
     bool Collection::verifyIds(const ModelsCollection<M> &actual,
+                               const std::unordered_set<quint64> &expected)
+    {
+        return std::ranges::all_of(actual, [&expected](const M &model)
+        {
+            return expected.contains(getKeyCasted(model));
+        });
+    }
+
+    template<typename M>
+    bool Collection::verifyIds(const QVector<M> &actual,
                                const std::unordered_set<quint64> &expected)
     {
         return std::ranges::all_of(actual, [&expected](const M &model)
