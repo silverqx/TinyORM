@@ -24,12 +24,12 @@ namespace Orm
 namespace Utils
 {
     /*! Tests if the std::hash can hash T with noexcept. */
-    template <class T, class = void>
+    template<class T, class = void>
     struct IsNothrowHashable : std::false_type
     {};
 
     /*! Tests if the std::hash can hash T with noexcept. */
-    template <class T>
+    template<class T>
     struct IsNothrowHashable<T, std::void_t<decltype(std::hash<T>()(
                                                          std::declval<const T &>()))>>
         : std::bool_constant<noexcept(std::hash<T>()(std::declval<const T &>()))>
@@ -59,7 +59,7 @@ namespace Utils
 
         /*! Call repeatedly to incrementally create a hash value from several
             variables. */
-        template <typename T>
+        template<typename T>
         inline static std::size_t &hashCombine(std::size_t &seed, const T &value)
         noexcept(IsNothrowHashable<std::remove_const_t<T>>::value);
 

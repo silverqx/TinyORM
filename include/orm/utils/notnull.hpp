@@ -191,7 +191,7 @@ TINYORM_END_COMMON_NAMESPACE
 
 namespace std
 {
-    template <typename T>
+    template<typename T>
     struct hash<Orm::Utils::NotNull<T>>
     {
         std::size_t operator()(const Orm::Utils::NotNull<T> &value) const
