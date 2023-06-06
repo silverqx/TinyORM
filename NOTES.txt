@@ -1931,6 +1931,26 @@ QString String::singular(const QString &string)
     return string.chopped(1);
 }
 
+std::format for QString:
+
+template <>
+struct std::formatter<QString>
+{
+    constexpr static auto parse(std::format_parse_context &ctx)
+    {
+        return ctx.begin();
+    }
+
+    static auto format(const QString &string, std::format_context &ctx)
+    {
+        return std::format_to(ctx.out(), "{}", string.toUtf8().constData());
+    }
+};
+
+usage:
+
+std::cout << std::format("String {}", QString("hello")) << "\n";
+
 
 Upgrade Laravel main version:
 -----------------------------
