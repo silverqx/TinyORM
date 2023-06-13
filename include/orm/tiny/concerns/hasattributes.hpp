@@ -251,6 +251,7 @@ namespace Orm::Tiny::Concerns
             (used by the getDirty()). */
         bool originalIsEquivalent(const QString &key) const;
 
+        /* Datetime-related */
         /*! Determine if the given attribute is a date. */
         bool isDateAttribute(const QString &key) const;
 
@@ -1263,6 +1264,8 @@ namespace Orm::Tiny::Concerns
 
         return false;
     }
+
+    /* Datetime-related */
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     bool
