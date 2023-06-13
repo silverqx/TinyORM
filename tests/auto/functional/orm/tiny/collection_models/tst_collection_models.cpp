@@ -592,7 +592,7 @@ void tst_Collection_Models::toBase() const
     QVERIFY(Common::verifyIds(images, {2, 3, 4, 5, 6}));
 
     // Get result
-    const auto result = images.all();
+    const auto result = images.toBase();
 
     // Verify
     QCOMPARE(typeid (result), typeid (QVector<AlbumImage>));
