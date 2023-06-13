@@ -19,12 +19,13 @@ using Orm::Constants::SPACE_IN;
 
 using Orm::Exceptions::InvalidArgumentError;
 using Orm::One;
-using Orm::Tiny::ConnectionOverride;
-using Orm::Tiny::Exceptions::RelationNotFoundError;
-using Orm::Tiny::Types::ModelsCollection;
 using Orm::Utils::NullVariant;
 
 using TypeUtils = Orm::Utils::Type;
+
+using Orm::Tiny::ConnectionOverride;
+using Orm::Tiny::Exceptions::RelationNotFoundError;
+using Orm::Tiny::Types::ModelsCollection;
 
 using AttributeUtils = Orm::Tiny::Utils::Attribute;
 
