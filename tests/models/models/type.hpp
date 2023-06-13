@@ -19,6 +19,9 @@ class Type final : public Model<Type>
     /*! The table associated with the model. */
     QString u_table {"types"};
 
+    /*! Indicates whether the model should be timestamped. */
+    bool u_timestamps = false;
+
     /*! The attributes that should be cast. */
     inline static std::unordered_map<QString, CastItem> u_casts {};
 };
