@@ -230,8 +230,6 @@ namespace Types
         /* Collection */
         /*! Get a base vector instance from this collection.*/
         inline QVector<Model> toBase() const;
-        /*! Get the collection of models as a vector (alias to all()). */
-        inline QVector<Model> toVector() const;
         /*! Get all of the models in the collection. */
         QVector<Model> all() const;
 
@@ -429,6 +427,11 @@ namespace Types
         inline ModelsCollection &load(QVector<QString> &&relations) &&;
 
         /* EnumeratesValues */
+        /*! Get the collection of models as a vector with serialized models. */
+        QVector<QVector<AttributeItem>> toVector();
+        /*! Get the collection of models as a map with serialized models. */
+        QVector<QVariantMap> toMap();
+
         /*! Create a collection of all models that do not pass a given truth test. */
         ModelsCollection<ModelRawType *>
         reject(const std::function<bool(const ModelRawType *, size_type)> &callback);
@@ -986,13 +989,6 @@ namespace Types
     template<DerivedCollectionModel Model>
     QVector<Model>
     ModelsCollection<Model>::toBase() const
-    {
-        return all();
-    }
-
-    template<DerivedCollectionModel Model>
-    QVector<Model>
-    ModelsCollection<Model>::toVector() const
     {
         return all();
     }
@@ -1820,6 +1816,26 @@ namespace Types
     }
 
     /* EnumeratesValues */
+
+    template<DerivedCollectionModel Model>
+    QVector<QVector<AttributeItem>>
+    ModelsCollection<Model>::toVector()
+    {
+        return map<QVector<AttributeItem>>([](ModelRawType &&model)
+        {
+            return model.toVector();
+        });
+    }
+
+    template<DerivedCollectionModel Model>
+    QVector<QVariantMap>
+    ModelsCollection<Model>::toMap()
+    {
+        return map<QVariantMap>([](ModelRawType &&model)
+        {
+            return model.toMap();
+        });
+    }
 
     template<DerivedCollectionModel Model>
     ModelsCollection<typename ModelsCollection<Model>::ModelRawType *>

@@ -8,6 +8,7 @@
 #include "models/albumimage.hpp"
 
 using Orm::Constants::COMMA;
+using Orm::Constants::CREATED_AT;
 using Orm::Constants::GE;
 using Orm::Constants::GT;
 using Orm::Constants::ID;
@@ -16,6 +17,7 @@ using Orm::Constants::NE;
 using Orm::Constants::NOTE;
 using Orm::Constants::SIZE_;
 using Orm::Constants::SPACE_IN;
+using Orm::Constants::UPDATED_AT;
 
 using Orm::Exceptions::InvalidArgumentError;
 using Orm::One;
@@ -23,6 +25,7 @@ using Orm::Utils::NullVariant;
 
 using TypeUtils = Orm::Utils::Type;
 
+using Orm::Tiny::AttributeItem;
 using Orm::Tiny::ConnectionOverride;
 using Orm::Tiny::Exceptions::RelationNotFoundError;
 using Orm::Tiny::Types::ModelsCollection;
@@ -74,7 +77,6 @@ private Q_SLOTS:
 
     /* Collection */
     void toBase() const;
-    void toVector() const;
     void all() const;
 
     void modelKeys_QVariant() const;
@@ -188,6 +190,9 @@ private Q_SLOTS:
     void load_rvalue_NonExistentRelation_Failed() const;
 
     /* EnumeratesValues */
+    void toVector() const;
+    void toMap() const;
+
     void reject() const;
     void reject_WithIndex() const;
 
@@ -594,22 +599,6 @@ void tst_Collection_Models::toBase() const
 
     // Get result
     const auto result = images.toBase();
-
-    // Verify
-    QCOMPARE(typeid (result), typeid (QVector<AlbumImage>));
-    QCOMPARE(result.size(), 5);
-    QVERIFY(Common::verifyIds(result, {2, 3, 4, 5, 6}));
-}
-
-void tst_Collection_Models::toVector() const
-{
-    auto images = AlbumImage::whereEq(Common::album_id, 2)->get();
-    QCOMPARE(images.size(), 5);
-    QCOMPARE(typeid (images), typeid (ModelsCollection<AlbumImage>));
-    QVERIFY(Common::verifyIds(images, {2, 3, 4, 5, 6}));
-
-    // Get result
-    const auto result = images.all();
 
     // Verify
     QCOMPARE(typeid (result), typeid (QVector<AlbumImage>));
@@ -2953,6 +2942,116 @@ void tst_Collection_Models::load_rvalue_NonExistentRelation_Failed() const
 }
 
 /* EnumeratesValues */
+
+void tst_Collection_Models::toVector() const
+{
+    auto images = AlbumImage::findMany({1, 6, 7, 8});
+    QCOMPARE(images.size(), 4);
+    QCOMPARE(typeid (images), typeid (ModelsCollection<AlbumImage>));
+    QVERIFY(Common::verifyIds(images, {1, 6, 7, 8}));
+
+    // Get result
+    QVector<QVector<AttributeItem>> result = images.toVector();
+
+    // Verify
+    QCOMPARE(result.size(), 4);
+
+    QVector<QVector<AttributeItem>> expectedVector {
+        {
+            {ID,                 1},
+            {Common::album_id_s, 1},
+            {NAME,               "album1_image1"},
+            {"ext",              "png"},
+            {SIZE_,              726},
+            {CREATED_AT,         "2023-03-01T15:24:37.000Z"},
+            {UPDATED_AT,         "2023-04-01T14:35:47.000Z"},
+        },
+        {
+            {ID,                 6},
+            {Common::album_id_s, 2},
+            {NAME,               "album2_image5"},
+            {"ext",              "gif"},
+            {SIZE_,              294},
+            {CREATED_AT,         "2023-03-06T15:24:37.000Z"},
+            {UPDATED_AT,         "2023-04-06T14:35:47.000Z"},
+        },
+        {
+            {ID,                 7},
+            {Common::album_id_s, 3},
+            {NAME,               "album3_image1"},
+            {"ext",              "jpg"},
+            {SIZE_,              718},
+            {CREATED_AT,         "2023-03-07T15:24:37.000Z"},
+            {UPDATED_AT,         "2023-04-07T14:35:47.000Z"},
+        },
+        {
+            {ID,                 8},
+            {Common::album_id_s, NullVariant::ULongLong()},
+            {NAME,               "image1"},
+            {"ext",              "jpg"},
+            {SIZE_,              498},
+            {CREATED_AT,         "2023-03-08T15:24:37.000Z"},
+            {UPDATED_AT,         "2023-04-08T14:35:47.000Z"},
+        },
+    };
+
+    QCOMPARE(result, expectedVector);
+}
+
+void tst_Collection_Models::toMap() const
+{
+    auto images = AlbumImage::findMany({1, 6, 7, 8});
+    QCOMPARE(images.size(), 4);
+    QCOMPARE(typeid (images), typeid (ModelsCollection<AlbumImage>));
+    QVERIFY(Common::verifyIds(images, {1, 6, 7, 8}));
+
+    // Get result
+    QVector<QVariantMap> result = images.toMap();
+
+    // Verify
+    QCOMPARE(result.size(), 4);
+
+    QVector<QVariantMap> expectedMap {
+        {
+            {Common::album_id_s, 1},
+            {CREATED_AT,         "2023-03-01T15:24:37.000Z"},
+            {"ext",              "png"},
+            {ID,                 1},
+            {NAME,               "album1_image1"},
+            {SIZE_,              726},
+            {UPDATED_AT,         "2023-04-01T14:35:47.000Z"},
+        },
+        {
+            {Common::album_id_s, 2},
+            {CREATED_AT,         "2023-03-06T15:24:37.000Z"},
+            {"ext",              "gif"},
+            {ID,                 6},
+            {NAME,               "album2_image5"},
+            {SIZE_,              294},
+            {UPDATED_AT,         "2023-04-06T14:35:47.000Z"},
+        },
+        {
+            {Common::album_id_s, 3},
+            {CREATED_AT,         "2023-03-07T15:24:37.000Z"},
+            {"ext",              "jpg"},
+            {ID,                 7},
+            {NAME,               "album3_image1"},
+            {SIZE_,              718},
+            {UPDATED_AT,         "2023-04-07T14:35:47.000Z"},
+        },
+        {
+            {Common::album_id_s, NullVariant::ULongLong()},
+            {CREATED_AT,         "2023-03-08T15:24:37.000Z"},
+            {"ext",              "jpg"},
+            {ID,                 8},
+            {NAME,               "image1"},
+            {SIZE_,              498},
+            {UPDATED_AT,         "2023-04-08T14:35:47.000Z"},
+        },
+    };
+
+    QCOMPARE(result, expectedMap);
+}
 
 void tst_Collection_Models::reject() const
 {

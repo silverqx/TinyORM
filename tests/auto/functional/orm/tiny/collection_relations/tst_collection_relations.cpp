@@ -23,6 +23,7 @@ using Orm::Utils::NullVariant;
 
 using TypeUtils = Orm::Utils::Type;
 
+using Orm::Tiny::AttributeItem;
 using Orm::Tiny::ConnectionOverride;
 using Orm::Tiny::Exceptions::RelationNotFoundError;
 using Orm::Tiny::Types::ModelsCollection;
