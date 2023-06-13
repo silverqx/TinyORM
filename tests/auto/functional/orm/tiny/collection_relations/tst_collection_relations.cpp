@@ -74,6 +74,7 @@ private Q_SLOTS:
 
     /* Collection */
     void toBase() const;
+    void toVector() const;
     void all() const;
 
     void modelKeys_QVariant() const;
@@ -753,6 +754,28 @@ void tst_Collection_Relations::implode_Ext_ColumnWithNull() const
 void tst_Collection_Relations::toBase() const
 {
     // The toBase() is currently an alias to the all() so the testing code is the same
+    auto album = Album::find(2);
+    QVERIFY(album);
+    QVERIFY(album->exists);
+    QCOMPARE(album->getKey(), QVariant(2));
+    QVERIFY(album->relationLoaded(Common::albumImages));
+
+    auto images = album->getRelation<AlbumImage>(Common::albumImages);
+    QCOMPARE(images.size(), 5);
+    QCOMPARE(typeid (images), typeid (ModelsCollection<AlbumImage *>));
+    QVERIFY(Common::verifyIds(images, {2, 3, 4, 5, 6}));
+
+    // Get result
+    const auto result = images.all();
+
+    // Verify
+    QCOMPARE(typeid (result), typeid (QVector<AlbumImage *>));
+    QCOMPARE(result.size(), 5);
+    QVERIFY(Common::verifyIds(result, {2, 3, 4, 5, 6}));
+}
+
+void tst_Collection_Relations::toVector() const
+{
     auto album = Album::find(2);
     QVERIFY(album);
     QVERIFY(album->exists);

@@ -230,6 +230,8 @@ namespace Types
         /* Collection */
         /*! Get a base vector instance from this collection.*/
         inline QVector<Model> toBase() const;
+        /*! Get the collection of models as a vector (alias to all()). */
+        inline QVector<Model> toVector() const;
         /*! Get all of the models in the collection. */
         QVector<Model> all() const;
 
@@ -984,6 +986,13 @@ namespace Types
     template<DerivedCollectionModel Model>
     QVector<Model>
     ModelsCollection<Model>::toBase() const
+    {
+        return all();
+    }
+
+    template<DerivedCollectionModel Model>
+    QVector<Model>
+    ModelsCollection<Model>::toVector() const
     {
         return all();
     }
