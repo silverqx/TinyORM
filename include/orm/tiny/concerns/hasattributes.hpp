@@ -1119,7 +1119,11 @@ namespace Orm::Tiny::Concerns
 
         /* If the attribute is listed as a date, we will convert it to the QDateTime
            or QDate instance on retrieval, which makes it quite convenient to work with
-           date fields without having to create a cast for each attribute. */
+           date fields without having to create a cast for each attribute.
+           Also don't return the nullFor_xyz() or NullVariant::QDateTime() here because
+           we need to return the null QVariant(QString) for the SQLite database, so
+           the logic here is, whatever the QtSql driver returns if the QVariant is null
+           we will return too. */
         if (!value.isNull() && getDates().contains(key))
             return asDateOrDateTime(value);
 
