@@ -132,8 +132,9 @@ namespace Types
         // QDateTime
         QDate,
         QDateTime,
-//        CustomQDateTime,
         Timestamp,
+        CustomQDate,
+        CustomQDateTime,
         // Others
         QByteArray,
     };

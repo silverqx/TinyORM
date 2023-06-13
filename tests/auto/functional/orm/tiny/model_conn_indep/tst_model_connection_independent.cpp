@@ -6,11 +6,13 @@
 
 #include "databases.hpp"
 
+#include "models/datetime.hpp"
 #include "models/filepropertyproperty.hpp"
 #include "models/massassignmentmodels.hpp"
 #include "models/torrent.hpp"
 #include "models/torrenteager.hpp"
 #include "models/torrenteager_without_qdatetime.hpp"
+#include "models/type.hpp"
 
 using Orm::Constants::ASTERISK;
 using Orm::Constants::CREATED_AT;
@@ -18,23 +20,29 @@ using Orm::Constants::ID;
 using Orm::Constants::NAME;
 using Orm::Constants::NOTE;
 using Orm::Constants::SIZE_;
+using Orm::Constants::UPDATED_AT;
 
 using Orm::DB;
 using Orm::Exceptions::InvalidArgumentError;
 using Orm::Exceptions::MultipleRecordsFoundError;
 using Orm::Exceptions::RecordsNotFoundError;
 using Orm::One;
+using Orm::Utils::Helpers;
+
+using NullVariant = Orm::Utils::NullVariant;
+using TypeUtils = Orm::Utils::Type;
 
 using Orm::Tiny::AttributeItem;
+using Orm::Tiny::CastType;
 using Orm::Tiny::ConnectionOverride;
 using Orm::Tiny::Exceptions::MassAssignmentError;
 using Orm::Tiny::Types::ModelsCollection;
 
 using AttributeUtils = Orm::Tiny::Utils::Attribute;
-using TypeUtils = Orm::Utils::Type;
 
 using TestUtils::Databases;
 
+using Models::Datetime;
 using Models::FilePropertyProperty;
 using Models::Torrent;
 using Models::TorrentPreviewableFile;
@@ -44,6 +52,7 @@ using Models::Torrent_TotallyGuarded;
 using Models::TorrentEager;
 using Models::TorrentEager_Without_QDateTime;
 using Models::TorrentPreviewableFileProperty;
+using Models::Type;
 using Models::User;
 
 class tst_Model_Connection_Independent : public QObject // clazy:exclude=ctor-missing-parent-argument
@@ -168,6 +177,31 @@ private Q_SLOTS:
     void soleValue_RecordsNotFoundError() const;
     void soleValue_MultipleRecordsFoundError() const;
     void soleValue_Pretending() const;
+
+    /* Serialization */
+    void toMap() const;
+    void toVector() const;
+
+    void toMap_WithCasts() const;
+    void toVector_WithCasts() const;
+
+    void toMap_UDatesOnly_QDateTime_For_date_column() const;
+    void toVector_UDatesOnly_QDateTime_For_date_column() const;
+
+    void toMap_UDatesOnly_QDate_For_date_column() const;
+    void toVector_UDatesOnly_QDate_For_date_column() const;
+
+    void toMap_UDatesOnly_Timestamp() const;
+    void toVector_UDatesOnly_Timestamp() const;
+
+    void toMap_WithDateModfiers() const;
+    void toVector_WithDateModfiers() const;
+
+    void toMap_UDatesOnly_DateNullVariants() const;
+    void toVector_UDatesOnly_DateNullVariants() const;
+
+    void toMap_WithCasts_DateNullVariants() const;
+    void toVector_WithCasts_DateNullVariants() const;
 
 // NOLINTNEXTLINE(readability-redundant-access-specifiers)
 private:
@@ -2204,6 +2238,375 @@ void tst_Model_Connection_Independent::soleValue_Pretending() const
              "select `name` from `file_property_properties` where `name` = ? limit 2");
     QCOMPARE(firstLog.boundValues,
              QVector<QVariant>({QVariant(QString("dummy-NON_EXISTENT"))}));
+}
+
+/* Serialization */
+
+void tst_Model_Connection_Independent::toMap() const
+{
+    auto torrent = Torrent::find(4);
+    QVERIFY(torrent);
+    QVERIFY(torrent->exists);
+
+    QVariantMap serialized = torrent->toMap();
+    QCOMPARE(serialized.size(), 10);
+
+    QVariantMap expectedAttributes {
+        {"added_on", "2020-08-04T20:11:10.000Z"},
+        {CREATED_AT, "2019-09-04T08:11:23.000Z"},
+        {"hash",     "4579e3af2768cdf52ec84c1f320333f68401dc6e"},
+        {ID,         4},
+        {NAME,       "test4"},
+        {NOTE,       "after update revert updated_at"},
+        {"progress", 400},
+        {SIZE_,      14},
+        {UPDATED_AT, "2021-01-04T18:46:31.000Z"},
+        {"user_id",  1},
+    };
+    QCOMPARE(serialized, expectedAttributes);
+}
+
+void tst_Model_Connection_Independent::toVector() const
+{
+    auto torrent = Torrent::find(4);
+    QVERIFY(torrent);
+    QVERIFY(torrent->exists);
+
+    QVector<AttributeItem> serialized = torrent->toVector();
+    QCOMPARE(serialized.size(), 10);
+
+    // The order must be the same as returned from the MySQL database
+    QVector<AttributeItem> expectedAttributes {
+        {ID,         4},
+        {"user_id",  1},
+        {NAME,       "test4"},
+        {SIZE_,      14},
+        {"progress", 400},
+        {"added_on", "2020-08-04T20:11:10.000Z"},
+        {"hash",     "4579e3af2768cdf52ec84c1f320333f68401dc6e"},
+        {NOTE,       "after update revert updated_at"},
+        {CREATED_AT, "2019-09-04T08:11:23.000Z"},
+        {UPDATED_AT, "2021-01-04T18:46:31.000Z"},
+    };
+    QCOMPARE(serialized, expectedAttributes);
+}
+
+void tst_Model_Connection_Independent::toMap_WithCasts() const
+{
+    auto datetime = Datetime::instance({
+        {"datetime",  QDateTime({2023, 05, 13}, {10, 11, 12}, Qt::UTC)},
+        {"date",      QDateTime({2023, 05, 14}, {10, 11, 12}, Qt::UTC)},
+        {"timestamp", static_cast<qint64>(1662712888)},
+    });
+
+    datetime.mergeCasts({{"datetime",  CastType::QDateTime},
+                         {"date",      CastType::QDate},
+                         {"timestamp", CastType::Timestamp}});
+
+    QVariantMap serialized = datetime.toMap();
+    QCOMPARE(serialized.size(), 3);
+
+    // The order must be the same as returned from the MySQL database
+    QVariantMap expectedAttributes {
+        {"date",      "2023-05-14"},
+        {"datetime",  "2023-05-13T10:11:12.000Z"},
+        {"timestamp", static_cast<qint64>(1662712888)},
+    };
+    QCOMPARE(serialized, expectedAttributes);
+
+    // Restore
+    datetime.resetCasts();
+}
+
+void tst_Model_Connection_Independent::toVector_WithCasts() const
+{
+    auto datetime = Datetime::instance({
+        {"datetime",  QDateTime({2023, 05, 13}, {10, 11, 12}, Qt::UTC)},
+        {"date",      QDateTime({2023, 05, 14}, {10, 11, 12}, Qt::UTC)},
+        {"timestamp", static_cast<qint64>(1662712888)},
+    });
+
+    datetime.mergeCasts({{"datetime",  CastType::QDateTime},
+                         {"date",      CastType::QDate},
+                         {"timestamp", CastType::Timestamp}});
+
+    QVector<AttributeItem> serialized = datetime.toVector();
+    QCOMPARE(serialized.size(), 3);
+
+    // The order must be the same as returned from the MySQL database
+    QVector<AttributeItem> expectedAttributes {
+        {"datetime",  "2023-05-13T10:11:12.000Z"},
+        {"date",      "2023-05-14"},
+        {"timestamp", static_cast<qint64>(1662712888)},
+    };
+    QCOMPARE(serialized, expectedAttributes);
+
+    // Restore
+    datetime.resetCasts();
+}
+
+void tst_Model_Connection_Independent::toMap_UDatesOnly_QDateTime_For_date_column() const
+{
+    auto datetime = Datetime::instance({
+        {"datetime", QDateTime({2023, 05, 13}, {10, 11, 12}, Qt::UTC)},
+        {"date",     QDateTime({2023, 05, 14}, {10, 11, 12}, Qt::UTC)},
+    });
+
+    QVariantMap serialized = datetime.toMap();
+    QCOMPARE(serialized.size(), 2);
+
+    // The order must be the same as returned from the MySQL database
+    QVariantMap expectedAttributes {
+        {"date",     "2023-05-14T10:11:12.000Z"},
+        {"datetime", "2023-05-13T10:11:12.000Z"},
+    };
+    QCOMPARE(serialized, expectedAttributes);
+}
+
+void
+tst_Model_Connection_Independent::toVector_UDatesOnly_QDateTime_For_date_column() const
+{
+    auto datetime = Datetime::instance({
+        {"datetime", QDateTime({2023, 05, 13}, {10, 11, 12}, Qt::UTC)},
+        {"date",     QDateTime({2023, 05, 14}, {10, 11, 12}, Qt::UTC)},
+    });
+
+    QVector<AttributeItem> serialized = datetime.toVector();
+    QCOMPARE(serialized.size(), 2);
+
+    // The order must be the same as returned from the MySQL database
+    QVector<AttributeItem> expectedAttributes {
+        {"datetime", "2023-05-13T10:11:12.000Z"},
+        {"date",     "2023-05-14T10:11:12.000Z"},
+    };
+    QCOMPARE(serialized, expectedAttributes);
+}
+
+void tst_Model_Connection_Independent::toMap_UDatesOnly_QDate_For_date_column() const
+{
+    auto datetime = Datetime::instance({
+        {"date", QDate(2023, 05, 14)},
+    });
+
+    QVariantMap serialized = datetime.toMap();
+    QCOMPARE(serialized.size(), 1);
+
+    // The order must be the same as returned from the MySQL database
+    QVariantMap expectedAttributes {
+        {"date", "2023-05-14T00:00:00.000Z"},
+    };
+    QCOMPARE(serialized, expectedAttributes);
+}
+
+void tst_Model_Connection_Independent::toVector_UDatesOnly_QDate_For_date_column() const
+{
+    auto datetime = Datetime::instance({
+        {"date", QDate(2023, 05, 14)},
+    });
+
+    QVector<AttributeItem> serialized = datetime.toVector();
+    QCOMPARE(serialized.size(), 1);
+
+    // The order must be the same as returned from the MySQL database
+    QVector<AttributeItem> expectedAttributes {
+        {"date", "2023-05-14T00:00:00.000Z"},
+    };
+    QCOMPARE(serialized, expectedAttributes);
+}
+
+void tst_Model_Connection_Independent::toMap_UDatesOnly_Timestamp() const
+{
+    auto datetime = Datetime::instance(QVector<AttributeItem> {
+        {"timestamp", static_cast<qint64>(1662712888)},
+    });
+
+    QVariantMap serialized = datetime.toMap();
+    QCOMPARE(serialized.size(), 1);
+
+    QVariantMap expectedAttributes {
+        {"timestamp", "2022-09-09T08:41:28.000Z"},
+    };
+    QCOMPARE(serialized, expectedAttributes);
+}
+
+void tst_Model_Connection_Independent::toVector_UDatesOnly_Timestamp() const
+{
+    auto datetime = Datetime::instance(QVector<AttributeItem> {
+        {"timestamp", static_cast<qint64>(1662712888)},
+    });
+
+    QVector<AttributeItem> serialized = datetime.toVector();
+    QCOMPARE(serialized.size(), 1);
+
+    // The order must be the same as returned from the MySQL database
+    QVector<AttributeItem> expectedAttributes {
+        {"timestamp", "2022-09-09T08:41:28.000Z"},
+    };
+    QCOMPARE(serialized, expectedAttributes);
+}
+
+void tst_Model_Connection_Independent::toMap_WithDateModfiers() const
+{
+    auto datetime = Datetime::instance({
+        {"datetime", QDateTime({2023, 05, 13}, {10, 11, 12}, Qt::UTC)},
+        {"date",     QDateTime({2023, 05, 14}, {10, 11, 12}, Qt::UTC)},
+    });
+
+    datetime.mergeCasts({
+        {"datetime", {CastType::CustomQDateTime, "dd.MM.yyyy HH:mm:ss.z t"}},
+        {"date",     {CastType::CustomQDate,     "dd.MM.yyyy"}},
+    });
+
+    QVariantMap serialized = datetime.toMap();
+    QCOMPARE(serialized.size(), 2);
+
+    // The order must be the same as returned from the MySQL database
+    QVariantMap expectedAttributes {
+        {"date",     "14.05.2023"},
+        {"datetime", "13.05.2023 10:11:12.0 UTC"},
+    };
+    QCOMPARE(serialized, expectedAttributes);
+
+    // Restore
+    datetime.resetCasts();
+}
+
+void tst_Model_Connection_Independent::toVector_WithDateModfiers() const
+{
+    auto datetime = Datetime::instance({
+        {"datetime", QDateTime({2023, 05, 13}, {10, 11, 12}, Qt::UTC)},
+        {"date",     QDateTime({2023, 05, 14}, {10, 11, 12}, Qt::UTC)},
+    });
+
+    datetime.mergeCasts({
+        {"datetime", {CastType::CustomQDateTime, "dd.MM.yyyy HH:mm:ss.z t"}},
+        {"date",     {CastType::CustomQDate,     "dd.MM.yyyy"}},
+    });
+
+    QVector<AttributeItem> serialized = datetime.toVector();
+    QCOMPARE(serialized.size(), 2);
+
+    // The order must be the same as returned from the MySQL database
+    QVector<AttributeItem> expectedAttributes {
+        {"datetime", "13.05.2023 10:11:12.0 UTC"},
+        {"date",     "14.05.2023"},
+    };
+    QCOMPARE(serialized, expectedAttributes);
+
+    // Restore
+    datetime.resetCasts();
+}
+
+void tst_Model_Connection_Independent::toMap_UDatesOnly_DateNullVariants() const
+{
+    Type::u_dates = {"date", "datetime", "timestamp"};
+
+    auto type = Type::find(3, {ID, "date", "datetime", "timestamp"});
+    QVERIFY(type);
+    QVERIFY(type->exists);
+
+    QVariantMap serialized = type->toMap();
+    QCOMPARE(serialized.size(), 4);
+
+    QCOMPARE(serialized[ID].template value<typename Type::KeyType>(), 3);
+
+    QCOMPARE(Helpers::qVariantTypeId(serialized["date"]),      QMetaType::QDateTime);
+    QCOMPARE(Helpers::qVariantTypeId(serialized["datetime"]),  QMetaType::QDateTime);
+    QCOMPARE(Helpers::qVariantTypeId(serialized["timestamp"]), QMetaType::QDateTime);
+
+    // Restore
+    Type::u_dates.clear();
+}
+
+void tst_Model_Connection_Independent::toVector_UDatesOnly_DateNullVariants() const
+{
+    Type::u_dates = {"date", "datetime", "timestamp"};
+
+    auto type = Type::find(3, {ID, "date", "datetime", "timestamp"});
+    QVERIFY(type);
+    QVERIFY(type->exists);
+
+    QVector<AttributeItem> serialized = type->toVector();
+    QCOMPARE(serialized.size(), 4);
+
+    const auto &serialized0 = serialized.at(0);
+    QCOMPARE(serialized0.key, ID);
+    QCOMPARE(serialized0.value.template value<typename Type::KeyType>(), 3);
+
+    const auto &serialized1 = serialized.at(1);
+    const auto &serialized2 = serialized.at(2);
+    const auto &serialized3 = serialized.at(3);
+
+    QCOMPARE(serialized1.key, "date");
+    QCOMPARE(serialized2.key, "datetime");
+    QCOMPARE(serialized3.key, "timestamp");
+
+    QCOMPARE(Helpers::qVariantTypeId(serialized1.value), QMetaType::QDateTime);
+    QCOMPARE(Helpers::qVariantTypeId(serialized2.value), QMetaType::QDateTime);
+    QCOMPARE(Helpers::qVariantTypeId(serialized3.value), QMetaType::QDateTime);
+
+    // Restore
+    Type::u_dates.clear();
+}
+
+void tst_Model_Connection_Independent::toMap_WithCasts_DateNullVariants() const
+{
+    auto type = Type::find(3, {ID, "date", "datetime", "timestamp"});
+    QVERIFY(type);
+    QVERIFY(type->exists);
+
+    type->mergeCasts({
+        {"date",      CastType::QDate},
+        {"datetime",  CastType::QDateTime},
+        {"timestamp", CastType::Timestamp},
+    });
+
+    QVariantMap serialized = type->toMap();
+    QCOMPARE(serialized.size(), 4);
+
+    QCOMPARE(serialized[ID].template value<typename Type::KeyType>(), 3);
+
+    QCOMPARE(Helpers::qVariantTypeId(serialized["date"]),      QMetaType::QDate);
+    QCOMPARE(Helpers::qVariantTypeId(serialized["datetime"]),  QMetaType::QDateTime);
+    QCOMPARE(Helpers::qVariantTypeId(serialized["timestamp"]), QMetaType::LongLong);
+
+    // Restore
+    type->resetCasts();
+}
+
+void tst_Model_Connection_Independent::toVector_WithCasts_DateNullVariants() const
+{
+    auto type = Type::find(3, {ID, "date", "datetime", "timestamp"});
+    QVERIFY(type);
+    QVERIFY(type->exists);
+
+    type->mergeCasts({
+        {"date",      CastType::QDate},
+        {"datetime",  CastType::QDateTime},
+        {"timestamp", CastType::Timestamp},
+    });
+
+    QVector<AttributeItem> serialized = type->toVector();
+    QCOMPARE(serialized.size(), 4);
+
+    const auto &serialized0 = serialized.at(0);
+    QCOMPARE(serialized0.key, ID);
+    QCOMPARE(serialized0.value.template value<typename Type::KeyType>(), 3);
+
+    const auto &serialized1 = serialized.at(1);
+    const auto &serialized2 = serialized.at(2);
+    const auto &serialized3 = serialized.at(3);
+
+    QCOMPARE(serialized1.key, "date");
+    QCOMPARE(serialized2.key, "datetime");
+    QCOMPARE(serialized3.key, "timestamp");
+
+    QCOMPARE(Helpers::qVariantTypeId(serialized1.value), QMetaType::QDate);
+    QCOMPARE(Helpers::qVariantTypeId(serialized2.value), QMetaType::QDateTime);
+    QCOMPARE(Helpers::qVariantTypeId(serialized3.value), QMetaType::LongLong);
+
+    // Restore
+    type->resetCasts();
 }
 // NOLINTEND(readability-convert-member-functions-to-static)
 

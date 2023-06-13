@@ -276,6 +276,12 @@ namespace Orm::Tiny
         /* Static cast this to a child's instance type (CRTP) */
         TINY_CRTP_MODEL_DECLARATIONS
 
+        /* Serialization */
+        /*! Convert the model instance to the map of attributes and relations. */
+        inline QVariantMap toMap() const;
+        /*! Convert the model instance to the vector of attributes and relations. */
+        inline QVector<AttributeItem> toVector() const;
+
         /* Getters / Setters */
         /*! Get the current connection name for the model. */
         const QString &getConnectionName() const;
@@ -1290,6 +1296,22 @@ namespace Orm::Tiny
 
     /* Static cast this to a child's instance type (CRTP) */
     TINY_CRTP_MODEL_DEFINITIONS(Model)
+
+    /* Serialization */
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    QVariantMap
+    Model<Derived, AllRelations...>::toMap() const
+    {
+        return this->attributesToMap();
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    QVector<AttributeItem>
+    Model<Derived, AllRelations...>::toVector() const
+    {
+        return this->attributesToVector();
+    }
 
     /* Getters / Setters */
 

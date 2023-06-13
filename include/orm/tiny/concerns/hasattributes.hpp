@@ -226,6 +226,12 @@ namespace Orm::Tiny::Concerns
         /*! Determine whether the QDateTime time zone should be converted. */
         inline bool isConvertingTimeZone() const;
 
+        /* Serialization */
+        /*! Convert the model's attributes to the map. */
+        QVariantMap attributesToMap() const;
+        /*! Convert the model's attributes to the vector. */
+        QVector<AttributeItem> attributesToVector() const;
+
     protected:
         /*! Transform a raw model value using mutators, casts, etc. */
         QVariant transformModelValue(const QString &key, const QVariant &value) const;
@@ -277,6 +283,8 @@ namespace Orm::Tiny::Concerns
         /*! Get the correct QVariant(null) by a type in the QVariant and format. */
         static QVariant nullFor_fromDateTime(const QVariant &value,
                                              const QString &format);
+        /*! Get the correct QVariant(null) by a type in the QVariant. */
+        static QVariant nullFor_addCastAttributesTo(const QVariant &value);
 
         /*! Convert the QDateTime's time zone to the Model's time zone. */
         QDateTime convertTimeZone(QDateTime &&datetime) const;
@@ -293,12 +301,42 @@ namespace Orm::Tiny::Concerns
 
         /*! Determine whether a value is Date / DateTime castable. */
         inline bool isDateCastable(const QString &key) const;
-        /*! Determine if the cast type is a custom date time cast. */
-//        static bool isCustomDateTimeCast(const CastItem &cast);
+
+        /*! Determine whether the given type is QDate or QDateTime cast type. */
+        inline static bool isDateCastType(CastType type);
+        /*! Determine if the cast type is a custom QDate or QDateTime cast type. */
+        inline static bool isCustomDateCastType(const CastItem &castItem);
 
         /*! Round a QVariant(double) to the given decimals (used by castAttribute()). */
         inline static QVariant
         roundDecimals(const QVariant &value, const QVariant &decimals);
+
+        /* Serialization */
+        /*! Get an attributes map of all mappable attributes. */
+        inline QVariantMap getMappableAttributes() const;
+        /*! Get an attributes vector of all vectorable attributes. */
+        inline QVector<AttributeItem> getVectorableAttributes() const;
+
+        /*! Add the date attributes to the attributes map. */
+        void addDateAttributesToMap(QVariantMap &attributes) const;
+        /*! Add the date attributes to the attributes vector. */
+        void addDateAttributesToVector(
+                QVector<AttributeItem> &attributes,
+                const std::unordered_map<QString, int> &attributesHash) const;
+
+        /*! Add the casted attributes to the attributes map. */
+        void addCastAttributesToMap(QVariantMap &attributes) const;
+        /*! Add the casted attributes to the attributes vector. */
+        void addCastAttributesToVector(
+                QVector<AttributeItem> &attributes,
+                const std::unordered_map<QString, int> &attributesHash) const;
+
+        /*! Prepare a date or datetime for vector, map, or JSON serialization. */
+        static QString serializeDateOrDateTime(const QVariant &value);
+        /*! Prepare a date for vector, map, or JSON serialization. */
+        static QString serializeDate(QDate date);
+        /*! Prepare a datetime for vector, map, or JSON serialization. */
+        static QString serializeDateTime(const QDateTime &datetime);
 
         /* Data members */
         /*! The model's default values for attributes. */
@@ -1092,6 +1130,45 @@ namespace Orm::Tiny::Concerns
         return *m_isConvertingTimeZone;
     }
 
+    /* Serialization */
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    QVariantMap
+    HasAttributes<Derived, AllRelations...>::attributesToMap() const
+    {
+        auto attributes = getMappableAttributes();
+
+        /* If an attribute is a date, we will cast it to a string after converting it
+           to a QDateTime instance. This is so we will get some consistent
+           formatting while accessing attributes vs. mapping / JSONing a model. */
+        addDateAttributesToMap(attributes);
+
+        /* Next we will handle any casts that have been setup for this model and cast
+           the values to their appropriate type. */
+        addCastAttributesToMap(attributes);
+
+        return attributes;
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    QVector<AttributeItem>
+    HasAttributes<Derived, AllRelations...>::attributesToVector() const
+    {
+        auto attributes = getVectorableAttributes();
+        const auto &attributesHash = getAttributesHash();
+
+        /* If an attribute is a date, we will cast it to a string after converting it
+           to a QDateTime instance. This is so we will get some consistent
+           formatting while accessing attributes vs. vectoring / JSONing a model. */
+        addDateAttributesToVector(attributes, attributesHash);
+
+        /* Next we will handle any casts that have been setup for this model and cast
+           the values to their appropriate type. */
+        addCastAttributesToVector(attributes, attributesHash);
+
+        return attributes;
+    }
+
     /* protected */
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
@@ -1348,6 +1425,12 @@ namespace Orm::Tiny::Concerns
            instantiate the QDateTime from many formats, a function like that would be
            ideal here. */
 
+        // But at least we can detect the ISO DateTime-s
+        if (auto date = QDateTime::fromString(valueString, Qt::ISODateWithMs);
+            date.isValid()
+        )
+            return convertTimeZone(std::move(date));
+
         throw Orm::Exceptions::InvalidFormatError(
                     QStringLiteral("Could not parse the datetime '%1' using "
                                    "the given format '%2' in %3().")
@@ -1392,6 +1475,9 @@ namespace Orm::Tiny::Concerns
 
         else T_LIKELY
             return asDateTime(value).toString(format);
+
+        /* I don't want the if (QMetaType::QDateTime) check and the Q_UNREACHABLE() here
+           because the NullVariant::QDateTime() must be returned in all other cases. */
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
@@ -1414,6 +1500,29 @@ namespace Orm::Tiny::Concerns
 
         else T_LIKELY
             return NullVariant::QDateTime();
+
+        /* I don't want the if (QMetaType::QDateTime) check and the Q_UNREACHABLE() here
+           because the NullVariant::QDateTime() must be returned in all other cases. */
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    QVariant
+    HasAttributes<Derived, AllRelations...>::nullFor_addCastAttributesTo(
+            const QVariant &value)
+    {
+        const auto typeId = Helpers::qVariantTypeId(value);
+
+        if (typeId == QMetaType::QDate ||
+            (typeId == QMetaType::QString &&
+             Helpers::isStandardDateFormat(value.value<QString>()))
+        ) T_UNLIKELY
+            return NullVariant::QDate();
+
+        else T_LIKELY
+            return NullVariant::QDateTime();
+
+        /* I don't want the if (QMetaType::QDateTime) check and the Q_UNREACHABLE() here
+           because the NullVariant::QDateTime() must be returned in all other cases. */
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
@@ -1503,10 +1612,11 @@ namespace Orm::Tiny::Concerns
         // QDateTime
         // DateTime-related values need spacial null handling
         case CastType::QDate:
+        case CastType::CustomQDate:
             return value_.isNull() ? NullVariant::QDate()
                                    : asDate(value_);
         case CastType::QDateTime:
-//        case CastType::CustomQDateTime:
+        case CastType::CustomQDateTime:
             return value_.isNull() ? NullVariant::QDateTime()
                                    : asDateTime(value_);
         case CastType::Timestamp:
@@ -1582,17 +1692,35 @@ namespace Orm::Tiny::Concerns
         return hasCast(key, {CastType::QDate, CastType::QDateTime});
     }
 
-//    template<typename Derived, AllRelationsConcept ...AllRelations>
-//    bool
-//    HasAttributes<Derived, AllRelations...>::isCustomDateTimeCast(
-//            const CastItem &cast)
-//    {
-//        const auto &modifier = cast.modifier();
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    bool
+    HasAttributes<Derived, AllRelations...>::isDateCastType(const CastType type)
+    {
+        static const std::unordered_set<CastType> dateCastTypes {
+            CastType::QDate,
+            CastType::QDateTime,
+        };
 
-//        return (cast.type() == CastType::QDateTime || cast.type() == CastType::QDate) &&
-//                modifier.template canConvert<QString>() &&
-//                !modifier.template value<QString>().isEmpty();
-//    }
+        return dateCastTypes.contains(type);
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    bool HasAttributes<Derived, AllRelations...>::isCustomDateCastType(
+            const CastItem &castItem)
+    {
+        static const std::unordered_set<CastType> customDateCastTypes {
+            CastType::CustomQDate,
+            CastType::CustomQDateTime,
+        };
+
+        const auto &modifier = castItem.modifier();
+
+        /* No need to check for the QVariant isNull and isValid for modifier,
+           the canConvert and isEmpty checks do the same thing. */
+        return customDateCastTypes.contains(castItem.type()) &&
+               modifier.template canConvert<QString>() &&
+               !modifier.template value<QString>().isEmpty();
+    }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     QVariant
@@ -1608,6 +1736,184 @@ namespace Orm::Tiny::Concerns
         return static_cast<double>(
                     std::round(value.template value<double>() * multiplier) /
                     multiplier);
+    }
+
+    /* Serialization */
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    QVariantMap
+    HasAttributes<Derived, AllRelations...>::getMappableAttributes() const
+    {
+        // FEATURE HidesAttributes silverqx
+        return AttributeUtils::convertVectorToMap(getAttributes());
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    QVector<AttributeItem>
+    HasAttributes<Derived, AllRelations...>::getVectorableAttributes() const
+    {
+        // FEATURE HidesAttributes silverqx
+        return getAttributes();
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    void HasAttributes<Derived, AllRelations...>::addDateAttributesToMap(
+            QVariantMap &attributes) const
+    {
+        for (auto &&key : getDates()) {
+            // NOTE api different, Eloquent is doing a double cast silverqx
+            /* Nothing to do, this attribute is not set OR it has set the cast
+               to the QDateTime, in this case, skip the serialization to avoid useless
+               double serialization. */
+            if (!attributes.contains(key) || hasCast(key, {CastType::QDateTime}))
+                continue;
+
+            auto &value = attributes[key];
+
+            value = value.isNull() ? NullVariant::QDateTime()
+                                   : serializeDateTime(asDateTime(value));
+        }
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    void HasAttributes<Derived, AllRelations...>::addDateAttributesToVector(
+            QVector<AttributeItem> &attributes,
+            const std::unordered_map<QString, int> &attributesHash) const
+    {
+        for (auto &&key : getDates()) {
+            // NOTE api different, Eloquent is doing a double cast silverqx
+            /* Nothing to do, this attribute is not set OR it has set the cast
+               to the QDateTime, in this case, skip the serialization to avoid useless
+               double serialization. */
+            if (!attributesHash.contains(key) || hasCast(key, {CastType::QDateTime}))
+                continue;
+
+            auto &value = attributes[m_attributesHash.at(key)].value;
+
+            value = value.isNull() ? NullVariant::QDateTime()
+                                   : serializeDateTime(asDateTime(value));
+        }
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    void HasAttributes<Derived, AllRelations...>::addCastAttributesToMap(
+            QVariantMap &attributes) const
+    {
+        for (auto &&[key, castItem] : getCasts()) {
+            // Nothing to do, this attribute is not set
+            if (!attributes.contains(key))
+                continue;
+
+            /* Here we will cast the attribute. Then, if the cast is a QDate or QDateTime
+               cast then we will serialize the date for the map. This will convert
+               the dates to strings based on the date format specified for these TinyORM
+               models. */
+            auto &value = attributes[key];
+
+            value = castAttribute(key, value);
+
+            /* If the attribute cast was a QDate or QDateTime, we will serialize the date
+               as a string. This allows the developers to customize how dates are
+               serialized into a map without affecting how they are persisted
+               into the storage. */
+            if (isDateCastType(castItem.type()))
+                value = value.isNull() ? nullFor_addCastAttributesTo(value)
+                                       : serializeDateOrDateTime(
+                                             asDateOrDateTime(value));
+
+            if (isCustomDateCastType(castItem)) {
+                const auto castedDate = asDateOrDateTime(value);
+                const auto &castModifier = castItem.modifier();
+
+                if (const auto typeId = Helpers::qVariantTypeId(castedDate);
+                    typeId == QMetaType::QDate
+                ) T_UNLIKELY
+                    value = castedDate.template value<QDate>()
+                            .toString(castModifier.template value<QString>());
+
+                else T_LIKELY
+                    value = castedDate.template value<QDateTime>()
+                            .toString(castModifier.template value<QString>());
+            }
+        }
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    void HasAttributes<Derived, AllRelations...>::addCastAttributesToVector(
+            QVector<AttributeItem> &attributes,
+            const std::unordered_map<QString, int> &attributesHash) const
+    {
+        for (auto &&[key, castItem] : getCasts()) {
+            // Nothing to do, this attribute is not set
+            if (!attributesHash.contains(key))
+                continue;
+
+            /* Here we will cast the attribute. Then, if the cast is a QDate or QDateTime
+               cast then we will serialize the date for the vector. This will convert
+               the dates to strings based on the date format specified for these TinyORM
+               models. */
+            auto &value = attributes[m_attributesHash.at(key)].value;
+
+            value = castAttribute(key, value);
+
+            /* If the attribute cast was a QDate or QDateTime, we will serialize the date
+               as a string. This allows the developers to customize how dates are
+               serialized into a map without affecting how they are persisted
+               into the storage. */
+            if (isDateCastType(castItem.type()))
+                value = value.isNull() ? nullFor_addCastAttributesTo(value)
+                                       : serializeDateOrDateTime(
+                                             asDateOrDateTime(value));
+
+            if (isCustomDateCastType(castItem)) {
+                const auto castedDate = asDateOrDateTime(value);
+                const auto &castModifier = castItem.modifier();
+
+                if (const auto typeId = Helpers::qVariantTypeId(castedDate);
+                    typeId == QMetaType::QDate
+                ) T_UNLIKELY
+                    value = castedDate.template value<QDate>()
+                            .toString(castModifier.template value<QString>());
+
+                else T_LIKELY
+                    value = castedDate.template value<QDateTime>()
+                            .toString(castModifier.template value<QString>());
+            }
+        }
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    QString
+    HasAttributes<Derived, AllRelations...>::serializeDateOrDateTime(
+            const QVariant &value)
+    {
+        const auto typeId = Helpers::qVariantTypeId(value);
+
+        if (typeId == QMetaType::QDate ||
+            (typeId == QMetaType::QString &&
+             Helpers::isStandardDateFormat(value.value<QString>()))
+        ) T_UNLIKELY
+            return serializeDate(value.template value<QDate>());
+
+        else T_LIKELY
+            return serializeDateTime(value.template value<QDateTime>());
+
+        /* I don't want the if (QMetaType::QDateTime) check and the Q_UNREACHABLE() here
+           because the NullVariant::QDateTime() must be returned in all other cases. */
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    QString
+    HasAttributes<Derived, AllRelations...>::serializeDate(const QDate date)
+    {
+        return date.toString(Qt::ISODate);
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    QString
+    HasAttributes<Derived, AllRelations...>::serializeDateTime(const QDateTime &datetime)
+    {
+        return datetime.toUTC().toString(Qt::ISODateWithMs);
     }
 
     /* private */

@@ -24,6 +24,10 @@ class Type final : public Model<Type>
 
     /*! The attributes that should be cast. */
     inline static std::unordered_map<QString, CastItem> u_casts {};
+
+public:
+    /*! The attributes that should be mutated to dates. */
+    inline static QStringList u_dates {};
 };
 
 } // namespace Models
