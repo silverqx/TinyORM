@@ -251,6 +251,12 @@ namespace Orm::Tiny::Concerns
             (used by the getDirty()). */
         bool originalIsEquivalent(const QString &key) const;
 
+        /*! Rehash attribute positions from the given index. */
+        void rehashAttributePositions(
+                const QVector<AttributeItem> &attributes,
+                std::unordered_map<QString, int> &attributesHash,
+                int from = 0);
+
         /* Datetime-related */
         /*! Determine if the given attribute is a date. */
         bool isDateAttribute(const QString &key) const;
@@ -276,12 +282,6 @@ namespace Orm::Tiny::Concerns
         QDateTime convertTimeZone(QDateTime &&datetime) const;
         /*! Set the QDateTime's time zone to the Model's time zone. */
         QDateTime &setTimeZone(QDateTime &datetime) const;
-
-        /*! Rehash attribute positions from the given index. */
-        void rehashAttributePositions(
-                const QVector<AttributeItem> &attributes,
-                std::unordered_map<QString, int> &attributesHash,
-                int from = 0);
 
         /* Casting Attributes */
         /*! Cast an attribute, convert a QVariant value. */
@@ -1265,6 +1265,20 @@ namespace Orm::Tiny::Concerns
         return false;
     }
 
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    void HasAttributes<Derived, AllRelations...>::rehashAttributePositions(
+            const QVector<AttributeItem> &attributes,
+            std::unordered_map<QString, int> &attributesHash,
+            const int from)
+    {
+        /* This member function is universal and can be used for m_attributes,
+           m_changes and m_original and it associated unordered_maps m_attributesHash,
+           m_changesHash and m_originalHash. */
+        for (auto i = from; i < attributes.size(); ++i)
+            // 'i' is the position index
+            attributesHash[attributes.at(i).key] = i;
+    }
+
     /* Datetime-related */
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
@@ -1420,20 +1434,6 @@ namespace Orm::Tiny::Concerns
             return datetime;
 
         return Helpers::setTimeZone(datetime, getQtTimeZone());
-    }
-
-    template<typename Derived, AllRelationsConcept ...AllRelations>
-    void HasAttributes<Derived, AllRelations...>::rehashAttributePositions(
-            const QVector<AttributeItem> &attributes,
-            std::unordered_map<QString, int> &attributesHash,
-            const int from)
-    {
-        /* This member function is universal and can be used for m_attributes,
-           m_changes and m_original and it associated unordered_maps m_attributesHash,
-           m_changesHash and m_originalHash. */
-        for (auto i = from; i < attributes.size(); ++i)
-            // 'i' is the position index
-            attributesHash[attributes.at(i).key] = i;
     }
 
     /* Casting Attributes */
