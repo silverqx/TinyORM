@@ -413,6 +413,11 @@ namespace Orm::Tiny::Concerns
         /*! Return the string name of the given cast type. */
         static QString castTypeName(CastType type);
 
+        /* Serialization */
+        /*! Cast the given attribute (used in serialization). */
+        void castAttributeForSerialization(QVariant &value, const QString &key,
+                                           const CastItem &castItem) const;
+
         /* Others */
         /* Static cast this to a child's instance type (CRTP) */
         TINY_CRTP_MODEL_WITH_BASE_DECLARATIONS
@@ -1810,31 +1815,7 @@ namespace Orm::Tiny::Concerns
                models. */
             auto &value = attributes[key];
 
-            value = castAttribute(key, value);
-
-            /* If the attribute cast was a QDate or QDateTime, we will serialize the date
-               as a string. This allows the developers to customize how dates are
-               serialized into a map without affecting how they are persisted
-               into the storage. */
-            if (isDateCastType(castItem.type()))
-                value = value.isNull() ? nullFor_addCastAttributesTo(value)
-                                       : serializeDateOrDateTime(
-                                             asDateOrDateTime(value));
-
-            if (isCustomDateCastType(castItem)) {
-                const auto castedDate = asDateOrDateTime(value);
-                const auto &castModifier = castItem.modifier();
-
-                if (const auto typeId = Helpers::qVariantTypeId(castedDate);
-                    typeId == QMetaType::QDate
-                ) T_UNLIKELY
-                    value = castedDate.template value<QDate>()
-                            .toString(castModifier.template value<QString>());
-
-                else T_LIKELY
-                    value = castedDate.template value<QDateTime>()
-                            .toString(castModifier.template value<QString>());
-            }
+            castAttributeForSerialization(value, key, castItem);
         }
     }
 
@@ -1854,31 +1835,7 @@ namespace Orm::Tiny::Concerns
                models. */
             auto &value = attributes[m_attributesHash.at(key)].value;
 
-            value = castAttribute(key, value);
-
-            /* If the attribute cast was a QDate or QDateTime, we will serialize the date
-               as a string. This allows the developers to customize how dates are
-               serialized into a map without affecting how they are persisted
-               into the storage. */
-            if (isDateCastType(castItem.type()))
-                value = value.isNull() ? nullFor_addCastAttributesTo(value)
-                                       : serializeDateOrDateTime(
-                                             asDateOrDateTime(value));
-
-            if (isCustomDateCastType(castItem)) {
-                const auto castedDate = asDateOrDateTime(value);
-                const auto &castModifier = castItem.modifier();
-
-                if (const auto typeId = Helpers::qVariantTypeId(castedDate);
-                    typeId == QMetaType::QDate
-                ) T_UNLIKELY
-                    value = castedDate.template value<QDate>()
-                            .toString(castModifier.template value<QString>());
-
-                else T_LIKELY
-                    value = castedDate.template value<QDateTime>()
-                            .toString(castModifier.template value<QString>());
-            }
+            castAttributeForSerialization(value, key, castItem);
         }
     }
 
@@ -2026,6 +1983,39 @@ namespace Orm::Tiny::Concerns
             return QStringLiteral("QByteArray");
         default:
             Q_UNREACHABLE();
+        }
+    }
+
+    /* Serialization */
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    void HasAttributes<Derived, AllRelations...>::castAttributeForSerialization(
+            QVariant &value, const QString &key, const CastItem &castItem) const
+    {
+        value = castAttribute(key, value);
+
+        /* If the attribute cast was a QDate or QDateTime, we will serialize the date
+           as a string. This allows the developers to customize how dates are
+           serialized into a map without affecting how they are persisted
+           into the storage. */
+        if (isDateCastType(castItem.type()))
+            value = value.isNull() ? nullFor_addCastAttributesTo(value)
+                                   : serializeDateOrDateTime(
+                                         asDateOrDateTime(value));
+
+        if (isCustomDateCastType(castItem)) {
+            const auto castedDate = asDateOrDateTime(value);
+            const auto &castModifier = castItem.modifier();
+
+            if (const auto typeId = Helpers::qVariantTypeId(castedDate);
+                typeId == QMetaType::QDate
+            ) T_UNLIKELY
+                value = castedDate.template value<QDate>()
+                        .toString(castModifier.template value<QString>());
+
+            else T_LIKELY
+                value = castedDate.template value<QDateTime>()
+                        .toString(castModifier.template value<QString>());
         }
     }
 
