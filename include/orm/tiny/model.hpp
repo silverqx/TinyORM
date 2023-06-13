@@ -32,7 +32,6 @@ namespace Orm::Tiny
     using GuardedModel = Concerns::GuardedModel;
 
     // TODO model missing methods Model::loadMissing() silverqx
-    // TODO model missing methods EloquentCollection::toQuery() silverqx
     // TODO model missing saveOrFail(), updateOrFail(), deleteOrFail(), I will need to implement ManagesTransaction::transaction(callback) method silverqx
     /*! Base model class. */
     template<typename Derived, AllRelationsConcept ...AllRelations>
