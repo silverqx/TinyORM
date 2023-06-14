@@ -339,13 +339,13 @@ namespace Orm::Tiny::Concerns
         inline const TouchOwnersRelationStore &touchOwnersStore() const;
         /*! Const reference to the lazy store. */
         template<typename Related>
-        inline const LazyRelationStore<Related> &lazyStore() const;
+        const LazyRelationStore<Related> &lazyStore() const;
         /*! Reference to the BelongsToMany related table name store. */
         inline const BelongsToManyRelatedTableStore &
         belongsToManyRelatedTableStore() const;
         /*! Const reference to the QueriesRelationships store. */
         template<typename Related = void>
-        inline const QueriesRelationshipsStore<Related> &
+        const QueriesRelationshipsStore<Related> &
         queriesRelationshipsStore() const;
 
         /*! Type of the template message to generate. */
