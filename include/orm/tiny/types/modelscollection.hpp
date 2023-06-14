@@ -242,18 +242,18 @@ namespace Types
         /*! Run a map over each of the models. */
         ModelsCollection<ModelRawType>
         map(const std::function<ModelRawType(ModelRawType &&modelCopy,
-                                             size_type)> &callback);
+                                             size_type)> &callback) const;
         /*! Run a map over each of the models. */
         ModelsCollection<ModelRawType>
-        map(const std::function<ModelRawType(ModelRawType &&modelCopy)> &callback);
+        map(const std::function<ModelRawType(ModelRawType &&modelCopy)> &callback) const;
 
         /*! Run a map over each of the models. */
         template<typename T>
         QVector<T> map(const std::function<T(ModelRawType &&modelCopy,
-                                             size_type)> &callback);
+                                             size_type)> &callback) const;
         /*! Run a map over each of the models. */
         template<typename T>
-        QVector<T> map(const std::function<T(ModelRawType &&modelCopy)> &callback);
+        QVector<T> map(const std::function<T(ModelRawType &&modelCopy)> &callback) const;
 
         /*! Run an associative map over each of the models (keyed by primary key). */
         std::unordered_map<KeyType, ModelRawType *> mapWithModelKeys();
@@ -428,9 +428,9 @@ namespace Types
 
         /* EnumeratesValues */
         /*! Get the collection of models as a vector with serialized models. */
-        QVector<QVector<AttributeItem>> toVector();
+        QVector<QVector<AttributeItem>> toVector() const;
         /*! Get the collection of models as a map with serialized models. */
-        QVector<QVariantMap> toMap();
+        QVector<QVariantMap> toMap() const;
 
         /*! Create a collection of all models that do not pass a given truth test. */
         ModelsCollection<ModelRawType *>
@@ -1029,7 +1029,7 @@ namespace Types
     ModelsCollection<typename ModelsCollection<Model>::ModelRawType>
     ModelsCollection<Model>::map(
             const std::function<ModelRawType(ModelRawType &&modelCopy,
-                                             size_type)> &callback)
+                                             size_type)> &callback) const
     {
         const auto size = this->size();
 
@@ -1046,7 +1046,7 @@ namespace Types
     template<DerivedCollectionModel Model>
     ModelsCollection<typename ModelsCollection<Model>::ModelRawType>
     ModelsCollection<Model>::map(
-            const std::function<ModelRawType(ModelRawType &&modelCopy)> &callback)
+            const std::function<ModelRawType(ModelRawType &&modelCopy)> &callback) const
     {
         const auto size = this->size();
 
@@ -1063,7 +1063,7 @@ namespace Types
     template<typename T>
     QVector<T>
     ModelsCollection<Model>::map(
-            const std::function<T(ModelRawType &&modelCopy, size_type)> &callback)
+            const std::function<T(ModelRawType &&modelCopy, size_type)> &callback) const
     {
         const auto size = this->size();
 
@@ -1087,7 +1087,7 @@ namespace Types
     template<typename T>
     QVector<T>
     ModelsCollection<Model>::map(
-            const std::function<T(ModelRawType &&modelCopy)> &callback)
+            const std::function<T(ModelRawType &&modelCopy)> &callback) const
     {
         const auto size = this->size();
 
@@ -1819,7 +1819,7 @@ namespace Types
 
     template<DerivedCollectionModel Model>
     QVector<QVector<AttributeItem>>
-    ModelsCollection<Model>::toVector()
+    ModelsCollection<Model>::toVector() const
     {
         return map<QVector<AttributeItem>>([](ModelRawType &&model)
         {
@@ -1829,7 +1829,7 @@ namespace Types
 
     template<DerivedCollectionModel Model>
     QVector<QVariantMap>
-    ModelsCollection<Model>::toMap()
+    ModelsCollection<Model>::toMap() const
     {
         return map<QVariantMap>([](ModelRawType &&model)
         {
