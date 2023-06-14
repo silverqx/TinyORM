@@ -390,6 +390,7 @@ function seedTables(string $connection): void
             [4, 1, 'test4', 14, 400, '2020-08-04 20:11:10', '4579e3af2768cdf52ec84c1f320333f68401dc6e', 'after update revert updated_at', '2021-01-04 14:51:23', '2021-01-04 18:46:31'],
             [5, 2, 'test5', 15, 500, '2020-08-05 20:11:10', '5579e3af2768cdf52ec84c1f320333f68401dc6e', 'no peers',                       '2021-01-05 14:51:23', '2021-01-05 18:46:31'],
             [6, 2, 'test6', 16, 600, '2020-08-06 20:11:10', '6579e3af2768cdf52ec84c1f320333f68401dc6e', 'no files no peers',              '2021-01-06 14:51:23', '2021-01-06 18:46:31'],
+            [7, 2, 'test7', 17, 700, '2020-08-07 20:11:10', '7579e3af2768cdf52ec84c1f320333f68401dc6e', 'for serialization',              '2021-01-07 14:51:23', '2021-01-07 18:46:31'],
         ]));
 
     Capsule::table('torrent_peers', null, $connection)->insert(
@@ -398,19 +399,23 @@ function seedTables(string $connection): void
             [2, 2, 2,    2, 2, 2, '2021-01-02 14:51:23', '2021-01-02 17:46:31'],
             [3, 3, 3,    3, 3, 3, '2021-01-03 14:51:23', '2021-01-03 17:46:31'],
             [4, 4, NULL, 4, 4, 4, '2021-01-04 14:51:23', '2021-01-04 17:46:31'],
+            [5, 7, NULL, 7, 7, 7, '2021-01-07 14:51:23', '2021-01-07 17:46:31'],
         ]));
 
     Capsule::table('torrent_previewable_files', null, $connection)->insert(
         combineValues(['id', 'torrent_id', 'file_index', 'filepath', 'size', 'progress', 'note', 'created_at', 'updated_at'], [
-            [1, 1,    0, 'test1_file1.mkv', 1024, 200,  'no file properties',                    '2021-01-01 14:51:23', '2021-01-01 17:46:31'],
-            [2, 2,    0, 'test2_file1.mkv', 2048, 870,  NULL,                                    '2021-01-02 14:51:23', '2021-01-02 17:46:31'],
-            [3, 2,    1, 'test2_file2.mkv', 3072, 1000, NULL,                                    '2021-01-02 14:51:23', '2021-01-02 17:46:31'],
-            [4, 3,    0, 'test3_file1.mkv', 5568, 870,  NULL,                                    '2021-01-03 14:51:23', '2021-01-03 17:46:31'],
-            [5, 4,    0, 'test4_file1.mkv', 4096, 0,    NULL,                                    '2021-01-04 14:51:23', '2021-01-04 17:46:31'],
-            [6, 5,    0, 'test5_file1.mkv', 2048, 999,  NULL,                                    '2021-01-05 14:51:23', '2021-01-05 17:46:31'],
-            [7, 5,    1, 'test5_file2.mkv', 2560, 890,  'for tst_BaseModel::remove()/destroy()', '2021-01-02 14:55:23', '2021-01-02 17:47:31'],
-            [8, 5,    2, 'test5_file3.mkv', 2570, 896,  'for tst_BaseModel::destroy()',          '2021-01-02 14:56:23', '2021-01-02 17:48:31'],
-            [9, NULL, 0, 'test0_file0.mkv', 1440, 420,  'no torrent parent model',               '2021-01-06 14:57:23', '2021-01-06 17:49:31'],
+            [ 1, 1,    0, 'test1_file1.mkv', 1024, 200,  'no file properties',                    '2021-01-01 14:51:23', '2021-01-01 17:46:31'],
+            [ 2, 2,    0, 'test2_file1.mkv', 2048, 870,  NULL,                                    '2021-01-02 14:51:23', '2021-01-02 17:46:31'],
+            [ 3, 2,    1, 'test2_file2.mkv', 3072, 1000, NULL,                                    '2021-01-02 14:51:23', '2021-01-02 17:46:31'],
+            [ 4, 3,    0, 'test3_file1.mkv', 5568, 870,  NULL,                                    '2021-01-03 14:51:23', '2021-01-03 17:46:31'],
+            [ 5, 4,    0, 'test4_file1.mkv', 4096, 0,    NULL,                                    '2021-01-04 14:51:23', '2021-01-04 17:46:31'],
+            [ 6, 5,    0, 'test5_file1.mkv', 2048, 999,  NULL,                                    '2021-01-05 14:51:23', '2021-01-05 17:46:31'],
+            [ 7, 5,    1, 'test5_file2.mkv', 2560, 890,  'for tst_BaseModel::remove()/destroy()', '2021-01-02 14:55:23', '2021-01-02 17:47:31'],
+            [ 8, 5,    2, 'test5_file3.mkv', 2570, 896,  'for tst_BaseModel::destroy()',          '2021-01-02 14:56:23', '2021-01-02 17:48:31'],
+            [ 9, NULL, 0, 'test0_file0.mkv', 1440, 420,  'no torrent parent model',               '2021-01-06 14:57:23', '2021-01-06 17:49:31'],
+            [10, 7,    0, 'test7_file1.mkv', 4562, 512,  'for serialization',                     '2021-01-10 14:51:23', '2021-01-10 17:46:31'],
+            [11, 7,    1, 'test7_file2.mkv', 2567, 256,  'for serialization',                     '2021-01-11 14:51:23', '2021-01-11 17:46:31'],
+            [12, 7,    2, 'test7_file3.mkv', 4279, 768,  'for serialization',                     '2021-01-12 14:51:23', '2021-01-12 17:46:31'],
         ]));
 
     Capsule::table('torrent_previewable_file_properties', null, $connection)->insert(
@@ -506,9 +511,9 @@ function fixPostgresSequences(): void
         'users_id_seq'                               => 6,
         'roles_id_seq'                               => 4,
         'user_phones_id_seq'                         => 4,
-        'torrents_id_seq'                            => 7,
-        'torrent_peers_id_seq'                       => 5,
-        'torrent_previewable_files_id_seq'           => 10,
+        'torrents_id_seq'                            => 8,
+        'torrent_peers_id_seq'                       => 6,
+        'torrent_previewable_files_id_seq'           => 13,
         'torrent_previewable_file_properties_id_seq' => 6,
         'file_property_properties_id_seq'            => 9,
         'torrent_tags_id_seq'                        => 6,

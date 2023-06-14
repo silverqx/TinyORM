@@ -1036,7 +1036,7 @@ void tst_Model_Connection_Independent::pluck() const
         auto result = Torrent::orderBy(NAME)->pluck(NAME);
 
         QVector<QVariant> expected {
-            "test1", "test2", "test3", "test4", "test5", "test6",
+            "test1", "test2", "test3", "test4", "test5", "test6", "test7",
         };
         QCOMPARE(result, expected);
     }
@@ -1046,7 +1046,7 @@ void tst_Model_Connection_Independent::pluck() const
 
         std::map<quint64, QVariant> expected {
             {1, "test1"}, {2, "test2"}, {3, "test3"}, {4, "test4"},
-            {5, "test5"}, {6, "test6"},
+            {5, "test5"}, {6, "test6"}, {7, "test7"},
         };
         QCOMPARE(result, expected);
     }
@@ -1056,7 +1056,7 @@ void tst_Model_Connection_Independent::pluck() const
 
         std::map<QString, QVariant> expected {
             {"test1", 11}, {"test2", 12}, {"test3", 13}, {"test4", 14},
-            {"test5", 15}, {"test6", 16},
+            {"test5", 15}, {"test6", 16}, {"test7", 17},
         };
         QCOMPARE(result, expected);
     }
@@ -1095,7 +1095,7 @@ void tst_Model_Connection_Independent::pluck_QualifiedColumnOrKey() const
         auto result = Torrent::orderBy(NAME)->pluck("torrents.name");
 
         QVector<QVariant> expected {
-            "test1", "test2", "test3", "test4", "test5", "test6",
+            "test1", "test2", "test3", "test4", "test5", "test6", "test7",
         };
         QCOMPARE(result, expected);
     }
@@ -1105,7 +1105,7 @@ void tst_Model_Connection_Independent::pluck_QualifiedColumnOrKey() const
 
         std::map<quint64, QVariant> expected {
             {1, "test1"}, {2, "test2"}, {3, "test3"}, {4, "test4"},
-            {5, "test5"}, {6, "test6"},
+            {5, "test5"}, {6, "test6"}, {7, "test7"},
         };
         QCOMPARE(result, expected);
     }
@@ -1114,7 +1114,7 @@ void tst_Model_Connection_Independent::pluck_QualifiedColumnOrKey() const
         auto result = Torrent::orderBy("name_alt")->pluck("name as name_alt");
 
         QVector<QVariant> expected {
-            "test1", "test2", "test3", "test4", "test5", "test6",
+            "test1", "test2", "test3", "test4", "test5", "test6", "test7",
         };
         QCOMPARE(result, expected);
     }
@@ -1124,7 +1124,7 @@ void tst_Model_Connection_Independent::pluck_QualifiedColumnOrKey() const
 
         std::map<quint64, QVariant> expected {
             {1, "test1"}, {2, "test2"}, {3, "test3"}, {4, "test4"},
-            {5, "test5"}, {6, "test6"},
+            {5, "test5"}, {6, "test6"}, {7, "test7"},
         };
         QCOMPARE(result, expected);
     }
@@ -1134,7 +1134,7 @@ void tst_Model_Connection_Independent::pluck_QualifiedColumnOrKey() const
 
         std::map<quint64, QVariant> expected {
             {1, "test1"}, {2, "test2"}, {3, "test3"}, {4, "test4"},
-            {5, "test5"}, {6, "test6"},
+            {5, "test5"}, {6, "test6"}, {7, "test7"},
         };
         QCOMPARE(result, expected);
     }
@@ -1153,6 +1153,7 @@ void tst_Model_Connection_Independent::pluck_With_u_dates() const
             QDateTime({2020, 8, 4}, {20, 11, 10}, Qt::UTC),
             QDateTime({2020, 8, 5}, {20, 11, 10}, Qt::UTC),
             QDateTime({2020, 8, 6}, {20, 11, 10}, Qt::UTC),
+            QDateTime({2020, 8, 7}, {20, 11, 10}, Qt::UTC),
         };
         QCOMPARE(result, expected);
     }
@@ -1167,6 +1168,7 @@ void tst_Model_Connection_Independent::pluck_With_u_dates() const
             {4, QDateTime({2020, 8, 4}, {20, 11, 10}, Qt::UTC)},
             {5, QDateTime({2020, 8, 5}, {20, 11, 10}, Qt::UTC)},
             {6, QDateTime({2020, 8, 6}, {20, 11, 10}, Qt::UTC)},
+            {7, QDateTime({2020, 8, 7}, {20, 11, 10}, Qt::UTC)},
         };
         QCOMPARE(result, expected);
     }
@@ -1181,6 +1183,7 @@ void tst_Model_Connection_Independent::pluck_With_u_dates() const
             {QDateTime({2020, 8, 4}, {20, 11, 10}, Qt::UTC), 4},
             {QDateTime({2020, 8, 5}, {20, 11, 10}, Qt::UTC), 5},
             {QDateTime({2020, 8, 6}, {20, 11, 10}, Qt::UTC), 6},
+            {QDateTime({2020, 8, 7}, {20, 11, 10}, Qt::UTC), 7},
         };
         QCOMPARE(result, expected);
     }
@@ -1215,6 +1218,7 @@ void tst_Model_Connection_Independent::pluck_QualifiedColumnOrKey_With_u_dates()
             QDateTime({2020, 8, 4}, {20, 11, 10}, Qt::UTC),
             QDateTime({2020, 8, 5}, {20, 11, 10}, Qt::UTC),
             QDateTime({2020, 8, 6}, {20, 11, 10}, Qt::UTC),
+            QDateTime({2020, 8, 7}, {20, 11, 10}, Qt::UTC),
         };
         QCOMPARE(result, expected);
     }
@@ -1229,6 +1233,7 @@ void tst_Model_Connection_Independent::pluck_QualifiedColumnOrKey_With_u_dates()
             {4, QDateTime({2020, 8, 4}, {20, 11, 10}, Qt::UTC)},
             {5, QDateTime({2020, 8, 5}, {20, 11, 10}, Qt::UTC)},
             {6, QDateTime({2020, 8, 6}, {20, 11, 10}, Qt::UTC)},
+            {7, QDateTime({2020, 8, 7}, {20, 11, 10}, Qt::UTC)},
         };
         QCOMPARE(result, expected);
     }
@@ -1243,6 +1248,7 @@ void tst_Model_Connection_Independent::pluck_QualifiedColumnOrKey_With_u_dates()
             QDateTime({2020, 8, 4}, {20, 11, 10}, Qt::UTC),
             QDateTime({2020, 8, 5}, {20, 11, 10}, Qt::UTC),
             QDateTime({2020, 8, 6}, {20, 11, 10}, Qt::UTC),
+            QDateTime({2020, 8, 7}, {20, 11, 10}, Qt::UTC),
         };
         QCOMPARE(result, expected);
     }
@@ -1257,6 +1263,7 @@ void tst_Model_Connection_Independent::pluck_QualifiedColumnOrKey_With_u_dates()
             {4, QDateTime({2020, 8, 4}, {20, 11, 10}, Qt::UTC)},
             {5, QDateTime({2020, 8, 5}, {20, 11, 10}, Qt::UTC)},
             {6, QDateTime({2020, 8, 6}, {20, 11, 10}, Qt::UTC)},
+            {7, QDateTime({2020, 8, 7}, {20, 11, 10}, Qt::UTC)},
         };
         QCOMPARE(result, expected);
     }
@@ -1271,6 +1278,7 @@ void tst_Model_Connection_Independent::pluck_QualifiedColumnOrKey_With_u_dates()
             {4, QDateTime({2020, 8, 4}, {20, 11, 10}, Qt::UTC)},
             {5, QDateTime({2020, 8, 5}, {20, 11, 10}, Qt::UTC)},
             {6, QDateTime({2020, 8, 6}, {20, 11, 10}, Qt::UTC)},
+            {7, QDateTime({2020, 8, 7}, {20, 11, 10}, Qt::UTC)},
         };
         QCOMPARE(result, expected);
     }

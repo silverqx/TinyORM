@@ -2211,7 +2211,7 @@ void tst_Model_Relations::has_Basic_QString_OnHasMany() const
 
     auto torrents = Torrent::has("torrentFiles")->get();
 
-    const QVector<QVariant> expectedIds {1, 2, 3, 4, 5};
+    const QVector<QVariant> expectedIds {1, 2, 3, 4, 5, 7};
 
     for (const auto &torrent : torrents)
         QVERIFY(expectedIds.contains(torrent.getKey()));
@@ -2237,7 +2237,7 @@ void tst_Model_Relations::has_Basic_UniquePtr_OnHasMany() const
     auto torrents = Torrent::has<TorrentPreviewableFile, void>(std::move(relation))
                     ->get();
 
-    const QVector<QVariant> expectedIds {1, 2, 3, 4, 5};
+    const QVector<QVariant> expectedIds {1, 2, 3, 4, 5, 7};
 
     for (const auto &torrent : torrents)
         QVERIFY(expectedIds.contains(torrent.getKey()));
@@ -2252,7 +2252,7 @@ void tst_Model_Relations::has_Basic_MethodPointer_OnHasMany() const
     auto torrents = Torrent::has<TorrentPreviewableFile>(&Torrent::torrentFiles)
                     ->get();
 
-    const QVector<QVariant> expectedIds {1, 2, 3, 4, 5};
+    const QVector<QVariant> expectedIds {1, 2, 3, 4, 5, 7};
 
     for (const auto &torrent : torrents)
         QVERIFY(expectedIds.contains(torrent.getKey()));
@@ -2267,7 +2267,7 @@ void tst_Model_Relations::has_Count_QString_OnHasMany() const
     auto torrents = Torrent::has("torrentFiles", ">", 1)
                     ->get();
 
-    const QVector<QVariant> expectedIds {2, 5};
+    const QVector<QVariant> expectedIds {2, 5, 7};
 
     for (const auto &torrent : torrents)
         QVERIFY(expectedIds.contains(torrent.getKey()));
@@ -2294,7 +2294,7 @@ void tst_Model_Relations::has_Count_UniquePtr_OnHasMany() const
                                                                ">=", 2)
                     ->get();
 
-    const QVector<QVariant> expectedIds {2, 5};
+    const QVector<QVariant> expectedIds {2, 5, 7};
 
     for (const auto &torrent : torrents)
         QVERIFY(expectedIds.contains(torrent.getKey()));
@@ -2309,7 +2309,7 @@ void tst_Model_Relations::has_Count_MethodPointer_OnHasMany() const
     auto torrents = Torrent::has<TorrentPreviewableFile>(&Torrent::torrentFiles, ">=", 2)
                     ->get();
 
-    const QVector<QVariant> expectedIds {2, 5};
+    const QVector<QVariant> expectedIds {2, 5, 7};
 
     for (const auto &torrent : torrents)
         QVERIFY(expectedIds.contains(torrent.getKey()));
@@ -2329,7 +2329,7 @@ void tst_Model_Relations::whereHas_Basic_QString_QueryBuilder_OnHasMany() const
     })
             ->get();
 
-    const QVector<QVariant> expectedIds {2, 5};
+    const QVector<QVariant> expectedIds {2, 5, 7};
 
     for (const auto &torrent : torrents)
         QVERIFY(expectedIds.contains(torrent.getKey()));
@@ -2351,7 +2351,7 @@ void tst_Model_Relations::whereHas_Basic_QString_TinyBuilder_OnHasMany() const
     })
             ->get();
 
-    const QVector<QVariant> expectedIds {2, 5};
+    const QVector<QVariant> expectedIds {2, 5, 7};
 
     for (const auto &torrent : torrents)
         QVERIFY(expectedIds.contains(torrent.getKey()));

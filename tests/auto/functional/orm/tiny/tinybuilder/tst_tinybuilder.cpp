@@ -76,11 +76,11 @@ void tst_TinyBuilder::get() const
 
     auto torrents = createQuery<Torrent>()->get();
 
-    QCOMPARE(torrents.size(), 6);
+    QCOMPARE(torrents.size(), 7);
 
     const std::unordered_map<quint64, QString> expectedIdNames {
-        {1, "test1"}, {2, "test2"}, {3, "test3"},
-        {4, "test4"}, {5, "test5"}, {6, "test6"},
+        {1, "test1"}, {2, "test2"}, {3, "test3"}, {4, "test4"},
+        {5, "test5"}, {6, "test6"}, {7, "test7"},
     };
     for (const auto &torrent : torrents) {
         const auto torrentId = torrent[ID].value<quint64>();

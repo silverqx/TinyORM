@@ -296,7 +296,7 @@ void tst_QueryBuilder::pluck() const
         auto result = builder->from("torrents").orderBy(NAME).pluck(NAME);
 
         QVector<QVariant> expected {
-            "test1", "test2", "test3", "test4", "test5", "test6",
+            "test1", "test2", "test3", "test4", "test5", "test6", "test7",
         };
         QCOMPARE(result, expected);
     }
@@ -308,7 +308,7 @@ void tst_QueryBuilder::pluck() const
 
         std::map<quint64, QVariant> expected {
             {1, "test1"}, {2, "test2"}, {3, "test3"}, {4, "test4"},
-            {5, "test5"}, {6, "test6"},
+            {5, "test5"}, {6, "test6"}, {7, "test7"},
         };
         QCOMPARE(result, expected);
     }
@@ -320,7 +320,7 @@ void tst_QueryBuilder::pluck() const
 
         std::map<QString, QVariant> expected {
             {"test1", 11}, {"test2", 12}, {"test3", 13}, {"test4", 14},
-            {"test5", 15}, {"test6", 16},
+            {"test5", 15}, {"test6", 16}, {"test7", 17},
         };
         QCOMPARE(result, expected);
     }
@@ -372,7 +372,7 @@ void tst_QueryBuilder::pluck_QualifiedColumnOrKey() const
         auto result = builder->from("torrents").orderBy(NAME).pluck("torrents.name");
 
         QVector<QVariant> expected {
-            "test1", "test2", "test3", "test4", "test5", "test6",
+            "test1", "test2", "test3", "test4", "test5", "test6", "test7",
         };
         QCOMPARE(result, expected);
     }
@@ -385,7 +385,7 @@ void tst_QueryBuilder::pluck_QualifiedColumnOrKey() const
 
         std::map<quint64, QVariant> expected {
             {1, "test1"}, {2, "test2"}, {3, "test3"}, {4, "test4"},
-            {5, "test5"}, {6, "test6"},
+            {5, "test5"}, {6, "test6"}, {7, "test7"},
         };
         QCOMPARE(result, expected);
     }
@@ -397,7 +397,7 @@ void tst_QueryBuilder::pluck_QualifiedColumnOrKey() const
                       .orderBy("name_alt").pluck("name as name_alt");
 
         QVector<QVariant> expected {
-            "test1", "test2", "test3", "test4", "test5", "test6",
+            "test1", "test2", "test3", "test4", "test5", "test6", "test7",
         };
         QCOMPARE(result, expected);
     }
@@ -410,7 +410,7 @@ void tst_QueryBuilder::pluck_QualifiedColumnOrKey() const
 
         std::map<quint64, QVariant> expected {
             {1, "test1"}, {2, "test2"}, {3, "test3"}, {4, "test4"},
-            {5, "test5"}, {6, "test6"},
+            {5, "test5"}, {6, "test6"}, {7, "test7"},
         };
         QCOMPARE(result, expected);
     }
@@ -423,7 +423,7 @@ void tst_QueryBuilder::pluck_QualifiedColumnOrKey() const
 
         std::map<quint64, QVariant> expected {
             {1, "test1"}, {2, "test2"}, {3, "test3"}, {4, "test4"},
-            {5, "test5"}, {6, "test6"},
+            {5, "test5"}, {6, "test6"}, {7, "test7"},
         };
         QCOMPARE(result, expected);
     }
@@ -439,7 +439,7 @@ void tst_QueryBuilder::implode() const
 
         auto result = builder->from("torrents").orderBy(NAME).implode(NAME);
 
-        QCOMPARE(result, QString {"test1test2test3test4test5test6"});
+        QCOMPARE(result, QString {"test1test2test3test4test5test6test7"});
     }
     // implode with the ', ' glue
     {
@@ -447,7 +447,7 @@ void tst_QueryBuilder::implode() const
 
         auto result = builder->from("torrents").orderBy(NAME).implode(NAME, COMMA);
 
-        QCOMPARE(result, QString {"test1, test2, test3, test4, test5, test6"});
+        QCOMPARE(result, QString {"test1, test2, test3, test4, test5, test6, test7"});
     }
 }
 
@@ -487,7 +487,7 @@ void tst_QueryBuilder::implode_QualifiedColumnOrKey() const
 
         auto result = builder->from("torrents").orderBy(NAME).implode("torrents.name");
 
-        QCOMPARE(result, QString {"test1test2test3test4test5test6"});
+        QCOMPARE(result, QString {"test1test2test3test4test5test6test7"});
     }
     // implode with the ', ' glue
     {
@@ -496,7 +496,7 @@ void tst_QueryBuilder::implode_QualifiedColumnOrKey() const
         auto result = builder->from("torrents").orderBy(NAME)
                       .implode("torrents.name", COMMA);
 
-        QCOMPARE(result, QString {"test1, test2, test3, test4, test5, test6"});
+        QCOMPARE(result, QString {"test1, test2, test3, test4, test5, test6, test7"});
     }
 }
 
@@ -1323,7 +1323,7 @@ void tst_QueryBuilder::count() const
         auto count = builder->from("torrent_peers").count();
 
         QCOMPARE(typeid (count), typeid (quint64));
-        QCOMPARE(count, static_cast<quint64>(4));
+        QCOMPARE(count, static_cast<quint64>(5));
     }
 
     // Should exclude columns with NULL values
@@ -1370,7 +1370,7 @@ void tst_QueryBuilder::sum_Aggregate() const
 
     auto sum = builder->from("torrent_peers").sum("total_seeds");
 
-    QCOMPARE(sum, QVariant(10));
+    QCOMPARE(sum, QVariant(17));
 }
 
 void tst_QueryBuilder::sum_Aggregate_ShouldReturnZeroInsteadOfNull() const

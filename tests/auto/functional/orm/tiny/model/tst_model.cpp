@@ -498,11 +498,11 @@ void tst_Model::all() const
 
     auto torrents = Torrent::all();
 
-    QCOMPARE(torrents.size(), 6);
+    QCOMPARE(torrents.size(), 7);
 
     const std::unordered_map<quint64, QString> expectedIdNames {
-        {1, "test1"}, {2, "test2"}, {3, "test3"},
-        {4, "test4"}, {5, "test5"}, {6, "test6"},
+        {1, "test1"}, {2, "test2"}, {3, "test3"}, {4, "test4"},
+        {5, "test5"}, {6, "test6"}, {7, "test7"},
     };
     for (const auto &torrent : torrents) {
         const auto torrentId = torrent[ID].value<quint64>();
@@ -587,9 +587,9 @@ void tst_Model::where() const
     {
         auto torrents = Torrent::where(ID, ">=", 3)->get();
 
-        QCOMPARE(torrents.size(), 4);
+        QCOMPARE(torrents.size(), 5);
 
-        const QVector<QVariant> expectedIds {3, 4, 5, 6};
+        const QVector<QVariant> expectedIds {3, 4, 5, 6, 7};
         for (const auto &torrent : torrents)
             QVERIFY(expectedIds.contains(torrent.getKey()));
     }
@@ -636,10 +636,10 @@ void tst_Model::where_WithVector() const
     }
     {
         auto torrents = Torrent::where({{ID, 3, ">="}})->get();
-        QCOMPARE(torrents.size(), 4);
+        QCOMPARE(torrents.size(), 5);
 
         const std::unordered_map<quint64, QString> expectedIdNames {
-            {3, "test3"}, {4, "test4"}, {5, "test5"}, {6, "test6"},
+            {3, "test3"}, {4, "test4"}, {5, "test5"}, {6, "test6"}, {7, "test7"},
         };
         for (const auto &torrent : torrents) {
             const auto torrentId = torrent[ID].value<quint64>();
@@ -695,7 +695,7 @@ void tst_Model::whereExists() const
             .orderBy(ID)
             .pluck(ID);
 
-        QVector<QVariant> expectedIds {1, 2, 3, 4};
+        QVector<QVariant> expectedIds {1, 2, 3, 4, 5};
 
         QCOMPARE(actualIds, expectedIds);
     }
@@ -710,7 +710,7 @@ void tst_Model::whereExists() const
                                .orderBy(ID)
                                .pluck(ID);
 
-        QVector<QVariant> expectedIds {1, 2, 3, 4};
+        QVector<QVariant> expectedIds {1, 2, 3, 4, 5};
 
         QCOMPARE(actualIds, expectedIds);
     }
@@ -728,7 +728,7 @@ void tst_Model::whereExists() const
                                .orderBy(ID)
                                .pluck(ID);
 
-        QVector<QVariant> expectedIds {1, 2, 3, 4};
+        QVector<QVariant> expectedIds {1, 2, 3, 4, 5};
 
         QCOMPARE(actualIds, expectedIds);
     }
