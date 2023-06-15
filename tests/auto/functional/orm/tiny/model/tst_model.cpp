@@ -695,7 +695,7 @@ void tst_Model::whereExists() const
             .orderBy(ID)
             .pluck(ID);
 
-        QVector<QVariant> expectedIds {1, 2, 3, 4, 5};
+        QVector<QVariant> expectedIds {1, 2, 3, 4, 5, 6};
 
         QCOMPARE(actualIds, expectedIds);
     }
@@ -710,7 +710,7 @@ void tst_Model::whereExists() const
                                .orderBy(ID)
                                .pluck(ID);
 
-        QVector<QVariant> expectedIds {1, 2, 3, 4, 5};
+        QVector<QVariant> expectedIds {1, 2, 3, 4, 5, 6};
 
         QCOMPARE(actualIds, expectedIds);
     }
@@ -728,7 +728,7 @@ void tst_Model::whereExists() const
                                .orderBy(ID)
                                .pluck(ID);
 
-        QVector<QVariant> expectedIds {1, 2, 3, 4, 5};
+        QVector<QVariant> expectedIds {1, 2, 3, 4, 5, 6};
 
         QCOMPARE(actualIds, expectedIds);
     }

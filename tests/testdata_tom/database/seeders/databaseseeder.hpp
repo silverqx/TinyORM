@@ -55,11 +55,12 @@ namespace Seeders
 
             DB::table("torrent_peers")->insert({ID, "torrent_id", "seeds", "total_seeds", "leechers", "total_leechers", CREATED_AT, UPDATED_AT},
             {
-                {1, 1, 1,                  1, 1, 1, "2021-01-01 14:51:23", "2021-01-01 17:46:31"},
-                {2, 2, 2,                  2, 2, 2, "2021-01-02 14:51:23", "2021-01-02 17:46:31"},
-                {3, 3, 3,                  3, 3, 3, "2021-01-03 14:51:23", "2021-01-03 17:46:31"},
-                {4, 4, NullVariant::Int(), 4, 4, 4, "2021-01-04 14:51:23", "2021-01-04 17:46:31"},
-                {5, 7, NullVariant::Int(), 7, 7, 7, "2021-01-07 14:51:23", "2021-01-07 17:46:31"},
+                {1, 1,                        1,                  1, 1, 1, "2021-01-01 14:51:23", "2021-01-01 17:46:31"},
+                {2, 2,                        2,                  2, 2, 2, "2021-01-02 14:51:23", "2021-01-02 17:46:31"},
+                {3, 3,                        3,                  3, 3, 3, "2021-01-03 14:51:23", "2021-01-03 17:46:31"},
+                {4, 4,                        NullVariant::Int(), 4, 4, 4, "2021-01-04 14:51:23", "2021-01-04 17:46:31"},
+                {5, 7,                        NullVariant::Int(), 7, 7, 7, "2021-01-07 14:51:23", "2021-01-07 17:46:31"},
+                {6, NullVariant::ULongLong(), NullVariant::Int(), 6, 6, 6, "2021-01-06 14:51:23", "2021-01-06 17:46:31"},
             });
 
             DB::table("torrent_previewable_files")->insert({ID, "torrent_id", "file_index", "filepath", SIZE_, "progress", NOTE, CREATED_AT, UPDATED_AT},
@@ -191,7 +192,7 @@ namespace Seeders
             {QStringLiteral("roles_id_seq"),                                4},
             {QStringLiteral("user_phones_id_seq"),                          4},
             {QStringLiteral("torrents_id_seq"),                             8},
-            {QStringLiteral("torrent_peers_id_seq"),                        6},
+            {QStringLiteral("torrent_peers_id_seq"),                        7},
             {QStringLiteral("torrent_previewable_files_id_seq"),           13},
             {QStringLiteral("torrent_previewable_file_properties_id_seq"),  6},
             {QStringLiteral("file_property_properties_id_seq"),             9},

@@ -1323,7 +1323,7 @@ void tst_QueryBuilder::count() const
         auto count = builder->from("torrent_peers").count();
 
         QCOMPARE(typeid (count), typeid (quint64));
-        QCOMPARE(count, static_cast<quint64>(5));
+        QCOMPARE(count, static_cast<quint64>(6));
     }
 
     // Should exclude columns with NULL values
@@ -1370,7 +1370,7 @@ void tst_QueryBuilder::sum_Aggregate() const
 
     auto sum = builder->from("torrent_peers").sum("total_seeds");
 
-    QCOMPARE(sum, QVariant(17));
+    QCOMPARE(sum, QVariant(23));
 }
 
 void tst_QueryBuilder::sum_Aggregate_ShouldReturnZeroInsteadOfNull() const

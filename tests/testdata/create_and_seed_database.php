@@ -208,7 +208,8 @@ function createTables(string $connection): void
         $table->integer('total_leechers');
         $table->timestamps();
 
-        $table->foreign('torrent_id')->references('id')->on('torrents')
+        $table->foreign('torrent_id')->nullable()
+            ->references('id')->on('torrents')
             ->cascadeOnUpdate()->cascadeOnDelete();
     });
 
@@ -395,11 +396,12 @@ function seedTables(string $connection): void
 
     Capsule::table('torrent_peers', null, $connection)->insert(
         combineValues(['id', 'torrent_id', 'seeds', 'total_seeds', 'leechers', 'total_leechers', 'created_at', 'updated_at'], [
-            [1, 1, 1,    1, 1, 1, '2021-01-01 14:51:23', '2021-01-01 17:46:31'],
-            [2, 2, 2,    2, 2, 2, '2021-01-02 14:51:23', '2021-01-02 17:46:31'],
-            [3, 3, 3,    3, 3, 3, '2021-01-03 14:51:23', '2021-01-03 17:46:31'],
-            [4, 4, NULL, 4, 4, 4, '2021-01-04 14:51:23', '2021-01-04 17:46:31'],
-            [5, 7, NULL, 7, 7, 7, '2021-01-07 14:51:23', '2021-01-07 17:46:31'],
+            [1, 1,    1,    1, 1, 1, '2021-01-01 14:51:23', '2021-01-01 17:46:31'],
+            [2, 2,    2,    2, 2, 2, '2021-01-02 14:51:23', '2021-01-02 17:46:31'],
+            [3, 3,    3,    3, 3, 3, '2021-01-03 14:51:23', '2021-01-03 17:46:31'],
+            [4, 4,    NULL, 4, 4, 4, '2021-01-04 14:51:23', '2021-01-04 17:46:31'],
+            [5, 7,    NULL, 7, 7, 7, '2021-01-07 14:51:23', '2021-01-07 17:46:31'],
+            [6, NULL, NULL, 6, 6, 6, '2021-01-06 14:51:23', '2021-01-06 17:46:31'],
         ]));
 
     Capsule::table('torrent_previewable_files', null, $connection)->insert(
@@ -515,7 +517,7 @@ function fixPostgresSequences(): void
         'roles_id_seq'                               => 4,
         'user_phones_id_seq'                         => 4,
         'torrents_id_seq'                            => 8,
-        'torrent_peers_id_seq'                       => 6,
+        'torrent_peers_id_seq'                       => 7,
         'torrent_previewable_files_id_seq'           => 13,
         'torrent_previewable_file_properties_id_seq' => 6,
         'file_property_properties_id_seq'            => 9,

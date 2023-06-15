@@ -16,7 +16,8 @@ namespace Migrations
             {
                 table.id();
 
-                table.foreignId("torrent_id").constrained().cascadeOnDelete().cascadeOnUpdate();
+                table.foreignId("torrent_id").nullable().constrained()
+                     .cascadeOnDelete().cascadeOnUpdate();
 
                 table.integer("seeds").nullable();
                 table.integer("total_seeds").nullable();
