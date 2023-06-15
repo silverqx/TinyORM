@@ -55,7 +55,7 @@ namespace Private
     class NotNull
     {
     public:
-        static_assert(Private::is_comparable_to_nullptr<T>::value,
+        static_assert (Private::is_comparable_to_nullptr<T>::value,
                 "The NotNull T template argument cannot be the nullptr.");
 
         template<typename U,
