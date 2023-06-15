@@ -226,7 +226,7 @@ namespace Orm::Tiny::Concerns
         /*! Determine whether the QDateTime time zone should be converted. */
         inline bool isConvertingTimeZone() const;
 
-        /* Serialization */
+        /* Serialization - Attributes */
         /*! Convert the model's attributes to the map. */
         QVariantMap attributesToMap() const;
         /*! Convert the model's attributes to the vector. */
@@ -311,7 +311,7 @@ namespace Orm::Tiny::Concerns
         inline static QVariant
         roundDecimals(const QVariant &value, const QVariant &decimals);
 
-        /* Serialization */
+        /* Serialization - Attributes */
         /*! Get an attributes map of all mappable attributes. */
         inline QVariantMap getMappableAttributes() const;
         /*! Get an attributes vector of all vectorable attributes. */
@@ -1135,7 +1135,7 @@ namespace Orm::Tiny::Concerns
         return *m_isConvertingTimeZone;
     }
 
-    /* Serialization */
+    /* Serialization - Attributes */
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     QVariantMap
@@ -1743,7 +1743,7 @@ namespace Orm::Tiny::Concerns
                     multiplier);
     }
 
-    /* Serialization */
+    /* Serialization - Attributes */
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     QVariantMap
