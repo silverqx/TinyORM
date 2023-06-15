@@ -277,9 +277,9 @@ namespace Orm::Tiny
 
         /* Serialization */
         /*! Convert the model instance to the map of attributes and relations. */
-        inline QVariantMap toMap() const;
+        QVariantMap toMap();
         /*! Convert the model instance to the vector of attributes and relations. */
-        inline QVector<AttributeItem> toVector() const;
+        QVector<AttributeItem> toVector();
 
         /* Getters / Setters */
         /*! Get the current connection name for the model. */
@@ -1300,16 +1300,24 @@ namespace Orm::Tiny
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     QVariantMap
-    Model<Derived, AllRelations...>::toMap() const
+    Model<Derived, AllRelations...>::toMap() // can't be const because of relation store
     {
-        return this->attributesToMap();
+        auto attributes = this->attributesToMap();
+
+        attributes.insert(this->template serializeRelations<QVariantMap>());
+
+        return attributes;
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     QVector<AttributeItem>
-    Model<Derived, AllRelations...>::toVector() const
+    Model<Derived, AllRelations...>::toVector() // can't be const because of relation store
     {
-        return this->attributesToVector();
+        auto attributes = this->attributesToVector();
+
+        attributes << this->template serializeRelations<QVector<AttributeItem>>();
+
+        return attributes;
     }
 
     /* Getters / Setters */

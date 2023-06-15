@@ -25,6 +25,7 @@ TINY_SYSTEM_HEADER
 #include "orm/tiny/relations/belongstomany.hpp"
 #include "orm/tiny/relations/hasmany.hpp"
 #include "orm/tiny/relations/hasone.hpp"
+#include "orm/utils/string.hpp"
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
@@ -52,6 +53,8 @@ namespace Concerns
         // To access private queriesRelationshipsWithVisitor()
         friend Concerns::QueriesRelationships<Derived>;
 
+        /*! Alias for the string utils. */
+        using StringUtils = Orm::Utils::String;
         /*! Alias for the type utils. */
         using TypeUtils = Orm::Utils::Type;
 
@@ -159,6 +162,11 @@ namespace Concerns
         inline const QStringList &getTouchedRelations() const;
         /*! Determine if the model touches a given relation. */
         inline bool touches(const QString &relation) const;
+
+        /* Serialization - Relations */
+        /*! Convert the model's relationships to the map or vector. */
+        template<SerializedAttributes C>
+        C serializeRelations();
 
         /* Others */
         /*! Equality comparison operator for the HasRelationships concern. */
@@ -354,6 +362,31 @@ namespace Concerns
                 std::unordered_map<QString, RelationsType<AllRelations...>> &relations,
 #endif
                 const QVector<WithItem> &onlyRelations);
+
+        /* Serialization - Relations */
+        /*! Get an map of all serializable relations. */
+#ifdef TINY_NO_INCOMPLETE_UNORDERED_MAP
+        inline std::map<QString, RelationsType<AllRelations...>> &
+#else
+        inline std::unordered_map<QString, RelationsType<AllRelations...>> &
+#endif
+        getSerializableRelations();
+
+        /*! On the base of alternative held by m_relations decide, which
+            serializeRelation() to execute. */
+        template<typename Related, SerializedAttributes C>
+        void serializeRelationVisited(
+                QString relation, RelationsType<AllRelations...> &models,
+                C &attributes) const;
+
+        /*! Serialize for Many relation types. */
+        template<typename Related, bool isMap>
+        inline static void serializeRelation(QVariant &relationSerialized, // don't remove inline
+                                             ModelsCollection<Related> &models);
+        /*! Serialize for One relation type. */
+        template<typename Related, bool isMap>
+        inline static void serializeRelation(QVariant &relationSerialized, // don't remove inline
+                                             std::optional<Related> &model);
 
         /* Static cast this to a child's instance type (CRTP) */
         TINY_CRTP_MODEL_WITH_BASE_DECLARATIONS
@@ -686,6 +719,32 @@ namespace Concerns
     HasRelationships<Derived, AllRelations...>::touches(const QString &relation) const
     {
         return getTouchedRelations().contains(relation);
+    }
+
+    /* Serialization - Relations */
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    template<SerializedAttributes C>
+    C HasRelationships<Derived, AllRelations...>::serializeRelations()
+    {
+        C attributes;
+
+        for (auto &&[relation, models] : getSerializableRelations()) {
+            Q_ASSERT(!models.valueless_by_exception());
+
+            // Skip belongs-to-many relations, relations with the pivot
+            if (m_pivots.contains(relation))
+                continue;
+
+            // Save model/s to the store to avoid passing variables to the visitor
+            this->createSerializeRelationStore(relation, models, attributes)
+                    .visit(relation);
+
+            // Releases the ownership and destroy the top relation store on the stack
+            this->resetRelationStore();
+        }
+
+        return attributes;
     }
 
     /* Others */
@@ -1280,6 +1339,94 @@ namespace Concerns
 
             m_relations[key] = std::move(itRelation->second);
         }
+    }
+
+    /* Serialization - Relations */
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+#ifdef TINY_NO_INCOMPLETE_UNORDERED_MAP
+    std::map<QString, RelationsType<AllRelations...>> &
+#else
+    std::unordered_map<QString, RelationsType<AllRelations...>> &
+#endif
+    HasRelationships<Derived, AllRelations...>::getSerializableRelations() // can't be const because of relation store
+    {
+        // FEATURE HidesAttributes silverqx
+        return model().getRelations();
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    template<typename Related, SerializedAttributes C>
+    void HasRelationships<Derived, AllRelations...>::serializeRelationVisited(
+            QString relation, RelationsType<AllRelations...> &models,
+            C &attributes) const
+    {
+        QVariant relationSerialized;
+
+        /*! Determine whether the toMap() or toVector() was invoked. */
+        constexpr auto IsMap = std::is_same_v<C, QVariantMap>;
+
+        // Many type relationship
+        if (std::holds_alternative<ModelsCollection<Related>>(models))
+            serializeRelation<Related, IsMap>(
+                        relationSerialized, std::get<ModelsCollection<Related>>(models));
+
+        // One type relationship
+        else if (std::holds_alternative<std::optional<Related>>(models))
+            serializeRelation<Related, IsMap>(
+                        relationSerialized, std::get<std::optional<Related>>(models));
+
+        else
+            Q_UNREACHABLE();
+
+        /* Practically useless because the "if" checks above check all possible
+           cases, but I leave it here anyway. */
+        Q_ASSERT(relationSerialized.isValid());
+
+        /* If the relationships snake-casing is enabled, we will snake case this
+           key so that the relation attribute is snake cased in this returned
+           map to the developers, making this consistent with attributes. */
+        if (Derived::u_snakeAttributes)
+            relation = StringUtils::snake(std::move(relation));
+
+        /* If the relation value has been set, we will set it on this attributes
+           map for returning. If it was not arrayable or null, we'll not set
+           the value on the array because it is some type of invalid value. */
+        if constexpr (IsMap)
+            attributes.insert(relation, relationSerialized);
+        else
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
+            attributes.append({relation, relationSerialized});
+#else
+            attributes.emplace_back(relation, relationSerialized);
+#endif
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    template<typename Related, bool IsMap>
+    void HasRelationships<Derived, AllRelations...>::serializeRelation(
+            QVariant &relationSerialized, ModelsCollection<Related> &models)
+    {
+        if constexpr (IsMap)
+            relationSerialized.setValue(models.toMap());
+        else
+            relationSerialized.setValue(models.toVector());
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    template<typename Related, bool IsMap>
+    void HasRelationships<Derived, AllRelations...>::serializeRelation(
+            QVariant &relationSerialized, std::optional<Related> &model)
+    {
+        if (model.has_value()) {
+            if constexpr (IsMap)
+                relationSerialized.setValue(model->toMap());
+            else
+                relationSerialized.setValue(model->toVector());
+        }
+        // A NULL foreign key
+        else
+            relationSerialized.setValue(nullptr);
     }
 
     /* Static cast this to a child's instance type (CRTP) */

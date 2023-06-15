@@ -30,6 +30,11 @@ namespace Orm::Tiny::Concerns
             std::is_convertible_v<std::invoke_result_t<Method, Derived>,
                                   std::unique_ptr<Relations::IsRelation>>;
 
+    /*! Concept to check the container for serialized model attributes. */
+    template<typename C>
+    concept SerializedAttributes = std::same_as<C, QVariantMap> ||
+                                   std::same_as<C, QVector<AttributeItem>>;
+
     // FUTURE relationstore, cache results, eg. cache Relation instance and return copy of this cached Relation instance, Related parameter can be obtained from cached Relation instance silverqx
     /*! Relation store, handles mapping from a relation name to the Model's relation
         method, also calls visited method with Related parameter when needed. */
@@ -72,6 +77,8 @@ namespace Orm::Tiny::Concerns
             QUERIES_RELATIONSHIPS_QUERY,
             QUERIES_RELATIONSHIPS_TINY,
             QUERIES_RELATIONSHIPS_TINY_NESTED,
+            RELATION_TO_MAP,
+            RELATION_TO_VECTOR,
         };
 
         /* Forward declarations */
@@ -90,6 +97,9 @@ namespace Orm::Tiny::Concerns
         class BelongsToManyRelatedTableStore;
         template<typename Related>
         class QueriesRelationshipsStore;
+        /*! The store for serializing relationship. */
+        template<SerializedAttributes C>
+        class SerializeRelationStore;
 
         /*! Base class for relation stores. */
         class BaseRelationStore
@@ -300,6 +310,40 @@ namespace Orm::Tiny::Concerns
             QStringList *m_relations;
         };
 
+        /*! The store for serializing relationship. */
+        template<SerializedAttributes C>
+        class SerializeRelationStore final : public BaseRelationStore
+        {
+            Q_DISABLE_COPY(SerializeRelationStore)
+
+        public:
+            /*! Constructor. */
+            SerializeRelationStore(
+                    NotNull<HasRelationStore *> hasRelationStore, const QString &relation,
+                    RelationsType<AllRelations...> &models, C &attributes);
+            /*! Virtual destructor. */
+            inline virtual ~SerializeRelationStore() final = default;
+
+            /*! Method called after visitation. */
+            template<RelationshipMethod<Derived> Method>
+            void visited(Method /*unused*/) const;
+
+        private:
+            /*! Store type initializer. */
+            constexpr static RelationStoreType initStoreType();
+
+            /*! Currently served store type, this class can handle two store types. */
+            constexpr static const RelationStoreType STORE_TYPE = initStoreType(); // thread_local not needed
+
+            /*! The name of the relationship to serialize. */
+            NotNull<const QString *> m_relation;
+            /*! Models to serialize, the reference to the relation in the m_relations
+                hash. */
+            NotNull<RelationsType<AllRelations...> *> m_models;
+            /*! The reference to the container that will store serialized attributes. */
+            NotNull<C *> m_attributes;
+        };
+
         /* Factory methods for Relation stores */
         /*! Factory method to create an eager store. */
         template<SameDerivedCollectionModel<Derived> CollectionModel>
@@ -328,6 +372,12 @@ namespace Orm::Tiny::Concerns
                         void(QueriesRelationshipsCallback<Related> &)> &callback,
                 std::optional<std::reference_wrapper<
                         QStringList>> relations = std::nullopt);
+        /*! Factory method to create the store for serializing relationship. */
+        template<SerializedAttributes C>
+        BaseRelationStore &
+        createSerializeRelationStore(
+                const QString &relation, RelationsType<AllRelations...> &models,
+                C &attributes);
 
         /*! Release the ownership and destroy the top relation store on the stack. */
         void resetRelationStore();
@@ -347,6 +397,9 @@ namespace Orm::Tiny::Concerns
         template<typename Related = void>
         const QueriesRelationshipsStore<Related> &
         queriesRelationshipsStore() const;
+        /*! Const reference to the serialize relation store. */
+        template<SerializedAttributes C>
+        const SerializeRelationStore<C> &serializeRelationStore() const;
 
         /*! Type of the template message to generate. */
         enum struct CopyMoveTemplateType
@@ -505,6 +558,8 @@ namespace Orm::Tiny::Concerns
         case RelationStoreType::QUERIES_RELATIONSHIPS_QUERY:
         case RelationStoreType::QUERIES_RELATIONSHIPS_TINY:
         case RelationStoreType::QUERIES_RELATIONSHIPS_TINY_NESTED:
+        case RelationStoreType::RELATION_TO_MAP:
+        case RelationStoreType::RELATION_TO_VECTOR:
         {
             using Related = typename std::invoke_result_t<Method, Derived>
                                         ::element_type::RelatedType;
@@ -523,6 +578,15 @@ namespace Orm::Tiny::Concerns
             case RelationStoreType::QUERIES_RELATIONSHIPS_TINY:
                 static_cast<QueriesRelationshipsStore<Related> *>(this)
                         ->template visited<Related>(method);
+                break;
+
+            case RelationStoreType::RELATION_TO_MAP:
+                static_cast<SerializeRelationStore<QVariantMap> *>(this)->visited(method);
+                break;
+
+            case RelationStoreType::RELATION_TO_VECTOR:
+                static_cast<SerializeRelationStore<QVector<AttributeItem>> *>(this)
+                        ->visited(method);
                 break;
 
             default:
@@ -818,6 +882,56 @@ namespace Orm::Tiny::Concerns
             return RelationStoreType::QUERIES_RELATIONSHIPS_TINY;
     }
 
+    /* SerializeRelationStore */
+
+    /* public */
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    template<SerializedAttributes C>
+    HasRelationStore<Derived, AllRelations...>::SerializeRelationStore<C>
+                                              ::SerializeRelationStore(
+            NotNull<HasRelationStore *> hasRelationStore, const QString &relation,
+            RelationsType<AllRelations...> &models, C &attributes
+    )
+        : BaseRelationStore(hasRelationStore, STORE_TYPE)
+        , m_relation(&relation)
+        , m_models(&models)
+        , m_attributes(&attributes)
+    {}
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    template<SerializedAttributes C>
+    template<RelationshipMethod<Derived> Method>
+    void HasRelationStore<Derived, AllRelations...>::SerializeRelationStore<C>::visited(
+            const Method /*unused*/) const
+    {
+        using Related = typename std::invoke_result_t<Method, Derived>
+                                    ::element_type::RelatedType;
+
+        this->m_hasRelationStore->basemodel()
+                .template serializeRelationVisited<Related, C>(
+                    *m_relation, *m_models, *m_attributes);
+    }
+
+    /* private */
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    template<SerializedAttributes C>
+    constexpr typename
+    HasRelationStore<Derived, AllRelations...>::RelationStoreType
+    HasRelationStore<Derived, AllRelations...>::SerializeRelationStore<C>
+                                              ::initStoreType()
+    {
+        if constexpr (std::is_same_v<C, QVariantMap>)
+            return RelationStoreType::RELATION_TO_MAP;
+
+        else if constexpr (std::is_same_v<C, QVector<AttributeItem>>)
+            return RelationStoreType::RELATION_TO_VECTOR;
+
+        else
+            Q_UNREACHABLE();
+    }
+
     /* HasRelationStore */
 
     /* private */
@@ -894,6 +1008,19 @@ namespace Orm::Tiny::Concerns
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
+    template<SerializedAttributes C>
+    typename HasRelationStore<Derived, AllRelations...>::BaseRelationStore &
+    HasRelationStore<Derived, AllRelations...>::createSerializeRelationStore(
+            const QString &relation, RelationsType<AllRelations...> &models,
+            C &attributes)
+    {
+        m_relationStore.push(std::make_shared<SerializeRelationStore<C>>(
+                                 this, relation, models, attributes));
+
+        return *m_relationStore.top();
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     void HasRelationStore<Derived, AllRelations...>::resetRelationStore()
     {
         m_relationStore.pop();
@@ -943,6 +1070,16 @@ namespace Orm::Tiny::Concerns
     {
         return *std::static_pointer_cast<
                 const QueriesRelationshipsStore<Related>>(m_relationStore.top());
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    template<SerializedAttributes C>
+    const typename HasRelationStore<Derived, AllRelations...>::
+          template SerializeRelationStore<C> &
+    HasRelationStore<Derived, AllRelations...>::serializeRelationStore() const
+    {
+        return *std::static_pointer_cast<
+                const SerializeRelationStore<C>>(m_relationStore.top());
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>

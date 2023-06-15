@@ -380,6 +380,11 @@ namespace Orm::Tiny::Concerns
         /*! Determine whether the QDateTime time zone should be converted. */
         mutable std::optional<bool> m_isConvertingTimeZone = std::nullopt;
 
+        /* Serialization */
+        /*! Indicates whether attributes are snake cased during serialization. */
+        T_THREAD_LOCAL
+        inline static bool u_snakeAttributes = true;
+
     private:
         /*! Throw if the m_attributesHash doesn't contain a given attribute. */
         static void throwIfNoAttributeInHash(

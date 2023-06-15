@@ -16,6 +16,7 @@
 
 using Orm::Constants::ASTERISK;
 using Orm::Constants::CREATED_AT;
+using Orm::Constants::DELETED_AT;
 using Orm::Constants::ID;
 using Orm::Constants::NAME;
 using Orm::Constants::NOTE;
@@ -202,6 +203,12 @@ private Q_SLOTS:
 
     void toMap_WithCasts_DateNullVariants() const;
     void toVector_WithCasts_DateNullVariants() const;
+
+    void toMap_WithRelations_HasOne_HasMany_BelongsTo() const;
+    void toVector_WithRelations_HasOne_HasMany_BelongsTo() const;
+
+    void toMap_WithRelation_BelongsToMany() const;
+    void toVector_WithRelation_BelongsToMany() const;
 
 // NOLINTNEXTLINE(readability-redundant-access-specifiers)
 private:
@@ -2615,6 +2622,302 @@ void tst_Model_Connection_Independent::toVector_WithCasts_DateNullVariants() con
 
     // Restore
     type->resetCasts();
+}
+
+void
+tst_Model_Connection_Independent::toMap_WithRelations_HasOne_HasMany_BelongsTo() const
+{
+    auto torrent = Torrent::with({"torrentPeer", "user", "torrentFiles"})->find(7);
+    QVERIFY(torrent);
+    QVERIFY(torrent->exists);
+
+    QVariantMap serialized = torrent->toMap();
+
+    QVariantMap expectedAttributes {
+        {"added_on",      "2020-08-07T20:11:10.000Z"},
+        {CREATED_AT,      "2021-11-07T08:13:23.000Z"},
+        {"hash",          "7579e3af2768cdf52ec84c1f320333f68401dc6e"},
+        {ID,              7},
+        {NAME,            "test7"},
+        {NOTE,            "for serialization"},
+        {"progress",      700},
+        {SIZE_,           17},
+        {"torrent_files", QVariant::fromValue(QVector<QVariantMap> {{
+                              {CREATED_AT,    "2021-01-10T14:51:23.000Z"},
+                              {"file_index",  0},
+                              {"filepath",    "test7_file1.mkv"},
+                              {ID,            10},
+                              {NOTE,          "for serialization"},
+                              {"progress",    512},
+                              {SIZE_,         4562},
+                              {"torrent_id",  7},
+                              {UPDATED_AT,    "2021-01-10T17:46:31.000Z"},
+                          }, {
+                              {CREATED_AT,    "2021-01-11T14:51:23.000Z"},
+                              {"file_index",  1},
+                              {"filepath",    "test7_file2.mkv"},
+                              {ID,            11},
+                              {NOTE,          "for serialization"},
+                              {"progress",    256},
+                              {SIZE_,         2567},
+                              {"torrent_id",  7},
+                              {UPDATED_AT,    "2021-01-11T17:46:31.000Z"},
+                          }, {
+                              {CREATED_AT,    "2021-01-12T14:51:23.000Z"},
+                              {"file_index",  2},
+                              {"filepath",    "test7_file3.mkv"},
+                              {ID,            12},
+                              {NOTE,          "for serialization"},
+                              {"progress",    768},
+                              {SIZE_,         4279},
+                              {"torrent_id",  7},
+                              {UPDATED_AT,    "2021-01-12T17:46:31.000Z"},
+                          }})},
+        {"torrent_peer",  QVariantMap {
+                              {CREATED_AT,       "2021-01-07T14:51:23.000Z"},
+                              {ID,               5},
+                              {"leechers",       7},
+                              {"seeds",          NullVariant::Int()},
+                              {"torrent_id",     7},
+                              {"total_leechers", 7},
+                              {"total_seeds",    7},
+                              {UPDATED_AT,       "2021-01-07T17:46:31.000Z"},
+                          }},
+        {UPDATED_AT,      "2021-01-07T18:46:31.000Z"},
+        {"user",          QVariantMap {
+                              {CREATED_AT,  "2022-01-02T14:51:23.000Z"},
+                              {DELETED_AT,  NullVariant::QDateTime()},
+                              {ID,          2},
+                              {"is_banned", false},
+                              {NAME,        "silver"},
+                              {NOTE,        NullVariant::QString()},
+                              {UPDATED_AT,  "2022-01-02T17:46:31.000Z"},
+                          }},
+        {"user_id",       2},
+    };
+
+    QCOMPARE(serialized, expectedAttributes);
+}
+
+void
+tst_Model_Connection_Independent::toVector_WithRelations_HasOne_HasMany_BelongsTo() const
+{
+    auto torrent = Torrent::with({"torrentPeer", "user", "torrentFiles"})->find(7);
+    QVERIFY(torrent);
+    QVERIFY(torrent->exists);
+
+    QVector<AttributeItem> serialized = torrent->toVector();
+
+    // Verify
+    /* Here we will have to compare all serialized relation attributes separately
+       because the Model::m_relations is the std::unordered_map so the relations are be
+       serialized in random order. */
+    const auto keyProj = [](const auto &attribute)
+    {
+        return attribute.key;
+    };
+
+    // torrent_peer
+    {
+        const auto it = std::ranges::find(serialized, "torrent_peer", keyProj);
+        if (it == serialized.end())
+            QFAIL("The \"torrent_peer\" key not found in the \"serialized\" result.");
+
+        auto actualAttributes = serialized.takeAt(std::distance(serialized.begin(), it))
+                                .value.value<QVector<AttributeItem>>();
+
+        QVector<AttributeItem> expectedAttributes {
+            {ID,               5},
+            {"torrent_id",     7},
+            {"seeds",          NullVariant::Int()},
+            {"total_seeds",    7},
+            {"leechers",       7},
+            {"total_leechers", 7},
+            {CREATED_AT,       "2021-01-07T14:51:23.000Z"},
+            {UPDATED_AT,       "2021-01-07T17:46:31.000Z"},
+        };
+
+        QCOMPARE(actualAttributes, expectedAttributes);
+    }
+    // user
+    {
+        const auto it = std::ranges::find(serialized, "user", keyProj);
+        if (it == serialized.end())
+            QFAIL("The \"user\" key not found in the \"serialized\" result.");
+
+        auto actualAttributes = serialized.takeAt(std::distance(serialized.begin(), it))
+                                .value.value<QVector<AttributeItem>>();
+
+        QVector<AttributeItem> expectedAttributes {
+            {ID,          2},
+            {NAME,        "silver"},
+            {"is_banned", false},
+            {NOTE,        NullVariant::QString()},
+            {CREATED_AT,  "2022-01-02T14:51:23.000Z"},
+            {UPDATED_AT,  "2022-01-02T17:46:31.000Z"},
+            {DELETED_AT,  NullVariant::QDateTime()},
+        };
+
+        QCOMPARE(actualAttributes, expectedAttributes);
+    }
+    // torrent_files
+    {
+        const auto it = std::ranges::find(serialized, "torrent_files", keyProj);
+        if (it == serialized.end())
+            QFAIL("The \"torrent_files\" key not found in the \"serialized\" result.");
+
+        auto actualAttributes = serialized.takeAt(std::distance(serialized.begin(), it))
+                                .value.value<QVector<QVector<AttributeItem>>>();
+
+        QVector<QVector<AttributeItem>> expectedAttributes {{
+            {ID,            10},
+            {"torrent_id",  7},
+            {"file_index",  0},
+            {"filepath",    "test7_file1.mkv"},
+            {SIZE_,         4562},
+            {"progress",    512},
+            {NOTE,          "for serialization"},
+            {CREATED_AT,    "2021-01-10T14:51:23.000Z"},
+            {UPDATED_AT,    "2021-01-10T17:46:31.000Z"},
+        }, {
+            {ID,            11},
+            {"torrent_id",  7},
+            {"file_index",  1},
+            {"filepath",    "test7_file2.mkv"},
+            {SIZE_,         2567},
+            {"progress",    256},
+            {NOTE,          "for serialization"},
+            {CREATED_AT,    "2021-01-11T14:51:23.000Z"},
+            {UPDATED_AT,    "2021-01-11T17:46:31.000Z"},
+        }, {
+            {ID,            12},
+            {"torrent_id",  7},
+            {"file_index",  2},
+            {"filepath",    "test7_file3.mkv"},
+            {SIZE_,         4279},
+            {"progress",    768},
+            {NOTE,          "for serialization"},
+            {CREATED_AT,    "2021-01-12T14:51:23.000Z"},
+            {UPDATED_AT,    "2021-01-12T17:46:31.000Z"},
+        }};
+
+        QCOMPARE(actualAttributes, expectedAttributes);
+    }
+    // Compare the rest of attributes - torrent itself
+    {
+        QVector<AttributeItem> expectedAttributes {
+            {ID,              7},
+            {"user_id",       2},
+            {NAME,            "test7"},
+            {SIZE_,           17},
+            {"progress",      700},
+            {"added_on",      "2020-08-07T20:11:10.000Z"},
+            {"hash",          "7579e3af2768cdf52ec84c1f320333f68401dc6e"},
+            {NOTE,            "for serialization"},
+            {CREATED_AT,      "2021-11-07T08:13:23.000Z"},
+            {UPDATED_AT,      "2021-01-07T18:46:31.000Z"},
+        };
+
+        QCOMPARE(serialized, expectedAttributes);
+    }
+}
+
+void tst_Model_Connection_Independent::toMap_WithRelation_BelongsToMany() const
+{
+    auto user = User::with("roles")->find(1);
+    QVERIFY(user);
+    QVERIFY(user->exists);
+
+    QVariantMap serialized = user->toMap();
+
+    QVariantMap expectedAttributes {
+        {CREATED_AT,  "2022-01-01T14:51:23.000Z"},
+        {DELETED_AT,  NullVariant::QDateTime()},
+        {ID,          1},
+        {"is_banned", false},
+        {NAME,        "andrej"},
+        {NOTE,        NullVariant::QString()},
+        {"roles",     QVariant::fromValue(QVector<QVariantMap> {{
+                          {ID,             1},
+                          {NAME,           "role one"},
+                          {"added_on",     "2022-08-01T13:36:56.000Z"},
+//                          {"subscription", QVariantMap {
+//                                               {"active",  true},
+//                                               {"role_id", 1},
+//                                               {"user_id", 1},
+//                                           }},
+                      }, {
+                          {ID,             2},
+                          {NAME,           "role two"},
+                          {"added_on",     "2022-08-02T13:36:56.000Z"},
+//                          {"subscription", QVariantMap {
+//                                               {"active",  false},
+//                                               {"role_id", 2},
+//                                               {"user_id", 1},
+//                                           }},
+                      }, {
+                          {ID,             3},
+                          {NAME,           "role three"},
+                          {"added_on",     NullVariant::QDateTime()},
+//                          {"subscription", QVariantMap {
+//                                               {"active",  true},
+//                                               {"role_id", 3},
+//                                               {"user_id", 1},
+//                                           }},
+                      }})},
+        {UPDATED_AT,  "2022-01-01T17:46:31.000Z"},
+    };
+
+    QCOMPARE(serialized, expectedAttributes);
+}
+
+void tst_Model_Connection_Independent::toVector_WithRelation_BelongsToMany() const
+{
+    auto user = User::with("roles")->find(1);
+    QVERIFY(user);
+    QVERIFY(user->exists);
+
+    QVector<AttributeItem> serialized = user->toVector();
+
+    QVector<AttributeItem> expectedAttributes {
+        {ID,          1},
+        {NAME,        "andrej"},
+        {"is_banned", false},
+        {NOTE,        NullVariant::QString()},
+        {CREATED_AT,  "2022-01-01T14:51:23.000Z"},
+        {UPDATED_AT,  "2022-01-01T17:46:31.000Z"},
+        {DELETED_AT,  NullVariant::QDateTime()},
+        {"roles",     QVariant::fromValue(QVector<QVector<AttributeItem>> {{
+                          {ID,             1},
+                          {NAME,           "role one"},
+                          {"added_on",     "2022-08-01T13:36:56.000Z"},
+//                          {"subscription", QVariantMap {
+//                                               {"role_id", 1},
+//                                               {"user_id", 1},
+//                                               {"active",  true},
+//                                           }},
+                      }, {
+                          {ID,             2},
+                          {NAME,           "role two"},
+                          {"added_on",     "2022-08-02T13:36:56.000Z"},
+//                          {"subscription", QVariantMap {
+//                                               {"role_id", 2},
+//                                               {"user_id", 1},
+//                                               {"active",  false},
+//                                           }},
+                      }, {
+                          {ID,             3},
+                          {NAME,           "role three"},
+                          {"added_on",     NullVariant::QDateTime()},
+//                          {"subscription", QVariantMap {
+//                                               {"role_id", 3},
+//                                               {"user_id", 1},
+//                                               {"active",  true},
+//                                           }},
+                      }})},
+    };
+
+    QCOMPARE(serialized, expectedAttributes);
 }
 // NOLINTEND(readability-convert-member-functions-to-static)
 
