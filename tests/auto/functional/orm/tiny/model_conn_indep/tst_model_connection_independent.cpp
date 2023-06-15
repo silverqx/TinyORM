@@ -2710,7 +2710,7 @@ tst_Model_Connection_Independent::toVector_WithRelations_HasOne_HasMany_BelongsT
 
     // Verify
     /* Here we will have to compare all serialized relation attributes separately
-       because the Model::m_relations is the std::unordered_map so the relations are be
+       because the Model::m_relations is the std::unordered_map so the relations are
        serialized in random order. */
     const auto keyProj = [](const auto &attribute)
     {
