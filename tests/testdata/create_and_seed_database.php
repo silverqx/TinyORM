@@ -223,7 +223,8 @@ function createTables(string $connection): void
         $table->string('note')->nullable();
         $table->timestamps();
 
-        $table->foreign('torrent_id')->references('id')->on('torrents')
+        $table->foreign('torrent_id')->nullable()
+            ->references('id')->on('torrents')
             ->cascadeOnUpdate()->cascadeOnDelete();
     });
 
