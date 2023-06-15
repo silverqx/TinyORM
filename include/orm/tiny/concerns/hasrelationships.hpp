@@ -172,6 +172,10 @@ namespace Concerns
         /*! Equality comparison operator for the HasRelationships concern. */
         bool operator==(const HasRelationships &right) const;
 
+        /*! Determine whether the current model contains a pivot relation alternative
+            in the m_relations std::variant. */
+        constexpr static bool hasPivotRelation() noexcept;
+
     protected:
         /*! Relation visitor lambda type. */
         using RelationVisitor = std::function<void(
@@ -765,6 +769,14 @@ namespace Concerns
                m_pivots    == right.m_pivots;
     }
 
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    constexpr bool
+    HasRelationships<Derived, AllRelations...>::hasPivotRelation() noexcept
+    {
+        return std::disjunction_v<
+                std::is_base_of<Relations::IsPivotModel, AllRelations>...>;
+    }
+
     /* protected */
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
@@ -1284,11 +1296,6 @@ namespace Concerns
     {
         QVector<WithItem> relations;
 
-        /* Current model (this) contains a pivot relation alternative
-           in the m_relations std::variant. */
-        auto hasPivotRelation = std::disjunction_v<std::is_base_of<
-                                Relations::IsPivotModel, AllRelations>...>;
-
         /* Get all currently loaded relation names except pivot relations. We need
            to check for the pivot models, but only if the std::variant which holds
            relations also holds a pivot model alternative, otherwise it is useless. */
@@ -1296,8 +1303,9 @@ namespace Concerns
             const auto &relationName = relation.first;
 
             // Skip pivot relations
-            if (hasPivotRelation && m_pivots.contains(relationName))
-                continue;
+            if constexpr (hasPivotRelation())
+                if (m_pivots.contains(relationName))
+                    continue;
 
             relations.append({relationName});
         }
