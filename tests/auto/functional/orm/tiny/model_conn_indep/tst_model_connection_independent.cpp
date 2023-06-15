@@ -207,8 +207,8 @@ private Q_SLOTS:
     void toMap_WithRelations_HasOne_HasMany_BelongsTo() const;
     void toVector_WithRelations_HasOne_HasMany_BelongsTo() const;
 
-    void toMap_WithRelation_BelongsToMany() const;
-    void toVector_WithRelation_BelongsToMany() const;
+    void toMap_WithRelation_BelongsToMany_UserRoles() const;
+    void toVector_WithRelation_BelongsToMany_UserRoles() const;
 
 // NOLINTNEXTLINE(readability-redundant-access-specifiers)
 private:
@@ -2822,7 +2822,7 @@ tst_Model_Connection_Independent::toVector_WithRelations_HasOne_HasMany_BelongsT
     }
 }
 
-void tst_Model_Connection_Independent::toMap_WithRelation_BelongsToMany() const
+void tst_Model_Connection_Independent::toMap_WithRelation_BelongsToMany_UserRoles() const
 {
     auto user = User::with("roles")->find(1);
     QVERIFY(user);
@@ -2871,7 +2871,7 @@ void tst_Model_Connection_Independent::toMap_WithRelation_BelongsToMany() const
     QCOMPARE(serialized, expectedAttributes);
 }
 
-void tst_Model_Connection_Independent::toVector_WithRelation_BelongsToMany() const
+void tst_Model_Connection_Independent::toVector_WithRelation_BelongsToMany_UserRoles() const
 {
     auto user = User::with("roles")->find(1);
     QVERIFY(user);
