@@ -1074,7 +1074,7 @@ namespace Types
 
         for (size_type index = 0; index < size; ++index)
 #if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
-            result.emplace_back(
+            result.emplaceBack(
                         std::invoke(callback, getModelCopy(this->operator[](index)),
                                     index));
 #else
@@ -1098,7 +1098,7 @@ namespace Types
 
         for (auto &&model : *this)
 #if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
-            result.emplace_back(std::invoke(callback, getModelCopy(model)));
+            result.emplaceBack(std::invoke(callback, getModelCopy(model)));
 #else
             result.append(std::invoke(callback, getModelCopy(model)));
 #endif

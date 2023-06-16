@@ -4167,7 +4167,7 @@ void tst_Collection_Relations::each_lvalue() const
                                                          (AlbumImage *const image)
     {
 #if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
-        expectedIds.emplace_back(Common::getKeyCasted(image));
+        expectedIds.emplaceBack(Common::getKeyCasted(image));
 #else
         expectedIds.append(Common::getKeyCasted(image));
 #endif
@@ -4221,7 +4221,7 @@ void tst_Collection_Relations::each_lvalue_index() const
 #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0) || (defined(__clang__) && __clang_major__ < 16)
         expectedIds.append({Common::getKeyCasted(image), index});
 #else
-        expectedIds.emplace_back(Common::getKeyCasted(image), index);
+        expectedIds.emplaceBack(Common::getKeyCasted(image), index);
 #endif
     });
 
@@ -4262,7 +4262,7 @@ void tst_Collection_Relations::each_lvalue_bool() const
             return false;
 
 #if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
-        expectedIds.emplace_back(Common::getKeyCasted(image));
+        expectedIds.emplaceBack(Common::getKeyCasted(image));
 #else
         expectedIds.append(Common::getKeyCasted(image));
 #endif
@@ -4309,7 +4309,7 @@ void tst_Collection_Relations::each_lvalue_bool_index() const
 #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0) || (defined(__clang__) && __clang_major__ < 16)
         expectedIds.append({Common::getKeyCasted(image), index});
 #else
-        expectedIds.emplace_back(Common::getKeyCasted(image), index);
+        expectedIds.emplaceBack(Common::getKeyCasted(image), index);
 #endif
 
         return true;
@@ -4345,7 +4345,7 @@ void tst_Collection_Relations::each_rvalue() const
                                        (AlbumImage *const image)
     {
 #if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
-        expectedIds.emplace_back(Common::getKeyCasted(image));
+        expectedIds.emplaceBack(Common::getKeyCasted(image));
 #else
         expectedIds.append(Common::getKeyCasted(image));
 #endif
@@ -4378,7 +4378,7 @@ void tst_Collection_Relations::each_rvalue_index() const
 #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0) || (defined(__clang__) && __clang_major__ < 16)
         expectedIds.append({Common::getKeyCasted(image), index});
 #else
-        expectedIds.emplace_back(Common::getKeyCasted(image), index);
+        expectedIds.emplaceBack(Common::getKeyCasted(image), index);
 #endif
     });
 
@@ -4412,7 +4412,7 @@ void tst_Collection_Relations::each_rvalue_bool() const
             return false;
 
 #if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
-        expectedIds.emplace_back(Common::getKeyCasted(image));
+        expectedIds.emplaceBack(Common::getKeyCasted(image));
 #else
         expectedIds.append(Common::getKeyCasted(image));
 #endif
@@ -4452,7 +4452,7 @@ void tst_Collection_Relations::each_rvalue_bool_index() const
 #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0) || (defined(__clang__) && __clang_major__ < 16)
         expectedIds.append({Common::getKeyCasted(image), index});
 #else
-        expectedIds.emplace_back(Common::getKeyCasted(image), index);
+        expectedIds.emplaceBack(Common::getKeyCasted(image), index);
 #endif
 
         return true;

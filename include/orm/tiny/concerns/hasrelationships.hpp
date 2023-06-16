@@ -1485,8 +1485,8 @@ namespace Concerns
 #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
         attributes.append({std::move(relation), std::move(relationSerialized)});
 #else
-        attributes.emplace_back(std::move(relation),
-                                std::move(relationSerialized));
+        attributes.emplaceBack(std::move(relation),
+                               std::move(relationSerialized));
 #endif
     }
 
