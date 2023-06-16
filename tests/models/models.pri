@@ -28,6 +28,7 @@ HEADERS += \
     $$PWD/models/torrentpreviewablefileeager_withdefault.hpp \
     $$PWD/models/torrentpreviewablefileproperty.hpp \
     $$PWD/models/torrentpreviewablefilepropertyeager.hpp \
+    $$PWD/models/torrentstate.hpp \
     $$PWD/models/type.hpp \
     $$PWD/models/user.hpp \
 

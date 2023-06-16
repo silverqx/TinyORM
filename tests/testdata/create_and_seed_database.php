@@ -342,6 +342,24 @@ function createTables(string $connection): void
         $table->foreign('album_id')->references('id')->on('torrents')
             ->cascadeOnUpdate()->cascadeOnDelete();
     });
+
+    $schema->create('torrent_states', function (Blueprint $table) {
+        $table->id();
+        $table->string('name')->unique();
+    });
+
+    $schema->create('state_torrent', function (Blueprint $table) {
+        $table->unsignedBigInteger('torrent_id');
+        $table->unsignedBigInteger('state_id');
+        $table->boolean('active')->default(0);
+
+        $table->primary(['torrent_id', 'state_id']);
+
+        $table->foreign('torrent_id')->references('id')->on('torrents')
+            ->cascadeOnUpdate()->cascadeOnDelete();
+        $table->foreign('state_id')->references('id')->on('torrent_states')
+            ->cascadeOnUpdate()->cascadeOnDelete();
+    });
 }
 
 /**
@@ -501,6 +519,21 @@ function seedTables(string $connection): void
             [8, null, 'image1',        'jpg', 498, '2023-03-08 15:24:37', '2023-04-08 14:35:47'],
             [9, null, 'image2',        'jpg', 568, '2023-03-09 15:24:37', '2023-04-09 14:35:47'],
         ]));
+
+    Capsule::table('torrent_states', null, $connection)->insert(
+        combineValues(['id', 'name'], [
+            [1, 'Active'],
+            [2, 'Stalled'],
+            [3, 'Inactive'],
+            [4, 'Downloading'],
+            [5, 'Resumed'],
+        ]));
+
+    Capsule::table('state_torrent', null, $connection)->insert(
+        combineValues(['torrent_id', 'state_id', 'active'], [
+            [7, 1, 1],
+            [7, 4, 0],
+        ]));
 }
 
 /**
@@ -527,6 +560,7 @@ function fixPostgresSequences(): void
 //        'types_id_seq'                               => 4,
         'albums_id_seq'                              => 8,
         'album_images_id_seq'                        => 4,
+        'torrent_states_id_seq'                      => 6,
     ];
 
     foreach ($sequences as $sequence => $id)

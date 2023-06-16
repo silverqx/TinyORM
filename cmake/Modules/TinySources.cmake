@@ -439,6 +439,7 @@ function(tiny_model_sources out_headers out_sources)
         torrentpreviewablefileeager_withdefault.hpp
         torrentpreviewablefileproperty.hpp
         torrentpreviewablefilepropertyeager.hpp
+        torrentstate.hpp
         type.hpp
         user.hpp
     )
@@ -550,6 +551,8 @@ function(tiny_tom_testdata_database_sources out_headers)
         migrations/2022_05_11_171400_create_datetime_table.hpp
         migrations/2022_05_11_171500_create_albums_table.hpp
         migrations/2022_05_11_171600_create_album_images_table.hpp
+        migrations/2022_05_11_171700_create_torrent_states_table.hpp
+        migrations/2022_05_11_171800_create_state_torrent_table.hpp
 
         # Seeders
         seeders/databaseseeder.hpp

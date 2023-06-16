@@ -170,6 +170,21 @@ namespace Seeders
                 {9, NullVariant::ULongLong(), "image2",        "jpg", 568, "2023-03-09 15:24:37", "2023-04-09 14:35:47"},
             });
 
+            DB::table("torrent_states")->insert({ID, NAME},
+            {
+                {1, "Active"},
+                {2, "Stalled"},
+                {3, "Inactive"},
+                {4, "Downloading"},
+                {5, "Resumed"},
+            });
+
+            DB::table("state_torrent")->insert({"torrent_id", "state_id", "active"},
+            {
+                {7, 1, true},
+                {7, 4, false},
+            });
+
             // Fix sequence numbers for the PostgreSQL
             if (isPostgreSql)
                 fixPostgresSequences();
@@ -201,6 +216,7 @@ namespace Seeders
             {QStringLiteral("types_id_seq"),                                4},
             {QStringLiteral("albums_id_seq"),                               5},
             {QStringLiteral("album_images_id_seq"),                         8},
+            {QStringLiteral("torrent_states_id_seq"),                       6},
         };
 
         for (const auto &[sequence, id] : sequences)
