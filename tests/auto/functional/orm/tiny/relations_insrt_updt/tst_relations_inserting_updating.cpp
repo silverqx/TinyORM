@@ -1028,9 +1028,9 @@ void tst_Relations_Inserting_Updating::create_OnBelongsToMany() const
     auto size = Tagged::whereEq("torrent_id", 5)->get({"torrent_id"}).size();
     QCOMPARE(size, 0);
 
-    QVector<AttributeItem> tagAttribtues {{NAME, "tag create"}};
+    QVector<AttributeItem> tagAttributes {{NAME, "tag create"}};
 
-    auto tag = torrent->tags()->create(tagAttribtues, {{"active", false}});
+    auto tag = torrent->tags()->create(tagAttributes, {{"active", false}});
     QVERIFY(tag.exists);
     QVERIFY(tag[ID]->isValid());
     QVERIFY(tag[ID]->value<quint64>() > 4);
@@ -1168,10 +1168,10 @@ void tst_Relations_Inserting_Updating::createMany_OnBelongsToMany() const
     auto size = Tagged::whereEq("torrent_id", 5)->get({"torrent_id"}).size();
     QCOMPARE(size, 0);
 
-    QVector<QVector<AttributeItem>> tagAttribtues {{{NAME, "tag create 1"}},
+    QVector<QVector<AttributeItem>> tagAttributes {{{NAME, "tag create 1"}},
                                                    {{NAME, "tag create 2"}}};
 
-    auto tags = torrent->tags()->createMany(tagAttribtues, {{}, {{"active", false}}});
+    auto tags = torrent->tags()->createMany(tagAttributes, {{}, {{"active", false}}});
     QCOMPARE(tags.size(), 2);
 
     auto &tag1 = tags[0];
@@ -1288,12 +1288,12 @@ void tst_Relations_Inserting_Updating::createMany_OnBelongsToMany_Failed() const
     auto size = Tagged::whereEq("torrent_id", 5)->get({"torrent_id"}).size();
     QCOMPARE(size, 0);
 
-    QVector<QVector<AttributeItem>> tagAttribtues {{{NAME, "tag1"}},
+    QVector<QVector<AttributeItem>> tagAttributes {{{NAME, "tag1"}},
                                                    {{NAME, "tag1"}}};
 
     ModelsCollection<Tag> tags;
 
-    QVERIFY_EXCEPTION_THROWN(tags = torrent->tags()->createMany(tagAttribtues,
+    QVERIFY_EXCEPTION_THROWN(tags = torrent->tags()->createMany(tagAttributes,
                                                                 {{{"active", false}}}),
                              QueryError);
     QVERIFY(tags.isEmpty());
