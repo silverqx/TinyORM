@@ -14,6 +14,7 @@
 
 using Orm::Constants::ASTERISK;
 using Orm::Constants::CREATED_AT;
+using Orm::Constants::HASH_;
 using Orm::Constants::ID;
 using Orm::Constants::LT;
 using Orm::Constants::NAME;
@@ -165,7 +166,7 @@ void tst_Model::save_Insert() const
             .setAttribute(SIZE_, 50)
             .setAttribute("progress", 50)
             .setAttribute("added_on", addedOn)
-            .setAttribute("hash", "5079e3af2768cdf52ec84c1f320333f68401dc61");
+            .setAttribute(HASH_, "5079e3af2768cdf52ec84c1f320333f68401dc61");
 
     QVERIFY(!torrent.exists);
     const auto result = torrent.save();
@@ -179,7 +180,7 @@ void tst_Model::save_Insert() const
     QCOMPARE(torrent.getAttribute(SIZE_), QVariant(50));
     QCOMPARE(torrent.getAttribute("progress"), QVariant(50));
     QCOMPARE(torrent.getAttribute("added_on"), QVariant(addedOn));
-    QCOMPARE(torrent.getAttribute("hash"),
+    QCOMPARE(torrent.getAttribute(HASH_),
              QVariant("5079e3af2768cdf52ec84c1f320333f68401dc61"));
     QVERIFY(torrent.getAttribute(CREATED_AT).isValid());
     QVERIFY(torrent.getAttribute(UPDATED_AT).isValid());
@@ -195,7 +196,7 @@ void tst_Model::save_Insert() const
     QCOMPARE(torrentToVerify->getAttribute(SIZE_), QVariant(50));
     QCOMPARE(torrentToVerify->getAttribute("progress"), QVariant(50));
     QCOMPARE(torrentToVerify->getAttribute("added_on"), QVariant(addedOn));
-    QCOMPARE(torrentToVerify->getAttribute("hash"),
+    QCOMPARE(torrentToVerify->getAttribute(HASH_),
              QVariant("5079e3af2768cdf52ec84c1f320333f68401dc61"));
     QVERIFY(torrentToVerify->getAttribute(CREATED_AT).isValid());
     QVERIFY(torrentToVerify->getAttribute(UPDATED_AT).isValid());
@@ -216,7 +217,7 @@ void tst_Model::save_Insert_WithDefaultValues() const
     const auto addedOn = QDateTime({2020, 10, 1}, {20, 22, 10}, Qt::UTC);
     torrent.setAttribute(NAME, "test51")
             .setAttribute("added_on", addedOn)
-            .setAttribute("hash", "5179e3af2768cdf52ec84c1f320333f68401dc61");
+            .setAttribute(HASH_, "5179e3af2768cdf52ec84c1f320333f68401dc61");
 
     QVERIFY(!torrent.exists);
     const auto result = torrent.save();
@@ -228,7 +229,7 @@ void tst_Model::save_Insert_WithDefaultValues() const
     QVERIFY(torrent.getKeyCasted() > 6);
     QCOMPARE(torrent.getAttribute(NAME), QVariant("test51"));
     QCOMPARE(torrent.getAttribute("added_on"), QVariant(addedOn));
-    QCOMPARE(torrent.getAttribute("hash"),
+    QCOMPARE(torrent.getAttribute(HASH_),
              QVariant("5179e3af2768cdf52ec84c1f320333f68401dc61"));
     QVERIFY(torrent.getAttribute(CREATED_AT).isValid());
     QVERIFY(torrent.getAttribute(UPDATED_AT).isValid());
@@ -245,7 +246,7 @@ void tst_Model::save_Insert_WithDefaultValues() const
     QCOMPARE(torrentToVerify->getAttribute(SIZE_), QVariant(0));
     QCOMPARE(torrentToVerify->getAttribute("progress"), QVariant(0));
     QCOMPARE(torrentToVerify->getAttribute("added_on"), QVariant(addedOn));
-    QCOMPARE(torrentToVerify->getAttribute("hash"),
+    QCOMPARE(torrentToVerify->getAttribute(HASH_),
              QVariant("5179e3af2768cdf52ec84c1f320333f68401dc61"));
     QVERIFY(torrentToVerify->getAttribute(CREATED_AT).isValid());
     QVERIFY(torrentToVerify->getAttribute(UPDATED_AT).isValid());
@@ -1157,7 +1158,7 @@ void tst_Model::firstOrCreate_Found() const
                            {{SIZE_, 33},
                             {"progress", 33},
                             {"added_on", addedOn},
-                            {"hash", "0009e3af2768cdf52ec84c1f320333f68401dc60"}});
+                            {HASH_, "0009e3af2768cdf52ec84c1f320333f68401dc60"}});
 
         QVERIFY(torrent.exists);
         QCOMPARE(torrent.getAttributes().size(), 10);
@@ -1167,7 +1168,7 @@ void tst_Model::firstOrCreate_Found() const
         QCOMPARE(torrent["progress"], QVariant(300));
         QCOMPARE(torrent["added_on"],
                 QVariant(QDateTime({2020, 8, 3}, {20, 11, 10}, Qt::UTC)));
-        QCOMPARE(torrent["hash"], QVariant("3579e3af2768cdf52ec84c1f320333f68401dc6e"));
+        QCOMPARE(torrent[HASH_], QVariant("3579e3af2768cdf52ec84c1f320333f68401dc6e"));
     }
 }
 
@@ -1185,7 +1186,7 @@ void tst_Model::firstOrCreate_NotFound() const
                        {{SIZE_, 113},
                         {"progress", 313},
                         {"added_on", addedOn},
-                        {"hash", "1999e3af2768cdf52ec84c1f320333f68401dc6e"}});
+                        {HASH_, "1999e3af2768cdf52ec84c1f320333f68401dc6e"}});
 
     QVERIFY(torrent.exists);
     QCOMPARE(torrent.getAttributes().size(), 8);
@@ -1194,7 +1195,7 @@ void tst_Model::firstOrCreate_NotFound() const
     QCOMPARE(torrent[SIZE_], QVariant(113));
     QCOMPARE(torrent["progress"], QVariant(313));
     QCOMPARE(torrent["added_on"], QVariant(addedOn));
-    QCOMPARE(torrent["hash"], QVariant("1999e3af2768cdf52ec84c1f320333f68401dc6e"));
+    QCOMPARE(torrent[HASH_], QVariant("1999e3af2768cdf52ec84c1f320333f68401dc6e"));
 
     const auto result = torrent.remove();
     QVERIFY(result);
@@ -1306,7 +1307,7 @@ void tst_Model::create() const
         {SIZE_,      100},
         {"progress", 333},
         {"added_on", addedOn},
-        {"hash",     "1009e3af2768cdf52ec84c1f320333f68401dc6e"},
+        {HASH_,      "1009e3af2768cdf52ec84c1f320333f68401dc6e"},
     });
 
     QVERIFY(torrent.exists);
@@ -1316,7 +1317,7 @@ void tst_Model::create() const
     QCOMPARE(torrent[SIZE_], QVariant(100));
     QCOMPARE(torrent["progress"], QVariant(333));
     QCOMPARE(torrent["added_on"], QVariant(addedOn));
-    QCOMPARE(torrent["hash"], QVariant("1009e3af2768cdf52ec84c1f320333f68401dc6e"));
+    QCOMPARE(torrent[HASH_], QVariant("1009e3af2768cdf52ec84c1f320333f68401dc6e"));
 
     QVERIFY(!torrent.isDirty());
     QVERIFY(!torrent.wasChanged());
@@ -1348,7 +1349,7 @@ void tst_Model::create_Failed() const
         {SIZE_,               100},
         {"progress",          333},
         {"added_on",          addedOn},
-        {"hash",              "1009e3af2768cdf52ec84c1f320333f68401dc6e"},
+        {HASH_,               "1009e3af2768cdf52ec84c1f320333f68401dc6e"},
     })), QueryError);
 
     QVERIFY(!torrent.exists);

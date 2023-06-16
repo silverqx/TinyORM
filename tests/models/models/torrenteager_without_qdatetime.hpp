@@ -7,6 +7,7 @@
 namespace Models
 {
 
+using Orm::Constants::HASH_;
 using Orm::Constants::NAME;
 using Orm::Constants::NOTE;
 using Orm::Constants::SIZE_;
@@ -36,7 +37,7 @@ class TorrentEager_Without_QDateTime final :
         SIZE_,
         "progress",
         "added_on",
-        "hash",
+        HASH_,
         NOTE,
     };
 

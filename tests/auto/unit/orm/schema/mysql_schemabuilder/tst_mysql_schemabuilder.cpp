@@ -11,6 +11,7 @@
 #  include "models/user.hpp"
 #endif
 
+using Orm::Constants::HASH_;
 using Orm::Constants::ID;
 using Orm::Constants::MyISAM;
 using Orm::Constants::NAME;
@@ -2569,7 +2570,7 @@ void tst_MySql_SchemaBuilder::add_PrimaryKey_WithAlgorithm() const
         Schema::on(connection.getName())
                 .table(Firewalls, [](Blueprint &table)
         {
-            table.primary("id", "key_name", "hash");
+            table.primary("id", "key_name", HASH_);
         });
     });
 

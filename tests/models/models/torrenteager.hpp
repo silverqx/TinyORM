@@ -10,6 +10,7 @@
 namespace Models
 {
 
+using Orm::Constants::HASH_;
 using Orm::Constants::NAME;
 using Orm::Constants::NOTE;
 using Orm::Constants::SIZE_;
@@ -71,7 +72,7 @@ private:
         SIZE_,
         "progress",
         "added_on",
-        "hash",
+        HASH_,
         NOTE,
     };
 

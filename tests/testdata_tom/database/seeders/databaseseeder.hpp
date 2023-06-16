@@ -42,7 +42,7 @@ namespace Seeders
                 {3, 3, "905111999"},
             });
 
-            DB::table("torrents")->insert({ID, "user_id", NAME, SIZE_, "progress", "added_on", "hash", NOTE, CREATED_AT, UPDATED_AT},
+            DB::table("torrents")->insert({ID, "user_id", NAME, SIZE_, "progress", "added_on", HASH_, NOTE, CREATED_AT, UPDATED_AT},
             {
                 {1, 1, "test1", 11, 100, "2020-08-01 20:11:10", "1579e3af2768cdf52ec84c1f320333f68401dc6e", NullVariant::QString(),           "2016-06-01 08:08:23", "2021-01-01 18:46:31"},
                 {2, 1, "test2", 12, 200, "2020-08-02 20:11:10", "2579e3af2768cdf52ec84c1f320333f68401dc6e", NullVariant::QString(),           "2017-07-02 08:09:23", "2021-01-02 18:46:31"},

@@ -10,6 +10,7 @@
 
 using Orm::Constants::Attached;
 using Orm::Constants::Detached;
+using Orm::Constants::HASH_;
 using Orm::Constants::ID;
 using Orm::Constants::NAME;
 using Orm::Constants::NOTE;
@@ -1572,12 +1573,12 @@ void tst_Relations_Inserting_Updating::attach_BasicPivot_WithIds() const
 
     Torrent torrent100 {
         {NAME, "test100"}, {SIZE_, 100}, {"progress", 555},
-        {"hash", "xyzhash100"}, {NOTE, "attach with pivot"},
+        {HASH_, "xyzhash100"}, {NOTE, "attach with pivot"},
     };
     torrent100.save();
     Torrent torrent101 {
         {NAME, "test101"}, {SIZE_, 101}, {"progress", 556},
-        {"hash", "xyzhash101"}, {NOTE, "attach with pivot"},
+        {HASH_, "xyzhash101"}, {NOTE, "attach with pivot"},
     };
     torrent101.save();
 
@@ -1622,12 +1623,12 @@ void tst_Relations_Inserting_Updating::attach_BasicPivot_WithModels() const
 
     Torrent torrent100 {
         {NAME, "test100"}, {SIZE_, 100}, {"progress", 555},
-        {"hash", "xyzhash100"}, {NOTE, "attach with pivot"},
+        {HASH_, "xyzhash100"}, {NOTE, "attach with pivot"},
     };
     torrent100.save();
     Torrent torrent101 {
         {NAME, "test101"}, {SIZE_, 101}, {"progress", 556},
-        {"hash", "xyzhash101"}, {NOTE, "attach with pivot"},
+        {HASH_, "xyzhash101"}, {NOTE, "attach with pivot"},
     };
     torrent101.save();
 
@@ -1764,12 +1765,12 @@ void tst_Relations_Inserting_Updating::attach_BasicPivot_IdsWithAttributes() con
 
     Torrent torrent100 {
         {NAME, "test100"}, {SIZE_, 100}, {"progress", 555},
-        {"hash", "xyzhash100"}, {NOTE, "attach with pivot"},
+        {HASH_, "xyzhash100"}, {NOTE, "attach with pivot"},
     };
     torrent100.save();
     Torrent torrent101 {
         {NAME, "test101"}, {SIZE_, 101}, {"progress", 556},
-        {"hash", "xyzhash101"}, {NOTE, "attach with pivot"},
+        {HASH_, "xyzhash101"}, {NOTE, "attach with pivot"},
     };
     torrent101.save();
 
@@ -1876,12 +1877,12 @@ void tst_Relations_Inserting_Updating::detach_BasicPivot_WithIds() const
 
     Torrent torrent100 {
         {NAME, "test100"}, {SIZE_, 100}, {"progress", 555},
-        {"hash", "xyzhash100"}, {NOTE, "attach with pivot"},
+        {HASH_, "xyzhash100"}, {NOTE, "attach with pivot"},
     };
     torrent100.save();
     Torrent torrent101 {
         {NAME, "test101"}, {SIZE_, 101}, {"progress", 556},
-        {"hash", "xyzhash101"}, {NOTE, "attach with pivot"},
+        {HASH_, "xyzhash101"}, {NOTE, "attach with pivot"},
     };
     torrent101.save();
 
@@ -1937,12 +1938,12 @@ void tst_Relations_Inserting_Updating::detach_BasicPivot_WithModels() const
 
     Torrent torrent100 {
         {NAME, "test100"}, {SIZE_, 100}, {"progress", 555},
-        {"hash", "xyzhash100"}, {NOTE, "attach with pivot"},
+        {HASH_, "xyzhash100"}, {NOTE, "attach with pivot"},
     };
     torrent100.save();
     Torrent torrent101 {
         {NAME, "test101"}, {SIZE_, 101}, {"progress", 556},
-        {"hash", "xyzhash101"}, {NOTE, "attach with pivot"},
+        {HASH_, "xyzhash101"}, {NOTE, "attach with pivot"},
     };
     torrent101.save();
 
@@ -1997,12 +1998,12 @@ void tst_Relations_Inserting_Updating::detach_BasicPivot_All() const
 
     Torrent torrent100 {
         {NAME, "test100"}, {SIZE_, 100}, {"progress", 555},
-        {"hash", "xyzhash100"}, {NOTE, "attach with pivot"},
+        {HASH_, "xyzhash100"}, {NOTE, "attach with pivot"},
     };
     torrent100.save();
     Torrent torrent101 {
         {NAME, "test101"}, {SIZE_, 101}, {"progress", 556},
-        {"hash", "xyzhash101"}, {NOTE, "attach with pivot"},
+        {HASH_, "xyzhash101"}, {NOTE, "attach with pivot"},
     };
     torrent101.save();
 
@@ -2409,22 +2410,22 @@ void tst_Relations_Inserting_Updating::sync_BasicPivot_WithIds() const
 
     Torrent torrent100 {
         {NAME, "test100"}, {SIZE_, 100}, {"progress", 555},
-        {"hash", "xyzhash100"}, {NOTE, "sync with pivot"},
+        {HASH_, "xyzhash100"}, {NOTE, "sync with pivot"},
     };
     torrent100.save();
     Torrent torrent101 {
         {NAME, "test101"}, {SIZE_, 101}, {"progress", 556},
-        {"hash", "xyzhash101"}, {NOTE, "sync with pivot"},
+        {HASH_, "xyzhash101"}, {NOTE, "sync with pivot"},
     };
     torrent101.save();
     Torrent torrent102 {
         {NAME, "test102"}, {SIZE_, 102}, {"progress", 557},
-        {"hash", "xyzhash102"}, {NOTE, "sync with pivot"},
+        {HASH_, "xyzhash102"}, {NOTE, "sync with pivot"},
     };
     torrent102.save();
     Torrent torrent103 {
         {NAME, "test103"}, {SIZE_, 103}, {"progress", 558},
-        {"hash", "xyzhash103"}, {NOTE, "sync with pivot"},
+        {HASH_, "xyzhash103"}, {NOTE, "sync with pivot"},
     };
     torrent103.save();
 
@@ -2528,22 +2529,22 @@ void tst_Relations_Inserting_Updating::sync_BasicPivot_IdsWithAttributes() const
 
     Torrent torrent100 {
         {NAME, "test100"}, {SIZE_, 100}, {"progress", 555},
-        {"hash", "xyzhash100"}, {NOTE, "sync with pivot"},
+        {HASH_, "xyzhash100"}, {NOTE, "sync with pivot"},
     };
     torrent100.save();
     Torrent torrent101 {
         {NAME, "test101"}, {SIZE_, 101}, {"progress", 556},
-        {"hash", "xyzhash101"}, {NOTE, "sync with pivot"},
+        {HASH_, "xyzhash101"}, {NOTE, "sync with pivot"},
     };
     torrent101.save();
     Torrent torrent102 {
         {NAME, "test102"}, {SIZE_, 102}, {"progress", 557},
-        {"hash", "xyzhash102"}, {NOTE, "sync with pivot"},
+        {HASH_, "xyzhash102"}, {NOTE, "sync with pivot"},
     };
     torrent102.save();
     Torrent torrent103 {
         {NAME, "test103"}, {SIZE_, 103}, {"progress", 558},
-        {"hash", "xyzhash103"}, {NOTE, "sync with pivot"},
+        {HASH_, "xyzhash103"}, {NOTE, "sync with pivot"},
     };
     torrent103.save();
 
@@ -2868,22 +2869,22 @@ void tst_Relations_Inserting_Updating::syncWithoutDetaching_BasicPivot_WithIds()
 
     Torrent torrent100 {
         {NAME, "test100"}, {SIZE_, 100}, {"progress", 555},
-        {"hash", "xyzhash100"}, {NOTE, "sync with pivot"},
+        {HASH_, "xyzhash100"}, {NOTE, "sync with pivot"},
     };
     torrent100.save();
     Torrent torrent101 {
         {NAME, "test101"}, {SIZE_, 101}, {"progress", 556},
-        {"hash", "xyzhash101"}, {NOTE, "sync with pivot"},
+        {HASH_, "xyzhash101"}, {NOTE, "sync with pivot"},
     };
     torrent101.save();
     Torrent torrent102 {
         {NAME, "test102"}, {SIZE_, 102}, {"progress", 557},
-        {"hash", "xyzhash102"}, {NOTE, "sync with pivot"},
+        {HASH_, "xyzhash102"}, {NOTE, "sync with pivot"},
     };
     torrent102.save();
     Torrent torrent103 {
         {NAME, "test103"}, {SIZE_, 103}, {"progress", 558},
-        {"hash", "xyzhash103"}, {NOTE, "sync with pivot"},
+        {HASH_, "xyzhash103"}, {NOTE, "sync with pivot"},
     };
     torrent103.save();
 
@@ -2985,22 +2986,22 @@ void tst_Relations_Inserting_Updating::
 
     Torrent torrent100 {
         {NAME, "test100"}, {SIZE_, 100}, {"progress", 555},
-        {"hash", "xyzhash100"}, {NOTE, "sync with pivot"},
+        {HASH_, "xyzhash100"}, {NOTE, "sync with pivot"},
     };
     torrent100.save();
     Torrent torrent101 {
         {NAME, "test101"}, {SIZE_, 101}, {"progress", 556},
-        {"hash", "xyzhash101"}, {NOTE, "sync with pivot"},
+        {HASH_, "xyzhash101"}, {NOTE, "sync with pivot"},
     };
     torrent101.save();
     Torrent torrent102 {
         {NAME, "test102"}, {SIZE_, 102}, {"progress", 557},
-        {"hash", "xyzhash102"}, {NOTE, "sync with pivot"},
+        {HASH_, "xyzhash102"}, {NOTE, "sync with pivot"},
     };
     torrent102.save();
     Torrent torrent103 {
         {NAME, "test103"}, {SIZE_, 103}, {"progress", 558},
-        {"hash", "xyzhash103"}, {NOTE, "sync with pivot"},
+        {HASH_, "xyzhash103"}, {NOTE, "sync with pivot"},
     };
     torrent103.save();
 

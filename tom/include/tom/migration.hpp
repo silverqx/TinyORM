@@ -83,6 +83,10 @@ namespace Migrations
     using TINYORM_COMMON_NAMESPACE::Orm::Constants::null_; // NOLINT(misc-unused-using-decls)
     /*! Alias for the string constant "note". */
     using TINYORM_COMMON_NAMESPACE::Orm::Constants::NOTE; // NOLINT(misc-unused-using-decls)
+    /*! Alias for the string constant "pivot". */
+    using TINYORM_COMMON_NAMESPACE::Orm::Constants::pivot_; // NOLINT(misc-unused-using-decls)
+    /*! Alias for the string constant "hash". */
+    using TINYORM_COMMON_NAMESPACE::Orm::Constants::HASH_; // NOLINT(misc-unused-using-decls)
 
     /*! Alias for the string constant "MySQL". */
     using TINYORM_COMMON_NAMESPACE::Orm::Constants::MYSQL_; // NOLINT(misc-unused-using-decls)

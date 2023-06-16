@@ -18,6 +18,7 @@
 using Orm::Constants::ASTERISK;
 using Orm::Constants::CREATED_AT;
 using Orm::Constants::DELETED_AT;
+using Orm::Constants::HASH_;
 using Orm::Constants::ID;
 using Orm::Constants::NAME;
 using Orm::Constants::NOTE;
@@ -2292,7 +2293,7 @@ void tst_Model_Connection_Independent::toMap() const
     QVariantMap expectedAttributes {
         {"added_on", "2020-08-04T20:11:10.000Z"},
         {CREATED_AT, "2019-09-04T08:11:23.000Z"},
-        {"hash",     "4579e3af2768cdf52ec84c1f320333f68401dc6e"},
+        {HASH_,      "4579e3af2768cdf52ec84c1f320333f68401dc6e"},
         {ID,         4},
         {NAME,       "test4"},
         {NOTE,       "after update revert updated_at"},
@@ -2321,7 +2322,7 @@ void tst_Model_Connection_Independent::toVector() const
         {SIZE_,      14},
         {"progress", 400},
         {"added_on", "2020-08-04T20:11:10.000Z"},
-        {"hash",     "4579e3af2768cdf52ec84c1f320333f68401dc6e"},
+        {HASH_,      "4579e3af2768cdf52ec84c1f320333f68401dc6e"},
         {NOTE,       "after update revert updated_at"},
         {CREATED_AT, "2019-09-04T08:11:23.000Z"},
         {UPDATED_AT, "2021-01-04T18:46:31.000Z"},
@@ -2659,7 +2660,7 @@ tst_Model_Connection_Independent::toMap_WithRelations_HasOne_HasMany_BelongsTo()
     QVariantMap expectedAttributes {
         {"added_on",      "2020-08-07T20:11:10.000Z"},
         {CREATED_AT,      "2021-11-07T08:13:23.000Z"},
-        {"hash",          "7579e3af2768cdf52ec84c1f320333f68401dc6e"},
+        {HASH_,           "7579e3af2768cdf52ec84c1f320333f68401dc6e"},
         {ID,              7},
         {NAME,            "test7"},
         {NOTE,            "for serialization"},
@@ -2835,7 +2836,7 @@ tst_Model_Connection_Independent::toVector_WithRelations_HasOne_HasMany_BelongsT
             {SIZE_,           17},
             {"progress",      700},
             {"added_on",      "2020-08-07T20:11:10.000Z"},
-            {"hash",          "7579e3af2768cdf52ec84c1f320333f68401dc6e"},
+            {HASH_,           "7579e3af2768cdf52ec84c1f320333f68401dc6e"},
             {NOTE,            "for serialization"},
             {CREATED_AT,      "2021-11-07T08:13:23.000Z"},
             {UPDATED_AT,      "2021-01-07T18:46:31.000Z"},
@@ -2857,7 +2858,7 @@ tst_Model_Connection_Independent::toMap_WithRelation_BelongsToMany_TorrentTags()
     QVariantMap expectedAttributes {
         {"added_on", "2020-08-07T20:11:10.000Z"},
         {CREATED_AT, "2021-11-07T08:13:23.000Z"},
-        {"hash",     "7579e3af2768cdf52ec84c1f320333f68401dc6e"},
+        {HASH_,      "7579e3af2768cdf52ec84c1f320333f68401dc6e"},
         {ID,         7},
         {NAME,       "test7"},
         {NOTE,       "for serialization"},
@@ -3011,7 +3012,7 @@ tst_Model_Connection_Independent::toVector_WithRelation_BelongsToMany_TorrentTag
         {SIZE_,      17},
         {"progress", 700},
         {"added_on", "2020-08-07T20:11:10.000Z"},
-        {"hash",     "7579e3af2768cdf52ec84c1f320333f68401dc6e"},
+        {HASH_,      "7579e3af2768cdf52ec84c1f320333f68401dc6e"},
         {NOTE,       "for serialization"},
         {CREATED_AT, "2021-11-07T08:13:23.000Z"},
         {UPDATED_AT, "2021-01-07T18:46:31.000Z"},
@@ -3074,7 +3075,7 @@ void tst_Model_Connection_Independent::
     QVariantMap expectedAttributes {
         {"added_on", "2020-08-07T20:11:10.000Z"},
         {CREATED_AT, "2021-11-07T08:13:23.000Z"},
-        {"hash",     "7579e3af2768cdf52ec84c1f320333f68401dc6e"},
+        {HASH_,      "7579e3af2768cdf52ec84c1f320333f68401dc6e"},
         {ID,         7},
         {NAME,       "test7"},
         {NOTE,       "for serialization"},
@@ -3276,7 +3277,7 @@ void tst_Model_Connection_Independent::
         {SIZE_,      17},
         {"progress", 700},
         {"added_on", "2020-08-07T20:11:10.000Z"},
-        {"hash",     "7579e3af2768cdf52ec84c1f320333f68401dc6e"},
+        {HASH_,      "7579e3af2768cdf52ec84c1f320333f68401dc6e"},
         {NOTE,       "for serialization"},
         {CREATED_AT, "2021-11-07T08:13:23.000Z"},
         {UPDATED_AT, "2021-01-07T18:46:31.000Z"},
@@ -3561,7 +3562,7 @@ void tst_Model_Connection_Independent::toMap_HasOne_EmptyRelation() const
     QVector<QVariantMap> expectedAttributes {{
         {"added_on",     "2020-08-06T20:11:10.000Z"},
         {CREATED_AT,     "2021-11-06T08:13:23.000Z"},
-        {"hash",         "6579e3af2768cdf52ec84c1f320333f68401dc6e"},
+        {HASH_,          "6579e3af2768cdf52ec84c1f320333f68401dc6e"},
         {ID,             6},
         {NAME,           "test6"},
         {NOTE,           "no files no peers"},
@@ -3573,7 +3574,7 @@ void tst_Model_Connection_Independent::toMap_HasOne_EmptyRelation() const
     }, {
         {"added_on",     "2020-08-07T20:11:10.000Z"},
         {CREATED_AT,     "2021-11-07T08:13:23.000Z"},
-        {"hash",         "7579e3af2768cdf52ec84c1f320333f68401dc6e"},
+        {HASH_,          "7579e3af2768cdf52ec84c1f320333f68401dc6e"},
         {ID,             7},
         {NAME,           "test7"},
         {NOTE,           "for serialization"},
@@ -3611,7 +3612,7 @@ void tst_Model_Connection_Independent::toVector_HasOne_EmptyRelation() const
         {SIZE_,          16},
         {"progress",     600},
         {"added_on",     "2020-08-06T20:11:10.000Z"},
-        {"hash",         "6579e3af2768cdf52ec84c1f320333f68401dc6e"},
+        {HASH_,          "6579e3af2768cdf52ec84c1f320333f68401dc6e"},
         {NOTE,           "no files no peers"},
         {CREATED_AT,     "2021-11-06T08:13:23.000Z"},
         {UPDATED_AT,     "2021-01-06T18:46:31.000Z"},
@@ -3623,7 +3624,7 @@ void tst_Model_Connection_Independent::toVector_HasOne_EmptyRelation() const
         {SIZE_,          17},
         {"progress",     700},
         {"added_on",     "2020-08-07T20:11:10.000Z"},
-        {"hash",         "7579e3af2768cdf52ec84c1f320333f68401dc6e"},
+        {HASH_,          "7579e3af2768cdf52ec84c1f320333f68401dc6e"},
         {NOTE,           "for serialization"},
         {CREATED_AT,     "2021-11-07T08:13:23.000Z"},
         {UPDATED_AT,     "2021-01-07T18:46:31.000Z"},
@@ -3658,7 +3659,7 @@ void tst_Model_Connection_Independent::toMap_BelongsTo_EmptyRelation() const
         {"torrent",        QVariantMap {
                                {"added_on", "2020-08-07T20:11:10.000Z"},
                                {CREATED_AT, "2021-11-07T08:13:23.000Z"},
-                               {"hash",     "7579e3af2768cdf52ec84c1f320333f68401dc6e"},
+                               {HASH_,      "7579e3af2768cdf52ec84c1f320333f68401dc6e"},
                                {ID,         7},
                                {NAME,       "test7"},
                                {NOTE,       "for serialization"},
@@ -3710,7 +3711,7 @@ void tst_Model_Connection_Independent::toVector_BelongsTo_EmptyRelation() const
                                {SIZE_,      17},
                                {"progress", 700},
                                {"added_on", "2020-08-07T20:11:10.000Z"},
-                               {"hash",     "7579e3af2768cdf52ec84c1f320333f68401dc6e"},
+                               {HASH_,      "7579e3af2768cdf52ec84c1f320333f68401dc6e"},
                                {NOTE,       "for serialization"},
                                {CREATED_AT, "2021-11-07T08:13:23.000Z"},
                                {UPDATED_AT, "2021-01-07T18:46:31.000Z"},

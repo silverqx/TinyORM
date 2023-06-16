@@ -23,7 +23,7 @@ namespace Migrations
                 table.unsignedBigInteger(SIZE_).defaultValue("0");
                 table.unsignedSmallInteger("progress").defaultValue("0");
                 table.datetime("added_on").useCurrent();
-                table.string("hash", 40);
+                table.string(HASH_, 40);
                 table.string(NOTE).nullable();
 
                 table.timestamps();

@@ -6,6 +6,7 @@
 
 #include "models/torrent.hpp"
 
+using Orm::Constants::HASH_;
 using Orm::Constants::ID;
 using Orm::Constants::CREATED_AT;
 using Orm::Constants::NAME;
@@ -161,7 +162,7 @@ void tst_Relations_Connection_Independent::with_BelongsTo_SameRelatedModels() co
         QCOMPARE(attributes.size(), 10);
 
         std::unordered_set<QString> expectedAttributes {
-            ID, "user_id", NAME, SIZE_, "progress", "added_on", "hash", NOTE,
+            ID, "user_id", NAME, SIZE_, "progress", "added_on", HASH_, NOTE,
             CREATED_AT, UPDATED_AT,
         };
         for (const auto &attribute : attributes)
