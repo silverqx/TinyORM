@@ -413,15 +413,15 @@ namespace Orm::Tiny
         static void throwIfTotallyGuarded(const QString &key);
 
         /*! Get the u_dateFormat attribute from the Derived model. */
-        inline QString &getUserDateFormat();
+        inline QString &getUserDateFormat() noexcept;
         /*! Get the u_dateFormat attribute from the Derived model. */
-        inline const QString &getUserDateFormat() const;
+        inline const QString &getUserDateFormat() const noexcept;
         /*! Get the u_dates attribute from the Derived model. */
-        inline static const QStringList &getUserDates();
+        inline static const QStringList &getUserDates() noexcept;
         /*! Get the casts hash. */
-        inline std::unordered_map<QString, CastItem> &getUserCasts();
+        inline std::unordered_map<QString, CastItem> &getUserCasts() noexcept;
         /*! Get the casts hash. */
-        inline const std::unordered_map<QString, CastItem> &getUserCasts() const;
+        inline const std::unordered_map<QString, CastItem> &getUserCasts() const noexcept;
         /*! Get the u_snakeAttributes attribute from the Derived model. */
         inline bool &getUserSnakeAttributes() noexcept;
         /*! Get the u_snakeAttributes attribute from the Derived model. */
@@ -429,13 +429,13 @@ namespace Orm::Tiny
 
         /* GuardsAttributes */
         /*! Get the u_fillable attributes from the Derived model. */
-        inline QStringList &getUserFillable();
+        inline QStringList &getUserFillable() noexcept;
         /*! Get the u_fillable attributes from the Derived model. */
-        inline const QStringList &getUserFillable() const;
+        inline const QStringList &getUserFillable() const noexcept;
         /*! Get the u_guarded attributes from the Derived model. */
-        inline QStringList &getUserGuarded();
+        inline QStringList &getUserGuarded() noexcept;
         /*! Get the u_guarded attributes from the Derived model. */
-        inline const QStringList &getUserGuarded() const;
+        inline const QStringList &getUserGuarded() const noexcept;
 
         /* HasRelationships */
         /*! Relation visitor lambda type (an alias for shorter declarations). */
@@ -444,15 +444,16 @@ namespace Orm::Tiny
                                  ::RelationVisitor;
 
         /*! Get the u_fillable attributes from the Derived model. */
-        inline const QHash<QString, RelationVisitorAlias> &getUserRelations() const;
+        inline const QHash<QString, RelationVisitorAlias> &
+        getUserRelations() const noexcept;
         /*! Get the u_fillable attributes from the Derived model. */
-        inline const QStringList &getUserTouches() const;
+        inline const QStringList &getUserTouches() const noexcept;
 
         /* HasTimestamps */
         /*! Get the u_timestamps attribute from the Derived model. */
-        inline bool &getUserTimestamps();
+        inline bool &getUserTimestamps() noexcept;
         /*! Get the u_timestamps attribute from the Derived model. */
-        inline bool getUserTimestamps() const;
+        inline bool getUserTimestamps() const noexcept;
         /*! Get the CREATED_AT attribute from the Derived model. */
         inline static const QString &getUserCreatedAtColumn() noexcept;
         /*! Get the UPDATED_AT attribute from the Derived model. */
@@ -1773,35 +1774,35 @@ namespace Orm::Tiny
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     QString &
-    Model<Derived, AllRelations...>::getUserDateFormat()
+    Model<Derived, AllRelations...>::getUserDateFormat() noexcept
     {
         return Derived::u_dateFormat;
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     const QString &
-    Model<Derived, AllRelations...>::getUserDateFormat() const
+    Model<Derived, AllRelations...>::getUserDateFormat() const noexcept
     {
         return Derived::u_dateFormat;
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     const QStringList &
-    Model<Derived, AllRelations...>::getUserDates()
+    Model<Derived, AllRelations...>::getUserDates() noexcept
     {
         return Derived::u_dates;
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     std::unordered_map<QString, CastItem> &
-    Model<Derived, AllRelations...>::getUserCasts()
+    Model<Derived, AllRelations...>::getUserCasts() noexcept
     {
         return Derived::u_casts;
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     const std::unordered_map<QString, CastItem> &
-    Model<Derived, AllRelations...>::getUserCasts() const
+    Model<Derived, AllRelations...>::getUserCasts() const noexcept
     {
         return Derived::u_casts;
     }
@@ -1823,28 +1824,28 @@ namespace Orm::Tiny
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     QStringList &
-    Model<Derived, AllRelations...>::getUserFillable()
+    Model<Derived, AllRelations...>::getUserFillable() noexcept
     {
         return Derived::u_fillable;
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     const QStringList &
-    Model<Derived, AllRelations...>::getUserFillable() const
+    Model<Derived, AllRelations...>::getUserFillable() const noexcept
     {
         return Derived::u_fillable;
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     QStringList &
-    Model<Derived, AllRelations...>::getUserGuarded()
+    Model<Derived, AllRelations...>::getUserGuarded() noexcept
     {
         return Derived::u_guarded;
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     const QStringList &
-    Model<Derived, AllRelations...>::getUserGuarded() const
+    Model<Derived, AllRelations...>::getUserGuarded() const noexcept
     {
         return Derived::u_guarded;
     }
@@ -1853,14 +1854,14 @@ namespace Orm::Tiny
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     const QHash<QString, typename Model<Derived, AllRelations...>::RelationVisitorAlias> &
-    Model<Derived, AllRelations...>::getUserRelations() const
+    Model<Derived, AllRelations...>::getUserRelations() const noexcept
     {
         return model().u_relations;
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     const QStringList &
-    Model<Derived, AllRelations...>::getUserTouches() const
+    Model<Derived, AllRelations...>::getUserTouches() const noexcept
     {
         return model().u_touches;
     }
@@ -1869,13 +1870,13 @@ namespace Orm::Tiny
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     bool &
-    Model<Derived, AllRelations...>::getUserTimestamps()
+    Model<Derived, AllRelations...>::getUserTimestamps() noexcept
     {
         return model().u_timestamps;
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
-    bool Model<Derived, AllRelations...>::getUserTimestamps() const
+    bool Model<Derived, AllRelations...>::getUserTimestamps() const noexcept
     {
         return model().u_timestamps;
     }
