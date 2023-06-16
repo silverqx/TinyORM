@@ -225,6 +225,9 @@ private:
 //        {"decimal",  CastType::Decimal},
 //        {"decimal",  {CastType::Decimal, 2}},
 //    };
+
+    /*! Indicates whether attributes are snake cased during serialization. */
+//    inline static const bool u_snakeAttributes = false;
 };
 
 } // namespace Models
