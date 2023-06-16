@@ -2037,6 +2037,9 @@ tests was done on std::vector<AttributeItem> with 1'000'000 values
  - std::unordered_map<int, int> at() vs operator[] vs find()
    Result: at() and operator[] are equally fast ~120ms, find() is ~35% slower
 
+ - global inline or extern constants are much faster than constructing new strings
+   Result: on 1'000'000 loop for a simple QString construction it's like 8ms vs 570ms
+
 
 Qt confusions notes:
 --------------------
