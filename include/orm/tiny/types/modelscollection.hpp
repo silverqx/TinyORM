@@ -269,34 +269,35 @@ namespace Types
         ModelsCollection<ModelRawType *> except(const std::unordered_set<KeyType> &ids);
 
         /*! Get a vector with the values in the given column. */
-        QVector<QVariant> pluck(const QString &column);
+        QVector<QVariant> pluck(const QString &column) const;
         /*! Get a vector with the values in the given column. */
         template<typename T>
-        QVector<T> pluck(const QString &column);
+        QVector<T> pluck(const QString &column) const;
         /*! Get a map with values in the given column and keyed by values in the key
             column (attribute). */
         template<typename T>
-        std::map<T, QVariant> pluck(const QString &column, const QString &key);
+        std::map<T, QVariant> pluck(const QString &column, const QString &key) const;
 
         /*! Determine if the collection contains a model with the given ID. */
-        inline bool contains(KeyType id);
+        inline bool contains(KeyType id) const;
         /*! Determine if the collection contains a model with the given ID. */
-        inline bool contains(const QVariant &id);
+        inline bool contains(const QVariant &id) const;
         /*! Determine if the collection contains a model using the given callback. */
-        bool contains(const std::function<bool(const ModelRawType *)> &callback);
+        bool contains(const std::function<bool(const ModelRawType *)> &callback) const;
         /*! Determine if the model exists in the collection (using the Model::is()). */
-        bool contains(const std::optional<ModelRawType> &model);
+        bool contains(const std::optional<ModelRawType> &model) const;
 
         /*! Determine if the collection doesn't contain a model with the given ID. */
-        bool doesntContain(KeyType id);
+        bool doesntContain(KeyType id) const;
         /*! Determine if the collection doesn't contain a model with the given ID. */
-        bool doesntContain(const QVariant &id);
+        bool doesntContain(const QVariant &id) const;
         /*! Determine if the collection doesn't contain a model using the given
             callback. */
-        bool doesntContain(const std::function<bool(const ModelRawType *)> &callback);
+        bool
+        doesntContain(const std::function<bool(const ModelRawType *)> &callback) const;
         /*! Determine if the model doesn't exist in the collection (using
             the Model::is()). */
-        bool doesntContain(const std::optional<ModelRawType> &model);
+        bool doesntContain(const std::optional<ModelRawType> &model) const;
 
         /*! Find a model in the collection by primary key. */
         ModelRawType *find(KeyType id, ModelRawType *defaultModel = nullptr);
@@ -1181,13 +1182,13 @@ namespace Types
 
     template<DerivedCollectionModel Model>
     QVector<QVariant>
-    ModelsCollection<Model>::pluck(const QString &column)
+    ModelsCollection<Model>::pluck(const QString &column) const
     {
         QVector<QVariant> result;
         result.reserve(this->size());
 
-        for (ModelLoopType model : *this) {
-            ModelRawType *const modelPointer = toPointer(model);
+        for (ConstModelLoopType model : *this) {
+            const ModelRawType *const modelPointer = toPointer(model);
 
             // Don't handle the nullptr
             if (const auto &attributesHash = modelPointer->getAttributesHash();
@@ -1204,13 +1205,13 @@ namespace Types
     template<DerivedCollectionModel Model>
     template<typename T>
     QVector<T>
-    ModelsCollection<Model>::pluck(const QString &column)
+    ModelsCollection<Model>::pluck(const QString &column) const
     {
         QVector<T> result;
         result.reserve(this->size());
 
-        for (ModelLoopType model : *this) {
-            ModelRawType *const modelPointer = toPointer(model);
+        for (ConstModelLoopType model : *this) {
+             const ModelRawType *const modelPointer = toPointer(model);
 
             // Don't handle the nullptr
             if (const auto &attributesHash = modelPointer->getAttributesHash();
@@ -1227,7 +1228,7 @@ namespace Types
     template<DerivedCollectionModel Model>
     template<typename T>
     std::map<T, QVariant>
-    ModelsCollection<Model>::pluck(const QString &column, const QString &key)
+    ModelsCollection<Model>::pluck(const QString &column, const QString &key) const
     {
         std::map<T, QVariant> result;
 
@@ -1251,7 +1252,7 @@ namespace Types
     }
 
     template<DerivedCollectionModel Model>
-    bool ModelsCollection<Model>::contains(const KeyType id)
+    bool ModelsCollection<Model>::contains(const KeyType id) const
     {
         return ranges::contains(*this, true, [id](ConstModelLoopType model)
         {
@@ -1260,7 +1261,7 @@ namespace Types
     }
 
     template<DerivedCollectionModel Model>
-    bool ModelsCollection<Model>::contains(const QVariant &id)
+    bool ModelsCollection<Model>::contains(const QVariant &id) const
     {
         // Don't handle the null and not valid
         return contains(castKey(id));
@@ -1269,7 +1270,7 @@ namespace Types
     template<DerivedCollectionModel Model>
     bool
     ModelsCollection<Model>::contains(
-            const std::function<bool(const ModelRawType *)> &callback)
+            const std::function<bool(const ModelRawType *)> &callback) const
     {
         for (ConstModelLoopType model : *this)
             // Don't handle the nullptr
@@ -1280,26 +1281,26 @@ namespace Types
     }
 
     template<DerivedCollectionModel Model>
-    bool ModelsCollection<Model>::contains(const std::optional<ModelRawType> &model)
+    bool ModelsCollection<Model>::contains(const std::optional<ModelRawType> &model) const
     {
         // Early return
         if (!model)
             return false;
 
-        return ranges::contains(*this, true, [&model](ModelLoopType modelThis)
+        return ranges::contains(*this, true, [&model](ConstModelLoopType modelThis)
         {
             return toPointer(modelThis)->is(model);
         });
     }
 
     template<DerivedCollectionModel Model>
-    bool ModelsCollection<Model>::doesntContain(const KeyType id)
+    bool ModelsCollection<Model>::doesntContain(const KeyType id) const
     {
         return !contains(id);
     }
 
     template<DerivedCollectionModel Model>
-    bool ModelsCollection<Model>::doesntContain(const QVariant &id)
+    bool ModelsCollection<Model>::doesntContain(const QVariant &id) const
     {
         return !contains(castKey(id));
     }
@@ -1307,13 +1308,14 @@ namespace Types
     template<DerivedCollectionModel Model>
     bool
     ModelsCollection<Model>::doesntContain(
-            const std::function<bool(const ModelRawType *)> &callback)
+            const std::function<bool(const ModelRawType *)> &callback) const
     {
         return !contains(callback);
     }
 
     template<DerivedCollectionModel Model>
-    bool ModelsCollection<Model>::doesntContain(const std::optional<ModelRawType> &model)
+    bool
+    ModelsCollection<Model>::doesntContain(const std::optional<ModelRawType> &model) const
     {
         return !contains(model);
     }
