@@ -377,7 +377,7 @@ void tst_Model_Relations::
 
     ConnectionOverride::connection = connection;
 
-    auto torrent = Torrent::with({"tags"})->find(2);
+    auto torrent = Torrent::with("tags")->find(2);
     QVERIFY(torrent);
     QVERIFY(torrent->exists);
 
