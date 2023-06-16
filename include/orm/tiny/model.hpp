@@ -277,8 +277,10 @@ namespace Orm::Tiny
 
         /* Serialization */
         /*! Convert the model instance to the map of attributes and relations. */
+        template<typename PivotType = void>
         QVariantMap toMap();
         /*! Convert the model instance to the vector of attributes and relations. */
+        template<typename PivotType = void>
         QVector<AttributeItem> toVector();
 
         /* Getters / Setters */
@@ -420,6 +422,10 @@ namespace Orm::Tiny
         inline std::unordered_map<QString, CastItem> &getUserCasts();
         /*! Get the casts hash. */
         inline const std::unordered_map<QString, CastItem> &getUserCasts() const;
+        /*! Get the u_snakeAttributes attribute from the Derived model. */
+        inline bool &getUserSnakeAttributes() noexcept;
+        /*! Get the u_snakeAttributes attribute from the Derived model. */
+        inline bool getUserSnakeAttributes() const noexcept;
 
         /* GuardsAttributes */
         /*! Get the u_fillable attributes from the Derived model. */
@@ -1299,24 +1305,26 @@ namespace Orm::Tiny
     /* Serialization */
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
+    template<typename PivotType>
     QVariantMap
     Model<Derived, AllRelations...>::toMap() // can't be const because of relation store
     {
         auto attributes = this->attributesToMap();
 
-        attributes.insert(this->template serializeRelations<QVariantMap>());
+        attributes.insert(this->template serializeRelations<QVariantMap, PivotType>());
 
         return attributes;
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
+    template<typename PivotType>
     QVector<AttributeItem>
     Model<Derived, AllRelations...>::toVector() // can't be const because of relation store
     {
         auto attributes = this->attributesToVector();
 
-        attributes << this->template serializeRelations<QVector<AttributeItem>>();
-
+        attributes << this->template serializeRelations<QVector<AttributeItem>,
+                                                        PivotType>();
         return attributes;
     }
 
@@ -1796,6 +1804,19 @@ namespace Orm::Tiny
     Model<Derived, AllRelations...>::getUserCasts() const
     {
         return Derived::u_casts;
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    bool &
+    Model<Derived, AllRelations...>::getUserSnakeAttributes() noexcept
+    {
+        return Derived::u_snakeAttributes;
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    bool Model<Derived, AllRelations...>::getUserSnakeAttributes() const noexcept
+    {
+        return Derived::u_snakeAttributes;
     }
 
     /* GuardsAttributes */

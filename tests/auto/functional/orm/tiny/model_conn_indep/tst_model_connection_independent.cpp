@@ -6,6 +6,7 @@
 
 #include "databases.hpp"
 
+#include "models/album.hpp"
 #include "models/datetime.hpp"
 #include "models/filepropertyproperty.hpp"
 #include "models/massassignmentmodels.hpp"
@@ -22,6 +23,7 @@ using Orm::Constants::NAME;
 using Orm::Constants::NOTE;
 using Orm::Constants::SIZE_;
 using Orm::Constants::UPDATED_AT;
+using Orm::Constants::pivot_;
 
 using Orm::DB;
 using Orm::Exceptions::InvalidArgumentError;
@@ -43,9 +45,12 @@ using AttributeUtils = Orm::Tiny::Utils::Attribute;
 
 using TestUtils::Databases;
 
+using Models::Album;
+using Models::AlbumImage;
 using Models::Datetime;
 using Models::FilePropertyProperty;
 using Models::Torrent;
+using Models::TorrentPeer;
 using Models::TorrentPreviewableFile;
 using Models::Torrent_AllowedMassAssignment;
 using Models::Torrent_GuardedAttribute;
@@ -207,8 +212,26 @@ private Q_SLOTS:
     void toMap_WithRelations_HasOne_HasMany_BelongsTo() const;
     void toVector_WithRelations_HasOne_HasMany_BelongsTo() const;
 
+    void toMap_WithRelation_BelongsToMany_TorrentTags() const;
+    void toVector_WithRelation_BelongsToMany_TorrentTags() const;
+
+    void toMap_WithRelation_BelongsToMany_TorrentTags_TorrentStates() const;
+    void toVector_WithRelation_BelongsToMany_TorrentTags_TorrentStates() const;
+
     void toMap_WithRelation_BelongsToMany_UserRoles() const;
     void toVector_WithRelation_BelongsToMany_UserRoles() const;
+
+    void toMap_u_snakeAttributes_false() const;
+    void toVector_u_snakeAttributes_false() const;
+
+    void toMap_HasMany_EmptyRelation() const;
+    void toVector_HasMany_EmptyRelation() const;
+
+    void toMap_HasOne_EmptyRelation() const;
+    void toVector_HasOne_EmptyRelation() const;
+
+    void toMap_BelongsTo_EmptyRelation() const;
+    void toVector_BelongsTo_EmptyRelation() const;
 
 // NOLINTNEXTLINE(readability-redundant-access-specifiers)
 private:
@@ -2822,6 +2845,487 @@ tst_Model_Connection_Independent::toVector_WithRelations_HasOne_HasMany_BelongsT
     }
 }
 
+void
+tst_Model_Connection_Independent::toMap_WithRelation_BelongsToMany_TorrentTags() const
+{
+    auto torrent = Torrent::with("tags")->find(7);
+    QVERIFY(torrent);
+    QVERIFY(torrent->exists);
+
+    QVariantMap serialized = torrent->toMap();
+
+    QVariantMap expectedAttributes {
+        {"added_on", "2020-08-07T20:11:10.000Z"},
+        {CREATED_AT, "2021-11-07T08:13:23.000Z"},
+        {"hash",     "7579e3af2768cdf52ec84c1f320333f68401dc6e"},
+        {ID,         7},
+        {NAME,       "test7"},
+        {NOTE,       "for serialization"},
+        {"progress", 700},
+        {SIZE_,      17},
+        {"tags",     QVariant::fromValue(QVector<QVariantMap> {{
+                         {CREATED_AT,     "2021-01-11T11:51:28.000Z"},
+                         {"id",           1},
+                         {NAME,           "tag1"},
+                         {NOTE,           NullVariant::QString()},
+                         {"tag_property", QVariantMap {
+                                              {"color",    "white"},
+                                              {CREATED_AT, "2021-02-11T12:41:28.000Z"},
+                                              {ID,         1},
+                                              {"position", 0},
+                                              {"tag_id",   1},
+                                              {UPDATED_AT, "2021-02-11T22:17:11.000Z"},
+                                          }},
+                         {"tagged",       QVariantMap {
+                                              {"active",     true},
+                                              {CREATED_AT,   "2021-03-01T17:31:58.000Z"},
+                                              {"tag_id",     1},
+                                              {"torrent_id", 7},
+                                              {UPDATED_AT,   "2021-03-01T18:49:22.000Z"},
+                                          }},
+                         {UPDATED_AT,     "2021-01-11T23:47:11.000Z"},
+                     }, {
+                         {CREATED_AT,     "2021-01-12T11:51:28.000Z"},
+                         {"id",           2},
+                         {NAME,           "tag2"},
+                         {NOTE,           NullVariant::QString()},
+                         {"tag_property", QVariantMap {
+                                              {"color",    "blue"},
+                                              {CREATED_AT, "2021-02-12T12:41:28.000Z"},
+                                              {ID,         2},
+                                              {"position", 1},
+                                              {"tag_id",   2},
+                                              {UPDATED_AT, "2021-02-12T22:17:11.000Z"},
+                                          }},
+                         {"tagged",       QVariantMap {
+                                              {"active",     true},
+                                              {CREATED_AT,   "2021-03-02T17:31:58.000Z"},
+                                              {"tag_id",     2},
+                                              {"torrent_id", 7},
+                                              {UPDATED_AT,   "2021-03-02T18:49:22.000Z"},
+                                          }},
+                         {UPDATED_AT,     "2021-01-12T23:47:11.000Z"},
+                     }, {
+                         {CREATED_AT,     "2021-01-13T11:51:28.000Z"},
+                         {"id",           3},
+                         {NAME,           "tag3"},
+                         {NOTE,           NullVariant::QString()},
+                         {"tag_property", QVariantMap {
+                                              {"color",    "red"},
+                                              {CREATED_AT, "2021-02-13T12:41:28.000Z"},
+                                              {ID,         3},
+                                              {"position", 2},
+                                              {"tag_id",   3},
+                                              {UPDATED_AT, "2021-02-13T22:17:11.000Z"},
+                                          }},
+                         {"tagged",       QVariantMap {
+                                              {"active",     false},
+                                              {CREATED_AT,   "2021-03-03T17:31:58.000Z"},
+                                              {"tag_id",     3},
+                                              {"torrent_id", 7},
+                                              {UPDATED_AT,   "2021-03-03T18:49:22.000Z"},
+                                          }},
+                         {UPDATED_AT,     "2021-01-13T23:47:11.000Z"},
+                     }})},
+        {UPDATED_AT, "2021-01-07T18:46:31.000Z"},
+        {"user_id",  2},
+    };
+
+    QCOMPARE(serialized, expectedAttributes);
+}
+
+void
+tst_Model_Connection_Independent::toVector_WithRelation_BelongsToMany_TorrentTags() const
+{
+    auto torrent = Torrent::with("tags")->find(7);
+    QVERIFY(torrent);
+    QVERIFY(torrent->exists);
+
+    QVector<AttributeItem> serialized = torrent->toVector();
+
+    // Verify
+    /* Here we will have to compare all serialized relation attributes separately
+       because the Model::m_relations is the std::unordered_map so the relations are
+       serialized in random order. */
+    // tag_property
+    {
+        const auto keyProj = [](const auto &attribute)
+        {
+            return attribute.key;
+        };
+
+        // First find the tags relationship vector
+        auto itTags = std::ranges::find(serialized, "tags", keyProj);
+        if (itTags == serialized.end())
+            QFAIL("The \"tags\" key not found in the \"serialized\" result.");
+
+        // Then extract the tag_property vectors from all tags
+        /* I'm going to directly modify the tag vector using the QVariant::data(),
+           it helps to avoid a lot of a junky code. */
+        auto &tags = *reinterpret_cast<QVector<QVector<AttributeItem>> *>(
+                             itTags->value.data());
+
+        QVector<QVector<AttributeItem>> actualTagProperties;
+        actualTagProperties.reserve(tags.size());
+
+        for (auto &tag : tags) {
+            const auto it = std::ranges::find(tag, "tag_property", keyProj);
+            if (it == tag.end())
+                QFAIL("The \"tag_property\" key not found in the \"tag\" result.");
+
+            actualTagProperties << tag.takeAt(std::distance(tag.begin(), it))
+                                .value.value<QVector<AttributeItem>>();
+        }
+
+        QVector<QVector<AttributeItem>> expectedTagProperties {{
+            {ID,         1},
+            {"tag_id",   1},
+            {"color",    "white"},
+            {"position", 0},
+            {CREATED_AT, "2021-02-11T12:41:28.000Z"},
+            {UPDATED_AT, "2021-02-11T22:17:11.000Z"},
+        }, {
+            {ID,         2},
+            {"tag_id",   2},
+            {"color",    "blue"},
+            {"position", 1},
+            {CREATED_AT, "2021-02-12T12:41:28.000Z"},
+            {UPDATED_AT, "2021-02-12T22:17:11.000Z"},
+        }, {
+            {ID,         3},
+            {"tag_id",   3},
+            {"color",    "red"},
+            {"position", 2},
+            {CREATED_AT, "2021-02-13T12:41:28.000Z"},
+            {UPDATED_AT, "2021-02-13T22:17:11.000Z"},
+        }};
+
+        QCOMPARE(actualTagProperties, expectedTagProperties);
+    }
+
+    // Compare the rest of attributes - they will already be in the right order
+    QVector<AttributeItem> expectedAttributes {
+        {ID,         7},
+        {"user_id",  2},
+        {NAME,       "test7"},
+        {SIZE_,      17},
+        {"progress", 700},
+        {"added_on", "2020-08-07T20:11:10.000Z"},
+        {"hash",     "7579e3af2768cdf52ec84c1f320333f68401dc6e"},
+        {NOTE,       "for serialization"},
+        {CREATED_AT, "2021-11-07T08:13:23.000Z"},
+        {UPDATED_AT, "2021-01-07T18:46:31.000Z"},
+        {"tags",     QVariant::fromValue(QVector<QVector<AttributeItem>> {{
+                         {"id",           1},
+                         {NAME,           "tag1"},
+                         {NOTE,           NullVariant::QString()},
+                         {CREATED_AT,     "2021-01-11T11:51:28.000Z"},
+                         {UPDATED_AT,     "2021-01-11T23:47:11.000Z"},
+                         {"tagged",       QVariant::fromValue(QVector<AttributeItem> {
+                                              {"torrent_id", 7},
+                                              {"tag_id",     1},
+                                              {"active",     true},
+                                              {CREATED_AT,   "2021-03-01T17:31:58.000Z"},
+                                              {UPDATED_AT,   "2021-03-01T18:49:22.000Z"},
+                                          })},
+                     }, {
+                         {"id",           2},
+                         {NAME,           "tag2"},
+                         {NOTE,           NullVariant::QString()},
+                         {CREATED_AT,     "2021-01-12T11:51:28.000Z"},
+                         {UPDATED_AT,     "2021-01-12T23:47:11.000Z"},
+                         {"tagged",       QVariant::fromValue(QVector<AttributeItem> {
+                                              {"torrent_id", 7},
+                                              {"tag_id",     2},
+                                              {"active",     true},
+                                              {CREATED_AT,   "2021-03-02T17:31:58.000Z"},
+                                              {UPDATED_AT,   "2021-03-02T18:49:22.000Z"},
+                                          })},
+                     }, {
+                         {"id",           3},
+                         {NAME,           "tag3"},
+                         {NOTE,           NullVariant::QString()},
+                         {CREATED_AT,     "2021-01-13T11:51:28.000Z"},
+                         {UPDATED_AT,     "2021-01-13T23:47:11.000Z"},
+                         {"tagged",       QVariant::fromValue(QVector<AttributeItem> {
+                                              {"torrent_id", 7},
+                                              {"tag_id",     3},
+                                              {"active",     false},
+                                              {CREATED_AT,   "2021-03-03T17:31:58.000Z"},
+                                              {UPDATED_AT,   "2021-03-03T18:49:22.000Z"},
+                                          })},
+                     }})},
+    };
+
+    QCOMPARE(serialized, expectedAttributes);
+}
+
+// Following two unit tests test two belongs-to-many relations on one model
+
+void tst_Model_Connection_Independent::
+     toMap_WithRelation_BelongsToMany_TorrentTags_TorrentStates() const
+{
+    auto torrent = Torrent::with({"tags", "torrentStates"})->find(7);
+    QVERIFY(torrent);
+    QVERIFY(torrent->exists);
+
+    QVariantMap serialized = torrent->toMap();
+
+    QVariantMap expectedAttributes {
+        {"added_on", "2020-08-07T20:11:10.000Z"},
+        {CREATED_AT, "2021-11-07T08:13:23.000Z"},
+        {"hash",     "7579e3af2768cdf52ec84c1f320333f68401dc6e"},
+        {ID,         7},
+        {NAME,       "test7"},
+        {NOTE,       "for serialization"},
+        {"progress", 700},
+        {SIZE_,      17},
+        {"tags",     QVariant::fromValue(QVector<QVariantMap> {{
+                         {CREATED_AT,     "2021-01-11T11:51:28.000Z"},
+                         {"id",           1},
+                         {NAME,           "tag1"},
+                         {NOTE,           NullVariant::QString()},
+                         {"tag_property", QVariantMap {
+                                              {"color",    "white"},
+                                              {CREATED_AT, "2021-02-11T12:41:28.000Z"},
+                                              {ID,         1},
+                                              {"position", 0},
+                                              {"tag_id",   1},
+                                              {UPDATED_AT, "2021-02-11T22:17:11.000Z"},
+                                          }},
+                         {"tagged",       QVariantMap {
+                                              {"active",     true},
+                                              {CREATED_AT,   "2021-03-01T17:31:58.000Z"},
+                                              {"tag_id",     1},
+                                              {"torrent_id", 7},
+                                              {UPDATED_AT,   "2021-03-01T18:49:22.000Z"},
+                                          }},
+                         {UPDATED_AT,     "2021-01-11T23:47:11.000Z"},
+                     },{
+                         {CREATED_AT,     "2021-01-12T11:51:28.000Z"},
+                         {"id",           2},
+                         {NAME,           "tag2"},
+                         {NOTE,           NullVariant::QString()},
+                         {"tag_property", QVariantMap {
+                                              {"color",    "blue"},
+                                              {CREATED_AT, "2021-02-12T12:41:28.000Z"},
+                                              {ID,         2},
+                                              {"position", 1},
+                                              {"tag_id",   2},
+                                              {UPDATED_AT, "2021-02-12T22:17:11.000Z"},
+                                          }},
+                         {"tagged",       QVariantMap {
+                                              {"active",     true},
+                                              {CREATED_AT,   "2021-03-02T17:31:58.000Z"},
+                                              {"tag_id",     2},
+                                              {"torrent_id", 7},
+                                              {UPDATED_AT,   "2021-03-02T18:49:22.000Z"},
+                                          }},
+                         {UPDATED_AT,     "2021-01-12T23:47:11.000Z"},
+                     }, {
+                         {CREATED_AT,     "2021-01-13T11:51:28.000Z"},
+                         {"id",           3},
+                         {NAME,           "tag3"},
+                         {NOTE,           NullVariant::QString()},
+                         {"tag_property", QVariantMap {
+                                              {"color",    "red"},
+                                              {CREATED_AT, "2021-02-13T12:41:28.000Z"},
+                                              {ID,         3},
+                                              {"position", 2},
+                                              {"tag_id",   3},
+                                              {UPDATED_AT, "2021-02-13T22:17:11.000Z"},
+                                          }},
+                         {"tagged",       QVariantMap {
+                                              {"active",     false},
+                                              {CREATED_AT,   "2021-03-03T17:31:58.000Z"},
+                                              {"tag_id",     3},
+                                              {"torrent_id", 7},
+                                              {UPDATED_AT,   "2021-03-03T18:49:22.000Z"},
+                                          }},
+                         {UPDATED_AT,     "2021-01-13T23:47:11.000Z"},
+                     }})},
+
+        {"torrent_states", QVariant::fromValue(QVector<QVariantMap> {{
+                               {ID,     1},
+                               {NAME,   "Active"},
+                               {pivot_, QVariantMap {
+                                            {"active",     1},
+                                            {"state_id",   1},
+                                            {"torrent_id", 7},
+                                        }},
+                           }, {
+                               {ID,     4},
+                               {NAME,   "Downloading"},
+                               {pivot_, QVariantMap {
+                                            {"active",     0},
+                                            {"state_id",   4},
+                                            {"torrent_id", 7},
+                                        }},
+                           }})},
+
+        {UPDATED_AT,      "2021-01-07T18:46:31.000Z"},
+        {"user_id",       2},
+    };
+
+    QCOMPARE(serialized, expectedAttributes);
+}
+
+void tst_Model_Connection_Independent::
+     toVector_WithRelation_BelongsToMany_TorrentTags_TorrentStates() const
+{
+    auto torrent = Torrent::with({"tags", "torrentStates"})->find(7);
+    QVERIFY(torrent);
+    QVERIFY(torrent->exists);
+
+    QVector<AttributeItem> serialized = torrent->toVector();
+
+    // Verify
+    /* Here we will have to compare all serialized relation attributes separately
+       because the Model::m_relations is the std::unordered_map so the relations are
+       serialized in random order. */
+
+    const auto keyProj = [](const auto &attribute)
+    {
+        return attribute.key;
+    };
+
+    // tag_property
+    {
+        // First find the tags relationship vector
+        auto itTags = std::ranges::find(serialized, "tags", keyProj);
+        if (itTags == serialized.end())
+            QFAIL("The \"tags\" key not found in the \"serialized\" result.");
+
+        // Then extract the tag_property vectors from all tags
+        /* I'm going to directly modify the tag vector using the QVariant::data(),
+           it helps to avoid a lot of a junky code. */
+        auto &tags = *reinterpret_cast<QVector<QVector<AttributeItem>> *>(
+                             itTags->value.data());
+
+        QVector<QVector<AttributeItem>> actualTagProperties;
+        actualTagProperties.reserve(tags.size());
+
+        for (auto &tag : tags) {
+            const auto it = std::ranges::find(tag, "tag_property", keyProj);
+            if (it == tag.end())
+                QFAIL("The \"tag_property\" key not found in the \"tag\" result.");
+
+            actualTagProperties << tag.takeAt(std::distance(tag.begin(), it))
+                                .value.value<QVector<AttributeItem>>();
+        }
+
+        QVector<QVector<AttributeItem>> expectedTagProperties {{
+            {ID,         1},
+            {"tag_id",   1},
+            {"color",    "white"},
+            {"position", 0},
+            {CREATED_AT, "2021-02-11T12:41:28.000Z"},
+            {UPDATED_AT, "2021-02-11T22:17:11.000Z"},
+        }, {
+            {ID,         2},
+            {"tag_id",   2},
+            {"color",    "blue"},
+            {"position", 1},
+            {CREATED_AT, "2021-02-12T12:41:28.000Z"},
+            {UPDATED_AT, "2021-02-12T22:17:11.000Z"},
+        }, {
+            {ID,         3},
+            {"tag_id",   3},
+            {"color",    "red"},
+            {"position", 2},
+            {CREATED_AT, "2021-02-13T12:41:28.000Z"},
+            {UPDATED_AT, "2021-02-13T22:17:11.000Z"},
+        }};
+        QCOMPARE(actualTagProperties, expectedTagProperties);
+    }
+
+    // torrent_states
+    {
+        const auto it = std::ranges::find(serialized, "torrent_states", keyProj);
+        if (it == serialized.end())
+            QFAIL("The \"torrent_states\" key not found in the \"serialized\" result.");
+
+        auto actualStates = serialized.takeAt(std::distance(serialized.begin(), it))
+                            .value.value<QVector<QVector<AttributeItem>>>();
+
+        QVector<QVector<AttributeItem>> expectedStates {{
+            {ID,     1},
+            {NAME,   "Active"},
+            {pivot_, QVariant::fromValue(QVector<AttributeItem> {
+                         {"torrent_id", 7},
+                         {"state_id",   1},
+                         {"active",     1},
+                     })},
+        }, {
+            {ID,     4},
+            {NAME,   "Downloading"},
+            {pivot_, QVariant::fromValue(QVector<AttributeItem> {
+                         {"torrent_id", 7},
+                         {"state_id",   4},
+                         {"active",     0},
+                     })}
+        }};
+
+        QCOMPARE(actualStates, expectedStates);
+    }
+
+    QVector<AttributeItem> expectedAttributes {
+        {ID,         7},
+        {"user_id",  2},
+        {NAME,       "test7"},
+        {SIZE_,      17},
+        {"progress", 700},
+        {"added_on", "2020-08-07T20:11:10.000Z"},
+        {"hash",     "7579e3af2768cdf52ec84c1f320333f68401dc6e"},
+        {NOTE,       "for serialization"},
+        {CREATED_AT, "2021-11-07T08:13:23.000Z"},
+        {UPDATED_AT, "2021-01-07T18:46:31.000Z"},
+        {"tags",     QVariant::fromValue(QVector<QVector<AttributeItem>> {{
+                         {"id",           1},
+                         {NAME,           "tag1"},
+                         {NOTE,           NullVariant::QString()},
+                         {CREATED_AT,     "2021-01-11T11:51:28.000Z"},
+                         {UPDATED_AT,     "2021-01-11T23:47:11.000Z"},
+                         {"tagged",       QVariant::fromValue(QVector<AttributeItem> {
+                                              {"torrent_id", 7},
+                                              {"tag_id",     1},
+                                              {"active",     true},
+                                              {CREATED_AT,   "2021-03-01T17:31:58.000Z"},
+                                              {UPDATED_AT,   "2021-03-01T18:49:22.000Z"},
+                                          })},
+                     }, {
+                         {"id",           2},
+                         {NAME,           "tag2"},
+                         {NOTE,           NullVariant::QString()},
+                         {CREATED_AT,     "2021-01-12T11:51:28.000Z"},
+                         {UPDATED_AT,     "2021-01-12T23:47:11.000Z"},
+                         {"tagged",       QVariant::fromValue(QVector<AttributeItem> {
+                                              {"torrent_id", 7},
+                                              {"tag_id",     2},
+                                              {"active",     true},
+                                              {CREATED_AT,   "2021-03-02T17:31:58.000Z"},
+                                              {UPDATED_AT,   "2021-03-02T18:49:22.000Z"},
+                                          })},
+                     }, {
+                         {"id",           3},
+                         {NAME,           "tag3"},
+                         {NOTE,           NullVariant::QString()},
+                         {CREATED_AT,     "2021-01-13T11:51:28.000Z"},
+                         {UPDATED_AT,     "2021-01-13T23:47:11.000Z"},
+                         {"tagged",       QVariant::fromValue(QVector<AttributeItem> {
+                                              {"torrent_id", 7},
+                                              {"tag_id",     3},
+                                              {"active",     false},
+                                              {CREATED_AT,   "2021-03-03T17:31:58.000Z"},
+                                              {UPDATED_AT,   "2021-03-03T18:49:22.000Z"},
+                                          })},
+                     }})},
+
+    };
+
+    QCOMPARE(serialized, expectedAttributes);
+}
+
 void tst_Model_Connection_Independent::toMap_WithRelation_BelongsToMany_UserRoles() const
 {
     auto user = User::with("roles")->find(1);
@@ -2841,29 +3345,29 @@ void tst_Model_Connection_Independent::toMap_WithRelation_BelongsToMany_UserRole
                           {ID,             1},
                           {NAME,           "role one"},
                           {"added_on",     "2022-08-01T13:36:56.000Z"},
-//                          {"subscription", QVariantMap {
-//                                               {"active",  true},
-//                                               {"role_id", 1},
-//                                               {"user_id", 1},
-//                                           }},
+                          {"subscription", QVariantMap {
+                                               {"active",  true},
+                                               {"role_id", 1},
+                                               {"user_id", 1},
+                                           }},
                       }, {
                           {ID,             2},
                           {NAME,           "role two"},
                           {"added_on",     "2022-08-02T13:36:56.000Z"},
-//                          {"subscription", QVariantMap {
-//                                               {"active",  false},
-//                                               {"role_id", 2},
-//                                               {"user_id", 1},
-//                                           }},
+                          {"subscription", QVariantMap {
+                                               {"active",  false},
+                                               {"role_id", 2},
+                                               {"user_id", 1},
+                                           }},
                       }, {
                           {ID,             3},
                           {NAME,           "role three"},
                           {"added_on",     NullVariant::QDateTime()},
-//                          {"subscription", QVariantMap {
-//                                               {"active",  true},
-//                                               {"role_id", 3},
-//                                               {"user_id", 1},
-//                                           }},
+                          {"subscription", QVariantMap {
+                                               {"active",  true},
+                                               {"role_id", 3},
+                                               {"user_id", 1},
+                                           }},
                       }})},
         {UPDATED_AT,  "2022-01-01T17:46:31.000Z"},
     };
@@ -2891,31 +3395,337 @@ void tst_Model_Connection_Independent::toVector_WithRelation_BelongsToMany_UserR
                           {ID,             1},
                           {NAME,           "role one"},
                           {"added_on",     "2022-08-01T13:36:56.000Z"},
-//                          {"subscription", QVariantMap {
-//                                               {"role_id", 1},
-//                                               {"user_id", 1},
-//                                               {"active",  true},
-//                                           }},
+                          {"subscription", QVariant::fromValue(QVector<AttributeItem> {
+                                               {"user_id", 1},
+                                               {"role_id", 1},
+                                               {"active",  true},
+                                           })},
                       }, {
                           {ID,             2},
                           {NAME,           "role two"},
                           {"added_on",     "2022-08-02T13:36:56.000Z"},
-//                          {"subscription", QVariantMap {
-//                                               {"role_id", 2},
-//                                               {"user_id", 1},
-//                                               {"active",  false},
-//                                           }},
+                          {"subscription", QVariant::fromValue(QVector<AttributeItem> {
+                                               {"user_id", 1},
+                                               {"role_id", 2},
+                                               {"active",  false},
+                                           })},
                       }, {
                           {ID,             3},
                           {NAME,           "role three"},
                           {"added_on",     NullVariant::QDateTime()},
-//                          {"subscription", QVariantMap {
-//                                               {"role_id", 3},
-//                                               {"user_id", 1},
-//                                               {"active",  true},
-//                                           }},
+                          {"subscription", QVariant::fromValue(QVector<AttributeItem> {
+                                               {"user_id", 1},
+                                               {"role_id", 3},
+                                               {"active",  true},
+                                           })},
                       }})},
     };
+
+    QCOMPARE(serialized, expectedAttributes);
+}
+
+void tst_Model_Connection_Independent::toMap_u_snakeAttributes_false() const
+{
+    auto album = Album::find(1);
+    QVERIFY(album);
+    QVERIFY(album->exists);
+
+    QVariantMap serialized = album->toMap();
+
+    QVariantMap expectedAttributes {
+        {"albumImages", QVariant::fromValue(QVector<QVariantMap> {{
+                            {"album_id", 1},
+                            {CREATED_AT, "2023-03-01T15:24:37.000Z"},
+                            {"ext",      "png"},
+                            {ID,         1},
+                            {NAME,       "album1_image1"},
+                            {SIZE_,      726},
+                            {UPDATED_AT, "2023-04-01T14:35:47.000Z"},
+                        }})},
+        {CREATED_AT,    "2023-01-01T12:21:14.000Z"},
+        {ID,            1},
+        {NAME,          "album1"},
+        {NOTE,          NullVariant::QString()},
+        {UPDATED_AT,    "2023-02-01T16:54:28.000Z"},
+    };
+
+    QCOMPARE(serialized, expectedAttributes);
+}
+
+void tst_Model_Connection_Independent::toVector_u_snakeAttributes_false() const
+{
+    auto album = Album::find(1);
+    QVERIFY(album);
+    QVERIFY(album->exists);
+
+    QVector<AttributeItem> serialized = album->toVector();
+
+    QVector<AttributeItem> expectedAttributes {
+        {ID,            1},
+        {NAME,          "album1"},
+        {NOTE,          NullVariant::QString()},
+        {CREATED_AT,    "2023-01-01T12:21:14.000Z"},
+        {UPDATED_AT,    "2023-02-01T16:54:28.000Z"},
+        {"albumImages", QVariant::fromValue(QVector<QVector<AttributeItem>> {{
+                            {ID,         1},
+                            {"album_id", 1},
+                            {NAME,       "album1_image1"},
+                            {"ext",      "png"},
+                            {SIZE_,      726},
+                            {CREATED_AT, "2023-03-01T15:24:37.000Z"},
+                            {UPDATED_AT, "2023-04-01T14:35:47.000Z"},
+                        }})},
+    };
+
+    QCOMPARE(serialized, expectedAttributes);
+}
+
+void tst_Model_Connection_Independent::toMap_HasMany_EmptyRelation() const
+{
+    auto albums = Album::findMany({3, 4});
+    QCOMPARE(albums.size(), 2);
+    QCOMPARE(typeid (albums), typeid (ModelsCollection<Album>));
+
+    QVector<QVariantMap> serialized = albums.toMap();
+
+    QVector<QVariantMap> expectedAttributes {{
+        {"albumImages", QVariant::fromValue(QVector<QVariantMap> {{
+                            {"album_id", 3},
+                            {CREATED_AT, "2023-03-07T15:24:37.000Z"},
+                            {"ext",      "jpg"},
+                            {ID,         7},
+                            {NAME,       "album3_image1"},
+                            {SIZE_,      718},
+                            {UPDATED_AT, "2023-04-07T14:35:47.000Z"},
+                        }})},
+        {CREATED_AT,    "2023-01-03T12:21:14.000Z"},
+        {ID,            3},
+        {NAME,          "album3"},
+        {NOTE,          "album3 note"},
+        {UPDATED_AT,    "2023-02-03T16:54:28.000Z"},
+    }, {
+        {"albumImages", QVariant::fromValue(QVector<QVariantMap> {})},
+        {CREATED_AT,    "2023-01-04T12:21:14.000Z"},
+        {ID,            4},
+        {NAME,          "album4"},
+        {NOTE,          "no images"},
+        {UPDATED_AT,    "2023-02-04T16:54:28.000Z"},
+    }};
+
+    QCOMPARE(serialized, expectedAttributes);
+}
+
+void tst_Model_Connection_Independent::toVector_HasMany_EmptyRelation() const
+{
+    auto albums = Album::findMany({3, 4});
+    QCOMPARE(albums.size(), 2);
+    QCOMPARE(typeid (albums), typeid (ModelsCollection<Album>));
+
+    QVector<QVector<AttributeItem>> serialized = albums.toVector();
+
+    QVector<QVector<AttributeItem>> expectedAttributes {{
+        {ID,            3},
+        {NAME,          "album3"},
+        {NOTE,          "album3 note"},
+        {CREATED_AT,    "2023-01-03T12:21:14.000Z"},
+        {UPDATED_AT,    "2023-02-03T16:54:28.000Z"},
+        {"albumImages", QVariant::fromValue(QVector<QVector<AttributeItem>> {{
+                            {ID,         7},
+                            {"album_id", 3},
+                            {NAME,       "album3_image1"},
+                            {"ext",      "jpg"},
+                            {SIZE_,      718},
+                            {CREATED_AT, "2023-03-07T15:24:37.000Z"},
+                            {UPDATED_AT, "2023-04-07T14:35:47.000Z"},
+                        }})},
+    }, {
+        {ID,            4},
+        {NAME,          "album4"},
+        {NOTE,          "no images"},
+        {CREATED_AT,    "2023-01-04T12:21:14.000Z"},
+        {UPDATED_AT,    "2023-02-04T16:54:28.000Z"},
+        {"albumImages", QVariant::fromValue(QVector<QVector<AttributeItem>> {})},
+    }};
+
+    QCOMPARE(serialized, expectedAttributes);
+}
+
+void tst_Model_Connection_Independent::toMap_HasOne_EmptyRelation() const
+{
+    auto torrents = Torrent::with("torrentPeer")->findMany({6, 7});
+    QCOMPARE(torrents.size(), 2);
+    QCOMPARE(typeid (torrents), typeid (ModelsCollection<Torrent>));
+
+    QVector<QVariantMap> serialized = torrents.toMap();
+
+    QVector<QVariantMap> expectedAttributes {{
+        {"added_on",     "2020-08-06T20:11:10.000Z"},
+        {CREATED_AT,     "2021-11-06T08:13:23.000Z"},
+        {"hash",         "6579e3af2768cdf52ec84c1f320333f68401dc6e"},
+        {ID,             6},
+        {NAME,           "test6"},
+        {NOTE,           "no files no peers"},
+        {"progress",     600},
+        {SIZE_,          16},
+        {"torrent_peer", QVariant::fromValue(nullptr)},
+        {UPDATED_AT,     "2021-01-06T18:46:31.000Z"},
+        {"user_id",      2},
+    }, {
+        {"added_on",     "2020-08-07T20:11:10.000Z"},
+        {CREATED_AT,     "2021-11-07T08:13:23.000Z"},
+        {"hash",         "7579e3af2768cdf52ec84c1f320333f68401dc6e"},
+        {ID,             7},
+        {NAME,           "test7"},
+        {NOTE,           "for serialization"},
+        {"progress",     700},
+        {SIZE_,          17},
+        {"torrent_peer", QVariantMap {
+                             {CREATED_AT,       "2021-01-07T14:51:23.000Z"},
+                             {ID,               5},
+                             {"leechers",       7},
+                             {"seeds",          NullVariant::Int()},
+                             {"torrent_id",     7},
+                             {"total_leechers", 7},
+                             {"total_seeds",    7},
+                             {UPDATED_AT,       "2021-01-07T17:46:31.000Z"},
+                         }},
+        {UPDATED_AT,     "2021-01-07T18:46:31.000Z"},
+        {"user_id",      2},
+    }};
+
+    QCOMPARE(serialized, expectedAttributes);
+}
+
+void tst_Model_Connection_Independent::toVector_HasOne_EmptyRelation() const
+{
+    auto torrents = Torrent::with("torrentPeer")->findMany({6, 7});
+    QCOMPARE(torrents.size(), 2);
+    QCOMPARE(typeid (torrents), typeid (ModelsCollection<Torrent>));
+
+    QVector<QVector<AttributeItem>> serialized = torrents.toVector();
+
+    QVector<QVector<AttributeItem>> expectedAttributes {{
+        {ID,             6},
+        {"user_id",      2},
+        {NAME,           "test6"},
+        {SIZE_,          16},
+        {"progress",     600},
+        {"added_on",     "2020-08-06T20:11:10.000Z"},
+        {"hash",         "6579e3af2768cdf52ec84c1f320333f68401dc6e"},
+        {NOTE,           "no files no peers"},
+        {CREATED_AT,     "2021-11-06T08:13:23.000Z"},
+        {UPDATED_AT,     "2021-01-06T18:46:31.000Z"},
+        {"torrent_peer", QVariant::fromValue(nullptr)},
+    }, {
+        {ID,             7},
+        {"user_id",      2},
+        {NAME,           "test7"},
+        {SIZE_,          17},
+        {"progress",     700},
+        {"added_on",     "2020-08-07T20:11:10.000Z"},
+        {"hash",         "7579e3af2768cdf52ec84c1f320333f68401dc6e"},
+        {NOTE,           "for serialization"},
+        {CREATED_AT,     "2021-11-07T08:13:23.000Z"},
+        {UPDATED_AT,     "2021-01-07T18:46:31.000Z"},
+        {"torrent_peer", QVariant::fromValue(QVector<AttributeItem> {
+                             {ID,               5},
+                             {"torrent_id",     7},
+                             {"seeds",          NullVariant::Int()},
+                             {"total_seeds",    7},
+                             {"leechers",       7},
+                             {"total_leechers", 7},
+                             {CREATED_AT,       "2021-01-07T14:51:23.000Z"},
+                             {UPDATED_AT,       "2021-01-07T17:46:31.000Z"},
+                         })},
+    }};
+
+    QCOMPARE(serialized, expectedAttributes);
+}
+
+void tst_Model_Connection_Independent::toMap_BelongsTo_EmptyRelation() const
+{
+    auto torrentPeers = TorrentPeer::with("torrent")->findMany({5, 6});
+    QCOMPARE(torrentPeers.size(), 2);
+    QCOMPARE(typeid (torrentPeers), typeid (ModelsCollection<TorrentPeer>));
+
+    QVector<QVariantMap> serialized = torrentPeers.toMap();
+
+    QVector<QVariantMap> expectedAttributes {{
+        {CREATED_AT,       "2021-01-07T14:51:23.000Z"},
+        {ID,               5},
+        {"leechers",       7},
+        {"seeds",          NullVariant::Int()},
+        {"torrent",        QVariantMap {
+                               {"added_on", "2020-08-07T20:11:10.000Z"},
+                               {CREATED_AT, "2021-11-07T08:13:23.000Z"},
+                               {"hash",     "7579e3af2768cdf52ec84c1f320333f68401dc6e"},
+                               {ID,         7},
+                               {NAME,       "test7"},
+                               {NOTE,       "for serialization"},
+                               {"progress", 700},
+                               {SIZE_,      17},
+                               {UPDATED_AT, "2021-01-07T18:46:31.000Z"},
+                               {"user_id",  2},
+                           }},
+        {"torrent_id",     7},
+        {"total_leechers", 7},
+        {"total_seeds",    7},
+        {UPDATED_AT,       "2021-01-07T17:46:31.000Z"},
+    }, {
+        {CREATED_AT,       "2021-01-06T14:51:23.000Z"},
+        {ID,               6},
+        {"leechers",       6},
+        {"seeds",          NullVariant::Int()},
+        {"torrent",        QVariant::fromValue(nullptr)},
+        {"torrent_id",     NullVariant::ULongLong()},
+        {"total_leechers", 6},
+        {"total_seeds",    6},
+        {UPDATED_AT,       "2021-01-06T17:46:31.000Z"},
+    }};
+
+    QCOMPARE(serialized, expectedAttributes);
+}
+
+void tst_Model_Connection_Independent::toVector_BelongsTo_EmptyRelation() const
+{
+    auto torrentPeers = TorrentPeer::with("torrent")->findMany({5, 6});
+    QCOMPARE(torrentPeers.size(), 2);
+    QCOMPARE(typeid (torrentPeers), typeid (ModelsCollection<TorrentPeer>));
+
+    QVector<QVector<AttributeItem>> serialized = torrentPeers.toVector();
+
+    QVector<QVector<AttributeItem>> expectedAttributes {{
+        {ID,               5},
+        {"torrent_id",     7},
+        {"seeds",          NullVariant::Int()},
+        {"total_seeds",    7},
+        {"leechers",       7},
+        {"total_leechers", 7},
+        {CREATED_AT,       "2021-01-07T14:51:23.000Z"},
+        {UPDATED_AT,       "2021-01-07T17:46:31.000Z"},
+        {"torrent",        QVariant::fromValue(QVector<AttributeItem> {
+                               {ID,         7},
+                               {"user_id",  2},
+                               {NAME,       "test7"},
+                               {SIZE_,      17},
+                               {"progress", 700},
+                               {"added_on", "2020-08-07T20:11:10.000Z"},
+                               {"hash",     "7579e3af2768cdf52ec84c1f320333f68401dc6e"},
+                               {NOTE,       "for serialization"},
+                               {CREATED_AT, "2021-11-07T08:13:23.000Z"},
+                               {UPDATED_AT, "2021-01-07T18:46:31.000Z"},
+                           })},
+    }, {
+        {ID,               6},
+        {"torrent_id",     NullVariant::ULongLong()},
+        {"seeds",          NullVariant::Int()},
+        {"total_seeds",    6},
+        {"leechers",       6},
+        {"total_leechers", 6},
+        {CREATED_AT,       "2021-01-06T14:51:23.000Z"},
+        {UPDATED_AT,       "2021-01-06T17:46:31.000Z"},
+        {"torrent",        QVariant::fromValue(nullptr)},
+    }};
 
     QCOMPARE(serialized, expectedAttributes);
 }

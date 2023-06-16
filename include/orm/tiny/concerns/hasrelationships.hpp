@@ -165,7 +165,7 @@ namespace Concerns
 
         /* Serialization - Relations */
         /*! Convert the model's relationships to the map or vector. */
-        template<SerializedAttributes C>
+        template<SerializedAttributes C, typename PivotType = void>
         C serializeRelations();
 
         /* Others */
@@ -376,21 +376,36 @@ namespace Concerns
 #endif
         getSerializableRelations();
 
+        /*! Create and visit the serialize relation store. */
+        template<SerializedAttributes C>
+        void serializeRelationWithVisitor(
+                const QString &relation, RelationsType<AllRelations...> &models,
+                C &attributes);
+
         /*! On the base of alternative held by m_relations decide, which
             serializeRelation() to execute. */
-        template<typename Related, SerializedAttributes C>
+        template<typename Related, SerializedAttributes C, typename PivotType>
         void serializeRelationVisited(
                 QString relation, RelationsType<AllRelations...> &models,
                 C &attributes) const;
 
         /*! Serialize for Many relation types. */
-        template<typename Related, bool isMap>
+        template<typename Related, bool isMap, typename PivotType>
         inline static void serializeRelation(QVariant &relationSerialized, // don't remove inline
                                              ModelsCollection<Related> &models);
         /*! Serialize for One relation type. */
         template<typename Related, bool isMap>
         inline static void serializeRelation(QVariant &relationSerialized, // don't remove inline
                                              std::optional<Related> &model);
+
+        /*! */
+        inline static void
+        insertSerializedRelation(QVariantMap &attributes, const QString &relation,
+                                 const QVariant &relationSerialized);
+        /*! */
+        inline static void
+        insertSerializedRelation(QVector<AttributeItem> &attributes, QString &&relation,
+                                 QVariant &&relationSerialized);
 
         /* Static cast this to a child's instance type (CRTP) */
         TINY_CRTP_MODEL_WITH_BASE_DECLARATIONS
@@ -728,24 +743,32 @@ namespace Concerns
     /* Serialization - Relations */
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
-    template<SerializedAttributes C>
+    template<SerializedAttributes C, typename PivotType>
     C HasRelationships<Derived, AllRelations...>::serializeRelations()
     {
-        C attributes;
+        auto &serializableRelations = getSerializableRelations();
 
-        for (auto &&[relation, models] : getSerializableRelations()) {
+        C attributes;
+        if constexpr (std::is_same_v<C, QVector<AttributeItem>>)
+            attributes.reserve(static_cast<QVector<AttributeItem>::size_type>(
+                                   serializableRelations.size()));
+
+        for (auto &&[relation, models] : serializableRelations) {
             Q_ASSERT(!models.valueless_by_exception());
 
-            // Skip belongs-to-many relations, relations with the pivot
-            if (m_pivots.contains(relation))
-                continue;
-
-            // Save model/s to the store to avoid passing variables to the visitor
-            this->createSerializeRelationStore(relation, models, attributes)
-                    .visit(relation);
-
-            // Releases the ownership and destroy the top relation store on the stack
-            this->resetRelationStore();
+            // Serialize belongs-to-many relation or the pivot model
+            if constexpr (hasPivotRelation() && !std::is_void_v<PivotType>) {
+                // Pivot model, skipping the relation store, call the visited directly
+                if (m_pivots.contains(relation))
+                    serializeRelationVisited<PivotType, C, void>(relation, models,
+                                                                 attributes);
+                // belongs-to-many relation
+                else
+                    serializeRelationWithVisitor(relation, models, attributes);
+            }
+            // Serialize has-one, has-many, and belongs-to relations
+            else
+                serializeRelationWithVisitor(relation, models, attributes);
         }
 
         return attributes;
@@ -1364,7 +1387,21 @@ namespace Concerns
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
-    template<typename Related, SerializedAttributes C>
+    template<SerializedAttributes C>
+    void HasRelationships<Derived, AllRelations...>::serializeRelationWithVisitor(
+            const QString &relation, RelationsType<AllRelations...> &models,
+            C &attributes)
+    {
+        // Save model/s to the store to avoid passing variables to the visitor
+        this->createSerializeRelationStore(relation, models, attributes)
+                .visit(relation);
+
+        // Releases the ownership and destroy the top relation store on the stack
+        this->resetRelationStore();
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    template<typename Related, SerializedAttributes C, typename PivotType>
     void HasRelationships<Derived, AllRelations...>::serializeRelationVisited(
             QString relation, RelationsType<AllRelations...> &models,
             C &attributes) const
@@ -1376,11 +1413,12 @@ namespace Concerns
 
         // Many type relationship
         if (std::holds_alternative<ModelsCollection<Related>>(models))
-            serializeRelation<Related, IsMap>(
+            serializeRelation<Related, IsMap, PivotType>(
                         relationSerialized, std::get<ModelsCollection<Related>>(models));
 
         // One type relationship
         else if (std::holds_alternative<std::optional<Related>>(models))
+            // No need to pass the PivotType down for the one type relation
             serializeRelation<Related, IsMap>(
                         relationSerialized, std::get<std::optional<Related>>(models));
 
@@ -1394,31 +1432,24 @@ namespace Concerns
         /* If the relationships snake-casing is enabled, we will snake case this
            key so that the relation attribute is snake cased in this returned
            map to the developers, making this consistent with attributes. */
-        if (Derived::u_snakeAttributes)
+        if (model().getUserSnakeAttributes())
             relation = StringUtils::snake(std::move(relation));
 
-        /* If the relation value has been set, we will set it on this attributes
-           map for returning. If it was not arrayable or null, we'll not set
-           the value on the array because it is some type of invalid value. */
-        if constexpr (IsMap)
-            attributes.insert(relation, relationSerialized);
-        else
-#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
-            attributes.append({relation, relationSerialized});
-#else
-            attributes.emplace_back(relation, relationSerialized);
-#endif
+        /* Insert or emplace the serialized relation attributes to the final attributes
+           map or vector. */
+        insertSerializedRelation(attributes, std::move(relation),
+                                 std::move(relationSerialized));
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
-    template<typename Related, bool IsMap>
+    template<typename Related, bool IsMap, typename PivotType>
     void HasRelationships<Derived, AllRelations...>::serializeRelation(
             QVariant &relationSerialized, ModelsCollection<Related> &models)
     {
         if constexpr (IsMap)
-            relationSerialized.setValue(models.toMap());
+            relationSerialized.setValue(models.template toMap<PivotType>());
         else
-            relationSerialized.setValue(models.toVector());
+            relationSerialized.setValue(models.template toVector<PivotType>());
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
@@ -1426,7 +1457,8 @@ namespace Concerns
     void HasRelationships<Derived, AllRelations...>::serializeRelation(
             QVariant &relationSerialized, std::optional<Related> &model)
     {
-        if (model.has_value()) {
+        // No need to pass the PivotType down for the one type relation
+        if (model) {
             if constexpr (IsMap)
                 relationSerialized.setValue(model->toMap());
             else
@@ -1435,6 +1467,27 @@ namespace Concerns
         // A NULL foreign key
         else
             relationSerialized.setValue(nullptr);
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    void HasRelationships<Derived, AllRelations...>::insertSerializedRelation(
+            QVariantMap &attributes, const QString &relation,
+            const QVariant &relationSerialized)
+    {
+        attributes.insert(relation, relationSerialized);
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    void HasRelationships<Derived, AllRelations...>::insertSerializedRelation(
+            QVector<AttributeItem> &attributes, QString &&relation,
+            QVariant &&relationSerialized)
+    {
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
+        attributes.append({std::move(relation), std::move(relationSerialized)});
+#else
+        attributes.emplace_back(std::move(relation),
+                                std::move(relationSerialized));
+#endif
     }
 
     /* Static cast this to a child's instance type (CRTP) */

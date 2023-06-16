@@ -905,12 +905,26 @@ namespace Orm::Tiny::Concerns
     void HasRelationStore<Derived, AllRelations...>::SerializeRelationStore<C>::visited(
             const Method /*unused*/) const
     {
-        using Related = typename std::invoke_result_t<Method, Derived>
-                                    ::element_type::RelatedType;
+        using Relation = typename std::invoke_result_t<Method, Derived>::element_type;
+        using Related  = typename Relation::RelatedType;
 
-        this->m_hasRelationStore->basemodel()
-                .template serializeRelationVisited<Related, C>(
-                    *m_relation, *m_models, *m_attributes);
+        /* Here is the last and only one chance where we can obtain the PivotType
+           for the belongs-to-many relation, so we need to pass it down, so that
+           the toMap() or toVector() can obtain the correct pivot model type
+           from the m_relations map's std::variant. */
+
+        // belongs-to-many
+        if constexpr (std::is_base_of_v<Relations::IsPivotRelation, Relation>)
+            this->m_hasRelationStore->basemodel()
+                    .template serializeRelationVisited<Related, C,
+                                                       Relation::PivotTypeType>(
+                        *m_relation, *m_models, *m_attributes);
+
+        // has-one, has-many, and belongs-to
+        else
+            this->m_hasRelationStore->basemodel()
+                    .template serializeRelationVisited<Related, C, void>(
+                        *m_relation, *m_models, *m_attributes);
     }
 
     /* private */
