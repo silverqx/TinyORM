@@ -2,7 +2,7 @@
 #ifndef MODELS_ROLE_HPP
 #define MODELS_ROLE_HPP
 
-#include "orm/tiny/model.hpp"
+#include "orm/tiny/relations/pivot.hpp"
 
 #include "models/roleuser.hpp"
 #include "models/user.hpp"
@@ -13,11 +13,12 @@ namespace Models
 using Orm::Constants::NAME;
 using Orm::Tiny::Model;
 using Orm::Tiny::Relations::BelongsToMany;
+using Orm::Tiny::Relations::Pivot;
 
 class User;
 
 // NOLINTNEXTLINE(misc-no-recursion, bugprone-exception-escape)
-class Role final : public Model<Role, User, RoleUser>
+class Role final : public Model<Role, User, RoleUser, Pivot>
 {
     friend Model;
     using Model::Model;

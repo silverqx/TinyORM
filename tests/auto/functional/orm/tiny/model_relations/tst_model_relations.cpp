@@ -334,11 +334,11 @@ void tst_Model_Relations::
 
     // Torrent belongs-to-many relation (basic pivot)
     auto torrents = tag->getRelation<Torrent>("torrents");
-    QCOMPARE(torrents.size(), 3);
+    QCOMPARE(torrents.size(), 4);
     QCOMPARE(typeid (torrents), typeid (ModelsCollection<Torrent *>));
 
     // Expected torrent IDs
-    QVector<QVariant> torrentIds {2, 3, 7};
+    QVector<QVariant> torrentIds {2, 3, 4, 7};
 
     for (auto *torrent : torrents) {
         QVERIFY(torrent);
@@ -434,11 +434,11 @@ void tst_Model_Relations::
 
     // Torrent belongs-to-many relation (basic pivot)
     auto torrents = tag->getRelation<Torrent>("torrents_WithoutPivotAttributes");
-    QCOMPARE(torrents.size(), 3);
+    QCOMPARE(torrents.size(), 4);
     QCOMPARE(typeid (torrents), typeid (ModelsCollection<Torrent *>));
 
     // Expected torrent IDs
-    QVector<QVariant> torrentIds {2, 3, 7};
+    QVector<QVariant> torrentIds {2, 3, 4, 7};
 
     for (auto *torrent : torrents) {
         QVERIFY(torrent);
@@ -576,11 +576,11 @@ void tst_Model_Relations::
 
     // Torrent belongs-to-many relation (basic pivot)
     auto torrents = tag->getRelationValue<Torrent>("torrents");
-    QCOMPARE(torrents.size(), 3);
+    QCOMPARE(torrents.size(), 4);
     QCOMPARE(typeid (torrents), typeid (ModelsCollection<Torrent *>));
 
     // Expected torrent IDs
-    QVector<QVariant> torrentIds {2, 3, 7};
+    QVector<QVariant> torrentIds {2, 3, 4, 7};
 
     for (auto *torrent : torrents) {
         QVERIFY(torrent);
@@ -676,11 +676,11 @@ void tst_Model_Relations::
 
     // Torrent belongs-to-many relation (basic pivot)
     auto torrents = tag->getRelationValue<Torrent>("torrents_WithoutPivotAttributes");
-    QCOMPARE(torrents.size(), 3);
+    QCOMPARE(torrents.size(), 4);
     QCOMPARE(typeid (torrents), typeid (ModelsCollection<Torrent *>));
 
     // Expected torrent IDs
-    QVector<QVariant> torrentIds {2, 3, 7};
+    QVector<QVariant> torrentIds {2, 3, 4, 7};
 
     for (auto *torrent : torrents) {
         QVERIFY(torrent);

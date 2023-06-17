@@ -4,6 +4,7 @@
 
 #include "orm/tiny/relations/pivot.hpp"
 
+#include "models/role.hpp"
 #include "models/tagged.hpp"
 #include "models/tagproperty.hpp"
 #include "models/torrent.hpp"
@@ -19,11 +20,12 @@ using Orm::Tiny::Relations::BelongsToMany;
 using Orm::Tiny::Relations::HasOne;
 using Orm::Tiny::Relations::Pivot;
 
+class Role;
 class Torrent;
 
 // NOLINTNEXTLINE(misc-no-recursion, bugprone-exception-escape)
-class Tag final : public Model<Tag, Torrent, TagProperty, Tagged>
-//class Tag final : public Model<Tag, Torrent, TagProperty, Pivot>
+class Tag final : public Model<Tag, Torrent, TagProperty, Role, Tagged>
+//class Tag final : public Model<Tag, Torrent, TagProperty, Role, Pivot>
 {
     friend Model;
     using Model::Model;
@@ -58,6 +60,19 @@ public:
         return hasOne<TagProperty>();
     }
 
+    /*! The roles that belong to the tag. */
+    std::unique_ptr<BelongsToMany<Tag, Role>>
+    roles()
+    {
+        // Ownership of a unique_ptr()
+        auto relation = belongsToMany<Role>();
+
+        relation->as("acl")
+                .withPivot("active");
+
+        return relation;
+    }
+
 private:
     /*! The table associated with the model. */
     QString u_table {"torrent_tags"};
@@ -67,6 +82,7 @@ private:
         {"torrents",                        [](auto &v) { v(&Tag::torrents); }},
         {"torrents_WithoutPivotAttributes", [](auto &v) { v(&Tag::torrents_WithoutPivotAttributes); }},
         {"tagProperty",                     [](auto &v) { v(&Tag::tagProperty); }},
+        {"roles",                           [](auto &v) { v(&Tag::roles); }},
     };
 
     /*! The relations to eager load on every query. */

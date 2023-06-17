@@ -360,6 +360,19 @@ function createTables(string $connection): void
         $table->foreign('state_id')->references('id')->on('torrent_states')
             ->cascadeOnUpdate()->cascadeOnDelete();
     });
+
+    $schema->create('role_tag', function (Blueprint $table) {
+        $table->unsignedBigInteger('tag_id');
+        $table->unsignedBigInteger('role_id');
+        $table->boolean('active')->default(0);
+
+        $table->primary(['tag_id', 'role_id']);
+
+        $table->foreign('tag_id')->references('id')->on('torrent_tags')
+            ->cascadeOnUpdate()->cascadeOnDelete();
+        $table->foreign('role_id')->references('id')->on('roles')
+            ->cascadeOnUpdate()->cascadeOnDelete();
+    });
 }
 
 /**
@@ -477,6 +490,7 @@ function seedTables(string $connection): void
             [2, 4, 1, '2021-02-24 17:31:58', '2021-02-24 18:49:22'],
             [3, 2, 1, '2021-02-25 17:31:58', '2021-02-25 18:49:22'],
             [3, 4, 1, '2021-02-26 17:31:58', '2021-02-26 18:49:22'],
+            [4, 2, 1, '2021-02-27 17:31:58', '2021-02-27 18:49:22'],
             [7, 1, 1, '2021-03-01 17:31:58', '2021-03-01 18:49:22'],
             [7, 2, 1, '2021-03-02 17:31:58', '2021-03-02 18:49:22'],
             [7, 3, 0, '2021-03-03 17:31:58', '2021-03-03 18:49:22'],
@@ -533,6 +547,12 @@ function seedTables(string $connection): void
         combineValues(['torrent_id', 'state_id', 'active'], [
             [7, 1, 1],
             [7, 4, 0],
+        ]));
+
+    Capsule::table('role_tag', null, $connection)->insert(
+        combineValues(['tag_id', 'role_id', 'active'], [
+            [2, 1, 1],
+            [2, 3, 0],
         ]));
 }
 
