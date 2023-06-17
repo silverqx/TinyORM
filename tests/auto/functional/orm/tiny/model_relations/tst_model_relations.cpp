@@ -827,7 +827,7 @@ void tst_Model_Relations::with_BelongsToMany() const
         QVERIFY(relations.contains("tagged"));
         QVERIFY(relations.contains("tagProperty"));
 
-        // Custom pivot relation
+        // Custom pivot relation - Tagged
         auto *tagged = tag->getRelation<Tagged, One>("tagged");
         QVERIFY(tagged);
         QVERIFY(tagged->exists);
@@ -1044,7 +1044,7 @@ void tst_Model_Relations::with_WithSelectConstraint_BelongsToMany() const
         QVERIFY(relations.contains("tagged"));
         QVERIFY(relations.contains("tagProperty"));
 
-        // Custom pivot relation
+        // Custom pivot relation - Tagged
         auto *tagged = tag->getRelation<Tagged, One>("tagged");
         QVERIFY(tagged);
         QVERIFY(tagged->exists);
@@ -1144,7 +1144,7 @@ void tst_Model_Relations::with_WithLambdaConstraint_BelongsToMany() const
         QVERIFY(relations.contains("tagged"));
         QVERIFY(relations.contains("tagProperty"));
 
-        // Custom pivot relation
+        // Custom pivot relation - Tagged
         auto *tagged = tag->getRelation<Tagged, One>("tagged");
         QVERIFY(tagged);
         QVERIFY(tagged->exists);
