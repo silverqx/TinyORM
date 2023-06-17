@@ -121,7 +121,7 @@ private Q_SLOTS:
     void massAssignment_forceFill_NonExistentAttribute() const;
 
     /* Eager loading */
-    void with_WithSelectConstraint_QueryWithoutRelatedTable() const;
+    void with_WithSelectConstraint_WithoutQualifiedColumnsForRelatedTable() const;
     void with_BelongsToMany_WithSelectConstraint_QualifiedColumnsForRelatedTable() const;
 
     /* Retrieving results */
@@ -1012,7 +1012,7 @@ void tst_Model_Connection_Independent::
 /* Eager loading */
 
 void tst_Model_Connection_Independent::
-     with_WithSelectConstraint_QueryWithoutRelatedTable() const
+     with_WithSelectConstraint_WithoutQualifiedColumnsForRelatedTable() const
 {
     DB::flushQueryLog(m_connection);
     DB::enableQueryLog(m_connection);
