@@ -1414,12 +1414,12 @@ namespace Orm::Tiny
            that start with the given top relations and add them to our vector. */
         for (const auto &[relationName, constraints] : m_eagerLoad)
             if (isNestedUnder(topRelationName, relationName))
-#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
-                nested.append({relationName.sliced(topRelationName.size() + 1),
-                               constraints});
-#else
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0) || (defined(__clang__) && __clang_major__ < 16)
                 nested.append({relationName.mid(topRelationName.size() + 1),
                                constraints});
+#else
+                nested.emplaceBack(relationName.sliced(topRelationName.size() + 1),
+                                   constraints);
 #endif
 
         return nested;
