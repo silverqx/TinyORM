@@ -33,6 +33,7 @@ using Orm::QtTimeZoneConfig;
 using Orm::QtTimeZoneType;
 using Orm::QueryBuilder;
 
+using Orm::Tiny::AttributeItem;
 using Orm::Tiny::ConnectionOverride;
 using Orm::Tiny::Exceptions::RelationNotFoundError;
 using Orm::Tiny::Exceptions::RelationNotLoadedError;
@@ -875,7 +876,8 @@ void tst_Model_Relations::with_BelongsToMany_Twice() const
     // Expected tag IDs
     std::unordered_set<Tag::KeyType> tagIds {2};
     // Expected role attribute names and positions hash
-    std::unordered_map<QString, int> expectedRoleAttributes {
+    std::unordered_map<QString, QVector<AttributeItem>::size_type>
+    expectedRoleAttributes {
         {ID,         0},
         {NAME,       1},
         {"added_on", 2},
@@ -1303,7 +1305,8 @@ void tst_Model_Relations::with_NestedRelations_WithSelectConstraint_HasOne() con
     // Expected file property IDs
     std::unordered_set<TorrentPreviewableFileProperty::KeyType> filePropertyIds {1, 2};
     // Expected file property attributes
-    std::unordered_map<QString, int> filePropertyAttributes {
+    std::unordered_map<QString, QVector<AttributeItem>::size_type>
+    filePropertyAttributes {
         {ID,                    0},
         {"previewable_file_id", 1},
     };
@@ -1356,7 +1359,8 @@ void tst_Model_Relations::with_NestedRelations_WithSelectConstraint_HasMany() co
     // Expected torrent previewable file IDs
     std::unordered_set<TorrentPreviewableFile::KeyType> fileIds {2, 3};
     // Expected torrent previewable file attributes
-    std::unordered_map<QString, int> fileAttributes {
+    std::unordered_map<QString, QVector<AttributeItem>::size_type>
+    fileAttributes {
         {ID,           0},
         {"torrent_id", 1},
     };
@@ -1392,7 +1396,8 @@ void tst_Model_Relations::
     // Expected tag property IDs
     std::unordered_set<TorrentPreviewableFileProperty::KeyType> tagPropertyIds {2, 4};
     // Expected tag property attributes
-    std::unordered_map<QString, int> tagPropertyAttributes {
+    std::unordered_map<QString, QVector<AttributeItem>::size_type>
+    tagPropertyAttributes {
         {ID,       0},
         {"tag_id", 1},
     };
@@ -1433,7 +1438,8 @@ void tst_Model_Relations::
     // Expected tag IDs
     std::unordered_set<Tag::KeyType> tagIds {2};
     // Expected role attribute names and positions hash
-    std::unordered_map<QString, int> expectedRoleAttributes {
+    std::unordered_map<QString, QVector<AttributeItem>::size_type>
+    expectedRoleAttributes {
         {ID,         0},
         {NAME,       1},
     };

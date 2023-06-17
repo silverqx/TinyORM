@@ -49,6 +49,9 @@ namespace Orm::Tiny::Concerns
         using TypeUtils = Orm::Utils::Type;
 
     public:
+        /*! Alias for the attributes vector size type. */
+        using AttributesSizeType = typename QVector<AttributeItem>::size_type;
+
         /*! Equality comparison operator for the HasAttributes concern. */
         inline bool operator==(const HasAttributes &) const = default;
 
@@ -66,7 +69,8 @@ namespace Orm::Tiny::Concerns
         /*! Get all of the current attributes on the model (insert order). */
         inline const QVector<AttributeItem> &getAttributes() const noexcept;
         /*! Get all of the current attributes on the model (for fast lookup). */
-        inline const std::unordered_map<QString, int> &getAttributesHash() const;
+        inline const std::unordered_map<QString, AttributesSizeType> &
+        getAttributesHash() const;
         /*! Get an attribute from the model. */
         QVariant getAttribute(const QString &key) const;
         /*! Get an attribute from the model casted to the given type. */
@@ -83,7 +87,8 @@ namespace Orm::Tiny::Concerns
         /*! Get the model's original attribute values (transformed and insert order). */
         QVector<AttributeItem> getOriginals() const;
         /*! Get the model's original attributes hash (for fast lookup). */
-        inline const std::unordered_map<QString, int> &getOriginalsHash() const;
+        inline const std::unordered_map<QString, AttributesSizeType> &
+        getOriginalsHash() const;
         /*! Get the model's raw original attribute value. */
         QVariant getRawOriginal(const QString &key,
                                 const QVariant &defaultValue = {}) const;
@@ -105,7 +110,7 @@ namespace Orm::Tiny::Concerns
         QVector<AttributeItem> getDirty() const;
         /*! Get the attributes that have been changed since last sync
             (for fast lookup). */
-        std::unordered_map<QString, int> getDirtyHash() const;
+        std::unordered_map<QString, AttributesSizeType> getDirtyHash() const;
         /*! Determine if the model or any of the given attribute(s) have
             been modified. */
         inline bool isDirty(const QStringList &attributes = {}) const;
@@ -122,7 +127,8 @@ namespace Orm::Tiny::Concerns
         /*! Get the attributes that were changed (insert order). */
         inline const QVector<AttributeItem> &getChanges() const;
         /*! Get the attributes that were changed (for fast lookup). */
-        inline const std::unordered_map<QString, int> &getChangesHash() const;
+        inline const std::unordered_map<QString, AttributesSizeType> &
+        getChangesHash() const;
         /*! Determine if the model and all the given attribute(s) have
             remained the same. */
         inline bool wasChanged(const QStringList &attributes = {}) const;
@@ -243,7 +249,7 @@ namespace Orm::Tiny::Concerns
         inline const QVector<AttributeItem> &getRawAttributes() const;
 
         /*! Determine if any of the given attributes were changed. */
-        bool hasChanges(const std::unordered_map<QString, int> &changes,
+        bool hasChanges(const std::unordered_map<QString, AttributesSizeType> &changes,
                         const QStringList &attributes = {}) const;
         /*! Sync the changed attributes. */
         Derived &syncChanges();
@@ -260,7 +266,7 @@ namespace Orm::Tiny::Concerns
         /*! Rehash attribute positions from the given index. */
         void rehashAttributePositions(
                 const QVector<AttributeItem> &attributes,
-                std::unordered_map<QString, int> &attributesHash,
+                std::unordered_map<QString, AttributesSizeType> &attributesHash,
                 int from = 0);
 
         /* Datetime-related */
@@ -322,14 +328,14 @@ namespace Orm::Tiny::Concerns
         /*! Add the date attributes to the attributes vector. */
         void addDateAttributesToVector(
                 QVector<AttributeItem> &attributes,
-                const std::unordered_map<QString, int> &attributesHash) const;
+                const std::unordered_map<QString, AttributesSizeType> &attributesHash) const;
 
         /*! Add the casted attributes to the attributes map. */
         void addCastAttributesToMap(QVariantMap &attributes) const;
         /*! Add the casted attributes to the attributes vector. */
         void addCastAttributesToVector(
                 QVector<AttributeItem> &attributes,
-                const std::unordered_map<QString, int> &attributesHash) const;
+                const std::unordered_map<QString, AttributesSizeType> &attributesHash) const;
 
         /*! Prepare a date or datetime for vector, map, or JSON serialization. */
         static QString serializeDateOrDateTime(const QVariant &value);
@@ -354,11 +360,11 @@ namespace Orm::Tiny::Concerns
         /* Don't want to use std::reference_wrapper to attributes, because if a copy
            of the model is made, all references would be invalidated. */
         /*! The model's attributes hash (for fast lookup). */
-        std::unordered_map<QString, int> m_attributesHash;
+        std::unordered_map<QString, AttributesSizeType> m_attributesHash;
         /*! The model attribute's original state (for fast lookup). */
-        std::unordered_map<QString, int> m_originalHash;
+        std::unordered_map<QString, AttributesSizeType> m_originalHash;
         /*! The changed model attributes (for fast lookup). */
-        std::unordered_map<QString, int> m_changesHash;
+        std::unordered_map<QString, AttributesSizeType> m_changesHash;
 
         /*! The storage format of the model's date columns. */
         T_THREAD_LOCAL
@@ -388,7 +394,7 @@ namespace Orm::Tiny::Concerns
     private:
         /*! Throw if the m_attributesHash doesn't contain a given attribute. */
         static void throwIfNoAttributeInHash(
-                    const std::unordered_map<QString, int> &attributesHash,
+                    const std::unordered_map<QString, AttributesSizeType> &attributesHash,
                     const QString &attribute, const QString &functionName);
 
         /* Casting Attributes */
@@ -525,7 +531,8 @@ namespace Orm::Tiny::Concerns
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
-    const std::unordered_map<QString, int> &
+    const std::unordered_map<QString,
+            typename HasAttributes<Derived, AllRelations...>::AttributesSizeType> &
     HasAttributes<Derived, AllRelations...>::getAttributesHash() const
     {
         // FEATURE castable silverqx
@@ -606,7 +613,8 @@ namespace Orm::Tiny::Concerns
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
-    const std::unordered_map<QString, int> &
+    const std::unordered_map<QString,
+            typename HasAttributes<Derived, AllRelations...>::AttributesSizeType> &
     HasAttributes<Derived, AllRelations...>::getOriginalsHash() const
     {
         return m_originalHash;
@@ -721,11 +729,14 @@ namespace Orm::Tiny::Concerns
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
-    std::unordered_map<QString, int>
+    std::unordered_map<QString,
+            typename HasAttributes<Derived, AllRelations...>::AttributesSizeType>
     HasAttributes<Derived, AllRelations...>::getDirtyHash() const
     {
         const auto size = m_attributes.size();
-        std::unordered_map<QString, int> dirtyHash(static_cast<std::size_t>(size));
+
+        std::unordered_map<QString, AttributesSizeType>
+        dirtyHash(static_cast<std::size_t>(size));
 
         for (auto i = 0; i < size; ++i)
             if (const auto &key = m_attributes.at(i).key;
@@ -772,7 +783,8 @@ namespace Orm::Tiny::Concerns
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
-    const std::unordered_map<QString, int> &
+    const std::unordered_map<QString,
+            typename HasAttributes<Derived, AllRelations...>::AttributesSizeType> &
     HasAttributes<Derived, AllRelations...>::getChangesHash() const
     {
         return m_changesHash;
@@ -1240,7 +1252,7 @@ namespace Orm::Tiny::Concerns
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     bool HasAttributes<Derived, AllRelations...>::hasChanges(
-            const std::unordered_map<QString, int> &changes,
+            const std::unordered_map<QString, AttributesSizeType> &changes,
             const QStringList &attributes) const
     {
         /* If no specific attributes were provided, we will just see if the dirty hash
@@ -1355,7 +1367,7 @@ namespace Orm::Tiny::Concerns
     template<typename Derived, AllRelationsConcept ...AllRelations>
     void HasAttributes<Derived, AllRelations...>::rehashAttributePositions(
             const QVector<AttributeItem> &attributes,
-            std::unordered_map<QString, int> &attributesHash,
+            std::unordered_map<QString, AttributesSizeType> &attributesHash,
             const int from)
     {
         /* This member function is universal and can be used for m_attributes,
@@ -1788,7 +1800,7 @@ namespace Orm::Tiny::Concerns
     template<typename Derived, AllRelationsConcept ...AllRelations>
     void HasAttributes<Derived, AllRelations...>::addDateAttributesToVector(
             QVector<AttributeItem> &attributes,
-            const std::unordered_map<QString, int> &attributesHash) const
+            const std::unordered_map<QString, AttributesSizeType> &attributesHash) const
     {
         for (auto &&key : getDates()) {
             // NOTE api different, Eloquent is doing a double cast silverqx
@@ -1827,7 +1839,7 @@ namespace Orm::Tiny::Concerns
     template<typename Derived, AllRelationsConcept ...AllRelations>
     void HasAttributes<Derived, AllRelations...>::addCastAttributesToVector(
             QVector<AttributeItem> &attributes,
-            const std::unordered_map<QString, int> &attributesHash) const
+            const std::unordered_map<QString, AttributesSizeType> &attributesHash) const
     {
         for (auto &&[key, castItem] : getCasts()) {
             // Nothing to do, this attribute is not set
@@ -1882,7 +1894,7 @@ namespace Orm::Tiny::Concerns
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     void HasAttributes<Derived, AllRelations...>::throwIfNoAttributeInHash(
-            const std::unordered_map<QString, int> &attributesHash,
+            const std::unordered_map<QString, AttributesSizeType> &attributesHash,
             const QString &attribute, const QString &functionName)
     {
         if (attributesHash.contains(attribute))
