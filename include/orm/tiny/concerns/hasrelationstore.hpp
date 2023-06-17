@@ -917,7 +917,7 @@ namespace Orm::Tiny::Concerns
         if constexpr (std::is_base_of_v<Relations::IsPivotRelation, Relation>)
             this->m_hasRelationStore->basemodel()
                     .template serializeRelationVisited<Related, C,
-                                                       Relation::PivotTypeType>(
+                                                       typename Relation::PivotTypeType>(
                         *m_relation, *m_models, *m_attributes);
 
         // has-one, has-many, and belongs-to
