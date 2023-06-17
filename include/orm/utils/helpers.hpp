@@ -30,8 +30,8 @@ namespace Utils
 
     /*! Tests if the std::hash can hash T with noexcept. */
     template<class T>
-    struct IsNothrowHashable<T, std::void_t<decltype(std::hash<T>()(
-                                                         std::declval<const T &>()))>>
+    struct IsNothrowHashable<T, std::void_t<decltype (std::hash<T>()(
+                                                          std::declval<const T &>()))>>
         : std::bool_constant<noexcept(std::hash<T>()(std::declval<const T &>()))>
     {};
 
