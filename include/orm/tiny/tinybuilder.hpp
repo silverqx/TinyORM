@@ -1270,7 +1270,23 @@ namespace Orm::Tiny
                         "constraint' to the Model::with() method is not allowed, use "
                         "only one of them.");
 
-            if (isSelectConstraint)
+            /* I have to write a note here, this !relation.name.contains(DOT) bugfix
+               was unbelievable, it took me a whole day of debugging, writing unit tests,
+               and figuring out how to solve this problem. I wrote dozen of lines to make
+               it work but at the end I started removing what was not needed and ended
+               with this one condition. 😮🙃
+               If the relation name is a nested relation, then the select constraints
+               lambda will not be generated and will be nullptr, so will be skipped here,
+               the problem was that the getRelatedTableForBelongsToManyWithVisitor()
+               could not be invoked correctly because it's a nested relation.
+               The getRelatedTableForBelongsToManyWithVisitor() will be visited or
+               resolved later, right before it will be needed and it will be done during
+               relation->getQuery().with(std::move(nested));
+               in the eagerLoadRelationVisited(), the magic is done
+               in the relationsNestedUnder() when the nested relation is unwrapped.
+               The super paradox is that this was the first think I wrote but I still got
+               crash and then a whole day of fixing started. 🐛 */
+            if (isSelectConstraint && !relation.name.contains(DOT))
                 relation = createSelectWithConstraint(relation.name);
 
             /* We need to separate out any nested includes, which allows the developers

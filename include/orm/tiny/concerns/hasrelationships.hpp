@@ -1143,6 +1143,9 @@ namespace Concerns
     HasRelationships<Derived, AllRelations...>::
     getRelatedTableForBelongsToManyWithVisitor(const QString &relation)
     {
+        // Can't be a nested relation, see a comment in TinyBuilder::parseWithRelations()
+        Q_ASSERT(!relation.contains(DOT));
+
         // Throw excpetion if a relation is not defined
         validateUserRelation(relation);
 
