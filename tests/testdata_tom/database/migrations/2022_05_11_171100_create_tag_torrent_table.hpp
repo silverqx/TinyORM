@@ -14,6 +14,7 @@ namespace Migrations
         {
             Schema::create("tag_torrent", [](Blueprint &table)
             {
+                // Don't use the terser methods syntax here, leave it this way as example
                 table.unsignedBigInteger("torrent_id");
                 table.unsignedBigInteger("tag_id");
 
