@@ -1011,6 +1011,9 @@ void tst_Model_Connection_Independent::
 
 /* Eager loading */
 
+/* Eager or lazy loading all other relations with select constraints don't have and
+   also don't need qualified column names for the related table. */
+
 void tst_Model_Connection_Independent::
      with_WithSelectConstraint_WithoutQualifiedColumnsForRelatedTable() const
 {
@@ -1029,6 +1032,10 @@ void tst_Model_Connection_Independent::
                      "from `torrent_previewable_files` "
                      "where `torrent_previewable_files`.`torrent_id` in (?)"));
 }
+
+/* Eager or lazy loading the belongs-to-many relation with select constraints must have
+   qualified column names on the related and pivot tables. The qualified column names
+   on the pivot table is done through the BelongsToManyRelatedTableStore. */
 
 void tst_Model_Connection_Independent::
      with_BelongsToMany_WithSelectConstraint_QualifiedColumnsForRelatedTable() const
