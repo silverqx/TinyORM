@@ -200,10 +200,13 @@ namespace Concerns
 
 TINYORM_END_COMMON_NAMESPACE
 
+// Register custom QVariant types for Qt 5
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
 #ifdef TINYORM_COMMON_NAMESPACE
 Q_DECLARE_METATYPE(TINYORM_COMMON_NAMESPACE::Orm::Tiny::AttributeItem) // NOLINT(performance-no-int-to-ptr, misc-no-recursion)
 #else
 Q_DECLARE_METATYPE(Orm::Tiny::AttributeItem) // NOLINT(performance-no-int-to-ptr, misc-no-recursion)
+#endif
 #endif
 
 #endif // ORM_TINY_TINYTYPES_HPP

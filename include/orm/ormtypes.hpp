@@ -200,6 +200,8 @@ namespace Query
 
 TINYORM_END_COMMON_NAMESPACE
 
+// Register custom QVariant types for Qt 5
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
 Q_DECLARE_METATYPE(QTimeZone) // NOLINT(performance-no-int-to-ptr, misc-no-recursion)
 Q_DECLARE_METATYPE(Qt::TimeSpec) // NOLINT(performance-no-int-to-ptr, misc-no-recursion)
 
@@ -209,6 +211,7 @@ Q_DECLARE_METATYPE(TINYORM_COMMON_NAMESPACE::Orm::QtTimeZoneConfig) // NOLINT(pe
 #else
 Q_DECLARE_METATYPE(Orm::WhereConditionItem) // NOLINT(performance-no-int-to-ptr, misc-no-recursion)
 Q_DECLARE_METATYPE(Orm::QtTimeZoneConfig) // NOLINT(performance-no-int-to-ptr, misc-no-recursion)
+#endif
 #endif
 
 #endif // ORM_ORMTYPES_HPP
