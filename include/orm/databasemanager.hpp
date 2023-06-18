@@ -396,6 +396,9 @@ namespace Query
         /*! Throw exception if DatabaseManager instance already exists. */
         static void checkInstance();
 
+        /*! Call QMetaType's register functions needed by the Qt 5. */
+        static void registerQMetaTypesForQt5();
+
         /*! Database configuration. */
         Configuration m_configuration {};
         /*! Active database connection instances for the current thread. */
