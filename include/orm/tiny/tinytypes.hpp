@@ -8,7 +8,7 @@ TINY_SYSTEM_HEADER
 #include <optional>
 
 #include "orm/macros/export.hpp"
-#include "orm/ormtypes.hpp"
+#include "orm/ormtypes.hpp" // IWYU pragma: export
 #include "orm/tiny/tinyconcepts.hpp" // IWYU pragma: keep
 
 TINYORM_BEGIN_COMMON_NAMESPACE
@@ -52,8 +52,8 @@ namespace Types
     /*! Attribute item used in ORM models. */
     struct SHAREDLIB_EXPORT AttributeItem
     {
-        QString  key;
-        QVariant value;
+        QString  key   {};
+        QVariant value {};
 
         /*! Converting operator to the UpdateItem. */
         explicit operator UpdateItem() const;
