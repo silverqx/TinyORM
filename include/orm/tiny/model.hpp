@@ -1015,8 +1015,18 @@ namespace Orm::Tiny
                                                  derivedRight.u_relations))
             return false;
 
-        return model().u_touches    == derivedRight.u_touches   &&
-               model().u_timestamps == derivedRight.u_timestamps;
+        /* Thanks to the CRTP the user doesn't have to define operator==() in every
+           model, the u_xyz data members are compared here. I don't like it though,
+           one caveat of this is that if a user defines the operator==() then these
+           data members will be compared twice. */
+        return model().u_table        == derivedRight.u_table        &&
+               model().u_incrementing == derivedRight.u_incrementing &&
+               model().u_primaryKey   == derivedRight.u_primaryKey   &&
+               model().u_with         == derivedRight.u_with         &&
+//               model().u_withCount    == derivedRight.u_withCount    &&
+               model().u_connection   == derivedRight.u_connection   &&
+               model().u_timestamps   == derivedRight.u_timestamps   &&
+               model().u_touches      == derivedRight.u_touches;
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
