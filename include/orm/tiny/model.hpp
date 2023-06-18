@@ -1004,7 +1004,7 @@ namespace Orm::Tiny
         )
             return false;
 
-        // Compare the Derived Model 😮🤯😎
+        // Compare data members in the Derived Model 😮🤯😎
         const auto &derivedRight = static_cast<const Derived &>(right);
 
         // model().u_relations == derivedRight.u_relations
