@@ -2545,7 +2545,11 @@ void tst_Model_Connection_Independent::toVector_WithDateModfiers() const
 
 void tst_Model_Connection_Independent::toMap_UDatesOnly_DateNullVariants() const
 {
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
     Type::u_dates = {"date", "datetime", "timestamp"};
+#else
+    Type::u_dates = QStringList {"date", "datetime", "timestamp"};
+#endif
 
     auto type = Type::find(3, {ID, "date", "datetime", "timestamp"});
     QVERIFY(type);
@@ -2566,7 +2570,11 @@ void tst_Model_Connection_Independent::toMap_UDatesOnly_DateNullVariants() const
 
 void tst_Model_Connection_Independent::toVector_UDatesOnly_DateNullVariants() const
 {
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
     Type::u_dates = {"date", "datetime", "timestamp"};
+#else
+    Type::u_dates = QStringList {"date", "datetime", "timestamp"};
+#endif
 
     auto type = Type::find(3, {ID, "date", "datetime", "timestamp"});
     QVERIFY(type);
