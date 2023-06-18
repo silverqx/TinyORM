@@ -328,14 +328,16 @@ namespace Orm::Tiny::Concerns
         /*! Add the date attributes to the attributes vector. */
         void addDateAttributesToVector(
                 QVector<AttributeItem> &attributes,
-                const std::unordered_map<QString, AttributesSizeType> &attributesHash) const;
+                const std::unordered_map<QString,
+                                         AttributesSizeType> &attributesHash) const;
 
         /*! Add the casted attributes to the attributes map. */
         void addCastAttributesToMap(QVariantMap &attributes) const;
         /*! Add the casted attributes to the attributes vector. */
         void addCastAttributesToVector(
                 QVector<AttributeItem> &attributes,
-                const std::unordered_map<QString, AttributesSizeType> &attributesHash) const;
+                const std::unordered_map<QString,
+                                         AttributesSizeType> &attributesHash) const;
 
         /*! Prepare a date or datetime for vector, map, or JSON serialization. */
         static QString serializeDateOrDateTime(const QVariant &value);
