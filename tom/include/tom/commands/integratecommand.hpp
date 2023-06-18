@@ -92,7 +92,7 @@ namespace Tom::Commands
 
         /* Others */
         /*! Throw exception if unknown shell was passed. */
-        static void throwIfUnknownShell(const QString &shellArg);
+        [[noreturn]] static void throwIfUnknownShell(const QString &shellArg);
     };
 
     /* public */

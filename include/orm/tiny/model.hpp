@@ -410,7 +410,7 @@ namespace Orm::Tiny
         static void throwIfQDateTimeAttribute(const QVector<AttributeItem> &attributes);
         /*! Throw if an attempt to fill a guarded attribute is detected
             (mass assignment). */
-        static void throwIfTotallyGuarded(const QString &key);
+        [[noreturn]] static void throwIfTotallyGuarded(const QString &key);
 
         /*! Get the u_dateFormat attribute from the Derived model. */
         inline QString &getUserDateFormat() noexcept;

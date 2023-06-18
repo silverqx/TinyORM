@@ -258,6 +258,7 @@ namespace Concerns
         /*! Throw domain exception, when a user tries to override ID key
             on the pivot table.  */
         template<typename KeyType = ParentKeyType>
+        [[noreturn]]
         void throwOverwritingKeyError(const QString &key, const QVariant &original,
                                       const QVariant &overwrite) const;
 
