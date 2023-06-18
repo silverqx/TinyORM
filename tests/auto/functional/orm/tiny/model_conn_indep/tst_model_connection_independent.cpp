@@ -2758,7 +2758,7 @@ tst_Model_Connection_Independent::toVector_WithRelations_HasOne_HasMany_BelongsT
 
     // torrent_peer
     {
-        const auto it = std::ranges::find(serialized, "torrent_peer", keyProj);
+        const auto it = ranges::find(serialized, "torrent_peer", keyProj);
         if (it == serialized.end())
             QFAIL("The \"torrent_peer\" key not found in the \"serialized\" result.");
 
@@ -2780,7 +2780,7 @@ tst_Model_Connection_Independent::toVector_WithRelations_HasOne_HasMany_BelongsT
     }
     // user
     {
-        const auto it = std::ranges::find(serialized, "user", keyProj);
+        const auto it = ranges::find(serialized, "user", keyProj);
         if (it == serialized.end())
             QFAIL("The \"user\" key not found in the \"serialized\" result.");
 
@@ -2801,7 +2801,7 @@ tst_Model_Connection_Independent::toVector_WithRelations_HasOne_HasMany_BelongsT
     }
     // torrent_files
     {
-        const auto it = std::ranges::find(serialized, "torrent_files", keyProj);
+        const auto it = ranges::find(serialized, "torrent_files", keyProj);
         if (it == serialized.end())
             QFAIL("The \"torrent_files\" key not found in the \"serialized\" result.");
 
@@ -2971,7 +2971,7 @@ tst_Model_Connection_Independent::toVector_WithRelation_BelongsToMany_TorrentTag
         };
 
         // First find the tags relationship vector
-        auto itTags = std::ranges::find(serialized, "tags", keyProj);
+        auto itTags = ranges::find(serialized, "tags", keyProj);
         if (itTags == serialized.end())
             QFAIL("The \"tags\" key not found in the \"serialized\" result.");
 
@@ -2985,7 +2985,7 @@ tst_Model_Connection_Independent::toVector_WithRelation_BelongsToMany_TorrentTag
         actualTagProperties.reserve(tags.size());
 
         for (auto &tag : tags) {
-            const auto it = std::ranges::find(tag, "tag_property", keyProj);
+            const auto it = ranges::find(tag, "tag_property", keyProj);
             if (it == tag.end())
                 QFAIL("The \"tag_property\" key not found in the \"tag\" result.");
 
@@ -3208,7 +3208,7 @@ void tst_Model_Connection_Independent::
     // tag_property
     {
         // First find the tags relationship vector
-        auto itTags = std::ranges::find(serialized, "tags", keyProj);
+        auto itTags = ranges::find(serialized, "tags", keyProj);
         if (itTags == serialized.end())
             QFAIL("The \"tags\" key not found in the \"serialized\" result.");
 
@@ -3222,7 +3222,7 @@ void tst_Model_Connection_Independent::
         actualTagProperties.reserve(tags.size());
 
         for (auto &tag : tags) {
-            const auto it = std::ranges::find(tag, "tag_property", keyProj);
+            const auto it = ranges::find(tag, "tag_property", keyProj);
             if (it == tag.end())
                 QFAIL("The \"tag_property\" key not found in the \"tag\" result.");
 
@@ -3257,7 +3257,7 @@ void tst_Model_Connection_Independent::
 
     // torrent_states
     {
-        const auto it = std::ranges::find(serialized, "torrent_states", keyProj);
+        const auto it = ranges::find(serialized, "torrent_states", keyProj);
         if (it == serialized.end())
             QFAIL("The \"torrent_states\" key not found in the \"serialized\" result.");
 
