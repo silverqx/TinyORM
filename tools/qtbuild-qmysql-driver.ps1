@@ -61,7 +61,19 @@ function Test-QtVersionInstalled
         return
     }
 
-    throw "The passed '$QtVersion' is not installed in the 'C:\Qt\$QtVersion\' folder."
+    throw "The passed '$QtVersion' version is not installed in the 'C:\Qt\$QtVersion\' folder."
+}
+
+# Check whether the source files to build the Qt MySQL plugin are installed
+function Test-QtSourcesInstalled {
+    Write-Progress "Testing whether Qt $QtVersion source files are installed"
+
+    if (Test-Path "C:\Qt\$QtVersion\Src\qtbase\src\plugins\sqldrivers") {
+        return
+    }
+
+    throw "Source files to build the Qt MySQL plugin for the passed '$QtVersion' version are not " +
+        "installed in the 'C:\Qt\$QtVersion\Src\qtbase\src\plugins\sqldrivers' folder."
 }
 
 # Remove $QtVersion build folder if the $CleanBuild was passed
@@ -141,6 +153,7 @@ Write-Header "Preparations"
 Initialize-QtVersions
 Test-QtVersion
 Test-QtVersionInstalled
+Test-QtSourcesInstalled
 
 Push-Location -StackName $STACK_NAME
 
