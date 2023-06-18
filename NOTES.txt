@@ -2040,6 +2040,9 @@ tests was done on std::vector<AttributeItem> with 1'000'000 values
  - global inline or extern constants are much faster than constructing new strings
    Result: on 1'000'000 loop for a simple QString construction it's like 8ms vs 570ms
 
+ - the QHash<QString, RelationVisitor> u_relations are ~50ms faster than the std::unordered_map,
+   tested with the TinyOrmPlayground with ~1595 queries
+
 
 Qt confusions notes:
 --------------------
