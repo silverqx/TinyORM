@@ -1793,7 +1793,8 @@ namespace Orm::Tiny::Concerns
             auto &value = attributes[key];
 
             value = value.isNull() ? NullVariant::QDateTime()
-                                   : serializeDateTime(asDateTime(value));
+                                   : Model<Derived, AllRelations...>::
+                                     getUserSerializeDateTime(asDateTime(value));
         }
     }
 
@@ -1813,7 +1814,8 @@ namespace Orm::Tiny::Concerns
             auto &value = attributes[m_attributesHash.at(key)].value;
 
             value = value.isNull() ? NullVariant::QDateTime()
-                                   : serializeDateTime(asDateTime(value));
+                                   : Model<Derived, AllRelations...>::
+                                     getUserSerializeDateTime(asDateTime(value));
         }
     }
 
@@ -1867,10 +1869,12 @@ namespace Orm::Tiny::Concerns
             (typeId == QMetaType::QString &&
              Helpers::isStandardDateFormat(value.value<QString>()))
         ) T_UNLIKELY
-            return serializeDate(value.template value<QDate>());
+            return Model<Derived, AllRelations...>::
+                   getUserSerializeDate(value.template value<QDate>());
 
         else T_LIKELY
-            return serializeDateTime(value.template value<QDateTime>());
+            return Model<Derived, AllRelations...>::
+                   getUserSerializeDateTime(value.template value<QDateTime>());
 
         /* I don't want the if (QMetaType::QDateTime) check and the Q_UNREACHABLE() here
            because the NullVariant::QDateTime() must be returned in all other cases. */

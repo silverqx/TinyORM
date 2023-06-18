@@ -459,6 +459,12 @@ namespace Orm::Tiny
         /*! Get the UPDATED_AT attribute from the Derived model. */
         inline static const QString &getUserUpdatedAtColumn() noexcept;
 
+        /* Serialization - Attributes */
+        /*! Prepare a date for vector, map, or JSON serialization (calls Derived). */
+        inline static QString getUserSerializeDate(QDate date);
+        /*! Prepare a datetime for vector, map, or JSON serialization (calls Derived). */
+        inline static QString getUserSerializeDateTime(const QDateTime &datetime);
+
         /* SoftDeletes */
         /*! Initialize the SoftDeletes (add the deleted_at column to the u_dates). */
         void initializeSoftDeletes() const;
@@ -1903,6 +1909,22 @@ namespace Orm::Tiny
     Model<Derived, AllRelations...>::getUserUpdatedAtColumn() noexcept
     {
         return Derived::UPDATED_AT();
+    }
+
+    /* Serialization - Attributes */
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    QString
+    Model<Derived, AllRelations...>::getUserSerializeDate(const QDate date)
+    {
+        return Derived::serializeDate(date);
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    QString
+    Model<Derived, AllRelations...>::getUserSerializeDateTime(const QDateTime &datetime)
+    {
+        return Derived::serializeDateTime(datetime);
     }
 
     /* SoftDeletes */
