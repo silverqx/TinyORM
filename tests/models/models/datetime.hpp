@@ -15,7 +15,6 @@ class Datetime final : public Model<Datetime>
     friend Model;
     using Model::Model;
 
-private:
     /*! The attributes that are mass assignable. */
     inline static const QStringList u_fillable { // NOLINT(cppcoreguidelines-interfaces-global-init)
         "datetime",
