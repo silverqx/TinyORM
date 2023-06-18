@@ -960,6 +960,7 @@ void DatabaseManager::checkInstance()
             "Only one instance of DatabaseManager is allowed per process.");
 }
 
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
 void DatabaseManager::registerQMetaTypesForQt5()
 {
     if (!QMetaType::hasRegisteredComparators<QtTimeZoneConfig>())
@@ -982,6 +983,7 @@ void DatabaseManager::registerQMetaTypesForQt5()
         QMetaType::registerEqualsComparator<QVector<QVector<AttributeItem>>>();
 #endif
 }
+#endif
 
 } // namespace Orm
 

@@ -397,7 +397,9 @@ namespace Query
         static void checkInstance();
 
         /*! Call QMetaType's register functions needed by the Qt 5. */
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
         static void registerQMetaTypesForQt5();
+#endif
 
         /*! Database configuration. */
         Configuration m_configuration {};
