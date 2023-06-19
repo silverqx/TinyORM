@@ -48,7 +48,6 @@ using AttributeUtils = Orm::Tiny::Utils::Attribute;
 using TestUtils::Databases;
 
 using Models::Album;
-using Models::AlbumImage;
 using Models::Datetime;
 using Models::Datetime_SerializeOverride;
 using Models::FilePropertyProperty;
