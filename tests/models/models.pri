@@ -4,6 +4,7 @@ HEADERS += \
     $$PWD/models/album.hpp \
     $$PWD/models/albumimage.hpp \
     $$PWD/models/datetime.hpp \
+    $$PWD/models/datetime_serializeoverride.hpp \
     $$PWD/models/filepropertyproperty.hpp \
     $$PWD/models/massassignmentmodels.hpp \
     $$PWD/models/phone.hpp \

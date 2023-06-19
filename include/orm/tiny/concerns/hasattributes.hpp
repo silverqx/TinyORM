@@ -307,6 +307,8 @@ namespace Orm::Tiny::Concerns
 
         /*! Determine whether a value is Date / DateTime castable. */
         inline bool isDateCastable(const QString &key) const;
+        /*! Determine whether a value is a custom Date / DateTime castable. */
+        inline bool isCustomDateCastable(const QString &key) const;
 
         /*! Determine whether the given type is QDate or QDateTime cast type. */
         inline static bool isDateCastType(CastType type);
@@ -342,9 +344,9 @@ namespace Orm::Tiny::Concerns
         /*! Prepare a date or datetime for vector, map, or JSON serialization. */
         static QString serializeDateOrDateTime(const QVariant &value);
         /*! Prepare a date for vector, map, or JSON serialization. */
-        static QString serializeDate(QDate date);
+        inline static QString serializeDate(QDate date);
         /*! Prepare a datetime for vector, map, or JSON serialization. */
-        static QString serializeDateTime(const QDateTime &datetime);
+        inline static QString serializeDateTime(const QDateTime &datetime);
 
         /* Data members */
         /*! The model's default values for attributes. */
@@ -1718,6 +1720,14 @@ namespace Orm::Tiny::Concerns
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     bool
+    HasAttributes<Derived, AllRelations...>::isCustomDateCastable(
+            const QString &key) const
+    {
+        return hasCast(key, {CastType::CustomQDate, CastType::CustomQDateTime});
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    bool
     HasAttributes<Derived, AllRelations...>::isDateCastType(const CastType type)
     {
         static const std::unordered_set<CastType> dateCastTypes {
@@ -1789,7 +1799,9 @@ namespace Orm::Tiny::Concerns
             /* Nothing to do, this attribute is not set OR it has set the cast
                to the QDateTime, in this case, skip the serialization to avoid useless
                double serialization. */
-            if (!attributes.contains(key) || hasCast(key, {CastType::QDateTime}))
+            if (!attributes.contains(key) || isDateCastable(key) ||
+                isCustomDateCastable(key)
+            )
                 continue;
 
             auto &value = attributes[key];
@@ -1810,7 +1822,9 @@ namespace Orm::Tiny::Concerns
             /* Nothing to do, this attribute is not set OR it has set the cast
                to the QDateTime, in this case, skip the serialization to avoid useless
                double serialization. */
-            if (!attributesHash.contains(key) || hasCast(key, {CastType::QDateTime}))
+            if (!attributesHash.contains(key) || isDateCastable(key) ||
+                isCustomDateCastable(key)
+            )
                 continue;
 
             auto &value = attributes[m_attributesHash.at(key)].value;

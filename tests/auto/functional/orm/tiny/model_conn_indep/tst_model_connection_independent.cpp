@@ -8,6 +8,7 @@
 
 #include "models/album.hpp"
 #include "models/datetime.hpp"
+#include "models/datetime_serializeoverride.hpp"
 #include "models/filepropertyproperty.hpp"
 #include "models/massassignmentmodels.hpp"
 #include "models/torrent.hpp"
@@ -49,6 +50,7 @@ using TestUtils::Databases;
 using Models::Album;
 using Models::AlbumImage;
 using Models::Datetime;
+using Models::Datetime_SerializeOverride;
 using Models::FilePropertyProperty;
 using Models::Torrent;
 using Models::TorrentPeer;
@@ -203,6 +205,18 @@ private Q_SLOTS:
 
     void toMap_WithDateModfiers() const;
     void toVector_WithDateModfiers() const;
+
+    void toMap_UDatesOnly_OverrideSerializeDateTime() const;
+    void toVector_UDatesOnly_OverrideSerializeDateTime() const;
+
+    void toMap_CastsOnly_OverrideSerializeDateTime() const;
+    void toVector_CastsOnly_OverrideSerializeDateTime() const;
+
+    void toMap_WithUDatesAndCasts_OverrideSerializeDateTime() const;
+    void toVector_WithUDatesAndCasts_OverrideSerializeDateTime() const;
+
+    void toMap_CastsOnly_WithDateModfiers_OverrideSerializeDateTime() const;
+    void toVector_CastsOnly_WithDateModfiers_OverrideSerializeDateTime() const;
 
     void toMap_UDatesOnly_DateNullVariants() const;
     void toVector_UDatesOnly_DateNullVariants() const;
@@ -2536,6 +2550,240 @@ void tst_Model_Connection_Independent::toVector_WithDateModfiers() const
     QVector<AttributeItem> expectedAttributes {
         {"datetime", "13.05.2023 10:11:12.0 UTC"},
         {"date",     "14.05.2023"},
+    };
+    QCOMPARE(serialized, expectedAttributes);
+
+    // Restore
+    datetime.resetCasts();
+}
+
+void tst_Model_Connection_Independent::toMap_UDatesOnly_OverrideSerializeDateTime() const
+{
+    auto datetime = Datetime_SerializeOverride::instance({
+        {"datetime", QDateTime({2023, 05, 13}, {10, 11, 12}, Qt::UTC)},
+        {"date",     QDateTime({2023, 05, 14}, {10, 11, 12}, Qt::UTC)},
+    });
+
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+    Datetime_SerializeOverride::u_dates = {"date", "datetime"};
+#else
+    Datetime_SerializeOverride::u_dates = QStringList {"date", "datetime"};
+#endif
+
+    QVariantMap serialized = datetime.toMap();
+    QCOMPARE(serialized.size(), 2);
+
+    // The order must be the same as returned from the MySQL database
+    QVariantMap expectedAttributes {
+        {"date",     "14.05.2023 10:11:12.0 UTC"},
+        {"datetime", "13.05.2023 10:11:12.0 UTC"},
+    };
+    QCOMPARE(serialized, expectedAttributes);
+
+    // Restore
+    Datetime_SerializeOverride::u_dates.clear();
+}
+
+void
+tst_Model_Connection_Independent::toVector_UDatesOnly_OverrideSerializeDateTime() const
+{
+    auto datetime = Datetime_SerializeOverride::instance({
+        {"datetime", QDateTime({2023, 05, 13}, {10, 11, 12}, Qt::UTC)},
+        {"date",     QDateTime({2023, 05, 14}, {10, 11, 12}, Qt::UTC)},
+    });
+
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+    Datetime_SerializeOverride::u_dates = {"date", "datetime"};
+#else
+    Datetime_SerializeOverride::u_dates = QStringList {"date", "datetime"};
+#endif
+
+    QVector<AttributeItem> serialized = datetime.toVector();
+    QCOMPARE(serialized.size(), 2);
+
+    // The order must be the same as returned from the MySQL database
+    QVector<AttributeItem> expectedAttributes {
+        {"datetime", "13.05.2023 10:11:12.0 UTC"},
+        {"date",     "14.05.2023 10:11:12.0 UTC"},
+    };
+    QCOMPARE(serialized, expectedAttributes);
+
+    // Restore
+    Datetime_SerializeOverride::u_dates.clear();
+}
+
+void tst_Model_Connection_Independent::toMap_CastsOnly_OverrideSerializeDateTime() const
+{
+    auto datetime = Datetime_SerializeOverride::instance({
+        {"datetime", QDateTime({2023, 05, 13}, {10, 11, 12}, Qt::UTC)},
+        {"date",     QDateTime({2023, 05, 14}, {10, 11, 12}, Qt::UTC)},
+    });
+
+    datetime.mergeCasts({
+        {"datetime", CastType::QDateTime},
+        {"date",     CastType::QDate},
+    });
+
+    QVariantMap serialized = datetime.toMap();
+    QCOMPARE(serialized.size(), 2);
+
+    // The order must be the same as returned from the MySQL database
+    QVariantMap expectedAttributes {
+        {"date",     "14.05.2023"},
+        {"datetime", "13.05.2023 10:11:12.0 UTC"},
+    };
+    QCOMPARE(serialized, expectedAttributes);
+
+    // Restore
+    datetime.resetCasts();
+}
+
+void
+tst_Model_Connection_Independent::toVector_CastsOnly_OverrideSerializeDateTime() const
+{
+    auto datetime = Datetime_SerializeOverride::instance({
+        {"datetime", QDateTime({2023, 05, 13}, {10, 11, 12}, Qt::UTC)},
+        {"date",     QDateTime({2023, 05, 14}, {10, 11, 12}, Qt::UTC)},
+    });
+
+    datetime.mergeCasts({
+        {"datetime", CastType::QDateTime},
+        {"date",     CastType::QDate},
+    });
+
+    QVector<AttributeItem> serialized = datetime.toVector();
+    QCOMPARE(serialized.size(), 2);
+
+    // The order must be the same as returned from the MySQL database
+    QVector<AttributeItem> expectedAttributes {
+        {"datetime", "13.05.2023 10:11:12.0 UTC"},
+        {"date",     "14.05.2023"},
+    };
+    QCOMPARE(serialized, expectedAttributes);
+
+    // Restore
+    datetime.resetCasts();
+}
+
+void tst_Model_Connection_Independent::
+     toMap_WithUDatesAndCasts_OverrideSerializeDateTime() const
+{
+    auto datetime = Datetime_SerializeOverride::instance({
+        {"datetime", QDateTime({2023, 05, 13}, {10, 11, 12}, Qt::UTC)},
+        {"date",     QDateTime({2023, 05, 14}, {10, 11, 12}, Qt::UTC)},
+    });
+
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+    Datetime_SerializeOverride::u_dates = {"date", "datetime"};
+#else
+    Datetime_SerializeOverride::u_dates = QStringList {"date", "datetime"};
+#endif
+
+    datetime.mergeCasts({
+        {"datetime", CastType::QDateTime},
+        {"date",     CastType::QDate},
+    });
+
+    QVariantMap serialized = datetime.toMap();
+    QCOMPARE(serialized.size(), 2);
+
+    // The order must be the same as returned from the MySQL database
+    QVariantMap expectedAttributes {
+        {"date",     "14.05.2023"},
+        {"datetime", "13.05.2023 10:11:12.0 UTC"},
+    };
+    QCOMPARE(serialized, expectedAttributes);
+
+    // Restore
+    Datetime_SerializeOverride::u_dates.clear();
+    datetime.resetCasts();
+}
+
+void tst_Model_Connection_Independent::
+     toVector_WithUDatesAndCasts_OverrideSerializeDateTime() const
+{
+    auto datetime = Datetime_SerializeOverride::instance({
+        {"datetime", QDateTime({2023, 05, 13}, {10, 11, 12}, Qt::UTC)},
+        {"date",     QDateTime({2023, 05, 14}, {10, 11, 12}, Qt::UTC)},
+    });
+
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+    Datetime_SerializeOverride::u_dates = {"date", "datetime"};
+#else
+    Datetime_SerializeOverride::u_dates = QStringList {"date", "datetime"};
+#endif
+
+    datetime.mergeCasts({
+        {"datetime", CastType::QDateTime},
+        {"date",     CastType::QDate},
+    });
+
+    QVector<AttributeItem> serialized = datetime.toVector();
+    QCOMPARE(serialized.size(), 2);
+
+    // The order must be the same as returned from the MySQL database
+    QVector<AttributeItem> expectedAttributes {
+        {"datetime", "13.05.2023 10:11:12.0 UTC"},
+        {"date",     "14.05.2023"},
+    };
+    QCOMPARE(serialized, expectedAttributes);
+
+    // Restore
+    Datetime_SerializeOverride::u_dates.clear();
+    datetime.resetCasts();
+}
+
+void tst_Model_Connection_Independent::
+     toMap_CastsOnly_WithDateModfiers_OverrideSerializeDateTime() const
+{
+    auto datetime = Datetime_SerializeOverride::instance({
+        {"datetime", QDateTime({2023, 05, 13}, {10, 11, 12}, Qt::UTC)},
+        {"date",     QDateTime({2023, 05, 14}, {10, 11, 12}, Qt::UTC)},
+    });
+
+    /* The MM and dd are switched here, in this case the user serialize override methods
+       must be skipped and the custom modifiers must be used. */
+    datetime.mergeCasts({
+        {"datetime", {CastType::CustomQDateTime, "MM.dd.yyyy HH:mm:ss.z t"}},
+        {"date",     {CastType::CustomQDate,     "MM.dd.yyyy"}},
+    });
+
+    QVariantMap serialized = datetime.toMap();
+    QCOMPARE(serialized.size(), 2);
+
+    // The order must be the same as returned from the MySQL database
+    QVariantMap expectedAttributes {
+        {"date",     "05.14.2023"},
+        {"datetime", "05.13.2023 10:11:12.0 UTC"},
+    };
+    QCOMPARE(serialized, expectedAttributes);
+
+    // Restore
+    datetime.resetCasts();
+}
+
+void tst_Model_Connection_Independent::
+     toVector_CastsOnly_WithDateModfiers_OverrideSerializeDateTime() const
+{
+    auto datetime = Datetime_SerializeOverride::instance({
+        {"datetime", QDateTime({2023, 05, 13}, {10, 11, 12}, Qt::UTC)},
+        {"date",     QDateTime({2023, 05, 14}, {10, 11, 12}, Qt::UTC)},
+    });
+
+    /* The MM and dd are switched here, in this case the user serialize override methods
+       must be skipped and the custom modifiers must be used. */
+    datetime.mergeCasts({
+        {"datetime", {CastType::CustomQDateTime, "MM.dd.yyyy HH:mm:ss.z t"}},
+        {"date",     {CastType::CustomQDate,     "MM.dd.yyyy"}},
+    });
+
+    QVector<AttributeItem> serialized = datetime.toVector();
+    QCOMPARE(serialized.size(), 2);
+
+    // The order must be the same as returned from the MySQL database
+    QVector<AttributeItem> expectedAttributes {
+        {"datetime", "05.13.2023 10:11:12.0 UTC"},
+        {"date",     "05.14.2023"},
     };
     QCOMPARE(serialized, expectedAttributes);
 

@@ -415,6 +415,7 @@ function(tiny_model_sources out_headers out_sources)
         album.hpp
         albumimage.hpp
         datetime.hpp
+        datetime_serializeoverride.hpp
         filepropertyproperty.hpp
         massassignmentmodels.hpp
         phone.hpp
