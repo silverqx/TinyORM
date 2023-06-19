@@ -5,8 +5,6 @@
 #include "orm/macros/systemheader.hpp"
 TINY_SYSTEM_HEADER
 
-#include <QDebug>
-
 #include <unordered_map>
 #include <unordered_set>
 
