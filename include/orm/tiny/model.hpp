@@ -277,10 +277,10 @@ namespace Orm::Tiny
 
         /* Serialization */
         /*! Convert the model instance to the map of attributes and relations. */
-        template<typename PivotType = void>
+        template<typename PivotType = void> // PivotType is primarily internal
         QVariantMap toMap();
         /*! Convert the model instance to the vector of attributes and relations. */
-        template<typename PivotType = void>
+        template<typename PivotType = void> // PivotType is primarily internal
         QVector<AttributeItem> toVector();
 
         /* Getters / Setters */

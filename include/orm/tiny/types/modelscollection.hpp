@@ -429,10 +429,10 @@ namespace Types
 
         /* EnumeratesValues */
         /*! Get the collection of models as a vector with serialized models. */
-        template<typename PivotType = void>
+        template<typename PivotType = void> // PivotType is primarily internal
         QVector<QVector<AttributeItem>> toVector() const;
         /*! Get the collection of models as a map with serialized models. */
-        template<typename PivotType = void>
+        template<typename PivotType = void> // PivotType is primarily internal
         QVector<QVariantMap> toMap() const;
 
         /*! Create a collection of all models that do not pass a given truth test. */
