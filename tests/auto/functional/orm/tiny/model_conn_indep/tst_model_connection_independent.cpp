@@ -247,6 +247,9 @@ private Q_SLOTS:
     void toMap_BelongsTo_EmptyRelation() const;
     void toVector_BelongsTo_EmptyRelation() const;
 
+    void toMap_BelongsToMany_EmptyRelation() const;
+    void toVector_BelongsToMany_EmptyRelation() const;
+
 // NOLINTNEXTLINE(readability-redundant-access-specifiers)
 private:
     /*! Connection name used in this test case. */
@@ -3988,6 +3991,86 @@ void tst_Model_Connection_Independent::toVector_BelongsTo_EmptyRelation() const
         {CREATED_AT,       "2021-01-06T14:51:23.000Z"},
         {UPDATED_AT,       "2021-01-06T17:46:31.000Z"},
         {"torrent",        QVariant::fromValue(nullptr)},
+    }};
+
+    QCOMPARE(serialized, expectedAttributes);
+}
+
+void tst_Model_Connection_Independent::toMap_BelongsToMany_EmptyRelation() const
+{
+    auto users = User::with("roles")->findMany({2, 3});
+    QCOMPARE(users.size(), 2);
+    QCOMPARE(typeid (users), typeid (ModelsCollection<User>));
+
+    QVector<QVariantMap> serialized = users.toMap();
+
+    QVector<QVariantMap> expectedAttributes {{
+        {CREATED_AT,  "2022-01-02T14:51:23.000Z"},
+        {DELETED_AT,  NullVariant::QDateTime()},
+        {ID,          2},
+        {"is_banned", false},
+        {NAME,        "silver"},
+        {NOTE,        NullVariant::QString()},
+        {"roles",     QVariantList {QVariantMap {
+                          {"added_on",     "2022-08-02T13:36:56.000Z"},
+                          {ID,             2},
+                          {NAME,           "role two"},
+                          {"subscription", QVariantMap {
+                                               {"active",  true},
+                                               {"role_id", 2},
+                                               {"user_id", 2},
+                                           }},
+                      }}},
+        {UPDATED_AT,  "2022-01-02T17:46:31.000Z"},
+    }, {
+        {CREATED_AT,  "2022-01-03T14:51:23.000Z"},
+        {DELETED_AT,  NullVariant::QDateTime()},
+        {ID,          3},
+        {"is_banned", true},
+        {NAME,        "peter"},
+        {NOTE,        "no torrents no roles"},
+        {"roles",     QVariantList {}},
+        {UPDATED_AT,  "2022-01-03T17:46:31.000Z"},
+    }};
+
+    QCOMPARE(serialized, expectedAttributes);
+}
+
+void tst_Model_Connection_Independent::toVector_BelongsToMany_EmptyRelation() const
+{
+    auto users = User::with("roles")->findMany({2, 3});
+    QCOMPARE(users.size(), 2);
+    QCOMPARE(typeid (users), typeid (ModelsCollection<User>));
+
+    QVector<QVector<AttributeItem>> serialized = users.toVector();
+
+    QVector<QVector<AttributeItem>> expectedAttributes {{
+        {ID,          2},
+        {NAME,        "silver"},
+        {"is_banned", false},
+        {NOTE,        NullVariant::QString()},
+        {CREATED_AT,  "2022-01-02T14:51:23.000Z"},
+        {UPDATED_AT,  "2022-01-02T17:46:31.000Z"},
+        {DELETED_AT,  NullVariant::QDateTime()},
+        {"roles",     QVariant::fromValue(QVector<QVector<AttributeItem>> {{
+                          {ID,             2},
+                          {NAME,           "role two"},
+                          {"added_on",     "2022-08-02T13:36:56.000Z"},
+                          {"subscription", QVariant::fromValue(QVector<AttributeItem> {
+                                               {"user_id", 2},
+                                               {"role_id", 2},
+                                               {"active",  true}
+                                           })},
+                      }})},
+    }, {
+        {ID,          3},
+        {NAME,        "peter"},
+        {"is_banned", true},
+        {NOTE,        "no torrents no roles"},
+        {CREATED_AT,  "2022-01-03T14:51:23.000Z"},
+        {UPDATED_AT,  "2022-01-03T17:46:31.000Z"},
+        {DELETED_AT,  NullVariant::QDateTime()},
+        {"roles",     QVariant::fromValue(QVector<QVector<AttributeItem>> {})},
     }};
 
     QCOMPARE(serialized, expectedAttributes);
