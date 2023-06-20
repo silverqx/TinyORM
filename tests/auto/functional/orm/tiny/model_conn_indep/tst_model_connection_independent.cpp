@@ -3605,27 +3605,27 @@ void tst_Model_Connection_Independent::toMap_WithRelation_BelongsToMany_UserRole
         {NAME,        "andrej"},
         {NOTE,        NullVariant::QString()},
         {"roles",     QVariant::fromValue(QVector<QVariantMap> {{
+                          {"added_on",     "2022-08-01T13:36:56.000Z"},
                           {ID,             1},
                           {NAME,           "role one"},
-                          {"added_on",     "2022-08-01T13:36:56.000Z"},
                           {"subscription", QVariantMap {
                                                {"active",  true},
                                                {"role_id", 1},
                                                {"user_id", 1},
                                            }},
                       }, {
+                          {"added_on",     "2022-08-02T13:36:56.000Z"},
                           {ID,             2},
                           {NAME,           "role two"},
-                          {"added_on",     "2022-08-02T13:36:56.000Z"},
                           {"subscription", QVariantMap {
                                                {"active",  false},
                                                {"role_id", 2},
                                                {"user_id", 1},
                                            }},
                       }, {
+                          {"added_on",     NullVariant::QDateTime()},
                           {ID,             3},
                           {NAME,           "role three"},
-                          {"added_on",     NullVariant::QDateTime()},
                           {"subscription", QVariantMap {
                                                {"active",  true},
                                                {"role_id", 3},
