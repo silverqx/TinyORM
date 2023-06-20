@@ -1450,9 +1450,11 @@ namespace Concerns
             QVariant &relationSerialized, ModelsCollection<Related> &models)
     {
         if constexpr (IsMap)
-            relationSerialized.setValue(models.template toMap<PivotType>());
+            relationSerialized.setValue(
+                models.template toMapVariantList<PivotType>());
         else
-            relationSerialized.setValue(models.template toVector<PivotType>());
+            relationSerialized.setValue(
+                models.template toVectorVariantList<PivotType>());
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>

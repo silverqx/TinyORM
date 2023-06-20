@@ -5,6 +5,9 @@
 #include "orm/macros/systemheader.hpp"
 TINY_SYSTEM_HEADER
 
+#include <QJsonArray>
+#include <QJsonDocument>
+
 #include <unordered_map>
 #include <unordered_set>
 
@@ -426,12 +429,29 @@ namespace Types
         inline ModelsCollection &load(QVector<QString> &&relations) &&;
 
         /* EnumeratesValues */
-        /*! Get the collection of models as a vector with serialized models. */
+        /*! Get the vector of models as a attributes vector with serialized models. */
         template<typename PivotType = void> // PivotType is primarily internal
         QVector<QVector<AttributeItem>> toVector() const;
-        /*! Get the collection of models as a map with serialized models. */
+        /*! Get the vector of models as a variant map with serialized models. */
         template<typename PivotType = void> // PivotType is primarily internal
         QVector<QVariantMap> toMap() const;
+
+        /*! Get the vector of models as the variant (variant map inside) with serialized
+            models (used by toJson()). */
+        template<typename PivotType = void> // PivotType is primarily internal
+        QVariantList toVectorVariantList() const;
+        /*! Get the vector of models as the variant (variant map inside) with serialized
+            models (used by toJson()). */
+        template<typename PivotType = void> // PivotType is primarily internal
+        QVariantList toMapVariantList() const;
+
+        /*! Convert a collection to QJsonArray. */
+        inline QJsonArray toJsonArray() const;
+        /*! Convert a collection to QJsonDocument. */
+        inline QJsonDocument toJsonDocument() const;
+        /*! Convert a collection to JSON. */
+        inline QByteArray
+        toJson(QJsonDocument::JsonFormat format = QJsonDocument::Indented) const;
 
         /*! Create a collection of all models that do not pass a given truth test. */
         ModelsCollection<ModelRawType *>
@@ -1839,6 +1859,84 @@ namespace Types
         {
             return model.template toMap<PivotType>();
         });
+    }
+
+    template<DerivedCollectionModel Model>
+    template<typename PivotType>
+    QVariantList
+    ModelsCollection<Model>::toVectorVariantList() const
+    {
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+        return map<QVariant>([](ModelRawType &&model)
+        {
+            return QVariant::fromValue(model.template toVector<PivotType>());
+        });
+#else
+        /* The map<>() returns the QVector but the QJson module needs the QVariantList
+           to correctly serialize relations, I will not add a new map<> overload. */
+        QVariantList result;
+        result.reserve(this->size());
+
+        for (ConstModelLoopType model : *this)
+            /* The getModelCopy() wouldn't be needed here for Qt5 but I would have to
+               make this method non-const, it's a small price to call the getModelCopy()
+               to avoid ABI compatibility breakage in the future because the Qt5 support
+               will be removed in the near future and the original map<> is also doing
+               a model copy. */
+            result << QVariant::fromValue(
+                          getModelCopy(model).template toVector<PivotType>());
+
+        return result;
+#endif
+    }
+
+    template<DerivedCollectionModel Model>
+    template<typename PivotType>
+    QVariantList
+    ModelsCollection<Model>::toMapVariantList() const
+    {
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+        return map<QVariant>([](ModelRawType &&model) -> QVariant
+        {
+            return model.template toMap<PivotType>();
+        });
+#else
+        /* The map<>() returns the QVector but the QJson module needs the QVariantList
+           to correctly serialize relations, I will not add a new map<> overload. */
+        QVariantList result;
+        result.reserve(this->size());
+
+        for (ConstModelLoopType model : *this)
+            /* The getModelCopy() wouldn't be needed here for Qt5 but I would have to
+               make this method non-const, it's a small price to call the getModelCopy()
+               to avoid ABI compatibility breakage in the future because the Qt5 support
+               will be removed in the near future and the original map<> is also doing
+               a model copy. */
+            result << getModelCopy(model).template toMap<PivotType>();
+
+        return result;
+#endif
+    }
+
+    template<DerivedCollectionModel Model>
+    QJsonArray
+    ModelsCollection<Model>::toJsonArray() const
+    {
+        return QJsonArray::fromVariantList(toMapVariantList());
+    }
+
+    template<DerivedCollectionModel Model>
+    QJsonDocument
+    ModelsCollection<Model>::toJsonDocument() const
+    {
+        return QJsonDocument(toJsonArray());
+    }
+
+    template<DerivedCollectionModel Model>
+    QByteArray
+    ModelsCollection<Model>::toJson(const QJsonDocument::JsonFormat format) const
+    {
+        return toJsonDocument().toJson(format);
     }
 
     template<DerivedCollectionModel Model>
