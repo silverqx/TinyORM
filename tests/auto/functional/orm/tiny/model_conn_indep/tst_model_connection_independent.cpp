@@ -3013,7 +3013,7 @@ tst_Model_Connection_Independent::toVector_WithRelations_HasOne_HasMany_BelongsT
             QFAIL("The \"torrent_peer\" key not found in the \"serialized\" result.");
 
         auto actualAttributes = serialized.takeAt(std::distance(serialized.begin(), it))
-                                .value.value<QVector<AttributeItem>>();
+                                    .value.value<QVector<AttributeItem>>();
 
         QVector<AttributeItem> expectedAttributes {
             {ID,               5},
@@ -3035,7 +3035,7 @@ tst_Model_Connection_Independent::toVector_WithRelations_HasOne_HasMany_BelongsT
             QFAIL("The \"user\" key not found in the \"serialized\" result.");
 
         auto actualAttributes = serialized.takeAt(std::distance(serialized.begin(), it))
-                                .value.value<QVector<AttributeItem>>();
+                                    .value.value<QVector<AttributeItem>>();
 
         QVector<AttributeItem> expectedAttributes {
             {ID,          2},
@@ -3240,7 +3240,7 @@ tst_Model_Connection_Independent::toVector_WithRelation_BelongsToMany_TorrentTag
                 QFAIL("The \"tag_property\" key not found in the \"tag\" result.");
 
             actualTagProperties << tag.takeAt(std::distance(tag.begin(), it))
-                                .value.value<QVector<AttributeItem>>();
+                                       .value.value<QVector<AttributeItem>>();
         }
 
         QVector<QVector<AttributeItem>> expectedTagProperties {{
@@ -3477,7 +3477,7 @@ void tst_Model_Connection_Independent::
                 QFAIL("The \"tag_property\" key not found in the \"tag\" result.");
 
             actualTagProperties << tag.takeAt(std::distance(tag.begin(), it))
-                                .value.value<QVector<AttributeItem>>();
+                                       .value.value<QVector<AttributeItem>>();
         }
 
         QVector<QVector<AttributeItem>> expectedTagProperties {{
