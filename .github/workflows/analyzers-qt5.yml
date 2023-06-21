@@ -30,18 +30,18 @@ jobs:
         sudo add-apt-repository --yes ppa:ubuntu-toolchain-r/test
         sudo add-apt-repository --yes ppa:beineri/opt-qt-5.15.2-focal
 
-    - name: add-apt-repository Clang 14
+    - name: add-apt-repository Clang 15
       run: |
         wget -O- https://apt.llvm.org/llvm-snapshot.gpg.key | sudo apt-key add -
-        sudo add-apt-repository --yes 'deb http://apt.llvm.org/focal/ llvm-toolchain-focal-14 main'
+        sudo add-apt-repository --yes 'deb http://apt.llvm.org/focal/ llvm-toolchain-focal-15 main'
 
     - name: apt update
       run: |
         sudo apt update
 
-    - name: apt install clang-14, lld-14, g++-11, clang-tidy-14, and Qt 5.15.2 base
+    - name: apt install clang-15, lld-15, g++-11, clang-tidy-15, and Qt 5.15.2 base
       run: |
-        sudo apt install --yes clang-14 lld-14 g++-11 clang-tidy-14 qt515base
+        sudo apt install --yes clang-15 lld-15 g++-11 clang-tidy-15 qt515base
 
     - name: ninja install latest version
       uses: seanmiddleditch/gha-setup-ninja@master
@@ -118,7 +118,7 @@ jobs:
           ${{ runner.os }}-${{ env.image_os }}-ccache-${{ env.cache_name }}-
       env:
         # Don't reuse the clang ccache cache from the linux-qt5.yml (prepended analyzers)
-        cache_name: analyzers-clang14-qt5
+        cache_name: analyzers-clang15-qt5
         cache_path: ${{ steps.ccache-initialize-cache.outputs.CachePath }}
         image_os: ${{ steps.ccache-initialize-cache.outputs.ImageOS }}
 
@@ -162,7 +162,7 @@ jobs:
         -B ../TinyORM-builds-cmake/build-clang-cmake-debug
         -G Ninja
         -D CMAKE_CXX_COMPILER_LAUNCHER:FILEPATH=/usr/local/bin/ccache
-        -D CMAKE_CXX_COMPILER:FILEPATH=/usr/bin/clang++-14
+        -D CMAKE_CXX_COMPILER:FILEPATH=/usr/bin/clang++-15
         -D CMAKE_TOOLCHAIN_FILE:FILEPATH="$VCPKG_INSTALLATION_ROOT/scripts/buildsystems/vcpkg.cmake"
         -D CMAKE_DISABLE_PRECOMPILE_HEADERS:BOOL=ON
         -D CMAKE_EXPORT_COMPILE_COMMANDS:BOOL=ON
@@ -238,7 +238,7 @@ jobs:
         ln --symbolic ../TinyORM-builds-cmake/build-clang-cmake-debug/compile_commands.json
         compile_commands.json
 
-        run-clang-tidy-14 '(?:examples|src|tests)[\\\/]+.+?[\\\/]+(?!mocs_)[\w_\-\+]+\.cpp$'
+        run-clang-tidy-15 '(?:examples|src|tests)[\\\/]+.+?[\\\/]+(?!mocs_)[\w_\-\+]+\.cpp$'
 
     # Disabled checks
     # Level 2      - qstring-allocations

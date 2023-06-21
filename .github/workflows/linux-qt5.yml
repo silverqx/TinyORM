@@ -21,9 +21,9 @@ jobs:
     strategy:
       matrix:
         compiler:
-          - key: clang14
-            apt: [ clang-14, lld-14, g++-11 ]
-            command: clang++-14
+          - key: clang15
+            apt: [ clang-15, lld-15, g++-11 ]
+            command: clang++-15
 
           - key: gcc11
             apt: [ g++-11 ]
@@ -169,11 +169,11 @@ jobs:
         sudo add-apt-repository --yes ppa:ubuntu-toolchain-r/test
         sudo add-apt-repository --yes ppa:beineri/opt-qt-5.15.2-focal
 
-    - name: add-apt-repository Clang 14
-      if: ${{ matrix.compiler.key == 'clang14' }}
+    - name: add-apt-repository Clang 15
+      if: ${{ matrix.compiler.key == 'clang15' }}
       run: |
         wget -O- https://apt.llvm.org/llvm-snapshot.gpg.key | sudo apt-key add -
-        sudo add-apt-repository --yes 'deb http://apt.llvm.org/focal/ llvm-toolchain-focal-14 main'
+        sudo add-apt-repository --yes 'deb http://apt.llvm.org/focal/ llvm-toolchain-focal-15 main'
 
     - name: apt update
       run: |
