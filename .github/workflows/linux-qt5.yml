@@ -164,24 +164,14 @@ jobs:
         pg_config --version
         sqlite3 --version
 
-    - name: add-apt-repository gcc 12 and Qt 5.15.4
-      run: |
-        sudo add-apt-repository --yes ppa:ubuntu-toolchain-r/test
-        sudo add-apt-repository --yes ppa:beineri/opt-qt-5.15.4-focal
-
-    - name: add-apt-repository Clang 15
-      if: ${{ matrix.compiler.key == 'clang15' }}
-      run: |
-        wget -O- https://apt.llvm.org/llvm-snapshot.gpg.key | sudo apt-key add -
-        sudo add-apt-repository --yes 'deb http://apt.llvm.org/focal/ llvm-toolchain-focal-15 main'
-
     - name: apt update
       run: |
         sudo apt update
 
-    - name: apt install ${{ join(matrix.compiler.apt, ', ') }}, and Qt 5.15.4 base
-      run: |
-        sudo apt install --yes ${{ join(matrix.compiler.apt, ' ') }} qt515base
+    - name: apt install ${{ join(matrix.compiler.apt, ', ') }}, and Qt 5.15.3 base
+      run: >-
+        sudo apt install --yes ${{ join(matrix.compiler.apt, ' ') }}
+        libqt5sql5-mysql libqt5sql5-sqlite libqt5sql5-psql
 
     - name: ninja install latest version
       uses: seanmiddleditch/gha-setup-ninja@master
