@@ -31,7 +31,7 @@ jobs:
 
     - name: apt install clang-15, lld-15, g++-12, clang-tidy-15, and Qt 5.15.3 base
       run: |
-        sudo apt install --yes clang-15 lld-15 g++-12 clang-tidy-15 libqt5core5a
+        sudo apt install --yes clang-15 lld-15 g++-12 clang-tidy-15 qtbase5-dev
 
     - name: ninja install latest version
       uses: seanmiddleditch/gha-setup-ninja@master
