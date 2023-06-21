@@ -9,6 +9,7 @@ SUBDIRS = \
     model_qdatetime \
     model_relations \
     model_return_relation \
+    model_serialization \
     relations_conn_indep \
     relations_insrt_updt \
     softdeletes \
