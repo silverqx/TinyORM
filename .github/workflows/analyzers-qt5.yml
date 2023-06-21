@@ -25,23 +25,13 @@ jobs:
         runnerWorkPath=$(realpath '${{ runner.workspace }}/..')
         echo "TinyRunnerWorkPath=$runnerWorkPath" >> $GITHUB_ENV
 
-    - name: add-apt-repository gcc 12 and Qt 5.15.4
-      run: |
-        sudo add-apt-repository --yes ppa:ubuntu-toolchain-r/test
-        sudo add-apt-repository --yes ppa:beineri/opt-qt-5.15.4-focal
-
-    - name: add-apt-repository Clang 15
-      run: |
-        wget -O- https://apt.llvm.org/llvm-snapshot.gpg.key | sudo apt-key add -
-        sudo add-apt-repository --yes 'deb http://apt.llvm.org/focal/ llvm-toolchain-focal-15 main'
-
     - name: apt update
       run: |
         sudo apt update
 
-    - name: apt install clang-15, lld-15, g++-12, clang-tidy-15, and Qt 5.15.4 base
+    - name: apt install clang-15, lld-15, g++-12, clang-tidy-15, and Qt 5.15.3 base
       run: |
-        sudo apt install --yes clang-15 lld-15 g++-12 clang-tidy-15 qt515base
+        sudo apt install --yes clang-15 lld-15 g++-12 clang-tidy-15 libqt5core5a
 
     - name: ninja install latest version
       uses: seanmiddleditch/gha-setup-ninja@master
