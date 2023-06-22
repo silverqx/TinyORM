@@ -2341,6 +2341,8 @@ void tst_Model_Relations::belongsToMany_allRelatedIds() const
         QVERIFY(expectedIds.contains(relatedId));
 }
 
+/* Default Models */
+
 void tst_Model_Relations::withoutDefaultModel_LazyLoad_HasOne() const
 {
     QFETCH_GLOBAL(QString, connection);
