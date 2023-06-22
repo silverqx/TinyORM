@@ -2,11 +2,11 @@ project(postgresql_schemabuilder_f
     LANGUAGES CXX
 )
 
-add_executable(postgresql_schemabuilder_f
+add_executable(psql_schemabuilder_f
     tst_postgresql_schemabuilder_f.cpp
 )
 
-add_test(NAME postgresql_schemabuilder_f COMMAND postgresql_schemabuilder_f)
+add_test(NAME psql_schemabuilder_f COMMAND psql_schemabuilder_f)
 
 include(TinyTestCommon)
-tiny_configure_test(postgresql_schemabuilder_f)
+tiny_configure_test(psql_schemabuilder_f)
