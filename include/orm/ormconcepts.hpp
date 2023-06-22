@@ -11,14 +11,9 @@ TINY_SYSTEM_HEADER
 #include <deque>
 #include <memory>
 #include <set>
+#include <variant>
 
 #include "orm/macros/commonnamespace.hpp"
-
-namespace std
-{
-    template<typename ...Types>
-    class variant; // NOLINT(bugprone-forwarding-reference-overload)
-}
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
