@@ -2249,25 +2249,25 @@ void tst_Model_Relations::orWhere_WithCallback() const
     }
 }
 
-//void tst_Model_Relations::belongsToMany_allRelatedIds() const
-//{
-//    QFETCH_GLOBAL(QString, connection);
+void tst_Model_Relations::belongsToMany_allRelatedIds() const
+{
+    QFETCH_GLOBAL(QString, connection);
 
-//    ConnectionOverride::connection = connection;
+    ConnectionOverride::connection = connection;
 
-//    auto torrent = Torrent::find(3);
-//    QVERIFY(torrent);
-//    QVERIFY(torrent->exists);
+    auto torrent = Torrent::find(3);
+    QVERIFY(torrent);
+    QVERIFY(torrent->exists);
 
-//    const auto relatedIds = torrent->tags()->allRelatedIds();
+    const auto relatedIds = torrent->tags()->allRelatedIds();
 
-//    QCOMPARE(relatedIds.size(), 2);
+    QCOMPARE(relatedIds.size(), 2);
 
-//    const QVector<QVariant> expectedIds {2, 4};
+    const QVector<QVariant> expectedIds {2, 4};
 
-//    for (const auto &relatedId : relatedIds)
-//        QVERIFY(expectedIds.contains(relatedId));
-//}
+    for (const auto &relatedId : relatedIds)
+        QVERIFY(expectedIds.contains(relatedId));
+}
 
 ///* Default Models */
 
