@@ -39,7 +39,7 @@ jobs:
           - key: qt5
             pacboy: qt5-base:u
 
-          # Causing exhausted memory even with -j1
+          # Qt6 with g++ is causing exhausted memory even with -j1
           # - key: qt6
           #   pacboy: qt6-base:u
 
