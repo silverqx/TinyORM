@@ -136,50 +136,50 @@ private Q_SLOTS:
     void belongsToMany_allRelatedIds() const;
 
     /* Default Models */
-//    void withoutDefaultModel_LazyLoad_HasOne() const;
-//    void withoutDefaultModel_LazyLoad_BelongsTo() const;
-//    void withoutDefaultModel_EagerLoad_HasOne() const;
-//    void withoutDefaultModel_EagerLoad_BelongsTo() const;
+    void withoutDefaultModel_LazyLoad_HasOne() const;
+    void withoutDefaultModel_LazyLoad_BelongsTo() const;
+    void withoutDefaultModel_EagerLoad_HasOne() const;
+    void withoutDefaultModel_EagerLoad_BelongsTo() const;
 
-//    void withDefaultModel_LazyLoad_Bool_HasOne() const;
-//    void withDefaultModel_LazyLoad_AttributesVector_HasOne() const;
-//    void withDefaultModel_LazyLoad_Bool_BelongsTo() const;
-//    void withDefaultModel_LazyLoad_AttributesVector_BelongsTo() const;
+    void withDefaultModel_LazyLoad_Bool_HasOne() const;
+    void withDefaultModel_LazyLoad_AttributesVector_HasOne() const;
+    void withDefaultModel_LazyLoad_Bool_BelongsTo() const;
+    void withDefaultModel_LazyLoad_AttributesVector_BelongsTo() const;
 
-//    void withDefaultModel_EagerLoad_Bool_HasOne() const;
-//    void withDefaultModel_EagerLoad_AttributesVector_HasOne() const;
-//    void withDefaultModel_EagerLoad_Bool_BelongsTo() const;
-//    void withDefaultModel_EagerLoad_AttributesVector_BelongsTo() const;
+    void withDefaultModel_EagerLoad_Bool_HasOne() const;
+    void withDefaultModel_EagerLoad_AttributesVector_HasOne() const;
+    void withDefaultModel_EagerLoad_Bool_BelongsTo() const;
+    void withDefaultModel_EagerLoad_AttributesVector_BelongsTo() const;
 
-//    /* Relation related */
-//    /* BelongsToMany related */
-//    void find() const;
+    /* Relation related */
+    /* BelongsToMany related */
+    void find() const;
 
-//    void findOr() const;
-//    void findOr_WithReturnType() const;
+    void findOr() const;
+    void findOr_WithReturnType() const;
 
-//    void first() const;
+    void first() const;
 
-//    void firstOr() const;
-//    void firstOr_WithReturnType() const;
+    void firstOr() const;
+    void firstOr_WithReturnType() const;
 
-//    void whereRowValues() const;
+    void whereRowValues() const;
 
-//    void upsert() const;
+    void upsert() const;
 
-//    /* Casting Attributes */
-//    void withCasts_OnRelation_OneToMany() const;
-//    void withCasts_OnRelation_ManyToMany() const;
+    /* Casting Attributes */
+    void withCasts_OnRelation_OneToMany() const;
+    void withCasts_OnRelation_ManyToMany() const;
 
-//    void u_casts_OnCustomPivotModel_ManyToMany() const;
+    void u_casts_OnCustomPivotModel_ManyToMany() const;
 
-//    /* QDateTime with/without timezone */
-//    /* Server timezone UTC */
-//    void timezone_TimestampAttribute_UtcOnServer_OnCustomPivotModel_ManyToMany() const;
+    /* QDateTime with/without timezone */
+    /* Server timezone UTC */
+    void timezone_TimestampAttribute_UtcOnServer_OnCustomPivotModel_ManyToMany() const;
 
-//    /* QtTimeZoneType::DontConvert */
-//    /* Server timezone UTC */
-//    void timezone_TimestampAttribute_UtcOnServer_DontConvert_OnCustomPivot_MtM() const;
+    /* QtTimeZoneType::DontConvert */
+    /* Server timezone UTC */
+    void timezone_TimestampAttribute_UtcOnServer_DontConvert_OnCustomPivot_MtM() const;
 };
 
 /* private slots */
@@ -2269,760 +2269,760 @@ void tst_Model_Relations::belongsToMany_allRelatedIds() const
         QVERIFY(expectedIds.contains(relatedId));
 }
 
-///* Default Models */
+/* Default Models */
 
-//void tst_Model_Relations::withoutDefaultModel_LazyLoad_HasOne() const
-//{
-//    QFETCH_GLOBAL(QString, connection);
+void tst_Model_Relations::withoutDefaultModel_LazyLoad_HasOne() const
+{
+    QFETCH_GLOBAL(QString, connection);
 
-//    ConnectionOverride::connection = connection;
+    ConnectionOverride::connection = connection;
 
-//    auto torrentFile = TorrentPreviewableFile::find(7);
-//    QVERIFY(torrentFile->exists);
+    auto torrentFile = TorrentPreviewableFile::find(7);
+    QVERIFY(torrentFile->exists);
 
-//    auto *fileProperty =
-//            torrentFile->getRelationValue<TorrentPreviewableFileProperty, One>(
-//                "fileProperty");
+    auto *fileProperty =
+            torrentFile->getRelationValue<TorrentPreviewableFileProperty, One>(
+                "fileProperty");
 
-//    QVERIFY(fileProperty == nullptr);
-//}
+    QVERIFY(fileProperty == nullptr);
+}
 
-//void tst_Model_Relations::withoutDefaultModel_LazyLoad_BelongsTo() const
-//{
-//    QFETCH_GLOBAL(QString, connection);
+void tst_Model_Relations::withoutDefaultModel_LazyLoad_BelongsTo() const
+{
+    QFETCH_GLOBAL(QString, connection);
 
-//    ConnectionOverride::connection = connection;
+    ConnectionOverride::connection = connection;
 
-//    auto torrentFile = TorrentPreviewableFile::find(9);
-//    QVERIFY(torrentFile->exists);
+    auto torrentFile = TorrentPreviewableFile::find(9);
+    QVERIFY(torrentFile->exists);
 
-//    auto *torrent = torrentFile->getRelationValue<Torrent, One>("torrent");
+    auto *torrent = torrentFile->getRelationValue<Torrent, One>("torrent");
 
-//    QVERIFY(torrent == nullptr);
-//}
+    QVERIFY(torrent == nullptr);
+}
 
-//void tst_Model_Relations::withoutDefaultModel_EagerLoad_HasOne() const
-//{
-//    QFETCH_GLOBAL(QString, connection);
+void tst_Model_Relations::withoutDefaultModel_EagerLoad_HasOne() const
+{
+    QFETCH_GLOBAL(QString, connection);
 
-//    ConnectionOverride::connection = connection;
+    ConnectionOverride::connection = connection;
 
-//    auto torrentFile = TorrentPreviewableFileEager_WithDefault::find(7);
-//    QVERIFY(torrentFile->exists);
+    auto torrentFile = TorrentPreviewableFileEager_WithDefault::find(7);
+    QVERIFY(torrentFile->exists);
 
-//    auto *fileProperty =
-//            torrentFile->getRelation<TorrentPreviewableFilePropertyEager, One>(
-//                "fileProperty");
+    auto *fileProperty =
+            torrentFile->getRelation<TorrentPreviewableFilePropertyEager, One>(
+                "fileProperty");
 
-//    QVERIFY(fileProperty == nullptr);
-//}
+    QVERIFY(fileProperty == nullptr);
+}
 
-//void tst_Model_Relations::withoutDefaultModel_EagerLoad_BelongsTo() const
-//{
-//    QFETCH_GLOBAL(QString, connection);
+void tst_Model_Relations::withoutDefaultModel_EagerLoad_BelongsTo() const
+{
+    QFETCH_GLOBAL(QString, connection);
 
-//    ConnectionOverride::connection = connection;
+    ConnectionOverride::connection = connection;
 
-//    auto torrentFile = TorrentPreviewableFileEager_WithDefault::find(9);
-//    QVERIFY(torrentFile->exists);
+    auto torrentFile = TorrentPreviewableFileEager_WithDefault::find(9);
+    QVERIFY(torrentFile->exists);
 
-//    auto *torrent = torrentFile->getRelation<TorrentEager_WithDefault, One>("torrent");
+    auto *torrent = torrentFile->getRelation<TorrentEager_WithDefault, One>("torrent");
 
-//    QVERIFY(torrent == nullptr);
-//}
+    QVERIFY(torrent == nullptr);
+}
 
-//void tst_Model_Relations::withDefaultModel_LazyLoad_Bool_HasOne() const
-//{
-//    QFETCH_GLOBAL(QString, connection);
+void tst_Model_Relations::withDefaultModel_LazyLoad_Bool_HasOne() const
+{
+    QFETCH_GLOBAL(QString, connection);
 
-//    ConnectionOverride::connection = connection;
+    ConnectionOverride::connection = connection;
 
-//    auto torrentFile = TorrentPreviewableFile::find(7);
-//    QVERIFY(torrentFile->exists);
+    auto torrentFile = TorrentPreviewableFile::find(7);
+    QVERIFY(torrentFile->exists);
 
-//    auto *fileProperty =
-//            torrentFile->getRelationValue<TorrentPreviewableFileProperty, One>(
-//                "fileProperty_WithBoolDefault");
+    auto *fileProperty =
+            torrentFile->getRelationValue<TorrentPreviewableFileProperty, One>(
+                "fileProperty_WithBoolDefault");
 
-//    QVERIFY(fileProperty != nullptr);
-//    QVERIFY(!fileProperty->exists);
-//    QCOMPARE(typeid (fileProperty), typeid (TorrentPreviewableFileProperty *));
-//    QCOMPARE(fileProperty->getAttributes().size(), 1);
-//    QCOMPARE((*fileProperty)["previewable_file_id"], QVariant(7));
-//}
+    QVERIFY(fileProperty != nullptr);
+    QVERIFY(!fileProperty->exists);
+    QCOMPARE(typeid (fileProperty), typeid (TorrentPreviewableFileProperty *));
+    QCOMPARE(fileProperty->getAttributes().size(), 1);
+    QCOMPARE((*fileProperty)["previewable_file_id"], QVariant(7));
+}
 
-//void tst_Model_Relations::withDefaultModel_LazyLoad_AttributesVector_HasOne() const
-//{
-//    QFETCH_GLOBAL(QString, connection);
+void tst_Model_Relations::withDefaultModel_LazyLoad_AttributesVector_HasOne() const
+{
+    QFETCH_GLOBAL(QString, connection);
 
-//    ConnectionOverride::connection = connection;
+    ConnectionOverride::connection = connection;
 
-//    auto torrentFile = TorrentPreviewableFile::find(7);
-//    QVERIFY(torrentFile->exists);
+    auto torrentFile = TorrentPreviewableFile::find(7);
+    QVERIFY(torrentFile->exists);
 
-//    auto *fileProperty =
-//            torrentFile->getRelationValue<TorrentPreviewableFileProperty, One>(
-//                "fileProperty_WithVectorDefaults");
+    auto *fileProperty =
+            torrentFile->getRelationValue<TorrentPreviewableFileProperty, One>(
+                "fileProperty_WithVectorDefaults");
 
-//    QVERIFY(fileProperty != nullptr);
-//    QVERIFY(!fileProperty->exists);
-//    QCOMPARE(typeid (fileProperty), typeid (TorrentPreviewableFileProperty *));
-//    QCOMPARE(fileProperty->getAttributes().size(), 3);
-//    QCOMPARE((*fileProperty)["previewable_file_id"], QVariant(7));
-//    QCOMPARE((*fileProperty)[NAME], QVariant("default_fileproperty_name"));
-//    QCOMPARE((*fileProperty)[SIZE_], QVariant(321));
-//}
+    QVERIFY(fileProperty != nullptr);
+    QVERIFY(!fileProperty->exists);
+    QCOMPARE(typeid (fileProperty), typeid (TorrentPreviewableFileProperty *));
+    QCOMPARE(fileProperty->getAttributes().size(), 3);
+    QCOMPARE((*fileProperty)["previewable_file_id"], QVariant(7));
+    QCOMPARE((*fileProperty)[NAME], QVariant("default_fileproperty_name"));
+    QCOMPARE((*fileProperty)[SIZE_], QVariant(321));
+}
 
-//void tst_Model_Relations::withDefaultModel_LazyLoad_Bool_BelongsTo() const
-//{
-//    QFETCH_GLOBAL(QString, connection);
+void tst_Model_Relations::withDefaultModel_LazyLoad_Bool_BelongsTo() const
+{
+    QFETCH_GLOBAL(QString, connection);
 
-//    ConnectionOverride::connection = connection;
+    ConnectionOverride::connection = connection;
 
-//    auto torrentFile = TorrentPreviewableFile::find(9);
-//    QVERIFY(torrentFile->exists);
+    auto torrentFile = TorrentPreviewableFile::find(9);
+    QVERIFY(torrentFile->exists);
 
-//    auto *torrent =
-//            torrentFile->getRelationValue<Torrent, One>("torrent_WithBoolDefault");
+    auto *torrent =
+            torrentFile->getRelationValue<Torrent, One>("torrent_WithBoolDefault");
 
-//    QVERIFY(torrent != nullptr);
-//    QVERIFY(!torrent->exists);
-//    QCOMPARE(typeid (torrent), typeid (Torrent *));
-//    QCOMPARE(torrent->getAttributes().size(), 0);
-//}
-
-//void tst_Model_Relations::withDefaultModel_LazyLoad_AttributesVector_BelongsTo() const
-//{
-//    QFETCH_GLOBAL(QString, connection);
-
-//    ConnectionOverride::connection = connection;
+    QVERIFY(torrent != nullptr);
+    QVERIFY(!torrent->exists);
+    QCOMPARE(typeid (torrent), typeid (Torrent *));
+    QCOMPARE(torrent->getAttributes().size(), 0);
+}
+
+void tst_Model_Relations::withDefaultModel_LazyLoad_AttributesVector_BelongsTo() const
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
 
-//    auto torrentFile = TorrentPreviewableFile::find(9);
-//    QVERIFY(torrentFile->exists);
+    auto torrentFile = TorrentPreviewableFile::find(9);
+    QVERIFY(torrentFile->exists);
 
-//    auto *torrent =
-//            torrentFile->getRelationValue<Torrent, One>("torrent_WithVectorDefaults");
+    auto *torrent =
+            torrentFile->getRelationValue<Torrent, One>("torrent_WithVectorDefaults");
 
-//    QVERIFY(torrent != nullptr);
-//    QVERIFY(!torrent->exists);
-//    QCOMPARE(typeid (torrent), typeid (Torrent *));
-//    QCOMPARE(torrent->getAttributes().size(), 2);
-//    QCOMPARE((*torrent)[NAME], QVariant("default_torrent_name"));
-//    QCOMPARE((*torrent)[SIZE_], QVariant(123));
-//}
+    QVERIFY(torrent != nullptr);
+    QVERIFY(!torrent->exists);
+    QCOMPARE(typeid (torrent), typeid (Torrent *));
+    QCOMPARE(torrent->getAttributes().size(), 2);
+    QCOMPARE((*torrent)[NAME], QVariant("default_torrent_name"));
+    QCOMPARE((*torrent)[SIZE_], QVariant(123));
+}
 
-//void tst_Model_Relations::withDefaultModel_EagerLoad_Bool_HasOne() const
-//{
-//    QFETCH_GLOBAL(QString, connection);
+void tst_Model_Relations::withDefaultModel_EagerLoad_Bool_HasOne() const
+{
+    QFETCH_GLOBAL(QString, connection);
 
-//    ConnectionOverride::connection = connection;
+    ConnectionOverride::connection = connection;
 
-//    auto torrentFile = TorrentPreviewableFileEager_WithDefault::find(7);
-//    QVERIFY(torrentFile->exists);
+    auto torrentFile = TorrentPreviewableFileEager_WithDefault::find(7);
+    QVERIFY(torrentFile->exists);
 
-//    auto *fileProperty =
-//            torrentFile->getRelation<TorrentPreviewableFilePropertyEager, One>(
-//                "fileProperty_WithBoolDefault");
-
-//    QVERIFY(fileProperty != nullptr);
-//    QVERIFY(!fileProperty->exists);
-//    QCOMPARE(typeid (fileProperty), typeid (TorrentPreviewableFilePropertyEager *));
-//    QCOMPARE(fileProperty->getAttributes().size(), 1);
-//    QCOMPARE((*fileProperty)["previewable_file_id"], QVariant(7));
-//}
-
-//void tst_Model_Relations::withDefaultModel_EagerLoad_AttributesVector_HasOne() const
-//{
-//    QFETCH_GLOBAL(QString, connection);
-
-//    ConnectionOverride::connection = connection;
-
-//    auto torrentFile = TorrentPreviewableFileEager_WithDefault::find(7);
-//    QVERIFY(torrentFile->exists);
-
-//    auto *fileProperty =
-//            torrentFile->getRelation<TorrentPreviewableFilePropertyEager, One>(
-//                "fileProperty_WithVectorDefaults");
-
-//    QVERIFY(fileProperty != nullptr);
-//    QVERIFY(!fileProperty->exists);
-//    QCOMPARE(typeid (fileProperty), typeid (TorrentPreviewableFilePropertyEager *));
-//    QCOMPARE(fileProperty->getAttributes().size(), 3);
-//    QCOMPARE((*fileProperty)["previewable_file_id"], QVariant(7));
-//    QCOMPARE((*fileProperty)[NAME], QVariant("default_fileproperty_name"));
-//    QCOMPARE((*fileProperty)[SIZE_], QVariant(321));
-//}
-
-//void tst_Model_Relations::withDefaultModel_EagerLoad_Bool_BelongsTo() const
-//{
-//    QFETCH_GLOBAL(QString, connection);
-
-//    ConnectionOverride::connection = connection;
-
-//    auto torrentFile = TorrentPreviewableFileEager_WithDefault::find(9);
-//    QVERIFY(torrentFile->exists);
-
-//    auto *torrent =
-//            torrentFile->getRelation<TorrentEager_WithDefault, One>(
-//                "torrent_WithBoolDefault");
-
-//    QVERIFY(torrent != nullptr);
-//    QVERIFY(!torrent->exists);
-//    QCOMPARE(typeid (torrent), typeid (TorrentEager_WithDefault *));
-//    QCOMPARE(torrent->getAttributes().size(), 0);
-//}
-
-//void tst_Model_Relations::withDefaultModel_EagerLoad_AttributesVector_BelongsTo() const
-//{
-//    QFETCH_GLOBAL(QString, connection);
-
-//    ConnectionOverride::connection = connection;
-
-//    auto torrentFile = TorrentPreviewableFileEager_WithDefault::find(9);
-//    QVERIFY(torrentFile->exists);
-
-//    auto *torrent =
-//            torrentFile->getRelation<TorrentEager_WithDefault, One>(
-//                "torrent_WithVectorDefaults");
-
-//    QVERIFY(torrent != nullptr);
-//    QVERIFY(!torrent->exists);
-//    QCOMPARE(typeid (torrent), typeid (TorrentEager_WithDefault *));
-//    QCOMPARE(torrent->getAttributes().size(), 2);
-//    QCOMPARE((*torrent)[NAME], QVariant("default_torrent_name"));
-//    QCOMPARE((*torrent)[SIZE_], QVariant(123));
-//}
-
-///* Relation related */
-
-///* BelongsToMany related */
-
-//void tst_Model_Relations::find() const
-//{
-//    QFETCH_GLOBAL(QString, connection);
-
-//    ConnectionOverride::connection = connection;
-
-//    auto tag = Torrent::find(3)->tags()->find(2);
-//    QVERIFY(tag);
-//    QCOMPARE(tag->getKey(), QVariant(2));
-//    QCOMPARE(tag->getAttribute(NAME), QVariant("tag2"));
-//}
-
-//void tst_Model_Relations::findOr() const
-//{
-//    QFETCH_GLOBAL(QString, connection);
-
-//    ConnectionOverride::connection = connection;
-
-//    // Callback invoked
-//    {
-//        auto callbackInvoked = false;
-//        auto tag = Torrent::find(3)->tags()
-//                   ->findOr(100, {ASTERISK}, [&callbackInvoked]()
-//        {
-//            callbackInvoked = true;
-//        });
-
-//        QVERIFY(!tag);
-//        QVERIFY(callbackInvoked);
-//    }
-//    // Callback invoked (second overload)
-//    {
-//        auto callbackInvoked = false;
-//        auto tag = Torrent::find(3)->tags()->findOr(100, [&callbackInvoked]()
-//        {
-//            callbackInvoked = true;
-//        });
-
-//        QVERIFY(!tag);
-//        QVERIFY(callbackInvoked);
-//    }
-//    // Callback not invoked
-//    {
-//        auto callbackInvoked = false;
-//        auto tag = Torrent::find(3)->tags()->findOr(2, [&callbackInvoked]()
-//        {
-//            callbackInvoked = true;
-//        });
-
-//        QVERIFY(tag);
-//        QVERIFY(!callbackInvoked);
-//        QCOMPARE(tag->getKey(), QVariant(2));
-//        QCOMPARE(tag->getAttribute(NAME), QVariant("tag2"));
-//    }
-//}
-
-//void tst_Model_Relations::findOr_WithReturnType() const
-//{
-//    QFETCH_GLOBAL(QString, connection);
-
-//    ConnectionOverride::connection = connection;
-
-//    // Callback invoked
-//    {
-//        auto [tag, result] = Torrent::find(3)->tags()->findOr<int>(100, []()
-//        {
-//            return 1;
-//        });
-
-//        QVERIFY(!tag);
-//        QCOMPARE(result, 1);
-//    }
-//    // Callback invoked (second overload)
-//    {
-//        auto [tag, result] = Torrent::find(3)->tags()
-//                             ->findOr<int>(100, {ID, NAME}, []()
-//        {
-//            return 1;
-//        });
-
-//        QVERIFY(!tag);
-//        QCOMPARE(result, 1);
-//    }
-//    // Callback not invoked
-//    {
-//        auto [tag, result] = Torrent::find(3)->tags()->findOr<int>(2, []()
-//        {
-//            return 1;
-//        });
-
-//        QVERIFY(tag);
-//        QCOMPARE(result, 0);
-//        QCOMPARE(tag->getKey(), QVariant(2));
-//        QCOMPARE(tag->getAttribute(NAME), QVariant("tag2"));
-//    }
-//}
-
-//void tst_Model_Relations::first() const
-//{
-//    QFETCH_GLOBAL(QString, connection);
-
-//    ConnectionOverride::connection = connection;
-
-//    auto tag = Torrent::find(3)->tags()->whereKey(2).first();
-//    QVERIFY(tag);
-//    QCOMPARE(tag->getKey(), QVariant(2));
-//    QCOMPARE(tag->getAttribute(NAME), QVariant("tag2"));
-//}
-
-//void tst_Model_Relations::firstOr() const
-//{
-//    QFETCH_GLOBAL(QString, connection);
-
-//    ConnectionOverride::connection = connection;
-
-//    // Callback invoked
-//    {
-//        auto callbackInvoked = false;
-//        auto tag = Torrent::find(3)->tags()->whereKey(100)
-//                   .firstOr({ASTERISK}, [&callbackInvoked]()
-//        {
-//            callbackInvoked = true;
-//        });
-
-//        QVERIFY(!tag);
-//        QVERIFY(callbackInvoked);
-//    }
-//    // Callback invoked (second overload)
-//    {
-//        auto callbackInvoked = false;
-//        auto tag = Torrent::find(3)->tags()->whereKey(100)
-//                   .firstOr([&callbackInvoked]()
-//        {
-//            callbackInvoked = true;
-//        });
-
-//        QVERIFY(!tag);
-//        QVERIFY(callbackInvoked);
-//    }
-//    // Callback not invoked
-//    {
-//        auto callbackInvoked = false;
-//        auto tag = Torrent::find(3)->tags()->whereKey(2).firstOr([&callbackInvoked]()
-//        {
-//            callbackInvoked = true;
-//        });
-
-//        QVERIFY(tag);
-//        QVERIFY(!callbackInvoked);
-//        QCOMPARE(tag->getKey(), QVariant(2));
-//        QCOMPARE(tag->getAttribute(NAME), QVariant("tag2"));
-//    }
-//}
-
-//void tst_Model_Relations::firstOr_WithReturnType() const
-//{
-//    QFETCH_GLOBAL(QString, connection);
-
-//    ConnectionOverride::connection = connection;
-
-//    // Callback invoked
-//    {
-//        auto [tag, result] = Torrent::find(3)->tags()->whereKey(100)
-//                             .firstOr<int>([]()
-//        {
-//            return 1;
-//        });
-
-//        QVERIFY(!tag);
-//        QCOMPARE(result, 1);
-//    }
-//    // Callback invoked (second overload)
-//    {
-//        auto [tag, result] = Torrent::find(3)->tags()->whereKey(100)
-//                             .firstOr<int>({ID, NAME}, []()
-//        {
-//            return 1;
-//        });
-
-//        QVERIFY(!tag);
-//        QCOMPARE(result, 1);
-//    }
-//    // Callback not invoked
-//    {
-//        auto [tag, result] = Torrent::find(3)->tags()->whereKey(2)
-//                             .firstOr<int>([]()
-//        {
-//            return 1;
-//        });
-
-//        QVERIFY(tag);
-//        QCOMPARE(result, 0);
-//        QCOMPARE(tag->getKey(), QVariant(2));
-//        QCOMPARE(tag->getAttribute(NAME), QVariant("tag2"));
-//    }
-//}
-
-//void tst_Model_Relations::whereRowValues() const
-//{
-//    QFETCH_GLOBAL(QString, connection);
-
-//    ConnectionOverride::connection = connection;
-
-//    auto tag = Torrent::find(2)->tags()
-//               ->whereRowValuesEq({ID, NAME}, {1, "tag1"})
-//               .first();
-
-//    QVERIFY(tag);
-//    QCOMPARE(tag->getKey(), QVariant(1));
-//    QCOMPARE(tag->getAttribute(NAME), QVariant("tag1"));
-//}
-
-//void tst_Model_Relations::upsert() const
-//{
-//    QFETCH_GLOBAL(QString, connection);
-
-//    ConnectionOverride::connection = connection;
-
-//    auto timeBeforeUpdate = QDateTime::currentDateTimeUtc();
-//    // Reset milliseconds to 0
-//    {
-//        auto time = timeBeforeUpdate.time();
-//        timeBeforeUpdate.setTime(QTime(time.hour(), time.minute(), time.second()));
-//    }
-
-//    // Get an original timestamp values for compare and restoration
-//    const auto &createdAtColumn = TagProperty::getCreatedAtColumn();
-//    const auto &updatedAtColumn = TagProperty::getUpdatedAtColumn();
-//    auto tagProperty1Original = TagProperty::whereEq("tag_id", 1)
-//                                ->orderBy("position")
-//                                .first();
-//    auto createdAtOriginal = tagProperty1Original->getAttribute(createdAtColumn);
-//    auto updatedAtOriginal = tagProperty1Original->getAttribute(updatedAtColumn);
-
-//    // Should update one row (color column) and insert one row
-//    {
-//        auto [affected, query] =
-//                Tag::without("tagProperty")->find(1)->tagProperty()->upsert(
-//                    {{{"tag_id", 1}, {"color", "pink"},   {"position", 0}},
-//                     {{"tag_id", 1}, {"color", "purple"}, {"position", 4}}},
-//                    {"position"},
-//                    {"color"});
-
-//        QVERIFY(query);
-//        QVERIFY(!query->isValid() && !query->isSelect() && query->isActive());
-//        if (DB::driverName(connection) == QMYSQL)
-//            /* For MySQL the affected-rows value per row is 1 if the row is inserted
-//               as a new row, 2 if an existing row is updated, and 0 if an existing row
-//               is set to its current values. */
-//            QCOMPARE(affected, 3);
-//        else
-//            QCOMPARE(affected, 2);
-
-//        // Validate one update and one insert
-//        auto tagProperties = TagProperty::whereEq("tag_id", 1)
-//                             ->orderBy("position")
-//                             .get();
-
-//        auto tagPropertiesSize = tagProperties.size();
-//        QCOMPARE(tagPropertiesSize, 2);
-
-//        QVector<QVector<QVariant>> result;
-//        result.reserve(tagPropertiesSize);
-
-//        for (const auto &tagProperty : tagProperties)
-//            result.append({tagProperty.getAttribute("color"),
-//                           tagProperty.getAttribute("position"),
-//                           tagProperty.getAttribute("tag_id")});
-
-//        QVector<QVector<QVariant>> expextedResult {
-//            {"pink",   0, 1},
-//            {"purple", 4, 1},
-//        };
-
-//        QCOMPARE(result, expextedResult);
-
-//        // Timestamps must be compared manually
-//        auto tagProperty1 = tagProperties.at(0);
-//        QCOMPARE(tagProperty1.getAttribute<QDateTime>(createdAtColumn),
-//                 createdAtOriginal);
-//        QVERIFY(tagProperty1.getAttribute<QDateTime>(updatedAtColumn) >=
-//                timeBeforeUpdate);
-//        auto tagProperty2 = tagProperties.at(1);
-//        QVERIFY(tagProperty2.getAttribute<QDateTime>(createdAtColumn) >=
-//                timeBeforeUpdate);
-//        QVERIFY(tagProperty1.getAttribute<QDateTime>(updatedAtColumn) >=
-//                timeBeforeUpdate);
-//    }
-
-//    // Restore db
-//    {
-//        auto [affected, query] = DB::table("tag_properties", connection)
-//                                 ->whereEq("position", 4)
-//                                 .remove();
-
-//        QVERIFY(!query.isValid() && !query.isSelect() && query.isActive());
-//        QCOMPARE(affected, 1);
-//    }
-//    {
-//        auto [affected, query] = DB::table("tag_properties", connection)
-//                                 ->whereEq("id", 1)
-//                                 .update({{"color", "white"},
-//                                          {createdAtColumn, createdAtOriginal},
-//                                          {updatedAtColumn, updatedAtOriginal}});
-
-//        QVERIFY(!query.isValid() && !query.isSelect() && query.isActive());
-//        QCOMPARE(affected, 1);
-//    }
-
-//    // Validate restored db
-//    {
-//        auto validateQuery = DB::table("tag_properties", connection)
-//                             ->whereEq("tag_id", 1)
-//                             .orderBy("position")
-//                             .get();
-
-//        QVERIFY(validateQuery.isSelect() && validateQuery.isActive());
-//        QCOMPARE(QueryUtils::queryResultSize(validateQuery), 1);
-//        QVERIFY(validateQuery.first());
-//        QVERIFY(validateQuery.isValid());
-//        QCOMPARE(validateQuery.value("color"), QVariant(QString("white")));
-//        QCOMPARE(validateQuery.value("position").value<int>(), 0);
-//        QCOMPARE(validateQuery.value(createdAtColumn).value<QDateTime>(),
-//                 createdAtOriginal);
-//        QCOMPARE(validateQuery.value(updatedAtColumn).value<QDateTime>(),
-//                 updatedAtOriginal);
-//    }
-//}
-
-///* Casting Attributes */
-
-//void tst_Model_Relations::withCasts_OnRelation_OneToMany() const
-//{
-//    QFETCH_GLOBAL(QString, connection);
-
-//    ConnectionOverride::connection = connection;
-
-//    auto torrentFile = Torrent::find(1)->torrentFiles()
-//                       ->withCasts({{"progress", Orm::Tiny::CastType::UInteger}})
-//                       .first();
-
-//    QVERIFY(torrentFile);
-//    QVERIFY(torrentFile->exists);
-//    QCOMPARE(torrentFile->getKeyCasted(), 1);
-
-//    auto attribute = torrentFile->getAttribute("progress");
-
-//    auto typeId = Helpers::qVariantTypeId(attribute);
-
-//    if (const auto driverName = DB::driverName(connection);
-//        driverName == QMYSQL
-//    )
-//        QCOMPARE(typeId, QMetaType::UInt);
-//    else if (driverName == Orm::QPSQL)
-//        QCOMPARE(typeId, QMetaType::UInt);
-//    else if (driverName == Orm::QSQLITE)
-//        QCOMPARE(typeId, QMetaType::UInt);
-//    else
-//        Q_UNREACHABLE();
-
-//    QCOMPARE(attribute.value<uint>(), 200);
-//}
-
-//void tst_Model_Relations::withCasts_OnRelation_ManyToMany() const
-//{
-//    QFETCH_GLOBAL(QString, connection);
-
-//    ConnectionOverride::connection = connection;
-
-//    auto tag = Torrent::find(2)->tags()
-//               ->orderBy(ID)
-//               .withCasts({{ID, Orm::Tiny::CastType::UInt}})
-//               .first();
-
-//    QVERIFY(tag);
-//    QVERIFY(tag->exists);
-//    QCOMPARE(tag->getKeyCasted(), 1);
-
-//    auto attribute = tag->getKey();
-
-//    auto typeId = Helpers::qVariantTypeId(attribute);
-
-//    if (const auto driverName = DB::driverName(connection);
-//        driverName == QMYSQL
-//    )
-//        QCOMPARE(typeId, QMetaType::UInt);
-//    else if (driverName == Orm::QPSQL)
-//        QCOMPARE(typeId, QMetaType::UInt);
-//    else if (driverName == Orm::QSQLITE)
-//        QCOMPARE(typeId, QMetaType::UInt);
-//    else
-//        Q_UNREACHABLE();
-
-//    QCOMPARE(attribute.value<uint>(), 1);
-//}
-
-//void tst_Model_Relations::u_casts_OnCustomPivotModel_ManyToMany() const
-//{
-//    QFETCH_GLOBAL(QString, connection);
-
-//    ConnectionOverride::connection = connection;
-
-//    auto tag = Torrent::find(2)->tags()
-//               ->orderBy(ID)
-//               .first();
-
-//    QVERIFY(tag);
-//    QVERIFY(tag->exists);
-//    QCOMPARE(tag->getKeyCasted(), 1);
-
-//    auto *tagged = tag->getRelation<Tagged, One>("tagged");
-//    QVERIFY(tagged);
-//    QVERIFY(tagged->exists);
-
-//    auto attribute = tagged->getAttribute("active");
-
-//    auto typeId = Helpers::qVariantTypeId(attribute);
-
-//    if (const auto driverName = DB::driverName(connection);
-//        driverName == QMYSQL
-//    )
-//        QCOMPARE(typeId, QMetaType::Bool);
-//    else if (driverName == Orm::QPSQL)
-//        QCOMPARE(typeId, QMetaType::Bool);
-//    else if (driverName == Orm::QSQLITE)
-//        QCOMPARE(typeId, QMetaType::Bool);
-//    else
-//        Q_UNREACHABLE();
-
-//    QCOMPARE(attribute.value<bool>(), true);
-//}
-
-///* QDateTime with/without timezone */
-
-///* Server timezone UTC */
-
-//void tst_Model_Relations::
-//timezone_TimestampAttribute_UtcOnServer_OnCustomPivotModel_ManyToMany() const
-//{
-//    QFETCH_GLOBAL(QString, connection);
-
-//    ConnectionOverride::connection = connection;
-
-//    // Get the fresh model from the database
-//    auto tag = Torrent::find(2)->tags()
-//               ->orderBy(ID)
-//               .first();
-
-//    QVERIFY(tag);
-//    QVERIFY(tag->exists);
-//    QCOMPARE(tag->getKeyCasted(), 1);
-
-//    auto *tagged = tag->getRelation<Tagged, One>("tagged");
-//    QVERIFY(tagged);
-//    QVERIFY(tagged->exists);
-
-//    // Test
-//    const auto timestampDbVariant = tagged->getAttribute(CREATED_AT);
-//    QVERIFY(timestampDbVariant.isValid());
-//    QVERIFY(!timestampDbVariant.isNull());
-
-//    QCOMPARE(Helpers::qVariantTypeId(timestampDbVariant), QMetaType::QDateTime);
-
-//    /* The time zone must be as is defined in the qt_timezone connection
-//       configuration, TinyORM TinyBuilder fixes and unifies the buggy time zone
-//       behavior of all QtSql drivers. */
-//    const auto timestampActual = timestampDbVariant.value<QDateTime>();
-//    const auto timestampExpected = QDateTime({2021, 2, 21}, {17, 31, 58}, Qt::UTC);
-
-//    QCOMPARE(timestampActual, timestampExpected);
-//    QCOMPARE(timestampActual, timestampExpected.toLocalTime());
-//    QCOMPARE(timestampActual.timeZone(), QTimeZone::utc());
-//}
-
-///* QtTimeZoneType::DontConvert */
-
-///* Server timezone UTC */
-
-//void tst_Model_Relations::
-//timezone_TimestampAttribute_UtcOnServer_DontConvert_OnCustomPivot_MtM() const
-//{
-//    QFETCH_GLOBAL(QString, connection);
-
-//    ConnectionOverride::connection = connection;
-
-//    DB::setQtTimeZone(QtTimeZoneConfig {QtTimeZoneType::DontConvert}, connection);
-//    QCOMPARE(DB::qtTimeZone(connection),
-//             QtTimeZoneConfig {QtTimeZoneType::DontConvert});
-
-//    // Get the fresh model from the database
-//    auto tag = Torrent::find(2)->tags()
-//               ->orderBy(ID)
-//               .first();
-
-//    QVERIFY(tag);
-//    QVERIFY(tag->exists);
-//    QCOMPARE(tag->getKeyCasted(), 1);
-
-//    auto *tagged = tag->getRelation<Tagged, One>("tagged");
-//    QVERIFY(tagged);
-//    QVERIFY(tagged->exists);
-
-//    // Test
-//    const auto timestampDbVariant = tagged->getAttribute(CREATED_AT);
-//    QVERIFY(timestampDbVariant.isValid());
-//    QVERIFY(!timestampDbVariant.isNull());
-
-//    QCOMPARE(Helpers::qVariantTypeId(timestampDbVariant), QMetaType::QDateTime);
-
-//    /* The time zone must be as is defined in the qt_timezone connection
-//       configuration, TinyORM TinyBuilder fixes and unifies the buggy time zone
-//       behavior of all QtSql drivers. */
-//    const auto timestampActual = timestampDbVariant.value<QDateTime>();
-//    const auto timestampExpected = QDateTime({2021, 2, 21}, {17, 31, 58});
-
-//    QCOMPARE(timestampActual, timestampExpected);
-//    QCOMPARE(timestampActual, timestampExpected.toLocalTime());
-//    QCOMPARE(timestampActual.timeZone(), QTimeZone::systemTimeZone());
-
-//    // Restore
-//    DB::setQtTimeZone(QtTimeZoneConfig {QtTimeZoneType::QtTimeSpec,
-//                                        QVariant::fromValue(Qt::UTC)}, connection);
-//    QCOMPARE(DB::qtTimeZone(connection),
-//             (QtTimeZoneConfig {QtTimeZoneType::QtTimeSpec,
-//                                QVariant::fromValue(Qt::UTC)}));
-//}
+    auto *fileProperty =
+            torrentFile->getRelation<TorrentPreviewableFilePropertyEager, One>(
+                "fileProperty_WithBoolDefault");
+
+    QVERIFY(fileProperty != nullptr);
+    QVERIFY(!fileProperty->exists);
+    QCOMPARE(typeid (fileProperty), typeid (TorrentPreviewableFilePropertyEager *));
+    QCOMPARE(fileProperty->getAttributes().size(), 1);
+    QCOMPARE((*fileProperty)["previewable_file_id"], QVariant(7));
+}
+
+void tst_Model_Relations::withDefaultModel_EagerLoad_AttributesVector_HasOne() const
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
+    auto torrentFile = TorrentPreviewableFileEager_WithDefault::find(7);
+    QVERIFY(torrentFile->exists);
+
+    auto *fileProperty =
+            torrentFile->getRelation<TorrentPreviewableFilePropertyEager, One>(
+                "fileProperty_WithVectorDefaults");
+
+    QVERIFY(fileProperty != nullptr);
+    QVERIFY(!fileProperty->exists);
+    QCOMPARE(typeid (fileProperty), typeid (TorrentPreviewableFilePropertyEager *));
+    QCOMPARE(fileProperty->getAttributes().size(), 3);
+    QCOMPARE((*fileProperty)["previewable_file_id"], QVariant(7));
+    QCOMPARE((*fileProperty)[NAME], QVariant("default_fileproperty_name"));
+    QCOMPARE((*fileProperty)[SIZE_], QVariant(321));
+}
+
+void tst_Model_Relations::withDefaultModel_EagerLoad_Bool_BelongsTo() const
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
+    auto torrentFile = TorrentPreviewableFileEager_WithDefault::find(9);
+    QVERIFY(torrentFile->exists);
+
+    auto *torrent =
+            torrentFile->getRelation<TorrentEager_WithDefault, One>(
+                "torrent_WithBoolDefault");
+
+    QVERIFY(torrent != nullptr);
+    QVERIFY(!torrent->exists);
+    QCOMPARE(typeid (torrent), typeid (TorrentEager_WithDefault *));
+    QCOMPARE(torrent->getAttributes().size(), 0);
+}
+
+void tst_Model_Relations::withDefaultModel_EagerLoad_AttributesVector_BelongsTo() const
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
+    auto torrentFile = TorrentPreviewableFileEager_WithDefault::find(9);
+    QVERIFY(torrentFile->exists);
+
+    auto *torrent =
+            torrentFile->getRelation<TorrentEager_WithDefault, One>(
+                "torrent_WithVectorDefaults");
+
+    QVERIFY(torrent != nullptr);
+    QVERIFY(!torrent->exists);
+    QCOMPARE(typeid (torrent), typeid (TorrentEager_WithDefault *));
+    QCOMPARE(torrent->getAttributes().size(), 2);
+    QCOMPARE((*torrent)[NAME], QVariant("default_torrent_name"));
+    QCOMPARE((*torrent)[SIZE_], QVariant(123));
+}
+
+/* Relation related */
+
+/* BelongsToMany related */
+
+void tst_Model_Relations::find() const
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
+    auto tag = Torrent::find(3)->tags()->find(2);
+    QVERIFY(tag);
+    QCOMPARE(tag->getKey(), QVariant(2));
+    QCOMPARE(tag->getAttribute(NAME), QVariant("tag2"));
+}
+
+void tst_Model_Relations::findOr() const
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
+    // Callback invoked
+    {
+        auto callbackInvoked = false;
+        auto tag = Torrent::find(3)->tags()
+                   ->findOr(100, {ASTERISK}, [&callbackInvoked]()
+        {
+            callbackInvoked = true;
+        });
+
+        QVERIFY(!tag);
+        QVERIFY(callbackInvoked);
+    }
+    // Callback invoked (second overload)
+    {
+        auto callbackInvoked = false;
+        auto tag = Torrent::find(3)->tags()->findOr(100, [&callbackInvoked]()
+        {
+            callbackInvoked = true;
+        });
+
+        QVERIFY(!tag);
+        QVERIFY(callbackInvoked);
+    }
+    // Callback not invoked
+    {
+        auto callbackInvoked = false;
+        auto tag = Torrent::find(3)->tags()->findOr(2, [&callbackInvoked]()
+        {
+            callbackInvoked = true;
+        });
+
+        QVERIFY(tag);
+        QVERIFY(!callbackInvoked);
+        QCOMPARE(tag->getKey(), QVariant(2));
+        QCOMPARE(tag->getAttribute(NAME), QVariant("tag2"));
+    }
+}
+
+void tst_Model_Relations::findOr_WithReturnType() const
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
+    // Callback invoked
+    {
+        auto [tag, result] = Torrent::find(3)->tags()->findOr<int>(100, []()
+        {
+            return 1;
+        });
+
+        QVERIFY(!tag);
+        QCOMPARE(result, 1);
+    }
+    // Callback invoked (second overload)
+    {
+        auto [tag, result] = Torrent::find(3)->tags()
+                             ->findOr<int>(100, {ID, NAME}, []()
+        {
+            return 1;
+        });
+
+        QVERIFY(!tag);
+        QCOMPARE(result, 1);
+    }
+    // Callback not invoked
+    {
+        auto [tag, result] = Torrent::find(3)->tags()->findOr<int>(2, []()
+        {
+            return 1;
+        });
+
+        QVERIFY(tag);
+        QCOMPARE(result, 0);
+        QCOMPARE(tag->getKey(), QVariant(2));
+        QCOMPARE(tag->getAttribute(NAME), QVariant("tag2"));
+    }
+}
+
+void tst_Model_Relations::first() const
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
+    auto tag = Torrent::find(3)->tags()->whereKey(2).first();
+    QVERIFY(tag);
+    QCOMPARE(tag->getKey(), QVariant(2));
+    QCOMPARE(tag->getAttribute(NAME), QVariant("tag2"));
+}
+
+void tst_Model_Relations::firstOr() const
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
+    // Callback invoked
+    {
+        auto callbackInvoked = false;
+        auto tag = Torrent::find(3)->tags()->whereKey(100)
+                   .firstOr({ASTERISK}, [&callbackInvoked]()
+        {
+            callbackInvoked = true;
+        });
+
+        QVERIFY(!tag);
+        QVERIFY(callbackInvoked);
+    }
+    // Callback invoked (second overload)
+    {
+        auto callbackInvoked = false;
+        auto tag = Torrent::find(3)->tags()->whereKey(100)
+                   .firstOr([&callbackInvoked]()
+        {
+            callbackInvoked = true;
+        });
+
+        QVERIFY(!tag);
+        QVERIFY(callbackInvoked);
+    }
+    // Callback not invoked
+    {
+        auto callbackInvoked = false;
+        auto tag = Torrent::find(3)->tags()->whereKey(2).firstOr([&callbackInvoked]()
+        {
+            callbackInvoked = true;
+        });
+
+        QVERIFY(tag);
+        QVERIFY(!callbackInvoked);
+        QCOMPARE(tag->getKey(), QVariant(2));
+        QCOMPARE(tag->getAttribute(NAME), QVariant("tag2"));
+    }
+}
+
+void tst_Model_Relations::firstOr_WithReturnType() const
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
+    // Callback invoked
+    {
+        auto [tag, result] = Torrent::find(3)->tags()->whereKey(100)
+                             .firstOr<int>([]()
+        {
+            return 1;
+        });
+
+        QVERIFY(!tag);
+        QCOMPARE(result, 1);
+    }
+    // Callback invoked (second overload)
+    {
+        auto [tag, result] = Torrent::find(3)->tags()->whereKey(100)
+                             .firstOr<int>({ID, NAME}, []()
+        {
+            return 1;
+        });
+
+        QVERIFY(!tag);
+        QCOMPARE(result, 1);
+    }
+    // Callback not invoked
+    {
+        auto [tag, result] = Torrent::find(3)->tags()->whereKey(2)
+                             .firstOr<int>([]()
+        {
+            return 1;
+        });
+
+        QVERIFY(tag);
+        QCOMPARE(result, 0);
+        QCOMPARE(tag->getKey(), QVariant(2));
+        QCOMPARE(tag->getAttribute(NAME), QVariant("tag2"));
+    }
+}
+
+void tst_Model_Relations::whereRowValues() const
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
+    auto tag = Torrent::find(2)->tags()
+               ->whereRowValuesEq({ID, NAME}, {1, "tag1"})
+               .first();
+
+    QVERIFY(tag);
+    QCOMPARE(tag->getKey(), QVariant(1));
+    QCOMPARE(tag->getAttribute(NAME), QVariant("tag1"));
+}
+
+void tst_Model_Relations::upsert() const
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
+    auto timeBeforeUpdate = QDateTime::currentDateTimeUtc();
+    // Reset milliseconds to 0
+    {
+        auto time = timeBeforeUpdate.time();
+        timeBeforeUpdate.setTime(QTime(time.hour(), time.minute(), time.second()));
+    }
+
+    // Get an original timestamp values for compare and restoration
+    const auto &createdAtColumn = TagProperty::getCreatedAtColumn();
+    const auto &updatedAtColumn = TagProperty::getUpdatedAtColumn();
+    auto tagProperty1Original = TagProperty::whereEq("tag_id", 1)
+                                ->orderBy("position")
+                                .first();
+    auto createdAtOriginal = tagProperty1Original->getAttribute(createdAtColumn);
+    auto updatedAtOriginal = tagProperty1Original->getAttribute(updatedAtColumn);
+
+    // Should update one row (color column) and insert one row
+    {
+        auto [affected, query] =
+                Tag::without("tagProperty")->find(1)->tagProperty()->upsert(
+                    {{{"tag_id", 1}, {"color", "pink"},   {"position", 0}},
+                     {{"tag_id", 1}, {"color", "purple"}, {"position", 4}}},
+                    {"position"},
+                    {"color"});
+
+        QVERIFY(query);
+        QVERIFY(!query->isValid() && !query->isSelect() && query->isActive());
+        if (DB::driverName(connection) == QMYSQL)
+            /* For MySQL the affected-rows value per row is 1 if the row is inserted
+               as a new row, 2 if an existing row is updated, and 0 if an existing row
+               is set to its current values. */
+            QCOMPARE(affected, 3);
+        else
+            QCOMPARE(affected, 2);
+
+        // Validate one update and one insert
+        auto tagProperties = TagProperty::whereEq("tag_id", 1)
+                             ->orderBy("position")
+                             .get();
+
+        auto tagPropertiesSize = tagProperties.size();
+        QCOMPARE(tagPropertiesSize, 2);
+
+        QVector<QVector<QVariant>> result;
+        result.reserve(tagPropertiesSize);
+
+        for (const auto &tagProperty : tagProperties)
+            result.append({tagProperty.getAttribute("color"),
+                           tagProperty.getAttribute("position"),
+                           tagProperty.getAttribute("tag_id")});
+
+        QVector<QVector<QVariant>> expextedResult {
+            {"pink",   0, 1},
+            {"purple", 4, 1},
+        };
+
+        QCOMPARE(result, expextedResult);
+
+        // Timestamps must be compared manually
+        auto tagProperty1 = tagProperties.at(0);
+        QCOMPARE(tagProperty1.getAttribute<QDateTime>(createdAtColumn),
+                 createdAtOriginal);
+        QVERIFY(tagProperty1.getAttribute<QDateTime>(updatedAtColumn) >=
+                timeBeforeUpdate);
+        auto tagProperty2 = tagProperties.at(1);
+        QVERIFY(tagProperty2.getAttribute<QDateTime>(createdAtColumn) >=
+                timeBeforeUpdate);
+        QVERIFY(tagProperty1.getAttribute<QDateTime>(updatedAtColumn) >=
+                timeBeforeUpdate);
+    }
+
+    // Restore db
+    {
+        auto [affected, query] = DB::table("tag_properties", connection)
+                                 ->whereEq("position", 4)
+                                 .remove();
+
+        QVERIFY(!query.isValid() && !query.isSelect() && query.isActive());
+        QCOMPARE(affected, 1);
+    }
+    {
+        auto [affected, query] = DB::table("tag_properties", connection)
+                                 ->whereEq("id", 1)
+                                 .update({{"color", "white"},
+                                          {createdAtColumn, createdAtOriginal},
+                                          {updatedAtColumn, updatedAtOriginal}});
+
+        QVERIFY(!query.isValid() && !query.isSelect() && query.isActive());
+        QCOMPARE(affected, 1);
+    }
+
+    // Validate restored db
+    {
+        auto validateQuery = DB::table("tag_properties", connection)
+                             ->whereEq("tag_id", 1)
+                             .orderBy("position")
+                             .get();
+
+        QVERIFY(validateQuery.isSelect() && validateQuery.isActive());
+        QCOMPARE(QueryUtils::queryResultSize(validateQuery), 1);
+        QVERIFY(validateQuery.first());
+        QVERIFY(validateQuery.isValid());
+        QCOMPARE(validateQuery.value("color"), QVariant(QString("white")));
+        QCOMPARE(validateQuery.value("position").value<int>(), 0);
+        QCOMPARE(validateQuery.value(createdAtColumn).value<QDateTime>(),
+                 createdAtOriginal);
+        QCOMPARE(validateQuery.value(updatedAtColumn).value<QDateTime>(),
+                 updatedAtOriginal);
+    }
+}
+
+/* Casting Attributes */
+
+void tst_Model_Relations::withCasts_OnRelation_OneToMany() const
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
+    auto torrentFile = Torrent::find(1)->torrentFiles()
+                       ->withCasts({{"progress", Orm::Tiny::CastType::UInteger}})
+                       .first();
+
+    QVERIFY(torrentFile);
+    QVERIFY(torrentFile->exists);
+    QCOMPARE(torrentFile->getKeyCasted(), 1);
+
+    auto attribute = torrentFile->getAttribute("progress");
+
+    auto typeId = Helpers::qVariantTypeId(attribute);
+
+    if (const auto driverName = DB::driverName(connection);
+        driverName == QMYSQL
+    )
+        QCOMPARE(typeId, QMetaType::UInt);
+    else if (driverName == Orm::QPSQL)
+        QCOMPARE(typeId, QMetaType::UInt);
+    else if (driverName == Orm::QSQLITE)
+        QCOMPARE(typeId, QMetaType::UInt);
+    else
+        Q_UNREACHABLE();
+
+    QCOMPARE(attribute.value<uint>(), 200);
+}
+
+void tst_Model_Relations::withCasts_OnRelation_ManyToMany() const
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
+    auto tag = Torrent::find(2)->tags()
+               ->orderBy(ID)
+               .withCasts({{ID, Orm::Tiny::CastType::UInt}})
+               .first();
+
+    QVERIFY(tag);
+    QVERIFY(tag->exists);
+    QCOMPARE(tag->getKeyCasted(), 1);
+
+    auto attribute = tag->getKey();
+
+    auto typeId = Helpers::qVariantTypeId(attribute);
+
+    if (const auto driverName = DB::driverName(connection);
+        driverName == QMYSQL
+    )
+        QCOMPARE(typeId, QMetaType::UInt);
+    else if (driverName == Orm::QPSQL)
+        QCOMPARE(typeId, QMetaType::UInt);
+    else if (driverName == Orm::QSQLITE)
+        QCOMPARE(typeId, QMetaType::UInt);
+    else
+        Q_UNREACHABLE();
+
+    QCOMPARE(attribute.value<uint>(), 1);
+}
+
+void tst_Model_Relations::u_casts_OnCustomPivotModel_ManyToMany() const
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
+    auto tag = Torrent::find(2)->tags()
+               ->orderBy(ID)
+               .first();
+
+    QVERIFY(tag);
+    QVERIFY(tag->exists);
+    QCOMPARE(tag->getKeyCasted(), 1);
+
+    auto *tagged = tag->getRelation<Tagged, One>("tagged");
+    QVERIFY(tagged);
+    QVERIFY(tagged->exists);
+
+    auto attribute = tagged->getAttribute("active");
+
+    auto typeId = Helpers::qVariantTypeId(attribute);
+
+    if (const auto driverName = DB::driverName(connection);
+        driverName == QMYSQL
+    )
+        QCOMPARE(typeId, QMetaType::Bool);
+    else if (driverName == Orm::QPSQL)
+        QCOMPARE(typeId, QMetaType::Bool);
+    else if (driverName == Orm::QSQLITE)
+        QCOMPARE(typeId, QMetaType::Bool);
+    else
+        Q_UNREACHABLE();
+
+    QCOMPARE(attribute.value<bool>(), true);
+}
+
+/* QDateTime with/without timezone */
+
+/* Server timezone UTC */
+
+void tst_Model_Relations::
+timezone_TimestampAttribute_UtcOnServer_OnCustomPivotModel_ManyToMany() const
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
+    // Get the fresh model from the database
+    auto tag = Torrent::find(2)->tags()
+               ->orderBy(ID)
+               .first();
+
+    QVERIFY(tag);
+    QVERIFY(tag->exists);
+    QCOMPARE(tag->getKeyCasted(), 1);
+
+    auto *tagged = tag->getRelation<Tagged, One>("tagged");
+    QVERIFY(tagged);
+    QVERIFY(tagged->exists);
+
+    // Test
+    const auto timestampDbVariant = tagged->getAttribute(CREATED_AT);
+    QVERIFY(timestampDbVariant.isValid());
+    QVERIFY(!timestampDbVariant.isNull());
+
+    QCOMPARE(Helpers::qVariantTypeId(timestampDbVariant), QMetaType::QDateTime);
+
+    /* The time zone must be as is defined in the qt_timezone connection
+       configuration, TinyORM TinyBuilder fixes and unifies the buggy time zone
+       behavior of all QtSql drivers. */
+    const auto timestampActual = timestampDbVariant.value<QDateTime>();
+    const auto timestampExpected = QDateTime({2021, 2, 21}, {17, 31, 58}, Qt::UTC);
+
+    QCOMPARE(timestampActual, timestampExpected);
+    QCOMPARE(timestampActual, timestampExpected.toLocalTime());
+    QCOMPARE(timestampActual.timeZone(), QTimeZone::utc());
+}
+
+/* QtTimeZoneType::DontConvert */
+
+/* Server timezone UTC */
+
+void tst_Model_Relations::
+timezone_TimestampAttribute_UtcOnServer_DontConvert_OnCustomPivot_MtM() const
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
+    DB::setQtTimeZone(QtTimeZoneConfig {QtTimeZoneType::DontConvert}, connection);
+    QCOMPARE(DB::qtTimeZone(connection),
+             QtTimeZoneConfig {QtTimeZoneType::DontConvert});
+
+    // Get the fresh model from the database
+    auto tag = Torrent::find(2)->tags()
+               ->orderBy(ID)
+               .first();
+
+    QVERIFY(tag);
+    QVERIFY(tag->exists);
+    QCOMPARE(tag->getKeyCasted(), 1);
+
+    auto *tagged = tag->getRelation<Tagged, One>("tagged");
+    QVERIFY(tagged);
+    QVERIFY(tagged->exists);
+
+    // Test
+    const auto timestampDbVariant = tagged->getAttribute(CREATED_AT);
+    QVERIFY(timestampDbVariant.isValid());
+    QVERIFY(!timestampDbVariant.isNull());
+
+    QCOMPARE(Helpers::qVariantTypeId(timestampDbVariant), QMetaType::QDateTime);
+
+    /* The time zone must be as is defined in the qt_timezone connection
+       configuration, TinyORM TinyBuilder fixes and unifies the buggy time zone
+       behavior of all QtSql drivers. */
+    const auto timestampActual = timestampDbVariant.value<QDateTime>();
+    const auto timestampExpected = QDateTime({2021, 2, 21}, {17, 31, 58});
+
+    QCOMPARE(timestampActual, timestampExpected);
+    QCOMPARE(timestampActual, timestampExpected.toLocalTime());
+    QCOMPARE(timestampActual.timeZone(), QTimeZone::systemTimeZone());
+
+    // Restore
+    DB::setQtTimeZone(QtTimeZoneConfig {QtTimeZoneType::QtTimeSpec,
+                                        QVariant::fromValue(Qt::UTC)}, connection);
+    QCOMPARE(DB::qtTimeZone(connection),
+             (QtTimeZoneConfig {QtTimeZoneType::QtTimeSpec,
+                                QVariant::fromValue(Qt::UTC)}));
+}
 // NOLINTEND(readability-convert-member-functions-to-static)
 
 QTEST_MAIN(tst_Model_Relations)
