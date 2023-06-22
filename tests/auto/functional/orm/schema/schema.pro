@@ -1,5 +1,5 @@
 TEMPLATE = subdirs
 
 SUBDIRS = \
-    postgresql_schemabuilder_f \
+    psql_schemabuilder_f \
     schemabuilder \
