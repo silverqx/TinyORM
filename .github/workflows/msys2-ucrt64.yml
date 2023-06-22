@@ -43,6 +43,10 @@ jobs:
             pacboy: qt6-base:u
 
     steps:
+    - if: ${{ matrix.compiler.key == 'gcc' }} && ${{ matrix.qt.key == 'qt6' }}
+      run: |
+        exit 0
+
     - uses: actions/checkout@v3
 
     - name: TinyORM prepare environment
