@@ -10,6 +10,8 @@ SUBDIRS = \
     model_relations \
     model_return_relation \
     model_serialization \
+    queriesrelationships \
+    relations_buildsqueries \
     relations_conn_indep \
     relations_insrt_updt \
     softdeletes \
