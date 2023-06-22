@@ -43,14 +43,8 @@ jobs:
             pacboy: qt6-base:u
 
         exclude:
-          - compiler:
-              - key: gcc
-                pacboy: [ 'gcc:u' ]
-                command: g++.exe
-
-            qt:
-              - key: qt6
-                pacboy: qt6-base:u
+          - compiler: [ key: 'gcc', pacboy: [ 'gcc:u' ], command: 'g++.exe' ]
+            qt: [ key: 'qt6', pacboy: 'qt6-base:u' ]
 
     steps:
     - uses: actions/checkout@v3
