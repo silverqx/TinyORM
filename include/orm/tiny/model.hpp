@@ -2027,7 +2027,6 @@ TINYORM_END_COMMON_NAMESPACE
 // CUR docs exceptions, which methods throw which exceptions, so user know which exception classes to define in a catch blocks silverqx
 // SEC fix LoadLibrary() before qsql plugin loads? https://www.qt.io/blog/security-advisory-qlockfile-qauthenticator-windows-platform-plugin silverqx
 // CUR cmake, make TinyUtils_target in TinyTestCommon.cmake optional, not always needed to link to silverqx
-// CUR docs, info about unsupported json column by qtsql drivers and link to schema.mdx Default Expressions silverqx
 // CUR model, add whereBelongsTo, whereRelation, orWhereRelation silverqx
 // CUR propagation, https://ben.balter.com/2017/11/10/twelve-tips-for-growing-communities-around-your-open-source-project/ silverqx
 // TODO vcpkg, solve how to build tom (when solving vcpkg builds again), currently I have hardly added tabulate to the vcpkg.json port and also manifest file; it will have to be conditional base of the TINYORM_DISABLE_TOM macro silverqx
