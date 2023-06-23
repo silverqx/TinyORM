@@ -795,7 +795,6 @@ namespace Orm::Tiny
            the relationships and save each model via this "push" method, which allows
            us to recurse into all of these nested relations for the model instance. */
         for (auto &[relation, models] : this->m_relations)
-            // FUTURE Eloquent uses array_filter on models, investigate when this happens, null value (model) in many relations? silverqx
             /* Following Eloquent API, if any push failed, then quit, remaining push-es
                will not be processed. */
             if (!this->pushWithVisitor(relation, models))
