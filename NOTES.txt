@@ -2075,6 +2075,9 @@ c++ mutex-es:
 The Note, to avoid always figuring out how this works, update this if I will use mutexes and will
 have more experiences.
 
+Nice sum up, all about multithreading:
+https://www.youtube.com/watch?v=A7sVFJLJM-A&t=2450s&ab_channel=CppCon
+
  - always use std::scoped_lock
  - std::lock and std::try_lock are simple functions which lock mutex, like std::mutex::lock/try_lock
  - std::lock_guard unlocks mutex at the end of a scope
