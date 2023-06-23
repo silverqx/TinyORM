@@ -2068,3 +2068,16 @@ c++ library confusions:
 
  - std::unordred_map reserve() vs ctor(size_type), they are the same
 
+
+c++ mutex-es:
+-------------
+
+The Note, to avoid always figuring out how this works, update this if I will use mutexes and will
+have more experiences.
+
+ - always use std::scoped_lock
+ - std::lock and std::try_lock are simple functions which lock mutex, like std::mutex::lock/try_lock
+ - std::lock_guard unlocks mutex at the end of a scope
+ - std::scoped_lock does the same as std::lock and std::lock_guard
+ - std::unique_lock is needed with the std::conditional_variable, with these you can wait
+   for data across threads
