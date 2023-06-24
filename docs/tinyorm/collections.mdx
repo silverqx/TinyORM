@@ -96,6 +96,7 @@ Furthermore, almost every method returns a new `ModelsCollection` instance, allo
 
 <div class="collection-methods-list">
 
+[all](#method-all)
 [contains](#method-contains)
 [doesntContain](#method-doesntcontain)
 [each](#method-each)
@@ -126,7 +127,15 @@ Furthermore, almost every method returns a new `ModelsCollection` instance, allo
 [stableSortByDesc](#method-stablesortbydesc)
 [stableSortDesc](#method-stablesortdesc)
 [tap](#method-tap)
+[toBase](#method-tobase)
+[toJson](#method-tojson)
+[toJsonArray](#method-tojsonarray)
+[toJsonDocument](#method-tojsondocument)
+[toMap](#method-tomap)
+[toMapVariantList](#method-tomapvariantlist)
 [toQuery](#method-toquery)
+[toVector](#method-tovector)
+[toVectorVariantList](#method-tovectorvariantlist)
 [unique](#method-unique)
 [uniqueBy](#method-uniqueby)
 [uniqueRelaxed](#method-uniquerelaxed)
@@ -147,6 +156,16 @@ For a better understanding of the following examples, many of the variable decla
 :::
 
 <div class='collection-methods'>
+
+#### `all()` {#method-all}
+
+The `all` method returns a copy of the underlying vector represented by the collection:
+
+    QVector<User> = users.all();
+
+:::note
+The [`toBase`](#method-tobase) is an alias to the `all` method.
+:::
 
 #### `contains()` {#method-contains}
 
@@ -789,9 +808,53 @@ The `tap` method returns an lvalue __reference__ to the currently processed coll
 
 It can be also called on `ModelsCollection` rvalues, it returns an rvalue reference in this case.
 
+#### `toBase()` {#method-tobase}
+
+The `toBase` method returns a copy of the underlying vector represented by the collection:
+
+    QVector<User> = users.toBase();
+
+:::note
+The [`toBase`](#method-tobase) is an alias to the `all` method.
+:::
+
+#### `toJson()` {#method-tojson}
+
+The `toJson` method converts the collection of models with all nested relations into a JSON serialized `QByteArray`.
+
+It returns an empty array for empty `many` type relations and `null` for empty `one` type relations.
+
+:::info
+The `toJson` method accepts the [`QJsonDocument::JsonFormat`](https://doc.qt.io/qt-6/qjsondocument.html#JsonFormat-enum), possible values are `QJsonDocument::Indented` or `QJsonDocument::Compact`.
+:::
+
+#### `toJsonArray()` {#method-tojsonarray}
+
+The `toJsonArray` method converts the collection of models with all nested relations into a [`QJsonArray`](https://doc.qt.io/qt-6/qjsonarray.html).
+
+#### `toJsonDocument()` {#method-tojsondocument}
+
+The `toJsonDocument` method converts the collection of models with all nested relations into a [`QJsonDocument`](https://doc.qt.io/qt-6/qjsondocument.html).
+
+#### `toMap()` {#method-tomap}
+
+The `toMap`  method converts the collection of models with all nested relations into an attributes map `QVector<QVariantMap>`.
+
+It returns an empty `QVariantList` for empty `many` type relations and a null <abbr title='QVariant::fromValue(nullptr)'>`QVariant`</abbr> for empty `one` type relations.
+
+#### `toMapVariantList()` {#method-tomapvariantlist}
+
+The `toMapVariantList` method converts the collection of models with all nested relations into an attributes map, but it returns the  <abbr title='QList<QVariant>'>`QVariantList`</abbr> instead of the `QVector<QVariantMap>`.
+
+It returns an empty `QVariantList` for empty `many` type relations and a null <abbr title='QVariant::fromValue(nullptr)'>`QVariant`</abbr> for empty `one` type relations.
+
+:::note
+The `toMapVariantList` method is internally needed by the `toJson` related methods.
+:::
+
 #### `toQuery()` {#method-toquery}
 
-The `toQuery` method returns the `TinyBuilder` instance containing a `whereIn` constraint with the collection models' primary keys:
+The `toQuery` method returns the `TinyBuilder` instance containing a `whereIn` constraint with the collection of models' primary keys:
 
     using Models::User;
 
@@ -800,6 +863,22 @@ The `toQuery` method returns the `TinyBuilder` instance containing a `whereIn` c
     users.toQuery()->update({
         {"status", "Administrator"},
     });
+
+#### `toVector()` {#method-tovector}
+
+The `toVector` method converts the collection of models with all nested relations into an attributes vector `QVector<QVector<AttributeItem>>`.
+
+It returns an empty `QVariantList` for empty `many` type relations and a null <abbr title='QVariant::fromValue(nullptr)'>`QVariant`</abbr> for empty `one` type relations.
+
+#### `toVectorVariantList()` {#method-tovectorvariantlist}
+
+The `toVectorVariantList` method converts the collection of models with all nested relations into an attributes vector, but it returns the <abbr title='QList<QVariant>'>`QVariantList`</abbr> instead of the `QVector<QVector<AttributeItem>>`.
+
+It returns an empty `QVariantList` for empty `many` type relations and a null <abbr title='QVariant::fromValue(nullptr)'>`QVariant`</abbr> for empty `one` type relations.
+
+:::note
+The `toVectorVariantList` method is internally needed by the `toJson` related methods.
+:::
 
 #### `unique()` {#method-unique}
 
