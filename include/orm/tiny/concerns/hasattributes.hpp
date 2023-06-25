@@ -1350,7 +1350,7 @@ namespace Orm::Tiny::Concerns
             return false;
 
         // This check ignores milliseconds in the QDateTime attribute
-        if (isDateAttribute(key))
+        if (isDateAttribute(key) || isCustomDateCastable(key))
             return fromDateTime(attribute) == fromDateTime(original);
 
         if (hasCast(key, {CastType::Real, CastType::Float, CastType::Double})) {
