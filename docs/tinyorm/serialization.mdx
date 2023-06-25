@@ -1,0 +1,117 @@
+---
+sidebar_position: 4
+sidebar_label: Serialization
+description: TinyORM models serialization allows you to serialize models and collection of models including all nested relations to JSON. It also supports converting to vectors or maps and allows controlling a custom date format during serialization.
+keywords: [c++ orm, orm, serialization, json, toJson, serializing models, serializing relations, serializing collections, converting, toVector, toMap]
+---
+
+# TinyORM: Serialization
+
+- [Introduction](#introduction)
+- [Serializing Models & Collections](#serializing-models-and-collections)
+    - [Serializing To Vectors & Maps](#serializing-to-vectors-and-maps)
+    - [Serializing To JSON](#serializing-to-json)
+- [Date Serialization](#date-serialization)
+
+## Introduction {#introduction}
+
+When building APIs using TinyORM, you will often need to convert your models and relationships to vectors, maps, or JSON. TinyORM includes convenient methods for making these conversions, as well as controlling which attributes are included in the serialized representation of your models.
+
+## Serializing Models & Collections {#serializing-models-and-collections}
+
+### Serializing To Vectors & Maps {#serializing-to-vectors-and-maps}
+
+To convert a model and its loaded [relationships](tinyorm/relationships.mdx) to a vector, you should use the `toVector` or `toMap` methods. This methods are recursive, so all attributes and all relations (including the relations of relations) will be converted to vectors:
+
+    using Models::User;
+
+    auto user = User::with("roles")->first();
+
+    return user->toVector();
+
+    return user->toMap();
+
+The `attributesToVector` or `attributesToMap` methods may be used to convert a model's attributes to a vector or map but not its relationships:
+
+    auto user = User::first();
+
+    return user->attributesToVector();
+
+    return user->attributesToMap();
+
+You may also convert entire [collections](tinyorm/collections.mdx) of models to vectors or maps by calling the [`toVector`](tinyorm/collections.mdx#method-tovector) or [`toMap`](tinyorm/collections.mdx#method-tomap) methods on the collection instance:
+
+    ModelsCollection<User> users = User::with("roles")->all();
+
+    return users.toVector();
+
+    return users.toMap();
+
+### Serializing To JSON {#serializing-to-json}
+
+To convert a model to JSON, you should use the `toJson` method. Like `toVector` or `toMap`, the `toJson` method is recursive, so all attributes and relations will be converted to JSON. You may also specify any JSON encoding options that are supported by [QJsonDocument::toJson](https://doc.qt.io/qt-6/qjsondocument.html#toJson):
+
+    using Models::User;
+
+    auto user = User::with("roles")->find(1);
+
+    return user->toJson();
+
+    return user->toJson(QJsonDocument::Compact);
+
+You may also convert entire [collections](tinyorm/collections.mdx) of models to JSON by calling the [`toJson`](tinyorm/collections.mdx#method-tojson) method on the collection instance:
+
+
+    ModelsCollection<User> users = User::with("roles")->findMany({1, 2});
+
+    return users.toJson();
+
+You can also convert models to the [`QJsonObject`](https://doc.qt.io/qt-6/qjsonobject.html) and [`QJsonDocument`](https://doc.qt.io/qt-6/qjsondocument.html) using the `toJsonArray` and `toJsonDocument` methods and collection of models to [`QJsonArray`](https://doc.qt.io/qt-6/qjsonarray.html) and [`QJsonDocument`](https://doc.qt.io/qt-6/qjsondocument.html) using the [`toJsonArray`](tinyorm/collections.mdx#method-tojsonarray) and [`toJsonDocument`](tinyorm/collections.mdx#method-tojsondocument) methods.
+
+#### Relationships {#relationships}
+
+When a TinyORM model is converted to JSON, its loaded relationships will automatically be included as attributes on the JSON object. Also, though TinyORM relationship methods are defined using "camelCase" method names, a relationship's JSON attributes will be "snake_case".
+
+This behavior is affected and can be overridden by the `u_snakeAttributes` static data member:
+
+    #include <orm/tiny/model.hpp>
+
+    using Orm::Tiny::Model;
+
+    class Album final : public Model<Album, AlbumImage>
+    {
+        friend Model;
+        using Model::Model;
+
+        /*! Indicates whether attributes are snake_cased during serialization. */
+        T_THREAD_LOCAL
+        inline static const bool u_snakeAttributes = false;
+    };
+
+## Date Serialization {#date-serialization}
+
+#### Customizing The Default Date Format {#customizing-the-default-date-format}
+
+You may customize the default serialization format by overriding the `serializeDate` and `serializeDateTime` methods. These methods do not affect how your dates are formatted for storage in the database:
+
+    /*! Prepare a date for vector, map, or JSON serialization. */
+    QString serializeDate(const QDate date)
+    {
+        return date.toString("yyyy-MM-dd");
+    }
+
+    /*! Prepare a datetime for vector, map, or JSON serialization. */
+    QString serializeDateTime(const QDateTime &datetime)
+    {
+        return datetime.toUTC().toString("yyyy-MM-ddTHH:mm:ssZ");
+    }
+
+#### Customizing The Date Format Per Attribute {#customizing-the-date-format-per-attribute}
+
+You may customize the serialization format of individual TinyORM date attributes by specifying the date format in the model's [cast declarations](tinyorm/casts.mdx#attribute-casting):
+
+    /*! The attributes that should be cast. */
+    inline static std::unordered_map<QString, CastItem> u_casts {
+        {"birthday",  {CastType::CustomQDate, "yyyy-MM-dd"}},
+        {"joined_at", {CastType::CustomQDateTime, "yyyy-MM-dd HH:00"}},
+    };

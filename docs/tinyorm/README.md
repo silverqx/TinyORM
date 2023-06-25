@@ -6,3 +6,4 @@ TinyORM is an object-relational mapper (ORM) that makes it enjoyable to interact
 - [Relationships](relationships.mdx#tinyorm-relationships)
 - [Collections](collections.mdx#tinyorm-collections)
 - [Casts](casts.mdx#tinyorm-casting)
+- [Serialization](serialization.mdx#tinyorm-serialization)

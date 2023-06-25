@@ -42,6 +42,7 @@ Whole library is documented as markdown documents:
   - [Relationships](/docs/tinyorm/relationships.mdx#tinyorm-relationships)
   - [Collections](/docs/tinyorm/collections.mdx#tinyorm-collections)
   - [Casts](/docs/tinyorm/casts.mdx#tinyorm-casting)
+  - [Serialization](/docs/tinyorm/serialization.mdx#tinyorm-serialization)
 - [Building](/docs/building#building)
   - [TinyORM](/docs/building/tinyorm.mdx#building-tinyorm)
   - [Hello world](/docs/building/hello-world.mdx#building-hello-world)
@@ -77,8 +78,9 @@ The following list fastly summarizes all the `TinyORM` features.
   - fluent `ModelsCollection` that expose a variety of map / reduce operations that may be chained using an intuitive interface ✨
   - all query builder methods are proxied from the model instances and also from the relation instances back to the query builder 🤯 (everything that can be called on the query builder can also be called on the model and relation instances)
   - clean active record pattern
-  - advanced features like timestamps, touching parent timestamps, __soft deleting__, default models, default model attributes, and attribute casting
+  - advanced features like timestamps, touching parent timestamps, __soft deleting__, default models, default model attributes, and attribute casting 🤓
   - querying relationships existence/absence using the has, whereHas, and hasNested methods (using dot notation for selecting nested relationships _users.posts.comments_)
+  - __serializing__ models and collection of models including all nested relations to __JSON__ and converting to vectors and maps, also allows controlling a custom date format during serialization 🪡
 - __compiled database migrations and seeders__ 🕺
   - create, update, drop, and rename database tables
   - create, drop, and rename table columns
