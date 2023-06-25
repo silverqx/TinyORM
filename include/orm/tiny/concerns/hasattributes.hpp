@@ -553,7 +553,9 @@ namespace Orm::Tiny::Concerns
             return {};
 
         /* If the attribute exists in the attribute hash or has a cast we will
-           get the attribute's value. Otherwise, we will return invalid QVariant. */
+           get the attribute's value. Otherwise, we will return invalid QVariant.
+           Also, don't user the hasCast(key) check here because there is always primary
+           key cast and it would return null or invalid QVariant. */
         if (m_attributesHash.contains(key) || model().getUserCasts().contains(key))
             return getAttributeValue(key);
 
