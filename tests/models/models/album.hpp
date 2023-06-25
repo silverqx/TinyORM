@@ -52,7 +52,7 @@ private:
         SIZE_, // Database table doesn't contain the size column but I need it in tests
     };
 
-    /*! Indicates whether attributes are snake cased during serialization. */
+    /*! Indicates whether attributes are snake_cased during serialization. */
     T_THREAD_LOCAL
     inline static const bool u_snakeAttributes = false;
 };

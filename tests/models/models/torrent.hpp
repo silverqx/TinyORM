@@ -227,7 +227,7 @@ private:
 //        {"decimal",  {CastType::Decimal, 2}},
 //    };
 
-    /*! Indicates whether attributes are snake cased during serialization. */
+    /*! Indicates whether attributes are snake_cased during serialization. */
 //    inline static const bool u_snakeAttributes = false;
 };
 

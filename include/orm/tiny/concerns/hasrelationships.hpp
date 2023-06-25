@@ -641,7 +641,7 @@ namespace Concerns
         const auto &relatedKeyName = instance->getKeyName();
 
         /* If no foreign key was supplied, we can guess the proper foreign key name
-           by using the snake case name of the relationship, which when combined
+           by using the snake_case name of the relationship, which when combined
            with an "_id" should conventionally match the columns. */
         if (foreignKey.isEmpty())
             foreignKey = QStringLiteral("%1_%2").arg(relation, relatedKeyName);
@@ -702,7 +702,7 @@ namespace Concerns
 
         /* If no table name was provided, we can guess it by concatenating the two
            models using underscores in alphabetical order. The two model names
-           are transformed to snake case from their default StudlyCase also. */
+           are transformed to snake_case from their default StudlyCase also. */
         if (table.isEmpty())
             table = pivotTableName<Related>();
 
@@ -962,7 +962,7 @@ namespace Concerns
     template<typename Related>
     QString HasRelationships<Derived, AllRelations...>::pivotTableName() const
     {
-        /* The joining table name, by convention, is simply the snake cased, models
+        /* The joining table name, by convention, is simply the snake_cased, models
            sorted alphabetically and concatenated with an underscore, so we can
            just sort the models and join them together to get the table name. */
         QStringList segments {
@@ -1432,8 +1432,8 @@ namespace Concerns
            cases, but I leave it here anyway. */
         Q_ASSERT(relationSerialized.isValid());
 
-        /* If the relationships snake-casing is enabled, we will snake case this
-           key so that the relation attribute is snake cased in this returned
+        /* If the relationships snake-casing is enabled, we will snake_case this
+           key so that the relation attribute is snake_cased in this returned
            map to the developers, making this consistent with attributes. */
         if (model().getUserSnakeAttributes())
             relation = StringUtils::snake(std::move(relation));

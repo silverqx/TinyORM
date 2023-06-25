@@ -391,7 +391,7 @@ namespace Orm::Tiny::Concerns
         mutable std::optional<bool> m_isConvertingTimeZone = std::nullopt;
 
         /* Serialization */
-        /*! Indicates whether attributes are snake cased during serialization. */
+        /*! Indicates whether attributes are snake_cased during serialization. */
         T_THREAD_LOCAL
         inline static bool u_snakeAttributes = true;
 
