@@ -1933,7 +1933,7 @@ void tst_Model_Serialization::
     QVERIFY(torrent);
     QVERIFY(torrent->exists);
 
-    QByteArray json = torrent->toJson();
+    QByteArray json = torrent->toJson(QJsonDocument::Indented);
 
     auto expectedJson = QByteArrayLiteral(
 R"({
@@ -2014,7 +2014,7 @@ tst_Model_Serialization::toJson_WithRelation_BelongsToMany_TorrentTags() const
     QVERIFY(torrent);
     QVERIFY(torrent->exists);
 
-    QByteArray json = torrent->toJson();
+    QByteArray json = torrent->toJson(QJsonDocument::Indented);
 
     auto expectedJson = QByteArrayLiteral(
 R"({
@@ -2109,7 +2109,7 @@ void tst_Model_Serialization::
     QVERIFY(torrent);
     QVERIFY(torrent->exists);
 
-    QByteArray json = torrent->toJson();
+    QByteArray json = torrent->toJson(QJsonDocument::Indented);
 
     auto expectedJson = QByteArrayLiteral(
 R"({
@@ -2223,7 +2223,7 @@ void tst_Model_Serialization::toJson_WithRelation_BelongsToMany_UserRoles() cons
     QVERIFY(user);
     QVERIFY(user->exists);
 
-    QByteArray json = user->toJson();
+    QByteArray json = user->toJson(QJsonDocument::Indented);
 
     auto expectedJson = QByteArrayLiteral(
 R"({
@@ -2278,7 +2278,7 @@ void tst_Model_Serialization::toJson_u_snakeAttributes_false() const
     QVERIFY(album);
     QVERIFY(album->exists);
 
-    QByteArray json = album->toJson();
+    QByteArray json = album->toJson(QJsonDocument::Indented);
 
     auto expectedJson = QByteArrayLiteral(
 R"({
@@ -2310,7 +2310,7 @@ void tst_Model_Serialization::toJson_HasMany_EmptyRelation() const
     QCOMPARE(albums.size(), 2);
     QCOMPARE(typeid (albums), typeid (ModelsCollection<Album>));
 
-    QByteArray json = albums.toJson();
+    QByteArray json = albums.toJson(QJsonDocument::Indented);
 
     auto expectedJson = QByteArrayLiteral(
 R"([
@@ -2353,7 +2353,7 @@ void tst_Model_Serialization::toJson_HasOne_EmptyRelation() const
     QCOMPARE(torrents.size(), 2);
     QCOMPARE(typeid (torrents), typeid (ModelsCollection<Torrent>));
 
-    QByteArray json = torrents.toJson();
+    QByteArray json = torrents.toJson(QJsonDocument::Indented);
 
     auto expectedJson = QByteArrayLiteral(
 R"([
@@ -2404,7 +2404,7 @@ void tst_Model_Serialization::toJson_BelongsTo_EmptyRelation() const
     QCOMPARE(torrentPeers.size(), 2);
     QCOMPARE(typeid (torrentPeers), typeid (ModelsCollection<TorrentPeer>));
 
-    QByteArray json = torrentPeers.toJson();
+    QByteArray json = torrentPeers.toJson(QJsonDocument::Indented);
 
     auto expectedJson = QByteArrayLiteral(
 R"([
@@ -2453,7 +2453,7 @@ void tst_Model_Serialization::toJson_BelongsToMany_EmptyRelation() const
     QCOMPARE(users.size(), 2);
     QCOMPARE(typeid (users), typeid (ModelsCollection<User>));
 
-    QByteArray json = users.toJson();
+    QByteArray json = users.toJson(QJsonDocument::Indented);
 
     auto expectedJson = QByteArrayLiteral(
 R"([

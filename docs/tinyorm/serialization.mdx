@@ -57,7 +57,7 @@ To convert a model to JSON, you should use the `toJson` method. Like `toVector` 
 
     return user->toJson();
 
-    return user->toJson(QJsonDocument::Compact);
+    return user->toJson(QJsonDocument::Indented);
 
 You may also convert entire [collections](tinyorm/collections.mdx) of models to JSON by calling the [`toJson`](tinyorm/collections.mdx#method-tojson) method on the collection instance:
 

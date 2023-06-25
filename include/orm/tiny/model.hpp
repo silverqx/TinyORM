@@ -291,7 +291,7 @@ namespace Orm::Tiny
         inline QJsonDocument toJsonDocument();
         /*! Convert the model instance to JSON. */
         inline QByteArray
-        toJson(QJsonDocument::JsonFormat format = QJsonDocument::Indented);
+        toJson(QJsonDocument::JsonFormat format = QJsonDocument::Compact);
 
         /* Getters / Setters */
         /*! Get the current connection name for the model. */

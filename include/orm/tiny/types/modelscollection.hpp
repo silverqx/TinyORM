@@ -451,7 +451,7 @@ namespace Types
         inline QJsonDocument toJsonDocument() const;
         /*! Convert a collection to JSON. */
         inline QByteArray
-        toJson(QJsonDocument::JsonFormat format = QJsonDocument::Indented) const;
+        toJson(QJsonDocument::JsonFormat format = QJsonDocument::Compact) const;
 
         /*! Create a collection of all models that do not pass a given truth test. */
         ModelsCollection<ModelRawType *>
