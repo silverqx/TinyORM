@@ -2043,18 +2043,23 @@ namespace Orm::Tiny::Concerns
                                          asDateOrDateTime(value));
 
         if (isCustomDateCastType(castItem)) {
+            const auto castModifier = castItem.modifier().template value<QString>();
+
+            // Support unix timestamps
+            if (castModifier == QLatin1Char('U')) {
+                value = asTimestamp(value);
+                return;
+            }
+
             const auto castedDate = asDateOrDateTime(value);
-            const auto &castModifier = castItem.modifier();
 
             if (const auto typeId = Helpers::qVariantTypeId(castedDate);
                 typeId == QMetaType::QDate
             ) T_UNLIKELY
-                value = castedDate.template value<QDate>()
-                        .toString(castModifier.template value<QString>());
+                value = castedDate.template value<QDate>().toString(castModifier);
 
             else T_LIKELY
-                value = castedDate.template value<QDateTime>()
-                        .toString(castModifier.template value<QString>());
+                value = castedDate.template value<QDateTime>().toString(castModifier);
         }
     }
 

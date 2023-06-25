@@ -66,6 +66,9 @@ private Q_SLOTS:
     void toMap_WithDateModfiers() const;
     void toVector_WithDateModfiers() const;
 
+    void toMap_WithDateModfiers_UnixTimestamp() const;
+    void toVector_WithDateModfiers_UnixTimestamp() const;
+
     void toMap_UDatesOnly_OverrideSerializeDateTime() const;
     void toVector_UDatesOnly_OverrideSerializeDateTime() const;
 
@@ -117,6 +120,7 @@ private Q_SLOTS:
     void toJson_WithRelation_BelongsToMany_UserRoles() const;
 
     void toJson_u_snakeAttributes_false() const;
+    void toJson_WithDateModfiers_UnixTimestamp() const;
 
     void toJson_HasMany_EmptyRelation() const;
     void toJson_HasOne_EmptyRelation() const;
@@ -399,6 +403,52 @@ void tst_Model_Serialization::toVector_WithDateModfiers() const
     QVector<AttributeItem> expectedAttributes {
         {"datetime", "13.05.2023 10:11:12.0 UTC"},
         {"date",     "14.05.2023"},
+    };
+    QCOMPARE(serialized, expectedAttributes);
+
+    // Restore
+    datetime.resetCasts();
+}
+
+void tst_Model_Serialization::toMap_WithDateModfiers_UnixTimestamp() const
+{
+    auto datetime = Datetime::instance({
+        {"datetime", QDateTime({2023, 05, 13}, {10, 11, 12}, Qt::UTC)},
+    });
+
+    datetime.mergeCasts({
+        {"datetime", {CastType::CustomQDateTime, "U"}},
+    });
+
+    QVariantMap serialized = datetime.toMap();
+    QCOMPARE(serialized.size(), 1);
+
+    // The order must be the same as returned from the MySQL database
+    QVariantMap expectedAttributes {
+        {"datetime", static_cast<qint64>(1683972672)},
+    };
+    QCOMPARE(serialized, expectedAttributes);
+
+    // Restore
+    datetime.resetCasts();
+}
+
+void tst_Model_Serialization::toVector_WithDateModfiers_UnixTimestamp() const
+{
+    auto datetime = Datetime::instance({
+        {"datetime", QDateTime({2023, 05, 13}, {10, 11, 12}, Qt::UTC)},
+    });
+
+    datetime.mergeCasts({
+        {"datetime", {CastType::CustomQDateTime, "U"}},
+    });
+
+    QVector<AttributeItem> serialized = datetime.toVector();
+    QCOMPARE(serialized.size(), 1);
+
+    // The order must be the same as returned from the MySQL database
+    QVector<AttributeItem> expectedAttributes {
+        {"datetime", static_cast<qint64>(1683972672)},
     };
     QCOMPARE(serialized, expectedAttributes);
 
@@ -2302,6 +2352,42 @@ R"({
 )");
 
     QCOMPARE(json, expectedJson);
+}
+
+void tst_Model_Serialization::toJson_WithDateModfiers_UnixTimestamp() const
+{
+    auto torrent = Torrent::find(4);
+    QVERIFY(torrent);
+    QVERIFY(torrent->exists);
+
+    torrent->mergeCasts({
+        {"added_on", {CastType::CustomQDateTime, "U"}},
+        // These two attributes have also the u_dates defined
+        {CREATED_AT, {CastType::CustomQDateTime, "U"}},
+        {UPDATED_AT, {CastType::CustomQDateTime, "U"}},
+    });
+
+    QByteArray json = torrent->toJson(QJsonDocument::Indented);
+
+    auto expectedJson = QByteArrayLiteral(
+R"({
+    "added_on": 1596571870,
+    "created_at": 1567584683,
+    "hash": "4579e3af2768cdf52ec84c1f320333f68401dc6e",
+    "id": 4,
+    "name": "test4",
+    "note": "after update revert updated_at",
+    "progress": 400,
+    "size": 14,
+    "updated_at": 1609785991,
+    "user_id": 1
+}
+)");
+
+    QCOMPARE(json, expectedJson);
+
+    // Restore
+    torrent->resetCasts();
 }
 
 void tst_Model_Serialization::toJson_HasMany_EmptyRelation() const
