@@ -2071,6 +2071,8 @@ c++ library confusions:
  - shared_ptr and unique_ptr complete vs incomeplete type:
    - https://en.cppreference.com/w/cpp/memory/unique_ptr
    - https://howardhinnant.github.io/incomplete.html
+     local copy in Books (search):
+     smart_pointers_shared_ptr_unique_ptr_incomplete_types.html
    - shared_ptr doesn't need polymorphic class to correctly destroy it through the shared_ptr<Base>
    - unique_ptr does need polymorphic class to correctly destroy it through the unique_ptr<Base>
    - shared_ptr needs complete type during construction
