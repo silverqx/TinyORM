@@ -447,10 +447,13 @@ namespace Types
         QVariantList toMapVariantList() const;
 
         /*! Convert a collection to QJsonArray. */
-        inline QJsonArray toJsonArray() const;
+        template<typename PivotType = void>
+        QJsonArray toJsonArray() const;
         /*! Convert a collection to QJsonDocument. */
-        inline QJsonDocument toJsonDocument() const;
+        template<typename PivotType = void>
+        QJsonDocument toJsonDocument() const;
         /*! Convert a collection to JSON. */
+        template<typename PivotType = void> // PivotType is primarily internal
         inline QByteArray
         toJson(QJsonDocument::JsonFormat format = QJsonDocument::Compact) const;
 
@@ -1920,25 +1923,28 @@ namespace Types
     }
 
     template<DerivedCollectionModel Model>
+    template<typename PivotType>
     QJsonArray
     ModelsCollection<Model>::toJsonArray() const
     {
         return QJsonArray::fromVariantList(
-                AttributeUtils::fixQtNullVariantBug(toMapVariantList()));
+                AttributeUtils::fixQtNullVariantBug(toMapVariantList<PivotType>()));
     }
 
     template<DerivedCollectionModel Model>
+    template<typename PivotType>
     QJsonDocument
     ModelsCollection<Model>::toJsonDocument() const
     {
-        return QJsonDocument(toJsonArray());
+        return QJsonDocument(toJsonArray<PivotType>());
     }
 
     template<DerivedCollectionModel Model>
+    template<typename PivotType>
     QByteArray
     ModelsCollection<Model>::toJson(const QJsonDocument::JsonFormat format) const
     {
-        return toJsonDocument().toJson(format);
+        return toJsonDocument<PivotType>().toJson(format);
     }
 
     template<DerivedCollectionModel Model>
