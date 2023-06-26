@@ -112,8 +112,8 @@ namespace Orm::Tiny::Concerns
                               RelationStoreType storeType);
 
         public:
-            /*! Pure virtual destructor. */
-            inline virtual ~BaseRelationStore() = 0;
+            /*! Default destructor. */
+            inline ~BaseRelationStore() = default;
 
             /*! Visit the given relation. */
             void visit(const QString &relation);
@@ -154,8 +154,8 @@ namespace Orm::Tiny::Concerns
                     NotNull<HasRelationStore *> hasRelationStore,
                     const Tiny::TinyBuilder<Derived> &builder,
                     ModelsCollection<CollectionModel> &models, const WithItem &relation);
-            /*! Virtual destructor. */
-            inline virtual ~EagerRelationStore() final = default;
+            /*! Default destructor. */
+            inline ~EagerRelationStore() = default;
 
             /*! Method called after visitation. */
             template<RelationshipMethod<Derived> Method>
@@ -188,8 +188,8 @@ namespace Orm::Tiny::Concerns
             /*! Constructor. */
             PushRelationStore(NotNull<HasRelationStore *> hasRelationStore,
                               RelationsType<AllRelations...> &models);
-            /*! Virtual destructor. */
-            inline virtual ~PushRelationStore() final = default;
+            /*! Default destructor. */
+            inline ~PushRelationStore() = default;
 
             /*! Method called after visitation. */
             template<RelationshipMethod<Derived> Method>
@@ -210,8 +210,8 @@ namespace Orm::Tiny::Concerns
             /*! Constructor. */
             TouchOwnersRelationStore(NotNull<HasRelationStore *> hasRelationStore,
                                      const QString &relation);
-            /*! Virtual destructor. */
-            inline virtual ~TouchOwnersRelationStore() final = default;
+            /*! Default destructor. */
+            inline ~TouchOwnersRelationStore() = default;
 
             /*! Method called after visitation. */
             template<RelationshipMethod<Derived> Method>
@@ -231,8 +231,8 @@ namespace Orm::Tiny::Concerns
         public:
             /*! Constructor. */
             explicit LazyRelationStore(NotNull<HasRelationStore *> hasRelationStore);
-            /*! Virtual destructor. */
-            inline virtual ~LazyRelationStore() final = default;
+            /*! Default destructor. */
+            inline ~LazyRelationStore() = default;
 
             /*! Method called after visitation. */
             template<RelationshipMethod<Derived> Method>
@@ -252,8 +252,8 @@ namespace Orm::Tiny::Concerns
             /*! Constructor. */
             explicit
             BelongsToManyRelatedTableStore(NotNull<HasRelationStore *> hasRelationStore);
-            /*! Virtual destructor. */
-            inline virtual ~BelongsToManyRelatedTableStore() final = default;
+            /*! Default destructor. */
+            inline ~BelongsToManyRelatedTableStore() = default;
 
             /*! Method called after visitation. */
             template<RelationshipMethod<Derived> Method>
@@ -279,8 +279,8 @@ namespace Orm::Tiny::Concerns
                             void(QueriesRelationshipsCallback<Related> &)> &callback,
                     std::optional<std::reference_wrapper<
                             QStringList>> relations = std::nullopt);
-            /*! Virtual destructor. */
-            inline virtual ~QueriesRelationshipsStore() final = default;
+            /*! Default destructor. */
+            inline ~QueriesRelationshipsStore() = default;
 
             /*! Method called after visitation. */
             template<typename RelatedFromMethod, typename Method>
@@ -321,8 +321,8 @@ namespace Orm::Tiny::Concerns
             SerializeRelationStore(
                     NotNull<HasRelationStore *> hasRelationStore, const QString &relation,
                     RelationsType<AllRelations...> &models, C &attributes);
-            /*! Virtual destructor. */
-            inline virtual ~SerializeRelationStore() final = default;
+            /*! Default destructor. */
+            inline ~SerializeRelationStore() = default;
 
             /*! Method called after visitation. */
             template<RelationshipMethod<Derived> Method>
@@ -512,10 +512,6 @@ namespace Orm::Tiny::Concerns
     {}
 
     /* public */
-
-    template<typename Derived, AllRelationsConcept ...AllRelations>
-    HasRelationStore<Derived, AllRelations...>::BaseRelationStore
-                                              ::~BaseRelationStore() = default;
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     void HasRelationStore<Derived, AllRelations...>::BaseRelationStore
