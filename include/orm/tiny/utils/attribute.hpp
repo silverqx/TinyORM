@@ -77,6 +77,23 @@ namespace Orm::Tiny::Utils
         noexcept(noexcept(std::forward<T>(left) == std::forward<U>(right)) &&
                  noexcept(std::forward<T>(left) < std::forward<U>(right)) &&
                  noexcept(std::forward<T>(left) > std::forward<U>(right)));
+
+        /* Serialization */
+        /*! Fix null QVariant bug for QJsonDocument, replace null QVariant-s with
+            the QVariant(nullptr). */
+        inline static QVariantMap fixQtNullVariantBug(QVariantMap &&attributes);
+        /*! Fix null QVariant bug for QJsonDocument, replace null QVariant-s with
+            the QVariant(nullptr). */
+        inline static QVariantList fixQtNullVariantBug(QVariantList &&attributesList);
+
+    private:
+        /* Serialization */
+        /*! Fix null QVariant bug for QJsonDocument, replace null QVariant-s with
+            the QVariant(nullptr). */
+        static void fixQtNullVariantBug(QVariantMap &attributes);
+        /*! Fix null QVariant bug for QJsonDocument, replace null QVariant-s with
+            the QVariant(nullptr). */
+        static void fixQtNullVariantBug(QVariantList &attributesList);
     };
 
     /* public */
@@ -147,6 +164,22 @@ namespace Orm::Tiny::Utils
             return std::strong_ordering::less;
 
         Q_UNREACHABLE();
+    }
+
+    /* Serialization */
+
+    QVariantMap Attribute::fixQtNullVariantBug(QVariantMap &&attributes)
+    {
+        fixQtNullVariantBug(attributes);
+
+        return attributes;
+    }
+
+    QVariantList Attribute::fixQtNullVariantBug(QVariantList &&attributesList)
+    {
+        fixQtNullVariantBug(attributesList);
+
+        return attributesList;
     }
 
 } // namespace Orm::Tiny::Utils

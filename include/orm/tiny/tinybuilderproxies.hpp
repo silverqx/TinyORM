@@ -6,7 +6,6 @@
 TINY_SYSTEM_HEADER
 
 #include "orm/ormconcepts.hpp"
-#include "orm/tiny/tinytypes.hpp"
 #include "orm/tiny/utils/attribute.hpp"
 #include "orm/types/sqlquery.hpp"
 

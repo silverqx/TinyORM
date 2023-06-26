@@ -127,6 +127,8 @@ private Q_SLOTS:
     void toJson_BelongsTo_EmptyRelation() const;
     void toJson_BelongsToMany_EmptyRelation() const;
 
+    void toJson_NullQVariant() const;
+
 // NOLINTNEXTLINE(readability-redundant-access-specifiers)
 private:
     /*! Connection name used in this test case. */
@@ -2034,7 +2036,7 @@ R"({
         "created_at": "2021-01-07T14:51:23.000Z",
         "id": 5,
         "leechers": 7,
-        "seeds": 0,
+        "seeds": null,
         "torrent_id": 7,
         "total_leechers": 7,
         "total_seeds": 7,
@@ -2043,11 +2045,11 @@ R"({
     "updated_at": "2021-01-07T18:46:31.000Z",
     "user": {
         "created_at": "2022-01-02T14:51:23.000Z",
-        "deleted_at": "",
+        "deleted_at": null,
         "id": 2,
         "is_banned": false,
         "name": "silver",
-        "note": "",
+        "note": null,
         "updated_at": "2022-01-02T17:46:31.000Z"
     },
     "user_id": 2
@@ -2081,7 +2083,7 @@ R"({
             "created_at": "2021-01-11T11:51:28.000Z",
             "id": 1,
             "name": "tag1",
-            "note": "",
+            "note": null,
             "tag_property": {
                 "color": "white",
                 "created_at": "2021-02-11T12:41:28.000Z",
@@ -2103,7 +2105,7 @@ R"({
             "created_at": "2021-01-12T11:51:28.000Z",
             "id": 2,
             "name": "tag2",
-            "note": "",
+            "note": null,
             "tag_property": {
                 "color": "blue",
                 "created_at": "2021-02-12T12:41:28.000Z",
@@ -2125,7 +2127,7 @@ R"({
             "created_at": "2021-01-13T11:51:28.000Z",
             "id": 3,
             "name": "tag3",
-            "note": "",
+            "note": null,
             "tag_property": {
                 "color": "red",
                 "created_at": "2021-02-13T12:41:28.000Z",
@@ -2176,7 +2178,7 @@ R"({
             "created_at": "2021-01-11T11:51:28.000Z",
             "id": 1,
             "name": "tag1",
-            "note": "",
+            "note": null,
             "tag_property": {
                 "color": "white",
                 "created_at": "2021-02-11T12:41:28.000Z",
@@ -2198,7 +2200,7 @@ R"({
             "created_at": "2021-01-12T11:51:28.000Z",
             "id": 2,
             "name": "tag2",
-            "note": "",
+            "note": null,
             "tag_property": {
                 "color": "blue",
                 "created_at": "2021-02-12T12:41:28.000Z",
@@ -2220,7 +2222,7 @@ R"({
             "created_at": "2021-01-13T11:51:28.000Z",
             "id": 3,
             "name": "tag3",
-            "note": "",
+            "note": null,
             "tag_property": {
                 "color": "red",
                 "created_at": "2021-02-13T12:41:28.000Z",
@@ -2278,11 +2280,11 @@ void tst_Model_Serialization::toJson_WithRelation_BelongsToMany_UserRoles() cons
     auto expectedJson = QByteArrayLiteral(
 R"({
     "created_at": "2022-01-01T14:51:23.000Z",
-    "deleted_at": "",
+    "deleted_at": null,
     "id": 1,
     "is_banned": false,
     "name": "andrej",
-    "note": "",
+    "note": null,
     "roles": [
         {
             "added_on": "2022-08-01T13:36:56.000Z",
@@ -2305,7 +2307,7 @@ R"({
             }
         },
         {
-            "added_on": "",
+            "added_on": null,
             "id": 3,
             "name": "role three",
             "subscription": {
@@ -2346,7 +2348,7 @@ R"({
     "created_at": "2023-01-01T12:21:14.000Z",
     "id": 1,
     "name": "album1",
-    "note": "",
+    "note": null,
     "updated_at": "2023-02-01T16:54:28.000Z"
 }
 )");
@@ -2469,7 +2471,7 @@ R"([
             "created_at": "2021-01-07T14:51:23.000Z",
             "id": 5,
             "leechers": 7,
-            "seeds": 0,
+            "seeds": null,
             "torrent_id": 7,
             "total_leechers": 7,
             "total_seeds": 7,
@@ -2498,7 +2500,7 @@ R"([
         "created_at": "2021-01-07T14:51:23.000Z",
         "id": 5,
         "leechers": 7,
-        "seeds": 0,
+        "seeds": null,
         "torrent": {
             "added_on": "2020-08-07T20:11:10.000Z",
             "created_at": "2021-11-07T08:13:23.000Z",
@@ -2520,9 +2522,9 @@ R"([
         "created_at": "2021-01-06T14:51:23.000Z",
         "id": 6,
         "leechers": 6,
-        "seeds": 0,
+        "seeds": null,
         "torrent": null,
-        "torrent_id": 0,
+        "torrent_id": null,
         "total_leechers": 6,
         "total_seeds": 6,
         "updated_at": "2021-01-06T17:46:31.000Z"
@@ -2545,11 +2547,11 @@ void tst_Model_Serialization::toJson_BelongsToMany_EmptyRelation() const
 R"([
     {
         "created_at": "2022-01-02T14:51:23.000Z",
-        "deleted_at": "",
+        "deleted_at": null,
         "id": 2,
         "is_banned": false,
         "name": "silver",
-        "note": "",
+        "note": null,
         "roles": [
             {
                 "added_on": "2022-08-02T13:36:56.000Z",
@@ -2566,7 +2568,7 @@ R"([
     },
     {
         "created_at": "2022-01-03T14:51:23.000Z",
-        "deleted_at": "",
+        "deleted_at": null,
         "id": 3,
         "is_banned": true,
         "name": "peter",
@@ -2576,6 +2578,45 @@ R"([
         "updated_at": "2022-01-03T17:46:31.000Z"
     }
 ]
+)");
+
+    QCOMPARE(json, expectedJson);
+}
+
+void tst_Model_Serialization::toJson_NullQVariant() const
+{
+    auto type = Type::find(3);
+    QVERIFY(type);
+    QVERIFY(type->exists);
+
+    QByteArray json = type->toJson(QJsonDocument::Indented);
+
+    auto expectedJson = QByteArrayLiteral(
+R"({
+    "bigint": null,
+    "bigint_u": null,
+    "binary": null,
+    "bool_false": null,
+    "bool_true": null,
+    "date": null,
+    "datetime": null,
+    "decimal": null,
+    "decimal_down": null,
+    "decimal_infinity": null,
+    "decimal_nan": null,
+    "decimal_up": null,
+    "double": null,
+    "double_infinity": null,
+    "double_nan": null,
+    "id": 3,
+    "int": null,
+    "int_u": null,
+    "smallint": null,
+    "smallint_u": null,
+    "string": null,
+    "text": null,
+    "timestamp": null
+}
 )");
 
     QCOMPARE(json, expectedJson);

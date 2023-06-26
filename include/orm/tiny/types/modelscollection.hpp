@@ -9,18 +9,16 @@ TINY_SYSTEM_HEADER
 #include <QJsonDocument>
 
 #include <unordered_map>
-#include <unordered_set>
 
 #include <range/v3/action/erase.hpp>
 #include <range/v3/algorithm/contains.hpp>
 #include <range/v3/algorithm/stable_sort.hpp>
 #include <range/v3/algorithm/unique.hpp>
-#include <range/v3/range/conversion.hpp>
 #include <range/v3/view/reverse.hpp>
 #include <range/v3/view/transform.hpp>
 
 #include "orm/exceptions/invalidargumenterror.hpp"
-#include "orm/tiny/tinytypes.hpp"
+#include "orm/tiny/utils/attribute.hpp"
 #include "orm/utils/type.hpp"
 
 TINYORM_BEGIN_COMMON_NAMESPACE
@@ -74,6 +72,9 @@ namespace Types
     template<DerivedCollectionModel Model>
     class ModelsCollection : public QVector<Model>
     {
+        /*! Alias for the attribute utils. */
+        using AttributeUtils = Orm::Tiny::Utils::Attribute;
+
     public:
         /*! Inherit constructors. */
         using QVector<Model>::QVector;
@@ -1922,7 +1923,8 @@ namespace Types
     QJsonArray
     ModelsCollection<Model>::toJsonArray() const
     {
-        return QJsonArray::fromVariantList(toMapVariantList());
+        return QJsonArray::fromVariantList(
+                AttributeUtils::fixQtNullVariantBug(toMapVariantList()));
     }
 
     template<DerivedCollectionModel Model>

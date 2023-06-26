@@ -1358,7 +1358,8 @@ namespace Orm::Tiny
     QJsonObject
     Model<Derived, AllRelations...>::toJsonObject()
     {
-        return QJsonObject::fromVariantMap(toMap());
+        return QJsonObject::fromVariantMap(
+                AttributeUtils::fixQtNullVariantBug(toMap()));
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
