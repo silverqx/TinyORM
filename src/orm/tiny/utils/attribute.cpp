@@ -166,7 +166,7 @@ Attribute::joinAttributesForFirstOr(const QVector<WhereItem> &attributes,
 
 /* Serialization */
 
-void Attribute::fixQtNullVariantBug(QVariantMap &attributes)
+void Attribute::fixQtNullVariantBug(QVariantMap &attributes) // NOLINT(misc-no-recursion)
 {
     for (auto &value : attributes)
         if (value.isNull()) T_UNLIKELY
@@ -186,7 +186,7 @@ void Attribute::fixQtNullVariantBug(QVariantMap &attributes)
             continue;
 }
 
-void Attribute::fixQtNullVariantBug(QVariantList &attributesList)
+void Attribute::fixQtNullVariantBug(QVariantList &attributesList) // NOLINT(misc-no-recursion)
 {
     for (auto &attributes : attributesList)
         if (Helpers::qVariantTypeId(attributes) == QMetaType::QVariantMap) T_LIKELY
