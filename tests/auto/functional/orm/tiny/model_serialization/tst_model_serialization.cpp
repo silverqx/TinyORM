@@ -34,8 +34,11 @@ using TestUtils::Databases;
 using Models::Album;
 using Models::Datetime;
 using Models::Datetime_SerializeOverride;
+using Models::Role;
+using Models::RoleUser;
 using Models::Torrent;
 using Models::TorrentPeer;
+using Models::TorrentPreviewableFile;
 using Models::Type;
 using Models::User;
 
@@ -114,6 +117,11 @@ private Q_SLOTS:
     void toMap_BelongsToMany_EmptyRelation() const;
     void toVector_BelongsToMany_EmptyRelation() const;
 
+    void toMap_RelationOnly_HasMany() const;
+    void toVector_RelationOnly_HasMany() const;
+    void toMap_RelationOnly_BelongsToMany() const;
+    void toVector_RelationOnly_BelongsToMany() const;
+
     void toJson_WithRelations_HasOne_HasMany_BelongsTo() const;
     void toJson_WithRelation_BelongsToMany_TorrentTags() const;
     void toJson_WithRelation_BelongsToMany_TorrentTags_TorrentStates() const;
@@ -127,6 +135,9 @@ private Q_SLOTS:
     void toJson_u_snakeAttributes_false() const;
     void toJson_WithDateModfiers_UnixTimestamp() const;
     void toJson_NullQVariant() const;
+
+    void toJson_RelationOnly_HasMany() const;
+    void toJson_RelationOnly_BelongsToMany() const;
 
 // NOLINTNEXTLINE(readability-redundant-access-specifiers)
 private:
@@ -1977,6 +1988,186 @@ void tst_Model_Serialization::toVector_BelongsToMany_EmptyRelation() const
     QCOMPARE(serialized, expectedAttributes);
 }
 
+void tst_Model_Serialization::toMap_RelationOnly_HasMany() const
+{
+    auto torrent = Torrent::with("torrentFiles")->find(7);
+    QVERIFY(torrent);
+    QVERIFY(torrent->exists);
+
+    ModelsCollection<TorrentPreviewableFile *>
+    torrentFiles = torrent->getRelationValue<TorrentPreviewableFile>("torrentFiles");
+    QCOMPARE(torrentFiles.size(), 3);
+
+    QVector<QVariantMap> serialized = torrentFiles.toMap();
+
+    QVector<QVariantMap> expectedAttributes {QVariantMap {
+        {CREATED_AT,   "2021-01-10T14:51:23.000Z"},
+        {"file_index", 0},
+        {"filepath",   "test7_file1.mkv"},
+        {ID,           10},
+        {NOTE,         "for serialization"},
+        {"progress",   512},
+        {SIZE_,        4562},
+        {"torrent_id", 7},
+        {UPDATED_AT,   "2021-01-10T17:46:31.000Z"},
+    }, QVariantMap {
+        {CREATED_AT,   "2021-01-11T14:51:23.000Z"},
+        {"file_index", 1},
+        {"filepath",   "test7_file2.mkv"},
+        {ID,           11},
+        {NOTE,         "for serialization"},
+        {"progress",   256},
+        {SIZE_,        2567},
+        {"torrent_id", 7},
+        {UPDATED_AT,   "2021-01-11T17:46:31.000Z"},
+    }, QVariantMap {
+        {CREATED_AT,   "2021-01-12T14:51:23.000Z"},
+        {"file_index", 2},
+        {"filepath",   "test7_file3.mkv"},
+        {ID,           12},
+        {NOTE,         "for serialization"},
+        {"progress",   768},
+        {SIZE_,        4279},
+        {"torrent_id", 7},
+        {UPDATED_AT,   "2021-01-12T17:46:31.000Z"},
+    }};
+
+    QCOMPARE(serialized, expectedAttributes);
+}
+
+void tst_Model_Serialization::toVector_RelationOnly_HasMany() const
+{
+    auto torrent = Torrent::with("torrentFiles")->find(7);
+    QVERIFY(torrent);
+    QVERIFY(torrent->exists);
+
+    ModelsCollection<TorrentPreviewableFile *>
+    torrentFiles = torrent->getRelationValue<TorrentPreviewableFile>("torrentFiles");
+    QCOMPARE(torrentFiles.size(), 3);
+
+    QVector<QVector<AttributeItem>> serialized = torrentFiles.toVector();
+
+    QVector<QVector<AttributeItem>> expectedAttributes {QVector<AttributeItem> {
+        {ID,           10},
+        {"torrent_id", 7},
+        {"file_index", 0},
+        {"filepath",   "test7_file1.mkv"},
+        {SIZE_,        4562},
+        {"progress",   512},
+        {NOTE,         "for serialization"},
+        {CREATED_AT,   "2021-01-10T14:51:23.000Z"},
+        {UPDATED_AT,   "2021-01-10T17:46:31.000Z"},
+    }, QVector<AttributeItem> {
+        {ID,           11},
+        {"torrent_id", 7},
+        {"file_index", 1},
+        {"filepath",   "test7_file2.mkv"},
+        {SIZE_,        2567},
+        {"progress",   256},
+        {NOTE,         "for serialization"},
+        {CREATED_AT,   "2021-01-11T14:51:23.000Z"},
+        {UPDATED_AT,   "2021-01-11T17:46:31.000Z"},
+    }, QVector<AttributeItem> {
+        {ID,           12},
+        {"torrent_id", 7},
+        {"file_index", 2},
+        {"filepath",   "test7_file3.mkv"},
+        {SIZE_,        4279},
+        {"progress",   768},
+        {NOTE,         "for serialization"},
+        {CREATED_AT,   "2021-01-12T14:51:23.000Z"},
+        {UPDATED_AT,   "2021-01-12T17:46:31.000Z"},
+    }};
+
+    QCOMPARE(serialized, expectedAttributes);
+}
+
+void tst_Model_Serialization::toMap_RelationOnly_BelongsToMany() const
+{
+    auto user = User::with("roles")->find(1);
+    QVERIFY(user);
+    QVERIFY(user->exists);
+
+    ModelsCollection<Role *> roles = user->template getRelationValue<Role>("roles");
+    QCOMPARE(roles.size(), 3);
+
+    QVector<QVariantMap> serialized = roles.toMap<RoleUser>();
+
+    QVector<QVariantMap> expectedAttributes {QVariantMap {
+        {"added_on",     "2022-08-01T13:36:56.000Z"},
+        {ID,             1},
+        {NAME,           "role one"},
+        {"subscription", QVariantMap {
+                             {"active",  true},
+                             {"role_id", 1},
+                             {"user_id", 1},
+                         }},
+    }, QVariantMap {
+        {"added_on",     "2022-08-02T13:36:56.000Z"},
+        {ID,             2},
+        {NAME,           "role two"},
+        {"subscription", QVariantMap {
+                             {"active",  false},
+                             {"role_id", 2},
+                             {"user_id", 1},
+                         }},
+    }, QVariantMap {
+        {"added_on",     NullVariant::QDateTime()},
+        {ID,             3},
+        {NAME,           "role three"},
+        {"subscription", QVariantMap {
+                             {"active",  true},
+                             {"role_id", 3},
+                             {"user_id", 1},
+                         }},
+    }};
+
+    QCOMPARE(serialized, expectedAttributes);
+}
+
+void tst_Model_Serialization::toVector_RelationOnly_BelongsToMany() const
+{
+    auto user = User::with("roles")->find(1);
+    QVERIFY(user);
+    QVERIFY(user->exists);
+
+    ModelsCollection<Role *> roles = user->template getRelationValue<Role>("roles");
+    QCOMPARE(roles.size(), 3);
+
+    QVector<QVector<AttributeItem>> serialized = roles.toVector<RoleUser>();
+
+    QVector<QVector<AttributeItem>> expectedAttributes {QVector<AttributeItem> {
+        {ID,             1},
+        {NAME,           "role one"},
+        {"added_on",     "2022-08-01T13:36:56.000Z"},
+        {"subscription", QVariant::fromValue(QVector<AttributeItem> {
+                             {"user_id", 1},
+                             {"role_id", 1},
+                             {"active",  true},
+                         })},
+    }, QVector<AttributeItem> {
+        {ID,             2},
+        {NAME,           "role two"},
+        {"added_on",     "2022-08-02T13:36:56.000Z"},
+        {"subscription", QVariant::fromValue(QVector<AttributeItem> {
+                             {"user_id", 1},
+                             {"role_id", 2},
+                             {"active",  false},
+                         })},
+    }, QVector<AttributeItem> {
+        {ID,             3},
+        {NAME,           "role three"},
+        {"added_on",     NullVariant::QDateTime()},
+        {"subscription", QVariant::fromValue(QVector<AttributeItem> {
+                             {"user_id", 1},
+                             {"role_id", 3},
+                             {"active",  true},
+                         })},
+    }};
+
+    QCOMPARE(serialized, expectedAttributes);
+}
+
 void tst_Model_Serialization::
      toJson_WithRelations_HasOne_HasMany_BelongsTo() const
 {
@@ -2616,6 +2807,108 @@ R"({
     "text": null,
     "timestamp": null
 }
+)");
+
+    QCOMPARE(json, expectedJson);
+}
+
+void tst_Model_Serialization::toJson_RelationOnly_HasMany() const
+{
+    auto torrent = Torrent::with("torrentFiles")->find(7);
+    QVERIFY(torrent);
+    QVERIFY(torrent->exists);
+
+    ModelsCollection<TorrentPreviewableFile *>
+    torrentFiles = torrent->getRelationValue<TorrentPreviewableFile>("torrentFiles");
+    QCOMPARE(torrentFiles.size(), 3);
+
+    QByteArray json = torrentFiles.toJson(QJsonDocument::Indented);
+
+    auto expectedJson = QByteArrayLiteral(
+R"([
+    {
+        "created_at": "2021-01-10T14:51:23.000Z",
+        "file_index": 0,
+        "filepath": "test7_file1.mkv",
+        "id": 10,
+        "note": "for serialization",
+        "progress": 512,
+        "size": 4562,
+        "torrent_id": 7,
+        "updated_at": "2021-01-10T17:46:31.000Z"
+    },
+    {
+        "created_at": "2021-01-11T14:51:23.000Z",
+        "file_index": 1,
+        "filepath": "test7_file2.mkv",
+        "id": 11,
+        "note": "for serialization",
+        "progress": 256,
+        "size": 2567,
+        "torrent_id": 7,
+        "updated_at": "2021-01-11T17:46:31.000Z"
+    },
+    {
+        "created_at": "2021-01-12T14:51:23.000Z",
+        "file_index": 2,
+        "filepath": "test7_file3.mkv",
+        "id": 12,
+        "note": "for serialization",
+        "progress": 768,
+        "size": 4279,
+        "torrent_id": 7,
+        "updated_at": "2021-01-12T17:46:31.000Z"
+    }
+]
+)");
+
+    QCOMPARE(json, expectedJson);
+}
+
+void tst_Model_Serialization::toJson_RelationOnly_BelongsToMany() const
+{
+    auto user = User::with("roles")->find(1);
+    QVERIFY(user);
+    QVERIFY(user->exists);
+
+    ModelsCollection<Role *> roles = user->getRelationValue<Role>("roles");
+    QCOMPARE(roles.size(), 3);
+
+    QByteArray json = roles.template toJson<RoleUser>(QJsonDocument::Indented);
+
+    auto expectedJson = QByteArrayLiteral(
+R"([
+    {
+        "added_on": "2022-08-01T13:36:56.000Z",
+        "id": 1,
+        "name": "role one",
+        "subscription": {
+            "active": true,
+            "role_id": 1,
+            "user_id": 1
+        }
+    },
+    {
+        "added_on": "2022-08-02T13:36:56.000Z",
+        "id": 2,
+        "name": "role two",
+        "subscription": {
+            "active": false,
+            "role_id": 2,
+            "user_id": 1
+        }
+    },
+    {
+        "added_on": null,
+        "id": 3,
+        "name": "role three",
+        "subscription": {
+            "active": true,
+            "role_id": 3,
+            "user_id": 1
+        }
+    }
+]
 )");
 
     QCOMPARE(json, expectedJson);
