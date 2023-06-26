@@ -119,14 +119,13 @@ private Q_SLOTS:
     void toJson_WithRelation_BelongsToMany_TorrentTags_TorrentStates() const;
     void toJson_WithRelation_BelongsToMany_UserRoles() const;
 
-    void toJson_u_snakeAttributes_false() const;
-    void toJson_WithDateModfiers_UnixTimestamp() const;
-
     void toJson_HasMany_EmptyRelation() const;
     void toJson_HasOne_EmptyRelation() const;
     void toJson_BelongsTo_EmptyRelation() const;
     void toJson_BelongsToMany_EmptyRelation() const;
 
+    void toJson_u_snakeAttributes_false() const;
+    void toJson_WithDateModfiers_UnixTimestamp() const;
     void toJson_NullQVariant() const;
 
 // NOLINTNEXTLINE(readability-redundant-access-specifiers)
@@ -2324,74 +2323,6 @@ R"({
     QCOMPARE(json, expectedJson);
 }
 
-void tst_Model_Serialization::toJson_u_snakeAttributes_false() const
-{
-    auto album = Album::find(1);
-    QVERIFY(album);
-    QVERIFY(album->exists);
-
-    QByteArray json = album->toJson(QJsonDocument::Indented);
-
-    auto expectedJson = QByteArrayLiteral(
-R"({
-    "albumImages": [
-        {
-            "album_id": 1,
-            "created_at": "2023-03-01T15:24:37.000Z",
-            "ext": "png",
-            "id": 1,
-            "name": "album1_image1",
-            "size": 726,
-            "updated_at": "2023-04-01T14:35:47.000Z"
-        }
-    ],
-    "created_at": "2023-01-01T12:21:14.000Z",
-    "id": 1,
-    "name": "album1",
-    "note": null,
-    "updated_at": "2023-02-01T16:54:28.000Z"
-}
-)");
-
-    QCOMPARE(json, expectedJson);
-}
-
-void tst_Model_Serialization::toJson_WithDateModfiers_UnixTimestamp() const
-{
-    auto torrent = Torrent::find(4);
-    QVERIFY(torrent);
-    QVERIFY(torrent->exists);
-
-    torrent->mergeCasts({
-        {"added_on", {CastType::CustomQDateTime, "U"}},
-        // These two attributes have also the u_dates defined
-        {CREATED_AT, {CastType::CustomQDateTime, "U"}},
-        {UPDATED_AT, {CastType::CustomQDateTime, "U"}},
-    });
-
-    QByteArray json = torrent->toJson(QJsonDocument::Indented);
-
-    auto expectedJson = QByteArrayLiteral(
-R"({
-    "added_on": 1596571870,
-    "created_at": 1567584683,
-    "hash": "4579e3af2768cdf52ec84c1f320333f68401dc6e",
-    "id": 4,
-    "name": "test4",
-    "note": "after update revert updated_at",
-    "progress": 400,
-    "size": 14,
-    "updated_at": 1609785991,
-    "user_id": 1
-}
-)");
-
-    QCOMPARE(json, expectedJson);
-
-    // Restore
-    torrent->resetCasts();
-}
-
 void tst_Model_Serialization::toJson_HasMany_EmptyRelation() const
 {
     auto albums = Album::findMany({3, 4});
@@ -2581,6 +2512,74 @@ R"([
 )");
 
     QCOMPARE(json, expectedJson);
+}
+
+void tst_Model_Serialization::toJson_u_snakeAttributes_false() const
+{
+    auto album = Album::find(1);
+    QVERIFY(album);
+    QVERIFY(album->exists);
+
+    QByteArray json = album->toJson(QJsonDocument::Indented);
+
+    auto expectedJson = QByteArrayLiteral(
+R"({
+    "albumImages": [
+        {
+            "album_id": 1,
+            "created_at": "2023-03-01T15:24:37.000Z",
+            "ext": "png",
+            "id": 1,
+            "name": "album1_image1",
+            "size": 726,
+            "updated_at": "2023-04-01T14:35:47.000Z"
+        }
+    ],
+    "created_at": "2023-01-01T12:21:14.000Z",
+    "id": 1,
+    "name": "album1",
+    "note": null,
+    "updated_at": "2023-02-01T16:54:28.000Z"
+}
+)");
+
+    QCOMPARE(json, expectedJson);
+}
+
+void tst_Model_Serialization::toJson_WithDateModfiers_UnixTimestamp() const
+{
+    auto torrent = Torrent::find(4);
+    QVERIFY(torrent);
+    QVERIFY(torrent->exists);
+
+    torrent->mergeCasts({
+        {"added_on", {CastType::CustomQDateTime, "U"}},
+        // These two attributes have also the u_dates defined
+        {CREATED_AT, {CastType::CustomQDateTime, "U"}},
+        {UPDATED_AT, {CastType::CustomQDateTime, "U"}},
+    });
+
+    QByteArray json = torrent->toJson(QJsonDocument::Indented);
+
+    auto expectedJson = QByteArrayLiteral(
+R"({
+    "added_on": 1596571870,
+    "created_at": 1567584683,
+    "hash": "4579e3af2768cdf52ec84c1f320333f68401dc6e",
+    "id": 4,
+    "name": "test4",
+    "note": "after update revert updated_at",
+    "progress": 400,
+    "size": 14,
+    "updated_at": 1609785991,
+    "user_id": 1
+}
+)");
+
+    QCOMPARE(json, expectedJson);
+
+    // Restore
+    torrent->resetCasts();
 }
 
 void tst_Model_Serialization::toJson_NullQVariant() const
