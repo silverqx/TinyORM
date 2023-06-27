@@ -420,6 +420,12 @@ namespace Orm::Tiny::Concerns
         std::stack<std::shared_ptr<BaseRelationStore>> m_relationStore;
     };
 
+    /* I have tried twice to make the m_relationStore to be only one instance per thread
+       (thread_local and first time inline static and second static local variable), but
+       I reverted it because it's slower for some mysterious reasons. 🤯
+       I tested it with the TinyOrmPlayground that had 1594 DB queries and it was ~20ms
+       slower. */
+
     /* HasRelationStore */
 
     /* private */
