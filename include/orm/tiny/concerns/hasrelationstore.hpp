@@ -684,7 +684,6 @@ namespace Orm::Tiny::Concerns
             return RelationStoreType::EAGER;
     }
 
-
     /* PushRelationStore */
 
     /* public */
