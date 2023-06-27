@@ -101,6 +101,7 @@ namespace Orm::Tiny::Concerns
         template<SerializedAttributes C>
         class SerializeRelationStore;
 
+        /* Relation stores */
         /*! Base class for relation stores. */
         class BaseRelationStore
         {
@@ -497,6 +498,8 @@ namespace Orm::Tiny::Concerns
 
         return *this;
     }
+
+    /* Relation stores */
 
     /* BaseRelationStore */
 
