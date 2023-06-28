@@ -206,10 +206,10 @@ namespace Types
         /* BaseCollection */
         /*! Run a filter over each of the models in the collection. */
         ModelsCollection<ModelRawType *>
-        filter(const std::function<bool(const ModelRawType *, size_type)> &callback);
+        filter(const std::function<bool(ModelRawType *, size_type)> &callback);
         /*! Run a filter over each of the models in the collection. */
         ModelsCollection<ModelRawType *>
-        filter(const std::function<bool(const ModelRawType *)> &callback);
+        filter(const std::function<bool(ModelRawType *)> &callback);
         /*! Run a filter over each of the models in the collection (removes nullptr-s). */
         ModelsCollection<ModelRawType *>
         filter() const requires std::is_pointer_v<Model>;
@@ -285,7 +285,7 @@ namespace Types
         /*! Determine if the collection contains a model with the given ID. */
         inline bool contains(const QVariant &id) const;
         /*! Determine if the collection contains a model using the given callback. */
-        bool contains(const std::function<bool(const ModelRawType *)> &callback) const;
+        bool contains(const std::function<bool(ModelRawType *)> &callback);
         /*! Determine if the model exists in the collection (using the Model::is()). */
         bool contains(const std::optional<ModelRawType> &model) const;
 
@@ -296,7 +296,7 @@ namespace Types
         /*! Determine if the collection doesn't contain a model using the given
             callback. */
         bool
-        doesntContain(const std::function<bool(const ModelRawType *)> &callback) const;
+        doesntContain(const std::function<bool(ModelRawType *)> &callback);
         /*! Determine if the model doesn't exist in the collection (using
             the Model::is()). */
         bool doesntContain(const std::optional<ModelRawType> &model) const;
@@ -332,8 +332,8 @@ namespace Types
         /*! Sort the collection by the given callback (supports multi-columns sorting). */
         ModelsCollection<ModelRawType *>
         sortBy(const QVector<std::function<
-                             std::strong_ordering(const ModelRawType *,
-                                                  const ModelRawType *)>> &callbacks);
+                             std::strong_ordering(ModelRawType *,
+                                                  ModelRawType *)>> &callbacks);
 
         /*! Sort the collection using the given projection. */
         template<typename P>
@@ -366,8 +366,8 @@ namespace Types
         /*! Sort the collection by the given callback (supports multi-columns sorting). */
         ModelsCollection<ModelRawType *>
         stableSortBy(const QVector<std::function<
-                           std::strong_ordering(const ModelRawType *,
-                                                const ModelRawType *)>> &callbacks);
+                                   std::strong_ordering(ModelRawType *,
+                                                        ModelRawType *)>> &callbacks);
 
         /*! Stable sort the collection using the given projection. */
         template<typename P>
@@ -459,10 +459,10 @@ namespace Types
 
         /*! Create a collection of all models that do not pass a given truth test. */
         ModelsCollection<ModelRawType *>
-        reject(const std::function<bool(const ModelRawType *, size_type)> &callback);
+        reject(const std::function<bool(ModelRawType *, size_type)> &callback);
         /*! Create a collection of all models that do not pass a given truth test. */
         ModelsCollection<ModelRawType *>
-        reject(const std::function<bool(const ModelRawType *)> &callback);
+        reject(const std::function<bool(ModelRawType *)> &callback);
 
         /*! Filter models by the given column value pair. */
         template<typename V>
@@ -896,7 +896,7 @@ namespace Types
     template<DerivedCollectionModel Model>
     ModelsCollection<typename ModelsCollection<Model>::ModelRawType *>
     ModelsCollection<Model>::filter(
-            const std::function<bool(const ModelRawType *, size_type)> &callback)
+            const std::function<bool(ModelRawType *, size_type)> &callback)
     {
         const auto size = this->size();
 
@@ -916,7 +916,7 @@ namespace Types
     template<DerivedCollectionModel Model>
     ModelsCollection<typename ModelsCollection<Model>::ModelRawType *>
     ModelsCollection<Model>::filter(
-            const std::function<bool(const ModelRawType *)> &callback)
+            const std::function<bool(ModelRawType *)> &callback)
     {
         ModelsCollection<ModelRawType *> result;
         result.reserve(this->size());
@@ -1292,9 +1292,9 @@ namespace Types
     template<DerivedCollectionModel Model>
     bool
     ModelsCollection<Model>::contains(
-            const std::function<bool(const ModelRawType *)> &callback) const
+            const std::function<bool(ModelRawType *)> &callback)
     {
-        for (ConstModelLoopType model : *this)
+        for (ModelLoopType model : *this)
             // Don't handle the nullptr
             if (std::invoke(callback, toPointer(model)))
                 return true;
@@ -1330,7 +1330,7 @@ namespace Types
     template<DerivedCollectionModel Model>
     bool
     ModelsCollection<Model>::doesntContain(
-            const std::function<bool(const ModelRawType *)> &callback) const
+            const std::function<bool(ModelRawType *)> &callback)
     {
         return !contains(callback);
     }
@@ -1447,8 +1447,8 @@ namespace Types
     ModelsCollection<typename ModelsCollection<Model>::ModelRawType *>
     ModelsCollection<Model>::sortBy(
             const QVector<std::function<
-                          std::strong_ordering(const ModelRawType *,
-                                               const ModelRawType *)>> &callbacks)
+                          std::strong_ordering(ModelRawType *,
+                                               ModelRawType *)>> &callbacks)
     {
         // Nothing to do
         if (this->isEmpty())
@@ -1456,8 +1456,8 @@ namespace Types
 
         auto result = toPointersCollection();
 
-        std::ranges::sort(result, [&callbacks](const ModelRawType *const left,
-                                               const ModelRawType *const right)
+        std::ranges::sort(result, [&callbacks](ModelRawType *const left,
+                                               ModelRawType *const right)
         {
             for (const auto &callback : callbacks) {
                 const auto compared = std::invoke(callback, left, right);
@@ -1563,8 +1563,8 @@ namespace Types
     ModelsCollection<typename ModelsCollection<Model>::ModelRawType *>
     ModelsCollection<Model>::stableSortBy(
             const QVector<std::function<
-                          std::strong_ordering(const ModelRawType *,
-                                               const ModelRawType *)>> &callbacks)
+                          std::strong_ordering(ModelRawType *,
+                                               ModelRawType *)>> &callbacks)
     {
         // Nothing to do
         if (this->isEmpty())
@@ -1572,8 +1572,8 @@ namespace Types
 
         auto result = toPointersCollection();
 
-        std::ranges::stable_sort(result, [&callbacks](const ModelRawType *const left,
-                                                      const ModelRawType *const right)
+        std::ranges::stable_sort(result, [&callbacks](ModelRawType *const left,
+                                                      ModelRawType *const right)
         {
             for (const auto &callback : callbacks) {
                 const auto compared = std::invoke(callback, left, right);
@@ -1950,7 +1950,7 @@ namespace Types
     template<DerivedCollectionModel Model>
     ModelsCollection<typename ModelsCollection<Model>::ModelRawType *>
     ModelsCollection<Model>::reject(
-            const std::function<bool(const ModelRawType *, size_type)> &callback)
+            const std::function<bool(ModelRawType *, size_type)> &callback)
     {
         const auto size = this->size();
 
@@ -1969,8 +1969,7 @@ namespace Types
 
     template<DerivedCollectionModel Model>
     ModelsCollection<typename ModelsCollection<Model>::ModelRawType *>
-    ModelsCollection<Model>::reject(
-            const std::function<bool(const ModelRawType *)> &callback)
+    ModelsCollection<Model>::reject(const std::function<bool(ModelRawType *)> &callback)
     {
         ModelsCollection<ModelRawType *> result;
         result.reserve(this->size());
