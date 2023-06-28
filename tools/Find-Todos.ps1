@@ -48,7 +48,7 @@ if ($PSVersionTable.Platform -eq 'Win32NT') {
 
 Get-ChildItem -Path $Path -Include $Include -Recurse -File
     | Where-Object DirectoryName -Match "^$Script:InFolders"
-    | Select-String -Pattern $TodoKeywordsPattern.toUpper() -CaseSensitive
+    | Select-String -Pattern "(?://)$($TodoKeywordsPattern.toUpper())" -CaseSensitive
     | Select-Object -Property `
         @{
             Name       = 'Line'
