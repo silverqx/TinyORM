@@ -63,7 +63,7 @@ namespace Orm::Tiny::Concerns
     protected:
         /*! Determine if the given column is a valid, guardable column. */
         bool isGuardableColumn(const QString &key) const;
-        /*! Th key for guardable columns hash cache. */
+        /*! The key for guardable columns hash cache. */
         QString getKeyForGuardableHash() const;
         /*! Move columns to the std::unordered_set for guardable columns hash cache. */
         static std::unordered_set<QString>
