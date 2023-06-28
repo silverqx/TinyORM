@@ -332,8 +332,8 @@ namespace Types
         /*! Sort the collection by the given callback (supports multi-columns sorting). */
         ModelsCollection<ModelRawType *>
         sortBy(const QVector<std::function<
-               std::strong_ordering(const ModelRawType *,
-                                    const ModelRawType *)>> &callbacks);
+                             std::strong_ordering(const ModelRawType *,
+                                                  const ModelRawType *)>> &callbacks);
 
         /*! Sort the collection using the given projection. */
         template<typename P>
@@ -366,8 +366,8 @@ namespace Types
         /*! Sort the collection by the given callback (supports multi-columns sorting). */
         ModelsCollection<ModelRawType *>
         stableSortBy(const QVector<std::function<
-                     std::strong_ordering(const ModelRawType *,
-                                          const ModelRawType *)>> &callbacks);
+                           std::strong_ordering(const ModelRawType *,
+                                                const ModelRawType *)>> &callbacks);
 
         /*! Stable sort the collection using the given projection. */
         template<typename P>
@@ -1447,8 +1447,8 @@ namespace Types
     ModelsCollection<typename ModelsCollection<Model>::ModelRawType *>
     ModelsCollection<Model>::sortBy(
             const QVector<std::function<
-                std::strong_ordering(const ModelRawType *,
-                                     const ModelRawType *)>> &callbacks)
+                          std::strong_ordering(const ModelRawType *,
+                                               const ModelRawType *)>> &callbacks)
     {
         // Nothing to do
         if (this->isEmpty())
@@ -1563,8 +1563,8 @@ namespace Types
     ModelsCollection<typename ModelsCollection<Model>::ModelRawType *>
     ModelsCollection<Model>::stableSortBy(
             const QVector<std::function<
-                std::strong_ordering(const ModelRawType *,
-                                     const ModelRawType *)>> &callbacks)
+                          std::strong_ordering(const ModelRawType *,
+                                               const ModelRawType *)>> &callbacks)
     {
         // Nothing to do
         if (this->isEmpty())
