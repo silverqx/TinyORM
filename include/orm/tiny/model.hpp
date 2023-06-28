@@ -189,9 +189,9 @@ namespace Orm::Tiny
         bool deleteModel();
 
         /*! Reload a fresh model instance from the database. */
-        std::optional<Derived> fresh(const QVector<WithItem> &relations = {});
+        std::optional<Derived> fresh(const QVector<WithItem> &relations = {}) const;
         /*! Reload a fresh model instance from the database. */
-        std::optional<Derived> fresh(const QString &relation);
+        std::optional<Derived> fresh(const QString &relation) const;
         /*! Reload the current model instance with fresh attributes from the database. */
         Derived &refresh();
 
@@ -236,35 +236,37 @@ namespace Orm::Tiny
 
         /* Model Instance methods */
         /*! Get a new query builder for the model's table. */
-        inline std::unique_ptr<TinyBuilder<Derived>> newQuery();
+        inline std::unique_ptr<TinyBuilder<Derived>> newQuery() const;
         /*! Get a new query builder that doesn't have any global scopes. */
-        std::unique_ptr<TinyBuilder<Derived>> newQueryWithoutScopes();
+        std::unique_ptr<TinyBuilder<Derived>> newQueryWithoutScopes() const;
         /*! Get a new query builder that doesn't have any global scopes or
             eager loading. */
-        std::unique_ptr<TinyBuilder<Derived>> newModelQuery();
+        std::unique_ptr<TinyBuilder<Derived>> newModelQuery() const;
         /*! Get a new query builder with no relationships loaded. */
-        std::unique_ptr<TinyBuilder<Derived>> newQueryWithoutRelationships();
+        std::unique_ptr<TinyBuilder<Derived>> newQueryWithoutRelationships() const;
         /*! Create a new Tiny query builder for the model. */
         std::unique_ptr<TinyBuilder<Derived>>
-        newTinyBuilder(std::shared_ptr<QueryBuilder> query);
+        newTinyBuilder(std::shared_ptr<QueryBuilder> query) const;
 
         /*! Create a new model instance that is existing. */
-        Derived newFromBuilder(const QVector<AttributeItem> &attributes = {},
-                               const std::optional<QString> &connection = std::nullopt);
+        Derived
+        newFromBuilder(const QVector<AttributeItem> &attributes = {},
+                       const std::optional<QString> &connection = std::nullopt) const;
         /*! Create a new model instance that is existing. */
-        Derived newFromBuilder(QVector<AttributeItem> &&attributes = {},
-                               const std::optional<QString> &connection = std::nullopt);
+        Derived
+        newFromBuilder(QVector<AttributeItem> &&attributes = {},
+                       const std::optional<QString> &connection = std::nullopt) const;
         /*! Create a new instance of the given model. */
-        inline Derived newInstance();
+        inline Derived newInstance() const;
         /*! Create a new instance of the given model. */
         Derived newInstance(const QVector<AttributeItem> &attributes,
-                            bool exists = false);
+                            bool exists = false) const;
         /*! Create a new instance of the given model. */
         Derived newInstance(QVector<AttributeItem> &&attributes,
-                            bool exists = false);
+                            bool exists = false) const;
 
         /*! Clone the model into a new, non-existing instance. */
-        Derived replicate(const std::unordered_set<QString> &except = {});
+        Derived replicate(const std::unordered_set<QString> &except = {}) const;
 
         /*! Create a new pivot model instance. */
         template<typename PivotType = Relations::Pivot, typename Parent>
@@ -280,18 +282,18 @@ namespace Orm::Tiny
         /* Serialization */
         /*! Convert the model instance to the map of attributes and relations. */
         template<typename PivotType = void> // PivotType is primarily internal
-        QVariantMap toMap();
+        QVariantMap toMap() const;
         /*! Convert the model instance to the vector of attributes and relations. */
         template<typename PivotType = void> // PivotType is primarily internal
-        QVector<AttributeItem> toVector();
+        QVector<AttributeItem> toVector() const;
 
         /*! Convert the model instance to QJsonObject. */
-        inline QJsonObject toJsonObject();
+        inline QJsonObject toJsonObject() const;
         /*! Convert the model instance to QJsonDocument. */
-        inline QJsonDocument toJsonDocument();
+        inline QJsonDocument toJsonDocument() const;
         /*! Convert the model instance to JSON. */
         inline QByteArray
-        toJson(QJsonDocument::JsonFormat format = QJsonDocument::Compact);
+        toJson(QJsonDocument::JsonFormat format = QJsonDocument::Compact) const;
 
         /* Getters / Setters */
         /*! Get the current connection name for the model. */
@@ -348,13 +350,13 @@ namespace Orm::Tiny
 
         /*! Set the keys for a save update query. */
         TinyBuilder<Derived> &
-        setKeysForSaveQuery(TinyBuilder<Derived> &query);
+        setKeysForSaveQuery(TinyBuilder<Derived> &query) const;
         /*! Get the primary key value for a save query. */
         QVariant getKeyForSaveQuery() const;
 
         /*! Set the keys for a select query. */
         TinyBuilder<Derived> &
-        setKeysForSelectQuery(TinyBuilder<Derived> &query);
+        setKeysForSelectQuery(TinyBuilder<Derived> &query) const;
         /*! Get the primary key value for a select query. */
         inline QVariant getKeyForSelectQuery() const;
 
@@ -884,8 +886,7 @@ namespace Orm::Tiny
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     std::optional<Derived>
-    Model<Derived, AllRelations...>::fresh(
-            const QVector<WithItem> &relations)
+    Model<Derived, AllRelations...>::fresh(const QVector<WithItem> &relations) const
     {
         if (!exists)
             return std::nullopt;
@@ -897,7 +898,7 @@ namespace Orm::Tiny
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     std::optional<Derived>
-    Model<Derived, AllRelations...>::fresh(const QString &relation)
+    Model<Derived, AllRelations...>::fresh(const QString &relation) const
     {
         return fresh(QVector<WithItem> {{relation}});
     }
@@ -1143,7 +1144,7 @@ namespace Orm::Tiny
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     std::unique_ptr<TinyBuilder<Derived>>
-    Model<Derived, AllRelations...>::newQuery()
+    Model<Derived, AllRelations...>::newQuery() const
     {
         // Ownership of a unique_ptr()
         auto query = newQueryWithoutScopes();
@@ -1156,7 +1157,7 @@ namespace Orm::Tiny
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     std::unique_ptr<TinyBuilder<Derived>>
-    Model<Derived, AllRelations...>::newQueryWithoutScopes()
+    Model<Derived, AllRelations...>::newQueryWithoutScopes() const
     {
         // Ownership of a unique_ptr()
         auto builder = newModelQuery();
@@ -1168,7 +1169,7 @@ namespace Orm::Tiny
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     std::unique_ptr<TinyBuilder<Derived>>
-    Model<Derived, AllRelations...>::newModelQuery()
+    Model<Derived, AllRelations...>::newModelQuery() const
     {
         // Ownership of the std::shared_ptr<QueryBuilder>
         auto query = newBaseQueryBuilder();
@@ -1181,7 +1182,7 @@ namespace Orm::Tiny
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     std::unique_ptr<TinyBuilder<Derived>>
-    Model<Derived, AllRelations...>::newQueryWithoutRelationships()
+    Model<Derived, AllRelations...>::newQueryWithoutRelationships() const
     {
         // Ownership of the std::shared_ptr<QueryBuilder>
         auto query = newModelQuery();
@@ -1195,7 +1196,7 @@ namespace Orm::Tiny
     template<typename Derived, AllRelationsConcept ...AllRelations>
     std::unique_ptr<TinyBuilder<Derived>>
     Model<Derived, AllRelations...>::newTinyBuilder(
-            std::shared_ptr<QueryBuilder> query)
+            std::shared_ptr<QueryBuilder> query) const
     {
         return std::make_unique<TinyBuilder<Derived>>(std::move(query), model());
     }
@@ -1204,7 +1205,7 @@ namespace Orm::Tiny
     Derived
     Model<Derived, AllRelations...>::newFromBuilder(
             const QVector<AttributeItem> &attributes,
-            const std::optional<QString> &connection)
+            const std::optional<QString> &connection) const
     {
         auto model = newInstance({}, true);
 
@@ -1219,7 +1220,7 @@ namespace Orm::Tiny
     Derived
     Model<Derived, AllRelations...>::newFromBuilder(
             QVector<AttributeItem> &&attributes,
-            const std::optional<QString> &connection)
+            const std::optional<QString> &connection) const
     {
         auto model = newInstance({}, true);
 
@@ -1232,7 +1233,7 @@ namespace Orm::Tiny
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     Derived
-    Model<Derived, AllRelations...>::newInstance()
+    Model<Derived, AllRelations...>::newInstance() const
     {
         return newInstance({});
     }
@@ -1240,7 +1241,7 @@ namespace Orm::Tiny
     template<typename Derived, AllRelationsConcept ...AllRelations>
     Derived
     Model<Derived, AllRelations...>::newInstance(
-            const QVector<AttributeItem> &attributes, const bool exists_)
+            const QVector<AttributeItem> &attributes, const bool exists_) const
     {
         /* This method just provides a convenient way for us to generate fresh model
            instances of this current model. It is particularly useful during the
@@ -1265,7 +1266,7 @@ namespace Orm::Tiny
     template<typename Derived, AllRelationsConcept ...AllRelations>
     Derived
     Model<Derived, AllRelations...>::newInstance(
-            QVector<AttributeItem> &&attributes, const bool exists_)
+            QVector<AttributeItem> &&attributes, const bool exists_) const
     {
         /* This method just provides a convenient way for us to generate fresh model
            instances of this current model. It is particularly useful during the
@@ -1289,7 +1290,7 @@ namespace Orm::Tiny
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     Derived Model<Derived, AllRelations...>::replicate(
-            const std::unordered_set<QString> &except)
+            const std::unordered_set<QString> &except) const
     {
         /* Get all attributes excluding the primary key, created_at, and updated_at
            attributes and those in the except set. */
@@ -1333,7 +1334,7 @@ namespace Orm::Tiny
     template<typename Derived, AllRelationsConcept ...AllRelations>
     template<typename PivotType>
     QVariantMap
-    Model<Derived, AllRelations...>::toMap() // can't be const because of relation store
+    Model<Derived, AllRelations...>::toMap() const
     {
         auto attributes = this->attributesToMap();
 
@@ -1345,7 +1346,7 @@ namespace Orm::Tiny
     template<typename Derived, AllRelationsConcept ...AllRelations>
     template<typename PivotType>
     QVector<AttributeItem>
-    Model<Derived, AllRelations...>::toVector() // can't be const because of relation store
+    Model<Derived, AllRelations...>::toVector() const
     {
         auto attributes = this->attributesToVector();
 
@@ -1356,7 +1357,7 @@ namespace Orm::Tiny
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     QJsonObject
-    Model<Derived, AllRelations...>::toJsonObject()
+    Model<Derived, AllRelations...>::toJsonObject() const
     {
         return QJsonObject::fromVariantMap(
                 AttributeUtils::fixQtNullVariantBug(toMap()));
@@ -1364,14 +1365,14 @@ namespace Orm::Tiny
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     QJsonDocument
-    Model<Derived, AllRelations...>::toJsonDocument()
+    Model<Derived, AllRelations...>::toJsonDocument() const
     {
         return QJsonDocument(toJsonObject());
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     QByteArray
-    Model<Derived, AllRelations...>::toJson(const QJsonDocument::JsonFormat format)
+    Model<Derived, AllRelations...>::toJson(const QJsonDocument::JsonFormat format) const
     {
         return toJsonDocument().toJson(format);
     }
@@ -1553,7 +1554,8 @@ namespace Orm::Tiny
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     TinyBuilder<Derived> &
-    Model<Derived, AllRelations...>::setKeysForSaveQuery(TinyBuilder<Derived> &query)
+    Model<Derived, AllRelations...>::setKeysForSaveQuery(
+            TinyBuilder<Derived> &query) const
     {
         return query.where(getKeyName(), EQ, getKeyForSaveQuery());
     }
@@ -1573,7 +1575,8 @@ namespace Orm::Tiny
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     TinyBuilder<Derived> &
-    Model<Derived, AllRelations...>::setKeysForSelectQuery(TinyBuilder<Derived> &query)
+    Model<Derived, AllRelations...>::setKeysForSelectQuery(
+            TinyBuilder<Derived> &query) const
     {
         return query.where(getKeyName(), EQ, getKeyForSelectQuery());
     }

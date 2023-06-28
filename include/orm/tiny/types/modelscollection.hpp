@@ -393,7 +393,7 @@ namespace Types
         ModelsCollection<ModelRawType *> uniqueRelaxedBy(const QString &column);
 
         /*! Get the TinyBuilder from the collection. */
-        std::unique_ptr<TinyBuilder<ModelRawType>> toQuery();
+        std::unique_ptr<TinyBuilder<ModelRawType>> toQuery() const;
 
         /* Collection - Relations related */
         /*! Reload a fresh model instance from the database for all the entities. */
@@ -1695,7 +1695,7 @@ namespace Types
 
     template<DerivedCollectionModel Model>
     std::unique_ptr<TinyBuilder<typename ModelsCollection<Model>::ModelRawType>>
-    ModelsCollection<Model>::toQuery()
+    ModelsCollection<Model>::toQuery() const
     {
         if (this->isEmpty())
             throw Orm::Exceptions::LogicError(

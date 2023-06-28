@@ -83,13 +83,13 @@ namespace Orm::Tiny::Relations
         /* AsPivot */
         /*! Set the keys for a select query. */
         TinyBuilder<PivotModel> &
-        setKeysForSelectQuery(TinyBuilder<PivotModel> &query);
+        setKeysForSelectQuery(TinyBuilder<PivotModel> &query) const;
         /*! Set the keys for a save update query. */
         inline TinyBuilder<PivotModel> &
-        setKeysForSaveQuery(TinyBuilder<PivotModel> &query);
+        setKeysForSaveQuery(TinyBuilder<PivotModel> &query) const;
 
         /*! Get the query builder for a delete operation on the pivot. */
-        std::unique_ptr<TinyBuilder<PivotModel>> getDeleteQuery();
+        std::unique_ptr<TinyBuilder<PivotModel>> getDeleteQuery() const;
 
         /*! Merge attributes from the database to the original (default) attributes. */
         static QVector<AttributeItem>
@@ -308,7 +308,7 @@ namespace Orm::Tiny::Relations
 
     template<typename PivotModel>
     TinyBuilder<PivotModel> &
-    BasePivot<PivotModel>::setKeysForSelectQuery(TinyBuilder<PivotModel> &query)
+    BasePivot<PivotModel>::setKeysForSelectQuery(TinyBuilder<PivotModel> &query) const
     {
         /* If the pivot table contains a primary key then use this primary key
            in the where clause. */
@@ -332,14 +332,14 @@ namespace Orm::Tiny::Relations
 
     template<typename PivotModel>
     TinyBuilder<PivotModel> &
-    BasePivot<PivotModel>::setKeysForSaveQuery(TinyBuilder<PivotModel> &query)
+    BasePivot<PivotModel>::setKeysForSaveQuery(TinyBuilder<PivotModel> &query) const
     {
         return setKeysForSelectQuery(query);
     }
 
     template<typename PivotModel>
     std::unique_ptr<TinyBuilder<PivotModel>>
-    BasePivot<PivotModel>::getDeleteQuery()
+    BasePivot<PivotModel>::getDeleteQuery() const
     {
         // Ownership of a unique_ptr()
         auto builder = this->newQueryWithoutRelationships();

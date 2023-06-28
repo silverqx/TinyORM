@@ -64,11 +64,11 @@ namespace Concerns
         bool chunkById(qint64 count,
                        const std::function<
                            bool(ModelsCollection<Model> &&models, qint64 page)> &callback,
-                       const QString &column = "", const QString &alias = "");
+                       const QString &column = "", const QString &alias = "") const;
         /*! Execute a callback over each item while chunking by ID. */
         bool eachById(const std::function<bool(Model &&model, qint64 index)> &callback,
                       qint64 count = 1000, const QString &column = "",
-                      const QString &alias = "");
+                      const QString &alias = "") const;
 
         /*! Execute the query and get the first result if it's the sole matching
             record. */
@@ -205,7 +205,7 @@ namespace Concerns
     bool BuildsQueries<Model>::chunkById(
             const qint64 count,
             const std::function<bool(ModelsCollection<Model> &&, qint64)> &callback,
-            const QString &column, const QString &alias)
+            const QString &column, const QString &alias) const
     {
         const auto columnName = column.isEmpty() ? builder().defaultKeyName() : column;
         const auto aliasName = alias.isEmpty() ? columnName : alias;
@@ -261,7 +261,7 @@ namespace Concerns
     template<ModelConcept Model>
     bool BuildsQueries<Model>::eachById(
             const std::function<bool(Model &&, qint64)> &callback,
-            const qint64 count, const QString &column, const QString &alias)
+            const qint64 count, const QString &column, const QString &alias) const
     {
         return chunkById(count, [&callback, count]
                                 (ModelsCollection<Model> &&models, const qint64 page)

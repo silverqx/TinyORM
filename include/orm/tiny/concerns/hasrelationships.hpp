@@ -156,7 +156,7 @@ namespace Concerns
 
         /* Touching timestamps */
         /*! Touch the owning relations of the model. */
-        void touchOwners();
+        void touchOwners() const;
 
         /*! Get the relationships that are touched on save. */
         inline const QStringList &getTouchedRelations() const;
@@ -166,7 +166,7 @@ namespace Concerns
         /* Serialization - Relations */
         /*! Convert the model's relationships to the map or vector. */
         template<SerializedAttributes C, typename PivotType = void>
-        C serializeRelations();
+        C serializeRelations() const;
 
         /* Others */
         /*! Equality comparison operator for the HasRelationships concern. */
@@ -294,7 +294,7 @@ namespace Concerns
 
         /*! Create lazy store and obtain a relationship from defined method. */
         template<typename Related, typename Result>
-        Result getRelationshipFromMethodWithVisitor(const QString &relation);
+        Result getRelationshipFromMethodWithVisitor(const QString &relation) const;
 
         /*! Throw exception if correct getRelation/Value() method was not used, to avoid
             std::bad_variant_access. */
@@ -311,33 +311,33 @@ namespace Concerns
         template<SameDerivedCollectionModel<Derived> CollectionModel>
         void eagerLoadRelationWithVisitor(
                 const WithItem &relation, const TinyBuilder<Derived> &builder,
-                ModelsCollection<CollectionModel> &models);
+                ModelsCollection<CollectionModel> &models) const;
 
         /* Get related table for belongs-to-many relation store related */
         /*! Get Related model table name if the relation is BelongsToMany, otherwise
             return empty std::optional. */
         std::optional<QString>
-        getRelatedTableForBelongsToManyWithVisitor(const QString &relation);
+        getRelatedTableForBelongsToManyWithVisitor(const QString &relation) const;
 
         /* Push relation store related */
         /*! Create push store and call push for every model. */
         bool pushWithVisitor(const QString &relation,
-                             RelationsType<AllRelations...> &models);
+                             RelationsType<AllRelations...> &models) const;
 
         /*! On the base of alternative held by m_relations decide, which
             pushVisitied() to execute. */
         template<typename Related>
-        void pushVisited();
+        void pushVisited() const;
         /*! Push for Many relation types. */
         template<typename Related, typename Tag> requires std::same_as<Tag, Many>
-        void pushVisited();
+        void pushVisited() const;
         /*! Push for One relation type. */
         template<typename Related, typename Tag> requires std::same_as<Tag, One>
-        void pushVisited();
+        void pushVisited() const;
 
         /* Touch owners store related */
         /*! Create 'touch owners relation store' and touch all related models. */
-        void touchOwnersWithVisitor(const QString &relation);
+        void touchOwnersWithVisitor(const QString &relation) const;
         /*! On the base of alternative held by m_relations decide, which
             touchOwnersVisited() to execute. */
         template<typename Related, typename Relation>
@@ -352,11 +352,11 @@ namespace Concerns
                 const std::function<void(
                         Concerns::QueriesRelationshipsCallback<Related> &)> &callback,
                 std::optional<std::reference_wrapper<
-                        QStringList>> relations = std::nullopt);
+                        QStringList>> relations = std::nullopt) const;
 
         /* Operations on a Model instance */
         /*! Obtain all loaded relation names except pivot relations. */
-        QVector<WithItem> getLoadedRelationsWithoutPivot();
+        QVector<WithItem> getLoadedRelationsWithoutPivot() const;
 
         /*! Replace relations in the m_relation. */
         void replaceRelations(
@@ -370,33 +370,33 @@ namespace Concerns
         /* Serialization - Relations */
         /*! Get an map of all serializable relations. */
 #ifdef TINY_NO_INCOMPLETE_UNORDERED_MAP
-        inline std::map<QString, RelationsType<AllRelations...>> &
+        inline const std::map<QString, RelationsType<AllRelations...>> &
 #else
-        inline std::unordered_map<QString, RelationsType<AllRelations...>> &
+        inline const std::unordered_map<QString, RelationsType<AllRelations...>> &
 #endif
-        getSerializableRelations();
+        getSerializableRelations() const;
 
         /*! Create and visit the serialize relation store. */
         template<SerializedAttributes C>
         void serializeRelationWithVisitor(
-                const QString &relation, RelationsType<AllRelations...> &models,
-                C &attributes);
+                const QString &relation, const RelationsType<AllRelations...> &models,
+                C &attributes) const;
 
         /*! On the base of alternative held by m_relations decide, which
             serializeRelation() to execute. */
         template<typename Related, SerializedAttributes C, typename PivotType>
         void serializeRelationVisited(
-                QString relation, RelationsType<AllRelations...> &models,
+                QString relation, const RelationsType<AllRelations...> &models,
                 C &attributes) const;
 
         /*! Serialize for Many relation types. */
         template<typename Related, bool isMap, typename PivotType>
         inline static void serializeRelation(QVariant &relationSerialized, // don't remove inline
-                                             ModelsCollection<Related> &models);
+                                             const ModelsCollection<Related> &models);
         /*! Serialize for One relation type. */
         template<typename Related, bool isMap>
         inline static void serializeRelation(QVariant &relationSerialized, // don't remove inline
-                                             std::optional<Related> &model);
+                                             const std::optional<Related> &model);
 
         /*! */
         inline static void
@@ -720,7 +720,7 @@ namespace Concerns
     /* Touching timestamps */
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
-    void HasRelationships<Derived, AllRelations...>::touchOwners()
+    void HasRelationships<Derived, AllRelations...>::touchOwners() const
     {
         for (const auto &relation : getTouchedRelations())
             touchOwnersWithVisitor(relation);
@@ -744,16 +744,16 @@ namespace Concerns
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     template<SerializedAttributes C, typename PivotType>
-    C HasRelationships<Derived, AllRelations...>::serializeRelations()
+    C HasRelationships<Derived, AllRelations...>::serializeRelations() const
     {
-        auto &serializableRelations = getSerializableRelations();
+        const auto &serializableRelations = getSerializableRelations();
 
         C attributes;
         if constexpr (std::is_same_v<C, QVector<AttributeItem>>)
             attributes.reserve(static_cast<QVector<AttributeItem>::size_type>(
                                    serializableRelations.size()));
 
-        for (auto &&[relation, models] : serializableRelations) {
+        for (const auto &[relation, models] : serializableRelations) {
             Q_ASSERT(!models.valueless_by_exception());
 
             // Serialize belongs-to-many relation or the pivot model
@@ -1056,7 +1056,7 @@ namespace Concerns
     template<typename Related, typename Result>
     Result
     HasRelationships<Derived, AllRelations...>::getRelationshipFromMethodWithVisitor(
-            const QString &relation)
+            const QString &relation) const
     {
         // Throw excpetion if a relation is not defined
         validateUserRelation(relation);
@@ -1123,7 +1123,7 @@ namespace Concerns
     template<SameDerivedCollectionModel<Derived> CollectionModel>
     void HasRelationships<Derived, AllRelations...>::eagerLoadRelationWithVisitor(
             const WithItem &relation, const TinyBuilder<Derived> &builder,
-            ModelsCollection<CollectionModel> &models)
+            ModelsCollection<CollectionModel> &models) const
     {
         // Throw excpetion if a relation is not defined
         validateUserRelation(relation.name);
@@ -1141,7 +1141,7 @@ namespace Concerns
     template<typename Derived, AllRelationsConcept ...AllRelations>
     std::optional<QString>
     HasRelationships<Derived, AllRelations...>::
-    getRelatedTableForBelongsToManyWithVisitor(const QString &relation)
+    getRelatedTableForBelongsToManyWithVisitor(const QString &relation) const
     {
         // Can't be a nested relation, see a comment in TinyBuilder::parseWithRelations()
         Q_ASSERT(!relation.contains(DOT));
@@ -1165,7 +1165,7 @@ namespace Concerns
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     bool HasRelationships<Derived, AllRelations...>::pushWithVisitor(
-            const QString &relation, RelationsType<AllRelations...> &models)
+            const QString &relation, RelationsType<AllRelations...> &models) const
     {
         // TODO prod remove, I don't exactly know if this can really happen silverqx
         /* Check for empty variant, the std::monostate is at zero index and
@@ -1191,7 +1191,7 @@ namespace Concerns
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     template<typename Related>
-    void HasRelationships<Derived, AllRelations...>::pushVisited()
+    void HasRelationships<Derived, AllRelations...>::pushVisited() const
     {
         const RelationsType<AllRelations...> &models = *this->pushStore().m_models;
 
@@ -1209,7 +1209,7 @@ namespace Concerns
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     template<typename Related, typename Tag> requires std::same_as<Tag, Many>
-    void HasRelationships<Derived, AllRelations...>::pushVisited()
+    void HasRelationships<Derived, AllRelations...>::pushVisited() const
     {
         auto &pushStore = this->pushStore();
 
@@ -1224,7 +1224,7 @@ namespace Concerns
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     template<typename Related, typename Tag> requires std::same_as<Tag, One>
-    void HasRelationships<Derived, AllRelations...>::pushVisited()
+    void HasRelationships<Derived, AllRelations...>::pushVisited() const
     {
         auto &pushStore = this->pushStore();
 
@@ -1245,7 +1245,7 @@ namespace Concerns
     template<typename Derived, AllRelationsConcept ...AllRelations>
     void
     HasRelationships<Derived, AllRelations...>::touchOwnersWithVisitor(
-            const QString &relation)
+            const QString &relation) const
     {
         // Throw excpetion if a relation is not defined
         validateUserRelation(relation);
@@ -1300,7 +1300,7 @@ namespace Concerns
             const QString &comparison, const qint64 count, const QString &condition,
             const std::function<void(
                 Concerns::QueriesRelationshipsCallback<Related> &)> &callback,
-            const std::optional<std::reference_wrapper<QStringList>> relations)
+            const std::optional<std::reference_wrapper<QStringList>> relations) const
     {
         // Throw excpetion if a relation is not defined
         validateUserRelation(relation);
@@ -1318,7 +1318,7 @@ namespace Concerns
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     QVector<WithItem>
-    HasRelationships<Derived, AllRelations...>::getLoadedRelationsWithoutPivot()
+    HasRelationships<Derived, AllRelations...>::getLoadedRelationsWithoutPivot() const
     {
         QVector<WithItem> relations;
         relations.reserve(
@@ -1381,11 +1381,11 @@ namespace Concerns
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
 #ifdef TINY_NO_INCOMPLETE_UNORDERED_MAP
-    std::map<QString, RelationsType<AllRelations...>> &
+    const std::map<QString, RelationsType<AllRelations...>> &
 #else
-    std::unordered_map<QString, RelationsType<AllRelations...>> &
+    const std::unordered_map<QString, RelationsType<AllRelations...>> &
 #endif
-    HasRelationships<Derived, AllRelations...>::getSerializableRelations() // can't be const because of relation store
+    HasRelationships<Derived, AllRelations...>::getSerializableRelations() const
     {
         // FEATURE HidesAttributes silverqx
         return model().getRelations();
@@ -1394,8 +1394,8 @@ namespace Concerns
     template<typename Derived, AllRelationsConcept ...AllRelations>
     template<SerializedAttributes C>
     void HasRelationships<Derived, AllRelations...>::serializeRelationWithVisitor(
-            const QString &relation, RelationsType<AllRelations...> &models,
-            C &attributes)
+            const QString &relation, const RelationsType<AllRelations...> &models,
+            C &attributes) const
     {
         // Save model/s to the store to avoid passing variables to the visitor
         this->createSerializeRelationStore(relation, models, attributes)
@@ -1408,7 +1408,7 @@ namespace Concerns
     template<typename Derived, AllRelationsConcept ...AllRelations>
     template<typename Related, SerializedAttributes C, typename PivotType>
     void HasRelationships<Derived, AllRelations...>::serializeRelationVisited(
-            QString relation, RelationsType<AllRelations...> &models,
+            QString relation, const RelationsType<AllRelations...> &models,
             C &attributes) const
     {
         QVariant relationSerialized;
@@ -1449,7 +1449,7 @@ namespace Concerns
     template<typename Derived, AllRelationsConcept ...AllRelations>
     template<typename Related, bool IsMap, typename PivotType>
     void HasRelationships<Derived, AllRelations...>::serializeRelation(
-            QVariant &relationSerialized, ModelsCollection<Related> &models)
+            QVariant &relationSerialized, const ModelsCollection<Related> &models)
     {
         if constexpr (IsMap)
             relationSerialized.setValue(
@@ -1462,7 +1462,7 @@ namespace Concerns
     template<typename Derived, AllRelationsConcept ...AllRelations>
     template<typename Related, bool IsMap>
     void HasRelationships<Derived, AllRelations...>::serializeRelation(
-            QVariant &relationSerialized, std::optional<Related> &model)
+            QVariant &relationSerialized, const std::optional<Related> &model)
     {
         // No need to pass the PivotType down for the one type relation
         if (model) {

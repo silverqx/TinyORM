@@ -236,18 +236,18 @@ namespace Orm::Tiny
         /*! Clone the Tiny query. */
         inline Builder clone() const;
         /*! Create a new instance of the model being queried. */
-        Model newModelInstance(const QVector<AttributeItem> &attributes);
+        Model newModelInstance(const QVector<AttributeItem> &attributes) const;
         /*! Create a new instance of the model being queried. */
-        Model newModelInstance(QVector<AttributeItem> &&attributes = {});
+        Model newModelInstance(QVector<AttributeItem> &&attributes = {}) const;
 
         /*! Get the hydrated models without eager loading. */
         ModelsCollection<Model> getModels(const QVector<Column> &columns = {ASTERISK});
 
         /*! Eager load the relationships for the models. */
         template<SameDerivedCollectionModel<Model> CollectionModel>
-        void eagerLoadRelations(ModelsCollection<CollectionModel> &models);
+        void eagerLoadRelations(ModelsCollection<CollectionModel> &models) const;
         /*! Eager load the relationships on the model. */
-        void eagerLoadRelations(Model &model);
+        void eagerLoadRelations(Model &model) const;
 
         /*! Eagerly load the relationship on a set of models. */
         template<typename Relation, SameDerivedCollectionModel<Model> CollectionModel>
@@ -256,7 +256,7 @@ namespace Orm::Tiny
                 const WithItem &relationItem) const;
 
         /*! Create a vector of models from the SqlQuery. */
-        ModelsCollection<Model> hydrate(SqlQuery &&result);
+        ModelsCollection<Model> hydrate(SqlQuery &&result) const;
 
         /*! Get the model instance being queried. */
         inline Model &getModel() noexcept;
@@ -1010,14 +1010,14 @@ namespace Orm::Tiny
     }
 
     template<typename Model>
-    Model Builder<Model>::newModelInstance(const QVector<AttributeItem> &attributes)
+    Model Builder<Model>::newModelInstance(const QVector<AttributeItem> &attributes) const
     {
         return m_model.newInstance(attributes)
                 .setConnection(m_query->getConnection().getName());
     }
 
     template<typename Model>
-    Model Builder<Model>::newModelInstance(QVector<AttributeItem> &&attributes)
+    Model Builder<Model>::newModelInstance(QVector<AttributeItem> &&attributes) const
     {
         return m_model.newInstance(std::move(attributes))
                 .setConnection(m_query->getConnection().getName());
@@ -1068,7 +1068,8 @@ namespace Orm::Tiny
 
     template<typename Model>
     template<SameDerivedCollectionModel<Model> CollectionModel>
-    void Builder<Model>::eagerLoadRelations(ModelsCollection<CollectionModel> &models)
+    void
+    Builder<Model>::eagerLoadRelations(ModelsCollection<CollectionModel> &models) const
     {
         // Nothing to load
         if (m_eagerLoad.isEmpty())
@@ -1086,7 +1087,7 @@ namespace Orm::Tiny
     }
 
     template<typename Model>
-    void Builder<Model>::eagerLoadRelations(Model &model)
+    void Builder<Model>::eagerLoadRelations(Model &model) const
     {
         // Nothing to load
         if (m_eagerLoad.isEmpty())
@@ -1141,7 +1142,7 @@ namespace Orm::Tiny
 
     template<typename Model>
     ModelsCollection<Model>
-    Builder<Model>::hydrate(SqlQuery &&result)
+    Builder<Model>::hydrate(SqlQuery &&result) const
     {
         auto instance = newModelInstance();
 

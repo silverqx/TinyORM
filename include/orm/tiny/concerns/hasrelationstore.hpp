@@ -321,7 +321,7 @@ namespace Orm::Tiny::Concerns
             /*! Constructor. */
             SerializeRelationStore(
                     NotNull<HasRelationStore *> hasRelationStore, const QString &relation,
-                    RelationsType<AllRelations...> &models, C &attributes);
+                    const RelationsType<AllRelations...> &models, C &attributes);
             /*! Default destructor. */
             inline ~SerializeRelationStore() = default;
 
@@ -340,7 +340,7 @@ namespace Orm::Tiny::Concerns
             NotNull<const QString *> m_relation;
             /*! Models to serialize, the reference to the relation in the m_relations
                 hash. */
-            NotNull<RelationsType<AllRelations...> *> m_models;
+            NotNull<const RelationsType<AllRelations...> *> m_models;
             /*! The reference to the container that will store serialized attributes. */
             NotNull<C *> m_attributes;
         };
@@ -351,17 +351,18 @@ namespace Orm::Tiny::Concerns
         BaseRelationStore &
         createEagerStore(
                 const Tiny::TinyBuilder<Derived> &builder,
-                ModelsCollection<CollectionModel> &models, const WithItem &relation);
+                ModelsCollection<CollectionModel> &models,
+                const WithItem &relation) const;
         /*! Factory method to create the push store. */
-        BaseRelationStore &createPushStore(RelationsType<AllRelations...> &models);
+        BaseRelationStore &createPushStore(RelationsType<AllRelations...> &models) const;
         /*! Factory method to create the touch owners store. */
-        BaseRelationStore &createTouchOwnersStore(const QString &relation);
+        BaseRelationStore &createTouchOwnersStore(const QString &relation) const;
         /*! Factory method to create the lazy store. */
         template<typename Related>
-        BaseRelationStore &createLazyStore();
+        BaseRelationStore &createLazyStore() const;
         /*! Factory method to create the store to obtain BelongsToMany related model
             table name. */
-        BaseRelationStore &createBelongsToManyRelatedTableStore();
+        BaseRelationStore &createBelongsToManyRelatedTableStore() const;
         /*! Factory method to create the QueriesRelationships store with a Tiny
             callback. */
         template<typename Related = void>
@@ -372,20 +373,20 @@ namespace Orm::Tiny::Concerns
                 const std::function<
                         void(QueriesRelationshipsCallback<Related> &)> &callback,
                 std::optional<std::reference_wrapper<
-                        QStringList>> relations = std::nullopt);
+                        QStringList>> relations = std::nullopt) const;
         /*! Factory method to create the store for serializing relationship. */
         template<SerializedAttributes C>
         BaseRelationStore &
         createSerializeRelationStore(
-                const QString &relation, RelationsType<AllRelations...> &models,
-                C &attributes);
+                const QString &relation, const RelationsType<AllRelations...> &models,
+                C &attributes) const;
 
         /*! Release the ownership and destroy the top relation store on the stack. */
-        void resetRelationStore();
+        void resetRelationStore() const;
 
         /* Getters for Relation stores */
         /*! Reference to the push store. */
-        inline PushRelationStore &pushStore();
+        inline PushRelationStore &pushStore() const;
         /*! Cont reference to the touch owners relation store. */
         inline const TouchOwnersRelationStore &touchOwnersStore() const;
         /*! Const reference to the lazy store. */
@@ -417,7 +418,7 @@ namespace Orm::Tiny::Concerns
 
         /*! The store where the values will be saved, before BaseRelationStore::visit()
             is called. */
-        std::stack<std::shared_ptr<BaseRelationStore>> m_relationStore;
+        mutable std::stack<std::shared_ptr<BaseRelationStore>> m_relationStore;
     };
 
     /* I have tried twice to make the m_relationStore to be only one instance per thread
@@ -895,7 +896,7 @@ namespace Orm::Tiny::Concerns
     HasRelationStore<Derived, AllRelations...>::SerializeRelationStore<C>
                                               ::SerializeRelationStore(
             NotNull<HasRelationStore *> hasRelationStore, const QString &relation,
-            RelationsType<AllRelations...> &models, C &attributes
+            const RelationsType<AllRelations...> &models, C &attributes
     )
         : BaseRelationStore(hasRelationStore, STORE_TYPE)
         , m_relation(&relation)
@@ -961,10 +962,11 @@ namespace Orm::Tiny::Concerns
     typename HasRelationStore<Derived, AllRelations...>::BaseRelationStore &
     HasRelationStore<Derived, AllRelations...>::createEagerStore(
             const Tiny::TinyBuilder<Derived> &builder,
-            ModelsCollection<CollectionModel> &models, const WithItem &relation)
+            ModelsCollection<CollectionModel> &models, const WithItem &relation) const
     {
-        m_relationStore.push(std::make_shared<EagerRelationStore<CollectionModel>>(
-                                 this, builder, models, relation));
+        m_relationStore.push(
+            std::make_shared<EagerRelationStore<CollectionModel>>(
+                const_cast<HasRelationStore *>(this), builder, models, relation));
 
         return *m_relationStore.top();
     }
@@ -972,9 +974,11 @@ namespace Orm::Tiny::Concerns
     template<typename Derived, AllRelationsConcept ...AllRelations>
     typename HasRelationStore<Derived, AllRelations...>::BaseRelationStore &
     HasRelationStore<Derived, AllRelations...>::createPushStore(
-            RelationsType<AllRelations...> &models)
+            RelationsType<AllRelations...> &models) const
     {
-        m_relationStore.push(std::make_shared<PushRelationStore>(this, models));
+        m_relationStore.push(
+            std::make_shared<PushRelationStore>(const_cast<HasRelationStore *>(this),
+                                                models));
 
         return *m_relationStore.top();
     }
@@ -982,10 +986,10 @@ namespace Orm::Tiny::Concerns
     template<typename Derived, AllRelationsConcept ...AllRelations>
     typename HasRelationStore<Derived, AllRelations...>::BaseRelationStore &
     HasRelationStore<Derived, AllRelations...>::createTouchOwnersStore(
-            const QString &relation)
+            const QString &relation) const
     {
-        m_relationStore.push(
-                    std::make_shared<TouchOwnersRelationStore>(this, relation));
+        m_relationStore.push(std::make_shared<TouchOwnersRelationStore>(
+                                 const_cast<HasRelationStore *>(this), relation));
 
         return *m_relationStore.top();
     }
@@ -993,18 +997,21 @@ namespace Orm::Tiny::Concerns
     template<typename Derived, AllRelationsConcept ...AllRelations>
     template<typename Related>
     typename HasRelationStore<Derived, AllRelations...>::BaseRelationStore &
-    HasRelationStore<Derived, AllRelations...>::createLazyStore()
+    HasRelationStore<Derived, AllRelations...>::createLazyStore() const
     {
-        m_relationStore.push(std::make_shared<LazyRelationStore<Related>>(this));
+        m_relationStore.push(std::make_shared<LazyRelationStore<Related>>(
+                                 const_cast<HasRelationStore *>(this)));
 
         return *m_relationStore.top();
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     typename HasRelationStore<Derived, AllRelations...>::BaseRelationStore &
-    HasRelationStore<Derived, AllRelations...>::createBelongsToManyRelatedTableStore()
+    HasRelationStore<Derived, AllRelations...>::
+    createBelongsToManyRelatedTableStore() const
     {
-        m_relationStore.push(std::make_shared<BelongsToManyRelatedTableStore>(this));
+        m_relationStore.push(std::make_shared<BelongsToManyRelatedTableStore>(
+                                 const_cast<HasRelationStore *>(this)));
 
         return *m_relationStore.top();
     }
@@ -1016,11 +1023,11 @@ namespace Orm::Tiny::Concerns
             QueriesRelationships<Derived> &origin, const QString &comparison,
             const qint64 count, const QString &condition,
             const std::function<void(QueriesRelationshipsCallback<Related> &)> &callback,
-            const std::optional<std::reference_wrapper<QStringList>> relations)
+            const std::optional<std::reference_wrapper<QStringList>> relations) const
     {
         m_relationStore.push(std::make_shared<QueriesRelationshipsStore<Related>>(
-                                 this, origin, comparison, count, condition, callback,
-                                 relations));
+                                 const_cast<HasRelationStore *>(this), origin,
+                                 comparison, count, condition, callback, relations));
 
         return *m_relationStore.top();
     }
@@ -1029,17 +1036,18 @@ namespace Orm::Tiny::Concerns
     template<SerializedAttributes C>
     typename HasRelationStore<Derived, AllRelations...>::BaseRelationStore &
     HasRelationStore<Derived, AllRelations...>::createSerializeRelationStore(
-            const QString &relation, RelationsType<AllRelations...> &models,
-            C &attributes)
+            const QString &relation, const RelationsType<AllRelations...> &models,
+            C &attributes) const
     {
         m_relationStore.push(std::make_shared<SerializeRelationStore<C>>(
-                                 this, relation, models, attributes));
+                                 const_cast<HasRelationStore *>(this), relation, models,
+                                 attributes));
 
         return *m_relationStore.top();
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
-    void HasRelationStore<Derived, AllRelations...>::resetRelationStore()
+    void HasRelationStore<Derived, AllRelations...>::resetRelationStore() const
     {
         m_relationStore.pop();
     }
@@ -1048,7 +1056,7 @@ namespace Orm::Tiny::Concerns
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     typename HasRelationStore<Derived, AllRelations...>::PushRelationStore &
-    HasRelationStore<Derived, AllRelations...>::pushStore()
+    HasRelationStore<Derived, AllRelations...>::pushStore() const
     {
         return *std::static_pointer_cast<PushRelationStore>(m_relationStore.top());
     }
