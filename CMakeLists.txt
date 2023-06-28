@@ -221,6 +221,7 @@ set_target_properties(${TinyOrm_target}
 
 # Append a major version number for shared or static library on Windows/MinGW only
 if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
+    # TODO use a new CMAKE_DLL_NAME_WITH_SOVERSION in CMake v3.27 silverqx
     set_property(
         TARGET ${TinyOrm_target}
         PROPERTY OUTPUT_NAME "${TinyOrm_target}${PROJECT_VERSION_MAJOR}"
