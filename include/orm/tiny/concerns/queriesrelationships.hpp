@@ -670,7 +670,6 @@ namespace Private
             const QString &comparison, const qint64 count,
             const std::function<void(TinyBuilder<Related> &)> &callback) const
     {
-        // BUG clang doesn't know how to init. aggregate ( by forward declaration inside, using construct in place ) silverqx
 #if defined(__clang__) && __clang_major__ < 16
         Private::HasNestedStore::STORE<Related>
                 .push(std::shared_ptr<Private::HasNestedStore::NestedStore<Related>>(
