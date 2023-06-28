@@ -52,7 +52,7 @@ namespace Orm::Tiny
         /*! Get the name of the "deleted at" column. */
         inline static const QString &getDeletedAtColumn() noexcept;
         /*! Get the fully qualified name of the "deleted at" column. */
-        QString getQualifiedDeletedAtColumn() const;
+        inline QString getQualifiedDeletedAtColumn() const;
 
     protected:
         /*! The name of the "created at" column. */
