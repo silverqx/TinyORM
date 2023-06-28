@@ -185,7 +185,7 @@ namespace Orm::Tiny
         model.setAttribute(getDeletedAtColumn(), timestamp);
 
         // Update also the updated_at column
-        if (const auto &updatedAtColumn = model.getUpdatedAtColumn();
+        if (const auto &updatedAtColumn = Derived::getUpdatedAtColumn();
             model.usesTimestamps() && !updatedAtColumn.isEmpty()
         ) {
             model.setUpdatedAt(timestamp);
