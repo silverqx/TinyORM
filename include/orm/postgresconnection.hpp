@@ -23,7 +23,7 @@ namespace Orm
         explicit PostgresConnection(
                 std::function<Connectors::ConnectionName()> &&connection,
                 QString &&database = "", QString &&tablePrefix = "",
-                QtTimeZoneConfig &&qtTimeZone = {QtTimeZoneType::DontConvert},
+                QtTimeZoneConfig &&qtTimeZone = {QtTimeZoneType::QtTimeSpec, Qt::UTC},
                 QVariantHash &&config = {});
 
     public:
@@ -35,7 +35,7 @@ namespace Orm
         std::shared_ptr<PostgresConnection>
         create(std::function<Connectors::ConnectionName()> &&connection,
                QString &&database = "", QString &&tablePrefix = "",
-               QtTimeZoneConfig &&qtTimeZone = {QtTimeZoneType::DontConvert},
+               QtTimeZoneConfig &&qtTimeZone = {QtTimeZoneType::QtTimeSpec, Qt::UTC},
                QVariantHash &&config = {});
 
         /* Getters */

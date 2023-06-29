@@ -21,7 +21,7 @@ namespace Orm
         explicit MySqlConnection(
                 std::function<Connectors::ConnectionName()> &&connection,
                 QString &&database = "", QString &&tablePrefix = "",
-                QtTimeZoneConfig &&qtTimeZone = {QtTimeZoneType::DontConvert},
+                QtTimeZoneConfig &&qtTimeZone = {QtTimeZoneType::QtTimeSpec, Qt::UTC},
                 QVariantHash &&config = {});
 
     public:
@@ -33,7 +33,7 @@ namespace Orm
         std::shared_ptr<MySqlConnection>
         create(std::function<Connectors::ConnectionName()> &&connection,
                QString &&database = "", QString &&tablePrefix = "",
-               QtTimeZoneConfig &&qtTimeZone = {QtTimeZoneType::DontConvert},
+               QtTimeZoneConfig &&qtTimeZone = {QtTimeZoneType::QtTimeSpec, Qt::UTC},
                QVariantHash &&config = {});
 
         /* Getters / Setters */

@@ -285,7 +285,9 @@ Databases::mysqlConfiguration()
         {collation_,      qEnvironmentVariable("DB_MYSQL_COLLATION", UTF8MB40900aici)},
         // Very important for tests
         {timezone_,       TZ00},
-        // Specifies what time zone all QDateTime-s will have
+        /* Specifies what time zone all QDateTime-s will have, the overridden default
+           is the Qt::UTC, set to the Qt::LocalTime or QtTimeZoneType::DontConvert to
+           use the system local time. */
         {qt_timezone,     QVariant::fromValue(Qt::UTC)},
         {prefix_,         EMPTY},
         {prefix_indexes,  false},
@@ -321,7 +323,9 @@ Databases::mariaConfiguration()
                                                UTF8MB4Unicode520ci)},
         // Very important for tests
         {timezone_,       TZ00},
-        // Specifies what time zone all QDateTime-s will have
+        /* Specifies what time zone all QDateTime-s will have, the overridden default
+           is the Qt::UTC, set to the Qt::LocalTime or QtTimeZoneType::DontConvert to
+           use the system local time. */
         {qt_timezone,     QVariant::fromValue(Qt::UTC)},
         {prefix_,         EMPTY},
         {prefix_indexes,  false},
@@ -349,7 +353,9 @@ Databases::sqliteConfiguration()
                                                        TINYORM_SQLITE_DATABASE)},
         {foreign_key_constraints, true},
         {check_database_exists,   true},
-        // Specifies what time zone all QDateTime-s will have
+        /* Specifies what time zone all QDateTime-s will have, the overridden default
+           is the Qt::UTC, set to the Qt::LocalTime or QtTimeZoneType::DontConvert to
+           use the system local time. */
         {qt_timezone,             QVariant::fromValue(Qt::UTC)},
         /* Return a QDateTime with the correct time zone instead of the QString,
            only works when the qt_timezone isn't set to the DontConvert. */
@@ -376,7 +382,9 @@ Databases::postgresConfiguration()
         {password_,          qEnvironmentVariable("DB_PGSQL_PASSWORD",   EMPTY)},
         {charset_,           qEnvironmentVariable("DB_PGSQL_CHARSET",    UTF8)},
         {timezone_,          UTC},
-        // Specifies what time zone all QDateTime-s will have
+        /* Specifies what time zone all QDateTime-s will have, the overridden default
+           is the Qt::UTC, set to the Qt::LocalTime or QtTimeZoneType::DontConvert to
+           use the system local time. */
         {qt_timezone,        QVariant::fromValue(Qt::UTC)},
         {prefix_,            EMPTY},
         {prefix_indexes,     false},

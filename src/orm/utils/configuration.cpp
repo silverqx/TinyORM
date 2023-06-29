@@ -42,7 +42,7 @@ QtTimeZoneConfig
 Configuration::prepareQtTimeZone(const QVariantHash &config, const QString &connection)
 {
     if (!config.contains(qt_timezone))
-        return {QtTimeZoneType::DontConvert, {}};
+        return {QtTimeZoneType::QtTimeSpec, Qt::UTC};
 
     return prepareQtTimeZone(config[qt_timezone], connection);
 }
@@ -52,12 +52,19 @@ Configuration::prepareQtTimeZone(const QVariant &qtTimeZone, const QString &conn
 {
     // Nothing to do
     if (!qtTimeZone.isValid() || qtTimeZone.isNull())
-        return {QtTimeZoneType::DontConvert, {}};
+        return {QtTimeZoneType::QtTimeSpec, Qt::UTC};
 
     const auto typeId = Helpers::qVariantTypeId(qtTimeZone);
 
     if (typeId == QMetaType::fromType<Qt::TimeSpec>().id())
         return {QtTimeZoneType::QtTimeSpec, qtTimeZone.value<Qt::TimeSpec>()};
+
+    // Allow to define the QtTimeZoneType::DontConvert for the qt_timezone config. option
+    if (typeId == QMetaType::fromType<QtTimeZoneType>().id())
+        if (const auto qtTimeZoneValue = qtTimeZone.value<QtTimeZoneType>();
+            qtTimeZoneValue == QtTimeZoneType::DontConvert
+        )
+            return {QtTimeZoneType::DontConvert, {}};
 
     if (typeId == QMetaType::fromType<QTimeZone>().id())
         return {QtTimeZoneType::QTimeZone,

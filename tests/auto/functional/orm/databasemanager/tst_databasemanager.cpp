@@ -248,7 +248,7 @@ void tst_DatabaseManager::default_MySQL_ConfigurationValues() const
                  {options_,       QVariantHash()},
                  {Version,        {}},
                  {qt_timezone,    QVariant::fromValue(
-                                      QtTimeZoneConfig {QtTimeZoneType::DontConvert, {}}
+                                      QtTimeZoneConfig {QtTimeZoneType::QtTimeSpec, Qt::UTC}
                                   )},
              }));
 
@@ -308,7 +308,7 @@ void tst_DatabaseManager::default_MariaDB_ConfigurationValues() const
                  {options_,       QVariantHash()},
                  {Version,        {}},
                  {qt_timezone,    QVariant::fromValue(
-                                      QtTimeZoneConfig {QtTimeZoneType::DontConvert, {}}
+                                      QtTimeZoneConfig {QtTimeZoneType::QtTimeSpec, Qt::UTC}
                                   )},
              }));
 
@@ -365,7 +365,7 @@ void tst_DatabaseManager::default_PostgreSQL_ConfigurationValues() const
                  {options_,       QVariantHash()},
                  {dont_drop,      QStringList {spatial_ref_sys}},
                  {qt_timezone,    QVariant::fromValue(
-                                      QtTimeZoneConfig {QtTimeZoneType::DontConvert, {}}
+                                      QtTimeZoneConfig {QtTimeZoneType::QtTimeSpec, Qt::UTC}
                                   )},
              }));
 
@@ -422,7 +422,7 @@ void tst_DatabaseManager::default_SQLite_ConfigurationValues() const
                  {options_,         QVariantHash()},
                  {return_qdatetime, true},
                  {qt_timezone,      QVariant::fromValue(
-                                        QtTimeZoneConfig {QtTimeZoneType::DontConvert, {}}
+                                        QtTimeZoneConfig {QtTimeZoneType::QtTimeSpec, Qt::UTC}
                                     )},
              }));
 
@@ -499,7 +499,7 @@ void tst_DatabaseManager::ssl_MySQL_ConfigurationValues() const
                  {prefix_indexes, false},
                  {Version,        {}},
                  {qt_timezone,    QVariant::fromValue(
-                                      QtTimeZoneConfig {QtTimeZoneType::DontConvert, {}}
+                                      QtTimeZoneConfig {QtTimeZoneType::QtTimeSpec, Qt::UTC}
                                   )},
                  // The ssl_cert is only alias to the "SSL_CERT", looks nicer
                  {ssl_cert,       sslCertValue},
@@ -588,7 +588,7 @@ void tst_DatabaseManager::ssl_MariaDB_ConfigurationValues() const
                  {prefix_indexes, false},
                  {Version,        {}},
                  {qt_timezone,    QVariant::fromValue(
-                                      QtTimeZoneConfig {QtTimeZoneType::DontConvert, {}}
+                                      QtTimeZoneConfig {QtTimeZoneType::QtTimeSpec, Qt::UTC}
                                   )},
                  // The ssl_cert is only alias to the "SSL_CERT", looks nicer
                  {ssl_cert,       sslCertValue},
@@ -674,7 +674,7 @@ void tst_DatabaseManager::ssl_PostgreSQL_ConfigurationValues() const
                  {options_,       QVariantHash()},
                  {dont_drop,      QStringList {spatial_ref_sys}},
                  {qt_timezone,    QVariant::fromValue(
-                                      QtTimeZoneConfig {QtTimeZoneType::DontConvert, {}}
+                                      QtTimeZoneConfig {QtTimeZoneType::QtTimeSpec, Qt::UTC}
                                   )},
                  {sslmode_,       sslmodeValue},
                  {sslcert,        sslcertValue},

@@ -66,7 +66,7 @@ namespace Connectors
         createConnection(
                 QString &&driver, std::function<ConnectionName()> &&connection,
                 QString &&database, QString &&tablePrefix = "",
-                QtTimeZoneConfig &&qtTimeZone = {QtTimeZoneType::DontConvert},
+                QtTimeZoneConfig &&qtTimeZone = {QtTimeZoneType::QtTimeSpec, Qt::UTC},
                 QVariantHash &&config = {},
                 std::optional<bool> returnQDateTime = std::nullopt);
 

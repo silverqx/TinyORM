@@ -184,13 +184,13 @@ namespace Query
     };
 
     /*! Determine how the QDateTime time zone will be converted, it's saved
-        in the qt_timezone database connection configuration option. */
+        in the qt_timezone database connection's configuration option. */
     struct QtTimeZoneConfig
     {
         /*! Time zone type saved in the value data member. */
-        QtTimeZoneType type  {QtTimeZoneType::DontConvert};
+        QtTimeZoneType type  {QtTimeZoneType::QtTimeSpec};
         /*! Time zone value. */
-        QVariant       value {};
+        QVariant       value {Qt::UTC}; // UTC is the default timezone, not the Qt::LocalTime (it overrides this default)
 
         /*! Equality comparison operator for the QtTimeZoneConfig. */
         inline bool operator==(const QtTimeZoneConfig &) const = default;
