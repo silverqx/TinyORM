@@ -46,12 +46,12 @@ namespace Concerns
         /* Using starts in the BaseRelationStore::visit() and is used to access private
            visited methods. */
         friend Concerns::HasRelationStore<Derived, AllRelations...>;
+        // To access private queriesRelationshipsWithVisitor()
+        friend Concerns::QueriesRelationships<Derived>;
         // To access XyzVisitor()-s, replaceRelations() and few other private methods
         friend Model<Derived, AllRelations...>;
         // To access eagerLoadRelationWithVisitor()
         friend TinyBuilder<Derived>;
-        // To access private queriesRelationshipsWithVisitor()
-        friend Concerns::QueriesRelationships<Derived>;
 
         /*! Alias for the string utils. */
         using StringUtils = Orm::Utils::String;
