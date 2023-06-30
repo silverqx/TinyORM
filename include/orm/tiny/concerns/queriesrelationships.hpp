@@ -10,7 +10,6 @@ TINY_SYSTEM_HEADER
 #include "orm/exceptions/invalidtemplateargumenterror.hpp"
 #include "orm/query/querybuilder.hpp"
 #include "orm/tiny/relations/relation.hpp"
-#include "orm/utils/notnull.hpp"
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
