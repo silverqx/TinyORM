@@ -126,6 +126,9 @@ namespace Orm::Tiny::Concerns
             MOVE,
         };
         /*! Template message for the Q_ASSERT_X() check in copy/move constructors. */
+#ifdef TINYORM_NO_DEBUG
+        [[maybe_unused]]
+#endif
         static QString
         relationStoreCopyMoveTemplate(CopyMoveTemplateType type);
 
@@ -400,8 +403,9 @@ namespace Orm::Tiny::Concerns
         default:
             Q_UNREACHABLE();
         }
+#else
+        Q_UNREACHABLE();
 #endif
-        return "";
     }
 
     /* Static cast this to a child's instance type (CRTP) */
