@@ -438,14 +438,13 @@ namespace Orm::Tiny::Concerns
     HasRelationStore<Derived, AllRelations...>::HasRelationStore( // NOLINT(modernize-use-equals-delete)
 #ifdef TINYORM_DEBUG
             const HasRelationStore &other)
+        : m_relationStore()
     {
         // This is real porn 😂
-        Q_ASSERT_X(m_relationStore.empty() && other.m_relationStore.empty(),
+        Q_ASSERT_X(other.m_relationStore.empty(),
                    "Relation store copy constructor",
                    relationStoreCopyMoveTemplate(CopyMoveTemplateType::COPY)
                    .toUtf8().constData());
-
-        m_relationStore = {};
     }
 #else
             const HasRelationStore &/*unused*/)
@@ -476,13 +475,12 @@ namespace Orm::Tiny::Concerns
     HasRelationStore<Derived, AllRelations...>::HasRelationStore( // NOLINT(modernize-use-equals-delete)
 #ifdef TINYORM_DEBUG
             HasRelationStore &&other) noexcept
+        : m_relationStore()
     {
-        Q_ASSERT_X(m_relationStore.empty() && other.m_relationStore.empty(),
+        Q_ASSERT_X(other.m_relationStore.empty(),
                    "Relation store move constructor",
                    relationStoreCopyMoveTemplate(CopyMoveTemplateType::MOVE)
                    .toUtf8().constData());
-
-        m_relationStore = {};
     }
 #else
             HasRelationStore &&/*unused*/) noexcept
