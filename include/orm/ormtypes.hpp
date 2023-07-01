@@ -208,9 +208,11 @@ Q_DECLARE_METATYPE(Qt::TimeSpec) // NOLINT(performance-no-int-to-ptr, misc-no-re
 #ifdef TINYORM_COMMON_NAMESPACE
 Q_DECLARE_METATYPE(TINYORM_COMMON_NAMESPACE::Orm::WhereConditionItem) // NOLINT(performance-no-int-to-ptr, misc-no-recursion)
 Q_DECLARE_METATYPE(TINYORM_COMMON_NAMESPACE::Orm::QtTimeZoneConfig) // NOLINT(performance-no-int-to-ptr, misc-no-recursion)
+Q_DECLARE_METATYPE(TINYORM_COMMON_NAMESPACE::Orm::QtTimeZoneType) // NOLINT(performance-no-int-to-ptr, misc-no-recursion)
 #else
 Q_DECLARE_METATYPE(Orm::WhereConditionItem) // NOLINT(performance-no-int-to-ptr, misc-no-recursion)
 Q_DECLARE_METATYPE(Orm::QtTimeZoneConfig) // NOLINT(performance-no-int-to-ptr, misc-no-recursion)
+Q_DECLARE_METATYPE(Orm::QtTimeZoneType) // NOLINT(performance-no-int-to-ptr, misc-no-recursion)
 #endif
 #endif
 
