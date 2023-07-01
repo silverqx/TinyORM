@@ -205,15 +205,15 @@ TINYORM_END_COMMON_NAMESPACE
 Q_DECLARE_METATYPE(QTimeZone) // NOLINT(performance-no-int-to-ptr, misc-no-recursion)
 Q_DECLARE_METATYPE(Qt::TimeSpec) // NOLINT(performance-no-int-to-ptr, misc-no-recursion)
 
-#ifdef TINYORM_COMMON_NAMESPACE
+#  ifdef TINYORM_COMMON_NAMESPACE
 Q_DECLARE_METATYPE(TINYORM_COMMON_NAMESPACE::Orm::WhereConditionItem) // NOLINT(performance-no-int-to-ptr, misc-no-recursion)
 Q_DECLARE_METATYPE(TINYORM_COMMON_NAMESPACE::Orm::QtTimeZoneConfig) // NOLINT(performance-no-int-to-ptr, misc-no-recursion)
 Q_DECLARE_METATYPE(TINYORM_COMMON_NAMESPACE::Orm::QtTimeZoneType) // NOLINT(performance-no-int-to-ptr, misc-no-recursion)
-#else
+#  else
 Q_DECLARE_METATYPE(Orm::WhereConditionItem) // NOLINT(performance-no-int-to-ptr, misc-no-recursion)
 Q_DECLARE_METATYPE(Orm::QtTimeZoneConfig) // NOLINT(performance-no-int-to-ptr, misc-no-recursion)
 Q_DECLARE_METATYPE(Orm::QtTimeZoneType) // NOLINT(performance-no-int-to-ptr, misc-no-recursion)
-#endif
+#  endif
 #endif
 
 #endif // ORM_ORMTYPES_HPP
