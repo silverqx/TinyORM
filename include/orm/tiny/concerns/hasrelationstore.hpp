@@ -50,6 +50,7 @@ namespace Orm::Tiny::Concerns
         /*! Alias for the type utils. */
         using TypeUtils = Orm::Utils::Type;
 
+        /* Constructors */
         /*! Default constructor. */
         inline HasRelationStore() = default;
         /*! Default destructor. */
@@ -430,6 +431,8 @@ namespace Orm::Tiny::Concerns
     /* HasRelationStore */
 
     /* private */
+
+    /* Constructors */
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     HasRelationStore<Derived, AllRelations...>::HasRelationStore( // NOLINT(modernize-use-equals-delete)
