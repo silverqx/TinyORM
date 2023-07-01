@@ -129,6 +129,7 @@ headersList += \
         $$PWD/orm/tiny/exceptions/relationnotloadederror.hpp \
         $$PWD/orm/tiny/macros/crtpmodel.hpp \
         $$PWD/orm/tiny/macros/crtpmodelwithbase.hpp \
+        $$PWD/orm/tiny/macros/relationstoresaliases.hpp \
         $$PWD/orm/tiny/model.hpp \
         $$PWD/orm/tiny/modelproxies.hpp \
         $$PWD/orm/tiny/relations/basepivot.hpp \
@@ -145,6 +146,14 @@ headersList += \
         $$PWD/orm/tiny/relations/relationproxies.hpp \
         $$PWD/orm/tiny/relations/relationtypes.hpp \
         $$PWD/orm/tiny/softdeletes.hpp \
+        $$PWD/orm/tiny/support/stores/baserelationstore.hpp \
+        $$PWD/orm/tiny/support/stores/belongstomanyrelatedtablestore.hpp \
+        $$PWD/orm/tiny/support/stores/eagerrelationstore.hpp \
+        $$PWD/orm/tiny/support/stores/lazyrelationstore.hpp \
+        $$PWD/orm/tiny/support/stores/pushrelationstore.hpp \
+        $$PWD/orm/tiny/support/stores/queriesrelationshipsstore.hpp \
+        $$PWD/orm/tiny/support/stores/serializerelationstore.hpp \
+        $$PWD/orm/tiny/support/stores/touchownersrelationstore.hpp \
         $$PWD/orm/tiny/tinybuilder.hpp \
         $$PWD/orm/tiny/tinybuilderproxies.hpp \
         $$PWD/orm/tiny/tinyconcepts.hpp \

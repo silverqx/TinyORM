@@ -50,6 +50,14 @@ namespace Concerns
         friend Concerns::QueriesRelationships<Derived>;
         // To access XyzVisitor()-s, replaceRelations() and few other private methods
         friend Model<Derived, AllRelations...>;
+        // To access private pushVisited()
+        friend Support::Stores::PushRelationStore<Derived, AllRelations...>;
+        // To access private touchOwnersVisited()
+        friend Support::Stores::TouchOwnersRelationStore<Derived, AllRelations...>;
+        // To access private serializeRelationVisited()
+        template<SerializedAttributes C, typename Derived_,
+                 AllRelationsConcept ...AllRelations_>
+        friend class Support::Stores::SerializeRelationStore;
         // To access eagerLoadRelationWithVisitor()
         friend TinyBuilder<Derived>;
 

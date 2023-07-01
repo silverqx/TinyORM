@@ -13,7 +13,15 @@ TINY_SYSTEM_HEADER
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
-namespace Orm::Tiny::Concerns
+namespace Orm::Tiny
+{
+namespace Support::Stores
+{
+    template<typename Derived, typename Related, AllRelationsConcept ...AllRelations>
+    class QueriesRelationshipsStore;
+}
+
+namespace Concerns
 {
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
@@ -74,11 +82,13 @@ namespace Private
     template<typename Model>
     class QueriesRelationships
     {
-        // Used by HasRelationStore::QueriesRelationshipsStore::visited()
-        friend typename Model::template ModelTypeApply<HasRelationStore>;
         // Used by QueriesRelationships::hasInternalVisited()
         template<typename T>
         friend class QueriesRelationships;
+
+        // To access private hasInternalVisited()
+        template<typename Derived, typename Related, AllRelationsConcept ...AllRelations>
+        friend class Support::Stores::QueriesRelationshipsStore;
 
         /*! Alias for the Expression. */
         using Expression = Orm::Query::Expression;
@@ -714,7 +724,8 @@ namespace Private
                      TypeUtils::classPureBasename<Related>()));
     }
 
-} // namespace Orm::Tiny::Concerns
+} // namespace Concerns
+} // namespace Orm::Tiny
 
 TINYORM_END_COMMON_NAMESPACE
 

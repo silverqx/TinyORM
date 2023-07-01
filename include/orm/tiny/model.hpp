@@ -51,12 +51,12 @@ namespace Orm::Tiny
         friend Concerns::HasAttributes<Derived, AllRelations...>;
         // To access getUserXx() methods
         friend Concerns::HasTimestamps<Derived, AllRelations...>;
-        // Used by BaseRelationStore::visit() and also by visted methods
-        friend Concerns::HasRelationStore<Derived, AllRelations...>;
         // To access getUserXx() methods
         friend Concerns::HasRelationships<Derived, AllRelations...>;
         // Used by QueriesRelationships::has()
         friend Concerns::QueriesRelationships<Derived>;
+        // To access getUserRelations()
+        friend Support::Stores::BaseRelationStore<Derived, AllRelations...>;
         // To access setKeysForSaveQuery(), and appendToUserDates()
         friend SoftDeletes<Derived>;
         // FUTURE try to solve problem with forward declarations for friend methods, to allow only relevant methods from TinyBuilder silverqx

@@ -138,6 +138,7 @@ function(tinyorm_sources out_headers out_sources)
             tiny/exceptions/relationnotloadederror.hpp
             tiny/macros/crtpmodel.hpp
             tiny/macros/crtpmodelwithbase.hpp
+            tiny/macros/relationstoresaliases.hpp
             tiny/model.hpp
             tiny/modelproxies.hpp
             tiny/relations/basepivot.hpp
@@ -154,6 +155,14 @@ function(tinyorm_sources out_headers out_sources)
             tiny/relations/relationproxies.hpp
             tiny/relations/relationtypes.hpp
             tiny/softdeletes.hpp
+            tiny/support/stores/baserelationstore.hpp
+            tiny/support/stores/belongstomanyrelatedtablestore.hpp
+            tiny/support/stores/eagerrelationstore.hpp
+            tiny/support/stores/lazyrelationstore.hpp
+            tiny/support/stores/pushrelationstore.hpp
+            tiny/support/stores/queriesrelationshipsstore.hpp
+            tiny/support/stores/serializerelationstore.hpp
+            tiny/support/stores/touchownersrelationstore.hpp
             tiny/tinybuilder.hpp
             tiny/tinybuilderproxies.hpp
             tiny/tinyconcepts.hpp

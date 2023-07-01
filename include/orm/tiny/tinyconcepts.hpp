@@ -5,6 +5,8 @@
 #include "orm/macros/systemheader.hpp"
 TINY_SYSTEM_HEADER
 
+#include <QtCore/qcontainerfwd.h>
+
 #include <concepts>
 #include <memory>
 
@@ -47,6 +49,13 @@ namespace Orm::Tiny
     concept SameDerivedCollectionModel = DerivedCollectionModel<T> &&
                                          DerivedCollectionModel<U> &&
                                          std::same_as<std::remove_pointer_t<T>, U>;
+
+    struct AttributeItem;
+
+    /*! Concept to check the container for serialized model attributes. */
+    template<typename C>
+    concept SerializedAttributes = std::same_as<C, QVariantMap> ||
+                                   std::same_as<C, QVector<AttributeItem>>;
 
 } // namespace Orm::Tiny
 
