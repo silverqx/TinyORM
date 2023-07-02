@@ -26,7 +26,6 @@ namespace Orm::Tiny::Support::Stores
         template<typename T>
         using NotNull = Orm::Utils::NotNull<T>;
 
-        /* Aliases to shorten type names */
         /*! Alias for the BaseRelationStore (for shorter name). */
         using BaseRelationStore_ = BaseRelationStore<Derived, AllRelations...>;
         /*! Alias for the HasRelationStore (for shorter name). */
