@@ -31,6 +31,9 @@ namespace Orm::Tiny::Support::Stores
         /*! Alias for the HasRelationStore (for shorter name). */
         using HasRelationStore = Concerns::HasRelationStore<Derived, AllRelations...>;
 
+        // To access visited()
+        friend BaseRelationStore_;
+
     public:
         /*! Constructor. */
         EagerRelationStore(
@@ -40,11 +43,11 @@ namespace Orm::Tiny::Support::Stores
         /*! Default destructor. */
         inline ~EagerRelationStore() = default;
 
+    private:
         /*! Method called after visitation. */
         template<RelationshipMethod<Derived> Method>
         void visited(Method method) const;
 
-    private:
         /*! Store type initializer. */
         constexpr static RelationStoreType initStoreType();
 
@@ -76,6 +79,8 @@ namespace Orm::Tiny::Support::Stores
         , m_models(&models)
         , m_relation(&relation)
     {}
+
+    /* private */
 
     template<typename Derived,
              TINY_RSA_ERS_CLANG16(TINY_RSA_ERS_IS_CLANG16) CollectionModel,
@@ -110,8 +115,6 @@ namespace Orm::Tiny::Support::Stores
         m_builder->eagerLoadRelationVisited(std::move(relationInstance),
                                             *m_models, *m_relation);
     }
-
-    /* private */
 
     template<typename Derived,
              TINY_RSA_ERS_CLANG16(TINY_RSA_ERS_IS_CLANG16) CollectionModel,

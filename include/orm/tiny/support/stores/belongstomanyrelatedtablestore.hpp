@@ -39,6 +39,9 @@ namespace Support::Stores
         /*! Alias for the HasRelationStore (for shorter name). */
         using HasRelationStore = Concerns::HasRelationStore<Derived, AllRelations...>;
 
+        // To access visited()
+        friend BaseRelationStore_;
+
     public:
         /*! Constructor. */
         explicit
@@ -49,11 +52,11 @@ namespace Support::Stores
         /*! Visit the given relation and return a result. */
         std::optional<QString> visitWithResult(const QString &relation);
 
+    private:
         /*! Method called after visitation. */
         template<RelationshipMethod<Derived> Method>
         void visited(Method /*unused*/);
 
-    private:
         /*! The cache key for std::unordered_map cache. */
         struct CacheKey
         {
@@ -114,6 +117,8 @@ namespace Support::Stores
         return m_result;
     }
 
+    /* private */
+
     template<typename Derived, AllRelationsConcept ...AllRelations>
     template<RelationshipMethod<Derived> Method>
     void BelongsToManyRelatedTableStore<Derived, AllRelations...>::visited(
@@ -124,8 +129,6 @@ namespace Support::Stores
         if constexpr (std::is_base_of_v<Relations::IsPivotRelation, Relation>)
             m_result = typename Relation::RelatedType().getTable();
     }
-
-    /* private */
 
     /* CacheKeyHasher */
 

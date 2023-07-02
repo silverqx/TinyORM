@@ -28,6 +28,9 @@ namespace Orm::Tiny::Support::Stores
         /*! Alias for the HasRelationStore (for shorter name). */
         using HasRelationStore = Concerns::HasRelationStore<Derived, AllRelations...>;
 
+        // To access visited()
+        friend BaseRelationStore_;
+
     public:
         /*! Constructor. */
         TouchOwnersRelationStore(NotNull<HasRelationStore *> hasRelationStore,
@@ -35,13 +38,14 @@ namespace Orm::Tiny::Support::Stores
         /*! Default destructor. */
         inline ~TouchOwnersRelationStore() = default;
 
-        /*! Method called after visitation. */
-        template<RelationshipMethod<Derived> Method>
-        void visited(Method method);
-
         /*! Models to touch timestamps for, the reference to the relation name/key
             in the m_relations hash. */
         NotNull<const QString *> m_relation;
+
+    private:
+        /*! Method called after visitation. */
+        template<RelationshipMethod<Derived> Method>
+        void visited(Method method);
     };
 
     /* public */
@@ -53,6 +57,8 @@ namespace Orm::Tiny::Support::Stores
         : BaseRelationStore_(hasRelationStore, RelationStoreType::TOUCH_OWNERS)
         , m_relation(&relation)
     {}
+
+    /* private */
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     template<RelationshipMethod<Derived> Method>

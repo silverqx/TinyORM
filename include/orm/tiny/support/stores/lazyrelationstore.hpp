@@ -27,18 +27,22 @@ namespace Orm::Tiny::Support::Stores
         /*! Alias for the HasRelationStore (for shorter name). */
         using HasRelationStore = Concerns::HasRelationStore<Derived, AllRelations...>;
 
+        // To access visited()
+        friend BaseRelationStore_;
+
     public:
         /*! Constructor. */
         explicit LazyRelationStore(NotNull<HasRelationStore *> hasRelationStore);
         /*! Default destructor. */
         inline ~LazyRelationStore() = default;
 
+        /*! The result of lazy load. */
+        std::variant<ModelsCollection<Related>, std::optional<Related>> m_result;
+
+    private:
         /*! Method called after visitation. */
         template<RelationshipMethod<Derived> Method>
         void visited(Method method);
-
-        /*! The result of lazy load. */
-        std::variant<ModelsCollection<Related>, std::optional<Related>> m_result;
     };
 
     /* public */
@@ -49,6 +53,8 @@ namespace Orm::Tiny::Support::Stores
     )
         : BaseRelationStore_(hasRelationStore, RelationStoreType::LAZY_RESULTS)
     {}
+
+    /* private */
 
     template<typename Derived, typename Related, AllRelationsConcept ...AllRelations>
     template<RelationshipMethod<Derived> Method>

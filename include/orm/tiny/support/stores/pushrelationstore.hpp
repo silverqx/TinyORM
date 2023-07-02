@@ -27,6 +27,9 @@ namespace Orm::Tiny::Support::Stores
         /*! Alias for the HasRelationStore (for shorter name). */
         using HasRelationStore = Concerns::HasRelationStore<Derived, AllRelations...>;
 
+        // To access visited()
+        friend BaseRelationStore_;
+
     public:
         /*! Constructor. */
         PushRelationStore(NotNull<HasRelationStore *> hasRelationStore,
@@ -34,14 +37,15 @@ namespace Orm::Tiny::Support::Stores
         /*! Default destructor. */
         inline ~PushRelationStore() = default;
 
-        /*! Method called after visitation. */
-        template<RelationshipMethod<Derived> Method>
-        void visited(Method /*unused*/) const;
-
         /*! Models to push, the reference to the relation in the m_relations hash. */
         NotNull<RelationsType<AllRelations...> *> m_models;
         /*! The result of a push. */
         bool m_result = false;
+
+    private:
+        /*! Method called after visitation. */
+        template<RelationshipMethod<Derived> Method>
+        void visited(Method /*unused*/) const;
     };
 
     /* public */
@@ -54,6 +58,8 @@ namespace Orm::Tiny::Support::Stores
         : BaseRelationStore_(hasRelationStore, RelationStoreType::PUSH)
         , m_models(&models)
     {}
+
+    /* private */
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     template<RelationshipMethod<Derived> Method>

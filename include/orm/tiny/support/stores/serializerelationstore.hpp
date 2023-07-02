@@ -36,6 +36,9 @@ namespace Support::Stores
         /*! Alias for the HasRelationStore (for shorter name). */
         using HasRelationStore = Concerns::HasRelationStore<Derived, AllRelations...>;
 
+        // To access visited()
+        friend BaseRelationStore_;
+
     public:
         /*! Constructor. */
         SerializeRelationStore(
@@ -44,11 +47,11 @@ namespace Support::Stores
         /*! Default destructor. */
         inline ~SerializeRelationStore() = default;
 
+    private:
         /*! Method called after visitation. */
         template<RelationshipMethod<Derived> Method>
         void visited(Method /*unused*/) const;
 
-    private:
         /*! Store type initializer. */
         constexpr static RelationStoreType initStoreType();
 
@@ -77,6 +80,8 @@ namespace Support::Stores
         , m_attributes(&attributes)
     {}
 
+    /* private */
+
     template<SerializedAttributes C, typename Derived,
              AllRelationsConcept ...AllRelations>
     template<RelationshipMethod<Derived> Method>
@@ -104,8 +109,6 @@ namespace Support::Stores
                     .template serializeRelationVisited<Related, C, void>(
                         *m_relation, *m_models, *m_attributes);
     }
-
-    /* private */
 
     template<SerializedAttributes C, typename Derived,
              AllRelationsConcept ...AllRelations>

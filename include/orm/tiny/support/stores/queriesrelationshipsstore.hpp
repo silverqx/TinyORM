@@ -45,6 +45,9 @@ namespace Support::Stores
         using QueriesRelationshipsCallback =
               Concerns::QueriesRelationshipsCallback<Related_>;
 
+        // To access visited()
+        friend BaseRelationStore_;
+
     public:
         /*! QueriesRelationshipsStore constructor. */
         QueriesRelationshipsStore(
@@ -58,11 +61,11 @@ namespace Support::Stores
         /*! Default destructor. */
         inline ~QueriesRelationshipsStore() = default;
 
+    private:
         /*! Method called after visitation. */
         template<typename RelatedFromMethod, typename Method>
         void visited(Method method);
 
-    private:
         /*! Store type initializer. */
         constexpr static RelationStoreType initStoreType();
 
@@ -128,6 +131,8 @@ namespace Support::Stores
         , m_relations(relations ? &relations->get() : nullptr)
     {}
 
+    /* private */
+
     template<typename Derived, typename Related, AllRelationsConcept ...AllRelations>
     template<typename RelatedFromMethod, typename Method>
     void QueriesRelationshipsStore<Derived, Related, AllRelations...>::visited(
@@ -157,8 +162,6 @@ namespace Support::Stores
                         std::move(relationInstance), *m_comparison, m_count,
                         *m_condition, *m_callback);
     }
-
-    /* private */
 
     template<typename Derived, typename Related, AllRelationsConcept ...AllRelations>
     constexpr RelationStoreType
