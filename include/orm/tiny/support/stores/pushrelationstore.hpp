@@ -24,7 +24,7 @@ namespace Orm::Tiny::Support::Stores
 
         /* Aliases to shorten type names */
         /*! Alias for the BaseRelationStore (for shorter name). */
-        using BaseRelationStore = BaseRelationStore<Derived, AllRelations...>;
+        using BaseRelationStore_ = BaseRelationStore<Derived, AllRelations...>;
         /*! Alias for the HasRelationStore (for shorter name). */
         using HasRelationStore = Concerns::HasRelationStore<Derived, AllRelations...>;
 
@@ -52,7 +52,7 @@ namespace Orm::Tiny::Support::Stores
             NotNull<HasRelationStore *> hasRelationStore,
             RelationsType<AllRelations...> &models
     )
-        : BaseRelationStore(hasRelationStore, RelationStoreType::PUSH)
+        : BaseRelationStore_(hasRelationStore, RelationStoreType::PUSH)
         , m_models(&models)
     {}
 

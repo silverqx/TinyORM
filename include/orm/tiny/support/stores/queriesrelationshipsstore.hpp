@@ -34,7 +34,7 @@ namespace Support::Stores
 
         /* Aliases to shorten type names */
         /*! Alias for the BaseRelationStore (for shorter name). */
-        using BaseRelationStore = BaseRelationStore<Derived, AllRelations...>;
+        using BaseRelationStore_ = BaseRelationStore<Derived, AllRelations...>;
         /*! Alias for the HasRelationStore (for shorter name). */
         using HasRelationStore = Concerns::HasRelationStore<Derived, AllRelations...>;
 
@@ -117,10 +117,10 @@ namespace Support::Stores
             const std::function<void(QueriesRelationshipsCallback<Related> &)> &callback,
             const std::optional<std::reference_wrapper<QStringList>> relations
     )
-        : BaseRelationStore(hasRelationStore,
-                            relations
-                                ? RelationStoreType::QUERIES_RELATIONSHIPS_TINY_NESTED
-                                : STORE_TYPE)
+        : BaseRelationStore_(hasRelationStore,
+                             relations
+                                 ? RelationStoreType::QUERIES_RELATIONSHIPS_TINY_NESTED
+                                 : STORE_TYPE)
         , m_origin(&origin)
         , m_comparison(&comparison)
         , m_count(count)

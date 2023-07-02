@@ -32,7 +32,7 @@ namespace Support::Stores
 
         /* Aliases to shorten type names */
         /*! Alias for the BaseRelationStore (for shorter name). */
-        using BaseRelationStore = BaseRelationStore<Derived, AllRelations...>;
+        using BaseRelationStore_ = BaseRelationStore<Derived, AllRelations...>;
         /*! Alias for the HasRelationStore (for shorter name). */
         using HasRelationStore = Concerns::HasRelationStore<Derived, AllRelations...>;
 
@@ -56,8 +56,8 @@ namespace Support::Stores
     template<typename Derived, AllRelationsConcept ...AllRelations>
     BelongsToManyRelatedTableStore<Derived, AllRelations...>::
     BelongsToManyRelatedTableStore(NotNull<HasRelationStore *> hasRelationStore)
-        : BaseRelationStore(hasRelationStore,
-                            RelationStoreType::BELONGSTOMANY_RELATED_TABLE)
+        : BaseRelationStore_(hasRelationStore,
+                             RelationStoreType::BELONGSTOMANY_RELATED_TABLE)
     {}
 
     template<typename Derived, AllRelationsConcept ...AllRelations>

@@ -25,7 +25,7 @@ namespace Orm::Tiny::Support::Stores
 
         /* Aliases to shorten type names */
         /*! Alias for the BaseRelationStore (for shorter name). */
-        using BaseRelationStore = BaseRelationStore<Derived, AllRelations...>;
+        using BaseRelationStore_ = BaseRelationStore<Derived, AllRelations...>;
         /*! Alias for the HasRelationStore (for shorter name). */
         using HasRelationStore = Concerns::HasRelationStore<Derived, AllRelations...>;
 
@@ -51,7 +51,7 @@ namespace Orm::Tiny::Support::Stores
     TouchOwnersRelationStore<Derived, AllRelations...>::TouchOwnersRelationStore(
             NotNull<HasRelationStore *> hasRelationStore, const QString &relation
     )
-        : BaseRelationStore(hasRelationStore, RelationStoreType::TOUCH_OWNERS)
+        : BaseRelationStore_(hasRelationStore, RelationStoreType::TOUCH_OWNERS)
         , m_relation(&relation)
     {}
 

@@ -24,7 +24,7 @@ namespace Orm::Tiny::Support::Stores
 
         /* Aliases to shorten type names */
         /*! Alias for the BaseRelationStore (for shorter name). */
-        using BaseRelationStore = BaseRelationStore<Derived, AllRelations...>;
+        using BaseRelationStore_ = BaseRelationStore<Derived, AllRelations...>;
         /*! Alias for the HasRelationStore (for shorter name). */
         using HasRelationStore = Concerns::HasRelationStore<Derived, AllRelations...>;
 
@@ -48,7 +48,7 @@ namespace Orm::Tiny::Support::Stores
     LazyRelationStore<Derived, Related, AllRelations...>::LazyRelationStore(
             NotNull<HasRelationStore *> hasRelationStore
     )
-        : BaseRelationStore(hasRelationStore, RelationStoreType::LAZY_RESULTS)
+        : BaseRelationStore_(hasRelationStore, RelationStoreType::LAZY_RESULTS)
     {}
 
     template<typename Derived, typename Related, AllRelationsConcept ...AllRelations>

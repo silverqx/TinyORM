@@ -33,7 +33,7 @@ namespace Support::Stores
 
         /* Aliases to shorten type names */
         /*! Alias for the BaseRelationStore (for shorter name). */
-        using BaseRelationStore = BaseRelationStore<Derived, AllRelations...>;
+        using BaseRelationStore_ = BaseRelationStore<Derived, AllRelations...>;
         /*! Alias for the HasRelationStore (for shorter name). */
         using HasRelationStore = Concerns::HasRelationStore<Derived, AllRelations...>;
 
@@ -72,7 +72,7 @@ namespace Support::Stores
             NotNull<HasRelationStore *> hasRelationStore, const QString &relation,
             const RelationsType<AllRelations...> &models, C &attributes
     )
-        : BaseRelationStore(hasRelationStore, STORE_TYPE)
+        : BaseRelationStore_(hasRelationStore, STORE_TYPE)
         , m_relation(&relation)
         , m_models(&models)
         , m_attributes(&attributes)

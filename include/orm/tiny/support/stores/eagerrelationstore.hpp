@@ -28,7 +28,7 @@ namespace Orm::Tiny::Support::Stores
 
         /* Aliases to shorten type names */
         /*! Alias for the BaseRelationStore (for shorter name). */
-        using BaseRelationStore = BaseRelationStore<Derived, AllRelations...>;
+        using BaseRelationStore_ = BaseRelationStore<Derived, AllRelations...>;
         /*! Alias for the HasRelationStore (for shorter name). */
         using HasRelationStore = Concerns::HasRelationStore<Derived, AllRelations...>;
 
@@ -72,7 +72,7 @@ namespace Orm::Tiny::Support::Stores
             const Tiny::TinyBuilder<Derived> &builder,
             ModelsCollection<CollectionModel> &models, const WithItem &relation
     )
-        : BaseRelationStore(hasRelationStore, STORE_TYPE)
+        : BaseRelationStore_(hasRelationStore, STORE_TYPE)
         , m_builder(&builder)
         , m_models(&models)
         , m_relation(&relation)
