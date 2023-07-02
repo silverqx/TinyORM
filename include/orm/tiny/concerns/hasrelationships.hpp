@@ -1158,10 +1158,12 @@ namespace Concerns
         validateUserRelation(relation);
 
         // Create the store and visit relation
-        this->createBelongsToManyRelatedTableStore().visit(relation);
+        this->createBelongsToManyRelatedTableStore();
 
         // NRVO kicks in
-        auto relatedTable = this->belongsToManyRelatedTableStore().m_result;
+        auto relatedTable = this->belongsToManyRelatedTableStore()
+                            // A little different than other visitors because of caching
+                            .visitWithResult(relation);
 
         // Releases the ownership and destroy the top relation store on the stack
         this->resetRelationStore();

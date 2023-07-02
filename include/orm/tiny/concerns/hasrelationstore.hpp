@@ -109,7 +109,7 @@ namespace Orm::Tiny::Concerns
         template<typename Related>
         const LazyRelationStore<Related> &lazyStore() const;
         /*! Reference to the BelongsToMany related table name store. */
-        inline const BelongsToManyRelatedTableStore &
+        inline BelongsToManyRelatedTableStore &
         belongsToManyRelatedTableStore() const;
         /*! Const reference to the QueriesRelationships store. */
         template<typename Related = void>
@@ -350,12 +350,12 @@ namespace Orm::Tiny::Concerns
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
-    const typename HasRelationStore<Derived, AllRelations...>::
-                   BelongsToManyRelatedTableStore &
+    typename HasRelationStore<Derived, AllRelations...>::
+             BelongsToManyRelatedTableStore &
     HasRelationStore<Derived, AllRelations...>::belongsToManyRelatedTableStore() const
     {
         return *std::static_pointer_cast<
-                const BelongsToManyRelatedTableStore>(m_relationStore.top());
+                BelongsToManyRelatedTableStore>(m_relationStore.top());
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
