@@ -162,7 +162,7 @@ namespace Types
         QVariant m_modifier;
     };
 
-    /* Cast type item */
+    /* CastItem */
 
     /* public */
 
