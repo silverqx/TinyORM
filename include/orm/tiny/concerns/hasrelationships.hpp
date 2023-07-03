@@ -349,7 +349,7 @@ namespace Concerns
         /*! On the base of alternative held by m_relations decide, which
             touchOwnersVisited() to execute. */
         template<typename Related, typename Relation>
-        void touchOwnersVisited(Relation &&relation);
+        void touchOwnersVisited(Relation &&relation, const QString &relationName);
 
         /* QueriesRelationships store related */
         /*! Create 'QueriesRelationships relation store' to obtain relation instance. */
@@ -1073,7 +1073,7 @@ namespace Concerns
         this->template createLazyStore<Related>().visit(relation);
 
         // Obtain result, related model/s
-        const auto lazyResult = this->template lazyStore<Related>().m_result;
+        const auto lazyResult = this->template lazyStore<Related>().result();
 
         // Releases the ownership and destroy the top relation store on the stack
         this->resetRelationStore();
@@ -1191,7 +1191,7 @@ namespace Concerns
         // Save model/s to the store to avoid passing variables to the visitor
         this->createPushStore(models).visit(relation);
 
-        const auto pushResult = this->pushStore().m_result;
+        const auto pushResult = this->pushStore().result();
 
         // Releases the ownership and destroy the top relation store on the stack
         this->resetRelationStore();
@@ -1203,7 +1203,7 @@ namespace Concerns
     template<typename Related>
     void HasRelationships<Derived, AllRelations...>::pushVisited() const
     {
-        const RelationsType<AllRelations...> &models = *this->pushStore().m_models;
+        const RelationsType<AllRelations...> &models = this->pushStore().models();
 
         // Invoke pushVisited() on the base of hold alternative in the models
         if (std::holds_alternative<ModelsCollection<Related>>(models))
@@ -1214,7 +1214,7 @@ namespace Concerns
 
         else
             throw Orm::Exceptions::RuntimeError(
-                    "this->pushStore().models holds unexpected alternative.");
+                    "this->pushStore().models() holds unexpected alternative.");
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
@@ -1223,13 +1223,11 @@ namespace Concerns
     {
         auto &pushStore = this->pushStore();
 
-        for (auto &model : std::get<ModelsCollection<Related>>(*pushStore.m_models))
-            if (!model.push()) {
-                pushStore.m_result = false;
-                return;
-            }
+        for (auto &model : std::get<ModelsCollection<Related>>(pushStore.models()))
+            if (!model.push())
+                return pushStore.setResult(false); // clazy:exclude=returning-void-expression
 
-        pushStore.m_result = true;
+        pushStore.setResult(true);
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
@@ -1238,16 +1236,14 @@ namespace Concerns
     {
         auto &pushStore = this->pushStore();
 
-        auto &model = std::get<std::optional<Related>>(*pushStore.m_models);
+        auto &model = std::get<std::optional<Related>>(pushStore.models());
         Q_ASSERT(model);
 
         // Skip a null model, consider it as success
-        if (!model) {
-            pushStore.m_result = true;
-            return;
-        }
+        if (!model)
+            return pushStore.setResult(true); // clazy:exclude=returning-void-expression
 
-        pushStore.m_result = model->push();
+        pushStore.setResult(model->push());
     }
 
     /* Touch owners store related */
@@ -1270,10 +1266,8 @@ namespace Concerns
     template<typename Derived, AllRelationsConcept ...AllRelations>
     template<typename Related, typename Relation>
     void HasRelationships<Derived, AllRelations...>::touchOwnersVisited(
-            Relation &&relation)
+            Relation &&relation, const QString &relationName)
     {
-        const auto &relationName = *this->touchOwnersStore().m_relation;
-
         relation->touch();
 
         // Many type relation

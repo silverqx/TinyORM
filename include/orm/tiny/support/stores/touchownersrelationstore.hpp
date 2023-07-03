@@ -38,14 +38,14 @@ namespace Orm::Tiny::Support::Stores
         /*! Default destructor. */
         inline ~TouchOwnersRelationStore() = default;
 
-        /*! Models to touch timestamps for, the reference to the relation name/key
-            in the m_relations hash. */
-        NotNull<const QString *> m_relation;
-
     private:
         /*! Method called after visitation. */
         template<RelationshipMethod<Derived> Method>
         void visited(Method method);
+
+        /*! Models to touch timestamps for, the reference to the relation name/key
+            in the m_relations hash. */
+        NotNull<const QString *> m_relation;
     };
 
     /* public */
@@ -71,7 +71,8 @@ namespace Orm::Tiny::Support::Stores
                                     ::element_type::RelatedType;
 
         this->basemodel()
-                .template touchOwnersVisited<Related>(std::move(relationInstance));
+                .template touchOwnersVisited<Related>(std::move(relationInstance),
+                                                      *m_relation);
     }
 
 } // namespace Orm::Tiny::Support::Stores

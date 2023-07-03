@@ -37,15 +37,23 @@ namespace Orm::Tiny::Support::Stores
         /*! Default destructor. */
         inline ~PushRelationStore() = default;
 
-        /*! Models to push, the reference to the relation in the m_relations hash. */
-        NotNull<RelationsType<AllRelations...> *> m_models;
-        /*! The result of a push. */
-        bool m_result = false;
+        /*! Get the result of a push. */
+        inline bool result() const noexcept;
+        /*! Set the result of a push. */
+        inline void setResult(bool value) noexcept;
+
+        /*! Get models to push, the reference to the relation in the m_relations hash. */
+        inline RelationsType<AllRelations...> &models() const noexcept;
 
     private:
         /*! Method called after visitation. */
         template<RelationshipMethod<Derived> Method>
         void visited(Method /*unused*/) const;
+
+        /*! Models to push, the reference to the relation in the m_relations hash. */
+        NotNull<RelationsType<AllRelations...> *> m_models;
+        /*! The result of a push. */
+        bool m_result = false;
     };
 
     /* public */
@@ -58,6 +66,25 @@ namespace Orm::Tiny::Support::Stores
         : BaseRelationStore_(hasRelationStore, RelationStoreType::PUSH)
         , m_models(&models)
     {}
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    bool PushRelationStore<Derived, AllRelations...>::result() const noexcept
+    {
+        return m_result;
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    void PushRelationStore<Derived, AllRelations...>::setResult(const bool value) noexcept
+    {
+        m_result = value;
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    RelationsType<AllRelations...> &
+    PushRelationStore<Derived, AllRelations...>::models() const noexcept
+    {
+        return *m_models;
+    }
 
     /* private */
 

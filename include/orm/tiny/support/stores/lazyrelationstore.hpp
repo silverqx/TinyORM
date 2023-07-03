@@ -36,13 +36,17 @@ namespace Orm::Tiny::Support::Stores
         /*! Default destructor. */
         inline ~LazyRelationStore() = default;
 
-        /*! The result of lazy load. */
-        std::variant<ModelsCollection<Related>, std::optional<Related>> m_result;
+        /*! Get the result of lazy load. */
+        inline const std::variant<ModelsCollection<Related>, std::optional<Related>> &
+        result() const noexcept;
 
     private:
         /*! Method called after visitation. */
         template<RelationshipMethod<Derived> Method>
         void visited(Method method);
+
+        /*! The result of lazy load. */
+        std::variant<ModelsCollection<Related>, std::optional<Related>> m_result;
     };
 
     /* public */
@@ -53,6 +57,13 @@ namespace Orm::Tiny::Support::Stores
     )
         : BaseRelationStore_(hasRelationStore, RelationStoreType::LAZY_RESULTS)
     {}
+
+    template<typename Derived, typename Related, AllRelationsConcept ...AllRelations>
+    const std::variant<ModelsCollection<Related>, std::optional<Related>> &
+    LazyRelationStore<Derived, Related, AllRelations...>::result() const noexcept
+    {
+        return m_result;
+    }
 
     /* private */
 
