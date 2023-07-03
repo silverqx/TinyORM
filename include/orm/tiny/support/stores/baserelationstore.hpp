@@ -17,6 +17,9 @@ namespace Concerns
 {
     template<typename Derived, AllRelationsConcept ...AllRelations>
     class HasRelationStore;
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    class HasRelationships;
 }
 namespace Relations
 {
@@ -82,6 +85,8 @@ namespace Support::Stores
     {
         Q_DISABLE_COPY(BaseRelationStore)
 
+        // To access visit()
+        friend Concerns::HasRelationships<Derived, AllRelations...>;
         // To access operator()
         friend Derived;
 
@@ -95,6 +100,9 @@ namespace Support::Stores
 
         TINY_RELATIONSTORES_ALIASES
 
+        // To access visit()
+        friend BelongsToManyRelatedTableStore;
+
     protected:
         /*! Constructor. */
         BaseRelationStore(NotNull<HasRelationStore *> hasRelationStore,
@@ -104,9 +112,6 @@ namespace Support::Stores
         /*! Default destructor. */
         inline ~BaseRelationStore() = default;
 
-        /*! Visit the given relation. */
-        void visit(const QString &relation);
-
     protected:
         /*! Called from Model::u_relations to pass reference to the relation method,
             an enter point of the visitation. */
@@ -115,9 +120,6 @@ namespace Support::Stores
 
         /*! Currently held store type. */
         inline RelationStoreType getStoreType() const noexcept;
-
-        /*! Reference to the parent HasRelationStore instance. */
-        NotNull<HasRelationStore *> m_hasRelationStore;
 
         /* Static cast this to a child's instance type (CRTP) */
         /*! Static cast this to a child's instance type (CRTP). */
@@ -131,6 +133,11 @@ namespace Support::Stores
         inline const Model<Derived, AllRelations...> &basemodel() const noexcept;
 
     private:
+        /*! Visit the given relation. */
+        void visit(const QString &relation);
+
+        /*! Reference to the parent HasRelationStore instance. */
+        NotNull<HasRelationStore *> m_hasRelationStore;
         /*! Store type held by relation store. */
         /*const*/ RelationStoreType m_storeType;
     };
@@ -147,12 +154,6 @@ namespace Support::Stores
     {}
 
     /* public */
-
-    template<typename Derived, AllRelationsConcept ...AllRelations>
-    void BaseRelationStore<Derived, AllRelations...>::visit(const QString &relation)
-    {
-        std::invoke(basemodel().getUserRelations().find(relation).value(), *this);
-    }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     template<RelationshipMethod<Derived> Method>
@@ -264,6 +265,14 @@ namespace Support::Stores
     BaseRelationStore<Derived, AllRelations...>::basemodel() const noexcept
     {
         return m_hasRelationStore->basemodel();
+    }
+
+    /* private */
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    void BaseRelationStore<Derived, AllRelations...>::visit(const QString &relation)
+    {
+        std::invoke(basemodel().getUserRelations().find(relation).value(), *this);
     }
 
 } // namespace Support::Stores

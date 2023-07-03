@@ -28,6 +28,9 @@ namespace Support::Stores
     {
         Q_DISABLE_COPY(BelongsToManyRelatedTableStore)
 
+        // To access visitWithResult()
+        friend Concerns::HasRelationships<Derived, AllRelations...>;
+
         /*! Alias for the helper utils. */
         using Helpers = Orm::Utils::Helpers;
         /*! Alias for the NotNull. */
@@ -49,10 +52,10 @@ namespace Support::Stores
         /*! Default destructor. */
         inline ~BelongsToManyRelatedTableStore() = default;
 
+    private:
         /*! Visit the given relation and return a result. */
         std::optional<QString> visitWithResult(const QString &relation);
 
-    private:
         /*! Method called after visitation. */
         template<RelationshipMethod<Derived> Method>
         void visited(Method /*unused*/);

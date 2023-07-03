@@ -18,6 +18,8 @@ namespace Orm::Tiny::Support::Stores
     {
         Q_DISABLE_COPY(PushRelationStore)
 
+        // To access result(), setResult(), and models()
+        friend Concerns::HasRelationships<Derived, AllRelations...>;
         /*! Alias for the NotNull. */
         template<typename T>
         using NotNull = Orm::Utils::NotNull<T>;
@@ -37,6 +39,7 @@ namespace Orm::Tiny::Support::Stores
         /*! Default destructor. */
         inline ~PushRelationStore() = default;
 
+    private:
         /*! Get the result of a push. */
         inline bool result() const noexcept;
         /*! Set the result of a push. */
@@ -45,7 +48,6 @@ namespace Orm::Tiny::Support::Stores
         /*! Get models to push, the reference to the relation in the m_relations hash. */
         inline RelationsType<AllRelations...> &models() const noexcept;
 
-    private:
         /*! Method called after visitation. */
         template<RelationshipMethod<Derived> Method>
         void visited(Method /*unused*/) const;

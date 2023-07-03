@@ -21,9 +21,6 @@ TINYORM_BEGIN_COMMON_NAMESPACE
 namespace Orm::Tiny::Concerns
 {
 
-    template<typename Derived, AllRelationsConcept ...AllRelations>
-    class HasRelationships;
-
     // FUTURE relationstore, cache results, eg. cache Relation instance and return copy of this cached Relation instance, Related parameter can be obtained from cached Relation instance silverqx
     /*! Relation store, handles mapping from a relation name to the Model's relation
         method, also calls visited method with Related parameter when needed. */

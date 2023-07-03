@@ -18,6 +18,8 @@ namespace Orm::Tiny::Support::Stores
     {
         Q_DISABLE_COPY(LazyRelationStore)
 
+        // To access result()
+        friend Concerns::HasRelationships<Derived, AllRelations...>;
         /*! Alias for the NotNull. */
         template<typename T>
         using NotNull = Orm::Utils::NotNull<T>;
@@ -36,11 +38,11 @@ namespace Orm::Tiny::Support::Stores
         /*! Default destructor. */
         inline ~LazyRelationStore() = default;
 
+    private:
         /*! Get the result of lazy load. */
         inline const std::variant<ModelsCollection<Related>, std::optional<Related>> &
         result() const noexcept;
 
-    private:
         /*! Method called after visitation. */
         template<RelationshipMethod<Derived> Method>
         void visited(Method method);
