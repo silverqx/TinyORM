@@ -11,7 +11,7 @@
 
 [![www.tinyorm.org][docs-badge]][docs]
 [![License MIT][license-badge]][license]
-[![TinyORM v0.30.3][version-tinyorm-badge]][docs]
+[![TinyORM v0.31.0][version-tinyorm-badge]][docs]
 [![tom v0.5.7][version-tom-badge]][docs]
 
 TinyORM is a modern ORM library that makes interacting with a database extremely simple.
@@ -133,5 +133,5 @@ The following list fastly summarizes all the `TinyORM` features.
 [docs]: https://www.tinyorm.org
 [license-badge]: https://img.shields.io/github/license/silverqx/TinyORM
 [license]: https://github.com/silverqx/TinyORM/blob/main/LICENSE
-[version-tinyorm-badge]: https://img.shields.io/badge/TinyORM-v0.30.3-blue
+[version-tinyorm-badge]: https://img.shields.io/badge/TinyORM-v0.31.0-blue
 [version-tom-badge]: https://img.shields.io/badge/tom-v0.5.7-blue
