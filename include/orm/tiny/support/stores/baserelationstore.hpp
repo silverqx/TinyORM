@@ -82,6 +82,9 @@ namespace Support::Stores
     {
         Q_DISABLE_COPY(BaseRelationStore)
 
+        // To access operator()
+        friend Derived;
+
         /*! Alias for the NotNull. */
         template<typename T>
         using NotNull = Orm::Utils::NotNull<T>;
@@ -104,12 +107,12 @@ namespace Support::Stores
         /*! Visit the given relation. */
         void visit(const QString &relation);
 
+    protected:
         /*! Called from Model::u_relations to pass reference to the relation method,
             an enter point of the visitation. */
         template<RelationshipMethod<Derived> Method>
         void operator()(Method method);
 
-    protected:
         /*! Currently held store type. */
         inline RelationStoreType getStoreType() const noexcept;
 
