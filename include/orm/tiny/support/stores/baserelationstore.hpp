@@ -20,7 +20,7 @@ namespace Concerns
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     class HasRelationships;
-}
+} // namespace Concerns
 namespace Relations
 {
     class IsRelation;
