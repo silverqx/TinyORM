@@ -264,7 +264,7 @@ namespace Orm::Tiny::Concerns
         bool originalIsEquivalent(const QString &key) const;
 
         /*! Rehash attribute positions from the given index. */
-        void rehashAttributePositions(
+        static void rehashAttributePositions(
                 const QVector<AttributeItem> &attributes,
                 std::unordered_map<QString, AttributesSizeType> &attributesHash,
                 int from = 0);
