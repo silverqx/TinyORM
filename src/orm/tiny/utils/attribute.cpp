@@ -14,6 +14,8 @@ using Orm::Utils::Helpers;
 namespace Orm::Tiny::Utils
 {
 
+/* public */
+
 QVariantMap Attribute::convertVectorToMap(const QVector<AttributeItem> &attributes)
 {
     QVariantMap result;
