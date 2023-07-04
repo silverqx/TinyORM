@@ -1829,7 +1829,7 @@ namespace Orm::Tiny::Concerns
             )
                 continue;
 
-            auto &value = attributes[m_attributesHash.at(key)].value;
+            auto &value = attributes[attributesHash.at(key)].value;
 
             value = value.isNull() ? NullVariant::QDateTime()
                                    : Model<Derived, AllRelations...>::
@@ -1870,7 +1870,7 @@ namespace Orm::Tiny::Concerns
                cast then we will serialize the date for the vector. This will convert
                the dates to strings based on the date format specified for these TinyORM
                models. */
-            auto &value = attributes[m_attributesHash.at(key)].value;
+            auto &value = attributes[attributesHash.at(key)].value;
 
             castAttributeForSerialization(value, key, castItem);
         }
