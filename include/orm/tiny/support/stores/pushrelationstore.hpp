@@ -43,7 +43,7 @@ namespace Orm::Tiny::Support::Stores
         /*! Get the result of a push. */
         inline bool result() const noexcept;
         /*! Set the result of a push. */
-        inline void setResult(bool value) noexcept;
+        inline void setResult(bool result) noexcept;
 
         /*! Get models to push, the reference to the relation in the m_relations hash. */
         inline RelationsType<AllRelations...> &models() const noexcept;
@@ -76,9 +76,10 @@ namespace Orm::Tiny::Support::Stores
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
-    void PushRelationStore<Derived, AllRelations...>::setResult(const bool value) noexcept
+    void
+    PushRelationStore<Derived, AllRelations...>::setResult(const bool result) noexcept
     {
-        m_result = value;
+        m_result = result;
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
