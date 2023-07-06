@@ -51,7 +51,7 @@ namespace Types
     template<typename Model>
     using ModelsCollection = Types::ModelsCollection<Model>;
 
-    /*! The type in which the relationships are stored. */
+    /*! Alias for the type in which the relationships are stored. */
     template<AllRelationsConcept ...AllRelations>
     using RelationsType = std::variant<std::monostate,
                                        ModelsCollection<AllRelations>...,
