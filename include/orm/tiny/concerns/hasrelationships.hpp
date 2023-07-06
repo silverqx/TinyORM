@@ -5,15 +5,6 @@
 #include "orm/macros/systemheader.hpp"
 TINY_SYSTEM_HEADER
 
-#include "orm/config.hpp" // IWYU pragma: keep
-
-#ifdef TINY_NO_INCOMPLETE_UNORDERED_MAP
-#  include <map>
-// Leaving only for reference, the unordered_map is included in the modelscollection.hpp
-//#else
-//#  include <unordered_map>
-#endif
-
 #include <range/v3/algorithm/contains.hpp>
 
 #include "orm/exceptions/invalidtemplateargumenterror.hpp"
@@ -67,6 +58,9 @@ namespace Concerns
         using TypeUtils = Orm::Utils::Type;
 
     public:
+        /*! Alias for the RelationsContainer. */
+        using RelationsContainerType = RelationsContainer<AllRelations...>;
+
         /* HasRelationships related */
         /*! Get a relationship for Many types relation (load a relationship lazily if
             not loaded). */
@@ -121,21 +115,9 @@ namespace Concerns
         Derived &setRelation(const QString &relation, std::optional<Related> &&model);
 
         /*! Get all the loaded relations for the instance. */
-        inline
-#ifdef TINY_NO_INCOMPLETE_UNORDERED_MAP
-        const std::map<QString, RelationsType<AllRelations...>> &
-#else
-        const std::unordered_map<QString, RelationsType<AllRelations...>> &
-#endif
-        getRelations() const noexcept;
+        inline const RelationsContainer<AllRelations...> &getRelations() const noexcept;
         /*! Get all the loaded relations for the instance. */
-        inline
-#ifdef TINY_NO_INCOMPLETE_UNORDERED_MAP
-        std::map<QString, RelationsType<AllRelations...>> &
-#else
-        std::unordered_map<QString, RelationsType<AllRelations...>> &
-#endif
-        getRelations() noexcept;
+        inline RelationsContainer<AllRelations...> &getRelations() noexcept;
 
         /*! Unset all the loaded relations for the instance. */
         Derived &unsetRelations();
@@ -201,20 +183,9 @@ namespace Concerns
         getRelationshipFromMethod(const QString &relation);
 
         /*! Set the entire relations hash on the model. */
-        Derived &setRelations(
-#ifdef TINY_NO_INCOMPLETE_UNORDERED_MAP
-                const std::map<QString, RelationsType<AllRelations...>> &relations);
-#else
-                const std::unordered_map<QString,
-                                         RelationsType<AllRelations...>> &relations);
-#endif
+        Derived &setRelations(const RelationsContainer<AllRelations...> &relations);
         /*! Set the entire relations hash on the model. */
-        Derived &setRelations(
-#ifdef TINY_NO_INCOMPLETE_UNORDERED_MAP
-                std::map<QString, RelationsType<AllRelations...>> &&relations);
-#else
-                std::unordered_map<QString, RelationsType<AllRelations...>> &&relations);
-#endif
+        Derived &setRelations(RelationsContainer<AllRelations...> &&relations);
 
         /* Relationships factory methods */
         /*! Instantiate a new HasOne relationship. */
@@ -267,13 +238,8 @@ namespace Concerns
 
         /* The libstdc++ shipped with the GCC <12.1 doesn't allow an incomplete
            mapped_type (value) in the std::unordered_map. */
-#ifdef TINY_NO_INCOMPLETE_UNORDERED_MAP
         /*! The loaded relationships for the model. */
-        std::map<QString, RelationsType<AllRelations...>> m_relations;
-#else
-        /*! The loaded relationships for the model. */
-        std::unordered_map<QString, RelationsType<AllRelations...>> m_relations;
-#endif
+        RelationsContainer<AllRelations...> m_relations;
         /*! The relationships that should be touched on save. */
         QStringList u_touches;
         // CUR1 use sets instead of QStringList where appropriate silverqx
@@ -367,21 +333,12 @@ namespace Concerns
         QVector<WithItem> getLoadedRelationsWithoutPivot() const;
 
         /*! Replace relations in the m_relation. */
-        void replaceRelations(
-#ifdef TINY_NO_INCOMPLETE_UNORDERED_MAP
-                std::map<QString, RelationsType<AllRelations...>> &relations,
-#else
-                std::unordered_map<QString, RelationsType<AllRelations...>> &relations,
-#endif
-                const QVector<WithItem> &onlyRelations);
+        void replaceRelations(RelationsContainer<AllRelations...> &relations,
+                              const QVector<WithItem> &onlyRelations);
 
         /* Serialization - Relations */
         /*! Get an map of all serializable relations. */
-#ifdef TINY_NO_INCOMPLETE_UNORDERED_MAP
-        inline const std::map<QString, RelationsType<AllRelations...>> &
-#else
-        inline const std::unordered_map<QString, RelationsType<AllRelations...>> &
-#endif
+        inline const RelationsContainer<AllRelations...> &
         getSerializableRelations() const;
 
         /*! Create and visit the serialize relation store. */
@@ -573,22 +530,14 @@ namespace Concerns
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
-#ifdef TINY_NO_INCOMPLETE_UNORDERED_MAP
-    const std::map<QString, RelationsType<AllRelations...>> &
-#else
-    const std::unordered_map<QString, RelationsType<AllRelations...>> &
-#endif
+    const RelationsContainer<AllRelations...> &
     HasRelationships<Derived, AllRelations...>::getRelations() const noexcept
     {
         return m_relations;
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
-#ifdef TINY_NO_INCOMPLETE_UNORDERED_MAP
-    std::map<QString, RelationsType<AllRelations...>> &
-#else
-    std::unordered_map<QString, RelationsType<AllRelations...>> &
-#endif
+    RelationsContainer<AllRelations...> &
     HasRelationships<Derived, AllRelations...>::getRelations() noexcept
     {
         return m_relations;
@@ -845,11 +794,7 @@ namespace Concerns
     template<typename Derived, AllRelationsConcept ...AllRelations>
     Derived &
     HasRelationships<Derived, AllRelations...>::setRelations(
-#ifdef TINY_NO_INCOMPLETE_UNORDERED_MAP
-            const std::map<QString, RelationsType<AllRelations...>> &relations)
-#else
-            const std::unordered_map<QString, RelationsType<AllRelations...>> &relations)
-#endif
+            const RelationsContainer<AllRelations...> &relations)
     {
         m_relations = relations;
 
@@ -859,11 +804,7 @@ namespace Concerns
     template<typename Derived, AllRelationsConcept ...AllRelations>
     Derived &
     HasRelationships<Derived, AllRelations...>::setRelations(
-#ifdef TINY_NO_INCOMPLETE_UNORDERED_MAP
-            std::map<QString, RelationsType<AllRelations...>> &&relations)
-#else
-            std::unordered_map<QString, RelationsType<AllRelations...>> &&relations)
-#endif
+            RelationsContainer<AllRelations...> &&relations)
     {
         m_relations = std::move(relations);
 
@@ -1347,11 +1288,7 @@ namespace Concerns
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     void HasRelationships<Derived, AllRelations...>::replaceRelations(
-#ifdef TINY_NO_INCOMPLETE_UNORDERED_MAP
-            std::map<QString, RelationsType<AllRelations...>> &relations,
-#else
-            std::unordered_map<QString, RelationsType<AllRelations...>> &relations,
-#endif
+            RelationsContainer<AllRelations...> &relations,
             const QVector<WithItem> &onlyRelations)
     {
         /* Replace only relations which was passed to this method, leave other
@@ -1384,11 +1321,7 @@ namespace Concerns
     /* Serialization - Relations */
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
-#ifdef TINY_NO_INCOMPLETE_UNORDERED_MAP
-    const std::map<QString, RelationsType<AllRelations...>> &
-#else
-    const std::unordered_map<QString, RelationsType<AllRelations...>> &
-#endif
+    const RelationsContainer<AllRelations...> &
     HasRelationships<Derived, AllRelations...>::getSerializableRelations() const
     {
         // FEATURE HidesAttributes silverqx

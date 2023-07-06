@@ -7,6 +7,15 @@ TINY_SYSTEM_HEADER
 
 #include <optional>
 
+#include "orm/config.hpp" // IWYU pragma: keep
+
+#ifdef TINY_NO_INCOMPLETE_UNORDERED_MAP
+#  include <map>
+ Leaving only for reference, the unordered_map is included in the modelscollection.hpp
+#else
+#  include <unordered_map>
+#endif
+
 #include "orm/macros/export.hpp"
 #include "orm/ormtypes.hpp" // IWYU pragma: export
 #include "orm/tiny/tinyconcepts.hpp" // IWYU pragma: keep
@@ -47,6 +56,15 @@ namespace Types
     using RelationsType = std::variant<std::monostate,
                                        ModelsCollection<AllRelations>...,
                                        std::optional<AllRelations>...>;
+
+#ifdef TINY_NO_INCOMPLETE_UNORDERED_MAP
+    template<AllRelationsConcept ...AllRelations>
+    using RelationsContainer = std::map<QString, RelationsType<AllRelations...>>;
+#else
+    template<AllRelationsConcept ...AllRelations>
+    using RelationsContainer = std::unordered_map<QString,
+                                                  RelationsType<AllRelations...>>;
+#endif
 
     // TODO pretty print in the debugger silverqx
     /*! Attribute item used in ORM models. */
