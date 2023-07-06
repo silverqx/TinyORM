@@ -40,7 +40,7 @@ namespace Types
 
     /*! Alias for the ModelsCollection. */
     template<typename Model>
-    using ModelsCollection = Tiny::Types::ModelsCollection<Model>;
+    using ModelsCollection = Types::ModelsCollection<Model>;
 
     /*! The type in which the relationships are stored. */
     template<AllRelationsConcept ...AllRelations>
@@ -194,7 +194,7 @@ namespace Concerns
 } // namespace Tiny
 
     /*! Alias for the Orm::Tiny::One, shortcut alias. */
-    using One = Orm::Tiny::One;
+    using One = Tiny::One;
 
 } // namespace Orm
 
