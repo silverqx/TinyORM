@@ -49,6 +49,7 @@ namespace Orm::Tiny
     concept SameDerivedCollectionModel = DerivedCollectionModel<T> &&
                                          DerivedCollectionModel<U> &&
                                          std::same_as<std::remove_pointer_t<T>, U>;
+    /* Serialization */
 
     struct AttributeItem;
 
