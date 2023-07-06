@@ -721,7 +721,7 @@ namespace Concerns
         const auto serializableRelations = getSerializableRelations();
 
         C attributes;
-        if constexpr (std::is_same_v<C, QVector<AttributeItem>>)
+        if constexpr (HasReserveMethod<C>)
             attributes.reserve(static_cast<QVector<AttributeItem>::size_type>(
                                    serializableRelations.size()));
 

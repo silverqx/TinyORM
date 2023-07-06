@@ -2134,7 +2134,7 @@ namespace Orm::Tiny::Concerns
         }
 
         C serializableAttributes;
-        if constexpr (std::is_same_v<C, QVector<AttributeItem>>)
+        if constexpr (HasReserveMethod<C>)
             serializableAttributes.reserve(attributes.size());
 
         // Get visible attributes only
