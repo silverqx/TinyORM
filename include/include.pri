@@ -122,6 +122,7 @@ headersList += \
         $$PWD/orm/tiny/concerns/hasrelationships.hpp \
         $$PWD/orm/tiny/concerns/hasrelationstore.hpp \
         $$PWD/orm/tiny/concerns/hastimestamps.hpp \
+        $$PWD/orm/tiny/concerns/hidesattributes.hpp \
         $$PWD/orm/tiny/concerns/queriesrelationships.hpp \
         $$PWD/orm/tiny/exceptions/massassignmenterror.hpp \
         $$PWD/orm/tiny/exceptions/modelnotfounderror.hpp \

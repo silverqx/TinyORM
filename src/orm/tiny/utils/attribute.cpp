@@ -16,6 +16,16 @@ namespace Orm::Tiny::Utils
 
 /* public */
 
+std::set<QString> Attribute::keys(const QVector<AttributeItem> &attributes)
+{
+    std::set<QString> keys;
+
+    for (const auto &attribute : attributes)
+        keys.emplace(attribute.key);
+
+    return keys;
+}
+
 QVariantMap Attribute::convertVectorToMap(const QVector<AttributeItem> &attributes)
 {
     QVariantMap result;

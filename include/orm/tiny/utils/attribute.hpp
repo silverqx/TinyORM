@@ -5,8 +5,11 @@
 #include "orm/macros/systemheader.hpp"
 TINY_SYSTEM_HEADER
 
+#include <set>
 #include <unordered_set>
 
+#include <range/v3/algorithm/set_algorithm.hpp>
+#include <range/v3/iterator/insert_iterators.hpp>
 #include <range/v3/range/conversion.hpp>
 #include <range/v3/view/filter.hpp>
 
@@ -27,6 +30,15 @@ namespace Orm::Tiny::Utils
         Attribute() = delete;
         /*! Deleted destructor. */
         ~Attribute() = delete;
+
+        /*! Get all keys from attributes vector. */
+        static std::set<QString> keys(const QVector<AttributeItem> &attributes);
+        /*! Get all keys from attributes map. */
+        inline static QList<QVariantMap::key_type> keys(const QVariantMap &attributes);
+        /*! Get all keys from relations map. */
+        template<AllRelationsConcept ...AllRelations>
+        static std::set<typename RelationsContainer<AllRelations...>::key_type>
+        keys(const RelationsContainer<AllRelations...> &relations);
 
         /*! Convert a AttributeItem QVector to QVariantMap. */
         static QVariantMap
@@ -97,6 +109,23 @@ namespace Orm::Tiny::Utils
     };
 
     /* public */
+
+    QList<QVariantMap::key_type> Attribute::keys(const QVariantMap &attributes)
+    {
+        return attributes.keys();
+    }
+
+    template<AllRelationsConcept ...AllRelations>
+    std::set<typename RelationsContainer<AllRelations...>::key_type>
+    Attribute::keys(const RelationsContainer<AllRelations...> &relations)
+    {
+        std::set<typename RelationsContainer<AllRelations...>::key_type> keys;
+
+        for (const auto &relation : relations)
+            keys.emplace(relation.first);
+
+        return keys;
+    }
 
     template<typename Model>
     QVector<AttributeItem>

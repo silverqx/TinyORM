@@ -52,6 +52,8 @@ namespace Concerns
         // To access eagerLoadRelationWithVisitor()
         friend TinyBuilder<Derived>;
 
+        /*! Alias for the attribute utils. */
+        using AttributeUtils = Orm::Tiny::Utils::Attribute;
         /*! Alias for the string utils. */
         using StringUtils = Orm::Utils::String;
         /*! Alias for the type utils. */
@@ -226,6 +228,10 @@ namespace Concerns
         template<typename Related>
         QString pivotTableName() const;
 
+        /* Serialization - Relations */
+        /*! Get a map of all serializable relations (visible/hidden). */
+        RelationsContainer<AllRelations...> getSerializableRelations() const;
+
         /* Others */
         /*! Compare the u_relations hash (size and keys only). */
         static bool compareURelations(
@@ -337,10 +343,6 @@ namespace Concerns
                               const QVector<WithItem> &onlyRelations);
 
         /* Serialization - Relations */
-        /*! Get an map of all serializable relations. */
-        inline const RelationsContainer<AllRelations...> &
-        getSerializableRelations() const;
-
         /*! Create and visit the serialize relation store. */
         template<SerializedAttributes C>
         void serializeRelationWithVisitor(
@@ -371,6 +373,19 @@ namespace Concerns
         inline static void
         insertSerializedRelation(QVector<AttributeItem> &attributes, QString &&relation,
                                  QVariant &&relationSerialized);
+
+        /* Serialization - HidesAttributes */
+        /*! Get a relations map of visible serializable relations. */
+        static RelationsContainer<AllRelations...>
+        getSerializableVisibleRelations(
+                const RelationsContainer<AllRelations...> &relations,
+                const std::set<QString> &visible);
+
+        /*! Get a relations map without hidden relation attributes. */
+        static RelationsContainer<AllRelations...>
+        removeSerializableHiddenRelations(
+                RelationsContainer<AllRelations...> &&relations,
+                const std::set<QString> &hidden);
 
         /* Static cast this to a child's instance type (CRTP) */
         TINY_CRTP_MODEL_WITH_BASE_DECLARATIONS
@@ -703,7 +718,7 @@ namespace Concerns
     template<SerializedAttributes C, typename PivotType>
     C HasRelationships<Derived, AllRelations...>::serializeRelations() const
     {
-        const auto &serializableRelations = getSerializableRelations();
+        const auto serializableRelations = getSerializableRelations();
 
         C attributes;
         if constexpr (std::is_same_v<C, QVector<AttributeItem>>)
@@ -927,6 +942,26 @@ namespace Concerns
         segments.sort(Qt::CaseInsensitive);
 
         return segments.join(UNDERSCORE).toLower();
+    }
+
+    /* Serialization - Relations */
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    RelationsContainer<AllRelations...>
+    HasRelationships<Derived, AllRelations...>::getSerializableRelations() const
+    {
+        const auto &visible   = basemodel().getUserVisible();
+        const auto &hidden    = basemodel().getUserHidden();
+        const auto &relations = getRelations();
+
+        // Nothing to do, the visible and hidden attributes are not defined
+        if (visible.empty() && hidden.empty())
+            return relations;
+
+        // Pass the visible and hidden down to avoid double obtaining
+        return removeSerializableHiddenRelations(
+                    getSerializableVisibleRelations(relations, visible),
+                    hidden);
     }
 
     /* Others */
@@ -1321,14 +1356,6 @@ namespace Concerns
     /* Serialization - Relations */
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
-    const RelationsContainer<AllRelations...> &
-    HasRelationships<Derived, AllRelations...>::getSerializableRelations() const
-    {
-        // FEATURE HidesAttributes silverqx
-        return model().getRelations();
-    }
-
-    template<typename Derived, AllRelationsConcept ...AllRelations>
     template<SerializedAttributes C>
     void HasRelationships<Derived, AllRelations...>::serializeRelationWithVisitor(
             const QString &relation, const RelationsType<AllRelations...> &models,
@@ -1432,6 +1459,66 @@ namespace Concerns
         attributes.emplaceBack(std::move(relation),
                                std::move(relationSerialized));
 #endif
+    }
+
+    /* Serialization - HidesAttributes */
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    RelationsContainer<AllRelations...>
+    HasRelationships<Derived, AllRelations...>::getSerializableVisibleRelations(
+            const RelationsContainer<AllRelations...> &relations,
+            const std::set<QString> &visible)
+    {
+        // Nothing to do
+        if (visible.empty())
+            return relations;
+
+        RelationsContainerType serializableRelations;
+        if constexpr (HasReserveMethod<RelationsContainerType>)
+            serializableRelations.reserve(relations.size());
+
+        // Get visible relations only
+        /* Compute visible keys on relations map, the intersection is needed to compute
+           only keys that really exists. */
+        std::set<QString> visibleKeys;
+        ranges::set_intersection(
+                    AttributeUtils::keys<AllRelations...>(relations), visible,
+                    ranges::inserter(visibleKeys, visibleKeys.cend()));
+
+        for (const auto &[key, value] : relations)
+            if (visibleKeys.contains(key))
+                serializableRelations.emplace(key, value);
+
+        return serializableRelations;
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    RelationsContainer<AllRelations...>
+    HasRelationships<Derived, AllRelations...>::removeSerializableHiddenRelations(
+            RelationsContainer<AllRelations...> &&relations,
+            const std::set<QString> &hidden)
+    {
+        // Nothing to do
+        if (hidden.empty())
+            return std::move(relations);
+
+        RelationsContainer<AllRelations...> serializableRelations;
+        serializableRelations.reserve(relations.size());
+
+        /* Remove hidden relations, from the map container returned by
+           the getSerializableVisibleRelations()! */
+        /* Compute hidden keys on relations map, the intersection is needed to compute
+           only keys that really exists. */
+        std::set<QString> hiddenKeys;
+        ranges::set_intersection(
+                    AttributeUtils::keys<AllRelations...>(relations), hidden,
+                    ranges::inserter(hiddenKeys, hiddenKeys.cend()));
+
+        for (auto &&[key, value] : relations)
+            if (!hiddenKeys.contains(key))
+                serializableRelations.emplace(std::move(key), std::move(value)); // try_emplace() not needed
+
+        return serializableRelations;
     }
 
     /* Static cast this to a child's instance type (CRTP) */

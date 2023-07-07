@@ -325,6 +325,12 @@ namespace Orm::Tiny::Concerns
         /*! Get an attributes vector of all vectorable attributes. */
         inline QVector<AttributeItem> getVectorableAttributes() const;
 
+        /*! Get an attributes map/vector of serializable attributes (visible/hidden). */
+        template<SerializedAttributes C>
+        static C getSerializableAttributes(const QVector<AttributeItem> &attributes,
+                                           const std::set<QString> &visible,
+                                           const std::set<QString> &hidden);
+
         /*! Add the date attributes to the attributes map. */
         void addDateAttributesToMap(QVariantMap &attributes) const;
         /*! Add the date attributes to the attributes vector. */
@@ -432,6 +438,22 @@ namespace Orm::Tiny::Concerns
         /*! Cast the given attribute (used in serialization). */
         void castAttributeForSerialization(QVariant &value, const QString &key,
                                            const CastItem &castItem) const;
+
+        /* Serialization - HidesAttributes */
+        /*! Get an attributes map/vector of visible serializable attributes. */
+        template<SerializedAttributes C>
+        static C
+        getSerializableVisibleAttributes(const QVector<AttributeItem> &attributes,
+                                         const std::set<QString> &visible);
+
+        /*! Get an attributes map without hidden attributes. */
+        static QVariantMap
+        removeSerializableHiddenAttributes(QVariantMap &&attributes,
+                                           const std::set<QString> &hidden);
+        /*! Get an attributes vector without hidden attributes. */
+        static QVector<AttributeItem>
+        removeSerializableHiddenAttributes(QVector<AttributeItem> &&attributes,
+                                           const std::set<QString> &hidden);
 
         /* Others */
         /* Static cast this to a child's instance type (CRTP) */
@@ -1183,7 +1205,14 @@ namespace Orm::Tiny::Concerns
     HasAttributes<Derived, AllRelations...>::attributesToVector() const
     {
         auto attributes = getVectorableAttributes();
-        const auto &attributesHash = getAttributesHash();
+        /* We need to recompute the attributesHash because of visible/hidden,
+           it wouldn't be necessary to recompute it if visible/hidden attributes are
+           empty but the problem is a reference. I'm not going to do a static variable
+           trick for this reference. */
+        std::unordered_map<QString, AttributesSizeType> attributesHash;
+        attributesHash.reserve(static_cast<decltype (attributesHash)::size_type>(
+                                   attributes.size()));
+        rehashAttributePositions(attributes, attributesHash);
 
         /* If an attribute is a date, we will cast it to a string after converting it
            to a QDateTime instance. This is so we will get some consistent
@@ -1780,16 +1809,40 @@ namespace Orm::Tiny::Concerns
     QVariantMap
     HasAttributes<Derived, AllRelations...>::getMappableAttributes() const
     {
-        // FEATURE HidesAttributes silverqx
-        return AttributeUtils::convertVectorToMap(getAttributes());
+        return getSerializableAttributes<QVariantMap>(
+                    getAttributes(), basemodel().getUserVisible(),
+                                     basemodel().getUserHidden());
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     QVector<AttributeItem>
     HasAttributes<Derived, AllRelations...>::getVectorableAttributes() const
     {
-        // FEATURE HidesAttributes silverqx
-        return getAttributes();
+        return getSerializableAttributes<QVector<AttributeItem>>(
+                    getAttributes(), basemodel().getUserVisible(),
+                                     basemodel().getUserHidden());
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    template<SerializedAttributes C>
+    C HasAttributes<Derived, AllRelations...>::getSerializableAttributes(
+            const QVector<AttributeItem> &attributes, const std::set<QString> &visible,
+            const std::set<QString> &hidden)
+    {
+        // Nothing to do, the visible and hidden attributes are not defined
+        if (visible.empty() && hidden.empty()) {
+            if constexpr (std::is_same_v<C, QVariantMap>)
+                return AttributeUtils::convertVectorToMap(attributes);
+
+            // QVector<AttributeItem>
+            else
+                return attributes;
+        }
+
+        // Pass the visible and hidden down to avoid double obtaining
+        return removeSerializableHiddenAttributes(
+                    getSerializableVisibleAttributes<C>(attributes, visible),
+                    hidden);
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
@@ -2061,6 +2114,112 @@ namespace Orm::Tiny::Concerns
             else T_LIKELY
                 value = castedDate.template value<QDateTime>().toString(castModifier);
         }
+    }
+
+    /* Serialization - HidesAttributes */
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    template<SerializedAttributes C>
+    C HasAttributes<Derived, AllRelations...>::getSerializableVisibleAttributes(
+            const QVector<AttributeItem> &attributes, const std::set<QString> &visible)
+    {
+        // Nothing to do
+        if (visible.empty()) {
+            if constexpr (std::is_same_v<C, QVariantMap>)
+                return AttributeUtils::convertVectorToMap(attributes);
+
+            // QVector<AttributeItem>
+            else
+                return attributes;
+        }
+
+        C serializableAttributes;
+        if constexpr (std::is_same_v<C, QVector<AttributeItem>>)
+            serializableAttributes.reserve(attributes.size());
+
+        // Get visible attributes only
+        /* Compute visible keys on attributes map/vector, the intersection is needed
+           to compute only keys that really exists. */
+        std::set<QString> visibleKeys;
+        ranges::set_intersection(AttributeUtils::keys(attributes), visible,
+                                 ranges::inserter(visibleKeys, visibleKeys.cend()));
+
+        for (const auto &[key, value] : attributes)
+            if (visibleKeys.contains(key)) {
+                if constexpr (std::is_same_v<C, QVariantMap>)
+                    serializableAttributes.insert(key, value);
+
+                // QVector<AttributeItem>
+                else
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+                    serializableAttributes.emplaceBack(key, value);
+#else
+                    serializableAttributes.append({key, value});
+#endif
+            }
+
+        return serializableAttributes;
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    QVariantMap
+    HasAttributes<Derived, AllRelations...>::removeSerializableHiddenAttributes(
+            QVariantMap &&attributes, const std::set<QString> &hidden)
+    {
+        // Nothing to do
+        if (hidden.empty())
+            return std::move(attributes);
+
+        QVariantMap serializableAttributes;
+
+        /* Remove hidden attributes, from the map container returned by
+           the getSerializableVisibleAttributes()! */
+        /* Compute hidden keys on attributes map, the intersection is needed to compute
+           only keys that really exists. */
+        std::set<QString> hiddenKeys;
+        ranges::set_intersection(AttributeUtils::keys(attributes), hidden,
+                                 ranges::inserter(hiddenKeys, hiddenKeys.cend()));
+
+        for (auto it = attributes.constBegin();
+             it != attributes.constEnd(); ++it
+        )
+            if (const auto &key = it.key();
+                !hiddenKeys.contains(key)
+            )
+                serializableAttributes.insert(key, it.value());
+
+        return serializableAttributes;
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    QVector<AttributeItem>
+    HasAttributes<Derived, AllRelations...>::removeSerializableHiddenAttributes(
+            QVector<AttributeItem> &&attributes, const std::set<QString> &hidden)
+    {
+        // Nothing to do
+        if (hidden.empty())
+            return std::move(attributes);
+
+        QVector<AttributeItem> serializableAttributes;
+        serializableAttributes.reserve(attributes.size());
+
+        /* Remove hidden attributes, from the vector container returned by
+           the getSerializableVisibleAttributes()! */
+        /* Compute hidden keys on attributes vector, the intersection is needed
+           to compute only keys that really exists. */
+        std::set<QString> hiddenKeys;
+        ranges::set_intersection(AttributeUtils::keys(attributes), hidden,
+                                 ranges::inserter(hiddenKeys, hiddenKeys.cend()));
+
+        for (auto &&[key, value] : attributes)
+            if (!hiddenKeys.contains(key))
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+                serializableAttributes.emplaceBack(std::move(key), std::move(value));
+#else
+                serializableAttributes.append({std::move(key), std::move(value)});
+#endif
+
+        return serializableAttributes;
     }
 
     /* Others */

@@ -131,6 +131,7 @@ function(tinyorm_sources out_headers out_sources)
             tiny/concerns/hasrelationships.hpp
             tiny/concerns/hasrelationstore.hpp
             tiny/concerns/hastimestamps.hpp
+            tiny/concerns/hidesattributes.hpp
             tiny/concerns/queriesrelationships.hpp
             tiny/exceptions/massassignmenterror.hpp
             tiny/exceptions/modelnotfounderror.hpp

@@ -15,6 +15,7 @@ TINY_SYSTEM_HEADER
 #include "orm/tiny/concerns/hasattributes.hpp"
 #include "orm/tiny/concerns/hasrelationships.hpp"
 #include "orm/tiny/concerns/hastimestamps.hpp"
+#include "orm/tiny/concerns/hidesattributes.hpp"
 #include "orm/tiny/exceptions/massassignmenterror.hpp"
 #include "orm/tiny/macros/crtpmodel.hpp"
 #include "orm/tiny/modelproxies.hpp"
@@ -39,6 +40,7 @@ namespace Orm::Tiny
     template<typename Derived, AllRelationsConcept ...AllRelations>
     class Model : public Orm::Concerns::HasConnectionResolver,
                   public Concerns::HasAttributes<Derived, AllRelations...>,
+                  public Concerns::HidesAttributes<Derived, AllRelations...>,
                   public Concerns::GuardsAttributes<Derived, AllRelations...>,
                   public Concerns::HasRelationships<Derived, AllRelations...>,
                   public Concerns::HasTimestamps<Derived, AllRelations...>,
@@ -53,6 +55,8 @@ namespace Orm::Tiny
         friend Concerns::HasTimestamps<Derived, AllRelations...>;
         // To access getUserXx() methods
         friend Concerns::HasRelationships<Derived, AllRelations...>;
+        // To access getUserXx() methods
+        friend Concerns::HidesAttributes<Derived, AllRelations...>;
         // Used by QueriesRelationships::has()
         friend Concerns::QueriesRelationships<Derived>;
         // To access getUserRelations()
@@ -472,6 +476,16 @@ namespace Orm::Tiny
         inline static const QString &getUserCreatedAtColumn() noexcept;
         /*! Get the UPDATED_AT attribute from the Derived model. */
         inline static const QString &getUserUpdatedAtColumn() noexcept;
+
+        /* HidesAttributes */
+        /*! Get the u_visible attributes from the Derived model. */
+        inline std::set<QString> &getUserVisible() noexcept;
+        /*! Get the u_visible attributes from the Derived model. */
+        inline const std::set<QString> &getUserVisible() const noexcept;
+        /*! Get the u_hidden attributes from the Derived model. */
+        inline std::set<QString> &getUserHidden() noexcept;
+        /*! Get the u_hidden attributes from the Derived model. */
+        inline const std::set<QString> &getUserHidden() const noexcept;
 
         /* Serialization - Attributes */
         /*! Prepare a date for vector, map, or JSON serialization (calls Derived). */
@@ -1945,6 +1959,36 @@ namespace Orm::Tiny
     Model<Derived, AllRelations...>::getUserUpdatedAtColumn() noexcept
     {
         return Derived::UPDATED_AT();
+    }
+
+    /* HidesAttributes */
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    std::set<QString> &
+    Model<Derived, AllRelations...>::getUserVisible() noexcept
+    {
+        return Derived::u_visible;
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    const std::set<QString> &
+    Model<Derived, AllRelations...>::getUserVisible() const noexcept
+    {
+        return Derived::u_visible;
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    std::set<QString> &
+    Model<Derived, AllRelations...>::getUserHidden() noexcept
+    {
+        return Derived::u_hidden;
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    const std::set<QString> &
+    Model<Derived, AllRelations...>::getUserHidden() const noexcept
+    {
+        return Derived::u_hidden;
     }
 
     /* Serialization - Attributes */

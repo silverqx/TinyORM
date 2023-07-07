@@ -6,6 +6,7 @@ SUBDIRS = \
     collection_relations \
     model \
     model_conn_indep \
+    model_hidesattributes \
     model_qdatetime \
     model_relations \
     model_return_relation \
