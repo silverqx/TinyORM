@@ -363,11 +363,11 @@ namespace Concerns
         inline static void serializeRelation(QVariant &relationSerialized, // don't remove inline
                                              const std::optional<Related> &model);
 
-        /*! */
+        /*! Insert the serialized relation attributes to the final attributes map. */
         inline static void
         insertSerializedRelation(QVariantMap &attributes, const QString &relation,
                                  const QVariant &relationSerialized);
-        /*! */
+        /*! Emplace the serialized relation attributes to the final attributes vector. */
         inline static void
         insertSerializedRelation(QVector<AttributeItem> &attributes, QString &&relation,
                                  QVariant &&relationSerialized);
