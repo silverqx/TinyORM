@@ -227,9 +227,11 @@ private:
 //        {"decimal",  {CastType::Decimal, 2}},
 //    };
 
+    /* Serialization */
     /*! Indicates whether attributes are snake_cased during serialization. */
 //    inline static const bool u_snakeAttributes = false;
 
+    /* HidesAttributes */
     /*! The attributes that should be visible during serialization. */
 //    inline static std::set<QString> u_visible {
 //        ID, "user_id", NAME, SIZE_, "progress", NOTE, CREATED_AT(), UPDATED_AT(),
