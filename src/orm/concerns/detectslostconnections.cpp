@@ -44,6 +44,8 @@ bool DetectsLostConnections::causedByLostConnection(const QSqlError &e)
         QLatin1String("running with the --read-only option so it cannot execute this statement"),
         QLatin1String("The connection is broken and recovery is not possible. The connection is marked by the client driver as unrecoverable. No attempt was made to restore the connection."),
         QLatin1String("SQLSTATE[HY000] [2002] php_network_getaddresses: getaddrinfo failed: Try again"),
+        QLatin1String("SQLSTATE[HY000] [2002] php_network_getaddresses: getaddrinfo failed: Name or service not known"),
+        QLatin1String("SQLSTATE[HY000] [2002] php_network_getaddresses: getaddrinfo for"),
         QLatin1String("SQLSTATE[HY000]: General error: 7 SSL SYSCALL error: EOF detected"),
         QLatin1String("SQLSTATE[HY000] [2002] Connection timed out"),
         QLatin1String("SSL: Connection timed out"),
@@ -55,6 +57,14 @@ bool DetectsLostConnections::causedByLostConnection(const QSqlError &e)
         QLatin1String("SQLSTATE[HY000]: General error: 7 SSL SYSCALL error: No route to host"),
         QLatin1String("The client was disconnected by the server because of inactivity. See wait_timeout and interactive_timeout for configuring this behavior."),
         QLatin1String("SQLSTATE[08006] [7] could not translate host name"),
+        QLatin1String("TCP Provider: Error code 0x274C"),
+        QLatin1String("SQLSTATE[HY000] [2002] No such file or directory"),
+        QLatin1String("SSL: Operation timed out"),
+        QLatin1String("Reason: Server is in script upgrade mode. Only administrator can connect at this time."),
+        QLatin1String("Unknown $curl_error_code: 77"),
+        QLatin1String("SSL: Handshake timed out"),
+        QLatin1String("SQLSTATE[08006] [7] SSL error: sslv3 alert unexpected message"),
+        QLatin1String("SQLSTATE[08006] [7] unrecognized SSL error code:"),
     };
 
     return std::ranges::any_of(lostMessagesCache,
