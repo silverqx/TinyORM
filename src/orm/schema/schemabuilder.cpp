@@ -156,9 +156,15 @@ SchemaBuilder::withoutForeignKeyConstraints(const std::function<void()> &callbac
 {
     disableForeignKeyConstraints();
 
-    std::invoke(callback);
+    try {
+        std::invoke(callback);
 
-    enableForeignKeyConstraints();
+    } catch (...) {
+
+        enableForeignKeyConstraints();
+        // Re-throw
+        throw;
+    }
 }
 
 QStringList SchemaBuilder::getColumnListing(const QString &table) const
