@@ -2133,16 +2133,16 @@ namespace Orm::Tiny::Concerns
                 return attributes;
         }
 
-        C serializableAttributes;
-        if constexpr (HasReserveMethod<C>)
-            serializableAttributes.reserve(attributes.size());
-
         // Get visible attributes only
         /* Compute visible keys on attributes map/vector, the intersection is needed
            to compute only keys that really exists. */
         std::set<QString> visibleKeys;
         ranges::set_intersection(AttributeUtils::keys(attributes), visible,
                                  ranges::inserter(visibleKeys, visibleKeys.cend()));
+
+        C serializableAttributes;
+        if constexpr (HasReserveMethod<C>)
+            serializableAttributes.reserve(attributes.size());
 
         for (const auto &[key, value] : attributes)
             if (visibleKeys.contains(key)) {
@@ -2170,8 +2170,6 @@ namespace Orm::Tiny::Concerns
         if (hidden.empty())
             return std::move(attributes);
 
-        QVariantMap serializableAttributes;
-
         /* Remove hidden attributes, from the map container returned by
            the getSerializableVisibleAttributes()! */
         /* Compute hidden keys on attributes map, the intersection is needed to compute
@@ -2179,6 +2177,8 @@ namespace Orm::Tiny::Concerns
         std::set<QString> hiddenKeys;
         ranges::set_intersection(AttributeUtils::keys(attributes), hidden,
                                  ranges::inserter(hiddenKeys, hiddenKeys.cend()));
+
+        QVariantMap serializableAttributes;
 
         for (auto it = attributes.constBegin();
              it != attributes.constEnd(); ++it
@@ -2200,9 +2200,6 @@ namespace Orm::Tiny::Concerns
         if (hidden.empty())
             return std::move(attributes);
 
-        QVector<AttributeItem> serializableAttributes;
-        serializableAttributes.reserve(attributes.size());
-
         /* Remove hidden attributes, from the vector container returned by
            the getSerializableVisibleAttributes()! */
         /* Compute hidden keys on attributes vector, the intersection is needed
@@ -2210,6 +2207,9 @@ namespace Orm::Tiny::Concerns
         std::set<QString> hiddenKeys;
         ranges::set_intersection(AttributeUtils::keys(attributes), hidden,
                                  ranges::inserter(hiddenKeys, hiddenKeys.cend()));
+
+        QVector<AttributeItem> serializableAttributes;
+        serializableAttributes.reserve(attributes.size());
 
         for (auto &&[key, value] : attributes)
             if (!hiddenKeys.contains(key))

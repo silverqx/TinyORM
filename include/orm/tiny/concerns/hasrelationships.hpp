@@ -1473,10 +1473,6 @@ namespace Concerns
         if (visible.empty())
             return relations;
 
-        RelationsContainerType serializableRelations;
-        if constexpr (HasReserveMethod<RelationsContainerType>)
-            serializableRelations.reserve(relations.size());
-
         // Get visible relations only
         /* Compute visible keys on relations map, the intersection is needed to compute
            only keys that really exists. */
@@ -1484,6 +1480,10 @@ namespace Concerns
         ranges::set_intersection(
                     AttributeUtils::keys<AllRelations...>(relations), visible,
                     ranges::inserter(visibleKeys, visibleKeys.cend()));
+
+        RelationsContainerType serializableRelations;
+        if constexpr (HasReserveMethod<RelationsContainerType>)
+            serializableRelations.reserve(relations.size());
 
         for (const auto &[key, value] : relations)
             if (visibleKeys.contains(key))
@@ -1502,9 +1502,6 @@ namespace Concerns
         if (hidden.empty())
             return std::move(relations);
 
-        RelationsContainer<AllRelations...> serializableRelations;
-        serializableRelations.reserve(relations.size());
-
         /* Remove hidden relations, from the map container returned by
            the getSerializableVisibleRelations()! */
         /* Compute hidden keys on relations map, the intersection is needed to compute
@@ -1513,6 +1510,9 @@ namespace Concerns
         ranges::set_intersection(
                     AttributeUtils::keys<AllRelations...>(relations), hidden,
                     ranges::inserter(hiddenKeys, hiddenKeys.cend()));
+
+        RelationsContainer<AllRelations...> serializableRelations;
+        serializableRelations.reserve(relations.size());
 
         for (auto &&[key, value] : relations)
             if (!hiddenKeys.contains(key))
