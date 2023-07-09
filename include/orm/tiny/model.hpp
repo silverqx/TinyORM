@@ -461,10 +461,10 @@ namespace Orm::Tiny
                 typename Concerns::HasRelationships<Derived, AllRelations...>
                                  ::RelationVisitor;
 
-        /*! Get the u_fillable attributes from the Derived model. */
+        /*! Get the u_relations map from the Derived model. */
         inline const QHash<QString, RelationVisitorAlias> &
         getUserRelations() const noexcept;
-        /*! Get the u_fillable attributes from the Derived model. */
+        /*! Get the u_touches relation names to touch from the Derived model. */
         inline const QStringList &getUserTouches() const noexcept;
 
         /* HasTimestamps */
