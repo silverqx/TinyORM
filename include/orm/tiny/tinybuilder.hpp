@@ -463,9 +463,10 @@ namespace Orm::Tiny
            use the alias name instead. */
         const auto unqualifiedColumn = getQuery().stripTableForPluck(column);
 
-        /* If the model has a mutator for the requested column, we will spin through
-           the results and mutate the values so that the mutated version of these
-           columns are returned as you would expect from these Eloquent models. */
+        /* If the model has a mutator for the requested column or it's a datetime column,
+           we will spin through the results and mutate the values so that the mutated
+           version of these columns are returned as you would expect from these TinyORM
+           models. */
         if (!m_model.getDates().contains(unqualifiedColumn))
             return result;
 
@@ -494,9 +495,10 @@ namespace Orm::Tiny
            use the alias name instead. */
         const auto unqualifiedColumn = getQuery().stripTableForPluck(column);
 
-        /* If the model has a mutator for the requested column, we will spin through
-           the results and mutate the values so that the mutated version of these
-           columns are returned as you would expect from these Eloquent models. */
+        /* If the model has a mutator for the requested column or it's a datetime column,
+           we will spin through the results and mutate the values so that the mutated
+           version of these columns are returned as you would expect from these TinyORM
+           models. */
         if (!m_model.getDates().contains(unqualifiedColumn))
             return result;
 
