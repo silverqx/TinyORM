@@ -45,8 +45,8 @@ QString RelationNotFoundError::formatMessage(const QString &model,
 
     default:
         return QStringLiteral(
-                    "Call to undefined relationship '%1' (in the u_relation data "
-                    "member) on model '%2'.")
+                    "The relationship mapping '%1' doesn't exist in the u_relations map "
+                    "data member for the '%2' model.")
                 .arg(relation, model);
     }
 }
