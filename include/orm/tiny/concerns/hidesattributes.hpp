@@ -36,22 +36,22 @@ namespace Concerns
         /*! Get the visible attributes for the model. */
         inline const std::set<QString> &getVisible() const noexcept;
         /*! Set the visible attributes for the model. */
-        inline void setVisible(const std::set<QString> &visible);
+        inline Derived &setVisible(const std::set<QString> &visible);
 
         /*! Get the hidden attributes for the model. */
         inline const std::set<QString> &getHidden() const noexcept;
         /*! Set the hidden attributes for the model. */
-        inline void setHidden(const std::set<QString> &hidden);
+        inline Derived &setHidden(const std::set<QString> &hidden);
 
         /*! Clear the visible attributes for the model. */
-        inline void clearVisible() noexcept;
+        inline Derived &clearVisible() noexcept;
         /*! Clear the hidden attributes for the model. */
-        inline void clearHidden() noexcept;
+        inline Derived &clearHidden() noexcept;
 
         /*! Make the given, typically hidden, attributes visible. */
-        inline void makeVisible(const std::set<QString> &attributes);
+        inline Derived &makeVisible(const std::set<QString> &attributes);
         /*! Make the given, typically visible, attributes hidden. */
-        inline void makeHidden(const std::set<QString> &attributes);
+        inline Derived &makeHidden(const std::set<QString> &attributes);
 
     private:
         /* Static cast this to a child's instance type (CRTP) */
@@ -75,10 +75,13 @@ namespace Concerns
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
-    void HidesAttributes<Derived, AllRelations...>::setVisible(
+    Derived &
+    HidesAttributes<Derived, AllRelations...>::setVisible(
             const std::set<QString> &visible)
     {
         basemodel().getUserVisible() = visible;
+
+        return model();
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
@@ -89,26 +92,36 @@ namespace Concerns
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
-    void HidesAttributes<Derived, AllRelations...>::setHidden(
+    Derived &
+    HidesAttributes<Derived, AllRelations...>::setHidden(
             const std::set<QString> &hidden)
     {
         basemodel().getUserHidden() = hidden;
+
+        return model();
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
-    void HidesAttributes<Derived, AllRelations...>::clearVisible() noexcept
+    Derived &
+    HidesAttributes<Derived, AllRelations...>::clearVisible() noexcept
     {
         basemodel().getUserVisible().clear();
+
+        return model();
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
-    void HidesAttributes<Derived, AllRelations...>::clearHidden() noexcept
+    Derived &
+    HidesAttributes<Derived, AllRelations...>::clearHidden() noexcept
     {
         basemodel().getUserHidden().clear();
+
+        return model();
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
-    void HidesAttributes<Derived, AllRelations...>::makeVisible(
+    Derived &
+    HidesAttributes<Derived, AllRelations...>::makeVisible(
             const std::set<QString> &attributes)
     {
         // First, remove attributes from the u_hidden set
@@ -124,10 +137,13 @@ namespace Concerns
             !visible.empty()
         )
             std::ranges::copy(attributes, std::inserter(visible, visible.end()));
+
+        return model();
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
-    void HidesAttributes<Derived, AllRelations...>::makeHidden(
+    Derived &
+    HidesAttributes<Derived, AllRelations...>::makeHidden(
             const std::set<QString> &attributes)
     {
         /* Removing attributes from u_visible is not needed because u_hidden overrides
@@ -135,6 +151,8 @@ namespace Concerns
         auto &hidden = basemodel().getUserHidden();
 
         std::ranges::copy(attributes, std::inserter(hidden, hidden.end()));
+
+        return model();
     }
 
     /* private */
