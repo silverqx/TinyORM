@@ -40,17 +40,17 @@ namespace Orm::Tiny::Utils
         static std::set<typename RelationsContainer<AllRelations...>::key_type>
         keys(const RelationsContainer<AllRelations...> &relations);
 
-        /*! Convert a AttributeItem QVector to QVariantMap. */
+        /*! Convert a AttributeItem QVector to the QVariantMap. */
         static QVariantMap
         convertVectorToMap(const QVector<AttributeItem> &attributes);
         /*! Convert a vector of AttributeItem QVectors to the vector of QVariantMaps. */
         static QVector<QVariantMap>
         convertVectorsToMaps(const QVector<QVector<AttributeItem>> &attributesVector);
 
-        /*! Convert a AttributeItem QVector to UpdateItem QVector. */
+        /*! Convert a AttributeItem QVector to the UpdateItem QVector. */
         static QVector<UpdateItem>
         convertVectorToUpdateItem(const QVector<AttributeItem> &attributes);
-        /*! Convert a AttributeItem QVector to UpdateItem QVector. */
+        /*! Convert a AttributeItem QVector to the UpdateItem QVector. */
         static QVector<UpdateItem>
         convertVectorToUpdateItem(QVector<AttributeItem> &&attributes);
 
