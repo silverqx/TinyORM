@@ -252,7 +252,8 @@ void tst_Model_HidesAttributes::toVector_WithVisibleAndHidden() const
 }
 
 void
-tst_Model_HidesAttributes::toMap_WithVisible_WithRelations_HasOne_HasMany_BelongsTo() const
+tst_Model_HidesAttributes::toMap_WithVisible_WithRelations_HasOne_HasMany_BelongsTo()
+const
 {
     auto torrent = Torrent::with({"torrentPeer", "user", "torrentFiles"})->find(7);
     QVERIFY(torrent);
@@ -659,7 +660,8 @@ tst_Model_HidesAttributes::toMap_WithHidden_WithRelations_BelongsToMany_UserRole
 }
 
 void
-tst_Model_HidesAttributes::toVector_WithHidden_WithRelations_BelongsToMany_UserRoles() const
+tst_Model_HidesAttributes::toVector_WithHidden_WithRelations_BelongsToMany_UserRoles()
+const
 {
     auto user = User::with("roles")->find(1);
     QVERIFY(user);
