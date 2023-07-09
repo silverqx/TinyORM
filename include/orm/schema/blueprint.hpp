@@ -56,46 +56,46 @@ namespace Grammars
         QVector<QString>
         toSql(const DatabaseConnection &connection, const SchemaGrammar &grammar);
 
-        /*! Indicate that the table needs to be created. */
+        /*! Indicates that the table needs to be created. */
         const BasicCommand &create();
         /*! Add the columns from the callback after the given column. */
         void after(const QString &column,
                    const std::function<void(Blueprint &)> &callback);
-        /*! Indicate that the table should be dropped. */
+        /*! Indicates that the table should be dropped. */
         const BasicCommand &drop();
-        /*! Indicate that the table should be dropped if it exists. */
+        /*! Indicates that the table should be dropped if it exists. */
         const BasicCommand &dropIfExists();
 
-        /*! Indicate that the given columns should be dropped. */
+        /*! Indicates that the given columns should be dropped. */
         const DropColumnsCommand &dropColumns(const QVector<QString> &columns);
-        /*! Indicate that the given columns should be dropped. */
+        /*! Indicates that the given columns should be dropped. */
         template<QStringConcept ...Args>
         const DropColumnsCommand &dropColumns(Args &&...columns);
-        /*! Indicate that the given columns should be dropped. */
+        /*! Indicates that the given columns should be dropped. */
         const DropColumnsCommand &dropColumn(const QString &column);
 
-        /*! Indicate that the timestamp columns should be dropped. */
+        /*! Indicates that the timestamp columns should be dropped. */
         void dropTimestamps();
-        /*! Indicate that the timestamp columns should be dropped. */
+        /*! Indicates that the timestamp columns should be dropped. */
         inline void dropTimestampsTz();
-        /*! Indicate that the datetime columns should be dropped. */
+        /*! Indicates that the datetime columns should be dropped. */
         inline void dropDatetimes();
 
-        /*! Indicate that the soft delete column should be dropped. */
+        /*! Indicates that the soft delete column should be dropped. */
         inline void dropSoftDeletes(const QString &column = Orm::Constants::DELETED_AT);
-        /*! Indicate that the soft delete column should be dropped. */
+        /*! Indicates that the soft delete column should be dropped. */
         inline void dropSoftDeletesTz(const QString &column = Orm::Constants::DELETED_AT);
-        /*! Indicate that the soft delete column should be dropped. */
+        /*! Indicates that the soft delete column should be dropped. */
         inline void
         dropSoftDeletesDatetime(const QString &column = Orm::Constants::DELETED_AT);
 
-        /*! Indicate that the remember token column should be dropped. */
+        /*! Indicates that the remember token column should be dropped. */
         inline void dropRememberToken();
 
         /*! Rename the table to a given name. */
         const RenameCommand &rename(const QString &to);
 
-        /*! Indicate that the given columns should be renamed. */
+        /*! Indicates that the given columns should be renamed. */
         const RenameCommand &renameColumn(const QString &from, const QString &to);
 
         /*! Specify the primary key(s) for the table. */
@@ -186,7 +186,7 @@ namespace Grammars
         template<typename = void>
         const IndexCommand &dropForeign(const QString &indexName);
 
-        /*! Indicate that the given indexes should be renamed. */
+        /*! Indicates that the given indexes should be renamed. */
         const RenameCommand &renameIndex(const QString &from, const QString &to);
 
         /*! Create a new auto-incrementing big integer (8-byte) column on the table. */
@@ -430,7 +430,7 @@ namespace Grammars
         inline bool isTemporary() const noexcept;
 
         /* Others */
-        /*! Indicate that the table needs to be temporary. */
+        /*! Indicates that the table needs to be temporary. */
         inline void temporary() noexcept;
 
         /*! Set the default string length for migrations. */

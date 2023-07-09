@@ -48,15 +48,15 @@ namespace Orm::SchemaNs
         ForeignKeyDefinitionReference &notValid(bool value = true);
 
         /* Shortcuts */
-        /*! Indicate that updates should cascade. */
+        /*! Indicates that updates should cascade. */
         ForeignKeyDefinitionReference &cascadeOnUpdate();
-        /*! Indicate that updates should be restricted. */
+        /*! Indicates that updates should be restricted. */
         ForeignKeyDefinitionReference &restrictOnUpdate();
-        /*! Indicate that deletes should cascade. */
+        /*! Indicates that deletes should cascade. */
         ForeignKeyDefinitionReference &cascadeOnDelete();
-        /*! Indicate that deletes should be restricted. */
+        /*! Indicates that deletes should be restricted. */
         ForeignKeyDefinitionReference &restrictOnDelete();
-        /*! Indicate that deletes should set the foreign key value to null. */
+        /*! Indicates that deletes should set the foreign key value to null. */
         ForeignKeyDefinitionReference &nullOnDelete();
 
     private:

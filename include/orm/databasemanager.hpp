@@ -254,7 +254,7 @@ namespace Query
         /* Records were modified */
         /*! Check if any records have been modified. */
         bool getRecordsHaveBeenModified(const QString &connection = "");
-        /*! Indicate if any records have been modified. */
+        /*! Indicates if any records have been modified. */
         void recordsHaveBeenModified(bool value = true,
                                      const QString &connection = "");
         /*! Reset the record modification state. */

@@ -237,7 +237,7 @@ namespace Orm
 
         /*! Check if any records have been modified. */
         inline bool getRecordsHaveBeenModified() const;
-        /*! Indicate if any records have been modified. */
+        /*! Indicates if any records have been modified. */
         inline void recordsHaveBeenModified(bool value = true);
         /*! Reset the record modification state. */
         inline void forgetRecordModificationState();
