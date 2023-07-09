@@ -988,7 +988,10 @@ namespace Concerns
     HasRelationships<Derived, AllRelations...>::validateUserRelation(
             const QString &name, const RelationFrom from) const
     {
-        if (!basemodel().getUserRelations().contains(name))
+        if (basemodel().getUserRelations().contains(name)) T_LIKELY
+            return;
+
+        else T_UNLIKELY
             throw Exceptions::RelationNotFoundError(
                     TypeUtils::classPureBasename<Derived>(), name, from);
     }
