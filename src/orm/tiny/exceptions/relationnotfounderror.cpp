@@ -24,7 +24,7 @@ QString RelationNotFoundError::formatMessage(const QString &model,
 {
     /* I was confused when I looked at this method after some time, but it's correct,
        it shows two kind of messages, one for the belongsTo/belongsToMany and one
-       in the relationship was not found in the u_relation data member. So the default
+       in the relationship was not found in the u_relations data member. So the default
        section is ok and is called by the validateUserRelation() without the second
        argument (UNDEFINED). */
     static const auto belongsToMessage =

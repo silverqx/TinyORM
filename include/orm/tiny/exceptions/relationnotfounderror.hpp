@@ -13,7 +13,7 @@ namespace Orm::Tiny::Exceptions
 {
 
     /*! Relation not found exception, check whether the relation was defined
-        in the u_relation data member, called from Model::validateUserRelation(). */
+        in the u_relations data member, called from Model::validateUserRelation(). */
     class SHAREDLIB_EXPORT RelationNotFoundError : public Orm::Exceptions::RuntimeError // clazy:exclude=copyable-polymorphic
     {
     public:
