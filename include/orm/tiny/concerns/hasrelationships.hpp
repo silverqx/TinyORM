@@ -1042,7 +1042,7 @@ namespace Concerns
     HasRelationships<Derived, AllRelations...>::getRelationshipFromMethodWithVisitor(
             const QString &relation) const
     {
-        // Throw excpetion if a relation is not defined
+        // Throw exception if a relation is not defined
         validateUserRelation(relation);
 
         // Save model/s to the store to avoid passing variables to the visitor
@@ -1109,7 +1109,7 @@ namespace Concerns
             const WithItem &relation, const TinyBuilder<Derived> &builder,
             ModelsCollection<CollectionModel> &models) const
     {
-        // Throw excpetion if a relation is not defined
+        // Throw exception if a relation is not defined
         validateUserRelation(relation.name);
 
         /* Save the needed variables to the store to avoid passing variables
@@ -1130,7 +1130,7 @@ namespace Concerns
         // Can't be a nested relation, see a comment in TinyBuilder::parseWithRelations()
         Q_ASSERT(!relation.contains(DOT));
 
-        // Throw excpetion if a relation is not defined
+        // Throw exception if a relation is not defined
         validateUserRelation(relation);
 
         // Create the store and visit relation
@@ -1161,7 +1161,7 @@ namespace Concerns
         if (variantIndex == 0)
             return true;
 
-        // Throw excpetion if a relation is not defined
+        // Throw exception if a relation is not defined
         validateUserRelation(relation);
 
         // Save model/s to the store to avoid passing variables to the visitor
@@ -1229,7 +1229,7 @@ namespace Concerns
     HasRelationships<Derived, AllRelations...>::touchOwnersWithVisitor(
             const QString &relation) const
     {
-        // Throw excpetion if a relation is not defined
+        // Throw exception if a relation is not defined
         validateUserRelation(relation);
 
         // Save model/s to the store to avoid passing variables to the visitor
@@ -1282,7 +1282,7 @@ namespace Concerns
                 Concerns::QueriesRelationshipsCallback<Related> &)> &callback,
             const std::optional<std::reference_wrapper<QStringList>> relations) const
     {
-        // Throw excpetion if a relation is not defined
+        // Throw exception if a relation is not defined
         validateUserRelation(relation);
 
         // Save model/s to the store to avoid passing variables to the visitor
