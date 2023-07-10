@@ -66,7 +66,7 @@ namespace Orm::Tiny::Concerns
         /*! Sync the original attributes with the current. */
         Derived &syncOriginal();
 
-        /*! Get all of the current attributes on the model (insert order). */
+        /*! Get all of the current attributes on the model (insertion order). */
         inline const QVector<AttributeItem> &getAttributes() const noexcept;
         /*! Get all of the current attributes on the model (for fast lookup). */
         inline const std::unordered_map<QString, AttributesSizeType> &
@@ -92,7 +92,7 @@ namespace Orm::Tiny::Concerns
         /*! Get the model's raw original attribute value. */
         QVariant getRawOriginal(const QString &key,
                                 const QVariant &defaultValue = {}) const;
-        /*! Get the model's raw original attribute values (insert order). */
+        /*! Get the model's raw original attribute values (insertion order). */
         inline const QVector<AttributeItem> &getRawOriginals() const;
 
         /*! Unset an attribute on the model, returns the number of attributes removed. */
@@ -106,7 +106,7 @@ namespace Orm::Tiny::Concerns
         QVector<AttributeItem> only(QStringList &&attributes) const;
 
         /*! Get the attributes that have been changed since last sync
-            (insert order). */
+            (insertion order). */
         QVector<AttributeItem> getDirty() const;
         /*! Get the attributes that have been changed since last sync
             (for fast lookup). */
@@ -124,7 +124,7 @@ namespace Orm::Tiny::Concerns
             remained the same. */
         inline bool isClean(const QString &attribute) const;
 
-        /*! Get the attributes that were changed (insert order). */
+        /*! Get the attributes that were changed (insertion order). */
         inline const QVector<AttributeItem> &getChanges() const;
         /*! Get the attributes that were changed (for fast lookup). */
         inline const std::unordered_map<QString, AttributesSizeType> &
@@ -358,13 +358,13 @@ namespace Orm::Tiny::Concerns
         /*! The model's default values for attributes. */
         T_THREAD_LOCAL
         inline static QVector<AttributeItem> u_attributes;
-        /*! The model's attributes (insert order). */
+        /*! The model's attributes (insertion order). */
         QVector<AttributeItem> m_attributes;
-        /*! The model attribute's original state (insert order).
+        /*! The model attribute's original state (insertion order).
             On the model from many-to-many relation also contains all pivot values,
-            that is normal (insert order). */
+            that is normal (insertion order). */
         QVector<AttributeItem> m_original;
-        /*! The changed model attributes (insert order). */
+        /*! The changed model attributes (insertion order). */
         QVector<AttributeItem> m_changes;
 
         /* Don't want to use std::reference_wrapper to attributes, because if a copy
