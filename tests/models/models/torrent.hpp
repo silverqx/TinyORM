@@ -171,6 +171,20 @@ private:
     /*! The name of the "updated at" column. */
     inline static const QString &UPDATED_AT() noexcept { return Orm::UPDATED_AT; }
 
+    /* Serialization */
+    /*! Prepare a date for vector, map, or JSON serialization. */
+//    inline static QString serializeDate(const QDate date)
+//    {
+//        return date.toString("dd.MM.yyyy");
+//    }
+
+    /*! Prepare a datetime for vector, map, or JSON serialization. */
+//    inline static QString serializeDateTime(const QDateTime &datetime)
+//    {
+//        return datetime.toUTC().toString("dd.MM.yyyy HH:mm:ss.z t");
+//    }
+
+    /* Data members */
     /*! The table associated with the model. */
     QString u_table {"torrents"};
 
