@@ -18,6 +18,8 @@ TINY_SYSTEM_HEADER
 #include "orm/macros/likely.hpp"
 #include "orm/macros/threadlocal.hpp"
 #include "orm/ormtypes.hpp"
+#include "orm/tiny/casts/attribute.hpp"
+#include "orm/tiny/exceptions/mutatornotfounderror.hpp"
 #include "orm/tiny/macros/crtpmodelwithbase.hpp"
 #include "orm/tiny/utils/attribute.hpp"
 #include "orm/utils/configuration.hpp"
@@ -49,6 +51,8 @@ namespace Orm::Tiny::Concerns
         using TypeUtils = Orm::Utils::Type;
 
     public:
+        /*! Alias for the attribute. */
+        using Attribute = Orm::Tiny::Casts::Attribute;
         /*! Alias for the attributes vector size type. */
         using AttributesSizeType = typename QVector<AttributeItem>::size_type;
 
@@ -238,7 +242,35 @@ namespace Orm::Tiny::Concerns
         /*! Convert the model's attributes to the vector. */
         QVector<AttributeItem> attributesToVector() const;
 
+        /* Serialization - Appends */
+        /*! Append accessor attribute to the u_appends set. */
+        inline Derived &append(const QString &attribute);
+        /*! Append accessor attribute to the u_appends set. */
+        inline Derived &append(QString &&attribute);
+
+        /*! Append accessor attributes to the u_appends set. */
+        inline Derived &append(const std::set<QString> &attributes);
+        /*! Append accessor attributes to the u_appends set. */
+        inline Derived &append(std::set<QString> &&attributes);
+
+        /*! Determine whether the u_appends set contains the given accessor attribute. */
+        inline bool hasAppend(const QString &attribute) const;
+
+        /*! Get the accessors that are being appended to the serialized model. */
+        inline const std::set<QString> &getAppends() const noexcept;
+
+        /*! Set the accessors to append to the serialized model. */
+        inline Derived &setAppends(const std::set<QString> &attributes);
+        /*! Set the accessors to append to the serialized model. */
+        inline Derived &setAppends(std::set<QString> &&attributes);
+
+        /*! Clear the u_appends accessor attributes for the model. */
+        inline Derived &clearAppends() noexcept;
+
     protected:
+        /*! Alias for the mutator method. */
+        using MutatorFunction = std::function<Attribute(const Derived &)>;
+
         /*! Transform a raw model value using mutators, casts, etc. */
         QVariant transformModelValue(const QString &key, const QVariant &value) const;
         /*! Get the model's original attribute values. */
@@ -268,6 +300,10 @@ namespace Orm::Tiny::Concerns
                 const QVector<AttributeItem> &attributes,
                 std::unordered_map<QString, AttributesSizeType> &attributesHash,
                 int from = 0);
+        /*! Rehash attribute positions from the given index. */
+        static std::unordered_map<QString, AttributesSizeType>
+        rehashAttributePositions(const QVector<AttributeItem> &attributes,
+                                 int from = 0);
 
         /* Datetime-related */
         /*! Determine if the given attribute is a date. */
@@ -320,16 +356,26 @@ namespace Orm::Tiny::Concerns
         roundDecimals(const QVariant &value, const QVariant &decimals);
 
         /* Serialization - Attributes */
+        /*! The return type for the getVectorableAttributes() method. */
+        struct VectorableAttributes
+        {
+            /*! The model's vectorable attributes (insertion order). */
+            QVector<AttributeItem> attributes;
+            /*! The model's vectorable attributes hash (for fast lookup). */
+            std::unordered_map<QString, AttributesSizeType> attributesHash;
+        };
+
         /*! Get an attributes map of all mappable attributes. */
         inline QVariantMap getMappableAttributes() const;
         /*! Get an attributes vector of all vectorable attributes. */
-        inline QVector<AttributeItem> getVectorableAttributes() const;
+        inline VectorableAttributes getVectorableAttributes() const;
 
         /*! Get an attributes map/vector of serializable attributes (visible/hidden). */
         template<SerializedAttributes C>
-        static C getSerializableAttributes(const QVector<AttributeItem> &attributes,
-                                           const std::set<QString> &visible,
-                                           const std::set<QString> &hidden);
+        static C getSerializableAttributes(
+                const QVector<AttributeItem> &attributes,
+                const std::set<QString> &visible, const std::set<QString> &hidden,
+                const std::set<QString> &appends);
 
         /*! Add the date attributes to the attributes map. */
         void addDateAttributesToMap(QVariantMap &attributes) const;
@@ -346,6 +392,12 @@ namespace Orm::Tiny::Concerns
                 QVector<AttributeItem> &attributes,
                 const std::unordered_map<QString,
                                          AttributesSizeType> &attributesHash) const;
+
+        /*! Get an attributes set of serializable appends (visible/hidden). */
+        std::set<QString> getSerializableAppends() const;
+
+        /*! Get an accessor (get) value by the given attribute key. */
+        QVariant mutateAccessorAttribute(const QString &key) const;
 
         /*! Prepare a date or datetime for vector, map, or JSON serialization. */
         static QString serializeDateOrDateTime(const QVariant &value);
@@ -401,6 +453,15 @@ namespace Orm::Tiny::Concerns
         T_THREAD_LOCAL
         inline static bool u_snakeAttributes = true;
 
+        /* Serialization - Appends */
+        /*! Map of mutator names to methods. */
+        T_THREAD_LOCAL
+        inline static QHash<QString, MutatorFunction> u_mutators;
+        /*! The accessors append to serialized models. */
+        std::set<QString> u_appends;
+        /*! The cache for already mutated Casts::Attribute-s. */
+        mutable QHash<QString, QVariant> m_attributeMutatorsCache;
+
     private:
         /*! Throw if the m_attributesHash doesn't contain a given attribute. */
         static void throwIfNoAttributeInHash(
@@ -435,6 +496,11 @@ namespace Orm::Tiny::Concerns
         static QString castTypeName(CastType type);
 
         /* Serialization */
+        /*! Remove the u_appends keys from vectorable attributes. */
+        static void removeAppendsFromVectorableAttributes(
+                QVector<AttributeItem> &attributes, bool isVisibleEmpty,
+                const std::set<QString> &hidden, const std::set<QString> &appends);
+
         /*! Cast the given attribute (used in serialization). */
         void castAttributeForSerialization(QVariant &value, const QString &key,
                                            const CastItem &castItem) const;
@@ -444,7 +510,8 @@ namespace Orm::Tiny::Concerns
         template<SerializedAttributes C>
         static C
         getSerializableVisibleAttributes(const QVector<AttributeItem> &attributes,
-                                         const std::set<QString> &visible);
+                                         const std::set<QString> &visible,
+                                         const std::set<QString> &appends);
 
         /*! Get an attributes map without hidden attributes. */
         static QVariantMap
@@ -454,6 +521,28 @@ namespace Orm::Tiny::Concerns
         static QVector<AttributeItem>
         removeSerializableHiddenAttributes(QVector<AttributeItem> &&attributes,
                                            const std::set<QString> &hidden);
+
+        /* Serialization - Appends */
+        /*! Get an appends set of visible serializable appends. */
+        static std::set<QString>
+        getSerializableVisibleAppends(const std::set<QString> &appends,
+                                      const std::set<QString> &visible);
+
+        /*! Get an appends set without hidden appends. */
+        static std::set<QString>
+        removeSerializableHiddenAppends(std::set<QString> &&appends,
+                                        const std::set<QString> &hidden);
+
+        /*! Get an accessor value from the given attribute. */
+        QVariant getAccessorValueFrom(const Attribute &attribute) const;
+
+        /*! Throw exception if a relation is not defined. */
+        static void
+        validateUserMutator(const QString &name,
+                            const QHash<QString, MutatorFunction> &userMutators);
+
+        /*! Prepare a date or datetime for vector, map, or JSON serialization. */
+        inline static void serializeDateOrDateTimeForAccessors(QVariant &value);
 
         /* Others */
         /* Static cast this to a child's instance type (CRTP) */
@@ -511,6 +600,8 @@ namespace Orm::Tiny::Concerns
         if (sync)
             syncOriginal();
 
+        m_attributeMutatorsCache.clear();
+
         return model();
     }
 
@@ -531,6 +622,8 @@ namespace Orm::Tiny::Concerns
 
         if (sync)
             syncOriginal();
+
+        m_attributeMutatorsCache.clear();
 
         return model();
     }
@@ -688,6 +781,10 @@ namespace Orm::Tiny::Concerns
         // Rehash attributes, but only attributes which were shifted
         rehashAttributePositions(m_attributes, m_attributesHash, position);
 
+        /* Need to clear the mutators cache because any mutator can depend on this unset
+           attribute, so the recomputation will be needed. */
+        m_attributeMutatorsCache.clear();
+
         return model();
     }
 
@@ -706,6 +803,10 @@ namespace Orm::Tiny::Concerns
 
         // Rehash attributes, but only attributes which were shifted
         rehashAttributePositions(m_attributes, m_attributesHash, position);
+
+        /* Need to clear the mutators cache because any mutator can depend on this unset
+           attribute, so the recomputation will be needed. */
+        m_attributeMutatorsCache.clear();
 
         return model();
     }
@@ -1197,6 +1298,12 @@ namespace Orm::Tiny::Concerns
            the values to their appropriate type. */
         addCastAttributesToMap(attributes);
 
+        /* Here we will grab all of the appended, calculated attributes to this model
+           as these attributes are not really in the attributes vector, but are run
+           when we need to serialize or JSON the model for convenience to the coder. */
+        for (const auto &key : getSerializableAppends())
+            attributes.insert(key, mutateAccessorAttribute(key));
+
         return attributes;
     }
 
@@ -1204,15 +1311,7 @@ namespace Orm::Tiny::Concerns
     QVector<AttributeItem>
     HasAttributes<Derived, AllRelations...>::attributesToVector() const
     {
-        auto attributes = getVectorableAttributes();
-        /* We need to recompute the attributesHash because of visible/hidden,
-           it wouldn't be necessary to recompute it if visible/hidden attributes are
-           empty but the problem is a reference. I'm not going to do a static variable
-           trick for this reference. */
-        std::unordered_map<QString, AttributesSizeType> attributesHash;
-        attributesHash.reserve(static_cast<decltype (attributesHash)::size_type>(
-                                   attributes.size()));
-        rehashAttributePositions(attributes, attributesHash);
+        auto [attributes, attributesHash] = getVectorableAttributes();
 
         /* If an attribute is a date, we will cast it to a string after converting it
            to a QDateTime instance. This is so we will get some consistent
@@ -1223,7 +1322,97 @@ namespace Orm::Tiny::Concerns
            the values to their appropriate type. */
         addCastAttributesToVector(attributes, attributesHash);
 
+        /* Here we will grab all of the appended, calculated attributes to this model
+           as these attributes are not really in the attributes vector, but are run
+           when we need to serialize or JSON the model for convenience to the coder. */
+        for (auto &&key : getSerializableAppends())
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+            attributes.emplaceBack(std::move(key), mutateAccessorAttribute(key));
+#else
+            attributes.append({std::move(key), mutateGetAttribute(key)});
+#endif
+
         return attributes;
+    }
+
+    /* Serialization - Appends */
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    Derived &
+    HasAttributes<Derived, AllRelations...>::append(const QString &attribute)
+    {
+        basemodel().getUserAppends().emplace(attribute);
+
+        return model();
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    Derived &
+    HasAttributes<Derived, AllRelations...>::append(QString &&attribute)
+    {
+        basemodel().getUserAppends().emplace(std::move(attribute));
+
+        return model();
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    Derived &
+    HasAttributes<Derived, AllRelations...>::append(const std::set<QString> &attributes)
+    {
+        basemodel().getUserAppends().merge(attributes);
+
+        return model();
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    Derived &
+    HasAttributes<Derived, AllRelations...>::append(std::set<QString> &&attributes)
+    {
+        basemodel().getUserAppends().merge(std::move(attributes));
+
+        return model();
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    bool
+    HasAttributes<Derived, AllRelations...>::hasAppend(const QString &attribute) const
+    {
+        return basemodel().getUserAppends().contains(attribute);
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    const std::set<QString> &
+    HasAttributes<Derived, AllRelations...>::getAppends() const noexcept
+    {
+        return basemodel().getUserAppends();
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    Derived &
+    HasAttributes<Derived, AllRelations...>::setAppends(
+            const std::set<QString> &attributes)
+    {
+        basemodel().getUserAppends() = attributes;
+
+        return model();
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    Derived &
+    HasAttributes<Derived, AllRelations...>::setAppends(std::set<QString> &&attributes)
+    {
+        basemodel().getUserAppends() = std::move(attributes);
+
+        return model();
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    Derived &
+    HasAttributes<Derived, AllRelations...>::clearAppends() noexcept
+    {
+        basemodel().getUserAppends().clear();
+
+        return model();
     }
 
     /* protected */
@@ -1411,6 +1600,22 @@ namespace Orm::Tiny::Concerns
         for (auto i = from; i < attributes.size(); ++i)
             // 'i' is the position index
             attributesHash[attributes.at(i).key] = i;
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    std::unordered_map<QString, typename HasAttributes<Derived, AllRelations...>::
+                                         AttributesSizeType>
+    HasAttributes<Derived, AllRelations...>::rehashAttributePositions(
+            const QVector<AttributeItem> &attributes, const int from)
+    {
+        std::unordered_map<QString, AttributesSizeType> attributesHash;
+        attributesHash.reserve(
+                static_cast<std::unordered_map<QString, AttributesSizeType>::size_type>(
+                        attributes.size()));
+
+        rehashAttributePositions(attributes, attributesHash, from);
+
+        return attributesHash;
     }
 
     /* Datetime-related */
@@ -1811,23 +2016,40 @@ namespace Orm::Tiny::Concerns
     {
         return getSerializableAttributes<QVariantMap>(
                     getAttributes(), basemodel().getUserVisible(),
-                                     basemodel().getUserHidden());
+                    basemodel().getUserHidden(), basemodel().getUserAppends());
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
-    QVector<AttributeItem>
+    HasAttributes<Derived, AllRelations...>::VectorableAttributes
     HasAttributes<Derived, AllRelations...>::getVectorableAttributes() const
     {
-        return getSerializableAttributes<QVector<AttributeItem>>(
-                    getAttributes(), basemodel().getUserVisible(),
-                                     basemodel().getUserHidden());
+        // Obtain these here and pass down to avoid double or triple obtaining later
+        const auto &visible = basemodel().getUserVisible();
+        const auto &hidden  = basemodel().getUserHidden();
+        const auto &appends = basemodel().getUserAppends();
+
+        auto attributes = getSerializableAttributes<QVector<AttributeItem>>(
+                              getAttributes(), visible, hidden, appends);
+
+        /* We need to remove attributes that have the same names as u_appends, to avoid
+           having two attributes with the same name. This logic is only needed
+           for the vectorable attributes, the mappable attributes, of course, don't need
+           this type of logic. */
+        removeAppendsFromVectorableAttributes(attributes, visible.empty(), hidden,
+                                              appends);
+
+        /* We need to recompute the attributesHash because of visible/hidden,
+           it wouldn't be necessary to recompute it if visible/hidden attributes are
+           empty but the problem is a reference. I'm not going to do a static variable
+           trick for this reference. */
+        return {attributes, rehashAttributePositions(attributes)};
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     template<SerializedAttributes C>
     C HasAttributes<Derived, AllRelations...>::getSerializableAttributes(
             const QVector<AttributeItem> &attributes, const std::set<QString> &visible,
-            const std::set<QString> &hidden)
+            const std::set<QString> &hidden, const std::set<QString> &appends)
     {
         // Nothing to do, the visible and hidden attributes are not defined
         if (visible.empty() && hidden.empty()) {
@@ -1841,7 +2063,7 @@ namespace Orm::Tiny::Concerns
 
         // Pass the visible and hidden down to avoid double obtaining
         return removeSerializableHiddenAttributes(
-                    getSerializableVisibleAttributes<C>(attributes, visible),
+                    getSerializableVisibleAttributes<C>(attributes, visible, appends),
                     hidden);
     }
 
@@ -1927,6 +2149,66 @@ namespace Orm::Tiny::Concerns
 
             castAttributeForSerialization(value, key, castItem);
         }
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    std::set<QString>
+    HasAttributes<Derived, AllRelations...>::getSerializableAppends() const
+    {
+        const auto &visible = basemodel().getUserVisible();
+        const auto &hidden  = basemodel().getUserHidden();
+        const auto &appends = basemodel().getUserAppends();
+
+        // Nothing to do, no u_appends defined
+        if (appends.empty())
+            return {};
+
+        // Nothing to do, the visible and hidden attributes are not defined
+        if (visible.empty() && hidden.empty())
+            return appends;
+
+        // Pass the visible and hidden down to avoid double obtaining
+        return removeSerializableHiddenAppends(
+                    getSerializableVisibleAppends(appends, visible),
+                    hidden);
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    QVariant
+    HasAttributes<Derived, AllRelations...>::mutateAccessorAttribute(
+            const QString &key) const
+    {
+        const auto &userMutators = Model<Derived, AllRelations...>::getUserMutators();
+
+        // Throw exception if a mutator mapping is not defined
+        validateUserMutator(key, userMutators);
+
+        // Return the cached get mutator
+        if (m_attributeMutatorsCache.contains(key))
+            // std::as_const() to prevent detach
+            return std::as_const(m_attributeMutatorsCache).find(key).value();
+
+        /* Get an accessor callback from the u_mutators map by the given attribute key,
+           and invoke it to obtain an attribute. */
+        Attribute attribute = std::invoke(userMutators.find(key).value(), model());
+        // Get an accessor (get) value from the given attribute
+        auto value = getAccessorValueFrom(attribute);
+
+        // Handle datetime-s returned from accessor
+        serializeDateOrDateTimeForAccessors(value);
+
+        // Cache the get mutator (accessor) value
+        if (attribute.withCaching()) T_UNLIKELY
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+                m_attributeMutatorsCache.emplace(key, value);
+#else
+            m_attributeCastCache.insert(key, value);
+#endif
+        // Remove the get mutator (accessor) from the cache if caching is disabled
+        else T_LIKELY
+                m_attributeMutatorsCache.remove(key);
+
+        return value;
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
@@ -2081,6 +2363,51 @@ namespace Orm::Tiny::Concerns
     /* Serialization */
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
+    void HasAttributes<Derived, AllRelations...>::removeAppendsFromVectorableAttributes(
+            QVector<AttributeItem> &attributes, const bool isVisibleEmpty,
+            const std::set<QString> &hidden, const std::set<QString> &appends)
+    {
+        /* Ok, this method is a little sketchy so I have to comment on this logic,
+           the logic is all about to boost performance a little. Also, this logic
+           corrupted almost the perfect code, but that is ok. */
+
+        /* Nothing to do, if the u_visible set contains attribute names then all
+           of the below is handled or prevented by the !u_appends.contains(key)
+           in the getSerializableVisibleAttributes(). */
+        if (!isVisibleEmpty)
+            return;
+
+        const auto attributeKeys = AttributeUtils::keys(attributes);
+
+        // Get the u_appends attributes only
+        /* Compute append keys on attributes vector, the intersection is needed
+           to compute only keys that really exists. */
+        std::set<QString> appendKeysTmp;
+        ranges::set_intersection(attributeKeys, appends,
+                                 ranges::inserter(appendKeysTmp, appendKeysTmp.cend()));
+
+        /* Nothing to do, no u_appends keys left, this typically happens when
+           the u_visible set is empty and the u_hidden set contains all of the u_appends
+           keys. */
+        if (appendKeysTmp.empty())
+            return;
+
+        // Remove hidden appends
+        std::set<QString> appendKeys;
+        ranges::set_difference(appendKeysTmp, hidden,
+                               ranges::inserter(appendKeys, appendKeys.cend()));
+
+        // Nothing to do
+        if (appendKeys.empty())
+            return;
+
+        attributes.removeIf([&appendKeys](const AttributeItem &attribute)
+        {
+            return appendKeys.contains(attribute.key);
+        });
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     void HasAttributes<Derived, AllRelations...>::castAttributeForSerialization(
             QVariant &value, const QString &key, const CastItem &castItem) const
     {
@@ -2121,7 +2448,8 @@ namespace Orm::Tiny::Concerns
     template<typename Derived, AllRelationsConcept ...AllRelations>
     template<SerializedAttributes C>
     C HasAttributes<Derived, AllRelations...>::getSerializableVisibleAttributes(
-            const QVector<AttributeItem> &attributes, const std::set<QString> &visible)
+            const QVector<AttributeItem> &attributes, const std::set<QString> &visible,
+            const std::set<QString> &appends)
     {
         // Nothing to do
         if (visible.empty()) {
@@ -2145,7 +2473,8 @@ namespace Orm::Tiny::Concerns
             serializableAttributes.reserve(attributes.size());
 
         for (const auto &[key, value] : attributes)
-            if (visibleKeys.contains(key)) {
+            // Skip the keys that are in the u_appends, they will be added later
+            if (visibleKeys.contains(key) &&  !appends.contains(key)) {
                 if constexpr (std::is_same_v<C, QVariantMap>)
                     serializableAttributes.insert(key, value);
 
@@ -2220,6 +2549,89 @@ namespace Orm::Tiny::Concerns
 #endif
 
         return serializableAttributes;
+    }
+
+    /* Serialization - Appends */
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    std::set<QString>
+    HasAttributes<Derived, AllRelations...>::getSerializableVisibleAppends(
+            const std::set<QString> &appends, const std::set<QString> &visible)
+    {
+        // Nothing to do
+        if (visible.empty())
+            return appends;
+
+        // Get visible appends only
+        std::set<QString> visibleAppends;
+        ranges::set_intersection(appends, visible,
+                                 ranges::inserter(visibleAppends, visibleAppends.cend()));
+
+        return visibleAppends;
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    std::set<QString>
+    HasAttributes<Derived, AllRelations...>::removeSerializableHiddenAppends(
+            std::set<QString> &&appends, const std::set<QString> &hidden)
+    {
+        // Nothing to do
+        if (hidden.empty())
+            return std::move(appends);
+
+        /* Remove hidden appends, from the set container returned by
+           the getSerializableVisibleAppends()! */
+        std::set<QString> hiddenAppends;
+        ranges::set_difference(appends, hidden,
+                               ranges::inserter(hiddenAppends, hiddenAppends.cend()));
+
+        return hiddenAppends;
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    QVariant
+    HasAttributes<Derived, AllRelations...>::getAccessorValueFrom(
+            const Attribute &attribute) const
+    {
+        const auto &accessorVariant = attribute.get();
+
+        using CallbackWithoutParameters = Attribute::CallbackWithoutParameters;
+
+        if (std::holds_alternative<CallbackWithoutParameters>(accessorVariant))
+            return std::invoke(attribute.get<CallbackWithoutParameters>());
+
+        using CallbackWithAttributes = Attribute::CallbackWithAttributes;
+
+        if (std::holds_alternative<CallbackWithAttributes>(accessorVariant))
+            return std::invoke(attribute.get<CallbackWithAttributes>(),
+                               AttributeUtils::convertVectorToModelAttributes(
+                                   m_attributes));
+        Q_UNREACHABLE();
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    void HasAttributes<Derived, AllRelations...>::validateUserMutator(
+            const QString &name, const QHash<QString, MutatorFunction> &userMutators)
+    {
+        if (userMutators.contains(name)) T_LIKELY
+            return;
+
+        else T_UNLIKELY
+            throw Exceptions::MutatorNotFoundError(
+                    TypeUtils::classPureBasename<Derived>(), name);
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    void HasAttributes<Derived, AllRelations...>::serializeDateOrDateTimeForAccessors(
+            QVariant &value)
+    {
+        const auto typeId = Helpers::qVariantTypeId(value);
+
+        if (typeId != QMetaType::QDateTime && typeId != QMetaType::QDate) T_LIKELY
+            return;
+
+        else T_UNLIKELY
+            value = serializeDateOrDateTime(value);
     }
 
     /* Others */

@@ -14,6 +14,7 @@ TINY_SYSTEM_HEADER
 #include <range/v3/view/filter.hpp>
 
 #include "orm/tiny/tinytypes.hpp"
+#include "orm/tiny/types/modelattributes.hpp"
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
@@ -46,6 +47,10 @@ namespace Orm::Tiny::Utils
         /*! Convert a vector of AttributeItem QVectors to the vector of QVariantMaps. */
         static QVector<QVariantMap>
         convertVectorsToMaps(const QVector<QVector<AttributeItem>> &attributesVector);
+
+        /*! Convert a AttributeItem QVector to the std::unordered_map. */
+        static ModelAttributes
+        convertVectorToModelAttributes(const QVector<AttributeItem> &attributes);
 
         /*! Convert a AttributeItem QVector to the UpdateItem QVector. */
         static QVector<UpdateItem>

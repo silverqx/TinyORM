@@ -487,6 +487,17 @@ namespace Orm::Tiny
         /*! Get the u_hidden attributes from the Derived model. */
         inline const std::set<QString> &getUserHidden() const noexcept;
 
+        /* Serialization - Appends */
+        /*! Get the u_appends attributes from the Derived model. */
+        inline std::set<QString> &getUserAppends() noexcept;
+        /*! Get the u_appends attributes from the Derived model. */
+        inline const std::set<QString> &getUserAppends() const noexcept;
+        /*! Get the u_mutators map from the Derived model. */
+        inline static
+        const QHash<QString, typename Concerns::HasAttributes<Derived, AllRelations...>
+                                              ::MutatorFunction> &
+        getUserMutators() noexcept;
+
         /* Serialization - Attributes */
         /*! Prepare a date for vector, map, or JSON serialization (calls Derived). */
         inline static QString getUserSerializeDate(QDate date);
@@ -1989,6 +2000,30 @@ namespace Orm::Tiny
     Model<Derived, AllRelations...>::getUserHidden() const noexcept
     {
         return Derived::u_hidden;
+    }
+
+    /* Serialization - Appends */
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    std::set<QString> &
+    Model<Derived, AllRelations...>::getUserAppends() noexcept
+    {
+        return model().u_appends;
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    const std::set<QString> &
+    Model<Derived, AllRelations...>::getUserAppends() const noexcept
+    {
+        return model().u_appends;
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    const QHash<QString, typename Concerns::HasAttributes<Derived, AllRelations...>
+                                          ::MutatorFunction> &
+    Model<Derived, AllRelations...>::getUserMutators() noexcept
+    {
+        return Derived::u_mutators;
     }
 
     /* Serialization - Attributes */

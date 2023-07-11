@@ -123,6 +123,7 @@ function(tinyorm_sources out_headers out_sources)
 
     if(ORM)
         list(APPEND headers
+            tiny/casts/attribute.hpp
             tiny/concerns/buildsqueries.hpp
             tiny/concerns/buildssoftdeletes.hpp
             tiny/concerns/guardedmodel.hpp
@@ -135,6 +136,7 @@ function(tinyorm_sources out_headers out_sources)
             tiny/concerns/queriesrelationships.hpp
             tiny/exceptions/massassignmenterror.hpp
             tiny/exceptions/modelnotfounderror.hpp
+            tiny/exceptions/mutatornotfounderror.hpp
             tiny/exceptions/relationnotfounderror.hpp
             tiny/exceptions/relationnotloadederror.hpp
             tiny/macros/crtpmodel.hpp
@@ -169,6 +171,7 @@ function(tinyorm_sources out_headers out_sources)
             tiny/tinyconcepts.hpp
             tiny/tinytypes.hpp
             tiny/types/connectionoverride.hpp
+            tiny/types/modelattributes.hpp
             tiny/types/modelscollection.hpp
             tiny/types/syncchanges.hpp
             tiny/utils/attribute.hpp

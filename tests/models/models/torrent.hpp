@@ -27,10 +27,13 @@ using Orm::Constants::HASH_;
 using Orm::Constants::ID;
 using Orm::Constants::NAME;
 using Orm::Constants::NOTE;
+using Orm::Constants::PARENTH_ONE;
 using Orm::Constants::SIZE_;
+using Orm::Constants::SPACE_IN;
 
 //using Orm::Tiny::CastItem;
 //using Orm::Tiny::CastType;
+using Orm::Tiny::Casts::Attribute;
 using Orm::Tiny::Model;
 using Orm::Tiny::Relations::BelongsTo;
 using Orm::Tiny::Relations::BelongsToMany;
@@ -38,6 +41,7 @@ using Orm::Tiny::Relations::HasOne;
 using Orm::Tiny::Relations::HasMany;
 using Orm::Tiny::Relations::Pivot;
 //using Orm::Tiny::SoftDeletes;
+using Orm::Tiny::Types::ModelAttributes;
 
 #ifdef PROJECT_TINYORM_PLAYGROUND
 using TinyPlay::Configuration;
@@ -136,6 +140,28 @@ public:
         relation->withPivot("active");
 
         return relation;
+    }
+
+protected:
+    /*! Accessor for torrent name with progress. Example: torrent 1 (98). */
+    Attribute nameProgress() const noexcept
+    {
+        return Attribute::make(/* get */ [this]() -> QVariant
+        {
+            return SPACE_IN.arg(getAttribute<QString>(NAME),
+                                PARENTH_ONE.arg(getAttribute<quint16>("progress")));
+        }).shouldCache();
+    }
+
+    /*! Accessor for torrent name with size. Example: torrent 1 (98). */
+    Attribute nameSize() const noexcept // NOLINT(readability-convert-member-functions-to-static)
+    {
+        return Attribute::make(
+               /* get */ [](const ModelAttributes &attributes) -> QVariant
+        {
+            return SPACE_IN.arg(attributes.at<QString>(NAME),
+                                PARENTH_ONE.arg(attributes.at<quint64>(SIZE_)));
+        });
     }
 
 private:
@@ -239,6 +265,18 @@ private:
     /*! The attributes that should be hidden during serialization. */
 //    inline static std::set<QString> u_hidden {
 //        "added_on", HASH_,
+//    };
+
+    /* Appends */
+    /*! Map of mutator names to methods. */
+    inline static const QHash<QString, MutatorFunction> u_mutators {
+        {"name_progress", &Torrent::nameProgress},
+        {"name_size",     &Torrent::nameSize},
+    };
+
+    /*! The accessor appends for serialized models. */
+//    std::set<QString> u_appends {
+//        "name_progress",
 //    };
 };
 

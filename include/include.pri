@@ -114,6 +114,7 @@ headersList += \
 
 !disable_orm: \
     headersList += \
+        $$PWD/orm/tiny/casts/attribute.hpp \
         $$PWD/orm/tiny/concerns/buildsqueries.hpp \
         $$PWD/orm/tiny/concerns/buildssoftdeletes.hpp \
         $$PWD/orm/tiny/concerns/guardedmodel.hpp \
@@ -126,6 +127,7 @@ headersList += \
         $$PWD/orm/tiny/concerns/queriesrelationships.hpp \
         $$PWD/orm/tiny/exceptions/massassignmenterror.hpp \
         $$PWD/orm/tiny/exceptions/modelnotfounderror.hpp \
+        $$PWD/orm/tiny/exceptions/mutatornotfounderror.hpp \
         $$PWD/orm/tiny/exceptions/relationnotfounderror.hpp \
         $$PWD/orm/tiny/exceptions/relationnotloadederror.hpp \
         $$PWD/orm/tiny/macros/crtpmodel.hpp \
@@ -160,6 +162,7 @@ headersList += \
         $$PWD/orm/tiny/tinyconcepts.hpp \
         $$PWD/orm/tiny/tinytypes.hpp \
         $$PWD/orm/tiny/types/connectionoverride.hpp \
+        $$PWD/orm/tiny/types/modelattributes.hpp \
         $$PWD/orm/tiny/types/modelscollection.hpp \
         $$PWD/orm/tiny/types/syncchanges.hpp \
         $$PWD/orm/tiny/utils/attribute.hpp \

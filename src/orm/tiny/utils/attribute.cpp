@@ -50,6 +50,18 @@ Attribute::convertVectorsToMaps(const QVector<QVector<AttributeItem>> &attribute
     return result;
 }
 
+ModelAttributes
+Attribute::convertVectorToModelAttributes(const QVector<AttributeItem> &attributes)
+{
+    ModelAttributes result;
+    result.reserve(static_cast<ModelAttributes::size_type>(attributes.size()));
+
+    for (const auto &attribute : attributes)
+        result.try_emplace(attribute.key, attribute.value);
+
+    return result;
+}
+
 QVector<UpdateItem>
 Attribute::convertVectorToUpdateItem(const QVector<AttributeItem> &attributes)
 {

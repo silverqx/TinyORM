@@ -12,8 +12,11 @@ namespace Models
 
 using Orm::Constants::NAME;
 using Orm::Constants::NOTE;
+using Orm::Constants::PARENTH_ONE;
 using Orm::Constants::SIZE_;
+using Orm::Constants::SPACE_IN;
 
+using Orm::Tiny::Casts::Attribute;
 using Orm::Tiny::Relations::BelongsTo;
 using Orm::Tiny::Relations::HasOne;
 
@@ -88,6 +91,17 @@ public:
         return relation;
     }
 
+protected:
+    /*! Accessor for filepath (used in tests to test accessor with existing attribute). */
+    Attribute filepath() const noexcept
+    {
+        return Attribute::make(/* get */ [this]() -> QVariant
+        {
+            return SPACE_IN.arg(getAttribute<QString>("filepath"),
+                                PARENTH_ONE.arg("dummy-STRING"));
+        });
+    }
+
 private:
     /*! The table associated with the model. */
     QString u_table {"torrent_previewable_files"};
@@ -120,6 +134,12 @@ private:
 
     /*! All of the relationships to be touched. */
     QStringList u_touches {"torrent"};
+
+    /* Appends */
+    /*! Map of mutator names to methods. */
+    inline static const QHash<QString, MutatorFunction> u_mutators {
+        {"filepath", &TorrentPreviewableFile::filepath},
+    };
 };
 
 } // namespace Models
