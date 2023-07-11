@@ -12,8 +12,8 @@ TINYORM_BEGIN_COMMON_NAMESPACE
 namespace Orm::Tiny::Exceptions
 {
 
-    /*! Mutator not found exception, check whether the mutator/accessor name was defined
-        in the u_mutators data member. */
+    /*! Mutator mapping not found exception, check whether the mutator/accessor name was
+        defined in the u_mutators data member. */
     class MutatorNotFoundError : public Orm::Exceptions::RuntimeError // clazy:exclude=copyable-polymorphic
     {
     public:
