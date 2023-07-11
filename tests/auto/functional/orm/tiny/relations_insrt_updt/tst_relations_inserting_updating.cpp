@@ -157,8 +157,7 @@ void tst_Relations_Inserting_Updating::save_OnHasOneOrMany() const
     QVERIFY(file[ID]->value<quint64>() > 8);
 
     // save method have to return the same model as a reference
-    QVERIFY(reinterpret_cast<uintptr_t>(&file) ==
-            reinterpret_cast<uintptr_t>(&fileRef));
+    QVERIFY(std::addressof(file) == std::addressof(fileRef));
 
     // Obtain file and verify saved values
     auto fileVerify = TorrentPreviewableFile::find(file[ID]);
@@ -285,10 +284,8 @@ void tst_Relations_Inserting_Updating::saveMany_OnHasOneOrMany() const
     QVERIFY(savedFile2[ID]->value<quint64>() > 9);
 
     // saveMany() have to return reference to the same 'models' vector
-    QVERIFY(reinterpret_cast<uintptr_t>(filesToSave.data()) ==
-            reinterpret_cast<uintptr_t>(&savedFile1));
-    QVERIFY(reinterpret_cast<uintptr_t>(&filesToSave[1]) ==
-            reinterpret_cast<uintptr_t>(&savedFile2));
+    QVERIFY(std::addressof(*filesToSave.data()) == std::addressof(savedFile1));
+    QVERIFY(std::addressof(filesToSave[1]) == std::addressof(savedFile2));
 
     // Obtain files and verify saved values
     auto file1Verify = TorrentPreviewableFile::find(savedFile1[ID]);
@@ -757,8 +754,7 @@ void tst_Relations_Inserting_Updating::save_OnBelongsToMany() const
     QCOMPARE(size, 1);
 
     // save method have to return the same model as a reference
-    QVERIFY(reinterpret_cast<uintptr_t>(&tag) ==
-            reinterpret_cast<uintptr_t>(&tagRef));
+    QVERIFY(std::addressof(tag) == std::addressof(tagRef));
 
     // Obtain tag and verify saved values
     auto tagVerify = Tag::find(tag[ID]);
@@ -890,12 +886,9 @@ void tst_Relations_Inserting_Updating::saveMany_OnBelongsToMany() const
     QCOMPARE(size, 2);
 
     // saveMany method have to return the same models as a reference_wrapper
-    QVERIFY(reinterpret_cast<uintptr_t>(&tagsToSave) ==
-            reinterpret_cast<uintptr_t>(&savedTags));
-    QVERIFY(reinterpret_cast<uintptr_t>(tagsToSave.data()) ==
-            reinterpret_cast<uintptr_t>(&savedTag1));
-    QVERIFY(reinterpret_cast<uintptr_t>(&tagsToSave[1]) ==
-            reinterpret_cast<uintptr_t>(&savedTag2));
+    QVERIFY(std::addressof(tagsToSave) == std::addressof(savedTags));
+    QVERIFY(std::addressof(*tagsToSave.data()) == std::addressof(savedTag1));
+    QVERIFY(std::addressof(tagsToSave[1]) == std::addressof(savedTag2));
 
     // Obtain tag and verify saved values
     auto tag1Verify = Tag::find(savedTag1[ID]);
@@ -1360,8 +1353,7 @@ void tst_Relations_Inserting_Updating::associate_WithModel() const
     auto &fileRef = file.torrent()->associate(*torrent);
 
     // associate method have to return the same model as a reference
-    QVERIFY(reinterpret_cast<uintptr_t>(&file) ==
-            reinterpret_cast<uintptr_t>(&fileRef));
+    QVERIFY(std::addressof(file) == std::addressof(fileRef));
 
     const auto &torrentForeignKeyName = torrent->getForeignKey();
     QVERIFY(file.getAttributesHash().contains(torrentForeignKeyName));
@@ -1425,8 +1417,7 @@ void tst_Relations_Inserting_Updating::associate_WithId() const
     auto &fileRef = file.torrent()->associate((*torrent)[ID]);
 
     // associate method have to return the same model as a reference
-    QVERIFY(reinterpret_cast<uintptr_t>(&file) ==
-            reinterpret_cast<uintptr_t>(&fileRef));
+    QVERIFY(std::addressof(file) == std::addressof(fileRef));
 
     const auto &torrentForeignKeyName = torrent->getForeignKey();
     QVERIFY(file.getAttributesHash().contains(torrentForeignKeyName));
@@ -1473,8 +1464,7 @@ void tst_Relations_Inserting_Updating::associate_WithId_ShouldUnsetRelation() co
     auto &fileRef = file.torrent()->associate(*torrent);
 
     // associate method have to return the same model as a reference
-    QVERIFY(reinterpret_cast<uintptr_t>(&file) ==
-            reinterpret_cast<uintptr_t>(&fileRef));
+    QVERIFY(std::addressof(file) == std::addressof(fileRef));
 
     const auto &torrentForeignKeyName = torrent->getForeignKey();
     QVERIFY(file.getAttributesHash().contains(torrentForeignKeyName));
@@ -1529,8 +1519,7 @@ void tst_Relations_Inserting_Updating::dissociate() const
     auto &fileRef = file.torrent()->associate(*torrent);
 
     // associate method have to return the same model as a reference
-    QVERIFY(reinterpret_cast<uintptr_t>(&file) ==
-            reinterpret_cast<uintptr_t>(&fileRef));
+    QVERIFY(std::addressof(file) == std::addressof(fileRef));
 
     const auto &torrentForeignKeyName = torrent->getForeignKey();
     QVERIFY(file.getAttributesHash().contains(torrentForeignKeyName));
@@ -1551,8 +1540,7 @@ void tst_Relations_Inserting_Updating::dissociate() const
     auto &fileRefDissociate = file.torrent()->dissociate();
 
     // dissociate method have to return the same model as a reference
-    QVERIFY(reinterpret_cast<uintptr_t>(&file) ==
-            reinterpret_cast<uintptr_t>(&fileRefDissociate));
+    QVERIFY(std::addressof(file) == std::addressof(fileRefDissociate));
 
     QVERIFY(file.getAttributesHash().contains(torrentForeignKeyName));
     QVERIFY(!file[torrentForeignKeyName].value().isValid());

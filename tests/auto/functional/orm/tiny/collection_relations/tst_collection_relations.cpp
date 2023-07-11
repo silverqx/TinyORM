@@ -2924,8 +2924,7 @@ void tst_Collection_Relations::load_lvalue() const
     // Both must be lvalue references because of that the decltype ((images)) is used
     QVERIFY((std::is_same_v<decltype (result), decltype ((albumsInit))>));
     // It must be the same ModelsCollection (the same memory address)
-    QVERIFY(reinterpret_cast<uintptr_t>(&result) ==
-            reinterpret_cast<uintptr_t>(&albumsInit));
+    QVERIFY(std::addressof(result) == std::addressof(albumsInit));
 
     // Prepare - AlbumImage::KeyType is Album ID
     std::unordered_map<AlbumImage::KeyType, ExpectedImages> expectedImages {
@@ -2987,8 +2986,7 @@ void tst_Collection_Relations::load_lvalue_WithSelectConstraint() const
     // Both must be lvalue references because of that the decltype ((images)) is used
     QVERIFY((std::is_same_v<decltype (result), decltype ((albumsInit))>));
     // It must be the same ModelsCollection (the same memory address)
-    QVERIFY(reinterpret_cast<uintptr_t>(&result) ==
-            reinterpret_cast<uintptr_t>(&albumsInit));
+    QVERIFY(std::addressof(result) == std::addressof(albumsInit));
 
     // Prepare - AlbumImage::KeyType is Album ID
     std::unordered_map<AlbumImage::KeyType, ExpectedImages> expectedImages {
@@ -3065,8 +3063,7 @@ void tst_Collection_Relations::load_lvalue_WithLambdaConstraint() const
     // Both must be lvalue references because of that the decltype ((images)) is used
     QVERIFY((std::is_same_v<decltype (result), decltype ((albumsInit))>));
     // It must be the same ModelsCollection (the same memory address)
-    QVERIFY(reinterpret_cast<uintptr_t>(&result) ==
-            reinterpret_cast<uintptr_t>(&albumsInit));
+    QVERIFY(std::addressof(result) == std::addressof(albumsInit));
 
     // Prepare - AlbumImage::KeyType is Album ID
     std::unordered_map<AlbumImage::KeyType, ExpectedImages> expectedImages {
@@ -3173,8 +3170,7 @@ void tst_Collection_Relations::load_rvalue() const
        verify the albums, the real world scenario would be:
        Album::without(Common::albumImages)->findMany({1, 2, 4}).load("albumImages")
        At the end of the day both command statements are the same. */
-//    QVERIFY(reinterpret_cast<uintptr_t>(&result) ==
-//            reinterpret_cast<uintptr_t>(&albumsInit));
+//    QVERIFY(std::addressof(result) == std::addressof(albumsInit));
 
     // Prepare - AlbumImage::KeyType is Album ID
     std::unordered_map<AlbumImage::KeyType, ExpectedImages> expectedImages {
@@ -3243,8 +3239,7 @@ void tst_Collection_Relations::load_rvalue_WithSelectConstraint() const
        verify the albums, the real world scenario would be:
        Album::without(Common::albumImages)->findMany({1, 2, 4}).load("albumImages")
        At the end of the day both command statements are the same. */
-//    QVERIFY(reinterpret_cast<uintptr_t>(&result) ==
-//            reinterpret_cast<uintptr_t>(&albumsInit));
+//    QVERIFY(std::addressof(result) == std::addressof(albumsInit));
 
     // Prepare - AlbumImage::KeyType is Album ID
     std::unordered_map<AlbumImage::KeyType, ExpectedImages> expectedImages {
@@ -3329,8 +3324,7 @@ void tst_Collection_Relations::load_rvalue_WithLambdaConstraint() const
        verify the albums, the real world scenario would be:
        Album::without(Common::albumImages)->findMany({1, 2, 4}).load("albumImages")
        At the end of the day both command statements are the same. */
-//    QVERIFY(reinterpret_cast<uintptr_t>(&result) ==
-//            reinterpret_cast<uintptr_t>(&albumsInit));
+//    QVERIFY(std::addressof(result) == std::addressof(albumsInit));
 
     // Prepare - AlbumImage::KeyType is Album ID
     std::unordered_map<AlbumImage::KeyType, ExpectedImages> expectedImages {
@@ -4167,8 +4161,7 @@ void tst_Collection_Relations::each_lvalue() const
     // Both must be lvalue references because of that the decltype ((images)) is used
     QVERIFY((std::is_same_v<decltype (result), decltype ((images))>));
     // It must be the same ModelsCollection (the same memory address)
-    QVERIFY(reinterpret_cast<uintptr_t>(&result) ==
-            reinterpret_cast<uintptr_t>(&images));
+    QVERIFY(std::addressof(result) == std::addressof(images));
     QCOMPARE(expectedIds.size(), 5);
     QCOMPARE(QVector<quint64>({2, 3, 4, 5, 6}), expectedIds);
 }
@@ -4219,8 +4212,7 @@ void tst_Collection_Relations::each_lvalue_index() const
     // Both must be lvalue references because of that the decltype ((images)) is used
     QVERIFY((std::is_same_v<decltype (result), decltype ((images))>));
     // It must be the same ModelsCollection (the same memory address)
-    QVERIFY(reinterpret_cast<uintptr_t>(&result) ==
-            reinterpret_cast<uintptr_t>(&images));
+    QVERIFY(std::addressof(result) == std::addressof(images));
     QCOMPARE(expectedIds.size(), 5);
     QCOMPARE(QVector<ExpectedItem>({{2, 0}, {3, 1}, {4, 2}, {5, 3}, {6, 4}}),
              expectedIds);
@@ -4264,8 +4256,7 @@ void tst_Collection_Relations::each_lvalue_bool() const
     // Both must be lvalue references because of that the decltype ((images)) is used
     QVERIFY((std::is_same_v<decltype (result), decltype ((images))>));
     // It must be the same ModelsCollection (the same memory address)
-    QVERIFY(reinterpret_cast<uintptr_t>(&result) ==
-            reinterpret_cast<uintptr_t>(&images));
+    QVERIFY(std::addressof(result) == std::addressof(images));
     QCOMPARE(expectedIds.size(), 3);
     QCOMPARE(QVector<quint64>({2, 3, 4}), expectedIds);
 }
@@ -4309,8 +4300,7 @@ void tst_Collection_Relations::each_lvalue_bool_index() const
     // Both must be lvalue references because of that the decltype ((images)) is used
     QVERIFY((std::is_same_v<decltype (result), decltype ((images))>));
     // It must be the same ModelsCollection (the same memory address)
-    QVERIFY(reinterpret_cast<uintptr_t>(&result) ==
-            reinterpret_cast<uintptr_t>(&images));
+    QVERIFY(std::addressof(result) == std::addressof(images));
     QCOMPARE(expectedIds.size(), 3);
     QCOMPARE(QVector<ExpectedItem>({{2, 0}, {3, 1}, {4, 2}}),
              expectedIds);
@@ -4471,14 +4461,14 @@ void tst_Collection_Relations::tap_lvalue() const
 
     // Get result
     auto callbackInvoked = false;
-    uintptr_t imagesInCallbackAddress = 0;
+    ModelsCollection<AlbumImage *> *imagesInCallbackAddress = nullptr;
 
     ModelsCollection<AlbumImage *> &result =
             images.tap([&callbackInvoked, &imagesInCallbackAddress]
                        (ModelsCollection<AlbumImage *> &imagesRef)
     {
         callbackInvoked = true;
-        imagesInCallbackAddress = reinterpret_cast<uintptr_t>(&imagesRef);
+        imagesInCallbackAddress = std::addressof(imagesRef);
 
         // Change the name, append " NEW"
         auto &image4 = *imagesRef.at(2);
@@ -4491,8 +4481,8 @@ void tst_Collection_Relations::tap_lvalue() const
     QVERIFY((std::is_same_v<decltype (result), decltype ((images))>));
     QVERIFY(callbackInvoked);
     // It must be the same ModelsCollection (the same memory address)
-    const auto imagesAddress = reinterpret_cast<uintptr_t>(&images);
-    QVERIFY(reinterpret_cast<uintptr_t>(&result) == imagesAddress);
+    const auto *const imagesAddress = std::addressof(images);
+    QVERIFY(std::addressof(result) == imagesAddress);
     QVERIFY(imagesInCallbackAddress == imagesAddress);
     // Collection content
     QCOMPARE(result.size(), 5);

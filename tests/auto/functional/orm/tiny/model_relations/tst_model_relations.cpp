@@ -1918,14 +1918,14 @@ void tst_Model_Relations::refresh_EagerLoad_OnlyRelations() const
     QVERIFY(seedsOriginalChanged == QVariant(33));
 
     // Memory address of the key and value for the relation
-    uintptr_t relationFilesKeyOriginal =
-            reinterpret_cast<uintptr_t>(&relations.find("torrentFiles")->first);
-    uintptr_t relationFilesValueOriginal =
-            reinterpret_cast<uintptr_t>(&relations.find("torrentFiles")->second);
-    uintptr_t relationPeerKeyOriginal =
-            reinterpret_cast<uintptr_t>(&relations.find("torrentPeer")->first);
-    uintptr_t relationPeerValueOriginal =
-            reinterpret_cast<uintptr_t>(&relations.find("torrentPeer")->second);
+    auto *const
+    relationFilesKeyOriginal = std::addressof(relations.find("torrentFiles")->first);
+    auto *const
+    relationFilesValueOriginal = std::addressof(relations.find("torrentFiles")->second);
+    auto *const
+    relationPeerKeyOriginal = std::addressof(relations.find("torrentPeer")->first);
+    auto *const
+    relationPeerValueOriginal = std::addressof(relations.find("torrentPeer")->second);
 
     torrent->refresh();
 
@@ -1934,13 +1934,13 @@ void tst_Model_Relations::refresh_EagerLoad_OnlyRelations() const
        only loaded relations will be replaced with std::move directly
        to the relation std::variant reference in the Model::load() method. */
     QVERIFY(relationFilesKeyOriginal ==
-            reinterpret_cast<uintptr_t>(&relations.find("torrentFiles")->first));
+            std::addressof(relations.find("torrentFiles")->first));
     QVERIFY(relationFilesValueOriginal ==
-            reinterpret_cast<uintptr_t>(&relations.find("torrentFiles")->second));
+            std::addressof(relations.find("torrentFiles")->second));
     QVERIFY(relationPeerKeyOriginal ==
-            reinterpret_cast<uintptr_t>(&relations.find("torrentPeer")->first));
+            std::addressof(relations.find("torrentPeer")->first));
     QVERIFY(relationPeerValueOriginal ==
-            reinterpret_cast<uintptr_t>(&relations.find("torrentPeer")->second));
+            std::addressof(relations.find("torrentPeer")->second));
 
     // Validate refreshed attributes in relations
     auto filesRefreshed =
@@ -1994,14 +1994,14 @@ void tst_Model_Relations::refresh_LazyLoad_OnlyRelations() const
     QVERIFY(seedsOriginalChanged == QVariant(33));
 
     // Memory address of the key and value for the relation
-    uintptr_t relationFilesKeyOriginal =
-            reinterpret_cast<uintptr_t>(&relations.find("torrentFiles")->first);
-    uintptr_t relationFilesValueOriginal =
-            reinterpret_cast<uintptr_t>(&relations.find("torrentFiles")->second);
-    uintptr_t relationPeerKeyOriginal =
-            reinterpret_cast<uintptr_t>(&relations.find("torrentPeer")->first);
-    uintptr_t relationPeerValueOriginal =
-            reinterpret_cast<uintptr_t>(&relations.find("torrentPeer")->second);
+    auto *const
+    relationFilesKeyOriginal = std::addressof(relations.find("torrentFiles")->first);
+    auto *const
+    relationFilesValueOriginal = std::addressof(relations.find("torrentFiles")->second);
+    auto *const
+    relationPeerKeyOriginal = std::addressof(relations.find("torrentPeer")->first);
+    auto *const
+    relationPeerValueOriginal = std::addressof(relations.find("torrentPeer")->second);
 
     torrent->refresh();
 
@@ -2010,13 +2010,13 @@ void tst_Model_Relations::refresh_LazyLoad_OnlyRelations() const
        only loaded relations will be replaced with std::move directly
        to the relation std::variant reference in the Model::load() method. */
     QVERIFY(relationFilesKeyOriginal ==
-            reinterpret_cast<uintptr_t>(&relations.find("torrentFiles")->first));
+            std::addressof(relations.find("torrentFiles")->first));
     QVERIFY(relationFilesValueOriginal ==
-            reinterpret_cast<uintptr_t>(&relations.find("torrentFiles")->second));
+            std::addressof(relations.find("torrentFiles")->second));
     QVERIFY(relationPeerKeyOriginal ==
-            reinterpret_cast<uintptr_t>(&relations.find("torrentPeer")->first));
+            std::addressof(relations.find("torrentPeer")->first));
     QVERIFY(relationPeerValueOriginal ==
-            reinterpret_cast<uintptr_t>(&relations.find("torrentPeer")->second));
+            std::addressof(relations.find("torrentPeer")->second));
 
     // Validate refreshed attributes in relations
     auto filesRefreshed =
