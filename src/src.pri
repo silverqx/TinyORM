@@ -69,7 +69,7 @@ sourcesList += \
     sourcesList += \
         $$PWD/orm/tiny/concerns/guardedmodel.cpp \
         $$PWD/orm/tiny/exceptions/modelnotfounderror.cpp \
-        $$PWD/orm/tiny/exceptions/relationnotfounderror.cpp \
+        $$PWD/orm/tiny/exceptions/relationmappingnotfounderror.cpp \
         $$PWD/orm/tiny/exceptions/relationnotloadederror.cpp \
         $$PWD/orm/tiny/tinytypes.cpp \
         $$PWD/orm/tiny/utils/attribute.cpp \

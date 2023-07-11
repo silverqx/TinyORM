@@ -27,7 +27,7 @@ using TypeUtils = Orm::Utils::Type;
 
 using Orm::Tiny::AttributeItem;
 using Orm::Tiny::ConnectionOverride;
-using Orm::Tiny::Exceptions::RelationNotFoundError;
+using Orm::Tiny::Exceptions::RelationMappingNotFoundError;
 using Orm::Tiny::Types::ModelsCollection;
 
 using AttributeUtils = Orm::Tiny::Utils::Attribute;
@@ -2693,7 +2693,7 @@ void tst_Collection_Models::load_lvalue_NonExistentRelation_Failed() const
     verify();
 
     QVERIFY_EXCEPTION_THROWN(albums.load("albumImages-NON_EXISTENT"),
-                             RelationNotFoundError);
+                             RelationMappingNotFoundError);
 
     // Verify after
     verify();
@@ -2935,7 +2935,7 @@ void tst_Collection_Models::load_rvalue_NonExistentRelation_Failed() const
     verify();
 
     QVERIFY_EXCEPTION_THROWN(std::move(albums).load("albumImages-NON_EXISTENT"),
-                             RelationNotFoundError);
+                             RelationMappingNotFoundError);
 
     // Verify after
     verify();

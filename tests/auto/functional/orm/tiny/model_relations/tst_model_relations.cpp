@@ -32,7 +32,7 @@ using Orm::QtTimeZoneType;
 
 using Orm::Tiny::AttributeItem;
 using Orm::Tiny::ConnectionOverride;
-using Orm::Tiny::Exceptions::RelationNotFoundError;
+using Orm::Tiny::Exceptions::RelationMappingNotFoundError;
 using Orm::Tiny::Exceptions::RelationNotLoadedError;
 using Orm::Tiny::Relations::Pivot;
 using Orm::Tiny::Types::ModelsCollection;
@@ -439,7 +439,7 @@ void tst_Model_Relations::eagerLoad_Failed() const
     ConnectionOverride::connection = connection;
 
     QVERIFY_EXCEPTION_THROWN(TorrentEager_Failed::find(1),
-                             RelationNotFoundError);
+                             RelationMappingNotFoundError);
 }
 
 void tst_Model_Relations::getRelationValue_LazyLoad_ManyAndOne() const
@@ -941,7 +941,7 @@ void tst_Model_Relations::with_NonExistentRelation_Failed() const
     ConnectionOverride::connection = connection;
 
     QVERIFY_EXCEPTION_THROWN(Torrent::with("torrentFiles-NON_EXISTENT")->find(1),
-                             RelationNotFoundError);
+                             RelationMappingNotFoundError);
 }
 
 void tst_Model_Relations::with_WithSelectConstraint() const
@@ -1783,7 +1783,7 @@ void tst_Model_Relations::load_NonExistentRelation_Failed() const
     QVERIFY(torrent->getRelations().empty());
 
     QVERIFY_EXCEPTION_THROWN(torrent->load("torrentFiles-NON_EXISTENT"),
-                             RelationNotFoundError);
+                             RelationMappingNotFoundError);
     QVERIFY(torrent->getRelations().empty());
 }
 

@@ -19,7 +19,7 @@ TINY_SYSTEM_HEADER
 #include "orm/macros/threadlocal.hpp"
 #include "orm/ormtypes.hpp"
 #include "orm/tiny/casts/attribute.hpp"
-#include "orm/tiny/exceptions/mutatornotfounderror.hpp"
+#include "orm/tiny/exceptions/mutatormappingnotfounderror.hpp"
 #include "orm/tiny/macros/crtpmodelwithbase.hpp"
 #include "orm/tiny/utils/attribute.hpp"
 #include "orm/utils/configuration.hpp"
@@ -2617,7 +2617,7 @@ namespace Orm::Tiny::Concerns
             return;
 
         else T_UNLIKELY
-            throw Exceptions::MutatorNotFoundError(
+            throw Exceptions::MutatorMappingNotFoundError(
                     TypeUtils::classPureBasename<Derived>(), name);
     }
 

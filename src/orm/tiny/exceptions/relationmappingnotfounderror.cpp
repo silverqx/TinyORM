@@ -1,4 +1,4 @@
-#include "orm/tiny/exceptions/relationnotfounderror.hpp"
+#include "orm/tiny/exceptions/relationmappingnotfounderror.hpp"
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
@@ -7,9 +7,9 @@ namespace Orm::Tiny::Exceptions
 
 /* public */
 
-RelationNotFoundError::RelationNotFoundError(const QString &model,
-                                             const QString &relation,
-                                             const From from)
+RelationMappingNotFoundError::RelationMappingNotFoundError(
+        const QString &model, const QString &relation, const From from
+)
     : RuntimeError(formatMessage(model, relation, from))
     , m_model(model)
     , m_relation(relation)
@@ -18,9 +18,9 @@ RelationNotFoundError::RelationNotFoundError(const QString &model,
 
 /* private */
 
-QString RelationNotFoundError::formatMessage(const QString &model,
-                                             const QString &relation,
-                                             const From from)
+QString
+RelationMappingNotFoundError::formatMessage(
+        const QString &model, const QString &relation, const From from)
 {
     /* I was confused when I looked at this method after some time, but it's correct,
        it shows two kind of messages, one for the belongsTo/belongsToMany and one

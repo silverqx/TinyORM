@@ -9,7 +9,7 @@ TINY_SYSTEM_HEADER
 
 #include "orm/exceptions/invalidtemplateargumenterror.hpp"
 #include "orm/tiny/concerns/hasrelationstore.hpp"
-#include "orm/tiny/exceptions/relationnotfounderror.hpp"
+#include "orm/tiny/exceptions/relationmappingnotfounderror.hpp"
 #include "orm/tiny/exceptions/relationnotloadederror.hpp"
 #include "orm/tiny/macros/crtpmodelwithbase.hpp"
 #include "orm/tiny/relations/belongsto.hpp"
@@ -253,8 +253,8 @@ namespace Concerns
         std::unordered_set<QString> m_pivots;
 
     private:
-        /*! Alias for the enum struct RelationNotFoundError::From. */
-        using RelationFrom = Tiny::Exceptions::RelationNotFoundError::From;
+        /*! Alias for the enum struct RelationMappingNotFoundError::From. */
+        using RelationFrom = Tiny::Exceptions::RelationMappingNotFoundError::From;
 
         /*! Throw exception if a relation is not defined. */
         void validateUserRelation(const QString &name,
@@ -992,7 +992,7 @@ namespace Concerns
             return;
 
         else T_UNLIKELY
-            throw Exceptions::RelationNotFoundError(
+            throw Exceptions::RelationMappingNotFoundError(
                     TypeUtils::classPureBasename<Derived>(), name, from);
     }
 

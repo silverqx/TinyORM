@@ -136,8 +136,8 @@ function(tinyorm_sources out_headers out_sources)
             tiny/concerns/queriesrelationships.hpp
             tiny/exceptions/massassignmenterror.hpp
             tiny/exceptions/modelnotfounderror.hpp
-            tiny/exceptions/mutatornotfounderror.hpp
-            tiny/exceptions/relationnotfounderror.hpp
+            tiny/exceptions/mutatormappingnotfounderror.hpp
+            tiny/exceptions/relationmappingnotfounderror.hpp
             tiny/exceptions/relationnotloadederror.hpp
             tiny/macros/crtpmodel.hpp
             tiny/macros/crtpmodelwithbase.hpp
@@ -255,7 +255,7 @@ function(tinyorm_sources out_headers out_sources)
         list(APPEND sources
             tiny/concerns/guardedmodel.cpp
             tiny/exceptions/modelnotfounderror.cpp
-            tiny/exceptions/relationnotfounderror.cpp
+            tiny/exceptions/relationmappingnotfounderror.cpp
             tiny/exceptions/relationnotloadederror.cpp
             tiny/tinytypes.cpp
             tiny/utils/attribute.cpp

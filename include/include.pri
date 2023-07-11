@@ -127,8 +127,8 @@ headersList += \
         $$PWD/orm/tiny/concerns/queriesrelationships.hpp \
         $$PWD/orm/tiny/exceptions/massassignmenterror.hpp \
         $$PWD/orm/tiny/exceptions/modelnotfounderror.hpp \
-        $$PWD/orm/tiny/exceptions/mutatornotfounderror.hpp \
-        $$PWD/orm/tiny/exceptions/relationnotfounderror.hpp \
+        $$PWD/orm/tiny/exceptions/mutatormappingnotfounderror.hpp \
+        $$PWD/orm/tiny/exceptions/relationmappingnotfounderror.hpp \
         $$PWD/orm/tiny/exceptions/relationnotloadederror.hpp \
         $$PWD/orm/tiny/macros/crtpmodel.hpp \
         $$PWD/orm/tiny/macros/crtpmodelwithbase.hpp \

@@ -14,11 +14,11 @@ namespace Orm::Tiny::Exceptions
 
     /*! Mutator mapping not found exception, check whether the mutator/accessor name was
         defined in the u_mutators data member. */
-    class MutatorNotFoundError : public Orm::Exceptions::RuntimeError // clazy:exclude=copyable-polymorphic
+    class MutatorMappingNotFoundError : public Orm::Exceptions::RuntimeError // clazy:exclude=copyable-polymorphic
     {
     public:
         /*! Constructor. */
-        inline MutatorNotFoundError(QString model, const QString &mutator);
+        inline MutatorMappingNotFoundError(QString model, const QString &mutator);
 
         /*! Get the affected TinyORM model. */
         inline const QString &getModel() const noexcept;
@@ -39,20 +39,21 @@ namespace Orm::Tiny::Exceptions
 
     /* public */
 
-    MutatorNotFoundError::MutatorNotFoundError(QString model, const QString &mutator)
+    MutatorMappingNotFoundError::MutatorMappingNotFoundError(QString model,
+                                                             const QString &mutator)
         : RuntimeError(formatMessage(model, mutator))
         , m_model(std::move(model))
         , m_mutator(mutator)
     {}
 
     const QString &
-    MutatorNotFoundError::getModel() const noexcept
+    MutatorMappingNotFoundError::getModel() const noexcept
     {
         return m_model;
     }
 
     const QString &
-    MutatorNotFoundError::getMutator() const noexcept
+    MutatorMappingNotFoundError::getMutator() const noexcept
     {
         return m_mutator;
     }
@@ -60,7 +61,8 @@ namespace Orm::Tiny::Exceptions
     /* private */
 
     QString
-    MutatorNotFoundError::formatMessage(const QString &model, const QString &mutator)
+    MutatorMappingNotFoundError::formatMessage(const QString &model,
+                                               const QString &mutator)
     {
         return QStringLiteral(
                     "The mutator mapping '%1' doesn't exist in the 'u_mutators' map "
