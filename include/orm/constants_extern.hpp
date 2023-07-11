@@ -59,6 +59,7 @@ namespace Orm::Constants
     SHAREDLIB_EXPORT extern const QString NOTE;
     SHAREDLIB_EXPORT extern const QString pivot_;
     SHAREDLIB_EXPORT extern const QString HASH_;
+    SHAREDLIB_EXPORT extern const QString Progress;
 
     // Templates
     SHAREDLIB_EXPORT extern const QString TMPL_ONE;

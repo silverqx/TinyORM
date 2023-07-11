@@ -48,6 +48,7 @@ namespace Orm::Constants
     const QString NOTE         = QStringLiteral("note");
     const QString pivot_       = QStringLiteral("pivot");
     const QString HASH_        = QStringLiteral("hash");
+    const QString Progress     = QStringLiteral("progress");
 
     // Templates
     const QString TMPL_ONE     = QStringLiteral("%1");

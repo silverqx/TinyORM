@@ -189,6 +189,8 @@ namespace Seeders
     using TINYORM_COMMON_NAMESPACE::Orm::Constants::pivot_; // NOLINT(misc-unused-using-decls)
     /*! Alias for the string constant "hash". */
     using TINYORM_COMMON_NAMESPACE::Orm::Constants::HASH_; // NOLINT(misc-unused-using-decls)
+    /*! Alias for the string constant "progress". */
+    using TINYORM_COMMON_NAMESPACE::Orm::Constants::Progress; // NOLINT(misc-unused-using-decls)
 
     /*! Alias for the string constant "MySQL". */
     using TINYORM_COMMON_NAMESPACE::Orm::Constants::MYSQL_; // NOLINT(misc-unused-using-decls)
