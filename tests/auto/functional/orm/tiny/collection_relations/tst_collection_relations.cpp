@@ -858,7 +858,7 @@ void tst_Collection_Relations::map() const
     QVERIFY(Common::verifyIds(images, {2, 3, 4, 5, 6}));
 
     // Get result
-    const auto result = images.map([](AlbumImage &&imageCopy)
+    const ModelsCollection<AlbumImage> result = images.map([](AlbumImage &&imageCopy)
     {
         if (const auto id = Common::getKeyCasted(imageCopy);
             id == 3 || id == 6
@@ -872,9 +872,6 @@ void tst_Collection_Relations::map() const
 
     // Verify
     QCOMPARE(result.size(), 5);
-    // It must return a new ModelsCollection (different memory address)
-    QVERIFY(reinterpret_cast<uintptr_t>(&result) !=
-            reinterpret_cast<uintptr_t>(&images));
     QVERIFY(Common::verifyIds(result, {2, 3, 4, 5, 6}));
     QVERIFY(Common::verifyAttributeValues<QString>(
                 NAME, result, {"album2_image1", "album2_image2_id_3", "album2_image3",
@@ -895,7 +892,8 @@ void tst_Collection_Relations::map_WithIndex() const
     QVERIFY(Common::verifyIds(images, {2, 3, 4, 5, 6}));
 
     // Get result
-    const auto result = images.map([](AlbumImage &&imageCopy, const auto index)
+    const ModelsCollection<AlbumImage> result =
+            images.map([](AlbumImage &&imageCopy, const auto index)
     {
         if (const auto id = Common::getKeyCasted(imageCopy);
             id == 2
@@ -913,9 +911,6 @@ void tst_Collection_Relations::map_WithIndex() const
     });
 
     // Verify
-    // It must return a new ModelsCollection (different memory address)
-    QVERIFY(reinterpret_cast<uintptr_t>(&result) !=
-            reinterpret_cast<uintptr_t>(&images));
     QCOMPARE(result.size(), 5);
     QVERIFY(Common::verifyIds(result, {2, 3, 4, 5, 6}));
     QVERIFY(Common::verifyAttributeValues<QString>(
@@ -937,7 +932,7 @@ void tst_Collection_Relations::map_CustomReturnType() const
     QVERIFY(Common::verifyIds(images, {2, 3, 4, 5, 6}));
 
     // Get result
-    const auto result = images.map<QString>([](AlbumImage &&imageCopy)
+    const QVector<QString> result = images.map<QString>([](AlbumImage &&imageCopy)
     {
         const auto nameRef = imageCopy[NAME];
 
@@ -952,9 +947,6 @@ void tst_Collection_Relations::map_CustomReturnType() const
     });
 
     // Verify
-    // It must return a new ModelsCollection (different memory address)
-    QVERIFY(reinterpret_cast<uintptr_t>(&result) !=
-            reinterpret_cast<uintptr_t>(&images));
     QCOMPARE(result.size(), 5);
     QVector<QString> expected {"album2_image1", "album2_image2_id_3", "album2_image3",
                                "album2_image4", "album2_image5_id_6"};
@@ -975,7 +967,8 @@ void tst_Collection_Relations::map_CustomReturnType_WithIndex() const
     QVERIFY(Common::verifyIds(images, {2, 3, 4, 5, 6}));
 
     // Get result
-    const auto result = images.map<QString>([](AlbumImage &&imageCopy, const auto index)
+    const QVector<QString> result = images.map<QString>(
+                                        [](AlbumImage &&imageCopy, const auto index)
     {
         const auto nameRef = imageCopy[NAME];
 
@@ -995,9 +988,6 @@ void tst_Collection_Relations::map_CustomReturnType_WithIndex() const
     });
 
     // Verify
-    // It must return a new ModelsCollection (different memory address)
-    QVERIFY(reinterpret_cast<uintptr_t>(&result) !=
-            reinterpret_cast<uintptr_t>(&images));
     QCOMPARE(result.size(), 5);
     QVector<QString> expected {"album2_image1_id_2", "album2_image2", "album2_image3",
                                "album2_image4_index_3", "album2_image5"};
