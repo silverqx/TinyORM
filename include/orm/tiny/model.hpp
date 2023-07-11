@@ -1068,8 +1068,12 @@ namespace Orm::Tiny
                model().u_with         == derivedRight.u_with         &&
 //               model().u_withCount    == derivedRight.u_withCount    &&
                model().u_connection   == derivedRight.u_connection   &&
-               model().u_timestamps   == derivedRight.u_timestamps   &&
-               model().u_touches      == derivedRight.u_touches;
+               // HasAttributes
+               model().u_appends      == derivedRight.u_appends      &&
+               // HasRelationships
+               model().u_touches      == derivedRight.u_touches      &&
+               // HasTimestamps
+               model().u_timestamps   == derivedRight.u_timestamps;
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
