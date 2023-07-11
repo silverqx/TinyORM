@@ -2602,11 +2602,12 @@ namespace Orm::Tiny::Concerns
 
         using CallbackWithAttributes = Attribute::CallbackWithAttributes;
 
-        if (std::holds_alternative<CallbackWithAttributes>(accessorVariant))
+        if (std::holds_alternative<CallbackWithAttributes>(accessorVariant)) T_LIKELY
             return std::invoke(attribute.get<CallbackWithAttributes>(),
                                AttributeUtils::convertVectorToModelAttributes(
                                    m_attributes));
-        Q_UNREACHABLE();
+        else T_UNLIKELY
+            Q_UNREACHABLE();
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
