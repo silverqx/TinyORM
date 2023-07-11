@@ -36,13 +36,13 @@ protected:
     }
 
 private:
-    /*! Prepare a date for vector, map, or JSON serialization (calls Derived). */
+    /*! Prepare a date for vector, map, or JSON serialization. */
     inline static QString serializeDate(const QDate date)
     {
         return date.toString("dd.MM.yyyy");
     }
 
-    /*! Prepare a datetime for vector, map, or JSON serialization (calls Derived). */
+    /*! Prepare a datetime for vector, map, or JSON serialization. */
     inline static QString serializeDateTime(const QDateTime &datetime)
     {
         return datetime.toUTC().toString("dd.MM.yyyy HH:mm:ss.z t");
