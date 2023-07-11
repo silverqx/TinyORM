@@ -11,6 +11,7 @@ using Orm::Constants::HASH_;
 using Orm::Constants::ID;
 using Orm::Constants::NAME;
 using Orm::Constants::NOTE;
+using Orm::Constants::Progress;
 using Orm::Constants::SIZE_;
 using Orm::Constants::UPDATED_AT;
 
@@ -150,7 +151,7 @@ void tst_Model_Appends::toMap_WithAppends() const
         {NAME,            "test4"},
         {"name_progress", "test4 (400)"},
         {NOTE,            "after update revert updated_at"},
-        {"progress",      400},
+        {Progress,        400},
         {SIZE_,           14},
         {UPDATED_AT,      "2021-01-04T18:46:31.000Z"},
         {"user_id",       1},
@@ -179,7 +180,7 @@ void tst_Model_Appends::toVector_WithAppends() const
         {"user_id",       1},
         {NAME,            "test4"},
         {SIZE_,           14},
-        {"progress",      400},
+        {Progress,        400},
         {"added_on",      "2020-08-04T20:11:10.000Z"},
         {HASH_,           "4579e3af2768cdf52ec84c1f320333f68401dc6e"},
         {NOTE,            "after update revert updated_at"},
@@ -265,7 +266,7 @@ void tst_Model_Appends::toMap_WithAppends_WithHidden() const
         {ID,              4},
         {NAME,            "test4"},
         {"name_progress", "test4 (400)"},
-        {"progress",      400},
+        {Progress,        400},
         {UPDATED_AT,      "2021-01-04T18:46:31.000Z"},
         {"user_id",       1},
     };
@@ -294,7 +295,7 @@ void tst_Model_Appends::toVector_WithAppends_WithHidden() const
         {ID,          4},
         {"user_id",   1},
         {NAME,        "test4"},
-        {"progress",  400},
+        {Progress,    400},
         {"added_on",  "2020-08-04T20:11:10.000Z"},
         {CREATED_AT,  "2019-09-04T08:11:23.000Z"},
         {UPDATED_AT,  "2021-01-04T18:46:31.000Z"},
@@ -405,7 +406,7 @@ void tst_Model_Appends::toVector_WithAppends_ForExistingAttribute() const
         {"torrent_id", 1},
         {"file_index", 0},
         {SIZE_,        1024},
-        {"progress",   200},
+        {Progress,     200},
         {NOTE,         "no file properties"},
         {CREATED_AT,   "2021-01-01T14:51:23.000Z"},
         {UPDATED_AT,   "2023-07-03T09:40:17.000Z"},
@@ -463,7 +464,7 @@ const
         {"torrent_id", 1},
         {"file_index", 0},
         {SIZE_,        1024},
-        {"progress",   200},
+        {Progress,     200},
         {NOTE,         "no file properties"},
         {CREATED_AT,   "2021-01-01T14:51:23.000Z"},
         {UPDATED_AT,   "2023-07-03T09:40:17.000Z"},

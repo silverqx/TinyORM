@@ -7,6 +7,7 @@
 
 using Orm::Constants::AND;
 using Orm::Constants::LIKE;
+using Orm::Constants::Progress;
 
 using Orm::QueryBuilder;
 
@@ -234,7 +235,7 @@ void tst_QueriesRelationships::whereHas_Count_QString_QueryBuilder_OnHasMany() c
     {
         QVERIFY((std::is_same_v<decltype (query), QueryBuilder &>));
 
-        query.where("progress", ">=", 870);
+        query.where(Progress, ">=", 870);
     }, ">=", 2)
             ->get();
 
@@ -256,7 +257,7 @@ void tst_QueriesRelationships::whereHas_Count_QString_TinyBuilder_OnHasMany() co
         QVERIFY((std::is_same_v<decltype (query),
                                 TinyBuilder<TorrentPreviewableFile> &>));
 
-        query.where("progress", ">=", 870);
+        query.where(Progress, ">=", 870);
     }, ">=", 2)
             ->get();
 
@@ -278,7 +279,7 @@ void tst_QueriesRelationships::whereHas_Count_MethodPointer_TinyBuilder_OnHasMan
         QVERIFY((std::is_same_v<decltype (query),
                                 TinyBuilder<TorrentPreviewableFile> &>));
 
-        query.where("progress", ">=", 870);
+        query.where(Progress, ">=", 870);
     }, ">=", 2)
             ->get();
 

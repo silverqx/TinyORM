@@ -7,6 +7,7 @@
 
 using Orm::Constants::ID;
 using Orm::Constants::NAME;
+using Orm::Constants::Progress;
 using Orm::Constants::SIZE_;
 
 using Orm::Exceptions::QueryError;
@@ -186,7 +187,7 @@ void tst_TinyBuilder::incrementAndDecrement() const
     const auto &updatedAtColumn = torrent4_1->getUpdatedAtColumn();
 
     auto sizeOriginal = torrent4_1->getAttribute(SIZE_);
-    auto progressOriginal = torrent4_1->getAttribute("progress");
+    auto progressOriginal = torrent4_1->getAttribute(Progress);
     auto updatedAtOriginal = torrent4_1->getAttribute(updatedAtColumn);
     QCOMPARE(sizeOriginal, QVariant(14));
     QCOMPARE(progressOriginal, QVariant(400));
@@ -194,24 +195,24 @@ void tst_TinyBuilder::incrementAndDecrement() const
              QVariant(QDateTime({2021, 1, 4}, {18, 46, 31}, Qt::UTC)));
 
     // Increment
-    Torrent::whereEq(ID, 4)->increment(SIZE_, 2, {{"progress", 444}});
+    Torrent::whereEq(ID, 4)->increment(SIZE_, 2, {{Progress, 444}});
 
     auto torrent4_2 = Torrent::find(4);
     QVERIFY(torrent4_2);
     QVERIFY(torrent4_2->exists);
     QCOMPARE(torrent4_2->getAttribute(SIZE_), QVariant(16));
-    QCOMPARE(torrent4_2->getAttribute("progress"), QVariant(444));
+    QCOMPARE(torrent4_2->getAttribute(Progress), QVariant(444));
     QVERIFY(torrent4_2->getAttribute<QDateTime>(updatedAtColumn) >= timeBeforeIncrement);
 
     // Decrement and restore updated at column
-    Torrent::whereEq(ID, 4)->decrement(SIZE_, 2, {{"progress", 400},
+    Torrent::whereEq(ID, 4)->decrement(SIZE_, 2, {{Progress, 400},
                                                   {updatedAtColumn, updatedAtOriginal}});
 
     auto torrent4_3 = Torrent::find(4);
     QVERIFY(torrent4_3);
     QVERIFY(torrent4_3->exists);
     QCOMPARE(torrent4_3->getAttribute(SIZE_), QVariant(14));
-    QCOMPARE(torrent4_3->getAttribute("progress"), QVariant(400));
+    QCOMPARE(torrent4_3->getAttribute(Progress), QVariant(400));
     QCOMPARE(torrent4_3->getAttribute(updatedAtColumn), updatedAtOriginal);
 }
 
@@ -232,7 +233,7 @@ void tst_TinyBuilder::update() const
 
     const auto &updatedAtColumn = torrent->getUpdatedAtColumn();
 
-    auto progressOriginal = torrent->getAttribute("progress");
+    auto progressOriginal = torrent->getAttribute(Progress);
     auto updatedAtOriginal = torrent->getAttribute(updatedAtColumn);
 
     QVERIFY(torrent->exists);
@@ -240,23 +241,23 @@ void tst_TinyBuilder::update() const
     QCOMPARE(updatedAtOriginal,
              QVariant(QDateTime({2021, 1, 4}, {18, 46, 31}, Qt::UTC)));
 
-    auto [affected, query] = Torrent::whereEq(ID, 4)->update({{"progress", 447}});
+    auto [affected, query] = Torrent::whereEq(ID, 4)->update({{Progress, 447}});
     QCOMPARE(affected, 1);
     QVERIFY(query.isActive());
 
     // Verify value in the database
     auto torrentVerify = Torrent::find(4);
     QVERIFY(torrentVerify->exists);
-    QCOMPARE(torrentVerify->getAttribute("progress"), QVariant(447));
+    QCOMPARE(torrentVerify->getAttribute(Progress), QVariant(447));
     QVERIFY(torrentVerify->getAttribute<QDateTime>(updatedAtColumn) >= timeBeforeUpdate);
 
     // Revert value back
     auto [affectedRevert, queryRevert] =
-            Torrent::whereEq(ID, 4)->update({{"progress", progressOriginal},
+            Torrent::whereEq(ID, 4)->update({{Progress, progressOriginal},
                                                {updatedAtColumn, updatedAtOriginal}});
     QCOMPARE(affectedRevert, 1);
     QVERIFY(queryRevert.isActive());
-    QCOMPARE(torrent->getAttribute("progress"), progressOriginal);
+    QCOMPARE(torrent->getAttribute(Progress), progressOriginal);
     /* Needed to convert toDateTime() because TinyBuilder::update() set update_at
        attribute as QString. */
     QCOMPARE(torrent->getAttribute<QDateTime>(updatedAtColumn),
@@ -293,7 +294,7 @@ void tst_TinyBuilder::update_SameValue() const
     /* Send update query to the database, this is different from
        the Model::update() method. */
     auto [affected, query] = Torrent::whereEq(ID, 5)
-            ->update({{"progress", torrent->getAttribute("progress")}});
+            ->update({{Progress, torrent->getAttribute(Progress)}});
 
     /* Don't exactly know what cause this, I think some sort of caching can
        occure, but it doesn't matter, leave it as is in the future, it is ok. */

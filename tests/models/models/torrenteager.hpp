@@ -13,6 +13,7 @@ namespace Models
 using Orm::Constants::HASH_;
 using Orm::Constants::NAME;
 using Orm::Constants::NOTE;
+using Orm::Constants::Progress;
 using Orm::Constants::SIZE_;
 
 using Orm::Tiny::AttributeItem;
@@ -62,7 +63,7 @@ private:
     /*! The model's default values for attributes. */
     inline static const QVector<AttributeItem> u_attributes { // NOLINT(cppcoreguidelines-interfaces-global-init)
         {SIZE_,      0},
-        {"progress", 0},
+        {Progress,   0},
         {"added_on", QDateTime({2021, 4, 1}, {15, 10, 10}, Qt::UTC)},
     };
 
@@ -70,7 +71,7 @@ private:
     inline static const QStringList u_fillable { // NOLINT(cppcoreguidelines-interfaces-global-init)
         NAME,
         SIZE_,
-        "progress",
+        Progress,
         "added_on",
         HASH_,
         NOTE,

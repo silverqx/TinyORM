@@ -18,6 +18,7 @@ using Orm::Constants::HASH_;
 using Orm::Constants::ID;
 using Orm::Constants::LT;
 using Orm::Constants::NAME;
+using Orm::Constants::Progress;
 using Orm::Constants::QMYSQL;
 using Orm::Constants::QSQLITE;
 using Orm::Constants::SIZE_;
@@ -164,7 +165,7 @@ void tst_Model::save_Insert() const
     const auto addedOn = QDateTime({2020, 10, 1}, {20, 22, 10}, Qt::UTC);
     torrent.setAttribute(NAME, "test50")
             .setAttribute(SIZE_, 50)
-            .setAttribute("progress", 50)
+            .setAttribute(Progress, 50)
             .setAttribute("added_on", addedOn)
             .setAttribute(HASH_, "5079e3af2768cdf52ec84c1f320333f68401dc61");
 
@@ -178,7 +179,7 @@ void tst_Model::save_Insert() const
     QVERIFY(torrent.getKeyCasted() > 6);
     QCOMPARE(torrent.getAttribute(NAME), QVariant("test50"));
     QCOMPARE(torrent.getAttribute(SIZE_), QVariant(50));
-    QCOMPARE(torrent.getAttribute("progress"), QVariant(50));
+    QCOMPARE(torrent.getAttribute(Progress), QVariant(50));
     QCOMPARE(torrent.getAttribute("added_on"), QVariant(addedOn));
     QCOMPARE(torrent.getAttribute(HASH_),
              QVariant("5079e3af2768cdf52ec84c1f320333f68401dc61"));
@@ -194,7 +195,7 @@ void tst_Model::save_Insert() const
     QCOMPARE(torrentToVerify->getKey(), torrent.getKey());
     QCOMPARE(torrentToVerify->getAttribute(NAME), QVariant("test50"));
     QCOMPARE(torrentToVerify->getAttribute(SIZE_), QVariant(50));
-    QCOMPARE(torrentToVerify->getAttribute("progress"), QVariant(50));
+    QCOMPARE(torrentToVerify->getAttribute(Progress), QVariant(50));
     QCOMPARE(torrentToVerify->getAttribute("added_on"), QVariant(addedOn));
     QCOMPARE(torrentToVerify->getAttribute(HASH_),
              QVariant("5079e3af2768cdf52ec84c1f320333f68401dc61"));
@@ -244,7 +245,7 @@ void tst_Model::save_Insert_WithDefaultValues() const
     QVERIFY(torrentToVerify->getKeyCasted() > 6);
     QCOMPARE(torrentToVerify->getAttribute(NAME), QVariant("test51"));
     QCOMPARE(torrentToVerify->getAttribute(SIZE_), QVariant(0));
-    QCOMPARE(torrentToVerify->getAttribute("progress"), QVariant(0));
+    QCOMPARE(torrentToVerify->getAttribute(Progress), QVariant(0));
     QCOMPARE(torrentToVerify->getAttribute("added_on"), QVariant(addedOn));
     QCOMPARE(torrentToVerify->getAttribute(HASH_),
              QVariant("5179e3af2768cdf52ec84c1f320333f68401dc61"));
@@ -311,7 +312,7 @@ void tst_Model::save_Update_Success() const
 
     torrentFile->setAttribute("filepath", "test3_file1-updated.mkv")
             .setAttribute(SIZE_, 5570)
-            .setAttribute("progress", 860);
+            .setAttribute(Progress, 860);
 
     const auto result = torrentFile->save();
     QVERIFY(result);
@@ -324,12 +325,12 @@ void tst_Model::save_Update_Success() const
     QCOMPARE(torrentFileFresh->getAttribute("filepath"),
              QVariant("test3_file1-updated.mkv"));
     QCOMPARE(torrentFileFresh->getAttribute(SIZE_), QVariant(5570));
-    QCOMPARE(torrentFileFresh->getAttribute("progress"), QVariant(860));
+    QCOMPARE(torrentFileFresh->getAttribute(Progress), QVariant(860));
 
     // Revert
     torrentFile->setAttribute("filepath", "test3_file1.mkv")
             .setAttribute(SIZE_, 5568)
-            .setAttribute("progress", 870);
+            .setAttribute(Progress, 870);
     torrentFile->save();
 }
 
@@ -658,7 +659,7 @@ void tst_Model::where_WithVector_Condition() const
     ConnectionOverride::connection = connection;
 
     {
-        auto torrents = Torrent::where({{SIZE_, 14}, {"progress", 400}})->get();
+        auto torrents = Torrent::where({{SIZE_, 14}, {Progress, 400}})->get();
         QCOMPARE(torrents.size(), 1);
         QCOMPARE(torrents.at(0).getKey(), QVariant(4));
     }
@@ -672,7 +673,7 @@ void tst_Model::where_WithVector_Condition() const
     }
     {
         auto torrents = Torrent::where({{SIZE_, 13}, {SIZE_, 14, "=", "or"}})
-                        ->where("progress", "=", 400)
+                        ->where(Progress, "=", 400)
                         .get();
         QCOMPARE(torrents.size(), 1);
         QCOMPARE(torrents.at(0).getKey(), QVariant(4));
@@ -1087,21 +1088,21 @@ void tst_Model::firstOrNew_Found() const
         QCOMPARE(torrent[ID], QVariant(3));
         QCOMPARE(torrent[NAME], QVariant("test3"));
         QCOMPARE(torrent[SIZE_], QVariant(13));
-        QCOMPARE(torrent["progress"], QVariant(300));
+        QCOMPARE(torrent[Progress], QVariant(300));
     }
     {
         auto torrent = Torrent::firstOrNew(
                            {{NAME, "test3"}},
 
                            {{SIZE_, 113},
-                            {"progress", 313}});
+                            {Progress, 313}});
 
         QVERIFY(torrent.exists);
         QCOMPARE(torrent.getAttributes().size(), 10);
         QCOMPARE(torrent[ID], QVariant(3));
         QCOMPARE(torrent[NAME], QVariant("test3"));
         QCOMPARE(torrent[SIZE_], QVariant(13));
-        QCOMPARE(torrent["progress"], QVariant(300));
+        QCOMPARE(torrent[Progress], QVariant(300));
     }
 }
 
@@ -1123,13 +1124,13 @@ void tst_Model::firstOrNew_NotFound() const
                            {{NAME, "test100"}},
 
                            {{SIZE_, 113},
-                            {"progress", 313}});
+                            {Progress, 313}});
 
         QVERIFY(!torrent.exists);
         QCOMPARE(torrent.getAttributes().size(), 3);
         QCOMPARE(torrent[NAME], QVariant("test100"));
         QCOMPARE(torrent[SIZE_], QVariant(113));
-        QCOMPARE(torrent["progress"], QVariant(313));
+        QCOMPARE(torrent[Progress], QVariant(313));
     }
 }
 
@@ -1147,7 +1148,7 @@ void tst_Model::firstOrCreate_Found() const
         QCOMPARE(torrent[ID], QVariant(3));
         QCOMPARE(torrent[NAME], QVariant("test3"));
         QCOMPARE(torrent[SIZE_], QVariant(13));
-        QCOMPARE(torrent["progress"], QVariant(300));
+        QCOMPARE(torrent[Progress], QVariant(300));
     }
     {
         const auto addedOn = QDateTime::currentDateTimeUtc();
@@ -1156,7 +1157,7 @@ void tst_Model::firstOrCreate_Found() const
                            {{NAME, "test3"}},
 
                            {{SIZE_, 33},
-                            {"progress", 33},
+                            {Progress, 33},
                             {"added_on", addedOn},
                             {HASH_, "0009e3af2768cdf52ec84c1f320333f68401dc60"}});
 
@@ -1165,7 +1166,7 @@ void tst_Model::firstOrCreate_Found() const
         QCOMPARE(torrent[ID], QVariant(3));
         QCOMPARE(torrent[NAME], QVariant("test3"));
         QCOMPARE(torrent[SIZE_], QVariant(13));
-        QCOMPARE(torrent["progress"], QVariant(300));
+        QCOMPARE(torrent[Progress], QVariant(300));
         QCOMPARE(torrent["added_on"],
                 QVariant(QDateTime({2020, 8, 3}, {20, 11, 10}, Qt::UTC)));
         QCOMPARE(torrent[HASH_], QVariant("3579e3af2768cdf52ec84c1f320333f68401dc6e"));
@@ -1184,7 +1185,7 @@ void tst_Model::firstOrCreate_NotFound() const
                        {{NAME, "test100"}},
 
                        {{SIZE_, 113},
-                        {"progress", 313},
+                        {Progress, 313},
                         {"added_on", addedOn},
                         {HASH_, "1999e3af2768cdf52ec84c1f320333f68401dc6e"}});
 
@@ -1193,7 +1194,7 @@ void tst_Model::firstOrCreate_NotFound() const
     QVERIFY(torrent[ID]->value<quint64>() > 6);
     QCOMPARE(torrent[NAME], QVariant("test100"));
     QCOMPARE(torrent[SIZE_], QVariant(113));
-    QCOMPARE(torrent["progress"], QVariant(313));
+    QCOMPARE(torrent[Progress], QVariant(313));
     QCOMPARE(torrent["added_on"], QVariant(addedOn));
     QCOMPARE(torrent[HASH_], QVariant("1999e3af2768cdf52ec84c1f320333f68401dc6e"));
 
@@ -1305,7 +1306,7 @@ void tst_Model::create() const
     auto torrent = Torrent::create({
         {NAME,       "test100"},
         {SIZE_,      100},
-        {"progress", 333},
+        {Progress,   333},
         {"added_on", addedOn},
         {HASH_,      "1009e3af2768cdf52ec84c1f320333f68401dc6e"},
     });
@@ -1315,7 +1316,7 @@ void tst_Model::create() const
     QVERIFY(torrent[ID]->value<quint64>() > 6);
     QCOMPARE(torrent[NAME], QVariant("test100"));
     QCOMPARE(torrent[SIZE_], QVariant(100));
-    QCOMPARE(torrent["progress"], QVariant(333));
+    QCOMPARE(torrent[Progress], QVariant(333));
     QCOMPARE(torrent["added_on"], QVariant(addedOn));
     QCOMPARE(torrent[HASH_], QVariant("1009e3af2768cdf52ec84c1f320333f68401dc6e"));
 
@@ -1347,7 +1348,7 @@ void tst_Model::create_Failed() const
     QVERIFY_EXCEPTION_THROWN((torrent = Torrent::create({
         {"name-NON_EXISTENT", "test100"},
         {SIZE_,               100},
-        {"progress",          333},
+        {Progress,            333},
         {"added_on",          addedOn},
         {HASH_,               "1009e3af2768cdf52ec84c1f320333f68401dc6e"},
     })), QueryError);
@@ -1376,7 +1377,7 @@ void tst_Model::incrementAndDecrement() const
     const auto &updatedAtColumn = torrent4_1->getUpdatedAtColumn();
 
     auto sizeOriginal = torrent4_1->getAttribute(SIZE_);
-    auto progressOriginal = torrent4_1->getAttribute("progress");
+    auto progressOriginal = torrent4_1->getAttribute(Progress);
     auto updatedAtOriginal = torrent4_1->getAttribute(updatedAtColumn);
     QCOMPARE(sizeOriginal, QVariant(14));
     QCOMPARE(progressOriginal, QVariant(400));
@@ -1384,42 +1385,42 @@ void tst_Model::incrementAndDecrement() const
              QVariant(QDateTime({2021, 1, 4}, {18, 46, 31}, Qt::UTC)));
 
     // Increment
-    torrent4_1->increment(SIZE_, 2, {{"progress", 444}});
+    torrent4_1->increment(SIZE_, 2, {{Progress, 444}});
 
     // Little unnecessary but the logic is true
     QVERIFY(!torrent4_1->isDirty());
     QVERIFY(!torrent4_1->isDirty(SIZE_));
-    QVERIFY(!torrent4_1->isDirty("progress"));
+    QVERIFY(!torrent4_1->isDirty(Progress));
     QVERIFY(torrent4_1->wasChanged());
     QVERIFY(torrent4_1->wasChanged(SIZE_));
-    QVERIFY(torrent4_1->wasChanged("progress"));
+    QVERIFY(torrent4_1->wasChanged(Progress));
 
     auto torrent4_2 = Torrent::find(4);
     QVERIFY(torrent4_2);
     QVERIFY(torrent4_2->exists);
     QCOMPARE(torrent4_2->getAttribute(SIZE_), QVariant(16));
-    QCOMPARE(torrent4_2->getAttribute("progress"), QVariant(444));
+    QCOMPARE(torrent4_2->getAttribute(Progress), QVariant(444));
     QVERIFY(torrent4_2->getAttribute<QDateTime>(updatedAtColumn) >= timeBeforeIncrement);
 
     // Decremented and restore updated at column
-    torrent4_2->decrement(SIZE_, 2, {{"progress", 400},
+    torrent4_2->decrement(SIZE_, 2, {{Progress, 400},
                                     {updatedAtColumn, updatedAtOriginal}});
 
     // Little unnecessary but the logic is true
     QVERIFY(!torrent4_2->isDirty());
     QVERIFY(!torrent4_2->isDirty(SIZE_));
-    QVERIFY(!torrent4_2->isDirty("progress"));
+    QVERIFY(!torrent4_2->isDirty(Progress));
     QVERIFY(!torrent4_2->isDirty(updatedAtColumn));
     QVERIFY(torrent4_2->wasChanged());
     QVERIFY(torrent4_2->wasChanged(SIZE_));
-    QVERIFY(torrent4_2->wasChanged("progress"));
+    QVERIFY(torrent4_2->wasChanged(Progress));
     QVERIFY(torrent4_2->wasChanged(updatedAtColumn));
 
     auto torrent4_3 = Torrent::find(4);
     QVERIFY(torrent4_3);
     QVERIFY(torrent4_3->exists);
     QCOMPARE(torrent4_3->getAttribute(SIZE_), QVariant(14));
-    QCOMPARE(torrent4_3->getAttribute("progress"), QVariant(400));
+    QCOMPARE(torrent4_3->getAttribute(Progress), QVariant(400));
     QCOMPARE(torrent4_3->getAttribute(updatedAtColumn), updatedAtOriginal);
 }
 
@@ -1433,7 +1434,7 @@ void tst_Model::incrementAndDecrement_OnNonExistentModel() const
 
     QVERIFY(!torrent.exists);
 
-    auto [affected, query] = torrent.increment(SIZE_, 1, {{"progress", 101}});
+    auto [affected, query] = torrent.increment(SIZE_, 1, {{Progress, 101}});
 
     // Must return -1 if updating all rows and the 'all' param. is in default (false)
     QVERIFY(affected == -1);
@@ -1460,7 +1461,7 @@ void tst_Model::update() const
 
     const auto &updatedAtColumn = torrent->getUpdatedAtColumn();
 
-    auto progressOriginal = torrent->getAttribute("progress");
+    auto progressOriginal = torrent->getAttribute(Progress);
     auto updatedAtOriginal = torrent->getAttribute(updatedAtColumn);
 
     QVERIFY(torrent->exists);
@@ -1468,25 +1469,25 @@ void tst_Model::update() const
     QCOMPARE(updatedAtOriginal,
              QVariant(QDateTime({2021, 1, 4}, {18, 46, 31}, Qt::UTC)));
 
-    auto result = torrent->update({{"progress", 449}});
+    auto result = torrent->update({{Progress, 449}});
 
     QVERIFY(result);
-    QCOMPARE(torrent->getAttribute("progress"), QVariant(449));
+    QCOMPARE(torrent->getAttribute(Progress), QVariant(449));
     QVERIFY(!torrent->isDirty());
     QVERIFY(torrent->wasChanged());
 
     // Verify value in the database
     auto torrentVerify = Torrent::find(4);
     QVERIFY(torrentVerify->exists);
-    QCOMPARE(torrentVerify->getAttribute("progress"), QVariant(449));
+    QCOMPARE(torrentVerify->getAttribute(Progress), QVariant(449));
     QVERIFY(torrentVerify->getAttribute<QDateTime>(updatedAtColumn) >=
             timeBeforeUpdate);
 
     // Revert value back
-    auto resultRevert = torrent->update({{"progress", progressOriginal},
+    auto resultRevert = torrent->update({{Progress, progressOriginal},
                                          {updatedAtColumn, updatedAtOriginal}});
     QVERIFY(resultRevert);
-    QCOMPARE(torrent->getAttribute("progress"), progressOriginal);
+    QCOMPARE(torrent->getAttribute(Progress), progressOriginal);
     /* Needed to convert toDateTime() because Model::update() set update_at
        attribute as QString. */
     QCOMPARE(torrent->getAttribute<QDateTime>(updatedAtColumn),
@@ -1503,7 +1504,7 @@ void tst_Model::update_OnNonExistentModel() const
 
     QVERIFY(!torrent.exists);
 
-    QVERIFY(!torrent.update({{"progress", 333}}));
+    QVERIFY(!torrent.update({{Progress, 333}}));
 }
 
 void tst_Model::update_NonExistentAttribute() const
@@ -1536,7 +1537,7 @@ void tst_Model::update_SameValue() const
 
     /* Doesn't send update query to the database, this is different from
        the TinyBuilder::update() method. */
-    auto result = torrent->update({{"progress", 300}});
+    auto result = torrent->update({{Progress, 300}});
 
     QVERIFY(result);
     QVERIFY(!torrent->isDirty());

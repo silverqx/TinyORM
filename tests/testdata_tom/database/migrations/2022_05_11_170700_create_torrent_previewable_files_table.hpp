@@ -23,7 +23,7 @@ namespace Migrations
                 table.string("filepath").unique();
 
                 table.unsignedBigInteger(SIZE_);
-                table.unsignedSmallInteger("progress");
+                table.unsignedSmallInteger(Progress);
 
                 table.string(NOTE).nullable();
 

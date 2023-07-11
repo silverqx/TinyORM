@@ -16,6 +16,7 @@ using Orm::Constants::CREATED_AT;
 using Orm::Constants::ID;
 using Orm::Constants::NAME;
 using Orm::Constants::NOTE;
+using Orm::Constants::Progress;
 using Orm::Constants::SIZE_;
 
 using Orm::DB;
@@ -235,7 +236,7 @@ defaultAttributeValues_WithQDateTime_InstanceMethod() const
 
     QVERIFY(!torrent.exists);
     QCOMPARE(torrent[SIZE_], QVariant(0));
-    QCOMPARE(torrent["progress"], QVariant(0));
+    QCOMPARE(torrent[Progress], QVariant(0));
     QCOMPARE(torrent["added_on"],
              QVariant(QDateTime({2021, 4, 1}, {15, 10, 10}, Qt::UTC)));
     QCOMPARE(torrent.getAttributes().size(), 3);
@@ -258,7 +259,7 @@ defaultAttributeValues_WithQDateTime_InstanceAttributesMethod() const
 
     QVERIFY(!torrent.exists);
     QCOMPARE(torrent[SIZE_], QVariant(0));
-    QCOMPARE(torrent["progress"], QVariant(0));
+    QCOMPARE(torrent[Progress], QVariant(0));
     QCOMPARE(torrent["added_on"],
              QVariant(QDateTime({2021, 4, 1}, {15, 10, 10}, Qt::UTC)));
     QCOMPARE(torrent[NAME], QVariant(name));
@@ -282,7 +283,7 @@ defaultAttributeValues_WithQDateTime_InstanceMethod_WithConnection() const
 
     QVERIFY(!torrent.exists);
     QCOMPARE(torrent[SIZE_], QVariant(0));
-    QCOMPARE(torrent["progress"], QVariant(0));
+    QCOMPARE(torrent[Progress], QVariant(0));
     QCOMPARE(torrent["added_on"],
              QVariant(QDateTime({2021, 4, 1}, {15, 10, 10}, Qt::UTC)));
     QCOMPARE(torrent.getAttributes().size(), 3);
@@ -316,7 +317,7 @@ defaultAttributeValues_WithQDateTime_InstanceAttributesMethod_WithConnection() c
 
     QVERIFY(!torrent.exists);
     QCOMPARE(torrent[SIZE_], QVariant(0));
-    QCOMPARE(torrent["progress"], QVariant(0));
+    QCOMPARE(torrent[Progress], QVariant(0));
     QCOMPARE(torrent["added_on"],
              QVariant(QDateTime({2021, 4, 1}, {15, 10, 10}, Qt::UTC)));
     QCOMPARE(torrent[NAME], QVariant(name));
@@ -339,7 +340,7 @@ defaultAttributeValues_WithoutQDateTime_DefaultCtor() const
 
     QVERIFY(!torrent.exists);
     QCOMPARE(torrent[SIZE_], QVariant(0));
-    QCOMPARE(torrent["progress"], QVariant(0));
+    QCOMPARE(torrent[Progress], QVariant(0));
     QCOMPARE(torrent.getAttributes().size(), 2);
 
     // Check also the connection name
@@ -360,7 +361,7 @@ defaultAttributeValues_WithoutQDateTime_ConvertingAttributesCtor() const
 
     QVERIFY(!torrent.exists);
     QCOMPARE(torrent[SIZE_], QVariant(0));
-    QCOMPARE(torrent["progress"], QVariant(0));
+    QCOMPARE(torrent[Progress], QVariant(0));
     QCOMPARE(torrent[NAME], QVariant(name));
     QCOMPARE(torrent[NOTE], QVariant(note));
     QCOMPARE(torrent.getAttributes().size(), 4);
@@ -384,7 +385,7 @@ defaultAttributeValues_WithoutQDateTime_ListInitializationCtor() const
 
     QVERIFY(!torrent.exists);
     QCOMPARE(torrent[SIZE_], QVariant(0));
-    QCOMPARE(torrent["progress"], QVariant(0));
+    QCOMPARE(torrent[Progress], QVariant(0));
     QCOMPARE(torrent[NAME], QVariant(name));
     QCOMPARE(torrent[NOTE], QVariant(note));
     QCOMPARE(torrent.getAttributes().size(), 4);
@@ -401,7 +402,7 @@ defaultAttributeValues_WithQDateTime_InstanceHeapMethod() const
 
     QVERIFY(!torrent->exists);
     QCOMPARE((*torrent)[SIZE_], QVariant(0));
-    QCOMPARE((*torrent)["progress"], QVariant(0));
+    QCOMPARE((*torrent)[Progress], QVariant(0));
     QCOMPARE((*torrent)["added_on"],
              QVariant(QDateTime({2021, 4, 1}, {15, 10, 10}, Qt::UTC)));
     QCOMPARE((*torrent).getAttributes().size(), 3);
@@ -424,7 +425,7 @@ defaultAttributeValues_WithQDateTime_InstanceHeapAttributesMethod() const
 
     QVERIFY(!torrent->exists);
     QCOMPARE((*torrent)[SIZE_], QVariant(0));
-    QCOMPARE((*torrent)["progress"], QVariant(0));
+    QCOMPARE((*torrent)[Progress], QVariant(0));
     QCOMPARE((*torrent)["added_on"],
              QVariant(QDateTime({2021, 4, 1}, {15, 10, 10}, Qt::UTC)));
     QCOMPARE((*torrent)[NAME], QVariant(name));
@@ -448,7 +449,7 @@ defaultAttributeValues_WithQDateTime_InstanceHeapMethod_WithConnection() const
 
     QVERIFY(!torrent->exists);
     QCOMPARE((*torrent)[SIZE_], QVariant(0));
-    QCOMPARE((*torrent)["progress"], QVariant(0));
+    QCOMPARE((*torrent)[Progress], QVariant(0));
     QCOMPARE((*torrent)["added_on"],
              QVariant(QDateTime({2021, 4, 1}, {15, 10, 10}, Qt::UTC)));
     QCOMPARE(torrent->getAttributes().size(), 3);
@@ -482,7 +483,7 @@ defaultAttributeValues_WithQDateTime_InstanceHeapAttributesMethod_WithConnection
 
     QVERIFY(!torrent->exists);
     QCOMPARE((*torrent)[SIZE_], QVariant(0));
-    QCOMPARE((*torrent)["progress"], QVariant(0));
+    QCOMPARE((*torrent)[Progress], QVariant(0));
     QCOMPARE((*torrent)["added_on"],
              QVariant(QDateTime({2021, 4, 1}, {15, 10, 10}, Qt::UTC)));
     QCOMPARE((*torrent)[NAME], QVariant(name));
@@ -910,12 +911,12 @@ void tst_Model_Connection_Independent::
      massAssignment_forceFill_OnTotallyGuardedModel() const
 {
     Torrent_TotallyGuarded torrent;
-    torrent.forceFill({{NAME, "foo"}, {SIZE_, 12}, {"progress", 20}});
+    torrent.forceFill({{NAME, "foo"}, {SIZE_, 12}, {Progress, 20}});
 
     QVERIFY(!torrent.exists);
     QCOMPARE(torrent[NAME], QVariant("foo"));
     QCOMPARE(torrent[SIZE_], QVariant(12));
-    QCOMPARE(torrent["progress"], QVariant(20));
+    QCOMPARE(torrent[Progress], QVariant(20));
     QCOMPARE(torrent.getAttributes().size(), 3);
 }
 

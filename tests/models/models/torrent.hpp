@@ -28,6 +28,7 @@ using Orm::Constants::ID;
 using Orm::Constants::NAME;
 using Orm::Constants::NOTE;
 using Orm::Constants::PARENTH_ONE;
+using Orm::Constants::Progress;
 using Orm::Constants::SIZE_;
 using Orm::Constants::SPACE_IN;
 
@@ -149,7 +150,7 @@ protected:
         return Attribute::make(/* get */ [this]() -> QVariant
         {
             return SPACE_IN.arg(getAttribute<QString>(NAME),
-                                PARENTH_ONE.arg(getAttribute<quint16>("progress")));
+                                PARENTH_ONE.arg(getAttribute<quint16>(Progress)));
         }).shouldCache();
     }
 
@@ -210,7 +211,7 @@ private:
     /*! The model's default values for attributes. */
 //    inline static const QVector<AttributeItem> u_attributes {
 //        {SIZE_,      0},
-//        {"progress", 0},
+//        {Progress, 0},
 //        {"added_on", QDateTime({2021, 4, 1}, {15, 10, 10}, Qt::UTC)},
 //    };
 
@@ -219,7 +220,7 @@ private:
         ID,
         NAME,
         SIZE_,
-        "progress",
+        Progress,
         "added_on",
         HASH_,
         NOTE,
@@ -247,7 +248,7 @@ private:
     /*! The attributes that should be cast. */
 //    inline static std::unordered_map<QString, CastItem> u_casts {
 //        {NAME,       CastType::QString},
-//        {"progress", CastType::UShort},
+//        {Progress, CastType::UShort},
 //        // Showcase only, the Torrent model doesn't have the decimal column
 //        {"decimal",  CastType::Decimal},
 //        {"decimal",  {CastType::Decimal, 2}},
@@ -260,7 +261,7 @@ private:
     /* HidesAttributes */
     /*! The attributes that should be visible during serialization. */
 //    inline static std::set<QString> u_visible {
-//        ID, "user_id", NAME, SIZE_, "progress", NOTE, CREATED_AT(), UPDATED_AT(),
+//        ID, "user_id", NAME, SIZE_, Progress, NOTE, CREATED_AT(), UPDATED_AT(),
 //    };
     /*! The attributes that should be hidden during serialization. */
 //    inline static std::set<QString> u_hidden {

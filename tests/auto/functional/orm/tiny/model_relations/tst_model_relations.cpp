@@ -20,6 +20,7 @@ using Orm::Constants::ASTERISK;
 using Orm::Constants::CREATED_AT;
 using Orm::Constants::ID;
 using Orm::Constants::NAME;
+using Orm::Constants::Progress;
 using Orm::Constants::QMYSQL;
 using Orm::Constants::SIZE_;
 using Orm::Constants::UPDATED_AT;
@@ -2231,7 +2232,7 @@ void tst_Model_Relations::orWhere_WithCallback() const
     ConnectionOverride::connection = connection;
 
     auto files = Torrent::find(5)->torrentFiles()
-                 ->where("progress", ">", 990)
+                 ->where(Progress, ">", 990)
                  .orWhere([](auto &query)
     {
         query.whereEq(ID, 8).whereEq("file_index", 2);
@@ -2835,14 +2836,14 @@ void tst_Model_Relations::withCasts_OnRelation_OneToMany() const
     ConnectionOverride::connection = connection;
 
     auto torrentFile = Torrent::find(1)->torrentFiles()
-                       ->withCasts({{"progress", Orm::Tiny::CastType::UInteger}})
+                       ->withCasts({{Progress, Orm::Tiny::CastType::UInteger}})
                        .first();
 
     QVERIFY(torrentFile);
     QVERIFY(torrentFile->exists);
     QCOMPARE(torrentFile->getKeyCasted(), 1);
 
-    auto attribute = torrentFile->getAttribute("progress");
+    auto attribute = torrentFile->getAttribute(Progress);
 
     auto typeId = Helpers::qVariantTypeId(attribute);
 

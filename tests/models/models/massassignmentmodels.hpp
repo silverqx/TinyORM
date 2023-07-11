@@ -10,6 +10,7 @@ namespace Models
 using Orm::Constants::HASH_;
 using Orm::Constants::NAME;
 using Orm::Constants::NOTE;
+using Orm::Constants::Progress;
 using Orm::Constants::SIZE_;
 
 using Orm::Tiny::Model;
@@ -37,7 +38,7 @@ class Torrent_GuardedAttribute final : public Model<Torrent_GuardedAttribute>
     inline static const QStringList u_fillable { // NOLINT(cppcoreguidelines-interfaces-global-init)
         NAME,
         SIZE_,
-        "progress",
+        Progress,
         "added_on",
         HASH_,
         NOTE,

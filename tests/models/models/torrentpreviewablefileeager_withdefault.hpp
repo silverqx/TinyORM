@@ -12,6 +12,7 @@ namespace Models
 
 using Orm::Constants::NAME;
 using Orm::Constants::NOTE;
+using Orm::Constants::Progress;
 using Orm::Constants::SIZE_;
 
 using Orm::Tiny::Model;
@@ -126,7 +127,7 @@ private:
         "file_index",
         "filepath",
         SIZE_,
-        "progress",
+        Progress,
         NOTE,
     };
 };

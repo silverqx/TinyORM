@@ -11,6 +11,7 @@ using Orm::Constants::ID;
 using Orm::Constants::CREATED_AT;
 using Orm::Constants::NAME;
 using Orm::Constants::NOTE;
+using Orm::Constants::Progress;
 using Orm::Constants::SIZE_;
 using Orm::Constants::UPDATED_AT;
 
@@ -125,7 +126,7 @@ void tst_Relations_Connection_Independent::with_HasMany_SameRelatedModels() cons
 
         // Check attributes
         std::unordered_set<QString> expectedAttributes {
-            ID, "torrent_id", "file_index", "filepath", SIZE_, "progress", NOTE,
+            ID, "torrent_id", "file_index", "filepath", SIZE_, Progress, NOTE,
             CREATED_AT, UPDATED_AT,
         };
 
@@ -162,7 +163,7 @@ void tst_Relations_Connection_Independent::with_BelongsTo_SameRelatedModels() co
         QCOMPARE(attributes.size(), 10);
 
         std::unordered_set<QString> expectedAttributes {
-            ID, "user_id", NAME, SIZE_, "progress", "added_on", HASH_, NOTE,
+            ID, "user_id", NAME, SIZE_, Progress, "added_on", HASH_, NOTE,
             CREATED_AT, UPDATED_AT,
         };
         for (const auto &attribute : attributes)

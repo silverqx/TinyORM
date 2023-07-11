@@ -14,6 +14,7 @@ using Orm::Constants::HASH_;
 using Orm::Constants::ID;
 using Orm::Constants::NAME;
 using Orm::Constants::NOTE;
+using Orm::Constants::Progress;
 using Orm::Constants::SIZE_;
 using Orm::Constants::Updated_;
 
@@ -144,7 +145,7 @@ void tst_Relations_Inserting_Updating::save_OnHasOneOrMany() const
         {"file_index", 3},
         {"filepath",   "test5_file4-save.mkv"},
         {SIZE_,        322322},
-        {"progress",   777},
+        {Progress,     777},
         {NOTE,         "relation's save"},
     });
     QVERIFY(!file.exists);
@@ -166,7 +167,7 @@ void tst_Relations_Inserting_Updating::save_OnHasOneOrMany() const
     QCOMPARE((*fileVerify)["file_index"], QVariant(3));
     QCOMPARE((*fileVerify)["filepath"],   QVariant("test5_file4-save.mkv"));
     QCOMPARE((*fileVerify)[SIZE_],        QVariant(322322));
-    QCOMPARE((*fileVerify)["progress"],   QVariant(777));
+    QCOMPARE((*fileVerify)[Progress],     QVariant(777));
     QCOMPARE((*fileVerify)[NOTE],         QVariant("relation's save"));
 
     // Remove file, restore db
@@ -189,7 +190,7 @@ void tst_Relations_Inserting_Updating::save_OnHasOneOrMany_WithRValue() const
         {"file_index", 3},
         {"filepath",   "test5_file4-save.mkv"},
         {SIZE_,        322322},
-        {"progress",   777},
+        {Progress,     777},
         {NOTE,         "relation's save"},
     });
     QVERIFY(savedResult);
@@ -204,7 +205,7 @@ void tst_Relations_Inserting_Updating::save_OnHasOneOrMany_WithRValue() const
     QCOMPARE((*fileVerify)["file_index"], QVariant(3));
     QCOMPARE((*fileVerify)["filepath"],   QVariant("test5_file4-save.mkv"));
     QCOMPARE((*fileVerify)[SIZE_],        QVariant(322322));
-    QCOMPARE((*fileVerify)["progress"],   QVariant(777));
+    QCOMPARE((*fileVerify)[Progress],     QVariant(777));
     QCOMPARE((*fileVerify)[NOTE],         QVariant("relation's save"));
 
     // Remove file, restore db
@@ -227,7 +228,7 @@ void tst_Relations_Inserting_Updating::save_OnHasOneOrMany_Failed() const
         {"file_index", 1},
         {"filepath",   "test1_file1.mkv"},
         {SIZE_,        377477},
-        {"progress",   222},
+        {Progress,     222},
         {NOTE,         "relation's save fail"},
     });
     QVERIFY(!file.exists);
@@ -253,7 +254,7 @@ void tst_Relations_Inserting_Updating::saveMany_OnHasOneOrMany() const
         {"file_index", 3},
         {"filepath",   "test5_file4-saveMany.mkv"},
         {SIZE_,        322322},
-        {"progress",   777},
+        {Progress,     777},
         {NOTE,         "relation's saveMany file1"},
     });
     QVERIFY(!file1.exists);
@@ -261,7 +262,7 @@ void tst_Relations_Inserting_Updating::saveMany_OnHasOneOrMany() const
         {"file_index", 4},
         {"filepath",   "test5_file5-saveMany.mkv"},
         {SIZE_,        333322},
-        {"progress",   888},
+        {Progress,     888},
         {NOTE,         "relation's saveMany file2"},
     });
     QVERIFY(!file2.exists);
@@ -296,7 +297,7 @@ void tst_Relations_Inserting_Updating::saveMany_OnHasOneOrMany() const
     QCOMPARE((*file1Verify)["file_index"], QVariant(3));
     QCOMPARE((*file1Verify)["filepath"],   QVariant("test5_file4-saveMany.mkv"));
     QCOMPARE((*file1Verify)[SIZE_],        QVariant(322322));
-    QCOMPARE((*file1Verify)["progress"],   QVariant(777));
+    QCOMPARE((*file1Verify)[Progress],     QVariant(777));
     QCOMPARE((*file1Verify)[NOTE],         QVariant("relation's saveMany file1"));
     auto file2Verify = TorrentPreviewableFile::find(savedFile2[ID]);
     QCOMPARE((*file2Verify)[ID],           QVariant(savedFile2[ID]));
@@ -304,7 +305,7 @@ void tst_Relations_Inserting_Updating::saveMany_OnHasOneOrMany() const
     QCOMPARE((*file2Verify)["file_index"], QVariant(4));
     QCOMPARE((*file2Verify)["filepath"],   QVariant("test5_file5-saveMany.mkv"));
     QCOMPARE((*file2Verify)[SIZE_],        QVariant(333322));
-    QCOMPARE((*file2Verify)["progress"],   QVariant(888));
+    QCOMPARE((*file2Verify)[Progress],     QVariant(888));
     QCOMPARE((*file2Verify)[NOTE],         QVariant("relation's saveMany file2"));
 
     // Remove files, restore db
@@ -330,13 +331,13 @@ void tst_Relations_Inserting_Updating::saveMany_OnHasOneOrMany_WithRValue() cons
         {"file_index", 3},
         {"filepath",   "test5_file4-saveMany.mkv"},
         {SIZE_,        322322},
-        {"progress",   777},
+        {Progress,     777},
         {NOTE,         "relation's saveMany file1"},
     }, {
         {"file_index", 4},
         {"filepath",   "test5_file5-saveMany.mkv"},
         {SIZE_,        333322},
-        {"progress",   888},
+        {Progress,     888},
         {NOTE,         "relation's saveMany file2"},
     }});
     QCOMPARE(savedFiles.size(), 2);
@@ -357,7 +358,7 @@ void tst_Relations_Inserting_Updating::saveMany_OnHasOneOrMany_WithRValue() cons
     QCOMPARE((*file1Verify)["file_index"], QVariant(3));
     QCOMPARE((*file1Verify)["filepath"],   QVariant("test5_file4-saveMany.mkv"));
     QCOMPARE((*file1Verify)[SIZE_],        QVariant(322322));
-    QCOMPARE((*file1Verify)["progress"],   QVariant(777));
+    QCOMPARE((*file1Verify)[Progress],     QVariant(777));
     QCOMPARE((*file1Verify)[NOTE],         QVariant("relation's saveMany file1"));
     auto file2Verify = TorrentPreviewableFile::find(savedFile2[ID]);
     QCOMPARE((*file2Verify)[ID],           QVariant(savedFile2[ID]));
@@ -365,7 +366,7 @@ void tst_Relations_Inserting_Updating::saveMany_OnHasOneOrMany_WithRValue() cons
     QCOMPARE((*file2Verify)["file_index"], QVariant(4));
     QCOMPARE((*file2Verify)["filepath"],   QVariant("test5_file5-saveMany.mkv"));
     QCOMPARE((*file2Verify)[SIZE_],        QVariant(333322));
-    QCOMPARE((*file2Verify)["progress"],   QVariant(888));
+    QCOMPARE((*file2Verify)[Progress],     QVariant(888));
     QCOMPARE((*file2Verify)[NOTE],         QVariant("relation's saveMany file2"));
 
     // Remove files, restore db
@@ -391,7 +392,7 @@ void tst_Relations_Inserting_Updating::saveMany_OnHasOneOrMany_Failed() const
         {"file_index", 1},
         {"filepath",   "test1_file1.mkv"},
         {SIZE_,        377477},
-        {"progress",   222},
+        {Progress,     222},
         {NOTE,         "relation's save fail"},
     });
     QVERIFY(!file1.exists);
@@ -423,7 +424,7 @@ void tst_Relations_Inserting_Updating::create_OnHasOneOrMany() const
         {"file_index", 3},
         {"filepath",   "test5_file4-create.mkv"},
         {SIZE_,        322322},
-        {"progress",   777},
+        {Progress,     777},
         {NOTE,         "relation's save"},
     };
 
@@ -439,7 +440,7 @@ void tst_Relations_Inserting_Updating::create_OnHasOneOrMany() const
     QCOMPARE((*fileVerify)["file_index"], QVariant(3));
     QCOMPARE((*fileVerify)["filepath"],   QVariant("test5_file4-create.mkv"));
     QCOMPARE((*fileVerify)[SIZE_],        QVariant(322322));
-    QCOMPARE((*fileVerify)["progress"],   QVariant(777));
+    QCOMPARE((*fileVerify)[Progress],     QVariant(777));
     QCOMPARE((*fileVerify)[NOTE],         QVariant("relation's save"));
 
     // Remove file, restore db
@@ -462,7 +463,7 @@ void tst_Relations_Inserting_Updating::create_OnHasOneOrMany_WithRValue() const
         {"file_index", 3},
         {"filepath",   "test5_file4-create.mkv"},
         {SIZE_,        322322},
-        {"progress",   777},
+        {Progress,     777},
         {NOTE,         "relation's save"},
     });
     QVERIFY(file.exists);
@@ -476,7 +477,7 @@ void tst_Relations_Inserting_Updating::create_OnHasOneOrMany_WithRValue() const
     QCOMPARE((*fileVerify)["file_index"], QVariant(3));
     QCOMPARE((*fileVerify)["filepath"],   QVariant("test5_file4-create.mkv"));
     QCOMPARE((*fileVerify)[SIZE_],        QVariant(322322));
-    QCOMPARE((*fileVerify)["progress"],   QVariant(777));
+    QCOMPARE((*fileVerify)[Progress],     QVariant(777));
     QCOMPARE((*fileVerify)[NOTE],         QVariant("relation's save"));
 
     // Remove file, restore db
@@ -499,7 +500,7 @@ void tst_Relations_Inserting_Updating::create_OnHasOneOrMany_Failed() const
         {"file_index", 1},
         {"filepath",   "test1_file1.mkv"},
         {SIZE_,        377477},
-        {"progress",   222},
+        {Progress,     222},
         {NOTE,         "relation's save fail"},
     };
     TorrentPreviewableFile file;
@@ -526,7 +527,7 @@ void tst_Relations_Inserting_Updating::create_OnHasOneOrMany_WithRValue_Failed()
         {"file_index", 1},
         {"filepath",   "test1_file1.mkv"},
         {SIZE_,        377477},
-        {"progress",   222},
+        {Progress,     222},
         {NOTE,         "relation's save fail"},
     }), QueryError);
 
@@ -548,14 +549,14 @@ void tst_Relations_Inserting_Updating::createMany_OnHasOneOrMany() const
         {"file_index", 3},
         {"filepath",   "test5_file4-createMany.mkv"},
         {SIZE_,        322322},
-        {"progress",   777},
+        {Progress,     777},
         {NOTE,         "relation's createMany file1"},
     });
     QVector<AttributeItem> file2Attributes({
         {"file_index", 4},
         {"filepath",   "test5_file5-createMany.mkv"},
         {SIZE_,        333322},
-        {"progress",   888},
+        {Progress,     888},
         {NOTE,         "relation's createMany file2"},
     });
 
@@ -583,7 +584,7 @@ void tst_Relations_Inserting_Updating::createMany_OnHasOneOrMany() const
     QCOMPARE((*file1Verify)["file_index"], QVariant(3));
     QCOMPARE((*file1Verify)["filepath"],   QVariant("test5_file4-createMany.mkv"));
     QCOMPARE((*file1Verify)[SIZE_],        QVariant(322322));
-    QCOMPARE((*file1Verify)["progress"],   QVariant(777));
+    QCOMPARE((*file1Verify)[Progress],     QVariant(777));
     QCOMPARE((*file1Verify)[NOTE],         QVariant("relation's createMany file1"));
     auto file2Verify = TorrentPreviewableFile::find(savedFile2[ID]);
     QCOMPARE((*file2Verify)[ID],           QVariant(savedFile2[ID]));
@@ -591,7 +592,7 @@ void tst_Relations_Inserting_Updating::createMany_OnHasOneOrMany() const
     QCOMPARE((*file2Verify)["file_index"], QVariant(4));
     QCOMPARE((*file2Verify)["filepath"],   QVariant("test5_file5-createMany.mkv"));
     QCOMPARE((*file2Verify)[SIZE_],        QVariant(333322));
-    QCOMPARE((*file2Verify)["progress"],   QVariant(888));
+    QCOMPARE((*file2Verify)[Progress],     QVariant(888));
     QCOMPARE((*file2Verify)[NOTE],         QVariant("relation's createMany file2"));
 
     // Remove files, restore db
@@ -617,13 +618,13 @@ void tst_Relations_Inserting_Updating::createMany_OnHasOneOrMany_WithRValue() co
         {"file_index", 3},
         {"filepath",   "test5_file4-createMany.mkv"},
         {SIZE_,        322322},
-        {"progress",   777},
+        {Progress,     777},
         {NOTE,         "relation's createMany file1"},
     }, {
         {"file_index", 4},
         {"filepath",   "test5_file5-createMany.mkv"},
         {SIZE_,        333322},
-        {"progress",   888},
+        {Progress,     888},
         {NOTE,         "relation's createMany file2"},
     }});
     QCOMPARE(savedFiles.size(), 2);
@@ -644,7 +645,7 @@ void tst_Relations_Inserting_Updating::createMany_OnHasOneOrMany_WithRValue() co
     QCOMPARE((*file1Verify)["file_index"], QVariant(3));
     QCOMPARE((*file1Verify)["filepath"],   QVariant("test5_file4-createMany.mkv"));
     QCOMPARE((*file1Verify)[SIZE_],        QVariant(322322));
-    QCOMPARE((*file1Verify)["progress"],   QVariant(777));
+    QCOMPARE((*file1Verify)[Progress],     QVariant(777));
     QCOMPARE((*file1Verify)[NOTE],         QVariant("relation's createMany file1"));
     auto file2Verify = TorrentPreviewableFile::find(savedFile2[ID]);
     QCOMPARE((*file2Verify)[ID],           QVariant(savedFile2[ID]));
@@ -652,7 +653,7 @@ void tst_Relations_Inserting_Updating::createMany_OnHasOneOrMany_WithRValue() co
     QCOMPARE((*file2Verify)["file_index"], QVariant(4));
     QCOMPARE((*file2Verify)["filepath"],   QVariant("test5_file5-createMany.mkv"));
     QCOMPARE((*file2Verify)[SIZE_],        QVariant(333322));
-    QCOMPARE((*file2Verify)["progress"],   QVariant(888));
+    QCOMPARE((*file2Verify)[Progress],     QVariant(888));
     QCOMPARE((*file2Verify)[NOTE],         QVariant("relation's createMany file2"));
 
     // Remove files, restore db
@@ -678,7 +679,7 @@ void tst_Relations_Inserting_Updating::createMany_OnHasOneOrMany_Failed() const
         {"file_index", 1},
         {"filepath",   "test1_file1.mkv"},
         {SIZE_,        377477},
-        {"progress",   222},
+        {Progress,     222},
         {NOTE,         "relation's save fail"},
     });
     // Make a copy is enough
@@ -713,7 +714,7 @@ tst_Relations_Inserting_Updating::createMany_OnHasOneOrMany_WithRValue_Failed() 
                     {"file_index", 1},
                     {"filepath",   "test1_file1.mkv"},
                     {SIZE_,        377477},
-                    {"progress",   222},
+                    {Progress,     222},
                     {NOTE,         "relation's save fail"},
                 },
                 /* It doesn't matter what is in this second vector, because after
@@ -722,7 +723,7 @@ tst_Relations_Inserting_Updating::createMany_OnHasOneOrMany_WithRValue_Failed() 
                     {"file_index", 1},
                     {"filepath",   "test1_file1.mkv"},
                     {SIZE_,        377477},
-                    {"progress",   222},
+                    {Progress,     222},
                     {NOTE,         "relation's save fail"},
                 }}),
                 QueryError);
@@ -1345,7 +1346,7 @@ void tst_Relations_Inserting_Updating::associate_WithModel() const
         {"file_index", 3},
         {"filepath",   "test5_file4.mkv"},
         {SIZE_,        3255},
-        {"progress",   115},
+        {Progress,     115},
         {NOTE,         "associate"},
     };
 
@@ -1410,7 +1411,7 @@ void tst_Relations_Inserting_Updating::associate_WithId() const
         {"file_index", 3},
         {"filepath",   "test5_file4.mkv"},
         {SIZE_,        3255},
-        {"progress",   115},
+        {Progress,     115},
         {NOTE,         "associate"},
     };
 
@@ -1458,7 +1459,7 @@ void tst_Relations_Inserting_Updating::associate_WithId_ShouldUnsetRelation() co
         {"file_index", 3},
         {"filepath",   "test5_file4.mkv"},
         {SIZE_,        3255},
-        {"progress",   115},
+        {Progress,     115},
         {NOTE,         "associate"},
     };
 
@@ -1514,7 +1515,7 @@ void tst_Relations_Inserting_Updating::dissociate() const
         {"file_index", 3},
         {"filepath",   "test5_file4.mkv"},
         {SIZE_,        3255},
-        {"progress",   115},
+        {Progress,     115},
         {NOTE,         "associate"},
     };
 
@@ -1572,12 +1573,12 @@ void tst_Relations_Inserting_Updating::attach_BasicPivot_WithIds() const
     ConnectionOverride::connection = connection;
 
     Torrent torrent100 {
-        {NAME, "test100"}, {SIZE_, 100}, {"progress", 555},
+        {NAME, "test100"}, {SIZE_, 100}, {Progress, 555},
         {HASH_, "xyzhash100"}, {NOTE, "attach with pivot"},
     };
     torrent100.save();
     Torrent torrent101 {
-        {NAME, "test101"}, {SIZE_, 101}, {"progress", 556},
+        {NAME, "test101"}, {SIZE_, 101}, {Progress, 556},
         {HASH_, "xyzhash101"}, {NOTE, "attach with pivot"},
     };
     torrent101.save();
@@ -1622,12 +1623,12 @@ void tst_Relations_Inserting_Updating::attach_BasicPivot_WithModels() const
     ConnectionOverride::connection = connection;
 
     Torrent torrent100 {
-        {NAME, "test100"}, {SIZE_, 100}, {"progress", 555},
+        {NAME, "test100"}, {SIZE_, 100}, {Progress, 555},
         {HASH_, "xyzhash100"}, {NOTE, "attach with pivot"},
     };
     torrent100.save();
     Torrent torrent101 {
-        {NAME, "test101"}, {SIZE_, 101}, {"progress", 556},
+        {NAME, "test101"}, {SIZE_, 101}, {Progress, 556},
         {HASH_, "xyzhash101"}, {NOTE, "attach with pivot"},
     };
     torrent101.save();
@@ -1764,12 +1765,12 @@ void tst_Relations_Inserting_Updating::attach_BasicPivot_IdsWithAttributes() con
     ConnectionOverride::connection = connection;
 
     Torrent torrent100 {
-        {NAME, "test100"}, {SIZE_, 100}, {"progress", 555},
+        {NAME, "test100"}, {SIZE_, 100}, {Progress, 555},
         {HASH_, "xyzhash100"}, {NOTE, "attach with pivot"},
     };
     torrent100.save();
     Torrent torrent101 {
-        {NAME, "test101"}, {SIZE_, 101}, {"progress", 556},
+        {NAME, "test101"}, {SIZE_, 101}, {Progress, 556},
         {HASH_, "xyzhash101"}, {NOTE, "attach with pivot"},
     };
     torrent101.save();
@@ -1876,12 +1877,12 @@ void tst_Relations_Inserting_Updating::detach_BasicPivot_WithIds() const
     ConnectionOverride::connection = connection;
 
     Torrent torrent100 {
-        {NAME, "test100"}, {SIZE_, 100}, {"progress", 555},
+        {NAME, "test100"}, {SIZE_, 100}, {Progress, 555},
         {HASH_, "xyzhash100"}, {NOTE, "attach with pivot"},
     };
     torrent100.save();
     Torrent torrent101 {
-        {NAME, "test101"}, {SIZE_, 101}, {"progress", 556},
+        {NAME, "test101"}, {SIZE_, 101}, {Progress, 556},
         {HASH_, "xyzhash101"}, {NOTE, "attach with pivot"},
     };
     torrent101.save();
@@ -1937,12 +1938,12 @@ void tst_Relations_Inserting_Updating::detach_BasicPivot_WithModels() const
     ConnectionOverride::connection = connection;
 
     Torrent torrent100 {
-        {NAME, "test100"}, {SIZE_, 100}, {"progress", 555},
+        {NAME, "test100"}, {SIZE_, 100}, {Progress, 555},
         {HASH_, "xyzhash100"}, {NOTE, "attach with pivot"},
     };
     torrent100.save();
     Torrent torrent101 {
-        {NAME, "test101"}, {SIZE_, 101}, {"progress", 556},
+        {NAME, "test101"}, {SIZE_, 101}, {Progress, 556},
         {HASH_, "xyzhash101"}, {NOTE, "attach with pivot"},
     };
     torrent101.save();
@@ -1997,12 +1998,12 @@ void tst_Relations_Inserting_Updating::detach_BasicPivot_All() const
     ConnectionOverride::connection = connection;
 
     Torrent torrent100 {
-        {NAME, "test100"}, {SIZE_, 100}, {"progress", 555},
+        {NAME, "test100"}, {SIZE_, 100}, {Progress, 555},
         {HASH_, "xyzhash100"}, {NOTE, "attach with pivot"},
     };
     torrent100.save();
     Torrent torrent101 {
-        {NAME, "test101"}, {SIZE_, 101}, {"progress", 556},
+        {NAME, "test101"}, {SIZE_, 101}, {Progress, 556},
         {HASH_, "xyzhash101"}, {NOTE, "attach with pivot"},
     };
     torrent101.save();
@@ -2409,22 +2410,22 @@ void tst_Relations_Inserting_Updating::sync_BasicPivot_WithIds() const
     ConnectionOverride::connection = connection;
 
     Torrent torrent100 {
-        {NAME, "test100"}, {SIZE_, 100}, {"progress", 555},
+        {NAME, "test100"}, {SIZE_, 100}, {Progress, 555},
         {HASH_, "xyzhash100"}, {NOTE, "sync with pivot"},
     };
     torrent100.save();
     Torrent torrent101 {
-        {NAME, "test101"}, {SIZE_, 101}, {"progress", 556},
+        {NAME, "test101"}, {SIZE_, 101}, {Progress, 556},
         {HASH_, "xyzhash101"}, {NOTE, "sync with pivot"},
     };
     torrent101.save();
     Torrent torrent102 {
-        {NAME, "test102"}, {SIZE_, 102}, {"progress", 557},
+        {NAME, "test102"}, {SIZE_, 102}, {Progress, 557},
         {HASH_, "xyzhash102"}, {NOTE, "sync with pivot"},
     };
     torrent102.save();
     Torrent torrent103 {
-        {NAME, "test103"}, {SIZE_, 103}, {"progress", 558},
+        {NAME, "test103"}, {SIZE_, 103}, {Progress, 558},
         {HASH_, "xyzhash103"}, {NOTE, "sync with pivot"},
     };
     torrent103.save();
@@ -2528,22 +2529,22 @@ void tst_Relations_Inserting_Updating::sync_BasicPivot_IdsWithAttributes() const
     ConnectionOverride::connection = connection;
 
     Torrent torrent100 {
-        {NAME, "test100"}, {SIZE_, 100}, {"progress", 555},
+        {NAME, "test100"}, {SIZE_, 100}, {Progress, 555},
         {HASH_, "xyzhash100"}, {NOTE, "sync with pivot"},
     };
     torrent100.save();
     Torrent torrent101 {
-        {NAME, "test101"}, {SIZE_, 101}, {"progress", 556},
+        {NAME, "test101"}, {SIZE_, 101}, {Progress, 556},
         {HASH_, "xyzhash101"}, {NOTE, "sync with pivot"},
     };
     torrent101.save();
     Torrent torrent102 {
-        {NAME, "test102"}, {SIZE_, 102}, {"progress", 557},
+        {NAME, "test102"}, {SIZE_, 102}, {Progress, 557},
         {HASH_, "xyzhash102"}, {NOTE, "sync with pivot"},
     };
     torrent102.save();
     Torrent torrent103 {
-        {NAME, "test103"}, {SIZE_, 103}, {"progress", 558},
+        {NAME, "test103"}, {SIZE_, 103}, {Progress, 558},
         {HASH_, "xyzhash103"}, {NOTE, "sync with pivot"},
     };
     torrent103.save();
@@ -2868,22 +2869,22 @@ void tst_Relations_Inserting_Updating::syncWithoutDetaching_BasicPivot_WithIds()
     ConnectionOverride::connection = connection;
 
     Torrent torrent100 {
-        {NAME, "test100"}, {SIZE_, 100}, {"progress", 555},
+        {NAME, "test100"}, {SIZE_, 100}, {Progress, 555},
         {HASH_, "xyzhash100"}, {NOTE, "sync with pivot"},
     };
     torrent100.save();
     Torrent torrent101 {
-        {NAME, "test101"}, {SIZE_, 101}, {"progress", 556},
+        {NAME, "test101"}, {SIZE_, 101}, {Progress, 556},
         {HASH_, "xyzhash101"}, {NOTE, "sync with pivot"},
     };
     torrent101.save();
     Torrent torrent102 {
-        {NAME, "test102"}, {SIZE_, 102}, {"progress", 557},
+        {NAME, "test102"}, {SIZE_, 102}, {Progress, 557},
         {HASH_, "xyzhash102"}, {NOTE, "sync with pivot"},
     };
     torrent102.save();
     Torrent torrent103 {
-        {NAME, "test103"}, {SIZE_, 103}, {"progress", 558},
+        {NAME, "test103"}, {SIZE_, 103}, {Progress, 558},
         {HASH_, "xyzhash103"}, {NOTE, "sync with pivot"},
     };
     torrent103.save();
@@ -2985,22 +2986,22 @@ void tst_Relations_Inserting_Updating::
     ConnectionOverride::connection = connection;
 
     Torrent torrent100 {
-        {NAME, "test100"}, {SIZE_, 100}, {"progress", 555},
+        {NAME, "test100"}, {SIZE_, 100}, {Progress, 555},
         {HASH_, "xyzhash100"}, {NOTE, "sync with pivot"},
     };
     torrent100.save();
     Torrent torrent101 {
-        {NAME, "test101"}, {SIZE_, 101}, {"progress", 556},
+        {NAME, "test101"}, {SIZE_, 101}, {Progress, 556},
         {HASH_, "xyzhash101"}, {NOTE, "sync with pivot"},
     };
     torrent101.save();
     Torrent torrent102 {
-        {NAME, "test102"}, {SIZE_, 102}, {"progress", 557},
+        {NAME, "test102"}, {SIZE_, 102}, {Progress, 557},
         {HASH_, "xyzhash102"}, {NOTE, "sync with pivot"},
     };
     torrent102.save();
     Torrent torrent103 {
-        {NAME, "test103"}, {SIZE_, 103}, {"progress", 558},
+        {NAME, "test103"}, {SIZE_, 103}, {Progress, 558},
         {HASH_, "xyzhash103"}, {NOTE, "sync with pivot"},
     };
     torrent103.save();

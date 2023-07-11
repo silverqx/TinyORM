@@ -42,7 +42,7 @@ namespace Seeders
                 {3, 3, "905111999"},
             });
 
-            DB::table("torrents")->insert({ID, "user_id", NAME, SIZE_, "progress", "added_on", HASH_, NOTE, CREATED_AT, UPDATED_AT},
+            DB::table("torrents")->insert({ID, "user_id", NAME, SIZE_, Progress, "added_on", HASH_, NOTE, CREATED_AT, UPDATED_AT},
             {
                 {1, 1, "test1", 11, 100, "2020-08-01 20:11:10", "1579e3af2768cdf52ec84c1f320333f68401dc6e", NullVariant::QString(),           "2016-06-01 08:08:23", "2021-01-01 18:46:31"},
                 {2, 1, "test2", 12, 200, "2020-08-02 20:11:10", "2579e3af2768cdf52ec84c1f320333f68401dc6e", NullVariant::QString(),           "2017-07-02 08:09:23", "2021-01-02 18:46:31"},
@@ -63,7 +63,7 @@ namespace Seeders
                 {6, NullVariant::ULongLong(), NullVariant::Int(), 6, 6, 6, "2021-01-06 14:51:23", "2021-01-06 17:46:31"},
             });
 
-            DB::table("torrent_previewable_files")->insert({ID, "torrent_id", "file_index", "filepath", SIZE_, "progress", NOTE, CREATED_AT, UPDATED_AT},
+            DB::table("torrent_previewable_files")->insert({ID, "torrent_id", "file_index", "filepath", SIZE_, Progress, NOTE, CREATED_AT, UPDATED_AT},
             {
                 { 1, 1,                        0, "test1_file1.mkv", 1024, 200,  "no file properties",                    "2021-01-01 14:51:23", "2021-01-01 17:46:31"},
                 { 2, 2,                        0, "test2_file1.mkv", 2048, 870,  NullVariant::QString(),                  "2021-01-02 14:51:23", "2021-01-02 17:46:31"},
