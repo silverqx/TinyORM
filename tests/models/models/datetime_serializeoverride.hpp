@@ -4,6 +4,8 @@
 
 #include "orm/tiny/model.hpp"
 
+class tst_Model_Serialization;
+
 namespace Models
 {
 
@@ -15,6 +17,10 @@ class Datetime_SerializeOverride final : public Model<Datetime_SerializeOverride
 {
     friend Model;
     using Model::Model;
+
+#ifdef TINYORM_TESTS_CODE
+    friend tst_Model_Serialization;
+#endif
 
 protected:
     /*! Accessor for datetime (used in tests to test accessor with serializeDateTime). */
@@ -60,11 +66,9 @@ private:
     /*! Indicates whether the model should be timestamped. */
     bool u_timestamps = false;
 
-public:
     /*! The attributes that should be mutated to dates. */
     inline static QStringList u_dates {}; // NOLINT(cppcoreguidelines-interfaces-global-init)
 
-private:
     /* Appends */
     /*! Map of mutator names to methods. */
     inline static const QHash<QString, MutatorFunction> u_mutators {
