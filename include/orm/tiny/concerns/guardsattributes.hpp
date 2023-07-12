@@ -338,6 +338,7 @@ namespace Orm::Tiny::Concerns
     /* private */
 
     /* Static cast this to a child's instance type (CRTP) */
+
     TINY_CRTP_MODEL_WITH_BASE_DEFINITIONS(GuardsAttributes)
 
 } // namespace Orm::Tiny::Concerns

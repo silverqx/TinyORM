@@ -1525,6 +1525,7 @@ namespace Concerns
     }
 
     /* Static cast this to a child's instance type (CRTP) */
+
     TINY_CRTP_MODEL_WITH_BASE_DEFINITIONS(HasRelationships)
 
 } // namespace Concerns

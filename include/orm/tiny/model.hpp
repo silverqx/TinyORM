@@ -1358,6 +1358,7 @@ namespace Orm::Tiny
     }
 
     /* Static cast this to a child's instance type (CRTP) */
+
     TINY_CRTP_MODEL_DEFINITIONS(Model)
 
     /* Serialization */

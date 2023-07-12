@@ -2670,6 +2670,7 @@ namespace Orm::Tiny::Concerns
     /* Others */
 
     /* Static cast this to a child's instance type (CRTP) */
+
     TINY_CRTP_MODEL_WITH_BASE_DEFINITIONS(HasAttributes)
 
 } // namespace Orm::Tiny::Concerns
