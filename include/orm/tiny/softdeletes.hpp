@@ -84,14 +84,12 @@ namespace Orm::Tiny
     template<typename Derived>
     void SoftDeletes<Derived>::initializeSoftDeletes() const
     {
-        const auto &model = this->model();
-
         const auto &deletedAtColumn = getDeletedAtColumn();
 
-        if (model.getDates().contains(deletedAtColumn))
+        if (model().getDates().contains(deletedAtColumn))
             return;
 
-        model.appendToUserDates(deletedAtColumn);
+        Derived::appendToUserDates(deletedAtColumn);
     }
 
     template<typename Derived>
