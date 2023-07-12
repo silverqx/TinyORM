@@ -544,9 +544,19 @@ namespace Orm::Tiny::Concerns
         /*! Prepare a date or datetime for vector, map, or JSON serialization. */
         inline static void serializeDateOrDateTimeForAccessors(QVariant &value);
 
+        /*! Convert a AttributeItem QVector to the std::unordered_map with caching. */
+        ModelAttributes
+        convertVectorToModelAttributes(const QVector<AttributeItem> &attributes) const;
+
         /* Others */
         /* Static cast this to a child's instance type (CRTP) */
         TINY_CRTP_MODEL_WITH_BASE_DECLARATIONS
+
+        /* Data members */
+        /*! ModelAttributes cache used in mutators callback (only for vectorable appends
+            to avoid repeated converting). */
+        mutable std::optional<ModelAttributes>
+                m_modelAttributesCacheForMutators = std::nullopt;
     };
 
     /* public */
@@ -580,6 +590,9 @@ namespace Orm::Tiny::Concerns
             m_attributesHash.emplace(key, position);
         }
 
+        // It's enough to clear this cache and recompute when needed
+        m_modelAttributesCacheForMutators.reset();
+
         return model();
     }
 
@@ -601,6 +614,7 @@ namespace Orm::Tiny::Concerns
             syncOriginal();
 
         m_attributeMutatorsCache.clear();
+        m_modelAttributesCacheForMutators.reset();
 
         return model();
     }
@@ -624,6 +638,7 @@ namespace Orm::Tiny::Concerns
             syncOriginal();
 
         m_attributeMutatorsCache.clear();
+        m_modelAttributesCacheForMutators.reset();
 
         return model();
     }
@@ -784,6 +799,8 @@ namespace Orm::Tiny::Concerns
         /* Need to clear the mutators cache because any mutator can depend on this unset
            attribute, so the recomputation will be needed. */
         m_attributeMutatorsCache.clear();
+        // It's enough to clear this cache and recompute when needed
+        m_modelAttributesCacheForMutators.reset();
 
         return model();
     }
@@ -807,6 +824,8 @@ namespace Orm::Tiny::Concerns
         /* Need to clear the mutators cache because any mutator can depend on this unset
            attribute, so the recomputation will be needed. */
         m_attributeMutatorsCache.clear();
+        // It's enough to clear this cache and recompute when needed
+        m_modelAttributesCacheForMutators.reset();
 
         return model();
     }
@@ -2604,8 +2623,7 @@ namespace Orm::Tiny::Concerns
 
         if (std::holds_alternative<CallbackWithAttributes>(accessorVariant)) T_LIKELY
             return std::invoke(attribute.get<CallbackWithAttributes>(),
-                               AttributeUtils::convertVectorToModelAttributes(
-                                   m_attributes));
+                               convertVectorToModelAttributes(m_attributes));
         else T_UNLIKELY
             Q_UNREACHABLE();
     }
@@ -2633,6 +2651,20 @@ namespace Orm::Tiny::Concerns
 
         else T_UNLIKELY
             value = serializeDateOrDateTime(value);
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    ModelAttributes
+    HasAttributes<Derived, AllRelations...>::convertVectorToModelAttributes(
+            const QVector<AttributeItem> &attributes) const
+    {
+        if (m_modelAttributesCacheForMutators)
+            return *m_modelAttributesCacheForMutators;
+
+        m_modelAttributesCacheForMutators = AttributeUtils::
+                                            convertVectorToModelAttributes(attributes);
+
+        return *m_modelAttributesCacheForMutators;
     }
 
     /* Others */
