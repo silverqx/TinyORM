@@ -365,7 +365,7 @@ void tst_Model_Appends::toVector_WithAppends_WithVisibleAndHidden() const
 
 void tst_Model_Appends::toMap_WithAppends_ForExistingAttribute() const
 {
-    auto torrentFile = TorrentPreviewableFile::find(1);
+    auto torrentFile = TorrentPreviewableFile::find(10);
     QVERIFY(torrentFile);
     QVERIFY(torrentFile->exists);
 
@@ -377,10 +377,10 @@ void tst_Model_Appends::toMap_WithAppends_ForExistingAttribute() const
     QCOMPARE(serialized.size(), 4);
 
     QVariantMap expectedAttributes {
-        {"filepath",   "test1_file1.mkv (dummy-STRING)"},
-        {ID,           1},
-        {SIZE_,        1024},
-        {"torrent_id", 1},
+        {"filepath",   "test7_file1.mkv (dummy-STRING)"},
+        {ID,           10},
+        {SIZE_,        4562},
+        {"torrent_id", 7},
     };
     QCOMPARE(serialized, expectedAttributes);
 
@@ -391,7 +391,7 @@ void tst_Model_Appends::toMap_WithAppends_ForExistingAttribute() const
 
 void tst_Model_Appends::toVector_WithAppends_ForExistingAttribute() const
 {
-    auto torrentFile = TorrentPreviewableFile::find(1);
+    auto torrentFile = TorrentPreviewableFile::find(10);
     QVERIFY(torrentFile);
     QVERIFY(torrentFile->exists);
 
@@ -402,15 +402,15 @@ void tst_Model_Appends::toVector_WithAppends_ForExistingAttribute() const
     QCOMPARE(serialized.size(), 9);
 
     QVector<AttributeItem> expectedAttributes {
-        {ID,           1},
-        {"torrent_id", 1},
+        {ID,           10},
+        {"torrent_id", 7},
         {"file_index", 0},
-        {SIZE_,        1024},
-        {Progress,     200},
-        {NOTE,         "no file properties"},
-        {CREATED_AT,   "2021-01-01T14:51:23.000Z"},
-        {UPDATED_AT,   "2023-07-03T09:40:17.000Z"},
-        {"filepath",   "test1_file1.mkv (dummy-STRING)"},
+        {SIZE_,        4562},
+        {Progress,     512},
+        {NOTE,         "for serialization"},
+        {CREATED_AT,   "2021-01-10T14:51:23.000Z"},
+        {UPDATED_AT,   "2021-01-10T17:46:31.000Z"},
+        {"filepath",   "test7_file1.mkv (dummy-STRING)"},
     };
     QCOMPARE(serialized, expectedAttributes);
 
@@ -420,7 +420,7 @@ void tst_Model_Appends::toVector_WithAppends_ForExistingAttribute() const
 
 void tst_Model_Appends::toVector_WithAppends_WithVisible_ForExistingAttribute() const
 {
-    auto torrentFile = TorrentPreviewableFile::find(1);
+    auto torrentFile = TorrentPreviewableFile::find(10);
     QVERIFY(torrentFile);
     QVERIFY(torrentFile->exists);
 
@@ -432,10 +432,10 @@ void tst_Model_Appends::toVector_WithAppends_WithVisible_ForExistingAttribute() 
     QCOMPARE(serialized.size(), 4);
 
     QVector<AttributeItem> expectedAttributes {
-        {ID,           1},
-        {"torrent_id", 1},
-        {SIZE_,        1024},
-        {"filepath",   "test1_file1.mkv (dummy-STRING)"},
+        {ID,           10},
+        {"torrent_id", 7},
+        {SIZE_,        4562},
+        {"filepath",   "test7_file1.mkv (dummy-STRING)"},
     };
     QCOMPARE(serialized, expectedAttributes);
 
@@ -446,7 +446,7 @@ void tst_Model_Appends::toVector_WithAppends_WithVisible_ForExistingAttribute() 
 
 void tst_Model_Appends::toVector_WithAppends_WithHidden_ForExistingAttribute() const
 {
-    auto torrentFile = TorrentPreviewableFile::find(1);
+    auto torrentFile = TorrentPreviewableFile::find(10);
     QVERIFY(torrentFile);
     QVERIFY(torrentFile->exists);
 
@@ -458,14 +458,14 @@ void tst_Model_Appends::toVector_WithAppends_WithHidden_ForExistingAttribute() c
     QCOMPARE(serialized.size(), 8);
 
     QVector<AttributeItem> expectedAttributes {
-        {ID,           1},
-        {"torrent_id", 1},
+        {ID,           10},
+        {"torrent_id", 7},
         {"file_index", 0},
-        {SIZE_,        1024},
-        {Progress,     200},
-        {NOTE,         "no file properties"},
-        {CREATED_AT,   "2021-01-01T14:51:23.000Z"},
-        {UPDATED_AT,   "2023-07-03T09:40:17.000Z"},
+        {SIZE_,        4562},
+        {Progress,     512},
+        {NOTE,         "for serialization"},
+        {CREATED_AT,   "2021-01-10T14:51:23.000Z"},
+        {UPDATED_AT,   "2021-01-10T17:46:31.000Z"},
     };
     QCOMPARE(serialized, expectedAttributes);
 
