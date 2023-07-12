@@ -444,9 +444,7 @@ void tst_Model_Appends::toVector_WithAppends_WithVisible_ForExistingAttribute() 
     torrentFile->clearAppends();
 }
 
-void
-tst_Model_Appends::toVector_WithAppends_WithHidden_ForExistingAttribute()
-const
+void tst_Model_Appends::toVector_WithAppends_WithHidden_ForExistingAttribute() const
 {
     auto torrentFile = TorrentPreviewableFile::find(1);
     QVERIFY(torrentFile);
