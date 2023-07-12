@@ -124,16 +124,18 @@ namespace Concerns
     HidesAttributes<Derived, AllRelations...>::makeVisible(
             const std::set<QString> &attributes)
     {
+        auto &basemodel = this->basemodel();
+
         // First, remove attributes from the u_hidden set
         std::set<QString> newHidden;
-        auto &hidden = basemodel().getUserHidden();
+        auto &hidden = basemodel.getUserHidden();
         ranges::set_difference(hidden, attributes,
                                ranges::inserter(newHidden, newHidden.cend()));
         hidden = std::move(newHidden);
 
         /* And merge them into the u_visible (empty u_visible means that all attributes
            are visible, so no merge is needed). */
-        if (auto &visible = basemodel().getUserVisible();
+        if (auto &visible = basemodel.getUserVisible();
             !visible.empty()
         )
             std::ranges::copy(attributes, std::inserter(visible, visible.end()));

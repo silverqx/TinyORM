@@ -249,8 +249,10 @@ namespace Orm::Tiny::Concerns
     template<typename Derived, AllRelationsConcept ...AllRelations>
     bool GuardsAttributes<Derived, AllRelations...>::totallyGuarded() const
     {
-        return basemodel().getUserFillable().isEmpty() &&
-               basemodel().getUserGuarded() == QStringList {ASTERISK};
+        const auto &basemodel = this->basemodel();
+
+        return basemodel.getUserFillable().isEmpty() &&
+               basemodel.getUserGuarded() == QStringList {ASTERISK};
     }
 
     /* protected */

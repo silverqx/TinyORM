@@ -957,13 +957,15 @@ namespace Orm::Tiny::Concerns
     const QString &
     HasAttributes<Derived, AllRelations...>::getDateFormat() const
     {
-        if (const auto &userDateFormat = basemodel().getUserDateFormat();
+        const auto &basemodel = this->basemodel();
+
+        if (const auto &userDateFormat = basemodel.getUserDateFormat();
             !userDateFormat.isEmpty()
         ) T_UNLIKELY
             return userDateFormat;
 
         else T_LIKELY
-            return basemodel().getConnection().getQueryGrammar().getDateFormat();
+            return basemodel.getConnection().getQueryGrammar().getDateFormat();
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
@@ -2027,19 +2029,22 @@ namespace Orm::Tiny::Concerns
     QVariantMap
     HasAttributes<Derived, AllRelations...>::getMappableAttributes() const
     {
+        const auto &basemodel = this->basemodel();
+
         return getSerializableAttributes<QVariantMap>(
-                    getAttributes(), basemodel().getUserVisible(),
-                    basemodel().getUserHidden(), basemodel().getUserAppends());
+                    getAttributes(), basemodel.getUserVisible(),
+                    basemodel.getUserHidden(), basemodel.getUserAppends());
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     HasAttributes<Derived, AllRelations...>::VectorableAttributes
     HasAttributes<Derived, AllRelations...>::getVectorableAttributes() const
     {
+        const auto &basemodel = this->basemodel();
         // Obtain these here and pass down to avoid double or triple obtaining later
-        const auto &visible = basemodel().getUserVisible();
-        const auto &hidden  = basemodel().getUserHidden();
-        const auto &appends = basemodel().getUserAppends();
+        const auto &visible = basemodel.getUserVisible();
+        const auto &hidden  = basemodel.getUserHidden();
+        const auto &appends = basemodel.getUserAppends();
 
         auto attributes = getSerializableAttributes<QVector<AttributeItem>>(
                               getAttributes(), visible, hidden, appends);
@@ -2168,9 +2173,10 @@ namespace Orm::Tiny::Concerns
     std::set<QString>
     HasAttributes<Derived, AllRelations...>::getSerializableAppends() const
     {
-        const auto &visible = basemodel().getUserVisible();
-        const auto &hidden  = basemodel().getUserHidden();
-        const auto &appends = basemodel().getUserAppends();
+        const auto &basemodel = this->basemodel();
+        const auto &visible   = basemodel.getUserVisible();
+        const auto &hidden    = basemodel.getUserHidden();
+        const auto &appends   = basemodel.getUserAppends();
 
         // Nothing to do, no u_appends defined
         if (appends.empty())

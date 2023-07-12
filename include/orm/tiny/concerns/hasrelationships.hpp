@@ -950,8 +950,9 @@ namespace Concerns
     RelationsContainer<AllRelations...>
     HasRelationships<Derived, AllRelations...>::getSerializableRelations() const
     {
-        const auto &visible   = basemodel().getUserVisible();
-        const auto &hidden    = basemodel().getUserHidden();
+        const auto &basemodel = this->basemodel();
+        const auto &visible   = basemodel.getUserVisible();
+        const auto &hidden    = basemodel.getUserHidden();
         const auto &relations = getRelations();
 
         // Nothing to do, the visible and hidden attributes are not defined

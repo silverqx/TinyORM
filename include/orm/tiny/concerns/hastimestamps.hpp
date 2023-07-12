@@ -96,9 +96,11 @@ namespace Concerns
     template<typename Derived, AllRelationsConcept ...AllRelations>
     bool HasTimestamps<Derived, AllRelations...>::touch(const QString &attribute)
     {
-        basemodel().setAttribute(attribute, freshTimestamp());
+        auto &basemodel = this->basemodel();
 
-        return basemodel().save();
+        basemodel.setAttribute(attribute, freshTimestamp());
+
+        return basemodel.save();
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
@@ -108,13 +110,15 @@ namespace Concerns
 
         const auto &updatedAtColumn = getUpdatedAtColumn();
 
-        if (!updatedAtColumn.isEmpty() && !basemodel().isDirty(updatedAtColumn))
+        auto &basemodel = this->basemodel();
+
+        if (!updatedAtColumn.isEmpty() && !basemodel.isDirty(updatedAtColumn))
             setUpdatedAt(time);
 
         const auto &createdAtColumn = getCreatedAtColumn();
 
-        if (!basemodel().exists && !createdAtColumn.isEmpty() &&
-            !basemodel().isDirty(createdAtColumn)
+        if (!basemodel.exists && !createdAtColumn.isEmpty() &&
+            !basemodel.isDirty(createdAtColumn)
         )
             setCreatedAt(time);
     }
