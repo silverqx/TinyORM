@@ -66,6 +66,10 @@ namespace Utils
         /*! Get the storage type of the value stored in the QVariant. */
         static int qVariantTypeId(const QVariant &value);
 
+        /*! Log exception caught in the main exception handler in a current thread. */
+        [[maybe_unused]]
+        static void logException(const std::exception &e, bool fatal = false);
+
         /* QDateTime related */
         /*! Determine if the given value is a standard date format. */
         static bool isStandardDateFormat(const QString &value);

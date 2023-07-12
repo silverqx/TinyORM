@@ -3,10 +3,12 @@
 #include "orm/db.hpp"
 #include "orm/macros/likely.hpp"
 #include "orm/utils/string.hpp"
+#include "orm/utils/type.hpp"
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
 using StringUtils = Orm::Utils::String;
+using TypeUtils = Orm::Utils::Type;
 
 namespace Orm::Utils
 {
@@ -20,6 +22,20 @@ int Helpers::qVariantTypeId(const QVariant &value)
 #else
     return value.userType();
 #endif
+}
+
+void Helpers::logException(const std::exception &e, const bool fatal)
+{
+    const auto message = QStringLiteral("\nCaught '")
+                         .append(TypeUtils::classPureBasename(e, true))
+                         .append("' Exception:\n")
+                         .append(e.what())
+                         .append('\n');
+
+    if (fatal)
+        qFatal().nospace().noquote() << message;
+    else
+        qCritical().nospace().noquote() << message;
 }
 
 /* QDateTime related */
