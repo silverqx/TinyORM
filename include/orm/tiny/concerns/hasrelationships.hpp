@@ -583,15 +583,17 @@ namespace Concerns
     HasRelationships<Derived, AllRelations...>::hasOne(
             QString foreignKey, QString localKey)
     {
+        auto &model = this->model();
+
         auto instance = newRelatedInstance<Related>();
 
         if (foreignKey.isEmpty())
-            foreignKey = model().getForeignKey(); // model() needed as it's overriden in the BasePivot
+            foreignKey = model.getForeignKey(); // model() needed as it's overriden in the BasePivot
 
         if (localKey.isEmpty())
             localKey = basemodel().getKeyName();
 
-        return newHasOne<Related>(std::move(instance), model(),
+        return newHasOne<Related>(std::move(instance), model,
                                   DOT_IN.arg(instance->getTable(), foreignKey),
                                   localKey);
     }
@@ -634,15 +636,17 @@ namespace Concerns
     HasRelationships<Derived, AllRelations...>::hasMany(
             QString foreignKey, QString localKey)
     {
+        auto &model = this->model();
+
         auto instance = newRelatedInstance<Related>();
 
         if (foreignKey.isEmpty())
-            foreignKey = model().getForeignKey(); // model() needed as it's overriden in the BasePivot
+            foreignKey = model.getForeignKey(); // model() needed as it's overriden in the BasePivot
 
         if (localKey.isEmpty())
             localKey = basemodel().getKeyName();
 
-        return newHasMany<Related>(std::move(instance), model(),
+        return newHasMany<Related>(std::move(instance), model,
                                    DOT_IN.arg(instance->getTable(), foreignKey),
                                    localKey);
     }
@@ -661,13 +665,15 @@ namespace Concerns
         if (relation.isEmpty())
             relation = guessBelongsToManyRelation<Related>();
 
+        auto &model = this->model();
+
         /* First, we'll need to determine the foreign key and "other key"
            for the relationship. Once we have determined the keys, we'll make
            the relationship instance we need for this. */
         auto instance = newRelatedInstance<Related>();
 
         if (foreignPivotKey.isEmpty())
-            foreignPivotKey = model().getForeignKey(); // model() needed as it's overriden in the BasePivot
+            foreignPivotKey = model.getForeignKey(); // model() needed as it's overriden in the BasePivot
 
         if (relatedPivotKey.isEmpty())
             relatedPivotKey = instance->getForeignKey();
@@ -685,7 +691,7 @@ namespace Concerns
             relatedKey = instance->getKeyName();
 
         return newBelongsToMany<Related, PivotType>(
-                    std::move(instance), model(), table, foreignPivotKey,
+                    std::move(instance), model, table, foreignPivotKey,
                     relatedPivotKey, parentKey, relatedKey, relation);
     }
 

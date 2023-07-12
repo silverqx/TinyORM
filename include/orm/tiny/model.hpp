@@ -933,10 +933,12 @@ namespace Orm::Tiny
     template<typename Derived, AllRelationsConcept ...AllRelations>
     Derived &Model<Derived, AllRelations...>::refresh()
     {
-        if (!exists)
-            return model();
+        auto &model = this->model();
 
-        this->setRawAttributes(model().setKeysForSelectQuery(*newQueryWithoutScopes())
+        if (!exists)
+            return model;
+
+        this->setRawAttributes(model.setKeysForSelectQuery(*newQueryWithoutScopes())
                                .firstOrFail().getRawAttributes());
 
         // And reload them again, refresh relations
@@ -944,7 +946,7 @@ namespace Orm::Tiny
 
         this->syncOriginal();
 
-        return model();
+        return model;
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
@@ -952,13 +954,15 @@ namespace Orm::Tiny
     Derived &
     Model<Derived, AllRelations...>::load(const QVector<WithItem> &relations)
     {
+        auto &model = this->model();
+
         // Ownership of a unique_ptr()
         auto builder = newQueryWithoutRelationships();
 
         builder->with(relations)
-                .eagerLoadRelations(model());
+                .eagerLoadRelations(model);
 
-        return model();
+        return model;
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
@@ -1047,6 +1051,7 @@ namespace Orm::Tiny
         )
             return false;
 
+        const auto &model = this->model();
         // Compare data members in the Derived Model 😮🤯😎
         const auto &derivedRight = static_cast<const Derived &>(right);
 
@@ -1054,7 +1059,7 @@ namespace Orm::Tiny
         /* It compares only the size and keys and doesn't compare hash values because
            the std::function doesn't have a full/complete operator==() (it only compares
            for the nullptr). */
-        if (!HasRelationships::compareURelations(model().u_relations,
+        if (!HasRelationships::compareURelations(model.u_relations,
                                                  derivedRight.u_relations))
             return false;
 
@@ -1062,18 +1067,18 @@ namespace Orm::Tiny
            model, the u_xyz data members are compared here. I don't like it though,
            one caveat of this is that if a user defines the operator==() then these
            data members will be compared twice. */
-        return model().u_table        == derivedRight.u_table        &&
-               model().u_incrementing == derivedRight.u_incrementing &&
-               model().u_primaryKey   == derivedRight.u_primaryKey   &&
-               model().u_with         == derivedRight.u_with         &&
-//               model().u_withCount    == derivedRight.u_withCount    &&
-               model().u_connection   == derivedRight.u_connection   &&
+        return model.u_table        == derivedRight.u_table        &&
+               model.u_incrementing == derivedRight.u_incrementing &&
+               model.u_primaryKey   == derivedRight.u_primaryKey   &&
+               model.u_with         == derivedRight.u_with         &&
+//               model.u_withCount    == derivedRight.u_withCount    &&
+               model.u_connection   == derivedRight.u_connection   &&
                // HasAttributes
-               model().u_appends      == derivedRight.u_appends      &&
+               model.u_appends      == derivedRight.u_appends      &&
                // HasRelationships
-               model().u_touches      == derivedRight.u_touches      &&
+               model.u_touches      == derivedRight.u_touches      &&
                // HasTimestamps
-               model().u_timestamps   == derivedRight.u_timestamps;
+               model.u_timestamps   == derivedRight.u_timestamps;
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
@@ -1437,38 +1442,46 @@ namespace Orm::Tiny
     Derived &
     Model<Derived, AllRelations...>::setConnection(const QString &name)
     {
-        model().u_connection = name;
+        auto &model = this->model();
 
-        return model();
+        model.u_connection = name;
+
+        return model;
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     Derived &
     Model<Derived, AllRelations...>::setConnection(QString &&name)
     {
-        model().u_connection = std::move(name);
+        auto &model = this->model();
 
-        return model();
+        model.u_connection = std::move(name);
+
+        return model;
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     Derived &
     Model<Derived, AllRelations...>::setTable(const QString &value)
     {
-        model().u_table = value;
+        auto &model = this->model();
 
-        return model();
+        model.u_table = value;
+
+        return model;
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     const QString &
     Model<Derived, AllRelations...>::getTable() const
     {
-        const auto &table = model().u_table;
+        auto &model = this->model();
+
+        const auto &table = model.u_table;
 
         // Guess as pluralized snake_case table name and set the u_table
         if (table.isEmpty())
-            const_cast<QString &>(model().u_table) =
+            const_cast<QString &>(model.u_table) =
                 TMPL_PLURAL.arg(
                     StringUtils::snake(TypeUtils::classPureBasename<Derived>()));
 
@@ -1514,9 +1527,11 @@ namespace Orm::Tiny
     Derived &
     Model<Derived, AllRelations...>::setIncrementing(const bool value)
     {
-        model().u_incrementing = value;
+        auto &model = this->model();
 
-        return model();
+        model.u_incrementing = value;
+
+        return model;
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
