@@ -959,10 +959,11 @@ namespace Orm::Tiny::Concerns
     {
         if (const auto &userDateFormat = basemodel().getUserDateFormat();
             !userDateFormat.isEmpty()
-        )
+        ) T_UNLIKELY
             return userDateFormat;
 
-        return basemodel().getConnection().getQueryGrammar().getDateFormat();
+        else T_LIKELY
+            return basemodel().getConnection().getQueryGrammar().getDateFormat();
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
