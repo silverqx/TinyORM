@@ -1763,13 +1763,13 @@ namespace Orm::Tiny
         // Execute the increment/decrement query on the database for the current model
         std::tuple<int, QSqlQuery> result;
         {
-            auto &model = this->model().setKeysForSaveQuery(*builder);
+            setKeysForSaveQuery(*builder);
             const auto extraConverted = AttributeUtils::convertVectorToUpdateItem(extra);
 
             if (method == Increment)
-                result = model.increment(column, amount, extraConverted);
+                result = builder->increment(column, amount, extraConverted);
             else if (method == Decrement)
-                result = model.decrement(column, amount, extraConverted);
+                result = builder->decrement(column, amount, extraConverted);
             else
                 Q_UNREACHABLE();
         }
