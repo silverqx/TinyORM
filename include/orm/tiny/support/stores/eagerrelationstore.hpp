@@ -100,7 +100,7 @@ namespace Orm::Tiny::Support::Stores
             Have to exists, until the 'relation->match()' is processed
             in the TinyBuilder::eagerLoadRelationVisited().
             Look at the Relation::m_parent for additional info. */
-        auto dummyModel = this->model().newInstance();
+        auto dummyModel = this->basemodel().newInstance();
 
         /* We want to run a relationship query without any constraints so that we will
            not have to remove these where clauses manually which gets really hacky

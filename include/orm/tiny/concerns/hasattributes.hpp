@@ -686,7 +686,7 @@ namespace Orm::Tiny::Concerns
            get the attribute's value. Otherwise, we will return invalid QVariant.
            Also, don't user the hasCast(key) check here because there is always primary
            key cast and it would return null or invalid QVariant. */
-        if (m_attributesHash.contains(key) || model().getUserCasts().contains(key))
+        if (m_attributesHash.contains(key) || basemodel().getUserCasts().contains(key))
             return getAttributeValue(key);
 
         // FUTURE add getRelationValue() overload without Related template argument, after that I will be able to use it here, Related template parameter will be obtained by the visitor, I think this task is impossible to do silverqx
@@ -1168,17 +1168,17 @@ namespace Orm::Tiny::Concerns
     std::unordered_map<QString, CastItem>
     HasAttributes<Derived, AllRelations...>::getCasts() const
     {
-        const auto &model = this->model();
+        const auto &basemodel = this->basemodel();
 
-        const auto &keyName = model.getKeyName();
+        const auto &keyName = basemodel.getKeyName();
 
         /* Needed to make a copy because it can interfere with the check
            in the getAttribute() method (getUserCasts().contains(key)), so don't modify
            the user's u_casts and add the 'id' cast on the fly on the casts copy. */
-        auto casts = model.getUserCasts();
+        auto casts = basemodel.getUserCasts();
 
         // try_emplace implies casts.contains()
-        if (model.getIncrementing()/* && !casts.contains(keyName)*/)
+        if (basemodel.getIncrementing()/* && !casts.contains(keyName)*/)
             // FEATURE dilemma primarykey, Model::KeyType vs QVariant silverqx
             casts.try_emplace(keyName, CastType::ULongLong);
 
@@ -1203,8 +1203,7 @@ namespace Orm::Tiny::Concerns
     HasAttributes<Derived, AllRelations...>::mergeCasts(
             const std::unordered_map<QString, CastItem> &casts)
     {
-        auto &model = this->model();
-        auto &userCasts = model.getUserCasts();
+        auto &userCasts = basemodel().getUserCasts();
 
         std::remove_cvref_t<decltype (casts)> mergedCasts;
         mergedCasts.reserve(userCasts.size() + casts.size());
@@ -1217,7 +1216,7 @@ namespace Orm::Tiny::Concerns
         // Swap user casts
         userCasts = std::move(mergedCasts);
 
-        return model;
+        return model();
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
@@ -1225,11 +1224,9 @@ namespace Orm::Tiny::Concerns
     HasAttributes<Derived, AllRelations...>::mergeCasts(
             std::unordered_map<QString, CastItem> &casts)
     {
-        auto &model = this->model();
+        basemodel().getUserCasts().merge(casts);
 
-        model.getUserCasts().merge(casts);
-
-        return model;
+        return model();
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
@@ -1237,21 +1234,17 @@ namespace Orm::Tiny::Concerns
     HasAttributes<Derived, AllRelations...>::mergeCasts(
             std::unordered_map<QString, CastItem> &&casts)
     {
-        auto &model = this->model();
+        basemodel().getUserCasts().merge(std::move(casts));
 
-        model.getUserCasts().merge(std::move(casts));
-
-        return model;
+        return model();
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     Derived &HasAttributes<Derived, AllRelations...>::resetCasts()
     {
-        auto &model = this->model();
+        basemodel().getUserCasts().clear();
 
-        model.getUserCasts().clear();
-
-        return model;
+        return model();
     }
 
     /* QDateTime time zone */

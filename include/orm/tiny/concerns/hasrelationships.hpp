@@ -586,7 +586,7 @@ namespace Concerns
         auto instance = newRelatedInstance<Related>();
 
         if (foreignKey.isEmpty())
-            foreignKey = model().getForeignKey();
+            foreignKey = model().getForeignKey(); // model() needed as it's overriden in the BasePivot
 
         if (localKey.isEmpty())
             localKey = basemodel().getKeyName();
@@ -637,7 +637,7 @@ namespace Concerns
         auto instance = newRelatedInstance<Related>();
 
         if (foreignKey.isEmpty())
-            foreignKey = model().getForeignKey();
+            foreignKey = model().getForeignKey(); // model() needed as it's overriden in the BasePivot
 
         if (localKey.isEmpty())
             localKey = basemodel().getKeyName();
@@ -667,7 +667,7 @@ namespace Concerns
         auto instance = newRelatedInstance<Related>();
 
         if (foreignPivotKey.isEmpty())
-            foreignPivotKey = model().getForeignKey();
+            foreignPivotKey = model().getForeignKey(); // model() needed as it's overriden in the BasePivot
 
         if (relatedPivotKey.isEmpty())
             relatedPivotKey = instance->getForeignKey();
@@ -1404,7 +1404,7 @@ namespace Concerns
         /* If the relationships snake-casing is enabled, we will snake_case this
            key so that the relation attribute is snake_cased in this returned
            map to the developers, making this consistent with attributes. */
-        if (model().getUserSnakeAttributes())
+        if (basemodel().getUserSnakeAttributes())
             relation = StringUtils::snake(std::move(relation));
 
         /* Insert or emplace the serialized relation attributes to the final attributes

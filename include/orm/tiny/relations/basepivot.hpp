@@ -260,7 +260,7 @@ namespace Orm::Tiny::Relations
     template<typename PivotModel>
     bool BasePivot<PivotModel>::deleteModel()
     {
-        return this->model().remove();
+        return remove();
     }
 
     /* Getters / Setters */

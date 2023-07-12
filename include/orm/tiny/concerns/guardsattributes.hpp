@@ -265,9 +265,9 @@ namespace Orm::Tiny::Concerns
         const auto [it, _] = m_guardableColumns.try_emplace(
                                  getKeyForGuardableHash(),
                                  moveToSetForGuardableHash(
-                                     model().getConnection()
-                                            .getSchemaBuilder()
-                                            .getColumnListing(model().getTable())));
+                                     basemodel().getConnection()
+                                                .getSchemaBuilder()
+                                                .getColumnListing(model().getTable()))); // model() needed as it's overriden in the BasePivot
 
         return it->second.contains(key);
     }

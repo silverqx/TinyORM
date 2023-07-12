@@ -73,6 +73,12 @@ namespace Orm::Tiny
         inline const Derived &model() const noexcept;
     };
 
+    /* We can't use the basemodel() in SoftDeletes concern as it's templated only by
+       the Derived template parameter so the model() is used everywhere instead.
+       It's not a big deal as everything works as expected and I'm not going to refactor
+       it to add the AllRelationsConcept ...AllRelations template parameter just because
+       of the basemodel(), it's good enough as it is. */
+
     /* public */
 
     template<typename Derived>
