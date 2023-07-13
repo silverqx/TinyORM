@@ -26,7 +26,7 @@ int Helpers::qVariantTypeId(const QVariant &value)
 
 void Helpers::logException(const std::exception &e, const bool fatal)
 {
-    const auto message = QStringLiteral("\nCaught '")
+    const auto message = QStringLiteral("\nCaught '") // NOLINT(misc-const-correctness)
                          .append(TypeUtils::classPureBasename(e, true))
                          .append("' Exception:\n")
                          .append(e.what())
