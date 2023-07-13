@@ -1344,7 +1344,7 @@ namespace Orm::Tiny::Concerns
 #if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
             attributes.emplaceBack(std::move(key), mutateAccessorAttribute(key));
 #else
-            attributes.append({std::move(key), mutateGetAttribute(key)});
+            attributes.append({std::move(key), mutateAccessorAttribute(key)});
 #endif
 
         return attributes;
@@ -2221,7 +2221,7 @@ namespace Orm::Tiny::Concerns
 #if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
             m_attributeMutatorsCache.emplace(key, value);
 #else
-            m_attributeCastCache.insert(key, value);
+            m_attributeMutatorsCache.insert(key, value);
 #endif
         // Remove the get mutator (accessor) from the cache if caching is disabled
         else T_LIKELY
