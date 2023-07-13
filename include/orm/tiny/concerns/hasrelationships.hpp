@@ -152,8 +152,27 @@ namespace Concerns
 
         /*! Get the relationships that are touched on save. */
         inline const QStringList &getTouchedRelations() const;
+
+        /*! Add one relationship that is touched on save. */
+        inline Derived &addTouch(const QString &touch);
+        /*! Add one relationship that is touched on save. */
+        inline Derived &addTouch(QString &&touch);
+
+        /*! Add one relationship that is touched on save. */
+        inline Derived &addTouches(const QStringList &touches);
+        /*! Add one relationship that is touched on save. */
+        inline Derived &addTouches(QStringList &&touches);
+
+        /*! Set the relationships that are touched on save. */
+        inline Derived &setTouchedRelations(const QStringList &touches);
+        /*! Set the relationships that are touched on save. */
+        inline Derived &setTouchedRelations(QStringList &&touches);
+
         /*! Determine if the model touches a given relation. */
         inline bool touches(const QString &relation) const;
+
+        /*! Clear the u_touches for the model. */
+        inline Derived &clearTouches();
 
         /* Serialization - Relations */
         /*! Convert the model's relationships to the map or vector. */
@@ -712,10 +731,83 @@ namespace Concerns
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
+    Derived &
+    HasRelationships<Derived, AllRelations...>::addTouch(const QString &touch)
+    {
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+        basemodel().getUserTouches().emplaceBack(touch);
+#else
+        basemodel().getUserTouches().append(touch);
+#endif
+
+        return model();
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    Derived &
+    HasRelationships<Derived, AllRelations...>::addTouch(QString &&touch)
+    {
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+        basemodel().getUserTouches().emplaceBack(std::move(touch));
+#else
+        basemodel().getUserTouches().append(std::move(touch));
+#endif
+
+        return model();
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    Derived &
+    HasRelationships<Derived, AllRelations...>::addTouches(const QStringList &touches)
+    {
+        basemodel().getUserTouches().append(touches);
+
+        return model();
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    Derived &
+    HasRelationships<Derived, AllRelations...>::addTouches(QStringList &&touches)
+    {
+        basemodel().getUserTouches().append(std::move(touches));
+
+        return model();
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    Derived &
+    HasRelationships<Derived, AllRelations...>::setTouchedRelations(
+            const QStringList &touches)
+    {
+        basemodel().getUserTouches() = touches;
+
+        return model();
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    Derived &
+    HasRelationships<Derived, AllRelations...>::setTouchedRelations(
+            QStringList &&touches)
+    {
+        basemodel().getUserTouches() = std::move(touches);
+
+        return model();
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     bool
     HasRelationships<Derived, AllRelations...>::touches(const QString &relation) const
     {
         return getTouchedRelations().contains(relation);
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    Derived &
+    HasRelationships<Derived, AllRelations...>::clearTouches()
+    {
+        basemodel().getUserTouches().clear();
+
+        return model();
     }
 
     /* Serialization - Relations */

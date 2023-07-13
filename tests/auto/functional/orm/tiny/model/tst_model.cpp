@@ -128,6 +128,9 @@ private Q_SLOTS:
     /* HasTimestamps */
     void touch_WithAttribute() const;
 
+    /* Touching timestamps */
+    void addTouch_setTouchedRelations_getTouchedRelations_touches_clearTouches() const;
+
     /* Attributes - unix timestamps */
     void getAttribute_UnixTimestamp_With_UDates() const;
     void getAttribute_UnixTimestamp_WithOut_UDates() const;
@@ -1747,6 +1750,49 @@ void tst_Model::touch_WithAttribute() const
     // Verify restored added_on value
     auto addedOnRestored = Torrent::find(1)->getAttribute("added_on");
     QCOMPARE(addedOnRestored, addedOnOriginal);
+}
+
+void
+tst_Model::addTouch_setTouchedRelations_getTouchedRelations_touches_clearTouches() const
+{
+    Torrent torrent;
+
+    const auto &touches = torrent.getTouchedRelations();
+
+    QVERIFY(touches.empty());
+
+    // touches()
+    QVERIFY(!torrent.touches("attribute_1"));
+    QVERIFY(!torrent.touches("attribute_2"));
+    QVERIFY(!torrent.touches("attribute_3"));
+
+    // addTouch(QString)
+    torrent.addTouch("attribute_1");
+    QCOMPARE(touches, (QStringList {"attribute_1"}));
+
+    // touches()
+    QVERIFY(torrent.touches("attribute_1"));
+
+    // addTouches(std::set<QString>)
+    torrent.addTouches({"attribute_2", "attribute_3"});
+    QCOMPARE(touches, (QStringList {"attribute_1", "attribute_2", "attribute_3"}));
+
+    // touches() - this is a little useless but whatever 🙃
+    QVERIFY(torrent.touches("attribute_2"));
+    QVERIFY(torrent.touches("attribute_3"));
+
+    // setTouchedRelations()
+    torrent.setTouchedRelations({"attribute_4", "attribute_5"});
+    QCOMPARE(touches, (QStringList {"attribute_4", "attribute_5"}));
+
+    // clearTouches()
+    torrent.clearTouches();
+    QVERIFY(touches.empty());
+
+    // getTouchedRelations()
+    QCOMPARE(torrent.getTouchedRelations(), touches);
+    // In the end, the memory addresses must be the same
+    QVERIFY(std::addressof(torrent.getTouchedRelations()) == std::addressof(touches));
 }
 
 /* Attributes - unix timestamps - u_dateFormat = 'U' */

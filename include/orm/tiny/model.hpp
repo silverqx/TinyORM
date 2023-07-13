@@ -466,6 +466,8 @@ namespace Orm::Tiny
         getUserRelations() const noexcept;
         /*! Get the u_touches relation names to touch from the Derived model. */
         inline const QStringList &getUserTouches() const noexcept;
+        /*! Get the u_touches relation names to touch from the Derived model. */
+        inline QStringList &getUserTouches() noexcept;
 
         /* HasTimestamps */
         /*! Get the u_timestamps attribute from the Derived model. */
@@ -1960,6 +1962,13 @@ namespace Orm::Tiny
     template<typename Derived, AllRelationsConcept ...AllRelations>
     const QStringList &
     Model<Derived, AllRelations...>::getUserTouches() const noexcept
+    {
+        return model().u_touches;
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    QStringList &
+    Model<Derived, AllRelations...>::getUserTouches() noexcept
     {
         return model().u_touches;
     }
