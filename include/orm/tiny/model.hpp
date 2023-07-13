@@ -1870,7 +1870,11 @@ namespace Orm::Tiny
 
     /* Getters for u_ data members defined in the Derived models, helps to avoid
        'friend GuardsAttributes/HasTimestamps' declarations in models when a u_ data
-       members are private/protected. */
+       members are private/protected.
+       Also, the non-static methods are ok for u_ static data members, the caller's
+       method constness controls the constness. There is one case when the getUserXyz()
+       method can be made static and that is when the u_ static data member doesn't
+       need be modified like the getUserRelations() or getUserMutators(). */
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     QString &
