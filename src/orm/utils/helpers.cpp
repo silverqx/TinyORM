@@ -28,14 +28,21 @@ void Helpers::logException(const std::exception &e, const bool fatal)
 {
     const auto message = QStringLiteral("\nCaught '") // NOLINT(misc-const-correctness)
                          .append(TypeUtils::classPureBasename(e, true))
-                         .append("' Exception:\n")
+                         .append(QStringLiteral("' Exception:\n"))
                          .append(e.what())
-                         .append('\n');
+                         .append(QChar(QChar::LineFeed));
 
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
     if (fatal)
-        qFatal(message.toUtf8().constData());
+        qFatal().nospace().noquote() << message;
     else
-        qCritical(message.toUtf8().constData());
+        qCritical().nospace().noquote() << message;
+#else
+    if (fatal)
+        qFatal("%s", message.toUtf8().constData());
+    else
+        qCritical("%s", message.toUtf8().constData());
+#endif
 }
 
 /* QDateTime related */
