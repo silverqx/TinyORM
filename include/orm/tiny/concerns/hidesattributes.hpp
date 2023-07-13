@@ -5,6 +5,8 @@
 #include "orm/macros/systemheader.hpp"
 TINY_SYSTEM_HEADER
 
+#include <QString>
+
 #include <set>
 
 #include <range/v3/algorithm/set_algorithm.hpp>
@@ -37,11 +39,15 @@ namespace Concerns
         inline const std::set<QString> &getVisible() const noexcept;
         /*! Set the visible attributes for the model. */
         inline Derived &setVisible(const std::set<QString> &visible);
+        /*! Set the visible attributes for the model. */
+        inline Derived &setVisible(std::set<QString> &&visible);
 
         /*! Get the hidden attributes for the model. */
         inline const std::set<QString> &getHidden() const noexcept;
         /*! Set the hidden attributes for the model. */
         inline Derived &setHidden(const std::set<QString> &hidden);
+        /*! Set the hidden attributes for the model. */
+        inline Derived &setHidden(std::set<QString> &&hidden);
 
         /*! Clear the visible attributes for the model. */
         inline Derived &clearVisible() noexcept;
@@ -50,8 +56,13 @@ namespace Concerns
 
         /*! Make the given, typically hidden, attributes visible. */
         inline Derived &makeVisible(const std::set<QString> &attributes);
+        /*! Make the given, typically hidden, attributes visible. */
+        inline Derived &makeVisible(QString attribute);
+
         /*! Make the given, typically visible, attributes hidden. */
         inline Derived &makeHidden(const std::set<QString> &attributes);
+        /*! Make the given, typically visible, attributes hidden. */
+        inline Derived &makeHidden(QString attribute);
 
     private:
         /* Static cast this to a child's instance type (CRTP) */
@@ -85,6 +96,15 @@ namespace Concerns
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
+    Derived &
+    HidesAttributes<Derived, AllRelations...>::setVisible(std::set<QString> &&visible)
+    {
+        basemodel().getUserVisible() = std::move(visible);
+
+        return model();
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     const std::set<QString> &
     HidesAttributes<Derived, AllRelations...>::getHidden() const noexcept
     {
@@ -97,6 +117,15 @@ namespace Concerns
             const std::set<QString> &hidden)
     {
         basemodel().getUserHidden() = hidden;
+
+        return model();
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    Derived &
+    HidesAttributes<Derived, AllRelations...>::setHidden(std::set<QString> &&hidden)
+    {
+        basemodel().getUserHidden() = std::move(hidden);
 
         return model();
     }
@@ -145,6 +174,13 @@ namespace Concerns
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     Derived &
+    HidesAttributes<Derived, AllRelations...>::makeVisible(QString attribute)
+    {
+        return makeVisible(std::set<QString> {std::move(attribute)});
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    Derived &
     HidesAttributes<Derived, AllRelations...>::makeHidden(
             const std::set<QString> &attributes)
     {
@@ -155,6 +191,13 @@ namespace Concerns
         std::ranges::copy(attributes, std::inserter(hidden, hidden.end()));
 
         return model();
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    Derived &
+    HidesAttributes<Derived, AllRelations...>::makeHidden(QString attribute)
+    {
+        return makeHidden(std::set<QString> {std::move(attribute)});
     }
 
     /* private */

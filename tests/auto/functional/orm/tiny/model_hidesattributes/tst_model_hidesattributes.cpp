@@ -1235,6 +1235,15 @@ void tst_Model_HidesAttributes::makeVisible() const
         // Must remove from u_hidden
         QVERIFY(torrent.getHidden().empty());
     }
+    // QString overload
+    {
+        torrent.setVisible({NAME});
+        torrent.makeVisible(SIZE_);
+
+        std::set<QString> expectedVisible {NAME, SIZE_};
+        QCOMPARE(torrent.getVisible(), expectedVisible);
+        QVERIFY(torrent.getHidden().empty());
+    }
 
     // Restore
     torrent.clearVisible();
@@ -1269,6 +1278,15 @@ void tst_Model_HidesAttributes::makeHidden() const
         torrent.makeHidden({SIZE_, NOTE, CREATED_AT});
 
         std::set<QString> expectedHidden {CREATED_AT, ID, NAME, NOTE, SIZE_};
+        QCOMPARE(torrent.getHidden(), expectedHidden);
+        QVERIFY(torrent.getVisible().empty());
+    }
+    // QString overload
+    {
+        torrent.setHidden({NAME});
+        torrent.makeHidden(SIZE_);
+
+        std::set<QString> expectedHidden {NAME, SIZE_};
         QCOMPARE(torrent.getHidden(), expectedHidden);
         QVERIFY(torrent.getVisible().empty());
     }
