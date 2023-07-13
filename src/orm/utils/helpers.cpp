@@ -33,9 +33,9 @@ void Helpers::logException(const std::exception &e, const bool fatal)
                          .append('\n');
 
     if (fatal)
-        qFatal().nospace().noquote() << message;
+        qFatal(message.toUtf8().constData());
     else
-        qCritical().nospace().noquote() << message;
+        qCritical(message.toUtf8().constData());
 }
 
 /* QDateTime related */
