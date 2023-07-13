@@ -2420,10 +2420,18 @@ namespace Orm::Tiny::Concerns
         if (appendKeys.empty())
             return;
 
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
         attributes.removeIf([&appendKeys](const AttributeItem &attribute)
         {
             return appendKeys.contains(attribute.key);
         });
+#else
+        for (auto it = attributes.begin(); it != attributes.end(); /*unused*/)
+            if (appendKeys.contains(it->key)) T_UNLIKELY
+                it = attributes.erase(it);
+            else T_LIKELY
+                ++it;
+#endif
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
