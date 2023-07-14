@@ -19,7 +19,7 @@ namespace Types
 {
 
     /*! Model attributes map (used only in the Attribute callback). */
-    class ModelAttributes : public std::unordered_map<QString, QVariant>
+    class ModelAttributes : public std::unordered_map<QString, QVariant> // NOLINT(bugprone-exception-escape)
     {
     public:
         /*! Inherit constructors. */
