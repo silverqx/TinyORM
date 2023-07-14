@@ -32,17 +32,14 @@ void Helpers::logException(const std::exception &e, const bool fatal)
                          .append(e.what())
                          .append(QChar(QChar::LineFeed));
 
-#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
     if (fatal)
+#if QT_VERSION >= QT_VERSION_CHECK(6, 5, 0)
         qFatal().nospace().noquote() << message;
+#else
+        qFatal("%s", message.toUtf8().constData());
+#endif
     else
         qCritical().nospace().noquote() << message;
-#else
-    if (fatal)
-        qFatal("%s", message.toUtf8().constData());
-    else
-        qCritical("%s", message.toUtf8().constData());
-#endif
 }
 
 /* QDateTime related */
