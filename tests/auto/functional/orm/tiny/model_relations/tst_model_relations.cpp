@@ -1918,11 +1918,11 @@ void tst_Model_Relations::refresh_EagerLoad_OnlyRelations() const
     QVERIFY(seedsOriginalChanged == QVariant(33));
 
     // Memory address of the key and value for the relation
-    auto *const
+    const auto *const
     relationFilesKeyOriginal = std::addressof(relations.find("torrentFiles")->first);
     auto *const
     relationFilesValueOriginal = std::addressof(relations.find("torrentFiles")->second);
-    auto *const
+    const auto *const
     relationPeerKeyOriginal = std::addressof(relations.find("torrentPeer")->first);
     auto *const
     relationPeerValueOriginal = std::addressof(relations.find("torrentPeer")->second);
@@ -1994,11 +1994,11 @@ void tst_Model_Relations::refresh_LazyLoad_OnlyRelations() const
     QVERIFY(seedsOriginalChanged == QVariant(33));
 
     // Memory address of the key and value for the relation
-    auto *const
+    const auto *const
     relationFilesKeyOriginal = std::addressof(relations.find("torrentFiles")->first);
     auto *const
     relationFilesValueOriginal = std::addressof(relations.find("torrentFiles")->second);
-    auto *const
+    const auto *const
     relationPeerKeyOriginal = std::addressof(relations.find("torrentPeer")->first);
     auto *const
     relationPeerValueOriginal = std::addressof(relations.find("torrentPeer")->second);
