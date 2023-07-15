@@ -15,7 +15,7 @@ keywords: [c++ orm, orm, serialization, json, toJson, serializing models, serial
 - [Appending Values To JSON](#appending-values-to-json)
 - [Date Serialization](#date-serialization)
 
-## Introduction {#introduction}
+## Introduction
 
 When building APIs using TinyORM, you will often need to convert your models and relationships to vectors, maps, or JSON. TinyORM includes convenient methods for making these conversions, as well as controlling which attributes are included in the serialized representation of your models.
 
@@ -49,7 +49,7 @@ You may also convert entire [collections](tinyorm/collections.mdx) of models to 
 
     return users.toMap();
 
-### Serializing To JSON {#serializing-to-json}
+### Serializing To JSON
 
 To convert a model to JSON, you should use the `toJson` method. Like `toVector` or `toMap`, the `toJson` method is recursive, so all attributes and relations will be converted to JSON. You may also specify any JSON encoding options that are supported by [QJsonDocument::toJson](https://doc.qt.io/qt-6/qjsondocument.html#toJson):
 
@@ -70,7 +70,7 @@ You may also convert entire [collections](tinyorm/collections.mdx) of models to 
 
 You can also convert models to the [`QJsonObject`](https://doc.qt.io/qt-6/qjsonobject.html) and [`QJsonDocument`](https://doc.qt.io/qt-6/qjsondocument.html) using the `toJsonArray` and `toJsonDocument` methods and collection of models to [`QJsonArray`](https://doc.qt.io/qt-6/qjsonarray.html) and [`QJsonDocument`](https://doc.qt.io/qt-6/qjsondocument.html) using the [`toJsonArray`](tinyorm/collections.mdx#method-tojsonarray) and [`toJsonDocument`](tinyorm/collections.mdx#method-tojsondocument) methods.
 
-#### Relationships {#relationships}
+#### Relationships
 
 When a TinyORM model is converted to JSON, its loaded relationships will automatically be included as attributes on the JSON object. Also, though TinyORM relationship methods are defined using "camelCase" method names, a relationship's JSON attributes will be "snake_case".
 
@@ -222,7 +222,7 @@ And you can also clear all appends or determine whether an append is defined:
 
     return user.hasAppend("is_admin");
 
-## Date Serialization {#date-serialization}
+## Date Serialization
 
 #### Customizing The Default Date Format {#customizing-the-default-date-format}
 
@@ -240,7 +240,7 @@ You may customize the default serialization format by overriding the `serializeD
         return datetime.toUTC().toString("yyyy-MM-ddTHH:mm:ssZ");
     }
 
-#### Customizing The Date Format Per Attribute {#customizing-the-date-format-per-attribute}
+#### Customizing The Date Format Per Attribute
 
 You may customize the serialization format of individual TinyORM date attributes by specifying the date format in the model's [cast declarations](tinyorm/casts.mdx#attribute-casting):
 
