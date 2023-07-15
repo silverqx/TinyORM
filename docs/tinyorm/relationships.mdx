@@ -203,7 +203,7 @@ If the parent model does not use `id` as its primary key, or you wish to find th
         return belongsTo<User>("foreign_key", "owner_key");
     }
 
-The third `belongsTo` parameter is the relation name, if you pass it, the foreign key name will be determined from it. By convention, TinyORM will "snake case" this relation name  and suffix it with a `_` followed by the name of the parent model's primary key column to generate foreign key, the `__func__` predefined identifier is ideal for this. The relation name is also used in BelongsTo's `associate` and `disassociate` methods:
+The third `belongsTo` parameter is the relation name, if you pass it, the foreign key name will be determined from it. By convention, TinyORM will "snake_case" this relation name  and suffix it with a `_` followed by the name of the parent model's primary key column to generate foreign key, the `__func__` predefined identifier is ideal for this. The relation name is also used in BelongsTo's `associate` and `disassociate` methods:
 
     /*! Get the user that owns the phone. */
     std::unique_ptr<BelongsTo<Phone, User>>
@@ -251,7 +251,7 @@ A one-to-many relationship is used to define relationships where a single model 
 
     #endif // POST_HPP
 
-Remember, TinyORM will automatically determine the proper foreign key column for the `Comment` model. By convention, TinyORM will take the "snake case" name of the parent model and suffix it with `_id`. So, in this example, TinyORM will assume the foreign key column on the `Comment` model is `post_id`.
+Remember, TinyORM will automatically determine the proper foreign key column for the `Comment` model. By convention, TinyORM will take the "snake_case" name of the parent model and suffix it with `_id`. So, in this example, TinyORM will assume the foreign key column on the `Comment` model is `post_id`.
 
 Once the relationship method has been defined, we can access the `QVector<Related *>` of related comments by Model's `getRelationValue<Related, Container = QVector>` method:
 
@@ -346,7 +346,7 @@ If your parent model does not use `id` as its primary key, or you wish to find t
         return belongsTo<Post>("foreign_key", "owner_key");
     }
 
-The third `belongsTo` parameter is the relation name, if you pass it, the foreign key name will be determined from it. By convention, TinyORM will "snake case" this relation name  and suffix it with a `_` followed by the name of the parent model's primary key column to generate foreign key, the `__func__` predefined identifier is ideal for this. The relation name is also used in BelongsTo's `associate` and `disassociate` methods:
+The third `belongsTo` parameter is the relation name, if you pass it, the foreign key name will be determined from it. By convention, TinyORM will "snake_case" this relation name  and suffix it with a `_` followed by the name of the parent model's primary key column to generate foreign key, the `__func__` predefined identifier is ideal for this. The relation name is also used in BelongsTo's `associate` and `disassociate` methods:
 
     /*! Get the post that owns the comment. */
     std::unique_ptr<BelongsTo<Comment, Post>>

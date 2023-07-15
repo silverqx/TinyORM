@@ -26,7 +26,7 @@ Accessors are currently only used during the serialization by the [Appending Val
 
 ### Defining An Accessor
 
-An accessor transforms a TinyORM attribute value when it is accessed (currently during serialization only by the [Appending Values](tinyorm/serialization.mdx#appending-values-to-json) feature). To define an accessor, create a protected method on your model to represent the accessible attribute. This method name should correspond to the "camel case" representation of the true underlying model attribute / database column when applicable.
+An accessor transforms a TinyORM attribute value when it is accessed (currently during serialization only by the [Appending Values](tinyorm/serialization.mdx#appending-values-to-json) feature). To define an accessor, create a protected method on your model to represent the accessible attribute. This method name should correspond to the "camelCase" representation of the true underlying model attribute / database column when applicable.
 
 In this example, we'll define an accessor for the `first_name` attribute. The accessor will automatically be called by TinyORM during serialization if the `first_name` attribute is defined in the `u_appends` data member set. All attribute accessor methods must return the `Orm::Tiny::Casts::Attribute`:
 

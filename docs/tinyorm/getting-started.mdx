@@ -129,7 +129,7 @@ Let's examine a basic model class and discuss some of TinyORM's key conventions:
 
 ### Table Names
 
-After glancing at the example above, you may have noticed that we did not tell TinyORM which database table corresponds to our `Flight` model. By convention, the "snake case", plural name of the class will be used as the table name unless another name is explicitly specified. So, in this case, TinyORM will assume the `Flight` model stores records in the `flights` table, while an `AirTrafficController` model would store records in an `air_traffic_controllers` table.
+After glancing at the example above, you may have noticed that we did not tell TinyORM which database table corresponds to our `Flight` model. By convention, the "snake_case", plural name of the class will be used as the table name unless another name is explicitly specified. So, in this case, TinyORM will assume the `Flight` model stores records in the `flights` table, while an `AirTrafficController` model would store records in an `air_traffic_controllers` table.
 
 If your model's corresponding database table does not fit this convention, you may manually specify the model's table name by defining the private `u_table` data member on the model:
 

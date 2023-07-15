@@ -182,7 +182,7 @@ Occasionally, when converting models to vector, map, or JSON, you may wish to ad
         }
     };
 
-If you would like the accessor to always be appended to your model's vector, map, and JSON representations, you may add the attribute name to the `u_appends` data member set of your model. Note that attribute names are typically referenced using their "snake case" serialized representation, even though the accessor's method name is defined using "camel case":
+If you would like the accessor to always be appended to your model's vector, map, and JSON representations, you may add the attribute name to the `u_appends` data member set of your model. Note that attribute names are typically referenced using their "snake_case" serialized representation, even though the accessor's method name is defined using "camelCase":
 
     #include <orm/tiny/model.hpp>
 
