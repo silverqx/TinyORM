@@ -19,7 +19,7 @@ keywords: [c++ orm, orm, getting started, tinyorm]
     - [Containers](#containers)
     - [Chunking Results](#chunking-results)
     - [Advanced Subqueries](#advanced-subqueries)
-- [Retrieving Single Models / Aggregates](#retrieving-single-models)
+- [Retrieving Single Models / Aggregates](#retrieving-single-models-and-aggregates)
     - [Retrieving Or Creating Models](#retrieving-or-creating-models)
     - [Retrieving Aggregates](#retrieving-aggregates)
 - [Inserting & Updating Models](#inserting-and-updating-models)
@@ -473,7 +473,7 @@ In addition, the query builder's `orderBy` function supports subqueries. Continu
                 .toBase())
         ->get();
 
-## Retrieving Single Models / Aggregates {#retrieving-single-models}
+## Retrieving Single Models / Aggregates {#retrieving-single-models-and-aggregates}
 
 In addition to retrieving all of the records matching a given query, you may also retrieve single records using the `find`, `first`, `firstWhere`, or `firstWhereEq` methods. Instead of returning a vector of models, these methods return a single model instance:
 
