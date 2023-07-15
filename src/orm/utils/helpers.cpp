@@ -1,5 +1,7 @@
 #include "orm/utils/helpers.hpp"
 
+#include <QDebug>
+
 #include "orm/db.hpp"
 #include "orm/macros/likely.hpp"
 #include "orm/utils/string.hpp"
