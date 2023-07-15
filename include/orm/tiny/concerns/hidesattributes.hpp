@@ -49,6 +49,11 @@ namespace Concerns
         /*! Set the hidden attributes for the model. */
         inline Derived &setHidden(std::set<QString> &&hidden);
 
+        /*! Determine whether the u_visible set contains the given accessor attribute. */
+        inline bool hasVisible(const QString &attribute) const;
+        /*! Determine whether the u_hidden set contains the given accessor attribute. */
+        inline bool hasHidden(const QString &attribute) const;
+
         /*! Clear the visible attributes for the model. */
         inline Derived &clearVisible() noexcept;
         /*! Clear the hidden attributes for the model. */
@@ -128,6 +133,20 @@ namespace Concerns
         basemodel().getUserHidden() = std::move(hidden);
 
         return model();
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    bool
+    HidesAttributes<Derived, AllRelations...>::hasVisible(const QString &attribute) const
+    {
+        return basemodel().getUserVisible().contains(attribute);
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    bool
+    HidesAttributes<Derived, AllRelations...>::hasHidden(const QString &attribute) const
+    {
+        return basemodel().getUserHidden().contains(attribute);
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>

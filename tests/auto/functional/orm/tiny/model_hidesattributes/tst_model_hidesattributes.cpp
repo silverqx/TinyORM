@@ -73,6 +73,8 @@ private Q_SLOTS:
     void makeVisible() const;
     void makeHidden() const;
 
+    void hasVisible_hasHidden() const;
+
 // NOLINTNEXTLINE(readability-redundant-access-specifiers)
 private:
     /*! Connection name used in this test case. */
@@ -1292,6 +1294,30 @@ void tst_Model_HidesAttributes::makeHidden() const
     }
 
     // Restore
+    torrent.clearHidden();
+}
+
+void tst_Model_HidesAttributes::hasVisible_hasHidden() const
+{
+    Torrent torrent;
+    QVERIFY(!torrent.exists);
+    QVERIFY(torrent.getVisible().empty());
+    QVERIFY(torrent.getHidden().empty());
+
+    torrent.setVisible({ID, NAME});
+    torrent.setHidden({NOTE});
+
+    std::set<QString> expectedVisible {ID, NAME};
+    QCOMPARE(torrent.getVisible(), expectedVisible);
+    std::set<QString> expectedHidden {NOTE};
+    QCOMPARE(torrent.getHidden(), expectedHidden);
+
+    QVERIFY(torrent.hasVisible(ID));
+    QVERIFY(torrent.hasVisible(NAME));
+    QVERIFY(torrent.hasHidden(NOTE));
+
+    // Restore
+    torrent.clearVisible();
     torrent.clearHidden();
 }
 // NOLINTEND(readability-convert-member-functions-to-static)
