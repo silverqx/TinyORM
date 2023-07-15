@@ -545,7 +545,7 @@ namespace Orm::Tiny::Concerns
         inline static void serializeDateOrDateTimeForAccessors(QVariant &value);
 
         /*! Convert a AttributeItem QVector to the std::unordered_map with caching. */
-        ModelAttributes
+        const ModelAttributes &
         convertVectorToModelAttributes(const QVector<AttributeItem> &attributes) const;
 
         /* Others */
@@ -2662,7 +2662,7 @@ namespace Orm::Tiny::Concerns
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
-    ModelAttributes
+    const ModelAttributes &
     HasAttributes<Derived, AllRelations...>::convertVectorToModelAttributes(
             const QVector<AttributeItem> &attributes) const
     {
