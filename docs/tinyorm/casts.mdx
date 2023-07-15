@@ -8,6 +8,8 @@ keywords: [c++ orm, orm, casts, casting, attributes, tinyorm]
 # TinyORM: Casting
 
 - [Introduction](#introduction)
+- [Accessors](#accessors)
+    - [Defining An Accessor](#defining-an-accessor)
 - [Attribute Casting](#attribute-casting)
     - [Date Casting](#date-casting)
     - [Query Time Casting](#query-time-casting)
@@ -15,6 +17,136 @@ keywords: [c++ orm, orm, casts, casting, attributes, tinyorm]
 ## Introduction
 
 Attribute casting allows you to transform TinyORM attribute values when you retrieve them on model instances. For example, you may want to convert a `datetime` string that is stored in your database to the `QDateTime` instance when it is accessed via your TinyORM model. Or, you may want to convert a `tinyint` number that is stored in the database to the `bool` when you access it on the TinyORM model.
+
+## Accessors
+
+:::caution
+Accessors are currently only used during the serialization by the [Appending Values](tinyorm/serialization.mdx#appending-values-to-json) feature. They are not used during the `getAttribute` or `getAttributeValue` methods calls.
+:::
+
+### Defining An Accessor
+
+An accessor transforms a TinyORM attribute value when it is accessed (currently during serialization only by the [Appending Values](tinyorm/serialization.mdx#appending-values-to-json) feature). To define an accessor, create a protected method on your model to represent the accessible attribute. This method name should correspond to the "camel case" representation of the true underlying model attribute / database column when applicable.
+
+In this example, we'll define an accessor for the `first_name` attribute. The accessor will automatically be called by TinyORM during serialization if the `first_name` attribute is defined in the `u_appends` data member set. All attribute accessor methods must return the `Orm::Tiny::Casts::Attribute`:
+
+    #include <orm/tiny/model.hpp>
+
+    using Orm::Tiny::Casts::Attribute;
+    using Orm::Tiny::Model;
+
+    class User final : public Model<User>
+    {
+        friend Model;
+        using Model::Model;
+
+    protected:
+        /*! Get the user's first name (accessor). */
+        Attribute firstName() const noexcept
+        {
+            return Attribute::make(/* get */ [this]() -> QVariant
+            {
+                auto firstName = getAttribute<QString>("first_name");
+
+                if (!firstName.isEmpty())
+                    firstName[0] = firstName.at(0).toUpper();
+
+                return firstName;
+            });
+        }
+
+    private:
+        /*! Map of mutator names to methods. */
+        inline static const QHash<QString, MutatorFunction> u_mutators {
+            {"first_name", &User::firstName},
+        };
+    };
+
+All accessor methods return an `Attribute` instance which defines how the attribute will be accessed. To do so, we supply the `get` argument to the `Attribute` class constructor or `Attribute::make` factory method.
+
+As you can see, the current model is captured by-reference using the `[this]` capture, allowing you to obtain a value by the `getAttribute` method inside the lambda expression, manipulate it and return a new value.
+
+You can also use the second overload that allows you to pass the `ModelAttributes` unordered map to the lambda expression:
+
+    using Orm::Tiny::Casts::Attribute;
+    using Orm::Tiny::Types::ModelAttributes;
+
+    protected:
+        /*! Get the user's first name (accessor). */
+        Attribute firstName() const noexcept
+        {
+            return Attribute::make(
+                   /* get */ [](const ModelAttributes &attributes) -> QVariant
+            {
+                auto firstName = attributes.at<QString>("first_name");
+
+                if (!firstName.isEmpty())
+                    firstName[0] = firstName.at(0).toUpper();
+
+                return firstName;
+            });
+        }
+
+The [`ModelAttributes`](https://github.com/silverqx/TinyORM/blob/main/include/orm/tiny/types/modelattributes.hpp) container extends the `std::unordered_map<QString, QVariant>` and adds the `at<T>` method that allows you to cast the underlying QVariant value.
+
+Special note should be given to the `u_mutators` static data member map, which maps accessors' attribute names to its methods. This data member is __required__ because C++ does not currently support reflection.
+
+:::info
+If you would like these computed values to be added to the vector, map, or JSON representations of your model, [you will need to append them](tinyorm/serialization.mdx#appending-values-to-json).
+:::
+
+:::danger
+You must guarantee that the current model will live long enough to avoid the dangling reference and crash if the current model is captured by-reference. Of course, you can capture it by-copy in edge cases or if you can't guarantee this.
+:::
+
+#### Building Value From Multiple Attributes
+
+Sometimes your accessor may need to transform multiple model attributes into a single value. You can use both methods described above to accomplish this:
+
+    using Orm::Constants::SPACE_IN;
+    using Orm::Tiny::Casts::Attribute;
+
+    protected:
+        /*! Get the user's full name (accessor). */
+        Attribute fullName() const noexcept
+        {
+            return Attribute::make(/* get */ [this]() -> QVariant
+            {
+                return SPACE_IN.arg(getAttribute<QString>("first_name"),
+                                    getAttribute<QString>("last_name"));
+            });
+        }
+
+Or you can use the `ModelAttributes` overload:
+
+    /*! Get the user's full name (accessor). */
+    Attribute fullName() const noexcept
+    {
+        return Attribute::make(
+                /* get */ [](const ModelAttributes &attributes) -> QVariant
+        {
+            return SPACE_IN.arg(attributes.at<QString>("first_name"),
+                                attributes.at<QString>("last_name"));
+        });
+    }
+
+#### Accessor Caching
+
+Sometimes computing an attribute value can be intensive, in this case, you can enable caching for this attribute value. To accomplish this, you have to invoke the `shouldCache` method when defining your accessor:
+
+    using Orm::Constants::SPACE_IN;
+    using Orm::Tiny::Casts::Attribute;
+
+    protected:
+        /*! Get the user's full name (accessor). */
+        Attribute fullName() const noexcept
+        {
+            return Attribute::make(/* get */ [this]() -> QVariant
+            {
+                return SPACE_IN.arg(getAttribute<QString>("first_name"),
+                                    getAttribute<QString>("last_name"));
+            }).shouldCache();
+        }
 
 ## Attribute Casting
 
