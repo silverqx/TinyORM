@@ -60,7 +60,7 @@ namespace Types
     template<typename T>
     T ModelAttributes::at(const key_type &key) const
     {
-        return BaseType::at(key).value<T>();
+        return BaseType::at(key).template value<T>();
     }
 
     /* public */
