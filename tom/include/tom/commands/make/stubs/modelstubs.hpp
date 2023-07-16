@@ -216,7 +216,7 @@ R"(
 inline const auto *const ModelDatesStub =
 R"(
     /*! The attributes that should be mutated to dates. */
-    inline static QStringList u_dates {%1};)";
+    inline static const QStringList u_dates {%1};)";
 
 /*! Model touches stub. */
 inline const auto *const ModelTouchesStub =
