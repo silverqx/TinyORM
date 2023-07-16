@@ -173,7 +173,7 @@ R"(
 /*! Model enable auto-incrementing stub. */
 inline const auto *const ModelIncrementingStub =
 R"(
-    /*! Indicates if the ID is auto-incrementing. */
+    /*! Indicates if the model's ID is auto-incrementing. */
     bool u_incrementing = %1;)";
 
 /*! Model connection stub. */
