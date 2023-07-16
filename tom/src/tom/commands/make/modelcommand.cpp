@@ -207,7 +207,7 @@ R"(  The <info>belongs-to</info> option is inverse relation for the <info>one-to
 
     <info>tom make:model User --one-to-many=Posts --foreign-key=post_id --one-to-many=Comments --foreign-key=comment_id</info>
 
-  And max. two times for the <info>belongs-to-many</info> relation, if only one value was given then set the <comment>related pivot key</comment> first. If two values were given then they follow the <gray>Model::belongsToMany()</gray> parameters order, a first value will be the <comment>foreign pivot key</comment>, and a second value the <comment>related pivot key</comment>. Two values can be passed using one <info>foreign-key</info> option separated by the , character or by two separate <info>foreign-key</info> options <gray>(this is true also for all other options that accept multiple values)</gray>:
+  And max. two times for the <info>belongs-to-many</info> relation, if only one value was given then set the <comment>related pivot key</comment> first. If two values were given then they follow the <gray>Model::belongsToMany()</gray> parameters order, a first value will be the <comment>foreign pivot key</comment>, and a second value the <comment>related pivot key</comment>. Two values can be passed using one <info>foreign-key</info> option separated by the , character or by two separate <info>foreign-key</info> options <gray>(this is also true for all other options that accept multiple values)</gray>:
 
     <info>tom make:model User --belongs-to-many=Tags --foreign-key=tag_id</info>
     <info>tom make:model User --belongs-to-many=Tags --foreign-key=user_id,tag_id</info>
