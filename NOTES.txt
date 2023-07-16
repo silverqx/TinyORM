@@ -2100,3 +2100,16 @@ https://www.youtube.com/watch?v=A7sVFJLJM-A&t=2450s&ab_channel=CppCon
    for data across threads
  - the best example is in the cpp std::scoped_lock documentation:
    https://en.cppreference.com/w/cpp/thread/scoped_lock
+
+
+Serialization - Appending Values To JSON:
+-----------------------------------------
+
+Currently isn't possible to serialize appended Aggregate types and Value Objects because
+of the QJsonValue, the reason is explained in the QJsonValue::fromVariant() documentation
+at https://doc.qt.io/qt-6/qjsonvalue.html#fromVariant
+
+The best what can be done is to return the QVariantMap or QVariantList from the accessors.
+
+Aggregate types and Value Objects works good with the Model's toMap() and toVector() methods,
+especially with Qt6's QVariant::fromValue(), Qt6 doesn't need to declare the Q_DECLARE_METATYPE().
