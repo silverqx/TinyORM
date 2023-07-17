@@ -406,7 +406,7 @@ void ModelCommand::showUnusedIncrementingWarning()
         return;
 
     comment(QStringLiteral(
-                "Unused the --disable-incrementing option; the --incrementing option "
+                "Unused --disable-incrementing option; the --incrementing option "
                 "has always precedence if both options were given."));
 
     m_shownUnusedIncrementing = true;

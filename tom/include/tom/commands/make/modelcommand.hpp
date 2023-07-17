@@ -82,7 +82,8 @@ namespace Support
         void findUnusedBtmOptions(const CmdOptions &cmdOptions);
         /*! Show unused options warning if generating a pivot model. */
         void showUnusedPivotModelOptionsWarnings();
-        /*! Show unused disable-incremening option if passed also incrementing option. */
+        /*! Show unused disable-incremening option if passed also the incrementing
+            option. */
         void showUnusedIncrementingWarning();
 
         /*! Write the model file to the disk. */
