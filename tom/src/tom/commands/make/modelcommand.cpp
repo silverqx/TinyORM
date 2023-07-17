@@ -447,9 +447,9 @@ CmdOptions ModelCommand::createCmdOptions()
             {}, {}, {}, {}, {}, {},
 
             // Model related
-            value(table_),       value(primary_key),          value(connection_),
-            {},                  values(fillable),            values(guarded),
-            value(dateformat),   values(dates),               values(touches),
+            value(table_),       value(primary_key), value(connection_), {},
+            values(fillable),    values(guarded),
+            value(dateformat),   values(dates),      values(touches),
             isSet(incrementing), isSet(disable_incrementing), isSet(disable_timestamps),
             m_isSetPivotModel
         };
@@ -470,9 +470,9 @@ CmdOptions ModelCommand::createCmdOptions()
         btmBoolValues(with_timestamps),
 
         // Model related
-        value(table_),       value(primary_key),          value(connection_),
-        values(with_),       values(fillable),            values(guarded),
-        value(dateformat),   values(dates),               values(touches),
+        value(table_),       value(primary_key), value(connection_), values(with_),
+        values(fillable),    values(guarded),
+        value(dateformat),   values(dates),      values(touches),
         isSet(incrementing), isSet(disable_incrementing), isSet(disable_timestamps),
         m_isSetPivotModel
     };
