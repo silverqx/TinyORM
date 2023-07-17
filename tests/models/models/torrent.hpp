@@ -289,7 +289,7 @@ private:
         {"name_size",     &Torrent::nameSize},
     };
 
-    /*! The accessor appends for serialized models. */
+    /*! The attributes that should be appended during serialization. */
 //    std::set<QString> u_appends {
 //        "name_progress",
 //    };
