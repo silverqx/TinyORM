@@ -124,10 +124,10 @@ ModelCreator::populateStub(const QString &className, const CmdOptions &cmdOption
             .replace(QStringLiteral("{{ includesSection }}"),    includesSection)
             .replace(QStringLiteral("{{includesSection}}"),      includesSection)
 
-            .replace(QStringLiteral("{{ usingsSection }}"),      usingsSection)
-            .replace(QStringLiteral("{{usingsSection}}"),        usingsSection)
-            .replace(QStringLiteral("{{ forwardsSection }}"),    forwardsSection)
-            .replace(QStringLiteral("{{forwardsSection}}"),      forwardsSection)
+            .replace(QStringLiteral("{{ usingsSection }}"),   usingsSection)
+            .replace(QStringLiteral("{{usingsSection}}"),     usingsSection)
+            .replace(QStringLiteral("{{ forwardsSection }}"), forwardsSection)
+            .replace(QStringLiteral("{{forwardsSection}}"),   forwardsSection)
 
             .replace(QStringLiteral("{{ relationsList }}"), relationsList)
             .replace(QStringLiteral("{{relationsList}}"),   relationsList)
