@@ -146,7 +146,7 @@ R"(
 
 private:)";
 
-/*! Model relations hash stub. */
+/*! Model u_relations hash stub. */
 inline const auto *const ModelRelationsStub =
 R"(
     /*! Map of relation names to methods. */
@@ -154,17 +154,17 @@ R"(
 {{ relationItems }}
     };)";
 
-/*! Relation item for model relations hash stub. */
+/*! Relation mapping item for model u_relations hash stub. */
 inline const auto *const ModelRelationItemStub =
 R"(        {"{{ relationName }}", {{ spaceAlign }}[](auto &v) { v(&{{ parentClass }}::{{ relationName }}); }},)";
 
-/*! Model table stub. */
+/*! Model u_table stub. */
 inline const auto *const ModelTableStub =
 R"(
     /*! The table associated with the model. */
     QString u_table {"%1"};)";
 
-/*! Model the primary key stub. */
+/*! Model u_primaryKey stub. */
 inline const auto *const ModelPrimaryKeyStub =
 R"(
     /*! The primary key associated with the table. */
@@ -176,49 +176,49 @@ R"(
     /*! Indicates if the model's ID is auto-incrementing. */
     bool u_incrementing = %1;)";
 
-/*! Model connection stub. */
+/*! Model u_connection stub. */
 inline const auto *const ModelConnectionStub =
 R"(
     /*! The connection name for the model. */
     QString u_connection {"%1"};)";
 
-/*! Model eager load 'with' stub. */
+/*! Model eager load u_with stub. */
 inline const auto *const ModelWithStub =
 R"(
     /*! The relations to eager load on every query. */
     QVector<QString> u_with {%1};)";
 
-/*! Model fillable stub. */
+/*! Model u_fillable stub. */
 inline const auto *const ModelFillableStub =
 R"(
     /*! The attributes that are mass assignable. */
     inline static const QStringList u_fillable {%1};)";
 
-/*! Model guarded stub. */
+/*! Model u_guarded stub. */
 inline const auto *const ModelGuardedStub =
 R"(
     /*! The attributes that aren't mass assignable. */
     inline static QStringList u_guarded {%1};)";
 
-/*! Model disable timestamps stub. */
+/*! Model disable u_timestamps stub. */
 inline const auto *const ModelDisableTimestampsStub =
 R"(
     /*! Indicates whether the model should be timestamped. */
     bool u_timestamps = false;)";
 
-/*! Model dateformat stub. */
+/*! Model u_dateFormat stub. */
 inline const auto *const ModelDateFormatStub =
 R"(
     /*! The storage format of the model's date columns. */
     inline static QString u_dateFormat {"%1"};)";
 
-/*! Model dates stub. */
+/*! Model u_dates stub. */
 inline const auto *const ModelDatesStub =
 R"(
     /*! The attributes that should be mutated to dates. */
     inline static const QStringList u_dates {%1};)";
 
-/*! Model touches stub. */
+/*! Model u_touches stub. */
 inline const auto *const ModelTouchesStub =
 R"(
     /*! All of the relationships to be touched. */
