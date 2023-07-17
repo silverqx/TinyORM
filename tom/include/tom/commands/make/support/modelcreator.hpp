@@ -120,7 +120,8 @@ namespace Tom::Commands::Make::Support
                 const QString &className, const CmdOptions &cmdOptions,
                 bool hasPublicSection, bool isSetPreserveOrder);
 
-        /*! Determine whether any model related option was given on the command-line. */
+        /*! Determine whether any model related option for the private: section was
+            given on the command-line. */
         static bool anyModelOptionGiven(const CmdOptions &cmdOptions);
         /*! Prepare string values for the initializer list. */
         static QString prepareInitializerListValues(const QStringList &list);
