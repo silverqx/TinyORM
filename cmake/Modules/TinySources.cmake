@@ -434,6 +434,7 @@ function(tiny_model_sources out_headers out_sources)
         phone.hpp
         role.hpp
         roleuser.hpp
+        roleuser_appends.hpp
         setting.hpp
         tag.hpp
         tag_returnrelation.hpp

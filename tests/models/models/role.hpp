@@ -5,6 +5,7 @@
 #include "orm/tiny/relations/pivot.hpp"
 
 #include "models/roleuser.hpp"
+#include "models/roleuser_appends.hpp"
 #include "models/user.hpp"
 
 namespace Models
@@ -18,7 +19,7 @@ using Orm::Tiny::Relations::Pivot;
 class User;
 
 // NOLINTNEXTLINE(misc-no-recursion, bugprone-exception-escape)
-class Role final : public Model<Role, User, RoleUser, Pivot>
+class Role final : public Model<Role, User, RoleUser, RoleUser_Appends, Pivot>
 {
     friend Model;
     using Model::Model;

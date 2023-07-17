@@ -15,6 +15,7 @@ using Orm::Constants::Progress;
 using Orm::Constants::SIZE_;
 using Orm::Constants::UPDATED_AT;
 
+using NullVariant = Orm::Utils::NullVariant;
 using TypeUtils = Orm::Utils::Type;
 
 using Orm::Tiny::AttributeItem;
@@ -25,6 +26,7 @@ using TestUtils::Databases;
 using Models::Datetime_SerializeOverride;
 using Models::Torrent;
 using Models::TorrentPreviewableFile;
+using Models::User;
 
 class tst_Model_Appends : public QObject // clazy:exclude=ctor-missing-parent-argument
 {
@@ -56,6 +58,9 @@ private Q_SLOTS:
 
     void toMap_WithAppends_OverrideSerializeDateTime() const;
     void toVector_WithAppends_OverrideSerializeDateTime() const;
+
+    void toMap_WithAppends_OnCustomPivot() const;
+    void toVector_WithAppends_OnCustomPivot() const;
 
     void toJson_WithAppends_WithVisible() const;
     void toJson_WithAppends_WithHidden() const;
@@ -528,6 +533,112 @@ tst_Model_Appends::toVector_WithAppends_OverrideSerializeDateTime() const
 
     // Restore
     datetime.clearAppends();
+}
+
+void tst_Model_Appends::toMap_WithAppends_OnCustomPivot() const
+{
+    auto user = User::with("roles_appends")->find(1);
+    QVERIFY(user);
+    QVERIFY(user->exists);
+
+    // Prepare
+    user->setVisible({ID, NAME, "roles_appends"});
+
+    QVariantMap serialized = user->toMap();
+
+    QVariantMap expectedAttributes {
+        {ID,              1},
+        {NAME,            "andrej"},
+        {"roles_appends", QVariantList {QVariantMap {
+                              {"added_on",     "2022-08-01T13:36:56.000Z"},
+                              {ID,             1},
+                              {NAME,           "role one"},
+                              {"subscription", QVariantMap {
+                                                   {"active",    true},
+                                                   {"is_active", true},
+                                                   {"role_id",   1},
+                                                   {"user_id",   1},
+                                               }},
+                          }, QVariantMap {
+                              {"added_on",     "2022-08-02T13:36:56.000Z"},
+                              {ID,             2},
+                              {NAME,           "role two"},
+                              {"subscription", QVariantMap {
+                                                   {"active",    false},
+                                                   {"is_active", false},
+                                                   {"role_id",   2},
+                                                   {"user_id",   1},
+                                               }},
+                          }, QVariantMap {
+                              {"added_on",     NullVariant::QDateTime()},
+                              {ID,             3},
+                              {NAME,           "role three"},
+                              {"subscription", QVariantMap {
+                                                   {"active",    true},
+                                                   {"is_active", true},
+                                                   {"role_id",   3},
+                                                   {"user_id",   1},
+                                               }},
+                          }}},
+    };
+
+    QCOMPARE(serialized, expectedAttributes);
+
+    // Restore
+    user->clearVisible();
+}
+
+void tst_Model_Appends::toVector_WithAppends_OnCustomPivot() const
+{
+    auto user = User::with("roles_appends")->find(1);
+    QVERIFY(user);
+    QVERIFY(user->exists);
+
+    // Prepare
+    user->setVisible({ID, NAME, "roles_appends"});
+
+    QVector<AttributeItem> serialized = user->toVector();
+
+    QVector<AttributeItem> expectedAttributes {
+        {ID,              1},
+        {NAME,            "andrej"},
+        {"roles_appends", QVariantList {QVariant::fromValue(QVector<AttributeItem> {
+                              {ID,             1},
+                              {NAME,           "role one"},
+                              {"added_on",     "2022-08-01T13:36:56.000Z"},
+                              {"subscription", QVariant::fromValue(QVector<AttributeItem> {
+                                                   {"user_id",   1},
+                                                   {"role_id",   1},
+                                                   {"active",    true},
+                                                   {"is_active", true},
+                                               })},
+                          }), QVariant::fromValue(QVector<AttributeItem> {
+                              {ID,             2},
+                              {NAME,           "role two"},
+                              {"added_on",     "2022-08-02T13:36:56.000Z"},
+                              {"subscription", QVariant::fromValue(QVector<AttributeItem> {
+                                                   {"user_id",   1},
+                                                   {"role_id",   2},
+                                                   {"active",    false},
+                                                   {"is_active", false},
+                                               })},
+                          }), QVariant::fromValue(QVector<AttributeItem> {
+                              {ID,             3},
+                              {NAME,           "role three"},
+                              {"added_on",     NullVariant::QDateTime()},
+                              {"subscription", QVariant::fromValue(QVector<AttributeItem> {
+                                                   {"user_id",   1},
+                                                   {"role_id",   3},
+                                                   {"active",    true},
+                                                   {"is_active", true},
+                                               })},
+                          })}},
+    };
+
+    QCOMPARE(serialized, expectedAttributes);
+
+    // Restore
+    user->clearVisible();
 }
 
 void tst_Model_Appends::toJson_WithAppends_WithVisible() const

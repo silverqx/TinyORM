@@ -10,6 +10,7 @@ HEADERS += \
     $$PWD/models/phone.hpp \
     $$PWD/models/role.hpp \
     $$PWD/models/roleuser.hpp \
+    $$PWD/models/roleuser_appends.hpp \
     $$PWD/models/setting.hpp \
     $$PWD/models/tag.hpp \
     $$PWD/models/tag_returnrelation.hpp \

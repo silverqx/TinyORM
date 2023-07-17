@@ -56,6 +56,19 @@ public:
         return relation;
     }
 
+    /*! The roles that belong to the user (to test a custom pivot with appends). */
+    std::unique_ptr<BelongsToMany<User, Role, RoleUser_Appends>>
+    roles_appends()
+    {
+        // Ownership of a unique_ptr()
+        auto relation = belongsToMany<Role, RoleUser_Appends>();
+
+        relation->as("subscription")
+                .withPivot("active");
+
+        return relation;
+    }
+
     /*! Get torrents associated with the user. */
     std::unique_ptr<HasMany<User, Torrent>>
     torrents()
@@ -66,9 +79,10 @@ public:
 private:
     /*! Map of relation names to methods. */
     QHash<QString, RelationVisitor> u_relations {
-        {"roles",    [](auto &v) { v(&User::roles); }},
-        {"phone",    [](auto &v) { v(&User::phone); }},
-        {"torrents", [](auto &v) { v(&User::torrents); }},
+        {"roles",         [](auto &v) { v(&User::roles); }},
+        {"roles_appends", [](auto &v) { v(&User::roles_appends); }},
+        {"phone",         [](auto &v) { v(&User::phone); }},
+        {"torrents",      [](auto &v) { v(&User::torrents); }},
     };
 
     /*! The attributes that are mass assignable. */
