@@ -204,6 +204,8 @@ ModelCreator::createPublicSection(const QString &className, const CmdOptions &cm
     return publicSection;
 }
 
+/* Relationships section */
+
 ModelCreator::RelationsWithOrder
 ModelCreator::createOneToOneRelation(
         const QString &parentClass, const QStringList &relatedClasses,

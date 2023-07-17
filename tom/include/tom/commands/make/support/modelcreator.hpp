@@ -51,6 +51,7 @@ namespace Tom::Commands::Make::Support
                 const QString &className, const CmdOptions &cmdOptions,
                 bool isSetPreserveOrder);
 
+        /* Relationships section */
         /*! One relationship method with order for the public section list. */
         struct RelationWithOrder
         {
