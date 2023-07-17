@@ -261,11 +261,11 @@ private:
 
     /*! The attributes that should be cast. */
 //    inline static std::unordered_map<QString, CastItem> u_casts {
-//        {NAME,       CastType::QString},
-//        {Progress, CastType::UShort},
+//        {NAME,      CastType::QString},
+//        {Progress,  CastType::UShort},
 //        // Showcase only, the Torrent model doesn't have the decimal column
-//        {"decimal",  CastType::Decimal},
-//        {"decimal",  {CastType::Decimal, 2}},
+//        {"decimal", CastType::Decimal},
+//        {"decimal", {CastType::Decimal, 2}},
 //    };
 
     /* Serialization */
