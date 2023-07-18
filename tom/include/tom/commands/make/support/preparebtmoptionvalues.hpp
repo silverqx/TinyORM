@@ -216,7 +216,11 @@ namespace Tom::Commands::Make::Support
            the single value option. */
 
         // Will be shown in the warning
-        modelCommand().m_unusedBtmOptions.insert(option);
+        /* Currently, the btm related options don't have any long option with a short
+           option alternative, this LongOption.arg() will have to be enhanced if
+           we will have such an option, in this case, we will have to map a short option
+           to a long one. */
+        modelCommand().m_unusedBtmOptions.insert(Tom::Constants::LongOption.arg(option));
 
         /* Skip the value, only the first option's value is used (and
            m_wasValueSetPartial doesn't matter). */
