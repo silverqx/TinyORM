@@ -731,6 +731,8 @@ QString ModelCreator::prepareInitializerListValues(const QStringList &list)
     return listJoined;
 }
 
+/* u_relations section */
+
 QString ModelCreator::createRelationsHash(
         const QString &className, const CmdOptions &cmdOptions,
         const bool isSetPreserveOrder) const

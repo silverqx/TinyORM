@@ -126,6 +126,7 @@ namespace Tom::Commands::Make::Support
         /*! Prepare string values for the initializer list. */
         static QString prepareInitializerListValues(const QStringList &list);
 
+        /* u_relations section */
         /*! Create model's u_relations hash. */
         QString createRelationsHash(
                 const QString &className, const CmdOptions &cmdOptions,
