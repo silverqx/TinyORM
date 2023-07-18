@@ -236,7 +236,7 @@ int ModelCommand::run()
     // Unused warnings
     showUnusedOptionsWarnings(cmdOptions);
 
-    if (!m_unusedBtmOptions.empty() || m_shownUnusedForeignKey ||
+    if (!m_unusedBtmOptions.empty()        || m_shownUnusedForeignKey   ||
         !m_unusedPivotModelOptions.empty() || m_shownUnusedIncrementing
     )
         newLine();
