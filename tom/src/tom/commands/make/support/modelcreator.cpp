@@ -726,7 +726,7 @@ QString ModelCreator::prepareInitializerListValues(const QStringList &list)
         listJoined.prepend(NOSPACE.arg(NEWLINE, QString(8, SPACE)));
 
     if (listSize > 1)
-        listJoined.append(NOSPACE.arg(NEWLINE, QString(4, SPACE)));
+        listJoined.append(COMMA).append(NEWLINE).append(QString(4, SPACE));
 
     return listJoined;
 }
