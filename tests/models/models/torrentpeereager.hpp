@@ -10,7 +10,6 @@ namespace Models
 {
 
 using Orm::Tiny::Model;
-using Orm::Tiny::Relations::BelongsTo;
 
 // NOLINTNEXTLINE(bugprone-exception-escape)
 class TorrentPeerEager final : public Model<TorrentPeerEager, TorrentEager>

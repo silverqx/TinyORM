@@ -59,7 +59,6 @@ Before you start defining relationship methods, you have to declare a model clas
     #include "models/phone.hpp"
 
     using Orm::Tiny::Model;
-    using Orm::Tiny::Relations::HasOne;
 
     class User final : public Model<User, Phone>
     {
@@ -106,7 +105,6 @@ A one-to-one relationship is a very basic type of database relationship. For exa
     #include "models/phone.hpp"
 
     using Orm::Tiny::Model;
-    using Orm::Tiny::Relations::HasOne;
 
     class User final : public Model<User, Phone>
     {
@@ -155,7 +153,6 @@ So, we can access the `Phone` model from our `User` model. Next, let's define a 
     #include "models/user.hpp"
 
     using Orm::Tiny::Model;
-    using Orm::Tiny::Relations::BelongsTo;
 
     class Phone final : public Model<Phone, User>
     {
@@ -184,8 +181,6 @@ When invoking the `user` method, TinyORM will attempt to find a `User` model tha
 TinyORM determines the foreign key name by examining the type-name of the `Related` template parameter and suffixing the type-name with `_id`. So, in this case, TinyORM assumes that the `Phone` model has a `user_id` column.
 
  However, if the foreign key on the `Phone` model is not `user_id`, you may pass a custom key name as the first argument to the `belongsTo` method:
-
-    using Orm::Tiny::Relations::BelongsTo;
 
     /*! Get the user that owns the phone. */
     std::unique_ptr<BelongsTo<Phone, User>>
@@ -227,7 +222,6 @@ A one-to-many relationship is used to define relationships where a single model 
     #include "models/comment.hpp"
 
     using Orm::Tiny::Model;
-    using Orm::Tiny::Relations::HasMany;
 
     class Post final : public Model<Post, Comment>
     {
@@ -288,7 +282,6 @@ Now that we can access all of a post's comments, let's define a relationship to 
     #include "models/post.hpp"
 
     using Orm::Tiny::Model;
-    using Orm::Tiny::Relations::BelongsTo;
 
     class Comment final : public Model<Comment, Post>
     {
@@ -326,8 +319,6 @@ TinyORM determines the foreign key name by examining the type-name of the `Relat
 
 However, if the foreign key for your relationship does not follow these conventions, you may pass a custom foreign key name as the first argument to the `belongsTo` method:
 
-    using Orm::Tiny::Relations::BelongsTo;
-
     /*! Get the post that owns the comment. */
     std::unique_ptr<BelongsTo<Comment, Post>>
     post()
@@ -336,8 +327,6 @@ However, if the foreign key for your relationship does not follow these conventi
     }
 
 If your parent model does not use `id` as its primary key, or you wish to find the associated model using a different column, you may pass a second argument to the `belongsTo` method specifying your parent table's custom key:
-
-    using Orm::Tiny::Relations::BelongsTo;
 
     /*! Get the post that owns the comment. */
     std::unique_ptr<BelongsTo<Comment, Post>>
@@ -423,7 +412,6 @@ Many-to-many relationships are defined by writing a method that returns the resu
     #include "models/role.hpp"
 
     using Orm::Tiny::Model;
-    using Orm::Tiny::Relations::BelongsToMany;
     using Orm::Tiny::Relations::Pivot;
 
     class User final : public Model<User, Role, Pivot>
@@ -486,7 +474,6 @@ To define the "inverse" of a many-to-many relationship, you should define a meth
     #include <orm/tiny/relations/pivot.hpp>
 
     using Orm::Tiny::Model;
-    using Orm::Tiny::Relations::BelongsToMany;
     using Orm::Tiny::Relations::Pivot;
 
     class User; // Forward declaration to avoid cyclic dependency
@@ -599,7 +586,6 @@ Custom many-to-many pivot models should extend the `Orm::Tiny::Relations::BasePi
     #include "models/role.hpp"
 
     using Orm::Tiny::Model;
-    using Orm::Tiny::Relations::BelongsToMany;
     using Orm::Tiny::Relations::Pivot;
 
     class User final : public Model<User, Role, Pivot>
@@ -655,7 +641,6 @@ You have to pass a custom pivot type to the `AllRelations` template parameter pa
     #include "models/roleuser.hpp"
 
     using Orm::Tiny::Model;
-    using Orm::Tiny::Relations::BelongsToMany;
 
     class User; // Forward declaration to avoid cyclic dependency
 
@@ -738,7 +723,6 @@ For example, imagine a blog application in which a `User` model has many associa
     #include "models/post.hpp"
 
     using Orm::Tiny::Model;
-    using Orm::Tiny::Relations::HasMany;
 
     class User final : public Model<User, Post>
     {
@@ -922,7 +906,6 @@ You may use "dot" notation to execute a query against a nested relationship. For
 When accessing TinyORM relationships by Model's `getRelationValue` method, the related models are "lazy loaded". This means the relationship data is not actually loaded until you first access them. However, TinyORM can "eager load" relationships at the time you query the parent model. Eager loading alleviates the "N + 1" query problem. To illustrate the N + 1 query problem, consider a `Book` model that "belongs to" to an `Author` model:
 
     using Orm::Tiny::Model;
-    using Orm::Tiny::Relations::BelongsTo;
 
     class Book final : public Model<Book, Author>
     {
@@ -1001,7 +984,6 @@ When using this feature, you should always include the `id` column and any relev
 Sometimes you might want to always load some relationships when retrieving a model. To accomplish this, you may define a `u_with` data member on the model:
 
     using Orm::Tiny::Model;
-    using Orm::Tiny::Relations::BelongsTo;
 
     class Book final : public Model<Book, Author>
     {
@@ -1304,7 +1286,6 @@ When a model defines a `belongsTo` relationship to another model, such as a `Com
 For example, when a `Comment` model is updated, you may want to automatically "touch" the `updated_at` timestamp of the owning `Post` so that it is set to the current date and time. To accomplish this, you may add a `u_touches` data member to your child model containing the names of the relationships that should have their `updated_at` timestamps updated when the child model is updated:
 
     using Orm::Tiny::Model;
-    using Orm::Tiny::Relations::BelongsTo;
 
     class Comment final : public Model<Comment, Post>
     {

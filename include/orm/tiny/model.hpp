@@ -88,6 +88,34 @@ namespace Orm::Tiny
         /*! The Derived model type. */
         using DerivedType = Derived;
 
+        // Following are not needed in this class, only to avoid using-s in Derived models
+        /*! Alias for the AttributeItem. */
+        using AttributeItem = AttributeItem;
+        /*! Alias for the CastItem. */
+        using CastItem = CastItem;
+        /*! Alias for the CastType. */
+        using CastType = CastType;
+        /*! Alias for the Pivot. */
+        using Pivot = Relations::Pivot; // Forward declaration is in the interactswithpivottable.hpp
+        /*! Alias for the ModelAttributes. */
+        using ModelAttributes = Types::ModelAttributes;
+
+        /*! Alias for the BelongsTo. */
+        template<class Model, class Related>
+        using BelongsTo = Relations::BelongsTo<Model, Related>;
+        /*! Alias for the BelongsToMany. */
+        template<class Model, class Related, class PivotType = Pivot>
+        using BelongsToMany = Relations::BelongsToMany<Model, Related, PivotType>;
+        /*! Alias for the HasOne. */
+        template<class Model, class Related>
+        using HasOne = Relations::HasOne<Model, Related>;
+        /*! Alias for the HasMany. */
+        template<class Model, class Related>
+        using HasMany = Relations::HasMany<Model, Related>;
+        /*! Alias for the Relation. */
+        template<class Model, class Related>
+        using Relation = Relations::Relation<Model, Related>;
+
         /* Constructors */
         /*! Create a new TinORM model instance, default constructor. */
         Model();

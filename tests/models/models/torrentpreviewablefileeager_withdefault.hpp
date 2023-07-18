@@ -16,8 +16,6 @@ using Orm::Constants::Progress;
 using Orm::Constants::SIZE_;
 
 using Orm::Tiny::Model;
-using Orm::Tiny::Relations::BelongsTo;
-using Orm::Tiny::Relations::HasOne;
 
 // NOLINTNEXTLINE(bugprone-exception-escape)
 class TorrentPreviewableFileEager_WithDefault final :

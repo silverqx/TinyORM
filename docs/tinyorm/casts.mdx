@@ -32,7 +32,6 @@ In this example, we'll define an accessor for the `first_name` attribute. The ac
 
     #include <orm/tiny/model.hpp>
 
-    using Orm::Tiny::Casts::Attribute;
     using Orm::Tiny::Model;
 
     class User final : public Model<User>
@@ -68,9 +67,6 @@ As you can see, the current model is captured by-reference using the `[this]` ca
 
 You can also use the second overload that allows you to pass the `ModelAttributes` unordered map to the lambda expression:
 
-    using Orm::Tiny::Casts::Attribute;
-    using Orm::Tiny::Types::ModelAttributes;
-
     protected:
         /*! Get the user's first name (accessor). */
         Attribute firstName() const noexcept
@@ -104,7 +100,6 @@ You must guarantee that the current model will live long enough to avoid the dan
 Sometimes your accessor may need to transform multiple model attributes into a single value. You can use both methods described above to accomplish this:
 
     using Orm::Constants::SPACE_IN;
-    using Orm::Tiny::Casts::Attribute;
 
     protected:
         /*! Get the user's full name (accessor). */
@@ -135,7 +130,6 @@ Or you can use the `ModelAttributes` overload:
 Sometimes computing an attribute value can be intensive, in this case, you can enable caching for this attribute value. To accomplish this, you have to invoke the `shouldCache` method when defining your accessor:
 
     using Orm::Constants::SPACE_IN;
-    using Orm::Tiny::Casts::Attribute;
 
     protected:
         /*! Get the user's full name (accessor). */
@@ -185,8 +179,6 @@ To demonstrate attribute casting, let's cast the `is_admin` attribute, which is 
 
     #include <orm/tiny/model.hpp>
 
-    using Orm::Tiny::CastItem;
-    using Orm::Tiny::CastType;
     using Orm::Tiny::Model;
 
     class User final : public Model<User>

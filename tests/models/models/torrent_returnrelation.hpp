@@ -16,7 +16,6 @@ namespace Models
 
 using Orm::Tiny::Model;
 using Orm::Tiny::Relations::Pivot;
-using Orm::Tiny::Relations::Relation;
 
 class Tag;
 class Tag_ReturnRelation;

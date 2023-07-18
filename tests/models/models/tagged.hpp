@@ -7,8 +7,6 @@
 namespace Models
 {
 
-using Orm::Tiny::CastItem;
-using Orm::Tiny::CastType;
 using Orm::Tiny::Relations::BasePivot;
 
 // NOLINTNEXTLINE(bugprone-exception-escape)

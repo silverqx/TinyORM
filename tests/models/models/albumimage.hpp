@@ -14,7 +14,6 @@ using Orm::Constants::NAME;
 using Orm::Constants::SIZE_;
 
 using Orm::Tiny::Model;
-using Orm::Tiny::Relations::BelongsTo;
 
 class Album;
 

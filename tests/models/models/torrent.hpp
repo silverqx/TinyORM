@@ -32,17 +32,9 @@ using Orm::Constants::Progress;
 using Orm::Constants::SIZE_;
 using Orm::Constants::SPACE_IN;
 
-//using Orm::Tiny::CastItem;
-//using Orm::Tiny::CastType;
-using Orm::Tiny::Casts::Attribute;
 using Orm::Tiny::Model;
-using Orm::Tiny::Relations::BelongsTo;
-using Orm::Tiny::Relations::BelongsToMany;
-using Orm::Tiny::Relations::HasOne;
-using Orm::Tiny::Relations::HasMany;
 using Orm::Tiny::Relations::Pivot;
 //using Orm::Tiny::SoftDeletes;
-using Orm::Tiny::Types::ModelAttributes;
 
 #ifdef PROJECT_TINYORM_PLAYGROUND
 using TinyPlay::Configuration;

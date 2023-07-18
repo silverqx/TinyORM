@@ -15,7 +15,6 @@ using Orm::Constants::NOTE;
 using Orm::Constants::SIZE_;
 
 using Orm::Tiny::Model;
-using Orm::Tiny::Relations::HasMany;
 
 class AlbumImage;
 

@@ -9,7 +9,6 @@ class tst_Model_Serialization;
 namespace Models
 {
 
-using Orm::Tiny::Casts::Attribute;
 using Orm::Tiny::Model;
 
 // NOLINTNEXTLINE(bugprone-exception-escape)

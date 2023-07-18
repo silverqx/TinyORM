@@ -10,7 +10,6 @@ namespace Models
 {
 
 using Orm::Tiny::Model;
-using Orm::Tiny::Relations::BelongsTo;
 
 class User;
 

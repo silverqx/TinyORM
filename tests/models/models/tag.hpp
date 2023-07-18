@@ -2,7 +2,8 @@
 #ifndef MODELS_TAG_HPP
 #define MODELS_TAG_HPP
 
-#include "orm/tiny/relations/pivot.hpp"
+#include "orm/tiny/model.hpp"
+//#include "orm/tiny/relations/pivot.hpp"
 
 #include "models/tagged.hpp"
 #include "models/tagproperty.hpp"
@@ -15,9 +16,7 @@ using Orm::Constants::NAME;
 using Orm::Constants::NOTE;
 
 using Orm::Tiny::Model;
-using Orm::Tiny::Relations::BelongsToMany;
-using Orm::Tiny::Relations::HasOne;
-using Orm::Tiny::Relations::Pivot;
+//using Orm::Tiny::Relations::Pivot;
 
 class Role;
 class Torrent;
