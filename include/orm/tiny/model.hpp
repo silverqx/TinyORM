@@ -7,8 +7,6 @@ TINY_SYSTEM_HEADER
 
 #include <QJsonObject>
 
-#include <range/v3/view/filter.hpp>
-
 #include "orm/concerns/hasconnectionresolver.hpp"
 #include "orm/connectionresolverinterface.hpp"
 #include "orm/tiny/concerns/guardsattributes.hpp"
@@ -17,7 +15,6 @@ TINY_SYSTEM_HEADER
 #include "orm/tiny/concerns/hastimestamps.hpp"
 #include "orm/tiny/concerns/hidesattributes.hpp"
 #include "orm/tiny/exceptions/massassignmenterror.hpp"
-#include "orm/tiny/macros/crtpmodel.hpp"
 #include "orm/tiny/modelproxies.hpp"
 #include "orm/tiny/tinybuilder.hpp" // IWYU pragma: keep
 #ifdef TINYORM_TESTS_CODE
