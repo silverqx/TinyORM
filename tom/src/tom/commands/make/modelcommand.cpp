@@ -151,7 +151,8 @@ QList<CommandLineOption> ModelCommand::optionsSignature() const
         {primary_key,          QStringLiteral("The primary key associated with the "
                                               "table"), primary_key_up}, // Value
         {incrementing,         QStringLiteral("Enable auto-incrementing for the model's "
-                                              "primary key")},
+                                              "primary key "
+                                              "<comment>(default)</comment>")},
         {disable_incrementing, QStringLiteral("Disable auto-incrementing for the model's "
                                               "primary key")},
         {connection_,          QStringLiteral("The connection name for the model"),
