@@ -133,7 +133,7 @@ QList<CommandLineOption> ModelCommand::optionsSignature() const
                                               "belongs-to-many relationship"),
                                pivot_up}, // Value
         {pivot_inverse,        QStringLiteral("The class name of the pivot class for the "
-                                              "belongs-to-many inverse relationship"
+                                              "belongs-to-many inverse relationship "
                                               "<comment>(multiple values allowed)"
                                               "</comment>"),
                                pivot_inverse_up}, // Value
