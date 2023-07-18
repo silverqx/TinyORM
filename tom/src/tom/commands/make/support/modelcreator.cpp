@@ -701,7 +701,7 @@ QString ModelCreator::prepareInitializerListValues(const QStringList &list)
     const auto wrapValues = [](const QStringList &values, const QString &prefix)
     {
         return values
-                | ranges::views::transform([&prefix](const auto &value)
+                | ranges::views::transform([&prefix](const QString &value)
         {
             return QStringLiteral("%2\"%1\"").arg(value, prefix);
         })
