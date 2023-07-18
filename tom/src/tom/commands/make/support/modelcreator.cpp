@@ -615,10 +615,10 @@ QString ModelCreator::createPrivateSection(
 {
     const auto &[
             _1, _2, _3, _4, _5, _6, _7, _8, _9, _10, _11, _12,
-            table,        primaryKey, connection,
-            with,         fillable,   guarded,
-            dateFormat,   dates,      touches,
-            incrementing, disableIncrementing, disableTimestamps, _13
+            table,           primaryKey, connection,
+            with,            fillable,   guarded,
+            dateFormat,      dates,      touches,
+            incrementing,    disableIncrementing, disableTimestamps, _13
     ] = cmdOptions;
 
     QString privateSection;
@@ -689,10 +689,10 @@ bool ModelCreator::anyModelOptionGiven(const CmdOptions &cmdOptions)
             incrementing, disableIncrementing, disableTimestamps, _13
     ] = cmdOptions;
 
-    return !table.isEmpty()       || !primaryKey.isEmpty() || !connection.isEmpty() ||
-           !with.isEmpty()        || !fillable.isEmpty()   || !guarded.isEmpty()    ||
-           !dateFormat.isEmpty()  || !dates.isEmpty()      || !touches.isEmpty()    ||
-           incrementing           || disableIncrementing   || disableTimestamps;
+    return !table.isEmpty()      || !primaryKey.isEmpty() || !connection.isEmpty() ||
+           !with.isEmpty()       || !fillable.isEmpty()   || !guarded.isEmpty()    ||
+           !dateFormat.isEmpty() || !dates.isEmpty()      || !touches.isEmpty()    ||
+           incrementing          || disableIncrementing   || disableTimestamps;
 }
 
 QString ModelCreator::prepareInitializerListValues(const QStringList &list)
