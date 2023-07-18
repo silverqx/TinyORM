@@ -224,7 +224,6 @@ ModelCreator::createOneToOneRelation(
     ) {
         // Insert to model includes, usings, and relations lists
         m_includesList.emplace(QString(ModelIncludeItemStub).arg(relatedClass.toLower()));
-        m_usingsList.emplace(QString(ModelUsingItemStub).arg(QStringLiteral("HasOne")));
         m_forwardsList.emplace(QString(ModelForwardItemStub).arg(relatedClass));
         m_relationsList.emplace(relatedClass);
 
@@ -279,7 +278,6 @@ ModelCreator::createOneToManyRelation(
     ) {
         // Insert to model includes, usings, and relations lists
         m_includesList.emplace(QString(ModelIncludeItemStub).arg(relatedClass.toLower()));
-        m_usingsList.emplace(QString(ModelUsingItemStub).arg(QStringLiteral("HasMany")));
         m_forwardsList.emplace(QString(ModelForwardItemStub).arg(relatedClass));
         m_relationsList.emplace(relatedClass);
 
@@ -334,8 +332,6 @@ ModelCreator::createBelongsToRelation(
     ) {
         // Insert to model includes, usings, and relations lists
         m_includesList.emplace(QString(ModelIncludeItemStub).arg(relatedClass.toLower()));
-        m_usingsList.emplace(QString(ModelUsingItemStub)
-                             .arg(QStringLiteral("BelongsTo")));
         m_forwardsList.emplace(QString(ModelForwardItemStub).arg(relatedClass));
         m_relationsList.emplace(relatedClass);
 
@@ -427,8 +423,6 @@ ModelCreator::createBelongsToManyRelation(
     ) {
         // Insert to model includes, usings, and relations lists
         m_includesList.emplace(QString(ModelIncludeItemStub).arg(relatedClass.toLower()));
-        m_usingsList.emplace(QString(ModelUsingItemStub)
-                             .arg(QStringLiteral("BelongsToMany")));
         m_forwardsList.emplace(QString(ModelForwardItemStub).arg(relatedClass));
         m_relationsList.emplace(relatedClass);
 
