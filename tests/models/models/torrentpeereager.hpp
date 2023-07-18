@@ -9,6 +9,7 @@
 namespace Models
 {
 
+using Orm::Tiny::Model;
 using Orm::Tiny::Relations::BelongsTo;
 
 // NOLINTNEXTLINE(bugprone-exception-escape)
