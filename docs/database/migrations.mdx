@@ -446,9 +446,11 @@ In addition, a few other data members and methods may be used to define other as
 
     #include <orm/constants.hpp>
 
+    using Orm::Constants::InnoDB;
+
     Schema::create("users", [](Blueprint &table)
     {
-        table.engine = Orm::InnoDB;
+        table.engine = InnoDB;
 
         // ...
     });
