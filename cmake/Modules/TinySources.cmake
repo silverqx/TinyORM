@@ -463,7 +463,7 @@ function(tiny_model_sources out_headers out_sources)
     set(sources)
 
 #    list(APPEND sources
-#        torrent.cpp
+#        example.cpp
 #    )
 
     list(SORT headers)

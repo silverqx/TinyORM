@@ -35,4 +35,4 @@ HEADERS += \
     $$PWD/models/user.hpp \
 
 #SOURCES += \
-#    $$PWD/models/torrent.cpp \
+#    $$PWD/models/example.cpp \
