@@ -28,7 +28,6 @@ using Orm::Constants::COMMA;
 using Orm::Constants::DOT;
 using Orm::Constants::NEWLINE;
 using Orm::Constants::NOSPACE;
-using Orm::Constants::NOSPACE3;
 using Orm::Constants::QUOTE;
 using Orm::Constants::SPACE;
 
