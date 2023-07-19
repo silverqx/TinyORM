@@ -180,11 +180,11 @@ ModelCreator::createPublicSection(const QString &className, const CmdOptions &cm
                                    belongsToManyList);
 
     // Nothing to do, no relations passed
-    if (m_relationsListSize == 0)
+    if (m_relationsListsSize == 0)
         return {};
 
     RelationsWithOrder publicSectionList;
-    publicSectionList.reserve(m_relationsListSize);
+    publicSectionList.reserve(m_relationsListsSize);
 
     publicSectionList |= ranges::actions::push_back(
                              createOneToOneRelation(className, oneToOneList,
@@ -881,7 +881,7 @@ QString ModelCreator::createRelationsHash(
     ] = cmdOptions;
 
     // Nothing to create, no relations passed
-    if (m_relationsListSize == 0)
+    if (m_relationsListsSize == 0)
         return {};
 
     // Get max. size of relation names for align
@@ -892,7 +892,7 @@ QString ModelCreator::createRelationsHash(
     ] = relationsOrder;
 
     RelationsWithOrder relationItemsList;
-    relationItemsList.reserve(m_relationsListSize); // Use already the cached size value
+    relationItemsList.reserve(m_relationsListsSize); // Use already the cached size value
 
     relationItemsList |= ranges::actions::push_back(
                              createOneToOneRelationItem(
@@ -1283,12 +1283,12 @@ std::size_t ModelCreator::computeReserveForRelationsList(
         const QStringList &belongsTo, const QStringList &belongsToMany)
 {
     // Cache the computed reserve size to avoid recomputation in the private section
-    m_relationsListSize = static_cast<std::size_t>(oneToOne.size()) +
+    m_relationsListsSize = static_cast<std::size_t>(oneToOne.size()) +
                           static_cast<std::size_t>(oneToMany.size()) +
                           static_cast<std::size_t>(belongsTo.size()) +
                           static_cast<std::size_t>(belongsToMany.size());
 
-    return m_relationsListSize;
+    return m_relationsListsSize;
 }
 
 QString ModelCreator::joinRelationsList(RelationsWithOrder &&relationsList)

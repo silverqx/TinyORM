@@ -219,8 +219,8 @@ namespace Tom::Commands::Make::Support
         /*! Forward declarations list for related models. */
         std::set<QString> m_forwardsList {};
 
-        /*! Cached relations list size to avoid recomputation. */
-        std::size_t m_relationsListSize = 0;
+        /*! Cached relations lists size to avoid recomputations (NOT m_relationsList). */
+        std::size_t m_relationsListsSize = 0;
     };
 
 } // namespace Tom::Commands::Make::Support
