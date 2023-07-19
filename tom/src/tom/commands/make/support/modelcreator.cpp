@@ -1050,7 +1050,7 @@ ModelCreator::createBelongsToManyRelationItem(
          ranges::views::zip(relatedClasses, orderList)
     ) {
         const auto relationName = guessManyTypeRelationName(relatedClass);
-        const auto spaceAlign = QString(relationsMaxSize - relationName.size(), SPACE);
+        const auto spaceAlign   = QString(relationsMaxSize - relationName.size(), SPACE);
 
         auto content = QString(ModelRelationItemStub)
                        .replace(QStringLiteral("{{ parentClass }}"),  parentClass)
