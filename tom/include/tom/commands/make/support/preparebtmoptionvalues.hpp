@@ -148,8 +148,7 @@ namespace Tom::Commands::Make::Support
         /* Nothing to prepare, btm relation/s defined on the command-line but no values
            (return true with default values) */
         if (m_values.empty()) {
-            const auto valuesSize = static_cast<typename P::size_type>(
-                                        allBtmValues.size());
+            const auto valuesSize = static_cast<P::size_type>(allBtmValues.size());
 
             P result;
             result.reserve(valuesSize);
