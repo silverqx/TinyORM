@@ -6,12 +6,14 @@
 #include <range/v3/action/push_back.hpp>
 #include <range/v3/action/remove_if.hpp>
 #include <range/v3/range/conversion.hpp>
+#include <range/v3/view/filter.hpp>
 #include <range/v3/view/join.hpp>
 #include <range/v3/view/move.hpp>
 #include <range/v3/view/transform.hpp>
 #include <range/v3/view/zip.hpp>
 
 #include <orm/constants.hpp>
+#include <orm/macros/likely.hpp>
 #include <orm/utils/container.hpp>
 #include <orm/utils/string.hpp>
 
@@ -26,6 +28,7 @@ using Orm::Constants::COMMA;
 using Orm::Constants::DOT;
 using Orm::Constants::NEWLINE;
 using Orm::Constants::NOSPACE;
+using Orm::Constants::NOSPACE3;
 using Orm::Constants::QUOTE;
 using Orm::Constants::SPACE;
 
@@ -236,6 +239,10 @@ ModelCreator::createOneToOneRelation(
     for (const auto &[relatedClass, foreignKey, relationOrder] :
          ranges::views::zip(relatedClasses, foreignKeys, orderList)
     ) {
+        // Nothing to do, don't create relationship methods with empty names
+        if (relatedClass.isEmpty())
+            continue;
+
         // Insert to model includes, usings, and relations lists
         m_includesList.emplace(QString(ModelIncludeItemStub).arg(relatedClass.toLower()));
         m_forwardsList.emplace(QString(ModelForwardItemStub).arg(relatedClass));
@@ -290,6 +297,10 @@ ModelCreator::createOneToManyRelation(
     for (const auto &[relatedClass, foreignKey, relationOrder] :
          ranges::views::zip(relatedClasses, foreignKeys, orderList)
     ) {
+        // Nothing to do, don't create relationship methods with empty names
+        if (relatedClass.isEmpty())
+            continue;
+
         // Insert to model includes, usings, and relations lists
         m_includesList.emplace(QString(ModelIncludeItemStub).arg(relatedClass.toLower()));
         m_forwardsList.emplace(QString(ModelForwardItemStub).arg(relatedClass));
@@ -344,6 +355,10 @@ ModelCreator::createBelongsToRelation(
     for (const auto &[relatedClass, foreignKey, relationOrder] :
          ranges::views::zip(relatedClasses, foreignKeys, orderList)
     ) {
+        // Nothing to do, don't create relationship methods with empty names
+        if (relatedClass.isEmpty())
+            continue;
+
         // Insert to model includes, usings, and relations lists
         m_includesList.emplace(QString(ModelIncludeItemStub).arg(relatedClass.toLower()));
         m_forwardsList.emplace(QString(ModelForwardItemStub).arg(relatedClass));
@@ -435,6 +450,10 @@ ModelCreator::createBelongsToManyRelation(
                             pivotClasses, pivotInverseClasses, asList, withPivotList,
                             withTimestampsList)
     ) {
+        // Nothing to do, don't create relationship methods with empty names
+        if (relatedClass.isEmpty())
+            continue;
+
         // Insert to model includes, usings, and relations lists
         m_includesList.emplace(QString(ModelIncludeItemStub).arg(relatedClass.toLower()));
         m_forwardsList.emplace(QString(ModelForwardItemStub).arg(relatedClass));
@@ -802,6 +821,11 @@ QString ModelCreator::prepareInitializerListValues(const QStringList &list)
     const auto wrapValues = [](const QStringList &values, const QString &prefix)
     {
         return values
+                // Skip empty values (allows to create initializers like xyz {}).
+                | ranges::views::filter([](const QString &value)
+        {
+            return !value.isEmpty();
+        })
                 | ranges::views::transform([&prefix](const QString &value)
         {
             return QStringLiteral("%2\"%1\"").arg(value, prefix);
@@ -935,6 +959,10 @@ ModelCreator::createOneToOneRelationItem(
     for (const auto &[relatedClass, relationOrder] :
          ranges::views::zip(relatedClasses, orderList)
     ) {
+        // Nothing to do, don't create relation mappings with empty names
+        if (relatedClass.isEmpty())
+            continue;
+
         const auto relationName = guessOneTypeRelationName(relatedClass);
         const auto spaceAlign   = QString(relationsMaxSize - relationName.size(), SPACE);
 
@@ -973,6 +1001,10 @@ ModelCreator::createOneToManyRelationItem(
     for (const auto &[relatedClass, relationOrder] :
          ranges::views::zip(relatedClasses, orderList)
     ) {
+        // Nothing to do, don't create relation mappings with empty names
+        if (relatedClass.isEmpty())
+            continue;
+
         const auto relationName = guessManyTypeRelationName(relatedClass);
         const auto spaceAlign   = QString(relationsMaxSize - relationName.size(), SPACE);
 
@@ -1011,6 +1043,10 @@ ModelCreator::createBelongsToRelationItem(
     for (const auto &[relatedClass, relationOrder] :
          ranges::views::zip(relatedClasses, orderList)
     ) {
+        // Nothing to do, don't create relation mappings with empty names
+        if (relatedClass.isEmpty())
+            continue;
+
         const auto relationName = guessOneTypeRelationName(relatedClass);
         const auto spaceAlign   = QString(relationsMaxSize - relationName.size(), SPACE);
 
@@ -1049,6 +1085,10 @@ ModelCreator::createBelongsToManyRelationItem(
     for (const auto &[relatedClass, relationOrder] :
          ranges::views::zip(relatedClasses, orderList)
     ) {
+        // Nothing to do, don't create relation mappings with empty names
+        if (relatedClass.isEmpty())
+            continue;
+
         const auto relationName = guessManyTypeRelationName(relatedClass);
         const auto spaceAlign   = QString(relationsMaxSize - relationName.size(), SPACE);
 
@@ -1095,7 +1135,8 @@ ModelCreator::createMutatorsHash(const QString &className, const QStringList &ac
         mutatorItemsList << createMutatorItem(className, mutator, mutatorsMaxSize);
 
     // Join and replace the main stub
-    const auto mutatorItems = mutatorItemsList.join(NEWLINE);
+    // The wrapMutatorItemsList() allows to create initializer like u_mutators {}
+    const auto mutatorItems = wrapMutatorItemsList(mutatorItemsList);
 
     return QString(ModelMutatorsStub)
             .replace(QStringLiteral("{{ mutatorItems }}"), mutatorItems)
@@ -1110,10 +1151,12 @@ ModelCreator::prepareMutatorNames(const QStringList &accessors,
     std::set<QString> appendsSet;
 
     for (const auto &accessor : accessors)
-        accessorsSet.emplace(StringUtils::snake(accessor));
+        if (!accessor.isEmpty())
+            accessorsSet.emplace(StringUtils::snake(accessor));
 
     for (const auto &append : appends)
-        appendsSet.emplace(StringUtils::snake(append));
+        if (!append.isEmpty())
+            appendsSet.emplace(StringUtils::snake(append));
 
     accessorsSet.merge(std::move(appendsSet));
 
@@ -1155,6 +1198,22 @@ ModelCreator::createMutatorItem(const QString &className, const QString &mutator
 
             .replace(QStringLiteral("{{ mutatorNameCamel }}"), mutatorCamel)
             .replace(QStringLiteral("{{mutatorNameCamel}}"),   mutatorCamel);
+}
+
+QString ModelCreator::wrapMutatorItemsList(const QStringList &mutatorItems)
+{
+    // Nothing to do
+    if (mutatorItems.isEmpty()) T_UNLIKELY
+        return "";
+
+    else T_LIKELY {
+        auto mutatorItemsJoined = mutatorItems.join(NEWLINE);
+
+        mutatorItemsJoined.prepend(NEWLINE)
+                          .append(NOSPACE.arg(NEWLINE, QString(4, SPACE)));
+
+        return mutatorItemsJoined;
+    }
 }
 
 /* Global */

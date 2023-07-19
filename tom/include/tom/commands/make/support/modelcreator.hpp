@@ -181,6 +181,8 @@ namespace Tom::Commands::Make::Support
         static QString
         createMutatorItem(const QString &className, const QString &mutator,
                           QString::size_type mutatorsMaxSize);
+        /*! Wrap final mutator items list for parent stub. */
+        static QString wrapMutatorItemsList(const QStringList &mutatorItems);
 
         /* Global */
         /*! Create model's TinyORM includes section. */

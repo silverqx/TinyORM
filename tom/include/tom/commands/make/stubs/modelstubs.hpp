@@ -266,9 +266,7 @@ R"(
 inline const auto *const ModelMutatorsStub =
 R"(
     /*! Map of mutator names to methods. */
-    inline static const QHash<QString, MutatorFunction> u_mutators {
-{{ mutatorItems }}
-    };)";
+    inline static const QHash<QString, MutatorFunction> u_mutators {{{ mutatorItems }}};)";
 
 /*! Mutator mapping item for model's u_mutators hash stub. */
 inline const auto *const ModelMutatorItemStub =
