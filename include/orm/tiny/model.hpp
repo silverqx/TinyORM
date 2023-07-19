@@ -90,11 +90,11 @@ namespace Orm::Tiny
 
         // Following are not needed in this class, only to avoid using-s in Derived models
         /*! Alias for the AttributeItem. */
-        using AttributeItem = AttributeItem;
+        using AttributeItem = Tiny::AttributeItem;
         /*! Alias for the CastItem. */
-        using CastItem = CastItem;
+        using CastItem = Tiny::CastItem;
         /*! Alias for the CastType. */
-        using CastType = CastType;
+        using CastType = Tiny::CastType;
         /*! Alias for the Pivot. */
         using Pivot = Relations::Pivot; // Forward declaration is in the interactswithpivottable.hpp
         /*! Alias for the ModelAttributes. */
