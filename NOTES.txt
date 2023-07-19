@@ -1,7 +1,7 @@
 Increase/bump the release version:
 ----------------------------------
 
-- just simply search the current version number in all files eg. 0.32.0
+- just simply search the current version number in all files eg. 0.32.1
 - 5 files must be modified, README.md, docs/README.mdx, two vcpkg.json files, NOTES.txt,
   plus bumped version.hpp files
 
