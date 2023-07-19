@@ -98,12 +98,26 @@ namespace Tom::Commands::Make
         QStringList dates;
         /*! All of the relationships to be touched. */
         QStringList touches;
+        /*! The attributes that should be visible during serialization. */
+        QStringList visible;
+        /*! The attributes that should be hidden during serialization. */
+        QStringList hidden;
+        /*! Accessor attribute names to create accessor methods and u_mutators hash. */
+        QStringList accessors;
+        /*! The attributes that should be appended during serialization. */
+        QStringList appends;
         /*! Enable auto-incrementing for the model's primary key. */
         bool incrementing;
         /*! Disable auto-incrementing for the model's primary key. */
         bool disableIncrementing;
         /*! Disable timestamping of the model. */
         bool disableTimestamps;
+        /*! Create the u_casts map example. */
+        bool castsExample;
+        /*! Enable snake_cased attributes during serialization. */
+        bool snakeAttributes;
+        /*! Disable snake_cased attributes during serialization. */
+        bool disableSnakeAttributes;
         /*! Genarate a custom pivot model class. */
         bool pivotModel;
     };

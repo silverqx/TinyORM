@@ -85,6 +85,9 @@ namespace Support
         /*! Show unused disable-incremening option if passed also the incrementing
             option. */
         void showUnusedIncrementingWarning();
+        /*! Show unused disable-snake-attributes option if passed also
+            the snake-attributes option. */
+        void showUnusedSnakeAttributesWarning();
 
         /*! Write the model file to the disk. */
         void writeModel(const QString &className, const CmdOptions &cmdOptions,
@@ -118,6 +121,8 @@ namespace Support
         bool m_shownUnusedForeignKey = false;
         /*! Was shown an unused warning for the disable-/incrementing option? */
         bool m_shownUnusedIncrementing = false;
+        /*! Was shown an unused warning for the disable-/snake-attributes option? */
+        bool m_shownUnusedSnakeAttribtues = false;
         /*! Unused btm options, will be shown in the warning. */
         std::set<QString> m_unusedBtmOptions {};
         /*! Unused options if generating a pivot model, will be shown in the warning. */

@@ -114,17 +114,27 @@ namespace Tom::Commands::Make::Support
         /*! Guess the to-many relationship name (plural). */
         static QString guessManyTypeRelationName(const QString &className);
 
+        /* Protected model section */
+        /*! Create model's protected section (accessors). */
+        static QString createProtectedSection(const CmdOptions &cmdOptions);
+
+        /*! Create accessor methods. */
+        static QString createAccessorMethods(const QStringList &accessors,
+                                             const QStringList &appends);
+
         /* Private model section */
         /*! Create model's private section. */
         QString createPrivateSection(
                 const QString &className, const CmdOptions &cmdOptions,
-                bool hasPublicSection, bool isSetPreserveOrder);
+                bool hasPublicSection, bool hasProtectedSection, bool isSetPreserveOrder);
 
         /*! Determine whether any model related option for the private: section was
             given on the command-line. */
         static bool anyModelOptionGiven(const CmdOptions &cmdOptions);
         /*! Prepare string values for the initializer list. */
         static QString prepareInitializerListValues(const QStringList &list);
+        /*! Prepare appends values/names. */
+        static QString prepareAppendsListValues(const QStringList &appends);
 
         /* u_relations section */
         /*! Create model's u_relations hash. */
@@ -154,6 +164,23 @@ namespace Tom::Commands::Make::Support
                 const QString &parentClass, const QStringList &relatedClasses,
                 QString::size_type relationsMaxSize,
                 const std::vector<std::size_t> &orderList);
+
+        /* u_mutators section */
+        /*! Create model's u_mutators hash. */
+        static QString
+        createMutatorsHash(const QString &className, const QStringList &accessors,
+                           const QStringList &appends);
+
+        /*! Prepare mutator attribute names. */
+        static std::set<QString>
+        prepareMutatorNames(const QStringList &accessors, const QStringList &appends);
+        /*! Get max. size of relation names for align. */
+        static QString::size_type
+        getMutatorNamesMaxSize(const std::set<QString> &mutators);
+        /*! Create mutator mapping item for u_mutators hash. */
+        static QString
+        createMutatorItem(const QString &className, const QString &mutator,
+                          QString::size_type mutatorsMaxSize);
 
         /* Global */
         /*! Create model's TinyORM includes section. */

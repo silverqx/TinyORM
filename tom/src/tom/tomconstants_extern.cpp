@@ -73,6 +73,10 @@ namespace Tom::Constants
     const QString with_pivot_up      = QStringLiteral("WITHPIVOT");
     const QString foreign_key_up     = QStringLiteral("FOREIGNKEY");
     const QString pivot_table_up     = QStringLiteral("PIVOTTABLE");
+    const QString visible_up         = QStringLiteral("VISIBLE");
+    const QString hidden_up          = QStringLiteral("HIDDEN");
+    const QString accessors_up       = QStringLiteral("ACCESSORS");
+    const QString appends_up         = QStringLiteral("APPENDS");
     // complete
     const QString commandline        = QStringLiteral("commandline");
     const QString position           = QStringLiteral("position");
@@ -115,6 +119,14 @@ namespace Tom::Constants
     const QString with_timestamps      = QStringLiteral("with-timestamps");
     const QString with_pivot           = QStringLiteral("with-pivot");
     const QString preserve_order       = QStringLiteral("preserve-order");
+    const QString snake_attributes     = QStringLiteral("snake-attributes");
+    const QString disable_snake_attributes
+                                       = QStringLiteral("disable-snake-attributes");
+    const QString casts_example        = QStringLiteral("casts-example");
+    const QString visible              = QStringLiteral("visible");
+    const QString hidden               = QStringLiteral("hidden");
+    const QString accessors            = QStringLiteral("accessors");
+    const QString appends              = QStringLiteral("appends");
     // migrate:refresh
     const QString step_migrate         = QStringLiteral("step-migrate");
     // migrate:status

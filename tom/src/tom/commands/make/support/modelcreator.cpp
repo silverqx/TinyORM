@@ -32,9 +32,12 @@ using Orm::Constants::SPACE;
 using ContainerUtils = Orm::Utils::Container;
 using StringUtils    = Orm::Utils::String;
 
+using Tom::Commands::Make::Stubs::AccessorMethodStub;
 using Tom::Commands::Make::Stubs::BelongsToManyStub;
 using Tom::Commands::Make::Stubs::BelongsToManyStub2;
 using Tom::Commands::Make::Stubs::BelongsToStub;
+using Tom::Commands::Make::Stubs::ModelAppendsStub;
+using Tom::Commands::Make::Stubs::ModelCastsExampleStub;
 using Tom::Commands::Make::Stubs::ModelConnectionStub;
 using Tom::Commands::Make::Stubs::ModelDateFormatStub;
 using Tom::Commands::Make::Stubs::ModelDatesStub;
@@ -42,17 +45,23 @@ using Tom::Commands::Make::Stubs::ModelDisableTimestampsStub;
 using Tom::Commands::Make::Stubs::ModelFillableStub;
 using Tom::Commands::Make::Stubs::ModelForwardItemStub;
 using Tom::Commands::Make::Stubs::ModelGuardedStub;
+using Tom::Commands::Make::Stubs::ModelHiddenStub;
 using Tom::Commands::Make::Stubs::ModelIncludeItemStub;
 using Tom::Commands::Make::Stubs::ModelIncludeOrmItemStub;
 using Tom::Commands::Make::Stubs::ModelIncrementingStub;
+using Tom::Commands::Make::Stubs::ModelMutatorItemStub;
+using Tom::Commands::Make::Stubs::ModelMutatorsStub;
 using Tom::Commands::Make::Stubs::ModelPrimaryKeyStub;
 using Tom::Commands::Make::Stubs::ModelPrivateStub;
+using Tom::Commands::Make::Stubs::ModelProtectedStub;
 using Tom::Commands::Make::Stubs::ModelPublicStub;
 using Tom::Commands::Make::Stubs::ModelRelationItemStub;
 using Tom::Commands::Make::Stubs::ModelRelationsStub;
+using Tom::Commands::Make::Stubs::ModelSnakeAttributesStub;
 using Tom::Commands::Make::Stubs::ModelStub;
 using Tom::Commands::Make::Stubs::ModelTableStub;
 using Tom::Commands::Make::Stubs::ModelTouchesStub;
+using Tom::Commands::Make::Stubs::ModelVisibleStub;
 using Tom::Commands::Make::Stubs::ModelUsingItemStub;
 using Tom::Commands::Make::Stubs::ModelWithStub;
 using Tom::Commands::Make::Stubs::OneToOneStub;
@@ -89,11 +98,12 @@ std::string
 ModelCreator::populateStub(const QString &className, const CmdOptions &cmdOptions,
                            const bool isSetPreserveOrder)
 {
-    const auto publicSection  = createPublicSection(className, cmdOptions,
-                                                    isSetPreserveOrder);
-    const auto privateSection = createPrivateSection(
-                                    className, cmdOptions, !publicSection.isEmpty(),
-                                    isSetPreserveOrder);
+    const auto publicSection    = createPublicSection(className, cmdOptions,
+                                                      isSetPreserveOrder);
+    const auto protectedSection = createProtectedSection(cmdOptions);
+    const auto privateSection   = createPrivateSection(
+                                      className, cmdOptions, !publicSection.isEmpty(),
+                                      !protectedSection.isEmpty(), isSetPreserveOrder);
 
     const auto macroGuard = className.toUpper();
 
@@ -115,6 +125,9 @@ ModelCreator::populateStub(const QString &className, const CmdOptions &cmdOption
 
             .replace(QStringLiteral("{{ publicSection }}"), publicSection)
             .replace(QStringLiteral("{{publicSection}}"),   publicSection)
+
+            .replace(QStringLiteral("{{ protectedSection }}"), protectedSection)
+            .replace(QStringLiteral("{{protectedSection}}"),   protectedSection)
 
             .replace(QStringLiteral("{{ privateSection }}"), privateSection)
             .replace(QStringLiteral("{{privateSection}}"),   privateSection)
@@ -148,7 +161,8 @@ ModelCreator::createPublicSection(const QString &className, const CmdOptions &cm
             oneToOneList, oneToManyList,  belongsToList,    belongsToManyList,
             foreignKeys,  pivotTables,    pivotClasses,     pivotInverseClasses,
             asList,       withPivotList,  withTimestampsList,
-            _1, _2, _3, _4, _5, _6, _7, _8, _9, _10, _11, _12, _13
+            _1, _2, _3, _4, _5, _6, _7, _8, _9, _10, _11, _12, _13, _14, _15, _16, _17,
+            _18, _19, _20
     ] = cmdOptions;
 
     const auto &[
@@ -607,18 +621,75 @@ QString ModelCreator::guessManyTypeRelationName(const QString &className)
     return guessOneTypeRelationName(className).append(QLatin1Char('s'));
 }
 
+/* Protected model section */
+
+QString ModelCreator::createProtectedSection(const CmdOptions &cmdOptions)
+{
+    const auto &[
+            _1, _2, _3, _4, _5, _6, _7, _8, _9, _10, _11, _12, _13, _14, _15, _16, _17,
+            _18, _19, _20, _21, _22, _23,
+            accessors, appends,
+            _26, _27, _28, _29, _30, _31, _32
+    ] = cmdOptions;
+
+    QString protectedSection;
+
+    protectedSection += createAccessorMethods(accessors, appends);
+
+    // Prepend the protected: specifier
+    if (!protectedSection.isEmpty())
+        protectedSection.prepend(ModelProtectedStub);
+
+    return protectedSection;
+}
+
+QString ModelCreator::createAccessorMethods(const QStringList &accessors,
+                                            const QStringList &appends)
+{
+    // Nothing to create, no accessors or appends passed
+    if (accessors.empty() && appends.empty())
+        return {};
+
+    // Prepare accessor attribute names
+    const auto accessorNames = prepareMutatorNames(accessors, appends);
+
+    // Loop over accessor names and create individual accessor methods
+    QStringList accessorMethodsList;
+    accessorMethodsList.reserve(static_cast<QStringList::size_type>(
+                                    accessorNames.size()));
+
+    for (const auto &accessor : accessorNames) {
+        const auto accessorCamel = StringUtils::camel(accessor);
+
+        accessorMethodsList
+                << QString(AccessorMethodStub)
+                   .replace(QStringLiteral("{{ accessorNameCamel }}"), accessorCamel)
+                   .replace(QStringLiteral("{{accessorNameCamel}}"),   accessorCamel)
+
+                   .replace(QStringLiteral("{{ accessorNameSnake }}"), accessor)
+                   .replace(QStringLiteral("{{accessorNameSnake}}"),   accessor);
+    }
+
+    return accessorMethodsList.join(NEWLINE);
+}
+
 /* Private model section */
 
 QString ModelCreator::createPrivateSection(
         const QString &className, const CmdOptions &cmdOptions,
-        const bool hasPublicSection, const bool isSetPreserveOrder)
+        const bool hasPublicSection, const bool hasProtectedSection,
+        const bool isSetPreserveOrder)
 {
     const auto &[
             _1, _2, _3, _4, _5, _6, _7, _8, _9, _10, _11, _12,
             table,           primaryKey, connection,
             with,            fillable,   guarded,
             dateFormat,      dates,      touches,
-            incrementing,    disableIncrementing, disableTimestamps, _13
+            visible,         hidden,
+            accessors,       appends,
+            incrementing,    disableIncrementing, disableTimestamps,
+            castsExample,
+            snakeAttributes, disableSnakeAttributes, _13
     ] = cmdOptions;
 
     QString privateSection;
@@ -657,6 +728,9 @@ QString ModelCreator::createPrivateSection(
     if (disableTimestamps)
         privateSection += ModelDisableTimestampsStub;
 
+    if (castsExample)
+        privateSection += ModelCastsExampleStub;
+
     if (!dateFormat.isEmpty())
         privateSection += QString(ModelDateFormatStub).arg(dateFormat);
 
@@ -668,9 +742,28 @@ QString ModelCreator::createPrivateSection(
         privateSection += QString(ModelTouchesStub)
                           .arg(prepareInitializerListValues(touches));
 
+    if (snakeAttributes)
+        privateSection += QString(ModelSnakeAttributesStub).arg(QStringLiteral("true"));
+    else if (disableSnakeAttributes)
+        privateSection += QString(ModelSnakeAttributesStub).arg(QStringLiteral("false"));
+
+    if (!visible.isEmpty())
+        privateSection += QString(ModelVisibleStub)
+                          .arg(prepareInitializerListValues(visible));
+
+    if (!hidden.isEmpty())
+        privateSection += QString(ModelHiddenStub)
+                          .arg(prepareInitializerListValues(hidden));
+
+    privateSection += createMutatorsHash(className, accessors, appends);
+
+    if (!appends.isEmpty())
+        privateSection += QString(ModelAppendsStub)
+                          .arg(prepareAppendsListValues(appends));
+
     if (!privateSection.isEmpty()) {
         // Prepend the private: specifier if the public section exists
-        if (hasPublicSection)
+        if (hasPublicSection || hasProtectedSection)
             privateSection.prepend(ModelPrivateStub);
         else
             privateSection.prepend(NEWLINE);
@@ -686,13 +779,21 @@ bool ModelCreator::anyModelOptionGiven(const CmdOptions &cmdOptions)
             table,        primaryKey, connection,
             with,         fillable,   guarded,
             dateFormat,   dates,      touches,
-            incrementing, disableIncrementing, disableTimestamps, _13
+            visible,      hidden,
+            mutators,     appends,
+            incrementing, disableIncrementing, disableTimestamps,
+            castsExample,
+            snakeAttributes, disableSnakeAttributes, _13
     ] = cmdOptions;
 
     return !table.isEmpty()      || !primaryKey.isEmpty() || !connection.isEmpty() ||
            !with.isEmpty()       || !fillable.isEmpty()   || !guarded.isEmpty()    ||
            !dateFormat.isEmpty() || !dates.isEmpty()      || !touches.isEmpty()    ||
-           incrementing          || disableIncrementing   || disableTimestamps;
+           !visible.isEmpty()    || !hidden.isEmpty()     ||
+           !mutators.isEmpty()   || !appends.isEmpty()    ||
+           incrementing          || disableIncrementing   || disableTimestamps     ||
+           castsExample          ||
+           snakeAttributes       || disableSnakeAttributes;
 }
 
 QString ModelCreator::prepareInitializerListValues(const QStringList &list)
@@ -731,6 +832,17 @@ QString ModelCreator::prepareInitializerListValues(const QStringList &list)
     return listJoined;
 }
 
+QString ModelCreator::prepareAppendsListValues(const QStringList &appends)
+{
+    QStringList preparedAppends;
+    preparedAppends.reserve(appends.size());
+
+    for (const auto &append : appends)
+        preparedAppends << StringUtils::snake(append);
+
+    return prepareInitializerListValues(preparedAppends);
+}
+
 /* u_relations section */
 
 QString ModelCreator::createRelationsHash(
@@ -741,7 +853,7 @@ QString ModelCreator::createRelationsHash(
             relationsOrder,
             oneToOneList, oneToManyList, belongsToList, belongsToManyList,
             _1, _2, _3, _4, _5, _6, _7, _8, _9, _10, _11, _12, _13, _14, _15, _16, _17,
-            _18, _19, _20
+            _18, _19, _20, _21, _22, _23, _24, _25, _26, _27
     ] = cmdOptions;
 
     // Nothing to create, no relations passed
@@ -792,7 +904,7 @@ QString::size_type ModelCreator::getRelationNamesMaxSize(const CmdOptions &cmdOp
             _1,
             oneToOneList, oneToManyList, belongsToList, belongsToManyList,
             _2, _3, _4, _5, _6, _7, _8, _9, _10, _11, _12, _13, _14, _15, _16, _17, _18,
-            _19, _20, _21
+            _19, _20, _21, _22, _23, _24, _25, _26, _27, _28
     ] = cmdOptions;
 
     // Get max. size of relation names for align
@@ -958,6 +1070,91 @@ ModelCreator::createBelongsToManyRelationItem(
     }
 
     return result;
+}
+
+/* u_mutators section */
+
+QString
+ModelCreator::createMutatorsHash(const QString &className, const QStringList &accessors,
+                                 const QStringList &appends)
+{
+    // Nothing to create, no accessors or appends passed
+    if (accessors.empty() && appends.empty())
+        return {};
+
+    // Prepare mutator attribute names
+    const auto mutatorNames = prepareMutatorNames(accessors, appends);
+    // Get max. size of relation names for align
+    const auto mutatorsMaxSize = getMutatorNamesMaxSize(mutatorNames);
+
+    // Loop over mutator names and create individual mutator items
+    QStringList mutatorItemsList;
+    mutatorItemsList.reserve(static_cast<QStringList::size_type>(mutatorNames.size()));
+
+    for (const auto &mutator : mutatorNames)
+        mutatorItemsList << createMutatorItem(className, mutator, mutatorsMaxSize);
+
+    // Join and replace the main stub
+    const auto mutatorItems = mutatorItemsList.join(NEWLINE);
+
+    return QString(ModelMutatorsStub)
+            .replace(QStringLiteral("{{ mutatorItems }}"), mutatorItems)
+            .replace(QStringLiteral("{{mutatorItems}}"),   mutatorItems);
+}
+
+std::set<QString>
+ModelCreator::prepareMutatorNames(const QStringList &accessors,
+                                  const QStringList &appends)
+{
+    std::set<QString> accessorsSet;
+    std::set<QString> appendsSet;
+
+    for (const auto &accessor : accessors)
+        accessorsSet.emplace(StringUtils::snake(accessor));
+
+    for (const auto &append : appends)
+        appendsSet.emplace(StringUtils::snake(append));
+
+    accessorsSet.merge(std::move(appendsSet));
+
+    return accessorsSet;
+}
+
+QString::size_type
+ModelCreator::getMutatorNamesMaxSize(const std::set<QString> &mutators)
+{
+    // Nothing to do
+    if (mutators.empty())
+        return 0;
+
+    return static_cast<QString::size_type>(
+                std::ranges::max_element(mutators,
+                                         [](const QString &left, const QString &right)
+    {
+        return left.size() < right.size();
+    })
+        ->size());
+}
+
+QString
+ModelCreator::createMutatorItem(const QString &className, const QString &mutator,
+                                const QString::size_type mutatorsMaxSize)
+{
+    const auto spaceAlign   = QString(mutatorsMaxSize - mutator.size(), SPACE);
+    const auto mutatorCamel = StringUtils::camel(mutator);
+
+    return QString(ModelMutatorItemStub)
+            .replace(QStringLiteral("{{ class }}"),      className)
+            .replace(QStringLiteral("{{class}}"),        className)
+
+            .replace(QStringLiteral("{{ spaceAlign }}"), spaceAlign)
+            .replace(QStringLiteral("{{spaceAlign}}"),   spaceAlign)
+
+            .replace(QStringLiteral("{{ mutatorNameSnake }}"), mutator)
+            .replace(QStringLiteral("{{mutatorNameSnake}}"),   mutator)
+
+            .replace(QStringLiteral("{{ mutatorNameCamel }}"), mutatorCamel)
+            .replace(QStringLiteral("{{mutatorNameCamel}}"),   mutatorCamel);
 }
 
 /* Global */

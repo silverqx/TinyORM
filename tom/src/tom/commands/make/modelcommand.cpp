@@ -27,12 +27,17 @@ using StringUtils = Orm::Utils::String;
 
 using Tom::Constants::MakeMigration;
 using Tom::Constants::MakeSeeder;
+using Tom::Constants::accessors;
+using Tom::Constants::accessors_up;
+using Tom::Constants::appends;
+using Tom::Constants::appends_up;
 using Tom::Constants::as_;
 using Tom::Constants::as_up;
 using Tom::Constants::belongs_to;
 using Tom::Constants::belongs_to_many;
 using Tom::Constants::belongs_to_many_up;
 using Tom::Constants::belongs_to_up;
+using Tom::Constants::casts_example;
 using Tom::Constants::create_;
 using Tom::Constants::dateformat;
 using Tom::Constants::dateformat_up;
@@ -41,6 +46,7 @@ using Tom::Constants::dates_up;
 using Tom::Constants::connection_;
 using Tom::Constants::connection_up;
 using Tom::Constants::disable_incrementing;
+using Tom::Constants::disable_snake_attributes;
 using Tom::Constants::disable_timestamps;
 using Tom::Constants::fillable;
 using Tom::Constants::fillable_up;
@@ -51,6 +57,8 @@ using Tom::Constants::from_model;
 using Tom::Constants::fullpath;
 using Tom::Constants::guarded;
 using Tom::Constants::guarded_up;
+using Tom::Constants::hidden;
+using Tom::Constants::hidden_up;
 using Tom::Constants::incrementing;
 using Tom::Constants::migration_;
 using Tom::Constants::one_to_one;
@@ -70,10 +78,13 @@ using Tom::Constants::primary_key;
 using Tom::Constants::primary_key_up;
 using Tom::Constants::realpath_;
 using Tom::Constants::seeder;
+using Tom::Constants::snake_attributes;
 using Tom::Constants::table_;
 using Tom::Constants::table_up;
 using Tom::Constants::touches;
 using Tom::Constants::touches_up;
+using Tom::Constants::visible;
+using Tom::Constants::visible_up;
 using Tom::Constants::with_;
 using Tom::Constants::with_up;
 using Tom::Constants::with_pivot;
@@ -175,6 +186,26 @@ QList<CommandLineOption> ModelCommand::optionsSignature() const
         {touches,              QStringLiteral("All of the relationships to be touched "
                                               "<comment>(multiple values allowed)"
                                               "</comment>"), touches_up}, // Value
+        {casts_example,        QStringLiteral("Create the u_casts map example")},
+        {snake_attributes,     QStringLiteral("Enable snake_cased attributes during "
+                                              "serialization "
+                                              "<comment>(default)</comment>")},
+        {disable_snake_attributes,
+                               QStringLiteral("Disable snake_cased attributes during "
+                                              "serialization")},
+        {visible,              QStringLiteral("The attributes that should be visible "
+                                              "during serialization <comment>(multiple "
+                                              "values allowed)</comment>"), visible_up}, // Value
+        {hidden,               QStringLiteral("The attributes that should be hidden "
+                                              "during serialization <comment>(multiple "
+                                              "values allowed)</comment>"), hidden_up}, // Value
+        {accessors,            QStringLiteral("Create accessor methods (merged with "
+                                              "appends) <comment>(multiple values "
+                                              "allowed)</comment>"),
+                                              accessors_up}, // Value
+        {appends,              QStringLiteral("The attributes that should be appended "
+                                              "during serialization <comment>(multiple "
+                                              "values allowed)</comment>"), appends_up}, // Value
         {pivot_model,          QStringLiteral("Genarate a custom pivot model class")},
 
         // Others
@@ -216,13 +247,15 @@ R"(  The <info>belongs-to</info> option is inverse relation for the <info>one-to
 
   The <info>pivot-table</info>, <info>pivot</info>, <info>as</info>, <info>with-pivot</info>, and <info>with-timestamps</info> options can be given only after the <info>belongs-to-many</info> relationship.
 
-  The <info>table</info>, <info>primary-key</info>, <info>incrementing</info>, <info>disable-incrementing</info>, <info>connection</info>, <info>with</info>, <info>fillable</info>, <info>guarded</info>, <info>disable-timestamps</info>, <info>dateformat</info>, <info>dates</info>, and <info>touches</info> options relate to the <blue>Model</blue> class itself, they have nothing to do with relationships and can be passed anywhere, best before relationship options:
+  The <info>table</info>, <info>primary-key</info>, <info>incrementing</info>, <info>disable-incrementing</info>, <info>connection</info>, <info>with</info>, <info>fillable</info>, <info>guarded</info>, <info>disable-timestamps</info>, <info>dateformat</info>, <info>dates</info>,  <info>touches</info>, <info>casts-example</info>, <info>snake-attributes</info>, <info>disable-snake-attributes</info>, <info>visible</info>, <info>hidden</info>, <info>accessors</info>, and <info>appends</info> options relate to the <blue>Model</blue> class itself, they have nothing to do with relationships and can be passed anywhere, best before relationship options:
 
     <info>tom make:model User --table=users --connection=tinyorm_connection_name --one-to-many=Posts</info>
 
  The order of the generated relation methods will be <info>one-to-one</info>, <info>one-to-many</info>, <info>belongs-to</info>, and <info>belongs-to-many</info> until you pass the <info>preserve-order</info> option then the order will be preserved.
 
   The <info>pivot-inverse</info> option adds the pivot type to the Model's <gray>AllRelations</gray> template parameter pack but beware this template parameter is needed by the inverse belongs-to-many relation! It has nothing to do with relationships in the currently generated model. Closer explanation in the documentation. https://bit.ly/44Kk3aC
+
+  The <info>appends</info> values are internally merged into the <info>accessors</info>, which ensures that the accessor methods for <info>appends</info> will be generated automatically.
 )");
 }
 
@@ -237,7 +270,8 @@ int ModelCommand::run()
     showUnusedOptionsWarnings(cmdOptions);
 
     if (!m_unusedBtmOptions.empty()        || m_shownUnusedForeignKey   ||
-        !m_unusedPivotModelOptions.empty() || m_shownUnusedIncrementing
+        !m_unusedPivotModelOptions.empty() || m_shownUnusedIncrementing ||
+        m_shownUnusedSnakeAttribtues
     )
         newLine();
 
@@ -284,7 +318,7 @@ ModelCommand::prepareModelClassNames(QString &&className, CmdOptions &&cmdOption
             _1,
             oneToOneList, oneToManyList, belongsToList, belongsToManyList,
             _2, _3, pivotClasses, pivotInverseClasses, _4, _5, _6, _7, _8, _9, _10, _11,
-            _12, _13, _14, _15, _16, _17, _18, _19
+            _12, _13, _14, _15, _16, _17, _18, _19, _20, _21, _22, _23, _24, _25, _26
     ] = cmdOptions;
 
     // Validate the model class names
@@ -324,6 +358,9 @@ void ModelCommand::showUnusedOptionsWarnings(const CmdOptions &cmdOptions)
 
     // Show unused disable-incremening option if passed also incrementing option
     showUnusedIncrementingWarning();
+    /* Show unused disable-snake-attributes option if passed also the snake-attributes
+       option. */
+    showUnusedSnakeAttributesWarning();
 }
 
 void ModelCommand::showUnusedBtmOptionsWarnings(const CmdOptions &cmdOptions)
@@ -413,6 +450,19 @@ void ModelCommand::showUnusedIncrementingWarning()
     m_shownUnusedIncrementing = true;
 }
 
+void ModelCommand::showUnusedSnakeAttributesWarning()
+{
+    // Nothing to show
+    if (!(isSet(snake_attributes) && isSet(disable_snake_attributes)))
+        return;
+
+    comment(QStringLiteral(
+                "Unused --disable-snake-attributes option; the --snake-attributes option "
+                "has always precedence if both options were given."));
+
+    m_shownUnusedSnakeAttribtues = true;
+}
+
 void ModelCommand::writeModel(const QString &className, const CmdOptions &cmdOptions,
                               const fspath &modelsPath)
 {
@@ -451,7 +501,11 @@ CmdOptions ModelCommand::createCmdOptions()
             value(table_),       value(primary_key), value(connection_), {},
             values(fillable),    values(guarded),
             value(dateformat),   values(dates),      values(touches),
+            values(visible),     values(hidden),
+            values(accessors),   values(appends),
             isSet(incrementing), isSet(disable_incrementing), isSet(disable_timestamps),
+            isSet(casts_example),
+            isSet(snake_attributes), isSet(disable_snake_attributes),
             m_isSetPivotModel
         };
 
@@ -474,7 +528,11 @@ CmdOptions ModelCommand::createCmdOptions()
         value(table_),       value(primary_key), value(connection_), values(with_),
         values(fillable),    values(guarded),
         value(dateformat),   values(dates),      values(touches),
+        values(visible),     values(hidden),
+        values(accessors),   values(appends),
         isSet(incrementing), isSet(disable_incrementing), isSet(disable_timestamps),
+        isSet(casts_example),
+        isSet(snake_attributes), isSet(disable_snake_attributes),
         m_isSetPivotModel
     };
 }
