@@ -431,7 +431,7 @@ Upgrade the Qt to new version:
 
 GitHub Action workflows:
 
- - open TinyORM in the vscode and file/replace all occurences of x.y.z and x_y_z to the new version
+ - open TinyORM in the vscode and file/replace all occurrences of x.y.z and x_y_z to the new version
  - commit - workflows upgraded to Qt vx.y.z
  - TinyOrm-files:
    - 7zip the qsqlmysql.dll, qsqlmysql.pdb, qsqlmysqld.dll, qsqlmysqld.pdb to the TinyOrm-files/qmysql_dlls-x.y.z.7z
