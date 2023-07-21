@@ -2,11 +2,14 @@
 
 #include <QCoreApplication>
 #include <QDebug>
+#include <QLibraryInfo>
 
 #include <range/v3/algorithm/contains.hpp>
 #include <range/v3/view/zip_with.hpp>
 
 #include <orm/databasemanager.hpp>
+#include <orm/libraryinfo.hpp>
+#include <orm/macros/compilerdetect.hpp>
 #include <orm/macros/likely.hpp>
 #include <orm/utils/type.hpp>
 #include <orm/version.hpp>
@@ -36,9 +39,7 @@
 #include "tom/migrator.hpp"
 #include "tom/terminal.hpp"
 #include "tom/tomutils.hpp"
-#ifndef TINYTOM_TESTS_CODE
-#  include "tom/version.hpp"
-#endif
+#include "tom/version.hpp"
 
 /*! Invoke Qt's global post routines. */
 extern void Q_DECL_IMPORT qt_call_post_routines();
@@ -47,11 +48,13 @@ TINYORM_BEGIN_COMMON_NAMESPACE
 
 using fspath = std::filesystem::path;
 
-using Orm::ConnectionResolverInterface;
 using Orm::Constants::EMPTY;
 using Orm::Constants::NEWLINE;
 using Orm::Constants::TMPL_ONE;
 using Orm::Constants::Version;
+
+using Orm::ConnectionResolverInterface;
+using Orm::LibraryInfo;
 
 using TypeUtils = Orm::Utils::Type;
 
@@ -414,18 +417,66 @@ QString Application::getCommandName(const QString &name, CommandNotFound notFoun
 
 Q_NORETURN void Application::showVersion() const
 {
-    printVersion();
+    printFullVersions();
 
     exitApplication(EXIT_SUCCESS);
 }
 
-/* Has to be divided into two methods because the printVersion() is called from
-   the list command. */
 void Application::printVersion() const
 {
     note(QStringLiteral("TinyORM "), false);
 
     info(TINYORM_VERSION_STR);
+}
+
+void Application::printFullVersions() const
+{
+    note(QStringLiteral("tom "), false);
+    info(TINYTOM_VERSION_STR);
+
+    newLine();
+    comment("Dependencies:");
+
+    note(QStringLiteral("TinyORM "), false);
+    info(TINYORM_VERSION_STR);
+
+    note(QStringLiteral("Qt "), false);
+    info(QT_VERSION_STR);
+
+    newLine();
+    comment("Build types:");
+
+    note(QStringLiteral("tom build type "), false);
+#ifdef TINYTOM_DEBUG
+    info(QStringLiteral("Debug"));
+#else
+    info(QStringLiteral("Release"));
+#endif
+
+    note(QStringLiteral("TinyORM build type "), false);
+    info(LibraryInfo::isDebugBuild() ? QStringLiteral("Debug")
+                                     : QStringLiteral("Release"));
+
+    note(QStringLiteral("TinyORM full build type "), false);
+    info(LibraryInfo::build());
+
+    note(QStringLiteral("Qt build type "), false);
+    info(QLibraryInfo::isDebugBuild() ? QStringLiteral("Debug")
+                                      : QStringLiteral("Release"));
+
+    note(QStringLiteral("Qt full build type "), false);
+    info(QLibraryInfo::build());
+
+    newLine();
+    comment("Compiler:");
+
+    note(QStringLiteral("Compiler version "), false);
+    info(TINYORM_COMPILER_STRING);
+
+#ifdef TINYORM_SIMULATED_STRING
+    note(QStringLiteral("Simulated compiler version "), false);
+    info(TINYORM_SIMULATED_STRING);
+#endif
 }
 
 Q_NORETURN void Application::showCommandsList(const int exitCode)
