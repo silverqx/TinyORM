@@ -418,6 +418,13 @@ _tom() {
                 "--dateformat=[The storage format of the model's date columns]:date format" \
                 '--dates=[The attributes that should be mutated to dates]:attribute names' \
                 '--touches=[All of the relationships to be touched]:relationship names' \
+                "--casts-example[Create the u_casts map example]" \
+                "--snake-attributes[Enable snake_cased attributes during serialization (default)]" \
+                "--disable-snake-attributes[Disable snake_cased attributes during serialization]" \
+                '--visible=[The attributes that should be visible during serialization]:attribute names' \
+                '--hidden=[The attributes that should be hidden during serialization]:attribute names' \
+                '--accessors=[Create accessor methods (merged with appends)]:accessor names' \
+                '--appends=[The attributes that should be appended during serialization]:attribute names' \
                 '(-o --preserve-order)'{-o,--preserve-order}'[Preserve relations order defined on the command-line]' \
                 '--path=[The location where the migration file should be created]:folder path:_files -/' \
                 '--realpath[Indicate any provided migration file paths are pre-resolved absolute paths]' \
