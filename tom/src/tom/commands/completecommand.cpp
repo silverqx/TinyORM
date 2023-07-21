@@ -99,9 +99,7 @@ int CompleteCommand::run() // NOLINT(readability-function-cognitive-complexity)
     const auto currentCommandSplitted = commandlineArg.split(SPACE);
     Q_ASSERT(!currentCommandSplitted.isEmpty());
 
-    const auto currentCommandArg = currentCommandSplitted.size() >= 2
-                                   ? std::make_optional(currentCommandSplitted[1])
-                                   : std::nullopt;
+    const auto currentCommandArg = getCurrentTomCommand(currentCommandSplitted);
     const auto tomCommandSize = currentCommandSplitted.constFirst().size();
 #else
     const auto cwordArg = static_cast<QString::size_type>(value(cword_).toLongLong());
@@ -214,7 +212,17 @@ int CompleteCommand::run() // NOLINT(readability-function-cognitive-complexity)
 
 /* protected */
 
-#ifndef _MSC_VER
+#ifdef _MSC_VER
+std::optional<QString>
+CompleteCommand::getCurrentTomCommand(const QStringList &currentCommandSplitted)
+{
+    // It's not a command name
+    if (currentCommandSplitted.size() < 2 || isLongOption(currentCommandSplitted[1]))
+        return std::nullopt;
+
+    return std::make_optional(currentCommandSplitted[1]);
+}
+#else
 std::optional<QString>
 CompleteCommand::getCurrentTomCommand(const QString &commandlineArg,
                                       const QString::size_type cword)

@@ -38,7 +38,11 @@ namespace Tom::Commands
         int run() override;
 
     protected:
-#ifndef _MSC_VER
+#ifdef _MSC_VER
+        /*! Currently processed tom command. */
+        static std::optional<QString>
+        getCurrentTomCommand(const QStringList &currentCommandSplitted);
+#else
         /*! Currently processed tom command. */
         static std::optional<QString>
         getCurrentTomCommand(const QString &commandlineArg, QString::size_type cword);
