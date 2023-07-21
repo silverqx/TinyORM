@@ -13,7 +13,7 @@ TINY_SYSTEM_HEADER
 #  define SHAREDLIB_EXPORT TINY_DECL_IMPORT
 #endif
 
-// Building library archive
+// Building library archive (static)
 #ifndef SHAREDLIB_EXPORT
 #  define SHAREDLIB_EXPORT
 #endif
