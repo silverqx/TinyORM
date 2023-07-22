@@ -13,6 +13,8 @@
 #include "migrations/2014_10_12_200000_create_properties_table.hpp"
 #include "migrations/2014_10_12_300000_create_phones_table.hpp"
 
+using Orm::Exceptions::RuntimeError;
+
 using TypeUtils = Orm::Utils::Type;
 
 using TomApplication = Tom::Application;
@@ -86,6 +88,9 @@ private:
 
     /*! Prepare the migration database for running. */
     void prepareDatabase() const;
+
+    /*! Throw if the environment is production because it needs confirmation. */
+    static void throwIfWrongEnvironment(const char *environmentEnvName);
 
     /*! Migrations table name. */
     inline static const auto MigrationsTable = QStringLiteral("migrations_unit_testing");
@@ -789,10 +794,16 @@ int tst_Migrate::invokeCommand(const QString &connection, const QString &name,
 
 int tst_Migrate::runCommand(int &argc, const std::vector<const char *> &argv)
 {
+    // Current environment variable name
+    const auto *const environmentEnvName = "TOM_TESTS_ENV";
+
     try {
-        // env. should be always development so passed {} for env. name
+        // Throw if the environment is production because it needs confirmation
+        throwIfWrongEnvironment(environmentEnvName);
+
+        // env. should be always local or development
         return TomApplication(argc, const_cast<char **>(argv.data()),
-                              Databases::managerShared(), "TOM_TESTS_ENV",
+                              Databases::managerShared(), environmentEnvName,
                               MigrationsTable)
                 .migrations<CreatePostsTable,
                             AddFactorColumnToPostsTable,
@@ -855,6 +866,23 @@ void tst_Migrate::prepareDatabase() const
 
         QVERIFY(exitCode == EXIT_SUCCESS);
     }
+}
+
+void tst_Migrate::throwIfWrongEnvironment(const char *const environmentEnvName)
+{
+    const auto environment = qEnvironmentVariable(environmentEnvName);
+
+    if (environment != QLatin1String("production") &&
+        environment != QLatin1String("prod")
+    )
+        return;
+
+    throw RuntimeError(
+                QStringLiteral(
+                    "The '%1' environment variable can't be 'prod' or 'production' "
+                    "because production environment needs confirmation, please set it "
+                    "to any other supported value as local, development, or testing.")
+                .arg(environmentEnvName));
 }
 
 QTEST_MAIN(tst_Migrate)
