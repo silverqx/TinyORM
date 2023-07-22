@@ -20,5 +20,5 @@ export DB_PGSQL_PASSWORD=""
 export DB_PGSQL_CHARSET="utf8"
 
 # Tom related
-export TOM_EXAMPLE_ENV="development"
-export TOM_TESTS_ENV="development"
+export TOM_EXAMPLE_ENV="local"
+export TOM_TESTS_ENV="local"

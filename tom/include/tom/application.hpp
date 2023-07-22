@@ -173,7 +173,7 @@ namespace Concerns
         void parseCommandLine();
 
         /*! Initialize environment value, order:
-            development -> value from env. variable -> --env command-line argument. */
+            local -> value from env. variable -> --env command-line argument. */
         void initializeEnvironment();
         /*! Obtain command name to run. */
         QString getCommandName();
@@ -284,7 +284,7 @@ namespace Concerns
         QCommandLineParser m_parser {};
 
         /*! Current environment. */
-        QString m_environment = QStringLiteral("development");
+        QString m_environment = QStringLiteral("local");
         /*! Environment variable name that holds a current environment value. */
         const char *m_environmentEnvName;
         /*! Migration repository table name. */
