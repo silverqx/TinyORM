@@ -52,7 +52,7 @@ std::function<bool()> Confirmable::defaultConfirmCallback() const
         const auto &environment = command().application().environment();
 
         return environment == QLatin1String("production") ||
-                environment == QLatin1String("prod");
+               environment == QLatin1String("prod");
     };
 }
 
