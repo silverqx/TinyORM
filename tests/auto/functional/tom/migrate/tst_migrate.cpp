@@ -69,9 +69,9 @@ private Q_SLOTS:
 // NOLINTNEXTLINE(readability-redundant-access-specifiers)
 private:
     /*! Prepare arguments and invoke runCommand(). */
-    [[nodiscard]] int
-    static invokeCommand(const QString &connection, const QString &name,
-                         std::vector<const char *> &&arguments = {});
+    [[nodiscard]] static int
+    invokeCommand(const QString &connection, const QString &name,
+                  std::vector<const char *> &&arguments = {});
     /*! Create a tom application instance and invoke the given command. */
     static int runCommand(int &argc, const std::vector<const char *> &argv);
 
