@@ -204,6 +204,7 @@ namespace Concerns
         /*! Display the full version informations with dependecies, build types, and
             compiler. */
         void printFullVersions() const;
+
         /*! Invoke the list command. */
         Q_NORETURN void showCommandsList(int exitCode);
         /*! Exit the application with post routines. */
