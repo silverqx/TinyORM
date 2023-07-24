@@ -11,7 +11,6 @@
 name: MSYS2 UCRT64 GCC/Clang
 
 on:
-  pull_request:
   push:
     branches:
       - main

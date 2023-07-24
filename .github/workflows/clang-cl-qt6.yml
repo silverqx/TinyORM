@@ -14,7 +14,6 @@
 name: clang-cl MSVC2022 Qt6.5
 
 on:
-  pull_request:
   push:
     branches:
       - main

@@ -1,7 +1,6 @@
 name: Clang Tidy/Clazy Qt6.2
 
 on:
-  pull_request:
   push:
     branches:
       - main
