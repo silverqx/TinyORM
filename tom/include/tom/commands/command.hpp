@@ -107,7 +107,8 @@ namespace Commands
         /*! Returns a option value found for the given option name or empty string. */
         QString value(const QString &name) const;
         /*! Returns a option values found for the given option name (addes , support). */
-        QStringList values(const QString &name) const;
+        QStringList values(const QString &name,
+                           Qt::SplitBehavior behavior = Qt::KeepEmptyParts) const;
         /*! Get a full command-line value option if value is set in the parser. */
         QString valueCmd(const QString &name, const QString &key = "") const;
         /*! Get a full command-line boolean option if it's set in the parser. */
