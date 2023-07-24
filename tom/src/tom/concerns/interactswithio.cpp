@@ -351,6 +351,32 @@ QString InteractsWithIO::stripAnsiTags(QString string)
             .replace(QStringLiteral("</b-white>"), "");
 }
 
+/* Getters / Setters */
+
+void InteractsWithIO::withoutAnsi(const std::function<void()> &callback)
+{
+    // Nothing to do, ansi is already disabled
+    if (m_ansi && !m_ansi.value())
+        return std::invoke(callback); // clazy:exclude=returning-void-expression
+
+    // Backup the current m_ansi value
+    auto previousAnsi = m_ansi;
+
+    disableAnsi();
+
+    try {
+        std::invoke(callback);
+
+        m_ansi = previousAnsi;
+
+    }  catch (...) {
+
+        m_ansi = previousAnsi;
+        // Re-throw
+        throw;
+    }
+}
+
 /* private */
 
 QString InteractsWithIO::parseOutput(QString string, const bool isAnsi)

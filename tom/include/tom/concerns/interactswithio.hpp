@@ -160,6 +160,20 @@ namespace Concerns
         /*! Remove tom ansi tags from the given string. */
         static QString stripAnsiTags(QString string);
 
+        /* Getters / Setters */
+        /*! Run the given callable with disabled ansi output support. */
+        void withoutAnsi(const std::function<void()> &callback);
+        /*! Enable ANSI support. */
+        inline InteractsWithIO &enableAnsi();
+        /*! Disable ANSI support. */
+        inline InteractsWithIO &disableAnsi();
+        /*! The ANSI support will be autodetected (set it to std::nullopt). */
+        inline InteractsWithIO &autodetectAnsi();
+        /*! Get ANSI value. */
+        inline const std::optional<bool> &getAnsi() const noexcept;
+        /*! Set ANSI value. */
+        inline InteractsWithIO &setAnsi(bool value) noexcept;
+
     protected:
         /*! Default constructor (used by the TomApplication, instance is initialized
             later in the TomApplication::parseCommandLine()). */
@@ -233,6 +247,43 @@ namespace Concerns
         /*! Describes current terminal features. */
         std::unique_ptr<Terminal> m_terminal;
     };
+
+    /* public */
+
+    /* Getters / Setters */
+
+    InteractsWithIO &InteractsWithIO::enableAnsi()
+    {
+        m_ansi = true;
+
+        return *this;
+    }
+
+    InteractsWithIO &InteractsWithIO::disableAnsi()
+    {
+        m_ansi = false;
+
+        return *this;
+    }
+
+    InteractsWithIO &InteractsWithIO::autodetectAnsi()
+    {
+        m_ansi.reset();
+
+        return *this;
+    }
+
+    const std::optional<bool> &InteractsWithIO::getAnsi() const noexcept
+    {
+        return m_ansi;
+    }
+
+    InteractsWithIO &InteractsWithIO::setAnsi(const bool value) noexcept
+    {
+        m_ansi.emplace(value);
+
+        return *this;
+    }
 
     /* protected */
 
