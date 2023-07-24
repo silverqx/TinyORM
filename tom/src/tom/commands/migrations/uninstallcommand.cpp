@@ -6,6 +6,9 @@
 
 #include "tom/migrationrepository.hpp"
 
+/*! Alias for the QStringLiteral(). */
+#define sl(str) QStringLiteral(str)
+
 TINYORM_BEGIN_COMMON_NAMESPACE
 
 using Orm::Constants::database_;
@@ -33,14 +36,13 @@ UninstallCommand::UninstallCommand(
 QList<CommandLineOption> UninstallCommand::optionsSignature() const
 {
     return {
-        {database_,   QStringLiteral("The database connection to use "
-                                     "<comment>(multiple values allowed)</comment>"),
-                      database_up}, // Value
+        {database_,   sl("The database connection to use <comment>(multiple values "
+                         "allowed)</comment>"), database_up}, // Value
         {{QChar('f'),
-          force},     QStringLiteral("Force the operation to run when in production")},
-        {pretend,     QStringLiteral("Dump the SQL queries that would be run")},
+          force},     sl("Force the operation to run when in production")},
+        {pretend,     sl("Dump the SQL queries that would be run")},
         {{QChar('r'),
-          reset},     QStringLiteral("Rollback all database migrations")},
+          reset},     sl("Rollback all database migrations")},
     };
 }
 

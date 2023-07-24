@@ -6,6 +6,9 @@
 
 #include "tom/migrator.hpp"
 
+/*! Alias for the QStringLiteral(). */
+#define sl(str) QStringLiteral(str)
+
 TINYORM_BEGIN_COMMON_NAMESPACE
 
 using Orm::Constants::database_;
@@ -49,18 +52,17 @@ FreshCommand::FreshCommand(
 QList<CommandLineOption> FreshCommand::optionsSignature() const
 {
     return {
-        {database_,     QStringLiteral("The database connection to use "
-                                       "<comment>(multiple values allowed)</comment>"),
-                        database_up}, // Value
-        {drop_views,    QStringLiteral("Drop all tables and views")},
-        {drop_types,    QStringLiteral("Drop all tables and types (Postgres only)")},
+        {database_,     sl("The database connection to use <comment>(multiple values "
+                           "allowed)</comment>"), database_up}, // Value
+        {drop_views,    sl("Drop all tables and views")},
+        {drop_types,    sl("Drop all tables and types (Postgres only)")},
         {{QChar('f'),
-          force},       QStringLiteral("Force the operation to run when in production")},
-//        {"schema-path", QStringLiteral("The path to a schema dump file")}, // Value
-        {seed,          QStringLiteral("Indicates if the seed task should be re-run")},
-        {seeder,        QStringLiteral("The class name of the root seeder"), seeder_up}, // Value
-        {step_,         QStringLiteral("Force the migrations to be run so they can be "
-                                       "rolled back individually")},
+          force},       sl("Force the operation to run when in production")},
+//        {"schema-path", sl("The path to a schema dump file")}, // Value
+        {seed,          sl("Indicates if the seed task should be re-run")},
+        {seeder,        sl("The class name of the root seeder"), seeder_up}, // Value
+        {step_,         sl("Force the migrations to be run so they can be rolled back "
+                           "individually")},
     };
 }
 

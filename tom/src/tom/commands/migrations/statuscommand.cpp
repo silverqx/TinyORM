@@ -16,6 +16,9 @@
 #  include "tom/exceptions/runtimeerror.hpp"
 #endif
 
+/*! Alias for the QStringLiteral(). */
+#define sl(str) QStringLiteral(str)
+
 TINYORM_BEGIN_COMMON_NAMESPACE
 
 using Orm::Constants::database_;
@@ -40,10 +43,9 @@ StatusCommand::StatusCommand(
 QList<CommandLineOption> StatusCommand::optionsSignature() const
 {
     return {
-        {database_, QStringLiteral("The database connection to use "
-                                   "<comment>(multiple values allowed)</comment>"),
-                    database_up}, // Value
-        {pending_,  QStringLiteral("Only list pending migrations")},
+        {database_, sl("The database connection to use <comment>(multiple values "
+                       "allowed)</comment>"), database_up}, // Value
+        {pending_,  sl("Only list pending migrations")},
     };
 }
 

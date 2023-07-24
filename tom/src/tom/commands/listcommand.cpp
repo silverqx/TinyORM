@@ -9,6 +9,9 @@
 
 #include "tom/application.hpp"
 
+/*! Alias for the QStringLiteral(). */
+#define sl(str) QStringLiteral(str)
+
 TINYORM_BEGIN_COMMON_NAMESPACE
 
 using Orm::Constants::COLON;
@@ -42,7 +45,7 @@ const std::vector<PositionalArgument> &ListCommand::positionalArguments() const
 QList<CommandLineOption> ListCommand::optionsSignature() const
 {
     return {
-        {raw_, QStringLiteral("To output raw command list")},
+        {raw_, sl("To output raw command list")},
     };
 }
 

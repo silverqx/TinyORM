@@ -6,6 +6,9 @@
 
 #include "tom/migrator.hpp"
 
+/*! Alias for the QStringLiteral(). */
+#define sl(str) QStringLiteral(str)
+
 TINYORM_BEGIN_COMMON_NAMESPACE
 
 using Orm::Constants::database_;
@@ -52,17 +55,15 @@ RefreshCommand::RefreshCommand(
 QList<CommandLineOption> RefreshCommand::optionsSignature() const
 {
     return {
-        {database_,    QStringLiteral("The database connection to use "
-                                      "<comment>(multiple values allowed)</comment>"),
-                       database_up}, // Value
+        {database_,    sl("The database connection to use <comment>(multiple values "
+                          "allowed)</comment>"), database_up}, // Value
         {{QChar('f'),
-          force},      QStringLiteral("Force the operation to run when in production")},
-        {seed,         QStringLiteral("Indicates if the seed task should be re-run")},
-        {seeder,       QStringLiteral("The class name of the root seeder"), seeder_up}, // Value
-        {step_,        QStringLiteral("The number of migrations to be reverted & "
-                                      "re-run"), step_up}, // Value
-        {step_migrate, QStringLiteral("Force the migrations to be run so they can be "
-                                      "rolled back individually")},
+          force},      sl("Force the operation to run when in production")},
+        {seed,         sl("Indicates if the seed task should be re-run")},
+        {seeder,       sl("The class name of the root seeder"), seeder_up}, // Value
+        {step_,        sl("The number of migrations to be reverted & re-run"), step_up}, // Value
+        {step_migrate, sl("Force the migrations to be run so they can be rolled back "
+                          "individually")},
     };
 }
 

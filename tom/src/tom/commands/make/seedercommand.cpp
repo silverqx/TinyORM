@@ -8,6 +8,9 @@
 #include "tom/exceptions/invalidargumenterror.hpp"
 #include "tom/tomconstants.hpp"
 
+/*! Alias for the QStringLiteral(). */
+#define sl(str) QStringLiteral(str)
+
 TINYORM_BEGIN_COMMON_NAMESPACE
 
 namespace fs = std::filesystem;
@@ -38,7 +41,7 @@ SeederCommand::SeederCommand(Application &application, QCommandLineParser &parse
 const std::vector<PositionalArgument> &SeederCommand::positionalArguments() const
 {
     static const std::vector<PositionalArgument> cached {
-        {NAME, QStringLiteral("The name of the seeder class (required StudlyCase)")},
+        {NAME, sl("The name of the seeder class (required StudlyCase)")},
     };
 
     return cached;
@@ -47,17 +50,16 @@ const std::vector<PositionalArgument> &SeederCommand::positionalArguments() cons
 QList<CommandLineOption> SeederCommand::optionsSignature() const
 {
     return {
-        {path_,        QStringLiteral("The location where the seeder file should be "
-                                      "created"), path_up}, // Value
-        {realpath_,    QStringLiteral("Indicate that any provided seeder file paths are "
-                                      "pre-resolved absolute paths")},
-        {fullpath,     QStringLiteral("Output the full path of the created seeder")},
+        {path_,        sl("The location where the seeder file should be created"),
+                       path_up}, // Value
+        {realpath_,    sl("Indicate that any provided seeder file paths are "
+                          "pre-resolved absolute paths")},
+        {fullpath,     sl("Output the full path of the created seeder")},
 
         {{QChar('f'),
-          force},      QStringLiteral("Overwrite the seeder class if already exists")},
+          force},      sl("Overwrite the seeder class if already exists")},
         // Hidden option, used in the special case when called from the make:model
-        {from_model,   QStringLiteral("Internal argument used when guessing a path"),
-                       true},
+        {from_model,   sl("Internal argument used when guessing a path"), true},
     };
 }
 

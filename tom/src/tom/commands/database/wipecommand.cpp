@@ -6,6 +6,9 @@
 
 #include "tom/tomconstants.hpp"
 
+/*! Alias for the QStringLiteral(). */
+#define sl(str) QStringLiteral(str)
+
 TINYORM_BEGIN_COMMON_NAMESPACE
 
 using Orm::Constants::database_;
@@ -29,15 +32,14 @@ WipeCommand::WipeCommand(Application &application, QCommandLineParser &parser)
 QList<CommandLineOption> WipeCommand::optionsSignature() const
 {
     return {
-        {database_,    QStringLiteral("The database connection to use "
-                                      "<comment>(multiple values allowed)</comment>"),
-                       database_up}, // Value
-        {drop_views,   QStringLiteral("Drop all tables and views")},
-        {drop_types,   QStringLiteral("Drop all tables and types (Postgres only)")},
+        {database_,    sl("The database connection to use <comment>(multiple values "
+                          "allowed)</comment>"), database_up}, // Value
+        {drop_views,   sl("Drop all tables and views")},
+        {drop_types,   sl("Drop all tables and types (Postgres only)")},
 
         {{QChar('f'),
-          force},      QStringLiteral("Force the operation to run when in production")},
-        {pretend,      QStringLiteral("Dump the SQL queries that would be run")},
+          force},      sl("Force the operation to run when in production")},
+        {pretend,      sl("Dump the SQL queries that would be run")},
     };
 }
 

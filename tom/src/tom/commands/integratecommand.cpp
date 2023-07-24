@@ -14,6 +14,9 @@
 #include "tom/commands/stubs/integratestubs.hpp"
 #include "tom/exceptions/runtimeerror.hpp"
 
+/*! Alias for the QStringLiteral(). */
+#define sl(str) QStringLiteral(str)
+
 TINYORM_BEGIN_COMMON_NAMESPACE
 
 using Orm::Constants::COMMA;
@@ -53,10 +56,10 @@ const std::vector<PositionalArgument> &IntegrateCommand::positionalArguments() c
 QList<CommandLineOption> IntegrateCommand::optionsSignature() const
 {
     return {
-        {stdout_, QStringLiteral("Print content of the <info>integrate</info> command "
-                                 "(instead of writing to the disk)")},
-        {path_,   QStringLiteral("The location where the completion file should be "
-                                 "created (zsh only)"), path_up}, // Value
+        {stdout_, sl("Print content of the <info>integrate</info> command "
+                     "(instead of writing to the disk)")},
+        {path_,   sl("The location where the completion file should be created "
+                     "(zsh only)"), path_up}, // Value
     };
 }
 

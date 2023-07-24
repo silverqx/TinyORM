@@ -13,6 +13,9 @@
 #include "tom/exceptions/invalidtemplateargumenterror.hpp"
 #include "tom/seeder.hpp"
 
+/*! Alias for the QStringLiteral(). */
+#define sl(str) QStringLiteral(str)
+
 TINYORM_BEGIN_COMMON_NAMESPACE
 
 using Orm::Constants::database_;
@@ -44,7 +47,7 @@ SeedCommand::SeedCommand(Application &application, QCommandLineParser &parser)
 const std::vector<PositionalArgument> &SeedCommand::positionalArguments() const
 {
     static const std::vector<PositionalArgument> cached {
-        {class_, QStringLiteral("The class name of the root seeder"), {}, true},
+        {class_, sl("The class name of the root seeder"), {}, true},
     };
 
     return cached;
@@ -53,14 +56,12 @@ const std::vector<PositionalArgument> &SeedCommand::positionalArguments() const
 QList<CommandLineOption> SeedCommand::optionsSignature() const
 {
     return {
-        {class_,       QStringLiteral("The class name of the root seeder"), class_up,
-                       DatabaseSeeder}, // Value
-        {database_,    QStringLiteral("The database connection to use "
-                                      "<comment>(multiple values allowed)</comment>"),
-                       database_up}, // Value
+        {class_,       sl("The class name of the root seeder"), class_up, DatabaseSeeder}, // Value
+        {database_,    sl("The database connection to use <comment>(multiple values "
+                          "allowed)</comment>"), database_up}, // Value
         {{QChar('f'),
-         force},       QStringLiteral("Force the operation to run when in production")},
-        {pretend,      QStringLiteral("Dump the SQL queries that would be run")},
+         force},       sl("Force the operation to run when in production")},
+        {pretend,      sl("Dump the SQL queries that would be run")},
     };
 }
 

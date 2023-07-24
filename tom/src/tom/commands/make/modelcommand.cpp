@@ -12,6 +12,9 @@
 #include "tom/exceptions/invalidargumenterror.hpp"
 #include "tom/tomconstants.hpp"
 
+/*! Alias for the QStringLiteral(). */
+#define sl(str) QStringLiteral(str)
+
 TINYORM_BEGIN_COMMON_NAMESPACE
 
 namespace fs = std::filesystem;
@@ -103,7 +106,7 @@ ModelCommand::ModelCommand(Application &application, QCommandLineParser &parser)
 const std::vector<PositionalArgument> &ModelCommand::positionalArguments() const
 {
     static const std::vector<PositionalArgument> cached {
-        {NAME, QStringLiteral("The name of the model class (required StudlyCase)")},
+        {NAME, sl("The name of the model class (required StudlyCase)")},
     };
 
     return cached;
@@ -114,115 +117,99 @@ QList<CommandLineOption> ModelCommand::optionsSignature() const
     return {
         // Call other commands
         {{QChar('m'),
-          migration_},         QStringLiteral("Create a new migration file for the "
-                                              "model")},
+          migration_},         sl("Create a new migration file for the model")},
         {{QChar('s'),
-          seeder},             QStringLiteral("Create a new seeder for the model")},
+          seeder},             sl("Create a new seeder for the model")},
 
         // Relationship methods
-        {one_to_one,           QStringLiteral("Create one-to-one relation to the given "
-                                              "model <comment>(multiple options allowed)"
-                                              "</comment>"), one_to_one_up}, // Value
-        {one_to_many,          QStringLiteral("Create one-to-many relation to the given "
-                                              "model <comment>(multiple options allowed)"
-                                              "</comment>"), one_to_many_up}, // Value
-        {belongs_to,           QStringLiteral("Create belongs-to relation to the given "
-                                              "model <comment>(multiple options allowed)"
-                                              "</comment>"), belongs_to_up}, // Value
-        {belongs_to_many,      QStringLiteral("Create many-to-many relation to the "
-                                              "given model <comment>(multiple options "
-                                              "allowed)</comment>"), belongs_to_many_up}, // Value
+        {one_to_one,           sl("Create one-to-one relation to the given model "
+                                  "<comment>(multiple options allowed)</comment>"),
+                               one_to_one_up}, // Value
+        {one_to_many,          sl("Create one-to-many relation to the given model "
+                                  "<comment>(multiple options allowed)</comment>"),
+                               one_to_many_up}, // Value
+        {belongs_to,           sl("Create belongs-to relation to the given model "
+                                  "<comment>(multiple options allowed)</comment>"),
+                               belongs_to_up}, // Value
+        {belongs_to_many,      sl("Create many-to-many relation to the given model "
+                                  "<comment>(multiple options allowed)</comment>"),
+                               belongs_to_many_up}, // Value
 
         // Common for all relations
-        {foreign_key,          QStringLiteral("The foreign key name <comment>(two values "
-                                              "allowed for btm)</comment>"),
-                               foreign_key_up},
+        {foreign_key,          sl("The foreign key name <comment>(two values allowed "
+                                  "for btm)</comment>"), foreign_key_up},
 
         // Belongs-to-many related
-        {pivot_table,          QStringLiteral("The pivot table name"), pivot_table_up}, // Value
-        {pivot_,               QStringLiteral("The class name of the pivot class for the "
-                                              "belongs-to-many relationship"),
-                               pivot_up}, // Value
-        {pivot_inverse,        QStringLiteral("The class name of the pivot class for the "
-                                              "belongs-to-many inverse relationship "
-                                              "<comment>(multiple values allowed)"
-                                              "</comment>"),
+        {pivot_table,          sl("The pivot table name"), pivot_table_up}, // Value
+        {pivot_,               sl("The class name of the pivot class for the "
+                                  "belongs-to-many relationship"), pivot_up}, // Value
+        {pivot_inverse,        sl("The class name of the pivot class for the "
+                                  "belongs-to-many inverse relationship "
+                                  "<comment>(multiple values allowed)</comment>"),
                                pivot_inverse_up}, // Value
-        {as_,                  QStringLiteral("The name for the pivot relation"),
-                               as_up}, // Value
-        {with_pivot,           QStringLiteral("Extra attributes for the pivot model "
-                                              "<comment>(multiple values allowed)"
-                                              "</comment>"),
+        {as_,                  sl("The name for the pivot relation"), as_up}, // Value
+        {with_pivot,           sl("Extra attributes for the pivot model "
+                                  "<comment>(multiple values allowed)</comment>"),
                                with_pivot_up}, // Value
-        {with_timestamps,      QStringLiteral("Pivot table with timestamps")},
+        {with_timestamps,      sl("Pivot table with timestamps")},
 
         // Model related attributes in the private section
-        {table_,               QStringLiteral("The table associated with the model"),
-                               table_up}, // Value
-        {primary_key,          QStringLiteral("The primary key associated with the "
-                                              "table"), primary_key_up}, // Value
-        {incrementing,         QStringLiteral("Enable auto-incrementing for the model's "
-                                              "primary key "
-                                              "<comment>(default)</comment>")},
-        {disable_incrementing, QStringLiteral("Disable auto-incrementing for the model's "
-                                              "primary key")},
-        {connection_,          QStringLiteral("The connection name for the model"),
-                               connection_up}, // Value
-        {with_,                QStringLiteral("The relations to eager load on every "
-                                              "query <comment>(multiple values allowed)"
-                                              "</comment>"), with_up}, // Value
-        {fillable,             QStringLiteral("The attributes that are mass assignable "
-                                              "<comment>(multiple values allowed)"
-                                              "</comment>"), fillable_up}, // Value
-        {guarded,              QStringLiteral("The guarded attributes that aren't mass "
-                                              "assignable <comment>(multiple values "
-                                              "allowed) </comment>"), guarded_up}, // Value
-        {disable_timestamps,   QStringLiteral("Disable timestamping of the model")},
-        {dateformat,           QStringLiteral("The storage format of the model's date "
-                                              "columns"), dateformat_up}, // Value
-        {dates,                QStringLiteral("The attributes that should be mutated to "
-                                              "dates <comment>(multiple values allowed)"
-                                              "</comment>"), dates_up}, // Value
-        {touches,              QStringLiteral("All of the relationships to be touched "
-                                              "<comment>(multiple values allowed)"
-                                              "</comment>"), touches_up}, // Value
-        {casts_example,        QStringLiteral("Create the u_casts map example")},
-        {snake_attributes,     QStringLiteral("Enable snake_cased attributes during "
-                                              "serialization "
-                                              "<comment>(default)</comment>")},
+        {table_,               sl("The table associated with the model"), table_up}, // Value
+        {primary_key,          sl("The primary key associated with the table"),
+                               primary_key_up}, // Value
+        {incrementing,         sl("Enable auto-incrementing for the model's primary key "
+                                  "<comment>(default)</comment>")},
+        {disable_incrementing, sl("Disable auto-incrementing for the model's primary "
+                                  "key")},
+        {connection_,          sl("The connection name for the model"), connection_up}, // Value
+        {with_,                sl("The relations to eager load on every query "
+                                  "<comment>(multiple values allowed)</comment>"),
+                               with_up}, // Value
+        {fillable,             sl("The attributes that are mass assignable <comment>"
+                                  "(multiple values allowed)</comment>"), fillable_up}, // Value
+        {guarded,              sl("The guarded attributes that aren't mass assignable "
+                                  "<comment>(multiple values allowed) </comment>"),
+                               guarded_up}, // Value
+        {disable_timestamps,   sl("Disable timestamping of the model")},
+        {dateformat,           sl("The storage format of the model's date columns"),
+                               dateformat_up}, // Value
+        {dates,                sl("The attributes that should be mutated to dates "
+                                  "<comment>(multiple values allowed)</comment>"),
+                               dates_up}, // Value
+        {touches,              sl("All of the relationships to be touched <comment>"
+                                  "(multiple values allowed)</comment>"), touches_up}, // Value
+        {casts_example,        sl("Create the u_casts map example")},
+        {snake_attributes,     sl("Enable snake_cased attributes during serialization "
+                                  "<comment>(default)</comment>")},
         {disable_snake_attributes,
-                               QStringLiteral("Disable snake_cased attributes during "
-                                              "serialization")},
-        {visible,              QStringLiteral("The attributes that should be visible "
-                                              "during serialization <comment>(multiple "
-                                              "values allowed)</comment>"), visible_up}, // Value
-        {hidden,               QStringLiteral("The attributes that should be hidden "
-                                              "during serialization <comment>(multiple "
-                                              "values allowed)</comment>"), hidden_up}, // Value
-        {accessors,            QStringLiteral("Create accessor methods (merged with "
-                                              "appends) <comment>(multiple values "
-                                              "allowed)</comment>"),
-                                              accessors_up}, // Value
-        {appends,              QStringLiteral("The attributes that should be appended "
-                                              "during serialization <comment>(multiple "
-                                              "values allowed)</comment>"), appends_up}, // Value
-        {pivot_model,          QStringLiteral("Genarate a custom pivot model class")},
+                               sl("Disable snake_cased attributes during serialization")},
+        {visible,              sl("The attributes that should be visible during "
+                                  "serialization <comment>(multiple values allowed)"
+                                  "</comment>"), visible_up}, // Value
+        {hidden,               sl("The attributes that should be hidden during "
+                                  "serialization <comment>(multiple values allowed)"
+                                  "</comment>"), hidden_up}, // Value
+        {accessors,            sl("Create accessor methods (merged with appends) "
+                                  "<comment>(multiple values allowed)</comment>"),
+                               accessors_up}, // Value
+        {appends,              sl("The attributes that should be appended during "
+                                  "serialization <comment>(multiple values allowed)"
+                                  "</comment>"), appends_up}, // Value
+        {pivot_model,          sl("Genarate a custom pivot model class")},
 
         // Others
         {{QChar('o'),
-          preserve_order},     QStringLiteral("Preserve relations order defined on the "
-                                              "command-line")},
+          preserve_order},     sl("Preserve relations order defined on the "
+                                  "command-line")},
 
         // Paths related
-        {path_,                QStringLiteral("The location where the model file should "
-                                              "be created"), path_up}, // Value
-        {realpath_,            QStringLiteral("Indicate that any provided model file "
-                                              "paths are pre-resolved absolute paths")},
-        {fullpath,             QStringLiteral("Output the full path of the created "
-                                              "model")},
+        {path_,                sl("The location where the model file should be created"),
+                               path_up}, // Value
+        {realpath_,            sl("Indicate that any provided model file paths are "
+                                  "pre-resolved absolute paths")},
+        {fullpath,             sl("Output the full path of the created model")},
         {{QChar('f'),
-          force},              QStringLiteral("Overwrite the model class if already "
-                                              "exists")},
+          force},              sl("Overwrite the model class if already exists")},
     };
 }
 

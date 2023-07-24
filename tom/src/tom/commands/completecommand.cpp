@@ -15,6 +15,9 @@
 #include "tom/application.hpp"
 #include "tom/tomutils.hpp"
 
+/*! Alias for the QStringLiteral(). */
+#define sl(str) QStringLiteral(str)
+
 TINYORM_BEGIN_COMMON_NAMESPACE
 
 namespace fs = std::filesystem;
@@ -68,15 +71,14 @@ CompleteCommand::CompleteCommand(Application &application, QCommandLineParser &p
 QList<CommandLineOption> CompleteCommand::optionsSignature() const
 {
     return {
-        {word_,       QStringLiteral("The current word that is being "
-                                     "completed"), word_up},
-        {commandline, QStringLiteral("The entire current command-line"), commandline_up},
+        {word_,       sl("The current word that is being completed"), word_up},
+        {commandline, sl("The entire current command-line"), commandline_up},
 #ifdef _MSC_VER
-        {position,    QStringLiteral("The current position of the cursor on the "
-                                     "command-line"), position_up, "0"},
+        {position,    sl("The current position of the cursor on the command-line"),
+                      position_up, sl("0")},
 #else
-        {cword_,      QStringLiteral("Position of the current word on the command-line "
-                                     "that is being completed"), cword_up},
+        {cword_,      sl("Position of the current word on the command-line that is "
+                         "being completed"), cword_up},
 #endif
     };
 }

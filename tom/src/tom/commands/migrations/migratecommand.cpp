@@ -6,6 +6,9 @@
 
 #include "tom/migrator.hpp"
 
+/*! Alias for the QStringLiteral(). */
+#define sl(str) QStringLiteral(str)
+
 TINYORM_BEGIN_COMMON_NAMESPACE
 
 using Orm::Constants::database_;
@@ -35,16 +38,15 @@ MigrateCommand::MigrateCommand(
 QList<CommandLineOption> MigrateCommand::optionsSignature() const
 {
     return {
-        {database_,     QStringLiteral("The database connection to use "
-                                       "<comment>(multiple values allowed)</comment>"),
-                        database_up}, // Value
+        {database_,     sl("The database connection to use <comment>(multiple values "
+                           "allowed)</comment>"), database_up}, // Value
         {{QChar('f'),
-          force},       QStringLiteral("Force the operation to run when in production")},
-        {pretend,       QStringLiteral("Dump the SQL queries that would be run")},
-//        {"schema-path", QStringLiteral("The path to a schema dump file")}, // Value
-        {seed,          QStringLiteral("Indicates if the seed task should be re-run")},
-        {step_,         QStringLiteral("Force the migrations to be run so they can be "
-                                       "rolled back individually")},
+          force},       sl("Force the operation to run when in production")},
+        {pretend,       sl("Dump the SQL queries that would be run")},
+//        {"schema-path", sl("The path to a schema dump file")}, // Value
+        {seed,          sl("Indicates if the seed task should be re-run")},
+        {step_,         sl("Force the migrations to be run so they can be rolled back "
+                           "individually")},
     };
 }
 

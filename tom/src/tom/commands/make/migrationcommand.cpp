@@ -12,6 +12,9 @@
 #include "tom/tomconstants.hpp"
 #include "tom/tomutils.hpp"
 
+/*! Alias for the QStringLiteral(). */
+#define sl(str) QStringLiteral(str)
+
 TINYORM_BEGIN_COMMON_NAMESPACE
 
 namespace fs = std::filesystem;
@@ -50,7 +53,7 @@ MigrationCommand::MigrationCommand(Application &application, QCommandLineParser 
 const std::vector<PositionalArgument> &MigrationCommand::positionalArguments() const
 {
     static const std::vector<PositionalArgument> cached {
-        {NAME, QStringLiteral("The name of the migration (best snake_case)")},
+        {NAME, sl("The name of the migration (best snake_case)")},
     };
 
     return cached;
@@ -59,19 +62,18 @@ const std::vector<PositionalArgument> &MigrationCommand::positionalArguments() c
 QList<CommandLineOption> MigrationCommand::optionsSignature() const
 {
     return {
-        {create_,      QStringLiteral("The table name to be created"), create_up}, // Value
-        {table_,       QStringLiteral("The table name to migrate (update)"), table_up}, // Value
-        {path_,        QStringLiteral("The location where the migration file should be "
-                                      "created"), path_up}, // Value
-        {realpath_,    QStringLiteral("Indicate that any provided migration file paths "
-                                      "are pre-resolved absolute paths")},
-        {fullpath,     QStringLiteral("Output the full path of the created migration")},
+        {create_,      sl("The table name to be created"), create_up}, // Value
+        {table_,       sl("The table name to migrate (update)"), table_up}, // Value
+        {path_,        sl("The location where the migration file should be created"),
+                       path_up}, // Value
+        {realpath_,    sl("Indicate that any provided migration file paths are "
+                          "pre-resolved absolute paths")},
+        {fullpath,     sl("Output the full path of the created migration")},
 
         {{QChar('f'),
-          force},      QStringLiteral("Overwrite the migration file if already exists")},
+          force},      sl("Overwrite the migration file if already exists")},
         // Hidden option, used in the special case when called from the make:model
-        {from_model,   QStringLiteral("Internal argument used when guessing a path"),
-                       true},
+        {from_model,   sl("Internal argument used when guessing a path"), true},
     };
 }
 

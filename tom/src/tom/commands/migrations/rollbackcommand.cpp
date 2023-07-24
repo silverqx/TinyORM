@@ -6,6 +6,9 @@
 
 #include "tom/migrator.hpp"
 
+/*! Alias for the QStringLiteral(). */
+#define sl(str) QStringLiteral(str)
+
 TINYORM_BEGIN_COMMON_NAMESPACE
 
 using Orm::Constants::database_;
@@ -35,15 +38,14 @@ RollbackCommand::RollbackCommand(
 QList<CommandLineOption> RollbackCommand::optionsSignature() const
 {
     return {
-        {database_,   QStringLiteral("The database connection to use "
-                                     "<comment>(multiple values allowed)</comment>"),
-                      database_up}, // Value
+        {database_,   sl("The database connection to use <comment>(multiple values "
+                         "allowed)</comment>"), database_up}, // Value
         {{QChar('f'),
-          force},     QStringLiteral("Force the operation to run when in production")},
-        {pretend,     QStringLiteral("Dump the SQL queries that would be run")},
-        {step_,       QStringLiteral("The number of migrations to be reverted"), step_up}, // Value
-        {batch_,      QStringLiteral("The batch of migrations (identified by their "
-                                     "batch number) to be reverted"), batch_up}, // Value
+          force},     sl("Force the operation to run when in production")},
+        {pretend,     sl("Dump the SQL queries that would be run")},
+        {step_,       sl("The number of migrations to be reverted"), step_up}, // Value
+        {batch_,      sl("The batch of migrations (identified by their batch number) "
+                         "to be reverted"), batch_up}, // Value
     };
 }
 
