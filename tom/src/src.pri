@@ -4,6 +4,7 @@ extern_constants: \
 
 sourcesList += \
     $$PWD/tom/application.cpp \
+    $$PWD/tom/commands/aboutcommand.cpp \
     $$PWD/tom/commands/command.cpp \
     $$PWD/tom/commands/completecommand.cpp \
     $$PWD/tom/commands/database/seedcommand.cpp \

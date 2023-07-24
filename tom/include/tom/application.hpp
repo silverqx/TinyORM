@@ -34,6 +34,7 @@ namespace Tom {
 
 namespace Commands
 {
+    class AboutCommand;
     class CompleteCommand;
     class HelpCommand;
     class ListCommand;
@@ -55,6 +56,8 @@ namespace Concerns
     {
         Q_DISABLE_COPY(Application)
 
+        // To access createVersionsSubsection()
+        friend Commands::AboutCommand;
         // To access saveOptions()
         friend Commands::Command;
         // To access createCommand(), namespaceNames(), guessCommandXyz() related methods

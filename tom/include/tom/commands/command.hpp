@@ -5,6 +5,8 @@
 #include <orm/macros/systemheader.hpp>
 TINY_SYSTEM_HEADER
 
+#include <QJsonDocument>
+
 #include "tom/concerns/callscommands.hpp"
 #include "tom/concerns/interactswithio.hpp"
 #include "tom/types/commandlineoption.hpp"
@@ -131,6 +133,9 @@ namespace Commands
         QString argument(ArgumentsSizeType index, bool useDefault = true) const;
         /*! Get a positional argument by the given name. */
         QString argument(const QString &name, bool useDefault = true) const;
+
+        /*! Get the JsonFormat based on the --pretty option. */
+        QJsonDocument::JsonFormat jsonFormat() const;
 
         /* Getters */
         /*! Get a database connection. */

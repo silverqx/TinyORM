@@ -22,6 +22,7 @@ using Orm::Constants::SPACE;
 
 using Tom::Constants::Help;
 using Tom::Constants::LongOption;
+using Tom::Constants::pretty;
 
 using TomUtils = Tom::Utils;
 
@@ -310,6 +311,11 @@ QString Command::argument(const QString &name, const bool useDefault) const
 {
     // Default value supported
     return argument(m_positionalArguments.at(name), useDefault);
+}
+
+QJsonDocument::JsonFormat Command::jsonFormat() const
+{
+    return isSet(pretty) ? QJsonDocument::Indented : QJsonDocument::Compact;
 }
 
 /* Getters */

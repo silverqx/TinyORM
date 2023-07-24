@@ -41,6 +41,9 @@ namespace Tom::Constants
     const QString seeder       = QStringLiteral("seeder");
     const QString step_        = QStringLiteral("step");
     const QString path_        = QStringLiteral("path");
+    const QString json_        = QStringLiteral("json");
+    const QString pretty       = QStringLiteral("pretty");
+    const QString only_        = QStringLiteral("only");
     // Default value names
     const QString env_up             = QStringLiteral("ENV");
     const QString class_up           = QStringLiteral("CLASS");
@@ -77,6 +80,7 @@ namespace Tom::Constants
     const QString hidden_up          = QStringLiteral("HIDDEN");
     const QString accessors_up       = QStringLiteral("ACCESSORS");
     const QString appends_up         = QStringLiteral("APPENDS");
+    const QString only_up            = QStringLiteral("ONLY");
     // complete
     const QString commandline        = QStringLiteral("commandline");
     const QString position           = QStringLiteral("position");
@@ -150,6 +154,7 @@ namespace Tom::Constants
     const QString ShZsh        = QStringLiteral("zsh");
 
     // Command names
+    const QString About            = QStringLiteral("about");
     const QString Complete         = QStringLiteral("complete");
     const QString DbSeed           = QStringLiteral("db:seed");
     const QString DbWipe           = QStringLiteral("db:wipe");

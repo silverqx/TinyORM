@@ -3,7 +3,6 @@
 #define TOM_MIGRATIONREPOSITORY_HPP
 
 #include <map>
-#include <optional>
 #include <vector>
 
 #include <orm/connectionresolverinterface.hpp>

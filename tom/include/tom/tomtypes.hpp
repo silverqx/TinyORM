@@ -5,9 +5,9 @@
 #include <orm/macros/systemheader.hpp>
 TINY_SYSTEM_HEADER
 
-#include <QString>
+#include <QVector>
 
-#include <memory>
+#include <optional>
 
 #include <orm/macros/commonnamespace.hpp>
 
@@ -50,6 +50,33 @@ namespace Tom
         QString connection;
         /*! Wrapping the migration within a transaction, if supported. */
         bool withinTransaction = false;
+    };
+
+    /*! About item type. */
+    struct AboutItem
+    {
+        /*! About item name. */
+        QString name;
+        /*! About item value. */
+        QString value;
+    };
+
+    /*! Subsection item type. */
+    struct SubSectionItem
+    {
+        /*! Subsection item name. */
+        std::optional<QString> name;
+        /*! About items list. */
+        QVector<AboutItem> abouts;
+    };
+
+    /*! Section item type. */
+    struct SectionItem
+    {
+        /*! Section item name. */
+        QString name;
+        /*! Subsection items list. */
+        QVector<SubSectionItem> subSections;
     };
 
 } // namespace Tom
