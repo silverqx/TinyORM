@@ -140,6 +140,7 @@ namespace Commands
         /*! Get database connection resolver. */
         std::shared_ptr<ConnectionResolverInterface> connectionResolver() const noexcept;
 
+        /* Data members */
         /*! Reference to the tom application. */
         std::reference_wrapper<Application> m_application;
         /*! Command-line parser. */
