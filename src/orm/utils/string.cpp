@@ -78,8 +78,8 @@ QString String::ltrim(const QString &string, const QString &characters)
 {
     QString::size_type position = 0;
 
-    for (const auto &c : string)
-        if (characters.contains(c))
+    for (const auto ch : string)
+        if (characters.contains(ch))
             ++position;
         else
             break;
@@ -96,8 +96,8 @@ QString String::rtrim(const QString &string, const QString &characters)
 #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
     QString::size_type position = 0;
 
-    for (const auto &itString : string | ranges::views::reverse)
-        if (characters.contains(itString))
+    for (const auto itChar : string | ranges::views::reverse)
+        if (characters.contains(itChar))
             ++position;
         else
             break;
@@ -106,8 +106,8 @@ QString String::rtrim(const QString &string, const QString &characters)
 #else
     QString::size_type position = string.size();
 
-    for (const auto &itString : string | ranges::views::reverse)
-        if (characters.contains(itString))
+    for (const auto itChar : string | ranges::views::reverse)
+        if (characters.contains(itChar))
             --position;
         else
             break;
