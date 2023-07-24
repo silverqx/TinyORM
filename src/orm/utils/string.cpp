@@ -130,6 +130,9 @@ QString String::snake(QString string, const QChar delimiter)
     if (snakeCache->contains(key))
         return (*snakeCache)[key];
 
+    // Avoid underscores at the beginning and end
+    string = trim(string, SPACE);
+
     // RegExp not used for performance reasons
     std::vector<QString::size_type> positions;
     positions.reserve(static_cast<std::size_t>(string.size() / 2) + 2);
@@ -137,11 +140,17 @@ QString String::snake(QString string, const QChar delimiter)
     for (QString::size_type i = 0; i < string.size(); ++i) {
         const auto ch = string.at(i);
 
-        if (i > 0 && ch >= QLatin1Char('A') && ch <= QLatin1Char('Z')) {
+        if (i > 0) {
             const auto previousChar = string.at(i - 1);
 
-            if ((previousChar >= QLatin1Char('a') && previousChar <= QLatin1Char('z')) ||
-                (previousChar >= QLatin1Char('0') && previousChar <= QLatin1Char('9'))
+                // xY to x_y or 0Y to 0_y
+            if ((ch >= QLatin1Char('A') && ch <= QLatin1Char('Z') &&
+                 ((previousChar >= QLatin1Char('a') &&
+                   previousChar <= QLatin1Char('z')) ||
+                  (previousChar >= QLatin1Char('0') &&
+                   previousChar <= QLatin1Char('9')))) ||
+                // x y to x_y                       Avoid more underscores __
+                (i >= 2 && previousChar == SPACE && string.at(i - 2) != SPACE)
             )
                 positions.push_back(i);
         }
@@ -151,10 +160,17 @@ QString String::snake(QString string, const QChar delimiter)
     std::ranges::for_each(positions,
                           [&string, delimiter](const QString::size_type pos)
     {
-        string.insert(pos, delimiter);
+        const auto previousPos = pos - 1;
+
+        // Change space to _
+        if (string.at(previousPos) == SPACE)
+            string[previousPos] = delimiter;
+        // Prepend the _ before A-Z
+        else
+            string.insert(pos, delimiter);
     });
 
-    return (*snakeCache)[std::move(key)] = string.toLower();
+    return (*snakeCache)[std::move(key)] = string.replace(SPACE, EMPTY).toLower();
 }
 #endif
 
