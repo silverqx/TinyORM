@@ -44,6 +44,10 @@ namespace Orm::Utils
         rtrim(const QString &string,
               const QString &characters = QStringLiteral(" \n\r\t\v\f"));
 
+        /*! Remove tags from the given string. */
+        [[maybe_unused]]
+        static QString stripTags(QString string);
+
 #if !defined(TINYORM_DISABLE_TOM) || !defined(TINYORM_DISABLE_ORM)
         /*! Convert a string to snake case (snake_case). */
         static QString snake(QString string, QChar delimiter = Constants::UNDERSCORE);
@@ -72,6 +76,11 @@ namespace Orm::Utils
         static QString wrapValue(const QString &string, QChar firstCharacter,
                                  QChar lastCharacter);
 #endif
+
+    private:
+        /*! Determine whether all characters in the given tag are allowed. */
+        static bool allTagCharsAllowed(const QString &string, QString::size_type posStart,
+                                       QString::size_type posEnd);
     };
 
     /* public */

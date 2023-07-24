@@ -13,9 +13,13 @@ TINYORM_BEGIN_COMMON_NAMESPACE
 using Orm::Constants::DASH;
 using Orm::Constants::DOT;
 using Orm::Constants::EMPTY;
+using Orm::Constants::EQ_C;
+using Orm::Constants::GT_C;
+using Orm::Constants::LT_C;
 using Orm::Constants::MINUS;
 using Orm::Constants::PLUS;
 using Orm::Constants::SPACE;
+using Orm::Constants::SQUOTE;
 using Orm::Constants::UNDERSCORE;
 
 namespace Orm::Utils
@@ -114,6 +118,36 @@ QString String::rtrim(const QString &string, const QString &characters)
 
     return string.first(position);
 #endif
+}
+
+QString String::stripTags(QString string)
+{
+    QString::size_type posStart = 0;
+    QString::size_type from = 0;
+
+    while ((posStart = string.indexOf(LT_C, from, Qt::CaseInsensitive)) != -1
+    ) {
+        const auto posEnd = string.indexOf(GT_C, posStart + 1, Qt::CaseInsensitive);
+
+        // Nothing to do, the > char not found
+        if (posEnd == -1)
+            break;
+
+        // Strip a tag if all tag chars are allowed
+        if (allTagCharsAllowed(string, posStart, posEnd)) {
+            string.remove(posStart, posEnd - posStart + 1);
+            from = posStart;
+
+        // Otherwise, start searching a next tag
+        } else
+            from = posEnd + 1;
+
+        // Nothing to do, the last tag already processed
+        if (from >= string.size())
+            break;
+    }
+
+    return string;
 }
 
 #if !defined(TINYORM_DISABLE_TOM) || !defined(TINYORM_DISABLE_ORM)
@@ -383,6 +417,44 @@ QString String::wrapValue(const QString &string, const QChar firstCharacter,
     return result.append(firstCharacter).append(string).append(lastCharacter);
 }
 #endif
+
+/* private */
+
+bool String::allTagCharsAllowed(const QString &string, const QString::size_type posStart,
+                                const QString::size_type posEnd)
+{
+    auto allCharsAllowed = true;
+
+    const auto firstAllowedPos = posStart + 1;
+    // Compute the start position skipping the / char if it's a first char
+    const auto allowdPosStart = firstAllowedPos < posEnd &&
+                                string.at(firstAllowedPos) == QLatin1Char('/')
+                                ? posStart + 2
+                                : firstAllowedPos;
+
+    for (QString::size_type i = allowdPosStart; i < posEnd; ++i) {
+        const auto ch = string.at(i);
+
+        // All allowed chars
+            // A-Z a-z 0-9
+        if ((ch >= QLatin1Char('A') && ch <= QLatin1Char('Z'))  ||
+            (ch >= QLatin1Char('a') && ch <= QLatin1Char('z'))  ||
+            (ch >= QLatin1Char('0') && ch <= QLatin1Char('9'))  ||
+            // space ! " # $ % & '
+            (ch >= SPACE && ch <= SQUOTE) ||
+            // - = ? _ @
+            ch == MINUS || ch == EQ_C || ch == QLatin1Char('?') || ch == UNDERSCORE ||
+            ch == QLatin1Char('@')
+        )
+            continue;
+
+        // Char is not allowed, break and return
+        allCharsAllowed = false;
+        break;
+    }
+
+    return allCharsAllowed;
+}
 
 } // namespace Orm::Utils
 
