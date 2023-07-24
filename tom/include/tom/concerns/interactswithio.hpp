@@ -157,6 +157,9 @@ namespace Concerns
         /*! Confirm a question with the user. */
         bool confirm(const QString &question, bool defaultAnswer = false) const;
 
+        /*! Remove tom ansi tags from the given string. */
+        static QString stripAnsiTags(QString string);
+
     protected:
         /*! Default constructor (used by the TomApplication, instance is initialized
             later in the TomApplication::parseCommandLine()). */
@@ -184,8 +187,6 @@ namespace Concerns
 
         /*! Repalce text tags with ANSI sequences. */
         static QString parseOutput(QString string, bool isAnsi = true);
-        /*! Remove tom ansi tags from the given string. */
-        static QString stripTags(QString string);
 
         /*! Initialize verbosity by set options in the command-line parser. */
         static Verbosity initializeVerbosity(const QCommandLineParser &parser);

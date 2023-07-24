@@ -330,6 +330,27 @@ bool InteractsWithIO::confirm(const QString &question, const bool defaultAnswer)
            answer == QLatin1String("yes");
 }
 
+QString InteractsWithIO::stripAnsiTags(QString string)
+{
+    return string
+            .replace(QStringLiteral("<note>"),     "")
+            .replace(QStringLiteral("</note>"),    "")
+            .replace(QStringLiteral("<info>"),     "")
+            .replace(QStringLiteral("<error>"),    "")
+            .replace(QStringLiteral("<comment>"),  "")
+            .replace(QStringLiteral("<blue>"),     "")
+            .replace(QStringLiteral("<gray>"),     "")
+            .replace(QStringLiteral("<b-blue>"),   "")
+            .replace(QStringLiteral("<b-white>"),  "")
+            .replace(QStringLiteral("</info>"),    "")
+            .replace(QStringLiteral("</error>"),   "")
+            .replace(QStringLiteral("</comment>"), "")
+            .replace(QStringLiteral("</blue>"),    "")
+            .replace(QStringLiteral("</gray>"),    "")
+            .replace(QStringLiteral("</b-blue>"),  "")
+            .replace(QStringLiteral("</b-white>"), "");
+}
+
 /* private */
 
 QString InteractsWithIO::parseOutput(QString string, const bool isAnsi)
@@ -356,28 +377,7 @@ QString InteractsWithIO::parseOutput(QString string, const bool isAnsi)
                 .replace(QStringLiteral("</b-white>"), QStringLiteral("\033[0m"));
 
     // no-ansi output
-    return stripTags(std::move(string));
-}
-
-QString InteractsWithIO::stripTags(QString string)
-{
-    return string
-            .replace(QStringLiteral("<note>"),     "")
-            .replace(QStringLiteral("</note>"),    "")
-            .replace(QStringLiteral("<info>"),     "")
-            .replace(QStringLiteral("<error>"),    "")
-            .replace(QStringLiteral("<comment>"),  "")
-            .replace(QStringLiteral("<blue>"),     "")
-            .replace(QStringLiteral("<gray>"),     "")
-            .replace(QStringLiteral("<b-blue>"),   "")
-            .replace(QStringLiteral("<b-white>"),  "")
-            .replace(QStringLiteral("</info>"),    "")
-            .replace(QStringLiteral("</error>"),   "")
-            .replace(QStringLiteral("</comment>"), "")
-            .replace(QStringLiteral("</blue>"),    "")
-            .replace(QStringLiteral("</gray>"),    "")
-            .replace(QStringLiteral("</b-blue>"),  "")
-            .replace(QStringLiteral("</b-white>"), "");
+    return stripAnsiTags(std::move(string));
 }
 
 InteractsWithIO::Verbosity
