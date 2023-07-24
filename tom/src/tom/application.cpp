@@ -5,7 +5,14 @@
 #include <QLibraryInfo>
 
 #include <range/v3/algorithm/contains.hpp>
+#include <range/v3/version.hpp>
 #include <range/v3/view/zip_with.hpp>
+
+/* This header exists from the tabulate v1.4.0, it has been added in the middle of v1.3.0
+   and didn't exist at the v1.3.0 release. */
+#if __has_include(<tabulate/tabulate.hpp>)
+#  include <tabulate/tabulate.hpp>
+#endif
 
 #include <orm/databasemanager.hpp>
 #include <orm/libraryinfo.hpp>
@@ -50,6 +57,8 @@ using fspath = std::filesystem::path;
 
 using Orm::Constants::EMPTY;
 using Orm::Constants::NEWLINE;
+using Orm::Constants::NOSPACE;
+using Orm::Constants::SPACE;
 using Orm::Constants::TMPL_ONE;
 using Orm::Constants::Version;
 
@@ -431,49 +440,67 @@ void Application::printFullVersions() const
     note(QStringLiteral("tom "), false);
     info(TINYTOM_VERSION_STR);
 
-    newLine();
-    comment("Dependencies:");
+    for (const auto &[subsectionName, abouts] : createVersionsSubsection()) {
+        // Subsection name is optional
+        if (subsectionName) {
+            newLine();
+            comment(*subsectionName);
+        }
 
-    note(QStringLiteral("TinyORM "), false);
-    info(TINYORM_VERSION_STR);
+        for (const auto &[name, value] : abouts) {
+            note(NOSPACE.arg(name).arg(SPACE), false);
+            info(value);
+        }
+    }
+}
 
-    note(QStringLiteral("Qt "), false);
-    info(QT_VERSION_STR);
+#define sl(str) QStringLiteral(str)
 
-    newLine();
-    comment("Build types:");
+QVector<SubSectionItem> Application::createVersionsSubsection()
+{
+    static const auto Debug_   = QStringLiteral("Debug");
+    static const auto Release_ = QStringLiteral("Release");
 
-    note(QStringLiteral("tom build type "), false);
-#ifdef TINYTOM_DEBUG
-    info(QStringLiteral("Debug"));
+    return {
+        {sl("Dependencies"),
+            {
+                {sl("TinyORM"),  TINYORM_VERSION_STR},
+                {sl("Qt"),       QT_VERSION_STR},
+                {sl("range-v3"), QStringLiteral("%1.%2.%3").arg(RANGE_V3_MAJOR)
+                                                           .arg(RANGE_V3_MINOR)
+                                                           .arg(RANGE_V3_PATCHLEVEL)},
+#if __has_include(<tabulate/tabulate.hpp>) && defined(TABULATE_VERSION_MAJOR) && \
+    defined(TABULATE_VERSION_MINOR) && defined(TABULATE_VERSION_PATCH)
+                {sl("tabulate"), QStringLiteral("%1.%2.%3").arg(TABULATE_VERSION_MAJOR)
+                                                           .arg(TABULATE_VERSION_MINOR)
+                                                           .arg(TABULATE_VERSION_PATCH)},
 #else
-    info(QStringLiteral("Release"));
+                {sl("tabulate"), QStringLiteral(
+                                     "<=1.3 (doesn't has <tabulate/tabulate.hpp>)")}}},
 #endif
-
-    note(QStringLiteral("TinyORM build type "), false);
-    info(LibraryInfo::isDebugBuild() ? QStringLiteral("Debug")
-                                     : QStringLiteral("Release"));
-
-    note(QStringLiteral("TinyORM full build type "), false);
-    info(LibraryInfo::build());
-
-    note(QStringLiteral("Qt build type "), false);
-    info(QLibraryInfo::isDebugBuild() ? QStringLiteral("Debug")
-                                      : QStringLiteral("Release"));
-
-    note(QStringLiteral("Qt full build type "), false);
-    info(QLibraryInfo::build());
-
-    newLine();
-    comment("Compiler:");
-
-    note(QStringLiteral("Compiler version "), false);
-    info(TINYORM_COMPILER_STRING);
-
+            }},
+        {sl("Build types"),
+            {
+#ifdef TINYTOM_DEBUG
+                {sl("tom build type"), Debug_},
+#else
+                {sl("tom build type"), Release_},
+#endif
+                {sl("TinyORM build type"),      LibraryInfo::isDebugBuild() ? Debug_
+                                                                            : Release_},
+                {sl("TinyORM full build type"), LibraryInfo::build()},
+                {sl("Qt build type"),           QLibraryInfo::isDebugBuild() ? Debug_
+                                                                             : Release_},
+                {sl("Qt full build type"),      QLibraryInfo::build()},
+            }},
+        {sl("Compiler"),
+            {
+                {sl("Compiler version"), TINYORM_COMPILER_STRING},
 #ifdef TINYORM_SIMULATED_STRING
-    note(QStringLiteral("Simulated compiler version "), false);
-    info(TINYORM_SIMULATED_STRING);
+                {sl("Simulated compiler version"), TINYORM_SIMULATED_STRING},
 #endif
+            }},
+    };
 }
 
 Q_NORETURN void Application::showCommandsList(const int exitCode)

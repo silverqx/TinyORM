@@ -204,6 +204,9 @@ namespace Concerns
         /*! Display the full version informations with dependecies, build types, and
             compiler. */
         void printFullVersions() const;
+        /*! Create the versions subsection container for the tom --version and tom about
+            commands. */
+        static QVector<SubSectionItem> createVersionsSubsection();
 
         /*! Invoke the list command. */
         Q_NORETURN void showCommandsList(int exitCode);
