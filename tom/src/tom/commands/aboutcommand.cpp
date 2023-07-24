@@ -13,6 +13,9 @@
 #include "tom/tomtypes.hpp"
 #include "tom/version.hpp"
 
+/*! Alias for the QStringLiteral(). */
+#define sl(str) QStringLiteral(str)
+
 TINYORM_BEGIN_COMMON_NAMESPACE
 
 using Orm::Constants::NOSPACE;
@@ -24,8 +27,6 @@ using Tom::Constants::json_;
 using Tom::Constants::only_;
 using Tom::Constants::only_up;
 using Tom::Constants::pretty;
-
-#define sl(str) QStringLiteral(str)
 
 namespace Tom::Commands
 {
