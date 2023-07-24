@@ -160,13 +160,10 @@ Application::Application(int &argc, char **argv, std::shared_ptr<DatabaseManager
     // Enable UTF-8 encoding and vt100 support
     Terminal::initialize();
 
-    // Following is not relevant in the auto test executables
-#ifndef TINYTOM_TESTS_CODE
+    QCoreApplication::setApplicationName(QStringLiteral("tom"));
     QCoreApplication::setOrganizationName(QStringLiteral("TinyORM"));
     QCoreApplication::setOrganizationDomain(QStringLiteral("tinyorm.org"));
-    QCoreApplication::setApplicationName(QStringLiteral("tom"));
     QCoreApplication::setApplicationVersion(TINYTOM_VERSION_STR);
-#endif
 
     // Print a newline at application's normal exit
 //    initializeAtExit();
