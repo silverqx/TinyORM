@@ -7,6 +7,7 @@ TINY_SYSTEM_HEADER
 
 #include <QVector>
 
+#include <memory>
 #include <optional>
 
 #include <orm/macros/commonnamespace.hpp>
