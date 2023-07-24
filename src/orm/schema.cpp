@@ -1,6 +1,5 @@
 #include "orm/schema.hpp"
 
-#include "orm/macros/likely.hpp"
 #include "orm/schema/schemabuilder.hpp"
 
 TINYORM_BEGIN_COMMON_NAMESPACE
@@ -166,11 +165,10 @@ SchemaBuilder &Schema::schemaBuilder(const QString &connection)
 
 DatabaseManager &Schema::manager()
 {
-    if (m_manager) T_LIKELY
+    if (m_manager)
         return *m_manager;
 
-    else T_UNLIKELY
-        return *(m_manager = DatabaseManager::instance());
+    return *(m_manager = DatabaseManager::instance());
 }
 
 } // namespace Orm

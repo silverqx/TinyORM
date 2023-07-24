@@ -1934,10 +1934,10 @@ namespace Orm::Tiny::Concerns
             if (!modifier.isValid()  || modifier.isNull() ||
                 !converted.isValid() || converted.isNull()
 #endif
-            ) T_LIKELY
+            )
                 return converted;
-            else T_UNLIKELY
-                return roundDecimals(converted, modifier);
+
+            return roundDecimals(converted, modifier);
         }
         // Others
         case CastType::QByteArray:
@@ -2629,22 +2629,22 @@ namespace Orm::Tiny::Concerns
 
         using CallbackWithAttributes = Attribute::CallbackWithAttributes;
 
-        if (std::holds_alternative<CallbackWithAttributes>(accessorVariant)) T_LIKELY
+        if (std::holds_alternative<CallbackWithAttributes>(accessorVariant))
             return std::invoke(attribute.get<CallbackWithAttributes>(),
                                convertVectorToModelAttributes(m_attributes));
-        else T_UNLIKELY
-            Q_UNREACHABLE();
+
+        Q_UNREACHABLE();
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     void HasAttributes<Derived, AllRelations...>::validateUserMutator(
             const QString &name, const QHash<QString, MutatorFunction> &userMutators)
     {
-        if (userMutators.contains(name)) T_LIKELY
+        // Nothing to do, mutator defined
+        if (userMutators.contains(name))
             return;
 
-        else T_UNLIKELY
-            throw Exceptions::MutatorMappingNotFoundError(
+        throw Exceptions::MutatorMappingNotFoundError(
                     TypeUtils::classPureBasename<Derived>(), name);
     }
 
@@ -2654,11 +2654,11 @@ namespace Orm::Tiny::Concerns
     {
         const auto typeId = Helpers::qVariantTypeId(value);
 
-        if (typeId != QMetaType::QDateTime && typeId != QMetaType::QDate) T_LIKELY
+        // Nothing to do, not a datetime
+        if (typeId != QMetaType::QDateTime && typeId != QMetaType::QDate)
             return;
 
-        else T_UNLIKELY
-            value = serializeDateOrDateTime(value);
+        value = serializeDateOrDateTime(value);
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>

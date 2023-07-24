@@ -1,7 +1,5 @@
 #include "orm/db.hpp"
 
-#include "orm/macros/likely.hpp"
-
 TINYORM_BEGIN_COMMON_NAMESPACE
 
 namespace Orm
@@ -625,11 +623,10 @@ void DB::resetStatementCounters(const QStringList &connections)
 
 DatabaseManager &DB::manager()
 {
-    if (m_manager) T_LIKELY
+    if (m_manager)
         return *m_manager;
 
-    else T_UNLIKELY
-        return *(m_manager = DatabaseManager::instance());
+    return *(m_manager = DatabaseManager::instance());
 }
 
 } // namespace Orm

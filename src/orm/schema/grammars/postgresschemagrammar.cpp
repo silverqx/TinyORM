@@ -2,7 +2,6 @@
 
 #include "orm/databaseconnection.hpp"
 #include "orm/exceptions/logicerror.hpp"
-#include "orm/macros/likely.hpp"
 #include "orm/utils/type.hpp"
 
 TINYORM_BEGIN_COMMON_NAMESPACE
@@ -937,11 +936,10 @@ PostgresSchemaGrammar::modifyVirtualAs(const ColumnDefinition &column) const // 
         return {};
 
     if (column.change) {
-        if (column.virtualAs->isEmpty()) T_LIKELY
+        if (column.virtualAs->isEmpty())
             return {QStringLiteral("drop expression if exists")};
 
-        else T_UNLIKELY
-            throwIfModifyingGeneratedColumn();
+        throwIfModifyingGeneratedColumn();
     }
 
     return {QStringLiteral(" generated always as (%1)").arg(*column.virtualAs)};
@@ -954,11 +952,10 @@ PostgresSchemaGrammar::modifyStoredAs(const ColumnDefinition &column) const // N
         return {};
 
     if (column.change) {
-        if (column.storedAs->isEmpty()) T_LIKELY
+        if (column.storedAs->isEmpty())
             return {QStringLiteral("drop expression if exists")};
 
-        else T_UNLIKELY
-            throwIfModifyingGeneratedColumn();
+        throwIfModifyingGeneratedColumn();
     }
 
     return {QStringLiteral(" generated always as (%1) stored").arg(*column.storedAs)};
