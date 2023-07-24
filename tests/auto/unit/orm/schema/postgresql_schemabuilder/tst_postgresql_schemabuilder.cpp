@@ -3,7 +3,6 @@
 
 #include "orm/db.hpp"
 #include "orm/exceptions/invalidargumenterror.hpp"
-#include "orm/exceptions/logicerror.hpp"
 #include "orm/schema.hpp"
 #include "orm/utils/type.hpp"
 
