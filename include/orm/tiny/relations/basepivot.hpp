@@ -128,12 +128,13 @@ namespace Orm::Tiny::Relations
        It's not true eg. if you call Tagged::create()/save()/update()/..., in all this
        cases the Ignored u_xyz data members are taken into account normally❗
 
-       Ignored  : u_connection, u_timestamps, CREATED_AT, UPDATED_AT
+       Ignored  : u_connection, u_timestamps, CREATED_AT(), UPDATED_AT()
        Accepted : u_attributes, u_dates, u_dateFormat, u_fillable, u_guarded,
                   u_incrementing, u_table
 
        Notes : u_connection - inferred from the parent model
-               u_timestamps - true if attributes contain both CREATED_AT and UPDATED_AT
+               u_timestamps - true if obtained pivot attributes contain both CREATED_AT
+                              and UPDATED_AT
                CREATED/UPDATED_AT - inferred from the parent model, can be overridden
                                     using the withTimestamps() method
     */
