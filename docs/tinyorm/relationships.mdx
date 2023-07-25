@@ -700,16 +700,16 @@ Do you see the confusing part? In short, if defining the `User::roles()` relatio
 
 The same is true for the basic `Pivot` model, if you are using a basic pivot model and not a custom pivot model you still need to add the `Pivot` type to the `AllRelations` template parameter pack on the `Model` class!
 
-The reason for all of this is so that the `Model` knows how to generate a `std::variant` to hold the pivot model in the `Model::m_relations` data member hash map, which you get using the `Model::getRelationValue` or `Model::getRelation` methods.
+The reason for all of this is that the `Model` knows how to generate and work with the `std::variant` that holds the pivot model in the `Model::m_relations` data member map, then you can get the pivot model using the `Model::getRelationValue` or `Model::getRelation` methods.
 
 ##### User Data Members on Custom Intermediate Table Models
 
-This is another nonstandard part of the custom pivot models. The `u_connection` and `u_timestamps` user data members and the `CREATED_AT` and `UPDATED_AT` static data members are ignored when obtaining pivot records from the database during the lazy or eager loading.
+This is another nonstandard part of the custom pivot models. The `u_connection` and `u_timestamps` user data members and the `CREATED_AT()` and `UPDATED_AT()` static getter methods are ignored when obtaining pivot records from the database during the lazy or eager loading.
 
 Let's describe how these data members are resolved:
 
  - `u_connection` - inferred from the parent model
- - `u_timestamps` - true if obtained attributes contain both the `CREATED_AT` and `UPDATED_AT` attributes
+ - `u_timestamps` - true if obtained pivot attributes contain both the `CREATED_AT` and `UPDATED_AT` attributes
  - `CREATED_AT`, `UPDATED_AT` - inferred from the parent model, can be overridden using the `withTimestamps()` method
 
 All these data members are taken into account normally when you call the `create`, `save`, `update`, ... on the Custom Pivot models!

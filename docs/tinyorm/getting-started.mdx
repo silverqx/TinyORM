@@ -257,7 +257,7 @@ To create unix timestamp columns using the [tom migrations](/database/migrations
 
 ##### Custom timestamp column names
 
-If you need to customize the names of the columns used to store the timestamps, you may define `CREATED_AT` and `UPDATED_AT` private getter methods on your model:
+If you need to customize the names of the columns used to store the timestamps, you may define `CREATED_AT` and `UPDATED_AT` private static getter methods on your model:
 
     #include <orm/tiny/model.hpp>
 
