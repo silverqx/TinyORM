@@ -2,7 +2,7 @@
 
 ## Reporting a Vulnerability
 
-Report vulnerabilities on the GitHub issue tracker or send me email directly.
+You're able to report vulnerabilities on the GitHub issue tracker or email me directly.
 
-Security vulnerabilities have highest priority and will be fixed immediately.
+Security vulnerabilities have the highest priority and will be fixed immediately.
 
