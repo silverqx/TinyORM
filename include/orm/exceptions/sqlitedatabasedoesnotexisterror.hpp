@@ -32,7 +32,7 @@ namespace Orm::Exceptions
     SQLiteDatabaseDoesNotExistError::SQLiteDatabaseDoesNotExistError(const QString &path)
         : InvalidArgumentError(QStringLiteral(
                                    "SQLite Database file '%1' does not exist, please "
-                                   " insert an absolute path to the database.")
+                                   "insert an absolute path to the database.")
                                .arg(path).toUtf8().constData())
         , m_path(path)
     {}
