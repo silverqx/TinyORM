@@ -48,7 +48,7 @@ CONFIG(shared, dll|shared|static|staticlib) | \
 CONFIG(dll, dll|shared|static|staticlib) {
     # Support override because inline_constants can be used in the shared build too
     !inline_constants: \
-        CONFIG += extern_constants
+        CONFIG *= extern_constants
 }
 # Archive library build (static build)
 else: \
