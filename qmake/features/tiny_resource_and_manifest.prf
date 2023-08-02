@@ -22,6 +22,10 @@ defineTest(tiny_resource_and_manifest) {
     # Windows Resource file
     rcFile = $$tiny_configure_cmake_rc($$resourcesFolder, $$targetExt, $$3, $$4)
 
+    # Remove the RC file on make clean and distclean
+    QMAKE_CLEAN += $$rcFile
+    QMAKE_DISTCLEAN += $$rcFile
+
     # Needed in the RC file, MinGW does not define _DEBUG macro
     mingw:CONFIG(debug, debug|release): DEFINES += _DEBUG
 
@@ -47,6 +51,8 @@ defineTest(tiny_resource_and_manifest) {
     export(RC_FILE)
     export(CONFIG)
     export(QMAKE_LFLAGS)
+    export(QMAKE_CLEAN)
+    export(QMAKE_DISTCLEAN)
 }
 
 # Substitute cmake variables in the Windows RC file, is better to reuse existing Windows
