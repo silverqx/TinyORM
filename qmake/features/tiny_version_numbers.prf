@@ -1,5 +1,5 @@
 # Find version numbers in the version header file and assign them to the
-# <TARGET>_VERSION_<MAJOR,MINOR,PATCH,TWEAK> and also to the VERSION variable.
+# <TARGET>_VERSION_<MAJOR,MINOR,PATCH,TWEAK> and also to the VERSION qmake variables.
 defineTest(tiny_version_numbers) {
     defined(1, var): \
     !isEmpty(1): \

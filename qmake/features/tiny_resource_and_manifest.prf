@@ -1,11 +1,11 @@
 # Include Windows resource and manifest files.
 defineTest(tiny_resource_and_manifest) {
-    # Relevant for Windows build only
+    # Relevant for Windows builds only
     !win32: return()
-    # Relevant for exe or shared library
+    # Relevant for executable or shared library only
     !contains(TEMPLATE, ".*(lib|app)$"): \
         return()
-    # Library archive does not need RC or manifest file
+    # Library archive does not need RC or manifest files
     contains(TEMPLATE, ".*lib$"): \
     !CONFIG(shared, dll|shared|static|staticlib): \
     !CONFIG(dll, dll|shared|static|staticlib): \
