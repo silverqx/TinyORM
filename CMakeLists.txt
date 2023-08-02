@@ -46,7 +46,7 @@ set(CMAKE_AUTOMOC ON)
 # ---
 # Older vesions may work, but you are on your own
 # Req - requirement, throws error
-# Rec - recommended, shows message
+# Rec - recommended, shows info message
 
 # Compilers
 # 16.10/16.11 (1929) to support pragma system_header
