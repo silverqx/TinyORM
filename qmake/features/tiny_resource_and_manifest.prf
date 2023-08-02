@@ -64,7 +64,7 @@ defineReplace(tiny_configure_cmake_rc) {
 
     rcFile = $$absolute_path($$1/$${rcBasename}.rc.in)
 
-    exists(rcFile) {
+    !exists($$rcFile) {
         error( "Windows RC file $$rcFile does not exists, the path passed to the\
                 tiny_configure_cmake_rc() was $${1}." )
     }
