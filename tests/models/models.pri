@@ -33,6 +33,3 @@ HEADERS += \
     $$PWD/models/torrentstate.hpp \
     $$PWD/models/type.hpp \
     $$PWD/models/user.hpp \
-
-#SOURCES += \
-#    $$PWD/models/example.cpp \
