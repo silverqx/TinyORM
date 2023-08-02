@@ -13,8 +13,8 @@ defineTest(tiny_version_numbers) {
     else:contains(_PRO_FILE_, ".*\/examples\/tom\/tom\.pro$"): \
         versionHeader = $$absolute_path("../tom/include/tom/version.hpp")
 
+    # Try to find in the HEADERS
     else: \
-        # Try to find in the HEADERS
         versionHeader = $$find(HEADERS, "(?:.*\/)?version\.h(?:pp)?$")
 
     versionHeader = $$clean_path($$absolute_path($$versionHeader))
