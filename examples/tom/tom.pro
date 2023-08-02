@@ -7,7 +7,7 @@ TARGET = tom
 # TinyTom example application specific configuration
 # ---
 
-CONFIG *= console
+CONFIG *= cmdline
 
 include($$TINYORM_SOURCE_TREE/qmake/tom.pri)
 

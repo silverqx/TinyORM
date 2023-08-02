@@ -7,7 +7,7 @@ TARGET = tom_testdata
 # TinyTom migrations for unit tests specific configuration
 # ---
 
-CONFIG *= console
+CONFIG *= cmdline
 
 include($$TINYORM_SOURCE_TREE/qmake/tom.pri)
 

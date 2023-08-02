@@ -6,7 +6,7 @@ TEMPLATE = app
 # Tests specific configuration
 # ---
 
-CONFIG *= qt console testcase link_prl
+CONFIG *= qt cmdline testcase link_prl
 
 # Common configuration
 # ---
