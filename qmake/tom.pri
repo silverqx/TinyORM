@@ -21,7 +21,7 @@ CONFIG(dll, dll|shared|static|staticlib): \
 
 # Disable the ORM-related source code
 disable_orm: DEFINES *= TINYORM_DISABLE_ORM
-# Prohibit disabling the tom-related source code and header files
+# Forbid disabling the tom-related source code and header files
 disable_tom: \
     error( "Disabling the tom is forbidden in the tom.pri, please remove\
             the 'disable_tom' configuration." )
@@ -37,9 +37,9 @@ tiny_version_numbers($$quote($$TINYTOM_SOURCE_TREE/include/tom/version.hpp))
 # Windows resource and manifest files
 # ---
 
-# Find version.hpp
+# To find version.hpp
 tinyRcIncludepath = $$quote($$TINYTOM_SOURCE_TREE/include/)
-# Find Windows manifest
+# To find Windows manifest
 mingw: tinyRcIncludepath += $$quote($$TINYTOM_SOURCE_TREE/resources/)
 
 load(tiny_resource_and_manifest)
