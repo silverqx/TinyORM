@@ -13,4 +13,5 @@ INCLUDEPATH += $$quote($$TINYORM_SOURCE_TREE/tests/TinyUtils/src/)
 # Link against tests's TinyUtils library
 # ---
 
-LIBS += $$quote(-L$$TINYORM_BUILD_TREE/tests/TinyUtils$$TINY_BUILD_SUBFOLDER/) -lTinyUtils
+LIBS += $$quote(-L$$TINYORM_BUILD_TREE/tests/TinyUtils$$TINY_BUILD_SUBFOLDER/)
+LIBS += -lTinyUtils
