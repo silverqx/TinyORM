@@ -21,7 +21,7 @@ defineTest(tiny_version_numbers) {
 
     isEmpty(versionHeader)| \
     !exists($$versionHeader): \
-        error( "HEADERS does not contain a version header file version.hpp, needed\
+        error( "HEADERS does not contain a version header file 'version.hpp', needed\
                 in the tiny_version_numbers.prf." )
 
     versionFileContent = $$cat($$quote($$versionHeader), lines)
