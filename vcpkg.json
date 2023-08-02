@@ -2,7 +2,7 @@
   "$schema": "https://raw.githubusercontent.com/microsoft/vcpkg-tool/main/docs/vcpkg.schema.json",
   "name": "tinyorm",
   "version-semver": "0.1.0",
-  "description": "c++ orm library for the Qt framwork",
+  "description": "C++ ORM library for Qt framework",
   "homepage": "https://github.com/silverqx/TinyORM",
   "documentation": "https://www.tinyorm.org",
   "maintainers": "Silver Zachara <silver.zachara@gmail.com>",
