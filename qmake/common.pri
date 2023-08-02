@@ -94,6 +94,9 @@ win32: include(winconf.pri)
 macx: include(macxconf.pri)
 mingw|if(unix:!macx): include(unixconf.pri)
 
+!if(win32|macx|if(mingw|if(unix:!macx))): \
+    message( "Unsupported platform ($${QMAKE_PLATFORM}-$${QMAKE_COMPILER})." )
+
 # Common Variables
 # ---
 
