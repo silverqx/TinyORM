@@ -58,9 +58,8 @@ win32-msvc {
 # clang-cl.exe notes:
 # /RTC    - https://lists.llvm.org/pipermail/cfe-commits/Week-of-Mon-20130902/088105.html
 # /bigobj - clang-cl uses it by default - https://reviews.llvm.org/D12981
-win32-clang-msvc {
+win32-clang-msvc: \
     QMAKE_CXXFLAGS_WARN_ON = -WX -W4
-}
 
 win32-msvc|win32-clang-msvc {
     # I don't use -MP flag because using the jom

@@ -86,14 +86,14 @@ build_tests {
 
     QMAKE_EXTRA_TARGETS += sqlitedatabase sqlitedatabase_message
 
-    !exists($$TINYORM_SQLITE_DATABASE) {
+    !exists($$TINYORM_SQLITE_DATABASE): \
         POST_TARGETDEPS += sqlitedatabase
-    }
 
     # Set path to the SQLite database
-    # ---
-    contains(TEMPLATE, vc.*): DEFINES += TINYORM_SQLITE_DATABASE=\"$$TINYORM_SQLITE_DATABASE\"
-    else: DEFINES += TINYORM_SQLITE_DATABASE=$$shell_quote(\"$$TINYORM_SQLITE_DATABASE\")
+    contains(TEMPLATE, vc.*): \
+        DEFINES += TINYORM_SQLITE_DATABASE=\"$$TINYORM_SQLITE_DATABASE\"
+    else: \
+        DEFINES += TINYORM_SQLITE_DATABASE=$$shell_quote(\"$$TINYORM_SQLITE_DATABASE\")
 }
 
 # Clean the SQLite database

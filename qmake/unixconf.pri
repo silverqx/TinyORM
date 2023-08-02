@@ -39,8 +39,8 @@ clang {
                 $$QMAKE_CXXFLAGS_PRECOMPILE
     }
 }
-gcc: \
-    QMAKE_CXXFLAGS_WARN_ON *= -Wdeprecated-copy-dtor
+
+gcc: QMAKE_CXXFLAGS_WARN_ON *= -Wdeprecated-copy-dtor
 
 # Clang 12 still doesn't support -Wstrict-null-sentinel
 !clang: QMAKE_CXXFLAGS_WARN_ON *= -Wstrict-null-sentinel

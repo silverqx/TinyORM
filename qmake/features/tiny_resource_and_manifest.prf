@@ -64,10 +64,9 @@ defineReplace(tiny_configure_cmake_rc) {
 
     rcFile = $$absolute_path($$1/$${rcBasename}.rc.in)
 
-    !exists($$rcFile) {
+    !exists($$rcFile): \
         error( "Windows RC file $$rcFile does not exists, the path passed to the\
                 tiny_configure_cmake_rc() was $${1}." )
-    }
 
     # Obtain a full filepath of the Windows RC file
     rcFilename = $$str_member($$rcFile, 0, -4)
@@ -109,9 +108,8 @@ defineReplace(tiny_configure_cmake_rc) {
     rcFileContent ~= s/\\$<TARGET_FILE_SUFFIX:$$TARGET>/$$2
     rcFileContent ~= s/@pragma_codepage@/$$pragmaCodepage
 
-    !write_file($$rcFilepath, rcFileContent) {
+    !write_file($$rcFilepath, rcFileContent): \
         error( "Can not write to the file $${rcFilepath}." )
-    }
 
     return($$rcFilepath)
 }

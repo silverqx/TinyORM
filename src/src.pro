@@ -91,14 +91,18 @@ win32-msvc:CONFIG(debug, debug|release) {
 # ---
 
 !build_pass {
-    CONFIG(debug, debug|release):   message( "Project is built in DEBUG mode." )
-    CONFIG(release, debug|release): message( "Project is built in RELEASE mode." )
+    CONFIG(debug, debug|release): \
+        message( "Project is built in DEBUG mode." )
+    CONFIG(release, debug|release): \
+        message( "Project is built in RELEASE mode (disabled debug output and asserts)." )
 
-    !disable_orm: message("Build ORM-related source code.")
-    else:         message("Disable ORM-related source code (build the query builder \
-only).")
+    !disable_orm: \
+        message( "Build ORM-related source code." )
+    else: \
+        message( "Disabled ORM-related source code (build the query builder only)." )
 
-    mysql_ping: message("Enable MySQL ping on Orm::MySqlConnection.")
+    mysql_ping: \
+        message( "Enabled MySQL ping on Orm::MySqlConnection." )
 }
 
 # User Configuration
