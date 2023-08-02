@@ -1,4 +1,6 @@
+# Path to the TinyORM source tree
 TINYORM_SOURCE_TREE = $$clean_path($$quote($$PWD/..))
+# Path to the Tom source tree
 TINYTOM_SOURCE_TREE = $$quote($$TINYORM_SOURCE_TREE/tom)
 
 # Also Provides:
