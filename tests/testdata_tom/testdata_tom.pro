@@ -57,6 +57,6 @@ exists(conf.pri): \
 #    include(../qmake/vcpkgconf.pri)
 
 else: \
-    error( "'conf.pri' for 'tom' example project does not exist. See an example\
+    error( "'conf.pri' for '$${TARGET}' example project does not exist. See an example\
             configuration in 'examples/tom/conf.pri.example' or call 'vcpkg install'\
             in the project's root." )
