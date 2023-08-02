@@ -16,14 +16,6 @@ include($$TINYORM_SOURCE_TREE/qmake/tom.pri)
 
 DEFINES += PROJECT_TOM_EXAMPLE
 
-# TinyTom defines
-# ---
-# this define is not provided in the qmake/tom.pri
-
-# Enable code needed by tests (modify the migrate:status command for tests need)
-build_tests: \
-    DEFINES *= TINYTOM_TESTS_CODE
-
 # TinyTom example application header and source files
 # ---
 

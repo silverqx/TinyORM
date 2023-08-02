@@ -16,18 +16,6 @@ include($$TINYORM_SOURCE_TREE/qmake/tom.pri)
 
 DEFINES += PROJECT_TOM_TESTDATA
 
-# TinyTom defines
-# ---
-# this define is not provided in the qmake/tom.pri
-
-# Another thing is that this project is build only if the build_tests qmake config option
-# is defined, but I leave this condition below because this logic is ok and there can be
-# edge cases like building the testdata_tom project stand-alone or whatever
-
-# Enable code needed by tests (modify the migrate:status command for tests need)
-build_tests: \
-    DEFINES *= TINYTOM_TESTS_CODE
-
 # TinyTom migrations for unit tests header and source files
 # ---
 
