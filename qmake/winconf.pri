@@ -63,7 +63,7 @@ win32-clang-msvc {
 }
 
 win32-msvc|win32-clang-msvc {
-    # I don't use -MP flag, because using jom
+    # I don't use -MP flag because using the jom
     QMAKE_LFLAGS += /guard:cf /WX
     # Looks like clang-cl does know nothing about these, for now enabling
     QMAKE_LFLAGS_RELEASE += /OPT:REF,ICF=5
