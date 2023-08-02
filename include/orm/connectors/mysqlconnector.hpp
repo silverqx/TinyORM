@@ -58,6 +58,9 @@ namespace Orm::Connectors
                                    const QVariantHash &config);
 
     private:
+        /*! Get the MySQL server version querying the database server. */
+        static QString getMySqlVersionFromDatabase(const QSqlDatabase &connection);
+
         /*! The default QSqlDatabase connection options for the MySqlConnector. */
         inline static const QVariantHash m_options;
     };

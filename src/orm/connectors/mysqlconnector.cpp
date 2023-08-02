@@ -171,26 +171,20 @@ QString MySqlConnector::strictMode(const QSqlDatabase &connection,
 QString MySqlConnector::getMySqlVersion(const QSqlDatabase &connection,
                                         const QVariantHash &config)
 {
+    static QString MySqlVersionCache;
+
+    // Return the cached MySQL version
+    if (!MySqlVersionCache.isEmpty())
+        return MySqlVersionCache;
+
     // Get the MySQL version from the configuration if it was defined and is valid
     if (auto configVersionValue = ConfigUtils::getValidConfigVersion(config);
         !configVersionValue.isEmpty()
     )
-        return configVersionValue;
+        return MySqlVersionCache = configVersionValue;
 
     // Obtain the MySQL version from the database
-    QSqlQuery query(connection);
-
-    if (!query.exec(QStringLiteral("select version()")))
-        throw Exceptions::QueryError(connection.connectionName(),
-                                     m_configureErrorMessage.arg(__tiny_func__), query);
-
-    if (!query.first())
-        throw Exceptions::RuntimeError(
-                QStringLiteral("Error during connection configuration, can not "
-                               "obtain the first record in %1().")
-                .arg(__tiny_func__));
-
-    return query.value(0).value<QString>();
+    return MySqlVersionCache = getMySqlVersionFromDatabase(connection);
 }
 
 void MySqlConnector::setCustomModes(const QSqlDatabase &connection,
@@ -205,6 +199,33 @@ void MySqlConnector::setCustomModes(const QSqlDatabase &connection,
 
     throw Exceptions::QueryError(connection.connectionName(),
                                  m_configureErrorMessage.arg(__tiny_func__), query);
+}
+
+/* private */
+
+QString MySqlConnector::getMySqlVersionFromDatabase(const QSqlDatabase &connection)
+{
+    QSqlQuery query(connection);
+
+    if (!query.exec(QStringLiteral("select version()")))
+        throw Exceptions::QueryError(connection.connectionName(),
+                                     m_configureErrorMessage.arg(__tiny_func__), query);
+
+    if (!query.first())
+        throw Exceptions::RuntimeError(
+                QStringLiteral("Error during connection configuration, can not "
+                               "obtain the first record in %1().")
+                .arg(__tiny_func__));
+
+    auto version = query.value(0).value<QString>();
+
+    if (version.isEmpty())
+        throw Exceptions::RuntimeError(
+                QStringLiteral("The MySQL or MariaDB server returned an empty database "
+                               "version number in %1().")
+                .arg(__tiny_func__));
+
+    return version;
 }
 
 } // namespace Orm::Connectors
