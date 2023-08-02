@@ -59,9 +59,7 @@ namespace Orm::Connectors
 
     private:
         /*! The default QSqlDatabase connection options for the MySqlConnector. */
-        inline static const QVariantHash m_options {
-            {QLatin1String("MYSQL_OPT_RECONNECT"), 0},
-        };
+        inline static const QVariantHash m_options;
     };
 
 } // namespace Orm::Connectors
