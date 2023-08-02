@@ -14,7 +14,7 @@ include($$TINYORM_SOURCE_TREE/qmake/tom.pri)
 # TinyTom example application defines
 # ---
 
-DEFINES += PROJECT_TOMEXAMPLE
+DEFINES += PROJECT_TOM_EXAMPLE
 
 # TinyTom defines
 # ---

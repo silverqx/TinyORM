@@ -60,7 +60,7 @@ target_include_directories(${TomExample_target} PRIVATE
 
 target_compile_definitions(${TomExample_target}
     PRIVATE
-        PROJECT_TOMEXAMPLE
+        PROJECT_TOM_EXAMPLE
 )
 
 # Windows resource and manifest files
