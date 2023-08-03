@@ -1,0 +1,50 @@
+# The cross-platform INCLUDEPATH, use the -isystem on MinGW and Unix, the -imsvc
+# on clag-cl with MSVC, otherwise, use only the INCLUDEPATH. The INCLUDEPATH is set
+# in all cases.
+defineTest(tiny_add_system_includepath) {
+    systemIncludePathsRaw = $$1
+    includePaths =
+    systemIncludePaths =
+
+    for(systemIncludePathRaw, systemIncludePathsRaw) {
+        # Nothing to do
+        isEmpty(systemIncludePathRaw)| \
+        !exists($$systemIncludePathRaw): \
+            next()
+
+        systemIncludePath = $$clean_path($$systemIncludePathRaw)
+
+        # MSVC and others
+        includePaths += $$quote($$systemIncludePath)
+
+        # clang-cl with MSVC
+        win32-clang-msvc: \
+            systemIncludePaths += -imsvc $$shell_quote($$systemIncludePath)
+
+        # Unix or MinGW
+        else:unix|win32-g++|win32-clang-g++: \
+            systemIncludePaths += -isystem $$shell_quote($$systemIncludePath)
+    }
+
+    # Nothing to do
+    isEmpty(includePaths): \
+        return()
+
+    # MSVC and others (eg. qmake internals need it)
+    # The g++ or clang++ on Unix doesn't need to set the -Ixyz include path if
+    # the -isystem is set, but the INCLUDEPATH must be set because the qmake and also
+    # QtCreator code completion depends on it, so it must be set in all cases, even
+    # when it's not needed.
+    # Note:
+    # The clang-cl with MSVC also doesn't need the -Ixyz if the -imsvc is set,
+    # it compiles without problems without it, but the QtCreator code completion and
+    # syntax highlighting is corrupted without it.
+    INCLUDEPATH += $$includePaths
+    export(INCLUDEPATH)
+
+    # clang-cl with MSVC, Unix, or MinGW
+    win32-clang-msvc|unix|win32-g++|win32-clang-g++ {
+        QMAKE_CXXFLAGS += $$systemIncludePaths
+        export(QMAKE_CXXFLAGS)
+    }
+}

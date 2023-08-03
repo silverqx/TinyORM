@@ -1,0 +1,43 @@
+# Prepare the TINY_VCPKG_ROOT (take into account also the VCPKG_ROOT environment variable)
+defineReplace(tiny_vcpkg_root) {
+    # Defined by the user
+    vcpkgRoot = $$TINY_VCPKG_ROOT
+
+    !isEmpty(vcpkgRoot): \
+        return($$vcpkgRoot)
+
+    # Use the VCPKG_ROOT environment variable
+    vcpkgRoot = $$(VCPKG_ROOT)
+
+    !isEmpty(vcpkgRoot): \
+        return($$vcpkgRoot)
+
+    return()
+}
+
+# Guess the vcpkg triplet on the base of the current compiler and OS (QMAKESPEC)
+defineReplace(tiny_vcpkg_triplet) {
+    # Defined by the user
+    vcpkgTriplet = $$TINY_VCPKG_TRIPLET
+
+    !isEmpty(vcpkgTriplet): \
+        return($$vcpkgTriplet)
+
+    # Try to guess
+    win32-msvc|win32-clang-msvc: \
+        return(x64-windows)
+
+    # MinGW
+    win32-g++|win32-clang-g++: \
+        return(x64-mingw-dynamic)
+
+    unix:!macx: \
+        return(x64-linux)
+
+    vcpkgTriplet = $$(VCPKG_DEFAULT_TRIPLET)
+
+    !isEmpty(vcpkgTriplet): \
+        return($$vcpkgTriplet)
+
+    return()
+}
