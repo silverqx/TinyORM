@@ -12,15 +12,15 @@ defineTest(tiny_resource_and_manifest) {
         return()
 
     # Path to the resources folder, relative to the currently processed project
-    isEmpty(2): resourcesFolder = $$absolute_path(resources, $$_PRO_FILE_PWD_)
-    else: resourcesFolder = $$absolute_path($$2)
+    isEmpty(2): resourcesPath = $$absolute_path(resources, $$_PRO_FILE_PWD_)
+    else: resourcesPath = $$absolute_path($$2)
 
     # Target's extension
     contains(TEMPLATE, ".*app"): targetExt = ".exe"
     else:contains(TEMPLATE, ".*lib"): targetExt = ".dll"
 
     # Windows Resource file
-    rcFile = $$tiny_configure_cmake_rc($$resourcesFolder, $$targetExt, $$3, $$4)
+    rcFile = $$tiny_configure_cmake_rc($$resourcesPath, $$targetExt, $$3, $$4)
 
     # Remove the RC file on make clean and distclean
     QMAKE_CLEAN += $$rcFile
@@ -44,7 +44,7 @@ defineTest(tiny_resource_and_manifest) {
         QMAKE_LFLAGS += \
             /MANIFEST:EMBED \
             /MANIFESTINPUT:$$shell_quote($$shell_path(\
-                $$resourcesFolder/$${manifestBasename}$${targetExt}.manifest))
+                $$resourcesPath/$${manifestBasename}$${targetExt}.manifest))
 
     export(DEFINES)
     export(RC_INCLUDEPATH)
