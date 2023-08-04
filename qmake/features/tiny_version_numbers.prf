@@ -19,7 +19,7 @@ defineTest(tiny_version_numbers) {
 
     versionHeader = $$clean_path($$absolute_path($$versionHeader))
 
-    isEmpty(versionHeader)| \
+    isEmpty(versionHeader) | \
     !exists($$versionHeader): \
         error( "HEADERS does not contain a version header file 'version.hpp', needed\
                 in the tiny_version_numbers.prf." )
@@ -32,7 +32,7 @@ defineTest(tiny_version_numbers) {
     versionList =
     hasStatus = false
 
-    isEmpty(versionFileContent)| \
+    isEmpty(versionFileContent) | \
     isEmpty(versionLines): \
         error( "Parse of the '$$versionHeader' version file failed." )
 

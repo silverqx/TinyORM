@@ -8,7 +8,7 @@ defineTest(tiny_add_system_includepath) {
 
     for(systemIncludePathRaw, systemIncludePathsRaw) {
         # Nothing to do
-        isEmpty(systemIncludePathRaw)| \
+        isEmpty(systemIncludePathRaw) | \
         !exists($$systemIncludePathRaw): \
             next()
 
