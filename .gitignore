@@ -30,7 +30,6 @@ qrc_*.cpp
 Thumbs.db
 *.res
 *.rc
-!/resources/*.rc
 /.qmake.cache
 /.qmake.stash
 *.tmp
@@ -91,7 +90,7 @@ Thumbs.db
 # others
 ~$*.xlsx
 conf.pri
-/TODOS.silverqx.txt
+/TODOS.*.txt
 /compile_commands.json
 /database/
 /examples/tom/database/
