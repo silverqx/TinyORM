@@ -93,6 +93,9 @@ conf.pri
 /TODOS.*.txt
 /compile_commands.json
 /database/
+/.env
+/.env.*
+!/.env.*.example
 /examples/tom/database/
 /exports*.txt
 /exports.xlsx

@@ -7,6 +7,11 @@
                 duplicit symbols, you can try to fix it :)." )
 }
 
+# Load .env and .env.$$QMAKE_PLATFORM files
+# ---
+
+include($$PWD/features/tiny_dotenv.prf)
+
 # Common Configuration ( also for tests )
 # ---
 

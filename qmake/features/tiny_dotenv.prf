@@ -1,0 +1,36 @@
+# Get the project's root path where the .env files should be placed.
+defineReplace(tiny_dotenv_root) {
+    !isEmpty(TINY_DOTENV_ROOT): \
+        return($$clean_path($$TINY_DOTENV_ROOT))
+
+    return($$_PRO_FILE_PWD_)
+}
+
+# Get the current platform based on the $$QMAKE_PLATFORM.
+defineReplace(tiny_dotenv_platform) {
+    unix:  return(unix)
+    mingw: return(mingw)
+    mac:   return(mac)
+    bsd:   return(bsd)
+
+    # This mapping must be managed manually so throw an error because the fix is
+    # very simple and can be made asap.
+    qmakePlatformSize = $$size(QMAKE_PLATFORM)
+
+    greaterThan(qmakePlatformSize, 1): \
+        error( "Needed to add mapping for '$${QMAKE_PLATFORM}'\
+                in the tiny_dotenv_platform()." )
+
+    return($$QMAKE_PLATFORM)
+}
+
+TINY_DOTENV_ROOT = $$tiny_dotenv_root()
+TINY_DOTENV_PLATFORM = $$tiny_dotenv_platform()
+
+# The .env file is included always
+exists($${TINY_DOTENV_ROOT}/.env): \
+    include($${TINY_DOTENV_ROOT}/.env)
+
+# The .env.$$TINY_DOTENV_PLATFORM file is included only for the current platform
+exists($${TINY_DOTENV_ROOT}/.env.$${TINY_DOTENV_PLATFORM}): \
+    include($${TINY_DOTENV_ROOT}/.env.$${TINY_DOTENV_PLATFORM})
