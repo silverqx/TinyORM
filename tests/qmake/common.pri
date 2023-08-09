@@ -73,3 +73,13 @@ exists(../conf.pri): \
 else: \
     error( "'tests/conf.pri' for 'tests' project does not exist. See an example\
             configuration in 'tests/conf.pri.example'." )
+
+# CONFIG tiny_autoconf
+# ---
+
+tiny_autoconf {
+    load(tiny_find_packages)
+
+    # Find the vcpkg and add the vcpkg/<triplet>/include/ on the system include path
+    tiny_find_vcpkg()
+}

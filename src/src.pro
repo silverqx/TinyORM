@@ -118,3 +118,16 @@ else: \
     error( "'conf.pri' for '$${TARGET}' project does not exist. See an example\
             configuration in 'conf.pri.example' or call 'vcpkg install'\
             in the project's root." )
+
+# CONFIG tiny_autoconf
+# ---
+
+tiny_autoconf {
+    load(tiny_find_packages)
+
+    # Find the vcpkg and add the vcpkg/<triplet>/include/ on the system include path
+    tiny_find_vcpkg()
+
+    # Find the MySQL and add it on the system include path and library path
+    mysql_ping: tiny_find_mysql()
+}

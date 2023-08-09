@@ -14,40 +14,60 @@ include($$TINYORM_SOURCE_TREE/tests/database/seeders.pri)
 # Dependencies include and library paths
 # ---
 
+load(tiny_system_includepath)
+
 # MinGW
 win32-g++|win32-clang-g++ {
     # Enable ccache wrapper
-    CONFIG *= tiny_ccache
-
-    # Includes
-    # tabulate
-    INCLUDEPATH += $$quote(C:/msys64/home/xyz/vcpkg/installed/x64-mingw-dynamic/include/)
-    QMAKE_CXXFLAGS += -isystem $$shell_quote(C:/msys64/home/xyz/vcpkg/installed/x64-mingw-dynamic/include/)
+#    CONFIG *= tiny_ccache
 
     # Use faster linker
     # CONFIG *= use_lld_linker does not work on MinGW
     QMAKE_LFLAGS *= -fuse-ld=lld
+
+    # Nothing to do, auto-configuration is enabled
+    tiny_autoconf: return()
+
+    # Includes
+    # vcpkg - range-v3 and tabulate
+    tiny_find_vcpkg()
+#    tiny_find_vcpkg($$quote(C:/msys64/home/xyz/Code/vcpkg/), x64-mingw-dynamic)
+#    tiny_add_system_includepath(\
+#        $$quote(C:/msys64/home/xyz/Code/vcpkg/installed/x64-mingw-dynamic/include/))
 }
+
+# Windows (excluding MinGW)
 else:win32-msvc|win32-clang-msvc {
     # Enable ccache wrapper
 #    CONFIG *= tiny_ccache
 
-    # Includes
-    # range-v3 and tabulate
-    INCLUDEPATH += $$quote(E:/xyz/vcpkg/installed/x64-windows/include/)
+    # Nothing to do, auto-configuration is enabled
+    tiny_autoconf: return()
 
-    win32-clang-msvc: \
-        QMAKE_CXXFLAGS += -imsvc $$shell_quote(E:/xyz/vcpkg/installed/x64-windows/include/)
+    # Includes
+    # vcpkg - range-v3 and tabulate
+    tiny_find_vcpkg()
+#    tiny_find_vcpkg($$quote(E:/xyz/vcpkg/), x64-windows)
+#    tiny_add_system_includepath($$quote(E:/xyz/vcpkg/installed/x64-windows/include/))
 }
-else:unix {
-    # Includes
-    # range-v3 and tabulate
-    QMAKE_CXXFLAGS += -isystem $$shell_quote(/home/xyz/vcpkg/installed/x64-linux/include/)
 
-    # Use faster linkers
+# Unix
+else:unix {
+    # Use faster linker
     clang: CONFIG *= use_lld_linker
     else: CONFIG *= use_gold_linker
 
     # Or use mold linker
 #    QMAKE_LFLAGS *= -fuse-ld=mold
+
+    # Nothing to do, auto-configuration is enabled
+    tiny_autoconf: return()
+
+    # Includes
+    # vcpkg - range-v3 and tabulate
+    tiny_find_vcpkg()
+#    tiny_find_vcpkg($$quote(/home/xyz/Code/c/vcpkg/installed/x64-linux/include/), \
+#                    x64-linux)
+#    tiny_add_system_includepath(\
+#        $$quote(/home/xyz/Code/c/vcpkg/installed/x64-linux/include/))
 }

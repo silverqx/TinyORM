@@ -1,3 +1,60 @@
+# Note:
+# All conf.pri.example files (they are 4) contain a lot of commented code, personally,
+# I wouldn't say I like these comments, especially after the tiny_autoconf qmake
+# configuration option was added.
+# But these comments show all possible alternatives to configure TinyORM project so
+# you can quickly find out what you can use.
+# Choose any method you like and remove the rest of commented code.
+
+# Auto-configuration
+# ---
+
+# The tiny_autoconf and tiny_dotenv qmake CONFIG were added in the TinyORM v0.34.0.
+# These new features allow to auto-configure TinyORM, and with their help, the conf.pri
+# files can be skipped entirely.
+# The tiny_autoconf is designed to find the vcpkg installation and tiny_dotenv
+# to include the .env and .env.$$QMAKE_PLATFORM files in the project's root folder.
+# They can be configured using qmake and environment variables, and they also contain
+# some guessing logic if these variables are not defined.
+#
+# These are qmake and environment variables that affect the auto-configuration feature:
+#
+# - TINY_VCPKG_ROOT    - path to the vcpkg installation folder (if not defined then
+#                        it tries to use the VCPKG_ROOT environment variable)
+# - TINY_VCPKG_TRIPLET - vcpkg triplet to use (vcpkg/installed/$$TINY_VCPKG_TRIPLET/);
+#                        if not defined then it tries to guess the vcpkg triplet based
+#                        on the current compiler and OS (QMAKESPEC)
+# - TINY_MYSQL_ROOT    - path to the MySQL installation folder (if not defined then
+#                        it tries to guess the MySQL installation folder:
+#                        $$(ProgramFiles)/MySQL/MySQL Server (8.1|8.0|5.7)/)
+#
+# You can set these variables in the .env or .conf files (recommended), in the qmake
+# file (or wherever you want), or as environment variables.
+#
+# These variables are set after the auto-configuration is done:
+#
+# - TINY_VCPKG_INCLUDE - path to the vcpkg include folder (vcpkg/installed/<triplet>/include/)
+# - TINY_MYSQL_INCLUDE - path to the MySQL include folder (MySQL Server 8.1/include/)
+# - TINY_MYSQL_LIB     - path to the MySQL lib folder (MySQL Server 8.1/lib/)
+#
+# The TINY_MYSQL_INCLUDE and TINY_MYSQL_LIB are only set on win32 except mingw.
+
+# .env and .env.$$TINY_DOTENV_PLATFORM (tiny_dotenv feature)
+# ---
+#
+# This feature allows to define the .env and .env.$$TINY_DOTENV_PLATFORM files
+# in the project's root folder. These files are loaded as early as possible so you can
+# affect the qmake configuration process. On the other hand, the conf.pri files are
+# loaded as late as possible and they can be used to override the qmake configuration.
+#
+# The .env file is included first and is included on all platforms.
+#
+# There is only one requirement for this feature to work correctly and that is, to set
+# the $$TINY_DOTENV_ROOT qmake variable to the project's root folder. This variable is
+# set in the qmake.conf file in the TinyORM project.
+#
+# The following names are taken into account: .env, .env.win32, .env.unix, .env.mingw
+
 # Tom migrations
 # ---
 
@@ -32,90 +89,133 @@
 # Gentoo - emerge dev-util/ccache
 # Ubuntu - apt install ccache
 
+load(tiny_system_includepath)
+
+!tiny_autoconf: \
+    load(tiny_find_packages)
+
 # MinGW
 win32-g++|win32-clang-g++ {
     # Enable ccache wrapper
-    CONFIG *= tiny_ccache
-
-    # Includes
-    # tabulate
-    INCLUDEPATH += $$quote(C:/msys64/home/xyz/vcpkg/installed/x64-mingw-dynamic/include/)
-    QMAKE_CXXFLAGS += -isystem $$shell_quote(C:/msys64/home/xyz/vcpkg/installed/x64-mingw-dynamic/include/)
-
-    # Libraries
-    # MySQL C library
-    # Find with the pkg-config (preferred), shared build only
-    mysql_ping:!link_pkgconfig_off: \
-    !CONFIG(static, dll|shared|static|staticlib): \
-    !CONFIG(staticlib, dll|shared|static|staticlib) {
-        CONFIG *= link_pkgconfig
-        PKGCONFIG += libmariadb
-    }
-    # Static build
-    else:mysql_ping: \
-    !CONFIG(shared, dll|shared|static|staticlib): \
-    !CONFIG(dll, dll|shared|static|staticlib): \
-        LIBS += -lmariadb.dll
-
-    # Or add manually (use only one method, above or this manual method)
-    mysql_ping {
-        # For shared build
-        LIBS += -lmariadb
-        # For static build
-        LIBS += -lmariadb.dll
-    }
+#    CONFIG *= tiny_ccache
 
     # Use faster linker
     # CONFIG *= use_lld_linker does not work on MinGW
     QMAKE_LFLAGS *= -fuse-ld=lld
+
+    # Nothing to do, auto-configuration is enabled
+    tiny_autoconf: return()
+
+    # Includes and Libraries
+    # vcpkg - range-v3 and tabulate
+    tiny_find_vcpkg()
+#    tiny_find_vcpkg($$quote(C:/msys64/home/xyz/Code/vcpkg/), x64-mingw-dynamic)
+#    tiny_add_system_includepath(\
+#        $$quote(C:/msys64/home/xyz/Code/vcpkg/installed/x64-mingw-dynamic/include/))
+
+    # MariaDB C library
+    # On MSYS2 there is only the MariaDB C library (no MySQL C library)
+    mysql_ping {
+        # Find the MySQL C library and add it on system include path and library path
+        tiny_find_mysql()
+
+        # Shared build - find with the pkg-config (preferred)
+#        CONFIG(shared, dll|shared|static|staticlib) | \
+#        CONFIG(dll, dll|shared|static|staticlib) {
+#            !link_pkgconfig_off {
+#                CONFIG *= link_pkgconfig
+#                PKGCONFIG *= libmariadb
+#            }
+#            else: \
+#                LIBS += -lmariadb
+#        }
+#        # Static build
+#        else: \
+#        if(CONFIG(static, dll|shared|static|staticlib) | \
+#        CONFIG(staticlib, dll|shared|static|staticlib)): \
+#            LIBS += -lmariadb.dll
+
+        # Or add manually (use only one method, above or this manual method)
+#        # For shared build
+#        LIBS += -lmariadb
+#        # For static build
+#        LIBS += -lmariadb.dll
+    }
 }
+
+# Windows (excluding MinGW)
 else:win32-msvc|win32-clang-msvc {
     # Enable ccache wrapper
 #    CONFIG *= tiny_ccache
 
-    # Includes
-    # range-v3
-    INCLUDEPATH += $$quote(E:/xyz/vcpkg/installed/x64-windows/include/)
+    # Nothing to do, auto-configuration is enabled
+    tiny_autoconf: return()
+    # Explicitly specify the MySQL root installation path using the $$TINY_MYSQL_ROOT
+#    tiny_autoconf {
+#        # Used in the tiny_find_mysql()
+#        TINY_MYSQL_ROOT = $$quote($$(ProgramFiles)/MySQL/MySQL Server 8.1/)
+#        return()
+#    }
 
-    # Conditional dependencies
-    # MySQL C library is used by TinyORM and it uses mysql_ping()
-    mysql_ping {
-        INCLUDEPATH += $$quote(C:/Program Files/MySQL/MySQL Server 8.0/include/)
+    # Includes and Libraries
+    # vcpkg - range-v3 and tabulate
+    tiny_find_vcpkg()
+#    tiny_find_vcpkg($$quote(E:/xyz/vcpkg/), x64-windows)
+#    tiny_add_system_includepath($$quote(E:/xyz/vcpkg/installed/x64-windows/include/))
 
-        LIBS += $$quote(-LC:/Program Files/MySQL/MySQL Server 8.0/lib/)
-        LIBS += -llibmysql
-    }
-
-    win32-clang-msvc: \
-        QMAKE_CXXFLAGS += \
-            -imsvc $$shell_quote(E:/xyz/vcpkg/installed/x64-windows/include/) \
-            -imsvc $$shell_quote(C:/Program Files/MySQL/MySQL Server 8.0/include/)
-}
-else:unix {
-    # Includes
-    # range-v3
-    QMAKE_CXXFLAGS += -isystem $$shell_quote(/home/xyz/vcpkg/installed/x64-linux/include/)
-
-    # Libraries
     # MySQL C library
-    # Find with pkg-config (preferred)
-    mysql_ping:!link_pkgconfig_off {
-        CONFIG *= link_pkgconfig
-        # Pick only one
-        PKGCONFIG += mysqlclient
-        PKGCONFIG += libmariadb
-    }
-    # Or add manually (use only one)
     mysql_ping {
-        # Pick only one
-        LIBS += -lmysqlclient
-        LIBS += -lmariadb
-    }
+        # Find the MySQL C library and add it on system include path and library path
+        tiny_find_mysql()
+#        tiny_find_mysql($$quote($$(ProgramFiles)/MySQL/MySQL Server 8.1/))
 
-    # Use faster linkers
+#        tiny_add_system_includepath(\
+#            $$quote(C:/Program Files/MySQL/MySQL Server 8.1/include/))
+
+#        LIBS += $$quote(-LC:/Program Files/MySQL/MySQL Server 8.1/lib/)
+#        LIBS += -llibmysql
+    }
+}
+
+# Unix
+else:unix {
+    # Use faster linker
     clang: CONFIG *= use_lld_linker
     else: CONFIG *= use_gold_linker
 
-    # Or use mold linker
+    # Or use the mold linker
 #    QMAKE_LFLAGS *= -fuse-ld=mold
+
+    # Nothing to do, auto-configuration is enabled
+    tiny_autoconf: return()
+
+    # Includes and Libraries
+    # vcpkg - range-v3 and tabulate
+    tiny_find_vcpkg()
+#    tiny_find_vcpkg($$quote(/home/xyz/Code/c/vcpkg/installed/x64-linux/include/), \
+#                    x64-linux)
+#    tiny_add_system_includepath(\
+#        $$quote(/home/xyz/Code/c/vcpkg/installed/x64-linux/include/))
+
+    # MySQL C library
+    mysql_ping {
+        # Find the MySQL C library and add it on system include path and library path
+        tiny_find_mysql()
+
+        # Find with pkg-config (preferred)
+#        !link_pkgconfig_off {
+#            CONFIG *= link_pkgconfig
+#            # Pick only one
+#            PKGCONFIG *= mysqlclient
+##            PKGCONFIG *= libmariadb
+#        }
+#        else: \
+#            LIBS += -lmysqlclient
+
+        # Or add manually (use only one method, above or this manual method)
+#        # For shared build
+#        LIBS += -lmysqlclient
+#        # For static build
+#        LIBS += -lmariadb
+    }
 }

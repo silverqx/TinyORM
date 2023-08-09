@@ -1,0 +1,138 @@
+load(tiny_system_includepath)
+load(tiny_vcpkg)
+
+# Find the vcpkg root folder and add the vcpkg/<triplet>/include/ on system include path.
+defineTest(tiny_find_vcpkg) {
+    # Prepare the vcpkg root path
+    TINY_VCPKG_ROOT = $$tiny_prepare_vcpkg_root($$1)
+    # Prepare the vcpkg triplet
+    TINY_VCPKG_TRIPLET = $$tiny_prepare_vcpkg_triplet($$2)
+
+    # Prepare the absolute vcpkg include path and add it on the system include path
+    TINY_VCPKG_INCLUDE = \
+        $$tiny_prepare_vcpkg_include_path($$TINY_VCPKG_ROOT, $$TINY_VCPKG_TRIPLET)
+
+    tiny_add_system_includepath($$TINY_VCPKG_INCLUDE)
+
+    export(TINY_VCPKG_ROOT)
+    export(TINY_VCPKG_TRIPLET)
+    export(TINY_VCPKG_INCLUDE)
+}
+
+# Find the MySQL C library and add it on the system include path and library path.
+defineTest(tiny_find_mysql) {
+    mysqlRoot = $$1
+
+    # MinGW
+    win32-g++|win32-clang-g++:        tiny_find_mysql_mingw()
+    else:win32-msvc|win32-clang-msvc: tiny_find_mysql_win32($$mysqlRoot)
+    else:unix:                        tiny_find_mysql_unix()
+}
+
+# Find the MySQL C library for MinGW platform.
+defineTest(tiny_find_mysql_mingw) {
+    # MariaDB C library
+    # On MSYS2 there is only the MariaDB C library (no MySQL C library)
+    # Shared build
+    CONFIG(shared, dll|shared|static|staticlib) | \
+    CONFIG(dll, dll|shared|static|staticlib) {
+        # Find with the pkg-config (preferred)
+        !link_pkgconfig_off {
+            CONFIG *= link_pkgconfig
+            PKGCONFIG *= libmariadb
+            export(CONFIG)
+            export(PKGCONFIG)
+        }
+        else {
+            LIBS += -lmariadb
+            export(LIBS)
+        }
+    }
+
+    # Static build
+    else: \
+    CONFIG(static, dll|shared|static|staticlib) | \
+    CONFIG(staticlib, dll|shared|static|staticlib) {
+        LIBS += -lmariadb.dll
+        export(LIBS)
+    }
+}
+
+# Find the MySQL C library for Win32 platform.
+defineTest(tiny_find_mysql_win32) {
+    mysqlRoot = $$1
+
+    isEmpty(mysqlRoot) | \
+    !exists($$mysqlRoot): \
+        TINY_MYSQL_ROOT = $$tiny_mysql_root_win32()
+    else: \
+        TINY_MYSQL_ROOT = $$clean_path($$mysqlRoot)
+
+    isEmpty(TINY_MYSQL_ROOT): \
+        error( "Can't detect the MySQL root folder, please set\
+                the TINY_MYSQL_ROOT qmake or environment variable." )
+
+    TINY_MYSQL_INCLUDE = $${TINY_MYSQL_ROOT}/include
+    TINY_MYSQL_LIB = $${TINY_MYSQL_ROOT}/lib
+
+    tiny_add_system_includepath($$TINY_MYSQL_INCLUDE)
+
+    LIBS += -L$$TINY_MYSQL_LIB
+    LIBS += -llibmysql
+
+    export(TINY_MYSQL_ROOT)
+    export(TINY_MYSQL_INCLUDE)
+    export(TINY_MYSQL_LIB)
+    export(LIBS)
+}
+
+# Find the MySQL C library for UNIX platform.
+defineTest(tiny_find_mysql_unix) {
+    # MySQL C library
+    # Find with pkg-config (preferred)
+    !link_pkgconfig_off {
+        CONFIG *= link_pkgconfig
+        PKGCONFIG *= mysqlclient
+        export(CONFIG)
+        export(PKGCONFIG)
+    }
+    else {
+        LIBS += -lmysqlclient
+        export(LIBS)
+    }
+}
+
+# Get the TINY_MYSQL_ROOT on Win32 platform except MinGW.
+defineReplace(tiny_mysql_root_win32) {
+    # Defined by a user using the qmake variable
+    mysqlRoot = $$TINY_MYSQL_ROOT
+
+    !isEmpty(mysqlRoot): \
+    exists($$mysqlRoot): \
+        return($$clean_path($$mysqlRoot))
+
+    # Defined by a user using the environment variable
+    mysqlRoot = $$(TINY_MYSQL_ROOT)
+
+    !isEmpty(mysqlRoot): \
+    exists($$mysqlRoot): \
+        return($$clean_path($$mysqlRoot))
+
+    # Try to guess if the $$TINY_MYSQL_ROOT is not defined (Win32 only except MinGW)
+    # Search in common installation places: $$(ProgramFiles)/MySQL/MySQL Server x.y
+    !win32|mingw: \
+        return()
+
+    # Supported MySQL versions
+    mysqlVersions = 8.1 8.0 5.7
+
+    for(version, mysqlVersions) {
+        mysqlRoot = $$clean_path(\
+                        $$quote($$(ProgramFiles)/MySQL/MySQL Server $${version}/))
+
+        exists($$mysqlRoot): \
+            return($$mysqlRoot)
+    }
+
+    return()
+}
