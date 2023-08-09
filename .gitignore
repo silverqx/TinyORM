@@ -92,7 +92,6 @@ Thumbs.db
 conf.pri
 /TODOS.*.txt
 /compile_commands.json
-/database/
 /.env
 /.env.*
 !/.env.*.example
