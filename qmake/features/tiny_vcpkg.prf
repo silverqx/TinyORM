@@ -1,3 +1,58 @@
+# Prepare the TINY_VCPKG_ROOT qmake variable with validation.
+defineReplace(tiny_prepare_vcpkg_root) {
+    # Prepare the vcpkg root path
+    vcpkgRoot = $$1
+
+    isEmpty(vcpkgRoot) | \
+    !exists($$vcpkgRoot): \
+        vcpkgRoot = $$tiny_vcpkg_root()
+
+    else: \
+        vcpkgRoot = $$clean_path($$vcpkgRoot)
+
+    isEmpty(vcpkgRoot): \
+        error( "Can't detect the vcpkg root folder, please set the TINY_VCPKG_ROOT\
+                qmake or environment variable or set the VCPKG_ROOT environment\
+                variable." )
+
+    !exists($$vcpkgRoot): \
+        error( "The vcpkg root folder '$${vcpkgRoot}' doesn't exist." )
+
+    return($$vcpkgRoot)
+}
+
+# Prepare the TINY_VCPKG_TRIPLET qmake variable with validation.
+defineReplace(tiny_prepare_vcpkg_triplet) {
+    vcpkgTriplet = $$2
+
+    isEmpty(vcpkgTriplet): \
+        vcpkgTriplet = $$tiny_vcpkg_triplet()
+
+    else: \
+        vcpkgTriplet = $$vcpkgTriplet
+
+    isEmpty(vcpkgTriplet): \
+        error( "Can't detect the vcpkg triplet, please set the TINY_VCPKG_TRIPLET\
+                qmake or environment variable or set the VCPKG_DEFAULT_TRIPLET\
+                environment variable." )
+
+    return($$vcpkgTriplet)
+}
+
+# Prepare the TINY_VCPKG_INCLUDE qmake variable with validation.
+defineReplace(tiny_prepare_vcpkg_include_path) {
+    vcpkgRoot = $$1
+    vcpkgTriplet = $$2
+
+    # Prepare the absolute vcpkg include path
+    vcpkgIncludePath = $$quote($${vcpkgRoot}/installed/$${vcpkgTriplet}/include)
+
+    !exists($$vcpkgIncludePath): \
+        error( "The vcpkg include/ folder '$${vcpkgIncludePath}' doesn't exist." )
+
+    return($$vcpkgIncludePath)
+}
+
 # Get the TINY_VCPKG_ROOT, take into account also the VCPKG_ROOT environment variable.
 defineReplace(tiny_vcpkg_root) {
     # Defined by a user using the qmake variable
@@ -54,59 +109,4 @@ defineReplace(tiny_vcpkg_triplet) {
         return($$vcpkgTriplet)
 
     return()
-}
-
-# Prepare the TINY_VCPKG_ROOT qmake variable with validation.
-defineReplace(tiny_prepare_vcpkg_root) {
-    # Prepare the vcpkg root path
-    vcpkgRoot = $$1
-
-    isEmpty(vcpkgRoot) | \
-    !exists($$vcpkgRoot): \
-        vcpkgRoot = $$tiny_vcpkg_root()
-
-    else: \
-        vcpkgRoot = $$clean_path($$vcpkgRoot)
-
-    isEmpty(vcpkgRoot): \
-        error( "Can't detect the vcpkg root folder, please set the TINY_VCPKG_ROOT\
-                qmake or environment variable or set the VCPKG_ROOT environment\
-                variable." )
-
-    !exists($$vcpkgRoot): \
-        error( "The vcpkg root folder '$${vcpkgRoot}' doesn't exist." )
-
-    return($$vcpkgRoot)
-}
-
-# Prepare the TINY_VCPKG_TRIPLET qmake variable with validation.
-defineReplace(tiny_prepare_vcpkg_triplet) {
-    vcpkgTriplet = $$2
-
-    isEmpty(vcpkgTriplet): \
-        vcpkgTriplet = $$tiny_vcpkg_triplet()
-
-    else: \
-        vcpkgTriplet = $$vcpkgTriplet
-
-    isEmpty(vcpkgTriplet): \
-        error( "Can't detect the vcpkg triplet, please set the TINY_VCPKG_TRIPLET\
-                qmake or environment variable or set the VCPKG_DEFAULT_TRIPLET\
-                environment variable." )
-
-    return($$vcpkgTriplet)
-}
-
-# Prepare the TINY_VCPKG_INCLUDE qmake variable with validation.
-defineReplace(tiny_prepare_vcpkg_include_path) {
-    vcpkgRoot = $$1
-    vcpkgTriplet = $$2
-
-    # Prepare the absolute vcpkg include path
-    vcpkgIncludePath = $$quote($${vcpkgRoot}/installed/$${vcpkgTriplet}/include)
-
-    !exists($$vcpkgIncludePath): \
-        error( "The vcpkg include/ folder '$${vcpkgIncludePath}' doesn't exist." )
-
-    return($$vcpkgIncludePath)
 }
