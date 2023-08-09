@@ -1,5 +1,5 @@
 # The tom.pri file is available to simplify the integration of the TinyORM library
-# into the tom migrations application.
+# into the Tom migrations application.
 #
 # It sets up and configures the CONFIG and DEFINES qmake variables, adds the TinyORM, Tom,
 # and vcpkg header files to the system INCLUDEPATH (cross-platform using the -isystem,
@@ -13,12 +13,16 @@
 # You must define the following variables before the tom.pri will be included:
 #
 # - TINYORM_BUILD_TREE - path to the TinyORM build folder
-# - TINY_VCPKG_ROOT    - path to the vcpkg/installed/ folder (if is empty then it tries
-#                        to use the VCPKG_ROOT environment variable)
-# - TINY_VCPKG_TRIPLET - vcpkg triplet to use (vcpkg/installed/$${TINY_VCPKG_TRIPLET})
+# - TINY_VCPKG_ROOT    - path to the vcpkg installation folder (if not defined then
+#                        it tries to use the VCPKG_ROOT environment variable)
+# - TINY_VCPKG_TRIPLET - vcpkg triplet to use (vcpkg/installed/$$TINY_VCPKG_TRIPLET/);
+#                        if not defined then it tries to guess the vcpkg triplet based
+#                        on the current compiler and OS (based on the QMAKESPEC)
 #
-# Also Provides:
+# These variables are set after the configuration is done:
+#
 # - TINY_BUILD_SUBFOLDER - folder by release type (/debug, /release, or empty)
+# - TINY_VCPKG_INCLUDE   - path to the vcpkg include folder (vcpkg/installed/<triplet>/include/)
 
 # Path to the TinyORM source tree
 TINYORM_SOURCE_TREE = $$clean_path($$quote($$PWD/..))
@@ -94,14 +98,11 @@ LIBS += -lTinyOrm
 
 # vcpkg - range-v3 and tabulate
 # ---
-# VCPKG_ROOT and VCPKG_DEFAULT_TRIPLET environment variables are also taken into account
+# Affected by (in the following order):
+# TINY_VCPKG_ROOT and TINY_VCPKG_TRIPLET qmake variables
+# TINY_VCPKG_ROOT and TINY_VCPKG_TRIPLET environment variables
+# VCPKG_ROOT and VCPKG_DEFAULT_TRIPLET environment variables
 
-load(tiny_vcpkg)
+load(tiny_find_packages)
 
-TINY_VCPKG_ROOT = $$tiny_vcpkg_root()
-TINY_VCPKG_TRIPLET = $$tiny_vcpkg_triplet()
-
-!isEmpty(TINY_VCPKG_ROOT): \
-!isEmpty(TINY_VCPKG_TRIPLET): \
-    tiny_add_system_includepath(\
-        $$quote($${TINY_VCPKG_ROOT}/installed/$${TINY_VCPKG_TRIPLET}/include/))
+tiny_find_vcpkg()
