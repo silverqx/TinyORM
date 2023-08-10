@@ -68,7 +68,9 @@ tiny_version_numbers()
 
 load(tiny_resource_and_manifest)
 tiny_resource_and_manifest(                                                            \
-    # RC_INCLUDEPATH - find icons, Windows manifest on MinGW and orm/version.hpp
+    # RC_INCLUDEPATH - find icons, Windows manifest on MinGW, and orm/version.hpp
+    # These two paths are not divided as in other tiny_resource_and_manifest() calls
+    # because of finding icons on win32 (revisited).
     $$quote($$TINYORM_SOURCE_TREE/include/) $$quote($$TINYORM_SOURCE_TREE/resources/), \
     ../resources                                                                       \
 )
