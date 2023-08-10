@@ -315,6 +315,20 @@ to avoid shared pointers reference cycles.
    - std::shared_ptr<QueryBuilder> m_query
 
 
+C preprocessor macros, defines, private, public, interface:
+-----------------------------------------------------------
+
+ - qmake:
+   - TINYORM_MYSQL_PING and linking against MySQL C library:
+     - TINYORM_MYSQL_PING is public macro and should also be defined in the application that 
+       consumes TinyORM library. If the TinyORM library was build with the mysql_ping config. then
+       it should also be  defined in the consumer application. But, if the mysql_ping is not defined
+       Nothing Bad Happens because the TINYORM_MYSQL_PING is only used in the databaseconnection.hpp
+       to #ifdef the friend MySqlConnection declaration what means that it doesn't affect
+       a consumer application in any sense.
+     - linking against MySQL C library is not needed in the TinyOrm.pri and tom.pri
+   
+
 Todos to check in TinyOrm:
 --------------------------
 
