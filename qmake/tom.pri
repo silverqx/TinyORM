@@ -75,6 +75,8 @@ tiny_resource_and_manifest(                                               \
     $$tinyRcIncludepath, $$TINYTOM_SOURCE_TREE/resources, tom, Tom        \
 )
 
+unset(tinyRcIncludepath)
+
 # Link against TinyORM library
 # ---
 

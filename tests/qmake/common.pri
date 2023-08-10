@@ -45,6 +45,7 @@ include(TinyOrm.pri)
 
 # Find Windows manifest
 mingw: tinyRcIncludepath += $$quote($$TINYORM_SOURCE_TREE/tests/resources/)
+else:  tinyRcIncludepath =
 
 load(tiny_resource_and_manifest)
 tiny_resource_and_manifest($$tinyRcIncludepath,     \
