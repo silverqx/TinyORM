@@ -8,11 +8,18 @@ defineTest(tiny_add_system_includepath) {
 
     for(systemIncludePathRaw, systemIncludePathsRaw) {
         # Nothing to do
-        isEmpty(systemIncludePathRaw) | \
-        !exists($$systemIncludePathRaw): \
+        isEmpty(systemIncludePathRaw): \
             next()
 
         systemIncludePath = $$clean_path($$systemIncludePathRaw)
+
+        # Nothing to do
+        !exists($$systemIncludePath) {
+            !build_pass: \
+                warning( "The system include path '$$systemIncludePath' doesn't exist." )
+
+            next()
+        }
 
         # MSVC and others
         includePaths += $$quote($$systemIncludePath)
