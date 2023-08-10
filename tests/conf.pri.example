@@ -6,7 +6,7 @@ load(tiny_system_includepath)
 # MinGW
 win32-g++|win32-clang-g++ {
     # Enable ccache wrapper
-#    CONFIG *= tiny_ccache
+#    CONFIG *= tiny_ccache_win32
 
     # Use faster linker
     # CONFIG *= use_lld_linker does not work on MinGW
@@ -26,7 +26,7 @@ win32-g++|win32-clang-g++ {
 # Windows (excluding MinGW)
 else:win32-msvc|win32-clang-msvc {
     # Enable ccache wrapper
-#    CONFIG *= tiny_ccache
+#    CONFIG *= tiny_ccache_win32
 
     # Nothing to do, auto-configuration is enabled
     tiny_autoconf: return()
