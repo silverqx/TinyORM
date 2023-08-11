@@ -42,7 +42,8 @@ win32-clang-msvc: \
               version >=$${tinyMinRecQt}, your version is $${QT_VERSION}, upgrade\
               Qt Framework.")
 
-!build_pass:!win32-clang-msvc:if(gcc|clang) {
+!build_pass: \
+!win32-clang-msvc:if(gcc|clang) {
     clang:!versionAtLeast(TINY_COMPILER_VERSION, $$tinyMinRecClang): \
         message( "Minimum recommended Clang compiler version was not satisfied,\
                   recommended version >=$${tinyMinRecClang}, your version is\
