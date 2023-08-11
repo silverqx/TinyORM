@@ -23,7 +23,7 @@
 #                        it tries to use the VCPKG_ROOT environment variable)
 # - TINY_VCPKG_TRIPLET - vcpkg triplet to use (vcpkg/installed/$$TINY_VCPKG_TRIPLET/);
 #                        if not defined then it tries to guess the vcpkg triplet based
-#                        on the current compiler and OS (QMAKESPEC)
+#                        on the current compiler and OS (based on the QMAKESPEC)
 # - TINY_MYSQL_ROOT    - path to the MySQL installation folder (if not defined then
 #                        it tries to guess the MySQL installation folder:
 #                        $$(ProgramFiles)/MySQL/MySQL Server (8.1|8.0|5.7)/)
