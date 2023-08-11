@@ -2186,3 +2186,4 @@ TINYORM_END_COMMON_NAMESPACE
 // CUR mariadb workflows silverqx
 // FEATURE HidesAttributes, and ModelsCollection::makeVisible/Hidden, ... silverqx
 // TODO vcpkg, workflows enable binary caching https://learn.microsoft.com/en-us/vcpkg/users/binarycaching#gha silverqx
+// BUG linux if both mysql-c-connector and mariadb-c-connector are installed and is enabled mysql_ping and TinyORM library is linked against the libmariadb instead of the libmysqlclient then MySQL ping fails because bad mysql.h header is included; to fix this there should be some auto-detection against which c connector we are linking OR should be added eg. mysql_ping vs maria_ping or somehow flag we are linking against mariadb c connector silverqx
