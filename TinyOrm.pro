@@ -12,5 +12,5 @@ build_tests {
     SUBDIRS += tests
     tests.depends = src
 
-    !build_pass: message("Build TinyORM unit tests.")
+    !build_pass: message( "Build TinyORM unit tests." )
 }

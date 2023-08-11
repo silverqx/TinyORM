@@ -69,8 +69,8 @@ defineTest(tiny_find_mysql_win32) {
         TINY_MYSQL_ROOT = $$clean_path($$mysqlRoot)
 
     isEmpty(TINY_MYSQL_ROOT): \
-        error( "Can't detect the MySQL root folder, please set\
-                the TINY_MYSQL_ROOT qmake or environment variable." )
+        error( "Can't detect the MySQL root folder, please set the TINY_MYSQL_ROOT qmake\
+                or environment variable." )
 
     TINY_MYSQL_INCLUDE = $${TINY_MYSQL_ROOT}/include
     TINY_MYSQL_LIB = $${TINY_MYSQL_ROOT}/lib

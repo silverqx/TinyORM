@@ -26,9 +26,9 @@ defineTest(tiny_version_numbers) {
 
     versionFileContent = $$cat($$quote($$versionHeader), lines)
     versionTokens = MAJOR MINOR BUGFIX BUILD STATUS
-    regexpTokens = $$join(versionTokens, '|')
-    regexp = "_($${regexpTokens}) +([0-9]+|\"-{1}\w+\")"
-    versionLines = $$find(versionFileContent, $$regexp)
+    regexpTokens  = $$join(versionTokens, '|')
+    regexp        = "_($${regexpTokens}) +([0-9]+|\"-{1}\w+\")"
+    versionLines  = $$find(versionFileContent, $$regexp)
     versionList =
     hasStatus = false
 

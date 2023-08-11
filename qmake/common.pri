@@ -96,7 +96,7 @@ build_tests: \
 # Platform specific configuration
 # ---
 win32: include(winconf.pri)
-macx: include(macxconf.pri)
+macx:  include(macxconf.pri)
 mingw|if(unix:!macx): include(unixconf.pri)
 
 !if(win32|macx|if(mingw|if(unix:!macx))): \
@@ -109,6 +109,7 @@ mingw|if(unix:!macx): include(unixconf.pri)
 debug_and_release {
     CONFIG(release, debug|release): \
         TINY_BUILD_SUBFOLDER = $$quote(/release)
+
     else:CONFIG(debug, debug|release): \
         TINY_BUILD_SUBFOLDER = $$quote(/debug)
 }
