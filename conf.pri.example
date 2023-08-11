@@ -210,12 +210,13 @@ else:unix {
 ##            PKGCONFIG *= libmariadb
 #        }
 #        else: \
+#            # Pick only one
 #            LIBS += -lmysqlclient
+##            LIBS += -lmariadb
 
         # Or add manually (use only one method, above or this manual method)
-#        # For shared build
+        # Pick only one
 #        LIBS += -lmysqlclient
-#        # For static build
 #        LIBS += -lmariadb
     }
 }
