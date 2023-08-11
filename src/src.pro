@@ -113,9 +113,6 @@ win32-msvc:CONFIG(debug, debug|release) {
 exists(../conf.pri): \
     include(../conf.pri)
 
-else:is_vcpkg_build: \
-    include(../qmake/vcpkgconf.pri)
-
 else: \
     error( "'conf.pri' for '$${TARGET}' project does not exist. See an example\
             configuration in 'conf.pri.example' or call 'vcpkg install'\
