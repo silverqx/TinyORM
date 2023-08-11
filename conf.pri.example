@@ -127,19 +127,19 @@ win32-g++|win32-clang-g++ {
 #                PKGCONFIG *= libmariadb
 #            }
 #            else: \
-#                LIBS += -lmariadb
+#                LIBS_PRIVATE += -lmariadb
 #        }
 #        # Static build
 #        else: \
 #        if(CONFIG(static, dll|shared|static|staticlib) | \
 #        CONFIG(staticlib, dll|shared|static|staticlib)): \
-#            LIBS += -lmariadb.dll
+#            LIBS_PRIVATE += -lmariadb.dll
 
         # Or add manually (use only one method, above or this manual method)
 #        # For shared build
-#        LIBS += -lmariadb
+#        LIBS_PRIVATE += -lmariadb
 #        # For static build
-#        LIBS += -lmariadb.dll
+#        LIBS_PRIVATE += -lmariadb.dll
     }
 }
 
@@ -172,8 +172,8 @@ else:win32-msvc|win32-clang-msvc {
 #        tiny_add_system_includepath(\
 #            $$quote(C:/Program Files/MySQL/MySQL Server 8.1/include/))
 
-#        LIBS += $$quote(-LC:/Program Files/MySQL/MySQL Server 8.1/lib/)
-#        LIBS += -llibmysql
+#        LIBS_PRIVATE += $$quote(-LC:/Program Files/MySQL/MySQL Server 8.1/lib/)
+#        LIBS_PRIVATE += -llibmysql
     }
 }
 
@@ -211,12 +211,12 @@ else:unix {
 #        }
 #        else: \
 #            # Pick only one
-#            LIBS += -lmysqlclient
-##            LIBS += -lmariadb
+#            LIBS_PRIVATE += -lmysqlclient
+##            LIBS_PRIVATE += -lmariadb
 
         # Or add manually (use only one method, above or this manual method)
         # Pick only one
-#        LIBS += -lmysqlclient
-#        LIBS += -lmariadb
+#        LIBS_PRIVATE += -lmysqlclient
+#        LIBS_PRIVATE += -lmariadb
     }
 }

@@ -44,8 +44,8 @@ defineTest(tiny_find_mysql_mingw) {
             export(PKGCONFIG)
         }
         else {
-            LIBS += -lmariadb
-            export(LIBS)
+            LIBS_PRIVATE += -lmariadb
+            export(LIBS_PRIVATE)
         }
     }
 
@@ -53,8 +53,8 @@ defineTest(tiny_find_mysql_mingw) {
     else: \
     CONFIG(static, dll|shared|static|staticlib) | \
     CONFIG(staticlib, dll|shared|static|staticlib) {
-        LIBS += -lmariadb.dll
-        export(LIBS)
+        LIBS_PRIVATE += -lmariadb.dll
+        export(LIBS_PRIVATE)
     }
 }
 
@@ -77,13 +77,13 @@ defineTest(tiny_find_mysql_win32) {
 
     tiny_add_system_includepath($$TINY_MYSQL_INCLUDE)
 
-    LIBS += -L$$TINY_MYSQL_LIB
-    LIBS += -llibmysql
+    LIBS_PRIVATE += -L$$TINY_MYSQL_LIB
+    LIBS_PRIVATE += -llibmysql
 
     export(TINY_MYSQL_ROOT)
     export(TINY_MYSQL_INCLUDE)
     export(TINY_MYSQL_LIB)
-    export(LIBS)
+    export(LIBS_PRIVATE)
 }
 
 # Find the MySQL C library for UNIX platform.
@@ -97,8 +97,8 @@ defineTest(tiny_find_mysql_unix) {
         export(PKGCONFIG)
     }
     else {
-        LIBS += -lmysqlclient
-        export(LIBS)
+        LIBS_PRIVATE += -lmysqlclient
+        export(LIBS_PRIVATE)
     }
 }
 
