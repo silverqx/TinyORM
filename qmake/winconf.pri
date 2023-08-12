@@ -53,6 +53,8 @@ win32-msvc {
     QMAKE_CXXFLAGS += -guard:cf -bigobj
     QMAKE_CXXFLAGS_DEBUG += -RTC1 -sdl
     QMAKE_CXXFLAGS_WARN_ON = -external:anglebrackets -external:W0 -WX -W4 -wd4702
+                             # Enable and check it from time to time
+#                             -external:templates-
 }
 
 # clang-cl.exe notes:

@@ -108,6 +108,8 @@ ${TINY_UNPARSED_ARGUMENTS}")
                 /Zc:wchar_t,rvalueCast,inline
                 /Zc:throwingNew,referenceBinding,ternary
                 /external:anglebrackets /external:W0
+                # Enable and check it from time to time
+#                /external:templates-
                 /wd4702
             )
         endif()
