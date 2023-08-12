@@ -256,8 +256,13 @@ jobs:
 
     - name: Print MySQL, PostgreSQL database versions
       run: |
+        Write-Output '::group::MySQL version'
         mysql.exe --version
+        Write-Output '::endgroup::'
+
+        Write-Output '::group::PostgreSQL version'
         postgres.exe --version
+        Write-Output '::endgroup::'
 
     - name: >-
         MSYS2 UCRT64 setup (${{ join(matrix.compiler.pacboy, ', ') }}, lld:u,
