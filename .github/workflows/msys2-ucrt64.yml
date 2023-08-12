@@ -1,8 +1,8 @@
 # MySQL
 # ---
-# Forces TLS connections with the caching_sha2_password and certificate validation, also validates
-# issuer  == CN=MySQL_Server_TinyORM_Auto_Generated_CA_Certificate and
-# subject == CN=MySQL_Server_TinyORM_Auto_Generated_Client_Certificate.
+# Both use the default unencrypted database connections because maria client can't connect
+# to the MySQL >= 8.0.34 or >=8.1, there is some problem in TLS 1.2 and 1.3 connection, it can't
+# select correct cipher. I will revert this back in the future when it will be fixed.
 
 # PostgreSQL
 # ---
@@ -89,13 +89,6 @@ jobs:
         DB_PGSQL_DATABASE: ${{ secrets.DB_PGSQL_DATABASE }}
         DB_PGSQL_USERNAME: ${{ secrets.DB_PGSQL_USERNAME }}
 
-    - name: Hosts add MySQL server hostname
-      run: >-
-        "127.0.0.1`t$env:DB_MYSQL_HOST" |
-        Add-Content -Path "$env:windir/System32/drivers/etc/hosts" -Force
-      env:
-        DB_MYSQL_HOST: ${{ secrets.DB_MYSQL_HOST_SSL }}
-
     - name: MySQL create data folder
       run: |
         New-Item -Type Directory '${{ env.TinyRunnerWorkPath }}/mysql/data'
@@ -103,23 +96,16 @@ jobs:
     - name: MySQL initialize my.ini configuration
       working-directory: .github/resources/windows
       run: >-
-        (Get-Content -Path ./my_8_ssl.template.ini) -creplace
+        (Get-Content -Path ./my_8.template.ini) -creplace
         '\{MYSQL_DATADIR\}', '${{ env.TinyRunnerWorkPath }}/mysql/data' -creplace
         '\{MYSQL_HOST\}', $env:DB_MYSQL_HOST |
         Set-Content -Path C:/mysql/my.ini
       env:
-        DB_MYSQL_HOST: ${{ secrets.DB_MYSQL_HOST_SSL }}
+        DB_MYSQL_HOST: ${{ secrets.DB_MYSQL_HOST }}
 
     - name: MySQL initialize data directory
       run: |
         mysqld.exe --initialize-insecure --console
-
-    - name: MySQL generate SSL certificates
-      working-directory: ${{ env.TinyRunnerWorkPath }}/mysql/data
-      run: |
-        # It's enough to remove only these three certificate-related files
-        Remove-Item ./ca.pem, ./server-cert.pem, ./server-key.pem
-        mysql_ssl_rsa_setup.exe --suffix=TinyORM
 
     - name: MySQL service install/start
       run: |
@@ -129,9 +115,7 @@ jobs:
     - name: MySQL change ${{ secrets.DB_MYSQL_ROOT_USERNAME }} password
       run: >-
         "alter user '$env:DB_MYSQL_ROOT_USERNAME'@'localhost'
-        identified with caching_sha2_password by '$env:DB_MYSQL_ROOT_PASSWORD'
-        require issuer '/CN=MySQL_Server_TinyORM_Auto_Generated_CA_Certificate' and
-        subject '/CN=MySQL_Server_TinyORM_Auto_Generated_Client_Certificate';" |
+        identified with caching_sha2_password by '$env:DB_MYSQL_ROOT_PASSWORD';" |
         mysql.exe --user=$env:DB_MYSQL_ROOT_USERNAME --skip-password
       env:
         DB_MYSQL_ROOT_PASSWORD: ${{ secrets.DB_MYSQL_ROOT_PASSWORD }}
@@ -235,9 +219,7 @@ jobs:
     - name: MySQL create TinyORM user
       run: >-
         "create user '$env:DB_MYSQL_USERNAME'@'%'
-        identified with caching_sha2_password by '$env:DB_MYSQL_PASSWORD'
-        require issuer '/CN=MySQL_Server_TinyORM_Auto_Generated_CA_Certificate' and
-        subject '/CN=MySQL_Server_TinyORM_Auto_Generated_Client_Certificate';
+        identified with caching_sha2_password by '$env:DB_MYSQL_PASSWORD';
         grant all privileges on ``tinyorm\_%``.* to '$env:DB_MYSQL_USERNAME'@'%';
         grant select on ``mysql``.``time_zone_name`` to '$env:DB_MYSQL_USERNAME'@'%';
         flush privileges;" |
@@ -382,7 +364,7 @@ jobs:
         DB_MYSQL_CHARSET: ${{ secrets.DB_MYSQL_CHARSET }}
         DB_MYSQL_COLLATION: ${{ secrets.DB_MYSQL_COLLATION }}
         DB_MYSQL_DATABASE: ${{ secrets.DB_MYSQL_DATABASE }}
-        DB_MYSQL_HOST: ${{ secrets.DB_MYSQL_HOST_SSL }}
+        DB_MYSQL_HOST: ${{ secrets.DB_MYSQL_HOST }}
         DB_MYSQL_PASSWORD: ${{ secrets.DB_MYSQL_PASSWORD }}
         DB_MYSQL_SSL_CA: ${{ env.TinyRunnerWorkPath }}/mysql/data/ca.pem
         DB_MYSQL_SSL_CERT: ${{ env.TinyRunnerWorkPath }}/mysql/data/client-cert.pem
@@ -407,7 +389,7 @@ jobs:
         DB_MYSQL_CHARSET: ${{ secrets.DB_MYSQL_CHARSET }}
         DB_MYSQL_COLLATION: ${{ secrets.DB_MYSQL_COLLATION }}
         DB_MYSQL_DATABASE: ${{ secrets.DB_MYSQL_DATABASE }}
-        DB_MYSQL_HOST: ${{ secrets.DB_MYSQL_HOST_SSL }}
+        DB_MYSQL_HOST: ${{ secrets.DB_MYSQL_HOST }}
         DB_MYSQL_PASSWORD: ${{ secrets.DB_MYSQL_PASSWORD }}
         DB_MYSQL_SSL_CA: ${{ env.TinyRunnerWorkPath }}/mysql/data/ca.pem
         DB_MYSQL_SSL_CERT: ${{ env.TinyRunnerWorkPath }}/mysql/data/client-cert.pem
@@ -438,7 +420,7 @@ jobs:
         DB_MYSQL_CHARSET: ${{ secrets.DB_MYSQL_CHARSET }}
         DB_MYSQL_COLLATION: ${{ secrets.DB_MYSQL_COLLATION }}
         DB_MYSQL_DATABASE: ${{ secrets.DB_MYSQL_DATABASE }}
-        DB_MYSQL_HOST: ${{ secrets.DB_MYSQL_HOST_SSL }}
+        DB_MYSQL_HOST: ${{ secrets.DB_MYSQL_HOST }}
         DB_MYSQL_PASSWORD: ${{ secrets.DB_MYSQL_PASSWORD }}
         DB_MYSQL_SSL_CA: ${{ env.TinyRunnerWorkPath }}/mysql/data/ca.pem
         DB_MYSQL_SSL_CERT: ${{ env.TinyRunnerWorkPath }}/mysql/data/client-cert.pem
