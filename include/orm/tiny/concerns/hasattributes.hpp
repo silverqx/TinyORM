@@ -1673,40 +1673,40 @@ namespace Orm::Tiny::Concerns
            when defining your date fields as they might be UNIX timestamps here. */
         if (StringUtils::isNumber(valueString))
             // TODO switch ms accuracy? For the u_dateFormat too? silverqx
-            if (auto date = QDateTime::fromSecsSinceEpoch(value.value<qint64>());
-                date.isValid()
+            if (auto unixTimestamp = QDateTime::fromSecsSinceEpoch(value.value<qint64>());
+                unixTimestamp.isValid()
             )
-                return convertTimeZone(std::move(date));
+                return convertTimeZone(std::move(unixTimestamp));
 
         /* If the value is in simply year, month, day format, we will instantiate the
            QDate instances from that format. Again, this provides for simple date
            fields on the database, while still supporting QDateTime conversion. */
         if (Helpers::isStandardDateFormat(valueString))
-            if (auto date = QDateTime::fromString(valueString,
-                                                  QStringLiteral("yyyy-M-d"));
-                date.isValid()
+            if (auto dateSimple = QDateTime::fromString(valueString,
+                                                        QStringLiteral("yyyy-M-d"));
+                dateSimple.isValid()
             )
-                return setTimeZone(date);
+                return setTimeZone(dateSimple);
 
         const auto &format = getDateFormat();
 
         /* Finally, we will just assume this date is in the format used by default on
            the database connection and use that format to create the QDateTime object
            that is returned back out to the developers after we convert it here. */
-        if (auto date = QDateTime::fromString(valueString, format);
-            date.isValid()
+        if (auto datetime = QDateTime::fromString(valueString, format);
+            datetime.isValid()
         )
-            return setTimeZone(date);
+            return setTimeZone(datetime);
 
         /* QDateTime doesn't offer any advanced parsing method that can guess and
            instantiate the QDateTime from many formats, a function like that would be
            ideal here. */
 
         // But at least we can detect the ISO DateTime-s
-        if (auto date = QDateTime::fromString(valueString, Qt::ISODateWithMs);
-            date.isValid()
+        if (auto dateIso = QDateTime::fromString(valueString, Qt::ISODateWithMs);
+            dateIso.isValid()
         )
-            return convertTimeZone(std::move(date));
+            return convertTimeZone(std::move(dateIso));
 
         throw Orm::Exceptions::InvalidFormatError(
                     QStringLiteral("Could not parse the datetime '%1' using "
