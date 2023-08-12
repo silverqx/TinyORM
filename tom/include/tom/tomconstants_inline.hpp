@@ -94,7 +94,7 @@ namespace Tom::Constants
     inline const QString only_up            = QStringLiteral("ONLY");
     // complete
     inline const QString commandline        = QStringLiteral("commandline");
-    inline const QString position           = QStringLiteral("position");
+    inline const QString position_          = QStringLiteral("position");
     inline const QString word_              = QStringLiteral("word");
     inline const QString cword_             = QStringLiteral("cword");
     // list

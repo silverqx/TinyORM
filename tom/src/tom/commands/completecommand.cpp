@@ -45,7 +45,7 @@ using Tom::Constants::word_up;
 
 #ifdef _MSC_VER
 using Tom::Constants::LongOptionValue;
-using Tom::Constants::position;
+using Tom::Constants::position_;
 using Tom::Constants::position_up;
 #else
 using Tom::Constants::ShBash;
@@ -74,7 +74,7 @@ QList<CommandLineOption> CompleteCommand::optionsSignature() const
         {word_,       sl("The current word that is being completed"), word_up},
         {commandline, sl("The entire current command-line"), commandline_up},
 #ifdef _MSC_VER
-        {position,    sl("The current position of the cursor on the command-line"),
+        {position_,   sl("The current position of the cursor on the command-line"),
                       position_up, sl("0")},
 #else
         {cword_,      sl("Position of the current word on the command-line that is "
@@ -93,7 +93,7 @@ int CompleteCommand::run() // NOLINT(readability-function-cognitive-complexity)
 
 #ifdef _MSC_VER
     const auto positionArg = static_cast<QString::size_type>(
-                                 value(position).toLongLong());
+                                 value(position_).toLongLong());
 
     const auto commandlineArgSize = commandlineArg.size();
 

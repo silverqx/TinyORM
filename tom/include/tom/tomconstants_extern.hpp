@@ -95,7 +95,7 @@ namespace Tom::Constants
     SHAREDLIB_EXPORT extern const QString only_up;
     // complete
     SHAREDLIB_EXPORT extern const QString commandline;
-    SHAREDLIB_EXPORT extern const QString position;
+    SHAREDLIB_EXPORT extern const QString position_;
     SHAREDLIB_EXPORT extern const QString word_;
     SHAREDLIB_EXPORT extern const QString cword_;
     // list
