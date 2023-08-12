@@ -2858,7 +2858,7 @@ void tst_Model_Relations::withCasts_OnRelation_OneToMany() const
     else
         Q_UNREACHABLE();
 
-    QCOMPARE(attribute.value<uint>(), 200);
+    QCOMPARE(attribute.value<uint>(), static_cast<uint>(200));
 }
 
 void tst_Model_Relations::withCasts_OnRelation_ManyToMany() const
@@ -2891,7 +2891,7 @@ void tst_Model_Relations::withCasts_OnRelation_ManyToMany() const
     else
         Q_UNREACHABLE();
 
-    QCOMPARE(attribute.value<uint>(), 1);
+    QCOMPARE(attribute.value<uint>(), static_cast<uint>(1));
 }
 
 void tst_Model_Relations::u_casts_OnCustomPivotModel_ManyToMany() const

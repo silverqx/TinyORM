@@ -2465,7 +2465,7 @@ void tst_Collection_Models::fresh_EmptyRelations() const
 struct ExpectedImages
 {
     /*! Number of images. */
-    std::size_t imagesSize;
+    ModelsCollection<AlbumImage>::size_type imagesSize;
     /*! Images ID. */
     std::unordered_set<AlbumImage::KeyType> imagesId;
 };
