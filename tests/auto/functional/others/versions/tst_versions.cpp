@@ -97,9 +97,16 @@ void tst_Versions::versions_TinyOrm() const
     QVERIFY(TINYORM_VERSION_BUILD >= 0);
 
     // Project and File Version strings
+#if defined(_MSC_VER) && !defined(__clang__)
+#  pragma warning(push)
+#  pragma warning(disable : 4127)
+#endif
     QString versionStr = QString::number(TINYORM_VERSION_MAJOR) + DOT +
                          QString::number(TINYORM_VERSION_MINOR) + DOT +
                          QString::number(TINYORM_VERSION_BUGFIX);
+#if defined(_MSC_VER) && !defined(__clang__)
+#  pragma warning(pop)
+#endif
     QString fileVersionStr = versionStr + DOT +
                              QString::number(TINYORM_VERSION_BUILD);
     if constexpr (TINYORM_VERSION_BUILD > 0)
@@ -108,7 +115,14 @@ void tst_Versions::versions_TinyOrm() const
 
     QCOMPARE(TINYORM_FILEVERSION_STR, fileVersionStr);
     QCOMPARE(TINYORM_VERSION_STR, versionStr);
+#if defined(_MSC_VER) && !defined(__clang__)
+#  pragma warning(push)
+#  pragma warning(disable : 4127)
+#endif
     QCOMPARE(TINYORM_VERSION_STR_2, QLatin1Char('v') + versionStr);
+#if defined(_MSC_VER) && !defined(__clang__)
+#  pragma warning(pop)
+#endif
 
     // Project Version number, to check API compatibility
     const auto version = TINYORM_VERSION_MAJOR * 10000 +
@@ -199,10 +213,17 @@ void tst_Versions::checkFileVersion_TinyOrm() const
             getExeVersionString(Fs::absolutePath(TINYTEST_VERSIONS_TINYORM_PATH));
 
     // Project and File Version strings
+#if defined(_MSC_VER) && !defined(__clang__)
+#  pragma warning(push)
+#  pragma warning(disable : 4127)
+#endif
     const QString versionStr = QString::number(TINYORM_VERSION_MAJOR) + DOT +
                                QString::number(TINYORM_VERSION_MINOR) + DOT +
                                QString::number(TINYORM_VERSION_BUGFIX) + DOT +
                                QString::number(TINYORM_VERSION_BUILD);
+#if defined(_MSC_VER) && !defined(__clang__)
+#  pragma warning(pop)
+#endif
 
     QCOMPARE(fileVersions.productVersion, versionStr);
     QCOMPARE(fileVersions.fileVersion, fileVersions.productVersion);
