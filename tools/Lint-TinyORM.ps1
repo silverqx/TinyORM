@@ -96,7 +96,7 @@ else {
 # Configure
 if (-not (Test-Path $BuildPath\compile_commands.json)) {
     cmake `
-        -S E:/c/qMedia/TinyOrm/TinyOrm `
+        -S E:/c/qMedia/TinyORM/TinyORM `
         -B $BuildPath `
         -G 'Ninja' `
         -D CMAKE_BUILD_TYPE:STRING=$BuildType `
