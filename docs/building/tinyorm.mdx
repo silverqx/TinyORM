@@ -126,10 +126,10 @@ You can set the root and application folder paths in the form below and they wil
 │   |   │   ├── build-gcc-debug/
 │   |   │   ├── build-gcc-release/
 │   |   │   └── build-clang-debug/
-│   |   └── TinyOrm-builds-qmake/
+│   |   └── TinyORM-builds-qmake/
 │   |       ├── build-debug/
-│   |       ├── build-TinyOrm-Desktop_Qt_5_15_2_MSVC2019_64bit-Debug/
-│   |       └── build-TinyOrm-Desktop_Qt_5_15_2_MSYS2_UCRT64_64bit-Release/
+│   |       ├── build-TinyORM-Desktop_Qt_5_15_2_MSVC2019_64bit-Debug/
+│   |       └── build-TinyORM-Desktop_Qt_5_15_2_MSYS2_UCRT64_64bit-Release/
 │   └── tom/
 │       ├── tom/
 │       │   └── database/
@@ -138,10 +138,10 @@ You can set the root and application folder paths in the form below and they wil
 │       │       ├── migrations.pri
 │       │       └── seeders.pri
 │       ├── tom-builds-cmake/
-│       │   └── build-TinyOrm-Desktop_Qt_6_5_2_MSVC2019_64bit-Debug/
+│       │   └── build-TinyORM-Desktop_Qt_6_5_2_MSVC2019_64bit-Debug/
 │       └── tom-builds-qmake/
-│           ├── build-TinyOrm-Desktop_Qt_5_15_3_MSYS2_UCRT64_64bit-Release/
-│           └── build-TinyOrm-Desktop_Qt_6_5_2_MSVC2019_64bit-Debug/
+│           ├── build-TinyORM-Desktop_Qt_5_15_3_MSYS2_UCRT64_64bit-Release/
+│           └── build-TinyORM-Desktop_Qt_6_5_2_MSVC2019_64bit-Debug/
 ├── tmp/
 └── vcpkg/
 ```
@@ -172,10 +172,10 @@ You can set the root and application folder paths in the form below and they wil
 │   |   │   ├── build-gcc-debug/
 │   |   │   ├── build-gcc-release/
 │   |   │   └── build-clang-debug/
-│   |   └── TinyOrm-builds-qmake/
+│   |   └── TinyORM-builds-qmake/
 │   |       ├── build-debug/
-│   |       ├── build-TinyOrm-Desktop_Qt_5_15_2_GCC_64bit-Debug/
-│   |       └── build-TinyOrm-Desktop_Qt_5_15_2_clang13_64bit_ccache-Release/
+│   |       ├── build-TinyORM-Desktop_Qt_5_15_2_GCC_64bit-Debug/
+│   |       └── build-TinyORM-Desktop_Qt_5_15_2_clang13_64bit_ccache-Release/
 │   └── tom/
 │       ├── tom/
 │       │   └── database/
@@ -184,10 +184,10 @@ You can set the root and application folder paths in the form below and they wil
 │       │       ├── migrations.pri
 │       │       └── seeders.pri
 │       ├── tom-builds-cmake/
-│       │   └── build-TinyOrm-Desktop_Qt_6_5_2_clang14_64bit_ccache-Debug/
+│       │   └── build-TinyORM-Desktop_Qt_6_5_2_clang14_64bit_ccache-Debug/
 │       └── tom-builds-qmake/
-│           ├── build-TinyOrm-Desktop_Qt_6_5_2_GCC_64bit-Debug/
-│           └── build-TinyOrm-Desktop_Qt_6_5_2_clang14_64bit_ccache-Release/
+│           ├── build-TinyORM-Desktop_Qt_6_5_2_GCC_64bit-Debug/
+│           └── build-TinyORM-Desktop_Qt_6_5_2_clang14_64bit_ccache-Release/
 ├── tmp/
 └── vcpkg/
 ```
@@ -504,7 +504,7 @@ First, create a basic folder structure and then clone the `TinyORM` project.
 <TabItem value={pwsh} label={pwsh_label}>
 <CodeBlock className='language-powershell'>
 {`cd ${rootFolderPath(pwsh)}
-mkdir ${applicationFolder()}/TinyORM/TinyOrm-builds-qmake\n
+mkdir ${applicationFolder()}/TinyORM/TinyORM-builds-qmake\n
 cd ${applicationFolder()}/TinyORM
 git clone git@github.com:silverqx/TinyORM.git`}
 </CodeBlock>
@@ -512,7 +512,7 @@ git clone git@github.com:silverqx/TinyORM.git`}
 <TabItem value={bash} label={bash_label}>
 <CodeBlock className='language-bash'>
 {`cd ${rootFolderPath(bash)}
-mkdir -p ${applicationFolder()}/TinyORM/TinyOrm-builds-qmake\n
+mkdir -p ${applicationFolder()}/TinyORM/TinyORM-builds-qmake\n
 cd ${applicationFolder()}/TinyORM
 git clone git@github.com:silverqx/TinyORM.git`}
 </CodeBlock>
@@ -647,7 +647,7 @@ The [`TinyOrm.pri`](https://github.com/silverqx/TinyORM/blob/main/qmake/TinyOrm.
 ```qmake
 TINY_MAIN_DIR = $$clean_path(<your_path>)
 # Name of this qmake variable is crucial
-TINYORM_BUILD_TREE = $$quote($$TINY_MAIN_DIR/TinyOrm-builds-qmake/build-TinyOrm-Desktop_Qt_6_5_2_MSVC2019_64bit-Debug)
+TINYORM_BUILD_TREE = $$quote($$TINY_MAIN_DIR/TinyORM-builds-qmake/build-TinyORM-Desktop_Qt_6_5_2_MSVC2019_64bit-Debug)
 
 include($$TINY_MAIN_DIR/TinyORM/qmake/TinyOrm.pri)
 ```
@@ -661,13 +661,13 @@ You will have to link against the `TinyORM` library manually if you don't set th
 # Link against TinyORM library
 # ---
 TINY_MAIN_DIR = $$clean_path(<your_path>)
-TINY_TINYORM_BUILDS_DIR = $$quote($$TINY_MAIN_DIR/TinyOrm-builds-qmake)
+TINY_TINYORM_BUILDS_DIR = $$quote($$TINY_MAIN_DIR/TinyORM-builds-qmake)
 
 # Configure TinyORM library
 include($$TINY_MAIN_DIR/TinyORM/qmake/TinyOrm.pri)
 
 # TinyORM library path
-LIBS += $$quote(-L$$TINY_TINYORM_BUILDS_DIR/build-TinyOrm-Desktop_Qt_5_15_2_MSVC2019_64bit-Debug/src/debug/)
+LIBS += $$quote(-L$$TINY_TINYORM_BUILDS_DIR/build-TinyORM-Desktop_Qt_5_15_2_MSVC2019_64bit-Debug/src/debug/)
 LIBS += -lTinyOrm
 ```
 
@@ -678,13 +678,13 @@ LIBS += -lTinyOrm
 # Link against TinyORM library
 # ---
 TINY_MAIN_DIR = $$clean_path(<your_path>)
-TINY_TINYORM_BUILDS_DIR = $$quote($$TINY_MAIN_DIR/TinyOrm-builds-qmake)
+TINY_TINYORM_BUILDS_DIR = $$quote($$TINY_MAIN_DIR/TinyORM-builds-qmake)
 
 # Configure TinyORM library
 include($$TINY_MAIN_DIR/TinyORM/qmake/TinyOrm.pri)
 
 # TinyORM library path
-LIBS += $$quote(-L$$TINY_TINYORM_BUILDS_DIR/build-TinyOrm-Desktop_Qt_5_15_2_GCC_64bit-Debug/src/debug/)
+LIBS += $$quote(-L$$TINY_TINYORM_BUILDS_DIR/build-TinyORM-Desktop_Qt_5_15_2_GCC_64bit-Debug/src/debug/)
 LIBS += -lTinyOrm
 ```
 
