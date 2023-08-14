@@ -427,7 +427,7 @@ CMake multi-config generators like `Ninja Multi-Config` or `Visual Studio 16 201
 | `MYSQL_PING`                      | `OFF`   | Enable `Orm::MySqlConnection::pingDatabase()` method. |
 | `ORM`                             | `ON`    | Controls the compilation of all `ORM-related` source code, when this option is `disabled`, then only the `query builder` without `ORM` is compiled. Also excludes `ORM-related` unit tests. |
 | `TOM`                             | `ON`    | Controls the compilation of all `Tom-related` source code, when this option is `disabled`, then it also excludes `Tom-related` unit tests. |
-| `TOM_EXAMPLE`                     | `OFF`   | Build the <abbr title='TinyORM Migrations'>`Tom`</abbr> command-line application example (console application). |
+| `TOM_EXAMPLE`                     | `OFF`   | Build the <abbr title='TinyORM Migrations'>`Tom`</abbr> console application example. |
 | `TOM_MIGRATIONS_DIR`              | `-`     | Default migrations path for the `make:migration` command, can be an absolute or relative path (to the <abbr title='Current working directory'>pwd</abbr>).<br/><small>Default value: `database/migrations` <small>(relative to the pwd)</small></small> |
 | `TOM_MODELS_DIR`                  | `-`     | Default models path for the `make:model` command, can be an absolute or relative path (to the <abbr title='Current working directory'>pwd</abbr>).<br/><small>Default value: `database/models` <small>(relative to the pwd)</small></small> |
 | `TOM_SEEDERS_DIR`                 | `-`     | Default seeders path for the `make:seeder` command, can be an absolute or relative path (to the <abbr title='Current working directory'>pwd</abbr>).<br/><small>Default value: `database/seeders` <small>(relative to the pwd)</small></small> |
@@ -630,7 +630,7 @@ Everything is ready for build, you can press <kbd>Ctrl</kbd>+<kbd>b</kbd> to bui
 | `link_pkgconfig_off`                | `OFF`   | Link against `libmariadb` with `PKGCONFIG`.<br/>Used only in the `MinGW` __shared__ build <small>(exactly <code>win32-g++\|win32-clang-g++</code>)</small> and when `mysql_ping` is also defined to link against `libmariadb`, [source code](https://github.com/silverqx/TinyORM/blob/main/conf.pri.example#L48).<br/><small>Available when: <code>(win32-g++\|win32-clang-g++):mysql:!static:!staticlib</code></small> |
 | `mysql_ping`                        | `OFF`   | Enable `Orm::MySqlConnection::pingDatabase()` method. |
 | `tiny_ccache_win32`                 | `ON`    | Enable compiler cache. [Homepage](https://ccache.dev/)<br/><small>It works only on Windows systems. It works well with the MSYS2 `g++`, `clang++`, `msvc`, and `clang-cl` with `msvc`. It disables `precompile_header` as they are not supported on Windows and changes the `-Zi` compiler option to the `-Z7` for debug builds as the `-Zi` compiler option is not supported ([link](https://github.com/ccache/ccache/issues/1040) to the issue).</small> |
-| `tom_example`                       | `OFF`   | Build the <abbr title='TinyORM Migrations'>`Tom`</abbr> command-line application example (console application). |
+| `tom_example`                       | `OFF`   | Build the <abbr title='TinyORM Migrations'>`Tom`</abbr> console application example. |
 
 </APITable>
 </div>
