@@ -57,7 +57,7 @@
 # the TINY_DOTENV_ROOT qmake variable to the project's root folder. This variable is
 # already set in the .qmake.conf file for the TinyORM project.
 #
-# The following names are taken into account: .env, .env.win32, .env.unix, .env.mingw
+# Then the following names are taken into account: .env, .env.win32, .env.unix, .env.mingw
 
 # Tom migrations
 # ---
