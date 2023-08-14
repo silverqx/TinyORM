@@ -268,6 +268,25 @@ Or you can export it for the current session only.
 </TabItem>
 </Tabs>
 
+Even better is to export `vcpkg` environment variables globally, add it to the `.bashrc` or `.zshrc` on Linux, and you can use the `Environment variables` dialog on Windows.
+
+```bash title='Linux'
+export VCPKG_DEFAULT_TRIPLET=x64-linux
+#export VCPKG_DEFAULT_HOST_TRIPLET=x64-linux
+export VCPKG_MAX_CONCURRENCY=11
+export VCPKG_OVERLAY_PORTS="$HOME/.local/share/vcpkg/ports"
+export VCPKG_OVERLAY_TRIPLETS="$HOME/.local/share/vcpkg/triplets"
+export VCPKG_ROOT="$HOME/Code/c/vcpkg"
+```
+
+:::info
+It is recommended to define these variables globally because the `CMake` and `qmake` build system are able to detect the `vcpkg` installation from them so you don't have to configure them manually to detect the `vcpkg` installation.
+:::
+
+:::tip
+On Windows, it's always better to create these types of variables as user variables instead of system variables in the `Environment variables` dialog.
+:::
+
 ## C preprocessor macros
 
 The following table summarizes all the C preprocessor macros defined in the `TinyORM` library. These C macros are configured by `CMake` or `qmake` build systems. They are not sorted alphabetically, but they are sorted by how significant they are.
