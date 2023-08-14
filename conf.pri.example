@@ -91,6 +91,9 @@
 
 load(tiny_system_includepath)
 
+# Disable auto-configuration
+#CONFIG -= tiny_autoconf
+
 !tiny_autoconf: \
     load(tiny_find_packages)
 
