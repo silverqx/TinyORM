@@ -71,8 +71,8 @@ Here is one simple example for `pwsh`.
 <TabItem value='qtenv6.ps1' label='qtenv6.ps1'>
 
 ```powershell
-Write-Host 'Setting up environment for Qt 6.2.4 usage...' -ForegroundColor Magenta
-$env:Path = 'C:\Qt\6.2.4\msvc2019_64\bin;' + $env:Path
+Write-Host 'Setting up environment for Qt 6.5.2 usage...' -ForegroundColor Magenta
+$env:Path = 'C:\Qt\6.5.2\msvc2019_64\bin;' + $env:Path
 . E:\dotfiles\bin\vcvars64.ps1
 ```
 
@@ -208,7 +208,7 @@ Prepare compilation environment, we need to put the Qt Framework and Visual Stud
 <CodeBlock className='language-powershell'>
 {`mkdir ${rootFolderPath(pwsh)}
 cd ${rootFolderPath(pwsh)}
-$env:Path = 'E:\\Qt\\5.15.2\\msvc2019_64\\bin;' + $env:Path
+$env:Path = 'C:\\Qt\\6.5.2\\msvc2019_64\\bin;' + $env:Path
 vcvars64.ps1`}
 </CodeBlock>
 </TabItem>
