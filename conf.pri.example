@@ -10,48 +10,52 @@
 # ---
 
 # The tiny_autoconf and tiny_dotenv qmake CONFIG were added in the TinyORM v0.34.0.
-# These new features allow to auto-configure TinyORM, and with their help, the conf.pri
-# files can be skipped entirely.
-# The tiny_autoconf is designed to find the vcpkg installation and tiny_dotenv
+# These new features allow us to auto-configure TinyORM, and with their help,
+# the conf.pri files can be skipped entirely.
+#
+# The tiny_autoconf is designed to find the vcpkg and MySQL installations, and tiny_dotenv
 # to include the .env and .env.$$QMAKE_PLATFORM files in the project's root folder.
-# They can be configured using qmake and environment variables, and they also contain
-# some guessing logic if these variables are not defined.
+# These new features can be configured using qmake and environment variables, and they
+# also contain some guessing logic if these variables are not defined.
 #
 # These are qmake and environment variables that affect the auto-configuration feature:
 #
-# - TINY_VCPKG_ROOT    - path to the vcpkg installation folder (if not defined then
-#                        it tries to use the VCPKG_ROOT environment variable)
-# - TINY_VCPKG_TRIPLET - vcpkg triplet to use (vcpkg/installed/$$TINY_VCPKG_TRIPLET/);
-#                        if not defined then it tries to guess the vcpkg triplet based
-#                        on the current compiler and OS (based on the QMAKESPEC)
-# - TINY_MYSQL_ROOT    - path to the MySQL installation folder (if not defined then
-#                        it tries to guess the MySQL installation folder:
+# - TINY_VCPKG_ROOT    - Path to the vcpkg installation folder.
+#                        If not defined, then it tries to use the VCPKG_ROOT environment
+#                        variable.
+# - TINY_VCPKG_TRIPLET - The vcpkg triplet to use (vcpkg/installed/$$TINY_VCPKG_TRIPLET/).
+#                        If not defined, then it tries to guess the vcpkg triplet based
+#                        on the current compiler and OS (based on the QMAKESPEC), and
+#                        as the last thing, it tries to use the VCPKG_DEFAULT_TRIPLET
+#                        environment variable.
+# - TINY_MYSQL_ROOT    - Path to the MySQL installation folder.
+#                        If not defined, then it tries to guess the MySQL installation folder:
 #                        $$(ProgramFiles)/MySQL/MySQL Server (8.1|8.0|5.7)/)
 #
-# You can set these variables in the .env or .conf files (recommended), in the qmake
-# file (or wherever you want), or as environment variables.
+# You can set these variables in the .env (recommended) or conf.pri files,
+# in the .qmake.conf file (or wherever you want), or as environment variables.
 #
 # These variables are set after the auto-configuration is done:
 #
-# - TINY_VCPKG_INCLUDE - path to the vcpkg include folder (vcpkg/installed/<triplet>/include/)
-# - TINY_MYSQL_INCLUDE - path to the MySQL include folder (MySQL Server 8.1/include/)
-# - TINY_MYSQL_LIB     - path to the MySQL lib folder (MySQL Server 8.1/lib/)
+# - TINY_VCPKG_INCLUDE - Path to the vcpkg include folder (vcpkg/installed/<triplet>/include/).
+# - TINY_MYSQL_INCLUDE - Path to the MySQL include folder (MySQL Server 8.1/include/).
+# - TINY_MYSQL_LIB     - Path to the MySQL lib folder (MySQL Server 8.1/lib/).
 #
-# The TINY_MYSQL_INCLUDE and TINY_MYSQL_LIB are only set on win32 except mingw.
+# The TINY_MYSQL_INCLUDE and TINY_MYSQL_LIB are only set on win32 platform except mingw.
 
 # .env and .env.$$TINY_DOTENV_PLATFORM (tiny_dotenv feature)
 # ---
 #
-# This feature allows to define the .env and .env.$$TINY_DOTENV_PLATFORM files
+# This feature allows us to define the .env and .env.$$TINY_DOTENV_PLATFORM files
 # in the project's root folder. These files are loaded as early as possible so you can
 # affect the qmake configuration process. On the other hand, the conf.pri files are
-# loaded as late as possible and they can be used to override the qmake configuration.
+# loaded as late as possible, and they can be used to override the qmake configuration.
 #
 # The .env file is included first and is included on all platforms.
 #
-# There is only one requirement for this feature to work correctly and that is, to set
-# the $$TINY_DOTENV_ROOT qmake variable to the project's root folder. This variable is
-# set in the qmake.conf file in the TinyORM project.
+# There is only one requirement for this feature to work correctly, and that is to set
+# the TINY_DOTENV_ROOT qmake variable to the project's root folder. This variable is
+# already set in the .qmake.conf file for the TinyORM project.
 #
 # The following names are taken into account: .env, .env.win32, .env.unix, .env.mingw
 

@@ -12,17 +12,20 @@
 #
 # You must define the following variables before the TinyOrm.pri will be included:
 #
-# - TINYORM_BUILD_TREE - path to the TinyORM build folder
-# - TINY_VCPKG_ROOT    - path to the vcpkg installation folder (if not defined then
-#                        it tries to use the VCPKG_ROOT environment variable)
-# - TINY_VCPKG_TRIPLET - vcpkg triplet to use (vcpkg/installed/$$TINY_VCPKG_TRIPLET/);
-#                        if not defined then it tries to guess the vcpkg triplet based
-#                        on the current compiler and OS (based on the QMAKESPEC)
+# - TINYORM_BUILD_TREE - Path to the TinyORM build folder.
+# - TINY_VCPKG_ROOT    - Path to the vcpkg installation folder.
+#                        If not defined, then it tries to use the VCPKG_ROOT environment
+#                        variable.
+# - TINY_VCPKG_TRIPLET - The vcpkg triplet to use (vcpkg/installed/$$TINY_VCPKG_TRIPLET/).
+#                        If not defined, then it tries to guess the vcpkg triplet based
+#                        on the current compiler and OS (based on the QMAKESPEC), and
+#                        as the last thing, it tries to use the VCPKG_DEFAULT_TRIPLET
+#                        environment variable.
 #
 # These variables are set after the configuration is done:
 #
-# - TINY_BUILD_SUBFOLDER - folder by release type (/debug, /release, or empty)
-# - TINY_VCPKG_INCLUDE   - path to the vcpkg include folder (vcpkg/installed/<triplet>/include/)
+# - TINY_BUILD_SUBFOLDER - Folder by release type (/debug, /release, or empty).
+# - TINY_VCPKG_INCLUDE   - Path to the vcpkg include folder (vcpkg/installed/<triplet>/include/).
 
 # Path to the TinyORM source tree
 TINYORM_SOURCE_TREE = $$clean_path($$quote($$PWD/..))
