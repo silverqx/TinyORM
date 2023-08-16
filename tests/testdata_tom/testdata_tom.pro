@@ -35,17 +35,6 @@ win32-msvc:CONFIG(debug, debug|release) {
     !isEmpty(target.path): INSTALLS += target
 }
 
-# User Configuration
-# ---
-
-exists(conf.pri): \
-    include(conf.pri)
-
-else: \
-    error( "'conf.pri' for '$${TARGET}' example project does not exist. See an example\
-            configuration in 'examples/tom/conf.pri.example' or call 'vcpkg install'\
-            in the project's root." )
-
 # CONFIG tiny_autoconf
 # ---
 
@@ -55,3 +44,14 @@ tiny_autoconf {
     # Find the vcpkg and add the vcpkg/<triplet>/include/ on the system include path
     tiny_find_vcpkg()
 }
+
+# User Configuration
+# ---
+
+exists(conf.pri): \
+    include(conf.pri)
+
+else:!tiny_autoconf: \
+    error( "'conf.pri' for '$${TARGET}' example project does not exist. See an example\
+            configuration in 'examples/tom/conf.pri.example' or call 'vcpkg install'\
+            in the project's root." )

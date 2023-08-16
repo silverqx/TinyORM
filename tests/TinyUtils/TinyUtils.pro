@@ -104,16 +104,6 @@ build_tests {
     QMAKE_DISTCLEAN += $$TINYORM_SQLITE_DATABASE
 }
 
-# User Configuration
-# ---
-
-exists(../conf.pri): \
-    include(../conf.pri)
-
-else: \
-    error( "'tests/conf.pri' for 'tests/TinyUtils' library does not exist. See an example\
-            configuration in 'tests/conf.pri.example'." )
-
 # CONFIG tiny_autoconf
 # ---
 
@@ -123,3 +113,13 @@ tiny_autoconf {
     # Find the vcpkg and add the vcpkg/<triplet>/include/ on the system include path
     tiny_find_vcpkg()
 }
+
+# User Configuration
+# ---
+
+exists(../conf.pri): \
+    include(../conf.pri)
+
+else:!tiny_autoconf: \
+    error( "'tests/conf.pri' for 'tests/TinyUtils' library does not exist. See an example\
+            configuration in 'tests/conf.pri.example'." )

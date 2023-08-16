@@ -107,17 +107,6 @@ win32-msvc:CONFIG(debug, debug|release) {
         message( "Enabled MySQL ping on Orm::MySqlConnection." )
 }
 
-# User Configuration
-# ---
-
-exists(../conf.pri): \
-    include(../conf.pri)
-
-else: \
-    error( "'conf.pri' for '$${TARGET}' project does not exist. See an example\
-            configuration in 'conf.pri.example' or call 'vcpkg install'\
-            in the project's root." )
-
 # CONFIG tiny_autoconf
 # ---
 
@@ -130,3 +119,14 @@ tiny_autoconf {
     # Find the MySQL and add it on the system include path and library path
     mysql_ping: tiny_find_mysql()
 }
+
+# User Configuration
+# ---
+
+exists(../conf.pri): \
+    include(../conf.pri)
+
+else:!tiny_autoconf: \
+    error( "'conf.pri' for '$${TARGET}' project does not exist. See an example\
+            configuration in 'conf.pri.example' or call 'vcpkg install'\
+            in the project's root." )
