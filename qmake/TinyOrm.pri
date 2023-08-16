@@ -2,8 +2,8 @@
 # into your application.
 #
 # It sets up and configures the CONFIG and DEFINES qmake variables, adds the TinyORM, Tom,
-# and vcpkg header files to the system INCLUDEPATH (cross-platform using the -isystem,
-# -imsvc), links againts the TinyORM shared or static library using the LIBS.
+# and vcpkg header files on the system INCLUDEPATH (cross-platform using the -isystem or
+# -imsvc), links against the TinyORM shared or static library using the LIBS.
 #
 # Requirements:
 #
@@ -22,7 +22,7 @@
 #                        as the last thing, it tries to use the VCPKG_DEFAULT_TRIPLET
 #                        environment variable.
 #
-# These variables are set after the configuration is done:
+# These variables will be set after the configuration is done:
 #
 # - TINY_BUILD_SUBFOLDER - Folder by release type (/debug, /release, or empty).
 # - TINY_VCPKG_INCLUDE   - Path to the vcpkg include folder (vcpkg/installed/<triplet>/include/).

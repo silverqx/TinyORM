@@ -10,7 +10,7 @@
 # ---
 
 # The tiny_autoconf and tiny_dotenv qmake CONFIG were added in the TinyORM v0.34.0.
-# These new features allow us to auto-configure TinyORM, and with their help,
+# These new features allow us to auto-configure TinyORM project, and with their help,
 # the conf.pri files can be skipped entirely.
 #
 # The tiny_autoconf is designed to find the vcpkg and MySQL installations, and tiny_dotenv
@@ -35,7 +35,7 @@
 # You can set these variables in the .env (recommended) or conf.pri files,
 # in the .qmake.conf file (or wherever you want), or as environment variables.
 #
-# These variables are set after the auto-configuration is done:
+# These variables will be set after the auto-configuration is done:
 #
 # - TINY_VCPKG_INCLUDE - Path to the vcpkg include folder (vcpkg/installed/<triplet>/include/).
 # - TINY_MYSQL_INCLUDE - Path to the MySQL include folder (MySQL Server 8.1/include/).
