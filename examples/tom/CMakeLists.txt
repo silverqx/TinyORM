@@ -82,3 +82,5 @@ tiny_resource_and_manifest(${TomExample_target}
 
 # Unconditional dependencies
 target_link_libraries(${TomExample_target} PRIVATE ${TinyOrm_ns}::${TinyOrm_target})
+
+install(TARGETS ${TomExample_target})
