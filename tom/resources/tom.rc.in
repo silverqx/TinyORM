@@ -33,7 +33,7 @@ VS_VERSION_INFO VERSIONINFO
             BLOCK "040904B0"
             BEGIN
                 VALUE "CompanyName",      "Crystal Studio\0"
-                VALUE "FileDescription",  "Tom console for TinyORM\0"
+                VALUE "FileDescription",  "Tom console application for TinyORM C++ library\0"
                 VALUE "FileVersion",      VER_FILEVERSION_STR
                 VALUE "InternalName",     "tom console\0"
                 VALUE "LegalCopyright",   "Copyright (©) 2022 Crystal Studio\0"

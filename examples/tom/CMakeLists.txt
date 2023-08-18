@@ -16,7 +16,7 @@ tiny_read_version(TINY_VERSION
 # ---
 
 project(${TomExample_ns}
-    DESCRIPTION "Tom console for TinyORM"
+    DESCRIPTION "Tom console application for TinyORM C++ library"
     HOMEPAGE_URL "https://www.tinyorm.org"
     LANGUAGES CXX
     VERSION ${TINY_VERSION}
