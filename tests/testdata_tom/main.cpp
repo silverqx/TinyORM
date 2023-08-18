@@ -39,7 +39,7 @@ using namespace Seeders;    // NOLINT(google-build-using-namespace)
 /*! Build the database manager instance and add a database connection. */
 std::shared_ptr<DatabaseManager> setupManager();
 
-/*! c++ main function. */
+/*! C++ main function. */
 int main(int argc, char *argv[])
 {
     try {
