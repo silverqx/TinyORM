@@ -11,7 +11,7 @@ TINY_SYSTEM_HEADER
 
 #ifdef TINY_NO_INCOMPLETE_UNORDERED_MAP
 #  include <map>
- Leaving only for reference, the unordered_map is included in the modelscollection.hpp
+// Leaving only for reference, the unordered_map is included in the modelscollection.hpp
 #else
 #  include <unordered_map>
 #endif
