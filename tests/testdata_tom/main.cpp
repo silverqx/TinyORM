@@ -36,15 +36,15 @@ using TomApplication = Tom::Application;
 using namespace Migrations; // NOLINT(google-build-using-namespace)
 using namespace Seeders;    // NOLINT(google-build-using-namespace)
 
-/*! Build the database manager instance and add a database connection. */
-std::shared_ptr<DatabaseManager> setupManager();
+/*! Create the database manager instance and add a database connection. */
+std::shared_ptr<DatabaseManager> setupDatabaseManager();
 
 /*! C++ main function. */
 int main(int argc, char *argv[])
 {
     try {
         // Ownership of the shared_ptr()
-        auto db = setupManager();
+        auto db = setupDatabaseManager();
 
         return TomApplication(argc, argv, std::move(db), "TOM_TESTDATA_ENV")
                 // TODO tests, add migration for createDatabase if not exists and remove DB creation from the workflows? silverqx
@@ -80,7 +80,7 @@ int main(int argc, char *argv[])
     return EXIT_FAILURE;
 }
 
-std::shared_ptr<DatabaseManager> setupManager()
+std::shared_ptr<DatabaseManager> setupDatabaseManager()
 {
     using namespace Orm::Constants; // NOLINT(google-build-using-namespace)
 
