@@ -1,12 +1,12 @@
 # Merge release and debug CMake targets and configs to support multiconfig generators.
 # 1. Fix ${_IMPORT_PREFIX} of IMPORTED_IMPLIB_DEBUG and IMPORTED_LOCATION_DEBUG
 #    in auto-generated debug target
-# 2. Move /debug/share/cmake/TinyOrm/*[Tt]argets-debug.cmake to /share/cmake/${PORT}/
+# 2. Move /debug/share/cmake/TinyOrm/*[Tt]argets-debug.cmake to /share/cmake/${TinyOrm_ns}/
 function(tiny_cmake_config_fixup)
 
     set(TinyOrm_ns TinyOrm)
     set(debug_cmake "${CURRENT_PACKAGES_DIR}/debug/share/cmake/${TinyOrm_ns}")
-    set(release_cmake "${CURRENT_PACKAGES_DIR}/share/cmake/${PORT}")
+    set(release_cmake "${CURRENT_PACKAGES_DIR}/share/cmake/${TinyOrm_ns}")
 
     file(GLOB debug_targets "${debug_cmake}/*[Tt]argets-debug.cmake")
 
