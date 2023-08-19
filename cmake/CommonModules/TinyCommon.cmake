@@ -91,7 +91,7 @@ ${TINY_UNPARSED_ARGUMENTS}")
             /Zc:__cplusplus
             # Standards-conforming behavior
             /Zc:strictStrings
-            /WX /W4
+            /W4
             $<$<CONFIG:Debug>:/sdl>
         )
 
@@ -102,7 +102,6 @@ ${TINY_UNPARSED_ARGUMENTS}")
                 /permissive-
                 # clang-cl 16 throws -Wunused-command-line-argument, so provide it
                 # only for the MSVC
-                /guard:cf
                 /bigobj
                 # Standards-conforming behavior
                 /Zc:wchar_t,rvalueCast,inline
