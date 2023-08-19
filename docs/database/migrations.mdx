@@ -50,7 +50,7 @@ Migrations are like version control for your database, allowing your team to def
 
 The TinyORM `Schema` facade provides database agnostic support for creating and manipulating tables across all of TinyORM's supported database systems. Typically, migrations will use this facade to create and modify database tables and columns.
 
-`Tom` migrations is a small console application that depends on the `TinyORM` library. All migrations logic is compiled so recompilation is needed after adding a new migration class.
+The `tom` migrations is a small console application that depends on the `TinyORM` library. All migrations logic is compiled so recompilation is needed after adding a new migration class.
 
 :::caution
 The [`schema builder`](database/migrations.mdx#tables) and [`migrations`](database/migrations.mdx) don't support [multi-threading](database/getting-started.mdx#multi-threading-support).

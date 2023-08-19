@@ -127,6 +127,10 @@ Let's examine a basic model class and discuss some of TinyORM's key conventions:
 
     #endif // FLIGHT_HPP
 
+:::tip
+The `TinyORM` source tree contains the [`Torrent`](https://github.com/silverqx/TinyORM/blob/main/tests/models/models/torrent.hpp#L43) example model that also acts as the full-fledged example model. It has defined and also nicely commented all possible features that model classes can use or define.
+:::
+
 ### Table Names
 
 After glancing at the example above, you may have noticed that we did not tell TinyORM which database table corresponds to our `Flight` model. By convention, the "snake_case", plural name of the class will be used as the table name unless another name is explicitly specified. So, in this case, TinyORM will assume the `Flight` model stores records in the `flights` table, while an `AirTrafficController` model would store records in an `air_traffic_controllers` table.

@@ -24,8 +24,9 @@ import {
 # Building: Migrations
 
 - [Introduction](#introduction)
-- [Prerequisites](#prerequisites)
-    - [vcpkg.json manifest](#vcpkg-json-manifest)
+- [Install dependencies](#install-dependencies)
+    - [Using vcpkg.json](#using-vcpkg-json-manifest-mode)
+    - [Using vcpkg install](#using-vcpkg-install-manually)
 - [Source code](#source-code)
     - [Main file](#main-file)
     - [Migrations](#migrations)
@@ -42,7 +43,7 @@ import {
 
 ## Introduction
 
-We will try to create a working migrations console application called as <abbr title='TinyORM migrations'>`tom`</abbr> in the terminal with the `CMake` and in the `QtCreator` IDE with the `qmake`.
+We will try to create a working migrations console application called as <abbr title='TinyORM migrations'>`tom`</abbr> in the terminal with the `CMake` and in the `QtCreator IDE` with the `qmake` build systems.
 
 The `tom` console application also expects the following [folders structure](building/tinyorm.mdx#folders-structure), let's create them.
 
@@ -63,19 +64,25 @@ cd tom`}
 </TabItem>
 </Tabs>
 
-`TinyORM` source tree contains the `tom` example application, you can inspire or look at the [source code](https://github.com/silverqx/TinyORM/tree/main/examples/tom). Also `TinyORM` unit tests use a `tom` migrations internally to create the database structure, internally called as the [`tom` migrations for unit tests](https://github.com/silverqx/TinyORM/tree/main/tests/testdata_tom).
+`TinyORM` source tree contains the `tom` example application, you can inspire or look at the [source code](https://github.com/silverqx/TinyORM/tree/main/examples/tom). Also, `TinyORM` unit tests use a `tom` migrations internally to create the database structure, internally called as the [`tom` migrations for unit tests](https://github.com/silverqx/TinyORM/tree/main/tests/testdata_tom).
 
 All these three console applications the `tom` example, `tom` migrations for unit tests, and the application described in this tutorial have practically identical source code (the main.cpp file).
 
-## Prerequisites
+:::note
+The `tom` is able to generate <a href='https://en.wikipedia.org/wiki/Data_definition_language' title='Data Definition Language'>DDL</a> queries for all the [supported databases](database/getting-started.mdx#introduction) databases.
+:::
 
-Any of the [supported databases](database/getting-started.mdx#introduction), `tom` is able to generate <a href='https://en.wikipedia.org/wiki/Data_definition_language' title='Data Definition Language'>DDL</a> queries for all these databases.
+## Install dependencies
 
-Install required dependencies and build the `TinyORM` library with the `tom` (it's enabled by default) as is described [here](building/hello-world.mdx#install-dependencies) and [here](building/tinyorm.mdx).
+First, install the `vcpkg` package manager as is described [here](building/tinyorm.mdx#vcpkg).
 
-### vcpkg.json manifest {#vcpkg-json-manifest}
+The `range-v3` and `tabulate` libraries are required dependencies because `TinyORM` uses them in header files, you have to install them before you can use `TinyORM`. The `tabulate` library is only needed in the `tom` migrations it's used by the `migrate:status` command.
 
-Whole section about the `vcpkg` dependencies is described in the [Install dependencies](building/hello-world.mdx#install-dependencies).
+There are two ways how to install the `range-v3` and `tabulate` libraries using `vcpkg`.
+
+Also, don't forget to build the `TinyORM` library with the `tom` source code enabled (it's enabled by default) as is described [here](building/tinyorm.mdx).
+
+#### Using vcpkg.json <small>(manifest mode)</small> {#using-vcpkg-json-manifest-mode}
 
 Create a `vcpkg.json` file with the following content. `CMake` example below uses this method.
 
@@ -90,6 +97,8 @@ vim vcpkg.json
   "name": "tom",
   "version-semver": "0.1.0",
   "description": "Tom console application for TinyORM C++ library",
+  "homepage": "https://github.com/silverqx/TinyORM",
+  "documentation": "https://www.tinyorm.org/building/migrations",
   "maintainers": "Silver Zachara <silver.zachara@gmail.com>",
   "supports": "!(uwp | arm | android | emscripten)",
   "dependencies": [
@@ -102,6 +111,19 @@ vim vcpkg.json
 :::note
 Only `CMake` via the `toolchain file` supports this method.
 :::
+
+#### Using vcpkg install <small>(manually)</small> {#using-vcpkg-install-manually}
+
+This method can be used with both `CMake` and `qmake`.
+
+```bash
+cd ../../vcpkg
+
+vcpkg search range-v3
+vcpkg search tabulate
+vcpkg install range-v3 tabulate
+vcpkg list
+```
 
 ## Source code
 
@@ -152,15 +174,15 @@ And paste the following code.
     using namespace Migrations; // NOLINT(google-build-using-namespace)
     using namespace Seeders;    // NOLINT(google-build-using-namespace)
 
-    /*! Build the database manager instance and add a database connection. */
-    std::shared_ptr<DatabaseManager> setupManager();
+    /*! Create the database manager instance and add a database connection. */
+    std::shared_ptr<DatabaseManager> setupDatabaseManager();
 
     /*! C++ main function. */
     int main(int argc, char *argv[])
     {
         try {
             // Ownership of the shared_ptr()
-            auto db = setupManager();
+            auto db = setupDatabaseManager();
 
             return TomApplication(argc, argv, std::move(db), "TOM_MIGRATIONS_ENV")
                     .migrations<CreatePostsTable>()
@@ -176,34 +198,28 @@ And paste the following code.
         return EXIT_FAILURE;
     }
 
-    std::shared_ptr<DatabaseManager> setupManager()
+    std::shared_ptr<DatabaseManager> setupDatabaseManager()
     {
         using namespace Orm::Constants; // NOLINT(google-build-using-namespace)
 
         // Ownership of the shared_ptr()
         return DB::create({
-            {driver_,         QMYSQL},
-            {host_,           qEnvironmentVariable("DB_MYSQL_HOST", H127001)},
-            {port_,           qEnvironmentVariable("DB_MYSQL_PORT", P3306)},
-            {database_,       qEnvironmentVariable("DB_MYSQL_DATABASE", EMPTY)},
-            {username_,       qEnvironmentVariable("DB_MYSQL_USERNAME", EMPTY)},
-            {password_,       qEnvironmentVariable("DB_MYSQL_PASSWORD", EMPTY)},
-            {charset_,        qEnvironmentVariable("DB_MYSQL_CHARSET", UTF8MB4)},
-            {collation_,      qEnvironmentVariable("DB_MYSQL_COLLATION", UTF8MB40900aici)},
-            {timezone_,       TZ00},
+            {driver_,     QMYSQL},
+            {host_,       qEnvironmentVariable("DB_MYSQL_HOST", H127001)},
+            {port_,       qEnvironmentVariable("DB_MYSQL_PORT", P3306)},
+            {database_,   qEnvironmentVariable("DB_MYSQL_DATABASE", EMPTY)},
+            {username_,   qEnvironmentVariable("DB_MYSQL_USERNAME", EMPTY)},
+            {password_,   qEnvironmentVariable("DB_MYSQL_PASSWORD", EMPTY)},
+            {charset_,    qEnvironmentVariable("DB_MYSQL_CHARSET", UTF8MB4)},
+            {collation_,  qEnvironmentVariable("DB_MYSQL_COLLATION", UTF8MB40900aici)},
+            {timezone_,   TZ00},
             /* Specifies what time zone all QDateTime-s will have, the overridden default is
                the Qt::UTC, set to the Qt::LocalTime or QtTimeZoneType::DontConvert to use
                the system local time. */
-            {qt_timezone,     QVariant::fromValue(Qt::UTC)},
-            {prefix_,         EMPTY},
-            {prefix_indexes,  false},
-            {strict_,         true},
-            {isolation_level, QStringLiteral("REPEATABLE READ")},
-            {engine_,         InnoDB},
-            {Version,         {}}, // Autodetect
-            {options_,        QVariantHash()},
+            {qt_timezone, QVariant::fromValue(Qt::UTC)},
+            {strict_,     true},
         },
-            QStringLiteral("tinyorm_tom")); // shell:connection
+            QStringLiteral("tinyorm_tom_mysql")); // shell:connection
     }
 
 :::tip
@@ -283,6 +299,11 @@ And paste the following code.
 
     } // namespace Migrations
 
+
+:::tip
+The `TinyORM` source tree contains the [`CreatePostsTable`](https://github.com/silverqx/TinyORM/blob/main/tests/database/migrations/2014_10_12_000000_create_posts_table.hpp#L5) example migration that also acts as the full-fledged example migration. It has defined and also nicely commented all possible features that migration classes can use or define.
+:::
+
 :::info
 If you want, you can also build the `tom` application without the migrations, simply comment out the `migrations` method and the corresponding `#include "migrations/xyz.hpp"` files.
 :::
@@ -337,6 +358,10 @@ And paste the following code.
         };
 
     } // namespace Seeders
+
+:::tip
+The `TinyORM` source tree contains the [`DatabaseSeeder`](https://github.com/silverqx/TinyORM/blob/main/tests/database/seeders/databaseseeder.hpp#L8) root seeder example class that also acts as the full-fledged example seeder. It has defined and also nicely commented all possible features that seeder classes can use or define.
+:::
 
 :::tip
 You can create more seeder classes like this and use the `call<>()` method to invoke them as is described in the [Calling Additional Seeders](database/seeding.mdx#calling-additional-seeders) section.
@@ -657,7 +682,6 @@ To paste a source code correctly in `vim`, press <kbd>Shift</kbd> + <kbd>p</kbd>
 :::
 
 ```qmake
-QT *= core sql
 QT -= gui
 
 TEMPLATE = app
@@ -674,46 +698,116 @@ include($$PWD/database/migrations.pri)
 # Database seeders
 include($$PWD/database/seeders.pri)
 
-# Configure TinyORM library for the migrations purposes
+# Auto-configure TinyORM library for the migrations purposes 🔥
 include($$TINY_MAIN_DIR/TinyORM/qmake/tom.pri)
-
-# vcpkg - range-v3 and tabulate
-win32-msvc: \
-    INCLUDEPATH += $$quote($$TINY_VCPKG_INSTALLED/x64-windows/include/)
-mingw: \
-    QMAKE_CXXFLAGS += -isystem $$shell_quote($$TINY_VCPKG_INSTALLED/x64-mingw-dynamic/include/)
-unix:!macx: \
-    QMAKE_CXXFLAGS += -isystem $$shell_quote($$TINY_VCPKG_INSTALLED/x64-linux/include/)
 ```
 
 :::caution
 The exact [folders structure](building/tinyorm.mdx#folders-structure) is crucial in this example because the paths to the `TinyORM` source and build folders are relative.
 :::
 
-:::tip
-On Linux `-isystem` marks the directory as a system directory, it prevents warnings.
-
-On Windows you can use `QMAKE_CXXFLAGS_WARN_ON = -external:anglebrackets -external:W0`, it applies a warning level 0 to the angel bracket includes; `#include <file>`.
+:::caution
+Please pay special attention to letter casing in paths, especially TinyOrm vs TinORM!
 :::
 
-#### Configure using .qmake.conf
+#### `Auto-configure` using `.qmake.conf` and `.env`
 
-To correctly set a file properties as the version, description, ... you have to provide the path to the `TinyORM` qmake features (`.prf` files) which handle this correctly, this path is provided by the `QMAKEFEATURES` variable and can be set only in the `.qmake.conf` file.
+If you want to have properly configured `DEFINES` (C preprocessor macros), have Qt headers marked as system headers, or eg. have properly set properties of an executable file such as version and description, then you need to specify a path to the `TinyORM` qmake features (`.prf` files) which handle this correctly; this path is provided by the `QMAKEFEATURES` variable and can only be set in the `.qmake.conf` file.
 
-Create `.qmake.conf` in the `tom` application root folder with the following content.
+:::tip
+Read the [Consume TinyOrm library (qmake)](tinyorm.mdx#consume-tinyorm-library-qmake) section, as everything that is described in that section applies here as well.
+:::
+
+Create the `.qmake.conf` file in the `tom` application root folder with the following content.
 
 ```qmake
-TINY_MAIN_DIR = $$clean_path($$PWD/../../TinyORM)
-# Name of this qmake variable is crucial
-TINYORM_BUILD_TREE = $$quote($$TINY_MAIN_DIR/TinyORM-builds-qmake/build-TinyORM-Desktop_Qt_6_5_2_MSVC2019_64bit-Debug)
-# vcpkg - range-v3 and tabulate
-TINY_VCPKG_INSTALLED = $$clean_path($$PWD/../../../vcpkg/installed)
+# Path to the PARENT folder of the TinyORM source folder
+TINY_MAIN_DIR = $$clean_path($$PWD/../../TinyORM/)
+# To find .env and .env.$$QMAKE_PLATFORM files
+TINY_DOTENV_ROOT = $$PWD
 
+# To find .prf files, needed by eg. CONFIG += tiny_system_headers inline/extern_constants
 QMAKEFEATURES *= $$quote($$TINY_MAIN_DIR/TinyORM/qmake/features)
 ```
 
+Then, create a <code>.env.(win32&vert;unix&vert;mingw)</code> file in the `tom` application root folder with the following content.
+
+<Tabs groupId={shell}>
+<TabItem value={pwsh} label='.env.win32'>
+
+```qmake
+# Names and values of these qmake variables are crucial, they are used in the tom.pro
+# Please pay special attention to letter casing in paths, especially TinyOrm vs TinORM!
+
+# Path to the TinyORM build folder
+TINYORM_BUILD_TREE = $$quote($$TINY_MAIN_DIR/TinyORM-builds-qmake/build-TinyORM-Desktop_Qt_6_5_2_MSVC2022_64bit-Debug/)
+
+# Path to the vcpkg - range-v3 and tabulate
+# Will use the TINY_VCPKG_ROOT or VCPKG_ROOT environment variable if is empty
+TINY_VCPKG_ROOT = $$clean_path($$PWD/../../../vcpkg/)
+TINY_VCPKG_TRIPLET = x64-windows
+
+# Enable ccache wrapper
+#CONFIG *= tiny_ccache
+```
+
+</TabItem>
+<TabItem value={bash} label='.env.unix'>
+
+```qmake
+# Names and values of these qmake variables are crucial, they are used in the tom.pro
+# Please pay special attention to letter casing in paths, especially TinyOrm vs TinORM!
+
+# Path to the TinyORM build folder
+TINYORM_BUILD_TREE = $$quote($$TINY_MAIN_DIR/TinyORM-builds-qmake/build-TinyORM-Desktop_Qt_6_5_2_clang16_64bit_ccache-Debug/)
+
+# Path to the vcpkg - range-v3 and tabulate
+# Will use the TINY_VCPKG_ROOT or VCPKG_ROOT environment variable if is empty
+TINY_VCPKG_ROOT = $$clean_path($$PWD/../../../vcpkg/)
+TINY_VCPKG_TRIPLET = x64-linux
+
+# Use faster linker
+clang: CONFIG *= use_lld_linker
+else: CONFIG *= use_gold_linker
+
+# Or use the mold linker
+#QMAKE_LFLAGS *= -fuse-ld=mold
+```
+
+</TabItem>
+<TabItem value='mingw' label='.env.mingw'>
+
+```qmake
+# Names and values of these qmake variables are crucial, they are used in the tom.pro
+# Please pay special attention to letter casing in paths, especially TinyOrm vs TinORM!
+
+# Path to the TinyORM build folder
+TINYORM_BUILD_TREE = $$quote($$TINY_MAIN_DIR/TinyORM-builds-qmake/build-TinyORM-Desktop_Qt_6_5_2_MSYS2_UCRT64_clang_64bit-Debug/)
+
+# Path to the vcpkg - range-v3 and tabulate
+# Will use the TINY_VCPKG_ROOT or VCPKG_ROOT environment variable if is empty
+TINY_VCPKG_ROOT = $$clean_path($$PWD/../../../vcpkg/)
+TINY_VCPKG_TRIPLET = x64-mingw-dynamic
+
+# Enable ccache wrapper
+#CONFIG *= tiny_ccache
+
+# Use faster linker
+# CONFIG *= use_lld_linker does not work on MinGW
+QMAKE_LFLAGS *= -fuse-ld=lld
+```
+
+</TabItem>
+</Tabs>
+
+Don't forget to update the `TINYORM_BUILD_TREE` and `TINY_VCPKG_ROOT` folder paths to your needs if you are not using the recommended [`Folders structure`](tinyorm.mdx#folders-structure).
+
+:::tip
+You can entirely avoid the `.env` files, just move the `TINYORM_BUILD_TREE` to the `.qmake.conf` and set the `VCPKG_ROOT` at system level as is described in [`Set up vcpkg environment`](tinyorm.mdx#set-up-vcpkg-environment).
+:::
+
 :::info
-Configuring with the `.qmake.conf` file has one big advantage that is that you do not have to modify the project files.
+Configuring by the `.qmake.conf` and `.env` files has one big advantage, which is that you don't have to modify the project files.
 :::
 
 #### Migrations source files
@@ -751,6 +845,10 @@ This will open the `Configure Project` tab, select some kit and update build fol
 <img src={require('./assets/img/migrations/qmake-configure_project.png').default}
     alt='tom - QtCreator - Configure Project' width='760' />
 
+:::tip
+You can force the `QtCreator` to generate a build folders structure as is described [here](tinyorm.mdx#qtcreator-default-build-directory).
+:::
+
 You are ready to configure build options, hit <kbd>Ctrl</kbd>+<kbd>5</kbd> to open `Project Settings` tab and select `Build` in the left sidebar to open the `Build Settings`, it should look similar to the following picture.
 
 <img src={require('./assets/img/migrations/qmake-build_settings.png').default}
@@ -758,21 +856,21 @@ You are ready to configure build options, hit <kbd>Ctrl</kbd>+<kbd>5</kbd> to op
 
 Disable `QML debugging and profiling` and `Qt Quick Compiler`, they are not used.
 
-In the left sidebar open `Dependencies` and check `TinyOrm` and `Synchronize configuration`, this setting ensures that the current project will be rebuilt correctly when the `TinyORM` library source code changes.
+In the left sidebar open `Dependencies` and check `TinyORM` project and `Synchronize configuration`, this setting ensures that the current project will be rebuilt correctly when the `TinyORM` library source code changes.
 
 Everything is ready to build, you can press <kbd>Ctrl</kbd>+<kbd>b</kbd> to build the project.
 
 ### Execute migrations {#execute-migrations-qmake}
 
-The `QtCreator` takes care about all the necessary configuration, sets up the build environment correctly and also prepends dependency libraries on the path on Windows and on the `LD_LIBRARY_PATH` on Linux.
+The `QtCreator` takes care of all the necessary configurations, sets up the build environment correctly, and also prepends dependency libraries on the system path on Windows and on the `LD_LIBRARY_PATH` on Linux.
 
-Only one thing you might want to change is to run the `tom` application in the new terminal window. To do so, hit <kbd>Ctrl</kbd>+<kbd>5</kbd> to open the `Project Settings` tab and select `Run` in the left sidebar to open the `Run Settings`, then in the `Run` section select the `Run in terminal` checkbox.
+The only thing you might want to change is to run the `tom` application in the new terminal window. To do so, hit <kbd>Ctrl</kbd>+<kbd>5</kbd> to open the `Project Settings` tab and select `Run` in the left sidebar to open the `Run Settings`, then in the `Run` section select the `Run in terminal` checkbox.
 
 You can also set the `Command line arguments` in this `Run` section, eg. the `migrate:status`.
 
 To execute the `tom` application press <kbd>Ctrl</kbd> + <kbd>r</kbd>.
 
-The output will look something like this.
+The output will look __very similar__ to this if you add more migrations.
 
 <img src={require('./assets/img/migrations/tom_migrate_status.png').default}
     alt='Tom migrations - migrate:status command output' width='660' />

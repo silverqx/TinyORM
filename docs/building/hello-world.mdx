@@ -26,8 +26,8 @@ import {
 - [Introduction](#introduction)
 - [Prepare SQLite 3 database](#prepare-sqlite-3-database)
 - [Install dependencies](#install-dependencies)
-    - [Using vcpkg.json](#using-vcpkg-json)
-    - [Using vcpkg install](#using-vcpkg-install)
+    - [Using vcpkg.json](#using-vcpkg-json-manifest-mode)
+    - [Using vcpkg install](#using-vcpkg-install-manually)
 - [Source code](#source-code)
 - [Hello world with CMake](#hello-world-with-cmake)
     - [CMake project](#cmake-project)
@@ -41,7 +41,7 @@ import {
 
 ## Introduction
 
-We will try to create the simplest working console application, in the terminal with the `CMake` and in the `QtCreator` IDE with the `qmake`.
+We will try to create the simplest working console application, in the terminal with the `CMake` and in the `QtCreator IDE` with the `qmake` build systems.
 
 The `HelloWorld` example also expects the following [folders structure](building/tinyorm.mdx#folders-structure), let's create them.
 
@@ -64,9 +64,9 @@ cd HelloWorld`}
 
 ## Prepare SQLite 3 database
 
-Simplest will be to demonstrate the `HelloWorld` example with the `SQLite 3` database.
+The easiest way to demonstrate the `HelloWorld` example will be with a `SQLite 3` database.
 
-To create and insert two rows into the `SQLite 3` database, execute the following command in the terminal.
+Execute the following command in the terminal to create and insert two rows into the `SQLite 3` database.
 
 ```bash
 sqlite3 HelloWorld.sqlite3 "
@@ -99,6 +99,8 @@ vim vcpkg.json
   "name": "tinyorm-helloworld",
   "version-semver": "0.1.0",
   "description": "Hello world console application for TinyORM C++ library",
+  "homepage": "https://github.com/silverqx/TinyORM",
+  "documentation": "https://www.tinyorm.org/building/hello-world",
   "maintainers": "Silver Zachara <silver.zachara@gmail.com>",
   "supports": "!(uwp | arm | android | emscripten)",
   "dependencies": [
@@ -174,7 +176,8 @@ And paste the following code.
         // Ownership of a shared_ptr()
         auto manager = DB::create({
             {"driver",   "QSQLITE"},
-            {"database", qEnvironmentVariable("DB_DATABASE", "HelloWorld.sqlite3")},
+            {"database", qEnvironmentVariable("TINYORM_HELLOWORLD_DB_SQLITE_DATABASE",
+                                              "../../HelloWorld.sqlite3")},
             {"check_database_exists", true},
         });
 
@@ -410,27 +413,6 @@ Do not forget to add `TinyOrm0d.dll` on the path on Windows and on the `LD_LIBRA
 </TabItem>
 </Tabs>
 
-Create a symbolic link to the `HelloWorld.sqlite3` database inside the build folder. If you do not have enabled symbolic links without `Administrator` rights on your `Windows`, you can just simply copy the `HelloWorld.sqlite3` database or [`Allow symbolic links unprivileged`](building/tinyorm.mdx#allow-symbolic-links-unprivileged).
-
-<Tabs groupId={shell} name='tinyorm-on-path'>
-<TabItem value={pwsh} label={pwsh_label}>
-
-```powershell
-New-Item -ItemType SymbolicLink -Target ../../HelloWorld.sqlite3 -Name HelloWorld.sqlite3
-# Or simply copy
-Copy-Item ../../HelloWorld.sqlite3 .
-```
-
-</TabItem>
-<TabItem value={bash} label={bash_label}>
-
-```bash
-ln -s ../../HelloWorld.sqlite3 .
-```
-
-</TabItem>
-</Tabs>
-
 Execute `HelloWorld` example.
 
 <Tabs groupId={shell}>
@@ -493,51 +475,126 @@ To paste a source code correctly in `vim`, press <kbd>Shift</kbd> + <kbd>p</kbd>
 :::
 
 ```qmake
-QT *= core sql
 QT -= gui
 
 TEMPLATE = app
 
 CONFIG *= cmdline
 
+DEFINES += PROJECT_TINYORM_HELLOWORLD
+
 SOURCES += $$PWD/main.cpp
 
-# Configure TinyORM library
+# Auto-configure TinyORM library 🔥
 include($$TINY_MAIN_DIR/TinyORM/qmake/TinyOrm.pri)
-
-# vcpkg - range-v3
-win32-msvc: \
-    INCLUDEPATH += $$quote($$TINY_VCPKG_INSTALLED/x64-windows/include/)
-mingw: \
-    QMAKE_CXXFLAGS += -isystem $$shell_quote($$TINY_VCPKG_INSTALLED/x64-mingw-dynamic/include/)
-unix:!macx: \
-    QMAKE_CXXFLAGS += -isystem $$shell_quote($$TINY_VCPKG_INSTALLED/x64-linux/include/)
 ```
 
 :::caution
 The exact [folders structure](building/tinyorm.mdx#folders-structure) is crucial in this example because the paths to the `TinyORM` source and build folders are relative.
 :::
 
-:::tip
-On Linux `-isystem` marks the directory as a system directory, it prevents warnings.
-
-On Windows you can use `QMAKE_CXXFLAGS_WARN_ON = -external:anglebrackets -external:W0`, it applies a warning level 0 to the angel bracket includes; `#include <file>`.
+:::caution
+Please pay special attention to letter casing in paths, especially TinyOrm vs TinORM!
 :::
 
-#### Configure using .qmake.conf
+#### `Auto-configure` using `.qmake.conf` and `.env`
 
-Create `.qmake.conf` in the `HelloWorld` project root folder with the following content.
+If you want to have properly configured `DEFINES` (C preprocessor macros) or have Qt headers marked as system headers, then you need to specify a path to the `TinyORM` qmake features (`.prf` files) which handle this correctly; this path is provided by the `QMAKEFEATURES` variable and can only be set in the `.qmake.conf` file.
+
+:::tip
+Read the [Consume TinyOrm library (qmake)](tinyorm.mdx#consume-tinyorm-library-qmake) section, as everything that is described in that section applies here as well.
+:::
+
+Create the `.qmake.conf` file in the `HelloWorld` project root folder with the following content.
 
 ```qmake
-TINY_MAIN_DIR = $$clean_path($$PWD/../../TinyORM)
-# Name of this qmake variable is crucial
-TINYORM_BUILD_TREE = $$quote($$TINY_MAIN_DIR/TinyORM-builds-qmake/build-TinyORM-Desktop_Qt_6_5_2_MSVC2019_64bit-Debug)
-# vcpkg - range-v3
-TINY_VCPKG_INSTALLED = $$clean_path($$PWD/../../../vcpkg/installed)
+# Path to the PARENT folder of the TinyORM source folder
+TINY_MAIN_DIR = $$clean_path($$PWD/../../TinyORM/)
+# To find .env and .env.$$QMAKE_PLATFORM files
+TINY_DOTENV_ROOT = $$PWD
+
+# To find .prf files, needed by eg. CONFIG += tiny_system_headers inline/extern_constants
+QMAKEFEATURES *= $$quote($$TINY_MAIN_DIR/TinyORM/qmake/features)
 ```
 
+Then, create a <code>.env.(win32&vert;unix&vert;mingw)</code> file in the `HelloWorld` project root folder with the following content.
+
+<Tabs groupId={shell}>
+<TabItem value={pwsh} label='.env.win32'>
+
+```qmake
+# Names and values of these qmake variables are crucial, they are used in HelloWorld.pro
+# Please pay special attention to letter casing in paths, especially TinyOrm vs TinORM!
+
+# Path to the TinyORM build folder
+TINYORM_BUILD_TREE = $$quote($$TINY_MAIN_DIR/TinyORM-builds-qmake/build-TinyORM-Desktop_Qt_6_5_2_MSVC2022_64bit-Debug/)
+
+# Path to the vcpkg - range-v3
+# Will use the TINY_VCPKG_ROOT or VCPKG_ROOT environment variable if is empty
+TINY_VCPKG_ROOT = $$clean_path($$PWD/../../../vcpkg/)
+TINY_VCPKG_TRIPLET = x64-windows
+
+# Enable ccache wrapper
+#CONFIG *= tiny_ccache
+```
+
+</TabItem>
+<TabItem value={bash} label='.env.unix'>
+
+```qmake
+# Names and values of these qmake variables are crucial, they are used in HelloWorld.pro
+# Please pay special attention to letter casing in paths, especially TinyOrm vs TinORM!
+
+# Path to the TinyORM build folder
+TINYORM_BUILD_TREE = $$quote($$TINY_MAIN_DIR/TinyORM-builds-qmake/build-TinyORM-Desktop_Qt_6_5_2_clang16_64bit_ccache-Debug/)
+
+# Path to the vcpkg - range-v3
+# Will use the TINY_VCPKG_ROOT or VCPKG_ROOT environment variable if is empty
+TINY_VCPKG_ROOT = $$clean_path($$PWD/../../../vcpkg/)
+TINY_VCPKG_TRIPLET = x64-linux
+
+# Use faster linker
+clang: CONFIG *= use_lld_linker
+else: CONFIG *= use_gold_linker
+
+# Or use the mold linker
+#QMAKE_LFLAGS *= -fuse-ld=mold
+```
+
+</TabItem>
+<TabItem value='mingw' label='.env.mingw'>
+
+```qmake
+# Names and values of these qmake variables are crucial, they are used in HelloWorld.pro
+# Please pay special attention to letter casing in paths, especially TinyOrm vs TinORM!
+
+# Path to the TinyORM build folder
+TINYORM_BUILD_TREE = $$quote($$TINY_MAIN_DIR/TinyORM-builds-qmake/build-TinyORM-Desktop_Qt_6_5_2_MSYS2_UCRT64_clang_64bit-Debug/)
+
+# Path to the vcpkg - range-v3
+# Will use the TINY_VCPKG_ROOT or VCPKG_ROOT environment variable if is empty
+TINY_VCPKG_ROOT = $$clean_path($$PWD/../../../vcpkg/)
+TINY_VCPKG_TRIPLET = x64-mingw-dynamic
+
+# Enable ccache wrapper
+#CONFIG *= tiny_ccache
+
+# Use faster linker
+# CONFIG *= use_lld_linker does not work on MinGW
+QMAKE_LFLAGS *= -fuse-ld=lld
+```
+
+</TabItem>
+</Tabs>
+
+Don't forget to update the `TINYORM_BUILD_TREE` and `TINY_VCPKG_ROOT` folder paths to your needs if you are not using the recommended [`Folders structure`](tinyorm.mdx#folders-structure).
+
+:::tip
+You can entirely avoid the `.env` files, just move the `TINYORM_BUILD_TREE` to the `.qmake.conf` and set the `VCPKG_ROOT` at system level as is described in [`Set up vcpkg environment`](tinyorm.mdx#set-up-vcpkg-environment).
+:::
+
 :::info
-Configuring with the `.qmake.conf` file has one big advantage that is that you do not have to modify the project files.
+Configuring by the `.qmake.conf` and `.env` files has one big advantage, which is that you don't have to modify the project files.
 :::
 
 ### Build Hello world {#build-hello-world-qmake}
@@ -553,6 +610,10 @@ This will open the `Configure Project` tab, select some kit and update build fol
 <img src={require('./assets/img/hello-world/qmake-configure_project.png').default}
     alt='HelloWorld - QtCreator - Configure Project' width='760' />
 
+:::tip
+You can force the `QtCreator` to generate a build folders structure as is described [here](tinyorm.mdx#qtcreator-default-build-directory).
+:::
+
 You are ready to configure build options, hit <kbd>Ctrl</kbd>+<kbd>5</kbd> to open `Project Settings` tab and select `Build` in the left sidebar to open the `Build Settings`, it should look similar to the following picture.
 
 <img src={require('./assets/img/hello-world/qmake-build_settings.png').default}
@@ -560,40 +621,15 @@ You are ready to configure build options, hit <kbd>Ctrl</kbd>+<kbd>5</kbd> to op
 
 Disable `QML debugging and profiling` and `Qt Quick Compiler`, they are not used.
 
-In the left sidebar open `Dependencies` and check `TinyOrm` and `Synchronize configuration`, this setting ensures that the current project will be rebuilt correctly when the `TinyORM` library source code changes.
+In the left sidebar open `Dependencies` and check `TinyORM` project and `Synchronize configuration`, this setting ensures that the current project will be rebuilt correctly when the `TinyORM` library source code changes.
 
 Everything is ready to build, you can press <kbd>Ctrl</kbd>+<kbd>b</kbd> to build the project.
 
 ### Execute Hello world {#execute-hello-world-qmake}
 
-The `QtCreator` takes care about all the necessary configuration, sets up the build environment correctly and also prepends dependency libraries on the path on Windows and on the `LD_LIBRARY_PATH` on Linux.
+The `QtCreator` takes care of all the necessary configurations, sets up the build environment correctly, and also prepends dependency libraries on the system path on Windows and on the `LD_LIBRARY_PATH` on Linux.
 
-Only one thing you might want to change is to run the `HelloWorld` example in the new terminal window. To do so, hit <kbd>Ctrl</kbd>+<kbd>5</kbd> to open the `Project Settings` tab and select `Run` in the left sidebar to open the `Run Settings`, then in the `Run` section select the `Run in terminal` checkbox.
-
-Create a symbolic link to the `HelloWorld.sqlite3` database inside the build folder. If you do not have enabled symbolic links without `Administrator` rights on your `Windows`, you can just simply copy the `HelloWorld.sqlite3` database or [`Allow symbolic links unprivileged`](building/tinyorm.mdx#allow-symbolic-links-unprivileged).
-
-<Tabs groupId={shell} name='tinyorm-on-path'>
-<TabItem value={pwsh} label={pwsh_label}>
-
-```powershell
-cd ../HelloWorld-builds-qmake/build-HelloWorld-Desktop_Qt_5_15_2_MSVC2019_64bit-Debug
-
-New-Item -ItemType SymbolicLink -Target ../../HelloWorld.sqlite3 -Name HelloWorld.sqlite3
-# Or simply copy
-Copy-Item ../../HelloWorld.sqlite3 .
-```
-
-</TabItem>
-<TabItem value={bash} label={bash_label}>
-
-```bash
-cd ../HelloWorld-builds-qmake/build-HelloWorld-Desktop_Qt_5_15_2_GCC_64bit-Debug
-
-ln -s ../../HelloWorld.sqlite3 .
-```
-
-</TabItem>
-</Tabs>
+The only thing you might want to change is to run the `HelloWorld` example in the new terminal window. To do so, hit <kbd>Ctrl</kbd>+<kbd>5</kbd> to open the `Project Settings` tab and select `Run` in the left sidebar to open the `Run Settings`, then in the `Run` section select the `Run in terminal` checkbox.
 
 To execute the `HelloWorld` example press <kbd>Ctrl</kbd> + <kbd>r</kbd>.
 

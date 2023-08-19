@@ -43,6 +43,9 @@ import {
     - [Configure & Build](#configure-and-build-qmake)
     - [qmake build options](#qmake-build-options)
     - [Consume TinyOrm library](#consume-tinyorm-library-qmake)
+    - [Auto-configuration internals](#auto-configuration-internals)
+      - [Environment files](#environment-files)
+    - [Manual configuration internals](#manual-configuration-internals)
 - [Ccache support](#ccache-support)
 
 ## Introduction
@@ -55,7 +58,7 @@ All examples below assume that `pwsh` runs on `Windows` and `bash` runs on `Linu
 
 #### Common Prerequisites
 
-Before beginning, install required [dependencies](dependencies.mdx).
+Install the required [dependencies](dependencies.mdx) before starting.
 
 #### Windows Prerequisites
 
@@ -83,6 +86,32 @@ $env:Path = 'C:\Qt\6.5.2\msvc2019_64\bin;' + $env:Path
 Write-Host 'Setting up environment for Qt 5.15.2 usage...' -ForegroundColor Magenta
 $env:Path = 'C:\Qt\5.15.2\msvc2019_64\bin;' + $env:Path
 . E:\dotfiles\bin\vcvars64.ps1
+```
+
+</TabItem>
+</Tabs>
+
+And here for Linux:
+
+
+<Tabs groupId={shell}>
+<TabItem value='qtenv6' label='qtenv6'>
+
+```bash
+echo 'Setting up environment for Qt 6.5.2 usage...'
+
+export PATH=/opt/Qt/6.5.2/gcc_64/bin${PATH:+:}$PATH
+export LD_LIBRARY_PATH=/opt/Qt/6.5.2/gcc_64/lib${LD_LIBRARY_PATH:+:}$LD_LIBRARY_PATH
+```
+
+</TabItem>
+<TabItem value='qtenv5' label='qtenv5'>
+
+```bash
+echo 'Setting up environment for Qt 5.15.2 usage...'
+
+export PATH=/opt/Qt/5.15.2/gcc_64/bin${PATH:+:}$PATH
+export LD_LIBRARY_PATH=/opt/Qt/5.15.2/gcc_64/lib${LD_LIBRARY_PATH:+:}$LD_LIBRARY_PATH
 ```
 
 </TabItem>
@@ -199,9 +228,18 @@ You can set the root and application folder paths in the form below and they wil
 Avoid paths with spaces with the `qmake` build system, it will not compile.
 :::
 
+<a id='qtcreator-default-build-directory' />
+
+:::tip
+You can force the `QtCreator` to generate a build folders structure as is described above.
+
+To generate the required folders structure set the `Settings` - `Build & Run` - `Default Build Properties` - `Default build directory` to:<br/>
+`../%{Project:Name}-builds-%{BuildSystem:Name}/%{JS: Util.asciify("build-%{Project:Name}-%{Kit:FileSystemName}-%{BuildConfig:Name}")}`
+:::
+
 ## Getting started
 
-Prepare compilation environment, we need to put the Qt Framework and Visual Studio MSVC compiler on the path on Windows. The Qt Framework and compiler are already on the path on Linux.
+Prepare compilation environment, we need to put the Qt Framework and Visual Studio MSVC compiler on the path on Windows. The compiler is already on the path on Linux and you can export `PATH` and `LD_LIBRARY_PATH` for Qt Framework, or use our `qtenvX` scripts described above.
 
 <Tabs groupId={shell}>
 <TabItem value={pwsh} label={pwsh_label}>
@@ -215,10 +253,16 @@ vcvars64.ps1`}
 <TabItem value={bash} label={bash_label}>
 <CodeBlock className='language-bash'>
 {`mkdir -p ${rootFolderPath(bash)}
-cd ${rootFolderPath(bash)}`}
+cd ${rootFolderPath(bash)}
+export PATH=/opt/Qt/6.5.2/gcc_64/bin$\{PATH:+:\}$PATH
+export LD_LIBRARY_PATH=/opt/Qt/6.5.2/gcc_64/lib$\{LD_LIBRARY_PATH:+:\}$LD_LIBRARY_PATH`}
 </CodeBlock>
 </TabItem>
 </Tabs>
+
+:::tip
+You can also use the [`tools/Add-FolderOnPath.ps1`](https://github.com/silverqx/TinyORM/blob/main/tools/Add-FolderOnPath.ps1) pwsh script to fastly prepend a path or <abbr title='Current working directory'>pwd</abbr> on the system `PATH`.
+:::
 
 ## vcpkg
 
@@ -251,7 +295,7 @@ Add `vcpkg` on the system path, add the following to the `.bashrc` or `.zshrc` o
 {`export PATH=${rootFolderPath(bash)}/vcpkg\${PATH:+:}$PATH`}
 </CodeBlock>
 
-On Windows, open the `Environment variables` dialog and add `vcpkg` on the `PATH`.
+On Windows, open the `Environment variables` dialog and add `vcpkg` on the user `PATH`.
 
 Or you can export it for the current session only.
 
@@ -268,7 +312,9 @@ Or you can export it for the current session only.
 </TabItem>
 </Tabs>
 
-Even better is to export `vcpkg` environment variables globally, add it to the `.bashrc` or `.zshrc` on Linux, and you can use the `Environment variables` dialog on Windows.
+#### Set up `vcpkg` environment
+
+To export `vcpkg` environment variables globally, add it to the `.bashrc` or `.zshrc` on Linux, and you can use the `Environment variables` dialog on Windows.
 
 ```bash title='Linux'
 export VCPKG_DEFAULT_TRIPLET=x64-linux
@@ -295,7 +341,7 @@ In the `CMake` build system, all the C macros are auto-detected / auto-configure
 
 In the `qmake` build is important whether you are building `TinyORM` library or you are building your application and linking against `TinyORM` library. When you are building the `TinyORM` library, all the C macros are auto-detected / auto-configured or controlled by [`qmake build options`](#qmake-build-options), so you don't have to care too much about them.
 
-But a special situation is when you are building your application / library and you are linking against `TinyORM` library. In this particular case, you must configure all these C macros manually! For this reason, the [`TinyOrm.pri`](https://github.com/silverqx/TinyORM/blob/main/qmake/TinyOrm.pri) has been created, so that's not a big deal. Little more info [here](#consume-tinyorm-library-qmake).
+But a special situation is when you are building your application / library and you are linking against `TinyORM` library. In this particular case, you must configure all these C macros manually! For this reason, the [`TinyOrm.pri`](https://github.com/silverqx/TinyORM/blob/main/qmake/TinyOrm.pri) has been created, so that's not a big deal either. Little more info [here](#consume-tinyorm-library-qmake).
 
 <div id='apitable-c-macros'>
 <APITable>
@@ -310,7 +356,7 @@ But a special situation is when you are building your application / library and 
 | `TINYORM_NO_DEBUG_SQL`            | Defined in the release build. |
 | `TINYORM_MYSQL_PING`              | Enable `Orm::MySqlConnection::pingDatabase()` method.<br/><small>Defined when [`mysql_ping`](#mysql_ping) <small>(qmake)</small> / [`MYSQL_PING`](#MYSQL_PING) <small>(cmake)</small> configuration `build option` is enabled.</small> |
 | `TINYORM_DISABLE_ORM`             | Controls the compilation of all `ORM-related` source code, when this macro  is `defined`, then only the `query builder` without `ORM` is compiled. Also excludes `ORM-related` unit tests.<br/><small>Defined when [`disable_orm`](#disable_orm) <small>(qmake)</small> / [`ORM`](#ORM) <small>(cmake)</small> configuration `build option` is enabled <small>(qmake)</small> / disabled <small>(cmake)</small>.</small> |
-| `TINYORM_EXTERN_CONSTANTS`        | Defined when extern constants are used.<br/><small>Described at [`qmake`](#inline_constants) / [`CMake`](#INLINE_CONSTANTS) how it works.</small> |
+| `TINYORM_EXTERN_CONSTANTS`        | Defined when extern constants are used. Extern constants are enabled by default for shared builds and disabled for static builds.<br/><small>Described at [`qmake`](#extern_constants) / [`CMake`](#INLINE_CONSTANTS) how it works.</small> |
 | `TINYORM_INLINE_CONSTANTS`        | Defined when global inline constants are used.<br/><small>Defined when [`inline_constants`](#inline_constants) <small>(qmake)</small> / [`INLINE_CONSTANTS`](#INLINE_CONSTANTS) <small>(cmake)</small> configuration `build option` is enabled.</small> |
 | `TINYORM_TESTS_CODE`              | Enable code needed by unit tests, eg. connection overriding in the `Orm::Tiny::Model`.<br/><small>Defined when [`build_tests`](#build_tests) <small>(qmake)</small> / [`BUILD_TESTS`](#BUILD_TESTS) <small>(cmake)</small> configuration `build option` is enabled.</small> |
 | `TINYORM_DISABLE_THREAD_LOCAL`    | Remove all [`thread_local`](https://en.cppreference.com/w/c/language/storage_duration) storage duration specifiers, it disables threading support.<br/><small>Defined when [`disable_thread_local`](#disable_thread_local) <small>(qmake)</small> / [`DISABLE_THREAD_LOCAL`](#DISABLE_THREAD_LOCAL) <small>(cmake)</small> configuration `build option` is enabled.</small> |
@@ -427,7 +473,7 @@ CMake multi-config generators like `Ninja Multi-Config` or `Visual Studio 16 201
 | `MYSQL_PING`                      | `OFF`   | Enable `Orm::MySqlConnection::pingDatabase()` method. |
 | `ORM`                             | `ON`    | Controls the compilation of all `ORM-related` source code, when this option is `disabled`, then only the `query builder` without `ORM` is compiled. Also excludes `ORM-related` unit tests. |
 | `TOM`                             | `ON`    | Controls the compilation of all `Tom-related` source code, when this option is `disabled`, then it also excludes `Tom-related` unit tests. |
-| `TOM_EXAMPLE`                     | `OFF`   | Build the <abbr title='TinyORM Migrations'>`Tom`</abbr> console application example. |
+| `TOM_EXAMPLE`                     | `OFF`   | Build the <abbr title='TinyORM Migrations'>`tom`</abbr> console application example. |
 | `TOM_MIGRATIONS_DIR`              | `-`     | Default migrations path for the `make:migration` command, can be an absolute or relative path (to the <abbr title='Current working directory'>pwd</abbr>).<br/><small>Default value: `database/migrations` <small>(relative to the pwd)</small></small> |
 | `TOM_MODELS_DIR`                  | `-`     | Default models path for the `make:model` command, can be an absolute or relative path (to the <abbr title='Current working directory'>pwd</abbr>).<br/><small>Default value: `database/models` <small>(relative to the pwd)</small></small> |
 | `TOM_SEEDERS_DIR`                 | `-`     | Default seeders path for the `make:seeder` command, can be an absolute or relative path (to the <abbr title='Current working directory'>pwd</abbr>).<br/><small>Default value: `database/seeders` <small>(relative to the pwd)</small></small> |
@@ -567,9 +613,44 @@ If you are using sessions, you can use a single `clangd` instance for all projec
 
 #### Configure TinyORM
 
-Now you are ready to configure the `TinyORM` library. The `qmake` does not support auto-configuration of dependencies out of the box, to configure TinyORM's `qmake` build dependencies you have to copy the `conf.pri.example` file to the `conf.pri` and manually edit the `INCLUDEPATH` and `LIBS`. This way you can override any `qmake` build options or variables.
+Now you are ready to configure the `TinyORM` library. There are two ways how to configure the `TinyORM` library and it's the new `auto-configure` feature added in `TinyORM` `v0.34.0` using the `.env` files and the old way using the `conf.pri` files.
 
-`conf.pri` files are nicely commented, so is clearly visible what has to be modified.
+##### Auto-configuration (`tiny_autoconf` and `tiny_dotenv`)
+
+This is the new recommended method to auto-configure TinyORM's `qmake` build system and also the dependencies, it was added in `TinyORM` `v0.34.0`. You need to copy the prepared `.env.(win32|unix|mingw).example` file to the `.env.(win32|unix|mingw)`. One `.env` example file is prepared for each supported platform.
+
+All prepared `.env.(win32|unix|mingw).example` files are simple and clear. You can also create a common `.env` file that is included before the `.env.(win32|unix|mingw)` files.
+
+<Tabs groupId={shell}>
+<TabItem value={pwsh} label={pwsh_label}>
+<CodeBlock className='language-powershell'>
+{`cd ${applicationFolderPath(pwsh)}/TinyORM/TinyORM\n
+cp .env.win32.example .env.win32`}
+</CodeBlock>
+</TabItem>
+<TabItem value={bash} label={bash_label}>
+<CodeBlock className='language-bash'>
+{`cd ${applicationFolderPath(bash)}/TinyORM/TinyORM\n
+cp .env.unix.example .env.unix`}
+</CodeBlock>
+</TabItem>
+</Tabs>
+
+And that is all, the `qmake` build system should be able to `auto-detect` all dependencies if you have correctly set all `qmake` variables in this `.env.(win32|unix|mingw)` file or you have correctly set environment variables. 🔥
+
+:::info
+The [`Auto-configuration`](#auto-configuration-internals) and [`Environment files`](#environment-files) internals are described at the end to make this section more clear.
+:::
+
+##### Manual configuration (conf.pri)
+
+This is the old method used before `TinyORM` `v0.34.0`. You need to copy the `conf.pri.example` files to `conf.pri` (there are four, one for every project or sub-project) and manually update the `INCLUDEPATH` and `LIBS` to configure TinyORM's `qmake` build dependencies. This way you can override any `qmake` build options or variables.
+
+You must uncomment the `CONFIG-=tiny_autoconf` at the beginning of every `conf.pri` file to disable `auto-configuration` because from `TinyORM` `v0.34.0` is the `auto-configuration` feature enabled by default.
+
+Also, remove all `.env` files or disable the `tiny_dotenv` feature using `CONFIG-=tiny_dotenv`. You can use them all at once if you want, `.env` and also `conf.pri` files.
+
+`conf.pri` files are nicely commented on, so you can see what needs to be modified.
 
 <Tabs groupId={shell}>
 <TabItem value={pwsh} label={pwsh_label}>
@@ -592,12 +673,26 @@ cp examples/tom/conf.pri.example examples/tom/conf.pri`}
 </TabItem>
 </Tabs>
 
-Now you can open the `TinyOrm.pro` project in the `QtCreator IDE`.
+:::info
+The [`Manual configuration`](#manual-configuration-internals) internals are described at the end to make this section more clear.
+:::
+
+:::note
+The `Manual configuration` is still relevant if you have any non-standard installation of the `vcpkg` or `MySQL` and the `Auto-configuration` feature fails.
+:::
+
+##### Opening TinyORM.pro (main project file)
+
+Now you can open the `TinyORM.pro` project in the `QtCreator IDE`.
 
 This will open the `Configure Project` tab, select some kit and update build folder paths to meet our [folders structure](#folders-structure) or like you want.
 
 <img src={require('./assets/img/tinyorm/qmake-configure_project.png').default}
     alt='TinyORM - QtCreator - Configure Project' width='760' />
+
+:::tip
+You can force the `QtCreator` to generate a build folders structure as is described [above](#qtcreator-default-build-directory).
+:::
 
 You are ready to configure build options, hit <kbd>Ctrl</kbd>+<kbd>5</kbd> to open `Project Settings` tab and select `Build` in the left sidebar to open the `Build Settings`, it should look similar to the following picture.
 
@@ -606,7 +701,7 @@ Disable `QML debugging and profiling` and `Qt Quick Compiler`, they are not used
 <img src={require('./assets/img/tinyorm/qmake-build_settings.png').default}
     alt='TinyORM - QtCreator - Build Settings' width='760' />
 
-If you want to change some `TinyORM` build options, you can pass them to the `Build Steps` - `qmake TinyOrm.pro` - `Additional arguments` input field. It can look like this.
+If you want to change some `TinyORM` build options, you can pass them to the `Build Steps` - `qmake TinyORM.pro` - `Additional arguments` input field. It can look like this.
 
 <img src={require('./assets/img/tinyorm/qmake-additional_arguments.png').default}
     alt='TinyORM - QtCreator - Build Settings - Additional arguments' width='660' />
@@ -626,11 +721,14 @@ Everything is ready for build, you can press <kbd>Ctrl</kbd>+<kbd>b</kbd> to bui
 | `disable_thread_local`              | `OFF`   | Remove all [`thread_local`](https://en.cppreference.com/w/c/language/storage_duration) storage duration specifiers, it disables threading support. |
 | `disable_orm`                       | `OFF`   | Controls the compilation of all `ORM-related` source code, when this option is `enabled`, then only the `query builder` without `ORM` is compiled. Also excludes `ORM-related` unit tests. |
 | `disable_tom`                       | `OFF`   | Controls the compilation of all `Tom-related` source code, when this option is `disabled`, then it also excludes `Tom-related` unit tests. |
-| `inline_constants`                  | `OFF`   | Use inline constants instead of extern constants in the `shared build`.<br/>`OFF` is highly recommended for the `shared build`;<br/>is always `ON` for the `static build`.<br/><small>Available when: <code>CONFIG(shared\|dll)</code></small> |
-| `link_pkgconfig_off`                | `OFF`   | Link against `libmariadb` with `PKGCONFIG`.<br/>Used only in the `MinGW` __shared__ build <small>(exactly <code>win32-g++\|win32-clang-g++</code>)</small> and when `mysql_ping` is also defined to link against `libmariadb`, [source code](https://github.com/silverqx/TinyORM/blob/main/conf.pri.example#L48).<br/><small>Available when: <code>(win32-g++\|win32-clang-g++):mysql:!static:!staticlib</code></small> |
+| `extern_constants`                  | `ON`    | Use `extern` constants instead of `inline` constants in the `shared build`.<br/>`ON` is highly recommended for the `shared build` <small>(by default)</small>;<br/>is always `OFF` for the `static build`.<br/><small>Available when: <code>CONFIG(shared\|dll):!inline_constants</code></small> |
+| `inline_constants`                  | `OFF`   | Use `inline` constants instead of `extern` constants in the `shared build`.<br/>`OFF` is highly recommended for the `shared build`;<br/>is always `ON` for the `static build`. |
+| `link_pkgconfig_off`                | `OFF`   | Link against `mysqlclient` or `libmariadb` with `PKGCONFIG`.<br/>Used only in the `Unix` and `MinGW` __shared__ build <small>(exactly <code>win32-g++\|win32-clang-g++</code>)</small> and when `mysql_ping` is also defined to link against `mysqlclient` or `libmariadb`, [source code](https://github.com/silverqx/TinyORM/blob/main/conf.pri.example#L48).<br/><small>Available when: `unix:mysql_ping` or <code>(win32-g++\|win32-clang-g++):mysql_ping:!static:!staticlib</code></small> |
 | `mysql_ping`                        | `OFF`   | Enable `Orm::MySqlConnection::pingDatabase()` method. |
+| `tiny_autoconf`                     | `ON`    | Enable [Auto-configuration](#auto-configuration-internals) feature.<br/>This `CONFIG` option allows us to `auto-configure` `TinyORM` project, and with it help, the `conf.pri` files can be skipped entirely. |
 | `tiny_ccache_win32`                 | `ON`    | Enable compiler cache. [Homepage](https://ccache.dev/)<br/><small>It works only on Windows systems. It works well with the MSYS2 `g++`, `clang++`, `msvc`, and `clang-cl` with `msvc`. It disables `precompile_header` as they are not supported on Windows and changes the `-Zi` compiler option to the `-Z7` for debug builds as the `-Zi` compiler option is not supported ([link](https://github.com/ccache/ccache/issues/1040) to the issue).</small> |
-| `tom_example`                       | `OFF`   | Build the <abbr title='TinyORM Migrations'>`Tom`</abbr> console application example. |
+| `tiny_dotenv`                       | `ON`    | Enable [Environment files](#environment-files) feature.<br/>The `.env` and <code>.env.(win32&vert;unix&vert;mingw)</code> files in `TinyORM` project root folder. |
+| `tom_example`                       | `OFF`   | Build the <abbr title='TinyORM Migrations'>`tom`</abbr> console application example. |
 
 </APITable>
 </div>
@@ -663,56 +761,112 @@ Important `qmake` options.
 
 ### Consume TinyOrm library <small>(qmake)</small> {#consume-tinyorm-library-qmake}
 
-The [`TinyOrm.pri`](https://github.com/silverqx/TinyORM/blob/main/qmake/TinyOrm.pri) file is available to simplify the integration of the `TinyORM` library into your application. This file sets up all the qmake variables that are needed by `TinyORM`. You can use it to configure the `TinyORM` library.
+The [`TinyOrm.pri`](https://github.com/silverqx/TinyORM/blob/main/qmake/TinyOrm.pri) file is available to simplify the integration of the `TinyORM` library into your application. It sets up and configures the `CONFIG` and `DEFINES` qmake variables, adds the `TinyORM`, <abbr title='TinyORM Migrations'>`tom`</abbr>, and `vcpkg` header files on the system `INCLUDEPATH` (cross-platform using the `-isystem` or `-imsvc`), links against the TinyORM `shared` or `static` library using the `LIBS`.
+
+You can use it to configure the `TinyORM` library when you are linking against it. It does a very similar thing like the CMake's `Find Modules` feature.
+
+#### Requirements
+
+It has a few requirements, you need to:
+
+ - specify path to the `TinyORM` qmake features (`.prf` files) using the `QMAKEFEATURES` variable that can only be set in the `.qmake.conf` file
+ - specify `qmake` or `environment` variables to find the `vcpkg` installation <small>(`TINY_VCPKG_ROOT` and `TINY_VCPKG_TRIPLET`)</small>
+ - specify path to the `TinyORM` build folder <small>(`TINYORM_BUILD_TREE`)</small>
+ - build your application with the same `CONFIG` `qmake` variables that were used  when building the `TinyORM` library
+
+Let's explain one by one.
+
+##### `QMAKEFEATURES`
+
+Create the `.qmake.conf` file in your application root folder with the following content.
 
 ```qmake
+# Path to the PARENT folder of the TinyORM source folder
 TINY_MAIN_DIR = $$clean_path(<your_path>)
-# Name of this qmake variable is crucial
-TINYORM_BUILD_TREE = $$quote($$TINY_MAIN_DIR/TinyORM-builds-qmake/build-TinyORM-Desktop_Qt_6_5_2_MSVC2019_64bit-Debug)
+# To find .env and .env.$$QMAKE_PLATFORM files in YOUR project
+TINY_DOTENV_ROOT = $$PWD
 
+# Path to the TinyORM build folder
+TINYORM_BUILD_TREE = $$quote($$TINY_MAIN_DIR/TinyORM-builds-qmake/build-TinyORM-Desktop_Qt_6_5_2_MSVC2019_64bit-Debug/)
+# vcpkg - range-v3 and tabulate
+TINY_VCPKG_ROOT = $$quote(<your_path>/vcpkg/)
+#TINY_VCPKG_TRIPLET = x64-windows
+
+# To find .prf files, needed by eg. CONFIG += tiny_system_headers inline/extern_constants
+QMAKEFEATURES *= $$quote($$TINY_MAIN_DIR/TinyORM/qmake/features)
+```
+
+You can move all `qmake` variables that are part of the `qmake` configuration process to the `.env` file if you want (recommended) as the `TinyOrm.pri` enables the [`Environment files`](#environment-files) feature by default.
+
+##### Variables affecting `TinyOrm.pri`
+
+You must define the following variables before the `TinyOrm.pri` is included:
+
+| Variable Name        | Description |
+| -------------------- | ----------- |
+| `TINYORM_BUILD_TREE` | Path to the `TinyORM` build folder. |
+| `TINY_VCPKG_ROOT`    | Path to the `vcpkg` installation folder.<br/>If not defined, then it tries to use the `VCPKG_ROOT` environment variable. |
+| `TINY_VCPKG_TRIPLET` | The `vcpkg` `triplet` to use <small>(vcpkg/installed/$$TINY_VCPKG_TRIPLET/)</small>.<br/>If not defined, then it tries to guess the `vcpkg` `triplet` based on the current compiler and OS (based on the `QMAKESPEC`), and as the last thing, it tries to use the `VCPKG_DEFAULT_TRIPLET` environment variable. |
+
+These variables will be set after the configuration is done:
+
+| Variable Name          | Description |
+| ---------------------- | ----------- |
+| `TINY_BUILD_SUBFOLDER` | Folder by release type (/debug, /release, or empty). |
+| `TINY_VCPKG_INCLUDE`   | Path to the `vcpkg` `include` folder <small>(vcpkg/installed/&lt;triplet&gt;/include/)</small>. |
+
+Then you simply include the `TinyOrm.pri` in your project file.
+
+```qmake title='AnyProject.pro'
 include($$TINY_MAIN_DIR/TinyORM/qmake/TinyOrm.pri)
 ```
 
-You will have to link against the `TinyORM` library manually if you don't set the `TINYORM_BUILD_TREE` qmake variable before the inclusion of the `TinyOrm.pri` file. The `INCLUDEPATH` is autodetected every time.
+And that is all, now you should be able to link against the `TinyORM` library. 👌
+
+##### Manual configuration examples
+
+Frankly, there is no reason not to define the variables described below before the `TinyOrm.pri`, perhaps when you want more control over this process or want to define everything yourself. I'll leave this section here to show how things work.
+
+You will have to link against the `TinyORM` library manually if you don't set the `TINYORM_BUILD_TREE` `qmake` variable before the inclusion of the `TinyOrm.pri` file. The `INCLUDEPATH` is auto-detected every time.
 
 <Tabs groupId={shell}>
 <TabItem value={pwsh} label={pwsh_label}>
 
-```qmake
+```qmake {9}
 # Link against TinyORM library
 # ---
 TINY_MAIN_DIR = $$clean_path(<your_path>)
-TINY_TINYORM_BUILDS_DIR = $$quote($$TINY_MAIN_DIR/TinyORM-builds-qmake)
 
 # Configure TinyORM library
 include($$TINY_MAIN_DIR/TinyORM/qmake/TinyOrm.pri)
 
 # TinyORM library path
-LIBS += $$quote(-L$$TINY_TINYORM_BUILDS_DIR/build-TinyORM-Desktop_Qt_5_15_2_MSVC2019_64bit-Debug/src/debug/)
+TINYORM_BUILD_TREE = $$quote($$TINY_MAIN_DIR/TinyORM-builds-qmake)
+LIBS += $$quote(-L$$TINYORM_BUILD_TREE/build-TinyORM-Desktop_Qt_6_5_2_MSVC2019_64bit-Debug/src$${TINY_BUILD_SUBFOLDER}/)
 LIBS += -lTinyOrm
 ```
 
 </TabItem>
 <TabItem value={bash} label={bash_label}>
 
-```qmake
+```qmake {9}
 # Link against TinyORM library
 # ---
 TINY_MAIN_DIR = $$clean_path(<your_path>)
-TINY_TINYORM_BUILDS_DIR = $$quote($$TINY_MAIN_DIR/TinyORM-builds-qmake)
 
 # Configure TinyORM library
 include($$TINY_MAIN_DIR/TinyORM/qmake/TinyOrm.pri)
 
 # TinyORM library path
-LIBS += $$quote(-L$$TINY_TINYORM_BUILDS_DIR/build-TinyORM-Desktop_Qt_5_15_2_GCC_64bit-Debug/src/debug/)
+TINYORM_BUILD_TREE = $$quote($$TINY_MAIN_DIR/TinyORM-builds-qmake)
+LIBS += $$quote(-L$$TINYORM_BUILD_TREE/build-TinyORM-Desktop_Qt_6_5_2_GCC_64bit-Debug/src$${TINY_BUILD_SUBFOLDER}/)
 LIBS += -lTinyOrm
 ```
 
 </TabItem>
 </Tabs>
 
-The last thing is to set up the `INCLUDEPATH` for the `vcpkg` that provides the `range-v3` and `tabulate` header files.
+The same is true for the `vcpkg` include path. If you don't set the `TINY_VCPKG_ROOT` or have not defined the `VCPKG_ROOT` environment variable, then you need to set up the `INCLUDEPATH` for the `vcpkg` that provides the `range-v3` and `tabulate` header files.
 
 <Tabs groupId={shell}>
 <TabItem value={pwsh} label={pwsh_label}>
@@ -735,7 +889,15 @@ QMAKE_CXXFLAGS += -isystem $$shell_quote(<your_path>/vcpkg/installed/x64-linux/i
 </TabItem>
 </Tabs>
 
-Do not forget to add `TinyOrm0d.dll` on the path on Windows and on the `LD_LIBRARY_PATH` on Linux, so your application can find it during execution.
+You can also use TinyORM's `qmake` function `tiny_add_system_includepath()` which handles `INCLUDEPATH` in a cross-platform way:
+
+```qmake
+# vcpkg - range-v3 and tabulate
+# ---
+tiny_add_system_includepath(<your_path>/vcpkg/installed/x64-linux/include/)
+```
+
+Do not forget to add `TinyOrm0.dll` on the path on Windows and on the `LD_LIBRARY_PATH` on Linux, so your application can find it during execution.
 
 <Tabs groupId={shell} name='tinyorm-on-path'>
 <TabItem value={pwsh} label={pwsh_label}>
@@ -752,17 +914,74 @@ Do not forget to add `TinyOrm0d.dll` on the path on Windows and on the `LD_LIBRA
 
 :::tip
 On Linux `-isystem` marks the directory as a system directory, it prevents warnings.
+
+On Windows you can use `QMAKE_CXXFLAGS_WARN_ON = -external:anglebrackets -external:W0`, it applies a warning level 0 to the angel bracket includes; `#include <file>`.
+
+With the `clang-cl` with `MSVC` you can use `-imsvc`.
 :::
 
-:::tip
-On Windows you can use `QMAKE_CXXFLAGS_WARN_ON = -external:anglebrackets -external:W0`, it applies a warning level 0 to the angel bracket includes, `#include <file>`.
+### Auto-configuration internals
+
+The `qmake` build system does not support the `auto-configuration` of dependencies out of the box but `TinyORM` from `v0.34.0` added its own `auto-configuration` feature using the `tiny_autoconf` and `tiny_dotenv` qmake features. These new features allow us to `auto-configure` `TinyORM` project, and with their help, the `conf.pri` files can be skipped entirely.
+
+While it adds additional complexity to the `qmake` configuration process, the benefits are significant.
+
+The `tiny_autoconf` is designed to find the `vcpkg` and `MySQL` installations, and `tiny_dotenv` to include the `.env` and `.env.(win32|unix|mingw)` files in the project's root folder. These new features can be configured using `qmake` and `environment` variables, and they also contain some guessing logic if these variables are not defined.
+
+These are <u>`qmake`</u> and <u>`environment`</u> variables that affect the `auto-configuration` feature:
+
+| Variable Name        | Description |
+| -------------------- | ----------- |
+| `TINY_VCPKG_ROOT`    | Path to the `vcpkg` installation folder.<br/>If not defined, then it tries to use the `VCPKG_ROOT` environment variable. |
+| `TINY_VCPKG_TRIPLET` | The `vcpkg` `triplet` to use <small>(vcpkg/installed/$$TINY_VCPKG_TRIPLET/)</small>.<br/>If not defined, then it tries to guess the `vcpkg` `triplet` based on the current compiler and OS (based on the `QMAKESPEC`), and as the last thing, it tries to use the `VCPKG_DEFAULT_TRIPLET` environment variable. |
+| `TINY_MYSQL_ROOT`    | Path to the `MySQL` installation folder.<br/>If not defined, then it tries to guess the `MySQL` installation folder (`win32` only): <code>$$(ProgramFiles)/MySQL/MySQL Server (8.1&vert;8.0&vert;5.7)/</code> |
+
+You can set these variables in the `.env` (recommended) or `conf.pri` files, in the `.qmake.conf` file (or wherever you want), or as environment variables.
+
+These variables will be set after the `auto-configuration` is done:
+
+| Variable Name        | Description |
+| -------------------- | ----------- |
+| `TINY_VCPKG_INCLUDE` | Path to the `vcpkg` `include` folder <small>(vcpkg/installed/&lt;triplet&gt;/include/)</small>. |
+| `TINY_MYSQL_INCLUDE` | Path to the `MySQL` `include` folder <small>(MySQL Server 8.1/include/)</small>. |
+| `TINY_MYSQL_LIB`     | Path to the `MySQL` `lib` folder <small>(MySQL Server 8.1/lib/)</small>. |
+
+The `TINY_MYSQL_INCLUDE` and `TINY_MYSQL_LIB` are only set on `win32` platform except `mingw`.
+
+#### Environment files
+
+The `tiny_dotenv` feature allows us to define the `.env` and `.env.$$TINY_DOTENV_PLATFORM` files in the project's root folder. These files are loaded as early as possible so you can affect the `qmake` configuration process. On the other hand, the `conf.pri` files are loaded as late as possible, and they can be used to override the `qmake` configuration.
+
+The `.env` file is included <u>first</u> and is included on all platforms.
+
+There is only one requirement for this feature to work correctly, and that is to set the `TINY_DOTENV_ROOT` `qmake` variable to the project's root folder. This variable is __already__ set in the `.qmake.conf` file for the `TinyORM` project.
+
+Then the following names are taken into account: .env, .env.win32, .env.unix, .env.mingw
+
+```qmake title='.qmake.conf'
+# To find .env and .env.$$QMAKE_PLATFORM files
+TINY_DOTENV_ROOT = $$PWD
+```
+
+:::caution
+`Environment files` don't work in the `CMake` builds.
 :::
+
+### Manual configuration internals
+
+There is not much to say about the `Manual configuration` feature. It uses `conf.pri` files (there are four, one for every project or sub-project), and every project has prepared its own `conf.pri.example` file for faster initial configuration.
+
+These `conf.pri.example` files are nicely commented on, so you can see what needs to be modified. The `conf.pri` files are loaded as late as possible, and they can be used to override the `qmake` configuration.
+
+If the `Auto-configuration` feature is disabled and there are no `conf.pri` files, then the `TinyORM` `qmake` configuration or build will fail at 100%.
+
+These `conf.pri` files are intended for configuring qmake's `INCLUDEPATH` and `LIBS`, `CONFIG` or eg. `QMAKE_LFLAGS`, or any other `qmake` options or variables.
 
 ## Ccache support
 
 The TinyORM supports the [`ccache`](https://ccache.dev/) out of the box for all [supported compilers](supported-compilers.mdx). For qmake you can enable it using the `CONFIG+=ccache` on Linux or `CONFIG+=tiny_ccache_win32` on Windows. For CMake you can set the `CMAKE_CXX_COMPILER_LAUNCHER=ccache`.
 
-On Linux it's clear, the ccache is fully supported and works also with the precompiled headers. But was necessary to add some workarounds to the qmake/CMake build systems to make out of the box support on Windows. When you enable the ccache on Windows then the build system disables precompiled headers and replaces the `-Zi` compiler option with the `-Z7` (link to the [issue](https://github.com/ccache/ccache/issues/1040)).
+On `Linux` it's clear, the ccache is fully supported and works also with the `precompiled headers`. But was necessary to add some workarounds to the `qmake`/`CMake` build systems to make out of the box support on `Windows`. When you enable the `ccache` on `Windows` then the build system disables `precompiled headers` and replaces the `-Zi` compiler option with the `-Z7` (link to the [issue](https://github.com/ccache/ccache/issues/1040)).
 
 :::tip
 You can install the ccache using the `scoop install ccache` command on Windows.
