@@ -91,7 +91,6 @@ ${TINY_UNPARSED_ARGUMENTS}")
             /Zc:__cplusplus
             # Standards-conforming behavior
             /Zc:strictStrings
-            /W4
             $<$<CONFIG:Debug>:/sdl>
         )
 
@@ -131,43 +130,6 @@ ${TINY_UNPARSED_ARGUMENTS}")
             # Use faster linker ( GNU ld linker doesn't work with the Clang )
             -fuse-ld=lld
         )
-    endif()
-
-    if(NOT MSVC AND
-            (CMAKE_CXX_COMPILER_ID STREQUAL "GNU" OR
-                CMAKE_CXX_COMPILER_ID STREQUAL "Clang" OR
-                CMAKE_CXX_COMPILER_ID STREQUAL "AppleClang")
-    )
-        target_compile_options(${target} INTERFACE
-            # -fexceptions for linux is not needed, it is on by default
-            -Wall
-            -Wextra
-            -Weffc++
-            -Wfatal-errors
-            -Wcast-qual
-            -Wcast-align
-            -Woverloaded-virtual
-            -Wold-style-cast
-            -Wshadow
-            -Wundef
-            -Wfloat-equal
-            -Wformat-security
-            -Wdouble-promotion
-            -Wconversion
-            -Wzero-as-null-pointer-constant
-            -Wuninitialized
-            -pedantic
-            -pedantic-errors
-            # Reduce I/O operations
-            -pipe
-        )
-
-        # Clang 12 still doesn't support -Wstrict-null-sentinel
-        include(CheckCXXCompilerFlag)
-        check_cxx_compiler_flag(-Wstrict-null-sentinel SNS_SUPPORT)
-        if(SNS_SUPPORT)
-            target_compile_options(${target} INTERFACE -Wstrict-null-sentinel)
-        endif()
     endif()
 
     # Use faster lld linker on Clang (target the Clang except clang-cl with MSVC)
