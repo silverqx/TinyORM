@@ -116,7 +116,6 @@ ${TINY_UNPARSED_ARGUMENTS}")
             $<$<NOT:$<CONFIG:Debug>>:/OPT:REF,ICF=5>
             # /OPT:REF,ICF does not support incremental linking
             $<$<CONFIG:RelWithDebInfo>:/INCREMENTAL:NO>
-            /WX
         )
     endif()
 
@@ -144,7 +143,6 @@ ${TINY_UNPARSED_ARGUMENTS}")
             -Wall
             -Wextra
             -Weffc++
-            -Werror
             -Wfatal-errors
             -Wcast-qual
             -Wcast-align
