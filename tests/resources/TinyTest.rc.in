@@ -26,7 +26,7 @@ VS_VERSION_INFO VERSIONINFO
                 VALUE "CompanyName",      "Crystal Studio\0"
                 VALUE "FileDescription",  "@TinyTest_target@ QtTest for TinyORM\0"
                 VALUE "InternalName",     "@TinyTest_target@\0"
-                VALUE "LegalCopyright",   "Copyright (©) 2021 Crystal Studio\0"
+                VALUE "LegalCopyright",   "Copyright (©) 2021 Silver Zachara\0"
                 VALUE "ProductName",      "@TinyTest_target@ QtTest\0"
                 VALUE "OriginalFilename", VER_ORIGINALFILENAME_STR
             END
