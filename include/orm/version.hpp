@@ -12,7 +12,7 @@ TINY_SYSTEM_HEADER
    https://community.kde.org/Policies/Binary_Compatibility_Issues_With_C++
    https://www.gnu.org/software/libtool/manual/html_node/Updating-version-info.html*/
 #define TINYORM_VERSION_MAJOR 0
-#define TINYORM_VERSION_MINOR 33
+#define TINYORM_VERSION_MINOR 34
 #define TINYORM_VERSION_BUGFIX 0
 #define TINYORM_VERSION_BUILD 0
 // Should be empty for stable releases, and use hypen before for SemVer compatibility!
