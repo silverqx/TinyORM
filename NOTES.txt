@@ -1,6 +1,10 @@
 Increase/bump the release version:
 ----------------------------------
 
+- bump message format:
+
+bump version to TinyORM v0.33.0 and tom v0.6.0
+
 - just simply search the current version number in all files eg. 0.33.0
 - 6 files must be modified, README.md, docs/README.mdx, two vcpkg.json files, NOTES.txt,
   plus bumped version.hpp files
