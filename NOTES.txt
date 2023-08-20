@@ -966,6 +966,14 @@ All are snake-case unless otherwise specified.
  - compile definitions prefix by project eg. TINYORM_, TINYUTILS_
 
 
+CMake confusion:
+----------------
+
+- CMAKE_SOURCE_DIR, PROJECT_SOURCE_DIR, CMAKE_BINARY_DIR, CMAKE_CURRENT_SOURCE_DIR, ...
+  Look at commit:
+  cmake added FetchContent support (23d0d904)
+
+
 Drop all PostgreSQL tables:
 ---------------------------
 
