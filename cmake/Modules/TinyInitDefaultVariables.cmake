@@ -17,11 +17,13 @@ macro(tiny_init_cmake_variables)
     set(CMAKE_DEBUG_POSTFIX d CACHE STRING
         "Default filename postfix for libraries for Debug configuration")
 
+    # find_package() related
     set(CMAKE_FIND_PACKAGE_SORT_ORDER NATURAL CACHE STRING
         "The default order for sorting packages found using find_package()")
     set(CMAKE_FIND_PACKAGE_SORT_DIRECTION DEC CACHE STRING
         "The sorting direction used by CMAKE_FIND_PACKAGE_SORT_ORDER")
 
+    # Others
     set(CMAKE_WARN_ON_ABSOLUTE_INSTALL_DESTINATION ON CACHE BOOL
         "Ask cmake_install.cmake script to warn each time a file with absolute INSTALL \
 DESTINATION is encountered")
@@ -226,6 +228,8 @@ $<SHELL_PATH:${${TinyOrm_ns}_BINARY_DIR}/tests/${TinyUtils_ns}>${TINY_PATH_SEPAR
                 string(PREPEND TINY_TESTS_ENV "\
 $<SHELL_PATH:${${TinyOrm_ns}_BINARY_DIR}/$<CONFIG>>${TINY_PATH_SEPARATOR}\
 $<SHELL_PATH:${${TinyOrm_ns}_BINARY_DIR}/tests/${TinyUtils_ns}/$<CONFIG>>${TINY_PATH_SEPARATOR}")
+
+            # Single-config generators
             else()
                 string(PREPEND TINY_TESTS_ENV "\
 $<SHELL_PATH:${${TinyOrm_ns}_BINARY_DIR}>${TINY_PATH_SEPARATOR}\
