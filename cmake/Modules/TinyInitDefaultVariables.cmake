@@ -106,8 +106,8 @@ DESTINATION is encountered")
 
     if(VERBOSE_CONFIGURE)
         message(STATUS "${TinyOrm_ns}: Set up defaults for \
-CMAKE_MAP_IMPORTED_CONFIG_<CONFIG> to avoid link a release type builds against a debug \
-build
+CMAKE_MAP_IMPORTED_CONFIG_<CONFIG> to avoid linking a release build types against debug \
+builds
 
  * CMAKE_MAP_IMPORTED_CONFIG_RELEASE        = ${CMAKE_MAP_IMPORTED_CONFIG_RELEASE}
  * CMAKE_MAP_IMPORTED_CONFIG_RELWITHDEBINFO = ${CMAKE_MAP_IMPORTED_CONFIG_RELWITHDEBINFO}
