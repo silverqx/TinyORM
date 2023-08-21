@@ -464,15 +464,9 @@ function(tiny_model_sources out_headers out_sources)
     # Sources section
     set(sources)
 
-#    list(APPEND sources
-#        example.cpp
-#    )
-
     list(SORT headers)
-    list(SORT sources)
 
     list(TRANSFORM headers PREPEND "${${TinyOrm_ns}_SOURCE_DIR}/tests/models/models/")
-    list(TRANSFORM sources PREPEND "${${TinyOrm_ns}_SOURCE_DIR}/tests/models/models/")
 
     set(${out_headers} ${headers} PARENT_SCOPE)
     set(${out_sources} ${sources} PARENT_SCOPE)
