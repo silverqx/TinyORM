@@ -115,8 +115,6 @@ endif()
 
 mark_as_advanced(MATCH_EQUAL_EXPORTED_BUILDTREE)
 
-# TODO so this doesn't work, anyway it has to be refactored, use target_compile_options() instead of string(APPEND CMAKE_C_FLAGS silverqx
-# TODO make it dependend on cmake_disable_precompile_headers and MSVC silverqx
 # MSVC_PARALLEL option
 include(TinyMsvcParallel)
 tiny_msvc_parallel("\

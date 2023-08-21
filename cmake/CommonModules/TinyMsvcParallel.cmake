@@ -19,3 +19,6 @@ function(tiny_msvc_parallel desc)
     endif()
 
 endfunction()
+
+# TODO so this doesn't work, anyway it has to be refactored, use target_compile_options() instead of string(APPEND CMAKE_C_FLAGS silverqx
+# TODO make it dependend on cmake_disable_precompile_headers and MSVC; after long time - I don't understand why it needs to depend on the cmake_disable_precompile_headers but it has to have a reason if I wrote or noted it this way silverqx
