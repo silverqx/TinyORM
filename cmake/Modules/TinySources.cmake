@@ -272,7 +272,7 @@ function(tinyorm_sources out_headers out_sources)
     set(${out_sources} ${sources} PARENT_SCOPE)
 endfunction()
 
-# TinyTom application header and source files
+# Tom application header and source files
 # Create header and source files lists and return them
 function(tinytom_sources out_headers out_sources)
 

@@ -175,7 +175,7 @@ target_optional_compile_definitions(${TinyOrm_target}
     PUBLIC
         FEATURE NAME TOM
         DEFAULT ON
-        DESCRIPTION "Controls the compilation of all tom related source code (command \
+        DESCRIPTION "Controls the compilation of all Tom-related source code (command \
 line interface)."
         DISABLED TINYORM_DISABLE_TOM
 )
@@ -274,7 +274,7 @@ if(BUILD_TESTS)
     target_compile_definitions(${TinyOrm_target} PUBLIC TINYORM_TESTS_CODE)
 endif()
 
-# TinyTom related header and source files
+# Tom related header and source files
 # ---
 
 if(TOM)
@@ -286,7 +286,7 @@ if(TOM)
     )
 endif()
 
-# TinyTom related specific configuration
+# Tom related specific configuration
 # ---
 
 if(TOM)
@@ -295,7 +295,7 @@ if(TOM)
     )
 endif()
 
-# TinyTom related defines
+# Tom related defines
 # ---
 
 if(TOM)
@@ -466,7 +466,7 @@ if(TOM)
             URL "https://github.com/p-ranav/tabulate"
             DESCRIPTION "Table Maker for Modern C++"
             TYPE REQUIRED
-            PURPOSE "Used by the tom in the migrate:status command"
+            PURPOSE "Used by the Tom in the migrate:status command"
     )
 endif()
 
