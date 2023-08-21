@@ -25,6 +25,7 @@ ${TINY_UNPARSED_ARGUMENTS}")
             C_VISIBILITY_PRESET "hidden"
             CXX_VISIBILITY_PRESET "hidden"
             VISIBILITY_INLINES_HIDDEN YES
+            AUTOMOC ON
     )
 
     # Setup correct PATH env. variable, used by ctest command, needed to find TinyUtils

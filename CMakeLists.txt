@@ -39,8 +39,8 @@ project(${TinyOrm_ns}
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED YES)
 set(CMAKE_CXX_EXTENSIONS OFF)
-
-set(CMAKE_AUTOMOC ON)
+# Set the AUTOMOC property explicitly only when needed (eg. unit tests need AUTOMOC)
+set(CMAKE_AUTOMOC OFF)
 
 # Version requirements
 # ---
