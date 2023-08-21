@@ -83,24 +83,29 @@ tiny_init_cmake_variables_pre()
 feature_option(BUILD_SHARED_LIBS
     "Build using shared libraries" ON
 )
+
 feature_option(BUILD_TESTS
     "Build TinyORM unit tests" OFF
 )
+
 # Depends on tiny_init_cmake_variables_pre() call
 feature_option_dependent(MATCH_EQUAL_EXPORTED_BUILDTREE
     "Exported package configuration from the build tree is considered to match only \
 when the build type is equal" OFF
     "CMAKE_EXPORT_PACKAGE_REGISTRY;NOT TINY_IS_MULTI_CONFIG" OFF
 )
+
 feature_option_dependent(MSVC_RUNTIME_DYNAMIC
     "Use MSVC dynamic runtime library (-MD) instead of static (-MT), also considers \
 a Debug configuration (-MTd, -MDd)" ON
     "MSVC;NOT DEFINED CMAKE_MSVC_RUNTIME_LIBRARY" MSVC_RUNTIME_DYNAMIC-NOTFOUND
 )
+
 feature_option(VERBOSE_CONFIGURE
     "Show information about PACKAGES_FOUND and PACKAGES_NOT_FOUND in the configure \
 output" OFF
 )
+
 # MinGW clang shared build crashes with inline constants
 # clang-cl shared build crashes with extern constants so force to inline constants 😕🤔
 # only one option with the clang-cl is inline constants for both shared/static builds
