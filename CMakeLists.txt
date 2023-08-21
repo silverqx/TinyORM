@@ -61,7 +61,7 @@ set(minQtVersion       5.15.2)
 # different versions of range-v3 (doesn't matter if it's vcpkg or some package manager)
 #set(minRangeV3Version  0.12.0)
 # tabulate doesn't provide Package Version File
-#set(minTabulateVersion 1.4.0)
+#set(minTabulateVersion 1.5.0)
 
 # Make minimum toolchain version a requirement
 tiny_toolchain_requirement(
