@@ -463,7 +463,7 @@ endif()
 if(TOM)
     set_package_properties(tabulate
         PROPERTIES
-            URL "https://github.com/p-ranav/tabulate/"
+            URL "https://github.com/p-ranav/tabulate"
             DESCRIPTION "Table Maker for Modern C++"
             TYPE REQUIRED
             PURPOSE "Used by the tom in the migrate:status command"
