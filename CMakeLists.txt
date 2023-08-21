@@ -29,7 +29,7 @@ tiny_read_version(TINY_VERSION
 
 # TODO add support for POSITION_INDEPENDENT_CODE silverqx
 project(${TinyOrm_ns}
-    DESCRIPTION "c++ ORM library for Qt framework"
+    DESCRIPTION "Modern C++ ORM library for the Qt framework"
     HOMEPAGE_URL "https://www.tinyorm.org"
     LANGUAGES CXX
     VERSION ${TINY_VERSION}
