@@ -37,7 +37,7 @@ file(INSTALL "${SOURCE_PATH}/LICENSE"
     RENAME copyright
 )
 
-configure_file("${CURRENT_PORT_DIR}/usage"
+configure_file("${CURRENT_PORT_DIR}/usage.in"
     "${CURRENT_PACKAGES_DIR}/share/${PORT}/usage"
     @ONLY
 )
