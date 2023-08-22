@@ -31,11 +31,7 @@ tiny_cmake_config_fixup()
 
 file(REMOVE_RECURSE "${CURRENT_PACKAGES_DIR}/debug/share")
 
-# Install header files and license
-file(INSTALL "${SOURCE_PATH}/include/"
-    DESTINATION "${CURRENT_PACKAGES_DIR}/include"
-    FILES_MATCHING PATTERN *.hpp
-)
+# Install license and usage
 file(INSTALL "${SOURCE_PATH}/LICENSE"
     DESTINATION "${CURRENT_PACKAGES_DIR}/share/${PORT}"
     RENAME copyright
