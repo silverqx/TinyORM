@@ -978,6 +978,31 @@ CMake confusion:
   cmake added FetchContent support (23d0d904)
 
 
+TinyORM vcpkg testing (CMake build):
+--------------------
+
+Don't install it to the main vcpkg installation because it can happend that whole qtbase will be
+installed and it pulls in many boost packages or mysql client library pulls in much more in.
+
+I have created svcpkg_tinyorm_port_testing.ps1 script so execute it and use the installation at:
+O:\Code\c_libs\vcpkg-tinyorm-port\
+
+To install only the neccesary minimum use:
+
+vcpkg install tinyorm[core] qtbase[core] --dry-run
+vcpkg install tinyorm[core] qtbase[core,sql-sqlite] --dry-run
+vcpkg install tinyorm[core]
+vcpkg install tinyorm[core] --editable
+
+With --editable option you can edit TinyORM source code at:
+buildtrees\tinyorm\src\b067300643-08e2ea7916\
+
+The o:\Code\c_libs\vcpkg-tinyorm-port\buildtrees\tinyorm\src\b067300643-08e2ea7916.clean\ folder
+is for the vcpkg install tinyorm[core] without the --editable option.
+You can call the vcpkg install tinyorm[core] --editable right away, w/o calling
+the vcpkg install tinyorm[core] first.
+
+
 Drop all PostgreSQL tables:
 ---------------------------
 
