@@ -49,9 +49,6 @@
 #include "tom/tomutils.hpp"
 #include "tom/version.hpp"
 
-/*! Invoke Qt's global post routines. */
-extern void Q_DECL_IMPORT qt_call_post_routines();
-
 TINYORM_BEGIN_COMMON_NAMESPACE
 
 using fspath = std::filesystem::path;
@@ -522,10 +519,6 @@ Q_NORETURN void Application::showCommandsList(const int exitCode)
 
 Q_NORETURN void Application::exitApplication(const int exitCode)
 {
-    /* Invoke post routines manually, it's safe as they will not be called twice even if
-       the QCoreApplication's destructor also calls this function. */
-    qt_call_post_routines();
-
     ::exit(exitCode); // NOLINT(concurrency-mt-unsafe)
 }
 
