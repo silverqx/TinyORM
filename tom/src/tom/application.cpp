@@ -523,7 +523,7 @@ Q_NORETURN void Application::showCommandsList(const int exitCode)
 Q_NORETURN void Application::exitApplication(const int exitCode)
 {
     /* Invoke post routines manually, it's safe as they will not be called twice even if
-       the QCoreApplication's desctructor calls also this function. */
+       the QCoreApplication's destructor also calls this function. */
     qt_call_post_routines();
 
     ::exit(exitCode); // NOLINT(concurrency-mt-unsafe)
