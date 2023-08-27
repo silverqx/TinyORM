@@ -35,7 +35,10 @@ DESTINATION is encountered")
         CMAKE_WARN_ON_ABSOLUTE_INSTALL_DESTINATION
     )
 
-    # Allow to select dynamic/static MSVC runtime
+    # Allow to select dynamic/static MSVC runtime, also the TINY_VCPKG check isn't
+    # needed because the MSVC_RUNTIME_DYNAMIC option isn't defined during vcpkg builds,
+    # see the comment for the MSVC_RUNTIME_DYNAMIC option.
+    # The MSVC_RUNTIME_DYNAMIC is always defined so the DEFINED check isn't needed
     if(MSVC AND NOT MSVC_RUNTIME_DYNAMIC STREQUAL MSVC_RUNTIME_DYNAMIC-NOTFOUND)
         if(MSVC_RUNTIME_DYNAMIC)
             set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>DLL")
