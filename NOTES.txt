@@ -989,7 +989,7 @@ O:\Code\c_libs\vcpkg-tinyorm-port\
 
 To install only the neccesary minimum use:
 
-vcpkg install tinyorm[core] qtbase[core] --dry-run
+vcpkg install tinyorm[core] qtbase[core,sql] --dry-run
 vcpkg install tinyorm[core] qtbase[core,sql-sqlite] --dry-run
 vcpkg install tinyorm[core]
 vcpkg install tinyorm[core] --editable
@@ -1001,6 +1001,11 @@ The o:\Code\c_libs\vcpkg-tinyorm-port\buildtrees\tinyorm\src\b067300643-08e2ea79
 is for the vcpkg install tinyorm[core] without the --editable option.
 You can call the vcpkg install tinyorm[core] --editable right away, w/o calling
 the vcpkg install tinyorm[core] first.
+
+ - To debug eg. vcpkg-cmake scripts set around a command to debug:
+
+set(PORT_DEBUG ON)
+set(PORT_DEBUG OFF)
 
 
 Drop all PostgreSQL tables:
