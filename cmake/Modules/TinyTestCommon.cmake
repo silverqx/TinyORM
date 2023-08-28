@@ -1,7 +1,7 @@
 include(TinyResourceAndManifest)
 include(TinySources)
 
-# Configure passed auto test
+# Configure a passed auto test
 function(tiny_configure_test name)
 
     set(options INCLUDE_MIGRATIONS INCLUDE_MODELS INCLUDE_SOURCE_DIR)
