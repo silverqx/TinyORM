@@ -32,6 +32,7 @@ function(tiny_install_tinyorm)
         DESTINATION "${tiny_config_package_dir}"
     )
 
+    # Install PDB files
     if(MSVC AND BUILD_SHARED_LIBS)
         install(FILES "$<TARGET_PDB_FILE:${TinyOrm_target}>" TYPE BIN OPTIONAL)
     endif()
