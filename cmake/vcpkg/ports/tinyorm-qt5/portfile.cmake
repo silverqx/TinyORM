@@ -10,34 +10,33 @@ vcpkg_check_features(
     OUT_FEATURE_OPTIONS FEATURE_OPTIONS
     PREFIX TINYORM
     FEATURES
-        mysqlping MYSQL_PING
+        disable-thread-local DISABLE_THREAD_LOCAL
+        inline-constants     INLINE_CONSTANTS
+        mysql-ping           MYSQL_PING
+        orm                  ORM
+        tom                  TOM
+        tom-example          TOM_EXAMPLE
 )
 
 vcpkg_cmake_configure(
-    SOURCE_PATH ${SOURCE_PATH}
+    SOURCE_PATH "${SOURCE_PATH}"
     OPTIONS
+        -DCMAKE_EXPORT_PACKAGE_REGISTRY:BOOL=OFF
         -DBUILD_TESTS:BOOL=OFF
-        -DMATCH_EQUAL_EXPORTED_BUILDTREE:BOOL=ON
-        -DVERBOSE_CONFIGURE:BOOL=ON
+        -DMATCH_EQUAL_EXPORTED_BUILDTREE:BOOL=OFF
+        -DTINY_PORT:STRING=${PORT}
         -DTINY_VCPKG:BOOL=ON
+        -DVERBOSE_CONFIGURE:BOOL=ON
         ${FEATURE_OPTIONS}
+    OPTIONS_RELEASE
+        -DTINY_TARGET_TRIPLET:STRING=${TARGET_TRIPLET}
 )
 
 vcpkg_cmake_install()
 
-list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake")
-include(tiny_cmake_config_fixup)
-tiny_cmake_config_fixup()
+vcpkg_cmake_config_fixup()
 
-file(REMOVE_RECURSE "${CURRENT_PACKAGES_DIR}/debug/share")
-
-# Install license and usage
-file(INSTALL "${SOURCE_PATH}/LICENSE"
-    DESTINATION "${CURRENT_PACKAGES_DIR}/share/${PORT}"
-    RENAME copyright
-)
-
-configure_file("${CURRENT_PORT_DIR}/usage.in"
-    "${CURRENT_PACKAGES_DIR}/share/${PORT}/usage"
-    @ONLY
-)
+if(TINYORM_TOM_EXAMPLE)
+    vcpkg_copy_tools(TOOL_NAMES tom AUTO_CLEAN)
+    vcpkg_copy_tool_dependencies("${CURRENT_PACKAGES_DIR}/tools/${PORT}")
+endif()

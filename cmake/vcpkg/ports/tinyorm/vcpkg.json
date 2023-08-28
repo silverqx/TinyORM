@@ -26,14 +26,13 @@
     }
   ],
   "default-features": [
-    "sql-mysql",
-    "sql-psql",
     "sql-sqlite",
-    "mysqlping"
+    "orm",
+    "tom"
   ],
   "features": {
     "sql-mysql": {
-      "description": "Enable Qt SQL Driver MySQL",
+      "description": "Build Qt SQL Driver for MySQL",
       "dependencies": [
         {
           "name": "qtbase",
@@ -43,7 +42,7 @@
       ]
     },
     "sql-psql": {
-      "description": "Enable Qt SQL Driver psql",
+      "description": "Build Qt SQL Driver for PostgreSQL",
       "dependencies": [
         {
           "name": "qtbase",
@@ -53,7 +52,7 @@
       ]
     },
     "sql-sqlite": {
-      "description": "Enable Qt SQL Driver sqlite",
+      "description": "Build Qt SQL Driver for SQLite",
       "dependencies": [
         {
           "name": "qtbase",
@@ -62,10 +61,32 @@
         }
       ]
     },
-    "mysqlping": {
-      "description": "Install a MySQL client library to support the mysql_ping()",
+    "disable-thread-local": {
+      "description": "Remove all thread_local storage duration specifiers (disables multi-threading support)"
+    },
+    "inline-constants": {
+      "description": "Use inline constants instead of extern constants in shared builds"
+    },
+    "mysql-ping": {
+      "description": "Install MySQL C client library (libmysql) to support the mysql_ping()",
       "dependencies": [
         "libmysql"
+      ]
+    },
+    "orm": {
+      "description": "Enable ORM-related source code (without it only the query builder is compiled)"
+    },
+    "tom": {
+      "description": "Enable Tom-related source code (command-line interface)"
+    },
+    "tom-example": {
+      "description": "Build Tom command-line application example",
+      "dependencies": [
+        {
+          "name": "tinyorm",
+          "default-features": false,
+          "features": ["tom"]
+        }
       ]
     }
   }

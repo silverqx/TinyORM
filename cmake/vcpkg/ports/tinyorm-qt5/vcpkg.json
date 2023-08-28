@@ -21,13 +21,12 @@
     }
   ],
   "default-features": [
-    "mysqlplugin",
-    "postgresqlplugin",
-    "mysqlping"
+    "orm",
+    "tom"
   ],
   "features": {
-    "mysqlplugin": {
-      "description": "Build the Qt sql plugin for connecting to MySQL databases",
+    "sql-mysql": {
+      "description": "Build Qt SQL Driver for MySQL",
       "dependencies": [
         {
           "name": "qt5-base",
@@ -35,8 +34,8 @@
         }
       ]
     },
-    "postgresqlplugin": {
-      "description": "Build the Qt sql plugin for connecting to PostgreSQL databases",
+    "sql-psql": {
+      "description": "Build Qt SQL Driver for PostgreSQL",
       "dependencies": [
         {
           "name": "qt5-base",
@@ -44,10 +43,32 @@
         }
       ]
     },
-    "mysqlping": {
-      "description": "Install a MySQL client library to support the mysql_ping()",
+    "disable-thread-local": {
+      "description": "Remove all thread_local storage duration specifiers (disables multi-threading support)"
+    },
+    "inline-constants": {
+      "description": "Use inline constants instead of extern constants in shared builds"
+    },
+    "mysql-ping": {
+      "description": "Install MySQL C client library (libmysql) to support the mysql_ping()",
       "dependencies": [
         "libmysql"
+      ]
+    },
+    "orm": {
+      "description": "Enable ORM-related source code (without it only the query builder is compiled)"
+    },
+    "tom": {
+      "description": "Enable Tom-related source code (command-line interface)"
+    },
+    "tom-example": {
+      "description": "Build Tom command-line application example",
+      "dependencies": [
+        {
+          "name": "tinyorm-qt5",
+          "default-features": false,
+          "features": ["tom"]
+        }
       ]
     }
   }

@@ -246,6 +246,8 @@ $<SHELL_PATH:${${TinyOrm_ns}_BINARY_DIR}/tests/${TinyUtils_ns}>${TINY_PATH_SEPAR
     # Provide the default value if not set
     if(NOT TINY_VCPKG)
         set(TINY_VCPKG FALSE)
+        set(TINY_PORT TINY_PORT-NOTFOUND)
+        set(TINY_TARGET_TRIPLET TARGET_TRIPLET-NOTFOUND)
     endif()
 
     # Specifies which global constant types will be used

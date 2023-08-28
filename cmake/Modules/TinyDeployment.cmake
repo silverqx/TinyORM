@@ -19,8 +19,15 @@ function(tiny_install_tinyorm)
         # TODO test NAMELINK_ on unix silverqx
     )
 
+    if(TOM_EXAMPLE AND
+            # Don't install for vcpkg debug build type
+            NOT (TINY_VCPKG AND CMAKE_BUILD_TYPE STREQUAL "Debug")
+    )
+        install(TARGETS ${TomExample_target} EXPORT TinyOrmTargets RUNTIME)
+    endif()
+
     if(TINY_VCPKG)
-        set(tiny_config_package_dir "${CMAKE_INSTALL_DATADIR}/cmake/${TinyOrm_ns}")
+        set(tiny_config_package_dir "${CMAKE_INSTALL_DATADIR}/${TINY_PORT}")
     else()
         set(tiny_config_package_dir "${CMAKE_INSTALL_LIBDIR}/cmake/${TinyOrm_ns}")
     endif()
@@ -35,6 +42,13 @@ function(tiny_install_tinyorm)
     # Install PDB files
     if(MSVC AND BUILD_SHARED_LIBS)
         install(FILES "$<TARGET_PDB_FILE:${TinyOrm_target}>" TYPE BIN OPTIONAL)
+
+        if(TOM_EXAMPLE AND
+                # Don't install for vcpkg debug build type
+                NOT (TINY_VCPKG AND CMAKE_BUILD_TYPE STREQUAL "Debug")
+        )
+            install(FILES "$<TARGET_PDB_FILE:${TomExample_target}>" TYPE BIN OPTIONAL)
+        endif()
     endif()
 
     # Do not install Package config, config version, header, doc. and CMake helper files
@@ -43,18 +57,36 @@ function(tiny_install_tinyorm)
         return()
     endif()
 
+    # Install header files
+    install(DIRECTORY "include/orm"
+        TYPE INCLUDE
+        FILES_MATCHING PATTERN "*.hpp"
+        PATTERN "include/orm/tiny" EXCLUDE
+    )
+    if(ORM)
+        install(DIRECTORY "include/orm/tiny"
+            DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/orm"
+            FILES_MATCHING PATTERN "*.hpp"
+        )
+    endif()
+    if(TOM)
+        # The trailing / is important here
+        install(DIRECTORY "tom/include/" TYPE INCLUDE FILES_MATCHING PATTERN "*.hpp")
+    endif()
+
     # Install all other files
-    install(DIRECTORY "include/orm" TYPE INCLUDE FILES_MATCHING PATTERN "*.hpp")
-    # If for any reason want to install the tom header files
-#    if(TOM)
-#        # The trailing / is important here
-#        install(DIRECTORY "tom/include/" TYPE INCLUDE FILES_MATCHING PATTERN "*.hpp")
-#    endif()
-    file(GLOB tiny_docs "docs/*.mdx")
-    install(FILES ${tiny_docs} DESTINATION "${CMAKE_INSTALL_DOCDIR}/mdx")
-    install(FILES AUTHOR LICENSE TYPE DOC)
-    install(FILES NOTES.txt TYPE DOC RENAME NOTES)
-    install(FILES README.md TYPE DOC RENAME README)
+    # TODO needs more work for the vcpkg port because eg. Qt6 is installing weird docs to doc/Qt6/ silverqx
+    if(NOT TINY_VCPKG)
+        # The trailing / is important here
+        install(DIRECTORY "docs/" DESTINATION "${CMAKE_INSTALL_DOCDIR}/mdx")
+        install(FILES AUTHOR LICENSE TYPE DOC)
+        install(FILES NOTES.txt TYPE DOC RENAME NOTES)
+        install(FILES README.md TYPE DOC RENAME README)
+
+    # Install the TinyORM Project for the vcpkg port (custom vcpkg logic)
+    else()
+        tiny_install_tinyorm_vcpkg()
+    endif()
 
     # TinyORM's package config needs the FindMySQL package module when the MYSQL_PING
     # is enabled
@@ -133,6 +165,30 @@ list(APPEND CMAKE_MODULE_PATH \"\${CMAKE_CURRENT_LIST_DIR}/Modules\")")
             "${PROJECT_BINARY_DIR}/${TINY_BUILD_INSTALLTREEDIR}/TinyOrmConfig.cmake"
             "${PROJECT_BINARY_DIR}/${TINY_BUILD_INSTALLTREEDIR}/TinyOrmConfigVersion.cmake"
         DESTINATION "${tiny_config_package_dir}"
+    )
+
+endfunction()
+
+# Install the TinyORM Project for the vcpkg port (custom vcpkg logic)
+function(tiny_install_tinyorm_vcpkg)
+
+    # Install license
+    install(FILES LICENSE
+        DESTINATION "${CMAKE_INSTALL_DATADIR}/${TINY_PORT}"
+        RENAME copyright
+    )
+
+    # Configure and install the usage file
+    set(tinyOrmPackageVersion
+        "${TINY_VERSION_MAJOR}.${TINY_VERSION_MINOR}.${TINY_VERSION_PATCH}"
+    )
+    configure_file("cmake/vcpkg/usage.in"
+        "${TINY_BUILD_INSTALLTREEDIR}/usage"
+        @ONLY NEWLINE_STYLE LF
+    )
+
+    install(FILES "${PROJECT_BINARY_DIR}/${TINY_BUILD_INSTALLTREEDIR}/usage"
+        DESTINATION "${CMAKE_INSTALL_DATADIR}/${TINY_PORT}"
     )
 
 endfunction()
