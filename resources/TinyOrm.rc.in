@@ -33,7 +33,7 @@ VS_VERSION_INFO VERSIONINFO
             BLOCK "040904B0"
             BEGIN
                 VALUE "CompanyName",      "Crystal Studio\0"
-                VALUE "FileDescription",  "TinyORM user-friendly ORM\0"
+                VALUE "FileDescription",  "Modern C++ ORM library for Qt framework\0"
                 VALUE "FileVersion",      VER_FILEVERSION_STR
                 VALUE "InternalName",     "TinyOrm\0"
                 VALUE "LegalCopyright",   "Copyright (©) 2023 Silver Zachara\0"
