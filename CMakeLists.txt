@@ -162,7 +162,7 @@ target_optional_compile_definitions(${TinyOrm_target}
         ADVANCED FEATURE NAME DISABLE_THREAD_LOCAL
         DEFAULT OFF
         DESCRIPTION "Remove all the thread_local storage duration specifiers \
-(disables threading support)"
+(disables multi-threading support)"
         ENABLED TINYORM_DISABLE_THREAD_LOCAL
 )
 
@@ -171,7 +171,7 @@ target_optional_compile_definitions(${TinyOrm_target}
         ADVANCED FEATURE NAME ORM
         DEFAULT ON
         DESCRIPTION "Controls the compilation of all ORM-related source code, when this \
-option is disabled, then only the query builder without ORM is compiled."
+option is disabled, then only the query builder without ORM is compiled"
         DISABLED TINYORM_DISABLE_ORM
 )
 
@@ -179,14 +179,14 @@ target_optional_compile_definitions(${TinyOrm_target}
     PUBLIC
         FEATURE NAME TOM
         DEFAULT ON
-        DESCRIPTION "Controls the compilation of all Tom-related source code (command \
-line interface)."
+        DESCRIPTION "Controls the compilation of all Tom-related source code \
+(command-line interface)"
         DISABLED TINYORM_DISABLE_TOM
 )
 
 # Depends on the TOM option so defined here
 feature_option_dependent(TOM_EXAMPLE
-    "Build the tom command-line application example" OFF
+    "Build the Tom command-line application example" OFF
     "TOM" TOM_EXAMPLE-NOTFOUND
 )
 
