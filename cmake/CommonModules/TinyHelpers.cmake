@@ -268,15 +268,15 @@ endmacro()
 function(tiny_check_unsupported_build)
 
     if(MINGW AND CMAKE_CXX_COMPILER_ID STREQUAL "Clang" AND NOT BUILD_SHARED_LIBS)
-        message(FATAL_ERROR "MinGW clang static build is not supported, problem with \
-inline constants :/.")
+        message(FATAL_ERROR "MinGW clang static build is not supported, it has problems \
+with inline constants :/.")
     endif()
 
     if(MINGW AND CMAKE_CXX_COMPILER_ID STREQUAL "Clang" AND BUILD_SHARED_LIBS AND
         INLINE_CONSTANTS
     )
         message(FATAL_ERROR "MinGW clang shared build crashes with inline constants, \
-don't enable INLINE_CONSTANTS cmake option :/.")
+don't enable the INLINE_CONSTANTS cmake option :/.")
     endif()
 
 endfunction()
