@@ -184,13 +184,13 @@ target_optional_compile_definitions(${TinyOrm_target}
         DISABLED TINYORM_DISABLE_TOM
 )
 
-# Depends on the TOM option so defined here
+# Depends on the TOM build option
 feature_option_dependent(TOM_EXAMPLE
     "Build the Tom command-line application example" OFF
     "TOM" TOM_EXAMPLE-NOTFOUND
 )
 
-# Depends on the TOM_EXAMPLE option so defined here
+# Depends on the TOM_EXAMPLE build option
 tiny_init_tom_database_dirs()
 
 # TinyORM library header and source files
@@ -226,7 +226,7 @@ set_target_properties(${TinyOrm_target}
         EXPORT_NAME ${TinyOrm_ns}
 )
 
-# Append a major version number for shared or static library on Windows/MinGW only
+# Append a major version number for shared or static library (Windows/MinGW only)
 if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
     # TODO use a new CMAKE_DLL_NAME_WITH_SOVERSION in CMake v3.27 silverqx
     set_property(
@@ -251,7 +251,7 @@ target_compile_definitions(${TinyOrm_target}
         $<$<NOT:$<CONFIG:Debug>>:TINYORM_NO_DEBUG_SQL>
         # Debug build
         $<$<CONFIG:Debug>:TINYORM_DEBUG>
-        # Log queries with a time measurement
+        # Log queries with time measurements
         $<$<CONFIG:Debug>:TINYORM_DEBUG_SQL>
 )
 
@@ -273,7 +273,7 @@ else()
 endif()
 
 # Enable code needed by tests, eg. connection overriding in the Model or
-# MySqlConnection::setConfigVersion().
+# MySqlConnection::setConfigVersion()
 if(BUILD_TESTS)
     target_compile_definitions(${TinyOrm_target} PUBLIC TINYORM_TESTS_CODE)
 endif()

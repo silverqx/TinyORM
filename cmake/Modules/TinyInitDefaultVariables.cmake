@@ -1,6 +1,6 @@
 include(TinyHelpers)
 
-# Initialize default CMake variables on which options depend
+# Initialize default CMake variables on which CMake options depend
 macro(tiny_init_cmake_variables_pre)
 
     set(CMAKE_EXPORT_PACKAGE_REGISTRY ON CACHE BOOL
@@ -12,8 +12,8 @@ endmacro()
 # Initialize default CMake variables
 macro(tiny_init_cmake_variables)
 
-    # Especially important for multi-config generators, I leave it to also kick-in for
-    # single-config generators
+    # Especially important for multi-config generators (a good practice for single-config
+    # generators as well)
     set(CMAKE_DEBUG_POSTFIX d CACHE STRING
         "Default filename postfix for libraries for Debug configuration")
 
@@ -35,7 +35,7 @@ DESTINATION is encountered")
         CMAKE_WARN_ON_ABSOLUTE_INSTALL_DESTINATION
     )
 
-    # Allow to select dynamic/static MSVC runtime, also the TINY_VCPKG check isn't
+    # Allow selecting dynamic or static MSVC runtime, also the TINY_VCPKG check isn't
     # needed because the MSVC_RUNTIME_DYNAMIC option isn't defined during vcpkg builds,
     # see the comment for the MSVC_RUNTIME_DYNAMIC option.
     # The MSVC_RUNTIME_DYNAMIC is always defined so the DEFINED check isn't needed
@@ -69,7 +69,7 @@ DESTINATION is encountered")
         endif()
     endif()
 
-    # Avoid to link a release type builds against a debug build
+    # Avoid linking a release build types against debug builds
     set(helpStringTemplate
         "Map from <CONFIG> project configuration to an imported target's configuration")
 
@@ -144,11 +144,11 @@ builds
 
 endmacro()
 
-# Initialize Tiny variables, early init.
+# Initialize Tiny variables, early initialization
 macro(tiny_init_tiny_variables_pre)
 
     # Top level project name, used for alias namespaces, CMAKE_MESSAGE_CONTEXT, or as
-    # a main package name
+    # the main package name
     set(TinyOrm_ns TinyOrm)
     set(TinyUtils_ns TinyUtils)
     set(TomExample_ns tom)
@@ -176,21 +176,20 @@ macro(tiny_init_tiny_variables_pre)
         "True when using a multi-configuration generator.")
     unset(isMultiConfig)
 
-    # Allow using an environment variable VCPKG_ROOT instead of CMAKE_TOOLCHAIN_FILE
-    # command-line option
+    # Auto-detect the CMAKE_TOOLCHAIN_FILE from the VCPKG_ROOT environment variable
     if(DEFINED ENV{VCPKG_ROOT} AND NOT DEFINED CMAKE_TOOLCHAIN_FILE)
         set(CMAKE_TOOLCHAIN_FILE "$ENV{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake"
             CACHE STRING "Path to toolchain file supplied to cmake.")
     endif()
-    # GitHub Actions defines VCPKG_INSTALLATION_ROOT instead of VCPKG_ROOT
+    # GitHub Actions defines the VCPKG_INSTALLATION_ROOT instead of VCPKG_ROOT
     if(DEFINED ENV{VCPKG_INSTALLATION_ROOT} AND NOT DEFINED CMAKE_TOOLCHAIN_FILE)
         set(CMAKE_TOOLCHAIN_FILE
             "$ENV{VCPKG_INSTALLATION_ROOT}/scripts/buildsystems/vcpkg.cmake"
             CACHE STRING "Path to toolchain file supplied to cmake.")
     endif()
 
-    # Vcpkg CMake integration ignores VCPKG_DEFAULT_TRIPLET env. variable, but acceppts
-    # VCPKG_TARGET_TRIPLET command-line option
+    # Vcpkg CMake integration ignores VCPKG_DEFAULT_TRIPLET env. variable but acceppts
+    # the VCPKG_TARGET_TRIPLET command-line option
     if(DEFINED ENV{VCPKG_DEFAULT_TRIPLET} AND NOT DEFINED VCPKG_TARGET_TRIPLET)
         set(VCPKG_TARGET_TRIPLET "$ENV{VCPKG_DEFAULT_TRIPLET}" CACHE STRING
             "Change the default triplet for CMake Integration.")
@@ -204,9 +203,9 @@ macro(tiny_init_tiny_variables)
     # List of package dependencies for the package config
     set(tiny_package_dependencies)
 
-    # Setup correct PATH env. variable used by ctest command
+    # Setup the correct PATH environment variable used by the ctest command
     if(BUILD_TESTS)
-        # For adjusting variables when running tests, we need to know what the correct
+        # For adjusting variables when running tests we need to know what the correct
         # variable is for separating entries in PATH-alike variables
         if(CMAKE_HOST_SYSTEM_NAME STREQUAL "Windows")
             set(TINY_PATH_SEPARATOR "\\;")
@@ -244,7 +243,7 @@ $<SHELL_PATH:${${TinyOrm_ns}_BINARY_DIR}/tests/${TinyUtils_ns}>${TINY_PATH_SEPAR
     set(TINY_BUILD_GENDIR "${TinyOrm_ns}_generated" CACHE INTERNAL
         "Generated content in the build tree")
 
-    # Provide default value if not set
+    # Provide the default value if not set
     if(NOT TINY_VCPKG)
         set(TINY_VCPKG FALSE)
     endif()
@@ -286,7 +285,7 @@ macro(tiny_init_tom_database_dirs)
             set(TOM_SEEDERS_DIR ${TomSeeders_folder})
         endif()
 
-        # Set path from the -D option or from the above default value
+        # Set path from the -D options or from the above default values
         set(TOM_MIGRATIONS_DIR "${TOM_MIGRATIONS_DIR}" CACHE PATH
             "Default migrations path for the make:migration command")
 

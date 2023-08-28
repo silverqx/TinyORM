@@ -8,7 +8,7 @@ function(cs_verbose_makefile)
     set(CMAKE_VERBOSE_MAKEFILE ON)
 endfunction()
 
-# Print all cmake variables
+# Print all CMake variables
 function(cs_print_vars)
     set(exclude_cmake yes)
     if(ARGC GREATER_EQUAL 1 AND DEFINED ARGV0 AND NOT ARGV0)
@@ -34,7 +34,7 @@ function(cs_print_env_vars)
     execute_process(COMMAND "${CMAKE_COMMAND}" "-E" "environment")
 endfunction()
 
-# Get all propreties that cmake supports
+# Get all propreties that CMake supports
 if(NOT CMAKE_PROPERTY_LIST)
     execute_process(
         COMMAND cmake --help-property-list

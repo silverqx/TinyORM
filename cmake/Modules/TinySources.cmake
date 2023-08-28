@@ -2,7 +2,7 @@
 # Create header and source files lists and return them
 function(tinyorm_sources out_headers out_sources)
 
-    # ORM headers section
+    # Header files section
     set(headers)
 
     if(TINY_EXTERN_CONSTANTS)
@@ -178,7 +178,7 @@ function(tinyorm_sources out_headers out_sources)
         )
     endif()
 
-    # ORM sources section
+    # Source files section
     set(sources)
 
     if(TINY_EXTERN_CONSTANTS)
@@ -272,11 +272,11 @@ function(tinyorm_sources out_headers out_sources)
     set(${out_sources} ${sources} PARENT_SCOPE)
 endfunction()
 
-# Tom application header and source files
+# Tom console application header and source files
 # Create header and source files lists and return them
 function(tinytom_sources out_headers out_sources)
 
-    # Tom headers section
+    # Tom header files section
     set(headers)
 
     if(TINY_EXTERN_CONSTANTS)
@@ -353,7 +353,7 @@ function(tinytom_sources out_headers out_sources)
         version.hpp
     )
 
-    # Tom sources section
+    # Tom source files section
     set(sources)
 
     if(TINY_EXTERN_CONSTANTS)
@@ -419,11 +419,11 @@ function(tinytom_sources out_headers out_sources)
     set(${out_sources} ${sources} PARENT_SCOPE)
 endfunction()
 
-# Tests - models header and source files
+# Models header and source files (primarily used in AutoTests)
 # Create header and source files lists and return them
 function(tiny_model_sources out_headers out_sources)
 
-    # Headers section
+    # Header files section
     set(headers)
 
     list(APPEND headers
@@ -461,7 +461,7 @@ function(tiny_model_sources out_headers out_sources)
         user.hpp
     )
 
-    # Sources section
+    # Source files section (empty)
     set(sources)
 
     list(SORT headers)
@@ -472,11 +472,11 @@ function(tiny_model_sources out_headers out_sources)
     set(${out_sources} ${sources} PARENT_SCOPE)
 endfunction()
 
-# Tests - database migrations header files
+# Database migrations header files (used in AutoTests and Tom example console application)
 # Create header and source files lists and return them
 function(tiny_tests_migration_sources out_headers)
 
-    # Headers section
+    # Header files section
     set(headers)
 
     list(APPEND headers
@@ -495,11 +495,11 @@ function(tiny_tests_migration_sources out_headers)
     set(${out_headers} ${headers} PARENT_SCOPE)
 endfunction()
 
-# Tests - database seeders header files
+# Database seeders header files (used in the Tom example console application)
 # Create header and source files lists and return them
 function(tiny_tests_seeder_sources out_headers)
 
-    # Headers section
+    # Header files section
     set(headers)
 
     list(APPEND headers
@@ -515,11 +515,11 @@ function(tiny_tests_seeder_sources out_headers)
     set(${out_headers} ${headers} PARENT_SCOPE)
 endfunction()
 
-# Tom example application - database migrations and seeders header files
+# Tom example console application - database migrations and seeders header files
 # Create header and source files lists and return them
 function(tiny_tom_example_database_sources out_headers)
 
-    # Headers section
+    # Header files section
     set(migration_headers)
     set(seeder_headers)
 
@@ -540,7 +540,7 @@ endfunction()
 # Create header and source files lists and return them
 function(tiny_tom_testdata_database_sources out_headers)
 
-    # Headers section
+    # Header files section
     set(headers)
 
     list(APPEND headers
