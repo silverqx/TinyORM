@@ -1613,8 +1613,9 @@ namespace Concerns
                     AttributeUtils::keys<AllRelations...>(relations), hidden,
                     ranges::inserter(hiddenKeys, hiddenKeys.cend()));
 
-        RelationsContainer<AllRelations...> serializableRelations;
-        serializableRelations.reserve(relations.size());
+        RelationsContainerType serializableRelations;
+        if constexpr (HasReserveMethod<RelationsContainerType>)
+            serializableRelations.reserve(relations.size());
 
         for (auto &&[key, value] : relations)
             if (!hiddenKeys.contains(key))
