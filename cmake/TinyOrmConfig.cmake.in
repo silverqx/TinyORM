@@ -20,7 +20,7 @@ list(APPEND CMAKE_MESSAGE_INDENT "  ")
 
 set(@TinyOrm_ns@_BIN_DIR "@PACKAGE_BIN_INSTALL_DIR@")
 set_and_check(@TinyOrm_ns@_CONFIG_DIR "@PACKAGE_CONFIG_INSTALL_DIR@")
-set_and_check(@TinyOrm_ns@_DOC_DIR "@PACKAGE_DOC_INSTALL_DIR@")
+set(@TinyOrm_ns@_DOC_DIR "@PACKAGE_DOC_INSTALL_DIR@")
 set_and_check(@TinyOrm_ns@_INCLUDE_DIR "@PACKAGE_INCLUDE_INSTALL_DIR@")
 set_and_check(@TinyOrm_ns@_LIB_DIR "@PACKAGE_LIB_INSTALL_DIR@")
 
