@@ -8,6 +8,7 @@ TINY_SYSTEM_HEADER
 #include <QTimeZone>
 
 #include <memory>
+#include <variant>
 
 #include "orm/constants.hpp"
 #include "orm/query/expression.hpp"
