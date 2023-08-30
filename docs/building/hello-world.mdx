@@ -396,6 +396,10 @@ And build.
 cmake --build . --target all
 ```
 
+:::tip
+Enable the [`TINYORM_STRICT_MODE`](tinyorm.mdx#cmake-strict_mode-option) environment variable to produce better code and to follow good code practices.
+:::
+
 ### Execute Hello world {#execute-hello-world-cmake}
 
 Do not forget to add `TinyOrm0d.dll` on the path on Windows and on the `LD_LIBRARY_PATH` on Linux, so `HelloWorld` application can find it during execution, as is described [here](building/tinyorm.mdx#tinyorm-on-path-cmake).

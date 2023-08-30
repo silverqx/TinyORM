@@ -58,6 +58,9 @@
     "orm": {
       "description": "Enable ORM-related source code (without it only the query builder is compiled)"
     },
+    "strict-mode": {
+      "description": "Propagate strict compiler/linker options and Qt definitions"
+    },
     "tom": {
       "description": "Enable Tom-related source code (command-line interface)"
     },

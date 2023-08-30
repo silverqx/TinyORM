@@ -440,6 +440,24 @@ cd TinyORM-builds-cmake/build-debug
 </TabItem>
 </Tabs>
 
+##### CMake `STRICT_MODE` option
+
+The `STRICT_MODE` `CMake` configuration option was added in `TinyORM` `v0.35.0`. This option was added to avoid the propagation of aggressive strict warning compiler/linker options and Qt definitions from the `TinyORM` library to user code through the [`TinyOrm::CommonConfig`](https://github.com/silverqx/TinyORM/blob/main/cmake/CommonModules/TinyCommon.cmake) interface library.
+
+`TinyORM` uses the strictest warning level options, virtually anything that can be enabled is enabled to produce a better code. I highly recommend enabling this option to produce better code and to follow good practices. It also helps to follow the `ISOCPP` [C++ Core Guidelines](https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines) standards.
+
+If you want to enable these strict warning options in your code, you can enable the `STRICT_MODE` `CMake` configuration option and they will be propagated to your code. You can also enabled it globally using the `TINYORM_STRICT_MODE` environment variable, and the value of this environment variable will be picked up during initial CMake configuration as the default value for the `STRICT_MODE` `CMake` configuration option.
+
+You can achieve the same result by manually linking against the `TinyOrm::CommonConfig` interface library when the `STRICT_MODE` is set to `OFF`.
+
+```cmake
+target_link_libraries(<target> PRIVATE TinyOrm::CommonConfig)
+```
+
+:::info
+The recommended way is to set the `TINYORM_STRICT_MODE` environment variable to `1`.
+:::
+
 #### Build TinyORM
 
 And build. You don't have to install it, you can use the build tree directly if you want.
@@ -472,6 +490,7 @@ CMake multi-config generators like `Ninja Multi-Config` or `Visual Studio 16 201
 | `MSVC_RUNTIME_DYNAMIC`            | `ON`    | Use MSVC dynamic runtime library (`-MD`) instead of static (`-MT`), also considers a Debug configuration (`-MTd`, `-MDd`).<br/><small>Available when: `MSVC AND NOT DEFINED CMAKE_MSVC_RUNTIME_LIBRARY`</small> |
 | `MYSQL_PING`                      | `OFF`   | Enable `Orm::MySqlConnection::pingDatabase()` method. |
 | `ORM`                             | `ON`    | Controls the compilation of all `ORM-related` source code, when this option is `disabled`, then only the `query builder` without `ORM` is compiled. Also excludes `ORM-related` unit tests. |
+| `STRICT_MODE`                     | `OFF`   | Controls propagation of strict compiler/linker options and Qt definitions using the `TinyOrm::CommonConfig` interface library to the user code.<br/><small>(highly recommended; can also be set with the `TINYORM_STRICT_MODE` environment variable; described [here](#cmake-strict_mode-option))</small>. |
 | `TOM`                             | `ON`    | Controls the compilation of all `Tom-related` source code, when this option is `disabled`, then it also excludes `Tom-related` unit tests. |
 | `TOM_EXAMPLE`                     | `OFF`   | Build the <abbr title='TinyORM Migrations'>`tom`</abbr> console application example. |
 | `TOM_MIGRATIONS_DIR`              | `-`     | Default migrations path for the `make:migration` command, can be an absolute or relative path (to the <abbr title='Current working directory'>pwd</abbr>).<br/><small>Default value: `database/migrations` <small>(relative to the pwd)</small></small> |

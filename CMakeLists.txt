@@ -105,6 +105,13 @@ a Debug configuration (-MTd, -MDd)" ON
     "MSVC;NOT DEFINED CMAKE_MSVC_RUNTIME_LIBRARY" MSVC_RUNTIME_DYNAMIC-NOTFOUND
 )
 
+feature_option_environment(STRICT_MODE
+    "Propagate strict compiler/linker options and Qt definitions using \
+the ${TinyOrm_ns}::${CommonConfig_target} interface library to the user code \
+(highly recommended; can also be set with the TINYORM_STRICT_MODE environment variable)"
+    TINYORM_STRICT_MODE OFF
+)
+
 feature_option(VERBOSE_CONFIGURE
     "Show information about PACKAGES_FOUND and PACKAGES_NOT_FOUND in the configure \
 output" OFF
@@ -367,10 +374,19 @@ target_link_libraries(${TinyOrm_target}
         Qt${QT_VERSION_MAJOR}::Core
         Qt${QT_VERSION_MAJOR}::Sql
         range-v3::range-v3
-        ${TinyOrm_ns}::${CommonConfig_target}
 )
 
 # Conditional dependencies
+if(STRICT_MODE)
+    target_link_libraries(${TinyOrm_target}
+        PUBLIC ${TinyOrm_ns}::${CommonConfig_target}
+    )
+else()
+    target_link_libraries(${TinyOrm_target}
+        PRIVATE ${TinyOrm_ns}::${CommonConfig_target}
+    )
+endif()
+
 if(MYSQL_PING)
     tiny_find_package(MySQL REQUIRED)
     target_link_libraries(${TinyOrm_target} PRIVATE MySQL::MySQL)

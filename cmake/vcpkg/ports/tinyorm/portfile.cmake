@@ -14,6 +14,7 @@ vcpkg_check_features(
         inline-constants     INLINE_CONSTANTS
         mysql-ping           MYSQL_PING
         orm                  ORM
+        strict-mode          STRICT_MODE
         tom                  TOM
         tom-example          TOM_EXAMPLE
 )

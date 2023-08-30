@@ -82,6 +82,10 @@ ${TINY_UNPARSED_ARGUMENTS}")
         )
     endif()
 
+    if(NOT STRICT_MODE)
+        target_link_libraries(${name} PRIVATE ${TinyOrm_ns}::${CommonConfig_target})
+    endif()
+
     target_link_libraries(${name}
         PRIVATE
             Qt${QT_VERSION_MAJOR}::Test

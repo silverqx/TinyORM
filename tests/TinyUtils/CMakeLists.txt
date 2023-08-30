@@ -101,6 +101,12 @@ tiny_resource_and_manifest(${TinyUtils_target}
 # Resolve and link dependencies
 # ---
 
+if(NOT STRICT_MODE)
+    target_link_libraries(${TinyUtils_target}
+        PRIVATE ${TinyOrm_ns}::${CommonConfig_target}
+    )
+endif()
+
 target_link_libraries(${TinyUtils_target}
     PUBLIC
         ${TinyOrm_ns}::${TinyOrm_target}
