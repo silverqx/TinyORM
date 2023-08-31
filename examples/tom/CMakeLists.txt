@@ -86,4 +86,4 @@ if(NOT STRICT_MODE)
     )
 endif()
 
-target_link_libraries(${TomExample_target} PRIVATE ${TinyOrm_ns}::${TinyOrm_target})
+target_link_libraries(${TomExample_target} PUBLIC ${TinyOrm_ns}::${TinyOrm_target})

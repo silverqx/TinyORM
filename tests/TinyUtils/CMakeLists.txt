@@ -109,9 +109,8 @@ endif()
 
 target_link_libraries(${TinyUtils_target}
     PUBLIC
-        ${TinyOrm_ns}::${TinyOrm_target}
-    PRIVATE
         Qt${QT_VERSION_MAJOR}::Core
+        ${TinyOrm_ns}::${TinyOrm_target}
 )
 
 # Others
