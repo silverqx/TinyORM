@@ -37,6 +37,6 @@ vcpkg_cmake_install()
 
 vcpkg_cmake_config_fixup()
 
-if(TINYORM_TOM_EXAMPLE)
+if(WIN32 AND TINYORM_TOM_EXAMPLE)
     vcpkg_copy_tools(TOOL_NAMES tom AUTO_CLEAN)
 endif()
