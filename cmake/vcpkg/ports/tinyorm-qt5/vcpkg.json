@@ -6,7 +6,7 @@
   "homepage": "https://github.com/silverqx/TinyORM",
   "documentation": "https://www.tinyorm.org",
   "maintainers": "Silver Zachara <silver.zachara@gmail.com>",
-  "supports": "!(uwp | arm | android | emscripten | osx | ios | xbox | freebsd | openbsd)",
+  "supports": "!(uwp | arm | android | emscripten | osx | ios | xbox | freebsd | openbsd | wasm32)",
   "dependencies": [
     "range-v3",
     "tabulate",
