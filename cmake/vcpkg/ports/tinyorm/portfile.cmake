@@ -39,5 +39,4 @@ vcpkg_cmake_config_fixup()
 
 if(TINYORM_TOM_EXAMPLE)
     vcpkg_copy_tools(TOOL_NAMES tom AUTO_CLEAN)
-    vcpkg_copy_tool_dependencies("${CURRENT_PACKAGES_DIR}/tools/${PORT}")
 endif()
