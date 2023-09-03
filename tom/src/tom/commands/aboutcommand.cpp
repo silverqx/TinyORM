@@ -317,7 +317,9 @@ QVector<SubSectionItem> AboutCommand::gatherVersionsInformation()
     auto versions = Application::createVersionsSubsection();
 
 #if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
-    versions.emplaceFront(std::nullopt, QVector<AboutItem> {
+                          // std::nullopt produces -Wmaybe-uninitialized in GCC release builds
+    versions.emplaceFront(std::optional<QString> {std::nullopt},
+                          QVector<AboutItem> {
                               {QStringLiteral("tom"), TINYTOM_VERSION_STR},
                           });
 #else
