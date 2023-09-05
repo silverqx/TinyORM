@@ -1,6 +1,7 @@
 #include "orm/utils/helpers.hpp"
 
 #include <QDebug>
+#include <QLibraryInfo>
 
 #include "orm/db.hpp"
 #include "orm/macros/likely.hpp"
@@ -28,10 +29,16 @@ int Helpers::qVariantTypeId(const QVariant &value)
 
 void Helpers::logException(const std::exception &e, const bool fatal)
 {
+    const QString exceptionMessage(e.what());
+
+    /* Log the QLibraryInfo::PluginsPath if an exception message contains:
+       QSqlError(Driver not loaded, Driver not loaded). */
+    logPluginsPath(exceptionMessage);
+
     const auto message = QStringLiteral("\nCaught '")
                          .append(TypeUtils::classPureBasename(e, true))
                          .append(QStringLiteral("' Exception:\n"))
-                         .append(e.what())
+                         .append(exceptionMessage)
                          .append(QChar(QChar::LineFeed));
 
     if (fatal)
@@ -146,6 +153,25 @@ Helpers::setTimeZone(QDateTime &datetime, const QString &connection)
 QDateTime Helpers::setTimeZone(QDateTime &&datetime, const QString &connection)
 {
     return setTimeZone(datetime, connection);
+}
+
+/* private */
+
+void Helpers::logPluginsPath(const QString &exceptionMessage)
+{
+    const static auto
+    DriverNotFound = QStringLiteral("QSqlError(Driver not loaded, Driver not loaded)");
+
+    // Nothing to do
+    if (!exceptionMessage.contains(DriverNotFound, Qt::CaseInsensitive))
+        return;
+
+    qInfo().nospace() << "Plugins Path: "
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+                      << QLibraryInfo::path(QLibraryInfo::PluginsPath);
+#else
+                      << QLibraryInfo::location(QLibraryInfo::PluginsPath);
+#endif
 }
 
 } // namespace Orm::Utils

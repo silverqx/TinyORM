@@ -93,6 +93,12 @@ namespace Utils
         /*! Set the QDateTime's time zone according to the given connection. */
         static QDateTime
         setTimeZone(QDateTime &&datetime, const QString &connection = "");
+
+    private:
+        /*! Log the QLibraryInfo::PluginsPath if an exception message contains:
+            QSqlError(Driver not loaded, Driver not loaded). */
+        [[maybe_unused]]
+        static void logPluginsPath(const QString &exceptionMessage);
     };
 
     /* public */
