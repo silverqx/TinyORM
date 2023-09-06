@@ -2144,7 +2144,7 @@ TINYORM_END_COMMON_NAMESPACE
 // FUTURE mingw64, find out better solution for .text section exhausted in debug build, -Wa,-mbig-obj didn't help, -flto helps, but again it can not find reference to WinMain, so I had to compile with -O1, then it is ok silverqx
 // FUTURE tests, QtCreator Qt AutoTests how to pass -maxwarnings silverqx
 // FUTURE constexpr, version header file, good example https://googleapis.dev/cpp/google-cloud-common/0.6.1/version_8h_source.html silverqx
-// BUG qmake impossible to add d postfix for dlls silverqx
+// BUG qmake impossible to add d postfix for dlls; I have found qtLibraryTarget() and qtPlatformTargetSuffix() in qt_functions.prf but I remember there was some other problem like when I added the d suffix something didn't work correctly, I don't exactly remember what it was silverqx
 // BUG SemVer version cmake/qmake silverqx
 // CUR cmake/qmake SOVERSION silverqx
 // CUR 0.1.0 vs 0.1.0.0 Product/FileVersion, investigate, also check versions in pc, prl, ... silverqx
