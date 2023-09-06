@@ -42,6 +42,9 @@ ${TINY_UNPARSED_ARGUMENTS}")
             QT_USE_QSTRINGBUILDER
             QT_STRICT_ITERATORS
             QT_NO_KEYWORDS
+
+            # Disable debug output in Release mode
+            $<$<NOT:$<CONFIG:Debug>>:QT_NO_DEBUG_OUTPUT>
     )
 
     # Platform specific configurations
