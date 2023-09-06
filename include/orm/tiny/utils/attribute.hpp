@@ -59,10 +59,10 @@ namespace Orm::Tiny::Utils
         static QVector<UpdateItem>
         convertVectorToUpdateItem(QVector<AttributeItem> &&attributes);
 
-        /*! Remove attributes which have duplicite keys and leave only the last one. */
+        /*! Remove attributes which have duplicate keys and leave only the last one. */
         static QVector<AttributeItem>
         removeDuplicitKeys(const QVector<AttributeItem> &attributes);
-        /*! Remove attributes which have duplicite keys and leave only the last one. */
+        /*! Remove attributes which have duplicate keys and leave only the last one. */
         static QVector<AttributeItem>
         removeDuplicitKeys(QVector<AttributeItem> &&attributes);
 

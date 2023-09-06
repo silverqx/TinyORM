@@ -138,7 +138,7 @@ void Migrator::createMigrationNamesMap()
 
         auto migrationName = getMigrationName(migrationRef);
 
-        // Verify duplicit Migration, the same Migration can't be passed more times
+        // Verify duplicate Migration, the same Migration can't be passed more times
         throwIfContainMigration(migrationName);
 
         // Verify alphabetical sorting

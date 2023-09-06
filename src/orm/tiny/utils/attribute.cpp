@@ -91,7 +91,7 @@ QVector<AttributeItem>
 Attribute::removeDuplicitKeys(const QVector<AttributeItem> &attributes)
 {
     const auto size = attributes.size();
-    // The helper set, to check duplicit keys
+    // The helper set, to check duplicate keys
     std::unordered_set<QString> added(static_cast<std::size_t>(size));
 
     QVector<std::reference_wrapper<const AttributeItem>> dedupedAttributesReversed;
@@ -101,7 +101,7 @@ Attribute::removeDuplicitKeys(const QVector<AttributeItem> &attributes)
        so the previous attributes will be skipped and only the last attribute
        will be copied. */
     for (const auto &attribute : attributes | ranges::views::reverse) {
-        // If duplicit key then skip
+        // If duplicate key then skip
         if (added.contains(attribute.key))
             continue;
 
@@ -119,7 +119,7 @@ QVector<AttributeItem>
 Attribute::removeDuplicitKeys(QVector<AttributeItem> &&attributes)
 {
     const auto size = attributes.size();
-    // The helper set, to check duplicit keys
+    // The helper set, to check duplicate keys
     std::unordered_set<QString> added(static_cast<std::size_t>(size));
 
     QVector<std::reference_wrapper<AttributeItem>> dedupedAttributesReversed;
@@ -129,7 +129,7 @@ Attribute::removeDuplicitKeys(QVector<AttributeItem> &&attributes)
        so the previous attributes will be skipped and only the last attribute
        will be moved. */
     for (auto &attribute : attributes | ranges::views::reverse) {
-        // If duplicit key then skip
+        // If duplicate key then skip
         if (added.contains(attribute.key))
             continue;
 
