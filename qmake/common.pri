@@ -105,16 +105,3 @@ mingw|if(unix:!macx): include(unixconf.pri)
 
 !if(win32|macx|if(mingw|if(unix:!macx))): \
     message( "Unsupported platform ($${QMAKE_PLATFORM}-$${QMAKE_COMPILER})." )
-
-# Common Variables
-# ---
-
-# Folder by release type
-debug_and_release {
-    CONFIG(release, debug|release): \
-        TINY_BUILD_SUBFOLDER = $$quote(/release)
-
-    else:CONFIG(debug, debug|release): \
-        TINY_BUILD_SUBFOLDER = $$quote(/debug)
-}
-else: TINY_BUILD_SUBFOLDER =

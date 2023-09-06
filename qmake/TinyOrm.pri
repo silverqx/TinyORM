@@ -24,13 +24,21 @@
 #
 # These variables will be set after the configuration is done:
 #
-# - TINY_BUILD_SUBFOLDER - Folder by release type (/debug, /release, or empty).
-# - TINY_VCPKG_INCLUDE   - Path to the vcpkg include folder (vcpkg/installed/<triplet>/include/).
+# - TINY_BUILD_SUBFOLDER        - Folder by release type if CONFIG+=debug_and_release is defined (/debug, /release, or an empty string).
+# - TINY_MSVC_VERSION           - Msvc compiler string (MSVC2022 or MSVC2019).
+# - TINY_QT_VERSION_UNDERSCORED - Underscored Qt version (eg. 6_5_2).
+# - TINY_RELEASE_TYPE_CAMEL     - Build type string (Debug, Profile, or Release).
+# - TINY_VCPKG_INCLUDE          - Path to the vcpkg include folder (vcpkg/installed/<triplet>/include/).
 
 # Path to the TinyORM source tree
 TINYORM_SOURCE_TREE = $$clean_path($$quote($$PWD/..))
 # Path to the Tom source tree
 TINYTOM_SOURCE_TREE = $$quote($$TINYORM_SOURCE_TREE/tom)
+
+# Variables to target a correct build folder
+# ---
+
+include($$TINYORM_SOURCE_TREE/qmake/variables.pri)
 
 # Qt Common Configuration
 # ---

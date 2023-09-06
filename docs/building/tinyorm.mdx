@@ -814,10 +814,13 @@ You must define the following variables before the `TinyOrm.pri` is included:
 
 These variables will be set after the configuration is done:
 
-| Variable Name          | Description |
-| ---------------------- | ----------- |
-| `TINY_BUILD_SUBFOLDER` | Folder by release type (/debug, /release, or empty). |
-| `TINY_VCPKG_INCLUDE`   | Path to the `vcpkg` `include` folder <small>(vcpkg/installed/&lt;triplet&gt;/include/)</small>. |
+| Variable Name                 | Description |
+| ----------------------------- | ----------- |
+| `TINY_BUILD_SUBFOLDER`        | Folder by release type if `CONFIG+=debug_and_release` is defined <small>(/debug, /release, or an empty string)</small>. |
+| `TINY_MSVC_VERSION`           | The `msvc` compiler string <small>(MSVC2022 or MSVC2019)</small>. |
+| `TINY_QT_VERSION_UNDERSCORED` | Underscored Qt version <small>(eg. 6_5_2)</small>. |
+| `TINY_RELEASE_TYPE_CAMEL`     | Build type string <small>(Debug, Profile, or Release)</small>. |
+| `TINY_VCPKG_INCLUDE`          | Path to the `vcpkg` `include` folder <small>(vcpkg/installed/&lt;triplet&gt;/include/)</small>. |
 
 Then you simply include the `TinyOrm.pri` in your project file.
 
