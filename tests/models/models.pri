@@ -1,4 +1,4 @@
-INCLUDEPATH += $$PWD
+INCLUDEPATH *= $$PWD
 
 HEADERS += \
     $$PWD/models/album.hpp \

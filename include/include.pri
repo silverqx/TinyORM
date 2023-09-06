@@ -1,4 +1,4 @@
-INCLUDEPATH += $$PWD
+INCLUDEPATH *= $$PWD
 
 extern_constants: \
     headersList += \

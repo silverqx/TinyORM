@@ -1,4 +1,4 @@
-INCLUDEPATH += $$PWD
+INCLUDEPATH *= $$PWD
 
 HEADERS += \
     $$PWD/migrations/2022_05_11_170000_create_users_table.hpp \

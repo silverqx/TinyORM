@@ -819,7 +819,7 @@ Configuring by the `.qmake.conf` and `.env` files has one big advantage, which i
 Create `database/migrations.pri` file and paste the following code.
 
 ```qmake
-INCLUDEPATH += $$PWD
+INCLUDEPATH *= $$PWD
 
 HEADERS += \
     $$PWD/migrations/2014_10_12_000000_create_posts_table.hpp \
@@ -830,7 +830,7 @@ HEADERS += \
 Create `database/seeders.pri` file and paste the following code.
 
 ```qmake
-INCLUDEPATH += $$PWD
+INCLUDEPATH *= $$PWD
 
 HEADERS += \
     $$PWD/seeders/databaseseeder.hpp \
