@@ -99,6 +99,15 @@ win32-msvc:CONFIG(debug, debug|release) {
     CONFIG(release, debug|release): \
         message( "Project is built in RELEASE mode (disabled debug output and asserts)." )
 
+    # Shared vs Static build
+    CONFIG(shared, dll|shared|static|staticlib) | \
+    CONFIG(dll, dll|shared|static|staticlib): \
+        message( "TinyOrm library is built as a shared library." )
+    else: \
+    if(CONFIG(static, dll|shared|static|staticlib) | \
+    CONFIG(staticlib, dll|shared|static|staticlib)): \
+        message( "TinyOrm library is built as a static library archive." )
+
     !disable_orm: \
         message( "Build ORM-related source code." )
     else: \
