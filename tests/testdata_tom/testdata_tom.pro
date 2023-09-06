@@ -4,12 +4,15 @@ QT -= gui
 TEMPLATE = app
 TARGET = tom_testdata
 
+# Link against TinyORM library for Tom application (also adds defines and include headers)
+# ---
+
+include($$TINYORM_SOURCE_TREE/qmake/tom.pri)
+
 # TinyTom migrations for unit tests specific configuration
 # ---
 
 CONFIG *= cmdline
-
-include($$TINYORM_SOURCE_TREE/qmake/tom.pri)
 
 # TinyTom migrations for unit tests defines
 # ---

@@ -4,12 +4,15 @@ QT -= gui
 TEMPLATE = app
 TARGET = tom
 
+# Link against TinyORM library for Tom application (also adds defines and include headers)
+# ---
+
+include($$TINYORM_SOURCE_TREE/qmake/tom.pri)
+
 # TinyTom example application specific configuration
 # ---
 
 CONFIG *= cmdline
-
-include($$TINYORM_SOURCE_TREE/qmake/tom.pri)
 
 # TinyTom example application defines
 # ---
