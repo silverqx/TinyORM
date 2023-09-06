@@ -93,6 +93,7 @@ win32-msvc:CONFIG(debug, debug|release) {
 # ---
 
 !build_pass {
+    # Release vs Debug build
     CONFIG(debug, debug|release): \
         message( "Project is built in DEBUG mode." )
     CONFIG(release, debug|release): \
