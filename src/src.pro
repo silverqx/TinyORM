@@ -102,11 +102,11 @@ win32-msvc:CONFIG(debug, debug|release) {
     # Shared vs Static build
     CONFIG(shared, dll|shared|static|staticlib) | \
     CONFIG(dll, dll|shared|static|staticlib): \
-        message( "TinyOrm library is built as a shared library." )
+        message( "TinyOrm library is built as shared library." )
     else: \
     if(CONFIG(static, dll|shared|static|staticlib) | \
     CONFIG(staticlib, dll|shared|static|staticlib)): \
-        message( "TinyOrm library is built as a static library archive." )
+        message( "TinyOrm library is built as static library archive." )
 
     !disable_orm: \
         message( "Build ORM-related source code." )
