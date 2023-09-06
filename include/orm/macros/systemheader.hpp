@@ -4,7 +4,8 @@
 
 /* The system_header pragma is disabled if building the TinyORM library itself
    as the shared library. */
-#if !defined(TINYORM_PRAGMA_SYSTEM_HEADER_OFF) && !defined(TINYORM_BUILDING_SHARED)
+#if !defined(TINYORM_PRAGMA_SYSTEM_HEADER_OFF) && \
+    (!defined(TINYORM_BUILDING_SHARED) || !defined(TINYUTILS_BUILDING_SHARED))
 // Clang masquerades as GCC 4.2.0 so it has to be first
 #  ifdef __clang__
 #    define TINY_SYSTEM_HEADER _Pragma("clang system_header")
