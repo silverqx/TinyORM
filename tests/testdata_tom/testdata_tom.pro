@@ -35,16 +35,6 @@ win32-msvc:CONFIG(debug, debug|release) {
     !isEmpty(target.path): INSTALLS += target
 }
 
-# CONFIG tiny_autoconf
-# ---
-
-tiny_autoconf {
-    load(tiny_find_packages)
-
-    # Find the vcpkg and add the vcpkg/<triplet>/include/ on the system include path
-    tiny_find_vcpkg()
-}
-
 # User Configuration
 # ---
 
