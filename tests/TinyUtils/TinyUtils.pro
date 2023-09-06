@@ -3,15 +3,15 @@ QT -= gui
 TEMPLATE = lib
 TARGET = TinyUtils
 
+# Link against TinyORM library (also adds defines and include headers)
+# ---
+
+include($$TINYORM_SOURCE_TREE/qmake/TinyOrm.pri)
+
 # TinyUtils library specific configuration
 # ---
 
-CONFIG *= qt link_prl create_prl create_pc create_libtool
-
-# Common configuration
-# ---
-
-include(../../qmake/common.pri)
+CONFIG *= create_prl create_pc create_libtool
 
 # TinyUtils library defines
 # ---
@@ -22,10 +22,6 @@ DEFINES += PROJECT_TINYUTILS
 CONFIG(shared, dll|shared|static|staticlib) | \
 CONFIG(dll, dll|shared|static|staticlib): \
     DEFINES *= TINYUTILS_BUILDING_SHARED
-
-# Disable debug output in release mode
-CONFIG(release, debug|release): \
-    DEFINES *= QT_NO_DEBUG_OUTPUT
 
 # TinyUtils library header and source files
 # ---
@@ -58,11 +54,6 @@ unset(tinyRcIncludepath)
 # ---
 
 include($$PWD/src/pch.pri)
-
-# Link against TinyORM library (also adds defines and include headers)
-# ---
-
-include($$TINYORM_SOURCE_TREE/tests/qmake/TinyOrm.pri)
 
 # Default rules for deployment
 # ---
@@ -102,16 +93,6 @@ build_tests {
 build_tests {
     QMAKE_CLEAN += $$TINYORM_SQLITE_DATABASE
     QMAKE_DISTCLEAN += $$TINYORM_SQLITE_DATABASE
-}
-
-# CONFIG tiny_autoconf
-# ---
-
-tiny_autoconf {
-    load(tiny_find_packages)
-
-    # Find the vcpkg and add the vcpkg/<triplet>/include/ on the system include path
-    tiny_find_vcpkg()
 }
 
 # User Configuration

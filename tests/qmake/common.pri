@@ -1,17 +1,17 @@
-QT *= core sql testlib
+QT *= testlib
 QT -= gui
 
 TEMPLATE = app
 
+# Link against TinyORM library (also adds defines and include headers)
+# ---
+
+include($$TINYORM_SOURCE_TREE/qmake/TinyOrm.pri)
+
 # Tests specific configuration
 # ---
 
-CONFIG *= qt cmdline testcase link_prl
-
-# Common configuration
-# ---
-
-include(../../qmake/common.pri)
+CONFIG *= cmdline testcase
 
 # Compiler and Linker options
 # ---
@@ -30,15 +30,6 @@ win32-clang-msvc: \
 # ---
 
 DEFINES += PROJECT_TINYORM_TEST
-
-# Disable debug output in release mode
-CONFIG(release, debug|release): \
-    DEFINES *= QT_NO_DEBUG_OUTPUT
-
-# Link against TinyORM library (also adds defines and include headers)
-# ---
-
-include(TinyOrm.pri)
 
 # Windows resource and manifest files
 # ---
@@ -64,16 +55,6 @@ include($$TINYORM_SOURCE_TREE/include/pch.pri)
 # ---
 
 target.CONFIG += no_default_install
-
-# CONFIG tiny_autoconf
-# ---
-
-tiny_autoconf {
-    load(tiny_find_packages)
-
-    # Find the vcpkg and add the vcpkg/<triplet>/include/ on the system include path
-    tiny_find_vcpkg()
-}
 
 # User Configuration
 # ---

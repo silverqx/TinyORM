@@ -15,7 +15,7 @@ include($$PWD/features/tiny_dotenv.prf)
 # Common Configuration ( also for tests )
 # ---
 
-CONFIG *= c++2a strict_c++ warn_on utf8_source hide_symbols no_keywords
+CONFIG *= qt c++2a strict_c++ warn_on utf8_source hide_symbols no_keywords
 CONFIG *= tiny_autoconf tiny_system_headers
 CONFIG *= silent
 CONFIG -= c++11 app_bundle
@@ -36,6 +36,10 @@ DEFINES *= QT_NO_CAST_TO_ASCII
 DEFINES *= QT_NO_CAST_FROM_BYTEARRAY
 DEFINES *= QT_USE_QSTRINGBUILDER
 DEFINES *= QT_STRICT_ITERATORS
+
+# Disable debug output in release mode
+CONFIG(release, debug|release): \
+    DEFINES *= QT_NO_DEBUG_OUTPUT
 
 # TinyORM configuration
 # ---
