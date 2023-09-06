@@ -82,5 +82,5 @@ exists(../conf.pri): \
     include(../conf.pri)
 
 else:!tiny_autoconf: \
-    error( "'tests/conf.pri' for 'tests' project does not exist. See an example\
-            configuration in 'tests/conf.pri.example'." )
+    error( "'tests/conf.pri' for 'tests' project does not exist.\
+            See an example configuration in 'tests/conf.pri.example'." )

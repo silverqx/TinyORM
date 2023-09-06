@@ -121,5 +121,5 @@ exists(../conf.pri): \
     include(../conf.pri)
 
 else:!tiny_autoconf: \
-    error( "'tests/conf.pri' for 'tests/TinyUtils' library does not exist. See an example\
-            configuration in 'tests/conf.pri.example'." )
+    error( "'tests/conf.pri' for 'tests/$${TARGET}' library does not exist.\
+             See an example configuration in 'tests/conf.pri.example'." )

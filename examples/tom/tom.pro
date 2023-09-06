@@ -47,6 +47,5 @@ exists(conf.pri): \
     include(conf.pri)
 
 else:!tiny_autoconf: \
-    error( "'conf.pri' for '$${TARGET}' example project does not exist. See an example\
-            configuration in 'examples/tom/conf.pri.example' or call 'vcpkg install'\
-            in the project's root." )
+    error( "'conf.pri' for '$${TARGET}' example project does not exist.\
+            See an example configuration in 'examples/tom/conf.pri.example'." )
