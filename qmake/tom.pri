@@ -85,12 +85,10 @@ unset(tinyRcIncludepath)
 
 load(tiny_system_includepath)
 
-!isEmpty(TINYORM_SOURCE_TREE): \
-exists($$TINYORM_SOURCE_TREE): \
-    tiny_add_system_includepath(                   \
-        $$quote($$TINYORM_SOURCE_TREE/include/)    \
-        $$quote($$TINYTOM_SOURCE_TREE/include/)    \
-    )
+tiny_add_system_includepath(                   \
+    $$quote($$TINYORM_SOURCE_TREE/include/)    \
+    $$quote($$TINYTOM_SOURCE_TREE/include/)    \
+)
 
 # Don't check if exists() because QtCreator depends on these LIBS paths it adds them
 # on the PATH or LD_LIBRARY_PATH during Run Project
