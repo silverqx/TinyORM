@@ -86,3 +86,15 @@ LIBS += -lTinyOrm
 load(tiny_find_packages)
 
 tiny_find_vcpkg()
+
+# Some info output
+# ---
+
+# The TINYORM_BUILD_TREE is super important, so print some warning if isn't defined,
+# can be disabled using CONFIG*=no_tinyorm_link_warning
+!build_pass: \
+!no_tinyorm_link_warnings: \
+if(!defined(TINYORM_BUILD_TREE, var)|isEmpty(TINYORM_BUILD_TREE)): \
+    warning( "The 'TINYORM_BUILD_TREE' qmake variable to the TinyORM build tree was not\
+              defined, please define it or link against the TinyOrm library manually\
+              using the 'LIBS' qmake variable. $$TARGET" )
