@@ -68,13 +68,12 @@ exists($$TINYORM_SOURCE_TREE) {
         tiny_add_system_includepath($$quote($$TINYTOM_SOURCE_TREE/include/))
 }
 
-!isEmpty(TINYORM_BUILD_TREE): \
-exists($$TINYORM_BUILD_TREE): \
+# Don't check if exists() because QtCreator depends on these LIBS paths it adds them
+# on the PATH or LD_LIBRARY_PATH during Run Project
+!isEmpty(TINYORM_BUILD_TREE) {
     LIBS += $$quote(-L$$clean_path($$TINYORM_BUILD_TREE)/src$${TINY_BUILD_SUBFOLDER}/)
-
-# TinyOrm library can be on the system path or LD_LIBRARY_PATH so don't depend
-# on the TINYORM_BUILD_TREE
-LIBS += -lTinyOrm
+    LIBS += -lTinyOrm
+}
 
 # vcpkg - range-v3 and tabulate
 # ---
