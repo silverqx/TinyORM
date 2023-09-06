@@ -1,4 +1,3 @@
-QT *= core sql
 QT -= gui
 
 TEMPLATE = app
