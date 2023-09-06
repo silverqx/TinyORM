@@ -4,7 +4,7 @@
     CONFIG(static, dll|shared|static|staticlib) | \
     CONFIG(staticlib, dll|shared|static|staticlib): \
         error( "MinGW clang static build is not supported, contains a problem with\
-                duplicit symbols, you can try to fix it :)." )
+                duplicate symbols, you can try to fix it :)." )
 }
 
 # Load .env and .env.$$QMAKE_PLATFORM files
