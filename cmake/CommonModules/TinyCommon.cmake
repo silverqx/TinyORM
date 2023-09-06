@@ -25,21 +25,23 @@ ${TINY_UNPARSED_ARGUMENTS}")
     # Qt defines
     # ---
 
-    target_compile_definitions(${target} INTERFACE
-        # You can also make your code fail to compile if it uses deprecated APIs.
-        # In order to do so, uncomment the following line.
-        # You can also select to disable deprecated APIs only up to a certain version of Qt.
-        # Disables all the APIs deprecated before Qt 6.0.0
-        QT_DISABLE_DEPRECATED_BEFORE=0x060000
+    target_compile_definitions(${target}
+        INTERFACE
+            # You can also make your code fail to compile if it uses deprecated APIs.
+            # In order to do so, uncomment the following line.
+            # You can also select to disable deprecated APIs only up to a certain version
+            # of Qt.
+            # Disables all the APIs deprecated before Qt 6.0.0
+            QT_DISABLE_DEPRECATED_BEFORE=0x060000
 
-        #QT_ASCII_CAST_WARNINGS
-        #QT_NO_CAST_FROM_ASCII
-        #QT_RESTRICTED_CAST_FROM_ASCII
-        QT_NO_CAST_TO_ASCII
-        QT_NO_CAST_FROM_BYTEARRAY
-        QT_USE_QSTRINGBUILDER
-        QT_STRICT_ITERATORS
-        QT_NO_KEYWORDS
+            #QT_ASCII_CAST_WARNINGS
+            #QT_NO_CAST_FROM_ASCII
+            #QT_RESTRICTED_CAST_FROM_ASCII
+            QT_NO_CAST_TO_ASCII
+            QT_NO_CAST_FROM_BYTEARRAY
+            QT_USE_QSTRINGBUILDER
+            QT_STRICT_ITERATORS
+            QT_NO_KEYWORDS
     )
 
     # Platform specific configurations
