@@ -1,0 +1,18 @@
+# Find the vcpkg root folder and add the vcpkg/<triplet>/include/ on system include path.
+defineTest(tiny_log_common_vars) {
+    !build_pass {
+        message("---")
+        message("TARGET : $$TARGET")
+        message("QT : $$QT")
+        message("CONFIG : $$CONFIG")
+        message("DEFINES : $$DEFINES")
+        message("INCLUDEPATH : $$INCLUDEPATH")
+        message("LIBS : $$LIBS")
+        message("LIBS_PRIVATE : $$LIBS_PRIVATE")
+        message("QMAKE_CXXFLAGS_WARN_ON : $$QMAKE_CXXFLAGS_WARN_ON")
+        message("QMAKE_CXXFLAGS : $$QMAKE_CXXFLAGS")
+        message("QMAKE_CXXFLAGS_DEBUG : $$QMAKE_CXXFLAGS_DEBUG")
+        message("QMAKE_LFLAGS : $$QMAKE_LFLAGS")
+        message("QMAKE_LFLAGS_DEBUG : $$QMAKE_LFLAGS_DEBUG")
+    }
+}
