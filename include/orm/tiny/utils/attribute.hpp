@@ -61,10 +61,10 @@ namespace Orm::Tiny::Utils
 
         /*! Remove attributes which have duplicate keys and leave only the last one. */
         static QVector<AttributeItem>
-        removeDuplicitKeys(const QVector<AttributeItem> &attributes);
+        removeDuplicateKeys(const QVector<AttributeItem> &attributes);
         /*! Remove attributes which have duplicate keys and leave only the last one. */
         static QVector<AttributeItem>
-        removeDuplicitKeys(QVector<AttributeItem> &&attributes);
+        removeDuplicateKeys(QVector<AttributeItem> &&attributes);
 
         /*! Join attributes and values for firstOrXx methods. */
         static QVector<AttributeItem>

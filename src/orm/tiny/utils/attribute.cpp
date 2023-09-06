@@ -88,7 +88,7 @@ Attribute::convertVectorToUpdateItem(QVector<AttributeItem> &&attributes)
 }
 
 QVector<AttributeItem>
-Attribute::removeDuplicitKeys(const QVector<AttributeItem> &attributes)
+Attribute::removeDuplicateKeys(const QVector<AttributeItem> &attributes)
 {
     const auto size = attributes.size();
     // The helper set, to check duplicate keys
@@ -116,7 +116,7 @@ Attribute::removeDuplicitKeys(const QVector<AttributeItem> &attributes)
 }
 
 QVector<AttributeItem>
-Attribute::removeDuplicitKeys(QVector<AttributeItem> &&attributes)
+Attribute::removeDuplicateKeys(QVector<AttributeItem> &&attributes)
 {
     const auto size = attributes.size();
     // The helper set, to check duplicate keys
