@@ -650,13 +650,17 @@ The [`Auto-configuration`](#auto-configuration-internals) and [`Environment file
 The `Auto-configuration` feature can be turned off using the [`disable_autoconf`](#disable_autoconf) `qmake` configuration option (eg. `CONFIG*=disable_autoconf`).
 :::
 
+:::tip
+The `tiny_dotenv` feature can be turned off using the [`disable_dotenv`](#disable_dotenv) `qmake` configuration option (eg. `CONFIG*=disable_dotenv`).
+:::
+
 ##### Manual configuration (conf.pri)
 
 This is the old method used before `TinyORM` `v0.34.0`. You need to copy the `conf.pri.example` files to `conf.pri` (there are four, one for every project or sub-project) and manually update the `INCLUDEPATH` and `LIBS` to configure TinyORM's `qmake` build dependencies. This way you can override any `qmake` build options or variables.
 
 To disable the [`Auto-configuration`](#auto-configuration-internals) feature you must define the [`disable_autoconf`](#disable_autoconf) `qmake` configuration option (eg. `CONFIG*=disable_autoconf`) because from `TinyORM` `v0.34.0` is the `Auto-configuration` feature enabled by default.
 
-You can also remove all `.env` files or disable the `tiny_dotenv` feature using `CONFIG-=tiny_dotenv`. You can use them all at once if you want, `.env` and also `conf.pri` files.
+You can also remove all `.env` files or turn off the `tiny_dotenv` feature using `CONFIG*=disable_dotenv`. You can use them all at once if you want, `.env` and also `conf.pri` files.
 
 `conf.pri` files are nicely commented on, so you can see what needs to be modified.
 
@@ -726,7 +730,8 @@ Everything is ready for build, you can press <kbd>Ctrl</kbd>+<kbd>b</kbd> to bui
 | `CONFIG` <small>Option Name</small> | Default | Description |
 | ----------------------------------- | ------- | ----------- |
 | `build_tests`                       | `OFF`   | Build TinyORM unit tests. |
-| `disable_autoconf`                  | `OFF`   | Disable the [Auto-configuration](#auto-configuration-internals) feature <small>(auto-configuration is enabled by default from `TinyORM` `v0.34.0`)</small>. |
+| `disable_autoconf`                  | `OFF`   | Disable the [`Auto-configuration`](#auto-configuration-internals) feature <small>(auto-configuration is enabled by default from `TinyORM` `v0.34.0`)</small>. |
+| `disable_dotenv`                    | `OFF`   | Disable the [`tiny_dotenv`](#environment-files) feature <small>(environment files are enabled by default from `TinyORM` `v0.34.0`)</small>. |
 | `disable_thread_local`              | `OFF`   | Remove all [`thread_local`](https://en.cppreference.com/w/c/language/storage_duration) storage duration specifiers, it disables multi-threading support. |
 | `disable_orm`                       | `OFF`   | Controls the compilation of all `ORM-related` source code, when this option is `enabled`, then only the `query builder` without `ORM` is compiled. Also excludes `ORM-related` unit tests. |
 | `disable_tom`                       | `OFF`   | Controls the compilation of all `Tom-related` source code, when this option is `disabled`, then it also excludes `Tom-related` unit tests. |
@@ -735,7 +740,6 @@ Everything is ready for build, you can press <kbd>Ctrl</kbd>+<kbd>b</kbd> to bui
 | `link_pkgconfig_off`                | `OFF`   | Link against `mysqlclient` or `libmariadb` with `PKGCONFIG`.<br/>Used only in the `Unix` and `MinGW` __shared__ build <small>(exactly <code>win32-g++\|win32-clang-g++</code>)</small> and when `mysql_ping` is also defined to link against `mysqlclient` or `libmariadb`, [source code](https://github.com/silverqx/TinyORM/blob/main/conf.pri.example#L132).<br/><small>Available when: `unix:mysql_ping` or <code>(win32-g++\|win32-clang-g++):mysql_ping:!static:!staticlib</code></small> |
 | `mysql_ping`                        | `OFF`   | Enable `Orm::MySqlConnection::pingDatabase()` method. |
 | `tiny_ccache_win32`                 | `ON`    | Enable compiler cache. [Homepage](https://ccache.dev/)<br/><small>It works only on Windows systems. It works well with the MSYS2 `g++`, `clang++`, `msvc`, and `clang-cl` with `msvc`. It disables `precompile_header` as they are not supported on Windows and changes the `-Zi` compiler option to the `-Z7` for debug builds as the `-Zi` compiler option is not supported ([link](https://github.com/ccache/ccache/issues/1040) to the issue).</small> |
-| `tiny_dotenv`                       | `ON`    | Enable [Environment files](#environment-files) feature.<br/>The `.env` and <code>.env.(win32&vert;unix&vert;mingw)</code> files in `TinyORM` project root folder. |
 | `tom_example`                       | `OFF`   | Build the <abbr title='TinyORM Migrations'>`tom`</abbr> console application example. |
 
 </APITable>
@@ -976,6 +980,8 @@ Then the following names are taken into account: .env, .env.win32, .env.unix, .e
 # To find .env and .env.$$QMAKE_PLATFORM files
 TINY_DOTENV_ROOT = $$PWD
 ```
+
+The `tiny_dotenv` feature can be turned off using the [`disable_dotenv`](#disable_dotenv) `qmake` configuration option (eg. `CONFIG*=disable_dotenv`).
 
 :::caution
 `Environment files` don't work in the `CMake` builds.

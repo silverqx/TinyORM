@@ -24,6 +24,9 @@ defineReplace(tiny_dotenv_platform) {
     return($$QMAKE_PLATFORM)
 }
 
+# Nothing to do, tiny_dotenv is disabled
+disable_dotenv: return()
+
 TINY_DOTENV_ROOT = $$tiny_dotenv_root()
 TINY_DOTENV_PLATFORM = $$tiny_dotenv_platform()
 
