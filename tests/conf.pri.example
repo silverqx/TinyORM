@@ -3,10 +3,7 @@
 
 load(tiny_system_includepath)
 
-# Disable auto-configuration
-#CONFIG -= tiny_autoconf
-
-!tiny_autoconf: \
+disable_autoconf: \
     load(tiny_find_packages)
 
 # MinGW
@@ -19,7 +16,7 @@ win32-g++|win32-clang-g++ {
     QMAKE_LFLAGS *= -fuse-ld=lld
 
     # Nothing to do, auto-configuration is enabled
-    tiny_autoconf: return()
+    !disable_autoconf: return()
 
     # Includes
     # vcpkg - range-v3 and tabulate
@@ -35,7 +32,7 @@ else:win32-msvc|win32-clang-msvc {
 #    CONFIG *= tiny_ccache_win32
 
     # Nothing to do, auto-configuration is enabled
-    tiny_autoconf: return()
+    !disable_autoconf: return()
 
     # Includes
     # vcpkg - range-v3 and tabulate
@@ -54,7 +51,7 @@ else:unix {
 #    QMAKE_LFLAGS *= -fuse-ld=mold
 
     # Nothing to do, auto-configuration is enabled
-    tiny_autoconf: return()
+    !disable_autoconf: return()
 
     # Includes
     # vcpkg - range-v3 and tabulate

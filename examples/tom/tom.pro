@@ -38,6 +38,6 @@ win32-msvc:CONFIG(debug, debug|release) {
 exists(conf.pri): \
     include(conf.pri)
 
-else:!tiny_autoconf: \
+else:disable_autoconf: \
     error( "'conf.pri' for '$${TARGET}' example project does not exist.\
             See an example configuration in 'examples/tom/conf.pri.example'." )

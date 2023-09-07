@@ -117,10 +117,10 @@ win32-msvc:CONFIG(debug, debug|release) {
         message( "Enabled MySQL ping on Orm::MySqlConnection." )
 }
 
-# CONFIG tiny_autoconf
+# Auto-configuration
 # ---
 
-tiny_autoconf {
+!disable_autoconf {
     load(tiny_find_packages)
 
     # Find the vcpkg and add the vcpkg/<triplet>/include/ on the system include path
@@ -136,6 +136,6 @@ tiny_autoconf {
 exists(../conf.pri): \
     include(../conf.pri)
 
-else:!tiny_autoconf: \
+else:disable_autoconf: \
     error( "'conf.pri' for '$${TARGET}' project does not exist.\
             See an example configuration in 'conf.pri.example'." )

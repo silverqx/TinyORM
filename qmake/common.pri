@@ -16,7 +16,7 @@ include($$PWD/features/tiny_dotenv.prf)
 # ---
 
 CONFIG *= qt c++2a strict_c++ warn_on utf8_source hide_symbols no_keywords
-CONFIG *= tiny_autoconf tiny_system_headers
+CONFIG *= tiny_system_headers
 CONFIG *= silent
 CONFIG -= c++11 app_bundle
 

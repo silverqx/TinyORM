@@ -101,6 +101,6 @@ build_tests {
 exists(../conf.pri): \
     include(../conf.pri)
 
-else:!tiny_autoconf: \
+else:disable_autoconf: \
     error( "'tests/conf.pri' for 'tests/$${TARGET}' library does not exist.\
              See an example configuration in 'tests/conf.pri.example'." )

@@ -62,6 +62,6 @@ target.CONFIG += no_default_install
 exists(../conf.pri): \
     include(../conf.pri)
 
-else:!tiny_autoconf: \
+else:disable_autoconf: \
     error( "'tests/conf.pri' for 'tests' project does not exist.\
             See an example configuration in 'tests/conf.pri.example'." )

@@ -617,9 +617,9 @@ If you are using sessions, you can use a single `clangd` instance for all projec
 
 #### Configure TinyORM
 
-Now you are ready to configure the `TinyORM` library. There are two ways how to configure the `TinyORM` library and it's the new `auto-configure` feature added in `TinyORM` `v0.34.0` using the `.env` files and the old way using the `conf.pri` files.
+Now you are ready to configure the `TinyORM` library. There are two ways how to configure the `TinyORM` library and it's the new `Auto-configure` feature added in `TinyORM` `v0.34.0` using the `.env` files and the old way using the `conf.pri` files.
 
-##### Auto-configuration (`tiny_autoconf` and `tiny_dotenv`)
+##### Auto-configuration and tiny_dotenv
 
 This is the new recommended method to auto-configure TinyORM's `qmake` build system and also the dependencies, it was added in `TinyORM` `v0.34.0`. You need to copy the prepared `.env.(win32|unix|mingw).example` file to the `.env.(win32|unix|mingw)`. One `.env` example file is prepared for each supported platform.
 
@@ -640,19 +640,23 @@ cp .env.unix.example .env.unix`}
 </TabItem>
 </Tabs>
 
-And that is all, the `qmake` build system should be able to `auto-detect` all dependencies if you have correctly set all `qmake` variables in this `.env.(win32|unix|mingw)` file or you have correctly set environment variables. 🔥
+And that is all, if you have correctly set all `qmake` variables in this `.env.(win32|unix|mingw)` file or you have correctly set environment variables, then the `qmake` build system should be able to `auto-detect` all dependencies . 🔥
 
 :::info
 The [`Auto-configuration`](#auto-configuration-internals) and [`Environment files`](#environment-files) internals are described at the end to make this section more clear.
+:::
+
+:::tip
+The `Auto-configuration` feature can be turned off using the [`disable_autoconf`](#disable_autoconf) `qmake` configuration option (eg. `CONFIG*=disable_autoconf`).
 :::
 
 ##### Manual configuration (conf.pri)
 
 This is the old method used before `TinyORM` `v0.34.0`. You need to copy the `conf.pri.example` files to `conf.pri` (there are four, one for every project or sub-project) and manually update the `INCLUDEPATH` and `LIBS` to configure TinyORM's `qmake` build dependencies. This way you can override any `qmake` build options or variables.
 
-You must uncomment the `CONFIG-=tiny_autoconf` at the beginning of every `conf.pri` file to disable `auto-configuration` because from `TinyORM` `v0.34.0` is the `auto-configuration` feature enabled by default.
+To disable the [`Auto-configuration`](#auto-configuration-internals) feature you must define the [`disable_autoconf`](#disable_autoconf) `qmake` configuration option (eg. `CONFIG*=disable_autoconf`) because from `TinyORM` `v0.34.0` is the `Auto-configuration` feature enabled by default.
 
-Also, remove all `.env` files or disable the `tiny_dotenv` feature using `CONFIG-=tiny_dotenv`. You can use them all at once if you want, `.env` and also `conf.pri` files.
+You can also remove all `.env` files or disable the `tiny_dotenv` feature using `CONFIG-=tiny_dotenv`. You can use them all at once if you want, `.env` and also `conf.pri` files.
 
 `conf.pri` files are nicely commented on, so you can see what needs to be modified.
 
@@ -722,6 +726,7 @@ Everything is ready for build, you can press <kbd>Ctrl</kbd>+<kbd>b</kbd> to bui
 | `CONFIG` <small>Option Name</small> | Default | Description |
 | ----------------------------------- | ------- | ----------- |
 | `build_tests`                       | `OFF`   | Build TinyORM unit tests. |
+| `disable_autoconf`                  | `OFF`   | Disable the [Auto-configuration](#auto-configuration-internals) feature <small>(auto-configuration is enabled by default from `TinyORM` `v0.34.0`)</small>. |
 | `disable_thread_local`              | `OFF`   | Remove all [`thread_local`](https://en.cppreference.com/w/c/language/storage_duration) storage duration specifiers, it disables multi-threading support. |
 | `disable_orm`                       | `OFF`   | Controls the compilation of all `ORM-related` source code, when this option is `enabled`, then only the `query builder` without `ORM` is compiled. Also excludes `ORM-related` unit tests. |
 | `disable_tom`                       | `OFF`   | Controls the compilation of all `Tom-related` source code, when this option is `disabled`, then it also excludes `Tom-related` unit tests. |
@@ -729,7 +734,6 @@ Everything is ready for build, you can press <kbd>Ctrl</kbd>+<kbd>b</kbd> to bui
 | `inline_constants`                  | `OFF`   | Use `inline` constants instead of `extern` constants in the `shared build`.<br/>`OFF` is highly recommended for the `shared build`;<br/>is always `ON` for the `static build`. |
 | `link_pkgconfig_off`                | `OFF`   | Link against `mysqlclient` or `libmariadb` with `PKGCONFIG`.<br/>Used only in the `Unix` and `MinGW` __shared__ build <small>(exactly <code>win32-g++\|win32-clang-g++</code>)</small> and when `mysql_ping` is also defined to link against `mysqlclient` or `libmariadb`, [source code](https://github.com/silverqx/TinyORM/blob/main/conf.pri.example#L132).<br/><small>Available when: `unix:mysql_ping` or <code>(win32-g++\|win32-clang-g++):mysql_ping:!static:!staticlib</code></small> |
 | `mysql_ping`                        | `OFF`   | Enable `Orm::MySqlConnection::pingDatabase()` method. |
-| `tiny_autoconf`                     | `ON`    | Enable [Auto-configuration](#auto-configuration-internals) feature.<br/>This `CONFIG` option allows us to `auto-configure` `TinyORM` project, and with it help, the `conf.pri` files can be skipped entirely. |
 | `tiny_ccache_win32`                 | `ON`    | Enable compiler cache. [Homepage](https://ccache.dev/)<br/><small>It works only on Windows systems. It works well with the MSYS2 `g++`, `clang++`, `msvc`, and `clang-cl` with `msvc`. It disables `precompile_header` as they are not supported on Windows and changes the `-Zi` compiler option to the `-Z7` for debug builds as the `-Zi` compiler option is not supported ([link](https://github.com/ccache/ccache/issues/1040) to the issue).</small> |
 | `tiny_dotenv`                       | `ON`    | Enable [Environment files](#environment-files) feature.<br/>The `.env` and <code>.env.(win32&vert;unix&vert;mingw)</code> files in `TinyORM` project root folder. |
 | `tom_example`                       | `OFF`   | Build the <abbr title='TinyORM Migrations'>`tom`</abbr> console application example. |
@@ -930,13 +934,15 @@ With the `clang-cl` with `MSVC` you can use `-imsvc`.
 
 ### Auto-configuration internals
 
-The `qmake` build system does not support the `auto-configuration` of dependencies out of the box but `TinyORM` from `v0.34.0` added its own `auto-configuration` feature using the `tiny_autoconf` and `tiny_dotenv` qmake features. These new features allow us to `auto-configure` `TinyORM` project, and with their help, the `conf.pri` files can be skipped entirely.
+The `qmake` build system does not support `auto-configuration` of dependencies out of the box but `TinyORM` from `v0.34.0` added its own `Auto-configuration` feature along with the `tiny_dotenv` qmake feature. These new features allow us to `auto-configure` `TinyORM` project, and with their help, the `conf.pri` files can be <u>skipped entirely</u>.
 
 While it adds additional complexity to the `qmake` configuration process, the benefits are significant.
 
-The `tiny_autoconf` is designed to find the `vcpkg` and `MySQL` installations, and `tiny_dotenv` to include the `.env` and `.env.(win32|unix|mingw)` files in the project's root folder. These new features can be configured using `qmake` and `environment` variables, and they also contain some guessing logic if these variables are not defined.
+The `Auto-configuration` feature is designed to find the `vcpkg` and `MySQL` installations, and `tiny_dotenv` to include the `.env` and `.env.(win32|unix|mingw)` files in the project's root folder. These new features can be configured using `qmake` and `environment` variables, and they also contain some guessing logic if these variables are not defined.
 
-These are <u>`qmake`</u> and <u>`environment`</u> variables that affect the `auto-configuration` feature:
+The `Auto-configuration` feature can be turned off using the [`disable_autoconf`](#disable_autoconf) `qmake` configuration option (eg. `CONFIG*=disable_autoconf`).
+
+These are <u>`qmake`</u> and <u>`environment`</u> variables that affect the `Auto-configuration` feature:
 
 | Variable Name        | Description |
 | -------------------- | ----------- |
@@ -946,7 +952,7 @@ These are <u>`qmake`</u> and <u>`environment`</u> variables that affect the `aut
 
 You can set these variables in the `.env` (recommended) or `conf.pri` files, in the `.qmake.conf` file (or wherever you want), or as environment variables.
 
-These variables will be set after the `auto-configuration` is done:
+These variables will be set after `auto-configuration` is done:
 
 | Variable Name        | Description |
 | -------------------- | ----------- |

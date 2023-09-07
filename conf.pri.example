@@ -1,7 +1,7 @@
 # Note:
 # All conf.pri.example files (they are 4) contain a lot of commented code, personally,
-# I wouldn't say I like these comments, especially after the tiny_autoconf qmake
-# configuration option was added.
+# I wouldn't say I like these comments, especially after the Auto-configuration feature
+# was added.
 # But these comments show all possible alternatives to configure TinyORM project so
 # you can quickly find out what you can use.
 # Choose any method you like and remove the rest of commented code.
@@ -9,16 +9,16 @@
 # Auto-configuration
 # ---
 
-# The tiny_autoconf and tiny_dotenv qmake CONFIG were added in the TinyORM v0.34.0.
+# The Auto-configuration feature and tiny_dotenv qmake CONFIG were added in the TinyORM v0.34.0.
 # These new features allow us to auto-configure TinyORM project, and with their help,
 # the conf.pri files can be skipped entirely.
 #
-# The tiny_autoconf is designed to find the vcpkg and MySQL installations, and tiny_dotenv
-# to include the .env and .env.$$QMAKE_PLATFORM files in the project's root folder.
+# The Auto-configuration feature is designed to find the vcpkg and MySQL installations, and
+# tiny_dotenv to include the .env and .env.$$QMAKE_PLATFORM files in the project's root folder.
 # These new features can be configured using qmake and environment variables, and they
 # also contain some guessing logic if these variables are not defined.
 #
-# These are qmake and environment variables that affect the auto-configuration feature:
+# These are qmake and environment variables that affect the Auto-configuration feature:
 #
 # - TINY_VCPKG_ROOT    - Path to the vcpkg installation folder.
 #                        If not defined, then it tries to use the VCPKG_ROOT environment
@@ -35,7 +35,7 @@
 # You can set these variables in the .env (recommended) or conf.pri files,
 # in the .qmake.conf file (or wherever you want), or as environment variables.
 #
-# These variables will be set after the auto-configuration is done:
+# These variables will be set after auto-configuration is done:
 #
 # - TINY_VCPKG_INCLUDE - Path to the vcpkg include folder (vcpkg/installed/<triplet>/include/).
 # - TINY_MYSQL_INCLUDE - Path to the MySQL include folder (MySQL Server 8.1/include/).
@@ -95,10 +95,7 @@
 
 load(tiny_system_includepath)
 
-# Disable auto-configuration
-#CONFIG -= tiny_autoconf
-
-!tiny_autoconf: \
+disable_autoconf: \
     load(tiny_find_packages)
 
 # MinGW
@@ -111,7 +108,7 @@ win32-g++|win32-clang-g++ {
     QMAKE_LFLAGS *= -fuse-ld=lld
 
     # Nothing to do, auto-configuration is enabled
-    tiny_autoconf: return()
+    !disable_autoconf: return()
 
     # Includes and Libraries
     # vcpkg - range-v3 and tabulate
@@ -156,9 +153,9 @@ else:win32-msvc|win32-clang-msvc {
 #    CONFIG *= tiny_ccache_win32
 
     # Nothing to do, auto-configuration is enabled
-    tiny_autoconf: return()
+    !disable_autoconf: return()
     # Explicitly specify the MySQL root installation path using the $$TINY_MYSQL_ROOT
-#    tiny_autoconf {
+#    !disable_autoconf {
 #        # Used in the tiny_find_mysql()
 #        TINY_MYSQL_ROOT = $$quote($$(ProgramFiles)/MySQL/MySQL Server 8.1/)
 #        return()
@@ -194,7 +191,7 @@ else:unix {
 #    QMAKE_LFLAGS *= -fuse-ld=mold
 
     # Nothing to do, auto-configuration is enabled
-    tiny_autoconf: return()
+    !disable_autoconf: return()
 
     # Includes and Libraries
     # vcpkg - range-v3 and tabulate
