@@ -33,3 +33,7 @@ debug_and_release {
         TINY_BUILD_SUBFOLDER = $$quote(/debug)
 }
 else: TINY_BUILD_SUBFOLDER =
+
+# To correctly link ccache build against a ccache build (_ccache or an empty string)
+contains(OUT_PWD, .*ccache.*): TINY_CCACHE_BUILD = _ccache
+else: TINY_CCACHE_BUILD =
