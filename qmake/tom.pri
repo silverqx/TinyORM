@@ -127,4 +127,4 @@ tiny_find_vcpkg()
 if(!defined(TINYORM_BUILD_TREE, var)|isEmpty(TINYORM_BUILD_TREE)): \
     warning( "The 'TINYORM_BUILD_TREE' qmake variable to the TinyORM build tree was not\
               defined, please define it or link against the TinyOrm library manually\
-              using the 'LIBS' qmake variable. $$TARGET" )
+              using the 'LIBS' qmake variable." )
