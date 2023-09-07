@@ -93,10 +93,10 @@
 # Gentoo - emerge dev-util/ccache
 # Ubuntu - apt install ccache
 
-load(tiny_system_includepath)
-
-disable_autoconf: \
+disable_autoconf {
+#    load(tiny_system_includepath)
     load(tiny_find_packages)
+}
 
 # MinGW
 win32-g++|win32-clang-g++ {
