@@ -154,6 +154,7 @@ else:win32-msvc|win32-clang-msvc {
 
     # Nothing to do, auto-configuration is enabled
     !disable_autoconf: return()
+
     # Explicitly specify the MySQL root installation path using the $$TINY_MYSQL_ROOT
 #    !disable_autoconf {
 #        # Used in the tiny_find_mysql()
