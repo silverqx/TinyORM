@@ -1,0 +1,40 @@
+# Log common info messages (Release vs Debug build, Shared vs Static build, ...)
+defineTest(tiny_log_info_messages) {
+    !build_pass {
+        # Release vs Debug build
+        CONFIG(debug, debug|release): \
+            message( "Project is built in DEBUG mode." )
+        CONFIG(release, debug|release): \
+            message( "Project is built in RELEASE mode (disabled debug output and\
+                      asserts)." )
+
+        # Shared vs Static build
+        CONFIG(shared, dll|shared|static|staticlib) | \
+        CONFIG(dll, dll|shared|static|staticlib) {
+            contains(TEMPLATE, ".*lib"): \
+                message( "$${TARGET} is built as shared library." )
+            else:contains(TEMPLATE, ".*app"): \
+                message( "$${TARGET} linked against shared libraries." )
+        }
+        else: \
+        if(CONFIG(static, dll|shared|static|staticlib) | \
+        CONFIG(staticlib, dll|shared|static|staticlib)) {
+            contains(TEMPLATE, ".*lib"): \
+                message( "$${TARGET} is built as static library archive." )
+            else:contains(TEMPLATE, ".*app"): \
+                message( "$${TARGET} linked against static library archives." )
+        }
+
+        # Environment files on vs off
+        disable_dotenv: \
+            message( "Environment files are disabled (tiny_dotenv)." )
+        else: \
+            message( "Environment files are enabled (tiny_dotenv)." )
+
+        # Auto vs Manual configuration
+        disable_autoconf: \
+            message( "Auto-configuration is disabled." )
+        else: \
+            message( "Auto-configuration is enabled." )
+    }
+}

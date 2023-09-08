@@ -92,22 +92,10 @@ win32-msvc:CONFIG(debug, debug|release) {
 # Some info output
 # ---
 
+load(tiny_info_messages)
+tiny_log_info_messages()
+
 !build_pass {
-    # Release vs Debug build
-    CONFIG(debug, debug|release): \
-        message( "Project is built in DEBUG mode." )
-    CONFIG(release, debug|release): \
-        message( "Project is built in RELEASE mode (disabled debug output and asserts)." )
-
-    # Shared vs Static build
-    CONFIG(shared, dll|shared|static|staticlib) | \
-    CONFIG(dll, dll|shared|static|staticlib): \
-        message( "$${TARGET} is built as shared library." )
-    else: \
-    if(CONFIG(static, dll|shared|static|staticlib) | \
-    CONFIG(staticlib, dll|shared|static|staticlib)): \
-        message( "$${TARGET} is built as static library archive." )
-
     !disable_orm: \
         message( "Build ORM-related source code." )
     else: \
