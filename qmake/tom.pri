@@ -30,6 +30,25 @@
 # - TINY_QT_VERSION_UNDERSCORED - Underscored Qt version (eg. 6_5_2).
 # - TINY_RELEASE_TYPE_CAMEL     - Build type string (Debug, Profile, or Release).
 # - TINY_VCPKG_INCLUDE          - Path to the vcpkg include folder (vcpkg/installed/<triplet>/include/).
+#
+# Partial guessing of the TINYORM_BUILD_TREE
+#
+# You don't have to define manually the TINYORM_BUILD_TREE in .env or .qmake.conf files.
+# The TINYORM_BUILD_TREE aboslute path can be put together for you (this is happening
+# inside the variables.pri file) and TinyORM build folder name can be guessed for you too.
+#
+# You must define the following variables before the TinyOrm.pri will be included to make
+# this real (set them in the .qmake.conf):
+#
+# - TINY_MAIN_DIR   - Path to the PARENT folder of the TinyORM source folder.
+# - TINY_BUILD_TREE - Path to the current build tree (eg. TINY_BUILD_TREE = $$shadowed($$PWD)).
+#
+# The TINY_MAIN_DIR is required for another features anyway (so it should already be set)
+# and all that's left is to set the TINY_BUILD_TREE.
+#
+# If you will follow this pattern or logic then you can switch QtCreator Kits and
+# the TINYORM_BUILD_TREE will be auto-generated correctly and will always point
+# to the correct TinyORM build tree.
 
 # Path to the TinyORM source tree
 TINYORM_SOURCE_TREE = $$clean_path($$quote($$PWD/..))
