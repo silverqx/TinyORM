@@ -1,7 +1,7 @@
-# Find the vcpkg root folder and add the vcpkg/<triplet>/include/ on system include path.
+# Log common Qt variables
 defineTest(tiny_log_common_vars) {
     !build_pass {
-        message("---")
+        message("--- Qt")
         message("TARGET : $$TARGET")
         message("QT : $$QT")
         message("CONFIG : $$CONFIG")
@@ -14,5 +14,36 @@ defineTest(tiny_log_common_vars) {
         message("QMAKE_CXXFLAGS_DEBUG : $$QMAKE_CXXFLAGS_DEBUG")
         message("QMAKE_LFLAGS : $$QMAKE_LFLAGS")
         message("QMAKE_LFLAGS_DEBUG : $$QMAKE_LFLAGS_DEBUG")
+    }
+}
+
+# Log common TinyORM project variables (for TinyORM project builds)
+defineTest(tiny_log_tinyorm_vars) {
+    tiny_log_common_vars()
+
+    !build_pass {
+        message("--- TinyORM project")
+        message("TINY_DOTENV_ROOT : $$TINY_DOTENV_ROOT")
+        message("TINYORM_SOURCE_TREE : $$TINYORM_SOURCE_TREE")
+        message("TINYORM_BUILD_TREE : $$TINYORM_BUILD_TREE")
+        message("TINY_VCPKG_ROOT : $$TINY_VCPKG_ROOT")
+        message("TINY_VCPKG_TRIPLET : $$TINY_VCPKG_TRIPLET")
+        message("TINY_MYSQL_ROOT : $$TINY_MYSQL_ROOT")
+    }
+}
+
+# Log common TinyORM project variables used during linking against the TinyOrm library
+# inside the build tree
+defineTest(tiny_log_link_build_tree_vars) {
+    tiny_log_common_vars()
+
+    !build_pass {
+        message("--- Linking against TinyORM build tree")
+        message("TINY_DOTENV_ROOT : $$TINY_DOTENV_ROOT")
+        message("TINYORM_BUILDS_DIR : $$TINYORM_BUILDS_DIR")
+        message("TINYORM_BUILD_FOLDER : $$TINYORM_BUILD_FOLDER")
+        message("TINYORM_BUILD_TREE : $$TINYORM_BUILD_TREE")
+        message("TINY_VCPKG_ROOT : $$TINY_VCPKG_ROOT")
+        message("TINY_VCPKG_TRIPLET : $$TINY_VCPKG_TRIPLET")
     }
 }
