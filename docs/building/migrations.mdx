@@ -752,7 +752,7 @@ TINY_VCPKG_ROOT = $$clean_path($$PWD/../../../vcpkg/)
 TINY_VCPKG_TRIPLET = x64-windows
 
 # Enable ccache wrapper
-#CONFIG *= tiny_ccache
+#CONFIG *= tiny_ccache_win32
 ```
 
 </TabItem>
@@ -794,7 +794,7 @@ TINY_VCPKG_ROOT = $$clean_path($$PWD/../../../vcpkg/)
 TINY_VCPKG_TRIPLET = x64-mingw-dynamic
 
 # Enable ccache wrapper
-#CONFIG *= tiny_ccache
+#CONFIG *= tiny_ccache_win32
 
 # Use faster linker
 # CONFIG *= use_lld_linker does not work on MinGW
