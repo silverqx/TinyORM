@@ -58,7 +58,7 @@ TINYTOM_SOURCE_TREE = $$quote($$TINYORM_SOURCE_TREE/tom)
 # Variables to target a correct build folder
 # ---
 
-include($$TINYORM_SOURCE_TREE/qmake/variables.pri)
+include($$TINYORM_SOURCE_TREE/qmake/support/variables.pri)
 
 # Qt Common Configuration
 # ---
