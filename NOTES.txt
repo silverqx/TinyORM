@@ -6,6 +6,7 @@ Increase/bump the release version:
 bump version to TinyORM v0.35.0 and tom v0.6.1
 
 - just simply search the current version number in all files eg. 0.35.0
+- don't forget to update a version number in the silverqx/TinyORM-HelloWorld find_package() call
 
 - TinyORM:
   7 files must be modified, README.md, docs/README.mdx, two vcpkg.json files, NOTES.txt,
