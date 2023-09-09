@@ -83,6 +83,7 @@
     },
     "tom-example": {
       "description": "Build Tom command-line application example",
+      "supports": "windows",
       "dependencies": [
         {
           "name": "tinyorm",

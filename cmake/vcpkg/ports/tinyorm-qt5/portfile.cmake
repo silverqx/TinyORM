@@ -37,6 +37,7 @@ vcpkg_cmake_install()
 
 vcpkg_cmake_config_fixup()
 
+# https://github.com/microsoft/vcpkg/issues/33551
 if(WIN32 AND TINYORM_TOM_EXAMPLE)
     vcpkg_copy_tools(TOOL_NAMES tom AUTO_CLEAN)
 endif()
