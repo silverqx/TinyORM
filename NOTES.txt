@@ -656,6 +656,26 @@ https://github.com/silverqx/files/raw/main/clazy-standalone.tar.bz2
 
 - print all contexts:
 
+  Linux:
+
+    - name: Dump pwd
+      run: pwd
+    - name: Dump OS env (unsorted)
+      run: env
+    - name: Dump OS env (sorted)
+      run: |
+        env | sort --ignore-case
+
+  Windows:
+
+    - name: Dump pwd
+      run: Get-Location
+    - name: Dump OS env
+      run: |
+        Get-ChildItem env:
+
+  Common:
+
     - name: Dump GitHub context
       env:
         GITHUB_CONTEXT: ${{ toJSON(github) }}
