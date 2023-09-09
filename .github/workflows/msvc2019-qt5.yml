@@ -384,7 +384,7 @@ jobs:
         'VCPKG_MAX_CONCURRENCY=2' >> $env:GITHUB_ENV
 
     - name: Visual Studio 2019 pwsh shell setup
-      uses: egor-tensin/vs-shell@v2
+      uses: ilammy/msvc-dev-cmd@v1
       with:
         arch: x64
 

@@ -530,9 +530,9 @@ GitHub Actions:
    mxschmitt/action-tmate@v3
    actions/cache@v2
    KyleMayes/install-llvm-action@v1
-   egor-tensin/vs-shell@v2
    msys2/setup-msys2@v2
    jurplel/install-qt-action@v3
+   ilammy/msvc-dev-cmd@v1
 
  - periodical upgrades:
 
