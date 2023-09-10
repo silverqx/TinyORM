@@ -1,12 +1,21 @@
 #!/usr/bin/env pwsh
 
+[CmdletBinding(DefaultParameterSetName = 'Branch')]
 Param(
-    [Parameter(Position = 0, HelpMessage = 'Specifies the GitHub project (username/project).')]
+    [Parameter(Position = 0, Mandatory,
+        HelpMessage = 'Specifies the GitHub project (username/project).')]
     [ValidateNotNullOrEmpty()]
     [string] $Project,
 
-    [Parameter(Position = 1,
-        HelpMessage = 'Specifies the commit ID to download a package archive.')]
+    [Parameter(Position = 1, ParameterSetName = 'Branch', ValueFromPipeline,
+        ValueFromPipelineByPropertyName,
+        HelpMessage = 'Specifies the branch for which to download a package archive (also ' +
+            'works with a commit ID).')]
+    [ValidateNotNullOrEmpty()]
+    [string] $Branch = 'main',
+
+    [Parameter(Position = 1, Mandatory, ParameterSetName = 'Ref', ValueFromPipelineByPropertyName,
+        HelpMessage = 'Specifies the commit ID for which to download a package archive.')]
     [ValidateNotNullOrEmpty()]
     [ValidatePattern('^[a-fA-F0-9]{40}$',
         ErrorMessage = 'The argument "{0}" is not the correct commit ID (SHA-1). ' +
@@ -16,6 +25,9 @@ Param(
 
 Set-StrictMode -Version 3.0
 
+# Get a git object by the current parameter set
+$currentObject = $PsCmdlet.ParameterSetName -eq 'Ref' ? $Ref : $Branch
+
 # Create a new temporary file
 $tempFile = New-TemporaryFile
 
@@ -24,7 +36,7 @@ $previousProgressPreference = $ProgressPreference
 $ProgressPreference = 'SilentlyContinue'
 
 try {
-    Invoke-WebRequest "https://github.com/${Project}/archive/${Ref}.tar.gz" -OutFile $tempFile
+    Invoke-WebRequest "https://github.com/${Project}/archive/${currentObject}.tar.gz" -OutFile $tempFile
 }
 finally {
     $ProgressPreference = $previousProgressPreference
