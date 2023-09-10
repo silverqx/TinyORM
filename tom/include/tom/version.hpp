@@ -12,7 +12,7 @@ TINY_SYSTEM_HEADER
 #define TINYTOM_VERSION_MINOR 6
 #define TINYTOM_VERSION_BUGFIX 1
 #define TINYTOM_VERSION_BUILD 0
-// Should be empty for stable releases, and use hypen before for SemVer compatibility!
+// Should be empty for stable releases, and use the hyphen before to be compatible with SemVer!
 #define TINYTOM_VERSION_STATUS ""
 
 // NOLINTNEXTLINE(bugprone-reserved-identifier)
