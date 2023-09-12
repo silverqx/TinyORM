@@ -334,7 +334,7 @@ jobs:
         # $response | Select-Object -ExpandProperty Content |
         Set-Content -Path $env:archive_filepath -AsByteStream
 
-        curl --fail --silent --show-error --location --remote-name
+        curl.exe --fail --silent --show-error --location --remote-name
         --output-dir '${{ runner.temp }}' "$env:URL_MYSQL_TIMEZONE_TABLES"
 
         7z.exe x -y -o'${{ runner.temp }}' "$env:archive_filepath"
@@ -486,7 +486,7 @@ jobs:
       id: ccache-initialize-cache
       run: |
         Write-Output '::group::Install'
-        choco install ccache --yes
+        choco.exe install ccache --yes
         Write-Output '::endgroup::'
 
         Write-Output '::group::get-config cache_dir'
@@ -548,7 +548,7 @@ jobs:
 
     - name: TinyORM cmake configure (msvc-cmake-${{ matrix.build-type.key }})
       run: >-
-        cmake
+        cmake.exe
         -S .
         -B ../TinyORM-builds-cmake/build-msvc-cmake-${{ matrix.build-type.key }}
         -G Ninja

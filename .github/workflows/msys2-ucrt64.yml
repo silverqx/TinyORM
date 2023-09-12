@@ -158,7 +158,7 @@ jobs:
         # $response | Select-Object -ExpandProperty Content |
         Set-Content -Path $env:archive_filepath -AsByteStream
 
-        curl --fail --silent --show-error --location --remote-name
+        curl.exe --fail --silent --show-error --location --remote-name
         --output-dir '${{ runner.temp }}' "$env:URL_MYSQL_TIMEZONE_TABLES"
 
         7z.exe x -y -o'${{ runner.temp }}' "$env:archive_filepath"
