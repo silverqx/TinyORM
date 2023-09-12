@@ -30,6 +30,7 @@ jobs:
             pacboy: [ 'clang:u', 'gcc:u' ]
             command: clang++.exe
 
+          # GitHub Free Plan is not enough for this (no money 💵)
           # Qt5 and Qt6 with g++ is causing exhausted memory even with -j1
           # - key: gcc
           #   pacboy: [ 'gcc:u' ]
