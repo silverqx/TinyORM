@@ -326,13 +326,13 @@ jobs:
 
     - name: MySQL 8 libmysql.dll install (Qt 5.15.2)
       run: |
-        7z.exe x -y -o'${{ runner.workspace }}/TinyORM-bin' $env:archive_filepath
+        7z.exe x -y -o'${{ env.TinyRunnerWorkPath }}/TinyORM-bin' $env:archive_filepath
       env:
         archive_filepath: ${{ steps.downloads-initialize-mysql_8-libmysql-dll.outputs.Filepath }}
 
     - name: MySQL 8 libmysql.dll add on the $env:Path
       run: |
-        '${{ runner.workspace }}/TinyORM-bin' >> $env:GITHUB_PATH
+        '${{ env.TinyRunnerWorkPath }}/TinyORM-bin' >> $env:GITHUB_PATH
 
     - name: Ccache initialize
       id: ccache-initialize-cache
