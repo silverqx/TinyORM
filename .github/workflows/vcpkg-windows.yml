@@ -1,0 +1,394 @@
+name: vcpkg Windows
+
+on:
+  push:
+    branches:
+      - main
+      - gh-actions
+
+jobs:
+
+  vcpkg-windows:
+    name: vcpkg Windows
+
+    runs-on: windows-2022
+
+    strategy:
+      matrix:
+        build-type:
+          - key: debug
+            name: Debug
+
+          - key: release
+            name: Release
+
+        qt:
+          # GitHub Free Plan is not enough for this (no money 💵)
+          # - key: qt5
+          #   name: Qt5
+          #   version: 5.15.2
+          #   vcpkg-qt: qt5-base
+          #   vcpkg-qt-features: qt5-base[core]
+          #   vcpkg-tinyorm: tinyorm-qt5
+          #   vcpkg-tinyorm-features: tinyorm-qt5[core,tom-example]
+
+          - key: qt6
+            name: Qt6
+            version: 6.5.2
+            vcpkg-qt: qtbase
+            vcpkg-qt-features: qtbase[core,sql-sqlite]
+            vcpkg-tinyorm: tinyorm
+            vcpkg-tinyorm-features: tinyorm[core,sql-sqlite,tom-example]
+
+    steps:
+    - uses: actions/checkout@v4
+
+    # I don't install everything to the TinyRunnerWorkPath as in all other workflows, I leave it
+    # this way because I tried to refactor it to the env.TinyRunnerWorkPath and it looks terrible
+    - name: TinyORM prepare environment
+      run: |
+        $runnerWorkPath = Resolve-Path -Path '${{ runner.workspace }}/..'
+        "TinyRunnerWorkPath=$runnerWorkPath" >> $env:GITHUB_ENV
+
+    - name: Visual Studio 2022 pwsh shell setup
+      uses: ilammy/msvc-dev-cmd@v1
+      with:
+        arch: x64
+
+    # Must be after the ilammy/msvc-dev-cmd@v1 because vcvars64 override the VCPKG_ROOT
+    - name: vcpkg set-up environment
+      run: |
+        "VCPKG_ROOT=$env:VCPKG_INSTALLATION_ROOT" >> $env:GITHUB_ENV
+        'VCPKG_DEFAULT_TRIPLET=x64-windows' >> $env:GITHUB_ENV
+        'VCPKG_MAX_CONCURRENCY=2' >> $env:GITHUB_ENV
+
+        $vcpkgPath = Resolve-Path -Path '${{ github.workspace }}/cmake/vcpkg'
+
+        $portsPath = Join-Path -Path $vcpkgPath -ChildPath 'ports'
+        "VCPKG_OVERLAY_PORTS=$portsPath" >> $env:GITHUB_ENV
+
+        $tripletsPath = Join-Path -Path $vcpkgPath -ChildPath 'triplets'
+        "VCPKG_OVERLAY_TRIPLETS=$tripletsPath" >> $env:GITHUB_ENV
+
+        # Binary caching
+        'VCPKG_BINARY_SOURCES=clear;x-gha,readwrite' >> $env:GITHUB_ENV
+
+    - name: vcpkg prepare binary caching
+      uses: actions/github-script@v6
+      with:
+        script: |
+          core.exportVariable('ACTIONS_CACHE_URL', process.env.ACTIONS_CACHE_URL || '');
+          core.exportVariable('ACTIONS_RUNTIME_TOKEN', process.env.ACTIONS_RUNTIME_TOKEN || '');
+
+    - name: CMake print version
+      run: |
+        cmake.exe --version
+
+    # The following two steps are not needed below they only test if the vcpkg classic mode works
+    # correctly
+
+    - name: vcpkg install ${{ matrix.qt.vcpkg-qt }} (classic mode)
+      run: |
+        vcpkg.exe install ${{ matrix.qt.vcpkg-qt-features }}
+
+    - name: vcpkg install ${{ matrix.qt.vcpkg-tinyorm }} (classic mode)
+      run: |
+        vcpkg.exe install ${{ matrix.qt.vcpkg-tinyorm-features }}
+
+    # Prepare TinyORM-HelloWorld project
+
+    - name: HelloWorld checkout
+      uses: actions/checkout@v4
+      with:
+        repository: silverqx/TinyORM-HelloWorld
+        path: HelloWorld
+
+    - name: HelloWorld move (to parent folder)
+      run: |
+        Move-Item -Path ./HelloWorld -Destination ..
+
+    - name: HelloWorld move HelloWorld.sqlite3 (to parent folder)
+      working-directory: ../HelloWorld
+      run: |
+        Move-Item -Path ./HelloWorld.sqlite3 -Destination ..
+
+    # VcpkgManifest method with the VCPKG_APPLOCAL_DEPS (no install or deployment)
+    # ---
+
+    - name: 🪡 VcpkgManifest method with the VCPKG_APPLOCAL_DEPS (no install or deployment) 🪡
+      run: |
+        Write-Output 'no-op'
+
+    - name: HelloWorld create build folder (vcpkgmanifest-msvc-${{ matrix.build-type.key }})
+      run: >-
+        New-Item -Type Directory
+        '../HelloWorld-builds-cmake/build-vcpkgmanifest-msvc-${{ matrix.build-type.key }}'
+
+    - name: HelloWorld prepare VcpkgManifest method (vcpkgmanifest-msvc-${{ matrix.build-type.key }})
+      working-directory: ../HelloWorld
+      run: >-
+        Copy-Item -Path ./vcpkg.json.VcpkgManifest.${{ matrix.qt.name }}.example
+        -Destination ./vcpkg.json
+
+    - name: HelloWorld cmake configure (vcpkgmanifest-msvc-${{ matrix.build-type.key }})
+      working-directory: ../HelloWorld
+      run: >-
+        cmake.exe
+        -S .
+        -B ../HelloWorld-builds-cmake/build-vcpkgmanifest-msvc-${{ matrix.build-type.key }}
+        -G Ninja
+        -D CMAKE_TOOLCHAIN_FILE:FILEPATH="$env:VCPKG_INSTALLATION_ROOT/scripts/buildsystems/vcpkg.cmake"
+        -D CMAKE_DISABLE_PRECOMPILE_HEADERS:BOOL=ON
+        -D CMAKE_BUILD_TYPE:STRING=${{ matrix.build-type.name }}
+        -D VCPKG_APPLOCAL_DEPS:BOOL=ON
+        -D RESOLVE_TINYORM:STRING=VcpkgManifest
+
+    - name: HelloWorld cmake build ✨ (vcpkgmanifest-msvc-${{ matrix.build-type.key }})
+      working-directory: >-
+        ../HelloWorld-builds-cmake/build-vcpkgmanifest-msvc-${{ matrix.build-type.key }}
+      run: |
+        cmake.exe --build . --target all --parallel 2
+
+    # Related issue: https://github.com/microsoft/vcpkg/issues/33539
+    - name: HelloWorld finish VCPKG_APPLOCAL_DEPS (Debug)
+      if: ${{ matrix.qt.key == 'qt6' && matrix.build-type.key == 'debug' }}
+      working-directory: >-
+        ../HelloWorld-builds-cmake/build-vcpkgmanifest-msvc-${{ matrix.build-type.key }}
+      run: |
+        Copy-Item -Path ./vcpkg_installed/x64-windows/debug/bin/sqlite3.dll -Destination .
+        Copy-Item -Path ./vcpkg_installed/x64-windows/debug/Qt6 -Destination . -Recurse
+
+    - name: HelloWorld finish VCPKG_APPLOCAL_DEPS (Release)
+      if: ${{ matrix.qt.key == 'qt6' && matrix.build-type.key == 'release' }}
+      working-directory: >-
+        ../HelloWorld-builds-cmake/build-vcpkgmanifest-msvc-${{ matrix.build-type.key }}
+      run: |
+        Copy-Item -Path ./vcpkg_installed/x64-windows/bin/sqlite3.dll -Destination .
+        Copy-Item -Path ./vcpkg_installed/x64-windows/Qt6 -Destination . -Recurse
+
+    # Qt5 has a problem too, it's deployed but to the wrong folder, the Release build is ok
+    - name: HelloWorld finish VCPKG_APPLOCAL_DEPS (Debug)
+      if: ${{ matrix.qt.key == 'qt5' && matrix.build-type.key == 'debug' }}
+      working-directory: >-
+        ../HelloWorld-builds-cmake/build-vcpkgmanifest-msvc-${{ matrix.build-type.key }}
+      run: |
+        New-Item -type Directory ./debug
+        Move-Item -Path ./plugins -Destination ./debug
+
+    - name: HelloWorld execute (SQLite) 🏁
+      working-directory: >-
+        ../HelloWorld-builds-cmake/build-vcpkgmanifest-msvc-${{ matrix.build-type.key }}
+      run: |
+        .\HelloWorld.exe
+      env:
+        TINYORM_HELLOWORLD_DB_SQLITE_DATABASE: ../../HelloWorld.sqlite3
+
+    # The FetchContent and Manual methods below need Qt installed and to be accessible on the system
+
+    - name: Qt ${{ matrix.qt.version }} install base components
+      uses: jurplel/install-qt-action@v3
+      with:
+        archives: qtbase
+        version: ${{ matrix.qt.version }}
+        arch: win64_msvc2019_64
+        cache: true
+        setup-python: false
+        extra: --external 7z.exe
+        dir: ${{ env.TinyRunnerWorkPath }}
+
+    # Prepare ccache
+    #
+    # The TinyORM build in the Manual method and the FetchContent method are using the ccache,
+    # packages build thourgh the FetchContent CMake module are also using the ccache, they respect
+    # the CMAKE_CXX_COMPILER_LAUNCHER option.
+
+    - name: Ccache initialize
+      id: ccache-initialize-cache
+      run: |
+        Write-Output '::group::Install'
+        choco install ccache --yes
+        Write-Output '::endgroup::'
+
+        Write-Output '::group::get-config cache_dir'
+        $cachePath = ccache.exe --get-config cache_dir
+        "CachePath=$cachePath" >> $env:GITHUB_OUTPUT
+
+        "ImageOS=$env:ImageOS" >> $env:GITHUB_OUTPUT
+        Write-Output '::endgroup::'
+
+    - name: Ccache restore cache 🕺
+      uses: actions/cache@v3
+      with:
+        path: ${{ env.cache_path }}
+        key: ${{ runner.os }}-${{ env.image_os }}-ccache-${{ env.cache_name }}-${{ github.run_id }}
+        restore-keys: |
+          ${{ runner.os }}-${{ env.image_os }}-ccache-${{ env.cache_name }}-
+      env:
+        cache_name: vcpkg-windows-${{ matrix.qt.key }}-${{ matrix.build-type.key }}
+        cache_path: ${{ steps.ccache-initialize-cache.outputs.CachePath }}
+        image_os: ${{ steps.ccache-initialize-cache.outputs.ImageOS }}
+
+    - name: Ccache setup 🥳
+      run: |
+        Write-Output '::group::Prepare ccache config'
+        # ~ 200 * 3 + 100
+        ccache.exe --set-config max_size=700M
+        ccache.exe --set-config sloppiness=pch_defines,time_macros
+        ccache.exe --show-config
+        Write-Output '::endgroup::'
+
+        Write-Output '::group::Clear ccache statistics'
+        ccache.exe --zero-stats
+        Write-Output '::endgroup::'
+
+        Write-Output '::group::Print version'
+        ccache.exe --version
+        Write-Output '::endgroup::'
+
+    # Manual method linking against the TinyORM build tree (no install or deployment)
+    # ---
+
+    - name: 🪡 Manual method linking against the TinyORM build tree (no install or deployment) 🪡
+      run: |
+        Write-Output 'no-op'
+
+    # Prepare and build the TinyORM library
+
+    - name: TinyORM checkout
+      uses: actions/checkout@v4
+      with:
+        repository: silverqx/TinyORM
+        path: TinyORM
+
+    - name: TinyORM move (to parent folder)
+      run: |
+        Move-Item -Path ./TinyORM -Destination ..
+
+    - name: TinyORM create build folder (manual-tinyorm-msvc-${{ matrix.build-type.key }})
+      run: >-
+        New-Item -Type Directory
+        '../TinyORM-builds-cmake/build-manual-tinyorm-msvc-${{ matrix.build-type.key }}'
+
+    - name: TinyORM cmake configure (manual-tinyorm-msvc-${{ matrix.build-type.key }})
+      working-directory: ../TinyORM
+      run: >-
+        cmake.exe
+        -S .
+        -B ../TinyORM-builds-cmake/build-manual-tinyorm-msvc-${{ matrix.build-type.key }}
+        -G Ninja
+        -D CMAKE_CXX_COMPILER_LAUNCHER:FILEPATH='C:/ProgramData/chocolatey/bin/ccache.exe'
+        -D CMAKE_TOOLCHAIN_FILE:FILEPATH="$env:VCPKG_INSTALLATION_ROOT/scripts/buildsystems/vcpkg.cmake"
+        -D CMAKE_DISABLE_PRECOMPILE_HEADERS:BOOL=ON
+        -D CMAKE_BUILD_TYPE:STRING=${{ matrix.build-type.name }}
+        -D VCPKG_APPLOCAL_DEPS:BOOL=OFF
+        -D VERBOSE_CONFIGURE:BOOL=ON
+        -D MATCH_EQUAL_EXPORTED_BUILDTREE:BOOL=OFF
+        -D MYSQL_PING:BOOL=OFF
+        -D BUILD_TESTS:BOOL=OFF
+        -D ORM:BOOL=ON
+        -D TOM:BOOL=OFF
+        -D TOM_EXAMPLE:BOOL=OFF
+
+    - name: TinyORM cmake build ✨ (manual-tinyorm-msvc-${{ matrix.build-type.key }})
+      working-directory: >-
+        ../TinyORM-builds-cmake/build-manual-tinyorm-msvc-${{ matrix.build-type.key }}
+      run: |
+        cmake.exe --build . --target all --parallel 2
+
+    # Build and execute the HelloWorld console application
+
+    - name: HelloWorld create build folder (manual-tinyorm-msvc-${{ matrix.build-type.key }})
+      run: >-
+        New-Item -Type Directory
+        '../HelloWorld-builds-cmake/build-manual-tinyorm-msvc-${{ matrix.build-type.key }}'
+
+    - name: HelloWorld prepare Manual method (manual-tinyorm-msvc-${{ matrix.build-type.key }})
+      working-directory: ../HelloWorld
+      run: |
+        Copy-Item -Path ./vcpkg.json.Manual.example -Destination ./vcpkg.json
+
+    - name: HelloWorld cmake configure (manual-tinyorm-msvc-${{ matrix.build-type.key }})
+      working-directory: ../HelloWorld
+      run: >-
+        cmake.exe
+        -S .
+        -B ../HelloWorld-builds-cmake/build-manual-tinyorm-msvc-${{ matrix.build-type.key }}
+        -G Ninja
+        -D CMAKE_TOOLCHAIN_FILE:FILEPATH="$env:VCPKG_INSTALLATION_ROOT/scripts/buildsystems/vcpkg.cmake"
+        -D CMAKE_DISABLE_PRECOMPILE_HEADERS:BOOL=ON
+        -D CMAKE_BUILD_TYPE:STRING=${{ matrix.build-type.name }}
+        -D VCPKG_APPLOCAL_DEPS:BOOL=OFF
+        -D RESOLVE_TINYORM:STRING=Manual
+
+    - name: HelloWorld cmake build ✨ (manual-tinyorm-msvc-${{ matrix.build-type.key }})
+      working-directory: >-
+        ../HelloWorld-builds-cmake/build-manual-tinyorm-msvc-${{ matrix.build-type.key }}
+      run: |
+        cmake.exe --build . --target all --parallel 2
+
+    - name: HelloWorld execute (SQLite) 🏁
+      working-directory: >-
+        ../HelloWorld-builds-cmake/build-manual-tinyorm-msvc-${{ matrix.build-type.key }}
+      run: |
+        $env:Path = '..\..\TinyORM-builds-cmake\build-manual-tinyorm-msvc-${{ matrix.build-type.key }};' + $env:Path
+
+        .\HelloWorld.exe
+      env:
+        TINYORM_HELLOWORLD_DB_SQLITE_DATABASE: ../../HelloWorld.sqlite3
+
+    # FetchContent method (with install or deployment)
+    # ---
+
+    - name: 🪡 FetchContent method (with install or deployment) 🪡
+      run: |
+        Write-Output 'no-op'
+
+    - name: HelloWorld create build folder (fetchcontent-msvc-${{ matrix.build-type.key }})
+      run: >-
+        New-Item -Type Directory
+        '../HelloWorld-builds-cmake/build-fetchcontent-msvc-${{ matrix.build-type.key }}'
+
+    - name: HelloWorld prepare FetchContent method (fetchcontent-msvc-${{ matrix.build-type.key }})
+      working-directory: ../HelloWorld
+      run: |
+        Copy-Item -Path ./vcpkg.json.FetchContent.example -Destination ./vcpkg.json
+
+    - name: HelloWorld cmake configure (fetchcontent-msvc-${{ matrix.build-type.key }})
+      working-directory: ../HelloWorld
+      run: >-
+        cmake.exe
+        -S .
+        -B ../HelloWorld-builds-cmake/build-fetchcontent-msvc-${{ matrix.build-type.key }}
+        -G Ninja
+        -D CMAKE_CXX_COMPILER_LAUNCHER:FILEPATH='C:/ProgramData/chocolatey/bin/ccache.exe'
+        -D CMAKE_TOOLCHAIN_FILE:FILEPATH="$env:VCPKG_INSTALLATION_ROOT/scripts/buildsystems/vcpkg.cmake"
+        -D CMAKE_DISABLE_PRECOMPILE_HEADERS:BOOL=ON
+        -D CMAKE_BUILD_TYPE:STRING=${{ matrix.build-type.name }}
+        -D CMAKE_INSTALL_PREFIX:PATH='${{ runner.workspace }}/HelloWorld-FetchContent-Install'
+        -D VCPKG_APPLOCAL_DEPS:BOOL=OFF
+        -D VERBOSE_CONFIGURE:BOOL=ON
+        -D MATCH_EQUAL_EXPORTED_BUILDTREE:BOOL=OFF
+        -D MYSQL_PING:BOOL=OFF
+        -D BUILD_TESTS:BOOL=OFF
+        -D ORM:BOOL=ON
+        -D TOM:BOOL=OFF
+        -D TOM_EXAMPLE:BOOL=OFF
+        -D RESOLVE_TINYORM:STRING=FetchContent
+
+    # Also install it, to test the deployment process
+    - name: HelloWorld cmake build and install ✨ (fetchcontent-msvc-${{ matrix.build-type.key }})
+      working-directory: >-
+        ../HelloWorld-builds-cmake/build-fetchcontent-msvc-${{ matrix.build-type.key }}
+      run: |
+        cmake.exe --build . --target install --parallel 2
+
+    - name: HelloWorld execute (SQLite) 🏁
+      working-directory: ../HelloWorld-FetchContent-Install/bin
+      run: |
+        .\HelloWorld.exe
+      env:
+        TINYORM_HELLOWORLD_DB_SQLITE_DATABASE: ../../HelloWorld.sqlite3
+
+    - name: Ccache statistics
+      run: |
+        ccache.exe --show-stats -vv

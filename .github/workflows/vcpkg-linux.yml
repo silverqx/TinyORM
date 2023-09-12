@@ -1,0 +1,436 @@
+name: vcpkg Linux
+
+on:
+  push:
+    branches:
+      - main
+      - gh-actions
+
+jobs:
+
+  vcpkg-linux:
+    name: vcpkg Linux
+
+    runs-on: ubuntu-22.04
+
+    strategy:
+      matrix:
+        build-type:
+          - key: debug
+            name: Debug
+
+          - key: release
+            name: Release
+
+        qt:
+          # GitHub Free Plan is not enough for this (no money 💵)
+          # - key: qt5
+          #   name: Qt5
+          #   version: 5.15
+          #   apt: [qtbase5-dev]
+          #   vcpkg-qt: qt5-base
+          #   vcpkg-qt-features: qt5-base[core]
+          #   vcpkg-tinyorm: tinyorm-qt5
+          #   vcpkg-tinyorm-features: tinyorm-qt5[core]
+
+          - key: qt6
+            name: Qt6
+            version: 6.2
+            apt: [qt6-base-dev, libqt6sql6-sqlite]
+            vcpkg-qt: qtbase
+            vcpkg-qt-features: qtbase[core,sql-sqlite]
+            vcpkg-tinyorm: tinyorm
+            vcpkg-tinyorm-features: tinyorm[core,sql-sqlite]
+
+    steps:
+    - uses: actions/checkout@v4
+
+    # I don't install everything to the TinyRunnerWorkPath as in all other workflows, I leave it
+    # this way because I tried to refactor it to the env.TinyRunnerWorkPath and it looks terrible
+    - name: TinyORM prepare environment
+      run: |
+        runnerWorkPath=$(realpath '${{ runner.workspace }}/..')
+        echo "TinyRunnerWorkPath=$runnerWorkPath" >> $GITHUB_ENV
+
+    - name: vcpkg set-up environment
+      run: |
+        echo "VCPKG_ROOT=$VCPKG_INSTALLATION_ROOT" >> $GITHUB_ENV
+        echo 'VCPKG_DEFAULT_TRIPLET=x64-linux' >> $GITHUB_ENV
+        echo 'VCPKG_MAX_CONCURRENCY=2' >> $GITHUB_ENV
+
+        vcpkgPath=$(realpath '${{ github.workspace }}/cmake/vcpkg')
+
+        portsPath="$vcpkgPath/ports"
+        echo "VCPKG_OVERLAY_PORTS=$portsPath" >> $GITHUB_ENV
+
+        tripletsPath="$vcpkgPath/triplets"
+        echo "VCPKG_OVERLAY_TRIPLETS=$tripletsPath" >> $GITHUB_ENV
+
+        # Binary caching
+        echo 'VCPKG_BINARY_SOURCES=clear;x-gha,readwrite' >> $GITHUB_ENV
+
+    - name: vcpkg prepare binary caching
+      uses: actions/github-script@v6
+      with:
+        script: |
+          core.exportVariable('ACTIONS_CACHE_URL', process.env.ACTIONS_CACHE_URL || '');
+          core.exportVariable('ACTIONS_RUNTIME_TOKEN', process.env.ACTIONS_RUNTIME_TOKEN || '');
+
+    - name: apt update
+      run: |
+        sudo apt update
+
+    - name: apt install g++-12
+      run: |
+        sudo apt install --yes g++-12
+
+    - name: ninja install latest version
+      uses: seanmiddleditch/gha-setup-ninja@master
+      with:
+        destination: ${{ env.TinyRunnerWorkPath }}/ninja-build
+
+    - name: CMake print version
+      run: |
+        cmake --version
+
+    - name: Print SQLite database version
+      run: |
+        sqlite3 --version
+
+    # Qt5 build dependencies: https://wiki.qt.io/Building_Qt_5_from_Git
+    - name: apt install Qt5 build dependencies
+      if: ${{ matrix.qt.key == 'qt5' }}
+      run: >-
+        sudo apt install --yes '^libxcb.*-dev' libx11-xcb-dev libglu1-mesa-dev libxrender-dev
+        libxi-dev libxkbcommon-dev libxkbcommon-x11-dev
+
+    # The following two steps are not needed below they only test if the vcpkg classic mode works
+    # correctly
+
+    - name: vcpkg install ${{ matrix.qt.vcpkg-qt }} (classic mode)
+      run: |
+        vcpkg install ${{ matrix.qt.vcpkg-qt-features }}
+
+    - name: vcpkg install ${{ matrix.qt.vcpkg-tinyorm }} (classic mode)
+      run: |
+        vcpkg install ${{ matrix.qt.vcpkg-tinyorm-features }}
+
+    # Prepare TinyORM-HelloWorld project
+
+    - name: HelloWorld checkout
+      uses: actions/checkout@v4
+      with:
+        repository: silverqx/TinyORM-HelloWorld
+        path: HelloWorld
+
+    - name: HelloWorld move (to parent folder)
+      run: |
+        mv --target-directory=.. ./HelloWorld
+
+    - name: HelloWorld move HelloWorld.sqlite3 (to parent folder)
+      working-directory: ../HelloWorld
+      run: |
+        mv --target-directory=.. ./HelloWorld.sqlite3
+
+    # VcpkgManifest method (no install or deployment)
+    # ---
+
+    - name: 🪡 VcpkgManifest method (no install or deployment) 🪡
+      run: |
+        echo 'no-op'
+
+    - name: HelloWorld create build folder (vcpkgmanifest-gcc-${{ matrix.build-type.key }})
+      run: >-
+        mkdir --parents
+        '../HelloWorld-builds-cmake/build-vcpkgmanifest-gcc-${{ matrix.build-type.key }}'
+
+    - name: HelloWorld prepare VcpkgManifest method (vcpkgmanifest-gcc-${{ matrix.build-type.key }})
+      working-directory: ../HelloWorld
+      run: >-
+        cp ./vcpkg.json.VcpkgManifest.${{ matrix.qt.name }}.example ./vcpkg.json
+
+    # CMAKE_DISABLE_PRECOMPILE_HEADERS=ON is correct (no need to use PCH for one TU)
+    # VCPKG_APPLOCAL_DEPS=OFF is correct as everything is linked statically on Linux
+    - name: HelloWorld cmake configure (vcpkgmanifest-gcc-${{ matrix.build-type.key }})
+      working-directory: ../HelloWorld
+      run: >-
+        cmake
+        -S .
+        -B ../HelloWorld-builds-cmake/build-vcpkgmanifest-gcc-${{ matrix.build-type.key }}
+        -G Ninja
+        -D CMAKE_TOOLCHAIN_FILE:FILEPATH="$VCPKG_INSTALLATION_ROOT/scripts/buildsystems/vcpkg.cmake"
+        -D CMAKE_DISABLE_PRECOMPILE_HEADERS:BOOL=ON
+        -D CMAKE_BUILD_TYPE:STRING=${{ matrix.build-type.name }}
+        -D VCPKG_APPLOCAL_DEPS:BOOL=OFF
+        -D RESOLVE_TINYORM:STRING=VcpkgManifest
+
+    - name: HelloWorld cmake build ✨ (vcpkgmanifest-gcc-${{ matrix.build-type.key }})
+      working-directory: >-
+        ../HelloWorld-builds-cmake/build-vcpkgmanifest-gcc-${{ matrix.build-type.key }}
+      run: |
+        cmake --build . --target all --parallel 2
+
+    - name: HelloWorld execute (SQLite) 🏁
+      working-directory: >-
+        ../HelloWorld-builds-cmake/build-vcpkgmanifest-gcc-${{ matrix.build-type.key }}
+      run: |
+        ./HelloWorld
+      env:
+        TINYORM_HELLOWORLD_DB_SQLITE_DATABASE: ../../HelloWorld.sqlite3
+
+    # The FetchContent and Manual methods below need Qt installed and to be accessible on the system
+    # I'm also using the Qt from the Ubuntu main repository instead of the latest Qt to have better
+    # coverage
+
+    - name: apt install Qt ${{ matrix.qt.version }} base (${{ join(matrix.compiler.apt, ', ') }})
+      run: |
+        sudo apt install --yes ${{ join(matrix.qt.apt, ' ') }}
+
+    # Prepare ccache
+    #
+    # The TinyORM build in the Manual method and the FetchContent method are using the ccache,
+    # packages build thourgh the FetchContent CMake module are also using the ccache, they respect
+    # the CMAKE_CXX_COMPILER_LAUNCHER option.
+
+    - name: Ccache initialize download
+      id: downloads-initialize-ccache
+      run: |
+        filename=$(basename "$URL_CCACHE_LINUX_X64")
+        echo "Filename=$filename" >> $GITHUB_OUTPUT
+
+        filepath="${{ runner.temp }}/$filename"
+        echo "Filepath=$filepath" >> $GITHUB_OUTPUT
+
+        hash=$(wget "$URL_CACHE_HASH_LINUX" -O- --no-verbose --quiet)
+        echo "Hash=$hash" >> $GITHUB_OUTPUT
+      env:
+        URL_CACHE_HASH_LINUX: ${{ secrets.URL_CACHE_HASH_LINUX }}
+        URL_CCACHE_LINUX_X64: ${{ secrets.URL_CCACHE_LINUX_X64 }}
+
+    - name: Ccache restore cache (download)
+      uses: actions/cache@v3
+      id: downloads-cache-ccache
+      with:
+        path: ${{ env.archive_filepath }}
+        key: ${{ runner.os }}-caches-${{ env.cache_name }}-${{ env.cache_hash }}
+      env:
+        archive_filepath: ${{ steps.downloads-initialize-ccache.outputs.Filepath }}
+        cache_hash: ${{ steps.downloads-initialize-ccache.outputs.Hash }}
+        cache_name: ccache
+
+    - name: Ccache download
+      if: steps.downloads-cache-ccache.outputs.cache-hit != 'true'
+      run: |
+        wget "$URL_CCACHE_LINUX_X64" --output-document="$archive_filepath" --no-verbose
+      env:
+        archive_filepath: ${{ steps.downloads-initialize-ccache.outputs.Filepath }}
+        URL_CCACHE_LINUX_X64: ${{ secrets.URL_CCACHE_LINUX_X64 }}
+
+    - name: Ccache install
+      run: |
+        echo '::group::Extract archive'
+        tar xJvf "$archive_filepath" --directory '${{ runner.temp }}'
+        echo '::endgroup::'
+
+        echo '::group::Install'
+        extractedFolder=$(basename --suffix='.tar.xz' "$archive_filename")
+        cd "${{ runner.temp }}/$extractedFolder"
+        sudo make install
+        echo '::endgroup::'
+
+        echo '::group::Print version'
+        ccache --version
+        echo '::endgroup::'
+      env:
+        archive_filename: ${{ steps.downloads-initialize-ccache.outputs.Filename }}
+        archive_filepath: ${{ steps.downloads-initialize-ccache.outputs.Filepath }}
+
+    - name: Ccache initialize
+      id: ccache-initialize-cache
+      run: |
+        cachePath=$(ccache --get-config cache_dir)
+        echo "CachePath=$cachePath" >> $GITHUB_OUTPUT
+
+        echo "ImageOS=$ImageOS" >> $GITHUB_OUTPUT
+
+    - name: Ccache restore cache 🕺
+      uses: actions/cache@v3
+      with:
+        path: ${{ env.cache_path }}
+        key: ${{ runner.os }}-${{ env.image_os }}-ccache-${{ env.cache_name }}-${{ github.run_id }}
+        restore-keys: |
+          ${{ runner.os }}-${{ env.image_os }}-ccache-${{ env.cache_name }}-
+      env:
+        cache_name: gcc-${{ matrix.qt.key }}
+        cache_path: ${{ steps.ccache-initialize-cache.outputs.CachePath }}
+        image_os: ${{ steps.ccache-initialize-cache.outputs.ImageOS }}
+
+    - name: Ccache setup 🥳
+      run: |
+        echo '::group::Prepare ccache config'
+        # gcc: ~ 165 * 3 + 100
+        ccache --set-config max_size=600M
+        ccache --set-config sloppiness=pch_defines,time_macros
+        ccache --show-config
+        echo '::endgroup::'
+
+        echo '::group::Clear ccache statistics'
+        ccache --zero-stats
+        echo '::endgroup::'
+
+        echo '::group::Print version'
+        ccache --version
+        echo '::endgroup::'
+
+    # Manual method linking against the TinyORM build tree (no install or deployment)
+    # ---
+
+    - name: 🪡 Manual method linking against the TinyORM build tree (no install or deployment) 🪡
+      run: |
+        echo 'no-op'
+
+    # Prepare and build the TinyORM library
+
+    - name: TinyORM checkout
+      uses: actions/checkout@v4
+      with:
+        repository: silverqx/TinyORM
+        path: TinyORM
+
+    - name: TinyORM move (to parent folder)
+      run: |
+        mv --target-directory=.. ./TinyORM
+
+    - name: TinyORM create build folder (manual-tinyorm-gcc-${{ matrix.build-type.key }})
+      run: |
+        mkdir --parents '../TinyORM-builds-cmake/build-manual-tinyorm-gcc-${{ matrix.build-type.key }}'
+
+    # CMAKE_DISABLE_PRECOMPILE_HEADERS=OFF is correct
+    - name: TinyORM cmake configure (manual-tinyorm-gcc-${{ matrix.build-type.key }})
+      working-directory: ../TinyORM
+      run: >-
+        cmake
+        -S .
+        -B ../TinyORM-builds-cmake/build-manual-tinyorm-gcc-${{ matrix.build-type.key }}
+        -G Ninja
+        -D CMAKE_CXX_COMPILER_LAUNCHER:FILEPATH=/usr/local/bin/ccache
+        -D CMAKE_TOOLCHAIN_FILE:FILEPATH="$VCPKG_INSTALLATION_ROOT/scripts/buildsystems/vcpkg.cmake"
+        -D CMAKE_DISABLE_PRECOMPILE_HEADERS:BOOL=OFF
+        -D CMAKE_BUILD_TYPE:STRING=${{ matrix.build-type.name }}
+        -D VCPKG_APPLOCAL_DEPS:BOOL=OFF
+        -D VERBOSE_CONFIGURE:BOOL=ON
+        -D MATCH_EQUAL_EXPORTED_BUILDTREE:BOOL=OFF
+        -D MYSQL_PING:BOOL=OFF
+        -D BUILD_TESTS:BOOL=OFF
+        -D ORM:BOOL=ON
+        -D TOM:BOOL=OFF
+        -D TOM_EXAMPLE:BOOL=OFF
+
+    - name: TinyORM cmake build ✨ (manual-tinyorm-gcc-${{ matrix.build-type.key }})
+      working-directory: >-
+        ../TinyORM-builds-cmake/build-manual-tinyorm-gcc-${{ matrix.build-type.key }}
+      run: |
+        cmake --build . --target all --parallel 2
+
+    # Build and execute the HelloWorld console application
+
+    - name: HelloWorld create build folder (manual-tinyorm-gcc-${{ matrix.build-type.key }})
+      run: |
+        mkdir --parents '../HelloWorld-builds-cmake/build-manual-tinyorm-gcc-${{ matrix.build-type.key }}'
+
+    - name: HelloWorld prepare Manual method (manual-tinyorm-gcc-${{ matrix.build-type.key }})
+      working-directory: ../HelloWorld
+      run: |
+        cp ./vcpkg.json.Manual.example ./vcpkg.json
+
+    # CMAKE_DISABLE_PRECOMPILE_HEADERS=ON is correct (no need to use PCH for one TU)
+    - name: HelloWorld cmake configure (manual-tinyorm-gcc-${{ matrix.build-type.key }})
+      working-directory: ../HelloWorld
+      run: >-
+        cmake
+        -S .
+        -B ../HelloWorld-builds-cmake/build-manual-tinyorm-gcc-${{ matrix.build-type.key }}
+        -G Ninja
+        -D CMAKE_TOOLCHAIN_FILE:FILEPATH="$VCPKG_INSTALLATION_ROOT/scripts/buildsystems/vcpkg.cmake"
+        -D CMAKE_DISABLE_PRECOMPILE_HEADERS:BOOL=ON
+        -D CMAKE_BUILD_TYPE:STRING=${{ matrix.build-type.name }}
+        -D VCPKG_APPLOCAL_DEPS:BOOL=OFF
+        -D RESOLVE_TINYORM:STRING=Manual
+
+    - name: HelloWorld cmake build ✨ (manual-tinyorm-gcc-${{ matrix.build-type.key }})
+      working-directory: >-
+        ../HelloWorld-builds-cmake/build-manual-tinyorm-gcc-${{ matrix.build-type.key }}
+      run: |
+        cmake --build . --target all --parallel 2
+
+    - name: HelloWorld execute (SQLite) 🏁
+      working-directory: >-
+        ../HelloWorld-builds-cmake/build-manual-tinyorm-gcc-${{ matrix.build-type.key }}
+      run: |
+        buildFolder='../../TinyORM-builds-cmake/build-manual-tinyorm-gcc-${{ matrix.build-type.key }}'
+
+        export LD_LIBRARY_PATH="$buildFolder"${LD_LIBRARY_PATH:+:}"$LD_LIBRARY_PATH"
+
+        ./HelloWorld
+      env:
+        TINYORM_HELLOWORLD_DB_SQLITE_DATABASE: ../../HelloWorld.sqlite3
+
+    # FetchContent method (with install or deployment)
+    # ---
+
+    - name: 🪡 FetchContent method (with install or deployment) 🪡
+      run: |
+        echo 'no-op'
+
+    - name: HelloWorld create build folder (fetchcontent-gcc-${{ matrix.build-type.key }})
+      run: >-
+        mkdir --parents
+        '../HelloWorld-builds-cmake/build-fetchcontent-gcc-${{ matrix.build-type.key }}'
+
+    - name: HelloWorld prepare FetchContent method (fetchcontent-gcc-${{ matrix.build-type.key }})
+      working-directory: ../HelloWorld
+      run: |
+        cp ./vcpkg.json.FetchContent.example ./vcpkg.json
+
+    # CMAKE_DISABLE_PRECOMPILE_HEADERS=OFF is correct
+    - name: HelloWorld cmake configure (fetchcontent-gcc-${{ matrix.build-type.key }})
+      working-directory: ../HelloWorld
+      run: >-
+        cmake
+        -S .
+        -B ../HelloWorld-builds-cmake/build-fetchcontent-gcc-${{ matrix.build-type.key }}
+        -G Ninja
+        -D CMAKE_CXX_COMPILER_LAUNCHER:FILEPATH=/usr/local/bin/ccache
+        -D CMAKE_TOOLCHAIN_FILE:FILEPATH="$VCPKG_INSTALLATION_ROOT/scripts/buildsystems/vcpkg.cmake"
+        -D CMAKE_DISABLE_PRECOMPILE_HEADERS:BOOL=OFF
+        -D CMAKE_BUILD_TYPE:STRING=${{ matrix.build-type.name }}
+        -D CMAKE_INSTALL_PREFIX:PATH='${{ runner.workspace }}/HelloWorld-FetchContent-Install'
+        -D VCPKG_APPLOCAL_DEPS:BOOL=OFF
+        -D VERBOSE_CONFIGURE:BOOL=ON
+        -D MATCH_EQUAL_EXPORTED_BUILDTREE:BOOL=OFF
+        -D MYSQL_PING:BOOL=OFF
+        -D BUILD_TESTS:BOOL=OFF
+        -D ORM:BOOL=ON
+        -D TOM:BOOL=OFF
+        -D TOM_EXAMPLE:BOOL=OFF
+        -D RESOLVE_TINYORM:STRING=FetchContent
+
+    # Also install it, to test the deployment process
+    - name: HelloWorld cmake build and install ✨ (fetchcontent-gcc-${{ matrix.build-type.key }})
+      working-directory: >-
+        ../HelloWorld-builds-cmake/build-fetchcontent-gcc-${{ matrix.build-type.key }}
+      run: |
+        cmake --build . --target install --parallel 2
+
+    - name: HelloWorld execute (SQLite) 🏁
+      working-directory: ../HelloWorld-FetchContent-Install/bin
+      run: |
+        export LD_LIBRARY_PATH='../lib'${LD_LIBRARY_PATH:+:}"$LD_LIBRARY_PATH"
+
+        ./HelloWorld
+      env:
+        TINYORM_HELLOWORLD_DB_SQLITE_DATABASE: ../../HelloWorld.sqlite3
+
+    - name: Ccache statistics
+      run: |
+        ccache --show-stats -vv
