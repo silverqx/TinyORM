@@ -19,7 +19,7 @@ Param(
     [ValidateNotNullOrEmpty()]
     [ValidatePattern('^[a-fA-F0-9]{40}$',
         ErrorMessage = 'The argument "{0}" is not the correct commit ID (SHA-1). ' +
-        'The argument "{0}" does not match the "{1}" pattern.')]
+            'The argument "{0}" does not match the "{1}" pattern.')]
     [string] $Ref
 )
 
