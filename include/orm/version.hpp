@@ -10,7 +10,7 @@ TINY_SYSTEM_HEADER
 
 /* Binary compatibility rules:
    https://community.kde.org/Policies/Binary_Compatibility_Issues_With_C++
-   https://www.gnu.org/software/libtool/manual/html_node/Updating-version-info.html*/
+   https://www.gnu.org/software/libtool/manual/html_node/Updating-version-info.html */
 #define TINYORM_VERSION_MAJOR 0
 #define TINYORM_VERSION_MINOR 35
 #define TINYORM_VERSION_BUGFIX 0
