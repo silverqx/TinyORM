@@ -4,7 +4,7 @@ Set-StrictMode -Version 3.0
 
 # Write a Header message to a host
 function Write-Header {
-    [OutputType([System.Void])]
+    [OutputType([void])]
     Param(
         [Parameter(Position = 0, Mandatory, HelpMessage = 'Writes a Header message to a host.')]
         [ValidateNotNullOrEmpty()]
@@ -19,7 +19,7 @@ function Write-Header {
 
 # Write a progress message to a host
 function Write-Progress {
-    [OutputType([System.Void])]
+    [OutputType([void])]
     Param(
         [Parameter(Position = 0, Mandatory, HelpMessage = 'Writes a Progress message to a host.')]
         [ValidateNotNullOrEmpty()]
