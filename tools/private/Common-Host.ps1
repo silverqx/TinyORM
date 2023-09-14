@@ -9,12 +9,24 @@ function Write-Header {
         [Parameter(Position = 0, Mandatory, HelpMessage = 'Writes a Header message to a host.')]
         [ValidateNotNullOrEmpty()]
         [string]
-        $Header
+        $Header,
+
+        [Parameter(HelpMessage = 'No newline before the header message.')]
+        [switch] $NoNewlineBefore,
+
+        [Parameter(HelpMessage = 'No newline after the header message.')]
+        [switch] $NoNewlineAfter
     )
 
-    NewLine
+    if (-not $NoNewlineBefore) {
+        NewLine
+    }
+
     Write-Host $Header -ForegroundColor DarkBlue
-    NewLine
+
+    if (-not $NoNewlineAfter) {
+        NewLine
+    }
 }
 
 # Write a progress message to a host
