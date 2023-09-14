@@ -29,3 +29,22 @@ function Write-Progress {
 
     Write-Host $Message -ForegroundColor DarkYellow
 }
+
+# Present a dialog allowing the user to choose continue or quit
+function Confirm-Continue {
+    [OutputType([void])]
+    Param()
+
+    $confirmChoices = [System.Management.Automation.Host.ChoiceDescription[]](@(
+        New-Object System.Management.Automation.Host.ChoiceDescription('&Yes', 'Continue')
+        New-Object System.Management.Automation.Host.ChoiceDescription('&No', 'Quit')
+    ))
+
+    Write-Host
+    $answer = $Host.Ui.PromptForChoice('', 'Ok to proceed?', $confirmChoices, 1)
+
+    switch ($answer) {
+        0 { break }
+        1 { "`nQuit"; exit 1 }
+    }
+}
