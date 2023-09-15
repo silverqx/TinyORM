@@ -105,10 +105,8 @@ function Test-GitRoot {
         return
     }
 
-    NewLine
-    Write-Error ('The deploy.ps1 script must be executed from the TinyORM root folder ' +
+    Write-ExitError ('The deploy.ps1 script must be executed from the TinyORM root folder ' +
         '(.\tools\deploy.ps1)')
-    exit 1
 }
 
 # Determine whether the current branch is develop
@@ -122,9 +120,7 @@ function Test-GitDevelopBranch {
         return
     }
 
-    NewLine
-    Write-Error 'The TinyORM current branch must be ''develop'''
-    exit 1
+    Write-ExitError 'The TinyORM current branch must be ''develop'''
 }
 
 # Determine whether the main or develop branches are behind the origin
@@ -136,17 +132,13 @@ function Test-GitBehindOrigin {
 
     $developBehind = git rev-list --count develop..origin/develop
     if ($developBehind -ne 0) {
-        NewLine
-        Write-Error ("The TinyORM 'develop' branch is $developBehind commits behind " +
+        Write-ExitError ("The TinyORM 'develop' branch is $developBehind commits behind " +
             'the origin/develop')
-        exit 1
     }
 
     $mainBehind = git rev-list --count main..origin/main
     if ($mainBehind -ne 0) {
-        NewLine
-        Write-Error "The TinyORM 'main' branch is $mainBehind commits behind the origin/main"
-        exit 1
+        Write-ExitError "The TinyORM 'main' branch is $mainBehind commits behind the origin/main"
     }
 
 }
@@ -162,9 +154,7 @@ function Test-WorkingTreeClean {
         return
     }
 
-    NewLine
-    Write-Error 'The TinyORM working tree must be clean'
-    exit 1
+    Write-ExitError 'The TinyORM working tree must be clean'
 }
 
 # Exit if the $LASTEXITCODE isn't 0
@@ -176,9 +166,7 @@ function Test-LastExitCode {
         return
     }
 
-    NewLine
-    Write-Error "The last command failed `$LASTEXITCODE was $LASTEXITCODE"
-    exit 1
+    Write-ExitError "The last command failed `$LASTEXITCODE was $LASTEXITCODE"
 }
 
 # Reads the bump type to do for the given library
@@ -266,9 +254,7 @@ function Test-AllBumpsEmpty {
         return
     }
 
-    NewLine
-    Write-Error 'Nothing to bump, all bump types were set to don''t bump'
-    exit 1
+    Write-ExitError 'Nothing to bump, all bump types were set to don''t bump'
 }
 
 # Bump version numbers by the chosen bump type

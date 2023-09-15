@@ -70,6 +70,26 @@ function Write-Error {
     Write-Host $Message -ForegroundColor Red
 }
 
+# Write an error message to a host and exit with 1 error code
+function Write-ExitError {
+    [OutputType([void])]
+    Param(
+        [Parameter(Position = 0, Mandatory, HelpMessage = 'Writes an error message to the host.')]
+        [ValidateNotNullOrEmpty()]
+        [string]
+        $Message,
+
+        [Parameter(HelpMessage = 'Specifies the exit code.')]
+        [ValidateNotNull()]
+        [int]
+        $ExitCode = 1
+    )
+
+    NewLine
+    Write-Error $Message
+    exit $ExitCode
+}
+
 # Present a dialog allowing the user to choose continue or quit
 function Approve-Continue {
     [OutputType([void])]
