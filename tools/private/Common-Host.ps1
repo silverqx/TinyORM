@@ -8,7 +8,7 @@ Set-Alias NewLine Write-Host -Option ReadOnly -Force
 function Write-Header {
     [OutputType([void])]
     Param(
-        [Parameter(Position = 0, Mandatory, HelpMessage = 'Writes a Header message to a host.')]
+        [Parameter(Position = 0, Mandatory, HelpMessage = 'Writes a header message to the host.')]
         [ValidateNotNullOrEmpty()]
         [string]
         $Header,
@@ -35,7 +35,7 @@ function Write-Header {
 function Write-Progress {
     [OutputType([void])]
     Param(
-        [Parameter(Position = 0, Mandatory, HelpMessage = 'Writes a Progress message to a host.')]
+        [Parameter(Position = 0, Mandatory, HelpMessage = 'Writes a progress message to the host.')]
         [ValidateNotNullOrEmpty()]
         [string]
         $Message
