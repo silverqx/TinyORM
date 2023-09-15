@@ -636,7 +636,7 @@ function Edit-VcpkgRefAndHash {
     }
 }
 
-# Get the vcpkg commit message (updated REF and SHA512)
+# Get the vcpkg commit message (updated vcpkg REF and SHA512)
 function Get-VcpkgCommitMessage {
     [OutputType([string])]
     Param()
@@ -675,7 +675,7 @@ Read-VersionNumbers
 Update-VersionNumbers
 Show-VersionNumbers
 # Write-Output $Script:BumpsHash
-# Modify these version numbers in all files
+# Update these version numbers in all files
 Edit-VersionNumbersInVersionHpp
 Edit-VersionNumbersInAllFiles
 
