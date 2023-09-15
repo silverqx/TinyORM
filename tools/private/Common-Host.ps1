@@ -2,6 +2,8 @@
 
 Set-StrictMode -Version 3.0
 
+Set-Alias NewLine Write-Host -Option ReadOnly -Force
+
 # Write a Header message to a host
 function Write-Header {
     [OutputType([void])]
@@ -19,13 +21,13 @@ function Write-Header {
     )
 
     if (-not $NoNewlineBefore) {
-        Write-Host
+        NewLine
     }
 
     Write-Host $Header -ForegroundColor DarkBlue
 
     if (-not $NoNewlineAfter) {
-        Write-Host
+        NewLine
     }
 }
 
@@ -52,7 +54,7 @@ function Approve-Continue {
         New-Object System.Management.Automation.Host.ChoiceDescription('&No', 'Quit')
     ))
 
-    Write-Host
+    NewLine
     $answer = $Host.Ui.PromptForChoice('', 'Ok to proceed?', $confirmChoices, 1)
 
     switch ($answer) {
