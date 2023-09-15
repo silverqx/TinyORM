@@ -619,6 +619,7 @@ function Edit-VcpkgRefAndHash {
 
         $matchedLines = $fileContent -cmatch $regexMatch
 
+        # Verify is the file contains the REF and SHA512 lines
         $matchedLinesLength = $matchedLines.Length
         if ($matchedLinesLength -ne $expectedOccurrences) {
             throw "Found '$matchedLinesLength' hash lines for '$regexMatch' regex " +
@@ -626,9 +627,11 @@ function Edit-VcpkgRefAndHash {
                 "'$expectedOccurrences'."
         }
 
+        # Replace the old REF AND SHA512 values with the new values
         $fileContentReplaced = $fileContent -creplace $regexRef, "`${ref}$vcpkgRef" `
                                             -creplace $regexHash, "`${sha512}$vcpkgHash"
 
+        # Save to the file
         ($fileContentReplaced -join "`n") + "`n" | Set-Content -Path $portfilePath -NoNewline
     }
 }
@@ -649,6 +652,7 @@ function Get-VcpkgCommitMessage {
 Clear-Host
 Write-Header 'Deploying TinORM library'
 
+# Verify whether the current working tree is in the correct state (required preconditions)
 Test-GitRoot
 Test-GitBehindOrigin
 Test-GitDevelopBranch
@@ -657,12 +661,14 @@ Test-WorkingTreeClean
 # Need to initialize these variables later because of the Resolve-Path calls
 Initialize-ScriptVariables
 
+# Select which version numbers to bump
 $Script:BumpsHash.TinyORM.type   = Read-BumpType -Name TinyORM
 $Script:BumpsHash.tom.type       = Read-BumpType -Name tom
 $Script:BumpsHash.TinyUtils.type = Read-BumpType -Name TinyUtils
 
 Test-AllBumpsEmpty
 
+# Obtain version numbers from version.hpp files
 Read-VersionNumbers
 
 # Bump all version numbers
@@ -681,6 +687,7 @@ Write-Progress 'Committing bumped version numbers...'
 git commit --all --edit --message=$(Get-BumpCommitMessage)
 Test-LastExitCode
 
+# Merge to origin/main and push
 Invoke-MergeDevelopAndDeploy
 
 NewLine
@@ -700,6 +707,7 @@ Write-Progress 'Committing vcpkg REF and SHA512...'
 git commit --all --message=$(Get-VcpkgCommitMessage)
 Test-LastExitCode
 
+# Merge to origin/main and push
 Invoke-MergeDevelopAndDeploy
 
 NewLine
