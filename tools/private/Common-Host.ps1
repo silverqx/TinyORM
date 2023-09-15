@@ -31,6 +31,19 @@ function Write-Header {
     }
 }
 
+# Write an info message to a host
+function Write-Info {
+    [OutputType([void])]
+    Param(
+        [Parameter(Position = 0, Mandatory, HelpMessage = 'Writes an info message to the host.')]
+        [ValidateNotNullOrEmpty()]
+        [string]
+        $Message
+    )
+
+    Write-Host $Message -ForegroundColor DarkGreen
+}
+
 # Write a progress message to a host
 function Write-Progress {
     [OutputType([void])]
@@ -42,6 +55,19 @@ function Write-Progress {
     )
 
     Write-Host $Message -ForegroundColor DarkYellow
+}
+
+# Write an error message to a host
+function Write-Error {
+    [OutputType([void])]
+    Param(
+        [Parameter(Position = 0, Mandatory, HelpMessage = 'Writes an error message to the host.')]
+        [ValidateNotNullOrEmpty()]
+        [string]
+        $Message
+    )
+
+    Write-Host $Message -ForegroundColor Red
 }
 
 # Present a dialog allowing the user to choose continue or quit
