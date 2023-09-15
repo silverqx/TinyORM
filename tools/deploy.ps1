@@ -674,7 +674,7 @@ Read-VersionNumbers
 # Bump all version numbers
 Update-VersionNumbers
 Show-VersionNumbers
-# Write-Output $Script:BumpsHash
+
 # Update these version numbers in all files
 Edit-VersionNumbersInVersionHpp
 Edit-VersionNumbersInAllFiles
@@ -683,7 +683,6 @@ Show-DiffSummaryAndApprove
 
 NewLine
 Write-Progress 'Committing bumped version numbers...'
-# Write-Output (Get-BumpCommitMessage)
 git commit --all --edit --message=$(Get-BumpCommitMessage)
 Test-LastExitCode
 
