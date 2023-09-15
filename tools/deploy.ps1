@@ -13,75 +13,83 @@ enum BumpType {
     None
 }
 
-# Bumping hash data (contains everything what is needed to bump the version numbers)
-$Script:BumpsHash = [ordered] @{
-    TinyORM   = @{type               = [BumpType]::None
-                  versionOld         = $null
-                  versionBumped      = $null
-                  versionOldArray    = $null
-                  versionBumpedArray = $null
-                  versionHpp         = Resolve-Path -Path ./include/orm/version.hpp
-                  macroPrefix        = 'TINYORM_VERSION_'}
-
-    tom       = @{type               = [BumpType]::None
-                  versionOld         = $null
-                  versionBumped      = $null
-                  versionOldArray    = $null
-                  versionBumpedArray = $null
-                  versionHpp         = Resolve-Path -Path ./tom/include/tom/version.hpp
-                  macroPrefix        = 'TINYTOM_VERSION_'}
-
-    TinyUtils = @{type               = [BumpType]::None
-                  versionOld         = $null
-                  versionBumped      = $null
-                  versionOldArray    = $null
-                  versionBumpedArray = $null
-                  versionHpp         = Resolve-Path -Path ./tests/TinyUtils/src/version.hpp
-                  macroPrefix        = 'TINYUTILS_VERSION_'}
-}
-
 # Version number format (with or without the v character prefix)
 enum VersionType {
     VersionOnly
     VersionWith_v
 }
 
+# Bumping hash data (contains everything what is needed to bump the version numbers)
+$Script:BumpsHash = $null
 # Files in which the version numbers needs to be bumped (integer value is the number of updates)
-$Script:VersionLocations = [ordered] @{
-    TinyORM = @{
-        VersionOnly = @{
-            (Resolve-Path -Path ./NOTES.txt)                                = 1
-            (Resolve-Path -Path ./cmake/vcpkg/ports/tinyorm/vcpkg.json)     = 1
-            (Resolve-Path -Path ./cmake/vcpkg/ports/tinyorm-qt5/vcpkg.json) = 1
-            (Resolve-Path -Path ./docs/building/hello-world.mdx)            = 2
-        }
-        [VersionType]::VersionWith_v = @{
-            (Resolve-Path -Path ./NOTES.txt)                 = 1
-            (Resolve-Path -Path ./README.md)                 = 2
-            (Resolve-Path -Path ./docs/README.mdx)           = 1
-            (Resolve-Path -Path ./docs/building/tinyorm.mdx) = 1
-        }
-    }
-    tom = @{
-        [VersionType]::VersionWith_v = @{
-            (Resolve-Path -Path ./NOTES.txt)       = 1
-            (Resolve-Path -Path ./README.md)       = 2
-            (Resolve-Path -Path ./docs/README.mdx) = 1
-        }
-    }
-    # TinyUtils doesn't have any version numbers in files
-}
-
+$Script:VersionLocations = $null
 # Vcpkg portfile filepaths for tinyorm and tinyorm-qt5 ports
-$Script:PortfileLocations = [ordered] @{
-    tinyorm       = Resolve-Path -Path ./cmake/vcpkg/ports/tinyorm/portfile.cmake
-    'tinyorm-qt5' = Resolve-Path -Path ./cmake/vcpkg/ports/tinyorm-qt5/portfile.cmake
-}
+$Script:PortfileLocations = $null
 
 # Functions section
 # ---
 
 . $PSScriptRoot\private\Common-Host.ps1
+
+# Initialize all script variables that contain the Resolve-Path call
+function Initialize-ScriptVariables {
+
+    $Script:BumpsHash = [ordered] @{
+        TinyORM   = @{type               = [BumpType]::None
+                      versionOld         = $null
+                      versionBumped      = $null
+                      versionOldArray    = $null
+                      versionBumpedArray = $null
+                      versionHpp         = Resolve-Path -Path ./include/orm/version.hpp
+                      macroPrefix        = 'TINYORM_VERSION_'}
+
+        tom       = @{type               = [BumpType]::None
+                      versionOld         = $null
+                      versionBumped      = $null
+                      versionOldArray    = $null
+                      versionBumpedArray = $null
+                      versionHpp         = Resolve-Path -Path ./tom/include/tom/version.hpp
+                      macroPrefix        = 'TINYTOM_VERSION_'}
+
+        TinyUtils = @{type               = [BumpType]::None
+                      versionOld         = $null
+                      versionBumped      = $null
+                      versionOldArray    = $null
+                      versionBumpedArray = $null
+                      versionHpp         = Resolve-Path -Path ./tests/TinyUtils/src/version.hpp
+                      macroPrefix        = 'TINYUTILS_VERSION_'}
+    }
+
+    $Script:VersionLocations = [ordered] @{
+        TinyORM = @{
+            VersionOnly = [ordered] @{
+                (Resolve-Path -Path ./NOTES.txt)                                = 1
+                (Resolve-Path -Path ./cmake/vcpkg/ports/tinyorm/vcpkg.json)     = 1
+                (Resolve-Path -Path ./cmake/vcpkg/ports/tinyorm-qt5/vcpkg.json) = 1
+                (Resolve-Path -Path ./docs/building/hello-world.mdx)            = 2
+            }
+            [VersionType]::VersionWith_v = [ordered] @{
+                (Resolve-Path -Path ./NOTES.txt)                 = 1
+                (Resolve-Path -Path ./README.md)                 = 2
+                (Resolve-Path -Path ./docs/README.mdx)           = 1
+                (Resolve-Path -Path ./docs/building/tinyorm.mdx) = 1
+            }
+        }
+        tom = @{
+            [VersionType]::VersionWith_v = [ordered] @{
+                (Resolve-Path -Path ./NOTES.txt)       = 1
+                (Resolve-Path -Path ./README.md)       = 2
+                (Resolve-Path -Path ./docs/README.mdx) = 1
+            }
+        }
+        # TinyUtils doesn't have any version numbers in files
+    }
+
+    $Script:PortfileLocations = [ordered] @{
+        tinyorm       = Resolve-Path -Path ./cmake/vcpkg/ports/tinyorm/portfile.cmake
+        'tinyorm-qt5' = Resolve-Path -Path ./cmake/vcpkg/ports/tinyorm-qt5/portfile.cmake
+    }
+}
 
 # Determine whether the deploy.ps1 script was executed from the TinyORM root folder (contains
 # the .git/ folder)
@@ -645,6 +653,9 @@ Test-GitRoot
 Test-GitBehindOrigin
 Test-GitDevelopBranch
 Test-WorkingTreeClean
+
+# Need to initialize these variables later because of the Resolve-Path calls
+Initialize-ScriptVariables
 
 $Script:BumpsHash.TinyORM.type   = Read-BumpType -Name TinyORM
 $Script:BumpsHash.tom.type       = Read-BumpType -Name tom
