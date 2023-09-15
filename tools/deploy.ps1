@@ -97,6 +97,7 @@ function Test-GitRoot {
         return
     }
 
+    NewLine
     Write-Error ('The deploy.ps1 script must be executed from the TinyORM root folder ' +
         '(.\tools\deploy.ps1)')
     exit 1
@@ -113,6 +114,7 @@ function Test-GitDevelopBranch {
         return
     }
 
+    NewLine
     Write-Error 'The TinyORM current branch must be ''develop'''
     exit 1
 }
@@ -126,6 +128,7 @@ function Test-GitBehindOrigin {
 
     $developBehind = git rev-list --count develop..origin/develop
     if ($developBehind -ne 0) {
+        NewLine
         Write-Error ("The TinyORM 'develop' branch is $developBehind commits behind " +
             'the origin/develop')
         exit 1
@@ -133,6 +136,7 @@ function Test-GitBehindOrigin {
 
     $mainBehind = git rev-list --count main..origin/main
     if ($mainBehind -ne 0) {
+        NewLine
         Write-Error "The TinyORM 'main' branch is $mainBehind commits behind the origin/main"
         exit 1
     }
@@ -150,6 +154,7 @@ function Test-WorkingTreeClean {
         return
     }
 
+    NewLine
     Write-Error 'The TinyORM working tree must be clean'
     exit 1
 }
@@ -253,6 +258,7 @@ function Test-AllBumpsEmpty {
         return
     }
 
+    NewLine
     Write-Error 'Nothing to bump, all bump types were set to don''t bump'
     exit 1
 }
