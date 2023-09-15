@@ -428,11 +428,10 @@ function Edit-VersionNumbersInAllFiles {
             continue
         }
 
-        $versionOld = $bumpValue.versionOld
-
         foreach ($locations in $versionLocationsAll.Value.GetEnumerator()) {
             $regex = ''
             $versionType = $locations.Name
+            $versionOld  = $bumpValue.versionOld
 
             # Prepend the v character to better target the replacement (be more accurate)
             if ($versionType -eq [VersionType]::VersionWith_v) {
