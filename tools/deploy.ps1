@@ -622,8 +622,8 @@ function Edit-VcpkgRefAndHash {
         $matchedLinesLength = $matchedLines.Length
         if ($matchedLinesLength -ne $expectedOccurrences) {
             throw "Found '$matchedLinesLength' hash lines for '$regexMatch' regex " +
-            "in the '$portfilePath' file, expected occurrences must be " +
-            "'$expectedOccurrences'."
+                "in the '$portfilePath' file, expected occurrences must be " +
+                "'$expectedOccurrences'."
         }
 
         $fileContentReplaced = $fileContent -creplace $regexRef, "`${ref}$vcpkgRef" `
