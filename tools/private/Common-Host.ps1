@@ -19,13 +19,13 @@ function Write-Header {
     )
 
     if (-not $NoNewlineBefore) {
-        NewLine
+        Write-Host
     }
 
     Write-Host $Header -ForegroundColor DarkBlue
 
     if (-not $NoNewlineAfter) {
-        NewLine
+        Write-Host
     }
 }
 
