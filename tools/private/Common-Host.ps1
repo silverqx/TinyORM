@@ -43,7 +43,7 @@ function Write-Progress {
 }
 
 # Present a dialog allowing the user to choose continue or quit
-function Confirm-Continue {
+function Approve-Continue {
     [OutputType([void])]
     Param()
 
