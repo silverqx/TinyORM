@@ -396,7 +396,7 @@ function Edit-VersionNumbersInVersionHpp {
         $versionBumpedArray  = $bumpValue.versionBumpedArray
         $expectedOccurrences = 1
 
-        $regex = "^(#define $macroPrefix$($mapBumpTypeToMacro[$bumpType]) )(?<version>\d+)$"
+        $regex = "^(?<before>#define $macroPrefix$($mapBumpTypeToMacro[$bumpType]) )(?<version>\d+)$"
 
         $fileContent = Get-Content -Path $versionHppPath
 
@@ -420,7 +420,7 @@ function Edit-VersionNumbersInVersionHpp {
 
         # Replace the old version number with the bumped version number
         $versionNumberBumped = $versionBumpedArray[$bumpType.GetHashCode()]
-        $fileContentReplaced = $fileContent -creplace $regex, "`${1}$($versionNumberBumped)"
+        $fileContentReplaced = $fileContent -creplace $regex, "`${before}$versionNumberBumped"
 
         # Save to the file
         ($fileContentReplaced -join "`n") + "`n" | Set-Content -Path $versionHppPath -NoNewline
