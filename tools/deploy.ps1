@@ -610,7 +610,7 @@ function Edit-VcpkgRefAndHash {
 }
 
 # Remove the 'port-version' field from vcpkg.json files if needed
-function Remove-PortVersion {
+function Remove-PortVersions {
     [OutputType([string])]
     Param()
 
@@ -753,7 +753,7 @@ function Invoke-UpdateVcpkgPorts {
     Write-Header 'Updating vcpkg ports REF and SHA512'
 
     Edit-VcpkgRefAndHash
-    Remove-PortVersion
+    Remove-PortVersions
 
     Show-DiffSummaryAndApprove
 
