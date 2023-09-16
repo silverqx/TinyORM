@@ -101,10 +101,18 @@ function Approve-Continue {
         [string]
         $Caption = '',
 
-        [Parameter(HelpMessage = 'Specifies a message that describes what the choice is for.')]
+        [Parameter(Position = 0,
+            HelpMessage = 'Specifies a message that describes what the choice is for.')]
         [ValidateNotNullOrEmpty()]
         [string]
         $Message = 'Ok to proceed?',
+
+        [Parameter(HelpMessage = 'The index of the label in the choices collection element ' +
+            'to be presented to the user as the default choice. -1 means "no default". ' +
+            'Must be a valid index.')]
+        [ValidateNotNull()]
+        [int]
+        $DefaultChoice = 1,
 
         [Parameter(ParameterSetName = 'Exit',
             HelpMessage = 'No newline before the header message.')]
@@ -126,7 +134,7 @@ function Approve-Continue {
     ))
 
     NewLine
-    $answer = $Host.Ui.PromptForChoice($Caption, $Message, $confirmChoices, 1)
+    $answer = $Host.Ui.PromptForChoice($Caption, $Message, $confirmChoices, $DefaultChoice)
 
     if ($isExitSet) {
         switch ($answer) {

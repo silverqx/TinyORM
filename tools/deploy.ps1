@@ -684,7 +684,7 @@ function Invoke-BumpVersions {
     Param()
 
     # Allow to skip bumping version numbers
-    $answer = Approve-Continue -Message 'Do you want to bump version numbers?'
+    $answer = Approve-Continue 'Do you want to bump version numbers?'
     if ($answer -eq 1) {
         return
     }
