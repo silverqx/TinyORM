@@ -606,7 +606,7 @@ function Edit-VcpkgRefAndHash {
 
         $matchedLines = $fileContent -cmatch $regexMatch
 
-        # Verify is the file contains the REF and SHA512 lines
+        # Verify if the file contains the REF and SHA512 lines
         $matchedLinesLength = $matchedLines.Length
         if ($matchedLinesLength -ne $expectedOccurrences) {
             throw "Found '$matchedLinesLength' hash lines for '$regexMatch' regex " +
