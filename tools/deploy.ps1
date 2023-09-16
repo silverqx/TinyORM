@@ -177,7 +177,7 @@ function Test-LastExitCode {
     Write-ExitError "The last command failed `$LASTEXITCODE was $LASTEXITCODE"
 }
 
-# Reads the bump type to do for the given library
+# Read the bump type to do for the given library
 function Read-BumpType {
     [OutputType([BumpType])]
     Param(
