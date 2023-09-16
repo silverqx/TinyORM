@@ -24,7 +24,7 @@ $Script:BumpsHash = $null
 # Files in which the version numbers needs to be bumped (integer value is the number of updates)
 $Script:VersionLocations = $null
 # Vcpkg port filepaths and bumping port-version field for tinyorm and tinyorm-qt5 ports
-$Script:VcpkgLocations = $null
+$Script:VcpkgHash = $null
 
 # Functions section
 # ---
@@ -89,7 +89,7 @@ function Initialize-ScriptVariables {
         # TinyUtils doesn't have any version numbers in files
     }
 
-    $Script:VcpkgLocations = [ordered] @{
+    $Script:VcpkgHash = [ordered] @{
         tinyorm       = @{
             portfile  = Resolve-Path -Path ./cmake/vcpkg/ports/tinyorm/portfile.cmake
             vcpkgJson = Resolve-Path -Path ./cmake/vcpkg/ports/tinyorm/vcpkg.json
@@ -580,7 +580,7 @@ function Edit-VcpkgRefAndHash {
 
     $vcpkgHash = Get-VcpkgHash -Project 'silverqx/TinyORM' -Branch 'main'
 
-    foreach ($portfiles in $Script:VcpkgLocations.GetEnumerator()) {
+    foreach ($portfiles in $Script:VcpkgHash.GetEnumerator()) {
         $regexRef   = '(?<ref>    REF )(?:[0-9a-f]{40})'
         $regexHash  = '(?<sha512>    SHA512 )(?:[0-9a-f]{128})'
         $regexMatch = "$regexRef|$regexHash"
@@ -621,7 +621,7 @@ function Remove-PortVersion {
         return
     }
 
-    foreach ($portfiles in $Script:VcpkgLocations.GetEnumerator()) {
+    foreach ($portfiles in $Script:VcpkgHash.GetEnumerator()) {
         $regex = '\s*?"port-version"\s*?:\s*?\d+\s*?,?\s*?'
 
         $vcpkgJsonPath = $portfiles.Value.vcpkgJson
