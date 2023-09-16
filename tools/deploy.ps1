@@ -232,6 +232,8 @@ function Read-VersionNumbers {
     [OutputType([void])]
     Param()
 
+    Write-Progress 'Reading version numbers from version.hpp files...'
+
     foreach ($bumpRow in $Script:BumpsHash.GetEnumerator()) {
         $bumpValue = $bumpRow.Value
 
