@@ -544,43 +544,6 @@ function Get-BumpCommitMessage {
     return $message
 }
 
-# Switch to the main branch, merge develop branch, and push to the origin/main branch
-function Invoke-MergeDevelopAndDeploy {
-    [OutputType([void])]
-    Param()
-
-    # Verify if the current branch is develop and the working tree is still clean
-    NewLine
-    Test-GitBehindOrigin
-    Test-GitDevelopBranch
-    Test-WorkingTreeClean
-
-    NewLine
-    Write-Progress 'Pushing to origin/develop branch...'
-    git push --progress origin refs/heads/develop:refs/heads/develop
-    Test-LastExitCode
-
-    NewLine
-    Write-Progress 'Switching to main branch...'
-    git switch main
-    Test-LastExitCode
-
-    NewLine
-    Write-Progress 'Merging develop branch...'
-    git merge --ff-only develop
-    Test-LastExitCode
-
-    NewLine
-    Write-Progress 'Pushing to origin/main branch...'
-    git push --progress origin refs/heads/main:refs/heads/main
-    Test-LastExitCode
-
-    NewLine
-    Write-Progress 'Switching back to develop branch...'
-    git switch develop
-    Test-LastExitCode
-}
-
 # Get the origin/main commit ID (SHA-1)
 function Get-VcpkgRef {
     [OutputType([string])]
@@ -677,6 +640,43 @@ function Get-VcpkgCommitMessage {
     Write-Progress 'Generating the vcpkg commit message...'
 
     return "updated vcpkg REF and SHA512`n`n[skip ci]"
+}
+
+# Switch to the main branch, merge develop branch, and push to the origin/main branch
+function Invoke-MergeDevelopAndDeploy {
+    [OutputType([void])]
+    Param()
+
+    # Verify if the current branch is develop and the working tree is still clean
+    NewLine
+    Test-GitBehindOrigin
+    Test-GitDevelopBranch
+    Test-WorkingTreeClean
+
+    NewLine
+    Write-Progress 'Pushing to origin/develop branch...'
+    git push --progress origin refs/heads/develop:refs/heads/develop
+    Test-LastExitCode
+
+    NewLine
+    Write-Progress 'Switching to main branch...'
+    git switch main
+    Test-LastExitCode
+
+    NewLine
+    Write-Progress 'Merging develop branch...'
+    git merge --ff-only develop
+    Test-LastExitCode
+
+    NewLine
+    Write-Progress 'Pushing to origin/main branch...'
+    git push --progress origin refs/heads/main:refs/heads/main
+    Test-LastExitCode
+
+    NewLine
+    Write-Progress 'Switching back to develop branch...'
+    git switch develop
+    Test-LastExitCode
 }
 
 # Bump version numbers
