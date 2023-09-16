@@ -490,7 +490,7 @@ function Show-DiffSummaryAndApprove {
 
     NewLine
     Write-Info 'Please check updated versions in SmartGit...'
-    Approve-Continue
+    Approve-Continue -Exit
 }
 
 # Put together a commit message based on all bump types and version numbers

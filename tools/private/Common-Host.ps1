@@ -90,21 +90,50 @@ function Write-ExitError {
     exit $ExitCode
 }
 
-# Present a dialog allowing the user to choose continue or quit
+# Present a dialog allowing the user to choose continue or quit/return
 function Approve-Continue {
-    [OutputType([void])]
-    Param()
+    [CmdletBinding(DefaultParameterSetName = 'Return')]
+    [OutputType([int], ParameterSetName = 'Return')]
+    [OutputType([void], ParameterSetName = 'Exit')]
+    Param(
+        [Parameter(HelpMessage = 'Specifies the caption to precede or title the prompt.')]
+        [ValidateNotNull()]
+        [string]
+        $Caption = '',
+
+        [Parameter(HelpMessage = 'Specifies a message that describes what the choice is for.')]
+        [ValidateNotNullOrEmpty()]
+        [string]
+        $Message = 'Ok to proceed?',
+
+        [Parameter(ParameterSetName = 'Exit',
+            HelpMessage = 'No newline before the header message.')]
+        [switch] $Exit,
+
+        [Parameter(ParameterSetName = 'Exit', HelpMessage = 'Specifies the exit code.')]
+        [ValidateNotNull()]
+        [int]
+        $ExitCode = 1
+    )
+
+    $isExitSet = $PsCmdlet.ParameterSetName -eq 'Exit'
 
     $confirmChoices = [System.Management.Automation.Host.ChoiceDescription[]](@(
         New-Object System.Management.Automation.Host.ChoiceDescription('&Yes', 'Continue')
-        New-Object System.Management.Automation.Host.ChoiceDescription('&No', 'Quit')
+        New-Object System.Management.Automation.Host.ChoiceDescription( `
+            '&No', ($isExitSet ? 'Quit' : 'Skip')
+        )
     ))
 
     NewLine
-    $answer = $Host.Ui.PromptForChoice('', 'Ok to proceed?', $confirmChoices, 1)
+    $answer = $Host.Ui.PromptForChoice($Caption, $Message, $confirmChoices, 1)
 
-    switch ($answer) {
-        0 { break }
-        1 { "`nQuit"; exit 1 }
+    if ($isExitSet) {
+        switch ($answer) {
+            0 { return }
+            1 { Write-ExitError -ExitCode $ExitCode "Quit" }
+        }
     }
+
+    return $answer
 }
