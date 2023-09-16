@@ -314,7 +314,7 @@ function Update-VersionNumbers {
 }
 
 # Get the longest size of the bumped version numbers
-function Get-MaxVersionNumberLength {
+function Get-MaxVersionNumbersLength {
     [OutputType([int])]
     Param()
 
@@ -328,12 +328,12 @@ function Get-MaxVersionNumberLength {
             continue
         }
 
-        $versionBumpedLength = $bumpValue.versionBumped.Length
-        if ($versionBumpedLength -le $result) {
+        $versionOldLength = $bumpValue.versionOld.Length
+        if ($versionOldLength -le $result) {
             continue
         }
 
-        $result = $versionBumpedLength
+        $result = $versionOldLength
     }
 
     return $result
@@ -346,6 +346,8 @@ function Show-VersionNumbers {
 
     Write-Progress 'Showing bumped version numbers...'
     NewLine
+
+    $maxVersionNumbersLength = Get-MaxVersionNumbersLength
 
     foreach ($bumpRow in $Script:BumpsHash.GetEnumerator()) {
         $bumpValue = $bumpRow.Value
@@ -360,8 +362,7 @@ function Show-VersionNumbers {
         }
 
         # Display the current/old and the bumped/new version number
-        $versionOldPadding = Get-MaxVersionNumberLength + 1
-        $versionOldPadded = $bumpValue.versionOld.PadRight($versionOldPadding)
+        $versionOldPadded = $bumpValue.versionOld.PadRight($maxVersionNumbersLength)
 
         Write-Host "$versionOldPadded -> $($bumpValue.versionBumped)"
     }
