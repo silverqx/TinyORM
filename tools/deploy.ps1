@@ -242,8 +242,9 @@ function Read-VersionNumbers {
             continue
         }
 
-        $versionHppPath = $bumpValue.versionHpp
-        $macroPrefix    = $bumpValue.macroPrefix
+        $versionHppPath      = $bumpValue.versionHpp
+        $macroPrefix         = $bumpValue.macroPrefix
+        $expectedOccurrences = 3
 
         # Obtain all C macros with version numbers
         # No Test-Path check needed as version.hpp filepaths were passed using the Resolve-Path
@@ -253,9 +254,10 @@ function Read-VersionNumbers {
             }
         # Verify
         $versionMacrosLength = $versionMacros.Length
-        if ($versionMacrosLength -ne 3) {
+        if ($versionMacrosLength -ne $expectedOccurrences) {
             throw "Found '$versionMacrosLength' version C macros for '$macroPrefix' " +
-                "in the '$versionHppPath' file, they must be '3' (major, minor, and bugfix)."
+                "in the '$versionHppPath' file, they must be '$expectedOccurrences' " +
+                '(major, minor, and bugfix).'
         }
 
         # Obtain version numbers
@@ -265,9 +267,10 @@ function Read-VersionNumbers {
         }
         # Verify
         $versionLength = $version.Length
-        if ($versionLength -ne 3) {
+        if ($versionLength -ne $expectedOccurrences) {
             throw "Found '$versionLength' version numbers for '$macroPrefix' " +
-                "in the '$versionHppPath' file, they must be '3' (major, minor, and bugfix)."
+                "in the '$versionHppPath' file, they must be '$expectedOccurrences' " +
+                '(major, minor, and bugfix).'
         }
 
         $bumpValue.versionOldArray = $version
@@ -621,18 +624,18 @@ function Remove-PortVersion {
         $regex = '\s*?"port-version"\s*?:\s*?\d+\s*?,?\s*?'
 
         $vcpkgJsonPath = $portfiles.Value.vcpkgJson
-        $expectedOccurrences = 1
+        $expectedOccurrences = @(0, 1)
 
         $fileContent = Get-Content -Path $vcpkgJsonPath
 
-        $matchedLines = $fileContent -cmatch $regex
+        $portVersionField = $fileContent -cmatch $regex
 
         # Verify if the vcpkg.json file contains one or zero port-version lines
-        $matchedLinesLength = $matchedLines.Length
-        if ($matchedLinesLength -ne $expectedOccurrences -and $matchedLinesLength -ne 0) {
-            throw "Found '$matchedLinesLength' hash lines for '$regex' regex " +
-            "in the '$vcpkgJsonPath' file, expected occurrences must be " +
-            "'0' or '$expectedOccurrences'."
+        $portVersionFieldLength = $portVersionField.Length
+        if (-not $expectedOccurrences.Contains($portVersionFieldLength)) {
+            throw "Found '$portVersionFieldLength' port-version field for '$regex' regex " +
+                "in the '$vcpkgJsonPath' file, expected occurrences must be '" +
+                ($expectedOccurrences -join "' or '") + "'."
         }
 
         # Remove the port-version field from the vcpkg.json file
