@@ -609,7 +609,7 @@ function Edit-VcpkgRefAndHash {
     }
 }
 
-# Remove the 'port-version' field from the vcpkg.json if needed
+# Remove the 'port-version' field from vcpkg.json files if needed
 function Remove-PortVersion {
     [OutputType([string])]
     Param()
