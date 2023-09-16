@@ -23,7 +23,7 @@ enum VersionType {
 $Script:BumpsHash = $null
 # Files in which the version numbers needs to be bumped (integer value is the number of updates)
 $Script:VersionLocations = $null
-# Vcpkg port filepaths for tinyorm and tinyorm-qt5 ports
+# Vcpkg port filepaths and bumping port-version field for tinyorm and tinyorm-qt5 ports
 $Script:VcpkgLocations = $null
 
 # Functions section
