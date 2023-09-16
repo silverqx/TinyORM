@@ -262,6 +262,7 @@ function Test-AllBumpsEmpty {
         return
     }
 
+    # I will exit here in this case and don't future process the vcpkg update logic, is ok
     Write-ExitError 'Nothing to bump, all bump types were set to don''t bump'
 }
 
