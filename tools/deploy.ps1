@@ -652,16 +652,16 @@ function Remove-PortVersion {
 
         $matchedLines = $fileContent -cmatch $regex
 
-        # Verify if the vcpkg.json file contains the port-version line
+        # Verify if the vcpkg.json file contains one or zero port-version lines
         $matchedLinesLength = $matchedLines.Length
-        if ($matchedLinesLength -ne $expectedOccurrences) {
+        if ($matchedLinesLength -ne $expectedOccurrences -and $matchedLinesLength -ne 0) {
             throw "Found '$matchedLinesLength' hash lines for '$regex' regex " +
             "in the '$vcpkgJsonPath' file, expected occurrences must be " +
-            "'$expectedOccurrences'."
+            "'0' or '$expectedOccurrences'."
         }
 
         # Remove the port-version field from the vcpkg.json file
-        $fileContentReplaced = $fileContent -creplace $regex, ''
+        $fileContentReplaced = $fileContent | Where-Object { $_ -cnotmatch $regex }
 
         # Save to the file
         ($fileContentReplaced -join "`n") + "`n" | Set-Content -Path $vcpkgJsonPath -NoNewline
