@@ -23,8 +23,8 @@ enum VersionType {
 $Script:BumpsHash = $null
 # Files in which the version numbers needs to be bumped (integer value is the number of updates)
 $Script:VersionLocations = $null
-# Vcpkg portfile filepaths for tinyorm and tinyorm-qt5 ports
-$Script:PortfileLocations = $null
+# Vcpkg port filepaths for tinyorm and tinyorm-qt5 ports
+$Script:VcpkgLocations = $null
 
 # Functions section
 # ---
@@ -86,9 +86,16 @@ function Initialize-ScriptVariables {
         # TinyUtils doesn't have any version numbers in files
     }
 
-    $Script:PortfileLocations = [ordered] @{
-        tinyorm       = Resolve-Path -Path ./cmake/vcpkg/ports/tinyorm/portfile.cmake
-        'tinyorm-qt5' = Resolve-Path -Path ./cmake/vcpkg/ports/tinyorm-qt5/portfile.cmake
+    $Script:VcpkgLocations = [ordered] @{
+        tinyorm       = @{
+            portfile  = Resolve-Path -Path ./cmake/vcpkg/ports/tinyorm/portfile.cmake
+            vcpkgJson = Resolve-Path -Path ./cmake/vcpkg/ports/tinyorm/vcpkg.json
+        }
+
+        'tinyorm-qt5' = @{
+            portfile  = Resolve-Path -Path ./cmake/vcpkg/ports/tinyorm-qt5/portfile.cmake
+            vcpkgJson = Resolve-Path -Path ./cmake/vcpkg/ports/tinyorm-qt5/portfile.cmake
+        }
     }
 }
 
@@ -594,12 +601,12 @@ function Edit-VcpkgRefAndHash {
 
     $vcpkgHash = Get-VcpkgHash -Project 'silverqx/TinyORM' -Branch 'main'
 
-    foreach ($portfile in $Script:PortfileLocations.GetEnumerator()) {
+    foreach ($portfiles in $Script:VcpkgLocations.GetEnumerator()) {
         $regexRef   = '(?<ref>    REF )(?:[0-9a-f]{40})'
         $regexHash  = '(?<sha512>    SHA512 )(?:[0-9a-f]{128})'
         $regexMatch = "$regexRef|$regexHash"
 
-        $portfilePath = $portfile.Value
+        $portfilePath = $portfiles.Value.portfile
         $expectedOccurrences = 2
 
         $fileContent = Get-Content -Path $portfilePath
@@ -620,6 +627,44 @@ function Edit-VcpkgRefAndHash {
 
         # Save to the file
         ($fileContentReplaced -join "`n") + "`n" | Set-Content -Path $portfilePath -NoNewline
+    }
+}
+
+# Remove the 'port-version' field from the vcpkg.json if needed
+function Remove-PortVersion {
+    [OutputType([string])]
+    Param()
+
+    Write-Progress 'Removing the port-version field from vcpkg.json...'
+
+    # Nothing to do, the TinyORM version wasn't bumped
+    if ($Script:BumpsHash.TinORM.type -eq [BumpType]::None) {
+        return
+    }
+
+    foreach ($portfiles in $Script:VcpkgLocations.GetEnumerator()) {
+        $regex = '\s*?"port-version"\s*?:\s*?\d+\s*?,?\s*?'
+
+        $vcpkgJsonPath = $portfiles.Value.vcpkgJson
+        $expectedOccurrences = 1
+
+        $fileContent = Get-Content -Path $vcpkgJsonPath
+
+        $matchedLines = $fileContent -cmatch $regex
+
+        # Verify if the vcpkg.json file contains the port-version line
+        $matchedLinesLength = $matchedLines.Length
+        if ($matchedLinesLength -ne $expectedOccurrences) {
+            throw "Found '$matchedLinesLength' hash lines for '$regex' regex " +
+            "in the '$vcpkgJsonPath' file, expected occurrences must be " +
+            "'$expectedOccurrences'."
+        }
+
+        # Remove the port-version field from the vcpkg.json file
+        $fileContentReplaced = $fileContent -creplace $regex, ''
+
+        # Save to the file
+        ($fileContentReplaced -join "`n") + "`n" | Set-Content -Path $vcpkgJsonPath -NoNewline
     }
 }
 
@@ -685,6 +730,7 @@ Write-Info 'TinyORM was bumped and deployed successfully. 🥳'
 Write-Header "Updating vcpkg ports REF and SHA512"
 
 Edit-VcpkgRefAndHash
+Remove-PortVersion
 
 Show-DiffSummaryAndApprove
 
@@ -725,6 +771,7 @@ Write-Info 'vcpkg ports were updated and deployed successfully. 🥳'
     - update the REF value
     - obtain the `origin/main` archive hash (SHA512)
     - update the SHA512 value
+    - remove the port-version field in vcpkg.json if needed
   - prepare the vcpkg commit message
   - do the commit, merge to the `main` branch (ff-only), and push to the `origin/main`
 
