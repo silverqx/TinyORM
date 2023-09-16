@@ -678,6 +678,79 @@ function Get-VcpkgCommitMessage {
     return "updated vcpkg REF and SHA512`n`n[skip ci]"
 }
 
+# Bump version numbers
+function Invoke-BumpVersions {
+    [OutputType([string])]
+    Param()
+
+    # Allow to skip bumping version numbers
+    $answer = Approve-Continue -Message 'Do you want to bump version numbers?'
+    if ($answer -eq 1) {
+        return
+    }
+
+    # Need to initialize these variables later because of the Resolve-Path calls
+    Initialize-ScriptVariables
+
+    # Select which version numbers to bump
+    $Script:BumpsHash.TinyORM.type   = Read-BumpType -Name TinyORM
+    $Script:BumpsHash.tom.type       = Read-BumpType -Name tom
+    $Script:BumpsHash.TinyUtils.type = Read-BumpType -Name TinyUtils
+
+    Test-AllBumpsEmpty
+
+    # Obtain version numbers from version.hpp files
+    Read-VersionNumbers
+
+    # Bump all version numbers
+    Update-VersionNumbers
+    Show-VersionNumbers
+
+    # Update these version numbers in all files
+    Edit-VersionNumbersInVersionHpp
+    Edit-VersionNumbersInAllFiles
+
+    Show-DiffSummaryAndApprove
+
+    NewLine
+    Write-Progress 'Committing bumped version numbers...'
+    git commit --all --edit --message=$(Get-BumpCommitMessage)
+    Test-LastExitCode
+
+    # Merge to origin/main and push
+    Invoke-MergeDevelopAndDeploy
+
+    NewLine
+    Write-Info 'TinyORM was bumped and deployed successfully. 🥳'
+}
+
+# Vcpkg ports update
+function Invoke-UpdateVcpkgPorts {
+    [OutputType([string])]
+    Param()
+
+    # Don't allow to skip updating the vcpkg ports because they must be always updated if merging
+    # into the main branch
+
+    Write-Header 'Updating vcpkg ports REF and SHA512'
+
+    Edit-VcpkgRefAndHash
+    Remove-PortVersion
+
+    Show-DiffSummaryAndApprove
+
+    NewLine
+    Write-Progress 'Committing vcpkg REF and SHA512...'
+    git commit --all --message=$(Get-VcpkgCommitMessage)
+    Test-LastExitCode
+
+    # Merge to origin/main and push
+    Invoke-MergeDevelopAndDeploy
+
+    NewLine
+    Write-Info 'vcpkg ports were updated and deployed successfully. 🥳'
+}
+
 # Main section
 # ---
 
@@ -690,60 +763,8 @@ Test-GitBehindOrigin
 Test-GitDevelopBranch
 Test-WorkingTreeClean
 
-# Need to initialize these variables later because of the Resolve-Path calls
-Initialize-ScriptVariables
-
-# Select which version numbers to bump
-$Script:BumpsHash.TinyORM.type   = Read-BumpType -Name TinyORM
-$Script:BumpsHash.tom.type       = Read-BumpType -Name tom
-$Script:BumpsHash.TinyUtils.type = Read-BumpType -Name TinyUtils
-
-Test-AllBumpsEmpty
-
-# Obtain version numbers from version.hpp files
-Read-VersionNumbers
-
-# Bump all version numbers
-Update-VersionNumbers
-Show-VersionNumbers
-
-# Update these version numbers in all files
-Edit-VersionNumbersInVersionHpp
-Edit-VersionNumbersInAllFiles
-
-Show-DiffSummaryAndApprove
-
-NewLine
-Write-Progress 'Committing bumped version numbers...'
-git commit --all --edit --message=$(Get-BumpCommitMessage)
-Test-LastExitCode
-
-# Merge to origin/main and push
-Invoke-MergeDevelopAndDeploy
-
-NewLine
-Write-Info 'TinyORM was bumped and deployed successfully. 🥳'
-
-# vcpkg update portfiles
-# ---
-
-Write-Header "Updating vcpkg ports REF and SHA512"
-
-Edit-VcpkgRefAndHash
-Remove-PortVersion
-
-Show-DiffSummaryAndApprove
-
-NewLine
-Write-Progress 'Committing vcpkg REF and SHA512...'
-git commit --all --message=$(Get-VcpkgCommitMessage)
-Test-LastExitCode
-
-# Merge to origin/main and push
-Invoke-MergeDevelopAndDeploy
-
-NewLine
-Write-Info 'vcpkg ports were updated and deployed successfully. 🥳'
+Invoke-BumpVersions
+Invoke-UpdateVcpkgPorts
 
 <#
  .Synopsis
