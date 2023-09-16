@@ -202,6 +202,25 @@ function Read-BumpType {
     return [Enum]::ToObject([BumpType], $answer)
 }
 
+# Determine whether all bump types were set to the None value (don't bump)
+function Test-AllBumpsEmpty {
+    [OutputType([void])]
+    Param()
+
+    NewLine
+    Write-Progress 'Testing if all bump types are empty...'
+
+    if ($Script:BumpsHash.TinyORM.type -ne [BumpType]::None -or
+        $Script:BumpsHash.tom.type -ne [BumpType]::None -or
+        $Script:BumpsHash.TinyUtils.type -ne [BumpType]::None
+    ) {
+        return
+    }
+
+    # I will exit here in this case and don't future process the vcpkg update logic, is ok
+    Write-ExitError 'Nothing to bump, all bump types were set to don''t bump'
+}
+
 # Read version numbers from version.hpp files and initialize the $Script:BumpsHash
 function Read-VersionNumbers {
     [OutputType([void])]
@@ -245,25 +264,6 @@ function Read-VersionNumbers {
 
         $bumpValue.versionOldArray = $version
     }
-}
-
-# Determine whether all bump types were set to the None value (don't bump)
-function Test-AllBumpsEmpty {
-    [OutputType([void])]
-    Param()
-
-    NewLine
-    Write-Progress 'Testing if all bump types are empty...'
-
-    if ($Script:BumpsHash.TinyORM.type   -ne [BumpType]::None -or
-        $Script:BumpsHash.tom.type       -ne [BumpType]::None -or
-        $Script:BumpsHash.TinyUtils.type -ne [BumpType]::None
-    ) {
-        return
-    }
-
-    # I will exit here in this case and don't future process the vcpkg update logic, is ok
-    Write-ExitError 'Nothing to bump, all bump types were set to don''t bump'
 }
 
 # Bump version numbers by the chosen bump type
