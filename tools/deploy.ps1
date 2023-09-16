@@ -638,7 +638,7 @@ function Remove-PortVersion {
     Write-Progress 'Removing the port-version field from vcpkg.json...'
 
     # Nothing to do, the TinyORM version wasn't bumped
-    if ($Script:BumpsHash.TinORM.type -eq [BumpType]::None) {
+    if ($Script:BumpsHash.TinyORM.type -eq [BumpType]::None) {
         return
     }
 
