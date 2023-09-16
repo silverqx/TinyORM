@@ -689,9 +689,6 @@ function Invoke-BumpVersions {
         return
     }
 
-    # Need to initialize these variables later because of the Resolve-Path calls
-    Initialize-ScriptVariables
-
     # Select which version numbers to bump
     $Script:BumpsHash.TinyORM.type   = Read-BumpType -Name TinyORM
     $Script:BumpsHash.tom.type       = Read-BumpType -Name tom
@@ -762,6 +759,9 @@ Test-GitRoot
 Test-GitBehindOrigin
 Test-GitDevelopBranch
 Test-WorkingTreeClean
+
+# Need to initialize these variables later because of the Resolve-Path calls
+Initialize-ScriptVariables
 
 Invoke-BumpVersions
 Invoke-UpdateVcpkgPorts
