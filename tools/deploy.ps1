@@ -274,7 +274,7 @@ function Read-VersionNumbers {
     }
 }
 
-# Bump version numbers by the chosen bump type
+# Bump version numbers by the chosen bump types
 function Update-VersionNumbers {
     [OutputType([void])]
     Param()
