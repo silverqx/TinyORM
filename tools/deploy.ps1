@@ -94,7 +94,7 @@ function Initialize-ScriptVariables {
 
         'tinyorm-qt5' = @{
             portfile  = Resolve-Path -Path ./cmake/vcpkg/ports/tinyorm-qt5/portfile.cmake
-            vcpkgJson = Resolve-Path -Path ./cmake/vcpkg/ports/tinyorm-qt5/portfile.cmake
+            vcpkgJson = Resolve-Path -Path ./cmake/vcpkg/ports/tinyorm-qt5/vcpkg.json
         }
     }
 }
