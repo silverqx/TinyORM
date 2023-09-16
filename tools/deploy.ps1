@@ -606,7 +606,7 @@ function Edit-VcpkgRefAndHash {
 
         $matchedLines = $fileContent -cmatch $regexMatch
 
-        # Verify if the file contains the REF and SHA512 lines
+        # Verify if the portfile.cmake file contains the REF and SHA512 lines
         $matchedLinesLength = $matchedLines.Length
         if ($matchedLinesLength -ne $expectedOccurrences) {
             throw "Found '$matchedLinesLength' hash lines for '$regexMatch' regex " +
@@ -614,7 +614,7 @@ function Edit-VcpkgRefAndHash {
                 "'$expectedOccurrences'."
         }
 
-        # Replace the old REF AND SHA512 values with the new values
+        # Replace the old REF AND SHA512 values with the new values in the portfile.cmake
         $fileContentReplaced = $fileContent -creplace $regexRef, "`${ref}$vcpkgRef" `
                                             -creplace $regexHash, "`${sha512}$vcpkgHash"
 
@@ -722,7 +722,9 @@ Write-Info 'vcpkg ports were updated and deployed successfully. 🥳'
   - do the commit, merge to the `main` branch (ff-only), and push to the `origin/main`
   - update the vcpkg `tinyorm` and `tinyorm-qt5` portfiles
     - obtain the `origin/main` commit ID (SHA-1)
+    - update the REF value
     - obtain the `origin/main` archive hash (SHA512)
+    - update the SHA512 value
   - prepare the vcpkg commit message
   - do the commit, merge to the `main` branch (ff-only), and push to the `origin/main`
 
