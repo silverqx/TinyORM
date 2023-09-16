@@ -75,6 +75,7 @@ function Initialize-ScriptVariables {
                 (Resolve-Path -Path ./docs/building/tinyorm.mdx) = 1
             }
         }
+
         tom = @{
             [VersionType]::VersionWith_v = [ordered] @{
                 (Resolve-Path -Path ./NOTES.txt)       = 1
