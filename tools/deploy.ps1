@@ -29,6 +29,9 @@ $Script:VcpkgLocations = $null
 # Functions section
 # ---
 
+# Common functions
+# ---
+
 . $PSScriptRoot\private\Common-Host.ps1
 
 # Initialize all script variables that contain the Resolve-Path call
@@ -176,6 +179,9 @@ function Test-LastExitCode {
 
     Write-ExitError "The last command failed `$LASTEXITCODE was $LASTEXITCODE"
 }
+
+# Bumping version numbers functions
+# ---
 
 # Read the bump type to do for the given library
 function Read-BumpType {
@@ -544,6 +550,9 @@ function Get-BumpCommitMessage {
     return $message
 }
 
+# Vcpkg - updating REF and SHA512 functions
+# ---
+
 # Get the origin/main commit ID (SHA-1)
 function Get-VcpkgRef {
     [OutputType([string])]
@@ -641,6 +650,9 @@ function Get-VcpkgCommitMessage {
 
     return "updated vcpkg REF and SHA512`n`n[skip ci]"
 }
+
+# Main section related functions
+# ---
 
 # Switch to the main branch, merge develop branch, and push to the origin/main branch
 function Invoke-MergeDevelopAndDeploy {
