@@ -294,9 +294,9 @@ function Read-VersionNumbers {
         $versionMacros = (Get-Content -Path $versionHppPath) -cmatch $regex
 
         # Verify
-        $versionMacrosLength = $versionMacros.Length
-        if ($versionMacrosLength -ne $expectedOccurrences) {
-            throw "Found '$versionMacrosLength' version C macros for '$macroPrefix' " +
+        $versionMacrosCount = $versionMacros.Count
+        if ($versionMacrosCount -ne $expectedOccurrences) {
+            throw "Found '$versionMacrosCount' version C macros for '$macroPrefix' " +
                 "in the '$versionHppPath' file, they must be '$expectedOccurrences' " +
                 '(major, minor, and bugfix).'
         }
@@ -309,9 +309,9 @@ function Read-VersionNumbers {
             [int] $Matches.version
         }
         # Verify
-        $versionLength = $version.Length
-        if ($versionLength -ne $expectedOccurrences) {
-            throw "Found '$versionLength' version numbers for '$macroPrefix' " +
+        $versionCount = $version.Count
+        if ($versionCount -ne $expectedOccurrences) {
+            throw "Found '$versionCount' version numbers for '$macroPrefix' " +
                 "in the '$versionHppPath' file, they must be '$expectedOccurrences' " +
                 '(major, minor, and bugfix).'
         }
@@ -447,9 +447,9 @@ function Edit-VersionNumbersInVersionHpp {
         $versionLines = $fileContent -cmatch $regex
 
         # Verify that we found exactly one line
-        $versionLinesLength = $versionLines.Length
-        if ($versionLinesLength -ne $expectedOccurrences) {
-            throw "Found '$versionLinesLength' version lines for '$regex' regex " +
+        $versionLinesCount = $versionLines.Count
+        if ($versionLinesCount -ne $expectedOccurrences) {
+            throw "Found '$versionLinesCount' version lines for '$regex' regex " +
                 "in the '$versionHppPath' file, expected occurrences must be " +
                 "'$expectedOccurrences'."
         }
@@ -513,9 +513,9 @@ function Edit-VersionNumbersInAllFiles {
                 $versionLines = $fileContent -cmatch $regex
 
                 # Verify that the number of expected occurrences of version numbers is correct
-                $versionLinesLength = $versionLines.Length
-                if ($versionLinesLength -ne $expectedOccurrences) {
-                    throw "Found '$versionLinesLength' version number lines for '$regex' regex " +
+                $versionLinesCount = $versionLines.Count
+                if ($versionLinesCount -ne $expectedOccurrences) {
+                    throw "Found '$versionLinesCount' version number lines for '$regex' regex " +
                         "in the '$filePath' file, expected occurrences must be " +
                         "'$expectedOccurrences'."
                 }
@@ -638,9 +638,9 @@ function Edit-VcpkgRefAndHash {
         $matchedLines = $fileContent -cmatch $regexMatch
 
         # Verify if the portfile.cmake file contains the REF and SHA512 lines
-        $matchedLinesLength = $matchedLines.Length
-        if ($matchedLinesLength -ne $expectedOccurrences) {
-            throw "Found '$matchedLinesLength' hash lines for '$regexMatch' regex " +
+        $matchedLinesCount = $matchedLines.Count
+        if ($matchedLinesCount -ne $expectedOccurrences) {
+            throw "Found '$matchedLinesCount' hash lines for '$regexMatch' regex " +
                 "in the '$portfilePath' file, expected occurrences must be " +
                 "'$expectedOccurrences'."
         }
@@ -727,9 +727,9 @@ function Read-PortVersionNumbers {
         $portVersionField = (Get-Content -Path $vcpkgJsonPath) -cmatch $regex
 
         # Verify that we found exactly zero or one line
-        $portVersionFieldLength = $portVersionField.Length
-        if (-not $expectedOccurrences.Contains($portVersionFieldLength)) {
-            throw "Found '$portVersionFieldLength' port-version field for '$regex' " +
+        $portVersionFieldCount = $portVersionField.Count
+        if (-not $expectedOccurrences.Contains($portVersionFieldCount)) {
+            throw "Found '$portVersionFieldCount' port-version field for '$regex' " +
                 "in the '$vcpkgJsonPath' file, they must be '" +
                 ($expectedOccurrences -join "' or '") + "'."
         }
@@ -738,7 +738,7 @@ function Read-PortVersionNumbers {
         # I leave the versionOld in the $null state in this case (don't set it to 0) so we don't
         # lost this information, this state information can be used during
         # the Show-PortVersionNumbers so instead of displaying the 0 we can display None
-        if ($portVersionFieldLength -eq 0) {
+        if ($portVersionFieldCount -eq 0) {
             continue
         }
 
@@ -948,9 +948,9 @@ function Edit-PortVersionNumbers {
         $portVersionField = $fileContent -cmatch $regex
 
         # Verify that we found exactly zero or one line
-        $portVersionFieldLength = $portVersionField.Length
-        if (-not $expectedOccurrences.Contains($portVersionFieldLength)) {
-            throw "Found '$portVersionFieldLength' port-version field for '$regex' " +
+        $portVersionFieldCount = $portVersionField.Count
+        if (-not $expectedOccurrences.Contains($portVersionFieldCount)) {
+            throw "Found '$portVersionFieldCount' port-version field for '$regex' " +
                 "in the '$vcpkgJsonPath' file, they must be '" +
                 ($expectedOccurrences -join "' or '") + "'."
         }
@@ -959,7 +959,7 @@ function Edit-PortVersionNumbers {
         $portName = $portRow.Name
 
         # The vcpkg.json file doesn't contain the port-version field so add it
-        if ($portVersionFieldLength -eq 0) {
+        if ($portVersionFieldCount -eq 0) {
             $fileContentReplaced = Add-PortVersionNumber -Name $portName -FileContent $fileContent
         }
         # The vcpkg.json file contains the port-version field so update it
@@ -992,9 +992,9 @@ function Remove-PortVersions {
         $portVersionField = $fileContent -cmatch $regex
 
         # Verify if the vcpkg.json file contains one or zero port-version lines
-        $portVersionFieldLength = $portVersionField.Length
-        if (-not $expectedOccurrences.Contains($portVersionFieldLength)) {
-            throw "Found '$portVersionFieldLength' port-version field for '$regex' regex " +
+        $portVersionFieldCount = $portVersionField.Count
+        if (-not $expectedOccurrences.Contains($portVersionFieldCount)) {
+            throw "Found '$portVersionFieldCount' port-version field for '$regex' regex " +
                 "in the '$vcpkgJsonPath' file, expected occurrences must be '" +
                 ($expectedOccurrences -join "' or '") + "'."
         }
