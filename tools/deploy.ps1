@@ -1161,7 +1161,7 @@ function Invoke-UpdateVcpkgPorts {
     Invoke-MergeDevelopAndDeploy
 
     NewLine
-    Write-Info 'vcpkg ports were updated and deployed successfully. 🥳'
+    Write-Info 'Vcpkg ports were updated and deployed successfully. 🥳'
 }
 
 # Main section
