@@ -1205,7 +1205,8 @@ Invoke-UpdateVcpkgPorts
     - update the REF value
     - obtain the `origin/main` archive hash (SHA512)
     - update the SHA512 value
-    - remove the port-version field in vcpkg.json if needed
+    - remove the port-version field from vcpkg.json files if TinyOrm version number was bumped
+    - if TinyOrm version number wasn't bumped allow to bump the port-version number in vcpkg.json
   - prepare the vcpkg commit message
   - do the commit, merge to the `main` branch (ff-only), and push to the `origin/main`
 
