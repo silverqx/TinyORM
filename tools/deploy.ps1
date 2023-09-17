@@ -19,6 +19,16 @@ enum VersionType {
     VersionWith_v
 }
 
+# Yes/No enum type
+# Used to determine whether to bump the vcpkg port-version field
+enum YesNoType {
+    Yes
+    No
+}
+
+# Before of Line (to indent)
+$Script:BOL = '  '
+
 # Bumping hash data (contains everything what is needed to bump the version numbers)
 $Script:BumpsHash = $null
 # Files in which the version numbers needs to be bumped (integer value is the number of updates)
@@ -90,14 +100,20 @@ function Initialize-ScriptVariables {
     }
 
     $Script:VcpkgHash = [ordered] @{
-        tinyorm       = @{
-            portfile  = Resolve-Path -Path ./cmake/vcpkg/ports/tinyorm/portfile.cmake
-            vcpkgJson = Resolve-Path -Path ./cmake/vcpkg/ports/tinyorm/vcpkg.json
+        tinyorm           = @{
+            portfile      = Resolve-Path -Path ./cmake/vcpkg/ports/tinyorm/portfile.cmake
+            vcpkgJson     = Resolve-Path -Path ./cmake/vcpkg/ports/tinyorm/vcpkg.json
+            bumpType      = [YesNoType]::No
+            versionOld    = $null
+            versionBumped = $null
         }
 
         'tinyorm-qt5' = @{
-            portfile  = Resolve-Path -Path ./cmake/vcpkg/ports/tinyorm-qt5/portfile.cmake
-            vcpkgJson = Resolve-Path -Path ./cmake/vcpkg/ports/tinyorm-qt5/vcpkg.json
+            portfile      = Resolve-Path -Path ./cmake/vcpkg/ports/tinyorm-qt5/portfile.cmake
+            vcpkgJson     = Resolve-Path -Path ./cmake/vcpkg/ports/tinyorm-qt5/vcpkg.json
+            bumpType      = [YesNoType]::No
+            versionOld    = $null
+            versionBumped = $null
         }
     }
 }
@@ -610,17 +626,329 @@ function Edit-VcpkgRefAndHash {
     }
 }
 
+# Vcpkg - updating port-version field functions
+# ---
+
+# Select for which ports to bump the port-version number
+function Read-PortVersionsToBump {
+    [OutputType([array])]
+    Param()
+
+    $versionTypeChoice = [System.Management.Automation.Host.ChoiceDescription[]](@(
+            New-Object System.Management.Automation.Host.ChoiceDescription(
+                '&tinyorm', 'tinyorm Qt6 port'
+            )
+            New-Object System.Management.Automation.Host.ChoiceDescription(
+                'tinyorm-qt&5', 'tinyorm-qt5 Qt5 port'
+            )
+            New-Object System.Management.Automation.Host.ChoiceDescription(
+                '&Both', 'Both ports tinyorm and tinyorm-qt5'
+            )
+            New-Object System.Management.Automation.Host.ChoiceDescription(
+                '&None', 'Don''t bump'
+            )
+        ))
+
+    $answer = $Host.Ui.PromptForChoice(
+        "Bump `e[32mtinyorm`e[0m and/or `e[32mtinyorm-qt5`e[0m port-version numbers",
+        'Choose the vcpkg port/s to bump:', $versionTypeChoice, 3
+    )
+
+    # References
+    $tinyormValue    = $Script:VcpkgHash.tinyorm
+    $tinyormQt5Value = $Script:VcpkgHash['tinyorm-qt5']
+
+    switch ($answer) {
+        0 { $tinyormValue.bumpType    = [YesNoType]::Yes }
+        1 { $tinyormQt5Value.bumpType = [YesNoType]::Yes }
+        2 {
+            $tinyormValue.bumpType    = [YesNoType]::Yes
+            $tinyormQt5Value.bumpType = [YesNoType]::Yes
+        }
+        3 { return $true }
+        Default {
+            throw 'Unreachable code.'
+        }
+    }
+
+    return $false
+}
+
+# Read port-version numbers from vcpkg.json files and initialize the $Script:VcpkgHash
+function Read-PortVersionNumbers {
+    [OutputType([void])]
+    Param()
+
+    Write-Progress 'Reading port-version numbers from vcpkg.json files...'
+
+    foreach ($portRow in $Script:VcpkgHash.GetEnumerator()) {
+        $portValue = $portRow.Value
+
+        # Nothing to bump
+        if ($portValue.bumpType -eq [YesNoType]::No) {
+            continue
+        }
+
+        $vcpkgJsonPath = $portValue.vcpkgJson
+        $expectedOccurrences = @(0, 1)
+
+        $regex = '"port-version"\s*?:\s*?(?<version>\d+)\s*?,?'
+
+        # Obtain the port-version field with version number
+        # No Test-Path check needed as vcpkg.json filepaths were passed using the Resolve-Path
+        $portVersionField = (Get-Content -Path $vcpkgJsonPath) -cmatch $regex
+
+        # Verify that we found exactly zero or one line
+        $portVersionFieldLength = $portVersionField.Length
+        if (-not $expectedOccurrences.Contains($portVersionFieldLength)) {
+            throw "Found '$portVersionFieldLength' port-version field for '$regex' " +
+                "in the '$vcpkgJsonPath' file, they must be '" +
+                ($expectedOccurrences -join "' or '") + "'."
+        }
+
+        # Nothing to do, the port-version field is not defined in the vcpkg.json file
+        # I leave the versionOld in the $null state in this case (don't set it to 0) so we don't
+        # lost this information, this state information can be used during
+        # the Show-PortVersionNumbers so instead of displaying the 0 we can display None
+        if ($portVersionFieldLength -eq 0) {
+            continue
+        }
+
+        # Obtain the port-version number
+        $portVersionField[0] -cmatch $regex | Out-Null
+        $portVersion = [int] $Matches.version
+
+        $portValue.versionOld = $portVersion
+    }
+}
+
+# Bump port-version numbers by the chosen bump types (Yes/No)
+function Update-PortVersionNumbers {
+    [OutputType([void])]
+    Param()
+
+    Write-Progress 'Bumping port-version numbers...'
+
+    foreach ($portRow in $Script:VcpkgHash.GetEnumerator()) {
+        $portValue = $portRow.Value
+
+        # Nothing to update
+        if ($portValue.bumpType -eq [YesNoType]::No) {
+            continue
+        }
+
+        # Bump the port-version number
+        $portValue.versionBumped = ($portValue.versionOld ?? 0) + 1
+    }
+}
+
+# Get the longest size of the bumped port-version numbers
+function Get-MaxPortVersionNumbersLength {
+    [OutputType([int])]
+    Param()
+
+    [int] $result = 0
+    $noneLength = 'None'.Length
+
+    foreach ($portRow in $Script:VcpkgHash.GetEnumerator()) {
+        $portValue = $portRow.Value
+
+        # Nothing to do
+        if ($portValue.bumpType -eq [YesNoType]::No) {
+            continue
+        }
+
+        $versionOld = $portValue.versionOld
+        $isVersionOldNull = $null -eq $versionOld
+
+        # If the port-version number is $null than the None string will be displayed
+        if ($isVersionOldNull -and $noneLength -gt $result) {
+            $result = $noneLength
+            continue
+        }
+
+        # Nothing to do
+        if ($isVersionOldNull) {
+            continue
+        }
+
+        $versionOldLength = $versionOld.ToString().Length
+
+        if ($versionOldLength -gt $result) {
+            $result = $versionOldLength
+        }
+    }
+
+    return $result
+}
+
+# Display port-version numbers summary
+function Show-PortVersionNumbers {
+    [OutputType([void])]
+    Param()
+
+    Write-Progress 'Showing bumped port-version numbers...'
+    NewLine
+
+    $maxPortVersionNumbersLength = Get-MaxPortVersionNumbersLength
+
+    foreach ($portRow in $Script:VcpkgHash.GetEnumerator()) {
+        $portValue = $portRow.Value
+
+        $portNamePadded = $portRow.Name.PadRight(12)
+        Write-Host "`e[32m$portNamePadded`e[0m" -NoNewline
+
+        # Nothing to do, skipped version number
+        if ($portValue.bumpType -eq [YesNoType]::No) {
+            Write-Host 'Skipped' -ForegroundColor DarkRed
+            continue
+        }
+
+        # Display the current/old and the bumped/new version number
+        $versionOld = $portValue.versionOld ?? 'None'
+        $versionOldPadded = $versionOld.ToString().PadRight($maxPortVersionNumbersLength)
+
+        # Make the None string DarkRed
+        if ($versionOldPadded.StartsWith('None')) {
+            $versionOldPadded = $versionOldPadded.Replace('None', "`e[31mNone`e[0m")
+        }
+
+        Write-Host "$versionOldPadded -> $($portValue.versionBumped)"
+    }
+}
+
+# Add the port-version number field into the vcpkg.json
+function Add-PortVersionNumber {
+    [OutputType([string])]
+    Param(
+        [Parameter(Mandatory,
+            HelpMessage = 'Specifies the vcpkg port name for which to update the port-version ' +
+                'number.')]
+        [ValidateNotNullOrEmpty()]
+        [string]
+        $Name,
+
+        [Parameter(Mandatory, HelpMessage = 'Specifies the vcpkg.json file content.')]
+        [ValidateNotNullOrEmpty()]
+        [string[]]
+        $FileContent
+    )
+
+    Write-Progress "${Script:BOL}Adding bumped port-version number..."
+
+    $portValue = $Script:VcpkgHash[$Name]
+
+    # Verification of the port-version number not needed because we know that there isn't
+    # any port-version field in the vcpkg.json file
+
+    $regex = '"version-semver"\s*?:\s*?"\d+(?:\.\d+){2,3}"\s*?,?.*'
+
+    # Replace the old version number with the bumped version number
+    $portVersionBumped = $portValue.versionBumped
+    return $FileContent -creplace $regex, "`$&`n  `"port-version`": $portVersionBumped,"
+}
+
+# Update the port-version number field in the vcpkg.json
+function Edit-PortVersionNumber {
+    [OutputType([string])]
+    Param(
+        [Parameter(Mandatory,
+            HelpMessage = 'Specifies the vcpkg port name for which to update the port-version ' +
+                'number.')]
+        [ValidateNotNullOrEmpty()]
+        [string]
+        $Name,
+
+        [Parameter(Mandatory, HelpMessage = 'Specifies the port-version field line.')]
+        [ValidateNotNullOrEmpty()]
+        [string]
+        $PortVersionField,
+
+        [Parameter(Mandatory, HelpMessage = 'Specifies the vcpkg.json file content.')]
+        [ValidateNotNullOrEmpty()]
+        [string[]]
+        $FileContent
+    )
+
+    Write-Progress "${Script:BOL}Updating bumped port-version number..."
+
+    $portValue = $Script:VcpkgHash[$Name]
+    $regex = '"port-version"\s*?:\s*?(?<version>\d+)\s*?,?'
+
+    # Verify that the port-version number in the vcpkgHash is still the same
+    $PortVersionField -cmatch $regex | Out-Null
+    $portVersionNow = [int] $Matches.version
+    $portVersionOld = $portValue.versionOld
+    if ($portVersionNow -ne $portVersionOld) {
+        throw "The '$portVersionNow -ne $portVersionOld' for '$regex' regex " +
+            "in the '$($portValue.vcpkgJson)' file."
+    }
+
+    # Replace the old version number with the bumped version number
+    $portVersionBumped = $portValue.versionBumped
+    return $FileContent -creplace $regex, "`"port-version`": $portVersionBumped,"
+}
+
+# Update port-version numbers in vcpkg.json files
+function Edit-PortVersionNumbers {
+    [OutputType([void])]
+    Param()
+
+    NewLine
+    Write-Progress 'Editing bumped port-version numbers in vcpkg.json files...'
+
+    foreach ($portRow in $Script:VcpkgHash.GetEnumerator()) {
+        $portValue = $portRow.Value
+        $bumpType = $portValue.bumpType
+
+        # Nothing to edit
+        if ($bumpType -eq [YesNoType]::No) {
+            continue
+        }
+
+        $vcpkgJsonPath = $portValue.vcpkgJson
+        $expectedOccurrences = @(0, 1)
+
+        $regex = '"port-version"\s*?:\s*?(?<version>\d+)\s*?,?'
+
+        # Obtain the port-version field with version number
+        # No Test-Path check needed as vcpkg.json filepaths were passed using the Resolve-Path
+        $fileContent = Get-Content -Path $vcpkgJsonPath
+        $portVersionField = $fileContent -cmatch $regex
+
+        # Verify that we found exactly zero or one line
+        $portVersionFieldLength = $portVersionField.Length
+        if (-not $expectedOccurrences.Contains($portVersionFieldLength)) {
+            throw "Found '$portVersionFieldLength' port-version field for '$regex' " +
+                "in the '$vcpkgJsonPath' file, they must be '" +
+                ($expectedOccurrences -join "' or '") + "'."
+        }
+
+        $fileContentReplaced = $null
+        $portName = $portRow.Name
+
+        # The vcpkg.json file doesn't contain the port-version field so add it
+        if ($portVersionFieldLength -eq 0) {
+            $fileContentReplaced = Add-PortVersionNumber -Name $portName -FileContent $fileContent
+        }
+        # The vcpkg.json file contains the port-version field so update it
+        else {
+            $fileContentReplaced = `
+                Edit-PortVersionNumber -Name $portName -PortVersionField $portVersionField[0] `
+                                       -FileContent $fileContent
+        }
+
+        # Save to the file
+        ($fileContentReplaced -join "`n") + "`n" | Set-Content -Path $vcpkgJsonPath -NoNewline
+    }
+}
+
 # Remove the 'port-version' field from vcpkg.json files if needed
 function Remove-PortVersions {
     [OutputType([string])]
     Param()
 
     Write-Progress 'Removing the port-version field from vcpkg.json...'
-
-    # Nothing to do, the TinyORM version wasn't bumped
-    if ($Script:BumpsHash.TinyORM.type -eq [BumpType]::None) {
-        return
-    }
 
     foreach ($portfiles in $Script:VcpkgHash.GetEnumerator()) {
         $regex = '\s*?"port-version"\s*?:\s*?\d+\s*?,?\s*?'
@@ -743,6 +1071,29 @@ function Invoke-BumpVersions {
     Write-Info 'TinyORM was bumped and deployed successfully. 🥳'
 }
 
+# Main logic to bump vcpkg port-version fields in the tinyorm and tinyorm-qt5 ports
+function Invoke-BumpPortVersions {
+    [OutputType([string])]
+    Param()
+
+    # Select for which ports to bump the port-version number
+    $cancelBumping = Read-PortVersionsToBump
+    # Nothing to bump
+    if ($cancelBumping) {
+        return
+    }
+
+    # Obtain vcpkg port-version numbers from vcpkg.json files
+    Read-PortVersionNumbers
+
+    # Bump all port-version numbers
+    Update-PortVersionNumbers
+    Show-PortVersionNumbers
+
+    # Update these port-version numbers in vcpkg.json files
+    Edit-PortVersionNumbers
+}
+
 # Vcpkg ports update
 function Invoke-UpdateVcpkgPorts {
     [OutputType([string])]
@@ -754,7 +1105,16 @@ function Invoke-UpdateVcpkgPorts {
     Write-Header 'Updating vcpkg ports REF and SHA512'
 
     Edit-VcpkgRefAndHash
-    Remove-PortVersions
+
+    # Allow to updated port-version fields if TinyORM version wasn't bumped
+    if ($Script:BumpsHash.TinyORM.type -eq [BumpType]::None) {
+        Invoke-BumpPortVersions
+        NewLine
+    }
+    # Remove a port-version fields if the TinyORM version was bumped
+    else {
+        Remove-PortVersions
+    }
 
     Show-DiffSummaryAndApprove
 
