@@ -181,7 +181,7 @@ function Test-WorkingTreeClean {
         return
     }
 
-    Write-ExitError 'The TinyORM working tree must be clean'
+    Write-ExitError 'The TinyORM project working tree must be clean'
 }
 
 # Exit if the $LASTEXITCODE isn't 0
@@ -1099,7 +1099,7 @@ function Invoke-BumpVersions {
     Invoke-MergeDevelopAndDeploy
 
     NewLine
-    Write-Info 'TinyORM was bumped and deployed successfully. 🥳'
+    Write-Info 'TinyORM project was bumped and deployed successfully. 🥳'
 }
 
 # Main logic to bump vcpkg port-version fields in the tinyorm and tinyorm-qt5 ports
