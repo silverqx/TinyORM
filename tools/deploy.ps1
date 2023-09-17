@@ -196,6 +196,30 @@ function Test-LastExitCode {
     Write-ExitError "The last command failed `$LASTEXITCODE was $LASTEXITCODE"
 }
 
+# Throw exception if the RegEx result is $false
+function Test-RegExResult {
+    [OutputType([void])]
+    Param(
+        [Parameter(Position = 0, Mandatory,
+            HelpMessage = 'Specifies the RegEx to display in the exception message.')]
+        [ValidateNotNullOrEmpty()]
+        [string]
+        $RegEx,
+
+        [Parameter(Mandatory, HelpMessage = 'Specifies the RegEx result to test.')]
+        [ValidateNotNull()]
+        [bool]
+        $Result
+    )
+
+    # Nothing to do
+    if ($Result) {
+        return
+    }
+
+    throw "The '$RegEx' regex failed."
+}
+
 # Bumping version numbers functions
 # ---
 
@@ -279,7 +303,9 @@ function Read-VersionNumbers {
 
         # Obtain version numbers
         $version = $versionMacros | ForEach-Object {
-            $_ -cmatch $regex | Out-Null
+            $result = $_ -cmatch $regex
+            Test-RegExResult $regex -Result $result
+
             [int] $Matches.version
         }
         # Verify
@@ -428,9 +454,11 @@ function Edit-VersionNumbersInVersionHpp {
                 "'$expectedOccurrences'."
         }
         # Verify that the version number in the bumpHash is still the same
-        $versionLines[0] -cmatch $regex | Out-Null
+        $result = $versionLines[0] -cmatch $regex
+        Test-RegExResult $regex -Result $result
         $versionNumberNow = [int] $Matches.version
         $versionNumberOld = $versionOldArray[$bumpType.GetHashCode()]
+
         if ($versionNumberNow -ne $versionNumberOld) {
             throw "The '$versionNumberNow -ne $versionNumberOld' for '$regex' regex " +
                 "in the '$versionHppPath' file."
@@ -715,7 +743,8 @@ function Read-PortVersionNumbers {
         }
 
         # Obtain the port-version number
-        $portVersionField[0] -cmatch $regex | Out-Null
+        $result = $portVersionField[0] -cmatch $regex
+        Test-RegExResult $regex -Result $result
         $portVersion = [int] $Matches.version
 
         $portValue.versionOld = $portVersion
@@ -876,9 +905,11 @@ function Edit-PortVersionNumber {
     $regex = '"port-version"\s*?:\s*?(?<version>\d+)\s*?,?'
 
     # Verify that the port-version number in the vcpkgHash is still the same
-    $PortVersionField -cmatch $regex | Out-Null
+    $result = $PortVersionField -cmatch $regex
+    Test-RegExResult $regex -Result $result
     $portVersionNow = [int] $Matches.version
     $portVersionOld = $portValue.versionOld
+
     if ($portVersionNow -ne $portVersionOld) {
         throw "The '$portVersionNow -ne $portVersionOld' for '$regex' regex " +
             "in the '$($portValue.vcpkgJson)' file."
