@@ -540,11 +540,16 @@ function Edit-VersionNumbersInAllFiles {
 # Display the diff summary and approve to continue
 function Show-DiffSummaryAndApprove {
     [OutputType([void])]
-    Param()
+    Param(
+        [Parameter(
+            HelpMessage = 'Specifies the folder for which to show  git diff, is pwd by default.')]
+        [ValidateNotNullOrEmpty()]
+        [string[]] $Path = $($(Get-Location).Path)
+    )
 
     Write-Progress 'Showing diff summary...'
     NewLine
-    git --no-pager diff --compact-summary
+    git --no-pager diff --compact-summary $Path
 
     NewLine
     Write-Info 'Please check updated versions in SmartGit...'
@@ -1150,7 +1155,7 @@ function Invoke-UpdateVcpkgPorts {
         Remove-PortVersions
     }
 
-    Show-DiffSummaryAndApprove
+    Show-DiffSummaryAndApprove -Path (Resolve-Path .\cmake\vcpkg)
 
     NewLine
     Write-Progress 'Committing vcpkg REF and SHA512...'
