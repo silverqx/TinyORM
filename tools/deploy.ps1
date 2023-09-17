@@ -263,12 +263,12 @@ function Read-VersionNumbers {
         $macroPrefix         = $bumpValue.macroPrefix
         $expectedOccurrences = 3
 
+        $regex = "^#define $macroPrefix(?:MAJOR|MINOR|BUGFIX) (?<version>\d+)$"
+
         # Obtain all C macros with version numbers
         # No Test-Path check needed as version.hpp filepaths were passed using the Resolve-Path
-        $versionMacros = Get-Content -Path $versionHppPath
-            | Where-Object {
-                $_ -cmatch "^#define $macroPrefix(?:MAJOR|MINOR|BUGFIX) (?:\d+)$"
-            }
+        $versionMacros = (Get-Content -Path $versionHppPath) -cmatch $regex
+
         # Verify
         $versionMacrosLength = $versionMacros.Length
         if ($versionMacrosLength -ne $expectedOccurrences) {
@@ -279,7 +279,7 @@ function Read-VersionNumbers {
 
         # Obtain version numbers
         $version = $versionMacros | ForEach-Object {
-            $_ -cmatch "^#define $macroPrefix(?:MAJOR|MINOR|BUGFIX) (?<version>\d+)$" | Out-Null
+            $_ -cmatch $regex | Out-Null
             [int] $Matches.version
         }
         # Verify
