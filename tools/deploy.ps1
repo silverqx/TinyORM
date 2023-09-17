@@ -48,7 +48,7 @@ $Script:VcpkgHash = $null
 function Initialize-ScriptVariables {
 
     $Script:BumpsHash = [ordered] @{
-        TinyORM   = @{type               = [BumpType]::None
+        TinyOrm   = @{type               = [BumpType]::None
                       versionOld         = $null
                       versionBumped      = $null
                       versionOldArray    = $null
@@ -74,7 +74,7 @@ function Initialize-ScriptVariables {
     }
 
     $Script:VersionLocations = [ordered] @{
-        TinyORM = @{
+        TinyOrm = @{
             VersionOnly = [ordered] @{
                 (Resolve-Path -Path ./NOTES.txt)                                = 1
                 (Resolve-Path -Path ./cmake/vcpkg/ports/tinyorm/vcpkg.json)     = 1
@@ -257,7 +257,7 @@ function Test-AllBumpsEmpty {
     NewLine
     Write-Progress 'Testing if all bump types are empty...'
 
-    if ($Script:BumpsHash.TinyORM.type -ne [BumpType]::None -or
+    if ($Script:BumpsHash.TinyOrm.type -ne [BumpType]::None -or
         $Script:BumpsHash.tom.type -ne [BumpType]::None -or
         $Script:BumpsHash.TinyUtils.type -ne [BumpType]::None
     ) {
@@ -560,23 +560,26 @@ function Get-BumpCommitMessage {
 
     $message = 'bump version to '
 
-    $TinyORMBumpValue   = $Script:BumpsHash.TinyORM
+    $TinyOrmBumpValue   = $Script:BumpsHash.TinyOrm
     $tomBumpValue       = $Script:BumpsHash.tom
     $TinyUtilsBumpValue = $Script:BumpsHash.TinyUtils
 
-    $isTinyORMBump   = $TinyORMBumpValue.type   -ne [BumpType]::None
+    $isTinyOrmBump   = $TinyOrmBumpValue.type   -ne [BumpType]::None
     $isTomBump       = $tomBumpValue.type       -ne [BumpType]::None
     $isTinyUtilsBump = $TinyUtilsBumpValue.type -ne [BumpType]::None
 
-    # TinyORM
-    if ($isTinyORMBump) {
-        $message += 'TinyORM v' + $TinyORMBumpValue.versionBumped
+    # TinyOrm
+    if ($isTinyOrmBump) {
+        # The TinyORM here is correct, it's the only one exception when the casing doesn't match,
+        # it should be TinyOrm (because it's a version number for the TinyOrm library) but I take it
+        # as TinyORM project (as whole) version number
+        $message += 'TinyORM v' + $TinyOrmBumpValue.versionBumped
     }
 
     # tom
     if ($isTomBump) {
         # Prepend the and word if necessary
-        if ($isTinyORMBump) {
+        if ($isTinyOrmBump) {
             $message += ' and '
         }
         $message += 'tom v' + $tomBumpValue.versionBumped
@@ -585,7 +588,7 @@ function Get-BumpCommitMessage {
     # TinyUtils
     if ($isTinyUtilsBump) {
         # Append the TinyUtils version to the commit message description
-        if ($isTinyORMBump) {
+        if ($isTinyOrmBump) {
             $message += "`n`nAlso bumped to TinyUtils v$($TinyUtilsBumpValue.versionBumped)."
         }
         # Append the TinyUtils version to the commit message title
@@ -1071,7 +1074,7 @@ function Invoke-BumpVersions {
     }
 
     # Select which version numbers to bump
-    $Script:BumpsHash.TinyORM.type   = Read-BumpType -Name TinyORM
+    $Script:BumpsHash.TinyOrm.type   = Read-BumpType -Name TinyOrm
     $Script:BumpsHash.tom.type       = Read-BumpType -Name tom
     $Script:BumpsHash.TinyUtils.type = Read-BumpType -Name TinyUtils
 
@@ -1137,12 +1140,12 @@ function Invoke-UpdateVcpkgPorts {
 
     Edit-VcpkgRefAndHash
 
-    # Allow to updated port-version fields if TinyORM version wasn't bumped
-    if ($Script:BumpsHash.TinyORM.type -eq [BumpType]::None) {
+    # Allow to updated port-version fields if TinyOrm version wasn't bumped
+    if ($Script:BumpsHash.TinyOrm.type -eq [BumpType]::None) {
         Invoke-BumpPortVersions
         NewLine
     }
-    # Remove a port-version fields if the TinyORM version was bumped
+    # Remove a port-version fields if the TinyOrm version was bumped
     else {
         Remove-PortVersions
     }
