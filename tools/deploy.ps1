@@ -201,8 +201,9 @@ function Read-BumpType {
         New-Object System.Management.Automation.Host.ChoiceDescription('&None', 'Don''t bump')
     ))
 
-    $answer = $Host.Ui.PromptForChoice("Bump `e[32m$Name`e[0m", 'Choose the version number to bump',
-                                       $versionTypeChoice, 3)
+    $answer = $Host.Ui.PromptForChoice(
+        "Bump `e[32m$Name`e[0m", 'Choose the version number to bump:', $versionTypeChoice, 3
+    )
 
     # Convert to the real [BumpType] type
     return [Enum]::ToObject([BumpType], $answer)
