@@ -430,6 +430,74 @@ function Show-VersionNumbers {
     }
 }
 
+# Verify that we found exactly the right count of lines based on the version number to bump
+function Test-VersionLinesForVersionHpp {
+    [OutputType([void])]
+    Param(
+        [Parameter(Mandatory)] [ValidateNotNullOrEmpty()] [array]  $versionLines,
+        [Parameter(Mandatory)] [ValidateNotNullOrEmpty()] [array]  $bumpTypesToMatch,
+        [Parameter(Mandatory)] [ValidateNotNullOrEmpty()] [string] $regex,
+        [Parameter(Mandatory)] [ValidateNotNullOrEmpty()] [string] $versionHppPath,
+        [Parameter(Mandatory)] [ValidateNotNullOrEmpty()] [array]  $bumpTypesToMatchMapped
+    )
+
+    $versionLinesCount = $versionLines.Count
+    $expectedOccurrences = $bumpTypesToMatch.Count
+
+    # Nothing to do
+    if ($versionLinesCount -eq $expectedOccurrences) {
+        return
+    }
+
+    throw "Found '$versionLinesCount' version lines for '$regex' regex " +
+        "in the '$versionHppPath' file, expected occurrences must be '$expectedOccurrences' " +
+        "($($bumpTypesToMatchMapped -join (', ')))."
+}
+
+# Verify that the version numbers in the $bumpHash are still the same
+function Test-SameVersionNumbersForVersionHpp {
+    [OutputType([void])]
+    Param(
+        [Parameter(Mandatory)] [ValidateNotNullOrEmpty()] [array]  $versionLines,
+        [Parameter(Mandatory)] [ValidateNotNullOrEmpty()] [string] $regex,
+        [Parameter(Mandatory)] [ValidateNotNullOrEmpty()] [array]  $versionOldArray,
+        [Parameter(Mandatory)] [ValidateNotNullOrEmpty()] [array]  $bumpTypesToMatch,
+        [Parameter(Mandatory)] [ValidateNotNullOrEmpty()] [string] $versionHppPath
+    )
+
+    # Obtain version numbers based on the version number to bump
+    [int[]] $versionNumbersNow = $versionLines | ForEach-Object {
+        $result = $_ -cmatch $regex
+        Test-RegExResult $regex -Result $result
+
+        [int] $Matches.version
+    }
+
+    # Fill the beginning with $null-s so the count matches the $bumpHash.versionOld array count
+    $versionOldArrayCount = $versionOldArray.Count
+    $versionNumbersNowCount = $versionNumbersNow.Count
+
+    if ($versionNumbersNowCount -ne $versionOldArrayCount) {
+            (1..($versionOldArrayCount - $versionNumbersNowCount)).ForEach({
+                $versionNumbersNow = @($null) + $versionNumbersNow
+            })
+    }
+
+    # Verify
+    foreach ($bumpTypeToVerifyRaw in $bumpTypesToMatch) {
+        $bumpTypeToVerify = $bumpTypeToVerifyRaw.GetHashCode()
+        $versionNumberNow = $versionNumbersNow[$bumpTypeToVerify]
+        $versionNumberOld = $versionOldArray[$bumpTypeToVerify]
+
+        if ($versionNumberNow -eq $versionNumberOld) {
+            continue
+        }
+
+        throw "The '$versionNumberNow -ne $versionNumberOld' for '$bumpTypeToVerifyRaw' " +
+            "bump type for '$regex' regex in the '$versionHppPath' file."
+    }
+}
+
 # Update version numbers in version.hpp files
 function Edit-VersionNumbersInVersionHpp {
     [OutputType([void])]
@@ -457,35 +525,41 @@ function Edit-VersionNumbersInVersionHpp {
         $macroPrefix         = $bumpValue.macroPrefix
         $versionOldArray     = $bumpValue.versionOldArray
         $versionBumpedArray  = $bumpValue.versionBumpedArray
-        $expectedOccurrences = 1
 
-        $regex = "^(?<before>#define $macroPrefix$($mapBumpTypeToMacro[$bumpType]) )(?<version>\d+)$"
+        $bumpTypesToReset       = (Get-BumpTypesToReset -BumpType $bumpType)
+        $bumpTypesToMatch       = @($bumpType) + $bumpTypesToReset
+        $bumpTypesToMatchMapped = $bumpTypesToMatch | ForEach-Object { $mapBumpTypeToMacro[$_] }
+
+        $regexTmpl = "^(?<before>#define $macroPrefix(?:{0}) )(?<version>\d+)$"
 
         $fileContent = Get-Content -Path $versionHppPath
 
+        # Obtain all C macros version lines
+        $regex = $regexTmpl -f ($bumpTypesToMatchMapped -join '|')
         $versionLines = $fileContent -cmatch $regex
 
-        # Verify that we found exactly one line
-        $versionLinesCount = $versionLines.Count
-        if ($versionLinesCount -ne $expectedOccurrences) {
-            throw "Found '$versionLinesCount' version lines for '$regex' regex " +
-                "in the '$versionHppPath' file, expected occurrences must be " +
-                "'$expectedOccurrences'."
-        }
-        # Verify that the version number in the bumpHash is still the same
-        $result = $versionLines[0] -cmatch $regex
-        Test-RegExResult $regex -Result $result
-        $versionNumberNow = [int] $Matches.version
-        $versionNumberOld = $versionOldArray[$bumpType.GetHashCode()]
-
-        if ($versionNumberNow -ne $versionNumberOld) {
-            throw "The '$versionNumberNow -ne $versionNumberOld' for '$regex' regex " +
-                "in the '$versionHppPath' file."
-        }
+        # Verify that we found exactly the right count of lines based on the version number to bump
+        Test-VersionLinesForVersionHpp `
+            $versionLines $bumpTypesToMatch $regex $versionHppPath $bumpTypesToMatchMapped
+        # Verify that the version numbers in the $bumpHash are still the same
+        Test-SameVersionNumbersForVersionHpp `
+            $versionLines $regex $versionOldArray $bumpTypesToMatch $versionHppPath
 
         # Replace the old version number with the bumped version number
         $versionNumberBumped = $versionBumpedArray[$bumpType.GetHashCode()]
+        $regex = $regexTmpl -f $mapBumpTypeToMacro[$bumpType]
         $fileContentReplaced = $fileContent -creplace $regex, "`${before}$versionNumberBumped"
+
+        # Reset the minor and bugfix version numbers to zero if necessary
+        foreach ($bumpTypeToReset in $bumpTypesToReset) {
+            # Nothing to do, already 0
+            if ($versionOldArray[$bumpTypeToReset] -eq 0) {
+                continue
+            }
+
+            $regex = $regexTmpl -f $mapBumpTypeToMacro[$bumpTypeToReset]
+            $fileContentReplaced = $fileContentReplaced -creplace $regex, "`${before}0"
+        }
 
         # Save to the file
         ($fileContentReplaced -join "`n") + "`n" | Set-Content -Path $versionHppPath -NoNewline
