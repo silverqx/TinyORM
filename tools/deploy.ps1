@@ -483,7 +483,7 @@ function Test-VersionLinesForVersionHpp {
         "($($BumpTypesToMatchMapped -join (', ')))."
 }
 
-# Verify that the version numbers in the $bumpHash are still the same
+# Verify that the version numbers in the $Script:BumpHash are still the same
 function Test-SameVersionNumbersForVersionHpp {
     [OutputType([void])]
     Param(
@@ -572,7 +572,7 @@ function Edit-VersionNumbersInVersionHpp {
         Test-VersionLinesForVersionHpp `
             $versionLines.Count $bumpTypesToMatch.Count $regex $versionHppPath `
             $bumpTypesToMatchMapped
-        # Verify that the version numbers in the $bumpHash are still the same
+        # Verify that the version numbers in the $Script:BumpHash are still the same
         Test-SameVersionNumbersForVersionHpp `
             $versionLines $regex $versionOldArray $bumpTypesToMatch $versionHppPath
 
