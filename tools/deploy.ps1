@@ -434,47 +434,47 @@ function Show-VersionNumbers {
 function Test-VersionLinesForVersionHpp {
     [OutputType([void])]
     Param(
-        [Parameter(Mandatory)] [ValidateNotNullOrEmpty()] [array]  $versionLines,
-        [Parameter(Mandatory)] [ValidateNotNullOrEmpty()] [array]  $bumpTypesToMatch,
-        [Parameter(Mandatory)] [ValidateNotNullOrEmpty()] [string] $regex,
-        [Parameter(Mandatory)] [ValidateNotNullOrEmpty()] [string] $versionHppPath,
-        [Parameter(Mandatory)] [ValidateNotNullOrEmpty()] [array]  $bumpTypesToMatchMapped
+        [Parameter(Mandatory)] [ValidateNotNullOrEmpty()] [array]  $VersionLines,
+        [Parameter(Mandatory)] [ValidateNotNullOrEmpty()] [array]  $BumpTypesToMatch,
+        [Parameter(Mandatory)] [ValidateNotNullOrEmpty()] [string] $RegEx,
+        [Parameter(Mandatory)] [ValidateNotNullOrEmpty()] [string] $VersionHppPath,
+        [Parameter(Mandatory)] [ValidateNotNullOrEmpty()] [array]  $BumpTypesToMatchMapped
     )
 
-    $versionLinesCount = $versionLines.Count
-    $expectedOccurrences = $bumpTypesToMatch.Count
+    $versionLinesCount = $VersionLines.Count
+    $expectedOccurrences = $BumpTypesToMatch.Count
 
     # Nothing to do
     if ($versionLinesCount -eq $expectedOccurrences) {
         return
     }
 
-    throw "Found '$versionLinesCount' version lines for '$regex' regex " +
-        "in the '$versionHppPath' file, expected occurrences must be '$expectedOccurrences' " +
-        "($($bumpTypesToMatchMapped -join (', ')))."
+    throw "Found '$versionLinesCount' version lines for '$RegEx' regex " +
+        "in the '$VersionHppPath' file, expected occurrences must be '$expectedOccurrences' " +
+        "($($BumpTypesToMatchMapped -join (', ')))."
 }
 
 # Verify that the version numbers in the $bumpHash are still the same
 function Test-SameVersionNumbersForVersionHpp {
     [OutputType([void])]
     Param(
-        [Parameter(Mandatory)] [ValidateNotNullOrEmpty()] [array]  $versionLines,
-        [Parameter(Mandatory)] [ValidateNotNullOrEmpty()] [string] $regex,
-        [Parameter(Mandatory)] [ValidateNotNullOrEmpty()] [array]  $versionOldArray,
-        [Parameter(Mandatory)] [ValidateNotNullOrEmpty()] [array]  $bumpTypesToMatch,
-        [Parameter(Mandatory)] [ValidateNotNullOrEmpty()] [string] $versionHppPath
+        [Parameter(Mandatory)] [ValidateNotNullOrEmpty()] [array]  $VersionLines,
+        [Parameter(Mandatory)] [ValidateNotNullOrEmpty()] [string] $RegEx,
+        [Parameter(Mandatory)] [ValidateNotNullOrEmpty()] [array]  $VersionOldArray,
+        [Parameter(Mandatory)] [ValidateNotNullOrEmpty()] [array]  $BumpTypesToMatch,
+        [Parameter(Mandatory)] [ValidateNotNullOrEmpty()] [string] $VersionHppPath
     )
 
     # Obtain version numbers based on the version number to bump
-    [int[]] $versionNumbersNow = $versionLines | ForEach-Object {
-        $result = $_ -cmatch $regex
-        Test-RegExResult $regex -Result $result
+    [int[]] $versionNumbersNow = $VersionLines | ForEach-Object {
+        $result = $_ -cmatch $RegEx
+        Test-RegExResult $RegEx -Result $result
 
         [int] $Matches.version
     }
 
     # Fill the beginning with $null-s so the count matches the $bumpHash.versionOld array count
-    $versionOldArrayCount = $versionOldArray.Count
+    $versionOldArrayCount = $VersionOldArray.Count
     $versionNumbersNowCount = $versionNumbersNow.Count
 
     if ($versionNumbersNowCount -ne $versionOldArrayCount) {
@@ -484,17 +484,17 @@ function Test-SameVersionNumbersForVersionHpp {
     }
 
     # Verify
-    foreach ($bumpTypeToVerifyRaw in $bumpTypesToMatch) {
+    foreach ($bumpTypeToVerifyRaw in $BumpTypesToMatch) {
         $bumpTypeToVerify = $bumpTypeToVerifyRaw.GetHashCode()
         $versionNumberNow = $versionNumbersNow[$bumpTypeToVerify]
-        $versionNumberOld = $versionOldArray[$bumpTypeToVerify]
+        $versionNumberOld = $VersionOldArray[$bumpTypeToVerify]
 
         if ($versionNumberNow -eq $versionNumberOld) {
             continue
         }
 
         throw "The '$versionNumberNow -ne $versionNumberOld' for '$bumpTypeToVerifyRaw' " +
-            "bump type for '$regex' regex in the '$versionHppPath' file."
+            "bump type for '$RegEx' regex in the '$VersionHppPath' file."
     }
 }
 
