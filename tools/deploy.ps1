@@ -268,6 +268,46 @@ function Test-AllBumpsEmpty {
     Write-ExitError 'Nothing to bump, all bump types were set to don''t bump'
 }
 
+# Verify that the count of matched C macro version numbers is correct
+function Test-VersionMacrosCount {
+    [OutputType([void])]
+    Param(
+        [Parameter(Mandatory)] [ValidateNotNullOrEmpty()] [int]    $VersionMacrosCount,
+        [Parameter(Mandatory)] [ValidateNotNullOrEmpty()] [int]    $ExpectedOccurrences,
+        [Parameter(Mandatory)] [ValidateNotNullOrEmpty()] [string] $MacroPrefix,
+        [Parameter(Mandatory)] [ValidateNotNullOrEmpty()] [string] $VersionHppPath
+    )
+
+    # Nothing to do
+    if ($VersionMacrosCount -eq $ExpectedOccurrences) {
+        return
+    }
+
+    throw "Found '$VersionMacrosCount' version C macros for '$MacroPrefix' " +
+        "in the '$VersionHppPath' file, they must be '$ExpectedOccurrences' " +
+        '(major, minor, and bugfix).'
+}
+
+# Verify that the count of the version numbers array is correct
+function Test-VersionArrayCount {
+    [OutputType([void])]
+    Param(
+        [Parameter(Mandatory)] [ValidateNotNullOrEmpty()] [int]    $VersionArrayCount,
+        [Parameter(Mandatory)] [ValidateNotNullOrEmpty()] [int]    $ExpectedOccurrences,
+        [Parameter(Mandatory)] [ValidateNotNullOrEmpty()] [string] $MacroPrefix,
+        [Parameter(Mandatory)] [ValidateNotNullOrEmpty()] [string] $VersionHppPath
+    )
+
+    # Nothing to do
+    if ($VersionArrayCount -eq $ExpectedOccurrences) {
+        return
+    }
+
+    throw "Found '$VersionArrayCount' version numbers for '$MacroPrefix' " +
+        "in the '$VersionHppPath' file, they must be '$ExpectedOccurrences' " +
+        '(major, minor, and bugfix).'
+}
+
 # Read version numbers from version.hpp files and initialize the $Script:BumpsHash
 function Read-VersionNumbers {
     [OutputType([void])]
@@ -293,13 +333,9 @@ function Read-VersionNumbers {
         # No Test-Path check needed as version.hpp filepaths were passed using the Resolve-Path
         $versionMacros = (Get-Content -Path $versionHppPath) -cmatch $regex
 
-        # Verify
-        $versionMacrosCount = $versionMacros.Count
-        if ($versionMacrosCount -ne $expectedOccurrences) {
-            throw "Found '$versionMacrosCount' version C macros for '$macroPrefix' " +
-                "in the '$versionHppPath' file, they must be '$expectedOccurrences' " +
-                '(major, minor, and bugfix).'
-        }
+        # Verify that the count of matched C macro version numbers is correct
+        Test-VersionMacrosCount `
+            $versionMacros.Count $expectedOccurrences $macroPrefix $versionHppPath
 
         # Obtain version numbers
         $versionArray = $versionMacros | ForEach-Object {
@@ -308,13 +344,9 @@ function Read-VersionNumbers {
 
             [int] $Matches.version
         }
-        # Verify
-        $versionArrayCount = $versionArray.Count
-        if ($versionArrayCount -ne $expectedOccurrences) {
-            throw "Found '$versionArrayCount' version numbers for '$macroPrefix' " +
-                "in the '$versionHppPath' file, they must be '$expectedOccurrences' " +
-                '(major, minor, and bugfix).'
-        }
+
+        # Verify that the count of the version numbers array is correct
+        Test-VersionArrayCount $versionArray.Count $expectedOccurrences $macroPrefix $versionHppPath
 
         $bumpValue.versionOldArray = $versionArray
     }
@@ -565,6 +597,25 @@ function Edit-VersionNumbersInVersionHpp {
     }
 }
 
+# Verify that the number of expected occurrences of version numbers is correct
+function Test-VersionLinesCount {
+    [OutputType([void])]
+    Param(
+        [Parameter(Mandatory)] [ValidateNotNullOrEmpty()] [int]    $VersionLinesCount,
+        [Parameter(Mandatory)] [ValidateNotNullOrEmpty()] [int]    $ExpectedOccurrences,
+        [Parameter(Mandatory)] [ValidateNotNullOrEmpty()] [string] $RegEx,
+        [Parameter(Mandatory)] [ValidateNotNullOrEmpty()] [string] $FilePath
+    )
+
+    # Nothing to do
+    if ($VersionLinesCount -eq $ExpectedOccurrences) {
+        return
+    }
+
+    throw "Found '$VersionLinesCount' version number lines for '$RegEx' regex " +
+        "in the '$FilePath' file, expected occurrences must be '$ExpectedOccurrences'."
+}
+
 # Update version numbers in all files for all libraries defined in the $Script:VersionLocations
 function Edit-VersionNumbersInAllFiles {
     [OutputType([void])]
@@ -605,12 +656,7 @@ function Edit-VersionNumbersInAllFiles {
                 $versionLines = $fileContent -cmatch $regex
 
                 # Verify that the number of expected occurrences of version numbers is correct
-                $versionLinesCount = $versionLines.Count
-                if ($versionLinesCount -ne $expectedOccurrences) {
-                    throw "Found '$versionLinesCount' version number lines for '$regex' regex " +
-                        "in the '$filePath' file, expected occurrences must be " +
-                        "'$expectedOccurrences'."
-                }
+                Test-VersionLinesCount $versionLines.Count $expectedOccurrences $regex $filePath
 
                 $versionBumped = $bumpValue.versionBumped
 
@@ -714,6 +760,25 @@ function Get-VcpkgRef {
     return (git rev-parse --verify origin/main)
 }
 
+# Verify if the portfile.cmake file contains the REF and SHA512 lines
+function Test-RefAndHashLinesCountForVcpkg {
+    [OutputType([void])]
+    Param(
+        [Parameter(Mandatory)] [ValidateNotNullOrEmpty()] [int]    $MatchedLinesCount,
+        [Parameter(Mandatory)] [ValidateNotNullOrEmpty()] [int]    $ExpectedOccurrences,
+        [Parameter(Mandatory)] [ValidateNotNullOrEmpty()] [string] $RegEx,
+        [Parameter(Mandatory)] [ValidateNotNullOrEmpty()] [string] $PortfilePath
+    )
+
+    # Nothing to do
+    if ($MatchedLinesCount -eq $ExpectedOccurrences) {
+        return
+    }
+
+    throw "Found '$MatchedLinesCount' hash lines for '$RegEx' regex in the '$PortfilePath' file, " +
+        "expected occurrences must be '$ExpectedOccurrences'."
+}
+
 # Update the REF and SHA512 in tinyorm and tinyorm-qt5 portfiles
 function Edit-VcpkgRefAndHash {
     [OutputType([void])]
@@ -731,19 +796,15 @@ function Edit-VcpkgRefAndHash {
         $regexMatch = "$regexRef|$regexHash"
 
         $portfilePath = $portfiles.Value.portfile
-        $expectedOccurrences = 2
 
         $fileContent = Get-Content -Path $portfilePath
 
         $matchedLines = $fileContent -cmatch $regexMatch
 
         # Verify if the portfile.cmake file contains the REF and SHA512 lines
-        $matchedLinesCount = $matchedLines.Count
-        if ($matchedLinesCount -ne $expectedOccurrences) {
-            throw "Found '$matchedLinesCount' hash lines for '$regexMatch' regex " +
-                "in the '$portfilePath' file, expected occurrences must be " +
-                "'$expectedOccurrences'."
-        }
+        $expectedOccurrences = 2
+        Test-RefAndHashLinesCountForVcpkg `
+            $matchedLines.Count $expectedOccurrences $regexMatch $portfilePath
 
         # Replace the old REF AND SHA512 values with the new values in the portfile.cmake
         $fileContentReplaced = $fileContent -creplace $regexRef, "`${ref}$vcpkgRef" `
@@ -802,6 +863,26 @@ function Read-PortVersionsToBump {
     return $false
 }
 
+# Verify that exactly zero or one port-version field line was found in the vcpkg.json file
+function Test-PortVersionFieldForVcpkg {
+    [OutputType([void])]
+    Param(
+        [Parameter(Mandatory)] [ValidateNotNullOrEmpty()] [int]    $PortVersionFieldCount,
+        [Parameter(Mandatory)] [ValidateNotNullOrEmpty()] [string] $RegEx,
+        [Parameter(Mandatory)] [ValidateNotNullOrEmpty()] [string] $VcpkgJsonPath,
+        [Parameter(Mandatory)] [ValidateNotNullOrEmpty()] [array]  $ExpectedOccurrences
+    )
+
+    # Nothing to do
+    if ($ExpectedOccurrences.Contains($PortVersionFieldCount)) {
+        return
+    }
+
+    throw "Found '$PortVersionFieldCount' port-version field for '$RegEx' regex " +
+        "in the '$VcpkgJsonPath' file, expected occurrences must be '" +
+        ($ExpectedOccurrences -join "' or '") + "'."
+}
+
 # Read port-version numbers from vcpkg.json files and initialize the $Script:VcpkgHash
 function Read-PortVersionNumbers {
     [OutputType([void])]
@@ -818,7 +899,6 @@ function Read-PortVersionNumbers {
         }
 
         $vcpkgJsonPath = $portValue.vcpkgJson
-        $expectedOccurrences = @(0, 1)
 
         $regex = '"port-version"\s*?:\s*?(?<version>\d+)\s*?,?'
 
@@ -826,13 +906,12 @@ function Read-PortVersionNumbers {
         # No Test-Path check needed as vcpkg.json filepaths were passed using the Resolve-Path
         $portVersionField = (Get-Content -Path $vcpkgJsonPath) -cmatch $regex
 
-        # Verify that we found exactly zero or one line
         $portVersionFieldCount = $portVersionField.Count
-        if (-not $expectedOccurrences.Contains($portVersionFieldCount)) {
-            throw "Found '$portVersionFieldCount' port-version field for '$regex' " +
-                "in the '$vcpkgJsonPath' file, they must be '" +
-                ($expectedOccurrences -join "' or '") + "'."
-        }
+        $expectedOccurrences   = @(0, 1)
+
+        # Verify that exactly zero or one port-version field line was found in the vcpkg.json file
+        Test-PortVersionFieldForVcpkg `
+            $portVersionFieldCount $regex $vcpkgJsonPath $expectedOccurrences
 
         # Nothing to do, the port-version field is not defined in the vcpkg.json file
         # I leave the versionOld in the $null state in this case (don't set it to 0) so we don't
@@ -977,6 +1056,30 @@ function Add-PortVersionNumber {
     return $FileContent -creplace $regex, "`$&`n  `"port-version`": $portVersionBumped,"
 }
 
+# Verify that the port-version number in the $Script:VcpkgHash is still the same
+function Test-SamePortVersionNumberForVcpkg {
+    [OutputType([void])]
+    Param(
+        [Parameter(Mandatory)] [ValidateNotNullOrEmpty()] [string] $PortVersionField,
+        [Parameter(Mandatory)] [ValidateNotNullOrEmpty()] [string] $RegEx,
+        [Parameter(Mandatory)] [ValidateNotNullOrEmpty()] [string] $PortVersionOld,
+        [Parameter(Mandatory)] [ValidateNotNullOrEmpty()] [string] $VcpkgJsonPath
+    )
+
+    $result = $PortVersionField -cmatch $RegEx
+    Test-RegExResult $RegEx -Result $result
+
+    $portVersionNow = [int] $Matches.version
+
+    # Nothing to do
+    if ($portVersionNow -eq $PortVersionOld) {
+        return
+    }
+
+    throw "The '$portVersionNow -ne $PortVersionOld' for '$RegEx' regex " +
+        "in the '$VcpkgJsonPath' file."
+}
+
 # Update the port-version number field in the vcpkg.json
 function Edit-PortVersionNumber {
     [OutputType([string])]
@@ -1004,16 +1107,9 @@ function Edit-PortVersionNumber {
     $portValue = $Script:VcpkgHash[$Name]
     $regex = '"port-version"\s*?:\s*?(?<version>\d+)\s*?,?'
 
-    # Verify that the port-version number in the vcpkgHash is still the same
-    $result = $PortVersionField -cmatch $regex
-    Test-RegExResult $regex -Result $result
-    $portVersionNow = [int] $Matches.version
-    $portVersionOld = $portValue.versionOld
-
-    if ($portVersionNow -ne $portVersionOld) {
-        throw "The '$portVersionNow -ne $portVersionOld' for '$regex' regex " +
-            "in the '$($portValue.vcpkgJson)' file."
-    }
+    # Verify that the port-version number in the $Script:VcpkgHash is still the same
+    Test-SamePortVersionNumberForVcpkg `
+        $PortVersionField $regex $portValue.versionOld $portValue.vcpkgJson
 
     # Replace the old version number with the bumped version number
     $portVersionBumped = $portValue.versionBumped
@@ -1038,7 +1134,6 @@ function Edit-PortVersionNumbers {
         }
 
         $vcpkgJsonPath = $portValue.vcpkgJson
-        $expectedOccurrences = @(0, 1)
 
         $regex = '"port-version"\s*?:\s*?(?<version>\d+)\s*?,?'
 
@@ -1047,13 +1142,12 @@ function Edit-PortVersionNumbers {
         $fileContent = Get-Content -Path $vcpkgJsonPath
         $portVersionField = $fileContent -cmatch $regex
 
-        # Verify that we found exactly zero or one line
         $portVersionFieldCount = $portVersionField.Count
-        if (-not $expectedOccurrences.Contains($portVersionFieldCount)) {
-            throw "Found '$portVersionFieldCount' port-version field for '$regex' " +
-                "in the '$vcpkgJsonPath' file, they must be '" +
-                ($expectedOccurrences -join "' or '") + "'."
-        }
+        $expectedOccurrences   = @(0, 1)
+
+        # Verify that exactly zero or one port-version field line was found in the vcpkg.json file
+        Test-PortVersionFieldForVcpkg `
+            $portVersionFieldCount $regex $vcpkgJsonPath $expectedOccurrences
 
         $fileContentReplaced = $null
         $portName = $portRow.Name
@@ -1082,22 +1176,20 @@ function Remove-PortVersions {
     Write-Progress 'Removing the port-version field from vcpkg.json...'
 
     foreach ($portfiles in $Script:VcpkgHash.GetEnumerator()) {
-        $regex = '\s*?"port-version"\s*?:\s*?\d+\s*?,?\s*?'
-
         $vcpkgJsonPath = $portfiles.Value.vcpkgJson
-        $expectedOccurrences = @(0, 1)
+
+        $regex = '\s*?"port-version"\s*?:\s*?\d+\s*?,?\s*?'
 
         $fileContent = Get-Content -Path $vcpkgJsonPath
 
         $portVersionField = $fileContent -cmatch $regex
 
-        # Verify if the vcpkg.json file contains one or zero port-version lines
         $portVersionFieldCount = $portVersionField.Count
-        if (-not $expectedOccurrences.Contains($portVersionFieldCount)) {
-            throw "Found '$portVersionFieldCount' port-version field for '$regex' regex " +
-                "in the '$vcpkgJsonPath' file, expected occurrences must be '" +
-                ($expectedOccurrences -join "' or '") + "'."
-        }
+        $expectedOccurrences   = @(0, 1)
+
+        # Verify that exactly zero or one port-version field line was found in the vcpkg.json file
+        Test-PortVersionFieldForVcpkg `
+            $portVersionFieldCount $regex $vcpkgJsonPath $expectedOccurrences
 
         # Remove the port-version field from the vcpkg.json file
         $fileContentReplaced = $fileContent | Where-Object { $_ -cnotmatch $regex }
