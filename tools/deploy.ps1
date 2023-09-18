@@ -478,9 +478,9 @@ function Test-SameVersionNumbersForVersionHpp {
     $versionNumbersNowCount = $versionNumbersNow.Count
 
     if ($versionNumbersNowCount -ne $versionOldArrayCount) {
-            (1..($versionOldArrayCount - $versionNumbersNowCount)).ForEach({
-                $versionNumbersNow = @($null) + $versionNumbersNow
-            })
+        (1..($versionOldArrayCount - $versionNumbersNowCount)).ForEach({
+            $versionNumbersNow = @($null) + $versionNumbersNow
+        })
     }
 
     # Verify
