@@ -489,6 +489,7 @@ function Test-SameVersionNumbersForVersionHpp {
         $versionNumberNow = $versionNumbersNow[$bumpTypeToVerify]
         $versionNumberOld = $VersionOldArray[$bumpTypeToVerify]
 
+        # Nothing to do
         if ($versionNumberNow -eq $versionNumberOld) {
             continue
         }
