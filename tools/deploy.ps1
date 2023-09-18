@@ -1210,7 +1210,7 @@ function Invoke-BumpPortVersions {
 
     # Select for which ports to bump the port-version number
     $cancelBumping = Read-PortVersionsToBump
-    # Nothing to bump
+    # Nothing to bump, bumping canceled
     if ($cancelBumping) {
         return
     }
@@ -1277,6 +1277,7 @@ Test-WorkingTreeClean
 # Need to initialize these variables later because of the Resolve-Path calls
 Initialize-ScriptVariables
 
+# Fire it up 🔥
 Invoke-BumpVersions
 Invoke-UpdateVcpkgPorts
 
