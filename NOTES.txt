@@ -1000,7 +1000,7 @@ CMake confusion:
 
 
 TinyORM vcpkg testing (CMake build):
---------------------
+------------------------------------
 
 Don't install it to the main vcpkg installation because it can happend that whole qtbase will be
 installed and it pulls in many boost packages or mysql client library pulls in much more in.
