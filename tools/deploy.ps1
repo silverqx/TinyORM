@@ -302,21 +302,21 @@ function Read-VersionNumbers {
         }
 
         # Obtain version numbers
-        $version = $versionMacros | ForEach-Object {
+        $versionArray = $versionMacros | ForEach-Object {
             $result = $_ -cmatch $regex
             Test-RegExResult $regex -Result $result
 
             [int] $Matches.version
         }
         # Verify
-        $versionCount = $version.Count
-        if ($versionCount -ne $expectedOccurrences) {
-            throw "Found '$versionCount' version numbers for '$macroPrefix' " +
+        $versionArrayCount = $versionArray.Count
+        if ($versionArrayCount -ne $expectedOccurrences) {
+            throw "Found '$versionArrayCount' version numbers for '$macroPrefix' " +
                 "in the '$versionHppPath' file, they must be '$expectedOccurrences' " +
                 '(major, minor, and bugfix).'
         }
 
-        $bumpValue.versionOldArray = $version
+        $bumpValue.versionOldArray = $versionArray
     }
 }
 
