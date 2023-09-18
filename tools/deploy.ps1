@@ -968,7 +968,7 @@ function Add-PortVersionNumber {
 
     $portValue = $Script:VcpkgHash[$Name]
 
-    # Verification of the port-version number not needed because we know that there isn't
+    # Verification of the port-version number isn't needed because we know that there isn't
     # any port-version field in the vcpkg.json file
 
     $regex = '"version-semver"\s*?:\s*?"\d+(?:\.\d+){2,3}"\s*?,?.*'
