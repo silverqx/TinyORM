@@ -2196,3 +2196,19 @@ The best what can be done is to return the QVariantMap or QVariantList from the 
 
 Aggregate types and Value Objects works good with the Model's toMap() and toVector() methods,
 especially with Qt6's QVariant::fromValue(), Qt6 doesn't need to declare the Q_DECLARE_METATYPE().
+
+
+PowerShell confusion:
+---------------------
+
+ - .Count comes from IEnumerate interface and should be used for array-like containers
+   - on arrays the Count is an alias to the Length property
+ - .Length should be used for strings
+   - string doesn't have Count property but 'str'.Count returns 1
+ - array-s are immutable
+ - -match operator:
+   - calling -match on string returns bool and sets the $Matches variable
+   - calling -match container filters it
+ - variable names are case-insensitive
+ - you don't have to ` escape newline: after + | or inside ()
+ - you must ` escape newline between function parameters eg.: -Path `\n -Message
