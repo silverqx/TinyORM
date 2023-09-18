@@ -320,6 +320,28 @@ function Read-VersionNumbers {
     }
 }
 
+# Compute bump types to reset based on the given bump type.
+function Get-BumpTypesToReset {
+    [OutputType([BumpType[]])]
+    Param(
+        [Parameter(Mandatory,
+            HelpMessage = 'Specifies a bump type based on which to decide bump types to reset.')]
+        [ValidateNotNull()]
+        [BumpType] $BumpType
+    )
+
+    $bumpTypes = @()
+
+    if ($bumpType -eq [BumpType]::Major) {
+        $bumpTypes += [BumpType]::Minor
+    }
+    if ($bumpType -eq [BumpType]::Major -or $bumpType -eq [BumpType]::Minor) {
+        $bumpTypes += [BumpType]::Bugfix
+    }
+
+    return $bumpTypes
+}
+
 # Bump version numbers by the chosen bump types
 function Update-VersionNumbers {
     [OutputType([void])]
@@ -343,11 +365,8 @@ function Update-VersionNumbers {
         $versionBumpedArray[$bumpType.GetHashCode()] += 1
 
         # Reset the major and minor numbers to zero if necessary
-        if ($bumpType -eq [BumpType]::Major -or $bumpType -eq [BumpType]::Minor) {
-            $versionBumpedArray[[BumpType]::Bugfix] = 0
-        }
-        if ($bumpType -eq [BumpType]::Major) {
-            $versionBumpedArray[[BumpType]::Minor] = 0
+        foreach ($bumpTypeToReset in Get-BumpTypesToReset -BumpType $bumpType) {
+            $versionBumpedArray[$bumpTypeToReset] = 0
         }
 
         $bumpValue.versionOld         = $versionOldArray    -join '.'
