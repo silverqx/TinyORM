@@ -364,7 +364,7 @@ function Update-VersionNumbers {
         # Bump the version number by the chosen bump type
         $versionBumpedArray[$bumpType.GetHashCode()] += 1
 
-        # Reset the major and minor numbers to zero if necessary
+        # Reset the minor and bugfix version numbers to zero if necessary
         foreach ($bumpTypeToReset in Get-BumpTypesToReset -BumpType $bumpType) {
             $versionBumpedArray[$bumpTypeToReset] = 0
         }
