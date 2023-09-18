@@ -434,23 +434,20 @@ function Show-VersionNumbers {
 function Test-VersionLinesForVersionHpp {
     [OutputType([void])]
     Param(
-        [Parameter(Mandatory)] [ValidateNotNullOrEmpty()] [array]  $VersionLines,
-        [Parameter(Mandatory)] [ValidateNotNullOrEmpty()] [array]  $BumpTypesToMatch,
+        [Parameter(Mandatory)] [ValidateNotNullOrEmpty()] [int]    $VersionLinesCount,
+        [Parameter(Mandatory)] [ValidateNotNullOrEmpty()] [int]    $ExpectedOccurrences,
         [Parameter(Mandatory)] [ValidateNotNullOrEmpty()] [string] $RegEx,
         [Parameter(Mandatory)] [ValidateNotNullOrEmpty()] [string] $VersionHppPath,
         [Parameter(Mandatory)] [ValidateNotNullOrEmpty()] [array]  $BumpTypesToMatchMapped
     )
 
-    $versionLinesCount = $VersionLines.Count
-    $expectedOccurrences = $BumpTypesToMatch.Count
-
     # Nothing to do
-    if ($versionLinesCount -eq $expectedOccurrences) {
+    if ($VersionLinesCount -eq $ExpectedOccurrences) {
         return
     }
 
-    throw "Found '$versionLinesCount' version lines for '$RegEx' regex " +
-        "in the '$VersionHppPath' file, expected occurrences must be '$expectedOccurrences' " +
+    throw "Found '$VersionLinesCount' version lines for '$RegEx' regex " +
+        "in the '$VersionHppPath' file, expected occurrences must be '$ExpectedOccurrences' " +
         "($($BumpTypesToMatchMapped -join (', ')))."
 }
 
@@ -541,7 +538,8 @@ function Edit-VersionNumbersInVersionHpp {
 
         # Verify that we found exactly the right count of lines based on the version number to bump
         Test-VersionLinesForVersionHpp `
-            $versionLines $bumpTypesToMatch $regex $versionHppPath $bumpTypesToMatchMapped
+            $versionLines.Count $bumpTypesToMatch.Count $regex $versionHppPath `
+            $bumpTypesToMatchMapped
         # Verify that the version numbers in the $bumpHash are still the same
         Test-SameVersionNumbersForVersionHpp `
             $versionLines $regex $versionOldArray $bumpTypesToMatch $versionHppPath
