@@ -45,3 +45,21 @@ finally {
 vcpkg hash $tempFile
 
 Remove-Item -Path $tempFile
+
+<#
+ .Synopsis
+  Computes the SHA-512 hash of a specified branch or git reference object
+
+ .Description
+  Computes the hash of a specified branch or git reference object. By default, it computes
+  the SHA-512 hash. The output will be the computed hash for the given git object displayed directly
+  on the console.
+
+ .INPUTS
+  System.String
+    You can pipe a branch for which to download the package archive and compute the SHA-512 hash
+    (works with a commit ID too).
+
+ .OUTPUTS
+  The computed SHA-512 hash for the given git object (branch or ref).
+#>
