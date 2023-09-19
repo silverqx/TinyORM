@@ -4,13 +4,13 @@
 Param(
     [Parameter(Position = 1, ParameterSetName = 'Branch', ValueFromPipeline,
         ValueFromPipelineByPropertyName,
-        HelpMessage = 'Specifies the branch for which to download a package archive (also ' +
-            'works with a commit ID).')]
+        HelpMessage = 'Specifies a branch for which to download the package archive (works with ' +
+            'a commit ID too).')]
     [ValidateNotNullOrEmpty()]
     [string] $Branch = 'main',
 
     [Parameter(Position = 1, Mandatory, ParameterSetName = 'Ref', ValueFromPipelineByPropertyName,
-        HelpMessage = 'Specifies the commit ID for which to download a package archive.')]
+        HelpMessage = 'Specifies a commit ID for which to download the package archive.')]
     [ValidateNotNullOrEmpty()]
     [ValidatePattern('^[a-fA-F0-9]{40}$',
         ErrorMessage = 'The argument "{0}" is not the correct commit ID (SHA-1). ' +
