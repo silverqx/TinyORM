@@ -2212,3 +2212,25 @@ PowerShell confusion:
  - variable names are case-insensitive
  - you don't have to ` escape newline: after + | or inside ()
  - you must ` escape newline between function parameters eg.: -Path `\n -Message
+
+
+tools/deploy.ps1:
+-----------------
+
+Alternative committing code:
+
+function Invoke-BumpVersions
+
+    NewLine
+    Write-Info ('Please check updated versions and commit all files in SmartGit with ' +
+        'the following commit message')
+    NewLine
+    Write-Output (Get-BumpCommitMessage)
+    Approve-Continue -Exit
+
+function Invoke-CreateTag
+
+    Write-Info 'Please create annotated signed tag in SmartGit with the following tag message'
+    NewLine
+    Write-Output (Get-TagMessage)
+    Approve-Continue -Exit

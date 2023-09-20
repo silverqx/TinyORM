@@ -35,6 +35,8 @@ $Script:BumpsHash = $null
 $Script:VersionLocations = $null
 # Vcpkg port filepaths and bumping port-version field for tinyorm and tinyorm-qt5 ports
 $Script:VcpkgHash = $null
+# Tag version with the v prefix
+$Script:TagVersion = $null
 
 # Functions section
 # ---
@@ -699,7 +701,7 @@ function Get-BumpCommitMessage {
     [OutputType([string])]
     Param()
 
-    Write-Progress 'Generating the bump commit message...'
+    Write-Progress 'Generating the bump commit message and setting it to clipboard...'
 
     $message = 'bump version to '
 
@@ -744,7 +746,26 @@ function Get-BumpCommitMessage {
         }
     }
 
+    Set-Clipboard -Value $message
+
     return $message
+}
+
+# Create tag functions
+# ---
+
+# Get the tag message
+function Get-TagMessage {
+    [OutputType([string])]
+    Param()
+
+    Write-Progress 'Generating the tag message and setting it to clipboard...'
+
+    $tagMessage = "bump version to TinyORM $Script:TagVersion"
+
+    Set-Clipboard -Value $tagMessage
+
+    return $tagMessage
 }
 
 # Vcpkg - update REF and SHA512 functions
@@ -788,7 +809,7 @@ function Edit-VcpkgRefAndHash {
 
     Write-Progress 'Obtaining the origin/main archive hash (SHA512)...'
 
-    $vcpkgHash = Get-VcpkgHash -Project 'silverqx/TinyORM' -Branch 'main'
+    $vcpkgHash = Get-VcpkgHash -Project 'silverqx/TinyORM' -Tag $Script:TagVersion
 
     foreach ($portfiles in $Script:VcpkgHash.GetEnumerator()) {
         $regexRef   = '(?<ref>    REF )(?:[0-9a-f]{40})'
@@ -1215,7 +1236,15 @@ function Get-VcpkgCommitMessage {
 # Switch to the main branch, merge develop branch, and push to the origin/main branch
 function Invoke-MergeDevelopAndDeploy {
     [OutputType([void])]
-    Param()
+    Param(
+        [Parameter(Mandatory, HelpMessage = 'Writes an info message to the host at the end.')]
+        [ValidateNotNullOrEmpty()]
+        [string]
+        $Message,
+
+        [Parameter(HelpMessage = 'Specifies whether to push also tags.')]
+        [switch] $FollowTags
+    )
 
     # Verify if the current branch is develop and the working tree is still clean
     NewLine
@@ -1240,13 +1269,17 @@ function Invoke-MergeDevelopAndDeploy {
 
     NewLine
     Write-Progress 'Pushing to origin/main branch...'
-    git push --progress origin refs/heads/main:refs/heads/main
+    $followTagsArg = $FollowTags ? '--follow-tags' : $null
+    git push --progress $followTagsArg origin refs/heads/main:refs/heads/main
     Test-LastExitCode
 
     NewLine
     Write-Progress 'Switching back to develop branch...'
     git switch develop
     Test-LastExitCode
+
+    NewLine
+    Write-Info -Message $Message
 }
 
 # Bump version numbers
@@ -1286,12 +1319,6 @@ function Invoke-BumpVersions {
     Write-Progress 'Committing bumped version numbers...'
     git commit --all --edit --message=$(Get-BumpCommitMessage)
     Test-LastExitCode
-
-    # Merge to origin/main and push
-    Invoke-MergeDevelopAndDeploy
-
-    NewLine
-    Write-Info 'TinyORM project was bumped and deployed successfully. 🥳'
 }
 
 # Main logic to bump vcpkg port-version fields in the tinyorm and tinyorm-qt5 ports
@@ -1315,6 +1342,19 @@ function Invoke-BumpPortVersions {
 
     # Update these port-version numbers in vcpkg.json files
     Edit-PortVersionNumbers
+}
+
+# Create the tag based on the bumped version number
+function Invoke-CreateTag {
+    [OutputType([string])]
+    Param()
+
+    $Script:TagVersion = 'v' + $Script:BumpsHash.TinyOrm.versionBumped
+
+    Write-Header "Creating $Script:TagVersion tag for TinyORM project"
+
+    git tag --sign --edit --message=$(Get-TagMessage) $Script:TagVersion
+    Test-LastExitCode
 }
 
 # Vcpkg ports update
@@ -1345,12 +1385,6 @@ function Invoke-UpdateVcpkgPorts {
     Write-Progress 'Committing vcpkg REF and SHA512...'
     git commit --all --message=$(Get-VcpkgCommitMessage)
     Test-LastExitCode
-
-    # Merge to origin/main and push
-    Invoke-MergeDevelopAndDeploy
-
-    NewLine
-    Write-Info 'Vcpkg ports were updated and deployed successfully. 🥳'
 }
 
 # Main section
@@ -1370,7 +1404,14 @@ Initialize-ScriptVariables
 
 # Fire it up 🔥
 Invoke-BumpVersions
+Invoke-CreateTag
+# Merge develop to main and and push to origin/main
+Invoke-MergeDevelopAndDeploy `
+    -Message 'TinyORM project was bumped and deployed successfully. 🥳' -FollowTags
+
 Invoke-UpdateVcpkgPorts
+# Merge develop to main and and push to origin/main
+Invoke-MergeDevelopAndDeploy -Message 'Vcpkg ports were updated and deployed successfully. 🥳'
 
 <#
  .Synopsis
