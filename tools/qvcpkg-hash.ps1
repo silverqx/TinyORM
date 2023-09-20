@@ -9,13 +9,19 @@ Param(
     [ValidateNotNullOrEmpty()]
     [string] $Branch = 'main',
 
+    [Parameter(Position = 1, Mandatory, ParameterSetName = 'Tag', ValueFromPipeline,
+        ValueFromPipelineByPropertyName,
+        HelpMessage = 'Specifies a tag for which to download the package archive.')]
+    [ValidateNotNullOrEmpty()]
+    [string] $Tag,
+
     [Parameter(Position = 1, Mandatory, ParameterSetName = 'Ref', ValueFromPipelineByPropertyName,
         HelpMessage = 'Specifies a commit ID for which to download the package archive.')]
     [ValidateNotNullOrEmpty()]
     [ValidatePattern('^[a-fA-F0-9]{40}$',
         ErrorMessage = 'The argument "{0}" is not the correct commit ID (SHA-1). ' +
             'The argument "{0}" does not match the "{1}" pattern.')]
-    [string] $Ref
+    [string] $Commit
 )
 
 Set-StrictMode -Version 3.0

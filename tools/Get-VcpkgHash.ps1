@@ -14,19 +14,40 @@ Param(
     [ValidateNotNullOrEmpty()]
     [string] $Branch = 'main',
 
+    [Parameter(Position = 1, Mandatory, ParameterSetName = 'Tag', ValueFromPipeline,
+        ValueFromPipelineByPropertyName,
+        HelpMessage = 'Specifies a tag for which to download the package archive.')]
+    [ValidateNotNullOrEmpty()]
+    [string] $Tag,
+
     [Parameter(Position = 1, Mandatory, ParameterSetName = 'Ref', ValueFromPipelineByPropertyName,
         HelpMessage = 'Specifies a commit ID for which to download the package archive.')]
     [ValidateNotNullOrEmpty()]
     [ValidatePattern('^[a-fA-F0-9]{40}$',
         ErrorMessage = 'The argument "{0}" is not the correct commit ID (SHA-1). ' +
             'The argument "{0}" does not match the "{1}" pattern.')]
-    [string] $Ref
+    [string] $Commit
 )
 
 Set-StrictMode -Version 3.0
 
 # Get a git object by the current parameter set
-$currentObject = $PsCmdlet.ParameterSetName -eq 'Ref' ? $Ref : $Branch
+# The vcpkg uses the archive/ prefix only without the refs/heads/ or refs/tags/:
+# https://github.com/microsoft/vcpkg/blob/master/scripts/cmake/vcpkg_from_github.cmake#L107
+# It doesn't matter if the refs/heads/ or refs/tags/ will be prepended, it returns the same SHA-512
+# hashes if the archive/ without these refs/ is used.
+# Most important are tags and commit IDs because these are used in the vcpkg_from_github REF option.
+# Even if the commit ID, tag, or branch refer to the same commit they return different SHA-512 hash.
+# So I leave these refs/heads/ and refs/tags/ prepended because it's more accurate and  the results
+# are always the same as the vcpkg_from_github generates.
+switch ($PsCmdlet.ParameterSetName) {
+    'Branch' { $currentObject = "refs/heads/$Branch" }
+    'Tag'    { $currentObject = "refs/tags/$Tag" }
+    'Ref'    { $currentObject = $Commit}
+    Default {
+        throw 'Unreachable code.'
+    }
+}
 
 # Create a new temporary file
 $tempFile = New-TemporaryFile
@@ -37,14 +58,14 @@ $ProgressPreference = 'SilentlyContinue'
 
 try {
     Invoke-WebRequest "https://github.com/${Project}/archive/${currentObject}.tar.gz" -OutFile $tempFile
+
+    vcpkg hash $tempFile
 }
 finally {
     $ProgressPreference = $previousProgressPreference
+
+    Remove-Item -Path $tempFile
 }
-
-vcpkg hash $tempFile
-
-Remove-Item -Path $tempFile
 
 <#
  .Synopsis
