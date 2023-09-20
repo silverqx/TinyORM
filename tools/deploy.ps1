@@ -220,7 +220,7 @@ function Test-RegExResult {
     throw "The '$RegEx' regex failed."
 }
 
-# Bumping version numbers functions
+# Bump version numbers functions
 # ---
 
 # Read the bump type to do for the given library
@@ -747,7 +747,7 @@ function Get-BumpCommitMessage {
     return $message
 }
 
-# Vcpkg - updating REF and SHA512 functions
+# Vcpkg - update REF and SHA512 functions
 # ---
 
 # Get the origin/main commit ID (SHA-1)
@@ -815,7 +815,7 @@ function Edit-VcpkgRefAndHash {
     }
 }
 
-# Vcpkg - updating port-version field functions
+# Vcpkg - update port-version field functions
 # ---
 
 # Select for which ports to bump the port-version number
