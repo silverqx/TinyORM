@@ -37,6 +37,8 @@ $Script:VersionLocations = $null
 $Script:VcpkgHash = $null
 # Tag version with the v prefix
 $Script:TagVersion = $null
+# Determine whether bumping version numbers was skipped
+$Script:IsBumpingSkipped = $false
 
 # Functions section
 # ---
@@ -152,12 +154,35 @@ function Test-GitDevelopBranch {
     Write-ExitError 'The TinyORM current branch must be ''develop'''
 }
 
+# Determine whether the main or develop branches are ahead the origin
+function Test-GitAheadOrigin {
+    [OutputType([void])]
+    Param()
+
+    Write-Progress 'Testing if the main and develop branches are ahead the origin...'
+
+    $developAhead = git rev-list --count origin/develop..develop
+    if ($developAhead -ne 0) {
+        Write-ExitError ("The TinyORM 'develop' branch is $developAhead commits ahead " +
+            'the origin/develop')
+    }
+
+    $mainAhead = git rev-list --count origin/main..main
+    if ($mainAhead -ne 0) {
+        Write-ExitError "The TinyORM 'main' branch is $mainAhead commits ahead the origin/main"
+    }
+
+}
+
 # Determine whether the main or develop branches are behind the origin
 function Test-GitBehindOrigin {
     [OutputType([void])]
     Param()
 
     Write-Progress 'Testing if the main and develop branches are behind the origin...'
+
+    Write-Progress "${Script:BOL}Fetching from origin..."
+    git fetch --tags origin
 
     $developBehind = git rev-list --count develop..origin/develop
     if ($developBehind -ne 0) {
@@ -236,15 +261,26 @@ function Read-BumpType {
         $Name
     )
 
-    $versionTypeChoice = [System.Management.Automation.Host.ChoiceDescription[]](@(
+    $versionTypeChoice = [System.Management.Automation.Host.ChoiceDescription[]] @(
         New-Object System.Management.Automation.Host.ChoiceDescription('M&ajor', 'Major version')
         New-Object System.Management.Automation.Host.ChoiceDescription('&Minor', 'Minor version')
         New-Object System.Management.Automation.Host.ChoiceDescription('&Bugfix', 'Bugfix version')
-        New-Object System.Management.Automation.Host.ChoiceDescription('&None', 'Don''t bump')
-    ))
+    )
+
+    $isNameTinyOrm = $Name -eq 'TinyOrm'
+
+    # The TinyOrm must always be bumped because the tag must be created
+    if (-not $isNameTinyOrm) {
+        $versionTypeChoice += `
+            New-Object System.Management.Automation.Host.ChoiceDescription('&None', 'Don''t bump')
+    }
+
+    # TinyOrm -> Bugfix and all others None
+    $defaultChoice = $isNameTinyOrm ? 2 : 3
 
     $answer = $Host.Ui.PromptForChoice(
-        "Bump `e[32m$Name`e[0m", 'Choose the version number to bump:', $versionTypeChoice, 3
+        "Bump `e[32m$Name`e[0m", 'Choose the version number to bump:', $versionTypeChoice,
+        $defaultChoice
     )
 
     # Convert to the real [BumpType] type
@@ -407,6 +443,9 @@ function Update-VersionNumbers {
         $bumpValue.versionBumped      = $versionBumpedArray -join '.'
         $bumpValue.versionBumpedArray = $versionBumpedArray
     }
+
+    # Also prepare the tag version
+    $Script:TagVersion = 'v' + $Script:BumpsHash.TinyOrm.versionBumped
 }
 
 # Get the longest size of the bumped version numbers
@@ -462,6 +501,9 @@ function Show-VersionNumbers {
 
         Write-Host "$versionOldPadded -> $($bumpValue.versionBumped)"
     }
+
+    NewLine
+    Write-Output "Tag version set to `e[35m$Script:TagVersion`e[0m"
 }
 
 # Verify that we found exactly the right count of lines based on the version number to bump
@@ -805,11 +847,11 @@ function Edit-VcpkgRefAndHash {
     [OutputType([void])]
     Param()
 
-    $vcpkgRef = Get-VcpkgRef
+    $vcpkgRef = $Script:TagVersion ?? (Get-VcpkgRef)
 
     Write-Progress 'Obtaining the origin/main archive hash (SHA512)...'
 
-    $vcpkgHash = Get-VcpkgHash -Project 'silverqx/TinyORM' -Tag $Script:TagVersion
+    $vcpkgHash = & "$PSScriptRoot\Get-VcpkgHash.ps1" -Project 'silverqx/TinyORM' -Ref $vcpkgRef
 
     foreach ($portfiles in $Script:VcpkgHash.GetEnumerator()) {
         $regexRef   = '(?<ref>    REF )(?:[0-9a-f]{40})'
@@ -1246,9 +1288,18 @@ function Invoke-MergeDevelopAndDeploy {
         [switch] $FollowTags
     )
 
-    # Verify if the current branch is develop and the working tree is still clean
+    # This is a special case, the $FollowTags indicates that the Invoke-MergeDevelopAndDeploy
+    # was invoked after bumping version numbers code.
+    # It allows to have a nicer code in the main section. 🫤
+    $isInvokedAfterVersionsBump = $FollowTags
+    if ($isInvokedAfterVersionsBump -and $Script:IsBumpingSkipped) {
+        return
+    }
+
     NewLine
+    # Test if the develop and main branches are behind the origin
     Test-GitBehindOrigin
+    # Verify if the current branch is develop and the working tree is still clean
     Test-GitDevelopBranch
     Test-WorkingTreeClean
 
@@ -1290,8 +1341,11 @@ function Invoke-BumpVersions {
     # Allow to skip bumping version numbers
     $answer = Approve-Continue 'Do you want to bump version numbers?' -DefaultChoice 0
     if ($answer -eq 1) {
+        # Set global flag to skip merge and deploy
+        $Script:IsBumpingSkipped = $true
+
         NewLine
-        Write-Error 'Skipping version numbers bumping'
+        Write-Error 'Skipping version numbers bumping 🦘'
         return
     }
 
@@ -1349,7 +1403,11 @@ function Invoke-CreateTag {
     [OutputType([void])]
     Param()
 
-    $Script:TagVersion = 'v' + $Script:BumpsHash.TinyOrm.versionBumped
+    if ($null -eq $Script:TagVersion) {
+        Write-Error ('Skipping tag creation because the TinyOrm library version number ' +
+            'was not bumped 🦘')
+        return
+    }
 
     Write-Header "Creating $Script:TagVersion tag for TinyORM project"
 
@@ -1366,6 +1424,15 @@ function Invoke-UpdateVcpkgPorts {
     # into the main branch
 
     Write-Header 'Updating vcpkg ports REF and SHA512'
+
+    # Behind and ahead tests are only needed if version numbers bumping was skipped because
+    # in this case  the develop and main branches were not pushed and if these branches are ahead
+    # then the vcpkg_from_github() REF option would point to the wrong commit ID as this commit ID
+    # is obtained from the origin/main. Because of this we need to test ahead in this specific case.
+    if ($Script:IsBumpingSkipped) {
+        Test-GitAheadOrigin
+        # Test behind is not needed here as it is always tested at the beginning of this script
+    }
 
     Edit-VcpkgRefAndHash
 
@@ -1428,14 +1495,19 @@ Invoke-MergeDevelopAndDeploy -Message 'Vcpkg ports were updated and deployed suc
   - test if the main or develop branch are behind
   - test if the current branch is develop
   - test if the current working tree is clean
+  - allow to skip bumping version numbers
   - ask which version numbers to bump for the `TinyOrm`, `tom`, and `TinyUtils` projects
   - display bumped version numbers to verify them
+  - display bumped tag number to verify it
   - update bumped version numbers in all `version.hpp` files and also in all other files
   - show diff summary
   - prepare the bump commit message with the bumped version numbers
-  - do the commit, merge to the `main` branch (ff-only), and push to the `origin/main`
+  - commit the bump commit message
+  - prepare a tag message with the bumped version number
+  - create an annotated git tag
+  - merge the `develop` to the `main` branch (ff-only), and push to the `origin/main`
   - update the vcpkg `tinyorm` and `tinyorm-qt5` portfiles
-    - obtain the `origin/main` commit ID (SHA-1)
+    - obtain the `origin/main` commit ID (SHA-1) or use the tag number (based on select mode)
     - update the REF value
     - obtain the `origin/main` archive hash (SHA512)
     - update the SHA512 value
@@ -1443,6 +1515,15 @@ Invoke-MergeDevelopAndDeploy -Message 'Vcpkg ports were updated and deployed suc
     - if TinyOrm version number wasn't bumped allow to bump the port-version number in vcpkg.json
   - prepare the vcpkg commit message
   - do the commit, merge to the `main` branch (ff-only), and push to the `origin/main`
+
+  The deployment is not possible without bumping the TinyOrm library version number because a git
+  tag must be created. That means that bumping only the tom or TinyUtils isn't possible.
+  This used to be possible, but not anymore because git tags are created during deployment.
+
+  But there is a second mode that allows to completely skip bumping version numbers and in this case
+  is possible to deploy the vcpkg ports only. The vcpkg ports will use the git commit ID
+  of the main branch for the vcpkg_from_github REF option in this case. The first approval question
+  allows you to select this so-called second mode.
 
  .INPUTS
   Nothing.
