@@ -1346,7 +1346,7 @@ function Invoke-BumpPortVersions {
 
 # Create the tag based on the bumped version number
 function Invoke-CreateTag {
-    [OutputType([string])]
+    [OutputType([void])]
     Param()
 
     $Script:TagVersion = 'v' + $Script:BumpsHash.TinyOrm.versionBumped
