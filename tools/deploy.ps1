@@ -35,10 +35,13 @@ $Script:BumpsHash = $null
 $Script:VersionLocations = $null
 # Vcpkg port filepaths and bumping port-version field for tinyorm and tinyorm-qt5 ports
 $Script:VcpkgHash = $null
+
 # Tag version with the v prefix
 $Script:TagVersion = $null
 # Determine whether bumping version numbers was skipped
 $Script:IsBumpingSkipped = $false
+# Bump commit message cache (to avoid regeneration for the tag)
+$Script:BumpCommitMessage = $null
 
 # Functions section
 # ---
@@ -790,6 +793,9 @@ function Get-BumpCommitMessage {
 
     Set-Clipboard -Value $message
 
+    # Cache the commit message for the tag
+    $Script:BumpCommitMessage = $message
+
     return $message
 }
 
@@ -803,7 +809,8 @@ function Get-TagMessage {
 
     Write-Progress 'Generating the tag message and setting it to clipboard...'
 
-    $tagMessage = "bump version to TinyORM $Script:TagVersion"
+    # Make the tag message the same as the commit message so no information is not lost
+    $tagMessage = $Script:BumpCommitMessage
 
     Set-Clipboard -Value $tagMessage
 
