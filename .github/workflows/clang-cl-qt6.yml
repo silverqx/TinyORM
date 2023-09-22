@@ -476,12 +476,12 @@ jobs:
       with:
         path: |
           C:/Program Files/LLVM
-        key: llvm-16.0.6
+        key: llvm-17.0.1
 
-    - name: Install LLVM and Clang 16.0.6
+    - name: Install LLVM and Clang 17.0.1
       uses: KyleMayes/install-llvm-action@v1
       with:
-        version: 16.0.6
+        version: 17.0.1
         force-version: true
         cached: ${{ steps.llvm-cache.outputs.cache-hit }}
 
