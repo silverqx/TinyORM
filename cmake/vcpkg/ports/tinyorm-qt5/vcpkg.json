@@ -2,15 +2,15 @@
   "$schema": "https://raw.githubusercontent.com/microsoft/vcpkg-tool/main/docs/vcpkg.schema.json",
   "name": "tinyorm-qt5",
   "version-semver": "0.35.0",
+  "maintainers": "Silver Zachara <silver.zachara@gmail.com>",
   "description": "Modern C++ ORM library for Qt framework",
   "homepage": "https://github.com/silverqx/TinyORM",
   "documentation": "https://www.tinyorm.org",
-  "maintainers": "Silver Zachara <silver.zachara@gmail.com>",
   "supports": "!(uwp | arm | android | emscripten | osx | ios | xbox | freebsd | openbsd | wasm32)",
   "dependencies": [
+    "qt5-base",
     "range-v3",
     "tabulate",
-    "qt5-base",
     {
       "name": "vcpkg-cmake",
       "host": true
@@ -25,24 +25,6 @@
     "tom"
   ],
   "features": {
-    "sql-mysql": {
-      "description": "Build Qt SQL Driver for MySQL",
-      "dependencies": [
-        {
-          "name": "qt5-base",
-          "features": ["mysqlplugin"]
-        }
-      ]
-    },
-    "sql-psql": {
-      "description": "Build Qt SQL Driver for PostgreSQL",
-      "dependencies": [
-        {
-          "name": "qt5-base",
-          "features": ["postgresqlplugin"]
-        }
-      ]
-    },
     "disable-thread-local": {
       "description": "Remove all thread_local storage duration specifiers (disables multi-threading support)"
     },
@@ -58,6 +40,28 @@
     "orm": {
       "description": "Enable ORM-related source code (without it only the query builder is compiled)"
     },
+    "sql-mysql": {
+      "description": "Build Qt SQL Driver for MySQL",
+      "dependencies": [
+        {
+          "name": "qt5-base",
+          "features": [
+            "mysqlplugin"
+          ]
+        }
+      ]
+    },
+    "sql-psql": {
+      "description": "Build Qt SQL Driver for PostgreSQL",
+      "dependencies": [
+        {
+          "name": "qt5-base",
+          "features": [
+            "postgresqlplugin"
+          ]
+        }
+      ]
+    },
     "strict-mode": {
       "description": "Propagate strict compiler/linker options and Qt definitions"
     },
@@ -71,7 +75,9 @@
         {
           "name": "tinyorm-qt5",
           "default-features": false,
-          "features": ["tom"]
+          "features": [
+            "tom"
+          ]
         }
       ]
     }

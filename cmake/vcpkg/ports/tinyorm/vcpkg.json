@@ -2,19 +2,21 @@
   "$schema": "https://raw.githubusercontent.com/microsoft/vcpkg-tool/main/docs/vcpkg.schema.json",
   "name": "tinyorm",
   "version-semver": "0.35.0",
+  "maintainers": "Silver Zachara <silver.zachara@gmail.com>",
   "description": "Modern C++ ORM library for Qt framework",
   "homepage": "https://github.com/silverqx/TinyORM",
   "documentation": "https://www.tinyorm.org",
-  "maintainers": "Silver Zachara <silver.zachara@gmail.com>",
   "supports": "!(uwp | arm | android | emscripten | osx | ios | xbox | freebsd | openbsd | wasm32)",
   "dependencies": [
-    "range-v3",
-    "tabulate",
     {
       "name": "qtbase",
       "default-features": false,
-      "features": ["sql"]
+      "features": [
+        "sql"
+      ]
     },
+    "range-v3",
+    "tabulate",
     {
       "name": "vcpkg-cmake",
       "host": true
@@ -25,41 +27,11 @@
     }
   ],
   "default-features": [
-    "sql-sqlite",
     "orm",
+    "sql-sqlite",
     "tom"
   ],
   "features": {
-    "sql-mysql": {
-      "description": "Build Qt SQL Driver for MySQL",
-      "dependencies": [
-        {
-          "name": "qtbase",
-          "default-features": false,
-          "features": ["sql-mysql"]
-        }
-      ]
-    },
-    "sql-psql": {
-      "description": "Build Qt SQL Driver for PostgreSQL",
-      "dependencies": [
-        {
-          "name": "qtbase",
-          "default-features": false,
-          "features": ["sql-psql"]
-        }
-      ]
-    },
-    "sql-sqlite": {
-      "description": "Build Qt SQL Driver for SQLite",
-      "dependencies": [
-        {
-          "name": "qtbase",
-          "default-features": false,
-          "features": ["sql-sqlite"]
-        }
-      ]
-    },
     "disable-thread-local": {
       "description": "Remove all thread_local storage duration specifiers (disables multi-threading support)"
     },
@@ -75,6 +47,42 @@
     "orm": {
       "description": "Enable ORM-related source code (without it only the query builder is compiled)"
     },
+    "sql-mysql": {
+      "description": "Build Qt SQL Driver for MySQL",
+      "dependencies": [
+        {
+          "name": "qtbase",
+          "default-features": false,
+          "features": [
+            "sql-mysql"
+          ]
+        }
+      ]
+    },
+    "sql-psql": {
+      "description": "Build Qt SQL Driver for PostgreSQL",
+      "dependencies": [
+        {
+          "name": "qtbase",
+          "default-features": false,
+          "features": [
+            "sql-psql"
+          ]
+        }
+      ]
+    },
+    "sql-sqlite": {
+      "description": "Build Qt SQL Driver for SQLite",
+      "dependencies": [
+        {
+          "name": "qtbase",
+          "default-features": false,
+          "features": [
+            "sql-sqlite"
+          ]
+        }
+      ]
+    },
     "strict-mode": {
       "description": "Propagate strict compiler/linker options and Qt definitions"
     },
@@ -88,7 +96,9 @@
         {
           "name": "tinyorm",
           "default-features": false,
-          "features": ["tom"]
+          "features": [
+            "tom"
+          ]
         }
       ]
     }
