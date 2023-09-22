@@ -2210,7 +2210,7 @@ PowerShell confusion:
    - calling -match on string returns bool and sets the $Matches variable
    - calling -match container filters it
  - variable names are case-insensitive
- - you don't have to ` escape newline: after + | or inside ()
+ - you don't have to ` escape newline: after + | = or inside ()
  - you must ` escape newline between function parameters eg.: -Path `\n -Message
 
 
