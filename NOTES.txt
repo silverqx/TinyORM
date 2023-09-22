@@ -1019,6 +1019,23 @@ CMake confusion:
   cmake added FetchContent support (23d0d904)
 
 
+TinyORM CMake build:
+--------------------
+
+Here I describe how the TinyORM's CMake build works because I was confused last time I returned
+to it and had to fix some problems.
+
+ - at the beginning are prepared and initialized CMake options and compiler requirements so
+   nothing special
+ - then are set header/sources files, PCH, prepared TinOrm target definitions, properties
+ - Windows RC and manifest
+ - nothing special until Deployment
+
+How the Deployment works:
+
+finish...
+
+
 TinyORM vcpkg testing (CMake build):
 ------------------------------------
 
