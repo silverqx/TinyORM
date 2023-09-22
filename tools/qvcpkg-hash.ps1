@@ -2,11 +2,6 @@
 
 [CmdletBinding(DefaultParameterSetName = 'Ref')]
 Param(
-    [Parameter(Position = 0, Mandatory,
-        HelpMessage = 'Specifies the GitHub project (username/project).')]
-    [ValidateNotNullOrEmpty()]
-    [string] $Project,
-
     [Parameter(Position = 1, ParameterSetName = 'Branch', ValueFromPipeline,
         ValueFromPipelineByPropertyName,
         HelpMessage = 'Specifies a branch for which to download the package archive (works with ' +
