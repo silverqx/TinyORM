@@ -1,6 +1,6 @@
 #!/usr/bin/env pwsh
 
-[CmdletBinding(DefaultParameterSetName = 'Branch')]
+[CmdletBinding(DefaultParameterSetName = 'Ref')]
 Param(
     [Parameter(Position = 0, Mandatory,
         HelpMessage = 'Specifies the GitHub project (username/project).')]
