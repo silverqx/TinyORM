@@ -228,6 +228,11 @@ QVector<SubSectionItem> AboutCommand::gatherEnvironmentInformation() const
 #else
                 {sl("Build type"),          "Release"},
 #endif
+#ifdef TINYORM_BUILDING_SHARED
+                {sl("Link type"),           "Shared (dynamic)"},
+#else
+                {sl("Link type"),           "Static"},
+#endif
             }},
     };
 }
