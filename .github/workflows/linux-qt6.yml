@@ -30,9 +30,9 @@ jobs:
     strategy:
       matrix:
         compiler:
-          - key: clang16
-            apt: [ clang-16, lld-16 ]
-            command: clang++-16
+          - key: clang17
+            apt: [ clang-17, lld-17 ]
+            command: clang++-17
 
           - key: gcc12
             apt: [ g++-12 ]
@@ -406,14 +406,14 @@ jobs:
         pg_config --version
         sqlite3 --version
 
-    - name: add-apt-repository Clang 16
-      if: ${{ matrix.compiler.key == 'clang16' }}
+    - name: add-apt-repository Clang 17
+      if: ${{ matrix.compiler.key == 'clang17' }}
       run: >-
         wget -O- https://apt.llvm.org/llvm-snapshot.gpg.key |
-        sudo tee /etc/apt/trusted.gpg.d/llvm-16.asc > /dev/null
+        sudo tee /etc/apt/trusted.gpg.d/llvm-17.asc > /dev/null
 
         sudo add-apt-repository --yes
-        --sourceslist 'deb http://apt.llvm.org/jammy/ llvm-toolchain-jammy-16 main'
+        --sourceslist 'deb http://apt.llvm.org/jammy/ llvm-toolchain-jammy-17 main'
 
     - name: apt update
       run: |
