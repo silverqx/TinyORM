@@ -4,6 +4,7 @@
 
 __tom_commands() {
     local -a commands=(
+        'about:Display basic information about the tom application'
         'env:Display the current framework environment'
         'help:Display help for a command'
         'inspire:Display an inspiring quote'
@@ -128,6 +129,14 @@ _tom() {
         '(-)*:: :->args' && return
 
     case $line[1] in
+        about)
+            _arguments \
+                $common_options \
+                '--json[Output the information as JSON]' \
+                '--pretty[Enable JSON human readable output]' \
+                '--only=[Sections to display (partial match)]:section names'
+            ;;
+
         (env|inspire)
             _arguments $common_options
             ;;
