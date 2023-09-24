@@ -243,6 +243,7 @@ QVector<SubSectionItem> AboutCommand::gatherEnvironmentInformation() const
 #else
                 {sl("Link type"),           "Static"},
 #endif
+// CMake ON/OFF
 #ifdef TINYORM_MSVC_RUNTIME_DYNAMIC
                 {sl("MSVC Runtime dynamic"),
                             TINY_CMAKE_BOOL(TINYORM_MSVC_RUNTIME_DYNAMIC)},
@@ -318,6 +319,7 @@ QVector<SubSectionItem> AboutCommand::gatherMacrosInformation()
 #else
                 {sl("TINYORM_NO_DEBUG_SQL"), *OFF},
 #endif
+// CMake ON/OFF
 #ifdef TINYORM_STRICT_MODE
                 {sl("TINYORM_STRICT_MODE"), TINY_CMAKE_BOOL(TINYORM_STRICT_MODE)},
 #endif
@@ -337,6 +339,7 @@ QVector<SubSectionItem> AboutCommand::gatherMacrosInformation()
 #else
                 {sl("TINYORM_USING_PCH"), *OFF},
 #endif
+// CMake ON/OFF
 #ifdef TINYORM_MSVC_RUNTIME_DYNAMIC
                 {sl("TINYORM_MSVC_RUNTIME_DYNAMIC"),
                             TINY_CMAKE_BOOL(TINYORM_MSVC_RUNTIME_DYNAMIC)},
