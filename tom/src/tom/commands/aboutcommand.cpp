@@ -9,8 +9,6 @@
 #include <orm/utils/string.hpp>
 
 #include "tom/application.hpp"
-#include "tom/config.hpp"
-#include "tom/tomtypes.hpp"
 #include "tom/version.hpp"
 
 /*! Alias for the QStringLiteral(). */
