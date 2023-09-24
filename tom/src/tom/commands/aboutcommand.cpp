@@ -213,11 +213,13 @@ QVector<SectionItem> AboutCommand::gatherAllAboutInformation() const
     };
 }
 
+/*! QString constant "ON". */
+Q_GLOBAL_STATIC_WITH_ARGS(QString, ON, ("ON")) // NOLINT(misc-use-anonymous-namespace)
+/*! QString constant "OFF". */
+Q_GLOBAL_STATIC_WITH_ARGS(QString, OFF, ("OFF")) // NOLINT(misc-use-anonymous-namespace)
+
 QVector<SubSectionItem> AboutCommand::gatherEnvironmentInformation() const
 {
-    static const auto ON  = QStringLiteral("ON");
-    static const auto OFF = QStringLiteral("OFF");
-
     return {
         {std::nullopt,
             {
@@ -240,7 +242,7 @@ QVector<SubSectionItem> AboutCommand::gatherEnvironmentInformation() const
                 {sl("MSVC Runtime dynamic"),
                             TypeUtils::isCMakeTrue(
                                 TINYTOM_STRINGIFY(TINYORM_MSVC_RUNTIME_DYNAMIC))
-                            ? ON : OFF},
+                            ? *ON : *OFF},
 #endif
 #ifdef TINYTOM_CMAKE_MSVC_RUNTIME_LIBRARY
                 {sl("MSVC Runtime library"),
@@ -252,91 +254,88 @@ QVector<SubSectionItem> AboutCommand::gatherEnvironmentInformation() const
 
 QVector<SubSectionItem> AboutCommand::gatherMacrosInformation()
 {
-    static const auto ON  = QStringLiteral("ON");
-    static const auto OFF = QStringLiteral("OFF");
-
     return {
         {std::nullopt,
             {
 #ifdef TINYORM_BUILDING_SHARED
-                {sl("TINYORM_BUILDING_SHARED"), ON},
+                {sl("TINYORM_BUILDING_SHARED"), *ON},
 #else
-                {sl("TINYORM_BUILDING_SHARED"), OFF},
+                {sl("TINYORM_BUILDING_SHARED"), *OFF},
 #endif
 #ifdef TINYORM_DEBUG
-                {sl("TINYORM_DEBUG"), ON},
+                {sl("TINYORM_DEBUG"), *ON},
 #else
-                {sl("TINYORM_DEBUG"), OFF},
+                {sl("TINYORM_DEBUG"), *OFF},
 #endif
 #ifdef TINYORM_DEBUG_SQL
-                {sl("TINYORM_DEBUG_SQL"), ON},
+                {sl("TINYORM_DEBUG_SQL"), *ON},
 #else
-                {sl("TINYORM_DEBUG_SQL"), OFF},
+                {sl("TINYORM_DEBUG_SQL"), *OFF},
 #endif
 #ifdef TINYORM_DISABLE_ORM
-                {sl("TINYORM_DISABLE_ORM"), ON},
+                {sl("TINYORM_DISABLE_ORM"), *ON},
 #else
-                {sl("TINYORM_DISABLE_ORM"), OFF},
+                {sl("TINYORM_DISABLE_ORM"), *OFF},
 #endif
 #ifdef TINYORM_DISABLE_THREAD_LOCAL
-                {sl("TINYORM_DISABLE_THREAD_LOCAL"), ON},
+                {sl("TINYORM_DISABLE_THREAD_LOCAL"), *ON},
 #else
-                {sl("TINYORM_DISABLE_THREAD_LOCAL"), OFF},
+                {sl("TINYORM_DISABLE_THREAD_LOCAL"), *OFF},
 #endif
 #ifdef TINYORM_DISABLE_TOM
-                {sl("TINYORM_DISABLE_TOM"), ON},
+                {sl("TINYORM_DISABLE_TOM"), *ON},
 #else
-                {sl("TINYORM_DISABLE_TOM"), OFF},
+                {sl("TINYORM_DISABLE_TOM"), *OFF},
 #endif
 #ifdef TINYORM_EXTERN_CONSTANTS
-                {sl("TINYORM_EXTERN_CONSTANTS"), ON},
+                {sl("TINYORM_EXTERN_CONSTANTS"), *ON},
 #else
-                {sl("TINYORM_EXTERN_CONSTANTS"), OFF},
+                {sl("TINYORM_EXTERN_CONSTANTS"), *OFF},
 #endif
 #ifdef TINYORM_INLINE_CONSTANTS
-                {sl("TINYORM_INLINE_CONSTANTS"), ON},
+                {sl("TINYORM_INLINE_CONSTANTS"), *ON},
 #else
-                {sl("TINYORM_INLINE_CONSTANTS"), OFF},
+                {sl("TINYORM_INLINE_CONSTANTS"), *OFF},
 #endif
 #ifdef TINYORM_MYSQL_PING
-                {sl("TINYORM_MYSQL_PING"), ON},
+                {sl("TINYORM_MYSQL_PING"), *ON},
 #else
-                {sl("TINYORM_MYSQL_PING"), OFF},
+                {sl("TINYORM_MYSQL_PING"), *OFF},
 #endif
 #ifdef TINYORM_NO_DEBUG
-                {sl("TINYORM_NO_DEBUG"), ON},
+                {sl("TINYORM_NO_DEBUG"), *ON},
 #else
-                {sl("TINYORM_NO_DEBUG"), OFF},
+                {sl("TINYORM_NO_DEBUG"), *OFF},
 #endif
 #ifdef TINYORM_NO_DEBUG_SQL
-                {sl("TINYORM_NO_DEBUG_SQL"), ON},
+                {sl("TINYORM_NO_DEBUG_SQL"), *ON},
 #else
-                {sl("TINYORM_NO_DEBUG_SQL"), OFF},
+                {sl("TINYORM_NO_DEBUG_SQL"), *OFF},
 #endif
 #ifdef TINYORM_STRICT_MODE
-                {sl("TINYORM_STRICT_MODE"), ON},
+                {sl("TINYORM_STRICT_MODE"), *ON},
 #else
-                {sl("TINYORM_STRICT_MODE"), OFF},
+                {sl("TINYORM_STRICT_MODE"), *OFF},
 #endif
 #ifdef TINYORM_TESTS_CODE
-                {sl("TINYORM_TESTS_CODE"), ON},
+                {sl("TINYORM_TESTS_CODE"), *ON},
 #else
-                {sl("TINYORM_TESTS_CODE"), OFF},
+                {sl("TINYORM_TESTS_CODE"), *OFF},
 #endif
 #ifdef TINYORM_TOM_EXAMPLE
-                {sl("TINYORM_TOM_EXAMPLE"), ON},
+                {sl("TINYORM_TOM_EXAMPLE"), *ON},
 #else
-                {sl("TINYORM_TOM_EXAMPLE"), OFF},
+                {sl("TINYORM_TOM_EXAMPLE"), *OFF},
 #endif
 #ifdef TINYORM_USING_PCH
-                {sl("TINYORM_USING_PCH"), ON},
+                {sl("TINYORM_USING_PCH"), *ON},
 #else
-                {sl("TINYORM_USING_PCH"), OFF},
+                {sl("TINYORM_USING_PCH"), *OFF},
 #endif
 #ifdef TINYORM_MSVC_RUNTIME_DYNAMIC
-                {sl("TINYORM_MSVC_RUNTIME_DYNAMIC"), ON},
+                {sl("TINYORM_MSVC_RUNTIME_DYNAMIC"), *ON},
 #else
-                {sl("TINYORM_MSVC_RUNTIME_DYNAMIC"), OFF},
+                {sl("TINYORM_MSVC_RUNTIME_DYNAMIC"), *OFF},
 #endif
                 {sl("TINYTOM_CMAKE_MSVC_RUNTIME_LIBRARY"),
                             TINYTOM_STRINGIFY(TINYTOM_CMAKE_MSVC_RUNTIME_LIBRARY)},
