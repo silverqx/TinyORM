@@ -283,6 +283,11 @@ QVector<SubSectionItem> AboutCommand::gatherMacrosInformation()
 #else
                 {sl("TINYORM_DISABLE_THREAD_LOCAL"), OFF},
 #endif
+#ifdef TINYORM_DISABLE_TOM
+                {sl("TINYORM_DISABLE_TOM"), ON},
+#else
+                {sl("TINYORM_DISABLE_TOM"), OFF},
+#endif
 #ifdef TINYORM_EXTERN_CONSTANTS
                 {sl("TINYORM_EXTERN_CONSTANTS"), ON},
 #else
@@ -308,6 +313,11 @@ QVector<SubSectionItem> AboutCommand::gatherMacrosInformation()
 #else
                 {sl("TINYORM_NO_DEBUG_SQL"), OFF},
 #endif
+#ifdef TINYORM_STRICT_MODE
+                {sl("TINYORM_STRICT_MODE"), ON},
+#else
+                {sl("TINYORM_STRICT_MODE"), OFF},
+#endif
 #ifdef TINYORM_TESTS_CODE
                 {sl("TINYORM_TESTS_CODE"), ON},
 #else
@@ -323,6 +333,14 @@ QVector<SubSectionItem> AboutCommand::gatherMacrosInformation()
 #else
                 {sl("TINYORM_USING_PCH"), OFF},
 #endif
+#ifdef TINYORM_MSVC_RUNTIME_DYNAMIC
+                {sl("TINYORM_MSVC_RUNTIME_DYNAMIC"), ON},
+#else
+                {sl("TINYORM_MSVC_RUNTIME_DYNAMIC"), OFF},
+#endif
+                {sl("TINYTOM_CMAKE_MSVC_RUNTIME_LIBRARY"),
+                            TINYTOM_STRINGIFY(TINYTOM_CMAKE_MSVC_RUNTIME_LIBRARY)},
+
                 {sl("TINYTOM_MIGRATIONS_DIR"), TINYTOM_STRINGIFY(TINYTOM_MIGRATIONS_DIR)},
                 {sl("TINYTOM_MODELS_DIR"),     TINYTOM_STRINGIFY(TINYTOM_MODELS_DIR)},
                 {sl("TINYTOM_SEEDERS_DIR"),    TINYTOM_STRINGIFY(TINYTOM_SEEDERS_DIR)},
