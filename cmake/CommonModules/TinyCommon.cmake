@@ -137,7 +137,8 @@ ${TINY_UNPARSED_ARGUMENTS}")
             $<$<CONFIG:Debug,RelWithDebInfo>:
                 LINKER:--dynamicbase,--high-entropy-va,--nxcompat
                 LINKER:--default-image-base-high>
-            # Use faster linker ( GNU ld linker doesn't work with the Clang )
+            # Use faster linker ( GNU ld linker doesn't work with the Clang;
+            # for both GCC and Clang )
             -fuse-ld=lld
         )
     endif()
