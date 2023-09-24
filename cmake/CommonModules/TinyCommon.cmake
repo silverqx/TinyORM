@@ -182,7 +182,8 @@ ${TINY_UNPARSED_ARGUMENTS}")
     endif()
 
     # Use faster lld linker on Clang (target the Clang except clang-cl with MSVC)
-    if(NOT MSVC AND CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+    # Don't set for MINGW to avoid duplicate setting (look a few lines above)
+    if(NOT MINGW AND NOT MSVC AND CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
         target_link_options(${target} INTERFACE -fuse-ld=lld)
     endif()
 
