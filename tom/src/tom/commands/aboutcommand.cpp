@@ -218,6 +218,10 @@ Q_GLOBAL_STATIC_WITH_ARGS(QString, ON, ("ON")) // NOLINT(misc-use-anonymous-name
 /*! QString constant "OFF". */
 Q_GLOBAL_STATIC_WITH_ARGS(QString, OFF, ("OFF")) // NOLINT(misc-use-anonymous-namespace)
 
+/*! Convert the CMake BOOL type value passed by the the C macro to the ON/OFF QString. */
+#define TINY_CMAKE_BOOL(value) TypeUtils::isCMakeTrue(                       \
+                                   TINYTOM_STRINGIFY(value)) ? *ON : *OFF
+
 QVector<SubSectionItem> AboutCommand::gatherEnvironmentInformation() const
 {
     return {
@@ -241,9 +245,7 @@ QVector<SubSectionItem> AboutCommand::gatherEnvironmentInformation() const
 #endif
 #ifdef TINYORM_MSVC_RUNTIME_DYNAMIC
                 {sl("MSVC Runtime dynamic"),
-                            TypeUtils::isCMakeTrue(
-                                TINYTOM_STRINGIFY(TINYORM_MSVC_RUNTIME_DYNAMIC))
-                            ? *ON : *OFF},
+                            TINY_CMAKE_BOOL(TINYORM_MSVC_RUNTIME_DYNAMIC)},
 #endif
 // Newline needed - QtCreator syntax highlighting bug
 #ifdef TINYTOM_CMAKE_MSVC_RUNTIME_LIBRARY
