@@ -546,14 +546,19 @@ GitHub Actions:
 
  - all actions with versions currently used by TinyORM:
 
-   actions/checkout@v3
-   Chocobo1/setup-ccache-action@v1
+   actions/checkout@v4
    mxschmitt/action-tmate@v3
-   actions/cache@v2
+   actions/cache@v3
    KyleMayes/install-llvm-action@v1
    msys2/setup-msys2@v2
    jurplel/install-qt-action@v3
    ilammy/msvc-dev-cmd@v1
+   seanmiddleditch/gha-setup-ninja@master
+   actions/github-script@v6
+
+   Not using anymore:
+
+   Chocobo1/setup-ccache-action@v1
 
  - periodical upgrades:
 

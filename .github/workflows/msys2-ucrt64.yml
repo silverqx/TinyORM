@@ -44,7 +44,7 @@ jobs:
             pacboy: qt6-base:u
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
 
     - name: TinyORM prepare environment
       run: |
