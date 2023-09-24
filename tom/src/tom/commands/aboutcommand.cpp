@@ -319,9 +319,7 @@ QVector<SubSectionItem> AboutCommand::gatherMacrosInformation()
                 {sl("TINYORM_NO_DEBUG_SQL"), *OFF},
 #endif
 #ifdef TINYORM_STRICT_MODE
-                {sl("TINYORM_STRICT_MODE"), *ON},
-#else
-                {sl("TINYORM_STRICT_MODE"), *OFF},
+                {sl("TINYORM_STRICT_MODE"), TINY_CMAKE_BOOL(TINYORM_STRICT_MODE)},
 #endif
 // Newline needed - QtCreator syntax highlighting bug
 #ifdef TINYORM_TESTS_CODE
@@ -340,9 +338,8 @@ QVector<SubSectionItem> AboutCommand::gatherMacrosInformation()
                 {sl("TINYORM_USING_PCH"), *OFF},
 #endif
 #ifdef TINYORM_MSVC_RUNTIME_DYNAMIC
-                {sl("TINYORM_MSVC_RUNTIME_DYNAMIC"), *ON},
-#else
-                {sl("TINYORM_MSVC_RUNTIME_DYNAMIC"), *OFF},
+                {sl("TINYORM_MSVC_RUNTIME_DYNAMIC"),
+                            TINY_CMAKE_BOOL(TINYORM_MSVC_RUNTIME_DYNAMIC)},
 #endif
 // Newline needed - QtCreator syntax highlighting bug
 #ifdef TINYTOM_CMAKE_MSVC_RUNTIME_LIBRARY

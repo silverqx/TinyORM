@@ -322,6 +322,7 @@ if(TOM)
             TINYORM_MSVC_RUNTIME_DYNAMIC=${MSVC_RUNTIME_DYNAMIC}
             # TINYTOM_ is corrent, it's strictly for the tom about command only
             TINYTOM_CMAKE_MSVC_RUNTIME_LIBRARY=${CMAKE_MSVC_RUNTIME_LIBRARY}
+            TINYORM_STRICT_MODE=${STRICT_MODE}
     )
 
     # Enable code needed by tests (modify the migrate:status command for tests need)
