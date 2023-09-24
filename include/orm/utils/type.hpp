@@ -68,6 +68,10 @@ namespace Orm::Utils
             "off"). */
         static bool isTrue(const QVariant &value);
 
+        /*! Determine if a string is the CMake true bool value (1, ON, YES, TRUE, Y, or
+            a non-zero number (including floating point numbers). */
+        static bool isCMakeTrue(const QString &value);
+
     private:
         /*! Class name with or w/o a namespace and w/o template parameters, common
             code. */

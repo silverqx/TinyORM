@@ -7,6 +7,7 @@
 
 #include <orm/constants.hpp>
 #include <orm/utils/string.hpp>
+#include <orm/utils/type.hpp>
 
 #include "tom/application.hpp"
 #include "tom/version.hpp"
@@ -20,6 +21,7 @@ using Orm::Constants::NOSPACE;
 using Orm::Constants::SPACE;
 
 using StringUtils = Orm::Utils::String;
+using TypeUtils = Orm::Utils::Type;
 
 using Tom::Constants::json_;
 using Tom::Constants::only_;
@@ -213,6 +215,9 @@ QVector<SectionItem> AboutCommand::gatherAllAboutInformation() const
 
 QVector<SubSectionItem> AboutCommand::gatherEnvironmentInformation() const
 {
+    static const auto ON  = QStringLiteral("ON");
+    static const auto OFF = QStringLiteral("OFF");
+
     return {
         {std::nullopt,
             {
@@ -230,6 +235,16 @@ QVector<SubSectionItem> AboutCommand::gatherEnvironmentInformation() const
                 {sl("Link type"),           "Shared (dynamic)"},
 #else
                 {sl("Link type"),           "Static"},
+#endif
+#ifdef TINYORM_MSVC_RUNTIME_DYNAMIC
+                {sl("MSVC Runtime dynamic"),
+                            TypeUtils::isCMakeTrue(
+                                TINYTOM_STRINGIFY(TINYORM_MSVC_RUNTIME_DYNAMIC))
+                            ? ON : OFF},
+#endif
+#ifdef TINYTOM_CMAKE_MSVC_RUNTIME_LIBRARY
+                {sl("MSVC Runtime library"),
+                            TINYTOM_STRINGIFY(TINYTOM_CMAKE_MSVC_RUNTIME_LIBRARY)},
 #endif
             }},
     };

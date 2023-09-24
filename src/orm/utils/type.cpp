@@ -78,6 +78,22 @@ bool Type::isTrue(const QVariant &value)
     return value.canConvert<QString>() && isTrue(value.value<QString>());
 }
 
+bool Type::isCMakeTrue(const QString &value)
+{
+    /* Is simpler to compare to the false-type values because comparing the true-type
+       values involves numbers, especially floating point numbers and +- sign before
+       a number is more complicated. */
+    return !value.isEmpty() &&
+           value != QLatin1Char('0') &&
+           value.compare(QStringLiteral("off"),         Qt::CaseInsensitive) != 0 &&
+           value.compare(QStringLiteral("no"),          Qt::CaseInsensitive) != 0 &&
+           value.compare(QStringLiteral("n"),           Qt::CaseInsensitive) != 0 &&
+           value.compare(QStringLiteral("false"),       Qt::CaseInsensitive) != 0 &&
+           value.compare(QStringLiteral("ignore"),      Qt::CaseInsensitive) != 0 &&
+           value.compare(QStringLiteral("notfound"),    Qt::CaseInsensitive) != 0 &&
+           !value.endsWith(QStringLiteral("-notfound"), Qt::CaseInsensitive);
+}
+
 QString
 Type::classPureBasenameInternal(const std::type_info &typeInfo, const bool withNamespace)
 {

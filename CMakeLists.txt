@@ -316,6 +316,12 @@ if(TOM)
             $<$<NOT:$<CONFIG:Debug>>:TINYTOM_NO_DEBUG>
             # Debug build
             $<$<CONFIG:Debug>:TINYTOM_DEBUG>
+        PRIVATE
+            # For the tom about command
+            # TINYORM_ is correct, it can be potentially used somewhere else
+            TINYORM_MSVC_RUNTIME_DYNAMIC=${MSVC_RUNTIME_DYNAMIC}
+            # TINYTOM_ is corrent, it's strictly for the tom about command only
+            TINYTOM_CMAKE_MSVC_RUNTIME_LIBRARY=${CMAKE_MSVC_RUNTIME_LIBRARY}
     )
 
     # Enable code needed by tests (modify the migrate:status command for tests need)
