@@ -345,9 +345,10 @@ QVector<SubSectionItem> AboutCommand::gatherMacrosInformation()
                 {sl("TINYORM_MSVC_RUNTIME_DYNAMIC"), *OFF},
 #endif
 // Newline needed - QtCreator syntax highlighting bug
+#ifdef TINYTOM_CMAKE_MSVC_RUNTIME_LIBRARY
                 {sl("TINYTOM_CMAKE_MSVC_RUNTIME_LIBRARY"),
                             TINYTOM_STRINGIFY(TINYTOM_CMAKE_MSVC_RUNTIME_LIBRARY)},
-
+#endif
                 {sl("TINYTOM_MIGRATIONS_DIR"), TINYTOM_STRINGIFY(TINYTOM_MIGRATIONS_DIR)},
                 {sl("TINYTOM_MODELS_DIR"),     TINYTOM_STRINGIFY(TINYTOM_MODELS_DIR)},
                 {sl("TINYTOM_SEEDERS_DIR"),    TINYTOM_STRINGIFY(TINYTOM_SEEDERS_DIR)},
