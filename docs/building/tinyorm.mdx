@@ -785,7 +785,8 @@ Important `qmake` options.
 | ----------------------------------- | ------- | ----------- |
 | `ccache`                            | `OFF`   | Enable compiler cache. [Homepage](https://ccache.dev/)<br/><small>It works only on the Unix systems. It works well with the `g++` and `clang++` and also supports precompiled headers.</small> |
 | `precompile_header`                 | `-`     | Enable precompiled headers, you can disable them with:<br/> `CONFIG-=precompile_header`.<br/><small>The `precompile_header` is enabled by default on `msvc`, `g++`, `clang++`, `clang-cl` on `Windows` and disabled by default on `linux`.</small> |
-| `static`<br/>`staticlib`            | `OFF`   | Build as a static library (lib only). |
+| `static`<br/>`staticlib`            | `OFF`   | Build as a `static` library (lib only). |
+| `static_runtime`                    | `OFF`   | Link against the `shared` (dynamic) or `static` run-time library.<br/><small>The `-MD` becomes `-MT` and `-MDd` becomes `-MTd`. It works only on `MSVC` and `MinGW` or `MSYS2`.<br/>Please <u>don't use</u> this option.<br/>Available when: `msvc` or `mingw`</small> |
 
 </APITable>
 </div>
