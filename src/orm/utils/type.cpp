@@ -67,10 +67,10 @@ QString Type::prettyFunction(const QString &function)
 bool Type::isTrue(const QString &value)
 {
     return !value.isEmpty() &&
-            value != QLatin1Char('0') &&
-            value != QStringLiteral("false") &&
-            // QVariant::value<bool>() doesn't check conditions below
-                     value != QStringLiteral("off");
+           value != QLatin1Char('0') &&
+           value.compare(QStringLiteral("false"), Qt::CaseInsensitive) != 0 &&
+           // QVariant::value<bool>() doesn't check conditions below
+           value.compare(QStringLiteral("off"), Qt::CaseInsensitive) != 0;
 }
 
 bool Type::isTrue(const QVariant &value)
