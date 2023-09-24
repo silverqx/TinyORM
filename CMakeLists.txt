@@ -340,6 +340,9 @@ if(TOM_EXAMPLE)
             TINYTOM_MODELS_DIR=${TOM_MODELS_DIR}
             # Will be stringified in the tom/application.cpp
             TINYTOM_SEEDERS_DIR=${TOM_SEEDERS_DIR}
+        PRIVATE
+            # For the tom about command
+            TINYORM_TOM_EXAMPLE
     )
 endif()
 
