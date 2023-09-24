@@ -7,6 +7,7 @@
 #endif
 
 #include "orm/constants.hpp"
+
 #if !defined(_MSC_VER)
 #  include "orm/exceptions/runtimeerror.hpp"
 #endif
