@@ -233,6 +233,7 @@ QVector<SubSectionItem> AboutCommand::gatherEnvironmentInformation() const
 #else
                 {sl("Build type"),          "Release"},
 #endif
+// Newline needed - QtCreator syntax highlighting bug
 #ifdef TINYORM_BUILDING_SHARED
                 {sl("Link type"),           "Shared (dynamic)"},
 #else
@@ -244,6 +245,7 @@ QVector<SubSectionItem> AboutCommand::gatherEnvironmentInformation() const
                                 TINYTOM_STRINGIFY(TINYORM_MSVC_RUNTIME_DYNAMIC))
                             ? *ON : *OFF},
 #endif
+// Newline needed - QtCreator syntax highlighting bug
 #ifdef TINYTOM_CMAKE_MSVC_RUNTIME_LIBRARY
                 {sl("MSVC Runtime library"),
                             TINYTOM_STRINGIFY(TINYTOM_CMAKE_MSVC_RUNTIME_LIBRARY)},
@@ -272,6 +274,7 @@ QVector<SubSectionItem> AboutCommand::gatherMacrosInformation()
 #else
                 {sl("TINYORM_DEBUG_SQL"), *OFF},
 #endif
+// Newline needed - QtCreator syntax highlighting bug
 #ifdef TINYORM_DISABLE_ORM
                 {sl("TINYORM_DISABLE_ORM"), *ON},
 #else
@@ -302,6 +305,7 @@ QVector<SubSectionItem> AboutCommand::gatherMacrosInformation()
 #else
                 {sl("TINYORM_MYSQL_PING"), *OFF},
 #endif
+// Newline needed - QtCreator syntax highlighting bug
 #ifdef TINYORM_NO_DEBUG
                 {sl("TINYORM_NO_DEBUG"), *ON},
 #else
@@ -317,6 +321,7 @@ QVector<SubSectionItem> AboutCommand::gatherMacrosInformation()
 #else
                 {sl("TINYORM_STRICT_MODE"), *OFF},
 #endif
+// Newline needed - QtCreator syntax highlighting bug
 #ifdef TINYORM_TESTS_CODE
                 {sl("TINYORM_TESTS_CODE"), *ON},
 #else
@@ -337,6 +342,7 @@ QVector<SubSectionItem> AboutCommand::gatherMacrosInformation()
 #else
                 {sl("TINYORM_MSVC_RUNTIME_DYNAMIC"), *OFF},
 #endif
+// Newline needed - QtCreator syntax highlighting bug
                 {sl("TINYTOM_CMAKE_MSVC_RUNTIME_LIBRARY"),
                             TINYTOM_STRINGIFY(TINYTOM_CMAKE_MSVC_RUNTIME_LIBRARY)},
 
