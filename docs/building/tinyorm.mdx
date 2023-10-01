@@ -74,8 +74,8 @@ Here is one simple example for `pwsh`.
 <TabItem value='qtenv6.ps1' label='qtenv6.ps1'>
 
 ```powershell
-Write-Host 'Setting up environment for Qt 6.5.2 usage...' -ForegroundColor Magenta
-$env:Path = 'C:\Qt\6.5.2\msvc2019_64\bin;' + $env:Path
+Write-Host 'Setting up environment for Qt 6.5.3 usage...' -ForegroundColor Magenta
+$env:Path = 'C:\Qt\6.5.3\msvc2019_64\bin;' + $env:Path
 . E:\dotfiles\bin\vcvars64.ps1
 ```
 
@@ -98,10 +98,10 @@ And here for Linux:
 <TabItem value='qtenv6' label='qtenv6'>
 
 ```bash
-echo 'Setting up environment for Qt 6.5.2 usage...'
+echo 'Setting up environment for Qt 6.5.3 usage...'
 
-export PATH=/opt/Qt/6.5.2/gcc_64/bin${PATH:+:}$PATH
-export LD_LIBRARY_PATH=/opt/Qt/6.5.2/gcc_64/lib${LD_LIBRARY_PATH:+:}$LD_LIBRARY_PATH
+export PATH=/opt/Qt/6.5.3/gcc_64/bin${PATH:+:}$PATH
+export LD_LIBRARY_PATH=/opt/Qt/6.5.3/gcc_64/lib${LD_LIBRARY_PATH:+:}$LD_LIBRARY_PATH
 ```
 
 </TabItem>
@@ -246,7 +246,7 @@ Prepare compilation environment, we need to put the Qt Framework and Visual Stud
 <CodeBlock className='language-powershell'>
 {`mkdir ${rootFolderPath(pwsh)}
 cd ${rootFolderPath(pwsh)}
-$env:Path = 'C:\\Qt\\6.5.2\\msvc2019_64\\bin;' + $env:Path
+$env:Path = 'C:\\Qt\\6.5.3\\msvc2019_64\\bin;' + $env:Path
 vcvars64.ps1`}
 </CodeBlock>
 </TabItem>
@@ -254,8 +254,8 @@ vcvars64.ps1`}
 <CodeBlock className='language-bash'>
 {`mkdir -p ${rootFolderPath(bash)}
 cd ${rootFolderPath(bash)}
-export PATH=/opt/Qt/6.5.2/gcc_64/bin$\{PATH:+:\}$PATH
-export LD_LIBRARY_PATH=/opt/Qt/6.5.2/gcc_64/lib$\{LD_LIBRARY_PATH:+:\}$LD_LIBRARY_PATH`}
+export PATH=/opt/Qt/6.5.3/gcc_64/bin$\{PATH:+:\}$PATH
+export LD_LIBRARY_PATH=/opt/Qt/6.5.3/gcc_64/lib$\{LD_LIBRARY_PATH:+:\}$LD_LIBRARY_PATH`}
 </CodeBlock>
 </TabItem>
 </Tabs>
