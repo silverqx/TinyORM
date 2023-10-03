@@ -5,7 +5,10 @@ Set-StrictMode -Version 3.0
 # Get slashes by platform (all allowed platform dependant path separators)
 function Get-Slashes {
     [OutputType([string])]
-    Param()
+    Param(
+        [Parameter(HelpMessage = 'Specifies whether to escape slashes for RegEx.')]
+        [switch] $ForRegEx
+    )
 
     # Test precondition only if the $Script:Slashes is defined
     if (Test-Path 'Variable:Script:Slashes') {
@@ -25,7 +28,8 @@ function Get-Slashes {
 
     switch ($platform) {
         'Win32NT' {
-            return $Script:Slashes = '\\/'
+            $slashes = '\/'
+            return $Script:Slashes = $ForRegEx ? [regex]::Escape($slashes) : $slashes
         }
         'Unix' {
             return $Script:Slashes = '/'
@@ -54,7 +58,7 @@ function Get-PathToMatch {
         $Path
     )
 
-    $slashes = Get-Slashes
+    $slashes = Get-Slashes -ForRegEx
 
     # Normalize path slashes
     $pathToMatch = $Path `
@@ -82,7 +86,7 @@ function Get-FullPath {
 
         foreach ($p in $Path) {
             $normalized += [System.IO.Path]::GetFullPath(
-                ($p -replace "[$(Get-Slashes)]+$", '')
+                ($p -replace "[$(Get-Slashes -ForRegEx)]+$", '')
             )
         }
 
