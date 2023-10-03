@@ -82,11 +82,18 @@ function Write-ExitError {
         [Parameter(HelpMessage = 'Specifies the exit code.')]
         [ValidateNotNull()]
         [int]
-        $ExitCode = 1
+        $ExitCode = 1,
+
+        [Parameter(HelpMessage = 'No newline before the header message.')]
+        [switch] $NoNewlineBefore
     )
 
-    NewLine
+    if (-not $NoNewlineBefore) {
+        NewLine
+    }
+
     Write-Error $Message
+
     exit $ExitCode
 }
 
