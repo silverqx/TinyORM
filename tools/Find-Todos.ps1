@@ -32,14 +32,20 @@ Param(
 
 Set-StrictMode -Version 3.0
 
+. $PSScriptRoot\private\Common-Path.ps1
+
 # If empty search all subfolders
 if ($InSubFoldersPattern.Length -eq 0) {
-    $Script:InFolders = @($Path.TrimEnd('\*'), '?.*') -join [IO.Path]::DirectorySeparatorChar
+    $Script:InFolders =
+        @($Path.TrimEnd('*').TrimEnd((Get-Slashes)), '?.*') -join [IO.Path]::DirectorySeparatorChar
 }
 else {
-    $Script:InFolders = `
-        (@($Path.TrimEnd('\*'), $InSubFoldersPattern) -join [IO.Path]::DirectorySeparatorChar) + `
-        [IO.Path]::DirectorySeparatorChar
+    $Script:InFolders =
+        (
+            @($Path.TrimEnd('*').TrimEnd((Get-Slashes)), $InSubFoldersPattern) -join
+            [IO.Path]::DirectorySeparatorChar
+        ) +
+            [IO.Path]::DirectorySeparatorChar
 }
 
 if ($PSVersionTable.Platform -eq 'Win32NT') {
