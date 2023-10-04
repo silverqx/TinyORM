@@ -23,6 +23,7 @@ Set-Variable STACK_NAME -Option Constant -Value $MyInvocation.MyCommand.Name
 $Script:QtMajorVersion = $null
 $Script:QtEnvVersion = $null
 $Script:VisualStudioVersion = '17.0'
+$Script:MySqlServerPath = 'C:/Program Files/MySQL/MySQL Server 8.1'
 
 # Functions section
 # ---
@@ -43,7 +44,7 @@ function Initialize-QtVersions
 # Check if the Qt version is >5
 function Test-QtVersion
 {
-    Write-Progress "Testing if the Qt version is >5"
+    Write-Host 'Testing if the Qt version is >5' -ForegroundColor DarkYellow
 
     if ($Script:QtMajorVersion -gt 5) {
         return
@@ -55,7 +56,7 @@ function Test-QtVersion
 # Check whether the passed QtVersion is installed
 function Test-QtVersionInstalled
 {
-    Write-Progress "Testing whether Qt $QtVersion is installed"
+    Write-Host "Testing whether Qt $QtVersion is installed" -ForegroundColor DarkYellow
 
     if (Test-Path "C:\Qt\$QtVersion") {
         return
@@ -66,7 +67,8 @@ function Test-QtVersionInstalled
 
 # Check whether the source files to build the Qt MySQL plugin are installed
 function Test-QtSourcesInstalled {
-    Write-Progress "Testing whether Qt $QtVersion source files are installed"
+    Write-Host "Testing whether Qt $QtVersion source files are installed" `
+        -ForegroundColor DarkYellow
 
     if (Test-Path "C:\Qt\$QtVersion\Src\qtbase\src\plugins\sqldrivers") {
         return
@@ -83,7 +85,7 @@ function Invoke-CleanBuild
         return
     }
 
-    Write-Progress "Removing $QtVersion build folder (Clean build)"
+    Write-Host "Removing $QtVersion build folder (Clean build)" -ForegroundColor DarkYellow
 
     Remove-Item -Force -Recurse "$QtVersion"
 }
@@ -91,18 +93,38 @@ function Invoke-CleanBuild
 # Create the build folders for debug and release builds
 function New-BuildFolders
 {
-    Write-Progress 'Creating build folders'
+    Write-Host 'Creating build folders' -ForegroundColor DarkYellow
 
-    mkdir -p "$QtVersion/msvc2019_64/RelWithDebInfo"
-    mkdir -p "$QtVersion/msvc2019_64/Debug"
+    $created = $false
+    $relWithDebInfoPath = "$QtVersion/msvc2019_64/RelWithDebInfo"
 
-    NewLine
+    if (-not (Test-Path $relWithDebInfoPath)) {
+        mkdir -p $relWithDebInfoPath
+        $created = $true
+    }
+    else {
+        Write-Host "  Release folder already exists ($relWithDebInfoPath)" -ForegroundColor DarkRed
+    }
+
+    $debugPath = "$QtVersion/msvc2019_64/Debug"
+
+    if (-not (Test-Path $debugPath)) {
+        mkdir -p $debugPath
+        $created = $true
+    }
+    else {
+        Write-Host "  Debug folder already exists ($debugPath)" -ForegroundColor DarkRed
+    }
+
+    if ($created) {
+        NewLine
+    }
 }
 
 # Test whether a Qt environment initialization was successful
 function Test-BuildEnvironment
 {
-    Write-Progress 'Testing whether the build environment is ready'
+    Write-Host 'Testing whether the build environment is ready' -ForegroundColor DarkYellow
 
     # Test MSVC build environment
     if (-not (Test-Path env:VisualStudioVersion) -or `
@@ -128,7 +150,7 @@ function Test-BuildEnvironment
 # Initialize the Qt and MSVC2022 build environment if it's not already there
 function Initialize-QtEnvironment
 {
-    Write-Progress 'Initializing Qt and MSVC2022 build environment'
+    Write-Host 'Initializing Qt and MSVC2022 build environment' -ForegroundColor DarkYellow
 
     if (Test-Path env:WindowsSDKLibVersion) {
         Write-Host ('The MSVC build environment already initialized. Exiting the Qt environment ' +
@@ -175,7 +197,7 @@ Write-Header 'Debug Build'
 Set-Location "$QtVersion/msvc2019_64/Debug"
 
 # Configure
-Write-Progress 'Configuring...'
+Write-Host 'Configuring...' -ForegroundColor DarkYellow
 
 qt-cmake `
     -S "C:/Qt/$QtVersion/Src/qtbase/src/plugins/sqldrivers" `
@@ -183,8 +205,8 @@ qt-cmake `
     -G Ninja `
     -D CMAKE_BUILD_TYPE=Debug `
     -D CMAKE_INSTALL_PREFIX="C:/Qt/$QtVersion/msvc2019_64" `
-    -D MySQL_INCLUDE_DIR='C:/Program Files/MySQL/MySQL Server 8.0/include' `
-    -D MySQL_LIBRARY='C:/Program Files/MySQL/MySQL Server 8.0/lib/libmysql.lib' `
+    -D MySQL_INCLUDE_DIR="${Script:MySqlServerPath}/include" `
+    -D MySQL_LIBRARY="${Script:MySqlServerPath}/lib/libmysql.lib" `
     -D FEATURE_sql_psql=OFF `
     -D FEATURE_sql_odbc=OFF `
     -D FEATURE_sql_sqlite=OFF
@@ -192,7 +214,7 @@ qt-cmake `
 NewLine
 
 # Build and install
-Write-Progress 'Building and installing...'
+Write-Host 'Building and installing...' -ForegroundColor DarkYellow
 
 cmake --build . --target install
 
@@ -202,7 +224,7 @@ Write-Header 'Release Build'
 
 Set-Location '../RelWithDebInfo'
 
-Write-Progress 'Configuring...'
+Write-Host 'Configuring...' -ForegroundColor DarkYellow
 
 qt-cmake `
     -S "C:/Qt/$QtVersion/Src/qtbase/src/plugins/sqldrivers" `
@@ -210,8 +232,8 @@ qt-cmake `
     -G Ninja `
     -D CMAKE_BUILD_TYPE=RelWithDebInfo `
     -D CMAKE_INSTALL_PREFIX="C:/Qt/$QtVersion/msvc2019_64" `
-    -D MySQL_INCLUDE_DIR='C:/Program Files/MySQL/MySQL Server 8.0/include' `
-    -D MySQL_LIBRARY='C:/Program Files/MySQL/MySQL Server 8.0/lib/libmysql.lib' `
+    -D MySQL_INCLUDE_DIR="${Script:MySqlServerPath}/include" `
+    -D MySQL_LIBRARY="${Script:MySqlServerPath}/lib/libmysql.lib" `
     -D FEATURE_sql_psql=OFF `
     -D FEATURE_sql_odbc=OFF `
     -D FEATURE_sql_sqlite=OFF
@@ -219,7 +241,7 @@ qt-cmake `
 NewLine
 
 # Build and install
-Write-Progress 'Building and installing...'
+Write-Host 'Building and installing...' -ForegroundColor DarkYellow
 
 cmake --build . --target install
 
