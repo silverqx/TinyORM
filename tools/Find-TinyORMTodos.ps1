@@ -14,7 +14,7 @@ Param(
 
 Set-StrictMode -Version 3.0
 
-E:\dotfiles\bin\Find-Todos.ps1 -Path 'E:\c\qMedia\TinyORM\TinyORM' -Include *.cpp, *.hpp `
+Find-Todos.ps1 -Path 'E:\c\qMedia\TinyORM\TinyORM' -Include *.cpp, *.hpp `
     -InSubFoldersPattern '(include|src|tests|tom)' @PSBoundParameters | Format-List
     # | Format-List -Property @{
     #     Name       = 'Line'

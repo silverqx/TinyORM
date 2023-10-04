@@ -14,4 +14,4 @@ Param(
 
 Set-StrictMode -Version 3.0
 
-E:\dotfiles\bin\Find-TinyORMTodos.ps1 @PSBoundParameters
+Find-TinyORMTodos.ps1 @PSBoundParameters
