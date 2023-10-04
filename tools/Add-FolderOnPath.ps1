@@ -26,7 +26,7 @@ Param(
 begin {
     Set-StrictMode -Version 3.0
 
-    if (-not (Test-Path 'variable:global:TinyBackedUpVariables')) {
+    if (-not (Test-Path 'Variable:Global:TinyBackedUpVariables')) {
         $Global:TinyBackedUpVariables = @()
     }
     $Script:Slashes = $null
