@@ -17,16 +17,19 @@ function Write-Header {
         [switch] $NoNewlineBefore,
 
         [Parameter(HelpMessage = 'No newline after the header message.')]
-        [switch] $NoNewlineAfter
+        [switch] $NoNewlineAfter,
+
+        [Parameter(HelpMessage = 'No newlines before and after the header message.')]
+        [switch] $NoNewlines
     )
 
-    if (-not $NoNewlineBefore) {
+    if (-not $NoNewlineBefore -and -not $NoNewlines) {
         NewLine
     }
 
     Write-Host $Header -ForegroundColor DarkBlue
 
-    if (-not $NoNewlineAfter) {
+    if (-not $NoNewlineAfter -and -not $NoNewlines) {
         NewLine
     }
 }
