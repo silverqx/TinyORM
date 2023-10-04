@@ -70,19 +70,19 @@ begin {
         Param()
 
         # Restore mode or a env. variable value already backed up
-        if ($RestorePath -or $Global:TinyBackedUpVariables.Contains($($Script:envVariableRaw))) {
+        if ($RestorePath -or $Global:TinyBackedUpVariables.Contains($($Script:EnvVariableRaw))) {
             return
         }
 
         # Keep track of backed up env. variable names
-        $Global:TinyBackedUpVariables += $Script:envVariableRaw
+        $Global:TinyBackedUpVariables += $Script:EnvVariableRaw
 
-        $globalName = "Tiny_$Script:envVariableRaw"
+        $globalName = "Tiny_$Script:EnvVariableRaw"
 
         # Backup to global variable
-        if (Test-Path $Script:envVariable) {
+        if (Test-Path $Script:EnvVariable) {
             Set-Variable -Scope global -Name $globalName `
-                -Value (Get-Item $Script:envVariable).Value
+                -Value (Get-Item $Script:EnvVariable).Value
         }
         # Env. variable to back up is empty, so set global variable to $null
         else {
@@ -133,7 +133,7 @@ begin {
             $VariableValue
         )
 
-        # Check if paths to add are already on the $Script:envVariable ($env:$Variable)
+        # Check if paths to add are already on the $Script:EnvVariable ($env:$Variable)
         $pathsToAdd = @()
         $pathsExcluded = @()
         if (-not ($VariableValue -eq '')) {
@@ -254,14 +254,14 @@ begin {
 
         begin {
             Write-Host
-            Write-Host "Updating `$$Script:envVariable environment variable..." `
+            Write-Host "Updating `$$Script:EnvVariable environment variable..." `
                 -ForegroundColor DarkBlue
             Write-Host
         }
 
         process {
             # Value of env. variable, set to the $null value if env. variable doesn't exist
-            $variableValue = Get-Item $Script:envVariable -ErrorAction SilentlyContinue
+            $variableValue = Get-Item $Script:EnvVariable -ErrorAction SilentlyContinue
                 | Select-Object -ExpandProperty Value
 
             # Obtain paths to add and excluded paths
@@ -275,7 +275,7 @@ begin {
             # Get final paths to add to the env. variable
             $pathsFinal = Join-PathsToAdd -VariableValue $variableValue -PathsToAdd $pathsToAdd
 
-            Set-Item -Path $Script:envVariable -Value $pathsFinal
+            Set-Item -Path $Script:EnvVariable -Value $pathsFinal
         }
 
         end {
@@ -289,7 +289,7 @@ begin {
         exit 0
     }
 
-    $Script:envVariable, $Script:envVariableRaw = Get-EnvVariable
+    $Script:EnvVariable, $Script:EnvVariableRaw = Get-EnvVariable
 }
 
 process {
@@ -300,8 +300,8 @@ process {
     }
     catch {
         # Clean global state when something goes wrong
-        if ($Script:envVariableRaw) {
-            Redo-GlobalState -Variable $($Script:envVariableRaw)
+        if ($Script:EnvVariableRaw) {
+            Redo-GlobalState -Variable $($Script:EnvVariableRaw)
         }
 
         throw
