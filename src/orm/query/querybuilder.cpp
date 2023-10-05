@@ -1735,7 +1735,7 @@ Builder &Builder::joinSubInternal(
             const QString &first, const QString &comparison, const QVariant &second,
             const QString &type, const bool where)
 {
-    auto &[queryString, bindings] = subQuery;
+    auto &&[queryString, bindings] = subQuery;
 
     addBinding(std::move(bindings), BindingType::JOIN);
 
@@ -1749,7 +1749,7 @@ Builder &Builder::joinSubInternal(
         const std::function<void(JoinClause &)> &callback,
         const QString &type)
 {
-    auto &[queryString, bindings] = subQuery;
+    auto &&[queryString, bindings] = subQuery;
 
     addBinding(std::move(bindings), BindingType::JOIN);
 
