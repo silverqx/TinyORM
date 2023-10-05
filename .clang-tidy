@@ -37,12 +37,20 @@ Checks:
   - -google-readability-todo
   - -llvm-header-guard
   - -llvm-qualified-auto
+  - -misc-include-cleaner
   - -misc-non-private-member-variables-in-classes
   - -modernize-use-nodiscard
   - -modernize-use-trailing-return-type
   - -readability-braces-around-statements
   - -readability-identifier-length
   - -readability-magic-numbers
+  # All below are only aliases
+  - -cppcoreguidelines-noexcept-destructor
+  - -cppcoreguidelines-noexcept-move-operations
+  - -cppcoreguidelines-noexcept-swap
+  - -cppcoreguidelines-use-default-member-init
+  # tmp
+  - -cppcoreguidelines-rvalue-reference-param-not-moved
 WarningsAsErrors:    '*'
 HeaderFilterRegex:   '[\\\/]+(examples|orm|tests|tom)[\\\/]+.+\.(h|hpp)$'
 FormatStyle:         none

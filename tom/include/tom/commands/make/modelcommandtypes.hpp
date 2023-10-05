@@ -18,9 +18,9 @@ namespace Tom::Commands::Make
     struct BelongToManyForeignKeys
     {
         /*! The foreign key of the parent model. */
-        QString foreignPivotKey;
+        QString foreignPivotKey {};
         /*! The associated key of the relation. */
-        QString relatedPivotKey;
+        QString relatedPivotKey {};
     };
 
     /*! Foreign keys lists divided by relation types. */

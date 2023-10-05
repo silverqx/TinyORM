@@ -97,7 +97,11 @@ namespace
 {
     /*! Insert a new item to the DB options hash. */
     template<QVariantConcept T>
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
+    void insertDbOption(QVariantHash &options, const QString &key, T &&value) // NOLINT(cppcoreguidelines-missing-std-forward)
+#else
     void insertDbOption(QVariantHash &options, const QString &key, T &&value)
+#endif
     {
         if (value.isEmpty())
             return;

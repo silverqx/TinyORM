@@ -305,7 +305,7 @@ InteractsWithIO::table(const TableRow &headers, const std::vector<TableRow> &row
             format.font_color(red);
     }
 
-    std::cout << table << std::endl;
+    std::cout << table << std::endl; // NOLINT(performance-avoid-endl)
 
     return *this;
 }
