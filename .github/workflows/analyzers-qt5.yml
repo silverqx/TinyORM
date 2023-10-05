@@ -234,10 +234,10 @@ jobs:
       run: >-
         echo 'TINY_CLANG_TIDY_EXECUTED=true' >> $GITHUB_ENV
 
-        ln --symbolic ../TinyORM-builds-cmake/build-clang-cmake-debug/compile_commands.json
-        compile_commands.json
-
-        run-clang-tidy-16 '(?:examples|src|tests)[\\\/]+.+?[\\\/]+(?!mocs_)[\w_\-\+]+\.cpp$'
+        run-clang-tidy-16
+        -extra-arg-before='-Qunused-arguments'
+        -p=../TinyORM-builds-cmake/build-clang-cmake-debug
+        '[\\\/]+(?:examples|src|tests)[\\\/]+.+?[\\\/]+(?!mocs_)[\w\d_\-\+]+\.cpp$'
 
     # Disabled checks
     # Level 2      - qstring-allocations
@@ -263,6 +263,9 @@ jobs:
         `# Checks Excluded from level2`\
         'no-qstring-allocations'
 
-        tools/run-clazy-standalone -checks="$checks" \
+        tools/run-clazy-standalone \
+        -checks="$checks" \
+        -extra-arg-before='-Qunused-arguments' \
         -header-filter='[\\\/]+(examples|orm|tests|tom)[\\\/]+.+\.(h|hpp)$' \
-        '[\\\/]+(?:examples|src|tests)[\\\/]+.+?[\\\/]+(?!mocs_)[\w_\-\+]+\.cpp$'
+        -p=../TinyORM-builds-cmake/build-clang-cmake-debug \
+        '[\\\/]+(?:examples|src|tests)[\\\/]+.+?[\\\/]+(?!mocs_)[\w\d_\-\+]+\.cpp$'
