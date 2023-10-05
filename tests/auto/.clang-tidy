@@ -1,3 +1,6 @@
 ---
-Checks:              '-bugprone-unchecked-optional-access,-misc-const-correctness,-readability-function-cognitive-complexity'
+Checks:
+    - -bugprone-unchecked-optional-access
+    - -misc-const-correctness
+    - -readability-function-cognitive-complexity
 InheritParentConfig: true
