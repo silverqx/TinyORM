@@ -19,6 +19,8 @@ Checks:
   - hicpp-multiway-paths-covered
   - -bugprone-easily-swappable-parameters
   - -bugprone-macro-parentheses
+  - -clang-analyzer-optin.osx.*
+  - -clang-analyzer-osx.*
   - -cppcoreguidelines-avoid-c-arrays
   - -cppcoreguidelines-avoid-magic-numbers
   - -cppcoreguidelines-avoid-non-const-global-variables
