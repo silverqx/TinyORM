@@ -10,7 +10,7 @@ TINY_SYSTEM_HEADER
 #include <tabulate/table.hpp>
 
 #ifdef TINYTOM_TESTS_CODE
-#include <orm/macros/threadlocal.hpp>
+#  include <orm/macros/threadlocal.hpp>
 #endif
 
 #include "tom/commands/command.hpp"
