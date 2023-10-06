@@ -4,7 +4,6 @@
 #include "orm/databaseconnection.hpp"
 #include "orm/exceptions/sqltransactionerror.hpp"
 #include "orm/support/databaseconfiguration.hpp"
-#include "orm/utils/type.hpp"
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
