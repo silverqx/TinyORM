@@ -93,9 +93,9 @@ QStringList Command::passedArguments() const
     if (!m_arguments.isEmpty())
         return m_arguments;
 
-    // Never obtain arguments from the QCoreApplication instance in tests
-    return application().hasQtApplication ? QCoreApplication::arguments()
-                                          : application().prepareArguments();
+    /* Never obtain arguments from the QCoreApplication instance in unit tests because
+       they are passed using the runWithArguments() method. */
+    return application().arguments();
 }
 
 /* Parser helpers */

@@ -146,6 +146,16 @@ namespace Tom {
    The complete command uses another approach to obtain all options
    in the CompleteCommand::getCommandOptionsSignature(). */
 
+/* Can't be inline static to avoid:
+   error: C2492: 'Tom::Application::m_inUnitTests':
+   data with thread storage duration may not have dll interface */
+namespace
+{
+    /*! Is enabled logic for unit testing? */
+    T_THREAD_LOCAL
+    auto g_inUnitTests = false;
+} // namespace
+
 /* public */
 
 Application::Application(int &argc, char **argv, std::shared_ptr<DatabaseManager> db,
@@ -155,9 +165,7 @@ Application::Application(int &argc, char **argv, std::shared_ptr<DatabaseManager
     : m_argc(&argc)
     , m_argv(argv)
     , m_db(std::move(db))
-#ifndef TINYTOM_TESTS_CODE
-    , m_qtApplication(argc, argv)
-#endif
+    , m_qtApplication(createQCoreApplication(argc, argv))
     , m_environmentEnvName(environmentEnvName)
     , m_migrationTable(std::move(migrationTable))
     , m_migrationsPath(initializePath(TINYORM_STRINGIFY(TINYTOM_MIGRATIONS_DIR)))
@@ -224,9 +232,10 @@ void Application::logException(const std::exception &e, const bool noAnsi)
 
 QStringList Application::arguments() const
 {
-    // Never obtain arguments from the QCoreApplication instance in unit tests
-    return hasQtApplication ? QCoreApplication::arguments()
-                            : prepareArguments();
+    /* Never obtain arguments from the QCoreApplication instance in unit tests because
+       they are passed using the runWithArguments() method. */
+    return g_inUnitTests ? prepareArguments()
+                         : QCoreApplication::arguments();
 }
 
 Application &Application::migrationsPath(fspath path)
@@ -251,6 +260,8 @@ std::vector<Application::StatusRow> Application::status()
 
 void Application::enableInUnitTests() noexcept
 {
+    g_inUnitTests = true;
+
     StatusCommand::setInUnitTests();
 }
 #endif
@@ -750,6 +761,19 @@ QList<CommandLineOption> Application::getCommandOptionsSignature(const QString &
 {
     // Ownership of a unique_ptr()
     return createCommand(command, std::nullopt, false)->optionsSignature();
+}
+
+std::unique_ptr<QCoreApplication>
+Application::createQCoreApplication(int &argc, char **argv)
+{
+    /* Only one instance of the QCoreApplication can exist in the whole application,
+       auto tests create their own instance.
+       The m_qtApplication isn't used anywhere but must be created if it doesn't exist.
+       I decided to use the QCoreApplication everywhere instead of eg. the m_qtApplication
+       or qtApplication()-> because it's much more clear what is happening. */
+    return QCoreApplication::instance() == nullptr
+            ? std::make_unique<QCoreApplication>(argc, argv)
+            : nullptr;
 }
 
 fspath Application::initializePath(fspath &&path)

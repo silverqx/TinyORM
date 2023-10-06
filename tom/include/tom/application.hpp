@@ -253,6 +253,9 @@ namespace Concerns
         /*! Get options signature for the given command. */
         QList<CommandLineOption> getCommandOptionsSignature(const QString &command);
 
+        /*! Create the QCoreApplication instance. */
+        static std::unique_ptr<QCoreApplication>
+        createQCoreApplication(int &argc, char **argv);
         /*! Initialize the migrations or seeders path (prepend pwd and make_prefered). */
         static fspath initializePath(fspath &&path);
 
@@ -276,17 +279,8 @@ namespace Concerns
         /*! The migrator service instance (cache only one instance created). */
         mutable std::shared_ptr<Migrator> m_migrator = nullptr;
 
-        /* Only one instance can exist in the whole application, auto tests create their
-           own QCoreApplication instance so this has to be excluded. */
-#ifndef TINYTOM_TESTS_CODE
         /*! Qt's application instance. */
-        QCoreApplication m_qtApplication;
-        /*! Determine whether the TomApplication has its own QCoreApplication instance. */
-        bool hasQtApplication = true;
-#else
-        /*! Determine whether the TomApplication has its own QCoreApplication instance. */
-        bool hasQtApplication = false;
-#endif
+        std::unique_ptr<QCoreApplication> m_qtApplication;
         /*! Command-line parser. */
         QCommandLineParser m_parser {};
 
