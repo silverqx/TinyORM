@@ -133,7 +133,7 @@ Helpers::setTimeZone(QDateTime &datetime, const QtTimeZoneConfig &timezone)
 }
 
 QDateTime
-Helpers::setTimeZone(QDateTime &&datetime, const QtTimeZoneConfig &timezone)
+Helpers::setTimeZone(QDateTime &&datetime, const QtTimeZoneConfig &timezone) // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
 {
     return setTimeZone(datetime, timezone);
 }
@@ -150,7 +150,7 @@ Helpers::setTimeZone(QDateTime &datetime, const QString &connection)
     return setTimeZone(datetime, DB::qtTimeZone(connection));
 }
 
-QDateTime Helpers::setTimeZone(QDateTime &&datetime, const QString &connection)
+QDateTime Helpers::setTimeZone(QDateTime &&datetime, const QString &connection) // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)○
 {
     return setTimeZone(datetime, connection);
 }

@@ -1335,7 +1335,7 @@ void tst_Model_Connection_Independent::chunk() const
 
     auto result = FilePropertyProperty::orderBy(ID)
                   ->chunk(3, [&compareResultSize, &ids]
-                             (ModelsCollection<FilePropertyProperty> &&models,
+                             (ModelsCollection<FilePropertyProperty> &&models, // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
                               const qint64 page)
     {
         compareResultSize(models.size(), page);
@@ -1374,7 +1374,7 @@ void tst_Model_Connection_Independent::chunk_ReturnFalse() const
 
     auto result = FilePropertyProperty::orderBy(ID)
                   ->chunk(3, [&compareResultSize, &ids]
-                             (ModelsCollection<FilePropertyProperty> &&models,
+                             (ModelsCollection<FilePropertyProperty> &&models, // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
                               const qint64 page)
     {
         compareResultSize(models.size(), page);
@@ -1422,7 +1422,7 @@ void tst_Model_Connection_Independent::chunk_EnforceOrderBy() const
 
     auto result = FilePropertyProperty::chunk(
                       3, [&compareResultSize, &ids]
-                         (ModelsCollection<FilePropertyProperty> &&models,
+                         (ModelsCollection<FilePropertyProperty> &&models, // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
                           const qint64 page)
     {
         compareResultSize(models.size(), page);
@@ -1449,7 +1449,7 @@ void tst_Model_Connection_Independent::chunk_EmptyResult() const
                                                 QStringLiteral("dummy-NON_EXISTENT"))
                   ->orderBy(ID)
                   .chunk(3, [&callbackInvoked]
-                            (ModelsCollection<FilePropertyProperty> &&/*unused*/,
+                            (ModelsCollection<FilePropertyProperty> &&/*unused*/, // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
                              const qint64 /*unused*/)
     {
         callbackInvoked = true;
@@ -1470,7 +1470,7 @@ void tst_Model_Connection_Independent::each() const
 
     auto result = FilePropertyProperty::orderBy(ID)
                   ->each([&indexes, &ids]
-                         (FilePropertyProperty &&model, const qint64 index)
+                         (FilePropertyProperty &&model, const qint64 index) // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
     {
         indexes.emplace_back(index);
         ids.emplace_back(model.getKeyCasted());
@@ -1498,7 +1498,7 @@ void tst_Model_Connection_Independent::each_ReturnFalse() const
 
     auto result = FilePropertyProperty::orderBy(ID)
                   ->each([&indexes, &ids]
-                         (FilePropertyProperty &&model, const qint64 index)
+                         (FilePropertyProperty &&model, const qint64 index) // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
     {
         indexes.emplace_back(index);
         ids.emplace_back(model.getKeyCasted());
@@ -1529,7 +1529,7 @@ void tst_Model_Connection_Independent::each_EnforceOrderBy() const
 
     auto result = FilePropertyProperty::each(
                       [&indexes, &ids]
-                      (FilePropertyProperty &&model, const qint64 index)
+                      (FilePropertyProperty &&model, const qint64 index) // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
     {
         indexes.emplace_back(index);
         ids.emplace_back(model.getKeyCasted());
@@ -1556,7 +1556,7 @@ void tst_Model_Connection_Independent::each_EmptyResult() const
                                                 QStringLiteral("dummy-NON_EXISTENT"))
                   ->orderBy(ID)
                   .each([&callbackInvoked]
-                        (FilePropertyProperty &&/*unused*/, const qint64 /*unused*/)
+                        (FilePropertyProperty &&/*unused*/, const qint64 /*unused*/) // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
     {
         callbackInvoked = true;
 
@@ -1686,7 +1686,7 @@ void tst_Model_Connection_Independent::chunkMap_EmptyResult() const
 void tst_Model_Connection_Independent::chunkMap_TemplatedReturnValue() const
 {
     auto result = FilePropertyProperty::orderBy(ID)
-                  ->chunkMap<QString>([](FilePropertyProperty &&model)
+                  ->chunkMap<QString>([](FilePropertyProperty &&model) // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
     {
         // Return the modify name directly
         return QStringLiteral("%1_mapped").arg(model[NAME]->template value<QString>());
@@ -1714,7 +1714,7 @@ tst_Model_Connection_Independent::chunkMap_EnforceOrderBy_TemplatedReturnValue()
        specified, instead it adds a generic 'order by' clause
        on the Model::getQualifiedKeyName() (it sorts by the primary key by default). */
     auto result = FilePropertyProperty::chunkMap<QString>(
-                      [](FilePropertyProperty &&model)
+                      [](FilePropertyProperty &&model) // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
     {
         // Return the modify name directly
         return QStringLiteral("%1_mapped").arg(model[NAME]->template value<QString>());
@@ -1742,7 +1742,7 @@ void tst_Model_Connection_Independent::chunkMap_EmptyResult_TemplatedReturnValue
     auto result = FilePropertyProperty::whereEq(NAME,
                                                 QStringLiteral("dummy-NON_EXISTENT"))
                   ->chunkMap<QString>([&callbackInvoked]
-                                      (FilePropertyProperty &&/*unused*/)
+                                      (FilePropertyProperty &&/*unused*/) // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
                                       -> QString
     {
         callbackInvoked = true;
@@ -1775,7 +1775,7 @@ void tst_Model_Connection_Independent::chunkById() const
 
     auto result = FilePropertyProperty::orderBy(ID)
                   ->chunkById(3, [&compareResultSize, &ids]
-                                 (ModelsCollection<FilePropertyProperty> &&models,
+                                 (ModelsCollection<FilePropertyProperty> &&models, // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
                                   const qint64 page)
     {
         compareResultSize(models.size(), page);
@@ -1814,7 +1814,7 @@ void tst_Model_Connection_Independent::chunkById_ReturnFalse() const
 
     auto result = FilePropertyProperty::orderBy(ID)
                   ->chunkById(3, [&compareResultSize, &ids]
-                                 (ModelsCollection<FilePropertyProperty> &&models,
+                                 (ModelsCollection<FilePropertyProperty> &&models, // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
                                   const qint64 page)
     {
         compareResultSize(models.size(), page);
@@ -1847,7 +1847,7 @@ void tst_Model_Connection_Independent::chunkById_EmptyResult() const
                                                 QStringLiteral("dummy-NON_EXISTENT"))
                   ->orderBy(ID)
                   .chunkById(3, [&callbackInvoked]
-                                (ModelsCollection<FilePropertyProperty> &&/*unused*/,
+                                (ModelsCollection<FilePropertyProperty> &&/*unused*/, // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
                                  const qint64 /*unused*/)
     {
         callbackInvoked = true;
@@ -1880,7 +1880,7 @@ void tst_Model_Connection_Independent::chunkById_WithAlias() const
     auto result = FilePropertyProperty::select({ASTERISK, "id as id_as"})
                   ->orderBy(ID)
                   .chunkById(3, [&compareResultSize, &ids]
-                                (ModelsCollection<FilePropertyProperty> &&models,
+                                (ModelsCollection<FilePropertyProperty> &&models, // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
                                  const qint64 page)
     {
         compareResultSize(models.size(), page);
@@ -1921,7 +1921,7 @@ void tst_Model_Connection_Independent::chunkById_ReturnFalse_WithAlias() const
     auto result = FilePropertyProperty::select({ASTERISK, "id as id_as"})
                   ->orderBy(ID)
                   .chunkById(3, [&compareResultSize, &ids]
-                                (ModelsCollection<FilePropertyProperty> &&models,
+                                (ModelsCollection<FilePropertyProperty> &&models, // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
                                  const qint64 page)
     {
         compareResultSize(models.size(), page);
@@ -1955,7 +1955,7 @@ void tst_Model_Connection_Independent::chunkById_EmptyResult_WithAlias() const
                   ->whereEq(NAME, QStringLiteral("dummy-NON_EXISTENT"))
                   .orderBy(ID)
                   .chunkById(3, [&callbackInvoked]
-                                (ModelsCollection<FilePropertyProperty> &&/*unused*/,
+                                (ModelsCollection<FilePropertyProperty> &&/*unused*/, // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
                                  const qint64 /*unused*/)
     {
         callbackInvoked = true;
@@ -1977,7 +1977,7 @@ void tst_Model_Connection_Independent::eachById() const
 
     auto result = FilePropertyProperty::orderBy(ID)
                   ->eachById([&indexes, &ids]
-                             (FilePropertyProperty &&model, const qint64 index)
+                             (FilePropertyProperty &&model, const qint64 index) // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
     {
         indexes.emplace_back(index);
         ids.emplace_back(model.getKeyCasted());
@@ -2005,7 +2005,7 @@ void tst_Model_Connection_Independent::eachById_ReturnFalse() const
 
     auto result = FilePropertyProperty::orderBy(ID)
                   ->eachById([&indexes, &ids]
-                             (FilePropertyProperty &&model, const qint64 index)
+                             (FilePropertyProperty &&model, const qint64 index) // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
     {
         indexes.emplace_back(index);
         ids.emplace_back(model.getKeyCasted());
@@ -2032,7 +2032,7 @@ void tst_Model_Connection_Independent::eachById_EmptyResult() const
                                                 QStringLiteral("dummy-NON_EXISTENT"))
                   ->orderBy(ID)
                   .eachById([&callbackInvoked]
-                            (FilePropertyProperty &&/*unused*/, const qint64 /*unused*/)
+                            (FilePropertyProperty &&/*unused*/, const qint64 /*unused*/) // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
     {
         callbackInvoked = true;
 
@@ -2053,7 +2053,7 @@ void tst_Model_Connection_Independent::eachById_WithAlias() const
     auto result = FilePropertyProperty::select({ASTERISK, "id as id_as"})
                   ->orderBy(ID)
                   .eachById([&indexes, &ids]
-                            (FilePropertyProperty &&model, const qint64 index)
+                            (FilePropertyProperty &&model, const qint64 index) // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
     {
         indexes.emplace_back(index);
         ids.emplace_back(model.getKeyCasted());
@@ -2083,7 +2083,7 @@ void tst_Model_Connection_Independent::eachById_ReturnFalse_WithAlias() const
     auto result = FilePropertyProperty::select({ASTERISK, "id as id_as"})
                   ->orderBy(ID)
                   .eachById([&indexes, &ids]
-                            (FilePropertyProperty &&model, const qint64 index)
+                            (FilePropertyProperty &&model, const qint64 index) // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
     {
         indexes.emplace_back(index);
         ids.emplace_back(model.getKeyCasted());
@@ -2111,7 +2111,7 @@ void tst_Model_Connection_Independent::eachById_EmptyResult_WithAlias() const
                   ->whereEq(NAME, QStringLiteral("dummy-NON_EXISTENT"))
                   .orderBy(ID)
                   .eachById([&callbackInvoked]
-                            (FilePropertyProperty &&/*unused*/, const qint64 /*unused*/)
+                            (FilePropertyProperty &&/*unused*/, const qint64 /*unused*/) // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
     {
         callbackInvoked = true;
 

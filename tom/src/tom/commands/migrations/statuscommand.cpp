@@ -96,8 +96,8 @@ int StatusCommand::run()
 /* protected */
 
 std::vector<StatusCommand::TableRow>
-StatusCommand::getStatusFor(QVector<QVariant> &&ran,
-                            std::map<QString, QVariant> &&batches) const
+StatusCommand::getStatusFor(const QVector<QVariant> &ran,
+                            const std::map<QString, QVariant> &batches) const
 {
     return m_migrator->migrationNames()
             | ranges::views::remove_if([&ran, pending = isSet(pending_)]
@@ -151,7 +151,7 @@ namespace
 } // namespace
 
 std::vector<StatusCommand::StatusRow>
-StatusCommand::statusForUnitTest(std::vector<TableRow> &&migrations)
+StatusCommand::statusForUnitTest(std::vector<TableRow> &&migrations) // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
 {
     return ranges::views::move(migrations)
             | ranges::views::transform([](auto &&migration)

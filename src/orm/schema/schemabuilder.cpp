@@ -222,7 +222,7 @@ Blueprint SchemaBuilder::createBlueprint(
     return Blueprint(table, callback, std::move(prefix));
 }
 
-void SchemaBuilder::build(Blueprint &&blueprint) const
+void SchemaBuilder::build(Blueprint &&blueprint) const // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
 {
     blueprint.build(*m_connection, *m_grammar);
 }

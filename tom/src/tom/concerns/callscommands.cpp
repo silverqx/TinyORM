@@ -77,7 +77,7 @@ CallsCommands::createCommandLineArguments(
 #endif
 
     // Get common allowed command-line arguments from the current command-line arguments
-    newArguments << getCommonArguments(std::move(currentArguments));
+    newArguments << getCommonArguments(currentArguments);
 
     // Append passed arguments
     std::ranges::move(ranges::actions::remove_if(std::move(arguments),
@@ -87,7 +87,7 @@ CallsCommands::createCommandLineArguments(
     return newArguments;
 }
 
-QStringList CallsCommands::getCommonArguments(QStringList &&arguments)
+QStringList CallsCommands::getCommonArguments(const QStringList &arguments)
 {
     // This way I'm able to re-use global constants
     /*! Create a long command-line option from the option name (--xyz). */
@@ -105,8 +105,8 @@ QStringList CallsCommands::getCommonArguments(QStringList &&arguments)
                           QLatin1String("-vvv"),
     };
 
-    return ranges::views::move(arguments)
-            | ranges::views::filter([&allowed = allowed](auto &&argument)
+    return arguments
+            | ranges::views::filter([&allowed = allowed](const QString &argument)
     {
         return allowed.contains(argument);
     })

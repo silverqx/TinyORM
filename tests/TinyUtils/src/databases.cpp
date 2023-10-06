@@ -122,7 +122,7 @@ namespace
 
 std::optional<QString>
 Databases::createConnectionTemp(
-        const QString &connection, ConnectionNameParts &&connectionParts,
+        const QString &connection, const ConnectionNameParts &connectionParts,
         const QVariantHash &configuration)
 {
     Q_ASSERT(configuration.contains(driver_));
@@ -144,7 +144,7 @@ Databases::createConnectionTemp(
 
 std::optional<QString>
 Databases::createConnectionTempFrom(const QString &fromConfiguration,
-                                    ConnectionNameParts &&connection)
+                                    const ConnectionNameParts &connection)
 {
     const auto configuration = Databases::configuration(fromConfiguration);
 
@@ -162,7 +162,7 @@ Databases::createConnectionTempFrom(const QString &fromConfiguration,
 
 std::optional<QString>
 Databases::createConnectionTempFrom(
-        const QString &fromConfiguration, ConnectionNameParts &&connection,
+        const QString &fromConfiguration, const ConnectionNameParts &connection,
         std::unordered_map<QString, QVariant> &&optionsToUpdate,
         const std::vector<QString> &optionsToRemove)
 {
@@ -488,7 +488,7 @@ bool Databases::isDriverAvailable(const QString &driver)
 
 void Databases::updateConfigurationForTemp(
         QVariantHash &configuration,
-        std::unordered_map<QString, QVariant> &&optionsToUpdate,
+        std::unordered_map<QString, QVariant> &&optionsToUpdate, // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
         const std::vector<QString> &optionsToRemove)
 {
     // Add or modify the configuration

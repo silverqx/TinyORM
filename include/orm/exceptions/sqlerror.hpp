@@ -23,6 +23,11 @@ namespace Orm::Exceptions
         /*! QString constructor. */
         SqlError(const QString &message, const QSqlError &error);
 
+        /*! const char * constructor. */
+        SqlError(const char *message, QSqlError &&error);
+        /*! QString constructor. */
+        SqlError(const QString &message, QSqlError &&error);
+
         /*! Get the original Qt SQL error. */
         inline const QSqlError &getSqlError() const noexcept;
 

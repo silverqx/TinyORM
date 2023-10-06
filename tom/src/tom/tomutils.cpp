@@ -78,7 +78,7 @@ Utils::convertToQCommandLineOptionList(const QList<CommandLineOption> &options)
 }
 
 QList<QCommandLineOption>
-Utils::convertToQCommandLineOptionList(QList<CommandLineOption> &&options)
+Utils::convertToQCommandLineOptionList(QList<CommandLineOption> &&options) // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
 {
     QList<QCommandLineOption> result;
     result.reserve(options.size());

@@ -610,7 +610,8 @@ QString PostgresSchemaGrammar::getType(ColumnDefinition &column) const
 }
 
 QString
-PostgresSchemaGrammar::formatPostGisType(QString &&type, const ColumnDefinition &column)
+PostgresSchemaGrammar::formatPostGisType(const QString &type,
+                                         const ColumnDefinition &column)
 {
     if (!column.isGeometry)
         return QStringLiteral("geography(%1, %2)")

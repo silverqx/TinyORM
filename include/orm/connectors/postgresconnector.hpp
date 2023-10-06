@@ -50,7 +50,7 @@ namespace Orm::Connectors
         static void configureSearchPath(const QSqlDatabase &connection,
                                         const QVariantHash &config);
         /*! Format the 'search_path' for the database query or DSN. */
-        static QString quoteSearchPath(QStringList &&searchPath);
+        static QString quoteSearchPath(const QStringList &searchPath);
 
         /*! Set an application name for the connection. */
         static void configureApplicationName(const QSqlDatabase &connection,

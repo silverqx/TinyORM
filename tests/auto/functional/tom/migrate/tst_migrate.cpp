@@ -73,7 +73,7 @@ private:
     /*! Prepare arguments and invoke runCommand(). */
     [[nodiscard]] static int
     invokeCommand(const QString &connection, const QString &name,
-                  std::vector<const char *> &&arguments = {});
+                  const std::vector<const char *> &arguments = {});
     /*! Create a tom application instance and invoke the given command. */
     static int runCommand(int &argc, const std::vector<const char *> &argv);
 
@@ -764,7 +764,7 @@ void tst_Migrate::refresh_Step_StepMigrate() const
 /* private */
 
 int tst_Migrate::invokeCommand(const QString &connection, const QString &name,
-                               std::vector<const char *> &&arguments)
+                               const std::vector<const char *> &arguments)
 {
     static const auto connectionTmpl = QStringLiteral("--database=%1");
 
@@ -785,7 +785,7 @@ int tst_Migrate::invokeCommand(const QString &connection, const QString &name,
     };
 
     argv.reserve(arguments.size());
-    std::ranges::move(arguments, std::back_inserter(argv));
+    std::ranges::copy(arguments, std::back_inserter(argv));
 
     int argc = static_cast<int>(argv.size());
 

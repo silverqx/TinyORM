@@ -932,7 +932,7 @@ void tst_Collection_Relations::map_CustomReturnType() const
     QVERIFY(Common::verifyIds(images, {2, 3, 4, 5, 6}));
 
     // Get result
-    const QVector<QString> result = images.map<QString>([](AlbumImage &&imageCopy)
+    const QVector<QString> result = images.map<QString>([](AlbumImage &&imageCopy) // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
     {
         const auto nameRef = imageCopy[NAME];
 
@@ -968,7 +968,7 @@ void tst_Collection_Relations::map_CustomReturnType_WithIndex() const
 
     // Get result
     const QVector<QString> result = images.map<QString>(
-                                        [](AlbumImage &&imageCopy, const auto index)
+                                        [](AlbumImage &&imageCopy, const auto index) // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
     {
         const auto nameRef = imageCopy[NAME];
 

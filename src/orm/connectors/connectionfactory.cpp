@@ -135,7 +135,7 @@ ConnectionFactory::createQSqlDatabaseResolverWithoutHosts(
 
 std::shared_ptr<DatabaseConnection>
 ConnectionFactory::createConnection(
-        QString &&driver, std::function<ConnectionName()> &&connection,
+        const QString &driver, std::function<ConnectionName()> &&connection,
         QString &&database, QString &&tablePrefix, QtTimeZoneConfig &&qtTimeZone,
         QVariantHash &&config, const std::optional<bool> returnQDateTime)
 {

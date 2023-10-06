@@ -158,7 +158,7 @@ void PostgresConnector::configureSearchPath(const QSqlDatabase &connection,
                                  m_configureErrorMessage.arg(__tiny_func__), query);
 }
 
-QString PostgresConnector::quoteSearchPath(QStringList &&searchPath)
+QString PostgresConnector::quoteSearchPath(const QStringList &searchPath)
 {
     // Allow to set an empty search_path
     if (isSearchPathEmpty(searchPath))

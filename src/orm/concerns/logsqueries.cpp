@@ -192,7 +192,7 @@ void LogsQueries::logQueryInternal(
 }
 
 QVector<QVariant>
-LogsQueries::convertNamedToPositionalBindings(QVariantMap &&bindings)
+LogsQueries::convertNamedToPositionalBindings(QVariantMap &&bindings) // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
 {
     QVector<QVariant> result;
     result.reserve(bindings.size());

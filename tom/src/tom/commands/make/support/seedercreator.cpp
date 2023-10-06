@@ -41,7 +41,7 @@ fspath SeederCreator::getPath(const QString &basename, const fspath &path)
 }
 
 std::string
-SeederCreator::populateStub(const QString &className, QString &&table)
+SeederCreator::populateStub(const QString &className, const QString &table)
 {
     QString stub(SeederStub);
 

@@ -282,7 +282,7 @@ void ManagesTransactions::throwIfTransactionError(
     throw Exceptions::SqlTransactionError(
             QStringLiteral("Statement in %1() failed : %2")
                 .arg(functionName, queryString),
-            error);
+            std::move(error));
 }
 
 } // namespace Orm::Concerns

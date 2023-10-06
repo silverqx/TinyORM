@@ -64,7 +64,7 @@ namespace Connectors
         /*! Create a new connection instance. */
         static std::shared_ptr<DatabaseConnection>
         createConnection(
-                QString &&driver, std::function<ConnectionName()> &&connection,
+                const QString &driver, std::function<ConnectionName()> &&connection,
                 QString &&database, QString &&tablePrefix = "",
                 QtTimeZoneConfig &&qtTimeZone = {QtTimeZoneType::QtTimeSpec, Qt::UTC},
                 QVariantHash &&config = {},

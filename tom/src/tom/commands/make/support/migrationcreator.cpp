@@ -81,7 +81,7 @@ std::string MigrationCreator::getDatePrefix()
 }
 
 std::string
-MigrationCreator::populateStub(const QString &name, QString &&stub, const QString &table)
+MigrationCreator::populateStub(const QString &name, QString &&stub, const QString &table) // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
 {
     const auto className = getClassName(name);
 

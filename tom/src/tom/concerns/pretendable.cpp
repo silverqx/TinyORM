@@ -17,16 +17,15 @@ namespace Tom::Concerns
 void Pretendable::optionalPretend(
         const bool pretend, const QString &database,
         const std::function<void(DatabaseConnection &)> &callback,
-        std::optional<QString> &&title, const bool newline) const
+        const std::optional<QString> &title, const bool newline) const
 {
-    optionalPretend(pretend, command().connection(database), callback,
-                    std::move(title), newline);
+    optionalPretend(pretend, command().connection(database), callback, title, newline);
 }
 
 void Pretendable::optionalPretend(
         const bool pretend, DatabaseConnection &connection,
         const std::function<void(DatabaseConnection &)> &callback,
-        std::optional<QString> &&title, const bool newline) const
+        const std::optional<QString> &title, const bool newline) const
 {
     // Execute the callback without pretending
     if (!pretend)
@@ -36,22 +35,21 @@ void Pretendable::optionalPretend(
     auto queriesLog = connection.pretend(callback);
 
     // Log gathered queries to the console
-    optionalPretendInternal(std::move(queriesLog), std::move(title), newline);
+    optionalPretendInternal(std::move(queriesLog), title, newline);
 }
 
 void Pretendable::optionalPretend(
         const bool pretend, const QString &database,
         const std::function<void()> &callback,
-        std::optional<QString> &&title, const bool newline) const
+        const std::optional<QString> &title, const bool newline) const
 {
-    optionalPretend(pretend, command().connection(database), callback,
-                    std::move(title), newline);
+    optionalPretend(pretend, command().connection(database), callback, title, newline);
 }
 
 void Pretendable::optionalPretend(
         const bool pretend, DatabaseConnection &connection,
         const std::function<void()> &callback,
-        std::optional<QString> &&title, const bool newline) const
+        const std::optional<QString> &title, const bool newline) const
 {
     // Execute the callback without pretending
     if (!pretend)
@@ -61,13 +59,13 @@ void Pretendable::optionalPretend(
     auto queriesLog = connection.pretend(callback);
 
     // Log gathered queries to the console
-    optionalPretendInternal(std::move(queriesLog), std::move(title), newline);
+    optionalPretendInternal(std::move(queriesLog), title, newline);
 }
 
 /* private */
 
 void Pretendable::optionalPretendInternal(
-        QVector<Orm::Log> &&queriesLog, std::optional<QString> &&title,
+        QVector<Orm::Log> &&queriesLog, const std::optional<QString> &title, // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
         const bool newline) const
 {
     // Log gathered queries to the console

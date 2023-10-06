@@ -129,7 +129,7 @@ void tst_Relations_BuildsQueries::chunk_Relation() const
     auto result = TorrentPreviewableFileProperty::find(5)->filePropertyProperty()
                   ->orderBy(ID)
                   .chunk(2, [&compareResultSize, &ids]
-                            (ModelsCollection<FilePropertyProperty> &&models,
+                            (ModelsCollection<FilePropertyProperty> &&models, // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
                              const qint64 page)
     {
         compareResultSize(models.size(), page);
@@ -162,7 +162,7 @@ void tst_Relations_BuildsQueries::each_Relation() const
     auto result = TorrentPreviewableFileProperty::find(5)->filePropertyProperty()
                   ->orderBy(ID)
                   .each([&indexes, &ids]
-                        (FilePropertyProperty &&model, const qint64 index)
+                        (FilePropertyProperty &&model, const qint64 index) // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
     {
         indexes.emplace_back(index);
         ids.emplace_back(model.getKeyCasted());
@@ -245,7 +245,7 @@ void tst_Relations_BuildsQueries::chunkMap_TemplatedReturnValue_Relation() const
     ConnectionOverride::connection = connection;
 
     auto result = TorrentPreviewableFileProperty::find(5)->filePropertyProperty()
-                  ->chunkMap<QString>([](FilePropertyProperty &&model)
+                  ->chunkMap<QString>([](FilePropertyProperty &&model) // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
     {
         // Return the modify name directly
         return QStringLiteral("%1_mapped").arg(model[NAME]->template value<QString>());
@@ -286,7 +286,7 @@ void tst_Relations_BuildsQueries::chunkById_Relation() const
     auto result = TorrentPreviewableFileProperty::find(5)->filePropertyProperty()
                   ->orderBy(ID)
                   .chunkById(2, [&compareResultSize, &ids]
-                                (ModelsCollection<FilePropertyProperty> &&models,
+                                (ModelsCollection<FilePropertyProperty> &&models, // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
                                  const qint64 page)
     {
         compareResultSize(models.size(), page);
@@ -331,7 +331,7 @@ void tst_Relations_BuildsQueries::chunkById_WithAlias_Relation() const
                   ->select({ASTERISK, "id as id_as"})
                   .orderBy(ID)
                   .chunkById(2, [&compareResultSize, &ids]
-                                (ModelsCollection<FilePropertyProperty> &&models,
+                                (ModelsCollection<FilePropertyProperty> &&models, // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
                                  const qint64 page)
     {
         compareResultSize(models.size(), page);
@@ -365,7 +365,7 @@ void tst_Relations_BuildsQueries::eachById_Relation() const
     auto result = TorrentPreviewableFileProperty::find(5)->filePropertyProperty()
                   ->orderBy(ID)
                   .eachById([&indexes, &ids]
-                            (FilePropertyProperty &&model, const qint64 index)
+                            (FilePropertyProperty &&model, const qint64 index) // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
     {
         indexes.emplace_back(index);
         ids.emplace_back(model.getKeyCasted());
@@ -399,7 +399,7 @@ void tst_Relations_BuildsQueries::eachById_WithAlias_Relation() const
                   ->select({ASTERISK, "id as id_as"})
                   .orderBy(ID)
                   .eachById([&indexes, &ids]
-                            (FilePropertyProperty &&model, const qint64 index)
+                            (FilePropertyProperty &&model, const qint64 index) // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
     {
         indexes.emplace_back(index);
         ids.emplace_back(model.getKeyCasted());
@@ -469,7 +469,7 @@ void tst_Relations_BuildsQueries::chunk() const
 
     auto result = Torrent::find(2)->tags()->orderBy(ID)
                   .chunk(2, [&compareResultSize, &ids]
-                            (ModelsCollection<Tag> &&models, const qint64 page)
+                            (ModelsCollection<Tag> &&models, const qint64 page) // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
     {
         compareResultSize(models.size(), page);
 
@@ -514,7 +514,7 @@ void tst_Relations_BuildsQueries::chunk_ReturnFalse() const
 
     auto result = Torrent::find(2)->tags()->orderBy(ID)
                   .chunk(2, [&compareResultSize, &ids]
-                            (ModelsCollection<Tag> &&models, const qint64 page)
+                            (ModelsCollection<Tag> &&models, const qint64 page) // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
     {
         compareResultSize(models.size(), page);
 
@@ -567,7 +567,7 @@ void tst_Relations_BuildsQueries::chunk_EnforceOrderBy() const
 
     auto result = Torrent::find(2)->tags()
                   ->chunk(2, [&compareResultSize, &ids]
-                             (ModelsCollection<Tag> &&models, const qint64 page)
+                             (ModelsCollection<Tag> &&models, const qint64 page) // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
     {
         compareResultSize(models.size(), page);
 
@@ -600,7 +600,7 @@ void tst_Relations_BuildsQueries::chunk_EmptyResult() const
                                                     QStringLiteral("dummy-NON_EXISTENT"))
                   .orderBy(ID)
                   .chunk(2, [&callbackInvoked]
-                            (ModelsCollection<Tag> &&/*unused*/, const qint64 /*unused*/)
+                            (ModelsCollection<Tag> &&/*unused*/, const qint64 /*unused*/) // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
     {
         callbackInvoked = true;
 
@@ -624,7 +624,7 @@ void tst_Relations_BuildsQueries::each() const
 
     auto result = Torrent::find(2)->tags()->orderBy(ID)
                   .each([&indexes, &ids]
-                        (Tag &&model, const qint64 index)
+                        (Tag &&model, const qint64 index) // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
     {
         indexes.emplace_back(index);
         ids.emplace_back(model.getKeyCasted());
@@ -658,7 +658,7 @@ void tst_Relations_BuildsQueries::each_ReturnFalse() const
 
     auto result = Torrent::find(2)->tags()->orderBy(ID)
                   .each([&indexes, &ids]
-                        (Tag &&model, const qint64 index)
+                        (Tag &&model, const qint64 index) // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
     {
         indexes.emplace_back(index);
         ids.emplace_back(model.getKeyCasted());
@@ -695,7 +695,7 @@ void tst_Relations_BuildsQueries::each_EnforceOrderBy() const
 
     auto result = Torrent::find(2)->tags()
                   ->each([&indexes, &ids]
-                         (Tag &&model, const qint64 index)
+                         (Tag &&model, const qint64 index) // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
     {
         indexes.emplace_back(index);
         ids.emplace_back(model.getKeyCasted());
@@ -728,7 +728,7 @@ void tst_Relations_BuildsQueries::each_EmptyResult() const
                                                     QStringLiteral("dummy-NON_EXISTENT"))
                   .orderBy(ID)
                   .each([&callbackInvoked]
-                        (Tag &&/*unused*/, const qint64 /*unused*/)
+                        (Tag &&/*unused*/, const qint64 /*unused*/) // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
     {
         callbackInvoked = true;
 
@@ -852,7 +852,7 @@ void tst_Relations_BuildsQueries::chunkMap_TemplatedReturnValue() const
 
     relation->orderBy(ID);
 
-    auto result = relation->chunkMap<QString>([](Tag &&model)
+    auto result = relation->chunkMap<QString>([](Tag &&model) // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
     {
         verifyTaggedPivot(model);
 
@@ -880,7 +880,7 @@ void tst_Relations_BuildsQueries::chunkMap_TemplatedReturnValue_OnRelationRef() 
     /* Even if the chunkMap<> is called on the Relation & it can't crash or fail, it
        should normally works but the pivot table will not be hydrated. */
     auto result = Torrent::find(2)->tags()->orderBy(ID)
-                  .chunkMap<QString>([](Tag &&model)
+                  .chunkMap<QString>([](Tag &&model) // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
     {
         // Pivot table is not hydrated
         Q_ASSERT(!model.relationLoaded("tagged"));
@@ -914,7 +914,7 @@ tst_Relations_BuildsQueries::chunkMap_EnforceOrderBy_TemplatedReturnValue() cons
     // Ownership of a unique_ptr()
     const auto relation = Torrent::find(2)->tags();
 
-    auto result = relation->chunkMap<QString>([](Tag &&model)
+    auto result = relation->chunkMap<QString>([](Tag &&model) // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
     {
         verifyTaggedPivot(model);
 
@@ -946,7 +946,7 @@ void tst_Relations_BuildsQueries::chunkMap_EmptyResult_TemplatedReturnValue() co
 
     relation->whereEq("torrent_tags.name", QStringLiteral("dummy-NON_EXISTENT"));
 
-    auto result = relation->chunkMap<QString>([&callbackInvoked](Tag &&/*unused*/)
+    auto result = relation->chunkMap<QString>([&callbackInvoked](Tag &&/*unused*/) // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
                                               -> QString
     {
         callbackInvoked = true;
@@ -983,7 +983,7 @@ void tst_Relations_BuildsQueries::chunkById() const
 
     auto result = Torrent::find(2)->tags()->orderBy(ID)
                   .chunkById(2, [&compareResultSize, &ids]
-                                (ModelsCollection<Tag> &&models, const qint64 page)
+                                (ModelsCollection<Tag> &&models, const qint64 page) // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
     {
         compareResultSize(models.size(), page);
 
@@ -1028,7 +1028,7 @@ void tst_Relations_BuildsQueries::chunkById_ReturnFalse() const
 
     auto result = Torrent::find(2)->tags()->orderBy(ID)
                   .chunkById(2, [&compareResultSize, &ids]
-                                (ModelsCollection<Tag> &&models, const qint64 page)
+                                (ModelsCollection<Tag> &&models, const qint64 page) // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
     {
         compareResultSize(models.size(), page);
 
@@ -1066,7 +1066,7 @@ void tst_Relations_BuildsQueries::chunkById_EmptyResult() const
                                                     QStringLiteral("dummy-NON_EXISTENT"))
                   .orderBy(ID)
                   .chunkById(2, [&callbackInvoked]
-                                (ModelsCollection<Tag> &&/*unused*/,
+                                (ModelsCollection<Tag> &&/*unused*/, // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
                                  const qint64 /*unused*/)
     {
         callbackInvoked = true;
@@ -1104,7 +1104,7 @@ void tst_Relations_BuildsQueries::chunkById_WithAlias() const
                   ->select({ASTERISK, "torrent_tags.id as id_as"})
                   .orderBy(ID)
                   .chunkById(2, [&compareResultSize, &ids]
-                                (ModelsCollection<Tag> &&models, const qint64 page)
+                                (ModelsCollection<Tag> &&models, const qint64 page) // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
     {
         compareResultSize(models.size(), page);
 
@@ -1152,7 +1152,7 @@ void tst_Relations_BuildsQueries::chunkById_ReturnFalse_WithAlias() const
                   ->select({ASTERISK, "torrent_tags.id as id_as"})
                   .orderBy(ID)
                   .chunkById(2, [&compareResultSize, &ids]
-                                (ModelsCollection<Tag> &&models, const qint64 page)
+                                (ModelsCollection<Tag> &&models, const qint64 page) // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
     {
         compareResultSize(models.size(), page);
 
@@ -1192,7 +1192,7 @@ void tst_Relations_BuildsQueries::chunkById_EmptyResult_WithAlias() const
                   .whereEq("torrent_tags.name", QStringLiteral("dummy-NON_EXISTENT"))
                   .orderBy(ID)
                   .chunkById(2, [&callbackInvoked]
-                                (ModelsCollection<Tag> &&/*unused*/,
+                                (ModelsCollection<Tag> &&/*unused*/, // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
                                  const qint64 /*unused*/)
     {
         callbackInvoked = true;
@@ -1219,7 +1219,7 @@ void tst_Relations_BuildsQueries::eachById() const
     auto result = Torrent::find(2)->tags()
                   ->orderBy(ID)
                   .eachById([&indexes, &ids]
-                            (Tag &&model, const qint64 index)
+                            (Tag &&model, const qint64 index) // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
     {
         indexes.emplace_back(index);
         ids.emplace_back(model.getKeyCasted());
@@ -1254,7 +1254,7 @@ void tst_Relations_BuildsQueries::eachById_ReturnFalse() const
     auto result = Torrent::find(2)->tags()
                   ->orderBy(ID)
                   .eachById([&indexes, &ids]
-                            (Tag &&model, const qint64 index)
+                            (Tag &&model, const qint64 index) // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
     {
         indexes.emplace_back(index);
         ids.emplace_back(model.getKeyCasted());
@@ -1287,7 +1287,7 @@ void tst_Relations_BuildsQueries::eachById_EmptyResult() const
                                                     QStringLiteral("dummy-NON_EXISTENT"))
                   .orderBy(ID)
                   .eachById([&callbackInvoked]
-                            (Tag &&/*unused*/, const qint64 /*unused*/)
+                            (Tag &&/*unused*/, const qint64 /*unused*/) // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
     {
         callbackInvoked = true;
 
@@ -1313,7 +1313,7 @@ void tst_Relations_BuildsQueries::eachById_WithAlias() const
                   ->select({ASTERISK, "torrent_tags.id as id_as"})
                   .orderBy(ID)
                   .eachById([&indexes, &ids]
-                            (Tag &&model, const qint64 index)
+                            (Tag &&model, const qint64 index) // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
     {
         indexes.emplace_back(index);
         ids.emplace_back(model.getKeyCasted());
@@ -1350,7 +1350,7 @@ void tst_Relations_BuildsQueries::eachById_ReturnFalse_WithAlias() const
                   ->select({ASTERISK, "torrent_tags.id as id_as"})
                   .orderBy(ID)
                   .eachById([&indexes, &ids]
-                            (Tag &&model, const qint64 index)
+                            (Tag &&model, const qint64 index) // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
     {
         indexes.emplace_back(index);
         ids.emplace_back(model.getKeyCasted());
@@ -1385,7 +1385,7 @@ void tst_Relations_BuildsQueries::eachById_EmptyResult_WithAlias() const
                   .whereEq("torrent_tags.name", QStringLiteral("dummy-NON_EXISTENT"))
                   .orderBy(ID)
                   .eachById([&callbackInvoked]
-                            (Tag &&/*unused*/, const qint64 /*unused*/)
+                            (Tag &&/*unused*/, const qint64 /*unused*/) // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
     {
         callbackInvoked = true;
 

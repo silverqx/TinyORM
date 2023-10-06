@@ -180,7 +180,8 @@ namespace Grammars
         QString getType(ColumnDefinition &column) const override;
 
         /*! Format the column definition for a PostGIS spatial type. */
-        static QString formatPostGisType(QString &&type, const ColumnDefinition &column);
+        static QString formatPostGisType(const QString &type,
+                                         const ColumnDefinition &column);
 
         /*! Create the column definition for a char type. */
         QString typeChar(const ColumnDefinition &column) const;

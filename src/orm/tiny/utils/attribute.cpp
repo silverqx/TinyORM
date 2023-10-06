@@ -75,7 +75,7 @@ Attribute::convertVectorToUpdateItem(const QVector<AttributeItem> &attributes)
 }
 
 QVector<UpdateItem>
-Attribute::convertVectorToUpdateItem(QVector<AttributeItem> &&attributes)
+Attribute::convertVectorToUpdateItem(QVector<AttributeItem> &&attributes) // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
 {
     QVector<UpdateItem> result;
     result.reserve(attributes.size());
@@ -116,7 +116,7 @@ Attribute::removeDuplicateKeys(const QVector<AttributeItem> &attributes)
 }
 
 QVector<AttributeItem>
-Attribute::removeDuplicateKeys(QVector<AttributeItem> &&attributes)
+Attribute::removeDuplicateKeys(QVector<AttributeItem> &&attributes) // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
 {
     const auto size = attributes.size();
     // The helper set, to check duplicate keys

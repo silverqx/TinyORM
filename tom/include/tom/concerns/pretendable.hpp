@@ -57,33 +57,34 @@ namespace Concerns
         void optionalPretend(
                 bool pretend, const QString &database,
                 const std::function<void(DatabaseConnection &)> &callback,
-                std::optional<QString> &&title = std::nullopt,
+                const std::optional<QString> &title = std::nullopt,
                 bool newline = false) const;
         /*! Pretend the callback on the base of a bool value (mainly --pretend option). */
         void optionalPretend(
                 bool pretend, DatabaseConnection &connection,
                 const std::function<void(DatabaseConnection &)> &callback,
-                std::optional<QString> &&title = std::nullopt,
+                const std::optional<QString> &title = std::nullopt,
                 bool newline = false) const;
 
         /*! Pretend the callback on the base of a bool value (mainly --pretend option). */
         void optionalPretend(
                 bool pretend, const QString &database,
                 const std::function<void()> &callback,
-                std::optional<QString> &&title = std::nullopt,
+                const std::optional<QString> &title = std::nullopt,
                 bool newline = false) const;
         /*! Pretend the callback on the base of a bool value (mainly --pretend option). */
         void optionalPretend(
                 bool pretend, DatabaseConnection &connection,
                 const std::function<void()> &callback,
-                std::optional<QString> &&title = std::nullopt,
+                const std::optional<QString> &title = std::nullopt,
                 bool newline = false) const;
 
     private:
         /*! Common logic for the optionalPretend() method, log gathered queries
             to the console. */
-        void optionalPretendInternal(QVector<Orm::Log> &&queriesLog,
-                                     std::optional<QString> &&title, bool newline) const;
+        void optionalPretendInternal(
+                QVector<Orm::Log> &&queriesLog,
+                const std::optional<QString> &title, bool newline) const;
 
         /*! Dynamic cast *this to the Command & base type, const version. */
         const Commands::Command &command() const;

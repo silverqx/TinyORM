@@ -53,7 +53,7 @@ void MakeCommand::throwIfContainsNamespaceOrPath(
 
 fspath MakeCommand::guessPathForMakeByPwd(
         const fspath &defaultPath,
-        std::optional<std::reference_wrapper<const fspath>> &&defaultModelsPath)
+        const std::optional<std::reference_wrapper<const fspath>> &defaultModelsPath)
 {
     /* Method is commented on heavily because the logic is sketchy and unclear. 😵‍💫🙃
        It tries to guess a path based on the pwd and the defaultPath (can be relative

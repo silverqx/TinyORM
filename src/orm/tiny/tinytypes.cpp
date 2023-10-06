@@ -36,7 +36,7 @@ WithItem::fromStringVector(const QVector<QString> &relations)
 }
 
 QVector<WithItem>
-WithItem::fromStringVector(QVector<QString> &&relations)
+WithItem::fromStringVector(QVector<QString> &&relations) // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
 {
     QVector<WithItem> relationsConverted;
     relationsConverted.reserve(relations.size());

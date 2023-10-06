@@ -615,12 +615,12 @@ QString Grammar::compileDeleteWithJoins(const QueryBuilder &query, const QString
     return QStringLiteral("delete %1 from %2 %3 %4").arg(alias, table, joins, wheres);
 }
 
-QString Grammar::concatenate(QStringList &&segments)
+QString Grammar::concatenate(const QStringList &segments)
 {
     QString result;
     result.reserve(ContainerUtils::countStringSizes(segments, 1) + 8);
 
-    for (auto &&segment : segments) {
+    for (const auto &segment : segments) {
         if (segment.isEmpty())
             continue;
 

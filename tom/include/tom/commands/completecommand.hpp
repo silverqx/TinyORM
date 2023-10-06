@@ -49,7 +49,8 @@ namespace Tom::Commands
 #endif
 
         /*! Print all guessed commands. */
-        int printGuessedCommands(std::vector<std::shared_ptr<Command>> &&commands) const;
+        int printGuessedCommands(
+                const std::vector<std::shared_ptr<Command>> &commands) const;
         /*! Print all or guessed namespace names for the list command. */
         int printGuessedNamespaces(const QString &word) const;
         /*! Print all or guessed shell names for the integrate command. */

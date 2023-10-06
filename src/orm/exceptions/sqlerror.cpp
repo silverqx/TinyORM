@@ -22,6 +22,15 @@ SqlError::SqlError(const QString &message, const QSqlError &error)
     : SqlError(message.toUtf8().constData(), error)
 {}
 
+SqlError::SqlError(const char *message, QSqlError &&error)
+    : RuntimeError(formatMessage(message, error))
+    , m_sqlError(std::move(error))
+{}
+
+SqlError::SqlError(const QString &message, QSqlError &&error)
+    : SqlError(message.toUtf8().constData(), std::move(error))
+{}
+
 /* protected */
 
 // NOLINTNEXTLINE(modernize-pass-by-value)

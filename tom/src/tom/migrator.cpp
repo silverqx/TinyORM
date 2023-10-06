@@ -276,7 +276,7 @@ Migrator::getMigrationsForRollbackByOptions(const MigrateOptions options) const
 }
 
 std::vector<RollbackItem>
-Migrator::getMigrationsForRollback(std::vector<MigrationItem> &&ran) const
+Migrator::getMigrationsForRollback(std::vector<MigrationItem> &&ran) const // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
 {
     return ranges::views::move(ran)
             | ranges::views::transform([this](auto &&migrationItem) -> RollbackItem

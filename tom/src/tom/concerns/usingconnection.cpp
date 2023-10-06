@@ -70,7 +70,7 @@ DatabaseConnection &UsingConnection::resolveConnection(const QString &name) cons
 
 template<UsingConnectionCallback F>
 int UsingConnection::usingConnectionsInternal(
-        QStringList &&names, const bool debugSql,
+        QStringList &&names, const bool debugSql, // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
         std::optional<std::reference_wrapper<MigrationRepository>> repository,
         const F &callback)
 {

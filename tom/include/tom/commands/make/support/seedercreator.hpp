@@ -39,7 +39,7 @@ namespace Tom::Commands::Make::Support
 
         /*! Populate the place-holders in the seeder stub. */
         static std::string
-        populateStub(const QString &className, QString &&table);
+        populateStub(const QString &className, const QString &table);
 
         /*! Get the table name from the seeder class name. */
         static QString getTableName(QString className);

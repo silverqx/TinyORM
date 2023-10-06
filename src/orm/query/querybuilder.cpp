@@ -437,7 +437,7 @@ Builder &Builder::addSelect(const Column &column)
     return *this;
 }
 
-Builder &Builder::select(QVector<Column> &&columns)
+Builder &Builder::select(QVector<Column> &&columns) // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
 {
     clearColumns();
 
@@ -457,7 +457,7 @@ Builder &Builder::select(Column &&column)
     return *this;
 }
 
-Builder &Builder::addSelect(QVector<Column> &&columns)
+Builder &Builder::addSelect(QVector<Column> &&columns) // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
 {
     m_columns.reserve(m_columns.size() + columns.size());
 
@@ -1272,7 +1272,7 @@ Builder &Builder::addBinding(const QVector<QVariant> &bindings, const BindingTyp
     return *this;
 }
 
-Builder &Builder::addBinding(QVector<QVariant> &&bindings, const BindingType type)
+Builder &Builder::addBinding(QVector<QVariant> &&bindings, const BindingType type) // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
 {
 #ifdef TINYORM_DEBUG
     // Check if m_bindings contain type
@@ -1402,8 +1402,8 @@ Builder &Builder::mergeWheres(const QVector<WhereConditionItem> &wheres,
     return *this;
 }
 
-Builder &Builder::mergeWheres(QVector<WhereConditionItem> &&wheres,
-                              QVector<QVariant> &&bindings)
+Builder &
+Builder::mergeWheres(QVector<WhereConditionItem> &&wheres, QVector<QVariant> &&bindings) // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
 {
     m_wheres.reserve(wheres.size());
     std::ranges::move(wheres, std::back_inserter(m_wheres));
@@ -1479,7 +1479,7 @@ QVector<QVariant> Builder::cleanBindings(const QVector<QVariant> &bindings)
     return cleanedBindings;
 }
 
-QVector<QVariant> Builder::cleanBindings(QVector<QVariant> &&bindings)
+QVector<QVariant> Builder::cleanBindings(QVector<QVariant> &&bindings) // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
 {
     QVector<QVariant> cleanedBindings;
     cleanedBindings.reserve(bindings.size());
@@ -1731,7 +1731,7 @@ Builder &Builder::joinInternal(std::shared_ptr<JoinClause> &&join)
 }
 
 Builder &Builder::joinSubInternal(
-            std::pair<QString, QVector<QVariant>> &&subQuery, const QString &as,
+            std::pair<QString, QVector<QVariant>> &&subQuery, const QString &as, // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
             const QString &first, const QString &comparison, const QVariant &second,
             const QString &type, const bool where)
 {
@@ -1745,7 +1745,7 @@ Builder &Builder::joinSubInternal(
 }
 
 Builder &Builder::joinSubInternal(
-        std::pair<QString, QVector<QVariant>> &&subQuery, const QString &as,
+        std::pair<QString, QVector<QVariant>> &&subQuery, const QString &as, // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
         const std::function<void(JoinClause &)> &callback,
         const QString &type)
 {

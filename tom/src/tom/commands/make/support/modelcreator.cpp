@@ -1290,12 +1290,12 @@ std::size_t ModelCreator::computeReserveForRelationsList(
     return m_relationsListsSize;
 }
 
-QString ModelCreator::joinRelationsList(RelationsWithOrder &&relationsList)
+QString ModelCreator::joinRelationsList(RelationsWithOrder &&relationsList) // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
 {
     auto relationsQList = ranges::views::move(relationsList)
             | ranges::views::transform([](auto &&relationItem) -> QString
     {
-        return relationItem.content;
+        return std::move(relationItem.content);
     })
             | ranges::to<QStringList>();
 

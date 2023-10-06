@@ -253,7 +253,7 @@ QVariantHash &Configuration::insertPostgresSslOptions(QVariantHash &options)
 /* private */
 
 QByteArray
-Configuration::prepareTimeZoneId(QString &&timezoneId, const QString &connection)
+Configuration::prepareTimeZoneId(QString &&timezoneId, const QString &connection) // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
 {
     const auto timezoneIdSize = timezoneId.size();
 

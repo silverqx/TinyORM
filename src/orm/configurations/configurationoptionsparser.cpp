@@ -54,7 +54,7 @@ ConfigurationOptionsParser::mergeAndConcatenateOptions(
 /* protected */
 
 void ConfigurationOptionsParser::copyOptionsFromTopLevel(
-        QVariantHash &options, std::vector<QString> &&optionNames,
+        QVariantHash &options, std::vector<QString> &&optionNames, // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
         const bool checkLowerCase) const
 {
     /* Copy the given connection options from the top-level configuration level

@@ -251,7 +251,7 @@ CompleteCommand::getCurrentTomCommand(const QString &commandlineArg,
 #endif
 
 int CompleteCommand::printGuessedCommands(
-            std::vector<std::shared_ptr<Command>> &&commands) const
+        const std::vector<std::shared_ptr<Command>> &commands) const
 {
     QStringList guessedCommands;
     guessedCommands.reserve(static_cast<QStringList::size_type>(commands.size()));
