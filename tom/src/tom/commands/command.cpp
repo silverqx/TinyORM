@@ -336,6 +336,15 @@ Command::connectionResolver() const noexcept
     return application().connectionResolver();
 }
 
+/* Auto tests helpers */
+
+#ifdef TINYTOM_TESTS_CODE
+bool Command::inUnitTests() const noexcept
+{
+    return application().inUnitTests();
+}
+#endif
+
 /* private */
 
 void Command::initializePositionalArguments()

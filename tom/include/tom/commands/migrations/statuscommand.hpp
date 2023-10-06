@@ -61,8 +61,6 @@ namespace Commands::Migrations
 
         /*! Get result of the status command (used in auto tests). */
         inline static std::vector<StatusRow> status();
-        /*! Enable logic for unit testing? */
-        inline static void setInUnitTests() noexcept;
 #endif
 
     protected:
@@ -83,9 +81,6 @@ namespace Commands::Migrations
         /*! Result of the status command (used in auto tests). */
         T_THREAD_LOCAL
         inline static std::vector<StatusRow> m_status;
-        /*! Is enabled logic for unit testing? */
-        T_THREAD_LOCAL
-        inline static auto m_inUnitTests = false;
 #endif
     };
 
@@ -105,11 +100,6 @@ namespace Commands::Migrations
     std::vector<StatusCommand::StatusRow> StatusCommand::status()
     {
         return m_status;
-    }
-
-    void StatusCommand::setInUnitTests() noexcept
-    {
-        m_inUnitTests = true;
     }
 #endif
 

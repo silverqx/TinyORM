@@ -317,6 +317,10 @@ namespace Concerns
     public:
         /*! Run the tom application with the given arguments (used in auto tests). */
         int runWithArguments(QStringList &&arguments);
+
+    private:
+        /*! Is enabled logic for unit testing? */
+        inline static bool inUnitTests() noexcept;
 #endif
     };
 

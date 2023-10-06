@@ -73,7 +73,7 @@ int StatusCommand::run()
             /* During testing save the result of a status command to the global
                variable instead of outputting it, to be able to verify results. */
 #ifdef TINYTOM_TESTS_CODE
-            if (m_inUnitTests)
+            if (inUnitTests())
                 m_status = statusForUnitTest(std::move(migrations));
             else
 #endif
@@ -83,7 +83,7 @@ int StatusCommand::run()
         }
 
 #ifdef TINYTOM_TESTS_CODE
-        if (m_inUnitTests)
+        if (inUnitTests())
             m_status.clear();
 #endif
 

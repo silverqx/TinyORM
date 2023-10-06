@@ -145,6 +145,12 @@ namespace Commands
         /*! Get database connection resolver. */
         std::shared_ptr<ConnectionResolverInterface> connectionResolver() const noexcept;
 
+        /* Auto tests helpers */
+#ifdef TINYTOM_TESTS_CODE
+        /*! Is enabled logic for unit testing? */
+        bool inUnitTests() const noexcept;
+#endif
+
         /* Data members */
         /*! Reference to the tom application. */
         std::reference_wrapper<Application> m_application;

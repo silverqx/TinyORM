@@ -261,8 +261,6 @@ std::vector<Application::StatusRow> Application::status()
 void Application::enableInUnitTests() noexcept
 {
     g_inUnitTests = true;
-
-    StatusCommand::setInUnitTests();
 }
 #endif
 
@@ -827,6 +825,13 @@ int Application::runWithArguments(QStringList &&arguments)
 
     // Ownership of a unique_ptr()
     return createCommand(getCommandName())->runWithArguments(std::move(arguments));
+}
+
+/* private */
+
+bool Application::inUnitTests() noexcept
+{
+    return g_inUnitTests;
 }
 #endif
 
