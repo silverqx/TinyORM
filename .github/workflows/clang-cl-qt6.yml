@@ -415,21 +415,21 @@ jobs:
         postgres.exe --version
         Write-Output '::endgroup::'
 
-    - name: Qt 6.5.2 install base components
+    - name: Qt 6.5.3 install base components
       uses: jurplel/install-qt-action@v3
       with:
         archives: qtbase
-        version: 6.5.2
+        version: 6.5.3
         arch: win64_msvc2019_64
         cache: true
         setup-python: false
         extra: --external 7z.exe
         dir: ${{ env.TinyRunnerWorkPath }}
 
-    - name: QMYSQL driver dlls initialize download (Qt 6.5.2)
+    - name: QMYSQL driver dlls initialize download (Qt 6.5.3)
       id: downloads-initialize-qmysql-dlls
       run: |
-        $filename = (Split-Path -Path $env:URL_QMYSQL_DLLS_MSVC_X64_6_5_2 -Leaf)
+        $filename = (Split-Path -Path $env:URL_QMYSQL_DLLS_MSVC_X64_6_5_3 -Leaf)
         "Filename=$filename" >> $env:GITHUB_OUTPUT
 
         $filepath = Join-Path -Path ${{ runner.temp }} -ChildPath $filename
@@ -438,7 +438,7 @@ jobs:
         $response = Invoke-WebRequest -Uri $env:URL_CACHE_HASH_WINDOWS
         "Hash=$($response.Content)" >> $env:GITHUB_OUTPUT
       env:
-        URL_QMYSQL_DLLS_MSVC_X64_6_5_2: ${{ secrets.URL_QMYSQL_DLLS_MSVC_X64_6_5_2 }}
+        URL_QMYSQL_DLLS_MSVC_X64_6_5_3: ${{ secrets.URL_QMYSQL_DLLS_MSVC_X64_6_5_3 }}
         URL_CACHE_HASH_WINDOWS: ${{ secrets.URL_CACHE_HASH_WINDOWS }}
 
     - name: QMYSQL driver dlls restore cache (download)
@@ -452,18 +452,18 @@ jobs:
         cache_hash: ${{ steps.downloads-initialize-qmysql-dlls.outputs.Hash }}
         cache_name: qmysql-dlls-qt6
 
-    - name: QMYSQL driver dlls download (Qt 6.5.2)
+    - name: QMYSQL driver dlls download (Qt 6.5.3)
       if: steps.downloads-cache-qmysql-dlls.outputs.cache-hit != 'true'
       run: >-
-        $response = Invoke-WebRequest -Uri $env:URL_QMYSQL_DLLS_MSVC_X64_6_5_2
+        $response = Invoke-WebRequest -Uri $env:URL_QMYSQL_DLLS_MSVC_X64_6_5_3
 
         $response | Select-Object -ExpandProperty Content |
         Set-Content -Path $env:archive_filepath -AsByteStream
       env:
         archive_filepath: ${{ steps.downloads-initialize-qmysql-dlls.outputs.Filepath }}
-        URL_QMYSQL_DLLS_MSVC_X64_6_5_2: ${{ secrets.URL_QMYSQL_DLLS_MSVC_X64_6_5_2 }}
+        URL_QMYSQL_DLLS_MSVC_X64_6_5_3: ${{ secrets.URL_QMYSQL_DLLS_MSVC_X64_6_5_3 }}
 
-    - name: QMYSQL driver dlls install (Qt 6.5.2)
+    - name: QMYSQL driver dlls install (Qt 6.5.3)
       working-directory: ${{ runner.temp }}
       run: |
         7z.exe x -y -o"$env:QT_PLUGIN_PATH/sqldrivers" $env:archive_filepath
