@@ -149,12 +149,14 @@ namespace Tom {
 /* Can't be inline static to avoid:
    error: C2492: 'Tom::Application::m_inUnitTests':
    data with thread storage duration may not have dll interface */
+#ifdef TINYTOM_TESTS_CODE
 namespace
 {
     /*! Is enabled logic for unit testing? */
     T_THREAD_LOCAL
     auto g_inUnitTests = false;
 } // namespace
+#endif
 
 /* public */
 
@@ -232,10 +234,14 @@ void Application::logException(const std::exception &e, const bool noAnsi)
 
 QStringList Application::arguments() const
 {
+#ifdef TINYTOM_TESTS_CODE
     /* Never obtain arguments from the QCoreApplication instance in unit tests because
        they are passed using the runWithArguments() method. */
     return g_inUnitTests ? prepareArguments()
                          : QCoreApplication::arguments();
+#else
+    return QCoreApplication::arguments();
+#endif
 }
 
 Application &Application::migrationsPath(fspath path)
