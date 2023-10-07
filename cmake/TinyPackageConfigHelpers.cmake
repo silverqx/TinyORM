@@ -100,6 +100,13 @@ function(tiny_build_type_requirements_install_tree
     message(DEBUG "cvf_is_vcpkg = ${cvf_is_vcpkg}")
     message(DEBUG "CMAKE_CURRENT_LIST_FILE = ${CMAKE_CURRENT_LIST_FILE}")
 
+    # The isMultiConfig means that the current application that is linking against
+    # the TinyORM is multi-config, the cvf_is_multi_config means that the TinyORM package
+    # is multi-config, these are two different things
+
+    # The below check if the TinyORM package is suitable and the checks are done only if
+    # TinyORM is single-config, they are not done for multi-config
+
     # VCPKG is multi-config too, but it doesn't set GENERATOR_IS_MULTI_CONFIG property
     if(NOT cvf_is_multi_config AND NOT cvf_is_vcpkg)
         tiny_is_debug_only_config(cvfIsDebugOnly "${cvfTargetConfigurations}")
@@ -114,18 +121,24 @@ function(tiny_build_type_requirements_install_tree
         message(DEBUG "cvfIsDebugOnly = ${cvfIsDebugOnly}")
         message(DEBUG "MSVC = ${MSVC}")
 
+        # Multi-config is not suitable for TinyORM single-config
         if(isMultiConfig)
+            # The single-config is correct, it will be used in the info message to print
+            # that multi-config is not suitable for TinyORM multi-config
             set(${out_package_version} "${${out_package_version}} single-config"
                 PARENT_SCOPE)
             set(${out_package_version_unsuitable} TRUE PARENT_SCOPE)
             return()
 
+        # Unsuitable because no installed targets
         elseif(count EQUAL 0)
             set(${out_package_version} "${${out_package_version}} no-configuration"
                 PARENT_SCOPE)
             set(${out_package_version_unsuitable} TRUE PARENT_SCOPE)
             return()
 
+        # Match Debug builds types for MSVC (linking debug against release
+        # (or vice-versa) cause crashes)
         elseif(MSVC AND ((CMAKE_BUILD_TYPE STREQUAL "Debug"
                 AND NOT "debug" IN_LIST cvfTargetConfigurations)
                 OR (NOT CMAKE_BUILD_TYPE STREQUAL "Debug" AND cvfIsDebugOnly))
@@ -157,6 +170,13 @@ function(tiny_build_type_requirements_build_tree
     message(DEBUG "cvf_is_multi_config = ${cvf_is_multi_config}")
     message(DEBUG "CMAKE_CURRENT_LIST_FILE = ${CMAKE_CURRENT_LIST_FILE}")
 
+    # The isMultiConfig means that the current application that is linking against
+    # the TinyORM is multi-config, the cvf_is_multi_config means that the TinyORM package
+    # is multi-config, these are two different things
+
+    # The below check if the TinyORM package is suitable and the checks are done only if
+    # TinyORM is single-config, they are not done for multi-config
+
     if(NOT cvf_is_multi_config)
         get_property(isMultiConfig GLOBAL PROPERTY GENERATOR_IS_MULTI_CONFIG)
         tiny_to_bool(isMultiConfig ${isMultiConfig})
@@ -169,12 +189,19 @@ function(tiny_build_type_requirements_build_tree
 
         # TODO forbid MINGW64 vs UCRT64 vs MSVC mismatch on windows silverqx
 
+        # Multi-config is not suitable for TinyORM single-config
         if(isMultiConfig)
+            # The single-config is correct, it will be used in the info message to print
+            # that multi-config is not suitable for TinyORM multi-config
             set(${out_package_version} "${${out_package_version}} single-config"
                 PARENT_SCOPE)
             set(${out_package_version_unsuitable} TRUE PARENT_SCOPE)
             return()
 
+        # Match Debug builds types for MSVC (linking debug against release
+        # (or vice-versa) cause crashes)
+        # Or if matching equal build tree was enabled and builds types don't match then
+        # also tag as unsuitable (this is Build tree specific)
         elseif((cvf_match_buildtree
                 AND NOT CMAKE_BUILD_TYPE STREQUAL cvf_config_build_type)
                 OR (MSVC AND ((CMAKE_BUILD_TYPE STREQUAL "Debug"
