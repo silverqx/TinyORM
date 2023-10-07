@@ -169,7 +169,7 @@ Type::classPureBasenameMsvc(const QString &className, const bool withNamespace)
         itBegin += findBeginWithoutNS();
 
     // Do not include the namespace in the result
-    // Block needed to pass clang-tidy bugprone-branch-clone
+    // Block needed to pass Clang-Tidy bugprone-branch-clone
     else {
         // Doesn't contain the namespace
         if (const qptrdiff toBegin = className.lastIndexOf(QStringLiteral("::"));
