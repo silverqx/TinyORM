@@ -267,6 +267,8 @@ endmacro()
 # Throw a fatal error for unsupported environments
 function(tiny_check_unsupported_build)
 
+    # Related issue: https://github.com/llvm/llvm-project/issues/55938
+
     if(MINGW AND CMAKE_CXX_COMPILER_ID STREQUAL "Clang" AND NOT BUILD_SHARED_LIBS)
         message(FATAL_ERROR "MinGW clang static build is not supported, it has problems \
 with inline constants :/.")

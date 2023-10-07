@@ -1,3 +1,4 @@
+# Related issue: https://github.com/llvm/llvm-project/issues/55938
 !build_pass:win32-clang-g++: \
 if(CONFIG(dll, dll|shared|static|staticlib) | \
 CONFIG(shared, dll|shared|static|staticlib)): \

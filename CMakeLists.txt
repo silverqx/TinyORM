@@ -121,6 +121,7 @@ output" OFF
 # clang-cl shared build crashes with extern constants so force to inline constants 😕🤔
 # only one option with the clang-cl is inline constants for both shared/static builds
 # Look at NOTES.txt[inline constants] how this funckin machinery works 😎
+# Related issue: https://github.com/llvm/llvm-project/issues/55938
 if(NOT (MINGW AND CMAKE_CXX_COMPILER_ID STREQUAL "Clang" AND BUILD_SHARED_LIBS))
     feature_option_dependent(INLINE_CONSTANTS
         "Use inline constants instead of extern constants in the shared build. \
