@@ -117,7 +117,7 @@ namespace Orm::Tiny
         using Relation = Relations::Relation<Model, Related>;
 
         /* Constructors */
-        /*! Create a new TinORM model instance, default constructor. */
+        /*! Create a new TinyORM model instance, default constructor. */
         Model();
         /*! Default destructor. */
         inline ~Model() = default;
@@ -132,18 +132,18 @@ namespace Orm::Tiny
         /*! Model's move assignment operator. */
         inline Model &operator=(Model &&) noexcept = default;
 
-        /*! Create a new TinORM model instance from attributes
+        /*! Create a new TinyORM model instance from attributes
             (converting constructor). */
         explicit Model(const QVector<AttributeItem> &attributes);
-        /*! Create a new TinORM model instance from attributes
+        /*! Create a new TinyORM model instance from attributes
             (converting constructor). */
         explicit Model(QVector<AttributeItem> &&attributes);
 
-        /*! Create a new TinORM model instance from attributes
+        /*! Create a new TinyORM model instance from attributes
             (list initialization). */
         Model(std::initializer_list<AttributeItem> attributes);
 
-        /*! Create a new TinORM model instance, skip-filling default attribute
+        /*! Create a new TinyORM model instance, skip-filling default attribute
             values. */
         explicit Model(DontFillDefaultAttributes /*unused*/);
 

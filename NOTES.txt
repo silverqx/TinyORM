@@ -1032,7 +1032,7 @@ to it and had to fix some problems.
 
  - at the beginning are prepared and initialized CMake options and compiler requirements so
    nothing special
- - then are set header/sources files, PCH, prepared TinOrm target definitions, properties
+ - then are set header/sources files, PCH, prepared TinyOrm target definitions, properties
  - Windows RC and manifest
  - nothing special until Deployment
 

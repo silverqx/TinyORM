@@ -1465,7 +1465,7 @@ function Invoke-UpdateVcpkgPorts {
 # ---
 
 Clear-Host
-Write-Header 'Deploying TinORM library'
+Write-Header 'Deploying TinyORM library'
 
 # Verify whether the current working tree is in the correct state (required preconditions)
 Test-GitRoot
