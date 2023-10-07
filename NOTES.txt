@@ -1034,11 +1034,101 @@ to it and had to fix some problems.
    nothing special
  - then are set header/sources files, PCH, prepared TinyOrm target definitions, properties
  - Windows RC and manifest
+ - resolved and linked dependencies
+   the tiny_find_package() macro is used for this and it has additional functionality and
+   it is to collect the dependency names for the find_dependency() that will be used during
+   the deployment ❗
  - nothing special until Deployment
 
 How the Deployment works:
 
-finish...
+ - first the find_dependency() calls are generated using the tiny_generate_find_dependency_calls()
+ - then are created Package Config and Package Config Version files for the Build and Install Tree
+ - look at the TinyDeployment.cmake tiny_install_tinyorm() and tiny_export_build_tree() functions
+   they are greatly commented so it's crystal clear how they works
+ - generating the Package Config for the Install tree also takes into account the vcpkg package
+   manager
+ - TinyOrmConfig.cmake.in is for the Install tree
+ - TinyOrmBuildTreeConfig.cmake.in is for the Build tree
+
+How the Package Config file works:
+
+ - they are used when linking against the TinyORM library so generating these config files and
+   linking against them are two different things so a different code is executed for these two
+   things
+ - first info messages are are printed:
+   - log messages output can be controlled by the --log-level=<level> and --log-context CMake
+     parameters during configure eg.:
+     - --log-level=DEBUG --log-context (full ouput)
+     - --log-level=VERBOSE (only verbose without debug output)
+
+   - I have invested a lot of effort to these info messages
+   - whether linking against the single, multi, vcpkg builds
+   - against which TinyORM package is linking eg.:
+     Found package TinyOrm 0.35.0.0 Debug (requested 0.35.0) at O:/Code/c/qMedia/TinyORM/TinyORM-builds-cmake/build-TinyORM-Desktop_Qt_6_5_3_MSVC2022_64bit-Debug/TinyOrmConfig.cmake
+
+   - whether Matching build type for Build tree was enabled/disabled eg.:
+     Matching build type for the TinyOrm 0.35.0.0 package build tree was enabled
+   - Matching build type is controlled by the MATCH_EQUAL_EXPORTED_BUILDTREE CMake config. option
+     during the TinyORM library configure
+
+   - if the MYSQL_PING was enabled then it also sets the CMAKE_MODULE_PATH to our Modules folder
+     to find the FindMySQL.cmake package module
+   - then are called find_dependency() from CMakeFindDependencyMacro modules to find Qt,
+     range-v3, and tabulate
+   - setting up meaningful values for MAP_IMPORTED_CONFIG_<CONFIG> to avoid link a release type
+     builds against a debug build
+   - as the last thing is called the check_required_components() from CMakePackageConfigHelpers
+     module. https://cmake.org/cmake/help/latest/module/CMakePackageConfigHelpers.html
+
+Differences between Package Config files for Install and Build tree:
+
+ - they are pactically identical
+ - this is how the Package Config for the Install tree differs from the Build tree:
+   - it has a little different logic for the Information message about build type used because
+     it must the vcpkg package manager into account, it calls the tiny_get_build_types() and
+     because of this it needs to include the TinyPackageConfigHelpers.cmake module
+ - doesn't print the Info message about matching build type (it's Build tree specific)
+
+ - sets the set() and set_and_check() for the cmake --target install;
+   they are the Install destination directories for the Install Tree
+ - and that's all
+
+How the Package Config Version file works:
+
+ - they are complex for sure, I will not describe how they work because I don't exactly remember
+ - ok, I added comments to the tiny_build_type_requirements_install_tree() and
+   tiny_build_type_requirements_build_tree() in the TinyPackageConfigHelpers.cmake so it should be
+   clear how they works now
+   - they check if Package configs are suitable, eg.:
+     - single-config is not suitable for multi-config
+     - or no CMake targets installed so unsuitable
+     - or linking debug against release for MSVC is unsuitable
+
+ - my logic also adds nice info messages if linking against unsuitable CMake package
+ - also a lot of debug messages that can be enabled using the --log-level=<level> and
+   --log-context CMake parameters during configure eg.:
+     - --log-level=DEBUG --log-context (full ouput)
+     - --log-level=VERBOSE (only verbose without debug output)
+
+ - they check if the versions are correct, the COMPATIBILITY SameMajorVersion is the main
+   thing here! (defined in the TinyDeployment.cmake during the write_basic_package_version_file()
+   Check here what the SameMajorVersion means:
+   https://cmake.org/cmake/help/latest/module/CMakePackageConfigHelpers.html
+
+Differences between Package Config files for Install and Build tree:
+
+ - all differences are in the tiny_build_type_requirements_install_tree() and
+   tiny_build_type_requirements_build_tree() in the TinyPackageConfigHelpers.cmake
+
+ - for Install tree:
+   - no CMake targets installed so unsuitable
+   - takes into account also the vcpkg (is multi-config so don't do the checks)
+
+ - for Build tree:
+   - if matching equal build tree was enabled and builds types don't match then tag as unsuitable
+
+It's crazy 🙃😲🙋‍
 
 
 TinyORM vcpkg testing (CMake build):
