@@ -774,7 +774,9 @@ Application::createQCoreApplication(int &argc, char **argv)
        auto tests create their own instance.
        The m_qtApplication isn't used anywhere but must be created if it doesn't exist.
        I decided to use the QCoreApplication everywhere instead of eg. the m_qtApplication
-       or qtApplication()-> because it's much more clear what is happening. */
+       or qtApplication()-> because it's much more clear what is happening.
+       Don't use the ternary operator here because Clang-Tidy throws false positive
+       warning! */
     if (QCoreApplication::instance() == nullptr)
         return std::make_unique<QCoreApplication>(argc, argv);
 
