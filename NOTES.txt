@@ -1346,6 +1346,25 @@ Torrent &operator=(Torrent &&torrent) noexcept
 }
 
 
+Model QDebug operator<<():
+--------------------------
+
+/* Non-member functions */
+
+template<Orm::Tiny::ModelConcept Model>
+QDebug operator<<(QDebug debug, const Model &model)
+{
+    const QDebugStateSaver saver(debug);
+
+    debug.nospace() << Orm::Utils::Type::classPureBasename<Model>().toUtf8().constData()
+                    << model.getKey().template value<Model::KeyType>() << ", "
+                    << model.getAttribute("name").template value<QString>()
+                    << ')';
+
+    return debug;
+}
+
+
 conversions:
 ------------
 
