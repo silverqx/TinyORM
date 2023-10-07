@@ -14,7 +14,7 @@ namespace Orm::Types
 
 /* public */
 
-SqlQuery::SqlQuery(QSqlQuery &&other, const QtTimeZoneConfig &qtTimeZone, // NOLINT(modernize-pass-by-value)
+SqlQuery::SqlQuery(QSqlQuery &&other, const QtTimeZoneConfig &qtTimeZone, // NOLINT(modernize-pass-by-value,cppcoreguidelines-rvalue-reference-param-not-moved)
                    const QueryGrammar &queryGrammar,
                    const std::optional<bool> returnQDateTime
 )

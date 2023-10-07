@@ -775,9 +775,10 @@ Application::createQCoreApplication(int &argc, char **argv)
        The m_qtApplication isn't used anywhere but must be created if it doesn't exist.
        I decided to use the QCoreApplication everywhere instead of eg. the m_qtApplication
        or qtApplication()-> because it's much more clear what is happening. */
-    return QCoreApplication::instance() == nullptr
-            ? std::make_unique<QCoreApplication>(argc, argv)
-            : nullptr;
+    if (QCoreApplication::instance() == nullptr)
+        return std::make_unique<QCoreApplication>(argc, argv);
+
+    return nullptr;
 }
 
 fspath Application::initializePath(fspath &&path)

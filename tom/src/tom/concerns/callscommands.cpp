@@ -47,7 +47,7 @@ int CallsCommands::runCommand(const QString &command, QStringList &&arguments) c
 
 QStringList
 CallsCommands::createCommandLineArguments(
-        const QString &command, QStringList &&arguments, QStringList &&currentArguments)
+        const QString &command, QStringList &&arguments, QStringList &&currentArguments) // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
 {
     // Must contain a command exe name and tom's command name
     Q_ASSERT(currentArguments.size() >= 2);
