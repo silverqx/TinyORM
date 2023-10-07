@@ -339,7 +339,7 @@ Command::connectionResolver() const noexcept
 /* Auto tests helpers */
 
 #ifdef TINYTOM_TESTS_CODE
-bool Command::inUnitTests() const noexcept
+bool Command::inUnitTests() noexcept
 {
     return Tom::Application::inUnitTests();
 }

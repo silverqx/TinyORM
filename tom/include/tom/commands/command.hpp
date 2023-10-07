@@ -148,7 +148,7 @@ namespace Commands
         /* Auto tests helpers */
 #ifdef TINYTOM_TESTS_CODE
         /*! Is enabled logic for unit testing? */
-        bool inUnitTests() const noexcept;
+        static bool inUnitTests() noexcept;
 #endif
 
         /* Data members */
