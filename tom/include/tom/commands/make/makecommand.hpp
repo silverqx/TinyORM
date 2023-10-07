@@ -31,13 +31,13 @@ namespace Tom::Commands::Make
     protected:
         /*! Check whether the created file already exists and create folder if needed. */
         void prepareFileSystem(
-                    const QString &type, const fspath &folder, const QString &basename,
-                    const QString &className = {}) const;
+                const QString &type, const fspath &folder, const QString &basename,
+                const QString &className = {}) const;
 
         /*! Throw if the given classname contains a namespace or path. */
         static void throwIfContainsNamespaceOrPath(
-                    const QString &type, const QString &className,
-                    const QString &source);
+                const QString &type, const QString &className,
+                const QString &source);
 
         /*! Try to guess a path for "make:" commands based on the pwd or use
             the default path. */
@@ -50,8 +50,8 @@ namespace Tom::Commands::Make
     private:
         /*! Ensure that a file in the given folder doesn't already exist. */
         void throwIfFileAlreadyExists(
-                    const QString &type, const fspath &folder, const QString &basename,
-                    const QString &className) const;
+                const QString &type, const fspath &folder, const QString &basename,
+                const QString &className) const;
 
         /*! Ensure a directory exists. */
         static void ensureDirectoryExists(const fspath &path);
