@@ -432,6 +432,9 @@ Builder &Builder::addSelect(const QVector<Column> &columns)
 
 Builder &Builder::addSelect(const Column &column)
 {
+    if (m_columns.contains(column))
+        return *this;
+
     m_columns << column;
 
     return *this;
@@ -472,6 +475,9 @@ Builder &Builder::addSelect(QVector<Column> &&columns) // NOLINT(cppcoreguidelin
 
 Builder &Builder::addSelect(Column &&column)
 {
+    if (m_columns.contains(column))
+        return *this;
+
     m_columns << std::move(column);
 
     return *this;
