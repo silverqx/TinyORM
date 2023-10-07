@@ -15,7 +15,7 @@ TINYORM_BEGIN_COMMON_NAMESPACE
 namespace Orm::Query
 {
 
-    /*! Expression in sql query. */
+    /*! Expression in SQL query. */
     class Expression
     {
     public:
