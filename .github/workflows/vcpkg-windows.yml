@@ -282,7 +282,6 @@ jobs:
         -D CMAKE_BUILD_TYPE:STRING=${{ matrix.build-type.name }}
         -D VCPKG_APPLOCAL_DEPS:BOOL=OFF
         -D VERBOSE_CONFIGURE:BOOL=ON
-        -D MATCH_EQUAL_EXPORTED_BUILDTREE:BOOL=OFF
         -D MYSQL_PING:BOOL=OFF
         -D BUILD_TESTS:BOOL=OFF
         -D ORM:BOOL=ON
@@ -367,7 +366,6 @@ jobs:
         -D CMAKE_INSTALL_PREFIX:PATH='${{ runner.workspace }}/HelloWorld-FetchContent-Install'
         -D VCPKG_APPLOCAL_DEPS:BOOL=OFF
         -D VERBOSE_CONFIGURE:BOOL=ON
-        -D MATCH_EQUAL_EXPORTED_BUILDTREE:BOOL=OFF
         -D MYSQL_PING:BOOL=OFF
         -D BUILD_TESTS:BOOL=OFF
         -D ORM:BOOL=ON
