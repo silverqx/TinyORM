@@ -43,9 +43,9 @@ namespace Tom::Commands::Make
             the default path. */
         static fspath
         guessPathForMakeByPwd(const fspath &defaultPath,
-                              const std::optional<
+                              std::optional<
                                   std::reference_wrapper<const fspath>
-                              > &defaultModelsPath = std::nullopt);
+                              > defaultModelsPath = std::nullopt);
 
     private:
         /*! Ensure that a file in the given folder doesn't already exist. */
