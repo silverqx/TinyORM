@@ -1696,8 +1696,8 @@ SqlQuery Builder::runSelect()
 }
 
 Builder &Builder::joinInternal(
-            std::shared_ptr<JoinClause> &&join, const QString &first,
-            const QString &comparison, const QVariant &second, const bool where)
+        std::shared_ptr<JoinClause> &&join, const QString &first,
+        const QString &comparison, const QVariant &second, const bool where)
 {
     if (where)
         join->where(first, comparison, second);
@@ -1731,9 +1731,9 @@ Builder &Builder::joinInternal(std::shared_ptr<JoinClause> &&join)
 }
 
 Builder &Builder::joinSubInternal(
-            std::pair<QString, QVector<QVariant>> &&subQuery, const QString &as, // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
-            const QString &first, const QString &comparison, const QVariant &second,
-            const QString &type, const bool where)
+        std::pair<QString, QVector<QVariant>> &&subQuery, const QString &as, // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
+        const QString &first, const QString &comparison, const QVariant &second,
+        const QString &type, const bool where)
 {
     auto &&[queryString, bindings] = subQuery;
 
