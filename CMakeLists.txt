@@ -94,7 +94,7 @@ feature_option(BUILD_TESTS
 feature_option_dependent(MATCH_EQUAL_EXPORTED_BUILDTREE
     "Exported package configuration from the build tree is considered to match only \
 when the build type is equal" OFF
-    "CMAKE_EXPORT_PACKAGE_REGISTRY;NOT TINY_IS_MULTI_CONFIG" OFF
+    "CMAKE_EXPORT_PACKAGE_REGISTRY AND NOT TINY_IS_MULTI_CONFIG" OFF
 )
 
 # Don't depend on the TINY_VCPKG, the CMAKE_MSVC_RUNTIME_LIBRARY check is sufficient
@@ -102,7 +102,7 @@ when the build type is equal" OFF
 feature_option_dependent(MSVC_RUNTIME_DYNAMIC
     "Use MSVC dynamic runtime library (-MD) instead of static (-MT), also considers \
 a Debug configuration (-MTd, -MDd)" ON
-    "MSVC;NOT DEFINED CMAKE_MSVC_RUNTIME_LIBRARY" MSVC_RUNTIME_DYNAMIC-NOTFOUND
+    "MSVC AND NOT DEFINED CMAKE_MSVC_RUNTIME_LIBRARY" MSVC_RUNTIME_DYNAMIC-NOTFOUND
 )
 
 feature_option_environment(STRICT_MODE
