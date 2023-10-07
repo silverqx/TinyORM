@@ -34,7 +34,7 @@ namespace Tom::Commands::Make
                     const QString &type, const fspath &folder, const QString &basename,
                     const QString &className = {}) const;
 
-        /*! Throw if the given classname constains a namespace or path. */
+        /*! Throw if the given classname contains a namespace or path. */
         static void throwIfContainsNamespaceOrPath(
                     const QString &type, const QString &className,
                     const QString &source);
