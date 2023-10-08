@@ -157,6 +157,7 @@ To paste a source code correctly in `vim`, press <kbd>Shift</kbd> + <kbd>p</kbd>
 And paste the following code.
 
 ```cpp title='main.cpp'
+#include <QCoreApplication>
 #include <QDebug>
 
 #ifdef _WIN32
@@ -167,12 +168,16 @@ And paste the following code.
 
 using Orm::DB;
 
-int main(int /*unused*/, char */*unused*/[])
+int main(int argc, char *argv[])
 {
 #ifdef _WIN32
     SetConsoleOutputCP(CP_UTF8);
 //    SetConsoleOutputCP(1250);
 #endif
+
+    /* Needed from Qt v6.5.3 to avoid:
+       qt.core.qobject.connect: QObject::connect(QObject, Unknown): invalid nullptr parameter */
+    QCoreApplication app(argc, argv);
 
     // Ownership of a shared_ptr()
     auto manager = DB::create({
