@@ -828,7 +828,9 @@ TINY_VCPKG_ROOT = $$quote(<your_path>/vcpkg/)
 QMAKEFEATURES *= $$quote($$TINY_MAIN_DIR/TinyORM/qmake/features)
 ```
 
-You can move all `qmake` variables that are part of the `qmake` configuration process to the `.env` file if you want (recommended) as the `TinyOrm.pri` enables the [`Environment files`](#environment-files) feature by default.
+You can move all `qmake` variables that are part of the `qmake` configuration process to the `.env` file if you want (recommended), this is possible because the `TinyOrm.pri` enables the [`Environment files`](#environment-files) feature by default.
+
+You can look at the [Auto-configure using .qmake.conf and .env](hello-world.mdx#auto-configure-using-qmake_conf-and-env) example for `Hello world` project of what must stay in the `qmake.conf` file and what can be moved to the `.env` files.
 
 ##### Variables affecting `TinyOrm.pri`
 
@@ -861,7 +863,7 @@ And that is all, now you should be able to link against the `TinyORM` library. ð
 
 ##### Manual configuration examples
 
-Frankly, there is no reason not to define the variables described below before the `TinyOrm.pri`, perhaps when you want more control over this process or want to define everything yourself. I'll leave this section here to show how things work.
+Frankly, there is no reason to use the Manual configuration (define the variables described below before the `TinyOrm.pri` inclusion), the only reason to use it is when you want more control over this process or want to define everything yourself. I'll leave this section here to show how things work.
 
 You will have to link against the `TinyORM` library manually if you don't set the `TINYORM_BUILD_TREE` `qmake` variable before the inclusion of the `TinyOrm.pri` file. The `INCLUDEPATH` is auto-detected every time.
 
