@@ -10,7 +10,7 @@ defineReplace(tinyorm_builds_dir) {
     return($$quote($$TINY_MAIN_DIR/TinyORM-builds-qmake))
 }
 
-# Guess and return a TinyORM build folder name by the current build folder name
+# Guess and return a TinyORM build folder name from the CURRENT build folder name
 defineReplace(tinyorm_build_folder) {
     # Nothing to do
     isEmpty(TINY_BUILD_TREE)|isEmpty(TARGET): return()
@@ -32,7 +32,7 @@ defineReplace(tinyorm_build_tree) {
 
 # Directory that contains all qmake builds (build trees)
 isEmpty(TINYORM_BUILDS_DIR):   TINYORM_BUILDS_DIR   = $$tinyorm_builds_dir()
-# TinyORM build folder name (guessed by the current build folder name)
+# TinyORM build folder name (guessed from the CURRENT build folder name)
 isEmpty(TINYORM_BUILD_FOLDER): TINYORM_BUILD_FOLDER = $$tinyorm_build_folder()
 # Absolute path to the TinyORM build tree
 isEmpty(TINYORM_BUILD_TREE):   TINYORM_BUILD_TREE   = $$tinyorm_build_tree()

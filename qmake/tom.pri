@@ -33,15 +33,15 @@
 #
 # Partial guessing of the TINYORM_BUILD_TREE
 #
-# You don't have to define manually the TINYORM_BUILD_TREE in .env or .qmake.conf files.
-# The TINYORM_BUILD_TREE aboslute path can be put together for you (this is happening
+# You don't have to manually define the TINYORM_BUILD_TREE in .env or .qmake.conf files.
+# The TINYORM_BUILD_TREE absolute path can be put together for you (this is happening
 # inside the variables.pri file) and TinyORM build folder name can be guessed for you too.
 #
 # You must define the following variables before the TinyOrm.pri will be included to make
 # this real (set them in the .qmake.conf):
 #
 # - TINY_MAIN_DIR   - Path to the PARENT folder of the TinyORM source folder.
-# - TINY_BUILD_TREE - Path to the current build tree (eg. TINY_BUILD_TREE = $$shadowed($$PWD)).
+# - TINY_BUILD_TREE - Path to the current build tree - TINY_BUILD_TREE = $$shadowed($$PWD).
 #
 # The TINY_MAIN_DIR is required for another features anyway (so it should already be set)
 # and all that's left is to set the TINY_BUILD_TREE.
