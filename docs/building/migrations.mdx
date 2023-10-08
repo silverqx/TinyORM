@@ -466,8 +466,8 @@ set_target_properties(${Tom_target}
         VERSION ${PROJECT_VERSION}
 )
 
-target_include_directories(${Tom_target} PRIVATE
-    "$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/database>"
+target_include_directories(${Tom_target}
+    PRIVATE "$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/database>"
 )
 
 # Tom command-line application defines

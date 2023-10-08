@@ -54,7 +54,9 @@ ${TINY_UNPARSED_ARGUMENTS}")
 
     # Currently unused
     if(TINY_INCLUDE_SOURCE_DIR)
-        target_include_directories(${name} PRIVATE "$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}>")
+        target_include_directories(${name}
+            PRIVATE "$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}>"
+        )
     endif()
 
     if(TINY_INCLUDE_MIGRATIONS)

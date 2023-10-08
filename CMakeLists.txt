@@ -243,8 +243,8 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
     )
 endif()
 
-target_include_directories(${TinyOrm_target} PUBLIC
-    "$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>"
+target_include_directories(${TinyOrm_target}
+    PUBLIC "$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>"
 )
 
 # TinyORM defines
@@ -302,8 +302,8 @@ endif()
 # ---
 
 if(TOM)
-    target_include_directories(${TinyOrm_target} PUBLIC
-        "$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/tom/include>"
+    target_include_directories(${TinyOrm_target}
+        PUBLIC "$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/tom/include>"
     )
 endif()
 

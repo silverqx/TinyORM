@@ -51,8 +51,8 @@ set_target_properties(${TomExample_target}
         VERSION ${PROJECT_VERSION}
 )
 
-target_include_directories(${TomExample_target} PRIVATE
-    "$<BUILD_INTERFACE:${${TinyOrm_ns}_SOURCE_DIR}/tests/database>"
+target_include_directories(${TomExample_target}
+    PRIVATE "$<BUILD_INTERFACE:${${TinyOrm_ns}_SOURCE_DIR}/tests/database>"
 )
 
 # Tom command-line application defines

@@ -30,8 +30,8 @@ if(TOM_EXAMPLE)
     )
 endif()
 
-target_include_directories(versions PRIVATE
-    "$<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/${TINY_BUILD_GENDIR}/include>"
+target_include_directories(versions
+    PRIVATE "$<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/${TINY_BUILD_GENDIR}/include>"
 )
 
 if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
