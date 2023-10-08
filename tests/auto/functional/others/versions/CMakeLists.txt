@@ -25,11 +25,13 @@ if(TOM_EXAMPLE)
     target_compile_definitions(versions PRIVATE TINYTOM_EXAMPLE)
 
     # To find tom/include/version.hpp
-    target_include_directories(versions PRIVATE "${${TinyOrm_ns}_SOURCE_DIR}/tom/include")
+    target_include_directories(versions
+        PRIVATE "$<BUILD_INTERFACE:${${TinyOrm_ns}_SOURCE_DIR}/tom/include>"
+    )
 endif()
 
 target_include_directories(versions PRIVATE
-    "${PROJECT_BINARY_DIR}/${TINY_BUILD_GENDIR}/include"
+    "$<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/${TINY_BUILD_GENDIR}/include>"
 )
 
 if(CMAKE_SYSTEM_NAME STREQUAL "Windows")

@@ -54,12 +54,12 @@ ${TINY_UNPARSED_ARGUMENTS}")
 
     # Currently unused
     if(TINY_INCLUDE_SOURCE_DIR)
-        target_include_directories(${name} PRIVATE "${PROJECT_SOURCE_DIR}")
+        target_include_directories(${name} PRIVATE "$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}>")
     endif()
 
     if(TINY_INCLUDE_MIGRATIONS)
         target_include_directories(${name}
-            PRIVATE "${${TinyOrm_ns}_SOURCE_DIR}/tests/database"
+            PRIVATE "$<BUILD_INTERFACE:${${TinyOrm_ns}_SOURCE_DIR}/tests/database>"
         )
 
         # Migrations header files
@@ -71,7 +71,7 @@ ${TINY_UNPARSED_ARGUMENTS}")
 
     if(TINY_INCLUDE_MODELS)
         target_include_directories(${name}
-            PRIVATE "${${TinyOrm_ns}_SOURCE_DIR}/tests/models"
+            PRIVATE "$<BUILD_INTERFACE:${${TinyOrm_ns}_SOURCE_DIR}/tests/models>"
         )
 
         # Models header and source files

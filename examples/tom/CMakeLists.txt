@@ -52,7 +52,7 @@ set_target_properties(${TomExample_target}
 )
 
 target_include_directories(${TomExample_target} PRIVATE
-    "${${TinyOrm_ns}_SOURCE_DIR}/tests/database"
+    "$<BUILD_INTERFACE:${${TinyOrm_ns}_SOURCE_DIR}/tests/database>"
 )
 
 # Tom command-line application defines
