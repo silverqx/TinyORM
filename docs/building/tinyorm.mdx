@@ -804,6 +804,8 @@ It has a few requirements, you need to:
  - specify path to the `TinyORM` qmake features (`.prf` files) using the `QMAKEFEATURES` variable that can only be set in the `.qmake.conf` file
  - specify `qmake` or `environment` variables to find the `vcpkg` installation <small>(`TINY_VCPKG_ROOT` and `TINY_VCPKG_TRIPLET`)</small>
  - specify path to the `TinyORM` build folder <small>(`TINYORM_BUILD_TREE`)</small>
+   - you can specify it __manually__
+   - or you can use [Partial guessing of the `TINYORM_BUILD_TREE`](#partial-guessing-of-the-tinyorm_build_tree)
  - build your application with the same `CONFIG` `qmake` variables that were used  when building the `TinyORM` library
 
 Let's explain one by one.
@@ -831,6 +833,10 @@ QMAKEFEATURES *= $$quote($$TINY_MAIN_DIR/TinyORM/qmake/features)
 You can move all `qmake` variables that are part of the `qmake` configuration process to the `.env` file if you want (recommended), this is possible because the `TinyOrm.pri` enables the [`Environment files`](#environment-files) feature by default.
 
 You can look at the [Auto-configure using .qmake.conf and .env](hello-world.mdx#auto-configure-using-qmake_conf-and-env) example for `Hello world` project of what must stay in the `qmake.conf` file and what can be moved to the `.env` files.
+
+:::tip
+You can use the [Partial guessing of the `TINYORM_BUILD_TREE`](#partial-guessing-of-the-tinyorm_build_tree) if you don't like to specify it manually.
+:::
 
 ##### Variables affecting `TinyOrm.pri`
 
@@ -1007,6 +1013,32 @@ The `tiny_dotenv` feature can be turned off using the [`disable_dotenv`](#disabl
 
 :::caution
 `Environment files` don't work in the `CMake` builds.
+:::
+
+#### Partial guessing of the `TINYORM_BUILD_TREE`
+
+You don't have to manually define the `TINYORM_BUILD_TREE` in `.env` or `.qmake.conf` files. The `TINYORM_BUILD_TREE` absolute path can be put together for you (this is happening inside the `variables.pri` file) and `TinyORM` build folder name can be guessed for you too.
+
+You must define the following variables before the `TinyOrm.pri` will be included to make this real (set them in the `.qmake.conf`):
+
+| Variable Name     | Description |
+| ----------------- | ----------- |
+| `TINY_MAIN_DIR`   | Path to the __PARENT__ folder of the `TinyORM` source folder. |
+| `TINY_BUILD_TREE` | Path to the __current__ build tree - `TINY_BUILD_TREE = $$shadowed($$PWD)`. |
+
+The `TINY_MAIN_DIR` is required for another features anyway (so it should already be set) and all that's left is to set the `TINY_BUILD_TREE`.
+
+```qmake title='.qmake.conf'
+# Path to the current build tree (used to guess the TinyORM build tree)
+TINY_BUILD_TREE = $$shadowed($$PWD)
+```
+
+If you will follow this pattern or logic then you can switch `QtCreator Kits` and the `TINYORM_BUILD_TREE` will be __auto-generated__ correctly and will always point to the correct `TinyORM` build tree.
+
+It works this way, all is happening inside the `variables.pri`, it takes a build folder name for the __current__ project eg. `build-HelloWorld-Desktop_Qt_6_5_3_MSVC2022_64bit-Debug`, replaces the `HelloWorld` with the `TinyORM` and as we already know the `TinyORM` build folder location we can simply concatenate these paths like `$$TINY_MAIN_DIR/TinyORM-builds-qmake/build-TinyORM-Desktop_Qt_6_5_3_MSVC2022_64bit-Debug`.
+
+:::caution
+This will only work if you follow the recommended [`Folders structure`](#folders-structure).
 :::
 
 ### Manual configuration internals

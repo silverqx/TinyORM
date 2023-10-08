@@ -724,11 +724,13 @@ Read the [Consume TinyOrm library (qmake)](tinyorm.mdx#consume-tinyorm-library-q
 
 Create the `.qmake.conf` file in the `tom` application root folder with the following content.
 
-```qmake
+```qmake title='.qmake.conf'
 # Path to the PARENT folder of the TinyORM source folder
-TINY_MAIN_DIR = $$clean_path($$PWD/../../TinyORM/)
+TINY_MAIN_DIR    = $$clean_path($$PWD/../../TinyORM/)
 # To find .env and .env.$$QMAKE_PLATFORM files
 TINY_DOTENV_ROOT = $$PWD
+# Path to the current build tree (used to guess the TinyORM build tree)
+#TINY_BUILD_TREE  = $$shadowed($$PWD)
 
 # To find .prf files, needed by eg. CONFIG += tiny_system_headers inline/extern_constants
 QMAKEFEATURES *= $$quote($$TINY_MAIN_DIR/TinyORM/qmake/features)
@@ -806,8 +808,10 @@ QMAKE_LFLAGS *= -fuse-ld=lld
 
 Don't forget to update the `TINYORM_BUILD_TREE` and `TINY_VCPKG_ROOT` folder paths to your needs if you are not using the recommended [`Folders structure`](tinyorm.mdx#folders-structure).
 
+You can use the [Partial guessing of the `TINYORM_BUILD_TREE`](tinyorm.mdx#partial-guessing-of-the-tinyorm_build_tree) if you don't like to specify it manually. Just comment out the `TINYORM_BUILD_TREE` and uncomment the `TINY_BUILD_TREE = $$shadowed($$PWD)` in the `.qmake.conf` file.
+
 :::tip
-You can entirely avoid the `.env` files, just move the `TINYORM_BUILD_TREE` to the `.qmake.conf` and set the `VCPKG_ROOT` at system level as is described in [`Set up vcpkg environment`](tinyorm.mdx#set-up-vcpkg-environment).
+You can entirely avoid the `.env` files, just move the `TINYORM_BUILD_TREE` to the `.qmake.conf` or remove it by help of [Partial guessing of the `TINYORM_BUILD_TREE`](tinyorm.mdx#partial-guessing-of-the-tinyorm_build_tree) and set the `VCPKG_ROOT` environment variable at system level as is described in [`Set up vcpkg environment`](tinyorm.mdx#set-up-vcpkg-environment).
 :::
 
 :::info
