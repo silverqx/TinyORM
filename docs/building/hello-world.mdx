@@ -93,7 +93,7 @@ cd HelloWorld
 vim vcpkg.json
 ```
 
-```json
+```json title='vcpkg.json'
 {
   "$schema": "https://raw.githubusercontent.com/microsoft/vcpkg-tool/main/docs/vcpkg.schema.json",
   "name": "tinyorm-helloworld",
@@ -156,37 +156,39 @@ To paste a source code correctly in `vim`, press <kbd>Shift</kbd> + <kbd>p</kbd>
 
 And paste the following code.
 
-    #include <QDebug>
+```cpp title='main.cpp'
+#include <QDebug>
 
-    #ifdef _WIN32
-    #  include <qt_windows.h>
-    #endif
+#ifdef _WIN32
+#  include <qt_windows.h>
+#endif
 
-    #include <orm/db.hpp>
+#include <orm/db.hpp>
 
-    using Orm::DB;
+using Orm::DB;
 
-    int main(int /*unused*/, char */*unused*/[])
-    {
-    #ifdef _WIN32
-        SetConsoleOutputCP(CP_UTF8);
-    //    SetConsoleOutputCP(1250);
-    #endif
+int main(int /*unused*/, char */*unused*/[])
+{
+#ifdef _WIN32
+    SetConsoleOutputCP(CP_UTF8);
+//    SetConsoleOutputCP(1250);
+#endif
 
-        // Ownership of a shared_ptr()
-        auto manager = DB::create({
-            {"driver",   "QSQLITE"},
-            {"database", qEnvironmentVariable("TINYORM_HELLOWORLD_DB_SQLITE_DATABASE",
-                                              "../../HelloWorld.sqlite3")},
-            {"check_database_exists", true},
-        });
+    // Ownership of a shared_ptr()
+    auto manager = DB::create({
+        {"driver",   "QSQLITE"},
+        {"database", qEnvironmentVariable("TINYORM_HELLOWORLD_DB_SQLITE_DATABASE",
+                                          "../../HelloWorld.sqlite3")},
+        {"check_database_exists", true},
+    });
 
-        auto posts = DB::select("select * from posts");
+    auto posts = DB::select("select * from posts");
 
-        while(posts.next())
-            qDebug() << posts.value("id").toULongLong()
-                     << posts.value("name").toString();
-    }
+    while(posts.next())
+        qDebug() << posts.value("id").toULongLong()
+                 << posts.value("name").toString();
+}
+```
 
 ## Hello world with CMake
 
@@ -478,7 +480,7 @@ vim HelloWorld.pro
 To paste a source code correctly in `vim`, press <kbd>Shift</kbd> + <kbd>p</kbd>.
 :::
 
-```qmake
+```qmake title='HelloWorld.pro'
 QT -= gui
 
 TEMPLATE = app
@@ -511,7 +513,7 @@ Read the [Consume TinyOrm library (qmake)](tinyorm.mdx#consume-tinyorm-library-q
 
 Create the `.qmake.conf` file in the `HelloWorld` project root folder with the following content.
 
-```qmake
+```qmake title='.qmake.conf'
 # Path to the PARENT folder of the TinyORM source folder
 TINY_MAIN_DIR    = $$clean_path($$PWD/../../TinyORM/)
 # To find .env and .env.$$QMAKE_PLATFORM files

@@ -534,7 +534,7 @@ Important `CMake` options.
 
 In your application or library `CMakeLists.txt` file add following `find_package()` call.
 
-```cmake
+```cmake title='CMakeLists.txt'
 find_package(TinyOrm 0.16.0 CONFIG REQUIRED)
 ```
 
@@ -814,7 +814,7 @@ Let's explain one by one.
 
 Create the `.qmake.conf` file in your application root folder with the following content.
 
-```qmake
+```qmake title='.qmake.conf'
 # Path to the PARENT folder of the TinyORM source folder
 TINY_MAIN_DIR = $$clean_path(<your_path>)
 # To find .env and .env.$$QMAKE_PLATFORM files in YOUR project
