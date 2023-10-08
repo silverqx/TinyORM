@@ -86,7 +86,9 @@ function Initialize-ScriptVariables {
                 (Resolve-Path -Path ./NOTES.txt)                                = 1
                 (Resolve-Path -Path ./cmake/vcpkg/ports/tinyorm/vcpkg.json)     = 1
                 (Resolve-Path -Path ./cmake/vcpkg/ports/tinyorm-qt5/vcpkg.json) = 1
-                (Resolve-Path -Path ./docs/building/hello-world.mdx)            = 2
+                (Resolve-Path -Path ./docs/building/hello-world.mdx)            = 4
+                (Resolve-Path -Path ./docs/building/migrations.mdx)             = 2
+                (Resolve-Path -Path ./docs/building/tinyorm.mdx)                = 1
             }
             [VersionType]::VersionWith_v = [ordered] @{
                 (Resolve-Path -Path ./NOTES.txt)                 = 1
