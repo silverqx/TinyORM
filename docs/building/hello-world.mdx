@@ -195,6 +195,10 @@ int main(int argc, char *argv[])
 }
 ```
 
+:::caution
+The `QSqlDatabase` depends on `QCoreApplication` from `Qt v6.5.3` so you must create the `QCoreApplication` instance before you will call anything from the `TinyORM` library. 🫤 The change was made [here](https://github.com/qt/qtbase/commit/8d2bdc9cd5482eace12ba7e45304857bd24db0e6#diff-1d355c25c0b0eddec2be48253407780c4dc510d986739aec61e1ec892ccaf86e).
+:::
+
 ## Hello world with CMake
 
 Create a folder for the `CMake` build.
