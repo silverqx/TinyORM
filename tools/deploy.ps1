@@ -1349,6 +1349,8 @@ function Invoke-BumpVersions {
     [OutputType([void])]
     Param()
 
+    Write-Header 'Bumping version numbers' -NoNewlineAfter
+
     # Allow to skip bumping version numbers
     $answer = Approve-Continue 'Do you want to bump version numbers?' -DefaultChoice 0
     if ($answer -eq 1) {
