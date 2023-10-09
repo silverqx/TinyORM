@@ -311,7 +311,7 @@ function Read-NumberOfUnitTestsCurrent {
     # Verify that the number of expected occurrences of unit tests numbers is correct
     $expectedOccurrences = 1
     Test-ExpectedLinesCount `
-        $numberOfUnitTestsLines.Count $expectedOccurrences $regex $filePath 'unit tests'
+        $numberOfUnitTestsLines.Count $expectedOccurrences $regex $filePath 'Unit Tests'
 
     # Obtain the number of unit tests
     $result = $numberOfUnitTestsLines[0] -cmatch $regex
@@ -337,7 +337,7 @@ function Test-NumberOfUnitTestsCurrent {
 
         # Verify that the number of expected occurrences of unit tests numbers is correct
         Test-ExpectedLinesCount `
-            $numberOfUnitTestsLines.Count $expectedOccurrences $regex $filePath 'unit tests'
+            $numberOfUnitTestsLines.Count $expectedOccurrences $regex $filePath 'Unit Tests'
     }
 }
 
@@ -407,7 +407,7 @@ function Edit-NumberOfUnitTestsInAllFiles {
         # Verify that the number of expected occurrences of unit tests numbers is correct
         Test-ExpectedLinesCount `
             $numberOfUnitTestsLines.Count $expectedOccurrences $Script:NumberOfUnitTestsRegEx `
-            $filePath 'unit tests'
+            $filePath 'Unit Tests'
 
         # Replace the old number of unit tests with the new number (doesn't work with `$1)
         $regexReplace = "`${before}${Script:NumberOfUnitTestsNew}`${after}"
@@ -864,7 +864,7 @@ function Edit-VersionNumbersInAllFiles {
 
                 # Verify that the number of expected occurrences of version numbers is correct
                 Test-ExpectedLinesCount `
-                    $versionLines.Count $expectedOccurrences $regex $filePath 'version'
+                    $versionLines.Count $expectedOccurrences $regex $filePath 'Version'
 
                 $versionBumped = $bumpValue.versionBumped
 
