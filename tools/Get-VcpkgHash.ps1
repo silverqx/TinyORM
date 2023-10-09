@@ -38,6 +38,8 @@ Param(
 
 Set-StrictMode -Version 3.0
 
+. $PSScriptRoot\private\Common-Host.ps1
+
 # Get a git object by the current parameter set
 # The vcpkg uses the archive/ prefix only without the refs/heads/ or refs/tags/:
 # https://github.com/microsoft/vcpkg/blob/master/scripts/cmake/vcpkg_from_github.cmake#L107
@@ -64,10 +66,16 @@ $tempFile = New-TemporaryFile
 $previousProgressPreference = $ProgressPreference
 $ProgressPreference = 'SilentlyContinue'
 
+$url = "https://github.com/${Project}/archive/${currentObject}.tar.gz"
+
 try {
-    Invoke-WebRequest "https://github.com/${Project}/archive/${currentObject}.tar.gz" -OutFile $tempFile
+    Invoke-WebRequest $url -OutFile $tempFile
 
     vcpkg hash $tempFile
+}
+catch {
+    # Exiting directly from the catch block is ok, the finally block will be invoked correctly
+    Write-ExitError "Failed to download the archive for hashing from the URL:`n$url"
 }
 finally {
     $ProgressPreference = $previousProgressPreference
@@ -83,6 +91,8 @@ finally {
   Computes the hash of a specified branch or git reference object. By default, it computes
   the SHA-512 hash. The output will be the computed hash for the given git object displayed directly
   on the console.
+
+  Prints error message to the error stream and exits with the error code 1 if the download fails.
 
  .INPUTS
   System.String
