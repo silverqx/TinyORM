@@ -253,13 +253,14 @@ function Test-RegExResult {
 }
 
 # Verify that the number of expected occurrences of version or unit tests numbers is correct
-function Test-VersionLinesCount {
+function Test-ExpectedLinesCount {
     [OutputType([void])]
     Param(
-        [Parameter(Mandatory)] [ValidateNotNullOrEmpty()] [int]    $VersionLinesCount,
+        [Parameter(Mandatory)] [ValidateNotNullOrEmpty()] [int]    $LinesCount,
         [Parameter(Mandatory)] [ValidateNotNullOrEmpty()] [int]    $ExpectedOccurrences,
         [Parameter(Mandatory)] [ValidateNotNullOrEmpty()] [string] $RegEx,
-        [Parameter(Mandatory)] [ValidateNotNullOrEmpty()] [string] $FilePath
+        [Parameter(Mandatory)] [ValidateNotNullOrEmpty()] [string] $FilePath,
+        [Parameter(Mandatory)] [ValidateNotNullOrEmpty()] [string] $Title
     )
 
     # Nothing to do
@@ -267,8 +268,8 @@ function Test-VersionLinesCount {
         return
     }
 
-    Write-ExitError ("Found '$VersionLinesCount' version number lines for '$RegEx' regex " +
-        "in the '$FilePath' file, expected occurrences must be '$ExpectedOccurrences'.")
+    Write-ExitError ("Found '$LinesCount' $Title number lines in the '$FilePath' file, " +
+        "expected occurrences must be '$ExpectedOccurrences' for the following RegEx: $RegEx")
 }
 
 # Bump version numbers functions
@@ -705,7 +706,8 @@ function Edit-VersionNumbersInAllFiles {
                 $versionLines = $fileContent -cmatch $regex
 
                 # Verify that the number of expected occurrences of version numbers is correct
-                Test-VersionLinesCount $versionLines.Count $expectedOccurrences $regex $filePath
+                Test-ExpectedLinesCount `
+                    $versionLines.Count $expectedOccurrences $regex $filePath 'version'
 
                 $versionBumped = $bumpValue.versionBumped
 
