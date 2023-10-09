@@ -267,8 +267,8 @@ function Test-VersionLinesCount {
         return
     }
 
-    throw "Found '$VersionLinesCount' version number lines for '$RegEx' regex " +
-        "in the '$FilePath' file, expected occurrences must be '$ExpectedOccurrences'."
+    Write-ExitError ("Found '$VersionLinesCount' version number lines for '$RegEx' regex " +
+        "in the '$FilePath' file, expected occurrences must be '$ExpectedOccurrences'.")
 }
 
 # Bump version numbers functions
