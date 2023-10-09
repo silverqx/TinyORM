@@ -33,6 +33,8 @@ $Script:BOL = '  '
 $Script:BumpsHash = $null
 # Files in which the version numbers needs to be bumped (integer value is the number of updates)
 $Script:VersionLocations = $null
+# Files in which a number of unit tests needs to be updated (integer value is the number of updates)
+$Script:NumberOfUnitTestsLocations = $null
 # Vcpkg port filepaths and bumping port-version field for tinyorm and tinyorm-qt5 ports
 $Script:VcpkgHash = $null
 
@@ -42,6 +44,16 @@ $Script:TagVersion = $null
 $Script:IsBumpingSkipped = $false
 # Bump commit message cache (to avoid regeneration for the tag)
 $Script:BumpCommitMessage = $null
+
+# Base template RegEx to match Number of Unit Tests in all files
+$Script:NumberOfUnitTestsRegExTmpl =
+    '(?<before>(?:with|currently|then) (?:__)?)(?<number>{0})(?<after>(?:__)? unit (?:and|tests))'
+# RegEx to match Number of Unit Tests in all files
+$Script:NumberOfUnitTestsRegEx = $Script:NumberOfUnitTestsRegExTmpl -f '\d{1,2} ?\d{3}'
+# The current Number of unit tests found in the README.md file
+$Script:NumberOfUnitTestsCurrent = $null
+# Number of unit tests to update in all files
+$Script:NumberOfUnitTestsNew = $null
 
 # Functions section
 # ---
@@ -106,6 +118,14 @@ function Initialize-ScriptVariables {
             }
         }
         # TinyUtils doesn't have any version numbers in files
+    }
+
+    $Script:NumberOfUnitTestsLocations = [ordered] @{
+        # The README.md will be read from to populate the current number of unit tests
+        (Resolve-Path -Path ./README.md)                    = 2
+        (Resolve-Path -Path ./docs/features-summary.mdx)    = 1
+        (Resolve-Path -Path ./docs/README.mdx)              = 2
+        (Resolve-Path -Path ./docs/supported-compilers.mdx) = 1
     }
 
     $Script:VcpkgHash = [ordered] @{
@@ -270,6 +290,143 @@ function Test-ExpectedLinesCount {
 
     Write-ExitError ("Found '$LinesCount' $Title number lines in the '$FilePath' file, " +
         "expected occurrences must be '$ExpectedOccurrences' for the following RegEx: $RegEx")
+}
+
+# Update Number of Unit Tests
+# ---
+
+# Read a number of unit tests from the README.md file
+function Read-NumberOfUnitTestsCurrent {
+    [OutputType([void])]
+    Param()
+
+    Write-Progress 'Reading number of unit tests from README.md...'
+
+    # Get the first README.md filepath
+    $filePath = $Script:NumberOfUnitTestsLocations.Keys.Item(0)
+    $regex = 'with __(?<number>\d{1,2} ?\d{3})__ unit'
+
+    $numberOfUnitTestsLines = (Get-Content -Path $filePath) -cmatch $regex
+
+    # Verify that the number of expected occurrences of unit tests numbers is correct
+    $expectedOccurrences = 1
+    Test-ExpectedLinesCount `
+        $numberOfUnitTestsLines.Count $expectedOccurrences $regex $filePath 'unit tests'
+
+    # Obtain the number of unit tests
+    $result = $numberOfUnitTestsLines[0] -cmatch $regex
+    Test-RegExResult $regex -Result $result
+
+    $Script:NumberOfUnitTestsCurrent = [int] $Matches.number.Replace(' ', '')
+}
+
+# Verify the current number of unit tests in all files whether is the same everywhere
+function Test-NumberOfUnitTestsCurrent {
+    [OutputType([void])]
+    Param()
+
+    Write-Progress 'Verifying a number of unit tests in all documentation files...'
+
+    foreach ($numberOfUnitTestLocationsAll in $Script:NumberOfUnitTestsLocations.GetEnumerator()) {
+        $filePath = $numberOfUnitTestLocationsAll.Name
+        $expectedOccurrences = $numberOfUnitTestLocationsAll.Value
+
+        # Find occurrences of the CURRENT number of unit tests
+        $regex = $Script:NumberOfUnitTestsRegExTmpl -f $Script:NumberOfUnitTestsCurrent
+        $numberOfUnitTestsLines = (Get-Content -Path $filePath) -cmatch $regex
+
+        # Verify that the number of expected occurrences of unit tests numbers is correct
+        Test-ExpectedLinesCount `
+            $numberOfUnitTestsLines.Count $expectedOccurrences $regex $filePath 'unit tests'
+    }
+}
+
+# Print the number of unit tests to the console
+function Show-NumberOfUnitTestsCurrent {
+    [OutputType([void])]
+    Param()
+
+    NewLine
+    Write-Output ("The current `e[36mNumber of Unit Tests`e[0m is set to " +
+        "`e[35m$Script:NumberOfUnitTestsCurrent`e[0m 🤯")
+}
+
+# Read the new number of unit tests to update in all files
+function Read-NumberOfUnitTestsNew {
+    [OutputType([void])]
+    Param()
+
+    Newline
+    $Script:NumberOfUnitTestsNew = Read-Host -Prompt "Enter the new `e[36mNumber of Unit Tests`e[0m"
+
+    $Script:NumberOfUnitTestsNew = $Script:NumberOfUnitTestsNew.Replace(' ', '')
+}
+
+# Verify the new number of unit tests
+function Test-NumberOfUnitTestsNew {
+    [OutputType([void])]
+    Param()
+
+    Newline
+    Write-Progress 'Verifying a new number of unit tests...'
+
+    $maxValue = 5000
+    [int] $parseResult = 0
+
+    if (-not ([int]::TryParse($Script:NumberOfUnitTestsNew, [ref] $parseResult))) {
+        Write-ExitError ("The new number of unit tests must be the integer number between " +
+            "$($Script:NumberOfUnitTestsCurrent + 1) - $maxValue")
+    }
+
+    if ($Script:NumberOfUnitTestsCurrent -ge $Script:NumberOfUnitTestsNew) {
+        Write-ExitError ("The new number of unit tests '$Script:NumberOfUnitTestsNew' must " +
+            "be greater than the current number '$Script:NumberOfUnitTestsCurrent'")
+    }
+
+    if ($Script:NumberOfUnitTestsNew -gt $maxValue) {
+        Write-ExitError ("The new number of unit tests '$Script:NumberOfUnitTestsNew' is too " +
+            "high. The current max. value is set to '$maxValue'.")
+    }
+}
+
+# Update the Number of Unit Tests in all files defined in the $Script:NumberOfUnitTestsLocations
+function Edit-NumberOfUnitTestsInAllFiles {
+    [OutputType([void])]
+    Param()
+
+    Write-Progress 'Editing number of unit tests in all files...'
+
+    foreach ($numberOfUnitTestLocationsAll in $Script:NumberOfUnitTestsLocations.GetEnumerator()) {
+        $filePath = $numberOfUnitTestLocationsAll.Name
+        $expectedOccurrences = $numberOfUnitTestLocationsAll.Value
+
+        $fileContent = Get-Content -Path $filePath
+
+        $numberOfUnitTestsLines = $fileContent -cmatch $Script:NumberOfUnitTestsRegEx
+
+        # Verify that the number of expected occurrences of unit tests numbers is correct
+        Test-ExpectedLinesCount `
+            $numberOfUnitTestsLines.Count $expectedOccurrences $Script:NumberOfUnitTestsRegEx `
+            $filePath 'unit tests'
+
+        # Replace the old number of unit tests with the new number (doesn't work with `$1)
+        $regexReplace = "`${before}${Script:NumberOfUnitTestsNew}`${after}"
+        $fileContentReplaced =
+            $fileContent -creplace $Script:NumberOfUnitTestsRegEx, $regexReplace
+
+        # Save to the file
+        ($fileContentReplaced -join "`n") + "`n" | Set-Content -Path $filePath -NoNewline
+    }
+}
+
+# Get the commit message for updated number of unit tests
+function Get-UpdatedNumberOfUnitTestsCommitMessage {
+    [OutputType([string])]
+    Param()
+
+    Write-Progress 'Generating the commit message for updated number of unit tests...'
+
+    return "docs updated number of unit tests to ${Script:NumberOfUnitTestsNew}`n`n[skip ci]"
 }
 
 # Bump version numbers functions
@@ -1344,6 +1501,38 @@ function Invoke-MergeDevelopAndDeploy {
     Write-Info -Message $Message
 }
 
+# Update number of unit tests
+function Invoke-UpdateNumberOfUnitTests {
+    [OutputType([void])]
+    Param()
+
+    Write-Header 'Updating Number of Unit Tests'
+
+    Read-NumberOfUnitTestsCurrent
+    Test-NumberOfUnitTestsCurrent
+    Show-NumberOfUnitTestsCurrent
+
+    $answer = Approve-Continue 'Do you want to update number of unit tests?' -DefaultChoice 1
+    if ($answer -eq 1) {
+        NewLine
+        Write-Error 'Skipping unit tests number update 🦘'
+        return
+    }
+
+    # Read a new number of unit tests to update in all files
+    Read-NumberOfUnitTestsNew
+    Test-NumberOfUnitTestsNew
+
+    Edit-NumberOfUnitTestsInAllFiles
+
+    Show-DiffSummaryAndApprove
+
+    NewLine
+    Write-Progress 'Committing updated number of unit tests...'
+    git commit --all --edit --message=$(Get-UpdatedNumberOfUnitTestsCommitMessage)
+    Test-LastExitCode
+}
+
 # Bump version numbers
 function Invoke-BumpVersions {
     [OutputType([void])]
@@ -1483,6 +1672,7 @@ Test-WorkingTreeClean
 Initialize-ScriptVariables
 
 # Fire it up 🔥
+Invoke-UpdateNumberOfUnitTests
 Invoke-BumpVersions
 Invoke-CreateTag
 # Merge develop to main and and push to origin/main
@@ -1508,6 +1698,16 @@ Invoke-MergeDevelopAndDeploy -Message 'Vcpkg ports were updated and deployed suc
   - test if the main or develop branch are behind
   - test if the current branch is develop
   - test if the current working tree is clean
+  - updating number of unit tests in all documentation files
+    - obtain the current number of unit tests from the README.md file
+    - verify the current number of unit tests in all files whether is the same everywhere
+    - print the number of unit tests to the console
+    - read the new number of unit tests to update in all files
+    - verify the new number of unit tests
+    - update the Number of Unit Tests in all files defined in the $Script:NumberOfUnitTestsLocations
+    - display the diff summary and approve to continue
+    - get the commit message for updated number of unit tests
+    - commit
   - allow to skip bumping version numbers
   - ask which version numbers to bump for the `TinyOrm`, `tom`, and `TinyUtils` projects
   - display bumped version numbers to verify them
