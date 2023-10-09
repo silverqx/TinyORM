@@ -252,6 +252,25 @@ function Test-RegExResult {
     throw "The '$RegEx' regex failed."
 }
 
+# Verify that the number of expected occurrences of version or unit tests numbers is correct
+function Test-VersionLinesCount {
+    [OutputType([void])]
+    Param(
+        [Parameter(Mandatory)] [ValidateNotNullOrEmpty()] [int]    $VersionLinesCount,
+        [Parameter(Mandatory)] [ValidateNotNullOrEmpty()] [int]    $ExpectedOccurrences,
+        [Parameter(Mandatory)] [ValidateNotNullOrEmpty()] [string] $RegEx,
+        [Parameter(Mandatory)] [ValidateNotNullOrEmpty()] [string] $FilePath
+    )
+
+    # Nothing to do
+    if ($LinesCount -eq $ExpectedOccurrences) {
+        return
+    }
+
+    throw "Found '$VersionLinesCount' version number lines for '$RegEx' regex " +
+        "in the '$FilePath' file, expected occurrences must be '$ExpectedOccurrences'."
+}
+
 # Bump version numbers functions
 # ---
 
@@ -644,25 +663,6 @@ function Edit-VersionNumbersInVersionHpp {
         # Save to the file
         ($fileContentReplaced -join "`n") + "`n" | Set-Content -Path $versionHppPath -NoNewline
     }
-}
-
-# Verify that the number of expected occurrences of version numbers is correct
-function Test-VersionLinesCount {
-    [OutputType([void])]
-    Param(
-        [Parameter(Mandatory)] [ValidateNotNullOrEmpty()] [int]    $VersionLinesCount,
-        [Parameter(Mandatory)] [ValidateNotNullOrEmpty()] [int]    $ExpectedOccurrences,
-        [Parameter(Mandatory)] [ValidateNotNullOrEmpty()] [string] $RegEx,
-        [Parameter(Mandatory)] [ValidateNotNullOrEmpty()] [string] $FilePath
-    )
-
-    # Nothing to do
-    if ($VersionLinesCount -eq $ExpectedOccurrences) {
-        return
-    }
-
-    throw "Found '$VersionLinesCount' version number lines for '$RegEx' regex " +
-        "in the '$FilePath' file, expected occurrences must be '$ExpectedOccurrences'."
 }
 
 # Update version numbers in all files for all libraries defined in the $Script:VersionLocations
