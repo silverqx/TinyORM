@@ -2,7 +2,7 @@
 
 Param(
     [Parameter(Position = 0,
-        HelpMessage = 'Specifies the files to be processed, is joined with by the | character ' +
+        HelpMessage = 'Specifies the cpp files to be processed, is joined with the | character ' +
             'and used in the parenthesized regex eg. (file1|file2).')]
     [ValidateNotNullOrEmpty()]
     [string[]] $Files,
@@ -31,14 +31,22 @@ Param(
         HelpMessage = 'Specifies the checks filter, when not specified, use clang-tidy default ' +
             '(eg. -*,readability-magic-numbers to run only a specific check).')]
     [ValidateNotNullOrEmpty()]
-    [string[]] $ClangTidyChecks
+    [string[]] $ClangTidyChecks,
+
+    [Parameter(HelpMessage = 'Specifies the number of tidy instances to be run in parallel.')]
+    [ValidateNotNull()]
+    [int] $Parallel
 )
 
 Set-StrictMode -Version 3.0
 
 Clear-Host
 
-E:\dotfiles\bin\Lint-TinyORM.ps1 `
-    -BuildPath '<your_path_here>\TinyORM\TinyORM-builds-cmake\build-lint-qt5' `
-    -QtVersion 5 @PSBoundParameters `
-    -Verbose:$VerbosePreference
+$Script:TinyORMMainPath = '<your_path_here>'
+
+Lint-TinyORM.ps1 `
+    -SourcePath "$Script:TinyORMMainPath\TinyORM" `
+    -BuildPath "$Script:TinyORMMainPath\TinyORM-builds-cmake\build-lint-qt5" `
+    -QtVersion 5 `
+    -Verbose:$VerbosePreference `
+    @PSBoundParameters

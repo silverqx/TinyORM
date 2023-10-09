@@ -2,8 +2,8 @@
 
 Param(
     [Parameter(Position = 0,
-        HelpMessage = 'Specifies the cpp files to be processed, is joined with by the | ' +
-            'character and used in the parenthesized regex eg. (file1|file2).')]
+        HelpMessage = 'Specifies the cpp files to be processed, is joined with the | character ' +
+            'and used in the parenthesized regex eg. (file1|file2).')]
     [ValidateNotNullOrEmpty()]
     [string[]] $Files,
 
@@ -13,7 +13,13 @@ Param(
     [ValidateNotNullOrEmpty()]
     [string[]] $FilesPaths,
 
-    [Parameter(HelpMessage = 'Specifies the path to the cmake build folder, is pwd by default.')]
+    [Parameter(Mandatory, Position = 0,
+        HelpMessage = 'Specifies the path to the TinyORM source folder.')]
+    [ValidateNotNullOrEmpty()]
+    [string] $SourcePath,
+
+    [Parameter(Position = 1,
+        HelpMessage = 'Specifies the path to the CMake build folder, is pwd by default.')]
     [ValidateNotNullOrEmpty()]
     [string] $BuildPath = $($(Get-Location).Path),
 
@@ -39,17 +45,39 @@ Param(
         HelpMessage = 'Specifies the checks filter, when not specified, use clang-tidy default ' +
             '(eg. -*,readability-magic-numbers to run only a specific check).')]
     [ValidateNotNullOrEmpty()]
-    [string[]] $ClangTidyChecks
+    [string[]] $ClangTidyChecks,
+
+    [Parameter(HelpMessage = 'Specifies the number of tidy instances to be run in parallel.')]
+    [ValidateNotNull()]
+    [int] $Parallel
 )
 
 Set-StrictMode -Version 3.0
 
+. $PSScriptRoot\private\Common-Host.ps1
+. $PSScriptRoot\private\Common-Path.ps1
+
 # Script variables section
 # ---
+
 Set-Variable STACK_NAME -Option Constant -Value $MyInvocation.MyCommand.Name
 
 # Number of processes to spawn (value passed to the -j option)
-$Script:numberOfProcesses = $env:NUMBER_OF_PROCESSORS - 2
+if (-not $PSBoundParameters.ContainsKey('Parallel') -or $Parallel -lt 1) {
+    $Script:Platform = $PSVersionTable.Platform
+
+    switch ($Script:Platform) {
+        'Win32NT' {
+            $Parallel = $env:NUMBER_OF_PROCESSORS - 4
+        }
+        'Unix' {
+            $Parallel = (nproc) - 4
+        }
+        Default {
+            throw "$Script:Platform platform is not supported."
+        }
+    }
+}
 
 # Rules for linting folders using the -FilesPaths parameter:
 #  - xyz    - passed folder only
@@ -57,17 +85,22 @@ $Script:numberOfProcesses = $env:NUMBER_OF_PROCESSORS - 2
 #  - xyz.+? - subfolders only excluding the passed folder
 
 # Prepare regex paths and provide default values if not passed
-$FilesPaths = $null -eq $FilesPaths ? '.+?'        : "(?:$($FilesPaths -join '|'))"
-$Files      = $null -eq $Files      ? '[\w_\-\+]+' : "(?:$($Files -join '|'))"
+$FilesPaths = $null -eq $FilesPaths ? '.+?'          : "(?:$($FilesPaths -join '|'))"
+$Files      = $null -eq $Files      ? '[\w\d_\-\+]+' : "(?:$($Files -join '|'))"
 
 $Script:RegEx = "[\\\/]+(?:examples|src|tests)[\\\/]+$FilesPaths[\\\/]+(?!mocs_)$($Files)\.cpp$"
 
 # Append the build type to the build path
-$BuildPath = $BuildPath.TrimEnd(
-    [IO.Path]::DirectorySeparatorChar,
-    [IO.Path]::AltDirectorySeparatorChar
-)
+$BuildPath = $BuildPath.TrimEnd((Get-Slashes))
 $BuildPath += "_$BuildType"
+
+# Main section
+# ---
+
+# Test whether the TinyORM source folder exists
+if (-not (Test-Path $SourcePath)) {
+    Write-ExitError "The TinyORM source folder doesn't exist."
+}
 
 # Create build folder
 if (-not (Test-Path $BuildPath)) {
@@ -78,67 +111,101 @@ Push-Location -StackName $STACK_NAME
 
 Set-Location -Path $BuildPath
 
-# Initialize build environment if it's not already there
-if (-not (Test-Path env:WindowsSDKLibVersion)) {
+# Obtain and print Recommended Clang-Tidy and clazy version numbers
+$regExClangTidyVersion = '(?:LLVM version )(?<version>\d+\.\d+\.\d+)'
+(clang-tidy --version | Select-String -Pattern $regExClangTidyVersion) `
+    -match $regExClangTidyVersion | Out-Null
+$clangTidyCurrentVersion = $Matches.version
+$regExClazyVersion = '(?:clazy version )(?<version>\d+\.\d+(?:\.\d+)?)'
+(clazy-standalone --version | Select-String -Pattern $regExClazyVersion) `
+    -match $regExClazyVersion | Out-Null
+$clazyCurrentVersion = $Matches.version
+
+Write-Info 'Recommended versions'
+Newline
+Write-Output "  Clang-Tidy `e[32mv17`e[0m (current `e[33mv$clangTidyCurrentVersion`e[0m)"
+Write-Output "  Clazy standalone `e[32mv1.11`e[0m (current `e[33mv$clazyCurrentVersion`e[0m)"
+
+# Initialize build environment if it's not already initialized
+if ($PSVersionTable.Platform -ceq 'Win32NT' -and -not (Test-Path env:WindowsSDKLibVersion)) {
+    Newline
     . "qtenv${QtVersion}.ps1"
 }
 
 # Clean build
 if ($CleanBuild) {
-    Remove-Item -Recurse -Force $BuildPath\*
+    if ($null -eq (Get-Command -Name rmq.ps1 -ErrorAction SilentlyContinue)) {
+        Remove-Item -Recurse -Force $BuildPath\*
+    }
+    else {
+        rmq.ps1 -Path $BuildPath
+    }
 
-    Write-Host "`nClean CMake $BuildType build`n" -ForegroundColor Green
+    Write-Header "`nClean CMake $BuildType build`n" -NoNewlines
 }
 else {
-    Write-Host "`nCMake $BuildType build`n" -ForegroundColor DarkBlue
+    Write-Header "`nCMake $BuildType build`n" -NoNewlines
 }
 
-# Configure
+# Configure and Build
 if (-not (Test-Path $BuildPath\compile_commands.json)) {
     cmake `
-        -S E:/c/qMedia/TinyORM/TinyORM `
+        -S $SourcePath `
         -B $BuildPath `
         -G 'Ninja' `
-        -D CMAKE_BUILD_TYPE:STRING=$BuildType `
-        -D CMAKE_TOOLCHAIN_FILE:PATH=E:/c_libs/vcpkg/scripts/buildsystems/vcpkg.cmake `
-        -D CMAKE_INSTALL_PREFIX:PATH=E:/c/qMedia/tmp/dummy `
-        # -D CMAKE_CXX_COMPILER_LAUNCHER:FILEPATH='C:/Users/<username>/scoop/shims/ccache.exe' `
-        -D CMAKE_VERBOSE_MAKEFILE:BOOL=OFF `
-        -D VERBOSE_CONFIGURE:BOOL=ON `
-        -D BUILD_TESTS:BOOL=ON `
-        -D MYSQL_PING:BOOL=ON `
-        -D TOM_EXAMPLE:BOOL=ON `
+        -D CMAKE_CXX_COMPILER_LAUNCHER:FILEPATH=ccache `
+        <# the $null can't be swapped by the '' empty string! #> `
+        ($PSVersionTable.Platform -ceq 'Unix' ? '-D CMAKE_CXX_COMPILER:FILEPATH=clang++'
+                                              : $null) `
+        -D CMAKE_TOOLCHAIN_FILE:PATH="$env:VCPKG_ROOT/scripts/buildsystems/vcpkg.cmake" `
         -D CMAKE_DISABLE_PRECOMPILE_HEADERS:BOOL=ON `
         -D CMAKE_EXPORT_COMPILE_COMMANDS:BOOL=ON `
-        -D CMAKE_EXPORT_PACKAGE_REGISTRY:BOOL=OFF
+        -D CMAKE_EXPORT_PACKAGE_REGISTRY:BOOL=OFF `
+        -D CMAKE_BUILD_TYPE:STRING=$BuildType `
+        -D VCPKG_APPLOCAL_DEPS:BOOL=OFF `
+        -D VERBOSE_CONFIGURE:BOOL=ON `
+        -D MATCH_EQUAL_EXPORTED_BUILDTREE:BOOL=OFF `
+        -D MYSQL_PING:BOOL=ON `
+        -D BUILD_TESTS:BOOL=ON `
+        -D ORM:BOOL=ON `
+        -D TOM:BOOL=ON `
+        -D TOM_EXAMPLE:BOOL=ON
 }
 
 cmake --build $BuildPath --target all `
     $($VerbosePreference -eq 'SilentlyContinue' ? '' : '--verbose')
 
 if (-not $?) {
-    Write-Host
-    throw 'CMake build failed'
+    Write-ExitError 'CMake build failed'
 }
 
+# This is critical so Clang-Tidy can correctly apply Checks from the .clang-tidy file
+Set-Location -Path $SourcePath
+
+# Analyze using the Clang Tidy and Clazy standalone
 if (-not $SkipClangTidy) {
-    Write-Host
-    Write-Host 'Clang Tidy' -ForegroundColor DarkBlue
-    Write-Host
+    Write-Header 'Clang Tidy'
 
     # Allow to pass a custom -checks option, the $null can't be swapped by the '' empty string!
     $checksOption = $PSBoundParameters.ContainsKey('ClangTidyChecks') `
-                    ? "-checks=$($ClangTidyChecks -join ',')" `
+                    ? "-checks=$($ClangTidyChecks -join ',')"
                     : $null
 
-    & 'E:\dotfiles\bin\run-clang-tidy.ps1' -use-color -extra-arg-before='-Qunused-arguments' `
-        -j $Script:numberOfProcesses -p="$BuildPath" $checksOption $Script:RegEx
+    run-clang-tidy.ps1 `
+        -use-color `
+        -extra-arg-before='-Qunused-arguments' `
+        -j $Parallel `
+        -p="$BuildPath" $checksOption $Script:RegEx
+
+    Newline
+}
+else {
+    Newline
+    Write-Info 'Skipping Clang Tidy'
 }
 
 if (-not $SkipClazy) {
-    Write-Host
-    Write-Host 'Clazy standalone' -ForegroundColor DarkBlue
-    Write-Host
+    Write-Header 'Clazy standalone'
 
     # Disabled checks
     # Level 2      - qstring-allocations
@@ -160,12 +227,15 @@ if (-not $SkipClazy) {
         # Checks Excluded from level2
         'no-qstring-allocations'
 
-    & 'E:\dotfiles\bin\run-clazy-standalone.ps1' `
+    run-clazy-standalone.ps1 `
         -checks="$Script:Checks" `
         -extra-arg-before='-Qunused-arguments' `
         -header-filter='[\\\/]+(examples|orm|tests|tom)[\\\/]+.+\.(h|hpp)$' `
-        -j $Script:numberOfProcesses `
+        -j $Parallel `
         -p="$BuildPath" $Script:RegEx
+}
+else {
+    Write-Info 'Skipping Clazy standalone'
 }
 
 Pop-Location -StackName $STACK_NAME

@@ -2,9 +2,25 @@
 
 Set-StrictMode -Version 3.0
 
-if (-not (Test-Path .\compile_commands.json)) {
-    throw 'Compile database compile_commands.json doesn''t exist.'
+. $PSScriptRoot\private\Common-Host.ps1
+. $PSScriptRoot\private\Common-Linting.ps1
+
+if (-not (Test-Path -LiteralPath "$(Get-CompileCommandsPath @args)\compile_commands.json")) {
+    Write-ExitError 'Compile database compile_commands.json doesn''t exist.' -NoNewlineBefore
 }
 
-# run-clang-tidy (scoop install llvm)
-python.exe 'C:\Users\<your_path>\scoop\apps\llvm\current\bin\run-clang-tidy' @args
+$platform = $PSVersionTable.Platform
+
+switch ($platform) {
+    'Win32NT' {
+        # run-clang-tidy (scoop install llvm)
+        python.exe 'C:\Users\<your_path>\scoop\apps\llvm\current\bin\run-clang-tidy' @args
+    }
+    'Unix' {
+        # Calling the run-clang-tidy only causes the recursive call to the run-clang-tidy.ps1 itself
+        python (which run-clang-tidy) @args
+    }
+    Default {
+        throw "$platform platform is not supported."
+    }
+}

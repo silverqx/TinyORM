@@ -1,0 +1,12 @@
+#!/usr/bin/env pwsh
+
+Set-StrictMode -Version 3.0
+
+Write-Host 'Setting up environment for vcpkg-tinyorm-port Qt5 usage...' -ForegroundColor Magenta
+
+Add-FolderOnPath.ps1 -Path '<your_path>\vcpkg-tinyorm-port-qt5'
+Write-Host
+
+$env:VCPKG_ROOT = '<your_path>\vcpkg-tinyorm-port-qt5'
+
+. vcvars64.ps1

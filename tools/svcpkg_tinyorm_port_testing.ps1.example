@@ -1,9 +1,0 @@
-#!/usr/bin/env pwsh
-
-Set-StrictMode -Version 3.0
-
-Add-FolderOnPath.ps1 -Path 'O:\Code\<your_path>\vcpkg-tinyorm-port'
-
-$env:VCPKG_ROOT = 'O:\Code\<your_path>\vcpkg-tinyorm-port'
-
-. E:\dotfiles\bin\vcvars64.ps1
