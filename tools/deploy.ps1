@@ -1244,7 +1244,7 @@ function Edit-PortVersionNumbers {
 
 # Remove the 'port-version' field from vcpkg.json files if needed
 function Remove-PortVersions {
-    [OutputType([string])]
+    [OutputType([void])]
     Param()
 
     Write-Progress 'Removing the port-version field from vcpkg.json...'
@@ -1346,7 +1346,7 @@ function Invoke-MergeDevelopAndDeploy {
 
 # Bump version numbers
 function Invoke-BumpVersions {
-    [OutputType([string])]
+    [OutputType([void])]
     Param()
 
     # Allow to skip bumping version numbers
@@ -1388,7 +1388,7 @@ function Invoke-BumpVersions {
 
 # Main logic to bump vcpkg port-version fields in the tinyorm and tinyorm-qt5 ports
 function Invoke-BumpPortVersions {
-    [OutputType([string])]
+    [OutputType([void])]
     Param()
 
     # Select for which ports to bump the port-version number
@@ -1428,7 +1428,7 @@ function Invoke-CreateTag {
 
 # Vcpkg ports update
 function Invoke-UpdateVcpkgPorts {
-    [OutputType([string])]
+    [OutputType([void])]
     Param()
 
     # Don't allow to skip updating the vcpkg ports because they must be always updated if merging
