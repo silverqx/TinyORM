@@ -1020,6 +1020,7 @@ function Edit-VcpkgRefAndHash {
     Write-Progress 'Obtaining the origin/main archive hash (SHA512)...'
 
     $vcpkgHash = & "$PSScriptRoot\Get-VcpkgHash.ps1" -Project 'silverqx/TinyORM' -Ref $vcpkgRef
+    Test-LastExitCode
 
     foreach ($portfiles in $Script:VcpkgHash.GetEnumerator()) {
         $regexRef   = '(?<ref>    REF )(?:[0-9a-f]{40})'
