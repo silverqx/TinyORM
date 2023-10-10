@@ -239,7 +239,7 @@ jobs:
       run: |
         New-Item -Type Directory (Split-Path -Parent -Path ${{ env.TinySQLitePath }})
 
-        New-Item -Type File -Name '${{ env.TinySQLitePath }}'
+        New-Item -Type File -Path '${{ env.TinySQLitePath }}'
 
     - name: Print MySQL, PostgreSQL database versions
       run: |
