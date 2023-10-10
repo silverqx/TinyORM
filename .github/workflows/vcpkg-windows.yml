@@ -34,7 +34,7 @@ jobs:
 
           - key: qt6
             name: Qt6
-            version: 6.5.2
+            version: 6.5.3
             vcpkg-qt: qtbase
             vcpkg-qt-features: qtbase[core,sql-sqlite]
             vcpkg-tinyorm: tinyorm
