@@ -858,7 +858,7 @@ void tst_Migrate::prepareDatabase() const
 
             QVERIFY(exitCode == EXIT_SUCCESS);
 
-            return;
+            continue;
         }
 
         // Reset the migrations table
