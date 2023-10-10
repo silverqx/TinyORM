@@ -41,8 +41,6 @@ jobs:
             vcpkg-tinyorm-features: tinyorm[core,sql-sqlite,tom-example]
 
     steps:
-    - uses: actions/checkout@v4
-
     # I don't install everything to the TinyRunnerWorkPath as in all other workflows, I leave it
     # this way because I tried to refactor it to the env.TinyRunnerWorkPath and it looks terrible
     - name: TinyORM prepare environment
