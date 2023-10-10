@@ -36,6 +36,10 @@ jobs:
 
         $sqlitePath = Join-Path -Path $runnerWorkPath -ChildPath "SQLite/$env:DB_SQLITE_DATABASE"
         "TinySQLitePath=$sqlitePath" >> $env:GITHUB_ENV
+
+        $mysqlExePath = (Get-Command -Name mysql.exe).Source
+        $mysqlInstallationPath = Split-Path -Parent -Path (Split-Path -Parent -Path $mysqlExePath)
+        "TinyMySQLInstallationPath=$mysqlInstallationPath" >> $env:GITHUB_ENV
       env:
         DB_SQLITE_DATABASE: ${{ secrets.DB_SQLITE_DATABASE }}
 
@@ -250,14 +254,10 @@ jobs:
     - name: MySQL initialize my.ini configuration
       working-directory: .github/resources/windows
       run: >-
-        $mysqlExePath = (Get-Command -Name mysql.exe).Source
-
-        $mysqlInstallationPath = Split-Path -Parent -Path (Split-Path -Parent -Path $mysqlExePath)
-
         (Get-Content -Path ./my_8_ssl.template.ini) -creplace
         '\{MYSQL_DATADIR\}', '${{ env.TinyRunnerWorkPath }}/mysql/data' -creplace
         '\{MYSQL_HOST\}', $env:DB_MYSQL_HOST |
-        Set-Content -Path $mysqlInstallationPath/my.ini
+        Set-Content -Path '${{ env.TinyMySQLInstallationPath }}/my.ini'
       env:
         DB_MYSQL_HOST: ${{ secrets.DB_MYSQL_HOST_SSL }}
 
@@ -401,7 +401,7 @@ jobs:
 
     - name: MySQL add libmysql.dll on the $env:Path
       run: |
-        'C:\mysql\lib' >> $env:GITHUB_PATH
+        '${{ env.TinyMySQLInstallationPath }}\lib' >> $env:GITHUB_PATH
 
     - name: SQLite create TinyORM database
       run: |
