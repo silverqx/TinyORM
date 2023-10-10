@@ -42,14 +42,15 @@ Number of Unit tests:
 ---------------------
 
 - Qt5 has 14 unit tests less; the QSQLITE driver tests are excluded in the tst_migrate;
-  Not SKIPPED but excluded!
+  Not SKIPPED but excluded using preprocessor macros!
 
 Testing of the Qt 5 QSQLITE driver is excluded because it doesn't support
 ALTER TABLE DROP COLUMN, support for dropping columns was added
 in the SQLite v3.35.0.
 
-- Linux has 3 unit tests less; checking exe properties are excluded in the tst_versions;
-  Not SKIPPED but excluded using preprocessor macros!
+- Linux has 3 unit tests less and 3 SKIPPED unit tests more;
+  checking exe properties are excluded in the tst_versions;
+  They are SKIPPED!
 
 Linux doesn't have exe properties like version, description, ...
 
