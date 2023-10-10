@@ -14,7 +14,7 @@ jobs:
     runs-on: ubuntu-22.04
 
     env:
-      TINY_CLANG_TIDY_EXECUTED: false
+      TINY_CLANG_TIDY_COMPLETED: false
 
     steps:
     - uses: actions/checkout@v4
@@ -231,7 +231,7 @@ jobs:
 
     - name: TinyORM execute clang-tidy 🔥
       run: >-
-        echo 'TINY_CLANG_TIDY_EXECUTED=true' >> $GITHUB_ENV
+        echo 'TINY_CLANG_TIDY_COMPLETED=true' >> $GITHUB_ENV
 
         run-clang-tidy-17
         -extra-arg-before='-Qunused-arguments'
@@ -244,7 +244,7 @@ jobs:
     #                qvariant-template-instantiation
     - name: TinyORM execute clazy-standalone 🚀
       # Run the clazy if the clang-tidy was executed and was success or failed
-      if: env.TINY_CLANG_TIDY_EXECUTED == 'true' && (success() || failure())
+      if: env.TINY_CLANG_TIDY_COMPLETED == 'true' && (success() || failure())
       run: |
         checks=\
         'level0,level1,level2,'\
