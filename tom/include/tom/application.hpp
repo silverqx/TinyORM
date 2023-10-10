@@ -320,7 +320,7 @@ namespace Concerns
 
     private:
         /*! Is enabled logic for unit testing? */
-        inline static bool inUnitTests() noexcept;
+        static bool inUnitTests() noexcept;
 #endif
     };
 
