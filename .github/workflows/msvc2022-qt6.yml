@@ -263,10 +263,14 @@ jobs:
     - name: MySQL initialize my.ini configuration
       working-directory: .github/resources/windows
       run: >-
+        $mysqlExePath = (Get-Command -Name mysql.exe).Source
+
+        $mysqlInstallationPath = Split-Path -Parent -Path (Split-Path -Parent -Path $mysqlExePath)
+
         (Get-Content -Path ./my_8_ssl.template.ini) -creplace
         '\{MYSQL_DATADIR\}', '${{ env.TinyRunnerWorkPath }}/mysql/data' -creplace
         '\{MYSQL_HOST\}', $env:DB_MYSQL_HOST |
-        Set-Content -Path C:/mysql/my.ini
+        Set-Content -Path $mysqlInstallationPath/my.ini
       env:
         DB_MYSQL_HOST: ${{ secrets.DB_MYSQL_HOST_SSL }}
 
