@@ -38,6 +38,22 @@ migrations.mdx#cmake-project
 tinyorm.mdx#consume-tinyorm-library-cmake
 
 
+Number of Unit tests:
+---------------------
+
+- Qt5 has 14 unit tests less; the QSQLITE driver tests are excluded in the tst_migrate;
+  Not SKIPPED but excluded!
+
+Testing of the Qt 5 QSQLITE driver is excluded because it doesn't support
+ALTER TABLE DROP COLUMN, support for dropping columns was added
+in the SQLite v3.35.0.
+
+- Linux has 3 unit tests less; checking exe properties are excluded in the tst_versions;
+  Not SKIPPED but excluded using preprocessor macros!
+
+Linux doesn't have exe properties like version, description, ...
+
+
 How to updated vcpkg tinyorm and tinyorm-qt5 ports:
 ---------------------------------------------------
 
