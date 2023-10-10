@@ -418,9 +418,9 @@ jobs:
 
     - name: SQLite create TinyORM database
       run: |
-        New-Item -Type Directory (Split-Path -Parent ${{ env.TinySQLitePath }})
+        New-Item -Type Directory (Split-Path -Parent -Path ${{ env.TinySQLitePath }})
 
-        New-Item -Type File '${{ env.TinySQLitePath }}'
+        New-Item -Type File -Path '${{ env.TinySQLitePath }}'
 
     - name: Print MySQL, PostgreSQL database versions
       run: |
