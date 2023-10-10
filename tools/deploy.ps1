@@ -54,6 +54,8 @@ $Script:NumberOfUnitTestsRegEx = $Script:NumberOfUnitTestsRegExTmpl -f '\d{1,2} 
 $Script:NumberOfUnitTestsCurrent = $null
 # Number of unit tests to update in all files
 $Script:NumberOfUnitTestsNew = $null
+# Number of skipped unit tests (will be used in the commit message only)
+$Script:NumberOfSkippedUnitTestsNew = $null
 
 # Functions section
 # ---
@@ -351,7 +353,7 @@ function Show-NumberOfUnitTestsCurrent {
         "`e[35m$Script:NumberOfUnitTestsCurrent`e[0m 🤯")
 }
 
-# Read the new number of unit tests to update in all files
+# Read the new number of unit tests to update in all files and skipped unit tests for commit message
 function Read-NumberOfUnitTestsNew {
     [OutputType([void])]
     Param()
@@ -360,9 +362,14 @@ function Read-NumberOfUnitTestsNew {
     $Script:NumberOfUnitTestsNew = Read-Host -Prompt "Enter the new `e[36mNumber of Unit Tests`e[0m"
 
     $Script:NumberOfUnitTestsNew = $Script:NumberOfUnitTestsNew.Replace(' ', '')
+
+    $Script:NumberOfSkippedUnitTestsNew =
+        Read-Host -Prompt "Enter the new `e[36mNumber of Skipped Unit Tests`e[0m"
+
+    $Script:NumberOfSkippedUnitTestsNew = $Script:NumberOfSkippedUnitTestsNew.Replace(' ', '')
 }
 
-# Verify the new number of unit tests
+# Verify the new number of unit tests and skipped unit tests
 function Test-NumberOfUnitTestsNew {
     [OutputType([void])]
     Param()
@@ -370,12 +377,21 @@ function Test-NumberOfUnitTestsNew {
     Newline
     Write-Progress 'Verifying a new number of unit tests...'
 
-    $maxValue = 5000
     [int] $parseResult = 0
+
+    # Verify Unit Tests number
+    [int] $maxValue = 5000
 
     if (-not ([int]::TryParse($Script:NumberOfUnitTestsNew, [ref] $parseResult))) {
         Write-ExitError ("The new number of unit tests must be the integer number between " +
             "$($Script:NumberOfUnitTestsCurrent + 1) - $maxValue")
+    }
+
+    # Type-cast before comparisons
+    $Script:NumberOfUnitTestsNew = $Script:NumberOfUnitTestsNew -as [int]
+
+    if ($null -eq $Script:NumberOfUnitTestsNew) {
+        Write-ExitError 'Type-cast of the $Script:NumberOfUnitTestsNew to [int] failed'
     }
 
     if ($Script:NumberOfUnitTestsCurrent -ge $Script:NumberOfUnitTestsNew) {
@@ -386,6 +402,27 @@ function Test-NumberOfUnitTestsNew {
     if ($Script:NumberOfUnitTestsNew -gt $maxValue) {
         Write-ExitError ("The new number of unit tests '$Script:NumberOfUnitTestsNew' is too " +
             "high. The current max. value is set to '$maxValue'.")
+    }
+
+    # Verify Skipped Unit Tests number
+    [int] $maxSkippedValue = 150
+
+    if (-not ([int]::TryParse($Script:NumberOfSkippedUnitTestsNew, [ref] $parseResult))) {
+        Write-ExitError 'The new number of skipped unit tests must be the integer number'
+    }
+
+    # Type-cast before comparisons
+    $Script:NumberOfSkippedUnitTestsNew = $Script:NumberOfSkippedUnitTestsNew -as [int]
+
+    if ($null -eq $Script:NumberOfSkippedUnitTestsNew) {
+        Write-ExitError 'Type-cast of the $Script:NumberOfSkippedUnitTestsNew to [int] failed'
+    }
+
+    if ($Script:NumberOfSkippedUnitTestsNew -gt $maxSkippedValue) {
+        Write-ExitError (
+            "The new number of skipped unit tests '$Script:NumberOfSkippedUnitTestsNew' " +
+            "is too high. The current max. value is set to '$maxSkippedValue'."
+        )
     }
 }
 
@@ -426,7 +463,8 @@ function Get-UpdatedNumberOfUnitTestsCommitMessage {
 
     Write-Progress 'Generating the commit message for updated number of unit tests...'
 
-    return "docs updated number of unit tests to ${Script:NumberOfUnitTestsNew}`n`n[skip ci]"
+    return "docs updated number of unit tests to ${Script:NumberOfUnitTestsNew} " +
+        "(${Script:NumberOfSkippedUnitTestsNew})`n`n[skip ci]"
 }
 
 # Bump version numbers functions
