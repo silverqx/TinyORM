@@ -261,7 +261,7 @@ jobs:
         `# Checks Excluded from level2`\
         'no-qstring-allocations'
 
-        tools/run-clazy-standalone \
+        ./tools/run-clazy-standalone.py \
         -checks="$checks" \
         -extra-arg-before='-Qunused-arguments' \
         -header-filter='[\\\/]+(examples|orm|tests|tom)[\\\/]+.+\.(h|hpp)$' \
