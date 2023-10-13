@@ -180,7 +180,7 @@ jobs:
     # I'm also using the Qt from the Ubuntu main repository instead of the latest Qt to have better
     # coverage
 
-    - name: apt install Qt ${{ matrix.qt.version }} base (${{ join(matrix.compiler.apt, ', ') }})
+    - name: apt install Qt v${{ matrix.qt.version }} base (${{ join(matrix.compiler.apt, ', ') }})
       run: |
         sudo apt install --yes ${{ join(matrix.qt.apt, ' ') }}
 

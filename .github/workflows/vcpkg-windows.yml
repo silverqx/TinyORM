@@ -183,7 +183,7 @@ jobs:
 
     # The FetchContent and Manual methods below need Qt installed and to be accessible on the system
 
-    - name: Qt ${{ matrix.qt.version }} install base components
+    - name: Qt v${{ matrix.qt.version }} install base components
       uses: jurplel/install-qt-action@v3
       with:
         archives: qtbase
