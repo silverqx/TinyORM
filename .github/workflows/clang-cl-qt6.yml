@@ -562,6 +562,7 @@ jobs:
         -D CMAKE_TOOLCHAIN_FILE:FILEPATH="$env:VCPKG_INSTALLATION_ROOT/scripts/buildsystems/vcpkg.cmake"
         -D CMAKE_C_COMPILER:FILEPATH="$env:LLVM_PATH/bin/clang-cl.exe"
         -D CMAKE_CXX_COMPILER:FILEPATH="$env:LLVM_PATH/bin/clang-cl.exe"
+        -D CMAKE_EXPORT_PACKAGE_REGISTRY:BOOL=OFF
         -D CMAKE_BUILD_TYPE:STRING=Debug
         -D VCPKG_APPLOCAL_DEPS:BOOL=OFF
         -D VERBOSE_CONFIGURE:BOOL=ON
