@@ -50,7 +50,7 @@ jobs:
         runnerWorkPath=$(realpath '${{ runner.workspace }}/..')
         echo "TinyRunnerWorkPath=$runnerWorkPath" >> $GITHUB_ENV
 
-    - name: vcpkg set-up environment
+    - name: vcpkg prepare environment
       run: |
         echo "VCPKG_ROOT=$VCPKG_INSTALLATION_ROOT" >> $GITHUB_ENV
         echo 'VCPKG_DEFAULT_TRIPLET=x64-linux' >> $GITHUB_ENV
