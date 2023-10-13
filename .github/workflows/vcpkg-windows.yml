@@ -149,7 +149,7 @@ jobs:
 
     # Related issue: https://github.com/microsoft/vcpkg/issues/33539
     - name: HelloWorld finish VCPKG_APPLOCAL_DEPS (Debug)
-      if: ${{ matrix.qt.key == 'qt6' && matrix.build-type.key == 'debug' }}
+      if: matrix.qt.key == 'qt6' && matrix.build-type.key == 'debug'
       working-directory: >-
         ../HelloWorld-builds-cmake/build-vcpkgmanifest-msvc-${{ matrix.build-type.key }}
       run: |
@@ -157,7 +157,7 @@ jobs:
         Copy-Item -Path ./vcpkg_installed/x64-windows/debug/Qt6 -Destination . -Recurse
 
     - name: HelloWorld finish VCPKG_APPLOCAL_DEPS (Release)
-      if: ${{ matrix.qt.key == 'qt6' && matrix.build-type.key == 'release' }}
+      if: matrix.qt.key == 'qt6' && matrix.build-type.key == 'release'
       working-directory: >-
         ../HelloWorld-builds-cmake/build-vcpkgmanifest-msvc-${{ matrix.build-type.key }}
       run: |
@@ -166,7 +166,7 @@ jobs:
 
     # Qt5 has a problem too, it's deployed but to the wrong folder, the Release build is ok
     - name: HelloWorld finish VCPKG_APPLOCAL_DEPS (Debug)
-      if: ${{ matrix.qt.key == 'qt5' && matrix.build-type.key == 'debug' }}
+      if: matrix.qt.key == 'qt5' && matrix.build-type.key == 'debug'
       working-directory: >-
         ../HelloWorld-builds-cmake/build-vcpkgmanifest-msvc-${{ matrix.build-type.key }}
       run: |

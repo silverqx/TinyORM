@@ -97,7 +97,7 @@ jobs:
 
     # Qt5 build dependencies: https://wiki.qt.io/Building_Qt_5_from_Git
     - name: apt install Qt5 build dependencies
-      if: ${{ matrix.qt.key == 'qt5' }}
+      if: matrix.qt.key == 'qt5'
       run: >-
         sudo apt install --yes '^libxcb.*-dev' libx11-xcb-dev libglu1-mesa-dev libxrender-dev
         libxi-dev libxkbcommon-dev libxkbcommon-x11-dev

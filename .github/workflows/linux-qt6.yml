@@ -407,7 +407,7 @@ jobs:
         sqlite3 --version
 
     - name: add-apt-repository Clang 17
-      if: ${{ matrix.compiler.key == 'clang17' }}
+      if: matrix.compiler.key == 'clang17'
       run: >-
         wget -O- https://apt.llvm.org/llvm-snapshot.gpg.key |
         sudo tee /etc/apt/trusted.gpg.d/llvm-17.asc > /dev/null
