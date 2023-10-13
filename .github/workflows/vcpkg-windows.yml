@@ -1,4 +1,4 @@
-name: vcpkg Windows
+name: Vcpkg Windows
 
 on:
   push:
@@ -9,7 +9,7 @@ on:
 jobs:
 
   vcpkg-windows:
-    name: vcpkg Windows
+    name: Vcpkg Windows
 
     runs-on: windows-2022
 

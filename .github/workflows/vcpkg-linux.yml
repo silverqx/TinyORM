@@ -1,4 +1,4 @@
-name: vcpkg Linux
+name: Vcpkg Linux
 
 on:
   push:
@@ -9,7 +9,7 @@ on:
 jobs:
 
   vcpkg-linux:
-    name: vcpkg Linux
+    name: Vcpkg Linux
 
     runs-on: ubuntu-22.04
 
