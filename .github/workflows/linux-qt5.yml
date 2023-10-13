@@ -181,7 +181,7 @@ jobs:
         sudo apt install --yes ${{ join(matrix.compiler.apt, ' ') }}
         qtbase5-dev libqt5sql5-mysql libqt5sql5-sqlite libqt5sql5-psql
 
-    - name: ninja install latest version
+    - name: Ninja install latest version
       uses: seanmiddleditch/gha-setup-ninja@master
       with:
         destination: ${{ env.TinyRunnerWorkPath }}/ninja-build

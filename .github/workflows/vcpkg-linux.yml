@@ -82,7 +82,7 @@ jobs:
       run: |
         sudo apt install --yes g++-12
 
-    - name: ninja install latest version
+    - name: Ninja install latest version
       uses: seanmiddleditch/gha-setup-ninja@master
       with:
         destination: ${{ env.TinyRunnerWorkPath }}/ninja-build
