@@ -53,7 +53,7 @@ jobs:
       with:
         arch: x64
 
-    # Must be after the ilammy/msvc-dev-cmd@v1 because vcvars64 override the VCPKG_ROOT
+    # Must be after the ilammy/msvc-dev-cmd@v1 because vcvars64 overrides the VCPKG_ROOT
     - name: vcpkg prepare environment
       run: |
         "VCPKG_ROOT=$env:VCPKG_INSTALLATION_ROOT" >> $env:GITHUB_ENV
