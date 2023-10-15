@@ -566,6 +566,20 @@ GitHub Actions:
 
  - Runner images: https://github.com/actions/runner-images/tree/main/images
 
+ - My common folders structure:
+
+   - checkout to the current folder
+     - the github.workspace is the current workspace folder
+     - if using more repo checkouts then checkout using side-by-side method:
+       https://github.com/actions/checkout?tab=readme-ov-file#Checkout-multiple-repos-side-by-side
+
+   - the runner.workspace points to the parent folder
+     - I'm using it for build folders or things that are generated during workflows
+
+   - the env.TinyRunnerWorkPath points two folders up ../..
+     - it's directly in the _work/ or work/ folder
+     - I'm using it for more common things like data from GH extensions or databases data folders
+
  - all actions with versions currently used by TinyORM:
 
    actions/cache@v3
