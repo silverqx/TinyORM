@@ -568,15 +568,15 @@ GitHub Actions:
 
  - all actions with versions currently used by TinyORM:
 
-   actions/checkout@v4
-   mxschmitt/action-tmate@v3
    actions/cache@v3
+   actions/checkout@v4
+   actions/github-script@v6
+   ilammy/msvc-dev-cmd@v1
+   jurplel/install-qt-action@v3
    KyleMayes/install-llvm-action@v1
    msys2/setup-msys2@v2
-   jurplel/install-qt-action@v3
-   ilammy/msvc-dev-cmd@v1
+   mxschmitt/action-tmate@v3
    seanmiddleditch/gha-setup-ninja@master
-   actions/github-script@v6
 
    Not using anymore:
 
