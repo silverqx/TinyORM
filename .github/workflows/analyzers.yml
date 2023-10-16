@@ -2,9 +2,9 @@ name: Clang-Tidy and Clazy Qt5.15/6.5
 
 on:
   # For Self-Hosted
-  # Run after the vcpkg Linux workflow completed (success ONLY)
+  # Run after the Vcpkg Linux workflow completed (success ONLY)
   workflow_run:
-    workflows: [vcpkg Linux]
+    workflows: [Vcpkg Linux]
     types:
       - completed
 

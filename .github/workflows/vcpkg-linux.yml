@@ -2,7 +2,7 @@ name: Vcpkg Linux
 
 on:
   # For Self-Hosted
-  # Run after the vcpkg Windows workflow completed (success or failure)
+  # Run after the Vcpkg Windows workflow completed (success or failure)
   workflow_run:
     workflows: [Vcpkg Windows]
     types:
