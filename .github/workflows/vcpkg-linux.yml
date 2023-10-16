@@ -7,6 +7,9 @@ on:
     workflows: [Vcpkg Windows]
     types:
       - completed
+    branches:
+      - main
+      - gh-actions
 
   # For GitHub hosted
 #  push:
