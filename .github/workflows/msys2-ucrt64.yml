@@ -301,13 +301,13 @@ jobs:
     - name: Ccache print version and configuration
       shell: msys2 {0}
       run: |
-        Write-Output '::group::Print version'
+        echo '::group::Print version'
         ccache.exe --version
-        Write-Output '::endgroup::'
+        echo '::endgroup::'
 
-        Write-Output '::group::Print ccache config'
+        echo '::group::Print ccache config'
         ccache.exe --show-config
-        Write-Output '::endgroup::'
+        echo '::endgroup::'
 
     - name: vcpkg prepare environment
       shell: msys2 {0}
