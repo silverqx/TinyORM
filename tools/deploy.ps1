@@ -64,6 +64,7 @@ $Script:NumberOfSkippedUnitTestsNew = $null
 # ---
 
 . $PSScriptRoot\private\Common-Host.ps1
+. $PSScriptRoot\private\Common-Deploy.ps1
 
 # Initialize all script variables that contain the Resolve-Path call
 function Initialize-ScriptVariables {
@@ -238,18 +239,6 @@ function Test-WorkingTreeClean {
     Write-ExitError 'The TinyORM project working tree must be clean'
 }
 
-# Exit if the $LASTEXITCODE isn't 0
-function Test-LastExitCode {
-    [OutputType([void])]
-    Param()
-
-    if ($LASTEXITCODE -eq 0) {
-        return
-    }
-
-    Write-ExitError "The last command failed `$LASTEXITCODE was $LASTEXITCODE"
-}
-
 # Throw exception if the RegEx result is $false
 function Test-RegExResult {
     [OutputType([void])]
@@ -274,26 +263,6 @@ function Test-RegExResult {
     throw "The '$RegEx' regex failed."
 }
 
-# Verify that the number of expected occurrences of version or unit tests numbers is correct
-function Test-ExpectedLinesCount {
-    [OutputType([void])]
-    Param(
-        [Parameter(Mandatory)] [ValidateNotNullOrEmpty()] [int]    $LinesCount,
-        [Parameter(Mandatory)] [ValidateNotNullOrEmpty()] [int]    $ExpectedOccurrences,
-        [Parameter(Mandatory)] [ValidateNotNullOrEmpty()] [string] $RegEx,
-        [Parameter(Mandatory)] [ValidateNotNullOrEmpty()] [string] $FilePath,
-        [Parameter(Mandatory)] [ValidateNotNullOrEmpty()] [string] $Title
-    )
-
-    # Nothing to do
-    if ($LinesCount -eq $ExpectedOccurrences) {
-        return
-    }
-
-    Write-ExitError ("Found '$LinesCount' $Title number lines in the '$FilePath' file, " +
-        "expected occurrences must be '$ExpectedOccurrences' for the following RegEx: $RegEx")
-}
-
 # Update Number of Unit Tests
 # ---
 
@@ -313,7 +282,7 @@ function Read-NumberOfUnitTestsCurrent {
     # Verify that the number of expected occurrences of unit tests numbers is correct
     $expectedOccurrences = 1
     Test-ExpectedLinesCount `
-        $numberOfUnitTestsLines.Count $expectedOccurrences $regex $filePath 'Unit Tests'
+        $numberOfUnitTestsLines.Count $expectedOccurrences $regex $filePath 'Unit Tests number'
 
     # Obtain the number of unit tests
     $result = $numberOfUnitTestsLines[0] -cmatch $regex
@@ -339,7 +308,7 @@ function Test-NumberOfUnitTestsCurrent {
 
         # Verify that the number of expected occurrences of unit tests numbers is correct
         Test-ExpectedLinesCount `
-            $numberOfUnitTestsLines.Count $expectedOccurrences $regex $filePath 'Unit Tests'
+            $numberOfUnitTestsLines.Count $expectedOccurrences $regex $filePath 'Unit Tests number'
     }
 }
 
@@ -444,7 +413,7 @@ function Edit-NumberOfUnitTestsInAllFiles {
         # Verify that the number of expected occurrences of unit tests numbers is correct
         Test-ExpectedLinesCount `
             $numberOfUnitTestsLines.Count $expectedOccurrences $Script:NumberOfUnitTestsRegEx `
-            $filePath 'Unit Tests'
+            $filePath 'Unit Tests number'
 
         # Replace the old number of unit tests with the new number (doesn't work with `$1)
         $regexReplace = "`${before}${Script:NumberOfUnitTestsNew}`${after}"
@@ -902,7 +871,7 @@ function Edit-VersionNumbersInAllFiles {
 
                 # Verify that the number of expected occurrences of version numbers is correct
                 Test-ExpectedLinesCount `
-                    $versionLines.Count $expectedOccurrences $regex $filePath 'Version'
+                    $versionLines.Count $expectedOccurrences $regex $filePath 'Version number'
 
                 $versionBumped = $bumpValue.versionBumped
 
@@ -1014,75 +983,6 @@ function Get-TagMessage {
     Set-Clipboard -Value $tagMessage
 
     return $tagMessage
-}
-
-# Vcpkg - update REF and SHA512 functions
-# ---
-
-# Get the origin/main commit ID (SHA-1)
-function Get-VcpkgRef {
-    [OutputType([string])]
-    Param()
-
-    Write-Progress 'Obtaining the origin/main commit ID (SHA-1)...'
-
-    return (git rev-parse --verify origin/main)
-}
-
-# Verify if the portfile.cmake file contains the REF and SHA512 lines
-function Test-RefAndHashLinesCountForVcpkg {
-    [OutputType([void])]
-    Param(
-        [Parameter(Mandatory)] [ValidateNotNullOrEmpty()] [int]    $MatchedLinesCount,
-        [Parameter(Mandatory)] [ValidateNotNullOrEmpty()] [int]    $ExpectedOccurrences,
-        [Parameter(Mandatory)] [ValidateNotNullOrEmpty()] [string] $RegEx,
-        [Parameter(Mandatory)] [ValidateNotNullOrEmpty()] [string] $PortfilePath
-    )
-
-    # Nothing to do
-    if ($MatchedLinesCount -eq $ExpectedOccurrences) {
-        return
-    }
-
-    throw "Found '$MatchedLinesCount' hash lines for '$RegEx' regex in the '$PortfilePath' file, " +
-        "expected occurrences must be '$ExpectedOccurrences'."
-}
-
-# Update the REF and SHA512 in tinyorm and tinyorm-qt5 portfiles
-function Edit-VcpkgRefAndHash {
-    [OutputType([void])]
-    Param()
-
-    $vcpkgRef = $Script:TagVersion ?? (Get-VcpkgRef)
-
-    Write-Progress 'Obtaining the origin/main archive hash (SHA512)...'
-
-    $vcpkgHash = & "$PSScriptRoot\Get-VcpkgHash.ps1" -Project 'silverqx/TinyORM' -Ref $vcpkgRef
-    Test-LastExitCode
-
-    foreach ($portfiles in $Script:VcpkgHash.GetEnumerator()) {
-        $regexRef   = '(?<ref>    REF )(?:[0-9a-f]{40})'
-        $regexHash  = '(?<sha512>    SHA512 )(?:[0-9a-f]{128})'
-        $regexMatch = "$regexRef|$regexHash"
-
-        $portfilePath = $portfiles.Value.portfile
-
-        $fileContent = Get-Content -Path $portfilePath
-
-        $matchedLines = $fileContent -cmatch $regexMatch
-
-        # Verify if the portfile.cmake file contains the REF and SHA512 lines
-        $expectedOccurrences = 2
-        Test-RefAndHashLinesCountForVcpkg `
-            $matchedLines.Count $expectedOccurrences $regexMatch $portfilePath
-
-        # Replace the old REF AND SHA512 values with the new values in the portfile.cmake
-        $fileContentReplaced = $fileContent -creplace $regexRef, "`${ref}$vcpkgRef" `
-                                            -creplace $regexHash, "`${sha512}$vcpkgHash"
-
-        # Save to the file
-        ($fileContentReplaced -join "`n") + "`n" | Set-Content -Path $portfilePath -NoNewline
-    }
 }
 
 # Vcpkg - update port-version field functions
@@ -1675,7 +1575,11 @@ function Invoke-UpdateVcpkgPorts {
         # Test behind is not needed here as it is always tested at the beginning of this script
     }
 
-    Edit-VcpkgRefAndHash
+    $vcpkgRef = $Script:TagVersion ?? (Get-VcpkgRef)
+    # Collect all portfiles to update (as an array)
+    $portfiles = $Script:VcpkgHash | ForEach-Object { $_.Values.portfile }
+
+    Edit-VcpkgRefAndHash -Project 'silverqx/TinyORM' -Ref $vcpkgRef -PortFile $portfiles
 
     # Allow to updated port-version fields if TinyOrm version wasn't bumped
     if ($Script:BumpsHash.TinyOrm.type -eq [BumpType]::None) {

@@ -588,6 +588,7 @@ GitHub Actions:
    ilammy/msvc-dev-cmd@v1
    jurplel/install-qt-action@v3
    KyleMayes/install-llvm-action@v1
+   lukka/get-cmake@latest
    msys2/setup-msys2@v2
    mxschmitt/action-tmate@v3
    seanmiddleditch/gha-setup-ninja@master

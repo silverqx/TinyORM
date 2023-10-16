@@ -1,0 +1,202 @@
+name: Clang-Tidy and Clazy Qt5.15/6.5
+
+on:
+  # For Self-Hosted
+  # Run after the vcpkg Linux workflow completed (success ONLY)
+  workflow_run:
+    workflows: [vcpkg Linux]
+    types:
+      - completed
+
+#  push:
+#    branches:
+#      - main
+#      - gh-actions
+
+jobs:
+
+  analyzers:
+    name: Clang-Tidy and Clazy
+
+    # Self-hosted runner is Ubuntu 22.04
+    runs-on: [self-hosted, linux]
+
+    if: github.event.workflow_run.conclusion == 'success'
+
+    strategy:
+      matrix:
+        qt:
+          - key: qt5
+            name: Qt5
+            version: 5.15.2
+
+          - key: qt6
+            name: Qt6
+            version: 6.5.3
+
+    env:
+      TINY_CLANG_TIDY_COMPLETED: false
+
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        path: main
+
+    - name: TinyORM prepare environment
+      run: |
+        runnerWorkPath=$(realpath '${{ runner.workspace }}/..')
+        echo "TinyRunnerWorkPath=$runnerWorkPath" >> $GITHUB_ENV
+
+        # Starts with the merydeye-
+        [[ "${{ runner.name }}" == 'merydeye-'* ]] && isSelfHostedRunner='true' || isSelfHostedRunner='false'
+        echo "TinyIsSelfHostedRunner=$isSelfHostedRunner" >> $GITHUB_ENV
+
+        [[ "$isSelfHostedRunner" == 'true' ]] && parallel=8 || parallel=2
+        echo "TinyParallel=$parallel" >> $GITHUB_ENV
+
+        tinyormPath=$(realpath ./main)
+        echo "TinyORMPath=$tinyormPath" >> $GITHUB_ENV
+
+    - name: Test self-hosted runner
+      if: env.TinyIsSelfHostedRunner == 'false'
+      run: |
+        throw 'This workflow is optimized for the self-hosted runner only.'
+
+    - name: Ninja install latest version
+      uses: seanmiddleditch/gha-setup-ninja@master
+      with:
+        destination: ${{ env.TinyRunnerWorkPath }}/ninja-build
+
+    # Don't use the default CCACHE_DIR path on self-hosted runners
+    - name: Ccache prepare environment
+      run: |
+        ccacheDirPath=$(realpath '${{ runner.workspace }}/ccache')
+        echo "CCACHE_DIR=$ccacheDirPath" >> $GITHUB_ENV
+
+    - name: Ccache setup 🥳
+      run: |
+        echo '::group::Prepare ccache config'
+        # ~ 490 * 3 + 100
+        ccache --set-config max_size=1600M
+        ccache --set-config sloppiness=pch_defines,time_macros
+        echo '::endgroup::'
+
+    - name: Ccache print version and configuration
+      run: |
+        echo '::group::Print version'
+        ccache --version
+        echo '::endgroup::'
+
+        echo '::group::Print ccache config'
+        ccache --show-config
+        echo '::endgroup::'
+
+    - name: vcpkg prepare environment
+      run: |
+        echo "VCPKG_ROOT=$VCPKG_INSTALLATION_ROOT" >> $GITHUB_ENV
+        echo 'VCPKG_DEFAULT_TRIPLET=x64-linux-dynamic' >> $GITHUB_ENV
+        echo 'VCPKG_MAX_CONCURRENCY=${{ env.TinyParallel }}' >> $GITHUB_ENV
+
+    - name: ${{ matrix.qt.name }} prepare environment
+      run: |
+        echo '/opt/Qt/${{ matrix.qt.version }}/bin' >> $GITHUB_PATH
+        echo "LD_LIBRARY_PATH=/opt/Qt/${{ matrix.qt.version }}/gcc_64/lib${LD_LIBRARY_PATH:+:}$LD_LIBRARY_PATH" >> $GITHUB_ENV
+
+        # The CMAKE_PREFIX_PATH must be defined on the GitHub Actions, this is some kind of a bug because the CMake
+        # can't find the Qt, but if I export the PATH directly in the step it works but doesn't work using
+        # the GITHUB_PATH like define two line above. 🫤
+        echo "CMAKE_PREFIX_PATH=/opt/Qt/${{ matrix.qt.version }}/gcc_64${CMAKE_PREFIX_PATH:+:}$CMAKE_PREFIX_PATH" >> $GITHUB_ENV
+
+    - name: CMake print version
+      run: |
+        cmake --version
+
+    - name: TinyORM create build folder (${{ matrix.qt.key }}-clang-cmake-debug)
+      run: |
+        mkdir --parents '../TinyORM-builds-cmake/build-${{ matrix.qt.key }}-clang-cmake-debug'
+
+    - name: Ccache clear statistics
+      run: |
+        ccache --zero-stats
+
+    # CMAKE_DISABLE_PRECOMPILE_HEADERS=ON is correct (I want to disable PCH here)
+    - name: TinyORM cmake configure (${{ matrix.qt.key }}-clang-cmake-debug)
+      working-directory: ${{ env.TinyORMPath }}
+      run: >-
+        cmake
+        -S .
+        -B '${{ runner.workspace }}/TinyORM-builds-cmake/build-${{ matrix.qt.key }}-clang-cmake-debug'
+        -G Ninja
+        -D CMAKE_CXX_COMPILER_LAUNCHER:FILEPATH=/usr/local/bin/ccache
+        -D CMAKE_CXX_COMPILER:FILEPATH=/usr/bin/clang++-17
+        -D CMAKE_TOOLCHAIN_FILE:FILEPATH="$VCPKG_INSTALLATION_ROOT/scripts/buildsystems/vcpkg.cmake"
+        -D CMAKE_DISABLE_PRECOMPILE_HEADERS:BOOL=ON
+        -D CMAKE_EXPORT_COMPILE_COMMANDS:BOOL=ON
+        -D CMAKE_EXPORT_PACKAGE_REGISTRY:BOOL=OFF
+        -D CMAKE_BUILD_TYPE:STRING=Debug
+        -D VCPKG_APPLOCAL_DEPS:BOOL=OFF
+        -D VERBOSE_CONFIGURE:BOOL=ON
+        -D MYSQL_PING:BOOL=ON
+        -D BUILD_TESTS:BOOL=ON
+        -D ORM:BOOL=ON
+        -D TOM:BOOL=ON
+        -D TOM_EXAMPLE:BOOL=ON
+
+    - name: TinyORM cmake build ✨ (${{ matrix.qt.key }}-clang-cmake-debug)
+      working-directory: >-
+        ../TinyORM-builds-cmake/build-${{ matrix.qt.key }}-clang-cmake-debug
+      run: >-
+        cmake --build . --target all --parallel ${{ env.TinyParallel }}
+
+    - name: Ccache statistics
+      run: |
+        ccache --show-stats -vv
+
+    - name: TinyORM execute clang-tidy 🔥
+      working-directory: ${{ env.TinyORMPath }}
+      run: >-
+        echo 'TINY_CLANG_TIDY_COMPLETED=true' >> $GITHUB_ENV
+
+        run-clang-tidy-17
+        -extra-arg-before='-Qunused-arguments'
+        -p='${{ runner.workspace }}/TinyORM-builds-cmake/build-${{ matrix.qt.key }}-clang-cmake-debug'
+        -j ${{ env.TinyParallel }}
+        '[\\\/]+(?:examples|src|tests)[\\\/]+.+?[\\\/]+(?!mocs_)[\w\d_\-\+]+\.cpp$'
+
+    - name: Clazy-standalone prepare
+      working-directory: ${{ env.TinyORMPath }}
+      run: |
+        chmod +x ./tools/run-clazy-standalone.py
+
+    # Disabled checks
+    # Level 2      - qstring-allocations
+    # Manual level - qt4-qstring-from-array, qt6-qlatin1stringchar-to-u,
+    #                qvariant-template-instantiation
+    - name: TinyORM execute clazy-standalone 🚀
+      # Run the clazy if the clang-tidy was executed and was success or failed
+      if: env.TINY_CLANG_TIDY_COMPLETED == 'true' && (success() || failure())
+      working-directory: ${{ env.TinyORMPath }}
+      run: |
+        checks=\
+        'level0,level1,level2,'\
+        `# Manual checks`\
+        'assert-with-side-effects,container-inside-loop,detaching-member,'\
+        'heap-allocated-small-trivial-type,ifndef-define-typo,isempty-vs-count,jni-signatures,'\
+        'qhash-with-char-pointer-key,qproperty-type-mismatch,qrequiredresult-candidates,'\
+        'qstring-varargs,qt-keywords,qt6-deprecated-api-fixes,qt6-fwd-fixes,qt6-header-fixes,'\
+        'qt6-qhash-signature,raw-environment-function,reserve-candidates,'\
+        'signal-with-return-value,thread-with-slots,tr-non-literal,unneeded-cast,'\
+        'use-chrono-in-qtimer,'\
+        `# New in Clazy 1.11`\
+        'unexpected-flag-enumerator-value,'\
+        'use-arrow-operator-instead-of-data,'\
+        `# Checks Excluded from level2`\
+        'no-qstring-allocations'
+
+        ./tools/run-clazy-standalone.py \
+        -checks="$checks" \
+        -extra-arg-before='-Qunused-arguments' \
+        -header-filter='[\\\/]+(examples|orm|tests|tom)[\\\/]+.+\.(h|hpp)$' \
+        -j ${{ env.TinyParallel }} \
+        -p='${{ runner.workspace }}/TinyORM-builds-cmake/build-${{ matrix.qt.key }}-clang-cmake-debug' \
+        '[\\\/]+(?:examples|src|tests)[\\\/]+.+?[\\\/]+(?!mocs_)[\w\d_\-\+]+\.cpp$'
