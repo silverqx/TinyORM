@@ -304,13 +304,11 @@ jobs:
         cache_path: ${{ steps.ccache-initialize-cache.outputs.CachePath }}
         image_os: ${{ steps.ccache-initialize-cache.outputs.ImageOS }}
 
-    - name: Ccache setup 🥳
+    - name: Ccache prepare configuration 🥳
       run: |
-        Write-Output '::group::Prepare ccache config'
         # ~ 70 * 3 + 100
         ccache.exe --set-config max_size=500M
         ccache.exe --set-config sloppiness=pch_defines,time_macros
-        Write-Output '::endgroup::'
 
     - name: Ccache print version and configuration
       run: |
@@ -361,7 +359,7 @@ jobs:
       run: |
         cmake.exe --build . --target all --parallel ${{ env.TinyParallel }}
 
-    - name: Ccache statistics
+    - name: Ccache print statistics
       run: |
         ccache.exe --show-stats -vv
 
@@ -457,7 +455,7 @@ jobs:
       run: |
         cmake.exe --build . --target install --parallel ${{ env.TinyParallel }}
 
-    - name: Ccache statistics
+    - name: Ccache print statistics
       run: |
         ccache.exe --show-stats -vv
 

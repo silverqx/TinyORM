@@ -259,21 +259,21 @@ jobs:
         cache_path: ${{ steps.ccache-initialize-cache.outputs.CachePath }}
         image_os: ${{ steps.ccache-initialize-cache.outputs.ImageOS }}
 
-    - name: Ccache setup 🥳
+    - name: Ccache prepare configuration 🥳
       run: |
-        echo '::group::Prepare ccache config'
         # gcc: ~ 115 * 3 + 100 ; clang: ~ 90 * 3 + 100
         ccache --set-config max_size=${{ matrix.compiler.key == 'gcc12' && '450M' || '380M' }}
         ccache --set-config sloppiness=pch_defines,time_macros
         ccache --show-config
-        echo '::endgroup::'
 
-        echo '::group::Clear ccache statistics'
-        ccache --zero-stats
-        echo '::endgroup::'
-
+    - name: Ccache print version and configuration
+      run: |
         echo '::group::Print version'
         ccache --version
+        echo '::endgroup::'
+
+        echo '::group::Print ccache config'
+        ccache --show-config
         echo '::endgroup::'
 
     - name: vcpkg prepare environment
@@ -289,6 +289,10 @@ jobs:
     - name: TinyORM create build folder (${{ matrix.compiler.key }}-cmake-debug)
       run: |
         mkdir --parents '../TinyORM-builds-cmake/build-${{ matrix.compiler.key }}-cmake-debug'
+
+    - name: Ccache clear statistics
+      run: |
+        ccache --zero-stats
 
     - name: TinyORM cmake configure (${{ matrix.compiler.key }}-cmake-debug)
       run: >-
@@ -319,7 +323,7 @@ jobs:
         cmake --build ../TinyORM-builds-cmake/build-${{ matrix.compiler.key }}-cmake-debug
         --target all --parallel 2
 
-    - name: Ccache statistics
+    - name: Ccache print statistics
       run: |
         ccache --show-stats -vv
 

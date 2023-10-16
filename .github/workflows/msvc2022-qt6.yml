@@ -512,21 +512,20 @@ jobs:
         cache_path: ${{ steps.ccache-initialize-cache.outputs.CachePath }}
         image_os: ${{ steps.ccache-initialize-cache.outputs.ImageOS }}
 
-    - name: Ccache setup 🥳
+    - name: Ccache prepare configuration 🥳
       run: |
-        Write-Output '::group::Prepare ccache config'
         # ~ 190 * 3 + 100 (not enough for the msvc2022, so * 2)
         ccache.exe --set-config max_size=1400M
         ccache.exe --set-config sloppiness=pch_defines,time_macros
-        ccache.exe --show-config
-        Write-Output '::endgroup::'
 
-        Write-Output '::group::Clear ccache statistics'
-        ccache.exe --zero-stats
-        Write-Output '::endgroup::'
-
+    - name: Ccache print version and configuration
+      run: |
         Write-Output '::group::Print version'
         ccache.exe --version
+        Write-Output '::endgroup::'
+
+        Write-Output '::group::Print ccache config'
+        ccache.exe --show-config
         Write-Output '::endgroup::'
 
     - name: Visual Studio 2022 pwsh shell setup
@@ -549,6 +548,10 @@ jobs:
       run: >-
         New-Item -Type Directory
         '../TinyORM-builds-cmake/build-msvc-cmake-${{ matrix.build-type.key }}'
+
+    - name: Ccache clear statistics
+      run: |
+        ccache.exe --zero-stats
 
     - name: TinyORM cmake configure (msvc-cmake-${{ matrix.build-type.key }})
       run: >-
@@ -574,7 +577,7 @@ jobs:
         cmake.exe --build ../TinyORM-builds-cmake/build-msvc-cmake-${{ matrix.build-type.key }}
         --target all --parallel 2
 
-    - name: Ccache statistics
+    - name: Ccache print statistics
       run: |
         ccache.exe --show-stats -vv
 

@@ -73,13 +73,11 @@ jobs:
         ccacheDirPath=$(realpath '${{ runner.workspace }}/ccache')
         echo "CCACHE_DIR=$ccacheDirPath" >> $GITHUB_ENV
 
-    - name: Ccache setup 🥳
+    - name: Ccache prepare configuration 🥳
       run: |
-        echo '::group::Prepare ccache config'
         # ~ 490 * 3 + 100
         ccache --set-config max_size=1600M
         ccache --set-config sloppiness=pch_defines,time_macros
-        echo '::endgroup::'
 
     - name: Ccache print version and configuration
       run: |
@@ -148,7 +146,7 @@ jobs:
       run: >-
         cmake --build . --target all --parallel ${{ env.TinyParallel }}
 
-    - name: Ccache statistics
+    - name: Ccache print statistics
       run: |
         ccache --show-stats -vv
 
