@@ -26,6 +26,9 @@ enum YesNoType {
     No
 }
 
+# The GitHub repository to deploy to
+$Script:GitHubProject = 'silverqx/TinyORM'
+
 # Before of Line (to indent)
 $Script:BOL = '  '
 
@@ -1579,7 +1582,7 @@ function Invoke-UpdateVcpkgPorts {
     # Collect all portfiles to update (as an array)
     $portfiles = $Script:VcpkgHash | ForEach-Object { $_.Values.portfile }
 
-    Edit-VcpkgRefAndHash -Project 'silverqx/TinyORM' -Ref $vcpkgRef -PortFile $portfiles
+    Edit-VcpkgRefAndHash -Project $Script:GitHubProject -Ref $vcpkgRef -PortFile $portfiles
 
     # Allow to updated port-version fields if TinyOrm version wasn't bumped
     if ($Script:BumpsHash.TinyOrm.type -eq [BumpType]::None) {
