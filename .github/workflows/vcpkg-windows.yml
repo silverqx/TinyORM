@@ -465,3 +465,4 @@ jobs:
         .\HelloWorld.exe
       env:
         TINYORM_HELLOWORLD_DB_SQLITE_DATABASE: ../../../HelloWorld.sqlite3
+
