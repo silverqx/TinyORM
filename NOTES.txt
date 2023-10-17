@@ -3,9 +3,9 @@ Increase/bump the release version:
 
 - bump message format:
 
-bump version to TinyORM v0.35.0 and tom v0.6.1
+bump version to TinyORM v0.36.0 and tom v0.7.0
 
-- just simply search the current version number in all files eg. 0.35.0
+- just simply search the current version number in all files eg. 0.36.0
 - don't forget to update a version number in the silverqx/TinyORM-HelloWorld find_package() call
 
 - TinyORM:
@@ -66,7 +66,7 @@ Prefer tags in the REF but can also be a commit ID.
 
 The SHA512 is a hash of the source code tinyorm.tar.gz archive, the tools/Get-VcpkgHash.ps1
 script can be used to obtain this hash. The URL to download this archive is:
-https://github.com/silverqx/TinyORM/archive/v0.35.0.tar.gz
+https://github.com/silverqx/TinyORM/archive/v0.36.0.tar.gz
 https://github.com/silverqx/TinyORM/archive/ca8909896247b21bf08d62a5109b23e9f65c89e1.tar.gz
 
 If only the vcpkg is updated but the TinyORM version number is not bumped then
@@ -1102,10 +1102,10 @@ How the Package Config file works:
    - I have invested a lot of effort to these info messages
    - whether linking against the single, multi, vcpkg builds
    - against which TinyORM package is linking eg.:
-     Found package TinyOrm 0.35.0.0 Debug (requested 0.35.0) at O:/Code/c/qMedia/TinyORM/TinyORM-builds-cmake/build-TinyORM-Desktop_Qt_6_5_3_MSVC2022_64bit-Debug/TinyOrmConfig.cmake
+     Found package TinyOrm 0.36.0.0 Debug (requested 0.36.0) at O:/Code/c/qMedia/TinyORM/TinyORM-builds-cmake/build-TinyORM-Desktop_Qt_6_5_3_MSVC2022_64bit-Debug/TinyOrmConfig.cmake
 
    - whether Matching build type for Build tree was enabled/disabled eg.:
-     Matching build type for the TinyOrm 0.35.0.0 package build tree was enabled
+     Matching build type for the TinyOrm 0.36.0.0 package build tree was enabled
    - Matching build type is controlled by the MATCH_EQUAL_EXPORTED_BUILDTREE CMake config. option
      during the TinyORM library configure
 
