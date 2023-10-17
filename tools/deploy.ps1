@@ -101,7 +101,7 @@ function Initialize-ScriptVariables {
     $Script:VersionLocations = [ordered] @{
         TinyOrm = @{
             VersionOnly = [ordered] @{
-                (Resolve-Path -Path ./NOTES.txt)                                = 1
+                (Resolve-Path -Path ./NOTES.txt)                                = 3
                 (Resolve-Path -Path ./cmake/vcpkg/ports/tinyorm/vcpkg.json)     = 1
                 (Resolve-Path -Path ./cmake/vcpkg/ports/tinyorm-qt5/vcpkg.json) = 1
                 (Resolve-Path -Path ./docs/building/hello-world.mdx)            = 4
@@ -109,7 +109,7 @@ function Initialize-ScriptVariables {
                 (Resolve-Path -Path ./docs/building/tinyorm.mdx)                = 1
             }
             [VersionType]::VersionWith_v = [ordered] @{
-                (Resolve-Path -Path ./NOTES.txt)                 = 1
+                (Resolve-Path -Path ./NOTES.txt)                 = 2
                 (Resolve-Path -Path ./README.md)                 = 2
                 (Resolve-Path -Path ./docs/README.mdx)           = 1
                 (Resolve-Path -Path ./docs/building/tinyorm.mdx) = 1
