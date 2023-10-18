@@ -100,21 +100,21 @@ jobs:
       run: |
         cmake --version
 
-    - name: TinyORM create build folder (${{ matrix.qt.key }}-clang-cmake-debug)
+    - name: TinyORM create folder for build trees
       run: |
-        mkdir --parents '../TinyORM-builds-cmake/build-${{ matrix.qt.key }}-clang-cmake-debug'
+        mkdir --parents '../TinyORM-builds-cmake'
 
     - name: Ccache clear statistics
       run: |
         ccache --zero-stats
 
     # CMAKE_DISABLE_PRECOMPILE_HEADERS=ON is correct (I want to disable PCH here)
-    - name: TinyORM cmake configure (${{ matrix.qt.key }}-clang-cmake-debug)
+    - name: TinyORM cmake configure (analyzer-${{ matrix.qt.key }}-clang-debug)
       working-directory: ${{ env.TinyORMPath }}
       run: >-
         cmake
         -S .
-        -B '${{ runner.workspace }}/TinyORM-builds-cmake/build-${{ matrix.qt.key }}-clang-cmake-debug'
+        -B '${{ runner.workspace }}/TinyORM-builds-cmake/build-analyzer-${{ matrix.qt.key }}-clang-debug'
         -G Ninja
         -D CMAKE_CXX_COMPILER_LAUNCHER:FILEPATH=/usr/local/bin/ccache
         -D CMAKE_CXX_COMPILER:FILEPATH=/usr/bin/clang++-17
@@ -131,9 +131,9 @@ jobs:
         -D TOM:BOOL=ON
         -D TOM_EXAMPLE:BOOL=ON
 
-    - name: TinyORM cmake build ✨ (${{ matrix.qt.key }}-clang-cmake-debug)
+    - name: TinyORM cmake build ✨ (analyzer-${{ matrix.qt.key }}-clang-debug)
       working-directory: >-
-        ../TinyORM-builds-cmake/build-${{ matrix.qt.key }}-clang-cmake-debug
+        ../TinyORM-builds-cmake/build-analyzer-${{ matrix.qt.key }}-clang-debug
       run: >-
         cmake --build . --target all --parallel ${{ env.TinyParallel }}
 
@@ -148,7 +148,7 @@ jobs:
 
         run-clang-tidy-17
         -extra-arg-before='-Qunused-arguments'
-        -p='${{ runner.workspace }}/TinyORM-builds-cmake/build-${{ matrix.qt.key }}-clang-cmake-debug'
+        -p='${{ runner.workspace }}/TinyORM-builds-cmake/build-analyzer-${{ matrix.qt.key }}-clang-debug'
         -j ${{ env.TinyParallel }}
         '[\\\/]+(?:examples|src|tests)[\\\/]+.+?[\\\/]+(?!mocs_)[\w\d_\-\+]+\.cpp$'
 
@@ -187,5 +187,5 @@ jobs:
         -extra-arg-before='-Qunused-arguments' \
         -header-filter='[\\\/]+(examples|orm|tests|tom)[\\\/]+.+\.(h|hpp)$' \
         -j ${{ env.TinyParallel }} \
-        -p='${{ runner.workspace }}/TinyORM-builds-cmake/build-${{ matrix.qt.key }}-clang-cmake-debug' \
+        -p='${{ runner.workspace }}/TinyORM-builds-cmake/build-analyzer-${{ matrix.qt.key }}-clang-debug' \
         '[\\\/]+(?:examples|src|tests)[\\\/]+.+?[\\\/]+(?!mocs_)[\w\d_\-\+]+\.cpp$'
