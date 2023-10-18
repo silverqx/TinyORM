@@ -1,20 +1,10 @@
 name: Clang-Tidy and Clazy Qt5.15/6.5
 
 on:
-  # For Self-Hosted
-  # Run after the Vcpkg Linux workflow completed (success ONLY)
-  workflow_run:
-    workflows: [Vcpkg Linux]
-    types:
-      - completed
+  push:
     branches:
       - main
       - gh-actions
-
-#  push:
-#    branches:
-#      - main
-#      - gh-actions
 
 jobs:
 
@@ -23,8 +13,6 @@ jobs:
 
     # Self-hosted runner is Ubuntu 22.04
     runs-on: [self-hosted, linux]
-
-    if: github.event.workflow_run.conclusion == 'success'
 
     strategy:
       matrix:

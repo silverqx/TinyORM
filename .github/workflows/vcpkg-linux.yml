@@ -1,21 +1,10 @@
 name: Vcpkg Linux
 
 on:
-  # For Self-Hosted
-  # Run after the Vcpkg Windows workflow completed (success or failure)
-  workflow_run:
-    workflows: [Vcpkg Windows]
-    types:
-      - completed
+  push:
     branches:
       - main
       - gh-actions
-
-  # For GitHub hosted
-#  push:
-#    branches:
-#      - main
-#      - gh-actions
 
 # I will not remove the build folders before a job execution it's not necessary and
 # it will be faster this way. I can still remove them manually if needed or
