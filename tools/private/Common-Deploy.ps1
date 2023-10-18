@@ -74,6 +74,41 @@ function Test-RefAndHashLinesCountForVcpkg {
         "expected occurrences must be '$ExpectedOccurrences'."
 }
 
+# Verify if the REF and SHA512 were correctly replaced in the given portfile
+function Test-VcpkgRefAndHashReplaced {
+    [OutputType([void])]
+    Param(
+        [Parameter(Mandatory, HelpMessage = 'Specifies the portfile.cmake filepath to update.')]
+        [ValidateNotNullOrEmpty()]
+        [string] $PortFile,
+
+        [Parameter(Mandatory, HelpMessage = 'Specifies the REF in the portfile.cmake to update.')]
+        [ValidateNotNullOrEmpty()]
+        [string] $Ref,
+
+        [Parameter(Mandatory,
+            HelpMessage = 'Specifies the SHA512 hash in the portfile.cmake to update.')]
+        [ValidateNotNullOrEmpty()]
+        [string] $Hash
+    )
+
+    $refEscaped = [regex]::Escape($Ref)
+    $hashEscaped = [regex]::Escape($Hash)
+
+    $regexRef = "^(?:    REF )(?:${refEscaped})$"
+    $regexHash = "^(?:    SHA512 )(?:${hashEscaped})$"
+    $regexMatch = "$regexRef|$regexHash"
+
+    $fileContent = Get-Content -Path $portfilePath
+
+    $matchedLines = $fileContent -cmatch $regexMatch
+
+    # Verify if the portfile.cmake file contains the REF and SHA512 lines
+    $expectedOccurrences = 2
+    Test-RefAndHashLinesCountForVcpkg `
+        $matchedLines.Count $expectedOccurrences $regexMatch $portfilePath
+}
+
 # Update the REF and SHA512 in tinyorm and tinyorm-qt5 portfiles
 function Edit-VcpkgRefAndHash {
     [OutputType([void])]
@@ -114,6 +149,8 @@ function Edit-VcpkgRefAndHash {
         & "$toolsFolder\Get-VcpkgHash.ps1" -Project $Project -Ref $Ref -TimeoutSec 15 @retries
     Test-LastExitCode
 
+    Write-Output $vcpkgHash
+
     foreach ($portfilePath in $PortFile) {
         $regexRef = '^(?<ref>    REF )(?:[0-9a-f]{40}|v\d+\.\d+\.\d+|[\w\d-_\/]+)$'
         $regexHash = '^(?<sha512>    SHA512 )(?:[0-9a-f]{128})$'
@@ -134,5 +171,8 @@ function Edit-VcpkgRefAndHash {
 
         # Save to the file
         ($fileContentReplaced -join "`n") + "`n" | Set-Content -Path $portfilePath -NoNewline
+
+        # Verify if the REF and SHA512 were correctly replaced in the given portfile
+        Test-VcpkgRefAndHashReplaced -PortFile $portfilePath -Ref $Ref -Hash $vcpkgHash
     }
 }
