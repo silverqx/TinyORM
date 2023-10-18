@@ -63,7 +63,7 @@ jobs:
         [[ "${{ runner.name }}" == 'merydeye-'* ]] && isSelfHostedRunner='true' || isSelfHostedRunner='false'
         echo "TinyIsSelfHostedRunner=$isSelfHostedRunner" >> $GITHUB_ENV
 
-        [[ "$isSelfHostedRunner" == 'true' ]] && parallel=8 || parallel=2
+        [[ "$isSelfHostedRunner" == 'true' ]] && parallel=4 || parallel=2
         echo "TinyParallel=$parallel" >> $GITHUB_ENV
 
         tinyormPath=$(realpath ./main)

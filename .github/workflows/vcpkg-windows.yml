@@ -62,7 +62,7 @@ jobs:
         $isSelfHostedRunner = '${{ runner.name }}'.StartsWith('merydeye-') ? $true : $false
         "TinyIsSelfHostedRunner=$isSelfHostedRunner" >> $env:GITHUB_ENV
 
-        $parallel = $isSelfHostedRunner ? 8 : 2
+        $parallel = $isSelfHostedRunner ? 5 : 2
         "TinyParallel=$parallel" >> $env:GITHUB_ENV
 
         $tinyormPath = Resolve-Path -Path ./main
