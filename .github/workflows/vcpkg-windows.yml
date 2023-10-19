@@ -122,7 +122,8 @@ jobs:
         cmake.exe --version
 
     # The following two steps are not needed below they only test if the vcpkg classic mode works
-    # correctly
+    # correctly. The Release and Debug build types are build at once so invoke these two steps
+    # for the debug matrix only.
 
     - name: vcpkg install ${{ matrix.qt.vcpkg-qt }} (classic mode)
       if: matrix.build-type.key == 'debug'
