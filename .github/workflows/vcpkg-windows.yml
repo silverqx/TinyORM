@@ -121,6 +121,20 @@ jobs:
       run: |
         cmake.exe --version
 
+    # Will be used in the classic method (vcpkg install tinyorm) and VcpkgManifest method
+    - name: vcpkg prepare TinyORM ports (update REF and SHA512)
+      working-directory: ${{ env.TinyORMPath }}
+      run: |
+        . ./tools/private/Common-Deploy.ps1
+
+        $portfileQt6Path = Resolve-Path -Path './cmake/vcpkg/ports/tinyorm/portfile.cmake'
+        $portfileQt5Path = Resolve-Path -Path './cmake/vcpkg/ports/tinyorm-qt5/portfile.cmake'
+        $vcpkgRef = '${{ github.ref_name }}'
+
+        Edit-VcpkgRefAndHash -Project 'silverqx/TinyORM' -Ref $vcpkgRef `
+        -PortFile $portfileQt6Path, $portfileQt5Path `
+        -EnableRetries
+
     # The following two steps (vcpkg install) are not needed below they only test if the vcpkg
     # classic mode works correctly. The Release and Debug build types are build at once so invoke
     # these two steps for the debug matrix only.
@@ -194,17 +208,6 @@ jobs:
       run: >-
         Copy-Item -Path ./vcpkg.json.VcpkgManifest.${{ matrix.qt.name }}.example
         -Destination ./vcpkg.json
-
-    - name: HelloWorld prepare VcpkgManifest method (update REF and SHA512)
-      working-directory: ${{ env.TinyORMPath }}
-      run: |
-        . ./tools/private/Common-Deploy.ps1
-
-        $portfilePath = Resolve-Path -Path './cmake/vcpkg/ports/tinyorm/portfile.cmake'
-        $vcpkgRef = '${{ github.ref_name }}'
-
-        Edit-VcpkgRefAndHash -Project 'silverqx/TinyORM' -Ref $vcpkgRef -PortFile $portfilePath `
-        -EnableRetries
 
     # Don't use ccache for the VcpkgManifest method as the vcpkg has its own binary caching
     - name: HelloWorld cmake configure (vcpkgmanifest-msvc-${{ matrix.build-type.key }})
