@@ -137,9 +137,27 @@ jobs:
       run: |
         sqlite3 --version
 
-    # The following two steps are not needed below they only test if the vcpkg classic mode works
-    # correctly. The Release and Debug build types are build at once so invoke these two steps
-    # for the debug matrix only.
+    # The following two steps (vcpkg install) are not needed below they only test if the vcpkg
+    # classic mode works correctly. The Release and Debug build types are build at once so invoke
+    # these two steps for the debug matrix only.
+
+    - name: vcpkg upgrade repository (latest version)
+      if: env.TinyIsSelfHostedRunner == 'true' && matrix.build-type.key == 'debug'
+      run: |
+        cd "$VCPKG_INSTALLATION_ROOT"
+
+        git switch master
+        git fetch --tags origin
+        git reset --hard origin/master
+
+    # This should reliably remove the qtbase and tinyorm with all dependencies.
+    # It's much faster to do it this way like removing the whole vcpkg folder and then the binary
+    # caching should kick in.
+    - name: vcpkg remove ${{ matrix.qt.vcpkg-qt }} and ${{ matrix.qt.vcpkg-tinyorm }} (classic mode)
+      if: matrix.build-type.key == 'debug'
+      run: >-
+        vcpkg remove --recurse vcpkg-cmake vcpkg-cmake-config zlib ${{ matrix.qt.vcpkg-qt }}
+        ${{ matrix.qt.vcpkg-tinyorm }}
 
     - name: vcpkg install ${{ matrix.qt.vcpkg-qt }} (classic mode)
       if: matrix.build-type.key == 'debug'
