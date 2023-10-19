@@ -19,13 +19,10 @@ function(tiny_install_tinyorm)
         # TODO test NAMELINK_ on unix silverqx
     )
 
-    # TODO vcpkg_copy_tools() doesn't handle executable symlinks correctly (mainly Linux), it uses file(COPY) without the FOLLOW_SYMLINK_CHAIN so the packages bin/ folder ends up with the tom-0.6.0.0 file and the tom symlink is copied to the tools/tinyorm/; so currently disabled for Linux platform silverqx
-    if(TOM_EXAMPLE AND (
-            # Don't install for vcpkg debug build type on WIN32
-            (WIN32 AND NOT (TINY_VCPKG AND CMAKE_BUILD_TYPE STREQUAL "Debug")) OR
-            # Don't install if vcpkg on Linux
-            (NOT WIN32 AND NOT TINY_VCPKG)
-    ))
+    if(TOM_EXAMPLE AND
+            # Don't install for vcpkg debug build type
+            NOT (TINY_VCPKG AND CMAKE_BUILD_TYPE STREQUAL "Debug")
+    )
         install(TARGETS ${TomExample_target} EXPORT TinyOrmTargets RUNTIME)
     endif()
 

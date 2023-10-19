@@ -48,8 +48,21 @@ set_target_properties(${TomExample_target}
         C_VISIBILITY_PRESET "hidden"
         CXX_VISIBILITY_PRESET "hidden"
         VISIBILITY_INLINES_HIDDEN YES
-        VERSION ${PROJECT_VERSION}
 )
+
+# Disable executable versioning for the vcpkg package manager on Linux
+# The vcpkg doesn't handle executable symlinks correctly on Linux, it uses the file(COPY)
+# without the FOLLOW_SYMLINK_CHAIN option so the package's bin/ folder ends up
+# with the tom-0.6.0.0 file and the tom symlink is copied to the tools/tinyorm/ during
+# the vcpkg_copy_tools()
+# https://github.com/microsoft/vcpkg/issues/33551
+# TODO vcpkg_copy_tools() doesn't handle executable symlinks correctly (mainly Linux), it uses file(COPY) without the FOLLOW_SYMLINK_CHAIN so the packages bin/ folder ends up with the tom-0.6.0.0 file and the tom symlink is copied to the tools/tinyorm/; so currently disabled for Linux platform silverqx
+if(WIN32 OR NOT TINY_VCPKG)
+    set_target_properties(${TomExample_target}
+        PROPERTIES
+            VERSION ${PROJECT_VERSION}
+    )
+endif()
 
 target_include_directories(${TomExample_target}
     PRIVATE "$<BUILD_INTERFACE:${${TinyOrm_ns}_SOURCE_DIR}/tests/database>"
