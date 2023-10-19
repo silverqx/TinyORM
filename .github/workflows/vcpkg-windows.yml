@@ -115,7 +115,7 @@ jobs:
       if: env.TinyIsSelfHostedRunner == 'true'
       run: |
         'C:\Program Files\CMake\bin' >> $env:GITHUB_PATH
-        'E:\c_libs\vcpkg-runner' >> $env:GITHUB_PATH
+        "$env:VCPKG_INSTALLATION_ROOT" >> $env:GITHUB_PATH
 
     - name: CMake print version
       run: |
