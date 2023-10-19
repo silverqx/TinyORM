@@ -129,7 +129,7 @@ jobs:
 
         $portfileQt6Path = Resolve-Path -Path './cmake/vcpkg/ports/tinyorm/portfile.cmake'
         $portfileQt5Path = Resolve-Path -Path './cmake/vcpkg/ports/tinyorm-qt5/portfile.cmake'
-        $vcpkgRef = '${{ github.ref_name }}'
+        $vcpkgRef = '${{ github.sha }}'
 
         Edit-VcpkgRefAndHash -Project '${{ github.repository }}' -Ref $vcpkgRef `
         -PortFile $portfileQt6Path, $portfileQt5Path `
@@ -439,7 +439,7 @@ jobs:
       working-directory: HelloWorld
       run: |
         $toolsPath = Resolve-Path -Path '${{ env.TinyORMPath }}/tools/private'
-        $gitTag = 'origin/${{ github.ref_name }}'
+        $gitTag = '${{ github.sha }}'
 
         & "$toolsPath/Edit-FetchContentGitTag.ps1" -CMakeLists ./CMakeLists.txt -GitTag $gitTag
 
