@@ -149,7 +149,7 @@ jobs:
         $portfileQt5Path = Resolve-Path -Path './cmake/vcpkg/ports/tinyorm-qt5/portfile.cmake'
         $vcpkgRef = '${{ github.ref_name }}'
 
-        Edit-VcpkgRefAndHash -Project 'silverqx/TinyORM' -Ref $vcpkgRef `
+        Edit-VcpkgRefAndHash -Project '${{ github.repository }}' -Ref $vcpkgRef `
         -PortFile $portfileQt6Path, $portfileQt5Path `
         -EnableRetries
 
