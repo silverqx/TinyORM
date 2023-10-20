@@ -6,6 +6,7 @@
   "description": "Modern C++ ORM library for Qt framework",
   "homepage": "https://github.com/silverqx/TinyORM",
   "documentation": "https://www.tinyorm.org",
+  "license": "MIT",
   "supports": "!(uwp | arm | android | emscripten | osx | ios | xbox | freebsd | openbsd | wasm32)",
   "dependencies": [
     {
