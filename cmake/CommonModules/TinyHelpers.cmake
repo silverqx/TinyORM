@@ -281,6 +281,10 @@ with inline constants :/.")
 don't enable the INLINE_CONSTANTS cmake option :/.")
     endif()
 
+    if(TINY_VCPKG AND TINY_IS_MULTI_CONFIG)
+        message(FATAL_ERROR "The multi-configuration generators are not supported in vcpkg ports.")
+    endif()
+
 endfunction()
 
 # Print a VERBOSE message against which library is project linking
