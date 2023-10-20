@@ -204,9 +204,9 @@ ${TINY_UNPARSED_ARGUMENTS}")
 
     message(DEBUG "Version file content - ${versionFileContent}")
 
-    set(regexp ".+_MAJOR +([0-9]+);.+_MINOR +([0-9]+);.+_BUGFIX +([0-9]+);\
+    set(regex ".+_MAJOR +([0-9]+);.+_MINOR +([0-9]+);.+_BUGFIX +([0-9]+);\
 .+_BUILD +([0-9]+)")
-    string(REGEX MATCHALL "${regexp}" match "${versionFileContent}")
+    string(REGEX MATCHALL "${regex}" match "${versionFileContent}")
 
     if(NOT match)
         message(FATAL_ERROR
