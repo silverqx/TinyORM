@@ -458,8 +458,6 @@ function(tiny_fix_ccache_msvc)
     # anyway but I will replace the Zi to Z7 compiler option in both
     # CMAKE_<C|CXX>_FLAGS_<CONFIG> to be consistent 🤔
 
-    tiny_disable_precompile_headers()
-
     # Fix the MSVC debug information format by the CMake version
     set(isNewMsvcDebugInformationFormat FALSE)
     tiny_is_new_msvc_debug_information_format_325(isNewMsvcDebugInformationFormat)
@@ -470,6 +468,13 @@ function(tiny_fix_ccache_msvc)
     else()
         # Replace /Zi by /Z7 in the CMAKE_<C|CXX>_FLAGS_<CONFIG> for the CMake <3.25
         tiny_fix_ccache_msvc_324()
+    endif()
+
+    # Don't disable PCH if no fixes were applied
+    # The new MSVC debug information format flags method also supports multi-config generators
+    # The old replace /Zi by /Z7 method doesn't support multi-config generators
+    if(isNewMsvcDebugInformationFormat OR NOT TINY_IS_MULTI_CONFIG)
+        tiny_disable_precompile_headers()
     endif()
 
 endfunction()
