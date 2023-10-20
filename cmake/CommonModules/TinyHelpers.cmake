@@ -346,6 +346,8 @@ endfunction()
 # Disable the precompilation of header files
 function(tiny_disable_precompile_headers)
 
+    message(VERBOSE "Disabled PCH because ccache or sccache is used as compiler launcher for MSVC")
+
     get_property(help_string CACHE CMAKE_DISABLE_PRECOMPILE_HEADERS
         PROPERTY HELPSTRING
     )
