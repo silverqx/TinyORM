@@ -90,7 +90,6 @@ function(tiny_build_type_requirements_install_tree
         out_package_version out_package_version_unsuitable
         cvf_is_multi_config cvf_is_vcpkg
 )
-
     # Obtain all installed target configurations
     # Needed in the Package Config file for the info message
     tiny_get_target_configurations(cvfTargetConfigurations)
@@ -165,8 +164,8 @@ endfunction()
 # is "Debug", otherwise all other configurations can be matched freely.
 function(tiny_build_type_requirements_build_tree
         out_package_version out_package_version_unsuitable
-        cvf_is_multi_config cvf_config_build_type cvf_match_buildtree)
-
+        cvf_is_multi_config cvf_config_build_type cvf_match_buildtree
+)
     message(DEBUG "cvf_is_multi_config = ${cvf_is_multi_config}")
     message(DEBUG "CMAKE_CURRENT_LIST_FILE = ${CMAKE_CURRENT_LIST_FILE}")
 
