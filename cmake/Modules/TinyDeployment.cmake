@@ -21,7 +21,7 @@ function(tiny_install_tinyorm)
 
     if(TOM_EXAMPLE AND
             # Don't install for vcpkg debug build type
-            NOT (TINY_VCPKG AND CMAKE_BUILD_TYPE STREQUAL "Debug")
+            NOT (TINY_VCPKG AND TINY_BUILD_TYPE_LOWER STREQUAL "debug")
     )
         install(TARGETS ${TomExample_target} EXPORT TinyOrmTargets RUNTIME)
     endif()
@@ -45,7 +45,7 @@ function(tiny_install_tinyorm)
 
         if(TOM_EXAMPLE AND
                 # Don't install for vcpkg debug build type
-                NOT (TINY_VCPKG AND CMAKE_BUILD_TYPE STREQUAL "Debug")
+                NOT (TINY_VCPKG AND TINY_BUILD_TYPE_LOWER STREQUAL "debug")
         )
             install(FILES "$<TARGET_PDB_FILE:${TomExample_target}>" TYPE BIN OPTIONAL)
         endif()
@@ -53,7 +53,7 @@ function(tiny_install_tinyorm)
 
     # Do not install Package config, config version, header, doc. and CMake helper files
     # when installing for VCPKG Debug configuration
-    if(TINY_VCPKG AND CMAKE_BUILD_TYPE STREQUAL "Debug")
+    if(TINY_VCPKG AND TINY_BUILD_TYPE_LOWER STREQUAL "debug")
         return()
     endif()
 

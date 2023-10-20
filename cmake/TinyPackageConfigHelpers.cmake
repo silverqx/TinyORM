@@ -115,6 +115,9 @@ function(tiny_build_type_requirements_install_tree
         get_property(isMultiConfig GLOBAL PROPERTY GENERATOR_IS_MULTI_CONFIG)
         tiny_to_bool(isMultiConfig ${isMultiConfig})
 
+        # Used in STREQUAL comparisons
+        string(TOLOWER "${CMAKE_BUILD_TYPE}" cmakeBuildTypeLower)
+
         message(DEBUG "isMultiConfig = ${isMultiConfig}")
         message(DEBUG "CMAKE_BUILD_TYPE = ${CMAKE_BUILD_TYPE}")
         message(DEBUG "cvfIsDebugOnly = ${cvfIsDebugOnly}")
@@ -138,9 +141,9 @@ function(tiny_build_type_requirements_install_tree
 
         # Match Debug builds types for MSVC (linking debug against release
         # (or vice-versa) cause crashes)
-        elseif(MSVC AND ((CMAKE_BUILD_TYPE STREQUAL "Debug"
+        elseif(MSVC AND ((cmakeBuildTypeLower STREQUAL "debug"
                 AND NOT "debug" IN_LIST cvfTargetConfigurations)
-                OR (NOT CMAKE_BUILD_TYPE STREQUAL "Debug" AND cvfIsDebugOnly))
+                OR (NOT cmakeBuildTypeLower STREQUAL "debug" AND cvfIsDebugOnly))
         )
             # Obtain target configurations in printable format
             tiny_printable_configurations(tinyPrintableConfigurations
@@ -180,6 +183,10 @@ function(tiny_build_type_requirements_build_tree
         get_property(isMultiConfig GLOBAL PROPERTY GENERATOR_IS_MULTI_CONFIG)
         tiny_to_bool(isMultiConfig ${isMultiConfig})
 
+        # Used in STREQUAL comparisons
+        string(TOLOWER "${CMAKE_BUILD_TYPE}" cmakeBuildTypeLower)
+        string(TOLOWER "${cvf_config_build_type}" cvfConfigBuildTypeLower)
+
         message(DEBUG "isMultiConfig = ${isMultiConfig}")
         message(DEBUG "cvf_match_buildtree = ${cvf_match_buildtree}")
         message(DEBUG "CMAKE_BUILD_TYPE = ${CMAKE_BUILD_TYPE}")
@@ -202,11 +209,11 @@ function(tiny_build_type_requirements_build_tree
         # Or if matching equal build tree was enabled and builds types don't match then
         # also tag as unsuitable (this is Build tree specific)
         elseif((cvf_match_buildtree
-                AND NOT CMAKE_BUILD_TYPE STREQUAL cvf_config_build_type)
-                OR (MSVC AND ((CMAKE_BUILD_TYPE STREQUAL "Debug"
-                    AND NOT cvf_config_build_type STREQUAL "Debug")
-                    OR (NOT CMAKE_BUILD_TYPE STREQUAL "Debug"
-                        AND cvf_config_build_type STREQUAL "Debug")))
+                AND NOT cmakeBuildTypeLower STREQUAL cvfConfigBuildTypeLower)
+                OR (MSVC AND ((cmakeBuildTypeLower STREQUAL "debug"
+                    AND NOT cvfConfigBuildTypeLower STREQUAL "debug")
+                    OR (NOT cmakeBuildTypeLower STREQUAL "debug"
+                        AND cvfConfigBuildTypeLower STREQUAL "debug")))
         )
             set(${out_package_version}
                 "${${out_package_version}} single-config CMAKE_BUILD_TYPE=${cvf_config_build_type}"

@@ -290,16 +290,15 @@ endfunction()
 # Print a VERBOSE message against which library is project linking
 function(tiny_print_linking_against target)
 
-    if(TINY_IS_MULTI_CONFIG)
+    # TINY_BUILD_TYPE_UPPER STREQUAL "" means that the CMAKE_BUILD_TYPE was not defined or is empty
+    if(TINY_IS_MULTI_CONFIG OR TINY_BUILD_TYPE_UPPER STREQUAL "")
         return()
     endif()
 
-    string(TOUPPER ${CMAKE_BUILD_TYPE} buildType)
-
     if(WIN32 AND BUILD_SHARED_LIBS)
-        get_target_property(libraryFilepath ${target} IMPORTED_IMPLIB_${buildType})
+        get_target_property(libraryFilepath ${target} IMPORTED_IMPLIB_${TINY_BUILD_TYPE_UPPER})
     else()
-        get_target_property(libraryFilepath ${target} IMPORTED_LOCATION_${buildType})
+        get_target_property(libraryFilepath ${target} IMPORTED_LOCATION_${TINY_BUILD_TYPE_UPPER})
     endif()
 
     message(VERBOSE "Linking against ${target} at ${libraryFilepath}")
@@ -416,21 +415,28 @@ endfunction()
 # Replace /Zi by /Z7 in the CMAKE_<C|CXX>_FLAGS_<CONFIG> option for the CMake <3.25
 function(tiny_fix_ccache_msvc_324)
 
+    # Nothing to do, multi-configuration generators are not supported
+    if(TINY_IS_MULTI_CONFIG OR TINY_BUILD_TYPE_LOWER STREQUAL "")
+        message(STATUS "The ccache compiler launcher is not supported for multi-configuration \
+generators or with undefined CMAKE_BUILD_TYPE on CMake <3.25")
+        return()
+    endif()
+
     # Replace /Zi by /Z7 by the build config type, for the CMake <=3.24
-    if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+    if(TINY_BUILD_TYPE_LOWER STREQUAL "debug")
         tiny_replace_Zi_by_Z7_for(CMAKE_CXX_FLAGS_DEBUG
             "Flags used by the CXX compiler during DEBUG builds.")
         tiny_replace_Zi_by_Z7_for(CMAKE_C_FLAGS_DEBUG
             "Flags used by the C compiler during DEBUG builds.")
 
     # This should never happen, but I leave it here because it won't hurt anything
-    elseif(CMAKE_BUILD_TYPE STREQUAL "Release")
+    elseif(TINY_BUILD_TYPE_LOWER STREQUAL "release")
         tiny_replace_Zi_by_Z7_for(CMAKE_CXX_FLAGS_RELEASE
             "Flags used by the CXX compiler during RELEASE builds.")
         tiny_replace_Zi_by_Z7_for(CMAKE_C_FLAGS_RELEASE
             "Flags used by the C compiler during RELEASE builds.")
 
-    elseif(CMAKE_BUILD_TYPE STREQUAL "RelWithDebInfo")
+    elseif(TINY_BUILD_TYPE_LOWER STREQUAL "relwithdebinfo")
         tiny_replace_Zi_by_Z7_for(CMAKE_CXX_FLAGS_RELWITHDEBINFO
             "Flags used by the CXX compiler during RELWITHDEBINFO builds.")
         tiny_replace_Zi_by_Z7_for(CMAKE_C_FLAGS_RELWITHDEBINFO

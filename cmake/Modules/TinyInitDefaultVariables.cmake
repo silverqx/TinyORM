@@ -171,6 +171,10 @@ macro(tiny_init_tiny_variables_pre)
     # Tom seeders folder for the make:seeder command
     set(TomSeeders_folder database/seeders)
 
+    # Used in STREQUAL comparisons
+    string(TOLOWER "${CMAKE_BUILD_TYPE}" TINY_BUILD_TYPE_LOWER)
+    string(TOUPPER "${CMAKE_BUILD_TYPE}" TINY_BUILD_TYPE_UPPER)
+
     get_property(isMultiConfig GLOBAL PROPERTY GENERATOR_IS_MULTI_CONFIG)
     set(TINY_IS_MULTI_CONFIG "${isMultiConfig}" CACHE INTERNAL
         "True when using a multi-configuration generator.")

@@ -502,7 +502,7 @@ if(TOM)
 endif()
 
 if(VERBOSE_CONFIGURE)
-    if(NOT TINY_IS_MULTI_CONFIG AND NOT CMAKE_BUILD_TYPE STREQUAL "Debug")
+    if(NOT TINY_IS_MULTI_CONFIG AND NOT TINY_BUILD_TYPE_LOWER STREQUAL "debug")
         message(STATUS "Disabled debug output and asserts")
     endif()
 
