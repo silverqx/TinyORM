@@ -491,15 +491,17 @@ function(tiny_fix_ccache)
 
     # MSYS2 g++ or clang++ work well with the precompiled headers but the msvc doesn't
 
-    # Fixes for the MSVC compiler
+    # Fixes for the MSVC compiler (including the clang-cl with MSVC)
     set(shouldFixCcacheMsvc FALSE)
     tiny_should_fix_ccache_msvc(shouldFixCcacheMsvc)
 
     if(shouldFixCcacheMsvc)
         tiny_fix_ccache_msvc()
+
+        # The early return() can be here, but I chose not to add it
     endif()
 
-    # Fixes for the Clang compiler
+    # Fixes for the Clang compiler on Linux and MSYS2 (excluding the clang-cl with MSVC)
     # Ignore PCH timestamps if the ccache is used (recommended in ccache docs)
     set(shouldFixCcacheClang FALSE)
     tiny_should_fix_ccache_clang(shouldFixCcacheClang)
