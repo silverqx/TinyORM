@@ -13,7 +13,7 @@ TINY_SYSTEM_HEADER
    https://www.gnu.org/software/libtool/manual/html_node/Updating-version-info.html */
 #define TINYORM_VERSION_MAJOR 0
 #define TINYORM_VERSION_MINOR 36
-#define TINYORM_VERSION_BUGFIX 2
+#define TINYORM_VERSION_BUGFIX 3
 #define TINYORM_VERSION_BUILD 0
 // Should be empty for stable releases, and use the hyphen before to be compatible with SemVer!
 #define TINYORM_VERSION_STATUS ""
