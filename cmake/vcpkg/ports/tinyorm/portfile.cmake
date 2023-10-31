@@ -1,8 +1,8 @@
 vcpkg_from_github(
     OUT_SOURCE_PATH SOURCE_PATH
     REPO silverqx/TinyORM
-    REF v0.36.3
-    SHA512 0f4339b809e14581dba748ce484bbe26f6b0f005f675495dba05c152ad3b0a81fed89a2a4ace03bdc3d6505ea65ec41e29bd32fecd0e931e5e65cb933c0addcd
+    REF v0.36.4
+    SHA512 45337e05af352df11efe7291c7b4eac357c5eaabc79a24bdec1bda8f5bb6a8869085fcf93fdc702072153639dbd4538720f3608bde1bdf430de9066ef277e899
     HEAD_REF main
 )
 
