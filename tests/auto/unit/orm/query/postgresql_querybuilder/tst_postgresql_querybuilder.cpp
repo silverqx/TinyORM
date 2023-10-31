@@ -51,8 +51,11 @@ private Q_SLOTS:
 
     void select() const;
     void select_ColumnExpression() const;
+    void select_ColumnAlias() const;
+
     void addSelect() const;
     void addSelect_ColumnExpression() const;
+    void addSelect_ColumnAlias() const;
 
     void distinct() const;
     void distinct_on() const;
@@ -367,6 +370,29 @@ void tst_PostgreSQL_QueryBuilder::select_ColumnExpression() const
              "select count(*) as user_count, status from \"torrents\"");
 }
 
+void tst_PostgreSQL_QueryBuilder::select_ColumnAlias() const
+{
+    auto builder = createQuery();
+
+    builder->from("torrents");
+
+    builder->select({ID, "name as username"});
+    QCOMPARE(builder->toSql(),
+             "select \"id\", \"name\" as \"username\" from \"torrents\"");
+
+    builder->select({ID, "name    as   username"});
+    QCOMPARE(builder->toSql(),
+             "select \"id\", \"name\" as \"username\" from \"torrents\"");
+
+    builder->select({ID, "name AS username"});
+    QCOMPARE(builder->toSql(),
+             "select \"id\", \"name\" as \"username\" from \"torrents\"");
+
+    builder->select({ID, "name    AS   username"});
+    QCOMPARE(builder->toSql(),
+             "select \"id\", \"name\" as \"username\" from \"torrents\"");
+}
+
 void tst_PostgreSQL_QueryBuilder::addSelect() const
 {
     auto builder = createQuery();
@@ -404,6 +430,34 @@ void tst_PostgreSQL_QueryBuilder::addSelect_ColumnExpression() const
     QCOMPARE(builder->toSql(),
              "select name, \"id\", happiness, count(*) as user_count, status "
              "from \"torrents\"");
+}
+
+void tst_PostgreSQL_QueryBuilder::addSelect_ColumnAlias() const
+{
+    auto builder = createQuery();
+
+    builder->from("torrents");
+
+    builder->addSelect("name as username");
+    QCOMPARE(builder->toSql(),
+             "select \"name\" as \"username\" from \"torrents\"");
+
+    builder->addSelect({ID, "name1    as   username1"});
+    QCOMPARE(builder->toSql(),
+             "select \"name\" as \"username\", \"id\", \"name1\" as \"username1\" "
+               "from \"torrents\"");
+
+    builder->addSelect("name2 AS username2");
+    QCOMPARE(builder->toSql(),
+             "select \"name\" as \"username\", \"id\", \"name1\" as \"username1\", "
+               "\"name2\" as \"username2\" "
+               "from \"torrents\"");
+
+    builder->addSelect({"note", "name3    AS   username3"});
+    QCOMPARE(builder->toSql(),
+             "select \"name\" as \"username\", \"id\", \"name1\" as \"username1\", "
+               "\"name2\" as \"username2\", \"note\", \"name3\" as \"username3\" "
+               "from \"torrents\"");
 }
 
 void tst_PostgreSQL_QueryBuilder::distinct() const

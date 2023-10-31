@@ -48,7 +48,7 @@ QString BaseGrammar::wrap(const QString &value, const bool prefixAlias) const
     /* If the value being wrapped has a column alias we will need to separate out
        the pieces so we can wrap each of the segments of the expression on its
        own, and then join these both back together using the "as" connector. */
-    if (value.contains(QStringLiteral(" as ")))
+    if (value.contains(QStringLiteral(" as "), Qt::CaseInsensitive))
         return wrapAliasedValue(value, prefixAlias);
 
     // FEATURE json columns, this code has to be in the Grammars::Grammar silverqx
