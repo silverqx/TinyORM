@@ -10,6 +10,15 @@ Param(
         'The argument "{0}" does not match the "{1}" pattern.')]
     [string] $QtVersion,
 
+    [Parameter(Position = 1,
+        HelpMessage = 'Specifies the MySQL Server version against which to build ' +
+            'the QMYSQL driver (version number of the MySQL Server installation folder).')]
+    [ValidateNotNullOrEmpty()]
+    [ValidatePattern('^[8-12]\.\d{1,2}\$',
+        ErrorMessage = 'The argument "{0}" is not the correct Qt version number. ' +
+        'The argument "{0}" does not match the "{1}" pattern.')]
+    [string] $MySQLVersion = '8.2',
+
     [Parameter(HelpMessage = 'Clean CMake build (delete the $QtVersion build folder).')]
     [switch] $CleanBuild
 )
@@ -23,7 +32,8 @@ Set-Variable STACK_NAME -Option Constant -Value $MyInvocation.MyCommand.Name
 $Script:QtMajorVersion = $null
 $Script:QtEnvVersion = $null
 $Script:VisualStudioVersion = '17.0'
-$Script:MySqlServerPath = 'C:/Program Files/MySQL/MySQL Server 8.1'
+$Script:MySqlServerPath = "C:/Program Files/MySQL/MySQL Server $MySQLVersion"
+$Script:BOL = '  '
 
 # Functions section
 # ---
@@ -34,7 +44,7 @@ function Initialize-QtVersions
 {
     # Extract major and minor versions from the passed $QtVersion
     if (-not ($QtVersion -match '^(?<major>[5-8])\.(?<minor>\d{1,2})\.\d{1,2}$')) {
-        throw 'Match for the ''$QtEnvVersion'' variable failed.'
+        Write-ExitError 'Match for the ''$QtEnvVersion'' variable failed.' -NoNewlineBefore
     }
 
     $Script:QtMajorVersion = $Matches['major']
@@ -44,38 +54,52 @@ function Initialize-QtVersions
 # Check if the Qt version is >5
 function Test-QtVersion
 {
-    Write-Host 'Testing if the Qt version is >5' -ForegroundColor DarkYellow
+    Write-Progress 'Testing if the Qt version is >5'
 
     if ($Script:QtMajorVersion -gt 5) {
         return
     }
 
-    throw "The passed '$QtVersion' is not supported because it doesn't support the CMake build."
+    Write-ExitError ("The passed Qt version '$QtVersion' is not supported because it doesn't " +
+        'support the CMake build.')
 }
 
 # Check whether the passed QtVersion is installed
 function Test-QtVersionInstalled
 {
-    Write-Host "Testing whether Qt $QtVersion is installed" -ForegroundColor DarkYellow
+    Write-Progress "Testing whether Qt $QtVersion is installed"
 
     if (Test-Path "C:\Qt\$QtVersion") {
         return
     }
 
-    throw "The passed '$QtVersion' version is not installed in the 'C:\Qt\$QtVersion\' folder."
+    Write-ExitError ("The passed Qt version '$QtVersion' is not installed " +
+        "in the 'C:\Qt\$QtVersion\' folder.")
 }
 
 # Check whether the source files to build the Qt MySQL plugin are installed
 function Test-QtSourcesInstalled {
-    Write-Host "Testing whether Qt $QtVersion source files are installed" `
-        -ForegroundColor DarkYellow
+    Write-Progress "Testing whether Qt $QtVersion source files are installed"
 
     if (Test-Path "C:\Qt\$QtVersion\Src\qtbase\src\plugins\sqldrivers") {
         return
     }
 
-    throw "Source files to build the Qt MySQL plugin for the passed '$QtVersion' version are not " +
-        "installed in the 'C:\Qt\$QtVersion\Src\qtbase\src\plugins\sqldrivers' folder."
+    Write-ExitError ("Source files to build the Qt MySQL plugin for the passed " +
+        "Qt version '$QtVersion' are not installed " +
+        "in the 'C:\Qt\$QtVersion\Src\qtbase\src\plugins\sqldrivers' folder.")
+}
+
+# Check whether the MySQL Server is installed
+function Test-MySQLServerInstalled
+{
+    Write-Progress "Testing whether MySQL Server is installed"
+
+    if (Test-Path $Script:MySqlServerPath) {
+        return
+    }
+
+    Write-ExitError "The MySQL Server is not installed in the '$Script:MySqlServerPath' folder."
 }
 
 # Remove $QtVersion build folder if the $CleanBuild was passed
@@ -85,53 +109,52 @@ function Invoke-CleanBuild
         return
     }
 
-    Write-Host "Removing $QtVersion build folder (Clean build)" -ForegroundColor DarkYellow
+    Write-Progress "Removing $QtVersion build folder (Clean build)"
 
-    Remove-Item -Force -Recurse "$QtVersion"
+    Remove-Item -Force -Recurse "./$QtVersion" -ErrorAction SilentlyContinue
 }
 
 # Create the build folders for debug and release builds
 function New-BuildFolders
 {
-    Write-Host 'Creating build folders' -ForegroundColor DarkYellow
+    Write-Progress 'Creating build folders'
 
-    $created = $false
-    $relWithDebInfoPath = "$QtVersion/msvc2019_64/RelWithDebInfo"
+    $relWithDebInfoPath = Join-Path -Path $PWD -ChildPath "./$QtVersion/msvc2019_64/RelWithDebInfo"
 
     if (-not (Test-Path $relWithDebInfoPath)) {
-        mkdir -p $relWithDebInfoPath
-        $created = $true
+        New-Item -Type Directory -Path $relWithDebInfoPath | Out-Null
+
+        Write-Progress "${Script:BOL}Created the Release folder at: $relWithDebInfoPath"
     }
     else {
-        Write-Host "  Release folder already exists ($relWithDebInfoPath)" -ForegroundColor DarkRed
+        Write-Error "${Script:BOL}Release folder already exists ($relWithDebInfoPath)"
     }
 
-    $debugPath = "$QtVersion/msvc2019_64/Debug"
+    $debugPath = Join-Path -Path $PWD -ChildPath "$QtVersion/msvc2019_64/Debug"
 
     if (-not (Test-Path $debugPath)) {
-        mkdir -p $debugPath
-        $created = $true
+        New-Item -Type Directory -Path $debugPath | Out-Null
+
+        Write-Progress "${Script:BOL}Created the Debug folder at: $debugPath"
     }
     else {
-        Write-Host "  Debug folder already exists ($debugPath)" -ForegroundColor DarkRed
-    }
-
-    if ($created) {
-        NewLine
+        Write-Error "${Script:BOL}Debug folder already exists ($debugPath)"
     }
 }
 
 # Test whether a Qt environment initialization was successful
 function Test-BuildEnvironment
 {
-    Write-Host 'Testing whether the build environment is ready' -ForegroundColor DarkYellow
+    Newline
+    Write-Progress 'Testing whether the build environment is ready'
 
     # Test MSVC build environment
     if (-not (Test-Path env:VisualStudioVersion) -or `
         $env:VisualStudioVersion -ne $Script:VisualStudioVersion
     ) {
         $majorVersion = ($Script:VisualStudioVersion -split '\.', 2)[0]
-        throw "The Visual Studio '$majorVersion' build environment is not on the system path."
+        Write-ExitError ("The Visual Studio '$majorVersion' build environment is not " +
+            'on the system path.')
     }
 
     # Test Qt build environment
@@ -141,20 +164,21 @@ function Test-BuildEnvironment
     # [System.Version] $qtVersion = (Get-Command qmake -ErrorAction SilentlyContinue).Version
 
     if (-not $qtVersionOnPath -or $qtVersionOnPath -ne $QtVersion) {
-        throw "The requested Qt version '$QtVersion' is not on the system path."
+        Write-ExitError ("The requested Qt version '$QtVersion' is not on the system path.")
     }
 
-    Write-Host 'Build environment is ready 🥳' -ForegroundColor DarkGreen
+    Write-Info 'Build environment is ready 🥳'
+    Newline
 }
 
 # Initialize the Qt and MSVC2022 build environment if it's not already there
 function Initialize-QtEnvironment
 {
-    Write-Host 'Initializing Qt and MSVC2022 build environment' -ForegroundColor DarkYellow
+    Write-Progress 'Initializing Qt and MSVC2022 build environment'
 
     if (Test-Path env:WindowsSDKLibVersion) {
-        Write-Host ('The MSVC build environment already initialized. Exiting the Qt environment ' +
-            'initialization!') -ForegroundColor DarkRed
+        Write-Error ('The MSVC build environment already initialized. Exiting the Qt environment ' +
+            'initialization!')
 
         return
     }
@@ -176,7 +200,13 @@ Initialize-QtVersions
 Test-QtVersion
 Test-QtVersionInstalled
 Test-QtSourcesInstalled
+Test-MySQLServerInstalled
 
+# Initialize the Qt and MSVC2022 build environment if it's not already there
+Initialize-QtEnvironment
+Test-BuildEnvironment
+
+# Prepare the build folder
 Push-Location -StackName $STACK_NAME
 
 Set-Location "E:\c_libs\qt${Script:QtMajorVersion}_sqldrivers"
@@ -186,10 +216,6 @@ Invoke-CleanBuild
 # Create the build folders for debug and release builds
 New-BuildFolders
 
-# Initialize the Qt and MSVC2022 build environment if it's not already there
-Initialize-QtEnvironment
-Test-BuildEnvironment
-
 # Debug build
 # ---
 Write-Header 'Debug Build'
@@ -197,7 +223,7 @@ Write-Header 'Debug Build'
 Set-Location "$QtVersion/msvc2019_64/Debug"
 
 # Configure
-Write-Host 'Configuring...' -ForegroundColor DarkYellow
+Write-Progress 'Configuring...'
 
 qt-cmake `
     -S "C:/Qt/$QtVersion/Src/qtbase/src/plugins/sqldrivers" `
@@ -214,7 +240,7 @@ qt-cmake `
 NewLine
 
 # Build and install
-Write-Host 'Building and installing...' -ForegroundColor DarkYellow
+Write-Progress 'Building and installing...'
 
 cmake --build . --target install
 
@@ -224,7 +250,7 @@ Write-Header 'Release Build'
 
 Set-Location '../RelWithDebInfo'
 
-Write-Host 'Configuring...' -ForegroundColor DarkYellow
+Write-Progress 'Configuring...'
 
 qt-cmake `
     -S "C:/Qt/$QtVersion/Src/qtbase/src/plugins/sqldrivers" `
@@ -241,7 +267,7 @@ qt-cmake `
 NewLine
 
 # Build and install
-Write-Host 'Building and installing...' -ForegroundColor DarkYellow
+Write-Progress 'Building and installing...'
 
 cmake --build . --target install
 
@@ -249,5 +275,7 @@ cmake --build . --target install
 # ---
 Pop-Location -StackName $STACK_NAME
 
-Write-Host "The QMYSQL driver for Qt $QtVersion was built and installed successfully. 🥳" `
-    -ForegroundColor DarkGreen
+Write-Progress "Linked against the MySQL Server at: $Script:MySqlServerPath"
+
+Newline
+Write-Info "The QMYSQL driver for Qt $QtVersion was built and installed successfully. 🥳"
