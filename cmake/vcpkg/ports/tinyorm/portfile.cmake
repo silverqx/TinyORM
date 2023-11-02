@@ -28,8 +28,6 @@ vcpkg_cmake_configure(
         -DTINY_VCPKG:BOOL=ON
         -DVERBOSE_CONFIGURE:BOOL=ON
         ${FEATURE_OPTIONS}
-    OPTIONS_RELEASE
-        -DTINY_TARGET_TRIPLET:STRING=${TARGET_TRIPLET}
 )
 
 vcpkg_cmake_install()

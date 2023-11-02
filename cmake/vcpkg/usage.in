@@ -1,4 +1,4 @@
-The @TINY_PORT@:@TINY_TARGET_TRIPLET@ port provides the following CMake targets:
+The @TINY_PORT@ port provides the following CMake targets:
 
     find_package(@TinyOrm_ns@ @tinyOrmPackageVersion@ CONFIG REQUIRED)
     target_link_libraries(main PRIVATE @TinyOrm_ns@::@TinyOrm_target@)
