@@ -2087,6 +2087,29 @@ std::ofstream("E:/tmp/aa.txt", std::ios::out | std::ios::app) << "first\nsecond\
 std::ofstream("E:/tmp/aa.txt", std::ios::out | std::ios::app) << "another line\n";
 
 
+Connect to the MySQL server using the raw QSqlDatabase:
+-------------------------------------------------------
+
+auto db = QSqlDatabase::addDatabase("QMYSQL");
+db.setHostName(qEnvironmentVariable("DB_MYSQL_HOST"));
+db.setDatabaseName(qEnvironmentVariable("DB_MYSQL_DATABASE"));
+db.setUserName(qEnvironmentVariable("DB_MYSQL_USERNAME"));
+db.setPassword(qEnvironmentVariable("DB_MYSQL_PASSWORD"));
+db.setPort(qEnvironmentVariable("DB_MYSQL_PORT").toUInt());
+db.setConnectOptions(QStringLiteral("SSL_CERT=%1;SSL_KEY=%2;SSL_CA=%3")
+                     .arg(qEnvironmentVariable("DB_MYSQL_SSL_CERT"),
+                          qEnvironmentVariable("DB_MYSQL_SSL_KEY"),
+                          qEnvironmentVariable("DB_MYSQL_SSL_CA")));
+
+auto ok = db.open();
+if (ok) {
+    qDebug() << "yes";
+}
+else {
+    qDebug() << "no";
+}
+
+
 Invoke-Tests.ps1:
 -----------------
 
