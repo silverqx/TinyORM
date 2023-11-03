@@ -215,6 +215,9 @@ DatabaseConnection::statement(const QString &queryString, QVector<QVariant> bind
     return {std::move(queryResult), m_qtTimeZone, *m_queryGrammar, m_returnQDateTime};
 }
 
+/* No need to return Orm::SqlQuery because affectingStatement-s don't return any results
+   from the database like eg. select queries so there is no need to correct QDateTime
+   timezones. */
 std::tuple<int, QSqlQuery>
 DatabaseConnection::affectingStatement(const QString &queryString,
                                        QVector<QVariant> bindings)
