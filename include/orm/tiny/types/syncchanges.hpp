@@ -53,7 +53,7 @@ namespace Types
         using size_type              = typename ContainerType::size_type;
         using mapped_size_type       = typename mapped_type::size_type;
 
-        /*! Constructor. */
+        /*! Default constructor. */
         inline SyncChanges();
         /*! Default destructor. */
         inline ~SyncChanges() = default;

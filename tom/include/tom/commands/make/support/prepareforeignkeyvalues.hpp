@@ -30,7 +30,7 @@ namespace Support
         Q_DISABLE_COPY(PrepareForeignKeyValues)
 
     public:
-        /*! Default constructor. */
+        /*! Constructor. */
         PrepareForeignKeyValues(ModelCommand &modelCommand, QStringList &&values);
         /*! Default destructor. */
         inline ~PrepareForeignKeyValues() = default;

@@ -24,7 +24,7 @@ namespace Tom::Commands::Make::Support
         Q_DISABLE_COPY(PrepareBtmOptionValues)
 
     public:
-        /*! Default constructor. */
+        /*! Constructor. */
         inline PrepareBtmOptionValues(ModelCommand &modelCommand, V &&values);
         /*! Default destructor. */
         inline ~PrepareBtmOptionValues() = default;
