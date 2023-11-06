@@ -55,7 +55,7 @@ namespace Types
 
         /*! Constructor. */
         inline SyncChanges();
-        /*! Default Destructor. */
+        /*! Default destructor. */
         inline ~SyncChanges() = default;
 
         /*! Copy constructor. */
