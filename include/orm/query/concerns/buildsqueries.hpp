@@ -23,13 +23,13 @@ namespace Orm::Query::Concerns
 
         /*! Copy constructor. */
         inline BuildsQueries(const BuildsQueries &) = default;
-        /*! Deleted copy assignment operator (QueryBuilder class constains reference and
+        /*! Deleted copy assignment operator (QueryBuilder class contains reference and
             const). */
         BuildsQueries &operator=(const BuildsQueries &) = delete;
 
         /*! Move constructor. */
         inline BuildsQueries(BuildsQueries &&) = default;
-        /*! Deleted move assignment operator (QueryBuilder class constains reference and
+        /*! Deleted move assignment operator (QueryBuilder class contains reference and
             const). */
         BuildsQueries &operator=(BuildsQueries &&) = delete;
 

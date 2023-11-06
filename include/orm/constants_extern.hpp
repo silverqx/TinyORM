@@ -12,7 +12,7 @@ TINY_SYSTEM_HEADER
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
-/*! Namespace constains common chars and strings. */
+/*! Namespace contains common chars and strings. */
 namespace Orm::Constants
 {
 

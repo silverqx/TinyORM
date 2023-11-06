@@ -58,12 +58,12 @@ namespace Orm::Query
 
         /*! Copy constructor. */
         inline Builder(const Builder &) = default;
-        /*! Deleted copy assignment operator (class constains reference and const). */
+        /*! Deleted copy assignment operator (class contains reference and const). */
         Builder &operator=(const Builder &) = delete;
 
         /*! Move constructor. */
         inline Builder(Builder &&) noexcept = default;
-        /*! Deleted move assignment operator (class constains reference and const). */
+        /*! Deleted move assignment operator (class contains reference and const). */
         Builder &operator=(Builder &&) = delete;
 
         /* Retrieving results */
