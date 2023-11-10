@@ -2625,7 +2625,7 @@ void tst_PostgreSQL_SchemaBuilder::drop_StoredAs() const
                 .table(Firewalls, [](Blueprint &table)
         {
             // Because of this the CommandDefinition::storedAs must be std::optional
-            table.integer("foo").storedAs(QString()).nullable().change();
+            table.integer("foo").storedAs({}).nullable().change();
         });
     });
 
