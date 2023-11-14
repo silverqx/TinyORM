@@ -1,6 +1,7 @@
 TEMPLATE = subdirs
 
 subdirsList = \
+    drivers \
     orm \
     others \
 

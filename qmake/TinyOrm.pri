@@ -93,6 +93,8 @@ tiny_add_system_includepath($$quote($$TINYORM_SOURCE_TREE/include/))
 !disable_tom: \
     tiny_add_system_includepath($$quote($$TINYTOM_SOURCE_TREE/include/))
 
+tiny_add_system_includepath($$quote($$TINYORM_SOURCE_TREE/drivers/include/))
+
 # Don't check if exists() because QtCreator depends on these LIBS paths it adds them
 # on the PATH or LD_LIBRARY_PATH during Run Project
 !isEmpty(TINYORM_BUILD_TREE) {
