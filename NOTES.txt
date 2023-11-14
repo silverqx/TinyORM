@@ -2197,6 +2197,205 @@ else {
 }
 
 
+MySQL C connector - invoked functions:
+--------------------------------------
+
+Note about invoked mysql_xyz() function during normal and prepared queries.
+
+Common for both normal and prepared queries
+--
+
+ - creating connection - MySqlDriver::open()
+
+MySqlDriverPrivate::MYSQL *mysql = nullptr
+mysql_library_init(0, nullptr, nullptr)
+mysql = mysql_init(nullptr)
+mysql_options()
+mysql_real_connect()
+mysql_set_character_set(d->mysql, cs->csname)
+mysql_select_db(d->mysql, db.toUtf8().constData())
+// check if this client and server version of MySQL/MariaDB support prepared statements
+checkPreparedQueries(MYSQL *mysql)
+  mysql_stmt_init(mysql)
+  mysql_stmt_prepare()
+  mysql_stmt_param_count()
+#if QT_CONFIG(thread)
+  mysql_thread_init();
+#endif
+
+ - before, everything is cleared and reset
+
+   - inside SqlQuery::exec("select ...")
+   - OR
+   - inside SqlQuery::prepare("select ...")
+     - there is the same reset logic like in the exec()
+   - there are two branches one if no query was executed before and other is any query
+     was executed before like:
+
+mysql_free_result(d->result)
+mysql_next_result(mysql) == 0
+  MYSQL_RES *res = mysql_store_result(mysql)
+  mysql_free_result(res)
+mysql_stmt_close(d->stmt)
+mysql_free_result(d->meta)
+
+NORMAL queries (non-prepared)
+--
+
+ - executing normal queries - SqlQuery::exec("select ...")
+
+mysql_real_query()
+d->result = mysql_store_result(mysql)
+mysql_field_count(mysql)
+int numFields = mysql_field_count(mysql)
+// For SELECT statements, mysql_affected_rows() works like mysql_num_rows()
+d->rowsAffected = mysql_affected_rows(mysql)
+
+isSelect()
+  MYSQL_FIELD* field = mysql_fetch_field_direct(d->result, i)
+  d->fields[i].type = qDecodeMYSQLType(field->type, field->flags)
+  d->fields[i].myField = field
+
+setAt(QSql::BeforeFirstRow);
+setActive(true)
+
+ - obtaining results for normal queries - SqlQuery::next()
+   - looping over rows (result sets)
+
+// Seeks to an arbitrary row in a query result set by the i (index)
+mysql_data_seek(d->result, i)
+[MYSQL_ROW] d->row = mysql_fetch_row(d->result)
+
+ - obtaining a value from positioned result set for normal queries - SqlQuery::value()
+
+// Following creates SqlRecord (result row of SqlField-s)
+MYSQL_RES *res = d->result
+
+if (!mysql_errno(mysql))
+  mysql_field_seek(res, 0)
+  MYSQL_FIELD* field = mysql_fetch_field(res)
+  while (field)
+    // qToField converts MySQL field to the Orm::Drivers::SqlField
+    [QList<SqlField>] info.append(qToField(field));
+    field = mysql_fetch_field(res);
+mysql_field_seek(res, 0)
+[SqlRecord] return info
+
+MySqlResult::data()
+const MySqlResultPrivate::MyField &f = d->fields.at(field);
+QString val
+fieldLength = mysql_fetch_lengths(d->result)[field]
+// ALL MySQL types are fetches into the QString val variable (weird but it work well)
+// except the QMetaType::QByteArray and converted appropriately by the f.type.id() and
+// returned as the QVariant
+switch (f.type.id())
+case QMetaType::LongLong:
+    [QVariant] return QVariant(val.toLongLong())
+case QMetaType::QDate:
+    [QVariant] return qDateFromString(val)
+
+
+PREPARED queries
+--
+
+ - preparing prepared queries and IN bindings metadata - SqlQuery::prepare("select ...")
+
+d->stmt = mysql_stmt_init(mysql)
+r = mysql_stmt_prepare(d->stmt)
+paramCount = mysql_stmt_param_count(d->stmt)
+d->outBinds = new MYSQL_BIND[paramCount]()
+
+bindInValues()
+meta = mysql_stmt_result_metadata(stmt)
+fields.resize(mysql_num_fields(meta))
+// Zero memory
+inBinds = new MYSQL_BIND[fields.size()]
+memset(inBinds, 0, fields.size() * sizeof(MYSQL_BIND))
+
+const MYSQL_FIELD *fieldInfo = mysql_fetch_field(meta))
+  here are set all field/column metadata from the fieldInfo to the inBinds
+  MYSQL_BIND *bind = &inBinds[i]; it prepares this inBinds structure for binding prepared
+  values
+
+ - now we can add/bind bindings
+   - eg. the addBindValue() add positional binding
+
+addBindValue(val)
+d->binds = PositionalBinding
+d->values[index] = val
+++d->bindCount
+
+ - executing prepared queries - SqlQuery::exec()
+   - the exec() method is different for normal and prepared queries
+     - normal queries call SqlQuery::exec()
+     - prepared queries call MySqlResult::exec()
+
+const QList<QVariant> values = boundValues()
+r = mysql_stmt_reset(d->stmt)
+
+if (mysql_stmt_param_count(d->stmt) > 0 &&
+    mysql_stmt_param_count(d->stmt) == (uint)values.size())
+  MYSQL_BIND* currBind = &d->outBinds[i];
+
+  here are set all needed metadata from the val QVariant value to the outBinds
+  mysql_stmt_bind_param() is used to bind input data for the parameter markers in the SQL statement
+  that was passed to mysql_stmt_prepare(). It uses MYSQL_BIND structures to supply the data.
+  bind is the address of an array of MYSQL_BIND structures.
+
+  r = mysql_stmt_bind_param(d->stmt, d->outBinds);
+
+// When we have all bindings prepared we can execute the prepared query
+r = mysql_stmt_execute(d->stmt)
+
+// Now we need to bind columns to output buffers 🫤😲 It's really complex ❗
+// mysql_stmt_bind_result() is used to associate (that is, bind) output columns in the result set
+// to data buffers and length buffers.
+// All columns must be bound to buffers prior to calling mysql_stmt_fetch()
+d->rowsAffected = mysql_stmt_affected_rows(d->stmt)
+if (isSelect())
+  r = mysql_stmt_bind_result(d->stmt, d->inBinds)
+
+// Some special logic for blobs
+// causes mysql_stmt_store_result() to update the metadata MYSQL_FIELD->max_length value
+if (d->hasBlobs)
+  mysql_stmt_attr_set(d->stmt, STMT_ATTR_UPDATE_MAX_LENGTH, &update_max_length)
+
+r = mysql_stmt_store_result(d->stmt)
+
+// Again some special logic for blobs (to avoid crashes on MySQL <4.1.8)
+r = mysql_stmt_bind_result(d->stmt, d->inBinds)
+
+Now should be everything ready and we can start obtaining result sets and values
+
+ - obtaining results for prepared queries - SqlQuery::next()
+   - looping over rows (result sets)
+   - prepared queries has different set of functions for this
+
+// Seeks to an arbitrary row in a query result set by the i (index)
+mysql_stmt_data_seek(d->stmt, i)
+int nRC = mysql_stmt_fetch(d->stmt)
+
+ - obtaining a value from positioned result set for prepared queries - SqlQuery::value()
+
+// Following creates SqlRecord (result row of SqlField-s)
+// Prepared queries use the d->meta instead of d->result, the rest is the same
+MYSQL_RES *res = d->meta
+
+if (!mysql_errno(mysql))
+  mysql_field_seek(res, 0)
+  MYSQL_FIELD* field = mysql_fetch_field(res)
+  while (field)
+    // qToField converts MySQL field to the Orm::Drivers::SqlField
+    [QList<SqlField>] info.append(qToField(field));
+    field = mysql_fetch_field(res);
+mysql_field_seek(res, 0)
+[SqlRecord] return info
+
+The beginning of this last step is different for prepared queries and it also do converting
+here and EARLY returns.
+The rest of converting logic is same for column type that were not processed in the step above.
+
+
 Invoke-Tests.ps1:
 -----------------
 
