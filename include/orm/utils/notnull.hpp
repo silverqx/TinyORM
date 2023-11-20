@@ -84,9 +84,8 @@ namespace Private
         inline NotNull(const NotNull &) = default;
         inline NotNull &operator=(const NotNull &) = default;
 
-        /* Don't declare = delete for move constructors! They prevent move operations. */
-//        inline NotNull(NotNull &&) = delete;
-//        inline NotNull &operator=(NotNull &&) = delete;
+        inline NotNull(NotNull &&) = default;
+        inline NotNull &operator=(NotNull &&) = default;
 
         /*! Return the managed pointer. */
         constexpr Private::value_or_reference_return_t<T> get() const // NOLINT(readability-const-return-type)
