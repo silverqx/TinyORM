@@ -2399,6 +2399,21 @@ https://www.youtube.com/watch?v=A7sVFJLJM-A&t=2450s&ab_channel=CppCon
  - the best example is in the cpp std::scoped_lock documentation:
    https://en.cppreference.com/w/cpp/thread/scoped_lock
 
+Shared/exclusive (read/write) mutex-es:
+
+ - std::shared_mutex - use it for this purposes
+ - std::shared_lock locks shared_mutex in the shared/read mode
+ - std::scoped_lock and std::unique_lock locks shared_mutex in the exclusive/write mode
+ - std::scoped_lock can be used with shared_mutex-es the same way as the std::unique_lock
+ - also everything described in the section above is true for the shared_mutex
+   in the exclusive/write mode but not for the std::shared_lock (it's special)
+
+Qt mappings:
+
+ - QReadWriteLock = std::shared_mutex
+ - QReadLocker    = std::shared_lock
+ - QWriteLocker   = std::scoped_lock or std::unique_lock
+
 
 Serialization - Appending Values To JSON:
 -----------------------------------------
