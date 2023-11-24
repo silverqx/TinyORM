@@ -5,7 +5,7 @@
 #include <orm/macros/systemheader.hpp>
 TINY_SYSTEM_HEADER
 
-#include "orm/drivers/macros/includemysqlh.hpp" // IWYU pragma: keep
+#include "orm/drivers/macros/includemysqlh_p.hpp" // IWYU pragma: keep
 
 #include "orm/drivers/sqldriver_p.hpp"
 
@@ -14,7 +14,7 @@ TINYORM_BEGIN_COMMON_NAMESPACE
 namespace Orm::Drivers::MySql
 {
 
-    class MySqlDriverPrivate : public SqlDriverPrivate
+    class MySqlDriverPrivate final : public SqlDriverPrivate
     {
         Q_DISABLE_COPY_MOVE(MySqlDriverPrivate)
 
@@ -22,7 +22,7 @@ namespace Orm::Drivers::MySql
         /*! Default constructor. */
         inline MySqlDriverPrivate();
         /*! Default destructor. */
-        inline ~MySqlDriverPrivate() = default;
+        inline ~MySqlDriverPrivate() final = default;
 
         static void setOptionFlag(uint &optionFlags, QStringView option);
         static bool setOptionString(MYSQL *mysql, mysql_option option, QStringView value);

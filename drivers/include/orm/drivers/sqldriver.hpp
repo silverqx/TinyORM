@@ -11,8 +11,6 @@ TINY_SYSTEM_HEADER
 #include <orm/macros/commonnamespace.hpp>
 #include <orm/macros/export.hpp>
 
-class QSqlDatabase;
-
 TINYORM_BEGIN_COMMON_NAMESPACE
 
 namespace Orm::Drivers
@@ -28,9 +26,6 @@ namespace Orm::Drivers
     {
         Q_DISABLE_COPY_MOVE(SqlDriver)
         Q_DECLARE_PRIVATE(SqlDriver)
-
-        friend QSqlDatabase;
-        friend class SqlResultPrivate;
 
     protected:
         /*! Protected constructor. */
@@ -89,6 +84,7 @@ namespace Orm::Drivers
         virtual std::unique_ptr<SqlResult> createResult() const = 0;
 
         virtual QVariant handle() const = 0;
+        virtual QString driverName() const = 0;
 
         virtual bool beginTransaction() = 0;
         virtual bool commitTransaction() = 0;

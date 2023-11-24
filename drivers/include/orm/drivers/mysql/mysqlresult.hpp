@@ -23,7 +23,7 @@ namespace Orm::Drivers::MySql
 
     public:
         /*! Constructor. */
-        explicit MySqlResult(const MySqlDriver *db);
+        explicit MySqlResult(const MySqlDriver *driver);
         /*! Virtual destructor. */
         ~MySqlResult() final;
 

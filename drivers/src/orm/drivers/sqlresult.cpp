@@ -17,6 +17,7 @@ SqlResult::SqlResult(std::unique_ptr<SqlResultPrivate> &&dd)
 {
     Q_D(SqlResult);
 
+    // CUR drivers why checked so late? silverqx
     // The d->sqldriver must always be set
     Q_ASSERT(d->sqldriver != nullptr);
 

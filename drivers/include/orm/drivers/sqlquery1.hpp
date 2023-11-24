@@ -2,11 +2,10 @@
 #ifndef ORM_DRIVERS_SQLQUERY1_HPP
 #define ORM_DRIVERS_SQLQUERY1_HPP
 
-#include <QSqlDatabase>
-
 #include <orm/macros/commonnamespace.hpp>
 #include <orm/macros/export.hpp>
 
+#include "orm/drivers/sqldatabase.hpp"
 #include "orm/drivers/sqlresult.hpp"
 
 TINYORM_BEGIN_COMMON_NAMESPACE
@@ -14,9 +13,9 @@ TINYORM_BEGIN_COMMON_NAMESPACE
 namespace Orm::Drivers
 {
 
+    class SqlDatabase;
     class SqlDriver;
     class SqlDriverError;
-//    class SqlResult;
     class SqlRecord;
     class SqlQueryPrivate;
 
@@ -25,7 +24,11 @@ namespace Orm::Drivers
         Q_DISABLE_COPY(SqlQuery1)
 
     public:
-        explicit SqlQuery1(const QSqlDatabase &connection = {});
+        /*! Default constructor. */
+        SqlQuery1();
+        /*! Converting constructor from the SqlDatabase. */
+        explicit SqlQuery1(const SqlDatabase &connection);
+        /*! Converting constructor from the std::unique_ptr<SqlResult>. */
         explicit SqlQuery1(std::unique_ptr<SqlResult> &&result);
 
         /*! Move constructor. */
@@ -92,6 +95,7 @@ namespace Orm::Drivers
         void clear();
 
     private:
+        /* Result sets */
         /*! Normal seek. */
         bool seekArbitrary(int index, int &actualIdx);
         /*! Relative seek. */
@@ -99,18 +103,13 @@ namespace Orm::Drivers
         /*! Map the given index to the fetch-related methods that are available. */
         bool mapSeekToFetch(int actualIdx);
 
-        static std::unique_ptr<SqlResult> initSqlResult(const QSqlDatabase &connection);
+        /* Constructors */
+        static std::unique_ptr<SqlResult> initSqlResult();
+        static std::unique_ptr<SqlResult> initSqlResult(const SqlDatabase &connection);
 
         /* Data members */
         std::unique_ptr<SqlResult> m_sqlResult;
     };
-
-    /* public */
-
-    const SqlDriver *SqlQuery1::driver() const noexcept
-    {
-        return m_sqlResult->driver();
-    }
 
 } // namespace Orm::Drivers
 
