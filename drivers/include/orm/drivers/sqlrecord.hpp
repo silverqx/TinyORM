@@ -88,7 +88,8 @@ TINYORM_END_COMMON_NAMESPACE
 
 #ifndef QT_NO_DEBUG_STREAM
 #  ifdef TINYORM_COMMON_NAMESPACE
-SHAREDLIB_EXPORT QDebug operator<<(QDebug debug, const TINYORM_COMMON_NAMESPACE::Orm::Drivers::SqlRecord &record);
+SHAREDLIB_EXPORT QDebug
+operator<<(QDebug debug, const TINYORM_COMMON_NAMESPACE::Orm::Drivers::SqlRecord &record);
 #  else
 SHAREDLIB_EXPORT QDebug operator<<(QDebug debug, const Orm::Drivers::SqlRecord &record);
 #  endif

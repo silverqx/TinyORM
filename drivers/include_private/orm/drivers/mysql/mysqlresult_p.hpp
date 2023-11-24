@@ -5,7 +5,7 @@
 #include <orm/macros/systemheader.hpp>
 TINY_SYSTEM_HEADER
 
-#include "orm/drivers/macros/includemysqlh.hpp" // IWYU pragma: keep
+#include "orm/drivers/macros/includemysqlh_p.hpp" // IWYU pragma: keep
 
 #include "orm/drivers/mysql/mysqldriver.hpp"
 #include "orm/drivers/sqlresult_p.hpp"

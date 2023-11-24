@@ -23,6 +23,9 @@ namespace Orm::Drivers::MySql
         Q_DISABLE_COPY_MOVE(MySqlDriver)
         Q_DECLARE_PRIVATE(MySqlDriver)
 
+        /* To access MySqlDriver::d_func() through the MySqlResultPrivate::drv_d_func(),
+           what means that the MySqlResultPrivate will have access
+           to the MySqlDriverPrivate. */
         friend class MySqlResultPrivate;
 
     public:
@@ -40,6 +43,7 @@ namespace Orm::Drivers::MySql
         std::unique_ptr<SqlResult> createResult() const final;
 
         QVariant handle() const final;
+        inline QString driverName() const final;
 
         bool isIdentifierEscaped(const QString &identifier,
                                  IdentifierType type) const final;
@@ -49,6 +53,13 @@ namespace Orm::Drivers::MySql
         bool commitTransaction() final;
         bool rollbackTransaction() final;
     };
+
+    /* public */
+
+    QString MySqlDriver::driverName() const
+    {
+        return QStringLiteral("QMYSQL");
+    }
 
 } // namespace Orm::Drivers::MySql
 

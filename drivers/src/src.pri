@@ -4,6 +4,9 @@ sourcesList += \
     $$PWD/orm/drivers/mysql/mysqlresult.cpp \
     $$PWD/orm/drivers/mysql/mysqlresult_p.cpp \
     $$PWD/orm/drivers/mysql/mysqlutils_p.cpp \
+    $$PWD/orm/drivers/sqldatabase.cpp \
+    $$PWD/orm/drivers/sqldatabase_p.cpp \
+    $$PWD/orm/drivers/sqldatabasemanager.cpp \
     $$PWD/orm/drivers/sqldriver.cpp \
     $$PWD/orm/drivers/sqldrivererror.cpp \
     $$PWD/orm/drivers/sqlfield.cpp \

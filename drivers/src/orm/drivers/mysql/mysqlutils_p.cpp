@@ -1,6 +1,6 @@
 #include "orm/drivers/mysql/mysqlutils_p.hpp"
 
-#include "orm/drivers/macros/includemysqlh.hpp" // IWYU pragma: keep
+#include "orm/drivers/macros/includemysqlh_p.hpp" // IWYU pragma: keep
 
 #include "orm/drivers/sqlfield.hpp"
 

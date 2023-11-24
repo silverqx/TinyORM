@@ -27,6 +27,7 @@ namespace Orm::Drivers
         Q_DISABLE_COPY_MOVE(SqlResult)
         Q_DECLARE_PRIVATE(SqlResult)
 
+        // To access practically everything, all logic is defined in the SqlResult
         friend class SqlQuery1;
 
     protected:

@@ -32,8 +32,8 @@ namespace Orm::Drivers::MySql
 
 /* public */
 
-MySqlResult::MySqlResult(const MySqlDriver *const db)
-    : SqlResult(std::make_unique<MySqlResultPrivate>(db))
+MySqlResult::MySqlResult(const MySqlDriver *const driver)
+    : SqlResult(std::make_unique<MySqlResultPrivate>(driver))
 {}
 
 MySqlResult::~MySqlResult()

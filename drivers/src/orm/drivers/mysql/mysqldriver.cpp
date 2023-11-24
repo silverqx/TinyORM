@@ -47,6 +47,7 @@ bool MySqlDriver::open(
         const QString &host, const int port, const QString &options)
 {
     Q_D(MySqlDriver);
+
     if (isOpen())
         close();
 

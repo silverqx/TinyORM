@@ -2,14 +2,12 @@
 
 //#define QT_DEBUG_SQL
 
-#include <QSqlDatabase>
-
 #ifdef QT_DEBUG_SQL
 #  include <QDebug>
 #  include <QElapsedTimer>
 #endif
 
-#include "orm/drivers/mysql/mysqldriver.hpp"
+#include "orm/drivers/sqldatabase.hpp"
 #include "orm/drivers/sqldrivererror.hpp"
 #include "orm/drivers/sqlrecord.hpp"
 #include "orm/drivers/sqlresult.hpp"
@@ -22,13 +20,20 @@ namespace Orm::Drivers
 
 /* public */
 
-SqlQuery1::SqlQuery1(const QSqlDatabase &connection)
+SqlQuery1::SqlQuery1()
+    : m_sqlResult(initSqlResult())
+{}
+
+SqlQuery1::SqlQuery1(const SqlDatabase &connection)
     : m_sqlResult(initSqlResult(connection))
 {}
 
 SqlQuery1::SqlQuery1(std::unique_ptr<SqlResult> &&result)
     : m_sqlResult(std::move(result))
 {}
+
+//SqlQuery1::SqlQuery1(SqlQuery1 &&) noexcept = default;
+//SqlQuery1 &SqlQuery1::operator=(SqlQuery1 &&) noexcept = default;
 
 /* The destructor must be in the cpp file because the m_sqlResult is unique_ptr.
    If the destructor is inline then the compilation fails because a unique_ptr can't
@@ -78,6 +83,11 @@ void
 SqlQuery1::setNumericalPrecisionPolicy(const QSql::NumericalPrecisionPolicy precision)
 {
     m_sqlResult->setNumericalPrecisionPolicy(precision);
+}
+
+const SqlDriver *SqlQuery1::driver() const noexcept
+{
+    return m_sqlResult->driver();
 }
 
 /* Normal queries */
@@ -454,23 +464,26 @@ bool SqlQuery1::mapSeekToFetch(const int actualIdx)
     return false;
 }
 
-std::unique_ptr<SqlResult> SqlQuery1::initSqlResult(const QSqlDatabase &connection)
+/* Constructors */
+
+std::unique_ptr<SqlResult> SqlQuery1::initSqlResult()
 {
-    auto connectionTmp = connection;
+    /* Instantiate the default connection if a connection was not passed
+       to the constructor (needed to obtain the SqlResult instance). */
+    return initSqlResult(
+                SqlDatabase::database(SqlDatabase::defaultConnection, false));
 
-    /* Instantiate the default connection if the given connection isn't valid, is needed
-       to obtain the SqlResult instance. */
-    if (!connectionTmp.isValid())
-        connectionTmp = QSqlDatabase::database(
-                            QLatin1StringView(QSqlDatabase::defaultConnection), false);
+}
 
-    if (!connectionTmp.isValid())
+std::unique_ptr<SqlResult> SqlQuery1::initSqlResult(const SqlDatabase &connection)
+{
+    // Nothing to do
+    if (!connection.isValid())
         // CUR drivers throw is the default connection is not valid silverqx
         throw std::exception("No DB connection available.");
 
     // Get the SqlResult instance
-    return MySql::MySqlDriver().createResult();
-//    return connectionTmp.driver()->createResult();
+    return connection.driver()->createResult();
 
 }
 

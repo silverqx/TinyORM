@@ -1,0 +1,248 @@
+#include "orm/drivers/sqldatabase.hpp"
+
+#ifndef QT_NO_DEBUG_STREAM
+#  include <QDebug>
+#endif
+
+#include <orm/macros/likely.hpp>
+
+#include "orm/drivers/sqldatabase_p.hpp"
+#include "orm/drivers/sqldriver.hpp"
+#include "orm/drivers/sqldrivererror.hpp"
+
+TINYORM_BEGIN_COMMON_NAMESPACE
+
+namespace Orm::Drivers
+{
+
+/* protected */
+
+SqlDatabase::SqlDatabase(const QString &driver)
+    : d(SqlDatabasePrivate::createSqlDatabasePrivate(driver))
+{}
+
+SqlDatabase::SqlDatabase(std::unique_ptr<SqlDriver> &&driver)
+    : d(SqlDatabasePrivate::createSqlDatabasePrivate(std::move(driver)))
+{}
+
+/* public */
+
+SqlDatabase::~SqlDatabase()
+{
+    // CUR drivers finish multi-thread (but SqlDatabase can be used only from thread where it was created) silverqx
+    if (d.use_count() == 1)
+        close();
+}
+
+/* Database connection */
+
+bool SqlDatabase::open()
+{
+    return d->driver()
+             .open(d->databaseName, d->username, d->password, d->hostName, d->port,
+                   d->connectionOptions);
+}
+
+bool SqlDatabase::open(const QString &username, const QString &password)
+{
+    /* This method doesn't store the given password. Instead, the password is passed
+       directly to the driver to open the connection and is then discarded.
+       Because of this, only the username setter is called, all other setters must be
+       called before the open() method. */
+
+    setUserName(username);
+
+    return d->driver()
+             .open(d->databaseName, username, password, d->hostName, d->port,
+                   d->connectionOptions);
+}
+
+void SqlDatabase::close()
+{
+    d->driver().close();
+}
+
+/* Getters / Setters */
+
+bool SqlDatabase::isOpen() const
+{
+    return d->driver().isOpen();
+}
+
+bool SqlDatabase::isOpenError() const
+{
+    return d->driver().isOpenError();
+}
+
+bool SqlDatabase::isValid() const
+{
+    /* The SqlDatabase connection can be invalid when you have a local copy and call
+       the reset method (this is the only case).
+       Isn't possible to create invalid SqlDatabase instance because the default
+       constructor is private. */
+    return d->isDriverValid();
+}
+
+SqlDriverError SqlDatabase::lastError() const
+{
+    return d->driver().lastError();
+}
+
+QString SqlDatabase::driverName() const
+{
+    return d->driverName;
+}
+
+QString SqlDatabase::connectionName() const
+{
+    return d->connectionName;
+}
+
+QString SqlDatabase::hostName() const
+{
+    return d->hostName;
+}
+
+void SqlDatabase::setHostName(const QString &host)
+{
+    d->hostName = host;
+}
+
+int SqlDatabase::port() const
+{
+    return d->port;
+}
+
+void SqlDatabase::setPort(int port)
+{
+    d->port = port;
+}
+
+QString SqlDatabase::databaseName() const
+{
+    return d->databaseName;
+}
+
+void SqlDatabase::setDatabaseName(const QString &database)
+{
+    d->databaseName = database;
+}
+
+QString SqlDatabase::userName() const
+{
+    return d->username;
+}
+
+void SqlDatabase::setUserName(const QString &username)
+{
+    d->username = username;
+}
+
+QString SqlDatabase::password() const
+{
+    return d->password;
+}
+
+void SqlDatabase::setPassword(const QString &password)
+{
+    d->password = password;
+}
+
+QString SqlDatabase::connectOptions() const
+{
+    return d->connectionOptions;
+}
+
+void SqlDatabase::setConnectOptions(const QString &options)
+{
+    d->connectionOptions = options;
+}
+
+QSql::NumericalPrecisionPolicy SqlDatabase::numericalPrecisionPolicy() const
+{
+    if (d->isDriverValid()) T_LIKELY
+        // The d->sqldriver is correct because of the d->isDriverValid() check
+        return d->sqldriver->defaultNumericalPrecisionPolicy();
+
+    else T_UNLIKELY
+        return d->precisionPolicy;
+}
+
+void
+SqlDatabase::setNumericalPrecisionPolicy(const QSql::NumericalPrecisionPolicy precision)
+{
+    if (d->isDriverValid())
+        // The d->sqldriver is correct because of the d->isDriverValid() check
+        d->sqldriver->setDefaultNumericalPrecisionPolicy(precision);
+
+    d->precisionPolicy = precision;
+}
+
+std::shared_ptr<SqlDriver> SqlDatabase::driver() const noexcept
+{
+    return d->sqldriver;
+}
+
+/* Transactions */
+
+bool SqlDatabase::transaction()
+{
+    // Nothing to do, no transactions support
+    if (!d->driver().hasFeature(SqlDriver::Transactions))
+        return false;
+
+    return d->driver().beginTransaction();
+}
+
+bool SqlDatabase::commit()
+{
+    // Nothing to do, no transactions support
+    if (!d->driver().hasFeature(SqlDriver::Transactions))
+        return false;
+
+    return d->driver().commitTransaction();
+}
+
+bool SqlDatabase::rollback()
+{
+    // Nothing to do, no transactions support
+    if (!d->driver().hasFeature(SqlDriver::Transactions))
+        return false;
+
+    return d->driver().rollbackTransaction();
+}
+
+} // namespace Orm::Drivers
+
+TINYORM_END_COMMON_NAMESPACE
+
+#ifndef QT_NO_DEBUG_STREAM
+#  ifdef TINYORM_COMMON_NAMESPACE
+SHAREDLIB_EXPORT QDebug
+operator<<(QDebug debug,
+           const TINYORM_COMMON_NAMESPACE::Orm::Drivers::SqlDatabase &connection)
+#  else
+SHAREDLIB_EXPORT QDebug
+operator<<(QDebug debug, const Orm::Drivers::SqlDatabase &connection)
+#  endif
+{
+    QDebugStateSaver saver(debug);
+    debug.nospace();
+    debug.noquote();
+
+    if (!connection.isValid()) {
+        debug << "SqlDatabase(invalid)";
+        return debug;
+    }
+
+    debug << "SqlDatabase("
+          << "driver=\""   << connection.driverName()   << "\", "
+          << "database=\"" << connection.databaseName() << "\", "
+          << "host=\""     << connection.hostName()     << "\", "
+          << "port="       << connection.port()         << ", "
+          << "user=\""     << connection.userName()     << "\", "
+          << "open="       << connection.isOpen()       << ')';
+
+    return debug;
+}
+#endif

@@ -11,6 +11,7 @@ namespace Orm::Drivers
 /* public */
 
 SqlResultPrivate::SqlResultPrivate(const SqlDriver *const driver)
+    // The const_cast() allows to have the MySqlDriver::createResult() method const
     : sqldriver(const_cast<SqlDriver *>(driver))
 {}
 
