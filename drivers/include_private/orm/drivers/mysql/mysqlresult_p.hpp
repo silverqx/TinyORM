@@ -7,6 +7,7 @@ TINY_SYSTEM_HEADER
 
 #include "orm/drivers/macros/includemysqlh_p.hpp" // IWYU pragma: keep
 
+#include "orm/drivers/macros/declaresqldriverprivate_p.hpp"
 #include "orm/drivers/mysql/mysqldriver.hpp"
 #include "orm/drivers/sqlresult_p.hpp"
 
@@ -26,7 +27,7 @@ namespace Orm::Drivers::MySql
         Q_DISABLE_COPY_MOVE(MySqlResultPrivate)
 
     public:
-        Q_DECLARE_SQLDRIVER_PRIVATE(MySqlDriver)
+        TINY_DECLARE_SQLDRIVER_PRIVATE(MySqlDriver)
 
         /*! Inherit constructors. */
         using SqlResultPrivate::SqlResultPrivate;

@@ -68,7 +68,7 @@ namespace Orm::Drivers
         QSql::NumericalPrecisionPolicy numericalPrecisionPolicy() const;
         void setNumericalPrecisionPolicy(QSql::NumericalPrecisionPolicy precision);
 
-        const SqlDriver *driver() const noexcept;
+        std::weak_ptr<const SqlDriver> driver() const noexcept;
 
         /* Normal queries */
         virtual bool exec(const QString &query) = 0;
@@ -114,6 +114,9 @@ namespace Orm::Drivers
 
         /* Data members */
         std::unique_ptr<SqlResultPrivate> d_ptr;
+
+    private:
+        std::weak_ptr<SqlDriver> driver() noexcept;
     };
 
     /* protected */

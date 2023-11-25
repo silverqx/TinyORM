@@ -178,7 +178,7 @@ SqlDatabase::setNumericalPrecisionPolicy(const QSql::NumericalPrecisionPolicy pr
     d->precisionPolicy = precision;
 }
 
-std::shared_ptr<SqlDriver> SqlDatabase::driver() const noexcept
+std::weak_ptr<SqlDriver> SqlDatabase::driver() const noexcept
 {
     return d->sqldriver;
 }

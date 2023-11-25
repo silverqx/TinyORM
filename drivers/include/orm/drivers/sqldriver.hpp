@@ -81,7 +81,8 @@ namespace Orm::Drivers
         QSql::NumericalPrecisionPolicy defaultNumericalPrecisionPolicy() const;
         void setDefaultNumericalPrecisionPolicy(QSql::NumericalPrecisionPolicy precision);
 
-        virtual std::unique_ptr<SqlResult> createResult() const = 0;
+        virtual std::unique_ptr<SqlResult>
+        createResult(const std::weak_ptr<SqlDriver> &driver) const = 0;
 
         virtual QVariant handle() const = 0;
         virtual QString driverName() const = 0;

@@ -10,10 +10,12 @@ namespace Orm::Drivers
 
 /* public */
 
-SqlResultPrivate::SqlResultPrivate(const SqlDriver *const driver)
-    // The const_cast() allows to have the MySqlDriver::createResult() method const
-    : sqldriver(const_cast<SqlDriver *>(driver))
-{}
+SqlResultPrivate::SqlResultPrivate(const std::weak_ptr<SqlDriver> &driver)
+    : sqldriver(driver)
+{
+    // The sqldriver must always be valid during construction
+    Q_ASSERT(!sqldriver.expired());
+}
 
 bool SqlResultPrivate::isVariantNull(const QVariant &value)
 {

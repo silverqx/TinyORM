@@ -40,7 +40,8 @@ namespace Orm::Drivers::MySql
 
         bool hasFeature(DriverFeature feature) const final;
 
-        std::unique_ptr<SqlResult> createResult() const final;
+        std::unique_ptr<SqlResult>
+        createResult(const std::weak_ptr<SqlDriver> &driver) const final;
 
         QVariant handle() const final;
         inline QString driverName() const final;
