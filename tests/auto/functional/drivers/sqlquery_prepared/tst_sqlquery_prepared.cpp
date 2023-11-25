@@ -1,6 +1,7 @@
 #include <QCoreApplication>
 #include <QtTest>
 
+#include "orm/drivers/sqldatabase.hpp"
 #include "orm/drivers/sqldriver.hpp"
 #include "orm/drivers/sqlquery1.hpp"
 #include "orm/drivers/sqlrecord.hpp"
@@ -32,6 +33,9 @@ using TestUtils::Databases;
 class tst_SqlQuery_Prepared : public QObject // clazy:exclude=ctor-missing-parent-argument
 {
     Q_OBJECT
+
+    /*! Expose the NumericalPrecisionPolicy enum. */
+    using enum Orm::Drivers::NumericalPrecisionPolicy;
 
 private Q_SLOTS:
     void initTestCase();
@@ -122,7 +126,7 @@ void tst_SqlQuery_Prepared::select_All() const
     QCOMPARE(querySize, 5);
     // Behaves the same as the size() for SELECT queries
     QCOMPARE(users.numRowsAffected(), 5);
-    QCOMPARE(users.numericalPrecisionPolicy(), QSql::LowPrecisionDouble);
+    QCOMPARE(users.numericalPrecisionPolicy(), LowPrecisionDouble);
     QCOMPARE(users.executedQuery(), query);
     QCOMPARE(users.lastInsertId(), QVariant());
 

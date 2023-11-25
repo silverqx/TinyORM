@@ -9,6 +9,8 @@
 #include "orm/drivers/mysql/mysqlutils_p.hpp"
 #include "orm/drivers/sqlrecord.hpp"
 
+#define sl(str) QStringLiteral(str)
+
 // this is a copy of the old MYSQL_TIME before an additional integer was added in
 // 8.0.27.0. This kills the sanity check during retrieving this struct from mysql
 // when another libmysql version is used during runtime than during compile time
@@ -23,9 +25,9 @@ struct QT_MYSQL_TIME
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
-using MySqlUtils = Orm::Drivers::MySql::MySqlUtilsPrivate;
-
 using namespace Qt::StringLiterals;
+
+using MySqlUtils = Orm::Drivers::MySql::MySqlUtilsPrivate;
 
 namespace Orm::Drivers::MySql
 {
@@ -47,7 +49,8 @@ QVariant MySqlResult::handle() const
 
     if (d->preparedQuery)
         // CUR check this later; I don't understand it now silverqx
-        return d->meta ? QVariant::fromValue(d->meta) : QVariant::fromValue(d->stmt);
+        return d->meta ? QVariant::fromValue(d->meta)
+                       : QVariant::fromValue(d->stmt);
     else
         return QVariant::fromValue(d->result);
 }
@@ -68,8 +71,8 @@ bool MySqlResult::exec(const QString &query)
     if (const auto queryArray = query.toUtf8();
         mysql_real_query(mysql, queryArray.constData(), queryArray.size()) != 0
     )
-        return setLastError(MySqlUtils::makeError(
-                                "Unable to execute query",
+        return setLastError(MySqlUtils::createError(
+                                sl("Unable to execute query"),
                                 SqlDriverError::StatementError, mysql));
     // Obtain result set
     d->result = mysql_store_result(mysql);
@@ -77,8 +80,8 @@ bool MySqlResult::exec(const QString &query)
     if (const auto errNo = mysql_errno(mysql);
         d->result == nullptr && errNo != 0
     )
-        return setLastError(MySqlUtils::makeError(
-                                "Unable to store result",
+        return setLastError(MySqlUtils::createError(
+                                sl("Unable to store result"),
                                 SqlDriverError::StatementError, mysql, errNo));
 
     const auto hasFields = d->populateFields(mysql);
@@ -107,8 +110,8 @@ bool MySqlResult::prepare(const QString &query)
     if (auto *const mysql = d->drv_d_func()->mysql;
         (d->stmt = mysql_stmt_init(mysql)) == nullptr
     )
-        return setLastError(MySqlUtils::makeError(
-                                "Unable to prepare statement",
+        return setLastError(MySqlUtils::createError(
+                                sl("Unable to prepare statement"),
                                 SqlDriverError::StatementError, mysql));
 
     // Not the same as the errno error code
@@ -116,15 +119,17 @@ bool MySqlResult::prepare(const QString &query)
 
     // Prepare the SQL statement
     const auto queryArray = query.toUtf8();
-    status = mysql_stmt_prepare(d->stmt, queryArray.constData(), queryArray.size());
-    if (status != 0) {
+
+    if (status = mysql_stmt_prepare(d->stmt, queryArray.constData(), queryArray.size());
+        status != 0
+    ) {
         mysqlStmtClose();
-        return setLastError(MySqlResultPrivate::makeStmtError(
-                                "Unable to prepare statement",
+        return setLastError(MySqlResultPrivate::createStmtError(
+                                sl("Unable to prepare statement"),
                                 SqlDriverError::StatementError, d->stmt));
     }
 
-    setSelect(d->bindInValues());
+    setSelect(d->bindResultValues());
 
     d->query = query;
     d->preparedQuery = true;
@@ -154,35 +159,31 @@ bool MySqlResult::exec()
 
     /* Reset a prepared statement on client and server to state after prepare,
        unbuffered result sets and current errors. */
-    status = mysql_stmt_reset(d->stmt);
-    if (status != 0)
-        return setLastError(MySqlResultPrivate::makeStmtError(
-                                "Unable to reset statement",
+    if (status = mysql_stmt_reset(d->stmt); status != 0)
+        return setLastError(MySqlResultPrivate::createStmtError(
+                                sl("Unable to reset statement"),
                                 SqlDriverError::StatementError, d->stmt));
 
     // Bind prepared bindings if the correct number of prepared bindings was bound
-    if (d->hasPreparedBindings(
+    if (d->shouldPrepareBindings(
             // Number of parameter placeholders in the prepared statement
             mysql_stmt_param_count(d->stmt))
     ) {
         d->bindPreparedBindings(nullVector, stringVector, timeVector);
 
         // Bind data for parameter placeholders 🕺
-        status = mysql_stmt_bind_param(d->stmt, d->outBinds);
-        if (status != 0) {
-            setLastError(MySqlResultPrivate::makeStmtError(
-                             "Unable to bind data for parameter placeholders",
+        if (status = mysql_stmt_bind_param(d->stmt, d->preparedBinds); status != 0) {
+            setLastError(MySqlResultPrivate::createStmtError(
+                             sl("Unable to bind data for parameter placeholders"),
                              SqlDriverError::StatementError, d->stmt));
             return false;
         }
     }
 
-    // Execute query
-    status = mysql_stmt_execute(d->stmt);
-
-    if (status != 0)
-        return setLastError(MySqlResultPrivate::makeStmtError(
-                                "Unable to execute prepared statement",
+    // Execute prepared query 🥳
+    if (status = mysql_stmt_execute(d->stmt); status != 0)
+        return setLastError(MySqlResultPrivate::createStmtError(
+                                sl("Unable to execute prepared statement"),
                                 SqlDriverError::StatementError, d->stmt));
 
     // Executed query has result set, if there are metadata there are also result sets
@@ -192,10 +193,9 @@ bool MySqlResult::exec()
         my_bool update_max_length = true;
 
         // Bind output columns in the result set to data buffers and length buffers
-        status = mysql_stmt_bind_result(d->stmt, d->inBinds);
-        if (status != 0)
-            return setLastError(MySqlResultPrivate::makeStmtError(
-                                    "Unable to bind result set data buffers",
+        if (status = mysql_stmt_bind_result(d->stmt, d->resultBinds); status != 0)
+            return setLastError(MySqlResultPrivate::createStmtError(
+                                    sl("Unable to bind result set data buffers"),
                                     SqlDriverError::StatementError, d->stmt));
 
         // Update the metadata MYSQL_FIELD->max_length value
@@ -203,10 +203,9 @@ bool MySqlResult::exec()
             mysql_stmt_attr_set(d->stmt, STMT_ATTR_UPDATE_MAX_LENGTH, &update_max_length);
 
         // Buffer the complete result set on the client (will be prepared for fetching)
-        status = mysql_stmt_store_result(d->stmt);
-        if (status != 0)
-            return setLastError(MySqlResultPrivate::makeStmtError(
-                                    "Unable to store prepared statement result sets",
+        if (status = mysql_stmt_store_result(d->stmt); status != 0)
+            return setLastError(MySqlResultPrivate::createStmtError(
+                                    sl("Unable to store prepared statement result sets"),
                                     SqlDriverError::StatementError, d->stmt));
 
         // CUR drivers revisit and drop silverqx
@@ -215,13 +214,14 @@ bool MySqlResult::exec()
 //            // when called without a preceding call to mysql_stmt_bind_result()
 //            // in versions < 4.1.8
 //            d->bindBlobs();
-//            status = mysql_stmt_bind_result(d->stmt, d->inBinds);
-//            if (status != 0)
+//
+//            if (status = mysql_stmt_bind_result(d->stmt, d->resultBinds); status != 0)
 //                return setLastError(MySqlResultPrivate::makeStmtError(
-//                                        "Unable to bind outvalues",
+//                                        sl("Unable to bind result set values"),
 //                                        SqlDriverError::StatementError, d->stmt));
 //        }
-        setAt(QSql::BeforeFirstRow);
+
+        setAt(BeforeFirstRow);
     }
 
     setActive(true);
@@ -236,20 +236,20 @@ SqlRecord MySqlResult::record() const
     Q_D(const MySqlResult);
     // CUR drivers check if is a good idea to fetch fields again because all fields are already cached in the MyField:::myField silverqx
 
-    MYSQL_RES *const res = d->preparedQuery ? d->meta : d->result;
+    auto *const mysqlRes = d->preparedQuery ? d->meta : d->result;
     // Backup the current cursor position
-    const auto currentCursor = mysql_field_tell(res);
+    const auto currentCursor = mysql_field_tell(mysqlRes);
     // Seek to the beginning
-    mysql_field_seek(res, 0);
+    mysql_field_seek(mysqlRes, 0);
 
     SqlRecord result;
     const MYSQL_FIELD *fieldInfo = nullptr;
 
-    while ((fieldInfo = mysql_fetch_field(res)))
+    while ((fieldInfo = mysql_fetch_field(mysqlRes)) != nullptr)
         result.append(MySqlUtils::convertToSqlField(fieldInfo));
 
     // Restore the cursor position
-    mysql_field_seek(res, currentCursor);
+    mysql_field_seek(mysqlRes, currentCursor);
 
     return result;
 }
@@ -291,8 +291,8 @@ bool MySqlResult::fetch(const int index)
 
         /* Here are fetched real data and lengths into the buffers that were bound by
            the mysql_stmt_bind_result(). 🥳
-           Also, the MyField::nullIndicator or inBinds.is_null is populated
-           (see MySqlResultPrivate::bindInValues()). */
+           Also, the MyField::isNull and resultBinds.is_null is populated
+           (see MySqlResultPrivate::bindResultValues()). */
         const auto status = mysql_stmt_fetch(d->stmt);
 
         // Success, no more data exists; returning false here is correct
@@ -307,14 +307,15 @@ bool MySqlResult::fetch(const int index)
 
         // This means there was an error or data were truncated
         if (!errorMessage.isEmpty())
-            return setLastError(MySqlResultPrivate::makeStmtError(
+            return setLastError(MySqlResultPrivate::createStmtError(
                                     errorMessage, SqlDriverError::StatementError,
                                     d->stmt));
     } else {
         mysql_data_seek(d->result, index);
 
-        d->row = mysql_fetch_row(d->result);
-        if (d->row == nullptr)
+        if (d->row = mysql_fetch_row(d->result);
+            d->row == nullptr
+        )
             return false;
     }
 
@@ -374,13 +375,14 @@ bool MySqlResult::fetchNext()
 
         // This means there was an error or data were truncated
         if (!errorMessage.isEmpty())
-            return setLastError(MySqlResultPrivate::makeStmtError(
+            return setLastError(MySqlResultPrivate::createStmtError(
                                     errorMessage, SqlDriverError::StatementError,
                                     d->stmt));
     } else {
-        d->row = mysql_fetch_row(d->result);
         // CUR drivers missing error check silverqx
-        if (d->row == nullptr)
+        if (d->row = mysql_fetch_row(d->result);
+            d->row == nullptr
+        )
             return false;
     }
 
@@ -393,11 +395,10 @@ QVariant MySqlResult::data(const int index)
     Q_D(MySqlResult);
 
     // Nothing to do
-    if (const auto fieldsCount = d->fields.size(); index >= fieldsCount) {
+    if (const auto fieldsCount = d->resultFields.size(); index >= fieldsCount) {
         qWarning().noquote()
-                << QStringLiteral(
-                       "MySqlResult::data: column index '%1' is out of range, "
-                       "the current number of fields is '%2'")
+                << sl("MySqlResult::data: column index '%1' is out of range, "
+                      "the current number of fields is '%2'")
                    .arg(index).arg(fieldsCount);
         return {};
     }
@@ -413,20 +414,20 @@ bool MySqlResult::isNull(const int index)
    Q_D(const MySqlResult);
 
     // CUR drivers test isNull() out of bounds if no metadata silverqx
-   if (const auto fieldsCount = d->fields.size(); index < 0 || index >= fieldsCount)
+    if (const auto fieldsCount = d->resultFields.size();
+        index < 0 || index >= fieldsCount
+    )
        throw std::exception(
-               QStringLiteral(
-                   "Field index '%1' is out of bounds, the index must be between "
-                   "0-%2")
-               .arg(index).arg(fieldsCount - 1).toUtf8().constData());
+                sl("Field index '%1' is out of bounds, the index must be between 0-%2")
+                .arg(index).arg(fieldsCount - 1).toUtf8().constData());
 
-   /* MyField::nullIndicator is populated for prepared statements only.
+   /* MyField::isNull is populated for prepared statements only.
       The row/result set/data must be fetched first to obtain the correct result. ❗ */
 
    if (d->preparedQuery)
-       /* The same value is in the inBinds.is_null
-          (see MySqlResultPrivate::bindInValues()). */
-       return d->fields.at(index).nullIndicator;
+       /* The same value is in the resultBinds.is_null
+          (see MySqlResultPrivate::bindResultValues()). */
+       return d->resultFields.at(index).isNull;
 
    else
        /* NULL values in the row are indicated by NULL pointers.
@@ -465,10 +466,13 @@ void MySqlResult::detachFromResultSet()
 
     if (d->preparedQuery)
         mysql_stmt_free_result(d->stmt);
+
+    // CUR drivers what about mysql_free_result()? Also look SqlQuery1::finish() silverqx
 }
 
 /* Others */
 
+// CUR drivers revisit all 4 free methods detachFromResultSet(), cleanup(), mysqlFreeResults(), and mysqlStmtClose() how they relate and how they are used silverqx
 void MySqlResult::cleanup()
 {
     Q_D(MySqlResult);
@@ -481,20 +485,20 @@ void MySqlResult::cleanup()
         d->meta = nullptr;
     }
 
-    if (d->outBinds != nullptr) {
-        delete[] d->outBinds;
-        d->outBinds = nullptr;
+    if (d->preparedBinds != nullptr) {
+        delete[] d->preparedBinds;
+        d->preparedBinds = nullptr;
     }
 
-    if (d->inBinds != nullptr) {
-        delete[] d->inBinds;
-        d->inBinds = nullptr;
+    if (d->resultBinds != nullptr) {
+        delete[] d->resultBinds;
+        d->resultBinds = nullptr;
     }
 
-    for (const auto &field : std::as_const(d->fields))
-        delete[] field.outField;
+    for (const auto &field : std::as_const(d->resultFields))
+        delete[] field.fieldValue;
 
-    d->fields.clear();
+    d->resultFields.clear();
 
     d->hasBlobs = false;
     d->preparedQuery = false;
@@ -502,12 +506,13 @@ void MySqlResult::cleanup()
     d->result = nullptr;
     d->row = nullptr;
 
-    setAt(QSql::BeforeFirstRow);
+    setAt(BeforeFirstRow);
     setActive(false);
 }
 
 /* private */
 
+// CUR drivers revisit is something similar needed also for prepared statements? Look at detachFromResultSet() silverqx
 void MySqlResult::mysqlFreeResults() const
 {
     Q_D(const MySqlResult);
@@ -537,17 +542,15 @@ void MySqlResult::mysqlFreeResults() const
            it succeeded or failed. */
         else if (const auto errNo = mysql_errno(mysql); errNo != 0) T_UNLIKELY
             qWarning().noquote()
-                << QStringLiteral(
-                       "MySqlResult::mysqlFreeResult: unable to store a result set "
-                       "using the mysql_store_result(); %1: %2")
+                << sl("MySqlResult::mysqlFreeResult: unable to store a result set "
+                      "using the mysql_store_result(); %1: %2")
                    .arg(errNo).arg(mysql_error(mysql));
 
     // The mysql_next_result() returned an error
     if (status > 0)
         qWarning().noquote()
-            << QStringLiteral(
-                   "MySqlResult::mysqlFreeResult: unable to obtain the next "
-                   "result set using the mysql_next_result(); %1: %2")
+            << sl("MySqlResult::mysqlFreeResult: unable to obtain the next "
+                  "result set using the mysql_next_result(); %1: %2")
                .arg(mysql_errno(mysql))
                .arg(mysql_error(mysql));
 }

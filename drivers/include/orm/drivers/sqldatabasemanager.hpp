@@ -15,6 +15,7 @@ namespace Orm::Drivers
     class SqlDatabase;
     class SqlDriver;
 
+    /*! Database connections manager. */
     class SHAREDLIB_EXPORT SqlDatabaseManager
     {
     protected:
@@ -29,30 +30,45 @@ namespace Orm::Drivers
             only. */
         static const QString defaultConnection;
 
+        /*! Obtain the given connection. */
         static SqlDatabase
         database(const QString &connection = defaultConnection, bool open = true);
+        /*! Determine whether the manager contains the given connection. */
         static bool
         contains(const QString &connection = defaultConnection);
 
+        /*! Register a new database connection using the given driver name. */
         static SqlDatabase
         addDatabase(const QString &driver, const QString &connection = defaultConnection);
+        /*! Register a new database connection using the given driver instance. */
         static SqlDatabase
         addDatabase(std::unique_ptr<SqlDriver> &&driver,
                     const QString &connection = defaultConnection);
 
+        /*! Remove the given database connection from the manager. */
         static void
         removeDatabase(const QString &connection);
 
+        /*! Clone the given connection and register it as a new database connection. */
         static SqlDatabase
         cloneDatabase(const SqlDatabase &other, const QString &connection);
+        /*! Clone the given connection and register it as a new database connection. */
         static SqlDatabase
         cloneDatabase(const QString &otherConnection, const QString &connection);
 
         /* Getters / Setters */
+        /*! Get all of the available database drivers. */
         static QStringList drivers();
+        /*! Get all managed connection names. */
         static QStringList connectionNames();
 
+        /*! Determine whether the given driver is available. */
         static bool isDriverAvailable(const QString &name);
+
+    private:
+        /*! Throw an exception if the driver is nullptr. */
+        static void throwIfDriverIsNullptr(const std::unique_ptr<SqlDriver> &driver,
+                                           const QString &connection);
     };
 
 } // namespace Orm::Drivers

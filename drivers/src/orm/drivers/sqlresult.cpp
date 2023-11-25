@@ -1,11 +1,11 @@
 #include "orm/drivers/sqlresult.hpp"
 
+#include <orm/constants.hpp>
+
 #include "orm/drivers/sqldriver.hpp"
 #include "orm/drivers/sqlresult_p.hpp"
 
 TINYORM_BEGIN_COMMON_NAMESPACE
-
-using namespace Qt::StringLiterals;
 
 namespace Orm::Drivers
 {
@@ -36,8 +36,8 @@ bool SqlResult::isValid() const
 {
     Q_D(const SqlResult);
 
-    return d->cursor != QSql::BeforeFirstRow &&
-           d->cursor != QSql::AfterLastRow;
+    return d->cursor != static_cast<int>(BeforeFirstRow) &&
+           d->cursor != static_cast<int>(AfterLastRow);
 }
 
 QString SqlResult::query() const
@@ -61,6 +61,7 @@ SqlDriverError SqlResult::lastError() const
 bool SqlResult::setLastError(const SqlDriverError &error)
 {
     Q_D(SqlResult);
+
     d->lastError = error;
 
     // To be able call 'return setLastError()' to simplify code
@@ -82,35 +83,35 @@ void SqlResult::setAt(const int index)
 bool SqlResult::isActive() const
 {
     Q_D(const SqlResult);
-    return d->active;
+    return d->isActive;
 }
 
 void SqlResult::setActive(const bool value)
 {
     Q_D(SqlResult);
-    d->active = value;
+    d->isActive = value;
 }
 
 bool SqlResult::isSelect() const
 {
     Q_D(const SqlResult);
-    return d->select;
+    return d->isSelect;
 }
 
 void SqlResult::setSelect(const bool value)
 {
     Q_D(SqlResult);
-    d->select = value;
+    d->isSelect = value;
 }
 
-QSql::NumericalPrecisionPolicy SqlResult::numericalPrecisionPolicy() const
+NumericalPrecisionPolicy SqlResult::numericalPrecisionPolicy() const
 {
     Q_D(const SqlResult);
     return d->precisionPolicy;
 }
 
 void
-SqlResult::setNumericalPrecisionPolicy(const QSql::NumericalPrecisionPolicy precision)
+SqlResult::setNumericalPrecisionPolicy(const NumericalPrecisionPolicy precision)
 {
     Q_D(SqlResult);
     d->precisionPolicy = precision;
@@ -125,54 +126,54 @@ std::weak_ptr<const SqlDriver> SqlResult::driver() const noexcept
 /* Prepared queries */
 
 void SqlResult::bindValue(const int index, const QVariant &value,
-                          const QSql::ParamType /*unused*/)
+                          const ParamType /*unused*/)
 {
     Q_D(SqlResult);
 
     /* Resize the underlying vector to assign a value to the given index
        (avoid out of bounds). */
-    if (d->values.size() <= index)
-        d->values.resize(index + 1);
+    if (d->boundValues.size() <= index)
+        d->boundValues.resize(index + 1);
 
-    d->values[index] = value;
+    d->boundValues[index] = value;
 }
 
-void SqlResult::addBindValue(const QVariant &value, const QSql::ParamType /*unused*/)
+void SqlResult::addBindValue(const QVariant &value, const ParamType /*unused*/)
 {
     // Append; index is after the last value
     const auto index = boundValuesCount();
 
-    bindValue(index, value, QSql::In);
+    bindValue(index, value, ParamType::In);
 }
 
 QVariant SqlResult::boundValue(const int index) const
 {
     Q_D(const SqlResult);
-    return d->values.value(index);
+    return d->boundValues.value(index);
 }
 
 int SqlResult::boundValuesCount() const
 {
     Q_D(const SqlResult);
-    return d->values.size();
+    return d->boundValues.size();
 }
 
 QVariantList SqlResult::boundValues() const
 {
     Q_D(const SqlResult);
-    return d->values;
+    return d->boundValues;
 }
 
 QVariantList &SqlResult::boundValues()
 {
     Q_D(SqlResult);
-    return d->values;
+    return d->boundValues;
 }
 
-void SqlResult::clearValues()
+void SqlResult::clearBoundValues()
 {
     Q_D(SqlResult);
-    d->values.clear();
+    d->boundValues.clear();
 }
 
 /* Result sets */
@@ -180,6 +181,11 @@ void SqlResult::clearValues()
 bool SqlResult::fetchPrevious()
 {
     return fetch(at() - 1);
+}
+
+bool SqlResult::nextResult()
+{
+    throw std::runtime_error(Orm::Constants::NotImplemented.toUtf8().constData());
 }
 
 /* private */

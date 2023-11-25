@@ -9,10 +9,14 @@ TINYORM_BEGIN_COMMON_NAMESPACE
 namespace Orm::Drivers
 {
 
-    /*! The SqlRecord represents a database record or row. */
+    /*! The SqlRecord represents a database row. */
     class SHAREDLIB_EXPORT SqlRecord
     {
     public:
+        /* Container related */
+        using ContainerType = QList<SqlField>;
+        using size_type     = typename ContainerType::size_type;
+
         /*! Default constructor. */
         inline SqlRecord() = default;
         /*! Default destructor. */
@@ -21,51 +25,114 @@ namespace Orm::Drivers
         /*! Equality comparison operator for the SqlRecord. */
         inline bool operator==(const SqlRecord &) const = default;
 
-        // CUR drivers swap silverqx
+        /*! Swap the SqlRecord. */
+        inline void swap(SqlRecord &other) noexcept;
 
-        QVariant value(int index) const;
-        QVariant value(const QString &name) const;
-        void setValue(int index, const QVariant &value);
-        void setValue(const QString &name, const QVariant &value);
+        /*! Get the field name at the given index. */
+        QString fieldName(size_type index) const;
+        /*! Get the index of the given field name (-1 if it can't be found). */
+        size_type indexOf(const QString &name) const;
 
-        void setNull(int index);
-        void setNull(const QString &name);
-        bool isNull(int index) const;
-        bool isNull(const QString &name) const;
-
-        QString fieldName(int index) const;
-        int indexOf(const QString &name) const;
-
-        SqlField field(int index) const;
+        /*! Get the field at the given index. */
+        SqlField field(size_type index) const;
+        /*! Get the field by field name. */
         SqlField field(const QString &name) const;
 
-        void append(const SqlField &field);
-        void insert(int index, const SqlField &field);
-        void replace(int index, const SqlField &field);
-        void remove(int index);
+        /*! Get the field value at the given index. */
+        QVariant value(size_type index) const;
+        /*! Get the field value by field name. */
+        QVariant value(const QString &name) const;
 
+        /*! Set the value of the field at the given index to the given value. */
+        void setValue(size_type index, const QVariant &value);
+        /*! Set the value of the field at the given index to the given value. */
+        void setValue(size_type index, QVariant &&value);
+
+        /*! Set the value of the field with the field name to the given value. */
+        void setValue(const QString &name, const QVariant &value);
+        /*! Set the value of the field with the field name to the given value. */
+        void setValue(const QString &name, QVariant &&value);
+
+        /*! Determine whether the field at the given index is NULL. */
+        bool isNull(size_type index) const;
+        /*! Determine whether the field with the given field name is NULL. */
+        bool isNull(const QString &name) const;
+
+        /*! Set the value of the field at the given index to NULL. */
+        void setNull(size_type index);
+        /*! Set the value of the field with the given field name to NULL. */
+        void setNull(const QString &name);
+
+        /*! Append a copy of the given field to the end of the record. */
+        void append(const SqlField &field);
+        /*! Append the given field to the end of the record. */
+        void append(SqlField &&field);
+
+        /*! Insert a copy of the given field at the index position in the record. */
+        void insert(size_type index, const SqlField &field);
+        /*! Insert the given field at the index position in the record. */
+        void insert(size_type index, SqlField &&field);
+
+        /*! Replace the field at the index position with the given field. */
+        void replace(size_type index, const SqlField &field);
+        /*! Replace the field at the index position with the given field. */
+        void replace(size_type index, SqlField &&field);
+
+        /*! Remove the field at the given index position from the record. */
+        void remove(size_type index);
+
+        /*! Removes all field from the record. */
         void clear();
+        /*! Clear all field values in the record and set each field to NULL. */
         void clearValues();
 
+        /*! Determine whether the current record contains fields. */
         inline bool isEmpty() const;
-        inline int count() const;
+        /*! Get the number of fields in the current record. */
+        inline size_type count() const;
+
+        /*! Determine whether the current record contains the given field name. */
         inline bool contains(const QString &name) const;
+        /*! Determine whether the current record contains the given field index. */
+        inline bool contains(size_type index) const;
 
     private:
-        inline bool contains(qsizetype index) const;
+        /*! Throw the std::out_of_range() exception if record doesn't contain an index. */
+        void throwIfNotContains(size_type index, QString &&functionName) const;
+
+        /*! FieldSegmentsType return type for getFieldNameSegments(). */
+        struct FieldSegmentsType
+        {
+            /*! Determine whether a given field is qualified. */
+            bool isQualifiedName;
+            /*! Table name. */
+            QStringView tableName;
+            /*! Field name. */
+            QStringView fieldName;
+        };
+
+        /*! Get individual segments from the aliased field identifier
+            (column alias (select expression)). */
+        static FieldSegmentsType getFieldNameSegments(QStringView name);
 
         /* Data members */
-        QList<SqlField> m_fields;
+        /*! Record fields. */
+        ContainerType m_fields;
     };
 
     /* public */
+
+    void SqlRecord::swap(SqlRecord &other) noexcept
+    {
+        m_fields.swap(other.m_fields);
+    }
 
     bool SqlRecord::isEmpty() const
     {
         return m_fields.isEmpty();
     }
 
-    int SqlRecord::count() const
+    SqlRecord::size_type SqlRecord::count() const
     {
         return m_fields.size();
     }
@@ -75,9 +142,7 @@ namespace Orm::Drivers
         return indexOf(name) >= 0;
     }
 
-    /* private */
-
-    bool SqlRecord::contains(const qsizetype index) const
+    bool SqlRecord::contains(const size_type index) const
     {
       return index >= 0 && index < m_fields.size();
     }

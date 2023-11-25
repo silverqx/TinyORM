@@ -1,14 +1,20 @@
 #include "orm/drivers/sqldatabase_p.hpp"
 
+#include <orm/constants.hpp>
+
 #include "orm/drivers/mysql/mysqldriver.hpp"
 #include "orm/drivers/sqldrivererror.hpp"
 #include "orm/drivers/support/connectionshash_p.hpp"
 
+#define sl(str) QStringLiteral(str)
+
 TINYORM_BEGIN_COMMON_NAMESPACE
 
-using Orm::Drivers::Support::ConnectionsHash;
-
 using namespace Qt::StringLiterals;
+
+using Orm::Constants::SPACE;
+
+using Orm::Drivers::Support::ConnectionsHash;
 
 namespace Orm::Drivers
 {
@@ -46,19 +52,18 @@ SqlDatabase SqlDatabasePrivate::database(const QString &connection, const bool o
 {
     auto &db = g_connections->at_ts(connection);
 
-    if (!db.isValid())
+    // Nothing to do, connection is Invalid
+    if (isInvalidWithWarning(db, connection))
         return db;
 
-    // CUR drivers finish QThread::currentThread() silverqx
-//    if (db.driver()->thread() != QThread::currentThread()) {
-//        qWarning("SqlDatabasePrivate::database: requested database does not belong to the calling thread.");
-//        return SqlDatabase();
-//    }
+    // Throw an exception if a connection was created in a different thread
+    throwIfDifferentThread(db, connection);
 
     // Try to open a database connection and show a warning if failed
     if (open && !db.isOpen() && !db.open())
-        qWarning() << "SqlDatabasePrivate::database: unable to open database:"
-                   << db.lastError().text();
+        qWarning().noquote().nospace()
+                << "SqlDatabasePrivate::database: unable to open database: "
+                << db.lastError().text();
 
     return db;
 }
@@ -76,10 +81,8 @@ void SqlDatabasePrivate::addDatabase(const SqlDatabase &db, const QString &conne
         invalidateDb(connections.extract(connection).mapped(), connection);
 
         qWarning().noquote()
-                << QStringLiteral(
-                       "SqlDatabasePrivate::addDatabase: duplicate connection name '%1', "
-                       "old connection has been removed.")
-                   .arg(connection);
+                << sl("SqlDatabasePrivate::addDatabase: duplicate connection name '%1', "
+                      "old connection has been removed.").arg(connection);
     }
 
     connections.try_emplace(connection, db);
@@ -106,10 +109,8 @@ void SqlDatabasePrivate::invalidateDb(const SqlDatabase &db, const QString &conn
 {
     if (db.d.use_count() > 1 && warn)
         qWarning().noquote()
-                << QStringLiteral(
-                       "SqlDatabasePrivate::invalidateDb: connection '%1' is still "
-                       "in use, all queries will stop working.")
-                   .arg(connection);
+                << sl("SqlDatabasePrivate::invalidateDb: connection '%1' is still "
+                      "in use, all queries will stop working.").arg(connection);
 
     db.d->resetDriver();
     db.d->connectionName.clear();
@@ -118,6 +119,12 @@ void SqlDatabasePrivate::invalidateDb(const SqlDatabase &db, const QString &conn
 ConnectionsHash &SqlDatabasePrivate::connections()
 {
     return *g_connections;
+}
+
+bool &SqlDatabasePrivate::checkDifferentThread() noexcept
+{
+    static auto isEnabled = true;
+    return isEnabled;
 }
 
 /* Factory methods */
@@ -130,8 +137,8 @@ std::shared_ptr<SqlDriver> SqlDatabasePrivate::createDriver(const QString &drive
         return std::make_shared<MySql::MySqlDriver>();
 
     throw std::exception(
-                QStringLiteral("Unsupported driver '%1', available drivers: %2.")
-                .arg(driver, SqlDatabase::drivers().join(QChar(' ')))
+                sl("Unsupported driver '%1', available drivers: %2.")
+                .arg(driver, SqlDatabase::drivers().join(SPACE))
                 .toUtf8().constData());
 }
 
@@ -147,7 +154,37 @@ void SqlDatabasePrivate::throwIfSqlDriverIsNull() const
     if (sqldriver)
         return;
 
-    throw std::exception("The SqlDatabasePrivate::sqldriver smart pointer is null.");
+    throw std::exception("The SqlDatabasePrivate::sqldriver smart pointer is nullptr.");
+}
+
+void SqlDatabasePrivate::throwIfDifferentThread(const SqlDatabase &db,
+                                                const QString &connection)
+{
+    /* Nothing to do, the thread check is disabled or a connection was created
+       in the same thread as the current thread. */
+    if (!checkDifferentThread() ||
+        db.driver().lock()->threadId() == std::this_thread::get_id()
+    )
+        return;
+
+    throw std::exception(
+                sl("SqlDatabasePrivate::database: requested '%1' database connection "
+                   "does not belong to the calling thread.")
+                .arg(connection).toUtf8().constData());
+}
+
+bool SqlDatabasePrivate::isInvalidWithWarning(const SqlDatabase &db,
+                                              const QString &connection)
+{
+    // Nothing to do, connection is valid
+    if (db.isValid())
+        return false;
+
+    qWarning().noquote()
+            << sl("SqlDatabasePrivate::database: requested '%1' database connection "
+                  "is invalid.").arg(connection);
+
+    return true;
 }
 
 } // namespace Orm::Drivers

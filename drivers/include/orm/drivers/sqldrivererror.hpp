@@ -23,15 +23,18 @@ namespace Orm::Drivers
             UnknownError,
         };
 
-        /*! Constructor. */
+        /*! Constructor (not explicit to allow {}). */
         SqlDriverError(
                 const QString &driverMessage = {}, const QString &databaseMessage = {},
                 ErrorType errorType = NoError, const QString &errorCode = {});
         /*! Default destructor. */
         inline ~SqlDriverError() = default;
 
-        /*! Equality comparison operator for the SqlField. */
+        /*! Equality comparison operator for the SqlDriverError. */
         bool operator==(const SqlDriverError &other) const;
+
+        /*! Swap the SqlDriverError. */
+        void swap(SqlDriverError &other) noexcept;
 
         inline bool isValid() const;
 

@@ -1,6 +1,6 @@
 #include "orm/drivers/mysql/mysqlutils_p.hpp"
 
-#include "orm/drivers/macros/includemysqlh_p.hpp" // IWYU pragma: keep
+#include "orm/drivers/macros/includemysqlh_p.hpp"
 
 #include "orm/drivers/sqlfield.hpp"
 
@@ -14,66 +14,67 @@ namespace Orm::Drivers::MySql
 /* public */
 
 SqlDriverError
-MySqlUtilsPrivate::makeError(const QString &error, const SqlDriverError::ErrorType type,
-                             MYSQL *const mysql,
-                             // CUR drivers check if this can be done also for makeStmtError() because all functions return r and then inside the makeStmtError() is the errNo obtained again silverqx
-                             const std::optional<uint> errNo)
+MySqlUtilsPrivate::createError(
+        const QString &error, const SqlDriverError::ErrorType errorType,
+        MYSQL *const mysql,
+        // CUR drivers check if this can be done also for makeStmtError() because all functions return r and then inside the makeStmtError() is the errNo obtained again silverqx
+        const std::optional<uint> errNo)
 {
     const auto mysqlErrno = errNo.value_or(mysql_errno(mysql));
     const auto *const mysqlError = mysql ? mysql_error(mysql) : nullptr;
 
     return SqlDriverError("QMYSQL: "_L1 + error, QString::fromUtf8(mysqlError),
-                          type, QString::number(mysqlErrno));
+                          errorType, QString::number(mysqlErrno));
 }
 
 QMetaType
 MySqlUtilsPrivate::decodeMySqlType(const enum_field_types mysqlType, const uint flags)
 {
-    QMetaType::Type type = QMetaType::UnknownType;
+    QMetaType::Type typeId = QMetaType::UnknownType;
 
     switch (mysqlType) {
     case MYSQL_TYPE_TINY:
-        type = flags & UNSIGNED_FLAG ? QMetaType::UChar : QMetaType::Char;
+        typeId = flags & UNSIGNED_FLAG ? QMetaType::UChar : QMetaType::Char;
         break;
 
     case MYSQL_TYPE_SHORT:
-        type = flags & UNSIGNED_FLAG ? QMetaType::UShort : QMetaType::Short;
+        typeId = flags & UNSIGNED_FLAG ? QMetaType::UShort : QMetaType::Short;
         break;
 
     case MYSQL_TYPE_LONG:
     case MYSQL_TYPE_INT24:
-        type = flags & UNSIGNED_FLAG ? QMetaType::UInt : QMetaType::Int;
+        typeId = flags & UNSIGNED_FLAG ? QMetaType::UInt : QMetaType::Int;
         break;
 
     case MYSQL_TYPE_YEAR:
-        type = QMetaType::Int;
+        typeId = QMetaType::Int;
         break;
 
     case MYSQL_TYPE_BIT:
     case MYSQL_TYPE_LONGLONG:
-        type = flags & UNSIGNED_FLAG ? QMetaType::ULongLong : QMetaType::LongLong;
+        typeId = flags & UNSIGNED_FLAG ? QMetaType::ULongLong : QMetaType::LongLong;
         break;
 
     case MYSQL_TYPE_FLOAT:
     case MYSQL_TYPE_DOUBLE:
     case MYSQL_TYPE_DECIMAL:
     case MYSQL_TYPE_NEWDECIMAL:
-        type = QMetaType::Double;
+        typeId = QMetaType::Double;
         break;
 
     case MYSQL_TYPE_DATE:
-        type = QMetaType::QDate;
+        typeId = QMetaType::QDate;
         break;
 
     case MYSQL_TYPE_TIME:
         /* A time field can be within the range '-838:59:59' to '838:59:59' so
            use QString instead of QTime since QTime is limited to 24 hour clock. */
-        type = QMetaType::QString;
+        typeId = QMetaType::QString;
         break;
 
     case MYSQL_TYPE_DATETIME:
     case MYSQL_TYPE_TIMESTAMP:
-        type = QMetaType::QDateTime;
+        typeId = QMetaType::QDateTime;
         break;
 
     case MYSQL_TYPE_STRING:
@@ -84,40 +85,40 @@ MySqlUtilsPrivate::decodeMySqlType(const enum_field_types mysqlType, const uint 
     case MYSQL_TYPE_LONG_BLOB:
     case MYSQL_TYPE_GEOMETRY:
     case MYSQL_TYPE_JSON:
-        type = flags & BINARY_FLAG ? QMetaType::QByteArray : QMetaType::QString;
+        typeId = flags & BINARY_FLAG ? QMetaType::QByteArray : QMetaType::QString;
         break;
 
     case MYSQL_TYPE_ENUM:
     case MYSQL_TYPE_SET:
-        type = QMetaType::QString;
+        typeId = QMetaType::QString;
         break;
 
     // Needed because there are more enum values which are not available in all headers
     default:
-        type = QMetaType::QString;
+        typeId = QMetaType::QString;
         break;
     }
 
-    return QMetaType(type);
+    return QMetaType(typeId);
 }
 
-bool MySqlUtilsPrivate::isInteger(const int type)
+bool MySqlUtilsPrivate::isInteger(const int typeId)
 {
-    return type == QMetaType::Char     || type == QMetaType::UChar  ||
-           type == QMetaType::Short    || type == QMetaType::UShort ||
-           type == QMetaType::Int      || type == QMetaType::UInt   ||
-           type == QMetaType::LongLong || type == QMetaType::ULongLong;
+    return typeId == QMetaType::Char     || typeId == QMetaType::UChar  ||
+           typeId == QMetaType::Short    || typeId == QMetaType::UShort ||
+           typeId == QMetaType::Int      || typeId == QMetaType::UInt   ||
+           typeId == QMetaType::LongLong || typeId == QMetaType::ULongLong;
 }
 
-bool MySqlUtilsPrivate::isTimeOrDate(const enum_field_types type)
+bool MySqlUtilsPrivate::isTimeOrDate(const enum_field_types mysqlType)
 {
     // BUG drivers the code that calls the qIsTimeOrDate() expect this method also matches the MYSQL_TYPE_TIME? Also check all MYSQL_TYPE_TIME occurrences silverqx
     /* Don't match the MYSQL_TYPE_TIME because its range is bigger than the QTime.
        A time field can be within the range '-838:59:59' to '838:59:59' so
        use QString instead of QTime since QTime is limited to 24 hour clock. */
-    return type == MYSQL_TYPE_DATE     ||
-           type == MYSQL_TYPE_DATETIME ||
-           type == MYSQL_TYPE_TIMESTAMP;
+    return mysqlType == MYSQL_TYPE_DATE     ||
+           mysqlType == MYSQL_TYPE_DATETIME ||
+           mysqlType == MYSQL_TYPE_TIMESTAMP;
 }
 
 
@@ -129,11 +130,13 @@ SqlField MySqlUtilsPrivate::convertToSqlField(const MYSQL_FIELD *const fieldInfo
                    MySqlUtilsPrivate::decodeMySqlType(fieldInfo->type, fieldInfo->flags),
                    QString::fromUtf8(fieldInfo->table));
 
-    field.setRequired(IS_NOT_NULL(fieldInfo->flags));
+    field.setAutoValue(fieldInfo->flags & AUTO_INCREMENT_FLAG);
+    // CUR drivers finish field default value silverqx
+//    field.setDefaultValue(QString::fromUtf8(fieldInfo->def));
     field.setLength(fieldInfo->length);
     field.setPrecision(fieldInfo->decimals);
+    field.setRequired(IS_NOT_NULL(fieldInfo->flags));
     field.setSqlType(fieldInfo->type);
-    field.setAutoValue(fieldInfo->flags & AUTO_INCREMENT_FLAG);
 
     return field;
 }

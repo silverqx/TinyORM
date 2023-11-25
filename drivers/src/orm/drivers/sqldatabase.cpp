@@ -15,7 +15,7 @@ TINYORM_BEGIN_COMMON_NAMESPACE
 namespace Orm::Drivers
 {
 
-/* protected */
+/* private */
 
 SqlDatabase::SqlDatabase(const QString &driver)
     : d(SqlDatabasePrivate::createSqlDatabasePrivate(driver))
@@ -158,7 +158,7 @@ void SqlDatabase::setConnectOptions(const QString &options)
     d->connectionOptions = options;
 }
 
-QSql::NumericalPrecisionPolicy SqlDatabase::numericalPrecisionPolicy() const
+NumericalPrecisionPolicy SqlDatabase::numericalPrecisionPolicy() const
 {
     if (d->isDriverValid()) T_LIKELY
         // The d->sqldriver is correct because of the d->isDriverValid() check
@@ -169,7 +169,7 @@ QSql::NumericalPrecisionPolicy SqlDatabase::numericalPrecisionPolicy() const
 }
 
 void
-SqlDatabase::setNumericalPrecisionPolicy(const QSql::NumericalPrecisionPolicy precision)
+SqlDatabase::setNumericalPrecisionPolicy(const NumericalPrecisionPolicy precision)
 {
     if (d->isDriverValid())
         // The d->sqldriver is correct because of the d->isDriverValid() check
@@ -183,33 +183,41 @@ std::weak_ptr<SqlDriver> SqlDatabase::driver() const noexcept
     return d->sqldriver;
 }
 
+void SqlDatabase::disableThreadCheck() noexcept
+{
+    SqlDatabasePrivate::checkDifferentThread() = false;
+}
+
 /* Transactions */
 
 bool SqlDatabase::transaction()
 {
     // Nothing to do, no transactions support
-    if (!d->driver().hasFeature(SqlDriver::Transactions))
+    if (!d->driver().hasFeature(SqlDriver::Transactions)) T_UNLIKELY
         return false;
 
-    return d->driver().beginTransaction();
+    else T_LIKELY
+        return d->driver().beginTransaction();
 }
 
 bool SqlDatabase::commit()
 {
     // Nothing to do, no transactions support
-    if (!d->driver().hasFeature(SqlDriver::Transactions))
+    if (!d->driver().hasFeature(SqlDriver::Transactions)) T_UNLIKELY
         return false;
 
-    return d->driver().commitTransaction();
+    else T_LIKELY
+        return d->driver().commitTransaction();
 }
 
 bool SqlDatabase::rollback()
 {
     // Nothing to do, no transactions support
-    if (!d->driver().hasFeature(SqlDriver::Transactions))
+    if (!d->driver().hasFeature(SqlDriver::Transactions)) T_UNLIKELY
         return false;
 
-    return d->driver().rollbackTransaction();
+    else T_LIKELY
+        return d->driver().rollbackTransaction();
 }
 
 } // namespace Orm::Drivers
@@ -218,18 +226,16 @@ TINYORM_END_COMMON_NAMESPACE
 
 #ifndef QT_NO_DEBUG_STREAM
 #  ifdef TINYORM_COMMON_NAMESPACE
-SHAREDLIB_EXPORT QDebug
-operator<<(QDebug debug,
-           const TINYORM_COMMON_NAMESPACE::Orm::Drivers::SqlDatabase &connection)
+QDebug operator<<(QDebug debug,
+                  const TINYORM_COMMON_NAMESPACE::Orm::Drivers::SqlDatabase &connection)
 #  else
-SHAREDLIB_EXPORT QDebug
-operator<<(QDebug debug, const Orm::Drivers::SqlDatabase &connection)
+QDebug operator<<(QDebug debug, const Orm::Drivers::SqlDatabase &connection)
 #  endif
 {
     QDebugStateSaver saver(debug);
-    debug.nospace();
-    debug.noquote();
+    debug.noquote().nospace();
 
+    // CUR drivers test and finish, also SqlDriverError silverqx
     if (!connection.isValid()) {
         debug << "SqlDatabase(invalid)";
         return debug;

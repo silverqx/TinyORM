@@ -13,7 +13,9 @@ namespace Orm::Drivers
 SqlResultPrivate::SqlResultPrivate(const std::weak_ptr<SqlDriver> &driver)
     : sqldriver(driver)
 {
-    // The sqldriver must always be valid during construction
+    /* The sqldriver must always be valid during construction, I'm leaving this check
+       here even there is another check in the MySqlDriver::createResult() because
+       the MySqlResult can still be instantiated manually. */
     Q_ASSERT(!sqldriver.expired());
 }
 
@@ -30,6 +32,7 @@ bool SqlResultPrivate::isVariantNull(const QVariant &value)
         return static_cast<const QByteArray *>(value.constData())->isNull();
 
     case qMetaTypeId<QDateTime>():
+        // CUR drivers check this if I send invalid date to the DB what happens, I think that problem will be in this and then update the comment appropriately, the same for the QTime few lines below; the isVariantNull() is used in prepared bindings only silverqx
         // We treat invalid date-time as null, since its ISODate would be empty.
         return !static_cast<const QDateTime *>(value.constData())->isValid();
 

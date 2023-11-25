@@ -5,14 +5,23 @@
 #include <orm/macros/systemheader.hpp>
 TINY_SYSTEM_HEADER
 
-#include "orm/drivers/macros/includemysqlh_p.hpp" // IWYU pragma: keep
+#include "orm/drivers/macros/includemysqlh_p.hpp"
 
 #include "orm/drivers/macros/declaresqldriverprivate_p.hpp"
 #include "orm/drivers/mysql/mysqldriver.hpp"
 #include "orm/drivers/sqlresult_p.hpp"
 
+/* All the in vs out bindings/data-related comments and identifier names related
+   to the results or prepared bindings are described from the MySQL server perspective and
+   they follow the MySQL documentation conventions.
+   Input bindings are prepared statements and output bindings are results from the MySQL
+   server. Is a very bad idea to switch these naming conventions. 🤔
+   Instead of using the input/in vs output/out words I'm using prepared vs result words
+   where possible to avoid confusion. */
+
 struct QT_MYSQL_TIME;
 
+// CUR drivers revisit all this types, fix comments silverqx
 /* MySQL above version 8 removed my_bool typedef while MariaDB kept it,
    by redefining it we can regain source compatibility. */
 using my_bool = decltype (mysql_stmt_bind_result(nullptr, nullptr));
@@ -22,6 +31,8 @@ TINYORM_BEGIN_COMMON_NAMESPACE
 namespace Orm::Drivers::MySql
 {
 
+    // CUR drivers finish and revisit whole MySqlResult/Private class silverqx
+    /*! MySqlResult private implementation. */
     class MySqlResultPrivate : public SqlResultPrivate
     {
         Q_DISABLE_COPY_MOVE(MySqlResultPrivate)
@@ -32,53 +43,83 @@ namespace Orm::Drivers::MySql
         /*! Inherit constructors. */
         using SqlResultPrivate::SqlResultPrivate;
 
+        /*! MySQL field type (used for result sets' fields). */
         struct MyField
         {
-            // CUR drivers rename to inField? silverqx
-            char *outField = nullptr;
+            /* Common for both */
+            /*! Field metatype. */
+            QMetaType metaType {};
             // CUR drivers remove? silverqx
-            // CUR drivers rename to mysqlField silverqx
+            /*! Field metadata. */
             const MYSQL_FIELD *myField = nullptr; // Returned by mysql_fetch_field()
-            // CUR drivers rename to typeId silverqx
-            QMetaType type {};
-            my_bool nullIndicator = false;
-            ulong bufferLength = 0ul; // Varies on the character set (latin1 1 byte or utf8mb4 4 bytes), w/o terminating null character
+            /* Prepared queries */
+            /*! Field value buffer in the result set. */
+            char *fieldValue = nullptr;
+            /*! Is the field NULL? */
+            my_bool isNull = false;
+            /*! Field value buffer length w/o terminating null character. */
+            ulong fieldValueSize = 0ul; // For strings varies on the character set (latin1 1 byte or eg. utf8mb4 4 bytes so 3 characters string size will be 12)
         };
 
         /* Normal queries */
+        /*! Populate the fields vector. */
         bool populateFields(MYSQL *mysql);
 
         /* Prepared queries */
-        bool bindInValues();
+        /*! Bind result set values into the resultBinds data member. */
+        bool bindResultValues();
+
         /*! Determine whether the correct number of prepared bindings was bound. */
-        bool hasPreparedBindings(ulong placeholdersCount) const;
+        bool shouldPrepareBindings(ulong placeholdersCount) const;
+        /*! Check the correct prepared bindings count and show warnings. */
+        static void checkPreparedBindingsCount(ulong placeholdersCount, ulong valuesSize);
+
+        /*! Bind prepared bindings for placeholders into the preparedBinds data member. */
         void bindPreparedBindings(
                 QList<my_bool> &nullVector, QList<QByteArray> &stringVector,
                 QList<QT_MYSQL_TIME> &timeVector);
+        /*! Bind BLOB-value type prepared bindings for placeholders. */
 //        void bindBlobs();
 
+        /*! Factory method to create the SqlDriverError for prepared statements
+            (from MYSQL_STMT). */
+        static SqlDriverError
+        createStmtError(const QString &error, SqlDriverError::ErrorType type,
+                        MYSQL_STMT *stmt);
+
         /* Result sets */
+        /*! Obtain the QVariant value for normal queries. */
         QVariant getValueForNormal(int index) const;
+        /*! Obtain the QVariant value for prepared queries. */
         QVariant getValueForPrepared(int index) const;
 
-        /* Others */
-        static SqlDriverError
-        makeStmtError(const QString &error, SqlDriverError::ErrorType type,
-                      MYSQL_STMT *stmt);
-
         /* Data members */
+        /* Common for both */
+        /*! Fields for the currently obtained record/row. */
+        QList<MyField> resultFields;
+
+        /* Normal queries */
+        /*! Result set handle (from the mysql_store_result()). */
         MYSQL_RES *result = nullptr;
-        MYSQL_ROW row = nullptr; // MYSQL_ROW is pointer
+        /*! Pointer to the row in the result set (from the mysql_fetch_row()). */
+        MYSQL_ROW row = nullptr;
 
-        QList<MyField> fields;
-
+        /* Prepared queries */
+        /*! Prepared statement handler. */
         MYSQL_STMT *stmt = nullptr;
+        /*! Result set metadata for a prepared statement. */
         MYSQL_RES *meta = nullptr;
 
-        MYSQL_BIND *inBinds = nullptr; // For results returned from the database
-        MYSQL_BIND *outBinds = nullptr; // Prepared bindings that will be sent to the database
+        /*! Structure to bind buffers to result set columns (result values returned from
+            the database server). */
+        MYSQL_BIND *resultBinds = nullptr;
+        /*! Structure for prepared bindings (data values sent to the server). */
+        MYSQL_BIND *preparedBinds = nullptr;
 
+        /* Common for both */
+        /*! Has the current result set any BLOB type field/s? */
         bool hasBlobs = false;
+        /*! Is the current result set for the prepared statement? */
         bool preparedQuery = false;
 
     private:
@@ -95,22 +136,32 @@ namespace Orm::Drivers::MySql
                 QList<my_bool> &nullVector, QList<QByteArray> &stringVector,
                 QList<QT_MYSQL_TIME> &timeVector) const;
 
-        /*! Determine whether the given MySQL column type is a BLOB. */
+        /*! Determine whether the given MySQL field type is a BLOB. */
         static bool isBlobType(enum_field_types fieldType);
-        static QT_MYSQL_TIME toMySqlDate(QDate date, QTime time, int typeId,
-                                         MYSQL_BIND *bind);
+        /*! Convert Qt date/time type to the MYSQL_TIME. */
+        static QT_MYSQL_TIME toMySqlDateTime(QDate date, QTime time, int typeId,
+                                             MYSQL_BIND *bind);
 
         /* Result sets */
+        /*! Determine whether the given MySQL field type is a Bit-value type. */
         inline static bool isBitType(enum_field_types type) noexcept;
-        static uint64_t toBitField(const MyField &field, const char *outField);
+        /*! Convert the Bit-value field to the quint64. */
+        static quint64 toBitField(const MyField &field, const char *fieldValue);
 
+        /*! Convert the DATE value to the QDate. */
         static QVariant toQDateFromString(const QString &value);
+        /*! Convert the TIME value to the QTime. */
         static QVariant toQTimeFromString(const QString &value);
+        /*! Convert the DATETIME value to the QDateTime. */
         static QVariant toQDateTimeFromString(QString &&value);
 
-        QVariant toQVariantDouble(QString &&value) const;
-        QVariant toQVariantByteArray(int index) const;
+        /*! Convert the Fixed/Floating-Point value types based on the set numerical
+            precision policy. */
+        QVariant toDoubleFromString(QString &&value) const;
+        /*! Convert the BLOB value type to the QByteArray. */
+        QVariant toQByteArray(int index) const;
 
+        /*! Create the QVariant by the given metatype ID and value. */
         QVariant createQVariant(int typeId, QString &&value, int index) const;
     };
 

@@ -14,7 +14,7 @@ TINYORM_BEGIN_COMMON_NAMESPACE
 namespace Orm::Drivers::Support
 {
 
-    /*! Handles Database connections for all threads (thread-safe). */
+    /*! Database connections hash (thread-safe). */
     class ConnectionsHash
     {
         Q_DISABLE_COPY_MOVE(ConnectionsHash)
@@ -40,25 +40,35 @@ namespace Orm::Drivers::Support
         inline ~ConnectionsHash() = default;
 
         /* Lookup */
+        /*! Get a connection by the given connection name. */
         inline mapped_type &at_ts(const key_type &key);
+        /*! Get a connection by the given connection name, const version. */
         inline const mapped_type &at_ts(const key_type &key) const;
 
+        /*! Determine whether the hash contains the given connection. */
         inline bool contains(const key_type &key) const;
+        /*! Determine whether the hash contains the given connection. */
         inline bool contains_ts(const key_type &key) const;
 
+        /*! Get all keys/connection names. */
         inline QStringList keys_ts() const;
 
         /* Modifiers */
+        /*! Extract the node by the given connection name. */
         inline node_type extract(const key_type &key);
 
+        /*! Construct a connection in-place if doesn't exist. */
         template<typename ...Args>
         std::pair<iterator, bool> try_emplace(const key_type &key, Args &&...args);
 
         /* Multi-threading */
+        /*! Get a reference to the shared mutex. */
         inline std::shared_mutex &mutex() const noexcept;
 
     private:
+        /*! Database connections hash. */
         ContainerType m_data;
+        /*! Shared mutex. */
         mutable std::shared_mutex m_mutex;
     };
 

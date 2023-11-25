@@ -6,7 +6,7 @@
 TINY_SYSTEM_HEADER
 
 #ifdef _WIN32
-#  include <QtCore/qt_windows.h>
+#  include <qt_windows.h>
 #endif
 
 #include "orm/drivers/sqldriver.hpp"
@@ -18,6 +18,7 @@ namespace Orm::Drivers::MySql
 
     class MySqlDriverPrivate;
 
+    /*! MySQL database driver. */
     class SHAREDLIB_EXPORT MySqlDriver final : public SqlDriver
     {
         Q_DISABLE_COPY_MOVE(MySqlDriver)
@@ -34,28 +35,43 @@ namespace Orm::Drivers::MySql
         /*! Virtual destructor. */
         inline ~MySqlDriver() final = default;
 
-        bool open(const QString &db, const QString &user, const QString &password,
-                  const QString &host, int port, const QString &options) final;
+        /*! Open the database connection using the given values. */
+        bool open(const QString &database, const QString &username,
+                  const QString &password, const QString &host, int port,
+                  const QString &options) final;
+        /*! Close the current database connection. */
         void close() final;
 
+        /* Getters / Setters */
+        /*! Determine whether the current driver supports the given feature. */
         bool hasFeature(DriverFeature feature) const final;
 
-        std::unique_ptr<SqlResult>
-        createResult(const std::weak_ptr<SqlDriver> &driver) const final;
-
+        /*! Get the low-level MySQL database handle (MYSQL *). */
         QVariant handle() const final;
+        /*! Get the MySQL database driver name. */
         inline QString driverName() const final;
 
+        /* Transactions */
+        /*! Start a new database transaction. */
+        bool beginTransaction() final;
+        /*! Commit the active database transaction. */
+        bool commitTransaction() final;
+        /*! Rollback the active database transaction. */
+        bool rollbackTransaction() final;
+
+        /* Others */
+        /*! Determine whether the given MySQL identifier is escaped. */
         bool isIdentifierEscaped(const QString &identifier,
                                  IdentifierType type) const final;
 
-    protected:
-        bool beginTransaction() final;
-        bool commitTransaction() final;
-        bool rollbackTransaction() final;
+        /*! Factory method to create an empty MySQL result. */
+        std::unique_ptr<SqlResult>
+        createResult(const std::weak_ptr<SqlDriver> &driver) const final;
     };
 
     /* public */
+
+    /* Getters / Setters */
 
     QString MySqlDriver::driverName() const
     {

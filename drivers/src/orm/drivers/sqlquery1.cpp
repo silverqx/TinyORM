@@ -1,5 +1,6 @@
 #include "orm/drivers/sqlquery1.hpp"
 
+/*! Log an executed query, elapsed time, and query /affected size to the stderr. */
 //#define QT_DEBUG_SQL
 
 #ifdef QT_DEBUG_SQL
@@ -12,6 +13,8 @@
 #include "orm/drivers/sqlrecord.hpp"
 #include "orm/drivers/sqlresult.hpp"
 #include "orm/drivers/sqldriver.hpp"
+
+#define sl(str) QStringLiteral(str)
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
@@ -32,9 +35,6 @@ SqlQuery1::SqlQuery1(std::unique_ptr<SqlResult> &&result)
     : m_sqlResult(std::move(result))
 {}
 
-//SqlQuery1::SqlQuery1(SqlQuery1 &&) noexcept = default;
-//SqlQuery1 &SqlQuery1::operator=(SqlQuery1 &&) noexcept = default;
-
 /* The destructor must be in the cpp file because the m_sqlResult is unique_ptr.
    If the destructor is inline then the compilation fails because a unique_ptr can't
    destroy an incomplete type. */
@@ -48,6 +48,11 @@ bool SqlQuery1::isValid() const
 }
 
 QString SqlQuery1::executedQuery() const
+{
+    return m_sqlResult->query();
+}
+
+QString SqlQuery1::lastQuery() const
 {
     return m_sqlResult->query();
 }
@@ -74,13 +79,13 @@ bool SqlQuery1::isSelect() const noexcept
     return m_sqlResult->isSelect();
 }
 
-QSql::NumericalPrecisionPolicy SqlQuery1::numericalPrecisionPolicy() const
+NumericalPrecisionPolicy SqlQuery1::numericalPrecisionPolicy() const
 {
     return m_sqlResult->numericalPrecisionPolicy();
 }
 
 void
-SqlQuery1::setNumericalPrecisionPolicy(const QSql::NumericalPrecisionPolicy precision)
+SqlQuery1::setNumericalPrecisionPolicy(const NumericalPrecisionPolicy precision)
 {
     m_sqlResult->setNumericalPrecisionPolicy(precision);
 }
@@ -98,17 +103,9 @@ std::weak_ptr<const SqlDriver> SqlQuery1::driver() const noexcept
 
 bool SqlQuery1::exec(const QString &query)
 {
-#ifdef QT_DEBUG_SQL
-    QElapsedTimer timer;
-    timer.start();
-#endif
-
-    m_sqlResult->clearValues();
-    m_sqlResult->setActive(false);
-    m_sqlResult->setLastError({});
-    m_sqlResult->setAt(QSql::BeforeFirstRow);
-
-    m_sqlResult->setQuery(query.trimmed());
+    // Nothing to do
+    if (query.isEmpty())
+        throw std::exception("SqlQuery1::exec: empty query");
 
     if (const auto driver = this->driver().lock();
         !driver->isOpen() || driver->isOpenError()
@@ -116,8 +113,18 @@ bool SqlQuery1::exec(const QString &query)
         qWarning("SqlQuery1::exec: database not open");
         return false;
     }
-    if (query.isEmpty())
-        throw std::exception("SqlQuery1::exec: empty query");
+
+    m_sqlResult->clearBoundValues();
+    m_sqlResult->setActive(false);
+    m_sqlResult->setLastError({});
+    m_sqlResult->setAt(BeforeFirstRow);
+
+    m_sqlResult->setQuery(query.trimmed());
+
+#ifdef QT_DEBUG_SQL
+    QElapsedTimer timer;
+    timer.start();
+#endif
 
     // CUR drivers this is bad, the mysql_real_query() inside the reset() silverqx
     const auto result = m_sqlResult->exec(query);
@@ -147,29 +154,31 @@ bool SqlQuery1::prepare(const QString &query)
         return false;
     }
 
-    m_sqlResult->clearValues();
+    m_sqlResult->clearBoundValues();
     m_sqlResult->setActive(false);
     m_sqlResult->setLastError({});
-    m_sqlResult->setAt(QSql::BeforeFirstRow);
+    m_sqlResult->setAt(BeforeFirstRow);
 
     return m_sqlResult->prepare(query);
 }
 
 bool SqlQuery1::exec()
 {
-#ifdef QT_DEBUG_SQL
-    QElapsedTimer t;
-    t.start();
-#endif
-
+    // Nothing to do
     if (m_sqlResult->query().isEmpty())
         throw std::exception(
                 "The prepared query is empty, call the SqlQuery1::prepare() first "
                 "for prepared statements or pass the query string directly "
                 "to the SqlQuery1::exec(QString) for normal statements.");
 
+    // CUR drivers check if this is needed as it's reset in the prepare() and if some error occurs in the m_sqlResult->prepare(query) then I don't know if make sense to continue silverqx
     if (m_sqlResult->lastError().isValid())
         m_sqlResult->setLastError({});
+
+#ifdef QT_DEBUG_SQL
+    QElapsedTimer t;
+    t.start();
+#endif
 
     const auto result = m_sqlResult->exec();
 
@@ -184,21 +193,21 @@ bool SqlQuery1::exec()
 }
 
 void SqlQuery1::bindValue(const int index, const QVariant &value,
-                          const QSql::ParamType /*unused*/)
+                          const ParamType /*unused*/)
 {
-    /* Need to pass the QSql::In to preserve the same API because I can't remove this
+    /* Need to pass the ParamType::In to preserve the same API because I can't remove this
        parameter so I need to pass something but it has no effect. */
-    m_sqlResult->bindValue(index, value, QSql::In);
+    m_sqlResult->bindValue(index, value, ParamType::In);
 }
 
-void SqlQuery1::addBindValue(const QVariant &value, const QSql::ParamType /*unused*/)
+void SqlQuery1::addBindValue(const QVariant &value, const ParamType /*unused*/)
 {
     // Append, index after the last value
     const auto index = m_sqlResult->boundValuesCount();
 
-    /* Need to pass the QSql::In to preserve the same API because I can't remove this
+    /* Need to pass the ParamType::In to preserve the same API because I can't remove this
        parameter so I need to pass something but it has no effect. */
-    m_sqlResult->bindValue(index, value, QSql::In);
+    m_sqlResult->bindValue(index, value, ParamType::In);
 }
 
 QVariant SqlQuery1::boundValue(const int index) const
@@ -243,17 +252,17 @@ bool SqlQuery1::next()
         return false;
 
     switch (at()) {
-    case QSql::BeforeFirstRow:
+    case BeforeFirstRow:
         return m_sqlResult->fetchFirst();
 
-    case QSql::AfterLastRow:
+    case AfterLastRow:
         return false;
 
     default:
         if (m_sqlResult->fetchNext())
             return true;
 
-        m_sqlResult->setAt(QSql::AfterLastRow);
+        m_sqlResult->setAt(AfterLastRow);
         return false;
     }
 }
@@ -265,17 +274,17 @@ bool SqlQuery1::previous()
         return false;
 
     switch (at()) {
-    case QSql::BeforeFirstRow:
+    case BeforeFirstRow:
         return false;
 
-    case QSql::AfterLastRow:
+    case AfterLastRow:
         return m_sqlResult->fetchLast();
 
     default:
         if (m_sqlResult->fetchPrevious())
             return true;
 
-        m_sqlResult->setAt(QSql::BeforeFirstRow);
+        m_sqlResult->setAt(BeforeFirstRow);
         return false;
     }
 }
@@ -303,7 +312,7 @@ bool SqlQuery1::seek(const int index, const bool relative)
     if (!isSelect() || !isActive())
         return false;
 
-    auto actualIdx = static_cast<int>(QSql::BeforeFirstRow);
+    auto actualIdx = static_cast<int>(BeforeFirstRow);
 
     // Arbitrary seek
     if (!relative && !seekArbitrary(index, actualIdx))
@@ -333,7 +342,7 @@ QVariant SqlQuery1::value(const QString &name) const
     )
         return value(index);
 
-    qWarning("SqlQuery1::value: unknown field name '%s'", qPrintable(name));
+    qWarning().noquote() << sl("SqlQuery1::value: unknown field name '%1'").arg(name);
 
     return {};
 }
@@ -355,7 +364,7 @@ bool SqlQuery1::isNull(const QString &name) const
     )
         return isNull(index);
 
-    qWarning("SqlQuery1::isNull: unknown field name '%s'", qPrintable(name));
+    qWarning().noquote() << sl("SqlQuery1::isNull: unknown field name '%1'").arg(name);
 
     return true;
 }
@@ -391,12 +400,14 @@ void SqlQuery1::clear()
 
 void SqlQuery1::finish()
 {
+    // CUR drivers finish this finish() method, also look hasFearures(FinishQuery), update description silverqx
     // Nothing to do
     if (!isActive())
         return;
 
+    // CUR drivers I saw 3 duplicates of this code block, extract silverqx
     m_sqlResult->setLastError({});
-    m_sqlResult->setAt(QSql::BeforeFirstRow);
+    m_sqlResult->setAt(BeforeFirstRow);
     m_sqlResult->detachFromResultSet();
     m_sqlResult->setActive(false);
 }
@@ -423,7 +434,7 @@ bool SqlQuery1::seekArbitrary(const int index, int &actualIdx)
 {
     // Nothing to do
     if (index < 0) {
-        m_sqlResult->setAt(QSql::BeforeFirstRow);
+        m_sqlResult->setAt(BeforeFirstRow);
         return false;
     }
 
@@ -435,14 +446,14 @@ bool SqlQuery1::seekRelative(const int index, int &actualIdx)
 {
     // CUR drivers finish this if I will have higher IQ silverqx
     switch (at()) {
-    case QSql::BeforeFirstRow:
+    case BeforeFirstRow:
         if (index > 0)
             actualIdx = index - 1;
         else
             return false;
         break;
 
-    case QSql::AfterLastRow:
+    case AfterLastRow:
         if (index < 0) {
             m_sqlResult->fetchLast();
             actualIdx = at() + index + 1;
@@ -452,7 +463,7 @@ bool SqlQuery1::seekRelative(const int index, int &actualIdx)
 
     default:
         if (at() + index < 0) {
-            m_sqlResult->setAt(QSql::BeforeFirstRow);
+            m_sqlResult->setAt(BeforeFirstRow);
             return false;
         }
         actualIdx = at() + index;
@@ -465,11 +476,11 @@ bool SqlQuery1::seekRelative(const int index, int &actualIdx)
 bool SqlQuery1::mapSeekToFetch(const int actualIdx)
 {
     // fetchNext()
-    if (actualIdx == at() + 1 && at() != QSql::BeforeFirstRow) {
+    if (actualIdx == at() + 1 && at() != static_cast<int>(BeforeFirstRow)) {
         if (m_sqlResult->fetchNext())
             return true;
 
-        m_sqlResult->setAt(QSql::AfterLastRow);
+        m_sqlResult->setAt(AfterLastRow);
         return false;
     }
 
@@ -478,7 +489,7 @@ bool SqlQuery1::mapSeekToFetch(const int actualIdx)
         if (m_sqlResult->fetchPrevious())
             return true;
 
-        m_sqlResult->setAt(QSql::BeforeFirstRow);
+        m_sqlResult->setAt(BeforeFirstRow);
         return false;
     }
 
@@ -486,7 +497,7 @@ bool SqlQuery1::mapSeekToFetch(const int actualIdx)
     if (m_sqlResult->fetch(actualIdx))
         return true;
 
-    m_sqlResult->setAt(QSql::AfterLastRow);
+    m_sqlResult->setAt(AfterLastRow);
 
     return false;
 }

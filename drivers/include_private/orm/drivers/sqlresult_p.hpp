@@ -2,9 +2,9 @@
 #ifndef ORM_DRIVERS_SQLRESULT_P_HPP
 #define ORM_DRIVERS_SQLRESULT_P_HPP
 
-#include <QtSql/private/qtsqlglobal_p.h>
 #include <QList>
 
+#include "orm/drivers/driverstypes.hpp"
 #include "orm/drivers/sqldrivererror.hpp"
 
 TINYORM_BEGIN_COMMON_NAMESPACE
@@ -14,9 +14,13 @@ namespace Orm::Drivers
 
     class SqlDriver;
 
+    /*! SqlResult private implementation. */
     class SqlResultPrivate
     {
         Q_DISABLE_COPY_MOVE(SqlResultPrivate)
+
+        /*! Expose the NumericalPrecisionPolicy enum. */
+        using enum Orm::Drivers::NumericalPrecisionPolicy;
 
     public:
         /*! Constructor. */
@@ -25,23 +29,32 @@ namespace Orm::Drivers
         inline ~SqlResultPrivate() = default;
 
         /* Prepared queries */
+        /*! Determine whether a value stored in the given QVariant isNull(). */
         static bool isVariantNull(const QVariant &value);
 
         /* Data members */
+        /*! Database driver used to access the database connection. */
         std::weak_ptr<SqlDriver> sqldriver;
 
+        /*! The current SQL query text. */
         QString query;
 
-        QList<QVariant> values;
+        /*! Bound values for the prepared statement. */
+        QList<QVariant> boundValues;
 
+        /*! The last query error. */
         SqlDriverError lastError;
 
-        QSql::NumericalPrecisionPolicy precisionPolicy = QSql::LowPrecisionDouble;
+        /*! Connection numerical precision policy. */
+        NumericalPrecisionPolicy precisionPolicy = LowPrecisionDouble;
 
-        int cursor = QSql::BeforeFirstRow;
+        /*! The current cursor position. */
+        int cursor = BeforeFirstRow;
 
-        bool active = false;
-        bool select = false;
+        /*! Is this result active? */
+        bool isActive = false;
+        /*! Is this result from the SELECT statement? */
+        bool isSelect = false;
     };
 
 } // namespace Orm::Drivers

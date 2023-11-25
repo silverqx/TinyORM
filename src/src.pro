@@ -47,11 +47,11 @@ CONFIG(dll, dll|shared|static|staticlib): \
 include(../include/include.pri)
 include(src.pri)
 
-INCLUDEPATH += C:/Qt/6.6.0/msvc2019_64/include/QtCore/6.6.0
-INCLUDEPATH += C:/Qt/6.6.0/msvc2019_64/include/QtSql/6.6.0
-INCLUDEPATH += $$PWD/../drivers/include_private
+#INCLUDEPATH += C:/Qt/6.6.0/msvc2019_64/include/QtCore/6.6.0
+#INCLUDEPATH += C:/Qt/6.6.0/msvc2019_64/include/QtSql/6.6.0
+#INCLUDEPATH += $$PWD/../drivers/include_private
 
-include(../drivers/include_private/include.pri)
+include(../drivers/include_private/include_private.pri)
 include(../drivers/include/include.pri)
 include(../drivers/src/src.pri)
 

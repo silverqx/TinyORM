@@ -1,7 +1,9 @@
 INCLUDEPATH *= $$PWD
 
 headersList += \
+    $$PWD/orm/drivers/driverstypes.hpp \
     $$PWD/orm/drivers/mysql/mysqldriver.hpp \
+    $$PWD/orm/drivers/mysql/mysqlresult.hpp \
     $$PWD/orm/drivers/sqldatabase.hpp \
     $$PWD/orm/drivers/sqldatabasemanager.hpp \
     $$PWD/orm/drivers/sqldriver.hpp \

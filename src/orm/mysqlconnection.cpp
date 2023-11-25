@@ -202,8 +202,7 @@ bool MySqlConnection::pingDatabase()
         if (ping != 0)
             return false;
 
-        qWarning() << "Unknown behavior during mysql_ping(), this should never "
-                      "happen :/";
+        qWarning("Unknown behavior during mysql_ping(), this should never happen :/");
         return false;
     };
 
