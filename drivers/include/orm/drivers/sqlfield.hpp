@@ -16,11 +16,18 @@ namespace Orm::Drivers
     class SHAREDLIB_EXPORT SqlField
     {
     public:
-        enum RequiredStatus {
+        /*! Determine whether a field is required during INSERT statements. */
+        enum struct RequiredStatus {
+            /*! Unknown required field status. */
             Unknown = -1,
+            /*! Optional field. */
             Optional = 0,
+            /*! Required field, INSERT will fail if a field doesn't have a value. */
             Required = 1,
         };
+
+        /*! Expose the RequiredStatus enum. */
+        using enum RequiredStatus;
 
         /*! Constructor. */
         explicit SqlField(
@@ -32,12 +39,14 @@ namespace Orm::Drivers
         /*! Equality comparison operator for the SqlField. */
         inline bool operator==(const SqlField &) const = default;
 
-        // CUR drivers swap silverqx
+        /*! Swap the SqlField. */
+        void swap(SqlField &other) noexcept;
 
+        /*! Clear the value of the field and set it to NULL. */
         void clear();
 
         /* Getters / Setters */
-        /*! Determine whether the field QVariant value is valid. */
+        /*! Determine whether the field QMetaType is valid (not value). */
         inline bool isValid() const;
         /*! Determine whether the field QVariant value is null. */
         inline bool isNull() const;
@@ -46,49 +55,68 @@ namespace Orm::Drivers
         inline QVariant value() const;
         /*! Set the field value. */
         inline void setValue(const QVariant &value);
+        /*! Set the field value. */
+        inline void setValue(QVariant &&value);
 
         /*! Get the field name. */
         inline QString name() const;
         /*! Set the field name. */
         inline void setName(const QString &name);
+        /*! Set the field name. */
+        inline void setName(QString &&name);
 
         /*! Get the table name a field belongs to. */
         inline QString tableName() const;
         /*! Set the table name for the current field. */
         inline void setTableName(const QString &tableName);
+        /*! Set the table name for the current field. */
+        inline void setTableName(QString &&tableName);
 
         /*! Get the field default value. */
         inline QVariant defaultValue() const;
         /*! Set the field default value. */
         inline void setDefaultValue(const QVariant &value);
+        /*! Set the field default value. */
+        inline void setDefaultValue(QVariant &&value);
 
         /*! Get the field QVariant value metatype. */
         inline QMetaType metaType() const;
         /*! Set the field QVariant value metatype. */
         void setMetaType(QMetaType metaType);
 
-        inline RequiredStatus requiredStatus() const;
-        inline void setRequiredStatus(RequiredStatus status);
+        /*! Determine whether a field is required. */
+        inline bool isRequired() const;
+        /*! Set the required field status. */
         inline void setRequired(bool required);
 
+        /*! Determine whether a field is required. */
+        inline RequiredStatus requiredStatus() const;
+        /*! Set the required field status. */
+        inline void setRequiredStatus(RequiredStatus status);
+
         /*! Get the field length. */
-        inline int length() const;
+        inline qint64 length() const;
         /*! Set the field length. */
-        inline void setLength(int fieldLength);
+        inline void setLength(qint64 fieldLength);
 
         /*! Get the field precision. */
-        inline int precision() const;
+        inline qint64 precision() const;
         /*! Set the field precision. */
-        inline void setPrecision(int precision);
+        inline void setPrecision(qint64 precision);
 
-        /*! Get the underlying database field type (DB dependant). */
+        /*! Get the underlying database field type (database dependent). */
         inline int typeID() const;
-        /*! Get the underlying database field type (DB dependant). */
+        /*! Get the underlying database field type (database dependent) (alias). */
         inline int sqlType() const;
-        /*! Set the underlying database field type (DB dependant). */
+        /*! Set the underlying database field type (database dependent). */
         inline void setSqlType(int sqlType);
 
-        /*! Determine whether a field is auto-incremented. */
+        /*! Determine whether a field is auto-incrementing (alias). */
+        inline bool isAutoIncrement() const;
+        /*! Mark the field as auto-incrementing (alias). */
+        inline void setAutoIncrement(bool value);
+
+        /*! Determine whether a field is auto-incrementing. */
         inline bool isAutoValue() const;
         /*! Mark the field as auto-incrementing. */
         inline void setAutoValue(bool value);
@@ -104,18 +132,18 @@ namespace Orm::Drivers
         QString m_table;
         /*! Field default value. */
         QVariant m_defaultValue {};
-        /*! Qt metaType. */
+        /*! Qt metatype. */
         QMetaType m_metaType;
         /*! Determine whether a field is required during INSERT statements. */
         SqlField::RequiredStatus m_requiredStatus = SqlField::Unknown;
         /*! Field length. */
-        int m_length = -1;
+        qint64 m_length = -1;
         /*! Field precision. */
-        int m_precision = -1;
-        /*! Underlying database field type (DB dependant). */
+        qint64 m_precision = -1;
+        /*! Underlying database field type (DB dependent). */
         int m_sqlType = -1;
         /*! Determine whether a field is auto-incremented. */
-        bool m_autovalue = false;
+        bool m_autoIncrement = false;
     };
 
     /* public */
@@ -142,6 +170,11 @@ namespace Orm::Drivers
         m_value = value;
     }
 
+    void SqlField::setValue(QVariant &&value)
+    {
+        m_value = std::move(value);
+    }
+
     QString SqlField::name() const
     {
         return m_name;
@@ -150,6 +183,11 @@ namespace Orm::Drivers
     void SqlField::setName(const QString &name)
     {
         m_name = name;
+    }
+
+    void SqlField::setName(QString &&name)
+    {
+        m_name = std::move(name);
     }
 
     QString SqlField::tableName() const
@@ -162,6 +200,11 @@ namespace Orm::Drivers
         m_table = table;
     }
 
+    void SqlField::setTableName(QString &&table)
+    {
+        m_table = std::move(table);
+    }
+
     QVariant SqlField::defaultValue() const
     {
         return m_defaultValue;
@@ -172,9 +215,24 @@ namespace Orm::Drivers
         m_defaultValue = value;
     }
 
+    void SqlField::setDefaultValue(QVariant &&value)
+    {
+        m_defaultValue = std::move(value);
+    }
+
     QMetaType SqlField::metaType() const
     {
         return m_metaType;
+    }
+
+    bool SqlField::isRequired() const
+    {
+        return m_requiredStatus == Required;
+    }
+
+    void SqlField::setRequired(const bool required)
+    {
+        setRequiredStatus(required ? Required : Optional);
     }
 
     SqlField::RequiredStatus SqlField::requiredStatus() const
@@ -187,27 +245,22 @@ namespace Orm::Drivers
         m_requiredStatus = required;
     }
 
-    void SqlField::setRequired(const bool required)
-    {
-        setRequiredStatus(required ? Required : Optional);
-    }
-
-    int SqlField::length() const
+    qint64 SqlField::length() const
     {
         return m_length;
     }
 
-    void SqlField::setLength(const int fieldLength)
+    void SqlField::setLength(const qint64 fieldLength)
     {
         m_length = fieldLength;
     }
 
-    int SqlField::precision() const
+    qint64 SqlField::precision() const
     {
         return m_precision;
     }
 
-    void SqlField::setPrecision(const int precision)
+    void SqlField::setPrecision(const qint64 precision)
     {
         m_precision = precision;
     }
@@ -227,14 +280,24 @@ namespace Orm::Drivers
         m_sqlType = sqlType;
     }
 
+    bool SqlField::isAutoIncrement() const
+    {
+        return m_autoIncrement;
+    }
+
+    void SqlField::setAutoIncrement(const bool value)
+    {
+        m_autoIncrement = value;
+    }
+
     bool SqlField::isAutoValue() const
     {
-        return m_autovalue;
+        return m_autoIncrement;
     }
 
     void SqlField::setAutoValue(const bool value)
     {
-        m_autovalue = value;
+        m_autoIncrement = value;
     }
 
 } // namespace Orm::Drivers

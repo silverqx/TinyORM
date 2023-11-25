@@ -2,7 +2,7 @@
 #ifndef ORM_DRIVERS_SQLDRIVER_P_HPP
 #define ORM_DRIVERS_SQLDRIVER_P_HPP
 
-#include <QtSql/private/qtsqlglobal_p.h>
+#include <thread>
 
 #include "orm/drivers/sqldriver.hpp"
 #include "orm/drivers/sqldrivererror.hpp"
@@ -12,23 +12,35 @@ TINYORM_BEGIN_COMMON_NAMESPACE
 namespace Orm::Drivers
 {
 
+    /*! SqlDriver private implementation. */
     class SqlDriverPrivate
     {
         Q_DISABLE_COPY_MOVE(SqlDriverPrivate)
+
+        /*! Expose the NumericalPrecisionPolicy enum. */
+        using enum Orm::Drivers::NumericalPrecisionPolicy;
 
     public:
         /*! Constructor. */
         inline explicit SqlDriverPrivate(SqlDriver::DbmsType type);
         // CUR drivers check virtual here, without it the ~MySqlDriverPrivate() is not called of course silverqx
-        /*! Default destructor. */
+        /*! Virtual destructor. */
         inline virtual ~SqlDriverPrivate() = default;
 
         /* Data members */
+        /*! The last error that occurred on the database. */
         SqlDriverError lastError {};
+        /*! Database driver type. */
         SqlDriver::DbmsType dbmsType;
-        QSql::NumericalPrecisionPolicy defaultPrecisionPolicy = QSql::LowPrecisionDouble;
+        /*! The default numerical precision policy. */
+        NumericalPrecisionPolicy defaultPrecisionPolicy = LowPrecisionDouble;
 
+        /*! The thread ID in which the driver was instantiated. */
+        std::thread::id threadId = std::this_thread::get_id();
+
+        /*! Is the connection currently open? */
         bool isOpen = false;
+        /*! Was there an error while opening a new database connection? */
         bool isOpenError = false;
     };
 

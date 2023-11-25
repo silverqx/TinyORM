@@ -1,8 +1,12 @@
 #include "orm/drivers/sqldriver.hpp"
 
+#include <orm/constants.hpp>
+
 #include "orm/drivers/sqldriver_p.hpp"
 
 TINYORM_BEGIN_COMMON_NAMESPACE
+
+using Orm::Constants::QUOTE;
 
 namespace Orm::Drivers
 {
@@ -19,6 +23,8 @@ SqlDriver::SqlDriver(std::unique_ptr<SqlDriverPrivate> &&dd)
    If the destructor is inline then the compilation fails because a unique_ptr can't
    destroy an incomplete type. */
 SqlDriver::~SqlDriver() = default;
+
+/* Getters / Setters */
 
 bool SqlDriver::isOpen() const
 {
@@ -44,30 +50,40 @@ SqlDriverError SqlDriver::lastError() const
     return d->lastError;
 }
 
-QSql::NumericalPrecisionPolicy SqlDriver::defaultNumericalPrecisionPolicy() const
+NumericalPrecisionPolicy SqlDriver::defaultNumericalPrecisionPolicy() const
 {
     Q_D(const SqlDriver);
     return d->defaultPrecisionPolicy;
 }
 
-void SqlDriver::setDefaultNumericalPrecisionPolicy(
-        const QSql::NumericalPrecisionPolicy precision)
+void
+SqlDriver::setDefaultNumericalPrecisionPolicy(const NumericalPrecisionPolicy precision)
 {
     Q_D(SqlDriver);
     d->defaultPrecisionPolicy = precision;
 }
+
+std::thread::id SqlDriver::threadId() const noexcept
+{
+    Q_D(const SqlDriver);
+    return d->threadId;
+}
+
+/* Others */
 
 int SqlDriver::maximumIdentifierLength(const SqlDriver::IdentifierType /*unused*/) const
 {
     return std::numeric_limits<int>::max();
 }
 
+/* The following two methods are named wrong, but I can't rename them because
+   they are public and virtual. 🤔 */
 bool SqlDriver::isIdentifierEscaped(const QString &identifier,
                                     const IdentifierType /*unused*/) const
 {
     return identifier.size() > 2 &&
-           identifier.startsWith(QChar('"')) &&
-           identifier.endsWith(QChar('"'));
+           identifier.startsWith(QUOTE) &&
+           identifier.endsWith(QUOTE);
 }
 
 QString
@@ -81,6 +97,8 @@ SqlDriver::stripDelimiters(const QString &identifier, const IdentifierType type)
 }
 
 /* protected */
+
+/* Setters */
 
 void SqlDriver::setOpen(const bool value)
 {
@@ -98,10 +116,25 @@ void SqlDriver::setOpenError(const bool value)
         d->isOpen = false;
 }
 
-void SqlDriver::setLastError(const SqlDriverError &error)
+bool SqlDriver::setLastError(const SqlDriverError &error)
 {
     Q_D(SqlDriver);
+
     d->lastError = error;
+
+    // To be able call 'return setLastError()' to simplify code
+    return false;
+}
+
+bool SqlDriver::setLastOpenError(const SqlDriverError &error)
+{
+    Q_D(SqlDriver);
+
+    d->lastError = error;
+    d->isOpenError = true;
+
+    // To be able call 'return setLastError()' to simplify code
+    return false;
 }
 
 } // namespace Orm::Drivers

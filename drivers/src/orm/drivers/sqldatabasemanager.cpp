@@ -1,17 +1,21 @@
 #include "orm/drivers/sqldatabasemanager.hpp"
 
+#include <orm/constants.hpp>
+
 #include "orm/drivers/sqldatabase_p.hpp"
 #include "orm/drivers/support/connectionshash_p.hpp"
 
+#define sl(str) QStringLiteral(str)
+
 TINYORM_BEGIN_COMMON_NAMESPACE
 
-using namespace Qt::StringLiterals;
+using Orm::Constants::QMYSQL;
 
 namespace Orm::Drivers
 {
 
 const QString
-SqlDatabaseManager::defaultConnection = QStringLiteral("qt_sql_default_connection");
+SqlDatabaseManager::defaultConnection = sl("qt_sql_default_connection"); // Don't change the default connection name
 
 /* public */
 
@@ -38,6 +42,8 @@ SqlDatabase
 SqlDatabaseManager::addDatabase(std::unique_ptr<SqlDriver> &&driver,
                                 const QString &connection)
 {
+    throwIfDriverIsNullptr(driver, connection);
+
     SqlDatabase db(std::move(driver));
     SqlDatabasePrivate::addDatabase(db, connection);
 
@@ -75,7 +81,7 @@ SqlDatabaseManager::cloneDatabase(const QString &otherConnection,
 
 QStringList SqlDatabaseManager::drivers()
 {
-    return {"QMYSQL"_L1};
+    return {QMYSQL};
 }
 
 QStringList SqlDatabaseManager::connectionNames()
@@ -86,6 +92,20 @@ QStringList SqlDatabaseManager::connectionNames()
 bool SqlDatabaseManager::isDriverAvailable(const QString &name)
 {
     return drivers().contains(name);
+}
+
+/* private */
+
+void SqlDatabaseManager::throwIfDriverIsNullptr(const std::unique_ptr<SqlDriver> &driver,
+                                                const QString &connection)
+{
+    // Nothing to do
+    if (driver)
+        return;
+
+    throw std::exception(
+                sl("The driver can't be nullptr while adding the '%1' connection.")
+                .arg(connection).toUtf8().constData());
 }
 
 } // namespace Orm::Drivers

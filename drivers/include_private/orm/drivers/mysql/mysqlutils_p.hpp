@@ -23,8 +23,6 @@ namespace Orm::Drivers
 namespace MySql
 {
 
-    class MySqlDriverPrivate;
-
     /*! MySQL driver private library class. */
     class SHAREDLIB_EXPORT MySqlUtilsPrivate
     {
@@ -36,14 +34,20 @@ namespace MySql
         /*! Deleted destructor. */
         ~MySqlUtilsPrivate() = delete;
 
+        /*! Factory method to create the SqlDriverError (from MYSQL handler). */
         static SqlDriverError
-        makeError(const QString &error, SqlDriverError::ErrorType type,
-                  MYSQL *mysql, std::optional<uint> errNo = std::nullopt);
+        createError(const QString &error, SqlDriverError::ErrorType errorType,
+                    MYSQL *mysql, std::optional<uint> errNo = std::nullopt);
 
-        static QMetaType decodeMySqlType(enum_field_types mysqltype, uint flags);
+        /*! Decode the given MySQL field type to the Qt metatype. */
+        static QMetaType decodeMySqlType(enum_field_types mysqlType, uint flags);
 
-        static bool isInteger(int type);
-        static bool isTimeOrDate(enum_field_types type);
+        /*! Determine whether the given metatype ID is integer type. */
+        static bool isInteger(int typeId);
+        /*! Determine whether the given MySQL field type is Date-related type. */
+        static bool isTimeOrDate(enum_field_types mysqlType);
+
+        /*! Convert the given MySQL field to the SqlField. */
         static SqlField convertToSqlField(const MYSQL_FIELD *fieldInfo);
     };
 
