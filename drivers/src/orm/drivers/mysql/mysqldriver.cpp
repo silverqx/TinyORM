@@ -266,9 +266,15 @@ bool MySqlDriver::hasFeature(const DriverFeature feature) const
     return false;
 }
 
-std::unique_ptr<SqlResult> MySqlDriver::createResult() const
+std::unique_ptr<SqlResult>
+MySqlDriver::createResult(const std::weak_ptr<SqlDriver> &driver) const
 {
-    return std::make_unique<MySqlResult>(this);
+    /* We need to upcast here, there is no other way, it also has to be std::weak_ptr(),
+       it can't be done any better. This upcast is kind of check, we can't pass down
+       the SqlDriver to the MySqlResult.
+       Even if it would be the shared_ptr<SqlDriver> we had to upcast the same way. */
+    return std::make_unique<MySqlResult>(
+                std::dynamic_pointer_cast<MySqlDriver>(driver.lock()));
 }
 
 QVariant MySqlDriver::handle() const

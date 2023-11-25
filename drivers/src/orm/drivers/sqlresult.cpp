@@ -17,11 +17,8 @@ SqlResult::SqlResult(std::unique_ptr<SqlResultPrivate> &&dd)
 {
     Q_D(SqlResult);
 
-    // CUR drivers why checked so late? silverqx
-    // The d->sqldriver must always be set
-    Q_ASSERT(d->sqldriver != nullptr);
-
-    setNumericalPrecisionPolicy(d->sqldriver->defaultNumericalPrecisionPolicy());
+    setNumericalPrecisionPolicy(
+                d->sqldriver.lock()->defaultNumericalPrecisionPolicy());
 }
 
 /* public */
@@ -119,7 +116,7 @@ SqlResult::setNumericalPrecisionPolicy(const QSql::NumericalPrecisionPolicy prec
     d->precisionPolicy = precision;
 }
 
-const SqlDriver *SqlResult::driver() const noexcept
+std::weak_ptr<const SqlDriver> SqlResult::driver() const noexcept
 {
     Q_D(const SqlResult);
     return d->sqldriver;
@@ -183,6 +180,17 @@ void SqlResult::clearValues()
 bool SqlResult::fetchPrevious()
 {
     return fetch(at() - 1);
+}
+
+/* private */
+
+/* Leave the non-const driver() private, it's correct, it's not needed anywhere and is
+   for special cases only. */
+
+std::weak_ptr<SqlDriver> SqlResult::driver() noexcept
+{
+    Q_D(const SqlResult);
+    return d->sqldriver;
 }
 
 } // namespace Orm::Drivers

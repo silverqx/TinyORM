@@ -85,8 +85,12 @@ SqlQuery1::setNumericalPrecisionPolicy(const QSql::NumericalPrecisionPolicy prec
     m_sqlResult->setNumericalPrecisionPolicy(precision);
 }
 
-const SqlDriver *SqlQuery1::driver() const noexcept
+std::weak_ptr<const SqlDriver> SqlQuery1::driver() const noexcept
 {
+    /* This must be the std::weak_ptr() because when the connection is removed from
+       the SqlDatabaseManager using the SqlDatabase::removeDatabase() then the SqlDriver
+       is invalidated (using the std::shared_ptr::reset()).
+       This means we don't want to keep the SqlDriver alive after removeDatabase(). */
     return m_sqlResult->driver();
 }
 
@@ -106,7 +110,9 @@ bool SqlQuery1::exec(const QString &query)
 
     m_sqlResult->setQuery(query.trimmed());
 
-    if (!driver()->isOpen() || driver()->isOpenError()) {
+    if (const auto driver = this->driver().lock();
+        !driver->isOpen() || driver->isOpenError()
+    ) {
         qWarning("SqlQuery1::exec: database not open");
         return false;
     }
@@ -134,7 +140,9 @@ bool SqlQuery1::prepare(const QString &query)
     if (query.isEmpty())
         throw std::exception("SqlQuery1::exec: empty query");
 
-    if (!driver()->isOpen() || driver()->isOpenError()) {
+    if (const auto driver = this->driver().lock();
+        !driver->isOpen() || driver->isOpenError()
+    ) {
         qWarning("SqlQuery1::prepare: database not open");
         return false;
     }
@@ -355,7 +363,7 @@ bool SqlQuery1::isNull(const QString &name) const
 int SqlQuery1::size() const
 {
     // Nothing to do
-    if (!driver()->hasFeature(SqlDriver::QuerySize) || !isSelect() || !isActive())
+    if (!driver().lock()->hasFeature(SqlDriver::QuerySize) || !isSelect() || !isActive())
         return -1;
 
     return m_sqlResult->size();
@@ -374,8 +382,11 @@ int SqlQuery1::numRowsAffected() const
 
 void SqlQuery1::clear()
 {
+    const auto driver = this->driver();
+
     // CUR drivers revisit, maybe clear everything manually? What happens with current values, is below correct? silverqx
-    *this = SqlQuery1(driver()->createResult());
+    // Get the SqlResult instance
+    *this = SqlQuery1(driver.lock()->createResult(driver));
 }
 
 void SqlQuery1::finish()
@@ -391,6 +402,22 @@ void SqlQuery1::finish()
 }
 
 /* private */
+
+/* Getters / Setters */
+
+/* Leave the non-const driver() private, it's correct, it's not needed anywhere and is
+   for special cases only. */
+
+std::weak_ptr<SqlDriver> SqlQuery1::driver() noexcept
+{
+    /* This must be the std::weak_ptr() because when the connection is removed from
+       the SqlDatabaseManager using the SqlDatabase::removeDatabase() then the SqlDriver
+       is invalidated (using the std::shared_ptr::reset()).
+       This means we don't want to keep the SqlDriver alive after removeDatabase(). */
+    return m_sqlResult->driver();
+}
+
+/* Result sets */
 
 bool SqlQuery1::seekArbitrary(const int index, int &actualIdx)
 {
@@ -482,9 +509,10 @@ std::unique_ptr<SqlResult> SqlQuery1::initSqlResult(const SqlDatabase &connectio
         // CUR drivers throw is the default connection is not valid silverqx
         throw std::exception("No DB connection available.");
 
-    // Get the SqlResult instance
-    return connection.driver()->createResult();
+    const auto driver = connection.driver();
 
+    // Get the SqlResult instance
+    return driver.lock()->createResult(driver);
 }
 
 } // namespace Orm::Drivers

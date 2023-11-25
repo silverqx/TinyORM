@@ -79,7 +79,7 @@ namespace Orm::Drivers
         QSql::NumericalPrecisionPolicy numericalPrecisionPolicy() const;
         void setNumericalPrecisionPolicy(QSql::NumericalPrecisionPolicy precision);
 
-        std::shared_ptr<SqlDriver> driver() const noexcept;
+        std::weak_ptr<SqlDriver> driver() const noexcept;
 
         /* Transactions */
         bool transaction();

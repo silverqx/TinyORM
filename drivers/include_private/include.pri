@@ -1,6 +1,7 @@
 INCLUDEPATH *= $$PWD
 
 headersList += \
+    $$PWD/orm/drivers/macros/declaresqldriverprivate_p.hpp \
     $$PWD/orm/drivers/macros/includemysqlh_p.hpp \
     $$PWD/orm/drivers/mysql/mysqldriver_p.hpp \
     $$PWD/orm/drivers/mysql/mysqlresult_p.hpp \

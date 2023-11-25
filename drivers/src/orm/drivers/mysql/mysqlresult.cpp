@@ -32,7 +32,7 @@ namespace Orm::Drivers::MySql
 
 /* public */
 
-MySqlResult::MySqlResult(const MySqlDriver *const driver)
+MySqlResult::MySqlResult(const std::weak_ptr<MySqlDriver> &driver)
     : SqlResult(std::make_unique<MySqlResultPrivate>(driver))
 {}
 
@@ -62,8 +62,7 @@ bool MySqlResult::exec(const QString &query)
 
     cleanup();
 
-    const auto *const sqldriver = d->drv_d_func();
-    auto *const mysql = sqldriver->mysql;
+    auto *const mysql = d->drv_d_func()->mysql;
 
     // Execute query
     if (const auto queryArray = query.toUtf8();
@@ -518,11 +517,7 @@ void MySqlResult::mysqlFreeResults() const
 
     /* Must iterate through leftover result sets from multi-selects or stored procedures
        if this isn't done then subsequent queries will fail with Commands out of sync. */
-    const auto *const sqldriver = d->drv_d_func();
-
-    // The d->sqldriver must always be set
-    Q_ASSERT(d->sqldriver != nullptr);
-    auto *const mysql = sqldriver->mysql;
+    auto *const mysql = d->drv_d_func()->mysql;
 
     // Nothing to do, no more result set/s
     if (mysql == nullptr || !mysql_more_results(mysql))

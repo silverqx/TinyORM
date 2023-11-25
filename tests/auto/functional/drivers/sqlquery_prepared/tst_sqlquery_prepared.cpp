@@ -516,7 +516,9 @@ void tst_SqlQuery_Prepared::insert_update_delete() const
 
 SqlQuery1 tst_SqlQuery_Prepared::createQuery(const QString &/*unused*/) const
 {
-    return SqlQuery1(SqlDatabase::database(Databases::MYSQL).driver()->createResult());
+    const auto driver = SqlDatabase::database(Databases::MYSQL).driver();
+
+    return SqlQuery1(driver.lock()->createResult(driver));
 }
 
 QTEST_MAIN(tst_SqlQuery_Prepared)
