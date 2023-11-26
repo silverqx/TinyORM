@@ -34,11 +34,11 @@ namespace Orm::Configurations
         /*! Add the SSL-related options to the connection 'options' hash. */
         void addSslOptions(QVariantHash &options) const;
 
-        /*! Throw exception if configuration contains the 'schema' option. */
+        /*! Throw an exception if configuration contains the 'schema' option. */
         void throwIfContainsSchemaOption() const;
         /*! Throw exception if the 'search_path' option isn't QString or QStringList. */
         void throwIfSearchPathHasWrongType() const;
-        /*! Throw exception if the 'dont_drop' option isn't QString or QStringList. */
+        /*! Throw an exception if the 'dont_drop' option isn't QString or QStringList. */
         void throwIfDontDropHasWrongType() const;
     };
 

@@ -940,7 +940,7 @@ namespace Orm::Query
                 const Column &column, const QString &comparison, QVariant value,
                 const QString &condition, WhereType type = WhereType::BASIC);
 
-        /*! Throw exception when m_bindings doesn't contain a passed type. */
+        /*! Throw an exception when m_bindings doesn't contain a passed type. */
         void checkBindingType(BindingType type) const;
 
         /*! All of the available clause operators. */

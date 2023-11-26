@@ -393,7 +393,7 @@ namespace Query
             TinyORM connection. */
         DatabaseConnection &refreshQtConnection(const QString &connection);
 
-        /*! Throw exception if DatabaseManager instance already exists. */
+        /*! Throw an exception if DatabaseManager instance already exists. */
         static void checkInstance();
 
         /*! Call QMetaType's register functions needed by the Qt 5. */

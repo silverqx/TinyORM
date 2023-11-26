@@ -59,7 +59,7 @@ namespace Tom::Commands
         /*! Integrate tab-completion for the bash shell. */
         int integrateBash() const;
 
-        /*! Throw exception if the bash completion directory doesn't exists. */
+        /*! Throw an exception if the bash completion directory doesn't exists. */
         static void throwIfBashCompletionDirNotExists();
         /*! Write the TinyORM tom tab-completion code for the bash shell. */
         static bool writeTomBashCompletion();
@@ -91,7 +91,7 @@ namespace Tom::Commands
 #endif
 
         /* Others */
-        /*! Throw exception if unknown shell was passed. */
+        /*! Throw an exception if unknown shell was passed. */
         [[noreturn]] static void throwIfUnknownShell(const QString &shellArg);
     };
 

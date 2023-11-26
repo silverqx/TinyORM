@@ -149,9 +149,9 @@ namespace TestUtils
                 std::unordered_map<QString, QVariant> &&optionsToUpdate,
                 const std::vector<QString> &optionsToRemove);
 
-        /*! Throw exception if the database manager instance was not yet created. */
+        /*! Throw an exception if the database manager instance was not yet created. */
         static void throwIfNoManagerInstance();
-        /*! Throw exception if database connections were already initialized. */
+        /*! Throw an exception if database connections were already initialized. */
         static void throwIfConnectionsInitialized();
 
         /*! Shared pointer to the DatabaseManager instance. */

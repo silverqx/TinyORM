@@ -275,7 +275,7 @@ namespace Concerns
         /*! Alias for the enum struct RelationMappingNotFoundError::From. */
         using RelationFrom = Tiny::Exceptions::RelationMappingNotFoundError::From;
 
-        /*! Throw exception if a relation is not defined. */
+        /*! Throw an exception if a relation is not defined. */
         void validateUserRelation(const QString &name,
                                   RelationFrom from = RelationFrom::UNDEFINED) const;
 

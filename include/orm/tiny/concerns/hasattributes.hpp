@@ -536,7 +536,7 @@ namespace Orm::Tiny::Concerns
         /*! Get an accessor value from the given attribute. */
         QVariant getAccessorValueFrom(const Attribute &attribute) const;
 
-        /*! Throw exception if a relation is not defined. */
+        /*! Throw an exception if a relation is not defined. */
         static void
         validateUserMutator(const QString &name,
                             const QHash<QString, MutatorFunction> &userMutators);
