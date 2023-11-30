@@ -44,7 +44,7 @@ namespace Tom::Commands
         /*! Integrate tab-completion for the pwsh shell. */
         int integratePwsh() const;
 
-        /*! Get system dependant Documents folder. */
+        /*! Get the system-dependent Documents folder. */
         static QString getPwshProfileFolder();
         /*! Write the TinyORM tom tab-completion code to the pwsh profile. */
         static bool writeToPwshProfile(
