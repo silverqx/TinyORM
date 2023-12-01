@@ -144,7 +144,7 @@ namespace Types
         /*! Clears the contents. */
         inline void clear();
 
-        /*! Swaps the contents. */
+        /*! Swap the SyncChanges. */
         inline void swap(SyncChanges &right)
         noexcept(std::is_nothrow_swappable_v<ContainerType>);
 
@@ -396,6 +396,7 @@ namespace Types
 
     /* Non-member functions */
 
+    /*! Swap the SyncChanges. */
     inline void swap(SyncChanges &left, SyncChanges &right)
     noexcept(noexcept(left.swap(right)))
     {
