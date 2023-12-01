@@ -213,7 +213,7 @@ namespace Orm
         inline const QString &getName() const noexcept;
         /*! Get the name of the connected database. */
         inline const QString &getDatabaseName() const noexcept;
-        /*! Get the host name of the connected database. */
+        /*! Get the hostname of the connected database. */
         inline const QString &getHostName() const noexcept;
 
         /*! Get the QtTimeZoneConfig for the current connection. */

@@ -207,7 +207,7 @@ namespace Query
         const QString &driverNamePrintable(const QString &connection = "");
         /*! Return the name of the connected database. */
         const QString &databaseName(const QString &connection = "");
-        /*! Return the host name of the connected database. */
+        /*! Return the hostname of the connected database. */
         const QString &hostName(const QString &connection = "");
 
         /*! Get the QtTimeZoneConfig for the current connection. */

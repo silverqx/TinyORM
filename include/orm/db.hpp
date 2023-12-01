@@ -199,7 +199,7 @@ namespace Orm
         static const QString &driverNamePrintable(const QString &connection = "");
         /*! Return the name of the connected database. */
         static const QString &databaseName(const QString &connection = "");
-        /*! Return the host name of the connected database. */
+        /*! Return the hostname of the connected database. */
         static const QString &hostName(const QString &connection = "");
 
         /*! Get the QtTimeZoneConfig for the current connection. */
