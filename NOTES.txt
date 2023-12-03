@@ -2345,6 +2345,33 @@ tests was done on std::vector<AttributeItem> with 1'000'000 values
  - the QHash<QString, RelationVisitor> u_relations are ~50ms faster than the std::unordered_map,
    tested with the TinyOrmPlayground with ~1595 queries
 
+ - QString constants - returning the QString from the function, 1'000'000 loops:
+
+   The following proves that TinyORM inline and extern constants are worth it.
+   It's 6000% faster!!! than constructing a new QString-s still again, benefits are huge. 😎👌
+
+   The function simply contains only the return xyz-scenarios described below (NRVO applied at 100%):
+     ~9ms - QStringLiteral defined in the same TU
+     ~9ms - inline QStringLiteral in another hpp
+    ~10ms - extern QStringLiteral in another TU
+   ~682ms - returning const char * directly eg. return "xyz"
+   ~628ms - returning QLatin1String directly eg. return "xyz"_L1
+    ~14ms - returning QStringLiteral directly using return u"xyz"_s
+    ~14ms - returning QStringLiteral directly using return QStringLiteral("xyz")
+
+   All the same as above but forced a copy inside the function like:
+    QString s;
+    s = sl;
+    return s;
+
+    ~46ms - QStringLiteral defined in the same TU
+    ~46ms - inline QStringLiteral in another hpp
+    ~47ms - extern QStringLiteral in another TU
+   ~734ms - returning const char * directly eg. return "xyz"
+   ~683ms - returning QLatin1String directly eg. return "xyz"_L1
+    ~48ms - returning QStringLiteral directly using return u"xyz"_s
+    ~50ms - returning QStringLiteral directly using return QStringLiteral("xyz")
+
 
 Qt confusions notes:
 --------------------
