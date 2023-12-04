@@ -2491,3 +2491,13 @@ function Invoke-CreateTag
     NewLine
     Write-Output (Get-TagMessage)
     Approve-Continue -Exit
+
+
+Windows File properties:
+------------------------
+tags: FILEFLAGS, debug
+--
+
+They can also be checked using, especially checking the IsDebug build:
+
+(Get-Item .\tom.exe).VersionInfo | fl
