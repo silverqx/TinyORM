@@ -1,3 +1,5 @@
+sourcesList =
+
 extern_constants: \
     sourcesList += \
         $$PWD/orm/constants_extern.cpp \

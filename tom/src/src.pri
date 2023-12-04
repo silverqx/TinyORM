@@ -1,3 +1,5 @@
+sourcesList =
+
 extern_constants: \
     sourcesList += \
         $$PWD/tom/tomconstants_extern.cpp

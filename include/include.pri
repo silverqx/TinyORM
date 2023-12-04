@@ -1,5 +1,7 @@
 INCLUDEPATH *= $$PWD
 
+headersList =
+
 extern_constants: \
     headersList += \
         $$PWD/orm/constants_extern.hpp \
