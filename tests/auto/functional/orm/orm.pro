@@ -7,8 +7,7 @@ subdirsList = \
     schema \
 
 !disable_orm: \
-    subdirsList += \
-        tiny \
+    subdirsList += tiny
 
 SUBDIRS = $$sorted(subdirsList)
 

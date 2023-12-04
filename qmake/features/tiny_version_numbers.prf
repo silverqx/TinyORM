@@ -61,6 +61,14 @@ defineTest(tiny_version_numbers) {
     if($$defined2:equals(targetName, "tom")): \
         versionHeader = $$quote($${TINYORM_SOURCE_TREE}/tom/include/tom/version.hpp)
 
+    # version.hpp for the TinyDrivers project
+    else:contains(_PRO_FILE_, ".*\/drivers\/common\/common\.pro$"): \
+        versionHeader = $$absolute_path("include/orm/drivers/version.hpp")
+
+    # version.hpp for the TinyMySql project
+    else:contains(_PRO_FILE_, ".*\/drivers\/mysql\/mysql\.pro$"): \
+        versionHeader = $$absolute_path("include/orm/drivers/mysql/version.hpp")
+
     # Try to find in the HEADERS
     else: \
         versionHeader = $$absolute_path($$find(HEADERS, "(?:.*\/)?version\.h(?:pp)?$"))

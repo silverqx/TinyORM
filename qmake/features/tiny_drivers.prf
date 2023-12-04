@@ -1,0 +1,130 @@
+# Determine whether the shared, loadable, or static TinyDrivers are built.
+# The variable name can be given as the first argument and the result will be set into
+# this output variable, it helps to avoid calling this function multiple times.
+defineTest(tiny_is_building_drivers) {
+    # The out argument checks
+    defined(1, var): \
+    isEmpty(1): \
+        error( "The first 'out' parameter can't be empty when defined\
+                in tiny_is_building_drivers()." )
+
+    # Prepare variable names
+    defined(1, var): definedOut = true
+    else: definedOut = false
+    out = $$1
+
+    # Main section
+    build_shared_drivers | \
+    build_loadable_drivers | \
+    build_static_drivers {
+        $$definedOut {
+            $$out = true
+            export($$out)
+        }
+        return(true)
+    }
+
+    $$definedOut {
+        $$out = false
+        export($$out)
+    }
+    return(false)
+}
+
+# Determine whether the given Tiny driver is built.
+# The first argument is the name of the Tiny driver to check.
+# The variable name can be given as the second argument and the result will be set into
+# this output variable, it helps to avoid calling this function multiple times.
+defineTest(tiny_is_building_driver) {
+    # The driverType argument checks
+    !defined(1, var) | \
+    isEmpty(1): \
+        error( "The first 'driverType' parameter can't be empty\
+                in tiny_is_building_driver()." )
+
+    # The out argument checks
+    defined(2, var): definedOut = true
+    else: definedOut = false
+
+    $$definedOut: \
+    isEmpty(2): \
+        error( "The first 'out' parameter can't be empty when defined\
+                in tiny_is_building_driver()." )
+
+    # Prepare variable names
+    driverType = $$1
+    out = $$2
+
+    equals(driverType, mysql): isMySql = true
+    else: isMySql = false
+    equals(driverType, psql): isPostgres = true
+    else: isPostgres = false
+    equals(driverType, sqlite): isSQLite = true
+    else: isSQLite = false
+
+    # Verify whether the driverType has the correct value
+    !$$isMySql: \
+    #!$$isPostgres: \
+    #!$$isSQLite: \
+        error( "Unsupported value for the first 'driverType' parameter, supported values\
+                are mysql in tiny_is_building_driver()." )
+
+    # Main section
+    # Nothing to check, no drivers are built
+    !tiny_is_building_drivers() {
+        $$definedOut {
+            $$out = false
+            export($$out)
+        }
+        return(false)
+    }
+
+    # The build_mysql/psql/sqlite_driver CONFIG option was given explicitly
+    $$isMySql:build_mysql_driver {
+        $$definedOut {
+            $$out = true
+            export($$out)
+        }
+        return(true)
+    }
+    #$$isPostgres:build_psql_driver: return(true)
+    #    $$definedOut {
+    #        $$out = true
+    #        export($$out)
+    #    }
+    #    return(true)
+    #}
+    #$$isSQLite:build_sqlite_driver {
+    #    $$definedOut {
+    #        $$out = true
+    #        export($$out)
+    #    }
+    #    return(true)
+    #}
+
+    # By default, all drivers are enabled if no CONFIG option was given
+    !build_mysql_driver {
+    #!build_psql_driver: \
+    #!build_sqlite_driver: \
+        $$definedOut {
+            $$out = true
+            export($$out)
+        }
+        return(true)
+    }
+
+    $$definedOut {
+        $$out = false
+        export($$out)
+    }
+    return(false)
+}
+
+# Check TinyDrivers build type CONFIG options.
+defineTest(tiny_drivers_check_build_types): \
+    if(build_shared_drivers:if(build_loadable_drivers|build_static_drivers)) | \
+    if(build_loadable_drivers:if(build_shared_drivers|build_static_drivers)) | \
+    if(build_static_drivers:if(build_shared_drivers|build_loadable_drivers)): \
+        error( "More TinyDrivers build types defined in the CONFIG options, only one of\
+                these 'build_shared/loadable/static_drivers' CONFIG options can be\
+                defined at a time." )

@@ -35,8 +35,8 @@ win32-msvc:CONFIG(debug, debug|release) {
 # User Configuration
 # ---
 
-exists(conf.pri): \
-    include(conf.pri)
+exists($$PWD/conf.pri): \
+    include($$PWD/conf.pri)
 
 else:disable_autoconf: \
     error( "'conf.pri' for '$${TARGET}' example project does not exist.\

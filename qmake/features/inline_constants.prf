@@ -7,7 +7,14 @@ CONFIG(shared, dll|shared|static|staticlib)): \
             \"CONFIG += extern_constants\" instead." )
 
 CONFIG -= extern_constants
-DEFINES -= TINYORM_EXTERN_CONSTANTS
-
 CONFIG *= inline_constants
-DEFINES *= TINYORM_INLINE_CONSTANTS
+
+# The TinyDrivers subproject has its own DEFINES for global constants
+equals(TARGET, TinyDrivers) {
+    DEFINES -= TINYDRIVERS_EXTERN_CONSTANTS
+    DEFINES *= TINYDRIVERS_INLINE_CONSTANTS
+}
+else {
+    DEFINES -= TINYORM_EXTERN_CONSTANTS
+    DEFINES *= TINYORM_INLINE_CONSTANTS
+}
