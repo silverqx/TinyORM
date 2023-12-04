@@ -1,0 +1,55 @@
+#pragma code_page(@pragma_codepage@) // DEFAULT for msvc >=Qt6 and UTF-8 in any other case
+
+//IDI_ICON1 ICON "icons/@TinyDrivers_target@.ico"
+
+#include <windows.h>
+#include "orm/drivers/version.hpp"
+
+#define VER_FILEVERSION             TINYDRIVERS_VERSION_MAJOR,TINYDRIVERS_VERSION_MINOR,TINYDRIVERS_VERSION_BUGFIX,TINYDRIVERS_VERSION_BUILD
+#define VER_FILEVERSION_STR         TINYDRIVERS_FILEVERSION_STR "\0"
+
+#define VER_PRODUCTVERSION          TINYDRIVERS_VERSION_MAJOR,TINYDRIVERS_VERSION_MINOR,TINYDRIVERS_VERSION_BUGFIX,TINYDRIVERS_VERSION_BUILD
+#define VER_PRODUCTVERSION_STR      TINYDRIVERS_VERSION_STR "\0"
+
+#define VER_ORIGINALFILENAME_STR    "$<TARGET_FILE_NAME:@TinyDrivers_target@>\0"
+
+#ifdef TINYDRIVERS_NO_DEBUG
+#  define VER_DEBUG                 0
+#else
+#  define VER_DEBUG                 VS_FF_DEBUG
+#endif
+
+VS_VERSION_INFO VERSIONINFO
+    FILEVERSION    	VER_FILEVERSION
+    PRODUCTVERSION 	VER_PRODUCTVERSION
+    FILEFLAGSMASK  	VER_DEBUG
+    FILEFLAGS      	VER_DEBUG
+    FILEOS         	VOS__WINDOWS32
+    FILETYPE       	VFT_DLL
+    FILESUBTYPE    	VFT2_UNKNOWN
+    BEGIN
+        BLOCK "StringFileInfo"
+        BEGIN
+            BLOCK "040904B0"
+            BEGIN
+                VALUE "CompanyName",      "Crystal Studio\0"
+                VALUE "FileDescription",  "Database drivers for TinyORM library\0"
+                VALUE "FileVersion",      VER_FILEVERSION_STR
+                VALUE "InternalName",     "TinyDrivers\0"
+                VALUE "LegalCopyright",   "Copyright (©) 2023 Silver Zachara\0"
+                VALUE "ProductName",      "TinyDrivers\0"
+                VALUE "ProductVersion",   VER_PRODUCTVERSION_STR
+                VALUE "OriginalFilename", VER_ORIGINALFILENAME_STR
+            END
+        END
+
+        BLOCK "VarFileInfo"
+        BEGIN
+            VALUE "Translation", 0x409, 1200
+        END
+    END
+/* End of Version info */
+
+#ifdef __MINGW32__
+ISOLATIONAWARE_MANIFEST_RESOURCE_ID RT_MANIFEST "@TinyDrivers_target@$<TARGET_FILE_SUFFIX:@TinyDrivers_target@>.manifest"
+#endif

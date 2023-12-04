@@ -1,0 +1,129 @@
+# Dependencies include and library paths
+# ---
+
+disable_autoconf {
+#    load(tiny_system_includepath)
+    load(tiny_find_packages)
+}
+
+# MinGW
+win32-g++|win32-clang-g++ {
+    # Enable ccache wrapper
+#    CONFIG *= tiny_ccache_win32
+
+    # Use faster linker (for both GCC and Clang)
+    # CONFIG *= use_lld_linker does not work on MinGW
+    QMAKE_LFLAGS *= -fuse-ld=lld
+
+    # Nothing to do, auto-configuration is enabled
+    !disable_autoconf: return()
+
+    # Includes and Libraries
+    # vcpkg - range-v3 and tabulate
+    tiny_find_vcpkg()
+#    tiny_find_vcpkg($$quote(C:/msys64/home/xyz/Code/vcpkg/), x64-mingw-dynamic)
+#    tiny_add_system_includepath(\
+#        $$quote(C:/msys64/home/xyz/Code/vcpkg/installed/x64-mingw-dynamic/include/))
+
+    # MariaDB C library
+    # On MSYS2 there is only the MariaDB C library (no MySQL C library)
+    # Find the MySQL C library and add it on system include path and library path
+    tiny_find_mysql()
+
+    # Shared build - find with the pkg-config (preferred)
+#    CONFIG(shared, dll|shared|static|staticlib) | \
+#    CONFIG(dll, dll|shared|static|staticlib) {
+#        !link_pkgconfig_off {
+#            CONFIG *= link_pkgconfig
+#            PKGCONFIG *= libmariadb
+#        }
+#        else: \
+#            LIBS_PRIVATE += -lmariadb
+#    }
+#    # Static build
+#    else: \
+#    if(CONFIG(static, dll|shared|static|staticlib) | \
+#    CONFIG(staticlib, dll|shared|static|staticlib)): \
+#        LIBS_PRIVATE += -lmariadb.dll
+
+    # Or add manually (use only one method, above or this manual method)
+#    # For shared build
+#    LIBS_PRIVATE += -lmariadb
+#    # For static build
+#    LIBS_PRIVATE += -lmariadb.dll
+}
+
+# Windows (excluding MinGW)
+else:win32-msvc|win32-clang-msvc {
+    # Enable ccache wrapper
+#    CONFIG *= tiny_ccache_win32
+
+    # Nothing to do, auto-configuration is enabled
+    !disable_autoconf: return()
+
+    # Explicitly specify the MySQL root installation path using the $$TINY_MYSQL_ROOT
+#    !disable_autoconf {
+#        # Used in the tiny_find_mysql()
+#        TINY_MYSQL_ROOT = $$quote($$(ProgramFiles)/MySQL/MySQL Server 8.1/)
+#        return()
+#    }
+
+    # Includes and Libraries
+    # vcpkg - range-v3 and tabulate
+    tiny_find_vcpkg()
+#    tiny_find_vcpkg($$quote(E:/xyz/vcpkg/), x64-windows)
+#    tiny_add_system_includepath($$quote(E:/xyz/vcpkg/installed/x64-windows/include/))
+
+    # MySQL C library
+    # Find the MySQL C library and add it on system include path and library path
+    tiny_find_mysql()
+#    tiny_find_mysql($$quote($$(ProgramFiles)/MySQL/MySQL Server 8.1/))
+
+#    tiny_add_system_includepath(\
+#        $$quote(C:/Program Files/MySQL/MySQL Server 8.1/include/))
+
+#    LIBS_PRIVATE += $$quote(-LC:/Program Files/MySQL/MySQL Server 8.1/lib/)
+#    LIBS_PRIVATE += -llibmysql
+}
+
+# Unix
+else:unix {
+    # Use faster linker
+    clang: CONFIG *= use_lld_linker
+    else: CONFIG *= use_gold_linker
+
+    # Or use the mold linker
+#    QMAKE_LFLAGS *= -fuse-ld=mold
+
+    # Nothing to do, auto-configuration is enabled
+    !disable_autoconf: return()
+
+    # Includes and Libraries
+    # vcpkg - range-v3 and tabulate
+    tiny_find_vcpkg()
+#    tiny_find_vcpkg($$quote(/home/xyz/Code/c/vcpkg/installed/x64-linux/include/), \
+#                    x64-linux)
+#    tiny_add_system_includepath(\
+#        $$quote(/home/xyz/Code/c/vcpkg/installed/x64-linux/include/))
+
+    # MySQL C library
+    # Find the MySQL C library and add it on system include path and library path
+    tiny_find_mysql()
+
+    # Find with pkg-config (preferred)
+#    !link_pkgconfig_off {
+#        CONFIG *= link_pkgconfig
+#        # Pick only one
+#        PKGCONFIG *= mysqlclient
+##        PKGCONFIG *= libmariadb
+#    }
+#    else: \
+#        # Pick only one
+#        LIBS_PRIVATE += -lmysqlclient
+##        LIBS_PRIVATE += -lmariadb
+
+    # Or add manually (use only one method, above or this manual method)
+    # Pick only one
+#    LIBS_PRIVATE += -lmysqlclient
+#    LIBS_PRIVATE += -lmariadb
+}

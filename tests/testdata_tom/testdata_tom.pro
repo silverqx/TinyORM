@@ -40,9 +40,9 @@ win32-msvc:CONFIG(debug, debug|release) {
 # User Configuration
 # ---
 
-exists(conf.pri): \
-    include(conf.pri)
+exists($$PWD/conf.pri): \
+    include($$PWD/conf.pri)
 
 else:disable_autoconf: \
     error( "'conf.pri' for 'tests/$${TARGET}' example project does not exist.\
-             See an example configuration in 'examples/tom/conf.pri.example'." )
+             See an example configuration in 'tests/testdata_tom/conf.pri.example'." )

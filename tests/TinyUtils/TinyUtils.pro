@@ -3,15 +3,15 @@ QT -= gui
 TEMPLATE = lib
 TARGET = TinyUtils
 
+# Common for static/shared libraries
+# ---
+
+include($$TINYORM_SOURCE_TREE/qmake/common/libraries.pri)
+
 # Link against TinyORM library (also adds defines and include headers)
 # ---
 
 include($$TINYORM_SOURCE_TREE/qmake/TinyOrm.pri)
-
-# TinyUtils library specific configuration
-# ---
-
-CONFIG *= create_prl create_pc create_libtool
 
 # TinyUtils library defines
 # ---
@@ -27,7 +27,7 @@ CONFIG(dll, dll|shared|static|staticlib): \
 # ---
 
 # tiny_version_numbers() depends on HEADERS (version.hpp)
-include(src/src.pri)
+include($$PWD/src/src.pri)
 
 # File version
 # ---
@@ -98,8 +98,8 @@ build_tests: \
 # User Configuration
 # ---
 
-exists(../conf.pri): \
-    include(../conf.pri)
+exists($$TINYORM_SOURCE_TREE/tests/conf.pri): \
+    include($$TINYORM_SOURCE_TREE/tests/conf.pri)
 
 else:disable_autoconf: \
     error( "'tests/conf.pri' for 'tests/$${TARGET}' library does not exist.\

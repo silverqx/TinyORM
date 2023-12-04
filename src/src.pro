@@ -4,31 +4,15 @@ QT -= gui
 TEMPLATE = lib
 TARGET = TinyOrm
 
-# Version requirements
-# ---
-# Older versions may work, but you are on your own
-# Req - requirement, throws error
-# Rec - recommended, shows info message
-
-# 16.10/16.11 (1929) - to support #pragma system_header
-tinyMinReqMsvc    = 19.29
-tinyMinReqClangCl = 14.0.3
-tinyMinRecClang   = 12
-tinyMinRecGCC     = 10.2
-tinyMinRecQt      = 5.15.2
-
-# Make minimum toolchain version a requirement
-load(tiny_toolchain_requirement)
-
-# TinyORM library specific configuration
+# Common for static/shared libraries
 # ---
 
-CONFIG *= create_prl create_pc create_libtool
+include($$TINYORM_SOURCE_TREE/qmake/common/libraries.pri)
 
 # Common Configuration
 # ---
 
-include(../qmake/common.pri)
+include($$TINYORM_SOURCE_TREE/qmake/common/TinyOrm.pri)
 
 # TinyORM defines
 # ---
@@ -44,23 +28,15 @@ CONFIG(dll, dll|shared|static|staticlib): \
 # ---
 
 # tiny_version_numbers() depends on HEADERS (version.hpp)
-include(../include/include.pri)
-include(src.pri)
-
-#INCLUDEPATH += C:/Qt/6.6.0/msvc2019_64/include/QtCore/6.6.0
-#INCLUDEPATH += C:/Qt/6.6.0/msvc2019_64/include/QtSql/6.6.0
-#INCLUDEPATH += $$PWD/../drivers/include_private
-
-include(../drivers/include_private/include_private.pri)
-include(../drivers/include/include.pri)
-include(../drivers/src/src.pri)
+include($$TINYORM_SOURCE_TREE/include/include.pri)
+include($$PWD/src.pri)
 
 # TinyTom header and source files
 # ---
 
 !disable_tom {
-    include(../tom/include/include.pri)
-    include(../tom/src/src.pri)
+    include($$TINYORM_SOURCE_TREE/tom/include/include.pri)
+    include($$TINYORM_SOURCE_TREE/tom/src/src.pri)
 }
 
 # File version
@@ -86,7 +62,7 @@ tiny_resource_and_manifest(                                                     
 # Use Precompiled headers (PCH)
 # ---
 
-include(../include/pch.pri)
+include($$TINYORM_SOURCE_TREE/include/pch.pri)
 
 # Deployment
 # ---
@@ -129,8 +105,8 @@ tiny_log_info_messages()
 # User Configuration
 # ---
 
-exists(../conf.pri): \
-    include(../conf.pri)
+exists($$TINYORM_SOURCE_TREE/conf.pri): \
+    include($$TINYORM_SOURCE_TREE/conf.pri)
 
 else:disable_autoconf: \
     error( "'conf.pri' for '$${TARGET}' project does not exist.\

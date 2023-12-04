@@ -59,8 +59,8 @@ target.CONFIG += no_default_install
 # User Configuration
 # ---
 
-exists(../conf.pri): \
-    include(../conf.pri)
+exists($$TINYORM_SOURCE_TREE/tests/conf.pri): \
+    include($$TINYORM_SOURCE_TREE/tests/conf.pri)
 
 else:disable_autoconf: \
     error( "'tests/conf.pri' for 'tests' project does not exist.\
