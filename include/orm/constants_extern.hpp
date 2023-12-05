@@ -123,6 +123,7 @@ namespace Orm::Constants
     SHAREDLIB_EXPORT extern const QString synchronous_commit;
     SHAREDLIB_EXPORT extern const QString spatial_ref_sys;
 
+    // Database common
     SHAREDLIB_EXPORT extern const QString H127001;
     SHAREDLIB_EXPORT extern const QString LOCALHOST;
     SHAREDLIB_EXPORT extern const QString P3306;
@@ -147,7 +148,6 @@ namespace Orm::Constants
     SHAREDLIB_EXPORT extern const QString Uca1400Nopadaici;
     SHAREDLIB_EXPORT extern const QString UcsBasic;
     SHAREDLIB_EXPORT extern const QString POSIX_;
-    SHAREDLIB_EXPORT extern const QString NotImplemented;
 
     // Comparison/logical/search operators
     SHAREDLIB_EXPORT extern const QString EQ;
@@ -172,6 +172,9 @@ namespace Orm::Constants
     // Bitewise operators
     SHAREDLIB_EXPORT extern const QString B_OR;
     SHAREDLIB_EXPORT extern const QString B_AND;
+
+    // Others
+    SHAREDLIB_EXPORT extern const QString NotImplemented;
 
 } // namespace Orm::Constants
 

@@ -112,6 +112,7 @@ namespace Orm::Constants
     const QString synchronous_commit      = QStringLiteral("synchronous_commit");
     const QString spatial_ref_sys         = QStringLiteral("spatial_ref_sys");
 
+    // Database common
     const QString H127001   = QStringLiteral("127.0.0.1");
     const QString LOCALHOST = QStringLiteral("localhost");
     const QString P3306     = QStringLiteral("3306");
@@ -136,7 +137,6 @@ namespace Orm::Constants
     const QString Uca1400Nopadaici    = QStringLiteral("uca1400_nopad_ai_ci");
     const QString UcsBasic            = QStringLiteral("ucs_basic");
     const QString POSIX_              = QStringLiteral("POSIX");
-    const QString NotImplemented      = QStringLiteral("Not implemented :/.");
 
     // Comparison/logical/search operators
     const QString EQ       = QStringLiteral("=");
@@ -161,6 +161,9 @@ namespace Orm::Constants
     // Bitewise operators
     const QString B_OR     = QStringLiteral("|");
     const QString B_AND    = QStringLiteral("&");
+
+    // Others
+    const QString NotImplemented = QStringLiteral("Not implemented :/.");
 
 } // namespace Orm::Constants
 
