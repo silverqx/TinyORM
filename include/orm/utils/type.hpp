@@ -30,7 +30,7 @@ TINYORM_BEGIN_COMMON_NAMESPACE
 #  define __tiny_func__ \
     Orm::Utils::Type::prettyFunction(static_cast<const char *>(__FUNCTION__))
 #else
-#  define __tiny_func__ QString {__FUNCTION__}
+#  define __tiny_func__ QString::fromUtf8(__FUNCTION__)
 #endif
 
 namespace Orm::Utils
@@ -60,6 +60,8 @@ namespace Orm::Utils
 
         /*! Return a pretty function name in the following format: Xyz::function. */
         static QString prettyFunction(const QString &function);
+        /*! Return a pretty function name in the following format: Xyz::function. */
+        inline static QString prettyFunction(const char *function);
 
         /*! Determine if a string is the true bool value (false for "", '0', "false",
             "off"). */
@@ -107,6 +109,11 @@ namespace Orm::Utils
            for polymorphic types as the parameter is const &.
            Anyway for polymorphic types pass *this! */
         return classPureBasenameInternal(typeid (type), withNamespace);
+    }
+
+    QString Type::prettyFunction(const char *const function)
+    {
+        return prettyFunction(QString::fromUtf8(function));
     }
 
 } // namespace Orm::Utils
