@@ -36,7 +36,7 @@ TINYORM_BEGIN_COMMON_NAMESPACE
 namespace Orm::Utils
 {
 
-    /*! Library class for types. */
+    /*! Types library class. */
     class SHAREDLIB_EXPORT Type
     {
         Q_DISABLE_COPY_MOVE(Type)
