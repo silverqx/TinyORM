@@ -2501,3 +2501,17 @@ tags: FILEFLAGS, debug
 They can also be checked using, especially checking the IsDebug build:
 
 (Get-Item .\tom.exe).VersionInfo | fl
+
+
+TinyORM C++ Coding Style:
+-------------------------
+
+ - Macro guard must copy what will be in the #include for the current header file,
+   not how the namespace is named and isn't based on the folder structure.
+
+   Eg. if the following header files will be included like this:
+#include "orm/drivers/mysql/mysqlresult_p.hpp"
+#include "orm/drivers/mysql/constants_extern_p.hpp"
+   Then the macro guards will be:
+#define ORM_DRIVERS_MYSQL_MYSQLRESULT_P_HPP
+#define ORM_DRIVERS_MYSQL_CONSTANTS_EXTERN_P_HPP
