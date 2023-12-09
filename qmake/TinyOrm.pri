@@ -55,7 +55,7 @@ TINYORM_SOURCE_TREE = $$clean_path($$quote($$PWD/..))
 # Path to the Tom source tree
 TINYTOM_SOURCE_TREE = $$quote($$TINYORM_SOURCE_TREE/tom)
 
-# Variables to target a correct build folder
+# Variables to target the correct build folder
 # ---
 
 include($$TINYORM_SOURCE_TREE/qmake/support/variables.pri)

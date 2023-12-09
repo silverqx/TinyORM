@@ -1,4 +1,4 @@
-# Variables and function to target a correct build folder
+# Variables and function to target the correct build folder
 # ---
 # These variables can be used to link against the TinyORM library in the build tree
 
