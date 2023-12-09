@@ -12,7 +12,7 @@ TINY_SYSTEM_HEADER
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
-/*! Namespace contains common strings for the Tom namespace (migrations). */
+/*! Namespace contains common strings used in the Tom namespace (migrations). */
 namespace Tom::Constants
 {
 

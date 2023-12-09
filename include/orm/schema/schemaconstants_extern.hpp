@@ -12,7 +12,7 @@ TINY_SYSTEM_HEADER
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
-/*! Namespace contains common chars and strings used in the Schema. */
+/*! Namespace contains common chars and strings used in the Schema namespace. */
 namespace Orm::SchemaNs
 {
 namespace Constants
