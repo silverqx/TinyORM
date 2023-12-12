@@ -1,5 +1,5 @@
 # The cross-platform INCLUDEPATH, use the -isystem on MinGW and Unix, the -imsvc
-# on clag-cl with MSVC, otherwise, use only the INCLUDEPATH. The INCLUDEPATH is set
+# on clang-cl with MSVC, otherwise, use only the INCLUDEPATH. The INCLUDEPATH is set
 # in all cases.
 defineTest(tiny_add_system_includepath) {
     systemIncludePathsRaw = $$1
