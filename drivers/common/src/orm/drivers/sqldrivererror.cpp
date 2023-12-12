@@ -59,12 +59,8 @@ QString SqlDriverError::text() const
 TINYORM_END_COMMON_NAMESPACE
 
 #ifndef QT_NO_DEBUG_STREAM
-#  ifdef TINYORM_COMMON_NAMESPACE
 QDebug operator<<(QDebug debug,
-                  const TINYORM_COMMON_NAMESPACE::Orm::Drivers::SqlDriverError &error)
-#  else
-QDebug operator<<(QDebug debug, const Orm::Drivers::SqlDriverError &error)
-#  endif
+                  const TINYORM_PREPEND_NAMESPACE(Orm::Drivers::SqlDriverError) &error)
 {
     QDebugStateSaver saver(debug);
     debug.noquote().nospace();

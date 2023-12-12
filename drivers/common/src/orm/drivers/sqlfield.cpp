@@ -83,12 +83,8 @@ namespace
     }
 } // namespace
 
-#  ifdef TINYORM_COMMON_NAMESPACE
 QDebug
-operator<<(QDebug debug, const TINYORM_COMMON_NAMESPACE::Orm::Drivers::SqlField &field)
-#  else
-QDebug operator<<(QDebug debug, const Orm::Drivers::SqlField &field)
-#  endif
+operator<<(QDebug debug, const TINYORM_PREPEND_NAMESPACE(Orm::Drivers::SqlField) &field)
 {
     using SqlFieldType = std::remove_cvref_t<decltype (field)>;
 
