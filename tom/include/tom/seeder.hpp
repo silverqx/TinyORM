@@ -158,7 +158,7 @@ namespace Concerns
 
 TINYORM_END_COMMON_NAMESPACE
 
-// Predefine some aliases so the user doesn't have to
+// Import the most used constants into the Seeders namespace so the user doesn't have to
 namespace Seeders
 {
     /*! Alias for the DB facade. */

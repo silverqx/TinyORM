@@ -56,7 +56,7 @@ namespace Tom
 
 TINYORM_END_COMMON_NAMESPACE
 
-// Predefine some aliases so the user doesn't have to
+// Import the most used constants into Migrations namespace so the user doesn't have to
 namespace Migrations
 {
     /*! Alias for the Schema Blueprint. */
