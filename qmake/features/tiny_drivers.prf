@@ -121,10 +121,31 @@ defineTest(tiny_is_building_driver) {
 }
 
 # Check TinyDrivers build type CONFIG options.
-defineTest(tiny_drivers_check_build_types): \
+defineTest(tiny_drivers_check_build_types) {
+    !build_pass: \
     if(build_shared_drivers:if(build_loadable_drivers|build_static_drivers)) | \
     if(build_loadable_drivers:if(build_shared_drivers|build_static_drivers)) | \
     if(build_static_drivers:if(build_shared_drivers|build_loadable_drivers)): \
         error( "More TinyDrivers build types defined in the CONFIG options, only one of\
                 these 'build_shared/loadable/static_drivers' CONFIG options can be\
                 defined at a time." )
+
+    !build_pass: \
+    CONFIG(static, dll|shared|static|staticlib): \
+    if(build_shared_drivers|build_loadable_drivers): \
+        error( "The 'build_shared/loadable_drivers' TinyDrivers build types can't be used\
+                with the 'static' CONFIG option, please use the 'build_static_drivers'\
+                CONFIG option." )
+}
+
+# Determine whether the current TARGET is TinyDrivers-related.
+defineTest(tiny_is_drivers_target) {
+    tiny_is_building_drivers(): \
+    if(equals(TARGET, TinyDrivers) | \
+       equals(TARGET, TinyMySql)): \
+       # equals(TARGET, TinyPostgres) | \
+       # equals(TARGET, TinySQLite)): \
+        return(true)
+
+    return(false)
+}

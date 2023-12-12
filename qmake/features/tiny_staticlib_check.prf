@@ -1,0 +1,7 @@
+!build_pass: \
+CONFIG(staticlib, dll|shared|static|staticlib): \
+if(build_tests|tom_example|tiny_is_building_drivers()): \
+    error( "The 'staticlib' can't be used with executables, the build will fail because\
+            it will produce some executable, please use the CONFIG += static instead,\
+            if you want to build all libraries as static library archives and link\
+            against static libraries." )

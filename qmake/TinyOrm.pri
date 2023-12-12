@@ -93,10 +93,8 @@ disable_tom: DEFINES *= TINYORM_DISABLE_TOM
 load(tiny_system_includepath)
 
 tiny_is_building_drivers(): \
-    tiny_add_system_includepath(                                      \
-        $$quote($$TINYORM_SOURCE_TREE/drivers/common/include/)        \
-        $$quote($$TINYORM_SOURCE_TREE/drivers/mysql/include/)         \
-    )
+    tiny_add_system_includepath( \
+        $$quote($$TINYORM_SOURCE_TREE/drivers/common/include/))
 
 tiny_add_system_includepath($$quote($$TINYORM_SOURCE_TREE/include/))
 

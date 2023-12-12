@@ -4,11 +4,6 @@ QT -= gui
 TEMPLATE = lib
 TARGET = TinyDrivers
 
-# Variables to target the correct build folder
-# ---
-
-include($$TINYORM_SOURCE_TREE/qmake/support/variables.pri)
-
 # Common for static/shared libraries
 # ---
 
@@ -19,6 +14,11 @@ include($$TINYORM_SOURCE_TREE/qmake/common/libraries.pri)
 
 DEFINES *= QT_ASCII_CAST_WARNINGS
 DEFINES *= QT_NO_CAST_FROM_ASCII
+
+# Variables to target the correct build folder
+# ---
+
+include($$TINYORM_SOURCE_TREE/qmake/support/variables.pri)
 
 # TinyDrivers configuration
 # ---
@@ -125,13 +125,6 @@ win32-msvc:CONFIG(debug, debug|release) {
 
 load(tiny_system_includepath)
 tiny_add_system_includepath($$quote($$TINYORM_SOURCE_TREE/include/))
-
-build_loadable_drivers: \
-tiny_is_building_driver(mysql): \
-    tiny_add_system_includepath(                                             \
-        $$quote($$TINYORM_SOURCE_TREE/drivers/mysql/include/)                \
-        $$quote($$TINYORM_SOURCE_TREE/drivers/mysql/include_private/)        \
-    )
 
 # Auto-configuration
 # ---

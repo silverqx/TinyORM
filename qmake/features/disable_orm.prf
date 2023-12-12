@@ -1,2 +1,8 @@
+load(tiny_drivers)
+
+# Nothing to do, TinyDrivers doesn't use this CONFIG option
+tiny_is_drivers_target(): \
+    return()
+
 CONFIG *= disable_orm
 DEFINES *= TINYORM_DISABLE_ORM

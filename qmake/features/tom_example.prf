@@ -1,2 +1,8 @@
+load(tiny_drivers)
+
+# Nothing to do, TinyDrivers doesn't use this CONFIG option
+tiny_is_drivers_target(): \
+    return()
+
 CONFIG *= tom_example
 DEFINES *= TINYORM_TOM_EXAMPLE
