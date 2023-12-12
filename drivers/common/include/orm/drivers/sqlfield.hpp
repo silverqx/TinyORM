@@ -309,12 +309,8 @@ namespace Orm::Drivers
 TINYORM_END_COMMON_NAMESPACE
 
 #ifndef QT_NO_DEBUG_STREAM
-#  ifdef TINYORM_COMMON_NAMESPACE
 TINYDRIVERS_EXPORT QDebug
-operator<<(QDebug debug, const TINYORM_COMMON_NAMESPACE::Orm::Drivers::SqlField &field);
-#  else
-TINYDRIVERS_EXPORT QDebug operator<<(QDebug debug, const Orm::Drivers::SqlField &field);
-#  endif
+operator<<(QDebug debug, const TINYORM_PREPEND_NAMESPACE(Orm::Drivers::SqlField) &field);
 #endif
 
 #endif // ORM_DRIVERS_SQLFIELD_HPP

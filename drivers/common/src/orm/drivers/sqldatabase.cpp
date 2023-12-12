@@ -225,12 +225,8 @@ bool SqlDatabase::rollback()
 TINYORM_END_COMMON_NAMESPACE
 
 #ifndef QT_NO_DEBUG_STREAM
-#  ifdef TINYORM_COMMON_NAMESPACE
 QDebug operator<<(QDebug debug,
-                  const TINYORM_COMMON_NAMESPACE::Orm::Drivers::SqlDatabase &connection)
-#  else
-QDebug operator<<(QDebug debug, const Orm::Drivers::SqlDatabase &connection)
-#  endif
+                  const TINYORM_PREPEND_NAMESPACE(Orm::Drivers::SqlDatabase) &connection)
 {
     QDebugStateSaver saver(debug);
     debug.noquote().nospace();
