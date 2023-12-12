@@ -46,7 +46,7 @@ set(CMAKE_AUTOMOC OFF)
 
 # Version requirements
 # ---
-# Older vesions may work, but you are on your own
+# Older versions may work, but you are on your own
 # Req - requirement, throws error
 # Rec - recommended, shows info message
 
