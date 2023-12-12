@@ -5,7 +5,7 @@
 #include "orm/macros/systemheader.hpp"
 TINY_SYSTEM_HEADER
 
-// Include the blueprint here so a user doesn't have to (it can be forward declared)
+// Include the blueprint here so the user doesn't have to (it can be forward declared)
 #include "orm/schema/blueprint.hpp"
 #include "orm/types/sqlquery.hpp"
 #include "orm/utils/helpers.hpp"
