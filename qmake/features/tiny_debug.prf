@@ -1,4 +1,4 @@
-# Log common Qt variables
+# Log common Qt variables.
 defineTest(tiny_log_common_vars) {
     !build_pass {
         message("--- Qt")
@@ -17,7 +17,7 @@ defineTest(tiny_log_common_vars) {
     }
 }
 
-# Log common TinyORM project variables (for TinyORM project builds)
+# Log common TinyORM project variables (for TinyORM project builds).
 defineTest(tiny_log_tinyorm_vars) {
     tiny_log_common_vars()
 
@@ -33,7 +33,7 @@ defineTest(tiny_log_tinyorm_vars) {
 }
 
 # Log common TinyORM project variables used during linking against the TinyOrm library
-# inside the build tree
+# inside the build tree.
 defineTest(tiny_log_link_build_tree_vars) {
     tiny_log_common_vars()
 

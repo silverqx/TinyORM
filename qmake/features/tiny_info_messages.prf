@@ -1,4 +1,4 @@
-# Log common info messages (Release vs Debug build, Shared vs Static build, ...)
+# Log common info messages (Release vs Debug build, Shared vs Static build, ...).
 defineTest(tiny_log_info_messages) {
     !build_pass {
         # Release vs Debug build
