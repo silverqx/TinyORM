@@ -2502,6 +2502,15 @@ qmake confusion:
    When both debug_and_release and static_and_shared are used all four Debug/Release and
    Static/Shared combinations will occur in addition to build_pass.
 
+ - static vs staticlib
+   - static
+     means prefer linking against static library archives and if the subproject TEMAPLTE qmake
+     option constains ".*lib" then set the CONFIG += staticlib
+   - staticlib
+     means build all subprojects as static archive libraries and it also sets the CONFIG += static
+     What means don't use it for the whole TinyORM project because it contains many subprojects
+     and it can cause problems, instead use the CONFIG += static!
+
 
 tools/deploy.ps1:
 -----------------
