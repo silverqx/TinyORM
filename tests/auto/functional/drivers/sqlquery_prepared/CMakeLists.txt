@@ -9,4 +9,4 @@ add_executable(sqlquery_prepared
 add_test(NAME sqlquery_prepared COMMAND sqlquery_prepared)
 
 include(TinyTestCommon)
-tiny_configure_test(sqlquery_prepared)
+tiny_configure_test(sqlquery_prepared LINK_DRIVERS)

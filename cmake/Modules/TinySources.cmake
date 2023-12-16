@@ -1,3 +1,149 @@
+# TinyDrivers library header and source files
+# Create header and source files lists and return them
+function(tinydrivers_sources out_headers_private out_headers out_sources)
+
+    # Private Header files section
+    set(headers_private)
+
+    if(TINY_EXTERN_CONSTANTS)
+        list(APPEND headers_private constants_extern_p.hpp)
+    else()
+        list(APPEND headers_private constants_inline_p.hpp)
+    endif()
+
+    list(APPEND headers_private
+        constants_p.hpp
+        macros/declaresqldriverprivate_p.hpp
+        sqldatabase_p.hpp
+        sqldriver_p.hpp
+        sqlresult_p.hpp
+        support/connectionshash_p.hpp
+        utils/helpers_p.hpp
+        utils/type_p.hpp
+    )
+
+    # Header files section
+    set(headers)
+
+    list(APPEND headers
+        driverstypes.hpp
+        macros/export.hpp
+        sqldatabase.hpp
+        sqldatabasemanager.hpp
+        sqldriver.hpp
+        sqldrivererror.hpp
+        sqlfield.hpp
+        sqlquery1.hpp
+        sqlrecord.hpp
+        sqlresult.hpp
+        utils/notnull.hpp
+        version.hpp
+    )
+
+    # Source files section
+    set(sources)
+
+    if(TINY_EXTERN_CONSTANTS)
+        list(APPEND sources constants_extern_p.cpp)
+    endif()
+
+    list(APPEND sources
+        sqldatabase.cpp
+        sqldatabase_p.cpp
+        sqldatabasemanager.cpp
+        sqldriver.cpp
+        sqldrivererror.cpp
+        sqlfield.cpp
+        sqlquery1.cpp
+        sqlrecord.cpp
+        sqlresult.cpp
+        sqlresult_p.cpp
+        utils/type_p.cpp
+    )
+
+    list(SORT headers_private)
+    list(SORT headers)
+    list(SORT sources)
+
+    set(sourceDir "${${TinyDrivers_ns}_SOURCE_DIR}")
+    set(suffixDir "orm/drivers/")
+
+    list(TRANSFORM headers_private PREPEND "${sourceDir}/include_private/${suffixDir}")
+    list(TRANSFORM headers         PREPEND "${sourceDir}/include/${suffixDir}")
+    list(TRANSFORM sources         PREPEND "${sourceDir}/src/${suffixDir}")
+
+    set(${out_headers_private} ${headers_private} PARENT_SCOPE)
+    set(${out_headers} ${headers} PARENT_SCOPE)
+    set(${out_sources} ${sources} PARENT_SCOPE)
+
+endfunction()
+
+# TinyMySql library header and source files
+# Create header and source files lists and return them
+function(tinymysqldriver_sources out_headers_private out_headers out_sources)
+
+    # Private Header files section
+    set(headers_private)
+
+    if(TINY_EXTERN_CONSTANTS)
+        list(APPEND headers_private mysqlconstants_extern_p.hpp)
+    else()
+        list(APPEND headers_private mysqlconstants_inline_p.hpp)
+    endif()
+
+    list(APPEND headers_private
+        macros/includemysqlh_p.hpp
+        mysqlconstants_p.hpp
+        mysqldriver_p.hpp
+        mysqlresult_p.hpp
+        mysqlutils_p.hpp
+    )
+
+    # Header files section
+    set(headers)
+
+    list(APPEND headers
+        mysqldriver.hpp
+        mysqlresult.hpp
+        version.hpp
+    )
+
+    # Source files section
+    set(sources)
+
+    if(TINY_EXTERN_CONSTANTS)
+        list(APPEND sources mysqlconstants_extern_p.cpp)
+    endif()
+
+    if(TINY_BUILD_LOADABLE_DRIVERS)
+        list(APPEND sources main.cpp)
+    endif()
+
+    list(APPEND sources
+        mysqldriver.cpp
+        mysqldriver_p.cpp
+        mysqlresult.cpp
+        mysqlresult_p.cpp
+        mysqlutils_p.cpp
+    )
+
+    list(SORT headers_private)
+    list(SORT headers)
+    list(SORT sources)
+
+    set(sourceDir "${${TinyOrm_ns}_SOURCE_DIR}/drivers/mysql")
+    set(suffixDir "orm/drivers/mysql/")
+
+    list(TRANSFORM headers_private PREPEND "${sourceDir}/include_private/${suffixDir}")
+    list(TRANSFORM headers         PREPEND "${sourceDir}/include/${suffixDir}")
+    list(TRANSFORM sources         PREPEND "${sourceDir}/src/${suffixDir}")
+
+    set(${out_headers_private} ${headers_private} PARENT_SCOPE)
+    set(${out_headers} ${headers} PARENT_SCOPE)
+    set(${out_sources} ${sources} PARENT_SCOPE)
+
+endfunction()
+
 # TinyORM library header and source files
 # Create header and source files lists and return them
 function(tinyorm_sources out_headers out_sources)
