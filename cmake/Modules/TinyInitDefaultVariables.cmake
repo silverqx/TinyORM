@@ -1,3 +1,4 @@
+include(TinyDrivers)
 include(TinyHelpers)
 
 # Initialize default CMake variables on which CMake options depend
@@ -161,12 +162,16 @@ macro(tiny_init_tiny_variables_pre)
 
     # Top level project name, used for alias namespaces, CMAKE_MESSAGE_CONTEXT, or as
     # the main package name
+    set(TinyDrivers_ns TinyDrivers)
+    set(TinyMySql_ns TinyMySql)
     set(TinyOrm_ns TinyOrm)
     set(TinyUtils_ns TinyUtils)
     set(TomExample_ns tom)
     set(TomTestData_ns tom_testdata)
     # Target names
     set(CommonConfig_target CommonConfig)
+    set(TinyDrivers_target TinyDrivers)
+    set(TinyMySql_target TinyMySql)
     set(TinyOrm_target TinyOrm)
     set(TinyUtils_target TinyUtils)
     set(TomExample_target tom)
@@ -210,6 +215,9 @@ macro(tiny_init_tiny_variables_pre)
         set(VCPKG_TARGET_TRIPLET "$ENV{VCPKG_DEFAULT_TRIPLET}" CACHE STRING
             "Change the default triplet for CMake Integration.")
     endif()
+
+    # Initialize TinyDrivers CMake internal cache variables, early initialization
+    tiny_init_driver_types_pre()
 
 endmacro()
 
@@ -277,6 +285,9 @@ $<SHELL_PATH:${${TinyOrm_ns}_BINARY_DIR}/tests/${TinyUtils_ns}>${TINY_PATH_SEPAR
         "Determine whether ${TinyOrm_target} library will be built with extern or inline \
 constants")
     unset(tinyExternConstants)
+
+    # Specifies which TinyDrivers build type is currently being built (for nicer if()-s)
+    tiny_init_driver_types()
 
 endmacro()
 

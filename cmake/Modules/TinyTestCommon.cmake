@@ -4,7 +4,7 @@ include(TinySources)
 # Configure a passed auto test
 function(tiny_configure_test name)
 
-    set(options INCLUDE_MIGRATIONS INCLUDE_MODELS INCLUDE_PROJECT_SOURCE_DIR)
+    set(options INCLUDE_MIGRATIONS INCLUDE_MODELS INCLUDE_PROJECT_SOURCE_DIR LINK_DRIVERS)
     cmake_parse_arguments(PARSE_ARGV 1 TINY "${options}" "" "")
 
     if(DEFINED TINY_UNPARSED_ARGUMENTS)
@@ -94,6 +94,11 @@ ${TINY_UNPARSED_ARGUMENTS}")
             ${TinyOrm_ns}::${TinyUtils_target}
             ${TinyOrm_ns}::${TinyOrm_target}
     )
+
+    # Explicitly link against the TinyDrivers library
+    if(TINY_LINK_DRIVERS)
+        target_link_libraries(${name} PRIVATE ${TinyDrivers_ns}::${TinyDrivers_target})
+    endif()
 
     # Windows resource and manifest files
     # ---

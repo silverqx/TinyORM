@@ -80,7 +80,7 @@ namespace Orm::Drivers::Support
     ConnectionsHash::at_ts(const key_type &key)
     {
         // Shared/read lock
-        std::shared_lock lock(m_mutex);
+        const std::shared_lock lock(m_mutex);
 
         return m_data.at(key);
     }
@@ -89,7 +89,7 @@ namespace Orm::Drivers::Support
     ConnectionsHash::at_ts(const key_type &key) const
     {
         // Shared/read lock
-        std::shared_lock lock(m_mutex);
+        const std::shared_lock lock(m_mutex);
 
         return m_data.at(key);
     }
@@ -102,7 +102,7 @@ namespace Orm::Drivers::Support
     bool ConnectionsHash::contains_ts(const key_type &key) const
     {
         // Shared/read lock
-        std::shared_lock lock(m_mutex);
+        const std::shared_lock lock(m_mutex);
 
         return m_data.contains(key);
     }
@@ -110,10 +110,10 @@ namespace Orm::Drivers::Support
     QStringList ConnectionsHash::keys_ts() const
     {
         // Shared/read lock
-        std::shared_lock lock(m_mutex);
+        const std::shared_lock lock(m_mutex);
 
         QStringList result;
-        result.reserve(m_data.size());
+        result.reserve(static_cast<QStringList::size_type>(m_data.size()));
 
         for (const auto &[key, _] : m_data)
             result << key;

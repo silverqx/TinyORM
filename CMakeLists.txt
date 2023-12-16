@@ -91,6 +91,20 @@ feature_option(BUILD_TESTS
     "Build TinyORM unit tests" OFF
 )
 
+# TinyDrivers options
+feature_option(BUILD_DRIVERS
+    "Build TinyORM database drivers that replaces QtSql module" OFF
+)
+feature_string_option_dependent(DRIVERS_TYPE
+    "Shared;Loadable;Static"
+    "Build TinyDrivers database driver (core/common code)" Shared
+    "BUILD_DRIVERS AND BUILD_SHARED_LIBS" ${TINY_DRIVERS_TYPE_FORCE}
+)
+feature_option_dependent(BUILD_MYSQL_DRIVER
+    "Build TinyORM MySQL database driver" ON
+    "BUILD_DRIVERS" OFF
+)
+
 # Depends on tiny_init_cmake_variables_pre() call
 feature_option_dependent(MATCH_EQUAL_EXPORTED_BUILDTREE
     "Exported package configuration from the build tree is considered to match only \
@@ -281,6 +295,13 @@ else()
     target_compile_definitions(${TinyOrm_target} PUBLIC TINYORM_INLINE_CONSTANTS)
 endif()
 
+# Using the TinyDrivers instead of QtSql drivers
+if(BUILD_DRIVERS)
+    target_compile_definitions(${TinyOrm_target} PUBLIC TINYORM_USING_TINYDRIVERS)
+else()
+    target_compile_definitions(${TinyOrm_target} PUBLIC TINYORM_USING_QTSQLDRIVERS)
+endif()
+
 # Enable code needed by tests, eg. connection overriding in the Model or
 # MySqlConnection::setConfigVersion()
 if(BUILD_TESTS)
@@ -408,6 +429,13 @@ if(TOM)
     # tabulate doesn't provide Package Version File
     tiny_find_package(tabulate CONFIG REQUIRED)
     target_link_libraries(${TinyOrm_target} PUBLIC tabulate::tabulate)
+endif()
+
+# Build TinyDrivers
+# ---
+
+if(BUILD_DRIVERS)
+    add_subdirectory(drivers)
 endif()
 
 # Build auto tests
