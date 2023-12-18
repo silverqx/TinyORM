@@ -4,7 +4,7 @@ include(TinySources)
 # Configure a passed auto test
 function(tiny_configure_test name)
 
-    set(options INCLUDE_MIGRATIONS INCLUDE_MODELS INCLUDE_SOURCE_DIR)
+    set(options INCLUDE_MIGRATIONS INCLUDE_MODELS INCLUDE_PROJECT_SOURCE_DIR)
     cmake_parse_arguments(PARSE_ARGV 1 TINY "${options}" "" "")
 
     if(DEFINED TINY_UNPARSED_ARGUMENTS)
@@ -53,7 +53,7 @@ ${TINY_UNPARSED_ARGUMENTS}")
     )
 
     # Currently unused
-    if(TINY_INCLUDE_SOURCE_DIR)
+    if(TINY_INCLUDE_PROJECT_SOURCE_DIR)
         target_include_directories(${name}
             PRIVATE "$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}>"
         )
