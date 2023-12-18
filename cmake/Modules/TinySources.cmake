@@ -270,6 +270,7 @@ function(tinyorm_sources out_headers out_sources)
 
     set(${out_headers} ${headers} PARENT_SCOPE)
     set(${out_sources} ${sources} PARENT_SCOPE)
+
 endfunction()
 
 # Tom console application header and source files
@@ -280,13 +281,9 @@ function(tinytom_sources out_headers out_sources)
     set(headers)
 
     if(TINY_EXTERN_CONSTANTS)
-        list(APPEND headers
-            tomconstants_extern.hpp
-        )
+        list(APPEND headers tomconstants_extern.hpp)
     else()
-        list(APPEND headers
-            tomconstants_inline.hpp
-        )
+        list(APPEND headers tomconstants_inline.hpp)
     endif()
 
     list(APPEND headers
@@ -357,9 +354,7 @@ function(tinytom_sources out_headers out_sources)
     set(sources)
 
     if(TINY_EXTERN_CONSTANTS)
-        list(APPEND sources
-            tomconstants_extern.cpp
-        )
+        list(APPEND sources tomconstants_extern.cpp)
     endif()
 
     list(APPEND sources
@@ -417,6 +412,7 @@ function(tinytom_sources out_headers out_sources)
 
     set(${out_headers} ${headers} PARENT_SCOPE)
     set(${out_sources} ${sources} PARENT_SCOPE)
+
 endfunction()
 
 # Models header and source files (primarily used in AutoTests)
@@ -470,6 +466,7 @@ function(tiny_model_sources out_headers out_sources)
 
     set(${out_headers} ${headers} PARENT_SCOPE)
     set(${out_sources} ${sources} PARENT_SCOPE)
+
 endfunction()
 
 # Database migrations header files (used in AutoTests and Tom example console application)
@@ -493,6 +490,7 @@ function(tiny_tests_migration_sources out_headers)
     )
 
     set(${out_headers} ${headers} PARENT_SCOPE)
+
 endfunction()
 
 # Database seeders header files (used in the Tom example console application)
@@ -513,6 +511,7 @@ function(tiny_tests_seeder_sources out_headers)
     list(TRANSFORM headers PREPEND "${${TinyOrm_ns}_SOURCE_DIR}/tests/database/seeders/")
 
     set(${out_headers} ${headers} PARENT_SCOPE)
+
 endfunction()
 
 # Tom example console application - database migrations and seeders header files
@@ -534,6 +533,7 @@ function(tiny_tom_example_database_sources out_headers)
     list(SORT headers)
 
     set(${out_headers} ${headers} PARENT_SCOPE)
+
 endfunction()
 
 # Tom testdata application - database migrations and seeder header files
@@ -577,4 +577,5 @@ function(tiny_tom_testdata_database_sources out_headers)
     )
 
     set(${out_headers} ${headers} PARENT_SCOPE)
+
 endfunction()
