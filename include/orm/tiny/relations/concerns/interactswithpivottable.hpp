@@ -128,8 +128,8 @@ namespace Concerns
 
         /*! Detach models from the relationship. */
         inline int detach(const QVector<QVariant> &ids, bool touch = true) const;
-        /*! Detach models from the relationship. */
-        inline int detach(bool touch = true) const;
+        /*! Detach all models from the relationship. */
+        inline int detachAll(bool touch = true) const;
         /*! Detach models from the relationship. */
         inline int detach(const QVector<std::reference_wrapper<Related>> &models,
                           bool touch = true) const;
@@ -523,7 +523,7 @@ namespace Concerns
 
     template<class Model, class Related, class PivotType>
     int
-    InteractsWithPivotTable<Model, Related, PivotType>::detach(const bool touch) const
+    InteractsWithPivotTable<Model, Related, PivotType>::detachAll(const bool touch) const
     {
         return detach(true, {}, touch);
     }

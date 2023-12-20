@@ -2024,7 +2024,7 @@ void tst_Relations_Inserting_Updating::detach_BasicPivot_All() const
         QCOMPARE(tagged["active"].value(), QVariant(false));
     }
 
-    auto affected = tag5->torrents()->detach(false);
+    auto affected = tag5->torrents()->detachAll(false);
 
     QCOMPARE(affected, 2);
 
@@ -2192,7 +2192,7 @@ void tst_Relations_Inserting_Updating::detach_CustomPivot_All() const
         QCOMPARE(tagged["active"].value(), QVariant(false));
     }
 
-    auto affected = torrent5->tags()->detach(false);
+    auto affected = torrent5->tags()->detachAll(false);
 
     QCOMPARE(affected, 2);
 

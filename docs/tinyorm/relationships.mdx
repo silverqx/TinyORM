@@ -1229,7 +1229,7 @@ Sometimes it may be necessary to remove a role from a user. To remove a many-to-
     user->roles()->detach(roleId);
 
     // Detach all roles from the user...
-    user->roles()->detach();
+    user->roles()->detachAll();
 
 For convenience, `attach` and `detach` also accept vectors of IDs or Model instances as input:
 
