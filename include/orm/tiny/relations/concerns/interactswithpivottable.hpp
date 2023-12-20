@@ -128,8 +128,6 @@ namespace Concerns
 
         /*! Detach models from the relationship. */
         inline int detach(const QVector<QVariant> &ids, bool touch = true) const;
-        /*! Detach all models from the relationship. */
-        inline int detachAll(bool touch = true) const;
         /*! Detach models from the relationship. */
         inline int detach(const QVector<std::reference_wrapper<Related>> &models,
                           bool touch = true) const;
@@ -137,6 +135,8 @@ namespace Concerns
         inline int detach(const QVariant &id, bool touch = true) const;
         /*! Detach model from the relationship. */
         inline int detach(const Related &model, bool touch = true) const;
+        /*! Detach all models from the relationship. */
+        inline int detachAll(bool touch = true) const;
 
         /*! Update an existing pivot record on the table. */
         int updateExistingPivot(const QVariant &id,
@@ -522,13 +522,6 @@ namespace Concerns
     }
 
     template<class Model, class Related, class PivotType>
-    int
-    InteractsWithPivotTable<Model, Related, PivotType>::detachAll(const bool touch) const
-    {
-        return detach(true, {}, touch);
-    }
-
-    template<class Model, class Related, class PivotType>
     int InteractsWithPivotTable<Model, Related, PivotType>::detach(
             const QVector<std::reference_wrapper<Related>> &models,
             const bool touch) const
@@ -549,6 +542,13 @@ namespace Concerns
     {
         return detach(QVector<QVariant> {model.getAttribute(getRelatedKeyName_())},
                       touch);
+    }
+
+    template<class Model, class Related, class PivotType>
+    int
+    InteractsWithPivotTable<Model, Related, PivotType>::detachAll(const bool touch) const
+    {
+        return detach(true, {}, touch);
     }
 
     template<class Model, class Related, class PivotType>
