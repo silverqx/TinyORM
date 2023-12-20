@@ -90,9 +90,11 @@ private Q_SLOTS:
     void attach_BasicPivot_IdsWithAttributes() const;
     void attach_CustomPivot_IdsWithAttributes() const;
 
+    void detach_BasicPivot_WithId() const;
     void detach_BasicPivot_WithIds() const;
     void detach_BasicPivot_WithModels() const;
     void detach_BasicPivot_All() const;
+    void detach_CustomPivot_WithId() const;
     void detach_CustomPivot_WithIds() const;
     void detach_CustomPivot_WithModels() const;
     void detach_CustomPivot_All() const;
@@ -1858,6 +1860,60 @@ void tst_Relations_Inserting_Updating::attach_CustomPivot_IdsWithAttributes() co
     tag101.remove();
 }
 
+void tst_Relations_Inserting_Updating::detach_BasicPivot_WithId() const
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
+    Torrent torrent100 {
+        {NAME, "test100"}, {SIZE_, 100}, {Progress, 555},
+        {HASH_, "xyzhash100"}, {NOTE, "attach with pivot"},
+    };
+    torrent100.save();
+
+    auto tag4 = Tag::find(4);
+    QVERIFY(tag4);
+    QVERIFY(tag4->exists);
+                             // Passing the quint64 to test it
+    tag4->torrents()->attach(torrent100.getAttribute<quint64>(ID),
+                             {{"active", false}},
+                             false);
+
+    auto taggeds = Tagged::whereEq("tag_id", (*tag4)[ID])
+                   ->whereIn("torrent_id", {torrent100[ID]})
+                   .get();
+
+    QCOMPARE(taggeds.size(), 1);
+
+    // Expected torrent ID
+    QVector<QVariant> torrentIds {torrent100[ID]};
+
+    for (auto &tagged : taggeds) {
+        QVERIFY(tagged.exists);
+        QCOMPARE(typeid (tagged), typeid (Tagged));
+
+        QCOMPARE(tagged.getAttributes().size(), 5);
+
+        QCOMPARE(tagged["tag_id"].value(), (*tag4)[ID]);
+        QVERIFY(torrentIds.contains(tagged["torrent_id"].value()));
+        QCOMPARE(tagged["active"].value(), QVariant(false));
+    }
+                                             // Passing the quint64 to test it
+    auto affected = tag4->torrents()->detach(torrent100.getAttribute<quint64>(ID), false);
+
+    QCOMPARE(affected, 1);
+
+    auto taggedsSize = Tagged::whereEq("tag_id", (*tag4)[ID])
+                       ->whereIn("torrent_id", {torrent100[ID]})
+                       .count();
+
+    QCOMPARE(taggedsSize, 0);
+
+    // Restore db
+    torrent100.remove();
+}
+
 void tst_Relations_Inserting_Updating::detach_BasicPivot_WithIds() const
 {
     QFETCH_GLOBAL(QString, connection);
@@ -2037,6 +2093,59 @@ void tst_Relations_Inserting_Updating::detach_BasicPivot_All() const
     // Restore db
     torrent100.remove();
     torrent101.remove();
+}
+
+void tst_Relations_Inserting_Updating::detach_CustomPivot_WithId() const
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    ConnectionOverride::connection = connection;
+
+    Tag tag100({{NAME, "tag100"}});
+    tag100.save();
+
+    auto torrent5 = Torrent::find(5);
+    QVERIFY(torrent5);
+    QVERIFY(torrent5->exists);
+
+    const auto torrent5Id = (*torrent5)[ID];
+
+    torrent5->tags()->attach(tag100[ID],
+                             {{"active", false}},
+                             false);
+
+    auto taggeds = Tagged::whereEq("torrent_id", torrent5Id)
+                   ->whereIn("tag_id", {tag100[ID]})
+                   .get();
+
+    QCOMPARE(taggeds.size(), 1);
+
+    // Expected tag IDs
+    QVector<QVariant> tagIds {tag100[ID]};
+
+    for (auto &tagged : taggeds) {
+        QVERIFY(tagged.exists);
+        QCOMPARE(typeid (tagged), typeid (Tagged));
+
+        QCOMPARE(tagged.getAttributes().size(), 5);
+
+        QCOMPARE(tagged["torrent_id"].value(), torrent5Id);
+        QVERIFY(tagIds.contains(tagged["tag_id"].value()));
+        QCOMPARE(tagged["active"].value(), QVariant(false));
+    }
+
+    auto affected = torrent5->tags()->detach(tag100[ID], false);
+
+    QCOMPARE(affected, 1);
+
+    auto taggedsSize = Tagged::whereEq("torrent_id", torrent5Id)
+                       ->whereIn("tag_id", {tag100[ID]})
+                       .count();
+
+    QCOMPARE(taggedsSize, 0);
+
+    // Restore db
+    tag100.remove();
 }
 
 void tst_Relations_Inserting_Updating::detach_CustomPivot_WithIds() const
