@@ -17,7 +17,7 @@
 #  elif __has_include(<mysql.h>)
 #    include <mysql.h>
 #  else
-#    error Can't find the <mysql.h> header file, install the MySQL C client library or \
+#    error Can not find the <mysql.h> header file, install the MySQL C client library or \
 disable the TINYORM_MYSQL_PING preprocessor directive.
 #  endif
 #endif
