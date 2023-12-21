@@ -2556,3 +2556,22 @@ TinyORM C++ Coding Style:
    Then the macro guards will be:
 #define ORM_DRIVERS_MYSQL_MYSQLRESULT_P_HPP
 #define ORM_DRIVERS_MYSQL_CONSTANTS_EXTERN_P_HPP
+
+
+GitHub actions self-hosted runners:
+-----------------------------------
+
+After a few week all stoped runners are invalided so they must be re-configured.
+Simply delete the .runner file and invoke the config script again as is described here:
+https://docs.github.com/en/actions/hosting-your-own-runners/managing-self-hosted-runners/adding-self-hosted-runners
+
+ - no need to remove services before re-configuring
+   - on Linux call the sudo ./svc.sh stop before
+   - Linux svc commands: sudo ./svc.sh start/status/stop
+ - config.sh script on Linux can be invoked without sudo
+ - config.cmd on Windows must be invoked in Admin. shell because it installs service
+ - all prompt questions leave at default, only one thing is to change the Windows runner name
+   to the lowercase
+ - I have added two helper scripts to execute/stop these runners:
+   - Start-TinyORMActions
+   - Stop-TinyORMActions
