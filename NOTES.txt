@@ -2576,3 +2576,9 @@ https://docs.github.com/en/actions/hosting-your-own-runners/managing-self-hosted
  - I have added two helper scripts to execute/stop these runners:
    - Start-TinyORMActions
    - Stop-TinyORMActions
+
+ - needed manual actions:
+   - deleting build folders eg. after compiler or Qt upgrade
+   - deleting and re-cloning the vcpkg repo
+     - the owner must be changed on Windows to NETWORK SERVICE because of git filesystem owner check
+     - isn't needed often, look on this step: vcpkg upgrade repository (latest version)
