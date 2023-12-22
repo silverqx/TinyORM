@@ -52,8 +52,6 @@ Param(
 
 Set-StrictMode -Version 3.0
 
-. $PSScriptRoot\private\Common-Host.ps1
-
 # Get a git object by the current parameter set
 # The vcpkg uses the archive/ prefix only without the refs/heads/ or refs/tags/:
 # https://github.com/microsoft/vcpkg/blob/master/scripts/cmake/vcpkg_from_github.cmake#L107
@@ -96,8 +94,9 @@ try {
     vcpkg hash $tempFile
 }
 catch {
-    # Exiting directly from the catch block is ok, the finally block will be invoked correctly
-    Write-ExitError "Failed to download the archive for hashing from the URL:`n$url"
+    Write-Error "Failed to download the archive for hashing from the URL:`n$url"
+    # Re-throw
+    throw
 }
 finally {
     $ProgressPreference = $previousProgressPreference
