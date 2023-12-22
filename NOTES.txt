@@ -2565,6 +2565,7 @@ After a few week all stoped runners are invalided so they must be re-configured.
 Simply delete the .runner file and invoke the config script again as is described here:
 https://docs.github.com/en/actions/hosting-your-own-runners/managing-self-hosted-runners/adding-self-hosted-runners
 
+ - !!! backup .env and .path (Linux only) before deleting whole runner's folder
  - no need to remove services before re-configuring
    - on Linux call the sudo ./svc.sh stop before
    - Linux svc commands: sudo ./svc.sh start/status/stop
