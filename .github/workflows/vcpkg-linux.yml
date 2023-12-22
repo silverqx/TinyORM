@@ -137,6 +137,10 @@ jobs:
       run: |
         sqlite3 --version
 
+    - name: vcpkg print version
+      run: |
+        vcpkg --version
+
     # Will be used in the classic method (vcpkg install tinyorm) and VcpkgManifest method
     # I will not write bash scripts for this, would be a pain 🫤
     - name: vcpkg prepare TinyORM ports (update REF and SHA512)
