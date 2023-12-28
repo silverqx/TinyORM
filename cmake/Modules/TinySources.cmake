@@ -214,6 +214,7 @@ function(tinyorm_sources out_headers out_sources)
         macros/export_common.hpp
         macros/likely.hpp
         macros/logexecutedquery.hpp
+        macros/sqldrivermappings.hpp
         macros/stringify.hpp
         macros/systemheader.hpp
         macros/threadlocal.hpp
