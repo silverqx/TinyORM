@@ -1,7 +1,8 @@
 #include "orm/connectors/mysqlconnector.hpp"
 
 #include <QVersionNumber>
-#include <QtSql/QSqlQuery>
+#include "orm/macros/sqldrivermappings.hpp"
+#include TINY_INCLUDE_TSqlQuery
 
 #include "orm/constants.hpp"
 #include "orm/exceptions/queryerror.hpp"
