@@ -142,7 +142,7 @@ bool MySqlResult::exec()
     if (!d->preparedQuery)
         throw std::exception(
                 "The prepared query is empty, to call normal queries use "
-                "the SqlQuery1::exec(QString) overload.");
+                "the SqlQuery::exec(QString) overload.");
 
     if (!d->stmt)
         return false;
@@ -463,7 +463,7 @@ void MySqlResult::detachFromResultSet()
     if (d->preparedQuery)
         mysql_stmt_free_result(d->stmt);
 
-    // CUR drivers what about mysql_free_result()? Also look SqlQuery1::finish() silverqx
+    // CUR drivers what about mysql_free_result()? Also look SqlQuery::finish() silverqx
 }
 
 /* Others */

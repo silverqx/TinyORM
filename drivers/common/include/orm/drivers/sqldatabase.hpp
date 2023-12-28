@@ -53,7 +53,7 @@ namespace Orm::Drivers
         /*! Open the database connection using the given username and password.
             The password is not stored but passed directly to the database driver. */
         bool open(const QString &username, const QString &password);
-        /*! Close the current connection (invalidates all SqlQuery1 instances). */
+        /*! Close the current connection (invalidates all SqlQuery instances). */
         void close();
 
         /* Getters / Setters */

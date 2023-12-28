@@ -29,7 +29,7 @@ namespace Orm::Drivers
         Q_DECLARE_PRIVATE(SqlResult)
 
         // To access practically everything, all logic is defined in the SqlResult
-        friend class SqlQuery1;
+        friend class SqlQuery;
 
     protected:
         /*! Constructor. */

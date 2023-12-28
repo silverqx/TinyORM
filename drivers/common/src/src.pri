@@ -10,7 +10,7 @@ sourcesList += \
     $$PWD/orm/drivers/sqldriver.cpp \
     $$PWD/orm/drivers/sqldrivererror.cpp \
     $$PWD/orm/drivers/sqlfield.cpp \
-    $$PWD/orm/drivers/sqlquery1.cpp \
+    $$PWD/orm/drivers/sqlquery.cpp \
     $$PWD/orm/drivers/sqlrecord.cpp \
     $$PWD/orm/drivers/sqlresult.cpp \
     $$PWD/orm/drivers/sqlresult_p.cpp \
