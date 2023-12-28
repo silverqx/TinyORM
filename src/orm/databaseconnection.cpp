@@ -4,7 +4,7 @@
 #  include <QDebug>
 #endif
 
-#include <QtSql/QSqlRecord>
+#include TINY_INCLUDE_TSqlRecord
 
 #include "orm/exceptions/lostconnectionerror.hpp"
 #include "orm/exceptions/multiplecolumnsselectederror.hpp"
@@ -281,7 +281,7 @@ SqlQuery DatabaseConnection::unprepared(const QString &queryString)
 
 /* Obtain connection instance */
 
-QSqlDatabase DatabaseConnection::getQtConnection()
+TSqlDatabase DatabaseConnection::getQtConnection()
 {
     if (!m_qtConnection) {
         // This should never happen 🤔
@@ -292,24 +292,24 @@ QSqlDatabase DatabaseConnection::getQtConnection()
 
         /* This should never happen 🤔, do this check only when the QSqlDatabase
            connection was resolved by connection resolver. */
-        if (!QSqlDatabase::contains(*m_qtConnection))
+        if (!TSqlDatabase::contains(*m_qtConnection))
             throw Exceptions::RuntimeError(
                     QStringLiteral("QSqlDatabase does not contain '%1' connection.")
                     .arg(*m_qtConnection));
     }
 
     // Return the connection from QSqlDatabase connection manager
-    return QSqlDatabase::database(*m_qtConnection, true);
+    return TSqlDatabase::database(*m_qtConnection, true);
 }
 
-QSqlDatabase DatabaseConnection::getRawQtConnection() const
+TSqlDatabase DatabaseConnection::getRawQtConnection() const
 {
     if (!m_qtConnection)
         throw Exceptions::RuntimeError(
                 "Can not obtain a connection from the QSqlDatabase instance because "
                 "the connection has not yet been established.");
 
-    return QSqlDatabase::database(*m_qtConnection);
+    return TSqlDatabase::database(*m_qtConnection);
 }
 
 DatabaseConnection &
@@ -410,7 +410,7 @@ bool DatabaseConnection::pingDatabase()
                 .arg(driverName()));
 }
 
-QSqlDriver *DatabaseConnection::driver()
+TSqlDriver *DatabaseConnection::driver()
 {
     return getQtConnection().driver();
 }

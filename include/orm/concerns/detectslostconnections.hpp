@@ -9,8 +9,9 @@ TINY_SYSTEM_HEADER
 
 #include "orm/macros/commonnamespace.hpp"
 #include "orm/macros/export.hpp"
+#include "orm/macros/sqldrivermappings.hpp"
 
-class QSqlError;
+class TSqlError;
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
@@ -39,7 +40,7 @@ namespace Concerns
         /*! Determine if the given exception was caused by a lost connection. */
         static bool causedByLostConnection(const Exceptions::SqlError &e);
         /*! Determine if the given exception was caused by a lost connection. */
-        static bool causedByLostConnection(const QSqlError &e);
+        static bool causedByLostConnection(const TSqlError &e);
     };
 
     /* public */

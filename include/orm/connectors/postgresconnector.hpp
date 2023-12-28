@@ -37,26 +37,26 @@ namespace Orm::Connectors
 
     protected:
         /*! Set the connection transaction isolation level. */
-        static void configureIsolationLevel(const QSqlDatabase &connection,
+        static void configureIsolationLevel(const TSqlDatabase &connection,
                                             const QVariantHash &config);
         /*! Set the connection character set and collation. */
-        static void configureEncoding(const QSqlDatabase &connection,
+        static void configureEncoding(const TSqlDatabase &connection,
                                       const QVariantHash &config);
         /*! Set the timezone on the connection. */
-        static void configureTimezone(const QSqlDatabase &connection,
+        static void configureTimezone(const TSqlDatabase &connection,
                                       const QVariantHash &config);
 
         /*! Set the 'search_path' on the database connection. */
-        static void configureSearchPath(const QSqlDatabase &connection,
+        static void configureSearchPath(const TSqlDatabase &connection,
                                         const QVariantHash &config);
         /*! Format the 'search_path' for the database query or DSN. */
         static QString quoteSearchPath(const QStringList &searchPath);
 
         /*! Set an application name for the connection. */
-        static void configureApplicationName(const QSqlDatabase &connection,
+        static void configureApplicationName(const TSqlDatabase &connection,
                                              const QVariantHash &config);
         /*! Configure the synchronous_commit setting. */
-        static void configureSynchronousCommit(const QSqlDatabase &connection,
+        static void configureSynchronousCommit(const TSqlDatabase &connection,
                                                const QVariantHash &config);
 
     private:

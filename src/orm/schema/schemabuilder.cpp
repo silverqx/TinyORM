@@ -1,6 +1,7 @@
 #include "orm/schema/schemabuilder.hpp"
 
-#include <QtSql/QSqlDriver>
+#include "orm/macros/sqldrivermappings.hpp"
+#include TINY_INCLUDE_TSqlDriver
 
 #include <range/v3/action/transform.hpp>
 #include <range/v3/algorithm/contains.hpp>

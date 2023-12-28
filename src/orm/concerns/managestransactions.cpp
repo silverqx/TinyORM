@@ -257,7 +257,7 @@ CountsQueries &ManagesTransactions::countsQueries()
 }
 
 void ManagesTransactions::handleStartTransactionError(
-        const QString &functionName, const QString &queryString, QSqlError &&error)
+        const QString &functionName, const QString &queryString, TSqlError &&error)
 {
     if (!DetectsLostConnections::causedByLostConnection(error))
         throwSqlTransactionError(functionName, queryString, std::move(error));
@@ -268,7 +268,7 @@ void ManagesTransactions::handleStartTransactionError(
 }
 
 void ManagesTransactions::handleCommonTransactionError(
-        const QString &functionName, const QString &queryString, QSqlError &&error)
+        const QString &functionName, const QString &queryString, TSqlError &&error)
 {
     /* Don't call reconnection logic here because if the current session is
        in the transaction and eg. a connection is lost then the transaction will be
@@ -282,7 +282,7 @@ void ManagesTransactions::handleCommonTransactionError(
 }
 
 void ManagesTransactions::throwSqlTransactionError(
-        const QString &functionName, const QString &queryString, QSqlError &&error)
+        const QString &functionName, const QString &queryString, TSqlError &&error)
 {
     throw Exceptions::SqlTransactionError(
             QStringLiteral("Statement in %1() failed : %2")

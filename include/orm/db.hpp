@@ -134,7 +134,7 @@ namespace Orm
         static bool pingDatabase(const QString &connection = "");
 
         /*! Returns the database driver used to access the database connection. */
-        static QSqlDriver *driver(const QString &connection = "");
+        static TSqlDriver *driver(const QString &connection = "");
 
         /* Proxy methods to the DatabaseManager */
         /*! Get a database connection instance. */

@@ -2057,7 +2057,7 @@ namespace Orm::Tiny::Concerns
         case CastType::Float:
         case CastType::Double:
             /* The fromFloat() not needed here because this logic is handled in the
-               QSqlDriver and currently only the PostgreSQL supports NaN and Infinity
+               TSqlDriver and currently only the PostgreSQL supports NaN and Infinity
                values. The MySQL and SQLite doesn't care. */
             return convertAttribute(QMetaType(QMetaType::Double));
 

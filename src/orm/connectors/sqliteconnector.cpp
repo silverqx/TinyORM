@@ -67,7 +67,7 @@ SQLiteConnector::getConnectorOptions() const
 
 /* protected */
 
-void SQLiteConnector::configureForeignKeyConstraints(const QSqlDatabase &connection,
+void SQLiteConnector::configureForeignKeyConstraints(const TSqlDatabase &connection,
                                                      const QVariantHash &config)
 {
     // This ensures default SQLite behavior

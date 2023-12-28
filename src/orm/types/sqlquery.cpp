@@ -1,6 +1,7 @@
 #include "orm/types/sqlquery.hpp"
 
-#include <QtSql/QSqlDriver>
+#include "orm/macros/sqldrivermappings.hpp"
+#include TINY_INCLUDE_TSqlDriver
 
 #include "orm/query/grammars/grammar.hpp" // IWYU pragma: keep
 #include "orm/utils/helpers.hpp"
@@ -25,7 +26,7 @@ SqlQuery::SqlQuery(QSqlQuery &&other, const QtTimeZoneConfig &qtTimeZone, // NOL
 #endif
     , m_qtTimeZone(qtTimeZone)
     , m_isConvertingTimeZone(m_qtTimeZone.type != QtTimeZoneType::DontConvert)
-    , m_isSQLiteDb(driver()->dbmsType() == QSqlDriver::DbmsType::SQLite)
+    , m_isSQLiteDb(driver()->dbmsType() == TSqlDriver::DbmsType::SQLite)
     // Following two are need by SQLite only
     , m_dateFormat(m_isSQLiteDb ? std::make_optional(queryGrammar.getDateFormat())
                                 : std::nullopt)

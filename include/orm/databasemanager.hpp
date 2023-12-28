@@ -137,7 +137,7 @@ namespace Query
         bool pingDatabase(const QString &connection = "");
 
         /*! Returns the database driver used to access the database connection. */
-        QSqlDriver *driver(const QString &connection = "");
+        TSqlDriver *driver(const QString &connection = "");
 
         /* DatabaseManager */
         /*! Obtain a shared pointer to the DatabaseManager. */

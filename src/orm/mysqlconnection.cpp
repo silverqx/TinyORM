@@ -4,7 +4,8 @@
 #  include <QDebug>
 #endif
 #include <QVersionNumber>
-#include <QtSql/QSqlDriver>
+#include "orm/macros/sqldrivermappings.hpp"
+#include TINY_INCLUDE_TSqlDriver
 
 #ifdef TINYORM_MYSQL_PING
 #  ifdef __MINGW32__

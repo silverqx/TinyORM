@@ -27,7 +27,7 @@ C preprocessor macro to select the SQL drivers to use.
 /* Includes */
 
 #ifdef TINYORM_USING_QTSQLDRIVERS
-#  include <QtCore/qtconfigmacros.h>
+// #  include <QtCore/qtconfigmacros.h>
 #elif defined(TINYORM_USING_TINYDRIVERS)
 #  include "orm/macros/commonnamespace.hpp"
 #else
@@ -38,26 +38,32 @@ C preprocessor macro to select the SQL drivers to use.
 
 #ifdef TINYORM_USING_QTSQLDRIVERS
 // Includes
-#  define TINY_INCLUDE_TSqlDatabase QtSql/QSqlDatabase
-#  define TINY_INCLUDE_TSqlDriver   QtSql/QSqlDriver
-#  define TINY_INCLUDE_TSqlError    QtSql/QSqlError
-#  define TINY_INCLUDE_TSqlQuery    QtSql/QSqlQuery
-#  define TINY_INCLUDE_TSqlRecord   QtSql/QSqlRecord
+#  define TINY_INCLUDE_TSqlDatabase <QtSql/QSqlDatabase>
+#  define TINY_INCLUDE_TSqlDriver   <QtSql/QSqlDriver>
+#  define TINY_INCLUDE_TSqlError    <QtSql/QSqlError>
+#  define TINY_INCLUDE_TSqlQuery    <QtSql/QSqlQuery>
+#  define TINY_INCLUDE_TSqlRecord   <QtSql/QSqlRecord>
 // Types
-#  define TSqlDatabase QT_PREPEND_NAMESPACE(QSqlDatabase)
-#  define TSqlDriver   QT_PREPEND_NAMESPACE(QSqlDriver)
-#  define TSqlError    QT_PREPEND_NAMESPACE(QSqlError)
-#  define TSqlQuery    QT_PREPEND_NAMESPACE(QSqlQuery)
-#  define TSqlRecord   QT_PREPEND_NAMESPACE(QSqlRecord)
+#  define TSqlDatabase QSqlDatabase
+#  define TSqlDriver   QSqlDriver
+#  define TSqlError    QSqlError
+#  define TSqlQuery    QSqlQuery
+// #  define TSqlQuery    TINYORM_PREPEND_NAMESPACE(Orm::Types::SqlQuery)
+#  define TSqlRecord   QSqlRecord
+// #  define TSqlDatabase QT_PREPEND_NAMESPACE(QSqlDatabase)
+// #  define TSqlDriver   QT_PREPEND_NAMESPACE(QSqlDriver)
+// #  define TSqlError    QT_PREPEND_NAMESPACE(QSqlError)
+// #  define TSqlQuery    QT_PREPEND_NAMESPACE(QSqlQuery)
+// #  define TSqlRecord   QT_PREPEND_NAMESPACE(QSqlRecord)
 #endif
 
 #ifdef TINYORM_USING_TINYDRIVERS
 // Includes
-#  define TINY_INCLUDE_TSqlDatabase orm/drivers/sqldatabase.hpp
-#  define TINY_INCLUDE_TSqlDriver   orm/drivers/sqldriver.hpp
-#  define TINY_INCLUDE_TSqlError    orm/drivers/sqlerror.hpp
-#  define TINY_INCLUDE_TSqlQuery    orm/drivers/sqlquery.hpp
-#  define TINY_INCLUDE_TSqlRecord   orm/drivers/sqlrecord.hpp
+#  define TINY_INCLUDE_TSqlDatabase <orm/drivers/sqldatabase.hpp>
+#  define TINY_INCLUDE_TSqlDriver   <orm/drivers/sqldriver.hpp>
+#  define TINY_INCLUDE_TSqlError    <orm/drivers/sqlerror.hpp>
+#  define TINY_INCLUDE_TSqlQuery    <orm/drivers/sqlquery.hpp>
+#  define TINY_INCLUDE_TSqlRecord   <orm/drivers/sqlrecord.hpp>
 // Types
 #  define TSqlDatabase TINYORM_PREPEND_NAMESPACE(Orm::Drivers::SqlDatabase)
 #  define TSqlDriver   TINYORM_PREPEND_NAMESPACE(Orm::Drivers::SqlDriver)

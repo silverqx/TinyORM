@@ -9,8 +9,9 @@ TINY_SYSTEM_HEADER
 
 #include "orm/macros/commonnamespace.hpp"
 #include "orm/macros/export.hpp"
+#include "orm/macros/sqldrivermappings.hpp"
 
-class QSqlError;
+class TSqlError;
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
@@ -80,19 +81,19 @@ namespace Concerns
         /*! Handle an error returned when beginning a transaction. */
         void handleStartTransactionError(
                 const QString &functionName, const QString &queryString,
-                QSqlError &&error);
+                TSqlError &&error);
         /*! Handle an error returned during a transaction commit, rollBack, savepoint or
             rollbackToSavepoint. */
         void handleCommonTransactionError(
                 const QString &functionName, const QString &queryString,
-                QSqlError &&error);
+                TSqlError &&error);
 
         /*! Transform a QtSql transaction error to TinyORM SqlTransactionError
             exception. */
         [[noreturn]]
         static void throwSqlTransactionError(
                 const QString &functionName, const QString &queryString,
-                QSqlError &&error);
+                TSqlError &&error);
 
         /*! The connection is in the transaction state. */
         bool m_inTransaction = false;

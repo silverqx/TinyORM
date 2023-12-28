@@ -14,7 +14,7 @@ bool DetectsLostConnections::causedByLostConnection(const Exceptions::SqlError &
     return causedByLostConnection(e.getSqlError());
 }
 
-bool DetectsLostConnections::causedByLostConnection(const QSqlError &e)
+bool DetectsLostConnections::causedByLostConnection(const TSqlError &e)
 {
     // TODO verify this will be pain in the ass 😕, but but it looks like few of them for mysql and postgres are completly valid silverqx
     static const QVector<QString> lostMessagesCache {

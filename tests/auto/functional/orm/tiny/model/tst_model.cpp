@@ -1,6 +1,8 @@
 #include <QCoreApplication>
-#include <QtSql/QSqlDriver>
 #include <QtTest>
+
+#include "orm/macros/sqldrivermappings.hpp"
+#include TINY_INCLUDE_TSqlDriver
 
 #include "orm/db.hpp"
 #include "orm/utils/nullvariant.hpp"

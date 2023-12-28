@@ -33,33 +33,33 @@ namespace Orm::Connectors
 
     protected:
         /*! Set the connection transaction isolation level. */
-        static void configureIsolationLevel(const QSqlDatabase &connection,
+        static void configureIsolationLevel(const TSqlDatabase &connection,
                                             const QVariantHash &config);
         /*! Set the connection character set and collation. */
-        static void configureEncoding(const QSqlDatabase &connection,
+        static void configureEncoding(const TSqlDatabase &connection,
                                       const QVariantHash &config);
         /*! Get the collation for the configuration. */
         static QString getCollation(const QVariantHash &config);
         /*! Set the timezone on the connection. */
-        static void configureTimezone(const QSqlDatabase &connection,
+        static void configureTimezone(const TSqlDatabase &connection,
                                       const QVariantHash &config);
 
         /*! Set the modes for the connection. */
-        static void setModes(const QSqlDatabase &connection,
+        static void setModes(const TSqlDatabase &connection,
                              const QVariantHash &config);
         /*! Get the query to enable strict mode. */
-        static QString strictMode(const QSqlDatabase &connection,
+        static QString strictMode(const TSqlDatabase &connection,
                                   const QVariantHash &config);
         /*! Get the MySQL server version. */
-        static QString getMySqlVersion(const QSqlDatabase &connection,
+        static QString getMySqlVersion(const TSqlDatabase &connection,
                                        const QVariantHash &config);
         /*! Set the custom modes on the connection. */
-        static void setCustomModes(const QSqlDatabase &connection,
+        static void setCustomModes(const TSqlDatabase &connection,
                                    const QVariantHash &config);
 
     private:
         /*! Get the MySQL server version querying the database server. */
-        static QString getMySqlVersionFromDatabase(const QSqlDatabase &connection);
+        static QString getMySqlVersionFromDatabase(const TSqlDatabase &connection);
 
         /*! The default QSqlDatabase connection options for the MySqlConnector. */
         inline static const QVariantHash m_options;

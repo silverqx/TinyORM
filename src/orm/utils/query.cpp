@@ -1,7 +1,8 @@
 #include "orm/utils/query.hpp"
 
 #include <QDebug>
-#include <QtSql/QSqlDriver>
+#include "orm/macros/sqldrivermappings.hpp"
+#include TINY_INCLUDE_TSqlDriver
 #include <QtSql/QSqlQuery>
 
 #include "orm/exceptions/invalidargumenterror.hpp"
@@ -71,7 +72,7 @@ int Query::queryResultSize(QSqlQuery &query)
     if (!query.isActive() || !query.isSelect())
         return -1;
 
-    if (query.driver()->hasFeature(QSqlDriver::QuerySize))
+    if (query.driver()->hasFeature(TSqlDriver::QuerySize))
         return query.size();
 
     // Backup the current cursor position

@@ -72,7 +72,7 @@ PostgresConnector::getConnectorOptions() const
 
 /* protected */
 
-void PostgresConnector::configureIsolationLevel(const QSqlDatabase &connection,
+void PostgresConnector::configureIsolationLevel(const TSqlDatabase &connection,
                                                 const QVariantHash &config)
 {
     if (!config.contains(isolation_level))
@@ -89,7 +89,7 @@ void PostgresConnector::configureIsolationLevel(const QSqlDatabase &connection,
                                  m_configureErrorMessage.arg(__tiny_func__), query);
 }
 
-void PostgresConnector::configureEncoding(const QSqlDatabase &connection,
+void PostgresConnector::configureEncoding(const TSqlDatabase &connection,
                                           const QVariantHash &config)
 {
     if (!config.contains(charset_))
@@ -115,7 +115,7 @@ struct QStringLessCi
     }
 };
 
-void PostgresConnector::configureTimezone(const QSqlDatabase &connection,
+void PostgresConnector::configureTimezone(const TSqlDatabase &connection,
                                           const QVariantHash &config)
 {
     if (!config.contains(timezone_))
@@ -138,7 +138,7 @@ void PostgresConnector::configureTimezone(const QSqlDatabase &connection,
                                  m_configureErrorMessage.arg(__tiny_func__), query);
 }
 
-void PostgresConnector::configureSearchPath(const QSqlDatabase &connection,
+void PostgresConnector::configureSearchPath(const TSqlDatabase &connection,
                                             const QVariantHash &config)
 {
     if (!config.contains(search_path))
@@ -168,7 +168,7 @@ QString PostgresConnector::quoteSearchPath(const QStringList &searchPath)
     return TMPL_DQUOTES.arg(ContainerUtils::join(searchPath, QStringLiteral("\", \"")));
 }
 
-void PostgresConnector::configureApplicationName(const QSqlDatabase &connection,
+void PostgresConnector::configureApplicationName(const TSqlDatabase &connection,
                                                  const QVariantHash &config)
 {
     if (!config.contains("application_name"))
@@ -184,7 +184,7 @@ void PostgresConnector::configureApplicationName(const QSqlDatabase &connection,
                                  m_configureErrorMessage.arg(__tiny_func__), query);
 }
 
-void PostgresConnector::configureSynchronousCommit(const QSqlDatabase &connection,
+void PostgresConnector::configureSynchronousCommit(const TSqlDatabase &connection,
                                                    const QVariantHash &config)
 {
     if (!config.contains(synchronous_commit))

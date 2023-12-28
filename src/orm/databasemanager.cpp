@@ -244,7 +244,7 @@ bool DatabaseManager::pingDatabase(const QString &connection)
     return this->connection(connection).pingDatabase();
 }
 
-QSqlDriver *DatabaseManager::driver(const QString &connection)
+TSqlDriver *DatabaseManager::driver(const QString &connection)
 {
     return this->connection(connection).driver();
 }
@@ -354,7 +354,7 @@ bool DatabaseManager::removeConnection(const QString &name)
     // Remove TinyORM configuration
     m_configuration->erase(name_);
     // Remove Qt's database connection, ~QSqlDatabase() internally also calls close()
-    QSqlDatabase::removeDatabase(name_);
+    TSqlDatabase::removeDatabase(name_);
 
     resetDefaultConnection_();
 
@@ -422,12 +422,12 @@ QStringList DatabaseManager::supportedDrivers() const // NOLINT(readability-conv
 
 QStringList DatabaseManager::drivers() const // NOLINT(readability-convert-member-functions-to-static)
 {
-    return QSqlDatabase::drivers();
+    return TSqlDatabase::drivers();
 }
 
 bool DatabaseManager::isDriverAvailable(const QString &driverName) const // NOLINT(readability-convert-member-functions-to-static)
 {
-    return QSqlDatabase::isDriverAvailable(driverName);
+    return TSqlDatabase::isDriverAvailable(driverName);
 }
 
 bool DatabaseManager::isConnectionDriverAvailable(const QString &connection)
@@ -440,7 +440,7 @@ bool DatabaseManager::isConnectionDriverAvailable(const QString &connection)
                                "the '%2' connection.")
                 .arg(driverName, connection));
 
-    return QSqlDatabase::isDriverAvailable(driverName);
+    return TSqlDatabase::isDriverAvailable(driverName);
 }
 
 const QString &
