@@ -1,4 +1,4 @@
-#include "orm/drivers/sqlquery1.hpp"
+#include "orm/drivers/sqlquery.hpp"
 
 /* I leave the QT_DEBUG_SQL defined to be compatible with the QtSql module, so
    the QtSql module and the TinyDrivers are interchangeable. */
@@ -28,74 +28,73 @@ namespace Orm::Drivers
 
 /* public */
 
-SqlQuery1::SqlQuery1()
+SqlQuery::SqlQuery()
     : m_sqlResult(initSqlResult())
 {}
 
-SqlQuery1::SqlQuery1(const SqlDatabase &connection)
+SqlQuery::SqlQuery(const SqlDatabase &connection)
     : m_sqlResult(initSqlResult(connection))
 {}
 
-SqlQuery1::SqlQuery1(std::unique_ptr<SqlResult> &&result)
+SqlQuery::SqlQuery(std::unique_ptr<SqlResult> &&result)
     : m_sqlResult(std::move(result))
 {}
 
 /* The destructor must be in the cpp file because the m_sqlResult is unique_ptr.
    If the destructor is inline then the compilation fails because a unique_ptr can't
    destroy an incomplete type. */
-SqlQuery1::~SqlQuery1() = default;
+SqlQuery::~SqlQuery() = default;
 
 /* Getters / Setters */
 
-bool SqlQuery1::isValid() const
+bool SqlQuery::isValid() const
 {
     return m_sqlResult->isValid();
 }
 
-QString SqlQuery1::executedQuery() const
+QString SqlQuery::executedQuery() const
 {
     return m_sqlResult->query();
 }
 
-QString SqlQuery1::lastQuery() const
+QString SqlQuery::lastQuery() const
 {
     return m_sqlResult->query();
 }
 
-SqlDriverError SqlQuery1::lastError() const
+SqlDriverError SqlQuery::lastError() const
 {
     return m_sqlResult->lastError();
 }
 
-int SqlQuery1::at() const
+int SqlQuery::at() const
 {
     return m_sqlResult->at();
 }
 
-bool SqlQuery1::isActive() const noexcept
+bool SqlQuery::isActive() const noexcept
 {
     return m_sqlResult->isActive();
 }
 
-bool SqlQuery1::isSelect() const noexcept
+bool SqlQuery::isSelect() const noexcept
 {
     /* isSelect() practically means that the executed query has a result set (data that
        can be looped over), it could also be named hasResultSet(). */
     return m_sqlResult->isSelect();
 }
 
-NumericalPrecisionPolicy SqlQuery1::numericalPrecisionPolicy() const
+NumericalPrecisionPolicy SqlQuery::numericalPrecisionPolicy() const
 {
     return m_sqlResult->numericalPrecisionPolicy();
 }
 
-void
-SqlQuery1::setNumericalPrecisionPolicy(const NumericalPrecisionPolicy precision)
+void SqlQuery::setNumericalPrecisionPolicy(const NumericalPrecisionPolicy precision)
 {
     m_sqlResult->setNumericalPrecisionPolicy(precision);
 }
 
-std::weak_ptr<const SqlDriver> SqlQuery1::driver() const noexcept
+std::weak_ptr<const SqlDriver> SqlQuery::driver() const noexcept
 {
     /* This must be the std::weak_ptr() because when the connection is removed from
        the SqlDatabaseManager using the SqlDatabase::removeDatabase() then the SqlDriver
@@ -106,16 +105,16 @@ std::weak_ptr<const SqlDriver> SqlQuery1::driver() const noexcept
 
 /* Normal queries */
 
-bool SqlQuery1::exec(const QString &query)
+bool SqlQuery::exec(const QString &query)
 {
     // Nothing to do
     if (query.isEmpty())
-        throw std::exception("SqlQuery1::exec: empty query");
+        throw std::exception("SqlQuery::exec: empty query");
 
     if (const auto driver = this->driver().lock();
         !driver->isOpen() || driver->isOpenError()
     ) {
-        qWarning("SqlQuery1::exec: database not open");
+        qWarning("SqlQuery::exec: database not open");
         return false;
     }
 
@@ -146,16 +145,16 @@ bool SqlQuery1::exec(const QString &query)
 
 /* Prepared queries */
 
-bool SqlQuery1::prepare(const QString &query)
+bool SqlQuery::prepare(const QString &query)
 {
     // Nothing to do
     if (query.isEmpty())
-        throw std::exception("SqlQuery1::exec: empty query");
+        throw std::exception("SqlQuery::exec: empty query");
 
     if (const auto driver = this->driver().lock();
         !driver->isOpen() || driver->isOpenError()
     ) {
-        qWarning("SqlQuery1::prepare: database not open");
+        qWarning("SqlQuery::prepare: database not open");
         return false;
     }
 
@@ -167,14 +166,14 @@ bool SqlQuery1::prepare(const QString &query)
     return m_sqlResult->prepare(query);
 }
 
-bool SqlQuery1::exec()
+bool SqlQuery::exec()
 {
     // Nothing to do
     if (m_sqlResult->query().isEmpty())
         throw std::exception(
-                "The prepared query is empty, call the SqlQuery1::prepare() first "
+                "The prepared query is empty, call the SqlQuery::prepare() first "
                 "for prepared statements or pass the query string directly "
-                "to the SqlQuery1::exec(QString) for normal statements.");
+                "to the SqlQuery::exec(QString) for normal statements.");
 
     // CUR drivers check if this is needed as it's reset in the prepare() and if some error occurs in the m_sqlResult->prepare(query) then I don't know if make sense to continue silverqx
     if (m_sqlResult->lastError().isValid())
@@ -197,7 +196,7 @@ bool SqlQuery1::exec()
     return result;
 }
 
-void SqlQuery1::bindValue(const int index, const QVariant &value,
+void SqlQuery::bindValue(const int index, const QVariant &value,
                           const ParamType /*unused*/)
 {
     /* Need to pass the ParamType::In to preserve the same API because I can't remove this
@@ -205,7 +204,7 @@ void SqlQuery1::bindValue(const int index, const QVariant &value,
     m_sqlResult->bindValue(index, value, ParamType::In);
 }
 
-void SqlQuery1::addBindValue(const QVariant &value, const ParamType /*unused*/)
+void SqlQuery::addBindValue(const QVariant &value, const ParamType /*unused*/)
 {
     // Append, index after the last value
     const auto index = m_sqlResult->boundValuesCount();
@@ -215,19 +214,19 @@ void SqlQuery1::addBindValue(const QVariant &value, const ParamType /*unused*/)
     m_sqlResult->bindValue(index, value, ParamType::In);
 }
 
-QVariant SqlQuery1::boundValue(const int index) const
+QVariant SqlQuery::boundValue(const int index) const
 {
     return m_sqlResult->boundValue(index);
 }
 
-QVariantList SqlQuery1::boundValues() const
+QVariantList SqlQuery::boundValues() const
 {
     return m_sqlResult->boundValues();
 }
 
 /* Result sets */
 
-SqlRecord SqlQuery1::record() const
+SqlRecord SqlQuery::record() const
 {
     // Nothing to do
     if (!isActive() || !isValid() || !isSelect())
@@ -241,7 +240,7 @@ SqlRecord SqlQuery1::record() const
     return record;
 }
 
-QVariant SqlQuery1::lastInsertId() const
+QVariant SqlQuery::lastInsertId() const
 {
     // Nothing to do, query was not executed
     if (!isActive())
@@ -250,7 +249,7 @@ QVariant SqlQuery1::lastInsertId() const
     return m_sqlResult->lastInsertId();
 }
 
-bool SqlQuery1::next()
+bool SqlQuery::next()
 {
     // Nothing to do
     if (!isSelect() || !isActive())
@@ -272,7 +271,7 @@ bool SqlQuery1::next()
     }
 }
 
-bool SqlQuery1::previous()
+bool SqlQuery::previous()
 {
     // Nothing to do
     if (!isSelect() || !isActive())
@@ -294,7 +293,7 @@ bool SqlQuery1::previous()
     }
 }
 
-bool SqlQuery1::first()
+bool SqlQuery::first()
 {
     // Nothing to do
     if (!isSelect() || !isActive())
@@ -303,7 +302,7 @@ bool SqlQuery1::first()
     return m_sqlResult->fetchFirst();
 }
 
-bool SqlQuery1::last()
+bool SqlQuery::last()
 {
     if (!isSelect() || !isActive())
         return false;
@@ -311,7 +310,7 @@ bool SqlQuery1::last()
     return m_sqlResult->fetchLast();
 }
 
-bool SqlQuery1::seek(const int index, const bool relative)
+bool SqlQuery::seek(const int index, const bool relative)
 {
     // Nothing to do
     if (!isSelect() || !isActive())
@@ -330,29 +329,29 @@ bool SqlQuery1::seek(const int index, const bool relative)
     return mapSeekToFetch(actualIdx);
 }
 
-QVariant SqlQuery1::value(const int index) const
+QVariant SqlQuery::value(const int index) const
 {
     if (isActive() && isValid() && isSelect() && index > -1)
         return m_sqlResult->data(index);
 
-    qWarning("SqlQuery1::value: not positioned on a valid record");
+    qWarning("SqlQuery::value: not positioned on a valid record");
 
     return {};
 }
 
-QVariant SqlQuery1::value(const QString &name) const
+QVariant SqlQuery::value(const QString &name) const
 {
     if (const auto index = m_sqlResult->record().indexOf(name);
         index > -1
     )
         return value(index);
 
-    qWarning().noquote() << u"SqlQuery1::value: unknown field name '%1'"_s.arg(name);
+    qWarning().noquote() << u"SqlQuery::value: unknown field name '%1'"_s.arg(name);
 
     return {};
 }
 
-bool SqlQuery1::isNull(const int index) const
+bool SqlQuery::isNull(const int index) const
 {
     if (isActive() && isValid())
         return m_sqlResult->isNull(index);
@@ -362,19 +361,19 @@ bool SqlQuery1::isNull(const int index) const
                 "on the existing row to see if a field is NULL.");
 }
 
-bool SqlQuery1::isNull(const QString &name) const
+bool SqlQuery::isNull(const QString &name) const
 {
     if (const auto index = m_sqlResult->record().indexOf(name);
         index > -1
     )
         return isNull(index);
 
-    qWarning().noquote() << u"SqlQuery1::isNull: unknown field name '%1'"_s.arg(name);
+    qWarning().noquote() << u"SqlQuery::isNull: unknown field name '%1'"_s.arg(name);
 
     return true;
 }
 
-int SqlQuery1::size() const
+int SqlQuery::size() const
 {
     // Nothing to do
     if (!driver().lock()->hasFeature(SqlDriver::QuerySize) || !isSelect() || !isActive())
@@ -383,7 +382,7 @@ int SqlQuery1::size() const
     return m_sqlResult->size();
 }
 
-int SqlQuery1::numRowsAffected() const
+int SqlQuery::numRowsAffected() const
 {
     // Nothing to do
     if (!isActive())
@@ -394,16 +393,16 @@ int SqlQuery1::numRowsAffected() const
 
 /* Others */
 
-void SqlQuery1::clear()
+void SqlQuery::clear()
 {
     const auto driver = this->driver();
 
     // CUR drivers revisit, maybe clear everything manually? What happens with current values, is below correct? silverqx
     // Get the SqlResult instance
-    *this = SqlQuery1(driver.lock()->createResult(driver));
+    *this = SqlQuery(driver.lock()->createResult(driver));
 }
 
-void SqlQuery1::finish()
+void SqlQuery::finish()
 {
     // CUR drivers finish this finish() method, also look hasFearures(FinishQuery), update description silverqx
     // Nothing to do
@@ -424,7 +423,7 @@ void SqlQuery1::finish()
 /* Leave the non-const driver() private, it's correct, it's not needed anywhere and is
    for special cases only. */
 
-std::weak_ptr<SqlDriver> SqlQuery1::driver() noexcept
+std::weak_ptr<SqlDriver> SqlQuery::driver() noexcept
 {
     /* This must be the std::weak_ptr() because when the connection is removed from
        the SqlDatabaseManager using the SqlDatabase::removeDatabase() then the SqlDriver
@@ -435,7 +434,7 @@ std::weak_ptr<SqlDriver> SqlQuery1::driver() noexcept
 
 /* Result sets */
 
-bool SqlQuery1::seekArbitrary(const int index, int &actualIdx)
+bool SqlQuery::seekArbitrary(const int index, int &actualIdx)
 {
     // Nothing to do
     if (index < 0) {
@@ -447,7 +446,7 @@ bool SqlQuery1::seekArbitrary(const int index, int &actualIdx)
     return true;
 }
 
-bool SqlQuery1::seekRelative(const int index, int &actualIdx)
+bool SqlQuery::seekRelative(const int index, int &actualIdx)
 {
     // CUR drivers finish this if I will have higher IQ silverqx
     switch (at()) {
@@ -478,7 +477,7 @@ bool SqlQuery1::seekRelative(const int index, int &actualIdx)
     return true;
 }
 
-bool SqlQuery1::mapSeekToFetch(const int actualIdx)
+bool SqlQuery::mapSeekToFetch(const int actualIdx)
 {
     // fetchNext()
     if (actualIdx == at() + 1 && at() != static_cast<int>(BeforeFirstRow)) {
@@ -509,7 +508,7 @@ bool SqlQuery1::mapSeekToFetch(const int actualIdx)
 
 /* Constructors */
 
-std::unique_ptr<SqlResult> SqlQuery1::initSqlResult()
+std::unique_ptr<SqlResult> SqlQuery::initSqlResult()
 {
     /* Instantiate the default connection if a connection was not passed
        to the constructor (needed to obtain the SqlResult instance). */
@@ -518,7 +517,7 @@ std::unique_ptr<SqlResult> SqlQuery1::initSqlResult()
 
 }
 
-std::unique_ptr<SqlResult> SqlQuery1::initSqlResult(const SqlDatabase &connection)
+std::unique_ptr<SqlResult> SqlQuery::initSqlResult(const SqlDatabase &connection)
 {
     // Nothing to do
     if (!connection.isValid())

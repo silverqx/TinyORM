@@ -3,7 +3,7 @@
 
 #include "orm/drivers/sqldatabase.hpp"
 #include "orm/drivers/sqldriver.hpp"
-#include "orm/drivers/sqlquery1.hpp"
+#include "orm/drivers/sqlquery.hpp"
 #include "orm/drivers/sqlrecord.hpp"
 
 #include "orm/constants.hpp"
@@ -20,7 +20,7 @@ using Orm::Constants::NOTE;
 using Orm::Constants::UPDATED_AT;
 
 using Orm::Drivers::SqlDatabase;
-using Orm::Drivers::SqlQuery1;
+using Orm::Drivers::SqlQuery;
 
 using Orm::Utils::NullVariant;
 
@@ -52,7 +52,7 @@ private Q_SLOTS:
 // NOLINTNEXTLINE(readability-redundant-access-specifiers)
 private:
     /*! Create QueryBuilder instance for the given connection. */
-    [[nodiscard]] SqlQuery1
+    [[nodiscard]] SqlQuery
     createQuery(const QString &connection) const;
 };
 
@@ -518,11 +518,11 @@ void tst_SqlQuery_Prepared::insert_update_delete() const
 
 /* private */
 
-SqlQuery1 tst_SqlQuery_Prepared::createQuery(const QString &/*unused*/) const
+SqlQuery tst_SqlQuery_Prepared::createQuery(const QString &/*unused*/) const
 {
     const auto driver = SqlDatabase::database(Databases::MYSQL).driver();
 
-    return SqlQuery1(driver.lock()->createResult(driver));
+    return SqlQuery(driver.lock()->createResult(driver));
 }
 
 QTEST_MAIN(tst_SqlQuery_Prepared)

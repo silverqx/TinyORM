@@ -1,6 +1,6 @@
 #pragma once
-#ifndef ORM_DRIVERS_SQLQUERY1_HPP
-#define ORM_DRIVERS_SQLQUERY1_HPP
+#ifndef ORM_DRIVERS_SQLQUERY_HPP
+#define ORM_DRIVERS_SQLQUERY_HPP
 
 #include <orm/macros/systemheader.hpp>
 TINY_SYSTEM_HEADER
@@ -19,10 +19,10 @@ namespace Orm::Drivers
     class SqlRecord;
     class SqlQueryPrivate;
 
-    /*! SqlQuery1 class executes, navigates, and retrieves data from SQL statements. */
-    class TINYDRIVERS_EXPORT SqlQuery1
+    /*! SqlQuery class executes, navigates, and retrieves data from SQL statements. */
+    class TINYDRIVERS_EXPORT SqlQuery
     {
-        Q_DISABLE_COPY(SqlQuery1)
+        Q_DISABLE_COPY(SqlQuery)
 
         /*! Alias for the NotNull. */
         template<typename T>
@@ -30,22 +30,22 @@ namespace Orm::Drivers
 
     public:
         /*! Default constructor. */
-        SqlQuery1();
+        SqlQuery();
         /*! Converting constructor from the SqlDatabase. */
-        explicit SqlQuery1(const SqlDatabase &connection);
+        explicit SqlQuery(const SqlDatabase &connection);
         /*! Converting constructor from the std::unique_ptr<SqlResult>. */
-        explicit SqlQuery1(std::unique_ptr<SqlResult> &&result);
+        explicit SqlQuery(std::unique_ptr<SqlResult> &&result);
 
         /*! Move constructor. */
-        inline SqlQuery1(SqlQuery1 &&) noexcept = default;
+        inline SqlQuery(SqlQuery &&) noexcept = default;
         /*! Move assignment operator. */
-        inline SqlQuery1 &operator=(SqlQuery1 &&) noexcept = default;
+        inline SqlQuery &operator=(SqlQuery &&) noexcept = default;
 
         /*! Default destructor. */
-        ~SqlQuery1();
+        ~SqlQuery();
 
-        /*! Swap the SqlQuery1. */
-        constexpr void swap(SqlQuery1 &other) noexcept;
+        /*! Swap the SqlQuery. */
+        constexpr void swap(SqlQuery &other) noexcept;
 
         /* Getters / Setters */
         /*! Determine whether the query result set is positioned on a valid record. */
@@ -164,7 +164,7 @@ namespace Orm::Drivers
 
     /* public */
 
-    constexpr void SqlQuery1::swap(SqlQuery1 &other) noexcept
+    constexpr void SqlQuery::swap(SqlQuery &other) noexcept
     {
         std::swap(m_sqlResult, other.m_sqlResult);
     }
@@ -173,4 +173,4 @@ namespace Orm::Drivers
 
 TINYORM_END_COMMON_NAMESPACE
 
-#endif // ORM_DRIVERS_SQLQUERY1_HPP
+#endif // ORM_DRIVERS_SQLQUERY_HPP
