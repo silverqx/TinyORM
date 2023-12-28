@@ -6,7 +6,8 @@
 TINY_SYSTEM_HEADER
 
 #include <QVariant>
-#include <QtSql/QSqlQuery>
+#include "orm/macros/sqldrivermappings.hpp"
+#include TINY_INCLUDE_TSqlQuery
 
 #include "orm/tiny/tinyconcepts.hpp" // IWYU pragma: keep
 #include "orm/utils/nullvariant.hpp"

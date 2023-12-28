@@ -1,7 +1,8 @@
 #include "orm/connectors/sqliteconnector.hpp"
 
 #include <QFile>
-#include <QtSql/QSqlQuery>
+#include "orm/macros/sqldrivermappings.hpp"
+#include TINY_INCLUDE_TSqlQuery
 
 #include "orm/constants.hpp"
 #include "orm/exceptions/queryerror.hpp"

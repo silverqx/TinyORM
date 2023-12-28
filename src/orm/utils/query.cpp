@@ -3,7 +3,7 @@
 #include <QDebug>
 #include "orm/macros/sqldrivermappings.hpp"
 #include TINY_INCLUDE_TSqlDriver
-#include <QtSql/QSqlQuery>
+#include TINY_INCLUDE_TSqlQuery
 
 #include "orm/exceptions/invalidargumenterror.hpp"
 #include "orm/utils/type.hpp"

@@ -5,7 +5,8 @@
 #include "orm/macros/systemheader.hpp"
 TINY_SYSTEM_HEADER
 
-#include <QtSql/QSqlQuery>
+#include "orm/macros/sqldrivermappings.hpp"
+#include TINY_INCLUDE_TSqlQuery
 
 #include "orm/macros/commonnamespace.hpp"
 #include "orm/macros/export.hpp"
