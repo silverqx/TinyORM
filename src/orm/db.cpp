@@ -177,7 +177,7 @@ bool DB::pingDatabase(const QString &connection)
     return manager().connection(connection).pingDatabase();
 }
 
-QSqlDriver *DB::driver(const QString &connection)
+TSqlDriver *DB::driver(const QString &connection)
 {
     return manager().connection(connection).driver();
 }

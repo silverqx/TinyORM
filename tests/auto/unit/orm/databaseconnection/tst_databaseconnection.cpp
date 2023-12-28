@@ -1,6 +1,8 @@
 #include <QCoreApplication>
-#include <QtSql/QSqlRecord>
 #include <QtTest>
+
+#include "orm/macros/sqldrivermappings.hpp"
+#include TINY_INCLUDE_TSqlRecord
 
 #include "orm/db.hpp"
 #include "orm/exceptions/multiplecolumnsselectederror.hpp"

@@ -6,7 +6,8 @@
 TINY_SYSTEM_HEADER
 
 #include <QVariantHash>
-#include <QtSql/QSqlDatabase>
+#include "orm/macros/sqldrivermappings.hpp"
+#include TINY_INCLUDE_TSqlDatabase
 
 #include "orm/concerns/detectslostconnections.hpp"
 
@@ -27,7 +28,7 @@ namespace Orm::Connectors
         inline ~Connector() override = 0;
 
         /*! Create a new QSqlDatabase connection, factory method. */
-        static QSqlDatabase
+        static TSqlDatabase
         createConnection(const QString &name, const QVariantHash &config,
                          const QString &options);
 
@@ -39,16 +40,16 @@ namespace Orm::Connectors
 
     protected:
         /*! Create a new QSqlDatabase instance, create a new database connection. */
-        static QSqlDatabase
+        static TSqlDatabase
         createQSqlDatabaseConnection(const QString &name, const QVariantHash &config,
                                      const QString &options);
 
         /*! Add a database to the list of database connections using the driver type. */
-        static QSqlDatabase
+        static TSqlDatabase
         addQSqlDatabaseConnection(const QString &name, const QVariantHash &config,
                                   const QString &options);
         /*! Handle an exception that occurred during connect execution. */
-        static QSqlDatabase
+        static TSqlDatabase
         tryAgainIfCausedByLostConnection(
                 const std::exception_ptr &ePtr, const Exceptions::SqlError &e,
                 const QString &name, const QVariantHash &config,

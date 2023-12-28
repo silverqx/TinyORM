@@ -24,7 +24,7 @@ const QString Connector::m_configureErrorMessage =
 
 /* public */
 
-QSqlDatabase
+TSqlDatabase
 Connector::createConnection(const QString &name, const QVariantHash &config,
                             const QString &options)
 {
@@ -55,16 +55,16 @@ QString Connector::getOptions(const QVariantHash &config) const
 
 /* protected */
 
-QSqlDatabase
+TSqlDatabase
 Connector::createQSqlDatabaseConnection(const QString &name, const QVariantHash &config,
                                         const QString &options)
 {
     /* If the Qt connection repository already contains this connection,
        than obtain it, and if don't, add a database to the list of database
        connections using the driver type. */
-    QSqlDatabase db = QSqlDatabase::contains(name)
-                      ? QSqlDatabase::database(name, false)
-                      : addQSqlDatabaseConnection(name, config, options);
+    auto db = TSqlDatabase::contains(name)
+              ? TSqlDatabase::database(name, false)
+              : addQSqlDatabaseConnection(name, config, options);
 
     if (!db.open())
         throw Exceptions::SqlError(
@@ -75,11 +75,11 @@ Connector::createQSqlDatabaseConnection(const QString &name, const QVariantHash 
     return db;
 }
 
-QSqlDatabase
+TSqlDatabase
 Connector::addQSqlDatabaseConnection(const QString &name, const QVariantHash &config,
                                      const QString &options)
 {
-    auto db = QSqlDatabase::addDatabase(config[driver_].value<QString>(), name);
+    auto db = TSqlDatabase::addDatabase(config[driver_].value<QString>(), name);
 
     db.setHostName(config[host_].value<QString>());
 
@@ -97,7 +97,7 @@ Connector::addQSqlDatabaseConnection(const QString &name, const QVariantHash &co
     return db;
 }
 
-QSqlDatabase
+TSqlDatabase
 Connector::tryAgainIfCausedByLostConnection(
         const std::exception_ptr &ePtr, const Exceptions::SqlError &e,
         const QString &name, const QVariantHash &config, const QString &options)

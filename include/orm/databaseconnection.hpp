@@ -139,9 +139,9 @@ namespace Orm
 
         /* Obtain connection instance */
         /*! Get underlying database connection (QSqlDatabase). */
-        QSqlDatabase getQtConnection();
+        TSqlDatabase getQtConnection();
         /*! Get underlying database connection without executing any reconnect logic. */
-        QSqlDatabase getRawQtConnection() const;
+        TSqlDatabase getRawQtConnection() const;
         /*! Get the connection resolver for an underlying database connection. */
         inline const std::function<Connectors::ConnectionName()> &
         getQtConnectionResolver() const noexcept;
@@ -163,7 +163,7 @@ namespace Orm
         virtual bool pingDatabase();
 
         /*! Returns the database driver used to access the database connection. */
-        QSqlDriver *driver();
+        TSqlDriver *driver();
 
         /*! Force connection to the database (creates physical connection), doesn't have
             to be called before querying a database. */

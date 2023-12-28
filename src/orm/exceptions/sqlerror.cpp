@@ -13,33 +13,33 @@ namespace Orm::Exceptions
 
 /* public */
 
-SqlError::SqlError(const char *message, const QSqlError &error)
+SqlError::SqlError(const char *message, const TSqlError &error)
     : RuntimeError(formatMessage(message, error))
     , m_sqlError(error)
 {}
 
-SqlError::SqlError(const QString &message, const QSqlError &error)
+SqlError::SqlError(const QString &message, const TSqlError &error)
     : SqlError(message.toUtf8().constData(), error)
 {}
 
-SqlError::SqlError(const char *message, QSqlError &&error)
+SqlError::SqlError(const char *message, TSqlError &&error)
     : RuntimeError(formatMessage(message, error))
     , m_sqlError(std::move(error))
 {}
 
-SqlError::SqlError(const QString &message, QSqlError &&error)
+SqlError::SqlError(const QString &message, TSqlError &&error)
     : SqlError(message.toUtf8().constData(), std::move(error))
 {}
 
 /* protected */
 
 // NOLINTNEXTLINE(modernize-pass-by-value)
-SqlError::SqlError(const QString &message, const QSqlError &error, const int /*unused*/)
+SqlError::SqlError(const QString &message, const TSqlError &error, const int /*unused*/)
     : RuntimeError(message.toUtf8().constData())
     , m_sqlError(error)
 {}
 
-QString SqlError::formatMessage(const char *message, const QSqlError &error)
+QString SqlError::formatMessage(const char *message, const TSqlError &error)
 {
     const auto messageStr = QString::fromUtf8(message);
     auto nativeErrorCode = error.nativeErrorCode();

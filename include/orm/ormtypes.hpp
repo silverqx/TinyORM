@@ -11,6 +11,7 @@ TINY_SYSTEM_HEADER
 #include <variant>
 
 #include "orm/constants.hpp"
+#include "orm/macros/sqldrivermappings.hpp" // IWYU pragma: export
 #include "orm/query/expression.hpp"
 
 // TODO types, divide to public/private silverqx

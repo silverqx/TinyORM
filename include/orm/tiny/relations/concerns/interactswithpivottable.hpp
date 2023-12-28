@@ -5,7 +5,8 @@
 #include "orm/macros/systemheader.hpp"
 TINY_SYSTEM_HEADER
 
-#include <QtSql/QSqlRecord>
+#include "orm/macros/sqldrivermappings.hpp"
+#include TINY_INCLUDE_TSqlRecord
 
 #include <range/v3/view/set_algorithm.hpp>
 
@@ -199,8 +200,8 @@ namespace Concerns
         QVector<PivotType> getCurrentlyAttachedPivots() const;
         /*! Get the attached pivot model by related model ID. */
         std::optional<PivotType> getAttachedPivot(const QVariant &id) const;
-        /*! Convert a QSqlRecord to the QVector<AttributeItem>. */
-        QVector<AttributeItem> attributesFromRecord(const QSqlRecord &record) const;
+        /*! Convert a TSqlRecord to the QVector<AttributeItem>. */
+        QVector<AttributeItem> attributesFromRecord(const TSqlRecord &record) const;
 
         /*! Cast the given key to the primary key type. */
         template<typename T>
@@ -859,7 +860,7 @@ namespace Concerns
     template<class Model, class Related, class PivotType>
     QVector<AttributeItem>
     InteractsWithPivotTable<Model, Related, PivotType>::attributesFromRecord(
-            const QSqlRecord &record) const
+            const TSqlRecord &record) const
     {
         const auto recordsCount = record.count();
 

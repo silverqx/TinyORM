@@ -66,7 +66,7 @@ MySqlConnector::getConnectorOptions() const
 
 /* protected */
 
-void MySqlConnector::configureIsolationLevel(const QSqlDatabase &connection,
+void MySqlConnector::configureIsolationLevel(const TSqlDatabase &connection,
                                              const QVariantHash &config)
 {
     if (!config.contains(isolation_level))
@@ -82,7 +82,7 @@ void MySqlConnector::configureIsolationLevel(const QSqlDatabase &connection,
                                  m_configureErrorMessage.arg(__tiny_func__), query);
 }
 
-void MySqlConnector::configureEncoding(const QSqlDatabase &connection,
+void MySqlConnector::configureEncoding(const TSqlDatabase &connection,
                                        const QVariantHash &config)
 {
     if (!config.contains(charset_))
@@ -105,7 +105,7 @@ QString MySqlConnector::getCollation(const QVariantHash &config)
             : QString("");
 }
 
-void MySqlConnector::configureTimezone(const QSqlDatabase &connection,
+void MySqlConnector::configureTimezone(const TSqlDatabase &connection,
                                        const QVariantHash &config)
 {
     if (!config.contains(timezone_))
@@ -121,7 +121,7 @@ void MySqlConnector::configureTimezone(const QSqlDatabase &connection,
                                  m_configureErrorMessage.arg(__tiny_func__), query);
 }
 
-void MySqlConnector::setModes(const QSqlDatabase &connection,
+void MySqlConnector::setModes(const TSqlDatabase &connection,
                               const QVariantHash &config)
 {
     // Custom modes defined
@@ -151,7 +151,7 @@ void MySqlConnector::setModes(const QSqlDatabase &connection,
                                  m_configureErrorMessage.arg(__tiny_func__), query);
 }
 
-QString MySqlConnector::strictMode(const QSqlDatabase &connection,
+QString MySqlConnector::strictMode(const TSqlDatabase &connection,
                                    const QVariantHash &config)
 {
     const auto version = getMySqlVersion(connection, config);
@@ -168,7 +168,7 @@ QString MySqlConnector::strictMode(const QSqlDatabase &connection,
                           "NO_ENGINE_SUBSTITUTION'");
 }
 
-QString MySqlConnector::getMySqlVersion(const QSqlDatabase &connection,
+QString MySqlConnector::getMySqlVersion(const TSqlDatabase &connection,
                                         const QVariantHash &config)
 {
     static QString MySqlVersionCache;
@@ -187,7 +187,7 @@ QString MySqlConnector::getMySqlVersion(const QSqlDatabase &connection,
     return MySqlVersionCache = getMySqlVersionFromDatabase(connection);
 }
 
-void MySqlConnector::setCustomModes(const QSqlDatabase &connection,
+void MySqlConnector::setCustomModes(const TSqlDatabase &connection,
                                     const QVariantHash &config)
 {
     const auto modes = config["modes"].value<QStringList>().join(COMMA);
@@ -203,7 +203,7 @@ void MySqlConnector::setCustomModes(const QSqlDatabase &connection,
 
 /* private */
 
-QString MySqlConnector::getMySqlVersionFromDatabase(const QSqlDatabase &connection)
+QString MySqlConnector::getMySqlVersionFromDatabase(const TSqlDatabase &connection)
 {
     QSqlQuery query(connection);
 

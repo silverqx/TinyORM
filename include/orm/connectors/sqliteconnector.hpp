@@ -33,7 +33,7 @@ namespace Orm::Connectors
 
     protected:
         /*! Set the connection foreign key constraints. */
-        static void configureForeignKeyConstraints(const QSqlDatabase &connection,
+        static void configureForeignKeyConstraints(const TSqlDatabase &connection,
                                                    const QVariantHash &config);
 
     private:
