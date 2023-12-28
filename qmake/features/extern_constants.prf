@@ -12,7 +12,7 @@ CONFIG(staticlib, dll|shared|static|staticlib)): \
 CONFIG -= inline_constants
 CONFIG *= extern_constants
 
-# The TinyDrivers subproject has its own DEFINES for global constants
+# The TinyDrivers sub-project has its own DEFINES for global constants
 equals(TARGET, TinyDrivers) {
     DEFINES -= TINYDRIVERS_INLINE_CONSTANTS
     DEFINES *= TINYDRIVERS_EXTERN_CONSTANTS
