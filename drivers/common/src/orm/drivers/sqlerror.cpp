@@ -1,4 +1,4 @@
-#include "orm/drivers/sqldrivererror.hpp"
+#include "orm/drivers/sqlerror.hpp"
 
 #ifndef QT_NO_DEBUG_STREAM
 #  include <QDebug>
@@ -16,8 +16,8 @@ namespace Orm::Drivers
 
 /* public */
 
-SqlDriverError::SqlDriverError(const QString &driverText, const QString &databaseText,
-                               const ErrorType errorType, const QString &errorCode)
+SqlError::SqlError(const QString &driverText, const QString &databaseText,
+                   const ErrorType errorType, const QString &errorCode)
     : m_driverText(driverText)
     , m_databaseText(databaseText)
     , m_errorType(errorType)
@@ -26,13 +26,13 @@ SqlDriverError::SqlDriverError(const QString &driverText, const QString &databas
     , m_errorCode(errorCode)
 {}
 
-bool SqlDriverError::operator==(const SqlDriverError &other) const
+bool SqlError::operator==(const SqlError &other) const
 {
     return m_errorType == other.m_errorType &&
            m_errorCode == other.m_errorCode;
 }
 
-void SqlDriverError::swap(SqlDriverError &other) noexcept
+void SqlError::swap(SqlError &other) noexcept
 {
     m_driverText.swap(other.m_driverText);
     m_databaseText.swap(other.m_databaseText);
@@ -40,7 +40,7 @@ void SqlDriverError::swap(SqlDriverError &other) noexcept
     m_errorCode.swap(other.m_errorCode);
 }
 
-QString SqlDriverError::text() const
+QString SqlError::text() const
 {
     auto result = m_databaseText;
 
@@ -60,12 +60,12 @@ TINYORM_END_COMMON_NAMESPACE
 
 #ifndef QT_NO_DEBUG_STREAM
 QDebug operator<<(QDebug debug,
-                  const TINYORM_PREPEND_NAMESPACE(Orm::Drivers::SqlDriverError) &error)
+                  const TINYORM_PREPEND_NAMESPACE(Orm::Drivers::SqlError) &error)
 {
     QDebugStateSaver saver(debug);
     debug.noquote().nospace();
 
-    debug << "SqlDriverError("
+    debug << "SqlError("
           << error.nativeErrorCode() << ", "
           << error.driverText()      << ", "
           << error.databaseText()    << ')';

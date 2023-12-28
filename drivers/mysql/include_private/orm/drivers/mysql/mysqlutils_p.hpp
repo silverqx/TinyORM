@@ -6,7 +6,7 @@
 
 #include <field_types.h> // MySQL header
 
-#include "orm/drivers/sqldrivererror.hpp"
+#include "orm/drivers/sqlerror.hpp"
 
 struct MYSQL;
 struct MYSQL_FIELD;
@@ -31,10 +31,10 @@ namespace MySql
         /*! Deleted destructor. */
         ~MySqlUtilsPrivate() = delete;
 
-        /*! Factory method to create the SqlDriverError (from MYSQL handler). */
-        static SqlDriverError
-        createError(const QString &error, SqlDriverError::ErrorType errorType,
-                    MYSQL *mysql, std::optional<uint> errNo = std::nullopt);
+        /*! Factory method to create the SqlError (from MYSQL handler). */
+        static SqlError
+        createError(const QString &error, SqlError::ErrorType errorType, MYSQL *mysql,
+                    std::optional<uint> errNo = std::nullopt);
 
         /*! Decode the given MySQL field type to the Qt metatype. */
         static QMetaType decodeMySqlType(enum_field_types mysqlType, uint flags);

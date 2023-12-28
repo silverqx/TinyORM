@@ -14,7 +14,7 @@
 #endif
 
 #include "orm/drivers/sqldatabase.hpp"
-#include "orm/drivers/sqldrivererror.hpp"
+#include "orm/drivers/sqlerror.hpp"
 #include "orm/drivers/sqlrecord.hpp"
 #include "orm/drivers/sqlresult.hpp"
 #include "orm/drivers/sqldriver.hpp"
@@ -62,7 +62,7 @@ QString SqlQuery::lastQuery() const
     return m_sqlResult->query();
 }
 
-SqlDriverError SqlQuery::lastError() const
+SqlError SqlQuery::lastError() const
 {
     return m_sqlResult->lastError();
 }

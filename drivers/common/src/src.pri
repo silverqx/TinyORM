@@ -8,7 +8,7 @@ sourcesList += \
     $$PWD/orm/drivers/sqldatabase_p.cpp \
     $$PWD/orm/drivers/sqldatabasemanager.cpp \
     $$PWD/orm/drivers/sqldriver.cpp \
-    $$PWD/orm/drivers/sqldrivererror.cpp \
+    $$PWD/orm/drivers/sqlerror.cpp \
     $$PWD/orm/drivers/sqlfield.cpp \
     $$PWD/orm/drivers/sqlquery.cpp \
     $$PWD/orm/drivers/sqlrecord.cpp \

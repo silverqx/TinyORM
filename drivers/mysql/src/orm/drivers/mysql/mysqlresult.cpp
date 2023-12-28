@@ -71,7 +71,7 @@ bool MySqlResult::exec(const QString &query)
     )
         return setLastError(MySqlUtils::createError(
                                 u"Unable to execute query"_s,
-                                SqlDriverError::StatementError, mysql));
+                                SqlError::StatementError, mysql));
     // Obtain result set
     d->result = mysql_store_result(mysql);
 
@@ -80,7 +80,7 @@ bool MySqlResult::exec(const QString &query)
     )
         return setLastError(MySqlUtils::createError(
                                 u"Unable to store result"_s,
-                                SqlDriverError::StatementError, mysql, errNo));
+                                SqlError::StatementError, mysql, errNo));
 
     const auto hasFields = d->populateFields(mysql);
 
@@ -110,7 +110,7 @@ bool MySqlResult::prepare(const QString &query)
     )
         return setLastError(MySqlUtils::createError(
                                 u"Unable to prepare statement"_s,
-                                SqlDriverError::StatementError, mysql));
+                                SqlError::StatementError, mysql));
 
     // Not the same as the errno error code
     int status = 1;
@@ -124,7 +124,7 @@ bool MySqlResult::prepare(const QString &query)
         mysqlStmtClose();
         return setLastError(MySqlResultPrivate::createStmtError(
                                 u"Unable to prepare statement"_s,
-                                SqlDriverError::StatementError, d->stmt));
+                                SqlError::StatementError, d->stmt));
     }
 
     setSelect(d->bindResultValues());
@@ -160,7 +160,7 @@ bool MySqlResult::exec()
     if (status = mysql_stmt_reset(d->stmt); status != 0)
         return setLastError(MySqlResultPrivate::createStmtError(
                                 u"Unable to reset statement"_s,
-                                SqlDriverError::StatementError, d->stmt));
+                                SqlError::StatementError, d->stmt));
 
     // Bind prepared bindings if the correct number of prepared bindings was bound
     if (d->shouldPrepareBindings(
@@ -173,7 +173,7 @@ bool MySqlResult::exec()
         if (status = mysql_stmt_bind_param(d->stmt, d->preparedBinds); status != 0) {
             setLastError(MySqlResultPrivate::createStmtError(
                              u"Unable to bind data for parameter placeholders"_s,
-                             SqlDriverError::StatementError, d->stmt));
+                             SqlError::StatementError, d->stmt));
             return false;
         }
     }
@@ -182,7 +182,7 @@ bool MySqlResult::exec()
     if (status = mysql_stmt_execute(d->stmt); status != 0)
         return setLastError(MySqlResultPrivate::createStmtError(
                                 u"Unable to execute prepared statement"_s,
-                                SqlDriverError::StatementError, d->stmt));
+                                SqlError::StatementError, d->stmt));
 
     // Executed query has result set, if there are metadata there are also result sets
     setSelect(d->meta != nullptr);
@@ -194,7 +194,7 @@ bool MySqlResult::exec()
         if (status = mysql_stmt_bind_result(d->stmt, d->resultBinds); status != 0)
             return setLastError(MySqlResultPrivate::createStmtError(
                                     u"Unable to bind result set data buffers"_s,
-                                    SqlDriverError::StatementError, d->stmt));
+                                    SqlError::StatementError, d->stmt));
 
         // Update the metadata MYSQL_FIELD->max_length value
         if (d->hasBlobs)
@@ -204,7 +204,7 @@ bool MySqlResult::exec()
         if (status = mysql_stmt_store_result(d->stmt); status != 0)
             return setLastError(MySqlResultPrivate::createStmtError(
                                     u"Unable to store prepared statement result sets"_s,
-                                    SqlDriverError::StatementError, d->stmt));
+                                    SqlError::StatementError, d->stmt));
 
         // CUR drivers revisit and drop silverqx
 //        if (d->hasBlobs) {
@@ -216,7 +216,7 @@ bool MySqlResult::exec()
 //            if (status = mysql_stmt_bind_result(d->stmt, d->resultBinds); status != 0)
 //                return setLastError(MySqlResultPrivate::makeStmtError(
 //                                        u"Unable to bind result set values"_s,
-//                                        SqlDriverError::StatementError, d->stmt));
+//                                        SqlError::StatementError, d->stmt));
 //        }
 
         setAt(BeforeFirstRow);
@@ -302,8 +302,7 @@ bool MySqlResult::fetch(const int index)
             errorMessage
         )
             return setLastError(MySqlResultPrivate::createStmtError(
-                                    *errorMessage, SqlDriverError::StatementError,
-                                    d->stmt));
+                                    *errorMessage, SqlError::StatementError, d->stmt));
     } else {
         mysql_data_seek(d->result, index);
 
@@ -366,8 +365,7 @@ bool MySqlResult::fetchNext()
             errorMessage
         )
             return setLastError(MySqlResultPrivate::createStmtError(
-                                    *errorMessage, SqlDriverError::StatementError,
-                                    d->stmt));
+                                    *errorMessage, SqlError::StatementError, d->stmt));
     } else {
         // CUR drivers missing error check silverqx
         if (d->row = mysql_fetch_row(d->result);

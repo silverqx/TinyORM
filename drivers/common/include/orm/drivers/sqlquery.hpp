@@ -15,7 +15,7 @@ namespace Orm::Drivers
 
     class SqlDatabase;
     class SqlDriver;
-    class SqlDriverError;
+    class SqlError;
     class SqlRecord;
     class SqlQueryPrivate;
 
@@ -56,7 +56,7 @@ namespace Orm::Drivers
         /*! Get the last executed query (alias). */
         QString lastQuery() const;
         /*! Get information about the error of the last query. */
-        SqlDriverError lastError() const;
+        SqlError lastError() const;
 
         /*! Get the current cursor position (0-based). */
         int at() const;

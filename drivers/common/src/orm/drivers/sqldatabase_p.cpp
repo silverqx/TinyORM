@@ -6,7 +6,7 @@
 #endif
 
 #include "orm/drivers/constants_p.hpp"
-#include "orm/drivers/sqldrivererror.hpp"
+#include "orm/drivers/sqlerror.hpp"
 #include "orm/drivers/support/connectionshash_p.hpp"
 
 #ifdef TINYDRIVERS_MYSQL_LOADABLE_LIBRARY

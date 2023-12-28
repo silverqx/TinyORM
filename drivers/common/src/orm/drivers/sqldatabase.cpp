@@ -8,7 +8,7 @@
 
 #include "orm/drivers/sqldatabase_p.hpp"
 #include "orm/drivers/sqldriver.hpp"
-#include "orm/drivers/sqldrivererror.hpp"
+#include "orm/drivers/sqlerror.hpp"
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
@@ -83,7 +83,7 @@ bool SqlDatabase::isValid() const
     return d->isDriverValid();
 }
 
-SqlDriverError SqlDatabase::lastError() const
+SqlError SqlDatabase::lastError() const
 {
     return d->driver().lastError();
 }
@@ -231,7 +231,7 @@ QDebug operator<<(QDebug debug,
     QDebugStateSaver saver(debug);
     debug.noquote().nospace();
 
-    // CUR drivers test and finish, also SqlDriverError silverqx
+    // CUR drivers test and finish, also SqlError silverqx
     if (!connection.isValid()) {
         debug << "SqlDatabase(invalid)";
         return debug;

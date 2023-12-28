@@ -78,11 +78,10 @@ namespace Orm::Drivers::MySql
         /*! Bind BLOB-value type prepared bindings for placeholders. */
 //        void bindBlobs();
 
-        /*! Factory method to create the SqlDriverError for prepared statements
+        /*! Factory method to create the SqlError for prepared statements
             (from MYSQL_STMT). */
-        static SqlDriverError
-        createStmtError(const QString &error, SqlDriverError::ErrorType type,
-                        MYSQL_STMT *stmt);
+        static SqlError createStmtError(const QString &error, SqlError::ErrorType type,
+                                        MYSQL_STMT *stmt);
 
         /* Result sets */
         /*! Get the error message based on the error code from mysql_stmt_fetch(). */

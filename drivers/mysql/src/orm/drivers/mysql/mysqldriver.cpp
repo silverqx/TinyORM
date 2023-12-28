@@ -155,7 +155,7 @@ bool MySqlDriver::beginTransaction()
 
     return setLastError(MySqlUtils::createError(
                             u"Unable to start transaction"_s,
-                            SqlDriverError::TransactionError, d->mysql));
+                            SqlError::TransactionError, d->mysql));
 }
 
 bool MySqlDriver::commitTransaction()
@@ -173,7 +173,7 @@ bool MySqlDriver::commitTransaction()
 
     return setLastError(MySqlUtils::createError(
                             u"Unable to commit transaction"_s,
-                            SqlDriverError::TransactionError, d->mysql));
+                            SqlError::TransactionError, d->mysql));
 }
 
 bool MySqlDriver::rollbackTransaction()
@@ -191,7 +191,7 @@ bool MySqlDriver::rollbackTransaction()
 
     return setLastError(MySqlUtils::createError(
                             u"Unable to rollback transaction"_s,
-                            SqlDriverError::TransactionError, d->mysql));
+                            SqlError::TransactionError, d->mysql));
 }
 
 /* Others */

@@ -13,10 +13,9 @@ namespace Orm::Drivers::MySql
 
 /* public */
 
-SqlDriverError
+SqlError
 MySqlUtilsPrivate::createError(
-        const QString &error, const SqlDriverError::ErrorType errorType,
-        MYSQL *const mysql,
+        const QString &error, const SqlError::ErrorType errorType, MYSQL *const mysql,
         // CUR drivers check if this can be done also for makeStmtError() because all functions return r and then inside the makeStmtError() is the errNo obtained again silverqx
         const std::optional<uint> errNo)
 {
@@ -24,8 +23,8 @@ MySqlUtilsPrivate::createError(
     const auto *const mysqlError = mysql ? mysql_error(mysql) : nullptr;
 
     // FUTURE drivers correctly support MySQL errors encoding, the QString::fromUtf8() must be changed to conversion from SET NAMES to UTF8; see https://dev.mysql.com/doc/refman/8.0/en/charset-errors.html silverqx
-    return SqlDriverError("QMYSQL: "_L1 + error, QString::fromUtf8(mysqlError),
-                          errorType, QString::number(mysqlErrno));
+    return SqlError("QMYSQL: "_L1 + error, QString::fromUtf8(mysqlError), errorType,
+                    QString::number(mysqlErrno));
 }
 
 QMetaType

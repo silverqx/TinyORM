@@ -295,15 +295,14 @@ void MySqlResultPrivate::bindPreparedBindings(
 //    }
 //}
 
-SqlDriverError
-MySqlResultPrivate::createStmtError(
-        const QString &error, const SqlDriverError::ErrorType type,
-        MYSQL_STMT *const stmt)
+SqlError
+MySqlResultPrivate::createStmtError(const QString &error, const SqlError::ErrorType type,
+                                    MYSQL_STMT *const stmt)
 {
     const auto *const mysqlError = mysql_stmt_error(stmt);
 
-    return SqlDriverError("QMYSQL: "_L1 + error, QString::fromUtf8(mysqlError),
-                          type, QString::number(mysql_stmt_errno(stmt)));
+    return SqlError("QMYSQL: "_L1 + error, QString::fromUtf8(mysqlError), type,
+                    QString::number(mysql_stmt_errno(stmt)));
 }
 
 /* Result sets */

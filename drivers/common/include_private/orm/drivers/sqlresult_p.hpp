@@ -5,7 +5,7 @@
 #include <QList>
 
 #include "orm/drivers/driverstypes.hpp"
-#include "orm/drivers/sqldrivererror.hpp"
+#include "orm/drivers/sqlerror.hpp"
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
@@ -48,7 +48,7 @@ namespace Orm::Drivers
         QList<QVariant> boundValues;
 
         /*! The last query error. */
-        SqlDriverError lastError;
+        SqlError lastError;
 
         /*! Connection numerical precision policy. */
         NumericalPrecisionPolicy precisionPolicy = LowPrecisionDouble;

@@ -19,7 +19,7 @@ namespace Orm::Drivers
 
     class SqlRecord;
     class SqlDriver;
-    class SqlDriverError;
+    class SqlError;
     class SqlResultPrivate;
 
     /*! Database SQL result set abstract class. */
@@ -61,9 +61,9 @@ namespace Orm::Drivers
         virtual void setQuery(const QString &query);
 
         /*! Get information about the error of the last query. */
-        SqlDriverError lastError() const;
+        SqlError lastError() const;
         /*! Set the last query error. */
-        virtual bool setLastError(const SqlDriverError &error);
+        virtual bool setLastError(const SqlError &error);
 
         /*! Get the current cursor position (0-based). */
         int at() const;

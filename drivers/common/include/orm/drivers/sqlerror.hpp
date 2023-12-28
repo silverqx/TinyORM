@@ -1,6 +1,6 @@
 #pragma once
-#ifndef ORM_DRIVERS_SQLDRIVERERROR_HPP
-#define ORM_DRIVERS_SQLDRIVERERROR_HPP
+#ifndef ORM_DRIVERS_SQLERROR_HPP
+#define ORM_DRIVERS_SQLERROR_HPP
 
 #include <orm/macros/systemheader.hpp>
 TINY_SYSTEM_HEADER
@@ -16,7 +16,7 @@ TINYORM_BEGIN_COMMON_NAMESPACE
 namespace Orm::Drivers
 {
 
-    class TINYDRIVERS_EXPORT SqlDriverError
+    class TINYDRIVERS_EXPORT SqlError
     {
     public:
         enum ErrorType {
@@ -28,17 +28,16 @@ namespace Orm::Drivers
         };
 
         /*! Constructor (not explicit to allow {}). */
-        SqlDriverError(
-                const QString &driverMessage = {}, const QString &databaseMessage = {},
-                ErrorType errorType = NoError, const QString &errorCode = {});
+        SqlError(const QString &driverMessage = {}, const QString &databaseMessage = {},
+                 ErrorType errorType = NoError, const QString &errorCode = {});
         /*! Default destructor. */
-        inline ~SqlDriverError() = default;
+        inline ~SqlError() = default;
 
-        /*! Equality comparison operator for the SqlDriverError. */
-        bool operator==(const SqlDriverError &other) const;
+        /*! Equality comparison operator for the SqlError. */
+        bool operator==(const SqlError &other) const;
 
-        /*! Swap the SqlDriverError. */
-        void swap(SqlDriverError &other) noexcept;
+        /*! Swap the SqlError. */
+        void swap(SqlError &other) noexcept;
 
         inline bool isValid() const;
 
@@ -53,33 +52,33 @@ namespace Orm::Drivers
         /* Data members */
         QString m_driverText;
         QString m_databaseText;
-        SqlDriverError::ErrorType m_errorType;
+        SqlError::ErrorType m_errorType;
         QString m_errorCode;
     };
 
     /* public */
 
-    bool SqlDriverError::isValid() const
+    bool SqlError::isValid() const
     {
         return m_errorType != NoError;
     }
 
-    QString SqlDriverError::driverText() const
+    QString SqlError::driverText() const
     {
         return m_driverText;
     }
 
-    QString SqlDriverError::databaseText() const
+    QString SqlError::databaseText() const
     {
         return m_databaseText;
     }
 
-    SqlDriverError::ErrorType SqlDriverError::type() const
+    SqlError::ErrorType SqlError::type() const
     {
         return m_errorType;
     }
 
-    QString SqlDriverError::nativeErrorCode() const
+    QString SqlError::nativeErrorCode() const
     {
         return m_errorCode;
     }
@@ -90,8 +89,7 @@ TINYORM_END_COMMON_NAMESPACE
 
 #ifndef QT_NO_DEBUG_STREAM
 TINYDRIVERS_EXPORT QDebug
-operator<<(QDebug debug,
-           const TINYORM_PREPEND_NAMESPACE(Orm::Drivers::SqlDriverError) &error);
+operator<<(QDebug debug, const TINYORM_PREPEND_NAMESPACE(Orm::Drivers::SqlError) &error);
 #endif
 
-#endif // ORM_DRIVERS_SQLDRIVERERROR_HPP
+#endif // ORM_DRIVERS_SQLERROR_HPP

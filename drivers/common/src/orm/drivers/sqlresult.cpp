@@ -51,13 +51,13 @@ void SqlResult::setQuery(const QString &query)
     d->query = query;
 }
 
-SqlDriverError SqlResult::lastError() const
+SqlError SqlResult::lastError() const
 {
     Q_D(const SqlResult);
     return d->lastError;
 }
 
-bool SqlResult::setLastError(const SqlDriverError &error)
+bool SqlResult::setLastError(const SqlError &error)
 {
     Q_D(SqlResult);
 
