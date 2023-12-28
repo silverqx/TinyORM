@@ -18,7 +18,7 @@ load(tiny_toolchain_requirement)
 # The staticlib option check
 load(tiny_staticlib_check)
 
-# Subprojects
+# Sub-projects
 # ---
 
 load(tiny_drivers)
