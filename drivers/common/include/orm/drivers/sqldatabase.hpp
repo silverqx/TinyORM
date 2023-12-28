@@ -12,7 +12,7 @@ TINYORM_BEGIN_COMMON_NAMESPACE
 namespace Orm::Drivers
 {
 
-    class SqlDriverError;
+    class SqlError;
 
     /*! Database connection. */
     class TINYDRIVERS_EXPORT SqlDatabase : public SqlDatabaseManager
@@ -65,7 +65,7 @@ namespace Orm::Drivers
         /*! Determine whether the connection has a valid database driver. */
         bool isValid() const;
         /*! Get information about the last error that occurred on the database. */
-        SqlDriverError lastError() const;
+        SqlError lastError() const;
 
         /*! Get the database driver name for the current connection. */
         QString driverName() const;

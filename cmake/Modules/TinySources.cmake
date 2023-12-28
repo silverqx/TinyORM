@@ -31,7 +31,7 @@ function(tinydrivers_sources out_headers_private out_headers out_sources)
         sqldatabase.hpp
         sqldatabasemanager.hpp
         sqldriver.hpp
-        sqldrivererror.hpp
+        sqlerror.hpp
         sqlfield.hpp
         sqlquery.hpp
         sqlrecord.hpp
@@ -52,7 +52,7 @@ function(tinydrivers_sources out_headers_private out_headers out_sources)
         sqldatabase_p.cpp
         sqldatabasemanager.cpp
         sqldriver.cpp
-        sqldrivererror.cpp
+        sqlerror.cpp
         sqlfield.cpp
         sqlquery.cpp
         sqlrecord.cpp

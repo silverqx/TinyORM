@@ -5,7 +5,7 @@
 #include <thread>
 
 #include "orm/drivers/sqldriver.hpp"
-#include "orm/drivers/sqldrivererror.hpp"
+#include "orm/drivers/sqlerror.hpp"
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
@@ -29,7 +29,7 @@ namespace Orm::Drivers
 
         /* Data members */
         /*! The last error that occurred on the database. */
-        SqlDriverError lastError {};
+        SqlError lastError {};
         /*! Database driver type. */
         SqlDriver::DbmsType dbmsType;
         /*! The default numerical precision policy. */

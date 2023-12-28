@@ -30,7 +30,7 @@ bool MySqlDriverPrivate::mysqlInit()
     return q->setLastOpenError(
                 MySqlUtils::createError(
                     u"Unable to allocate and initialize the MYSQL object"_s,
-                    SqlDriverError::ConnectionError, mysql));
+                    SqlError::ConnectionError, mysql));
 }
 
 MySqlDriverPrivate::SetConnectionOptionsResult
@@ -85,7 +85,7 @@ bool MySqlDriverPrivate::mysqlSetCharacterSet(const QString &host, const bool be
                 MySqlUtils::createError(
                     u"Unable to set the default character set %1"_s
                     .arg(message.arg(host)),
-                    SqlDriverError::ConnectionError, mysql));
+                    SqlError::ConnectionError, mysql));
 
     mysql_close(mysql);
     mysql = nullptr;
@@ -115,7 +115,7 @@ bool MySqlDriverPrivate::mysqlRealConnect(
     q->setLastOpenError(MySqlUtils::createError(
                             u"Unable to establish a connection to the MySQL server "
                              "running on the '%1' host."_s.arg(host),
-                            SqlDriverError::ConnectionError, mysql));
+                            SqlError::ConnectionError, mysql));
 
     mysql_close(mysql);
     mysql = nullptr;
@@ -136,7 +136,7 @@ bool MySqlDriverPrivate::mysqlSelectDb(const QString &database)
 
     q->setLastOpenError(MySqlUtils::createError(
                             u"Unable to select/open database '%1'"_s.arg(database),
-                            SqlDriverError::ConnectionError, mysql));
+                            SqlError::ConnectionError, mysql));
     mysql_close(mysql);
     mysql = nullptr;
 

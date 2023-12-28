@@ -20,7 +20,7 @@ namespace Orm::Drivers
 {
 
     class SqlDriverPrivate;
-    class SqlDriverError;
+    class SqlError;
     class SqlField;
     class SqlRecord;
     class SqlResult;
@@ -103,7 +103,7 @@ namespace Orm::Drivers
         /*! Get the current database driver type. */
         DbmsType dbmsType() const;
         /*! Get information about the last error that occurred on the database. */
-        SqlDriverError lastError() const;
+        SqlError lastError() const;
 
         /*! Get the default numerical precision policy for the current driver. */
         NumericalPrecisionPolicy defaultNumericalPrecisionPolicy() const;
@@ -142,9 +142,9 @@ namespace Orm::Drivers
         /*! Set a flag if an error while opening a new database connection. */
         void setOpenError(bool value);
         /*! Set the last database error. */
-        bool setLastError(const SqlDriverError &error);
+        bool setLastError(const SqlError &error);
         /*! Set an error that occurred during opening a new database connection. */
-        bool setLastOpenError(const SqlDriverError &error);
+        bool setLastOpenError(const SqlError &error);
 
         /* Data members */
         /*! Smart pointer to the private implementation. */

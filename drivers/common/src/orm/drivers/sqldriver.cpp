@@ -43,7 +43,7 @@ SqlDriver::DbmsType SqlDriver::dbmsType() const
     return d->dbmsType;
 }
 
-SqlDriverError SqlDriver::lastError() const
+SqlError SqlDriver::lastError() const
 {
     Q_D(const SqlDriver);
     return d->lastError;
@@ -115,7 +115,7 @@ void SqlDriver::setOpenError(const bool value)
         d->isOpen = false;
 }
 
-bool SqlDriver::setLastError(const SqlDriverError &error)
+bool SqlDriver::setLastError(const SqlError &error)
 {
     Q_D(SqlDriver);
 
@@ -125,7 +125,7 @@ bool SqlDriver::setLastError(const SqlDriverError &error)
     return false;
 }
 
-bool SqlDriver::setLastOpenError(const SqlDriverError &error)
+bool SqlDriver::setLastOpenError(const SqlError &error)
 {
     Q_D(SqlDriver);
 
