@@ -245,7 +245,7 @@ DatabaseConnection::affectingStatement(const QString &queryString,
 
             recordsHaveBeenModified(numRowsAffected > 0);
 
-            return {numRowsAffected, query};
+            return {numRowsAffected, std::move(query)};
         }
 
         /* If an error occurs when attempting to run a query, we'll transform it
