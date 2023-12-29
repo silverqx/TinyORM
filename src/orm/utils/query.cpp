@@ -1,7 +1,6 @@
 #include "orm/utils/query.hpp"
 
 #include <QDebug>
-#include "orm/macros/sqldrivermappings.hpp"
 #include TINY_INCLUDE_TSqlDriver
 #include TINY_INCLUDE_TSqlQuery
 
@@ -16,7 +15,7 @@ namespace Orm::Utils
 /* We don't need the Orm::SqlQuery overloads for the parseExecutedQuery() and
    logExecutedQuery() as all bindings are already prepared. */
 
-QString Query::parseExecutedQuery(const QSqlQuery &query)
+QString Query::parseExecutedQuery(const TSqlQuery &query)
 {
     auto executedQuery = query.executedQuery();
     if (executedQuery.isEmpty())
@@ -26,13 +25,13 @@ QString Query::parseExecutedQuery(const QSqlQuery &query)
 }
 
 #ifndef TINYORM_NO_DEBUG
-void Query::logExecutedQuery(const QSqlQuery &query)
+void Query::logExecutedQuery(const TSqlQuery &query)
 {
     qDebug().noquote() << QStringLiteral("Executed Query :")
                        << Query::parseExecutedQuery(query);
 }
 #else
-void Query::logExecutedQuery(const QSqlQuery &/*unused*/)
+void Query::logExecutedQuery(const TSqlQuery &/*unused*/)
 {}
 #endif
 
@@ -66,7 +65,7 @@ Query::zipForInsert(const QVector<QString> &columns,
     return zippedValues;
 }
 
-int Query::queryResultSize(QSqlQuery &query)
+int Query::queryResultSize(TSqlQuery &query)
 {
     // Nothing to do, no result set, isn't active SELECT query
     if (!query.isActive() || !query.isSelect())

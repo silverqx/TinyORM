@@ -73,7 +73,7 @@ void MySqlConnector::configureIsolationLevel(const TSqlDatabase &connection,
     if (!config.contains(isolation_level))
         return;
 
-    QSqlQuery query(connection);
+    TSqlQuery query(connection);
 
     if (query.exec(QStringLiteral("SET SESSION TRANSACTION ISOLATION LEVEL %1;")
                    .arg(config[isolation_level].value<QString>())))
@@ -89,7 +89,7 @@ void MySqlConnector::configureEncoding(const TSqlDatabase &connection,
     if (!config.contains(charset_))
         return;
 
-    QSqlQuery query(connection);
+    TSqlQuery query(connection);
 
     if (query.exec(QStringLiteral("set names '%1'%2;")
                    .arg(config[charset_].value<QString>(), getCollation(config))))
@@ -112,7 +112,7 @@ void MySqlConnector::configureTimezone(const TSqlDatabase &connection,
     if (!config.contains(timezone_))
         return;
 
-    QSqlQuery query(connection);
+    TSqlQuery query(connection);
 
     if (query.exec(QStringLiteral("set time_zone=\"%1\";")
                    .arg(config[timezone_].value<QString>())))
@@ -133,7 +133,7 @@ void MySqlConnector::setModes(const TSqlDatabase &connection,
     if (!config.contains(strict_))
         return;
 
-    QSqlQuery query(connection);
+    TSqlQuery query(connection);
 
     // Enable strict mode
     if (config[strict_].value<bool>()) {
@@ -193,7 +193,7 @@ void MySqlConnector::setCustomModes(const TSqlDatabase &connection,
 {
     const auto modes = config["modes"].value<QStringList>().join(COMMA);
 
-    QSqlQuery query(connection);
+    TSqlQuery query(connection);
 
     if (query.exec(QStringLiteral("set session sql_mode='%1';").arg(modes)))
         return;
@@ -206,7 +206,7 @@ void MySqlConnector::setCustomModes(const TSqlDatabase &connection,
 
 QString MySqlConnector::getMySqlVersionFromDatabase(const TSqlDatabase &connection)
 {
-    QSqlQuery query(connection);
+    TSqlQuery query(connection);
 
     if (!query.exec(QStringLiteral("select version()")))
         throw Exceptions::QueryError(connection.connectionName(),

@@ -68,7 +68,7 @@ namespace Query
         /*! Get a new query builder instance for the connection. */
         std::shared_ptr<QueryBuilder> query(const QString &connection = "");
         /*! Get a new QSqlQuery instance for the connection. */
-        QSqlQuery qtQuery(const QString &connection = "");
+        TSqlQuery qtQuery(const QString &connection = "");
 
         // TODO next add support for named bindings, Using Named Bindings silverqx
         /*! Run a select statement against the database. */
@@ -94,11 +94,11 @@ namespace Query
         insert(const QString &query, QVector<QVariant> bindings = {},
                const QString &connection = "");
         /*! Run an update statement against the database. */
-        std::tuple<int, QSqlQuery>
+        std::tuple<int, TSqlQuery>
         update(const QString &query, QVector<QVariant> bindings = {},
                const QString &connection = "");
         /*! Run a delete statement against the database. */
-        std::tuple<int, QSqlQuery>
+        std::tuple<int, TSqlQuery>
         remove(const QString &query, QVector<QVariant> bindings = {},
                const QString &connection = "");
 
@@ -107,7 +107,7 @@ namespace Query
         statement(const QString &query, QVector<QVariant> bindings = {},
                   const QString &connection = "");
         /*! Run an SQL statement and get the number of rows affected. */
-        std::tuple<int, QSqlQuery>
+        std::tuple<int, TSqlQuery>
         affectingStatement(const QString &query, QVector<QVariant> bindings = {},
                            const QString &connection = "");
 

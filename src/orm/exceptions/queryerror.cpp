@@ -1,6 +1,5 @@
 #include "orm/exceptions/queryerror.hpp"
 
-#include "orm/macros/sqldrivermappings.hpp"
 #include TINY_INCLUDE_TSqlQuery
 
 #include "orm/utils/query.hpp"
@@ -17,7 +16,7 @@ namespace Orm::Exceptions
 /* public */
 
 QueryError::QueryError(QString connectionName, const char *message,
-                       const QSqlQuery &query, const QVector<QVariant> &bindings)
+                       const TSqlQuery &query, const QVector<QVariant> &bindings)
     : SqlError(formatMessage(connectionName, message, query), query.lastError(), 1)
     , m_connectionName(std::move(connectionName))
     , m_sql(query.executedQuery())
@@ -25,14 +24,14 @@ QueryError::QueryError(QString connectionName, const char *message,
 {}
 
 QueryError::QueryError(QString connectionName, const QString &message,
-                       const QSqlQuery &query, const QVector<QVariant> &bindings)
+                       const TSqlQuery &query, const QVector<QVariant> &bindings)
     : QueryError(std::move(connectionName), message.toUtf8().constData(), query, bindings)
 {}
 
 /* protected */
 
 QString QueryError::formatMessage(const QString &connectionName, const char *message,
-                                  const QSqlQuery &query)
+                                  const TSqlQuery &query)
 {
     const auto sqlError = SqlError::formatMessage(message, query.lastError());
     const auto executedQuery = QueryUtils::parseExecutedQuery(query);

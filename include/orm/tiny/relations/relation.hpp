@@ -140,7 +140,7 @@ namespace Relations
 
         /* Others */
         /*! Run a raw update against the base query. */
-        inline std::tuple<int, QSqlQuery>
+        inline std::tuple<int, TSqlQuery>
         rawUpdate(const QVector<UpdateItem> &values = {}) const;
 
         /*! The textual representation of the Relation type. */
@@ -345,7 +345,7 @@ namespace Relations
     /* Others */
 
     template<class Model, class Related>
-    std::tuple<int, QSqlQuery>
+    std::tuple<int, TSqlQuery>
     Relation<Model, Related>::rawUpdate(const QVector<UpdateItem> &values) const
     {
         // FEATURE scopes silverqx

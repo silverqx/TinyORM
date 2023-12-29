@@ -26,7 +26,7 @@ namespace Types
 {
 
     /*! Wrapper around the QSqlQuery to fix QDateTime time zones. */
-    class SHAREDLIB_EXPORT SqlQuery : public QSqlQuery
+    class SHAREDLIB_EXPORT SqlQuery : public TSqlQuery
     {
         /*! Alias for the QueryGrammar. */
         using QueryGrammar = Query::Grammars::Grammar;
@@ -48,7 +48,7 @@ namespace Types
         SqlQuery &operator=(SqlQuery &&other) noexcept = default;
 
         /*! Constructor from the QSqlQuery type and time zone from the configuration. */
-        SqlQuery(QSqlQuery &&other, const QtTimeZoneConfig &qtTimeZone,
+        SqlQuery(TSqlQuery &&other, const QtTimeZoneConfig &qtTimeZone,
                  const QueryGrammar &queryGrammar,
                  std::optional<bool> returnQDateTime);
 
@@ -89,12 +89,12 @@ namespace Types
 
     QVariant SqlQuery::value(const int index) const
     {
-        return valueInternal(QSqlQuery::value(index));
+        return valueInternal(TSqlQuery::value(index));
     }
 
     QVariant SqlQuery::value(const QString &name) const
     {
-        return valueInternal(QSqlQuery::value(name));
+        return valueInternal(TSqlQuery::value(name));
     }
 
 } // namespace Types

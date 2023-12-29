@@ -129,7 +129,7 @@ private:
     /*! Create QueryBuilder instance for the given connection. */
     [[nodiscard]] inline std::shared_ptr<QueryBuilder> createQuery() const;
     /*! Create a raw QSqlQuery instance for the given connection. */
-    [[nodiscard]] inline QSqlQuery createQtQuery() const;
+    [[nodiscard]] inline TSqlQuery createQtQuery() const;
 
     /* QDateTime with/without timezone */
     /*! Restore the database after a QDateTime-related test. */
@@ -1795,7 +1795,7 @@ tst_SQLite_QDateTime::createQuery() const
     return DB::query(m_connection);
 }
 
-QSqlQuery tst_SQLite_QDateTime::createQtQuery() const
+TSqlQuery tst_SQLite_QDateTime::createQtQuery() const
 {
     return DB::qtQuery(m_connection);
 }

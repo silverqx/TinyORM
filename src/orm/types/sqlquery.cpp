@@ -15,14 +15,14 @@ namespace Orm::Types
 
 /* public */
 
-SqlQuery::SqlQuery(QSqlQuery &&other, const QtTimeZoneConfig &qtTimeZone, // NOLINT(modernize-pass-by-value,cppcoreguidelines-rvalue-reference-param-not-moved)
+SqlQuery::SqlQuery(TSqlQuery &&other, const QtTimeZoneConfig &qtTimeZone, // NOLINT(modernize-pass-by-value,cppcoreguidelines-rvalue-reference-param-not-moved)
                    const QueryGrammar &queryGrammar,
                    const std::optional<bool> returnQDateTime
 )
 #if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
-    : QSqlQuery(std::move(other))
+    : TSqlQuery(std::move(other))
 #else
-    : QSqlQuery(other)
+    : TSqlQuery(other)
 #endif
     , m_qtTimeZone(qtTimeZone)
     , m_isConvertingTimeZone(m_qtTimeZone.type != QtTimeZoneType::DontConvert)

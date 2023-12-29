@@ -205,12 +205,12 @@ namespace Orm::Tiny
 
         /*! Increment a column's value by a given amount. */
         template<typename T = std::size_t> requires std::is_arithmetic_v<T>
-        inline std::tuple<int, QSqlQuery>
+        inline std::tuple<int, TSqlQuery>
         increment(const QString &column, T amount = 1,
                   const QVector<AttributeItem> &extra = {}, bool all = false);
         /*! Decrement a column's value by a given amount. */
         template<typename T = std::size_t> requires std::is_arithmetic_v<T>
-        inline std::tuple<int, QSqlQuery>
+        inline std::tuple<int, TSqlQuery>
         decrement(const QString &column, T amount = 1,
                   const QVector<AttributeItem> &extra = {}, bool all = false);
 
@@ -433,13 +433,13 @@ namespace Orm::Tiny
 
         /*! Run the increment or decrement method on the model. */
         template<typename T> requires std::is_arithmetic_v<T>
-        std::tuple<int, QSqlQuery>
+        std::tuple<int, TSqlQuery>
         incrementOrDecrement(
                 const QString &column, T amount, const QVector<AttributeItem> &extra,
                 IncrementOrDecrement method, bool all);
         /*! Invoke the increment or decrement method on the model. */
         template<typename T> requires std::is_arithmetic_v<T>
-        std::tuple<int, QSqlQuery>
+        std::tuple<int, TSqlQuery>
         invokeIncrementOrDecrement(
                 TinyBuilder<Derived> &query, const QString &column, T amount,
                 const QVector<AttributeItem> &extra, IncrementOrDecrement method,
@@ -886,7 +886,7 @@ namespace Orm::Tiny
     // NOTE api different, I have added the 'all' bool param. to avoid updating all rows by mistake silverqx
     template<typename Derived, AllRelationsConcept ...AllRelations>
     template<typename T> requires std::is_arithmetic_v<T>
-    std::tuple<int, QSqlQuery>
+    std::tuple<int, TSqlQuery>
     Model<Derived, AllRelations...>::increment(
             const QString &column, const T amount, const QVector<AttributeItem> &extra,
             const bool all)
@@ -896,7 +896,7 @@ namespace Orm::Tiny
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     template<typename T> requires std::is_arithmetic_v<T>
-    std::tuple<int, QSqlQuery>
+    std::tuple<int, TSqlQuery>
     Model<Derived, AllRelations...>::decrement(
             const QString &column, const T amount, const QVector<AttributeItem> &extra,
             const bool all)
@@ -1785,7 +1785,7 @@ namespace Orm::Tiny
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     template<typename T> requires std::is_arithmetic_v<T>
-    std::tuple<int, QSqlQuery>
+    std::tuple<int, TSqlQuery>
     Model<Derived, AllRelations...>::incrementOrDecrement(
             const QString &column, const T amount, const QVector<AttributeItem> &extra,
             const IncrementOrDecrement method, const bool all)
@@ -1835,7 +1835,7 @@ namespace Orm::Tiny
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     template<typename T> requires std::is_arithmetic_v<T>
-    std::tuple<int, QSqlQuery>
+    std::tuple<int, TSqlQuery>
     Model<Derived, AllRelations...>::invokeIncrementOrDecrement(
             TinyBuilder<Derived> &query, const QString &column, const T amount,
             const QVector<AttributeItem> &extra, const IncrementOrDecrement method,

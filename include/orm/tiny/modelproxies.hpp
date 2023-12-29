@@ -209,22 +209,22 @@ namespace Tiny
                     const QString &sequence = "");
 
         /*! Insert a new record into the database while ignoring errors. */
-        static std::tuple<int, std::optional<QSqlQuery>>
+        static std::tuple<int, std::optional<TSqlQuery>>
         insertOrIgnore(const QVector<AttributeItem> &values);
         /*! Insert new records into the database while ignoring errors. */
-        static std::tuple<int, std::optional<QSqlQuery>>
+        static std::tuple<int, std::optional<TSqlQuery>>
         insertOrIgnore(const QVector<QVector<AttributeItem>> &values);
         /*! Insert new records into the database while ignoring errors (multi insert). */
-        static std::tuple<int, std::optional<QSqlQuery>>
+        static std::tuple<int, std::optional<TSqlQuery>>
         insertOrIgnore(const QVector<QString> &columns,
                        QVector<QVector<QVariant>> values);
 
         /*! Insert new records or update the existing ones. */
-        static std::tuple<int, std::optional<QSqlQuery>>
+        static std::tuple<int, std::optional<TSqlQuery>>
         upsert(const QVector<QVariantMap> &values, const QStringList &uniqueBy,
                const QStringList &update);
         /*! Insert new records or update the existing ones (update all columns). */
-        static std::tuple<int, std::optional<QSqlQuery>>
+        static std::tuple<int, std::optional<TSqlQuery>>
         upsert(const QVector<QVariantMap> &values, const QStringList &uniqueBy);
 
         /*! Run a truncate statement on the table. */
@@ -232,7 +232,7 @@ namespace Tiny
 
         /* Touching timestamps */
         /*! Update the column's update timestamp on all Models. */
-        static std::tuple<int, std::optional<QSqlQuery>>
+        static std::tuple<int, std::optional<TSqlQuery>>
         touchAll(const QString &column = "");
 
         /* Select */
@@ -1017,7 +1017,7 @@ namespace Tiny
         onlyTrashed();
 
         /*! Restore all trashed models (calls update on deleted_at column). */
-        static std::tuple<int, QSqlQuery> restoreAll();
+        static std::tuple<int, TSqlQuery> restoreAll();
 
         /* Casting Attributes */
         /*! Apply query-time casts to the model instance. */
@@ -1442,7 +1442,7 @@ namespace Tiny
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
-    std::tuple<int, std::optional<QSqlQuery>>
+    std::tuple<int, std::optional<TSqlQuery>>
     ModelProxies<Derived, AllRelations...>::insertOrIgnore(
             const QVector<AttributeItem> &values)
     {
@@ -1450,7 +1450,7 @@ namespace Tiny
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
-    std::tuple<int, std::optional<QSqlQuery>>
+    std::tuple<int, std::optional<TSqlQuery>>
     ModelProxies<Derived, AllRelations...>::insertOrIgnore(
             const QVector<QVector<AttributeItem>> &values)
     {
@@ -1458,7 +1458,7 @@ namespace Tiny
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
-    std::tuple<int, std::optional<QSqlQuery>>
+    std::tuple<int, std::optional<TSqlQuery>>
     ModelProxies<Derived, AllRelations...>::insertOrIgnore(
             const QVector<QString> &columns, QVector<QVector<QVariant>> values)
     {
@@ -1466,7 +1466,7 @@ namespace Tiny
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
-    std::tuple<int, std::optional<QSqlQuery>>
+    std::tuple<int, std::optional<TSqlQuery>>
     ModelProxies<Derived, AllRelations...>::upsert(
             const QVector<QVariantMap> &values, const QStringList &uniqueBy,
             const QStringList &update)
@@ -1475,7 +1475,7 @@ namespace Tiny
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
-    std::tuple<int, std::optional<QSqlQuery>>
+    std::tuple<int, std::optional<TSqlQuery>>
     ModelProxies<Derived, AllRelations...>::upsert(
             const QVector<QVariantMap> &values, const QStringList &uniqueBy)
     {
@@ -1491,7 +1491,7 @@ namespace Tiny
     /* Touching timestamps */
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
-    std::tuple<int, std::optional<QSqlQuery>>
+    std::tuple<int, std::optional<TSqlQuery>>
     ModelProxies<Derived, AllRelations...>::touchAll(const QString &column)
     {
         return query()->touch(column);
@@ -3652,7 +3652,7 @@ namespace Tiny
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
-    std::tuple<int, QSqlQuery>
+    std::tuple<int, TSqlQuery>
     ModelProxies<Derived, AllRelations...>::restoreAll()
     {
         // restoreAll() to avoid ambiguous call (SoftDeletes also contains restore())

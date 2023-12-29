@@ -125,42 +125,42 @@ namespace Orm::Query
         quint64 insertGetId(const QVariantMap &values, const QString &sequence = "");
 
         /*! Insert new records into the database while ignoring errors. */
-        std::tuple<int, std::optional<QSqlQuery>>
+        std::tuple<int, std::optional<TSqlQuery>>
         insertOrIgnore(const QVector<QVariantMap> &values);
         /*! Insert a new record into the database while ignoring errors. */
-        std::tuple<int, std::optional<QSqlQuery>>
+        std::tuple<int, std::optional<TSqlQuery>>
         insertOrIgnore(const QVariantMap &values);
         /*! Insert new records into the database while ignoring errors (multi insert). */
-        std::tuple<int, std::optional<QSqlQuery>>
+        std::tuple<int, std::optional<TSqlQuery>>
         insertOrIgnore(const QVector<QString> &columns,
                        const QVector<QVector<QVariant>> &values);
 
         /*! Update records in the database. */
-        std::tuple<int, QSqlQuery>
+        std::tuple<int, TSqlQuery>
         update(const QVector<UpdateItem> &values);
         /*! Insert or update a record matching the attributes, and fill it with values. */
-        std::tuple<int, std::optional<QSqlQuery>>
+        std::tuple<int, std::optional<TSqlQuery>>
         updateOrInsert(const QVector<WhereItem> &attributes,
                        const QVector<UpdateItem> &values);
 
         /*! Insert new records or update the existing ones. */
-        std::tuple<int, std::optional<QSqlQuery>>
+        std::tuple<int, std::optional<TSqlQuery>>
         upsert(const QVector<QVariantMap> &values, const QStringList &uniqueBy,
                const QStringList &update);
         /*! Insert new records or update the existing ones (update all columns). */
-        std::tuple<int, std::optional<QSqlQuery>>
+        std::tuple<int, std::optional<TSqlQuery>>
         upsert(const QVector<QVariantMap> &values, const QStringList &uniqueBy);
 
         /*! Delete records from the database. */
-        std::tuple<int, QSqlQuery> deleteRow();
+        std::tuple<int, TSqlQuery> deleteRow();
         /*! Delete records from the database. */
-        std::tuple<int, QSqlQuery> remove();
-        /*! Delete records from the database. */
-        template<Remove T>
-        inline std::tuple<int, QSqlQuery> deleteRow(T &&id);
+        std::tuple<int, TSqlQuery> remove();
         /*! Delete records from the database. */
         template<Remove T>
-        std::tuple<int, QSqlQuery> remove(T &&id);
+        inline std::tuple<int, TSqlQuery> deleteRow(T &&id);
+        /*! Delete records from the database. */
+        template<Remove T>
+        std::tuple<int, TSqlQuery> remove(T &&id);
 
         /*! Run a truncate statement on the table. */
         void truncate();
@@ -692,12 +692,12 @@ namespace Orm::Query
         /* Others */
         /*! Increment a column's value by a given amount. */
         template<typename T = std::size_t> requires std::is_arithmetic_v<T>
-        std::tuple<int, QSqlQuery>
+        std::tuple<int, TSqlQuery>
         increment(const QString &column, T amount = 1,
                   const QVector<UpdateItem> &extra = {});
         /*! Decrement a column's value by a given amount. */
         template<typename T = std::size_t> requires std::is_arithmetic_v<T>
-        std::tuple<int, QSqlQuery>
+        std::tuple<int, TSqlQuery>
         decrement(const QString &column, T amount = 1,
                   const QVector<UpdateItem> &extra = {});
 
@@ -1061,13 +1061,13 @@ namespace Orm::Query
     /* Insert, Update, Delete */
 
     template<Remove T>
-    std::tuple<int, QSqlQuery> Builder::deleteRow(T &&id)
+    std::tuple<int, TSqlQuery> Builder::deleteRow(T &&id)
     {
         return remove(std::forward<T>(id));
     }
 
     template<Remove T>
-    std::tuple<int, QSqlQuery> Builder::remove(T &&id)
+    std::tuple<int, TSqlQuery> Builder::remove(T &&id)
     {
         /* If an ID is passed to the method, we will set the where clause to check the
            ID to let developers to simply and quickly remove a single row from this
@@ -1618,7 +1618,7 @@ namespace Orm::Query
     /* Others */
 
     template<typename T> requires std::is_arithmetic_v<T>
-    std::tuple<int, QSqlQuery>
+    std::tuple<int, TSqlQuery>
     Builder::increment(const QString &column, const T amount,
                        const QVector<UpdateItem> &extra)
     {
@@ -1632,7 +1632,7 @@ namespace Orm::Query
     }
 
     template<typename T> requires std::is_arithmetic_v<T>
-    std::tuple<int, QSqlQuery>
+    std::tuple<int, TSqlQuery>
     Builder::decrement(const QString &column, const T amount,
                        const QVector<UpdateItem> &extra)
     {

@@ -121,17 +121,17 @@ namespace Orm
         inline SqlQuery
         insert(const QString &queryString, QVector<QVariant> bindings = {});
         /*! Run an update statement against the database. */
-        inline std::tuple<int, QSqlQuery>
+        inline std::tuple<int, TSqlQuery>
         update(const QString &queryString, QVector<QVariant> bindings = {});
         /*! Run a delete statement against the database. */
-        inline std::tuple<int, QSqlQuery>
+        inline std::tuple<int, TSqlQuery>
         remove(const QString &queryString, QVector<QVariant> bindings = {});
 
         /*! Execute an SQL statement, should be used for DDL/DML queries, internally
             calls DatabaseConnection::recordsHaveBeenModified(). */
         SqlQuery statement(const QString &queryString, QVector<QVariant> bindings = {});
         /*! Run an SQL statement and get the number of rows affected (for DML queries). */
-        std::tuple<int, QSqlQuery>
+        std::tuple<int, TSqlQuery>
         affectingStatement(const QString &queryString, QVector<QVariant> bindings = {});
 
         /*! Run a raw, unprepared query against the database (good for DDL queries). */
@@ -150,12 +150,12 @@ namespace Orm
                 const std::function<Connectors::ConnectionName()> &resolver);
 
         /*! Get a new QSqlQuery instance for the current connection. */
-        QSqlQuery getQtQuery();
+        TSqlQuery getQtQuery();
 
         /*! Prepare the query bindings for execution. */
         QVector<QVariant> &prepareBindings(QVector<QVariant> &bindings) const;
         /*! Bind values to their parameters in the given statement. */
-        static void bindValues(QSqlQuery &query, const QVector<QVariant> &bindings);
+        static void bindValues(TSqlQuery &query, const QVector<QVariant> &bindings);
 
         /*! Determine whether the database connection is currently open. */
         inline bool isOpen();
@@ -309,9 +309,9 @@ namespace Orm
 
     private:
         /*! Prepare an SQL statement and return the query object. */
-        QSqlQuery prepareQuery(const QString &queryString);
+        TSqlQuery prepareQuery(const QString &queryString);
         /*! Get a new QSqlQuery instance for the pretend for the current connection. */
-        inline QSqlQuery getQtQueryForPretend();
+        inline TSqlQuery getQtQueryForPretend();
 
         /*! Prepare the QDateTime query binding for execution. */
         QDateTime prepareBinding(const QDateTime &binding) const;
@@ -393,13 +393,13 @@ namespace Orm
         return statement(queryString, std::move(bindings));
     }
 
-    std::tuple<int, QSqlQuery>
+    std::tuple<int, TSqlQuery>
     DatabaseConnection::update(const QString &queryString, QVector<QVariant> bindings)
     {
         return affectingStatement(queryString, std::move(bindings));
     }
 
-    std::tuple<int, QSqlQuery>
+    std::tuple<int, TSqlQuery>
     DatabaseConnection::remove(const QString &queryString, QVector<QVariant> bindings)
     {
         return affectingStatement(queryString, std::move(bindings));
@@ -576,7 +576,7 @@ namespace Orm
 
     /* private */
 
-    QSqlQuery DatabaseConnection::getQtQueryForPretend()
+    TSqlQuery DatabaseConnection::getQtQueryForPretend()
     {
         return getQtQuery();
     }

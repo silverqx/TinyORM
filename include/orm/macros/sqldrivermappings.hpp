@@ -48,7 +48,6 @@ C preprocessor macro to select the SQL drivers to use.
 #  define TSqlDriver   QSqlDriver
 #  define TSqlError    QSqlError
 #  define TSqlQuery    QSqlQuery
-// #  define TSqlQuery    TINYORM_PREPEND_NAMESPACE(Orm::Types::SqlQuery)
 #  define TSqlRecord   QSqlRecord
 // #  define TSqlDatabase QT_PREPEND_NAMESPACE(QSqlDatabase)
 // #  define TSqlDriver   QT_PREPEND_NAMESPACE(QSqlDriver)

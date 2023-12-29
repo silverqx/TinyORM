@@ -138,7 +138,7 @@ private:
     [[nodiscard]] inline static std::shared_ptr<QueryBuilder>
     createQuery(const QString &connection);
     /*! Create a raw QSqlQuery instance for the given connection. */
-    [[nodiscard]] inline static QSqlQuery
+    [[nodiscard]] inline static TSqlQuery
     createQtQuery(const QString &connection);
 
     /* QDateTime with/without timezone */
@@ -2891,7 +2891,7 @@ tst_MySql_QDateTime::createQuery(const QString &connection)
     return DB::query(connection);
 }
 
-QSqlQuery tst_MySql_QDateTime::createQtQuery(const QString &connection)
+TSqlQuery tst_MySql_QDateTime::createQtQuery(const QString &connection)
 {
     return DB::qtQuery(connection);
 }

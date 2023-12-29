@@ -103,12 +103,12 @@ namespace Tiny
         /* Others */
         /*! Increment a column's value by a given amount. */
         template<typename T = std::size_t> requires std::is_arithmetic_v<T>
-        std::tuple<int, QSqlQuery>
+        std::tuple<int, TSqlQuery>
         increment(const QString &column, T amount = 1,
                   const QVector<UpdateItem> &extra = {});
         /*! Decrement a column's value by a given amount. */
         template<typename T = std::size_t> requires std::is_arithmetic_v<T>
-        std::tuple<int, QSqlQuery>
+        std::tuple<int, TSqlQuery>
         decrement(const QString &column, T amount = 1,
                   const QVector<UpdateItem> &extra = {});
 
@@ -129,21 +129,21 @@ namespace Tiny
                             const QString &sequence = "") const;
 
         /*! Insert a new record into the database while ignoring errors. */
-        std::tuple<int, std::optional<QSqlQuery>>
+        std::tuple<int, std::optional<TSqlQuery>>
         insertOrIgnore(const QVector<AttributeItem> &values) const;
         /*! Insert new records into the database while ignoring errors. */
-        std::tuple<int, std::optional<QSqlQuery>>
+        std::tuple<int, std::optional<TSqlQuery>>
         insertOrIgnore(const QVector<QVector<AttributeItem>> &values) const;
         /*! Insert new records into the database while ignoring errors (multi insert). */
-        std::tuple<int, std::optional<QSqlQuery>>
+        std::tuple<int, std::optional<TSqlQuery>>
         insertOrIgnore(const QVector<QString> &columns,
                        QVector<QVector<QVariant>> values) const;
 
         /*! Run the default delete function on the builder (sidestep soft deleting). */
-        std::tuple<int, QSqlQuery> forceDelete() const;
+        std::tuple<int, TSqlQuery> forceDelete() const;
         /*! Run the default delete function on the builder (sidestep soft deleting),
             alias. */
-        std::tuple<int, QSqlQuery> forceRemove() const;
+        std::tuple<int, TSqlQuery> forceRemove() const;
 
         /*! Run a truncate statement on the table. */
         void truncate() const;
@@ -829,7 +829,7 @@ namespace Tiny
 
     template<typename Model>
     template<typename T> requires std::is_arithmetic_v<T>
-    std::tuple<int, QSqlQuery>
+    std::tuple<int, TSqlQuery>
     BuilderProxies<Model>::increment(
             const QString &column, const T amount, const QVector<UpdateItem> &extra)
     {
@@ -838,7 +838,7 @@ namespace Tiny
 
     template<typename Model>
     template<typename T> requires std::is_arithmetic_v<T>
-    std::tuple<int, QSqlQuery>
+    std::tuple<int, TSqlQuery>
     BuilderProxies<Model>::decrement(
             const QString &column, const T amount, const QVector<UpdateItem> &extra)
     {
@@ -882,14 +882,14 @@ namespace Tiny
     }
 
     template<typename Model>
-    std::tuple<int, std::optional<QSqlQuery>>
+    std::tuple<int, std::optional<TSqlQuery>>
     BuilderProxies<Model>::insertOrIgnore(const QVector<AttributeItem> &values) const
     {
         return getQuery().insertOrIgnore(AttributeUtils::convertVectorToMap(values));
     }
 
     template<typename Model>
-    std::tuple<int, std::optional<QSqlQuery>>
+    std::tuple<int, std::optional<TSqlQuery>>
     BuilderProxies<Model>::insertOrIgnore(
             const QVector<QVector<AttributeItem>> &values) const
     {
@@ -897,7 +897,7 @@ namespace Tiny
     }
 
     template<typename Model>
-    std::tuple<int, std::optional<QSqlQuery>>
+    std::tuple<int, std::optional<TSqlQuery>>
     BuilderProxies<Model>::insertOrIgnore(
             const QVector<QString> &columns, QVector<QVector<QVariant>> values) const
     {
@@ -905,14 +905,14 @@ namespace Tiny
     }
 
     template<typename Model>
-    std::tuple<int, QSqlQuery> BuilderProxies<Model>::forceDelete() const
+    std::tuple<int, TSqlQuery> BuilderProxies<Model>::forceDelete() const
     {
         // Skip applying SoftDeletes (getQuery()) to actually delete
         return getQuery().remove();
     }
 
     template<typename Model>
-    std::tuple<int, QSqlQuery> BuilderProxies<Model>::forceRemove() const
+    std::tuple<int, TSqlQuery> BuilderProxies<Model>::forceRemove() const
     {
         // Skip applying SoftDeletes (getQuery()) to actually delete
         return getQuery().remove();

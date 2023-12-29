@@ -10,9 +10,10 @@ TINY_SYSTEM_HEADER
 #include "orm/constants.hpp"
 #include "orm/macros/commonnamespace.hpp"
 #include "orm/macros/export.hpp"
+#include "orm/macros/sqldrivermappings.hpp"
 #include "orm/utils/helpers.hpp"
 
-class QSqlQuery;
+class TSqlQuery;
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
@@ -43,7 +44,7 @@ namespace Orm::Utils
         ~Query() = delete;
 
         /*! Get the last executed query with replaced placeholders (ideal for logging). */
-        static QString parseExecutedQuery(const QSqlQuery &query);
+        static QString parseExecutedQuery(const TSqlQuery &query);
         /*! Get pretended query with replaced placeholders ( ideal for logging ). */
         inline static QString
         parseExecutedQueryForPretend(QString queryString,
@@ -57,7 +58,7 @@ namespace Orm::Utils
 
         /*! Log the last executed query to the debug output. */
         [[maybe_unused]]
-        static void logExecutedQuery(const QSqlQuery &query);
+        static void logExecutedQuery(const TSqlQuery &query);
 
         /*! Prepare the passed containers for the multi-insert. */
         static QVector<QVariantMap>
@@ -65,7 +66,7 @@ namespace Orm::Utils
                      const QVector<QVector<QVariant>> &values);
 
         /*! Returns the size of the result (number of rows returned). */
-        static int queryResultSize(QSqlQuery &query);
+        static int queryResultSize(TSqlQuery &query);
     };
 
     /* public */

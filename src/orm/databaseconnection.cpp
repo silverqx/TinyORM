@@ -94,11 +94,11 @@ std::shared_ptr<QueryBuilder> DatabaseConnection::query()
 SqlQuery
 DatabaseConnection::select(const QString &queryString, QVector<QVariant> bindings)
 {
-    auto queryResult = run<QSqlQuery>(
+    auto queryResult = run<TSqlQuery>(
                            queryString, std::move(bindings), Prepared,
                            [this](const QString &queryString_,
                                   const QVector<QVariant> &preparedBindings)
-                           -> QSqlQuery
+                           -> TSqlQuery
     {
         if (m_pretending)
             return getQtQueryForPretend();
@@ -159,11 +159,11 @@ DatabaseConnection::scalar(const QString &queryString, QVector<QVariant> binding
 SqlQuery
 DatabaseConnection::statement(const QString &queryString, QVector<QVariant> bindings)
 {
-    auto queryResult = run<QSqlQuery>(
+    auto queryResult = run<TSqlQuery>(
                            queryString, std::move(bindings), Prepared,
                            [this](const QString &queryString_,
                                   const QVector<QVariant> &preparedBindings)
-                           -> QSqlQuery
+                           -> TSqlQuery
     {
         if (m_pretending)
             return getQtQueryForPretend();
@@ -200,15 +200,15 @@ DatabaseConnection::statement(const QString &queryString, QVector<QVariant> bind
 /* No need to return Orm::SqlQuery because affectingStatement-s don't return any results
    from the database like eg. select queries so there is no need to correct QDateTime
    timezones. */
-std::tuple<int, QSqlQuery>
+std::tuple<int, TSqlQuery>
 DatabaseConnection::affectingStatement(const QString &queryString,
                                        QVector<QVariant> bindings)
 {
-    return run<std::tuple<int, QSqlQuery>>(
+    return run<std::tuple<int, TSqlQuery>>(
                queryString, std::move(bindings), Prepared,
                [this](const QString &queryString_,
                       const QVector<QVariant> &preparedBindings)
-               -> std::tuple<int, QSqlQuery>
+               -> std::tuple<int, TSqlQuery>
     {
         if (m_pretending)
             return {-1, getQtQueryForPretend()};
@@ -244,11 +244,11 @@ DatabaseConnection::affectingStatement(const QString &queryString,
 
 SqlQuery DatabaseConnection::unprepared(const QString &queryString)
 {
-    auto queryResult = run<QSqlQuery>(
+    auto queryResult = run<TSqlQuery>(
                            queryString, {}, Unprepared,
                            [this](const QString &queryString_,
                                   const QVector<QVariant> &/*unused*/)
-                           -> QSqlQuery
+                           -> TSqlQuery
     {
         if (m_pretending)
             return getQtQueryForPretend();
@@ -337,9 +337,9 @@ DatabaseConnection::setQtConnectionResolver(
     return *this;
 }
 
-QSqlQuery DatabaseConnection::getQtQuery()
+TSqlQuery DatabaseConnection::getQtQuery()
 {
-    return QSqlQuery(getQtConnection());
+    return TSqlQuery(getQtConnection());
 }
 
 QVector<QVariant> &
@@ -397,7 +397,7 @@ DatabaseConnection::prepareBindings(QVector<QVariant> &bindings) const
     return bindings;
 }
 
-void DatabaseConnection::bindValues(QSqlQuery &query, const QVector<QVariant> &bindings)
+void DatabaseConnection::bindValues(TSqlQuery &query, const QVector<QVariant> &bindings)
 {
     for (const auto &binding : bindings)
         query.addBindValue(binding);
@@ -609,7 +609,7 @@ void DatabaseConnection::useDefaultPostProcessor()
 
 /* private */
 
-QSqlQuery DatabaseConnection::prepareQuery(const QString &queryString)
+TSqlQuery DatabaseConnection::prepareQuery(const QString &queryString)
 {
     // Prepare query string
     auto query = getQtQuery();

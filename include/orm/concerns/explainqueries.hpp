@@ -34,7 +34,7 @@ namespace Concerns
         inline virtual ~ExplainQueries() = default;
 
         /*! Explains the query. */
-        QSqlQuery explain();
+        TSqlQuery explain();
 
     private:
         /*! Dynamic cast *this to the QueryBuilder & derived type. */

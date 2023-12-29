@@ -216,7 +216,7 @@ quint64 Builder::insertGetId(const QVariantMap &values, const QString &sequence)
     return query.lastInsertId().value<quint64>();
 }
 
-std::tuple<int, std::optional<QSqlQuery>>
+std::tuple<int, std::optional<TSqlQuery>>
 Builder::insertOrIgnore(const QVector<QVariantMap> &values)
 {
     if (values.isEmpty())
@@ -227,20 +227,20 @@ Builder::insertOrIgnore(const QVector<QVariantMap> &values)
                 cleanBindings(flatValuesForInsert(values)));
 }
 
-std::tuple<int, std::optional<QSqlQuery>>
+std::tuple<int, std::optional<TSqlQuery>>
 Builder::insertOrIgnore(const QVariantMap &values)
 {
     return insertOrIgnore(QVector<QVariantMap> {values});
 }
 
-std::tuple<int, std::optional<QSqlQuery>>
+std::tuple<int, std::optional<TSqlQuery>>
 Builder::insertOrIgnore(const QVector<QString> &columns,
                         const QVector<QVector<QVariant>> &values)
 {
     return insertOrIgnore(QueryUtils::zipForInsert(columns, values));
 }
 
-std::tuple<int, QSqlQuery>
+std::tuple<int, TSqlQuery>
 Builder::update(const QVector<UpdateItem> &values)
 {
     return m_connection->update(
@@ -269,7 +269,7 @@ namespace
     };
 } // namespace
 
-std::tuple<int, std::optional<QSqlQuery>>
+std::tuple<int, std::optional<TSqlQuery>>
 Builder::updateOrInsert(const QVector<WhereItem> &attributes,
                         const QVector<UpdateItem> &values)
 {
@@ -291,7 +291,7 @@ namespace
     };
 } // namespace
 
-std::tuple<int, std::optional<QSqlQuery>>
+std::tuple<int, std::optional<TSqlQuery>>
 Builder::upsert(const QVector<QVariantMap> &values, const QStringList &uniqueBy,
                 const QStringList &update)
 {
@@ -313,7 +313,7 @@ Builder::upsert(const QVector<QVariantMap> &values, const QStringList &uniqueBy,
                 cleanBindings(flatValuesForUpsert(values)));
 }
 
-std::tuple<int, std::optional<QSqlQuery>>
+std::tuple<int, std::optional<TSqlQuery>>
 Builder::upsert(const QVector<QVariantMap> &values, const QStringList &uniqueBy)
 {
     // Update all columns
@@ -325,12 +325,12 @@ Builder::upsert(const QVector<QVariantMap> &values, const QStringList &uniqueBy)
                 cleanBindings(flatValuesForUpsert(values)));
 }
 
-std::tuple<int, QSqlQuery> Builder::deleteRow()
+std::tuple<int, TSqlQuery> Builder::deleteRow()
 {
     return remove();
 }
 
-std::tuple<int, QSqlQuery> Builder::remove()
+std::tuple<int, TSqlQuery> Builder::remove()
 {
     return m_connection->remove(
             m_grammar->compileDelete(*this),
