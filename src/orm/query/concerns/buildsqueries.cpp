@@ -68,8 +68,8 @@ bool BuildsQueries::each(const std::function<bool(SqlQuery &, qint64)> &callback
 
 /* This is trash as the QSqlQuery is passed to the callback, I need to pass something
    like std::map<std::pair<int, QString>, QVariant> so an user can modify it and return */
-//QVector<QSqlQuery>
-//BuildsQueries::chunkMap(const std::function<void(QSqlQuery &)> &callback, const qint64 count)
+//QVector<TSqlQuery>
+//BuildsQueries::chunkMap(const std::function<void(TSqlQuery &)> &callback, const qint64 count)
 //{
 //    /* This method is weird, it should return one merged collection with all rows, but
 //       it's impossible to merge more QSqlQuery-ies into the one QSqlQuery, so I have
@@ -81,9 +81,9 @@ bool BuildsQueries::each(const std::function<bool(SqlQuery &, qint64)> &callback
 //       but it's not possible in this case as the QSqlQuery holds all other rows,
 //       it's only a cursor. So I have to pass non-const reference and if all rows are
 //       processed/looped then move a whole QSqlQuery into the result vector. */
-//    QVector<QSqlQuery> result;
+//    QVector<TSqlQuery> result;
 
-//    chunk(count, [&result, &callback](QSqlQuery &results, const qint64 /*unused*/)
+//    chunk(count, [&result, &callback](TSqlQuery &results, const qint64 /*unused*/)
 //    {
 //        while (results.next())
 //            std::invoke(callback, results);

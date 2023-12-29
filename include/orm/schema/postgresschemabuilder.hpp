@@ -79,7 +79,7 @@ namespace Grammars
         /*! Get a set of excluded views (hardcoded). */
         const QSet<QString> &excludedViews() const;
         /*! Get the 0 and qualifiedname column values from the given query. */
-        static std::tuple<QString, QString> columnValuesForDrop(QSqlQuery &query);
+        static std::tuple<QString, QString> columnValuesForDrop(TSqlQuery &query);
 
         /*! Get the PostgreSQL server 'search_path' for the current connection
             (with the "$user" variable resolved as the config['username']). */

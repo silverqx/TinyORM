@@ -41,8 +41,8 @@ namespace Orm::Query::Concerns
                   qint64 count = 1000);
 
         /*! Run a map over each item while chunking. */
-//        QVector<QSqlQuery>
-//        chunkMap(const std::function<void(QSqlQuery &row)> &callback, qint64 count = 1000);
+//        QVector<TSqlQuery>
+//        chunkMap(const std::function<void(TSqlQuery &row)> &callback, qint64 count = 1000);
 
         /*! Chunk the results of a query by comparing IDs. */
         bool chunkById(qint64 count,

@@ -78,7 +78,7 @@ void SQLiteConnector::configureForeignKeyConstraints(const TSqlDatabase &connect
     const auto foreignKeyConstraints = TypeUtils::isTrue(config[foreign_key_constraints])
                                        ? ON : OFF;
 
-    QSqlQuery query(connection);
+    TSqlQuery query(connection);
     // FEATURE schema builder, use DatabaseConnection::statement(), to set recordsHaveBeenModied to true, foreign key constraints silverqx
     if (query.exec(QStringLiteral("PRAGMA foreign_keys = %1;")
                    .arg(foreignKeyConstraints)))

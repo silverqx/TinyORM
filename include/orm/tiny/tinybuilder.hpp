@@ -206,25 +206,25 @@ namespace Orm::Tiny
                              const QVector<AttributeItem> &values = {});
 
         /*! Update the column's update timestamp. */
-        std::tuple<int, std::optional<QSqlQuery>>
+        std::tuple<int, std::optional<TSqlQuery>>
         touch(const QString &column = "");
 
         /* QueryBuilder proxy methods that need modifications */
         /*! Update records in the database. */
-        std::tuple<int, QSqlQuery>
+        std::tuple<int, TSqlQuery>
         update(const QVector<UpdateItem> &values);
 
         /*! Delete records from the database. */
-        std::tuple<int, QSqlQuery> remove();
+        std::tuple<int, TSqlQuery> remove();
         /*! Delete records from the database, alias. */
-        inline std::tuple<int, QSqlQuery> deleteModels();
+        inline std::tuple<int, TSqlQuery> deleteModels();
 
         /*! Insert new records or update the existing ones. */
-        std::tuple<int, std::optional<QSqlQuery>>
+        std::tuple<int, std::optional<TSqlQuery>>
         upsert(const QVector<QVariantMap> &values, const QStringList &uniqueBy,
                const QStringList &update);
         /*! Insert new records or update the existing ones (update all columns). */
-        std::tuple<int, std::optional<QSqlQuery>>
+        std::tuple<int, std::optional<TSqlQuery>>
         upsert(const QVector<QVariantMap> &values, const QStringList &uniqueBy);
 
         /* Casting Attributes */
@@ -283,7 +283,7 @@ namespace Orm::Tiny
 
         /*! Register a replacement for the default delete function. */
         inline void
-        onDelete(std::function<std::tuple<int, QSqlQuery>(Builder<Model> &)> &&callback);
+        onDelete(std::function<std::tuple<int, TSqlQuery>(Builder<Model> &)> &&callback);
 
         /* BuildsSoftDeletes */
         /*! Apply the SoftDeletes where null condition for the deleted_at column. */
@@ -348,7 +348,7 @@ namespace Orm::Tiny
         QVector<WithItem> m_eagerLoad;
 
         /*! A replacement for the typical delete function. */
-        std::function<std::tuple<int, QSqlQuery>(Builder<Model> &)> m_onDelete = nullptr;
+        std::function<std::tuple<int, TSqlQuery>(Builder<Model> &)> m_onDelete = nullptr;
 
         /* BuildsSoftDeletes */
         /*! Determine whether the Model the TinyBuilder manages extends SoftDeletes. */
@@ -896,7 +896,7 @@ namespace Orm::Tiny
     }
 
     template<typename Model>
-    std::tuple<int, std::optional<QSqlQuery>>
+    std::tuple<int, std::optional<TSqlQuery>>
     Builder<Model>::touch(const QString &column)
     {
         auto time = m_model.freshTimestamp();
@@ -915,14 +915,14 @@ namespace Orm::Tiny
     /* QueryBuilder proxy methods that need modifications */
 
     template<typename Model>
-    std::tuple<int, QSqlQuery>
+    std::tuple<int, TSqlQuery>
     Builder<Model>::update(const QVector<UpdateItem> &values)
     {
         return toBase().update(addUpdatedAtColumn(values));
     }
 
     template<typename Model>
-    std::tuple<int, QSqlQuery> Builder<Model>::remove()
+    std::tuple<int, TSqlQuery> Builder<Model>::remove()
     {
         // Custom onDelete callback registered
         if (m_onDelete)
@@ -932,13 +932,13 @@ namespace Orm::Tiny
     }
 
     template<typename Model>
-    std::tuple<int, QSqlQuery> Builder<Model>::deleteModels()
+    std::tuple<int, TSqlQuery> Builder<Model>::deleteModels()
     {
         return remove();
     }
 
     template<typename Model>
-    std::tuple<int, std::optional<QSqlQuery>>
+    std::tuple<int, std::optional<TSqlQuery>>
     Builder<Model>::upsert(
             const QVector<QVariantMap> &values, const QStringList &uniqueBy,
             const QStringList &update)
@@ -959,7 +959,7 @@ namespace Orm::Tiny
     }
 
     template<typename Model>
-    std::tuple<int, std::optional<QSqlQuery>>
+    std::tuple<int, std::optional<TSqlQuery>>
     Builder<Model>::upsert(
             const QVector<QVariantMap> &values, const QStringList &uniqueBy)
     {
@@ -1224,7 +1224,7 @@ namespace Orm::Tiny
 
     template<typename Model>
     void Builder<Model>::onDelete(
-            std::function<std::tuple<int, QSqlQuery>(Builder<Model> &)> &&callback)
+            std::function<std::tuple<int, TSqlQuery>(Builder<Model> &)> &&callback)
     {
         m_onDelete = std::move(callback);
     }

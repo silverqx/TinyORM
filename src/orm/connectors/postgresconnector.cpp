@@ -79,7 +79,7 @@ void PostgresConnector::configureIsolationLevel(const TSqlDatabase &connection,
     if (!config.contains(isolation_level))
         return;
 
-    QSqlQuery query(connection);
+    TSqlQuery query(connection);
 
     if (query.exec(QStringLiteral("set session characteristics as "
                                   "transaction isolation level %1;")
@@ -96,7 +96,7 @@ void PostgresConnector::configureEncoding(const TSqlDatabase &connection,
     if (!config.contains(charset_))
         return;
 
-    QSqlQuery query(connection);
+    TSqlQuery query(connection);
 
     if (query.exec(QStringLiteral("set names '%1';")
                    .arg(config[charset_].value<QString>())))
@@ -122,7 +122,7 @@ void PostgresConnector::configureTimezone(const TSqlDatabase &connection,
     if (!config.contains(timezone_))
         return;
 
-    QSqlQuery query(connection);
+    TSqlQuery query(connection);
 
     static const std::set<QString, QStringLessCi> local {DEFAULT, LOCAL};
 
@@ -145,7 +145,7 @@ void PostgresConnector::configureSearchPath(const TSqlDatabase &connection,
     if (!config.contains(search_path))
         return;
 
-    QSqlQuery query(connection);
+    TSqlQuery query(connection);
 
     // Don't add the searchPath.isEmpty() check here to allow set "" (empty search path)
 
@@ -175,7 +175,7 @@ void PostgresConnector::configureApplicationName(const TSqlDatabase &connection,
     if (!config.contains("application_name"))
         return;
 
-    QSqlQuery query(connection);
+    TSqlQuery query(connection);
 
     if (query.exec(QStringLiteral("set application_name to '%1';")
                    .arg(config["application_name"].value<QString>())))
@@ -191,7 +191,7 @@ void PostgresConnector::configureSynchronousCommit(const TSqlDatabase &connectio
     if (!config.contains(synchronous_commit))
         return;
 
-    QSqlQuery query(connection);
+    TSqlQuery query(connection);
 
     if (query.exec(QStringLiteral("set synchronous_commit to '%1';")
                    .arg(config[synchronous_commit].value<QString>())))

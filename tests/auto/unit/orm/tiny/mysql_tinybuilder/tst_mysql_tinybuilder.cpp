@@ -201,7 +201,7 @@ void tst_MySql_TinyBuilder::touch_CustomColumn() const
 void tst_MySql_TinyBuilder::touch_NotUsesTimestamps() const
 {
     int affected = -1;
-    std::optional<QSqlQuery> query = std::nullopt;
+    std::optional<TSqlQuery> query = std::nullopt;
 
     auto log = DB::connection(m_connection).pretend([this, &affected, &query]
     {

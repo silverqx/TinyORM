@@ -51,7 +51,7 @@ DB::query(const QString &connection)
     return manager().connection(connection).query();
 }
 
-QSqlQuery DB::qtQuery(const QString &connection)
+TSqlQuery DB::qtQuery(const QString &connection)
 {
     return manager().connection(connection).getQtQuery();
 }
@@ -92,14 +92,14 @@ DB::insert(const QString &query, QVector<QVariant> bindings,
     return manager().connection(connection).insert(query, std::move(bindings));
 }
 
-std::tuple<int, QSqlQuery>
+std::tuple<int, TSqlQuery>
 DB::update(const QString &query, QVector<QVariant> bindings,
            const QString &connection)
 {
     return manager().connection(connection).update(query, std::move(bindings));
 }
 
-std::tuple<int, QSqlQuery>
+std::tuple<int, TSqlQuery>
 DB::remove(const QString &query, QVector<QVariant> bindings,
            const QString &connection)
 {
@@ -113,7 +113,7 @@ DB::statement(const QString &query, QVector<QVariant> bindings,
     return manager().connection(connection).statement(query, std::move(bindings));
 }
 
-std::tuple<int, QSqlQuery>
+std::tuple<int, TSqlQuery>
 DB::affectingStatement(const QString &query, QVector<QVariant> bindings,
                        const QString &connection)
 {

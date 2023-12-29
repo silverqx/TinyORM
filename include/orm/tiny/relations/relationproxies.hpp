@@ -213,32 +213,32 @@ namespace Tiny::Relations
                             const QString &sequence = "") const;
 
         /*! Insert a new record into the database while ignoring errors. */
-        std::tuple<int, std::optional<QSqlQuery>>
+        std::tuple<int, std::optional<TSqlQuery>>
         insertOrIgnore(const QVector<AttributeItem> &values) const;
         /*! Insert new records into the database while ignoring errors. */
-        std::tuple<int, std::optional<QSqlQuery>>
+        std::tuple<int, std::optional<TSqlQuery>>
         insertOrIgnore(const QVector<QVector<AttributeItem>> &values) const;
         /*! Insert new records into the database while ignoring errors (multi insert). */
-        std::tuple<int, std::optional<QSqlQuery>>
+        std::tuple<int, std::optional<TSqlQuery>>
         insertOrIgnore(const QVector<QString> &columns,
                        QVector<QVector<QVariant>> values) const;
 
         /*! Update records in the database. */
-        std::tuple<int, QSqlQuery>
+        std::tuple<int, TSqlQuery>
         update(const QVector<UpdateItem> &values) const;
 
         /*! Insert new records or update the existing ones. */
-        std::tuple<int, std::optional<QSqlQuery>>
+        std::tuple<int, std::optional<TSqlQuery>>
         upsert(const QVector<QVariantMap> &values, const QStringList &uniqueBy,
                const QStringList &update) const;
         /*! Insert new records or update the existing ones (update all columns). */
-        std::tuple<int, std::optional<QSqlQuery>>
+        std::tuple<int, std::optional<TSqlQuery>>
         upsert(const QVector<QVariantMap> &values, const QStringList &uniqueBy) const;
 
         /*! Delete records from the database. */
-        std::tuple<int, QSqlQuery> remove() const;
+        std::tuple<int, TSqlQuery> remove() const;
         /*! Delete records from the database. */
-        std::tuple<int, QSqlQuery> deleteModels() const;
+        std::tuple<int, TSqlQuery> deleteModels() const;
 
         /*! Run a truncate statement on the table. */
         void truncate() const;
@@ -827,12 +827,12 @@ namespace Tiny::Relations
         /* Others */
         /*! Increment a column's value by a given amount. */
         template<typename T = std::size_t> requires std::is_arithmetic_v<T>
-        std::tuple<int, QSqlQuery>
+        std::tuple<int, TSqlQuery>
         increment(const QString &column, T amount = 1,
                   const QVector<UpdateItem> &extra = {}) const;
         /*! Decrement a column's value by a given amount. */
         template<typename T = std::size_t> requires std::is_arithmetic_v<T>
-        std::tuple<int, QSqlQuery>
+        std::tuple<int, TSqlQuery>
         decrement(const QString &column, T amount = 1,
                   const QVector<UpdateItem> &extra = {}) const;
 
@@ -1012,12 +1012,12 @@ namespace Tiny::Relations
         const Relation<Model, Related> &onlyTrashed() const;
 
         /*! Restore all trashed models (calls update on deleted_at column). */
-        std::tuple<int, QSqlQuery> restore() const;
+        std::tuple<int, TSqlQuery> restore() const;
         /*! Run the default delete function on the builder (sidestep soft deleting). */
-        std::tuple<int, QSqlQuery> forceDelete() const;
+        std::tuple<int, TSqlQuery> forceDelete() const;
         /*! Run the default delete function on the builder (sidestep soft deleting),
             alias. */
-        std::tuple<int, QSqlQuery> forceRemove() const;
+        std::tuple<int, TSqlQuery> forceRemove() const;
 
         /* Casting Attributes */
         /*! Apply query-time casts to the model instance. */
@@ -1431,7 +1431,7 @@ namespace Tiny::Relations
     }
 
     template<class Model, class Related>
-    std::tuple<int, std::optional<QSqlQuery>>
+    std::tuple<int, std::optional<TSqlQuery>>
     RelationProxies<Model, Related>::insertOrIgnore(
             const QVector<AttributeItem> &values) const
     {
@@ -1439,7 +1439,7 @@ namespace Tiny::Relations
     }
 
     template<class Model, class Related>
-    std::tuple<int, std::optional<QSqlQuery>>
+    std::tuple<int, std::optional<TSqlQuery>>
     RelationProxies<Model, Related>::insertOrIgnore(
             const QVector<QVector<AttributeItem>> &values) const
     {
@@ -1447,7 +1447,7 @@ namespace Tiny::Relations
     }
 
     template<class Model, class Related>
-    std::tuple<int, std::optional<QSqlQuery>>
+    std::tuple<int, std::optional<TSqlQuery>>
     RelationProxies<Model, Related>::insertOrIgnore(
             const QVector<QString> &columns, QVector<QVector<QVariant>> values) const
     {
@@ -1455,14 +1455,14 @@ namespace Tiny::Relations
     }
 
     template<class Model, class Related>
-    std::tuple<int, QSqlQuery>
+    std::tuple<int, TSqlQuery>
     RelationProxies<Model, Related>::update(const QVector<UpdateItem> &values) const
     {
         return getQuery().update(values);
     }
 
     template<class Model, class Related>
-    std::tuple<int, std::optional<QSqlQuery>>
+    std::tuple<int, std::optional<TSqlQuery>>
     RelationProxies<Model, Related>::upsert(
             const QVector<QVariantMap> &values, const QStringList &uniqueBy,
             const QStringList &update) const
@@ -1471,7 +1471,7 @@ namespace Tiny::Relations
     }
 
     template<class Model, class Related>
-    std::tuple<int, std::optional<QSqlQuery>>
+    std::tuple<int, std::optional<TSqlQuery>>
     RelationProxies<Model, Related>::upsert(
             const QVector<QVariantMap> &values, const QStringList &uniqueBy) const
     {
@@ -1479,14 +1479,14 @@ namespace Tiny::Relations
     }
 
     template<class Model, class Related>
-    std::tuple<int, QSqlQuery>
+    std::tuple<int, TSqlQuery>
     RelationProxies<Model, Related>::remove() const
     {
         return getQuery().remove();
     }
 
     template<class Model, class Related>
-    std::tuple<int, QSqlQuery>
+    std::tuple<int, TSqlQuery>
     RelationProxies<Model, Related>::deleteModels() const
     {
         return getQuery().deleteModels();
@@ -3030,7 +3030,7 @@ namespace Tiny::Relations
 
     template<class Model, class Related>
     template<typename T> requires std::is_arithmetic_v<T>
-    std::tuple<int, QSqlQuery>
+    std::tuple<int, TSqlQuery>
     RelationProxies<Model, Related>::increment(const QString &column, const T amount,
                                                const QVector<UpdateItem> &extra) const
     {
@@ -3039,7 +3039,7 @@ namespace Tiny::Relations
 
     template<class Model, class Related>
     template<typename T> requires std::is_arithmetic_v<T>
-    std::tuple<int, QSqlQuery>
+    std::tuple<int, TSqlQuery>
     RelationProxies<Model, Related>::decrement(const QString &column, const T amount,
                                                const QVector<UpdateItem> &extra) const
     {
@@ -3382,21 +3382,21 @@ namespace Tiny::Relations
     }
 
     template<class Model, class Related>
-    std::tuple<int, QSqlQuery>
+    std::tuple<int, TSqlQuery>
     RelationProxies<Model, Related>::restore() const
     {
         return getQuery().restore();
     }
 
     template<class Model, class Related>
-    std::tuple<int, QSqlQuery>
+    std::tuple<int, TSqlQuery>
     RelationProxies<Model, Related>::forceDelete() const
     {
         return getQuery().forceDelete();
     }
 
     template<class Model, class Related>
-    std::tuple<int, QSqlQuery>
+    std::tuple<int, TSqlQuery>
     RelationProxies<Model, Related>::forceRemove() const
     {
         return getQuery().forceRemove();

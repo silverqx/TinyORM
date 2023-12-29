@@ -135,7 +135,7 @@ private:
     /*! Create a QueryBuilder instance for the given connection. */
     [[nodiscard]] inline std::shared_ptr<QueryBuilder> createQuery() const;
     /*! Create a raw QSqlQuery instance for the given connection. */
-    [[nodiscard]] inline QSqlQuery createQtQuery() const;
+    [[nodiscard]] inline TSqlQuery createQtQuery() const;
 
     /* QDateTime with/without timezone */
     /*! Set the PostgreSQL timezone session variable to the UTC value. */
@@ -2744,7 +2744,7 @@ tst_PostgreSQL_QDateTime::createQuery() const
     return DB::query(m_connection);
 }
 
-QSqlQuery tst_PostgreSQL_QDateTime::createQtQuery() const
+TSqlQuery tst_PostgreSQL_QDateTime::createQtQuery() const
 {
     return DB::qtQuery(m_connection);
 }

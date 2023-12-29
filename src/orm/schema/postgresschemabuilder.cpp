@@ -248,7 +248,7 @@ const QSet<QString> &PostgresSchemaBuilder::excludedViews() const
 }
 
 std::tuple<QString, QString>
-PostgresSchemaBuilder::columnValuesForDrop(QSqlQuery &query)
+PostgresSchemaBuilder::columnValuesForDrop(TSqlQuery &query)
 {
     return {query.value(0).value<QString>(),
             query.value(QStringLiteral("qualifiedname"))

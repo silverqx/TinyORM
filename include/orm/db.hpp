@@ -63,7 +63,7 @@ namespace Orm
         /*! Get a new query builder instance for the connection. */
         static std::shared_ptr<QueryBuilder> query(const QString &connection = "");
         /*! Get a new QSqlQuery instance for the connection. */
-        static QSqlQuery qtQuery(const QString &connection = "");
+        static TSqlQuery qtQuery(const QString &connection = "");
 
         /*! Run a select statement against the database. */
         static SqlQuery
@@ -88,11 +88,11 @@ namespace Orm
         insert(const QString &query, QVector<QVariant> bindings = {},
                const QString &connection = "");
         /*! Run an update statement against the database. */
-        static std::tuple<int, QSqlQuery>
+        static std::tuple<int, TSqlQuery>
         update(const QString &query, QVector<QVariant> bindings = {},
                const QString &connection = "");
         /*! Run a delete statement against the database. */
-        static std::tuple<int, QSqlQuery>
+        static std::tuple<int, TSqlQuery>
         remove(const QString &query, QVector<QVariant> bindings = {},
                const QString &connection = "");
 
@@ -101,7 +101,7 @@ namespace Orm
         statement(const QString &query, QVector<QVariant> bindings = {},
                   const QString &connection = "");
         /*! Run an SQL statement and get the number of rows affected. */
-        static std::tuple<int, QSqlQuery>
+        static std::tuple<int, TSqlQuery>
         affectingStatement(const QString &query, QVector<QVariant> bindings = {},
                            const QString &connection = "");
 

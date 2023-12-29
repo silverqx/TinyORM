@@ -38,10 +38,10 @@ namespace Concerns
         inline virtual ~LogsQueries() = 0;
 
         /*! Log a query into the connection's query log. */
-        inline void logQuery(QSqlQuery &query, std::optional<qint64> elapsed,
+        inline void logQuery(TSqlQuery &query, std::optional<qint64> elapsed,
                              const QString &type) const;
         /*! Log a query into the connection's query log. */
-        inline void logQuery(std::tuple<int, QSqlQuery> &queryResult,
+        inline void logQuery(std::tuple<int, TSqlQuery> &queryResult,
                              std::optional<qint64> elapsed, const QString &type) const;
         /*! Log a query into the connection's query log in the pretending mode. */
         void logQueryForPretend(const QString &query,
@@ -97,7 +97,7 @@ namespace Concerns
 
     private:
         /*! Log a query into the connection's query log. */
-        void logQueryInternal(QSqlQuery &query, std::optional<qint64> elapsed,
+        void logQueryInternal(TSqlQuery &query, std::optional<qint64> elapsed,
                               const QString &type) const;
 
         /*! Convert a named bindings map to the positional bindings vector. */
@@ -118,14 +118,14 @@ namespace Concerns
     LogsQueries::~LogsQueries() = default;
 
     void LogsQueries::logQuery(
-            QSqlQuery &queryResult, std::optional<qint64> elapsed,
+            TSqlQuery &queryResult, std::optional<qint64> elapsed,
             const QString &type) const
     {
         logQueryInternal(queryResult, elapsed, type);
     }
 
     void LogsQueries::logQuery(
-            std::tuple<int, QSqlQuery> &queryResult,
+            std::tuple<int, TSqlQuery> &queryResult,
             std::optional<qint64> elapsed, const QString &type) const
     {
         logQueryInternal(std::get<1>(queryResult), elapsed, type);

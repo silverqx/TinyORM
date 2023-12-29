@@ -145,7 +145,7 @@ LogsQueries::withFreshQueryLog(const std::function<QVector<Log>()> &callback)
 /* private */
 
 void LogsQueries::logQueryInternal(
-        QSqlQuery &query, const std::optional<qint64> elapsed,
+        TSqlQuery &query, const std::optional<qint64> elapsed,
 #ifdef TINYORM_DEBUG_SQL
         const QString &type) const
 #else

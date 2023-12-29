@@ -74,7 +74,7 @@ namespace Concerns
         inline Builder<Model> &onlyTrashed();
 
         /*! Restore all trashed models (call update on deleted_at column, set to null). */
-        std::tuple<int, QSqlQuery> restore();
+        std::tuple<int, TSqlQuery> restore();
 
         /*! Alias for the WithoutTrashed constraint. */
         constexpr static auto WithoutTrashed = TrashedType::WITHOUT_TRASHED;
@@ -205,7 +205,7 @@ namespace Concerns
     }
 
     template<ModelConcept Model, bool T>
-    std::tuple<int, QSqlQuery>
+    std::tuple<int, TSqlQuery>
     BuildsSoftDeletes<Model, T>::restore()
     {
         withTrashed();
