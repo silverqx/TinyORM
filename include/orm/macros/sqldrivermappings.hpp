@@ -44,11 +44,13 @@ C preprocessor macro to select the SQL drivers to use.
 #  define TINY_INCLUDE_TSqlQuery    <QtSql/QSqlQuery>
 #  define TINY_INCLUDE_TSqlRecord   <QtSql/QSqlRecord>
 // Types
-#  define TSqlDatabase QSqlDatabase
-#  define TSqlDriver   QSqlDriver
-#  define TSqlError    QSqlError
-#  define TSqlQuery    QSqlQuery
-#  define TSqlRecord   QSqlRecord
+#  define TCursorPosition  QSql
+#  define TPrecisionPolicy QSql
+#  define TSqlDatabase     QSqlDatabase
+#  define TSqlDriver       QSqlDriver
+#  define TSqlError        QSqlError
+#  define TSqlQuery        QSqlQuery
+#  define TSqlRecord       QSqlRecord
 // #  define TSqlDatabase QT_PREPEND_NAMESPACE(QSqlDatabase)
 // #  define TSqlDriver   QT_PREPEND_NAMESPACE(QSqlDriver)
 // #  define TSqlError    QT_PREPEND_NAMESPACE(QSqlError)
@@ -64,11 +66,14 @@ C preprocessor macro to select the SQL drivers to use.
 #  define TINY_INCLUDE_TSqlQuery    <orm/drivers/sqlquery.hpp>
 #  define TINY_INCLUDE_TSqlRecord   <orm/drivers/sqlrecord.hpp>
 // Types
-#  define TSqlDatabase TINYORM_PREPEND_NAMESPACE(Orm::Drivers::SqlDatabase)
-#  define TSqlDriver   TINYORM_PREPEND_NAMESPACE(Orm::Drivers::SqlDriver)
-#  define TSqlError    TINYORM_PREPEND_NAMESPACE(Orm::Drivers::SqlError)
-#  define TSqlQuery    TINYORM_PREPEND_NAMESPACE(Orm::Drivers::SqlQuery)
-#  define TSqlRecord   TINYORM_PREPEND_NAMESPACE(Orm::Drivers::SqlRecord)
+#  define TCursorPosition  TINYORM_PREPEND_NAMESPACE(Orm::Drivers::CursorPosition)
+#  define TPrecisionPolicy TINYORM_PREPEND_NAMESPACE(Orm::Drivers \
+                                                        ::NumericalPrecisionPolicy)
+#  define TSqlDatabase     TINYORM_PREPEND_NAMESPACE(Orm::Drivers::SqlDatabase)
+#  define TSqlDriver       TINYORM_PREPEND_NAMESPACE(Orm::Drivers::SqlDriver)
+#  define TSqlError        TINYORM_PREPEND_NAMESPACE(Orm::Drivers::SqlError)
+#  define TSqlQuery        TINYORM_PREPEND_NAMESPACE(Orm::Drivers::SqlQuery)
+#  define TSqlRecord       TINYORM_PREPEND_NAMESPACE(Orm::Drivers::SqlRecord)
 #endif
 
 #endif // ORM_MACROS_SQLDRIVERMAPPINGS_HPP

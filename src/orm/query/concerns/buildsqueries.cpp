@@ -126,7 +126,7 @@ bool BuildsQueries::chunkById(
         results.last();
         lastId = results.value(aliasName);
         // Restore a cursor position
-        results.seek(QSql::BeforeFirstRow);
+        results.seek(TCursorPosition::BeforeFirstRow);
 
         /* And this check can also be made before a callback invocation, it saves
            the unnecessary invocation if the lastId is invalid. It also helps to avoid

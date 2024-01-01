@@ -435,7 +435,7 @@ void tst_DatabaseConnection::transaction_Savepoints_Commit_AllSuccess() const
         QCOMPARE(query.value(NOTE).value<QString>(), noteValue);
     }
 
-    QVERIFY(!query.seek(QSql::BeforeFirstRow));
+    QVERIFY(!query.seek(TCursorPosition::BeforeFirstRow));
 
     // Clean up
     while (query.next())
@@ -529,7 +529,7 @@ void tst_DatabaseConnection::transaction_Savepoints_Commit_OneFailed() const
         QCOMPARE(query.value(NOTE).value<QString>(), noteValue);
     }
 
-    QVERIFY(!query.seek(QSql::BeforeFirstRow));
+    QVERIFY(!query.seek(TCursorPosition::BeforeFirstRow));
 
     // Clean up
     while (query.next())

@@ -77,7 +77,7 @@ int Query::queryResultSize(TSqlQuery &query)
     // Backup the current cursor position
     const auto currentCursor = query.at();
 
-    query.seek(QSql::BeforeFirstRow);
+    query.seek(TCursorPosition::BeforeFirstRow);
 
     // Count manually
     int size = 0;
