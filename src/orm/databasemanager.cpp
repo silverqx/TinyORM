@@ -416,8 +416,15 @@ std::size_t DatabaseManager::openedConnectionsSize() const noexcept
 
 QStringList DatabaseManager::supportedDrivers() const // NOLINT(readability-convert-member-functions-to-static)
 {
+#ifdef TINYORM_USING_QTSQLDRIVERS
     // aaaaaaaaaaaaaachjo 🤔😁 -- 4 months later, looks much better, right?
     return {QMYSQL, QPSQL, QSQLITE};
+#elif defined(TINYORM_USING_TINYDRIVERS)
+    // aaaaaaaaaaaaaachjo 🤔
+    return {QMYSQL/*, QPSQL, QSQLITE*/};
+#else
+#  error Missing include "orm/macros/sqldrivermappings.hpp".
+#endif
 }
 
 QStringList DatabaseManager::drivers() const // NOLINT(readability-convert-member-functions-to-static)
