@@ -116,7 +116,16 @@ SqlResult::setNumericalPrecisionPolicy(const NumericalPrecisionPolicy precision)
     d->precisionPolicy = precision;
 }
 
-std::weak_ptr<const SqlDriver> SqlResult::driver() const noexcept
+/* See the note near the DatabaseManager/SqlQuery::driver() method about
+   driver() vs driverWeak(). */
+
+const SqlDriver *SqlResult::driver() const noexcept
+{
+    Q_D(const SqlResult);
+    return d->sqldriver.lock().get();
+}
+
+std::weak_ptr<const SqlDriver> SqlResult::driverWeak() const noexcept
 {
     Q_D(const SqlResult);
     return d->sqldriver;

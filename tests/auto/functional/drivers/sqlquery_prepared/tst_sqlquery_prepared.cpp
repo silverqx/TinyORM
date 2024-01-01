@@ -520,7 +520,7 @@ void tst_SqlQuery_Prepared::insert_update_delete() const
 
 SqlQuery tst_SqlQuery_Prepared::createQuery(const QString &/*unused*/) const
 {
-    const auto driver = SqlDatabase::database(Databases::MYSQL).driver();
+    const auto driver = SqlDatabase::database(Databases::MYSQL).driverWeak();
 
     return SqlQuery(driver.lock()->createResult(driver));
 }

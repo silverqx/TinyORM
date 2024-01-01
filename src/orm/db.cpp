@@ -177,10 +177,20 @@ bool DB::pingDatabase(const QString &connection)
     return manager().connection(connection).pingDatabase();
 }
 
-TSqlDriver *DB::driver(const QString &connection)
+/* See the note near the DatabaseManager/SqlQuery::driver() method about
+   driver() vs driverWeak(). */
+
+const TSqlDriver *DB::driver(const QString &connection)
 {
     return manager().connection(connection).driver();
 }
+
+#ifdef TINYORM_USING_TINYDRIVERS
+std::weak_ptr<const TSqlDriver> DB::driverWeak(const QString &connection)
+{
+    return manager().connection(connection).driverWeak();
+}
+#endif
 
 /* Proxy methods to the DatabaseManager */
 

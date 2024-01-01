@@ -71,7 +71,10 @@ namespace Orm::Drivers
         /*! Set the numerical precision policy for the current query. */
         void setNumericalPrecisionPolicy(NumericalPrecisionPolicy precision);
 
-        std::weak_ptr<const SqlDriver> driver() const noexcept;
+        /*! Get the SQL database driver used to access the database connection (const). */
+        const SqlDriver *driver() const noexcept;
+        /*! Get the SQL database driver used to access the database connection (const). */
+        std::weak_ptr<const SqlDriver> driverWeak() const noexcept;
 
         /* Normal queries */
         /*! Execute the given SQL query (non-prepared only). */
@@ -138,8 +141,8 @@ namespace Orm::Drivers
 
     private:
         /* Getters / Setters */
-        /*! Get the database driver associated with the query. */
-        std::weak_ptr<SqlDriver> driver() noexcept;
+        /*! Get the SQL database driver used to access the database connection. */
+        std::weak_ptr<SqlDriver> driverWeak() noexcept;
 
         /* Result sets */
         /*! Normal seek. */

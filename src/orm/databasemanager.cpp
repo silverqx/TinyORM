@@ -244,10 +244,24 @@ bool DatabaseManager::pingDatabase(const QString &connection)
     return this->connection(connection).pingDatabase();
 }
 
-TSqlDriver *DatabaseManager::driver(const QString &connection)
+/* The TinyDrivers uses smart pointers everywhere and because of this the driverWeak()
+   method exists. The reason why the TSqlDriver *driver() also exists is because that's
+   how the QtSql module works so it can't be removed.
+   So if the TinyOrm library is linked against the QtSql module, only the driver() method
+   will be defined. If the TinyOrm library is linked against the TinyDrivers library,
+   both methods will be defined. */
+
+const TSqlDriver *DatabaseManager::driver(const QString &connection)
 {
     return this->connection(connection).driver();
 }
+
+#ifdef TINYORM_USING_TINYDRIVERS
+std::weak_ptr<const TSqlDriver> DatabaseManager::driverWeak(const QString &connection)
+{
+    return this->connection(connection).driverWeak();
+}
+#endif
 
 /* DatabaseManager */
 

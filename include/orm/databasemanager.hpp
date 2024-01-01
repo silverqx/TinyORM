@@ -136,8 +136,12 @@ namespace Query
         /*! Check database connection and show warnings when the state changed. */
         bool pingDatabase(const QString &connection = "");
 
-        /*! Returns the database driver used to access the database connection. */
-        TSqlDriver *driver(const QString &connection = "");
+        /*! Get the SQL database driver used to access the database connection (const). */
+        const TSqlDriver *driver(const QString &connection = "");
+#ifdef TINYORM_USING_TINYDRIVERS
+        /*! Get the SQL database driver used to access the database connection (const). */
+        std::weak_ptr<const TSqlDriver> driverWeak(const QString &connection = "");
+#endif
 
         /* DatabaseManager */
         /*! Obtain a shared pointer to the DatabaseManager. */

@@ -410,10 +410,23 @@ bool DatabaseConnection::pingDatabase()
                 .arg(driverName()));
 }
 
-TSqlDriver *DatabaseConnection::driver()
+/* See the note near the DatabaseManager/SqlQuery::driver() method about
+   driver() vs driverWeak(). */
+
+const TSqlDriver *DatabaseConnection::driver()
 {
     return getQtConnection().driver();
 }
+
+#ifdef TINYORM_USING_TINYDRIVERS
+std::weak_ptr<const TSqlDriver> DatabaseConnection::driverWeak()
+{
+    // To select the driverWeak() const overload
+    const auto connection = getQtConnection();
+
+    return connection.driverWeak();
+}
+#endif
 
 void DatabaseConnection::reconnectIfMissingConnection() const
 {
