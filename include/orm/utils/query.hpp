@@ -13,7 +13,7 @@ TINY_SYSTEM_HEADER
 #include "orm/macros/sqldrivermappings.hpp"
 #include "orm/utils/helpers.hpp"
 
-class TSqlQuery;
+TINY_FORWARD_DECLARE_TSqlQuery
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 

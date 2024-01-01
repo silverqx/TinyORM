@@ -11,7 +11,7 @@ TINY_SYSTEM_HEADER
 #include "orm/macros/export.hpp"
 #include "orm/macros/sqldrivermappings.hpp"
 
-class TSqlError;
+TINY_FORWARD_DECLARE_TSqlError
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 

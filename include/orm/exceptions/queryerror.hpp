@@ -9,7 +9,7 @@ TINY_SYSTEM_HEADER
 
 #include "orm/exceptions/sqlerror.hpp"
 
-class TSqlQuery;
+TINY_FORWARD_DECLARE_TSqlQuery
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
