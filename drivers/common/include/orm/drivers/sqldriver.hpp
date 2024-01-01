@@ -69,11 +69,11 @@ namespace Orm::Drivers
             UnknownDbms,
             /*! MySQL database driver. */
             MySqlServer,
-            // Not implemented yet :/
+            // Not implemented yet :/ (must be defined because eg. Orm::SqlQuery use it)
             /*! PostgreSQL database driver. */
-            // PostgreSQL,
+            PostgreSQL,
             /*! SQLite database driver. */
-            // SQLite,
+            SQLite,
         };
 
         /*! Pure virtual destructor. */
