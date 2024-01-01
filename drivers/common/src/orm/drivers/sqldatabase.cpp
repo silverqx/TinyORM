@@ -178,7 +178,27 @@ SqlDatabase::setNumericalPrecisionPolicy(const NumericalPrecisionPolicy precisio
     d->precisionPolicy = precision;
 }
 
-std::weak_ptr<SqlDriver> SqlDatabase::driver() const noexcept
+/* See the note near the DatabaseManager/SqlQuery::driver() method about
+   driver() vs driverWeak(). */
+
+const SqlDriver *SqlDatabase::driver() const noexcept
+{
+    return d->sqldriver.get();
+}
+
+std::weak_ptr<const SqlDriver> SqlDatabase::driverWeak() const noexcept
+{
+    return d->sqldriver;
+}
+
+/* The reason why the driverWeak() non-const method is exposed only here and isn't also
+   exposed in the Drivers::SqlQuery/SqlResult is to be able to instantiate the SqlQuery
+   manually like this:
+const auto driver = SqlDatabase::database(Databases::MYSQL).driverWeak();
+SqlQuery query(driver.lock()->createResult(driver));
+*/
+
+std::weak_ptr<SqlDriver> SqlDatabase::driverWeak() noexcept
 {
     return d->sqldriver;
 }

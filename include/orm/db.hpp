@@ -133,8 +133,12 @@ namespace Orm
         /*! Check database connection and show warnings when the state changed. */
         static bool pingDatabase(const QString &connection = "");
 
-        /*! Returns the database driver used to access the database connection. */
-        static TSqlDriver *driver(const QString &connection = "");
+        /*! Get the SQL database driver used to access the database connection (const). */
+        static const TSqlDriver *driver(const QString &connection = "");
+#ifdef TINYORM_USING_TINYDRIVERS
+        /*! Get the SQL database driver used to access the database connection (const). */
+        static std::weak_ptr<const TSqlDriver> driverWeak(const QString &connection = "");
+#endif
 
         /* Proxy methods to the DatabaseManager */
         /*! Get a database connection instance. */

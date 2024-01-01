@@ -94,7 +94,18 @@ void SqlQuery::setNumericalPrecisionPolicy(const NumericalPrecisionPolicy precis
     m_sqlResult->setNumericalPrecisionPolicy(precision);
 }
 
-std::weak_ptr<const SqlDriver> SqlQuery::driver() const noexcept
+/* The reason why the non-const methods are not provided is because they are not needed,
+   everything can be accessed through getter-s, setter-s, or other methods and if
+   something is not accessible then it has to be exposed through some method. */
+
+const SqlDriver *SqlQuery::driver() const noexcept
+{
+    /* I must provide this raw pointer method to have compatible API with QtSql and that
+       users can avoid #ifdef-s in their code. There is no way to remove this method. */
+    return m_sqlResult->driver().lock().get();
+}
+
+std::weak_ptr<const SqlDriver> SqlQuery::driverWeak() const noexcept
 {
     /* This must be the std::weak_ptr() because when the connection is removed from
        the SqlDatabaseManager using the SqlDatabase::removeDatabase() then the SqlDriver
@@ -111,7 +122,7 @@ bool SqlQuery::exec(const QString &query)
     if (query.isEmpty())
         throw std::exception("SqlQuery::exec: empty query");
 
-    if (const auto driver = this->driver().lock();
+    if (const auto driver = this->driverWeak().lock();
         !driver->isOpen() || driver->isOpenError()
     ) {
         qWarning("SqlQuery::exec: database not open");
@@ -151,7 +162,7 @@ bool SqlQuery::prepare(const QString &query)
     if (query.isEmpty())
         throw std::exception("SqlQuery::exec: empty query");
 
-    if (const auto driver = this->driver().lock();
+    if (const auto driver = this->driverWeak().lock();
         !driver->isOpen() || driver->isOpenError()
     ) {
         qWarning("SqlQuery::prepare: database not open");
@@ -376,7 +387,9 @@ bool SqlQuery::isNull(const QString &name) const
 int SqlQuery::size() const
 {
     // Nothing to do
-    if (!driver().lock()->hasFeature(SqlDriver::QuerySize) || !isSelect() || !isActive())
+    if (!driverWeak().lock()->hasFeature(SqlDriver::QuerySize) ||
+        !isSelect() || !isActive()
+    )
         return -1;
 
     return m_sqlResult->size();
@@ -395,7 +408,7 @@ int SqlQuery::numRowsAffected() const
 
 void SqlQuery::clear()
 {
-    const auto driver = this->driver();
+    const auto driver = driverWeak();
 
     // CUR drivers revisit, maybe clear everything manually? What happens with current values, is below correct? silverqx
     // Get the SqlResult instance
@@ -420,10 +433,10 @@ void SqlQuery::finish()
 
 /* Getters / Setters */
 
-/* Leave the non-const driver() private, it's correct, it's not needed anywhere and is
-   for special cases only. */
+/* Leave the non-const driverWeak() private, it's correct, it's not needed anywhere and
+   is for special cases only. */
 
-std::weak_ptr<SqlDriver> SqlQuery::driver() noexcept
+std::weak_ptr<SqlDriver> SqlQuery::driverWeak() noexcept
 {
     /* This must be the std::weak_ptr() because when the connection is removed from
        the SqlDatabaseManager using the SqlDatabase::removeDatabase() then the SqlDriver
@@ -524,7 +537,7 @@ std::unique_ptr<SqlResult> SqlQuery::initSqlResult(const SqlDatabase &connection
         // CUR drivers throw is the default connection is not valid silverqx
         throw std::exception("No database connection available (isn't valid).");
 
-    const auto driver = connection.driver();
+    const auto driver = const_cast<SqlDatabase &>(connection).driverWeak();
 
     // Get the SqlResult instance
     return driver.lock()->createResult(driver);

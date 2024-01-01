@@ -107,8 +107,12 @@ namespace Orm::Drivers
         /*! Set the numerical precision policy for the current connection. */
         void setNumericalPrecisionPolicy(NumericalPrecisionPolicy precision);
 
-        /*! Get the database driver used to access the database connection. */
-        std::weak_ptr<SqlDriver> driver() const noexcept;
+        /*! Get the SQL database driver used to access the database connection (const). */
+        const SqlDriver *driver() const noexcept;
+        /*! Get the SQL database driver used to access the database connection (const). */
+        std::weak_ptr<const SqlDriver> driverWeak() const noexcept;
+        /*! Get the SQL database driver used to access the database connection. */
+        std::weak_ptr<SqlDriver> driverWeak() noexcept;
 
         /*! Disable the different thread check during SqlDatabase::database() call. */
         static void disableThreadCheck() noexcept;

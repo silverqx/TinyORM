@@ -169,9 +169,21 @@ bool MySqlConnection::pingDatabase()
 #ifdef TINYORM_MYSQL_PING
     auto qtConnection = getQtConnection();
 
-    const auto getMysqlHandle = [&qtConnection]() -> MYSQL *
+    const auto getDriverHandle = [&qtConnection = std::as_const(qtConnection)]()
+                                 -> QVariant
     {
-        auto driverHandle = qtConnection.driver()->handle();
+#ifdef TINYORM_USING_QTSQLDRIVERS
+        return qtConnection.driver()->handle();
+#elif defined(TINYORM_USING_TINYDRIVERS)
+        return qtConnection.driverWeak().lock()->handle();
+#else
+#  error Missing include "orm/macros/sqldrivermappings.hpp".
+#endif
+    };
+
+    const auto getMysqlHandle = [&getDriverHandle]() -> MYSQL *
+    {
+        auto driverHandle = std::invoke(getDriverHandle);
         const auto *typeName = driverHandle.typeName();
 
         // MYSQL* for MySQL client and st_mysql* for MariaDB client
@@ -181,9 +193,9 @@ bool MySqlConnection::pingDatabase()
         return nullptr;
     };
 
-    const auto mysqlPing = [getMysqlHandle]() -> bool
+    const auto mysqlPing = [&getMysqlHandle]() -> bool
     {
-        auto *mysqlHandle = getMysqlHandle();
+        auto *mysqlHandle = std::invoke(getMysqlHandle);
         if (mysqlHandle == nullptr)
             return false;
 
@@ -207,7 +219,7 @@ bool MySqlConnection::pingDatabase()
         return false;
     };
 
-    if (qtConnection.isOpen() && mysqlPing()) {
+    if (qtConnection.isOpen() && std::invoke(mysqlPing)) {
         logConnected();
         return true;
     }

@@ -85,7 +85,8 @@ namespace Support
         createSqlDatabasePrivate(std::shared_ptr<SqlDriver> &&driver);
 
         /* Data members */
-        // It's shared_ptr because of the SqlDatabase::driver()
+        /* It's shared_ptr because of the SqlDatabase::driverWeak(),
+           see the SqlQuery::driverWeak() for more details. */
         /*! Database driver instance. */
         std::shared_ptr<SqlDriver> sqldriver;
 

@@ -319,7 +319,7 @@ void SqlDatabasePrivate::throwIfDifferentThread(const SqlDatabase &db,
     /* Nothing to do, the thread check is disabled or a connection was created
        in the same thread as the current thread. */
     if (!checkDifferentThread() ||
-        db.driver().lock()->threadId() == std::this_thread::get_id()
+        db.driverWeak().lock()->threadId() == std::this_thread::get_id()
     )
         return;
 

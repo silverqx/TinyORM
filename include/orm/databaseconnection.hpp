@@ -5,6 +5,9 @@
 #include "orm/macros/systemheader.hpp"
 TINY_SYSTEM_HEADER
 
+#include "orm/macros/sqldrivermappings.hpp"
+#include TINY_INCLUDE_TSqlDatabase
+
 #include "orm/concerns/countsqueries.hpp"
 #include "orm/concerns/detectslostconnections.hpp"
 #include "orm/concerns/logsqueries.hpp"
@@ -162,8 +165,12 @@ namespace Orm
         /*! Check database connection and show warnings when the state changed. */
         virtual bool pingDatabase();
 
-        /*! Returns the database driver used to access the database connection. */
-        TSqlDriver *driver();
+        /*! Get the SQL database driver used to access the database connection (const). */
+        const TSqlDriver *driver();
+#ifdef TINYORM_USING_TINYDRIVERS
+        /*! Get the SQL database driver used to access the database connection (const). */
+        std::weak_ptr<const TSqlDriver> driverWeak();
+#endif
 
         /*! Force connection to the database (creates physical connection), doesn't have
             to be called before querying a database. */

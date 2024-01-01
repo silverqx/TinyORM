@@ -13,6 +13,21 @@ using Orm::Utils::Helpers;
 namespace Orm::Types
 {
 
+namespace
+{
+    /*! Determine whether the underlying SQL driver for the given SqlQuery is SQLite. */
+    const auto isSQLiteDbmsType = [](const SqlQuery &query) -> bool
+    {
+#ifdef TINYORM_USING_QTSQLDRIVERS
+        return query.driver()->dbmsType() == TSqlDriver::DbmsType::SQLite;
+#elif defined(TINYORM_USING_TINYDRIVERS)
+        return query.driverWeak().lock()->dbmsType() == TSqlDriver::DbmsType::SQLite;
+#else
+#  error Missing include "orm/macros/sqldrivermappings.hpp".
+#endif
+    };
+} // namespace
+
 /* public */
 
 SqlQuery::SqlQuery(TSqlQuery &&other, const QtTimeZoneConfig &qtTimeZone, // NOLINT(modernize-pass-by-value,cppcoreguidelines-rvalue-reference-param-not-moved)
@@ -26,7 +41,7 @@ SqlQuery::SqlQuery(TSqlQuery &&other, const QtTimeZoneConfig &qtTimeZone, // NOL
 #endif
     , m_qtTimeZone(qtTimeZone)
     , m_isConvertingTimeZone(m_qtTimeZone.type != QtTimeZoneType::DontConvert)
-    , m_isSQLiteDb(driver()->dbmsType() == TSqlDriver::DbmsType::SQLite)
+    , m_isSQLiteDb(isSQLiteDbmsType(*this))
     // Following two are need by SQLite only
     , m_dateFormat(m_isSQLiteDb ? std::make_optional(queryGrammar.getDateFormat())
                                 : std::nullopt)

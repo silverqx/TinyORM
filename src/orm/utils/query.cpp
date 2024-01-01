@@ -65,13 +65,28 @@ Query::zipForInsert(const QVector<QString> &columns,
     return zippedValues;
 }
 
+namespace
+{
+    /*! Determine whether the underlying query driver has the QuerySize feature. */
+    const auto hasFeatureQuerySize = [](const TSqlQuery &query) -> bool
+    {
+#ifdef TINYORM_USING_QTSQLDRIVERS
+        return query.driver()->hasFeature(TSqlDriver::QuerySize);
+#elif defined(TINYORM_USING_TINYDRIVERS)
+        return query.driverWeak().lock()->hasFeature(TSqlDriver::QuerySize);
+#else
+#  error Missing include "orm/macros/sqldrivermappings.hpp".
+#endif
+    };
+} // namespace
+
 int Query::queryResultSize(TSqlQuery &query)
 {
     // Nothing to do, no result set, isn't active SELECT query
     if (!query.isActive() || !query.isSelect())
         return -1;
 
-    if (query.driver()->hasFeature(TSqlDriver::QuerySize))
+    if (std::invoke(hasFeatureQuerySize, query))
         return query.size();
 
     // Backup the current cursor position
