@@ -110,6 +110,11 @@ namespace Orm::Drivers
         /*! Set the default numerical precision policy for the current driver. */
         void setDefaultNumericalPrecisionPolicy(NumericalPrecisionPolicy precision);
 
+        /*! Get the default numerical precision policy for the current driver (alias). */
+        inline NumericalPrecisionPolicy numericalPrecisionPolicy() const;
+        /*! Set the default numerical precision policy for the current driver (alias). */
+        inline void setNumericalPrecisionPolicy(NumericalPrecisionPolicy precision);
+
         /*! Get the thread ID in which the driver was instantiated. */
         std::thread::id threadId() const noexcept;
 
@@ -150,6 +155,20 @@ namespace Orm::Drivers
         /*! Smart pointer to the private implementation. */
         std::unique_ptr<SqlDriverPrivate> d_ptr;
     };
+
+    /* public */
+
+    // Must be defined to be API compatible with the QtSql module
+
+    NumericalPrecisionPolicy SqlDriver::numericalPrecisionPolicy() const
+    {
+        return defaultNumericalPrecisionPolicy();
+    }
+
+    void SqlDriver::setNumericalPrecisionPolicy(const NumericalPrecisionPolicy precision)
+    {
+        setDefaultNumericalPrecisionPolicy(precision);
+    }
 
 } // namespace Orm::Drivers
 
