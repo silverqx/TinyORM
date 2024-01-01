@@ -785,7 +785,7 @@ void tst_CastAttributes::defaultCast_double() const
     QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     QCOMPARE(DB::driver(connection)->numericalPrecisionPolicy(),
-             QSql::LowPrecisionDouble);
+             TPrecisionPolicy::LowPrecisionDouble);
 
     auto &type = model(connection);
 
@@ -811,7 +811,7 @@ void tst_CastAttributes::defaultCast_double_Negative() const
     QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     QCOMPARE(DB::driver(connection)->numericalPrecisionPolicy(),
-             QSql::LowPrecisionDouble);
+             TPrecisionPolicy::LowPrecisionDouble);
 
     auto &type = modelNegative(connection);
 
@@ -841,7 +841,7 @@ void tst_CastAttributes::defaultCast_double_NaN() const
               "on the PostgreSQL database.", );
 
     QCOMPARE(DB::driver(connection)->numericalPrecisionPolicy(),
-             QSql::LowPrecisionDouble);
+             TPrecisionPolicy::LowPrecisionDouble);
 
     auto &type = model(connection);
 
@@ -861,7 +861,7 @@ void tst_CastAttributes::defaultCast_double_Infinity() const
               "on the PostgreSQL database.", );
 
     QCOMPARE(DB::driver(connection)->numericalPrecisionPolicy(),
-             QSql::LowPrecisionDouble);
+             TPrecisionPolicy::LowPrecisionDouble);
 
     auto &type = model(connection);
 
@@ -877,7 +877,7 @@ void tst_CastAttributes::defaultCast_decimal() const
     QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     QCOMPARE(DB::driver(connection)->numericalPrecisionPolicy(),
-             QSql::LowPrecisionDouble);
+             TPrecisionPolicy::LowPrecisionDouble);
 
     auto &type = model(connection);
 
@@ -903,7 +903,7 @@ void tst_CastAttributes::defaultCast_decimal_Negative() const
     QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     QCOMPARE(DB::driver(connection)->numericalPrecisionPolicy(),
-             QSql::LowPrecisionDouble);
+             TPrecisionPolicy::LowPrecisionDouble);
 
     auto &type = modelNegative(connection);
 
@@ -933,7 +933,7 @@ void tst_CastAttributes::defaultCast_decimal_NaN() const
               "on the PostgreSQL database.", );
 
     QCOMPARE(DB::driver(connection)->numericalPrecisionPolicy(),
-             QSql::LowPrecisionDouble);
+             TPrecisionPolicy::LowPrecisionDouble);
 
     auto &type = model(connection);
 
@@ -953,7 +953,7 @@ void tst_CastAttributes::defaultCast_decimal_Infinity() const
               "on the PostgreSQL database.", );
 
     QCOMPARE(DB::driver(connection)->numericalPrecisionPolicy(),
-             QSql::LowPrecisionDouble);
+             TPrecisionPolicy::LowPrecisionDouble);
 
     auto &type = model(connection);
 
@@ -1354,7 +1354,7 @@ void tst_CastAttributes::defaultCast_Null_double() const
     QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     QCOMPARE(DB::driver(connection)->numericalPrecisionPolicy(),
-             QSql::LowPrecisionDouble);
+             TPrecisionPolicy::LowPrecisionDouble);
 
     auto &type = modelNull(connection);
 
@@ -1384,7 +1384,7 @@ void tst_CastAttributes::defaultCast_Null_double_NaN() const
               "on the PostgreSQL database.", );
 
     QCOMPARE(DB::driver(connection)->numericalPrecisionPolicy(),
-             QSql::LowPrecisionDouble);
+             TPrecisionPolicy::LowPrecisionDouble);
 
     auto &type = modelNull(connection);
 
@@ -1404,7 +1404,7 @@ void tst_CastAttributes::defaultCast_Null_double_Infinity() const
               "on the PostgreSQL database.", );
 
     QCOMPARE(DB::driver(connection)->numericalPrecisionPolicy(),
-             QSql::LowPrecisionDouble);
+             TPrecisionPolicy::LowPrecisionDouble);
 
     auto &type = modelNull(connection);
 
@@ -1420,7 +1420,7 @@ void tst_CastAttributes::defaultCast_Null_decimal() const
     QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     QCOMPARE(DB::driver(connection)->numericalPrecisionPolicy(),
-             QSql::LowPrecisionDouble);
+             TPrecisionPolicy::LowPrecisionDouble);
 
     auto &type = modelNull(connection);
 
@@ -1450,7 +1450,7 @@ void tst_CastAttributes::defaultCast_Null_decimal_NaN() const
               "on the PostgreSQL database.", );
 
     QCOMPARE(DB::driver(connection)->numericalPrecisionPolicy(),
-             QSql::LowPrecisionDouble);
+             TPrecisionPolicy::LowPrecisionDouble);
 
     auto &type = modelNull(connection);
 
@@ -1470,7 +1470,7 @@ void tst_CastAttributes::defaultCast_Null_decimal_Infinity() const
               "on the PostgreSQL database.", );
 
     QCOMPARE(DB::driver(connection)->numericalPrecisionPolicy(),
-             QSql::LowPrecisionDouble);
+             TPrecisionPolicy::LowPrecisionDouble);
 
     auto &type = modelNull(connection);
 
@@ -2037,7 +2037,7 @@ void tst_CastAttributes::cast_double_to_longlong() const
     QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     QCOMPARE(DB::driver(connection)->numericalPrecisionPolicy(),
-             QSql::LowPrecisionDouble);
+             TPrecisionPolicy::LowPrecisionDouble);
 
     auto &type = model(connection);
 
@@ -2065,7 +2065,7 @@ void tst_CastAttributes::cast_double_to_QString() const
     QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     QCOMPARE(DB::driver(connection)->numericalPrecisionPolicy(),
-             QSql::LowPrecisionDouble);
+             TPrecisionPolicy::LowPrecisionDouble);
 
     auto &type = model(connection);
 
@@ -2093,7 +2093,7 @@ void tst_CastAttributes::cast_double_Negative_to_longlong() const
     QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     QCOMPARE(DB::driver(connection)->numericalPrecisionPolicy(),
-             QSql::LowPrecisionDouble);
+             TPrecisionPolicy::LowPrecisionDouble);
 
     auto &type = modelNegative(connection);
 
@@ -2121,7 +2121,7 @@ void tst_CastAttributes::cast_double_Negative_to_QString() const
     QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     QCOMPARE(DB::driver(connection)->numericalPrecisionPolicy(),
-             QSql::LowPrecisionDouble);
+             TPrecisionPolicy::LowPrecisionDouble);
 
     auto &type = modelNegative(connection);
 
@@ -2149,7 +2149,7 @@ void tst_CastAttributes::cast_decimal_to_Decimal() const
     QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     QCOMPARE(DB::driver(connection)->numericalPrecisionPolicy(),
-             QSql::LowPrecisionDouble);
+             TPrecisionPolicy::LowPrecisionDouble);
 
     auto &type = model(connection);
 
@@ -2177,7 +2177,7 @@ void tst_CastAttributes::cast_decimal_to_longlong() const
     QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     QCOMPARE(DB::driver(connection)->numericalPrecisionPolicy(),
-             QSql::LowPrecisionDouble);
+             TPrecisionPolicy::LowPrecisionDouble);
 
     auto &type = model(connection);
 
@@ -2205,7 +2205,7 @@ void tst_CastAttributes::cast_decimal_to_QString() const
     QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     QCOMPARE(DB::driver(connection)->numericalPrecisionPolicy(),
-             QSql::LowPrecisionDouble);
+             TPrecisionPolicy::LowPrecisionDouble);
 
     auto &type = model(connection);
 
@@ -2233,7 +2233,7 @@ void tst_CastAttributes::cast_decimal_Negative_to_Decimal() const
     QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     QCOMPARE(DB::driver(connection)->numericalPrecisionPolicy(),
-             QSql::LowPrecisionDouble);
+             TPrecisionPolicy::LowPrecisionDouble);
 
     auto &type = modelNegative(connection);
 
@@ -2261,7 +2261,7 @@ void tst_CastAttributes::cast_decimal_Negative_to_longlong() const
     QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     QCOMPARE(DB::driver(connection)->numericalPrecisionPolicy(),
-             QSql::LowPrecisionDouble);
+             TPrecisionPolicy::LowPrecisionDouble);
 
     auto &type = modelNegative(connection);
 
@@ -2289,7 +2289,7 @@ void tst_CastAttributes::cast_decimal_Negative_to_QString() const
     QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     QCOMPARE(DB::driver(connection)->numericalPrecisionPolicy(),
-             QSql::LowPrecisionDouble);
+             TPrecisionPolicy::LowPrecisionDouble);
 
     auto &type = modelNegative(connection);
 
@@ -2317,7 +2317,7 @@ void tst_CastAttributes::cast_decimal_to_Decimal_With_Modifier_2_Down() const
     QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     QCOMPARE(DB::driver(connection)->numericalPrecisionPolicy(),
-             QSql::LowPrecisionDouble);
+             TPrecisionPolicy::LowPrecisionDouble);
 
     auto &type = model(connection);
 
@@ -2345,7 +2345,7 @@ void tst_CastAttributes::cast_decimal_to_Decimal_With_Modifier_2_Up() const
     QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     QCOMPARE(DB::driver(connection)->numericalPrecisionPolicy(),
-             QSql::LowPrecisionDouble);
+             TPrecisionPolicy::LowPrecisionDouble);
 
     auto &type = model(connection);
 
@@ -2373,7 +2373,7 @@ void tst_CastAttributes::cast_decimal_to_Decimal_With_Modifier_2_Down_Negative()
     QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     QCOMPARE(DB::driver(connection)->numericalPrecisionPolicy(),
-             QSql::LowPrecisionDouble);
+             TPrecisionPolicy::LowPrecisionDouble);
 
     auto &type = modelNegative(connection);
 
@@ -2401,7 +2401,7 @@ void tst_CastAttributes::cast_decimal_to_Decimal_With_Modifier_2_Up_Negative() c
     QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     QCOMPARE(DB::driver(connection)->numericalPrecisionPolicy(),
-             QSql::LowPrecisionDouble);
+             TPrecisionPolicy::LowPrecisionDouble);
 
     auto &type = modelNegative(connection);
 
@@ -3042,7 +3042,7 @@ void tst_CastAttributes::cast_Null_double_NaN() const
               "on the PostgreSQL database.", );
 
     QCOMPARE(DB::driver(connection)->numericalPrecisionPolicy(),
-             QSql::LowPrecisionDouble);
+             TPrecisionPolicy::LowPrecisionDouble);
 
     auto &type = modelNull(connection);
 
@@ -3064,7 +3064,7 @@ void tst_CastAttributes::cast_Null_double_Infinity() const
               "on the PostgreSQL database.", );
 
     QCOMPARE(DB::driver(connection)->numericalPrecisionPolicy(),
-             QSql::LowPrecisionDouble);
+             TPrecisionPolicy::LowPrecisionDouble);
 
     auto &type = modelNull(connection);
 
@@ -3113,7 +3113,7 @@ void tst_CastAttributes::cast_Null_decimal_NaN() const
               "on the PostgreSQL database.", );
 
     QCOMPARE(DB::driver(connection)->numericalPrecisionPolicy(),
-             QSql::LowPrecisionDouble);
+             TPrecisionPolicy::LowPrecisionDouble);
 
     auto &type = modelNull(connection);
 
@@ -3135,7 +3135,7 @@ void tst_CastAttributes::cast_Null_decimal_Infinity() const
               "on the PostgreSQL database.", );
 
     QCOMPARE(DB::driver(connection)->numericalPrecisionPolicy(),
-             QSql::LowPrecisionDouble);
+             TPrecisionPolicy::LowPrecisionDouble);
 
     auto &type = modelNull(connection);
 
