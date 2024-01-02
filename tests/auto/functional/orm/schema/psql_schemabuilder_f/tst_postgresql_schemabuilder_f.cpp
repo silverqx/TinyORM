@@ -77,7 +77,7 @@ void tst_PostgreSQL_SchemaBuilder_f::hasTable_NoSearchPath_InConfiguration() con
        and based on that do the QVERIFY().
        Because I can't know what is the default for the search_path on foreign DB, this
        secures that this test passes whatever search_path will be set to.
-       This also makes auto-tests dependent on the 'public' schema. */
+       This also makes auto tests dependent on the 'public' schema. */
     const auto searchPath = dynamic_cast<PostgresConnection &>(
                                 DB::connection(*connectionName))
                             .searchPath();
