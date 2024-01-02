@@ -79,9 +79,7 @@ QSqlDatabase
 Connector::addQSqlDatabaseConnection(const QString &name, const QVariantHash &config,
                                      const QString &options)
 {
-    QSqlDatabase db;
-
-    db = QSqlDatabase::addDatabase(config[driver_].value<QString>(), name);
+    auto db = QSqlDatabase::addDatabase(config[driver_].value<QString>(), name);
 
     db.setHostName(config[host_].value<QString>());
 
