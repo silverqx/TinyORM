@@ -2477,6 +2477,11 @@ qmake confusion:
  - load() vs include() prf files:
    - if load() or include() is called inside other feature prf or pri file then you don't need
      to load() or include() again, it's imported into the current scope (what is logical)
+   - if any variable is defined inside other feature prf or pri file and this file is
+     include()-ed or load()-ed then the variable will be available in the so called parent file
+     where the inclusion was called; this is also true if the variable is defined inside
+     the qmake Scope but isn't true if the variable is defined inside the test or replace function
+   - include() or load() inside function will not be available outside this function
    - include()
      - includes the contents of the file specified by filename into the current project
        at the point where it is included
@@ -2510,6 +2515,10 @@ qmake confusion:
      means build all subprojects as static archive libraries and it also sets the CONFIG += static
      What means don't use it for the whole TinyORM project because it contains many subprojects
      and it can cause problems, instead use the CONFIG += static!
+
+ - export() variable in deeper functions:
+   - if we are eg. three functions deep inside then it's enough to call export() only once,
+     there is no need to re-export() in parent functions
 
 
 tools/deploy.ps1:
