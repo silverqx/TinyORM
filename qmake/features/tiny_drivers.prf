@@ -149,3 +149,73 @@ defineTest(tiny_is_drivers_target) {
 
     return(false)
 }
+
+# Add the given path on the system or non-system INCLUDEPATH.
+# It's configurable using the global TINY_DRIVERS_INCLUDE_NONSYSTEM qmake variable.
+defineTest(tiny_add_drivers_includepath) {
+    # Argument checks
+    !defined(1, var) | \
+    isEmpty(1): \
+        error( "The first 'driversIncludePath' parameter can't be empty\
+                in tiny_add_drivers_includepath()." )
+
+    # Prepare variable names
+    driversIncludePath = $$1
+
+    # This is the best way how to do it, another solution would be to use qmake's CONFIG
+    # variable to configure it (not a good idea) or call the tiny_link_drivers() qmake
+    # function for each project separately and pass eg. true/false flag to it (not a good
+    # idea as we have ~45 project files that would need be updated).
+    # Also, we need this non-system include only in a few projects, such as auto tests
+    # (currently sqlquery_normal.pro and sqlquery_prepared.pro), and all other projects
+    # must include it the same way as the QtSql module is included.
+    # The reason why only automated tests use this non-system include is to not suppress
+    # compiler warnings.
+    # Add the TinyDrivers include path as non-system include path
+    defined(TINY_DRIVERS_INCLUDE_NONSYSTEM, var): \
+    !isEmpty(TINY_DRIVERS_INCLUDE_NONSYSTEM): \
+    $$TINY_DRIVERS_INCLUDE_NONSYSTEM {
+        INCLUDEPATH += $$driversIncludePath
+        export(INCLUDEPATH)
+    }
+    # Add as the SYSTEM include path
+    else {
+        load(tiny_system_includepath)
+        tiny_add_system_includepath($$driversIncludePath)
+    }
+}
+
+# Link against the TinyDrivers (if enabled) or QtSql module and define the qmake DEFINES.
+defineTest(tiny_link_drivers) {
+    # Use the TinyDrivers instead of QtSql drivers
+    tiny_is_building_drivers() {
+        # Defines
+        DEFINES *= TINYORM_USING_TINYDRIVERS
+
+        build_shared_drivers | \
+        build_loadable_drivers: \
+            DEFINES *= TINYDRIVERS_LINKING_SHARED
+
+        # Includes and Libraries
+        tiny_add_drivers_includepath(\
+            $$quote($$TINYORM_SOURCE_TREE/drivers/common/include/))
+
+        # Don't check if exists() because QtCreator depends on these LIBS paths it adds
+        # them on the PATH or LD_LIBRARY_PATH during Run Project
+        !isEmpty(TINYORM_BUILD_TREE) {
+            include($$TINYORM_SOURCE_TREE/qmake/support/variables.pri)
+            LIBS += $$quote(-L$$clean_path($$TINYORM_BUILD_TREE)/drivers/common$${TINY_BUILD_SUBFOLDER}/)
+            LIBS += -lTinyDrivers
+            export(LIBS)
+        }
+        export(INCLUDEPATH)
+    }
+    # Use the QtSql module
+    else {
+        QT *= sql
+        DEFINES *= TINYORM_USING_QTSQLDRIVERS
+        export(QT)
+    }
+
+    export(DEFINES)
+}

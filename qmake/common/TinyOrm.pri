@@ -6,18 +6,10 @@ include($$PWD/common.pri)
 # TinyORM defines
 # ---
 
-load(tiny_drivers)
-
 # Release build
 CONFIG(release, debug|release): DEFINES += TINYORM_NO_DEBUG
 # Debug build
 CONFIG(debug, debug|release): DEFINES *= TINYORM_DEBUG
-
-# Using the TinyDrivers instead of QtSql drivers
-tiny_is_building_drivers(): \
-    DEFINES *= TINYORM_USING_TINYDRIVERS
-else: \
-    DEFINES *= TINYORM_USING_QTSQLDRIVERS
 
 # Enable MySQL ping on Orm::MySqlConnection
 mysql_ping: DEFINES *= TINYORM_MYSQL_PING
@@ -44,3 +36,9 @@ build_tests: \
     build_tests: \
         DEFINES *= TINYTOM_TESTS_CODE
 }
+
+# Link against the TinyDrivers library (if enabled) or QtSql module
+# ---
+
+load(tiny_drivers)
+tiny_link_drivers()

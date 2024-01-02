@@ -63,7 +63,7 @@ include($$TINYORM_SOURCE_TREE/qmake/support/variables.pri)
 # Qt Common Configuration
 # ---
 
-QT *= core sql
+QT *= core
 
 CONFIG *= link_prl
 
@@ -74,13 +74,8 @@ include($$TINYORM_SOURCE_TREE/qmake/common/TinyOrm.pri)
 
 # Link against the shared library
 CONFIG(shared, dll|shared|static|staticlib) | \
-CONFIG(dll, dll|shared|static|staticlib) {
-    build_shared_drivers | \
-    build_loadable_drivers: \
-        DEFINES *= TINYDRIVERS_LINKING_SHARED
-
+CONFIG(dll, dll|shared|static|staticlib): \
     DEFINES *= TINYORM_LINKING_SHARED
-}
 
 # Disable the ORM-related source code
 disable_orm: DEFINES *= TINYORM_DISABLE_ORM
@@ -118,10 +113,6 @@ unset(tinyRcIncludepath)
 
 load(tiny_system_includepath)
 
-tiny_is_building_drivers(): \
-    tiny_add_system_includepath( \
-        $$quote($$TINYORM_SOURCE_TREE/drivers/common/include/))
-
 tiny_add_system_includepath(                   \
     $$quote($$TINYORM_SOURCE_TREE/include/)    \
     $$quote($$TINYTOM_SOURCE_TREE/include/)    \
@@ -130,11 +121,6 @@ tiny_add_system_includepath(                   \
 # Don't check if exists() because QtCreator depends on these LIBS paths it adds them
 # on the PATH or LD_LIBRARY_PATH during Run Project
 !isEmpty(TINYORM_BUILD_TREE) {
-    tiny_is_building_drivers() {
-        LIBS += $$quote(-L$$clean_path($$TINYORM_BUILD_TREE)/drivers/common$${TINY_BUILD_SUBFOLDER}/)
-        LIBS += -lTinyDrivers
-    }
-
     LIBS += $$quote(-L$$clean_path($$TINYORM_BUILD_TREE)/src$${TINY_BUILD_SUBFOLDER}/)
     LIBS += -lTinyOrm
 }

@@ -1,4 +1,4 @@
-QT *= core sql
+QT *= core
 QT -= gui
 
 TEMPLATE = lib
