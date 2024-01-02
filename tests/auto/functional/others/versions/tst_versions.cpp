@@ -85,16 +85,16 @@ Q_GLOBAL_STATIC_WITH_ARGS(QString, CopyRight, ("Copyright (©) 2023 Silver Zacha
 void tst_Versions::versions_TinyOrm() const
 {
     // Test types
-    QCOMPARE(typeid (TINYORM_VERSION_MAJOR), typeid (int));
-    QCOMPARE(typeid (TINYORM_VERSION_MINOR), typeid (int));
+    QCOMPARE(typeid (TINYORM_VERSION_MAJOR),  typeid (int));
+    QCOMPARE(typeid (TINYORM_VERSION_MINOR),  typeid (int));
     QCOMPARE(typeid (TINYORM_VERSION_BUGFIX), typeid (int));
-    QCOMPARE(typeid (TINYORM_VERSION_BUILD), typeid (int));
+    QCOMPARE(typeid (TINYORM_VERSION_BUILD),  typeid (int));
 
     // Individual version numbers have to be greater than zero
-    QVERIFY(TINYORM_VERSION_MAJOR >= 0);
-    QVERIFY(TINYORM_VERSION_MINOR >= 0);
+    QVERIFY(TINYORM_VERSION_MAJOR  >= 0);
+    QVERIFY(TINYORM_VERSION_MINOR  >= 0);
     QVERIFY(TINYORM_VERSION_BUGFIX >= 0);
-    QVERIFY(TINYORM_VERSION_BUILD >= 0);
+    QVERIFY(TINYORM_VERSION_BUILD  >= 0);
 
     // Project and File Version strings
 #if defined(_MSC_VER) && !defined(__clang__)
@@ -134,16 +134,16 @@ void tst_Versions::versions_TinyOrm() const
 void tst_Versions::versions_TinyUtils() const
 {
     // Test types
-    QCOMPARE(typeid (TINYUTILS_VERSION_MAJOR), typeid (int));
-    QCOMPARE(typeid (TINYUTILS_VERSION_MINOR), typeid (int));
+    QCOMPARE(typeid (TINYUTILS_VERSION_MAJOR),  typeid (int));
+    QCOMPARE(typeid (TINYUTILS_VERSION_MINOR),  typeid (int));
     QCOMPARE(typeid (TINYUTILS_VERSION_BUGFIX), typeid (int));
-    QCOMPARE(typeid (TINYUTILS_VERSION_BUILD), typeid (int));
+    QCOMPARE(typeid (TINYUTILS_VERSION_BUILD),  typeid (int));
 
     // Individual version numbers have to be greater than zero
-    QVERIFY(TINYUTILS_VERSION_MAJOR >= 0);
-    QVERIFY(TINYUTILS_VERSION_MINOR >= 0);
+    QVERIFY(TINYUTILS_VERSION_MAJOR  >= 0);
+    QVERIFY(TINYUTILS_VERSION_MINOR  >= 0);
     QVERIFY(TINYUTILS_VERSION_BUGFIX >= 0);
-    QVERIFY(TINYUTILS_VERSION_BUILD >= 0);
+    QVERIFY(TINYUTILS_VERSION_BUILD  >= 0);
 
     // Project and File Version strings
     QString versionStr = QString::number(TINYUTILS_VERSION_MAJOR) + DOT +
@@ -169,16 +169,16 @@ void tst_Versions::versions_TinyUtils() const
 void tst_Versions::versions_TomExample() const
 {
     // Test types
-    QCOMPARE(typeid (TINYTOM_VERSION_MAJOR), typeid (int));
-    QCOMPARE(typeid (TINYTOM_VERSION_MINOR), typeid (int));
+    QCOMPARE(typeid (TINYTOM_VERSION_MAJOR),  typeid (int));
+    QCOMPARE(typeid (TINYTOM_VERSION_MINOR),  typeid (int));
     QCOMPARE(typeid (TINYTOM_VERSION_BUGFIX), typeid (int));
-    QCOMPARE(typeid (TINYTOM_VERSION_BUILD), typeid (int));
+    QCOMPARE(typeid (TINYTOM_VERSION_BUILD),  typeid (int));
 
     // Individual version numbers have to be greater than zero
-    QVERIFY(TINYTOM_VERSION_MAJOR >= 0);
-    QVERIFY(TINYTOM_VERSION_MINOR >= 0);
+    QVERIFY(TINYTOM_VERSION_MAJOR  >= 0);
+    QVERIFY(TINYTOM_VERSION_MINOR  >= 0);
     QVERIFY(TINYTOM_VERSION_BUGFIX >= 0);
-    QVERIFY(TINYTOM_VERSION_BUILD >= 0);
+    QVERIFY(TINYTOM_VERSION_BUILD  >= 0);
 
     // Project and File Version strings
     QString versionStr = QString::number(TINYTOM_VERSION_MAJOR) + DOT +
@@ -217,8 +217,8 @@ void tst_Versions::checkFileVersion_TinyOrm() const
 #  pragma warning(push)
 #  pragma warning(disable : 4127)
 #endif
-    const QString versionStr = QString::number(TINYORM_VERSION_MAJOR) + DOT +
-                               QString::number(TINYORM_VERSION_MINOR) + DOT +
+    const QString versionStr = QString::number(TINYORM_VERSION_MAJOR)  + DOT +
+                               QString::number(TINYORM_VERSION_MINOR)  + DOT +
                                QString::number(TINYORM_VERSION_BUGFIX) + DOT +
                                QString::number(TINYORM_VERSION_BUILD);
 #if defined(_MSC_VER) && !defined(__clang__)
@@ -242,8 +242,8 @@ void tst_Versions::checkFileVersion_TinyUtils() const
             getExeVersionString(Fs::absolutePath(TINYTEST_VERSIONS_TINYUTILS_PATH));
 
     // Project and File Version strings
-    const QString versionStr = QString::number(TINYUTILS_VERSION_MAJOR) + DOT +
-                               QString::number(TINYUTILS_VERSION_MINOR) + DOT +
+    const QString versionStr = QString::number(TINYUTILS_VERSION_MAJOR)  + DOT +
+                               QString::number(TINYUTILS_VERSION_MINOR)  + DOT +
                                QString::number(TINYUTILS_VERSION_BUGFIX) + DOT +
                                QString::number(TINYUTILS_VERSION_BUILD);
 
@@ -265,8 +265,8 @@ void tst_Versions::checkFileVersion_TomExample() const
             getExeVersionString(Fs::absolutePath(TINYTEST_VERSIONS_TOMEXAMPLE_PATH));
 
     // Project and File Version strings
-    const QString versionStr = QString::number(TINYTOM_VERSION_MAJOR) + DOT +
-                               QString::number(TINYTOM_VERSION_MINOR) + DOT +
+    const QString versionStr = QString::number(TINYTOM_VERSION_MAJOR)  + DOT +
+                               QString::number(TINYTOM_VERSION_MINOR)  + DOT +
                                QString::number(TINYTOM_VERSION_BUGFIX) + DOT +
                                QString::number(TINYTOM_VERSION_BUILD);
 
