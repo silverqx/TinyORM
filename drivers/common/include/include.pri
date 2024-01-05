@@ -2,6 +2,10 @@ INCLUDEPATH *= $$PWD
 
 headersList = \
     $$PWD/orm/drivers/driverstypes.hpp \
+    $$PWD/orm/drivers/exceptions/driverserror.hpp \
+    $$PWD/orm/drivers/exceptions/invalidargumenterror.hpp \
+    $$PWD/orm/drivers/exceptions/logicerror.hpp \
+    $$PWD/orm/drivers/exceptions/runtimeerror.hpp \
     $$PWD/orm/drivers/macros/export.hpp \
     $$PWD/orm/drivers/sqldatabase.hpp \
     $$PWD/orm/drivers/sqldatabasemanager.hpp \
