@@ -240,13 +240,15 @@ QVariantList SqlQuery::boundValues() const
 SqlRecord SqlQuery::record() const
 {
     // Nothing to do
-    if (!isActive() || !isValid() || !isSelect())
+    if (!isActive() || !isSelect())
         return {};
 
     auto record = m_sqlResult->record();
 
-    for (qsizetype index = 0; index < record.count(); ++index)
-        record.setValue(index, value(index));
+    // Populate also the field values if the cursor is positioned on a valid record/row
+    if (isValid())
+        for (qsizetype index = 0; index < record.count(); ++index)
+            record.setValue(index, value(index));
 
     return record;
 }
