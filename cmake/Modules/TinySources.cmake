@@ -27,6 +27,10 @@ function(tinydrivers_sources out_headers_private out_headers out_sources)
 
     list(APPEND headers
         driverstypes.hpp
+        exceptions/driverserror.hpp
+        exceptions/invalidargumenterror.hpp
+        exceptions/logicerror.hpp
+        exceptions/runtimeerror.hpp
         macros/export.hpp
         sqldatabase.hpp
         sqldatabasemanager.hpp
@@ -48,6 +52,8 @@ function(tinydrivers_sources out_headers_private out_headers out_sources)
     endif()
 
     list(APPEND sources
+        exceptions/logicerror.cpp
+        exceptions/runtimeerror.cpp
         sqldatabase.cpp
         sqldatabase_p.cpp
         sqldatabasemanager.cpp
