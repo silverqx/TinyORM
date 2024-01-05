@@ -80,7 +80,7 @@ bool SqlDatabase::isValid() const
        the reset method (this is the only case).
        Isn't possible to create invalid SqlDatabase instance because the default
        constructor is private. */
-    return d->isDriverValid();
+    return d && d->isDriverValid();
 }
 
 SqlError SqlDatabase::lastError() const
