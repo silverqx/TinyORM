@@ -84,6 +84,10 @@ namespace Support
         static std::shared_ptr<SqlDatabasePrivate>
         createSqlDatabasePrivate(std::shared_ptr<SqlDriver> &&driver);
 
+        /* Others */
+        /*! Throw if a given database connection isn't registered (doesn't exist). */
+        static void throwIfNoConnection(const QString &connection);
+
         /* Data members */
         /* It's shared_ptr because of the SqlDatabase::driverWeak(),
            see the SqlQuery::driverWeak() for more details. */
@@ -141,10 +145,6 @@ namespace Support
         /*! Throw an exception if a connection was created in a different thread. */
         static void throwIfDifferentThread(const SqlDatabase &db,
                                            const QString &connection);
-
-        /*! Determine whether the given connection is invalid and log a warning. */
-        static bool isInvalidWithWarning(const SqlDatabase &db,
-                                         const QString &connection);
     };
 
     /* public */

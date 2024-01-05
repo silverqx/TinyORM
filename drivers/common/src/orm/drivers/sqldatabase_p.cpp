@@ -6,8 +6,10 @@
 #endif
 
 #include "orm/drivers/constants_p.hpp"
+#include "orm/drivers/exceptions/invalidargumenterror.hpp"
 #include "orm/drivers/sqlerror.hpp"
 #include "orm/drivers/support/connectionshash_p.hpp"
+#include "orm/drivers/utils/type_p.hpp"
 
 #ifdef TINYDRIVERS_MYSQL_LOADABLE_LIBRARY
 #  include "orm/drivers/sqldriver.hpp"
@@ -60,11 +62,10 @@ void SqlDatabasePrivate::cloneDatabase(const SqlDatabasePrivate &other)
 
 SqlDatabase SqlDatabasePrivate::database(const QString &connection, const bool open)
 {
-    auto &db = g_connections->at_ts(connection);
+    // Throw an exception if a given database connection isn't registered (doesn't exist)
+    throwIfNoConnection(connection);
 
-    // Nothing to do, connection is Invalid
-    if (isInvalidWithWarning(db, connection))
-        return db;
+    auto &db = g_connections->at_ts(connection);
 
     // Throw an exception if a connection was created in a different thread
     throwIfDifferentThread(db, connection);
@@ -160,6 +161,20 @@ std::shared_ptr<SqlDatabasePrivate>
 SqlDatabasePrivate::createSqlDatabasePrivate(std::shared_ptr<SqlDriver> &&driver)
 {
     return std::make_shared<SqlDatabasePrivate>(std::move(driver), driver->driverName());
+}
+
+/* Others */
+
+void SqlDatabasePrivate::throwIfNoConnection(const QString &connection)
+{
+    // Nothing to do, the connection exists
+    if (g_connections->contains_ts(connection))
+        return;
+
+    throw Exceptions::InvalidArgumentError(
+                u"The '%1' connection isn't registered (doesn't exist), please register "
+                "it using the SqlDatabase::addDatabase() method in %2()."_s
+                .arg(connection, __tiny_func__));
 }
 
 /* private */
@@ -327,20 +342,6 @@ void SqlDatabasePrivate::throwIfDifferentThread(const SqlDatabase &db,
                 u"SqlDatabasePrivate::database: requested '%1' database connection "
                  "does not belong to the calling thread."_s
                 .arg(connection).toUtf8().constData());
-}
-
-bool SqlDatabasePrivate::isInvalidWithWarning(const SqlDatabase &db,
-                                              const QString &connection)
-{
-    // Nothing to do, connection is valid
-    if (db.isValid())
-        return false;
-
-    qWarning().noquote()
-            << u"SqlDatabasePrivate::database: requested '%1' database connection "
-                "is invalid."_s.arg(connection);
-
-    return true;
 }
 
 } // namespace Orm::Drivers

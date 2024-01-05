@@ -72,6 +72,9 @@ SqlDatabase
 SqlDatabaseManager::cloneDatabase(const QString &otherConnection,
                                   const QString &connection)
 {
+    // Nothing to clone, the otherConnection isn't registered (doesn't exist)
+    SqlDatabasePrivate::throwIfNoConnection(otherConnection);
+
     return cloneDatabase(SqlDatabasePrivate::connections().at_ts(otherConnection),
                          connection);
 }
