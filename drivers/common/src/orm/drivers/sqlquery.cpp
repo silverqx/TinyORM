@@ -529,7 +529,6 @@ std::unique_ptr<SqlResult> SqlQuery::initSqlResult()
        to the constructor (needed to obtain the SqlResult instance). */
     return initSqlResult(
                 SqlDatabase::database(SqlDatabase::defaultConnection, false));
-
 }
 
 std::unique_ptr<SqlResult> SqlQuery::initSqlResult(const SqlDatabase &connection)
