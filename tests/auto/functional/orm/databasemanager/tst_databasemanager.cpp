@@ -353,7 +353,7 @@ void tst_DatabaseManager::default_MySQL_ConfigurationValues() const
 
 void tst_DatabaseManager::default_MariaDB_ConfigurationValues() const
 {
-    /* The MariaDB connection should be absolutelly the same and should behave
+    /* The MariaDB connection should be absolutely the same and should behave
        the same as the MySQL connection. */
 
     // Add a new database connection
