@@ -212,8 +212,8 @@ void tst_Versions::checkFileVersion_TinyOrm() const
 #elif !defined(TINYTEST_VERSIONS_IS_SHARED_BUILD)
     QSKIP("checkFileVersion_*() related tests are enabled for shared builds only.", );
 #else
-    const auto fileVersions =
-            getExeVersionString(Fs::absolutePath(TINYTEST_VERSIONS_TINYORM_PATH));
+    const auto fileVersions = getExeVersionString(
+                                  Fs::absolutePath(TINYTEST_VERSIONS_TINYORM_PATH));
 
     // Project and File Version strings
 #if defined(_MSC_VER) && !defined(__clang__)
@@ -241,8 +241,8 @@ void tst_Versions::checkFileVersion_TinyUtils() const
 #elif !defined(TINYTEST_VERSIONS_IS_SHARED_BUILD)
     QSKIP("checkFileVersion_*() related tests are enabled for shared builds only.", );
 #else
-    const auto fileVersions =
-            getExeVersionString(Fs::absolutePath(TINYTEST_VERSIONS_TINYUTILS_PATH));
+    const auto fileVersions = getExeVersionString(
+                                  Fs::absolutePath(TINYTEST_VERSIONS_TINYUTILS_PATH));
 
     // Project and File Version strings
     const QString versionStr = QString::number(TINYUTILS_VERSION_MAJOR)  + DOT +
@@ -264,8 +264,8 @@ void tst_Versions::checkFileVersion_TomExample() const
 #elif !defined(TINYTEST_VERSIONS_IS_SHARED_BUILD)
     QSKIP("checkFileVersion_*() related tests are enabled for shared builds only.", );
 #else
-    const auto fileVersions =
-            getExeVersionString(Fs::absolutePath(TINYTEST_VERSIONS_TOMEXAMPLE_PATH));
+    const auto fileVersions = getExeVersionString(
+                                  Fs::absolutePath(TINYTEST_VERSIONS_TOMEXAMPLE_PATH));
 
     // Project and File Version strings
     const QString versionStr = QString::number(TINYTOM_VERSION_MAJOR)  + DOT +
