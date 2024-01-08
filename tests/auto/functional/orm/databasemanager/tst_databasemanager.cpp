@@ -62,8 +62,8 @@ class tst_DatabaseManager : public QObject // clazy:exclude=ctor-missing-parent-
 private Q_SLOTS:
     void initTestCase();
 
-    void removeConnection_Connected() const;
-    void removeConnection_NotConnected() const;
+    void Postgres_removeConnection_Connected() const;
+    void Postgres_removeConnection_NotConnected() const;
 
     void default_MySQL_ConfigurationValues() const;
     void default_MariaDB_ConfigurationValues() const;
@@ -74,13 +74,13 @@ private Q_SLOTS:
     void ssl_MariaDB_ConfigurationValues() const;
     void ssl_PostgreSQL_ConfigurationValues() const;
 
-    void sqlite_MemoryDriver() const;
+    void SQLite_MemoryDriver() const;
 
-    void sqlite_CheckDatabaseExists_True() const;
-    void sqlite_CheckDatabaseExists_False() const;
+    void SQLite_CheckDatabaseExists_True() const;
+    void SQLite_CheckDatabaseExists_False() const;
 
-    void addUseAndRemoveConnection_FiveTimes() const;
-    void addUseAndRemoveThreeConnections_FiveTimes() const;
+    void MySQL_addUseAndRemoveConnection_FiveTimes() const;
+    void MySQL_addUseAndRemoveThreeConnections_FiveTimes() const;
 
 // NOLINTNEXTLINE(readability-redundant-access-specifiers)
 private:
@@ -116,7 +116,7 @@ void tst_DatabaseManager::initTestCase()
     QVERIFY(m_dm->getDefaultConnection().isEmpty());
 }
 
-void tst_DatabaseManager::removeConnection_Connected() const
+void tst_DatabaseManager::Postgres_removeConnection_Connected() const
 {
     const auto databaseName = qEnvironmentVariable("DB_PGSQL_DATABASE", "");
     const auto driverName = QPSQL;
@@ -167,7 +167,7 @@ void tst_DatabaseManager::removeConnection_Connected() const
     QCOMPARE(m_dm->getDefaultConnection(), DatabaseConfiguration::defaultConnectionName);
 }
 
-void tst_DatabaseManager::removeConnection_NotConnected() const
+void tst_DatabaseManager::Postgres_removeConnection_NotConnected() const
 {
     // Add a new database connection
     const auto connectionName = Databases::createConnectionTemp(
@@ -690,7 +690,7 @@ void tst_DatabaseManager::ssl_PostgreSQL_ConfigurationValues() const
     QVERIFY(Databases::removeConnection(*connectionName));
 }
 
-void tst_DatabaseManager::sqlite_MemoryDriver() const
+void tst_DatabaseManager::SQLite_MemoryDriver() const
 {
     // Add a new database connection
     const auto connectionName = Databases::createConnectionTemp(
@@ -724,7 +724,7 @@ void tst_DatabaseManager::sqlite_MemoryDriver() const
     QVERIFY(Databases::removeConnection(*connectionName));
 }
 
-void tst_DatabaseManager::sqlite_CheckDatabaseExists_True() const
+void tst_DatabaseManager::SQLite_CheckDatabaseExists_True() const
 {
     // Add a new database connection
     const auto connectionName = Databases::createConnectionTemp(
@@ -751,7 +751,7 @@ void tst_DatabaseManager::sqlite_CheckDatabaseExists_True() const
     QVERIFY(Databases::removeConnection(*connectionName));
 }
 
-void tst_DatabaseManager::sqlite_CheckDatabaseExists_False() const
+void tst_DatabaseManager::SQLite_CheckDatabaseExists_False() const
 {
     // Add a new database connection
     const auto connectionName = Databases::createConnectionTemp(
@@ -783,7 +783,7 @@ void tst_DatabaseManager::sqlite_CheckDatabaseExists_False() const
     QVERIFY(!QFile::exists(checkDatabaseExistsFile()));
 }
 
-void tst_DatabaseManager::addUseAndRemoveConnection_FiveTimes() const
+void tst_DatabaseManager::MySQL_addUseAndRemoveConnection_FiveTimes() const
 {
     for (auto i = 0; i < 5; ++i) {
         // Add a new MYSQL database connection
@@ -804,7 +804,7 @@ void tst_DatabaseManager::addUseAndRemoveConnection_FiveTimes() const
     }
 }
 
-void tst_DatabaseManager::addUseAndRemoveThreeConnections_FiveTimes() const
+void tst_DatabaseManager::MySQL_addUseAndRemoveThreeConnections_FiveTimes() const
 {
     for (auto i = 0; i < 5; ++i) {
         // Add 3 new MYSQL database connections
