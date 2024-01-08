@@ -3,6 +3,7 @@
 
 #include "orm/databasemanager.hpp"
 #include "orm/exceptions/sqlitedatabasedoesnotexisterror.hpp"
+#include "orm/utils/configuration.hpp"
 #include "orm/utils/type.hpp"
 
 #include "databases.hpp"
@@ -20,10 +21,13 @@ using Orm::Constants::SSL_CA;
 using Orm::Constants::SSL_CERT;
 using Orm::Constants::SSL_KEY;
 using Orm::Constants::UTF8;
+using Orm::Constants::UTF8MB4;
+using Orm::Constants::UTF8MB40900aici;
 using Orm::Constants::Version;
 using Orm::Constants::application_name;
 using Orm::Constants::charset_;
 using Orm::Constants::check_database_exists;
+using Orm::Constants::collation_;
 using Orm::Constants::database_;
 using Orm::Constants::dont_drop;
 using Orm::Constants::driver_;
@@ -53,6 +57,7 @@ using Orm::QtTimeZoneConfig;
 using Orm::QtTimeZoneType;
 using Orm::Support::DatabaseConfiguration;
 
+using ConfigUtils = Orm::Utils::Configuration;
 using TypeUtils = Orm::Utils::Type;
 
 using TestUtils::Databases;
@@ -63,6 +68,9 @@ class tst_DatabaseManager : public QObject // clazy:exclude=ctor-missing-parent-
 
 private Q_SLOTS:
     void initTestCase();
+
+    void MySQL_removeConnection_Connected() const;
+    void MySQL_removeConnection_NotConnected() const;
 
     void Postgres_removeConnection_Connected() const;
     void Postgres_removeConnection_NotConnected() const;
@@ -121,6 +129,88 @@ void tst_DatabaseManager::initTestCase()
 
     // Default connection must be empty
     QVERIFY(m_dm->getDefaultConnection().isEmpty());
+}
+
+void tst_DatabaseManager::MySQL_removeConnection_Connected() const
+{
+    const auto databaseName = qEnvironmentVariable("DB_MYSQL_DATABASE", EMPTY);
+    const auto driverName = QMYSQL;
+
+    // Add a new database connection
+    const auto connectionName = Databases::createConnectionTemp(
+                                    Databases::MYSQL,
+                                    {ClassName, QString::fromUtf8(__func__)}, // NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
+    {
+        {driver_,    driverName},
+        {host_,      qEnvironmentVariable("DB_MYSQL_HOST",      H127001)},
+        {port_,      qEnvironmentVariable("DB_MYSQL_PORT",      P5432)},
+        {database_,  databaseName},
+        {username_,  qEnvironmentVariable("DB_MYSQL_USERNAME",  EMPTY)},
+        {password_,  qEnvironmentVariable("DB_MYSQL_PASSWORD",  EMPTY)},
+        {charset_,   qEnvironmentVariable("DB_MYSQL_CHARSET",   UTF8MB4)},
+        {collation_, qEnvironmentVariable("DB_MYSQL_COLLATION", UTF8MB40900aici)},
+        {options_,   ConfigUtils::mysqlSslOptions()},
+    });
+
+    if (!connectionName)
+        QSKIP(TestUtils::AutoTestSkipped
+              .arg(TypeUtils::classPureBasename(*this), Databases::MYSQL)
+              .toUtf8().constData(), );
+
+    // Open connection
+    auto &connection = m_dm->connection(*connectionName);
+    const auto openedConnections = m_dm->openedConnectionNames();
+
+    QCOMPARE(connection.getName(), *connectionName);
+    QCOMPARE(connection.getDatabaseName(), databaseName);
+    QCOMPARE(connection.driverName(), driverName);
+    QCOMPARE(openedConnections.size(), 1);
+    QCOMPARE(openedConnections.first(), *connectionName);
+    QCOMPARE(m_dm->connectionNames().size(), m_initialConnectionsCount + 1);
+    QVERIFY(m_dm->getDefaultConnection().isEmpty());
+
+    // Remove opened connection
+    QVERIFY(Databases::removeConnection(*connectionName));
+
+    QVERIFY(m_dm->getDefaultConnection().isEmpty());
+    QVERIFY(m_dm->openedConnectionNames().isEmpty());
+    QCOMPARE(m_dm->connectionNames().size(), m_initialConnectionsCount);
+
+    // Restore defaults
+    m_dm->resetDefaultConnection();
+    QCOMPARE(m_dm->getDefaultConnection(), DatabaseConfiguration::defaultConnectionName);
+}
+
+void tst_DatabaseManager::MySQL_removeConnection_NotConnected() const
+{
+    // Add a new database connection
+    const auto connectionName = Databases::createConnectionTemp(
+                                    Databases::MYSQL,
+                                    {ClassName, QString::fromUtf8(__func__)}, // NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
+    {
+        {driver_, QMYSQL},
+        {host_,   "example.com"},
+    });
+
+    if (!connectionName)
+        QSKIP(TestUtils::AutoTestSkipped
+              .arg(TypeUtils::classPureBasename(*this), Databases::MYSQL)
+              .toUtf8().constData(), );
+
+    m_dm->setDefaultConnection(*connectionName);
+
+    QVERIFY(m_dm->openedConnectionNames().isEmpty());
+    QCOMPARE(m_dm->connectionNames().size(), m_initialConnectionsCount + 1);
+    QCOMPARE(m_dm->getDefaultConnection(), *connectionName);
+
+    // Remove database connection that is not opened
+    QVERIFY(Databases::removeConnection(*connectionName));
+
+    QVERIFY(m_dm->openedConnectionNames().isEmpty());
+    QCOMPARE(m_dm->connectionNames().size(), m_initialConnectionsCount);
+    /* When the connection was also a default connection, then DM will reset
+       the default connection. */
+    QCOMPARE(m_dm->getDefaultConnection(), DatabaseConfiguration::defaultConnectionName);
 }
 
 void tst_DatabaseManager::Postgres_removeConnection_Connected() const
