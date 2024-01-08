@@ -182,10 +182,6 @@ void tst_DatabaseManager::MySQL_removeConnection_Connected() const
     QVERIFY(m_dm->getDefaultConnection().isEmpty());
     QVERIFY(m_dm->openedConnectionNames().isEmpty());
     QCOMPARE(m_dm->connectionNames().size(), m_initialConnectionsCount);
-
-    // Restore defaults
-    m_dm->resetDefaultConnection();
-    QCOMPARE(m_dm->getDefaultConnection(), DatabaseConfiguration::defaultConnectionName);
 }
 
 void tst_DatabaseManager::MySQL_removeConnection_NotConnected() const
@@ -204,6 +200,7 @@ void tst_DatabaseManager::MySQL_removeConnection_NotConnected() const
               .arg(TypeUtils::classPureBasename(*this), Databases::MYSQL)
               .toUtf8().constData(), );
 
+    // To test resetting the default connection
     m_dm->setDefaultConnection(*connectionName);
 
     QVERIFY(m_dm->openedConnectionNames().isEmpty());
@@ -218,6 +215,10 @@ void tst_DatabaseManager::MySQL_removeConnection_NotConnected() const
     /* When the connection was also a default connection, then DM will reset
        the default connection. */
     QCOMPARE(m_dm->getDefaultConnection(), DatabaseConfiguration::defaultConnectionName);
+
+    // Restore defaults
+    m_dm->setDefaultConnection(EMPTY);
+    QVERIFY(m_dm->openedConnectionNames().isEmpty());
 }
 
 void tst_DatabaseManager::Postgres_removeConnection_Connected() const
@@ -264,10 +265,6 @@ void tst_DatabaseManager::Postgres_removeConnection_Connected() const
     QVERIFY(m_dm->getDefaultConnection().isEmpty());
     QVERIFY(m_dm->openedConnectionNames().isEmpty());
     QCOMPARE(m_dm->connectionNames().size(), m_initialConnectionsCount);
-
-    // Restore defaults
-    m_dm->resetDefaultConnection();
-    QCOMPARE(m_dm->getDefaultConnection(), DatabaseConfiguration::defaultConnectionName);
 }
 
 void tst_DatabaseManager::Postgres_removeConnection_NotConnected() const
@@ -286,6 +283,7 @@ void tst_DatabaseManager::Postgres_removeConnection_NotConnected() const
               .arg(TypeUtils::classPureBasename(*this), Databases::POSTGRESQL)
               .toUtf8().constData(), );
 
+    // To test resetting the default connection
     m_dm->setDefaultConnection(*connectionName);
 
     QVERIFY(m_dm->openedConnectionNames().isEmpty());
@@ -300,6 +298,10 @@ void tst_DatabaseManager::Postgres_removeConnection_NotConnected() const
     /* When the connection was also a default connection, then DM will reset
        the default connection. */
     QCOMPARE(m_dm->getDefaultConnection(), DatabaseConfiguration::defaultConnectionName);
+
+    // Restore defaults
+    m_dm->setDefaultConnection(EMPTY);
+    QVERIFY(m_dm->openedConnectionNames().isEmpty());
 }
 
 void tst_DatabaseManager::default_MySQL_ConfigurationValues() const
