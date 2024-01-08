@@ -593,8 +593,8 @@ void tst_DatabaseManager::ssl_MySQL_ConfigurationValues() const
                  {ssl_cert,       sslCertValue},
                  {ssl_key,        sslKeyValue},
                  {ssl_ca,         sslCaValue},
+                                                 // Here must be uppercase
                  {options_,       QVariantHash({{SSL_CERT, sslCertValue},
-                                                // Here will be uppercase
                                                 {SSL_KEY,  sslKeyValue},
                                                 {SSL_CA,   sslCaValue}})},
              }));
