@@ -116,6 +116,8 @@ private:
 Q_GLOBAL_STATIC_WITH_ARGS(
         QVariant, QtTimeZoneConfigUTC, // NOLINT(misc-use-anonymous-namespace)
         (QVariant::fromValue(QtTimeZoneConfig {QtTimeZoneType::QtTimeSpec, Qt::UTC})));
+/*! QString constant for the "users" table. */
+Q_GLOBAL_STATIC_WITH_ARGS(QString, UsersTable, ("users"));
 
 /* private slots */
 
@@ -884,7 +886,7 @@ void tst_DatabaseManager::MySQL_addUseAndRemoveConnection_FiveTimes() const
                   .toUtf8().constData(), );
 
         // Execute some database query
-        QCOMPARE(m_dm->table("users", *connectionName)->count(), 5);
+        QCOMPARE(m_dm->table(*UsersTable, *connectionName)->count(), 5);
 
         // Restore
         QVERIFY(Databases::removeConnection(*connectionName));
@@ -914,9 +916,9 @@ void tst_DatabaseManager::MySQL_addUseAndRemoveThreeConnections_FiveTimes() cons
                       .toUtf8().constData(), );
 
         // Execute some database query on connections
-        QCOMPARE(m_dm->table("users", *connectionName1)->count(), 5);
-        QCOMPARE(m_dm->table("users", *connectionName2)->count(), 5);
-        QCOMPARE(m_dm->table("users", *connectionName3)->count(), 5);
+        QCOMPARE(m_dm->table(*UsersTable, *connectionName1)->count(), 5);
+        QCOMPARE(m_dm->table(*UsersTable, *connectionName2)->count(), 5);
+        QCOMPARE(m_dm->table(*UsersTable, *connectionName3)->count(), 5);
 
         // Restore
         QVERIFY(Databases::removeConnection(*connectionName3));
