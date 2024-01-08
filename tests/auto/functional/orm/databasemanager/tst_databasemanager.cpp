@@ -35,6 +35,7 @@ using Orm::Constants::host_;
 using Orm::Constants::options_;
 using Orm::Constants::password_;
 using Orm::Constants::port_;
+using Orm::Constants::postgres_;
 using Orm::Constants::prefix_;
 using Orm::Constants::prefix_indexes;
 using Orm::Constants::qt_timezone;
@@ -225,14 +226,13 @@ void tst_DatabaseManager::Postgres_removeConnection_Connected() const
     {
         {driver_,          driverName},
         {application_name, QStringLiteral("TinyORM tests - tst_databasemanager")},
-        {host_,            qEnvironmentVariable("DB_PGSQL_HOST", H127001)},
-        {port_,            qEnvironmentVariable("DB_PGSQL_PORT", P5432)},
+        {host_,            qEnvironmentVariable("DB_PGSQL_HOST",       H127001)},
+        {port_,            qEnvironmentVariable("DB_PGSQL_PORT",       P5432)},
         {database_,        databaseName},
         {search_path,      qEnvironmentVariable("DB_PGSQL_SEARCHPATH", PUBLIC)},
-        {username_,        qEnvironmentVariable("DB_PGSQL_USERNAME",
-                                                QStringLiteral("postgres"))},
-        {password_,        qEnvironmentVariable("DB_PGSQL_PASSWORD", "")},
-        {charset_,         qEnvironmentVariable("DB_PGSQL_CHARSET", UTF8)},
+        {username_,        qEnvironmentVariable("DB_PGSQL_USERNAME",   postgres_)},
+        {password_,        qEnvironmentVariable("DB_PGSQL_PASSWORD",   EMPTY)},
+        {charset_,         qEnvironmentVariable("DB_PGSQL_CHARSET",    UTF8)},
     });
 
     if (!connectionName)
@@ -303,7 +303,7 @@ void tst_DatabaseManager::default_MySQL_ConfigurationValues() const
                                     Databases::MYSQL,
                                     {ClassName, QString::fromUtf8(__func__)}, // NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
     {
-        {driver_, "qmysql"},
+        {driver_, QMYSQL},
     });
 
     if (!connectionName)
@@ -316,7 +316,7 @@ void tst_DatabaseManager::default_MySQL_ConfigurationValues() const
     const auto &originalConfig = m_dm->originalConfig(*connectionName);
     QCOMPARE(originalConfig,
              QVariantHash({
-                 {driver_, "qmysql"},
+                 {driver_, QMYSQL},
              }));
 
     /* Force the creation of a connection and parse the connection configuration options.
@@ -361,7 +361,7 @@ void tst_DatabaseManager::default_MariaDB_ConfigurationValues() const
                                     Databases::MARIADB,
                                     {ClassName, QString::fromUtf8(__func__)}, // NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
     {
-        {driver_, "qmysql"},
+        {driver_, QMYSQL},
     });
 
     if (!connectionName)
@@ -374,7 +374,7 @@ void tst_DatabaseManager::default_MariaDB_ConfigurationValues() const
     const auto &originalConfig = m_dm->originalConfig(*connectionName);
     QCOMPARE(originalConfig,
              QVariantHash({
-                 {driver_, "qmysql"},
+                 {driver_, QMYSQL},
              }));
 
     /* Force the creation of a connection and parse the connection configuration options.
@@ -416,7 +416,7 @@ void tst_DatabaseManager::default_PostgreSQL_ConfigurationValues() const
                                     Databases::POSTGRESQL,
                                     {ClassName, QString::fromUtf8(__func__)}, // NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
     {
-        {driver_, "qpsql"},
+        {driver_, QPSQL},
     });
 
     if (!connectionName)
@@ -429,7 +429,7 @@ void tst_DatabaseManager::default_PostgreSQL_ConfigurationValues() const
     const auto &originalConfig = m_dm->originalConfig(*connectionName);
     QCOMPARE(originalConfig,
              QVariantHash({
-                 {driver_, "qpsql"},
+                 {driver_, QPSQL},
              }));
 
     /* Force the creation of a connection and parse the connection configuration options.
@@ -471,7 +471,7 @@ void tst_DatabaseManager::default_SQLite_ConfigurationValues() const
                                     Databases::SQLITE,
                                     {ClassName, QString::fromUtf8(__func__)}, // NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
     {
-        {driver_, "qsqlite"},
+        {driver_, QSQLITE},
     });
 
     if (!connectionName)
@@ -484,7 +484,7 @@ void tst_DatabaseManager::default_SQLite_ConfigurationValues() const
     const auto &originalConfig = m_dm->originalConfig(*connectionName);
     QCOMPARE(originalConfig,
              QVariantHash({
-                 {driver_, "qsqlite"},
+                 {driver_, QSQLITE},
              }));
 
     /* Force the creation of a connection and parse the connection configuration options.
