@@ -114,6 +114,7 @@ namespace Orm::Constants
     SHAREDLIB_EXPORT extern const QString verify_ca;
     SHAREDLIB_EXPORT extern const QString verify_full;
 
+    // Others
     SHAREDLIB_EXPORT extern const QString isolation_level;
     SHAREDLIB_EXPORT extern const QString foreign_key_constraints;
     SHAREDLIB_EXPORT extern const QString check_database_exists;

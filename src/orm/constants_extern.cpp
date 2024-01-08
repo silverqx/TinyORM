@@ -103,6 +103,7 @@ namespace Orm::Constants
     const QString verify_ca    = QStringLiteral("verify-ca");
     const QString verify_full  = QStringLiteral("verify-full");
 
+    // Others
     const QString isolation_level         = QStringLiteral("isolation_level");
     const QString foreign_key_constraints = QStringLiteral("foreign_key_constraints");
     const QString check_database_exists   = QStringLiteral("check_database_exists");

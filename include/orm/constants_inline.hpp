@@ -113,6 +113,7 @@ namespace Orm::Constants
     inline const QString verify_ca    = QStringLiteral("verify-ca");
     inline const QString verify_full  = QStringLiteral("verify-full");
 
+    // Others
     inline const QString
     isolation_level         = QStringLiteral("isolation_level");
     inline const QString
