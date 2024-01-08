@@ -470,8 +470,8 @@ bool Databases::isDriverAvailable(const QString &driver)
     static std::unordered_map<QString, bool> isAvailableCache;
 
     // Return a cached value/result
-    if (isAvailableCache.contains(driver) && isAvailableCache.at(driver))
-        return true;
+    if (isAvailableCache.contains(driver))
+        return isAvailableCache.at(driver);
 
     const auto isAvailable = m_dm->isDriverAvailable(driver);
 
