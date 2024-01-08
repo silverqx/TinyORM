@@ -141,6 +141,7 @@ namespace Orm::Constants
     SHAREDLIB_EXPORT extern const QString InnoDB;
     SHAREDLIB_EXPORT extern const QString MyISAM;
     SHAREDLIB_EXPORT extern const QString postgres_;
+    SHAREDLIB_EXPORT extern const QString in_memory;
 
     SHAREDLIB_EXPORT extern const QString UTF8Generalci;
     SHAREDLIB_EXPORT extern const QString UTF8Unicodeci;
@@ -170,7 +171,7 @@ namespace Orm::Constants
     SHAREDLIB_EXPORT extern const QString AND_;
     SHAREDLIB_EXPORT extern const QString NOT_;
 
-    // Bitewise operators
+    // Bitwise operators
     SHAREDLIB_EXPORT extern const QString B_OR;
     SHAREDLIB_EXPORT extern const QString B_AND;
 

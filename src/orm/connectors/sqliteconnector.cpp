@@ -14,6 +14,7 @@ using Orm::Constants::NAME;
 using Orm::Constants::check_database_exists;
 using Orm::Constants::database_;
 using Orm::Constants::foreign_key_constraints;
+using Orm::Constants::in_memory;
 
 using TypeUtils = Orm::Utils::Type;
 
@@ -32,7 +33,7 @@ SQLiteConnector::connect(const QVariantHash &config) const
     /* SQLite supports "in-memory" databases that only last as long as the owning
        connection does. These are useful for tests or for short lifetime store
        querying. In-memory databases may only have a single open connection. */
-    if (config[database_].value<QString>() == QStringLiteral(":memory:")) {
+    if (config[database_].value<QString>() == in_memory) {
         // sqlite :memory: driver
         createConnection(name, config, options);
 

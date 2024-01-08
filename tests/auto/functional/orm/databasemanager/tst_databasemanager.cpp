@@ -32,6 +32,7 @@ using Orm::Constants::database_;
 using Orm::Constants::dont_drop;
 using Orm::Constants::driver_;
 using Orm::Constants::host_;
+using Orm::Constants::in_memory;
 using Orm::Constants::options_;
 using Orm::Constants::password_;
 using Orm::Constants::port_;
@@ -781,7 +782,7 @@ void tst_DatabaseManager::SQLite_MemoryDriver() const
                                     {ClassName, QString::fromUtf8(__func__)}, // NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
     {
         {driver_,   QSQLITE},
-        {database_, QStringLiteral(":memory:")},
+        {database_, in_memory},
     });
 
     if (!connectionName)

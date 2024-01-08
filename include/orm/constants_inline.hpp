@@ -148,6 +148,7 @@ namespace Orm::Constants
     inline const QString InnoDB    = QStringLiteral("InnoDB");
     inline const QString MyISAM    = QStringLiteral("MyISAM");
     inline const QString postgres_ = QStringLiteral("postgres");
+    inline const QString in_memory = QStringLiteral(":memory:");
 
     inline const QString UTF8Generalci       = QStringLiteral("utf8_general_ci");
     inline const QString UTF8Unicodeci       = QStringLiteral("utf8_unicode_ci");
@@ -177,7 +178,7 @@ namespace Orm::Constants
     inline const QString AND_  = QStringLiteral("&&");
     inline const QString NOT_  = QStringLiteral("!");
 
-    // Bitewise operators
+    // Bitwise operators
     inline const QString B_OR  = QStringLiteral("|");
     inline const QString B_AND = QStringLiteral("&");
 

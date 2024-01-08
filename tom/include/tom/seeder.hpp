@@ -258,6 +258,10 @@ namespace Seeders
     using TINYORM_COMMON_NAMESPACE::Orm::Constants::InnoDB; // NOLINT(misc-unused-using-decls)
     /*! Alias for the string constant "MyISAM". */
     using TINYORM_COMMON_NAMESPACE::Orm::Constants::MyISAM; // NOLINT(misc-unused-using-decls)
+    /*! Alias for the string constant "postgres". */
+    using TINYORM_COMMON_NAMESPACE::Orm::Constants::postgres_; // NOLINT(misc-unused-using-decls)
+    /*! Alias for the string constant ":memory:". */
+    using TINYORM_COMMON_NAMESPACE::Orm::Constants::in_memory; // NOLINT(misc-unused-using-decls)
 
     /*! Alias for the string constant "utf8_general_ci". */
     using TINYORM_COMMON_NAMESPACE::Orm::Constants::UTF8Generalci; // NOLINT(misc-unused-using-decls)
