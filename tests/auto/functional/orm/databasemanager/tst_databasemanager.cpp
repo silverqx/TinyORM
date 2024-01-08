@@ -440,9 +440,9 @@ void tst_DatabaseManager::ssl_MySQL_ConfigurationValues() const
 
     const QVariantHash initialConfiguration {
         {driver_,   QMYSQL},
-        // The ssl_cert is only alias to the "SSL_CERT", looks nicer
+        /* The ssl_cert/key/ca are only aliases to the "SSL_CERT/KEY/CA" (looks nicer).
+           Lowercase SSL-related option names in top-level configuration. */
         {ssl_cert,  sslCertValue},
-        // Lowercase SSL-related option names in top-level configuration
         {"ssl_key", sslKeyValue},
         {"ssl_ca",  sslCaValue},
         {options_,  QVariantHash({{SSL_CERT, sslCertOptionsValue},
@@ -477,9 +477,9 @@ void tst_DatabaseManager::ssl_MySQL_ConfigurationValues() const
                  {prefix_,        EMPTY},
                  {prefix_indexes, false},
                  {Version,        {}},
-                 // The ssl_cert is only alias to the "SSL_CERT", looks nicer
+                 /* The ssl_xyz are only aliases to the "SSL_CERT/KEY/CA" (looks nicer).
+                    Lowercase SSL-related option names in the top-level configuration. */
                  {ssl_cert,       sslCertValue},
-                 // Lowercase SSL-related option names in top-level configuration
                  {"ssl_key",      sslKeyValue},
                  {"ssl_ca",       sslCaValue},
                  {options_,       QVariantHash({{SSL_CERT, sslCertOptionsValue},
@@ -496,9 +496,9 @@ void tst_DatabaseManager::ssl_MySQL_ConfigurationValues() const
                  {prefix_indexes, false},
                  {Version,        {}},
                  {qt_timezone,    *QtTimeZoneConfigUTC},
-                 // The ssl_cert is only alias to the "SSL_CERT", looks nicer
+                 /* The ssl_xyz are only aliases to the "SSL_CERT/KEY/CA" (looks nicer).
+                    Lowercase SSL-related option names in the top-level configuration. */
                  {ssl_cert,       sslCertValue},
-                 // Lowercase SSL-related option names in top-level configuration
                  {"ssl_key",      sslKeyValue},
                  {"ssl_ca",       sslCaValue},
                  {options_,       QVariantHash({{SSL_CERT, sslCertValue},
@@ -527,9 +527,9 @@ void tst_DatabaseManager::ssl_MariaDB_ConfigurationValues() const
 
     const QVariantHash initialConfiguration {
         {driver_,   QMYSQL},
-        // The ssl_cert is only alias to the "SSL_CERT", looks nicer
+        /* The ssl_cert/key/ca are only aliases to the "SSL_CERT/KEY/CA" (looks nicer).
+           Lowercase SSL-related option names in the top-level configuration. */
         {ssl_cert,  sslCertValue},
-        // Lowercase SSL-related option names in top-level configuration
         {"ssl_key", sslKeyValue},
         {"ssl_ca",  sslCaValue},
         {options_,  QVariantHash({{SSL_CERT, sslCertOptionsValue},
@@ -564,9 +564,9 @@ void tst_DatabaseManager::ssl_MariaDB_ConfigurationValues() const
                  {prefix_,        EMPTY},
                  {prefix_indexes, false},
                  {Version,        {}},
-                 // The ssl_cert is only alias to the "SSL_CERT", looks nicer
+                 /* The ssl_xyz are only aliases to the "SSL_CERT/KEY/CA" (looks nicer).
+                    Lowercase SSL-related option names in the top-level configuration. */
                  {ssl_cert,       sslCertValue},
-                 // Lowercase SSL-related option names in top-level configuration
                  {"ssl_key",      sslKeyValue},
                  {"ssl_ca",       sslCaValue},
                  {options_,       QVariantHash({{SSL_CERT, sslCertOptionsValue},
@@ -583,13 +583,13 @@ void tst_DatabaseManager::ssl_MariaDB_ConfigurationValues() const
                  {prefix_indexes, false},
                  {Version,        {}},
                  {qt_timezone,    *QtTimeZoneConfigUTC},
-                 // The ssl_cert is only alias to the "SSL_CERT", looks nicer
+                 /* The ssl_xyz are only aliases to the "SSL_CERT/KEY/CA" (looks nicer).
+                    Lowercase SSL-related option names in the top-level configuration. */
                  {ssl_cert,       sslCertValue},
-                 // Lowercase SSL-related option names in top-level configuration
                  {"ssl_key",      sslKeyValue},
                  {"ssl_ca",       sslCaValue},
+                                                 // Here must be uppercase
                  {options_,       QVariantHash({{SSL_CERT, sslCertValue},
-                                                // Here will be uppercase
                                                 {SSL_KEY,  sslKeyValue},
                                                 {SSL_CA,   sslCaValue}})},
              }));
