@@ -1,6 +1,9 @@
 include($$TINYORM_SOURCE_TREE/tests/qmake/common.pri)
 include($$TINYORM_SOURCE_TREE/tests/qmake/TinyUtils.pri)
 
+# No need to link against to QtSql module
+QT -= sql
+
 SOURCES = tst_versions.cpp
 
 tom_example:!disable_tom: \
@@ -32,3 +35,6 @@ win32 {
 
     LIBS += -lVersion
 }
+
+# No need to link against the TinyOrm library
+LIBS -= -lTinyOrm

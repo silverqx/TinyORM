@@ -10,7 +10,6 @@
 #endif
 
 // TinyORM
-#include "orm/constants.hpp"
 #include "orm/version.hpp"
 // TinyUtils
 #include "version.hpp"
@@ -31,8 +30,6 @@
 #  define TINYTEST_VERSIONS_TINYUTILS_PATH
 #  define TINYTEST_VERSIONS_TOMEXAMPLE_PATH
 #endif
-
-using Orm::Constants::DOT;
 
 #ifdef _WIN32
 using TestUtils::Fs;
@@ -78,6 +75,12 @@ private:
 /*! Executables copyright, all executables have the same LegalCopyright. */
 Q_GLOBAL_STATIC_WITH_ARGS(QString, CopyRight, ("Copyright (©) 2023 Silver Zachara")) // NOLINT(misc-use-anonymous-namespace)
 #endif
+
+namespace
+{
+    /*! QChar constant '.'. */
+    constexpr QChar DOT(QLatin1Char('.'));
+} // namespace
 
 /* private slots */
 
