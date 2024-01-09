@@ -436,6 +436,10 @@ endif()
 
 if(BUILD_DRIVERS)
     add_subdirectory(drivers)
+
+    target_link_libraries(${TinyOrm_target}
+        PUBLIC ${TinyDrivers_ns}::${TinyDrivers_target}
+    )
 endif()
 
 # Build auto tests

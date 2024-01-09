@@ -10,7 +10,7 @@
 #endif
 
 // TinyDrivers
-#ifdef TINYORM_USING_TINYDRIVERS
+#if defined(TINYORM_USING_TINYDRIVERS) && defined(TINYDRIVERS_LINKING_SHARED)
 #  include "orm/drivers/version.hpp"
 #endif
 // TinyMySql (loadable shared library)
@@ -55,7 +55,7 @@ class tst_Versions : public QObject // clazy:exclude=ctor-missing-parent-argumen
     Q_OBJECT
 
 private Q_SLOTS:
-#ifdef TINYORM_USING_TINYDRIVERS
+#if defined(TINYORM_USING_TINYDRIVERS) && defined(TINYDRIVERS_LINKING_SHARED)
     void versions_TinyDrivers() const;
 #endif
 #ifdef TINYDRIVERS_MYSQL_LOADABLE_LIBRARY
@@ -67,7 +67,7 @@ private Q_SLOTS:
     void versions_TomExample() const;
 #endif
 
-#ifdef TINYORM_USING_TINYDRIVERS
+#if defined(TINYORM_USING_TINYDRIVERS) && defined(TINYDRIVERS_LINKING_SHARED)
     void checkFileVersion_TinyDrivers() const;
 #endif
 #ifdef TINYDRIVERS_MYSQL_LOADABLE_LIBRARY
@@ -112,7 +112,7 @@ namespace
 /* private slots */
 
 // NOLINTBEGIN(readability-convert-member-functions-to-static)
-#ifdef TINYORM_USING_TINYDRIVERS
+#if defined(TINYORM_USING_TINYDRIVERS) && defined(TINYDRIVERS_LINKING_SHARED)
 void tst_Versions::versions_TinyDrivers() const
 {
     // Test types
@@ -334,7 +334,7 @@ void tst_Versions::versions_TomExample() const
 }
 #endif
 
-#ifdef TINYORM_USING_TINYDRIVERS
+#if defined(TINYORM_USING_TINYDRIVERS) && defined(TINYDRIVERS_LINKING_SHARED)
 void tst_Versions::checkFileVersion_TinyDrivers() const
 {
 #ifndef _WIN32

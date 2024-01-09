@@ -81,10 +81,8 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
 endif()
 
 target_include_directories(${TinyMySql_target}
-    PUBLIC
-        # To be able to find the version.hpp
-        "$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>"
     PRIVATE
+        "$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>"
         "$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include_private>"
         "$<BUILD_INTERFACE:${${TinyOrm_ns}_SOURCE_DIR}/include>"
         "$<BUILD_INTERFACE:${${TinyOrm_ns}_SOURCE_DIR}/drivers/common/include_private>"
