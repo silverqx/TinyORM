@@ -15,8 +15,9 @@ ${TINY_UNPARSED_ARGUMENTS}")
 
     # The static archive doesn't need an RC or manifest file
     if(NOT CMAKE_SYSTEM_NAME STREQUAL "Windows" OR
-            (NOT target_type STREQUAL "EXECUTABLE" AND
-                NOT target_type STREQUAL "SHARED_LIBRARY")
+            NOT (target_type STREQUAL "EXECUTABLE" OR
+                 target_type STREQUAL "SHARED_LIBRARY" OR
+                 target_type STREQUAL "MODULE_LIBRARY")
     )
         return()
     endif()
@@ -107,7 +108,7 @@ ${TINY_UNPARSED_ARGUMENTS}")
     # Manifest file (injected through the RC file on MinGW)
     if(NOT MINGW)
         # Obtain extension by target type - .exe or .dll
-        if(target_type STREQUAL "SHARED_LIBRARY")
+        if(target_type STREQUAL "SHARED_LIBRARY" OR target_type STREQUAL "MODULE_LIBRARY")
             set(tiny_original_extension "${CMAKE_SHARED_LIBRARY_SUFFIX}")
         elseif(target_type STREQUAL "EXECUTABLE")
             set(tiny_original_extension "${CMAKE_EXECUTABLE_SUFFIX}")
