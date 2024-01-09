@@ -49,9 +49,14 @@ CONFIG(release, debug|release): DEFINES += TINYDRIVERS_NO_DEBUG
 CONFIG(debug, debug|release): DEFINES *= TINYDRIVERS_DEBUG
 
 load(tiny_drivers)
+# Cache the result to the isBuildingMySqlDriver variable
+tiny_is_building_driver(mysql, isBuildingMySqlDriver)
+
+$$isBuildingMySqlDriver: \
+    DEFINES *= TINYDRIVERS_MYSQL_DRIVER
 
 build_loadable_drivers: \
-tiny_is_building_driver(mysql) {
+$$isBuildingMySqlDriver {
     DEFINES *= TINYDRIVERS_MYSQL_LOADABLE_LIBRARY
     DEFINES *= TINYDRIVERS_MYSQL_PATH=$$quote($$shell_quote(\
                $$clean_path($$TINYORM_BUILD_TREE)/drivers/mysql$${TINY_BUILD_SUBFOLDER}/))
@@ -70,7 +75,7 @@ include($$PWD/include/include.pri)
 include($$PWD/src/src.pri)
 
 !build_loadable_drivers: \
-tiny_is_building_driver(mysql) {
+$$isBuildingMySqlDriver {
     include($$TINYORM_SOURCE_TREE/drivers/mysql/include_private/include_private.pri)
     include($$TINYORM_SOURCE_TREE/drivers/mysql/include/include.pri)
     include($$TINYORM_SOURCE_TREE/drivers/mysql/src/src.pri)
@@ -134,7 +139,7 @@ tiny_add_system_includepath($$quote($$TINYORM_SOURCE_TREE/include/))
     load(tiny_find_packages)
 
     # Find the MySQL and add it on the system include path and library path
-    tiny_is_building_driver(mysql): \
+    $$isBuildingMySqlDriver: \
         tiny_find_mysql()
 }
 

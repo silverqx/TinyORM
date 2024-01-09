@@ -196,9 +196,24 @@ defineTest(tiny_link_drivers) {
         build_loadable_drivers: \
             DEFINES *= TINYDRIVERS_LINKING_SHARED
 
+        # Cache the result to the isBuildingMySqlDriver variable
+        tiny_is_building_driver(mysql, isBuildingMySqlDriver)
+
+        $$isBuildingMySqlDriver: \
+            DEFINES *= TINYDRIVERS_MYSQL_DRIVER
+
+        build_loadable_drivers: \
+        $$isBuildingMySqlDriver: \
+            DEFINES *= TINYDRIVERS_MYSQL_LOADABLE_LIBRARY
+
         # Includes and Libraries
         tiny_add_drivers_includepath(\
             $$quote($$TINYORM_SOURCE_TREE/drivers/common/include/))
+
+        build_loadable_drivers: \
+        $$isBuildingMySqlDriver: \
+            tiny_add_drivers_includepath(\
+                $$quote($$TINYORM_SOURCE_TREE/drivers/mysql/include/))
 
         # Don't check if exists() because QtCreator depends on these LIBS paths it adds
         # them on the PATH or LD_LIBRARY_PATH during Run Project

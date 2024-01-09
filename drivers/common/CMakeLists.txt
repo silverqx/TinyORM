@@ -102,8 +102,9 @@ target_include_directories(${TinyDrivers_target}
 
 if(NOT TINY_BUILD_LOADABLE_DRIVERS AND BUILD_MYSQL_DRIVER)
     target_include_directories(${TinyDrivers_target}
-        PRIVATE
+        PUBLIC
             "$<BUILD_INTERFACE:${${TinyOrm_ns}_SOURCE_DIR}/drivers/mysql/include>"
+        PRIVATE
             "$<BUILD_INTERFACE:${${TinyOrm_ns}_SOURCE_DIR}/drivers/mysql/include_private>"
     )
 endif()
@@ -142,10 +143,15 @@ else()
     target_compile_definitions(${TinyDrivers_target} PRIVATE TINYDRIVERS_INLINE_CONSTANTS)
 endif()
 
+if(BUILD_MYSQL_DRIVER)
+    target_compile_definitions(${TinyDrivers_target} PUBLIC TINYDRIVERS_MYSQL_DRIVER)
+endif()
+
 if(TINY_BUILD_LOADABLE_DRIVERS AND BUILD_MYSQL_DRIVER)
     target_compile_definitions(${TinyDrivers_target}
-        PRIVATE
+        PUBLIC
             TINYDRIVERS_MYSQL_LOADABLE_LIBRARY
+        PRIVATE
             # Don't user quotes around the path here
             TINYDRIVERS_MYSQL_PATH=${CMAKE_BINARY_DIR}/drivers/mysql/
     )
