@@ -210,6 +210,7 @@ defineTest(tiny_link_drivers) {
         tiny_add_drivers_includepath(\
             $$quote($$TINYORM_SOURCE_TREE/drivers/common/include/))
 
+        # To be able to find the version.hpp
         build_loadable_drivers: \
         $$isBuildingMySqlDriver: \
             tiny_add_drivers_includepath(\

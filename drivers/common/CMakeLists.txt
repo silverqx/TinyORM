@@ -100,13 +100,20 @@ target_include_directories(${TinyDrivers_target}
         "$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include_private>"
 )
 
-if(NOT TINY_BUILD_LOADABLE_DRIVERS AND BUILD_MYSQL_DRIVER)
-    target_include_directories(${TinyDrivers_target}
-        PUBLIC
-            "$<BUILD_INTERFACE:${${TinyOrm_ns}_SOURCE_DIR}/drivers/mysql/include>"
-        PRIVATE
-            "$<BUILD_INTERFACE:${${TinyOrm_ns}_SOURCE_DIR}/drivers/mysql/include_private>"
-    )
+if(BUILD_MYSQL_DRIVER)
+    if(TINY_BUILD_LOADABLE_DRIVERS)
+        # PUBLIC to be able to find the version.hpp
+        target_include_directories(${TinyDrivers_target}
+            PUBLIC
+                "$<BUILD_INTERFACE:${${TinyOrm_ns}_SOURCE_DIR}/drivers/mysql/include>"
+        )
+    else()
+        target_include_directories(${TinyDrivers_target}
+            PRIVATE
+                "$<BUILD_INTERFACE:${${TinyOrm_ns}_SOURCE_DIR}/drivers/mysql/include>"
+                "$<BUILD_INTERFACE:${${TinyOrm_ns}_SOURCE_DIR}/drivers/mysql/include_private>"
+        )
+    endif()
 endif()
 
 # TinyDrivers defines
