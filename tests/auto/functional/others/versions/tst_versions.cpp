@@ -13,6 +13,10 @@
 #ifdef TINYORM_USING_TINYDRIVERS
 #  include "orm/drivers/version.hpp"
 #endif
+// TinyMySql (loadable shared library)
+#ifdef TINYDRIVERS_MYSQL_LOADABLE_LIBRARY
+#  include "orm/drivers/mysql/version.hpp"
+#endif
 // TinyORM
 #include "orm/version.hpp"
 // TinyUtils
@@ -31,6 +35,7 @@
 #  endif
 #else
 #  define TINYTEST_VERSIONS_TINYDRIVERS_PATH
+#  define TINYTEST_VERSIONS_TINYMYSQL_PATH
 #  define TINYTEST_VERSIONS_TINYORM_PATH
 #  define TINYTEST_VERSIONS_TINYUTILS_PATH
 #  define TINYTEST_VERSIONS_TOMEXAMPLE_PATH
@@ -53,6 +58,9 @@ private Q_SLOTS:
 #ifdef TINYORM_USING_TINYDRIVERS
     void versions_TinyDrivers() const;
 #endif
+#ifdef TINYDRIVERS_MYSQL_LOADABLE_LIBRARY
+    void versions_TinyMySql() const;
+#endif
     void versions_TinyOrm() const;
     void versions_TinyUtils() const;
 #ifdef TINYTOM_EXAMPLE
@@ -61,6 +69,9 @@ private Q_SLOTS:
 
 #ifdef TINYORM_USING_TINYDRIVERS
     void checkFileVersion_TinyDrivers() const;
+#endif
+#ifdef TINYDRIVERS_MYSQL_LOADABLE_LIBRARY
+    void checkFileVersion_TinyMySql() const;
 #endif
     void checkFileVersion_TinyOrm() const;
     void checkFileVersion_TinyUtils() const;
@@ -149,6 +160,57 @@ void tst_Versions::versions_TinyDrivers() const
                          TINYDRIVERS_VERSION_MINOR * 100 +
                          TINYDRIVERS_VERSION_BUGFIX;
     QCOMPARE(TINYDRIVERS_VERSION, version);
+}
+#endif
+
+#ifdef TINYDRIVERS_MYSQL_LOADABLE_LIBRARY
+void tst_Versions::versions_TinyMySql() const
+{
+    // Test types
+    QCOMPARE(typeid (TINYMYSQL_VERSION_MAJOR),  typeid (int));
+    QCOMPARE(typeid (TINYMYSQL_VERSION_MINOR),  typeid (int));
+    QCOMPARE(typeid (TINYMYSQL_VERSION_BUGFIX), typeid (int));
+    QCOMPARE(typeid (TINYMYSQL_VERSION_BUILD),  typeid (int));
+
+    // Individual version numbers have to be greater than zero
+    QVERIFY(TINYMYSQL_VERSION_MAJOR  >= 0);
+    QVERIFY(TINYMYSQL_VERSION_MINOR  >= 0);
+    QVERIFY(TINYMYSQL_VERSION_BUGFIX >= 0);
+    QVERIFY(TINYMYSQL_VERSION_BUILD  >= 0);
+
+    // Project and File Version strings
+#if defined(_MSC_VER) && !defined(__clang__)
+#  pragma warning(push)
+#  pragma warning(disable : 4127)
+#endif
+    QString versionStr = QString::number(TINYMYSQL_VERSION_MAJOR) + DOT +
+                         QString::number(TINYMYSQL_VERSION_MINOR) + DOT +
+                         QString::number(TINYMYSQL_VERSION_BUGFIX);
+#if defined(_MSC_VER) && !defined(__clang__)
+#  pragma warning(pop)
+#endif
+    QString fileVersionStr = versionStr + DOT +
+                             QString::number(TINYMYSQL_VERSION_BUILD);
+    if constexpr (TINYMYSQL_VERSION_BUILD > 0)
+        versionStr += DOT + QString::number(TINYMYSQL_VERSION_BUILD);
+    versionStr += TINYMYSQL_VERSION_STATUS;
+
+    QCOMPARE(TINYMYSQL_FILEVERSION_STR, fileVersionStr);
+    QCOMPARE(TINYMYSQL_VERSION_STR, versionStr);
+#if defined(_MSC_VER) && !defined(__clang__)
+#  pragma warning(push)
+#  pragma warning(disable : 4127)
+#endif
+    QCOMPARE(TINYMYSQL_VERSION_STR_2, QLatin1Char('v') + versionStr);
+#if defined(_MSC_VER) && !defined(__clang__)
+#  pragma warning(pop)
+#endif
+
+    // Project Version number, to check API compatibility
+    const auto version = TINYMYSQL_VERSION_MAJOR * 10000 +
+                         TINYMYSQL_VERSION_MINOR * 100 +
+                         TINYMYSQL_VERSION_BUGFIX;
+    QCOMPARE(TINYMYSQL_VERSION, version);
 }
 #endif
 
@@ -292,6 +354,37 @@ void tst_Versions::checkFileVersion_TinyDrivers() const
                                QString::number(TINYDRIVERS_VERSION_MINOR)  + DOT +
                                QString::number(TINYDRIVERS_VERSION_BUGFIX) + DOT +
                                QString::number(TINYDRIVERS_VERSION_BUILD);
+#if defined(_MSC_VER) && !defined(__clang__)
+#  pragma warning(pop)
+#endif
+
+    QCOMPARE(fileVersions.productVersion, versionStr);
+    QCOMPARE(fileVersions.fileVersion, fileVersions.productVersion);
+    QCOMPARE(fileVersions.copyright, *CopyRight);
+#endif
+}
+#endif
+
+#ifdef TINYDRIVERS_MYSQL_LOADABLE_LIBRARY
+void tst_Versions::checkFileVersion_TinyMySql() const
+{
+#ifndef _WIN32
+    QSKIP("checkFileVersion_*() related tests are supported on MSVC only.", );
+#elif !defined(TINYTEST_VERSIONS_IS_SHARED_BUILD)
+    QSKIP("checkFileVersion_*() related tests are enabled for shared builds only.", );
+#else
+    const auto fileVersions = getExeVersionString(
+                                  Fs::absolutePath(TINYTEST_VERSIONS_TINYMYSQL_PATH));
+
+    // Project and File Version strings
+#if defined(_MSC_VER) && !defined(__clang__)
+#  pragma warning(push)
+#  pragma warning(disable : 4127)
+#endif
+    const QString versionStr = QString::number(TINYMYSQL_VERSION_MAJOR)  + DOT +
+                               QString::number(TINYMYSQL_VERSION_MINOR)  + DOT +
+                               QString::number(TINYMYSQL_VERSION_BUGFIX) + DOT +
+                               QString::number(TINYMYSQL_VERSION_BUILD);
 #if defined(_MSC_VER) && !defined(__clang__)
 #  pragma warning(pop)
 #endif
