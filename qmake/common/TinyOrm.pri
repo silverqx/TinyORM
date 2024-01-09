@@ -1,3 +1,6 @@
+# The common/TinyOrm.pri exists because the src.pro project (TinyOrm library) needs only
+# this part.
+
 # Common for the whole TinyORM library
 # ---
 
