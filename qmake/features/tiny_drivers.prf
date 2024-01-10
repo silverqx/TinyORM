@@ -5,7 +5,7 @@ defineTest(tiny_is_building_drivers) {
     # The out argument checks
     defined(1, var): \
     isEmpty(1): \
-        error( "The first 'out' parameter can't be empty when defined\
+        error( "The first string 'out' parameter can't be empty when defined\
                 in tiny_is_building_drivers()." )
 
     # Prepare variable names
@@ -39,7 +39,7 @@ defineTest(tiny_is_building_driver) {
     # The driverType argument checks
     !defined(1, var) | \
     isEmpty(1): \
-        error( "The first 'driverType' parameter can't be empty\
+        error( "The first string 'driverType' parameter can't be empty\
                 in tiny_is_building_driver()." )
 
     # The out argument checks
@@ -48,7 +48,7 @@ defineTest(tiny_is_building_driver) {
 
     $$definedOut: \
     isEmpty(2): \
-        error( "The first 'out' parameter can't be empty when defined\
+        error( "The first string 'out' parameter can't be empty when defined\
                 in tiny_is_building_driver()." )
 
     # Prepare variable names
@@ -156,7 +156,7 @@ defineTest(tiny_add_drivers_includepath) {
     # Argument checks
     !defined(1, var) | \
     isEmpty(1): \
-        error( "The first 'driversIncludePath' parameter can't be empty\
+        error( "The first string 'driversIncludePath' parameter can't be empty\
                 in tiny_add_drivers_includepath()." )
 
     # Prepare variable names
