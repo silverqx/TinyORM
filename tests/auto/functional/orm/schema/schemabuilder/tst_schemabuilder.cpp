@@ -39,7 +39,8 @@ class tst_SchemaBuilder : public QObject // clazy:exclude=ctor-missing-parent-ar
     Q_OBJECT
 
 private Q_SLOTS:
-    void initTestCase() const;
+    void initTestCase();
+    void cleanupTestCase() const;
 
     /* SchemaBuilder related */
     void createDatabase_dropAllTables_dropDatabaseIfExists() const;
@@ -97,24 +98,41 @@ private:
     static std::optional<QString> alternativeConnection_Postgres();
     /*! Create a new alternative connection on the DatabaseExample database (SQLite). */
     static std::optional<QString> alternativeConnection_Sqlite();
+
+    /*! Created database connections (needed by the cleanupTestCase()). */
+    QStringList m_connections {};
 };
 
 /* private slots */
 
 // NOLINTBEGIN(readability-convert-member-functions-to-static)
-void tst_SchemaBuilder::initTestCase() const
+void tst_SchemaBuilder::initTestCase()
 {
-    const auto connections = Databases::createConnections();
+    m_connections = Databases::createConnections();
 
-    if (connections.isEmpty())
+    if (m_connections.isEmpty())
         QSKIP(TestUtils::AutoTestSkippedAny.arg(TypeUtils::classPureBasename(*this))
                                            .toUtf8().constData(), );
 
     QTest::addColumn<QString>("connection");
 
     // Run all tests for all supported database connections
-    for (const auto &connection : connections)
+    for (const auto &connection : std::as_const(m_connections))
         QTest::newRow(connection.toUtf8().constData()) << connection;
+}
+
+void tst_SchemaBuilder::cleanupTestCase() const
+{
+    // dropDatabaseIfExists()
+    for (const auto &connection : m_connections) {
+        auto database = DatabaseName;
+        if (DB::driverName(connection) == QSQLITE)
+            database.append(QStringLiteral(".sqlite3"));
+
+        Schema::on(connection).dropDatabaseIfExists(database);
+
+        QVERIFY(!hasDatabase(database, connection));
+    }
 }
 
 /* SchemaBuilder related */
