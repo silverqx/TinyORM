@@ -17,10 +17,24 @@ win32 {
     CONFIG(dll, dll|shared|static|staticlib): \
         DEFINES += TINYTEST_VERSIONS_IS_SHARED_BUILD
 
+    # File versions
+    # ---
+
+    # Find version numbers in the version header files and assign them to the
+    # <TARGET>_VERSION_<MAJOR,MINOR,PATCH,TWEAK> (excluding the VERSION variable).
+    load(tiny_version_numbers)
+    tiny_version_numbers(, TinyOrm, false)
+    tiny_version_numbers(, TinyUtils, false)
+
+    # Filenames
+    tinyOrmFilename   = TinyOrm$${TinyOrm_VERSION_MAJOR}.dll
+    tinyUtilsFilename = TinyUtils$${TinyUtils_VERSION_MAJOR}.dll
+
+    # Filepaths to dll/exe-es
     TINYTEST_VERSIONS_TINYORM_PATH = \
-        $$quote($${TINYORM_BUILD_TREE}/src$${TINY_BUILD_SUBFOLDER}/TinyOrm0.dll)
+        $$quote($${TINYORM_BUILD_TREE}/src$${TINY_BUILD_SUBFOLDER}/$$tinyOrmFilename)
     TINYTEST_VERSIONS_TINYUTILS_PATH = \
-        $$quote($${TINYORM_BUILD_TREE}/tests/TinyUtils$${TINY_BUILD_SUBFOLDER}/TinyUtils0.dll)
+        $$quote($${TINYORM_BUILD_TREE}/tests/TinyUtils$${TINY_BUILD_SUBFOLDER}/$$tinyUtilsFilename)
     TINYTEST_VERSIONS_TOMEXAMPLE_PATH = \
         $$quote($${TINYORM_BUILD_TREE}/examples/tom$${TINY_BUILD_SUBFOLDER}/tom.exe)
 

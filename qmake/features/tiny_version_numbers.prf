@@ -1,41 +1,93 @@
 # Find version numbers in the version header file and assign them to the
 # <TARGET>_VERSION_<MAJOR,MINOR,PATCH,TWEAK> and also to the VERSION qmake variables.
+# There are 3 code branches:
+#  - if no arguments are passed then it tries to find the version.hpp in the HEADERS var.
+#  - relative/absolute filepath to the version.hpp can be passed using the first argument
+#  - the target name can be passed as the third argument eg. TinyOrm, TinyUtils, tom and
+#    the version.hpp file will be found using this target name
+# The third 'setVersion' parameter disables assigning the version number to the VERSION
+# qmake variable.
 defineTest(tiny_version_numbers) {
+    defined(2, var): defined2 = true
+    else: defined2 = false
+    defined(3, var): defined3 = true
+    else: defined3 = false
+
+    # Argument checks
+    !isEmpty(1): \
+    !isEmpty(2): \
+        error ( "The first 'versionHeader' and second 'targetName' parameters can't\
+                 be used at the same time in tiny_version_numbers()." )
+    $$defined2: \
+    isEmpty(2): \
+        error( "The second string 'targetName' parameter can't be empty if is defined\
+                in tiny_version_numbers()." )
+    $$defined3: \
+    if(isEmpty(3) | \
+    !if(equals(3, "true") | equals(3, "false"))): \
+        error( "The third bool 'setVersion' parameter can't be empty if is defined,\
+                it must be true or false in tiny_version_numbers()." )
+
+    # Prepare variable names
+    $$defined2: \
+        targetName = $$2
+    else: \
+        # Default value
+        targetName = $$TARGET
+
+    $$defined3: \
+        setVersion = $$3
+    else: \
+        # Default value
+        setVersion = true
+
+    # Main section
     defined(1, var): \
     !isEmpty(1): \
-        versionHeader = $$1
+        versionHeader = $$absolute_path($$1)
 
     # version.hpp for the TinyORM library project
-    else:contains(_PRO_FILE_, ".*\/src\/src\.pro$"): \
-        versionHeader = $$absolute_path("../include/orm/version.hpp")
+    else:contains(_PRO_FILE_, ".*\/src\/src\.pro$") | \
+    if($$defined2:equals(targetName, "TinyOrm")): \
+        versionHeader = $$quote($${TINYORM_SOURCE_TREE}/include/orm/version.hpp)
+
+    # version.hpp for the TinyUtils library project
+    else:contains(_PRO_FILE_, ".*\/TinyUtils\/TinyUtils\.pro$") | \
+    if($$defined2:equals(targetName, "TinyUtils")): \
+        versionHeader = $$quote($${TINYORM_SOURCE_TREE}/tests/TinyUtils/src/version.hpp)
 
     # version.hpp for the tom example project
-    else:contains(_PRO_FILE_, ".*\/examples\/tom\/tom\.pro$"): \
-        versionHeader = $$absolute_path("../tom/include/tom/version.hpp")
+    else:contains(_PRO_FILE_, ".*\/examples\/tom\/tom\.pro$") | \
+    if($$defined2:equals(targetName, "tom")): \
+        versionHeader = $$quote($${TINYORM_SOURCE_TREE}/tom/include/tom/version.hpp)
 
     # Try to find in the HEADERS
     else: \
-        versionHeader = $$find(HEADERS, "(?:.*\/)?version\.h(?:pp)?$")
+        versionHeader = $$absolute_path($$find(HEADERS, "(?:.*\/)?version\.h(?:pp)?$"))
 
-    versionHeader = $$clean_path($$absolute_path($$versionHeader))
+    versionHeader = $$clean_path($$versionHeader)
 
     isEmpty(versionHeader) | \
     !exists($$versionHeader): \
-        error( "HEADERS does not contain a version header file 'version.hpp', needed\
-                in the tiny_version_numbers.prf." )
+        error( "HEADERS does not contain a version header file 'version.hpp' passed\
+                by the first versionHeader parameter, it must be a valid relative or\
+                abosulte path in tiny_version_numbers()." )
 
-    versionFileContent = $$cat($$quote($$versionHeader), lines)
-    versionTokens = MAJOR MINOR BUGFIX BUILD STATUS
-    regexpTokens  = $$join(versionTokens, '|')
-    regexp        = "_($${regexpTokens}) +([0-9]+|\"-{1}\w+\")"
-    versionLines  = $$find(versionFileContent, $$regexp)
-    versionList =
-    hasStatus = false
+    # Find version numbers in the version.hpp file
+    versionFileContent = $$cat($$versionHeader, lines)
+    versionTokens      = MAJOR MINOR BUGFIX BUILD STATUS
+    regexpTokens       = $$join(versionTokens, '|')
+    regexp             = "_($${regexpTokens}) +([0-9]+|\"-{1}\w+\")"
+    versionLines       = $$find(versionFileContent, $$regexp)
+    versionList        =
+    hasStatus          = false
 
     isEmpty(versionFileContent) | \
     isEmpty(versionLines): \
-        error( "Parse of the '$$versionHeader' version file failed." )
+        error( "Parse of the '$$versionHeader' version file failed\
+                in tiny_version_numbers()." )
 
+    # Assign version numbers to the <TARGET>_VERSION_<MAJOR,MINOR,PATCH,TWEAK> variables
     for(versionLine, versionLines) {
         splittedLine  = $$split(versionLine, ' ')
         versionNumber = $$take_last(splittedLine)
@@ -49,13 +101,16 @@ defineTest(tiny_version_numbers) {
                 }
                 versionList += $$versionNumber
 
-                $${TARGET}_VERSION_$${versionToken} = $$versionNumber
-                export($${TARGET}_VERSION_$${versionToken})
+                $${targetName}_VERSION_$${versionToken} = $$versionNumber
+                export($${targetName}_VERSION_$${versionToken})
             }
         }
     }
 
-    # Obtain version status
+    # Nothing to do, setting the VERSION variable was skipped
+    !$$setVersion: return()
+
+    # Obtain the version status
     $$hasStatus: \
         versionStatus = $$take_last(versionList)
 
