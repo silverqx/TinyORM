@@ -6,6 +6,7 @@
 TINY_SYSTEM_HEADER
 
 #include <QVariant>
+
 #include "orm/macros/sqldrivermappings.hpp"
 #include TINY_INCLUDE_TSqlQuery
 

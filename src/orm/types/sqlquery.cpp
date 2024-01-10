@@ -1,6 +1,5 @@
 #include "orm/types/sqlquery.hpp"
 
-#include "orm/macros/sqldrivermappings.hpp"
 #include TINY_INCLUDE_TSqlDriver
 
 #include "orm/query/grammars/grammar.hpp" // IWYU pragma: keep

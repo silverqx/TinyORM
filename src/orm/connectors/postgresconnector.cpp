@@ -1,6 +1,5 @@
 #include "orm/connectors/postgresconnector.hpp"
 
-#include "orm/macros/sqldrivermappings.hpp"
 #include TINY_INCLUDE_TSqlQuery
 
 #include "orm/exceptions/queryerror.hpp"

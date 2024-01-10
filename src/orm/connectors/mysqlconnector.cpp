@@ -1,7 +1,7 @@
 #include "orm/connectors/mysqlconnector.hpp"
 
 #include <QVersionNumber>
-#include "orm/macros/sqldrivermappings.hpp"
+
 #include TINY_INCLUDE_TSqlQuery
 
 #include "orm/constants.hpp"

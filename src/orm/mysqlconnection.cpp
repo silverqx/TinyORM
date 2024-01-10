@@ -4,10 +4,10 @@
 #  include <QDebug>
 #endif
 #include <QVersionNumber>
-#include "orm/macros/sqldrivermappings.hpp"
-#include TINY_INCLUDE_TSqlDriver
 
 #ifdef TINYORM_MYSQL_PING
+#  include TINY_INCLUDE_TSqlDriver
+
 #  ifdef __MINGW32__
 #    include <mysql/errmsg.h>
 #  elif __has_include(<errmsg.h>)
