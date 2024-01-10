@@ -1,6 +1,7 @@
 #include "orm/utils/query.hpp"
 
 #include <QDebug>
+
 #include TINY_INCLUDE_TSqlDriver
 #include TINY_INCLUDE_TSqlQuery
 
