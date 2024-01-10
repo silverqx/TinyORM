@@ -109,7 +109,7 @@ std::weak_ptr<const SqlDriver> SqlQuery::driverWeak() const noexcept
 {
     /* This must be the std::weak_ptr() because when the connection is removed from
        the SqlDatabaseManager using the SqlDatabase::removeDatabase() then the SqlDriver
-       is invalidated (using the std::shared_ptr::reset()).
+       will be invalidated immediately (using the std::shared_ptr::reset()).
        This means we don't want to keep the SqlDriver alive after removeDatabase(). */
     return m_sqlResult->driver();
 }
