@@ -248,6 +248,9 @@ Databases::createConfigurationsHash(const QStringList &connections)
                 (createAllConnections || connections.contains(connection));
     };
 
+    m_configurations.reserve(
+                static_cast<ConfigurationsType::size_type>(connections.size()));
+
     // This connection must be to the MySQL database server (not MariaDB)
     if (shouldCreateConnection(MYSQL, QMYSQL))
         if (auto [config, envDefined] = mysqlConfiguration(); envDefined)
