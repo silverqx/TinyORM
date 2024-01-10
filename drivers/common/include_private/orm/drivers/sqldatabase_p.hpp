@@ -64,8 +64,8 @@ namespace Support
         /*! Remove the given database connection from the connections hash. */
         static void removeDatabase(const QString &connection);
         /*! Invalidate the given connection (reset driver and clear connection name). */
-        static void invalidateDb(const SqlDatabase &db, const QString &connection,
-                                 bool warn = true);
+        static void invalidateDatabase(const SqlDatabase &db, const QString &connection,
+                                       bool warn = true);
 
         /*! Get a reference to the database connections hash. */
         static ConnectionsHash &connections();
