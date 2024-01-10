@@ -89,7 +89,7 @@ void SqlDatabasePrivate::addDatabase(const SqlDatabase &db, const QString &conne
     if (connections.contains(connection)) {
         /* This is correct, invaliding the origin connection is a good thing, even if
            that origin connection would normally work after being replaced. */
-        invalidateDb(connections.extract(connection).mapped(), connection);
+        invalidateDatabase(connections.extract(connection).mapped(), connection);
 
         qWarning().noquote()
                 << u"SqlDatabasePrivate::addDatabase: duplicate connection name '%1', "
@@ -112,11 +112,12 @@ void SqlDatabasePrivate::removeDatabase(const QString &connection)
     if (!connections.contains(connection))
         return;
 
-    invalidateDb(connections.extract(connection).mapped(), connection);
+    invalidateDatabase(connections.extract(connection).mapped(), connection);
 }
 
-void SqlDatabasePrivate::invalidateDb(const SqlDatabase &db, const QString &connection,
-                                      const bool warn)
+void
+SqlDatabasePrivate::invalidateDatabase(const SqlDatabase &db, const QString &connection,
+                                       const bool warn)
 {
     if (db.d.use_count() > 1 && warn)
         qWarning().noquote()
