@@ -128,18 +128,18 @@ private:
    the QVariant(QString).value<QDateTime>() and
    QTimeZone(UTC+02) != QTimeZone(UTC+02:00). */
 /*! Time zone +02 (reason for this is QTimeZone(UTC+02) != QTimeZone(UTC+02:00)). */
-Q_GLOBAL_STATIC_WITH_ARGS(QTimeZone, TimeZone02, (QByteArray("UTC+02"))) // NOLINT(misc-use-anonymous-namespace)
+Q_GLOBAL_STATIC_WITH_ARGS(const QTimeZone, TimeZone02, (QByteArray("UTC+02"))) // NOLINT(misc-use-anonymous-namespace)
 /*! Time zone +02:00. */
-Q_GLOBAL_STATIC_WITH_ARGS(QTimeZone, TimeZone0200, (QByteArray("UTC+02"))) // NOLINT(misc-use-anonymous-namespace)
+Q_GLOBAL_STATIC_WITH_ARGS(const QTimeZone, TimeZone0200, (QByteArray("UTC+02"))) // NOLINT(misc-use-anonymous-namespace)
 
 /*! QString constant "datetimes" (perf. reason, one time initialization). */
-Q_GLOBAL_STATIC_WITH_ARGS(QString, datetimes, ("datetimes")) // NOLINT(misc-use-anonymous-namespace)
+Q_GLOBAL_STATIC_WITH_ARGS(const QString, datetimes, ("datetimes")) // NOLINT(misc-use-anonymous-namespace)
 /*! QString constant "datetime" (perf. reason, one time initialization). */
-Q_GLOBAL_STATIC_WITH_ARGS(QString, datetime, ("datetime")) // NOLINT(misc-use-anonymous-namespace)
+Q_GLOBAL_STATIC_WITH_ARGS(const QString, datetime, ("datetime")) // NOLINT(misc-use-anonymous-namespace)
 /*! QString constant "timestamp" (perf. reason, one time initialization). */
-Q_GLOBAL_STATIC_WITH_ARGS(QString, timestamp, ("timestamp")) // NOLINT(misc-use-anonymous-namespace)
+Q_GLOBAL_STATIC_WITH_ARGS(const QString, timestamp, ("timestamp")) // NOLINT(misc-use-anonymous-namespace)
 /*! QString constant "date" (perf. reason, one time initialization). */
-Q_GLOBAL_STATIC_WITH_ARGS(QString, date, ("date")) // NOLINT(misc-use-anonymous-namespace)
+Q_GLOBAL_STATIC_WITH_ARGS(const QString, date, ("date")) // NOLINT(misc-use-anonymous-namespace)
 
 /* private slots */
 

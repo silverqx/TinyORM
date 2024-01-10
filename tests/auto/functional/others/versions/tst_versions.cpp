@@ -73,7 +73,7 @@ private:
 
 #if defined(_WIN32) && defined(TINYTEST_VERSIONS_IS_SHARED_BUILD)
 /*! Executables copyright, all executables have the same LegalCopyright. */
-Q_GLOBAL_STATIC_WITH_ARGS(QString, CopyRight, ("Copyright (©) 2023 Silver Zachara")) // NOLINT(misc-use-anonymous-namespace)
+Q_GLOBAL_STATIC_WITH_ARGS(const QString, CopyRight, ("Copyright (©) 2023 Silver Zachara")) // NOLINT(misc-use-anonymous-namespace)
 #endif
 
 namespace

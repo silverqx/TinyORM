@@ -114,10 +114,10 @@ private:
 
 /*! The QtTimeZoneConfig set to the Qt::UTC. */
 Q_GLOBAL_STATIC_WITH_ARGS(
-        QVariant, QtTimeZoneConfigUTC, // NOLINT(misc-use-anonymous-namespace)
+        const QVariant, QtTimeZoneConfigUTC, // NOLINT(misc-use-anonymous-namespace)
         (QVariant::fromValue(QtTimeZoneConfig {QtTimeZoneType::QtTimeSpec, Qt::UTC})))
 /*! QString constant for the "users" table. */
-Q_GLOBAL_STATIC_WITH_ARGS(QString, UsersTable, ("users"))
+Q_GLOBAL_STATIC_WITH_ARGS(const QString, UsersTable, ("users"))
 
 /* private slots */
 

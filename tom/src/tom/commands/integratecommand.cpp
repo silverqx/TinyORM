@@ -152,11 +152,11 @@ namespace
 
 /*! Template string for tab-completion installed successfully. */
 Q_GLOBAL_STATIC_WITH_ARGS(
-        QString, IntegrateSuccessTmpl, // NOLINT(misc-use-anonymous-namespace)
+        const QString, IntegrateSuccessTmpl, // NOLINT(misc-use-anonymous-namespace)
         ("Tab-completion for the %1 shell was successfully registered. 🎉"))
 /*! Template string for tab-completion already registered. */
 Q_GLOBAL_STATIC_WITH_ARGS(
-        QString, IntegrateAlreadyRegisteredTmpl, // NOLINT(misc-use-anonymous-namespace)
+        const QString, IntegrateAlreadyRegisteredTmpl, // NOLINT(misc-use-anonymous-namespace)
         ("Tab-completion for the %1 shell is already registered. 🙌"))
 
 int IntegrateCommand::integratePwsh() const
@@ -286,11 +286,11 @@ int IntegrateCommand::integrateBash() const
 }
 
 /*! Bash completions directory path. */
-Q_GLOBAL_STATIC_WITH_ARGS(QString, BashCompletionsDirPath, // NOLINT(misc-use-anonymous-namespace)
+Q_GLOBAL_STATIC_WITH_ARGS(const QString, BashCompletionsDirPath, // NOLINT(misc-use-anonymous-namespace)
                           ("/usr/share/bash-completion/completions"))
 
 /*! Path to the TinyORM tom bash completion file. */
-Q_GLOBAL_STATIC_WITH_ARGS(QString, TomBashCompletionFilepath, // NOLINT(misc-use-anonymous-namespace)
+Q_GLOBAL_STATIC_WITH_ARGS(const QString, TomBashCompletionFilepath, // NOLINT(misc-use-anonymous-namespace)
                           (QString("%1/tom").arg(*BashCompletionsDirPath)))
 
 void IntegrateCommand::throwIfBashCompletionDirNotExists()
@@ -360,7 +360,7 @@ int IntegrateCommand::integrateZsh() const
 }
 
 /*! Zsh completions directory path. */
-Q_GLOBAL_STATIC_WITH_ARGS(QStringList, ZshCompletionsDirPaths, // NOLINT(misc-use-anonymous-namespace)
+Q_GLOBAL_STATIC_WITH_ARGS(const QStringList, ZshCompletionsDirPaths, // NOLINT(misc-use-anonymous-namespace)
                           ({"/usr/local/share/zsh/site-functions",
                             "/usr/share/zsh/site-functions"}))
 

@@ -214,9 +214,9 @@ QVector<SectionItem> AboutCommand::gatherAllAboutInformation() const
 }
 
 /*! QString constant "ON". */
-Q_GLOBAL_STATIC_WITH_ARGS(QString, ON, ("ON")) // NOLINT(misc-use-anonymous-namespace)
+Q_GLOBAL_STATIC_WITH_ARGS(const QString, ON, ("ON")) // NOLINT(misc-use-anonymous-namespace)
 /*! QString constant "OFF". */
-Q_GLOBAL_STATIC_WITH_ARGS(QString, OFF, ("OFF")) // NOLINT(misc-use-anonymous-namespace)
+Q_GLOBAL_STATIC_WITH_ARGS(const QString, OFF, ("OFF")) // NOLINT(misc-use-anonymous-namespace)
 
 /*! Convert the CMake BOOL type value passed by the the C macro to the ON/OFF QString. */
 #define TINY_CMAKE_BOOL(value) TypeUtils::isCMakeTrue(                       \

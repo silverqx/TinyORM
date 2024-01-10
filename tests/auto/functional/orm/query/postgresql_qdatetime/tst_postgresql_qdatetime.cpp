@@ -133,17 +133,17 @@ private:
 };
 
 /*! Time zone Europe/Bratislava. */
-Q_GLOBAL_STATIC_WITH_ARGS(QTimeZone, TimeZoneEUBratislava, // NOLINT(misc-use-anonymous-namespace)
+Q_GLOBAL_STATIC_WITH_ARGS(const QTimeZone, TimeZoneEUBratislava, // NOLINT(misc-use-anonymous-namespace)
                           (QByteArray("Europe/Bratislava")))
 
 /*! QString constant "datetimes" (perf. reason, one time initialization). */
-Q_GLOBAL_STATIC_WITH_ARGS(QString, datetimes, ("datetimes")) // NOLINT(misc-use-anonymous-namespace)
+Q_GLOBAL_STATIC_WITH_ARGS(const QString, datetimes, ("datetimes")) // NOLINT(misc-use-anonymous-namespace)
 /*! QString constant "datetime" (perf. reason, one time initialization). */
-Q_GLOBAL_STATIC_WITH_ARGS(QString, datetime, ("datetime")) // NOLINT(misc-use-anonymous-namespace)
+Q_GLOBAL_STATIC_WITH_ARGS(const QString, datetime, ("datetime")) // NOLINT(misc-use-anonymous-namespace)
 /*! QString constant "timestamp" (perf. reason, one time initialization). */
-Q_GLOBAL_STATIC_WITH_ARGS(QString, timestamp, ("timestamp")) // NOLINT(misc-use-anonymous-namespace)
+Q_GLOBAL_STATIC_WITH_ARGS(const QString, timestamp, ("timestamp")) // NOLINT(misc-use-anonymous-namespace)
 /*! QString constant "date" (perf. reason, one time initialization). */
-Q_GLOBAL_STATIC_WITH_ARGS(QString, date, ("date")) // NOLINT(misc-use-anonymous-namespace)
+Q_GLOBAL_STATIC_WITH_ARGS(const QString, date, ("date")) // NOLINT(misc-use-anonymous-namespace)
 
 /* private slots */
 
