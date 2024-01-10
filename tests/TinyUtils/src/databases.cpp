@@ -253,21 +253,21 @@ Databases::createConfigurationsHash(const QStringList &connections)
 
     // This connection must be to the MySQL database server (not MariaDB)
     if (shouldCreateConnection(MYSQL, QMYSQL))
-        if (auto [config, envDefined] = mysqlConfiguration(); envDefined)
-            m_configurations[MYSQL] = std::move(config);
+        if (auto &&[config, envDefined] = mysqlConfiguration(); envDefined)
+            m_configurations.try_emplace(MYSQL, std::move(config));
 
     // This connection must be to the MariaDB database server (not MySQL)
     if (shouldCreateConnection(MARIADB, QMYSQL))
-        if (auto [config, envDefined] = mariaConfiguration(); envDefined)
-            m_configurations[MARIADB] = std::move(config);
+        if (auto &&[config, envDefined] = mariaConfiguration(); envDefined)
+            m_configurations.try_emplace(MARIADB, std::move(config));
 
     if (shouldCreateConnection(SQLITE, QSQLITE))
-        if (auto [config, envDefined] = sqliteConfiguration(); envDefined)
-            m_configurations[SQLITE] = std::move(config);
+        if (auto &&[config, envDefined] = sqliteConfiguration(); envDefined)
+            m_configurations.try_emplace(SQLITE, std::move(config));
 
     if (shouldCreateConnection(POSTGRESQL, QPSQL))
-        if (auto [config, envDefined] = postgresConfiguration(); envDefined)
-            m_configurations[POSTGRESQL] = std::move(config);
+        if (auto &&[config, envDefined] = postgresConfiguration(); envDefined)
+            m_configurations.try_emplace(POSTGRESQL, std::move(config));
 
     return m_configurations;
 }
