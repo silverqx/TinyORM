@@ -475,6 +475,7 @@ void Application::printFullVersions() const
     }
 }
 
+/*! Alias for the QStringLiteral(). */
 #define sl(str) QStringLiteral(str)
 
 QVector<SubSectionItem> Application::createVersionsSubsection()
