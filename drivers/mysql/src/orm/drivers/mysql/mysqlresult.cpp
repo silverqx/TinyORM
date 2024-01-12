@@ -467,6 +467,7 @@ void MySqlResult::detachFromResultSet()
 /* Others */
 
 // CUR drivers revisit all 4 free methods detachFromResultSet(), cleanup(), mysqlFreeResults(), and mysqlStmtClose() how they relate and how they are used silverqx
+// CUR drivers use smart pointers where possible to minimize memory leaks silverqx
 void MySqlResult::cleanup()
 {
     Q_D(MySqlResult);
