@@ -1784,7 +1784,7 @@ namespace Orm::Tiny
         if (!exists) {
             // This makes it much safer
             if (!all)
-                return {-1, QSqlQuery()};
+                return {-1, getConnection().getQtQuery()};
 
             const auto extraConverted = AttributeUtils::convertVectorToUpdateItem(extra);
 
