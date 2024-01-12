@@ -276,24 +276,32 @@ void MySqlResultPrivate::bindPreparedBindings(
     }
 }
 
-//void MySqlResultPrivate::bindBlobs()
-//{
-//    using SizeType = std::remove_cvref_t<decltype (resultFields)>::size_type;
-//    for (SizeType index = 0; index < resultFields.size(); ++index) {
-//        const auto *const fieldInfo = resultFields.at(index).myField;
+void MySqlResultPrivate::bindResultBlobs()
+{
+   using SizeType = std::remove_cvref_t<decltype (resultFields)>::size_type;
 
-//        if (isBlobType(resultBinds[index].buffer_type) && meta && fieldInfo) {
-//            auto *const bind = &resultBinds[index];
+   for (SizeType index = 0; index < resultFields.size(); ++index) {
+       const auto *const fieldInfo = resultFields.at(index).myField;
 
-//            bind->buffer_length = fieldInfo->max_length;
+       // Nothing to do, isn't the BLOB type or some info is missing
+       if (!isBlobType(resultBinds[index].buffer_type) ||
+           meta == nullptr || fieldInfo == nullptr
+       )
+           continue;
 
-//            delete[] static_cast<char *>(bind->buffer);
-//            bind->buffer = new char[fieldInfo->max_length];
+       auto *const resultBind = &resultBinds[index];
 
-//            resultFields[index].fieldValue = static_cast<char *>(bind->buffer);
-//        }
-//    }
-//}
+       // Update the buffer length to the BLOB max. length in the current result set
+       resultBind->buffer_length = fieldInfo->max_length;
+
+       // Create a new BLOB result buffer
+       // Free the current BLOB result buffer
+       delete[] static_cast<char *>(resultBind->buffer);
+       // And create a new one using a new BLOB length
+       resultBind->buffer = new char[fieldInfo->max_length];
+       resultFields[index].fieldValue = static_cast<char *>(resultBind->buffer);
+   }
+}
 
 SqlError
 MySqlResultPrivate::createStmtError(const QString &error, const SqlError::ErrorType type,

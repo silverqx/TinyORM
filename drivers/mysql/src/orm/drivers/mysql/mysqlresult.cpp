@@ -202,18 +202,17 @@ bool MySqlResult::exec()
                                     u"Unable to store prepared statement result sets"_s,
                                     SqlError::StatementError, d->stmt));
 
-        // CUR drivers revisit and drop silverqx
-//        if (d->hasBlobs) {
-//            // mysql_stmt_store_result() with STMT_ATTR_UPDATE_MAX_LENGTH set to true crashes
-//            // when called without a preceding call to mysql_stmt_bind_result()
-//            // in versions < 4.1.8
-//            d->bindBlobs();
-//
-//            if (status = mysql_stmt_bind_result(d->stmt, d->resultBinds); status != 0)
-//                return setLastError(MySqlResultPrivate::makeStmtError(
-//                                        u"Unable to bind result set values"_s,
-//                                        SqlError::StatementError, d->stmt));
-//        }
+        // CUR drivers revisit try to achieve or avoid calling the mysql_stmt_bind_result() twice silverqx
+        if (d->hasBlobs) {
+            d->bindResultBlobs();
+
+            // Re-bind output columns in the result set to data buffers and length buffers
+            if (status = mysql_stmt_bind_result(d->stmt, d->resultBinds); status != 0)
+                return setLastError(MySqlResultPrivate::createStmtError(
+                                        u"Unable to re-bind result set data buffers "
+                                        "for BLOB-s"_s,
+                                        SqlError::StatementError, d->stmt));
+        }
 
         setAt(BeforeFirstRow);
     }

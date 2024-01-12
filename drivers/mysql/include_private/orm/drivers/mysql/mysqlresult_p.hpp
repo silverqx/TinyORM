@@ -75,8 +75,9 @@ namespace Orm::Drivers::MySql
         void bindPreparedBindings(
                 QList<my_bool> &nullVector, QList<QByteArray> &stringVector,
                 QList<QT_MYSQL_TIME> &timeVector);
-        /*! Bind BLOB-value type prepared bindings for placeholders. */
-//        void bindBlobs();
+
+        /*! Bind result set BLOB values. */
+        void bindResultBlobs();
 
         /*! Factory method to create the SqlError for prepared statements
             (from MYSQL_STMT). */
