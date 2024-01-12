@@ -124,6 +124,10 @@ SqlDatabasePrivate::invalidateDatabase(const SqlDatabase &db, const QString &con
                 << u"SqlDatabasePrivate::invalidateDb: connection '%1' is still "
                     "in use, all queries will stop working."_s.arg(connection);
 
+    /* This method is only called from the removeDatabase(), so the close() method must
+       always be called to properly finish and free the database connection.
+       Also, always reset the database connection regardless of use_count(). */
+    db.d->driver().close();
     db.d->resetDriver();
     db.d->connectionName.clear();
 }
