@@ -358,8 +358,14 @@ namespace Grammars
         /*! Create a new year column on the table. */
         ColumnDefinitionReference<> year(const QString &column);
 
+        /*! Create a new tiny binary column on the table. */
+        ColumnDefinitionReference<> tinyBinary(const QString &column);
         /*! Create a new binary column on the table. */
         ColumnDefinitionReference<> binary(const QString &column);
+        /*! Create a new medium binary column on the table. */
+        ColumnDefinitionReference<> mediumBinary(const QString &column);
+        /*! Create a new long binary column on the table. */
+        ColumnDefinitionReference<> longBinary(const QString &column);
 
         /*! Create a new uuid column on the table. */
         ColumnDefinitionReference<>

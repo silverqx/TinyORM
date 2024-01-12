@@ -60,6 +60,8 @@ namespace Constants
     inline const QString integer_ = QStringLiteral("integer");
     inline const QString varchar_ = QStringLiteral("varchar");
     inline const QString float_   = QStringLiteral("float");
+    inline const QString blob_    = QStringLiteral("blob");
+    inline const QString bytea_   = QStringLiteral("bytea");
 
     // Common strings
     inline const QString TRIM_QUOTES  = QStringLiteral("'\"");

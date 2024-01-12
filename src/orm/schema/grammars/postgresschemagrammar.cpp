@@ -565,6 +565,15 @@ QString PostgresSchemaGrammar::getType(ColumnDefinition &column) const
     case ColumnType::Binary:
         return typeBinary(column);
 
+    case ColumnType::TinyBinary:
+        return typeTinyBinary(column);
+
+    case ColumnType::MediumBinary:
+        return typeMediumBinary(column);
+
+    case ColumnType::LongBinary:
+        return typeLongBinary(column);
+
     case ColumnType::Uuid:
         return typeUuid(column);
 
@@ -801,9 +810,24 @@ QString PostgresSchemaGrammar::typeYear(const ColumnDefinition &column) const
     return typeInteger(column);
 }
 
+QString PostgresSchemaGrammar::typeTinyBinary(const ColumnDefinition &/*unused*/) const // NOLINT(readability-convert-member-functions-to-static)
+{
+    return bytea_;
+}
+
 QString PostgresSchemaGrammar::typeBinary(const ColumnDefinition &/*unused*/) const // NOLINT(readability-convert-member-functions-to-static)
 {
-    return QStringLiteral("bytea");
+    return bytea_;
+}
+
+QString PostgresSchemaGrammar::typeMediumBinary(const ColumnDefinition &/*unused*/) const // NOLINT(readability-convert-member-functions-to-static)
+{
+    return bytea_;
+}
+
+QString PostgresSchemaGrammar::typeLongBinary(const ColumnDefinition &/*unused*/) const // NOLINT(readability-convert-member-functions-to-static)
+{
+    return bytea_;
 }
 
 QString PostgresSchemaGrammar::typeUuid(const ColumnDefinition &/*unused*/) const // NOLINT(readability-convert-member-functions-to-static)

@@ -498,6 +498,15 @@ QString SQLiteSchemaGrammar::getType(ColumnDefinition &column) const
     case ColumnType::Binary:
         return typeBinary(column);
 
+    case ColumnType::TinyBinary:
+        return typeTinyBinary(column);
+
+    case ColumnType::MediumBinary:
+        return typeMediumBinary(column);
+
+    case ColumnType::LongBinary:
+        return typeLongBinary(column);
+
     case ColumnType::Uuid:
         return typeUuid(column);
 
@@ -687,9 +696,24 @@ QString SQLiteSchemaGrammar::typeYear(const ColumnDefinition &column) const
     return typeInteger(column);
 }
 
+QString SQLiteSchemaGrammar::typeTinyBinary(const ColumnDefinition &/*unused*/) const // NOLINT(readability-convert-member-functions-to-static)
+{
+    return blob_;
+}
+
 QString SQLiteSchemaGrammar::typeBinary(const ColumnDefinition &/*unused*/) const // NOLINT(readability-convert-member-functions-to-static)
 {
-    return QStringLiteral("blob");
+    return blob_;
+}
+
+QString SQLiteSchemaGrammar::typeMediumBinary(const ColumnDefinition &/*unused*/) const // NOLINT(readability-convert-member-functions-to-static)
+{
+    return blob_;
+}
+
+QString SQLiteSchemaGrammar::typeLongBinary(const ColumnDefinition &/*unused*/) const // NOLINT(readability-convert-member-functions-to-static)
+{
+    return blob_;
 }
 
 QString SQLiteSchemaGrammar::typeUuid(const ColumnDefinition &/*unused*/) const // NOLINT(readability-convert-member-functions-to-static)

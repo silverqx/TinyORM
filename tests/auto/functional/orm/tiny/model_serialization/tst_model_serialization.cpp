@@ -2802,6 +2802,8 @@ R"({
     "id": 3,
     "int": null,
     "int_u": null,
+    "medium_binary": null,
+    "medium_text": null,
     "smallint": null,
     "smallint_u": null,
     "string": null,

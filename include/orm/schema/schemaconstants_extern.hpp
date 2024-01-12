@@ -59,6 +59,8 @@ namespace Constants
     SHAREDLIB_EXPORT extern const QString integer_;
     SHAREDLIB_EXPORT extern const QString varchar_;
     SHAREDLIB_EXPORT extern const QString float_;
+    SHAREDLIB_EXPORT extern const QString blob_;
+    SHAREDLIB_EXPORT extern const QString bytea_;
 
     // Common strings
     SHAREDLIB_EXPORT extern const QString TRIM_QUOTES;

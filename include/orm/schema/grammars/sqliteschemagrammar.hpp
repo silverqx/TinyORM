@@ -202,8 +202,14 @@ namespace Grammars
         QString typeTimestampTz(ColumnDefinition &column) const;
         /*! Create the column definition for a year type. */
         QString typeYear(const ColumnDefinition &column) const;
+        /*! Create the column definition for a tiny binary type. */
+        QString typeTinyBinary(const ColumnDefinition &column) const;
         /*! Create the column definition for a binary type. */
         QString typeBinary(const ColumnDefinition &column) const;
+        /*! Create the column definition for a medium binary type. */
+        QString typeMediumBinary(const ColumnDefinition &column) const;
+        /*! Create the column definition for a long binary type. */
+        QString typeLongBinary(const ColumnDefinition &column) const;
         /*! Create the column definition for a uuid type. */
         QString typeUuid(const ColumnDefinition &column) const;
         /*! Create the column definition for an IP address type. */

@@ -47,6 +47,8 @@ namespace Orm::SchemaNs::Constants
     const QString integer_ = QStringLiteral("integer");
     const QString varchar_ = QStringLiteral("varchar");
     const QString float_   = QStringLiteral("float");
+    const QString blob_    = QStringLiteral("blob");
+    const QString bytea_   = QStringLiteral("bytea");
 
     // Common strings
     const QString TRIM_QUOTES  = QStringLiteral("'\"");

@@ -566,8 +566,10 @@ The schema builder blueprint offers a variety of methods that correspond to the 
 [json](#column-method-json)
 [jsonb](#column-method-jsonb)
 [lineString](#column-method-lineString)
+[longBinary](#column-method-longBinary)
 [longText](#column-method-longText)
 [macAddress](#column-method-macAddress)
+[mediumBinary](#column-method-mediumBinary)
 [mediumIncrements](#column-method-mediumIncrements)
 [mediumInteger](#column-method-mediumInteger)
 [mediumText](#column-method-mediumText)
@@ -591,6 +593,7 @@ The schema builder blueprint offers a variety of methods that correspond to the 
 [timestampTz](#column-method-timestampTz)
 [timestampsTz](#column-method-timestampsTz)
 [timestamps](#column-method-timestamps)
+[tinyBinary](#column-method-tinyBinary)
 [tinyIncrements](#column-method-tinyIncrements)
 [tinyInteger](#column-method-tinyInteger)
 [tinyText](#column-method-tinyText)
@@ -771,6 +774,12 @@ The `lineString` method creates a `LINESTRING` equivalent column:
 
     table.lineString("positions");
 
+#### `longBinary()` {#column-method-longBinary}
+
+The `longBinary` method creates a `LONGBLOB` equivalent column:
+
+    table.longBinary("photo");
+
 #### `longText()` {#column-method-longText}
 
 The `longText` method creates a `LONGTEXT` equivalent column:
@@ -782,6 +791,12 @@ The `longText` method creates a `LONGTEXT` equivalent column:
 The `macAddress` method creates a column that is intended to hold a MAC address. Some database systems, such as PostgreSQL, have a dedicated column type for this type of data. Other database systems will use a string equivalent `VARCHAR(17)` column:
 
     table.macAddress("device");
+
+#### `mediumBinary()` {#column-method-mediumBinary}
+
+The `mediumBinary` method creates a `MEDIUMBLOB` equivalent column:
+
+    table.mediumBinary("photo");
 
 #### `mediumIncrements()` {#column-method-mediumIncrements}
 
@@ -922,6 +937,12 @@ The `timestampsTz` method creates `created_at` and `updated_at` `TIMESTAMP` (wit
 The `timestamps` method creates `created_at` and `updated_at` `TIMESTAMP` equivalent columns with an optional precision (total digits):
 
     table.timestamps(precision = 0);
+
+#### `tinyBinary()` {#column-method-tinyBinary}
+
+The `tinyBinary` method creates a `TINYBLOB` equivalent column:
+
+    table.tinyBinary("photo");
 
 #### `tinyIncrements()` {#column-method-tinyIncrements}
 

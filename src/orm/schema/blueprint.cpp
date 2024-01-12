@@ -422,9 +422,24 @@ ColumnDefinitionReference<> Blueprint::year(const QString &column)
     return addColumn(ColumnType::Year, column);
 }
 
+ColumnDefinitionReference<> Blueprint::tinyBinary(const QString &column)
+{
+    return addColumn(ColumnType::TinyBinary, column);
+}
+
 ColumnDefinitionReference<> Blueprint::binary(const QString &column)
 {
     return addColumn(ColumnType::Binary, column);
+}
+
+ColumnDefinitionReference<> Blueprint::mediumBinary(const QString &column)
+{
+    return addColumn(ColumnType::MediumBinary, column);
+}
+
+ColumnDefinitionReference<> Blueprint::longBinary(const QString &column)
+{
+    return addColumn(ColumnType::LongBinary, column);
 }
 
 ColumnDefinitionReference<> Blueprint::uuid(const QString &column)

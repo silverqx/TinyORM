@@ -556,6 +556,15 @@ QString MySqlSchemaGrammar::getType(ColumnDefinition &column) const
     case ColumnType::Binary:
         return typeBinary(column);
 
+    case ColumnType::TinyBinary:
+        return typeTinyBinary(column);
+
+    case ColumnType::MediumBinary:
+        return typeMediumBinary(column);
+
+    case ColumnType::LongBinary:
+        return typeLongBinary(column);
+
     case ColumnType::Uuid:
         return typeUuid(column);
 
@@ -776,9 +785,24 @@ QString MySqlSchemaGrammar::typeYear(const ColumnDefinition &/*unused*/) const /
     return QStringLiteral("year");
 }
 
+QString MySqlSchemaGrammar::typeTinyBinary(const ColumnDefinition &/*unused*/) const // NOLINT(readability-convert-member-functions-to-static)
+{
+    return QStringLiteral("tinyblob");
+}
+
 QString MySqlSchemaGrammar::typeBinary(const ColumnDefinition &/*unused*/) const // NOLINT(readability-convert-member-functions-to-static)
 {
-    return QStringLiteral("blob");
+    return blob_;
+}
+
+QString MySqlSchemaGrammar::typeMediumBinary(const ColumnDefinition &/*unused*/) const // NOLINT(readability-convert-member-functions-to-static)
+{
+    return QStringLiteral("mediumblob");
+}
+
+QString MySqlSchemaGrammar::typeLongBinary(const ColumnDefinition &/*unused*/) const // NOLINT(readability-convert-member-functions-to-static)
+{
+    return QStringLiteral("longblob");
 }
 
 QString MySqlSchemaGrammar::typeUuid(const ColumnDefinition &/*unused*/) const // NOLINT(readability-convert-member-functions-to-static)
