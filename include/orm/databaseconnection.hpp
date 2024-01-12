@@ -312,8 +312,8 @@ namespace Orm
     private:
         /*! Prepare an SQL statement and return the query object. */
         QSqlQuery prepareQuery(const QString &queryString);
-        /*! Get a new invalid QSqlQuery instance for the pretend. */
-        inline static QSqlQuery getQtQueryForPretend();
+        /*! Get a new QSqlQuery instance for the pretend for the current connection. */
+        inline QSqlQuery getQtQueryForPretend();
 
         /*! Prepare the QDateTime query binding for execution. */
         QDateTime prepareBinding(const QDateTime &binding) const;
@@ -579,7 +579,7 @@ namespace Orm
 
     QSqlQuery DatabaseConnection::getQtQueryForPretend()
     {
-        return QSqlQuery(QSqlDatabase());
+        return getQtQuery();
     }
 
     template<typename Return>
