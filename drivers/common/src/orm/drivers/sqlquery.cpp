@@ -134,8 +134,6 @@ bool SqlQuery::exec(const QString &query)
     m_sqlResult->setLastError({});
     m_sqlResult->setAt(BeforeFirstRow);
 
-    m_sqlResult->setQuery(query.trimmed());
-
 #if defined(QT_DEBUG_SQL) || defined(TINYDRIVERS_DEBUG_SQL)
     QElapsedTimer timer;
     timer.start();

@@ -63,6 +63,8 @@ bool MySqlResult::exec(const QString &query)
 
     cleanup();
 
+    d->query = query.trimmed();
+
     auto *const mysql = d->drv_d_func()->mysql;
 
     // Execute query
@@ -104,6 +106,9 @@ bool MySqlResult::prepare(const QString &query)
 
     cleanup();
 
+    d->query = query.trimmed();
+    d->preparedQuery = true;
+
     // Create the MYSQL_STMT handler
     if (auto *const mysql = d->drv_d_func()->mysql;
         (d->stmt = mysql_stmt_init(mysql)) == nullptr
@@ -128,9 +133,6 @@ bool MySqlResult::prepare(const QString &query)
     }
 
     setSelect(d->bindResultValues());
-
-    d->query = query;
-    d->preparedQuery = true;
 
     return true;
 }
