@@ -100,10 +100,6 @@ bool MySqlResult::prepare(const QString &query)
 {
     Q_D(MySqlResult);
 
-    // Nothing to do
-    if (query.isEmpty())
-        return false;
-
     cleanup();
 
     d->query = query.trimmed();
