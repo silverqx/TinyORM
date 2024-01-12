@@ -121,12 +121,10 @@ bool MySqlResult::prepare(const QString &query)
 
     if (status = mysql_stmt_prepare(d->stmt, queryArray.constData(), queryArray.size());
         status != 0
-    ) {
-        mysqlStmtClose();
+    )
         return setLastError(MySqlResultPrivate::createStmtError(
                                 u"Unable to prepare statement"_s,
                                 SqlError::StatementError, d->stmt));
-    }
 
     setSelect(d->bindResultValues());
 
