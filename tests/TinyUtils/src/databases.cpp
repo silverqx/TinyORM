@@ -496,8 +496,6 @@ const std::vector<const char *> &Databases::postgresEnvVariables()
 
 bool Databases::isDriverAvailable(const QString &driver)
 {
-    Q_ASSERT(m_dm->supportedDrivers().contains(driver));
-
     static std::unordered_map<QString, bool> isAvailableCache;
 
     // Return a cached value/result
@@ -506,9 +504,12 @@ bool Databases::isDriverAvailable(const QString &driver)
 
     const auto isAvailable = m_dm->isDriverAvailable(driver);
 
+    // TinyDrivers currently supports only the MySQL database so this warning is useless
+#ifdef TINYORM_USING_QTSQLDRIVERS
     if (!isAvailable)
         qWarning("The '%s' driver not available, all tests for this database will "
                  "be skipped.", driver.toLatin1().constData());
+#endif
 
     // Cache a result and return it
     const auto [it, ok] = isAvailableCache.emplace(driver, isAvailable);
