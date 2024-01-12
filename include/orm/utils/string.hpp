@@ -77,6 +77,11 @@ namespace Orm::Utils
                                  QChar lastCharacter);
 #endif
 
+#ifdef TINYORM_TESTS_CODE
+        /*! Lorem ipsum paragraphs generator (511 characters in paragraph + newline). */
+        static QString loremIpsum512Paragraph(std::size_t count);
+#endif
+
     private:
         /*! Determine whether all characters in the given tag are allowed. */
         static bool allTagCharsAllowed(const QString &string, QString::size_type posStart,

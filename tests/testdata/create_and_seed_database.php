@@ -315,6 +315,7 @@ function createTables(string $connection): void
 
         $table->string('string')->nullable();
         $table->text('text')->nullable();
+        $table->mediumText('medium_text')->nullable();
 
         $table->timestamp('timestamp')->nullable();
 
@@ -322,6 +323,7 @@ function createTables(string $connection): void
         $table->date('date')->nullable();
 
         $table->binary('binary')->nullable();
+        $table->mediumBinary('medium_binary')->nullable();
     });
 
     $schema->create('albums', function (Blueprint $table) {

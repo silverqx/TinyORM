@@ -38,6 +38,7 @@ namespace Migrations
 
                 table.string("string").nullable();
                 table.text("text").nullable();
+                table.mediumText("medium_text").nullable();
 
                 table.timestamp("timestamp").nullable();
 
@@ -45,6 +46,7 @@ namespace Migrations
                 table.date("date").nullable();
 
                 table.binary("binary").nullable();
+                table.mediumBinary("medium_binary").nullable();
             });
         }
 

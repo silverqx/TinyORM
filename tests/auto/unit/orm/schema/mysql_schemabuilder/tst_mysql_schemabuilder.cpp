@@ -339,6 +339,11 @@ void tst_MySql_SchemaBuilder::createTable() const
             table.uuid();
             table.ipAddress();
             table.macAddress();
+
+            table.tinyBinary("tiny_binary");
+            table.binary("binary");
+            table.mediumBinary("medium_binary");
+            table.longBinary("long_binary");
         });
     });
 
@@ -370,7 +375,11 @@ void tst_MySql_SchemaBuilder::createTable() const
                  "`unsignedBigInteger` bigint unsigned not null, "
                  "`uuid` char(36) not null, "
                  "`ip_address` varchar(45) not null, "
-                 "`mac_address` varchar(17) not null) "
+                 "`mac_address` varchar(17) not null, "
+                 "`tiny_binary` tinyblob not null, "
+                 "`binary` blob not null, "
+                 "`medium_binary` mediumblob not null, "
+                 "`long_binary` longblob not null) "
                  "default character set %1 collate '%2' "
                  "engine = InnoDB")
              .arg(m_charset, m_collation));
@@ -644,6 +653,11 @@ void tst_MySql_SchemaBuilder::modifyTable() const
             table.smallInteger("smallInteger");
             table.mediumInteger("mediumInteger");
 
+            table.tinyBinary("tiny_binary");
+            table.binary("binary");
+            table.mediumBinary("medium_binary");
+            table.longBinary("long_binary");
+
             table.dropColumn("long_text");
             table.dropColumns({"medium_text", "text"});
             table.dropColumns("smallInteger", "mediumInteger");
@@ -669,7 +683,11 @@ void tst_MySql_SchemaBuilder::modifyTable() const
              "add column `integer` int null, "
              "add column `tinyInteger` tinyint not null, "
              "add column `smallInteger` smallint not null, "
-             "add column `mediumInteger` mediumint not null");
+             "add column `mediumInteger` mediumint not null, "
+             "add column `tiny_binary` tinyblob not null, "
+             "add column `binary` blob not null, "
+             "add column `medium_binary` mediumblob not null, "
+             "add column `long_binary` longblob not null");
     QVERIFY(log0.boundValues.isEmpty());
 
     const auto &log1 = log.at(1);

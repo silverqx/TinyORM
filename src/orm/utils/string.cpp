@@ -8,6 +8,9 @@
 
 #include "orm/constants.hpp"
 
+/*! Alias for the QStringLiteral(). */
+#define sl(str) QStringLiteral(str)
+
 TINYORM_BEGIN_COMMON_NAMESPACE
 
 using Orm::Constants::DASH;
@@ -17,6 +20,7 @@ using Orm::Constants::EQ_C;
 using Orm::Constants::GT_C;
 using Orm::Constants::LT_C;
 using Orm::Constants::MINUS;
+using Orm::Constants::NEWLINE;
 using Orm::Constants::PLUS;
 using Orm::Constants::SPACE;
 using Orm::Constants::SQUOTE;
@@ -415,6 +419,27 @@ QString String::wrapValue(const QString &string, const QChar firstCharacter,
     result.reserve(string.size() + 8);
 
     return result.append(firstCharacter).append(string).append(lastCharacter);
+}
+#endif
+
+#ifdef TINYORM_TESTS_CODE
+QString String::loremIpsum512Paragraph(const std::size_t count)
+{
+    Q_ASSERT(count != 0);
+
+    static const auto lorem511 =
+    sl("Lorem ipsum dolor sit amet consectetuer cursus euismod eget Vestibulum sodales. "
+       "Pellentesque neque Phasellus id id Pellentesque Integer mauris nibh nibh. "
+       "Non Morbi pharetra cursus in interdum fringilla Donec quam nunc vitae. "
+       "Nulla purus eget et Quisque congue Maecenas Phasellus at Curabitur. "
+       "Tellus vel Sed ac nulla dis Vestibulum tellus turpis. "
+       "Convallis elit Vestibulum turpis metus Integer nunc quis Sed Integer. "
+       "Semper a rutrum at In nibh cursus Nam libero tempus. "
+       "Risus nibh semper quis volutpat facilisi.");
+
+    return QStringList(count, lorem511).join(NEWLINE);
+            // Insert the s character before the last . to make it 512, 1024, ...
+            // .insert(-1, QLatin1Char('s'));
 }
 #endif
 

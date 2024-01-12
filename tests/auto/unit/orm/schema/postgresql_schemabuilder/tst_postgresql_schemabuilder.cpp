@@ -302,6 +302,11 @@ void tst_PostgreSQL_SchemaBuilder::createTable() const
             table.uuid();
             table.ipAddress();
             table.macAddress();
+
+            table.tinyBinary("tiny_binary");
+            table.binary("binary");
+            table.mediumBinary("medium_binary");
+            table.longBinary("long_binary");
         });
     });
 
@@ -332,7 +337,11 @@ void tst_PostgreSQL_SchemaBuilder::createTable() const
              "\"unsignedBigInteger\" bigint not null, "
              "\"uuid\" uuid not null, "
              "\"ip_address\" inet not null, "
-             "\"mac_address\" macaddr not null)");
+             "\"mac_address\" macaddr not null, "
+             "\"tiny_binary\" bytea not null, "
+             "\"binary\" bytea not null, "
+             "\"medium_binary\" bytea not null, "
+             "\"long_binary\" bytea not null)");
     QVERIFY(firstLog.boundValues.isEmpty());
 }
 
@@ -568,6 +577,11 @@ void tst_PostgreSQL_SchemaBuilder::modifyTable() const
             table.smallInteger("smallInteger");
             table.mediumInteger("mediumInteger");
 
+            table.tinyBinary("tiny_binary");
+            table.binary("binary");
+            table.mediumBinary("medium_binary");
+            table.longBinary("long_binary");
+
             table.dropColumn("long_text");
             table.dropColumns({"medium_text", "text"});
             table.dropColumns("smallInteger", "mediumInteger");
@@ -593,7 +607,11 @@ void tst_PostgreSQL_SchemaBuilder::modifyTable() const
              "add column \"integer\" integer null, "
              "add column \"tinyInteger\" smallint not null, "
              "add column \"smallInteger\" smallint not null, "
-             "add column \"mediumInteger\" integer not null");
+             "add column \"mediumInteger\" integer not null, "
+             "add column \"tiny_binary\" bytea not null, "
+             "add column \"binary\" bytea not null, "
+             "add column \"medium_binary\" bytea not null, "
+             "add column \"long_binary\" bytea not null");
     QVERIFY(log0.boundValues.isEmpty());
 
     const auto &log1 = log.at(1);
