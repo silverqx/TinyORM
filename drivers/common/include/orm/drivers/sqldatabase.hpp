@@ -114,7 +114,7 @@ namespace Orm::Drivers
         /*! Get the SQL database driver used to access the database connection. */
         std::weak_ptr<SqlDriver> driverWeak() noexcept;
 
-        /*! Disable the different thread check during SqlDatabase::database() call. */
+        /*! Disable the same thread check during SqlDatabase::database() call. */
         static void disableThreadCheck() noexcept;
 
         /* Transactions */

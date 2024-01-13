@@ -137,7 +137,7 @@ ConnectionsHash &SqlDatabasePrivate::connections()
     return *g_connections;
 }
 
-bool &SqlDatabasePrivate::checkDifferentThread() noexcept
+bool &SqlDatabasePrivate::checkSameThread() noexcept
 {
     static auto isEnabled = true;
     return isEnabled;
@@ -338,9 +338,9 @@ void SqlDatabasePrivate::throwIfSqlDriverIsNull() const
 void SqlDatabasePrivate::throwIfDifferentThread(const SqlDatabase &db,
                                                 const QString &connection)
 {
-    /* Nothing to do, the thread check is disabled or a connection was created
+    /* Nothing to do, the same thread check is disabled or a connection was created
        in the same thread as the current thread. */
-    if (!checkDifferentThread() ||
+    if (!checkSameThread() ||
         db.driverWeak().lock()->threadId() == std::this_thread::get_id()
     )
         return;

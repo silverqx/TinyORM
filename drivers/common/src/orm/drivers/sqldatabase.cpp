@@ -209,7 +209,7 @@ std::weak_ptr<SqlDriver> SqlDatabase::driverWeak() noexcept
 
 void SqlDatabase::disableThreadCheck() noexcept
 {
-    SqlDatabasePrivate::checkDifferentThread() = false;
+    SqlDatabasePrivate::checkSameThread() = false;
 }
 
 /* Transactions */
