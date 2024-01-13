@@ -70,8 +70,8 @@ namespace Support
         /*! Get a reference to the database connections hash. */
         static ConnectionsHash &connections();
 
-        /*! Determine whether the different thread check is enabled during database(). */
-        static bool &checkDifferentThread() noexcept;
+        /*! Determine whether the same thread check is enabled during database(). */
+        static bool &checkSameThread() noexcept;
 
         /* Factory methods */
         /*! Factory method to create a new database driver by the given driver name. */
