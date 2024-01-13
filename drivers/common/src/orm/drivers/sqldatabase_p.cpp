@@ -330,7 +330,9 @@ void SqlDatabasePrivate::throwIfSqlDriverIsNull() const
     if (sqldriver)
         return;
 
-    throw std::exception("The SqlDatabasePrivate::sqldriver smart pointer is nullptr.");
+    throw std::exception(
+                "The SqlDatabasePrivate::sqldriver smart pointer is nullptr. "
+                "The SqlDatabase instance is invalid after calling removeDatabase().");
 }
 
 void SqlDatabasePrivate::throwIfDifferentThread(const SqlDatabase &db,
