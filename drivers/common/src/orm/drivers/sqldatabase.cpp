@@ -30,7 +30,7 @@ SqlDatabase::SqlDatabase(std::unique_ptr<SqlDriver> &&driver)
 SqlDatabase::~SqlDatabase()
 {
     // CUR drivers finish multi-thread (but SqlDatabase can be used only from thread where it was created) silverqx
-    if (d.use_count() == 1)
+    if (d && d.use_count() == 1)
         close();
 }
 
@@ -59,6 +59,9 @@ bool SqlDatabase::open(const QString &username, const QString &password)
 
 void SqlDatabase::close()
 {
+    if (!isValid())
+        return;
+
     d->driver().close();
 }
 
