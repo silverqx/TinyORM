@@ -230,14 +230,14 @@ std::shared_ptr<SqlDriver>
 SqlDatabasePrivate::loadSqlDriverCommon(const QString &driverFilepath)
 {
     // CUR drivers UNIX version number silverqx
-    QLibrary myLib(driverFilepath);
+    QLibrary sqlDriverLib(driverFilepath);
 
     /*! Return type for the factory driver method. */
     using ReturnType = const std::shared_ptr<SqlDriver> *;
 
     std::function<ReturnType()>
     createDriverMemFn(reinterpret_cast<ReturnType(*)()>(
-                          myLib.resolve("TinyDriverInstance")));
+                          sqlDriverLib.resolve("TinyDriverInstance")));
 
     if (createDriverMemFn)
         return *std::invoke(createDriverMemFn);
