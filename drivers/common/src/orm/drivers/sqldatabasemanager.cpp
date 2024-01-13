@@ -1,14 +1,19 @@
 #include "orm/drivers/sqldatabasemanager.hpp"
 
-#include "orm/drivers/constants_p.hpp"
 #include "orm/drivers/sqldatabase_p.hpp"
 #include "orm/drivers/support/connectionshash_p.hpp"
+
+#ifdef TINYDRIVERS_MYSQL_DRIVER
+#  include "orm/drivers/constants_p.hpp"
+#endif
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
 using namespace Qt::StringLiterals;
 
+#ifdef TINYDRIVERS_MYSQL_DRIVER
 using Orm::Drivers::Constants::QMYSQL;
+#endif
 
 namespace Orm::Drivers
 {
@@ -83,7 +88,18 @@ SqlDatabaseManager::cloneDatabase(const QString &otherConnection,
 
 QStringList SqlDatabaseManager::drivers()
 {
-    return {QMYSQL};
+    return {
+#ifdef TINYDRIVERS_MYSQL_DRIVER
+        QMYSQL,
+#endif
+    // Not implemented yet :/
+// #ifdef TINYDRIVERS_PSQL_DRIVER
+//         QPSQL,
+// #endif
+// #ifdef TINYDRIVERS_SQLITE_DRIVER
+//         QSQLITE,
+// #endif
+    };
 }
 
 QStringList SqlDatabaseManager::connectionNames()
