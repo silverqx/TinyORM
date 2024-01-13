@@ -19,6 +19,8 @@ MySqlUtilsPrivate::createError(
         // CUR drivers check if this can be done also for makeStmtError() because all functions return r and then inside the makeStmtError() is the errNo obtained again silverqx
         const std::optional<uint> errNo)
 {
+    Q_ASSERT(mysql != nullptr);
+
     const auto mysqlErrno = errNo.value_or(mysql_errno(mysql));
     const auto *const mysqlError = mysql ? mysql_error(mysql) : nullptr;
 
