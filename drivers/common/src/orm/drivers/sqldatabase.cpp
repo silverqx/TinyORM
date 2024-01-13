@@ -76,10 +76,11 @@ bool SqlDatabase::isOpenError() const
 
 bool SqlDatabase::isValid() const
 {
-    /* The SqlDatabase connection can be invalid when you have a local copy and call
-       the reset method (this is the only case).
-       Isn't possible to create invalid SqlDatabase instance because the default
-       constructor is private. */
+    /* The SqlDatabase connection can be invalid when the SqlDatabase local copy is
+       created and the removeDatabase() -> invalidateConnection() -> d.reset() method is
+       called while this local copy is still in scope (this is the only case).
+       Creating an invalid SqlDatabase instance manually by an user isn't possible because
+       the default constructor is private. */
     return d && d->isDriverValid();
 }
 
