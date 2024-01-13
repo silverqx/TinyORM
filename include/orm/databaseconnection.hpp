@@ -525,8 +525,6 @@ namespace Orm
         if (countElapsed)
             timer.start();
 
-        Return result;
-
         /* Prepare bindings early so they will be prepared only once (for performance
            reasons). The weird preparedBindings return value is for better variable
            naming. */
@@ -535,13 +533,16 @@ namespace Orm
         /* Here we will run this query. If an exception occurs we'll determine if it was
            caused by a connection that has been lost. If that is the cause, we'll try
            to re-establish connection and re-run the query with a fresh connection. */
-        try {
-            result = runQueryCallback(queryString, preparedBindings, callback);
+        Return result = std::invoke([this, &queryString, &preparedBindings, &callback]
+        {
+            try {
+                return runQueryCallback(queryString, preparedBindings, callback);
 
-        }  catch (const Exceptions::QueryError &e) {
-            result = handleQueryException(std::current_exception(), e,
-                                          queryString, preparedBindings, callback);
-        }
+            }  catch (const Exceptions::QueryError &e) {
+                return handleQueryException(std::current_exception(), e,
+                                            queryString, preparedBindings, callback);
+            }
+        });
 
         std::optional<qint64> elapsed;
         if (countElapsed) {
