@@ -435,8 +435,15 @@ namespace Orm::Tiny
         template<typename T> requires std::is_arithmetic_v<T>
         std::tuple<int, QSqlQuery>
         incrementOrDecrement(
-                    const QString &column, T amount, const QVector<AttributeItem> &extra,
-                    IncrementOrDecrement method, bool all);
+                const QString &column, T amount, const QVector<AttributeItem> &extra,
+                IncrementOrDecrement method, bool all);
+        /*! Invoke the increment or decrement method on the model. */
+        template<typename T> requires std::is_arithmetic_v<T>
+        std::tuple<int, QSqlQuery>
+        invokeIncrementOrDecrement(
+                TinyBuilder<Derived> &query, const QString &column, T amount,
+                const QVector<AttributeItem> &extra, IncrementOrDecrement method,
+                bool all);
 
         /* HasAttributes */
         /*! Fill the model with a vector of attributes with the CRTP check. */
@@ -1780,20 +1787,19 @@ namespace Orm::Tiny
         // Ownership of a unique_ptr()
         auto builder = newQueryWithoutRelationships();
 
-        // Increment/Decrement all rows in the database, this is damn dangerous 🙃
+        /* Increment/Decrement all rows in the database, this is damn dangerous 🙃.
+           It increments/decrements all columns because the model doesn't exist which
+           means we don't have the ID. Also, in this case, there is no need to prefill
+           attributes because there is nothing to increment/decrement, and filling extras
+           also makes no sense. */
         if (!exists) {
-            // This makes it much safer
+            /* This makes it much safer because an user must explicitly select this
+               behavior using the all parameter. */
             if (!all)
                 return {-1, getConnection().getQtQuery()};
 
-            const auto extraConverted = AttributeUtils::convertVectorToUpdateItem(extra);
-
-            if (method == Increment)
-                return builder->increment(column, amount, extraConverted);
-            if (method == Decrement)
-                return builder->decrement(column, amount, extraConverted);
-
-            Q_UNREACHABLE();
+            return invokeIncrementOrDecrement(*builder, column, amount, extra, method,
+                                              all);
         }
 
         // Prefill an amount and extra attributes on the current model
@@ -1805,18 +1811,8 @@ namespace Orm::Tiny
         }
 
         // Execute the increment/decrement query on the database for the current model
-        std::tuple<int, QSqlQuery> result;
-        {
-            setKeysForSaveQuery(*builder);
-            const auto extraConverted = AttributeUtils::convertVectorToUpdateItem(extra);
-
-            if (method == Increment)
-                result = builder->increment(column, amount, extraConverted);
-            else if (method == Decrement)
-                result = builder->decrement(column, amount, extraConverted);
-            else
-                Q_UNREACHABLE();
-        }
+        auto result = invokeIncrementOrDecrement(*builder, column, amount, extra, method,
+                                                 all);
 
         // Synchronize changes manually
         this->syncChanges();
@@ -1829,6 +1825,28 @@ namespace Orm::Tiny
         this->syncOriginalAttributes(updatedAttributes);
 
         return result;
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    template<typename T> requires std::is_arithmetic_v<T>
+    std::tuple<int, QSqlQuery>
+    Model<Derived, AllRelations...>::invokeIncrementOrDecrement(
+            TinyBuilder<Derived> &query, const QString &column, const T amount,
+            const QVector<AttributeItem> &extra, const IncrementOrDecrement method,
+            const bool all)
+    {
+        if (!all)
+            setKeysForSaveQuery(query);
+
+        const auto extraConverted = AttributeUtils::convertVectorToUpdateItem(extra);
+
+        if (method == Increment)
+            return query.increment(column, amount, extraConverted);
+
+        if (method == Decrement)
+            return query.decrement(column, amount, extraConverted);
+
+        Q_UNREACHABLE();
     }
 
     /* HasAttributes */
