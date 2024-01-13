@@ -307,6 +307,8 @@ SqlError
 MySqlResultPrivate::createStmtError(const QString &error, const SqlError::ErrorType type,
                                     MYSQL_STMT *const stmt)
 {
+    Q_ASSERT(stmt != nullptr);
+
     const auto *const mysqlError = mysql_stmt_error(stmt);
 
     return SqlError("QMYSQL: "_L1 + error, QString::fromUtf8(mysqlError), type,
