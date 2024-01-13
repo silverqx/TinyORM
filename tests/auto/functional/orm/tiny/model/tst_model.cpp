@@ -112,7 +112,7 @@ private Q_SLOTS:
     void create_Failed() const;
 
     void incrementAndDecrement() const;
-    void incrementAndDecrement_OnNonExistentModel() const;
+    void incrementAndDecrement_OnNonExistentModel_WithoutAll() const;
 
     void update() const;
     void update_OnNonExistentModel() const;
@@ -1427,7 +1427,7 @@ void tst_Model::incrementAndDecrement() const
     QCOMPARE(torrent4_3->getAttribute(updatedAtColumn), updatedAtOriginal);
 }
 
-void tst_Model::incrementAndDecrement_OnNonExistentModel() const
+void tst_Model::incrementAndDecrement_OnNonExistentModel_WithoutAll() const
 {
     QFETCH_GLOBAL(QString, connection);
 
