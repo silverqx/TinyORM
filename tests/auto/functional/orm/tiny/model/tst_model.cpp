@@ -1437,7 +1437,7 @@ void tst_Model::incrementAndDecrement_OnNonExistentModel_WithoutAll() const
 
     QVERIFY(!torrent.exists);
 
-    auto [affected, query] = torrent.increment(SIZE_, 1, {{Progress, 101}});
+    auto [affected, query] = torrent.increment(SIZE_, 1, {{Progress, 101}}, false);
 
     // Must return -1 if updating all rows and the 'all' param. is in default (false)
     QVERIFY(affected == -1);
