@@ -75,7 +75,7 @@ namespace Support
 
         /* Factory methods */
         /*! Factory method to create a new database driver by the given driver name. */
-        static std::shared_ptr<SqlDriver> createDriver(const QString &driver);
+        static std::shared_ptr<SqlDriver> createSqlDriver(const QString &driver);
 
         /*! Factory method to create the SqlDatabase private implementation instance. */
         inline static std::shared_ptr<SqlDatabasePrivate>
@@ -198,7 +198,7 @@ namespace Support
     SqlDatabasePrivate::createSqlDatabasePrivate(const QString &driver)
     {
         return std::make_shared<SqlDatabasePrivate>(
-                    SqlDatabasePrivate::createDriver(driver), driver);
+                    SqlDatabasePrivate::createSqlDriver(driver), driver);
     }
 
 } // namespace Orm::Drivers

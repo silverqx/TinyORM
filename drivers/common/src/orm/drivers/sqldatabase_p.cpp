@@ -145,7 +145,7 @@ bool &SqlDatabasePrivate::checkSameThread() noexcept
 
 /* Factory methods */
 
-std::shared_ptr<SqlDriver> SqlDatabasePrivate::createDriver(const QString &driver)
+std::shared_ptr<SqlDriver> SqlDatabasePrivate::createSqlDriver(const QString &driver)
 {
     Q_ASSERT(!driver.isEmpty());
 
