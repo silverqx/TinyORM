@@ -320,7 +320,7 @@ SqlDatabasePrivate::joinDriverPath(const QString &driverPath,
 {
     return QDir::toNativeSeparators(u"%1/%2"_s.arg(driverPath, driverBasename));
 }
-#endif
+#endif // TINYDRIVERS_MYSQL_LOADABLE_LIBRARY
 
 /* Others */
 
