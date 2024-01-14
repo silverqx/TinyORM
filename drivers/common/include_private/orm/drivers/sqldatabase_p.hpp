@@ -137,7 +137,7 @@ namespace Support
         /*! Join the given driver path and driver basename (w/o file extension). */
         static QString joinDriverPath(const QString &driverPath,
                                       const QString &driverBasename);
-#endif
+#endif // TINYDRIVERS_MYSQL_LOADABLE_LIBRARY
 
         /* Others */
         /*! Throw an exception if the sqldriver is nullptr. */
