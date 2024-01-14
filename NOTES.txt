@@ -1432,9 +1432,10 @@ Check copy/move/swap operations:
     using TypeToCheck       = Orm::SqlQuery;
     using ConstructibleFrom = QVariant;
 
+    qDebug() << "\n-- is_trivial";
     qDebug() << std::is_trivial_v<TypeToCheck>;
 
-    qDebug() << "-- nothrow";
+    qDebug() << "\n-- nothrow";
     qDebug() << std::is_nothrow_default_constructible_v<TypeToCheck>;
     qDebug() << std::is_nothrow_copy_constructible_v<TypeToCheck>;
     qDebug() << std::is_nothrow_copy_assignable_v<TypeToCheck>;
@@ -1461,12 +1462,12 @@ Check copy/move/swap operations:
     qDebug() << std::is_trivially_move_assignable_v<TypeToCheck>;
     qDebug() << std::is_trivially_destructible_v<TypeToCheck>;
 
-    qDebug() << "-- nothrow constructible from";
-    qDebug() << std::is_nothrow_constructible_v<TypeToCheck, ConstructibleFrom>;
-    qDebug() << std::is_nothrow_constructible_v<TypeToCheck, const ConstructibleFrom &>;
-    qDebug() << std::is_nothrow_constructible_v<TypeToCheck, ConstructibleFrom &&>;
-
-    exit(0);
+    if constexpr (!std::is_void_v<ConstructibleFrom>) {
+        qDebug() << "-- nothrow constructible from";
+        qDebug() << std::is_nothrow_constructible_v<TypeToCheck, ConstructibleFrom>;
+        qDebug() << std::is_nothrow_constructible_v<TypeToCheck, const ConstructibleFrom &>;
+        qDebug() << std::is_nothrow_constructible_v<TypeToCheck, ConstructibleFrom &&>;
+    }
 }
 
 
@@ -1596,6 +1597,37 @@ DatabaseConnection debug code:
             while(query.next()) {
         qDebug().nospace() << query.value(0).toString() << "\n"
          << query.value(1).toString();
+    }
+}
+
+
+Database connection character set and collation debug code:
+-----------------------------------------------------------
+
+{
+    auto query = DB::select("SHOW VARIABLES like 'version%';", {}, connection);
+    while (query.next()) {
+        qDebug().noquote().nospace()
+                << query.value("Variable_name").toString() << ": "
+                << query.value("Value").toString();
+    }
+}
+
+{
+    auto query = DB::select("SHOW SESSION VARIABLES LIKE 'character_set_%'", {}, connection);
+    while (query.next()) {
+        qDebug().noquote().nospace()
+                << query.value("Variable_name").toString() << ": "
+                << query.value("Value").toString();
+    }
+}
+
+{
+    auto query = DB::select("SHOW SESSION VARIABLES LIKE 'collation_%';", {}, connection);
+    while (query.next()) {
+        qDebug().noquote().nospace()
+                << query.value("Variable_name").toString() << ": "
+                << query.value("Value").toString();
     }
 }
 
