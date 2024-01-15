@@ -44,6 +44,9 @@ namespace Orm::Drivers
         /*! Register a new database connection using the given driver name. */
         static SqlDatabase
         addDatabase(const QString &driver, const QString &connection = defaultConnection);
+        /*! Register a new database connection using the given driver name. */
+        static SqlDatabase
+        addDatabase(QString &&driver, const QString &connection = defaultConnection);
         /*! Register a new database connection using the given driver instance. */
         static SqlDatabase
         addDatabase(std::unique_ptr<SqlDriver> &&driver,

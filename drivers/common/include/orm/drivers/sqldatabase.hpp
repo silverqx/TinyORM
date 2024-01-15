@@ -31,6 +31,8 @@ namespace Orm::Drivers
         /*! Protected constructor. */
         explicit SqlDatabase(const QString &driver);
         /*! Protected constructor. */
+        explicit SqlDatabase(QString &&driver);
+        /*! Protected constructor. */
         explicit SqlDatabase(std::unique_ptr<SqlDriver> &&driver);
 
     public:

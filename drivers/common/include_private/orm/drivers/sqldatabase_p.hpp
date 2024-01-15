@@ -81,6 +81,9 @@ namespace Support
         inline static std::shared_ptr<SqlDatabasePrivate>
         createSqlDatabasePrivate(const QString &driver);
         /*! Factory method to create the SqlDatabase private implementation instance. */
+        inline static std::shared_ptr<SqlDatabasePrivate>
+        createSqlDatabasePrivate(QString &&driver);
+        /*! Factory method to create the SqlDatabase private implementation instance. */
         static std::shared_ptr<SqlDatabasePrivate>
         createSqlDatabasePrivate(std::shared_ptr<SqlDriver> &&driver);
 
@@ -216,6 +219,13 @@ namespace Support
     {
         return std::make_shared<SqlDatabasePrivate>(
                     SqlDatabasePrivate::createSqlDriver(driver), driver);
+    }
+
+    std::shared_ptr<SqlDatabasePrivate>
+    SqlDatabasePrivate::createSqlDatabasePrivate(QString &&driver)
+    {
+        return std::make_shared<SqlDatabasePrivate>(
+                    SqlDatabasePrivate::createSqlDriver(driver), std::move(driver));
     }
 
 } // namespace Orm::Drivers

@@ -21,6 +21,10 @@ SqlDatabase::SqlDatabase(const QString &driver)
     : d(SqlDatabasePrivate::createSqlDatabasePrivate(driver))
 {}
 
+SqlDatabase::SqlDatabase(QString &&driver)
+    : d(SqlDatabasePrivate::createSqlDatabasePrivate(std::move(driver)))
+{}
+
 SqlDatabase::SqlDatabase(std::unique_ptr<SqlDriver> &&driver)
     : d(SqlDatabasePrivate::createSqlDatabasePrivate(std::move(driver)))
 {}

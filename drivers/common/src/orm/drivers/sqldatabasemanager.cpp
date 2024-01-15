@@ -40,6 +40,12 @@ SqlDatabaseManager::addDatabase(const QString &driver, const QString &connection
 }
 
 SqlDatabase
+SqlDatabaseManager::addDatabase(QString &&driver, const QString &connection)
+{
+    return SqlDatabasePrivate::addDatabase(SqlDatabase(std::move(driver)), connection);
+}
+
+SqlDatabase
 SqlDatabaseManager::addDatabase(std::unique_ptr<SqlDriver> &&driver,
                                 const QString &connection)
 {
