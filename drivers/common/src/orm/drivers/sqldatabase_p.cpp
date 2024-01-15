@@ -90,7 +90,7 @@ SqlDatabase SqlDatabasePrivate::database(const QString &connection, const bool o
     return db;
 }
 
-void SqlDatabasePrivate::addDatabase(const SqlDatabase &db, const QString &connection)
+SqlDatabase SqlDatabasePrivate::addDatabase(SqlDatabase &&db, const QString &connection)
 {
     auto &connections = *g_connections;
 
@@ -107,9 +107,13 @@ void SqlDatabasePrivate::addDatabase(const SqlDatabase &db, const QString &conne
                     "old connection has been removed."_s.arg(connection);
     }
 
-    connections.try_emplace(connection, db);
-
     db.d->connectionName = connection;
+
+    auto [itDatabase, ok] = connections.try_emplace(connection, std::move(db));
+    // Insertion must always happen here
+    Q_ASSERT(ok);
+
+    return itDatabase->second;
 }
 
 void SqlDatabasePrivate::removeDatabase(const QString &connection)
