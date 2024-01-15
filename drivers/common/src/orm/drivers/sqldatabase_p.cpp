@@ -3,6 +3,8 @@
 #ifdef TINYDRIVERS_MYSQL_LOADABLE_LIBRARY
 #  include <QDir>
 #  include <QLibrary>
+
+#  include <orm/macros/likely.hpp>
 #endif
 
 #include "orm/drivers/constants_p.hpp"
@@ -32,6 +34,15 @@ namespace Orm::Drivers
 
 /*! Database connections hash, maps connection names to SqlDatabase instances. */
 Q_GLOBAL_STATIC(ConnectionsHash, g_connections) // NOLINT(misc-use-anonymous-namespace)
+
+#ifdef TINYDRIVERS_MYSQL_LOADABLE_LIBRARY
+/*! SQL loadable drivers' factory methods hash type. */
+using DriverLoadedHashType = std::unordered_map<QString, std::function<SqlDriver *()>>;
+/*! SQL loadable drivers' factory methods hash (used to check if driver is loaded too). */
+Q_GLOBAL_STATIC(DriverLoadedHashType, g_driversLoaded) // NOLINT(misc-use-anonymous-namespace)
+/*! Mutex to secure loading of loadable driver shared libraries. */
+Q_GLOBAL_STATIC(std::shared_mutex, mx_driversLoaded) // NOLINT(misc-use-anonymous-namespace)
+#endif
 
 /* public */
 
@@ -150,11 +161,13 @@ std::shared_ptr<SqlDriver> SqlDatabasePrivate::createSqlDriver(const QString &dr
     Q_ASSERT(!driver.isEmpty());
 
     if (driver == QMYSQL)
-#ifdef TINYDRIVERS_MYSQL_LOADABLE_LIBRARY
-        return loadSqlDriver(driver, u"TinyMySql"_s);
-#else
-        return std::make_shared<MySql::MySqlDriver>();
-#endif
+        return createMySqlDriver();
+
+    // if (driver == QPSQL)
+    //     return createPostgresDriver();
+
+    // if (driver == QSQLITE)
+    //     return createSQLiteDriver();
 
     throw std::exception(
                 u"Unsupported driver '%1', available drivers: %2."_s
@@ -186,6 +199,33 @@ void SqlDatabasePrivate::throwIfNoConnection(const QString &connection)
 
 /* Factory methods */
 
+std::shared_ptr<SqlDriver> SqlDatabasePrivate::createMySqlDriver()
+{
+#ifdef TINYDRIVERS_MYSQL_LOADABLE_LIBRARY
+    return createSqlDriverLoadable(QMYSQL, u"TinyMySql"_s);
+#else
+    return std::make_shared<MySql::MySqlDriver>();
+#endif
+}
+
+// std::shared_ptr<SqlDriver> SqlDatabasePrivate::createPostgresDriver()
+// {
+// #ifdef TINYDRIVERS_PSQL_LOADABLE_LIBRARY
+//     return createSqlDriverLoadable(QPSQL, u"TinyPostgres"_s);
+// #else
+//     return std::make_shared<Postgres::PostgresDriver>();
+// #endif
+// }
+
+// std::shared_ptr<SqlDriver> SqlDatabasePrivate::createSQLiteDriver()
+// {
+// #ifdef TINYDRIVERS_SQLITE_LOADABLE_LIBRARY
+//     return createSqlDriverLoadable(QSQLITE, u"TinySQLite"_s);
+// #else
+//     return std::make_shared<SQLite::SQLiteDriver>();
+// #endif
+// }
+
 #ifdef TINYDRIVERS_MYSQL_LOADABLE_LIBRARY
 namespace
 {
@@ -206,7 +246,43 @@ namespace
 } // namespace
 
 std::shared_ptr<SqlDriver>
+SqlDatabasePrivate::createSqlDriverLoadable(const QString &driver,
+                                            const QString &driverBasenameRaw)
+{
+    // Load a SQL driver shared library at runtime and return the driver factory method
+    const auto &createDriverMemFn = loadSqlDriver(driver, driverBasenameRaw);
+
+    // This should never happen :/, it's checked earlier
+    Q_ASSERT(createDriverMemFn);
+
+    return std::shared_ptr<SqlDriver>(std::invoke(createDriverMemFn));
+}
+
+const std::function<SqlDriver *()> &
 SqlDatabasePrivate::loadSqlDriver(const QString &driver, const QString &driverBasenameRaw)
+{
+    /* Everything between the g_driversLoaded->contains() and g_driversLoaded->emplace()
+       must be synchronized (secured using the write mutex). I implemented
+       the g_driversLoaded the same way is as the g_connections is implemented but I had
+       to rework it to this mutex way. Simply, all threads must wait until the driver
+       library is loaded and the result is cached. */
+
+    // Exclusive/write lock
+    const std::scoped_lock lock(*mx_driversLoaded);
+
+    /* This secures that the QLibrary(driver) will be instantiated only once and also
+       the resolve("TinyDriverInstance") method will be called only once. Calling them
+       always when a new SQL driver instance is needed is unnecessary. */
+    if (g_driversLoaded->contains(driver)) T_LIKELY
+        return g_driversLoaded->at(driver);
+
+    else T_UNLIKELY
+        return loadSqlDriverCommon(driver, driverBasenameRaw);
+}
+
+const std::function<SqlDriver *()> &
+SqlDatabasePrivate::loadSqlDriverCommon(const QString &driver,
+                                        const QString &driverBasenameRaw)
 {
     const auto driverBasenames = getDriverBasenames(driverBasenameRaw);
 
@@ -214,11 +290,19 @@ SqlDatabasePrivate::loadSqlDriver(const QString &driver, const QString &driverBa
        from paths from qmake/CMake build system (inside build tree). */
     for (const auto &driverPath : sqlDriverPaths(driver))
         for (const auto &driverBasename : driverBasenames)
-            if (auto driverInstance = loadSqlDriverCommon(joinDriverPath(driverPath,
-                                                                         driverBasename));
-                driverInstance
-            )
-                return driverInstance;
+            // Load a Tiny SQL driver shared library and resolve driver factory function
+            if (auto createDriverMemFn = loadSqlDriverAndResolve(
+                                             joinDriverPath(driverPath, driverBasename));
+                createDriverMemFn
+            ) {
+                // Cache the result
+                const auto [itDriverMemFn, ok] = g_driversLoaded
+                                                 ->emplace(driver, createDriverMemFn);
+                // Insertion must always happen here
+                Q_ASSERT(ok);
+
+                return itDriverMemFn->second;
+            }
 
     throw std::runtime_error(
                 u"Can't load '%1' shared library for '%2' driver at runtime."_s
@@ -226,23 +310,27 @@ SqlDatabasePrivate::loadSqlDriver(const QString &driver, const QString &driverBa
                 .toUtf8().constData());
 }
 
-std::shared_ptr<SqlDriver>
-SqlDatabasePrivate::loadSqlDriverCommon(const QString &driverFilepath)
+SqlDatabasePrivate::CreateSqlDriverMemFn
+SqlDatabasePrivate::loadSqlDriverAndResolve(const QString &driverFilepath)
 {
     // CUR drivers UNIX version number silverqx
     QLibrary sqlDriverLib(driverFilepath);
 
-    /*! Return type for the factory driver method. */
-    using ReturnType = const std::shared_ptr<SqlDriver> *;
+    // Nothing to do, the driver isn't on the given filepath
+    if (!sqlDriverLib.load())
+        return nullptr;
 
-    std::function<ReturnType()>
-    createDriverMemFn(reinterpret_cast<ReturnType(*)()>(
-                          sqlDriverLib.resolve("TinyDriverInstance")));
+    // Resolve the TinyDriverInstance function
+    auto *const createSqlDriverMemFn = reinterpret_cast<CreateSqlDriverMemFn>(
+                                           sqlDriverLib.resolve("TinyDriverInstance"));
 
-    if (createDriverMemFn)
-        return *std::invoke(createDriverMemFn);
+    if (createSqlDriverMemFn != nullptr)
+        return createSqlDriverMemFn;
 
-    return nullptr;
+    throw std::runtime_error(
+                u"The QLibrary('%1') was loaded successfully but "
+                 "the resolve('TinyDriverInstance') failed."_s
+                .arg(driverFilepath).toUtf8().constData());
 }
 
 QStringList SqlDatabasePrivate::sqlDriverPaths(const QString &driver)
