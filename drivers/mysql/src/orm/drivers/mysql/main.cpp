@@ -3,12 +3,13 @@
 using TINYORM_PREPEND_NAMESPACE(Orm::Drivers::SqlDriver);
 using TINYORM_PREPEND_NAMESPACE(Orm::Drivers::MySql::MySqlDriver);
 
-/*! Factory method to create the MySqlDriver instance. */
-extern "C" Q_DECL_EXPORT
-const std::shared_ptr<SqlDriver> *TinyDriverInstance()
-{
-    static const std::shared_ptr<SqlDriver>
-    cachedInstance = std::make_shared<MySqlDriver>();
+/* There is no way to return anything other than a raw pointer as the extern "C" is used.
+   Also, don't use the static local variable to cache the driver, it causes weird bugs.
+   The SqlDatabase will be responsible for destroying the MySqlDriver instance during
+   the destruction or the removeDatabase() call inside the invalidateDatabase() method. */
 
-    return std::addressof(cachedInstance);
+/*! Factory method to create the MySqlDriver instance. */
+extern "C" Q_DECL_EXPORT SqlDriver *TinyDriverInstance()
+{
+    return new MySqlDriver();
 }

@@ -117,13 +117,30 @@ namespace Support
 
     private:
         /* Factory methods */
+        /*! Factory method to create a new MySQL driver instance (shared/loadable). */
+        static std::shared_ptr<SqlDriver> createMySqlDriver();
+        /*! Factory method to create new PostgreSQL driver instance (shared/loadable). */
+        // static std::shared_ptr<SqlDriver> createPostgresDriver();
+        /*! Factory method to create a new SQLite driver instance (shared/loadable). */
+        // static std::shared_ptr<SqlDriver> createSQLiteDriver();
+
 #ifdef TINYDRIVERS_MYSQL_LOADABLE_LIBRARY
-        /*! Load Tiny SQL driver shared library at runtime and instantiate it. */
+        /*! SQL driver factory function pointer type (allows construction in-place). */
+        using CreateSqlDriverMemFn = SqlDriver *(*)();
+
+        /*! Create a Tiny SQL driver instance (loads a shared library at runtime). */
         static std::shared_ptr<SqlDriver>
+        createSqlDriverLoadable(const QString &driver, const QString &driverBasenameRaw);
+
+        /*! Wrapper for loading a SQL driver shared library at runtime (thread-safe). */
+        static const std::function<SqlDriver *()> &
         loadSqlDriver(const QString &driver, const QString &driverBasenameRaw);
-        /*! Load Tiny SQL driver shared library at runtime and instantiate it. */
-        static std::shared_ptr<SqlDriver>
-        loadSqlDriverCommon(const QString &driverFilepath);
+        /*! Load a Tiny SQL driver shared library at runtime (actual code). */
+        static const std::function<SqlDriver *()> &
+        loadSqlDriverCommon(const QString &driver, const QString &driverBasenameRaw);
+        /*! Load a Tiny SQL driver shared library and resolve driver factory function. */
+        static CreateSqlDriverMemFn
+        loadSqlDriverAndResolve(const QString &driverFilepath);
 
         /*! Get all non-standard Tiny SQL driver locations that LoadLibrary() doesn't
             load from (TINY_PLUGIN_PATH/QT_PLUGIN_PATH, qmake build folder). */
