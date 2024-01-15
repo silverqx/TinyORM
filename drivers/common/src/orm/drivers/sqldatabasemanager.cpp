@@ -36,10 +36,7 @@ bool SqlDatabaseManager::contains(const QString &connection)
 SqlDatabase
 SqlDatabaseManager::addDatabase(const QString &driver, const QString &connection)
 {
-    SqlDatabase db(driver);
-    SqlDatabasePrivate::addDatabase(db, connection);
-
-    return db;
+    return SqlDatabasePrivate::addDatabase(SqlDatabase(driver), connection);
 }
 
 SqlDatabase
@@ -48,10 +45,7 @@ SqlDatabaseManager::addDatabase(std::unique_ptr<SqlDriver> &&driver,
 {
     throwIfDriverIsNullptr(driver, connection);
 
-    SqlDatabase db(std::move(driver));
-    SqlDatabasePrivate::addDatabase(db, connection);
-
-    return db;
+    return SqlDatabasePrivate::addDatabase(SqlDatabase(std::move(driver)), connection);
 }
 
 void SqlDatabaseManager::removeDatabase(const QString &connection)
@@ -68,9 +62,7 @@ SqlDatabaseManager::cloneDatabase(const SqlDatabase &other, const QString &conne
     SqlDatabase db(other.driverName());
     db.d->cloneDatabase(*other.d);
 
-    SqlDatabasePrivate::addDatabase(db, connection);
-
-    return db;
+    return SqlDatabasePrivate::addDatabase(std::move(db), connection);
 }
 
 SqlDatabase

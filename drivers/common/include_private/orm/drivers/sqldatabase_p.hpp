@@ -60,7 +60,7 @@ namespace Support
         static SqlDatabase database(const QString &connection, bool open);
 
         /*! Insert a new database connection into the connections hash. */
-        static void addDatabase(const SqlDatabase &db, const QString &connection);
+        static SqlDatabase addDatabase(SqlDatabase &&db, const QString &connection);
         /*! Remove the given database connection from the connections hash. */
         static void removeDatabase(const QString &connection);
         /*! Invalidate the given connection (reset driver and clear connection name). */
