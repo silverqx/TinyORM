@@ -2405,6 +2405,22 @@ tests was done on std::vector<AttributeItem> with 1'000'000 values
     ~50ms - returning QStringLiteral directly using return QStringLiteral("xyz")
 
 
+QtSql vs TinyDrivers performance:
+---------------------------------
+
+ - invoke tests Alt+PgDw
+ - Switch tests output to Text View and copy the whole output
+ - paste it to some file eg. pp.txt
+ - check if has the correct number of '^  <Duration ' (using RegEx Find)
+ - invoke the Get-TextCasesDuration.ps1 on this file to obtain the result (Duration in seconds)
+
+TestCases UnitTests BuildTime Type       Duration in seconds
+39        1924(50)  3:13      loadable - 25.00, 26.00, 25.90, 25.23, 25.21
+39        1922(50)  2:58      shared   - 24.68, 24.92, 24.96
+39        1920(50)  3:04      static   - 25.50, 24.58, 24.34
+37        1914(42)  2:51      QtSql    - 26.10, 25.75, 25.20, 25.31
+
+
 Qt confusions notes:
 --------------------
 
