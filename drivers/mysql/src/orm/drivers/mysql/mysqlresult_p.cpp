@@ -14,7 +14,13 @@
 // when another libmysql version is used during runtime than during compile time
 struct QT_MYSQL_TIME
 {
-    unsigned int year, month, day, hour, minute, second = 0;
+    unsigned int year = 0;
+    unsigned int month = 0;
+    unsigned int day = 0;
+    unsigned int hour = 0;
+    unsigned int minute = 0;
+    unsigned int second = 0;
+
     /*! The fractional part of the second in microseconds. */
     unsigned long second_part = 0;
     my_bool neg = false;
