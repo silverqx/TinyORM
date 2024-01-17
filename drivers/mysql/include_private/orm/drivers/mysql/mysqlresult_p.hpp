@@ -113,9 +113,9 @@ namespace Orm::Drivers::MySql
 
         /*! Structure to bind buffers to result set columns (result values returned from
             the database server). */
-        MYSQL_BIND *resultBinds = nullptr;
+        std::unique_ptr<MYSQL_BIND[]> resultBinds = nullptr;
         /*! Structure for prepared bindings (data values sent to the server). */
-        MYSQL_BIND *preparedBinds = nullptr;
+        std::unique_ptr<MYSQL_BIND[]> preparedBinds = nullptr;
 
         /* Common for both */
         /*! Has the current result set any BLOB type field/s? */
@@ -130,7 +130,7 @@ namespace Orm::Drivers::MySql
                                         QLatin1StringView method);
 
         /*! Allocate memory for prepared bindings that will be sent to the database. */
-        static void allocateMemoryForBindings(MYSQL_BIND **binds,
+        static void allocateMemoryForBindings(std::unique_ptr<MYSQL_BIND[]> &binds,
                                               std::size_t count) noexcept;
         /*! Reserve all vectors for prepared bindings buffer data. */
         void reserveVectorsForBindings(
@@ -141,7 +141,7 @@ namespace Orm::Drivers::MySql
         static bool isBlobType(enum_field_types fieldType);
         /*! Convert Qt date/time type to the MYSQL_TIME. */
         static QT_MYSQL_TIME toMySqlDateTime(QDate date, QTime time, int typeId,
-                                             MYSQL_BIND *bind);
+                                             MYSQL_BIND &bind);
 
         /* Result sets */
         /*! Determine whether the given MySQL field type is a Bit-value type. */

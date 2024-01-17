@@ -38,7 +38,7 @@ MySqlResult::MySqlResult(const std::weak_ptr<MySqlDriver> &driver)
 
 MySqlResult::~MySqlResult()
 {
-    cleanup();
+    cleanup(true);
 }
 
 QVariant MySqlResult::handle() const
@@ -166,7 +166,7 @@ bool MySqlResult::exec()
         d->bindPreparedBindings(nullVector, stringVector, timeVector);
 
         // Bind data for parameter placeholders 🕺
-        if (status = mysql_stmt_bind_param(d->stmt, d->preparedBinds); status != 0)
+        if (status = mysql_stmt_bind_param(d->stmt, d->preparedBinds.get()); status != 0)
             return setLastError(MySqlResultPrivate::createStmtError(
                                     u"Unable to bind data for parameter placeholders"_s,
                                     SqlError::StatementError, d->stmt));
@@ -185,7 +185,7 @@ bool MySqlResult::exec()
         my_bool update_max_length = true;
 
         // Bind output columns in the result set to data buffers and length buffers
-        if (status = mysql_stmt_bind_result(d->stmt, d->resultBinds); status != 0)
+        if (status = mysql_stmt_bind_result(d->stmt, d->resultBinds.get()); status != 0)
             return setLastError(MySqlResultPrivate::createStmtError(
                                     u"Unable to bind result set data buffers"_s,
                                     SqlError::StatementError, d->stmt));
@@ -205,7 +205,9 @@ bool MySqlResult::exec()
             d->bindResultBlobs();
 
             // Re-bind output columns in the result set to data buffers and length buffers
-            if (status = mysql_stmt_bind_result(d->stmt, d->resultBinds); status != 0)
+            if (status = mysql_stmt_bind_result(d->stmt, d->resultBinds.get());
+                status != 0
+            )
                 return setLastError(MySqlResultPrivate::createStmtError(
                                         u"Unable to re-bind result set data buffers "
                                         "for BLOB-s"_s,
@@ -461,38 +463,34 @@ void MySqlResult::detachFromResultSet()
 
 // CUR drivers revisit all 4 free methods detachFromResultSet(), cleanup(), mysqlFreeResults(), and mysqlStmtClose() how they relate and how they are used silverqx
 // CUR drivers use smart pointers where possible to minimize memory leaks silverqx
-void MySqlResult::cleanup()
+void MySqlResult::cleanup(const bool fromDestructor)
 {
     Q_D(MySqlResult);
 
+    // Normal queries
     mysqlFreeResults();
+
+    // Prepared queries
     mysqlStmtClose();
 
-    if (d->meta != nullptr) {
-        mysql_free_result(d->meta);
-        d->meta = nullptr;
+    // d->meta != nullptr check is inside as the first thing
+    mysql_free_result(d->meta);
+    d->meta = nullptr;
+
+    // Will be auto-destroyed if called from destructor as they are smart pointers
+    if (!fromDestructor) {
+        if (d->preparedBinds)
+            d->preparedBinds.reset();
+
+        if (d->resultBinds)
+            d->resultBinds.reset();
     }
-
-    if (d->preparedBinds != nullptr) {
-        delete[] d->preparedBinds;
-        d->preparedBinds = nullptr;
-    }
-
-    if (d->resultBinds != nullptr) {
-        delete[] d->resultBinds;
-        d->resultBinds = nullptr;
-    }
-
-    for (const auto &field : std::as_const(d->resultFields))
-        delete[] field.fieldValue;
-
-    d->resultFields.clear();
 
     d->hasBlobs = false;
     d->preparedQuery = false;
 
-    d->result = nullptr;
-    d->row = nullptr;
+    // Common for both
+    freeResultFields();
 
     setAt(BeforeFirstRow);
     setActive(false);
@@ -501,9 +499,9 @@ void MySqlResult::cleanup()
 /* private */
 
 // CUR drivers revisit is something similar needed also for prepared statements? Look at detachFromResultSet() silverqx
-void MySqlResult::mysqlFreeResults() const
+void MySqlResult::mysqlFreeResults()
 {
-    Q_D(const MySqlResult);
+    Q_D(MySqlResult);
 
     if (d->result != nullptr)
         mysql_free_result(d->result);
@@ -542,6 +540,9 @@ void MySqlResult::mysqlFreeResults() const
                 "result set using the mysql_next_result(); %1: %2"_s
                .arg(mysql_errno(mysql))
                .arg(QString::fromUtf8(mysql_error(mysql)));
+
+    d->result = nullptr;
+    d->row = nullptr;
 }
 
 void MySqlResult::mysqlStmtClose()
@@ -556,6 +557,19 @@ void MySqlResult::mysqlStmtClose()
         qWarning("MySqlResult::mysqlStmtClose: unable to free statement handle");
 
     d->stmt = nullptr;
+}
+
+void MySqlResult::freeResultFields()
+{
+    Q_D(MySqlResult);
+
+    // Prepared queries
+    // Free result buffers
+    for (const auto &field : std::as_const(d->resultFields))
+        delete[] field.fieldValue;
+
+    // Common for both
+    d->resultFields.clear();
 }
 
 } // namespace Orm::Drivers::MySql
