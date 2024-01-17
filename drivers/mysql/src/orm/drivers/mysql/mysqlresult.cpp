@@ -166,12 +166,10 @@ bool MySqlResult::exec()
         d->bindPreparedBindings(nullVector, stringVector, timeVector);
 
         // Bind data for parameter placeholders 🕺
-        if (status = mysql_stmt_bind_param(d->stmt, d->preparedBinds); status != 0) {
-            setLastError(MySqlResultPrivate::createStmtError(
-                             u"Unable to bind data for parameter placeholders"_s,
-                             SqlError::StatementError, d->stmt));
-            return false;
-        }
+        if (status = mysql_stmt_bind_param(d->stmt, d->preparedBinds); status != 0)
+            return setLastError(MySqlResultPrivate::createStmtError(
+                                    u"Unable to bind data for parameter placeholders"_s,
+                                    SqlError::StatementError, d->stmt));
     }
 
     // Execute prepared query 🥳
