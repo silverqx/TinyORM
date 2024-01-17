@@ -73,13 +73,15 @@ namespace Orm::Drivers::MySql
 
         /* Others */
         /*! Main cleanup method, free prepared and non-prepared statements. */
-        void cleanup();
+        void cleanup(bool fromDestructor = false);
 
     private:
         /*! Free the memory allocated for result sets. */
-        void mysqlFreeResults() const;
+        void mysqlFreeResults();
         /*! Close the prepared statement and deallocate the statement handler. */
         void mysqlStmtClose();
+        /*! Free the MyField-s list. */
+        void freeResultFields();
     };
 
 } // namespace Orm::Drivers::MySql

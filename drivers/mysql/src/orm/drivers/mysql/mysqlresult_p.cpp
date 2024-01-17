@@ -94,49 +94,49 @@ bool MySqlResultPrivate::bindResultValues()
 //    }
 
     // Allocate memory for result sets that will be obtained from the database
-    allocateMemoryForBindings(&resultBinds, static_cast<std::size_t>(fieldsCount));
+    allocateMemoryForBindings(resultBinds, static_cast<std::size_t>(fieldsCount));
 
     uint index = 0;
     const MYSQL_FIELD *fieldInfo = nullptr;
     resultFields.resize(fieldsCount);
 
     while((fieldInfo = mysql_fetch_field(meta)) != nullptr) {
-        auto *const resultBind = &resultBinds[index];
+        auto &resultBind = resultBinds[index];
         auto &field = resultFields[index];
 
         field.myField = fieldInfo;
         field.metaType = MySqlUtils::decodeMySqlType(fieldInfo->type, fieldInfo->flags);
-        resultBind->buffer_type = fieldInfo->type;
+        resultBind.buffer_type = fieldInfo->type;
         // CUR drivers I didn't see +1 for NULL char anywhere on any MySQL docs page in any example, try it with full buffers for more type like char[40] or varchar[255] and find out how it works and behaves silverqx
         // +1 for the NULL character
-        resultBind->buffer_length = field.fieldValueSize = fieldInfo->length + 1;
+        resultBind.buffer_length = field.fieldValueSize = fieldInfo->length + 1;
 
         // CUR drivers finish this during testing BLOB-s silverqx
         if (isBlobType(fieldInfo->type)) {
             /* The size of a blob-field is available as soon as
                the mysql_stmt_store_result() is called, it's after
                the mysql_stmt_exec() in MySqlResult::exec(). */
-            resultBind->buffer_length = field.fieldValueSize = 0;
+            resultBind.buffer_length = field.fieldValueSize = 0;
             hasBlobs = true;
         }
         else if (MySqlUtils::isTimeOrDate(fieldInfo->type))
-            resultBind->buffer_length = field.fieldValueSize = sizeof (QT_MYSQL_TIME);
+            resultBind.buffer_length = field.fieldValueSize = sizeof (QT_MYSQL_TIME);
         else if (MySqlUtils::isInteger(field.metaType.id()))
-            resultBind->buffer_length = field.fieldValueSize = 8;
+            resultBind.buffer_length = field.fieldValueSize = 8;
         else
-            resultBind->buffer_type = MYSQL_TYPE_STRING;
+            resultBind.buffer_type = MYSQL_TYPE_STRING;
 
         // The following two lines only bind data members using pointers (no real values)
-        resultBind->is_null     = &field.isNull;
-        resultBind->length      = &field.fieldValueSize;
-        resultBind->is_unsigned = fieldInfo->flags & UNSIGNED_FLAG;
+        resultBind.is_null     = &field.isNull;
+        resultBind.length      = &field.fieldValueSize;
+        resultBind.is_unsigned = fieldInfo->flags & UNSIGNED_FLAG;
 
         /* Prepare the output/result buffer (nothing to do with prepared bindings),
            +1 for the terminating null character. */
-        auto *const resultBuffer = resultBind->buffer_length > 0
-                                   ? new char[resultBind->buffer_length + 1]
+        auto *const resultBuffer = resultBind.buffer_length > 0
+                                   ? new char[resultBind.buffer_length + 1]
                                    : nullptr;
-        resultBind->buffer = field.fieldValue = resultBuffer;
+        resultBind.buffer = field.fieldValue = resultBuffer;
 
         ++index;
     }
@@ -189,75 +189,75 @@ void MySqlResultPrivate::bindPreparedBindings(
     // Reserve all vectors for prepared bindings buffer data
     reserveVectorsForBindings(nullVector, stringVector, timeVector);
     // Allocate memory for prepared bindings that will be sent to the database
-    allocateMemoryForBindings(&preparedBinds,
+    allocateMemoryForBindings(preparedBinds,
                               static_cast<std::size_t>(boundValues.size()));
 
     for (qsizetype index = 0; index < boundValues.size(); ++index) {
         // MySQL storage for prepared binding to prepare
-        auto *const preparedBind = &preparedBinds[index];
+        auto &preparedBind = preparedBinds[index];
         // Prepared binding value to prepare
         const auto &boundValue = boundValues.at(index);
         // Pointer to a raw data to bind (of course some types need special handling)
         auto *const data = const_cast<void *>(boundValue.constData());
 
         // Emplace to the vector to make it alive until mysql_stmt_execute()
-        preparedBind->is_null = &nullVector.emplaceBack(
-                                    static_cast<my_bool>(
-                                        SqlResultPrivate::isVariantNull(boundValue)));
-        preparedBind->length = 0;
-        preparedBind->is_unsigned = false;
+        preparedBind.is_null = &nullVector.emplaceBack(
+                                   static_cast<my_bool>(
+                                       SqlResultPrivate::isVariantNull(boundValue)));
+        preparedBind.length = 0;
+        preparedBind.is_unsigned = false;
 
         switch (boundValue.userType()) {
         case QMetaType::QByteArray:
-            preparedBind->buffer_type   = MYSQL_TYPE_BLOB;
+            preparedBind.buffer_type   = MYSQL_TYPE_BLOB;
             // Need to use the constData() to avoid detach
-            preparedBind->buffer_length = boundValue.toByteArray().size();
+            preparedBind.buffer_length = boundValue.toByteArray().size();
             /* The toByteArray().constData() is correct, it will point to the same
                data even if the QVariant creates a copy of the QByteArray inside
                toByteArray(). */
-            preparedBind->buffer = const_cast<char *>(
-                                       boundValue.toByteArray().constData());
+            preparedBind.buffer = const_cast<char *>(
+                                      boundValue.toByteArray().constData());
             break;
 
         case QMetaType::QTime:
         case QMetaType::QDate:
         case QMetaType::QDateTime:
-            preparedBind->buffer_length = sizeof (QT_MYSQL_TIME);
-            preparedBind->length        = 0;
+            preparedBind.buffer_length = sizeof (QT_MYSQL_TIME);
+            preparedBind.length        = 0;
             // Emplace to the vector to make it alive until mysql_stmt_execute()
-            preparedBind->buffer = &timeVector.emplaceBack(
-                                       toMySqlDateTime(
-                                           boundValue.toDate(), boundValue.toTime(),
-                                           boundValue.userType(), preparedBind));
+            preparedBind.buffer = &timeVector.emplaceBack(
+                                      toMySqlDateTime(
+                                          boundValue.toDate(), boundValue.toTime(),
+                                          boundValue.userType(), preparedBind));
             break;
 
         case QMetaType::UInt:
         case QMetaType::Int:
-            preparedBind->buffer_type   = MYSQL_TYPE_LONG;
-            preparedBind->buffer_length = sizeof (int);
-            preparedBind->is_unsigned   = boundValue.userType() != QMetaType::Int;
-            preparedBind->buffer        = data;
+            preparedBind.buffer_type   = MYSQL_TYPE_LONG;
+            preparedBind.buffer_length = sizeof (int);
+            preparedBind.is_unsigned   = boundValue.userType() != QMetaType::Int;
+            preparedBind.buffer        = data;
             break;
 
         case QMetaType::Bool:
-            preparedBind->buffer_type   = MYSQL_TYPE_TINY;
-            preparedBind->buffer_length = sizeof (bool);
-            preparedBind->is_unsigned   = false;
-            preparedBind->buffer        = data;
+            preparedBind.buffer_type   = MYSQL_TYPE_TINY;
+            preparedBind.buffer_length = sizeof (bool);
+            preparedBind.is_unsigned   = false;
+            preparedBind.buffer        = data;
             break;
 
         case QMetaType::Double:
-            preparedBind->buffer_type   = MYSQL_TYPE_DOUBLE;
-            preparedBind->buffer_length = sizeof (double);
-            preparedBind->buffer        = data;
+            preparedBind.buffer_type   = MYSQL_TYPE_DOUBLE;
+            preparedBind.buffer_length = sizeof (double);
+            preparedBind.buffer        = data;
             break;
 
         case QMetaType::LongLong:
         case QMetaType::ULongLong:
-            preparedBind->buffer_type   = MYSQL_TYPE_LONGLONG;
-            preparedBind->buffer_length = sizeof (qint64);
-            preparedBind->is_unsigned   = boundValue.userType() == QMetaType::ULongLong;
-            preparedBind->buffer        = data;
+            preparedBind.buffer_type   = MYSQL_TYPE_LONGLONG;
+            preparedBind.buffer_length = sizeof (qint64);
+            preparedBind.is_unsigned   = boundValue.userType() == QMetaType::ULongLong;
+            preparedBind.buffer        = data;
             break;
 
         case QMetaType::QString:
@@ -267,9 +267,9 @@ void MySqlResultPrivate::bindPreparedBindings(
             const auto &stringRef = stringVector.emplaceBack(
                                         boundValue.toString().toUtf8());
 
-            preparedBind->buffer_type   = MYSQL_TYPE_STRING;
-            preparedBind->buffer_length = stringRef.size();
-            preparedBind->buffer        = const_cast<char *>(stringRef.constData());
+            preparedBind.buffer_type   = MYSQL_TYPE_STRING;
+            preparedBind.buffer_length = stringRef.size();
+            preparedBind.buffer        = const_cast<char *>(stringRef.constData());
             break;
         }
         }
@@ -289,17 +289,17 @@ void MySqlResultPrivate::bindResultBlobs()
        )
            continue;
 
-       auto *const resultBind = &resultBinds[index];
+       auto &resultBind = resultBinds[index];
 
        // Update the buffer length to the BLOB max. length in the current result set
-       resultBind->buffer_length = fieldInfo->max_length;
+       resultBind.buffer_length = fieldInfo->max_length;
 
        // Create a new BLOB result buffer
        // Free the current BLOB result buffer
-       delete[] static_cast<char *>(resultBind->buffer);
+       delete[] static_cast<char *>(resultBind.buffer);
        // And create a new one using a new BLOB length
-       resultBind->buffer = new char[fieldInfo->max_length];
-       resultFields[index].fieldValue = static_cast<char *>(resultBind->buffer);
+       resultBind.buffer = new char[fieldInfo->max_length];
+       resultFields[index].fieldValue = static_cast<char *>(resultBind.buffer);
    }
 }
 
@@ -437,12 +437,12 @@ bool MySqlResultPrivate::wasAllFieldsFetched(
     return false;
 }
 
-void MySqlResultPrivate::allocateMemoryForBindings(MYSQL_BIND **binds,
+void MySqlResultPrivate::allocateMemoryForBindings(std::unique_ptr<MYSQL_BIND[]> &binds,
                                                    const std::size_t count) noexcept
 {
-    *binds = new MYSQL_BIND[count];
+    binds = std::make_unique<MYSQL_BIND[]>(count);
     // Zero the memory storage
-    memset(*binds, 0, sizeof (MYSQL_BIND) * count);
+    memset(binds.get(), 0, sizeof (MYSQL_BIND) * count);
 }
 
 void MySqlResultPrivate::reserveVectorsForBindings(
@@ -476,11 +476,10 @@ bool MySqlResultPrivate::isBlobType(const enum_field_types fieldType)
 
 QT_MYSQL_TIME
 MySqlResultPrivate::toMySqlDateTime(const QDate date, const QTime time, const int typeId,
-                                    MYSQL_BIND *const bind)
+                                    MYSQL_BIND &bind)
 {
-    Q_ASSERT((typeId == QMetaType::QTime || typeId == QMetaType::QDate ||
-              typeId == QMetaType::QDateTime) &&
-              bind != nullptr);
+    Q_ASSERT(typeId == QMetaType::QDateTime || typeId == QMetaType::QTime ||
+             typeId == QMetaType::QDate);
 
     QT_MYSQL_TIME mysqlTime;
 
@@ -505,21 +504,21 @@ MySqlResultPrivate::toMySqlDateTime(const QDate date, const QTime time, const in
         initTime();
 
         mysqlTime.time_type = MYSQL_TIMESTAMP_DATETIME;
-        bind->buffer_type = MYSQL_TYPE_DATETIME;
+        bind.buffer_type = MYSQL_TYPE_DATETIME;
         break;
 
     case QMetaType::QDate:
         initDate();
 
         mysqlTime.time_type = MYSQL_TIMESTAMP_DATE;
-        bind->buffer_type = MYSQL_TYPE_DATE;
+        bind.buffer_type = MYSQL_TYPE_DATE;
         break;
 
     case QMetaType::QTime:
         initTime();
 
         mysqlTime.time_type = MYSQL_TIMESTAMP_TIME;
-        bind->buffer_type = MYSQL_TYPE_TIME;
+        bind.buffer_type = MYSQL_TYPE_TIME;
         break;
 
     default:
