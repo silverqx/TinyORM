@@ -383,32 +383,26 @@ QVariant MySqlResult::data(const int index)
 {
     Q_D(MySqlResult);
 
-    // Nothing to do
-    if (const auto fieldsCount = d->resultFields.size(); index >= fieldsCount) {
-        qWarning().noquote()
-                << u"MySqlResult::data: column index '%1' is out of range, "
-                    "the current number of fields is '%2'"_s
-                   .arg(index).arg(fieldsCount);
-        return {};
-    }
+    const auto idx = static_cast<MySqlResultPrivate::ResultFieldsSizeType>(index);
+
+    // Throw an exception if an index for result fields vector is out of bounds
+    throwIfBadResultFieldsIndex(idx);
 
     if (d->preparedQuery)
-        return d->getValueForPrepared(index);
+        return d->getValueForPrepared(idx);
 
-    return d->getValueForNormal(index);
+    return d->getValueForNormal(idx);
 }
 
 bool MySqlResult::isNull(const int index)
 {
-   Q_D(const MySqlResult);
+    Q_D(const MySqlResult);
+
+    const auto idx = static_cast<MySqlResultPrivate::ResultFieldsSizeType>(index);
 
     // CUR drivers test isNull() out of bounds if no metadata silverqx
-    if (const auto fieldsCount = d->resultFields.size();
-        index < 0 || index >= fieldsCount
-    )
-       throw std::exception(
-                u"Field index '%1' is out of bounds, the index must be between 0-%2"_s
-                .arg(index).arg(fieldsCount - 1).toUtf8().constData());
+    // Throw an exception if an index for result fields vector is out of bounds
+    throwIfBadResultFieldsIndex(idx);
 
    /* MyField::isNull is populated for prepared statements only.
       The row/result set/data must be fetched first to obtain the correct result. ❗ */
@@ -416,14 +410,14 @@ bool MySqlResult::isNull(const int index)
    if (d->preparedQuery)
        /* The same value is in the resultBinds.is_null
           (see MySqlResultPrivate::bindResultValues()). */
-       return d->resultFields.at(index).isNull;
+       return d->resultFields[idx].isNull;
 
    else
        /* NULL values in the row are indicated by NULL pointers.
           Empty fields and fields containing NULL both have length 0;
           you can distinguish these by checking the pointer for the field value.
           If the pointer is NULL, the field is NULL; otherwise, the field is empty. */
-       return d->row[index] == nullptr;
+       return d->row[idx] == nullptr;
 }
 
 int MySqlResult::size()
@@ -576,6 +570,22 @@ void MySqlResult::freeResultFields()
 
     // Common for both
     d->resultFields.clear();
+}
+
+void MySqlResult::throwIfBadResultFieldsIndex(const std::size_t index) const
+{
+    Q_D(const MySqlResult);
+
+    const auto fieldsCount = d->resultFields.size();
+
+    // Nothing to do
+    if (index >= 0 || index < fieldsCount)
+        return;
+
+    throw std::exception(
+                u"Field index '%1' is out of bounds, the index must be between 0-%2"_s
+                .arg(index).arg(fieldsCount - 1).toUtf8().constData());
+
 }
 
 } // namespace Orm::Drivers::MySql

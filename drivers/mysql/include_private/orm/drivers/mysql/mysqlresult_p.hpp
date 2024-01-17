@@ -86,18 +86,23 @@ namespace Orm::Drivers::MySql
                                         MYSQL_STMT *stmt);
 
         /* Result sets */
+        /*! Alias for the result fields vector type. */
+        using ResultFieldsType = std::vector<MyField>;
+        /*! Alias for the result fields vector size type. */
+        using ResultFieldsSizeType = ResultFieldsType::size_type;
+
         /*! Get the error message based on the error code from mysql_stmt_fetch(). */
         static std::optional<QString> fetchErrorMessage(int status) noexcept;
 
         /*! Obtain the QVariant value for normal queries. */
-        QVariant getValueForNormal(int index) const;
+        QVariant getValueForNormal(ResultFieldsSizeType index) const;
         /*! Obtain the QVariant value for prepared queries. */
-        QVariant getValueForPrepared(int index) const;
+        QVariant getValueForPrepared(ResultFieldsSizeType index) const;
 
         /* Data members */
         /* Common for both */
         /*! Fields for the currently obtained record/row. */
-        QList<MyField> resultFields;
+        ResultFieldsType resultFields;
 
         /* Normal queries */
         /*! Result set handle (from the mysql_store_result()). */
@@ -160,10 +165,11 @@ namespace Orm::Drivers::MySql
             precision policy. */
         QVariant toDoubleFromString(QString &&value) const;
         /*! Convert the BLOB value type to the QByteArray. */
-        QVariant toQByteArray(int index) const;
+        QVariant toQByteArray(ResultFieldsSizeType index) const;
 
         /*! Create the QVariant by the given metatype ID and value. */
-        QVariant createQVariant(int typeId, QString &&value, int index) const;
+        QVariant createQVariant(int typeId, QString &&value,
+                                ResultFieldsSizeType index) const;
     };
 
     /* private */

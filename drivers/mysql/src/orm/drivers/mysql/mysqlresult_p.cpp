@@ -9,6 +9,7 @@
 #include "orm/drivers/mysql/mysqlutils_p.hpp"
 #include "orm/drivers/utils/helpers_p.hpp"
 
+// CUR drivers extract common MySQL types to own file, then also check throwIfBadResultFieldsIndex(std::size_t) vs ResultFieldsType silverqx
 // this is a copy of the old MYSQL_TIME before an additional integer was added in
 // 8.0.27.0. This kills the sanity check during retrieving this struct from mysql
 // when another libmysql version is used during runtime than during compile time
@@ -284,10 +285,8 @@ void MySqlResultPrivate::bindPreparedBindings(
 
 void MySqlResultPrivate::bindResultBlobs()
 {
-   using SizeType = std::remove_cvref_t<decltype (resultFields)>::size_type;
-
-   for (SizeType index = 0; index < resultFields.size(); ++index) {
-       const auto *const fieldInfo = resultFields.at(index).myField;
+   for (ResultFieldsSizeType index = 0; index < resultFields.size(); ++index) {
+       const auto *const fieldInfo = resultFields[index].myField;
 
        // Nothing to do, isn't the BLOB type or some info is missing
        if (!isBlobType(resultBinds[index].buffer_type) ||
@@ -338,9 +337,9 @@ std::optional<QString> MySqlResultPrivate::fetchErrorMessage(const int status) n
     Q_UNREACHABLE();
 }
 
-QVariant MySqlResultPrivate::getValueForNormal(const int index) const
+QVariant MySqlResultPrivate::getValueForNormal(const ResultFieldsSizeType index) const
 {
-    const auto &field = resultFields.at(index);
+    const auto &field = resultFields[index]; // Index bound checked in MySqlResult::data()
 
     // Field is NULL
     if (row[index] == nullptr)
@@ -358,14 +357,15 @@ QVariant MySqlResultPrivate::getValueForNormal(const int index) const
 
     // BLOB field needs the QByteArray as the storage
     if (typeId != QMetaType::QByteArray)
-        value = QString::fromUtf8(row[index], fieldLength);
+        value = QString::fromUtf8(row[index],
+                                  static_cast<QString::size_type>(fieldLength));
 
     return createQVariant(typeId, std::move(value), index);
 }
 
-QVariant MySqlResultPrivate::getValueForPrepared(const int index) const
+QVariant MySqlResultPrivate::getValueForPrepared(const ResultFieldsSizeType index) const
 {
-    const auto &field = resultFields.at(index);
+    const auto &field = resultFields[index]; // Index bound checked in MySqlResult::data()
 
     // Field is NULL
     if (field.isNull)
@@ -643,10 +643,10 @@ QVariant MySqlResultPrivate::toDoubleFromString(QString &&value) const
 }
 
 QVariant
-MySqlResultPrivate::toQByteArray(const int index) const
+MySqlResultPrivate::toQByteArray(const ResultFieldsSizeType index) const
 {
     if (preparedQuery) {
-        const auto &field = resultFields.at(index);
+        const auto &field = resultFields[index]; // Index bound checked in MySqlResult::data()
         return {QByteArray(field.fieldValue, field.fieldValueSize)};
     }
 
@@ -656,7 +656,7 @@ MySqlResultPrivate::toQByteArray(const int index) const
 }
 
 QVariant MySqlResultPrivate::createQVariant(const int typeId, QString &&value,
-                                            const int index) const
+                                            const ResultFieldsSizeType index) const
 {
     switch (typeId) {
     case QMetaType::QString:

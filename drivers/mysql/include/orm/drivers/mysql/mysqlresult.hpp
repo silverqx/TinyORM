@@ -82,6 +82,9 @@ namespace Orm::Drivers::MySql
         void mysqlStmtClose();
         /*! Free the MyField-s list. */
         void freeResultFields();
+
+        /*! Throw an exception if an index for result fields vector is out of bounds. */
+        void throwIfBadResultFieldsIndex(std::size_t index) const;
     };
 
 } // namespace Orm::Drivers::MySql
