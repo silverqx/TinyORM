@@ -132,7 +132,7 @@ bool SqlDriver::setLastOpenError(const SqlError &error)
     d->lastError = error;
     d->isOpenError = true;
 
-    // To be able call 'return setLastError()' to simplify code
+    // To be able call 'return setLastOpenError()' to simplify code
     return false;
 }
 
