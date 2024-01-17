@@ -490,7 +490,8 @@ void MySqlResult::cleanup(const bool fromDestructor)
     d->preparedQuery = false;
 
     // Common for both
-    freeResultFields();
+    // The MyField.fieldValue buffer will be auto-freed as it's a smart pointer
+    d->resultFields.clear();
 
     setAt(BeforeFirstRow);
     setActive(false);
@@ -557,19 +558,6 @@ void MySqlResult::mysqlStmtClose()
         qWarning("MySqlResult::mysqlStmtClose: unable to free statement handle");
 
     d->stmt = nullptr;
-}
-
-void MySqlResult::freeResultFields()
-{
-    Q_D(MySqlResult);
-
-    // Prepared queries
-    // Free result buffers
-    for (const auto &field : std::as_const(d->resultFields))
-        delete[] field.fieldValue;
-
-    // Common for both
-    d->resultFields.clear();
 }
 
 void MySqlResult::throwIfBadResultFieldsIndex(const std::size_t index) const

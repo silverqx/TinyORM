@@ -140,10 +140,10 @@ bool MySqlResultPrivate::bindResultValues()
 
         /* Prepare the output/result buffer (nothing to do with prepared bindings),
            +1 for the terminating null character. */
-        auto *const resultBuffer = resultBind.buffer_length > 0
-                                   ? new char[resultBind.buffer_length + 1]
-                                   : nullptr;
-        resultBind.buffer = field.fieldValue = resultBuffer;
+        field.fieldValue = resultBind.buffer_length > 0
+                           ? std::make_unique<char[]>(resultBind.buffer_length + 1)
+                           : nullptr;
+        resultBind.buffer = static_cast<void *>(field.fieldValue.get());
 
         ++index;
     }
@@ -286,7 +286,8 @@ void MySqlResultPrivate::bindPreparedBindings(
 void MySqlResultPrivate::bindResultBlobs()
 {
    for (ResultFieldsSizeType index = 0; index < resultFields.size(); ++index) {
-       const auto *const fieldInfo = resultFields[index].myField;
+       auto &resultField = resultFields[index];
+       const auto *const fieldInfo = resultField.myField;
 
        // Nothing to do, isn't the BLOB type or some info is missing
        if (!isBlobType(resultBinds[index].buffer_type) ||
@@ -299,12 +300,10 @@ void MySqlResultPrivate::bindResultBlobs()
        // Update the buffer length to the BLOB max. length in the current result set
        resultBind.buffer_length = fieldInfo->max_length;
 
-       // Create a new BLOB result buffer
-       // Free the current BLOB result buffer
-       delete[] static_cast<char *>(resultBind.buffer);
-       // And create a new one using a new BLOB length
-       resultBind.buffer = new char[fieldInfo->max_length];
-       resultFields[index].fieldValue = static_cast<char *>(resultBind.buffer);
+       /* Create a new BLOB result buffer using a new BLOB length.
+          The previous BLOB buffer will be auto-freed as it's a smart pointer. */
+       resultField.fieldValue = std::make_unique<char[]>(fieldInfo->max_length);
+       resultBind.buffer = static_cast<void *>(resultField.fieldValue.get());
    }
 }
 
@@ -373,13 +372,13 @@ QVariant MySqlResultPrivate::getValueForPrepared(const ResultFieldsSizeType inde
 
     // BIT field
     if (isBitType(field.myField->type))
-        return QVariant::fromValue(toBitField(field, field.fieldValue));
+        return QVariant::fromValue(toBitField(field, field.fieldValue.get()));
 
     const auto typeId = field.metaType.id();
 
     // CUR drivers finish silverqx
     if (MySqlUtilsPrivate::isInteger(typeId)) {
-        QVariant variant(field.metaType, field.fieldValue);
+        QVariant variant(field.metaType, field.fieldValue.get());
         // we never want to return char variants here, see QTBUG-53397
         if (typeId == QMetaType::UChar)
             return variant.toUInt();
@@ -393,7 +392,7 @@ QVariant MySqlResultPrivate::getValueForPrepared(const ResultFieldsSizeType inde
         field.fieldValueSize >= sizeof (QT_MYSQL_TIME)
     ) {
         const auto *const mysqlTime = reinterpret_cast<const QT_MYSQL_TIME *>(
-                                          field.fieldValue);
+                                          field.fieldValue.get());
         QDate date;
         QTime time;
 
@@ -418,7 +417,7 @@ QVariant MySqlResultPrivate::getValueForPrepared(const ResultFieldsSizeType inde
 
     // BLOB field needs the QByteArray as the storage
     if (typeId != QMetaType::QByteArray)
-        value = QString::fromUtf8(field.fieldValue, field.fieldValueSize);
+        value = QString::fromUtf8(field.fieldValue.get(), field.fieldValueSize);
 
     return createQVariant(typeId, std::move(value), index);
 }
@@ -647,7 +646,7 @@ MySqlResultPrivate::toQByteArray(const ResultFieldsSizeType index) const
 {
     if (preparedQuery) {
         const auto &field = resultFields[index]; // Index bound checked in MySqlResult::data()
-        return {QByteArray(field.fieldValue, field.fieldValueSize)};
+        return {QByteArray(field.fieldValue.get(), field.fieldValueSize)};
     }
 
     // CUR drivers revisit this if I need to fetch the length silverqx
