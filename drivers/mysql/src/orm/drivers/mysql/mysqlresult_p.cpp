@@ -549,7 +549,7 @@ quint64 MySqlResultPrivate::toBitField(const MyField &field, const char *const f
     quint64 result = 0;
 
     for (ulong index = 0; index < numBytes; ++index) {
-        quint64 tmp = static_cast<quint8>(fieldValue[index]);
+        const quint64 tmp = static_cast<quint8>(fieldValue[index]);
         result <<= 8;
         result |= tmp;
     }
