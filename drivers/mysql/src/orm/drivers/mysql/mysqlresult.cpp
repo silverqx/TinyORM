@@ -521,10 +521,10 @@ void MySqlResult::mysqlFreeResults() const
     // This condition is weird but I don't want test if <= 0
     while (!((status = mysql_next_result(mysql)) > 0))
 
-        if (auto *const res = mysql_store_result(mysql);
-            res != nullptr
+        if (auto *const mysqlRes = mysql_store_result(mysql);
+            mysqlRes != nullptr
         ) T_LIKELY
-            mysql_free_result(res);
+            mysql_free_result(mysqlRes);
 
         // CUR driver use createError(); create a new eg. ErrorType::FreeError? silverqx
         /* Check the error code because mysql_store_result() may return the nullptr if
