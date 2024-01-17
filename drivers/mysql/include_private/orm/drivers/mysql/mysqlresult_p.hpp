@@ -52,7 +52,7 @@ namespace Orm::Drivers::MySql
             /* Prepared queries */
             // CUR drivers made this std::unique_ptr<char[]> but I will have to make the QList<MyField> resultFields std::vector<MyField> because the QList makes problem, it doesn't allow to make it unique_ptr because of operator[] internally calls detach a tries to make a copy? silverqx
             /*! Field value buffer in the result set. */
-            char *fieldValue = nullptr;
+            std::unique_ptr<char[]> fieldValue = nullptr;
             /*! Is the field NULL? */
             my_bool isNull = false;
             /*! Field value buffer length w/o terminating null character. */
