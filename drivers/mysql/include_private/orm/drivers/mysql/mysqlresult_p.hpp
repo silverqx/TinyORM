@@ -51,7 +51,7 @@ namespace Orm::Drivers::MySql
             const MYSQL_FIELD *myField = nullptr; // Returned by mysql_fetch_field()
             /* Prepared queries */
             /*! Field value buffer in the result set. */
-            std::unique_ptr<char[]> fieldValue = nullptr;
+            std::unique_ptr<char[]> fieldValue = nullptr; // NOLINT(modernize-avoid-c-arrays)
             /*! Is the field NULL? */
             my_bool isNull = false;
             /*! Field value buffer length w/o terminating null character. */
@@ -117,9 +117,9 @@ namespace Orm::Drivers::MySql
 
         /*! Structure to bind buffers to result set columns (result values returned from
             the database server). */
-        std::unique_ptr<MYSQL_BIND[]> resultBinds = nullptr;
+        std::unique_ptr<MYSQL_BIND[]> resultBinds = nullptr; // NOLINT(modernize-avoid-c-arrays)
         /*! Structure for prepared bindings (data values sent to the server). */
-        std::unique_ptr<MYSQL_BIND[]> preparedBinds = nullptr;
+        std::unique_ptr<MYSQL_BIND[]> preparedBinds = nullptr; // NOLINT(modernize-avoid-c-arrays)
 
         /* Common for both */
         /*! Has the current result set any BLOB type field/s? */
@@ -134,7 +134,7 @@ namespace Orm::Drivers::MySql
                                         QLatin1StringView method);
 
         /*! Allocate memory for prepared bindings that will be sent to the database. */
-        static void allocateMemoryForBindings(std::unique_ptr<MYSQL_BIND[]> &binds,
+        static void allocateMemoryForBindings(std::unique_ptr<MYSQL_BIND[]> &binds, // NOLINT(modernize-avoid-c-arrays)
                                               std::size_t count) noexcept;
         /*! Reserve all vectors for prepared bindings buffer data. */
         void reserveVectorsForBindings(

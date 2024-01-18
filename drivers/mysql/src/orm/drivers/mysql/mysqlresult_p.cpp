@@ -141,7 +141,7 @@ bool MySqlResultPrivate::bindResultValues()
         /* Prepare the output/result buffer (nothing to do with prepared bindings),
            +1 for the terminating null character. */
         field.fieldValue = resultBind.buffer_length > 0
-                           ? std::make_unique<char[]>(resultBind.buffer_length + 1)
+                           ? std::make_unique<char[]>(resultBind.buffer_length + 1) // NOLINT(modernize-avoid-c-arrays)
                            : nullptr;
         resultBind.buffer = static_cast<void *>(field.fieldValue.get());
 
@@ -300,7 +300,7 @@ void MySqlResultPrivate::bindResultBlobs()
 
        /* Create a new BLOB result buffer using a new BLOB length.
           The previous BLOB buffer will be auto-freed as it's a smart pointer. */
-       resultField.fieldValue = std::make_unique<char[]>(fieldInfo->max_length);
+       resultField.fieldValue = std::make_unique<char[]>(fieldInfo->max_length); // NOLINT(modernize-avoid-c-arrays)
        resultBind.buffer = static_cast<void *>(resultField.fieldValue.get());
    }
 }
@@ -449,10 +449,16 @@ bool MySqlResultPrivate::wasAllFieldsFetched(
     return false;
 }
 
-void MySqlResultPrivate::allocateMemoryForBindings(std::unique_ptr<MYSQL_BIND[]> &binds,
+/* All these modernize-avoid-c-arrays suppressions are correct as we only need to allocate
+   buffers on the heap, nothing else, we don't need access, modify, iterate over, or
+   anything else, just simple buffers and C arrays are perfect for this.
+   The std::array can't be used here as we don't know the size and std::vector is too
+   much. */
+
+void MySqlResultPrivate::allocateMemoryForBindings(std::unique_ptr<MYSQL_BIND[]> &binds, // NOLINT(modernize-avoid-c-arrays)
                                                    const std::size_t count) noexcept
 {
-    binds = std::make_unique<MYSQL_BIND[]>(count);
+    binds = std::make_unique<MYSQL_BIND[]>(count); // NOLINT(modernize-avoid-c-arrays)
     // Zero the memory storage
     memset(binds.get(), 0, sizeof (MYSQL_BIND) * count);
 }
