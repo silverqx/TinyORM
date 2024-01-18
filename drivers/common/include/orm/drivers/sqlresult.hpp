@@ -53,12 +53,12 @@ namespace Orm::Drivers
 
         /* Getters / Setters */
         /*! Determine whether a cursor is positioned on a valid record/row. */
-        bool isValid() const;
+        bool isValid() const noexcept;
 
         /*! Get the current SQL query text. */
-        QString query() const;
+        QString query() const noexcept;
         /*! Set the query for the result. */
-        virtual void setQuery(const QString &query);
+        virtual void setQuery(const QString &query) noexcept;
 
         /*! Get information about the error of the last query. */
         SqlError lastError() const;
@@ -66,24 +66,24 @@ namespace Orm::Drivers
         virtual bool setLastError(const SqlError &error);
 
         /*! Get the current cursor position (0-based). */
-        int at() const;
+        int at() const noexcept;
         /*! Set the current cursor position (0-based). */
-        virtual void setAt(int index);
+        virtual void setAt(int index) noexcept;
 
         /*! Determine whether the result set has records to be retrieved. */
-        bool isActive() const;
+        bool isActive() const noexcept;
         /*! Set a flag that this result is active. */
-        virtual void setActive(bool value);
+        virtual void setActive(bool value) noexcept;
 
         /*! Determine whether the current result is from the SELECT statement. */
-        bool isSelect() const;
+        bool isSelect() const noexcept;
         /*! Set a flag that the result is from the SELECT statement. */
-        virtual void setSelect(bool value);
+        virtual void setSelect(bool value) noexcept;
 
         /*! Get the current numerical precision policy. */
-        NumericalPrecisionPolicy numericalPrecisionPolicy() const;
+        NumericalPrecisionPolicy numericalPrecisionPolicy() const noexcept;
         /*! Set the numerical precision policy for the current result. */
-        void setNumericalPrecisionPolicy(NumericalPrecisionPolicy precision);
+        void setNumericalPrecisionPolicy(NumericalPrecisionPolicy precision) noexcept;
 
         /*! Get the SQL database driver used to access the database connection (const). */
         const SqlDriver *driver() const noexcept;
