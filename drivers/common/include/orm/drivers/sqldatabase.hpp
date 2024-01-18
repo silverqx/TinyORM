@@ -77,12 +77,12 @@ namespace Orm::Drivers
         /*! Get the hostname. */
         QString hostName() const;
         /*! Set the hostname. */
-        void setHostName(const QString &value);
+        void setHostName(const QString &hostname);
 
         /*! Get the port. */
         int port() const;
         /*! Set the port. */
-        void setPort(int p);
+        void setPort(int port);
 
         /*! Get the database name. */
         QString databaseName() const;

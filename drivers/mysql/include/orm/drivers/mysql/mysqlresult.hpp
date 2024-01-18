@@ -57,9 +57,9 @@ namespace Orm::Drivers::MySql
         bool fetchNext() final;
 
         /*! Get the field value at the given index in the current record. */
-        QVariant data(int field) final;
+        QVariant data(int index) final;
         /*! Determine whether the field at the given index is NULL. */
-        bool isNull(int field) final;
+        bool isNull(int index) final;
 
         /*! Get the size of the result (number of rows returned), -1 if the size can't be
             determined (database must support reporting about query sizes). */

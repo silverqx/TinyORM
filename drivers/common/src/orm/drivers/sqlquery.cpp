@@ -14,10 +14,10 @@
 #endif
 
 #include "orm/drivers/sqldatabase.hpp"
+#include "orm/drivers/sqldriver.hpp"
 #include "orm/drivers/sqlerror.hpp"
 #include "orm/drivers/sqlrecord.hpp"
 #include "orm/drivers/sqlresult.hpp"
-#include "orm/drivers/sqldriver.hpp"
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 

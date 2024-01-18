@@ -159,11 +159,11 @@ namespace Orm::Drivers::MySql
         /*! Convert the TIME value to the QTime. */
         static QVariant toQTimeFromString(const QString &value);
         /*! Convert the DATETIME value to the QDateTime. */
-        static QVariant toQDateTimeFromString(QString &&value);
+        static QVariant toQDateTimeFromString(QString value);
 
         /*! Convert the Fixed/Floating-Point value types based on the set numerical
             precision policy. */
-        QVariant toDoubleFromString(QString &&value) const;
+        QVariant toDoubleFromString(const QString &value) const;
         /*! Convert the BLOB value type to the QByteArray. */
         QVariant toQByteArray(ResultFieldsSizeType index) const;
 

@@ -41,9 +41,9 @@ namespace Orm::Drivers::MySql
         bool mysqlSetCharacterSet(const QString &host, bool before);
         /*! Establish a connection to the MySQL server running on the host. */
         bool mysqlRealConnect(
-                const QString &host, QByteArray &&username, QByteArray &&password,
-                QByteArray &&database, const int port, QByteArray &&unixSocket,
-                uint optionFlags);
+                const QString &host, const QByteArray &username,
+                const QByteArray &password, const QByteArray &database, int port,
+                const QByteArray &unixSocket, uint optionFlags);
         /*! Select the default database. */
         bool mysqlSelectDb(const QString &database);
 
@@ -153,8 +153,9 @@ namespace Orm::Drivers::MySql
         using namespace Qt::StringLiterals; // NOLINT(google-build-using-namespace)
 
         // _L1 is correct here
-        return value.compare("true"_L1, Qt::CaseInsensitive) ||
-               value.compare("on"_L1,   Qt::CaseInsensitive) ||
+        return value.compare("true"_L1, Qt::CaseInsensitive) == 0 ||
+               value.compare("on"_L1,   Qt::CaseInsensitive) == 0 ||
+               value.compare("yes"_L1,  Qt::CaseInsensitive) == 0 ||
                value == '1'_L1;
     }
 
