@@ -78,6 +78,8 @@ bool MySqlResultPrivate::populateFields(MYSQL *const mysql)
     return hasFields && wasAllFieldsFetched(fieldsCount, index, "populateFields"_L1);
 }
 
+/* Prepared queries */
+
 bool MySqlResultPrivate::bindResultValues()
 {
     // Obtain result set metadata
