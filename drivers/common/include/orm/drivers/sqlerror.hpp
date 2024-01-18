@@ -28,7 +28,7 @@ namespace Orm::Drivers
         };
 
         /*! Constructor (not explicit to allow {}). */
-        SqlError(const QString &driverText = {}, const QString &m_databaseText = {},
+        SqlError(const QString &driverText = {}, const QString &databaseText = {},
                  ErrorType errorType = NoError, const QString &errorCode = {});
         /*! Default destructor. */
         inline ~SqlError() = default;

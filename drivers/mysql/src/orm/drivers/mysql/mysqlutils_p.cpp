@@ -22,7 +22,7 @@ MySqlUtilsPrivate::createError(
     Q_ASSERT(mysql != nullptr);
 
     const auto mysqlErrno = errNo.value_or(mysql_errno(mysql));
-    const auto *const mysqlError = mysql ? mysql_error(mysql) : nullptr;
+    const auto *const mysqlError = mysql != nullptr ? mysql_error(mysql) : nullptr;
 
     // FUTURE drivers correctly support MySQL errors encoding, the QString::fromUtf8() must be changed to conversion from SET NAMES to UTF8; see https://dev.mysql.com/doc/refman/8.0/en/charset-errors.html silverqx
     return SqlError("QMYSQL: "_L1 + error, QString::fromUtf8(mysqlError), errorType,
@@ -36,16 +36,16 @@ MySqlUtilsPrivate::decodeMySqlType(const enum_field_types mysqlType, const uint 
 
     switch (mysqlType) {
     case MYSQL_TYPE_TINY:
-        typeId = flags & UNSIGNED_FLAG ? QMetaType::UChar : QMetaType::Char;
+        typeId = (flags & UNSIGNED_FLAG) != 0U ? QMetaType::UChar : QMetaType::Char;
         break;
 
     case MYSQL_TYPE_SHORT:
-        typeId = flags & UNSIGNED_FLAG ? QMetaType::UShort : QMetaType::Short;
+        typeId = (flags & UNSIGNED_FLAG) != 0U ? QMetaType::UShort : QMetaType::Short;
         break;
 
     case MYSQL_TYPE_LONG:
     case MYSQL_TYPE_INT24:
-        typeId = flags & UNSIGNED_FLAG ? QMetaType::UInt : QMetaType::Int;
+        typeId = (flags & UNSIGNED_FLAG) != 0U ? QMetaType::UInt : QMetaType::Int;
         break;
 
     case MYSQL_TYPE_YEAR:
@@ -54,7 +54,8 @@ MySqlUtilsPrivate::decodeMySqlType(const enum_field_types mysqlType, const uint 
 
     case MYSQL_TYPE_BIT:
     case MYSQL_TYPE_LONGLONG:
-        typeId = flags & UNSIGNED_FLAG ? QMetaType::ULongLong : QMetaType::LongLong;
+        typeId = (flags & UNSIGNED_FLAG) != 0U ? QMetaType::ULongLong
+                                               : QMetaType::LongLong;
         break;
 
     case MYSQL_TYPE_FLOAT:
@@ -87,14 +88,11 @@ MySqlUtilsPrivate::decodeMySqlType(const enum_field_types mysqlType, const uint 
     case MYSQL_TYPE_LONG_BLOB:
     case MYSQL_TYPE_GEOMETRY:
     case MYSQL_TYPE_JSON:
-        typeId = flags & BINARY_FLAG ? QMetaType::QByteArray : QMetaType::QString;
+        typeId = (flags & BINARY_FLAG) != 0U ? QMetaType::QByteArray : QMetaType::QString;
         break;
 
     case MYSQL_TYPE_ENUM:
     case MYSQL_TYPE_SET:
-        typeId = QMetaType::QString;
-        break;
-
     // Needed because there are more enum values which are not available in all headers
     default:
         typeId = QMetaType::QString;
@@ -132,7 +130,7 @@ SqlField MySqlUtilsPrivate::convertToSqlField(const MYSQL_FIELD *const fieldInfo
                    MySqlUtilsPrivate::decodeMySqlType(fieldInfo->type, fieldInfo->flags),
                    QString::fromUtf8(fieldInfo->table));
 
-    field.setAutoValue(fieldInfo->flags & AUTO_INCREMENT_FLAG);
+    field.setAutoValue((fieldInfo->flags & AUTO_INCREMENT_FLAG) != 0U);
     // CUR drivers finish field default value silverqx
 //    field.setDefaultValue(QString::fromUtf8(fieldInfo->def));
     field.setLength(fieldInfo->length);

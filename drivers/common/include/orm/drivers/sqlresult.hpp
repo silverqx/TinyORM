@@ -172,7 +172,7 @@ namespace Orm::Drivers
 
     /* Prepared queries */
 
-    SqlResult::BindingSyntax SqlResult::bindingSyntax() const
+    SqlResult::BindingSyntax SqlResult::bindingSyntax() const // NOLINT(readability-convert-member-functions-to-static)
     {
         return SqlResult::PositionalBinding;
     }
