@@ -55,8 +55,8 @@ QVariant MySqlResult::handle() const
         // CUR check this later; I don't understand it now silverqx
         return d->meta ? QVariant::fromValue(d->meta)
                        : QVariant::fromValue(d->stmt);
-    else
-        return QVariant::fromValue(d->result);
+
+    return QVariant::fromValue(d->result);
 }
 
 /* protected */
@@ -412,12 +412,11 @@ bool MySqlResult::isNull(const int index)
           (see MySqlResultPrivate::bindResultValues()). */
        return d->resultFields[idx].isNull;
 
-   else
-       /* NULL values in the row are indicated by NULL pointers.
-          Empty fields and fields containing NULL both have length 0;
-          you can distinguish these by checking the pointer for the field value.
-          If the pointer is NULL, the field is NULL; otherwise, the field is empty. */
-       return d->row[idx] == nullptr;
+   /* NULL values in the row are indicated by NULL pointers.
+      Empty fields and fields containing NULL both have length 0;
+      you can distinguish these by checking the pointer for the field value.
+      If the pointer is NULL, the field is NULL; otherwise, the field is empty. */
+   return d->row[idx] == nullptr;
 }
 
 int MySqlResult::size()
@@ -434,8 +433,8 @@ int MySqlResult::size()
     if (d->preparedQuery)
         // CUR drivers fix all these int-s they must be quint64 silverqx
         return static_cast<int>(mysql_stmt_num_rows(d->stmt));
-    else
-        return static_cast<int>(mysql_num_rows(d->result));
+
+    return static_cast<int>(mysql_num_rows(d->result));
 }
 
 int MySqlResult::numRowsAffected()
@@ -445,8 +444,8 @@ int MySqlResult::numRowsAffected()
     // Don't cache the result as it's already cached in the MYSQL_RES/MYSQL_STMT
     if (d->preparedQuery)
         return static_cast<int>(mysql_stmt_affected_rows(d->stmt));
-    else
-        return static_cast<int>(mysql_affected_rows(d->drv_d_func()->mysql));
+
+    return static_cast<int>(mysql_affected_rows(d->drv_d_func()->mysql));
 }
 
 void MySqlResult::detachFromResultSet()
