@@ -379,11 +379,14 @@ QVariant MySqlResultPrivate::getValueForPrepared(const ResultFieldsSizeType inde
     // CUR drivers finish silverqx
     if (MySqlUtilsPrivate::isInteger(typeId)) {
         QVariant variant(field.metaType, field.fieldValue.get());
+
         // we never want to return char variants here, see QTBUG-53397
         if (typeId == QMetaType::UChar)
             return variant.toUInt();
+
         if (typeId == QMetaType::Char)
             return variant.toInt();
+
         return variant;
     }
 
@@ -464,6 +467,7 @@ void MySqlResultPrivate::reserveVectorsForBindings(
     timeVector.reserve(std::ranges::count_if(boundValues, [](const QVariant &value)
     {
         const auto typeId = Helpers::qVariantTypeId(value);
+
         return typeId == QMetaType::QDateTime ||
                typeId == QMetaType::QDate     ||
                typeId == QMetaType::QTime;
