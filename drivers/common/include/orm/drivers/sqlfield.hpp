@@ -34,9 +34,8 @@ namespace Orm::Drivers
         using enum RequiredStatus;
 
         /*! Constructor. */
-        explicit SqlField(
-                const QString &fieldName = {}, QMetaType metaType = {},
-                const QString &tableName = {});
+        explicit SqlField(QString fieldName = {}, QMetaType metaType = {},
+                          QString tableName = {});
         /*! Default destructor. */
         inline ~SqlField() = default;
 
@@ -106,7 +105,7 @@ namespace Orm::Drivers
         /*! Determine whether a field is required. */
         inline RequiredStatus requiredStatus() const;
         /*! Set the required field status. */
-        inline void setRequiredStatus(RequiredStatus status);
+        inline void setRequiredStatus(RequiredStatus required);
 
         /*! Get the field length. */
         inline qint64 length() const;

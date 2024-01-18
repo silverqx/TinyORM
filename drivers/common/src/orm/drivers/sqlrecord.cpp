@@ -175,7 +175,8 @@ void SqlRecord::clearValues()
 
 /* private */
 
-void SqlRecord::throwIfNotContains(const size_type index, QString &&functionName) const
+void SqlRecord::throwIfNotContains(const size_type index,
+                                   const QString &functionName) const
 {
     // Nothing to do
     if (contains(index))
@@ -216,7 +217,7 @@ QDebug operator<<(QDebug debug,
                   const TINYORM_PREPEND_NAMESPACE(Orm::Drivers::SqlRecord) &record)
 #endif
 {
-    QDebugStateSaver saver(debug);
+    const QDebugStateSaver saver(debug);
     debug.nospace();
 
     using SizeType = std::remove_cvref_t<decltype (record)>::size_type;

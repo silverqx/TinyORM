@@ -256,7 +256,7 @@ TINYORM_END_COMMON_NAMESPACE
 QDebug operator<<(QDebug debug,
                   const TINYORM_PREPEND_NAMESPACE(Orm::Drivers::SqlDatabase) &connection)
 {
-    QDebugStateSaver saver(debug);
+    const QDebugStateSaver saver(debug);
     debug.noquote().nospace();
 
     // CUR drivers test and finish, also SqlError silverqx
