@@ -42,9 +42,9 @@ MySqlResult::MySqlResult(const std::weak_ptr<MySqlDriver> &driver)
     : SqlResult(std::make_unique<MySqlResultPrivate>(driver))
 {}
 
-MySqlResult::~MySqlResult()
+MySqlResult::~MySqlResult() noexcept
 {
-    cleanup(true);
+    cleanupForDtor();
 }
 
 QVariant MySqlResult::handle() const
@@ -454,10 +454,10 @@ void MySqlResult::detachFromResultSet()
     // CUR drivers what about mysql_free_result()? Also look SqlQuery::finish() silverqx
 }
 
-/* Others */
+/* Cleanup */
 
 // CUR drivers revisit all 4 free methods detachFromResultSet(), cleanup(), mysqlFreeResults(), and mysqlStmtClose() how they relate and how they are used silverqx
-void MySqlResult::cleanup(const bool fromDestructor)
+void MySqlResult::cleanup()
 {
     Q_D(MySqlResult);
 
@@ -467,18 +467,44 @@ void MySqlResult::cleanup(const bool fromDestructor)
     // Prepared queries
     mysqlStmtClose();
 
+    d->preparedBinds.reset();
+    d->resultBinds.reset();
+
+    // Common code for both cleanup methods
+    cleanupCommon();
+}
+
+/* private */
+
+/* Cleanup */
+
+void MySqlResult::cleanupForDtor() noexcept
+{
+    Q_D(MySqlResult);
+
+    // Normal queries
+    mysqlFreeResultsForDtor();
+
+    // Prepared queries
+    // d->stmt != nullptr check is NOT inside the mysql_stmt_close()
+    if (d->stmt != nullptr)
+        mysql_stmt_close(d->stmt);
+    d->stmt = nullptr;
+
+    /* The d->preparedBinds and d->resultBinds will be auto-destroyed if called
+       from the destructor as they are smart pointers. */
+
+    // Common code for both cleanup methods
+    cleanupCommon();
+}
+
+void MySqlResult::cleanupCommon() noexcept
+{
+    Q_D(MySqlResult);
+
     // d->meta != nullptr check is inside as the first thing
     mysql_free_result(d->meta);
     d->meta = nullptr;
-
-    // Will be auto-destroyed if called from destructor as they are smart pointers
-    if (!fromDestructor) {
-        if (d->preparedBinds)
-            d->preparedBinds.reset();
-
-        if (d->resultBinds)
-            d->resultBinds.reset();
-    }
 
     d->hasBlobs = false;
     d->preparedQuery = false;
@@ -491,15 +517,13 @@ void MySqlResult::cleanup(const bool fromDestructor)
     setActive(false);
 }
 
-/* private */
-
 // CUR drivers revisit is something similar needed also for prepared statements? Look at detachFromResultSet() silverqx
 void MySqlResult::mysqlFreeResults()
 {
     Q_D(MySqlResult);
 
-    if (d->result != nullptr)
-        mysql_free_result(d->result);
+    // d->result != nullptr check is inside as the first thing
+    mysql_free_result(d->result);
 
     /* Must iterate through leftover result sets from multi-selects or stored procedures
        if this isn't done then subsequent queries will fail with Commands out of sync. */
@@ -511,8 +535,7 @@ void MySqlResult::mysqlFreeResults()
 
     // More results? -1 = no, >0 = error, 0 = yes (keep looping)
     int status = -1;
-    // This condition is weird but I don't want test if <= 0
-    while (!((status = mysql_next_result(mysql)) > 0))
+    while ((status = mysql_next_result(mysql)) == 0)
 
         if (auto *const mysqlRes = mysql_store_result(mysql);
             mysqlRes != nullptr
@@ -540,6 +563,31 @@ void MySqlResult::mysqlFreeResults()
     d->row = nullptr;
 }
 
+void MySqlResult::mysqlFreeResultsForDtor() noexcept
+{
+    Q_D(MySqlResult);
+
+    // d->result != nullptr check is inside as the first thing
+    mysql_free_result(d->result);
+
+    /* Must iterate through leftover result sets from multi-selects or stored procedures
+       if this isn't done then subsequent queries will fail with Commands out of sync.
+       Also, the drv_d_func_noexcept() is needed to have the noexcept destructor. */
+    auto *const mysql = d->drv_d_func_noexcept()->mysql;
+
+    // Nothing to do, no more result set/s
+    if (mysql == nullptr || !mysql_more_results(mysql))
+        return;
+
+    // More results? -1 = no, >0 = error, 0 = yes (keep looping)
+    while (mysql_next_result(mysql) == 0)
+        if (auto *const mysqlRes = mysql_store_result(mysql); mysqlRes != nullptr)
+            mysql_free_result(mysqlRes);
+
+    d->result = nullptr;
+    d->row = nullptr;
+}
+
 void MySqlResult::mysqlStmtClose()
 {
     Q_D(MySqlResult);
@@ -553,6 +601,8 @@ void MySqlResult::mysqlStmtClose()
 
     d->stmt = nullptr;
 }
+
+/* Others */
 
 void MySqlResult::throwIfBadResultFieldsIndex(const std::size_t index) const
 {

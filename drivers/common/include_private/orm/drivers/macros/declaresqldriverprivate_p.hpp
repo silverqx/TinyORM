@@ -29,6 +29,16 @@
                                                                                          \
         else T_LIKELY                                                                    \
             return std::static_pointer_cast<Class>(driver)->d_func();                    \
+    }                                                                                    \
+                                                                                         \
+    /*! Get a pointer to the ClassSqlDriver private implementation, const version. */    \
+    inline const Class##Private *drv_d_func_noexcept() const noexcept                    \
+    {                                                                                    \
+        if (const auto driver = sqldriver.lock(); !driver) T_UNLIKELY                    \
+            return nullptr;                                                              \
+                                                                                         \
+        else T_LIKELY                                                                    \
+            return std::static_pointer_cast<const Class>(driver)->d_func();              \
     }
 
 #endif // ORM_DRIVERS_MACROS_DECLARESQLDRIVERPRIVATE_P_HPP
