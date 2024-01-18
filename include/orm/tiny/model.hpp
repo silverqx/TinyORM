@@ -1033,7 +1033,7 @@ namespace Orm::Tiny
            that it's the same record. */
         return model &&
                // First compare the same table (same model type)
-               this->model().getTable() == model->getTable() && // model() needed as it's overriden in the BasePivot
+               this->model().getTable() == model->getTable() && // model() needed as it's overridden in the BasePivot
                getKey() == model->getKey() &&
                getConnectionName() == model->getConnectionName();
     }
@@ -1328,7 +1328,7 @@ namespace Orm::Tiny
 
         // I want to have these two as the last thing
         model.exists = exists_;
-        model.setTable(this->model().getTable()); // model() needed as it's overriden in the BasePivot
+        model.setTable(this->model().getTable()); // model() needed as it's overridden in the BasePivot
 
         return model;
     }
@@ -1353,7 +1353,7 @@ namespace Orm::Tiny
 
         // I want to have these two as the last thing
         model.exists = exists_;
-        model.setTable(this->model().getTable()); // model() needed as it's overriden in the BasePivot
+        model.setTable(this->model().getTable()); // model() needed as it's overridden in the BasePivot
 
         return model;
     }
@@ -1584,7 +1584,7 @@ namespace Orm::Tiny
     {
         if (column.contains(DOT))
             return column;
-                          // model() needed as it's overriden in the BasePivot
+                          // model() needed as it's overridden in the BasePivot
         return DOT_IN.arg(model().getTable(), column);
     }
 
@@ -1628,7 +1628,7 @@ namespace Orm::Tiny
     {
         /* Ownership of a unique_ptr(), dereferenced and passed down, will be
            destroyed right after this command. */
-        model().setKeysForSaveQuery(*newModelQuery()).remove(); // model() needed as it's overriden in the BasePivot
+        model().setKeysForSaveQuery(*newModelQuery()).remove(); // model() needed as it's overridden in the BasePivot
 
         this->exists = false;
     }
@@ -1730,7 +1730,7 @@ namespace Orm::Tiny
         const auto dirty = this->getDirty();
 
         if (!dirty.isEmpty()) {
-            // model() needed as it's overriden in the BasePivot
+            // model() needed as it's overridden in the BasePivot
             model().setKeysForSaveQuery(query).update(
                         AttributeUtils::convertVectorToUpdateItem(dirty));
 

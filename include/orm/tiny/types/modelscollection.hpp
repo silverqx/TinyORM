@@ -164,7 +164,7 @@ namespace Types
         bool operator==(const ModelsCollection<ModelRawType> &other) const
         requires std::is_pointer_v<Model>;
 
-        /* Redeclared overriden methods from the base class */
+        /* Redeclared overridden methods from the base class */
 #if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
         /*! Returns a reference to the first model in the collection. */
         inline Model &first();
@@ -787,7 +787,7 @@ namespace Types
         return true;
     }
 
-    /* Redeclared overriden methods from the base class */
+    /* Redeclared overridden methods from the base class */
 
 #if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
     template<DerivedCollectionModel Model>

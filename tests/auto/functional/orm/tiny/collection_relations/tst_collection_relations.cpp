@@ -54,7 +54,7 @@ private Q_SLOTS:
     void equalComparison_WithModelsCollection() const;
     void notEqualComparison_WithModelsCollection() const;
 
-    /* Redeclared overriden methods from the base class */
+    /* Redeclared overridden methods from the base class */
     void isEmpty() const;
 
     /* BaseCollection */
@@ -433,7 +433,7 @@ void tst_Collection_Relations::notEqualComparison_WithModelsCollection() const
     QVERIFY(images2_2 != images2_1);
 }
 
-/* Redeclared overriden methods from the base class */
+/* Redeclared overridden methods from the base class */
 
 void tst_Collection_Relations::isEmpty() const
 {

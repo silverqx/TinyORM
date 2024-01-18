@@ -64,7 +64,7 @@ target.CONFIG += no_default_install
 # ---
 
 build_tests {
-    # Default SQLite test database, can be overriden by DB_SQLITE_DATABASE env. variable
+    # Default SQLite test database, can be overridden by DB_SQLITE_DATABASE env. variable
     TINYORM_SQLITE_DATABASE = $$quote($$TINYORM_BUILD_TREE/tests/tinyorm_test_1.sqlite3)
 
     sqlitedatabase.target = sqlitedatabase

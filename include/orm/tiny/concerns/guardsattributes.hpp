@@ -269,7 +269,7 @@ namespace Orm::Tiny::Concerns
                                  moveToSetForGuardableHash(
                                      basemodel().getConnection()
                                                 .getSchemaBuilder()
-                                                .getColumnListing(model().getTable()))); // model() needed as it's overriden in the BasePivot
+                                                .getColumnListing(model().getTable()))); // model() needed as it's overridden in the BasePivot
 
         return it->second.contains(key);
     }

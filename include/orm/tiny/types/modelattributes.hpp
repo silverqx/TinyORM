@@ -29,7 +29,7 @@ namespace Types
         /*! The base class type (used as the storage container). */
         using BaseType = std::unordered_map<QString, QVariant>;
 
-        /* Redeclared overriden methods from the base class */
+        /* Redeclared overridden methods from the base class */
         /*! Access specified element with bounds checking. */
         inline const mapped_type &at(const key_type &key) const;
         /*! Access specified element with bounds checking. */
@@ -43,7 +43,7 @@ namespace Types
 
     /* public */
 
-    /* Redeclared overriden methods from the base class */
+    /* Redeclared overridden methods from the base class */
 
     const ModelAttributes::mapped_type &ModelAttributes::at(const key_type &key) const
     {

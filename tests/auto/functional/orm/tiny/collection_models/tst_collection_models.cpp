@@ -54,7 +54,7 @@ private Q_SLOTS:
     void equalComparison_WithPointersCollection() const;
     void notEqualComparison_WithPointersCollection() const;
 
-    /* Redeclared overriden methods from the base class */
+    /* Redeclared overridden methods from the base class */
     void isEmpty() const;
 
     /* BaseCollection */
@@ -376,7 +376,7 @@ void tst_Collection_Models::notEqualComparison_WithPointersCollection() const
     QVERIFY(images2_1 != images2_2_Init);
 }
 
-/* Redeclared overriden methods from the base class */
+/* Redeclared overridden methods from the base class */
 
 void tst_Collection_Models::isEmpty() const
 {

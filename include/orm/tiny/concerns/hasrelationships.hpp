@@ -607,7 +607,7 @@ namespace Concerns
         auto instance = newRelatedInstance<Related>();
 
         if (foreignKey.isEmpty())
-            foreignKey = model.getForeignKey(); // model() needed as it's overriden in the BasePivot
+            foreignKey = model.getForeignKey(); // model() needed as it's overridden in the BasePivot
 
         if (localKey.isEmpty())
             localKey = basemodel().getKeyName();
@@ -660,7 +660,7 @@ namespace Concerns
         auto instance = newRelatedInstance<Related>();
 
         if (foreignKey.isEmpty())
-            foreignKey = model.getForeignKey(); // model() needed as it's overriden in the BasePivot
+            foreignKey = model.getForeignKey(); // model() needed as it's overridden in the BasePivot
 
         if (localKey.isEmpty())
             localKey = basemodel().getKeyName();
@@ -692,7 +692,7 @@ namespace Concerns
         auto instance = newRelatedInstance<Related>();
 
         if (foreignPivotKey.isEmpty())
-            foreignPivotKey = model.getForeignKey(); // model() needed as it's overriden in the BasePivot
+            foreignPivotKey = model.getForeignKey(); // model() needed as it's overridden in the BasePivot
 
         if (relatedPivotKey.isEmpty())
             relatedPivotKey = instance->getForeignKey();
