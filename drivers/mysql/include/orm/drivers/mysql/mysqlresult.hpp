@@ -25,7 +25,7 @@ namespace Orm::Drivers::MySql
         /*! Constructor. */
         explicit MySqlResult(const std::weak_ptr<MySqlDriver> &driver);
         /*! Virtual destructor. */
-        ~MySqlResult() final;
+        ~MySqlResult() noexcept final;
 
         /*! Returns the low-level database result set handle (MYSQL_RES or MYSQL_STMT). */
         QVariant handle() const final;
@@ -71,16 +71,25 @@ namespace Orm::Drivers::MySql
         /*! Releases memory associated with the current result set. */
         void detachFromResultSet() final;
 
-        /* Others */
+        /* Cleanup */
         /*! Main cleanup method, free prepared and non-prepared statements. */
-        void cleanup(bool fromDestructor = false);
+        void cleanup();
 
     private:
+        /* Cleanup */
+        /*! Main cleanup method, free prepared and non-prepared statements, noexcept. */
+        void cleanupForDtor() noexcept;
+        /*! Common code for both cleanup methods. */
+        void cleanupCommon() noexcept;
+
         /*! Free the memory allocated for result sets. */
         void mysqlFreeResults();
+        /*! Free the memory allocated for result sets, noexcept version. */
+        void mysqlFreeResultsForDtor() noexcept;
         /*! Close the prepared statement and deallocate the statement handler. */
         void mysqlStmtClose();
 
+        /* Others */
         /*! Throw an exception if an index for result fields vector is out of bounds. */
         void throwIfBadResultFieldsIndex(std::size_t index) const;
     };
