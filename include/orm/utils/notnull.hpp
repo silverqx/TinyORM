@@ -27,7 +27,7 @@ namespace Private
     struct is_comparable_to_nullptr<
         T,
         std::enable_if_t<
-            std::is_convertible<decltype (std::declval<T>() != nullptr), bool>::value>>
+            std::is_convertible_v<decltype (std::declval<T>() != nullptr), bool>>>
         : std::true_type
     {};
 
@@ -38,7 +38,7 @@ namespace Private
     template<typename T>
     using value_or_reference_return_t =
             std::conditional_t<sizeof (T) < 2 * sizeof (void *) &&
-                               std::is_trivially_copy_constructible<T>::value,
+                               std::is_trivially_copy_constructible_v<T>,
                                const T, const T &>;
 
 } // namespace Private
@@ -59,7 +59,7 @@ namespace Private
                 "The NotNull T template argument cannot be the nullptr.");
 
         template<typename U,
-                 typename = std::enable_if_t<std::is_convertible<U, T>::value>>
+                 typename = std::enable_if_t<std::is_convertible_v<U, T>>>
         constexpr NotNull(U &&u) // NOLINT(google-explicit-constructor)
             : m_ptr(std::forward<U>(u))
         {
@@ -67,7 +67,7 @@ namespace Private
                 std::terminate();
         }
 
-        template<typename = std::enable_if_t<!std::is_same<std::nullptr_t, T>::value>>
+        template<typename = std::enable_if_t<!std::is_same_v<std::nullptr_t, T>>>
         constexpr NotNull(T u) // NOLINT(google-explicit-constructor)
             : m_ptr(std::move(u))
         {
@@ -76,7 +76,7 @@ namespace Private
         }
 
         template<typename U,
-                 typename = std::enable_if_t<std::is_convertible<U, T>::value>>
+                 typename = std::enable_if_t<std::is_convertible_v<U, T>>>
         constexpr NotNull(const NotNull<U> &other) // NOLINT(google-explicit-constructor)
             : NotNull(other.get())
         {}
