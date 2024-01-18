@@ -31,7 +31,7 @@ SqlResult::~SqlResult() = default;
 
 /* Getters / Setters */
 
-bool SqlResult::isValid() const
+bool SqlResult::isValid() const noexcept
 {
     Q_D(const SqlResult);
 
@@ -39,13 +39,13 @@ bool SqlResult::isValid() const
            d->cursor != static_cast<int>(AfterLastRow);
 }
 
-QString SqlResult::query() const
+QString SqlResult::query() const noexcept
 {
     Q_D(const SqlResult);
     return d->query;
 }
 
-void SqlResult::setQuery(const QString &query)
+void SqlResult::setQuery(const QString &query) noexcept
 {
     Q_D(SqlResult);
     d->query = query;
@@ -67,50 +67,50 @@ bool SqlResult::setLastError(const SqlError &error)
     return false;
 }
 
-int SqlResult::at() const
+int SqlResult::at() const noexcept
 {
     Q_D(const SqlResult);
     return d->cursor;
 }
 
-void SqlResult::setAt(const int index)
+void SqlResult::setAt(const int index) noexcept
 {
     Q_D(SqlResult);
     d->cursor = index;
 }
 
-bool SqlResult::isActive() const
+bool SqlResult::isActive() const noexcept
 {
     Q_D(const SqlResult);
     return d->isActive;
 }
 
-void SqlResult::setActive(const bool value)
+void SqlResult::setActive(const bool value) noexcept
 {
     Q_D(SqlResult);
     d->isActive = value;
 }
 
-bool SqlResult::isSelect() const
+bool SqlResult::isSelect() const noexcept
 {
     Q_D(const SqlResult);
     return d->isSelect;
 }
 
-void SqlResult::setSelect(const bool value)
+void SqlResult::setSelect(const bool value) noexcept
 {
     Q_D(SqlResult);
     d->isSelect = value;
 }
 
-NumericalPrecisionPolicy SqlResult::numericalPrecisionPolicy() const
+NumericalPrecisionPolicy SqlResult::numericalPrecisionPolicy() const noexcept
 {
     Q_D(const SqlResult);
     return d->precisionPolicy;
 }
 
 void
-SqlResult::setNumericalPrecisionPolicy(const NumericalPrecisionPolicy precision)
+SqlResult::setNumericalPrecisionPolicy(const NumericalPrecisionPolicy precision) noexcept
 {
     Q_D(SqlResult);
     d->precisionPolicy = precision;
