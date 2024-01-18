@@ -111,13 +111,13 @@ namespace Orm::Drivers
 
     private:
         /*! Throw the std::out_of_range() exception if record doesn't contain an index. */
-        void throwIfNotContains(size_type index, QString &&functionName) const;
+        void throwIfNotContains(size_type index, const QString &functionName) const;
 
         /*! FieldSegmentsType return type for getFieldNameSegments(). */
         struct FieldSegmentsType
         {
             /*! Determine whether a given field is qualified. */
-            bool isQualifiedName;
+            bool isQualifiedName = false;
             /*! Table name. */
             QStringView tableName;
             /*! Field name. */

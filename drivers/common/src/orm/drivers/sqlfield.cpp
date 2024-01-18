@@ -13,12 +13,10 @@ namespace Orm::Drivers
 
 /* public */
 
-SqlField::SqlField(const QString &fieldName, const QMetaType metaType,
-                   const QString &table
-)
+SqlField::SqlField(QString fieldName, const QMetaType metaType, QString table)
     : m_value(QVariant(metaType, nullptr))
-    , m_name(fieldName)
-    , m_table(table)
+    , m_name(std::move(fieldName))
+    , m_table(std::move(table))
     , m_metaType(metaType)
 {}
 
@@ -63,7 +61,7 @@ using namespace Qt::StringLiterals; // NOLINT(google-build-using-namespace)
 namespace
 {
     /*! Log the SqlField QVariant value to the QDebug stream. */
-    inline void logSqlFieldValue(QDebug &debug, QVariant &&value)
+    inline void logSqlFieldValue(QDebug &debug, const QVariant &value)
     {
         using Orm::Drivers::Constants::null_;
 
@@ -88,7 +86,7 @@ operator<<(QDebug debug, const TINYORM_PREPEND_NAMESPACE(Orm::Drivers::SqlField)
 {
     using SqlFieldType = std::remove_cvref_t<decltype (field)>;
 
-    QDebugStateSaver saver(debug);
+    const QDebugStateSaver saver(debug);
     debug.nospace();
 
     debug << "SqlField(" << field.name() << ", " << field.metaType().name();

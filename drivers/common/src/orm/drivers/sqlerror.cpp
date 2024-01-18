@@ -62,7 +62,7 @@ TINYORM_END_COMMON_NAMESPACE
 QDebug operator<<(QDebug debug,
                   const TINYORM_PREPEND_NAMESPACE(Orm::Drivers::SqlError) &error)
 {
-    QDebugStateSaver saver(debug);
+    const QDebugStateSaver saver(debug);
     debug.noquote().nospace();
 
     debug << "SqlError("

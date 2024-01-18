@@ -56,7 +56,7 @@ namespace Orm::Drivers::MySql
             /*! Is the field NULL? */
             my_bool isNull = false;
             /*! Field value buffer length w/o terminating null character. */
-            ulong fieldValueSize = 0ul; // For strings varies on the character set (latin1 1 byte or eg. utf8mb4 4 bytes so 3 characters string size will be 12)
+            ulong fieldValueSize = 0UL; // For strings varies on the character set (latin1 1 byte or eg. utf8mb4 4 bytes so 3 characters string size will be 12)
         };
 
         /* Normal queries */
