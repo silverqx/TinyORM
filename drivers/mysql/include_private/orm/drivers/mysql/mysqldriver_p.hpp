@@ -150,7 +150,7 @@ namespace Orm::Drivers::MySql
 
     bool MySqlDriverPrivate::isTrueBoolOption(const QStringView value) noexcept
     {
-        using namespace Qt::StringLiterals;
+        using namespace Qt::StringLiterals; // NOLINT(google-build-using-namespace)
 
         // _L1 is correct here
         return value.compare("true"_L1, Qt::CaseInsensitive) ||

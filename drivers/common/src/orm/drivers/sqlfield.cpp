@@ -58,7 +58,7 @@ void SqlField::setMetaType(const QMetaType metaType)
 TINYORM_END_COMMON_NAMESPACE
 
 #ifndef QT_NO_DEBUG_STREAM
-using namespace Qt::StringLiterals;
+using namespace Qt::StringLiterals; // NOLINT(google-build-using-namespace)
 
 namespace
 {

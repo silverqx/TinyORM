@@ -9,7 +9,7 @@
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
-using namespace Qt::StringLiterals;
+using namespace Qt::StringLiterals; // NOLINT(google-build-using-namespace)
 
 #if !defined(_MSC_VER)
 using Orm::Exceptions::RuntimeError;

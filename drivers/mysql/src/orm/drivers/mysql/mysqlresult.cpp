@@ -29,7 +29,7 @@ struct QT_MYSQL_TIME
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
-using namespace Qt::StringLiterals;
+using namespace Qt::StringLiterals; // NOLINT(google-build-using-namespace)
 
 using MySqlUtils = Orm::Drivers::MySql::MySqlUtilsPrivate;
 
