@@ -111,9 +111,9 @@ QString SqlDatabase::hostName() const
     return d->hostName;
 }
 
-void SqlDatabase::setHostName(const QString &host)
+void SqlDatabase::setHostName(const QString &hostname)
 {
-    d->hostName = host;
+    d->hostName = hostname;
 }
 
 int SqlDatabase::port() const
@@ -121,7 +121,7 @@ int SqlDatabase::port() const
     return d->port;
 }
 
-void SqlDatabase::setPort(int port)
+void SqlDatabase::setPort(const int port)
 {
     d->port = port;
 }

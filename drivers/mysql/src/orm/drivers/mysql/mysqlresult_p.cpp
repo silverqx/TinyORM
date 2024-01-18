@@ -23,7 +23,7 @@ struct QT_MYSQL_TIME
     unsigned int second = 0;
 
     /*! The fractional part of the second in microseconds. */
-    unsigned long second_part = 0;
+    unsigned long second_part = 0; // NOLINT(google-runtime-int)
     my_bool neg = false;
     enum enum_mysql_timestamp_type time_type = MYSQL_TIMESTAMP_NONE;
 };
@@ -93,7 +93,7 @@ bool MySqlResultPrivate::bindResultValues()
     if (!hasFields)
         return false;
 
-    // CUR drivers for prepared stmts it has RESULTSET_METADATA_NONE (0), need to try disable metadata and examine the changes in the meta silverqx
+    // CUR drivers for prepared statements it has RESULTSET_METADATA_NONE (0), need to try disable metadata and examine the changes in the meta silverqx
     // Nothing to do, metadata disabled
 //    if (mysql_result_metadata(meta) == RESULTSET_METADATA_NONE) {
 //        qWarning("MySqlResultPrivate::bindResultValues: result set has no metadata");
@@ -136,7 +136,7 @@ bool MySqlResultPrivate::bindResultValues()
         // The following two lines only bind data members using pointers (no real values)
         resultBind.is_null     = &field.isNull;
         resultBind.length      = &field.fieldValueSize;
-        resultBind.is_unsigned = fieldInfo->flags & UNSIGNED_FLAG;
+        resultBind.is_unsigned = (fieldInfo->flags & UNSIGNED_FLAG) != 0U;
 
         /* Prepare the output/result buffer (nothing to do with prepared bindings),
            +1 for the terminating null character. */
@@ -211,7 +211,7 @@ void MySqlResultPrivate::bindPreparedBindings(
         preparedBind.is_null = &nullVector.emplaceBack(
                                    static_cast<my_bool>(
                                        SqlResultPrivate::isVariantNull(boundValue)));
-        preparedBind.length = 0;
+        preparedBind.length = nullptr;
         preparedBind.is_unsigned = false;
 
         switch (boundValue.userType()) {
@@ -230,7 +230,6 @@ void MySqlResultPrivate::bindPreparedBindings(
         case QMetaType::QDate:
         case QMetaType::QDateTime:
             preparedBind.buffer_length = sizeof (QT_MYSQL_TIME);
-            preparedBind.length        = 0;
             // Emplace to the vector to make it alive until mysql_stmt_execute()
             preparedBind.buffer = &timeVector.emplaceBack(
                                       toMySqlDateTime(
@@ -314,8 +313,8 @@ MySqlResultPrivate::createStmtError(const QString &error, const SqlError::ErrorT
 
     const auto *const mysqlError = mysql_stmt_error(stmt);
 
-    return SqlError("QMYSQL: "_L1 + error, QString::fromUtf8(mysqlError), type,
-                    QString::number(mysql_stmt_errno(stmt)));
+    return {"QMYSQL: "_L1 + error, QString::fromUtf8(mysqlError), type,
+            QString::number(mysql_stmt_errno(stmt))};
 }
 
 /* Result sets */
@@ -399,11 +398,17 @@ QVariant MySqlResultPrivate::getValueForPrepared(const ResultFieldsSizeType inde
         QTime time;
 
         if (typeId != QMetaType::QTime)
-            date = QDate(mysqlTime->year, mysqlTime->month, mysqlTime->day);
+            date = {static_cast<int>(mysqlTime->year),
+                    static_cast<int>(mysqlTime->month),
+                    static_cast<int>(mysqlTime->day)};
 
         if (typeId != QMetaType::QDate)
-            time = QTime(mysqlTime->hour, mysqlTime->minute, mysqlTime->second,
-                         mysqlTime->second_part / 1000);
+            time = {static_cast<int>(mysqlTime->hour),
+                    static_cast<int>(mysqlTime->minute),
+                    static_cast<int>(mysqlTime->second),
+                    static_cast<int>(
+                        std::lround(
+                            static_cast<double>(mysqlTime->second_part) / 1000))};
 
         if (typeId == QMetaType::QDateTime)
             return QDateTime(date, time);
@@ -565,9 +570,9 @@ QVariant MySqlResultPrivate::toQDateFromString(const QString &value)
     // Nothing to do
     if (value.isEmpty())
         // CUR drivers check this if QVariant(QMetaType(QMetaType::QDate)) is different thing; also Qt5 vs Qt6; also for QTime() and QDateTime() below silverqx
-        return QVariant(QDate());
+        return QDate();
 
-    return QVariant(QDate::fromString(value, Qt::ISODate));
+    return QDate::fromString(value, Qt::ISODate);
 #else
     Q_UNUSED(value);
     return QVariant(value);
@@ -579,21 +584,21 @@ QVariant MySqlResultPrivate::toQTimeFromString(const QString &value)
 #if QT_CONFIG(datestring)
     // Nothing to do
     if (value.isEmpty())
-        return QVariant(QTime());
+        return QTime();
 
-    return QVariant(QTime::fromString(value, Qt::ISODate));
+    return QTime::fromString(value, Qt::ISODate);
 #else
     Q_UNUSED(value);
     return QVariant(value);
 #endif
 }
 
-QVariant MySqlResultPrivate::toQDateTimeFromString(QString &&value)
+QVariant MySqlResultPrivate::toQDateTimeFromString(QString value)
 {
 #if QT_CONFIG(datestring)
     // Nothing to do
     if (value.isEmpty())
-        return QVariant(QDateTime());
+        return QDateTime();
 
     // CUR drivers revisit and if it's true the also validate 14 digits string silverqx
     // TIMESTAMPS have the format yyyyMMddhhmmss
@@ -601,19 +606,19 @@ QVariant MySqlResultPrivate::toQDateTimeFromString(QString &&value)
         value.insert(4, DASH).insert(7, DASH).insert(10, 'T'_L1).insert(13, COLON)
              .insert(16, COLON);
 
-    return QVariant(QDateTime::fromString(value, Qt::ISODate));
+    return QDateTime::fromString(value, Qt::ISODate);
 #else
     Q_UNUSED(value);
     return QVariant(value);
 #endif
 }
 
-QVariant MySqlResultPrivate::toDoubleFromString(QString &&value) const
+QVariant MySqlResultPrivate::toDoubleFromString(const QString &value) const
 {
     // CUR drivers use String::isNumber()? silverqx
     auto ok = false;
     // CUR drivers test this with the HighPrecision policy silverqx
-    double valueDouble = value.toDouble(&ok);
+    const double valueDouble = value.toDouble(&ok);
 
     if (!ok) {
         qWarning().noquote()
@@ -628,7 +633,7 @@ QVariant MySqlResultPrivate::toDoubleFromString(QString &&value) const
     switch(precisionPolicy) {
     // This is the default precision policy
     case LowPrecisionDouble:
-        return QVariant(valueDouble);
+        return valueDouble;
 
     // The following two precision policies discard the fractional part silently
     case LowPrecisionInt32:
@@ -653,8 +658,8 @@ MySqlResultPrivate::toQByteArray(const ResultFieldsSizeType index) const
     }
 
     // CUR drivers revisit this if I need to fetch the length silverqx
-    const quint64 fieldLength = mysql_fetch_lengths(result)[index];
-    return {QByteArray(row[index], fieldLength)};
+    const ulong fieldLength = mysql_fetch_lengths(result)[index];
+    return {QByteArray(row[index], static_cast<QByteArray::size_type>(fieldLength))};
 }
 
 QVariant MySqlResultPrivate::createQVariant(const int typeId, QString &&value,
@@ -662,23 +667,23 @@ QVariant MySqlResultPrivate::createQVariant(const int typeId, QString &&value,
 {
     switch (typeId) {
     case QMetaType::QString:
-        return QVariant(value);
+        return value;
 
     case QMetaType::LongLong:
-        return QVariant(value.toLongLong());
+        return value.toLongLong();
 
     case QMetaType::ULongLong:
-        return QVariant(value.toULongLong());
+        return value.toULongLong();
 
     case QMetaType::Char:
     case QMetaType::Short:
     case QMetaType::Int:
-        return QVariant(value.toInt());
+        return value.toInt();
 
     case QMetaType::UChar:
     case QMetaType::UShort:
     case QMetaType::UInt:
-        return QVariant(value.toUInt());
+        return value.toUInt();
 
     case QMetaType::QDateTime:
         return toQDateTimeFromString(std::move(value));
@@ -690,13 +695,13 @@ QVariant MySqlResultPrivate::createQVariant(const int typeId, QString &&value,
         return toQTimeFromString(value);
 
     case QMetaType::Double:
-        return toDoubleFromString(std::move(value));
+        return toDoubleFromString(value);
 
     case QMetaType::QByteArray:
         return toQByteArray(index);
 
     default:
-        return QVariant(value);
+        return value;
     }
 
     Q_UNREACHABLE();

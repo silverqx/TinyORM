@@ -94,8 +94,8 @@ bool MySqlDriverPrivate::mysqlSetCharacterSet(const QString &host, const bool be
 }
 
 bool MySqlDriverPrivate::mysqlRealConnect(
-        const QString &host, QByteArray &&username, QByteArray &&password,
-        QByteArray &&database, const int port, QByteArray &&unixSocket,
+        const QString &host, const QByteArray &username, const QByteArray &password,
+        const QByteArray &database, const int port, const QByteArray &unixSocket,
         const uint optionFlags)
 {
     Q_Q(MySqlDriver);

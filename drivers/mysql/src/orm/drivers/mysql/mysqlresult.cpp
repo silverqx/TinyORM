@@ -22,7 +22,7 @@ struct QT_MYSQL_TIME
     unsigned int second = 0;
 
     /*! The fractional part of the second in microseconds. */
-    unsigned long second_part = 0;
+    unsigned long second_part = 0; // NOLINT(google-runtime-int)
     my_bool neg = false;
     enum enum_mysql_timestamp_type time_type = MYSQL_TIMESTAMP_NONE;
 };
@@ -53,8 +53,8 @@ QVariant MySqlResult::handle() const
 
     if (d->preparedQuery)
         // CUR check this later; I don't understand it now silverqx
-        return d->meta ? QVariant::fromValue(d->meta)
-                       : QVariant::fromValue(d->stmt);
+        return d->meta == nullptr ? QVariant::fromValue(d->stmt)
+                                  : QVariant::fromValue(d->meta);
 
     return QVariant::fromValue(d->result);
 }
@@ -112,22 +112,19 @@ bool MySqlResult::prepare(const QString &query)
     d->preparedQuery = true;
 
     // Create the MYSQL_STMT handler
-    if (auto *const mysql = d->drv_d_func()->mysql;
-        (d->stmt = mysql_stmt_init(mysql)) == nullptr
-    )
-        return setLastError(MySqlUtils::createError(
-                                u"Unable to prepare statement"_s,
-                                SqlError::StatementError, mysql));
+    {
+        auto *const mysql = d->drv_d_func()->mysql;
 
-    // Not the same as the errno error code
-    int status = 1;
+        if (d->stmt = mysql_stmt_init(mysql); d->stmt == nullptr)
+            return setLastError(MySqlUtils::createError(
+                                    u"Unable to prepare statement"_s,
+                                    SqlError::StatementError, mysql));
+    }
 
     // Prepare the SQL statement
     const auto queryArray = query.toUtf8();
 
-    if (status = mysql_stmt_prepare(d->stmt, queryArray.constData(), queryArray.size());
-        status != 0
-    )
+    if (mysql_stmt_prepare(d->stmt, queryArray.constData(), queryArray.size()) != 0)
         return setLastError(MySqlResultPrivate::createStmtError(
                                 u"Unable to prepare statement"_s,
                                 SqlError::StatementError, d->stmt));
@@ -146,12 +143,13 @@ bool MySqlResult::exec()
                 "The prepared query is empty, to call normal queries use "
                 "the SqlQuery::exec(QString) overload.");
 
-    if (!d->stmt)
+    if (d->stmt == nullptr)
         return false;
 
-    /* The int type is ok because some mysql_xyz() return bool true if failed. 🤔🙃
-       I leave it this way as it's the best solution. */
-    int status = 1;
+    /* These mysql_stmt_xyz()-s functions are weird, if they return a bool, then
+       they return zero for success and non-zero if an error occurred, but the type is
+       bool, which means they return false if succeed and true if they failed! 🤔🙃😲 */
+
     // These vectors keep values alive long enough until mysql_stmt_execute() is invoked
     QList<my_bool> nullVector;
     QList<QByteArray> stringVector;
@@ -159,7 +157,7 @@ bool MySqlResult::exec()
 
     /* Reset a prepared statement on client and server to state after prepare,
        unbuffered result sets and current errors. */
-    if (status = mysql_stmt_reset(d->stmt); status != 0)
+    if (mysql_stmt_reset(d->stmt))
         return setLastError(MySqlResultPrivate::createStmtError(
                                 u"Unable to reset statement"_s,
                                 SqlError::StatementError, d->stmt));
@@ -172,14 +170,14 @@ bool MySqlResult::exec()
         d->bindPreparedBindings(nullVector, stringVector, timeVector);
 
         // Bind data for parameter placeholders 🕺
-        if (status = mysql_stmt_bind_param(d->stmt, d->preparedBinds.get()); status != 0)
+        if (mysql_stmt_bind_param(d->stmt, d->preparedBinds.get()))
             return setLastError(MySqlResultPrivate::createStmtError(
                                     u"Unable to bind data for parameter placeholders"_s,
                                     SqlError::StatementError, d->stmt));
     }
 
     // Execute prepared query 🥳
-    if (status = mysql_stmt_execute(d->stmt); status != 0)
+    if (mysql_stmt_execute(d->stmt) != 0)
         return setLastError(MySqlResultPrivate::createStmtError(
                                 u"Unable to execute prepared statement"_s,
                                 SqlError::StatementError, d->stmt));
@@ -191,7 +189,7 @@ bool MySqlResult::exec()
         my_bool update_max_length = true;
 
         // Bind output columns in the result set to data buffers and length buffers
-        if (status = mysql_stmt_bind_result(d->stmt, d->resultBinds.get()); status != 0)
+        if (mysql_stmt_bind_result(d->stmt, d->resultBinds.get()))
             return setLastError(MySqlResultPrivate::createStmtError(
                                     u"Unable to bind result set data buffers"_s,
                                     SqlError::StatementError, d->stmt));
@@ -201,7 +199,7 @@ bool MySqlResult::exec()
             mysql_stmt_attr_set(d->stmt, STMT_ATTR_UPDATE_MAX_LENGTH, &update_max_length);
 
         // Buffer the complete result set on the client (will be prepared for fetching)
-        if (status = mysql_stmt_store_result(d->stmt); status != 0)
+        if (mysql_stmt_store_result(d->stmt) != 0)
             return setLastError(MySqlResultPrivate::createStmtError(
                                     u"Unable to store prepared statement result sets"_s,
                                     SqlError::StatementError, d->stmt));
@@ -211,9 +209,7 @@ bool MySqlResult::exec()
             d->bindResultBlobs();
 
             // Re-bind output columns in the result set to data buffers and length buffers
-            if (status = mysql_stmt_bind_result(d->stmt, d->resultBinds.get());
-                status != 0
-            )
+            if (mysql_stmt_bind_result(d->stmt, d->resultBinds.get()))
                 return setLastError(MySqlResultPrivate::createStmtError(
                                         u"Unable to re-bind result set data buffers "
                                         "for BLOB-s"_s,
@@ -553,7 +549,7 @@ void MySqlResult::mysqlStmtClose()
     if (d->stmt == nullptr)
         return;
 
-    if (mysql_stmt_close(d->stmt) != 0)
+    if (mysql_stmt_close(d->stmt))
         qWarning("MySqlResult::mysqlStmtClose: unable to free statement handle");
 
     d->stmt = nullptr;
@@ -572,7 +568,6 @@ void MySqlResult::throwIfBadResultFieldsIndex(const std::size_t index) const
     throw std::exception(
                 u"Field index '%1' is out of bounds, the index must be between 0-%2"_s
                 .arg(index).arg(fieldsCount - 1).toUtf8().constData());
-
 }
 
 } // namespace Orm::Drivers::MySql
