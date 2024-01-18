@@ -286,16 +286,15 @@ void MySqlResultPrivate::bindPreparedBindings(
 void MySqlResultPrivate::bindResultBlobs()
 {
    for (ResultFieldsSizeType index = 0; index < resultFields.size(); ++index) {
+       auto &resultBind = resultBinds[index];
        auto &resultField = resultFields[index];
        const auto *const fieldInfo = resultField.myField;
 
        // Nothing to do, isn't the BLOB type or some info is missing
-       if (!isBlobType(resultBinds[index].buffer_type) ||
+       if (!isBlobType(resultBind.buffer_type) ||
            meta == nullptr || fieldInfo == nullptr
        )
            continue;
-
-       auto &resultBind = resultBinds[index];
 
        // Update the buffer length to the BLOB max. length in the current result set
        resultBind.buffer_length = fieldInfo->max_length;
@@ -339,14 +338,15 @@ std::optional<QString> MySqlResultPrivate::fetchErrorMessage(const int status) n
 QVariant MySqlResultPrivate::getValueForNormal(const ResultFieldsSizeType index) const
 {
     const auto &field = resultFields[index]; // Index bound checked in MySqlResult::data()
+    const auto *const column = row[index];
 
     // Field is NULL
-    if (row[index] == nullptr)
+    if (column == nullptr)
         return QVariant(field.metaType);
 
     // BIT field
     if (isBitType(field.myField->type))
-        return QVariant::fromValue(toBitField(field, row[index]));
+        return QVariant::fromValue(toBitField(field, column));
 
     QString value;
     quint64 fieldLength = 0;
@@ -356,8 +356,7 @@ QVariant MySqlResultPrivate::getValueForNormal(const ResultFieldsSizeType index)
 
     // BLOB field needs the QByteArray as the storage
     if (typeId != QMetaType::QByteArray)
-        value = QString::fromUtf8(row[index],
-                                  static_cast<QString::size_type>(fieldLength));
+        value = QString::fromUtf8(column, static_cast<QString::size_type>(fieldLength));
 
     return createQVariant(typeId, std::move(value), index);
 }
