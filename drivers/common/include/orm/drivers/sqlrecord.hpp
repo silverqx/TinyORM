@@ -25,6 +25,16 @@ namespace Orm::Drivers
         /*! Default destructor. */
         inline ~SqlRecord() = default;
 
+        /*! Copy constructor. */
+        inline SqlRecord(const SqlRecord &) = default;
+        /*! Copy assignment operator. */
+        inline SqlRecord &operator=(const SqlRecord &) = default;
+
+        /*! Move constructor. */
+        inline SqlRecord(SqlRecord &&) noexcept = default;
+        /*! Move assignment operator. */
+        inline SqlRecord &operator=(SqlRecord &&) noexcept = default;
+
         /*! Equality comparison operator for the SqlRecord. */
         inline bool operator==(const SqlRecord &) const = default;
 

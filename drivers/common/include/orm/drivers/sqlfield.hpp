@@ -40,6 +40,16 @@ namespace Orm::Drivers
         /*! Default destructor. */
         inline ~SqlField() = default;
 
+        /*! Copy constructor. */
+        inline SqlField(const SqlField &) = default;
+        /*! Copy assignment operator. */
+        inline SqlField &operator=(const SqlField &) = default;
+
+        /*! Move constructor. */
+        inline SqlField(SqlField &&) noexcept = default;
+        /*! Move assignment operator. */
+        inline SqlField &operator=(SqlField &&) noexcept = default;
+
         /*! Equality comparison operator for the SqlField. */
         inline bool operator==(const SqlField &) const = default;
 
