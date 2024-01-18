@@ -181,7 +181,7 @@ void SqlRecord::throwIfNotContains(const size_type index, QString &&functionName
     if (contains(index))
         return;
 
-    using namespace Qt::StringLiterals;
+    using namespace Qt::StringLiterals; // NOLINT(google-build-using-namespace)
 
     static const auto
     MessageTmpl = u"The field index position '%1' is out of range, the current number "

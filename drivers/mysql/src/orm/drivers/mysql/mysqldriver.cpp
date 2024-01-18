@@ -18,7 +18,7 @@ Q_DECLARE_METATYPE(MYSQL_STMT *)
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
-using namespace Qt::StringLiterals;
+using namespace Qt::StringLiterals; // NOLINT(google-build-using-namespace)
 
 using MySqlUtils = Orm::Drivers::MySql::MySqlUtilsPrivate;
 

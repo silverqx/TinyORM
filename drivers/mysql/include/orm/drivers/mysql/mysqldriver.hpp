@@ -71,7 +71,7 @@ namespace Orm::Drivers::MySql
 
     QString MySqlDriver::driverName() const
     {
-        using namespace Qt::StringLiterals;
+        using namespace Qt::StringLiterals; // NOLINT(google-build-using-namespace)
 
         return u"QMYSQL"_s;
     }
