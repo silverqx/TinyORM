@@ -281,26 +281,14 @@ bool MySqlResult::fetch(const int index)
     if (at() == index)
         return true;
 
+    // Fetch the next row in the result set
     if (d->preparedQuery) {
         mysql_stmt_data_seek(d->stmt, index);
 
-        /* Here are fetched real data and lengths into the buffers that were bound by
-           the mysql_stmt_bind_result(). 🥳
-           Also, the MyField::isNull and resultBinds.is_null is populated
-           (see MySqlResultPrivate::bindResultValues()). */
-        const auto status = mysql_stmt_fetch(d->stmt);
-
-        // Success, no more data exists; returning false here is correct
-        if (status == MYSQL_NO_DATA)
+        if (!mysqlStmtFetch())
             return false;
-
-        // This means there was an error or data were truncated
-        if (const auto errorMessage = MySqlResultPrivate::fetchErrorMessage(status);
-            errorMessage
-        )
-            return setLastError(MySqlResultPrivate::createStmtError(
-                                    *errorMessage, SqlError::StatementError, d->stmt));
-    } else {
+    }
+    else {
         mysql_data_seek(d->result, index);
 
         if (d->row = mysql_fetch_row(d->result);
@@ -349,21 +337,12 @@ bool MySqlResult::fetchNext()
     if (size() == 0)
         return false;
 
-    // CUR drivers duplicate code in fetch(int) silverqx
+    // Fetch the next row in the result set
     if (d->preparedQuery) {
-        const auto status = mysql_stmt_fetch(d->stmt);
-
-        // Success, no more data exists; returning false here is correct
-        if (status == MYSQL_NO_DATA)
+        if (!mysqlStmtFetch())
             return false;
-
-        // This means there was an error or data were truncated
-        if (const auto errorMessage = MySqlResultPrivate::fetchErrorMessage(status);
-            errorMessage
-        )
-            return setLastError(MySqlResultPrivate::createStmtError(
-                                    *errorMessage, SqlError::StatementError, d->stmt));
-    } else {
+    }
+    else {
         // CUR drivers missing error check silverqx
         if (d->row = mysql_fetch_row(d->result);
             d->row == nullptr
@@ -475,6 +454,32 @@ void MySqlResult::cleanup()
 }
 
 /* private */
+
+/* Result sets */
+
+bool MySqlResult::mysqlStmtFetch()
+{
+    Q_D(const MySqlResult);
+
+    /* Here are fetched real data and lengths into the buffers that were bound by
+       the mysql_stmt_bind_result(). 🥳
+       Also, the MyField::isNull and resultBinds.is_null is populated
+       (see MySqlResultPrivate::bindResultValues()). */
+    const auto status = mysql_stmt_fetch(d->stmt);
+
+    // Success, no more data exists; returning false here is correct
+    if (status == MYSQL_NO_DATA)
+        return false;
+
+    // This means there was an error or data were truncated
+    if (const auto errorMessage = MySqlResultPrivate::fetchErrorMessage(status);
+        errorMessage
+    )
+        return setLastError(MySqlResultPrivate::createStmtError(
+                                *errorMessage, SqlError::StatementError, d->stmt));
+
+    return true;
+}
 
 /* Cleanup */
 

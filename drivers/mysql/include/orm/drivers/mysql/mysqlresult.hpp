@@ -76,6 +76,10 @@ namespace Orm::Drivers::MySql
         void cleanup();
 
     private:
+        /* Result sets */
+        /*! Fetch the next row in the result set. */
+        bool mysqlStmtFetch();
+
         /* Cleanup */
         /*! Main cleanup method, free prepared and non-prepared statements, noexcept. */
         void cleanupForDtor() noexcept;
