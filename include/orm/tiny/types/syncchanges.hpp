@@ -62,6 +62,7 @@ namespace Types
         inline SyncChanges(const SyncChanges &) = default;
         /*! Copy assignment operator. */
         inline SyncChanges &operator=(const SyncChanges &) = default;
+
         /*! Move constructor. */
         inline SyncChanges(SyncChanges &&) // NOLINT(bugprone-exception-escape)
         noexcept(std::is_nothrow_move_constructible_v<ContainerType>) = default; // NOLINT(performance-noexcept-move-constructor)

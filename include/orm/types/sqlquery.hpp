@@ -40,6 +40,7 @@ namespace Types
         SqlQuery(const SqlQuery &other) = delete;
         /*! Deleted copy assignment operator (follow the base class). */
         SqlQuery &operator=(const SqlQuery &other) = delete;
+
         /*! Move constructor. */
         SqlQuery(SqlQuery &&other) noexcept = default;
         /*! Move assignment operator. */
