@@ -103,8 +103,14 @@ namespace Orm::Drivers
         /*! Bound the positional placeholder value at the given index for the prepared
             statement. */
         virtual void bindValue(int index, const QVariant &value, ParamType /*unused*/);
+        /*! Bound the positional placeholder value at the given index for the prepared
+            statement. */
+        virtual void bindValue(int index, QVariant &&value, ParamType /*unused*/);
+
         /*! Add the placeholder value to the list of positional bound values. */
         void addBindValue(const QVariant &value, ParamType /*unused*/);
+        /*! Add the placeholder value to the list of positional bound values. */
+        void addBindValue(QVariant &&value, ParamType /*unused*/);
 
         /*! Get the placeholder value at the given index position. */
         QVariant boundValue(int index) const;

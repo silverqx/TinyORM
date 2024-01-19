@@ -213,6 +213,14 @@ void SqlQuery::bindValue(const int index, const QVariant &value,
     m_sqlResult->bindValue(index, value, ParamType::In);
 }
 
+void SqlQuery::bindValue(const int index, QVariant &&value,
+                         const ParamType /*unused*/)
+{
+    /* Need to pass the ParamType::In to preserve the same API because I can't remove this
+       parameter so I need to pass something but it has no effect. */
+    m_sqlResult->bindValue(index, std::move(value), ParamType::In);
+}
+
 void SqlQuery::addBindValue(const QVariant &value, const ParamType /*unused*/)
 {
     // Append, index after the last value
@@ -221,6 +229,16 @@ void SqlQuery::addBindValue(const QVariant &value, const ParamType /*unused*/)
     /* Need to pass the ParamType::In to preserve the same API because I can't remove this
        parameter so I need to pass something but it has no effect. */
     m_sqlResult->bindValue(index, value, ParamType::In);
+}
+
+void SqlQuery::addBindValue(QVariant &&value, const ParamType /*unused*/)
+{
+    // Append, index after the last value
+    const auto index = m_sqlResult->boundValuesCount();
+
+    /* Need to pass the ParamType::In to preserve the same API because I can't remove this
+       parameter so I need to pass something but it has no effect. */
+    m_sqlResult->bindValue(index, std::move(value), ParamType::In);
 }
 
 QVariant SqlQuery::boundValue(const int index) const

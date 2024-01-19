@@ -90,8 +90,15 @@ namespace Orm::Drivers
             statement. */
         void bindValue(int index, const QVariant &value,
                        ParamType /*unused*/ = ParamType::In);
+        /*! Bound the positional placeholder value at the given index for the prepared
+            statement. */
+        void bindValue(int index, QVariant &&value,
+                       ParamType /*unused*/ = ParamType::In);
+
         /*! Add the placeholder value to the list of positional bound values. */
         void addBindValue(const QVariant &value, ParamType /*unused*/ = ParamType::In);
+        /*! Add the placeholder value to the list of positional bound values. */
+        void addBindValue(QVariant &&value, ParamType /*unused*/ = ParamType::In);
 
         /*! Get the placeholder value at the given index position. */
         QVariant boundValue(int index) const;
