@@ -292,9 +292,7 @@ void MySqlResultPrivate::bindResultBlobs()
        const auto *const fieldInfo = resultField.myField;
 
        // Nothing to do, isn't the BLOB type or some info is missing
-       if (!isBlobType(resultBind.buffer_type) ||
-           meta == nullptr || fieldInfo == nullptr
-       )
+       if (!isBlobType(resultBind.buffer_type) || meta == nullptr || fieldInfo == nullptr)
            continue;
 
        // Update the buffer length to the BLOB max. length in the current result set
