@@ -56,6 +56,8 @@ namespace Orm::Drivers::MySql
         bool rollbackTransaction() final;
 
         /* Others */
+        /*! Get the maximum identifier length for the current driver. */
+        inline int maximumIdentifierLength(IdentifierType type) const final;
         /*! Determine whether the given MySQL identifier is escaped. */
         bool isIdentifierEscaped(const QString &identifier,
                                  IdentifierType type) const final;
@@ -74,6 +76,14 @@ namespace Orm::Drivers::MySql
         using namespace Qt::StringLiterals; // NOLINT(google-build-using-namespace)
 
         return u"QMYSQL"_s;
+    }
+
+    /* Others */
+
+    int MySqlDriver::maximumIdentifierLength(const IdentifierType /*unused*/) const
+    {
+        // https://dev.mysql.com/doc/refman/8.3/en/identifier-length.html
+        return 64;
     }
 
 } // namespace Orm::Drivers::MySql
