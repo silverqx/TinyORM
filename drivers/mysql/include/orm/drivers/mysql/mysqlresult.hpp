@@ -48,7 +48,7 @@ namespace Orm::Drivers::MySql
         QVariant lastInsertId() const final;
 
         /*! Retrieve the record at the given index and position the cursor on it. */
-        bool fetch(int i) final;
+        bool fetch(int index) final;
         /*! Retrieve the first record and position the cursor on it. */
         bool fetchFirst() final;
         /*! Retrieve the last record and position the cursor on it. */
