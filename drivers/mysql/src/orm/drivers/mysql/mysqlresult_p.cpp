@@ -336,7 +336,7 @@ std::optional<QString> MySqlResultPrivate::fetchErrorMessage(const int status) n
 
 QVariant MySqlResultPrivate::getValueForNormal(const ResultFieldsSizeType index) const
 {
-    const auto &field = resultFields[index]; // Index bound checked in MySqlResult::data()
+    const auto &field = resultFields[index]; // Index bounds checked in MySqlResult::data()
     const auto *const column = row[index];
 
     // Field is NULL
@@ -362,7 +362,7 @@ QVariant MySqlResultPrivate::getValueForNormal(const ResultFieldsSizeType index)
 
 QVariant MySqlResultPrivate::getValueForPrepared(const ResultFieldsSizeType index) const
 {
-    const auto &field = resultFields[index]; // Index bound checked in MySqlResult::data()
+    const auto &field = resultFields[index]; // Index bounds checked in MySqlResult::data()
 
     // Field is NULL
     if (field.isNull)
@@ -659,7 +659,7 @@ QVariant
 MySqlResultPrivate::toQByteArray(const ResultFieldsSizeType index) const
 {
     if (preparedQuery) {
-        const auto &field = resultFields[index]; // Index bound checked in MySqlResult::data()
+        const auto &field = resultFields[index]; // Index bounds checked in MySqlResult::data()
         return {QByteArray(field.fieldValue.get(), field.fieldValueSize)};
     }
 
