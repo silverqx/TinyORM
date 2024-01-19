@@ -370,9 +370,9 @@ QVariant SqlQuery::value(const int index) const
 
 QVariant SqlQuery::value(const QString &name) const
 {
-    if (const auto index = m_sqlResult->record().indexOf(name);
-        index > -1
-    )
+    const auto index = m_sqlResult->record().indexOf(name);
+
+    if (index > -1)
         return value(index);
 
     qWarning().noquote() << u"SqlQuery::value: unknown field name '%1'"_s.arg(name);
@@ -392,9 +392,9 @@ bool SqlQuery::isNull(const int index) const
 
 bool SqlQuery::isNull(const QString &name) const
 {
-    if (const auto index = m_sqlResult->record().indexOf(name);
-        index > -1
-    )
+    const auto index = m_sqlResult->record().indexOf(name);
+
+    if (index > -1)
         return isNull(index);
 
     qWarning().noquote() << u"SqlQuery::isNull: unknown field name '%1'"_s.arg(name);
