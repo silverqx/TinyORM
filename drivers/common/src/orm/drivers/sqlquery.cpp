@@ -360,7 +360,7 @@ bool SqlQuery::seek(const int index, const bool relative)
 
 QVariant SqlQuery::value(const int index) const
 {
-    if (isActive() && isValid() && isSelect() && index > -1)
+    if (isActive() && isValid() && isSelect())
         return m_sqlResult->data(index);
 
     qWarning("SqlQuery::value: not positioned on a valid record");
