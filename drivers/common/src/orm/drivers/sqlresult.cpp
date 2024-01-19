@@ -146,12 +146,33 @@ void SqlResult::bindValue(const int index, const QVariant &value,
     d->boundValues[index] = value;
 }
 
+void SqlResult::bindValue(const int index, QVariant &&value,
+                          const ParamType /*unused*/)
+{
+    Q_D(SqlResult);
+
+    /* Resize the underlying vector to assign a value to the given index
+       (avoid out of bounds). */
+    if (d->boundValues.size() <= index)
+        d->boundValues.resize(index + 1);
+
+    d->boundValues[index] = std::move(value);
+}
+
 void SqlResult::addBindValue(const QVariant &value, const ParamType /*unused*/)
 {
     // Append; index is after the last value
     const auto index = boundValuesCount();
 
     bindValue(index, value, ParamType::In);
+}
+
+void SqlResult::addBindValue(QVariant &&value, const ParamType /*unused*/)
+{
+    // Append; index is after the last value
+    const auto index = boundValuesCount();
+
+    bindValue(index, std::move(value), ParamType::In);
 }
 
 QVariant SqlResult::boundValue(const int index) const
