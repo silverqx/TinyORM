@@ -17,7 +17,7 @@ Param(
     [ValidatePattern('^[8-12]\.\d{1,2}\$',
         ErrorMessage = 'The argument "{0}" is not the correct Qt version number. ' +
         'The argument "{0}" does not match the "{1}" pattern.')]
-    [string] $MySQLVersion = '8.2',
+    [string] $MySQLVersion = '8.3',
 
     [Parameter(HelpMessage = 'Clean CMake build (delete the $QtVersion build folder).')]
     [switch] $CleanBuild

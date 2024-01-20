@@ -124,7 +124,7 @@ defineReplace(tiny_mysql_root_win32) {
         return()
 
     # Supported MySQL versions
-    mysqlVersions = 8.2 8.1 8.0 5.7
+    mysqlVersions = 8.3 8.2 8.1 8.0 5.7
 
     for(version, mysqlVersions) {
         mysqlRoot = $$clean_path(\
