@@ -67,7 +67,7 @@ SqlError SqlQuery::lastError() const
     return m_sqlResult->lastError();
 }
 
-int SqlQuery::at() const
+SqlQuery::size_type SqlQuery::at() const
 {
     return m_sqlResult->at();
 }
@@ -205,7 +205,7 @@ bool SqlQuery::exec()
     return result;
 }
 
-void SqlQuery::bindValue(const int index, const QVariant &value,
+void SqlQuery::bindValue(const size_type index, const QVariant &value,
                          const ParamType /*unused*/)
 {
     /* Need to pass the ParamType::In to preserve the same API because I can't remove this
@@ -213,7 +213,7 @@ void SqlQuery::bindValue(const int index, const QVariant &value,
     m_sqlResult->bindValue(index, value, ParamType::In);
 }
 
-void SqlQuery::bindValue(const int index, QVariant &&value,
+void SqlQuery::bindValue(const size_type index, QVariant &&value,
                          const ParamType /*unused*/)
 {
     /* Need to pass the ParamType::In to preserve the same API because I can't remove this
@@ -241,7 +241,7 @@ void SqlQuery::addBindValue(QVariant &&value, const ParamType /*unused*/)
     m_sqlResult->bindValue(index, std::move(value), ParamType::In);
 }
 
-QVariant SqlQuery::boundValue(const int index) const
+QVariant SqlQuery::boundValue(const size_type index) const
 {
     return m_sqlResult->boundValue(index);
 }
@@ -263,7 +263,7 @@ SqlRecord SqlQuery::record() const
 
     // Populate also the field values if the cursor is positioned on a valid record/row
     if (isValid())
-        for (qsizetype index = 0; index < record.count(); ++index)
+        for (decltype (record)::size_type index = 0; index < record.count(); ++index)
             record.setValue(index, value(index));
 
     return record;
@@ -339,13 +339,13 @@ bool SqlQuery::last()
     return m_sqlResult->fetchLast();
 }
 
-bool SqlQuery::seek(const int index, const bool relative)
+bool SqlQuery::seek(const size_type index, const bool relative)
 {
     // Nothing to do
     if (!isSelect() || !isActive())
         return false;
 
-    auto actualIdx = static_cast<int>(BeforeFirstRow);
+    auto actualIdx = static_cast<size_type>(BeforeFirstRow);
 
     // Arbitrary seek
     if (!relative && !seekArbitrary(index, actualIdx))
@@ -358,7 +358,7 @@ bool SqlQuery::seek(const int index, const bool relative)
     return mapSeekToFetch(actualIdx);
 }
 
-QVariant SqlQuery::value(const int index) const
+QVariant SqlQuery::value(const size_type index) const
 {
     if (isActive() && isValid() && isSelect())
         return m_sqlResult->data(index);
@@ -380,7 +380,7 @@ QVariant SqlQuery::value(const QString &name) const
     return {};
 }
 
-bool SqlQuery::isNull(const int index) const
+bool SqlQuery::isNull(const size_type index) const
 {
     if (isActive() && isValid())
         return m_sqlResult->isNull(index);
@@ -402,7 +402,7 @@ bool SqlQuery::isNull(const QString &name) const
     return true;
 }
 
-int SqlQuery::size() const
+SqlQuery::size_type SqlQuery::size() const
 {
     // Nothing to do
     if (!driverWeak().lock()->hasFeature(SqlDriver::QuerySize) ||
@@ -413,7 +413,7 @@ int SqlQuery::size() const
     return m_sqlResult->size();
 }
 
-int SqlQuery::numRowsAffected() const
+SqlQuery::size_type SqlQuery::numRowsAffected() const
 {
     // Nothing to do
     if (!isActive())
@@ -465,7 +465,7 @@ std::weak_ptr<SqlDriver> SqlQuery::driverWeak() noexcept
 
 /* Result sets */
 
-bool SqlQuery::seekArbitrary(const int index, int &actualIdx)
+bool SqlQuery::seekArbitrary(const size_type index, size_type &actualIdx)
 {
     // Nothing to do
     if (index < 0) {
@@ -477,7 +477,7 @@ bool SqlQuery::seekArbitrary(const int index, int &actualIdx)
     return true;
 }
 
-bool SqlQuery::seekRelative(const int index, int &actualIdx)
+bool SqlQuery::seekRelative(const size_type index, size_type &actualIdx)
 {
     // CUR drivers finish this if I will have higher IQ silverqx
     switch (at()) {
@@ -508,10 +508,10 @@ bool SqlQuery::seekRelative(const int index, int &actualIdx)
     return true;
 }
 
-bool SqlQuery::mapSeekToFetch(const int actualIdx)
+bool SqlQuery::mapSeekToFetch(const size_type actualIdx)
 {
     // fetchNext()
-    if (actualIdx == at() + 1 && at() != static_cast<int>(BeforeFirstRow)) {
+    if (actualIdx == at() + 1 && at() != static_cast<size_type>(BeforeFirstRow)) {
         if (m_sqlResult->fetchNext())
             return true;
 

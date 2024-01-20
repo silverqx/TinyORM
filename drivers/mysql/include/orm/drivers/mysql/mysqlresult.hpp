@@ -48,7 +48,7 @@ namespace Orm::Drivers::MySql
         QVariant lastInsertId() const final;
 
         /*! Retrieve the record at the given index and position the cursor on it. */
-        bool fetch(int index) final;
+        bool fetch(size_type index) final;
         /*! Retrieve the first record and position the cursor on it. */
         bool fetchFirst() final;
         /*! Retrieve the last record and position the cursor on it. */
@@ -57,16 +57,16 @@ namespace Orm::Drivers::MySql
         bool fetchNext() final;
 
         /*! Get the field value at the given index in the current record. */
-        QVariant data(int index) final;
+        QVariant data(size_type index) final;
         /*! Determine whether the field at the given index is NULL. */
-        bool isNull(int index) final;
+        bool isNull(size_type index) final;
 
         /*! Get the size of the result (number of rows returned), -1 if the size can't be
             determined (database must support reporting about query sizes). */
-        int size() final;
+        size_type size() final;
         /*! Get the number of affected rows for DML queries or -1 if the size can't be
             determined. */
-        int numRowsAffected() final;
+        size_type numRowsAffected() final;
 
         /*! Releases memory associated with the current result set. */
         void detachFromResultSet() final;

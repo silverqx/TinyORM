@@ -28,6 +28,9 @@ namespace Orm::Drivers
         using enum Orm::Drivers::NumericalPrecisionPolicy;
 
     public:
+        /*! Alias for the cursor type. */
+        using size_type = int;
+
         /*! Constructor. */
         explicit SqlResultPrivate(const std::weak_ptr<SqlDriver> &driver);
         /*! Default destructor. */
@@ -54,7 +57,7 @@ namespace Orm::Drivers
         NumericalPrecisionPolicy precisionPolicy = LowPrecisionDouble;
 
         /*! The current cursor position. */
-        int cursor = BeforeFirstRow;
+        size_type cursor = BeforeFirstRow;
 
         /*! Is this result active? */
         bool isActive = false;

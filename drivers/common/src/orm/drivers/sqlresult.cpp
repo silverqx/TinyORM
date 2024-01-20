@@ -35,8 +35,8 @@ bool SqlResult::isValid() const noexcept
 {
     Q_D(const SqlResult);
 
-    return d->cursor != static_cast<int>(BeforeFirstRow) &&
-           d->cursor != static_cast<int>(AfterLastRow);
+    return d->cursor != static_cast<size_type>(BeforeFirstRow) &&
+           d->cursor != static_cast<size_type>(AfterLastRow);
 }
 
 QString SqlResult::query() const noexcept
@@ -67,13 +67,13 @@ bool SqlResult::setLastError(const SqlError &error)
     return false;
 }
 
-int SqlResult::at() const noexcept
+SqlResult::size_type SqlResult::at() const noexcept
 {
     Q_D(const SqlResult);
     return d->cursor;
 }
 
-void SqlResult::setAt(const int index) noexcept
+void SqlResult::setAt(const size_type index) noexcept
 {
     Q_D(SqlResult);
     d->cursor = index;
@@ -133,7 +133,7 @@ std::weak_ptr<const SqlDriver> SqlResult::driverWeak() const noexcept
 
 /* Prepared queries */
 
-void SqlResult::bindValue(const int index, const QVariant &value,
+void SqlResult::bindValue(const size_type index, const QVariant &value,
                           const ParamType /*unused*/)
 {
     Q_D(SqlResult);
@@ -146,7 +146,7 @@ void SqlResult::bindValue(const int index, const QVariant &value,
     d->boundValues[index] = value;
 }
 
-void SqlResult::bindValue(const int index, QVariant &&value,
+void SqlResult::bindValue(const size_type index, QVariant &&value,
                           const ParamType /*unused*/)
 {
     Q_D(SqlResult);
@@ -175,16 +175,16 @@ void SqlResult::addBindValue(QVariant &&value, const ParamType /*unused*/)
     bindValue(index, std::move(value), ParamType::In);
 }
 
-QVariant SqlResult::boundValue(const int index) const
+QVariant SqlResult::boundValue(const size_type index) const
 {
     Q_D(const SqlResult);
     return d->boundValues.value(index);
 }
 
-int SqlResult::boundValuesCount() const
+SqlResult::size_type SqlResult::boundValuesCount() const
 {
     Q_D(const SqlResult);
-    return d->boundValues.size();
+    return static_cast<size_type>(d->boundValues.size());
 }
 
 QVariantList SqlResult::boundValues() const
