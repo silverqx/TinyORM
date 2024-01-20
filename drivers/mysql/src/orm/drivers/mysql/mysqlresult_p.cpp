@@ -103,7 +103,7 @@ bool MySqlResultPrivate::bindResultValues()
 //    }
 
     // Allocate memory for result sets that will be obtained from the database
-    allocateMemoryForBindings(resultBinds, static_cast<std::size_t>(fieldsCount));
+    allocateMemoryForBindings(resultBinds, fieldsCount);
 
     uint index = 0;
     const MYSQL_FIELD *fieldInfo = nullptr;
@@ -156,7 +156,7 @@ bool MySqlResultPrivate::bindResultValues()
 
 bool MySqlResultPrivate::shouldPrepareBindings(const ulong placeholdersCount) const
 {
-    const auto boundValuesSize = static_cast<ulong>(boundValues.size());
+    const auto boundValuesSize = boundValues.size();
 
     // Check prepared bindings count and show warnings
     checkPreparedBindingsCount(placeholdersCount, boundValuesSize);
@@ -201,7 +201,9 @@ void MySqlResultPrivate::bindPreparedBindings(
     allocateMemoryForBindings(preparedBinds,
                               static_cast<std::size_t>(boundValues.size()));
 
-    for (qsizetype index = 0; index < boundValues.size(); ++index) {
+    /*! Alias for bound values size type. */
+    using BoundValuesSizeType = decltype (boundValues)::size_type;
+    for (BoundValuesSizeType index = 0; index < boundValues.size(); ++index) {
         // MySQL storage for prepared binding to prepare
         auto &preparedBind = preparedBinds[index];
         // Prepared binding value to prepare
@@ -348,7 +350,7 @@ QVariant MySqlResultPrivate::getValueForNormal(const ResultFieldsSizeType index)
         return QVariant::fromValue(toBitField(field, column));
 
     QString value;
-    quint64 fieldLength = 0;
+    std::size_t fieldLength = 0;
     const auto typeId = field.metaType.id();
     // CUR drivers revisit silverqx
     fieldLength = mysql_fetch_lengths(result)[index];
@@ -660,11 +662,12 @@ MySqlResultPrivate::toQByteArray(const ResultFieldsSizeType index) const
 {
     if (preparedQuery) {
         const auto &field = resultFields[index]; // Index bounds checked in MySqlResult::data()
-        return {QByteArray(field.fieldValue.get(), field.fieldValueSize)};
+        return {QByteArray(field.fieldValue.get(),
+                           static_cast<QByteArray::size_type>(field.fieldValueSize))};
     }
 
     // CUR drivers revisit this if I need to fetch the length silverqx
-    const ulong fieldLength = mysql_fetch_lengths(result)[index];
+    const auto fieldLength = mysql_fetch_lengths(result)[index];
     return {QByteArray(row[index], static_cast<QByteArray::size_type>(fieldLength))};
 }
 

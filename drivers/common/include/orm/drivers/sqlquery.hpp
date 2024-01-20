@@ -29,6 +29,9 @@ namespace Orm::Drivers
         using NotNull = Orm::Drivers::Utils::NotNull<T>;
 
     public:
+        /*! Alias for the cursor, bound, and result values type. */
+        using size_type = SqlResult::size_type;
+
         /*! Default constructor. */
         SqlQuery();
         /*! Converting constructor from the SqlDatabase. */
@@ -59,7 +62,7 @@ namespace Orm::Drivers
         SqlError lastError() const;
 
         /*! Get the current cursor position (0-based). */
-        int at() const;
+        size_type at() const;
 
         /*! Determine if the query was exec()'d successfully and isn't yet finished. */
         bool isActive() const noexcept;
@@ -88,11 +91,11 @@ namespace Orm::Drivers
 
         /*! Bound the positional placeholder value at the given index for the prepared
             statement. */
-        void bindValue(int index, const QVariant &value,
+        void bindValue(size_type index, const QVariant &value,
                        ParamType /*unused*/ = ParamType::In);
         /*! Bound the positional placeholder value at the given index for the prepared
             statement. */
-        void bindValue(int index, QVariant &&value,
+        void bindValue(size_type index, QVariant &&value,
                        ParamType /*unused*/ = ParamType::In);
 
         /*! Add the placeholder value to the list of positional bound values. */
@@ -101,7 +104,7 @@ namespace Orm::Drivers
         void addBindValue(QVariant &&value, ParamType /*unused*/ = ParamType::In);
 
         /*! Get the placeholder value at the given index position. */
-        QVariant boundValue(int index) const;
+        QVariant boundValue(size_type index) const;
         /*! Get a QVariant vector of all bound values. */
         QVariantList boundValues() const;
 
@@ -120,24 +123,24 @@ namespace Orm::Drivers
         /*! Retrieve the last record and position the cursor on it. */
         bool last();
         /*! Retrieve the record at the given index and position the cursor on it. */
-        bool seek(int index, bool relative = false);
+        bool seek(size_type index, bool relative = false);
 
         /*! Get the field value at the given index in the current record. */
-        QVariant value(int index) const;
+        QVariant value(size_type index) const;
         /*! Get the field value with the field name in the current record. */
         QVariant value(const QString &name) const;
 
         /*! Determine whether the field at the given index is NULL. */
-        bool isNull(int index) const;
+        bool isNull(size_type index) const;
         /*! Determine whether the field with the given field name is NULL. */
         bool isNull(const QString &name) const;
 
         /*! Get the size of the result (number of rows returned), -1 if the size can't be
             determined (database must support reporting about query sizes). */
-        int size() const;
+        size_type size() const;
         /*! Get the number of affected rows for DML queries or -1 if the size can't be
             determined. */
-        int numRowsAffected() const;
+        size_type numRowsAffected() const;
 
         /* Others */
         /*! Instruct the database driver that no more data will be fetched from this query
@@ -153,11 +156,11 @@ namespace Orm::Drivers
 
         /* Result sets */
         /*! Normal seek. */
-        bool seekArbitrary(int index, int &actualIdx);
+        bool seekArbitrary(size_type index, size_type &actualIdx);
         /*! Relative seek. */
-        bool seekRelative(int index, int &actualIdx);
+        bool seekRelative(size_type index, size_type &actualIdx);
         /*! Map the given index to the fetch-related methods that are available. */
-        bool mapSeekToFetch(int actualIdx);
+        bool mapSeekToFetch(size_type actualIdx);
 
         /* Constructors */
         /*! Initialize implementation-dependent query result set for the default

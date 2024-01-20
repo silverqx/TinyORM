@@ -17,8 +17,8 @@ namespace Orm::Drivers
     {
     public:
         /* Container related */
-        using ContainerType = QList<SqlField>;
-        using size_type     = typename ContainerType::size_type;
+        /*! Alias for the SqlRecord size type. */
+        using size_type = int;
 
         /*! Default constructor. */
         inline SqlRecord() = default;
@@ -130,7 +130,7 @@ namespace Orm::Drivers
 
         /* Data members */
         /*! Record fields. */
-        ContainerType m_fields;
+        QList<SqlField> m_fields;
     };
 
     /* public */
@@ -147,7 +147,7 @@ namespace Orm::Drivers
 
     SqlRecord::size_type SqlRecord::count() const
     {
-        return m_fields.size();
+        return static_cast<size_type>(m_fields.size());
     }
 
     bool SqlRecord::contains(const QString &name) const

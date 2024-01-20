@@ -269,7 +269,7 @@ QVariant MySqlResult::lastInsertId() const
     return {};
 }
 
-bool MySqlResult::fetch(const int index)
+bool MySqlResult::fetch(const size_type index)
 {
     Q_D(MySqlResult);
 
@@ -354,7 +354,7 @@ bool MySqlResult::fetchNext()
     return true;
 }
 
-QVariant MySqlResult::data(const int index)
+QVariant MySqlResult::data(const size_type index)
 {
     Q_D(MySqlResult);
 
@@ -369,7 +369,7 @@ QVariant MySqlResult::data(const int index)
     return d->getValueForNormal(idx);
 }
 
-bool MySqlResult::isNull(const int index)
+bool MySqlResult::isNull(const size_type index)
 {
     Q_D(const MySqlResult);
 
@@ -394,7 +394,7 @@ bool MySqlResult::isNull(const int index)
    return d->row[idx] == nullptr;
 }
 
-int MySqlResult::size()
+MySqlResult::size_type MySqlResult::size()
 {
     Q_D(const MySqlResult);
 
@@ -406,21 +406,20 @@ int MySqlResult::size()
 
     // Don't cache the result as it's already cached in the MYSQL_RES/MYSQL_STMT
     if (d->preparedQuery)
-        // CUR drivers fix all these int-s they must be quint64 silverqx
-        return static_cast<int>(mysql_stmt_num_rows(d->stmt));
+        return static_cast<size_type>(mysql_stmt_num_rows(d->stmt));
 
-    return static_cast<int>(mysql_num_rows(d->result));
+    return static_cast<size_type>(mysql_num_rows(d->result));
 }
 
-int MySqlResult::numRowsAffected()
+MySqlResult::size_type MySqlResult::numRowsAffected()
 {
     Q_D(const MySqlResult);
 
     // Don't cache the result as it's already cached in the MYSQL_RES/MYSQL_STMT
     if (d->preparedQuery)
-        return static_cast<int>(mysql_stmt_affected_rows(d->stmt));
+        return static_cast<size_type>(mysql_stmt_affected_rows(d->stmt));
 
-    return static_cast<int>(mysql_affected_rows(d->drv_d_func()->mysql));
+    return static_cast<size_type>(mysql_affected_rows(d->drv_d_func()->mysql));
 }
 
 void MySqlResult::detachFromResultSet()

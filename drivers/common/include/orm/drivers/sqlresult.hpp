@@ -36,6 +36,9 @@ namespace Orm::Drivers
         explicit SqlResult(std::unique_ptr<SqlResultPrivate> &&dd);
 
     public:
+        /*! Alias for the cursor, bound, and result values type. */
+        using size_type = int;
+
         /*! Pure virtual destructor. */
         virtual ~SqlResult() = 0;
 
@@ -66,9 +69,9 @@ namespace Orm::Drivers
         virtual bool setLastError(const SqlError &error);
 
         /*! Get the current cursor position (0-based). */
-        int at() const noexcept;
+        size_type at() const noexcept;
         /*! Set the current cursor position (0-based). */
-        virtual void setAt(int index) noexcept;
+        virtual void setAt(size_type index) noexcept;
 
         /*! Determine whether the result set has records to be retrieved. */
         bool isActive() const noexcept;
@@ -102,10 +105,11 @@ namespace Orm::Drivers
 
         /*! Bound the positional placeholder value at the given index for the prepared
             statement. */
-        virtual void bindValue(int index, const QVariant &value, ParamType /*unused*/);
+        virtual void bindValue(size_type index, const QVariant &value,
+                               ParamType /*unused*/);
         /*! Bound the positional placeholder value at the given index for the prepared
             statement. */
-        virtual void bindValue(int index, QVariant &&value, ParamType /*unused*/);
+        virtual void bindValue(size_type index, QVariant &&value, ParamType /*unused*/);
 
         /*! Add the placeholder value to the list of positional bound values. */
         void addBindValue(const QVariant &value, ParamType /*unused*/);
@@ -113,10 +117,10 @@ namespace Orm::Drivers
         void addBindValue(QVariant &&value, ParamType /*unused*/);
 
         /*! Get the placeholder value at the given index position. */
-        QVariant boundValue(int index) const;
+        QVariant boundValue(size_type index) const;
 
         /*! Get the number of bound values. */
-        int boundValuesCount() const;
+        size_type boundValuesCount() const;
 
         /*! Get a QVariant vector of all bound values. */
         QVariantList boundValues() const;
@@ -136,7 +140,7 @@ namespace Orm::Drivers
         virtual QVariant lastInsertId() const = 0;
 
         /*! Retrieve the record at the given index and position the cursor on it. */
-        virtual bool fetch(int index) = 0;
+        virtual bool fetch(size_type index) = 0;
         /*! Retrieve the first record and position the cursor on it. */
         virtual bool fetchFirst() = 0;
         /*! Retrieve the last record and position the cursor on it. */
@@ -147,16 +151,16 @@ namespace Orm::Drivers
         virtual bool fetchPrevious();
 
         /*! Get the field value at the given index in the current record. */
-        virtual QVariant data(int index) = 0;
+        virtual QVariant data(size_type index) = 0;
         /*! Determine whether the field at the given index is NULL. */
-        virtual bool isNull(int index) = 0;
+        virtual bool isNull(size_type index) = 0;
 
         /*! Get the size of the result (number of rows returned), -1 if the size can't be
             determined (database must support reporting about query sizes). */
-        virtual int size() = 0;
+        virtual size_type size() = 0;
         /*! Get the number of affected rows for DML queries or -1 if the size can't be
             determined. */
-        virtual int numRowsAffected() = 0;
+        virtual size_type numRowsAffected() = 0;
 
         /*! Releases memory associated with the current result set. */
         virtual void detachFromResultSet() = 0;
