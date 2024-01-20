@@ -154,7 +154,7 @@ bool MySqlResultPrivate::bindResultValues()
     return hasFields && wasAllFieldsFetched(fieldsCount, index, "bindResultValues"_L1);
 }
 
-bool MySqlResultPrivate::shouldPrepareBindings(const ulong placeholdersCount) const
+bool MySqlResultPrivate::shouldPrepareBindings(const uint placeholdersCount) const
 {
     const auto boundValuesSize = boundValues.size();
 

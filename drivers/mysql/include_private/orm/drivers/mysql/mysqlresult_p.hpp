@@ -67,7 +67,7 @@ namespace Orm::Drivers::MySql
         bool bindResultValues();
 
         /*! Determine whether the correct number of prepared bindings was bound. */
-        bool shouldPrepareBindings(ulong placeholdersCount) const;
+        bool shouldPrepareBindings(uint placeholdersCount) const;
         /*! Check the correct prepared bindings count and show warnings. */
         static void checkPreparedBindingsCount(ulong placeholdersCount, ulong valuesSize);
 
