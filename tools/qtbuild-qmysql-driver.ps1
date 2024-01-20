@@ -229,13 +229,13 @@ qt-cmake `
     -S "C:/Qt/$QtVersion/Src/qtbase/src/plugins/sqldrivers" `
     -B . `
     -G Ninja `
-    -D CMAKE_BUILD_TYPE=Debug `
-    -D CMAKE_INSTALL_PREFIX="C:/Qt/$QtVersion/msvc2019_64" `
-    -D MySQL_INCLUDE_DIR="${Script:MySqlServerPath}/include" `
-    -D MySQL_LIBRARY="${Script:MySqlServerPath}/lib/libmysql.lib" `
-    -D FEATURE_sql_psql=OFF `
-    -D FEATURE_sql_odbc=OFF `
-    -D FEATURE_sql_sqlite=OFF
+    -D CMAKE_BUILD_TYPE:STRING=Debug `
+    -D CMAKE_INSTALL_PREFIX:PATH="C:/Qt/$QtVersion/msvc2019_64" `
+    -D MySQL_INCLUDE_DIR:PATH="${Script:MySqlServerPath}/include" `
+    -D MySQL_LIBRARY:FILEPATH="${Script:MySqlServerPath}/lib/libmysql.lib" `
+    -D FEATURE_sql_psql:BOOL=OFF `
+    -D FEATURE_sql_odbc:BOOL=OFF `
+    -D FEATURE_sql_sqlite:BOOL=OFF
 
 NewLine
 
@@ -256,13 +256,13 @@ qt-cmake `
     -S "C:/Qt/$QtVersion/Src/qtbase/src/plugins/sqldrivers" `
     -B . `
     -G Ninja `
-    -D CMAKE_BUILD_TYPE=RelWithDebInfo `
-    -D CMAKE_INSTALL_PREFIX="C:/Qt/$QtVersion/msvc2019_64" `
-    -D MySQL_INCLUDE_DIR="${Script:MySqlServerPath}/include" `
-    -D MySQL_LIBRARY="${Script:MySqlServerPath}/lib/libmysql.lib" `
-    -D FEATURE_sql_psql=OFF `
-    -D FEATURE_sql_odbc=OFF `
-    -D FEATURE_sql_sqlite=OFF
+    -D CMAKE_BUILD_TYPE:STRING=RelWithDebInfo `
+    -D CMAKE_INSTALL_PREFIX:PATH="C:/Qt/$QtVersion/msvc2019_64" `
+    -D MySQL_INCLUDE_DIR:PATH="${Script:MySqlServerPath}/include" `
+    -D MySQL_LIBRARY:FILEPATH="${Script:MySqlServerPath}/lib/libmysql.lib" `
+    -D FEATURE_sql_psql:BOOL=OFF `
+    -D FEATURE_sql_odbc:BOOL=OFF `
+    -D FEATURE_sql_sqlite:BOOL=OFF
 
 NewLine
 
