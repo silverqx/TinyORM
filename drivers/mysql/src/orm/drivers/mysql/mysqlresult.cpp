@@ -163,14 +163,20 @@ bool MySqlResult::exec()
                                 SqlError::StatementError, d->stmt));
 
     // Bind prepared bindings if the correct number of prepared bindings was bound
-    if (d->shouldPrepareBindings(
-            // Number of parameter placeholders in the prepared statement
-            mysql_stmt_param_count(d->stmt))
+        // Number of parameter placeholders in the prepared statement
+    if (const auto paramCount = static_cast<uint>(mysql_stmt_param_count(d->stmt));
+        d->shouldPrepareBindings(paramCount)
     ) {
         d->bindPreparedBindings(nullVector, stringVector, timeVector);
 
         // Bind data for parameter placeholders 🕺
+#if defined(MARIADB_VERSION_ID) || MYSQL_VERSION_ID < 80300
         if (mysql_stmt_bind_param(d->stmt, d->preparedBinds.get()))
+#else
+        if (mysql_stmt_bind_named_param(d->stmt, d->preparedBinds.get(), paramCount,
+                                        nullptr)
+        )
+#endif
             return setLastError(MySqlResultPrivate::createStmtError(
                                     u"Unable to bind data for parameter placeholders"_s,
                                     SqlError::StatementError, d->stmt));
