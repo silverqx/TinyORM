@@ -278,7 +278,7 @@ void MySqlResultPrivate::bindPreparedBindings(
                                         boundValue.toString().toUtf8());
 
             preparedBind.buffer_type   = MYSQL_TYPE_STRING;
-            preparedBind.buffer_length = stringRef.size();
+            preparedBind.buffer_length = static_cast<ulong>(stringRef.size());
             preparedBind.buffer        = const_cast<char *>(stringRef.constData());
             break;
         }
