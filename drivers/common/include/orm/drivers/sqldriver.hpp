@@ -65,8 +65,6 @@ namespace Orm::Drivers
 
         /*! Database driver type enum. */
         enum DbmsType {
-            /*! Unknown database driver. */
-            UnknownDbms,
             /*! MySQL database driver. */
             MySqlServer,
             // Not implemented yet :/ (must be defined because eg. Orm::SqlQuery use it)
