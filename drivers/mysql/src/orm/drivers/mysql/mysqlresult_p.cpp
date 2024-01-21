@@ -116,9 +116,6 @@ bool MySqlResultPrivate::bindResultValues()
         field.myField = fieldInfo;
         field.metaType = MySqlUtils::decodeMySqlType(fieldInfo->type, fieldInfo->flags);
         resultBind.buffer_type = fieldInfo->type;
-        // CUR drivers I didn't see +1 for NULL char anywhere on any MySQL docs page in any example, try it with full buffers for more type like char[40] or varchar[255] and find out how it works and behaves silverqx
-        // +1 for the NULL character
-        resultBind.buffer_length = field.fieldValueSize = fieldInfo->length + 1UL;
 
         // CUR drivers finish this during testing BLOB-s silverqx
         if (isBlobType(fieldInfo->type)) {
@@ -130,10 +127,15 @@ bool MySqlResultPrivate::bindResultValues()
         }
         else if (MySqlUtils::isTimeOrDate(fieldInfo->type))
             resultBind.buffer_length = field.fieldValueSize = sizeof (QT_MYSQL_TIME);
+
         else if (MySqlUtils::isInteger(field.metaType.id()))
             resultBind.buffer_length = field.fieldValueSize = 8UL;
-        else
+        else {
             resultBind.buffer_type = MYSQL_TYPE_STRING;
+            // CUR drivers I didn't see +1 for NULL char anywhere on any MySQL docs page in any example, try it with full buffers for more type like char[40] or varchar[255] and find out how it works and behaves silverqx
+            // +1 for the NULL character
+            resultBind.buffer_length = field.fieldValueSize = fieldInfo->length + 1UL;
+        }
 
         // The following two lines only bind data members using pointers (no real values)
         resultBind.is_null     = &field.isNull;
