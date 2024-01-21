@@ -118,20 +118,20 @@ bool MySqlResultPrivate::bindResultValues()
         resultBind.buffer_type = fieldInfo->type;
         // CUR drivers I didn't see +1 for NULL char anywhere on any MySQL docs page in any example, try it with full buffers for more type like char[40] or varchar[255] and find out how it works and behaves silverqx
         // +1 for the NULL character
-        resultBind.buffer_length = field.fieldValueSize = fieldInfo->length + 1;
+        resultBind.buffer_length = field.fieldValueSize = fieldInfo->length + 1UL;
 
         // CUR drivers finish this during testing BLOB-s silverqx
         if (isBlobType(fieldInfo->type)) {
             /* The size of a blob-field is available as soon as
                the mysql_stmt_store_result() is called, it's after
                the mysql_stmt_exec() in MySqlResult::exec(). */
-            resultBind.buffer_length = field.fieldValueSize = 0;
+            resultBind.buffer_length = field.fieldValueSize = 0UL;
             hasBlobs = true;
         }
         else if (MySqlUtils::isTimeOrDate(fieldInfo->type))
             resultBind.buffer_length = field.fieldValueSize = sizeof (QT_MYSQL_TIME);
         else if (MySqlUtils::isInteger(field.metaType.id()))
-            resultBind.buffer_length = field.fieldValueSize = 8;
+            resultBind.buffer_length = field.fieldValueSize = 8UL;
         else
             resultBind.buffer_type = MYSQL_TYPE_STRING;
 
@@ -142,8 +142,8 @@ bool MySqlResultPrivate::bindResultValues()
 
         /* Prepare the output/result buffer (nothing to do with prepared bindings),
            +1 for the terminating null character. */
-        field.fieldValue = resultBind.buffer_length > 0
-                           ? std::make_unique<char[]>(resultBind.buffer_length + 1) // NOLINT(modernize-avoid-c-arrays)
+        field.fieldValue = resultBind.buffer_length > 0UL
+                           ? std::make_unique<char[]>(resultBind.buffer_length + 1UL) // NOLINT(modernize-avoid-c-arrays)
                            : nullptr;
         resultBind.buffer = static_cast<void *>(field.fieldValue.get());
 
