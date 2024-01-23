@@ -275,7 +275,7 @@ defaultAttributeValues_WithQDateTime_InstanceMethod_WithConnection() const
 {
     const auto connectionForInstance =
             QStringLiteral(
-                "tinyorm_pgsql_tests-tst_Model_Connection_Independent-"
+                "tinyorm_postgres_tests-tst_Model_Connection_Independent-"
                 "defaultAttributeValues_WithQDateTime");
 
     // The Model::instance() method must work well (with connection override)
@@ -302,7 +302,7 @@ defaultAttributeValues_WithQDateTime_InstanceAttributesMethod_WithConnection() c
 {
     const auto connectionForInstance =
             QStringLiteral(
-                "tinyorm_pgsql_tests-tst_Model_Connection_Independent-"
+                "tinyorm_postgres_tests-tst_Model_Connection_Independent-"
                 "defaultAttributeValues_WithQDateTime");
 
     const auto name = QStringLiteral("test22");
@@ -441,7 +441,7 @@ defaultAttributeValues_WithQDateTime_InstanceHeapMethod_WithConnection() const
 {
     const auto connectionForInstance =
             QStringLiteral(
-                "tinyorm_pgsql_tests-tst_Model_Connection_Independent-"
+                "tinyorm_postgres_tests-tst_Model_Connection_Independent-"
                 "defaultAttributeValues_WithQDateTime");
 
     // The Model::instance() method must work well (with connection override)
@@ -468,7 +468,7 @@ defaultAttributeValues_WithQDateTime_InstanceHeapAttributesMethod_WithConnection
 {
     const auto connectionForInstance =
             QStringLiteral(
-                "tinyorm_pgsql_tests-tst_Model_Connection_Independent-"
+                "tinyorm_postgres_tests-tst_Model_Connection_Independent-"
                 "defaultAttributeValues_WithQDateTime");
 
     const auto name = QStringLiteral("test22");

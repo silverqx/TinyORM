@@ -55,7 +55,7 @@ namespace TestUtils
         /*! SQLite connection name. */
         inline static const QString SQLITE     = "tinyorm_sqlite_tests";
         /*! PostgreSQL connection name. */
-        inline static const QString POSTGRESQL = "tinyorm_pgsql_tests";
+        inline static const QString POSTGRESQL = "tinyorm_postgres_tests";
 
         /* Create connection/s for the whole unit test case */
         /*! Create all database connections which will be tested. */
