@@ -107,6 +107,8 @@ namespace TestUtils
         /*! Check whether environment variables are correctly set. */
         static bool envVariablesDefined(const std::vector<const char *> &envVariables);
 
+        /*! Create the database manager instance. */
+        static std::shared_ptr<DatabaseManager> createDatabaseManager();
         /*! Get a reference to the database manager. */
         static DatabaseManager &manager();
         /*! Get a database manager instance. */

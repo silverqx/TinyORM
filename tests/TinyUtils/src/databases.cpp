@@ -80,8 +80,7 @@ QStringList Databases::createConnections(const QStringList &connections)
 {
     throwIfConnectionsInitialized();
 
-    // Ownership of a shared_ptr()
-    m_dm = DB::create();
+    createDatabaseManager();
 
     /* The default connection is empty for tests, there is no default connection
        because it can produce hard to find bugs, I have to be explicit about
@@ -215,6 +214,14 @@ bool Databases::envVariablesDefined(const std::vector<const char *> &envVariable
     {
         return !qEnvironmentVariableIsEmpty(envVariable);
     });
+}
+
+std::shared_ptr<Databases::DatabaseManager> Databases::createDatabaseManager()
+{
+    // Ownership of a shared_ptr()
+    m_dm = DB::create(EMPTY);
+
+    return m_dm;
 }
 
 DatabaseManager &Databases::manager()
