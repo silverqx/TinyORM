@@ -108,9 +108,9 @@ namespace TestUtils
         static bool envVariablesDefined(const std::vector<const char *> &envVariables);
 
         /*! Get a reference to the database manager. */
-        static Orm::DatabaseManager &manager();
+        static DatabaseManager &manager();
         /*! Get a database manager instance. */
-        static std::shared_ptr<Orm::DatabaseManager> managerShared();
+        static std::shared_ptr<DatabaseManager> managerShared();
 
     private:
         /*! Create database configurations hash. */
@@ -159,7 +159,7 @@ namespace TestUtils
         static void throwIfConnectionsInitialized();
 
         /*! Shared pointer to the DatabaseManager instance. */
-        static std::shared_ptr<Orm::DatabaseManager> m_dm;
+        static std::shared_ptr<DatabaseManager> m_dm;
         /*! Database configurations map. */
         static ConfigurationsType m_configurations;
     };

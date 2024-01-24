@@ -217,7 +217,7 @@ bool Databases::envVariablesDefined(const std::vector<const char *> &envVariable
     });
 }
 
-Orm::DatabaseManager &Databases::manager()
+DatabaseManager &Databases::manager()
 {
     throwIfNoManagerInstance();
 
