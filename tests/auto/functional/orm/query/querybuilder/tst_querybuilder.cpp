@@ -586,7 +586,7 @@ void tst_QueryBuilder::whereDate_QString()
     QFETCH_GLOBAL(QString, connection);
 
     auto result = createQuery(connection)->from("torrents")
-                  .whereDate(CREATED_AT, LE, QStringLiteral("2018-08-03"))
+                  .whereDate(CREATED_AT, LE, sl("2018-08-03"))
                   .orderBy(CREATED_AT)
                   .get();
 
@@ -669,7 +669,7 @@ void tst_QueryBuilder::whereTime_QString()
     QFETCH_GLOBAL(QString, connection);
 
     auto result = createQuery(connection)->from("torrents")
-                  .whereTime(CREATED_AT, LE, QStringLiteral("08:10:23"))
+                  .whereTime(CREATED_AT, LE, sl("08:10:23"))
                   .orderBy(CREATED_AT)
                   .get();
 
@@ -750,7 +750,7 @@ void tst_QueryBuilder::whereDay_QString()
     QFETCH_GLOBAL(QString, connection);
 
     auto result = createQuery(connection)->from("torrents")
-                  .whereDay(CREATED_AT, LE, QStringLiteral("3"))
+                  .whereDay(CREATED_AT, LE, sl("3"))
                   .orderBy(CREATED_AT)
                   .get();
 
@@ -858,7 +858,7 @@ void tst_QueryBuilder::whereMonth_QString()
     QFETCH_GLOBAL(QString, connection);
 
     auto result = createQuery(connection)->from("torrents")
-                  .whereMonth(CREATED_AT, LE, QStringLiteral("8"))
+                  .whereMonth(CREATED_AT, LE, sl("8"))
                   .orderBy(CREATED_AT)
                   .get();
 
@@ -966,7 +966,7 @@ void tst_QueryBuilder::whereYear_QString()
     QFETCH_GLOBAL(QString, connection);
 
     auto result = createQuery(connection)->from("torrents")
-                  .whereYear(CREATED_AT, LE, QStringLiteral("2018"))
+                  .whereYear(CREATED_AT, LE, sl("2018"))
                   .orderBy(CREATED_AT)
                   .get();
 
@@ -1733,7 +1733,7 @@ void tst_QueryBuilder::chunk_EmptyResult() const
     auto callbackInvoked = false;
 
     auto result = createQuery(connection)->from("file_property_properties")
-                  .whereEq(NAME, QStringLiteral("dummy-NON_EXISTENT"))
+                  .whereEq(NAME, sl("dummy-NON_EXISTENT"))
                   .orderBy(ID)
                   .chunk(3, [&callbackInvoked]
                             (SqlQuery &/*unused*/, const qint64 /*unused*/)
@@ -1826,7 +1826,7 @@ void tst_QueryBuilder::each_EmptyResult() const
     auto callbackInvoked = false;
 
     auto result = createQuery(connection)->from("file_property_properties")
-                  .whereEq(NAME, QStringLiteral("dummy-NON_EXISTENT"))
+                  .whereEq(NAME, sl("dummy-NON_EXISTENT"))
                   .orderBy(ID)
                   .each([&callbackInvoked]
                         (SqlQuery &/*unused*/, const qint64 /*unused*/)
@@ -1931,7 +1931,7 @@ void tst_QueryBuilder::chunkById_EmptyResult() const
     auto callbackInvoked = false;
 
     auto result = createQuery(connection)->from("file_property_properties")
-                  .whereEq(NAME, QStringLiteral("dummy-NON_EXISTENT"))
+                  .whereEq(NAME, sl("dummy-NON_EXISTENT"))
                   .orderBy(ID)
                   .chunkById(3, [&callbackInvoked]
                                 (SqlQuery &/*unused*/, const qint64 /*unused*/)
@@ -2041,7 +2041,7 @@ void tst_QueryBuilder::chunkById_EmptyResult_WithAlias() const
 
     auto result = createQuery(connection)->from("file_property_properties")
                   .select({ASTERISK, "id as id_as"})
-                  .whereEq(NAME, QStringLiteral("dummy-NON_EXISTENT"))
+                  .whereEq(NAME, sl("dummy-NON_EXISTENT"))
                   .orderBy(ID)
                   .chunkById(3, [&callbackInvoked]
                                 (SqlQuery &/*unused*/, const qint64 /*unused*/)
@@ -2123,7 +2123,7 @@ void tst_QueryBuilder::eachById_EmptyResult() const
     auto callbackInvoked = false;
 
     auto result = createQuery(connection)->from("file_property_properties")
-                  .whereEq(NAME, QStringLiteral("dummy-NON_EXISTENT"))
+                  .whereEq(NAME, sl("dummy-NON_EXISTENT"))
                   .orderBy(ID)
                   .eachById([&callbackInvoked]
                             (SqlQuery &/*unused*/, const qint64 /*unused*/)
@@ -2209,7 +2209,7 @@ void tst_QueryBuilder::eachById_EmptyResult_WithAlias() const
 
     auto result = createQuery(connection)->from("file_property_properties")
                   .select({ASTERISK, "id as id_as"})
-                  .whereEq(NAME, QStringLiteral("dummy-NON_EXISTENT"))
+                  .whereEq(NAME, sl("dummy-NON_EXISTENT"))
                   .orderBy(ID)
                   .eachById([&callbackInvoked]
                             (SqlQuery &/*unused*/, const qint64 /*unused*/)

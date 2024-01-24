@@ -94,7 +94,7 @@ void tst_DatabaseConnection::pingDatabase() const
     if (const auto driverName = connectionRef.driverName();
         driverName != QMYSQL
     )
-        QSKIP(QStringLiteral("The '%1' database driver doesn't support ping command.")
+        QSKIP(sl("The '%1' database driver doesn't support ping command.")
               .arg(driverName).toUtf8().constData(), );
 
 #ifndef TINYORM_MYSQL_PING
@@ -114,8 +114,7 @@ void tst_DatabaseConnection::isNotMaria_OnMySqlConnection() const
     QFETCH_GLOBAL(QString, connection);
 
     if (connection != Databases::MYSQL)
-        QSKIP(QStringLiteral(
-                  "The '%1' connection is not the connection to the MySQL database.")
+        QSKIP(sl("The '%1' connection is not the connection to the MySQL database.")
               .arg(connection).toUtf8().constData(), );
 
     const auto isMaria = dynamic_cast<MySqlConnection &>(DB::connection(connection))
@@ -129,8 +128,7 @@ void tst_DatabaseConnection::isMaria_OnMariaConnection() const
     QFETCH_GLOBAL(QString, connection);
 
     if (connection != Databases::MARIADB)
-        QSKIP(QStringLiteral(
-                  "The '%1' connection is not the connection to the MariaDB database.")
+        QSKIP(sl("The '%1' connection is not the connection to the MariaDB database.")
               .arg(connection).toUtf8().constData(), );
 
     const auto isMaria = dynamic_cast<MySqlConnection &>(DB::connection(connection))
@@ -146,8 +144,8 @@ void tst_DatabaseConnection::transaction_Commit() const
     auto builder = createQuery(connection);
 
     // Prepare data
-    const auto nameValue = QStringLiteral("alibaba");
-    const auto noteValue = QStringLiteral("transation commit");
+    const auto nameValue = sl("alibaba");
+    const auto noteValue = sl("transation commit");
 
     DB::beginTransaction(connection);
 
@@ -182,8 +180,8 @@ void tst_DatabaseConnection::transaction_RollBack() const
     auto builder = createQuery(connection);
 
     // Prepare data
-    const auto nameValue = QStringLiteral("alibaba");
-    const auto noteValue = QStringLiteral("transation rollBack");
+    const auto nameValue = sl("alibaba");
+    const auto noteValue = sl("transation rollBack");
 
     DB::beginTransaction(connection);
 
@@ -228,8 +226,8 @@ void tst_DatabaseConnection::transaction_Commit_Double() const
         auto builder = createQuery(connection);
 
         // Prepare data
-        const auto nameValue = QStringLiteral("mařka");
-        const auto noteValue = QStringLiteral("transation double-commit");
+        const auto nameValue = sl("mařka");
+        const auto noteValue = sl("transation double-commit");
 
         DB::beginTransaction(connection);
 
@@ -258,8 +256,8 @@ void tst_DatabaseConnection::transaction_Commit_Double() const
         auto builder = createQuery(connection);
 
         // Prepare data
-        const auto nameValue = QStringLiteral("venda");
-        const auto noteValue = QStringLiteral("transation double-commit");
+        const auto nameValue = sl("venda");
+        const auto noteValue = sl("transation double-commit");
 
         DB::beginTransaction(connection);
 
@@ -299,8 +297,8 @@ void tst_DatabaseConnection::transaction_RollBack_Double() const
         auto builder = createQuery(connection);
 
         // Prepare data
-        const auto nameValue = QStringLiteral("john");
-        const auto noteValue = QStringLiteral("transation double-rollBack");
+        const auto nameValue = sl("john");
+        const auto noteValue = sl("transation double-rollBack");
 
         DB::beginTransaction(connection);
 
@@ -331,8 +329,8 @@ void tst_DatabaseConnection::transaction_RollBack_Double() const
         auto builder = createQuery(connection);
 
         // Prepare data
-        const auto nameValue = QStringLiteral("franky");
-        const auto noteValue = QStringLiteral("transation double-rollBack");
+        const auto nameValue = sl("franky");
+        const auto noteValue = sl("transation double-rollBack");
 
         DB::beginTransaction(connection);
 
@@ -372,7 +370,7 @@ void tst_DatabaseConnection::transaction_Savepoints_Commit_AllSuccess() const
         QLatin1String("robert"),
         QLatin1String("david"),
     };
-    const auto noteValue = QStringLiteral("transation savepoints commit all success");
+    const auto noteValue = sl("transation savepoints commit all success");
 
     // Result ids
     QVector<quint64> idsSuccess;
@@ -457,7 +455,7 @@ void tst_DatabaseConnection::transaction_Savepoints_Commit_OneFailed() const
     const QVector<QString> nameValuesFailed {
         QLatin1String("robert"),
     };
-    const auto noteValue = QStringLiteral("transation savepoints commit one failed");
+    const auto noteValue = sl("transation savepoints commit one failed");
 
     // Result ids
     QVector<quint64> idsSuccess;
@@ -549,7 +547,7 @@ void tst_DatabaseConnection::transaction_Savepoints_Commit_AllFailed() const
         QLatin1String("robert"),
         QLatin1String("david"),
     };
-    const auto noteValue = QStringLiteral("transation savepoints commit all failed");
+    const auto noteValue = sl("transation savepoints commit all failed");
 
     // Result ids
     QVector<quint64> idsFailed;
@@ -644,8 +642,7 @@ void tst_DatabaseConnection::transaction_Savepoints_Commit_AllFailed_Double() co
             QLatin1String("robert"),
             QLatin1String("david"),
         };
-        const auto noteValue =
-                QStringLiteral("transation savepoints commit all failed double");
+        const auto noteValue = sl("transation savepoints commit all failed double");
 
         // Result ids
         QVector<quint64> idsFailed;
@@ -732,8 +729,7 @@ void tst_DatabaseConnection::transaction_Savepoints_Commit_AllFailed_Double() co
             QLatin1String("robert"),
             QLatin1String("david"),
         };
-        const auto noteValue =
-                QStringLiteral("transation savepoints commit all failed double");
+        const auto noteValue = sl("transation savepoints commit all failed double");
 
         // Result ids
         QVector<quint64> idsFailed;

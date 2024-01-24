@@ -8,9 +8,6 @@
 
 #include "databases.hpp"
 
-/*! Alias for the QStringLiteral(). */
-#define sl(str) QStringLiteral(str)
-
 using Orm::Constants::QMYSQL;
 using Orm::Constants::text_;
 

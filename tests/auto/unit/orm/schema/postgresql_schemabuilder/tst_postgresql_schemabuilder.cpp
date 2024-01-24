@@ -180,7 +180,7 @@ private Q_SLOTS:
 // NOLINTNEXTLINE(readability-redundant-access-specifiers)
 private:
     /*! Table or database name used in tests. */
-    inline static const auto Firewalls = QStringLiteral("firewalls");
+    inline static const auto Firewalls = sl("firewalls");
     /*! Test case class name. */
     inline static const auto *ClassName = "tst_PostgreSQL_SchemaBuilder";
 
@@ -214,8 +214,7 @@ void tst_PostgreSQL_SchemaBuilder::createDatabase() const
     const auto &firstLog = log.first();
 
     QCOMPARE(log.size(), 1);
-    QCOMPARE(firstLog.query,
-             QStringLiteral(R"(create database "firewalls" encoding "%1")")
+    QCOMPARE(firstLog.query, sl(R"(create database "firewalls" encoding "%1")")
              .arg(connection.getConfig(charset_).value<QString>()));
     QVERIFY(firstLog.boundValues.isEmpty());
 }
@@ -651,7 +650,7 @@ void tst_PostgreSQL_SchemaBuilder::modifyTable_WithComment() const
         Schema::on(connection.getName())
                 .table(Firewalls, [](Blueprint &table)
         {
-            table.comment(QStringLiteral("Example 'table' comment"));
+            table.comment(sl("Example 'table' comment"));
         });
     });
 
@@ -788,11 +787,10 @@ void tst_PostgreSQL_SchemaBuilder::getAllTables() const
 
     QCOMPARE(log.size(), 1);
     QCOMPARE(firstLog.query,
-             QStringLiteral(
-                 "select tablename, "
-                   "concat('\"', schemaname, '\".\"', tablename, '\"') as qualifiedname "
-                 "from pg_catalog.pg_tables "
-                 "where schemaname in ('%1')")
+             sl("select tablename, "
+                  "concat('\"', schemaname, '\".\"', tablename, '\"') as qualifiedname "
+                "from pg_catalog.pg_tables "
+                "where schemaname in ('%1')")
              .arg(DB::originalConfigValue(search_path, m_connection).value<QString>()));
 
     QVERIFY(firstLog.boundValues.isEmpty());
@@ -812,11 +810,10 @@ void tst_PostgreSQL_SchemaBuilder::getAllViews() const
 
     QCOMPARE(log.size(), 1);
     QCOMPARE(firstLog.query,
-             QStringLiteral(
-                 "select viewname, "
-                   "concat('\"', schemaname, '\".\"', viewname, '\"') as qualifiedname "
-                 "from pg_catalog.pg_views "
-                 "where schemaname in ('%1')")
+             sl("select viewname, "
+                  "concat('\"', schemaname, '\".\"', viewname, '\"') as qualifiedname "
+                "from pg_catalog.pg_views "
+                "where schemaname in ('%1')")
              .arg(connection.getConfig(search_path).value<QString>()));
     QVERIFY(firstLog.boundValues.isEmpty());
 }
@@ -915,15 +912,15 @@ void tst_PostgreSQL_SchemaBuilder::hasTable_SchemaDiffers() const
     // Prepare test variables
     auto &connection = DB::connection(m_connection);
     const auto &databaseName = connection.getDatabaseName();
-    const auto schemaName = QStringLiteral("schema_example");
-    const auto tableName = QStringLiteral("users");
+    const auto schemaName = sl("schema_example");
+    const auto tableName = sl("users");
 
     // Verify
     auto log = connection.pretend([&databaseName, &schemaName, &tableName]
                                   (auto &connection_)
     {
         const auto hasTable = Schema::on(connection_.getName())
-                              .hasTable(QStringLiteral("%1.%2.%3")
+                              .hasTable(sl("%1.%2.%3")
                                         .arg(databaseName, schemaName, tableName));
 
         QVERIFY(!hasTable);
@@ -951,7 +948,7 @@ void tst_PostgreSQL_SchemaBuilder::
     const auto connectionName =
             Databases::createConnectionTempFrom(
                 Databases::POSTGRESQL, {ClassName, QString::fromUtf8(__func__)}, // NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
-                {{search_path, QStringLiteral("schema_example, another_example")}});
+                {{search_path, sl("schema_example, another_example")}});
 
     if (!connectionName)
         QSKIP(TestUtils::AutoTestSkipped
@@ -960,7 +957,7 @@ void tst_PostgreSQL_SchemaBuilder::
 
     // Prepare test variables
     auto &connection = DB::connection(*connectionName);
-    const auto tableName = QStringLiteral("users");
+    const auto tableName = sl("users");
 
     // Verify
     auto log = connection.pretend([&tableName](auto &connection_)
@@ -982,7 +979,7 @@ void tst_PostgreSQL_SchemaBuilder::
                "table_name = ? and table_type = 'BASE TABLE'");
     QCOMPARE(firstLog.boundValues,
              QVector<QVariant>({QVariant(connection.getDatabaseName()),
-                                QVariant(QStringLiteral("schema_example")),
+                                QVariant(sl("schema_example")),
                                 QVariant(tableName)}));
 
     // Restore
@@ -1005,7 +1002,7 @@ void tst_PostgreSQL_SchemaBuilder::
 
     // Prepare test variables
     auto &connection = DB::connection(*connectionName);
-    const auto tableName = QStringLiteral("users");
+    const auto tableName = sl("users");
 
     // Verify
     auto log = connection.pretend([&tableName](auto &connection_)
@@ -1027,7 +1024,7 @@ void tst_PostgreSQL_SchemaBuilder::
                "table_name = ? and table_type = 'BASE TABLE'");
     QCOMPARE(firstLog.boundValues,
              QVector<QVariant>({QVariant(connection.getDatabaseName()),
-                                QVariant(QStringLiteral("schema_example")),
+                                QVariant(sl("schema_example")),
                                 QVariant(tableName)}));
 
     // Restore
@@ -1042,8 +1039,8 @@ void tst_PostgreSQL_SchemaBuilder::
             Databases::createConnectionTempFrom(
                 Databases::POSTGRESQL, {ClassName, QString::fromUtf8(__func__)}, // NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
                 {{search_path, QVariant::fromValue(
-                                   QSet<QString> {QStringLiteral("schema_example"),
-                                                  QStringLiteral("another_example")})}});
+                                   QSet<QString> {sl("schema_example"),
+                                                  sl("another_example")})}});
 
     if (!connectionName)
         QSKIP(TestUtils::AutoTestSkipped
@@ -1065,7 +1062,7 @@ void tst_PostgreSQL_SchemaBuilder::
     const auto connectionName =
             Databases::createConnectionTempFrom(
                 Databases::POSTGRESQL, {ClassName, QString::fromUtf8(__func__)}, // NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
-                {{search_path, QStringLiteral("\"$user\", public")}});
+                {{search_path, sl("\"$user\", public")}});
 
     if (!connectionName)
         QSKIP(TestUtils::AutoTestSkipped
@@ -1074,7 +1071,7 @@ void tst_PostgreSQL_SchemaBuilder::
 
     // Prepare test variables
     auto &connection = DB::connection(*connectionName);
-    const auto tableName = QStringLiteral("users");
+    const auto tableName = sl("users");
 
     // Verify
     auto log = connection.pretend([&tableName](auto &connection_)
@@ -1118,7 +1115,7 @@ void tst_PostgreSQL_SchemaBuilder::hasTable_NoSearchPath_InConfiguration() const
 
     // Prepare test variables
     auto &connection = DB::connection(*connectionName);
-    const auto tableName = QStringLiteral("users");
+    const auto tableName = sl("users");
 
     // Verify
     auto log = connection.pretend([&tableName](auto &connection_)

@@ -487,7 +487,7 @@ void tst_SQLite_QueryBuilder::from() const
 
     QVERIFY(std::holds_alternative<std::monostate>(from));
 
-    const auto tableTorrents = QStringLiteral("torrents");
+    const auto tableTorrents = sl("torrents");
     builder->from(tableTorrents);
 
     QVERIFY(std::holds_alternative<QString>(from));
@@ -495,7 +495,7 @@ void tst_SQLite_QueryBuilder::from() const
     QCOMPARE(builder->toSql(),
              "select * from \"torrents\"");
 
-    const auto tableTorrentPeers = QStringLiteral("torrent_peers");
+    const auto tableTorrentPeers = sl("torrent_peers");
     builder->from(tableTorrentPeers);
 
     QVERIFY(std::holds_alternative<QString>(from));
@@ -511,7 +511,7 @@ void tst_SQLite_QueryBuilder::from_TableWrappingQuotationMarks() const
     const auto &from = builder->getFrom();
 
     {
-        const auto table = QStringLiteral("some`table");
+        const auto table = sl("some`table");
         builder->from(table);
 
         QVERIFY(std::holds_alternative<QString>(from));
@@ -521,7 +521,7 @@ void tst_SQLite_QueryBuilder::from_TableWrappingQuotationMarks() const
     }
     // Protects quotation marks
     {
-        const auto table = QStringLiteral("some\"table");
+        const auto table = sl("some\"table");
         builder->from(table);
 
         QVERIFY(std::holds_alternative<QString>(from));
@@ -530,7 +530,7 @@ void tst_SQLite_QueryBuilder::from_TableWrappingQuotationMarks() const
                  "select * from \"some\"\"table\"");
     }
     {
-        const auto table = QStringLiteral("some'table");
+        const auto table = sl("some'table");
         builder->from(table);
 
         QVERIFY(std::holds_alternative<QString>(from));
@@ -540,7 +540,7 @@ void tst_SQLite_QueryBuilder::from_TableWrappingQuotationMarks() const
     }
     // Wrapping as whole constant
     {
-        const auto table = QStringLiteral("baz");
+        const auto table = sl("baz");
         builder->select("x.y as foo.bar").from(table);
 
         QVERIFY(std::holds_alternative<QString>(from));
@@ -550,7 +550,7 @@ void tst_SQLite_QueryBuilder::from_TableWrappingQuotationMarks() const
     }
     // Wrapping with space in database name
     {
-        const auto table = QStringLiteral("baz");
+        const auto table = sl("baz");
         builder->select("w x.y.z as foo.bar").from(table);
 
         QVERIFY(std::holds_alternative<QString>(from));
@@ -560,7 +560,7 @@ void tst_SQLite_QueryBuilder::from_TableWrappingQuotationMarks() const
     }
     // Wrapping with as
     {
-        const auto table = QStringLiteral("table as alias");
+        const auto table = sl("table as alias");
         builder->select("*").from(table);
 
         QVERIFY(std::holds_alternative<QString>(from));
@@ -570,13 +570,12 @@ void tst_SQLite_QueryBuilder::from_TableWrappingQuotationMarks() const
     }
     // Wrapping with as
     {
-        const auto table = QStringLiteral("table");
-        const auto alias = QStringLiteral("alias");
+        const auto table = sl("table");
+        const auto alias = sl("alias");
         builder->from(table, alias);
 
         QVERIFY(std::holds_alternative<QString>(from));
-        QCOMPARE(std::get<QString>(from),
-                 QStringLiteral("%1 as %2").arg(table, alias));
+        QCOMPARE(std::get<QString>(from), sl("%1 as %2").arg(table, alias));
         QCOMPARE(builder->toSql(),
                  "select * from \"table\" as \"alias\"");
     }
@@ -586,8 +585,8 @@ void tst_SQLite_QueryBuilder::from_WithPrefix() const
 {
     auto builder = createQuery();
 
-    const auto prefix = QStringLiteral("xyz_");
-    const auto table = QStringLiteral("table");
+    const auto prefix = sl("xyz_");
+    const auto table = sl("table");
     builder->from(table);
 
     builder->getConnection().setTablePrefix(prefix);
@@ -609,23 +608,22 @@ void tst_SQLite_QueryBuilder::from_AliasWithPrefix() const
 
     const auto &from = builder->getFrom();
 
-    const auto prefix = QStringLiteral("xyz_");
+    const auto prefix = sl("xyz_");
     builder->getConnection().setTablePrefix(prefix);
 
     {
-        const auto table = QStringLiteral("table");
-        const auto alias = QStringLiteral("alias");
+        const auto table = sl("table");
+        const auto alias = sl("alias");
         builder->from(table, alias);
 
         QVERIFY(std::holds_alternative<QString>(from));
-        QCOMPARE(std::get<QString>(from),
-                 QStringLiteral("%1 as %2").arg(table, alias));
+        QCOMPARE(std::get<QString>(from), sl("%1 as %2").arg(table, alias));
         QCOMPARE(builder->toSql(),
                  "select * from \"xyz_table\" as \"xyz_alias\"");
     }
 
     {
-        const auto table = QStringLiteral("table as alias");
+        const auto table = sl("table as alias");
         builder->from(table);
 
         QVERIFY(std::holds_alternative<QString>(from));

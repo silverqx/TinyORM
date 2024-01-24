@@ -120,7 +120,7 @@ void tst_PostgreSQL_Connection::searchpath_Empty_SingleQuotes_PostgreSQL() const
                                     Databases::POSTGRESQL,
                                     {ClassName, QString::fromUtf8(__func__)}, // NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
     {
-        {search_path, QStringLiteral("''")},
+        {search_path, sl("''")},
     });
 
     if (!connectionName)
@@ -130,7 +130,7 @@ void tst_PostgreSQL_Connection::searchpath_Empty_SingleQuotes_PostgreSQL() const
 
     // Connection configuration
     QCOMPARE(m_dm->getConfigValue(search_path, *connectionName),
-             QVariant {QStringLiteral("''")});
+             QVariant {sl("''")});
 
     // Verify
     auto &connection = dynamic_cast<PostgresConnection &>(
@@ -149,7 +149,7 @@ void tst_PostgreSQL_Connection::searchpath_Empty_DoubleQuotes_PostgreSQL() const
                                     Databases::POSTGRESQL,
                                     {ClassName, QString::fromUtf8(__func__)}, // NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
     {
-        {search_path, QStringLiteral("\"\"")},
+        {search_path, sl("\"\"")},
     });
 
     if (!connectionName)
@@ -159,7 +159,7 @@ void tst_PostgreSQL_Connection::searchpath_Empty_DoubleQuotes_PostgreSQL() const
 
     // Connection configuration
     QCOMPARE(m_dm->getConfigValue(search_path, *connectionName),
-             QVariant {QStringLiteral("\"\"")});
+             QVariant {sl("\"\"")});
 
     // Verify
     auto &connection = dynamic_cast<PostgresConnection &>(
@@ -209,7 +209,7 @@ void tst_PostgreSQL_Connection::
                                     Databases::POSTGRESQL,
                                     {ClassName, QString::fromUtf8(__func__)}, // NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
     {
-        {search_path, QStringLiteral("\"$user\", public")},
+        {search_path, sl("\"$user\", public")},
     });
 
     if (!connectionName)
@@ -280,7 +280,7 @@ void tst_PostgreSQL_Connection::
                                     Databases::POSTGRESQL,
                                     {ClassName, QString::fromUtf8(__func__)}, // NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
     {
-        {search_path, QStringLiteral("$user, public")},
+        {search_path, sl("$user, public")},
     });
 
     if (!connectionName)
@@ -386,7 +386,7 @@ void tst_PostgreSQL_Connection::searchpath_Pretend_Empty_SingleQuotes_PostgreSQL
                                     Databases::POSTGRESQL,
                                     {ClassName, QString::fromUtf8(__func__)}, // NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
     {
-        {search_path, QStringLiteral("''")},
+        {search_path, sl("''")},
     });
 
     if (!connectionName)
@@ -396,7 +396,7 @@ void tst_PostgreSQL_Connection::searchpath_Pretend_Empty_SingleQuotes_PostgreSQL
 
     // Connection configuration
     QCOMPARE(m_dm->getConfigValue(search_path, *connectionName),
-             QVariant {QStringLiteral("''")});
+             QVariant {sl("''")});
 
     // Verify
     auto &connection = dynamic_cast<PostgresConnection &>(
@@ -420,7 +420,7 @@ void tst_PostgreSQL_Connection::searchpath_Pretend_Empty_DoubleQuotes_PostgreSQL
                                     Databases::POSTGRESQL,
                                     {ClassName, QString::fromUtf8(__func__)}, // NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
     {
-        {search_path, QStringLiteral("\"\"")},
+        {search_path, sl("\"\"")},
     });
 
     if (!connectionName)
@@ -430,7 +430,7 @@ void tst_PostgreSQL_Connection::searchpath_Pretend_Empty_DoubleQuotes_PostgreSQL
 
     // Connection configuration
     QCOMPARE(m_dm->getConfigValue(search_path, *connectionName),
-             QVariant {QStringLiteral("\"\"")});
+             QVariant {sl("\"\"")});
 
     // Verify
     auto &connection = dynamic_cast<PostgresConnection &>(
@@ -486,7 +486,7 @@ void tst_PostgreSQL_Connection::
                                     Databases::POSTGRESQL,
                                     {ClassName, QString::fromUtf8(__func__)}, // NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
     {
-        {search_path, QStringLiteral("\"$user\", public")},
+        {search_path, sl("\"$user\", public")},
     });
 
     if (!connectionName)
@@ -568,7 +568,7 @@ void tst_PostgreSQL_Connection::
                                     Databases::POSTGRESQL,
                                     {ClassName, QString::fromUtf8(__func__)}, // NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
     {
-        {search_path, QStringLiteral("$user, public")},
+        {search_path, sl("$user, public")},
     });
 
     if (!connectionName)
@@ -607,7 +607,7 @@ void tst_PostgreSQL_Connection::
                                     Databases::POSTGRESQL,
                                     {ClassName, QString::fromUtf8(__func__)}, // NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
     {
-        {search_path, QStringLiteral("$user, public")},
+        {search_path, sl("$user, public")},
     });
 
     if (!connectionName)

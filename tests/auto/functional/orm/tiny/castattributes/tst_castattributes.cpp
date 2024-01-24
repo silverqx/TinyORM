@@ -965,7 +965,7 @@ void tst_CastAttributes::defaultCast_string() const
     auto typeId = Helpers::qVariantTypeId(attribute);
 
     QCOMPARE(typeId, QMetaType::QString);
-    QCOMPARE(attribute.value<QString>(), QStringLiteral("string text"));
+    QCOMPARE(attribute.value<QString>(), sl("string text"));
 }
 
 void tst_CastAttributes::defaultCast_text() const
@@ -978,7 +978,7 @@ void tst_CastAttributes::defaultCast_text() const
     auto typeId = Helpers::qVariantTypeId(attribute);
 
     QCOMPARE(typeId, QMetaType::QString);
-    QCOMPARE(attribute.value<QString>(), QStringLiteral("text text"));
+    QCOMPARE(attribute.value<QString>(), sl("text text"));
 }
 
 void tst_CastAttributes::defaultCast_timestamp() const
@@ -3216,7 +3216,7 @@ tst_CastAttributes::model(const QString &connection, const RowType rowType) cons
 
     if (!type)
         throw Orm::Exceptions::RuntimeError(
-                QStringLiteral("Can't find the Type model with the ID(%1).").arg(id));
+                sl("Can't find the Type model with the ID(%1).").arg(id));
 
     // Cache the Type model
     auto [itType, ok] = m_modelsCache.insert({std::move(cacheKey),
@@ -3225,9 +3225,8 @@ tst_CastAttributes::model(const QString &connection, const RowType rowType) cons
     // Validate insertion to the cache 😮
     if (!ok)
         throw Orm::Exceptions::RuntimeError(
-                QStringLiteral(
-                    "Insertion to the tst_CastAttributes::m_modelCache for the '%1' "
-                    "connection and ID(%3) failed in %2().")
+                sl("Insertion to the tst_CastAttributes::m_modelCache for the '%1' "
+                   "connection and ID(%3) failed in %2().")
                 .arg(connection, __tiny_func__).arg(id));
 
     /* The u_casts has to be reset everytime since the u_casts is static because

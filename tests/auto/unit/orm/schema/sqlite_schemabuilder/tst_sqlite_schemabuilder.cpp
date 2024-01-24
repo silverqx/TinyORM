@@ -131,7 +131,7 @@ private:
     static QString getDatabaseFilepath();
 
     /*! Table or database name used in tests. */
-    inline static const auto Firewalls = QStringLiteral("firewalls");
+    inline static const auto Firewalls = sl("firewalls");
 
     /*! Connection name used in this test case. */
     QString m_connection {};
@@ -618,7 +618,7 @@ void tst_SQLite_SchemaBuilder::modifyTable_WithComment() const
                 .table(Firewalls, [](Blueprint &table)
         {
             // Can't throw an exception (SQLite doesn't support table comments)
-            table.comment(QStringLiteral("Example 'table' comment"));
+            table.comment(sl("Example 'table' comment"));
         });
     });
 
@@ -1719,9 +1719,9 @@ QString tst_SQLite_SchemaBuilder::getDatabaseFilepath()
         database.reserve(Firewalls.size() + 32);
 
         return database
-                .append(QStringLiteral("tmp/tinyorm_tests_"))
+                .append(sl("tmp/tinyorm_tests_"))
                 .append(Firewalls)
-                .append(QStringLiteral(".sqlite3"));
+                .append(sl(".sqlite3"));
     }();
 
     return cached;

@@ -213,7 +213,7 @@ void tst_Relations_BuildsQueries::chunkMap_Relation() const
         auto nameRef = model[NAME];
 
         // Modify the name attribute
-        nameRef = QStringLiteral("%1_mapped").arg(nameRef->template value<QString>());
+        nameRef = sl("%1_mapped").arg(nameRef->template value<QString>());
 
         return std::move(model);
     });
@@ -248,7 +248,7 @@ void tst_Relations_BuildsQueries::chunkMap_TemplatedReturnValue_Relation() const
                   ->chunkMap<QString>([](FilePropertyProperty &&model) // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
     {
         // Return the modify name directly
-        return QStringLiteral("%1_mapped").arg(model[NAME]->template value<QString>());
+        return sl("%1_mapped").arg(model[NAME]->template value<QString>());
     });
 
     QVector<QString> expectedResult {
@@ -597,7 +597,7 @@ void tst_Relations_BuildsQueries::chunk_EmptyResult() const
     auto callbackInvoked = false;
 
     auto result = Torrent::find(2)->tags()->whereEq("torrent_tags.name",
-                                                    QStringLiteral("dummy-NON_EXISTENT"))
+                                                    sl("dummy-NON_EXISTENT"))
                   .orderBy(ID)
                   .chunk(2, [&callbackInvoked]
                             (ModelsCollection<Tag> &&/*unused*/, const qint64 /*unused*/) // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
@@ -725,7 +725,7 @@ void tst_Relations_BuildsQueries::each_EmptyResult() const
     auto callbackInvoked = false;
 
     auto result = Torrent::find(2)->tags()->whereEq("torrent_tags.name",
-                                                    QStringLiteral("dummy-NON_EXISTENT"))
+                                                    sl("dummy-NON_EXISTENT"))
                   .orderBy(ID)
                   .each([&callbackInvoked]
                         (Tag &&/*unused*/, const qint64 /*unused*/) // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
@@ -751,7 +751,7 @@ void tst_Relations_BuildsQueries::chunkMap() const
         auto nameRef = model[NAME];
 
         // Modify the name attribute
-        nameRef = QStringLiteral("%1_mapped").arg(nameRef->template value<QString>());
+        nameRef = sl("%1_mapped").arg(nameRef->template value<QString>());
 
         verifyTaggedPivot(model);
 
@@ -792,7 +792,7 @@ void tst_Relations_BuildsQueries::chunkMap_EnforceOrderBy() const
         auto nameRef = model[NAME];
 
         // Modify the name attribute
-        nameRef = QStringLiteral("%1_mapped").arg(nameRef->template value<QString>());
+        nameRef = sl("%1_mapped").arg(nameRef->template value<QString>());
 
         verifyTaggedPivot(model);
 
@@ -828,7 +828,7 @@ void tst_Relations_BuildsQueries::chunkMap_EmptyResult() const
     auto callbackInvoked = false;
 
     auto result = Torrent::find(2)->tags()
-                  ->whereEq("torrent_tags.name", QStringLiteral("dummy-NON_EXISTENT"))
+                  ->whereEq("torrent_tags.name", sl("dummy-NON_EXISTENT"))
                   .chunkMap([&callbackInvoked](Tag &&model)
     {
         callbackInvoked = true;
@@ -857,7 +857,7 @@ void tst_Relations_BuildsQueries::chunkMap_TemplatedReturnValue() const
         verifyTaggedPivot(model);
 
         // Return the modify name directly
-        return QStringLiteral("%1_mapped").arg(model[NAME]->template value<QString>());
+        return sl("%1_mapped").arg(model[NAME]->template value<QString>());
     });
 
     QVector<QString> expectedResult {
@@ -886,7 +886,7 @@ void tst_Relations_BuildsQueries::chunkMap_TemplatedReturnValue_OnRelationRef() 
         Q_ASSERT(!model.relationLoaded("tagged"));
 
         // Return the modify name directly
-        return QStringLiteral("%1_mapped").arg(model[NAME]->template value<QString>());
+        return sl("%1_mapped").arg(model[NAME]->template value<QString>());
     });
 
     QVector<QString> expectedResult {
@@ -919,7 +919,7 @@ tst_Relations_BuildsQueries::chunkMap_EnforceOrderBy_TemplatedReturnValue() cons
         verifyTaggedPivot(model);
 
         // Return the modify name directly
-        return QStringLiteral("%1_mapped").arg(model[NAME]->template value<QString>());
+        return sl("%1_mapped").arg(model[NAME]->template value<QString>());
     });
 
     QVector<QString> expectedResult {
@@ -944,7 +944,7 @@ void tst_Relations_BuildsQueries::chunkMap_EmptyResult_TemplatedReturnValue() co
     // Ownership of a unique_ptr()
     const auto relation = Torrent::find(2)->tags();
 
-    relation->whereEq("torrent_tags.name", QStringLiteral("dummy-NON_EXISTENT"));
+    relation->whereEq("torrent_tags.name", sl("dummy-NON_EXISTENT"));
 
     auto result = relation->chunkMap<QString>([&callbackInvoked](Tag &&/*unused*/) // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
                                               -> QString
@@ -1063,7 +1063,7 @@ void tst_Relations_BuildsQueries::chunkById_EmptyResult() const
     auto callbackInvoked = false;
 
     auto result = Torrent::find(2)->tags()->whereEq("torrent_tags.name",
-                                                    QStringLiteral("dummy-NON_EXISTENT"))
+                                                    sl("dummy-NON_EXISTENT"))
                   .orderBy(ID)
                   .chunkById(2, [&callbackInvoked]
                                 (ModelsCollection<Tag> &&/*unused*/, // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
@@ -1189,7 +1189,7 @@ void tst_Relations_BuildsQueries::chunkById_EmptyResult_WithAlias() const
 
     auto result = Torrent::find(2)->tags()
                   ->select({ASTERISK, "torrent_tags.id as id_as"})
-                  .whereEq("torrent_tags.name", QStringLiteral("dummy-NON_EXISTENT"))
+                  .whereEq("torrent_tags.name", sl("dummy-NON_EXISTENT"))
                   .orderBy(ID)
                   .chunkById(2, [&callbackInvoked]
                                 (ModelsCollection<Tag> &&/*unused*/, // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
@@ -1284,7 +1284,7 @@ void tst_Relations_BuildsQueries::eachById_EmptyResult() const
     auto callbackInvoked = false;
 
     auto result = Torrent::find(2)->tags()->whereEq("torrent_tags.name",
-                                                    QStringLiteral("dummy-NON_EXISTENT"))
+                                                    sl("dummy-NON_EXISTENT"))
                   .orderBy(ID)
                   .eachById([&callbackInvoked]
                             (Tag &&/*unused*/, const qint64 /*unused*/) // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
@@ -1382,7 +1382,7 @@ void tst_Relations_BuildsQueries::eachById_EmptyResult_WithAlias() const
 
     auto result = Torrent::find(2)->tags()
                   ->select({ASTERISK, "torrent_tags.id as id_as"})
-                  .whereEq("torrent_tags.name", QStringLiteral("dummy-NON_EXISTENT"))
+                  .whereEq("torrent_tags.name", sl("dummy-NON_EXISTENT"))
                   .orderBy(ID)
                   .eachById([&callbackInvoked]
                             (Tag &&/*unused*/, const qint64 /*unused*/) // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)

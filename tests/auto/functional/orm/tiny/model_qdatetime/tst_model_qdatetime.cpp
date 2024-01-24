@@ -1344,9 +1344,8 @@ const QString &tst_Model_QDateTime::utcTimezoneString(const QString &connection)
 bool
 tst_Model_QDateTime::mysqlTimezoneTablesNotPopulated(const QString &connection)
 {
-    auto qtQuery = DB::select(
-                       QStringLiteral("select count(*) from `mysql`.`time_zone_name`"),
-                       {}, connection);
+    auto qtQuery = DB::select(sl("select count(*) from `mysql`.`time_zone_name`"), {},
+                              connection);
 
     if (!qtQuery.first())
         return true;
@@ -1379,14 +1378,14 @@ Q_GLOBAL_STATIC_WITH_ARGS(const QTimeZone, TimeZoneEUBratislava, // NOLINT(misc-
 
 void tst_Model_QDateTime::set0200TimezoneForMySQL(const QString &connection)
 {
-    setTimezone(QStringLiteral("+02:00"),
+    setTimezone(sl("+02:00"),
                 {QtTimeZoneType::QTimeZone, QVariant::fromValue(*TimeZone0200)},
                 connection);
 }
 
 void tst_Model_QDateTime::setEUBratislavaTimezoneForPSQL(const QString &connection)
 {
-    setTimezone(QStringLiteral("Europe/Bratislava"),
+    setTimezone(sl("Europe/Bratislava"),
                 {QtTimeZoneType::QTimeZone, QVariant::fromValue(*TimeZoneEUBratislava)},
                 connection);
 }
@@ -1409,10 +1408,10 @@ QString tst_Model_QDateTime::getSetTimezoneQueryString(const QString &connection
     const auto driverName = DB::driverName(connection);
 
     if (driverName == QMYSQL)
-        return QStringLiteral("set time_zone=\"%1\";");
+        return sl("set time_zone=\"%1\";");
 
     if (driverName == QPSQL)
-        return QStringLiteral("set time zone '%1';");
+        return sl("set time zone '%1';");
 
     Q_UNREACHABLE();
 }

@@ -2194,7 +2194,7 @@ void tst_PostgreSQL_QDateTime::setUtcTimezone() const
 
 void tst_PostgreSQL_QDateTime::setEUBratislavaTimezone() const
 {
-    setTimezone(QStringLiteral("Europe/Bratislava"),
+    setTimezone(sl("Europe/Bratislava"),
                 {QtTimeZoneType::QTimeZone, QVariant::fromValue(*TimeZoneEUBratislava)});
 }
 
@@ -2206,9 +2206,8 @@ void tst_PostgreSQL_QDateTime::setDontConvertTimezone() const
 void tst_PostgreSQL_QDateTime::setTimezone(const QString &timeZone,
                                            QtTimeZoneConfig &&qtTimeZone) const
 {
-    const auto qtQuery = DB::unprepared(
-                             QStringLiteral("set time zone '%1';").arg(timeZone),
-                             m_connection);
+    const auto qtQuery = DB::unprepared(sl("set time zone '%1';").arg(timeZone),
+                                        m_connection);
 
     QVERIFY(!qtQuery.isValid() && qtQuery.isActive() && !qtQuery.isSelect());
 

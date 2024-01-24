@@ -87,7 +87,7 @@ std::shared_ptr<DatabaseManager> setupDatabaseManager()
     // Ownership of the shared_ptr()
     return DB::create({
         // MySQL connection
-        {QStringLiteral("tinyorm_testdata_tom_mysql"), { // shell:connection
+        {sl("tinyorm_testdata_tom_mysql"), { // shell:connection
             {driver_,         QMYSQL},
             {host_,           qEnvironmentVariable("DB_MYSQL_HOST",      H127001)},
             {port_,           qEnvironmentVariable("DB_MYSQL_PORT",      P3306)},
@@ -104,14 +104,14 @@ std::shared_ptr<DatabaseManager> setupDatabaseManager()
             {prefix_,         EMPTY},
             {prefix_indexes,  false},
             {strict_,         true},
-            {isolation_level, QStringLiteral("REPEATABLE READ")}, // MySQL default is REPEATABLE READ for InnoDB
+            {isolation_level, sl("REPEATABLE READ")}, // MySQL default is REPEATABLE READ for InnoDB
             {engine_,         InnoDB},
             {Version,         {}}, // Autodetect
             {options_,        ConfigUtils::mysqlSslOptions()},
         }},
 
         // MariaDB connection
-        {QStringLiteral("tinyorm_testdata_tom_maria"), { // shell:connection
+        {sl("tinyorm_testdata_tom_maria"), { // shell:connection
             {driver_,         QMYSQL},
             {host_,           qEnvironmentVariable("DB_MARIA_HOST",      H127001)},
             {port_,           qEnvironmentVariable("DB_MARIA_PORT",      P3306)},
@@ -130,16 +130,16 @@ std::shared_ptr<DatabaseManager> setupDatabaseManager()
             {prefix_,         EMPTY},
             {prefix_indexes,  false},
             {strict_,         true},
-            {isolation_level, QStringLiteral("REPEATABLE READ")}, // MySQL default is REPEATABLE READ for InnoDB
+            {isolation_level, sl("REPEATABLE READ")}, // MySQL default is REPEATABLE READ for InnoDB
             {engine_,         InnoDB},
             {Version,         {}}, // Autodetect
             {options_,        ConfigUtils::mariaSslOptions()},
         }},
 
         // PostgreSQL connection
-        {QStringLiteral("tinyorm_testdata_tom_postgres"), { // shell:connection
+        {sl("tinyorm_testdata_tom_postgres"), { // shell:connection
             {driver_,            QPSQL},
-            {application_name,   QStringLiteral("tom_testdata")},
+            {application_name,   sl("tom_testdata")},
             {host_,              qEnvironmentVariable("DB_PGSQL_HOST",       H127001)},
             {port_,              qEnvironmentVariable("DB_PGSQL_PORT",       P5432)},
             {database_,          qEnvironmentVariable("DB_PGSQL_DATABASE",   EMPTY)},
@@ -154,15 +154,15 @@ std::shared_ptr<DatabaseManager> setupDatabaseManager()
             {qt_timezone,        QVariant::fromValue(Qt::UTC)},
             {prefix_,            EMPTY},
             {prefix_indexes,     false},
-//            {isolation_level,    QStringLiteral("REPEATABLE READ")}, // Postgres default is READ COMMITTED
-//            {synchronous_commit, QStringLiteral("off")}, // Postgres default is on
+//            {isolation_level,    sl("REPEATABLE READ")}, // Postgres default is READ COMMITTED
+//            {synchronous_commit, sl("off")}, // Postgres default is on
             // ConnectionFactory provides a default value for this (for reference only)
 //            {dont_drop,          QStringList {spatial_ref_sys}},
             {options_,           ConfigUtils::postgresSslOptions()},
         }},
 
         // SQLite connection
-        {QStringLiteral("tinyorm_testdata_tom_sqlite"), { // shell:connection
+        {sl("tinyorm_testdata_tom_sqlite"), { // shell:connection
             {driver_,                 QSQLITE},
             {database_,               qEnvironmentVariable("DB_SQLITE_DATABASE", {})},
             {foreign_key_constraints, true},

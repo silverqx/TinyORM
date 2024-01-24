@@ -93,7 +93,7 @@ private:
     static void throwIfWrongEnvironment(const char *environmentEnvName);
 
     /*! Migrations table name. */
-    inline static const auto MigrationsTable = QStringLiteral("migrations_unit_testing");
+    inline static const auto MigrationsTable = sl("migrations_unit_testing");
 
     /*! Created database connections (needed by the cleanupTestCase()). */
     QStringList m_connections {};
@@ -766,7 +766,7 @@ void tst_Migrate::refresh_Step_StepMigrate() const
 int tst_Migrate::invokeCommand(const QString &connection, const QString &name,
                                const std::vector<const char *> &arguments)
 {
-    static const auto connectionTmpl = QStringLiteral("--database=%1");
+    static const auto connectionTmpl = sl("--database=%1");
 
     // Prepare fake argc and argv
     const auto nameArr = name.toUtf8();
@@ -878,10 +878,9 @@ void tst_Migrate::throwIfWrongEnvironment(const char *const environmentEnvName)
         return;
 
     throw RuntimeError(
-                QStringLiteral(
-                    "The '%1' environment variable can't be 'prod' or 'production' "
-                    "because production environment needs confirmation, please set it "
-                    "to any other supported value as local, development, or testing.")
+                sl("The '%1' environment variable can't be 'prod' or 'production' "
+                   "because production environment needs confirmation, please set it "
+                   "to any other supported value as local, development, or testing.")
                 .arg(environmentEnvName));
 }
 

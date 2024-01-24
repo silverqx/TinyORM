@@ -58,11 +58,11 @@ private Q_SLOTS:
 // NOLINTNEXTLINE(readability-redundant-access-specifiers)
 private:
     /*! Table or database name used in tests. */
-    inline static const auto Firewalls = QStringLiteral("firewalls");
+    inline static const auto Firewalls = sl("firewalls");
     /*! Test case class name. */
     inline static const auto *ClassName = "tst_SchemaBuilder";
     /*! Database name used in the current test case. */
-    inline static const auto DatabaseName = QStringLiteral("tinyorm_tests_schemabuilder");
+    inline static const auto DatabaseName = sl("tinyorm_tests_schemabuilder");
 
     /*! Get all database tables for the given connection. */
     static QSet<QString> getAllTablesFor(const QString &connection);
@@ -127,7 +127,7 @@ void tst_SchemaBuilder::cleanupTestCase() const
     for (const auto &connection : m_connections) {
         auto database = DatabaseName;
         if (DB::driverName(connection) == QSQLITE)
-            database.append(QStringLiteral(".sqlite3"));
+            database.append(sl(".sqlite3"));
 
         Schema::on(connection).dropDatabaseIfExists(database);
 
@@ -145,7 +145,7 @@ void tst_SchemaBuilder::createDatabase_dropAllTables_dropDatabaseIfExists() cons
     {
         auto database = DatabaseName;
         if (DB::driverName(connection) == QSQLITE)
-            database.append(QStringLiteral(".sqlite3"));
+            database.append(sl(".sqlite3"));
 
         QVERIFY(!hasDatabase(database, connection));
 
@@ -161,8 +161,8 @@ void tst_SchemaBuilder::createDatabase_dropAllTables_dropDatabaseIfExists() cons
 
     // dropAllTables()
     {
-        const QSet<QString> tables {QStringLiteral("tinyorm_test_table_to_drop_1"),
-                                    QStringLiteral("tinyorm_test_table_to_drop_2")};
+        const QSet<QString> tables {sl("tinyorm_test_table_to_drop_1"),
+                                    sl("tinyorm_test_table_to_drop_2")};
 
         // Create new tables in another database
         for (const auto &table : tables)
@@ -200,7 +200,7 @@ void tst_SchemaBuilder::createDatabase_dropAllTables_dropDatabaseIfExists() cons
     {
         auto database = DatabaseName;
         if (DB::driverName(connection) == QSQLITE)
-            database.append(QStringLiteral(".sqlite3"));
+            database.append(sl(".sqlite3"));
 
         QVERIFY(hasDatabase(database, connection));
 
@@ -235,15 +235,13 @@ void tst_SchemaBuilder::getAllViews_dropAllViews() const
     QVERIFY(getAllViewsFor(connection).isEmpty());
 
     // View names to create and drop
-    QSet<QString> views {QStringLiteral("tinyorm_test_view_to_drop_1"),
-                         QStringLiteral("tinyorm_test_view_to_drop_2")};
+    QSet<QString> views {sl("tinyorm_test_view_to_drop_1"),
+                         sl("tinyorm_test_view_to_drop_2")};
 
     // Create new views to drop
     for (const auto &view : views)
-        DB::on(connection)
-                .unprepared(QStringLiteral(
-                                "create view %1 as select id, name from users")
-                            .arg(view));
+        DB::on(connection).unprepared(sl("create view %1 as select id, name from users")
+                                      .arg(view));
 
     // Verify newly created views
     {
@@ -275,7 +273,7 @@ void tst_SchemaBuilder::getColumnListing() const
     std::ranges::move(columnsList, std::inserter(columns, columns.end()));
 
     QCOMPARE(columns,
-             std::unordered_set<QString>({ID, NAME, QStringLiteral("added_on")}));
+             std::unordered_set<QString>({ID, NAME, sl("added_on")}));
 }
 
 void tst_SchemaBuilder::hasTable() const
@@ -297,7 +295,7 @@ void tst_SchemaBuilder::createTable_WithComment() const
     QVERIFY(!Schema::on(connection).hasTable(Firewalls));
 
     // Create table with comment
-    const auto tableComment = QStringLiteral("Example 'table' comment");
+    const auto tableComment = sl("Example 'table' comment");
 
     Schema::on(connection)
             .create(Firewalls, [&tableComment](Blueprint &table)
@@ -330,7 +328,7 @@ void tst_SchemaBuilder::modifyTable_WithComment() const
 
     // Create table with comment
     {
-        const auto tableComment = QStringLiteral("Example 'table' comment");
+        const auto tableComment = sl("Example 'table' comment");
 
         Schema::on(connection)
                 .create(Firewalls, [&tableComment](Blueprint &table)
@@ -349,7 +347,7 @@ void tst_SchemaBuilder::modifyTable_WithComment() const
 
     // Modify the table comment
     {
-        const auto tableComment = QStringLiteral("Example modified 'table' comment");
+        const auto tableComment = sl("Example modified 'table' comment");
 
         Schema::on(connection)
                 .table(Firewalls, [&tableComment](Blueprint &table)
@@ -420,10 +418,10 @@ bool tst_SchemaBuilder::hasDatabase(const QString &database, const QString &conn
 bool tst_SchemaBuilder::hasDatabase_MySql(const QString &database,
                                           const QString &connection)
 {
-    auto query = DB::on(connection).select(QStringLiteral("show databases"));
+    auto query = DB::on(connection).select(sl("show databases"));
 
     while (query.next())
-        if (query.value(QStringLiteral("Database")).value<QString>() == database)
+        if (query.value(sl("Database")).value<QString>() == database)
             return true;
 
     return false;
@@ -433,16 +431,14 @@ bool tst_SchemaBuilder::hasDatabase_Postgres(const QString &database,
                                              const QString &connection)
 {
     auto query = DB::on(connection)
-                 .select(
-                     QStringLiteral(
-                         "select datname from pg_database "
-                         "join pg_user on pg_database.datdba = pg_user.usesysid "
-                         "where datdba = "
-                           "(select usesysid from pg_user where usename = ?)"),
+                 .select(sl("select datname from pg_database "
+                            "join pg_user on pg_database.datdba = pg_user.usesysid "
+                            "where datdba = "
+                              "(select usesysid from pg_user where usename = ?)"),
                      {DB::getConfigValue(username_, connection)});
 
     while (query.next())
-        if (query.value(QStringLiteral("datname")).value<QString>() == database)
+        if (query.value(sl("datname")).value<QString>() == database)
             return true;
 
     return false;
@@ -488,8 +484,7 @@ QVariant tst_SchemaBuilder::getTableComment_Postgres(const QString &table,
     Q_ASSERT(schema == PUBLIC);
 
     auto query = DB::on(connection).unprepared(
-                     QStringLiteral(
-                         "select obj_description('%1.%2'::regclass) as table_comment")
+                     sl("select obj_description('%1.%2'::regclass) as table_comment")
                      .arg(schema, table));
 
     [[maybe_unused]]
@@ -497,7 +492,7 @@ QVariant tst_SchemaBuilder::getTableComment_Postgres(const QString &table,
     Q_ASSERT(ok);
     Q_ASSERT(query.isValid());
 
-    return query.value(QStringLiteral("table_comment"));
+    return query.value(sl("table_comment"));
 }
 
 std::optional<QString>

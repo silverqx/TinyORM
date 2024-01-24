@@ -31,6 +31,9 @@
 #  define TINYTEST_VERSIONS_TOMEXAMPLE_PATH
 #endif
 
+/*! Alias for the QStringLiteral(). */
+#define sl(str) QStringLiteral(str)
+
 #ifdef _WIN32
 using TestUtils::Fs;
 #endif
@@ -332,17 +335,15 @@ tst_Versions::getExeVersionString(const QString &fileName)
 
     return {
         // Product Version
-        QStringLiteral("%1.%2.%3.%4")
-                .arg(HIWORD(lpBuffer->dwProductVersionMS))
-                .arg(LOWORD(lpBuffer->dwProductVersionMS))
-                .arg(HIWORD(lpBuffer->dwProductVersionLS))
-                .arg(LOWORD(lpBuffer->dwProductVersionLS)),
+        sl("%1.%2.%3.%4").arg(HIWORD(lpBuffer->dwProductVersionMS))
+                         .arg(LOWORD(lpBuffer->dwProductVersionMS))
+                         .arg(HIWORD(lpBuffer->dwProductVersionLS))
+                         .arg(LOWORD(lpBuffer->dwProductVersionLS)),
         // File Version
-        QStringLiteral("%1.%2.%3.%4")
-                .arg(HIWORD(lpBuffer->dwFileVersionMS))
-                .arg(LOWORD(lpBuffer->dwFileVersionMS))
-                .arg(HIWORD(lpBuffer->dwFileVersionLS))
-                .arg(LOWORD(lpBuffer->dwFileVersionLS)),
+        sl("%1.%2.%3.%4").arg(HIWORD(lpBuffer->dwFileVersionMS))
+                         .arg(LOWORD(lpBuffer->dwFileVersionMS))
+                         .arg(HIWORD(lpBuffer->dwFileVersionLS))
+                         .arg(LOWORD(lpBuffer->dwFileVersionLS)),
         // LegalCopyright
         std::move(copyright)
     };

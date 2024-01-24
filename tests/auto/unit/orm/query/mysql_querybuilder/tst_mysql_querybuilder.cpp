@@ -271,7 +271,7 @@ void tst_MySql_QueryBuilder::initTestCase()
 
 void tst_MySql_QueryBuilder::version() const
 {
-    auto version = QStringLiteral("10.8.3-MariaDB");
+    auto version = sl("10.8.3-MariaDB");
 
     auto &mysqlConnection = dynamic_cast<MySqlConnection &>(DB::connection(m_connection));
     mysqlConnection.setConfigVersion(version);
@@ -281,7 +281,7 @@ void tst_MySql_QueryBuilder::version() const
 
 void tst_MySql_QueryBuilder::version_InPretend() const
 {
-    auto version = QStringLiteral("10.8.3-MariaDB");
+    auto version = sl("10.8.3-MariaDB");
 
     // Need to be set before pretending
     auto &mysqlConnection = dynamic_cast<MySqlConnection &>(DB::connection(m_connection));
@@ -1025,7 +1025,7 @@ void tst_MySql_QueryBuilder::from() const
 
     QVERIFY(std::holds_alternative<std::monostate>(from));
 
-    const auto tableTorrents = QStringLiteral("torrents");
+    const auto tableTorrents = sl("torrents");
     builder->from(tableTorrents);
 
     QVERIFY(std::holds_alternative<QString>(from));
@@ -1033,7 +1033,7 @@ void tst_MySql_QueryBuilder::from() const
     QCOMPARE(builder->toSql(),
              "select * from `torrents`");
 
-    const auto tableTorrentPeers = QStringLiteral("torrent_peers");
+    const auto tableTorrentPeers = sl("torrent_peers");
     builder->from(tableTorrentPeers);
 
     QVERIFY(std::holds_alternative<QString>(from));
@@ -1050,7 +1050,7 @@ void tst_MySql_QueryBuilder::from_TableWrappingQuotationMarks() const
 
     // Protects quotation marks
     {
-        const auto table = QStringLiteral("some`table");
+        const auto table = sl("some`table");
         builder->from(table);
 
         QVERIFY(std::holds_alternative<QString>(from));
@@ -1059,7 +1059,7 @@ void tst_MySql_QueryBuilder::from_TableWrappingQuotationMarks() const
                  "select * from `some``table`");
     }
     {
-        const auto table = QStringLiteral("some\"table");
+        const auto table = sl("some\"table");
         builder->from(table);
 
         QVERIFY(std::holds_alternative<QString>(from));
@@ -1068,7 +1068,7 @@ void tst_MySql_QueryBuilder::from_TableWrappingQuotationMarks() const
                  "select * from `some\"table`");
     }
     {
-        const auto table = QStringLiteral("some'table");
+        const auto table = sl("some'table");
         builder->from(table);
 
         QVERIFY(std::holds_alternative<QString>(from));
@@ -1078,7 +1078,7 @@ void tst_MySql_QueryBuilder::from_TableWrappingQuotationMarks() const
     }
     // Wrapping as whole constant
     {
-        const auto table = QStringLiteral("baz");
+        const auto table = sl("baz");
         builder->select("x.y as foo.bar").from(table);
 
         QVERIFY(std::holds_alternative<QString>(from));
@@ -1088,7 +1088,7 @@ void tst_MySql_QueryBuilder::from_TableWrappingQuotationMarks() const
     }
     // Wrapping with space in database name
     {
-        const auto table = QStringLiteral("baz");
+        const auto table = sl("baz");
         builder->select("w x.y.z as foo.bar").from(table);
 
         QVERIFY(std::holds_alternative<QString>(from));
@@ -1098,7 +1098,7 @@ void tst_MySql_QueryBuilder::from_TableWrappingQuotationMarks() const
     }
     // Wrapping with as
     {
-        const auto table = QStringLiteral("table as alias");
+        const auto table = sl("table as alias");
         builder->select("*").from(table);
 
         QVERIFY(std::holds_alternative<QString>(from));
@@ -1108,13 +1108,12 @@ void tst_MySql_QueryBuilder::from_TableWrappingQuotationMarks() const
     }
     // Wrapping with as
     {
-        const auto table = QStringLiteral("table");
-        const auto alias = QStringLiteral("alias");
+        const auto table = sl("table");
+        const auto alias = sl("alias");
         builder->from(table, alias);
 
         QVERIFY(std::holds_alternative<QString>(from));
-        QCOMPARE(std::get<QString>(from),
-                 QStringLiteral("%1 as %2").arg(table, alias));
+        QCOMPARE(std::get<QString>(from), sl("%1 as %2").arg(table, alias));
         QCOMPARE(builder->toSql(),
                  "select * from `table` as `alias`");
     }
@@ -1124,8 +1123,8 @@ void tst_MySql_QueryBuilder::from_WithPrefix() const
 {
     auto builder = createQuery();
 
-    const auto prefix = QStringLiteral("xyz_");
-    const auto table = QStringLiteral("table");
+    const auto prefix = sl("xyz_");
+    const auto table = sl("table");
     builder->from(table);
 
     builder->getConnection().setTablePrefix(prefix);
@@ -1147,23 +1146,22 @@ void tst_MySql_QueryBuilder::from_AliasWithPrefix() const
 
     const auto &from = builder->getFrom();
 
-    const auto prefix = QStringLiteral("xyz_");
+    const auto prefix = sl("xyz_");
     builder->getConnection().setTablePrefix(prefix);
 
     {
-        const auto table = QStringLiteral("table");
-        const auto alias = QStringLiteral("alias");
+        const auto table = sl("table");
+        const auto alias = sl("alias");
         builder->from(table, alias);
 
         QVERIFY(std::holds_alternative<QString>(from));
-        QCOMPARE(std::get<QString>(from),
-                 QStringLiteral("%1 as %2").arg(table, alias));
+        QCOMPARE(std::get<QString>(from), sl("%1 as %2").arg(table, alias));
         QCOMPARE(builder->toSql(),
                  "select * from `xyz_table` as `xyz_alias`");
     }
 
     {
-        const auto table = QStringLiteral("table as alias");
+        const auto table = sl("table as alias");
         builder->from(table);
 
         QVERIFY(std::holds_alternative<QString>(from));
@@ -3380,7 +3378,7 @@ void tst_MySql_QueryBuilder::update_WithExpression() const
 
 void tst_MySql_QueryBuilder::upsert_UseUpsertAlias() const
 {
-    const auto configVersion = QStringLiteral("8.0.19");
+    const auto configVersion = sl("8.0.19");
 
     // Need to be set before pretending
     auto &mysqlConnection = dynamic_cast<MySqlConnection &>(DB::connection(m_connection));
@@ -3418,7 +3416,7 @@ void tst_MySql_QueryBuilder::upsert_UseUpsertAlias() const
 
 void tst_MySql_QueryBuilder::upsert_UseUpsertAlias_Disabled() const
 {
-    const auto configVersion = QStringLiteral("8.0.18");
+    const auto configVersion = sl("8.0.18");
 
     // Need to be set before pretending
     auto &mysqlConnection = dynamic_cast<MySqlConnection &>(DB::connection(m_connection));
@@ -3490,7 +3488,7 @@ void tst_MySql_QueryBuilder::upsert_UseUpsertAlias_DefaultValue() const
 
 void tst_MySql_QueryBuilder::upsert_UseUpsertAlias_Maria() const
 {
-    const auto configVersion = QStringLiteral("11.0.1-MariaDB");
+    const auto configVersion = sl("11.0.1-MariaDB");
 
     // Need to be set before pretending
     auto &mysqlConnection = dynamic_cast<MySqlConnection &>(DB::connection(m_connection));
@@ -3527,7 +3525,7 @@ void tst_MySql_QueryBuilder::upsert_UseUpsertAlias_Maria() const
 
 void tst_MySql_QueryBuilder::upsert_WithoutUpdate_UpdateAll_UseUpsertAlias() const
 {
-    const auto configVersion = QStringLiteral("8.0.19");
+    const auto configVersion = sl("8.0.19");
 
     // Need to be set before pretending
     auto &mysqlConnection = dynamic_cast<MySqlConnection &>(DB::connection(m_connection));
@@ -3568,7 +3566,7 @@ void tst_MySql_QueryBuilder::upsert_WithoutUpdate_UpdateAll_UseUpsertAlias() con
 void tst_MySql_QueryBuilder::
      upsert_WithoutUpdate_UpdateAll_UseUpsertAlias_Disabled() const
 {
-    const auto configVersion = QStringLiteral("8.0.18");
+    const auto configVersion = sl("8.0.18");
 
     // Need to be set before pretending
     auto &mysqlConnection = dynamic_cast<MySqlConnection &>(DB::connection(m_connection));
@@ -3607,7 +3605,7 @@ void tst_MySql_QueryBuilder::
 
 void tst_MySql_QueryBuilder::upsert_WithoutUpdate_UpdateAll_UseUpsertAlias_Maria() const
 {
-    const auto configVersion = QStringLiteral("11.0.1-MariaDB");
+    const auto configVersion = sl("11.0.1-MariaDB");
 
     // Need to be set before pretending
     auto &mysqlConnection = dynamic_cast<MySqlConnection &>(DB::connection(m_connection));

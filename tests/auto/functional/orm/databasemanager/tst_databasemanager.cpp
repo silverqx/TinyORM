@@ -8,9 +8,6 @@
 
 #include "databases.hpp"
 
-/*! Alias for the QStringLiteral(). */
-#define sl(str) QStringLiteral(str)
-
 using Orm::Constants::EMPTY;
 using Orm::Constants::H127001;
 using Orm::Constants::NAME;

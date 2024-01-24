@@ -9,6 +9,9 @@
 
 #include "export.hpp"
 
+/*! Alias for the QStringLiteral(). */
+#define sl(str) QStringLiteral(str)
+
 namespace Orm
 {
     class DatabaseManager;
@@ -22,13 +25,12 @@ namespace TestUtils
 
     /*! Template message for the QSKIP() for one connection. */
     inline const QString AutoTestSkipped =
-            QStringLiteral("%1 autotest skipped, environment variables "
-                           "for '%2' connection have not been defined or the Qt sql "
-                           "driver is not available.");
+            sl("%1 autotest skipped, environment variables for '%2' connection "
+               "have not been defined or the Qt sql driver is not available.");
     /*! Template message for the QSKIP() for more connections. */
     inline const QString AutoTestSkippedAny =
-            QStringLiteral("%1 autotest skipped, environment variables "
-                           "for ANY connection have not been defined.");
+            sl("%1 autotest skipped, environment variables for ANY connection "
+               "have not been defined.");
 
     /*! Database connections factory for unit tests (library class). */
     class TINYUTILS_EXPORT Databases

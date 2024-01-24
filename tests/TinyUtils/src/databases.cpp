@@ -110,7 +110,7 @@ namespace
     connectionNameForTemp(const QString &connection,
                           const Databases::ConnectionNameParts &connectionParts)
     {
-        return QStringLiteral("%1-%2-%3").arg(connection, connectionParts.className,
+        return sl("%1-%2-%3").arg(connection, connectionParts.className,
                                               connectionParts.methodName);
     }
 } // namespace
@@ -295,7 +295,7 @@ Databases::mysqlConfiguration()
         {prefix_,         EMPTY},
         {prefix_indexes,  false},
         {strict_,         true},
-        {isolation_level, QStringLiteral("REPEATABLE READ")}, // MySQL default is REPEATABLE READ for InnoDB
+        {isolation_level, sl("REPEATABLE READ")}, // MySQL default is REPEATABLE READ for InnoDB
         {engine_,         InnoDB},
         {Version,         {}}, // Autodetect
         {options_,        ConfigUtils::mysqlSslOptions()},
@@ -333,7 +333,7 @@ Databases::mariaConfiguration()
         {prefix_,         EMPTY},
         {prefix_indexes,  false},
         {strict_,         true},
-        {isolation_level, QStringLiteral("REPEATABLE READ")}, // MySQL default is REPEATABLE READ for InnoDB
+        {isolation_level, sl("REPEATABLE READ")}, // MySQL default is REPEATABLE READ for InnoDB
         {engine_,         InnoDB},
         {Version,         {}}, // Autodetect
         {options_,        ConfigUtils::mariaSslOptions()},
@@ -376,7 +376,7 @@ Databases::postgresConfiguration()
 {
     QVariantHash config {
         {driver_,            QPSQL},
-        {application_name,   QStringLiteral("TinyORM tests (TinyUtils)")},
+        {application_name,   sl("TinyORM tests (TinyUtils)")},
         {host_,              qEnvironmentVariable("DB_PGSQL_HOST",       H127001)},
         {port_,              qEnvironmentVariable("DB_PGSQL_PORT",       P5432)},
         {database_,          qEnvironmentVariable("DB_PGSQL_DATABASE",   EMPTY)},
@@ -391,8 +391,8 @@ Databases::postgresConfiguration()
         {qt_timezone,        QVariant::fromValue(Qt::UTC)},
         {prefix_,            EMPTY},
         {prefix_indexes,     false},
-//        {isolation_level,    QStringLiteral("REPEATABLE READ")}, // Postgres default is READ COMMITTED
-//        {synchronous_commit, QStringLiteral("off")}, // Postgres default is on
+//        {isolation_level,    sl("REPEATABLE READ")}, // Postgres default is READ COMMITTED
+//        {synchronous_commit, sl("off")}, // Postgres default is on
         // ConnectionFactory provides a default value for this, this is only for reference
 //        {dont_drop,          QStringList {spatial_ref_sys}},
         {options_,           ConfigUtils::postgresSslOptions()},
@@ -513,10 +513,9 @@ void Databases::throwIfNoManagerInstance()
         return;
 
     throw RuntimeError(
-                QStringLiteral(
-                    "The DatabaseManager instance has not yet been created, create it "
-                    "by the Databases::createConnections/createConnection methods "
-                    "in %1().")
+                sl("The DatabaseManager instance has not yet been created, create it "
+                   "by the Databases::createConnections/createConnection methods "
+                   "in %1().")
                 .arg(__tiny_func__));
 }
 
@@ -527,8 +526,8 @@ void Databases::throwIfConnectionsInitialized()
 
     if (initialized)
         throw RuntimeError(
-                QStringLiteral("Databases::createConnections/createConnection methods "
-                               "can be called only once in %1().")
+                sl("Databases::createConnections/createConnection methods "
+                   "can be called only once in %1().")
                 .arg(__tiny_func__));
 
     initialized = true;

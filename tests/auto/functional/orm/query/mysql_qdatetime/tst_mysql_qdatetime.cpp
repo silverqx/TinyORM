@@ -2304,7 +2304,7 @@ void tst_MySql_QDateTime::setUtcTimezone(const QString &connection)
 
 void tst_MySql_QDateTime::set0200Timezone(const QString &connection)
 {
-    setTimezone(connection, QStringLiteral("+02:00"),
+    setTimezone(connection, sl("+02:00"),
                 {QtTimeZoneType::QTimeZone, QVariant::fromValue(*TimeZone0200)});
 }
 
@@ -2316,9 +2316,8 @@ void tst_MySql_QDateTime::setDontConvertTimezone(const QString &connection)
 void tst_MySql_QDateTime::setTimezone(const QString &connection, const QString &timeZone,
                                       Orm::QtTimeZoneConfig &&qtTimeZone)
 {
-    const auto qtQuery = DB::unprepared(
-                             QStringLiteral("set time_zone=\"%1\";").arg(timeZone),
-                             connection);
+    const auto qtQuery = DB::unprepared(sl("set time_zone=\"%1\";").arg(timeZone),
+                                        connection);
 
     QVERIFY(!qtQuery.isValid() && qtQuery.isActive() && !qtQuery.isSelect());
 
@@ -2335,9 +2334,8 @@ const QString &tst_MySql_QDateTime::utcTimezoneString(const QString &connection)
 bool
 tst_MySql_QDateTime::mysqlTimezoneTablesNotPopulated(const QString &connection)
 {
-    auto qtQuery = DB::select(
-                       QStringLiteral("select count(*) from `mysql`.`time_zone_name`"),
-                       {}, connection);
+    auto qtQuery = DB::select(sl("select count(*) from `mysql`.`time_zone_name`"), {},
+                              connection);
 
     if (!qtQuery.first())
         return true;

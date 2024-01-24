@@ -863,9 +863,8 @@ void tst_Collection_Relations::map() const
         if (const auto id = Common::getKeyCasted(imageCopy);
             id == 3 || id == 6
         )
-            imageCopy[NAME] = QStringLiteral("%1_id_%2")
-                              .arg(imageCopy.getAttribute<QString>(NAME))
-                              .arg(id);
+            imageCopy[NAME] = sl("%1_id_%2").arg(imageCopy.getAttribute<QString>(NAME))
+                                            .arg(id);
 
         return std::move(imageCopy);
     });
@@ -898,14 +897,12 @@ void tst_Collection_Relations::map_WithIndex() const
         if (const auto id = Common::getKeyCasted(imageCopy);
             id == 2
         )
-            imageCopy[NAME] = QStringLiteral("%1_id_%2")
-                              .arg(imageCopy.getAttribute<QString>(NAME))
-                              .arg(id);
+            imageCopy[NAME] = sl("%1_id_%2").arg(imageCopy.getAttribute<QString>(NAME))
+                                            .arg(id);
 
         else if (index == 3)
-            imageCopy[NAME] = QStringLiteral("%1_index_%2")
-                              .arg(imageCopy.getAttribute<QString>(NAME))
-                              .arg(index);
+            imageCopy[NAME] = sl("%1_index_%2").arg(imageCopy.getAttribute<QString>(NAME))
+                                               .arg(index);
 
         return std::move(imageCopy);
     });
@@ -939,9 +936,7 @@ void tst_Collection_Relations::map_CustomReturnType() const
         if (const auto id = Common::getKeyCasted(imageCopy);
             id == 3 || id == 6
         )
-            nameRef = QStringLiteral("%1_id_%2")
-                      .arg(imageCopy.getAttribute<QString>(NAME))
-                      .arg(id);
+            nameRef = sl("%1_id_%2").arg(imageCopy.getAttribute<QString>(NAME)).arg(id);
 
         return nameRef->value<QString>();
     });
@@ -975,14 +970,11 @@ void tst_Collection_Relations::map_CustomReturnType_WithIndex() const
         if (const auto id = Common::getKeyCasted(imageCopy);
             id == 2
         )
-            nameRef = QStringLiteral("%1_id_%2")
-                      .arg(imageCopy.getAttribute<QString>(NAME))
-                      .arg(id);
+            nameRef = sl("%1_id_%2").arg(imageCopy.getAttribute<QString>(NAME)).arg(id);
 
         else if (index == 3)
-            nameRef = QStringLiteral("%1_index_%2")
-                      .arg(imageCopy.getAttribute<QString>(NAME))
-                      .arg(index);
+            nameRef = sl("%1_index_%2").arg(imageCopy.getAttribute<QString>(NAME))
+                                       .arg(index);
 
         return nameRef->value<QString>();
     });
@@ -4472,8 +4464,7 @@ void tst_Collection_Relations::tap_lvalue() const
 
         // Change the name, append " NEW"
         auto &image4 = *imagesRef.at(2);
-        image4[NAME] = SPACE_IN.arg(image4.getAttribute<QString>(NAME),
-                                    QStringLiteral("NEW"));
+        image4[NAME] = SPACE_IN.arg(image4.getAttribute<QString>(NAME), sl("NEW"));
     });
 
     // Verify
@@ -4494,7 +4485,7 @@ void tst_Collection_Relations::tap_lvalue() const
 void tst_Collection_Relations::tap_rvalue() const
 {
     // Prepare
-    AlbumImage image2 {{ID, 2}, {NAME, QStringLiteral("image2")}};
+    AlbumImage image2 {{ID, 2}, {NAME, sl("image2")}};
     ModelsCollection<AlbumImage *> images {&image2};
 
     // Get result
@@ -4508,8 +4499,7 @@ void tst_Collection_Relations::tap_rvalue() const
 
         // Change the name, append " NEW"
         auto &image2_ = *imagesRef.first();
-        image2_[NAME] = SPACE_IN.arg(image2_.getAttribute<QString>(NAME),
-                                     QStringLiteral("NEW"));
+        image2_[NAME] = SPACE_IN.arg(image2_.getAttribute<QString>(NAME), sl("NEW"));
     });
 
     // Verify

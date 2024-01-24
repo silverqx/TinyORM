@@ -248,8 +248,8 @@ defaultAttributeValues_WithQDateTime_InstanceMethod() const
 void tst_Model_Connection_Independent::
 defaultAttributeValues_WithQDateTime_InstanceAttributesMethod() const
 {
-    const auto name = QStringLiteral("test22");
-    const auto note = QStringLiteral("Torrent::instance()");
+    const auto name = sl("test22");
+    const auto note = sl("Torrent::instance()");
 
     // The Model::instance(attributes) must work well
     auto torrent = TorrentEager::instance({
@@ -274,9 +274,8 @@ void tst_Model_Connection_Independent::
 defaultAttributeValues_WithQDateTime_InstanceMethod_WithConnection() const
 {
     const auto connectionForInstance =
-            QStringLiteral(
-                "tinyorm_postgres_tests-tst_Model_Connection_Independent-"
-                "defaultAttributeValues_WithQDateTime");
+            sl("tinyorm_postgres_tests-tst_Model_Connection_Independent-"
+               "defaultAttributeValues_WithQDateTime");
 
     // The Model::instance() method must work well (with connection override)
     auto torrent = TorrentEager::instance(connectionForInstance);
@@ -301,12 +300,11 @@ void tst_Model_Connection_Independent::
 defaultAttributeValues_WithQDateTime_InstanceAttributesMethod_WithConnection() const
 {
     const auto connectionForInstance =
-            QStringLiteral(
-                "tinyorm_postgres_tests-tst_Model_Connection_Independent-"
-                "defaultAttributeValues_WithQDateTime");
+            sl("tinyorm_postgres_tests-tst_Model_Connection_Independent-"
+               "defaultAttributeValues_WithQDateTime");
 
-    const auto name = QStringLiteral("test22");
-    const auto note = QStringLiteral("Torrent::instance()");
+    const auto name = sl("test22");
+    const auto note = sl("Torrent::instance()");
 
     // The Model::instance(attributes) must work well (with connection override)
     auto torrent = TorrentEager::instance({
@@ -350,8 +348,8 @@ defaultAttributeValues_WithoutQDateTime_DefaultCtor() const
 void tst_Model_Connection_Independent::
 defaultAttributeValues_WithoutQDateTime_ConvertingAttributesCtor() const
 {
-    const auto name = QStringLiteral("test22");
-    const auto note = QStringLiteral("Torrent::instance()");
+    const auto name = sl("test22");
+    const auto note = sl("Torrent::instance()");
 
     // The converting attributes ctor without QDateTime must work well
     TorrentEager_Without_QDateTime torrent({
@@ -373,8 +371,8 @@ defaultAttributeValues_WithoutQDateTime_ConvertingAttributesCtor() const
 void tst_Model_Connection_Independent::
 defaultAttributeValues_WithoutQDateTime_ListInitializationCtor() const
 {
-    const auto name = QStringLiteral("test22");
-    const auto note = QStringLiteral("Torrent::instance()");
+    const auto name = sl("test22");
+    const auto note = sl("Torrent::instance()");
 
     /* The list initialization ctor without QDateTime
        using the std::initializer_list<AttributeItem> must work well. */
@@ -414,8 +412,8 @@ defaultAttributeValues_WithQDateTime_InstanceHeapMethod() const
 void tst_Model_Connection_Independent::
 defaultAttributeValues_WithQDateTime_InstanceHeapAttributesMethod() const
 {
-    const auto name = QStringLiteral("test22");
-    const auto note = QStringLiteral("Torrent::instance()");
+    const auto name = sl("test22");
+    const auto note = sl("Torrent::instance()");
 
     // The Model::instance(attributes) must work well
     auto torrent = TorrentEager::instanceHeap({
@@ -440,9 +438,8 @@ void tst_Model_Connection_Independent::
 defaultAttributeValues_WithQDateTime_InstanceHeapMethod_WithConnection() const
 {
     const auto connectionForInstance =
-            QStringLiteral(
-                "tinyorm_postgres_tests-tst_Model_Connection_Independent-"
-                "defaultAttributeValues_WithQDateTime");
+            sl("tinyorm_postgres_tests-tst_Model_Connection_Independent-"
+               "defaultAttributeValues_WithQDateTime");
 
     // The Model::instance() method must work well (with connection override)
     auto torrent = TorrentEager::instanceHeap(connectionForInstance);
@@ -467,12 +464,11 @@ void tst_Model_Connection_Independent::
 defaultAttributeValues_WithQDateTime_InstanceHeapAttributesMethod_WithConnection() const
 {
     const auto connectionForInstance =
-            QStringLiteral(
-                "tinyorm_postgres_tests-tst_Model_Connection_Independent-"
-                "defaultAttributeValues_WithQDateTime");
+            sl("tinyorm_postgres_tests-tst_Model_Connection_Independent-"
+               "defaultAttributeValues_WithQDateTime");
 
-    const auto name = QStringLiteral("test22");
-    const auto note = QStringLiteral("Torrent::instance()");
+    const auto name = sl("test22");
+    const auto note = sl("Torrent::instance()");
 
     // The Model::instance(attributes) must work well (with connection override)
     auto torrent = TorrentEager::instanceHeap({
@@ -634,7 +630,7 @@ void tst_Model_Connection_Independent::subscriptOperator_OnLhs() const
     QCOMPARE(torrent->getAttribute(NAME), QVariant("test2"));
     QCOMPARE(torrent->getAttribute(SIZE_), QVariant(12));
 
-    const auto name = QStringLiteral("test2 operator[]");
+    const auto name = sl("test2 operator[]");
     const auto size = 112;
     (*torrent)[NAME] = name;
     (*torrent)[SIZE_] = size;
@@ -666,7 +662,7 @@ void tst_Model_Connection_Independent::
     QCOMPARE(torrent3->getAttribute(NAME), torrent2->getAttribute(NAME));
 
     // Some more testing
-    const auto name = QStringLiteral("test2 operator[]");
+    const auto name = sl("test2 operator[]");
 
     attributeReference = name;
     (*torrent3)[NAME] = attributeReference;
@@ -1445,8 +1441,7 @@ void tst_Model_Connection_Independent::chunk_EmptyResult() const
 {
     auto callbackInvoked = false;
 
-    auto result = FilePropertyProperty::whereEq(NAME,
-                                                QStringLiteral("dummy-NON_EXISTENT"))
+    auto result = FilePropertyProperty::whereEq(NAME, sl("dummy-NON_EXISTENT"))
                   ->orderBy(ID)
                   .chunk(3, [&callbackInvoked]
                             (ModelsCollection<FilePropertyProperty> &&/*unused*/, // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
@@ -1552,8 +1547,7 @@ void tst_Model_Connection_Independent::each_EmptyResult() const
 {
     auto callbackInvoked = false;
 
-    auto result = FilePropertyProperty::whereEq(NAME,
-                                                QStringLiteral("dummy-NON_EXISTENT"))
+    auto result = FilePropertyProperty::whereEq(NAME, sl("dummy-NON_EXISTENT"))
                   ->orderBy(ID)
                   .each([&callbackInvoked]
                         (FilePropertyProperty &&/*unused*/, const qint64 /*unused*/) // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
@@ -1594,7 +1588,7 @@ void tst_Model_Connection_Independent::chunkMap() const
         auto nameRef = model[NAME];
 
         // Modify the name attribute
-        nameRef = QStringLiteral("%1_mapped").arg(nameRef->template value<QString>());
+        nameRef = sl("%1_mapped").arg(nameRef->template value<QString>());
 
         return std::move(model);
     });
@@ -1634,7 +1628,7 @@ void tst_Model_Connection_Independent::chunkMap_EnforceOrderBy() const
         auto nameRef = model[NAME];
 
         // Modify the name attribute
-        nameRef = QStringLiteral("%1_mapped").arg(nameRef->template value<QString>());
+        nameRef = sl("%1_mapped").arg(nameRef->template value<QString>());
 
         return std::move(model);
     });
@@ -1668,8 +1662,7 @@ void tst_Model_Connection_Independent::chunkMap_EmptyResult() const
 {
     auto callbackInvoked = false;
 
-    auto result = FilePropertyProperty::whereEq(NAME,
-                                                QStringLiteral("dummy-NON_EXISTENT"))
+    auto result = FilePropertyProperty::whereEq(NAME, sl("dummy-NON_EXISTENT"))
                   ->chunkMap([&callbackInvoked]
                              (FilePropertyProperty &&model)
     {
@@ -1689,7 +1682,7 @@ void tst_Model_Connection_Independent::chunkMap_TemplatedReturnValue() const
                   ->chunkMap<QString>([](FilePropertyProperty &&model) // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
     {
         // Return the modify name directly
-        return QStringLiteral("%1_mapped").arg(model[NAME]->template value<QString>());
+        return sl("%1_mapped").arg(model[NAME]->template value<QString>());
     });
 
     QVector<QString> expectedResult {
@@ -1717,7 +1710,7 @@ tst_Model_Connection_Independent::chunkMap_EnforceOrderBy_TemplatedReturnValue()
                       [](FilePropertyProperty &&model) // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
     {
         // Return the modify name directly
-        return QStringLiteral("%1_mapped").arg(model[NAME]->template value<QString>());
+        return sl("%1_mapped").arg(model[NAME]->template value<QString>());
     });
 
     QVector<QString> expectedResult {
@@ -1739,8 +1732,7 @@ void tst_Model_Connection_Independent::chunkMap_EmptyResult_TemplatedReturnValue
 {
     auto callbackInvoked = false;
 
-    auto result = FilePropertyProperty::whereEq(NAME,
-                                                QStringLiteral("dummy-NON_EXISTENT"))
+    auto result = FilePropertyProperty::whereEq(NAME, sl("dummy-NON_EXISTENT"))
                   ->chunkMap<QString>([&callbackInvoked]
                                       (FilePropertyProperty &&/*unused*/) // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
                                       -> QString
@@ -1843,8 +1835,7 @@ void tst_Model_Connection_Independent::chunkById_EmptyResult() const
 {
     auto callbackInvoked = false;
 
-    auto result = FilePropertyProperty::whereEq(NAME,
-                                                QStringLiteral("dummy-NON_EXISTENT"))
+    auto result = FilePropertyProperty::whereEq(NAME, sl("dummy-NON_EXISTENT"))
                   ->orderBy(ID)
                   .chunkById(3, [&callbackInvoked]
                                 (ModelsCollection<FilePropertyProperty> &&/*unused*/, // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
@@ -1952,7 +1943,7 @@ void tst_Model_Connection_Independent::chunkById_EmptyResult_WithAlias() const
     auto callbackInvoked = false;
 
     auto result = FilePropertyProperty::select({ASTERISK, "id as id_as"})
-                  ->whereEq(NAME, QStringLiteral("dummy-NON_EXISTENT"))
+                  ->whereEq(NAME, sl("dummy-NON_EXISTENT"))
                   .orderBy(ID)
                   .chunkById(3, [&callbackInvoked]
                                 (ModelsCollection<FilePropertyProperty> &&/*unused*/, // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
@@ -2028,8 +2019,7 @@ void tst_Model_Connection_Independent::eachById_EmptyResult() const
 {
     auto callbackInvoked = false;
 
-    auto result = FilePropertyProperty::whereEq(NAME,
-                                                QStringLiteral("dummy-NON_EXISTENT"))
+    auto result = FilePropertyProperty::whereEq(NAME, sl("dummy-NON_EXISTENT"))
                   ->orderBy(ID)
                   .eachById([&callbackInvoked]
                             (FilePropertyProperty &&/*unused*/, const qint64 /*unused*/) // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
@@ -2108,7 +2098,7 @@ void tst_Model_Connection_Independent::eachById_EmptyResult_WithAlias() const
     auto callbackInvoked = false;
 
     auto result = FilePropertyProperty::select({ASTERISK, "id as id_as"})
-                  ->whereEq(NAME, QStringLiteral("dummy-NON_EXISTENT"))
+                  ->whereEq(NAME, sl("dummy-NON_EXISTENT"))
                   .orderBy(ID)
                   .eachById([&callbackInvoked]
                             (FilePropertyProperty &&/*unused*/, const qint64 /*unused*/) // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)

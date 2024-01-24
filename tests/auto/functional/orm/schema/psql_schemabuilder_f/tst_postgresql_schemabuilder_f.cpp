@@ -68,7 +68,7 @@ void tst_PostgreSQL_SchemaBuilder_f::hasTable_NoSearchPath_InConfiguration() con
               .toUtf8().constData(), );
 
     // Verify
-    const auto hasTable = Schema::on(*connectionName).hasTable(QStringLiteral("users"));
+    const auto hasTable = Schema::on(*connectionName).hasTable(sl("users"));
 
     /* This check is really weird, our implementation queries the PostgreSQL database
        using the 'show search_path' query to obtain a real search_path if
@@ -100,7 +100,7 @@ void tst_PostgreSQL_SchemaBuilder_f::
     const auto connectionName =
             Databases::createConnectionTempFrom(
                 Databases::POSTGRESQL, {ClassName, QString::fromUtf8(__func__)}, // NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
-                {{search_path, QStringLiteral("''")}});
+                {{search_path, sl("''")}});
 
     if (!connectionName)
         QSKIP(TestUtils::AutoTestSkipped
@@ -109,7 +109,7 @@ void tst_PostgreSQL_SchemaBuilder_f::
 
     // Verify
     QVERIFY_EXCEPTION_THROWN(
-                Schema::on(*connectionName).hasTable(QStringLiteral("users")),
+                Schema::on(*connectionName).hasTable(sl("users")),
                 SearchPathEmptyError);
 
     // Restore
@@ -123,7 +123,7 @@ void tst_PostgreSQL_SchemaBuilder_f::
     const auto connectionName =
             Databases::createConnectionTempFrom(
                 Databases::POSTGRESQL, {ClassName, QString::fromUtf8(__func__)}, // NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
-                {{search_path, QStringLiteral("''")}});
+                {{search_path, sl("''")}});
 
     if (!connectionName)
         QSKIP(TestUtils::AutoTestSkipped
@@ -131,7 +131,7 @@ void tst_PostgreSQL_SchemaBuilder_f::
               .toUtf8().constData(), );
 
     // Verify
-    QVERIFY(Schema::on(*connectionName).hasTable(QStringLiteral("public.users")));
+    QVERIFY(Schema::on(*connectionName).hasTable(sl("public.users")));
 
     // Restore
     QVERIFY(Databases::removeConnection(*connectionName));
