@@ -103,17 +103,23 @@ tiny_resource_and_manifest(${TinyUtils_target}
 # Resolve and link dependencies
 # ---
 
+# Unconditional dependencies
+target_link_libraries(${TinyUtils_target}
+    PUBLIC
+        Qt${QT_VERSION_MAJOR}::Core
+        ${TinyOrm_ns}::${TinyOrm_target}
+)
+
+# Conditional dependencies
 if(NOT STRICT_MODE)
     target_link_libraries(${TinyUtils_target}
         PRIVATE ${TinyOrm_ns}::${CommonConfig_target}
     )
 endif()
 
-target_link_libraries(${TinyUtils_target}
-    PUBLIC
-        Qt${QT_VERSION_MAJOR}::Core
-        ${TinyOrm_ns}::${TinyOrm_target}
-)
+if(BUILD_DRIVERS)
+    target_link_libraries(${TinyUtils_target} PRIVATE range-v3::range-v3)
+endif()
 
 # Others
 # ---

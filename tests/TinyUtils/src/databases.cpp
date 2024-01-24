@@ -1,8 +1,18 @@
 #include "databases.hpp"
 
+#ifdef TINYORM_USING_TINYDRIVERS
+#  include <range/v3/view/map.hpp>
+
+#  include "orm/drivers/sqldatabase.hpp"
+#endif
+
 #include "orm/db.hpp"
 #include "orm/utils/configuration.hpp"
 #include "orm/utils/type.hpp"
+
+#ifdef TINYORM_USING_TINYDRIVERS
+using Orm::Drivers::SqlDatabase;
+#endif
 
 using Orm::Constants::EMPTY;
 using Orm::Constants::H127001;
@@ -12,6 +22,9 @@ using Orm::Constants::PUBLIC;
 using Orm::Constants::QMYSQL;
 using Orm::Constants::QPSQL;
 using Orm::Constants::QSQLITE;
+using Orm::Constants::SSL_CA;
+using Orm::Constants::SSL_CERT;
+using Orm::Constants::SSL_KEY;
 using Orm::Constants::ROOT;
 using Orm::Constants::TZ00;
 using Orm::Constants::UTC;
@@ -95,6 +108,13 @@ const QString Databases::MARIADB    = sl("tinyorm_maria_tests");
 const QString Databases::SQLITE     = sl("tinyorm_sqlite_tests");
 const QString Databases::POSTGRESQL = sl("tinyorm_postgres_tests");
 
+#ifdef TINYORM_USING_TINYDRIVERS
+const QString Databases::MYSQL_DRIVERS      = sl("tinydrivers_mysql_tests");
+const QString Databases::MARIADB_DRIVERS    = sl("tinydrivers_maria_tests");
+const QString Databases::SQLITE_DRIVERS     = sl("tinydrivers_sqlite_tests");
+const QString Databases::POSTGRESQL_DRIVERS = sl("tinydrivers_postgres_tests");
+#endif
+
 /* Create connection/s for the whole unit test case */
 
 QStringList Databases::createConnections(const QStringList &connections)
@@ -106,7 +126,7 @@ QStringList Databases::createConnections(const QStringList &connections)
     /* The default connection is empty for tests, there is no default connection
        because it can produce hard to find bugs, I have to be explicit about
        the connection which will be used. */
-    m_dm->addConnections(createConfigurationsHash(connections), EMPTY);
+    m_dm->addConnections(createConfigurationsHash(connections, false), EMPTY);
 
     return m_dm->connectionNames();
 }
@@ -115,11 +135,47 @@ QString Databases::createConnection(const QString &connection)
 {
     auto connections = createConnections({connection});
 
+    // Nothing to do
     if (connections.isEmpty())
         return {};
 
     return std::move(connections.first());
 }
+
+#ifdef TINYORM_USING_TINYDRIVERS
+QStringList Databases::createDriversConnections(const QStringList &connections)
+{
+    throwIfConnectionsInitialized();
+
+    const auto &configurations = createConfigurationsHash(connections, true);
+
+    // Nothing to do
+    if (configurations.empty())
+        return {};
+
+    for (const auto &[connection, configuration] : configurations)
+        createDriversConnectionInternal(connection, configuration);
+
+    return configurations | ranges::views::keys | ranges::to<QStringList>();
+}
+
+QString Databases::createDriversConnection(const QString &connection)
+{
+    throwIfConnectionsInitialized();
+
+    const auto &configurations = createConfigurationsHash({connection}, true);
+
+    // Nothing to do
+    if (configurations.empty())
+        return {};
+
+    Q_ASSERT(configurations.size() == 1);
+
+    createDriversConnectionInternal(connection, configurations.find(connection)->second);
+
+    return connection;
+}
+#endif
 
 /* Create a connection for one test method */
 
@@ -166,7 +222,7 @@ std::optional<QString>
 Databases::createConnectionTempFrom(const QString &fromConfiguration,
                                     const ConnectionNameParts &connectionParts)
 {
-    const auto configuration = Databases::configuration(fromConfiguration);
+    const auto configuration = Databases::configuration(fromConfiguration, false);
 
     // Nothing to do, no configuration exists
     if (!configuration)
@@ -186,7 +242,7 @@ Databases::createConnectionTempFrom(
         std::unordered_map<QString, QVariant> &&optionsToUpdate,
         const std::vector<QString> &optionsToRemove)
 {
-    const auto configurationOriginal = Databases::configuration(fromConfiguration);
+    const auto configurationOriginal = Databases::configuration(fromConfiguration, false);
 
     // Nothing to do, no configuration exists
     if (!configurationOriginal)
@@ -208,12 +264,12 @@ Databases::createConnectionTempFrom(
 }
 
 std::optional<std::reference_wrapper<const QVariantHash>>
-Databases::configuration(const QString &connection)
+Databases::configuration(const QString &connection, const bool forTinyDrivers)
 {
     if (hasConfiguration(connection))
         return m_configurations.at(connection);
 
-    return createConfigurationsHash({connection}).at(connection);
+    return createConfigurationsHash({connection}, forTinyDrivers).at(connection);
 }
 
 bool Databases::hasConfiguration(const QString &connection)
@@ -261,8 +317,62 @@ std::shared_ptr<DatabaseManager> Databases::managerShared()
 
 /* private */
 
+#ifdef TINYORM_USING_TINYDRIVERS
+void Databases::createDriversConnectionInternal(const QString &connection,
+                                                const QVariantHash &configuration)
+{
+    if (connection == MYSQL_DRIVERS)
+        createDriversMySQLConnection(connection, configuration, mysqlEnvVariables());
+
+    else if (connection == MARIADB_DRIVERS)
+        createDriversMariaConnection(connection, configuration, mariaSslEnvVariables());
+
+    // else if (connection == POSTGRESQL_DRIVERS)
+    //     createDriversPostgresConnection(connection, configuration);
+
+    // else if (connection == SQLITE_DRIVERS)
+    //     createDriversSQLiteConnection(connection, configuration);
+    else
+        throw RuntimeError(
+                sl("Creating of the '%1' connection for TinyDrivers failed in %2().")
+                .arg(connection, __tiny_func__));
+}
+
+void Databases::createDriversMySQLConnection(
+        const QString &connection, const QVariantHash &configuration,
+        const std::vector<const char *> &sslEnvVariables)
+{
+    const auto options = configuration[options_].value<QVariantHash>();
+
+    Q_ASSERT(configuration.contains(driver_));
+    auto db = SqlDatabase::addDatabase(configuration[driver_].value<QString>().toUpper(),
+                                       connection);
+
+    db.setHostName(    configuration[host_].value<QString>());
+    db.setPort(        configuration[port_].value<int>());
+    db.setDatabaseName(configuration[database_].value<QString>());
+    db.setUserName(    configuration[username_].value<QString>());
+    db.setPassword(    configuration[password_].value<QString>());
+
+    // Check if all SSL-related Environment variables are defined
+    if (envVariablesDefined(sslEnvVariables))
+        db.setConnectOptions(sl("SSL_CERT=%1;SSL_KEY=%2;SSL_CA=%3")
+                             .arg(options[SSL_CERT].value<QString>(),
+                                  options[SSL_KEY].value<QString>(),
+                                  options[SSL_CA].value<QString>()));
+
+    if (db.open())
+        return;
+
+    // CUR drivers open() should throw exception in the near future, then remove this exception; also because of this I'm throwing simple RuntimeError() silverqx
+    throw RuntimeError(sl("Failed to open the '%1' database connection in %2().")
+                       .arg(connection, __tiny_func__));
+}
+#endif
+
 const ConfigurationsType &
-Databases::createConfigurationsHash(const QStringList &connections)
+Databases::createConfigurationsHash(const QStringList &connections,
+                                    const bool forTinyDrivers)
 {
     /*! Determine whether a connection for the given driver should be created. */
     const auto shouldCreateConnection = [&connections]
@@ -276,28 +386,53 @@ Databases::createConfigurationsHash(const QStringList &connections)
                 (createAllConnections || connections.contains(connection));
     };
 
-    m_configurations.reserve(static_cast<decltype (m_configurations)::size_type>(
-                                 connections.size()));
+    m_configurations.reserve(computeReserveForConfigurationsHash(connections));
 
     // This connection must be to the MySQL database server (not MariaDB)
-    if (shouldCreateConnection(MYSQL, QMYSQL))
+    if (const auto connection = forTinyDrivers ? MYSQL_DRIVERS : MYSQL;
+        shouldCreateConnection(connection, QMYSQL)
+    )
         if (auto &&[config, envDefined] = mysqlConfiguration(); envDefined)
-            m_configurations.try_emplace(MYSQL, std::move(config));
+            m_configurations.try_emplace(connection, std::move(config));
 
     // This connection must be to the MariaDB database server (not MySQL)
-    if (shouldCreateConnection(MARIADB, QMYSQL))
+    if (const auto connection = forTinyDrivers ? MARIADB_DRIVERS : MARIADB;
+        shouldCreateConnection(connection, QMYSQL)
+    )
         if (auto &&[config, envDefined] = mariaConfiguration(); envDefined)
-            m_configurations.try_emplace(MARIADB, std::move(config));
+            m_configurations.try_emplace(connection, std::move(config));
 
-    if (shouldCreateConnection(SQLITE, QSQLITE))
+    if (const auto connection = forTinyDrivers ? SQLITE_DRIVERS : SQLITE;
+        shouldCreateConnection(connection, QSQLITE)
+    )
         if (auto &&[config, envDefined] = sqliteConfiguration(); envDefined)
-            m_configurations.try_emplace(SQLITE, std::move(config));
+            m_configurations.try_emplace(connection, std::move(config));
 
-    if (shouldCreateConnection(POSTGRESQL, QPSQL))
+    if (const auto connection = forTinyDrivers ? POSTGRESQL_DRIVERS : POSTGRESQL;
+        shouldCreateConnection(connection, QPSQL)
+    )
         if (auto &&[config, envDefined] = postgresConfiguration(); envDefined)
-            m_configurations.try_emplace(POSTGRESQL, std::move(config));
+            m_configurations.try_emplace(connection, std::move(config));
 
     return m_configurations;
+}
+
+ConfigurationsType::size_type
+Databases::computeReserveForConfigurationsHash(const QStringList &connections)
+{
+    /*! Alias for the configurations hash size type. */
+    using SizeType = decltype (m_configurations)::size_type;
+
+    if (!connections.isEmpty())
+        return static_cast<SizeType>(connections.size());
+
+    /* For all connections enabled (this logic is enough, I will not complicate it).
+       +1 because the QMYSQL driver is also used for MariaDB connection. */
+#ifdef TINYORM_USING_TINYDRIVERS
+    return static_cast<SizeType>(SqlDatabase::drivers().size()) + 1;
+#else
+    return static_cast<SizeType>(m_dm->supportedDrivers().size()) + 1;
+#endif
 }
 
 std::pair<QVariantHash, bool>
@@ -456,7 +591,7 @@ const std::vector<const char *> &Databases::mysqlEnvVariables()
     // Environment variables to check if all are empty (no need to check SSL variables)
     static const std::vector<const char *> cached {
         "DB_MYSQL_HOST", "DB_MYSQL_PORT", "DB_MYSQL_DATABASE", "DB_MYSQL_USERNAME",
-        "DB_MYSQL_PASSWORD", "DB_MYSQL_CHARSET", "DB_MYSQL_COLLATION"
+        "DB_MYSQL_PASSWORD", "DB_MYSQL_CHARSET", "DB_MYSQL_COLLATION",
     };
 
     return cached;
@@ -467,7 +602,7 @@ const std::vector<const char *> &Databases::mariaEnvVariables()
     // Environment variables to check if all are empty (no need to check SSL variables)
     static const std::vector<const char *> cached {
         "DB_MARIA_HOST", "DB_MARIA_PORT", "DB_MARIA_DATABASE", "DB_MARIA_USERNAME",
-        "DB_MARIA_PASSWORD", "DB_MARIA_CHARSET", "DB_MARIA_COLLATION"
+        "DB_MARIA_PASSWORD", "DB_MARIA_CHARSET", "DB_MARIA_COLLATION",
     };
 
     return cached;
@@ -477,7 +612,7 @@ const std::vector<const char *> &Databases::sqliteEnvVariables()
 {
     // Environment variables to check if all are empty
     static const std::vector<const char *> cached {
-        "DB_SQLITE_DATABASE", "DB_SQLITE_FOREIGN_KEYS"
+        "DB_SQLITE_DATABASE", "DB_SQLITE_FOREIGN_KEYS",
     };
 
     return cached;
@@ -488,11 +623,33 @@ const std::vector<const char *> &Databases::postgresEnvVariables()
     // Environment variables to check if all are empty (no need to check SSL variables)
     static const std::vector<const char *> cached {
         "DB_PGSQL_HOST", "DB_PGSQL_PORT", "DB_PGSQL_DATABASE", "DB_PGSQL_SEARCHPATH",
-        "DB_PGSQL_USERNAME", "DB_PGSQL_PASSWORD", "DB_PGSQL_CHARSET"
+        "DB_PGSQL_USERNAME", "DB_PGSQL_PASSWORD", "DB_PGSQL_CHARSET",
     };
 
     return cached;
 }
+
+#ifdef TINYORM_USING_TINYDRIVERS
+const std::vector<const char *> &Databases::mysqlSslEnvVariables()
+{
+    // SSL-related Environment variables to check if all are empty
+    static const std::vector<const char *> cached {
+        "DB_MYSQL_SSL_CA", "DB_MYSQL_SSL_CERT", "DB_MYSQL_SSL_KEY",
+    };
+
+    return cached;
+}
+
+const std::vector<const char *> &Databases::mariaSslEnvVariables()
+{
+    // SSL-related Environment variables to check if all are empty
+    static const std::vector<const char *> cached {
+        "DB_MARIA_SSL_CA", "DB_MARIA_SSL_CERT", "DB_MARIA_SSL_KEY",
+    };
+
+    return cached;
+}
+#endif
 
 bool Databases::isDriverAvailable(const QString &driver)
 {
@@ -555,8 +712,8 @@ void Databases::throwIfConnectionsInitialized()
 
     if (initialized)
         throw RuntimeError(
-                sl("Databases::createConnections/createConnection methods "
-                   "can be called only once in %1().")
+                sl("Databases::createConnections/createConnection methods can be called "
+                   "only once in %1().")
                 .arg(__tiny_func__));
 
     initialized = true;

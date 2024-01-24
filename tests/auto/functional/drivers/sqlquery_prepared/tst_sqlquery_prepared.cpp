@@ -28,8 +28,6 @@ using TypeUtils = Orm::Utils::Type;
 
 using TestUtils::Databases;
 
-#define sl(str) QStringLiteral(str)
-
 class tst_SqlQuery_Prepared : public QObject // clazy:exclude=ctor-missing-parent-argument
 {
     Q_OBJECT
@@ -38,7 +36,7 @@ class tst_SqlQuery_Prepared : public QObject // clazy:exclude=ctor-missing-paren
     using enum Orm::Drivers::NumericalPrecisionPolicy;
 
 private Q_SLOTS:
-    void initTestCase();
+    void initTestCase() const;
 
     void select_All() const;
     void select_WithWhere() const;
@@ -59,33 +57,18 @@ private:
 /* private slots */
 
 // NOLINTBEGIN(readability-convert-member-functions-to-static)
-void tst_SqlQuery_Prepared::initTestCase()
+void tst_SqlQuery_Prepared::initTestCase() const
 {
-//    const auto connections = Databases::createConnections({Databases::MYSQL});
+   const auto connections = Databases::createDriversConnections();
 
-//    if (connections.isEmpty())
-//        QSKIP(TestUtils::AutoTestSkippedAny.arg(TypeUtils::classPureBasename(*this))
-//                                           .toUtf8().constData(), );
-
-    auto db = SqlDatabase::addDatabase("QMYSQL", Databases::MYSQL);
-    db.setHostName(qEnvironmentVariable("DB_MYSQL_HOST"));
-    db.setPort(qEnvironmentVariable("DB_MYSQL_PORT").toUInt());
-    db.setDatabaseName(qEnvironmentVariable("DB_MYSQL_DATABASE"));
-    db.setUserName(qEnvironmentVariable("DB_MYSQL_USERNAME"));
-    db.setPassword(qEnvironmentVariable("DB_MYSQL_PASSWORD"));
-    db.setConnectOptions(sl("SSL_CERT=%1;SSL_KEY=%2;SSL_CA=%3")
-                         .arg(qEnvironmentVariable("DB_MYSQL_SSL_CERT"),
-                              qEnvironmentVariable("DB_MYSQL_SSL_KEY"),
-                              qEnvironmentVariable("DB_MYSQL_SSL_CA")));
-
-    if (!db.open())
-        QSKIP(TestUtils::AutoTestSkippedAny.arg(TypeUtils::classPureBasename(*this))
-              .toUtf8().constData(), );
+   if (connections.isEmpty())
+       QSKIP(TestUtils::AutoTestSkippedAny.arg(TypeUtils::classPureBasename(*this))
+                                          .toUtf8().constData(), );
 
     QTest::addColumn<QString>("connection");
 
     // Run all tests for all supported database connections
-    for (const auto &connection : QStringList{Databases::MYSQL})
+    for (const auto &connection : connections)
         QTest::newRow(connection.toUtf8().constData()) << connection;
 }
 
@@ -518,9 +501,9 @@ void tst_SqlQuery_Prepared::insert_update_delete() const
 
 /* private */
 
-SqlQuery tst_SqlQuery_Prepared::createQuery(const QString &/*unused*/) const
+SqlQuery tst_SqlQuery_Prepared::createQuery(const QString &connection) const
 {
-    const auto driver = SqlDatabase::database(Databases::MYSQL).driverWeak();
+    const auto driver = SqlDatabase::database(connection).driverWeak();
 
     return SqlQuery(driver.lock()->createResult(driver));
 }

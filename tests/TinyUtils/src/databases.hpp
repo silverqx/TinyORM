@@ -48,20 +48,38 @@ namespace TestUtils
         using ConfigurationsType = Orm::Support::DatabaseConfiguration
                                                ::ConfigurationsType;
 
-        /*! MySQL connection name. */
+        /*! MySQL connection name for TinyORM tests. */
         static const QString MYSQL;
-        /*! MariaDB connection name. */
+        /*! MariaDB connection name for TinyORM tests. */
         static const QString MARIADB;
-        /*! SQLite connection name. */
+        /*! SQLite connection name for TinyORM tests. */
         static const QString SQLITE;
-        /*! PostgreSQL connection name. */
+        /*! PostgreSQL connection name for TinyORM tests. */
         static const QString POSTGRESQL;
 
+#ifdef TINYORM_USING_TINYDRIVERS
+        /*! MySQL connection name for TinyDrivers tests. */
+        static const QString MYSQL_DRIVERS;
+        /*! MariaDB connection name for TinyDrivers tests. */
+        static const QString MARIADB_DRIVERS;
+        /*! SQLite connection name for TinyDrivers tests. */
+        static const QString SQLITE_DRIVERS;
+        /*! PostgreSQL connection name for TinyDrivers tests. */
+        static const QString POSTGRESQL_DRIVERS;
+#endif
+
         /* Create connection/s for the whole unit test case */
-        /*! Create all database connections which will be tested. */
+        /*! Create all database connections which will be tested for TinyORM tests. */
         static QStringList createConnections(const QStringList &connections = {});
-        /*! Create a database connection. */
+        /*! Create a database connection for TinyORM tests. */
         static QString createConnection(const QString &connection);
+
+#ifdef TINYORM_USING_TINYDRIVERS
+        /*! Create all database connections which will be tested for TinyDrivers tests. */
+        static QStringList createDriversConnections(const QStringList &connections = {});
+        /*! Create a database connection for TinyDrivers tests. */
+        static QString createDriversConnection(const QString &connection);
+#endif
 
         /* Create a connection for one test method */
         /*! Connection name parts to generate the connection name for one test method. */
@@ -93,7 +111,7 @@ namespace TestUtils
 
         /*! Get a configuration for the given connection. */
         static std::optional<std::reference_wrapper<const QVariantHash>>
-        configuration(const QString &connection);
+        configuration(const QString &connection, bool forTinyDrivers);
 
         /*! Determine whether a configuration for the given connection was defined. */
         static bool hasConfiguration(const QString &connection);
@@ -113,9 +131,27 @@ namespace TestUtils
         static std::shared_ptr<DatabaseManager> managerShared();
 
     private:
+#ifdef TINYORM_USING_TINYDRIVERS
+        /*! Create a database connection for TinyDrivers tests. */
+        static void createDriversConnectionInternal(
+                const QString &connection, const QVariantHash &configuration);
+        /*! Create a MySQL database connection for TinyDrivers tests. */
+        static void createDriversMySQLConnection(
+                const QString &connection, const QVariantHash &configuration,
+                const std::vector<const char *> &sslEnvVariables);
+        /*! Create a MariaDB database connection for TinyDrivers tests. */
+        inline static void createDriversMariaConnection(
+                const QString &connection,
+                const QVariantHash &configuration,
+                const std::vector<const char *> &sslEnvVariables);
+#endif
+
         /*! Create database configurations hash. */
         static const ConfigurationsType &
-        createConfigurationsHash(const QStringList &connections);
+        createConfigurationsHash(const QStringList &connections, bool forTinyDrivers);
+        /*! Compute the reserve size for the configurations hash. */
+        static ConfigurationsType::size_type
+        computeReserveForConfigurationsHash(const QStringList &connections);
 
         /*! Create MySQL configuration hash. */
         static std::pair<QVariantHash, bool>
@@ -143,6 +179,13 @@ namespace TestUtils
         /*! Get all PostgreSQL environment variable names. */
         static const std::vector<const char *> &postgresEnvVariables();
 
+#ifdef TINYORM_USING_TINYDRIVERS
+        /*! Get all MySQL SSL-related environment variable names for TinyDrivers tests. */
+        static const std::vector<const char *> &mysqlSslEnvVariables();
+        /*! Get all MariaDB SSL-related environment variable names, TinyDrivers tests. */
+        static const std::vector<const char *> &mariaSslEnvVariables();
+#endif
+
         /*! Check whether the given Qt driver is available. */
         static bool isDriverAvailable(const QString &driver);
 
@@ -163,6 +206,19 @@ namespace TestUtils
         /*! Database configurations map. */
         static ConfigurationsType m_configurations;
     };
+
+    /* private */
+
+#ifdef TINYORM_USING_TINYDRIVERS
+    /* MariaDB connection code is the same as for the MySQL connection, still leave this
+       method as it has a better name (for better naming). */
+    void Databases::createDriversMariaConnection(
+            const QString &connection, const QVariantHash &configuration,
+            const std::vector<const char *> &sslEnvVariables)
+    {
+        createDriversMySQLConnection(connection, configuration, sslEnvVariables);
+    }
+#endif
 
 } // namespace TestUtils
 
