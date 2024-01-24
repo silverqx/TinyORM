@@ -49,6 +49,11 @@
 #include "tom/tomutils.hpp"
 #include "tom/version.hpp"
 
+#ifndef sl
+/*! Alias for the QStringLiteral(). */
+#  define sl(str) QStringLiteral(str)
+#endif
+
 TINYORM_BEGIN_COMMON_NAMESPACE
 
 using fspath = std::filesystem::path;
@@ -474,9 +479,6 @@ void Application::printFullVersions() const
         }
     }
 }
-
-/*! Alias for the QStringLiteral(). */
-#define sl(str) QStringLiteral(str)
 
 QVector<SubSectionItem> Application::createVersionsSubsection()
 {

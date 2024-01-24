@@ -15,8 +15,10 @@
 #include "tom/application.hpp"
 #include "tom/tomutils.hpp"
 
+#ifndef sl
 /*! Alias for the QStringLiteral(). */
-#define sl(str) QStringLiteral(str)
+#  define sl(str) QStringLiteral(str)
+#endif
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 

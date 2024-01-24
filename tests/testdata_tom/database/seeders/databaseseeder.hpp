@@ -2,8 +2,10 @@
 
 #include <tom/seeder.hpp>
 
+#ifndef sl
 /*! Alias for the QStringLiteral(). */
-#define sl(str) QStringLiteral(str)
+#  define sl(str) QStringLiteral(str)
+#endif
 
 namespace Seeders
 {

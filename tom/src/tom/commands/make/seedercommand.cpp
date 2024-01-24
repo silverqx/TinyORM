@@ -8,8 +8,10 @@
 #include "tom/exceptions/invalidargumenterror.hpp"
 #include "tom/tomconstants.hpp"
 
+#ifndef sl
 /*! Alias for the QStringLiteral(). */
-#define sl(str) QStringLiteral(str)
+#  define sl(str) QStringLiteral(str)
+#endif
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 

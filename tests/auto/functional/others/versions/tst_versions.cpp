@@ -31,8 +31,10 @@
 #  define TINYTEST_VERSIONS_TOMEXAMPLE_PATH
 #endif
 
+#ifndef sl
 /*! Alias for the QStringLiteral(). */
-#define sl(str) QStringLiteral(str)
+#  define sl(str) QStringLiteral(str)
+#endif
 
 #ifdef _WIN32
 using TestUtils::Fs;

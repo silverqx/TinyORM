@@ -8,8 +8,10 @@
 
 #include "orm/constants.hpp"
 
+#ifndef sl
 /*! Alias for the QStringLiteral(). */
-#define sl(str) QStringLiteral(str)
+#  define sl(str) QStringLiteral(str)
+#endif
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
