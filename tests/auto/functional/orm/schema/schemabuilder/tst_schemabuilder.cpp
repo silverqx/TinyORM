@@ -420,9 +420,7 @@ bool tst_SchemaBuilder::hasDatabase(const QString &database, const QString &conn
 bool tst_SchemaBuilder::hasDatabase_MySql(const QString &database,
                                           const QString &connection)
 {
-    auto query = DB::on(connection)
-                 .select(QStringLiteral("show databases"),
-                         {DB::getConfigValue(username_, connection)});
+    auto query = DB::on(connection).select(QStringLiteral("show databases"));
 
     while (query.next())
         if (query.value(QStringLiteral("Database")).value<QString>() == database)
