@@ -160,6 +160,7 @@ void tst_DatabaseManager::MySQL_removeConnection_Connected() const
     QCOMPARE(connection.driverName(), driverName);
     QCOMPARE(openedConnections.size(), 1);
     QCOMPARE(openedConnections.first(), *connectionName);
+    QVERIFY(m_dm->isOpen(*connectionName));
     QCOMPARE(m_dm->connectionNames().size(), 1);
     QVERIFY(m_dm->getDefaultConnection().isEmpty());
 
@@ -191,6 +192,7 @@ void tst_DatabaseManager::MySQL_removeConnection_NotConnected() const
     m_dm->setDefaultConnection(*connectionName);
 
     QVERIFY(m_dm->openedConnectionNames().isEmpty());
+    QVERIFY(!m_dm->isOpen(*connectionName));
     QCOMPARE(m_dm->connectionNames().size(), 1);
     QCOMPARE(m_dm->getDefaultConnection(), *connectionName);
 
@@ -243,6 +245,7 @@ void tst_DatabaseManager::Postgres_removeConnection_Connected() const
     QCOMPARE(connection.driverName(), driverName);
     QCOMPARE(openedConnections.size(), 1);
     QCOMPARE(openedConnections.first(), *connectionName);
+    QVERIFY(m_dm->isOpen(*connectionName));
     QCOMPARE(m_dm->connectionNames().size(), 1);
     QVERIFY(m_dm->getDefaultConnection().isEmpty());
 
@@ -274,6 +277,7 @@ void tst_DatabaseManager::Postgres_removeConnection_NotConnected() const
     m_dm->setDefaultConnection(*connectionName);
 
     QVERIFY(m_dm->openedConnectionNames().isEmpty());
+    QVERIFY(!m_dm->isOpen(*connectionName));
     QCOMPARE(m_dm->connectionNames().size(), 1);
     QCOMPARE(m_dm->getDefaultConnection(), *connectionName);
 
