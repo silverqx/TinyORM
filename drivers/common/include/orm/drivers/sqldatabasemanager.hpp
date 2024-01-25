@@ -68,6 +68,8 @@ namespace Orm::Drivers
         static QStringList drivers();
         /*! Get all managed connection names. */
         static QStringList connectionNames();
+        /*! Get a list of opened connections. */
+        static QStringList openedConnectionNames();
 
         /*! Determine whether the given driver is available. */
         static bool isDriverAvailable(const QString &name);

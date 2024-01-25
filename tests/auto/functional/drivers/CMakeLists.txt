@@ -1,2 +1,3 @@
+add_subdirectory(sqldatabasemanager)
 add_subdirectory(sqlquery_normal)
 add_subdirectory(sqlquery_prepared)
