@@ -207,7 +207,7 @@ void tst_DatabaseManager::MySQL_removeConnection_NotConnected() const
 
     // Restore defaults
     m_dm->setDefaultConnection(EMPTY);
-    QVERIFY(m_dm->openedConnectionNames().isEmpty());
+    QVERIFY(m_dm->getDefaultConnection().isEmpty());
 }
 
 void tst_DatabaseManager::Postgres_removeConnection_Connected() const
@@ -292,7 +292,7 @@ void tst_DatabaseManager::Postgres_removeConnection_NotConnected() const
 
     // Restore defaults
     m_dm->setDefaultConnection(EMPTY);
-    QVERIFY(m_dm->openedConnectionNames().isEmpty());
+    QVERIFY(m_dm->getDefaultConnection().isEmpty());
 }
 
 void tst_DatabaseManager::default_MySQL_ConfigurationValues() const
