@@ -158,18 +158,18 @@ void tst_DatabaseManager::MySQL_removeConnection_Connected() const
     QCOMPARE(connection.getName(), *connectionName);
     QCOMPARE(connection.getDatabaseName(), databaseName);
     QCOMPARE(connection.driverName(), driverName);
+    QCOMPARE(m_dm->connectionNames().size(), 1);
     QCOMPARE(openedConnections.size(), 1);
     QCOMPARE(openedConnections.first(), *connectionName);
     QVERIFY(m_dm->isOpen(*connectionName));
-    QCOMPARE(m_dm->connectionNames().size(), 1);
     QVERIFY(m_dm->getDefaultConnection().isEmpty());
 
     // Remove opened connection
     QVERIFY(Databases::removeConnection(*connectionName));
 
     QVERIFY(m_dm->getDefaultConnection().isEmpty());
-    QVERIFY(m_dm->openedConnectionNames().isEmpty());
     QVERIFY(m_dm->connectionNames().isEmpty());
+    QVERIFY(m_dm->openedConnectionNames().isEmpty());
 }
 
 void tst_DatabaseManager::MySQL_removeConnection_NotConnected() const
@@ -191,16 +191,16 @@ void tst_DatabaseManager::MySQL_removeConnection_NotConnected() const
     // To test resetting the default connection
     m_dm->setDefaultConnection(*connectionName);
 
+    QCOMPARE(m_dm->connectionNames().size(), 1);
     QVERIFY(m_dm->openedConnectionNames().isEmpty());
     QVERIFY(!m_dm->isOpen(*connectionName));
-    QCOMPARE(m_dm->connectionNames().size(), 1);
     QCOMPARE(m_dm->getDefaultConnection(), *connectionName);
 
     // Remove database connection that is not opened
     QVERIFY(Databases::removeConnection(*connectionName));
 
-    QVERIFY(m_dm->openedConnectionNames().isEmpty());
     QVERIFY(m_dm->connectionNames().isEmpty());
+    QVERIFY(m_dm->openedConnectionNames().isEmpty());
     /* When the connection was also a default connection, then DM will reset
        the default connection. */
     QCOMPARE(m_dm->getDefaultConnection(), DatabaseConfiguration::defaultConnectionName);
@@ -243,18 +243,18 @@ void tst_DatabaseManager::Postgres_removeConnection_Connected() const
     QCOMPARE(connection.getName(), *connectionName);
     QCOMPARE(connection.getDatabaseName(), databaseName);
     QCOMPARE(connection.driverName(), driverName);
+    QCOMPARE(m_dm->connectionNames().size(), 1);
     QCOMPARE(openedConnections.size(), 1);
     QCOMPARE(openedConnections.first(), *connectionName);
     QVERIFY(m_dm->isOpen(*connectionName));
-    QCOMPARE(m_dm->connectionNames().size(), 1);
     QVERIFY(m_dm->getDefaultConnection().isEmpty());
 
     // Remove opened connection
     QVERIFY(Databases::removeConnection(*connectionName));
 
     QVERIFY(m_dm->getDefaultConnection().isEmpty());
-    QVERIFY(m_dm->openedConnectionNames().isEmpty());
     QVERIFY(m_dm->connectionNames().isEmpty());
+    QVERIFY(m_dm->openedConnectionNames().isEmpty());
 }
 
 void tst_DatabaseManager::Postgres_removeConnection_NotConnected() const
@@ -276,16 +276,16 @@ void tst_DatabaseManager::Postgres_removeConnection_NotConnected() const
     // To test resetting the default connection
     m_dm->setDefaultConnection(*connectionName);
 
+    QCOMPARE(m_dm->connectionNames().size(), 1);
     QVERIFY(m_dm->openedConnectionNames().isEmpty());
     QVERIFY(!m_dm->isOpen(*connectionName));
-    QCOMPARE(m_dm->connectionNames().size(), 1);
     QCOMPARE(m_dm->getDefaultConnection(), *connectionName);
 
     // Remove database connection that is not opened
     QVERIFY(Databases::removeConnection(*connectionName));
 
-    QVERIFY(m_dm->openedConnectionNames().isEmpty());
     QVERIFY(m_dm->connectionNames().isEmpty());
+    QVERIFY(m_dm->openedConnectionNames().isEmpty());
     /* When the connection was also a default connection, then DM will reset
        the default connection. */
     QCOMPARE(m_dm->getDefaultConnection(), DatabaseConfiguration::defaultConnectionName);
