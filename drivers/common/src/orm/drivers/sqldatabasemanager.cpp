@@ -105,6 +105,11 @@ QStringList SqlDatabaseManager::connectionNames()
     return SqlDatabasePrivate::connections().keys_ts();
 }
 
+QStringList SqlDatabaseManager::openedConnectionNames()
+{
+    return SqlDatabasePrivate::connections().openedConnectionNames_ts();
+}
+
 bool SqlDatabaseManager::isDriverAvailable(const QString &name)
 {
     return drivers().contains(name);

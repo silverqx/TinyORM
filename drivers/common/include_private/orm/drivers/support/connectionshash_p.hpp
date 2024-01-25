@@ -61,6 +61,10 @@ namespace Orm::Drivers::Support
         template<typename ...Args>
         std::pair<iterator, bool> try_emplace(const key_type &key, Args &&...args);
 
+        /* Connections specific */
+        /*! Get a list of opened connections. */
+        inline QStringList openedConnectionNames_ts() const;
+
         /* Multi-threading */
         /*! Get a reference to the shared mutex. */
         inline std::shared_mutex &mutex() const noexcept;
@@ -134,6 +138,23 @@ namespace Orm::Drivers::Support
     ConnectionsHash::try_emplace(const key_type &key, Args &&...args)
     {
         return m_data.try_emplace(key, std::forward<Args>(args)...);
+    }
+
+    /* Connections specific */
+
+    QStringList ConnectionsHash::openedConnectionNames_ts() const
+    {
+        // Shared/read lock
+        const std::shared_lock lock(m_mutex);
+
+        QStringList result;
+        result.reserve(static_cast<decltype (result)::size_type>(m_data.size()));
+
+        for (const auto &[connectionName, connection] : m_data)
+            if (connection.isOpen())
+                result << connectionName;
+
+        return result;
     }
 
     /* Multi-threading */

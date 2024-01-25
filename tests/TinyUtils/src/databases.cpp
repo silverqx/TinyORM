@@ -22,6 +22,7 @@ using Orm::Constants::PUBLIC;
 using Orm::Constants::QMYSQL;
 using Orm::Constants::QPSQL;
 using Orm::Constants::QSQLITE;
+using Orm::Constants::SEMICOLON;
 using Orm::Constants::SSL_CA;
 using Orm::Constants::SSL_CERT;
 using Orm::Constants::SSL_KEY;
@@ -263,6 +264,48 @@ Databases::createConnectionTempFrom(
     return connectionName;
 }
 
+#ifdef TINYORM_USING_TINYDRIVERS
+std::optional<QString>
+Databases::createDriversConnectionTemp(
+        const QString &connection, const ConnectionNameParts &connectionParts,
+        const QVariantHash &configuration, const bool open)
+{
+    Q_ASSERT(configuration.contains(driver_));
+
+    const auto driver = configuration[driver_].value<QString>().toUpper();
+
+    if (!isDriverAvailable(driver) ||
+        !envVariablesDefined(envVariables(driver, connection))
+    )
+        return std::nullopt;
+
+    auto connectionName = connectionNameForTemp(connection, connectionParts);
+
+    // Add a new TinyDrivers database connection
+    createDriversConnectionInternal(connectionName, configuration, open);
+
+    return connectionName;
+}
+
+std::optional<QString>
+Databases::createDriversConnectionTempFrom(
+        const QString &fromConfiguration, const ConnectionNameParts &connectionParts)
+{
+    const auto configuration = Databases::configuration(fromConfiguration, true);
+
+    // Nothing to do, no configuration exists
+    if (!configuration)
+        return std::nullopt;
+
+    auto connectionName = connectionNameForTemp(fromConfiguration, connectionParts);
+
+    // Add a new TinyDrivers database connection
+    createDriversConnectionInternal(connectionName, *configuration);
+
+    return connectionName;
+}
+#endif
+
 std::optional<std::reference_wrapper<const QVariantHash>>
 Databases::configuration(const QString &connection, const bool forTinyDrivers)
 {
@@ -283,6 +326,13 @@ bool Databases::removeConnection(const QString &connection)
 {
     return m_dm->removeConnection(connection);
 }
+
+#ifdef TINYORM_USING_TINYDRIVERS
+void Databases::removeDriversConnection(const QString &connection)
+{
+    SqlDatabase::removeDatabase(connection);
+}
+#endif
 
 bool Databases::envVariablesDefined(const std::vector<const char *> &envVariables)
 {
@@ -318,20 +368,28 @@ std::shared_ptr<DatabaseManager> Databases::managerShared()
 /* private */
 
 #ifdef TINYORM_USING_TINYDRIVERS
-void Databases::createDriversConnectionInternal(const QString &connection,
-                                                const QVariantHash &configuration)
+void Databases::createDriversConnectionInternal(
+        const QString &connection, const QVariantHash &configuration, const bool open)
 {
-    if (connection == MYSQL_DRIVERS)
-        createDriversMySQLConnection(connection, configuration, mysqlEnvVariables());
+    Q_ASSERT(configuration.contains(driver_));
 
-    else if (connection == MARIADB_DRIVERS)
-        createDriversMariaConnection(connection, configuration, mariaSslEnvVariables());
+    const auto driver = configuration[driver_].value<QString>().toUpper();
 
-    // else if (connection == POSTGRESQL_DRIVERS)
-    //     createDriversPostgresConnection(connection, configuration);
+    if (driver == QMYSQL) {
+        if (connection.startsWith(MYSQL_DRIVERS))
+            createDriversMySQLConnection(
+                        connection, configuration, mysqlEnvVariables(), open);
 
-    // else if (connection == SQLITE_DRIVERS)
-    //     createDriversSQLiteConnection(connection, configuration);
+        else if (connection.startsWith(MARIADB_DRIVERS))
+            createDriversMariaConnection(
+                        connection, configuration, mariaSslEnvVariables(), open);
+    }
+    // else if (driver == QPSQL)
+    //     createDriversPostgresConnection(connection, configuration, open);
+
+    // else if (driver == QSQLITE)
+    //     createDriversSQLiteConnection(connection, configuration, open);
+
     else
         throw RuntimeError(
                 sl("Creating of the '%1' connection for TinyDrivers failed in %2().")
@@ -340,33 +398,51 @@ void Databases::createDriversConnectionInternal(const QString &connection,
 
 void Databases::createDriversMySQLConnection(
         const QString &connection, const QVariantHash &configuration,
-        const std::vector<const char *> &sslEnvVariables)
+        const std::vector<const char *> &sslEnvVariables, const bool open)
 {
-    const auto options = configuration[options_].value<QVariantHash>();
-
-    Q_ASSERT(configuration.contains(driver_));
     auto db = SqlDatabase::addDatabase(configuration[driver_].value<QString>().toUpper(),
                                        connection);
 
-    db.setHostName(    configuration[host_].value<QString>());
-    db.setPort(        configuration[port_].value<int>());
-    db.setDatabaseName(configuration[database_].value<QString>());
-    db.setUserName(    configuration[username_].value<QString>());
-    db.setPassword(    configuration[password_].value<QString>());
+    if (configuration.contains(host_))
+        db.setHostName(    configuration[host_].value<QString>());
+    if (configuration.contains(port_))
+        db.setPort(        configuration[port_].value<int>());
+    if (configuration.contains(database_))
+        db.setDatabaseName(configuration[database_].value<QString>());
+    if (configuration.contains(username_))
+        db.setUserName(    configuration[username_].value<QString>());
+    if (configuration.contains(password_))
+        db.setPassword(    configuration[password_].value<QString>());
 
     // Check if all SSL-related Environment variables are defined
-    if (envVariablesDefined(sslEnvVariables))
-        db.setConnectOptions(sl("SSL_CERT=%1;SSL_KEY=%2;SSL_CA=%3")
-                             .arg(options[SSL_CERT].value<QString>(),
-                                  options[SSL_KEY].value<QString>(),
-                                  options[SSL_CA].value<QString>()));
+    if (configuration.contains(options_) && envVariablesDefined(sslEnvVariables))
+        db.setConnectOptions(createMySQLOrMariaSslOptions(configuration));
 
-    if (db.open())
+    if (!open || db.open())
         return;
 
     // CUR drivers open() should throw exception in the near future, then remove this exception; also because of this I'm throwing simple RuntimeError() silverqx
     throw RuntimeError(sl("Failed to open the '%1' database connection in %2().")
                        .arg(connection, __tiny_func__));
+}
+
+QString Databases::createMySQLOrMariaSslOptions(const QVariantHash &configuration)
+{
+    const auto options = configuration[options_].value<QVariantHash>();
+
+    QStringList result;
+    result.reserve(3);
+
+    if (options.contains(SSL_CERT))
+        result << sl("SSL_CERT=").append(options[SSL_CERT].value<QString>());
+
+    if (options.contains(SSL_KEY))
+        result << sl("SSL_KEY=").append(options[SSL_KEY].value<QString>());
+
+    if (options.contains(SSL_CA))
+        result << sl("SSL_CA=").append(options[SSL_CA].value<QString>());
+
+    return result.join(SEMICOLON);
 }
 #endif
 
@@ -568,10 +644,10 @@ const std::vector<const char *> &
 Databases::envVariables(const QString &driver, const QString &connection)
 {
     if (driver == QMYSQL) {
-        if (connection == MYSQL)
+        if (connection == MYSQL || connection == MYSQL_DRIVERS)
             return mysqlEnvVariables();
 
-        if (connection == MARIADB)
+        if (connection == MARIADB || connection == MARIADB_DRIVERS)
             return mariaEnvVariables();
 
         Q_UNREACHABLE();

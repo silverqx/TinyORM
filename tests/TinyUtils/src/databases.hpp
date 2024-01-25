@@ -91,12 +91,12 @@ namespace TestUtils
             QString methodName;
         };
 
-        /*! Create a temporary database connection for one test method. */
+        /*! Create a temporary database connection for one test method, TinyORM tests. */
         static std::optional<QString>
         createConnectionTemp(
                 const QString &connection, const ConnectionNameParts &connectionParts,
                 const QVariantHash &configuration);
-        /*! Create a temporary database connection for one test method from config. */
+        /*! Create a temp. DB connection for one test method from config., TinyORM. */
         static std::optional<QString>
         createConnectionTempFrom(
                 const QString &fromConfiguration,
@@ -109,6 +109,18 @@ namespace TestUtils
                 std::unordered_map<QString, QVariant> &&optionsToUpdate,
                 const std::vector<QString> &optionsToRemove = {});
 
+#ifdef TINYORM_USING_TINYDRIVERS
+        /*! Create temp. database connection for one test method, TinyDrivers tests. */
+        static std::optional<QString>
+        createDriversConnectionTemp(
+                const QString &connectionName, const ConnectionNameParts &connectionParts,
+                const QVariantHash &configuration, bool open = true);
+        /*! Create temp. DB connection for one test method from config., TinyDrivers. */
+        static std::optional<QString>
+        createDriversConnectionTempFrom(const QString &fromConfiguration,
+                                        const ConnectionNameParts &connectionParts);
+#endif
+
         /*! Get a configuration for the given connection. */
         static std::optional<std::reference_wrapper<const QVariantHash>>
         configuration(const QString &connection, bool forTinyDrivers);
@@ -117,8 +129,12 @@ namespace TestUtils
         static bool hasConfiguration(const QString &connection);
 
         /* Common */
-        /*! Remove a database connection. */
+        /*! Remove a database connection for TinyORM tests. */
         static bool removeConnection(const QString &connection);
+#ifdef TINYORM_USING_TINYDRIVERS
+        /*! Remove a database connection for TinyDrivers tests. */
+        static void removeDriversConnection(const QString &connection);
+#endif
 
         /*! Check whether environment variables are correctly set. */
         static bool envVariablesDefined(const std::vector<const char *> &envVariables);
@@ -134,16 +150,21 @@ namespace TestUtils
 #ifdef TINYORM_USING_TINYDRIVERS
         /*! Create a database connection for TinyDrivers tests. */
         static void createDriversConnectionInternal(
-                const QString &connection, const QVariantHash &configuration);
+                const QString &connection, const QVariantHash &configuration,
+                bool open = true);
+
         /*! Create a MySQL database connection for TinyDrivers tests. */
         static void createDriversMySQLConnection(
                 const QString &connection, const QVariantHash &configuration,
-                const std::vector<const char *> &sslEnvVariables);
+                const std::vector<const char *> &sslEnvVariables, bool open);
         /*! Create a MariaDB database connection for TinyDrivers tests. */
         inline static void createDriversMariaConnection(
                 const QString &connection,
                 const QVariantHash &configuration,
-                const std::vector<const char *> &sslEnvVariables);
+                const std::vector<const char *> &sslEnvVariables, bool open);
+
+        /*! Get the SSL-related connection options for MySQL or MariaDB. */
+        static QString createMySQLOrMariaSslOptions(const QVariantHash &configuration);
 #endif
 
         /*! Create database configurations hash. */
@@ -214,9 +235,9 @@ namespace TestUtils
        method as it has a better name (for better naming). */
     void Databases::createDriversMariaConnection(
             const QString &connection, const QVariantHash &configuration,
-            const std::vector<const char *> &sslEnvVariables)
+            const std::vector<const char *> &sslEnvVariables, const bool open)
     {
-        createDriversMySQLConnection(connection, configuration, sslEnvVariables);
+        createDriversMySQLConnection(connection, configuration, sslEnvVariables, open);
     }
 #endif
 
