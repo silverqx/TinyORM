@@ -348,6 +348,8 @@ void tst_DatabaseManager::default_MySQL_ConfigurationValues() const
 
     // Restore
     QVERIFY(Databases::removeConnection(*connectionName));
+    QVERIFY(m_dm->connectionNames().isEmpty());
+    QVERIFY(m_dm->openedConnectionNames().isEmpty());
 }
 
 void tst_DatabaseManager::default_MariaDB_ConfigurationValues() const
@@ -406,6 +408,8 @@ void tst_DatabaseManager::default_MariaDB_ConfigurationValues() const
 
     // Restore
     QVERIFY(Databases::removeConnection(*connectionName));
+    QVERIFY(m_dm->connectionNames().isEmpty());
+    QVERIFY(m_dm->openedConnectionNames().isEmpty());
 }
 
 void tst_DatabaseManager::default_PostgreSQL_ConfigurationValues() const
@@ -461,6 +465,8 @@ void tst_DatabaseManager::default_PostgreSQL_ConfigurationValues() const
 
     // Restore
     QVERIFY(Databases::removeConnection(*connectionName));
+    QVERIFY(m_dm->connectionNames().isEmpty());
+    QVERIFY(m_dm->openedConnectionNames().isEmpty());
 }
 
 void tst_DatabaseManager::default_SQLite_ConfigurationValues() const
@@ -516,6 +522,8 @@ void tst_DatabaseManager::default_SQLite_ConfigurationValues() const
 
     // Restore
     QVERIFY(Databases::removeConnection(*connectionName));
+    QVERIFY(m_dm->connectionNames().isEmpty());
+    QVERIFY(m_dm->openedConnectionNames().isEmpty());
 }
 
 void tst_DatabaseManager::ssl_MySQL_ConfigurationValues() const
@@ -600,6 +608,8 @@ void tst_DatabaseManager::ssl_MySQL_ConfigurationValues() const
 
     // Restore
     QVERIFY(Databases::removeConnection(*connectionName));
+    QVERIFY(m_dm->connectionNames().isEmpty());
+    QVERIFY(m_dm->openedConnectionNames().isEmpty());
 }
 
 void tst_DatabaseManager::ssl_MariaDB_ConfigurationValues() const
@@ -687,6 +697,8 @@ void tst_DatabaseManager::ssl_MariaDB_ConfigurationValues() const
 
     // Restore
     QVERIFY(Databases::removeConnection(*connectionName));
+    QVERIFY(m_dm->connectionNames().isEmpty());
+    QVERIFY(m_dm->openedConnectionNames().isEmpty());
 }
 
 void tst_DatabaseManager::ssl_PostgreSQL_ConfigurationValues() const
@@ -770,6 +782,8 @@ void tst_DatabaseManager::ssl_PostgreSQL_ConfigurationValues() const
 
     // Restore
     QVERIFY(Databases::removeConnection(*connectionName));
+    QVERIFY(m_dm->connectionNames().isEmpty());
+    QVERIFY(m_dm->openedConnectionNames().isEmpty());
 }
 
 void tst_DatabaseManager::SQLite_MemoryDriver() const
@@ -804,6 +818,8 @@ void tst_DatabaseManager::SQLite_MemoryDriver() const
 
     // Restore
     QVERIFY(Databases::removeConnection(*connectionName));
+    QVERIFY(m_dm->connectionNames().isEmpty());
+    QVERIFY(m_dm->openedConnectionNames().isEmpty());
 }
 
 void tst_DatabaseManager::SQLite_CheckDatabaseExists_True() const
@@ -831,6 +847,8 @@ void tst_DatabaseManager::SQLite_CheckDatabaseExists_True() const
 
     // Restore
     QVERIFY(Databases::removeConnection(*connectionName));
+    QVERIFY(m_dm->connectionNames().isEmpty());
+    QVERIFY(m_dm->openedConnectionNames().isEmpty());
 }
 
 void tst_DatabaseManager::SQLite_CheckDatabaseExists_False() const
@@ -883,6 +901,8 @@ void tst_DatabaseManager::MySQL_addUseAndRemoveConnection_FiveTimes() const
 
         // Restore
         QVERIFY(Databases::removeConnection(*connectionName));
+        QVERIFY(m_dm->connectionNames().isEmpty());
+        QVERIFY(m_dm->openedConnectionNames().isEmpty());
     }
 }
 
@@ -917,6 +937,8 @@ void tst_DatabaseManager::MySQL_addUseAndRemoveThreeConnections_FiveTimes() cons
         QVERIFY(Databases::removeConnection(*connectionName3));
         QVERIFY(Databases::removeConnection(*connectionName2));
         QVERIFY(Databases::removeConnection(*connectionName1));
+        QVERIFY(m_dm->connectionNames().isEmpty());
+        QVERIFY(m_dm->openedConnectionNames().isEmpty());
     }
 }
 // NOLINTEND(readability-convert-member-functions-to-static)
