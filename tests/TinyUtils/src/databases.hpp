@@ -80,16 +80,18 @@ namespace TestUtils
         /*! Create a temporary database connection for one test method. */
         static std::optional<QString>
         createConnectionTemp(
-                const QString &connectionName, const ConnectionNameParts &connectionParts,
+                const QString &connection, const ConnectionNameParts &connectionParts,
                 const QVariantHash &configuration);
         /*! Create a temporary database connection for one test method from config. */
         static std::optional<QString>
         createConnectionTempFrom(
-                const QString &fromConfiguration, const ConnectionNameParts &connection);
+                const QString &fromConfiguration,
+                const ConnectionNameParts &connectionParts);
         /*! Create a temporary database connection for one test method from config. */
         static std::optional<QString>
         createConnectionTempFrom(
-                const QString &fromConfiguration, const ConnectionNameParts &connection,
+                const QString &fromConfiguration,
+                const ConnectionNameParts &connectionParts,
                 std::unordered_map<QString, QVariant> &&optionsToUpdate,
                 const std::vector<QString> &optionsToRemove = {});
 

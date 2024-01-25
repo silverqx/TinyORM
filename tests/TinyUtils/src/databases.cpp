@@ -143,7 +143,7 @@ Databases::createConnectionTemp(
 
 std::optional<QString>
 Databases::createConnectionTempFrom(const QString &fromConfiguration,
-                                    const ConnectionNameParts &connection)
+                                    const ConnectionNameParts &connectionParts)
 {
     const auto configuration = Databases::configuration(fromConfiguration);
 
@@ -151,7 +151,7 @@ Databases::createConnectionTempFrom(const QString &fromConfiguration,
     if (!configuration)
         return std::nullopt;
 
-    auto connectionName = connectionNameForTemp(fromConfiguration, connection);
+    auto connectionName = connectionNameForTemp(fromConfiguration, connectionParts);
 
     // Add a new database connection
     m_dm->addConnection(*configuration, connectionName);
@@ -161,7 +161,7 @@ Databases::createConnectionTempFrom(const QString &fromConfiguration,
 
 std::optional<QString>
 Databases::createConnectionTempFrom(
-        const QString &fromConfiguration, const ConnectionNameParts &connection,
+        const QString &fromConfiguration, const ConnectionNameParts &connectionParts,
         std::unordered_map<QString, QVariant> &&optionsToUpdate,
         const std::vector<QString> &optionsToRemove)
 {
@@ -178,7 +178,7 @@ Databases::createConnectionTempFrom(
     updateConfigurationForTemp(configuration, std::move(optionsToUpdate),
                                optionsToRemove);
 
-    auto connectionName = connectionNameForTemp(fromConfiguration, connection);
+    auto connectionName = connectionNameForTemp(fromConfiguration, connectionParts);
 
     // Add a new database connection
     m_dm->addConnection(configuration, connectionName);
