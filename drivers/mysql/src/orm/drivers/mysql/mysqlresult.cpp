@@ -469,7 +469,7 @@ void MySqlResult::cleanup()
 
     setActive(false);
     setAt(BeforeFirstRow);
-    setLastError(SqlError::NoError);
+    resetLastError();
 }
 
 /* private */

@@ -28,12 +28,22 @@ namespace Orm::Drivers
         };
 
         /*! Constructor (not explicit to allow setLastError(SqlError::NoError)). */
-        inline SqlError(ErrorType errorType);
+        inline SqlError(ErrorType errorType) noexcept;
         /*! Constructor (not explicit to allow {}). */
         SqlError(QString driverText = {}, QString databaseText = {},
                  ErrorType errorType = NoError, QString errorCode = {});
         /*! Default destructor. */
         inline ~SqlError() = default;
+
+        /*! Copy constructor. */
+        inline SqlError(const SqlError &) = default;
+        /*! Copy assignment operator. */
+        inline SqlError &operator=(const SqlError &) = default;
+
+        /*! Move constructor. */
+        inline SqlError(SqlError &&) noexcept = default;
+        /*! Move assignment operator. */
+        inline SqlError &operator=(SqlError &&) noexcept = default;
 
         /*! Equality comparison operator for the SqlError. */
         bool operator==(const SqlError &other) const;
@@ -60,7 +70,7 @@ namespace Orm::Drivers
 
     /* public */
 
-    SqlError::SqlError(const ErrorType errorType)
+    SqlError::SqlError(const ErrorType errorType) noexcept
         : m_errorType(NoError)
     {
         Q_ASSERT_X(errorType == NoError, "SqlError(ErrorType)",

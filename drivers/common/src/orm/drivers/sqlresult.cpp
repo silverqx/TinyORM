@@ -67,6 +67,23 @@ bool SqlResult::setLastError(const SqlError &error)
     return false;
 }
 
+bool SqlResult::setLastError(SqlError &&error)
+{
+    Q_D(SqlResult);
+
+    d->lastError = std::move(error);
+
+    // To be able call 'return setLastError()' to simplify code
+    return false;
+}
+
+void SqlResult::resetLastError()
+{
+    Q_D(SqlResult);
+
+    d->lastError = SqlError::NoError;
+}
+
 SqlResult::size_type SqlResult::at() const noexcept
 {
     Q_D(const SqlResult);
