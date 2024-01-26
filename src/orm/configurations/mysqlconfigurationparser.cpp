@@ -49,7 +49,7 @@ MySqlConfigurationParser::throwIfContainsUnsupportedOption(const QVariantHash &o
     static const std::unordered_map<QString, BannedValue> bannedMap {
         // We have our own reconnector
         {QStringLiteral("MYSQL_OPT_RECONNECT"),
-            {1, QStringLiteral(" TinyORM uses its own reconnector. Also, be aware that "
+            {1, QStringLiteral("TinyORM uses its own reconnector. Also, be aware that "
                                "the MYSQL_OPT_RECONNECT is deprecated from MySQL >=8.1 "
                                "and >=8.0.24 and will be removed in future versions.")}},
     };
