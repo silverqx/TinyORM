@@ -30,7 +30,7 @@
 #                        environment variable.
 # - TINY_MYSQL_ROOT    - Path to the MySQL installation folder.
 #                        If not defined, then it tries to guess the MySQL installation folder:
-#                        $$(ProgramFiles)/MySQL/MySQL Server (8.1|8.0|5.7)/)
+#                        $$(ProgramFiles)/MySQL/MySQL Server (8.3|8.2|8.1|8.0|5.7)/)
 #
 # You can set these variables in the .env (recommended) or conf.pri files,
 # in the .qmake.conf file (or wherever you want), or as environment variables.
@@ -38,8 +38,8 @@
 # These variables will be set after auto-configuration is done:
 #
 # - TINY_VCPKG_INCLUDE - Path to the vcpkg include folder (vcpkg/installed/<triplet>/include/).
-# - TINY_MYSQL_INCLUDE - Path to the MySQL include folder (MySQL Server 8.1/include/).
-# - TINY_MYSQL_LIB     - Path to the MySQL lib folder (MySQL Server 8.1/lib/).
+# - TINY_MYSQL_INCLUDE - Path to the MySQL include folder (MySQL Server 8.3/include/).
+# - TINY_MYSQL_LIB     - Path to the MySQL lib folder (MySQL Server 8.3/lib/).
 #
 # The TINY_MYSQL_INCLUDE and TINY_MYSQL_LIB are only set on win32 platform except mingw.
 
@@ -158,7 +158,7 @@ else:win32-msvc|win32-clang-msvc {
     # Explicitly specify the MySQL root installation path using the $$TINY_MYSQL_ROOT
 #    !disable_autoconf {
 #        # Used in the tiny_find_mysql()
-#        TINY_MYSQL_ROOT = $$quote($$(ProgramFiles)/MySQL/MySQL Server 8.1/)
+#        TINY_MYSQL_ROOT = $$quote($$(ProgramFiles)/MySQL/MySQL Server 8.3/)
 #        return()
 #    }
 
@@ -172,12 +172,12 @@ else:win32-msvc|win32-clang-msvc {
     mysql_ping {
         # Find the MySQL C library and add it on system include path and library path
         tiny_find_mysql()
-#        tiny_find_mysql($$quote($$(ProgramFiles)/MySQL/MySQL Server 8.1/))
+#        tiny_find_mysql($$quote($$(ProgramFiles)/MySQL/MySQL Server 8.3/))
 
 #        tiny_add_system_includepath(\
-#            $$quote(C:/Program Files/MySQL/MySQL Server 8.1/include/))
+#            $$quote(C:/Program Files/MySQL/MySQL Server 8.3/include/))
 
-#        LIBS_PRIVATE += $$quote(-LC:/Program Files/MySQL/MySQL Server 8.1/lib/)
+#        LIBS_PRIVATE += $$quote(-LC:/Program Files/MySQL/MySQL Server 8.3/lib/)
 #        LIBS_PRIVATE += -llibmysql
     }
 }
