@@ -25,8 +25,8 @@ MySqlUtilsPrivate::createError(
     const auto *const mysqlError = mysql != nullptr ? mysql_error(mysql) : nullptr;
 
     // FUTURE drivers correctly support MySQL errors encoding, the QString::fromUtf8() must be changed to conversion from SET NAMES to UTF8; see https://dev.mysql.com/doc/refman/8.0/en/charset-errors.html silverqx
-    return SqlError("QMYSQL: "_L1 + error, QString::fromUtf8(mysqlError), errorType,
-                    QString::number(mysqlErrno));
+    return {"QMYSQL: "_L1 + error, QString::fromUtf8(mysqlError), errorType,
+            QString::number(mysqlErrno)};
 }
 
 QMetaType

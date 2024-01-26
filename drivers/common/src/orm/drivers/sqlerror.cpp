@@ -16,14 +16,14 @@ namespace Orm::Drivers
 
 /* public */
 
-SqlError::SqlError(const QString &driverText, const QString &databaseText,
-                   const ErrorType errorType, const QString &errorCode)
-    : m_driverText(driverText)
-    , m_databaseText(databaseText)
+SqlError::SqlError(QString driverText, QString databaseText, const ErrorType errorType,
+                   QString errorCode)
+    : m_driverText(std::move(driverText))
+    , m_databaseText(std::move(databaseText))
     , m_errorType(errorType)
     /* Can't be an integer because eg. the PostgreSQL error code can be something like
        this 25P02, so it can also contain letters. */
-    , m_errorCode(errorCode)
+    , m_errorCode(std::move(errorCode))
 {}
 
 bool SqlError::operator==(const SqlError &other) const
