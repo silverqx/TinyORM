@@ -451,11 +451,25 @@ void MySqlResult::cleanup()
     // Prepared queries
     mysqlStmtClose();
 
+    // d->meta != nullptr check is inside as the first thing
+    mysql_free_result(d->meta);
+    d->meta = nullptr;
+
     d->preparedBinds.reset();
     d->resultBinds.reset();
 
-    // Common code for both cleanup methods
-    cleanupCommon();
+    d->hasBlobs = false;
+    d->preparedQuery = false;
+
+    // Common code for both
+    /* The MyField.fieldValue buffer will be auto-freed as it's a smart pointer and
+       the MyField::myField is freed during the mysql_free_result() call. */
+    d->resultFields.clear();
+    d->boundValues.clear();
+
+    setActive(false);
+    setAt(BeforeFirstRow);
+    setLastError(SqlError::NoError);
 }
 
 /* private */
@@ -501,30 +515,12 @@ void MySqlResult::cleanupForDtor() noexcept
         mysql_stmt_close(d->stmt);
     d->stmt = nullptr;
 
-    /* The d->preparedBinds and d->resultBinds will be auto-destroyed if called
-       from the destructor as they are smart pointers. */
-
-    // Common code for both cleanup methods
-    cleanupCommon();
-}
-
-void MySqlResult::cleanupCommon() noexcept
-{
-    Q_D(MySqlResult);
-
     // d->meta != nullptr check is inside as the first thing
     mysql_free_result(d->meta);
     d->meta = nullptr;
 
-    d->hasBlobs = false;
-    d->preparedQuery = false;
-
-    // Common for both
-    // The MyField.fieldValue buffer will be auto-freed as it's a smart pointer
-    d->resultFields.clear();
-
-    setAt(BeforeFirstRow);
-    setActive(false);
+    /* The d->preparedBinds and d->resultBinds will be auto-destroyed if called
+       from the destructor as they are smart pointers. */
 }
 
 // CUR drivers revisit is something similar needed also for prepared statements? Look at detachFromResultSet() silverqx

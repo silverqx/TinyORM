@@ -83,8 +83,6 @@ namespace Orm::Drivers::MySql
         /* Cleanup */
         /*! Main cleanup method, free prepared and non-prepared statements, noexcept. */
         void cleanupForDtor() noexcept;
-        /*! Common code for both cleanup methods. */
-        void cleanupCommon() noexcept;
 
         /*! Free the memory allocated for result sets. */
         void mysqlFreeResults();

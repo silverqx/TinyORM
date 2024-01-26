@@ -27,6 +27,8 @@ namespace Orm::Drivers
             UnknownError,
         };
 
+        /*! Constructor (not explicit to allow setLastError(SqlError::NoError)). */
+        inline SqlError(ErrorType errorType);
         /*! Constructor (not explicit to allow {}). */
         SqlError(const QString &driverText = {}, const QString &databaseText = {},
                  ErrorType errorType = NoError, const QString &errorCode = {});
@@ -57,6 +59,13 @@ namespace Orm::Drivers
     };
 
     /* public */
+
+    SqlError::SqlError(const ErrorType errorType)
+        : m_errorType(NoError)
+    {
+        Q_ASSERT_X(errorType == NoError, "SqlError(ErrorType)",
+                   "This constructor can be called with the ErrorType::NoError only.");
+    }
 
     bool SqlError::isValid() const
     {

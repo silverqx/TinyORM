@@ -129,11 +129,6 @@ bool SqlQuery::exec(const QString &query)
         return false;
     }
 
-    m_sqlResult->clearBoundValues();
-    m_sqlResult->setActive(false);
-    m_sqlResult->setLastError({});
-    m_sqlResult->setAt(BeforeFirstRow);
-
 #if defined(QT_DEBUG_SQL) || defined(TINYDRIVERS_DEBUG_SQL)
     QElapsedTimer timer;
     timer.start();
@@ -167,11 +162,6 @@ bool SqlQuery::prepare(const QString &query)
         return false;
     }
 
-    m_sqlResult->clearBoundValues();
-    m_sqlResult->setActive(false);
-    m_sqlResult->setLastError({});
-    m_sqlResult->setAt(BeforeFirstRow);
-
     return m_sqlResult->prepare(query);
 }
 
@@ -184,9 +174,7 @@ bool SqlQuery::exec()
                 "for prepared statements or pass the query string directly "
                 "to the SqlQuery::exec(QString) for normal statements.");
 
-    // CUR drivers check if this is needed as it's reset in the prepare() and if some error occurs in the m_sqlResult->prepare(query) then I don't know if make sense to continue silverqx
-    if (m_sqlResult->lastError().isValid())
-        m_sqlResult->setLastError({});
+    m_sqlResult->setLastError(SqlError::NoError);
 
 #if defined(QT_DEBUG_SQL) || defined(TINYDRIVERS_DEBUG_SQL)
     QElapsedTimer t;
@@ -440,11 +428,10 @@ void SqlQuery::finish()
     if (!isActive())
         return;
 
-    // CUR drivers I saw 3 duplicates of this code block, extract silverqx
-    m_sqlResult->setLastError({});
-    m_sqlResult->setAt(BeforeFirstRow);
-    m_sqlResult->detachFromResultSet();
     m_sqlResult->setActive(false);
+    m_sqlResult->setAt(BeforeFirstRow);
+    m_sqlResult->setLastError(SqlError::NoError);
+    m_sqlResult->detachFromResultSet();
 }
 
 /* private */
