@@ -173,10 +173,9 @@ std::shared_ptr<SqlDriver> SqlDatabasePrivate::createSqlDriver(const QString &dr
     // if (driver == QSQLITE)
     //     return createSQLiteDriver();
 
-    throw std::exception(
-                u"Unsupported driver '%1', available drivers: %2."_s
-                .arg(driver, SqlDatabase::drivers().join(SPACE))
-                .toUtf8().constData());
+    throw Exceptions::InvalidArgumentError(
+                u"Unsupported driver '%1', available drivers: %2; in %3()."_s
+                .arg(driver, SqlDatabase::drivers().join(SPACE), __tiny_func__));
 }
 
 std::shared_ptr<SqlDatabasePrivate>

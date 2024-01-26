@@ -1,7 +1,9 @@
 #include "orm/drivers/sqldatabasemanager.hpp"
 
+#include "orm/drivers/exceptions/invalidargumenterror.hpp"
 #include "orm/drivers/sqldatabase_p.hpp"
 #include "orm/drivers/support/connectionshash_p.hpp"
+#include "orm/drivers/utils/type_p.hpp"
 
 #ifdef TINYDRIVERS_MYSQL_DRIVER
 #  include "orm/drivers/constants_p.hpp"
@@ -63,7 +65,9 @@ SqlDatabase
 SqlDatabaseManager::cloneDatabase(const SqlDatabase &other, const QString &connection)
 {
     if (!other.isValid())
-        return {};
+        throw Exceptions::InvalidArgumentError(
+                u"Can't clone an invalid '%1' connection in %2()."_s
+                .arg(other.connectionName(), __tiny_func__));
 
     SqlDatabase db(other.driverName());
     db.d->cloneDatabase(*other.d);
