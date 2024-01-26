@@ -443,7 +443,7 @@ QString MySqlSchemaGrammar::wrapValue(QString value) const
 QString MySqlSchemaGrammar::escapeString(QString value) const
 {
     /* Different approach used for the MySQL and PostgreSQL, for MySQL are escaped more
-       special characters but for PostrgreSQL only single-quote, it doesn't matter
+       special characters but for PostgreSQL only single-quote, it doesn't matter
        though, it will work anyway.
        On MySQL escaping of ^Z, \0, and \ is needed on some environments, described here:
        https://dev.mysql.com/doc/refman/8.3/en/string-literals.html
