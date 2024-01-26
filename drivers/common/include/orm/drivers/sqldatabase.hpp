@@ -78,6 +78,8 @@ namespace Orm::Drivers
         QString hostName() const noexcept;
         /*! Set the hostname. */
         void setHostName(const QString &hostname) noexcept;
+        /*! Set the hostname. */
+        void setHostName(QString &&hostname) noexcept;
 
         /*! Get the port. */
         int port() const noexcept;
@@ -88,21 +90,29 @@ namespace Orm::Drivers
         QString databaseName() const noexcept;
         /*! Set the database name. */
         void setDatabaseName(const QString &database) noexcept;
+        /*! Set the database name. */
+        void setDatabaseName(QString &&database) noexcept;
 
         /*! Get the username. */
         QString userName() const noexcept;
         /*! Set the username. */
         void setUserName(const QString &username) noexcept;
+        /*! Set the username. */
+        void setUserName(QString &&username) noexcept;
 
         /*! Get the password. */
         QString password() const noexcept;
         /*! Set the password. */
         void setPassword(const QString &password) noexcept;
+        /*! Set the password. */
+        void setPassword(QString &&password) noexcept;
 
         /*! Get the connection options. */
         QString connectOptions() const noexcept;
         /*! Set the connection options. */
-        void setConnectOptions(const QString &options = {}) noexcept;
+        void setConnectOptions(const QString &options) noexcept;
+        /*! Set the connection options. */
+        void setConnectOptions(QString &&options = {}) noexcept;
 
         /*! Get the current numerical precision policy. */
         NumericalPrecisionPolicy numericalPrecisionPolicy() const noexcept;
