@@ -99,7 +99,7 @@ void MySqlDriver::close()
 
 /* Getters / Setters */
 
-bool MySqlDriver::hasFeature(const DriverFeature feature) const
+bool MySqlDriver::hasFeature(const DriverFeature feature) const noexcept
 {
     Q_D(const MySqlDriver);
 

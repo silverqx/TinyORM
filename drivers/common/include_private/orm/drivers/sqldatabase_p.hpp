@@ -34,16 +34,16 @@ namespace Support
     public:
         /*! Constructor. */
         inline SqlDatabasePrivate(std::shared_ptr<SqlDriver> &&driver,
-                                  const QString &driverName);
+                                  const QString &driverName) noexcept;
         /*! Constructor. */
         inline SqlDatabasePrivate(std::shared_ptr<SqlDriver> &&driver,
-                                  QString &&driverName);
+                                  QString &&driverName) noexcept;
         /*! Default destructor. */
         inline ~SqlDatabasePrivate() = default;
 
         /* Database connection */
         /*! Clone the SqlDatabasePrivate. */
-        void cloneDatabase(const SqlDatabasePrivate &other);
+        void cloneDatabase(const SqlDatabasePrivate &other) noexcept;
 
         /*! Determine whether the database driver isn't nullptr. */
         inline bool isDriverValid() const noexcept;
@@ -173,13 +173,13 @@ namespace Support
        in the SqlDatabaseManager::addDatabase(). */
 
     SqlDatabasePrivate::SqlDatabasePrivate(std::shared_ptr<SqlDriver> &&driver,
-                                           const QString &driverName)
+                                           const QString &driverName) noexcept
         : sqldriver(std::move(driver))
         , driverName(driverName)
     {}
 
     SqlDatabasePrivate::SqlDatabasePrivate(std::shared_ptr<SqlDriver> &&driver,
-                                           QString &&driverName)
+                                           QString &&driverName) noexcept
         : sqldriver(std::move(driver))
         , driverName(std::move(driverName))
     {}

@@ -51,13 +51,13 @@ void SqlResult::setQuery(const QString &query) noexcept
     d->query = query;
 }
 
-SqlError SqlResult::lastError() const
+SqlError SqlResult::lastError() const noexcept
 {
     Q_D(const SqlResult);
     return d->lastError;
 }
 
-bool SqlResult::setLastError(const SqlError &error)
+bool SqlResult::setLastError(const SqlError &error) noexcept
 {
     Q_D(SqlResult);
 
@@ -67,7 +67,7 @@ bool SqlResult::setLastError(const SqlError &error)
     return false;
 }
 
-bool SqlResult::setLastError(SqlError &&error)
+bool SqlResult::setLastError(SqlError &&error) noexcept
 {
     Q_D(SqlResult);
 
@@ -77,7 +77,7 @@ bool SqlResult::setLastError(SqlError &&error)
     return false;
 }
 
-void SqlResult::resetLastError()
+void SqlResult::resetLastError() noexcept
 {
     Q_D(SqlResult);
 

@@ -96,77 +96,77 @@ SqlError SqlDatabase::lastError() const
     return d->driver().lastError();
 }
 
-QString SqlDatabase::driverName() const
+QString SqlDatabase::driverName() const noexcept
 {
     return d->driverName;
 }
 
-QString SqlDatabase::connectionName() const
+QString SqlDatabase::connectionName() const noexcept
 {
     return d->connectionName;
 }
 
-QString SqlDatabase::hostName() const
+QString SqlDatabase::hostName() const noexcept
 {
     return d->hostName;
 }
 
-void SqlDatabase::setHostName(const QString &hostname)
+void SqlDatabase::setHostName(const QString &hostname) noexcept
 {
     d->hostName = hostname;
 }
 
-int SqlDatabase::port() const
+int SqlDatabase::port() const noexcept
 {
     return d->port;
 }
 
-void SqlDatabase::setPort(const int port)
+void SqlDatabase::setPort(const int port) noexcept
 {
     d->port = port;
 }
 
-QString SqlDatabase::databaseName() const
+QString SqlDatabase::databaseName() const noexcept
 {
     return d->databaseName;
 }
 
-void SqlDatabase::setDatabaseName(const QString &database)
+void SqlDatabase::setDatabaseName(const QString &database) noexcept
 {
     d->databaseName = database;
 }
 
-QString SqlDatabase::userName() const
+QString SqlDatabase::userName() const noexcept
 {
     return d->username;
 }
 
-void SqlDatabase::setUserName(const QString &username)
+void SqlDatabase::setUserName(const QString &username) noexcept
 {
     d->username = username;
 }
 
-QString SqlDatabase::password() const
+QString SqlDatabase::password() const noexcept
 {
     return d->password;
 }
 
-void SqlDatabase::setPassword(const QString &password)
+void SqlDatabase::setPassword(const QString &password) noexcept
 {
     d->password = password;
 }
 
-QString SqlDatabase::connectOptions() const
+QString SqlDatabase::connectOptions() const noexcept
 {
     return d->connectionOptions;
 }
 
-void SqlDatabase::setConnectOptions(const QString &options)
+void SqlDatabase::setConnectOptions(const QString &options) noexcept
 {
     d->connectionOptions = options;
 }
 
-NumericalPrecisionPolicy SqlDatabase::numericalPrecisionPolicy() const
+NumericalPrecisionPolicy SqlDatabase::numericalPrecisionPolicy() const noexcept
 {
     if (d->isDriverValid()) T_LIKELY
         // The d->sqldriver is correct because of the d->isDriverValid() check
@@ -176,8 +176,8 @@ NumericalPrecisionPolicy SqlDatabase::numericalPrecisionPolicy() const
         return d->precisionPolicy;
 }
 
-void
-SqlDatabase::setNumericalPrecisionPolicy(const NumericalPrecisionPolicy precision)
+void SqlDatabase::setNumericalPrecisionPolicy(
+            const NumericalPrecisionPolicy precision) noexcept
 {
     if (d->isDriverValid())
         // The d->sqldriver is correct because of the d->isDriverValid() check

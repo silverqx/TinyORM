@@ -31,7 +31,7 @@ namespace Orm::Drivers
         inline SqlError(ErrorType errorType) noexcept;
         /*! Constructor (not explicit to allow {}). */
         SqlError(QString driverText = {}, QString databaseText = {},
-                 ErrorType errorType = NoError, QString errorCode = {});
+                 ErrorType errorType = NoError, QString errorCode = {}) noexcept;
         /*! Default destructor. */
         inline ~SqlError() = default;
 
@@ -46,17 +46,17 @@ namespace Orm::Drivers
         inline SqlError &operator=(SqlError &&) noexcept = default;
 
         /*! Equality comparison operator for the SqlError. */
-        bool operator==(const SqlError &other) const;
+        bool operator==(const SqlError &other) const noexcept;
 
         /*! Swap the SqlError. */
         void swap(SqlError &other) noexcept;
 
-        inline bool isValid() const;
+        inline bool isValid() const noexcept;
 
-        inline QString driverText() const;
-        inline QString databaseText() const;
-        inline ErrorType type() const;
-        inline QString nativeErrorCode() const;
+        inline QString driverText() const noexcept;
+        inline QString databaseText() const noexcept;
+        inline ErrorType type() const noexcept;
+        inline QString nativeErrorCode() const noexcept;
 
         QString text() const;
 
@@ -77,27 +77,27 @@ namespace Orm::Drivers
                    "This constructor can be called with the ErrorType::NoError only.");
     }
 
-    bool SqlError::isValid() const
+    bool SqlError::isValid() const noexcept
     {
         return m_errorType != NoError;
     }
 
-    QString SqlError::driverText() const
+    QString SqlError::driverText() const noexcept
     {
         return m_driverText;
     }
 
-    QString SqlError::databaseText() const
+    QString SqlError::databaseText() const noexcept
     {
         return m_databaseText;
     }
 
-    SqlError::ErrorType SqlError::type() const
+    SqlError::ErrorType SqlError::type() const noexcept
     {
         return m_errorType;
     }
 
-    QString SqlError::nativeErrorCode() const
+    QString SqlError::nativeErrorCode() const noexcept
     {
         return m_errorCode;
     }

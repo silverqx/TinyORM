@@ -86,32 +86,34 @@ namespace Orm::Drivers
 
         /* Getters / Setters */
         /*! Determine whether the current driver supports the given feature. */
-        virtual bool hasFeature(DriverFeature feature) const = 0;
+        virtual bool hasFeature(DriverFeature feature) const noexcept = 0;
 
         /*! Determine whether the connection is currently open. */
-        virtual bool isOpen() const;
+        virtual bool isOpen() const noexcept;
         /*! Determine if an error occurred while opening a new database connection. */
-        bool isOpenError() const;
+        bool isOpenError() const noexcept;
 
         /*! Get the underlying database handle (low-level handle, eg. MYSQL *). */
         virtual QVariant handle() const = 0;
         /*! Get the database driver name. */
-        virtual QString driverName() const = 0;
+        virtual QString driverName() const noexcept = 0;
 
         /*! Get the current database driver type. */
-        DbmsType dbmsType() const;
+        DbmsType dbmsType() const noexcept;
         /*! Get information about the last error that occurred on the database. */
-        SqlError lastError() const;
+        SqlError lastError() const noexcept;
 
         /*! Get the default numerical precision policy for the current driver. */
-        NumericalPrecisionPolicy defaultNumericalPrecisionPolicy() const;
+        NumericalPrecisionPolicy defaultNumericalPrecisionPolicy() const noexcept;
         /*! Set the default numerical precision policy for the current driver. */
-        void setDefaultNumericalPrecisionPolicy(NumericalPrecisionPolicy precision);
+        void
+        setDefaultNumericalPrecisionPolicy(NumericalPrecisionPolicy precision) noexcept;
 
         /*! Get the default numerical precision policy for the current driver (alias). */
-        inline NumericalPrecisionPolicy numericalPrecisionPolicy() const;
+        inline NumericalPrecisionPolicy numericalPrecisionPolicy() const noexcept;
         /*! Set the default numerical precision policy for the current driver (alias). */
-        inline void setNumericalPrecisionPolicy(NumericalPrecisionPolicy precision);
+        inline void
+        setNumericalPrecisionPolicy(NumericalPrecisionPolicy precision) noexcept;
 
         /*! Get the thread ID in which the driver was instantiated. */
         std::thread::id threadId() const noexcept;
@@ -126,7 +128,7 @@ namespace Orm::Drivers
 
         /* Others */
         /*! Get the maximum identifier length for the current driver. */
-        virtual int maximumIdentifierLength(IdentifierType type) const;
+        virtual int maximumIdentifierLength(IdentifierType type) const noexcept;
         /*! Determine whether the given identifier is escaped/quoted. */
         virtual bool isIdentifierEscaped(const QString &identifier,
                                          IdentifierType type) const;
@@ -158,12 +160,13 @@ namespace Orm::Drivers
 
     // Must be defined to be API compatible with the QtSql module
 
-    NumericalPrecisionPolicy SqlDriver::numericalPrecisionPolicy() const
+    NumericalPrecisionPolicy SqlDriver::numericalPrecisionPolicy() const noexcept
     {
         return defaultNumericalPrecisionPolicy();
     }
 
-    void SqlDriver::setNumericalPrecisionPolicy(const NumericalPrecisionPolicy precision)
+    void SqlDriver::setNumericalPrecisionPolicy(
+                const NumericalPrecisionPolicy precision) noexcept
     {
         setDefaultNumericalPrecisionPolicy(precision);
     }

@@ -40,12 +40,12 @@ namespace Orm::Drivers::MySql
 
         /* Getters / Setters */
         /*! Determine whether the current driver supports the given feature. */
-        bool hasFeature(DriverFeature feature) const final;
+        bool hasFeature(DriverFeature feature) const noexcept final;
 
         /*! Get the low-level MySQL database handle (MYSQL *). */
         QVariant handle() const final;
         /*! Get the MySQL database driver name. */
-        inline QString driverName() const final;
+        inline QString driverName() const noexcept final;
 
         /* Transactions */
         /*! Start a new database transaction. */
@@ -57,7 +57,7 @@ namespace Orm::Drivers::MySql
 
         /* Others */
         /*! Get the maximum identifier length for the current driver. */
-        inline int maximumIdentifierLength(IdentifierType type) const final;
+        inline int maximumIdentifierLength(IdentifierType type) const noexcept final;
         /*! Determine whether the given MySQL identifier is escaped. */
         bool isIdentifierEscaped(const QString &identifier,
                                  IdentifierType type) const final;
@@ -71,7 +71,7 @@ namespace Orm::Drivers::MySql
 
     /* Getters / Setters */
 
-    QString MySqlDriver::driverName() const
+    QString MySqlDriver::driverName() const noexcept
     {
         using namespace Qt::StringLiterals; // NOLINT(google-build-using-namespace)
 
@@ -80,7 +80,8 @@ namespace Orm::Drivers::MySql
 
     /* Others */
 
-    int MySqlDriver::maximumIdentifierLength(const IdentifierType /*unused*/) const
+    int
+    MySqlDriver::maximumIdentifierLength(const IdentifierType /*unused*/) const noexcept
     {
         // https://dev.mysql.com/doc/refman/8.3/en/identifier-length.html
         return 64;
