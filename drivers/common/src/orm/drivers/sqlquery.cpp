@@ -122,7 +122,7 @@ bool SqlQuery::exec(const QString &query)
     if (query.isEmpty())
         throw std::exception("SqlQuery::exec: empty query");
 
-    if (const auto driver = this->driverWeak().lock();
+    if (const auto driver = this->driverWeakInternal().lock();
         !driver->isOpen() || driver->isOpenError()
     ) {
         qWarning("SqlQuery::exec: database not open");
@@ -160,7 +160,7 @@ bool SqlQuery::prepare(const QString &query)
     if (query.isEmpty())
         throw std::exception("SqlQuery::exec: empty query");
 
-    if (const auto driver = this->driverWeak().lock();
+    if (const auto driver = this->driverWeakInternal().lock();
         !driver->isOpen() || driver->isOpenError()
     ) {
         qWarning("SqlQuery::prepare: database not open");
@@ -426,7 +426,7 @@ SqlQuery::size_type SqlQuery::numRowsAffected() const
 
 void SqlQuery::clear()
 {
-    const auto driver = driverWeak();
+    const auto driver = driverWeakInternal();
 
     // CUR drivers revisit, maybe clear everything manually? What happens with current values, is below correct? silverqx
     // Get the SqlResult instance
@@ -454,7 +454,7 @@ void SqlQuery::finish()
 /* Leave the non-const driverWeak() private, it's correct, it's not needed anywhere and
    is for special cases only. */
 
-std::weak_ptr<SqlDriver> SqlQuery::driverWeak() noexcept
+std::weak_ptr<SqlDriver> SqlQuery::driverWeakInternal() noexcept
 {
     /* This must be the std::weak_ptr() because when the connection is removed from
        the SqlDatabaseManager using the SqlDatabase::removeDatabase() then the SqlDriver

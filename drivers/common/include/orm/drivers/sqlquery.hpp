@@ -152,7 +152,7 @@ namespace Orm::Drivers
     private:
         /* Getters / Setters */
         /*! Get the SQL database driver used to access the database connection. */
-        std::weak_ptr<SqlDriver> driverWeak() noexcept;
+        std::weak_ptr<SqlDriver> driverWeakInternal() noexcept;
 
         /* Result sets */
         /*! Normal seek. */
