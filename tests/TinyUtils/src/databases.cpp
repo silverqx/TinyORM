@@ -60,12 +60,17 @@ using ConfigurationsType = TestUtils::Databases::ConfigurationsType;
 namespace TestUtils
 {
 
-/* The whole class is designed so that a Database::createConnections/createConnection
+/* The whole class is designed so that a Database::createConnections()/createConnection()
    methods can be called only once. You can pass connection name/s to these methods
    and they create TinyORM database connections.
-   Only those connections will be created, for which are environment variables defined
+   Only those connections will be created, for which the environment variables are defined
    correctly.
-   Tests don't fail but are skipped when a connection is not available. */
+   Tests don't fail but are skipped when a connection is not available.
+
+   The createConnections()/createConnection() are supposed to be called from
+   the initTestCase() method (can be called only once).
+   The createConnectionTemp/From() can be called from test methods and connections don't
+   need to be initialized first in the initTestCase(). */
 
 /* private */
 
@@ -189,10 +194,10 @@ Databases::createConnectionTempFrom(
 std::optional<std::reference_wrapper<const QVariantHash>>
 Databases::configuration(const QString &connection)
 {
-    if (!m_configurations.contains(connection))
-        return std::nullopt;
+    if (hasConfiguration(connection))
+        return m_configurations.at(connection);
 
-    return m_configurations.at(connection);
+    return createConfigurationsHash({connection}).at(connection);
 }
 
 bool Databases::hasConfiguration(const QString &connection)

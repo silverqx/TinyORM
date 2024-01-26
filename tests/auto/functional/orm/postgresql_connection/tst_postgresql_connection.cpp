@@ -69,14 +69,7 @@ private:
 // NOLINTBEGIN(readability-convert-member-functions-to-static)
 void tst_PostgreSQL_Connection::initTestCase()
 {
-    m_connection = Databases::createConnection(Databases::POSTGRESQL);
-
-    if (m_connection.isEmpty())
-        QSKIP(TestUtils::AutoTestSkipped
-              .arg(TypeUtils::classPureBasename(*this), Databases::POSTGRESQL)
-              .toUtf8().constData(), );
-
-    m_dm = Databases::managerShared();
+    m_dm = Databases::createDatabaseManager();
 
     // Default connection must be empty
     QVERIFY(m_dm->getDefaultConnection().isEmpty());
