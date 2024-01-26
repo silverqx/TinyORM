@@ -245,6 +245,8 @@ void tst_SqlDatabaseManager::MySQL_addUseAndRemoveConnection_FiveTimes() const
         Databases::removeDriversConnection(*connectionName);
 
         // The sqldriver must be invalidated immediately
+        QVERIFY(query.driverWeak().expired());
+        QCOMPARE(query.driver(), nullptr);
         QVERIFY(!connection.isValid());
         QVERIFY(SqlDatabase::connectionNames().isEmpty());
         QVERIFY(SqlDatabase::openedConnectionNames().isEmpty());
@@ -299,58 +301,58 @@ void tst_SqlDatabaseManager::MySQL_addUseAndRemoveThreeConnections_FiveTimes() c
         QCOMPARE(SqlDatabase::connectionNames().size(), 3);
 
         // Execute some database query on connection1
+        SqlQuery query1(connection1);
         {
-            SqlQuery query(connection1);
-            query.exec(sl("select count(*) as user_count from users"));
+            query1.exec(sl("select count(*) as user_count from users"));
 
             // Verify the query
-            QVERIFY(query.isActive());
-            QVERIFY(query.isSelect());
-            QVERIFY(!query.isValid());
-            QCOMPARE(query.at(), CursorPosition::BeforeFirstRow);
-            QCOMPARE(query.size(), 1);
+            QVERIFY(query1.isActive());
+            QVERIFY(query1.isSelect());
+            QVERIFY(!query1.isValid());
+            QCOMPARE(query1.at(), CursorPosition::BeforeFirstRow);
+            QCOMPARE(query1.size(), 1);
 
             // Verify the result
-            QVERIFY(query.first());
-            QVERIFY(query.isValid());
-            QCOMPARE(query.at(), 0);
-            QCOMPARE(query.value(sl("user_count")).value<quint64>(), 5);
+            QVERIFY(query1.first());
+            QVERIFY(query1.isValid());
+            QCOMPARE(query1.at(), 0);
+            QCOMPARE(query1.value(sl("user_count")).value<quint64>(), 5);
         }
         // Execute some database query on connection2
+        SqlQuery query2(connection2);
         {
-            SqlQuery query(connection2);
-            query.exec(sl("select count(*) as user_count from users"));
+            query2.exec(sl("select count(*) as user_count from users"));
 
             // Verify the query
-            QVERIFY(query.isActive());
-            QVERIFY(query.isSelect());
-            QVERIFY(!query.isValid());
-            QCOMPARE(query.at(), CursorPosition::BeforeFirstRow);
-            QCOMPARE(query.size(), 1);
+            QVERIFY(query2.isActive());
+            QVERIFY(query2.isSelect());
+            QVERIFY(!query2.isValid());
+            QCOMPARE(query2.at(), CursorPosition::BeforeFirstRow);
+            QCOMPARE(query2.size(), 1);
 
             // Verify the result
-            QVERIFY(query.first());
-            QVERIFY(query.isValid());
-            QCOMPARE(query.at(), 0);
-            QCOMPARE(query.value(sl("user_count")).value<quint64>(), 5);
+            QVERIFY(query2.first());
+            QVERIFY(query2.isValid());
+            QCOMPARE(query2.at(), 0);
+            QCOMPARE(query2.value(sl("user_count")).value<quint64>(), 5);
         }
         // Execute some database query on connection3
+        SqlQuery query3(connection3);
         {
-            SqlQuery query(connection3);
-            query.exec(sl("select count(*) as user_count from users"));
+            query3.exec(sl("select count(*) as user_count from users"));
 
             // Verify the query
-            QVERIFY(query.isActive());
-            QVERIFY(query.isSelect());
-            QVERIFY(!query.isValid());
-            QCOMPARE(query.at(), CursorPosition::BeforeFirstRow);
-            QCOMPARE(query.size(), 1);
+            QVERIFY(query3.isActive());
+            QVERIFY(query3.isSelect());
+            QVERIFY(!query3.isValid());
+            QCOMPARE(query3.at(), CursorPosition::BeforeFirstRow);
+            QCOMPARE(query3.size(), 1);
 
             // Verify the result
-            QVERIFY(query.first());
-            QVERIFY(query.isValid());
-            QCOMPARE(query.at(), 0);
-            QCOMPARE(query.value(sl("user_count")).value<quint64>(), 5);
+            QVERIFY(query3.first());
+            QVERIFY(query3.isValid());
+            QCOMPARE(query3.at(), 0);
+            QCOMPARE(query3.value(sl("user_count")).value<quint64>(), 5);
         }
 
         // Restore
@@ -359,6 +361,12 @@ void tst_SqlDatabaseManager::MySQL_addUseAndRemoveThreeConnections_FiveTimes() c
         Databases::removeDriversConnection(*connectionName1);
 
         // The sqldriver must be invalidated immediately
+        QVERIFY(query3.driverWeak().expired());
+        QVERIFY(query2.driverWeak().expired());
+        QVERIFY(query1.driverWeak().expired());
+        QCOMPARE(query3.driver(), nullptr);
+        QCOMPARE(query2.driver(), nullptr);
+        QCOMPARE(query1.driver(), nullptr);
         QVERIFY(!connection3.isValid());
         QVERIFY(!connection2.isValid());
         QVERIFY(!connection1.isValid());
