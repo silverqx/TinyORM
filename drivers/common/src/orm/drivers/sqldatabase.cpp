@@ -116,6 +116,11 @@ void SqlDatabase::setHostName(const QString &hostname) noexcept
     d->hostName = hostname;
 }
 
+void SqlDatabase::setHostName(QString &&hostname) noexcept
+{
+    d->hostName = std::move(hostname);
+}
+
 int SqlDatabase::port() const noexcept
 {
     return d->port;
@@ -136,6 +141,11 @@ void SqlDatabase::setDatabaseName(const QString &database) noexcept
     d->databaseName = database;
 }
 
+void SqlDatabase::setDatabaseName(QString &&database) noexcept
+{
+    d->databaseName = std::move(database);
+}
+
 QString SqlDatabase::userName() const noexcept
 {
     return d->username;
@@ -144,6 +154,11 @@ QString SqlDatabase::userName() const noexcept
 void SqlDatabase::setUserName(const QString &username) noexcept
 {
     d->username = username;
+}
+
+void SqlDatabase::setUserName(QString &&username) noexcept
+{
+    d->username = std::move(username);
 }
 
 QString SqlDatabase::password() const noexcept
@@ -156,6 +171,11 @@ void SqlDatabase::setPassword(const QString &password) noexcept
     d->password = password;
 }
 
+void SqlDatabase::setPassword(QString &&password) noexcept
+{
+    d->password = std::move(password);
+}
+
 QString SqlDatabase::connectOptions() const noexcept
 {
     return d->connectionOptions;
@@ -164,6 +184,11 @@ QString SqlDatabase::connectOptions() const noexcept
 void SqlDatabase::setConnectOptions(const QString &options) noexcept
 {
     d->connectionOptions = options;
+}
+
+void SqlDatabase::setConnectOptions(QString &&options) noexcept
+{
+    d->connectionOptions = std::move(options);
 }
 
 NumericalPrecisionPolicy SqlDatabase::numericalPrecisionPolicy() const noexcept
