@@ -174,7 +174,7 @@ bool SqlQuery::exec()
                 "for prepared statements or pass the query string directly "
                 "to the SqlQuery::exec(QString) for normal statements.");
 
-    m_sqlResult->setLastError(SqlError::NoError);
+    m_sqlResult->resetLastError();
 
 #if defined(QT_DEBUG_SQL) || defined(TINYDRIVERS_DEBUG_SQL)
     QElapsedTimer t;
@@ -430,7 +430,7 @@ void SqlQuery::finish()
 
     m_sqlResult->setActive(false);
     m_sqlResult->setAt(BeforeFirstRow);
-    m_sqlResult->setLastError(SqlError::NoError);
+    m_sqlResult->resetLastError();
     m_sqlResult->detachFromResultSet();
 }
 

@@ -67,6 +67,10 @@ namespace Orm::Drivers
         SqlError lastError() const;
         /*! Set the last query error. */
         virtual bool setLastError(const SqlError &error);
+        /*! Set the last query error. */
+        virtual bool setLastError(SqlError &&error);
+        /*! Reset the last query error. */
+        void resetLastError();
 
         /*! Get the current cursor position (0-based). */
         size_type at() const noexcept;
