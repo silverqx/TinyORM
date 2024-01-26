@@ -504,10 +504,12 @@ Databases::computeReserveForConfigurationsHash(const QStringList &connections)
 
     /* For all connections enabled (this logic is enough, I will not complicate it).
        +1 because the QMYSQL driver is also used for MariaDB connection. */
-#ifdef TINYORM_USING_TINYDRIVERS
+#ifdef TINYORM_USING_QTSQLDRIVERS
+    return static_cast<SizeType>(m_dm->supportedDrivers().size()) + 1;
+#elif defined(TINYORM_USING_TINYDRIVERS)
     return static_cast<SizeType>(SqlDatabase::drivers().size()) + 1;
 #else
-    return static_cast<SizeType>(m_dm->supportedDrivers().size()) + 1;
+#  error Missing include "orm/macros/sqldrivermappings.hpp".
 #endif
 }
 
