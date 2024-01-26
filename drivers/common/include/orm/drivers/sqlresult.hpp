@@ -64,13 +64,13 @@ namespace Orm::Drivers
         virtual void setQuery(const QString &query) noexcept;
 
         /*! Get information about the error of the last query. */
-        SqlError lastError() const;
+        SqlError lastError() const noexcept;
         /*! Set the last query error. */
-        virtual bool setLastError(const SqlError &error);
+        virtual bool setLastError(const SqlError &error) noexcept;
         /*! Set the last query error. */
-        virtual bool setLastError(SqlError &&error);
+        virtual bool setLastError(SqlError &&error) noexcept;
         /*! Reset the last query error. */
-        void resetLastError();
+        void resetLastError() noexcept;
 
         /*! Get the current cursor position (0-based). */
         size_type at() const noexcept;

@@ -17,7 +17,7 @@ namespace Orm::Drivers
 /* public */
 
 SqlError::SqlError(QString driverText, QString databaseText, const ErrorType errorType,
-                   QString errorCode)
+                   QString errorCode) noexcept
     : m_driverText(std::move(driverText))
     , m_databaseText(std::move(databaseText))
     , m_errorType(errorType)
@@ -26,7 +26,7 @@ SqlError::SqlError(QString driverText, QString databaseText, const ErrorType err
     , m_errorCode(std::move(errorCode))
 {}
 
-bool SqlError::operator==(const SqlError &other) const
+bool SqlError::operator==(const SqlError &other) const noexcept
 {
     return m_errorType == other.m_errorType &&
            m_errorCode == other.m_errorCode;

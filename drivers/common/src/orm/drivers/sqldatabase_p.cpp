@@ -48,7 +48,7 @@ Q_GLOBAL_STATIC(std::shared_mutex, mx_driversLoaded) // NOLINT(misc-use-anonymou
 
 /* Database connection */
 
-void SqlDatabasePrivate::cloneDatabase(const SqlDatabasePrivate &other)
+void SqlDatabasePrivate::cloneDatabase(const SqlDatabasePrivate &other) noexcept
 {
     driverName   = other.driverName;
     hostName     = other.hostName;

@@ -25,38 +25,39 @@ SqlDriver::~SqlDriver() = default;
 
 /* Getters / Setters */
 
-bool SqlDriver::isOpen() const
+bool SqlDriver::isOpen() const noexcept
 {
     Q_D(const SqlDriver);
     return d->isOpen;
 }
 
-bool SqlDriver::isOpenError() const
+bool SqlDriver::isOpenError() const noexcept
 {
     Q_D(const SqlDriver);
     return d->isOpenError;
 }
 
-SqlDriver::DbmsType SqlDriver::dbmsType() const
+SqlDriver::DbmsType SqlDriver::dbmsType() const noexcept
 {
     Q_D(const SqlDriver);
     return d->dbmsType;
 }
 
-SqlError SqlDriver::lastError() const
+SqlError SqlDriver::lastError() const noexcept
 {
     Q_D(const SqlDriver);
     return d->lastError;
 }
 
-NumericalPrecisionPolicy SqlDriver::defaultNumericalPrecisionPolicy() const
+NumericalPrecisionPolicy SqlDriver::defaultNumericalPrecisionPolicy() const noexcept
 {
     Q_D(const SqlDriver);
     return d->defaultPrecisionPolicy;
 }
 
 void
-SqlDriver::setDefaultNumericalPrecisionPolicy(const NumericalPrecisionPolicy precision)
+SqlDriver::setDefaultNumericalPrecisionPolicy(
+        const NumericalPrecisionPolicy precision) noexcept
 {
     Q_D(SqlDriver);
     d->defaultPrecisionPolicy = precision;
@@ -70,7 +71,8 @@ std::thread::id SqlDriver::threadId() const noexcept
 
 /* Others */
 
-int SqlDriver::maximumIdentifierLength(const SqlDriver::IdentifierType /*unused*/) const
+int SqlDriver::maximumIdentifierLength(
+        const SqlDriver::IdentifierType /*unused*/) const noexcept
 {
     return std::numeric_limits<int>::max();
 }

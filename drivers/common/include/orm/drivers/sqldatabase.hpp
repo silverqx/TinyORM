@@ -70,44 +70,44 @@ namespace Orm::Drivers
         SqlError lastError() const;
 
         /*! Get the database driver name for the current connection. */
-        QString driverName() const;
+        QString driverName() const noexcept;
         /*! Get the current connection name. */
-        QString connectionName() const;
+        QString connectionName() const noexcept;
 
         /*! Get the hostname. */
-        QString hostName() const;
+        QString hostName() const noexcept;
         /*! Set the hostname. */
-        void setHostName(const QString &hostname);
+        void setHostName(const QString &hostname) noexcept;
 
         /*! Get the port. */
-        int port() const;
+        int port() const noexcept;
         /*! Set the port. */
-        void setPort(int port);
+        void setPort(int port) noexcept;
 
         /*! Get the database name. */
-        QString databaseName() const;
+        QString databaseName() const noexcept;
         /*! Set the database name. */
-        void setDatabaseName(const QString &database);
+        void setDatabaseName(const QString &database) noexcept;
 
         /*! Get the username. */
-        QString userName() const;
+        QString userName() const noexcept;
         /*! Set the username. */
-        void setUserName(const QString &username);
+        void setUserName(const QString &username) noexcept;
 
         /*! Get the password. */
-        QString password() const;
+        QString password() const noexcept;
         /*! Set the password. */
-        void setPassword(const QString &password);
+        void setPassword(const QString &password) noexcept;
 
         /*! Get the connection options. */
-        QString connectOptions() const;
+        QString connectOptions() const noexcept;
         /*! Set the connection options. */
-        void setConnectOptions(const QString &options = {});
+        void setConnectOptions(const QString &options = {}) noexcept;
 
         /*! Get the current numerical precision policy. */
-        NumericalPrecisionPolicy numericalPrecisionPolicy() const;
+        NumericalPrecisionPolicy numericalPrecisionPolicy() const noexcept;
         /*! Set the numerical precision policy for the current connection. */
-        void setNumericalPrecisionPolicy(NumericalPrecisionPolicy precision);
+        void setNumericalPrecisionPolicy(NumericalPrecisionPolicy precision) noexcept;
 
         /*! Get the SQL database driver used to access the database connection (const). */
         const SqlDriver *driver() const noexcept;
