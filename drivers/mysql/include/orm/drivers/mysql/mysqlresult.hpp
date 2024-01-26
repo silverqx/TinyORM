@@ -90,6 +90,8 @@ namespace Orm::Drivers::MySql
         void mysqlFreeResults();
         /*! Free the memory allocated for result sets, noexcept version. */
         void mysqlFreeResultsForDtor() noexcept;
+        /*! Free the memory allocated for multi-result sets, noexcept version. */
+        void mysqlFreeMultiResultsForDtor() noexcept;
         /*! Close the prepared statement and deallocate the statement handler. */
         void mysqlStmtClose();
 
