@@ -169,7 +169,7 @@ namespace Orm::SchemaNs
         std::optional<int> precision = std::nullopt;
         /* srid max. value should be 2^32-1 as is described here, so unsigned int
            should be ok:
-           https://dev.mysql.com/doc/refman/8.0/en/spatial-function-argument-handling.html */
+           https://dev.mysql.com/doc/refman/8.3/en/spatial-function-argument-handling.html */
         /*! The spatial reference identifier (SRID) of a geometry identifies the SRS
             in which the geometry is defined (MySQL/PostgreSQL). */
         std::optional<quint32> srid = std::nullopt;

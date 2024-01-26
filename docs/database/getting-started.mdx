@@ -341,7 +341,7 @@ The first argument is configuration hash which is of type `QVariantHash` and the
 
 You may also configure connection options by `options` key as `QVariantHash` or `QString`, you can pass any [connection options](https://doc.qt.io/qt/qsqldatabase.html#setConnectOptions) supported by `QSqlDatabase`.
 
-You can also configure [Transaction Isolation Levels](https://dev.mysql.com/doc/refman/8.1/en/innodb-transaction-isolation-levels.html) for MySQL connection with the `isolation_level` configuration option.
+You can also configure [Transaction Isolation Levels](https://dev.mysql.com/doc/refman/8.3/en/innodb-transaction-isolation-levels.html) for MySQL connection with the `isolation_level` configuration option.
 
 The `version` option is relevant only for the MySQL connections and you can save/avoid one database query (select version()) if you provide it manually. On the base of this version will be decided which [session variables](https://github.com/silverqx/TinyORM/blob/main/src/orm/connectors/mysqlconnector.cpp#L154) will be set if strict mode is enabled and whether to use an [alias](https://github.com/silverqx/TinyORM/blob/main/src/orm/query/grammars/mysqlgrammar.cpp#L36) during the `upsert` method call.
 
@@ -731,11 +731,11 @@ Since unprepared statements do not bind parameters, they may be vulnerable to SQ
 
 #### Implicit Commits
 
-When using the `DB` facade's `statement` methods within transactions, you must be careful to avoid statements that cause [implicit commits](https://dev.mysql.com/doc/refman/8.1/en/implicit-commit.html). These statements will cause the database engine to indirectly commit the entire transaction, leaving TinyORM unaware of the database's transaction level. An example of such a statement is creating a database table:
+When using the `DB` facade's `statement` methods within transactions, you must be careful to avoid statements that cause [implicit commits](https://dev.mysql.com/doc/refman/8.3/en/implicit-commit.html). These statements will cause the database engine to indirectly commit the entire transaction, leaving TinyORM unaware of the database's transaction level. An example of such a statement is creating a database table:
 
     DB::statement("create table users (name varchar(255) null)");
 
-Please refer to the MySQL manual for [a list of all statements](https://dev.mysql.com/doc/refman/8.1/en/implicit-commit.html) that trigger implicit commits.
+Please refer to the MySQL manual for [a list of all statements](https://dev.mysql.com/doc/refman/8.3/en/implicit-commit.html) that trigger implicit commits.
 
 ### Using Multiple Database Connections
 

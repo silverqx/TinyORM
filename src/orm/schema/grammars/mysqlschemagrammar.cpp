@@ -446,7 +446,7 @@ QString MySqlSchemaGrammar::escapeString(QString value) const
        special characters but for PostrgreSQL only single-quote, it doesn't matter
        though, it will work anyway.
        On MySQL escaping of ^Z, \0, and \ is needed on some environments, described here:
-       https://dev.mysql.com/doc/refman/8.0/en/string-literals.html
+       https://dev.mysql.com/doc/refman/8.3/en/string-literals.html
        On PostgreSQL escaping using \ is is more SQL standard conforming, described here,
        (especially look at the caution box):
        https://www.postgresql.org/docs/current/sql-syntax-lexical.html#SQL-SYNTAX-SPECIAL-CHARS*/
