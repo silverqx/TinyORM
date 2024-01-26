@@ -30,8 +30,8 @@ namespace Orm::Drivers
         /*! Constructor (not explicit to allow setLastError(SqlError::NoError)). */
         inline SqlError(ErrorType errorType);
         /*! Constructor (not explicit to allow {}). */
-        SqlError(const QString &driverText = {}, const QString &databaseText = {},
-                 ErrorType errorType = NoError, const QString &errorCode = {});
+        SqlError(QString driverText = {}, QString databaseText = {},
+                 ErrorType errorType = NoError, QString errorCode = {});
         /*! Default destructor. */
         inline ~SqlError() = default;
 
