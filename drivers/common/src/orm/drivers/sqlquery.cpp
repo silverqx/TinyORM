@@ -538,7 +538,6 @@ std::unique_ptr<SqlResult> SqlQuery::initSqlResult(const SqlDatabase &connection
 {
     // Nothing to do
     if (!connection.isValid())
-        // CUR drivers throw if the default connection is not valid silverqx
         throw std::exception("No database connection available (isn't valid).");
 
     // This const_cast<> is needed because of the SqlQuery constructor (to have same API)
