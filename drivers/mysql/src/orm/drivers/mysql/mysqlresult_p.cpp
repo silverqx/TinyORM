@@ -9,25 +9,6 @@
 #include "orm/drivers/mysql/mysqlutils_p.hpp"
 #include "orm/drivers/utils/helpers_p.hpp"
 
-// CUR drivers extract common MySQL types to own file, then also check throwIfBadResultFieldsIndex(std::size_t) vs ResultFieldsType silverqx
-// this is a copy of the old MYSQL_TIME before an additional integer was added in
-// 8.0.27.0. This kills the sanity check during retrieving this struct from mysql
-// when another libmysql version is used during runtime than during compile time
-struct QT_MYSQL_TIME
-{
-    unsigned int year = 0;
-    unsigned int month = 0;
-    unsigned int day = 0;
-    unsigned int hour = 0;
-    unsigned int minute = 0;
-    unsigned int second = 0;
-
-    /*! The fractional part of the second in microseconds. */
-    unsigned long second_part = 0; // NOLINT(google-runtime-int)
-    my_bool neg = false;
-    enum enum_mysql_timestamp_type time_type = MYSQL_TIMESTAMP_NONE;
-};
-
 TINYORM_BEGIN_COMMON_NAMESPACE
 
 using namespace Qt::StringLiterals; // NOLINT(google-build-using-namespace)
@@ -130,7 +111,7 @@ bool MySqlResultPrivate::bindResultValues()
             hasBlobs = true;
         }
         else if (MySqlUtils::isTimeOrDate(fieldInfo->type))
-            resultBind.buffer_length = field.fieldValueSize = sizeof (QT_MYSQL_TIME);
+            resultBind.buffer_length = field.fieldValueSize = sizeof (MYSQL_TIME);
 
         else if (MySqlUtils::isInteger(field.metaType.id()))
             resultBind.buffer_length = field.fieldValueSize = 8UL;
@@ -199,7 +180,7 @@ void MySqlResultPrivate::checkPreparedBindingsCount(const uint placeholdersCount
 
 void MySqlResultPrivate::bindPreparedBindings(
         QList<my_bool> &nullVector, QList<QByteArray> &stringVector,
-        QList<QT_MYSQL_TIME> &timeVector)
+        QList<MYSQL_TIME> &timeVector)
 {
     // Reserve all vectors for prepared bindings buffer data
     reserveVectorsForBindings(nullVector, stringVector, timeVector);
@@ -240,7 +221,7 @@ void MySqlResultPrivate::bindPreparedBindings(
         case QMetaType::QTime:
         case QMetaType::QDate:
         case QMetaType::QDateTime:
-            preparedBind.buffer_length = sizeof (QT_MYSQL_TIME);
+            preparedBind.buffer_length = sizeof (MYSQL_TIME);
             // Emplace to the vector to make it alive until mysql_stmt_execute()
             preparedBind.buffer = &timeVector.emplaceBack(
                                       toMySqlDateTime(
@@ -402,9 +383,9 @@ QVariant MySqlResultPrivate::getValueForPrepared(const ResultFieldsSizeType inde
     /* Here is different logic as for the normal queries because normal queries return
        datetime-related columns as a char * but prepared statements return MYSQL_TIME. */
     if (MySqlUtils::isTimeOrDate(field.myField->type) &&
-        field.fieldValueSize >= sizeof (QT_MYSQL_TIME)
+        field.fieldValueSize >= sizeof (MYSQL_TIME)
     )
-        return toQDateTimeFromMySQLTime(typeId, reinterpret_cast<const QT_MYSQL_TIME *>(
+        return toQDateTimeFromMySQLTime(typeId, reinterpret_cast<const MYSQL_TIME *>(
                                                     field.fieldValue.get()));
 
     QString value;
@@ -452,7 +433,7 @@ void MySqlResultPrivate::allocateMemoryForBindings(std::unique_ptr<MYSQL_BIND[]>
 
 void MySqlResultPrivate::reserveVectorsForBindings(
         QList<my_bool> &nullVector, QList<QByteArray> &stringVector,
-        QList<QT_MYSQL_TIME> &timeVector) const
+        QList<MYSQL_TIME> &timeVector) const
 {
     nullVector.reserve(boundValues.size());
 
@@ -480,14 +461,14 @@ bool MySqlResultPrivate::isBlobType(const enum_field_types fieldType) noexcept
            fieldType == MYSQL_TYPE_JSON;
 }
 
-QT_MYSQL_TIME
+MYSQL_TIME
 MySqlResultPrivate::toMySqlDateTime(const QDate date, const QTime time, const int typeId,
                                     MYSQL_BIND &bind)
 {
     Q_ASSERT(typeId == QMetaType::QDateTime || typeId == QMetaType::QTime ||
              typeId == QMetaType::QDate);
 
-    QT_MYSQL_TIME mysqlTime;
+    MYSQL_TIME mysqlTime;
 
     const auto initDate = [&mysqlTime, date]
     {
@@ -608,7 +589,7 @@ QVariant MySqlResultPrivate::toQDateTimeFromString(QString value)
 
 QVariant
 MySqlResultPrivate::toQDateTimeFromMySQLTime(const int typeId,
-                                             const QT_MYSQL_TIME *const mysqlTime)
+                                             const MYSQL_TIME *const mysqlTime)
 {
     QDate date;
     QTime time;

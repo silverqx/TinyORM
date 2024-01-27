@@ -16,8 +16,7 @@
    Instead of using the input/in vs output/out words I'm using prepared vs result words
    where possible to avoid confusion. */
 
-struct QT_MYSQL_TIME;
-
+// CUR drivers extract common MySQL types to own file, then also check throwIfBadResultFieldsIndex(std::size_t) vs ResultFieldsType silverqx
 // CUR drivers revisit all this types, fix comments silverqx
 /* MySQL above version 8 removed my_bool typedef while MariaDB kept it,
    by redefining it we can regain source compatibility. */
@@ -74,7 +73,7 @@ namespace Orm::Drivers::MySql
         /*! Bind prepared bindings for placeholders into the preparedBinds data member. */
         void bindPreparedBindings(
                 QList<my_bool> &nullVector, QList<QByteArray> &stringVector,
-                QList<QT_MYSQL_TIME> &timeVector);
+                QList<MYSQL_TIME> &timeVector);
 
         /*! Bind result set BLOB values. */
         void bindResultBlobs();
@@ -139,13 +138,13 @@ namespace Orm::Drivers::MySql
         /*! Reserve all vectors for prepared bindings buffer data. */
         void reserveVectorsForBindings(
                 QList<my_bool> &nullVector, QList<QByteArray> &stringVector,
-                QList<QT_MYSQL_TIME> &timeVector) const;
+                QList<MYSQL_TIME> &timeVector) const;
 
         /*! Determine whether the given MySQL field type is a BLOB. */
         static bool isBlobType(enum_field_types fieldType) noexcept;
         /*! Convert Qt date/time type to the MYSQL_TIME. */
-        static QT_MYSQL_TIME toMySqlDateTime(QDate date, QTime time, int typeId,
-                                             MYSQL_BIND &bind);
+        static MYSQL_TIME toMySqlDateTime(QDate date, QTime time, int typeId,
+                                          MYSQL_BIND &bind);
 
         /* Result sets */
         /*! Determine whether the given MySQL field type is a Bit-value type. */
@@ -161,7 +160,7 @@ namespace Orm::Drivers::MySql
         static QVariant toQDateTimeFromString(QString value);
         /*! Convert the DATE/TIME value to the QDateTime (prepared statements only). */
         static QVariant toQDateTimeFromMySQLTime(int typeId,
-                                                 const QT_MYSQL_TIME *mysqlTime);
+                                                 const MYSQL_TIME *mysqlTime);
 
         /*! Convert the Fixed/Floating-Point value types based on the set numerical
             precision policy. */

@@ -9,24 +9,6 @@
 #include "orm/drivers/mysql/mysqlutils_p.hpp"
 #include "orm/drivers/sqlrecord.hpp"
 
-// this is a copy of the old MYSQL_TIME before an additional integer was added in
-// 8.0.27.0. This kills the sanity check during retrieving this struct from mysql
-// when another libmysql version is used during runtime than during compile time
-struct QT_MYSQL_TIME
-{
-    unsigned int year = 0;
-    unsigned int month = 0;
-    unsigned int day = 0;
-    unsigned int hour = 0;
-    unsigned int minute = 0;
-    unsigned int second = 0;
-
-    /*! The fractional part of the second in microseconds. */
-    unsigned long second_part = 0; // NOLINT(google-runtime-int)
-    my_bool neg = false;
-    enum enum_mysql_timestamp_type time_type = MYSQL_TIMESTAMP_NONE;
-};
-
 TINYORM_BEGIN_COMMON_NAMESPACE
 
 using namespace Qt::StringLiterals; // NOLINT(google-build-using-namespace)
@@ -156,7 +138,7 @@ bool MySqlResult::exec()
     // These vectors keep values alive long enough until mysql_stmt_execute() is invoked
     QList<my_bool> nullVector;
     QList<QByteArray> stringVector;
-    QList<QT_MYSQL_TIME> timeVector;
+    QList<MYSQL_TIME> timeVector;
 
     /* Reset a prepared statement on client and server to state after prepare,
        unbuffered result sets and current errors. */
