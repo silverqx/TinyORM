@@ -75,7 +75,8 @@ bool MySqlResult::exec(const QString &query)
 
     // Execute query
     if (const auto queryArray = query.toUtf8();
-        mysql_real_query(mysql, queryArray.constData(), queryArray.size()) != 0
+        mysql_real_query(mysql, queryArray.constData(),
+                         static_cast<ulong>(queryArray.size())) != 0
     )
         return setLastError(MySqlUtils::createError(
                                 u"Unable to execute query"_s,
@@ -124,7 +125,9 @@ bool MySqlResult::prepare(const QString &query)
     // Prepare the SQL statement
     const auto queryArray = query.toUtf8();
 
-    if (mysql_stmt_prepare(d->stmt, queryArray.constData(), queryArray.size()) != 0)
+    if (mysql_stmt_prepare(d->stmt, queryArray.constData(),
+                           static_cast<ulong>(queryArray.size())) != 0
+    )
         return setLastError(MySqlResultPrivate::createStmtError(
                                 u"Unable to prepare statement"_s,
                                 SqlError::StatementError, d->stmt));
@@ -289,13 +292,13 @@ bool MySqlResult::fetch(const size_type index)
 
     // Fetch the next row in the result set
     if (d->preparedQuery) {
-        mysql_stmt_data_seek(d->stmt, index);
+        mysql_stmt_data_seek(d->stmt, static_cast<quint64>(index));
 
         if (!mysqlStmtFetch())
             return false;
     }
     else {
-        mysql_data_seek(d->result, index);
+        mysql_data_seek(d->result, static_cast<quint64>(index));
 
         if (d->row = mysql_fetch_row(d->result);
             d->row == nullptr
@@ -630,8 +633,8 @@ void MySqlResult::throwIfBadResultFieldsIndex(const std::size_t index) const
 
     const auto fieldsCount = d->resultFields.size();
 
-    // Nothing to do
-    if (index >= 0 || index < fieldsCount)
+    // Nothing to do, index is always higher than 0
+    if (/*index >= 0 || */index < fieldsCount)
         return;
 
     throw std::exception(

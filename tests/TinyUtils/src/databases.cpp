@@ -164,7 +164,14 @@ QString Databases::createDriversConnection(const QString &connection)
 {
     throwIfConnectionsInitialized();
 
+#if defined(__GNUG__) && !defined(__clang__)
+#  pragma GCC diagnostic push
+#  pragma GCC diagnostic ignored "-Wdangling-reference"
+#endif
     const auto &configurations = createConfigurationsHash({connection}, true);
+#if defined(__GNUG__) && !defined(__clang__)
+#  pragma GCC diagnostic pop
+#endif
 
     // Nothing to do
     if (configurations.empty())
@@ -450,6 +457,9 @@ const ConfigurationsType &
 Databases::createConfigurationsHash(const QStringList &connections,
                                     const bool forTinyDrivers)
 {
+#ifdef TINYORM_USING_QTSQLDRIVERS
+    Q_UNUSED(forTinyDrivers)
+#endif
     /*! Determine whether a connection for the given driver should be created. */
     const auto shouldCreateConnection = [&connections]
                                         (const QString &connection,
@@ -465,26 +475,50 @@ Databases::createConfigurationsHash(const QStringList &connections,
     m_configurations.reserve(computeReserveForConfigurationsHash(connections));
 
     // This connection must be to the MySQL database server (not MariaDB)
+#ifdef TINYORM_USING_QTSQLDRIVERS
+    if (const auto connection = MYSQL;
+#elif defined(TINYORM_USING_TINYDRIVERS)
     if (const auto connection = forTinyDrivers ? MYSQL_DRIVERS : MYSQL;
+#else
+#  error Missing include "orm/macros/sqldrivermappings.hpp".
+#endif
         shouldCreateConnection(connection, QMYSQL)
     )
         if (auto &&[config, envDefined] = mysqlConfiguration(); envDefined)
             m_configurations.try_emplace(connection, std::move(config));
 
     // This connection must be to the MariaDB database server (not MySQL)
+#ifdef TINYORM_USING_QTSQLDRIVERS
+    if (const auto connection = MARIADB;
+#elif defined(TINYORM_USING_TINYDRIVERS)
     if (const auto connection = forTinyDrivers ? MARIADB_DRIVERS : MARIADB;
+#else
+#  error Missing include "orm/macros/sqldrivermappings.hpp".
+#endif
         shouldCreateConnection(connection, QMYSQL)
     )
         if (auto &&[config, envDefined] = mariaConfiguration(); envDefined)
             m_configurations.try_emplace(connection, std::move(config));
 
+#ifdef TINYORM_USING_QTSQLDRIVERS
+    if (const auto connection = SQLITE;
+#elif defined(TINYORM_USING_TINYDRIVERS)
     if (const auto connection = forTinyDrivers ? SQLITE_DRIVERS : SQLITE;
+#else
+#  error Missing include "orm/macros/sqldrivermappings.hpp".
+#endif
         shouldCreateConnection(connection, QSQLITE)
     )
         if (auto &&[config, envDefined] = sqliteConfiguration(); envDefined)
             m_configurations.try_emplace(connection, std::move(config));
 
+#ifdef TINYORM_USING_QTSQLDRIVERS
+    if (const auto connection = POSTGRESQL;
+#elif defined(TINYORM_USING_TINYDRIVERS)
     if (const auto connection = forTinyDrivers ? POSTGRESQL_DRIVERS : POSTGRESQL;
+#else
+#  error Missing include "orm/macros/sqldrivermappings.hpp".
+#endif
         shouldCreateConnection(connection, QPSQL)
     )
         if (auto &&[config, envDefined] = postgresConfiguration(); envDefined)
@@ -646,10 +680,22 @@ const std::vector<const char *> &
 Databases::envVariables(const QString &driver, const QString &connection)
 {
     if (driver == QMYSQL) {
+#ifdef TINYORM_USING_QTSQLDRIVERS
+        if (connection == MYSQL)
+#elif defined(TINYORM_USING_TINYDRIVERS)
         if (connection == MYSQL || connection == MYSQL_DRIVERS)
+#else
+#  error Missing include "orm/macros/sqldrivermappings.hpp".
+#endif
             return mysqlEnvVariables();
 
+#ifdef TINYORM_USING_QTSQLDRIVERS
+        if (connection == MARIADB)
+#elif defined(TINYORM_USING_TINYDRIVERS)
         if (connection == MARIADB || connection == MARIADB_DRIVERS)
+#else
+#  error Missing include "orm/macros/sqldrivermappings.hpp".
+#endif
             return mariaEnvVariables();
 
         Q_UNREACHABLE();

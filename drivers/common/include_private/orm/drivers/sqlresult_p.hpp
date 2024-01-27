@@ -45,13 +45,13 @@ namespace Orm::Drivers
         std::weak_ptr<SqlDriver> sqldriver;
 
         /*! The current SQL query text. */
-        QString query;
+        QString query {};
 
         /*! Bound values for the prepared statement. */
-        QList<QVariant> boundValues;
+        QList<QVariant> boundValues {};
 
         /*! The last query error. */
-        SqlError lastError;
+        SqlError lastError {};
 
         /*! Connection numerical precision policy. */
         NumericalPrecisionPolicy precisionPolicy = LowPrecisionDouble;

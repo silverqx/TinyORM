@@ -34,10 +34,10 @@ namespace Support
     public:
         /*! Constructor. */
         inline SqlDatabasePrivate(std::shared_ptr<SqlDriver> &&driver,
-                                  const QString &driverName) noexcept;
+                                  const QString &driverName_) noexcept;
         /*! Constructor. */
         inline SqlDatabasePrivate(std::shared_ptr<SqlDriver> &&driver,
-                                  QString &&driverName) noexcept;
+                                  QString &&driverName_) noexcept;
         /*! Default destructor. */
         inline ~SqlDatabasePrivate() = default;
 
@@ -102,18 +102,18 @@ namespace Support
         /*! Connection driver name. */
         QString driverName;
         /*! Connection name. */
-        QString connectionName;
+        QString connectionName {};
 
         /*! Connection hostname. */
-        QString hostName;
+        QString hostName {};
         /*! Connection database name. */
-        QString databaseName;
+        QString databaseName {};
         /*! Connection username. */
-        QString username;
+        QString username {};
         /*! Connection password. */
-        QString password;
+        QString password {};
         /*! Connection extra options. */
-        QString connectionOptions;
+        QString connectionOptions {};
 
         /*! Connection port. */
         int port = -1;
@@ -175,15 +175,15 @@ namespace Support
        in the SqlDatabaseManager::addDatabase(). */
 
     SqlDatabasePrivate::SqlDatabasePrivate(std::shared_ptr<SqlDriver> &&driver,
-                                           const QString &driverName) noexcept
+                                           const QString &driverName_) noexcept
         : sqldriver(std::move(driver))
-        , driverName(driverName)
+        , driverName(driverName_)
     {}
 
     SqlDatabasePrivate::SqlDatabasePrivate(std::shared_ptr<SqlDriver> &&driver,
-                                           QString &&driverName) noexcept
+                                           QString &&driverName_) noexcept
         : sqldriver(std::move(driver))
-        , driverName(std::move(driverName))
+        , driverName(std::move(driverName_))
     {}
 
     /* Database connection */

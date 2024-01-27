@@ -12,6 +12,7 @@ TINYORM_BEGIN_COMMON_NAMESPACE
 namespace Orm::Drivers
 {
 
+    class SqlDatabasePrivate;
     class SqlError;
 
     /*! Database connection. */

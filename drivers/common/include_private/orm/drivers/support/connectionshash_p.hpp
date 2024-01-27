@@ -71,9 +71,9 @@ namespace Orm::Drivers::Support
 
     private:
         /*! Database connections hash. */
-        ContainerType m_data;
+        ContainerType m_data {};
         /*! Shared mutex. */
-        mutable std::shared_mutex m_mutex;
+        mutable std::shared_mutex m_mutex {};
     };
 
     /* public */
