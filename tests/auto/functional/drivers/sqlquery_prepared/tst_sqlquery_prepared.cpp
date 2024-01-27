@@ -59,10 +59,10 @@ private:
 // NOLINTBEGIN(readability-convert-member-functions-to-static)
 void tst_SqlQuery_Prepared::initTestCase() const
 {
-   const auto connections = Databases::createDriversConnections();
+    const auto connections = Databases::createDriversConnections();
 
-   if (connections.isEmpty())
-       QSKIP(TestUtils::AutoTestSkippedAny.arg(TypeUtils::classPureBasename(*this))
+    if (connections.isEmpty())
+        QSKIP(TestUtils::AutoTestSkippedAny.arg(TypeUtils::classPureBasename(*this))
                                           .toUtf8().constData(), );
 
     QTest::addColumn<QString>("connection");
