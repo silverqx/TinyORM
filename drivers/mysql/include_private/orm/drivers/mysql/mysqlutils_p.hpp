@@ -4,12 +4,18 @@
 
 #include <QtGlobal>
 
-#include <field_types.h> // MySQL header
+#if __has_include(<field_types.h>)
+#  include <field_types.h> // MySQL header
+#else
+#  include "orm/drivers/mysql/macros/includemysqlh_p.hpp"
+#endif
 
 #include "orm/drivers/sqlerror.hpp"
 
+#if __has_include(<field_types.h>)
 struct MYSQL;
 struct MYSQL_FIELD;
+#endif
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
