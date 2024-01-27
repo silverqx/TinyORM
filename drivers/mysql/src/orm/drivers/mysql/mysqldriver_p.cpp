@@ -271,7 +271,7 @@ bool MySqlDriverPrivate::setOptionBool(MYSQL *const mysql, const mysql_option op
 bool MySqlDriverPrivate::setOptionProtocol(MYSQL *const mysql, const mysql_option option,
                                            const QStringView value)
 {
-    mysql_protocol_type protocol = MYSQL_PROTOCOL_DEFAULT;
+    auto protocol = MYSQL_PROTOCOL_DEFAULT;
 
     if (value == "TCP"_L1 || value == "MYSQL_PROTOCOL_TCP"_L1)
         protocol = MYSQL_PROTOCOL_TCP;
@@ -296,7 +296,7 @@ bool MySqlDriverPrivate::setOptionProtocol(MYSQL *const mysql, const mysql_optio
 bool MySqlDriverPrivate::setOptionSslMode(MYSQL *const mysql, const mysql_option option,
                                           const QStringView value)
 {
-    mysql_ssl_mode sslMode = SSL_MODE_DISABLED;
+    auto sslMode = SSL_MODE_DISABLED;
 
     if (value == "DISABLED"_L1 || value == "SSL_MODE_DISABLED"_L1)
         sslMode = SSL_MODE_DISABLED;
