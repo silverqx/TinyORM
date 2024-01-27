@@ -392,7 +392,8 @@ QVariant MySqlResultPrivate::getValueForPrepared(const ResultFieldsSizeType inde
 
     // The BLOB field needs the QByteArray as storage
     if (typeId != QMetaType::QByteArray)
-        value = QString::fromUtf8(field.fieldValue.get(), field.fieldValueSize);
+        value = QString::fromUtf8(field.fieldValue.get(),
+                                  static_cast<QString::size_type>(field.fieldValueSize));
 
     return createQVariant(typeId, std::move(value), index);
 }

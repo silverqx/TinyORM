@@ -1,5 +1,7 @@
 #include "orm/drivers/sqldatabase_p.hpp"
 
+#include <mutex>
+
 #ifdef TINYDRIVERS_MYSQL_LOADABLE_LIBRARY
 #  include <QDir>
 #  include <QLibrary>
