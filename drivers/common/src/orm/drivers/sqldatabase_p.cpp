@@ -421,7 +421,7 @@ void SqlDatabasePrivate::throwIfSqlDriverIsNull() const
     if (sqldriver)
         return;
 
-    throw std::exception(
+    throw std::runtime_error(
                 "The SqlDatabasePrivate::sqldriver smart pointer is nullptr. "
                 "The SqlDatabase instance is invalid after calling removeDatabase().");
 }
@@ -436,7 +436,7 @@ void SqlDatabasePrivate::throwIfDifferentThread(const SqlDatabase &db,
     )
         return;
 
-    throw std::exception(
+    throw std::runtime_error(
                 u"SqlDatabasePrivate::database: requested '%1' database connection "
                  "does not belong to the calling thread."_s
                 .arg(connection).toUtf8().constData());

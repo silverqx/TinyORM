@@ -13,7 +13,7 @@
     inline const Class##Private *drv_d_func() const                                      \
     {                                                                                    \
         if (const auto driver = sqldriver.lock(); !driver) T_UNLIKELY                    \
-            throw std::exception(                                                        \
+            throw std::runtime_error(                                                    \
                     "The sqldriver is nullptr, the connection was destroyed.");          \
                                                                                          \
         else T_LIKELY                                                                    \
@@ -24,7 +24,7 @@
     inline Class##Private *drv_d_func()                                                  \
     {                                                                                    \
         if (const auto driver = sqldriver.lock(); !driver) T_UNLIKELY                    \
-            throw std::exception(                                                        \
+            throw std::runtime_error(                                                    \
                     "The sqldriver is nullptr, the connection was destroyed.");          \
                                                                                          \
         else T_LIKELY                                                                    \
