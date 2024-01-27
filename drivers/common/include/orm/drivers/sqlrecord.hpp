@@ -44,7 +44,7 @@ namespace Orm::Drivers
         /*! Get the field name at the given index. */
         QString fieldName(size_type index) const;
         /*! Get the index of the given field name (-1 if it can't be found). */
-        size_type indexOf(const QString &name) const;
+        size_type indexOf(const QString &name) const noexcept;
 
         /*! Get the field at the given index. */
         SqlField field(size_type index) const;
@@ -100,14 +100,14 @@ namespace Orm::Drivers
         void clearValues();
 
         /*! Determine whether the current record contains fields. */
-        inline bool isEmpty() const;
+        inline bool isEmpty() const noexcept;
         /*! Get the number of fields in the current record. */
-        inline size_type count() const;
+        inline size_type count() const noexcept;
 
         /*! Determine whether the current record contains the given field name. */
-        inline bool contains(const QString &name) const;
+        inline bool contains(const QString &name) const noexcept;
         /*! Determine whether the current record contains the given field index. */
-        inline bool contains(size_type index) const;
+        inline bool contains(size_type index) const noexcept;
 
     private:
         /*! Throw the std::out_of_range() exception if record doesn't contain an index. */
@@ -126,7 +126,7 @@ namespace Orm::Drivers
 
         /*! Get individual segments from the aliased field identifier
             (column alias (select expression)). */
-        static FieldSegmentsType getFieldNameSegments(QStringView name);
+        static FieldSegmentsType getFieldNameSegments(QStringView name) noexcept;
 
         /* Data members */
         /*! Record fields. */
@@ -140,22 +140,22 @@ namespace Orm::Drivers
         m_fields.swap(other.m_fields);
     }
 
-    bool SqlRecord::isEmpty() const
+    bool SqlRecord::isEmpty() const noexcept
     {
         return m_fields.isEmpty();
     }
 
-    SqlRecord::size_type SqlRecord::count() const
+    SqlRecord::size_type SqlRecord::count() const noexcept
     {
         return static_cast<size_type>(m_fields.size());
     }
 
-    bool SqlRecord::contains(const QString &name) const
+    bool SqlRecord::contains(const QString &name) const noexcept
     {
         return indexOf(name) >= 0;
     }
 
-    bool SqlRecord::contains(const size_type index) const
+    bool SqlRecord::contains(const size_type index) const noexcept
     {
       return index >= 0 && index < m_fields.size();
     }

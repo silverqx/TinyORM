@@ -466,7 +466,7 @@ void MySqlResultPrivate::reserveVectorsForBindings(
     }));
 }
 
-bool MySqlResultPrivate::isBlobType(const enum_field_types fieldType)
+bool MySqlResultPrivate::isBlobType(const enum_field_types fieldType) noexcept
 {
     return fieldType == MYSQL_TYPE_TINY_BLOB   ||
            fieldType == MYSQL_TYPE_BLOB        ||
@@ -531,8 +531,8 @@ MySqlResultPrivate::toMySqlDateTime(const QDate date, const QTime time, const in
 
 /* Result sets */
 
-// CUR drivers noexcept? silverqx
-quint64 MySqlResultPrivate::toBitField(const MyField &field, const char *const fieldValue)
+quint64 MySqlResultPrivate::toBitField(const MyField &field,
+                                       const char *const fieldValue) noexcept
 {
     // Nothing to do
     if (fieldValue == nullptr)

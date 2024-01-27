@@ -10,7 +10,7 @@ namespace Orm::Drivers
 
 /* public */
 
-SqlResultPrivate::SqlResultPrivate(const std::weak_ptr<SqlDriver> &driver)
+SqlResultPrivate::SqlResultPrivate(const std::weak_ptr<SqlDriver> &driver) noexcept
     : sqldriver(driver)
 {
     /* The sqldriver must always be valid during construction, I'm leaving this check

@@ -33,7 +33,7 @@ namespace Orm::Drivers
 
     protected:
         /*! Constructor. */
-        explicit SqlResult(std::unique_ptr<SqlResultPrivate> &&dd);
+        explicit SqlResult(std::unique_ptr<SqlResultPrivate> &&dd) noexcept;
 
     public:
         /*! Alias for the cursor, bound, and result values type. */
@@ -43,7 +43,7 @@ namespace Orm::Drivers
         virtual ~SqlResult() = 0;
 
         /*! Returns the low-level database result set handle (database specific). */
-        virtual QVariant handle() const = 0;
+        virtual QVariant handle() const noexcept = 0;
 
     protected:
         /*! Query placeholders syntax enum. */

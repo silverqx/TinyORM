@@ -28,7 +28,7 @@ namespace Orm::Drivers::MySql
         ~MySqlResult() noexcept final;
 
         /*! Returns the low-level database result set handle (MYSQL_RES or MYSQL_STMT). */
-        QVariant handle() const final;
+        QVariant handle() const noexcept final;
 
     protected:
         /* Normal queries */

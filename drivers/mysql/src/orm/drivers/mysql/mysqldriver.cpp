@@ -79,7 +79,7 @@ bool MySqlDriver::open(
     return true;
 }
 
-void MySqlDriver::close()
+void MySqlDriver::close() noexcept
 {
     Q_D(MySqlDriver);
 
@@ -90,7 +90,8 @@ void MySqlDriver::close()
     setOpenError(false);
     setOpen(false);
 
-    d->databaseName.clear();
+    // QString::clear() isn't marked noexcept even it is so use this move alternative
+    d->databaseName = QString();
     d->mysql = nullptr;
 
 #if QT_CONFIG(thread)
@@ -134,7 +135,7 @@ bool MySqlDriver::hasFeature(const DriverFeature feature) const noexcept
     return false;
 }
 
-QVariant MySqlDriver::handle() const
+QVariant MySqlDriver::handle() const noexcept
 {
     Q_D(const MySqlDriver);
     return QVariant::fromValue(d->mysql);

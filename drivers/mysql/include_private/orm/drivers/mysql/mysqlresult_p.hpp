@@ -142,7 +142,7 @@ namespace Orm::Drivers::MySql
                 QList<QT_MYSQL_TIME> &timeVector) const;
 
         /*! Determine whether the given MySQL field type is a BLOB. */
-        static bool isBlobType(enum_field_types fieldType);
+        static bool isBlobType(enum_field_types fieldType) noexcept;
         /*! Convert Qt date/time type to the MYSQL_TIME. */
         static QT_MYSQL_TIME toMySqlDateTime(QDate date, QTime time, int typeId,
                                              MYSQL_BIND &bind);
@@ -151,7 +151,7 @@ namespace Orm::Drivers::MySql
         /*! Determine whether the given MySQL field type is a Bit-value type. */
         inline static bool isBitType(enum_field_types type) noexcept;
         /*! Convert the Bit-value field to the quint64. */
-        static quint64 toBitField(const MyField &field, const char *fieldValue);
+        static quint64 toBitField(const MyField &field, const char *fieldValue) noexcept;
 
         /*! Convert the DATE value to the QDate. */
         static QVariant toQDateFromString(const QString &value);

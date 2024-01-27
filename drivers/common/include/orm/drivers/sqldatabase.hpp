@@ -37,7 +37,7 @@ namespace Orm::Drivers
 
     public:
         /*! Default destructor. */
-        ~SqlDatabase();
+        ~SqlDatabase() noexcept;
 
         /*! Copy constructor. */
         inline SqlDatabase(const SqlDatabase &) = default;
@@ -56,7 +56,7 @@ namespace Orm::Drivers
             The password is not stored but passed directly to the database driver. */
         bool open(const QString &username, const QString &password);
         /*! Close the current connection (invalidates all SqlQuery instances). */
-        void close();
+        void close() noexcept;
 
         /* Getters / Setters */
         /*! Determine whether the connection is currently open. */
@@ -65,7 +65,7 @@ namespace Orm::Drivers
         bool isOpenError() const;
 
         /*! Determine whether the connection has a valid database driver. */
-        bool isValid() const;
+        bool isValid() const noexcept;
         /*! Get information about the last error that occurred on the database. */
         SqlError lastError() const;
 

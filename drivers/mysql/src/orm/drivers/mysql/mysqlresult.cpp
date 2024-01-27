@@ -47,7 +47,7 @@ MySqlResult::~MySqlResult() noexcept
     cleanupForDtor();
 }
 
-QVariant MySqlResult::handle() const
+QVariant MySqlResult::handle() const noexcept
 {
     Q_D(const MySqlResult);
 

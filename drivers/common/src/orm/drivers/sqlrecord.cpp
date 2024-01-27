@@ -21,7 +21,7 @@ QString SqlRecord::fieldName(const size_type index) const
     return m_fields.value(index).name();
 }
 
-SqlRecord::size_type SqlRecord::indexOf(const QString &name) const
+SqlRecord::size_type SqlRecord::indexOf(const QString &name) const noexcept
 {
     const auto [isQualifiedName, tableName, fieldName] = getFieldNameSegments(name);
 
@@ -193,7 +193,7 @@ void SqlRecord::throwIfNotContains(const size_type index,
 }
 
 SqlRecord::FieldSegmentsType
-SqlRecord::getFieldNameSegments(const QStringView name)
+SqlRecord::getFieldNameSegments(const QStringView name) noexcept
 {
     // CUR drivers what about more DOT-s and schema for PostgreSQL (can contain 3 dots?) silverqx
     const auto dotIndex = name.indexOf(DOT);
