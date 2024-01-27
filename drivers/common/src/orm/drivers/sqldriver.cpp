@@ -12,7 +12,7 @@ namespace Orm::Drivers
 
 /* protected */
 
-SqlDriver::SqlDriver(std::unique_ptr<SqlDriverPrivate> &&dd)
+SqlDriver::SqlDriver(std::unique_ptr<SqlDriverPrivate> &&dd) noexcept
     : d_ptr(std::move(dd))
 {}
 
@@ -101,13 +101,13 @@ SqlDriver::stripDelimiters(const QString &identifier, const IdentifierType type)
 
 /* Setters */
 
-void SqlDriver::setOpen(const bool value)
+void SqlDriver::setOpen(const bool value) noexcept
 {
     Q_D(SqlDriver);
     d->isOpen = value;
 }
 
-void SqlDriver::setOpenError(const bool value)
+void SqlDriver::setOpenError(const bool value) noexcept
 {
     Q_D(SqlDriver);
 
@@ -117,7 +117,7 @@ void SqlDriver::setOpenError(const bool value)
         d->isOpen = false;
 }
 
-bool SqlDriver::setLastError(const SqlError &error)
+bool SqlDriver::setLastError(const SqlError &error) noexcept
 {
     Q_D(SqlDriver);
 
@@ -127,7 +127,7 @@ bool SqlDriver::setLastError(const SqlError &error)
     return false;
 }
 
-bool SqlDriver::setLastOpenError(const SqlError &error)
+bool SqlDriver::setLastOpenError(const SqlError &error) noexcept
 {
     Q_D(SqlDriver);
 

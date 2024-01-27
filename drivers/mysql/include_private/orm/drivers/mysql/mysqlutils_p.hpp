@@ -40,9 +40,9 @@ namespace MySql
         static QMetaType decodeMySqlType(enum_field_types mysqlType, uint flags);
 
         /*! Determine whether the given metatype ID is integer type. */
-        static bool isInteger(int typeId);
+        static bool isInteger(int typeId) noexcept;
         /*! Determine whether the given MySQL field type is Date-related type. */
-        static bool isTimeOrDate(enum_field_types mysqlType);
+        static bool isTimeOrDate(enum_field_types mysqlType) noexcept;
 
         /*! Convert the given MySQL field to the SqlField. */
         static SqlField convertToSqlField(const MYSQL_FIELD *fieldInfo);

@@ -26,7 +26,7 @@ namespace Orm::Drivers::MySql
 
     public:
         /*! Default constructor. */
-        inline explicit MySqlDriverPrivate(MySqlDriver *q);
+        inline explicit MySqlDriverPrivate(MySqlDriver *q) noexcept;
         /*! Virtual destructor. */
         inline ~MySqlDriverPrivate() final = default;
 
@@ -106,7 +106,8 @@ namespace Orm::Drivers::MySql
         /*! Set the MySQL option to the given int value. */
         static bool setOptionInt(MYSQL *mysql, mysql_option option, QStringView value);
         /*! Set the MySQL option to the given boolean value. */
-        static bool setOptionBool(MYSQL *mysql, mysql_option option, QStringView value);
+        static bool setOptionBool(MYSQL *mysql, mysql_option option,
+                                  QStringView value) noexcept;
         /*! Set the MySQL protocol type option to the given value. */
         static bool setOptionProtocol(MYSQL *mysql, mysql_option option,
                                       QStringView value);
@@ -128,7 +129,7 @@ namespace Orm::Drivers::MySql
 
     /* public */
 
-    MySqlDriverPrivate::MySqlDriverPrivate(MySqlDriver *const q)
+    MySqlDriverPrivate::MySqlDriverPrivate(MySqlDriver *const q) noexcept
         : SqlDriverPrivate(SqlDriver::MySqlServer)
         , q_ptr(q)
     {}

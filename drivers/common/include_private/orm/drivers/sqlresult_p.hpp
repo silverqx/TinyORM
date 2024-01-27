@@ -32,7 +32,7 @@ namespace Orm::Drivers
         using size_type = int;
 
         /*! Constructor. */
-        explicit SqlResultPrivate(const std::weak_ptr<SqlDriver> &driver);
+        explicit SqlResultPrivate(const std::weak_ptr<SqlDriver> &driver) noexcept;
         /*! Default destructor. */
         inline ~SqlResultPrivate() = default;
 

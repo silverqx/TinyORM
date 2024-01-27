@@ -102,7 +102,7 @@ MySqlUtilsPrivate::decodeMySqlType(const enum_field_types mysqlType, const uint 
     return QMetaType(typeId);
 }
 
-bool MySqlUtilsPrivate::isInteger(const int typeId)
+bool MySqlUtilsPrivate::isInteger(const int typeId) noexcept
 {
     return typeId == QMetaType::Char     || typeId == QMetaType::UChar  ||
            typeId == QMetaType::Short    || typeId == QMetaType::UShort ||
@@ -110,7 +110,7 @@ bool MySqlUtilsPrivate::isInteger(const int typeId)
            typeId == QMetaType::LongLong || typeId == QMetaType::ULongLong;
 }
 
-bool MySqlUtilsPrivate::isTimeOrDate(const enum_field_types mysqlType)
+bool MySqlUtilsPrivate::isTimeOrDate(const enum_field_types mysqlType) noexcept
 {
     // BUG drivers the code that calls the qIsTimeOrDate() expect this method also matches the MYSQL_TYPE_TIME? Also check all MYSQL_TYPE_TIME occurrences silverqx
     /* Don't match the MYSQL_TYPE_TIME because its range is bigger than the QTime.

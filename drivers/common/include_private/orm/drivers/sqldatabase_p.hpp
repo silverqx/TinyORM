@@ -52,6 +52,8 @@ namespace Support
         inline SqlDriver &driver();
         /*! Get the driver reference, const version. */
         inline const SqlDriver &driver() const;
+        /*! Get the driver pointer. */
+        inline SqlDriver *driverPtr() noexcept;
         /*! Reset and free the driver smart pointer. */
         inline void resetDriver() noexcept;
 
@@ -205,6 +207,11 @@ namespace Support
         throwIfSqlDriverIsNull();
 
         return *sqldriver;
+    }
+
+    SqlDriver *SqlDatabasePrivate::driverPtr() noexcept
+    {
+        return sqldriver.get();
     }
 
     void SqlDatabasePrivate::resetDriver() noexcept

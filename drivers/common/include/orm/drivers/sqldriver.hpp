@@ -33,7 +33,7 @@ namespace Orm::Drivers
 
     protected:
         /*! Protected constructor. */
-        explicit SqlDriver(std::unique_ptr<SqlDriverPrivate> &&dd);
+        explicit SqlDriver(std::unique_ptr<SqlDriverPrivate> &&dd) noexcept;
 
     public:
         /*! Supported driver features enum. */
@@ -82,7 +82,7 @@ namespace Orm::Drivers
         open(const QString &database, const QString &username, const QString &password,
              const QString &host, int port, const QString &options) = 0;
         /*! Close the current database connection. */
-        virtual void close() = 0;
+        virtual void close() noexcept = 0;
 
         /* Getters / Setters */
         /*! Determine whether the current driver supports the given feature. */
@@ -94,7 +94,7 @@ namespace Orm::Drivers
         bool isOpenError() const noexcept;
 
         /*! Get the underlying database handle (low-level handle, eg. MYSQL *). */
-        virtual QVariant handle() const = 0;
+        virtual QVariant handle() const noexcept = 0;
         /*! Get the database driver name. */
         virtual QString driverName() const noexcept = 0;
 
@@ -143,13 +143,13 @@ namespace Orm::Drivers
     protected:
         /* Setters */
         /*! Set a flag whether the connection is open. */
-        void setOpen(bool value);
+        void setOpen(bool value) noexcept;
         /*! Set a flag if an error while opening a new database connection. */
-        void setOpenError(bool value);
+        void setOpenError(bool value) noexcept;
         /*! Set the last database error. */
-        bool setLastError(const SqlError &error);
+        bool setLastError(const SqlError &error) noexcept;
         /*! Set an error that occurred during opening a new database connection. */
-        bool setLastOpenError(const SqlError &error);
+        bool setLastOpenError(const SqlError &error) noexcept;
 
         /* Data members */
         /*! Smart pointer to the private implementation. */

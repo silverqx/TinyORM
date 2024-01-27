@@ -260,7 +260,7 @@ bool MySqlDriverPrivate::setOptionInt(MYSQL *const mysql, const mysql_option opt
 }
 
 bool MySqlDriverPrivate::setOptionBool(MYSQL *const mysql, const mysql_option option,
-                                       const QStringView value)
+                                       const QStringView value) noexcept
 {
     // CUR revisit silverqx
     const auto boolValue = value.isEmpty() || isTrueBoolOption(value);

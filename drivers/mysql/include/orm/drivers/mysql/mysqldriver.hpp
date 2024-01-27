@@ -36,14 +36,14 @@ namespace Orm::Drivers::MySql
                   const QString &password, const QString &host, int port,
                   const QString &options) final;
         /*! Close the current database connection. */
-        void close() final;
+        void close() noexcept final;
 
         /* Getters / Setters */
         /*! Determine whether the current driver supports the given feature. */
         bool hasFeature(DriverFeature feature) const noexcept final;
 
         /*! Get the low-level MySQL database handle (MYSQL *). */
-        QVariant handle() const final;
+        QVariant handle() const noexcept final;
         /*! Get the MySQL database driver name. */
         inline QString driverName() const noexcept final;
 

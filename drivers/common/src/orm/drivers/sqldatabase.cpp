@@ -31,7 +31,7 @@ SqlDatabase::SqlDatabase(std::unique_ptr<SqlDriver> &&driver)
 
 /* public */
 
-SqlDatabase::~SqlDatabase()
+SqlDatabase::~SqlDatabase() noexcept
 {
     // CUR drivers finish multi-thread (but SqlDatabase can be used only from thread where it was created) silverqx
     if (d && d.use_count() == 1)
@@ -61,12 +61,18 @@ bool SqlDatabase::open(const QString &username, const QString &password)
                    d->connectionOptions);
 }
 
-void SqlDatabase::close()
+void SqlDatabase::close() noexcept
 {
     if (!isValid())
         return;
 
-    d->driver().close();
+    // To have this method noexcept
+    auto *driver = d->driverPtr();
+
+    if (driver == nullptr)
+        return;
+
+    driver->close();
 }
 
 /* Getters / Setters */
@@ -81,7 +87,7 @@ bool SqlDatabase::isOpenError() const
     return d->driver().isOpenError();
 }
 
-bool SqlDatabase::isValid() const
+bool SqlDatabase::isValid() const noexcept
 {
     /* The SqlDatabase connection can be invalid when the SqlDatabase local copy is
        created and the removeDatabase() -> invalidateConnection() -> d.reset() method is

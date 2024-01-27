@@ -14,7 +14,7 @@ namespace Orm::Drivers
 
 /* protected */
 
-SqlResult::SqlResult(std::unique_ptr<SqlResultPrivate> &&dd)
+SqlResult::SqlResult(std::unique_ptr<SqlResultPrivate> &&dd) noexcept
     : d_ptr(std::move(dd))
 {
     Q_D(SqlResult);
