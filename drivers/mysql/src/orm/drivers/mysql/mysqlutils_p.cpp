@@ -35,16 +35,16 @@ MySqlUtilsPrivate::decodeMySqlType(const enum_field_types mysqlType, const uint 
     QMetaType::Type typeId = QMetaType::UnknownType;
 
     switch (mysqlType) {
-    case MYSQL_TYPE_TINY:
+    case MYSQL_TYPE_TINY: // 8-bit
         typeId = (flags & UNSIGNED_FLAG) != 0U ? QMetaType::UChar : QMetaType::Char;
         break;
 
-    case MYSQL_TYPE_SHORT:
+    case MYSQL_TYPE_SHORT: // 16-bit
         typeId = (flags & UNSIGNED_FLAG) != 0U ? QMetaType::UShort : QMetaType::Short;
         break;
 
     case MYSQL_TYPE_LONG:
-    case MYSQL_TYPE_INT24:
+    case MYSQL_TYPE_INT24: // 32-bit (INT24 is 24-bit) both as the int type
         typeId = (flags & UNSIGNED_FLAG) != 0U ? QMetaType::UInt : QMetaType::Int;
         break;
 
@@ -53,7 +53,7 @@ MySqlUtilsPrivate::decodeMySqlType(const enum_field_types mysqlType, const uint 
         break;
 
     case MYSQL_TYPE_BIT:
-    case MYSQL_TYPE_LONGLONG:
+    case MYSQL_TYPE_LONGLONG: // 64-bit
         typeId = (flags & UNSIGNED_FLAG) != 0U ? QMetaType::ULongLong
                                                : QMetaType::LongLong;
         break;
