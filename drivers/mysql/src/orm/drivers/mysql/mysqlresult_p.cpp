@@ -563,7 +563,7 @@ QVariant MySqlResultPrivate::toQDateFromString(const QString &value)
 
     return QDate::fromString(value, Qt::ISODate);
 #else
-    Q_UNUSED(value);
+    Q_UNUSED(value)
     return QVariant(value);
 #endif
 }
@@ -577,7 +577,7 @@ QVariant MySqlResultPrivate::toQTimeFromString(const QString &value)
 
     return QTime::fromString(value, Qt::ISODate);
 #else
-    Q_UNUSED(value);
+    Q_UNUSED(value)
     return QVariant(value);
 #endif
 }
@@ -597,7 +597,7 @@ QVariant MySqlResultPrivate::toQDateTimeFromString(QString value)
 
     return QDateTime::fromString(value, Qt::ISODate);
 #else
-    Q_UNUSED(value);
+    Q_UNUSED(value)
     return QVariant(value);
 #endif
 }
