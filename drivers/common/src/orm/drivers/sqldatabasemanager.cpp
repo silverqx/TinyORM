@@ -128,7 +128,7 @@ void SqlDatabaseManager::throwIfDriverIsNullptr(const std::unique_ptr<SqlDriver>
     if (driver)
         return;
 
-    throw std::exception(
+    throw std::runtime_error(
                 u"The driver can't be nullptr while adding the '%1' connection."_s
                 .arg(connection).toUtf8().constData());
 }

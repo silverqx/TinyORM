@@ -142,7 +142,7 @@ bool MySqlResult::exec()
     Q_D(MySqlResult);
 
     if (!d->preparedQuery)
-        throw std::exception(
+        throw std::runtime_error(
                 "The prepared query is empty, to call normal queries use "
                 "the SqlQuery::exec(QString) overload.");
 
@@ -637,7 +637,7 @@ void MySqlResult::throwIfBadResultFieldsIndex(const std::size_t index) const
     if (/*index >= 0 || */index < fieldsCount)
         return;
 
-    throw std::exception(
+    throw std::runtime_error(
                 u"Field index '%1' is out of bounds, the index must be between 0-%2"_s
                 .arg(index).arg(fieldsCount - 1).toUtf8().constData());
 }
