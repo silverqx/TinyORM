@@ -248,13 +248,23 @@ QVariant MySqlResult::lastInsertId() const
         if (const auto id = mysql_stmt_insert_id(d->stmt);
             id != 0
         )
+#if defined(__LP64__) || defined(_LP64)
+            // To avoid ambiguous overload
+            return QVariant::fromValue(id);
+#else
             return id;
+#endif
     }
     else {
         if (const auto id = mysql_insert_id(d->drv_d_func()->mysql);
             id != 0
         )
+#if defined(__LP64__) || defined(_LP64)
+            // To avoid ambiguous overload
+            return QVariant::fromValue(id);
+#else
             return id;
+#endif
     }
 
     return {};
