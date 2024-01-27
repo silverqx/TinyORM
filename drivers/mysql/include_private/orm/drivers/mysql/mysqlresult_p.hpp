@@ -159,6 +159,9 @@ namespace Orm::Drivers::MySql
         static QVariant toQTimeFromString(const QString &value);
         /*! Convert the DATETIME value to the QDateTime. */
         static QVariant toQDateTimeFromString(QString value);
+        /*! Convert the DATE/TIME value to the QDateTime (prepared statements only). */
+        static QVariant toQDateTimeFromMySQLTime(int typeId,
+                                                 const QT_MYSQL_TIME *mysqlTime);
 
         /*! Convert the Fixed/Floating-Point value types based on the set numerical
             precision policy. */

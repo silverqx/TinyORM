@@ -394,37 +394,13 @@ QVariant MySqlResultPrivate::getValueForPrepared(const ResultFieldsSizeType inde
         return integer;
     }
 
-    // CUR drivers revisit this, how datetimes are returned from normal vs prepared queries because here is different logic than for normal queries silverqx
+    /* Here is different logic as for the normal queries because normal queries return
+       datetime-related columns as a char * but prepared statements return MYSQL_TIME. */
     if (MySqlUtils::isTimeOrDate(field.myField->type) &&
         field.fieldValueSize >= sizeof (QT_MYSQL_TIME)
-    ) {
-        const auto *const mysqlTime = reinterpret_cast<const QT_MYSQL_TIME *>(
-                                          field.fieldValue.get());
-        QDate date;
-        QTime time;
-
-        if (typeId != QMetaType::QTime)
-            date = {static_cast<int>(mysqlTime->year),
-                    static_cast<int>(mysqlTime->month),
-                    static_cast<int>(mysqlTime->day)};
-
-        if (typeId != QMetaType::QDate)
-            time = {static_cast<int>(mysqlTime->hour),
-                    static_cast<int>(mysqlTime->minute),
-                    static_cast<int>(mysqlTime->second),
-                    static_cast<int>(
-                        std::lround(
-                            static_cast<double>(mysqlTime->second_part) / 1000))};
-
-        if (typeId == QMetaType::QDateTime)
-            return QDateTime(date, time);
-        if (typeId == QMetaType::QDate)
-            return date;
-        if (typeId == QMetaType::QTime)
-            return time;
-
-        Q_UNREACHABLE();
-    }
+    )
+        return toQDateTimeFromMySQLTime(typeId, reinterpret_cast<const QT_MYSQL_TIME *>(
+                                                    field.fieldValue.get()));
 
     QString value;
 
@@ -623,6 +599,38 @@ QVariant MySqlResultPrivate::toQDateTimeFromString(QString value)
     Q_UNUSED(value);
     return QVariant(value);
 #endif
+}
+
+QVariant
+MySqlResultPrivate::toQDateTimeFromMySQLTime(const int typeId,
+                                             const QT_MYSQL_TIME *const mysqlTime)
+{
+    QDate date;
+    QTime time;
+
+    if (typeId != QMetaType::QTime)
+        date = {static_cast<int>(mysqlTime->year),
+                static_cast<int>(mysqlTime->month),
+                static_cast<int>(mysqlTime->day)};
+
+    if (typeId != QMetaType::QDate)
+        time = {static_cast<int>(mysqlTime->hour),
+                static_cast<int>(mysqlTime->minute),
+                static_cast<int>(mysqlTime->second),
+                static_cast<int>(
+                    std::lround(
+                        static_cast<double>(mysqlTime->second_part) / 1000))};
+
+    if (typeId == QMetaType::QDateTime)
+        return QDateTime(date, time);
+
+    if (typeId == QMetaType::QDate)
+        return date;
+
+    if (typeId == QMetaType::QTime)
+        return time;
+
+    Q_UNREACHABLE();
 }
 
 QVariant MySqlResultPrivate::toDoubleFromString(const QString &value) const
