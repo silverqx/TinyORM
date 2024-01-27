@@ -378,7 +378,9 @@ QVariant MySqlResultPrivate::getValueForPrepared(const ResultFieldsSizeType inde
 
     const auto typeId = field.metaType.id();
 
+    // CUR drivers the following isInteger() block make prepared statements behavior different from normal queries, all logic is handled in the createQVariant() at the end of this method, I don't understand why here is different logic for prepared statements silverqx
     // CUR drivers finish silverqx
+    // BUG drivers I think this should be here, it's correctly handled in the createQVariant() silverqx
     if (MySqlUtilsPrivate::isInteger(typeId)) {
         QVariant variant(field.metaType, field.fieldValue.get());
 
