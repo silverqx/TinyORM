@@ -102,6 +102,8 @@ void tst_SqlDatabaseManager::MySQL_removeConnection_Connected() const
     QCOMPARE(SqlDatabase::connectionNames().size(), 1);
 
     // Remove opened connection
+    /* This will generate expected warning about the connection is still in use
+       it can't be avoided because we want to test the connection.isValid(). */
     Databases::removeDriversConnection(*connectionName);
 
     // The sqldriver must be invalidated immediately
@@ -137,6 +139,8 @@ void tst_SqlDatabaseManager::MySQL_removeConnection_NotConnected() const
     QCOMPARE(SqlDatabase::connectionNames().size(), 1);
 
     // Remove database connection that is not opened
+    /* This will generate expected warning about the connection is still in use
+       it can't be avoided because we want to test the connection.isValid(). */
     Databases::removeDriversConnection(*connectionName);
 
     // The sqldriver must be invalidated immediately
@@ -192,6 +196,8 @@ void tst_SqlDatabaseManager::default_MySQL_ConfigurationValues() const
              NumericalPrecisionPolicy::LowPrecisionDouble);
 
     // Restore
+    /* This will generate expected warning about the connection is still in use
+       it can't be avoided because we want to test the connection.isValid(). */
     Databases::removeDriversConnection(*connectionName);
 
     // The sqldriver must be invalidated immediately
@@ -242,6 +248,8 @@ void tst_SqlDatabaseManager::MySQL_addUseAndRemoveConnection_FiveTimes() const
         QCOMPARE(query.value(sl("user_count")).value<quint64>(), 5);
 
         // Restore
+        /* This will generate expected warning about the connection is still in use
+           it can't be avoided because we want to test the query.driver/Weak(). */
         Databases::removeDriversConnection(*connectionName);
 
         // The sqldriver must be invalidated immediately
@@ -356,6 +364,8 @@ void tst_SqlDatabaseManager::MySQL_addUseAndRemoveThreeConnections_FiveTimes() c
         }
 
         // Restore
+        /* This will generate expected warning about the connection is still in use
+           it can't be avoided because we want to test the query.driver/Weak(). */
         Databases::removeDriversConnection(*connectionName3);
         Databases::removeDriversConnection(*connectionName2);
         Databases::removeDriversConnection(*connectionName1);
