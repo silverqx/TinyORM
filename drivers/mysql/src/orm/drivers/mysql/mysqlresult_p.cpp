@@ -382,16 +382,16 @@ QVariant MySqlResultPrivate::getValueForPrepared(const ResultFieldsSizeType inde
     // CUR drivers finish silverqx
     // BUG drivers I think this should be here, it's correctly handled in the createQVariant() silverqx
     if (MySqlUtilsPrivate::isInteger(typeId)) {
-        QVariant variant(field.metaType, field.fieldValue.get());
+        QVariant integer(field.metaType, field.fieldValue.get());
 
         // Avoid QVariant(char) for TINYINT to prevent weird conversions (QTBUG-53397)
         if (typeId == QMetaType::UChar)
-            return variant.toUInt();
+            return integer.toUInt();
 
         if (typeId == QMetaType::Char)
-            return variant.toInt();
+            return integer.toInt();
 
-        return variant;
+        return integer;
     }
 
     // CUR drivers revisit this, how datetimes are returned from normal vs prepared queries because here is different logic than for normal queries silverqx
