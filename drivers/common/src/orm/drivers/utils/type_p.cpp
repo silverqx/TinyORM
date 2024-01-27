@@ -4,7 +4,7 @@
 
 // CUR drivers Orm::Exceptions::RuntimeError silverqx
 #if !defined(_MSC_VER)
-#  include <orm/exceptions/runtimeerror.hpp>
+#  include <orm/drivers/exceptions/runtimeerror.hpp>
 #endif
 
 TINYORM_BEGIN_COMMON_NAMESPACE
@@ -12,7 +12,7 @@ TINYORM_BEGIN_COMMON_NAMESPACE
 using namespace Qt::StringLiterals; // NOLINT(google-build-using-namespace)
 
 #if !defined(_MSC_VER)
-using Orm::Exceptions::RuntimeError;
+using Orm::Drivers::Exceptions::RuntimeError;
 #endif
 
 namespace Orm::Drivers::Utils
