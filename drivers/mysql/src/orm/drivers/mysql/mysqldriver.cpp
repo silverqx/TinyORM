@@ -2,9 +2,11 @@
 
 #include <orm/macros/likely.hpp>
 
+#include "orm/drivers/exceptions/invalidargumenterror.hpp"
 #include "orm/drivers/mysql/mysqldriver_p.hpp"
 #include "orm/drivers/mysql/mysqlresult.hpp"
 #include "orm/drivers/mysql/mysqlutils_p.hpp"
+#include "orm/drivers/utils/type_p.hpp"
 
 Q_DECLARE_METATYPE(MYSQL_RES *)
 Q_DECLARE_METATYPE(MYSQL *)
@@ -218,7 +220,9 @@ MySqlDriver::createResult(const std::weak_ptr<SqlDriver> &driver) const
                     std::dynamic_pointer_cast<MySqlDriver>(driverShared));
 
     else T_UNLIKELY
-        throw std::exception("The driver must be valid, it can't be expired.");
+        throw Exceptions::InvalidArgumentError(
+                u"The driver must be valid, it can't be expired in %1()."_s
+                .arg(__tiny_func__));
 }
 
 } // namespace Orm::Drivers::MySql

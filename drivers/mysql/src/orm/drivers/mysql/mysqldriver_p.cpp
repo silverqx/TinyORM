@@ -1,8 +1,10 @@
 #include "orm/drivers/mysql/mysqldriver_p.hpp"
 
+#include "orm/drivers/exceptions/invalidargumenterror.hpp"
 #include "orm/drivers/mysql/mysqlconstants_p.hpp"
 #include "orm/drivers/mysql/mysqldriver.hpp"
 #include "orm/drivers/mysql/mysqlutils_p.hpp"
+#include "orm/drivers/utils/type_p.hpp"
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
@@ -61,9 +63,9 @@ MySqlDriverPrivate::mysqlSetConnectionOptions(const QString &options)
             unixSocket = value->toString();
 
         else
-            qWarning().noquote()
-                    << u"MySqlDriver::open: Illegal connect option value '%1'"_s
-                       .arg(optionRaw.trimmed());
+            throw Exceptions::InvalidArgumentError(
+                    u"Failed to set MySQL connection option value '%1' in %2()."_s
+                    .arg(optionRaw.trimmed(), __tiny_func__));
     }
 
     return {optionFlags, std::move(unixSocket)};
@@ -173,11 +175,9 @@ bool MySqlDriverPrivate::mysqlSetConnectionOption(const QStringView option,
     )
         return true;
 
-    qWarning().noquote()
-            << u"MySqlDriver::open: Failed to set '%1' connection option to '%2' value"_s
-               .arg(option, value);
-
-    return false;
+    throw Exceptions::InvalidArgumentError(
+                u"Failed to set MySQL '%1' connection option to '%2' value in %3()."_s
+                .arg(option, value, __tiny_func__));
 }
 
 const MySqlDriverPrivate::MySqlOptionsHash &
@@ -234,14 +234,14 @@ void MySqlDriverPrivate::setOptionFlag(uint &optionFlags, const QStringView opti
     else if (option == "CLIENT_ODBC"_L1)
         optionFlags |= CLIENT_ODBC;
     else if (option == "CLIENT_SSL"_L1)
-        // CUR drivers throw exception here silverqx
-        throw std::exception(
-                "MySqlDriver: The MYSQL_OPT_SSL_KEY, MYSQL_OPT_SSL_CERT, and "
-                "MYSQL_OPT_SSL_CA should be used instead of the CLIENT_SSL option.");
+        throw Exceptions::InvalidArgumentError(
+                u"The MYSQL_OPT_SSL_KEY, MYSQL_OPT_SSL_CERT, and MYSQL_OPT_SSL_CA "
+                 "should be used instead of the CLIENT_SSL option in %1()."_s
+                .arg(__tiny_func__));
     else
-        // CUR drivers throw exception here, check all others qWarning()-s; I think would be a good idea to throw instead of the qWarning() everywhere silverqx
-        qWarning().noquote()
-                << u"MySqlDriver::open: Unknown connect option '%1'"_s.arg(option);
+        throw Exceptions::InvalidArgumentError(
+                u"Unknown MySQL connect option '%1' in %2()."_s
+                .arg(option, __tiny_func__));
 }
 
 bool MySqlDriverPrivate::setOptionString(MYSQL *const mysql, const mysql_option option,
@@ -284,8 +284,9 @@ bool MySqlDriverPrivate::setOptionProtocol(MYSQL *const mysql, const mysql_optio
     else if (value == "DEFAULT"_L1 || value == "MYSQL_PROTOCOL_DEFAULT"_L1)
         protocol = MYSQL_PROTOCOL_DEFAULT;
     else
-        qWarning().noquote()
-                << u"Unknown protocol '%1' - using MYSQL_PROTOCOL_DEFAULT"_s.arg(value);
+        throw Exceptions::InvalidArgumentError(
+                u"Unknown MySQL connection transport protocol '%1' in %2()."_s
+                .arg(value, __tiny_func__));
 
     return mysql_options(mysql, option, &protocol) == 0;
 }
@@ -308,8 +309,9 @@ bool MySqlDriverPrivate::setOptionSslMode(MYSQL *const mysql, const mysql_option
     else if (value == "VERIFY_IDENTITY"_L1 || value == "SSL_MODE_VERIFY_IDENTITY"_L1)
         sslMode = SSL_MODE_VERIFY_IDENTITY;
     else
-        qWarning().noquote()
-                << u"Unknown ssl mode '%1' - using SSL_MODE_DISABLED"_s.arg(value);
+        throw Exceptions::InvalidArgumentError(
+                u"Unknown MySQL SSL mode '%1' in %2()."_s
+                .arg(value, __tiny_func__));
 
     return mysql_options(mysql, option, &sslMode) == 0;
 }

@@ -1,8 +1,11 @@
 #include "orm/drivers/sqlresult.hpp"
 
 #include "orm/drivers/constants_p.hpp"
+#include "orm/drivers/exceptions/runtimeerror.hpp"
 #include "orm/drivers/sqldriver.hpp"
 #include "orm/drivers/sqlresult_p.hpp"
+
+using Orm::Drivers::Constants::NotImplemented;
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
@@ -231,9 +234,7 @@ bool SqlResult::fetchPrevious()
 
 bool SqlResult::nextResult()
 {
-    using Orm::Drivers::Constants::NotImplemented;
-
-    throw std::runtime_error(NotImplemented.toUtf8().constData());
+    throw Exceptions::RuntimeError(NotImplemented);
 }
 
 /* private */
