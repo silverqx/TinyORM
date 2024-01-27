@@ -56,11 +56,15 @@ bool MySqlResultPrivate::populateFields(MYSQL *const mysql)
         return false;
 
     // CUR drivers test with no metadata silverqx
+    /* MariaDB doesn't have the mysql_result_metadata() function (metadata for normal
+       queries). */
+#ifndef MARIADB_VERSION_ID
     // Nothing to do, metadata disabled
     if (mysql_result_metadata(result) == RESULTSET_METADATA_NONE) {
         qWarning("MySqlResultPrivate::populateFields: result set has no metadata");
         return false;
     }
+#endif
 
     uint index = 0;
     const MYSQL_FIELD *fieldInfo = nullptr;
