@@ -384,7 +384,7 @@ QVariant MySqlResultPrivate::getValueForPrepared(const ResultFieldsSizeType inde
     if (MySqlUtilsPrivate::isInteger(typeId)) {
         QVariant variant(field.metaType, field.fieldValue.get());
 
-        // we never want to return char variants here, see QTBUG-53397
+        // Avoid QVariant(char) for TINYINT to prevent weird conversions (QTBUG-53397)
         if (typeId == QMetaType::UChar)
             return variant.toUInt();
 
@@ -428,7 +428,7 @@ QVariant MySqlResultPrivate::getValueForPrepared(const ResultFieldsSizeType inde
 
     QString value;
 
-    // BLOB field needs the QByteArray as the storage
+    // The BLOB field needs the QByteArray as storage
     if (typeId != QMetaType::QByteArray)
         value = QString::fromUtf8(field.fieldValue.get(), field.fieldValueSize);
 
