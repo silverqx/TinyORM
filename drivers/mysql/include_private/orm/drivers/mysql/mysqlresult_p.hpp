@@ -69,7 +69,7 @@ namespace Orm::Drivers::MySql
         /*! Determine whether the correct number of prepared bindings was bound. */
         bool shouldPrepareBindings(uint placeholdersCount) const;
         /*! Check the correct prepared bindings count and show warnings. */
-        static void checkPreparedBindingsCount(ulong placeholdersCount, ulong valuesSize);
+        static void checkPreparedBindingsCount(uint placeholdersCount, ulong valuesSize);
 
         /*! Bind prepared bindings for placeholders into the preparedBinds data member. */
         void bindPreparedBindings(
@@ -101,7 +101,7 @@ namespace Orm::Drivers::MySql
         /* Data members */
         /* Common for both */
         /*! Fields for the currently obtained record/row. */
-        ResultFieldsType resultFields;
+        ResultFieldsType resultFields {};
 
         /* Normal queries */
         /*! Result set handle (from the mysql_store_result()). */

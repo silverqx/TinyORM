@@ -108,7 +108,8 @@ bool MySqlDriverPrivate::mysqlRealConnect(
             mysql_real_connect(
                 mysql,
                 toCharArray(hostArray),  toCharArray(username),
-                toCharArray(password),   toCharArray(database), port > -1 ? port : 0,
+                toCharArray(password),   toCharArray(database),
+                port > -1 ? static_cast<uint>(port) : 0,
                 toCharArray(unixSocket), optionFlags);
 
     if (mysqlToVerify != nullptr && mysqlToVerify == mysql)

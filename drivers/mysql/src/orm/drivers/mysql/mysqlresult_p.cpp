@@ -158,7 +158,7 @@ bool MySqlResultPrivate::bindResultValues()
 
 bool MySqlResultPrivate::shouldPrepareBindings(const uint placeholdersCount) const
 {
-    const auto boundValuesSize = boundValues.size();
+    const auto boundValuesSize = static_cast<ulong>(boundValues.size());
 
     // Check prepared bindings count and show warnings
     checkPreparedBindingsCount(placeholdersCount, boundValuesSize);
@@ -166,7 +166,7 @@ bool MySqlResultPrivate::shouldPrepareBindings(const uint placeholdersCount) con
     return placeholdersCount > 0 && placeholdersCount <= boundValuesSize;
 }
 
-void MySqlResultPrivate::checkPreparedBindingsCount(const ulong placeholdersCount,
+void MySqlResultPrivate::checkPreparedBindingsCount(const uint placeholdersCount,
                                                     const ulong valuesSize)
 {
     // This is more likely an info message, everything will work normally
@@ -207,7 +207,7 @@ void MySqlResultPrivate::bindPreparedBindings(
     using BoundValuesSizeType = decltype (boundValues)::size_type;
     for (BoundValuesSizeType index = 0; index < boundValues.size(); ++index) {
         // MySQL storage for prepared binding to prepare
-        auto &preparedBind = preparedBinds[index];
+        auto &preparedBind = preparedBinds[static_cast<std::size_t>(index)];
         // Prepared binding value to prepare
         const auto &boundValue = boundValues.at(index);
         // Pointer to a raw data to bind (of course some types need special handling)
@@ -224,7 +224,8 @@ void MySqlResultPrivate::bindPreparedBindings(
         case QMetaType::QByteArray:
             preparedBind.buffer_type   = MYSQL_TYPE_BLOB;
             // Need to use the constData() to avoid detach
-            preparedBind.buffer_length = boundValue.toByteArray().size();
+            preparedBind.buffer_length = static_cast<ulong>(
+                                             boundValue.toByteArray().size());
             /* The toByteArray().constData() is correct, it will point to the same
                data even if the QVariant creates a copy of the QByteArray inside
                toByteArray(). */

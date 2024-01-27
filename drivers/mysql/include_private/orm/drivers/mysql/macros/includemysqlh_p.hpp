@@ -7,7 +7,8 @@
 #elif __has_include(<mysql.h>)
 #  include <mysql.h> // IWYU pragma: export
 #else
-#  error Can't find the <mysql.h> header file, please install the MySQL C client library.
+#  error Can not find the <mysql.h> header file, please install the MySQL C client \
+library.
 #endif
 
 #endif // ORM_DRIVERS_MYSQL_MACROS_INCLUDEMYSQLH_P_HPP
