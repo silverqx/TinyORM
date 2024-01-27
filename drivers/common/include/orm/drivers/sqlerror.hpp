@@ -28,9 +28,9 @@ namespace Orm::Drivers
         };
 
         /*! Constructor (not explicit to allow setLastError(SqlError::NoError)). */
-        inline SqlError(ErrorType errorType) noexcept;
+        inline SqlError(ErrorType errorType) noexcept; // NOLINT(google-explicit-constructor)
         /*! Constructor (not explicit to allow {}). */
-        SqlError(QString driverText = {}, QString databaseText = {},
+        SqlError(QString driverText = {}, QString databaseText = {}, // NOLINT(google-explicit-constructor)
                  ErrorType errorType = NoError, QString errorCode = {}) noexcept;
         /*! Default destructor. */
         inline ~SqlError() = default;
