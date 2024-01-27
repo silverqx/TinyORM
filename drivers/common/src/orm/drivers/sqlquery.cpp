@@ -380,6 +380,7 @@ bool SqlQuery::isNull(const size_type index) const
 
 bool SqlQuery::isNull(const QString &name) const
 {
+    // CUR drivers perf check this record() call because it's doing the same performance heavy computation thing still again; cache it? silverqx
     const auto index = m_sqlResult->record().indexOf(name);
 
     if (index > -1)
