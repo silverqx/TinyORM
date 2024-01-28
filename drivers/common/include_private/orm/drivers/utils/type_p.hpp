@@ -6,6 +6,8 @@
 
 #include <orm/macros/commonnamespace.hpp>
 
+#include "orm/drivers/macros/export.hpp"
+
 TINYORM_BEGIN_COMMON_NAMESPACE
 
 #if defined(__GNUG__) || defined(__clang__)
@@ -25,7 +27,7 @@ namespace Orm::Drivers::Utils
 {
 
     /*! Types library class for TinyDrivers. */
-    class Type
+    class TINYDRIVERS_EXPORT Type
     {
         Q_DISABLE_COPY_MOVE(Type)
 
