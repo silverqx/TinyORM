@@ -20,6 +20,9 @@ namespace Orm::Drivers
     class TINYDRIVERS_EXPORT SqlField
     {
     public:
+        /*! Alias for the SqlRecord size type. */
+        using size_type = qint64;
+
         /*! Determine whether a field is required during INSERT statements. */
         enum struct RequiredStatus {
             /*! Unknown required field status. */
@@ -110,12 +113,12 @@ namespace Orm::Drivers
         /*! Get the field length. */
         inline qint64 length() const noexcept;
         /*! Set the field length. */
-        inline void setLength(qint64 fieldLength) noexcept;
+        inline void setLength(size_type fieldLength) noexcept;
 
         /*! Get the field precision. */
         inline qint64 precision() const noexcept;
         /*! Set the field precision. */
-        inline void setPrecision(qint64 precision) noexcept;
+        inline void setPrecision(size_type precision) noexcept;
 
         /*! Get the underlying database field type (database dependent). */
         inline int typeID() const noexcept;
@@ -150,9 +153,9 @@ namespace Orm::Drivers
         /*! Determine whether a field is required during INSERT statements. */
         SqlField::RequiredStatus m_requiredStatus = SqlField::Unknown;
         /*! Field length. */
-        qint64 m_length = -1;
+        size_type m_length = -1;
         /*! Field precision. */
-        qint64 m_precision = -1;
+        size_type m_precision = -1;
         /*! Underlying database field type (DB dependent). */
         int m_sqlType = -1;
         /*! Determine whether a field is auto-incremented. */
@@ -263,7 +266,7 @@ namespace Orm::Drivers
         return m_length;
     }
 
-    void SqlField::setLength(const qint64 fieldLength) noexcept
+    void SqlField::setLength(const size_type fieldLength) noexcept
     {
         m_length = fieldLength;
     }
@@ -273,7 +276,7 @@ namespace Orm::Drivers
         return m_precision;
     }
 
-    void SqlField::setPrecision(const qint64 precision) noexcept
+    void SqlField::setPrecision(const size_type precision) noexcept
     {
         m_precision = precision;
     }

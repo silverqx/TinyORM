@@ -133,8 +133,8 @@ SqlField MySqlUtilsPrivate::convertToSqlField(const MYSQL_FIELD *const fieldInfo
     field.setAutoValue((fieldInfo->flags & AUTO_INCREMENT_FLAG) != 0U);
     // CUR drivers finish field default value silverqx
 //    field.setDefaultValue(QString::fromUtf8(fieldInfo->def));
-    field.setLength(fieldInfo->length);
-    field.setPrecision(fieldInfo->decimals);
+    field.setLength(static_cast<SqlField::size_type>(fieldInfo->length));
+    field.setPrecision(static_cast<SqlField::size_type>(fieldInfo->decimals));
     field.setRequired(IS_NOT_NULL(fieldInfo->flags));
     field.setSqlType(fieldInfo->type);
 
