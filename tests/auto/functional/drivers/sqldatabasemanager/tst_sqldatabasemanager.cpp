@@ -283,8 +283,8 @@ void tst_SqlDatabaseManager::MySQL_addUseAndRemoveThreeConnections_FiveTimes() c
 
         if (i == 0 && !connectionName1)
             QSKIP(TestUtils::AutoTestSkipped
-                      .arg(TypeUtils::classPureBasename(*this), Databases::MYSQL_DRIVERS)
-                      .toUtf8().constData(), );
+                  .arg(TypeUtils::classPureBasename(*this), Databases::MYSQL_DRIVERS)
+                  .toUtf8().constData(), );
 
         // Connection is already open so pass the false to verify it
         const auto connection1 = Databases::driversConnection(*connectionName1, false);

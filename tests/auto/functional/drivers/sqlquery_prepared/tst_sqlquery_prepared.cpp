@@ -62,7 +62,7 @@ void tst_SqlQuery_Prepared::initTestCase() const
 
     if (connections.isEmpty())
         QSKIP(TestUtils::AutoTestSkippedAny.arg(TypeUtils::classPureBasename(*this))
-                                          .toUtf8().constData(), );
+                                           .toUtf8().constData(), );
 
     QTest::addColumn<QString>("connection");
 
