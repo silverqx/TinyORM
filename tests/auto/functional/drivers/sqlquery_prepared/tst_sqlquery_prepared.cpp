@@ -502,7 +502,7 @@ void tst_SqlQuery_Prepared::insert_update_delete() const
 
 SqlQuery tst_SqlQuery_Prepared::createQuery(const QString &connection) const
 {
-    return SqlQuery(Databases::connection(connection));
+    return SqlQuery(Databases::driversConnection(connection));
 }
 
 QTEST_MAIN(tst_SqlQuery_Prepared)
