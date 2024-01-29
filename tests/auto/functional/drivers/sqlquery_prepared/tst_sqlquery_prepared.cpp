@@ -2,7 +2,6 @@
 #include <QtTest>
 
 #include "orm/drivers/sqldatabase.hpp"
-#include "orm/drivers/sqldriver.hpp"
 #include "orm/drivers/sqlquery.hpp"
 #include "orm/drivers/sqlrecord.hpp"
 
@@ -503,9 +502,7 @@ void tst_SqlQuery_Prepared::insert_update_delete() const
 
 SqlQuery tst_SqlQuery_Prepared::createQuery(const QString &connection) const
 {
-    const auto driver = SqlDatabase::database(connection).driverWeak();
-
-    return SqlQuery(driver.lock()->createResult(driver));
+    return SqlQuery(Databases::connection(connection));
 }
 
 QTEST_MAIN(tst_SqlQuery_Prepared)
