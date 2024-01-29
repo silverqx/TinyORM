@@ -933,8 +933,8 @@ void tst_DatabaseManager::MySQL_addUseAndRemoveThreeConnections_FiveTimes() cons
 
         if (i == 0 && !connectionName1)
             QSKIP(TestUtils::AutoTestSkipped
-                      .arg(TypeUtils::classPureBasename(*this), Databases::MYSQL)
-                      .toUtf8().constData(), );
+                  .arg(TypeUtils::classPureBasename(*this), Databases::MYSQL)
+                  .toUtf8().constData(), );
 
         // Execute some database query on connections
         QCOMPARE(m_dm->table(*UsersTable, *connectionName1)->count(), 5);
