@@ -88,8 +88,8 @@ void tst_SqlDatabaseManager::MySQL_removeConnection_Connected() const
               .toUtf8().constData(), );
 
     // Connection is already open so pass the false to verify it
-    const auto connection = SqlDatabase::database(*connectionName, false);
-    const auto openedConnections = SqlDatabase::openedConnectionNames();
+    const auto connection = Databases::driversConnection(*connectionName, false);
+    const auto openedConnections = Databases::driversOpenedConnectionNames();
 
     QVERIFY(connection.isValid());
     QVERIFY(connection.isOpen());
@@ -99,7 +99,7 @@ void tst_SqlDatabaseManager::MySQL_removeConnection_Connected() const
     QCOMPARE(connection.driverName(), driverName);
     QCOMPARE(openedConnections.size(), 1);
     QCOMPARE(openedConnections.first(), *connectionName);
-    QCOMPARE(SqlDatabase::connectionNames().size(), 1);
+    QCOMPARE(Databases::driversConnectionNames().size(), 1);
 
     // Remove opened connection
     /* This will generate expected warning about the connection is still in use
@@ -108,8 +108,8 @@ void tst_SqlDatabaseManager::MySQL_removeConnection_Connected() const
 
     // The sqldriver must be invalidated immediately
     QVERIFY(!connection.isValid());
-    QVERIFY(SqlDatabase::openedConnectionNames().isEmpty());
-    QVERIFY(SqlDatabase::connectionNames().isEmpty());
+    QVERIFY(Databases::driversOpenedConnectionNames().isEmpty());
+    QVERIFY(Databases::driversConnectionNames().isEmpty());
 }
 
 void tst_SqlDatabaseManager::MySQL_removeConnection_NotConnected() const
@@ -130,13 +130,13 @@ void tst_SqlDatabaseManager::MySQL_removeConnection_NotConnected() const
               .toUtf8().constData(), );
 
     // Connection must be closed
-    const auto connection = SqlDatabase::database(*connectionName, false);
+    const auto connection = Databases::driversConnection(*connectionName, false);
 
     QVERIFY(connection.isValid());
     QVERIFY(!connection.isOpen());
     QVERIFY(!connection.isOpenError());
-    QVERIFY(SqlDatabase::openedConnectionNames().isEmpty());
-    QCOMPARE(SqlDatabase::connectionNames().size(), 1);
+    QVERIFY(Databases::driversOpenedConnectionNames().isEmpty());
+    QCOMPARE(Databases::driversConnectionNames().size(), 1);
 
     // Remove database connection that is not opened
     /* This will generate expected warning about the connection is still in use
@@ -145,8 +145,8 @@ void tst_SqlDatabaseManager::MySQL_removeConnection_NotConnected() const
 
     // The sqldriver must be invalidated immediately
     QVERIFY(!connection.isValid());
-    QVERIFY(SqlDatabase::openedConnectionNames().isEmpty());
-    QCOMPARE(SqlDatabase::connectionNames().size(), 0);
+    QVERIFY(Databases::driversOpenedConnectionNames().isEmpty());
+    QCOMPARE(Databases::driversConnectionNames().size(), 0);
 }
 
 // No need to test with other database drivers because the behavior is the same
@@ -167,15 +167,15 @@ void tst_SqlDatabaseManager::default_MySQL_ConfigurationValues() const
               .toUtf8().constData(), );
 
     // Connection must be closed
-    const auto connection = SqlDatabase::database(*connectionName, false);
+    const auto connection = Databases::driversConnection(*connectionName, false);
 
     // Main section
     QVERIFY(connection.isValid());
     QVERIFY(!connection.isOpen());
     QVERIFY(!connection.isOpenError());
     // CUR drivers revisit here the SqlError check after exceptions refactor; add it or ... silverqx
-    QCOMPARE(SqlDatabase::connectionNames().size(), 1);
-    QVERIFY(SqlDatabase::openedConnectionNames().isEmpty());
+    QCOMPARE(Databases::driversConnectionNames().size(), 1);
+    QVERIFY(Databases::driversOpenedConnectionNames().isEmpty());
 
     // No need to distinguish between empty and null QString values
     QCOMPARE(connection.driverName(), QMYSQL);
@@ -189,7 +189,7 @@ void tst_SqlDatabaseManager::default_MySQL_ConfigurationValues() const
     const auto driver = connection.driverWeak().lock();
     QCOMPARE(connection.numericalPrecisionPolicy(),
              driver->defaultNumericalPrecisionPolicy());
-    QVERIFY(SqlDatabase::isThreadCheck());
+    QVERIFY(Databases::driversIsThreadCheck());
 
     QCOMPARE(driver->dbmsType(), SqlDriver::MySqlServer);
     QCOMPARE(driver->defaultNumericalPrecisionPolicy(),
@@ -202,8 +202,8 @@ void tst_SqlDatabaseManager::default_MySQL_ConfigurationValues() const
 
     // The sqldriver must be invalidated immediately
     QVERIFY(!connection.isValid());
-    QVERIFY(SqlDatabase::connectionNames().isEmpty());
-    QVERIFY(SqlDatabase::openedConnectionNames().isEmpty());
+    QVERIFY(Databases::driversConnectionNames().isEmpty());
+    QVERIFY(Databases::driversOpenedConnectionNames().isEmpty());
 }
 
 void tst_SqlDatabaseManager::MySQL_addUseAndRemoveConnection_FiveTimes() const
@@ -220,15 +220,15 @@ void tst_SqlDatabaseManager::MySQL_addUseAndRemoveConnection_FiveTimes() const
                   .toUtf8().constData(), );
 
         // Connection is already open so pass the false to verify it
-        const auto connection = SqlDatabase::database(*connectionName, false);
-        const auto openedConnections = SqlDatabase::openedConnectionNames();
+        const auto connection = Databases::driversConnection(*connectionName, false);
+        const auto openedConnections = Databases::driversOpenedConnectionNames();
 
         QVERIFY(connection.isValid());
         QVERIFY(connection.isOpen());
         QVERIFY(!connection.isOpenError());
         QCOMPARE(openedConnections.size(), 1);
         QCOMPARE(openedConnections.first(), *connectionName);
-        QCOMPARE(SqlDatabase::connectionNames().size(), 1);
+        QCOMPARE(Databases::driversConnectionNames().size(), 1);
 
         // Execute some database query
         SqlQuery query(connection);
@@ -256,8 +256,8 @@ void tst_SqlDatabaseManager::MySQL_addUseAndRemoveConnection_FiveTimes() const
         QVERIFY(query.driverWeak().expired());
         QCOMPARE(query.driver(), nullptr);
         QVERIFY(!connection.isValid());
-        QVERIFY(SqlDatabase::connectionNames().isEmpty());
-        QVERIFY(SqlDatabase::openedConnectionNames().isEmpty());
+        QVERIFY(Databases::driversConnectionNames().isEmpty());
+        QVERIFY(Databases::driversOpenedConnectionNames().isEmpty());
     }
 }
 
@@ -287,10 +287,10 @@ void tst_SqlDatabaseManager::MySQL_addUseAndRemoveThreeConnections_FiveTimes() c
                       .toUtf8().constData(), );
 
         // Connection is already open so pass the false to verify it
-        const auto connection1 = SqlDatabase::database(*connectionName1, false);
-        const auto connection2 = SqlDatabase::database(*connectionName2, false);
-        const auto connection3 = SqlDatabase::database(*connectionName3, false);
-        const auto openedConnections = SqlDatabase::openedConnectionNames();
+        const auto connection1 = Databases::driversConnection(*connectionName1, false);
+        const auto connection2 = Databases::driversConnection(*connectionName2, false);
+        const auto connection3 = Databases::driversConnection(*connectionName3, false);
+        const auto openedConnections = Databases::driversOpenedConnectionNames();
 
         QVERIFY(connection1.isValid());
         QVERIFY(connection1.isOpen());
@@ -306,7 +306,7 @@ void tst_SqlDatabaseManager::MySQL_addUseAndRemoveThreeConnections_FiveTimes() c
         QVERIFY(openedConnections.contains(*connectionName1));
         QVERIFY(openedConnections.contains(*connectionName2));
         QVERIFY(openedConnections.contains(*connectionName3));
-        QCOMPARE(SqlDatabase::connectionNames().size(), 3);
+        QCOMPARE(Databases::driversConnectionNames().size(), 3);
 
         // Execute some database query on connection1
         SqlQuery query1(connection1);
@@ -380,8 +380,8 @@ void tst_SqlDatabaseManager::MySQL_addUseAndRemoveThreeConnections_FiveTimes() c
         QVERIFY(!connection3.isValid());
         QVERIFY(!connection2.isValid());
         QVERIFY(!connection1.isValid());
-        QVERIFY(SqlDatabase::connectionNames().isEmpty());
-        QVERIFY(SqlDatabase::openedConnectionNames().isEmpty());
+        QVERIFY(Databases::driversConnectionNames().isEmpty());
+        QVERIFY(Databases::driversOpenedConnectionNames().isEmpty());
     }
 }
 // NOLINTEND(readability-convert-member-functions-to-static)

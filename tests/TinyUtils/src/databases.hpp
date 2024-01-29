@@ -5,6 +5,10 @@
 #include <memory>
 #include <optional>
 
+#ifdef TINYORM_USING_TINYDRIVERS
+#  include "orm/drivers/sqldatabase.hpp"
+#endif
+
 #include "orm/support/databaseconfiguration.hpp"
 
 #include "export.hpp"
@@ -37,6 +41,10 @@ namespace TestUtils
 
         /*! Alias for the DatabaseManager. */
         using DatabaseManager = Orm::DatabaseManager;
+#ifdef TINYORM_USING_TINYDRIVERS
+        /*! Alias for the SqlDatabase. */
+        using SqlDatabase = Orm::Drivers::SqlDatabase;
+#endif
 
     public:
         /*! Deleted default constructor, this is a pure library class. */
@@ -134,6 +142,16 @@ namespace TestUtils
 #ifdef TINYORM_USING_TINYDRIVERS
         /*! Remove a database connection for TinyDrivers tests. */
         static void removeDriversConnection(const QString &connection);
+
+        /*! Obtain the given database connection for TinyDrivers tests. */
+        static SqlDatabase driversConnection(const QString &connection, bool open = true);
+        /*! Get all managed connection names for TinyDrivers tests. */
+        static QStringList driversConnectionNames();
+        /*! Get a list of opened connections for TinyDrivers tests. */
+        static QStringList driversOpenedConnectionNames();
+        /*! Determine if the same thread check during the database() call is enabled,
+             for TinyDrivers tests. */
+        static bool driversIsThreadCheck() noexcept;
 #endif
 
         /*! Check whether environment variables are correctly set. */

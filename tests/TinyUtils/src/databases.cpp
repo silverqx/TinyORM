@@ -2,8 +2,6 @@
 
 #ifdef TINYORM_USING_TINYDRIVERS
 #  include <range/v3/view/map.hpp>
-
-#  include "orm/drivers/sqldatabase.hpp"
 #endif
 
 #include "orm/db.hpp"
@@ -338,6 +336,36 @@ bool Databases::removeConnection(const QString &connection)
 void Databases::removeDriversConnection(const QString &connection)
 {
     SqlDatabase::removeDatabase(connection);
+}
+
+/* This method is needed and must be used the with build_static_drivers option because
+   using the SqlDatabase::database() directly causes that the g_connections global
+   variable has different addresses in TinyOrm and TinyUtils libraries.
+   The reason is that the TinyUtils, TinyOrm, and auto test executables are all linking
+   against the TinyDrivers library and if this library is linked statically into
+   the TinyUtils, TinyOrm, and auto tests executables then the g_connections global will
+   have different address everywhere, there is nothing what can be done about this
+   because this is how static libraries work, solution is to use shared libraries or
+   secure that only one instance will be used and this is what this and a few methods
+   below are doing. */
+SqlDatabase Databases::driversConnection(const QString &connection, const bool open)
+{
+    return SqlDatabase::database(connection, open);
+}
+
+QStringList Databases::driversConnectionNames()
+{
+    return SqlDatabase::connectionNames();
+}
+
+QStringList Databases::driversOpenedConnectionNames()
+{
+    return SqlDatabase::openedConnectionNames();
+}
+
+bool Databases::driversIsThreadCheck() noexcept
+{
+    return SqlDatabase::isThreadCheck();
 }
 #endif
 
