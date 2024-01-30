@@ -50,9 +50,12 @@ bool MySqlDriver::open(
     // Set extra MySQL connection options
     const auto [optionFlags, unixSocket] = d->mysqlSetConnectionOptions(options);
 
+    // CUR drivers revisit if it really works for MySQL, MariaDB reports "Server has gone away" error 2006 silverqx
     // Set the default character set for the mysql_real_connect() function
+#ifndef MARIADB_VERSION_ID
     if (!d->mysqlSetCharacterSet(host, true))
         return false;
+#endif
 
     // Establish a connection to the MySQL server running on the host
     if (!d->mysqlRealConnect(host, username.toUtf8(), password.toUtf8(),
