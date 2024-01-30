@@ -1,3 +1,4 @@
+add_subdirectory(blobs)
 add_subdirectory(mysql_qdatetime)
 add_subdirectory(postgresql_qdatetime)
 add_subdirectory(querybuilder)
