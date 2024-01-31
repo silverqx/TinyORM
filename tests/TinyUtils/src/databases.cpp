@@ -72,12 +72,28 @@ namespace TestUtils
    The createConnectionTemp/From() can be called from test methods and connections don't
    need to be initialized first in the initTestCase(). */
 
+/* Global */
+
+const QString AutoTestSkipped =
+        sl("%1 autotest skipped, environment variables for '%2' connection "
+           "have not been defined or the Qt sql driver is not available.");
+const QString AutoTestSkippedAny =
+        sl("%1 autotest skipped, environment variables for ANY connection "
+           "have not been defined.");
+
+/* Databases */
+
 /* private */
 
 std::shared_ptr<DatabaseManager> Databases::m_dm;
 ConfigurationsType Databases::m_configurations;
 
 /* public */
+
+const QString Databases::MYSQL      = sl("tinyorm_mysql_tests");
+const QString Databases::MARIADB    = sl("tinyorm_maria_tests");
+const QString Databases::SQLITE     = sl("tinyorm_sqlite_tests");
+const QString Databases::POSTGRESQL = sl("tinyorm_postgres_tests");
 
 /* Create connection/s for the whole unit test case */
 

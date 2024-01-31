@@ -26,13 +26,9 @@ namespace TestUtils
        one of these constants. */
 
     /*! Template message for the QSKIP() for one connection. */
-    inline const QString AutoTestSkipped =
-            sl("%1 autotest skipped, environment variables for '%2' connection "
-               "have not been defined or the Qt sql driver is not available.");
+    TINYUTILS_EXPORT extern const QString AutoTestSkipped;
     /*! Template message for the QSKIP() for more connections. */
-    inline const QString AutoTestSkippedAny =
-            sl("%1 autotest skipped, environment variables for ANY connection "
-               "have not been defined.");
+    TINYUTILS_EXPORT extern const QString AutoTestSkippedAny;
 
     /*! Database connections factory for unit tests (library class). */
     class TINYUTILS_EXPORT Databases
@@ -53,13 +49,13 @@ namespace TestUtils
                                                ::ConfigurationsType;
 
         /*! MySQL connection name. */
-        inline static const QString MYSQL      = "tinyorm_mysql_tests";
+        static const QString MYSQL;
         /*! MariaDB connection name. */
-        inline static const QString MARIADB    = "tinyorm_maria_tests";
+        static const QString MARIADB;
         /*! SQLite connection name. */
-        inline static const QString SQLITE     = "tinyorm_sqlite_tests";
+        static const QString SQLITE;
         /*! PostgreSQL connection name. */
-        inline static const QString POSTGRESQL = "tinyorm_postgres_tests";
+        static const QString POSTGRESQL;
 
         /* Create connection/s for the whole unit test case */
         /*! Create all database connections which will be tested. */
