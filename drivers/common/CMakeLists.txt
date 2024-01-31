@@ -188,7 +188,7 @@ tiny_resource_and_manifest(${TinyDrivers_target}
 # Must be before the TinyCommon, to exclude WINVER for the MSYS2 Qt6 builds to avoid:
 # 'WINVER' macro redefined [-Wmacro-redefined]
 # Look also to the TinyCommon for conditional WINVER definition
-find_package(QT NAMES Qt5 Qt6 REQUIRED COMPONENTS Core)
+find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Core)
 tiny_find_package(Qt${QT_VERSION_MAJOR} ${minQtVersion} CONFIG
     REQUIRED COMPONENTS Core
 )
