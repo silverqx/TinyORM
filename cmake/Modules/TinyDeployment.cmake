@@ -14,6 +14,8 @@ function(tiny_install_tinyorm)
     install(
         TARGETS ${TinyOrm_target} ${CommonConfig_target}
         EXPORT TinyOrmTargets
+        # The $<INSTALL_INTERFACE:xyz> in the target_include_directories() doesn't
+        # need to be defined because of this line
         INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
         LIBRARY ARCHIVE RUNTIME
         # TODO test NAMELINK_ on unix silverqx
