@@ -79,6 +79,8 @@ set_target_properties(${TinyDrivers_target}
         CXX_VISIBILITY_PRESET "hidden"
         VISIBILITY_INLINES_HIDDEN YES
         VERSION ${PROJECT_VERSION}
+        # Needed by the Compatible Interface Requirement for the project's major version
+        VERSION_MAJOR ${PROJECT_VERSION_MAJOR}
         SOVERSION 0
         EXPORT_NAME ${TinyDrivers_ns}
 )
@@ -189,7 +191,8 @@ tiny_resource_and_manifest(${TinyDrivers_target}
 # 'WINVER' macro redefined [-Wmacro-redefined]
 # Look also to the TinyCommon for conditional WINVER definition
 find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Core)
-tiny_find_package(Qt${QT_VERSION_MAJOR} ${minQtVersion} CONFIG
+# No need to call the tiny_find_package() here as the core TinyOrm always depends on it
+find_package(Qt${QT_VERSION_MAJOR} ${minQtVersion} CONFIG
     REQUIRED COMPONENTS Core
 )
 
@@ -207,8 +210,8 @@ else()
     )
 endif()
 
-# The PRIVATE MySQL dependency is propagated for TinyDrivers library static build
-if(NOT TINY_BUILD_LOADABLE_DRIVERS AND BUILD_MYSQL_DRIVER)
+# The PRIVATE MySQL dependency is propagated correctly for TinyDrivers lib. static build
+if((TINY_BUILD_SHARED_DRIVERS OR TINY_BUILD_STATIC_DRIVERS) AND BUILD_MYSQL_DRIVER)
     tiny_find_package(MySQL REQUIRED)
     target_link_libraries(${TinyDrivers_target} PRIVATE MySQL::MySQL)
 endif()

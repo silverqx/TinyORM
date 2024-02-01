@@ -11,6 +11,7 @@ set(TINY_BUILD_INSTALLTREEDIR "${TINY_BUILD_GENDIR}/installtree" CACHE INTERNAL
 function(tiny_install_tinyorm)
 
     # Install targets from the project and assign them to the export set
+    # TinyOrm library
     install(
         TARGETS ${TinyOrm_target} ${CommonConfig_target}
         EXPORT TinyOrmTargets
@@ -20,6 +21,27 @@ function(tiny_install_tinyorm)
         LIBRARY ARCHIVE RUNTIME
         # TODO test NAMELINK_ on unix silverqx
     )
+    # TinyDrivers library
+    if(BUILD_DRIVERS)
+        install(
+            TARGETS ${TinyDrivers_target} ${CommonConfig_target}
+            EXPORT TinyDriversTargets
+            INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+            LIBRARY ARCHIVE RUNTIME
+        )
+    endif()
+    # TinyMySql library (MODULE, loaded at runtime)
+    # The MODULE libraries are installed to the bin/ folder on Linux and
+    # they don't have namelink-s
+    if(TINY_BUILD_LOADABLE_DRIVERS AND BUILD_MYSQL_DRIVER)
+        install(
+            TARGETS ${TinyMySql_target}
+            EXPORT TinyDriversTargets
+            INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+            # The LIBRARY destination must always be provided for MODULE libraries
+            LIBRARY DESTINATION ${CMAKE_INSTALL_BINDIR}
+        )
+    endif()
 
     if(TOM_EXAMPLE AND
             # Don't install for vcpkg debug build type
@@ -40,6 +62,13 @@ function(tiny_install_tinyorm)
         NAMESPACE ${TinyOrm_ns}::
         DESTINATION "${tiny_config_package_dir}"
     )
+    if(BUILD_DRIVERS)
+        install(
+            EXPORT TinyDriversTargets
+            NAMESPACE ${TinyDrivers_ns}::
+            DESTINATION "${tiny_config_package_dir}"
+        )
+    endif()
 
     # Install PDB files
     if(MSVC AND BUILD_SHARED_LIBS)
@@ -50,6 +79,14 @@ function(tiny_install_tinyorm)
                 NOT (TINY_VCPKG AND TINY_BUILD_TYPE_LOWER STREQUAL "debug")
         )
             install(FILES "$<TARGET_PDB_FILE:${TomExample_target}>" TYPE BIN OPTIONAL)
+        endif()
+
+        if(TINY_BUILD_LOADABLE_DRIVERS OR TINY_BUILD_SHARED_DRIVERS)
+            install(FILES "$<TARGET_PDB_FILE:${TinyDrivers_target}>" TYPE BIN OPTIONAL)
+        endif()
+
+        if(TINY_BUILD_LOADABLE_DRIVERS AND BUILD_MYSQL_DRIVER)
+            install(FILES "$<TARGET_PDB_FILE:${TinyMySql_target}>" TYPE BIN OPTIONAL)
         endif()
     endif()
 
@@ -72,8 +109,23 @@ function(tiny_install_tinyorm)
         )
     endif()
     if(TOM)
-        # The trailing / is important here
+        # The trailing / is important here (skip creating of the include/ folder
+        # inside the INCLUDE folder and copy all content directly)
         install(DIRECTORY "tom/include/" TYPE INCLUDE FILES_MATCHING PATTERN "*.hpp")
+    endif()
+    # TinyDrivers
+    if(BUILD_DRIVERS)
+        install(DIRECTORY "drivers/common/include/orm"
+            TYPE INCLUDE
+            FILES_MATCHING PATTERN "*.hpp"
+        )
+    endif()
+    # TinyMySql
+    if(TINY_BUILD_LOADABLE_DRIVERS AND BUILD_MYSQL_DRIVER)
+        install(DIRECTORY "drivers/mysql/include/orm"
+            TYPE INCLUDE
+            FILES_MATCHING PATTERN "*.hpp"
+        )
     endif()
 
     # Install all other files
@@ -93,7 +145,7 @@ function(tiny_install_tinyorm)
     # TinyORM's package config needs the FindMySQL package module when the MYSQL_PING
     # is enabled
     set(tiny_cmake_module_path)
-    if(MYSQL_PING)
+    if(MYSQL_PING OR BUILD_MYSQL_DRIVER)
         install(FILES "cmake/Modules/FindMySQL.cmake"
             DESTINATION "${tiny_config_package_dir}/Modules"
         )
@@ -113,6 +165,10 @@ list(APPEND CMAKE_MODULE_PATH \"\${CMAKE_CURRENT_LIST_DIR}/Modules\")")
     tiny_to_bool(cvf_is_multi_config ${cvf_is_multi_config})
 
     tiny_to_bool(cvf_is_vcpkg ${TINY_VCPKG})
+
+    # Generate target includes for the TinyORM package config file
+    set(tiny_target_includes)
+    tiny_generate_target_includes(tiny_target_includes)
 
     # Install destination directories for the Install Tree
     set(BIN_INSTALL_DIR "${CMAKE_INSTALL_BINDIR}/")
@@ -136,6 +192,16 @@ list(APPEND CMAKE_MODULE_PATH \"\${CMAKE_CURRENT_LIST_DIR}/Modules\")")
     tiny_set_compatible_interface_string(${TinyOrm_target}
         PROPERTIES VERSION_MAJOR SOVERSION
     )
+    if(BUILD_DRIVERS)
+        tiny_set_compatible_interface_string(${TinyDrivers_target}
+            PROPERTIES VERSION_MAJOR SOVERSION
+        )
+    endif()
+    if(TINY_BUILD_LOADABLE_DRIVERS AND BUILD_MYSQL_DRIVER)
+        tiny_set_compatible_interface_string(${TinyMySql_target}
+            PROPERTIES VERSION_MAJOR SOVERSION
+        )
+    endif()
 
     # Generate the Package Version file for the Package Config file for the Install Tree
     write_basic_package_version_file(
@@ -196,7 +262,7 @@ function(tiny_export_build_tree)
     # TinyORM's package config needs the FindMySQL package module when the MYSQL_PING
     # is enabled
     set(tiny_cmake_module_path)
-    if(MYSQL_PING)
+    if(MYSQL_PING OR BUILD_MYSQL_DRIVER)
         file(COPY "cmake/Modules/FindMySQL.cmake" DESTINATION "cmake/Modules")
 
         set(tiny_cmake_module_path "\
@@ -213,9 +279,20 @@ list(APPEND CMAKE_MODULE_PATH \"\${CMAKE_CURRENT_LIST_DIR}/cmake/Modules\")")
         FILE "TinyOrmTargets.cmake"
         NAMESPACE ${TinyOrm_ns}::
     )
+    if(BUILD_DRIVERS)
+        export(
+            EXPORT TinyDriversTargets
+            FILE "TinyDriversTargets.cmake"
+            NAMESPACE ${TinyDrivers_ns}::
+        )
+    endif()
 
     get_property(cvf_is_multi_config GLOBAL PROPERTY GENERATOR_IS_MULTI_CONFIG)
     tiny_to_bool(cvf_is_multi_config ${cvf_is_multi_config})
+
+    # Generate target includes for the TinyORM package config file
+    set(tiny_target_includes)
+    tiny_generate_target_includes(tiny_target_includes)
 
     # Configure Package Config file for the Build Tree
     configure_package_config_file(
