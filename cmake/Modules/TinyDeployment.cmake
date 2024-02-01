@@ -133,15 +133,8 @@ list(APPEND CMAKE_MODULE_PATH \"\${CMAKE_CURRENT_LIST_DIR}/Modules\")")
     )
 
     # Compatible Interface Requirement for the project's major version
-    set_property(
-        TARGET ${TinyOrm_target}
-        PROPERTY
-            INTERFACE_${TinyOrm_target}_VERSION_MAJOR ${${TinyOrm_target}_VERSION_MAJOR}
-    )
-    set_property(
-        TARGET ${TinyOrm_target}
-        APPEND PROPERTY
-            COMPATIBLE_INTERFACE_STRING ${TinyOrm_target}_VERSION_MAJOR
+    tiny_set_compatible_interface_string(${TinyOrm_target}
+        PROPERTIES VERSION_MAJOR SOVERSION
     )
 
     # Generate the Package Version file for the Package Config file for the Install Tree

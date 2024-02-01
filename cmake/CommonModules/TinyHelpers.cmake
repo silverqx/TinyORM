@@ -528,3 +528,37 @@ function(tiny_fix_ccache)
     endif()
 
 endfunction()
+
+# Set the Compatible Interface Requirement for the project's major version using
+# the given target
+function(tiny_set_compatible_interface_string target)
+
+    # Arguments
+    set(multiValueArgs PROPERTIES)
+    cmake_parse_arguments(PARSE_ARGV 1 TINY "" "" "${multiValueArgs}")
+
+    if(DEFINED TINY_UNPARSED_ARGUMENTS)
+        message(FATAL_ERROR "${CMAKE_CURRENT_FUNCTION} was passed extra arguments: \
+${TINY_UNPARSED_ARGUMENTS}")
+    endif()
+
+    # Body
+    foreach(property ${TINY_PROPERTIES})
+        # Skip the TinyOrm_VERSION_MAJOR as it's already defined in the main/parent
+        # CMakeLists.txt file
+        if(NOT (target STREQUAL TinyOrm_target AND property STREQUAL "VERSION_MAJOR"))
+            get_target_property(${target}_${property} ${target} ${property})
+        endif()
+
+        set_property(
+            TARGET ${target}
+            PROPERTY INTERFACE_${target}_${property} ${${target}_${property}}
+        )
+
+        set_property(
+            TARGET ${target}
+            APPEND PROPERTY COMPATIBLE_INTERFACE_STRING ${target}_${property}
+        )
+    endforeach()
+
+endfunction()
