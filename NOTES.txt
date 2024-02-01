@@ -1074,6 +1074,11 @@ CMake confusions:
   - the forms ITEMS ${A} and LISTS A are equivalent
   - I'm using the first syntax everywhere, eg. vcpkg uses the second syntax everywhere
 
+- Variables
+  - every new scope (block, function, add_subdirectory(), ...) creates a copy of all variables
+    from the current scope that means all variable are immutable so you can't change/overwrite
+    variables in parent scopes using simple set(xyz ...) call
+
 
 TinyORM CMake build:
 --------------------
