@@ -6,7 +6,6 @@
 
 using Orm::Constants::EMPTY;
 using Orm::Constants::H127001;
-using Orm::Constants::InnoDB;
 using Orm::Constants::P3306;
 using Orm::Constants::P5432;
 using Orm::Constants::PUBLIC;
@@ -20,6 +19,7 @@ using Orm::Constants::UTF8;
 using Orm::Constants::UTF8MB4;
 using Orm::Constants::UTF8MB40900aici;
 using Orm::Constants::UTF8MB4Unicode520ci;
+using Orm::Constants::InnoDB;
 using Orm::Constants::Version;
 using Orm::Constants::application_name;
 using Orm::Constants::database_;
