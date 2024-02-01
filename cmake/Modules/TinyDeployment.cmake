@@ -136,7 +136,7 @@ list(APPEND CMAKE_MODULE_PATH \"\${CMAKE_CURRENT_LIST_DIR}/Modules\")")
     set_property(
         TARGET ${TinyOrm_target}
         PROPERTY
-            INTERFACE_${TinyOrm_target}_VERSION_MAJOR ${PROJECT_VERSION_MAJOR}
+            INTERFACE_${TinyOrm_target}_VERSION_MAJOR ${${TinyOrm_target}_VERSION_MAJOR}
     )
     set_property(
         TARGET ${TinyOrm_target}
