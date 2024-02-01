@@ -1051,6 +1051,9 @@ All are snake-case unless otherwise specified.
  - cached variables: TINY_
  - function names has the tiny_ prefix
  - compile definitions prefix by project eg. TINYORM_, TINYUTILS_
+ - commands:
+   - foreach: use the foreach(depend ${depends}) syntax everywhere as default syntax and use
+              the IN LISTS XYZ syntax only if needed
 
 
 CMake confusions:
@@ -1059,6 +1062,17 @@ CMake confusions:
 - CMAKE_SOURCE_DIR, PROJECT_SOURCE_DIR, CMAKE_BINARY_DIR, CMAKE_CURRENT_SOURCE_DIR, ...
   Look at commit:
   cmake added FetchContent support (23d0d904)
+
+- foreach ITEMS vs LISTS
+  - ITEMS:
+    - used like foreach(depend ${depends})
+    - it loops over the each item in the given list
+    - can't wrap in quotes as it will be parsed as a one-value
+  - LISTS:
+    - used like foreach(depend IN LISTS depends anotherList)
+    - it loops over the each item in the given LISTS so you can pass MORE list variables
+  - the forms ITEMS ${A} and LISTS A are equivalent
+  - I'm using the first syntax everywhere, eg. vcpkg uses the second syntax everywhere
 
 
 TinyORM CMake build:
