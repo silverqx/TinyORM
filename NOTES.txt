@@ -1053,8 +1053,8 @@ All are snake-case unless otherwise specified.
  - compile definitions prefix by project eg. TINYORM_, TINYUTILS_
 
 
-CMake confusion:
-----------------
+CMake confusions:
+-----------------
 
 - CMAKE_SOURCE_DIR, PROJECT_SOURCE_DIR, CMAKE_BINARY_DIR, CMAKE_CURRENT_SOURCE_DIR, ...
   Look at commit:
@@ -2421,8 +2421,8 @@ TestCases UnitTests BuildTime Type       Duration in seconds
 37        1914(42)  2:51      QtSql    - 26.10, 25.75, 25.20, 25.31
 
 
-Qt confusions notes:
---------------------
+Qt confusions:
+--------------
 
 QVariant null vs invalid:
 
@@ -2503,8 +2503,8 @@ Aggregate types and Value Objects works good with the Model's toMap() and toVect
 especially with Qt6's QVariant::fromValue(), Qt6 doesn't need to declare the Q_DECLARE_METATYPE().
 
 
-PowerShell confusion:
----------------------
+PowerShell confusions:
+----------------------
 
  - .Count comes from IEnumerate interface and should be used for array-like containers
    - on arrays the Count is an alias to the Length property
@@ -2519,8 +2519,8 @@ PowerShell confusion:
  - you must ` escape newline between function parameters eg.: -Path `\n -Message
 
 
-qmake confusion:
-----------------
+qmake confusions:
+-----------------
 
  - load() vs include() prf files:
    - if load() or include() is called inside other feature prf or pri file then you don't need
