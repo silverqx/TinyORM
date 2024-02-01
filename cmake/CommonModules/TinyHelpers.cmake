@@ -78,7 +78,8 @@ upgrade Clang compiler")
 endfunction()
 
 # A helper macro that calls find_package() and appends the package (if found) to the
-# TINY_PACKAGE_DEPENDENCIES list, which can be used later to generate package config file
+# TINY_PACKAGE_DEPENDENCIES list that will be used later to generate find_dependency()
+# calls for the TinyORM package configuration file
 macro(tiny_find_package package_name)
 
     find_package(${package_name} ${ARGN})
@@ -96,24 +97,32 @@ macro(tiny_find_package package_name)
         # Convert to the string
         string(REPLACE ";" " " args "${args}")
 
-        list(APPEND tiny_package_dependencies "${args}")
+        # Check if the given args are in the TINY_PACKAGE_DEPENDENCIES list
+        get_property(packageDependencies GLOBAL PROPERTY TINY_PACKAGE_DEPENDENCIES)
+
+        if(NOT args IN_LIST packageDependencies)
+            set_property(GLOBAL APPEND PROPERTY TINY_PACKAGE_DEPENDENCIES "${args}")
+        endif()
     endif()
 
     unset(args)
 
 endmacro()
 
-# Generate find_dependency calls for the TinyORM package config file
+# Generate find_dependency() calls for the TinyORM package config file
 function(tiny_generate_find_dependency_calls out_dependency_calls)
 
-    set(find_dependency_calls)
+    set(findDependencyCalls)
 
-    string(REGEX REPLACE "([^;]+)" "find_dependency(\\1)" find_dependency_calls
-        "${tiny_package_dependencies}")
+    get_property(packageDependencies GLOBAL PROPERTY TINY_PACKAGE_DEPENDENCIES)
 
-    string(REPLACE ";" "\n" find_dependency_calls "${find_dependency_calls}")
+    # The ([^;]+) regex matches every list item excluding the ; character 😮
+    string(REGEX REPLACE "([^;]+)" "find_dependency(\\1)" findDependencyCalls
+        "${packageDependencies}")
 
-    set(${out_dependency_calls} ${find_dependency_calls} PARENT_SCOPE)
+    string(REPLACE ";" "\n" findDependencyCalls "${findDependencyCalls}")
+
+    set(${out_dependency_calls} ${findDependencyCalls} PARENT_SCOPE)
 
 endfunction()
 
@@ -560,5 +569,33 @@ ${TINY_UNPARSED_ARGUMENTS}")
             APPEND PROPERTY COMPATIBLE_INTERFACE_STRING ${target}_${property}
         )
     endforeach()
+
+endfunction()
+
+# Get target includes that contain IMPORTED targets for the TinyORM package config file
+function(tiny_generate_target_includes out_variable)
+
+    set(includeTmpl "include(\"\${CMAKE_CURRENT_LIST_DIR}/@target@.cmake\")")
+    set(includeReplaced)
+    set(result)
+
+    # The order is important here, the TinyDriversTargets must be included before
+    # the TinyOrmTargets because of the checks whether the exported targets exist
+    # at the end of the TinyOrmTargets.cmake file
+
+    # TinyDriversTargets
+    if(BUILD_DRIVERS)
+        string(REPLACE "@target@" "TinyDriversTargets" includeReplaced "${includeTmpl}")
+        list(APPEND result ${includeReplaced})
+    endif()
+
+    # TinyOrmTargets
+    string(REPLACE "@target@" "TinyOrmTargets" includeReplaced "${includeTmpl}")
+    list(APPEND result ${includeReplaced})
+
+    # No need to escape the ; character as include() statement can't contain it
+    list(JOIN result "\n" result)
+
+    set(${out_variable} ${result} PARENT_SCOPE)
 
 endfunction()

@@ -67,6 +67,8 @@ set_target_properties(${TinyMySql_target}
         CXX_VISIBILITY_PRESET "hidden"
         VISIBILITY_INLINES_HIDDEN YES
         VERSION ${PROJECT_VERSION}
+        # Needed by the Compatible Interface Requirement for the project's major version
+        VERSION_MAJOR ${PROJECT_VERSION_MAJOR}
         SOVERSION 0
         EXPORT_NAME ${TinyMySql_ns}
 )
@@ -144,7 +146,8 @@ tiny_resource_and_manifest(${TinyMySql_target}
 # 'WINVER' macro redefined [-Wmacro-redefined]
 # Look also to the TinyCommon for conditional WINVER definition
 find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Core)
-tiny_find_package(Qt${QT_VERSION_MAJOR} ${minQtVersion} CONFIG
+# No need to call the tiny_find_package() here as the core TinyOrm always depends on it
+find_package(Qt${QT_VERSION_MAJOR} ${minQtVersion} CONFIG
     REQUIRED COMPONENTS Core
 )
 tiny_find_package(MySQL REQUIRED)

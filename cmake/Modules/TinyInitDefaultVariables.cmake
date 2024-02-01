@@ -224,8 +224,12 @@ endmacro()
 # Initialize Tiny variables
 macro(tiny_init_tiny_variables)
 
-    # List of package dependencies for the package config
-    set(tiny_package_dependencies)
+    # List of package dependencies for the package config (can't be a simple variable)
+    define_property(GLOBAL PROPERTY TINY_PACKAGE_DEPENDENCIES
+        BRIEF_DOCS "Recorded arguments from find_package() calls."
+        FULL_DOCS "Recorded arguments from find_package() calls that will be used \
+to generate find_dependency() calls for the TinyORM package configuration file."
+    )
 
     # Setup the correct PATH environment variable used by the ctest command
     if(BUILD_TESTS)
