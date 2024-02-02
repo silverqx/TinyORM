@@ -165,7 +165,7 @@ ${TINY_UNPARSED_ARGUMENTS}")
 endfunction()
 
 # Create an empty SQLite database file if it does not exist
-function(create_sqlite_db db_filepath)
+function(tiny_create_sqlite_db db_filepath)
 
     if(EXISTS ${db_filepath})
         return()
