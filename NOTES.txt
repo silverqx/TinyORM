@@ -1079,6 +1079,21 @@ CMake confusions:
     from the current scope that means all variable are immutable so you can't change/overwrite
     variables in parent scopes using simple set(xyz ...) call
 
+- add_custom_command()
+  - COMMAND_EXPAND_LISTS
+    - if something output eg. a;b;c eg. genex then it will be converted to string like a b c
+  - VERBATIM
+    - you don't need to care about escaping so what you type in command arguments will be exactly
+      what you get as output or on command line and it will be correctly escaped
+    - only one thing that I discovered that need to be escaped is backslash like \\
+    - w/o VERBATIM you need to escape eg. \" to be passed on command-line
+    - also, everything is already quoted correctly with or w/o verbatim that is a little weird,
+      eg. if some list item contains space and is used with copy command then it will be quotes,
+      also the main command is quoted everytime
+    - hard to tell how this works but use VERBATIM and don't care about escaping 🤔 because it's
+      also cross-platform or cross-shell so it knows which OS or shell is used and will escape
+      correctly
+
 
 TinyORM CMake build:
 --------------------
