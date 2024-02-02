@@ -490,6 +490,7 @@ CMake multi-config generators like `Ninja Multi-Config` or `Visual Studio 16 201
 | --------------------------------- | ------- | ----------- |
 | `BUILD_SHARED_LIBS`               | `ON`    | Build as a shared/static library. |
 | `BUILD_TESTS`                     | `OFF`   | Build TinyORM unit tests. |
+| `BUILD_TREE_DEPLOY`               | `ON`    | Copy `TinyDrivers` and `TinyMySql` libraries to the root of the build tree. |
 | `INLINE_CONSTANTS`                | `OFF`   | Use inline constants instead of extern constants in the `shared build`.<br/>`OFF` is highly recommended for the `shared build`;<br/>is always `ON` for the `static build`.<br/><small>Available when: `BUILD_SHARED_LIBS`</small> |
 | `MSVC_RUNTIME_DYNAMIC`            | `ON`    | Use MSVC dynamic runtime library (`-MD`) instead of static (`-MT`), also considers a Debug configuration (`-MTd`, `-MDd`).<br/><small>Available when: `MSVC AND NOT DEFINED CMAKE_MSVC_RUNTIME_LIBRARY`</small> |
 | `MYSQL_PING`                      | `OFF`   | Enable `Orm::MySqlConnection::pingDatabase()` method. |

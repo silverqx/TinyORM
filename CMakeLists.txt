@@ -86,9 +86,11 @@ tiny_init_cmake_variables_pre()
 feature_option(BUILD_SHARED_LIBS
     "Build using shared libraries" ON
 )
-
 feature_option(BUILD_TESTS
     "Build TinyORM unit tests" OFF
+)
+feature_option(BUILD_TREE_DEPLOY
+    "Copy TinyDrivers and TinyMySql libraries to the root of the build tree" ON
 )
 
 # TinyDrivers options
@@ -472,6 +474,11 @@ tiny_install_tinyorm()
 
 # Create Package Config and Package Config Version files for the Build Tree and export it
 tiny_export_build_tree()
+
+# Copy TinyDrivers and TinyMySql libraries to the root of the build tree
+if(BUILD_TREE_DEPLOY)
+    tiny_build_tree_deployment()
+endif()
 
 # Generate pkg-config file
 #if(NOT MSVC)
