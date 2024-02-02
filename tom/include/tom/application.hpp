@@ -204,7 +204,7 @@ namespace Concerns
         Q_NORETURN void showVersion() const;
         /*! Display the version information. */
         void printVersion() const;
-        /*! Display the full version informations with dependecies, build types, and
+        /*! Display the full version information with dependencies, build types, and
             compiler. */
         void printFullVersions() const;
         /*! Create the versions subsection container for the tom --version and tom about

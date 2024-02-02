@@ -33,8 +33,8 @@ namespace Tom::Commands::Migrations
 {
 
 /* Don't add the --pretend option for the migrate:refresh command. It doesn't make sense
-   to have it because it doesn't show relevant informations as we can't really call
-   the migrate:rollbak command, so it would show pretended queries on the base
+   to have it because it doesn't show relevant information as we can't really call
+   the migrate:rollback command, so it would show pretended queries on the base
    of the current state of the migration repository table and not pretended queries which
    would be normally executed without the --pretend option.
    So eg. if the DB with 4 migrations would be half migrated and

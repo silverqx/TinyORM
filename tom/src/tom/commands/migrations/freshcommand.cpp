@@ -32,7 +32,7 @@ namespace Tom::Commands::Migrations
 {
 
 /* Don't add the --pretend option for the migrate:fresh command. It doesn't make sense
-   to have it because it doesn't show relevant informations as we can't really call
+   to have it because it doesn't show relevant information as we can't really call
    the db:wipe command, so it would show pretended queries on the base of the current
    state of the migration repository table and not all pretended queries for all
    migrations.
