@@ -330,3 +330,41 @@ list(APPEND CMAKE_MODULE_PATH \"\${CMAKE_CURRENT_LIST_DIR}/cmake/Modules\")")
     export(PACKAGE ${TinyOrm_ns})
 
 endfunction()
+
+# Copy TinyDrivers and TinyMySql libraries to the root of the build tree
+function(tiny_build_tree_deployment)
+
+    # Nothing to do
+    if(TINY_VCPKG OR NOT MSVC OR NOT BUILD_SHARED_LIBS)
+        return()
+    endif()
+
+    set(filesToDeploy)
+
+    # All generator expressions below will be expanded during the add_custom_target() call
+    if(TINY_BUILD_LOADABLE_DRIVERS OR TINY_BUILD_SHARED_DRIVERS)
+        list(APPEND filesToDeploy
+            $<TARGET_FILE:${TinyDrivers_target}>
+            $<$<CONFIG:Debug,RelWithDebInfo>:$<TARGET_PDB_FILE:${TinyDrivers_target}>>
+        )
+    endif()
+
+    if(TINY_BUILD_LOADABLE_DRIVERS)
+        list(APPEND filesToDeploy
+            $<TARGET_FILE:${TinyMySql_target}>
+            $<$<CONFIG:Debug,RelWithDebInfo>:$<TARGET_PDB_FILE:${TinyMySql_target}>>
+        )
+    endif()
+
+    list(LENGTH filesToDeploy filesToDeployCount)
+
+    if(filesToDeployCount GREATER 0)
+        add_custom_target(TinyBuildTreeDeployTarget
+            ALL ${CMAKE_COMMAND} -E copy -t ${CMAKE_BINARY_DIR} ${filesToDeploy}
+            VERBATIM
+            COMMENT
+                "Copying ${TinyDrivers_target} libraries to the root of the build tree..."
+        )
+    endif()
+
+endfunction()
