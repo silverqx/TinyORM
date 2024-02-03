@@ -425,7 +425,7 @@ QString String::wrapValue(const QString &string, const QChar firstCharacter,
 #endif
 
 #ifdef TINYORM_TESTS_CODE
-QString String::loremIpsum512Paragraph(const std::size_t count)
+QString String::loremIpsum512Paragraph(const QStringList::size_type count)
 {
     Q_ASSERT(count != 0);
 

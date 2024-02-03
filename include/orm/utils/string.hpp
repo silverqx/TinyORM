@@ -79,7 +79,7 @@ namespace Orm::Utils
 
 #ifdef TINYORM_TESTS_CODE
         /*! Lorem ipsum paragraphs generator (511 characters in paragraph + newline). */
-        static QString loremIpsum512Paragraph(std::size_t count);
+        static QString loremIpsum512Paragraph(QStringList::size_type count);
 #endif
 
     private:
