@@ -117,6 +117,13 @@ InteractsWithIO::comment(const QString &string, const bool newline,
     return line(QStringLiteral("<comment>%1</comment>").arg(string), newline, verbosity);
 }
 
+const InteractsWithIO &
+InteractsWithIO::muted(const QString &string, const bool newline,
+                       const Verbosity verbosity) const
+{
+    return line(QStringLiteral("<muted>%1</muted>").arg(string), newline, verbosity);
+}
+
 const InteractsWithIO &InteractsWithIO::alert(const QString &string,
                                               const Verbosity verbosity) const
 {
@@ -199,6 +206,13 @@ InteractsWithIO::wcomment(const QString &string, const bool newline,
                           const Verbosity verbosity) const
 {
     return wline(QStringLiteral("<comment>%1</comment>").arg(string), newline, verbosity);
+}
+
+const InteractsWithIO &
+InteractsWithIO::wmuted(const QString &string, const bool newline,
+                        const Verbosity verbosity) const
+{
+    return wline(QStringLiteral("<muted>%1</muted>").arg(string), newline, verbosity);
 }
 
 const InteractsWithIO &InteractsWithIO::walert(const QString &string,
@@ -338,6 +352,7 @@ QString InteractsWithIO::stripAnsiTags(QString string)
             .replace(QStringLiteral("<info>"),     "")
             .replace(QStringLiteral("<error>"),    "")
             .replace(QStringLiteral("<comment>"),  "")
+            .replace(QStringLiteral("<muted>"),    "")
             .replace(QStringLiteral("<blue>"),     "")
             .replace(QStringLiteral("<gray>"),     "")
             .replace(QStringLiteral("<b-blue>"),   "")
@@ -345,6 +360,7 @@ QString InteractsWithIO::stripAnsiTags(QString string)
             .replace(QStringLiteral("</info>"),    "")
             .replace(QStringLiteral("</error>"),   "")
             .replace(QStringLiteral("</comment>"), "")
+            .replace(QStringLiteral("</muted>"),   "")
             .replace(QStringLiteral("</blue>"),    "")
             .replace(QStringLiteral("</gray>"),    "")
             .replace(QStringLiteral("</b-blue>"),  "")
@@ -390,6 +406,7 @@ QString InteractsWithIO::parseOutput(QString string, const bool isAnsi)
                 .replace(QStringLiteral("<info>"),     QStringLiteral("\033[32m"))
                 .replace(QStringLiteral("<error>"),    QStringLiteral("\033[37;41m"))
                 .replace(QStringLiteral("<comment>"),  QStringLiteral("\033[33m"))
+                .replace(QStringLiteral("<muted>"),    QStringLiteral("\033[90m")) // Bright black
                 .replace(QStringLiteral("<blue>"),     QStringLiteral("\033[34m"))
                 .replace(QStringLiteral("<gray>"),     QStringLiteral("\033[90m")) // Bright black
                 .replace(QStringLiteral("<b-blue>"),   QStringLiteral("\033[94m"))
@@ -397,6 +414,7 @@ QString InteractsWithIO::parseOutput(QString string, const bool isAnsi)
                 .replace(QStringLiteral("</info>"),    QStringLiteral("\033[0m"))
                 .replace(QStringLiteral("</error>"),   QStringLiteral("\033[0m"))
                 .replace(QStringLiteral("</comment>"), QStringLiteral("\033[0m"))
+                .replace(QStringLiteral("</muted>"),   QStringLiteral("\033[0m"))
                 .replace(QStringLiteral("</blue>"),    QStringLiteral("\033[0m"))
                 .replace(QStringLiteral("</gray>"),    QStringLiteral("\033[0m"))
                 .replace(QStringLiteral("</b-blue>"),  QStringLiteral("\033[0m"))

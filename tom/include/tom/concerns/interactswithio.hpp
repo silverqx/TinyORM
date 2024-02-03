@@ -111,6 +111,9 @@ namespace Concerns
         /*! Write a string as comment output. */
         const InteractsWithIO &comment(const QString &string, bool newline = true,
                                        Verbosity verbosity = Normal) const;
+        /*! Write a string as muted output. */
+        const InteractsWithIO &muted(const QString &string, bool newline = true,
+                                     Verbosity verbosity = Normal) const;
         /*! Write a string in an alert box. */
         const InteractsWithIO &alert(const QString &string,
                                      Verbosity verbosity = Normal) const;
@@ -135,6 +138,9 @@ namespace Concerns
         /*! Write a string as comment output, wide version. */
         const InteractsWithIO &wcomment(const QString &string, bool newline = true,
                                         Verbosity verbosity = Normal) const;
+        /*! Write a string as muted output, wide version. */
+        const InteractsWithIO &wmuted(const QString &string, bool newline = true,
+                                      Verbosity verbosity = Normal) const;
         /*! Write a string in an alert box, wide version. */
         const InteractsWithIO &walert(const QString &string,
                                       Verbosity verbosity = Normal) const;
