@@ -96,8 +96,9 @@ tiny_version_numbers($$quote($$TINYTOM_SOURCE_TREE/include/tom/version.hpp))
 # Windows resource and manifest files
 # ---
 
-# To find version.hpp
-tinyRcIncludepath = $$quote($$TINYTOM_SOURCE_TREE/include/)
+# To find stringify.hpp and version.hpp
+tinyRcIncludepath = $$quote($$TINYORM_SOURCE_TREE/include/) \
+                    $$quote($$TINYTOM_SOURCE_TREE/include/)
 # To find Windows manifest
 mingw: tinyRcIncludepath += $$quote($$TINYTOM_SOURCE_TREE/resources/)
 

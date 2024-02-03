@@ -8,6 +8,8 @@
 TINY_SYSTEM_HEADER
 #endif
 
+#include "orm/macros/stringify.hpp"
+
 /* Binary compatibility rules:
    https://community.kde.org/Policies/Binary_Compatibility_Issues_With_C++
    https://www.gnu.org/software/libtool/manual/html_node/Updating-version-info.html */
@@ -18,16 +20,12 @@ TINY_SYSTEM_HEADER
 // Should be empty for stable releases, and use the hyphen before to be compatible with SemVer!
 #define TINYORM_VERSION_STATUS ""
 
-// NOLINTNEXTLINE(bugprone-reserved-identifier)
-#define TINYORM__STRINGIFY(x) #x
-#define TINYORM_STRINGIFY(x) TINYORM__STRINGIFY(x)
-
 #if TINYORM_VERSION_BUILD != 0
-#  define TINYORM_PROJECT_VERSION TINYORM_STRINGIFY( \
+#  define TINYORM_PROJECT_VERSION TINY_STRINGIFY( \
      TINYORM_VERSION_MAJOR.TINYORM_VERSION_MINOR.TINYORM_VERSION_BUGFIX.TINYORM_VERSION_BUILD \
    ) TINYORM_VERSION_STATUS
 #else
-#  define TINYORM_PROJECT_VERSION TINYORM_STRINGIFY( \
+#  define TINYORM_PROJECT_VERSION TINY_STRINGIFY( \
      TINYORM_VERSION_MAJOR.TINYORM_VERSION_MINOR.TINYORM_VERSION_BUGFIX \
    ) TINYORM_VERSION_STATUS
 #endif
@@ -36,7 +34,7 @@ TINY_SYSTEM_HEADER
    M = Major, m = minor, p = patch, t = tweak, s = status ; [] - excluded if 0 */
 
 // Format - M.m.p.t (used in Windows RC file)
-#define TINYORM_FILEVERSION_STR TINYORM_STRINGIFY( \
+#define TINYORM_FILEVERSION_STR TINY_STRINGIFY( \
     TINYORM_VERSION_MAJOR.TINYORM_VERSION_MINOR.TINYORM_VERSION_BUGFIX.TINYORM_VERSION_BUILD)
 // Format - M.m.p[.t]-s
 #define TINYORM_VERSION_STR TINYORM_PROJECT_VERSION

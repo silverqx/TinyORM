@@ -175,9 +175,9 @@ Application::Application(int &argc, char **argv, std::shared_ptr<DatabaseManager
     , m_qtApplication(createQCoreApplication(argc, argv))
     , m_environmentEnvName(environmentEnvName)
     , m_migrationTable(std::move(migrationTable))
-    , m_migrationsPath(initializePath(TINYORM_STRINGIFY(TINYTOM_MIGRATIONS_DIR)))
-    , m_modelsPath(initializePath(TINYORM_STRINGIFY(TINYTOM_MODELS_DIR)))
-    , m_seedersPath(initializePath(TINYORM_STRINGIFY(TINYTOM_SEEDERS_DIR)))
+    , m_migrationsPath(initializePath(TINY_STRINGIFY(TINYTOM_MIGRATIONS_DIR)))
+    , m_modelsPath(initializePath(TINY_STRINGIFY(TINYTOM_MODELS_DIR)))
+    , m_seedersPath(initializePath(TINY_STRINGIFY(TINYTOM_SEEDERS_DIR)))
     , m_migrations(std::move(migrations))
     , m_seeders(std::move(seeders))
 {

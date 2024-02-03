@@ -221,8 +221,7 @@ Q_GLOBAL_STATIC_WITH_ARGS(const QString, ON, ("ON")) // NOLINT(misc-use-anonymou
 Q_GLOBAL_STATIC_WITH_ARGS(const QString, OFF, ("OFF")) // NOLINT(misc-use-anonymous-namespace)
 
 /*! Convert the CMake BOOL type value passed by the the C macro to the ON/OFF QString. */
-#define TINY_CMAKE_BOOL(value) TypeUtils::isCMakeTrue(                       \
-                                   TINYTOM_STRINGIFY(value)) ? *ON : *OFF
+#define TINY_CMAKE_BOOL(value) TypeUtils::isCMakeTrue(TINY_STRINGIFY(value)) ? *ON : *OFF
 
 QVector<SubSectionItem> AboutCommand::gatherEnvironmentInformation() const
 {
@@ -253,7 +252,7 @@ QVector<SubSectionItem> AboutCommand::gatherEnvironmentInformation() const
 // Newline needed - QtCreator syntax highlighting bug
 #ifdef TINYTOM_CMAKE_MSVC_RUNTIME_LIBRARY
                 {sl("MSVC Runtime library"),
-                            TINYTOM_STRINGIFY(TINYTOM_CMAKE_MSVC_RUNTIME_LIBRARY)},
+                            TINY_STRINGIFY(TINYTOM_CMAKE_MSVC_RUNTIME_LIBRARY)},
 #endif
             }},
     };
@@ -349,11 +348,11 @@ QVector<SubSectionItem> AboutCommand::gatherMacrosInformation()
 // Newline needed - QtCreator syntax highlighting bug
 #ifdef TINYTOM_CMAKE_MSVC_RUNTIME_LIBRARY
                 {sl("TINYTOM_CMAKE_MSVC_RUNTIME_LIBRARY"),
-                            TINYTOM_STRINGIFY(TINYTOM_CMAKE_MSVC_RUNTIME_LIBRARY)},
+                            TINY_STRINGIFY(TINYTOM_CMAKE_MSVC_RUNTIME_LIBRARY)},
 #endif
-                {sl("TINYTOM_MIGRATIONS_DIR"), TINYTOM_STRINGIFY(TINYTOM_MIGRATIONS_DIR)},
-                {sl("TINYTOM_MODELS_DIR"),     TINYTOM_STRINGIFY(TINYTOM_MODELS_DIR)},
-                {sl("TINYTOM_SEEDERS_DIR"),    TINYTOM_STRINGIFY(TINYTOM_SEEDERS_DIR)},
+                {sl("TINYTOM_MIGRATIONS_DIR"), TINY_STRINGIFY(TINYTOM_MIGRATIONS_DIR)},
+                {sl("TINYTOM_MODELS_DIR"),     TINY_STRINGIFY(TINYTOM_MODELS_DIR)},
+                {sl("TINYTOM_SEEDERS_DIR"),    TINY_STRINGIFY(TINYTOM_SEEDERS_DIR)},
             }},
     };
 }
