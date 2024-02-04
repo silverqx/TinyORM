@@ -30,7 +30,7 @@ namespace Orm
         static const char *build() noexcept;
         /*! Return true if this build of TinyORM was built with debugging enabled, or
             false if it was built in release mode. */
-        static bool isDebugBuild();
+        static bool isDebugBuild() noexcept;
 
         /*! Return the version of the TinyORM library. */
         static QVersionNumber version() noexcept Q_DECL_CONST_FUNCTION;

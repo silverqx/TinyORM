@@ -71,7 +71,7 @@ void AboutCommand::display(const QVector<SectionItem> &sections)
         displayDetail(sections);
 }
 
-void AboutCommand::displayDetail(const QVector<SectionItem> &sections)
+void AboutCommand::displayDetail(const QVector<SectionItem> &sections) const
 {
     auto firstSection = true;
 

@@ -46,7 +46,7 @@ const char *LibraryInfo::build() noexcept
     return TINYORM_BUILD_STR;
 }
 
-bool LibraryInfo::isDebugBuild()
+bool LibraryInfo::isDebugBuild() noexcept
 {
 #ifdef TINYORM_NO_DEBUG
     return false;
