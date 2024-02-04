@@ -34,7 +34,24 @@ namespace Orm
 
         /*! Return the version of the TinyORM library. */
         static QVersionNumber version() noexcept Q_DECL_CONST_FUNCTION;
+
+        /*! Gather all C preprocessor macros (used by tom about). */
+        inline static std::map<QString, QString> allCMacrosMap();
+        /*! Gather TinyOrm library C preprocessor macros. */
+        static std::map<QString, QString> ormCMacrosMap();
+        /*! Gather tom C preprocessor macros. */
+        static std::map<QString, QString> tomCMacrosMap();
     };
+
+    /* public */
+
+    std::map<QString, QString> LibraryInfo::allCMacrosMap()
+    {
+        auto result = ormCMacrosMap();
+        result.merge(tomCMacrosMap());
+
+        return result;
+    }
 
 } // namespace Orm
 

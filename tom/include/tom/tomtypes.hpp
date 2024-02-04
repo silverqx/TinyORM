@@ -7,6 +7,7 @@ TINY_SYSTEM_HEADER
 
 #include <QVector>
 
+#include <map>
 #include <memory>
 #include <optional>
 
@@ -53,22 +54,13 @@ namespace Tom
         bool withinTransaction = false;
     };
 
-    /*! About item type. */
-    struct AboutItem
-    {
-        /*! About item name. */
-        QString name;
-        /*! About item value. */
-        QString value;
-    };
-
     /*! Subsection item type. */
     struct SubSectionItem
     {
         /*! Subsection item name. */
         std::optional<QString> name;
-        /*! About items list. */
-        QVector<AboutItem> abouts;
+        /*! About items map. */
+        std::map<QString, QString> abouts;
     };
 
     /*! Section item type. */

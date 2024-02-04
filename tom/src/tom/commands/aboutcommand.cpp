@@ -6,6 +6,7 @@
 #include <range/v3/algorithm/contains.hpp>
 
 #include <orm/constants.hpp>
+#include <orm/libraryinfo.hpp>
 #include <orm/utils/string.hpp>
 #include <orm/utils/type.hpp>
 
@@ -21,6 +22,8 @@ TINYORM_BEGIN_COMMON_NAMESPACE
 
 using Orm::Constants::NOSPACE;
 using Orm::Constants::SPACE;
+
+using Orm::LibraryInfo;
 
 using StringUtils = Orm::Utils::String;
 using TypeUtils = Orm::Utils::Type;
@@ -215,13 +218,15 @@ QVector<SectionItem> AboutCommand::gatherAllAboutInformation() const
     };
 }
 
-/*! QString constant "ON". */
-Q_GLOBAL_STATIC_WITH_ARGS(const QString, ON, ("ON")) // NOLINT(misc-use-anonymous-namespace)
-/*! QString constant "OFF". */
-Q_GLOBAL_STATIC_WITH_ARGS(const QString, OFF, ("OFF")) // NOLINT(misc-use-anonymous-namespace)
+#ifdef TINYORM_MSVC_RUNTIME_DYNAMIC
+using Orm::Constants::OFF;
+using Orm::Constants::ON;
 
+#ifndef TINY_CMAKE_BOOL
 /*! Convert the CMake BOOL type value passed by the the C macro to the ON/OFF QString. */
-#define TINY_CMAKE_BOOL(value) TypeUtils::isCMakeTrue(TINY_STRINGIFY(value)) ? *ON : *OFF
+#  define TINY_CMAKE_BOOL(value) TypeUtils::isCMakeTrue(TINY_STRINGIFY(value)) ? ON : OFF
+#endif
+#endif // TINYORM_MSVC_RUNTIME_DYNAMIC
 
 QVector<SubSectionItem> AboutCommand::gatherEnvironmentInformation() const
 {
@@ -261,99 +266,7 @@ QVector<SubSectionItem> AboutCommand::gatherEnvironmentInformation() const
 QVector<SubSectionItem> AboutCommand::gatherMacrosInformation()
 {
     return {
-        {std::nullopt,
-            {
-#ifdef TINYORM_BUILDING_SHARED
-                {sl("TINYORM_BUILDING_SHARED"), *ON},
-#else
-                {sl("TINYORM_BUILDING_SHARED"), *OFF},
-#endif
-#ifdef TINYORM_DEBUG
-                {sl("TINYORM_DEBUG"), *ON},
-#else
-                {sl("TINYORM_DEBUG"), *OFF},
-#endif
-#ifdef TINYORM_DEBUG_SQL
-                {sl("TINYORM_DEBUG_SQL"), *ON},
-#else
-                {sl("TINYORM_DEBUG_SQL"), *OFF},
-#endif
-// Newline needed - QtCreator syntax highlighting bug
-#ifdef TINYORM_DISABLE_ORM
-                {sl("TINYORM_DISABLE_ORM"), *ON},
-#else
-                {sl("TINYORM_DISABLE_ORM"), *OFF},
-#endif
-#ifdef TINYORM_DISABLE_THREAD_LOCAL
-                {sl("TINYORM_DISABLE_THREAD_LOCAL"), *ON},
-#else
-                {sl("TINYORM_DISABLE_THREAD_LOCAL"), *OFF},
-#endif
-#ifdef TINYORM_DISABLE_TOM
-                {sl("TINYORM_DISABLE_TOM"), *ON},
-#else
-                {sl("TINYORM_DISABLE_TOM"), *OFF},
-#endif
-#ifdef TINYORM_EXTERN_CONSTANTS
-                {sl("TINYORM_EXTERN_CONSTANTS"), *ON},
-#else
-                {sl("TINYORM_EXTERN_CONSTANTS"), *OFF},
-#endif
-#ifdef TINYORM_INLINE_CONSTANTS
-                {sl("TINYORM_INLINE_CONSTANTS"), *ON},
-#else
-                {sl("TINYORM_INLINE_CONSTANTS"), *OFF},
-#endif
-#ifdef TINYORM_MYSQL_PING
-                {sl("TINYORM_MYSQL_PING"), *ON},
-#else
-                {sl("TINYORM_MYSQL_PING"), *OFF},
-#endif
-// Newline needed - QtCreator syntax highlighting bug
-#ifdef TINYORM_NO_DEBUG
-                {sl("TINYORM_NO_DEBUG"), *ON},
-#else
-                {sl("TINYORM_NO_DEBUG"), *OFF},
-#endif
-#ifdef TINYORM_NO_DEBUG_SQL
-                {sl("TINYORM_NO_DEBUG_SQL"), *ON},
-#else
-                {sl("TINYORM_NO_DEBUG_SQL"), *OFF},
-#endif
-// CMake ON/OFF
-#ifdef TINYORM_STRICT_MODE
-                {sl("TINYORM_STRICT_MODE"), TINY_CMAKE_BOOL(TINYORM_STRICT_MODE)},
-#endif
-// Newline needed - QtCreator syntax highlighting bug
-#ifdef TINYORM_TESTS_CODE
-                {sl("TINYORM_TESTS_CODE"), *ON},
-#else
-                {sl("TINYORM_TESTS_CODE"), *OFF},
-#endif
-#ifdef TINYORM_TOM_EXAMPLE
-                {sl("TINYORM_TOM_EXAMPLE"), *ON},
-#else
-                {sl("TINYORM_TOM_EXAMPLE"), *OFF},
-#endif
-#ifdef TINYORM_USING_PCH
-                {sl("TINYORM_USING_PCH"), *ON},
-#else
-                {sl("TINYORM_USING_PCH"), *OFF},
-#endif
-// CMake ON/OFF
-#ifdef TINYORM_MSVC_RUNTIME_DYNAMIC
-                {sl("TINYORM_MSVC_RUNTIME_DYNAMIC"),
-                            TINY_CMAKE_BOOL(TINYORM_MSVC_RUNTIME_DYNAMIC)},
-#endif
-// Newline needed - QtCreator syntax highlighting bug
-#ifdef TINYTOM_CMAKE_MSVC_RUNTIME_LIBRARY
-                {sl("TINYTOM_CMAKE_MSVC_RUNTIME_LIBRARY"),
-                            TINY_STRINGIFY(TINYTOM_CMAKE_MSVC_RUNTIME_LIBRARY)},
-#endif
-                {sl("TINYTOM_MIGRATIONS_DIR"), TINY_STRINGIFY(TINYTOM_MIGRATIONS_DIR)},
-                {sl("TINYTOM_MODELS_DIR"),     TINY_STRINGIFY(TINYTOM_MODELS_DIR)},
-                {sl("TINYTOM_SEEDERS_DIR"),    TINY_STRINGIFY(TINYTOM_SEEDERS_DIR)},
-            }},
+        {std::nullopt, LibraryInfo::allCMacrosMap()},
     };
 }
 
@@ -364,7 +277,7 @@ QVector<SubSectionItem> AboutCommand::gatherVersionsInformation()
 #if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
                           // std::nullopt produces -Wmaybe-uninitialized in GCC release builds
     versions.emplaceFront(std::optional<QString> {std::nullopt},
-                          QVector<AboutItem> {
+                          std::map<QString, QString> {
                               {QStringLiteral("tom"), TINYTOM_VERSION_STR},
                           });
 #else
