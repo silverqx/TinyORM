@@ -45,7 +45,7 @@ namespace Commands
     protected:
         /*! Display the application information. */
         void display(const QVector<SectionItem> &sections);
-        /*! Display the application information as a detail view. */
+        /*! Display the application information as a detailed view. */
         void displayDetail(const QVector<SectionItem> &sections) const;
         /*! Display the application information as JSON. */
         void displayJson(const QVector<SectionItem> &sections);
