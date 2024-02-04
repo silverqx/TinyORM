@@ -2,7 +2,7 @@
 #ifndef ORM_DRIVERS_SQLRESULT_P_HPP
 #define ORM_DRIVERS_SQLRESULT_P_HPP
 
-#include <QList>
+#include <QVariant>
 
 #include "orm/drivers/driverstypes.hpp"
 #include "orm/drivers/sqlerror.hpp"
