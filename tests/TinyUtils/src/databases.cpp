@@ -228,7 +228,7 @@ std::optional<QString>
 Databases::createConnectionTempFrom(const QString &fromConfiguration,
                                     const ConnectionNameParts &connectionParts)
 {
-    const auto configuration = Databases::configuration(fromConfiguration, false);
+    const auto configuration = Databases::configurationForTemp(fromConfiguration, false);
 
     // Nothing to do, no configuration exists
     if (!configuration)
@@ -248,7 +248,8 @@ Databases::createConnectionTempFrom(
         std::unordered_map<QString, QVariant> &&optionsToUpdate,
         const std::vector<QString> &optionsToRemove)
 {
-    const auto configurationOriginal = Databases::configuration(fromConfiguration, false);
+    const auto
+    configurationOriginal = Databases::configurationForTemp(fromConfiguration, false);
 
     // Nothing to do, no configuration exists
     if (!configurationOriginal)
@@ -296,7 +297,7 @@ std::optional<QString>
 Databases::createDriversConnectionTempFrom(
         const QString &fromConfiguration, const ConnectionNameParts &connectionParts)
 {
-    const auto configuration = Databases::configuration(fromConfiguration, true);
+    const auto configuration = Databases::configurationForTemp(fromConfiguration, true);
 
     // Nothing to do, no configuration exists
     if (!configuration)
@@ -312,12 +313,22 @@ Databases::createDriversConnectionTempFrom(
 #endif
 
 std::optional<std::reference_wrapper<const QVariantHash>>
-Databases::configuration(const QString &connection, const bool forTinyDrivers)
+Databases::configurationForTemp(const QString &connection, const bool forTinyDrivers)
 {
+    // Never call this method from createConnection/s() or createDriversConnection/s()
+
+    // Connection already exists
     if (hasConfiguration(connection))
         return m_configurations.at(connection);
 
-    return createConfigurationsHash({connection}, forTinyDrivers).at(connection);
+    // The XyzConnectionTemp() methods are allowed to create new configurations
+    createConfigurationsHash({connection}, forTinyDrivers);
+
+    // Nothing to do, creating the configuration failed
+    if (!hasConfiguration(connection))
+        return std::nullopt;
+
+    return std::as_const(m_configurations).at(connection);
 }
 
 bool Databases::hasConfiguration(const QString &connection)

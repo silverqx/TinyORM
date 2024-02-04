@@ -129,9 +129,9 @@ namespace TestUtils
                                         const ConnectionNameParts &connectionParts);
 #endif
 
-        /*! Get a configuration for the given connection. */
+        /*! Get a configuration for the given connection for XyzConnectionTemp methods. */
         static std::optional<std::reference_wrapper<const QVariantHash>>
-        configuration(const QString &connection, bool forTinyDrivers);
+        configurationForTemp(const QString &connection, bool forTinyDrivers);
 
         /*! Determine whether a configuration for the given connection was defined. */
         static bool hasConfiguration(const QString &connection);
