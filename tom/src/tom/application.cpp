@@ -237,7 +237,7 @@ void Application::logException(const std::exception &e, const bool noAnsi)
     qCritical().nospace().noquote() << tmpl.arg(io.errorWallInternal(message));
 }
 
-QStringList Application::arguments() const
+QStringList Application::arguments() const // NOLINT(readability-convert-member-functions-to-static)
 {
 #ifdef TINYTOM_TESTS_CODE
     /* Never obtain arguments from the QCoreApplication instance in unit tests because
