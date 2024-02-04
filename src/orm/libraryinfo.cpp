@@ -20,14 +20,15 @@
 
 // static/shared
 #ifdef TINYORM_BUILDING_SHARED
-#  define SHARED_STRING " shared"
+#  define TINYORM_LINKING_STRING " shared"
 #else
-#  define SHARED_STRING " static"
+#  define TINYORM_LINKING_STRING " static"
 #endif
 
-// Full build type string
-#define TINYORM_BUILD_STR "TinyORM " TINYORM_VERSION_STR " (" ARCH_FULL SHARED_STRING \
-                          DEBUG_STRING " build; by " TINYORM_COMPILER_STRING ")"
+// Full build type string for TinyOrm
+#define TINYORM_BUILD_STR                                                   \
+    "TinyORM " TINYORM_VERSION_STR " (" ARCH_FULL TINYORM_LINKING_STRING    \
+    DEBUG_STRING " build; by " TINYORM_COMPILER_STRING ")"
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
