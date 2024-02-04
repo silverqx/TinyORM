@@ -102,6 +102,7 @@ headersList += \
     $$PWD/orm/sqliteconnection.hpp \
     $$PWD/orm/support/databaseconfiguration.hpp \
     $$PWD/orm/support/databaseconnectionsmap.hpp \
+    $$PWD/orm/types/aboutvalue.hpp \
     $$PWD/orm/types/log.hpp \
     $$PWD/orm/types/sqlquery.hpp \
     $$PWD/orm/types/statementscounter.hpp \

@@ -5,13 +5,11 @@
 #include <orm/macros/systemheader.hpp>
 TINY_SYSTEM_HEADER
 
-#include <QVector>
-
 #include <map>
 #include <memory>
-#include <optional>
+#include <variant>
 
-#include <orm/macros/commonnamespace.hpp>
+#include <orm/types/aboutvalue.hpp>
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
@@ -54,13 +52,16 @@ namespace Tom
         bool withinTransaction = false;
     };
 
+    /*! Alias for the AboutValue. */
+    using Orm::Types::AboutValue;
+
     /*! Subsection item type. */
     struct SubSectionItem
     {
         /*! Subsection item name. */
         std::optional<QString> name;
         /*! About items map. */
-        std::map<QString, QString> abouts;
+        std::variant<std::map<QString, QString>, std::map<QString, AboutValue>> abouts;
     };
 
     /*! Section item type. */

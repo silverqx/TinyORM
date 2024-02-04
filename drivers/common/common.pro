@@ -131,6 +131,12 @@ win32-msvc:CONFIG(debug, debug|release) {
 load(tiny_system_includepath)
 tiny_add_system_includepath($$quote($$TINYORM_SOURCE_TREE/include/))
 
+# This path is already added on the INCLUDEPATH in the mysql/include/include.pri file
+# for shared and static builds
+build_loadable_drivers: \
+$$isBuildingMySqlDriver: \
+    tiny_add_system_includepath($$quote($$TINYORM_SOURCE_TREE/drivers/mysql/include/))
+
 # Auto-configuration
 # ---
 
