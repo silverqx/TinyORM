@@ -59,6 +59,10 @@ namespace Orm::Constants
     inline const QString pivot_       = QStringLiteral("pivot");
     inline const QString HASH_        = QStringLiteral("hash");
     inline const QString Progress     = QStringLiteral("progress");
+    inline const QString ON           = QStringLiteral("ON");
+    inline const QString OFF          = QStringLiteral("OFF");
+    inline const QString on           = QStringLiteral("on");
+    inline const QString off          = QStringLiteral("off");
 
     // Templates
     inline const QString TMPL_ONE     = QStringLiteral("%1");

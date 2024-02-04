@@ -11,6 +11,8 @@
 TINYORM_BEGIN_COMMON_NAMESPACE
 
 using Orm::Constants::NAME;
+using Orm::Constants::OFF;
+using Orm::Constants::ON;
 using Orm::Constants::check_database_exists;
 using Orm::Constants::database_;
 using Orm::Constants::foreign_key_constraints;
@@ -73,8 +75,7 @@ void SQLiteConnector::configureForeignKeyConstraints(const QSqlDatabase &connect
         return;
 
     const auto foreignKeyConstraints = TypeUtils::isTrue(config[foreign_key_constraints])
-                                       ? QStringLiteral("ON")
-                                       : QStringLiteral("OFF");
+                                       ? ON : OFF;
 
     QSqlQuery query(connection);
     // FEATURE schema builder, use DatabaseConnection::statement(), to set recordsHaveBeenModied to true, foreign key constraints silverqx

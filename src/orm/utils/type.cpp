@@ -17,6 +17,7 @@ TINYORM_BEGIN_COMMON_NAMESPACE
 using Orm::Constants::ASTERISK_C;
 using Orm::Constants::LT_C;
 using Orm::Constants::SPACE;
+using Orm::Constants::off;
 
 #if !defined(_MSC_VER)
 using Orm::Exceptions::RuntimeError;
@@ -70,7 +71,7 @@ bool Type::isTrue(const QString &value)
            value != QLatin1Char('0') &&
            value.compare(QStringLiteral("false"), Qt::CaseInsensitive) != 0 &&
            // QVariant::value<bool>() doesn't check conditions below
-           value.compare(QStringLiteral("off"), Qt::CaseInsensitive) != 0;
+           value.compare(off, Qt::CaseInsensitive) != 0;
 }
 
 bool Type::isTrue(const QVariant &value)
@@ -85,7 +86,7 @@ bool Type::isCMakeTrue(const QString &value)
        a number is more complicated. */
     return !value.isEmpty() &&
            value != QLatin1Char('0') &&
-           value.compare(QStringLiteral("off"),         Qt::CaseInsensitive) != 0 &&
+           value.compare(off,                           Qt::CaseInsensitive) != 0 &&
            value.compare(QStringLiteral("no"),          Qt::CaseInsensitive) != 0 &&
            value.compare(QStringLiteral("n"),           Qt::CaseInsensitive) != 0 &&
            value.compare(QStringLiteral("false"),       Qt::CaseInsensitive) != 0 &&
