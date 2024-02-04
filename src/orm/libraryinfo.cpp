@@ -18,7 +18,7 @@
 #  define DEBUG_STRING " debug"
 #endif
 
-// static/shared
+// Linking type for TinyOrm (static/shared)
 #ifdef TINYORM_BUILDING_SHARED
 #  define TINYORM_LINKING_STRING " shared"
 #else
