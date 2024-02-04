@@ -10,7 +10,7 @@ TINY_SYSTEM_HEADER
 
 #ifndef TINY_STRINGIFY
 // NOLINTNEXTLINE(bugprone-reserved-identifier)
-#  define TINY__STRINGIFY(x) #x
+#  define TINY__STRINGIFY(x) #x // clazy:exclude=ifndef-define-typo
 #  define TINY_STRINGIFY(x) TINY__STRINGIFY(x)
 #endif
 
