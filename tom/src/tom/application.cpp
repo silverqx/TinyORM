@@ -14,6 +14,14 @@
 #  include <tabulate/tabulate.hpp>
 #endif
 
+#ifdef TINYORM_USING_TINYDRIVERS
+#  include <orm/drivers/libraryinfo.hpp>
+#  include <orm/drivers/version.hpp>
+#endif
+#ifdef TINYDRIVERS_MYSQL_DRIVER
+#  include <orm/drivers/mysql/version.hpp>
+#endif
+
 #include <orm/databasemanager.hpp>
 #include <orm/libraryinfo.hpp>
 #include <orm/macros/compilerdetect.hpp>
@@ -58,9 +66,18 @@ TINYORM_BEGIN_COMMON_NAMESPACE
 
 using fspath = std::filesystem::path;
 
+#ifdef TINYORM_USING_TINYDRIVERS
+using DriversLibraryInfo = Orm::Drivers::LibraryInfo;
+#endif
+
+using Orm::Constants::COMMA;
 using Orm::Constants::EMPTY;
+#ifdef TINYDRIVERS_MYSQL_DRIVER
+using Orm::Constants::MYSQL_;
+#endif
 using Orm::Constants::NEWLINE;
 using Orm::Constants::NOSPACE;
+using Orm::Constants::PARENTH_ONE;
 using Orm::Constants::SPACE;
 using Orm::Constants::TMPL_ONE;
 using Orm::Constants::Version;
@@ -451,12 +468,49 @@ void Application::printFullVersions() const
             comment(*subsectionName);
         }
 
-        for (const auto &[name, value] : abouts) {
+        /*! Alias for the std::map<QString, AboutValue>. */
+        using AboutItemsType = std::map<QString, AboutValue>;
+        // Must always hold the std::map with the AboutValue mapped_type
+        Q_ASSERT(std::holds_alternative<AboutItemsType>(abouts));
+
+        for (const auto &[name, about] : std::get<AboutItemsType>(abouts)) {
             note(NOSPACE.arg(name).arg(SPACE), false);
-            info(value);
+            info(about.value, false);
+
+            // Item components
+            if (const auto &components = about.components; components)
+               muted(SPACE + PARENTH_ONE.arg(components->join(COMMA)), false);
+
+            newLine();
         }
     }
 }
+
+namespace
+{
+#ifdef TINYORM_USING_TINYDRIVERS
+    /*! Get TinyDrivers components for the tom --version and tom about commands. */
+    inline QStringList getDriversComponents()
+    {
+        return {
+#ifdef TINYDRIVERS_MYSQL_DRIVER
+            MYSQL_,
+#endif
+        };
+    }
+#endif // TINYORM_USING_TINYDRIVERS
+
+    /*! Get Qt components for the tom --version and tom about commands. */
+    inline QStringList getQtComponents()
+    {
+        return {
+            sl("Core"),
+#ifdef TINYORM_USING_QTSQLDRIVERS
+            sl("Sql"),
+#endif
+        };
+    }
+} // namespace
 
 QVector<SubSectionItem> Application::createVersionsSubsection()
 {
@@ -465,38 +519,58 @@ QVector<SubSectionItem> Application::createVersionsSubsection()
 
     return {
         {sl("Dependencies"),
-            {
-                {sl("TinyORM"),  TINYORM_VERSION_STR},
-                {sl("Qt"),       QT_VERSION_STR},
-                {sl("range-v3"), QStringLiteral("%1.%2.%3").arg(RANGE_V3_MAJOR)
-                                                           .arg(RANGE_V3_MINOR)
-                                                           .arg(RANGE_V3_PATCHLEVEL)},
+            std::map<QString, AboutValue> {
+                {sl("TinyORM"),     TINYORM_VERSION_STR},
+#ifdef TINYORM_USING_TINYDRIVERS
+                {sl("TinyDrivers"), {TINYDRIVERS_VERSION_STR, getDriversComponents()}},
+#endif
+#ifdef TINYDRIVERS_MYSQL_DRIVER
+                {sl("TinyMySql"),   TINYMYSQL_VERSION_STR},
+#endif
+                {sl("Qt"),          {QT_VERSION_STR, getQtComponents()}},
+                {sl("range-v3"),    sl("%1.%2.%3").arg(RANGE_V3_MAJOR)
+                                                  .arg(RANGE_V3_MINOR)
+                                                  .arg(RANGE_V3_PATCHLEVEL)},
 #if __has_include(<tabulate/tabulate.hpp>) && defined(TABULATE_VERSION_MAJOR) && \
     defined(TABULATE_VERSION_MINOR) && defined(TABULATE_VERSION_PATCH)
-                {sl("tabulate"), QStringLiteral("%1.%2.%3").arg(TABULATE_VERSION_MAJOR)
-                                                           .arg(TABULATE_VERSION_MINOR)
-                                                           .arg(TABULATE_VERSION_PATCH)},
+                {sl("tabulate"),    sl("%1.%2.%3").arg(TABULATE_VERSION_MAJOR)
+                                                  .arg(TABULATE_VERSION_MINOR)
+                                                  .arg(TABULATE_VERSION_PATCH)},
 #else
-                {sl("tabulate"), QStringLiteral(
-                                     "<=1.3 (doesn't has <tabulate/tabulate.hpp>)")}}},
+                {sl("tabulate"),    sl("<=1.3 (doesn't has <tabulate/tabulate.hpp>)")}}},
 #endif
             }},
         {sl("Build types"),
-            {
+            std::map<QString, AboutValue> {
 #ifdef TINYTOM_DEBUG
                 {sl("tom build type"), Debug_},
 #else
                 {sl("tom build type"), Release_},
 #endif
-                {sl("TinyORM build type"),      LibraryInfo::isDebugBuild() ? Debug_
-                                                                            : Release_},
-                {sl("TinyORM full build type"), LibraryInfo::build()},
-                {sl("Qt build type"),           QLibraryInfo::isDebugBuild() ? Debug_
-                                                                             : Release_},
-                {sl("Qt full build type"),      QLibraryInfo::build()},
+                {sl("TinyORM build type"),          LibraryInfo::isDebugBuild()
+                                                    ? Debug_ : Release_},
+                {sl("TinyORM full build type"),     LibraryInfo::build()},
+#ifdef TINYORM_USING_TINYDRIVERS
+                {sl("TinyDrivers build type"),      DriversLibraryInfo::isDebugBuild()
+                                                    ? Debug_ : Release_},
+                {sl("TinyDrivers full build type"), DriversLibraryInfo::build()},
+#endif
+                /* I have dropped the MySqlLibraryInfo because the TinyDrivers library has
+                   all information about TinyMySql/... drivers and it would be problematic
+                   to call these static methods if the driver is built as the loadable
+                   module. I would need to store a handle to this loadable library and
+                   then resolve those symbols and it would be practically for nothing. */
+#ifdef TINYDRIVERS_MYSQL_DRIVER
+                {sl("TinyMySql build type"),        DriversLibraryInfo::isDebugBuild()
+                                                    ? Debug_ : Release_},
+                {sl("TinyMySql full build type"),   DriversLibraryInfo::mysqlBuild()},
+#endif
+                {sl("Qt build type"),               QLibraryInfo::isDebugBuild()
+                                                    ? Debug_ : Release_},
+                {sl("Qt full build type"),          QLibraryInfo::build()},
             }},
         {sl("Compiler"),
-            {
+            std::map<QString, AboutValue> {
                 {sl("Compiler version"), TINYORM_COMPILER_STRING},
 #ifdef TINYORM_SIMULATED_STRING
                 {sl("Simulated compiler version"), TINYORM_SIMULATED_STRING},

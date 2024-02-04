@@ -103,16 +103,15 @@ target_include_directories(${TinyDrivers_target}
 )
 
 if(BUILD_MYSQL_DRIVER)
-    if(TINY_BUILD_LOADABLE_DRIVERS)
-        # PUBLIC to be able to find the version.hpp
-        target_include_directories(${TinyDrivers_target}
-            PUBLIC
-                "$<BUILD_INTERFACE:${${TinyOrm_ns}_SOURCE_DIR}/drivers/mysql/include>"
-        )
-    else()
+    # PUBLIC to be able to find the version.hpp and mysqllibraryinfo.hpp
+    target_include_directories(${TinyDrivers_target}
+        PUBLIC
+            "$<BUILD_INTERFACE:${${TinyOrm_ns}_SOURCE_DIR}/drivers/mysql/include>"
+    )
+
+    if(TINY_BUILD_SHARED_DRIVERS OR TINY_BUILD_STATIC_DRIVERS)
         target_include_directories(${TinyDrivers_target}
             PRIVATE
-                "$<BUILD_INTERFACE:${${TinyOrm_ns}_SOURCE_DIR}/drivers/mysql/include>"
                 "$<BUILD_INTERFACE:${${TinyOrm_ns}_SOURCE_DIR}/drivers/mysql/include_private>"
         )
     endif()

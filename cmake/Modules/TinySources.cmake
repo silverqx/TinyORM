@@ -31,6 +31,7 @@ function(tinydrivers_sources out_headers_private out_headers out_sources)
         exceptions/invalidargumenterror.hpp
         exceptions/logicerror.hpp
         exceptions/runtimeerror.hpp
+        libraryinfo.hpp
         macros/export.hpp
         sqldatabase.hpp
         sqldatabasemanager.hpp
@@ -54,6 +55,7 @@ function(tinydrivers_sources out_headers_private out_headers out_sources)
     list(APPEND sources
         exceptions/logicerror.cpp
         exceptions/runtimeerror.cpp
+        libraryinfo.cpp
         sqldatabase.cpp
         sqldatabase_p.cpp
         sqldatabasemanager.cpp
@@ -260,6 +262,7 @@ function(tinyorm_sources out_headers out_sources)
         sqliteconnection.hpp
         support/databaseconfiguration.hpp
         support/databaseconnectionsmap.hpp
+        types/aboutvalue.hpp
         types/log.hpp
         types/sqlquery.hpp
         types/statementscounter.hpp

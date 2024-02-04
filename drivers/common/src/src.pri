@@ -6,6 +6,7 @@ extern_constants: \
 sourcesList += \
     $$PWD/orm/drivers/exceptions/logicerror.cpp \
     $$PWD/orm/drivers/exceptions/runtimeerror.cpp \
+    $$PWD/orm/drivers/libraryinfo.cpp \
     $$PWD/orm/drivers/sqldatabase.cpp \
     $$PWD/orm/drivers/sqldatabase_p.cpp \
     $$PWD/orm/drivers/sqldatabasemanager.cpp \

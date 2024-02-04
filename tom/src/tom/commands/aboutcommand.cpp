@@ -5,6 +5,10 @@
 
 #include <range/v3/algorithm/contains.hpp>
 
+#ifdef TINYORM_USING_TINYDRIVERS
+#  include <orm/drivers/libraryinfo.hpp>
+#endif
+
 #include <orm/constants.hpp>
 #include <orm/db.hpp>
 #include <orm/libraryinfo.hpp>
@@ -21,7 +25,13 @@
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
+#ifdef TINYORM_USING_TINYDRIVERS
+using DriversLibraryInfo = Orm::Drivers::LibraryInfo;
+#endif
+
+using Orm::Constants::COMMA;
 using Orm::Constants::NOSPACE;
+using Orm::Constants::PARENTH_ONE;
 using Orm::Constants::SPACE;
 
 using Orm::DB;
@@ -106,10 +116,14 @@ void AboutCommand::displayDetail(const QVector<SectionItem> &sections) const
                 comment(*subsectionName);
 
             // Print about items
-            for (const auto &[name, value] : abouts) {
-                note(NOSPACE.arg(name).arg(SPACE), false);
-                info(value);
-            }
+            if (std::holds_alternative<std::map<QString, QString>>(abouts))
+                printAboutItemsDetail(std::get<std::map<QString, QString>>(abouts));
+
+            else if (std::holds_alternative<std::map<QString, AboutValue>>(abouts))
+                printAboutItemsDetail(std::get<std::map<QString, AboutValue>>(abouts));
+
+            else
+                Q_UNREACHABLE();
         }
     }
 }
@@ -134,17 +148,17 @@ void AboutCommand::displayJson(const QVector<SectionItem> &sections)
             QJsonObject jsonAboutItems;
 
             // Serialize about items
-            for (const auto &[name, value] : abouts)
-                /* Subsection name is optional, if it's not defined then append directly
-                   to the parent jsonSubsections. */
-                if (subsectionName)
-                    jsonAboutItems.insert(StringUtils::snake(name.toLower()),
-                                          QJsonValue(value));
-                else
-                    // Don't use snake_case for preprocessor macro names
-                    jsonSubsections.insert(
-                                prepareJsonAboutItemName(sectionNamePrepared, name),
-                                QJsonValue(value));
+            if (std::holds_alternative<std::map<QString, QString>>(abouts))
+                prepareAboutItemsJson(jsonSubsections, jsonAboutItems,
+                                      std::get<std::map<QString, QString>>(abouts),
+                                      subsectionName, sectionNamePrepared);
+
+            else if (std::holds_alternative<std::map<QString, AboutValue>>(abouts))
+                prepareAboutItemsJson(jsonSubsections, jsonAboutItems,
+                                      std::get<std::map<QString, AboutValue>>(abouts),
+                                      subsectionName, sectionNamePrepared);
+            else
+                Q_UNREACHABLE();
 
             /* Nothing to do, subsection name is the std::nullopt so the jsonAboutItems
                were directly appended to the parent jsonSubsections. */
@@ -211,6 +225,70 @@ QString AboutCommand::prepareJsonAboutItemName(const QString &section,
                                    : StringUtils::snake(aboutItem.toLower());
 }
 
+void
+AboutCommand::printAboutItemsDetail(const std::map<QString, QString> &aboutItems) const
+{
+    for (const auto &[name, value] : aboutItems)
+        printAboutItemDetail(name, value, true);
+}
+
+void
+AboutCommand::printAboutItemsDetail(const std::map<QString, AboutValue> &aboutItems) const
+{
+    for (const auto &[name, about] : aboutItems) {
+        printAboutItemDetail(name, about.value, false);
+
+        // Item components
+        if (const auto &components = about.components; components)
+           muted(SPACE + PARENTH_ONE.arg(components->join(COMMA)), false);
+
+        newLine();
+    }
+}
+
+/* I won't serialize the Dependencies components into the JSON output because that
+   would add unnecessary complexity to the consumers' parsing code.
+   Currently the output looks like:
+"dependencies": {"qt": "6.6.1", "range-v3": "0.12.0", "tinydrivers": "0.1.0"}
+
+   With the Dependencies' components it would look like:
+"dependencies": {
+    "qt": {
+        "version": "6.6.1",
+        "components": ["Core"]
+    },
+    "range-v3": "0.12.0",
+    "tinydrivers": : {
+        "version": "6.6.1",
+        "components": ["MySQL"]
+    }
+}
+*/
+
+void AboutCommand::prepareAboutItemsJson(
+        QJsonObject &jsonSubsections, QJsonObject &jsonAboutItems,
+        const std::map<QString, QString> &aboutItems,
+        const std::optional<QString> &subsectionName,
+        const QString &sectionNamePrepared)
+{
+    for (const auto &[name, value] : aboutItems)
+        prepareAboutItemJson(jsonSubsections, jsonAboutItems, name, value,
+                             subsectionName, sectionNamePrepared);
+}
+
+void AboutCommand::prepareAboutItemsJson(
+        QJsonObject &jsonSubsections, QJsonObject &jsonAboutItems,
+        const std::map<QString, AboutValue> &aboutItems,
+        const std::optional<QString> &subsectionName,
+        const QString &sectionNamePrepared)
+{
+    for (const auto &[name, about] : aboutItems)
+        prepareAboutItemJson(jsonSubsections, jsonAboutItems, name, about.value,
+                             subsectionName, sectionNamePrepared);
+}
+
+/* Gathering */
+
 QVector<SectionItem> AboutCommand::gatherAllAboutInformation() const
 {
     return {
@@ -235,7 +313,7 @@ QVector<SubSectionItem> AboutCommand::gatherEnvironmentInformation() const
 {
     return {
         {std::nullopt,
-            {
+            std::map<QString, QString> {
                 {sl("Application name"),    QCoreApplication::applicationName()},
                 {sl("Organization name"),   QCoreApplication::organizationName()},
                 {sl("Organization domain"), QCoreApplication::organizationDomain()},
@@ -268,8 +346,13 @@ QVector<SubSectionItem> AboutCommand::gatherEnvironmentInformation() const
 
 QVector<SubSectionItem> AboutCommand::gatherMacrosInformation()
 {
+    auto allCMacrosMap = LibraryInfo::allCMacrosMap();
+#ifdef TINYORM_USING_TINYDRIVERS
+    allCMacrosMap.merge(DriversLibraryInfo::allCMacrosMap());
+#endif
+
     return {
-        {std::nullopt, LibraryInfo::allCMacrosMap()},
+        {std::nullopt, std::move(allCMacrosMap)},
     };
 }
 
@@ -295,10 +378,40 @@ QVector<SubSectionItem> AboutCommand::gatherVersionsInformation()
 QVector<SubSectionItem> AboutCommand::gatherConnectionsInformation()
 {
     return {
-        {std::nullopt, {{sl("Available drivers"),   DB::supportedDrivers().join(SPACE)},
-                        {sl("Connection names"),    DB::connectionNames().join(SPACE)},
-                        {sl("Default connection"),  DB::getDefaultConnection()}}},
+        {std::nullopt,
+            std::map<QString, QString> {
+                {sl("Available drivers"),   DB::supportedDrivers().join(SPACE)},
+                {sl("Connection names"),    DB::connectionNames().join(SPACE)},
+                {sl("Default connection"),  DB::getDefaultConnection()},
+            }},
     };
+}
+
+/* private */
+
+void AboutCommand::printAboutItemDetail(
+        const QString &aboutName, const QString &aboutValue, const bool newline) const
+{
+    note(NOSPACE.arg(aboutName).arg(SPACE), false);
+    info(aboutValue, newline);
+}
+
+void AboutCommand::prepareAboutItemJson(
+        QJsonObject &jsonSubsections, QJsonObject &jsonAboutItems,
+        const QString &aboutName, const QString &aboutValue,
+        const std::optional<QString> &subsectionName,
+        const QString &sectionNamePrepared)
+{
+    /* Subsection name is optional, if it's not defined then append directly
+       to the parent jsonSubsections. */
+    if (subsectionName)
+        jsonAboutItems.insert(StringUtils::snake(aboutName.toLower()),
+                              QJsonValue(aboutValue));
+    else
+        jsonSubsections.insert(
+                    // Don't use snake_case for preprocessor macro names
+                    prepareJsonAboutItemName(sectionNamePrepared, aboutName),
+                    QJsonValue(aboutValue));
 }
 
 } // namespace Tom::Commands
