@@ -362,7 +362,7 @@ QVariant MySqlResult::data(const size_type index)
     const auto idx = static_cast<MySqlResultPrivate::ResultFieldsSizeType>(index);
 
     // Throw an exception if an index for result fields vector is out of bounds
-    throwIfBadResultFieldsIndex(idx);
+    d->throwIfBadResultFieldsIndex(idx);
 
     if (d->preparedQuery)
         return d->getValueForPrepared(idx);
@@ -378,7 +378,7 @@ bool MySqlResult::isNull(const size_type index)
 
     // CUR drivers test isNull() out of bounds if no metadata silverqx
     // Throw an exception if an index for result fields vector is out of bounds
-    throwIfBadResultFieldsIndex(idx);
+    d->throwIfBadResultFieldsIndex(idx);
 
    /* MyField::isNull is populated for prepared statements only.
       The row/result set/data must be fetched first to obtain the correct result. ❗ */
@@ -615,24 +615,6 @@ void MySqlResult::mysqlStmtClose()
         qWarning("MySqlResult::mysqlStmtClose: unable to free statement handle");
 
     d->stmt = nullptr;
-}
-
-/* Others */
-
-void MySqlResult::throwIfBadResultFieldsIndex(const std::size_t index) const
-{
-    Q_D(const MySqlResult);
-
-    const auto fieldsCount = d->resultFields.size();
-
-    // Nothing to do
-        // Index is always higher than 0
-    if (/*index >= 0 || */index < fieldsCount)
-        return;
-
-    throw std::runtime_error(
-                u"Field index '%1' is out of bounds, the index must be between 0-%2"_s
-                .arg(index).arg(fieldsCount - 1).toUtf8().constData());
 }
 
 } // namespace Orm::Drivers::MySql

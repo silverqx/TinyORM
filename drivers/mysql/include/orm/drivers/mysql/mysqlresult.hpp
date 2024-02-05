@@ -92,10 +92,6 @@ namespace Orm::Drivers::MySql
         void mysqlFreeMultiResultsForDtor() noexcept;
         /*! Close the prepared statement and deallocate the statement handler. */
         void mysqlStmtClose();
-
-        /* Others */
-        /*! Throw an exception if an index for result fields vector is out of bounds. */
-        void throwIfBadResultFieldsIndex(std::size_t index) const;
     };
 
 } // namespace Orm::Drivers::MySql
