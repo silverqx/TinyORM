@@ -455,11 +455,14 @@ void MySqlResultPrivate::reserveVectorsForBindings(
 
 bool MySqlResultPrivate::isBlobType(const enum_field_types fieldType) noexcept
 {
-    return fieldType == MYSQL_TYPE_TINY_BLOB   ||
-           fieldType == MYSQL_TYPE_BLOB        ||
+    return fieldType == MYSQL_TYPE_BLOB        ||
            fieldType == MYSQL_TYPE_MEDIUM_BLOB ||
-           fieldType == MYSQL_TYPE_LONG_BLOB   ||
-           fieldType == MYSQL_TYPE_JSON;
+           fieldType == MYSQL_TYPE_TINY_BLOB   ||
+// MYSQL_TYPE_JSON was added in MySQL 5.7.8
+#if defined(MYSQL_VERSION_ID) && MYSQL_VERSION_ID >= 50708
+           fieldType == MYSQL_TYPE_JSON        ||
+#endif
+           fieldType == MYSQL_TYPE_LONG_BLOB;
 }
 
 MYSQL_TIME
