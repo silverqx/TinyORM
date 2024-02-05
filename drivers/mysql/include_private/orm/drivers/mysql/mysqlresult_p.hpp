@@ -16,11 +16,14 @@
    Instead of using the input/in vs output/out words I'm using prepared vs result words
    where possible to avoid confusion. */
 
-// CUR drivers extract common MySQL types to own file silverqx
-// CUR drivers revisit all this types, fix comments silverqx
-/* MySQL above version 8 removed my_bool typedef while MariaDB kept it,
-   by redefining it we can regain source compatibility. */
+/* MySQL >=8.0.1 removed my_bool typedef while MariaDB kept it, so it's still needed to
+   define it for MariaDB because my_bool == char and compilation fails with the bool type.
+   See https://bugs.mysql.com/bug.php?id=85131 */
+#if defined(MARIADB_VERSION_ID) || MYSQL_VERSION_ID < 80001
 using my_bool = decltype (mysql_stmt_bind_result(nullptr, nullptr));
+#else
+using my_bool = bool;
+#endif
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
