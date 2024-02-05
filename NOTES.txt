@@ -2573,7 +2573,7 @@ qmake confusions:
      - loads the feature file (.prf) specified by feature, unless the feature has already been loaded
      - if the CONFIG contains the feature name it will be loaded after the current project is
        processed
-     - the feature will be loaded for every subproject
+     - the feature will be loaded for every sub-project
      - the load() function can also be in scope checks (returns true/false) but it doesn't make
        sense because it also throws an error
 
@@ -2591,11 +2591,11 @@ qmake confusions:
 
  - static vs staticlib
    - static
-     means prefer linking against static library archives and if the subproject TEMAPLTE qmake
+     means prefer linking against static library archives and if the sub-project TEMAPLTE qmake
      option constains ".*lib" then set the CONFIG += staticlib
    - staticlib
-     means build all subprojects as static archive libraries and it also sets the CONFIG += static
-     What means don't use it for the whole TinyORM project because it contains many subprojects
+     means build all sub-projects as static archive libraries and it also sets the CONFIG += static
+     What means don't use it for the whole TinyORM project because it contains many sub-projects
      and it can cause problems, instead use the CONFIG += static!
 
  - export() variable in deeper functions:
