@@ -16,7 +16,7 @@
    Instead of using the input/in vs output/out words I'm using prepared vs result words
    where possible to avoid confusion. */
 
-// CUR drivers extract common MySQL types to own file, then also check throwIfBadResultFieldsIndex(std::size_t) vs ResultFieldsType silverqx
+// CUR drivers extract common MySQL types to own file silverqx
 // CUR drivers revisit all this types, fix comments silverqx
 /* MySQL above version 8 removed my_bool typedef while MariaDB kept it,
    by redefining it we can regain source compatibility. */
@@ -96,6 +96,9 @@ namespace Orm::Drivers::MySql
         QVariant getValueForNormal(ResultFieldsSizeType index) const;
         /*! Obtain the QVariant value for prepared queries. */
         QVariant getValueForPrepared(ResultFieldsSizeType index) const;
+
+        /*! Throw an exception if an index for result fields vector is out of bounds. */
+        void throwIfBadResultFieldsIndex(ResultFieldsSizeType index) const;
 
         /* Data members */
         /* Common for both */

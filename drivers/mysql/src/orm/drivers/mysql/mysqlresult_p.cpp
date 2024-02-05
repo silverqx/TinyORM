@@ -398,6 +398,21 @@ QVariant MySqlResultPrivate::getValueForPrepared(const ResultFieldsSizeType inde
     return createQVariant(typeId, std::move(value), index);
 }
 
+void
+MySqlResultPrivate::throwIfBadResultFieldsIndex(const ResultFieldsSizeType index) const
+{
+    const auto fieldsCount = resultFields.size();
+
+    // Nothing to do
+        // Index is always higher than 0
+    if (/*index >= 0 || */index < fieldsCount)
+        return;
+
+    throw std::runtime_error(
+                u"Field index '%1' is out of bounds, the index must be between 0-%2"_s
+                .arg(index).arg(fieldsCount - 1).toUtf8().constData());
+}
+
 /* private */
 
 /* Prepared queries */
