@@ -104,6 +104,7 @@ function(tinymysqldriver_sources out_headers_private out_headers out_sources)
         mysqlconstants_p.hpp
         mysqldriver_p.hpp
         mysqlresult_p.hpp
+        mysqltypes_p.hpp
         mysqlutils_p.hpp
     )
 
