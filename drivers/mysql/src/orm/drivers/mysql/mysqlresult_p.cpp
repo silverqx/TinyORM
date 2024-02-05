@@ -404,8 +404,7 @@ MySqlResultPrivate::throwIfBadResultFieldsIndex(const ResultFieldsSizeType index
     const auto fieldsCount = resultFields.size();
 
     // Nothing to do
-        // Index is always higher than 0
-    if (/*index >= 0 || */index < fieldsCount)
+    if (index >= 0 || index < fieldsCount)
         return;
 
     throw std::runtime_error(
