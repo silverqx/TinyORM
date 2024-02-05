@@ -215,7 +215,7 @@ MySqlDriver::createResult(const std::weak_ptr<SqlDriver> &driver) const
 
     else T_UNLIKELY
         throw Exceptions::InvalidArgumentError(
-                u"The driver must be valid, it can't be expired in %1()."_s
+                u"The driver argument can't be nullptr, it can't be expired in %1()."_s
                 .arg(__tiny_func__));
 }
 

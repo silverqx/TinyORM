@@ -196,7 +196,7 @@ void SqlDatabasePrivate::throwIfNoConnection(const QString &connection)
 
     throw Exceptions::InvalidArgumentError(
                 u"The '%1' connection isn't registered (doesn't exist), please register "
-                "it using the SqlDatabase::addDatabase() method in %2()."_s
+                 "it using the SqlDatabase::addDatabase() method. In %2()."_s
                 .arg(connection, __tiny_func__));
 }
 
@@ -371,10 +371,9 @@ SqlDatabasePrivate::loadSqlDriverCommon(const QString &driver,
                 return itDriverMemFn->second;
             }
 
-    throw std::runtime_error(
-                u"Can't load '%1' shared library for '%2' driver at runtime."_s
-                .arg(driverBasenameRaw, driver)
-                .toUtf8().constData());
+    throw Exceptions::RuntimeError(
+                u"Can't load '%1' shared library for '%2' driver at runtime in %3()."_s
+                .arg(driverBasenameRaw, driver, __tiny_func__));
 }
 
 SqlDatabasePrivate::CreateSqlDriverMemFn
@@ -394,10 +393,10 @@ SqlDatabasePrivate::loadSqlDriverAndResolve(const QString &driverFilepath)
     if (createSqlDriverMemFn != nullptr)
         return createSqlDriverMemFn;
 
-    throw std::runtime_error(
+    throw Exceptions::RuntimeError(
                 u"The QLibrary('%1') was loaded successfully but "
-                 "the resolve('TinyDriverInstance') failed."_s
-                .arg(driverFilepath).toUtf8().constData());
+                 "the resolve('TinyDriverInstance') failed in %2()."_s
+                .arg(driverFilepath, __tiny_func__));
 }
 
 QStringList SqlDatabasePrivate::sqlDriverPaths(const QString &driver)
@@ -485,9 +484,11 @@ void SqlDatabasePrivate::throwIfSqlDriverIsNull() const
     if (sqldriver)
         return;
 
-    throw std::runtime_error(
-                "The SqlDatabasePrivate::sqldriver smart pointer is nullptr. "
-                "The SqlDatabase instance is invalid after calling removeDatabase().");
+    throw Exceptions::LogicError(
+                u"The SqlDatabasePrivate::sqldriver smart pointer is nullptr. "
+                 "The SqlDatabase instance is invalid after calling removeDatabase(). "
+                 "In %1()."_s
+                .arg(__tiny_func__));
 }
 
 void SqlDatabasePrivate::throwIfDifferentThread(const SqlDatabase &db,
@@ -500,10 +501,12 @@ void SqlDatabasePrivate::throwIfDifferentThread(const SqlDatabase &db,
     )
         return;
 
-    throw std::runtime_error(
-                u"SqlDatabasePrivate::database: requested '%1' database connection "
-                 "does not belong to the calling thread."_s
-                .arg(connection).toUtf8().constData());
+    throw Exceptions::LogicError(
+                u"The requested '%1' database connection does not belong to the calling "
+                 "thread it was created in another thread. This check can be disabled "
+                 "using the SqlDatabase::disableThreadCheck(), then you have to "
+                 "synchronize your threads to avoid race conditions. In %2()."_s
+                .arg(connection, __tiny_func__));
 }
 
 } // namespace Orm::Drivers

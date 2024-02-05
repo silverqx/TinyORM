@@ -6,6 +6,7 @@
 #  include "orm/drivers/mysql/mysqlconstants_p.hpp"
 #endif
 
+#include "orm/drivers/exceptions/outofrange.hpp"
 #include "orm/drivers/mysql/mysqlutils_p.hpp"
 #include "orm/drivers/utils/helpers_p.hpp"
 
@@ -407,9 +408,10 @@ MySqlResultPrivate::throwIfBadResultFieldsIndex(const ResultFieldsSizeType index
     if (index >= 0 || index < fieldsCount)
         return;
 
-    throw std::runtime_error(
-                u"Field index '%1' is out of bounds, the index must be between 0-%2"_s
-                .arg(index).arg(fieldsCount - 1).toUtf8().constData());
+    throw Exceptions::OutOfRangeError(
+                u"The field index '%1' is out of bounds, the index must be between 0-%2 "
+                 "in %3()."_s
+                .arg(index).arg(fieldsCount - 1).arg(__tiny_func__));
 }
 
 /* private */

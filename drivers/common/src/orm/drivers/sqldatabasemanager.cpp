@@ -128,9 +128,10 @@ void SqlDatabaseManager::throwIfDriverIsNullptr(const std::unique_ptr<SqlDriver>
     if (driver)
         return;
 
-    throw std::runtime_error(
-                u"The driver can't be nullptr while adding the '%1' connection."_s
-                .arg(connection).toUtf8().constData());
+    throw Exceptions::InvalidArgumentError(
+                u"The driver argument can't be nullptr while adding the '%1' "
+                 "connection in %2()."_s
+                .arg(connection, __tiny_func__));
 }
 
 } // namespace Orm::Drivers

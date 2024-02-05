@@ -237,7 +237,7 @@ void MySqlDriverPrivate::setOptionFlag(uint &optionFlags, const QStringView opti
     else if (option == "CLIENT_SSL"_L1)
         throw Exceptions::InvalidArgumentError(
                 u"The MYSQL_OPT_SSL_KEY, MYSQL_OPT_SSL_CERT, and MYSQL_OPT_SSL_CA "
-                 "should be used instead of the CLIENT_SSL option in %1()."_s
+                 "must be used instead of the CLIENT_SSL option in %1()."_s
                 .arg(__tiny_func__));
     else
         throw Exceptions::InvalidArgumentError(
