@@ -87,9 +87,12 @@ MySqlUtilsPrivate::decodeMySqlType(const enum_field_types mysqlType, const uint 
     case MYSQL_TYPE_MEDIUM_BLOB:
     case MYSQL_TYPE_LONG_BLOB:
     case MYSQL_TYPE_GEOMETRY:
+// MYSQL_TYPE_JSON was added in MySQL 5.7.8
+#if defined(MYSQL_VERSION_ID) && MYSQL_VERSION_ID >= 50708
     case MYSQL_TYPE_JSON:
         typeId = (flags & BINARY_FLAG) != 0U ? QMetaType::QByteArray : QMetaType::QString;
         break;
+#endif
 
     case MYSQL_TYPE_ENUM:
     case MYSQL_TYPE_SET:
