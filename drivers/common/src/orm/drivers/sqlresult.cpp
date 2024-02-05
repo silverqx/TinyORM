@@ -5,9 +5,9 @@
 #include "orm/drivers/sqldriver.hpp"
 #include "orm/drivers/sqlresult_p.hpp"
 
-using Orm::Drivers::Constants::NotImplemented;
-
 TINYORM_BEGIN_COMMON_NAMESPACE
+
+using Orm::Drivers::Constants::NotImplemented;
 
 namespace Orm::Drivers
 {
