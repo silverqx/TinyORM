@@ -625,7 +625,8 @@ void MySqlResult::throwIfBadResultFieldsIndex(const std::size_t index) const
 
     const auto fieldsCount = d->resultFields.size();
 
-    // Nothing to do, index is always higher than 0
+    // Nothing to do
+        // Index is always higher than 0
     if (/*index >= 0 || */index < fieldsCount)
         return;
 
