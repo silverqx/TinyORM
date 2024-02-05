@@ -41,13 +41,14 @@ namespace Orm::Drivers::MySql
             // CUR drivers remove? silverqx
             /*! Field metadata. */
             const MYSQL_FIELD *myField = nullptr; // Returned by mysql_fetch_field()
+
             /* Prepared queries */
             /*! Field value buffer in the result set. */
             std::unique_ptr<char[]> fieldValue = nullptr; // NOLINT(modernize-avoid-c-arrays)
             /*! Is the field NULL? */
             my_bool isNull = false;
             /*! Field value buffer length w/o terminating null character. */
-            ulong fieldValueSize = 0UL; // For strings varies on the character set (latin1 1 byte or eg. utf8mb4 4 bytes so 3 characters string size will be 12)
+            ulong fieldValueSize = 0UL; // For strings it varies on the character set (latin1 1 byte or eg. utf8mb4 4 bytes so 3 characters string size it will be 12)
         };
 
         /* Normal queries */
