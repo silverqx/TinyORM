@@ -12,6 +12,7 @@ headersList += \
     $$PWD/orm/drivers/mysql/mysqlconstants_p.hpp \
     $$PWD/orm/drivers/mysql/mysqldriver_p.hpp \
     $$PWD/orm/drivers/mysql/mysqlresult_p.hpp \
+    $$PWD/orm/drivers/mysql/mysqltypes_p.hpp \
     $$PWD/orm/drivers/mysql/mysqlutils_p.hpp \
 
 HEADERS += $$sorted(headersList)

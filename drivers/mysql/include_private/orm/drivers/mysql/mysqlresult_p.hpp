@@ -2,10 +2,9 @@
 #ifndef ORM_DRIVERS_MYSQL_MYSQLRESULT_P_HPP
 #define ORM_DRIVERS_MYSQL_MYSQLRESULT_P_HPP
 
-#include "orm/drivers/mysql/macros/includemysqlh_p.hpp"
-
 #include "orm/drivers/macros/declaresqldriverprivate_p.hpp"
 #include "orm/drivers/mysql/mysqldriver.hpp"
+#include "orm/drivers/mysql/mysqltypes_p.hpp"
 #include "orm/drivers/sqlresult_p.hpp"
 
 /* All the in vs out bindings/data-related comments and identifier names related
@@ -15,15 +14,6 @@
    server. Is a very bad idea to switch these naming conventions. 🤔
    Instead of using the input/in vs output/out words I'm using prepared vs result words
    where possible to avoid confusion. */
-
-/* MySQL >=8.0.1 removed my_bool typedef while MariaDB kept it, so it's still needed to
-   define it for MariaDB because my_bool == char and compilation fails with the bool type.
-   See https://bugs.mysql.com/bug.php?id=85131 */
-#if defined(MARIADB_VERSION_ID) || MYSQL_VERSION_ID < 80001
-using my_bool = decltype (mysql_stmt_bind_result(nullptr, nullptr));
-#else
-using my_bool = bool;
-#endif
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
