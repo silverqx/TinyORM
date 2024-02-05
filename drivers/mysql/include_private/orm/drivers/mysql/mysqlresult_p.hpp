@@ -38,7 +38,6 @@ namespace Orm::Drivers::MySql
             /* Common for both */
             /*! Field metatype. */
             QMetaType metaType {};
-            // CUR drivers remove? silverqx
             /*! Field metadata. */
             const MYSQL_FIELD *myField = nullptr; // Returned by mysql_fetch_field()
 
