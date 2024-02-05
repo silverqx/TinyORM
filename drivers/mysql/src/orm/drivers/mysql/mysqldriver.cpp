@@ -8,10 +8,6 @@
 #include "orm/drivers/mysql/mysqlutils_p.hpp"
 #include "orm/drivers/utils/type_p.hpp"
 
-Q_DECLARE_METATYPE(MYSQL_RES *)
-Q_DECLARE_METATYPE(MYSQL *)
-Q_DECLARE_METATYPE(MYSQL_STMT *)
-
 // BUG drivers defined at bad place also wrap all occurrences in #ifdef silverqx
 // MYSQL_TYPE_JSON was added in MySQL 5.7.9
 #if defined(MYSQL_VERSION_ID) && MYSQL_VERSION_ID < 50709
