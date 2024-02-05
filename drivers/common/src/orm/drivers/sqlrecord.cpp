@@ -5,6 +5,7 @@
 #endif
 
 #include "orm/drivers/constants_p.hpp"
+#include "orm/drivers/exceptions/outofrange.hpp"
 #include "orm/drivers/utils/type_p.hpp"
 
 TINYORM_BEGIN_COMMON_NAMESPACE
@@ -185,11 +186,11 @@ void SqlRecord::throwIfNotContains(const size_type index,
     using namespace Qt::StringLiterals; // NOLINT(google-build-using-namespace)
 
     static const auto
-    MessageTmpl = u"The field index position '%1' is out of range, the current number "
-                   "of fields is '%2' in %3()."_s;
+    MessageTmpl = u"The field index '%1' is out of bounds, the index must be "
+                   "between 0-%2 in %3()."_s;
 
-    throw std::out_of_range(MessageTmpl.arg(index).arg(m_fields.size()).arg(functionName)
-                                       .toUtf8().constData());
+    throw Exceptions::OutOfRangeError(
+                MessageTmpl.arg(index).arg(m_fields.size() - 1).arg(functionName));
 }
 
 SqlRecord::FieldSegmentsType

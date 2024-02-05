@@ -5,6 +5,7 @@ headersList = \
     $$PWD/orm/drivers/exceptions/driverserror.hpp \
     $$PWD/orm/drivers/exceptions/invalidargumenterror.hpp \
     $$PWD/orm/drivers/exceptions/logicerror.hpp \
+    $$PWD/orm/drivers/exceptions/outofrange.hpp \
     $$PWD/orm/drivers/exceptions/runtimeerror.hpp \
     $$PWD/orm/drivers/libraryinfo.hpp \
     $$PWD/orm/drivers/macros/export.hpp \

@@ -13,11 +13,13 @@
 #  include <QElapsedTimer>
 #endif
 
+#include "orm/drivers/exceptions/invalidargumenterror.hpp"
 #include "orm/drivers/sqldatabase.hpp"
 #include "orm/drivers/sqldriver.hpp"
 #include "orm/drivers/sqlerror.hpp"
 #include "orm/drivers/sqlrecord.hpp"
 #include "orm/drivers/sqlresult.hpp"
+#include "orm/drivers/utils/type_p.hpp"
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
@@ -120,7 +122,9 @@ bool SqlQuery::exec(const QString &query)
 {
     // Nothing to do
     if (query.isEmpty())
-        throw std::runtime_error("SqlQuery::exec: empty query");
+        throw Exceptions::InvalidArgumentError(
+                u"The query argument can't be empty in %1()."_s
+                .arg(__tiny_func__));
 
     if (const auto driver = this->driverWeakInternal().lock();
         !driver->isOpen() || driver->isOpenError()
@@ -153,7 +157,9 @@ bool SqlQuery::prepare(const QString &query)
 {
     // Nothing to do
     if (query.isEmpty())
-        throw std::runtime_error("SqlQuery::exec: empty query");
+        throw Exceptions::InvalidArgumentError(
+                u"The query argument can't be empty in %1()."_s
+                .arg(__tiny_func__));
 
     if (const auto driver = this->driverWeakInternal().lock();
         !driver->isOpen() || driver->isOpenError()
@@ -169,10 +175,11 @@ bool SqlQuery::exec()
 {
     // Nothing to do
     if (m_sqlResult->query().isEmpty())
-        throw std::runtime_error(
-                "The prepared query is empty, call the SqlQuery::prepare() first "
-                "for prepared statements or pass the query string directly "
-                "to the SqlQuery::exec(QString) for normal statements.");
+        throw Exceptions::LogicError(
+                u"The prepared query is empty, call the SqlQuery::prepare() first "
+                 "for prepared statements or pass the query string directly "
+                 "to the SqlQuery::exec(QString) for normal statements in %1()."_s
+                .arg(__tiny_func__));
 
     m_sqlResult->resetLastError();
 
@@ -373,9 +380,10 @@ bool SqlQuery::isNull(const size_type index) const
     if (isActive() && isValid())
         return m_sqlResult->isNull(index);
 
-    throw std::runtime_error(
-                "First, you need to execute the query and place the cursor "
-                "on the existing row to see if a field is NULL.");
+    throw Exceptions::LogicError(
+                u"First, you need to execute the query and place the cursor "
+                 "on an existing row to see if the field is NULL in %1()."_s
+                .arg(__tiny_func__));
 }
 
 bool SqlQuery::isNull(const QString &name) const
@@ -539,7 +547,10 @@ std::unique_ptr<SqlResult> SqlQuery::initSqlResult(const SqlDatabase &connection
 {
     // Nothing to do
     if (!connection.isValid())
-        throw std::runtime_error("No database connection available (isn't valid).");
+        throw Exceptions::InvalidArgumentError(
+                u"The default database connection isn't available or the given '%1' "
+                 "database connection isn't valid in %2()."_s
+                .arg(connection.connectionName(), __tiny_func__));
 
     // This const_cast<> is needed because of the SqlQuery constructor (to have same API)
     const auto driver = const_cast<SqlDatabase &>(connection).driverWeak();

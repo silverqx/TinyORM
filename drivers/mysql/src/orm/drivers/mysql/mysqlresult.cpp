@@ -2,8 +2,6 @@
 
 #include <QDateTime>
 
-#include <orm/macros/likely.hpp>
-
 #include "orm/drivers/mysql/mysqldriver_p.hpp"
 #include "orm/drivers/mysql/mysqlresult_p.hpp"
 #include "orm/drivers/mysql/mysqlutils_p.hpp"
@@ -124,9 +122,11 @@ bool MySqlResult::exec()
     Q_D(MySqlResult);
 
     if (!d->preparedQuery)
-        throw std::runtime_error(
-                "The prepared query is empty, to call normal queries use "
-                "the SqlQuery::exec(QString) overload.");
+        throw Exceptions::LogicError(
+                u"The prepared query is empty, call the SqlQuery::prepare() first "
+                 "for prepared statements or pass the query string directly "
+                 "to the SqlQuery::exec(QString) for normal statements in %1()."_s
+                .arg(__tiny_func__));
 
     if (d->stmt == nullptr)
         return false;

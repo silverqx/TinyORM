@@ -30,6 +30,7 @@ function(tinydrivers_sources out_headers_private out_headers out_sources)
         exceptions/driverserror.hpp
         exceptions/invalidargumenterror.hpp
         exceptions/logicerror.hpp
+        exceptions/outofrange.hpp
         exceptions/runtimeerror.hpp
         libraryinfo.hpp
         macros/export.hpp
