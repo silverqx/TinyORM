@@ -30,9 +30,6 @@ bool SqlResultPrivate::isVariantNull(const QVariant &value)
     case qMetaTypeId<QString>():
         return static_cast<const QString *>(value.constData())->isNull();
 
-    case qMetaTypeId<QByteArray>():
-        return static_cast<const QByteArray *>(value.constData())->isNull();
-
     case qMetaTypeId<QDateTime>():
         // CUR drivers check this if I send invalid date to the DB what happens, I think that problem will be in this and then update the comment appropriately, the same for the QTime few lines below silverqx
         // We treat invalid date-time as null, since its ISODate would be empty.
@@ -44,6 +41,9 @@ bool SqlResultPrivate::isVariantNull(const QVariant &value)
     case qMetaTypeId<QTime>():
         // As for QDateTime, QTime can be invalid without being null.
         return !static_cast<const QTime *>(value.constData())->isValid();
+
+    case qMetaTypeId<QByteArray>():
+        return static_cast<const QByteArray *>(value.constData())->isNull();
 
     case qMetaTypeId<QUuid>():
         return static_cast<const QUuid *>(value.constData())->isNull();
