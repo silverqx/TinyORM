@@ -21,6 +21,8 @@ SqlResultPrivate::SqlResultPrivate(const std::weak_ptr<SqlDriver> &driver) noexc
 
 bool SqlResultPrivate::isVariantNull(const QVariant &value)
 {
+    // This method is used in prepared bindings only
+
     if (value.isNull())
         return true;
 
@@ -32,7 +34,7 @@ bool SqlResultPrivate::isVariantNull(const QVariant &value)
         return static_cast<const QByteArray *>(value.constData())->isNull();
 
     case qMetaTypeId<QDateTime>():
-        // CUR drivers check this if I send invalid date to the DB what happens, I think that problem will be in this and then update the comment appropriately, the same for the QTime few lines below; the isVariantNull() is used in prepared bindings only silverqx
+        // CUR drivers check this if I send invalid date to the DB what happens, I think that problem will be in this and then update the comment appropriately, the same for the QTime few lines below silverqx
         // We treat invalid date-time as null, since its ISODate would be empty.
         return !static_cast<const QDateTime *>(value.constData())->isValid();
 
