@@ -32,7 +32,7 @@ Connector::createConnection(const QString &name, const QVariantHash &config,
 
     try {
         return createQSqlDatabaseConnection(name, config, options);
-    }  catch (const Exceptions::SqlError &e) {
+    } catch (const Exceptions::SqlError &e) {
         return tryAgainIfCausedByLostConnection(std::current_exception(), e, name,
                                                 config, options);
     }

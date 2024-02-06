@@ -385,7 +385,7 @@ void InteractsWithIO::withoutAnsi(const std::function<void()> &callback)
 
         m_ansi = previousAnsi;
 
-    }  catch (...) {
+    } catch (...) {
 
         m_ansi = previousAnsi;
         // Re-throw

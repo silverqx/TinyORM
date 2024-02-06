@@ -36,7 +36,7 @@ void GuardedModel::unguarded(const std::function<void()> &callback)
 
         reguard();
 
-    }  catch (...) {
+    } catch (...) {
 
         reguard();
         // Re-throw

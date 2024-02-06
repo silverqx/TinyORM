@@ -112,7 +112,7 @@ ConnectionFactory::createQSqlDatabaseResolverWithHosts(const QVariantHash &confi
 
                 return createConnector(config)->connect(config);
 
-            }  catch (const std::exception &/*unused*/) {
+            } catch (const std::exception &/*unused*/) {
                 // Save last exception to be able to re-throw
                 lastException = std::current_exception();
                 continue;

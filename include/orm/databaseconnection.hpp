@@ -538,7 +538,7 @@ namespace Orm
             try {
                 return runQueryCallback(queryString, preparedBindings, callback);
 
-            }  catch (const Exceptions::QueryError &e) {
+            } catch (const Exceptions::QueryError &e) {
                 return handleQueryException(std::current_exception(), e,
                                             queryString, preparedBindings, callback);
             }

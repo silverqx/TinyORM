@@ -387,7 +387,7 @@ void Migrator::runMigration(const Migration &migration, const MigrateMethod meth
     try {
         migrateByMethod(migration, method);
 
-    }  catch (...) {
+    } catch (...) {
 
         connection.rollBack();
         // Re-throw
