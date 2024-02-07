@@ -2,7 +2,7 @@
 #ifndef ORM_DRIVERS_LIBRARYINFO_HPP
 #define ORM_DRIVERS_LIBRARYINFO_HPP
 
-#include "orm/macros/systemheader.hpp"
+#include <orm/macros/systemheader.hpp>
 TINY_SYSTEM_HEADER
 
 #include <QVersionNumber>
