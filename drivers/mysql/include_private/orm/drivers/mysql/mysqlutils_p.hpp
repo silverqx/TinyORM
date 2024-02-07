@@ -37,19 +37,23 @@ namespace MySql
         /*! Deleted destructor. */
         ~MySqlUtilsPrivate() = delete;
 
+        /* Exceptions */
         /*! Factory method to create the SqlError (from MYSQL handler). */
         static SqlError
         createError(const QString &error, SqlError::ErrorType errorType, MYSQL *mysql,
                     std::optional<uint> errNo = std::nullopt);
 
+        /* Common for both */
         /*! Decode the given MySQL field type to the Qt metatype. */
         static QMetaType decodeMySqlType(enum_field_types mysqlType, uint flags);
 
+        /* Prepared queries */
         /*! Determine whether the given metatype ID is integer type. */
         static bool isInteger(int typeId) noexcept;
         /*! Determine whether the given MySQL field type is Date-related type. */
         static bool isTimeOrDate(enum_field_types mysqlType) noexcept;
 
+        /* Result sets */
         /*! Convert the given MySQL field to the SqlField. */
         static SqlField convertToSqlField(const MYSQL_FIELD *fieldInfo);
     };
