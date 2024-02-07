@@ -10,11 +10,6 @@
 #  include "orm/drivers/mysql/version.hpp"
 #endif
 
-#ifndef sl
-/*! Alias for the QStringLiteral(). */
-#  define sl(str) QStringLiteral(str)
-#endif
-
 // Build type release/debug
 #ifdef TINYDRIVERS_NO_DEBUG
 #  define DEBUG_STRING " release"
@@ -56,6 +51,8 @@
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
+using namespace Qt::StringLiterals; // NOLINT(google-build-using-namespace)
+
 namespace Orm::Drivers
 {
 
@@ -91,58 +88,58 @@ QVersionNumber LibraryInfo::version() noexcept
 std::map<QString, QString> LibraryInfo::allCMacrosMap()
 {
     // To avoid include-ing the orm::constants
-    static const auto ON = sl("ON");
-    static const auto OFF = sl("OFF");
+    static const auto ON = u"ON"_s;
+    static const auto OFF = u"OFF"_s;
 
     return {
 #ifdef TINYDRIVERS_BUILDING_SHARED
-        {sl("TINYDRIVERS_BUILDING_SHARED"), ON},
+        {u"TINYDRIVERS_BUILDING_SHARED"_s, ON},
 #else
-        {sl("TINYDRIVERS_BUILDING_SHARED"), OFF},
+        {u"TINYDRIVERS_BUILDING_SHARED"_s, OFF},
 #endif
 #ifdef TINYDRIVERS_DEBUG
-        {sl("TINYDRIVERS_DEBUG"), ON},
+        {u"TINYDRIVERS_DEBUG"_s, ON},
 #else
-        {sl("TINYDRIVERS_DEBUG"), OFF},
+        {u"TINYDRIVERS_DEBUG"_s, OFF},
 #endif
 #ifdef TINYDRIVERS_EXTERN_CONSTANTS
-        {sl("TINYDRIVERS_EXTERN_CONSTANTS"), ON},
+        {u"TINYDRIVERS_EXTERN_CONSTANTS"_s, ON},
 #else
-        {sl("TINYDRIVERS_EXTERN_CONSTANTS"), OFF},
+        {u"TINYDRIVERS_EXTERN_CONSTANTS"_s, OFF},
 #endif
 #ifdef TINYDRIVERS_INLINE_CONSTANTS
-        {sl("TINYDRIVERS_INLINE_CONSTANTS"), ON},
+        {u"TINYDRIVERS_INLINE_CONSTANTS"_s, ON},
 #else
-        {sl("TINYDRIVERS_INLINE_CONSTANTS"), OFF},
+        {u"TINYDRIVERS_INLINE_CONSTANTS"_s, OFF},
 #endif
 #ifdef TINYDRIVERS_MYSQL_DRIVER
-        {sl("TINYDRIVERS_MYSQL_DRIVER"), ON},
+        {u"TINYDRIVERS_MYSQL_DRIVER"_s, ON},
 #else
-        {sl("TINYDRIVERS_MYSQL_DRIVER"), OFF},
+        {u"TINYDRIVERS_MYSQL_DRIVER"_s, OFF},
 #endif
 #ifdef TINYDRIVERS_MYSQL_LOADABLE_LIBRARY
-        {sl("TINYDRIVERS_MYSQL_LOADABLE_LIBRARY"), ON},
+        {u"TINYDRIVERS_MYSQL_LOADABLE_LIBRARY"_s, ON},
 #else
-        {sl("TINYDRIVERS_MYSQL_LOADABLE_LIBRARY"), OFF},
+        {u"TINYDRIVERS_MYSQL_LOADABLE_LIBRARY"_s, OFF},
 #endif
 #ifdef TINYDRIVERS_MYSQL_PATH
-        {sl("TINYDRIVERS_MYSQL_PATH"), QString::fromUtf8(
-                                           TINY_STRINGIFY(TINYDRIVERS_MYSQL_PATH))},
+        {u"TINYDRIVERS_MYSQL_PATH"_s, QString::fromUtf8(
+                                          TINY_STRINGIFY(TINYDRIVERS_MYSQL_PATH))},
 #endif
 #ifdef TINYDRIVERS_NO_DEBUG
-        {sl("TINYDRIVERS_NO_DEBUG"), ON},
+        {u"TINYDRIVERS_NO_DEBUG"_s, ON},
 #else
-        {sl("TINYDRIVERS_NO_DEBUG"), OFF},
+        {u"TINYDRIVERS_NO_DEBUG"_s, OFF},
 #endif
 #ifdef TINYDRIVERS_TESTS_CODE
-        {sl("TINYDRIVERS_TESTS_CODE"), ON},
+        {u"TINYDRIVERS_TESTS_CODE"_s, ON},
 #else
-        {sl("TINYDRIVERS_TESTS_CODE"), OFF},
+        {u"TINYDRIVERS_TESTS_CODE"_s, OFF},
 #endif
 #ifdef TINYDRIVERS_USING_PCH
-        {sl("TINYDRIVERS_USING_PCH"), ON},
+        {u"TINYDRIVERS_USING_PCH"_s, ON},
 #else
-        {sl("TINYDRIVERS_USING_PCH"), OFF},
+        {u"TINYDRIVERS_USING_PCH"_s, OFF},
 #endif
     };
 }
