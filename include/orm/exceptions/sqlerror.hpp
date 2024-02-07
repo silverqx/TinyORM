@@ -32,8 +32,8 @@ namespace Orm::Exceptions
         inline const QSqlError &getSqlError() const noexcept;
 
     protected:
-        /*! Internal ctor for use from descendants to avoid an error message
-            formatting. */
+        /*! Protected converting constructor for use from descendants to avoid an error
+            message formatting. */
         SqlError(const QString &message, const QSqlError &error, int /*unused*/);
 
         /*! Format the Qt SQL error message. */
