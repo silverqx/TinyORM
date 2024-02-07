@@ -13,6 +13,8 @@ namespace Orm::Drivers::MySql
 
 /* public */
 
+/* Exceptions */
+
 SqlError
 MySqlUtilsPrivate::createError(
         const QString &error, const SqlError::ErrorType errorType, MYSQL *const mysql,
@@ -28,6 +30,8 @@ MySqlUtilsPrivate::createError(
     return {"QMYSQL: "_L1 + error, QString::fromUtf8(mysqlError), errorType,
             QString::number(mysqlErrno)};
 }
+
+/* Common for both */
 
 QMetaType
 MySqlUtilsPrivate::decodeMySqlType(const enum_field_types mysqlType, const uint flags)
@@ -105,6 +109,8 @@ MySqlUtilsPrivate::decodeMySqlType(const enum_field_types mysqlType, const uint 
     return QMetaType(typeId);
 }
 
+/* Prepared queries */
+
 bool MySqlUtilsPrivate::isInteger(const int typeId) noexcept
 {
     return typeId == QMetaType::Char     || typeId == QMetaType::UChar  ||
@@ -124,6 +130,7 @@ bool MySqlUtilsPrivate::isTimeOrDate(const enum_field_types mysqlType) noexcept
            mysqlType == MYSQL_TYPE_TIMESTAMP;
 }
 
+/* Result sets */
 
 SqlField MySqlUtilsPrivate::convertToSqlField(const MYSQL_FIELD *const fieldInfo)
 {
