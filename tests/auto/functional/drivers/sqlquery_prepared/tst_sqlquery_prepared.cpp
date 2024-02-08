@@ -71,7 +71,7 @@ void tst_SqlQuery_Prepared::initTestCase() const
         QTest::newRow(connection.toUtf8().constData()) << connection;
 }
 
-/*! Comparable structure to store the ID and custom the templated type. */
+/*! Comparable structure to store the ID and custom templated type. */
 template<typename T>
 struct IdAndCustomType
 {
