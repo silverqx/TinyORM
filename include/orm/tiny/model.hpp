@@ -460,7 +460,7 @@ namespace Orm::Tiny
         static void throwIfQDateTimeAttribute(const QVector<AttributeItem> &attributes);
         /*! Throw if an attempt to fill a guarded attribute is detected
             (mass assignment). */
-        [[noreturn]] static void throwIfTotallyGuarded(const QString &key);
+        [[noreturn]] static void throwTotallyGuarded(const QString &key);
 
         /*! Get the u_dateFormat attribute from the Derived model. */
         inline QString &getUserDateFormat() noexcept;
@@ -1150,7 +1150,7 @@ namespace Orm::Tiny
                 this->setAttribute(key, std::move(attribute.value));
 
             else if (totallyGuarded)
-                throwIfTotallyGuarded(key);
+                throwTotallyGuarded(key);
 
         return model();
     }
@@ -1171,7 +1171,7 @@ namespace Orm::Tiny
                 this->setAttribute(key, std::move(attribute.value));
 
             else if (totallyGuarded)
-                throwIfTotallyGuarded(key);
+                throwTotallyGuarded(key);
         }
 
         return model();
@@ -1903,7 +1903,7 @@ namespace Orm::Tiny
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
-    void Model<Derived, AllRelations...>::throwIfTotallyGuarded(const QString &key)
+    void Model<Derived, AllRelations...>::throwTotallyGuarded(const QString &key)
     {
         throw Exceptions::MassAssignmentError(
                     QStringLiteral("Add '%1' to u_fillable data member to allow "

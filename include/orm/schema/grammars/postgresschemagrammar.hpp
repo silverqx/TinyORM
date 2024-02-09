@@ -287,7 +287,7 @@ namespace Grammars
 
     private:
         /*! Throw if modifying a generated column using the change() method. */
-        [[noreturn]] static void throwIfModifyingGeneratedColumn();
+        [[noreturn]] static void throwModifyingGeneratedColumn();
 
         /*! Modifier methods array for the "alter column" (change()). */
         constexpr static std::array m_modifierMethodsForChange {

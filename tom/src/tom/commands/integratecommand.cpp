@@ -98,7 +98,7 @@ int IntegrateCommand::run()
         return EXIT_SUCCESS;
     }
 
-    throwIfUnknownShell(shellArg);
+    throwUnknownShell(shellArg);
 
     Q_UNREACHABLE();
 }
@@ -499,7 +499,7 @@ QStringList IntegrateCommand::getCompletionFilepaths()
 
 /* Others */
 
-void IntegrateCommand::throwIfUnknownShell(const QString &shellArg)
+void IntegrateCommand::throwUnknownShell(const QString &shellArg)
 {
     const QStringList allowedShells {
 #if defined(__linux__) || defined(__MINGW32__)

@@ -964,7 +964,7 @@ PostgresSchemaGrammar::modifyVirtualAs(const ColumnDefinition &column) const // 
         if (column.virtualAs->isEmpty())
             return {QStringLiteral("drop expression if exists")};
 
-        throwIfModifyingGeneratedColumn();
+        throwModifyingGeneratedColumn();
     }
 
     return {QStringLiteral(" generated always as (%1)").arg(*column.virtualAs)};
@@ -980,7 +980,7 @@ PostgresSchemaGrammar::modifyStoredAs(const ColumnDefinition &column) const // N
         if (column.storedAs->isEmpty())
             return {QStringLiteral("drop expression if exists")};
 
-        throwIfModifyingGeneratedColumn();
+        throwModifyingGeneratedColumn();
     }
 
     return {QStringLiteral(" generated always as (%1) stored").arg(*column.storedAs)};
@@ -1022,7 +1022,7 @@ PostgresSchemaGrammar::modifyGeneratedAs(const ColumnDefinition &column) const /
 
 /* private */
 
-void PostgresSchemaGrammar::throwIfModifyingGeneratedColumn()
+void PostgresSchemaGrammar::throwModifyingGeneratedColumn()
 {
     throw Exceptions::LogicError(
                 "The PostgreSQL database does not support modifying generated columns.");
