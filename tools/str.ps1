@@ -9,6 +9,8 @@ Param(
 
 Set-StrictMode -Version 3.0
 
-Add-FolderOnPath.ps1 -Path $BuildPath\src\release,
+Add-FolderOnPath.ps1 -Path $BuildPath\drivers\common\release,
+                           $BuildPath\drivers\mysql\release,
+                           $BuildPath\src\release,
                            $BuildPath\examples\tom\release,
                            $BuildPath\tests\testdata_tom\release
