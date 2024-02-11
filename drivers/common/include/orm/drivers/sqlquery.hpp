@@ -143,11 +143,11 @@ namespace Orm::Drivers
         size_type numRowsAffected() const;
 
         /* Others */
+        /*! Clear the result set and releases any resources held by the query. */
+        void clear();
         /*! Instruct the database driver that no more data will be fetched from this query
             until it is re-executed. */
         void finish() noexcept;
-        /*! Clear the result set and releases any resources held by the query. */
-        void clear();
 
     private:
         /* Getters / Setters */
