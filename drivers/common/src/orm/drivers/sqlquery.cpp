@@ -38,7 +38,7 @@ SqlQuery::SqlQuery(const SqlDatabase &connection)
     : m_sqlResult(initSqlResult(connection))
 {}
 
-SqlQuery::SqlQuery(std::unique_ptr<SqlResult> &&result)
+SqlQuery::SqlQuery(std::unique_ptr<SqlResult> &&result) noexcept
     : m_sqlResult(std::move(result))
 {}
 
@@ -49,27 +49,27 @@ SqlQuery::~SqlQuery() = default;
 
 /* Getters / Setters */
 
-bool SqlQuery::isValid() const
+bool SqlQuery::isValid() const noexcept
 {
     return m_sqlResult->isValid();
 }
 
-QString SqlQuery::executedQuery() const
+QString SqlQuery::executedQuery() const noexcept
 {
     return m_sqlResult->query();
 }
 
-QString SqlQuery::lastQuery() const
+QString SqlQuery::lastQuery() const noexcept
 {
     return m_sqlResult->query();
 }
 
-SqlError SqlQuery::lastError() const
+SqlError SqlQuery::lastError() const noexcept
 {
     return m_sqlResult->lastError();
 }
 
-SqlQuery::size_type SqlQuery::at() const
+SqlQuery::size_type SqlQuery::at() const noexcept
 {
     return m_sqlResult->at();
 }
@@ -86,12 +86,13 @@ bool SqlQuery::isSelect() const noexcept
     return m_sqlResult->isSelect();
 }
 
-NumericalPrecisionPolicy SqlQuery::numericalPrecisionPolicy() const
+NumericalPrecisionPolicy SqlQuery::numericalPrecisionPolicy() const noexcept
 {
     return m_sqlResult->numericalPrecisionPolicy();
 }
 
-void SqlQuery::setNumericalPrecisionPolicy(const NumericalPrecisionPolicy precision)
+void
+SqlQuery::setNumericalPrecisionPolicy(const NumericalPrecisionPolicy precision) noexcept
 {
     m_sqlResult->setNumericalPrecisionPolicy(precision);
 }
@@ -399,7 +400,7 @@ bool SqlQuery::isNull(const QString &name) const
     return true;
 }
 
-SqlQuery::size_type SqlQuery::size() const
+SqlQuery::size_type SqlQuery::size() const noexcept
 {
     // Nothing to do
     if (!driverWeak().lock()->hasFeature(SqlDriver::QuerySize) ||
@@ -430,7 +431,7 @@ void SqlQuery::clear()
     *this = SqlQuery(driver.lock()->createResult(driver));
 }
 
-void SqlQuery::finish()
+void SqlQuery::finish() noexcept
 {
     // CUR drivers finish this finish() method, also look hasFearures(FinishQuery), update description silverqx
     // Nothing to do
@@ -461,7 +462,7 @@ std::weak_ptr<SqlDriver> SqlQuery::driverWeakInternal() noexcept
 
 /* Result sets */
 
-bool SqlQuery::seekArbitrary(const size_type index, size_type &actualIdx)
+bool SqlQuery::seekArbitrary(const size_type index, size_type &actualIdx) noexcept
 {
     // Nothing to do
     if (index < 0) {

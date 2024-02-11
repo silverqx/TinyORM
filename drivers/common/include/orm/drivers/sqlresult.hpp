@@ -141,7 +141,7 @@ namespace Orm::Drivers
         /*! Get a SqlRecord containing the field information for the current query. */
         virtual SqlRecord record() const = 0;
         /*! Get the ID of the most recent inserted row if the database supports it. */
-        virtual QVariant lastInsertId() const = 0;
+        virtual QVariant lastInsertId() const = 0; // Can't be noexcept because PostgresResult::lastInsertId() will call driver()->createResult()
 
         /*! Retrieve the record at the given index and position the cursor on it. */
         virtual bool fetch(size_type index) = 0;
@@ -161,13 +161,13 @@ namespace Orm::Drivers
 
         /*! Get the size of the result (number of rows returned), -1 if the size can't be
             determined (database must support reporting about query sizes). */
-        virtual size_type size() = 0;
+        virtual size_type size() noexcept = 0;
         /*! Get the number of affected rows for DML queries or -1 if the size can't be
             determined. */
         virtual size_type numRowsAffected() = 0;
 
         /*! Releases memory associated with the current result set. */
-        virtual void detachFromResultSet() = 0;
+        virtual void detachFromResultSet() const noexcept = 0;
 
         /*! Discard the current result set and navigates to the next if available
             (not supported). */

@@ -37,7 +37,7 @@ namespace Orm::Drivers
         /*! Converting constructor from the SqlDatabase. */
         explicit SqlQuery(const SqlDatabase &connection);
         /*! Converting constructor from the std::unique_ptr<SqlResult>. */
-        explicit SqlQuery(std::unique_ptr<SqlResult> &&result);
+        explicit SqlQuery(std::unique_ptr<SqlResult> &&result) noexcept;
 
         /*! Move constructor. */
         inline SqlQuery(SqlQuery &&) noexcept = default;
@@ -52,17 +52,17 @@ namespace Orm::Drivers
 
         /* Getters / Setters */
         /*! Determine whether the query result set is positioned on a valid record. */
-        bool isValid() const;
+        bool isValid() const noexcept;
 
         /*! Get the last executed query. */
-        QString executedQuery() const;
+        QString executedQuery() const noexcept;
         /*! Get the last executed query (alias). */
-        QString lastQuery() const;
+        QString lastQuery() const noexcept;
         /*! Get information about the error of the last query. */
-        SqlError lastError() const;
+        SqlError lastError() const noexcept;
 
         /*! Get the current cursor position (0-based). */
-        size_type at() const;
+        size_type at() const noexcept;
 
         /*! Determine if the query was exec()'d successfully and isn't yet finished. */
         bool isActive() const noexcept;
@@ -70,9 +70,9 @@ namespace Orm::Drivers
         bool isSelect() const noexcept;
 
         /*! Get the current numerical precision policy. */
-        NumericalPrecisionPolicy numericalPrecisionPolicy() const;
+        NumericalPrecisionPolicy numericalPrecisionPolicy() const noexcept;
         /*! Set the numerical precision policy for the current query. */
-        void setNumericalPrecisionPolicy(NumericalPrecisionPolicy precision);
+        void setNumericalPrecisionPolicy(NumericalPrecisionPolicy precision) noexcept;
 
         /*! Get the SQL database driver used to access the database connection (const). */
         const SqlDriver *driver() const noexcept;
@@ -137,7 +137,7 @@ namespace Orm::Drivers
 
         /*! Get the size of the result (number of rows returned), -1 if the size can't be
             determined (database must support reporting about query sizes). */
-        size_type size() const;
+        size_type size() const noexcept;
         /*! Get the number of affected rows for DML queries or -1 if the size can't be
             determined. */
         size_type numRowsAffected() const;
@@ -145,7 +145,7 @@ namespace Orm::Drivers
         /* Others */
         /*! Instruct the database driver that no more data will be fetched from this query
             until it is re-executed. */
-        void finish();
+        void finish() noexcept;
         /*! Clear the result set and releases any resources held by the query. */
         void clear();
 
@@ -156,7 +156,7 @@ namespace Orm::Drivers
 
         /* Result sets */
         /*! Normal seek. */
-        bool seekArbitrary(size_type index, size_type &actualIdx);
+        bool seekArbitrary(size_type index, size_type &actualIdx) noexcept;
         /*! Relative seek. */
         bool seekRelative(size_type index, size_type &actualIdx);
         /*! Map the given index to the fetch-related methods that are available. */

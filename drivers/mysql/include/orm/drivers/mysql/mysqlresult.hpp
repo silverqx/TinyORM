@@ -63,13 +63,13 @@ namespace Orm::Drivers::MySql
 
         /*! Get the size of the result (number of rows returned), -1 if the size can't be
             determined (database must support reporting about query sizes). */
-        size_type size() final;
+        size_type size() noexcept final;
         /*! Get the number of affected rows for DML queries or -1 if the size can't be
             determined. */
         size_type numRowsAffected() final;
 
         /*! Releases memory associated with the current result set. */
-        void detachFromResultSet() final;
+        void detachFromResultSet() const noexcept final;
 
         /* Cleanup */
         /*! Main cleanup method, free prepared and non-prepared statements. */

@@ -395,7 +395,7 @@ bool MySqlResult::isNull(const size_type index)
    return d->row[idx] == nullptr;
 }
 
-MySqlResult::size_type MySqlResult::size()
+MySqlResult::size_type MySqlResult::size() noexcept
 {
     Q_D(const MySqlResult);
 
@@ -423,9 +423,9 @@ MySqlResult::size_type MySqlResult::numRowsAffected()
     return static_cast<size_type>(mysql_affected_rows(d->drv_d_func()->mysql));
 }
 
-void MySqlResult::detachFromResultSet()
+void MySqlResult::detachFromResultSet() const noexcept
 {
-    Q_D(MySqlResult);
+    Q_D(const MySqlResult);
 
     if (d->preparedQuery)
         mysql_stmt_free_result(d->stmt);
