@@ -1,0 +1,26 @@
+#!/usr/bin/env pwsh
+
+Set-StrictMode -Version 3.0
+
+$Script:BuildPath = '<your_path_here>\TinyORM\TinyORM-builds-qmake\' +
+    'build-TinyORM-Desktop_Qt_6_6_1_MSVC2022_64bit-Release'
+
+$Script:DestinationPath = '<your_path_here>\dotfiles\bin'
+$Script:TinyDriversPath = "${Script:BuildPath}\src\release\TinyDrivers0.dll"
+$Script:TinyMySqlPath   = "${Script:BuildPath}\src\release\TinyMySql0.dll"
+
+if (Test-Path $Script:TinyDriversPath) {
+    Copy-Item -Path $Script:TinyDriversPath -Destination $Script:DestinationPath
+}
+
+if (Test-Path $Script:TinyMySqlPath) {
+    Copy-Item -Path $Script:TinyMySqlPath -Destination $Script:DestinationPath
+}
+
+Copy-Item -Path `
+    "${Script:BuildPath}\src\release\TinyOrm0.dll", `
+    "${Script:BuildPath}\tests\testdata_tom\release\tom_testdata.exe", `
+    "${Script:BuildPath}\examples\tom\release\tom.exe"`
+    -Destination $Script:DestinationPath
+
+Write-Host 'TinyORM was deployed successfully. 🥳' -ForegroundColor DarkGreen
