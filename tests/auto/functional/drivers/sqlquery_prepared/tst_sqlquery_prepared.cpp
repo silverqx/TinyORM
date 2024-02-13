@@ -12,6 +12,8 @@
 
 #include "databases.hpp"
 
+using namespace Qt::StringLiterals; /* NOLINT(google-build-using-namespace) */
+
 using Orm::Constants::CREATED_AT;
 using Orm::Constants::DELETED_AT;
 using Orm::Constants::ID;
@@ -95,7 +97,7 @@ void tst_SqlQuery_Prepared::select_All() const
 
     auto users = createQuery(connection);
 
-    const auto query = sl("select id, name from users order by id");
+    const auto query = u"select id, name from users order by id"_s;
     auto ok = users.prepare(query);
     QVERIFY(ok);
 
@@ -148,7 +150,7 @@ void tst_SqlQuery_Prepared::select_WithWhere() const
 
     auto users = createQuery(connection);
 
-    const auto query = sl("select id, name from users where id < ? order by id");
+    const auto query = u"select id, name from users where id < ? order by id"_s;
     auto ok = users.prepare(query);
     QVERIFY(ok);
 
@@ -202,7 +204,7 @@ void tst_SqlQuery_Prepared::select_IsNull() const
 
     auto users = createQuery(connection);
 
-    const auto query = sl("select id, note from users order by id");
+    const auto query = u"select id, note from users order by id"_s;
     auto ok = users.prepare(query);
     QVERIFY(ok);
 
@@ -246,7 +248,7 @@ void tst_SqlQuery_Prepared::select_Aggregate_Count() const
 
     auto users = createQuery(connection);
 
-    const auto query = sl("select count(id) as aggregate from users where id < ?");
+    const auto query = u"select count(id) as aggregate from users where id < ?"_s;
     auto ok = users.prepare(query);
     QVERIFY(ok);
 
@@ -285,7 +287,7 @@ void tst_SqlQuery_Prepared::select_BoundLessValues() const
 
     auto users = createQuery(connection);
 
-    const auto query = sl("select id, name from users where id < ? and name = ?");
+    const auto query = u"select id, name from users where id < ? and name = ?"_s;
     auto ok = users.prepare(query);
     QVERIFY(ok);
 
@@ -323,17 +325,17 @@ void tst_SqlQuery_Prepared::select_BoundMoreValues() const
 
     auto users = createQuery(connection);
 
-    const auto query = sl("select id, name from users where id < ? order by id");
+    const auto query = u"select id, name from users where id < ? order by id"_s;
     auto ok = users.prepare(query);
     QVERIFY(ok);
 
     users.addBindValue(4);
-    users.addBindValue(sl("dummy-NON_EXISTENT"));
+    users.addBindValue(u"dummy-NON_EXISTENT"_s);
 
     // Test bound values
     const auto boundValues = users.boundValues();
     QCOMPARE(boundValues.size(), 2);
-    const QVariantList boundValuesExpected({4, sl("dummy-NON_EXISTENT")});
+    const QVariantList boundValuesExpected({4, u"dummy-NON_EXISTENT"_s});
     QCOMPARE(boundValues, boundValuesExpected);
 
     // To catch qWarning() message
@@ -358,10 +360,10 @@ void tst_SqlQuery_Prepared::select_BoundMoreValues() const
     // Verify the logged message 😎
     QCOMPARE(g_loggedMessages.size(), 1);
     static const auto expectedWarning =
-            sl("MySqlResultPrivate::hasPreparedBindings: values.size() > "
-               "placeholdersCount, higher number of prepared bindings; Current number "
-               "of placeholder markers is '1' and number of bind values is '2', but "
-               "everything will work normally");
+            u"MySqlResultPrivate::hasPreparedBindings: values.size() > "
+             "placeholdersCount, higher number of prepared bindings; Current number "
+             "of placeholder markers is '1' and number of bind values is '2', but "
+             "everything will work normally"_s;
     QCOMPARE(g_loggedMessages.first(), expectedWarning);
 
     // Verify the result
@@ -405,25 +407,25 @@ void tst_SqlQuery_Prepared::insert_update_delete() const
     // INSERT a new row into the users table
     {
         const auto query =
-                sl("insert into users "
-                     "(name, is_banned, note, created_at, updated_at, deleted_at) "
-                   "values (?, ?, ?, ?, ?, ?)");
+                u"insert into users "
+                   "(name, is_banned, note, created_at, updated_at, deleted_at) "
+                 "values (?, ?, ?, ?, ?, ?)"_s;
         auto ok = users.prepare(query);
         QVERIFY(ok);
 
-        users.addBindValue(sl("ashen one"));
+        users.addBindValue(u"ashen one"_s);
         users.addBindValue(1);
-        users.addBindValue(sl("test drivers INSERT"));
-        users.addBindValue(sl("2023-05-11T11:52:53"));
-        users.addBindValue(sl("2023-05-12T11:52:53"));
+        users.addBindValue(u"test drivers INSERT"_s);
+        users.addBindValue(u"2023-05-11T11:52:53"_s);
+        users.addBindValue(u"2023-05-12T11:52:53"_s);
         users.addBindValue(NullVariant::QDateTime());
 
         // Test bound values
         const auto boundValues = users.boundValues();
         QCOMPARE(boundValues.size(), 6);
         QCOMPARE(boundValues,
-                 (QVariantList {sl("ashen one"), 1, sl("test drivers INSERT"),
-                                sl("2023-05-11T11:52:53"), sl("2023-05-12T11:52:53"),
+                 (QVariantList {u"ashen one"_s, 1, u"test drivers INSERT"_s,
+                                u"2023-05-11T11:52:53"_s, u"2023-05-12T11:52:53"_s,
                                 NullVariant::QDateTime()}));
 
         ok = users.exec();
@@ -440,12 +442,12 @@ void tst_SqlQuery_Prepared::insert_update_delete() const
         QVERIFY(lastInsertedId > 5);
     }
 
-    const auto columnNames = std::to_array({ID, NAME, sl("is_banned"), NOTE, CREATED_AT,
+    const auto columnNames = std::to_array({ID, NAME, u"is_banned"_s, NOTE, CREATED_AT,
                                             UPDATED_AT, DELETED_AT});
 
     // Verify the INSERT
     {
-        const auto query = sl("select * from users where id = ?");
+        const auto query = u"select * from users where id = ?"_s;
         auto ok = users.prepare(query);
         QVERIFY(ok);
 
@@ -477,9 +479,9 @@ void tst_SqlQuery_Prepared::insert_update_delete() const
             QVERIFY(record.contains(column));
 
         // Tests if the QVariant has the correct type will be done in other test methods
-        QCOMPARE(users.value(NAME)       .value<QString>(),   sl("ashen one"));
+        QCOMPARE(users.value(NAME)       .value<QString>(),   u"ashen one"_s);
         QCOMPARE(users.value("is_banned").value<bool>(),      true);
-        QCOMPARE(users.value(NOTE)       .value<QString>(),   sl("test drivers INSERT"));
+        QCOMPARE(users.value(NOTE)       .value<QString>(),   u"test drivers INSERT"_s);
         QCOMPARE(users.value(CREATED_AT) .value<QDateTime>(), QDateTime({2023, 05, 11},
                                                                         {11, 52, 53}));
         QCOMPARE(users.value(UPDATED_AT) .value<QDateTime>(), QDateTime({2023, 05, 12},
@@ -490,18 +492,18 @@ void tst_SqlQuery_Prepared::insert_update_delete() const
 
     // UPDATE
     {
-        const auto query = sl("update users set name = ?, is_banned = ? where id = ?");
+        const auto query = u"update users set name = ?, is_banned = ? where id = ?"_s;
         auto ok = users.prepare(query);
         QVERIFY(ok);
 
-        users.addBindValue(sl("micah"));
+        users.addBindValue(u"micah"_s);
         users.addBindValue(0);
         users.addBindValue(lastInsertedId);
 
         // Test bound values
         const auto boundValues = users.boundValues();
         QCOMPARE(boundValues.size(), 3);
-        QCOMPARE(boundValues, (QVariantList {sl("micah"), 0, lastInsertedId}));
+        QCOMPARE(boundValues, (QVariantList {u"micah"_s, 0, lastInsertedId}));
 
         ok = users.exec();
 
@@ -516,7 +518,7 @@ void tst_SqlQuery_Prepared::insert_update_delete() const
 
     // Verify the UPDATE
     {
-        const auto query = sl("select * from users where id = ?");
+        const auto query = u"select * from users where id = ?"_s;
         auto ok = users.prepare(query);
         QVERIFY(ok);
 
@@ -548,9 +550,9 @@ void tst_SqlQuery_Prepared::insert_update_delete() const
             QVERIFY(record.contains(column));
 
         // Tests if the QVariant has the correct type will be done in other test methods
-        QCOMPARE(users.value(NAME)       .value<QString>(),   sl("micah"));
+        QCOMPARE(users.value(NAME)       .value<QString>(),   u"micah"_s);
         QCOMPARE(users.value("is_banned").value<bool>(),      false);
-        QCOMPARE(users.value(NOTE)       .value<QString>(),   sl("test drivers INSERT"));
+        QCOMPARE(users.value(NOTE)       .value<QString>(),   u"test drivers INSERT"_s);
         QCOMPARE(users.value(CREATED_AT) .value<QDateTime>(), QDateTime({2023, 05, 11},
                                                                         {11, 52, 53}));
         QCOMPARE(users.value(UPDATED_AT) .value<QDateTime>(), QDateTime({2023, 05, 12},
@@ -561,7 +563,7 @@ void tst_SqlQuery_Prepared::insert_update_delete() const
 
     // Restore and also test the DELETE
     {
-        const auto query = sl("delete from users where id = ?");
+        const auto query = u"delete from users where id = ?"_s;
         auto ok = users.prepare(query);
         QVERIFY(ok);
 
@@ -585,7 +587,7 @@ void tst_SqlQuery_Prepared::insert_update_delete() const
 
     // Verify the DELETE
     {
-        const auto query = sl("select id from users where id = ?");
+        const auto query = u"select id from users where id = ?"_s;
         auto ok = users.prepare(query);
         QVERIFY(ok);
 

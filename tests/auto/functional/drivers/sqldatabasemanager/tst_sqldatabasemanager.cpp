@@ -11,6 +11,8 @@
 
 #include "databases.hpp"
 
+using namespace Qt::StringLiterals; /* NOLINT(google-build-using-namespace) */
+
 using Orm::Constants::EMPTY;
 using Orm::Constants::H127001;
 using Orm::Constants::NOSPACE;
@@ -120,7 +122,7 @@ void tst_SqlDatabaseManager::MySQL_removeConnection_NotConnected() const
                                     {ClassName, QString::fromUtf8(__func__)}, // NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
     {
         {driver_, QMYSQL},
-        {host_,   sl("example.com")},
+        {host_,   u"example.com"_s},
     },
         false);
 
@@ -232,7 +234,7 @@ void tst_SqlDatabaseManager::MySQL_addUseAndRemoveConnection_FiveTimes() const
 
         // Execute some database query
         SqlQuery query(connection);
-        query.exec(sl("select count(*) as user_count from users"));
+        query.exec(u"select count(*) as user_count from users"_s);
 
         // Verify the query
         QVERIFY(query.isActive());
@@ -245,7 +247,7 @@ void tst_SqlDatabaseManager::MySQL_addUseAndRemoveConnection_FiveTimes() const
         QVERIFY(query.first());
         QVERIFY(query.isValid());
         QCOMPARE(query.at(), 0);
-        QCOMPARE(query.value(sl("user_count")).value<quint64>(), 5);
+        QCOMPARE(query.value(u"user_count"_s).value<quint64>(), 5);
 
         // Restore
         /* This will generate expected warning about the connection is still in use
@@ -269,17 +271,17 @@ void tst_SqlDatabaseManager::MySQL_addUseAndRemoveThreeConnections_FiveTimes() c
         const auto connectionName1 =
                 Databases::createDriversConnectionTempFrom(
                     Databases::MYSQL_DRIVERS,
-                    {ClassName, NOSPACE.arg(QString::fromUtf8(__func__), sl("1"))});// NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
+                    {ClassName, NOSPACE.arg(QString::fromUtf8(__func__), u"1"_s)});// NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
 
         const auto connectionName2 =
                 Databases::createDriversConnectionTempFrom(
                     Databases::MYSQL_DRIVERS,
-                    {ClassName, NOSPACE.arg(QString::fromUtf8(__func__), sl("2"))});// NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
+                    {ClassName, NOSPACE.arg(QString::fromUtf8(__func__), u"2"_s)});// NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
 
         const auto connectionName3 =
                 Databases::createDriversConnectionTempFrom(
                     Databases::MYSQL_DRIVERS,
-                    {ClassName, NOSPACE.arg(QString::fromUtf8(__func__), sl("3"))});// NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
+                    {ClassName, NOSPACE.arg(QString::fromUtf8(__func__), u"3"_s)});// NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
 
         if (i == 0 && !connectionName1)
             QSKIP(TestUtils::AutoTestSkipped
@@ -311,7 +313,7 @@ void tst_SqlDatabaseManager::MySQL_addUseAndRemoveThreeConnections_FiveTimes() c
         // Execute some database query on connection1
         SqlQuery query1(connection1);
         {
-            query1.exec(sl("select count(*) as user_count from users"));
+            query1.exec(u"select count(*) as user_count from users"_s);
 
             // Verify the query
             QVERIFY(query1.isActive());
@@ -324,12 +326,12 @@ void tst_SqlDatabaseManager::MySQL_addUseAndRemoveThreeConnections_FiveTimes() c
             QVERIFY(query1.first());
             QVERIFY(query1.isValid());
             QCOMPARE(query1.at(), 0);
-            QCOMPARE(query1.value(sl("user_count")).value<quint64>(), 5);
+            QCOMPARE(query1.value(u"user_count"_s).value<quint64>(), 5);
         }
         // Execute some database query on connection2
         SqlQuery query2(connection2);
         {
-            query2.exec(sl("select count(*) as user_count from users"));
+            query2.exec(u"select count(*) as user_count from users"_s);
 
             // Verify the query
             QVERIFY(query2.isActive());
@@ -342,12 +344,12 @@ void tst_SqlDatabaseManager::MySQL_addUseAndRemoveThreeConnections_FiveTimes() c
             QVERIFY(query2.first());
             QVERIFY(query2.isValid());
             QCOMPARE(query2.at(), 0);
-            QCOMPARE(query2.value(sl("user_count")).value<quint64>(), 5);
+            QCOMPARE(query2.value(u"user_count"_s).value<quint64>(), 5);
         }
         // Execute some database query on connection3
         SqlQuery query3(connection3);
         {
-            query3.exec(sl("select count(*) as user_count from users"));
+            query3.exec(u"select count(*) as user_count from users"_s);
 
             // Verify the query
             QVERIFY(query3.isActive());
@@ -360,7 +362,7 @@ void tst_SqlDatabaseManager::MySQL_addUseAndRemoveThreeConnections_FiveTimes() c
             QVERIFY(query3.first());
             QVERIFY(query3.isValid());
             QCOMPARE(query3.at(), 0);
-            QCOMPARE(query3.value(sl("user_count")).value<quint64>(), 5);
+            QCOMPARE(query3.value(u"user_count"_s).value<quint64>(), 5);
         }
 
         // Restore
