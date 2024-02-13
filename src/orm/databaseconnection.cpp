@@ -21,24 +21,6 @@ using ConfigUtils = Orm::Utils::Configuration;
 namespace Orm
 {
 
-/*!
-    \class DatabaseConnection
-    \brief The DatabaseConnection class handles a connection to the database.
-
-    \ingroup database
-    \inmodule Export
-
-    Wrapper around QSqlDatabase class, many methods are only proxies with
-    some error handling.
-    Savepoints (nested transactions) are not managed automatically like eg.
-    in Laravel's Eloquent ORM, because I want to be more explicit, so when
-    I need to start a Savepoint, I will call savepoint() method and not
-    transcation(). The same is true for rollBack(), so I will not call
-    rollBack() for both, to end transaction and to end savepoint, instead,
-    I will call rollBack() for transaction and rollbackToSavepoint("xx_1")
-    for savepoint. This makes it clear at a glance what is happening.
-*/
-
 /* public */
 
 DatabaseConnection::DatabaseConnection(
