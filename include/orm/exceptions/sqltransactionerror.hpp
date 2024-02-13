@@ -12,7 +12,8 @@ TINYORM_BEGIN_COMMON_NAMESPACE
 namespace Orm::Exceptions
 {
 
-    /*! TinyORM Sql transaction exception. */
+    /*! TinyORM Sql transaction exception. TinyOrm library compiled against
+        the TinyDrivers doesn't use this exception class. */
     class SqlTransactionError : public SqlError // clazy:exclude=copyable-polymorphic
     {
         /*! Inherit constructors. */

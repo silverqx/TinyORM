@@ -15,7 +15,8 @@ TINYORM_BEGIN_COMMON_NAMESPACE
 namespace Orm::Exceptions
 {
 
-    /*! TinyORM SqlError exception, wrapper for the TSqlError. */
+    /*! TinyORM SqlError exception, wrapper for the TSqlError. TinyOrm library compiled
+        against the TinyDrivers doesn't use this exception class. */
     class SHAREDLIB_EXPORT SqlError : public RuntimeError // clazy:exclude=copyable-polymorphic
     {
     public:
