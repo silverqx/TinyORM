@@ -24,6 +24,7 @@ using Orm::Constants::NOTE;
 using Orm::Constants::OR;
 using Orm::Constants::Progress;
 using Orm::Constants::SIZE_;
+using Orm::Constants::dummy_NONEXISTENT;
 
 using Orm::DB;
 using Orm::Exceptions::InvalidArgumentError;
@@ -3699,7 +3700,7 @@ void tst_MySql_QueryBuilder::sole() const
 {
     auto log = DB::connection(m_connection).pretend([](auto &connection)
     {
-        connection.query()->from("torrents").whereEq(NAME, "dummy-NON_EXISTENT").sole();
+        connection.query()->from("torrents").whereEq(NAME, dummy_NONEXISTENT).sole();
     });
 
     QVERIFY(!log.isEmpty());
@@ -3709,7 +3710,7 @@ void tst_MySql_QueryBuilder::sole() const
     QCOMPARE(firstLog.query,
              "select * from `torrents` where `name` = ? limit 2");
     QCOMPARE(firstLog.boundValues,
-             QVector<QVariant>({QVariant(QString("dummy-NON_EXISTENT"))}));
+             QVector<QVariant>({QVariant(dummy_NONEXISTENT)}));
 }
 
 void tst_MySql_QueryBuilder::soleValue() const
@@ -3717,7 +3718,7 @@ void tst_MySql_QueryBuilder::soleValue() const
     auto log = DB::connection(m_connection).pretend([](auto &connection)
     {
         connection.query()->from("torrents")
-                .whereEq(NAME, "dummy-NON_EXISTENT")
+                .whereEq(NAME, dummy_NONEXISTENT)
                 .soleValue(NAME);
     });
 
@@ -3728,7 +3729,7 @@ void tst_MySql_QueryBuilder::soleValue() const
     QCOMPARE(firstLog.query,
              "select `name` from `torrents` where `name` = ? limit 2");
     QCOMPARE(firstLog.boundValues,
-             QVector<QVariant>({QVariant(QString("dummy-NON_EXISTENT"))}));
+             QVector<QVariant>({QVariant(dummy_NONEXISTENT)}));
 }
 // NOLINTEND(readability-convert-member-functions-to-static)
 

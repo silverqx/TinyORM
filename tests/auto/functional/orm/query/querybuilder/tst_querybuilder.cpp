@@ -21,6 +21,7 @@ using Orm::Constants::NAME;
 using Orm::Constants::OR;
 using Orm::Constants::QMYSQL;
 using Orm::Constants::SIZE_;
+using Orm::Constants::dummy_NONEXISTENT;
 
 using Orm::DB;
 using Orm::Exceptions::InvalidArgumentError;
@@ -346,7 +347,7 @@ void tst_QueryBuilder::pluck_EmptyResult() const
         auto builder = createQuery(connection);
 
         auto result = builder->from("torrents")
-                      .whereEq(NAME, "dummy-NON_EXISTENT").pluck(NAME);
+                      .whereEq(NAME, dummy_NONEXISTENT).pluck(NAME);
 
         QCOMPARE(result, QVector<QVariant>());
     }
@@ -354,7 +355,7 @@ void tst_QueryBuilder::pluck_EmptyResult() const
         auto builder = createQuery(connection);
 
         auto result = builder->from("torrents")
-                      .whereEq(NAME, "dummy-NON_EXISTENT").pluck<quint64>(NAME, ID);
+                      .whereEq(NAME, dummy_NONEXISTENT).pluck<quint64>(NAME, ID);
 
         std::map<quint64, QVariant> expected;
         QCOMPARE(result, expected);
@@ -460,7 +461,7 @@ void tst_QueryBuilder::implode_EmptyResult() const
         auto builder = createQuery(connection);
 
         auto result = builder->from("torrents")
-                      .whereEq(NAME, "dummy-NON_EXISTENT").orderBy(NAME)
+                      .whereEq(NAME, dummy_NONEXISTENT).orderBy(NAME)
                       .implode(NAME);
 
         QCOMPARE(result, QString());
@@ -470,7 +471,7 @@ void tst_QueryBuilder::implode_EmptyResult() const
         auto builder = createQuery(connection);
 
         auto result = builder->from("torrents")
-                      .whereEq(NAME, "dummy-NON_EXISTENT").orderBy(NAME)
+                      .whereEq(NAME, dummy_NONEXISTENT).orderBy(NAME)
                       .implode(NAME, COMMA);
 
         QCOMPARE(result, QString());
@@ -1582,7 +1583,7 @@ void tst_QueryBuilder::sole_RecordsNotFoundError() const
 
     QVERIFY_EXCEPTION_THROWN(
             createQuery(connection)->from("torrents")
-                .whereEq(NAME, "dummy-NON_EXISTENT")
+                .whereEq(NAME, dummy_NONEXISTENT)
                 .sole(),
             RecordsNotFoundError);
 }
@@ -1614,7 +1615,7 @@ void tst_QueryBuilder::soleValue_RecordsNotFoundError() const
 
     QVERIFY_EXCEPTION_THROWN(
             createQuery(connection)->from("torrents")
-                .whereEq(NAME, "dummy-NON_EXISTENT")
+                .whereEq(NAME, dummy_NONEXISTENT)
                 .soleValue(NAME),
             RecordsNotFoundError);
 }
@@ -1733,7 +1734,7 @@ void tst_QueryBuilder::chunk_EmptyResult() const
     auto callbackInvoked = false;
 
     auto result = createQuery(connection)->from("file_property_properties")
-                  .whereEq(NAME, sl("dummy-NON_EXISTENT"))
+                  .whereEq(NAME, dummy_NONEXISTENT)
                   .orderBy(ID)
                   .chunk(3, [&callbackInvoked]
                             (SqlQuery &/*unused*/, const qint64 /*unused*/)
@@ -1826,7 +1827,7 @@ void tst_QueryBuilder::each_EmptyResult() const
     auto callbackInvoked = false;
 
     auto result = createQuery(connection)->from("file_property_properties")
-                  .whereEq(NAME, sl("dummy-NON_EXISTENT"))
+                  .whereEq(NAME, dummy_NONEXISTENT)
                   .orderBy(ID)
                   .each([&callbackInvoked]
                         (SqlQuery &/*unused*/, const qint64 /*unused*/)
@@ -1931,7 +1932,7 @@ void tst_QueryBuilder::chunkById_EmptyResult() const
     auto callbackInvoked = false;
 
     auto result = createQuery(connection)->from("file_property_properties")
-                  .whereEq(NAME, sl("dummy-NON_EXISTENT"))
+                  .whereEq(NAME, dummy_NONEXISTENT)
                   .orderBy(ID)
                   .chunkById(3, [&callbackInvoked]
                                 (SqlQuery &/*unused*/, const qint64 /*unused*/)
@@ -2041,7 +2042,7 @@ void tst_QueryBuilder::chunkById_EmptyResult_WithAlias() const
 
     auto result = createQuery(connection)->from("file_property_properties")
                   .select({ASTERISK, "id as id_as"})
-                  .whereEq(NAME, sl("dummy-NON_EXISTENT"))
+                  .whereEq(NAME, dummy_NONEXISTENT)
                   .orderBy(ID)
                   .chunkById(3, [&callbackInvoked]
                                 (SqlQuery &/*unused*/, const qint64 /*unused*/)
@@ -2123,7 +2124,7 @@ void tst_QueryBuilder::eachById_EmptyResult() const
     auto callbackInvoked = false;
 
     auto result = createQuery(connection)->from("file_property_properties")
-                  .whereEq(NAME, sl("dummy-NON_EXISTENT"))
+                  .whereEq(NAME, dummy_NONEXISTENT)
                   .orderBy(ID)
                   .eachById([&callbackInvoked]
                             (SqlQuery &/*unused*/, const qint64 /*unused*/)
@@ -2209,7 +2210,7 @@ void tst_QueryBuilder::eachById_EmptyResult_WithAlias() const
 
     auto result = createQuery(connection)->from("file_property_properties")
                   .select({ASTERISK, "id as id_as"})
-                  .whereEq(NAME, sl("dummy-NON_EXISTENT"))
+                  .whereEq(NAME, dummy_NONEXISTENT)
                   .orderBy(ID)
                   .eachById([&callbackInvoked]
                             (SqlQuery &/*unused*/, const qint64 /*unused*/)

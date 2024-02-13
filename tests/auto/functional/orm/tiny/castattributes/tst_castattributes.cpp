@@ -13,6 +13,7 @@
 using Orm::Constants::QMYSQL;
 using Orm::Constants::QPSQL;
 using Orm::Constants::QSQLITE;
+using Orm::Constants::dummy_NONEXISTENT;
 
 using Orm::DB;
 using Orm::Exceptions::InvalidArgumentError;
@@ -2708,9 +2709,9 @@ void tst_CastAttributes::cast_NonExisting_Invalid_to_int() const
 
     Type type;
 
-    type.mergeCasts({{"dummy-NON_EXISTENT", CastType::Integer}});
+    type.mergeCasts({{dummy_NONEXISTENT, CastType::Integer}});
 
-    auto attribute = type.getAttribute("dummy-NON_EXISTENT");
+    auto attribute = type.getAttribute(dummy_NONEXISTENT);
     auto typeId = Helpers::qVariantTypeId(attribute);
 
     QVERIFY(!attribute.isValid());

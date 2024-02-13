@@ -10,6 +10,7 @@
 using Orm::Constants::ASTERISK;
 using Orm::Constants::ID;
 using Orm::Constants::NAME;
+using Orm::Constants::dummy_NONEXISTENT;
 
 using Orm::One;
 
@@ -597,7 +598,7 @@ void tst_Relations_BuildsQueries::chunk_EmptyResult() const
     auto callbackInvoked = false;
 
     auto result = Torrent::find(2)->tags()->whereEq("torrent_tags.name",
-                                                    sl("dummy-NON_EXISTENT"))
+                                                    dummy_NONEXISTENT)
                   .orderBy(ID)
                   .chunk(2, [&callbackInvoked]
                             (ModelsCollection<Tag> &&/*unused*/, const qint64 /*unused*/) // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
@@ -725,7 +726,7 @@ void tst_Relations_BuildsQueries::each_EmptyResult() const
     auto callbackInvoked = false;
 
     auto result = Torrent::find(2)->tags()->whereEq("torrent_tags.name",
-                                                    sl("dummy-NON_EXISTENT"))
+                                                    dummy_NONEXISTENT)
                   .orderBy(ID)
                   .each([&callbackInvoked]
                         (Tag &&/*unused*/, const qint64 /*unused*/) // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
@@ -828,7 +829,7 @@ void tst_Relations_BuildsQueries::chunkMap_EmptyResult() const
     auto callbackInvoked = false;
 
     auto result = Torrent::find(2)->tags()
-                  ->whereEq("torrent_tags.name", sl("dummy-NON_EXISTENT"))
+                  ->whereEq("torrent_tags.name", dummy_NONEXISTENT)
                   .chunkMap([&callbackInvoked](Tag &&model)
     {
         callbackInvoked = true;
@@ -944,7 +945,7 @@ void tst_Relations_BuildsQueries::chunkMap_EmptyResult_TemplatedReturnValue() co
     // Ownership of a unique_ptr()
     const auto relation = Torrent::find(2)->tags();
 
-    relation->whereEq("torrent_tags.name", sl("dummy-NON_EXISTENT"));
+    relation->whereEq("torrent_tags.name", dummy_NONEXISTENT);
 
     auto result = relation->chunkMap<QString>([&callbackInvoked](Tag &&/*unused*/) // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
                                               -> QString
@@ -1063,7 +1064,7 @@ void tst_Relations_BuildsQueries::chunkById_EmptyResult() const
     auto callbackInvoked = false;
 
     auto result = Torrent::find(2)->tags()->whereEq("torrent_tags.name",
-                                                    sl("dummy-NON_EXISTENT"))
+                                                    dummy_NONEXISTENT)
                   .orderBy(ID)
                   .chunkById(2, [&callbackInvoked]
                                 (ModelsCollection<Tag> &&/*unused*/, // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
@@ -1189,7 +1190,7 @@ void tst_Relations_BuildsQueries::chunkById_EmptyResult_WithAlias() const
 
     auto result = Torrent::find(2)->tags()
                   ->select({ASTERISK, "torrent_tags.id as id_as"})
-                  .whereEq("torrent_tags.name", sl("dummy-NON_EXISTENT"))
+                  .whereEq("torrent_tags.name", dummy_NONEXISTENT)
                   .orderBy(ID)
                   .chunkById(2, [&callbackInvoked]
                                 (ModelsCollection<Tag> &&/*unused*/, // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
@@ -1284,7 +1285,7 @@ void tst_Relations_BuildsQueries::eachById_EmptyResult() const
     auto callbackInvoked = false;
 
     auto result = Torrent::find(2)->tags()->whereEq("torrent_tags.name",
-                                                    sl("dummy-NON_EXISTENT"))
+                                                    dummy_NONEXISTENT)
                   .orderBy(ID)
                   .eachById([&callbackInvoked]
                             (Tag &&/*unused*/, const qint64 /*unused*/) // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
@@ -1382,7 +1383,7 @@ void tst_Relations_BuildsQueries::eachById_EmptyResult_WithAlias() const
 
     auto result = Torrent::find(2)->tags()
                   ->select({ASTERISK, "torrent_tags.id as id_as"})
-                  .whereEq("torrent_tags.name", sl("dummy-NON_EXISTENT"))
+                  .whereEq("torrent_tags.name", dummy_NONEXISTENT)
                   .orderBy(ID)
                   .eachById([&callbackInvoked]
                             (Tag &&/*unused*/, const qint64 /*unused*/) // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)

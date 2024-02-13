@@ -18,6 +18,7 @@ using Orm::Constants::NAME;
 using Orm::Constants::NOTE;
 using Orm::Constants::Progress;
 using Orm::Constants::SIZE_;
+using Orm::Constants::dummy_NONEXISTENT;
 
 using Orm::DB;
 using Orm::Exceptions::InvalidArgumentError;
@@ -852,7 +853,7 @@ void tst_Model_Connection_Independent::
 {
     Torrent torrent;
 
-    torrent.fill({{"dummy-NON_EXISTENT", "foo"}});
+    torrent.fill({{dummy_NONEXISTENT, "foo"}});
 
     QVERIFY(!torrent.exists);
     QCOMPARE(torrent.getAttributes().size(), 0);
@@ -863,10 +864,10 @@ void tst_Model_Connection_Independent::
 {
     Torrent_AllowedMassAssignment torrent;
 
-    torrent.fill({{"dummy-NON_EXISTENT", "foo"}});
+    torrent.fill({{dummy_NONEXISTENT, "foo"}});
 
     QVERIFY(!torrent.exists);
-    QCOMPARE(torrent["dummy-NON_EXISTENT"], QVariant("foo"));
+    QCOMPARE(torrent[dummy_NONEXISTENT], QVariant("foo"));
     QCOMPARE(torrent.getAttributes().size(), 1);
 }
 
@@ -875,10 +876,10 @@ void tst_Model_Connection_Independent::
 {
     Torrent_AllowedMassAssignment torrent;
 
-    torrent.fill({{"dummy-NON_EXISTENT", "foo"}});
+    torrent.fill({{dummy_NONEXISTENT, "foo"}});
 
     QVERIFY(!torrent.exists);
-    QCOMPARE(torrent["dummy-NON_EXISTENT"], QVariant("foo"));
+    QCOMPARE(torrent[dummy_NONEXISTENT], QVariant("foo"));
     QCOMPARE(torrent.getAttributes().size(), 1);
 }
 
@@ -934,10 +935,10 @@ void tst_Model_Connection_Independent::
      massAssignment_forceFill_NonExistentAttribute() const
 {
     Torrent_TotallyGuarded torrent;
-    torrent.forceFill({{"dummy-NON_EXISTENT", "foo"}});
+    torrent.forceFill({{dummy_NONEXISTENT, "foo"}});
 
     QVERIFY(!torrent.exists);
-    QCOMPARE(torrent["dummy-NON_EXISTENT"], QVariant("foo"));
+    QCOMPARE(torrent[dummy_NONEXISTENT], QVariant("foo"));
     QCOMPARE(torrent.getAttributes().size(), 1);
 }
 
@@ -1045,12 +1046,12 @@ void tst_Model_Connection_Independent::pluck() const
 void tst_Model_Connection_Independent::pluck_EmptyResult() const
 {
     {
-        auto result = Torrent::whereEq(NAME, "dummy-NON_EXISTENT")->pluck(NAME);
+        auto result = Torrent::whereEq(NAME, dummy_NONEXISTENT)->pluck(NAME);
 
         QCOMPARE(result, QVector<QVariant>());
     }
     {
-        auto result = Torrent::whereEq(NAME, "dummy-NON_EXISTENT")
+        auto result = Torrent::whereEq(NAME, dummy_NONEXISTENT)
                       ->pluck<quint64>(NAME, ID);
 
         std::map<quint64, QVariant> expected;
@@ -1162,12 +1163,12 @@ void tst_Model_Connection_Independent::pluck_With_u_dates() const
 void tst_Model_Connection_Independent::pluck_EmptyResult_With_u_dates() const
 {
     {
-        auto result = Torrent::whereEq(NAME, "dummy-NON_EXISTENT")->pluck("added_on");
+        auto result = Torrent::whereEq(NAME, dummy_NONEXISTENT)->pluck("added_on");
 
         QCOMPARE(result, QVector<QVariant>());
     }
     {
-        auto result = Torrent::whereEq(NAME, "dummy-NON_EXISTENT")
+        auto result = Torrent::whereEq(NAME, dummy_NONEXISTENT)
                       ->pluck<QDateTime>(ID, "added_on");
 
         std::map<QDateTime, QVariant> expected;
@@ -1289,7 +1290,7 @@ void tst_Model_Connection_Independent::only_NonExistentAttribute() const
     QVERIFY(torrent);
     QVERIFY(torrent->exists);
 
-    auto attributes = torrent->only({ID, NAME, "dummy-NON_EXISTENT"});
+    auto attributes = torrent->only({ID, NAME, dummy_NONEXISTENT});
     QCOMPARE(attributes.size(), 3);
 
     /* The order must be the same as the requested order during only() method call and
@@ -1298,13 +1299,13 @@ void tst_Model_Connection_Independent::only_NonExistentAttribute() const
         {ID,   1},
         {NAME, QString("test1")},
         // Must return invalid QVariant for non-existent attribute
-        {"dummy-NON_EXISTENT", QVariant()},
+        {dummy_NONEXISTENT, QVariant()},
     };
     QCOMPARE(attributes, expectedAttributes);
 
     // Verify an invalid attribute 🤓
     const auto &dummyAttribute = expectedAttributes.at(2);
-    QCOMPARE(dummyAttribute.key, QString("dummy-NON_EXISTENT"));
+    QCOMPARE(dummyAttribute.key, dummy_NONEXISTENT);
     QVERIFY(!dummyAttribute.value.isValid());
     QVERIFY(dummyAttribute.value.isNull());
 }
@@ -1441,7 +1442,7 @@ void tst_Model_Connection_Independent::chunk_EmptyResult() const
 {
     auto callbackInvoked = false;
 
-    auto result = FilePropertyProperty::whereEq(NAME, sl("dummy-NON_EXISTENT"))
+    auto result = FilePropertyProperty::whereEq(NAME, dummy_NONEXISTENT)
                   ->orderBy(ID)
                   .chunk(3, [&callbackInvoked]
                             (ModelsCollection<FilePropertyProperty> &&/*unused*/, // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
@@ -1547,7 +1548,7 @@ void tst_Model_Connection_Independent::each_EmptyResult() const
 {
     auto callbackInvoked = false;
 
-    auto result = FilePropertyProperty::whereEq(NAME, sl("dummy-NON_EXISTENT"))
+    auto result = FilePropertyProperty::whereEq(NAME, dummy_NONEXISTENT)
                   ->orderBy(ID)
                   .each([&callbackInvoked]
                         (FilePropertyProperty &&/*unused*/, const qint64 /*unused*/) // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
@@ -1662,7 +1663,7 @@ void tst_Model_Connection_Independent::chunkMap_EmptyResult() const
 {
     auto callbackInvoked = false;
 
-    auto result = FilePropertyProperty::whereEq(NAME, sl("dummy-NON_EXISTENT"))
+    auto result = FilePropertyProperty::whereEq(NAME, dummy_NONEXISTENT)
                   ->chunkMap([&callbackInvoked]
                              (FilePropertyProperty &&model)
     {
@@ -1732,7 +1733,7 @@ void tst_Model_Connection_Independent::chunkMap_EmptyResult_TemplatedReturnValue
 {
     auto callbackInvoked = false;
 
-    auto result = FilePropertyProperty::whereEq(NAME, sl("dummy-NON_EXISTENT"))
+    auto result = FilePropertyProperty::whereEq(NAME, dummy_NONEXISTENT)
                   ->chunkMap<QString>([&callbackInvoked]
                                       (FilePropertyProperty &&/*unused*/) // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
                                       -> QString
@@ -1835,7 +1836,7 @@ void tst_Model_Connection_Independent::chunkById_EmptyResult() const
 {
     auto callbackInvoked = false;
 
-    auto result = FilePropertyProperty::whereEq(NAME, sl("dummy-NON_EXISTENT"))
+    auto result = FilePropertyProperty::whereEq(NAME, dummy_NONEXISTENT)
                   ->orderBy(ID)
                   .chunkById(3, [&callbackInvoked]
                                 (ModelsCollection<FilePropertyProperty> &&/*unused*/, // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
@@ -1943,7 +1944,7 @@ void tst_Model_Connection_Independent::chunkById_EmptyResult_WithAlias() const
     auto callbackInvoked = false;
 
     auto result = FilePropertyProperty::select({ASTERISK, "id as id_as"})
-                  ->whereEq(NAME, sl("dummy-NON_EXISTENT"))
+                  ->whereEq(NAME, dummy_NONEXISTENT)
                   .orderBy(ID)
                   .chunkById(3, [&callbackInvoked]
                                 (ModelsCollection<FilePropertyProperty> &&/*unused*/, // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
@@ -2019,7 +2020,7 @@ void tst_Model_Connection_Independent::eachById_EmptyResult() const
 {
     auto callbackInvoked = false;
 
-    auto result = FilePropertyProperty::whereEq(NAME, sl("dummy-NON_EXISTENT"))
+    auto result = FilePropertyProperty::whereEq(NAME, dummy_NONEXISTENT)
                   ->orderBy(ID)
                   .eachById([&callbackInvoked]
                             (FilePropertyProperty &&/*unused*/, const qint64 /*unused*/) // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
@@ -2098,7 +2099,7 @@ void tst_Model_Connection_Independent::eachById_EmptyResult_WithAlias() const
     auto callbackInvoked = false;
 
     auto result = FilePropertyProperty::select({ASTERISK, "id as id_as"})
-                  ->whereEq(NAME, sl("dummy-NON_EXISTENT"))
+                  ->whereEq(NAME, dummy_NONEXISTENT)
                   .orderBy(ID)
                   .eachById([&callbackInvoked]
                             (FilePropertyProperty &&/*unused*/, const qint64 /*unused*/) // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
@@ -2143,7 +2144,7 @@ void tst_Model_Connection_Independent::sole() const
 void tst_Model_Connection_Independent::sole_RecordsNotFoundError() const
 {
     QVERIFY_EXCEPTION_THROWN(
-            FilePropertyProperty::whereEq(NAME, "dummy-NON_EXISTENT")->sole(),
+            FilePropertyProperty::whereEq(NAME, dummy_NONEXISTENT)->sole(),
             RecordsNotFoundError);
 }
 
@@ -2158,7 +2159,7 @@ void tst_Model_Connection_Independent::sole_Pretending() const
 {
     auto log = DB::connection(m_connection).pretend([]()
     {
-        FilePropertyProperty::whereEq(NAME, "dummy-NON_EXISTENT")->sole();
+        FilePropertyProperty::whereEq(NAME, dummy_NONEXISTENT)->sole();
     });
 
     QVERIFY(!log.isEmpty());
@@ -2168,7 +2169,7 @@ void tst_Model_Connection_Independent::sole_Pretending() const
     QCOMPARE(firstLog.query,
              "select * from `file_property_properties` where `name` = ? limit 2");
     QCOMPARE(firstLog.boundValues,
-             QVector<QVariant>({QVariant(QString("dummy-NON_EXISTENT"))}));
+             QVector<QVariant>({QVariant(dummy_NONEXISTENT)}));
 }
 
 void tst_Model_Connection_Independent::soleValue() const
@@ -2183,7 +2184,7 @@ void tst_Model_Connection_Independent::soleValue() const
 void tst_Model_Connection_Independent::soleValue_RecordsNotFoundError() const
 {
     QVERIFY_EXCEPTION_THROWN(
-            FilePropertyProperty::whereEq(NAME, "dummy-NON_EXISTENT")->soleValue(NAME),
+            FilePropertyProperty::whereEq(NAME, dummy_NONEXISTENT)->soleValue(NAME),
             RecordsNotFoundError);
 }
 
@@ -2198,7 +2199,7 @@ void tst_Model_Connection_Independent::soleValue_Pretending() const
 {
     auto log = DB::connection(m_connection).pretend([]()
     {
-        FilePropertyProperty::whereEq(NAME, "dummy-NON_EXISTENT")->soleValue(NAME);
+        FilePropertyProperty::whereEq(NAME, dummy_NONEXISTENT)->soleValue(NAME);
     });
 
     QVERIFY(!log.isEmpty());
@@ -2208,7 +2209,7 @@ void tst_Model_Connection_Independent::soleValue_Pretending() const
     QCOMPARE(firstLog.query,
              "select `name` from `file_property_properties` where `name` = ? limit 2");
     QCOMPARE(firstLog.boundValues,
-             QVector<QVariant>({QVariant(QString("dummy-NON_EXISTENT"))}));
+             QVector<QVariant>({QVariant(dummy_NONEXISTENT)}));
 }
 // NOLINTEND(readability-convert-member-functions-to-static)
 

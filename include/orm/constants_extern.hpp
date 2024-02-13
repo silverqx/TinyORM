@@ -181,6 +181,7 @@ namespace Orm::Constants
 
     // Others
     SHAREDLIB_EXPORT extern const QString NotImplemented;
+    SHAREDLIB_EXPORT extern const QString dummy_NONEXISTENT;
 
 } // namespace Orm::Constants
 

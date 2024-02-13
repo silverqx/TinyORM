@@ -21,6 +21,7 @@ using Orm::Constants::UTF8;
 using Orm::Constants::UcsBasic;
 using Orm::Constants::charset_;
 using Orm::Constants::driver_;
+using Orm::Constants::dummy_NONEXISTENT;
 using Orm::Constants::search_path;
 using Orm::Constants::username_;
 
@@ -902,7 +903,7 @@ void tst_PostgreSQL_SchemaBuilder::hasTable_DatabaseDiffers_ThrowException() con
     {
         QVERIFY_EXCEPTION_THROWN(
                     Schema::on(connection.getName())
-                    .hasTable("dummy-NON_EXISTENT-database.public.users"),
+                    .hasTable(sl("%1-database.public.users").arg(dummy_NONEXISTENT)),
                     InvalidArgumentError);
     });
 }

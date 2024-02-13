@@ -18,6 +18,7 @@ using Orm::Constants::NOTE;
 using Orm::Constants::SIZE_;
 using Orm::Constants::SPACE_IN;
 using Orm::Constants::UPDATED_AT;
+using Orm::Constants::dummy_NONEXISTENT;
 
 using Orm::Exceptions::InvalidArgumentError;
 using Orm::One;
@@ -3141,7 +3142,7 @@ void tst_Collection_Models::where_InvalidComparisonOperator_ThrowException() con
     QVERIFY(Common::verifyIds(images, {2, 3, 4, 5, 6}));
 
     // Verify
-    QVERIFY_EXCEPTION_THROWN(images.where(ID, "dummy-NON_EXISTENT", 10),
+    QVERIFY_EXCEPTION_THROWN(images.where(ID, dummy_NONEXISTENT, 10),
                              InvalidArgumentError);
 }
 
@@ -3404,7 +3405,7 @@ void tst_Collection_Models::value_QVariant_NonExistentAttribute() const
     QVERIFY(Common::verifyIds(images, {2, 3, 4, 5, 6}));
 
     // Get result
-    const auto result = images.value("dummy-NON_EXISTENT");
+    const auto result = images.value(dummy_NONEXISTENT);
 
     // Verify
     QVERIFY(!result.isValid());
@@ -3419,7 +3420,7 @@ void tst_Collection_Models::value_QVariant_NonExistentAttribute_DefaultValue() c
     QVERIFY(Common::verifyIds(images, {2, 3, 4, 5, 6}));
 
     // Get result
-    const auto result = images.value("dummy-NON_EXISTENT", "default-value");
+    const auto result = images.value(dummy_NONEXISTENT, "default-value");
 
     // Verify
     QVERIFY(!result.isNull() && result.isValid());
@@ -3429,7 +3430,7 @@ void tst_Collection_Models::value_QVariant_NonExistentAttribute_DefaultValue() c
 void tst_Collection_Models::value_QVariant_EmptyCollection() const
 {
     // Get result
-    const auto result = ModelsCollection<AlbumImage>().value("dummy-NON_EXISTENT");
+    const auto result = ModelsCollection<AlbumImage>().value(dummy_NONEXISTENT);
 
     // Verify
     QVERIFY(!result.isValid());
@@ -3459,7 +3460,7 @@ void tst_Collection_Models::value_quint64_NonExistentAttribute_DefaultValue() co
     QVERIFY(Common::verifyIds(images, {2, 3, 4, 5, 6}));
 
     // Get result
-    const auto result = images.value<quint64>("dummy-NON_EXISTENT", 0);
+    const auto result = images.value<quint64>(dummy_NONEXISTENT, 0);
 
     // Verify
     QVERIFY((std::is_same_v<std::remove_const_t<decltype (result)>, quint64>));
@@ -3489,7 +3490,7 @@ void tst_Collection_Models::value_QString_NonExistentAttribute_DefaultValue() co
     QVERIFY(Common::verifyIds(images, {2, 3, 4, 5, 6}));
 
     // Get result
-    const auto result = images.value<QString>("dummy-NON_EXISTENT", "default-value");
+    const auto result = images.value<QString>(dummy_NONEXISTENT, "default-value");
 
     // Verify
     QVERIFY((std::is_same_v<std::remove_const_t<decltype (result)>, QString>));

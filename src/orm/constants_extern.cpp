@@ -169,7 +169,8 @@ namespace Orm::Constants
     const QString B_AND    = QStringLiteral("&");
 
     // Others
-    const QString NotImplemented = QStringLiteral("Not implemented :/.");
+    const QString NotImplemented    = QStringLiteral("Not implemented :/.");
+    const QString dummy_NONEXISTENT = QStringLiteral("dummy-NON_EXISTENT");
 
 } // namespace Orm::Constants
 
