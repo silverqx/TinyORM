@@ -20,6 +20,7 @@ using Orm::Constants::ID;
 using Orm::Constants::NAME;
 using Orm::Constants::NOTE;
 using Orm::Constants::UPDATED_AT;
+using Orm::Constants::dummy_NONEXISTENT;
 
 using Orm::Drivers::Exceptions::QueryError;
 using Orm::Drivers::SqlDatabase;
@@ -330,12 +331,12 @@ void tst_SqlQuery_Prepared::select_BoundMoreValues() const
     QVERIFY(ok);
 
     users.addBindValue(4);
-    users.addBindValue(u"dummy-NON_EXISTENT"_s);
+    users.addBindValue(dummy_NONEXISTENT);
 
     // Test bound values
     const auto boundValues = users.boundValues();
     QCOMPARE(boundValues.size(), 2);
-    const QVariantList boundValuesExpected({4, u"dummy-NON_EXISTENT"_s});
+    const QVariantList boundValuesExpected({4, dummy_NONEXISTENT});
     QCOMPARE(boundValues, boundValuesExpected);
 
     // To catch qWarning() message
