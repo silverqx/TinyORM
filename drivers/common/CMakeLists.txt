@@ -129,6 +129,8 @@ target_compile_definitions(${TinyDrivers_target}
         $<$<NOT:$<CONFIG:Debug>>:TINYDRIVERS_NO_DEBUG>
         # Debug build
         $<$<CONFIG:Debug>:TINYDRIVERS_DEBUG>
+        # Used in common header files (currently in replacebindings.hpp only)
+        PROJECT_TINYDRIVERS_PRIVATE
         # TinyDrivers support these strict Qt macros
         QT_ASCII_CAST_WARNINGS
         QT_NO_CAST_FROM_ASCII

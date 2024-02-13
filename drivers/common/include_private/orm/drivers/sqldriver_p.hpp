@@ -5,7 +5,6 @@
 #include <thread>
 
 #include "orm/drivers/sqldriver.hpp"
-#include "orm/drivers/sqlerror.hpp"
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
@@ -28,8 +27,6 @@ namespace Orm::Drivers
         inline virtual ~SqlDriverPrivate() = default;
 
         /* Data members */
-        /*! The last error that occurred on the database. */
-        SqlError lastError {};
         /*! Database driver type. */
         SqlDriver::DbmsType dbmsType;
         /*! The default numerical precision policy. */
@@ -40,8 +37,6 @@ namespace Orm::Drivers
 
         /*! Is the connection currently open? */
         bool isOpen = false;
-        /*! Was there an error while opening a new database connection? */
-        bool isOpenError = false;
     };
 
     /* public */

@@ -13,11 +13,11 @@ TINYORM_BEGIN_COMMON_NAMESPACE
 namespace Orm::Drivers
 {
 
+    class DummySqlError;
     class SqlDatabase;
     class SqlDriver;
-    class SqlError;
-    class SqlRecord;
     class SqlQueryPrivate;
+    class SqlRecord;
 
     /*! SqlQuery class executes, navigates, and retrieves data from SQL statements. */
     class TINYDRIVERS_EXPORT SqlQuery
@@ -59,7 +59,7 @@ namespace Orm::Drivers
         /*! Get the last executed query (alias). */
         QString lastQuery() const noexcept;
         /*! Get information about the error of the last query. */
-        SqlError lastError() const noexcept;
+        DummySqlError lastError() const noexcept;
 
         /*! Get the current cursor position (0-based). */
         size_type at() const noexcept;

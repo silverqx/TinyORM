@@ -1,6 +1,10 @@
 #include <QCoreApplication>
 #include <QtTest>
 
+#ifdef TINYORM_USING_TINYDRIVERS
+#  include "orm/drivers/dummysqlerror.hpp"
+#endif
+
 #include "orm/db.hpp"
 #include "orm/utils/nullvariant.hpp"
 #include "orm/utils/type.hpp"

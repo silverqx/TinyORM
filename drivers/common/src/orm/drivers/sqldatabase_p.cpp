@@ -11,7 +11,6 @@
 
 #include "orm/drivers/constants_p.hpp"
 #include "orm/drivers/exceptions/invalidargumenterror.hpp"
-#include "orm/drivers/sqlerror.hpp"
 #include "orm/drivers/support/connectionshash_p.hpp"
 #include "orm/drivers/utils/type_p.hpp"
 
@@ -83,11 +82,9 @@ SqlDatabase SqlDatabasePrivate::database(const QString &connection, const bool o
     // Throw an exception if a connection was created in a different thread
     throwIfDifferentThread(db, connection);
 
-    // Try to open a database connection and show a warning if failed
-    if (open && !db.isOpen() && !db.open())
-        qWarning().noquote().nospace()
-                << "SqlDatabasePrivate::database: unable to open database: "
-                << db.lastError().text();
+    // Try to open a database connection
+    if (open && !db.isOpen())
+        db.open();
 
     return db;
 }

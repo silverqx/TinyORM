@@ -18,12 +18,19 @@ using Orm::Constants::Progress;
 using Orm::Constants::SIZE_;
 using Orm::Constants::Updated_;
 
-using Orm::Exceptions::QueryError;
 using Orm::One;
 
 using Orm::Tiny::AttributeItem;
 using Orm::Tiny::ConnectionOverride;
 using Orm::Tiny::Types::ModelsCollection;
+
+#ifdef TINYORM_USING_QTSQLDRIVERS
+using Orm::Exceptions::QueryError;
+#elif defined(TINYORM_USING_TINYDRIVERS)
+using Orm::Drivers::Exceptions::QueryError;
+#else
+#  error Missing include "orm/macros/sqldrivermappings.hpp".
+#endif
 
 using TypeUtils = Orm::Utils::Type;
 

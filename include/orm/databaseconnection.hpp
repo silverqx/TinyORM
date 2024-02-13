@@ -13,12 +13,19 @@ TINY_SYSTEM_HEADER
 #include "orm/concerns/logsqueries.hpp"
 #include "orm/concerns/managestransactions.hpp"
 #include "orm/connectors/connectorinterface.hpp"
-#include "orm/exceptions/queryerror.hpp"
 #include "orm/query/grammars/grammar.hpp"
 #include "orm/query/processors/processor.hpp"
 #include "orm/schema/grammars/schemagrammar.hpp"
 #include "orm/schema/schemabuilder.hpp"
 #include "orm/types/sqlquery.hpp"
+
+#ifdef TINYORM_USING_QTSQLDRIVERS
+#  include "orm/exceptions/queryerror.hpp"
+#elif defined(TINYORM_USING_TINYDRIVERS)
+#  include "orm/drivers/exceptions/queryerror.hpp"
+#else
+#  error Missing include "orm/macros/sqldrivermappings.hpp".
+#endif
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
@@ -64,6 +71,14 @@ namespace Orm
 #ifdef TINYORM_MYSQL_PING
         // To access logConnected()/logDisconnected() methods
         friend class MySqlConnection;
+#endif
+
+#ifdef TINYORM_USING_QTSQLDRIVERS
+        /*! Alias for the QueryError exception. */
+        using QueryError = Orm::Exceptions::QueryError;
+#elif defined(TINYORM_USING_TINYDRIVERS)
+        /*! Alias for the QueryError exception. */
+        using QueryError = Orm::Drivers::Exceptions::QueryError;
 #endif
 
     protected:
@@ -326,13 +341,13 @@ namespace Orm
         /*! Handle a query exception. */
         template<typename Return>
         Return handleQueryException(
-                const std::exception_ptr &ePtr, const Exceptions::QueryError &e,
+                const std::exception_ptr &ePtr, const QString &errorMessage,
                 const QString &queryString, const QVector<QVariant> &preparedBindings,
                 const RunCallback<Return> &callback) const;
         /*! Handle a query exception that occurred during query execution. */
         template<typename Return>
         Return tryAgainIfCausedByLostConnection(
-                const std::exception_ptr &ePtr, const Exceptions::QueryError &e,
+                const std::exception_ptr &ePtr, const QString &errorMessage,
                 const QString &queryString, const QVector<QVariant> &preparedBindings,
                 const RunCallback<Return> &callback) const;
 
@@ -543,8 +558,8 @@ namespace Orm
             try {
                 return runQueryCallback(queryString, preparedBindings, callback);
 
-            } catch (const Exceptions::QueryError &e) {
-                return handleQueryException(std::current_exception(), e,
+            } catch (const QueryError &e) {
+                return handleQueryException(std::current_exception(), e.databaseText(),
                                             queryString, preparedBindings, callback);
             }
         });
@@ -591,7 +606,7 @@ namespace Orm
     template<typename Return>
     Return
     DatabaseConnection::handleQueryException(
-            const std::exception_ptr &ePtr, const Exceptions::QueryError &e,
+            const std::exception_ptr &ePtr, const QString &errorMessage,
             const QString &queryString, const QVector<QVariant> &preparedBindings,
             const RunCallback<Return> &callback) const
     {
@@ -599,28 +614,27 @@ namespace Orm
         if (inTransaction())
             std::rethrow_exception(ePtr);
 
-        return tryAgainIfCausedByLostConnection(ePtr, e, queryString, preparedBindings,
-                                                callback);
+        return tryAgainIfCausedByLostConnection(ePtr, errorMessage, queryString,
+                                                preparedBindings, callback);
     }
 
     template<typename Return>
     Return
     DatabaseConnection::tryAgainIfCausedByLostConnection(
-            const std::exception_ptr &ePtr, const Exceptions::QueryError &e,
+            const std::exception_ptr &ePtr, const QString &errorMessage,
             const QString &queryString, const QVector<QVariant> &preparedBindings,
             const RunCallback<Return> &callback) const
     {
         // TODO would be good to call KILL on lost connection to free locks, https://dev.mysql.com/doc/c-api/8.0/en/c-api-auto-reconnect.html silverqx
-        if (causedByLostConnection(e)) {
-            reconnect();
+        if (!causedByLostConnection(errorMessage))
+            std::rethrow_exception(ePtr);
 
-            // BUG rethrow e when causedByLostConnection to correctly inform user, causedByLostConnection state lost during second runQueryCallback(), because it internally tries to connect to DB and throws "Unable to connect to database" instead of "Lost connection", probably another try-catch and if catched "Unable to connect to database" then rethrow e (Lost connection)? silverqx
-            /* After the second failed attempt will be isOpen() == false because
+        reconnect();
+
+        // BUG rethrow e when causedByLostConnection to correctly inform user, causedByLostConnection state lost during second runQueryCallback(), because it internally tries to connect to DB and throws "Unable to connect to database" instead of "Lost connection", probably another try-catch and if catched "Unable to connect to database" then rethrow e (Lost connection)? silverqx
+        /* After the second failed attempt will be isOpen() == false because
                the m_qtConnection == std::nullopt. */
-            return runQueryCallback(queryString, preparedBindings, callback);
-        }
-
-        std::rethrow_exception(ePtr);
+        return runQueryCallback(queryString, preparedBindings, callback);
     }
 
     bool DatabaseConnection::shouldCountElapsed() const

@@ -6,9 +6,9 @@
 
 #include <orm/macros/likely.hpp>
 
+#include "orm/drivers/dummysqlerror.hpp"
 #include "orm/drivers/sqldatabase_p.hpp"
 #include "orm/drivers/sqldriver.hpp"
-#include "orm/drivers/sqlerror.hpp"
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
@@ -82,9 +82,9 @@ bool SqlDatabase::isOpen() const
     return d->driver().isOpen();
 }
 
-bool SqlDatabase::isOpenError() const
+bool SqlDatabase::isOpenError() const noexcept // NOLINT(readability-convert-member-functions-to-static)
 {
-    return d->driver().isOpenError();
+    return false;
 }
 
 bool SqlDatabase::isValid() const noexcept
@@ -97,9 +97,9 @@ bool SqlDatabase::isValid() const noexcept
     return d && d->isDriverValid();
 }
 
-SqlError SqlDatabase::lastError() const
+DummySqlError SqlDatabase::lastError() const noexcept // NOLINT(readability-convert-member-functions-to-static)
 {
-    return d->driver().lastError();
+    return {};
 }
 
 QString SqlDatabase::driverName() const noexcept

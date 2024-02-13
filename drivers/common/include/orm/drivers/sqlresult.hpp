@@ -17,9 +17,8 @@ TINYORM_BEGIN_COMMON_NAMESPACE
 namespace Orm::Drivers
 {
 
-    class SqlRecord;
     class SqlDriver;
-    class SqlError;
+    class SqlRecord;
     class SqlResultPrivate;
 
     /*! Database SQL result set abstract class. */
@@ -45,6 +44,9 @@ namespace Orm::Drivers
         /*! Returns the low-level database result set handle (database specific). */
         virtual QVariant handle() const noexcept = 0;
 
+        /*! Set the connection name. */
+        void setConnectionName(QString &&connection) noexcept;
+
     protected:
         /*! Query placeholders syntax enum. */
         enum BindingSyntax {
@@ -62,15 +64,6 @@ namespace Orm::Drivers
         QString query() const noexcept;
         /*! Set the query for the result. */
         virtual void setQuery(const QString &query) noexcept;
-
-        /*! Get information about the error of the last query. */
-        SqlError lastError() const noexcept;
-        /*! Set the last query error. */
-        virtual bool setLastError(const SqlError &error) noexcept;
-        /*! Set the last query error. */
-        virtual bool setLastError(SqlError &&error) noexcept;
-        /*! Reset the last query error. */
-        void resetLastError() noexcept;
 
         /*! Get the current cursor position (0-based). */
         size_type at() const noexcept;

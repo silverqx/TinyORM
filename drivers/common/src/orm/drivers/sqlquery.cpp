@@ -13,10 +13,10 @@
 #  include <QElapsedTimer>
 #endif
 
+#include "orm/drivers/dummysqlerror.hpp"
 #include "orm/drivers/exceptions/invalidargumenterror.hpp"
 #include "orm/drivers/sqldatabase.hpp"
 #include "orm/drivers/sqldriver.hpp"
-#include "orm/drivers/sqlerror.hpp"
 #include "orm/drivers/sqlrecord.hpp"
 #include "orm/drivers/sqlresult.hpp"
 #include "orm/drivers/utils/type_p.hpp"
@@ -64,9 +64,9 @@ QString SqlQuery::lastQuery() const noexcept
     return m_sqlResult->query();
 }
 
-SqlError SqlQuery::lastError() const noexcept
+DummySqlError SqlQuery::lastError() const noexcept // NOLINT(readability-convert-member-functions-to-static)
 {
-    return m_sqlResult->lastError();
+    return {};
 }
 
 SqlQuery::size_type SqlQuery::at() const noexcept
@@ -127,9 +127,7 @@ bool SqlQuery::exec(const QString &query)
                 u"The query argument can't be empty in %1()."_s
                 .arg(__tiny_func__));
 
-    if (const auto driver = this->driverWeakInternal().lock();
-        !driver->isOpen() || driver->isOpenError()
-    ) {
+    if (!this->driverWeakInternal().lock()->isOpen()) {
         qWarning("SqlQuery::exec: database not open");
         return false;
     }
@@ -162,9 +160,7 @@ bool SqlQuery::prepare(const QString &query)
                 u"The query argument can't be empty in %1()."_s
                 .arg(__tiny_func__));
 
-    if (const auto driver = this->driverWeakInternal().lock();
-        !driver->isOpen() || driver->isOpenError()
-    ) {
+    if (!this->driverWeakInternal().lock()->isOpen()) {
         qWarning("SqlQuery::prepare: database not open");
         return false;
     }
@@ -181,8 +177,6 @@ bool SqlQuery::exec()
                  "for prepared statements or pass the query string directly "
                  "to the SqlQuery::exec(QString) for normal statements in %1()."_s
                 .arg(__tiny_func__));
-
-    m_sqlResult->resetLastError();
 
 #if defined(QT_DEBUG_SQL) || defined(TINYDRIVERS_DEBUG_SQL)
     QElapsedTimer t;
@@ -440,7 +434,6 @@ void SqlQuery::finish() noexcept
 
     m_sqlResult->setActive(false);
     m_sqlResult->setAt(BeforeFirstRow);
-    m_sqlResult->resetLastError();
     m_sqlResult->detachFromResultSet();
 }
 
@@ -556,8 +549,13 @@ std::unique_ptr<SqlResult> SqlQuery::initSqlResult(const SqlDatabase &connection
     // This const_cast<> is needed because of the SqlQuery constructor (to have same API)
     const auto driver = const_cast<SqlDatabase &>(connection).driverWeak();
 
-    // Get the SqlResult instance
-    return driver.lock()->createResult(driver);
+    // Ownership of a unique_ptr()
+    auto sqlResult = driver.lock()->createResult(driver);
+
+    // Connection name is used in exception messages
+    sqlResult->setConnectionName(connection.connectionName());
+
+    return sqlResult;
 }
 
 } // namespace Orm::Drivers

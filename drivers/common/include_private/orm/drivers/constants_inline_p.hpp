@@ -19,6 +19,7 @@ namespace Orm::Drivers::Constants
 
     // Common strings
     inline const QString NEWLINE = QStringLiteral("\n");
+    inline const QString COMMA   = QStringLiteral(", ");
     inline const QString null_   = QStringLiteral("null");
 
     // Database related

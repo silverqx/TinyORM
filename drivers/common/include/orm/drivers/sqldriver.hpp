@@ -19,8 +19,8 @@ TINYORM_BEGIN_COMMON_NAMESPACE
 namespace Orm::Drivers
 {
 
+    class DummySqlError;
     class SqlDriverPrivate;
-    class SqlError;
     class SqlField;
     class SqlRecord;
     class SqlResult;
@@ -101,7 +101,7 @@ namespace Orm::Drivers
         /*! Get the current database driver type. */
         DbmsType dbmsType() const noexcept;
         /*! Get information about the last error that occurred on the database. */
-        SqlError lastError() const noexcept;
+        DummySqlError lastError() const noexcept;
 
         /*! Get the default numerical precision policy for the current driver. */
         NumericalPrecisionPolicy defaultNumericalPrecisionPolicy() const noexcept;
@@ -144,12 +144,6 @@ namespace Orm::Drivers
         /* Setters */
         /*! Set a flag whether the connection is open. */
         void setOpen(bool value) noexcept;
-        /*! Set a flag if an error while opening a new database connection. */
-        void setOpenError(bool value) noexcept;
-        /*! Set the last database error. */
-        bool setLastError(const SqlError &error) noexcept;
-        /*! Set an error that occurred during opening a new database connection. */
-        bool setLastOpenError(const SqlError &error) noexcept;
 
         /* Data members */
         /*! Smart pointer to the private implementation. */

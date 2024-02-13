@@ -1,6 +1,7 @@
 #include "orm/drivers/sqldriver.hpp"
 
 #include "orm/drivers/constants_p.hpp"
+#include "orm/drivers/dummysqlerror.hpp"
 #include "orm/drivers/sqldriver_p.hpp"
 
 TINYORM_BEGIN_COMMON_NAMESPACE
@@ -31,10 +32,9 @@ bool SqlDriver::isOpen() const noexcept
     return d->isOpen;
 }
 
-bool SqlDriver::isOpenError() const noexcept
+bool SqlDriver::isOpenError() const noexcept // NOLINT(readability-convert-member-functions-to-static)
 {
-    Q_D(const SqlDriver);
-    return d->isOpenError;
+    return false;
 }
 
 SqlDriver::DbmsType SqlDriver::dbmsType() const noexcept
@@ -43,10 +43,9 @@ SqlDriver::DbmsType SqlDriver::dbmsType() const noexcept
     return d->dbmsType;
 }
 
-SqlError SqlDriver::lastError() const noexcept
+DummySqlError SqlDriver::lastError() const noexcept // NOLINT(readability-convert-member-functions-to-static)
 {
-    Q_D(const SqlDriver);
-    return d->lastError;
+    return {};
 }
 
 NumericalPrecisionPolicy SqlDriver::defaultNumericalPrecisionPolicy() const noexcept
@@ -105,37 +104,6 @@ void SqlDriver::setOpen(const bool value) noexcept
 {
     Q_D(SqlDriver);
     d->isOpen = value;
-}
-
-void SqlDriver::setOpenError(const bool value) noexcept
-{
-    Q_D(SqlDriver);
-
-    d->isOpenError = value;
-
-    if (value)
-        d->isOpen = false;
-}
-
-bool SqlDriver::setLastError(const SqlError &error) noexcept
-{
-    Q_D(SqlDriver);
-
-    d->lastError = error;
-
-    // To be able call 'return setLastError()' to simplify code
-    return false;
-}
-
-bool SqlDriver::setLastOpenError(const SqlError &error) noexcept
-{
-    Q_D(SqlDriver);
-
-    d->lastError = error;
-    d->isOpenError = true;
-
-    // To be able call 'return setLastOpenError()' to simplify code
-    return false;
 }
 
 } // namespace Orm::Drivers

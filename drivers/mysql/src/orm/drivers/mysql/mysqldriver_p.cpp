@@ -2,7 +2,6 @@
 
 #include "orm/drivers/exceptions/invalidargumenterror.hpp"
 #include "orm/drivers/mysql/mysqlconstants_p.hpp"
-#include "orm/drivers/mysql/mysqldriver.hpp"
 #include "orm/drivers/mysql/mysqlutils_p.hpp"
 #include "orm/drivers/utils/type_p.hpp"
 
@@ -10,6 +9,7 @@ TINYORM_BEGIN_COMMON_NAMESPACE
 
 using namespace Qt::StringLiterals; // NOLINT(google-build-using-namespace)
 
+using Orm::Drivers::MySql::Constants::COMMA;
 using Orm::Drivers::MySql::Constants::EQ_C;
 using Orm::Drivers::MySql::Constants::SEMICOLON;
 
@@ -22,17 +22,15 @@ namespace Orm::Drivers::MySql
 
 /* open() */
 
-bool MySqlDriverPrivate::mysqlInit()
+void MySqlDriverPrivate::mysqlInit()
 {
-    Q_Q(MySqlDriver);
-
     if (mysql = mysql_init(nullptr); mysql != nullptr)
-        return true;
+        return;
 
-    return q->setLastOpenError(
-                MySqlUtils::createError(
-                    u"Unable to allocate and initialize the MYSQL object"_s,
-                    SqlError::ConnectionError, mysql));
+    throw Exceptions::SqlError(
+                u"Unable to allocate and initialize the MYSQL handler object in %1()."_s
+                .arg(__tiny_func__),
+                MySqlUtils::prepareMySqlError(mysql));
 }
 
 MySqlDriverPrivate::SetConnectionOptionsResult
@@ -71,40 +69,48 @@ MySqlDriverPrivate::mysqlSetConnectionOptions(const QString &options)
     return {optionFlags, std::move(unixSocket)};
 }
 
-bool MySqlDriverPrivate::mysqlSetCharacterSet(const QString &host, const bool before)
+namespace
 {
-    Q_Q(MySqlDriver);
+    /*! Join all default character sets used for connection and SQL statements. */
+    QString joinDefaultCharacterSets(const auto defaultCharacterSets)
+    {
+        QStringList result;
+        result.reserve(defaultCharacterSets.size());
 
+        for (const auto *const charset : defaultCharacterSets)
+            // All character sets are always latin1 (SHOW CHARACTER SET)
+            result << QString::fromLatin1(charset);
+
+        return result.join(COMMA);
+    }
+} // namespace
+
+void
+MySqlDriverPrivate::mysqlSetCharacterSet(const QString &host, const bool before) const
+{
     for (const auto *const csname : DefaultCharacterSets)
         if (mysql_set_character_set(mysql, csname) == 0)
-            return true;
+            return;
 
-    const auto message =
+    const auto messageTmpl =
             before ? u"before establishing a database connection to the '%1' host"_s
                    : u"for SQL statements for the '%1' host"_s;
 
-    q->setLastOpenError(
-                MySqlUtils::createError(
-                    u"Unable to set the default character set %1"_s
-                    .arg(message.arg(host)),
-                    SqlError::ConnectionError, mysql));
-
-    mysql_close(mysql);
-    mysql = nullptr;
-
-    return false;
+    throw Exceptions::SqlError(
+                u"Unable to set the default character sets [%1] %2 in %3()."_s
+                .arg(joinDefaultCharacterSets(DefaultCharacterSets),
+                     messageTmpl.arg(host), __tiny_func__),
+                MySqlUtils::prepareMySqlError(mysql));
 }
 
-bool MySqlDriverPrivate::mysqlRealConnect(
+void MySqlDriverPrivate::mysqlRealConnect(
         const QString &host, const QByteArray &username, const QByteArray &password,
         const QByteArray &database, const int port, const QByteArray &unixSocket,
-        const uint optionFlags)
+        const uint optionFlags) const
 {
-    Q_Q(MySqlDriver);
-
     const auto hostArray = host.toUtf8();
 
-    const auto *const mysqlToVerify =
+    const auto *const mysqlAferConnect =
             mysql_real_connect(
                 mysql,
                 toCharArray(hostArray),  toCharArray(username),
@@ -112,38 +118,46 @@ bool MySqlDriverPrivate::mysqlRealConnect(
                 port > -1 ? static_cast<uint>(port) : 0,
                 toCharArray(unixSocket), optionFlags);
 
-    if (mysqlToVerify != nullptr && mysqlToVerify == mysql)
-        return true;
+    if (mysqlAferConnect != nullptr && mysqlAferConnect == mysql)
+        return;
 
-    q->setLastOpenError(MySqlUtils::createError(
-                            u"Unable to establish a connection to the MySQL server "
-                             "running on the '%1' host."_s.arg(host),
-                            SqlError::ConnectionError, mysql));
-
-    mysql_close(mysql);
-    mysql = nullptr;
-
-    return false;
+    throw Exceptions::SqlError(
+                u"Unable to establish a connection to the MySQL server "
+                 "running on the '%1' host in %2()."_s
+                .arg(host, __tiny_func__),
+                MySqlUtils::prepareMySqlError(mysql));
 }
 
-bool MySqlDriverPrivate::mysqlSelectDb(const QString &database)
+void MySqlDriverPrivate::mysqlSelectDb(const QString &database)
 {
-    Q_Q(MySqlDriver);
+    // Nothing to do
+    if (database.isEmpty())
+        return databaseName.clear(); // clazy:exclude=returning-void-expression
 
-    if (database.isEmpty() ||
-        mysql_select_db(mysql, database.toUtf8().constData()) == 0
-    ) {
+    if (mysql_select_db(mysql, database.toUtf8().constData()) == 0) {
         databaseName = database;
-        return true;
+        return;
     }
 
-    q->setLastOpenError(MySqlUtils::createError(
-                            u"Unable to select/open database '%1'"_s.arg(database),
-                            SqlError::ConnectionError, mysql));
+    throw Exceptions::SqlError(
+                u"Unable to select/open database '%1' in %2()."_s
+                .arg(database, __tiny_func__),
+                MySqlUtils::prepareMySqlError(mysql));
+}
+
+void MySqlDriverPrivate::mysqlClose() noexcept
+{
+    // Deallocate the connection handler
     mysql_close(mysql);
     mysql = nullptr;
 
-    return false;
+    /* Unlike mysql_thread_init(), mysql_thread_end() isn't invoked automatically if
+       the thread ends. It must be called explicitly to avoid memory leaks.
+       It can or should be called after the mysql_close() because it's supposed to be
+       called before the thread ends and not before or after the connection closes.
+       Even calling it here isn't at 100% right, it should be called before the current
+       thread ends. */
+    mysql_thread_end();
 }
 
 /* private */

@@ -68,7 +68,7 @@ bool MySqlResultPrivate::populateFields(MYSQL *const mysql)
 
 bool MySqlResultPrivate::bindResultValues()
 {
-    // Obtain result set metadata
+    // Obtain the Result Set metadata
     if (meta = mysql_stmt_result_metadata(stmt); meta == nullptr)
         /* Don't log a warning about no metadata here as the INSERT, UPDATE, and DELETE
            queries have no metadata. */
@@ -296,31 +296,20 @@ void MySqlResultPrivate::bindResultBlobs()
    }
 }
 
-SqlError
-MySqlResultPrivate::createStmtError(const QString &error, const SqlError::ErrorType type,
-                                    MYSQL_STMT *const stmt)
-{
-    Q_ASSERT(stmt != nullptr);
-
-    const auto *const mysqlError = mysql_stmt_error(stmt);
-
-    return {"QMYSQL: "_L1 + error, QString::fromUtf8(mysqlError), type,
-            QString::number(mysql_stmt_errno(stmt))};
-}
-
 /* Result sets */
 
-std::optional<QString> MySqlResultPrivate::fetchErrorMessage(const int status) noexcept
+std::optional<QString>
+MySqlResultPrivate::errorMessageForStmtFetch(const int status) noexcept
 {
     // Nothing to do, fetching was successful
     if (status == 0)
         return std::nullopt;
 
     if (status == 1)
-        return u"Unable to fetch data"_s;
+        return u"Unable to fetch data in %1()."_s;
 
     if (status == MYSQL_DATA_TRUNCATED)
-        return u"Data truncated during fetching data"_s;
+        return u"Data truncated during fetching data in %1()."_s;
 
     Q_UNREACHABLE();
 }

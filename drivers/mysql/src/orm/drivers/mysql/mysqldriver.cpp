@@ -3,6 +3,7 @@
 #include <orm/macros/likely.hpp>
 
 #include "orm/drivers/exceptions/invalidargumenterror.hpp"
+#include "orm/drivers/exceptions/sqltransactionerror.hpp"
 #include "orm/drivers/mysql/mysqldriver_p.hpp"
 #include "orm/drivers/mysql/mysqlresult.hpp"
 #include "orm/drivers/mysql/mysqlutils_p.hpp"
@@ -20,7 +21,7 @@ namespace Orm::Drivers::MySql
 /* public */
 
 MySqlDriver::MySqlDriver()
-    : SqlDriver(std::make_unique<MySqlDriverPrivate>(this))
+    : SqlDriver(std::make_unique<MySqlDriverPrivate>())
 {}
 
 bool MySqlDriver::open(
@@ -33,41 +34,40 @@ bool MySqlDriver::open(
     if (isOpen())
         close();
 
-    // Allocate and initialize the MYSQL object for the mysql_real_connect()
-    if (!d->mysqlInit())
-        return false;
+    try {
+        // Allocate and initialize the MYSQL object for the mysql_real_connect()
+        d->mysqlInit();
 
-    // Set extra MySQL connection options
-    const auto [optionFlags, unixSocket] = d->mysqlSetConnectionOptions(options);
+        // mysql_thread_init() is called automatically by mysql_init()
 
-    // CUR drivers revisit if it really works for MySQL, MariaDB reports "Server has gone away" error 2006 silverqx
-    // Set the default character set for the mysql_real_connect() function
+        // Set extra MySQL connection options
+        const auto [optionFlags, unixSocket] = d->mysqlSetConnectionOptions(options);
+
+        // CUR drivers revisit if it really works for MySQL, MariaDB reports "Server has gone away" error 2006 silverqx
+        // Set the default character set for the mysql_real_connect() function
 #ifndef MARIADB_VERSION_ID
-    if (!d->mysqlSetCharacterSet(host, true))
-        return false;
+        d->mysqlSetCharacterSet(host, true);
 #endif
 
-    // Establish a connection to the MySQL server running on the host
-    if (!d->mysqlRealConnect(host, username.toUtf8(), password.toUtf8(),
-                             database.toUtf8(), port, unixSocket.toUtf8(), optionFlags)
-    )
-        return false;
+        // Establish a connection to the MySQL server running on the host
+        d->mysqlRealConnect(host, username.toUtf8(), password.toUtf8(), database.toUtf8(),
+                            port, unixSocket.toUtf8(), optionFlags);
 
-    // Set the default character set for SQL statements
-    if (!d->mysqlSetCharacterSet(host, false))
-        return false;
+        // Set the default character set for SQL statements
+        d->mysqlSetCharacterSet(host, false);
 
-    // Select the default database
-    if (!d->mysqlSelectDb(database))
-        return false;
+        // Select the default database
+        d->mysqlSelectDb(database);
 
-    // CUR drivers called to late? silverqx
-#if QT_CONFIG(thread)
-    mysql_thread_init();
-#endif
+    } catch (...) {
+        // Deallocate the connection handler (must call this whatever exception occurs)
+        d->mysqlClose();
+
+        // Re-throw
+        throw;
+    }
 
     setOpen(true);
-    setOpenError(false);
 
     return true;
 }
@@ -80,17 +80,13 @@ void MySqlDriver::close() noexcept
     if (!isOpen())
         return;
 
-    setOpenError(false);
     setOpen(false);
 
-    // QString::clear() isn't marked noexcept even it is so use this move alternative
+    // QString::clear() isn't marked as noexcept even if it's so use this move alternative
     d->databaseName = QString();
-    d->mysql = nullptr;
 
-#if QT_CONFIG(thread)
-    mysql_thread_end();
-#endif
-    mysql_close(d->mysql);
+    // Deallocate the connection handler
+    d->mysqlClose();
 }
 
 /* Getters / Setters */
@@ -149,9 +145,9 @@ bool MySqlDriver::beginTransaction()
     if (mysql_query(d->mysql, "START TRANSACTION") == 0)
         return true;
 
-    return setLastError(MySqlUtils::createError(
-                            u"Unable to start transaction"_s,
-                            SqlError::TransactionError, d->mysql));
+    throw Exceptions::SqlTransactionError(
+                u"Unable to start transaction in %1()."_s.arg(__tiny_func__),
+                MySqlUtils::prepareMySqlError(d->mysql));
 }
 
 bool MySqlDriver::commitTransaction()
@@ -167,9 +163,9 @@ bool MySqlDriver::commitTransaction()
     if (mysql_query(d->mysql, "COMMIT") == 0)
         return true;
 
-    return setLastError(MySqlUtils::createError(
-                            u"Unable to commit transaction"_s,
-                            SqlError::TransactionError, d->mysql));
+    throw Exceptions::SqlTransactionError(
+                u"Unable to commit transaction in %1()."_s.arg(__tiny_func__),
+                MySqlUtils::prepareMySqlError(d->mysql));
 }
 
 bool MySqlDriver::rollbackTransaction()
@@ -185,9 +181,9 @@ bool MySqlDriver::rollbackTransaction()
     if (mysql_query(d->mysql, "ROLLBACK") == 0)
         return true;
 
-    return setLastError(MySqlUtils::createError(
-                            u"Unable to rollback transaction"_s,
-                            SqlError::TransactionError, d->mysql));
+    throw Exceptions::SqlTransactionError(
+                u"Unable to rollback transaction in %1()."_s.arg(__tiny_func__),
+                MySqlUtils::prepareMySqlError(d->mysql));
 }
 
 /* Others */

@@ -8,6 +8,8 @@ TINYORM_BEGIN_COMMON_NAMESPACE
 
 using namespace Qt::StringLiterals; // NOLINT(google-build-using-namespace)
 
+using MySqlErrorType = Orm::Drivers::Exceptions::SqlError::MySqlErrorType;
+
 namespace Orm::Drivers::MySql
 {
 
@@ -15,20 +17,20 @@ namespace Orm::Drivers::MySql
 
 /* Exceptions */
 
-SqlError
-MySqlUtilsPrivate::createError(
-        const QString &error, const SqlError::ErrorType errorType, MYSQL *const mysql,
-        // CUR drivers check if this can be done also for makeStmtError() because all functions return r and then inside the makeStmtError() is the errNo obtained again silverqx
-        const std::optional<uint> errNo)
+MySqlErrorType
+MySqlUtilsPrivate::prepareMySqlError(const NotNull<MYSQL *> mysql,
+                                     const std::optional<uint> errNo)
 {
-    Q_ASSERT(mysql != nullptr);
+    return {QString::number(errNo.value_or(mysql_errno(mysql))),
+            // FUTURE drivers correctly support MySQL errors encoding, the QString::fromUtf8() must be changed to conversion from SET NAMES to UTF8; see https://dev.mysql.com/doc/refman/8.0/en/charset-errors.html silverqx
+            QString::fromUtf8(mysql_error(mysql))};
+}
 
-    const auto mysqlErrno = errNo.value_or(mysql_errno(mysql));
-    const auto *const mysqlError = mysql != nullptr ? mysql_error(mysql) : nullptr;
-
-    // FUTURE drivers correctly support MySQL errors encoding, the QString::fromUtf8() must be changed to conversion from SET NAMES to UTF8; see https://dev.mysql.com/doc/refman/8.0/en/charset-errors.html silverqx
-    return {"QMYSQL: "_L1 + error, QString::fromUtf8(mysqlError), errorType,
-            QString::number(mysqlErrno)};
+MySqlErrorType MySqlUtilsPrivate::prepareStmtError(const NotNull<MYSQL_STMT *> stmt)
+{
+    return {QString::number(mysql_stmt_errno(stmt)),
+            // FUTURE drivers correctly support MySQL errors encoding, the QString::fromUtf8() must be changed to conversion from SET NAMES to UTF8; see https://dev.mysql.com/doc/refman/8.0/en/charset-errors.html silverqx
+            QString::fromUtf8(mysql_stmt_error(stmt))};
 }
 
 /* Common for both */

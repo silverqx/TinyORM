@@ -2,7 +2,6 @@
 
 #include <QRegularExpression>
 
-// CUR drivers Orm::Exceptions::RuntimeError silverqx
 #if !defined(_MSC_VER)
 #  include <orm/drivers/exceptions/runtimeerror.hpp>
 #endif

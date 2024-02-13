@@ -2,8 +2,15 @@
 
 #include "orm/configurations/configurationoptionsparser.hpp"
 #include "orm/constants.hpp"
-#include "orm/exceptions/sqlerror.hpp"
 #include "orm/utils/type.hpp"
+
+#ifdef TINYORM_USING_QTSQLDRIVERS
+#  include "orm/exceptions/sqlerror.hpp"
+#elif defined(TINYORM_USING_TINYDRIVERS)
+#  include "orm/drivers/exceptions/sqlerror.hpp"
+#else
+#  error Missing include "orm/macros/sqldrivermappings.hpp".
+#endif
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
@@ -13,6 +20,12 @@ using Orm::Constants::host_;
 using Orm::Constants::password_;
 using Orm::Constants::port_;
 using Orm::Constants::username_;
+
+#ifdef TINYORM_USING_QTSQLDRIVERS
+using SqlError = Orm::Exceptions::SqlError;
+#elif defined(TINYORM_USING_TINYDRIVERS)
+using SqlError = Orm::Drivers::Exceptions::SqlError;
+#endif
 
 namespace Orm::Connectors
 {
@@ -32,9 +45,9 @@ Connector::createConnection(const QString &name, const QVariantHash &config,
 
     try {
         return createQSqlDatabaseConnection(name, config, options);
-    } catch (const Exceptions::SqlError &e) {
-        return tryAgainIfCausedByLostConnection(std::current_exception(), e, name,
-                                                config, options);
+    } catch (const SqlError &e) {
+        return tryAgainIfCausedByLostConnection(std::current_exception(),
+                                                e.databaseText(), name, config, options);
     }
 }
 
@@ -66,11 +79,15 @@ Connector::createQSqlDatabaseConnection(const QString &name, const QVariantHash 
               ? TSqlDatabase::database(name, false)
               : addQSqlDatabaseConnection(name, config, options);
 
+#ifdef TINYORM_USING_QTSQLDRIVERS
     if (!db.open())
         throw Exceptions::SqlError(
                 QStringLiteral("Failed to open database connection in %1().")
                 .arg(__tiny_func__),
                 db.lastError());
+#elif defined(TINYORM_USING_TINYDRIVERS)
+    db.open();
+#endif
 
     return db;
 }
@@ -99,10 +116,10 @@ Connector::addQSqlDatabaseConnection(const QString &name, const QVariantHash &co
 
 TSqlDatabase
 Connector::tryAgainIfCausedByLostConnection(
-        const std::exception_ptr &ePtr, const Exceptions::SqlError &e,
+        const std::exception_ptr &ePtr, const QString &errorMessage,
         const QString &name, const QVariantHash &config, const QString &options)
 {
-    if (causedByLostConnection(e))
+    if (causedByLostConnection(errorMessage))
         return createQSqlDatabaseConnection(name, config, options);
 
     std::rethrow_exception(ePtr);

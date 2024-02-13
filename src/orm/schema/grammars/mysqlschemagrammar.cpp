@@ -3,6 +3,10 @@
 #include "orm/databaseconnection.hpp"
 #include "orm/utils/type.hpp"
 
+#ifdef TINYORM_USING_TINYDRIVERS
+#  include "orm/exceptions/runtimeerror.hpp"
+#endif
+
 TINYORM_BEGIN_COMMON_NAMESPACE
 
 namespace Orm::SchemaNs::Grammars

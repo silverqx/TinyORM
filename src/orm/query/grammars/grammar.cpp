@@ -4,6 +4,10 @@
 #include "orm/macros/likely.hpp"
 #include "orm/query/joinclause.hpp"
 
+#ifdef TINYORM_USING_TINYDRIVERS
+#  include "orm/exceptions/runtimeerror.hpp"
+#endif
+
 TINYORM_BEGIN_COMMON_NAMESPACE
 
 namespace Orm::Query::Grammars

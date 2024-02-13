@@ -52,7 +52,7 @@ namespace Orm::Connectors
         /*! Handle an exception that occurred during connect execution. */
         static TSqlDatabase
         tryAgainIfCausedByLostConnection(
-                const std::exception_ptr &ePtr, const Exceptions::SqlError &e,
+                const std::exception_ptr &ePtr, const QString &errorMessage,
                 const QString &name, const QVariantHash &config,
                 const QString &options);
 

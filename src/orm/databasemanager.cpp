@@ -6,6 +6,10 @@
 #include "orm/connectors/connectionfactory.hpp"
 #include "orm/exceptions/invalidargumenterror.hpp"
 
+#ifdef TINYORM_USING_TINYDRIVERS
+#  include "orm/exceptions/runtimeerror.hpp"
+#endif
+
 TINYORM_BEGIN_COMMON_NAMESPACE
 
 namespace Orm

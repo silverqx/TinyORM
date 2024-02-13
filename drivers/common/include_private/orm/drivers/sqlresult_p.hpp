@@ -5,7 +5,9 @@
 #include <QVariant>
 
 #include "orm/drivers/driverstypes.hpp"
-#include "orm/drivers/sqlerror.hpp"
+#ifdef TINYDRIVERS_MYSQL_LOADABLE_LIBRARY
+#  include "orm/drivers/macros/export.hpp"
+#endif
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
@@ -45,13 +47,12 @@ namespace Orm::Drivers
         std::weak_ptr<SqlDriver> sqldriver;
 
         /*! The current SQL query text. */
-        QString query {};
+        QString connectionName {};
 
+        /*! The current SQL query text. */
+        QString query {};
         /*! Bound values for the prepared statement. */
         QList<QVariant> boundValues {};
-
-        /*! The last query error. */
-        SqlError lastError {};
 
         /*! Connection numerical precision policy. */
         NumericalPrecisionPolicy precisionPolicy = LowPrecisionDouble;

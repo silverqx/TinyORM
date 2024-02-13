@@ -32,6 +32,11 @@ namespace Orm::Exceptions
         /*! Get the original Qt SQL error. */
         inline const TSqlError &getSqlError() const noexcept;
 
+        /*! Get the database-specific error code (shortcut method). */
+        inline QString nativeErrorCode() const noexcept;
+        /*! Get the database-specific error message (shortcut method). */
+        inline QString databaseText() const noexcept;
+
     protected:
         /*! Protected converting constructor for use by descendants to avoid an error
             message formatting. */
@@ -49,6 +54,16 @@ namespace Orm::Exceptions
     const TSqlError &SqlError::getSqlError() const noexcept
     {
         return m_sqlError;
+    }
+
+    QString SqlError::nativeErrorCode() const noexcept
+    {
+        return m_sqlError.nativeErrorCode();
+    }
+
+    QString SqlError::databaseText() const noexcept
+    {
+        return m_sqlError.databaseText();
     }
 
 } // namespace Orm::Exceptions

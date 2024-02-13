@@ -9,21 +9,10 @@ TINY_SYSTEM_HEADER
 
 #include "orm/macros/commonnamespace.hpp"
 #include "orm/macros/export.hpp"
-#include "orm/macros/sqldrivermappings.hpp"
-
-TINY_FORWARD_DECLARE_TSqlError
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
-namespace Orm
-{
-
-namespace Exceptions
-{
-    class SqlError;
-}
-
-namespace Concerns
+namespace Orm::Concerns
 {
 
     /*! Detect lost connection by passed exception message. */
@@ -38,17 +27,14 @@ namespace Concerns
         inline virtual ~DetectsLostConnections() = 0;
 
         /*! Determine if the given exception was caused by a lost connection. */
-        static bool causedByLostConnection(const Exceptions::SqlError &e);
-        /*! Determine if the given exception was caused by a lost connection. */
-        static bool causedByLostConnection(const TSqlError &e);
+        static bool causedByLostConnection(const QString &errorMessage);
     };
 
     /* public */
 
     DetectsLostConnections::~DetectsLostConnections() = default;
 
-} // namespace Concerns
-} // namespace Orm
+} // namespace Orm::Concerns
 
 TINYORM_END_COMMON_NAMESPACE
 

@@ -1,6 +1,7 @@
 #include <QCoreApplication>
 #include <QtTest>
 
+#include "orm/drivers/exceptions/queryerror.hpp"
 #include "orm/drivers/sqldatabase.hpp"
 #include "orm/drivers/sqlquery.hpp"
 #include "orm/drivers/sqlrecord.hpp"
@@ -18,6 +19,7 @@ using Orm::Constants::NAME;
 using Orm::Constants::NOTE;
 using Orm::Constants::UPDATED_AT;
 
+using Orm::Drivers::Exceptions::QueryError;
 using Orm::Drivers::SqlDatabase;
 using Orm::Drivers::SqlQuery;
 

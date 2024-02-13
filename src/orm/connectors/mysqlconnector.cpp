@@ -5,9 +5,16 @@
 #include TINY_INCLUDE_TSqlQuery
 
 #include "orm/constants.hpp"
-#include "orm/exceptions/queryerror.hpp"
 #include "orm/utils/configuration.hpp"
 #include "orm/utils/type.hpp"
+
+#ifdef TINYORM_USING_QTSQLDRIVERS
+#  include "orm/exceptions/queryerror.hpp"
+#elif defined(TINYORM_USING_TINYDRIVERS)
+#  include "orm/exceptions/runtimeerror.hpp"
+#else
+#  error Missing include "orm/macros/sqldrivermappings.hpp".
+#endif
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
@@ -79,8 +86,12 @@ void MySqlConnector::configureIsolationLevel(const TSqlDatabase &connection,
                    .arg(config[isolation_level].value<QString>())))
         return;
 
+#ifdef TINYORM_USING_QTSQLDRIVERS
     throw Exceptions::QueryError(connection.connectionName(),
                                  m_configureErrorMessage.arg(__tiny_func__), query);
+#else
+    Q_UNREACHABLE();
+#endif
 }
 
 void MySqlConnector::configureEncoding(const TSqlDatabase &connection,
@@ -95,8 +106,12 @@ void MySqlConnector::configureEncoding(const TSqlDatabase &connection,
                    .arg(config[charset_].value<QString>(), getCollation(config))))
         return;
 
+#ifdef TINYORM_USING_QTSQLDRIVERS
     throw Exceptions::QueryError(connection.connectionName(),
                                  m_configureErrorMessage.arg(__tiny_func__), query);
+#else
+    Q_UNREACHABLE();
+#endif
 }
 
 QString MySqlConnector::getCollation(const QVariantHash &config)
@@ -118,8 +133,12 @@ void MySqlConnector::configureTimezone(const TSqlDatabase &connection,
                    .arg(config[timezone_].value<QString>())))
         return;
 
+#ifdef TINYORM_USING_QTSQLDRIVERS
     throw Exceptions::QueryError(connection.connectionName(),
                                  m_configureErrorMessage.arg(__tiny_func__), query);
+#else
+    Q_UNREACHABLE();
+#endif
 }
 
 void MySqlConnector::setModes(const TSqlDatabase &connection,
@@ -140,16 +159,24 @@ void MySqlConnector::setModes(const TSqlDatabase &connection,
         if (query.exec(strictMode(connection, config)))
             return;
 
+#ifdef TINYORM_USING_QTSQLDRIVERS
         throw Exceptions::QueryError(connection.connectionName(),
                                      m_configureErrorMessage.arg(__tiny_func__), query);
+#else
+        Q_UNREACHABLE();
+#endif
     }
 
     // Set defaults, no strict mode
     if (query.exec(QStringLiteral("set session sql_mode='NO_ENGINE_SUBSTITUTION'")))
         return;
 
+#ifdef TINYORM_USING_QTSQLDRIVERS
     throw Exceptions::QueryError(connection.connectionName(),
                                  m_configureErrorMessage.arg(__tiny_func__), query);
+#else
+    Q_UNREACHABLE();
+#endif
 }
 
 QString MySqlConnector::strictMode(const TSqlDatabase &connection,
@@ -198,8 +225,12 @@ void MySqlConnector::setCustomModes(const TSqlDatabase &connection,
     if (query.exec(QStringLiteral("set session sql_mode='%1';").arg(modes)))
         return;
 
+#ifdef TINYORM_USING_QTSQLDRIVERS
     throw Exceptions::QueryError(connection.connectionName(),
                                  m_configureErrorMessage.arg(__tiny_func__), query);
+#else
+    Q_UNREACHABLE();
+#endif
 }
 
 /* private */
@@ -208,9 +239,13 @@ QString MySqlConnector::getMySqlVersionFromDatabase(const TSqlDatabase &connecti
 {
     TSqlQuery query(connection);
 
+#ifdef TINYORM_USING_QTSQLDRIVERS
     if (!query.exec(QStringLiteral("select version()")))
         throw Exceptions::QueryError(connection.connectionName(),
                                      m_configureErrorMessage.arg(__tiny_func__), query);
+#elif defined(TINYORM_USING_TINYDRIVERS)
+    query.exec(QStringLiteral("select version()"));
+#endif
 
     if (!query.first())
         throw Exceptions::RuntimeError(
