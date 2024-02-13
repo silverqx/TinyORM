@@ -16,7 +16,7 @@ TINYORM_BEGIN_COMMON_NAMESPACE
 namespace Orm::Exceptions
 {
 
-    /*! TinyORM Database query exception. */
+    /*! TinyORM database query exception. */
     class SHAREDLIB_EXPORT QueryError : public SqlError // clazy:exclude=copyable-polymorphic
     {
     public:
