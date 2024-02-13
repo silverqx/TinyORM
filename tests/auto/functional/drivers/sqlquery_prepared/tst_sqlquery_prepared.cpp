@@ -46,6 +46,9 @@ private Q_SLOTS:
 
     void select_Aggregate_Count() const;
 
+    void select_BoundLessValues() const;
+    void select_BoundMoreValues() const;
+
     void insert_update_delete() const;
 
 // NOLINTNEXTLINE(readability-redundant-access-specifiers)
@@ -274,6 +277,119 @@ void tst_SqlQuery_Prepared::select_Aggregate_Count() const
     QVERIFY(record.contains("aggregate"));
 
     QCOMPARE(users.value("aggregate").value<quint64>(), 2);
+}
+
+void tst_SqlQuery_Prepared::select_BoundLessValues() const
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    auto users = createQuery(connection);
+
+    const auto query = sl("select id, name from users where id < ? and name = ?");
+    auto ok = users.prepare(query);
+    QVERIFY(ok);
+
+    users.addBindValue(1);
+
+    // Test bound values
+    const auto boundValues = users.boundValues();
+    QCOMPARE(boundValues.size(), 1);
+    QCOMPARE(boundValues, QVariantList {1});
+
+    QVERIFY_THROWS_EXCEPTION(QueryError, users.exec());
+}
+
+namespace
+{
+    /*! Pointer to the previous Message Handler. */
+    QtMessageHandler g_originalHandler = nullptr;
+    /*! Logged messages in the Message Handler. */
+    QStringList g_loggedMessages;
+
+    /*! Custom Message Handler that records logged messages. */
+    void tinyMessageHandler(const QtMsgType type, const QMessageLogContext &context,
+                            const QString &message)
+    {
+        g_loggedMessages << message;
+
+        if (g_originalHandler)
+            g_originalHandler(type, context, message);
+    }
+} // namespace
+
+void tst_SqlQuery_Prepared::select_BoundMoreValues() const
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    auto users = createQuery(connection);
+
+    const auto query = sl("select id, name from users where id < ? order by id");
+    auto ok = users.prepare(query);
+    QVERIFY(ok);
+
+    users.addBindValue(4);
+    users.addBindValue(sl("dummy-NON_EXISTENT"));
+
+    // Test bound values
+    const auto boundValues = users.boundValues();
+    QCOMPARE(boundValues.size(), 2);
+    const QVariantList boundValuesExpected({4, sl("dummy-NON_EXISTENT")});
+    QCOMPARE(boundValues, boundValuesExpected);
+
+    // To catch qWarning() message
+    g_originalHandler = qInstallMessageHandler(tinyMessageHandler);
+
+    ok = users.exec();
+
+    // Restore handler as soon as possible
+    qInstallMessageHandler(g_originalHandler);
+    g_originalHandler = nullptr;
+
+    QVERIFY(ok);
+    QVERIFY(users.isActive());
+    QVERIFY(!users.isValid());
+    QVERIFY(users.isSelect());
+    const auto querySize = users.size();
+    QCOMPARE(querySize, 3);
+    // Behaves the same as the size() for SELECT queries
+    QCOMPARE(users.numRowsAffected(), 3);
+    QCOMPARE(users.executedQuery(), query);
+
+    // Verify the logged message 😎
+    QCOMPARE(g_loggedMessages.size(), 1);
+    static const auto expectedWarning =
+            sl("MySqlResultPrivate::hasPreparedBindings: values.size() > "
+               "placeholdersCount, higher number of prepared bindings; Current number "
+               "of placeholder markers is '1' and number of bind values is '2', but "
+               "everything will work normally");
+    QCOMPARE(g_loggedMessages.first(), expectedWarning);
+
+    // Verify the result
+    QVector<IdAndCustomType<QString>> expected {
+        {1, "andrej"}, {2, "silver"}, {3, "peter"},
+    };
+    QVector<IdAndCustomType<QString>> actual;
+    actual.reserve(querySize);
+
+    while (users.next()) {
+        QVERIFY(users.isValid());
+        QVERIFY(!users.isNull(0));
+        QVERIFY(!users.isNull(1));
+        QVERIFY(!users.isNull(ID));
+        QVERIFY(!users.isNull(NAME));
+        // Number of fields
+        const auto record = users.record();
+        QCOMPARE(record.count(), 2);
+        QVERIFY(record.contains(ID));
+        QVERIFY(record.contains(NAME));
+
+        actual.emplaceBack(users.value(ID).value<quint64>(),
+                           users.value(NAME).value<QString>());
+    }
+    QCOMPARE(actual, expected);
+
+    // Restore
+    g_loggedMessages.clear();
 }
 
 /* I will test the INSERT, UPDATE, and DELETE in the one test method, it's nothing
