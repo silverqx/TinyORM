@@ -1,12 +1,9 @@
 #include "orm/drivers/mysql/mysqlresult_p.hpp"
 
-#if QT_CONFIG(datestring)
-#  include <QDateTime>
-
-#  include "orm/drivers/mysql/mysqlconstants_p.hpp"
-#endif
+#include <QDateTime>
 
 #include "orm/drivers/exceptions/outofrange.hpp"
+#include "orm/drivers/mysql/mysqlconstants_p.hpp"
 #include "orm/drivers/mysql/mysqlutils_p.hpp"
 #include "orm/drivers/utils/helpers_p.hpp"
 
@@ -549,36 +546,25 @@ quint64 MySqlResultPrivate::toBitField(const MyField &field,
 
 QVariant MySqlResultPrivate::toQDateFromString(const QString &value)
 {
-#if QT_CONFIG(datestring)
     // Nothing to do
     if (value.isEmpty())
         // CUR drivers check this if QVariant(QMetaType(QMetaType::QDate)) is different thing; also Qt5 vs Qt6; also for QTime() and QDateTime() below silverqx
         return QDate();
 
     return QDate::fromString(value, Qt::ISODate);
-#else
-    Q_UNUSED(value)
-    return QVariant(value);
-#endif
 }
 
 QVariant MySqlResultPrivate::toQTimeFromString(const QString &value)
 {
-#if QT_CONFIG(datestring)
     // Nothing to do
     if (value.isEmpty())
         return QTime();
 
     return QTime::fromString(value, Qt::ISODate);
-#else
-    Q_UNUSED(value)
-    return QVariant(value);
-#endif
 }
 
 QVariant MySqlResultPrivate::toQDateTimeFromString(QString value)
 {
-#if QT_CONFIG(datestring)
     // Nothing to do
     if (value.isEmpty())
         return QDateTime();
@@ -590,10 +576,6 @@ QVariant MySqlResultPrivate::toQDateTimeFromString(QString value)
              .insert(16, COLON);
 
     return QDateTime::fromString(value, Qt::ISODate);
-#else
-    Q_UNUSED(value)
-    return QVariant(value);
-#endif
 }
 
 QVariant
