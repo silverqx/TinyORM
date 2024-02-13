@@ -171,7 +171,7 @@ namespace Orm
         /*! Reconnect to the database if a Qt connection is missing (doesn't create
             a physical connection, only refreshs connection resolver). */
         void reconnectIfMissingConnection() const;
-        /*! Reconnect to the database (doesn't create physical connection, only refreshs
+        /*! Reconnect to the database (doesn't create physical connection, only refreshes
             a connection resolver). */
         void reconnect() const;
         /*! Disconnect from the underlying Qt's connection. */
@@ -518,7 +518,7 @@ namespace Orm
     {
         reconnectIfMissingConnection();
 
-        // Elapsed timer needed
+        // Is Elapsed timer needed?
         const auto countElapsed = shouldCountElapsed();
 
         QElapsedTimer timer;
