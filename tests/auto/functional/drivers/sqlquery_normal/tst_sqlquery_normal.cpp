@@ -11,6 +11,8 @@
 
 #include "databases.hpp"
 
+using namespace Qt::StringLiterals; /* NOLINT(google-build-using-namespace) */
+
 using Orm::Constants::CREATED_AT;
 using Orm::Constants::DELETED_AT;
 using Orm::Constants::ID;
@@ -90,7 +92,7 @@ void tst_SqlQuery_Normal::select_All() const
 
     auto users = createQuery(connection);
 
-    const auto query = sl("select id, name from users order by id");
+    const auto query = u"select id, name from users order by id"_s;
     const auto ok = users.exec(query);
 
     // Check everything what can be checked for this basic query (default configuration)
@@ -139,7 +141,7 @@ void tst_SqlQuery_Normal::select_WithWhere() const
 
     auto users = createQuery(connection);
 
-    const auto query = sl("select id, name from users where id < 4 order by id");
+    const auto query = u"select id, name from users where id < 4 order by id"_s;
     const auto ok = users.exec(query);
 
     QVERIFY(ok);
@@ -185,7 +187,7 @@ void tst_SqlQuery_Normal::select_IsNull() const
 
     auto users = createQuery(connection);
 
-    const auto query = sl("select id, note from users order by id");
+    const auto query = u"select id, note from users order by id"_s;
     const auto ok = users.exec(query);
 
     QVERIFY(ok);
@@ -223,7 +225,7 @@ void tst_SqlQuery_Normal::select_Aggregate_Count() const
 
     auto users = createQuery(connection);
 
-    const auto query = sl("select count(id) as aggregate from users where id < 3");
+    const auto query = u"select count(id) as aggregate from users where id < 3"_s;
     auto ok = users.exec(query);
 
     QVERIFY(ok);
@@ -259,10 +261,10 @@ void tst_SqlQuery_Normal::insert_update_delete() const
     // INSERT a new row into the users table
     {
         const auto query =
-                sl("insert into users "
-                     "(name, is_banned, note, created_at, updated_at, deleted_at) "
-                   "values ('ashen one', 1, 'test drivers INSERT', "
-                     "'2023-05-11T11:52:53', '2023-05-12T11:52:53', null)");
+                u"insert into users "
+                   "(name, is_banned, note, created_at, updated_at, deleted_at) "
+                 "values ('ashen one', 1, 'test drivers INSERT', "
+                   "'2023-05-11T11:52:53', '2023-05-12T11:52:53', null)"_s;
         const auto ok = users.exec(query);
 
         QVERIFY(ok);
@@ -277,12 +279,12 @@ void tst_SqlQuery_Normal::insert_update_delete() const
         QVERIFY(lastInsertedId > 5);
     }
 
-    const auto columnNames = std::to_array({ID, NAME, sl("is_banned"), NOTE, CREATED_AT,
+    const auto columnNames = std::to_array({ID, NAME, u"is_banned"_s, NOTE, CREATED_AT,
                                             UPDATED_AT, DELETED_AT});
 
     // Verify the INSERT
     {
-        const auto query = sl("select * from users where id = %1").arg(lastInsertedId);
+        const auto query = u"select * from users where id = %1"_s.arg(lastInsertedId);
         auto ok = users.exec(query);
 
         QVERIFY(ok);
@@ -304,9 +306,9 @@ void tst_SqlQuery_Normal::insert_update_delete() const
             QVERIFY(record.contains(column));
 
         // Tests if the QVariant has the correct type will be done in other test methods
-        QCOMPARE(users.value(NAME)       .value<QString>(),   sl("ashen one"));
+        QCOMPARE(users.value(NAME)       .value<QString>(),   u"ashen one"_s);
         QCOMPARE(users.value("is_banned").value<bool>(),      true);
-        QCOMPARE(users.value(NOTE)       .value<QString>(),   sl("test drivers INSERT"));
+        QCOMPARE(users.value(NOTE)       .value<QString>(),   u"test drivers INSERT"_s);
         QCOMPARE(users.value(CREATED_AT) .value<QDateTime>(), QDateTime({2023, 05, 11},
                                                                         {11, 52, 53}));
         QCOMPARE(users.value(UPDATED_AT) .value<QDateTime>(), QDateTime({2023, 05, 12},
@@ -317,8 +319,8 @@ void tst_SqlQuery_Normal::insert_update_delete() const
 
     // UPDATE
     {
-        const auto query = sl("update users set name = '%1', is_banned = %2 "
-                                "where id = %3")
+        const auto query = u"update users set name = '%1', is_banned = %2 "
+                              "where id = %3"_s
                            .arg("micah").arg(0).arg(lastInsertedId);
         auto ok = users.exec(query);
 
@@ -333,7 +335,7 @@ void tst_SqlQuery_Normal::insert_update_delete() const
 
     // Verify the UPDATE
     {
-        const auto query = sl("select * from users where id = %1").arg(lastInsertedId);
+        const auto query = u"select * from users where id = %1"_s.arg(lastInsertedId);
         auto ok = users.exec(query);
 
         QVERIFY(ok);
@@ -355,9 +357,9 @@ void tst_SqlQuery_Normal::insert_update_delete() const
             QVERIFY(record.contains(column));
 
         // Tests if the QVariant has the correct type will be done in other test methods
-        QCOMPARE(users.value(NAME)       .value<QString>(),   sl("micah"));
+        QCOMPARE(users.value(NAME)       .value<QString>(),   u"micah"_s);
         QCOMPARE(users.value("is_banned").value<bool>(),      false);
-        QCOMPARE(users.value(NOTE)       .value<QString>(),   sl("test drivers INSERT"));
+        QCOMPARE(users.value(NOTE)       .value<QString>(),   u"test drivers INSERT"_s);
         QCOMPARE(users.value(CREATED_AT) .value<QDateTime>(), QDateTime({2023, 05, 11},
                                                                         {11, 52, 53}));
         QCOMPARE(users.value(UPDATED_AT) .value<QDateTime>(), QDateTime({2023, 05, 12},
@@ -368,7 +370,7 @@ void tst_SqlQuery_Normal::insert_update_delete() const
 
     // Restore and also test the DELETE
     {
-        const auto query = sl("delete from users where id = %1").arg(lastInsertedId);
+        const auto query = u"delete from users where id = %1"_s.arg(lastInsertedId);
         auto ok = users.exec(query);
 
         QVERIFY(ok);
@@ -382,7 +384,7 @@ void tst_SqlQuery_Normal::insert_update_delete() const
 
     // Verify the DELETE
     {
-        const auto query = sl("select id from users where id = %1").arg(lastInsertedId);
+        const auto query = u"select id from users where id = %1"_s.arg(lastInsertedId);
         auto ok = users.exec(query);
 
         QVERIFY(ok);
