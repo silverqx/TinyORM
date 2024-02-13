@@ -27,13 +27,20 @@ using Orm::Constants::SIZE_;
 using Orm::Constants::UPDATED_AT;
 
 using Orm::DB;
-using Orm::Exceptions::QueryError;
 using Orm::Tiny::ConnectionOverride;
 using Orm::Tiny::Exceptions::ModelNotFoundError;
 using Orm::Tiny::Model;
 using Orm::Tiny::Types::ModelsCollection;
 using Orm::Utils::Helpers;
 using Orm::Utils::NullVariant;
+
+#ifdef TINYORM_USING_QTSQLDRIVERS
+using Orm::Exceptions::QueryError;
+#elif defined(TINYORM_USING_TINYDRIVERS)
+using Orm::Drivers::Exceptions::QueryError;
+#else
+#  error Missing include "orm/macros/sqldrivermappings.hpp".
+#endif
 
 using QueryUtils = Orm::Utils::Query;
 using TypeUtils = Orm::Utils::Type;

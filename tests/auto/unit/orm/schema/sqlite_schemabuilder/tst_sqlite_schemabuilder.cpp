@@ -9,6 +9,10 @@
 #include "orm/schema/grammars/sqliteschemagrammar.hpp"
 #include "orm/utils/type.hpp"
 
+#ifdef TINYORM_USING_TINYDRIVERS
+#  include "orm/exceptions/runtimeerror.hpp"
+#endif
+
 #include "databases.hpp"
 
 #ifndef TINYORM_DISABLE_ORM

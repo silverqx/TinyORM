@@ -5,6 +5,13 @@ extern_constants: \
         $$PWD/orm/constants_extern.cpp \
         $$PWD/orm/schema/schemaconstants_extern.cpp
 
+# TinyOrm library compiled against the TinyDrivers doesn't use these exception classes
+load(tiny_drivers)
+!tiny_is_building_drivers(): \
+    sourcesList += \
+        $$PWD/orm/exceptions/queryerror.cpp \
+        $$PWD/orm/exceptions/sqlerror.cpp \
+
 sourcesList += \
     $$PWD/orm/basegrammar.cpp \
     $$PWD/orm/concerns/countsqueries.cpp \
@@ -28,9 +35,7 @@ sourcesList += \
     $$PWD/orm/databasemanager.cpp \
     $$PWD/orm/db.cpp \
     $$PWD/orm/exceptions/logicerror.cpp \
-    $$PWD/orm/exceptions/queryerror.cpp \
     $$PWD/orm/exceptions/runtimeerror.cpp \
-    $$PWD/orm/exceptions/sqlerror.cpp \
     $$PWD/orm/libraryinfo.cpp \
     $$PWD/orm/mysqlconnection.cpp \
     $$PWD/orm/postgresconnection.cpp \

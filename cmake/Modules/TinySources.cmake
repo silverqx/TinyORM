@@ -27,17 +27,20 @@ function(tinydrivers_sources out_headers_private out_headers out_sources)
 
     list(APPEND headers
         driverstypes.hpp
+        dummysqlerror.hpp
         exceptions/driverserror.hpp
         exceptions/invalidargumenterror.hpp
         exceptions/logicerror.hpp
         exceptions/outofrange.hpp
+        exceptions/queryerror.hpp
         exceptions/runtimeerror.hpp
+        exceptions/sqlerror.hpp
+        exceptions/sqltransactionerror.hpp
         libraryinfo.hpp
         macros/export.hpp
         sqldatabase.hpp
         sqldatabasemanager.hpp
         sqldriver.hpp
-        sqlerror.hpp
         sqlfield.hpp
         sqlquery.hpp
         sqlrecord.hpp
@@ -54,14 +57,16 @@ function(tinydrivers_sources out_headers_private out_headers out_sources)
     endif()
 
     list(APPEND sources
+        dummysqlerror.cpp
         exceptions/logicerror.cpp
+        exceptions/queryerror.cpp
         exceptions/runtimeerror.cpp
+        exceptions/sqlerror.cpp
         libraryinfo.cpp
         sqldatabase.cpp
         sqldatabase_p.cpp
         sqldatabasemanager.cpp
         sqldriver.cpp
-        sqlerror.cpp
         sqlfield.cpp
         sqlquery.cpp
         sqlrecord.cpp
@@ -173,6 +178,15 @@ function(tinyorm_sources out_headers out_sources)
         )
     endif()
 
+    # TinyOrm library compiled against the TinyDrivers doesn't use these exception classes
+    if(NOT BUILD_DRIVERS)
+        list(APPEND headers
+            exceptions/queryerror.hpp
+            exceptions/sqlerror.hpp
+            exceptions/sqltransactionerror.hpp
+        )
+    endif()
+
     list(APPEND headers
         basegrammar.hpp
         concerns/countsqueries.hpp
@@ -209,13 +223,10 @@ function(tinyorm_sources out_headers out_sources)
         exceptions/multiplerecordsfounderror.hpp
         exceptions/ormerror.hpp
         exceptions/outofrangeerror.hpp
-        exceptions/queryerror.hpp
         exceptions/recordsnotfounderror.hpp
         exceptions/runtimeerror.hpp
         exceptions/searchpathemptyerror.hpp
-        exceptions/sqlerror.hpp
         exceptions/sqlitedatabasedoesnotexisterror.hpp
-        exceptions/sqltransactionerror.hpp
         libraryinfo.hpp
         macros/archdetect.hpp
         macros/commonnamespace.hpp
@@ -264,6 +275,7 @@ function(tinyorm_sources out_headers out_sources)
         sqliteconnection.hpp
         support/databaseconfiguration.hpp
         support/databaseconnectionsmap.hpp
+        support/replacebindings.hpp
         types/aboutvalue.hpp
         types/log.hpp
         types/sqlquery.hpp
@@ -349,6 +361,14 @@ function(tinyorm_sources out_headers out_sources)
         )
     endif()
 
+    # TinyOrm library compiled against the TinyDrivers doesn't use these exception classes
+    if(NOT BUILD_DRIVERS)
+        list(APPEND sources
+            exceptions/queryerror.cpp
+            exceptions/sqlerror.cpp
+        )
+    endif()
+
     list(APPEND sources
         basegrammar.cpp
         concerns/countsqueries.cpp
@@ -372,9 +392,7 @@ function(tinyorm_sources out_headers out_sources)
         databasemanager.cpp
         db.cpp
         exceptions/logicerror.cpp
-        exceptions/queryerror.cpp
         exceptions/runtimeerror.cpp
-        exceptions/sqlerror.cpp
         libraryinfo.cpp
         mysqlconnection.cpp
         postgresconnection.cpp

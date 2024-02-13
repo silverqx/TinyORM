@@ -11,6 +11,14 @@ else: \
         $$PWD/orm/constants_inline.hpp \
         $$PWD/orm/schema/schemaconstants_inline.hpp
 
+# TinyOrm library compiled against the TinyDrivers doesn't use these exception classes
+load(tiny_drivers)
+!tiny_is_building_drivers(): \
+    headersList += \
+        $$PWD/orm/exceptions/queryerror.hpp \
+        $$PWD/orm/exceptions/sqlerror.hpp \
+        $$PWD/orm/exceptions/sqltransactionerror.hpp \
+
 headersList += \
     $$PWD/orm/basegrammar.hpp \
     $$PWD/orm/concerns/countsqueries.hpp \
@@ -47,13 +55,10 @@ headersList += \
     $$PWD/orm/exceptions/multiplerecordsfounderror.hpp \
     $$PWD/orm/exceptions/ormerror.hpp \
     $$PWD/orm/exceptions/outofrangeerror.hpp \
-    $$PWD/orm/exceptions/queryerror.hpp \
     $$PWD/orm/exceptions/recordsnotfounderror.hpp \
     $$PWD/orm/exceptions/runtimeerror.hpp \
     $$PWD/orm/exceptions/searchpathemptyerror.hpp \
-    $$PWD/orm/exceptions/sqlerror.hpp \
     $$PWD/orm/exceptions/sqlitedatabasedoesnotexisterror.hpp \
-    $$PWD/orm/exceptions/sqltransactionerror.hpp \
     $$PWD/orm/libraryinfo.hpp \
     $$PWD/orm/macros/archdetect.hpp \
     $$PWD/orm/macros/commonnamespace.hpp \
@@ -102,6 +107,7 @@ headersList += \
     $$PWD/orm/sqliteconnection.hpp \
     $$PWD/orm/support/databaseconfiguration.hpp \
     $$PWD/orm/support/databaseconnectionsmap.hpp \
+    $$PWD/orm/support/replacebindings.hpp \
     $$PWD/orm/types/aboutvalue.hpp \
     $$PWD/orm/types/log.hpp \
     $$PWD/orm/types/sqlquery.hpp \

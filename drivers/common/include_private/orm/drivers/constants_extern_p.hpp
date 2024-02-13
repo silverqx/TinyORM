@@ -21,6 +21,7 @@ namespace Orm::Drivers::Constants
 
     // Common strings
     TINYDRIVERS_EXPORT extern const QString NEWLINE;
+    TINYDRIVERS_EXPORT extern const QString COMMA;
     TINYDRIVERS_EXPORT extern const QString null_;
 
     // Database related

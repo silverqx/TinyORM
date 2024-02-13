@@ -40,6 +40,11 @@ CONFIG(release, debug|release): DEFINES += TINYDRIVERS_NO_DEBUG
 # Debug build
 CONFIG(debug, debug|release): DEFINES *= TINYDRIVERS_DEBUG
 
+# Used by exceptions (public C macro, used in Drivers::Exceptions::SqlError/QueryError)
+load(tiny_drivers)
+tiny_is_building_driver(mysql): \
+    DEFINES *= TINYDRIVERS_MYSQL_DRIVER
+
 # Not used (don't remove it)
 build_loadable_drivers: \
     DEFINES *= TINYDRIVERS_MYSQL_LOADABLE_LIBRARY

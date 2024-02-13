@@ -2,9 +2,12 @@
 
 #include TINY_INCLUDE_TSqlQuery
 
-#include "orm/exceptions/queryerror.hpp"
 #include "orm/utils/container.hpp"
-#include "orm/utils/type.hpp"
+
+#ifdef TINYORM_USING_QTSQLDRIVERS
+#  include "orm/exceptions/queryerror.hpp"
+#  include "orm/utils/type.hpp"
+#endif
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
@@ -85,8 +88,12 @@ void PostgresConnector::configureIsolationLevel(const TSqlDatabase &connection,
                    .arg(config[isolation_level].value<QString>())))
         return;
 
+#ifdef TINYORM_USING_QTSQLDRIVERS
     throw Exceptions::QueryError(connection.connectionName(),
                                  m_configureErrorMessage.arg(__tiny_func__), query);
+#else
+    Q_UNREACHABLE();
+#endif
 }
 
 void PostgresConnector::configureEncoding(const TSqlDatabase &connection,
@@ -101,8 +108,12 @@ void PostgresConnector::configureEncoding(const TSqlDatabase &connection,
                    .arg(config[charset_].value<QString>())))
         return;
 
+#ifdef TINYORM_USING_QTSQLDRIVERS
     throw Exceptions::QueryError(connection.connectionName(),
                                  m_configureErrorMessage.arg(__tiny_func__), query);
+#else
+    Q_UNREACHABLE();
+#endif
 }
 
 /*! The key comparison function for the Compare template parameter. */
@@ -134,8 +145,12 @@ void PostgresConnector::configureTimezone(const TSqlDatabase &connection,
         if (query.exec(QStringLiteral("set time zone '%1';").arg(timezone)))
             return;
 
+#ifdef TINYORM_USING_QTSQLDRIVERS
     throw Exceptions::QueryError(connection.connectionName(),
                                  m_configureErrorMessage.arg(__tiny_func__), query);
+#else
+    Q_UNREACHABLE();
+#endif
 }
 
 void PostgresConnector::configureSearchPath(const TSqlDatabase &connection,
@@ -154,8 +169,12 @@ void PostgresConnector::configureSearchPath(const TSqlDatabase &connection,
     )
         return;
 
+#ifdef TINYORM_USING_QTSQLDRIVERS
     throw Exceptions::QueryError(connection.connectionName(),
                                  m_configureErrorMessage.arg(__tiny_func__), query);
+#else
+    Q_UNREACHABLE();
+#endif
 }
 
 QString PostgresConnector::quoteSearchPath(const QStringList &searchPath)
@@ -180,8 +199,12 @@ void PostgresConnector::configureApplicationName(const TSqlDatabase &connection,
                    .arg(config["application_name"].value<QString>())))
         return;
 
+#ifdef TINYORM_USING_QTSQLDRIVERS
     throw Exceptions::QueryError(connection.connectionName(),
                                  m_configureErrorMessage.arg(__tiny_func__), query);
+#else
+    Q_UNREACHABLE();
+#endif
 }
 
 void PostgresConnector::configureSynchronousCommit(const TSqlDatabase &connection,
@@ -196,8 +219,12 @@ void PostgresConnector::configureSynchronousCommit(const TSqlDatabase &connectio
                    .arg(config[synchronous_commit].value<QString>())))
         return;
 
+#ifdef TINYORM_USING_QTSQLDRIVERS
     throw Exceptions::QueryError(connection.connectionName(),
                                  m_configureErrorMessage.arg(__tiny_func__), query);
+#else
+    Q_UNREACHABLE();
+#endif
 }
 
 } // namespace Orm::Connectors

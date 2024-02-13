@@ -35,8 +35,10 @@ include($$TINYORM_SOURCE_TREE/qmake/common/common.pri)
 # TinyDrivers defines
 # ---
 
-DEFINES += PROJECT_TINYDRIVERS
+DEFINES *= PROJECT_TINYDRIVERS
 DEFINES *= TINY_QMAKE_BUILD
+# Used in common header files (currently in replacebindings.hpp only)
+DEFINES *= PROJECT_TINYDRIVERS_PRIVATE
 
 # Build as the shared library
 CONFIG(shared, dll|shared|static|staticlib) | \

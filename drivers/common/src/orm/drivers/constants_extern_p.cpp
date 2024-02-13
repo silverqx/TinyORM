@@ -14,6 +14,7 @@ namespace Orm::Drivers::Constants
 
     // Common strings
     const QString NEWLINE = u"\n"_s;
+    const QString COMMA   = u", "_s;
     const QString null_   = u"null"_s;
 
     // Database related

@@ -116,6 +116,7 @@ DatabaseConnection::select(const QString &queryString, QVector<QVariant> binding
             return query;
         }
 
+#ifdef TINYORM_USING_QTSQLDRIVERS
         /* If an error occurs when attempting to run a query, we'll transform it
            to the exception QueryError(), which formats the error message to
            include the bindings with SQL, which will make this exception a lot
@@ -124,6 +125,9 @@ DatabaseConnection::select(const QString &queryString, QVector<QVariant> binding
                     m_connectionName,
                     "Select statement in DatabaseConnection::select() failed.",
                     query, preparedBindings);
+#else
+        Q_UNREACHABLE();
+#endif
     });
 
     return {std::move(queryResult), m_qtTimeZone, *m_queryGrammar, m_returnQDateTime};
@@ -184,6 +188,7 @@ DatabaseConnection::statement(const QString &queryString, QVector<QVariant> bind
         }
 
         // TODO perf, use __tiny_func__ but when I fix pref. problem with it, rewrite it w/o the QRegularExpression, look at and revert the 8e114524 and 03fc82ae commits, also use static local variable instead! ALSO create macro eg. T_FUNCTION_NAME - static const auto functionName = __tiny_func__; silverqx
+#ifdef TINYORM_USING_QTSQLDRIVERS
         /* If an error occurs when attempting to run a query, we'll transform it
            to the exception QueryError(), which formats the error message to
            include the bindings with SQL, which will make this exception a lot
@@ -192,6 +197,9 @@ DatabaseConnection::statement(const QString &queryString, QVector<QVariant> bind
                     m_connectionName,
                     "Statement in DatabaseConnection::statement() failed.",
                     query, preparedBindings);
+#else
+        Q_UNREACHABLE();
+#endif
     });
 
     return {std::move(queryResult), m_qtTimeZone, *m_queryGrammar, m_returnQDateTime};
@@ -230,6 +238,7 @@ DatabaseConnection::affectingStatement(const QString &queryString,
             return {numRowsAffected, std::move(query)};
         }
 
+#ifdef TINYORM_USING_QTSQLDRIVERS
         /* If an error occurs when attempting to run a query, we'll transform it
            to the exception QueryError(), which formats the error message to
            include the bindings with SQL, which will make this exception a lot
@@ -239,6 +248,9 @@ DatabaseConnection::affectingStatement(const QString &queryString,
                     "Affecting statement in DatabaseConnection::affectingStatement() "
                     "failed.",
                     query, preparedBindings);
+#else
+        Q_UNREACHABLE();
+#endif
     });
 }
 
@@ -266,6 +278,7 @@ SqlQuery DatabaseConnection::unprepared(const QString &queryString)
             return query;
         }
 
+#ifdef TINYORM_USING_QTSQLDRIVERS
         /* If an error occurs when attempting to run a query, we'll transform it
            to the exception QueryError(), which formats the error message to
            include the bindings with SQL, which will make this exception a lot
@@ -274,6 +287,9 @@ SqlQuery DatabaseConnection::unprepared(const QString &queryString)
                     m_connectionName,
                     "Unprepared statement in DatabaseConnection::unprepared() failed.",
                     query);
+#else
+        Q_UNREACHABLE();
+#endif
     });
 
     return {std::move(queryResult), m_qtTimeZone, *m_queryGrammar, m_returnQDateTime};

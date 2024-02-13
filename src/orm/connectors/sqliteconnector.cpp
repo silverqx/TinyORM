@@ -5,9 +5,12 @@
 #include TINY_INCLUDE_TSqlQuery
 
 #include "orm/constants.hpp"
-#include "orm/exceptions/queryerror.hpp"
 #include "orm/exceptions/sqlitedatabasedoesnotexisterror.hpp"
 #include "orm/utils/type.hpp"
+
+#ifdef TINYORM_USING_QTSQLDRIVERS
+#  include "orm/exceptions/queryerror.hpp"
+#endif
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
@@ -84,8 +87,12 @@ void SQLiteConnector::configureForeignKeyConstraints(const TSqlDatabase &connect
                    .arg(foreignKeyConstraints)))
         return;
 
+#ifdef TINYORM_USING_QTSQLDRIVERS
     throw Exceptions::QueryError(connection.connectionName(),
                                  m_configureErrorMessage.arg(__tiny_func__), query);
+#else
+    Q_UNREACHABLE();
+#endif
 }
 
 /* private */

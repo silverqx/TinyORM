@@ -11,6 +11,10 @@
 #include "orm/query/joinclause.hpp"
 #include "orm/utils/type.hpp"
 
+#ifdef TINYORM_USING_TINYDRIVERS
+#  include "orm/exceptions/runtimeerror.hpp"
+#endif
+
 TINYORM_BEGIN_COMMON_NAMESPACE
 
 using Orm::Utils::Helpers;

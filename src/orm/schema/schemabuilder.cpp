@@ -7,6 +7,10 @@
 #include "orm/exceptions/logicerror.hpp"
 #include "orm/utils/query.hpp"
 
+#ifdef TINYORM_USING_TINYDRIVERS
+#  include "orm/exceptions/runtimeerror.hpp"
+#endif
+
 TINYORM_BEGIN_COMMON_NAMESPACE
 
 using QueryUtils = Orm::Utils::Query;

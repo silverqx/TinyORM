@@ -2,6 +2,7 @@
 
 #include <QDateTime>
 
+#include "orm/drivers/exceptions/queryerror.hpp"
 #include "orm/drivers/mysql/mysqldriver_p.hpp"
 #include "orm/drivers/mysql/mysqlresult_p.hpp"
 #include "orm/drivers/mysql/mysqlutils_p.hpp"
@@ -58,18 +59,22 @@ bool MySqlResult::exec(const QString &query)
         mysql_real_query(mysql, queryArray.constData(),
                          static_cast<ulong>(queryArray.size())) != 0
     )
-        return setLastError(MySqlUtils::createError(
-                                u"Unable to execute query"_s,
-                                SqlError::StatementError, mysql));
-    // Obtain result set
+        throw Exceptions::QueryError(
+                d->connectionName,
+                u"Unable to execute the normal query in %1()."_s.arg(__tiny_func__),
+                MySqlUtils::prepareMySqlError(mysql), d->query);
+
+    // Obtain the Result Set
     d->result = mysql_store_result(mysql);
 
     if (const auto errNo = mysql_errno(mysql);
         d->result == nullptr && errNo != 0
     )
-        return setLastError(MySqlUtils::createError(
-                                u"Unable to store result"_s,
-                                SqlError::StatementError, mysql, errNo));
+        throw Exceptions::QueryError(
+                d->connectionName,
+                u"Unable to store the result for the normal query in %1()."_s
+                .arg(__tiny_func__),
+                MySqlUtils::prepareMySqlError(mysql, errNo), d->query);
 
     const auto hasFields = d->populateFields(mysql);
 
@@ -97,9 +102,10 @@ bool MySqlResult::prepare(const QString &query)
         auto *const mysql = d->drv_d_func()->mysql;
 
         if (d->stmt = mysql_stmt_init(mysql); d->stmt == nullptr)
-            return setLastError(MySqlUtils::createError(
-                                    u"Unable to prepare statement"_s,
-                                    SqlError::StatementError, mysql));
+            throw Exceptions::SqlError(
+                        u"Unable to prepare the MYSQL_STMT handler in %1()."_s
+                        .arg(__tiny_func__),
+                        MySqlUtils::prepareMySqlError(mysql));
     }
 
     // Prepare the SQL statement
@@ -108,9 +114,10 @@ bool MySqlResult::prepare(const QString &query)
     if (mysql_stmt_prepare(d->stmt, queryArray.constData(),
                            static_cast<ulong>(queryArray.size())) != 0
     )
-        return setLastError(MySqlResultPrivate::createStmtError(
-                                u"Unable to prepare statement"_s,
-                                SqlError::StatementError, d->stmt));
+        throw Exceptions::QueryError(
+                d->connectionName,
+                u"Unable to prepare the prepared statement in %1()."_s.arg(__tiny_func__),
+                MySqlUtils::prepareStmtError(d->stmt), d->query);
 
     setSelect(d->bindResultValues());
 
@@ -140,12 +147,14 @@ bool MySqlResult::exec()
     QList<QByteArray> stringVector;
     QList<MYSQL_TIME> timeVector;
 
-    /* Reset a prepared statement on client and server to state after prepare,
-       unbuffered result sets and current errors. */
+    /* Reset a prepared statement on the client and server side to the state after
+       the prepare (resets the statement on the server, unbuffered result sets, and
+       clear current errors). */
     if (mysql_stmt_reset(d->stmt))
-        return setLastError(MySqlResultPrivate::createStmtError(
-                                u"Unable to reset statement"_s,
-                                SqlError::StatementError, d->stmt));
+        throw Exceptions::QueryError(
+                d->connectionName,
+                u"Unable to reset statement in %1()."_s.arg(__tiny_func__),
+                MySqlUtils::prepareStmtError(d->stmt), d->query);
 
     // Bind prepared bindings if the correct number of prepared bindings was bound
         // Number of parameter placeholders in the prepared statement
@@ -162,16 +171,19 @@ bool MySqlResult::exec()
                                         nullptr)
         )
 #endif
-            return setLastError(MySqlResultPrivate::createStmtError(
-                                    u"Unable to bind data for parameter placeholders"_s,
-                                    SqlError::StatementError, d->stmt));
+            throw Exceptions::QueryError(
+                    d->connectionName,
+                    u"Unable to bind data for parameter placeholders in %1()."_s
+                    .arg(__tiny_func__),
+                    MySqlUtils::prepareStmtError(d->stmt), d->query);
     }
 
     // Execute prepared query 🥳
     if (mysql_stmt_execute(d->stmt) != 0)
-        return setLastError(MySqlResultPrivate::createStmtError(
-                                u"Unable to execute prepared statement"_s,
-                                SqlError::StatementError, d->stmt));
+        throw Exceptions::QueryError(
+                d->connectionName,
+                u"Unable to execute the prepared statement in %1()."_s.arg(__tiny_func__),
+                MySqlUtils::prepareStmtError(d->stmt), d->query, d->boundValues);
 
     // Executed query has result set, if there are metadata there are also result sets
     setSelect(d->meta != nullptr);
@@ -181,9 +193,11 @@ bool MySqlResult::exec()
 
         // Bind output columns in the result set to data buffers and length buffers
         if (mysql_stmt_bind_result(d->stmt, d->resultBinds.get()))
-            return setLastError(MySqlResultPrivate::createStmtError(
-                                    u"Unable to bind result set data buffers"_s,
-                                    SqlError::StatementError, d->stmt));
+            throw Exceptions::QueryError(
+                    d->connectionName,
+                    u"Unable to bind result set data buffers in %1()"_s
+                    .arg(__tiny_func__),
+                    MySqlUtils::prepareStmtError(d->stmt), d->query, d->boundValues);
 
         // Update the metadata MYSQL_FIELD->max_length value
         if (d->hasBlobs)
@@ -191,9 +205,11 @@ bool MySqlResult::exec()
 
         // Buffer the complete result set on the client (will be prepared for fetching)
         if (mysql_stmt_store_result(d->stmt) != 0)
-            return setLastError(MySqlResultPrivate::createStmtError(
-                                    u"Unable to store prepared statement result sets"_s,
-                                    SqlError::StatementError, d->stmt));
+            throw Exceptions::QueryError(
+                    d->connectionName,
+                    u"Unable to store result sets for the prepared statement in %1()."_s
+                    .arg(__tiny_func__),
+                    MySqlUtils::prepareStmtError(d->stmt), d->query, d->boundValues);
 
         // CUR drivers revisit try to achieve or avoid calling the mysql_stmt_bind_result() twice silverqx
         if (d->hasBlobs) {
@@ -201,10 +217,11 @@ bool MySqlResult::exec()
 
             // Re-bind output columns in the result set to data buffers and length buffers
             if (mysql_stmt_bind_result(d->stmt, d->resultBinds.get()))
-                return setLastError(MySqlResultPrivate::createStmtError(
-                                        u"Unable to re-bind result set data buffers "
-                                        "for BLOB-s"_s,
-                                        SqlError::StatementError, d->stmt));
+                throw Exceptions::QueryError(
+                        d->connectionName,
+                        u"Unable to re-bind result set data buffers for BLOB-s in %1()."_s
+                        .arg(__tiny_func__),
+                        MySqlUtils::prepareStmtError(d->stmt), d->query);
         }
 
         setAt(BeforeFirstRow);
@@ -420,6 +437,7 @@ MySqlResult::size_type MySqlResult::numRowsAffected()
     if (d->preparedQuery)
         return static_cast<size_type>(mysql_stmt_affected_rows(d->stmt));
 
+    // CUR drivers try to pass d->result like above and make it noexcept and also SqlQuery::numRowsAffected() silverqx
     return static_cast<size_type>(mysql_affected_rows(d->drv_d_func()->mysql));
 }
 
@@ -464,7 +482,6 @@ void MySqlResult::cleanup()
 
     setActive(false);
     setAt(BeforeFirstRow);
-    resetLastError();
 }
 
 /* private */
@@ -486,11 +503,11 @@ bool MySqlResult::mysqlStmtFetch()
         return false;
 
     // This means there was an error or data were truncated
-    if (const auto errorMessage = MySqlResultPrivate::fetchErrorMessage(status);
+    if (const auto errorMessage = MySqlResultPrivate::errorMessageForStmtFetch(status);
         errorMessage
     )
-        return setLastError(MySqlResultPrivate::createStmtError(
-                                *errorMessage, SqlError::StatementError, d->stmt));
+        throw Exceptions::QueryError(d->connectionName, errorMessage->arg(__tiny_func__),
+                                     MySqlUtils::prepareStmtError(d->stmt), d->query);
 
     return true;
 }

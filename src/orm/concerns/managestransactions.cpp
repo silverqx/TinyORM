@@ -1,14 +1,62 @@
 #include "orm/concerns/managestransactions.hpp"
 
+#ifdef TINYORM_USING_QTSQLDRIVERS
+#  include <QtSql/QSqlQuery>
+#endif
+
 #include "orm/concerns/countsqueries.hpp"
 #include "orm/databaseconnection.hpp"
-#include "orm/exceptions/sqltransactionerror.hpp"
 #include "orm/support/databaseconfiguration.hpp"
+
+#ifdef TINYORM_USING_QTSQLDRIVERS
+#  include "orm/exceptions/sqltransactionerror.hpp"
+#elif defined(TINYORM_USING_TINYDRIVERS)
+#  include "orm/drivers/exceptions/sqltransactionerror.hpp"
+#else
+#  error Missing include "orm/macros/sqldrivermappings.hpp".
+#endif
+
+#ifndef sl
+/*! Alias for the QStringLiteral(). */
+#  define sl(str) QStringLiteral(str)
+#endif
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
+#ifdef TINYORM_USING_QTSQLDRIVERS
+using SqlTransactionError = Orm::Exceptions::SqlTransactionError;
+#elif defined(TINYORM_USING_TINYDRIVERS)
+using SqlTransactionError = Orm::Drivers::Exceptions::SqlTransactionError;
+#endif
+
 namespace Orm::Concerns
 {
+
+/* private */
+
+/*! QString constant for the "BEGIN WORK" query (Qt internally uses this query string). */
+Q_GLOBAL_STATIC_WITH_ARGS(const QString, StartTransaction, ("BEGIN WORK")) // NOLINT(misc-use-anonymous-namespace)
+/*! QString constant for the "START TRANSACTION" query. */
+Q_GLOBAL_STATIC_WITH_ARGS(const QString, Commit,           ("COMMIT")) // NOLINT(misc-use-anonymous-namespace)
+/*! QString constant for the "START TRANSACTION" query. */
+Q_GLOBAL_STATIC_WITH_ARGS(const QString, RollBack,         ("ROLLBACK")) // NOLINT(misc-use-anonymous-namespace)
+#ifdef TINYORM_USING_QTSQLDRIVERS
+/*! QString constant for the "ManagesTransactions::beginTransaction" function name. */
+Q_GLOBAL_STATIC_WITH_ARGS(const QString, BeginTransactionFunction, // NOLINT(misc-use-anonymous-namespace)
+                          ("ManagesTransactions::beginTransaction"))
+/*! QString constant for the "ManagesTransactions::commit" function name. */
+Q_GLOBAL_STATIC_WITH_ARGS(const QString, CommitFunction, // NOLINT(misc-use-anonymous-namespace)
+                          ("ManagesTransactions::commit"))
+/*! QString constant for the "ManagesTransactions::rollBack" function name. */
+Q_GLOBAL_STATIC_WITH_ARGS(const QString, RollBackFunction, // NOLINT(misc-use-anonymous-namespace)
+                          ("ManagesTransactions::rollBack"))
+/*! QString constant for the "ManagesTransactions::savepoint" function name. */
+Q_GLOBAL_STATIC_WITH_ARGS(const QString, SavepointFunction, // NOLINT(misc-use-anonymous-namespace)
+                          ("ManagesTransactions::savepoint"))
+/*! QString constant for the "ManagesTransactions::rollbackToSavepoint" function name. */
+Q_GLOBAL_STATIC_WITH_ARGS(const QString, RollbackToSavepointFunction, // NOLINT(misc-use-anonymous-namespace)
+                          ("ManagesTransactions::rollbackToSavepoint"))
+#endif
 
 /* public */
 
@@ -21,26 +69,27 @@ bool ManagesTransactions::beginTransaction()
     Q_ASSERT(m_inTransaction == false);
     Q_ASSERT(m_savepoints == 0);
 
-    databaseConnection().reconnectIfMissingConnection();
+    auto &connection = databaseConnection();
 
-    static const auto queryString = QStringLiteral("START TRANSACTION");
+    connection.reconnectIfMissingConnection();
 
-    // Elapsed timer needed
-    const auto countElapsed = databaseConnection().shouldCountElapsed();
+    // Is Elapsed timer needed?
+    const auto countElapsed = connection.shouldCountElapsed();
 
     QElapsedTimer timer;
     if (countElapsed)
         timer.start();
 
-    if (!databaseConnection().pretending() &&
-        !databaseConnection().getQtConnection().transaction()
-    ) {
-        // Initialize as late as possible
-        static const auto functionName = QStringLiteral(
-                                             "ManagesTransactions::beginTransaction");
-        handleStartTransactionError(
-                    functionName, queryString,
-                    databaseConnection().getRawQtConnection().lastError());
+    try {
+#ifdef TINYORM_USING_QTSQLDRIVERS
+        runBeginTransaction(connection);
+#elif defined(TINYORM_USING_TINYDRIVERS)
+        if (!connection.pretending())
+            connection.getQtConnection().transaction();
+#endif
+    } catch (const SqlTransactionError &e) {
+        tryAgainIfCausedByLostConnectionStart(connection, std::current_exception(),
+                                              e.databaseText());
     }
 
     m_inTransaction = true;
@@ -51,10 +100,10 @@ bool ManagesTransactions::beginTransaction()
     /* Once we have run the transaction query we will calculate the time
        that it took to run and then log the query and execution time.
        We'll log time in milliseconds. */
-    if (databaseConnection().pretending())
-        databaseConnection().logTransactionQueryForPretend(queryString);
+    if (connection.pretending())
+        connection.logTransactionQueryForPretend(*StartTransaction);
     else
-        databaseConnection().logTransactionQuery(queryString, elapsed);
+        connection.logTransactionQuery(*StartTransaction, elapsed);
 
     return true;
 }
@@ -63,23 +112,25 @@ bool ManagesTransactions::commit()
 {
     Q_ASSERT(m_inTransaction);
 
-    static const auto queryString = QStringLiteral("COMMIT");
+    auto &connection = databaseConnection();
 
-    // Elapsed timer needed
-    const auto countElapsed = databaseConnection().shouldCountElapsed();
+    // Is Elapsed timer needed?
+    const auto countElapsed = connection.shouldCountElapsed();
 
     QElapsedTimer timer;
     if (countElapsed)
         timer.start();
 
-    if (!databaseConnection().pretending() &&
-        !databaseConnection().getRawQtConnection().commit()
-    ) {
-        // Initialize as late as possible
-        static const auto functionName = QStringLiteral("ManagesTransactions::commit");
-        handleCommonTransactionError(
-                    functionName, queryString,
-                    databaseConnection().getRawQtConnection().lastError());
+    try {
+#ifdef TINYORM_USING_QTSQLDRIVERS
+        runCommit(connection);
+#elif defined(TINYORM_USING_TINYDRIVERS)
+        if (!connection.pretending())
+            connection.getRawQtConnection().commit();
+#endif
+    } catch (const SqlTransactionError &e) {
+        tryAgainIfCausedByLostConnectionCommon(std::current_exception(),
+                                               e.databaseText());
     }
 
     resetTransactions();
@@ -90,10 +141,10 @@ bool ManagesTransactions::commit()
     /* Once we have run the transaction query we will calculate the time
        that it took to run and then log the query and execution time.
        We'll log time in milliseconds. */
-    if (databaseConnection().pretending())
-        databaseConnection().logTransactionQueryForPretend(queryString);
+    if (connection.pretending())
+        connection.logTransactionQueryForPretend(*Commit);
     else
-        databaseConnection().logTransactionQuery(queryString, elapsed);
+        connection.logTransactionQuery(*Commit, elapsed);
 
     return true;
 }
@@ -102,23 +153,25 @@ bool ManagesTransactions::rollBack()
 {
     Q_ASSERT(m_inTransaction);
 
-    static const auto queryString = QStringLiteral("ROLLBACK");
+    auto &connection = databaseConnection();
 
-    // Elapsed timer needed
-    const auto countElapsed = databaseConnection().shouldCountElapsed();
+    // Is Elapsed timer needed?
+    const auto countElapsed = connection.shouldCountElapsed();
 
     QElapsedTimer timer;
     if (countElapsed)
         timer.start();
 
-    if (!databaseConnection().pretending() &&
-        !databaseConnection().getRawQtConnection().rollback()
-    ) {
-        // Initialize as late as possible
-        static const auto functionName = QStringLiteral("ManagesTransactions::rollBack");
-        handleCommonTransactionError(
-                    functionName, queryString,
-                    databaseConnection().getRawQtConnection().lastError());
+    try {
+#ifdef TINYORM_USING_QTSQLDRIVERS
+        runRollBack(connection);
+#elif defined(TINYORM_USING_TINYDRIVERS)
+        if (!connection.pretending())
+            connection.getRawQtConnection().rollback();
+#endif
+    } catch (const SqlTransactionError &e) {
+        tryAgainIfCausedByLostConnectionCommon(std::current_exception(),
+                                               e.databaseText());
     }
 
     resetTransactions();
@@ -129,10 +182,10 @@ bool ManagesTransactions::rollBack()
     /* Once we have run the transaction query we will calculate the time
        that it took to run and then log the query and execution time.
        We'll log time in milliseconds. */
-    if (databaseConnection().pretending())
-        databaseConnection().logTransactionQueryForPretend(queryString);
+    if (connection.pretending())
+        connection.logTransactionQueryForPretend(*RollBack);
     else
-        databaseConnection().logTransactionQuery(queryString, elapsed);
+        connection.logTransactionQuery(*RollBack, elapsed);
 
     return true;
 }
@@ -141,24 +194,29 @@ bool ManagesTransactions::savepoint(const QString &id)
 {
     Q_ASSERT(m_inTransaction);
 
-    auto savePoint = databaseConnection().getQtQuery();
-    const auto queryString =
-            QStringLiteral("SAVEPOINT %1_%2").arg(m_savepointNamespace, id);
+    auto &connection = databaseConnection();
 
-    // Elapsed timer needed
-    const auto countElapsed = databaseConnection().shouldCountElapsed();
+    static const auto savepointQueryTmpl = sl("SAVEPOINT %1_%2");
+    const auto queryString = savepointQueryTmpl.arg(m_savepointNamespace, id);
+
+    // Is Elapsed timer needed?
+    const auto countElapsed = connection.shouldCountElapsed();
 
     QElapsedTimer timer;
     if (countElapsed)
         timer.start();
 
     // Execute a savepoint query
-    if (!databaseConnection().pretending() && !savePoint.exec(queryString)) {
-        static const auto functionName = QStringLiteral(
-                                             "ManagesTransactions::savepoint");
-        handleCommonTransactionError(
-                    functionName, queryString,
-                    databaseConnection().getRawQtConnection().lastError());
+    try {
+#ifdef TINYORM_USING_QTSQLDRIVERS
+        runCommonSavepointQuery(connection, queryString, *SavepointFunction);
+#elif defined(TINYORM_USING_TINYDRIVERS)
+        if (!connection.pretending())
+            connection.getQtQuery().exec(queryString);
+#endif
+    } catch (const SqlTransactionError &e) {
+        tryAgainIfCausedByLostConnectionCommon(std::current_exception(),
+                                               e.databaseText());
     }
 
     ++m_savepoints;
@@ -169,17 +227,12 @@ bool ManagesTransactions::savepoint(const QString &id)
     /* Once we have run the transaction query we will calculate the time
        that it took to run and then log the query and execution time.
        We'll log time in milliseconds. */
-    if (databaseConnection().pretending())
-        databaseConnection().logTransactionQueryForPretend(queryString);
+    if (connection.pretending())
+        connection.logTransactionQueryForPretend(queryString);
     else
-        databaseConnection().logTransactionQuery(queryString, elapsed);
+        connection.logTransactionQuery(queryString, elapsed);
 
     return true;
-}
-
-bool ManagesTransactions::savepoint(const std::size_t id)
-{
-    return savepoint(QString::number(id));
 }
 
 bool ManagesTransactions::rollbackToSavepoint(const QString &id)
@@ -187,24 +240,29 @@ bool ManagesTransactions::rollbackToSavepoint(const QString &id)
     Q_ASSERT(m_inTransaction);
     Q_ASSERT(m_savepoints > 0);
 
-    auto rollbackToSavepoint = databaseConnection().getQtQuery();
-    const auto queryString =
-            QStringLiteral("ROLLBACK TO SAVEPOINT %1_%2").arg(m_savepointNamespace, id);
+    auto &connection = databaseConnection();
 
-    // Elapsed timer needed
-    const auto countElapsed = databaseConnection().shouldCountElapsed();
+    static const auto rollbackToSavepointQueryTmpl = sl("ROLLBACK TO SAVEPOINT %1_%2");
+    const auto queryString = rollbackToSavepointQueryTmpl.arg(m_savepointNamespace, id);
+
+    // Is Elapsed timer needed?
+    const auto countElapsed = connection.shouldCountElapsed();
 
     QElapsedTimer timer;
     if (countElapsed)
         timer.start();
 
     // Execute a rollback to savepoint query
-    if (!databaseConnection().pretending() && !rollbackToSavepoint.exec(queryString)) {
-        static const auto functionName = QStringLiteral(
-                                             "ManagesTransactions::rollbackToSavepoint");
-        handleCommonTransactionError(
-                    functionName, queryString,
-                    databaseConnection().getRawQtConnection().lastError());
+    try {
+#ifdef TINYORM_USING_QTSQLDRIVERS
+        runCommonSavepointQuery(connection, queryString, *RollbackToSavepointFunction);
+#elif defined(TINYORM_USING_TINYDRIVERS)
+        if (!connection.pretending())
+            connection.getQtQuery().exec(queryString);
+#endif
+    } catch (const SqlTransactionError &e) {
+        tryAgainIfCausedByLostConnectionCommon(std::current_exception(),
+                                               e.databaseText());
     }
 
     m_savepoints = std::max<decltype (m_savepoints)>(0, m_savepoints - 1);
@@ -215,17 +273,12 @@ bool ManagesTransactions::rollbackToSavepoint(const QString &id)
     /* Once we have run the transaction query we will calculate the time
        that it took to run and then log the query and execution time.
        We'll log time in milliseconds. */
-    if (databaseConnection().pretending())
-        databaseConnection().logTransactionQueryForPretend(queryString);
+    if (connection.pretending())
+        connection.logTransactionQueryForPretend(queryString);
     else
-        databaseConnection().logTransactionQuery(queryString, elapsed);
+        connection.logTransactionQuery(queryString, elapsed);
 
     return true;
-}
-
-bool ManagesTransactions::rollbackToSavepoint(const std::size_t id)
-{
-    return rollbackToSavepoint(QString::number(id));
 }
 
 DatabaseConnection &
@@ -237,6 +290,74 @@ ManagesTransactions::setSavepointNamespace(const QString &savepointNamespace)
 }
 
 /* private */
+
+#ifdef TINYORM_USING_QTSQLDRIVERS
+void ManagesTransactions::runBeginTransaction(DatabaseConnection &connection)
+{
+    auto qtConnection = connection.getQtConnection();
+
+    // Nothing to do
+    if (connection.pretending() || qtConnection.transaction())
+        return;
+
+    throwSqlTransactionError(*BeginTransactionFunction, *StartTransaction,
+                             qtConnection.lastError());
+}
+
+void ManagesTransactions::runCommit(DatabaseConnection &connection)
+{
+    auto qtConnection = connection.getRawQtConnection();
+
+    // Nothing to do
+    if (connection.pretending() || qtConnection.commit())
+        return;
+
+    throwSqlTransactionError(*CommitFunction, *Commit, qtConnection.lastError());
+}
+
+void ManagesTransactions::runRollBack(DatabaseConnection &connection)
+{
+    auto qtConnection = connection.getRawQtConnection();
+
+    // Nothing to do
+    if (connection.pretending() || qtConnection.rollback())
+        return;
+
+    throwSqlTransactionError(*RollBackFunction, *RollBack, qtConnection.lastError());
+}
+
+void ManagesTransactions::runCommonSavepointQuery(
+        DatabaseConnection &connection, const QString &queryString,
+        const QString &functionName)
+{
+    auto qtQuery = connection.getQtQuery();
+
+    // Nothing to do
+    if (connection.pretending() || qtQuery.exec(queryString))
+        return;
+
+    throwSqlTransactionError(functionName, qtQuery);
+}
+
+void ManagesTransactions::throwSqlTransactionError(
+        const QString &functionName, const QString &queryString, TSqlError &&error)
+{
+    throw Exceptions::SqlTransactionError(
+                sl("Transaction statement in %1() failed : %2")
+                .arg(functionName, queryString),
+                std::move(error));
+}
+
+void ManagesTransactions::throwSqlTransactionError(const QString &functionName,
+                                                   const QSqlQuery &qtQuery)
+{
+    auto executedQuery = qtQuery.executedQuery();
+    if (executedQuery.isEmpty())
+        executedQuery = qtQuery.lastQuery();
+
+    throwSqlTransactionError(functionName, executedQuery, qtQuery.lastError());
+}
+#endif
 
 DatabaseConnection &ManagesTransactions::resetTransactions()
 {
@@ -256,38 +377,30 @@ CountsQueries &ManagesTransactions::countsQueries()
     return dynamic_cast<CountsQueries &>(*this);
 }
 
-void ManagesTransactions::handleStartTransactionError(
-        const QString &functionName, const QString &queryString, TSqlError &&error)
+void ManagesTransactions::tryAgainIfCausedByLostConnectionStart(
+        DatabaseConnection &connection, const std::exception_ptr &ePtr,
+        const QString &errorMessage)
 {
-    if (!DetectsLostConnections::causedByLostConnection(error))
-        throwSqlTransactionError(functionName, queryString, std::move(error));
+    if (!DetectsLostConnections::causedByLostConnection(errorMessage))
+        std::rethrow_exception(ePtr);
 
-    databaseConnection().reconnect();
+    connection.reconnect();
 
-    databaseConnection().getQtConnection().transaction();
+    connection.getQtConnection().transaction();
 }
 
-void ManagesTransactions::handleCommonTransactionError(
-        const QString &functionName, const QString &queryString, TSqlError &&error)
+void ManagesTransactions::tryAgainIfCausedByLostConnectionCommon(
+        const std::exception_ptr &ePtr, const QString &errorMessage)
 {
     /* Don't call reconnection logic here because if the current session is
        in the transaction and eg. a connection is lost then the transaction will be
        rolled back which means reconnecting and re-executing the SAVEPOINT statement
        doesn't make sense as the START TRANSACTION must be called before SAVEPOINT
        statement and also, there could be many queries between. */
-    if (DetectsLostConnections::causedByLostConnection(error))
+    if (DetectsLostConnections::causedByLostConnection(errorMessage))
         resetTransactions();
 
-    throwSqlTransactionError(functionName, queryString, std::move(error));
-}
-
-void ManagesTransactions::throwSqlTransactionError(
-        const QString &functionName, const QString &queryString, TSqlError &&error)
-{
-    throw Exceptions::SqlTransactionError(
-            QStringLiteral("Statement in %1() failed : %2")
-                .arg(functionName, queryString),
-            std::move(error));
+    std::rethrow_exception(ePtr);
 }
 
 } // namespace Orm::Concerns

@@ -9,6 +9,10 @@
 #include "orm/utils/type.hpp"
 
 #ifdef TINYORM_USING_TINYDRIVERS
+#  include "orm/exceptions/runtimeerror.hpp"
+#endif
+
+#ifdef TINYORM_USING_TINYDRIVERS
 using Orm::Drivers::SqlDatabase;
 #endif
 
@@ -464,12 +468,8 @@ void Databases::createDriversMySQLConnection(
     if (configuration.contains(options_) && envVariablesDefined(sslEnvVariables))
         db.setConnectOptions(createMySQLOrMariaSslOptions(configuration));
 
-    if (!open || db.open())
-        return;
-
-    // CUR drivers open() should throw exception in the near future, then remove this exception; also because of this I'm throwing simple RuntimeError() silverqx
-    throw RuntimeError(sl("Failed to open the '%1' database connection in %2().")
-                       .arg(connection, __tiny_func__));
+    if (open)
+        db.open();
 }
 
 QString Databases::createMySQLOrMariaSslOptions(const QVariantHash &configuration)

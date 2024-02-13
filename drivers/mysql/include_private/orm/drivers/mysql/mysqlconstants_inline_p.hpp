@@ -18,6 +18,9 @@ namespace Orm::Drivers::MySql::Constants
     inline const QChar DASH      = QLatin1Char('-');
     inline const QChar EQ_C      = QLatin1Char('=');
 
+    // Common strings
+    inline const QString COMMA   = QStringLiteral(", ");
+
 } // namespace Orm::Drivers::MySql::Constants
 
 TINYORM_END_COMMON_NAMESPACE

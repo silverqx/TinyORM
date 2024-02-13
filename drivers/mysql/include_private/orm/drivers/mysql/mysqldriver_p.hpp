@@ -5,7 +5,6 @@
 #include "orm/drivers/mysql/macros/includemysqlh_p.hpp"
 
 #include "orm/drivers/sqldriver_p.hpp"
-#include "orm/drivers/utils/notnull.hpp"
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
@@ -18,34 +17,31 @@ namespace Orm::Drivers::MySql
     class MySqlDriverPrivate final : public SqlDriverPrivate
     {
         Q_DISABLE_COPY_MOVE(MySqlDriverPrivate)
-        Q_DECLARE_PUBLIC(MySqlDriver)
-
-        /*! Alias for the NotNull. */
-        template<typename T>
-        using NotNull = Orm::Drivers::Utils::NotNull<T>;
 
     public:
         /*! Default constructor. */
-        inline explicit MySqlDriverPrivate(MySqlDriver *q) noexcept;
+        inline MySqlDriverPrivate() noexcept;
         /*! Virtual destructor. */
         inline ~MySqlDriverPrivate() final = default;
 
         /* open() */
         struct SetConnectionOptionsResult;
 
-        /*! Allocate and initialize the MYSQL object for the mysql_real_connect(). */
-        bool mysqlInit();
+        /*! Allocate and initialize the MYSQL connection handler object. */
+        void mysqlInit();
         /*! Set extra MySQL connection options. */
         SetConnectionOptionsResult mysqlSetConnectionOptions(const QString &options);
         /*! Set the default character set for the mysql_real_connect() function. */
-        bool mysqlSetCharacterSet(const QString &host, bool before);
+        void mysqlSetCharacterSet(const QString &host, bool before) const;
         /*! Establish a connection to the MySQL server running on the host. */
-        bool mysqlRealConnect(
+        void mysqlRealConnect(
                 const QString &host, const QByteArray &username,
                 const QByteArray &password, const QByteArray &database, int port,
-                const QByteArray &unixSocket, uint optionFlags);
+                const QByteArray &unixSocket, uint optionFlags) const;
         /*! Select the default database. */
-        bool mysqlSelectDb(const QString &database);
+        void mysqlSelectDb(const QString &database);
+        /*! Deallocate the MYSQL connection handler object. */
+        void mysqlClose() noexcept;
 
         /*! Return value type for the mysqlSetConnectionOptions() method. */
         struct SetConnectionOptionsResult
@@ -61,8 +57,6 @@ namespace Orm::Drivers::MySql
         inline bool supportsTransactions() const noexcept;
 
         /* Data members */
-        /*! Pointer to the public implementation. */
-        NotNull<MySqlDriver *> q_ptr;
         /*! MYSQL handler. */
         MYSQL *mysql = nullptr;
         /*! The currently selected default database name. */
@@ -129,9 +123,8 @@ namespace Orm::Drivers::MySql
 
     /* public */
 
-    MySqlDriverPrivate::MySqlDriverPrivate(MySqlDriver *const q) noexcept
+    MySqlDriverPrivate::MySqlDriverPrivate() noexcept
         : SqlDriverPrivate(SqlDriver::MySqlServer)
-        , q_ptr(q)
     {}
 
     /* hasFeature() */

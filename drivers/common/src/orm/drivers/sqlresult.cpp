@@ -30,6 +30,12 @@ SqlResult::SqlResult(std::unique_ptr<SqlResultPrivate> &&dd) noexcept
    destroy an incomplete type. */
 SqlResult::~SqlResult() = default;
 
+void SqlResult::setConnectionName(QString &&connection) noexcept
+{
+    Q_D(SqlResult);
+    d->connectionName = std::move(connection);
+}
+
 /* protected */
 
 /* Getters / Setters */
@@ -52,39 +58,6 @@ void SqlResult::setQuery(const QString &query) noexcept
 {
     Q_D(SqlResult);
     d->query = query;
-}
-
-SqlError SqlResult::lastError() const noexcept
-{
-    Q_D(const SqlResult);
-    return d->lastError;
-}
-
-bool SqlResult::setLastError(const SqlError &error) noexcept
-{
-    Q_D(SqlResult);
-
-    d->lastError = error;
-
-    // To be able call 'return setLastError()' to simplify code
-    return false;
-}
-
-bool SqlResult::setLastError(SqlError &&error) noexcept
-{
-    Q_D(SqlResult);
-
-    d->lastError = std::move(error);
-
-    // To be able call 'return setLastError()' to simplify code
-    return false;
-}
-
-void SqlResult::resetLastError() noexcept
-{
-    Q_D(SqlResult);
-
-    d->lastError = SqlError::NoError;
 }
 
 SqlResult::size_type SqlResult::at() const noexcept

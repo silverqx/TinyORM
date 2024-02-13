@@ -20,6 +20,9 @@ namespace Orm::Drivers::MySql::Constants
     TINYDRIVERS_EXPORT extern const QChar DASH;
     TINYDRIVERS_EXPORT extern const QChar EQ_C;
 
+    // Common strings
+    TINYDRIVERS_EXPORT extern const QString COMMA;
+
 } // namespace Orm::Drivers::MySql::Constants
 
 TINYORM_END_COMMON_NAMESPACE

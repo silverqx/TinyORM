@@ -29,6 +29,10 @@ disable the TINYORM_MYSQL_PING preprocessor directive.
 #include "orm/schema/mysqlschemabuilder.hpp"
 #include "orm/utils/configuration.hpp"
 
+#ifdef TINYORM_USING_TINYDRIVERS
+#  include "orm/exceptions/runtimeerror.hpp"
+#endif
+
 TINYORM_BEGIN_COMMON_NAMESPACE
 
 using ConfigUtils = Orm::Utils::Configuration;

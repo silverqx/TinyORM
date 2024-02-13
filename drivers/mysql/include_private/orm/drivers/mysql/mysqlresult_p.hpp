@@ -71,19 +71,14 @@ namespace Orm::Drivers::MySql
         /*! Bind result set BLOB values. */
         void bindResultBlobs();
 
-        /*! Factory method to create the SqlError for prepared statements
-            (from MYSQL_STMT). */
-        static SqlError createStmtError(const QString &error, SqlError::ErrorType type,
-                                        MYSQL_STMT *stmt);
-
         /* Result sets */
         /*! Alias for the result fields vector type. */
         using ResultFieldsType = std::vector<MyField>;
         /*! Alias for the result fields vector size type. */
         using ResultFieldsSizeType = ResultFieldsType::size_type;
 
-        /*! Get the error message based on the error code from mysql_stmt_fetch(). */
-        static std::optional<QString> fetchErrorMessage(int status) noexcept;
+        /*! Get the error message based on the error code from the mysql_stmt_fetch(). */
+        static std::optional<QString> errorMessageForStmtFetch(int status) noexcept;
 
         /*! Obtain the QVariant value for normal queries. */
         QVariant getValueForNormal(ResultFieldsSizeType index) const;

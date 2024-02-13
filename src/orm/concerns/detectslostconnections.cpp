@@ -2,19 +2,12 @@
 
 #include <QVector>
 
-#include "orm/exceptions/sqlerror.hpp"
-
 TINYORM_BEGIN_COMMON_NAMESPACE
 
 namespace Orm::Concerns
 {
 
-bool DetectsLostConnections::causedByLostConnection(const Exceptions::SqlError &e)
-{
-    return causedByLostConnection(e.getSqlError());
-}
-
-bool DetectsLostConnections::causedByLostConnection(const TSqlError &e)
+bool DetectsLostConnections::causedByLostConnection(const QString &errorMessage)
 {
     // TODO verify this will be pain in the ass 😕, but but it looks like few of them for mysql and postgres are completly valid silverqx
     static const QVector<QString> lostMessagesCache {
@@ -49,11 +42,10 @@ bool DetectsLostConnections::causedByLostConnection(const TSqlError &e)
     };
 
     return std::ranges::any_of(lostMessagesCache,
-                               [databaseError = e.databaseText()]
-                               (const auto &lostMessage)
+                               [&errorMessage](const auto &lostMessage)
     {
         // found
-        return databaseError.indexOf(lostMessage, 0, Qt::CaseInsensitive) >= 0;
+        return errorMessage.indexOf(lostMessage, 0, Qt::CaseInsensitive) >= 0;
     });
 }
 
