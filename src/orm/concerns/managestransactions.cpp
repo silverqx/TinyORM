@@ -270,6 +270,11 @@ void ManagesTransactions::handleStartTransactionError(
 void ManagesTransactions::handleCommonTransactionError(
         const QString &functionName, const QString &queryString, QSqlError &&error)
 {
+    /* Don't call reconnection logic here because if the current session is
+       in the transaction and eg. a connection is lost then the transaction will be
+       rolled back which means reconnecting and re-executing the SAVEPOINT statement
+       doesn't make sense as the START TRANSACTION must be called before SAVEPOINT
+       statement and also, there could be many queries between. */
     if (DetectsLostConnections::causedByLostConnection(error))
         resetTransactions();
 
