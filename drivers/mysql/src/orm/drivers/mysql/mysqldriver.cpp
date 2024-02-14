@@ -30,7 +30,7 @@ bool MySqlDriver::open(
 {
     Q_D(MySqlDriver);
 
-    // CUR drivers log warning? silverqx
+    // CUR drivers log warning or throw? or add reopen method or parameter? silverqx
     if (isOpen())
         close();
 
