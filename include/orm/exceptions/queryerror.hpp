@@ -9,7 +9,7 @@ TINY_SYSTEM_HEADER
 
 #include "orm/exceptions/sqlerror.hpp"
 
-TINY_FORWARD_DECLARE_TSqlQuery
+class QSqlQuery;
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
@@ -22,10 +22,10 @@ namespace Orm::Exceptions
     {
     public:
         /*! const char * constructor. */
-        QueryError(QString connectionName, const char *message, const TSqlQuery &query,
+        QueryError(QString connectionName, const char *message, const QSqlQuery &query,
                    const QVector<QVariant> &bindings = {});
         /*! QString constructor. */
-        QueryError(QString connectionName, const QString &message, const TSqlQuery &query,
+        QueryError(QString connectionName, const QString &message, const QSqlQuery &query,
                    const QVector<QVariant> &bindings = {});
 
         /*! Get the connection name for the query. */
@@ -38,7 +38,7 @@ namespace Orm::Exceptions
     protected:
         /*! Format the Qt SQL error message. */
         static QString formatMessage(const QString &connectionName, const char *message,
-                                     const TSqlQuery &query);
+                                     const QSqlQuery &query);
 
         /*! The database connection name. */
         QString m_connectionName;

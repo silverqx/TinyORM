@@ -1,6 +1,6 @@
 #include "orm/exceptions/queryerror.hpp"
 
-#include TINY_INCLUDE_TSqlQuery
+#include <QtSql/QSqlQuery>
 
 #include "orm/utils/query.hpp"
 
@@ -11,12 +11,14 @@ using QueryUtils = Orm::Utils::Query;
 namespace Orm::Exceptions
 {
 
-// We don't need the Orm::SqlQuery overload as all bindings are already prepared
+/* We don't need the Orm::SqlQuery overload as all bindings are already prepared.
+   Used the QSqlQuery directly to make it more clear that TSqlXyz mappings are not
+   needed. */
 
 /* public */
 
 QueryError::QueryError(QString connectionName, const char *message,
-                       const TSqlQuery &query, const QVector<QVariant> &bindings)
+                       const QSqlQuery &query, const QVector<QVariant> &bindings)
     : SqlError(formatMessage(connectionName, message, query), query.lastError(), 1)
     , m_connectionName(std::move(connectionName))
     , m_sql(query.executedQuery())
@@ -24,14 +26,14 @@ QueryError::QueryError(QString connectionName, const char *message,
 {}
 
 QueryError::QueryError(QString connectionName, const QString &message,
-                       const TSqlQuery &query, const QVector<QVariant> &bindings)
+                       const QSqlQuery &query, const QVector<QVariant> &bindings)
     : QueryError(std::move(connectionName), message.toUtf8().constData(), query, bindings)
 {}
 
 /* protected */
 
 QString QueryError::formatMessage(const QString &connectionName, const char *message,
-                                  const TSqlQuery &query)
+                                  const QSqlQuery &query)
 {
     const auto sqlError = SqlError::formatMessage(message, query.lastError());
     const auto executedQuery = QueryUtils::parseExecutedQuery(query);

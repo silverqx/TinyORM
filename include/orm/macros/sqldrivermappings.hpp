@@ -41,7 +41,7 @@ TINY_FORWARD_DECLARE_TClass(TSqlQueryRaw)
    TinyDrivers doesn't provide this Orm::Drivers::SqlError class, it always throws
    exceptions. There is only the Orm::Drivers::DummySqlError class, which is used
    as an empty dummy counterpart wrapper for SqlError and it does nothing.
-   Because of this, all TSqlError mappings are disabled/commented. */
+   The TSqlError mappings aren't needed and were removed because of this. */
 
 /* Checks */
 
@@ -68,7 +68,6 @@ C preprocessor macro to select the SQL drivers to use.
 // Includes
 #  define TINY_INCLUDE_TSqlDatabase <QtSql/QSqlDatabase>
 #  define TINY_INCLUDE_TSqlDriver   <QtSql/QSqlDriver>
-#  define TINY_INCLUDE_TSqlError    <QtSql/QSqlError>
 #  define TINY_INCLUDE_TSqlQuery    <QtSql/QSqlQuery>
 #  define TINY_INCLUDE_TSqlRecord   <QtSql/QSqlRecord>
 // Types without any namespace
@@ -76,7 +75,6 @@ C preprocessor macro to select the SQL drivers to use.
 #  define TPrecisionPolicyRaw NumericalPrecisionPolicy
 #  define TSqlDatabaseRaw     QSqlDatabase
 #  define TSqlDriverRaw       QSqlDriver
-#  define TSqlErrorRaw        QSqlError
 #  define TSqlQueryRaw        QSqlQuery
 #  define TSqlRecordRaw       QSqlRecord
 // Types with user-defined common namespace
@@ -84,7 +82,6 @@ C preprocessor macro to select the SQL drivers to use.
 #  define TPrecisionPolicy QT_PREPEND_NAMESPACE(QSql::TPrecisionPolicyRaw)
 #  define TSqlDatabase     QT_PREPEND_NAMESPACE(TSqlDatabaseRaw)
 #  define TSqlDriver       QT_PREPEND_NAMESPACE(TSqlDriverRaw)
-#  define TSqlError        QT_PREPEND_NAMESPACE(TSqlErrorRaw)
 #  define TSqlQuery        QT_PREPEND_NAMESPACE(TSqlQueryRaw)
 #  define TSqlRecord       QT_PREPEND_NAMESPACE(TSqlRecordRaw)
 
@@ -103,7 +100,6 @@ namespace QT_NAMESPACE { class name; }
 // Includes
 #  define TINY_INCLUDE_TSqlDatabase <orm/drivers/sqldatabase.hpp>
 #  define TINY_INCLUDE_TSqlDriver   <orm/drivers/sqldriver.hpp>
-// #  define TINY_INCLUDE_TSqlError    <orm/drivers/dummysqlerror.hpp>
 #  define TINY_INCLUDE_TSqlQuery    <orm/drivers/sqlquery.hpp>
 #  define TINY_INCLUDE_TSqlRecord   <orm/drivers/sqlrecord.hpp>
 // Types without any namespace
@@ -111,7 +107,6 @@ namespace QT_NAMESPACE { class name; }
 #  define TPrecisionPolicyRaw NumericalPrecisionPolicy
 #  define TSqlDatabaseRaw     SqlDatabase
 #  define TSqlDriverRaw       SqlDriver
-// #  define TSqlErrorRaw        DummySqlError
 #  define TSqlQueryRaw        SqlQuery
 #  define TSqlRecordRaw       SqlRecord
 // Types with user-defined common namespace
@@ -119,7 +114,6 @@ namespace QT_NAMESPACE { class name; }
 #  define TPrecisionPolicy TINYORM_PREPEND_NAMESPACE(Orm::Drivers::TPrecisionPolicyRaw)
 #  define TSqlDatabase     TINYORM_PREPEND_NAMESPACE(Orm::Drivers::TSqlDatabaseRaw)
 #  define TSqlDriver       TINYORM_PREPEND_NAMESPACE(Orm::Drivers::TSqlDriverRaw)
-// #  define TSqlError        TINYORM_PREPEND_NAMESPACE(Orm::Drivers::TSqlErrorRaw)
 #  define TSqlQuery        TINYORM_PREPEND_NAMESPACE(Orm::Drivers::TSqlQueryRaw)
 #  define TSqlRecord       TINYORM_PREPEND_NAMESPACE(Orm::Drivers::TSqlRecordRaw)
 
@@ -141,9 +135,6 @@ namespace TINYORM_COMMON_NAMESPACE::Orm::Drivers { class name; }
 #define TINY_FORWARD_DECLARE_TPrecisionPolicy TINY_FORWARD_DECLARE_TClass(TPrecisionPolicyRaw)
 #define TINY_FORWARD_DECLARE_TSqlDatabase     TINY_FORWARD_DECLARE_TClass(TSqlDatabaseRaw)
 #define TINY_FORWARD_DECLARE_TSqlDriver       TINY_FORWARD_DECLARE_TClass(TSqlDriverRaw)
-#ifdef TINYORM_USING_QTSQLDRIVERS
-#  define TINY_FORWARD_DECLARE_TSqlError        TINY_FORWARD_DECLARE_TClass(TSqlErrorRaw)
-#endif
 #define TINY_FORWARD_DECLARE_TSqlQuery        TINY_FORWARD_DECLARE_TClass(TSqlQueryRaw)
 #define TINY_FORWARD_DECLARE_TSqlRecord       TINY_FORWARD_DECLARE_TClass(TSqlRecordRaw)
 

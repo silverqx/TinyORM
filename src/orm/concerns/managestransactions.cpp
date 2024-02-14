@@ -32,6 +32,9 @@ using SqlTransactionError = Orm::Drivers::Exceptions::SqlTransactionError;
 namespace Orm::Concerns
 {
 
+/* Used the QSqlError and QSqlQuery directly to make it more clear that TSqlXyz mappings
+   are not needed. */
+
 /* private */
 
 /*! QString constant for the "BEGIN WORK" query (Qt internally uses this query string). */
@@ -340,7 +343,7 @@ void ManagesTransactions::runCommonSavepointQuery(
 }
 
 void ManagesTransactions::throwSqlTransactionError(
-        const QString &functionName, const QString &queryString, TSqlError &&error)
+        const QString &functionName, const QString &queryString, QSqlError &&error)
 {
     throw Exceptions::SqlTransactionError(
                 sl("Transaction statement in %1() failed : %2")
