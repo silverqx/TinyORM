@@ -4,13 +4,7 @@
 #include "orm/constants.hpp"
 #include "orm/utils/type.hpp"
 
-#ifdef TINYORM_USING_QTSQLDRIVERS
-#  include "orm/exceptions/sqlerror.hpp"
-#elif defined(TINYORM_USING_TINYDRIVERS)
-#  include "orm/drivers/exceptions/sqlerror.hpp"
-#else
-#  error Missing include "orm/macros/sqldrivermappings.hpp".
-#endif
+#include TINY_INCLUDE_TSqlError
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
@@ -21,11 +15,7 @@ using Orm::Constants::password_;
 using Orm::Constants::port_;
 using Orm::Constants::username_;
 
-#ifdef TINYORM_USING_QTSQLDRIVERS
-using SqlError = Orm::Exceptions::SqlError;
-#elif defined(TINYORM_USING_TINYDRIVERS)
-using SqlError = Orm::Drivers::Exceptions::SqlError;
-#endif
+using TSqlError;
 
 namespace Orm::Connectors
 {

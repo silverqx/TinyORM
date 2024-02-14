@@ -34,13 +34,7 @@ using Orm::Tiny::Types::ModelsCollection;
 using Orm::Utils::Helpers;
 using Orm::Utils::NullVariant;
 
-#ifdef TINYORM_USING_QTSQLDRIVERS
-using Orm::Exceptions::QueryError;
-#elif defined(TINYORM_USING_TINYDRIVERS)
-using Orm::Drivers::Exceptions::QueryError;
-#else
-#  error Missing include "orm/macros/sqldrivermappings.hpp".
-#endif
+using TQueryError;
 
 using QueryUtils = Orm::Utils::Query;
 using TypeUtils = Orm::Utils::Type;

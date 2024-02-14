@@ -64,12 +64,22 @@ C preprocessor macro to select the SQL drivers to use.
 
 /* Main section */
 
+// Common for both
+// Types without any namespace - Exceptions
+#define TQueryErrorRaw          QueryError
+#define TSqlErrorRaw            SqlError
+#define TSqlTransactionErrorRaw SqlTransactionError
+
 #ifdef TINYORM_USING_QTSQLDRIVERS
 // Includes
 #  define TINY_INCLUDE_TSqlDatabase <QtSql/QSqlDatabase>
 #  define TINY_INCLUDE_TSqlDriver   <QtSql/QSqlDriver>
 #  define TINY_INCLUDE_TSqlQuery    <QtSql/QSqlQuery>
 #  define TINY_INCLUDE_TSqlRecord   <QtSql/QSqlRecord>
+// Includes - Exceptions
+#  define TINY_INCLUDE_TQueryError          <orm/exceptions/queryerror.hpp>
+#  define TINY_INCLUDE_TSqlError            <orm/exceptions/sqlerror.hpp>
+#  define TINY_INCLUDE_TSqlTransactionError <orm/exceptions/sqltransactionerror.hpp>
 // Types without any namespace
 #  define TCursorPositionRaw  Location
 #  define TPrecisionPolicyRaw NumericalPrecisionPolicy
@@ -84,6 +94,10 @@ C preprocessor macro to select the SQL drivers to use.
 #  define TSqlDriver       QT_PREPEND_NAMESPACE(TSqlDriverRaw)
 #  define TSqlQuery        QT_PREPEND_NAMESPACE(TSqlQueryRaw)
 #  define TSqlRecord       QT_PREPEND_NAMESPACE(TSqlRecordRaw)
+// Types with user-defined common namespace - Exceptions
+#  define TQueryError          TINYORM_PREPEND_NAMESPACE(Orm::Exceptions::TQueryErrorRaw)
+#  define TSqlError            TINYORM_PREPEND_NAMESPACE(Orm::Exceptions::TSqlErrorRaw)
+#  define TSqlTransactionError TINYORM_PREPEND_NAMESPACE(Orm::Exceptions::TSqlTransactionErrorRaw)
 
 // Forward declare QtSql classes
 // User namespace is not defined
@@ -102,6 +116,10 @@ namespace QT_NAMESPACE { class name; }
 #  define TINY_INCLUDE_TSqlDriver   <orm/drivers/sqldriver.hpp>
 #  define TINY_INCLUDE_TSqlQuery    <orm/drivers/sqlquery.hpp>
 #  define TINY_INCLUDE_TSqlRecord   <orm/drivers/sqlrecord.hpp>
+// Includes - Exceptions
+#  define TINY_INCLUDE_TQueryError          <orm/drivers/exceptions/queryerror.hpp>
+#  define TINY_INCLUDE_TSqlError            <orm/drivers/exceptions/sqlerror.hpp>
+#  define TINY_INCLUDE_TSqlTransactionError <orm/drivers/exceptions/sqltransactionerror.hpp>
 // Types without any namespace
 #  define TCursorPositionRaw  CursorPosition
 #  define TPrecisionPolicyRaw NumericalPrecisionPolicy
@@ -116,6 +134,10 @@ namespace QT_NAMESPACE { class name; }
 #  define TSqlDriver       TINYORM_PREPEND_NAMESPACE(Orm::Drivers::TSqlDriverRaw)
 #  define TSqlQuery        TINYORM_PREPEND_NAMESPACE(Orm::Drivers::TSqlQueryRaw)
 #  define TSqlRecord       TINYORM_PREPEND_NAMESPACE(Orm::Drivers::TSqlRecordRaw)
+// Types with user-defined common namespace - Exceptions
+#  define TQueryError          TINYORM_PREPEND_NAMESPACE(Orm::Drivers::Exceptions::TQueryErrorRaw)
+#  define TSqlError            TINYORM_PREPEND_NAMESPACE(Orm::Drivers::Exceptions::TSqlErrorRaw)
+#  define TSqlTransactionError TINYORM_PREPEND_NAMESPACE(Orm::Drivers::Exceptions::TSqlTransactionErrorRaw)
 
 // Forward declare TinyDrivers classes
 // User namespace is not defined
