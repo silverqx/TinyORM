@@ -5,6 +5,7 @@
 #include "orm/utils/configuration.hpp"
 #include "orm/utils/type.hpp"
 
+#include "orm/drivers/exceptions/invalidargumenterror.hpp"
 #include "orm/drivers/sqldatabase.hpp"
 #include "orm/drivers/sqldriver.hpp"
 #include "orm/drivers/sqlquery.hpp"
@@ -34,6 +35,7 @@ using ConfigUtils = Orm::Utils::Configuration;
 using TypeUtils = Orm::Utils::Type;
 
 using Orm::Drivers::CursorPosition;
+using Orm::Drivers::Exceptions::InvalidArgumentError;
 using Orm::Drivers::NumericalPrecisionPolicy;
 using Orm::Drivers::SqlDatabase;
 using Orm::Drivers::SqlDriver;
@@ -53,6 +55,8 @@ private Q_SLOTS:
 
     void MySQL_addUseAndRemoveConnection_FiveTimes() const;
     void MySQL_addUseAndRemoveThreeConnections_FiveTimes() const;
+
+    void MySQL_addExistingConnection_ThrowException() const;
 
 // NOLINTNEXTLINE(readability-redundant-access-specifiers)
 private:
@@ -385,6 +389,62 @@ void tst_SqlDatabaseManager::MySQL_addUseAndRemoveThreeConnections_FiveTimes() c
         QVERIFY(Databases::driversConnectionNames().isEmpty());
         QVERIFY(Databases::driversOpenedConnectionNames().isEmpty());
     }
+}
+
+void tst_SqlDatabaseManager::MySQL_addExistingConnection_ThrowException() const
+{
+    // Add a new database connection
+    const auto connectionName = Databases::createDriversConnectionTemp(
+                                    Databases::MYSQL_DRIVERS,
+                                    {ClassName, QString::fromUtf8(__func__)}, // NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
+    {
+        {driver_, QMYSQL},
+    },
+        false);
+
+    if (!connectionName)
+        QSKIP(TestUtils::AutoTestSkipped
+              .arg(TypeUtils::classPureBasename(*this), Databases::MYSQL_DRIVERS)
+              .toUtf8().constData(), );
+
+    // Connection must be closed
+    const auto connection = Databases::driversConnection(*connectionName, false);
+
+    // Main section
+    QVERIFY(connection.isValid());
+    QVERIFY(!connection.isOpen());
+    QVERIFY(!connection.isOpenError());
+    // CUR drivers revisit here the SqlError check after exceptions refactor; add it or ... silverqx
+    QCOMPARE(Databases::driversConnectionNames().size(), 1);
+    QVERIFY(Databases::driversOpenedConnectionNames().isEmpty());
+
+    QVERIFY_THROWS_EXCEPTION(
+                InvalidArgumentError,
+                Databases::createDriversConnectionTemp(
+                    Databases::MYSQL_DRIVERS,
+                    {ClassName, QString::fromUtf8(__func__)},
+    {
+        {driver_, QMYSQL},
+    },
+        false));
+
+    // Re-verify
+    QVERIFY(connection.isValid());
+    QVERIFY(!connection.isOpen());
+    QVERIFY(!connection.isOpenError());
+    // CUR drivers revisit here the SqlError check after exceptions refactor; add it or ... silverqx
+    QCOMPARE(Databases::driversConnectionNames().size(), 1);
+    QVERIFY(Databases::driversOpenedConnectionNames().isEmpty());
+
+    // Restore
+    /* This will generate expected warning about the connection is still in use
+       it can't be avoided because we want to test the query.driver/Weak(). */
+    Databases::removeDriversConnection(*connectionName);
+
+    // The sqldriver must be invalidated immediately
+    QVERIFY(!connection.isValid());
+    QVERIFY(Databases::driversConnectionNames().isEmpty());
+    QVERIFY(Databases::driversOpenedConnectionNames().isEmpty());
 }
 // NOLINTEND(readability-convert-member-functions-to-static)
 

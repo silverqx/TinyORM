@@ -361,10 +361,10 @@ void tst_SqlQuery_Prepared::select_BoundMoreValues() const
     // Verify the logged message 😎
     QCOMPARE(g_loggedMessages.size(), 1);
     static const auto expectedWarning =
-            u"MySqlResultPrivate::hasPreparedBindings: values.size() > "
-             "placeholdersCount, higher number of prepared bindings; Current number "
-             "of placeholder markers is '1' and number of bind values is '2', but "
-             "everything will work normally"_s;
+            u"The values.size() > placeholdersCount, the higher number "
+             "of prepared bindings. The current number of placeholder markers is "
+             "'1' and the number of bound values is '2', but everything will "
+             "work normally, in MySqlResultPrivate::checkPreparedBindingsCount()."_s;
     QCOMPARE(g_loggedMessages.first(), expectedWarning);
 
     // Verify the result
