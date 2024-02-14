@@ -406,8 +406,8 @@ namespace Types
 
 } // namespace Types
 
-    /*! Alias for the SyncChanges. */
-    using SyncChanges = Tiny::Types::SyncChanges;
+    /*! Alias for the Types::SyncChanges, shortcut alias. */
+    using Tiny::Types::SyncChanges; // NOLINT(misc-unused-using-decls)
 
 } // namespace Tiny
 } // namespace Orm

@@ -45,7 +45,8 @@ namespace Types
 
 } // namespace Types
 
-    using Log = Types::Log;
+    /*! Alias for the Types::Log, shortcut alias. */
+    using Types::Log; // NOLINT(misc-unused-using-decls)
 
 } // namespace Orm
 

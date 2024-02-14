@@ -15,7 +15,8 @@ using Orm::Constants::Progress;
 using Orm::Constants::SIZE_;
 using Orm::Constants::UPDATED_AT;
 
-using NullVariant = Orm::Utils::NullVariant;
+using Orm::Utils::NullVariant;
+
 using TypeUtils = Orm::Utils::Type;
 
 using Orm::Tiny::AttributeItem;

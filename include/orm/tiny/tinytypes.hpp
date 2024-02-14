@@ -210,8 +210,8 @@ namespace Concerns
 } // namespace Concerns
 } // namespace Tiny
 
-    /*! Alias for the Orm::Tiny::One, shortcut alias. */
-    using One = Tiny::One;
+    /*! Alias for the Tiny::One, shortcut alias. */
+    using Tiny::One; // NOLINT(misc-unused-using-decls)
 
 } // namespace Orm
 

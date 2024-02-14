@@ -98,7 +98,8 @@ namespace Types
 
 } // namespace Types
 
-    using SqlQuery = Types::SqlQuery;
+    /*! Alias for the Types::SqlQuery, shortcut alias. */
+    using Types::SqlQuery; // NOLINT(misc-unused-using-decls)
 
 } // namespace Orm
 

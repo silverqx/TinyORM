@@ -28,8 +28,8 @@ namespace Orm::Tiny
     template<typename Derived>
     class SoftDeletes;
 
-    /*! Alias for the GuardedModel. */
-    using GuardedModel = Concerns::GuardedModel; // Don't remove
+    /*! Alias for the Concerns::GuardedModel, shortcut alias. */
+    using Concerns::GuardedModel; // Don't remove // NOLINT(misc-unused-using-decls)
 
     // TODO model missing methods Model::loadMissing() silverqx
     // TODO model missing saveOrFail(), updateOrFail(), deleteOrFail(), I will need to implement ManagesTransaction::transaction(callback) method silverqx

@@ -28,7 +28,8 @@ namespace Types
 
 } // namespace Types
 
-    using StatementsCounter = Types::StatementsCounter;
+    /*! Alias for the Types::StatementsCounter, shortcut alias. */
+    using Types::StatementsCounter; // NOLINT(misc-unused-using-decls)
 
 } // namespace Orm
 

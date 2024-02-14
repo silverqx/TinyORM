@@ -35,7 +35,8 @@ namespace Types
 
 } // namespace Types
 
-    using ConnectionOverride = Tiny::Types::ConnectionOverride;
+    /*! Alias for the Types::ConnectionOverride, shortcut alias. */
+    using Tiny::Types::ConnectionOverride; // NOLINT(misc-unused-using-decls)
 
 } // namespace Orm::Tiny
 

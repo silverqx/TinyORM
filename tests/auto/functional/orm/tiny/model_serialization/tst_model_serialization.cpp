@@ -22,7 +22,8 @@ using Orm::Constants::pivot_;
 
 using Orm::Utils::Helpers;
 
-using NullVariant = Orm::Utils::NullVariant;
+using Orm::Utils::NullVariant;
+
 using TypeUtils = Orm::Utils::Type;
 
 using Orm::Tiny::AttributeItem;

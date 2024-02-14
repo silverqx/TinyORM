@@ -20,7 +20,7 @@ namespace Types
 {
     struct Log;
 }
-    using Log = Orm::Types::Log;
+    using Orm::Types::Log;
 
     class DatabaseConnection;
 } // namespace Orm

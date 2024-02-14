@@ -54,7 +54,7 @@ void SQLiteSchemaBuilder::dropAllTables() const
     if (m_connection->getDatabaseName() != in_memory)
         return refreshDatabaseFile(); // clazy:exclude=returning-void-expression
 
-    using SQLiteSchemaGrammar = Grammars::SQLiteSchemaGrammar;
+    using Grammars::SQLiteSchemaGrammar;
 
     m_connection->selectFromWriteConnection(SQLiteSchemaGrammar::
                                             compileEnableWriteableSchema());
@@ -69,7 +69,7 @@ void SQLiteSchemaBuilder::dropAllTables() const
 
 void SQLiteSchemaBuilder::dropAllViews() const
 {
-    using SQLiteSchemaGrammar = Grammars::SQLiteSchemaGrammar;
+    using Grammars::SQLiteSchemaGrammar;
 
     m_connection->selectFromWriteConnection(SQLiteSchemaGrammar::
                                             compileEnableWriteableSchema());

@@ -36,8 +36,8 @@ namespace Tiny::Relations
 
 } // namespace Tiny::Relations
 
-    /*! Alias for the Pivot, shortcut alias. */
-    using Pivot = Tiny::Relations::Pivot;
+    /*! Alias for the Relations::Pivot, shortcut alias. */
+    using Tiny::Relations::Pivot; // NOLINT(misc-unused-using-decls)
 
 } // namespace Orm
 

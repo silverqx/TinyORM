@@ -971,7 +971,7 @@ void DatabaseManager::registerQMetaTypesForQt5()
         QMetaType::registerEqualsComparator<QVector<QVariantMap>>();
 
 #ifndef TINYORM_DISABLE_ORM
-    using AttributeItem = Tiny::AttributeItem;
+    using Tiny::AttributeItem;
 
     if (!QMetaType::hasRegisteredComparators<AttributeItem>())
         QMetaType::registerEqualsComparator<AttributeItem>();

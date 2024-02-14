@@ -67,8 +67,8 @@ namespace Types
 
 } // namespace Types
 
-    /*! Alias for the ModelAttributes. */
-    using ModelAttributes = Tiny::Types::ModelAttributes;
+    /*! Alias for the Types::ModelAttributes, shortcut alias. */
+    using Tiny::Types::ModelAttributes; // NOLINT(misc-unused-using-decls)
 
 } // namespace Orm::Tiny
 
