@@ -13,13 +13,7 @@ using Orm::Constants::SIZE_;
 using Orm::Tiny::ConnectionOverride;
 using Orm::Tiny::Exceptions::ModelNotFoundError;
 
-#ifdef TINYORM_USING_QTSQLDRIVERS
-using Orm::Exceptions::QueryError;
-#elif defined(TINYORM_USING_TINYDRIVERS)
-using Orm::Drivers::Exceptions::QueryError;
-#else
-#  error Missing include "orm/macros/sqldrivermappings.hpp".
-#endif
+using TQueryError;
 
 template<typename Model>
 using TinyBuilder = Orm::Tiny::Builder<Model>;

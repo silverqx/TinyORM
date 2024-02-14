@@ -6,6 +6,7 @@
 TINY_SYSTEM_HEADER
 
 #include "orm/macros/sqldrivermappings.hpp"
+#include TINY_INCLUDE_TQueryError
 #include TINY_INCLUDE_TSqlDatabase
 
 #include "orm/concerns/countsqueries.hpp"
@@ -18,14 +19,6 @@ TINY_SYSTEM_HEADER
 #include "orm/schema/grammars/schemagrammar.hpp"
 #include "orm/schema/schemabuilder.hpp"
 #include "orm/types/sqlquery.hpp"
-
-#ifdef TINYORM_USING_QTSQLDRIVERS
-#  include "orm/exceptions/queryerror.hpp"
-#elif defined(TINYORM_USING_TINYDRIVERS)
-#  include "orm/drivers/exceptions/queryerror.hpp"
-#else
-#  error Missing include "orm/macros/sqldrivermappings.hpp".
-#endif
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
@@ -73,13 +66,8 @@ namespace Orm
         friend class MySqlConnection;
 #endif
 
-#ifdef TINYORM_USING_QTSQLDRIVERS
         /*! Alias for the QueryError exception. */
-        using QueryError = Orm::Exceptions::QueryError;
-#elif defined(TINYORM_USING_TINYDRIVERS)
-        /*! Alias for the QueryError exception. */
-        using QueryError = Orm::Drivers::Exceptions::QueryError;
-#endif
+        using QueryError = TQueryError;
 
     protected:
         /*! Protected constructor. */

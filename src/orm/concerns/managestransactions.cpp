@@ -8,13 +8,7 @@
 #include "orm/databaseconnection.hpp"
 #include "orm/support/databaseconfiguration.hpp"
 
-#ifdef TINYORM_USING_QTSQLDRIVERS
-#  include "orm/exceptions/sqltransactionerror.hpp"
-#elif defined(TINYORM_USING_TINYDRIVERS)
-#  include "orm/drivers/exceptions/sqltransactionerror.hpp"
-#else
-#  error Missing include "orm/macros/sqldrivermappings.hpp".
-#endif
+#include TINY_INCLUDE_TSqlTransactionError
 
 #ifndef sl
 /*! Alias for the QStringLiteral(). */
@@ -23,11 +17,7 @@
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
-#ifdef TINYORM_USING_QTSQLDRIVERS
-using SqlTransactionError = Orm::Exceptions::SqlTransactionError;
-#elif defined(TINYORM_USING_TINYDRIVERS)
-using SqlTransactionError = Orm::Drivers::Exceptions::SqlTransactionError;
-#endif
+using TSqlTransactionError;
 
 namespace Orm::Concerns
 {
