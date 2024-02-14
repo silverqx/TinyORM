@@ -5,8 +5,7 @@
 #include "orm/macros/systemheader.hpp"
 TINY_SYSTEM_HEADER
 
-#include "orm/macros/sqldrivermappings.hpp"
-#include TINY_INCLUDE_TSqlError
+#include <QtSql/QSqlError>
 
 #include "orm/exceptions/runtimeerror.hpp"
 
@@ -15,23 +14,23 @@ TINYORM_BEGIN_COMMON_NAMESPACE
 namespace Orm::Exceptions
 {
 
-    /*! TinyORM SqlError exception, wrapper for the TSqlError. TinyOrm library compiled
+    /*! TinyORM SqlError exception, wrapper for the QSqlError. TinyOrm library compiled
         against the TinyDrivers doesn't use this exception class. */
     class SHAREDLIB_EXPORT SqlError : public RuntimeError // clazy:exclude=copyable-polymorphic
     {
     public:
         /*! const char * constructor. */
-        SqlError(const char *message, const TSqlError &error);
+        SqlError(const char *message, const QSqlError &error);
         /*! QString constructor. */
-        SqlError(const QString &message, const TSqlError &error);
+        SqlError(const QString &message, const QSqlError &error);
 
         /*! const char * constructor. */
-        SqlError(const char *message, TSqlError &&error);
+        SqlError(const char *message, QSqlError &&error);
         /*! QString constructor. */
-        SqlError(const QString &message, TSqlError &&error);
+        SqlError(const QString &message, QSqlError &&error);
 
         /*! Get the original Qt SQL error. */
-        inline const TSqlError &getSqlError() const noexcept;
+        inline const QSqlError &getSqlError() const noexcept;
 
         /*! Get the database-specific error code (shortcut method). */
         inline QString nativeErrorCode() const noexcept;
@@ -41,18 +40,18 @@ namespace Orm::Exceptions
     protected:
         /*! Protected converting constructor for use by descendants to avoid an error
             message formatting. */
-        SqlError(const QString &message, const TSqlError &error, int /*unused*/);
+        SqlError(const QString &message, const QSqlError &error, int /*unused*/);
 
         /*! Format the Qt SQL error message. */
-        static QString formatMessage(const char *message, const TSqlError &error);
+        static QString formatMessage(const char *message, const QSqlError &error);
 
         /*! The Qt SQL error instance. */
-        TSqlError m_sqlError;
+        QSqlError m_sqlError;
     };
 
     /* public */
 
-    const TSqlError &SqlError::getSqlError() const noexcept
+    const QSqlError &SqlError::getSqlError() const noexcept
     {
         return m_sqlError;
     }

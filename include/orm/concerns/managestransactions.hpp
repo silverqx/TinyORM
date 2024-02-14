@@ -11,10 +11,7 @@ TINY_SYSTEM_HEADER
 #include "orm/macros/export.hpp"
 
 #ifdef TINYORM_USING_QTSQLDRIVERS
-#include "orm/macros/sqldrivermappings.hpp"
-
-TINY_FORWARD_DECLARE_TSqlError
-
+class QSqlError;
 class QSqlQuery;
 #endif
 
@@ -92,7 +89,7 @@ namespace Concerns
             exception. */
         [[noreturn]] static void
         throwSqlTransactionError(const QString &functionName, const QString &queryString,
-                                 TSqlError &&error);
+                                 QSqlError &&error);
         /*! Transform QtSql transaction error (QSqlError) to TinyORM SqlTransactionError
             exception (shortcut method). */
         [[noreturn]] static void
