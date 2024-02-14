@@ -96,15 +96,10 @@ SqlDatabase SqlDatabasePrivate::addDatabase(SqlDatabase &&db, const QString &con
     // Exclusive/write lock
     const std::scoped_lock lock(connections.mutex());
 
-    if (connections.contains(connection)) {
-        /* This is correct, invaliding the origin connection is a good thing, even if
-           that origin connection would normally work after being replaced. */
-        invalidateDatabase(connections.extract(connection).mapped(), connection);
-
-        qWarning().noquote()
-                << u"SqlDatabasePrivate::addDatabase: duplicate connection name '%1', "
-                    "old connection has been removed."_s.arg(connection);
-    }
+    if (connections.contains(connection))
+        throw Exceptions::InvalidArgumentError(
+                u"The database connection '%1' already exists in %2()."_s
+                .arg(connection, __tiny_func__));
 
     db.d->connectionName = connection;
 
@@ -135,8 +130,10 @@ SqlDatabasePrivate::invalidateDatabase(const SqlDatabase &db, const QString &con
 {
     if (db.d.use_count() > 1 && warn)
         qWarning().noquote()
-                << u"SqlDatabasePrivate::invalidateDb: connection '%1' is still "
-                    "in use, all queries will stop working."_s.arg(connection);
+                << u"The database connection '%1' is still in use, all queries for this "
+                    "connection will stop working. Make sure to destroy all SqlDatabase "
+                    "instances to avoid this warning, in %2()."_s
+                   .arg(connection, __tiny_func__);
 
     /* This method is only called from the removeDatabase(), so the close() method must
        always be called to properly finish and free the database connection.

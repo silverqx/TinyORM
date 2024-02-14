@@ -365,9 +365,9 @@ QVariant SqlQuery::value(const QString &name) const
     if (index > -1)
         return value(index);
 
-    qWarning().noquote() << u"SqlQuery::value: unknown field name '%1'"_s.arg(name);
-
-    return {};
+    throw Exceptions::InvalidArgumentError(
+                u"The field name '%1' doesn't exist or was not fetched for the current "
+                 "result set in %2()."_s.arg(name, __tiny_func__));
 }
 
 bool SqlQuery::isNull(const size_type index) const
@@ -389,9 +389,9 @@ bool SqlQuery::isNull(const QString &name) const
     if (index > -1)
         return isNull(index);
 
-    qWarning().noquote() << u"SqlQuery::isNull: unknown field name '%1'"_s.arg(name);
-
-    return true;
+    throw Exceptions::InvalidArgumentError(
+                u"The field name '%1' doesn't exist or was not fetched for the current "
+                 "result set in %2()."_s.arg(name, __tiny_func__));
 }
 
 SqlQuery::size_type SqlQuery::size() const noexcept

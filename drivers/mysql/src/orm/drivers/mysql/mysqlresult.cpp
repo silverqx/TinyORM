@@ -560,21 +560,26 @@ void MySqlResult::mysqlFreeResults()
         ) T_LIKELY
             mysql_free_result(mysqlRes);
 
-        // CUR driver use createError(); create a new eg. ErrorType::FreeError? silverqx
         /* Check the error code because mysql_store_result() may return the nullptr if
            it succeeded or failed. */
         else if (const auto errNo = mysql_errno(mysql); errNo != 0) T_UNLIKELY
+            /* Don't throw an exception here because the next result sets can be freed
+               successfully. */
             qWarning().noquote()
-                << u"MySqlResult::mysqlFreeResult: unable to store a result set "
-                    "using the mysql_store_result(); %1: %2"_s
-                   .arg(errNo).arg(QString::fromUtf8(mysql_error(mysql)));
+                << u"Unable to store a result set using mysql_store_result() in %1().\n"
+                    "MySQL(%2, %3)"_s
+                   .arg(__tiny_func__).arg(errNo)
+                   .arg(QString::fromUtf8(mysql_error(mysql)));
 
     // The mysql_next_result() returned an error
     if (status > 0)
+        /* Also, don't throw here, this should never happen and if it does, then there
+           will be a memory leak only, there is nothing the user can do about it,
+           it's a MySQL thing. */
         qWarning().noquote()
-            << u"MySqlResult::mysqlFreeResult: unable to obtain the next "
-                "result set using the mysql_next_result(); %1: %2"_s
-               .arg(mysql_errno(mysql))
+            << u"Unable to obtain the next result set using mysql_next_result() in %1()."
+                "\n. MySQL(%2, %3)"_s
+               .arg(__tiny_func__).arg(mysql_errno(mysql))
                .arg(QString::fromUtf8(mysql_error(mysql)));
 
     d->result = nullptr;
