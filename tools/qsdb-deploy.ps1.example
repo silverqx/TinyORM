@@ -3,7 +3,7 @@
 Set-StrictMode -Version 3.0
 
 $Script:BuildPath = '<your_path_here>\TinyORM\TinyORM-builds-qmake\' +
-    'build-TinyORM-Desktop_Qt_6_6_1_MSVC2022_64bit-Release'
+    'build-TinyORM-Desktop_Qt_6_6_2_MSVC2022_64bit-Release'
 
 $Script:DestinationPath = '<your_path_here>\dotfiles\bin'
 $Script:TinyDriversPath = "${Script:BuildPath}\src\release\TinyDrivers0.dll"
