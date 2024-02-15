@@ -9,7 +9,7 @@ TINY_SYSTEM_HEADER
 #if defined(TINYTOM_NO_DEBUG) && defined(TINYTOM_DEBUG)
 #  error Both TINYTOM_DEBUG and TINYTOM_NO_DEBUG defined.
 #endif
-// Debug build
+// Debug build (default build)
 #if !defined(TINYTOM_NO_DEBUG) && !defined(TINYTOM_DEBUG)
 #  define TINYTOM_DEBUG
 #endif

@@ -25,7 +25,7 @@ TINY_SYSTEM_HEADER
 #if defined(TINYORM_NO_DEBUG) && defined(TINYORM_DEBUG)
 #  error Both TINYORM_DEBUG and TINYORM_NO_DEBUG defined.
 #endif
-// Debug build
+// Debug build (default build)
 #if !defined(TINYORM_NO_DEBUG) && !defined(TINYORM_DEBUG)
 #  define TINYORM_DEBUG
 #endif
