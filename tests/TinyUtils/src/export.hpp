@@ -4,7 +4,7 @@
 
 #include "orm/macros/export_common.hpp"
 
-#if defined(TINYUTILS_BUILDING_SHARED)
+#ifdef TINYUTILS_BUILDING_SHARED
 #  define TINYUTILS_EXPORT TINY_DECL_EXPORT
 #elif defined(TINYUTILS_LINKING_SHARED)
 #  define TINYUTILS_EXPORT TINY_DECL_IMPORT

@@ -2,13 +2,13 @@
 
 #include <QRegularExpression>
 
-#if !defined(_MSC_VER)
+#ifndef _MSC_VER
 #  include <memory>
 #endif
 
 #include "orm/constants.hpp"
 
-#if !defined(_MSC_VER)
+#ifndef _MSC_VER
 #  include "orm/exceptions/runtimeerror.hpp"
 #endif
 
@@ -19,7 +19,7 @@ using Orm::Constants::LT_C;
 using Orm::Constants::SPACE;
 using Orm::Constants::off;
 
-#if !defined(_MSC_VER)
+#ifndef _MSC_VER
 using Orm::Exceptions::RuntimeError;
 #endif
 

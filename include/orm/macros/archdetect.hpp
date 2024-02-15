@@ -8,7 +8,7 @@ TINY_SYSTEM_HEADER
 #include <QtGlobal>
 
 // main part: processor type
-#if defined(Q_PROCESSOR_ALPHA)
+#ifdef Q_PROCESSOR_ALPHA
 #  define ARCH_PROCESSOR "alpha"
 #elif defined(Q_PROCESSOR_ARM_32)
 #  define ARCH_PROCESSOR "arm"
@@ -62,7 +62,7 @@ TINY_SYSTEM_HEADER
 #endif
 
 // pointer type
-#if defined(Q_OS_WIN64)
+#ifdef Q_OS_WIN64
 #  define ARCH_POINTER "llp64"
 #elif defined(__LP64__) || QT_POINTER_SIZE - 0 == 8
 #  define ARCH_POINTER "lp64"

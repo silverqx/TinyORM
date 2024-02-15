@@ -1,6 +1,6 @@
 #include "orm/databaseconnection.hpp"
 
-#if defined(TINYORM_MYSQL_PING)
+#ifdef TINYORM_MYSQL_PING
 #  include <QDebug>
 #endif
 

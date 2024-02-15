@@ -2,7 +2,7 @@
 
 /* Add C includes here */
 
-#if defined __cplusplus
+#ifdef __cplusplus
 /* Add C++ includes here */
 #include <QDateTime>
 #include <QDebug>

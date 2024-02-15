@@ -24,7 +24,7 @@ QString Query::parseExecutedQuery(const QSqlQuery &query)
     return replaceBindingsInSql(std::move(executedQuery), query.boundValues()).first;
 }
 
-#if !defined(TINYORM_NO_DEBUG)
+#ifndef TINYORM_NO_DEBUG
 void Query::logExecutedQuery(const QSqlQuery &query)
 {
     qDebug().noquote() << QStringLiteral("Executed Query :")

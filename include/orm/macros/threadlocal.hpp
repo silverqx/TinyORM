@@ -23,7 +23,7 @@ TINY_SYSTEM_HEADER
 #  define T_THREAD_LOCAL thread_local
 #endif
 
-#if !defined(T_THREAD_LOCAL)
+#ifndef T_THREAD_LOCAL
 #  define T_THREAD_LOCAL
 #endif
 
