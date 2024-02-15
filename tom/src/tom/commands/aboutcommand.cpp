@@ -249,17 +249,17 @@ AboutCommand::printAboutItemsDetail(const std::map<QString, AboutValue> &aboutIt
 /* I won't serialize the Dependencies components into the JSON output because that
    would add unnecessary complexity to the consumers' parsing code.
    Currently the output looks like:
-"dependencies": {"qt": "6.6.1", "range-v3": "0.12.0", "tinydrivers": "0.1.0"}
+"dependencies": {"qt": "6.6.2", "range-v3": "0.12.0", "tinydrivers": "0.1.0"}
 
    With the Dependencies' components it would look like:
 "dependencies": {
     "qt": {
-        "version": "6.6.1",
+        "version": "6.6.2",
         "components": ["Core"]
     },
     "range-v3": "0.12.0",
     "tinydrivers": : {
-        "version": "6.6.1",
+        "version": "6.6.2",
         "components": ["MySQL"]
     }
 }
