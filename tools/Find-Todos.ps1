@@ -19,7 +19,7 @@ Param(
     [string[]] $Include = @('*.cpp', '*.hpp'),
 
     [Parameter(HelpMessage = 'Specifies subfolders to search. The pattern value is used ' +
-        'in regular expression, eg. (examples|include|src|tests|tom).')]
+        'in regular expression, eg. (drivers|examples|include|src|tests|tom).')]
     [AllowEmptyString()]
     [string] $InSubFoldersPattern,
 
