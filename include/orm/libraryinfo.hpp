@@ -26,13 +26,13 @@ namespace Orm
         /*! Deleted destructor. */
         ~LibraryInfo() = delete;
 
-        /*! Return a string describing how this version of TinyORM library was built. */
-        static const char *build() noexcept;
-        /*! Return true if this build of TinyORM was built with debugging enabled, or
-            false if it was built in release mode. */
-        static bool isDebugBuild() noexcept;
+        /*! Get a string describing how this version of TinyORM library was built. */
+        static const char *build() noexcept Q_DECL_CONST_FUNCTION;
+        /*! Determine if this build of TinyORM was built with debugging enabled or
+            if it was built in release mode. */
+        static bool isDebugBuild() noexcept Q_DECL_CONST_FUNCTION;
 
-        /*! Return the version of the TinyORM library. */
+        /*! Get the version of the TinyORM library. */
         static QVersionNumber version() noexcept Q_DECL_CONST_FUNCTION;
 
         /*! Gather all C preprocessor macros (used by tom about). */
