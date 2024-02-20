@@ -2,7 +2,7 @@
 #ifndef TOM_TYPES_COMMANDLINEOPTION_HPP
 #define TOM_TYPES_COMMANDLINEOPTION_HPP
 
-#include "orm/macros/systemheader.hpp"
+#include <orm/macros/systemheader.hpp>
 TINY_SYSTEM_HEADER
 
 #include <QCommandLineOption>
