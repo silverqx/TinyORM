@@ -27,7 +27,7 @@ SqlResultPrivate::SqlResultPrivate(const std::weak_ptr<SqlDriver> &driver) noexc
     - DATE: '1000-01-01' to '9999-12-31'
     - TIME: '-838:59:59.000000' to '838:59:59.000000'
 
-   Qt ranges, it depends whether Daylight-Saving Time (DST) is used, the ranges are huge
+   Qt ranges: it depends whether Daylight-Saving Time (DST) is used, the ranges are huge
    without the DST and with DST they are around 1970-01-01 to 2037-12-31.
 
    The QDate is OK there is nothing wrong with it.
@@ -35,8 +35,8 @@ SqlResultPrivate::SqlResultPrivate(const std::weak_ptr<SqlDriver> &driver) noexc
    But the QTime isn't good, Qt can't represent QTime outside of the following ranges:
    Hours 0-23, minutes/seconds 0-59, and 0-999 for milliseconds.
 
-   The other thing is that invalid QDateTime and QTime has an empty ISODate so send it
-   as the NULL value instead of an empty string.
+   The other thing is that invalid QDateTime and QTime have an empty ISODate so
+   they are sent to the database as NULL values instead of an empty string (if invalid).
    I don't like this but we need to be API compatible with QtSql module so I leave this
    logic untouched. */
 

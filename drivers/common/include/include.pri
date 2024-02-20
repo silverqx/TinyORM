@@ -6,7 +6,7 @@ headersList = \
     $$PWD/orm/drivers/exceptions/driverserror.hpp \
     $$PWD/orm/drivers/exceptions/invalidargumenterror.hpp \
     $$PWD/orm/drivers/exceptions/logicerror.hpp \
-    $$PWD/orm/drivers/exceptions/outofrange.hpp \
+    $$PWD/orm/drivers/exceptions/outofrangeerror.hpp \
     $$PWD/orm/drivers/exceptions/queryerror.hpp \
     $$PWD/orm/drivers/exceptions/runtimeerror.hpp \
     $$PWD/orm/drivers/exceptions/sqlerror.hpp \

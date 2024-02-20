@@ -27,20 +27,20 @@ namespace Orm::Drivers
         /*! Deleted destructor. */
         ~LibraryInfo() = delete;
 
-        /*! Return a string describing how this version of TinyDrivers library was
+        /*! Get a string describing how this version of TinyDrivers library was
             built. */
-        static const char *build() noexcept;
+        static const char *build() noexcept Q_DECL_CONST_FUNCTION;
 #ifdef TINYDRIVERS_MYSQL_DRIVER
-        /*! Return a string describing how this version of TinyMySql library was
+        /*! Get a string describing how this version of TinyMySql library was
             built. */
-        static const char *mysqlBuild() noexcept;
+        static const char *mysqlBuild() noexcept Q_DECL_CONST_FUNCTION;
 #endif
 
-        /*! Return true if this build of TinyDrivers was built with debugging enabled, or
-            false if it was built in release mode. */
-        static bool isDebugBuild() noexcept;
+        /*! Determine if this build of TinyDrivers was built with debugging enabled or
+            if it was built in release mode. */
+        static bool isDebugBuild() noexcept; Q_DECL_CONST_FUNCTION
 
-        /*! Return the version of the TinyDrivers library. */
+        /*! Get the version of the TinyDrivers library. */
         static QVersionNumber version() noexcept Q_DECL_CONST_FUNCTION;
 
         /*! Gather all C preprocessor macros (used by tom about). */

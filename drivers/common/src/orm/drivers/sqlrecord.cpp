@@ -5,7 +5,7 @@
 #endif
 
 #include "orm/drivers/constants_p.hpp"
-#include "orm/drivers/exceptions/outofrange.hpp"
+#include "orm/drivers/exceptions/outofrangeerror.hpp"
 #include "orm/drivers/utils/type_p.hpp"
 
 TINYORM_BEGIN_COMMON_NAMESPACE
@@ -69,7 +69,7 @@ QVariant SqlRecord::value(const QString &name) const
 
 void SqlRecord::setValue(const size_type index, const QVariant &value)
 {
-    // Throw the std::out_of_range() exception if the record doesn't contain an index
+    // Throw the OutOfRangeError exception if the record doesn't contain an index
     throwIfNotContains(index, __tiny_func__);
 
     m_fields[index].setValue(value);
@@ -77,7 +77,7 @@ void SqlRecord::setValue(const size_type index, const QVariant &value)
 
 void SqlRecord::setValue(const size_type index, QVariant &&value)
 {
-    // Throw the std::out_of_range() exception if the record doesn't contain an index
+    // Throw the OutOfRangeError exception if the record doesn't contain an index
     throwIfNotContains(index, __tiny_func__);
 
     m_fields[index].setValue(std::move(value));
@@ -95,7 +95,7 @@ void SqlRecord::setValue(const QString &name, QVariant &&value)
 
 bool SqlRecord::isNull(const size_type index) const
 {
-    // Throw the std::out_of_range() exception if the record doesn't contain an index
+    // Throw the OutOfRangeError exception if the record doesn't contain an index
     throwIfNotContains(index, __tiny_func__);
 
     return m_fields[index].isNull();
@@ -108,7 +108,7 @@ bool SqlRecord::isNull(const QString &name) const
 
 void SqlRecord::setNull(const size_type index)
 {
-    // Throw the std::out_of_range() exception if the record doesn't contain an index
+    // Throw the OutOfRangeError exception if the record doesn't contain an index
     throwIfNotContains(index, __tiny_func__);
 
     m_fields[index].clear();
@@ -141,7 +141,7 @@ void SqlRecord::insert(const size_type index, SqlField &&field)
 
 void SqlRecord::replace(const size_type index, const SqlField &field)
 {
-    // Throw the std::out_of_range() exception if the record doesn't contain an index
+    // Throw the OutOfRangeError exception if the record doesn't contain an index
     throwIfNotContains(index, __tiny_func__);
 
     m_fields[index] = field;
@@ -149,7 +149,7 @@ void SqlRecord::replace(const size_type index, const SqlField &field)
 
 void SqlRecord::replace(const size_type index, SqlField &&field)
 {
-    // Throw the std::out_of_range() exception if the record doesn't contain an index
+    // Throw the OutOfRangeError exception if the record doesn't contain an index
     throwIfNotContains(index, __tiny_func__);
 
     m_fields[index] = std::move(field);
@@ -157,7 +157,7 @@ void SqlRecord::replace(const size_type index, SqlField &&field)
 
 void SqlRecord::remove(const size_type index)
 {
-    // Throw the std::out_of_range() exception if the record doesn't contain an index
+    // Throw the OutOfRangeError exception if the record doesn't contain an index
     throwIfNotContains(index, __tiny_func__);
 
     m_fields.remove(index);
@@ -196,7 +196,9 @@ void SqlRecord::throwIfNotContains(const size_type index,
 SqlRecord::FieldSegmentsType
 SqlRecord::getFieldNameSegments(const QStringView name) noexcept
 {
-    // CUR drivers what about more DOT-s and schema for PostgreSQL (can contain 3 dots?) silverqx
+    // CUR drivers postgres what about more DOT-s and schema for PostgreSQL (can contain 3 dots?) silverqx
+    Q_ASSERT(name.count(DOT) <= 1);
+
     const auto dotIndex = name.indexOf(DOT);
     const auto isQualifiedName = dotIndex > -1;
 

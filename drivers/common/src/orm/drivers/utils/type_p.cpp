@@ -2,15 +2,15 @@
 
 #include <QRegularExpression>
 
-#if !defined(_MSC_VER)
-#  include <orm/drivers/exceptions/runtimeerror.hpp>
+#ifndef _MSC_VER
+#  include "orm/drivers/exceptions/runtimeerror.hpp"
 #endif
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
 using namespace Qt::StringLiterals; // NOLINT(google-build-using-namespace)
 
-#if !defined(_MSC_VER)
+#ifndef _MSC_VER
 using Orm::Drivers::Exceptions::RuntimeError;
 #endif
 
@@ -27,10 +27,10 @@ QString Type::prettyFunction(const QString &function)
        exceptions, so there would not be any performance benefit. */
 #if defined(__GNUG__) || defined(__clang__)
     static const QRegularExpression
-            regex(R"((?:.* )?(?:.*::)?(\w+)(?:<.*>)?::(\w+)\(.*\))"_L1);
+            regex(uR"((?:.* )?(?:.*::)?(\w+)(?:<.*>)?::(\w+)\(.*\))"_s);
 #elif _MSC_VER
     static const QRegularExpression
-            regex(R"((?:.*::)?(\w+)(?:<.*>)?::(\w+)(?:$|::<lambda))"_L1);
+            regex(uR"((?:.*::)?(\w+)(?:<.*>)?::(\w+)(?:$|::<lambda))"_s);
 #else
     throw RuntimeError(
                 "Unsupported compiler in Drivers::Utils::Type::prettyFunction().");

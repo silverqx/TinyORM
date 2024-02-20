@@ -12,7 +12,7 @@
    they follow the MySQL documentation conventions.
    Input bindings are prepared statements and output bindings are results from the MySQL
    server. Is a very bad idea to switch these naming conventions. 🤔
-   Instead of using the input/in vs output/out words I'm using prepared vs result words
+   Instead of using the input/in and output/out words I'm using prepared and result words
    where possible to avoid confusion. */
 
 TINYORM_BEGIN_COMMON_NAMESPACE
@@ -20,7 +20,6 @@ TINYORM_BEGIN_COMMON_NAMESPACE
 namespace Orm::Drivers::MySql
 {
 
-    // CUR drivers finish and revisit whole MySqlResult/Private class silverqx
     /*! MySqlResult private implementation. */
     class MySqlResultPrivate : public SqlResultPrivate
     {
@@ -47,7 +46,7 @@ namespace Orm::Drivers::MySql
             /*! Is the field NULL? */
             my_bool isNull = false;
             /*! Field value buffer length w/o terminating null character. */
-            ulong fieldValueSize = 0UL; // For strings it varies on the character set (latin1 1 byte or eg. utf8mb4 4 bytes so 3 characters string size it will be 12)
+            ulong fieldValueSize = 0UL; // For strings, it varies by character set (latin1 1 byte or eg. utf8mb4 4 bytes so 3 characters string will have size 12)
         };
 
         /* Normal queries */
@@ -105,10 +104,10 @@ namespace Orm::Drivers::MySql
         /*! Result set metadata for a prepared statement. */
         MYSQL_RES *meta = nullptr;
 
-        /*! Structure to bind buffers to result set columns (result values returned from
+        /*! Array for bind buffers to result set columns (result values returned from
             the database server). */
         std::unique_ptr<MYSQL_BIND[]> resultBinds = nullptr; // NOLINT(modernize-avoid-c-arrays)
-        /*! Structure for prepared bindings (data values sent to the server). */
+        /*! Array for prepared bindings (data values sent to the server). */
         std::unique_ptr<MYSQL_BIND[]> preparedBinds = nullptr; // NOLINT(modernize-avoid-c-arrays)
 
         /* Common for both */
@@ -153,7 +152,7 @@ namespace Orm::Drivers::MySql
         static QVariant toQDateTimeFromMySQLTime(int typeId,
                                                  const MYSQL_TIME *mysqlTime);
 
-        /*! Convert the Fixed/Floating-Point value types based on the set numerical
+        /*! Convert the Fixed/Floating-Point value type based on the set numerical
             precision policy. */
         QVariant toDoubleFromString(const QString &value) const;
         /*! Convert the BLOB value type to the QByteArray. */

@@ -2,6 +2,7 @@
 
 #include <orm/macros/likely.hpp>
 
+#include "orm/drivers/constants_p.hpp"
 #include "orm/drivers/exceptions/invalidargumenterror.hpp"
 #include "orm/drivers/exceptions/sqltransactionerror.hpp"
 #include "orm/drivers/mysql/mysqldriver_p.hpp"
@@ -12,6 +13,8 @@
 TINYORM_BEGIN_COMMON_NAMESPACE
 
 using namespace Qt::StringLiterals; // NOLINT(google-build-using-namespace)
+
+using Orm::Drivers::Constants::QMYSQL;
 
 using MySqlUtils = Orm::Drivers::MySql::MySqlUtilsPrivate;
 
@@ -60,7 +63,7 @@ bool MySqlDriver::open(
         d->mysqlSelectDb(database);
 
     } catch (...) {
-        // Deallocate the connection handler (must call this whatever exception occurs)
+        // Deallocate a connection handler (this must be called whatever exception occurs)
         d->mysqlClose();
 
         // Re-throw
@@ -128,6 +131,11 @@ QVariant MySqlDriver::handle() const noexcept
 {
     Q_D(const MySqlDriver);
     return QVariant::fromValue(d->mysql);
+}
+
+QString MySqlDriver::driverName() const noexcept
+{
+    return QMYSQL;
 }
 
 /* Transactions */
@@ -199,11 +207,9 @@ bool MySqlDriver::isIdentifierEscaped(const QString &identifier,
 std::unique_ptr<SqlResult>
 MySqlDriver::createResult(const std::weak_ptr<SqlDriver> &driver) const
 {
-    if (const auto driverShared = driver.lock();
-        driverShared
-    ) T_LIKELY
+    if (const auto driverShared = driver.lock(); driverShared) T_LIKELY
         /* We need to upcast here, there is no other way, it also has to be
-           std::weak_ptr(), it can't be done any better. This upcast is kind of check,
+           std::weak_ptr(), it can't be done better. This upcast is kind of check,
            we can't pass down the SqlDriver to the MySqlResult.
            Even if it would be the shared_ptr<SqlDriver> we had to upcast the same way. */
         return std::make_unique<MySqlResult>(
@@ -211,7 +217,7 @@ MySqlDriver::createResult(const std::weak_ptr<SqlDriver> &driver) const
 
     else T_UNLIKELY
         throw Exceptions::InvalidArgumentError(
-                u"The driver argument can't be nullptr, it can't be expired in %1()."_s
+                u"The 'driver' argument can't be nullptr, it can't be expired in %1()."_s
                 .arg(__tiny_func__));
 }
 

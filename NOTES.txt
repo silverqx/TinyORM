@@ -1056,6 +1056,25 @@ npm install @docusaurus/core@latest @docusaurus/plugin-client-redirects@latest @
 yarn upgrade @docusaurus/core@latest @docusaurus/preset-classic@latest
 
 
+TinyOrm headres used in TinyDrivers:
+------------------------------------
+
+TinyDrivers and SQL libraries like TinyMySql use some header files from TinyOrm library.
+It can only use TinyOrm as header library because of circular library dependencies so it can't
+use any header file that has the cpp file (translation unit TU).
+
+These are all header files that are used:
+
+#include <orm/macros/archdetect.hpp>
+#include <orm/macros/commonnamespace.hpp>
+#include <orm/macros/compilerdetect.hpp>
+#include <orm/macros/export_common.hpp>
+#include <orm/macros/likely.hpp>
+#include <orm/macros/stringify.hpp>
+#include <orm/macros/systemheader.hpp>
+#include <orm/support/replacebindings.hpp>
+
+
 CMake Guidelines:
 -----------------
 

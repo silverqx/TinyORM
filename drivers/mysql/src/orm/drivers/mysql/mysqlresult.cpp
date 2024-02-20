@@ -119,7 +119,10 @@ bool MySqlResult::prepare(const QString &query)
                 u"Unable to prepare the prepared statement in %1()."_s.arg(__tiny_func__),
                 MySqlUtils::prepareStmtError(d->stmt), d->query);
 
-    setSelect(d->bindResultValues());
+    const auto hasFields = d->bindResultValues();
+
+    // Executed query has result set
+    setSelect(hasFields);
 
     return true;
 }
@@ -142,7 +145,8 @@ bool MySqlResult::exec()
        they return zero for success and non-zero if an error occurred, but the type is
        bool, which means they return false if succeed and true if they failed! 🤔🙃😲 */
 
-    // These vectors keep values alive long enough until mysql_stmt_execute() is invoked
+    /* These vectors keep values alive long enough until mysql_stmt_execute() is invoked.
+       The reserve() method is called later (for all). */
     QList<my_bool> nullVector;
     QList<QByteArray> stringVector;
     QList<MYSQL_TIME> timeVector;
@@ -186,11 +190,13 @@ bool MySqlResult::exec()
                 MySqlUtils::prepareStmtError(d->stmt), d->query, d->boundValues);
 
     // Executed query has result set, if there are metadata there are also result sets
-    setSelect(d->meta != nullptr);
+    {
+        const auto hasFields = d->meta != nullptr;
+
+        setSelect(hasFields);
+    }
 
     if (isSelect()) {
-        my_bool update_max_length = true;
-
         // Bind output columns in the result set to data buffers and length buffers
         if (mysql_stmt_bind_result(d->stmt, d->resultBinds.get()))
             throw Exceptions::QueryError(
@@ -200,10 +206,13 @@ bool MySqlResult::exec()
                     MySqlUtils::prepareStmtError(d->stmt), d->query, d->boundValues);
 
         // Update the metadata MYSQL_FIELD->max_length value
-        if (d->hasBlobs)
-            mysql_stmt_attr_set(d->stmt, STMT_ATTR_UPDATE_MAX_LENGTH, &update_max_length);
+        if (d->hasBlobs) {
+            constexpr static my_bool updateMaxLength = true;
 
-        // Buffer the complete result set on the client (will be prepared for fetching)
+            mysql_stmt_attr_set(d->stmt, STMT_ATTR_UPDATE_MAX_LENGTH, &updateMaxLength);
+        }
+
+        // Buffer the complete result set on the client (it will be prepared for fetching)
         if (mysql_stmt_store_result(d->stmt) != 0)
             throw Exceptions::QueryError(
                     d->connectionName,
@@ -301,13 +310,13 @@ bool MySqlResult::fetch(const size_type index)
 
     // Fetch the next row in the result set
     if (d->preparedQuery) {
-        mysql_stmt_data_seek(d->stmt, static_cast<quint64>(index));
+        mysql_stmt_data_seek(d->stmt, static_cast<quint64>(index)); // Returns nothing and also no errors
 
         if (!mysqlStmtFetch())
             return false;
     }
     else {
-        mysql_data_seek(d->result, static_cast<quint64>(index));
+        mysql_data_seek(d->result, static_cast<quint64>(index)); // Returns nothing and also no errors
 
         if (d->row = mysql_fetch_row(d->result);
             d->row == nullptr
@@ -446,6 +455,7 @@ void MySqlResult::detachFromResultSet() const noexcept
     Q_D(const MySqlResult);
 
     if (d->preparedQuery)
+        // CUR drivers log warning if failed? silverqx
         mysql_stmt_free_result(d->stmt);
 
     // CUR drivers what about mysql_free_result()? Also look SqlQuery::finish() silverqx
@@ -488,7 +498,7 @@ void MySqlResult::cleanup()
 
 /* Result sets */
 
-bool MySqlResult::mysqlStmtFetch()
+bool MySqlResult::mysqlStmtFetch() const
 {
     Q_D(const MySqlResult);
 
@@ -531,11 +541,11 @@ void MySqlResult::cleanupForDtor() noexcept
     mysql_free_result(d->meta);
     d->meta = nullptr;
 
-    /* The d->preparedBinds and d->resultBinds will be auto-destroyed if called
+    /* The d->preparedBinds and d->resultBinds will be auto-freed if called
        from the destructor as they are smart pointers. */
 }
 
-// CUR drivers revisit is something similar needed also for prepared statements? Look at detachFromResultSet() silverqx
+// CUR drivers revisit if something similar is needed also for prepared statements? Look at detachFromResultSet() silverqx
 void MySqlResult::mysqlFreeResults()
 {
     Q_D(MySqlResult);
@@ -543,7 +553,7 @@ void MySqlResult::mysqlFreeResults()
     // d->result != nullptr check is inside as the first thing
     mysql_free_result(d->result);
 
-    /* Must iterate through leftover result sets from multi-selects or stored procedures
+    /* Must iterate through leftover result sets from multi-selects or stored procedures,
        if this isn't done then subsequent queries will fail with Commands out of sync. */
     auto *const mysql = d->drv_d_func()->mysql;
 
@@ -599,9 +609,9 @@ void MySqlResult::mysqlFreeResultsForDtor() noexcept
     d->row = nullptr;
 }
 
-void MySqlResult::mysqlFreeMultiResultsForDtor() noexcept
+void MySqlResult::mysqlFreeMultiResultsForDtor() const noexcept
 {
-    Q_D(MySqlResult);
+    Q_D(const MySqlResult);
 
     // BUG drivers? find out if this free-ing multi-results logic is really needed, TinyDrivers currectly doesn't support the nextResult() so next results will never be read and stored on the client; and if it will support this then before next result will be stored we will free the current result so it looks like this is useless silverqx
     /* Must iterate through leftover result sets from multi-selects or stored procedures
@@ -609,7 +619,7 @@ void MySqlResult::mysqlFreeMultiResultsForDtor() noexcept
        Also, the drv_d_func_noexcept() is needed to have the noexcept destructor. */
     const auto *const driver = d->drv_d_func_noexcept();
 
-    // Nothing to do, the MySQL driver was invalidated early using the removeConnection()
+    // Nothing to do, the MySQL driver was invalidated earlier using removeConnection()
     if (driver == nullptr)
         return;
 

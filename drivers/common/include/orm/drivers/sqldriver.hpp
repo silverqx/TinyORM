@@ -21,8 +21,6 @@ namespace Orm::Drivers
 
     class DummySqlError;
     class SqlDriverPrivate;
-    class SqlField;
-    class SqlRecord;
     class SqlResult;
 
     /*! Database driver abstract class. */
@@ -36,22 +34,44 @@ namespace Orm::Drivers
         explicit SqlDriver(std::unique_ptr<SqlDriverPrivate> &&dd) noexcept;
 
     public:
+        /* Enum-s tagged with "for API compatibility" were removed (no plan to use them),
+           but were added back to be API compatible with QSqlDriver::DriverFeature. */
+
         /*! Supported driver features enum. */
         enum DriverFeature {
+            /*! Supports batched operations (unused, for API compatibility). */
             BatchOperations,
+            /*! Supports BLOB-s fields (Binary Large Objects). */
             BLOB,
+            /*! Supports cancelling a running query (unused, for API compatibility). */
             CancelQuery,
+            /*! Supports database event notifications (unused, for API compatibility). */
             EventNotifications,
+            /*! Does low-level resource cleanup when QSqlQuery::finish() is called. */
             FinishQuery,
+            /*! Supports returning an ID after the previous INSERT or UPDATE statement. */
             LastInsertId,
+            /*! Supports fetching numerical values with low precision. */
             LowPrecisionNumbers,
+            /*! Supports accessing multiple result sets returned from batched statements
+                or stored procedures. */
             MultipleResultSets,
+            /*! Supports the use of named placeholders. */
             NamedPlaceholders,
+            /*! Supports the use of positional placeholders. */
             PositionalPlaceholders,
+            /*! Supports prepared query execution (prepared statements). */
             PreparedQueries,
+            /*! Whether the database is capable of reporting the size of a query.
+                The QSqlQuery::size() will return -1 if a database doesn't support it
+                (SQLite doesn't support this). */
             QuerySize,
+            /*! Disallows a write lock on a table while other queries have a read lock
+                on it. */
             SimpleLocking,
+            /*! Supports SQL transactions. */
             Transactions,
+            /*! Supports Unicode strings if the database server does. */
             Unicode,
         };
 
@@ -67,7 +87,7 @@ namespace Orm::Drivers
         enum DbmsType {
             /*! MySQL database driver. */
             MySqlServer,
-            // Not implemented yet :/ (must be defined because eg. Orm::SqlQuery use it)
+            // Not implemented yet :/ (must be defined because eg. Orm::SqlQuery uses it)
             /*! PostgreSQL database driver. */
             PostgreSQL,
             /*! SQLite database driver. */
@@ -77,7 +97,7 @@ namespace Orm::Drivers
         /*! Pure virtual destructor. */
         virtual ~SqlDriver() = 0;
 
-        /*! Open the database connection using the given values. */
+        /*! Open the database connection using the given connection values. */
         virtual bool
         open(const QString &database, const QString &username, const QString &password,
              const QString &host, int port, const QString &options) = 0;

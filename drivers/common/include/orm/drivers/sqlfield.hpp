@@ -97,7 +97,7 @@ namespace Orm::Drivers
 
         /*! Get the field QVariant value metatype. */
         inline QMetaType metaType() const noexcept;
-        /*! Set the field QVariant value metatype. */
+        /*! Set the field QVariant value metatype (for invalid values only). */
         void setMetaType(QMetaType metaType);
 
         /*! Determine whether a field is required. */
@@ -326,6 +326,3 @@ operator<<(QDebug debug, const TINYORM_PREPEND_NAMESPACE(Orm::Drivers::SqlField)
 #endif
 
 #endif // ORM_DRIVERS_SQLFIELD_HPP
-
-// CUR drivers check/change to int vs quint64 everywhere silverqx
-// CUR drivers add noexcept everywhere silverqx

@@ -50,7 +50,7 @@ bool SqlDatabase::open()
 bool SqlDatabase::open(const QString &username, const QString &password)
 {
     /* This method doesn't store the given password. Instead, the password is passed
-       directly to the driver to open the connection and is then discarded.
+       directly to the driver to open the connection and is then discarded (more secure).
        Because of this, only the username setter is called, all other setters must be
        called before the open() method. */
 
@@ -66,7 +66,7 @@ void SqlDatabase::close() noexcept
     if (!isValid())
         return;
 
-    // To have this method noexcept
+    // Used the driverPtr() to have the close() method noexcept
     auto *driver = d->driverPtr();
 
     if (driver == nullptr)
@@ -77,9 +77,12 @@ void SqlDatabase::close() noexcept
 
 /* Getters / Setters */
 
-bool SqlDatabase::isOpen() const
+bool SqlDatabase::isOpen() const noexcept
 {
-    return d->driver().isOpen();
+    // Used the driverPtr() to have the isOpen() method noexcept
+    const auto *const driver = d->driverPtr();
+
+    return driver != nullptr && driver->isOpen();
 }
 
 bool SqlDatabase::isOpenError() const noexcept // NOLINT(readability-convert-member-functions-to-static)
@@ -256,32 +259,32 @@ void SqlDatabase::disableThreadCheck() noexcept
 
 bool SqlDatabase::transaction()
 {
-    // Nothing to do, no transactions support
-    if (!d->driver().hasFeature(SqlDriver::Transactions)) T_UNLIKELY
-        return false;
-
-    else T_LIKELY
+    if (d->driver().hasFeature(SqlDriver::Transactions)) T_LIKELY
         return d->driver().beginTransaction();
+
+    // Nothing to do, no transactions support
+    else T_UNLIKELY
+        return false;
 }
 
 bool SqlDatabase::commit()
 {
-    // Nothing to do, no transactions support
-    if (!d->driver().hasFeature(SqlDriver::Transactions)) T_UNLIKELY
-        return false;
-
-    else T_LIKELY
+    if (d->driver().hasFeature(SqlDriver::Transactions)) T_LIKELY
         return d->driver().commitTransaction();
+
+    // Nothing to do, no transactions support
+    else T_UNLIKELY
+        return false;
 }
 
 bool SqlDatabase::rollback()
 {
-    // Nothing to do, no transactions support
-    if (!d->driver().hasFeature(SqlDriver::Transactions)) T_UNLIKELY
-        return false;
-
-    else T_LIKELY
+    if (d->driver().hasFeature(SqlDriver::Transactions)) T_LIKELY
         return d->driver().rollbackTransaction();
+
+    // Nothing to do, no transactions support
+    else T_UNLIKELY
+        return false;
 }
 
 } // namespace Orm::Drivers

@@ -4,7 +4,7 @@
 
 // Excluded for the Resource compiler
 #ifndef RC_INVOKED
-#  include "orm/macros/systemheader.hpp"
+#  include <orm/macros/systemheader.hpp>
 TINY_SYSTEM_HEADER
 #endif
 

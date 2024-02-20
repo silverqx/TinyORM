@@ -22,9 +22,8 @@ namespace Orm::Drivers
     public:
         /*! Constructor. */
         inline explicit SqlDriverPrivate(SqlDriver::DbmsType type) noexcept;
-        // CUR drivers check virtual here, without it the ~MySqlDriverPrivate() is not called of course silverqx
-        /*! Virtual destructor. */
-        inline virtual ~SqlDriverPrivate() = default;
+        /*! Pure virtual destructor. */
+        inline virtual ~SqlDriverPrivate() = 0;
 
         /* Data members */
         /*! Database driver type. */
@@ -40,6 +39,8 @@ namespace Orm::Drivers
     };
 
     /* public */
+
+    SqlDriverPrivate::~SqlDriverPrivate() = default;
 
     SqlDriverPrivate::SqlDriverPrivate(const SqlDriver::DbmsType type) noexcept
         : dbmsType(type)
