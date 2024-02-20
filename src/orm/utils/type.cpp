@@ -42,10 +42,10 @@ QString Type::prettyFunction(const QString &function)
        exceptions, so there would not be any performance benefit. */
 #if defined(__GNUG__) || defined(__clang__)
     static const QRegularExpression regex(
-                QLatin1String(R"((?:.* )?(?:.*::)?(\w+)(?:<.*>)?::(\w+)\(.*\))"));
+                QStringLiteral(R"((?:.* )?(?:.*::)?(\w+)(?:<.*>)?::(\w+)\(.*\))"));
 #elif _MSC_VER
     static const QRegularExpression regex(
-                QLatin1String(R"((?:.*::)?(\w+)(?:<.*>)?::(\w+)(?:$|::<lambda))"));
+                QStringLiteral(R"((?:.*::)?(\w+)(?:<.*>)?::(\w+)(?:$|::<lambda))"));
 #else
     throw RuntimeError(
                 "Unsupported compiler in Utils::Type::prettyFunction().");
