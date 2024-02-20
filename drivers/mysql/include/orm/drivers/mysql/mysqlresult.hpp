@@ -27,16 +27,16 @@ namespace Orm::Drivers::MySql
         /*! Virtual destructor. */
         ~MySqlResult() noexcept final;
 
-        /*! Returns the low-level database result set handle (MYSQL_RES or MYSQL_STMT). */
+        /*! Get the low-level database result set handle (MYSQL_RES or MYSQL_STMT). */
         QVariant handle() const noexcept final;
 
     protected:
         /* Normal queries */
-        /*! Execute the given SQL query (non-prepared only). */
+        /*! Execute the given SQL query (non-prepared/normal only). */
         bool exec(const QString &query) final;
 
         /* Prepared queries */
-        /*! Prepares the given SQL query for execution. */
+        /*! Prepare the given SQL query for execution. */
         bool prepare(const QString &query) final;
         /*! Execute a previously prepared SQL query. */
         bool exec() final;
@@ -44,7 +44,7 @@ namespace Orm::Drivers::MySql
         /* Result sets */
         /*! Get a SqlRecord containing the field information for the current query. */
         SqlRecord record() const final;
-        /*! Get the ID of the most recent inserted row if the database supports it. */
+        /*! Get the ID of the most recent inserted row. */
         QVariant lastInsertId() const final;
 
         /*! Retrieve the record at the given index and position the cursor on it. */
@@ -62,26 +62,26 @@ namespace Orm::Drivers::MySql
         bool isNull(size_type index) final;
 
         /*! Get the size of the result (number of rows returned), -1 if the size can't be
-            determined (database must support reporting about query sizes). */
+            determined. */
         size_type size() noexcept final;
         /*! Get the number of affected rows for DML queries or -1 if the size can't be
             determined. */
         size_type numRowsAffected() final;
 
-        /*! Releases memory associated with the current result set. */
+        /*! Release memory associated with the current result set. */
         void detachFromResultSet() const noexcept final;
 
         /* Cleanup */
-        /*! Main cleanup method, free prepared and non-prepared statements. */
+        /*! Main cleanup method, free normal and prepared statements. */
         void cleanup();
 
     private:
         /* Result sets */
         /*! Fetch the next row in the result set. */
-        bool mysqlStmtFetch();
+        bool mysqlStmtFetch() const;
 
         /* Cleanup */
-        /*! Main cleanup method, free prepared and non-prepared statements, noexcept. */
+        /*! Main cleanup method, free normal and prepared statements, noexcept version. */
         void cleanupForDtor() noexcept;
 
         /*! Free the memory allocated for result sets. */
@@ -89,7 +89,7 @@ namespace Orm::Drivers::MySql
         /*! Free the memory allocated for result sets, noexcept version. */
         void mysqlFreeResultsForDtor() noexcept;
         /*! Free the memory allocated for multi-result sets, noexcept version. */
-        void mysqlFreeMultiResultsForDtor() noexcept;
+        void mysqlFreeMultiResultsForDtor() const noexcept;
         /*! Close the prepared statement and deallocate the statement handler. */
         void mysqlStmtClose();
     };

@@ -12,7 +12,6 @@
 #  include "orm/drivers/mysql/macros/includemysqlh_p.hpp"
 #endif
 
-#include "orm/drivers/exceptions/sqlerror.hpp"
 #include "orm/drivers/utils/notnull.hpp"
 
 #if __has_include(<field_types.h>)
@@ -27,6 +26,11 @@ namespace Orm::Drivers
 {
     class SqlField;
 
+namespace Exceptions
+{
+    struct MySqlErrorType;
+}
+
 namespace MySql
 {
 
@@ -36,7 +40,7 @@ namespace MySql
         Q_DISABLE_COPY_MOVE(MySqlUtilsPrivate)
 
         /*! Alias for the MySqlErrorType. */
-        using MySqlErrorType = Orm::Drivers::Exceptions::SqlError::MySqlErrorType;
+        using MySqlErrorType = Orm::Drivers::Exceptions::MySqlErrorType;
         /*! Alias for the NotNull. */
         template<typename T>
         using NotNull = Orm::Drivers::Utils::NotNull<T>;
@@ -48,7 +52,7 @@ namespace MySql
         ~MySqlUtilsPrivate() = delete;
 
         /* Exceptions */
-        /*! Prepare MySQL errNo and error message for the SqlError exception for normal
+        /*! Prepare MySQL errNo and error message for SqlError exception for normal
             queries. */
         static MySqlErrorType
         prepareMySqlError(NotNull<MYSQL *> mysql,
@@ -65,7 +69,7 @@ namespace MySql
         /* Prepared queries */
         /*! Determine whether the given metatype ID is integer type. */
         static bool isInteger(int typeId) noexcept;
-        /*! Determine whether the given MySQL field type is Date-related type. */
+        /*! Determine whether the given MySQL field type is date-related type. */
         static bool isTimeOrDate(enum_field_types mysqlType) noexcept;
 
         /* Result sets */

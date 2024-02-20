@@ -53,7 +53,7 @@ namespace Support
         /*! Get the driver reference, const version. */
         inline const SqlDriver &driver() const;
         /*! Get the driver pointer. */
-        inline SqlDriver *driverPtr() noexcept;
+        inline SqlDriver *driverPtr() const noexcept;
         /*! Reset and free the driver smart pointer. */
         inline void resetDriver() noexcept;
 
@@ -72,7 +72,7 @@ namespace Support
         /*! Get a reference to the database connections hash. */
         static ConnectionsHash &connections();
 
-        /*! Determine whether the same thread check is enabled during database(). */
+        /*! Determine whether the same thread check is enabled during database() call. */
         static bool &checkSameThread() noexcept;
 
         /* Factory methods */
@@ -209,7 +209,7 @@ namespace Support
         return *sqldriver;
     }
 
-    SqlDriver *SqlDatabasePrivate::driverPtr() noexcept
+    SqlDriver *SqlDatabasePrivate::driverPtr() const noexcept
     {
         return sqldriver.get();
     }

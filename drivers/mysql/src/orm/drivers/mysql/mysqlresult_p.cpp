@@ -2,7 +2,7 @@
 
 #include <QDateTime>
 
-#include "orm/drivers/exceptions/outofrange.hpp"
+#include "orm/drivers/exceptions/outofrangeerror.hpp"
 #include "orm/drivers/mysql/mysqlconstants_p.hpp"
 #include "orm/drivers/mysql/mysqlutils_p.hpp"
 #include "orm/drivers/utils/helpers_p.hpp"
@@ -48,7 +48,7 @@ bool MySqlResultPrivate::populateFields(MYSQL *const mysql)
     uint index = 0;
     const MYSQL_FIELD *fieldInfo = nullptr;
     resultFields.resize(fieldsCount);
-
+                       // Returns no errors
     while((fieldInfo = mysql_fetch_field(result)) != nullptr) {
         resultFields[index].metaType = MySqlUtils::decodeMySqlType(fieldInfo->type,
                                                                    fieldInfo->flags);
@@ -65,7 +65,7 @@ bool MySqlResultPrivate::populateFields(MYSQL *const mysql)
 
 bool MySqlResultPrivate::bindResultValues()
 {
-    // Obtain the Result Set metadata
+    // Obtain the Result Set metadata (nothing to do if no metadata)
     if (meta = mysql_stmt_result_metadata(stmt); meta == nullptr)
         /* Don't log a warning about no metadata here as the INSERT, UPDATE, and DELETE
            queries have no metadata. */
@@ -91,7 +91,7 @@ bool MySqlResultPrivate::bindResultValues()
     uint index = 0;
     const MYSQL_FIELD *fieldInfo = nullptr;
     resultFields.resize(fieldsCount);
-
+                       // Returns no errors
     while((fieldInfo = mysql_fetch_field(meta)) != nullptr) {
         auto &resultBind = resultBinds[index];
         auto &field = resultFields[index];
@@ -125,7 +125,7 @@ bool MySqlResultPrivate::bindResultValues()
         resultBind.length      = &field.fieldValueSize;
         resultBind.is_unsigned = (fieldInfo->flags & UNSIGNED_FLAG) != 0U;
 
-        /* Prepare the output/result buffer (nothing to do with prepared bindings),
+        /* Prepare the output/result buffer (it has nothing to do with prepared bindings),
            +1 for the terminating null character. */
         field.fieldValue = resultBind.buffer_length > 0UL
                            ? std::make_unique<char[]>(resultBind.buffer_length + 1UL) // NOLINT(modernize-avoid-c-arrays)
@@ -202,12 +202,11 @@ void MySqlResultPrivate::bindPreparedBindings(
         switch (boundValue.userType()) {
         case QMetaType::QByteArray:
             preparedBind.buffer_type   = MYSQL_TYPE_BLOB;
-            // Need to use the constData() to avoid detach
             preparedBind.buffer_length = static_cast<ulong>(
                                              boundValue.toByteArray().size());
             /* The toByteArray().constData() is correct, it will point to the same
                data even if the QVariant creates a copy of the QByteArray inside
-               toByteArray(). */
+               toByteArray(). Also, need to use the constData() to avoid detach. */
             preparedBind.buffer = const_cast<char *>(
                                       boundValue.toByteArray().constData());
             break;
@@ -227,7 +226,7 @@ void MySqlResultPrivate::bindPreparedBindings(
         case QMetaType::Int:
             preparedBind.buffer_type   = MYSQL_TYPE_LONG;
             preparedBind.buffer_length = sizeof (int);
-            preparedBind.is_unsigned   = boundValue.userType() != QMetaType::Int;
+            preparedBind.is_unsigned   = boundValue.userType() == QMetaType::UInt;
             preparedBind.buffer        = data;
             break;
 
@@ -321,12 +320,11 @@ QVariant MySqlResultPrivate::getValueForNormal(const ResultFieldsSizeType index)
         return QVariant::fromValue(toBitField(field, column));
 
     QString value;
-    std::size_t fieldLength = 0;
     const auto typeId = field.metaType.id();
     // CUR drivers revisit silverqx
-    fieldLength = mysql_fetch_lengths(result)[index];
+    const auto fieldLength = mysql_fetch_lengths(result)[index];
 
-    // BLOB field needs the QByteArray as the storage
+    // BLOB field needs QVariant(QByteArray) as the storage (handled in toQByteArray())
     if (typeId != QMetaType::QByteArray)
         value = QString::fromUtf8(column, static_cast<QString::size_type>(fieldLength));
 
@@ -373,7 +371,7 @@ QVariant MySqlResultPrivate::getValueForPrepared(const ResultFieldsSizeType inde
 
     QString value;
 
-    // The BLOB field needs the QByteArray as storage
+    // The BLOB field needs QVariant(QByteArray) as storage (handled in toQByteArray())
     if (typeId != QMetaType::QByteArray)
         value = QString::fromUtf8(field.fieldValue.get(),
                                   static_cast<QString::size_type>(field.fieldValueSize));

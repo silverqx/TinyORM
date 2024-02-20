@@ -2,13 +2,14 @@
 
 #include "orm/drivers/mysql/macros/includemysqlh_p.hpp"
 
+#include "orm/drivers/exceptions/sqlerror.hpp"
 #include "orm/drivers/sqlfield.hpp"
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
 using namespace Qt::StringLiterals; // NOLINT(google-build-using-namespace)
 
-using MySqlErrorType = Orm::Drivers::Exceptions::SqlError::MySqlErrorType;
+using Orm::Drivers::Exceptions::MySqlErrorType;
 
 namespace Orm::Drivers::MySql
 {
@@ -96,9 +97,9 @@ MySqlUtilsPrivate::decodeMySqlType(const enum_field_types mysqlType, const uint 
 // MYSQL_TYPE_JSON was added in MySQL 5.7.8
 #if defined(MYSQL_VERSION_ID) && MYSQL_VERSION_ID >= 50708
     case MYSQL_TYPE_JSON:
+#endif
         typeId = (flags & BINARY_FLAG) != 0U ? QMetaType::QByteArray : QMetaType::QString;
         break;
-#endif
 
     case MYSQL_TYPE_ENUM:
     case MYSQL_TYPE_SET:
@@ -125,7 +126,7 @@ bool MySqlUtilsPrivate::isTimeOrDate(const enum_field_types mysqlType) noexcept
 {
     // BUG drivers the code that calls the qIsTimeOrDate() expect this method also matches the MYSQL_TYPE_TIME? Also check all MYSQL_TYPE_TIME occurrences silverqx
     /* Don't match the MYSQL_TYPE_TIME because its range is bigger than the QTime.
-       A time field can be within the range '-838:59:59' to '838:59:59' so
+       A TIME field can be within the range '-838:59:59' to '838:59:59' so
        use QString instead of QTime since QTime is limited to 24 hour clock. */
     return mysqlType == MYSQL_TYPE_DATE     ||
            mysqlType == MYSQL_TYPE_DATETIME ||

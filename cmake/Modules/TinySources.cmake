@@ -31,7 +31,7 @@ function(tinydrivers_sources out_headers_private out_headers out_sources)
         exceptions/driverserror.hpp
         exceptions/invalidargumenterror.hpp
         exceptions/logicerror.hpp
-        exceptions/outofrange.hpp
+        exceptions/outofrangeerror.hpp
         exceptions/queryerror.hpp
         exceptions/runtimeerror.hpp
         exceptions/sqlerror.hpp

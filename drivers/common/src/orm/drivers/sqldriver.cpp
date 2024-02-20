@@ -34,6 +34,8 @@ bool SqlDriver::isOpen() const noexcept
 
 bool SqlDriver::isOpenError() const noexcept // NOLINT(readability-convert-member-functions-to-static)
 {
+    // Must be defined to be API compatible with the QtSql module
+
     return false;
 }
 
@@ -45,6 +47,8 @@ SqlDriver::DbmsType SqlDriver::dbmsType() const noexcept
 
 DummySqlError SqlDriver::lastError() const noexcept // NOLINT(readability-convert-member-functions-to-static)
 {
+    // Must be defined to be API compatible with the QtSql module
+
     return {};
 }
 

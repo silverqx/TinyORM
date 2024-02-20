@@ -46,7 +46,6 @@ void SqlField::setMetaType(const QMetaType metaType)
 {
     m_metaType = metaType;
 
-    // CUR drivers revisit this and forbid invalid values? silverqx
     if (!m_value.isValid())
         m_value = QVariant(metaType, nullptr);
 }
@@ -70,7 +69,7 @@ namespace
 
         debug << ", value: ";
 
-        // CUR drivers revisit this and forbid invalid values? silverqx
+        // isValid() must be checked first because an invalid QVariant is also null
         if (!value.isValid())
             debug.noquote() << Invalid;
 

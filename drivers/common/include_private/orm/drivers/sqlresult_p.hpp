@@ -46,12 +46,12 @@ namespace Orm::Drivers
         /*! Database driver used to access the database connection. */
         std::weak_ptr<SqlDriver> sqldriver;
 
-        /*! The current SQL query text. */
+        /*! The current database connection name (used in exceptions and logs). */
         QString connectionName {};
 
         /*! The current SQL query text. */
         QString query {};
-        /*! Bound values for the prepared statement. */
+        /*! Bound values for a prepared statement. */
         QList<QVariant> boundValues {};
 
         /*! Connection numerical precision policy. */
@@ -60,7 +60,7 @@ namespace Orm::Drivers
         /*! The current cursor position. */
         size_type cursor = BeforeFirstRow;
 
-        /*! Is this result active? */
+        /*! Is this result active? (has records to be retrieved) */
         bool isActive = false;
         /*! Is this result from the SELECT statement? */
         bool isSelect = false;

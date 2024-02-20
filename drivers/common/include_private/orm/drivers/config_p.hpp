@@ -23,7 +23,7 @@
 #if defined(TINYDRIVERS_NO_DEBUG) && defined(TINYDRIVERS_DEBUG)
 #  error Both TINYDRIVERS_DEBUG and TINYDRIVERS_NO_DEBUG defined.
 #endif
-// Debug build
+// Debug build (default build)
 #if !defined(TINYDRIVERS_NO_DEBUG) && !defined(TINYDRIVERS_DEBUG)
 #  define TINYDRIVERS_DEBUG
 #endif

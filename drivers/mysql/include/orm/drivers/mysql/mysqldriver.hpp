@@ -69,15 +69,6 @@ namespace Orm::Drivers::MySql
 
     /* public */
 
-    /* Getters / Setters */
-
-    QString MySqlDriver::driverName() const noexcept
-    {
-        using namespace Qt::StringLiterals; // NOLINT(google-build-using-namespace)
-
-        return u"QMYSQL"_s;
-    }
-
     /* Others */
 
     int

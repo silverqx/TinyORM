@@ -23,7 +23,7 @@
             throw Exceptions::LogicError(                                                \
                         u"The SqlResultPrivate::sqldriver smart pointer is nullptr. "    \
                          "The SqlDatabase instance is invalid after calling "            \
-                         "removeDatabase(). In %1()."_s                                  \
+                         "removeDatabase(), in %1()."_s                                  \
                         .arg(__tiny_func__));                                            \
                                                                                          \
         else T_LIKELY                                                                    \
@@ -39,7 +39,7 @@
             throw Exceptions::LogicError(                                                \
                         u"The SqlResultPrivate::sqldriver smart pointer is nullptr. "    \
                          "The SqlDatabase instance is invalid after calling "            \
-                         "removeDatabase(). In %1()."_s                                  \
+                         "removeDatabase(), in %1()."_s                                  \
                         .arg(__tiny_func__));                                            \
                                                                                          \
         else T_LIKELY                                                                    \

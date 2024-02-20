@@ -5,7 +5,10 @@
 #include <orm/macros/systemheader.hpp>
 TINY_SYSTEM_HEADER
 
-#include "orm/drivers/sqlresult.hpp"
+#include <QtGlobal>
+
+#include "orm/drivers/driverstypes.hpp"
+#include "orm/drivers/macros/export.hpp"
 #include "orm/drivers/utils/notnull.hpp"
 
 TINYORM_BEGIN_COMMON_NAMESPACE
@@ -16,8 +19,8 @@ namespace Orm::Drivers
     class DummySqlError;
     class SqlDatabase;
     class SqlDriver;
-    class SqlQueryPrivate;
     class SqlRecord;
+    class SqlResult;
 
     /*! SqlQuery class executes, navigates, and retrieves data from SQL statements. */
     class TINYDRIVERS_EXPORT SqlQuery
@@ -30,7 +33,7 @@ namespace Orm::Drivers
 
     public:
         /*! Alias for the cursor, bound, and result values type. */
-        using size_type = SqlResult::size_type;
+        using size_type = int;
 
         /*! Default constructor. */
         SqlQuery();
@@ -40,15 +43,15 @@ namespace Orm::Drivers
         explicit SqlQuery(std::unique_ptr<SqlResult> &&result) noexcept;
 
         /*! Move constructor. */
-        inline SqlQuery(SqlQuery &&) noexcept = default;
+        SqlQuery(SqlQuery &&) noexcept;
         /*! Move assignment operator. */
-        inline SqlQuery &operator=(SqlQuery &&) noexcept = default;
+        SqlQuery &operator=(SqlQuery &&) noexcept;
 
         /*! Default destructor. */
         ~SqlQuery();
 
         /*! Swap the SqlQuery. */
-        constexpr void swap(SqlQuery &other) noexcept;
+        void swap(SqlQuery &other) noexcept;
 
         /* Getters / Setters */
         /*! Determine whether the query result set is positioned on a valid record. */
@@ -58,15 +61,15 @@ namespace Orm::Drivers
         QString executedQuery() const noexcept;
         /*! Get the last executed query (alias). */
         QString lastQuery() const noexcept;
-        /*! Get information about the error of the last query. */
-        DummySqlError lastError() const noexcept;
+        /*! Get information about the error of the last query (dummy method). */
+        DummySqlError lastError() const noexcept Q_DECL_CONST_FUNCTION;
 
         /*! Get the current cursor position (0-based). */
         size_type at() const noexcept;
 
         /*! Determine if the query was exec()'d successfully and isn't yet finished. */
         bool isActive() const noexcept;
-        /*! Determine whether the current query is a SELECT statement. */
+        /*! Determine whether the current query is the SELECT statement. */
         bool isSelect() const noexcept;
 
         /*! Get the current numerical precision policy. */
@@ -80,20 +83,20 @@ namespace Orm::Drivers
         std::weak_ptr<const SqlDriver> driverWeak() const noexcept;
 
         /* Normal queries */
-        /*! Execute the given SQL query (non-prepared only). */
+        /*! Execute the given SQL query (non-prepared/normal only). */
         bool exec(const QString &query);
 
         /* Prepared queries */
-        /*! Prepares the given SQL query for execution. */
+        /*! Prepare the given SQL query for execution. */
         bool prepare(const QString &query);
         /*! Execute a previously prepared SQL query. */
         bool exec();
 
-        /*! Bound the positional placeholder value at the given index for the prepared
+        /*! Bind the positional placeholder value at the given index for the prepared
             statement. */
         void bindValue(size_type index, const QVariant &value,
                        ParamType /*unused*/ = ParamType::In);
-        /*! Bound the positional placeholder value at the given index for the prepared
+        /*! Bind the positional placeholder value at the given index for the prepared
             statement. */
         void bindValue(size_type index, QVariant &&value,
                        ParamType /*unused*/ = ParamType::In);
@@ -136,7 +139,7 @@ namespace Orm::Drivers
         bool isNull(const QString &name) const;
 
         /*! Get the size of the result (number of rows returned), -1 if the size can't be
-            determined (database must support reporting about query sizes). */
+            determined (database must support reporting about query size). */
         size_type size() const noexcept;
         /*! Get the number of affected rows for DML queries or -1 if the size can't be
             determined. */
@@ -174,13 +177,6 @@ namespace Orm::Drivers
         /*! Query result set. */
         NotNull<std::unique_ptr<SqlResult>> m_sqlResult;
     };
-
-    /* public */
-
-    constexpr void SqlQuery::swap(SqlQuery &other) noexcept
-    {
-        std::swap(m_sqlResult, other.m_sqlResult);
-    }
 
 } // namespace Orm::Drivers
 

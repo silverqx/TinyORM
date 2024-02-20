@@ -41,7 +41,7 @@ namespace Orm::Drivers
         /*! Pure virtual destructor. */
         virtual ~SqlResult() = 0;
 
-        /*! Returns the low-level database result set handle (database specific). */
+        /*! Get the low-level database result set handle (database specific). */
         virtual QVariant handle() const noexcept = 0;
 
         /*! Set the connection name. */
@@ -63,7 +63,7 @@ namespace Orm::Drivers
         /*! Get the current SQL query text. */
         QString query() const noexcept;
         /*! Set the query for the result. */
-        virtual void setQuery(const QString &query) noexcept;
+        void setQuery(QString query) noexcept;
 
         /*! Get the current cursor position (0-based). */
         size_type at() const noexcept;
@@ -72,7 +72,7 @@ namespace Orm::Drivers
 
         /*! Determine whether the result set has records to be retrieved. */
         bool isActive() const noexcept;
-        /*! Set a flag that this result is active. */
+        /*! Set a flag that this result is active (has records to be retrieved). */
         virtual void setActive(bool value) noexcept;
 
         /*! Determine whether the current result is from the SELECT statement. */
@@ -91,11 +91,11 @@ namespace Orm::Drivers
         std::weak_ptr<const SqlDriver> driverWeak() const noexcept;
 
         /* Normal queries */
-        /*! Execute the given SQL query (non-prepared only). */
+        /*! Execute the given SQL query (non-prepared/normal only). */
         virtual bool exec(const QString &query) = 0;
 
         /* Prepared queries */
-        /*! Prepares the given SQL query for execution. */
+        /*! Prepare the given SQL query for execution. */
         virtual bool prepare(const QString &query) = 0;
         /*! Execute a previously prepared SQL query. */
         virtual bool exec() = 0;
@@ -117,18 +117,18 @@ namespace Orm::Drivers
         QVariant boundValue(size_type index) const;
 
         /*! Get the number of bound values. */
-        size_type boundValuesCount() const;
+        size_type boundValuesCount() const noexcept;
 
         /*! Get a QVariant vector of all bound values. */
-        QVariantList boundValues() const;
+        QVariantList boundValues() const noexcept;
         /*! Get a reference to the QVariant vector of all bound values. */
-        QVariantList &boundValues();
+        QVariantList &boundValues() noexcept;
 
         /*! Clear all bound values. */
         void clearBoundValues();
 
         /*! Get the binding syntax for the current query (always PositionalBinding). */
-        inline BindingSyntax bindingSyntax() const;
+        constexpr BindingSyntax bindingSyntax() const noexcept;
 
         /* Result sets */
         /*! Get a SqlRecord containing the field information for the current query. */
@@ -153,16 +153,16 @@ namespace Orm::Drivers
         virtual bool isNull(size_type index) = 0;
 
         /*! Get the size of the result (number of rows returned), -1 if the size can't be
-            determined (database must support reporting about query sizes). */
+            determined (database must support reporting about query size). */
         virtual size_type size() noexcept = 0;
         /*! Get the number of affected rows for DML queries or -1 if the size can't be
             determined. */
         virtual size_type numRowsAffected() = 0;
 
-        /*! Releases memory associated with the current result set. */
+        /*! Release memory associated with the current result set. */
         virtual void detachFromResultSet() const noexcept = 0;
 
-        /*! Discard the current result set and navigates to the next if available
+        /*! Discard the current result set and navigate to the next if available
             (not supported). */
         virtual bool nextResult();
 
@@ -179,7 +179,7 @@ namespace Orm::Drivers
 
     /* Prepared queries */
 
-    SqlResult::BindingSyntax SqlResult::bindingSyntax() const // NOLINT(readability-convert-member-functions-to-static)
+    constexpr SqlResult::BindingSyntax SqlResult::bindingSyntax() const noexcept // NOLINT(readability-convert-member-functions-to-static)
     {
         return SqlResult::PositionalBinding;
     }

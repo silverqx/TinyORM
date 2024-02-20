@@ -54,10 +54,12 @@ QString SqlResult::query() const noexcept
     return d->query;
 }
 
-void SqlResult::setQuery(const QString &query) noexcept
+void SqlResult::setQuery(QString query) noexcept
 {
+    // This method is currently unused
+
     Q_D(SqlResult);
-    d->query = query;
+    d->query = std::move(query);
 }
 
 SqlResult::size_type SqlResult::at() const noexcept
@@ -174,19 +176,19 @@ QVariant SqlResult::boundValue(const size_type index) const
     return d->boundValues.value(index);
 }
 
-SqlResult::size_type SqlResult::boundValuesCount() const
+SqlResult::size_type SqlResult::boundValuesCount() const noexcept
 {
     Q_D(const SqlResult);
     return static_cast<size_type>(d->boundValues.size());
 }
 
-QVariantList SqlResult::boundValues() const
+QVariantList SqlResult::boundValues() const noexcept
 {
     Q_D(const SqlResult);
     return d->boundValues;
 }
 
-QVariantList &SqlResult::boundValues()
+QVariantList &SqlResult::boundValues() noexcept
 {
     Q_D(SqlResult);
     return d->boundValues;

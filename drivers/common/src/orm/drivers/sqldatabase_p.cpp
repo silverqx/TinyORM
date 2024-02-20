@@ -15,6 +15,7 @@
 #include "orm/drivers/utils/type_p.hpp"
 
 #ifdef TINYDRIVERS_MYSQL_LOADABLE_LIBRARY
+#  include "orm/drivers/exceptions/runtimeerror.hpp"
 #  include "orm/drivers/sqldriver.hpp"
 #  include "orm/drivers/version.hpp"
 #else
@@ -61,9 +62,9 @@ void SqlDatabasePrivate::cloneDatabase(const SqlDatabasePrivate &other) noexcept
     connectionOptions = other.connectionOptions;
     precisionPolicy   = other.precisionPolicy;
 
-    /* The connectionName is set in the SqlDatabasePrivate::addDatabase().
-       The other.sqldriver in the SqlDatabase(const QString &driver) constructor so
-       it's always set. */
+    /* The connectionName is set in SqlDatabasePrivate::addDatabase() (after this method).
+       The other.sqldriver was already set in the SqlDatabase(const QString &driver)
+       constructor so it's always set. */
 
     if (sqldriver)
         sqldriver->setDefaultNumericalPrecisionPolicy(
@@ -128,7 +129,7 @@ void
 SqlDatabasePrivate::invalidateDatabase(const SqlDatabase &db, const QString &connection,
                                        const bool warn)
 {
-    if (db.d.use_count() > 1 && warn)
+    if (warn && db.d.use_count() > 1)
         qWarning().noquote()
                 << u"The database connection '%1' is still in use, all queries for this "
                     "connection will stop working. Make sure to destroy all SqlDatabase "
@@ -177,6 +178,9 @@ std::shared_ptr<SqlDriver> SqlDatabasePrivate::createSqlDriver(const QString &dr
 std::shared_ptr<SqlDatabasePrivate>
 SqlDatabasePrivate::createSqlDatabasePrivate(std::shared_ptr<SqlDriver> &&driver)
 {
+    /* Revisited, passing the driverName as a separate argument is ok, it's about how
+       the SqlDatabase class is instantiated, exactly two ways how to instantiate,
+       from the QString and from the unique_ptr<SqlDriver>. */
     return std::make_shared<SqlDatabasePrivate>(std::move(driver), driver->driverName());
 }
 
@@ -189,14 +193,18 @@ void SqlDatabasePrivate::throwIfNoConnection(const QString &connection)
         return;
 
     throw Exceptions::InvalidArgumentError(
-                u"The '%1' connection isn't registered (doesn't exist), please register "
-                 "it using the SqlDatabase::addDatabase() method. In %2()."_s
+                u"The '%1' database connection isn't registered (doesn't exist), please "
+                "register it using the SqlDatabase::addDatabase() method, in %2()."_s
                 .arg(connection, __tiny_func__));
 }
 
 /* private */
 
 /* Factory methods */
+
+/* Our conventions for database names are MySql, Postgres, and SQLite, the same names
+   like TinyORM connection or driver classes are named. 🫤 I will not break this, so
+   shared/static libraries will also have these names. */
 
 std::shared_ptr<SqlDriver> SqlDatabasePrivate::createMySqlDriver()
 {
@@ -273,7 +281,7 @@ namespace
         auto driverBasenameTmp = driverBasename;
 
         return std::to_array<QString>({
-            // qmake build doesn't prepend lib for shared libraries
+            // qmake build doesn't prepend lib for shared libraries on MSYS2
 #ifndef TINY_QMAKE_BUILD
             driverBasenameTmp.prepend(u"lib"_s), // libTinyMySql.dll
 #endif
@@ -292,8 +300,6 @@ namespace
     /*! Get driver library basenames for which to try to load the shared library. */
     inline auto getDriverBasenames(const QString &driverBasename)
     {
-        auto driverBasenameTmp = driverBasename;
-
 #ifdef _MSC_VER
         return getDriverBasenameMsvc(driverBasename);
 #elif defined(__linux__)
@@ -313,7 +319,7 @@ SqlDatabasePrivate::createSqlDriverLoadable(const QString &driver,
     // Load a SQL driver shared library at runtime and return the driver factory method
     const auto &createDriverMemFn = loadSqlDriver(driver, driverBasenameRaw);
 
-    // This should never happen :/, it's checked earlier
+    // This should never happen :/, it's checked earlier in loadSqlDriverCommon()
     Q_ASSERT(createDriverMemFn);
 
     return std::shared_ptr<SqlDriver>(std::invoke(createDriverMemFn));
@@ -324,7 +330,7 @@ SqlDatabasePrivate::loadSqlDriver(const QString &driver, const QString &driverBa
 {
     /* Everything between the g_driversLoaded->contains() and g_driversLoaded->emplace()
        must be synchronized (secured using the write mutex). I implemented
-       the g_driversLoaded the same way is as the g_connections is implemented but I had
+       the g_driversLoaded the same way as the g_connections is implemented but I had
        to rework it to this mutex way. Simply, all threads must wait until the driver
        library is loaded and the result is cached. */
 
@@ -348,8 +354,9 @@ SqlDatabasePrivate::loadSqlDriverCommon(const QString &driver,
     const auto driverBasenames = getDriverBasenames(driverBasenameRaw);
 
     /* Try to load library from paths from TINY/QT_PLUGIN_PATH environment variables and
-       from paths from qmake/CMake build system (inside build tree). */
+       from paths from qmake/CMake build system (inside the build tree). */
     for (const auto &driverPath : sqlDriverPaths(driver))
+        // Try to load all our basenames
         for (const auto &driverBasename : driverBasenames)
             // Load a Tiny SQL driver shared library and resolve driver factory function
             if (auto createDriverMemFn = loadSqlDriverAndResolve(
@@ -426,7 +433,7 @@ QStringList SqlDatabasePrivate::sqlDriverPaths(const QString &driver)
 std::optional<QString>
 SqlDatabasePrivate::sqlDriverPathFromBuildSystem(const QString &driver)
 {
-    /* The TINYDRIVERS_MYSQL/PSQL/SQLITE_PATH-s are optional; whoever will deal with
+    /* The TINYDRIVERS_MYSQL/PSQL/SQLITE_PATH-s are optional so whoever will deal with
        the TinyDrivers to be able to avoid defining these macros. */
 #if (defined TINYDRIVERS_MYSQL_LOADABLE_LIBRARY && !defined(TINYDRIVERS_MYSQL_PATH)) || \
     (defined TINYDRIVERS_PSQL_LOADABLE_LIBRARY && !defined(TINYDRIVERS_PSQL_PATH))   || \
@@ -440,15 +447,15 @@ SqlDatabasePrivate::sqlDriverPathFromBuildSystem(const QString &driver)
         return getSqlDriverPath(TINY_STRINGIFY(TINYDRIVERS_MYSQL_PATH));
 #endif
 
-#ifdef TINYDRIVERS_PSQL_LOADABLE_LIBRARY
-    if (driver == QPSQL)
-        return getSqlDriverPath(TINY_STRINGIFY(TINYDRIVERS_PSQL_PATH));
-#endif
+// #ifdef TINYDRIVERS_PSQL_LOADABLE_LIBRARY
+//     if (driver == QPSQL)
+//         return getSqlDriverPath(TINY_STRINGIFY(TINYDRIVERS_PSQL_PATH));
+// #endif
 
-#ifdef TINYDRIVERS_SQLITE_LOADABLE_LIBRARY
-    if (driver == QSQLITE)
-        return getSqlDriverPath(TINY_STRINGIFY(TINYDRIVERS_SQLITE_PATH));
-#endif
+// #ifdef TINYDRIVERS_SQLITE_LOADABLE_LIBRARY
+//     if (driver == QSQLITE)
+//         return getSqlDriverPath(TINY_STRINGIFY(TINYDRIVERS_SQLITE_PATH));
+// #endif
 
     Q_UNREACHABLE();
 }
@@ -466,7 +473,7 @@ QString
 SqlDatabasePrivate::joinDriverPath(const QString &driverPath,
                                    const QString &driverBasename)
 {
-    return QDir::toNativeSeparators(u"%1/%2"_s.arg(driverPath, driverBasename));
+   return QDir::toNativeSeparators(u"%1/%2"_s.arg(driverPath, driverBasename));
 }
 #endif // TINYDRIVERS_MYSQL_LOADABLE_LIBRARY
 
@@ -480,9 +487,8 @@ void SqlDatabasePrivate::throwIfSqlDriverIsNull() const
 
     throw Exceptions::LogicError(
                 u"The SqlDatabasePrivate::sqldriver smart pointer is nullptr. "
-                 "The SqlDatabase instance is invalid after calling removeDatabase(). "
-                 "In %1()."_s
-                .arg(__tiny_func__));
+                 "The SqlDatabase instance is invalid after calling removeDatabase(), "
+                 "in %1()."_s.arg(__tiny_func__));
 }
 
 void SqlDatabasePrivate::throwIfDifferentThread(const SqlDatabase &db,
@@ -497,9 +503,9 @@ void SqlDatabasePrivate::throwIfDifferentThread(const SqlDatabase &db,
 
     throw Exceptions::LogicError(
                 u"The requested '%1' database connection does not belong to the calling "
-                 "thread it was created in another thread. This check can be disabled "
+                 "thread, it was created in another thread. This check can be disabled "
                  "using the SqlDatabase::disableThreadCheck(), then you have to "
-                 "synchronize your threads to avoid race conditions. In %2()."_s
+                 "synchronize your threads to avoid race conditions, in %2()."_s
                 .arg(connection, __tiny_func__));
 }
 

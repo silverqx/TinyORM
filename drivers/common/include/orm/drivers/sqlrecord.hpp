@@ -110,7 +110,7 @@ namespace Orm::Drivers
         inline bool contains(size_type index) const noexcept;
 
     private:
-        /*! Throw the std::out_of_range() exception if record doesn't contain an index. */
+        /*! Throw the OutOfRangeError exception if record doesn't contain an index. */
         void throwIfNotContains(size_type index, const QString &functionName) const;
 
         /*! FieldSegmentsType return type for getFieldNameSegments(). */

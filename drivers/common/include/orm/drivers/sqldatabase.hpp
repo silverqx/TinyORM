@@ -18,22 +18,16 @@ namespace Orm::Drivers
     /*! Database connection. */
     class TINYDRIVERS_EXPORT SqlDatabase : public SqlDatabaseManager
     {
-        // To access SqlDatabase() default constructor by the ConnectionsHash
-        friend QHash<QString, SqlDatabase>;
-
         // To access the private constructors and d smart pointer (private impl.)
         friend SqlDatabaseManager;
         // To access the d smart pointer (private implementation)
         friend class SqlDatabasePrivate;
 
-        /*! Default constructor (needed by the SqlDatabaseManager::cloneDatabase()). */
-        inline SqlDatabase() = default;
-
-        /*! Protected constructor. */
+        /*! Private constructor. */
         explicit SqlDatabase(const QString &driver);
-        /*! Protected constructor. */
+        /*! Private constructor. */
         explicit SqlDatabase(QString &&driver);
-        /*! Protected constructor. */
+        /*! Private constructor. */
         explicit SqlDatabase(std::unique_ptr<SqlDriver> &&driver);
 
     public:
@@ -61,7 +55,7 @@ namespace Orm::Drivers
 
         /* Getters / Setters */
         /*! Determine whether the connection is currently open. */
-        bool isOpen() const;
+        bool isOpen() const noexcept;
         /*! Determine if an error occurred while opening a new database connection. */
         bool isOpenError() const noexcept;
 

@@ -1,6 +1,6 @@
 #include "orm/drivers/sqlquery.hpp"
 
-/* I leave the QT_DEBUG_SQL defined to be compatible with the QtSql module, so
+/* I'll keep the QT_DEBUG_SQL C macro to be compatible with the QtSql module, so
    the QtSql module and the TinyDrivers are interchangeable. */
 
 /*! Log an executed query, elapsed time, and query /affected size to the stderr. */
@@ -42,10 +42,20 @@ SqlQuery::SqlQuery(std::unique_ptr<SqlResult> &&result) noexcept
     : m_sqlResult(std::move(result))
 {}
 
-/* The destructor must be in the cpp file because the m_sqlResult is unique_ptr.
-   If the destructor is inline then the compilation fails because a unique_ptr can't
-   destroy an incomplete type. */
+/* The destructor, move/assign constructors, and the swap() method must be defined
+   in the cpp file because the m_sqlResult is unique_ptr. If they are defined as inline
+   then the compilation fails because a unique_ptr can't destroy an incomplete type. */
+
+SqlQuery::SqlQuery(SqlQuery &&) noexcept = default;
+
+SqlQuery &SqlQuery::operator=(SqlQuery &&) noexcept = default;
+
 SqlQuery::~SqlQuery() = default;
+
+void SqlQuery::swap(SqlQuery &other) noexcept
+{
+    std::swap(m_sqlResult, other.m_sqlResult);
+}
 
 /* Getters / Setters */
 
@@ -137,11 +147,10 @@ bool SqlQuery::exec(const QString &query)
     timer.start();
 #endif
 
-    // CUR drivers this is bad, the mysql_real_query() inside the reset() silverqx
     const auto result = m_sqlResult->exec(query);
 
 #if defined(QT_DEBUG_SQL) || defined(TINYDRIVERS_DEBUG_SQL)
-    qDebug().nospace() << "Executed query (" << timer.elapsed() << "ms, "
+    qDebug().nospace() << "Executed normal query (" << timer.elapsed() << "ms, "
                        << m_sqlResult->size() << " results, "
                        << m_sqlResult->numRowsAffected() << " affected): "
                        << m_sqlResult->query();
@@ -372,7 +381,8 @@ QVariant SqlQuery::value(const QString &name) const
 
 bool SqlQuery::isNull(const size_type index) const
 {
-    if (isActive() && isValid())
+    // NOTE api different, QtSql also returns true for not active and not valid fields :/ silverqx
+    if (isActive() && isValid() && isSelect())
         return m_sqlResult->isNull(index);
 
     throw Exceptions::LogicError(
@@ -418,6 +428,7 @@ SqlQuery::size_type SqlQuery::numRowsAffected() const
 
 void SqlQuery::clear()
 {
+    // Ownership of a weak_ptr()
     const auto driver = driverWeakInternal();
 
     // CUR drivers revisit, maybe clear everything manually? What happens with current values, is below correct? silverqx

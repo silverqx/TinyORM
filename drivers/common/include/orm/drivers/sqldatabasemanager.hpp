@@ -27,41 +27,47 @@ namespace Orm::Drivers
         inline SqlDatabaseManager() = default;
 
     public:
+        /*! Copy constructor. */
+        inline SqlDatabaseManager(const SqlDatabaseManager &) = default;
+        /*! Copy assignment operator. */
+        inline SqlDatabaseManager &operator=(const SqlDatabaseManager &) = default; // clazy:exclude=function-args-by-value
+
+        /*! Move constructor. */
+        inline SqlDatabaseManager(SqlDatabaseManager &&) noexcept = default;
+        /*! Move assignment operator. */
+        inline SqlDatabaseManager &operator=(SqlDatabaseManager &&) noexcept = default;
+
         /*! Default destructor. */
         inline ~SqlDatabaseManager() = default;
 
-        /*! Default Database Connection Name, used as default value in method declarations
-            only. */
+        /*! Default Database Connection Name. */
         static const QString defaultConnection;
 
         /*! Obtain the given connection. */
-        static SqlDatabase
-        database(const QString &connection = defaultConnection, bool open = true);
+        static SqlDatabase database(const QString &connection = defaultConnection,
+                                    bool open = true);
         /*! Determine whether the manager contains the given connection. */
-        static bool
-        contains(const QString &connection = defaultConnection);
+        static bool contains(const QString &connection = defaultConnection);
 
         /*! Register a new database connection using the given driver name. */
-        static SqlDatabase
-        addDatabase(const QString &driver, const QString &connection = defaultConnection);
+        static SqlDatabase addDatabase(const QString &driver,
+                                       const QString &connection = defaultConnection);
         /*! Register a new database connection using the given driver name. */
-        static SqlDatabase
-        addDatabase(QString &&driver, const QString &connection = defaultConnection);
+        static SqlDatabase addDatabase(QString &&driver,
+                                       const QString &connection = defaultConnection);
         /*! Register a new database connection using the given driver instance. */
-        static SqlDatabase
-        addDatabase(std::unique_ptr<SqlDriver> &&driver,
-                    const QString &connection = defaultConnection);
+        static SqlDatabase addDatabase(std::unique_ptr<SqlDriver> &&driver,
+                                       const QString &connection = defaultConnection);
 
         /*! Remove the given database connection from the manager. */
-        static void
-        removeDatabase(const QString &connection);
+        static void removeDatabase(const QString &connection);
 
         /*! Clone the given connection and register it as a new database connection. */
-        static SqlDatabase
-        cloneDatabase(const SqlDatabase &other, const QString &connection);
+        static SqlDatabase cloneDatabase(const SqlDatabase &other,
+                                         const QString &connection);
         /*! Clone the given connection and register it as a new database connection. */
-        static SqlDatabase
-        cloneDatabase(const QString &otherConnection, const QString &connection);
+        static SqlDatabase cloneDatabase(const QString &otherConnection,
+                                         const QString &connection);
 
         /* Getters / Setters */
         /*! Get all of the available database drivers. */

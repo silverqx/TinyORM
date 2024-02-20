@@ -12,6 +12,17 @@ TINYORM_BEGIN_COMMON_NAMESPACE
 namespace Orm::Drivers::Exceptions
 {
 
+#ifdef TINYDRIVERS_MYSQL_DRIVER
+    /*! Prepare MySQL errNo and error message. */
+    struct MySqlErrorType
+    {
+        /*! Prepared database-specific error code. */
+        QString errNo {};
+        /*! Prepared database-specific error message. */
+        QString errorMessage {};
+    };
+#endif // TINYDRIVERS_MYSQL_DRIVER
+
     /*! TinyDrivers SqlError exception, wrapper for the database-specific error. */
     class TINYDRIVERS_EXPORT SqlError : public RuntimeError // clazy:exclude=copyable-polymorphic
     {
@@ -20,15 +31,6 @@ namespace Orm::Drivers::Exceptions
         SqlError() = delete;
 
 #ifdef TINYDRIVERS_MYSQL_DRIVER
-        /*! Prepare MySQL errNo and error message. */
-        struct MySqlErrorType
-        {
-            /*! Prepared database-specific error code. */
-            QString errNo {};
-            /*! Prepared database-specific error message. */
-            QString errorMessage {};
-        };
-
         /*! Converting constructor for MySQL. */
         SqlError(const char *message, MySqlErrorType &&mysqlError);
         /*! Converting constructor for MySQL. */

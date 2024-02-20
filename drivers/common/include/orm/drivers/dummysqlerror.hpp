@@ -52,7 +52,7 @@ namespace Orm::Drivers
         /*! Equality comparison operator for the SqlError. */
         inline bool operator==(const DummySqlError &other) const noexcept;
 
-        /*! Swap the SqlError. */
+        /*! Swap the DummySqlError. */
         inline void swap(DummySqlError &other) noexcept;
 
         /* Getters */
@@ -114,7 +114,7 @@ namespace Orm::Drivers
         return m_databaseText;
     }
 
-    DummySqlError::ErrorType DummySqlError::type() const noexcept
+    DummySqlError::ErrorType DummySqlError::type() const noexcept // NOLINT(readability-convert-member-functions-to-static)
     {
         return NoError;
     }
