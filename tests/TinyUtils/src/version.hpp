@@ -2,12 +2,6 @@
 #ifndef TINYUTILS_VERSION_HPP
 #define TINYUTILS_VERSION_HPP
 
-// Excluded for the Resource compiler
-#ifndef RC_INVOKED
-#  include "orm/macros/systemheader.hpp"
-TINY_SYSTEM_HEADER
-#endif
-
 #include <orm/macros/stringify.hpp>
 
 #define TINYUTILS_VERSION_MAJOR 0
