@@ -160,7 +160,7 @@ namespace Orm::Drivers
         virtual size_type numRowsAffected() = 0;
 
         /*! Release memory associated with the current result set. */
-        virtual void detachFromResultSet() const noexcept = 0;
+        virtual void detachFromResultSet() noexcept = 0;
 
         /*! Discard the current result set and navigate to the next if available
             (not supported). */
