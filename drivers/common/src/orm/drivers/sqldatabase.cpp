@@ -245,7 +245,7 @@ std::weak_ptr<SqlDriver> SqlDatabase::driverWeak() noexcept
     return d->sqldriver;
 }
 
-bool SqlDatabase::isThreadCheck() noexcept
+bool SqlDatabase::isThreadCheckEnabled() noexcept
 {
     return SqlDatabasePrivate::checkSameThread();
 }

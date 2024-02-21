@@ -380,7 +380,7 @@ QStringList Databases::driversOpenedConnectionNames()
 
 bool Databases::driversIsThreadCheck() noexcept
 {
-    return SqlDatabase::isThreadCheck();
+    return SqlDatabase::isThreadCheckEnabled();
 }
 #endif
 

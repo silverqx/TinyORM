@@ -122,7 +122,7 @@ namespace Orm::Drivers
         std::weak_ptr<SqlDriver> driverWeak() noexcept;
 
         /*! Determine if the same thread check during the database() call is enabled. */
-        static bool isThreadCheck() noexcept;
+        static bool isThreadCheckEnabled() noexcept;
         /*! Disable the same thread check during SqlDatabase::database() call. */
         static void disableThreadCheck() noexcept;
 
