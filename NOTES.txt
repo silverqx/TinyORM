@@ -174,7 +174,7 @@ MySQL:
       Returns in the local timezone.
       - for prepared statements:
         return QDateTime(date, time);
-      - for non-prepared statements:
+      - for non-prepared/normal statements:
         return qDateTimeFromString(val); it internally calls
         return QVariant(QDateTime::fromString(val, Qt::ISODate));
 
