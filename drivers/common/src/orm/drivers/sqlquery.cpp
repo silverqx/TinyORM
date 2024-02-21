@@ -426,6 +426,23 @@ SqlQuery::size_type SqlQuery::numRowsAffected() const
 
 /* Others */
 
+/* clear() vs finish()
+
+   clear() resets the SqlQuery instance to the initial state, it creates a new SqlResult
+   (eg. MySqlResult) and also a new SqlQuery and moves this new instance to the *this.
+
+   finish() instructs the database driver that no more data will be fetched
+   from this query until it is re-executed. Sets a query to an inactive state and resets
+   the cursor to initial state (BeforeFirstRow).
+
+   Eg. for MySQL prepared statements it releases memory associated with the result set
+   produced by execution of the prepared statement. If there is a cursor open
+   for the statement, mysql_stmt_free_result() closes it. Free the client side memory
+   buffers, reset long data state on client if necessary, and reset the server side
+   statement if this has been requested.
+
+   Bound values retain their values. */
+
 void SqlQuery::clear()
 {
     // Ownership of a weak_ptr()
