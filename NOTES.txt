@@ -1075,6 +1075,27 @@ These are all header files that are used:
 #include <orm/support/replacebindings.hpp>
 
 
+TinyDrivers output of operator<<()-s:
+-------------------------------------
+
+Output of all TinyDrivers operator<<()-s SqlDatabase, SqlRecord, SqlField, DummySqlError
+
+SqlDatabase(driver="QMYSQL", database="tinyorm_test_1", host="mysql.test", port=3306, user="szachara", open=true", options="SSL_CERT=C:/mysql/mysql_8.3/data/client-cert.pem;SSL_KEY=C:/mysql/mysql_8.3/data/client-key.pem;SSL_CA=C:/mysql/mysql_8.3/data/ca.pem")
+--
+SqlRecord(7)
+ 0: SqlField(name: "id", type: qulonglong, value: "1", isNull: false, isValid: true, length: 20, precision: 0, required: true, sqlType: 8, autoIncrement: true, tableName: "users")
+ 1: SqlField(name: "name", type: QString, value: "andrej", isNull: false, isValid: true, length: 1020, precision: 0, required: true, sqlType: 253, autoIncrement: false, tableName: "users")
+ 2: SqlField(name: "is_banned", type: char, value: "0", isNull: false, isValid: true, length: 1, precision: 0, required: true, sqlType: 1, autoIncrement: false, tableName: "users")
+ 3: SqlField(name: "note", type: QString, value: NULL, isNull: true, isValid: true, length: 1020, precision: 0, required: false, sqlType: 253, autoIncrement: false, tableName: "users")
+ 4: SqlField(name: "created_at", type: QDateTime, value: "2022-01-01T14:51:23.000", isNull: false, isValid: true, length: 19, precision: 0, required: false, sqlType: 7, autoIncrement: false, tableName: "users")
+ 5: SqlField(name: "updated_at", type: QDateTime, value: "2022-01-01T17:46:31.000", isNull: false, isValid: true, length: 19, precision: 0, required: false, sqlType: 7, autoIncrement: false, tableName: "users")
+ 6: SqlField(name: "deleted_at", type: QDateTime, value: NULL, isNull: true, isValid: true, length: 19, precision: 0, required: false, sqlType: 7, autoIncrement: false, tableName: "users")
+--
+SqlField(name: "name", type: QString, value: "andrej", isNull: false, isValid: true, length: 1020, precision: 0, required: true, sqlType: 253, autoIncrement: false, tableName: "users")
+--
+DummySqlError(errorType: NoError)
+
+
 CMake Guidelines:
 -----------------
 

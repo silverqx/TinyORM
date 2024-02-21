@@ -298,19 +298,28 @@ QDebug operator<<(QDebug debug,
     const QDebugStateSaver saver(debug);
     debug.noquote().nospace();
 
-    // CUR drivers test and finish, also SqlError silverqx
     if (!connection.isValid()) {
         debug << "SqlDatabase(invalid)";
         return debug;
     }
 
+    /* The SqlDatabase output format is different from SqlRecord or SqlField that use
+       ': ' instead of = but this is correct, it's much better to print these connection
+       arguments with = because psql or mysql client applications use this format too. */
     debug << "SqlDatabase("
           << "driver=\""   << connection.driverName()   << "\", "
           << "database=\"" << connection.databaseName() << "\", "
           << "host=\""     << connection.hostName()     << "\", "
           << "port="       << connection.port()         << ", "
           << "user=\""     << connection.userName()     << "\", "
-          << "open="       << connection.isOpen()       << ')';
+          << "open="       << connection.isOpen()       << '"';
+
+    if (const auto connectOptions = connection.connectOptions();
+        !connectOptions.isEmpty()
+    )
+        debug << ", options=\"" << connectOptions << '"';
+
+    debug << ')';
 
     return debug;
 }
