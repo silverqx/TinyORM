@@ -450,20 +450,21 @@ MySqlResult::size_type MySqlResult::numRowsAffected()
     return static_cast<size_type>(mysql_affected_rows(d->drv_d_func()->mysql));
 }
 
-void MySqlResult::detachFromResultSet() const noexcept
+void MySqlResult::detachFromResultSet() noexcept
 {
     Q_D(const MySqlResult);
 
+    // Don't log warnings here to leave this method noexcept
+
     if (d->preparedQuery)
-        // CUR drivers log warning if failed? silverqx
         mysql_stmt_free_result(d->stmt);
 
-    // CUR drivers what about mysql_free_result()? Also look SqlQuery::finish() silverqx
+    else
+        mysqlFreeResultsForDtor();
 }
 
 /* Cleanup */
 
-// CUR drivers revisit all 4 free methods detachFromResultSet(), cleanup(), mysqlFreeResults(), and mysqlStmtClose() how they relate and how they are used silverqx
 void MySqlResult::cleanup()
 {
     Q_D(MySqlResult);

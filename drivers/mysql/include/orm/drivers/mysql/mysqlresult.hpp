@@ -69,7 +69,7 @@ namespace Orm::Drivers::MySql
         size_type numRowsAffected() final;
 
         /*! Release memory associated with the current result set. */
-        void detachFromResultSet() const noexcept final;
+        void detachFromResultSet() noexcept final;
 
         /* Cleanup */
         /*! Main cleanup method, free normal and prepared statements. */
