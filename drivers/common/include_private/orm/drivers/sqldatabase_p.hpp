@@ -73,7 +73,7 @@ namespace Support
         static ConnectionsHash &connections();
 
         /*! Determine whether the same thread check is enabled during database() call. */
-        static bool &checkSameThread() noexcept;
+        static std::atomic_bool &checkSameThread() noexcept;
 
         /* Factory methods */
         /*! Factory method to create a new database driver by the given driver name. */

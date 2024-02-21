@@ -149,9 +149,9 @@ ConnectionsHash &SqlDatabasePrivate::connections()
     return *g_connections;
 }
 
-bool &SqlDatabasePrivate::checkSameThread() noexcept
+std::atomic_bool &SqlDatabasePrivate::checkSameThread() noexcept
 {
-    static auto isEnabled = true;
+    static std::atomic_bool isEnabled = true;
     return isEnabled;
 }
 
