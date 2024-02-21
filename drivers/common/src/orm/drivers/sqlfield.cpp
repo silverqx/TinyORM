@@ -14,7 +14,7 @@ namespace Orm::Drivers
 /* public */
 
 SqlField::SqlField(QString fieldName, const QMetaType metaType, QString table)
-    : m_value(QVariant(metaType, nullptr))
+    : m_value(QVariant(metaType))
     , m_name(std::move(fieldName))
     , m_table(std::move(table))
     , m_metaType(metaType)
@@ -37,7 +37,7 @@ void SqlField::swap(SqlField &other) noexcept
 
 void SqlField::clear()
 {
-    m_value = QVariant(m_metaType, nullptr);
+    m_value = QVariant(m_metaType);
 }
 
 /* Getters / Setters */
@@ -47,7 +47,7 @@ void SqlField::setMetaType(const QMetaType metaType)
     m_metaType = metaType;
 
     if (!m_value.isValid())
-        m_value = QVariant(metaType, nullptr);
+        m_value = QVariant(metaType);
 }
 
 } // namespace Orm::Drivers
