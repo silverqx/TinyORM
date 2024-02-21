@@ -88,7 +88,8 @@ operator<<(QDebug debug, const TINYORM_PREPEND_NAMESPACE(Orm::Drivers::SqlField)
     const QDebugStateSaver saver(debug);
     debug.nospace();
 
-    debug << "SqlField(" << field.name() << ", " << field.metaType().name();
+    debug << "SqlField(name: " << field.name()
+          << ", type: " << field.metaType().name();
 
     // Log the SqlField QVariant value to the QDebug stream
     logSqlFieldValue(debug, field.value());
@@ -105,10 +106,11 @@ operator<<(QDebug debug, const TINYORM_PREPEND_NAMESPACE(Orm::Drivers::SqlField)
     if (field.requiredStatus() != SqlFieldType::Unknown)
         debug << ", required: " << field.isRequired();
 
-    // CUR drivers finish defaultValue() silverqx
+    // CUR drivers finish defaultValue(), look at the bottom of this file for more info silverqx
     if (!field.defaultValue().isNull())
         debug << ", defaultValue: " << field.defaultValue();
 
+    // FUTURE drivers MySQL in client.cc exists fieldtype2str() that converts field.sqlType() to string, add support for printing this to SqlField; a new data member with getter/setter will be needed silverqx
     if (field.sqlType() >= 0)
         debug << ", sqlType: " << field.sqlType();
 
@@ -121,3 +123,14 @@ operator<<(QDebug debug, const TINYORM_PREPEND_NAMESPACE(Orm::Drivers::SqlField)
     return debug;
 }
 #endif
+
+/* CUR drivers finish defaultValue():
+   We will need something like this, also the MYSQL_FIELD.def data member was dropped
+   in MySQL v8.3, what means connector C API doesn't provide this default field value,
+   also both IS_NULLABLE and COLUMN_DEFAULT must be checked to correctly obtain this
+   information, there is also some info at about NO_DEFAULT_VALUE_FLAG:
+   https://dev.mysql.com/doc/c-api/8.0/en/c-api-data-structures.html:
+- SHOW COLUMNS FROM users;
+- describe users; (the same as SHOW COLUMNS)
+- select c.COLUMN_NAME, c.IS_NULLABLE, c.COLUMN_DEFAULT from information_schema.`COLUMNS` c where c.TABLE_SCHEMA = 'tinyorm_test_1' and c.TABLE_NAME = 'users'; (this select-s as little info as possible)
+*/
