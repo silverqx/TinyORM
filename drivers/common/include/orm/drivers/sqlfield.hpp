@@ -127,6 +127,13 @@ namespace Orm::Drivers
         /*! Set the underlying database field type (database dependent). */
         inline void setSqlType(int sqlType) noexcept;
 
+        /*! Get the underlying database field type (database dependent) (alias). */
+        inline QString sqlTypeName() const noexcept;
+        /*! Set the underlying database field type (database dependent). */
+        inline void setSqlTypeName(const QString &sqlTypeName) noexcept;
+        /*! Set the underlying database field type (database dependent). */
+        inline void setSqlTypeName(QString &&sqlTypeName) noexcept;
+
         /*! Determine whether a field is auto-incrementing (alias). */
         inline bool isAutoIncrement() const noexcept;
         /*! Mark the field as auto-incrementing (alias). */
@@ -146,6 +153,8 @@ namespace Orm::Drivers
         QString m_name;
         /*! Table name a field belongs to. */
         QString m_table;
+        /*! Underlying database field type name (DB dependent). */
+        QString m_sqlTypeName {}; // Moved up here for a better memory layout/padding
         /*! Field default value. */
         QVariant m_defaultValue {};
         /*! Qt metatype. */
@@ -294,6 +303,21 @@ namespace Orm::Drivers
     void SqlField::setSqlType(const int sqlType) noexcept
     {
         m_sqlType = sqlType;
+    }
+
+    QString SqlField::sqlTypeName() const noexcept
+    {
+        return m_sqlTypeName;
+    }
+
+    void SqlField::setSqlTypeName(const QString &sqlTypeName) noexcept
+    {
+        m_sqlTypeName = sqlTypeName;
+    }
+
+    void SqlField::setSqlTypeName(QString &&sqlTypeName) noexcept
+    {
+        m_sqlTypeName = std::move(sqlTypeName);
     }
 
     bool SqlField::isAutoIncrement() const noexcept

@@ -1080,20 +1080,56 @@ TinyDrivers output of operator<<()-s:
 
 Output of all TinyDrivers operator<<()-s SqlDatabase, SqlRecord, SqlField, DummySqlError
 
-SqlDatabase(driver="QMYSQL", database="tinyorm_test_1", host="mysql.test", port=3306, user="szachara", open=true", options="SSL_CERT=C:/mysql/mysql_8.3/data/client-cert.pem;SSL_KEY=C:/mysql/mysql_8.3/data/client-key.pem;SSL_CA=C:/mysql/mysql_8.3/data/ca.pem")
+SqlDatabase(driver="QMYSQL", database="tinyorm_test_1", host="mysql.test", port=3306, user="szachara", open=true", options="SSL_CERT=C:/mysql/mysql_8.3/data/client-cert.pem;SSL_CA=C:/mysql/mysql_8.3/data/ca.pem;SSL_KEY=C:/mysql/mysql_8.3/data/client-key.pem")
 --
 SqlRecord(7)
- 0: SqlField(name: "id", type: qulonglong, value: "1", isNull: false, isValid: true, length: 20, precision: 0, required: true, sqlType: 8, autoIncrement: true, tableName: "users")
- 1: SqlField(name: "name", type: QString, value: "andrej", isNull: false, isValid: true, length: 1020, precision: 0, required: true, sqlType: 253, autoIncrement: false, tableName: "users")
- 2: SqlField(name: "is_banned", type: char, value: "0", isNull: false, isValid: true, length: 1, precision: 0, required: true, sqlType: 1, autoIncrement: false, tableName: "users")
- 3: SqlField(name: "note", type: QString, value: NULL, isNull: true, isValid: true, length: 1020, precision: 0, required: false, sqlType: 253, autoIncrement: false, tableName: "users")
- 4: SqlField(name: "created_at", type: QDateTime, value: "2022-01-01T14:51:23.000", isNull: false, isValid: true, length: 19, precision: 0, required: false, sqlType: 7, autoIncrement: false, tableName: "users")
- 5: SqlField(name: "updated_at", type: QDateTime, value: "2022-01-01T17:46:31.000", isNull: false, isValid: true, length: 19, precision: 0, required: false, sqlType: 7, autoIncrement: false, tableName: "users")
- 6: SqlField(name: "deleted_at", type: QDateTime, value: NULL, isNull: true, isValid: true, length: 19, precision: 0, required: false, sqlType: 7, autoIncrement: false, tableName: "users")
+ 0: SqlField(name: "id", type: qulonglong, value: "1", isNull: false, isValid: true, length: 20, precision: 0, required: true, sqlType: 8, sqlTypeName: BIGINT, autoIncrement: true, tableName: "users")
+ 1: SqlField(name: "name", type: QString, value: "andrej", isNull: false, isValid: true, length: 1020, precision: 0, required: true, sqlType: 253, sqlTypeName: VARCHAR, autoIncrement: false, tableName: "users")
+ 2: SqlField(name: "is_banned", type: char, value: "0", isNull: false, isValid: true, length: 1, precision: 0, required: true, sqlType: 1, sqlTypeName: TINYINT, autoIncrement: false, tableName: "users")
+ 3: SqlField(name: "note", type: QString, value: NULL, isNull: true, isValid: true, length: 1020, precision: 0, required: false, sqlType: 253, sqlTypeName: VARCHAR, autoIncrement: false, tableName: "users")
+ 4: SqlField(name: "created_at", type: QDateTime, value: "2022-01-01T14:51:23.000", isNull: false, isValid: true, length: 19, precision: 0, required: false, sqlType: 7, sqlTypeName: TIMESTAMP, autoIncrement: false, tableName: "users")
+ 5: SqlField(name: "updated_at", type: QDateTime, value: "2022-01-01T17:46:31.000", isNull: false, isValid: true, length: 19, precision: 0, required: false, sqlType: 7, sqlTypeName: TIMESTAMP, autoIncrement: false, tableName: "users")
+ 6: SqlField(name: "deleted_at", type: QDateTime, value: NULL, isNull: true, isValid: true, length: 19, precision: 0, required: false, sqlType: 7, sqlTypeName: TIMESTAMP, autoIncrement: false, tableName: "users")
 --
-SqlField(name: "name", type: QString, value: "andrej", isNull: false, isValid: true, length: 1020, precision: 0, required: true, sqlType: 253, autoIncrement: false, tableName: "users")
+SqlField(name: "name", type: QString, value: "andrej", isNull: false, isValid: true, length: 1020, precision: 0, required: true, sqlType: 253, sqlTypeName: VARCHAR, autoIncrement: false, tableName: "users")
 --
 DummySqlError(errorType: NoError)
+--
+SqlRecord(30)
+ 0: SqlField(name: "id", type: qulonglong, value: "1", isNull: false, isValid: true, length: 20, precision: 0, required: true, sqlType: 8, sqlTypeName: BIGINT, autoIncrement: true, tableName: "types")
+ 1: SqlField(name: "bool_true", type: char, value: "1", isNull: false, isValid: true, length: 1, precision: 0, required: false, sqlType: 1, sqlTypeName: TINYINT, autoIncrement: false, tableName: "types")
+ 2: SqlField(name: "bool_false", type: char, value: "0", isNull: false, isValid: true, length: 1, precision: 0, required: false, sqlType: 1, sqlTypeName: TINYINT, autoIncrement: false, tableName: "types")
+ 3: SqlField(name: "smallint", type: short, value: "32760", isNull: false, isValid: true, length: 6, precision: 0, required: false, sqlType: 2, sqlTypeName: SMALLINT, autoIncrement: false, tableName: "types")
+ 4: SqlField(name: "smallint_u", type: ushort, value: "32761", isNull: false, isValid: true, length: 5, precision: 0, required: false, sqlType: 2, sqlTypeName: SMALLINT, autoIncrement: false, tableName: "types")
+ 5: SqlField(name: "int", type: int, value: "2147483640", isNull: false, isValid: true, length: 11, precision: 0, required: false, sqlType: 3, sqlTypeName: INT, autoIncrement: false, tableName: "types")
+ 6: SqlField(name: "int_u", type: uint, value: "2147483641", isNull: false, isValid: true, length: 10, precision: 0, required: false, sqlType: 3, sqlTypeName: INT, autoIncrement: false, tableName: "types")
+ 7: SqlField(name: "bigint", type: qlonglong, value: "9223372036854775800", isNull: false, isValid: true, length: 20, precision: 0, required: false, sqlType: 8, sqlTypeName: BIGINT, autoIncrement: false, tableName: "types")
+ 8: SqlField(name: "bigint_u", type: qulonglong, value: "9223372036854775801", isNull: false, isValid: true, length: 20, precision: 0, required: false, sqlType: 8, sqlTypeName: BIGINT, autoIncrement: false, tableName: "types")
+ 9: SqlField(name: "double", type: double, value: "1000000.123", isNull: false, isValid: true, length: 22, precision: 31, required: false, sqlType: 5, sqlTypeName: DOUBLE, autoIncrement: false, tableName: "types")
+10: SqlField(name: "double_nan", type: double, value: NULL, isNull: true, isValid: true, length: 22, precision: 31, required: false, sqlType: 5, sqlTypeName: DOUBLE, autoIncrement: false, tableName: "types")
+11: SqlField(name: "double_infinity", type: double, value: NULL, isNull: true, isValid: true, length: 22, precision: 31, required: false, sqlType: 5, sqlTypeName: DOUBLE, autoIncrement: false, tableName: "types")
+12: SqlField(name: "decimal", type: double, value: "100000.12", isNull: false, isValid: true, length: 10, precision: 2, required: false, sqlType: 246, sqlTypeName: DECIMAL, autoIncrement: false, tableName: "types")
+13: SqlField(name: "decimal_nan", type: double, value: NULL, isNull: true, isValid: true, length: 10, precision: 2, required: false, sqlType: 246, sqlTypeName: DECIMAL, autoIncrement: false, tableName: "types")
+14: SqlField(name: "decimal_infinity", type: double, value: NULL, isNull: true, isValid: true, length: 11, precision: 0, required: false, sqlType: 246, sqlTypeName: DECIMAL, autoIncrement: false, tableName: "types")
+15: SqlField(name: "decimal_down", type: double, value: "100.12", isNull: false, isValid: true, length: 10, precision: 2, required: false, sqlType: 246, sqlTypeName: DECIMAL, autoIncrement: false, tableName: "types")
+16: SqlField(name: "decimal_up", type: double, value: "100.13", isNull: false, isValid: true, length: 10, precision: 2, required: false, sqlType: 246, sqlTypeName: DECIMAL, autoIncrement: false, tableName: "types")
+17: SqlField(name: "string", type: QString, value: "string text", isNull: false, isValid: true, length: 1020, precision: 0, required: false, sqlType: 253, sqlTypeName: VARCHAR, autoIncrement: false, tableName: "types")
+18: SqlField(name: "text", type: QString, value: "text text", isNull: false, isValid: true, length: 262140, precision: 0, required: false, sqlType: 252, sqlTypeName: TEXT, autoIncrement: false, tableName: "types")
+19: SqlField(name: "medium_text", type: QString, value: NULL, isNull: true, isValid: true, length: 67108860, precision: 0, required: false, sqlType: 252, sqlTypeName: TEXT, autoIncrement: false, tableName: "types")
+20: SqlField(name: "timestamp", type: QDateTime, value: "2022-09-09T08:41:28.000", isNull: false, isValid: true, length: 19, precision: 0, required: false, sqlType: 7, sqlTypeName: TIMESTAMP, autoIncrement: false, tableName: "types")
+21: SqlField(name: "datetime", type: QDateTime, value: "2022-09-10T08:41:28.000", isNull: false, isValid: true, length: 19, precision: 0, required: false, sqlType: 12, sqlTypeName: DATETIME, autoIncrement: false, tableName: "types")
+22: SqlField(name: "date", type: QDate, value: "2022-09-11", isNull: false, isValid: true, length: 10, precision: 0, required: false, sqlType: 10, sqlTypeName: DATE, autoIncrement: false, tableName: "types")
+23: SqlField(name: "binary", type: QByteArray, value: "Qt is great!", isNull: false, isValid: true, length: 65535, precision: 0, required: false, sqlType: 252, sqlTypeName: BLOB, autoIncrement: false, tableName: "types")
+24: SqlField(name: "medium_binary", type: QByteArray, value: NULL, isNull: true, isValid: true, length: 16777215, precision: 0, required: false, sqlType: 252, sqlTypeName: BLOB, autoIncrement: false, tableName: "types")
+↓↓↓ I manually added these columns during testing, they don't exist in the `types` table
+25: SqlField(name: "char_col", type: QString, value: NULL, isNull: true, isValid: true, length: 60, precision: 0, required: false, sqlType: 254, sqlTypeName: CHAR, autoIncrement: false, tableName: "types")
+26: SqlField(name: "bin", type: QByteArray, value: NULL, isNull: true, isValid: true, length: 255, precision: 0, required: false, sqlType: 254, sqlTypeName: BINARY, autoIncrement: false, tableName: "types")
+27: SqlField(name: "varbin", type: QByteArray, value: NULL, isNull: true, isValid: true, length: 255, precision: 0, required: false, sqlType: 253, sqlTypeName: VARBINARY, autoIncrement: false, tableName: "types")
+28: SqlField(name: "enum1", type: QString, value: NULL, isNull: true, isValid: true, length: 8, precision: 0, required: false, sqlType: 254, sqlTypeName: ENUM, autoIncrement: false, tableName: "types")
+29: SqlField(name: "set1", type: QString, value: NULL, isNull: true, isValid: true, length: 36, precision: 0, required: false, sqlType: 254, sqlTypeName: SET, autoIncrement: false, tableName: "types")
+
+- SQL to quickly add 5 new columns above:
+ALTER TABLE `types` ADD `char_col` CHAR(20) NULL DEFAULT NULL AFTER `medium_binary`, ADD `bin` BINARY(255) NULL DEFAULT NULL AFTER `char_col`, ADD `varbin` VARBINARY(255) NULL DEFAULT NULL AFTER `bin`, ADD `enum1` ENUM('aa','bb','cc') NULL DEFAULT NULL AFTER `varbin`, ADD `set1` SET('qq','ww','yy') NULL DEFAULT NULL AFTER `enum1`;
 
 
 CMake Guidelines:
