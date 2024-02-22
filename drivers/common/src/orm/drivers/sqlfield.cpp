@@ -64,7 +64,7 @@ namespace
     {
         using Orm::Drivers::Constants::null_;
 
-        static const auto Invalid = "INVALID"_L1;
+        static const auto Invalid = u"INVALID"_s;
         static const auto Null = null_.toUpper();
 
         debug << ", value: ";
@@ -89,7 +89,7 @@ operator<<(QDebug debug, const TINYORM_PREPEND_NAMESPACE(Orm::Drivers::SqlField)
     debug.nospace();
 
     debug << "SqlField(name: " << field.name()
-          << ", type: " << field.metaType().name();
+          << ", type: "        << field.metaType().name();
 
     // Log the SqlField QVariant value to the QDebug stream
     logSqlFieldValue(debug, field.value());
@@ -110,15 +110,18 @@ operator<<(QDebug debug, const TINYORM_PREPEND_NAMESPACE(Orm::Drivers::SqlField)
     if (!field.defaultValue().isNull())
         debug << ", defaultValue: " << field.defaultValue();
 
-    // FUTURE drivers MySQL in client.cc exists fieldtype2str() that converts field.sqlType() to string, add support for printing this to SqlField; a new data member with getter/setter will be needed silverqx
     if (field.sqlType() >= 0)
         debug << ", sqlType: " << field.sqlType();
 
-    debug << ", autoIncrement: " << field.isAutoIncrement()
+    if (!field.sqlTypeName().isEmpty())
+        debug.noquote() << ", sqlTypeName: " << field.sqlTypeName();
 
-          << ", tableName: "
-          << (field.tableName().isEmpty() ? u"(not specified)"_s : field.tableName())
-          << ')';
+    debug.quote() << ", autoIncrement: " << field.isAutoIncrement()
+
+                  << ", tableName: "
+                  << (field.tableName().isEmpty() ? u"(not specified)"_s
+                                                  : field.tableName())
+                  << ')';
 
     return debug;
 }
