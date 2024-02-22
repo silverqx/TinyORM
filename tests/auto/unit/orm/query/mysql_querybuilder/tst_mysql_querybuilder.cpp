@@ -3489,7 +3489,7 @@ void tst_MySql_QueryBuilder::upsert_UseUpsertAlias_DefaultValue() const
 
 void tst_MySql_QueryBuilder::upsert_UseUpsertAlias_Maria() const
 {
-    const auto configVersion = sl("11.0.1-MariaDB");
+    const auto configVersion = sl("11.3.2-MariaDB");
 
     // Need to be set before pretending
     auto &mysqlConnection = dynamic_cast<MySqlConnection &>(DB::connection(m_connection));
@@ -3606,7 +3606,7 @@ void tst_MySql_QueryBuilder::
 
 void tst_MySql_QueryBuilder::upsert_WithoutUpdate_UpdateAll_UseUpsertAlias_Maria() const
 {
-    const auto configVersion = sl("11.0.1-MariaDB");
+    const auto configVersion = sl("11.3.2-MariaDB");
 
     // Need to be set before pretending
     auto &mysqlConnection = dynamic_cast<MySqlConnection &>(DB::connection(m_connection));

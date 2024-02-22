@@ -214,7 +214,7 @@ void tst_MySql_SchemaBuilder::initTestCase()
     /* No need to test with the MariaDB (MARIADB connection) because it will produce
        the same output in 99% cases. I will create a new MARIADB connection as needed,
        eg. see nullable modifier tests for generated columns.
-       Also, I can't use the setConfigVersion("11.0.1-MariaDB") technique here as
+       Also, I can't use the setConfigVersion("11.3.2-MariaDB") technique here as
        in the upsert tests because of the MySqlSchemaGrammar::m_isMaria,
        the MySqlSchemaGrammar is instatiated only once for the DatabaseConnection. */
     auto connections = Databases::createConnections({Databases::MYSQL,
@@ -2165,7 +2165,7 @@ void tst_MySql_SchemaBuilder::virtualAs_StoredAs_CreateTable_Maria() const
                                     {ClassName, QString::fromUtf8(__func__)}, // NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
     {
         // Force MariaDB version because autodetection can't work with pretended queries
-        {Version, "11.0.1-MariaDB"}
+        {Version, "11.3.2-MariaDB"}
     });
 
     if (!connectionName)
@@ -2219,7 +2219,7 @@ void tst_MySql_SchemaBuilder::virtualAs_StoredAs_Nullable_CreateTable_Maria() co
                                     {ClassName, QString::fromUtf8(__func__)}, // NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
     {
         // Force MariaDB version because autodetection can't work with pretended queries
-        {Version, "11.0.1-MariaDB"}
+        {Version, "11.3.2-MariaDB"}
     });
 
     if (!connectionName)
@@ -2273,7 +2273,7 @@ void tst_MySql_SchemaBuilder::virtualAs_StoredAs_ModifyTable_Maria() const
                                     {ClassName, QString::fromUtf8(__func__)}, // NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
     {
         // Force MariaDB version because autodetection can't work with pretended queries
-        {Version, "11.0.1-MariaDB"}
+        {Version, "11.3.2-MariaDB"}
     });
 
     if (!connectionName)
@@ -2317,7 +2317,7 @@ void tst_MySql_SchemaBuilder::virtualAs_StoredAs_Nullable_ModifyTable_Maria() co
                                     {ClassName, QString::fromUtf8(__func__)}, // NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
     {
         // Force MariaDB version because autodetection can't work with pretended queries
-        {Version, "11.0.1-MariaDB"}
+        {Version, "11.3.2-MariaDB"}
     });
 
     if (!connectionName)
