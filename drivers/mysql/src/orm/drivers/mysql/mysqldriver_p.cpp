@@ -89,9 +89,26 @@ namespace
 void
 MySqlDriverPrivate::mysqlSetCharacterSet(const QString &host, const bool before) const
 {
-    for (const auto *const csname : DefaultCharacterSets)
-        if (mysql_set_character_set(mysql, csname) == 0)
-            return;
+#ifndef MARIADB_VERSION_ID
+    static constexpr auto isMaria = false;
+#else
+    static constexpr auto isMaria = true;
+#endif
+
+    for (const auto *const characterSetName : DefaultCharacterSets)
+        /* MySQL's mysql_set_character_set() is more advanced and is optimized to call it
+           before the mysql_real_connect(), it can detect whether connection
+           to the database exists and prepare charset based on it.
+           On the other hand, MariaDB isn't able to do it this way and reports
+           "Server has gone away" because it tries to execute "SET NAMES csname" query. */
+        if (before && isMaria) {
+            if (mysql_options(mysql, MYSQL_SET_CHARSET_NAME, characterSetName) == 0) // Must be as the separate if
+                return;
+        }
+        else {
+            if (mysql_set_character_set(mysql, characterSetName) == 0)
+                return;
+        }
 
     const auto messageTmpl =
             before ? u"before establishing a database connection to the '%1' host"_s
