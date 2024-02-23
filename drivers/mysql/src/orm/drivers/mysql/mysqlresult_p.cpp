@@ -100,7 +100,6 @@ bool MySqlResultPrivate::bindResultValues()
         field.metaType = MySqlUtils::decodeMySqlType(fieldInfo->type, fieldInfo->flags);
         resultBind.buffer_type = fieldInfo->type;
 
-        // CUR drivers finish this during testing BLOB-s silverqx
         if (isBlobType(fieldInfo->type)) {
             /* The size of a blob-field is available as soon as
                the mysql_stmt_store_result() is called, it's after
