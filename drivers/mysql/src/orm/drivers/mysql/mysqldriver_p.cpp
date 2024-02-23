@@ -40,7 +40,9 @@ MySqlDriverPrivate::mysqlSetConnectionOptions(const QString &options)
     /* Enable the MySQL's stored procedures support.
        Needed to enable CLIEN_MULTI_STATEMENTS (which also enables CLIENT_MULTI_RESULTS)
        because stored procedures can return multiple result sets, otherwise, any
-       stored procedure call will fail. */
+       stored procedure call will fail.
+       Note: CLIENT_MULTI_RESULTS is enabled by default even if we don't set
+             CLIENT_MULTI_STATEMENTS. */
     uint optionFlags = CLIENT_MULTI_STATEMENTS;
     QString unixSocket;
 

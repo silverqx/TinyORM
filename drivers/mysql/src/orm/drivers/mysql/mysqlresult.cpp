@@ -558,6 +558,9 @@ void MySqlResult::mysqlFreeResults()
        if this isn't done then subsequent queries will fail with Commands out of sync. */
     auto *const mysql = d->drv_d_func()->mysql;
 
+    /* Must be called even if the nextResult() isn't implemented yet, I debugged it and
+       if there are multiple results it calls the mysql_free_result() multiple times. */
+
     // Nothing to do, no more result set/s
     if (mysql == nullptr || !mysql_more_results(mysql))
         return;
@@ -614,7 +617,6 @@ void MySqlResult::mysqlFreeMultiResultsForDtor() const noexcept
 {
     Q_D(const MySqlResult);
 
-    // BUG drivers? find out if this free-ing multi-results logic is really needed, TinyDrivers currectly doesn't support the nextResult() so next results will never be read and stored on the client; and if it will support this then before next result will be stored we will free the current result so it looks like this is useless silverqx
     /* Must iterate through leftover result sets from multi-selects or stored procedures
        if this isn't done then subsequent queries will fail with Commands out of sync.
        Also, the drv_d_func_noexcept() is needed to have the noexcept destructor. */
@@ -625,6 +627,9 @@ void MySqlResult::mysqlFreeMultiResultsForDtor() const noexcept
         return;
 
     auto *const mysql = driver->mysql;
+
+    /* Must be called even if the nextResult() isn't implemented yet, I debugged it and
+       if there are multiple results it calls the mysql_free_result() multiple times. */
 
     // Nothing to do, no more result set/s
     if (mysql == nullptr || !mysql_more_results(mysql))
