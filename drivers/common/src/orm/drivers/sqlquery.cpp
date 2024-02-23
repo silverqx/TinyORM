@@ -448,14 +448,12 @@ void SqlQuery::clear()
     // Ownership of a weak_ptr()
     const auto driver = driverWeakInternal();
 
-    // CUR drivers revisit, maybe clear everything manually? What happens with current values, is below correct? silverqx
     // Get the SqlResult instance
     *this = SqlQuery(driver.lock()->createResult(driver));
 }
 
 void SqlQuery::finish() noexcept
 {
-    // CUR drivers finish this finish() method, also look hasFearures(FinishQuery), update description silverqx
     // Nothing to do
     if (!isActive())
         return;
