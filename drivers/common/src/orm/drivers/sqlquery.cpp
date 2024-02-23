@@ -46,11 +46,11 @@ SqlQuery::SqlQuery(std::unique_ptr<SqlResult> &&result) noexcept
    in the cpp file because the m_sqlResult is unique_ptr. If they are defined as inline
    then the compilation fails because a unique_ptr can't destroy an incomplete type. */
 
+SqlQuery::~SqlQuery() = default;
+
 SqlQuery::SqlQuery(SqlQuery &&) noexcept = default;
 
 SqlQuery &SqlQuery::operator=(SqlQuery &&) noexcept = default;
-
-SqlQuery::~SqlQuery() = default;
 
 void SqlQuery::swap(SqlQuery &other) noexcept
 {

@@ -42,13 +42,13 @@ namespace Orm::Drivers
         /*! Converting constructor from the std::unique_ptr<SqlResult>. */
         explicit SqlQuery(std::unique_ptr<SqlResult> &&result) noexcept;
 
+        /*! Default destructor. */
+        ~SqlQuery();
+
         /*! Move constructor. */
         SqlQuery(SqlQuery &&) noexcept;
         /*! Move assignment operator. */
         SqlQuery &operator=(SqlQuery &&) noexcept;
-
-        /*! Default destructor. */
-        ~SqlQuery();
 
         /*! Swap the SqlQuery. */
         void swap(SqlQuery &other) noexcept;
