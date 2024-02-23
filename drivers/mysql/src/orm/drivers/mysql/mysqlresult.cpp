@@ -592,7 +592,7 @@ void MySqlResult::mysqlFreeResults()
            it's a MySQL thing. */
         qWarning().noquote()
             << u"Unable to obtain the next result set using mysql_next_result() in %1()."
-                "\n. MySQL(%2, %3)"_s
+                "\nMySQL(%2, %3)"_s
                .arg(__tiny_func__).arg(mysql_errno(mysql))
                .arg(QString::fromUtf8(mysql_error(mysql)));
 
