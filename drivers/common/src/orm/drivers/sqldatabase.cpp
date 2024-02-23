@@ -15,6 +15,59 @@ TINYORM_BEGIN_COMMON_NAMESPACE
 namespace Orm::Drivers
 {
 
+/* How SqlDatabase, SqlDriver, SqlResult are instantiated for SqlQuery.
+   SqlDatabase instance represents a database connection and it inherits from
+   the SqlDatabaseManager that manages database connections, so the SqlDatabase class
+   provides both this functionality at once. 🫤🤔 (S?-olid)
+   The SqlDatabase::addDatabase() method is a factory method for SqlDatabase connections,
+   it instantiates this connection based on the given database driver (QString or
+   SqlDriver() class instance).
+
+   It's possible to instantiate all these classes manually, like:
+   MySqlDriver() -> SqlDatabase() -> MySqlDriver::createResult() -> SqlResult() -> SqlQuery()
+   Actual code:
+   auto db = SqlDatabase(MySqlDriver());
+   SqlQuery(db.driver()->createResult())
+
+   Of course, the above example is just for explanation to show how things work.
+   The real code should look like:
+   auto db = SqlDatabase::addDatabase("QMYSQL", "connectionName");
+   SqlQuery query(db);
+
+   Explantation:
+   SqlDatabase(MySqlDriver()) - SqlDatabase() needs to know for which database driver
+                                the connection should be created. It also owns and manages
+                                this database driver instance.
+   SqlQuery(SqlResult()) - SqlQuery() needs the SqlResult() instance, all database logic
+                           is handled by these SqlResult() classes (eg. MySqlResult()).
+                           SqlQuery() delegates all database-related calls to these
+                           SqlResult() classes (based on the database driver type), so
+                           it's the facade class.
+
+   SqlDriver, SqlResult, SqlQuery responsibilities:
+   SqlDriver:
+    - opens and closes database connection
+    - can start, commit, and rollback transactions
+    - holds database-specific handle (eg. MYSQL *handle)
+    - provides factory method to create SqlResult() instance
+   SqlResult:
+    - everything else 🙂
+    - sends normal queries
+    - prepares and sends prepared queries
+    - prepares/handles prepared bindings for prepared queries
+    - obtains results after query execution
+    - everything related to result sets like:
+      - looping over result sets
+      - obtains database row as the SqlRecord() instance (every column is represented by
+        the SqlField() instance)
+      - obtains values from rows/records
+      - checks NULL column values
+    SqlQuery:
+     - facade class into the SqlResult() instance
+     - everything that is described above for the SqlResult is accessed through
+       the SqlQuery() instance
+*/
+
 /* private */
 
 SqlDatabase::SqlDatabase(const QString &driver)
