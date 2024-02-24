@@ -23,6 +23,11 @@ namespace Orm::Drivers::MySql::Constants
     // Common strings
     TINYDRIVERS_EXPORT extern const QString COMMA;
 
+    // Database related
+    TINYDRIVERS_EXPORT extern const QString QMYSQL;
+//    TINYDRIVERS_EXPORT extern const QString QPSQL;
+//    TINYDRIVERS_EXPORT extern const QString QSQLITE;
+
 } // namespace Orm::Drivers::MySql::Constants
 
 TINYORM_END_COMMON_NAMESPACE
