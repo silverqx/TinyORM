@@ -2,9 +2,9 @@
 
 #include <orm/macros/likely.hpp>
 
-#include "orm/drivers/constants_p.hpp"
 #include "orm/drivers/exceptions/invalidargumenterror.hpp"
 #include "orm/drivers/exceptions/sqltransactionerror.hpp"
+#include "orm/drivers/mysql/mysqlconstants_p.hpp"
 #include "orm/drivers/mysql/mysqldriver_p.hpp"
 #include "orm/drivers/mysql/mysqlresult.hpp"
 #include "orm/drivers/mysql/mysqlutils_p.hpp"
@@ -14,7 +14,7 @@ TINYORM_BEGIN_COMMON_NAMESPACE
 
 using namespace Qt::StringLiterals; // NOLINT(google-build-using-namespace)
 
-using Orm::Drivers::Constants::QMYSQL;
+using Orm::Drivers::MySql::Constants::QMYSQL;
 
 using MySqlUtils = Orm::Drivers::MySql::MySqlUtilsPrivate;
 

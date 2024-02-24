@@ -16,6 +16,11 @@ namespace Orm::Drivers::MySql::Constants
     // Common strings
     const QString COMMA   = u", "_s;
 
+    // Database related
+    const QString QMYSQL  = u"QMYSQL"_s;
+//    const QString QPSQL   = u"QPSQL"_s;
+//    const QString QSQLITE = u"QSQLITE"_s;
+
 } // namespace Orm::Drivers::MySql::Constants
 
 TINYORM_END_COMMON_NAMESPACE
