@@ -3,6 +3,7 @@
 # 3.22 - because is used CMP0127: cmake_dependent_option() supports full Condition Syntax
 # Maximum version allowed for the minimum version is 3.22 because of Ubuntu 22.04 LTS so
 # currently can't use the target_sources(FILE_SET) 😔
+# TODO use LINKER_TYPE target property when min. version will be CMake v3.29 silverqx
 cmake_minimum_required(VERSION 3.22...3.28 FATAL_ERROR)
 
 list(APPEND CMAKE_MODULE_PATH
