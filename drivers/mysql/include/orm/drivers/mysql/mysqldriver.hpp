@@ -35,6 +35,10 @@ namespace Orm::Drivers::MySql
         bool open(const QString &database, const QString &username,
                   const QString &password, const QString &host, int port,
                   const QString &options) final;
+        /*! Reopen the database connection using the given values. */
+        inline bool reopen(const QString &database, const QString &username,
+                           const QString &password, const QString &host, int port,
+                           const QString &options) final;
         /*! Close the current database connection. */
         void close() noexcept final;
 
@@ -68,6 +72,16 @@ namespace Orm::Drivers::MySql
     };
 
     /* public */
+
+    bool MySqlDriver::reopen(
+            const QString &database, const QString &username, const QString &password,
+            const QString &host, const int port, const QString &options)
+    {
+        if (isOpen())
+            close();
+
+        return open(database, username, password, host, port, options);
+    }
 
     /* Others */
 

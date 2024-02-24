@@ -33,9 +33,11 @@ bool MySqlDriver::open(
 {
     Q_D(MySqlDriver);
 
-    // CUR drivers log warning or throw? or add reopen method or parameter? silverqx
     if (isOpen())
-        close();
+        throw Exceptions::LogicError(
+                u"MySQL database connection is already open, first close the connection "
+                 "and then open it again or call the reopen() method, in %1()."_s
+                .arg(__tiny_func__));
 
     try {
         // Allocate and initialize the MYSQL object for the mysql_real_connect()
