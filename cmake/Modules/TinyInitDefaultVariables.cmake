@@ -231,7 +231,11 @@ macro(tiny_init_tiny_variables)
 to generate find_dependency() calls for the TinyORM package configuration file."
     )
 
+    # Specifies which TinyDrivers build type is currently being built (for nicer if()-s)
+    tiny_init_driver_types()
+
     # Setup the correct PATH environment variable used by the ctest command
+    # To debug these paths on the PATH environment variable run ctest --debug
     if(BUILD_TESTS)
         # For adjusting variables when running tests we need to know what the correct
         # variable is for separating entries in PATH-alike variables
@@ -255,12 +259,32 @@ $<SHELL_PATH:${${TinyOrm_ns}_BINARY_DIR}/tests/${TinyUtils_ns}>${TINY_PATH_SEPAR
         else()
             # Multi-config generators have different folders structure
             if(TINY_IS_MULTI_CONFIG)
+                if(TINY_BUILD_LOADABLE_DRIVERS AND BUILD_MYSQL_DRIVER)
+                    string(PREPEND TINY_TESTS_ENV "\
+$<SHELL_PATH:${${TinyOrm_ns}_BINARY_DIR}/drivers/mysql/$<CONFIG>>${TINY_PATH_SEPARATOR}")
+                endif()
+
+                if(BUILD_DRIVERS)
+                    string(PREPEND TINY_TESTS_ENV "\
+$<SHELL_PATH:${${TinyOrm_ns}_BINARY_DIR}/drivers/common/$<CONFIG>>${TINY_PATH_SEPARATOR}")
+                endif()
+
                 string(PREPEND TINY_TESTS_ENV "\
 $<SHELL_PATH:${${TinyOrm_ns}_BINARY_DIR}/$<CONFIG>>${TINY_PATH_SEPARATOR}\
 $<SHELL_PATH:${${TinyOrm_ns}_BINARY_DIR}/tests/${TinyUtils_ns}/$<CONFIG>>${TINY_PATH_SEPARATOR}")
 
             # Single-config generators
             else()
+                if(TINY_BUILD_LOADABLE_DRIVERS AND BUILD_MYSQL_DRIVER)
+                    string(PREPEND TINY_TESTS_ENV "\
+$<SHELL_PATH:${${TinyOrm_ns}_BINARY_DIR}/drivers/mysql>${TINY_PATH_SEPARATOR}")
+                endif()
+
+                if(BUILD_DRIVERS)
+                    string(PREPEND TINY_TESTS_ENV "\
+$<SHELL_PATH:${${TinyOrm_ns}_BINARY_DIR}/drivers/common>${TINY_PATH_SEPARATOR}")
+                endif()
+
                 string(PREPEND TINY_TESTS_ENV "\
 $<SHELL_PATH:${${TinyOrm_ns}_BINARY_DIR}>${TINY_PATH_SEPARATOR}\
 $<SHELL_PATH:${${TinyOrm_ns}_BINARY_DIR}/tests/${TinyUtils_ns}>${TINY_PATH_SEPARATOR}")
@@ -289,9 +313,6 @@ $<SHELL_PATH:${${TinyOrm_ns}_BINARY_DIR}/tests/${TinyUtils_ns}>${TINY_PATH_SEPAR
         "Determine whether ${TinyOrm_target} library will be built with extern or inline \
 constants")
     unset(tinyExternConstants)
-
-    # Specifies which TinyDrivers build type is currently being built (for nicer if()-s)
-    tiny_init_driver_types()
 
 endmacro()
 
