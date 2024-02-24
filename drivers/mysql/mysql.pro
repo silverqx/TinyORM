@@ -28,7 +28,7 @@ include($$TINYORM_SOURCE_TREE/qmake/common/common.pri)
 # TinyMySql defines
 # ---
 
-DEFINES += PROJECT_TINYMYSQL
+DEFINES *= PROJECT_TINYMYSQL
 
 # Build as the shared library
 CONFIG(shared, dll|shared|static|staticlib) | \
