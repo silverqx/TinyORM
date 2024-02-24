@@ -39,10 +39,9 @@ bool MySqlResultPrivate::populateFields(MYSQL *const mysql)
        queries). */
 #ifndef MARIADB_VERSION_ID
     // Nothing to do, metadata disabled
-    if (mysql_result_metadata(result) == RESULTSET_METADATA_NONE) {
-        qWarning("MySqlResultPrivate::populateFields: result set has no metadata");
-        return false;
-    }
+    if (mysql_result_metadata(result) == RESULTSET_METADATA_NONE)
+        throw Exceptions::LogicError(
+                u"Result set has no metadata in %1()."_s.arg(__tiny_func__));
 #endif
 
     uint index = 0;
@@ -80,10 +79,9 @@ bool MySqlResultPrivate::bindResultValues()
 
     // CUR drivers for prepared statements it has RESULTSET_METADATA_NONE (0), need to try disable metadata and examine the changes in the meta silverqx
     // Nothing to do, metadata disabled
-//    if (mysql_result_metadata(meta) == RESULTSET_METADATA_NONE) {
-//        qWarning("MySqlResultPrivate::bindResultValues: result set has no metadata");
-//        return false;
-//    }
+   // if (mysql_result_metadata(meta) == RESULTSET_METADATA_NONE)
+   //     throw Exceptions::LogicError(
+   //             u"Result set has no metadata in %1()."_s.arg(__tiny_func__));
 
     // Allocate memory for result sets that will be obtained from the database
     allocateMemoryForBindings(resultBinds, fieldsCount);

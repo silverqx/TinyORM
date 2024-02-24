@@ -137,10 +137,9 @@ bool SqlQuery::exec(const QString &query)
                 u"The query argument can't be empty in %1()."_s
                 .arg(__tiny_func__));
 
-    if (!this->driverWeakInternal().lock()->isOpen()) {
-        qWarning("SqlQuery::exec: database not open");
-        return false;
-    }
+    if (!this->driverWeakInternal().lock()->isOpen())
+        throw Exceptions::LogicError(
+                u"MySQL database connection isn't open in %1()."_s.arg(__tiny_func__));
 
 #if defined(QT_DEBUG_SQL) || defined(TINYDRIVERS_DEBUG_SQL)
     QElapsedTimer timer;
@@ -169,10 +168,9 @@ bool SqlQuery::prepare(const QString &query)
                 u"The query argument can't be empty in %1()."_s
                 .arg(__tiny_func__));
 
-    if (!this->driverWeakInternal().lock()->isOpen()) {
-        qWarning("SqlQuery::prepare: database not open");
-        return false;
-    }
+    if (!this->driverWeakInternal().lock()->isOpen())
+        throw Exceptions::LogicError(
+                u"MySQL database connection isn't open in %1()."_s.arg(__tiny_func__));
 
     return m_sqlResult->prepare(query);
 }
@@ -362,9 +360,10 @@ QVariant SqlQuery::value(const size_type index) const
     if (isActive() && isValid() && isSelect())
         return m_sqlResult->data(index);
 
-    qWarning("SqlQuery::value: not positioned on a valid record");
-
-    return {};
+    throw Exceptions::LogicError(
+            u"No active and valid result set, first, you need to execute the query "
+             "and place the cursor on an existing row to obtain the column/field value "
+             "in %1()."_s.arg(__tiny_func__));
 }
 
 QVariant SqlQuery::value(const QString &name) const
@@ -386,8 +385,9 @@ bool SqlQuery::isNull(const size_type index) const
         return m_sqlResult->isNull(index);
 
     throw Exceptions::LogicError(
-                u"First, you need to execute the query and place the cursor "
-                 "on an existing row to see if the field is NULL in %1()."_s
+                u"No active and valid result set, first, you need to execute the query "
+                 "and place the cursor on an existing row to see if the field is NULL "
+                 "in %1()."_s
                 .arg(__tiny_func__));
 }
 

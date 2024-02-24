@@ -649,8 +649,15 @@ void MySqlResult::mysqlStmtClose()
     if (d->stmt == nullptr)
         return;
 
-    if (mysql_stmt_close(d->stmt))
-        qWarning("MySqlResult::mysqlStmtClose: unable to free statement handle");
+    if (mysql_stmt_close(d->stmt)){
+        auto *const mysql = d->drv_d_func()->mysql;
+
+        qWarning().noquote()
+                << u"Unable to free statement handle using mysql_stmt_close() in %1().\n"
+                   "MySQL(%2, %3)"_s
+                   .arg(__tiny_func__).arg(mysql_errno(mysql))
+                   .arg(QString::fromUtf8(mysql_error(mysql)));
+    }
 
     d->stmt = nullptr;
 }
