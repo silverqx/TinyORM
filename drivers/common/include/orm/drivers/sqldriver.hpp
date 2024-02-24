@@ -101,6 +101,10 @@ namespace Orm::Drivers
         virtual bool
         open(const QString &database, const QString &username, const QString &password,
              const QString &host, int port, const QString &options) = 0;
+        /*! Reopen the database connection using the given connection values. */
+        virtual bool
+        reopen(const QString &database, const QString &username, const QString &password,
+               const QString &host, int port, const QString &options) = 0;
         /*! Close the current database connection. */
         virtual void close() noexcept = 0;
 
