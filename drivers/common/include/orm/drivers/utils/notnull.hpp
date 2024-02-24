@@ -87,7 +87,7 @@ namespace Private
         inline NotNull(NotNull &&) = default;
         inline NotNull &operator=(NotNull &&) = default;
 
-        /*! Return the managed pointer. */
+        /*! Return the managed pointer (allows access to the smart pointer). */
         constexpr Private::value_or_reference_return_t<T> get() const // NOLINT(readability-const-return-type)
         {
             return m_ptr;
