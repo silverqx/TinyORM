@@ -16,7 +16,7 @@ CONFIG *= cmdline
 # TinyTom migrations for unit tests defines
 # ---
 
-DEFINES += PROJECT_TOM_TESTDATA
+DEFINES *= PROJECT_TOM_TESTDATA
 
 # TinyTom migrations for unit tests header and source files
 # ---

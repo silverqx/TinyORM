@@ -29,7 +29,7 @@ win32-clang-msvc: \
 # Tests defines
 # ---
 
-DEFINES += PROJECT_TINYORM_TEST
+DEFINES *= PROJECT_TINYORM_TEST
 
 # Windows resource and manifest files
 # ---

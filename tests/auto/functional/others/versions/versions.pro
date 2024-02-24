@@ -7,15 +7,15 @@ QT -= sql
 SOURCES = tst_versions.cpp
 
 tom_example:!disable_tom: \
-    DEFINES += TINYTOM_EXAMPLE
+    DEFINES *= TINYTOM_EXAMPLE
 
 # Used by checkFileVersion_*() tests
 win32 {
-    DEFINES += TINYTEST_VERSIONS_IS_QMAKE
+    DEFINES *= TINYTEST_VERSIONS_IS_QMAKE
 
     CONFIG(shared, dll|shared|static|staticlib) | \
     CONFIG(dll, dll|shared|static|staticlib): \
-        DEFINES += TINYTEST_VERSIONS_IS_SHARED_BUILD
+        DEFINES *= TINYTEST_VERSIONS_IS_SHARED_BUILD
 
     # File versions
     # ---

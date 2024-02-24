@@ -16,7 +16,7 @@ CONFIG *= cmdline
 # TinyTom example application defines
 # ---
 
-DEFINES += PROJECT_TOM_EXAMPLE
+DEFINES *= PROJECT_TOM_EXAMPLE
 
 # TinyTom example application header and source files
 # ---

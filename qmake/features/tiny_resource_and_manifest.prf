@@ -27,7 +27,7 @@ defineTest(tiny_resource_and_manifest) {
     QMAKE_DISTCLEAN += $$rcFile
 
     # Needed in the RC file, MinGW does not define _DEBUG macro
-    mingw:CONFIG(debug, debug|release): DEFINES += _DEBUG
+    mingw:CONFIG(debug, debug|release): DEFINES *= _DEBUG
 
     RC_INCLUDEPATH = $$1
     RC_FILE = $$rcFile

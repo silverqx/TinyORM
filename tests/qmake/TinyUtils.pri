@@ -3,7 +3,7 @@
 
 CONFIG(shared, dll|shared|static|staticlib) | \
 CONFIG(dll, dll|shared|static|staticlib): \
-    DEFINES += TINYUTILS_LINKING_SHARED
+    DEFINES *= TINYUTILS_LINKING_SHARED
 
 # TinyUtils library headers include path
 # ---

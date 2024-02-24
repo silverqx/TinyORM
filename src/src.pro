@@ -33,7 +33,7 @@ include(../qmake/common.pri)
 # TinyORM defines
 # ---
 
-DEFINES += PROJECT_TINYORM
+DEFINES *= PROJECT_TINYORM
 
 # Build as the shared library
 CONFIG(shared, dll|shared|static|staticlib) | \

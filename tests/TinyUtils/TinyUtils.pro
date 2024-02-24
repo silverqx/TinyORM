@@ -16,7 +16,7 @@ CONFIG *= create_prl create_pc create_libtool
 # TinyUtils library defines
 # ---
 
-DEFINES += PROJECT_TINYUTILS
+DEFINES *= PROJECT_TINYUTILS
 
 # Build as the shared library
 CONFIG(shared, dll|shared|static|staticlib) | \
