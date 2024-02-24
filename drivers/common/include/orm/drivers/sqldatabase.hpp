@@ -6,6 +6,7 @@ TINY_SYSTEM_HEADER
 
 #include "orm/drivers/driverstypes.hpp"
 #include "orm/drivers/sqldatabasemanager.hpp"
+#include "orm/drivers/utils/notnull.hpp"
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
@@ -22,6 +23,10 @@ namespace Orm::Drivers
         friend SqlDatabaseManager;
         // To access the d smart pointer (private implementation)
         friend class SqlDatabasePrivate;
+
+        /*! Alias for the NotNull. */
+        template<typename T>
+        using NotNull = Orm::Drivers::Utils::NotNull<T>;
 
         /*! Private constructor. */
         explicit SqlDatabase(const QString &driver);
@@ -136,7 +141,7 @@ namespace Orm::Drivers
 
     private:
         /*! Smart pointer to the private implementation. */
-        std::shared_ptr<SqlDatabasePrivate> d = nullptr;
+        NotNull<std::shared_ptr<SqlDatabasePrivate>> d;
     };
 
 } // namespace Orm::Drivers

@@ -129,7 +129,7 @@ void
 SqlDatabasePrivate::invalidateDatabase(const SqlDatabase &db, const QString &connection,
                                        const bool warn)
 {
-    if (warn && db.d.use_count() > 1)
+    if (warn && db.d.get().use_count() > 1)
         qWarning().noquote()
                 << u"The database connection '%1' is still in use, all queries for this "
                     "connection will stop working. Make sure to destroy all SqlDatabase "

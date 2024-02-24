@@ -87,7 +87,7 @@ SqlDatabase::SqlDatabase(std::unique_ptr<SqlDriver> &&driver)
 SqlDatabase::~SqlDatabase() noexcept
 {
     // CUR drivers finish multi-thread (but SqlDatabase can be used only from thread where it was created) silverqx
-    if (d && d.use_count() == 1)
+    if (d.get().use_count() == 1)
         close();
 }
 
@@ -116,9 +116,6 @@ bool SqlDatabase::open(const QString &username, const QString &password)
 
 void SqlDatabase::close() noexcept
 {
-    if (!isValid())
-        return;
-
     // Used the driverPtr() to have the close() method noexcept
     auto *driver = d->driverPtr();
 
@@ -150,7 +147,7 @@ bool SqlDatabase::isValid() const noexcept
        called while this local copy is still in scope (this is the only case).
        Creating an invalid SqlDatabase instance manually by an user isn't possible because
        the default constructor is private. */
-    return d && d->isDriverValid();
+    return d->isDriverValid();
 }
 
 DummySqlError SqlDatabase::lastError() const noexcept // NOLINT(readability-convert-member-functions-to-static)
