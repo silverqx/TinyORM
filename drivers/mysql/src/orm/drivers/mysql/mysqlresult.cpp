@@ -546,7 +546,7 @@ void MySqlResult::cleanupForDtor() noexcept
        from the destructor as they are smart pointers. */
 }
 
-// CUR drivers revisit if something similar is needed also for prepared statements? Look at detachFromResultSet() silverqx
+// CUR drivers make the same logic also for prepared statements; now I'm pretty sure the same logic is also needed for prepared stmts; look also at detachFromResultSet(); see https://dev.mysql.com/doc/c-api/8.3/en/mysql-stmt-next-result.html; see https://github.com/php/php-src/blob/75ef03e742cac6a69c8475252ae2a725902c2e1e/ext/pdo_mysql/mysql_statement.c#L351 silverqx
 void MySqlResult::mysqlFreeResults()
 {
     Q_D(MySqlResult);
