@@ -435,9 +435,9 @@ SqlQuery::size_type SqlQuery::numRowsAffected() const
    from this query until it is re-executed. Sets a query to an inactive state and resets
    the cursor to initial state (BeforeFirstRow).
 
-   Eg. for MySQL prepared statements it releases memory associated with the result set
-   produced by execution of the prepared statement. If there is a cursor open
-   for the statement, mysql_stmt_free_result() closes it. Free the client side memory
+   Also, eg. for MySQL prepared statements it releases memory associated with
+   the result set produced by execution of the prepared statement. If there is a cursor
+   open for the statement, mysql_stmt_free_result() closes it. Free the client side memory
    buffers, reset long data state on client if necessary, and reset the server side
    statement if this has been requested.
 
