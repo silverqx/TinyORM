@@ -142,10 +142,9 @@ bool MySqlDriver::beginTransaction()
     Q_D(MySqlDriver);
 
     // Nothing to do
-    if (!isOpen()) {
-        qWarning("MySqlDriver::beginTransaction: Database not open");
-        return false;
-    }
+    if (!isOpen())
+        throw Exceptions::LogicError(
+                u"MySQL database connection isn't open in %1()."_s.arg(__tiny_func__));
 
     if (mysql_query(d->mysql, "START TRANSACTION") == 0)
         return true;
@@ -160,10 +159,9 @@ bool MySqlDriver::commitTransaction()
     Q_D(MySqlDriver);
 
     // Nothing to do
-    if (!isOpen()) {
-        qWarning("MySqlDriver::commitTransaction: Database not open");
-        return false;
-    }
+    if (!isOpen())
+        throw Exceptions::LogicError(
+                u"MySQL database connection isn't open in %1()."_s.arg(__tiny_func__));
 
     if (mysql_query(d->mysql, "COMMIT") == 0)
         return true;
@@ -178,10 +176,9 @@ bool MySqlDriver::rollbackTransaction()
     Q_D(MySqlDriver);
 
     // Nothing to do
-    if (!isOpen()) {
-        qWarning("MySqlDriver::rollbackTransaction: Database not open");
-        return false;
-    }
+    if (!isOpen())
+        throw Exceptions::LogicError(
+                u"MySQL database connection isn't open in %1()."_s.arg(__tiny_func__));
 
     if (mysql_query(d->mysql, "ROLLBACK") == 0)
         return true;
