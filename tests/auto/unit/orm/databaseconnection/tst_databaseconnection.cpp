@@ -87,7 +87,7 @@ void tst_DatabaseConnection::initTestCase_data() const
 
 void tst_DatabaseConnection::pingDatabase() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     auto &connectionRef = DB::connection(connection);
 
@@ -111,7 +111,7 @@ void tst_DatabaseConnection::pingDatabase() const
 
 void tst_DatabaseConnection::isNotMaria_OnMySqlConnection() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     if (connection != Databases::MYSQL)
         QSKIP(sl("The '%1' connection is not the connection to the MySQL database.")
@@ -125,7 +125,7 @@ void tst_DatabaseConnection::isNotMaria_OnMySqlConnection() const
 
 void tst_DatabaseConnection::isMaria_OnMariaConnection() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     if (connection != Databases::MARIADB)
         QSKIP(sl("The '%1' connection is not the connection to the MariaDB database.")
@@ -139,7 +139,7 @@ void tst_DatabaseConnection::isMaria_OnMariaConnection() const
 
 void tst_DatabaseConnection::transaction_Commit() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     auto builder = createQuery(connection);
 
@@ -175,7 +175,7 @@ void tst_DatabaseConnection::transaction_Commit() const
 
 void tst_DatabaseConnection::transaction_RollBack() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     auto builder = createQuery(connection);
 
@@ -216,7 +216,7 @@ void tst_DatabaseConnection::transaction_RollBack() const
 
 void tst_DatabaseConnection::transaction_Commit_Double() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     quint64 id1 = 0;
     quint64 id2 = 0;
@@ -290,7 +290,7 @@ void tst_DatabaseConnection::transaction_Commit_Double() const
 
 void tst_DatabaseConnection::transaction_RollBack_Double() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     // First rollback
     {
@@ -360,7 +360,7 @@ void tst_DatabaseConnection::transaction_RollBack_Double() const
 
 void tst_DatabaseConnection::transaction_Savepoints_Commit_AllSuccess() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     auto builder = createQuery(connection);
 
@@ -443,7 +443,7 @@ void tst_DatabaseConnection::transaction_Savepoints_Commit_AllSuccess() const
 
 void tst_DatabaseConnection::transaction_Savepoints_Commit_OneFailed() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     auto builder = createQuery(connection);
 
@@ -537,7 +537,7 @@ void tst_DatabaseConnection::transaction_Savepoints_Commit_OneFailed() const
 
 void tst_DatabaseConnection::transaction_Savepoints_Commit_AllFailed() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     auto builder = createQuery(connection);
 
@@ -630,7 +630,7 @@ void tst_DatabaseConnection::transaction_Savepoints_Commit_AllFailed() const
 
 void tst_DatabaseConnection::transaction_Savepoints_Commit_AllFailed_Double() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     // First commit
     {
@@ -810,7 +810,7 @@ void tst_DatabaseConnection::transaction_Savepoints_Commit_AllFailed_Double() co
 
 void tst_DatabaseConnection::timezone_And_qt_timezone() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     auto &connectionRef = DB::connection(connection);
 
@@ -843,7 +843,7 @@ void tst_DatabaseConnection::timezone_And_qt_timezone() const
 
 void tst_DatabaseConnection::scalar() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     auto name = DB::connection(connection).scalar(
                     "select name from torrents order by id");
@@ -853,7 +853,7 @@ void tst_DatabaseConnection::scalar() const
 
 void tst_DatabaseConnection::scalar_EmptyResult() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     auto name = DB::connection(connection).scalar(
                     "select name from torrents where id = ?", {0});
@@ -863,7 +863,7 @@ void tst_DatabaseConnection::scalar_EmptyResult() const
 
 void tst_DatabaseConnection::scalar_MultipleColumnsSelectedError() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     QVERIFY_EXCEPTION_THROWN(DB::connection(connection).scalar(
                                  "select id, name from torrents order by id"),

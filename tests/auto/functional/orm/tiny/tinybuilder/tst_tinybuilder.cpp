@@ -71,7 +71,7 @@ void tst_TinyBuilder::initTestCase_data() const
 
 void tst_TinyBuilder::get() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -95,7 +95,7 @@ void tst_TinyBuilder::get() const
 
 void tst_TinyBuilder::get_Columns() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -110,7 +110,7 @@ void tst_TinyBuilder::get_Columns() const
 
 void tst_TinyBuilder::value() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -121,7 +121,7 @@ void tst_TinyBuilder::value() const
 
 void tst_TinyBuilder::value_ModelNotFound() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -133,7 +133,7 @@ void tst_TinyBuilder::value_ModelNotFound() const
 
 void tst_TinyBuilder::firstOrFail_Found() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -157,7 +157,7 @@ void tst_TinyBuilder::firstOrFail_Found() const
 
 void tst_TinyBuilder::firstOrFail_NotFoundFailed() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -169,7 +169,7 @@ void tst_TinyBuilder::firstOrFail_NotFoundFailed() const
 
 void tst_TinyBuilder::incrementAndDecrement() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -218,7 +218,7 @@ void tst_TinyBuilder::incrementAndDecrement() const
 
 void tst_TinyBuilder::update() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -266,7 +266,7 @@ void tst_TinyBuilder::update() const
 
 void tst_TinyBuilder::update_Failed() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -277,7 +277,7 @@ void tst_TinyBuilder::update_Failed() const
 
 void tst_TinyBuilder::update_SameValue() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 

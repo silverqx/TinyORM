@@ -308,7 +308,7 @@ void tst_CastAttributes::initTestCase_data() const
 
 void tst_CastAttributes::mergeCasts_const_lvalue() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     auto &type = model(connection);
 
@@ -346,7 +346,7 @@ void tst_CastAttributes::mergeCasts_const_lvalue() const
 
 void tst_CastAttributes::mergeCasts_lvalue() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     auto &type = model(connection);
 
@@ -387,7 +387,7 @@ void tst_CastAttributes::mergeCasts_lvalue() const
 
 void tst_CastAttributes::mergeCasts_rvalue() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     auto &type = model(connection);
     const auto &primaryKey = type.getKeyName();
@@ -429,7 +429,7 @@ void tst_CastAttributes::mergeCasts_rvalue() const
 
 void tst_CastAttributes::withCasts_OnTinyBuilder() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     auto type = Type::on(connection)->withCasts({{"smallint", CastType::UInteger}})
                 .find(1);
@@ -457,7 +457,7 @@ void tst_CastAttributes::withCasts_OnTinyBuilder() const
 
 void tst_CastAttributes::withCasts_OnModel() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     Orm::Tiny::ConnectionOverride::connection = connection;
 
@@ -491,7 +491,7 @@ void tst_CastAttributes::withCasts_OnModel() const
 
 void tst_CastAttributes::cast_QByteArray_to_QDateTime_ThrowException() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     auto &type = model(connection);
 
@@ -503,7 +503,7 @@ void tst_CastAttributes::cast_QByteArray_to_QDateTime_ThrowException() const
 
 void tst_CastAttributes::cast_QDateTime_to_QByteArray_ThrowException() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     if (DB::driverName(connection) == QSQLITE)
         QSKIP("The SQLite driver returns the QString type for the datetime column, so "
@@ -521,7 +521,7 @@ void tst_CastAttributes::cast_QDateTime_to_QByteArray_ThrowException() const
 
 void tst_CastAttributes::defaultCast_bool_true() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     auto &type = model(connection);
 
@@ -544,7 +544,7 @@ void tst_CastAttributes::defaultCast_bool_true() const
 
 void tst_CastAttributes::defaultCast_bool_false() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     auto &type = model(connection);
 
@@ -567,7 +567,7 @@ void tst_CastAttributes::defaultCast_bool_false() const
 
 void tst_CastAttributes::defaultCast_smallint() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     auto &type = model(connection);
 
@@ -590,7 +590,7 @@ void tst_CastAttributes::defaultCast_smallint() const
 
 void tst_CastAttributes::defaultCast_smallint_u() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     auto &type = model(connection);
 
@@ -613,7 +613,7 @@ void tst_CastAttributes::defaultCast_smallint_u() const
 
 void tst_CastAttributes::defaultCast_int() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     auto &type = model(connection);
 
@@ -636,7 +636,7 @@ void tst_CastAttributes::defaultCast_int() const
 
 void tst_CastAttributes::defaultCast_int_u() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     auto &type = model(connection);
 
@@ -659,7 +659,7 @@ void tst_CastAttributes::defaultCast_int_u() const
 
 void tst_CastAttributes::defaultCast_bigint() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     auto &type = model(connection);
 
@@ -682,7 +682,7 @@ void tst_CastAttributes::defaultCast_bigint() const
 
 void tst_CastAttributes::defaultCast_bigint_u() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     auto &type = model(connection);
 
@@ -705,7 +705,7 @@ void tst_CastAttributes::defaultCast_bigint_u() const
 
 void tst_CastAttributes::defaultCast_smallint_Negative() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     auto &type = modelNegative(connection);
 
@@ -728,7 +728,7 @@ void tst_CastAttributes::defaultCast_smallint_Negative() const
 
 void tst_CastAttributes::defaultCast_int_Negative() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     auto &type = modelNegative(connection);
 
@@ -751,7 +751,7 @@ void tst_CastAttributes::defaultCast_int_Negative() const
 
 void tst_CastAttributes::defaultCast_bigint_Negative() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     auto &type = modelNegative(connection);
 
@@ -774,7 +774,7 @@ void tst_CastAttributes::defaultCast_bigint_Negative() const
 
 void tst_CastAttributes::defaultCast_double() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     QCOMPARE(DB::driver(connection)->numericalPrecisionPolicy(),
              QSql::LowPrecisionDouble);
@@ -800,7 +800,7 @@ void tst_CastAttributes::defaultCast_double() const
 
 void tst_CastAttributes::defaultCast_double_Negative() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     QCOMPARE(DB::driver(connection)->numericalPrecisionPolicy(),
              QSql::LowPrecisionDouble);
@@ -826,7 +826,7 @@ void tst_CastAttributes::defaultCast_double_Negative() const
 
 void tst_CastAttributes::defaultCast_double_NaN() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     if (DB::driverName(connection) != QPSQL)
         QSKIP("The NaN value for the double type column is supported only "
@@ -846,7 +846,7 @@ void tst_CastAttributes::defaultCast_double_NaN() const
 
 void tst_CastAttributes::defaultCast_double_Infinity() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     if (DB::driverName(connection) != QPSQL)
         QSKIP("The Infinity value for the double type column is supported only "
@@ -866,7 +866,7 @@ void tst_CastAttributes::defaultCast_double_Infinity() const
 
 void tst_CastAttributes::defaultCast_decimal() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     QCOMPARE(DB::driver(connection)->numericalPrecisionPolicy(),
              QSql::LowPrecisionDouble);
@@ -892,7 +892,7 @@ void tst_CastAttributes::defaultCast_decimal() const
 
 void tst_CastAttributes::defaultCast_decimal_Negative() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     QCOMPARE(DB::driver(connection)->numericalPrecisionPolicy(),
              QSql::LowPrecisionDouble);
@@ -918,7 +918,7 @@ void tst_CastAttributes::defaultCast_decimal_Negative() const
 
 void tst_CastAttributes::defaultCast_decimal_NaN() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     if (DB::driverName(connection) != QPSQL)
         QSKIP("The NaN value for the double type column is supported only "
@@ -938,7 +938,7 @@ void tst_CastAttributes::defaultCast_decimal_NaN() const
 
 void tst_CastAttributes::defaultCast_decimal_Infinity() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     if (DB::driverName(connection) != QPSQL)
         QSKIP("The Infinity value for the double type column is supported only "
@@ -958,7 +958,7 @@ void tst_CastAttributes::defaultCast_decimal_Infinity() const
 
 void tst_CastAttributes::defaultCast_string() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     auto &type = model(connection);
 
@@ -971,7 +971,7 @@ void tst_CastAttributes::defaultCast_string() const
 
 void tst_CastAttributes::defaultCast_text() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     auto &type = model(connection);
 
@@ -984,7 +984,7 @@ void tst_CastAttributes::defaultCast_text() const
 
 void tst_CastAttributes::defaultCast_timestamp() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     auto &type = model(connection);
 
@@ -1001,7 +1001,7 @@ void tst_CastAttributes::defaultCast_timestamp() const
 
 void tst_CastAttributes::defaultCast_datetime() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     auto &type = model(connection);
 
@@ -1018,7 +1018,7 @@ void tst_CastAttributes::defaultCast_datetime() const
 
 void tst_CastAttributes::defaultCast_date() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     auto &type = model(connection);
 
@@ -1032,7 +1032,7 @@ void tst_CastAttributes::defaultCast_date() const
 
 void tst_CastAttributes::defaultCast_timestamp_QSQLITE_OffReturnQDateTime() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     if (DB::driverName(connection) != QSQLITE)
         QSKIP("The return_qdatetime connection config. option is only supported "
@@ -1061,7 +1061,7 @@ void tst_CastAttributes::defaultCast_timestamp_QSQLITE_OffReturnQDateTime() cons
 
 void tst_CastAttributes::defaultCast_datetime_QSQLITE_OffReturnQDateTime() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     if (DB::driverName(connection) != QSQLITE)
         QSKIP("The return_qdatetime connection config. option is only supported "
@@ -1090,7 +1090,7 @@ void tst_CastAttributes::defaultCast_datetime_QSQLITE_OffReturnQDateTime() const
 
 void tst_CastAttributes::defaultCast_date_QSQLITE_OffReturnQDateTime() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     if (DB::driverName(connection) != QSQLITE)
         QSKIP("The return_qdatetime connection config. option is only supported "
@@ -1116,7 +1116,7 @@ void tst_CastAttributes::defaultCast_date_QSQLITE_OffReturnQDateTime() const
 
 void tst_CastAttributes::defaultCast_blob() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     auto &type = model(connection);
 
@@ -1154,7 +1154,7 @@ void tst_CastAttributes::defaultCast_blob() const
 
 void tst_CastAttributes::defaultCast_Null_bool_true() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     auto &type = modelNull(connection);
 
@@ -1179,7 +1179,7 @@ void tst_CastAttributes::defaultCast_Null_bool_true() const
 
 void tst_CastAttributes::defaultCast_Null_smallint() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     auto &type = modelNull(connection);
 
@@ -1202,7 +1202,7 @@ void tst_CastAttributes::defaultCast_Null_smallint() const
 
 void tst_CastAttributes::defaultCast_Null_smallint_u() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     auto &type = modelNull(connection);
 
@@ -1225,7 +1225,7 @@ void tst_CastAttributes::defaultCast_Null_smallint_u() const
 
 void tst_CastAttributes::defaultCast_Null_int() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     auto &type = modelNull(connection);
 
@@ -1248,7 +1248,7 @@ void tst_CastAttributes::defaultCast_Null_int() const
 
 void tst_CastAttributes::defaultCast_Null_int_u() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     auto &type = modelNull(connection);
 
@@ -1271,7 +1271,7 @@ void tst_CastAttributes::defaultCast_Null_int_u() const
 
 void tst_CastAttributes::defaultCast_Null_bigint() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     auto &type = modelNull(connection);
 
@@ -1296,7 +1296,7 @@ void tst_CastAttributes::defaultCast_Null_bigint() const
 
 void tst_CastAttributes::defaultCast_Null_bigint_u() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     auto &type = modelNull(connection);
 
@@ -1321,7 +1321,7 @@ void tst_CastAttributes::defaultCast_Null_bigint_u() const
 
 void tst_CastAttributes::defaultCast_Null_double() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     QCOMPARE(DB::driver(connection)->numericalPrecisionPolicy(),
              QSql::LowPrecisionDouble);
@@ -1347,7 +1347,7 @@ void tst_CastAttributes::defaultCast_Null_double() const
 
 void tst_CastAttributes::defaultCast_Null_double_NaN() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     if (DB::driverName(connection) != QPSQL)
         QSKIP("The NaN value for the double type column is supported only "
@@ -1367,7 +1367,7 @@ void tst_CastAttributes::defaultCast_Null_double_NaN() const
 
 void tst_CastAttributes::defaultCast_Null_double_Infinity() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     if (DB::driverName(connection) != QPSQL)
         QSKIP("The Infinity value for the double type column is supported only "
@@ -1387,7 +1387,7 @@ void tst_CastAttributes::defaultCast_Null_double_Infinity() const
 
 void tst_CastAttributes::defaultCast_Null_decimal() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     QCOMPARE(DB::driver(connection)->numericalPrecisionPolicy(),
              QSql::LowPrecisionDouble);
@@ -1413,7 +1413,7 @@ void tst_CastAttributes::defaultCast_Null_decimal() const
 
 void tst_CastAttributes::defaultCast_Null_decimal_NaN() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     if (DB::driverName(connection) != QPSQL)
         QSKIP("The NaN value for the double type column is supported only "
@@ -1433,7 +1433,7 @@ void tst_CastAttributes::defaultCast_Null_decimal_NaN() const
 
 void tst_CastAttributes::defaultCast_Null_decimal_Infinity() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     if (DB::driverName(connection) != QPSQL)
         QSKIP("The Infinity value for the double type column is supported only "
@@ -1453,7 +1453,7 @@ void tst_CastAttributes::defaultCast_Null_decimal_Infinity() const
 
 void tst_CastAttributes::defaultCast_Null_string() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     auto &type = modelNull(connection);
 
@@ -1466,7 +1466,7 @@ void tst_CastAttributes::defaultCast_Null_string() const
 
 void tst_CastAttributes::defaultCast_Null_text() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     auto &type = modelNull(connection);
 
@@ -1479,7 +1479,7 @@ void tst_CastAttributes::defaultCast_Null_text() const
 
 void tst_CastAttributes::defaultCast_Null_timestamp() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     auto &type = modelNull(connection);
 
@@ -1496,7 +1496,7 @@ void tst_CastAttributes::defaultCast_Null_timestamp() const
 
 void tst_CastAttributes::defaultCast_Null_datetime() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     auto &type = modelNull(connection);
 
@@ -1513,7 +1513,7 @@ void tst_CastAttributes::defaultCast_Null_datetime() const
 
 void tst_CastAttributes::defaultCast_Null_date() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     auto &type = modelNull(connection);
 
@@ -1530,7 +1530,7 @@ void tst_CastAttributes::defaultCast_Null_date() const
 
 void tst_CastAttributes::defaultCast_Null_blob() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     auto &type = modelNull(connection);
 
@@ -1555,7 +1555,7 @@ void tst_CastAttributes::defaultCast_Null_blob() const
 
 void tst_CastAttributes::cast_bool_true_to_bool() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     auto &type = model(connection);
 
@@ -1580,7 +1580,7 @@ void tst_CastAttributes::cast_bool_true_to_bool() const
 
 void tst_CastAttributes::cast_bool_true_to_int() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     auto &type = model(connection);
 
@@ -1605,7 +1605,7 @@ void tst_CastAttributes::cast_bool_true_to_int() const
 
 void tst_CastAttributes::cast_bool_false_to_bool() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     auto &type = model(connection);
 
@@ -1630,7 +1630,7 @@ void tst_CastAttributes::cast_bool_false_to_bool() const
 
 void tst_CastAttributes::cast_bool_false_to_int() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     auto &type = model(connection);
 
@@ -1655,7 +1655,7 @@ void tst_CastAttributes::cast_bool_false_to_int() const
 
 void tst_CastAttributes::cast_smallint_to_uint() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     auto &type = model(connection);
 
@@ -1680,7 +1680,7 @@ void tst_CastAttributes::cast_smallint_to_uint() const
 
 void tst_CastAttributes::cast_smallint_u_to_ulonglong() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     auto &type = model(connection);
 
@@ -1705,7 +1705,7 @@ void tst_CastAttributes::cast_smallint_u_to_ulonglong() const
 
 void tst_CastAttributes::cast_int_to_ulonglong() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     auto &type = model(connection);
 
@@ -1730,7 +1730,7 @@ void tst_CastAttributes::cast_int_to_ulonglong() const
 
 void tst_CastAttributes::cast_int_u_to_ulonglong() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     auto &type = model(connection);
 
@@ -1755,7 +1755,7 @@ void tst_CastAttributes::cast_int_u_to_ulonglong() const
 
 void tst_CastAttributes::cast_bigint_to_QString() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     auto &type = model(connection);
 
@@ -1780,7 +1780,7 @@ void tst_CastAttributes::cast_bigint_to_QString() const
 
 void tst_CastAttributes::cast_bigint_u_to_QString() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     auto &type = model(connection);
 
@@ -1805,7 +1805,7 @@ void tst_CastAttributes::cast_bigint_u_to_QString() const
 
 void tst_CastAttributes::cast_smallint_Negative_to_short() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     auto &type = modelNegative(connection);
 
@@ -1830,7 +1830,7 @@ void tst_CastAttributes::cast_smallint_Negative_to_short() const
 
 void tst_CastAttributes::cast_smallint_Negative_to_int() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     auto &type = modelNegative(connection);
 
@@ -1855,7 +1855,7 @@ void tst_CastAttributes::cast_smallint_Negative_to_int() const
 
 void tst_CastAttributes::cast_smallint_Negative_to_QString() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     auto &type = modelNegative(connection);
 
@@ -1880,7 +1880,7 @@ void tst_CastAttributes::cast_smallint_Negative_to_QString() const
 
 void tst_CastAttributes::cast_int_Negative_to_longlong() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     auto &type = modelNegative(connection);
 
@@ -1905,7 +1905,7 @@ void tst_CastAttributes::cast_int_Negative_to_longlong() const
 
 void tst_CastAttributes::cast_int_Negative_to_QString() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     auto &type = modelNegative(connection);
 
@@ -1930,7 +1930,7 @@ void tst_CastAttributes::cast_int_Negative_to_QString() const
 
 void tst_CastAttributes::cast_bigint_Negative_to_longlong() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     auto &type = modelNegative(connection);
 
@@ -1955,7 +1955,7 @@ void tst_CastAttributes::cast_bigint_Negative_to_longlong() const
 
 void tst_CastAttributes::cast_bigint_Negative_to_QString() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     auto &type = modelNegative(connection);
 
@@ -1980,7 +1980,7 @@ void tst_CastAttributes::cast_bigint_Negative_to_QString() const
 
 void tst_CastAttributes::cast_double_to_longlong() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     QCOMPARE(DB::driver(connection)->numericalPrecisionPolicy(),
              QSql::LowPrecisionDouble);
@@ -2008,7 +2008,7 @@ void tst_CastAttributes::cast_double_to_longlong() const
 
 void tst_CastAttributes::cast_double_to_QString() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     QCOMPARE(DB::driver(connection)->numericalPrecisionPolicy(),
              QSql::LowPrecisionDouble);
@@ -2036,7 +2036,7 @@ void tst_CastAttributes::cast_double_to_QString() const
 
 void tst_CastAttributes::cast_double_Negative_to_longlong() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     QCOMPARE(DB::driver(connection)->numericalPrecisionPolicy(),
              QSql::LowPrecisionDouble);
@@ -2064,7 +2064,7 @@ void tst_CastAttributes::cast_double_Negative_to_longlong() const
 
 void tst_CastAttributes::cast_double_Negative_to_QString() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     QCOMPARE(DB::driver(connection)->numericalPrecisionPolicy(),
              QSql::LowPrecisionDouble);
@@ -2092,7 +2092,7 @@ void tst_CastAttributes::cast_double_Negative_to_QString() const
 
 void tst_CastAttributes::cast_decimal_to_Decimal() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     QCOMPARE(DB::driver(connection)->numericalPrecisionPolicy(),
              QSql::LowPrecisionDouble);
@@ -2120,7 +2120,7 @@ void tst_CastAttributes::cast_decimal_to_Decimal() const
 
 void tst_CastAttributes::cast_decimal_to_longlong() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     QCOMPARE(DB::driver(connection)->numericalPrecisionPolicy(),
              QSql::LowPrecisionDouble);
@@ -2148,7 +2148,7 @@ void tst_CastAttributes::cast_decimal_to_longlong() const
 
 void tst_CastAttributes::cast_decimal_to_QString() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     QCOMPARE(DB::driver(connection)->numericalPrecisionPolicy(),
              QSql::LowPrecisionDouble);
@@ -2176,7 +2176,7 @@ void tst_CastAttributes::cast_decimal_to_QString() const
 
 void tst_CastAttributes::cast_decimal_Negative_to_Decimal() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     QCOMPARE(DB::driver(connection)->numericalPrecisionPolicy(),
              QSql::LowPrecisionDouble);
@@ -2204,7 +2204,7 @@ void tst_CastAttributes::cast_decimal_Negative_to_Decimal() const
 
 void tst_CastAttributes::cast_decimal_Negative_to_longlong() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     QCOMPARE(DB::driver(connection)->numericalPrecisionPolicy(),
              QSql::LowPrecisionDouble);
@@ -2232,7 +2232,7 @@ void tst_CastAttributes::cast_decimal_Negative_to_longlong() const
 
 void tst_CastAttributes::cast_decimal_Negative_to_QString() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     QCOMPARE(DB::driver(connection)->numericalPrecisionPolicy(),
              QSql::LowPrecisionDouble);
@@ -2260,7 +2260,7 @@ void tst_CastAttributes::cast_decimal_Negative_to_QString() const
 
 void tst_CastAttributes::cast_decimal_to_Decimal_With_Modifier_2_Down() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     QCOMPARE(DB::driver(connection)->numericalPrecisionPolicy(),
              QSql::LowPrecisionDouble);
@@ -2288,7 +2288,7 @@ void tst_CastAttributes::cast_decimal_to_Decimal_With_Modifier_2_Down() const
 
 void tst_CastAttributes::cast_decimal_to_Decimal_With_Modifier_2_Up() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     QCOMPARE(DB::driver(connection)->numericalPrecisionPolicy(),
              QSql::LowPrecisionDouble);
@@ -2316,7 +2316,7 @@ void tst_CastAttributes::cast_decimal_to_Decimal_With_Modifier_2_Up() const
 
 void tst_CastAttributes::cast_decimal_to_Decimal_With_Modifier_2_Down_Negative() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     QCOMPARE(DB::driver(connection)->numericalPrecisionPolicy(),
              QSql::LowPrecisionDouble);
@@ -2344,7 +2344,7 @@ void tst_CastAttributes::cast_decimal_to_Decimal_With_Modifier_2_Down_Negative()
 
 void tst_CastAttributes::cast_decimal_to_Decimal_With_Modifier_2_Up_Negative() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     QCOMPARE(DB::driver(connection)->numericalPrecisionPolicy(),
              QSql::LowPrecisionDouble);
@@ -2372,7 +2372,7 @@ void tst_CastAttributes::cast_decimal_to_Decimal_With_Modifier_2_Up_Negative() c
 
 void tst_CastAttributes::cast_timestamp_to_QDateTime() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     auto &type = model(connection);
 
@@ -2398,7 +2398,7 @@ void tst_CastAttributes::cast_timestamp_to_QDateTime() const
 
 void tst_CastAttributes::cast_timestamp_to_QString() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     auto &type = model(connection);
 
@@ -2428,7 +2428,7 @@ void tst_CastAttributes::cast_timestamp_to_QString() const
 
 void tst_CastAttributes::cast_timestamp_to_Timestamp() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     auto &type = model(connection);
 
@@ -2456,7 +2456,7 @@ void tst_CastAttributes::cast_timestamp_to_Timestamp() const
 
 void tst_CastAttributes::cast_datetime_to_QDateTime() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     auto &type = model(connection);
 
@@ -2482,7 +2482,7 @@ void tst_CastAttributes::cast_datetime_to_QDateTime() const
 
 void tst_CastAttributes::cast_datetime_to_QString() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     auto &type = model(connection);
 
@@ -2512,7 +2512,7 @@ void tst_CastAttributes::cast_datetime_to_QString() const
 
 void tst_CastAttributes::cast_date_to_QDate() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     auto &type = model(connection);
 
@@ -2539,7 +2539,7 @@ void tst_CastAttributes::cast_date_to_QDate() const
 
 void tst_CastAttributes::cast_date_to_QString() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     auto &type = model(connection);
 
@@ -2564,7 +2564,7 @@ void tst_CastAttributes::cast_date_to_QString() const
 
 void tst_CastAttributes::cast_blob_to_QByteArray() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     auto &type = model(connection);
 
@@ -2590,7 +2590,7 @@ void tst_CastAttributes::cast_blob_to_QByteArray() const
 
 void tst_CastAttributes::cast_blob_to_QString() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     auto &type = model(connection);
 
@@ -2615,7 +2615,7 @@ void tst_CastAttributes::cast_blob_to_QString() const
 
 void tst_CastAttributes::cast_Null_bool_true_to_bool() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     auto &type = modelNull(connection);
 
@@ -2644,7 +2644,7 @@ void tst_CastAttributes::cast_Null_bool_true_to_bool() const
 
 void tst_CastAttributes::cast_Null_bool_true_to_int() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     auto &type = modelNull(connection);
 
@@ -2673,7 +2673,7 @@ void tst_CastAttributes::cast_Existing_Invalid_to_int() const
 {
     /* Don't convert/cast invalid QVariant because it changes validity from false
        to true and sets a QVariant to null, so no cast can't happen. */
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     Type type;
     type.setAttribute("invalid", {});
@@ -2705,7 +2705,7 @@ void tst_CastAttributes::cast_NonExisting_Invalid_to_int() const
 {
     /* Don't convert/cast invalid QVariant because it changes validity from false
        to true and sets a QVariant to null, so no cast can't happen. */
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     Type type;
 
@@ -2734,7 +2734,7 @@ void tst_CastAttributes::cast_NonExisting_Invalid_to_int() const
 
 void tst_CastAttributes::cast_Null_smallint_to_Short() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     auto &type = modelNull(connection);
 
@@ -2761,7 +2761,7 @@ void tst_CastAttributes::cast_Null_smallint_to_Short() const
 
 void tst_CastAttributes::cast_Null_smallint_u_to_UShort() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     auto &type = modelNull(connection);
 
@@ -2788,7 +2788,7 @@ void tst_CastAttributes::cast_Null_smallint_u_to_UShort() const
 
 void tst_CastAttributes::cast_Null_int_to_Int() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     auto &type = modelNull(connection);
 
@@ -2815,7 +2815,7 @@ void tst_CastAttributes::cast_Null_int_to_Int() const
 
 void tst_CastAttributes::cast_Null_int_u_to_UInt() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     auto &type = modelNull(connection);
 
@@ -2842,7 +2842,7 @@ void tst_CastAttributes::cast_Null_int_u_to_UInt() const
 
 void tst_CastAttributes::cast_Null_bigint_to_LongLong() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     auto &type = modelNull(connection);
 
@@ -2869,7 +2869,7 @@ void tst_CastAttributes::cast_Null_bigint_to_LongLong() const
 
 void tst_CastAttributes::cast_Null_bigint_u_to_ULongLong() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     auto &type = modelNull(connection);
 
@@ -2896,7 +2896,7 @@ void tst_CastAttributes::cast_Null_bigint_u_to_ULongLong() const
 
 void tst_CastAttributes::cast_Null_double_to_Double() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     auto &type = modelNull(connection);
 
@@ -2923,7 +2923,7 @@ void tst_CastAttributes::cast_Null_double_to_Double() const
 
 void tst_CastAttributes::cast_Null_double_NaN() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     if (DB::driverName(connection) != QPSQL)
         QSKIP("The NaN value for the double type column is supported only "
@@ -2945,7 +2945,7 @@ void tst_CastAttributes::cast_Null_double_NaN() const
 
 void tst_CastAttributes::cast_Null_double_Infinity() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     if (DB::driverName(connection) != QPSQL)
         QSKIP("The Infinity value for the double type column is supported only "
@@ -2967,7 +2967,7 @@ void tst_CastAttributes::cast_Null_double_Infinity() const
 
 void tst_CastAttributes::cast_Null_decimal_to_Decimal() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     auto &type = modelNull(connection);
 
@@ -2994,7 +2994,7 @@ void tst_CastAttributes::cast_Null_decimal_to_Decimal() const
 
 void tst_CastAttributes::cast_Null_decimal_NaN() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     if (DB::driverName(connection) != QPSQL)
         QSKIP("The NaN value for the double type column is supported only "
@@ -3016,7 +3016,7 @@ void tst_CastAttributes::cast_Null_decimal_NaN() const
 
 void tst_CastAttributes::cast_Null_decimal_Infinity() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     if (DB::driverName(connection) != QPSQL)
         QSKIP("The Infinity value for the double type column is supported only "
@@ -3038,7 +3038,7 @@ void tst_CastAttributes::cast_Null_decimal_Infinity() const
 
 void tst_CastAttributes::cast_Null_string_to_QString() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     auto &type = modelNull(connection);
 
@@ -3065,7 +3065,7 @@ void tst_CastAttributes::cast_Null_string_to_QString() const
 
 void tst_CastAttributes::cast_Null_text_to_QString() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     auto &type = modelNull(connection);
 
@@ -3092,7 +3092,7 @@ void tst_CastAttributes::cast_Null_text_to_QString() const
 
 void tst_CastAttributes::cast_Null_timestamp_to_Timestamp() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     auto &type = modelNull(connection);
 
@@ -3119,7 +3119,7 @@ void tst_CastAttributes::cast_Null_timestamp_to_Timestamp() const
 
 void tst_CastAttributes::cast_Null_datetime_to_QDateTime() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     auto &type = modelNull(connection);
 
@@ -3146,7 +3146,7 @@ void tst_CastAttributes::cast_Null_datetime_to_QDateTime() const
 
 void tst_CastAttributes::cast_Null_date_to_QDate() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     auto &type = modelNull(connection);
 
@@ -3173,7 +3173,7 @@ void tst_CastAttributes::cast_Null_date_to_QDate() const
 
 void tst_CastAttributes::cast_Null_blob_to_QByteArray() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     auto &type = modelNull(connection);
 

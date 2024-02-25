@@ -83,14 +83,14 @@ void tst_Blobs::initTestCase_data() const
 
 void tst_Blobs::cleanup() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     restoreMaxAllowedPacketForMySql(connection);
 }
 
 void tst_Blobs::text() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     // Prepare the max_allowed_packet MySQL variable (requires 16MB)
     prepareMaxAllowedPacketForMySql(16'777'216, connection);
@@ -159,7 +159,7 @@ void tst_Blobs::text() const
 
 void tst_Blobs::mediumText() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     // Prepare the max_allowed_packet MySQL variable (requires 64MB)
     prepareMaxAllowedPacketForMySql(67'108'864, connection);
@@ -228,7 +228,7 @@ void tst_Blobs::mediumText() const
 
 void tst_Blobs::binary() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     // Prepare the max_allowed_packet MySQL variable (requires 16MB)
     prepareMaxAllowedPacketForMySql(16'777'216, connection);
@@ -301,7 +301,7 @@ void tst_Blobs::binary() const
 
 void tst_Blobs::mediumBinary() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     // Prepare the max_allowed_packet MySQL variable (requires 64MB)
     prepareMaxAllowedPacketForMySql(67'108'864, connection);

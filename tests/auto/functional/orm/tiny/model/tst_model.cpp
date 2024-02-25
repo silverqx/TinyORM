@@ -159,7 +159,7 @@ void tst_Model::initTestCase_data() const
 
 void tst_Model::save_Insert() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -212,7 +212,7 @@ void tst_Model::save_Insert() const
 
 void tst_Model::save_Insert_WithDefaultValues() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -262,7 +262,7 @@ void tst_Model::save_Insert_WithDefaultValues() const
 
 void tst_Model::save_Insert_TableWithoutAutoincrementKey() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -304,7 +304,7 @@ void tst_Model::save_Insert_TableWithoutAutoincrementKey() const
 
 void tst_Model::save_Update_Success() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -339,7 +339,7 @@ void tst_Model::save_Update_Success() const
 
 void tst_Model::save_Update_WithNullValue() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -376,7 +376,7 @@ void tst_Model::save_Update_WithNullValue() const
 
 void tst_Model::save_Update_Failed() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -393,7 +393,7 @@ void tst_Model::save_Update_Failed() const
 
 void tst_Model::remove() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -419,7 +419,7 @@ void tst_Model::remove() const
 
 void tst_Model::destroy() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -451,7 +451,7 @@ void tst_Model::destroy() const
 
 void tst_Model::destroyWithVector() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -497,7 +497,7 @@ void tst_Model::destroyWithVector() const
 
 void tst_Model::all() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -519,7 +519,7 @@ void tst_Model::all() const
 
 void tst_Model::all_Columns() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -540,7 +540,7 @@ void tst_Model::all_Columns() const
 
 void tst_Model::latest() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -560,7 +560,7 @@ void tst_Model::latest() const
 
 void tst_Model::oldest() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -580,7 +580,7 @@ void tst_Model::oldest() const
 
 void tst_Model::where() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -602,7 +602,7 @@ void tst_Model::where() const
 
 void tst_Model::whereEq() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -630,7 +630,7 @@ void tst_Model::whereEq() const
 
 void tst_Model::where_WithVector() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -657,7 +657,7 @@ void tst_Model::where_WithVector() const
 
 void tst_Model::where_WithVector_Condition() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -685,7 +685,7 @@ void tst_Model::where_WithVector_Condition() const
 
 void tst_Model::whereExists() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -741,7 +741,7 @@ void tst_Model::whereExists() const
 
 void tst_Model::find() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -753,7 +753,7 @@ void tst_Model::find() const
 
 void tst_Model::findOrNew_Found() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -777,7 +777,7 @@ void tst_Model::findOrNew_Found() const
 
 void tst_Model::findOrNew_NotFound() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -801,7 +801,7 @@ void tst_Model::findOrNew_NotFound() const
 
 void tst_Model::findOrFail_Found() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -825,7 +825,7 @@ void tst_Model::findOrFail_Found() const
 
 void tst_Model::findOrFail_NotFoundFailed() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -837,7 +837,7 @@ void tst_Model::findOrFail_NotFoundFailed() const
 
 void tst_Model::findMany() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -853,7 +853,7 @@ void tst_Model::findMany() const
 
 void tst_Model::findMany_Empty() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -865,7 +865,7 @@ void tst_Model::findMany_Empty() const
 
 void tst_Model::findOr() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -908,7 +908,7 @@ void tst_Model::findOr() const
 
 void tst_Model::findOr_WithReturnType() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -948,7 +948,7 @@ void tst_Model::findOr_WithReturnType() const
 
 void tst_Model::first() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -960,7 +960,7 @@ void tst_Model::first() const
 
 void tst_Model::firstOr() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -1003,7 +1003,7 @@ void tst_Model::firstOr() const
 
 void tst_Model::firstOr_WithReturnType() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -1043,7 +1043,7 @@ void tst_Model::firstOr_WithReturnType() const
 
 void tst_Model::firstWhere() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -1066,7 +1066,7 @@ void tst_Model::firstWhere() const
 
 void tst_Model::firstWhereEq() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -1079,7 +1079,7 @@ void tst_Model::firstWhereEq() const
 
 void tst_Model::firstOrNew_Found() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -1111,7 +1111,7 @@ void tst_Model::firstOrNew_Found() const
 
 void tst_Model::firstOrNew_NotFound() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -1139,7 +1139,7 @@ void tst_Model::firstOrNew_NotFound() const
 
 void tst_Model::firstOrCreate_Found() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -1178,7 +1178,7 @@ void tst_Model::firstOrCreate_Found() const
 
 void tst_Model::firstOrCreate_NotFound() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -1208,7 +1208,7 @@ void tst_Model::firstOrCreate_NotFound() const
 
 void tst_Model::wasChanged() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -1235,7 +1235,7 @@ void tst_Model::wasChanged() const
 
 void tst_Model::fresh_OnlyAttributes() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -1266,7 +1266,7 @@ void tst_Model::fresh_OnlyAttributes() const
 
 void tst_Model::refresh_OnlyAttributes() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -1300,7 +1300,7 @@ void tst_Model::refresh_OnlyAttributes() const
 
 void tst_Model::create() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -1341,7 +1341,7 @@ void tst_Model::create() const
 
 void tst_Model::create_Failed() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -1362,7 +1362,7 @@ void tst_Model::create_Failed() const
 
 void tst_Model::incrementAndDecrement() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -1429,7 +1429,7 @@ void tst_Model::incrementAndDecrement() const
 
 void tst_Model::incrementAndDecrement_OnNonExistentModel_WithoutAll() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -1449,7 +1449,7 @@ void tst_Model::incrementAndDecrement_OnNonExistentModel_WithoutAll() const
 
 void tst_Model::update() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -1499,7 +1499,7 @@ void tst_Model::update() const
 
 void tst_Model::update_OnNonExistentModel() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -1512,7 +1512,7 @@ void tst_Model::update_OnNonExistentModel() const
 
 void tst_Model::update_NonExistentAttribute() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -1528,7 +1528,7 @@ void tst_Model::update_NonExistentAttribute() const
 
 void tst_Model::update_SameValue() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -1554,7 +1554,7 @@ void tst_Model::update_SameValue() const
 
 void tst_Model::upsert() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -1671,7 +1671,7 @@ void tst_Model::upsert() const
 
 void tst_Model::truncate() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -1702,7 +1702,7 @@ void tst_Model::massAssignment_isGuardableColumn() const
 {
     /* This test has to be here because it internally calls columns listing against
        database, so it is connection-dependent. */
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -1718,7 +1718,7 @@ void tst_Model::massAssignment_isGuardableColumn() const
 
 void tst_Model::touch_WithAttribute() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -1815,7 +1815,7 @@ namespace
 
 void tst_Model::getAttribute_UnixTimestamp_With_UDates() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -1835,7 +1835,7 @@ void tst_Model::getAttribute_UnixTimestamp_With_UDates() const
 
 void tst_Model::getAttribute_UnixTimestamp_WithOut_UDates() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -1859,7 +1859,7 @@ void tst_Model::getAttribute_UnixTimestamp_WithOut_UDates() const
 
 void tst_Model::getAttribute_UnixTimestamp_With_UDates_Null() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -1884,7 +1884,7 @@ void tst_Model::getAttribute_UnixTimestamp_With_UDates_Null() const
 
 void tst_Model::getAttribute_UnixTimestamp_WithOut_UDates_Null() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 

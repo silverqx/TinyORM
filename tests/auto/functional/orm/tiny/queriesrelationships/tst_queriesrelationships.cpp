@@ -73,7 +73,7 @@ void tst_QueriesRelationships::initTestCase_data() const
 
 void tst_QueriesRelationships::has_Basic_QString_OnHasMany() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -87,7 +87,7 @@ void tst_QueriesRelationships::has_Basic_QString_OnHasMany() const
 
 void tst_QueriesRelationships::has_Basic_UniquePtr_OnHasMany() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -113,7 +113,7 @@ void tst_QueriesRelationships::has_Basic_UniquePtr_OnHasMany() const
 
 void tst_QueriesRelationships::has_Basic_MethodPointer_OnHasMany() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -128,7 +128,7 @@ void tst_QueriesRelationships::has_Basic_MethodPointer_OnHasMany() const
 
 void tst_QueriesRelationships::has_Count_QString_OnHasMany() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -143,7 +143,7 @@ void tst_QueriesRelationships::has_Count_QString_OnHasMany() const
 
 void tst_QueriesRelationships::has_Count_UniquePtr_OnHasMany() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -170,7 +170,7 @@ void tst_QueriesRelationships::has_Count_UniquePtr_OnHasMany() const
 
 void tst_QueriesRelationships::has_Count_MethodPointer_OnHasMany() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -185,7 +185,7 @@ void tst_QueriesRelationships::has_Count_MethodPointer_OnHasMany() const
 
 void tst_QueriesRelationships::whereHas_Basic_QString_QueryBuilder_OnHasMany() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -205,7 +205,7 @@ void tst_QueriesRelationships::whereHas_Basic_QString_QueryBuilder_OnHasMany() c
 
 void tst_QueriesRelationships::whereHas_Basic_QString_TinyBuilder_OnHasMany() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -227,7 +227,7 @@ void tst_QueriesRelationships::whereHas_Basic_QString_TinyBuilder_OnHasMany() co
 
 void tst_QueriesRelationships::whereHas_Count_QString_QueryBuilder_OnHasMany() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -247,7 +247,7 @@ void tst_QueriesRelationships::whereHas_Count_QString_QueryBuilder_OnHasMany() c
 
 void tst_QueriesRelationships::whereHas_Count_QString_TinyBuilder_OnHasMany() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -269,7 +269,7 @@ void tst_QueriesRelationships::whereHas_Count_QString_TinyBuilder_OnHasMany() co
 
 void tst_QueriesRelationships::whereHas_Count_MethodPointer_TinyBuilder_OnHasMany() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -291,7 +291,7 @@ void tst_QueriesRelationships::whereHas_Count_MethodPointer_TinyBuilder_OnHasMan
 
 void tst_QueriesRelationships::hasNested_Basic_OnHasMany() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -307,7 +307,7 @@ void tst_QueriesRelationships::hasNested_Basic_OnHasMany() const
 
 void tst_QueriesRelationships::hasNested_Count_OnHasMany() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -323,7 +323,7 @@ void tst_QueriesRelationships::hasNested_Count_OnHasMany() const
 
 void tst_QueriesRelationships::hasNested_Count_TinyBuilder_OnHasMany() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 

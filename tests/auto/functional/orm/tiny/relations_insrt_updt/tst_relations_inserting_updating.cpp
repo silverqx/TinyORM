@@ -135,7 +135,7 @@ void tst_Relations_Inserting_Updating::initTestCase_data() const
 
 void tst_Relations_Inserting_Updating::save_OnHasOneOrMany() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -179,7 +179,7 @@ void tst_Relations_Inserting_Updating::save_OnHasOneOrMany() const
 
 void tst_Relations_Inserting_Updating::save_OnHasOneOrMany_WithRValue() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -217,7 +217,7 @@ void tst_Relations_Inserting_Updating::save_OnHasOneOrMany_WithRValue() const
 
 void tst_Relations_Inserting_Updating::save_OnHasOneOrMany_Failed() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -243,7 +243,7 @@ void tst_Relations_Inserting_Updating::save_OnHasOneOrMany_Failed() const
 
 void tst_Relations_Inserting_Updating::saveMany_OnHasOneOrMany() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -318,7 +318,7 @@ void tst_Relations_Inserting_Updating::saveMany_OnHasOneOrMany() const
 
 void tst_Relations_Inserting_Updating::saveMany_OnHasOneOrMany_WithRValue() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -379,7 +379,7 @@ void tst_Relations_Inserting_Updating::saveMany_OnHasOneOrMany_WithRValue() cons
 
 void tst_Relations_Inserting_Updating::saveMany_OnHasOneOrMany_Failed() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -411,7 +411,7 @@ void tst_Relations_Inserting_Updating::saveMany_OnHasOneOrMany_Failed() const
 
 void tst_Relations_Inserting_Updating::create_OnHasOneOrMany() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -450,7 +450,7 @@ void tst_Relations_Inserting_Updating::create_OnHasOneOrMany() const
 
 void tst_Relations_Inserting_Updating::create_OnHasOneOrMany_WithRValue() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -487,7 +487,7 @@ void tst_Relations_Inserting_Updating::create_OnHasOneOrMany_WithRValue() const
 
 void tst_Relations_Inserting_Updating::create_OnHasOneOrMany_Failed() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -512,7 +512,7 @@ void tst_Relations_Inserting_Updating::create_OnHasOneOrMany_Failed() const
 
 void tst_Relations_Inserting_Updating::create_OnHasOneOrMany_WithRValue_Failed() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -536,7 +536,7 @@ void tst_Relations_Inserting_Updating::create_OnHasOneOrMany_WithRValue_Failed()
 
 void tst_Relations_Inserting_Updating::createMany_OnHasOneOrMany() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -605,7 +605,7 @@ void tst_Relations_Inserting_Updating::createMany_OnHasOneOrMany() const
 
 void tst_Relations_Inserting_Updating::createMany_OnHasOneOrMany_WithRValue() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -666,7 +666,7 @@ void tst_Relations_Inserting_Updating::createMany_OnHasOneOrMany_WithRValue() co
 
 void tst_Relations_Inserting_Updating::createMany_OnHasOneOrMany_Failed() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -699,7 +699,7 @@ void tst_Relations_Inserting_Updating::createMany_OnHasOneOrMany_Failed() const
 void
 tst_Relations_Inserting_Updating::createMany_OnHasOneOrMany_WithRValue_Failed() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -731,7 +731,7 @@ tst_Relations_Inserting_Updating::createMany_OnHasOneOrMany_WithRValue_Failed() 
 
 void tst_Relations_Inserting_Updating::save_OnBelongsToMany() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -780,7 +780,7 @@ void tst_Relations_Inserting_Updating::save_OnBelongsToMany() const
 
 void tst_Relations_Inserting_Updating::save_OnBelongsToMany_WithRValue() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -824,7 +824,7 @@ void tst_Relations_Inserting_Updating::save_OnBelongsToMany_WithRValue() const
 
 void tst_Relations_Inserting_Updating::save_OnBelongsToMany_Failed() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -851,7 +851,7 @@ void tst_Relations_Inserting_Updating::save_OnBelongsToMany_Failed() const
 
 void tst_Relations_Inserting_Updating::saveMany_OnBelongsToMany() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -922,7 +922,7 @@ void tst_Relations_Inserting_Updating::saveMany_OnBelongsToMany() const
 
 void tst_Relations_Inserting_Updating::saveMany_OnBelongsToMany_WithRValue() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -983,7 +983,7 @@ void tst_Relations_Inserting_Updating::saveMany_OnBelongsToMany_WithRValue() con
 
 void tst_Relations_Inserting_Updating::saveMany_OnBelongsToMany_Failed() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -1014,7 +1014,7 @@ void tst_Relations_Inserting_Updating::saveMany_OnBelongsToMany_Failed() const
 
 void tst_Relations_Inserting_Updating::create_OnBelongsToMany() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -1058,7 +1058,7 @@ void tst_Relations_Inserting_Updating::create_OnBelongsToMany() const
 
 void tst_Relations_Inserting_Updating::create_OnBelongsToMany_WithRValue() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -1101,7 +1101,7 @@ void tst_Relations_Inserting_Updating::create_OnBelongsToMany_WithRValue() const
 
 void tst_Relations_Inserting_Updating::create_OnBelongsToMany_Failed() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -1128,7 +1128,7 @@ void tst_Relations_Inserting_Updating::create_OnBelongsToMany_Failed() const
 
 void tst_Relations_Inserting_Updating::create_OnBelongsToMany_WithRValue_Failed() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -1154,7 +1154,7 @@ void tst_Relations_Inserting_Updating::create_OnBelongsToMany_WithRValue_Failed(
 
 void tst_Relations_Inserting_Updating::createMany_OnBelongsToMany() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -1214,7 +1214,7 @@ void tst_Relations_Inserting_Updating::createMany_OnBelongsToMany() const
 
 void tst_Relations_Inserting_Updating::createMany_OnBelongsToMany_WithRValue() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -1274,7 +1274,7 @@ void tst_Relations_Inserting_Updating::createMany_OnBelongsToMany_WithRValue() c
 
 void tst_Relations_Inserting_Updating::createMany_OnBelongsToMany_Failed() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -1304,7 +1304,7 @@ void tst_Relations_Inserting_Updating::createMany_OnBelongsToMany_Failed() const
 void
 tst_Relations_Inserting_Updating::createMany_OnBelongsToMany_WithRValue_Failed() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -1332,7 +1332,7 @@ tst_Relations_Inserting_Updating::createMany_OnBelongsToMany_WithRValue_Failed()
 
 void tst_Relations_Inserting_Updating::associate_WithModel() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -1396,7 +1396,7 @@ void tst_Relations_Inserting_Updating::associate_WithModel() const
 
 void tst_Relations_Inserting_Updating::associate_WithId() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -1443,7 +1443,7 @@ void tst_Relations_Inserting_Updating::associate_WithId() const
 
 void tst_Relations_Inserting_Updating::associate_WithId_ShouldUnsetRelation() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -1498,7 +1498,7 @@ void tst_Relations_Inserting_Updating::associate_WithId_ShouldUnsetRelation() co
 
 void tst_Relations_Inserting_Updating::dissociate() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -1558,7 +1558,7 @@ void tst_Relations_Inserting_Updating::dissociate() const
 
 void tst_Relations_Inserting_Updating::attach_BasicPivot_WithIds() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -1608,7 +1608,7 @@ void tst_Relations_Inserting_Updating::attach_BasicPivot_WithIds() const
 
 void tst_Relations_Inserting_Updating::attach_BasicPivot_WithModels() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -1658,7 +1658,7 @@ void tst_Relations_Inserting_Updating::attach_BasicPivot_WithModels() const
 
 void tst_Relations_Inserting_Updating::attach_CustomPivot_WithIds() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -1704,7 +1704,7 @@ void tst_Relations_Inserting_Updating::attach_CustomPivot_WithIds() const
 
 void tst_Relations_Inserting_Updating::attach_CustomPivot_WithModels() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -1750,7 +1750,7 @@ void tst_Relations_Inserting_Updating::attach_CustomPivot_WithModels() const
 
 void tst_Relations_Inserting_Updating::attach_BasicPivot_IdsWithAttributes() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -1808,7 +1808,7 @@ void tst_Relations_Inserting_Updating::attach_BasicPivot_IdsWithAttributes() con
 
 void tst_Relations_Inserting_Updating::attach_CustomPivot_IdsWithAttributes() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -1862,7 +1862,7 @@ void tst_Relations_Inserting_Updating::attach_CustomPivot_IdsWithAttributes() co
 
 void tst_Relations_Inserting_Updating::detach_BasicPivot_WithId() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -1916,7 +1916,7 @@ void tst_Relations_Inserting_Updating::detach_BasicPivot_WithId() const
 
 void tst_Relations_Inserting_Updating::detach_BasicPivot_WithIds() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -1977,7 +1977,7 @@ void tst_Relations_Inserting_Updating::detach_BasicPivot_WithIds() const
 
 void tst_Relations_Inserting_Updating::detach_BasicPivot_WithModels() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -2037,7 +2037,7 @@ void tst_Relations_Inserting_Updating::detach_BasicPivot_WithModels() const
 
 void tst_Relations_Inserting_Updating::detach_BasicPivot_All() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -2097,7 +2097,7 @@ void tst_Relations_Inserting_Updating::detach_BasicPivot_All() const
 
 void tst_Relations_Inserting_Updating::detach_CustomPivot_WithId() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -2150,7 +2150,7 @@ void tst_Relations_Inserting_Updating::detach_CustomPivot_WithId() const
 
 void tst_Relations_Inserting_Updating::detach_CustomPivot_WithIds() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -2206,7 +2206,7 @@ void tst_Relations_Inserting_Updating::detach_CustomPivot_WithIds() const
 
 void tst_Relations_Inserting_Updating::detach_CustomPivot_WithModels() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -2262,7 +2262,7 @@ void tst_Relations_Inserting_Updating::detach_CustomPivot_WithModels() const
 
 void tst_Relations_Inserting_Updating::detach_CustomPivot_All() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -2318,7 +2318,7 @@ void tst_Relations_Inserting_Updating::detach_CustomPivot_All() const
 
 void tst_Relations_Inserting_Updating::updateExistingPivot_BasicPivot_WithId() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -2363,7 +2363,7 @@ void tst_Relations_Inserting_Updating::updateExistingPivot_BasicPivot_WithId() c
 
 void tst_Relations_Inserting_Updating::updateExistingPivot_BasicPivot_WithModel() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -2410,7 +2410,7 @@ void tst_Relations_Inserting_Updating::updateExistingPivot_BasicPivot_WithModel(
 
 void tst_Relations_Inserting_Updating::updateExistingPivot_CustomPivot_WithId() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -2455,7 +2455,7 @@ void tst_Relations_Inserting_Updating::updateExistingPivot_CustomPivot_WithId() 
 
 void tst_Relations_Inserting_Updating::updateExistingPivot_CustomPivot_WithModel() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -2502,7 +2502,7 @@ void tst_Relations_Inserting_Updating::updateExistingPivot_CustomPivot_WithModel
 
 void tst_Relations_Inserting_Updating::sync_BasicPivot_WithIds() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -2621,7 +2621,7 @@ void tst_Relations_Inserting_Updating::sync_BasicPivot_WithIds() const
 
 void tst_Relations_Inserting_Updating::sync_BasicPivot_IdsWithAttributes() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -2745,7 +2745,7 @@ void tst_Relations_Inserting_Updating::sync_BasicPivot_IdsWithAttributes() const
 
 void tst_Relations_Inserting_Updating::sync_CustomPivot_WithIds() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -2850,7 +2850,7 @@ void tst_Relations_Inserting_Updating::sync_CustomPivot_WithIds() const
 
 void tst_Relations_Inserting_Updating::sync_CustomPivot_IdsWithAttributes() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -2961,7 +2961,7 @@ void tst_Relations_Inserting_Updating::sync_CustomPivot_IdsWithAttributes() cons
 
 void tst_Relations_Inserting_Updating::syncWithoutDetaching_BasicPivot_WithIds() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -3078,7 +3078,7 @@ void tst_Relations_Inserting_Updating::syncWithoutDetaching_BasicPivot_WithIds()
 void tst_Relations_Inserting_Updating::
      syncWithoutDetaching_BasicPivot_IdsWithAttributes() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -3199,7 +3199,7 @@ void tst_Relations_Inserting_Updating::
 
 void tst_Relations_Inserting_Updating::syncWithoutDetaching_CustomPivot_WithIds() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -3303,7 +3303,7 @@ void tst_Relations_Inserting_Updating::syncWithoutDetaching_CustomPivot_WithIds(
 void tst_Relations_Inserting_Updating::
      syncWithoutDetaching_CustomPivot_IdsWithAttributes() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 

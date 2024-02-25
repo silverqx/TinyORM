@@ -138,7 +138,7 @@ void tst_Model_QDateTime::initTestCase_data() const
 void tst_Model_QDateTime::
 create_QDateTime_UtcTimezone_DatetimeAttribute_UtcOnServer() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -191,7 +191,7 @@ create_QDateTime_UtcTimezone_DatetimeAttribute_UtcOnServer() const
 void tst_Model_QDateTime::
 create_QDateTime_0200Timezone_DatetimeAttribute_UtcOnServer() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -244,7 +244,7 @@ create_QDateTime_0200Timezone_DatetimeAttribute_UtcOnServer() const
 
 void tst_Model_QDateTime::create_QString_DatetimeAttribute_UtcOnServer() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -297,7 +297,7 @@ void tst_Model_QDateTime::create_QString_DatetimeAttribute_UtcOnServer() const
 void tst_Model_QDateTime::
 create_QDateTime_UtcTimezone_TimestampAttribute_UtcOnServer() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -350,7 +350,7 @@ create_QDateTime_UtcTimezone_TimestampAttribute_UtcOnServer() const
 void tst_Model_QDateTime::
 create_QDateTime_0200Timezone_TimestampAttribute_UtcOnServer() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -403,7 +403,7 @@ create_QDateTime_0200Timezone_TimestampAttribute_UtcOnServer() const
 
 void tst_Model_QDateTime::create_QString_TimestampAttribute_UtcOnServer() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -458,7 +458,7 @@ void tst_Model_QDateTime::create_QString_TimestampAttribute_UtcOnServer() const
 void tst_Model_QDateTime::
 create_QDateTime_UtcTimezone_DatetimeAttribute_0200OnServer() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     if (DB::driverName(connection) == QSQLITE)
         QSKIP("SQLite database doesn't support setting a time zone on the database "
@@ -517,7 +517,7 @@ create_QDateTime_UtcTimezone_DatetimeAttribute_0200OnServer() const
 void tst_Model_QDateTime::
 create_QDateTime_0200Timezone_DatetimeAttribute_0200OnServer() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     if (DB::driverName(connection) == QSQLITE)
         QSKIP("SQLite database doesn't support setting a time zone on the database "
@@ -576,7 +576,7 @@ create_QDateTime_0200Timezone_DatetimeAttribute_0200OnServer() const
 
 void tst_Model_QDateTime::create_QString_DatetimeAttribute_0200OnServer() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     if (DB::driverName(connection) == QSQLITE)
         QSKIP("SQLite database doesn't support setting a time zone on the database "
@@ -635,7 +635,7 @@ void tst_Model_QDateTime::create_QString_DatetimeAttribute_0200OnServer() const
 void tst_Model_QDateTime::
 create_QDateTime_UtcTimezone_TimestampAttribute_0200OnServer() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     if (DB::driverName(connection) == QSQLITE)
         QSKIP("SQLite database doesn't support setting a time zone on the database "
@@ -694,7 +694,7 @@ create_QDateTime_UtcTimezone_TimestampAttribute_0200OnServer() const
 void tst_Model_QDateTime::
 create_QDateTime_0200Timezone_TimestampAttribute_0200OnServer() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     if (DB::driverName(connection) == QSQLITE)
         QSKIP("SQLite database doesn't support setting a time zone on the database "
@@ -753,7 +753,7 @@ create_QDateTime_0200Timezone_TimestampAttribute_0200OnServer() const
 
 void tst_Model_QDateTime::create_QString_TimestampAttribute_0200OnServer() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     if (DB::driverName(connection) == QSQLITE)
         QSKIP("SQLite database doesn't support setting a time zone on the database "
@@ -815,7 +815,7 @@ void tst_Model_QDateTime::create_QString_TimestampAttribute_0200OnServer() const
 
 void tst_Model_QDateTime::create_QDate_UtcTimezone_DateAttribute_UtcOnServer() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -861,7 +861,7 @@ void tst_Model_QDateTime::create_QDate_UtcTimezone_DateAttribute_UtcOnServer() c
 
 void tst_Model_QDateTime::create_QString_DateAttribute_UtcOnServer() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -910,7 +910,7 @@ void tst_Model_QDateTime::create_QString_DateAttribute_UtcOnServer() const
 
 void tst_Model_QDateTime::create_QDate_UtcTimezone_DateAttribute_0200OnServer() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -958,7 +958,7 @@ void tst_Model_QDateTime::create_QDate_UtcTimezone_DateAttribute_0200OnServer() 
 
 void tst_Model_QDateTime::create_QString_DateAttribute_0200OnServer() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -1011,7 +1011,7 @@ void tst_Model_QDateTime::create_QString_DateAttribute_0200OnServer() const
 
 void tst_Model_QDateTime::create_QDateTime_Null_DatetimeAttribute_UtcOnServer() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -1072,7 +1072,7 @@ void tst_Model_QDateTime::create_QDateTime_Null_DatetimeAttribute_UtcOnServer() 
 
 void tst_Model_QDateTime::create_QDate_Null_DateAttribute_UtcOnServer() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -1130,7 +1130,7 @@ void tst_Model_QDateTime::create_QDate_Null_DateAttribute_UtcOnServer() const
 
 void tst_Model_QDateTime::create_QDateTime_Null_DatetimeAttribute_0200OnServer() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     if (DB::driverName(connection) == QSQLITE)
         QSKIP("SQLite database doesn't support setting a time zone on the database "
@@ -1197,7 +1197,7 @@ void tst_Model_QDateTime::create_QDateTime_Null_DatetimeAttribute_0200OnServer()
 
 void tst_Model_QDateTime::create_QDate_Null_DateAttribute_0200OnServer() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -1260,7 +1260,7 @@ void tst_Model_QDateTime::create_QDate_Null_DateAttribute_0200OnServer() const
 void tst_Model_QDateTime::
 create_QDateTime_0300Timezone_DatetimeAttribute_UtcOnServer_DontConvert() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 

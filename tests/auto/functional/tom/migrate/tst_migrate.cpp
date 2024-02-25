@@ -190,7 +190,7 @@ void tst_Migrate::initTestCase()
 
 void tst_Migrate::cleanup() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     /* All test methods need this except for two of them (reset and I don't remember
        second), I will not implement special logic to skip this for these two methods. */
@@ -240,7 +240,7 @@ void tst_Migrate::cleanupTestCase() const
 
 void tst_Migrate::migrate() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     {
         auto exitCode = invokeCommand(connection, Migrate);
@@ -258,7 +258,7 @@ void tst_Migrate::migrate() const
 
 void tst_Migrate::migrate_Step() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     {
         auto exitCode = invokeCommand(connection, Migrate, {"--step"});
@@ -276,7 +276,7 @@ void tst_Migrate::migrate_Step() const
 
 void tst_Migrate::reset() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     {
         auto exitCode = invokeCommand(connection, MigrateReset);
@@ -294,7 +294,7 @@ void tst_Migrate::reset() const
 
 void tst_Migrate::rollback() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     {
         auto exitCode = invokeCommand(connection, Migrate);
@@ -326,7 +326,7 @@ void tst_Migrate::rollback() const
 
 void tst_Migrate::rollback_AfterMigrateWithStep() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     {
         auto exitCode = invokeCommand(connection, Migrate, {"--step"});
@@ -363,7 +363,7 @@ void tst_Migrate::rollback_AfterMigrateWithStep() const
 
 void tst_Migrate::rollback_Step() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     {
         auto exitCode = invokeCommand(connection, Migrate);
@@ -400,7 +400,7 @@ void tst_Migrate::rollback_Step() const
 
 void tst_Migrate::rollback_Step_AfterMigrateWithStep() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     {
         auto exitCode = invokeCommand(connection, Migrate, {"--step"});
@@ -437,7 +437,7 @@ void tst_Migrate::rollback_Step_AfterMigrateWithStep() const
 
 void tst_Migrate::rollback_Batch_MoreMigrations() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     // Prepare migrations to the exact state
     {
@@ -494,7 +494,7 @@ void tst_Migrate::rollback_Batch_MoreMigrations() const
 
 void tst_Migrate::rollback_Batch_AfterMigrateWithStep() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     {
         auto exitCode = invokeCommand(connection, Migrate, {"--step"});
@@ -591,7 +591,7 @@ void tst_Migrate::rollback_Batch_AfterMigrateWithStep() const
 
 void tst_Migrate::refresh() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     {
         auto exitCode = invokeCommand(connection, Migrate);
@@ -623,7 +623,7 @@ void tst_Migrate::refresh() const
 
 void tst_Migrate::refresh_AfterMigrateWithStep() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     {
         auto exitCode = invokeCommand(connection, Migrate, {"--step"});
@@ -655,7 +655,7 @@ void tst_Migrate::refresh_AfterMigrateWithStep() const
 
 void tst_Migrate::refresh_Step() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     {
         auto exitCode = invokeCommand(connection, Migrate);
@@ -692,7 +692,7 @@ void tst_Migrate::refresh_Step() const
 
 void tst_Migrate::refresh_StepMigrate() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     {
         auto exitCode = invokeCommand(connection, Migrate);
@@ -724,7 +724,7 @@ void tst_Migrate::refresh_StepMigrate() const
 
 void tst_Migrate::refresh_Step_StepMigrate() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     {
         auto exitCode = invokeCommand(connection, Migrate);

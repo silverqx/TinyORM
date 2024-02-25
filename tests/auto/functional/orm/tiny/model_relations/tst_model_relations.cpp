@@ -203,7 +203,7 @@ void tst_Model_Relations::initTestCase_data() const
 
 void tst_Model_Relations::getRelation_EagerLoad_ManyAndOne() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -242,7 +242,7 @@ void tst_Model_Relations::getRelation_EagerLoad_ManyAndOne() const
 
 void tst_Model_Relations::getRelation_EagerLoad_BelongsTo() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -261,7 +261,7 @@ void tst_Model_Relations::getRelation_EagerLoad_BelongsTo() const
 void tst_Model_Relations::
      getRelationValue_EagerLoad_BelongsToMany_BasicPivot_WithPivotAttributes() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -310,7 +310,7 @@ void tst_Model_Relations::
 void tst_Model_Relations::
      getRelationValue_EagerLoad_BelongsToMany_CustomPivot_WithPivotAttributes() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -361,7 +361,7 @@ void tst_Model_Relations::
 void tst_Model_Relations::
      getRelationValue_EagerLoad_BelongsToMany_BasicPivot_WithoutPivotAttributes() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -405,7 +405,7 @@ void tst_Model_Relations::
 
 void tst_Model_Relations::getRelation_EagerLoad_Failed() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -435,7 +435,7 @@ void tst_Model_Relations::getRelation_EagerLoad_Failed() const
 
 void tst_Model_Relations::eagerLoad_Failed() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -445,7 +445,7 @@ void tst_Model_Relations::eagerLoad_Failed() const
 
 void tst_Model_Relations::getRelationValue_LazyLoad_ManyAndOne() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -484,7 +484,7 @@ void tst_Model_Relations::getRelationValue_LazyLoad_ManyAndOne() const
 
 void tst_Model_Relations::getRelationValue_LazyLoad_BelongsTo() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -503,7 +503,7 @@ void tst_Model_Relations::getRelationValue_LazyLoad_BelongsTo() const
 void tst_Model_Relations::
      getRelationValue_LazyLoad_BelongsToMany_BasicPivot_WithPivotAttributes() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -552,7 +552,7 @@ void tst_Model_Relations::
 void tst_Model_Relations::
      getRelationValue_LazyLoad_BelongsToMany_CustomPivot_WithPivotAttributes() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -603,7 +603,7 @@ void tst_Model_Relations::
 void tst_Model_Relations::
      getRelationValue_LazyLoad_BelongsToMany_BasicPivot_WithoutPivotAttributes() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -647,7 +647,7 @@ void tst_Model_Relations::
 
 void tst_Model_Relations::getRelationValue_LazyLoad_Failed() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -667,7 +667,7 @@ void tst_Model_Relations::getRelationValue_LazyLoad_Failed() const
 
 void tst_Model_Relations::u_with_Empty() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -678,7 +678,7 @@ void tst_Model_Relations::u_with_Empty() const
 
 void tst_Model_Relations::with_HasOne() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -696,7 +696,7 @@ void tst_Model_Relations::with_HasOne() const
 
 void tst_Model_Relations::with_HasMany() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -721,7 +721,7 @@ void tst_Model_Relations::with_HasMany() const
 
 void tst_Model_Relations::with_BelongsTo() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -739,7 +739,7 @@ void tst_Model_Relations::with_BelongsTo() const
 
 void tst_Model_Relations::with_BelongsToMany() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -790,7 +790,7 @@ void tst_Model_Relations::with_BelongsToMany() const
 
 void tst_Model_Relations::with_BelongsToMany_Twice() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -898,7 +898,7 @@ void tst_Model_Relations::with_BelongsToMany_Twice() const
 
 void tst_Model_Relations::with_Vector_MoreRelations() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -937,7 +937,7 @@ void tst_Model_Relations::with_Vector_MoreRelations() const
 
 void tst_Model_Relations::with_NonExistentRelation_Failed() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -947,7 +947,7 @@ void tst_Model_Relations::with_NonExistentRelation_Failed() const
 
 void tst_Model_Relations::with_WithSelectConstraint() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -981,7 +981,7 @@ void tst_Model_Relations::with_WithSelectConstraint() const
 
 void tst_Model_Relations::with_WithSelectConstraint_WithWhitespaces() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -1016,7 +1016,7 @@ void tst_Model_Relations::with_WithSelectConstraint_WithWhitespaces() const
 
 void tst_Model_Relations::with_WithSelectConstraint_BelongsToMany() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -1076,7 +1076,7 @@ void tst_Model_Relations::with_WithSelectConstraint_BelongsToMany() const
 
 void tst_Model_Relations::with_WithLambdaConstraint() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -1113,7 +1113,7 @@ void tst_Model_Relations::with_WithLambdaConstraint() const
 
 void tst_Model_Relations::with_WithLambdaConstraint_BelongsToMany() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -1176,7 +1176,7 @@ void tst_Model_Relations::with_WithLambdaConstraint_BelongsToMany() const
 
 void tst_Model_Relations::with_NestedRelations() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -1215,7 +1215,7 @@ void tst_Model_Relations::with_NestedRelations() const
 
 void tst_Model_Relations::with_NestedRelations_WithSelectConstraint_HasOne() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -1263,7 +1263,7 @@ void tst_Model_Relations::with_NestedRelations_WithSelectConstraint_HasOne() con
 
 void tst_Model_Relations::with_NestedRelations_WithSelectConstraint_HasMany() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -1307,7 +1307,7 @@ void tst_Model_Relations::with_NestedRelations_WithSelectConstraint_HasMany() co
 void tst_Model_Relations::
      with_NestedRelations_WithSelectConstraint_BelongsToMany_HasOne() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -1352,7 +1352,7 @@ void tst_Model_Relations::
 void tst_Model_Relations::
      with_NestedRelations_WithSelectConstraint_BelongsToMany_Twice() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -1459,7 +1459,7 @@ void tst_Model_Relations::
 
 void tst_Model_Relations::without() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -1475,7 +1475,7 @@ void tst_Model_Relations::without() const
 
 void tst_Model_Relations::without_NestedRelations() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -1491,7 +1491,7 @@ void tst_Model_Relations::without_NestedRelations() const
 
 void tst_Model_Relations::without_Vector_MoreRelations() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -1504,7 +1504,7 @@ void tst_Model_Relations::without_Vector_MoreRelations() const
 
 void tst_Model_Relations::withOnly() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -1520,7 +1520,7 @@ void tst_Model_Relations::withOnly() const
 
 void tst_Model_Relations::load_QVector_WithItem() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -1566,7 +1566,7 @@ void tst_Model_Relations::load_QVector_WithItem() const
 
 void tst_Model_Relations::load_QVector_QString_lvalue() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -1613,7 +1613,7 @@ void tst_Model_Relations::load_QVector_QString_lvalue() const
 
 void tst_Model_Relations::load_QVector_QString_rvalue() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -1659,7 +1659,7 @@ void tst_Model_Relations::load_QVector_QString_rvalue() const
 
 void tst_Model_Relations::load_QString() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -1686,7 +1686,7 @@ void tst_Model_Relations::load_QString() const
 
 void tst_Model_Relations::load_WithSelectConstraint() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -1729,7 +1729,7 @@ void tst_Model_Relations::load_WithSelectConstraint() const
 
 void tst_Model_Relations::load_WithLambdaConstraint() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -1775,7 +1775,7 @@ void tst_Model_Relations::load_WithLambdaConstraint() const
 
 void tst_Model_Relations::load_NonExistentRelation_Failed() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -1790,7 +1790,7 @@ void tst_Model_Relations::load_NonExistentRelation_Failed() const
 
 void tst_Model_Relations::fresh() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -1833,7 +1833,7 @@ void tst_Model_Relations::fresh() const
 
 void tst_Model_Relations::fresh_WithSelectConstraint() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -1880,7 +1880,7 @@ void tst_Model_Relations::fresh_WithSelectConstraint() const
 
 void tst_Model_Relations::refresh_EagerLoad_OnlyRelations() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -1955,7 +1955,7 @@ void tst_Model_Relations::refresh_EagerLoad_OnlyRelations() const
 
 void tst_Model_Relations::refresh_LazyLoad_OnlyRelations() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -2031,7 +2031,7 @@ void tst_Model_Relations::refresh_LazyLoad_OnlyRelations() const
 
 void tst_Model_Relations::push_EagerLoad() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -2118,7 +2118,7 @@ void tst_Model_Relations::push_EagerLoad() const
 
 void tst_Model_Relations::push_LazyLoad() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -2203,7 +2203,7 @@ void tst_Model_Relations::push_LazyLoad() const
 
 void tst_Model_Relations::where_WithCallback() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -2227,7 +2227,7 @@ void tst_Model_Relations::where_WithCallback() const
 
 void tst_Model_Relations::orWhere_WithCallback() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -2252,7 +2252,7 @@ void tst_Model_Relations::orWhere_WithCallback() const
 
 void tst_Model_Relations::belongsToMany_allRelatedIds() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -2274,7 +2274,7 @@ void tst_Model_Relations::belongsToMany_allRelatedIds() const
 
 void tst_Model_Relations::withoutDefaultModel_LazyLoad_HasOne() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -2290,7 +2290,7 @@ void tst_Model_Relations::withoutDefaultModel_LazyLoad_HasOne() const
 
 void tst_Model_Relations::withoutDefaultModel_LazyLoad_BelongsTo() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -2304,7 +2304,7 @@ void tst_Model_Relations::withoutDefaultModel_LazyLoad_BelongsTo() const
 
 void tst_Model_Relations::withoutDefaultModel_EagerLoad_HasOne() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -2320,7 +2320,7 @@ void tst_Model_Relations::withoutDefaultModel_EagerLoad_HasOne() const
 
 void tst_Model_Relations::withoutDefaultModel_EagerLoad_BelongsTo() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -2334,7 +2334,7 @@ void tst_Model_Relations::withoutDefaultModel_EagerLoad_BelongsTo() const
 
 void tst_Model_Relations::withDefaultModel_LazyLoad_Bool_HasOne() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -2354,7 +2354,7 @@ void tst_Model_Relations::withDefaultModel_LazyLoad_Bool_HasOne() const
 
 void tst_Model_Relations::withDefaultModel_LazyLoad_AttributesVector_HasOne() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -2376,7 +2376,7 @@ void tst_Model_Relations::withDefaultModel_LazyLoad_AttributesVector_HasOne() co
 
 void tst_Model_Relations::withDefaultModel_LazyLoad_Bool_BelongsTo() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -2394,7 +2394,7 @@ void tst_Model_Relations::withDefaultModel_LazyLoad_Bool_BelongsTo() const
 
 void tst_Model_Relations::withDefaultModel_LazyLoad_AttributesVector_BelongsTo() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -2414,7 +2414,7 @@ void tst_Model_Relations::withDefaultModel_LazyLoad_AttributesVector_BelongsTo()
 
 void tst_Model_Relations::withDefaultModel_EagerLoad_Bool_HasOne() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -2434,7 +2434,7 @@ void tst_Model_Relations::withDefaultModel_EagerLoad_Bool_HasOne() const
 
 void tst_Model_Relations::withDefaultModel_EagerLoad_AttributesVector_HasOne() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -2456,7 +2456,7 @@ void tst_Model_Relations::withDefaultModel_EagerLoad_AttributesVector_HasOne() c
 
 void tst_Model_Relations::withDefaultModel_EagerLoad_Bool_BelongsTo() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -2475,7 +2475,7 @@ void tst_Model_Relations::withDefaultModel_EagerLoad_Bool_BelongsTo() const
 
 void tst_Model_Relations::withDefaultModel_EagerLoad_AttributesVector_BelongsTo() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -2500,7 +2500,7 @@ void tst_Model_Relations::withDefaultModel_EagerLoad_AttributesVector_BelongsTo(
 
 void tst_Model_Relations::find() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -2512,7 +2512,7 @@ void tst_Model_Relations::find() const
 
 void tst_Model_Relations::findOr() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -2556,7 +2556,7 @@ void tst_Model_Relations::findOr() const
 
 void tst_Model_Relations::findOr_WithReturnType() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -2597,7 +2597,7 @@ void tst_Model_Relations::findOr_WithReturnType() const
 
 void tst_Model_Relations::first() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -2609,7 +2609,7 @@ void tst_Model_Relations::first() const
 
 void tst_Model_Relations::firstOr() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -2654,7 +2654,7 @@ void tst_Model_Relations::firstOr() const
 
 void tst_Model_Relations::firstOr_WithReturnType() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -2697,7 +2697,7 @@ void tst_Model_Relations::firstOr_WithReturnType() const
 
 void tst_Model_Relations::whereRowValues() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -2712,7 +2712,7 @@ void tst_Model_Relations::whereRowValues() const
 
 void tst_Model_Relations::upsert() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -2831,7 +2831,7 @@ void tst_Model_Relations::upsert() const
 
 void tst_Model_Relations::withCasts_OnRelation_OneToMany() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -2863,7 +2863,7 @@ void tst_Model_Relations::withCasts_OnRelation_OneToMany() const
 
 void tst_Model_Relations::withCasts_OnRelation_ManyToMany() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -2896,7 +2896,7 @@ void tst_Model_Relations::withCasts_OnRelation_ManyToMany() const
 
 void tst_Model_Relations::u_casts_OnCustomPivotModel_ManyToMany() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -2937,7 +2937,7 @@ void tst_Model_Relations::u_casts_OnCustomPivotModel_ManyToMany() const
 void tst_Model_Relations::
 timezone_TimestampAttribute_UtcOnServer_OnCustomPivotModel_ManyToMany() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -2979,7 +2979,7 @@ timezone_TimestampAttribute_UtcOnServer_OnCustomPivotModel_ManyToMany() const
 void tst_Model_Relations::
 timezone_TimestampAttribute_UtcOnServer_DontConvert_OnCustomPivot_MtM() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 

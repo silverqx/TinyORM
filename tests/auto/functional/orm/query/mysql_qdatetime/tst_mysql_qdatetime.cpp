@@ -181,7 +181,7 @@ void tst_MySql_QDateTime::initTestCase() const
 void tst_MySql_QDateTime::
 insert_Qt_QDateTime_UtcTimezone_DatetimeColumn_UtcOnServer() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     quint64 lastId = 0;
 
@@ -246,7 +246,7 @@ insert_Qt_QDateTime_UtcTimezone_DatetimeColumn_UtcOnServer() const
 void tst_MySql_QDateTime::
 insert_Qt_QDateTime_0200Timezone_DatetimeColumn_UtcOnServer() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     quint64 lastId = 0;
 
@@ -310,7 +310,7 @@ insert_Qt_QDateTime_0200Timezone_DatetimeColumn_UtcOnServer() const
 
 void tst_MySql_QDateTime::insert_Qt_QString_DatetimeColumn_UtcOnServer() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     quint64 lastId = 0;
 
@@ -374,7 +374,7 @@ void tst_MySql_QDateTime::insert_Qt_QString_DatetimeColumn_UtcOnServer() const
 void tst_MySql_QDateTime::
 insert_Qt_QDateTime_UtcTimezone_TimestampColumn_UtcOnServer() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     quint64 lastId = 0;
 
@@ -439,7 +439,7 @@ insert_Qt_QDateTime_UtcTimezone_TimestampColumn_UtcOnServer() const
 void tst_MySql_QDateTime::
 insert_Qt_QDateTime_0200Timezone_TimestampColumn_UtcOnServer() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     quint64 lastId = 0;
 
@@ -503,7 +503,7 @@ insert_Qt_QDateTime_0200Timezone_TimestampColumn_UtcOnServer() const
 
 void tst_MySql_QDateTime::insert_Qt_QString_TimestampColumn_UtcOnServer() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     quint64 lastId = 0;
 
@@ -570,7 +570,7 @@ void tst_MySql_QDateTime::insert_Qt_QString_TimestampColumn_UtcOnServer() const
 void tst_MySql_QDateTime::
 insert_Qt_QDateTime_UtcTimezone_DatetimeColumn_0200OnServer() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     set0200Timezone(connection);
     quint64 lastId = 0;
@@ -636,7 +636,7 @@ insert_Qt_QDateTime_UtcTimezone_DatetimeColumn_0200OnServer() const
 void tst_MySql_QDateTime::
 insert_Qt_QDateTime_0200Timezone_DatetimeColumn_0200OnServer() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     set0200Timezone(connection);
     quint64 lastId = 0;
@@ -701,7 +701,7 @@ insert_Qt_QDateTime_0200Timezone_DatetimeColumn_0200OnServer() const
 
 void tst_MySql_QDateTime::insert_Qt_QString_DatetimeColumn_0200OnServer() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     set0200Timezone(connection);
     quint64 lastId = 0;
@@ -766,7 +766,7 @@ void tst_MySql_QDateTime::insert_Qt_QString_DatetimeColumn_0200OnServer() const
 void tst_MySql_QDateTime::
 insert_Qt_QDateTime_UtcTimezone_TimestampColumn_0200OnServer() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     set0200Timezone(connection);
     quint64 lastId = 0;
@@ -832,7 +832,7 @@ insert_Qt_QDateTime_UtcTimezone_TimestampColumn_0200OnServer() const
 void tst_MySql_QDateTime::
 insert_Qt_QDateTime_0200Timezone_TimestampColumn_0200OnServer() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     set0200Timezone(connection);
     quint64 lastId = 0;
@@ -897,7 +897,7 @@ insert_Qt_QDateTime_0200Timezone_TimestampColumn_0200OnServer() const
 
 void tst_MySql_QDateTime::insert_Qt_QString_TimestampColumn_0200OnServer() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     set0200Timezone(connection);
     quint64 lastId = 0;
@@ -966,7 +966,7 @@ void tst_MySql_QDateTime::insert_Qt_QString_TimestampColumn_0200OnServer() const
 void tst_MySql_QDateTime::
 insert_QDateTime_UtcTimezone_DatetimeColumn_UtcOnServer() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     // Insert
     quint64 lastId = createQuery(connection)->from(*datetimes).insertGetId(
@@ -1006,7 +1006,7 @@ insert_QDateTime_UtcTimezone_DatetimeColumn_UtcOnServer() const
 void tst_MySql_QDateTime::
 insert_QDateTime_0200Timezone_DatetimeColumn_UtcOnServer() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     // Insert
     quint64 lastId = createQuery(connection)->from(*datetimes).insertGetId(
@@ -1045,7 +1045,7 @@ insert_QDateTime_0200Timezone_DatetimeColumn_UtcOnServer() const
 
 void tst_MySql_QDateTime::insert_QString_DatetimeColumn_UtcOnServer() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     // Insert
     quint64 lastId = createQuery(connection)->from(*datetimes).insertGetId(
@@ -1084,7 +1084,7 @@ void tst_MySql_QDateTime::insert_QString_DatetimeColumn_UtcOnServer() const
 void tst_MySql_QDateTime::
 insert_QDateTime_UtcTimezone_TimestampColumn_UtcOnServer() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     // Insert
     quint64 lastId = createQuery(connection)->from(*datetimes).insertGetId(
@@ -1124,7 +1124,7 @@ insert_QDateTime_UtcTimezone_TimestampColumn_UtcOnServer() const
 void tst_MySql_QDateTime::
 insert_QDateTime_0200Timezone_TimestampColumn_UtcOnServer() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     // Insert
     quint64 lastId = createQuery(connection)->from(*datetimes).insertGetId(
@@ -1163,7 +1163,7 @@ insert_QDateTime_0200Timezone_TimestampColumn_UtcOnServer() const
 
 void tst_MySql_QDateTime::insert_QString_TimestampColumn_UtcOnServer() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     // Insert
     quint64 lastId = createQuery(connection)->from(*datetimes).insertGetId(
@@ -1204,7 +1204,7 @@ void tst_MySql_QDateTime::insert_QString_TimestampColumn_UtcOnServer() const
 void tst_MySql_QDateTime::
 insert_QDateTime_UtcTimezone_DatetimeColumn_0200OnServer() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     set0200Timezone(connection);
 
@@ -1246,7 +1246,7 @@ insert_QDateTime_UtcTimezone_DatetimeColumn_0200OnServer() const
 void tst_MySql_QDateTime::
 insert_QDateTime_0200Timezone_DatetimeColumn_0200OnServer() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     set0200Timezone(connection);
 
@@ -1287,7 +1287,7 @@ insert_QDateTime_0200Timezone_DatetimeColumn_0200OnServer() const
 
 void tst_MySql_QDateTime::insert_QString_DatetimeColumn_0200OnServer() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     set0200Timezone(connection);
 
@@ -1328,7 +1328,7 @@ void tst_MySql_QDateTime::insert_QString_DatetimeColumn_0200OnServer() const
 void tst_MySql_QDateTime::
 insert_QDateTime_UtcTimezone_TimestampColumn_0200OnServer() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     set0200Timezone(connection);
 
@@ -1370,7 +1370,7 @@ insert_QDateTime_UtcTimezone_TimestampColumn_0200OnServer() const
 void tst_MySql_QDateTime::
 insert_QDateTime_0200Timezone_TimestampColumn_0200OnServer() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     set0200Timezone(connection);
 
@@ -1411,7 +1411,7 @@ insert_QDateTime_0200Timezone_TimestampColumn_0200OnServer() const
 
 void tst_MySql_QDateTime::insert_QString_TimestampColumn_0200OnServer() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     set0200Timezone(connection);
 
@@ -1457,7 +1457,7 @@ void tst_MySql_QDateTime::insert_QString_TimestampColumn_0200OnServer() const
 
 void tst_MySql_QDateTime::insert_Qt_QDate_UtcTimezone_DateColumn_UtcOnServer() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     quint64 lastId = 0;
 
@@ -1515,7 +1515,7 @@ void tst_MySql_QDateTime::insert_Qt_QDate_UtcTimezone_DateColumn_UtcOnServer() c
 
 void tst_MySql_QDateTime::insert_Qt_QString_DateColumn_UtcOnServer() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     quint64 lastId = 0;
 
@@ -1575,7 +1575,7 @@ void tst_MySql_QDateTime::insert_Qt_QString_DateColumn_UtcOnServer() const
 
 void tst_MySql_QDateTime::insert_Qt_QDate_UtcTimezone_DateColumn_0200OnServer() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     set0200Timezone(connection);
 
@@ -1635,7 +1635,7 @@ void tst_MySql_QDateTime::insert_Qt_QDate_UtcTimezone_DateColumn_0200OnServer() 
 
 void tst_MySql_QDateTime::insert_Qt_QString_DateColumn_0200OnServer() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     set0200Timezone(connection);
 
@@ -1699,7 +1699,7 @@ void tst_MySql_QDateTime::insert_Qt_QString_DateColumn_0200OnServer() const
 
 void tst_MySql_QDateTime::insert_QDate_UtcTimezone_DateColumn_UtcOnServer() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     // Insert
     quint64 lastId = createQuery(connection)->from(*datetimes).insertGetId(
@@ -1731,7 +1731,7 @@ void tst_MySql_QDateTime::insert_QDate_UtcTimezone_DateColumn_UtcOnServer() cons
 
 void tst_MySql_QDateTime::insert_QString_DateColumn_UtcOnServer() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     // Insert
     quint64 lastId = createQuery(connection)->from(*datetimes).insertGetId(
@@ -1764,7 +1764,7 @@ void tst_MySql_QDateTime::insert_QString_DateColumn_UtcOnServer() const
 
 void tst_MySql_QDateTime::insert_QDate_UtcTimezone_DateColumn_0200OnServer() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     set0200Timezone(connection);
 
@@ -1797,7 +1797,7 @@ void tst_MySql_QDateTime::insert_QDate_UtcTimezone_DateColumn_0200OnServer() con
 
 void tst_MySql_QDateTime::insert_QString_DateColumn_0200OnServer() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     set0200Timezone(connection);
 
@@ -1836,7 +1836,7 @@ void tst_MySql_QDateTime::insert_QString_DateColumn_0200OnServer() const
 
 void tst_MySql_QDateTime::insert_Qt_QDateTime_Null_DatetimeColumn_UtcOnServer() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     quint64 lastId = 0;
 
@@ -1899,7 +1899,7 @@ void tst_MySql_QDateTime::insert_Qt_QDateTime_Null_DatetimeColumn_UtcOnServer() 
 
 void tst_MySql_QDateTime::insert_Qt_QDate_Null_DateColumn_UtcOnServer() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     quint64 lastId = 0;
 
@@ -1959,7 +1959,7 @@ void tst_MySql_QDateTime::insert_Qt_QDate_Null_DateColumn_UtcOnServer() const
 
 void tst_MySql_QDateTime::insert_Qt_QDateTime_Null_DatetimeColumn_0200OnServer() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     set0200Timezone(connection);
 
@@ -2024,7 +2024,7 @@ void tst_MySql_QDateTime::insert_Qt_QDateTime_Null_DatetimeColumn_0200OnServer()
 
 void tst_MySql_QDateTime::insert_Qt_QDate_Null_DateColumn_0200OnServer() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     set0200Timezone(connection);
 
@@ -2088,7 +2088,7 @@ void tst_MySql_QDateTime::insert_Qt_QDate_Null_DateColumn_0200OnServer() const
 
 void tst_MySql_QDateTime::insert_QDateTime_Null_DatetimeColumn_UtcOnServer() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     // Insert
     quint64 lastId = createQuery(connection)->from(*datetimes).insertGetId(
@@ -2125,7 +2125,7 @@ void tst_MySql_QDateTime::insert_QDateTime_Null_DatetimeColumn_UtcOnServer() con
 
 void tst_MySql_QDateTime::insert_QDate_Null_DateColumn_UtcOnServer() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     // Insert
     quint64 lastId = createQuery(connection)->from(*datetimes).insertGetId(
@@ -2158,7 +2158,7 @@ void tst_MySql_QDateTime::insert_QDate_Null_DateColumn_UtcOnServer() const
 
 void tst_MySql_QDateTime::insert_QDateTime_Null_DatetimeColumn_0200OnServer() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     set0200Timezone(connection);
 
@@ -2197,7 +2197,7 @@ void tst_MySql_QDateTime::insert_QDateTime_Null_DatetimeColumn_0200OnServer() co
 
 void tst_MySql_QDateTime::insert_QDate_Null_DateColumn_0200OnServer() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     set0200Timezone(connection);
 
@@ -2237,7 +2237,7 @@ void tst_MySql_QDateTime::insert_QDate_Null_DateColumn_0200OnServer() const
 void tst_MySql_QDateTime::
 insert_QDateTime_0300Timezone_DatetimeColumn_UtcOnServer_DontConvert() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     setDontConvertTimezone(connection);
 

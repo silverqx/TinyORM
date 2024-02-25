@@ -171,7 +171,7 @@ void tst_QueryBuilder::initTestCase_data() const
 
 void tst_QueryBuilder::find() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     auto builder = createQuery(connection);
 
@@ -183,7 +183,7 @@ void tst_QueryBuilder::find() const
 
 void tst_QueryBuilder::findOr() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     // Callback invoked
     {
@@ -231,7 +231,7 @@ void tst_QueryBuilder::findOr() const
 
 void tst_QueryBuilder::findOr_WithReturnType() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     // Callback invoked
     {
@@ -276,7 +276,7 @@ void tst_QueryBuilder::findOr_WithReturnType() const
 
 void tst_QueryBuilder::first() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     auto builder = createQuery(connection);
 
@@ -288,7 +288,7 @@ void tst_QueryBuilder::first() const
 
 void tst_QueryBuilder::pluck() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     // Simple pluck without keying
     {
@@ -341,7 +341,7 @@ void tst_QueryBuilder::pluck() const
 
 void tst_QueryBuilder::pluck_EmptyResult() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     {
         auto builder = createQuery(connection);
@@ -364,7 +364,7 @@ void tst_QueryBuilder::pluck_EmptyResult() const
 
 void tst_QueryBuilder::pluck_QualifiedColumnOrKey() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     // Strip table name
     {
@@ -432,7 +432,7 @@ void tst_QueryBuilder::pluck_QualifiedColumnOrKey() const
 
 void tst_QueryBuilder::implode() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     // Simple implode without the glue
     {
@@ -454,7 +454,7 @@ void tst_QueryBuilder::implode() const
 
 void tst_QueryBuilder::implode_EmptyResult() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     // Simple implode without the glue
     {
@@ -480,7 +480,7 @@ void tst_QueryBuilder::implode_EmptyResult() const
 
 void tst_QueryBuilder::implode_QualifiedColumnOrKey() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     // Simple implode without the glue
     {
@@ -503,7 +503,7 @@ void tst_QueryBuilder::implode_QualifiedColumnOrKey() const
 
 void tst_QueryBuilder::whereBetween() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     auto result = createQuery(connection)->from("torrents")
                   .whereBetween("size", {12, 14})
@@ -528,7 +528,7 @@ void tst_QueryBuilder::whereBetween() const
 
 void tst_QueryBuilder::whereDate_QDate()
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     auto result = createQuery(connection)->from("torrents")
                   .whereDate(CREATED_AT, LE, QDate(2018, 8, 3))
@@ -555,7 +555,7 @@ void tst_QueryBuilder::whereDate_QDate()
 
 void tst_QueryBuilder::whereDate_QDateTime()
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     auto result = createQuery(connection)->from("torrents")
                   .whereDate(CREATED_AT, LE,
@@ -584,7 +584,7 @@ void tst_QueryBuilder::whereDate_QDateTime()
 
 void tst_QueryBuilder::whereDate_QString()
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     auto result = createQuery(connection)->from("torrents")
                   .whereDate(CREATED_AT, LE, sl("2018-08-03"))
@@ -611,7 +611,7 @@ void tst_QueryBuilder::whereDate_QString()
 
 void tst_QueryBuilder::whereTime_QTime()
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     auto result = createQuery(connection)->from("torrents")
                   .whereTime(CREATED_AT, LE, QTime(8, 10, 23))
@@ -638,7 +638,7 @@ void tst_QueryBuilder::whereTime_QTime()
 
 void tst_QueryBuilder::whereTime_QDateTime()
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     auto result = createQuery(connection)->from("torrents")
                   .whereTime(CREATED_AT, LE,
@@ -667,7 +667,7 @@ void tst_QueryBuilder::whereTime_QDateTime()
 
 void tst_QueryBuilder::whereTime_QString()
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     auto result = createQuery(connection)->from("torrents")
                   .whereTime(CREATED_AT, LE, sl("08:10:23"))
@@ -694,7 +694,7 @@ void tst_QueryBuilder::whereTime_QString()
 
 void tst_QueryBuilder::whereDay_QDate()
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     auto result = createQuery(connection)->from("torrents")
                   .whereDay(CREATED_AT, LE, QDate(2018, 8, 3))
@@ -721,7 +721,7 @@ void tst_QueryBuilder::whereDay_QDate()
 
 void tst_QueryBuilder::whereDay_QDateTime()
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     auto result = createQuery(connection)->from("torrents")
                   .whereDay(CREATED_AT, LE, QDateTime({2018, 8, 3}, {}, Qt::UTC))
@@ -748,7 +748,7 @@ void tst_QueryBuilder::whereDay_QDateTime()
 
 void tst_QueryBuilder::whereDay_QString()
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     auto result = createQuery(connection)->from("torrents")
                   .whereDay(CREATED_AT, LE, sl("3"))
@@ -775,7 +775,7 @@ void tst_QueryBuilder::whereDay_QString()
 
 void tst_QueryBuilder::whereDay_int()
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     auto result = createQuery(connection)->from("torrents")
                   .whereDay(CREATED_AT, LE, 3)
@@ -802,7 +802,7 @@ void tst_QueryBuilder::whereDay_int()
 
 void tst_QueryBuilder::whereMonth_QDate()
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     auto result = createQuery(connection)->from("torrents")
                   .whereMonth(CREATED_AT, LE, QDate(2018, 8, 3))
@@ -829,7 +829,7 @@ void tst_QueryBuilder::whereMonth_QDate()
 
 void tst_QueryBuilder::whereMonth_QDateTime()
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     auto result = createQuery(connection)->from("torrents")
                   .whereMonth(CREATED_AT, LE, QDateTime({2018, 8, 3}, {}, Qt::UTC))
@@ -856,7 +856,7 @@ void tst_QueryBuilder::whereMonth_QDateTime()
 
 void tst_QueryBuilder::whereMonth_QString()
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     auto result = createQuery(connection)->from("torrents")
                   .whereMonth(CREATED_AT, LE, sl("8"))
@@ -883,7 +883,7 @@ void tst_QueryBuilder::whereMonth_QString()
 
 void tst_QueryBuilder::whereMonth_int()
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     auto result = createQuery(connection)->from("torrents")
                   .whereMonth(CREATED_AT, LE, 8)
@@ -910,7 +910,7 @@ void tst_QueryBuilder::whereMonth_int()
 
 void tst_QueryBuilder::whereYear_QDate()
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     auto result = createQuery(connection)->from("torrents")
                   .whereYear(CREATED_AT, LE, QDate(2018, 8, 3))
@@ -937,7 +937,7 @@ void tst_QueryBuilder::whereYear_QDate()
 
 void tst_QueryBuilder::whereYear_QDateTime()
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     auto result = createQuery(connection)->from("torrents")
                   .whereYear(CREATED_AT, LE, QDateTime({2018, 8, 3}, {}, Qt::UTC))
@@ -964,7 +964,7 @@ void tst_QueryBuilder::whereYear_QDateTime()
 
 void tst_QueryBuilder::whereYear_QString()
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     auto result = createQuery(connection)->from("torrents")
                   .whereYear(CREATED_AT, LE, sl("2018"))
@@ -991,7 +991,7 @@ void tst_QueryBuilder::whereYear_QString()
 
 void tst_QueryBuilder::whereYear_int()
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     auto result = createQuery(connection)->from("torrents")
                   .whereYear(CREATED_AT, LE, 2018)
@@ -1018,7 +1018,7 @@ void tst_QueryBuilder::whereYear_int()
 
 void tst_QueryBuilder::updateOrInsert() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     // update
     {
@@ -1082,7 +1082,7 @@ void tst_QueryBuilder::updateOrInsert() const
 
 void tst_QueryBuilder::updateOrInsert_EmptyValues() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     // validate
     auto count = createQuery(connection)->from("user_phones")
@@ -1120,7 +1120,7 @@ void tst_QueryBuilder::updateOrInsert_EmptyValues() const
 
 void tst_QueryBuilder::upsert() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     // Should update one row (color column) and insert one row
     {
@@ -1205,7 +1205,7 @@ void tst_QueryBuilder::upsert() const
 
 void tst_QueryBuilder::upsert_EmptyValues() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     // Should just return with no DB operations
     {
@@ -1220,7 +1220,7 @@ void tst_QueryBuilder::upsert_EmptyValues() const
 
 void tst_QueryBuilder::upsert_EmptyUpdate() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     QVERIFY_EXCEPTION_THROWN(
                 createQuery(connection)->from("tag_properties")
@@ -1232,7 +1232,7 @@ void tst_QueryBuilder::upsert_EmptyUpdate() const
 
 void tst_QueryBuilder::upsert_WithoutUpdate_UpdateAll() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     // Should update one row (all columns) and insert one row
     {
@@ -1316,7 +1316,7 @@ void tst_QueryBuilder::upsert_WithoutUpdate_UpdateAll() const
 
 void tst_QueryBuilder::count() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     {
         auto builder = createQuery(connection);
@@ -1340,7 +1340,7 @@ void tst_QueryBuilder::count() const
 
 void tst_QueryBuilder::count_Distinct() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     auto builder = createQuery(connection);
 
@@ -1354,7 +1354,7 @@ void tst_QueryBuilder::count_Distinct() const
 
 void tst_QueryBuilder::min_Aggregate() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     auto builder = createQuery(connection);
 
@@ -1365,7 +1365,7 @@ void tst_QueryBuilder::min_Aggregate() const
 
 void tst_QueryBuilder::sum_Aggregate() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     auto builder = createQuery(connection);
 
@@ -1376,7 +1376,7 @@ void tst_QueryBuilder::sum_Aggregate() const
 
 void tst_QueryBuilder::sum_Aggregate_ShouldReturnZeroInsteadOfNull() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     auto builder = createQuery(connection);
 
@@ -1387,7 +1387,7 @@ void tst_QueryBuilder::sum_Aggregate_ShouldReturnZeroInsteadOfNull() const
 
 void tst_QueryBuilder::exists() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     auto builder = createQuery(connection);
 
@@ -1398,7 +1398,7 @@ void tst_QueryBuilder::exists() const
 
 void tst_QueryBuilder::doesntExist() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     auto builder = createQuery(connection);
 
@@ -1409,7 +1409,7 @@ void tst_QueryBuilder::doesntExist() const
 
 void tst_QueryBuilder::existsOr() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     // Callback invoked
     {
@@ -1441,7 +1441,7 @@ void tst_QueryBuilder::existsOr() const
 
 void tst_QueryBuilder::doesntExistOr() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     // Callback invoked
     {
@@ -1473,7 +1473,7 @@ void tst_QueryBuilder::doesntExistOr() const
 
 void tst_QueryBuilder::existsOr_WithReturnType() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     // Callback invoked
     {
@@ -1507,7 +1507,7 @@ void tst_QueryBuilder::existsOr_WithReturnType() const
 
 void tst_QueryBuilder::doesntExistOr_WithReturnType() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     // Callback invoked
     {
@@ -1541,7 +1541,7 @@ void tst_QueryBuilder::doesntExistOr_WithReturnType() const
 
 void tst_QueryBuilder::limit() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     auto builder = createQuery(connection);
 
@@ -1568,7 +1568,7 @@ void tst_QueryBuilder::limit() const
 
 void tst_QueryBuilder::sole() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     auto query = createQuery(connection)->from("torrents").whereEq(ID, 1).sole();
 
@@ -1579,7 +1579,7 @@ void tst_QueryBuilder::sole() const
 
 void tst_QueryBuilder::sole_RecordsNotFoundError() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     QVERIFY_EXCEPTION_THROWN(
             createQuery(connection)->from("torrents")
@@ -1590,7 +1590,7 @@ void tst_QueryBuilder::sole_RecordsNotFoundError() const
 
 void tst_QueryBuilder::sole_MultipleRecordsFoundError() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     QVERIFY_EXCEPTION_THROWN(
             createQuery(connection)->from("torrents").whereEq("user_id", 1).sole(),
@@ -1599,7 +1599,7 @@ void tst_QueryBuilder::sole_MultipleRecordsFoundError() const
 
 void tst_QueryBuilder::soleValue() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     auto value = createQuery(connection)->from("torrents").whereEq(ID, 1)
                  .soleValue(NAME);
@@ -1611,7 +1611,7 @@ void tst_QueryBuilder::soleValue() const
 
 void tst_QueryBuilder::soleValue_RecordsNotFoundError() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     QVERIFY_EXCEPTION_THROWN(
             createQuery(connection)->from("torrents")
@@ -1622,7 +1622,7 @@ void tst_QueryBuilder::soleValue_RecordsNotFoundError() const
 
 void tst_QueryBuilder::soleValue_MultipleRecordsFoundError() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     QVERIFY_EXCEPTION_THROWN(
             createQuery(connection)->from("torrents")
@@ -1633,7 +1633,7 @@ void tst_QueryBuilder::soleValue_MultipleRecordsFoundError() const
 
 void tst_QueryBuilder::chunk() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     // <page, chunk_rowsCount>
     const std::unordered_map<qint64, qint64> expectedRows {{1, 3}, {2, 3}, {3, 2}};
@@ -1672,7 +1672,7 @@ void tst_QueryBuilder::chunk() const
 
 void tst_QueryBuilder::chunk_ReturnFalse() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     // <page, chunk_rowsCount> (I leave it here also in this test, doesn't matter much
     const std::unordered_map<qint64, qint64> expectedRows {{1, 3}, {2, 3}, {3, 2}};
@@ -1717,7 +1717,7 @@ void tst_QueryBuilder::chunk_ReturnFalse() const
 
 void tst_QueryBuilder::chunk_EnforceOrderBy() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     QVERIFY_EXCEPTION_THROWN(createQuery(connection)->from("file_property_properties")
                              .chunk(3, [](SqlQuery &/*unused*/, const qint64 /*unused*/)
@@ -1729,7 +1729,7 @@ void tst_QueryBuilder::chunk_EnforceOrderBy() const
 
 void tst_QueryBuilder::chunk_EmptyResult() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     auto callbackInvoked = false;
 
@@ -1750,7 +1750,7 @@ void tst_QueryBuilder::chunk_EmptyResult() const
 
 void tst_QueryBuilder::each() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     std::vector<qint64> indexes;
     indexes.reserve(8);
@@ -1780,7 +1780,7 @@ void tst_QueryBuilder::each() const
 
 void tst_QueryBuilder::each_ReturnFalse() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     std::vector<qint64> indexes;
     indexes.reserve(5);
@@ -1810,7 +1810,7 @@ void tst_QueryBuilder::each_ReturnFalse() const
 
 void tst_QueryBuilder::each_EnforceOrderBy() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     QVERIFY_EXCEPTION_THROWN(createQuery(connection)->from("file_property_properties")
                              .each([](SqlQuery &/*unused*/, const qint64 /*unused*/)
@@ -1822,7 +1822,7 @@ void tst_QueryBuilder::each_EnforceOrderBy() const
 
 void tst_QueryBuilder::each_EmptyResult() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     auto callbackInvoked = false;
 
@@ -1843,7 +1843,7 @@ void tst_QueryBuilder::each_EmptyResult() const
 
 void tst_QueryBuilder::chunkById() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     // <page, chunk_rowsCount>
     const std::unordered_map<qint64, qint64> expectedRows {{1, 3}, {2, 3}, {3, 2}};
@@ -1882,7 +1882,7 @@ void tst_QueryBuilder::chunkById() const
 
 void tst_QueryBuilder::chunkById_ReturnFalse() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     // <page, chunk_rowsCount> (I leave it here also in this test, doesn't matter much
     const std::unordered_map<qint64, qint64> expectedRows {{1, 3}, {2, 3}, {3, 2}};
@@ -1927,7 +1927,7 @@ void tst_QueryBuilder::chunkById_ReturnFalse() const
 
 void tst_QueryBuilder::chunkById_EmptyResult() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     auto callbackInvoked = false;
 
@@ -1948,7 +1948,7 @@ void tst_QueryBuilder::chunkById_EmptyResult() const
 
 void tst_QueryBuilder::chunkById_WithAlias() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     // <page, chunk_rowsCount>
     const std::unordered_map<qint64, qint64> expectedRows {{1, 3}, {2, 3}, {3, 2}};
@@ -1989,7 +1989,7 @@ void tst_QueryBuilder::chunkById_WithAlias() const
 
 void tst_QueryBuilder::chunkById_ReturnFalse_WithAlias() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     // <page, chunk_rowsCount> (I leave it here also in this test, doesn't matter much
     const std::unordered_map<qint64, qint64> expectedRows {{1, 3}, {2, 3}, {3, 2}};
@@ -2036,7 +2036,7 @@ void tst_QueryBuilder::chunkById_ReturnFalse_WithAlias() const
 
 void tst_QueryBuilder::chunkById_EmptyResult_WithAlias() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     auto callbackInvoked = false;
 
@@ -2059,7 +2059,7 @@ void tst_QueryBuilder::chunkById_EmptyResult_WithAlias() const
 
 void tst_QueryBuilder::eachById() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     std::vector<qint64> indexes;
     indexes.reserve(8);
@@ -2089,7 +2089,7 @@ void tst_QueryBuilder::eachById() const
 
 void tst_QueryBuilder::eachById_ReturnFalse() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     std::vector<qint64> indexes;
     indexes.reserve(5);
@@ -2119,7 +2119,7 @@ void tst_QueryBuilder::eachById_ReturnFalse() const
 
 void tst_QueryBuilder::eachById_EmptyResult() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     auto callbackInvoked = false;
 
@@ -2140,7 +2140,7 @@ void tst_QueryBuilder::eachById_EmptyResult() const
 
 void tst_QueryBuilder::eachById_WithAlias() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     std::vector<qint64> indexes;
     indexes.reserve(8);
@@ -2172,7 +2172,7 @@ void tst_QueryBuilder::eachById_WithAlias() const
 
 void tst_QueryBuilder::eachById_ReturnFalse_WithAlias() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     std::vector<qint64> indexes;
     indexes.reserve(5);
@@ -2204,7 +2204,7 @@ void tst_QueryBuilder::eachById_ReturnFalse_WithAlias() const
 
 void tst_QueryBuilder::eachById_EmptyResult_WithAlias() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     auto callbackInvoked = false;
 

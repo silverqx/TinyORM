@@ -107,7 +107,7 @@ void tst_Relations_BuildsQueries::initTestCase_data() const
 
 void tst_Relations_BuildsQueries::chunk_Relation() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -151,7 +151,7 @@ void tst_Relations_BuildsQueries::chunk_Relation() const
 
 void tst_Relations_BuildsQueries::each_Relation() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -203,7 +203,7 @@ namespace
 
 void tst_Relations_BuildsQueries::chunkMap_Relation() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -241,7 +241,7 @@ void tst_Relations_BuildsQueries::chunkMap_Relation() const
 
 void tst_Relations_BuildsQueries::chunkMap_TemplatedReturnValue_Relation() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -264,7 +264,7 @@ void tst_Relations_BuildsQueries::chunkMap_TemplatedReturnValue_Relation() const
 
 void tst_Relations_BuildsQueries::chunkById_Relation() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -308,7 +308,7 @@ void tst_Relations_BuildsQueries::chunkById_Relation() const
 
 void tst_Relations_BuildsQueries::chunkById_WithAlias_Relation() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -354,7 +354,7 @@ void tst_Relations_BuildsQueries::chunkById_WithAlias_Relation() const
 
 void tst_Relations_BuildsQueries::eachById_Relation() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -387,7 +387,7 @@ void tst_Relations_BuildsQueries::eachById_Relation() const
 
 void tst_Relations_BuildsQueries::eachById_WithAlias_Relation() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -448,7 +448,7 @@ namespace
 
 void tst_Relations_BuildsQueries::chunk() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -493,7 +493,7 @@ void tst_Relations_BuildsQueries::chunk() const
 
 void tst_Relations_BuildsQueries::chunk_ReturnFalse() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -546,7 +546,7 @@ void tst_Relations_BuildsQueries::chunk_EnforceOrderBy() const
     /* The TinBuilder version doesn't throws exception if the 'order by' clause is not
        specified, instead it adds a generic 'order by' clause
        on the Model::getQualifiedKeyName() (it sorts by the primary key by default). */
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -591,7 +591,7 @@ void tst_Relations_BuildsQueries::chunk_EnforceOrderBy() const
 
 void tst_Relations_BuildsQueries::chunk_EmptyResult() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -614,7 +614,7 @@ void tst_Relations_BuildsQueries::chunk_EmptyResult() const
 
 void tst_Relations_BuildsQueries::each() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -648,7 +648,7 @@ void tst_Relations_BuildsQueries::each() const
 
 void tst_Relations_BuildsQueries::each_ReturnFalse() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -682,7 +682,7 @@ void tst_Relations_BuildsQueries::each_ReturnFalse() const
 
 void tst_Relations_BuildsQueries::each_EnforceOrderBy() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -719,7 +719,7 @@ void tst_Relations_BuildsQueries::each_EnforceOrderBy() const
 
 void tst_Relations_BuildsQueries::each_EmptyResult() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -742,7 +742,7 @@ void tst_Relations_BuildsQueries::each_EmptyResult() const
 
 void tst_Relations_BuildsQueries::chunkMap() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -781,7 +781,7 @@ void tst_Relations_BuildsQueries::chunkMap() const
 
 void tst_Relations_BuildsQueries::chunkMap_EnforceOrderBy() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -822,7 +822,7 @@ void tst_Relations_BuildsQueries::chunkMap_EnforceOrderBy() const
 
 void tst_Relations_BuildsQueries::chunkMap_EmptyResult() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -844,7 +844,7 @@ void tst_Relations_BuildsQueries::chunkMap_EmptyResult() const
 
 void tst_Relations_BuildsQueries::chunkMap_TemplatedReturnValue() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -874,7 +874,7 @@ void tst_Relations_BuildsQueries::chunkMap_TemplatedReturnValue() const
 
 void tst_Relations_BuildsQueries::chunkMap_TemplatedReturnValue_OnRelationRef() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -904,7 +904,7 @@ void tst_Relations_BuildsQueries::chunkMap_TemplatedReturnValue_OnRelationRef() 
 void
 tst_Relations_BuildsQueries::chunkMap_EnforceOrderBy_TemplatedReturnValue() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -936,7 +936,7 @@ tst_Relations_BuildsQueries::chunkMap_EnforceOrderBy_TemplatedReturnValue() cons
 
 void tst_Relations_BuildsQueries::chunkMap_EmptyResult_TemplatedReturnValue() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -962,7 +962,7 @@ void tst_Relations_BuildsQueries::chunkMap_EmptyResult_TemplatedReturnValue() co
 
 void tst_Relations_BuildsQueries::chunkById() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -1007,7 +1007,7 @@ void tst_Relations_BuildsQueries::chunkById() const
 
 void tst_Relations_BuildsQueries::chunkById_ReturnFalse() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -1057,7 +1057,7 @@ void tst_Relations_BuildsQueries::chunkById_ReturnFalse() const
 
 void tst_Relations_BuildsQueries::chunkById_EmptyResult() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -1081,7 +1081,7 @@ void tst_Relations_BuildsQueries::chunkById_EmptyResult() const
 
 void tst_Relations_BuildsQueries::chunkById_WithAlias() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -1129,7 +1129,7 @@ void tst_Relations_BuildsQueries::chunkById_WithAlias() const
 
 void tst_Relations_BuildsQueries::chunkById_ReturnFalse_WithAlias() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -1182,7 +1182,7 @@ void tst_Relations_BuildsQueries::chunkById_ReturnFalse_WithAlias() const
 
 void tst_Relations_BuildsQueries::chunkById_EmptyResult_WithAlias() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -1208,7 +1208,7 @@ void tst_Relations_BuildsQueries::chunkById_EmptyResult_WithAlias() const
 
 void tst_Relations_BuildsQueries::eachById() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -1243,7 +1243,7 @@ void tst_Relations_BuildsQueries::eachById() const
 
 void tst_Relations_BuildsQueries::eachById_ReturnFalse() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -1278,7 +1278,7 @@ void tst_Relations_BuildsQueries::eachById_ReturnFalse() const
 
 void tst_Relations_BuildsQueries::eachById_EmptyResult() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -1301,7 +1301,7 @@ void tst_Relations_BuildsQueries::eachById_EmptyResult() const
 
 void tst_Relations_BuildsQueries::eachById_WithAlias() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -1338,7 +1338,7 @@ void tst_Relations_BuildsQueries::eachById_WithAlias() const
 
 void tst_Relations_BuildsQueries::eachById_ReturnFalse_WithAlias() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 
@@ -1375,7 +1375,7 @@ void tst_Relations_BuildsQueries::eachById_ReturnFalse_WithAlias() const
 
 void tst_Relations_BuildsQueries::eachById_EmptyResult_WithAlias() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     ConnectionOverride::connection = connection;
 

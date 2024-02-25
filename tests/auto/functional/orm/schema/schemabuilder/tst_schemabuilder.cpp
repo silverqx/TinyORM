@@ -139,7 +139,7 @@ void tst_SchemaBuilder::cleanupTestCase() const
 
 void tst_SchemaBuilder::createDatabase_dropAllTables_dropDatabaseIfExists() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     // createDatabase()
     {
@@ -212,7 +212,7 @@ void tst_SchemaBuilder::createDatabase_dropAllTables_dropDatabaseIfExists() cons
 
 void tst_SchemaBuilder::getAllTables() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     const auto tablesActual = getAllTablesFor(connection);
 
@@ -229,7 +229,7 @@ void tst_SchemaBuilder::getAllTables() const
 
 void tst_SchemaBuilder::getAllViews_dropAllViews() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     // Verify views before creating new views, no views can't exist at the beginning
     QVERIFY(getAllViewsFor(connection).isEmpty());
@@ -262,7 +262,7 @@ void tst_SchemaBuilder::getAllViews_dropAllViews() const
 
 void tst_SchemaBuilder::getColumnListing() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     auto columnsList = Schema::on(connection).getColumnListing("roles");
 
@@ -278,7 +278,7 @@ void tst_SchemaBuilder::getColumnListing() const
 
 void tst_SchemaBuilder::hasTable() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     QVERIFY(Schema::on(connection).hasTable("users"));
 }
@@ -287,7 +287,7 @@ void tst_SchemaBuilder::hasTable() const
 
 void tst_SchemaBuilder::createTable_WithComment() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     if (DB::driverName(connection) == QSQLITE)
         QSKIP("The SQLite database doesn't support table comments.", );
@@ -319,7 +319,7 @@ void tst_SchemaBuilder::createTable_WithComment() const
 
 void tst_SchemaBuilder::modifyTable_WithComment() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     if (DB::driverName(connection) == QSQLITE)
         QSKIP("The SQLite database doesn't support table comments.", );
