@@ -235,7 +235,7 @@ When defining the `CastType::QDate` or `CastType::QDateTime` cast, you may also 
     };
 
 :::note
-The `CastType::CustomQDate` and `CastType::CustomQDateTime` cast types behave exactly like the `CastType::QDate` and `CastType::QDateTime` cast types with the additional __date's format__ functionality during __serialization__.
+The `CastType::CustomQDate` and `CastType::CustomQDateTime` cast types behave exactly like the `CastType::QDate` and `CastType::QDateTime` cast types with the additional __date's format__ functionality during <u>__serialization__</u>.
 :::
 
 You may customize the [default serialization format](tinyorm/serialization.mdx#customizing-the-default-date-format) for all of your model's dates or datetimes by defining a `serializeDate` or `serializeDateTime` methods on your model. These methods do not affect how your dates are formatted for storage in the database:
