@@ -85,9 +85,9 @@ SqlQuery::prepareDateTime(const QVariant &value) const
 
     const auto valueString = value.value<QString>();
 
-    /* If the value is in simply year, month, day format, we will instantiate the
-       QDate instances from that format. Again, this provides for simple date
-       fields on the database, while still supporting QDateTime conversion. */
+    /* If the value is in the so-called simple format (year-month-day), then we will
+       instantiate the QDate instances from this format. This is only done for date
+       fields/columns, while still supporting QDateTime conversion. */
     if (Helpers::isStandardDateFormat(valueString))
         return asDate(valueString);
 
