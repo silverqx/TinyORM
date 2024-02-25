@@ -80,7 +80,7 @@ namespace Types
         bool m_isSQLiteDb;
         /*! Date format for database stored dates (SQLite only). */
         std::optional<QString> m_dateFormat;
-        /*! Determine whether to return the QDateTime or QString (SQLite only). */
+        /*! Determine whether to return the QDateTime/QDate or QString (SQLite only). */
         std::optional<bool> m_returnQDateTime;
     };
 

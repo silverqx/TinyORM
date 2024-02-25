@@ -38,9 +38,9 @@ namespace Orm
                std::optional<bool> returnQDateTime = true,
                QVariantHash &&config = {});
 
-        /*! Determine whether to return the QDateTime or QString (SQLite only). */
+        /*! Determine whether to return the QDateTime/QDate or QString (SQLite only). */
         inline bool returnQDateTime() const noexcept;
-        /*! Set return the QDateTime or QString (override the return_qdatetime). */
+        /*! Set return the QDateTime/QDate or QString (override the return_qdatetime). */
         SQLiteConnection &setReturnQDateTime(bool value);
 
     protected:

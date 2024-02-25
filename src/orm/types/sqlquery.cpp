@@ -66,7 +66,7 @@ bool SqlQuery::shouldPrepareDateTime(const QVariant &value) const
 
     const auto typeId = Helpers::qVariantTypeId(value);
 
-    // If it's the QDateTime or if should return the QDateTime for QSQLITE
+    // If it's the QDateTime or if should return the QDateTime/QDate for QSQLITE
     return typeId == QMetaType::QDateTime ||
             (m_isSQLiteDb && m_returnQDateTime && *m_returnQDateTime &&
              typeId == QMetaType::QString);

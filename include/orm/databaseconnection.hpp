@@ -289,7 +289,7 @@ namespace Orm
         QtTimeZoneConfig m_qtTimeZone;
         /*! Determine whether the QDateTime time zone should be converted. */
         bool m_isConvertingTimeZone;
-        /*! Determine whether to return the QDateTime or QString (SQLite only). */
+        /*! Determine whether to return the QDateTime/QDate or QString (SQLite only). */
         std::optional<bool> m_returnQDateTime = std::nullopt;
         /*! The database connection configuration options. */
         /*const*/ QVariantHash m_config;

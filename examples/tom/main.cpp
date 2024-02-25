@@ -165,7 +165,7 @@ std::shared_ptr<DatabaseManager> setupDatabaseManager()
                is the Qt::UTC, set to the Qt::LocalTime or QtTimeZoneType::DontConvert to
                use the system local time. */
             {qt_timezone,             QVariant::fromValue(Qt::UTC)},
-            /* Return a QDateTime with the correct time zone instead of the QString,
+            /* Return a QDateTime/QDate with the correct time zone instead of the QString,
                only works when the qt_timezone isn't set to the DontConvert. */
             {return_qdatetime,        true},
             {prefix_,                 EMPTY},
