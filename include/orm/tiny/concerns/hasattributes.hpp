@@ -2263,7 +2263,7 @@ namespace Orm::Tiny::Concerns
     QString
     HasAttributes<Derived, AllRelations...>::serializeDateTime(const QDateTime &datetime)
     {
-        return datetime.toUTC().toString(Qt::ISODateWithMs);
+        return datetime.toUTC().toString(Qt::ISODateWithMs); // Default is with fractional seconds (ms)
     }
 
     /* private */
