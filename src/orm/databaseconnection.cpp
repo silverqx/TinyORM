@@ -351,15 +351,16 @@ DatabaseConnection::prepareBindings(QVector<QVariant> &bindings) const
             continue;
 
         switch (Helpers::qVariantTypeId(binding)) {
-        // QDate doesn't have a time zone
         case QMetaType::QDate:
+            // QDate doesn't have a time zone
             binding = binding.value<QDate>().toString(Qt::ISODate);
             break;
 
         /* We need to transform all instances of QDateTime into the actual date string.
            Each query grammar maintains its own date string format so we'll just ask
-           the grammar for the format to get from the date. */
+           the grammar for the format. */
         case QMetaType::QDateTime:
+            // Convert to the time zone provided through the qt_timezone config. option
             binding = prepareBinding(binding.value<QDateTime>())
                       .toString(m_queryGrammar->getDateFormat());
             break;
