@@ -86,6 +86,12 @@ const QVariant &NullVariant::QDateTime()
     return cached;
 }
 
+const QVariant &NullVariant::QTime()
+{
+    static const QVariant cached = QVariant(QMetaType(QMetaType::QTime));
+    return cached;
+}
+
 const QVariant &NullVariant::QString()
 {
     static const QVariant cached = QVariant(QMetaType(QMetaType::QString));

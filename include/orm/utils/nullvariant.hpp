@@ -50,6 +50,8 @@ namespace Orm::Utils
         static const QVariant &QDate();
         /*! Null QVariant(QMetaType(QMetaType::QDateTime)). */
         static const QVariant &QDateTime();
+        /*! Null QVariant(QMetaType(QMetaType::QTime)). */
+        static const QVariant &QTime();
         /*! Null QVariant(QMetaType(QMetaType::QString)). */
         static const QVariant &QString();
     };
