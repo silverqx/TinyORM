@@ -165,7 +165,7 @@ namespace Orm::SchemaNs
         int length = DefaultStringLength;
         /*! Number of digits after the decimal point for floating-point types. */
         std::optional<int> places = std::nullopt;
-        /*! Determine fractional Seconds in Time Values (MySQL 0-6). */
+        /*! Determine fractional seconds in time values (MySQL 0-6). */
         std::optional<int> precision = std::nullopt;
         /* srid max. value should be 2^32-1 as is described here, so unsigned int
            should be ok:
