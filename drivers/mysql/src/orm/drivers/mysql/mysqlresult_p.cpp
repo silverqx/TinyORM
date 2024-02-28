@@ -625,7 +625,6 @@ MySqlResultPrivate::toQDateTimeFromMySQLTime(const int typeId,
 
 QVariant MySqlResultPrivate::toDoubleFromString(const QString &value) const
 {
-    // CUR drivers use String::isNumber()? silverqx
     auto ok = false;
     // CUR drivers test this with the HighPrecision policy silverqx
     const double valueDouble = value.toDouble(&ok);
