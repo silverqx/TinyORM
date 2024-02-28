@@ -160,9 +160,13 @@ namespace Orm::Drivers::MySql
         /*! Convert the BLOB value type to the QByteArray. */
         QVariant toQByteArray(ResultFieldsSizeType index) const;
 
-        /*! Create the QVariant by the given metatype ID and value. */
+        /*! Convert field value to the QString (using UTF-8 encoding). */
+        static QString fieldValueToString(int typeId, const MyField &field);
+        /*! Create a QVariant by the given metatype ID and field value. */
         QVariant createQVariant(int typeId, QString &&value,
                                 ResultFieldsSizeType index) const;
+        /*! Create an integer QVariant by the given metatype ID and value. */
+        static QVariant createIntegerQVariant(int typeId, const MyField &field);
     };
 
     /* private */
