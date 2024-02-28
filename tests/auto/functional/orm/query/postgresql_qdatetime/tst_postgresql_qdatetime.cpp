@@ -82,24 +82,47 @@ private Q_SLOTS:
     void insert_QDate_UtcTimezone_DateColumn_0200OnServer() const;
     void insert_QString_DateColumn_0200OnServer() const;
 
+    /* QTime */
+    /* Raw QSqlQuery */
+    /* Server timezone UTC */
+    void insert_Qt_QTime_UtcTimezone_TimeColumn_UtcOnServer() const;
+    void insert_Qt_QString_TimeColumn_UtcOnServer() const;
+
+    /* Server timezone Europe/Bratislava (+02:00) */
+    void insert_Qt_QTime_UtcTimezone_TimeColumn_0200OnServer() const;
+    void insert_Qt_QString_TimeColumn_0200OnServer() const;
+
+    /* Orm::QueryBuilder */
+    /* Server timezone UTC */
+    void insert_QTime_UtcTimezone_TimeColumn_UtcOnServer() const;
+    void insert_QString_TimeColumn_UtcOnServer() const;
+
+    /* Server timezone Europe/Bratislava (+02:00) */
+    void insert_QTime_UtcTimezone_TimeColumn_0200OnServer() const;
+    void insert_QString_TimeColumn_0200OnServer() const;
+
     /* Null values QDateTime / QDate */
     /* Raw QSqlQuery */
     /* Server timezone UTC */
     void insert_Qt_QDateTime_Null_DatetimeColumn_UtcOnServer() const;
     void insert_Qt_QDate_Null_DateColumn_UtcOnServer() const;
+    void insert_Qt_QTime_Null_TimeColumn_UtcOnServer() const;
 
     /* Server timezone +02:00 */
     void insert_Qt_QDateTime_Null_DatetimeColumn_0200OnServer() const;
     void insert_Qt_QDate_Null_DateColumn_0200OnServer() const;
+    void insert_Qt_QTime_Null_TimeColumn_0200OnServer() const;
 
     /* Orm::QueryBuilder */
     /* Server timezone UTC */
     void insert_QDateTime_Null_DatetimeColumn_UtcOnServer() const;
     void insert_QDate_Null_DateColumn_UtcOnServer() const;
+    void insert_QTime_Null_TimeColumn_UtcOnServer() const;
 
     /* Server timezone +02:00 */
     void insert_QDateTime_Null_DatetimeColumn_0200OnServer() const;
     void insert_QDate_Null_DateColumn_0200OnServer() const;
+    void insert_QTime_Null_TimeColumn_0200OnServer() const;
 
     /* QtTimeZoneType::DontConvert */
     /* Orm::QueryBuilder */
@@ -144,6 +167,8 @@ Q_GLOBAL_STATIC_WITH_ARGS(const QString, datetime, ("datetime")) // NOLINT(misc-
 Q_GLOBAL_STATIC_WITH_ARGS(const QString, timestamp, ("timestamp")) // NOLINT(misc-use-anonymous-namespace)
 /*! QString constant "date" (perf. reason, one time initialization). */
 Q_GLOBAL_STATIC_WITH_ARGS(const QString, date, ("date")) // NOLINT(misc-use-anonymous-namespace)
+/*! QString constant "time" (perf. reason, one time initialization). */
+Q_GLOBAL_STATIC_WITH_ARGS(const QString, time_, ("time")) // NOLINT(misc-use-anonymous-namespace)
 
 /* private slots */
 
@@ -1738,6 +1763,371 @@ void tst_PostgreSQL_QDateTime::insert_QString_DateColumn_0200OnServer() const
     restore(lastId, true);
 }
 
+/* QTime */
+
+/* Raw QSqlQuery */
+
+/* Server timezone UTC */
+
+void
+tst_PostgreSQL_QDateTime::insert_Qt_QTime_UtcTimezone_TimeColumn_UtcOnServer() const
+{
+    quint64 lastId = 0;
+
+    // Insert
+    {
+        auto qtQuery = createQtQuery();
+
+        QVERIFY(qtQuery.prepare(R"(insert into "datetimes" ("time") values (?))"));
+
+        qtQuery.addBindValue(QTime(17, 2, 59));
+
+        QVERIFY(qtQuery.exec());
+
+        QVERIFY(!qtQuery.lastError().isValid());
+        QVERIFY(!qtQuery.isValid() && qtQuery.isActive() && !qtQuery.isSelect());
+        QCOMPARE(qtQuery.numRowsAffected(), 1);
+
+        lastId = qtQuery.lastInsertId().value<quint64>();
+        QVERIFY(lastId != 0);
+    }
+
+    // Verify
+    {
+        auto qtQuery = createQtQuery();
+
+        QVERIFY(qtQuery.prepare(
+                    R"(select "id", "time" from "datetimes" where "id" = ?)"));
+
+        qtQuery.addBindValue(lastId);
+
+        QVERIFY(qtQuery.exec());
+
+        QVERIFY(!qtQuery.lastError().isValid());
+        QVERIFY(!qtQuery.isValid() && qtQuery.isActive() && qtQuery.isSelect());
+        QCOMPARE(qtQuery.size(), 1);
+
+        QVERIFY(qtQuery.first());
+
+        QCOMPARE(qtQuery.value(ID).value<quint64>(), lastId);
+
+        const auto timeDbVariant = qtQuery.value(*time_);
+        QVERIFY(timeDbVariant.isValid());
+        QVERIFY(!timeDbVariant.isNull());
+
+        QCOMPARE(Helpers::qVariantTypeId(timeDbVariant), QMetaType::QTime);
+
+        const auto timeActual = timeDbVariant.value<QTime>();
+        const auto timeExpected = QTime(17, 2, 59);
+        QCOMPARE(timeActual, timeExpected);
+    }
+
+    // Restore
+    restore(lastId);
+}
+
+void tst_PostgreSQL_QDateTime::insert_Qt_QString_TimeColumn_UtcOnServer() const
+{
+    quint64 lastId = 0;
+
+    // Insert
+    {
+        auto qtQuery = createQtQuery();
+
+        QVERIFY(qtQuery.prepare(R"(insert into "datetimes" ("time") values (?))"));
+
+        qtQuery.addBindValue(QString("17:02:59"));
+
+        QVERIFY(qtQuery.exec());
+
+        QVERIFY(!qtQuery.lastError().isValid());
+        QVERIFY(!qtQuery.isValid() && qtQuery.isActive() && !qtQuery.isSelect());
+        QCOMPARE(qtQuery.numRowsAffected(), 1);
+
+        lastId = qtQuery.lastInsertId().value<quint64>();
+        QVERIFY(lastId != 0);
+    }
+
+    // Verify
+    {
+        auto qtQuery = createQtQuery();
+
+        QVERIFY(qtQuery.prepare(
+                    R"(select "id", "time" from "datetimes" where "id" = ?)"));
+
+        qtQuery.addBindValue(lastId);
+
+        QVERIFY(qtQuery.exec());
+
+        QVERIFY(!qtQuery.lastError().isValid());
+        QVERIFY(!qtQuery.isValid() && qtQuery.isActive() && qtQuery.isSelect());
+        QCOMPARE(qtQuery.size(), 1);
+
+        QVERIFY(qtQuery.first());
+
+        QCOMPARE(qtQuery.value(ID).value<quint64>(), lastId);
+
+        const auto timeDbVariant = qtQuery.value(*time_);
+        QVERIFY(timeDbVariant.isValid());
+        QVERIFY(!timeDbVariant.isNull());
+
+        QCOMPARE(Helpers::qVariantTypeId(timeDbVariant), QMetaType::QTime);
+
+        const auto timeActual = timeDbVariant.value<QTime>();
+        const auto timeExpected = QTime(17, 2, 59);
+        QCOMPARE(timeActual, timeExpected);
+    }
+
+    // Restore
+    restore(lastId);
+}
+
+/* Server timezone Europe/Bratislava (+02:00) */
+
+void tst_PostgreSQL_QDateTime::
+insert_Qt_QTime_UtcTimezone_TimeColumn_0200OnServer() const
+{
+    setEUBratislavaTimezone();
+
+    quint64 lastId = 0;
+
+    // Insert
+    {
+        auto qtQuery = createQtQuery();
+
+        QVERIFY(qtQuery.prepare(R"(insert into "datetimes" ("time") values (?))"));
+
+        qtQuery.addBindValue(QTime(17, 2, 59));
+
+        QVERIFY(qtQuery.exec());
+
+        QVERIFY(!qtQuery.lastError().isValid());
+        QVERIFY(!qtQuery.isValid() && qtQuery.isActive() && !qtQuery.isSelect());
+        QCOMPARE(qtQuery.numRowsAffected(), 1);
+
+        lastId = qtQuery.lastInsertId().value<quint64>();
+        QVERIFY(lastId != 0);
+    }
+
+    // Verify
+    {
+        auto qtQuery = createQtQuery();
+
+        QVERIFY(qtQuery.prepare(
+                    R"(select "id", "time" from "datetimes" where "id" = ?)"));
+
+        qtQuery.addBindValue(lastId);
+
+        QVERIFY(qtQuery.exec());
+
+        QVERIFY(!qtQuery.lastError().isValid());
+        QVERIFY(!qtQuery.isValid() && qtQuery.isActive() && qtQuery.isSelect());
+        QCOMPARE(qtQuery.size(), 1);
+
+        QVERIFY(qtQuery.first());
+
+        QCOMPARE(qtQuery.value(ID).value<quint64>(), lastId);
+
+        const auto timeDbVariant = qtQuery.value(*time_);
+        QVERIFY(timeDbVariant.isValid());
+        QVERIFY(!timeDbVariant.isNull());
+
+        QCOMPARE(Helpers::qVariantTypeId(timeDbVariant), QMetaType::QTime);
+
+        const auto timeActual = timeDbVariant.value<QTime>();
+        const auto timeExpected = QTime(17, 2, 59);
+        QCOMPARE(timeActual, timeExpected);
+    }
+
+    // Restore
+    restore(lastId, true);
+}
+
+void tst_PostgreSQL_QDateTime::insert_Qt_QString_TimeColumn_0200OnServer() const
+{
+    setEUBratislavaTimezone();
+
+    quint64 lastId = 0;
+
+    // Insert
+    {
+        auto qtQuery = createQtQuery();
+
+        QVERIFY(qtQuery.prepare(R"(insert into "datetimes" ("time") values (?))"));
+
+        qtQuery.addBindValue(QString("17:02:59"));
+
+        QVERIFY(qtQuery.exec());
+
+        QVERIFY(!qtQuery.lastError().isValid());
+        QVERIFY(!qtQuery.isValid() && qtQuery.isActive() && !qtQuery.isSelect());
+        QCOMPARE(qtQuery.numRowsAffected(), 1);
+
+        lastId = qtQuery.lastInsertId().value<quint64>();
+        QVERIFY(lastId != 0);
+    }
+
+    // Verify
+    {
+        auto qtQuery = createQtQuery();
+
+        QVERIFY(qtQuery.prepare(
+                    R"(select "id", "time" from "datetimes" where "id" = ?)"));
+
+        qtQuery.addBindValue(lastId);
+
+        QVERIFY(qtQuery.exec());
+
+        QVERIFY(!qtQuery.lastError().isValid());
+        QVERIFY(!qtQuery.isValid() && qtQuery.isActive() && qtQuery.isSelect());
+        QCOMPARE(qtQuery.size(), 1);
+
+        QVERIFY(qtQuery.first());
+
+        QCOMPARE(qtQuery.value(ID).value<quint64>(), lastId);
+
+        const auto timeDbVariant = qtQuery.value(*time_);
+        QVERIFY(timeDbVariant.isValid());
+        QVERIFY(!timeDbVariant.isNull());
+
+        QCOMPARE(Helpers::qVariantTypeId(timeDbVariant), QMetaType::QTime);
+
+        const auto timeActual = timeDbVariant.value<QTime>();
+        const auto timeExpected = QTime(17, 2, 59);
+        QCOMPARE(timeActual, timeExpected);
+    }
+
+    // Restore
+    restore(lastId, true);
+}
+
+/* Orm::QueryBuilder */
+
+/* Server timezone UTC */
+
+void tst_PostgreSQL_QDateTime::insert_QTime_UtcTimezone_TimeColumn_UtcOnServer() const
+{
+    // Insert
+    quint64 lastId = createQuery()->from(*datetimes).insertGetId(
+                         {{*time_, QTime(17, 2, 59)}});
+
+    // Verify
+    {
+        auto query = createQuery()->from(*datetimes).find(lastId, {ID, *time_});
+
+        QCOMPARE(query.size(), 1);
+
+        QCOMPARE(query.value(ID).value<quint64>(), lastId);
+
+        const auto timeDbVariant = query.value(*time_);
+        QVERIFY(timeDbVariant.isValid());
+        QVERIFY(!timeDbVariant.isNull());
+
+        QCOMPARE(Helpers::qVariantTypeId(timeDbVariant), QMetaType::QTime);
+
+        const auto timeActual = timeDbVariant.value<QTime>();
+        const auto timeExpected = QTime(17, 2, 59);
+        QCOMPARE(timeActual, timeExpected);
+    }
+
+    // Restore
+    restore(lastId);
+}
+
+void tst_PostgreSQL_QDateTime::insert_QString_TimeColumn_UtcOnServer() const
+{
+    // Insert
+    quint64 lastId = createQuery()->from(*datetimes).insertGetId(
+                         {{*time_, QString("17:02:59")}});
+
+    // Verify
+    {
+        auto query = createQuery()->from(*datetimes).find(lastId, {ID, *time_});
+
+        QCOMPARE(query.size(), 1);
+
+        QCOMPARE(query.value(ID).value<quint64>(), lastId);
+
+        const auto timeDbVariant = query.value(*time_);
+        QVERIFY(timeDbVariant.isValid());
+        QVERIFY(!timeDbVariant.isNull());
+
+        QCOMPARE(Helpers::qVariantTypeId(timeDbVariant), QMetaType::QTime);
+
+        const auto timeActual = timeDbVariant.value<QTime>();
+        const auto timeExpected = QTime(17, 2, 59);
+        QCOMPARE(timeActual, timeExpected);
+    }
+
+    // Restore
+    restore(lastId);
+}
+
+/* Server timezone Europe/Bratislava (+02:00) */
+
+void tst_PostgreSQL_QDateTime::
+insert_QTime_UtcTimezone_TimeColumn_0200OnServer() const
+{
+    setEUBratislavaTimezone();
+
+    // Insert
+    quint64 lastId = createQuery()->from(*datetimes).insertGetId(
+                         {{*time_, QTime(17, 2, 59)}});
+
+    // Verify
+    {
+        auto query = createQuery()->from(*datetimes).find(lastId, {ID, *time_});
+
+        QCOMPARE(query.size(), 1);
+
+        QCOMPARE(query.value(ID).value<quint64>(), lastId);
+
+        const auto timeDbVariant = query.value(*time_);
+        QVERIFY(timeDbVariant.isValid());
+        QVERIFY(!timeDbVariant.isNull());
+
+        QCOMPARE(Helpers::qVariantTypeId(timeDbVariant), QMetaType::QTime);
+
+        const auto timeActual = timeDbVariant.value<QTime>();
+        const auto timeExpected = QTime(17, 2, 59);
+        QCOMPARE(timeActual, timeExpected);
+    }
+
+    // Restore
+    restore(lastId, true);
+}
+
+void tst_PostgreSQL_QDateTime::insert_QString_TimeColumn_0200OnServer() const
+{
+    setEUBratislavaTimezone();
+
+    // Insert
+    quint64 lastId = createQuery()->from(*datetimes).insertGetId(
+                         {{*time_, QString("17:02:59")}});
+
+    // Verify
+    {
+        auto query = createQuery()->from(*datetimes).find(lastId, {ID, *time_});
+
+        QCOMPARE(query.size(), 1);
+
+        QCOMPARE(query.value(ID).value<quint64>(), lastId);
+
+        const auto timeDbVariant = query.value(*time_);
+        QVERIFY(timeDbVariant.isValid());
+        QVERIFY(!timeDbVariant.isNull());
+
+        QCOMPARE(Helpers::qVariantTypeId(timeDbVariant), QMetaType::QTime);
+
+        const auto timeActual = timeDbVariant.value<QTime>();
+        const auto timeExpected = QTime(17, 2, 59);
+        QCOMPARE(timeActual, timeExpected);
+    }
+
+    // Restore
+    restore(lastId, true);
+}
+
 /* Null values QDateTime / QDate */
 
 /* Raw QSqlQuery */
@@ -1856,6 +2246,62 @@ void tst_PostgreSQL_QDateTime::insert_Qt_QDate_Null_DateColumn_UtcOnServer() con
         const auto dateActual = dateDbVariant.value<QDate>();
         const auto dateExpected = QDate();
         QCOMPARE(dateActual, dateExpected);
+    }
+
+    // Restore
+    restore(lastId);
+}
+
+void tst_PostgreSQL_QDateTime::insert_Qt_QTime_Null_TimeColumn_UtcOnServer() const
+{
+    quint64 lastId = 0;
+
+    // Insert
+    {
+        auto qtQuery = createQtQuery();
+
+        QVERIFY(qtQuery.prepare(R"(insert into "datetimes" ("time") values (?))"));
+
+        qtQuery.addBindValue(NullVariant::QTime());
+
+        QVERIFY(qtQuery.exec());
+
+        QVERIFY(!qtQuery.lastError().isValid());
+        QVERIFY(!qtQuery.isValid() && qtQuery.isActive() && !qtQuery.isSelect());
+        QCOMPARE(qtQuery.numRowsAffected(), 1);
+
+        lastId = qtQuery.lastInsertId().value<quint64>();
+        QVERIFY(lastId != 0);
+    }
+
+    // Verify
+    {
+        auto qtQuery = createQtQuery();
+
+        QVERIFY(qtQuery.prepare(
+                    R"(select "id", "time" from "datetimes" where "id" = ?)"));
+
+        qtQuery.addBindValue(lastId);
+
+        QVERIFY(qtQuery.exec());
+
+        QVERIFY(!qtQuery.lastError().isValid());
+        QVERIFY(!qtQuery.isValid() && qtQuery.isActive() && qtQuery.isSelect());
+        QCOMPARE(qtQuery.size(), 1);
+
+        QVERIFY(qtQuery.first());
+
+        QCOMPARE(qtQuery.value(ID).value<quint64>(), lastId);
+
+        const auto timeDbVariant = qtQuery.value(*time_);
+        QVERIFY(timeDbVariant.isValid());
+        QVERIFY(timeDbVariant.isNull());
+
+        QCOMPARE(Helpers::qVariantTypeId(timeDbVariant), QMetaType::QTime);
+
+        const auto timeActual = timeDbVariant.value<QTime>();
+        const auto timeExpected = QTime();
+        QCOMPARE(timeActual, timeExpected);
     }
 
     // Restore
@@ -1986,6 +2432,64 @@ void tst_PostgreSQL_QDateTime::insert_Qt_QDate_Null_DateColumn_0200OnServer() co
     restore(lastId, true);
 }
 
+void tst_PostgreSQL_QDateTime::insert_Qt_QTime_Null_TimeColumn_0200OnServer() const
+{
+    setEUBratislavaTimezone();
+
+    quint64 lastId = 0;
+
+    // Insert
+    {
+        auto qtQuery = createQtQuery();
+
+        QVERIFY(qtQuery.prepare(R"(insert into "datetimes" ("time") values (?))"));
+
+        qtQuery.addBindValue(NullVariant::QTime());
+
+        QVERIFY(qtQuery.exec());
+
+        QVERIFY(!qtQuery.lastError().isValid());
+        QVERIFY(!qtQuery.isValid() && qtQuery.isActive() && !qtQuery.isSelect());
+        QCOMPARE(qtQuery.numRowsAffected(), 1);
+
+        lastId = qtQuery.lastInsertId().value<quint64>();
+        QVERIFY(lastId != 0);
+    }
+
+    // Verify
+    {
+        auto qtQuery = createQtQuery();
+
+        QVERIFY(qtQuery.prepare(
+                    R"(select "id", "time" from "datetimes" where "id" = ?)"));
+
+        qtQuery.addBindValue(lastId);
+
+        QVERIFY(qtQuery.exec());
+
+        QVERIFY(!qtQuery.lastError().isValid());
+        QVERIFY(!qtQuery.isValid() && qtQuery.isActive() && qtQuery.isSelect());
+        QCOMPARE(qtQuery.size(), 1);
+
+        QVERIFY(qtQuery.first());
+
+        QCOMPARE(qtQuery.value(ID).value<quint64>(), lastId);
+
+        const auto timeDbVariant = qtQuery.value(*time_);
+        QVERIFY(timeDbVariant.isValid());
+        QVERIFY(timeDbVariant.isNull());
+
+        QCOMPARE(Helpers::qVariantTypeId(timeDbVariant), QMetaType::QTime);
+
+        const auto timeActual = timeDbVariant.value<QTime>();
+        const auto timeExpected = QTime();
+        QCOMPARE(timeActual, timeExpected);
+    }
+
+    // Restore
+    restore(lastId, true);
+}
+
 /* Orm::QueryBuilder */
 
 /* Server timezone UTC */
@@ -2047,6 +2551,35 @@ void tst_PostgreSQL_QDateTime::insert_QDate_Null_DateColumn_UtcOnServer() const
         const auto dateActual = dateDbVariant.value<QDate>();
         const auto dateExpected = QDate();
         QCOMPARE(dateActual, dateExpected);
+    }
+
+    // Restore
+    restore(lastId);
+}
+
+void tst_PostgreSQL_QDateTime::insert_QTime_Null_TimeColumn_UtcOnServer() const
+{
+    // Insert
+    quint64 lastId = createQuery()->from(*datetimes).insertGetId(
+                         {{*time_, NullVariant::QTime()}});
+
+    // Verify
+    {
+        auto query = createQuery()->from(*datetimes).find(lastId, {ID, *time_});
+
+        QCOMPARE(query.size(), 1);
+
+        QCOMPARE(query.value(ID).value<quint64>(), lastId);
+
+        const auto timeDbVariant = query.value(*time_);
+        QVERIFY(timeDbVariant.isValid());
+        QVERIFY(timeDbVariant.isNull());
+
+        QCOMPARE(Helpers::qVariantTypeId(timeDbVariant), QMetaType::QTime);
+
+        const auto timeActual = timeDbVariant.value<QTime>();
+        const auto timeExpected = QTime();
+        QCOMPARE(timeActual, timeExpected);
     }
 
     // Restore
@@ -2116,6 +2649,37 @@ void tst_PostgreSQL_QDateTime::insert_QDate_Null_DateColumn_0200OnServer() const
         const auto dateActual = dateDbVariant.value<QDate>();
         const auto dateExpected = QDate();
         QCOMPARE(dateActual, dateExpected);
+    }
+
+    // Restore
+    restore(lastId, true);
+}
+
+void tst_PostgreSQL_QDateTime::insert_QTime_Null_TimeColumn_0200OnServer() const
+{
+    setEUBratislavaTimezone();
+
+    // Insert
+    quint64 lastId = createQuery()->from(*datetimes).insertGetId(
+                         {{*time_, NullVariant::QTime()}});
+
+    // Verify
+    {
+        auto query = createQuery()->from(*datetimes).find(lastId, {ID, *time_});
+
+        QCOMPARE(query.size(), 1);
+
+        QCOMPARE(query.value(ID).value<quint64>(), lastId);
+
+        const auto timeDbVariant = query.value(*time_);
+        QVERIFY(timeDbVariant.isValid());
+        QVERIFY(timeDbVariant.isNull());
+
+        QCOMPARE(Helpers::qVariantTypeId(timeDbVariant), QMetaType::QTime);
+
+        const auto timeActual = timeDbVariant.value<QTime>();
+        const auto timeExpected = QTime();
+        QCOMPARE(timeActual, timeExpected);
     }
 
     // Restore

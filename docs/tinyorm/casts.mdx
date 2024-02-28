@@ -259,6 +259,11 @@ To specify the format that should be used when actually storing a model's dates 
 
 This format can be any format that the QDateTime's `fromString` or `toString` methods accept or the special `U` format that represents the UNIX timestamp (this `U` format is TinyORM-specific and isn't supported by `QDateTime`).
 
+Define a `u_timeFormat` data member on your model to specify the format that should be used when storing a model's times within your database:
+
+    /*! The storage format of the model's time columns. */
+    inline static QString u_timeFormat {"HH:mm:ss.zzz"};
+
 #### Date Casting, Serialization & Timezones {#date-casting-serialization-and-timezones}
 
 By default, the `CastType::CustomQDate` and `CastType::CustomQDateTime` casts will serialize dates to a UTC ISO-8601 date string (`yyyy-MM-ddTHH:mm:ss.zzzZ`), regardless of the timezone specified in your database connection's `qt_timezone` configuration option. You are strongly encouraged to always use this serialization format, as well as to store your application's dates in the UTC timezone by not changing your database connection's `qt_timezone` configuration option from its default `Qt::UTC` value. Consistently using the UTC timezone throughout your application will provide the maximum level of interoperability with other date manipulation libraries or services written in any programming language.

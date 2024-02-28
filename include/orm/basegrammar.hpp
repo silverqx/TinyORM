@@ -44,6 +44,8 @@ namespace Query
 
         /*! Get the format for database stored dates. */
         virtual const QString &getDateFormat() const;
+        /*! Get the format for database stored times. */
+        virtual const QString &getTimeFormat() const;
 
         /*! Wrap a value in keyword identifiers. */
         QString wrap(const QString &value, bool prefixAlias = false) const;

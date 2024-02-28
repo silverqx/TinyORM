@@ -22,6 +22,8 @@ class Datetime final : public Model<Datetime>
         "timestamp",
         "timestamp_tz",
         "date",
+        "time",
+        "time_ms",
     };
 
     /*! Indicates whether the model should be timestamped. */
@@ -35,6 +37,10 @@ class Datetime final : public Model<Datetime>
         "timestamp_tz",
         "date",
     };
+
+public:
+    /*! The storage format of the model's time columns. */
+    inline static QString u_timeFormat {"HH:mm:ss"};
 };
 
 } // namespace Models

@@ -365,6 +365,14 @@ DatabaseConnection::prepareBindings(QVector<QVariant> &bindings) const
                       .toString(m_queryGrammar->getDateFormat());
             break;
 
+        /* We need to transform all instances of QTime into the actual time string.
+           Each query grammar maintains its own time string format so we'll just ask
+           the grammar for the format. */
+        case QMetaType::QTime:
+            // QTime doesn't have a time zone
+            binding = binding.value<QTime>().toString(m_queryGrammar->getTimeFormat());
+            break;
+
         /* I have decided to not handle the QMetaType::Bool here, little info:
            - Qt's QMYSQL driver handles bool values internally, it doesn't matter if you
              pass true/false or 0/1

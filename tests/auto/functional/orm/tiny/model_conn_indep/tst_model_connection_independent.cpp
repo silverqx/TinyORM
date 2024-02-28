@@ -5,6 +5,7 @@
 
 #include "databases.hpp"
 
+#include "models/datetime.hpp"
 #include "models/filepropertyproperty.hpp"
 #include "models/massassignmentmodels.hpp"
 #include "models/torrent.hpp"
@@ -37,6 +38,7 @@ using AttributeUtils = Orm::Tiny::Utils::Attribute;
 
 using TestUtils::Databases;
 
+using Models::Datetime;
 using Models::FilePropertyProperty;
 using Models::Torrent;
 using Models::TorrentPreviewableFile;
@@ -84,7 +86,10 @@ private Q_SLOTS:
     void subscriptOperator_OnLhs() const;
     void subscriptOperator_OnLhs_AssignAttributeReference() const;
 
+    /* Examining Attribute Changes */
     void isCleanAndIsDirty() const;
+    void isDirty_TimeColumn() const;
+    void isDirty_TimeColumn_WithFractionalSeconds() const;
 
     /* Models comparison */
     void is() const;
@@ -673,6 +678,8 @@ void tst_Model_Connection_Independent::
     QCOMPARE(torrent3->getAttribute(NAME), torrent2Name);
 }
 
+/* Examining Attribute Changes */
+
 void tst_Model_Connection_Independent::isCleanAndIsDirty() const
 {
     auto torrent = Torrent::find(3);
@@ -703,6 +710,73 @@ void tst_Model_Connection_Independent::isCleanAndIsDirty() const
     // Restore the name
     torrent->setAttribute(NAME, "test3");
     torrent->save();
+}
+
+void tst_Model_Connection_Independent::isDirty_TimeColumn() const
+{
+    // Prepare
+    auto datetime = Datetime::create({{"time", QTime(17, 1, 5)}});
+
+    // Verify
+    QVERIFY(datetime.exists);
+
+    QVERIFY(!datetime.isDirty("time"));
+    QCOMPARE(datetime.getAttribute<QString>("time"), sl("17:01:05"));
+
+    // Setting to the same time can't change dirty state
+                                  // as QTime()
+    datetime.setAttribute("time", QTime(17, 1, 5));
+    QVERIFY(!datetime.isDirty("time"));              // Can't have fractional seconds (ms)
+    QCOMPARE(datetime.getAttribute<QString>("time"), sl("17:01:05"));
+                                  // or as QString()
+    datetime.setAttribute("time", sl("17:01:05"));
+    QVERIFY(!datetime.isDirty("time"));              // Can't have fractional seconds (ms)
+    QCOMPARE(datetime.getAttribute<QString>("time"), sl("17:01:05"));
+
+    // Setting to the new time value must change dirty state
+    datetime.setAttribute("time", QTime(17, 1, 6));
+    QVERIFY(datetime.isDirty("time"));               // Can't have fractional seconds (ms)
+    QCOMPARE(datetime.getAttribute<QString>("time"), sl("17:01:06"));
+
+    // Restore
+    const auto affected = Datetime::destroy(datetime.getKey());
+    QCOMPARE(affected, 1);
+}
+
+void tst_Model_Connection_Independent::isDirty_TimeColumn_WithFractionalSeconds() const
+{
+    // Prepare
+    auto timeFormatOriginal = Datetime::u_timeFormat;
+    Datetime::u_timeFormat = sl("HH:mm:ss.zzz");
+
+    auto datetime = Datetime::create({{"time_ms", QTime(17, 1, 5, 123)}});
+
+    // Verify
+    QVERIFY(datetime.exists);
+
+    QVERIFY(!datetime.isDirty("time_ms"));
+    QCOMPARE(datetime.getAttribute<QString>("time_ms"), sl("17:01:05.123"));
+
+    // Setting to the same time with fractional seconds (ms) can't change dirty state
+                                     // as QTime()
+    datetime.setAttribute("time_ms", QTime(17, 1, 5, 123));
+    QVERIFY(!datetime.isDirty("time_ms"));              // Must have 3 fractional seconds (ms)
+    QCOMPARE(datetime.getAttribute<QString>("time_ms"), sl("17:01:05.123"));
+                                     // or as QString()
+    datetime.setAttribute("time_ms", sl("17:01:05.123"));
+    QVERIFY(!datetime.isDirty("time_ms"));              // Must have 3 fractional seconds (ms)
+    QCOMPARE(datetime.getAttribute<QString>("time_ms"), sl("17:01:05.123"));
+
+    // Setting to the new time value with fractional seconds (ms) must change dirty state
+    datetime.setAttribute("time_ms", QTime(17, 1, 5, 124));
+    QVERIFY(datetime.isDirty("time_ms"));               // Must have 3 fractional seconds (ms)
+    QCOMPARE(datetime.getAttribute<QString>("time_ms"), sl("17:01:05.124"));
+
+    // Restore
+    const auto affected = Datetime::destroy(datetime.getKey());
+    QCOMPARE(affected, 1);
+
+    Datetime::u_timeFormat = std::move(timeFormatOriginal);
 }
 
 /* Models comparison */

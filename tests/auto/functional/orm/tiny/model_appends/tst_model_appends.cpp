@@ -485,21 +485,24 @@ void tst_Model_Appends::toMap_WithAppends_OverrideSerializeDateTime() const
     auto datetime = Datetime_SerializeOverride::instance({
         {"datetime", QDateTime({2023, 05, 13}, {10, 11, 12}, Qt::UTC)},
         {"date",     QDateTime({2023, 05, 14}, {10, 11, 12}, Qt::UTC)},
+        {"time",     sl("14:11:15")},
     });
 
     // Prepare
-    datetime.append({"datetime_test", "date_test"});
+    datetime.append({"datetime_test", "date_test", "time_test"});
 
     QVariantMap serialized = datetime.toMap();
-    QCOMPARE(serialized.size(), 4);
+    QCOMPARE(serialized.size(), 6);
 
     /* No casts and u_date are defined for the date and datetime attributes so
        they will be serialized as the QString instances (in the storage format). */
     QVariantMap expectedAttributes {
         {"date",          "2023-05-14 10:11:12"},
         {"date_test",     "14.06.2023"},
+        {"time",          "14:11:15"},
         {"datetime",      "2023-05-13 10:11:12"},
         {"datetime_test", "13.06.2023 10:11:12.0 UTC"},
+        {"time_test",     "14-11-20.0"},
     };
     QCOMPARE(serialized, expectedAttributes);
 
@@ -513,13 +516,14 @@ tst_Model_Appends::toVector_WithAppends_OverrideSerializeDateTime() const
     auto datetime = Datetime_SerializeOverride::instance({
         {"datetime", QDateTime({2023, 05, 13}, {10, 11, 12}, Qt::UTC)},
         {"date",     QDateTime({2023, 05, 14}, {10, 11, 12}, Qt::UTC)},
+        {"time",     QTime(14, 11, 15)}, // It must also accept QTime() instances
     });
 
     // Prepare
-    datetime.append({"datetime_test", "date_test"});
+    datetime.append({"datetime_test", "date_test", "time_test"});
 
     QVector<AttributeItem> serialized = datetime.toVector();
-    QCOMPARE(serialized.size(), 4);
+    QCOMPARE(serialized.size(), 6);
 
     /* No casts and u_date are defined for the date and datetime attributes so
        they will be serialized as the QString instances (in the storage format). */
@@ -527,8 +531,10 @@ tst_Model_Appends::toVector_WithAppends_OverrideSerializeDateTime() const
     QVector<AttributeItem> expectedAttributes {
         {"datetime",      "2023-05-13 10:11:12"},
         {"date",          "2023-05-14 10:11:12"},
+        {"time",          "14:11:15"},
         {"date_test",     "14.06.2023"},
         {"datetime_test", "13.06.2023 10:11:12.0 UTC"},
+        {"time_test",     "14-11-20.0"},
     };
     QCOMPARE(serialized, expectedAttributes);
 

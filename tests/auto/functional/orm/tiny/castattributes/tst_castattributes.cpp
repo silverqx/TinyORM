@@ -150,10 +150,12 @@ private Q_SLOTS:
     void defaultCast_timestamp() const;
     void defaultCast_datetime() const;
     void defaultCast_date() const;
+    void defaultCast_time() const;
 
     void defaultCast_timestamp_QSQLITE_OffReturnQDateTime() const;
     void defaultCast_datetime_QSQLITE_OffReturnQDateTime() const;
     void defaultCast_date_QSQLITE_OffReturnQDateTime() const;
+    // Test for time column types not needed because return_qdatetime doesn't affect them
 
     void defaultCast_blob() const;
 
@@ -181,6 +183,7 @@ private Q_SLOTS:
     void defaultCast_Null_timestamp() const;
     void defaultCast_Null_datetime() const;
     void defaultCast_Null_date() const;
+    void defaultCast_Null_time() const;
 
     void defaultCast_Null_blob() const;
 
@@ -230,6 +233,8 @@ private Q_SLOTS:
     void cast_datetime_to_QString() const;
     void cast_date_to_QDate() const;
     void cast_date_to_QString() const;
+    void cast_time_to_QTime() const;
+    void cast_time_to_QString() const;
 
     void cast_blob_to_QByteArray() const;
     void cast_blob_to_QString() const;
@@ -262,6 +267,7 @@ private Q_SLOTS:
     void cast_Null_timestamp_to_Timestamp() const;
     void cast_Null_datetime_to_QDateTime() const;
     void cast_Null_date_to_QDate() const;
+    void cast_Null_time_to_QTime() const;
 
     void cast_Null_blob_to_QByteArray() const;
 
@@ -1030,6 +1036,28 @@ void tst_CastAttributes::defaultCast_date() const
     QCOMPARE(attribute.value<QDate>(), QDate(2022, 9, 11));
 }
 
+void tst_CastAttributes::defaultCast_time() const
+{
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
+
+    auto &type = model(connection);
+
+    auto attribute = type.getAttribute("time");
+    auto typeId = Helpers::qVariantTypeId(attribute);
+
+    // Postgres returns QTime() because its time type can't be out of 24 hours range
+    if (DB::driverName(connection) == QPSQL) {
+        QCOMPARE(typeId, QMetaType::QTime);
+
+        QCOMPARE(attribute.value<QTime>(), QTime(17, 1, 5));
+    }
+    else {
+        QCOMPARE(typeId, QMetaType::QString);
+
+        QCOMPARE(attribute.value<QString>(), sl("17:01:05"));
+    }
+}
+
 void tst_CastAttributes::defaultCast_timestamp_QSQLITE_OffReturnQDateTime() const
 {
     QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
@@ -1524,6 +1552,30 @@ void tst_CastAttributes::defaultCast_Null_date() const
         QCOMPARE(typeId, QMetaType::QString);
     else
         QCOMPARE(typeId, QMetaType::QDate);
+
+    QVERIFY(attribute.isNull());
+}
+
+void tst_CastAttributes::defaultCast_Null_time() const
+{
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
+
+    auto &type = modelNull(connection);
+
+    auto attribute = type.getAttribute("time");
+    auto typeId = Helpers::qVariantTypeId(attribute);
+
+    if (const auto driverName = DB::driverName(connection);
+        driverName == QMYSQL
+    )
+        QCOMPARE(typeId, QMetaType::QString);
+    // Postgres returns QTime() because its time type can't be out of 24 hours range
+    else if (driverName == QPSQL)
+        QCOMPARE(typeId, QMetaType::QTime);
+    else if (driverName == QSQLITE)
+        QCOMPARE(typeId, QMetaType::QString);
+    else
+        Q_UNREACHABLE();
 
     QVERIFY(attribute.isNull());
 }
@@ -2562,6 +2614,64 @@ void tst_CastAttributes::cast_date_to_QString() const
     QCOMPARE(attribute.value<QString>(), QString("2022-09-11"));
 }
 
+void tst_CastAttributes::cast_time_to_QTime() const
+{
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
+
+    auto &type = model(connection);
+
+    type.mergeCasts({{"time", CastType::QTime}});
+
+    auto attribute = type.getAttribute("time");
+    auto typeId = Helpers::qVariantTypeId(attribute);
+
+    if (const auto driverName = DB::driverName(connection);
+        driverName == QMYSQL
+    )
+        QCOMPARE(typeId, QMetaType::QTime);
+    else if (driverName == QPSQL)
+        QCOMPARE(typeId, QMetaType::QTime);
+    else if (driverName == QSQLITE)
+        QCOMPARE(typeId, QMetaType::QTime);
+    else
+        Q_UNREACHABLE();
+
+    QCOMPARE(attribute.value<QTime>(),
+             // QTime doesn't have a time zone
+             QTime(17, 1, 5));
+}
+
+void tst_CastAttributes::cast_time_to_QString() const
+{
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
+
+    auto &type = model(connection);
+
+    type.mergeCasts({{"time", CastType::QString}});
+
+    auto attribute = type.getAttribute("time");
+    auto typeId = Helpers::qVariantTypeId(attribute);
+
+    const auto driverName = DB::driverName(connection);
+
+    if (driverName == QMYSQL)
+        QCOMPARE(typeId, QMetaType::QString);
+    else if (driverName == QPSQL)
+        QCOMPARE(typeId, QMetaType::QString);
+    else if (driverName == QSQLITE)
+        QCOMPARE(typeId, QMetaType::QString);
+    else
+        Q_UNREACHABLE();
+
+    if (driverName == QPSQL)
+        /* This is kind of special case, it has .000 because Postgres returns QTime() and
+           if the QVariant::convert() (code is actually in qmetatype.cpp) detects
+           conversion from QTime to QString then it uses .toString(Qt::ISODateWithMs). */
+        QCOMPARE(attribute.value<QString>(), QString("17:01:05.000"));
+    else
+        QCOMPARE(attribute.value<QString>(), QString("17:01:05"));
+}
+
 void tst_CastAttributes::cast_blob_to_QByteArray() const
 {
     QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
@@ -3165,6 +3275,33 @@ void tst_CastAttributes::cast_Null_date_to_QDate() const
         QCOMPARE(typeId, QMetaType::QDate);
     else if (driverName == QSQLITE)
         QCOMPARE(typeId, QMetaType::QDate);
+    else
+        Q_UNREACHABLE();
+
+    QVERIFY(attribute.isNull());
+}
+
+void tst_CastAttributes::cast_Null_time_to_QTime() const
+{
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
+
+    auto &type = modelNull(connection);
+
+    type.mergeCasts({{"time", CastType::QTime}});
+
+    auto attribute = type.getAttribute("time");
+    auto typeId = Helpers::qVariantTypeId(attribute);
+
+    QVERIFY(attribute.isNull());
+
+    if (const auto driverName = DB::driverName(connection);
+        driverName == QMYSQL
+    )
+        QCOMPARE(typeId, QMetaType::QTime);
+    else if (driverName == QPSQL)
+        QCOMPARE(typeId, QMetaType::QTime);
+    else if (driverName == QSQLITE)
+        QCOMPARE(typeId, QMetaType::QTime);
     else
         Q_UNREACHABLE();
 

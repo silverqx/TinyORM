@@ -40,6 +40,15 @@ protected:
         });
     }
 
+    /*! Accessor for time (used in tests to test accessor with serializeTime()). */
+    Attribute timeTest() const noexcept // NOLINT(readability-convert-member-functions-to-static)
+    {
+        return Attribute::make(/* get */ [this]() -> QVariant
+        {
+            return asTime(getAttribute("time")).addSecs(5);
+        });
+    }
+
 private:
     /*! Prepare a date for vector, map, or JSON serialization. */
     inline static QString serializeDate(const QDate date)
@@ -53,6 +62,15 @@ private:
         return datetime.toUTC().toString("dd.MM.yyyy HH:mm:ss.z t");
     }
 
+    /*! Prepare a time for vector, map, or JSON serialization. */
+    inline static QString serializeTime(const QTime time)
+    {
+        /* .z reports the seconds to full available (millisecond) precision without
+           trailing zeroes, so if ms is .123 it reports also .123, what means there is
+           no rounding support for now and we can't force the output to .1 only. */
+        return time.toString("HH-mm-ss.z");
+    }
+
     /*! The attributes that are mass assignable. */
     inline static const QStringList u_fillable { // NOLINT(cppcoreguidelines-interfaces-global-init)
         "datetime",
@@ -60,6 +78,8 @@ private:
         "timestamp",
         "timestamp_tz",
         "date",
+        "time",
+        "time_ms",
     };
 
     /*! Indicates whether the model should be timestamped. */
@@ -73,7 +93,12 @@ private:
     inline static const QHash<QString, MutatorFunction> u_mutators {
         {"datetime_test", &Datetime_SerializeOverride::datetimeTest},
         {"date_test",     &Datetime_SerializeOverride::dateTest},
+        {"time_test",     &Datetime_SerializeOverride::timeTest},
     };
+
+public:
+    /*! The storage format of the model's time columns. */
+    inline static QString u_timeFormat {"HH:mm:ss"};
 };
 
 } // namespace Models

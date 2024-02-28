@@ -147,9 +147,11 @@ namespace Types
         // String
         QString,
         // QDateTime
+        QTime,
         QDate,
         QDateTime,
         Timestamp,
+        CustomQTime,
         CustomQDate,
         CustomQDateTime,
         // Others

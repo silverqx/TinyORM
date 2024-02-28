@@ -42,6 +42,13 @@ const QString &BaseGrammar::getDateFormat() const
     return cachedFormat;
 }
 
+const QString &BaseGrammar::getTimeFormat() const
+{
+    static const auto cachedFormat = QStringLiteral("HH:mm:ss");
+
+    return cachedFormat;
+}
+
 // NOLINTNEXTLINE(misc-no-recursion)
 QString BaseGrammar::wrap(const QString &value, const bool prefixAlias) const
 {

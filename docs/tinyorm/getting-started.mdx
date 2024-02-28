@@ -243,6 +243,13 @@ If you need to customize the format of your model's timestamps, set the private 
         QString u_dateFormat {"yyyy-MM-dd HH:mm:ss"};
     };
 
+If you need to customize the format of your model's time columns, set the private `u_timeFormat` data member on your model. This data member determines how time attributes are stored in the database, supported formats are described in the `QTime` documentation. The default value for `u_timeFormat` is `HH:mm:ss`:
+
+    /*! The storage format of the model's time columns. */
+    QString u_timeFormat {"HH:mm:ss.zzz"};
+
+The default value for datetime or timestamp columns is `yyyy-MM-dd HH:mm:ss` and for time columns is `HH:mm:ss`.
+
 ##### Unix timestamps
 
 You can set the `u_dateFormat` to `U` if you want to store dates in the database as unix timestamps:

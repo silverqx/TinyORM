@@ -321,6 +321,7 @@ function createTables(string $connection): void
 
         $table->datetime('datetime')->nullable();
         $table->date('date')->nullable();
+        $table->time('time')->nullable();
 
         $table->binary('binary')->nullable();
         $table->binary('medium_binary')->nullable();
@@ -508,11 +509,11 @@ function seedTables(string $connection): void
 
     // Insert
 //    Capsule::table('types', null, $connection)->insert(
-//        combineValues(['id', 'bool_true', 'bool_false', 'smallint', 'smallint_u', 'int', 'int_u', 'bigint', 'bigint_u', 'double', 'double_nan', 'double_infinity', 'decimal', 'decimal_nan', 'decimal_infinity', 'decimal_down', 'decimal_up', 'string', 'text', 'medium_text', 'timestamp', 'datetime', 'date', 'binary', 'medium_binary'], [
-//            [1, true, false, 32760, 32761, 2147483640, 2147483641, 9223372036854775800, 9223372036854775801, 1000000.123, "double_nan", "double_infinity", 100000.12, "double_nan", "double_infinity", 100.124, 100.125, 'string text', 'text text', 'mediumtext text', '2022-09-09 08:41:28', '2022-09-10 08:41:28', '2022-09-11', QByteArray::fromHex("517420697320677265617421"), QByteArray::fromHex("54696e794f524d206973206772656174657221")],
-//            [2, null, null, -32762, null, -2147483642, null, -9223372036854775802, null, -1000000.123, null, null, -100000.12, null, null, -100.125, -100.124, null, null, null, null, null, null, null, null],
+//        combineValues(['id', 'bool_true', 'bool_false', 'smallint', 'smallint_u', 'int', 'int_u', 'bigint', 'bigint_u', 'double', 'double_nan', 'double_infinity', 'decimal', 'decimal_nan', 'decimal_infinity', 'decimal_down', 'decimal_up', 'string', 'text', 'medium_text', 'timestamp', 'datetime', 'date', 'time', 'binary', 'medium_binary'], [
+//            [1, true, false, 32760, 32761, 2147483640, 2147483641, 9223372036854775800, 9223372036854775801, 1000000.123, "double_nan", "double_infinity", 100000.12, "double_nan", "double_infinity", 100.124, 100.125, 'string text', 'text text', 'mediumtext text', '2022-09-09 08:41:28', '2022-09-10 08:41:28', '2022-09-11', '17:01:05', QByteArray::fromHex("517420697320677265617421"), QByteArray::fromHex("54696e794f524d206973206772656174657221")],
+//            [2, null, null, -32762, null, -2147483642, null, -9223372036854775802, null, -1000000.123, null, null, -100000.12, null, null, -100.125, -100.124, null, null, null, null, null, null, null, null, null],
 //            // All types null
-//            [3, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null],
+//            [3, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null],
 //        ]));
 
     Capsule::table('albums', null, $connection)->insert(

@@ -466,6 +466,10 @@ namespace Orm::Tiny
         inline QString &getUserDateFormat() noexcept;
         /*! Get the u_dateFormat attribute from the Derived model. */
         inline const QString &getUserDateFormat() const noexcept;
+        /*! Get the u_timeFormat attribute from the Derived model. */
+        inline QString &getUserTimeFormat() noexcept;
+        /*! Get the u_timeFormat attribute from the Derived model. */
+        inline const QString &getUserTimeFormat() const noexcept;
         /*! Get the u_dates attribute from the Derived model. */
         inline static const QStringList &getUserDates() noexcept;
         /*! Get the casts hash. */
@@ -537,6 +541,8 @@ namespace Orm::Tiny
         inline static QString getUserSerializeDate(QDate date);
         /*! Prepare a datetime for vector, map, or JSON serialization (calls Derived). */
         inline static QString getUserSerializeDateTime(const QDateTime &datetime);
+        /*! Prepare a time for vector, map, or JSON serialization (calls Derived). */
+        inline static QString getUserSerializeTime(QTime time);
 
         /* SoftDeletes */
         /*! Initialize the SoftDeletes (add the deleted_at column to the u_dates). */
@@ -1934,6 +1940,20 @@ namespace Orm::Tiny
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
+    QString &
+    Model<Derived, AllRelations...>::getUserTimeFormat() noexcept
+    {
+        return Derived::u_timeFormat;
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    const QString &
+    Model<Derived, AllRelations...>::getUserTimeFormat() const noexcept
+    {
+        return Derived::u_timeFormat;
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     const QStringList &
     Model<Derived, AllRelations...>::getUserDates() noexcept
     {
@@ -2117,6 +2137,13 @@ namespace Orm::Tiny
     Model<Derived, AllRelations...>::getUserSerializeDateTime(const QDateTime &datetime)
     {
         return Derived::serializeDateTime(datetime);
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    QString
+    Model<Derived, AllRelations...>::getUserSerializeTime(const QTime time)
+    {
+        return Derived::serializeTime(time);
     }
 
     /* SoftDeletes */

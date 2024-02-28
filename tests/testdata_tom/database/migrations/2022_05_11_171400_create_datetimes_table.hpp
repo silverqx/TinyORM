@@ -23,6 +23,8 @@ namespace Migrations
                 table.timestampTz("timestamp_tz").nullable();
 
                 table.date("date").nullable();
+                table.time("time").nullable();
+                table.time("time_ms", 3).nullable();
             });
         }
 

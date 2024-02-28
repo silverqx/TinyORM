@@ -144,6 +144,12 @@ namespace Orm::Tiny::Concerns
         const QString &getDateFormat() const;
         /*! Set the date format used by the model. */
         Derived &setDateFormat(const QString &format);
+
+        /*! Get the format for database stored times. */
+        const QString &getTimeFormat() const;
+        /*! Set the time format used by the model. */
+        Derived &setTimeFormat(const QString &format);
+
         /*! Convert a QDateTime or QDate to a storable string. */
         QVariant fromDateTime(const QVariant &value) const;
         /*! Convert a QDateTime or QDate to a storable string. */
@@ -313,14 +319,18 @@ namespace Orm::Tiny::Concerns
         QDateTime asDateTime(const QVariant &value) const;
         /*! Return a timestamp as QDate object. */
         inline QDate asDate(const QVariant &value) const;
+        /*! Return a timestamp as QTime object. */
+        inline QTime asTime(const QVariant &value) const;
         /*! Return a timestamp as unix timestamp. */
         inline qint64 asTimestamp(const QVariant &value) const;
 
         /*! Return a timestamp as QDateTime or QDate object. */
         QVariant asDateOrDateTime(const QVariant &value) const;
-        /*! Convert a QDateTime or QDate to a storable string. */
-        QVariant fromDateOrDateTime(const QVariant &value,
-                                    const QString &format) const;
+        /*! Return the given value as QDateTime, QDate, or QTime object. */
+        QVariant asDateOrDateTimeOrTime(const QVariant &value) const;
+        /*! Convert a QDateTime, QDate, or QTime to a storable string. */
+        QVariant fromDateOrDateTimeOrTime(const QVariant &value,
+                                          const QString &format) const;
 
         /*! Get the correct QVariant(null) by a type in the QVariant and format. */
         static QVariant nullFor_fromDateTime(const QVariant &value,
@@ -399,12 +409,14 @@ namespace Orm::Tiny::Concerns
         /*! Get an accessor (get) value by the given attribute key. */
         QVariant mutateAccessorAttribute(const QString &key) const;
 
-        /*! Prepare a date or datetime for vector, map, or JSON serialization. */
-        static QString serializeDateOrDateTime(const QVariant &value);
+        /*! Prepare a date, datetime, or time for vector, map, or JSON serialization. */
+        static QString serializeDateOrDateTimeOrTime(const QVariant &value);
         /*! Prepare a date for vector, map, or JSON serialization. */
         inline static QString serializeDate(QDate date);
         /*! Prepare a datetime for vector, map, or JSON serialization. */
         inline static QString serializeDateTime(const QDateTime &datetime);
+        /*! Prepare a time for vector, map, or JSON serialization. */
+        inline static QString serializeTime(QTime time);
 
         /* Data members */
         /*! The model's default values for attributes. */
@@ -431,6 +443,9 @@ namespace Orm::Tiny::Concerns
         /*! The storage format of the model's date columns. */
         T_THREAD_LOCAL
         inline static QString u_dateFormat;
+        /*! The storage format of the model's time columns. */
+        T_THREAD_LOCAL
+        inline static QString u_timeFormat;
         /*! The attributes that should be mutated to dates. */
         T_THREAD_LOCAL
         inline static QStringList u_dates;
@@ -572,7 +587,8 @@ namespace Orm::Tiny::Concerns
         if (const auto typeId = Helpers::qVariantTypeId(value);
             value.isValid() && (isDateAttribute(key) ||
             // NOTE api different, if the QDateTime or QDate is detected then take it as datetime silverqx
-            typeId == QMetaType::QDateTime || typeId == QMetaType::QDate)
+            typeId == QMetaType::QDateTime || typeId == QMetaType::QDate ||
+            typeId == QMetaType::QTime)
         )
             value = fromDateTime(value);
 
@@ -978,6 +994,30 @@ namespace Orm::Tiny::Concerns
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
+    const QString &
+    HasAttributes<Derived, AllRelations...>::getTimeFormat() const
+    {
+        const auto &basemodel = this->basemodel();
+
+        if (const auto &userTimeFormat = basemodel.getUserTimeFormat();
+            !userTimeFormat.isEmpty()
+        ) T_UNLIKELY
+            return userTimeFormat;
+
+        else T_LIKELY
+            return basemodel.getConnection().getQueryGrammar().getTimeFormat();
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    Derived &
+    HasAttributes<Derived, AllRelations...>::setTimeFormat(const QString &format)
+    {
+        basemodel().getUserTimeFormat() = format;
+
+        return model();
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     QVariant
     HasAttributes<Derived, AllRelations...>::fromDateTime(const QVariant &value) const
     {
@@ -988,7 +1028,7 @@ namespace Orm::Tiny::Concerns
            is designed. */
         Q_ASSERT(value.isValid() &&
                  (value.canConvert<QDateTime>() || value.canConvert<QDate>() ||
-                  value.canConvert<qint64>()));
+                  value.canConvert<QTime>()     || value.canConvert<qint64>()));
 
         const auto &format = getDateFormat();
 
@@ -1001,9 +1041,9 @@ namespace Orm::Tiny::Concerns
         if (format == QLatin1Char('U')) T_UNLIKELY
             return asTimestamp(value);
 
-        // Convert a QDateTime or QDate to a storable string
+        // Convert a QDateTime, QDate, or QTime to a storable string
         else T_LIKELY
-            return fromDateOrDateTime(value, format);
+            return fromDateOrDateTimeOrTime(value, format);
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
@@ -1582,7 +1622,10 @@ namespace Orm::Tiny::Concerns
         if (!attribute.isValid() || attribute.isNull())
             return false;
 
-        // This check ignores milliseconds in the QDateTime attribute
+        /* This check ignores milliseconds for QDateTime or QTime attributes with
+           the default u_date/timeFormat static data member value, so it depends how this
+           format is set. Milliseconds aren't ignored if the format contains them,
+           eg. ...:ss.zzz. */
         if (isDateAttribute(key) || isCustomDateCastable(key))
             return fromDateTime(attribute) == fromDateTime(original);
 
@@ -1722,10 +1765,60 @@ namespace Orm::Tiny::Concerns
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
+    QTime
+    HasAttributes<Derived, AllRelations...>::asTime(const QVariant &value) const
+    {
+        /* This can never happen, null values must be handled outside of the asTime()
+           method. */
+        Q_ASSERT_X(!value.isNull(),
+                   "HasAttributes::asTime",
+                   "null values must be handled outside of the asTime() methods.");
+
+        /* If this value is already a QTime instance, we shall just return it as is.
+           This prevents us having to re-parse a QTime instance when we know
+           it already is one. */
+        if (Helpers::qVariantTypeId(value) == QMetaType::QTime)
+            return value.template value<QTime>();
+
+        // The value has to be convertible to the QString so we can work with it
+        if (!value.canConvert<QString>())
+            throw Orm::Exceptions::InvalidFormatError(
+                        QStringLiteral("Could not parse the time, could not convert "
+                                       "the 'value' to the QString in %1().")
+                        .arg(__tiny_func__));
+
+        const auto valueString = value.value<QString>();
+
+        /* Finally, we will just assume this time is in the format used by default on
+           the database connection and use that format to create the QTime object
+           that is returned back out to the developers after we convert it here. */
+        if (auto time = QTime::fromString(valueString, getTimeFormat());
+            time.isValid()
+        )
+            return time;
+
+        /* QTime doesn't offer any advanced parsing method that can guess and instantiate
+           the QTime from many formats, a function like that would be ideal here. */
+
+        // But at least we can detect the ISO Time-s
+        if (auto timeIso = QTime::fromString(valueString, Qt::ISODateWithMs);
+            timeIso.isValid()
+        )
+            return timeIso;
+
+        throw Orm::Exceptions::InvalidFormatError(
+                    QStringLiteral("Could not parse the time '%1' using "
+                                   "the Qt::ISODateWithMs format in %2().")
+                    .arg(valueString, __tiny_func__));
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
     QVariant
     HasAttributes<Derived, AllRelations...>::asDateOrDateTime(
             const QVariant &value) const
     {
+        // This method is used only for u_dates so no QTime handling is applied
+
         const auto typeId = Helpers::qVariantTypeId(value);
 
         if (typeId == QMetaType::QDate ||
@@ -1740,7 +1833,30 @@ namespace Orm::Tiny::Concerns
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     QVariant
-    HasAttributes<Derived, AllRelations...>::fromDateOrDateTime(
+    HasAttributes<Derived, AllRelations...>::asDateOrDateTimeOrTime(
+            const QVariant &value) const
+    {
+        const auto typeId = Helpers::qVariantTypeId(value);
+
+        if (typeId == QMetaType::QDate ||
+            (typeId == QMetaType::QString &&
+             Helpers::isStandardDateFormat(value.value<QString>()))
+        ) T_UNLIKELY
+            return asDate(value);
+
+        else if (typeId == QMetaType::QTime) T_UNLIKELY
+            return asTime(value);
+
+        else T_LIKELY
+            return asDateTime(value);
+
+        /* I don't want the if (QMetaType::QDateTime) check and the Q_UNREACHABLE() here
+           because the NullVariant::QDateTime() must be returned in all other cases. */
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    QVariant
+    HasAttributes<Derived, AllRelations...>::fromDateOrDateTimeOrTime(
             const QVariant &value, const QString &format) const
     {
         if (const auto typeId = Helpers::qVariantTypeId(value);
@@ -1749,6 +1865,9 @@ namespace Orm::Tiny::Concerns
              Helpers::isStandardDateFormat(value.value<QString>()))
         ) T_UNLIKELY
             return asDate(value).toString(Qt::ISODate);
+
+        else if(typeId == QMetaType::QTime) T_UNLIKELY
+            return asTime(value).toString(getTimeFormat());
 
         else T_LIKELY
             return asDateTime(value).toString(format);
@@ -1769,11 +1888,16 @@ namespace Orm::Tiny::Concerns
     HasAttributes<Derived, AllRelations...>::nullFor_fromDateTime(
             const QVariant &value, const QString &format)
     {
+        const auto typeId = Helpers::qVariantTypeId(value);
+
         if (format == QLatin1Char('U')) T_UNLIKELY
             return NullVariant::LongLong();
 
-        else if (Helpers::qVariantTypeId(value) == QMetaType::QDate) T_UNLIKELY
+        else if (typeId == QMetaType::QDate) T_UNLIKELY
             return NullVariant::QDate();
+
+        else if (typeId == QMetaType::QTime) T_UNLIKELY
+            return NullVariant::QTime();
 
         else T_LIKELY
             return NullVariant::QDateTime();
@@ -1794,6 +1918,9 @@ namespace Orm::Tiny::Concerns
              Helpers::isStandardDateFormat(value.value<QString>()))
         ) T_UNLIKELY
             return NullVariant::QDate();
+
+        else if (typeId == QMetaType::QTime) T_UNLIKELY
+            return NullVariant::QTime();
 
         else T_LIKELY
             return NullVariant::QDateTime();
@@ -1896,6 +2023,10 @@ namespace Orm::Tiny::Concerns
         case CastType::CustomQDateTime:
             return value_.isNull() ? NullVariant::QDateTime()
                                    : asDateTime(value_);
+        case CastType::QTime:
+        case CastType::CustomQTime:
+            return value_.isNull() ? NullVariant::QTime()
+                                   : asTime(value_);
         case CastType::Timestamp:
             return value_.isNull() ? NullVariant::LongLong()
                                    : asTimestamp(value_);
@@ -1966,7 +2097,7 @@ namespace Orm::Tiny::Concerns
     bool
     HasAttributes<Derived, AllRelations...>::isDateCastable(const QString &key) const
     {
-        return hasCast(key, {CastType::QDate, CastType::QDateTime});
+        return hasCast(key, {CastType::QDate, CastType::QDateTime, CastType::QTime});
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
@@ -1974,7 +2105,8 @@ namespace Orm::Tiny::Concerns
     HasAttributes<Derived, AllRelations...>::isCustomDateCastable(
             const QString &key) const
     {
-        return hasCast(key, {CastType::CustomQDate, CastType::CustomQDateTime});
+        return hasCast(key, {CastType::CustomQDate, CastType::CustomQDateTime,
+                             CastType::CustomQTime});
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
@@ -1984,6 +2116,7 @@ namespace Orm::Tiny::Concerns
         static const std::unordered_set<CastType> dateCastTypes {
             CastType::QDate,
             CastType::QDateTime,
+            CastType::QTime,
         };
 
         return dateCastTypes.contains(type);
@@ -1996,6 +2129,7 @@ namespace Orm::Tiny::Concerns
         static const std::unordered_set<CastType> customDateCastTypes {
             CastType::CustomQDate,
             CastType::CustomQDateTime,
+            CastType::CustomQTime,
         };
 
         const auto &modifier = castItem.modifier();
@@ -2024,6 +2158,20 @@ namespace Orm::Tiny::Concerns
     }
 
     /* Serialization - Attributes */
+
+    /* u_dates vs u_casts vs serializeDate/Time()
+       If an attribute is in the u_dates and isn't in the u_casts it will be serialized
+       using the serializeDatetime(). If it is in the u_casts then it will be serialized
+       using the serializeDateOrDateTimeOrTime(). These two methods allow an user to
+       override them in the model class.
+       If it is defined as the CustomQDate/Time in the u_casts then
+       the serializeDateOrDateTimeOrTime() will not be used/called and the custom format
+       modifier will be applied instead using the toString(format).
+       Also, asDate/Time() method is called before every serialization that converts
+       this string date/time attribute to the QDate/Time using the u_date/timeFormat
+       using the fromString() and then is applied the logic described above what is
+       calling the serializeDateOrDateTimeOrTime() or toString(format) with the custom
+       format modifier. */
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     QVariantMap
@@ -2092,8 +2240,8 @@ namespace Orm::Tiny::Concerns
         for (auto &&key : getDates()) {
             // NOTE api different, Eloquent is doing a double cast silverqx
             /* Nothing to do, this attribute is not set OR it has set the cast
-               to the QDateTime, in this case, skip the serialization to avoid useless
-               double serialization. */
+               to the QDate, QDateTime, or QTime, in this case, skip the serialization
+               to avoid useless double serialization. */
             if (!attributes.contains(key) || isDateCastable(key) ||
                 isCustomDateCastable(key)
             )
@@ -2115,8 +2263,8 @@ namespace Orm::Tiny::Concerns
         for (auto &&key : getDates()) {
             // NOTE api different, Eloquent is doing a double cast silverqx
             /* Nothing to do, this attribute is not set OR it has set the cast
-               to the QDateTime, in this case, skip the serialization to avoid useless
-               double serialization. */
+               to the QDate, QDateTime, or QTime, in this case, skip the serialization
+               to avoid useless double serialization. */
             if (!attributesHash.contains(key) || isDateCastable(key) ||
                 isCustomDateCastable(key)
             )
@@ -2139,10 +2287,10 @@ namespace Orm::Tiny::Concerns
             if (!attributes.contains(key))
                 continue;
 
-            /* Here we will cast the attribute. Then, if the cast is a QDate or QDateTime
-               cast then we will serialize the date for the map. This will convert
-               the dates to strings based on the date format specified for these TinyORM
-               models. */
+            /* Here we will cast the attribute. Then, if the cast is a QDate, QDateTime,
+               or QTime cast then we will serialize the date for the map. This will
+               convert the dates to strings based on the date format specified
+               for these TinyORM models. */
             auto &value = attributes[key];
 
             castAttributeForSerialization(value, key, castItem);
@@ -2159,10 +2307,10 @@ namespace Orm::Tiny::Concerns
             if (!attributesHash.contains(key))
                 continue;
 
-            /* Here we will cast the attribute. Then, if the cast is a QDate or QDateTime
-               cast then we will serialize the date for the vector. This will convert
-               the dates to strings based on the date format specified for these TinyORM
-               models. */
+            /* Here we will cast the attribute. Then, if the cast is a QDate, QDateTime,
+               or QTime cast then we will serialize the date for the vector. This will
+               convert the dates to strings based on the date format specified
+               for these TinyORM models. */
             auto &value = attributes[attributesHash.at(key)].value;
 
             castAttributeForSerialization(value, key, castItem);
@@ -2232,7 +2380,7 @@ namespace Orm::Tiny::Concerns
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     QString
-    HasAttributes<Derived, AllRelations...>::serializeDateOrDateTime(
+    HasAttributes<Derived, AllRelations...>::serializeDateOrDateTimeOrTime(
             const QVariant &value)
     {
         const auto typeId = Helpers::qVariantTypeId(value);
@@ -2243,6 +2391,10 @@ namespace Orm::Tiny::Concerns
         ) T_UNLIKELY
             return Model<Derived, AllRelations...>::
                    getUserSerializeDate(value.template value<QDate>());
+
+        else if (typeId == QMetaType::QTime) T_UNLIKELY
+            return Model<Derived, AllRelations...>::
+                   getUserSerializeTime(value.template value<QTime>());
 
         else T_LIKELY
             return Model<Derived, AllRelations...>::
@@ -2264,6 +2416,13 @@ namespace Orm::Tiny::Concerns
     HasAttributes<Derived, AllRelations...>::serializeDateTime(const QDateTime &datetime)
     {
         return datetime.toUTC().toString(Qt::ISODateWithMs); // Default is with fractional seconds (ms)
+    }
+
+    template<typename Derived, AllRelationsConcept ...AllRelations>
+    QString
+    HasAttributes<Derived, AllRelations...>::serializeTime(const QTime time)
+    {
+        return time.toString(Qt::ISODateWithMs); // Default is with fractional seconds (ms)
     }
 
     /* private */
@@ -2351,6 +2510,8 @@ namespace Orm::Tiny::Concerns
             return QStringLiteral("QDate");
         case CastType::QDateTime:
             return QStringLiteral("QDateTime");
+        case CastType::QTime:
+            return QStringLiteral("QTime");
         case CastType::Timestamp:
             return QStringLiteral("Timestamp");
         // Bool
@@ -2440,14 +2601,14 @@ namespace Orm::Tiny::Concerns
     {
         value = castAttribute(key, value);
 
-        /* If the attribute cast was a QDate or QDateTime, we will serialize the date
-           as a string. This allows the developers to customize how dates are
+        /* If the attribute cast was a QDate, QDateTime, or QTime, we will serialize
+           the date as a string. This allows the developers to customize how dates are
            serialized into a map without affecting how they are persisted
            into the storage. */
         if (isDateCastType(castItem.type()))
             value = value.isNull() ? nullFor_addCastAttributesTo(value)
-                                   : serializeDateOrDateTime(
-                                         asDateOrDateTime(value));
+                                   : serializeDateOrDateTimeOrTime(
+                                         asDateOrDateTimeOrTime(value));
 
         if (isCustomDateCastType(castItem)) {
             const auto castModifier = castItem.modifier().template value<QString>();
@@ -2458,12 +2619,15 @@ namespace Orm::Tiny::Concerns
                 return;
             }
 
-            const auto castedDate = asDateOrDateTime(value);
+            const auto castedDate = asDateOrDateTimeOrTime(value);
 
             if (const auto typeId = Helpers::qVariantTypeId(castedDate);
                 typeId == QMetaType::QDate
             ) T_UNLIKELY
                 value = castedDate.template value<QDate>().toString(castModifier);
+
+            else if (typeId == QMetaType::QTime) T_UNLIKELY
+                value = castedDate.template value<QTime>().toString(castModifier);
 
             else T_LIKELY
                 value = castedDate.template value<QDateTime>().toString(castModifier);
@@ -2655,10 +2819,12 @@ namespace Orm::Tiny::Concerns
         const auto typeId = Helpers::qVariantTypeId(value);
 
         // Nothing to do, not a datetime
-        if (typeId != QMetaType::QDateTime && typeId != QMetaType::QDate)
+        if (typeId != QMetaType::QDateTime && typeId != QMetaType::QDate &&
+            typeId != QMetaType::QTime
+        )
             return;
 
-        value = serializeDateOrDateTime(value);
+        value = serializeDateOrDateTimeOrTime(value);
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>

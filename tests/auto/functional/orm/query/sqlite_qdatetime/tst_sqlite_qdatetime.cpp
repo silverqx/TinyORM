@@ -82,11 +82,31 @@ private Q_SLOTS:
 
     /* Server timezone +02:00 - not supported by the SQLite database */
 
+    /* QTime */
+    /* Raw QSqlQuery */
+    /* Server timezone None */
+    void insert_Qt_QTime_UtcTimezone_TimeColumn() const;
+    void insert_Qt_QString_TimeColumn() const;
+
+    /* Server timezone +02:00 - not supported by the SQLite database */
+
+    /* Orm::QueryBuilder */
+    /* Server timezone None and enabled return_qdatetime (ignored for time columns) */
+    void insert_QTime_UtcTimezone_TimeColumn_OnReturnQDateTime() const;
+    void insert_QString_TimeColumn_OnReturnQDateTime() const;
+
+    /* Server timezone None and disabled return_qdatetime */
+    void insert_QTime_UtcTimezone_TimeColumn_OffReturnQDateTime() const;
+    void insert_QString_TimeColumn_OffReturnQDateTime() const;
+
+    /* Server timezone +02:00 - not supported by the SQLite database */
+
     /* Null values QDateTime / QDate */
     /* Raw QSqlQuery */
     /* Server timezone None */
     void insert_Qt_QDateTime_Null_DatetimeColumn() const;
     void insert_Qt_QDate_Null_DateColumn() const;
+    void insert_Qt_QTime_Null_TimeColumn() const;
 
     /* Server timezone +02:00 - not supported by the SQLite database */
 
@@ -94,6 +114,7 @@ private Q_SLOTS:
     /* Server timezone None */
     void insert_QDateTime_Null_DatetimeColumn() const;
     void insert_QDate_Null_DateColumn() const;
+    void insert_QTime_Null_TimeColumn() const;
 
     /* Server timezone +02:00 - not supported by the SQLite database */
 
@@ -140,6 +161,8 @@ Q_GLOBAL_STATIC_WITH_ARGS(const QString, datetime, ("datetime")) // NOLINT(misc-
 Q_GLOBAL_STATIC_WITH_ARGS(const QString, timestamp, ("timestamp")) // NOLINT(misc-use-anonymous-namespace)
 /*! QString constant "date" (perf. reason, one time initialization). */
 Q_GLOBAL_STATIC_WITH_ARGS(const QString, date, ("date")) // NOLINT(misc-use-anonymous-namespace)
+/*! QString constant "time" (perf. reason, one time initialization). */
+Q_GLOBAL_STATIC_WITH_ARGS(const QString, time_, ("time")) // NOLINT(misc-use-anonymous-namespace)
 
 /* private slots */
 
@@ -1187,6 +1210,250 @@ void tst_SQLite_QDateTime::insert_QString_DateColumn_OffReturnQDateTime() const
     enableReturnQDateTime();
 }
 
+/* QTime */
+
+/* Raw QSqlQuery */
+
+/* Server timezone None */
+
+void tst_SQLite_QDateTime::insert_Qt_QTime_UtcTimezone_TimeColumn() const
+{
+    quint64 lastId = 0;
+
+    // Insert
+    {
+        auto qtQuery = createQtQuery();
+
+        QVERIFY(qtQuery.prepare(R"(insert into "datetimes" ("time") values (?))"));
+
+        qtQuery.addBindValue(QTime(17, 2, 59));
+
+        QVERIFY(qtQuery.exec());
+
+        QVERIFY(!qtQuery.lastError().isValid());
+        QVERIFY(!qtQuery.isValid() && qtQuery.isActive() && !qtQuery.isSelect());
+        QCOMPARE(qtQuery.numRowsAffected(), 1);
+
+        lastId = qtQuery.lastInsertId().value<quint64>();
+        QVERIFY(lastId != 0);
+    }
+
+    // Verify
+    {
+        auto qtQuery = createQtQuery();
+
+        QVERIFY(qtQuery.prepare(
+                    R"(select "id", "time" from "datetimes" where "id" = ?)"));
+
+        qtQuery.addBindValue(lastId);
+
+        QVERIFY(qtQuery.exec());
+
+        QVERIFY(!qtQuery.lastError().isValid());
+        QVERIFY(!qtQuery.isValid() && qtQuery.isActive() && qtQuery.isSelect());
+
+        QVERIFY(qtQuery.first());
+
+        QCOMPARE(qtQuery.value(ID).value<quint64>(), lastId);
+
+        const auto timeDbVariant = qtQuery.value(*time_);
+        QVERIFY(timeDbVariant.isValid());
+        QVERIFY(!timeDbVariant.isNull());
+
+        QCOMPARE(Helpers::qVariantTypeId(timeDbVariant), QMetaType::QString);
+
+        const auto timeActual = timeDbVariant.value<QTime>();
+        const auto timeExpected = QTime(17, 2, 59);
+        QCOMPARE(timeActual, timeExpected);
+    }
+
+    // Restore
+    restore(lastId);
+}
+
+void tst_SQLite_QDateTime::insert_Qt_QString_TimeColumn() const
+{
+    quint64 lastId = 0;
+
+    // Insert
+    {
+        auto qtQuery = createQtQuery();
+
+        QVERIFY(qtQuery.prepare(R"(insert into "datetimes" ("time") values (?))"));
+
+        qtQuery.addBindValue(QString("17:02:59"));
+
+        QVERIFY(qtQuery.exec());
+
+        QVERIFY(!qtQuery.lastError().isValid());
+        QVERIFY(!qtQuery.isValid() && qtQuery.isActive() && !qtQuery.isSelect());
+        QCOMPARE(qtQuery.numRowsAffected(), 1);
+
+        lastId = qtQuery.lastInsertId().value<quint64>();
+        QVERIFY(lastId != 0);
+    }
+
+    // Verify
+    {
+        auto qtQuery = createQtQuery();
+
+        QVERIFY(qtQuery.prepare(
+                    R"(select "id", "time" from "datetimes" where "id" = ?)"));
+
+        qtQuery.addBindValue(lastId);
+
+        QVERIFY(qtQuery.exec());
+
+        QVERIFY(!qtQuery.lastError().isValid());
+        QVERIFY(!qtQuery.isValid() && qtQuery.isActive() && qtQuery.isSelect());
+
+        QVERIFY(qtQuery.first());
+
+        QCOMPARE(qtQuery.value(ID).value<quint64>(), lastId);
+
+        const auto timeDbVariant = qtQuery.value(*time_);
+        QVERIFY(timeDbVariant.isValid());
+        QVERIFY(!timeDbVariant.isNull());
+
+        QCOMPARE(Helpers::qVariantTypeId(timeDbVariant), QMetaType::QString);
+
+        const auto timeActual = timeDbVariant.value<QTime>();
+        const auto timeExpected = QTime(17, 2, 59);
+        QCOMPARE(timeActual, timeExpected);
+    }
+
+    // Restore
+    restore(lastId);
+}
+
+/* Orm::QueryBuilder */
+
+/* Server timezone None and enabled return_qdatetime (ignored for time columns) */
+
+void
+tst_SQLite_QDateTime::insert_QTime_UtcTimezone_TimeColumn_OnReturnQDateTime() const
+{
+    // Insert
+    quint64 lastId = createQuery()->from(*datetimes).insertGetId(
+                         {{*time_, QTime(17, 2, 59)}});
+
+    // Verify
+    {
+        auto query = createQuery()->from(*datetimes).find(lastId, {ID, *time_});
+
+        QCOMPARE(query.value(ID).value<quint64>(), lastId);
+
+        const auto timeDbVariant = query.value(*time_);
+        QVERIFY(timeDbVariant.isValid());
+        QVERIFY(!timeDbVariant.isNull());
+
+        /* The return_qdatetime doesn't affect time columns/fields, they are returned
+           as QString to support time ranges larger than 24-hours,
+           eg. like for MySQL '-838:59:59' to '838:59:59'. */
+        QCOMPARE(Helpers::qVariantTypeId(timeDbVariant), QMetaType::QString);
+
+        const auto timeActual = timeDbVariant.value<QTime>();
+        const auto timeExpected = QTime(17, 2, 59);
+        QCOMPARE(timeActual, timeExpected);
+    }
+
+    // Restore
+    restore(lastId);
+}
+
+void tst_SQLite_QDateTime::insert_QString_TimeColumn_OnReturnQDateTime() const
+{
+    // Insert
+    quint64 lastId = createQuery()->from(*datetimes).insertGetId(
+                         {{*time_, QString("17:02:59")}});
+
+    // Verify
+    {
+        auto query = createQuery()->from(*datetimes).find(lastId, {ID, *time_});
+
+        QCOMPARE(query.value(ID).value<quint64>(), lastId);
+
+        const auto timeDbVariant = query.value(*time_);
+        QVERIFY(timeDbVariant.isValid());
+        QVERIFY(!timeDbVariant.isNull());
+
+        /* The return_qdatetime doesn't affect time columns/fields, they are returned
+           as QString to support time ranges larger than 24-hours,
+           eg. like for MySQL '-838:59:59' to '838:59:59'. */
+        QCOMPARE(Helpers::qVariantTypeId(timeDbVariant), QMetaType::QString);
+
+        const auto timeActual = timeDbVariant.value<QTime>();
+        const auto timeExpected = QTime(17, 2, 59);
+        QCOMPARE(timeActual, timeExpected);
+    }
+
+    // Restore
+    restore(lastId);
+}
+
+/* Server timezone None and disabled return_qdatetime */
+
+void
+tst_SQLite_QDateTime::insert_QTime_UtcTimezone_TimeColumn_OffReturnQDateTime() const
+{
+    disableReturnQDateTime();
+
+    // Insert
+    quint64 lastId = createQuery()->from(*datetimes).insertGetId(
+                         {{*time_, QTime(17, 2, 59)}});
+
+    // Verify
+    {
+        auto query = createQuery()->from(*datetimes).find(lastId, {ID, *time_});
+
+        QCOMPARE(query.value(ID).value<quint64>(), lastId);
+
+        const auto timeDbVariant = query.value(*time_);
+        QVERIFY(timeDbVariant.isValid());
+        QVERIFY(!timeDbVariant.isNull());
+
+        QCOMPARE(Helpers::qVariantTypeId(timeDbVariant), QMetaType::QString);
+
+        const auto timeActual = timeDbVariant.value<QTime>();
+        const auto timeExpected = QTime(17, 2, 59);
+        QCOMPARE(timeActual, timeExpected);
+    }
+
+    // Restore
+    restore(lastId);
+    enableReturnQDateTime();
+}
+
+void tst_SQLite_QDateTime::insert_QString_TimeColumn_OffReturnQDateTime() const
+{
+    disableReturnQDateTime();
+
+    // Insert
+    quint64 lastId = createQuery()->from(*datetimes).insertGetId(
+                         {{*time_, QString("17:02:59")}});
+
+    // Verify
+    {
+        auto query = createQuery()->from(*datetimes).find(lastId, {ID, *time_});
+
+        QCOMPARE(query.value(ID).value<quint64>(), lastId);
+
+        const auto timeDbVariant = query.value(*time_);
+        QVERIFY(timeDbVariant.isValid());
+        QVERIFY(!timeDbVariant.isNull());
+
+        QCOMPARE(Helpers::qVariantTypeId(timeDbVariant), QMetaType::QString);
+
+        const auto timeActual = timeDbVariant.value<QTime>();
+        const auto timeExpected = QTime(17, 2, 59);
+        QCOMPARE(timeActual, timeExpected);
+    }
+
+    // Restore
+    restore(lastId);
+    enableReturnQDateTime();
+}
+
 /* Null values QDateTime / QDate */
 
 /* Raw QSqlQuery */
@@ -1311,6 +1578,62 @@ void tst_SQLite_QDateTime::insert_Qt_QDate_Null_DateColumn() const
     restore(lastId);
 }
 
+void tst_SQLite_QDateTime::insert_Qt_QTime_Null_TimeColumn() const
+{
+    quint64 lastId = 0;
+
+    // Insert
+    {
+        auto qtQuery = createQtQuery();
+
+        QVERIFY(qtQuery.prepare(R"(insert into "datetimes" ("time") values (?))"));
+
+        qtQuery.addBindValue(NullVariant::QTime());
+
+        QVERIFY(qtQuery.exec());
+
+        QVERIFY(!qtQuery.lastError().isValid());
+        QVERIFY(!qtQuery.isValid() && qtQuery.isActive() && !qtQuery.isSelect());
+        QCOMPARE(qtQuery.numRowsAffected(), 1);
+
+        lastId = qtQuery.lastInsertId().value<quint64>();
+        QVERIFY(lastId != 0);
+    }
+
+    // Verify
+    {
+        auto qtQuery = createQtQuery();
+
+        QVERIFY(qtQuery.prepare(
+                    R"(select "id", "time" from "datetimes" where "id" = ?)"));
+
+        qtQuery.addBindValue(lastId);
+
+        QVERIFY(qtQuery.exec());
+
+        QVERIFY(!qtQuery.lastError().isValid());
+        QVERIFY(!qtQuery.isValid() && qtQuery.isActive() && qtQuery.isSelect());
+
+        QVERIFY(qtQuery.first());
+
+        QCOMPARE(qtQuery.value(ID).value<quint64>(), lastId);
+
+        const auto timeDbVariant = qtQuery.value(*time_);
+        QVERIFY(timeDbVariant.isValid());
+        QVERIFY(timeDbVariant.isNull());
+
+        // QSQLITE driver simply returns QVariant(QMetaType::QString)
+        QCOMPARE(Helpers::qVariantTypeId(timeDbVariant), QMetaType::QString);
+
+        const auto timeActual = timeDbVariant.value<QDate>();
+        const auto timeExpected = QDate();
+        QCOMPARE(timeActual, timeExpected);
+    }
+
+    // Restore
+    restore(lastId);
+}
+
 /* Orm::QueryBuilder */
 
 /* Server timezone None */
@@ -1364,7 +1687,35 @@ void tst_SQLite_QDateTime::insert_QDate_Null_DateColumn() const
 
         QCOMPARE(query.value(ID).value<quint64>(), lastId);
 
-        const auto dateDbVariant = query.value(*date);
+        const auto timeDbVariant = query.value(*date);
+        QVERIFY(timeDbVariant.isValid());
+        QVERIFY(timeDbVariant.isNull());
+
+        // QSQLITE driver simply returns QVariant(QMetaType::QString)
+        QCOMPARE(Helpers::qVariantTypeId(timeDbVariant), QMetaType::QString);
+
+        const auto timeActual = timeDbVariant.value<QDate>();
+        const auto timeExpected = QDate();
+        QCOMPARE(timeActual, timeExpected);
+    }
+
+    // Restore
+    restore(lastId);
+}
+
+void tst_SQLite_QDateTime::insert_QTime_Null_TimeColumn() const
+{
+    // Insert
+    quint64 lastId = createQuery()->from(*datetimes).insertGetId(
+                         {{*time_, NullVariant::QTime()}});
+
+    // Verify
+    {
+        auto query = createQuery()->from(*datetimes).find(lastId, {ID, *time_});
+
+        QCOMPARE(query.value(ID).value<quint64>(), lastId);
+
+        const auto dateDbVariant = query.value(*time_);
         QVERIFY(dateDbVariant.isValid());
         QVERIFY(dateDbVariant.isNull());
 
