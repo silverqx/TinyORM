@@ -426,7 +426,8 @@ void MySqlResultPrivate::reserveVectorsForBindings(
     timeVector.reserve(std::ranges::count_if(boundValues, [](const QVariant &value)
     {
         const auto typeId = value.typeId();
-
+        /* All QMetaType-s that will be converted to the MYSQL_TIME, must exactly match
+           the case statements in the bindPreparedBindings(). */
         return typeId == QMetaType::QDateTime ||
                typeId == QMetaType::QDate     ||
                typeId == QMetaType::QTime;
