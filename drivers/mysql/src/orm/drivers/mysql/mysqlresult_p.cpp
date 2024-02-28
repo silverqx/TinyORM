@@ -483,7 +483,7 @@ MySqlResultPrivate::toMySqlDateTime(const QDate date, const QTime time, const in
         mysqlTime.hour        = static_cast<uint>(time.hour());
         mysqlTime.minute      = static_cast<uint>(time.minute());
         mysqlTime.second      = static_cast<uint>(time.second());
-        mysqlTime.second_part = static_cast<ulong>(time.msec()) * 1000;
+        mysqlTime.second_part = static_cast<ulong>(time.msec()) * 1000; // Convert from milliseconds (ms) to microseconds
     };
 
     switch (typeId) {
