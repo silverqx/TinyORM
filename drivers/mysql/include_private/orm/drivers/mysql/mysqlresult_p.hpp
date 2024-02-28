@@ -135,6 +135,8 @@ namespace Orm::Drivers::MySql
         /*! Convert Qt date/time type to the MYSQL_TIME. */
         static MYSQL_TIME toMySqlDateTime(QDate date, QTime time, int typeId,
                                           MYSQL_BIND &bind);
+        /*! Create and zero the MYSQL_TIME structure as 0000-00-00 00:00:00.000000. */
+        static MYSQL_TIME createMsqlTime() noexcept;
 
         /* Result sets */
         /*! Determine whether the given MySQL field type is a Bit-value type. */
