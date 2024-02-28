@@ -18,7 +18,6 @@ function(tinydrivers_sources out_headers_private out_headers out_sources)
         sqldriver_p.hpp
         sqlresult_p.hpp
         support/connectionshash_p.hpp
-        utils/helpers_p.hpp
         utils/type_p.hpp
     )
 

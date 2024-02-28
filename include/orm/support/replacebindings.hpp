@@ -9,9 +9,7 @@ TINY_SYSTEM_HEADER
 
 #include "orm/macros/commonnamespace.hpp"
 
-#ifdef PROJECT_TINYDRIVERS_PRIVATE
-#  include "orm/drivers/utils/helpers_p.hpp"
-#else
+#ifndef PROJECT_TINYDRIVERS_PRIVATE
 #  include "orm/utils/helpers.hpp"
 #endif
 
@@ -34,10 +32,7 @@ namespace Orm::Support
     {
         Q_DISABLE_COPY_MOVE(ReplaceBindings)
 
-#ifdef PROJECT_TINYDRIVERS_PRIVATE
-        /*! Alias for the helper utils. */
-        using Helpers = Orm::Drivers::Utils::Helpers;
-#else
+#ifndef PROJECT_TINYDRIVERS_PRIVATE
         /*! Alias for the helper utils. */
         using Helpers = Orm::Utils::Helpers;
 #endif
@@ -84,7 +79,11 @@ namespace Orm::Support
                 bindingValue = Null_;
 
             // Support for binary data (BLOB)
+#ifdef PROJECT_TINYDRIVERS_PRIVATE
+            else if (binding.typeId() == QMetaType::QByteArray) {
+#else
             else if (Helpers::qVariantTypeId(binding) == QMetaType::QByteArray) {
+#endif
                 const auto binaryData = binding.template value<QByteArray>();
                 const auto binarySize = binaryData.size();
                 // Don't overwhelm terminal with a lot of text, 512 characters is enough
@@ -95,7 +94,11 @@ namespace Orm::Support
                                                    binaryData.toHex(' ')));
             }
             // Support for strings quoting
+#ifdef PROJECT_TINYDRIVERS_PRIVATE
+            else if (binding.typeId() == QMetaType::QString)
+#else
             else if (Helpers::qVariantTypeId(binding) == QMetaType::QString)
+#endif
                 bindingValue = TMPL_SQUOTES.arg(binding.template value<QString>());
             else
                 bindingValue = binding.template value<QString>();
