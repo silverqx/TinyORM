@@ -5,7 +5,6 @@
 #include "orm/drivers/exceptions/outofrangeerror.hpp"
 #include "orm/drivers/mysql/mysqlconstants_p.hpp"
 #include "orm/drivers/mysql/mysqlutils_p.hpp"
-#include "orm/drivers/utils/helpers_p.hpp"
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
@@ -14,7 +13,6 @@ using namespace Qt::StringLiterals; // NOLINT(google-build-using-namespace)
 using Orm::Drivers::MySql::Constants::COLON;
 using Orm::Drivers::MySql::Constants::DASH;
 
-using Orm::Drivers::Utils::Helpers;
 
 using MySqlUtils = Orm::Drivers::MySql::MySqlUtilsPrivate;
 
@@ -196,7 +194,7 @@ void MySqlResultPrivate::bindPreparedBindings(
         preparedBind.length = nullptr;
         preparedBind.is_unsigned = false;
 
-        switch (boundValue.userType()) {
+        switch (boundValue.typeId()) {
         case QMetaType::QByteArray:
             preparedBind.buffer_type   = MYSQL_TYPE_BLOB;
             preparedBind.buffer_length = static_cast<ulong>(
@@ -216,14 +214,14 @@ void MySqlResultPrivate::bindPreparedBindings(
             preparedBind.buffer = &timeVector.emplaceBack(
                                       toMySqlDateTime(
                                           boundValue.toDate(), boundValue.toTime(),
-                                          boundValue.userType(), preparedBind));
+                                          boundValue.typeId(), preparedBind));
             break;
 
         case QMetaType::UInt:
         case QMetaType::Int:
             preparedBind.buffer_type   = MYSQL_TYPE_LONG;
             preparedBind.buffer_length = sizeof (int);
-            preparedBind.is_unsigned   = boundValue.userType() == QMetaType::UInt;
+            preparedBind.is_unsigned   = boundValue.typeId() == QMetaType::UInt;
             preparedBind.buffer        = data;
             break;
 
@@ -244,7 +242,7 @@ void MySqlResultPrivate::bindPreparedBindings(
         case QMetaType::ULongLong:
             preparedBind.buffer_type   = MYSQL_TYPE_LONGLONG;
             preparedBind.buffer_length = sizeof (qint64);
-            preparedBind.is_unsigned   = boundValue.userType() == QMetaType::ULongLong;
+            preparedBind.is_unsigned   = boundValue.typeId() == QMetaType::ULongLong;
             preparedBind.buffer        = data;
             break;
 
@@ -437,12 +435,12 @@ void MySqlResultPrivate::reserveVectorsForBindings(
 
     stringVector.reserve(std::ranges::count_if(boundValues, [](const QVariant &value)
     {
-        return Helpers::qVariantTypeId(value) == QMetaType::QString;
+        return value.typeId() == QMetaType::QString;
     }));
 
     timeVector.reserve(std::ranges::count_if(boundValues, [](const QVariant &value)
     {
-        const auto typeId = Helpers::qVariantTypeId(value);
+        const auto typeId = value.typeId();
 
         return typeId == QMetaType::QDateTime ||
                typeId == QMetaType::QDate     ||
