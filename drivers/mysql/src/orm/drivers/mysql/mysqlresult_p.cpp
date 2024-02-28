@@ -469,7 +469,8 @@ MySqlResultPrivate::toMySqlDateTime(const QDate date, const QTime time, const in
     Q_ASSERT(typeId == QMetaType::QDateTime || typeId == QMetaType::QTime ||
              typeId == QMetaType::QDate);
 
-    MYSQL_TIME mysqlTime;
+    // Create and zero the MYSQL_TIME structure as 0000-00-00 00:00:00.000000
+    auto mysqlTime = createMsqlTime();
 
     const auto initDate = [&mysqlTime, date]
     {
@@ -512,6 +513,15 @@ MySqlResultPrivate::toMySqlDateTime(const QDate date, const QTime time, const in
     default:
         Q_UNREACHABLE();
     }
+
+    return mysqlTime;
+}
+
+MYSQL_TIME MySqlResultPrivate::createMsqlTime() noexcept
+{
+    MYSQL_TIME mysqlTime;
+    // It causes bugs eg. -838:59:59 time if isn't zero-ed
+    memset(&mysqlTime, 0, sizeof (MYSQL_TIME));
 
     return mysqlTime;
 }
