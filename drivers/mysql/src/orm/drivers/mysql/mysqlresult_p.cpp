@@ -593,9 +593,10 @@ QVariant MySqlResultPrivate::toQDateTimeFromString(QString value)
     if (value.isEmpty())
         return QDateTime();
 
-    // CUR drivers revisit and if it's true the also validate 14 digits string silverqx
-    // TIMESTAMPS have the format yyyyMMddhhmmss
-    if (value.size() == 14)
+    /* Some MySQL functions can return datetime/timestamp-s in the YYYYMMDDhhmmss format,
+       depending on whether the function is used in string or numeric context,
+       eg. NOW() + 0 will return in this format, so this if condition makes sense. */
+    if (value.size() == 14 && MySqlUtils::isNumber(value))
         value.insert(4, DASH).insert(7, DASH).insert(10, 'T'_L1).insert(13, COLON)
              .insert(16, COLON);
 

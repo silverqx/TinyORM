@@ -123,6 +123,23 @@ MySqlUtilsPrivate::decodeMySqlType(const enum_field_types mysqlType, const uint 
     return QMetaType(typeId);
 }
 
+/* Normal queries */
+
+bool MySqlUtilsPrivate::isNumber(const QStringView string)
+{
+    if (string.isEmpty())
+        return false;
+
+    const auto *const nonDigit = std::find_if(string.cbegin(), string.cend(),
+                                       [](const auto &ch)
+    {
+        // Is not numeric == 0
+        return std::isdigit(ch.toLatin1()) == 0;
+    });
+
+    return nonDigit == string.cend();
+}
+
 /* Prepared queries */
 
 bool MySqlUtilsPrivate::isInteger(const int typeId) noexcept

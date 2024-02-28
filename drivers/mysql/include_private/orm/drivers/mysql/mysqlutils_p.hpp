@@ -14,6 +14,8 @@
 
 #include "orm/drivers/utils/notnull.hpp"
 
+class QStringView;
+
 #if __has_include(<field_types.h>)
 struct MYSQL;
 struct MYSQL_FIELD;
@@ -65,6 +67,10 @@ namespace MySql
         /* Common for both */
         /*! Decode the given MySQL field type to the Qt metatype. */
         static QMetaType decodeMySqlType(enum_field_types mysqlType, uint flags);
+
+        /* Normal queries */
+        /*! Check if the given string is the simple integer number (w/o sign). */
+        static bool isNumber(QStringView string);
 
         /* Prepared queries */
         /*! Determine whether the given metatype ID is integer type. */
