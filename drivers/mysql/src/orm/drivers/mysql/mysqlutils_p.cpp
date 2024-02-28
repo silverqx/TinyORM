@@ -135,10 +135,11 @@ bool MySqlUtilsPrivate::isInteger(const int typeId) noexcept
 
 bool MySqlUtilsPrivate::isTimeOrDate(const enum_field_types mysqlType) noexcept
 {
-    // BUG drivers the code that calls the qIsTimeOrDate() expect this method also matches the MYSQL_TYPE_TIME? Also check all MYSQL_TYPE_TIME occurrences silverqx
     /* Don't match the MYSQL_TYPE_TIME because its range is bigger than the QTime.
        A TIME field can be within the range '-838:59:59' to '838:59:59' so
-       use QString instead of QTime since QTime is limited to 24 hour clock. */
+       use QString instead of QTime since QTime is limited to 24 hour clock.
+       The mapping from the MYSQL_TYPE_TIME to QMetaType::QString is happening
+       in the decodeMySqlType() method. */
     return mysqlType == MYSQL_TYPE_DATE     ||
            mysqlType == MYSQL_TYPE_DATETIME ||
            mysqlType == MYSQL_TYPE_TIMESTAMP;
