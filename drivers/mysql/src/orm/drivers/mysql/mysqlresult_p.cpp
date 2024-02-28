@@ -340,21 +340,12 @@ QVariant MySqlResultPrivate::getValueForPrepared(const ResultFieldsSizeType inde
 
     const auto typeId = field.metaType.id();
 
-    // CUR drivers the following isInteger() block make prepared statements behavior different from normal queries, all logic is handled in the createQVariant() at the end of this method, I don't understand why here is different logic for prepared statements silverqx
-    // CUR drivers finish silverqx
-    // BUG drivers I think this should be here, it's correctly handled in the createQVariant() silverqx
-    if (MySqlUtils::isInteger(typeId)) {
-        QVariant integer(field.metaType, field.fieldValue.get());
-
-        // Avoid QVariant(char) for TINYINT to prevent weird conversions (QTBUG-53397)
-        if (typeId == QMetaType::UChar)
-            return integer.toUInt();
-
-        if (typeId == QMetaType::Char)
-            return integer.toInt();
-
-        return integer;
-    }
+    /* Create an integer QVariant by the given metatype ID and value. This early integer
+       number if() condition still makes sense (even if the same logic is already
+       inside the createQVariant() method) because it skips QString::fromUtf8()
+       conversion and instead constructs the QVariant() directly from the field value. */
+    if (MySqlUtils::isInteger(typeId))
+        return createIntegerQVariant(typeId, field);
 
     /* Here is different logic as for the normal queries because normal queries return
        datetime-related columns as a char * but prepared statements return MYSQL_TIME. */
@@ -364,14 +355,8 @@ QVariant MySqlResultPrivate::getValueForPrepared(const ResultFieldsSizeType inde
         return toQDateTimeFromMySQLTime(typeId, reinterpret_cast<const MYSQL_TIME *>(
                                                     field.fieldValue.get()));
 
-    QString value;
-
-    // The BLOB field needs QVariant(QByteArray) as storage (handled in toQByteArray())
-    if (typeId != QMetaType::QByteArray)
-        value = QString::fromUtf8(field.fieldValue.get(),
-                                  static_cast<QString::size_type>(field.fieldValueSize));
-
-    return createQVariant(typeId, std::move(value), index);
+    // Create a QVariant by the given metatype ID and field value
+    return createQVariant(typeId, fieldValueToString(typeId, field), index);
 }
 
 void
@@ -687,6 +672,16 @@ MySqlResultPrivate::toQByteArray(const ResultFieldsSizeType index) const
     return {QByteArray(row[index], static_cast<QByteArray::size_type>(fieldLength))};
 }
 
+QString MySqlResultPrivate::fieldValueToString(const int typeId, const MyField &field)
+{
+    // The BLOB field needs QVariant(QByteArray) as storage (handled in toQByteArray())
+    if (typeId == QMetaType::QByteArray)
+        return {};
+
+    return QString::fromUtf8(field.fieldValue.get(),
+                             static_cast<QString::size_type>(field.fieldValueSize));
+}
+
 QVariant MySqlResultPrivate::createQVariant(const int typeId, QString &&value,
                                             const ResultFieldsSizeType index) const
 {
@@ -738,6 +733,21 @@ QVariant MySqlResultPrivate::createQVariant(const int typeId, QString &&value,
     }
 
     Q_UNREACHABLE();
+}
+
+QVariant
+MySqlResultPrivate::createIntegerQVariant(const int typeId, const MyField &field)
+{
+    QVariant integer(field.metaType, field.fieldValue.get());
+
+    // Avoid QVariant(char) for TINYINT to prevent weird conversions (QTBUG-53397)
+    if (typeId == QMetaType::UChar)
+        return integer.toUInt();
+
+    if (typeId == QMetaType::Char)
+        return integer.toInt();
+
+    return integer;
 }
 
 } // namespace Orm::Drivers::MySql
