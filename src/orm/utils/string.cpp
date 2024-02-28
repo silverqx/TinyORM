@@ -59,8 +59,9 @@ bool String::isNumber(const QStringView string, const bool allowFloating,
     // Only one dot allowed
     auto dotAlreadyFound = false;
 
-    const auto *nonDigit = std::find_if(itBegin, string.cend(),
-                                       [allowFloating, &dotAlreadyFound](const auto &ch)
+    const auto *const nonDigit = std::find_if(
+                                     itBegin, string.cend(),
+                                     [allowFloating, &dotAlreadyFound](const auto &ch)
     {
         // Integer type
         if (!allowFloating)
