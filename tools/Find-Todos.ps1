@@ -18,11 +18,10 @@ Param(
     [ValidateNotNullOrEmpty()]
     [string[]] $Include = @('*.cpp', '*.hpp'),
 
-    [Parameter(Position = 3,
-        HelpMessage = 'Specifies subfolders to search. The pattern value is used ' +
-            'in regular expression, eg. (include|src|tests).')]
+    [Parameter(HelpMessage = 'Specifies subfolders to search. The pattern value is used ' +
+        'in regular expression, eg. (include|src|tests|tom).')]
     [AllowEmptyString()]
-    [string] $InSubFoldersPattern = '(include|src|tests|tom)',
+    [string] $InSubFoldersPattern,
 
     [Parameter(HelpMessage = 'Todo keywords regex pattern.')]
     [ValidateNotNullOrEmpty()]

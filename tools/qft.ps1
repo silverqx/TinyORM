@@ -9,7 +9,12 @@ Param(
 
     [Parameter(Position = 1, HelpMessage = 'Todo keywords regex pattern.')]
     [ValidateNotNullOrEmpty()]
-    [string] $TodoKeywordsPattern = ' (TODO|NOTE|FIXME|BUG|WARNING|CUR|FEATURE|TEST|FUTURE|CUR1|TMP|SEC) '
+    [string] $TodoKeywordsPattern = ' (TODO|NOTE|FIXME|BUG|WARNING|CUR|FEATURE|TEST|FUTURE|CUR1|TMP|SEC) ',
+
+    [Parameter(HelpMessage = 'Specifies subfolders to search. The pattern value is used ' +
+        'in regular expression, eg. (include|src|tests|tom).')]
+    [AllowEmptyString()]
+    [string] $InSubFoldersPattern = '(include|src|tests|tom)'
 )
 
 Set-StrictMode -Version 3.0
