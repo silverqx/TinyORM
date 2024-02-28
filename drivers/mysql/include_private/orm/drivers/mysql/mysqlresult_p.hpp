@@ -147,7 +147,7 @@ namespace Orm::Drivers::MySql
         /*! Convert the DATE value to the QDate. */
         static QVariant toQDateFromString(const QString &value);
         /*! Convert the TIME value to the QTime. */
-        static QVariant toQTimeFromString(const QString &value);
+        // static QVariant toQTimeFromString(const QString &value);
         /*! Convert the DATETIME value to the QDateTime. */
         static QVariant toQDateTimeFromString(QString value);
         /*! Convert the DATE/TIME value to the QDateTime (prepared statements only). */

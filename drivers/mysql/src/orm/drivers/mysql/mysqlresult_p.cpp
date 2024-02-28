@@ -554,25 +554,41 @@ quint64 MySqlResultPrivate::toBitField(const MyField &field,
 
 QVariant MySqlResultPrivate::toQDateFromString(const QString &value)
 {
+    // This method is used for normal queries only
+
+    /* This should never happen :/, MySQL always returns date/time even if
+       the NO_ZERO_DATE option isn't defined.*/
+    Q_ASSERT(!value.isEmpty());
+
     // Nothing to do
     if (value.isEmpty())
-        // CUR drivers check this if QVariant(QMetaType(QMetaType::QDate)) is different thing; also Qt5 vs Qt6; also for QTime() and QDateTime() below silverqx
         return QDate();
 
     return QDate::fromString(value, Qt::ISODate);
 }
 
-QVariant MySqlResultPrivate::toQTimeFromString(const QString &value)
-{
-    // Nothing to do
-    if (value.isEmpty())
-        return QTime();
+// This method is never called as the MYSQL_TYPE_TIME is mapped to the QString
+// QVariant MySqlResultPrivate::toQTimeFromString(const QString &value)
+// {
+//    /* This should never happen :/, MySQL always returns date/time even if
+//       the NO_ZERO_DATE option isn't defined.*/
+//     Q_ASSERT(!value.isEmpty());
 
-    return QTime::fromString(value, Qt::ISODate);
-}
+//     // Nothing to do
+//     if (value.isEmpty())
+//         return QTime();
+
+//     return QTime::fromString(value, Qt::ISODateWithMs);
+// }
 
 QVariant MySqlResultPrivate::toQDateTimeFromString(QString value)
 {
+    // This method is used for normal queries only
+
+    /* This should never happen :/, MySQL always returns date/time even if
+       the NO_ZERO_DATE option isn't defined.*/
+    Q_ASSERT(!value.isEmpty());
+
     // Nothing to do
     if (value.isEmpty())
         return QDateTime();
@@ -583,7 +599,7 @@ QVariant MySqlResultPrivate::toQDateTimeFromString(QString value)
         value.insert(4, DASH).insert(7, DASH).insert(10, 'T'_L1).insert(13, COLON)
              .insert(16, COLON);
 
-    return QDateTime::fromString(value, Qt::ISODate);
+    return QDateTime::fromString(value, Qt::ISODateWithMs);
 }
 
 QVariant
@@ -674,6 +690,8 @@ QVariant MySqlResultPrivate::createQVariant(const int typeId, QString &&value,
                                             const ResultFieldsSizeType index) const
 {
     switch (typeId) {
+    /* Also, the MYSQL_TYPE_TIME is returned as the QString (normal/prepared) because of
+       '-838:59:59' to '838:59:59' range. */
     case QMetaType::QString:
         return value;
 
@@ -693,20 +711,26 @@ QVariant MySqlResultPrivate::createQVariant(const int typeId, QString &&value,
     case QMetaType::UInt:
         return value.toUInt();
 
+    /* For normal queries only, prepared queries have separate logic for QDateTime and
+       QDate because date/time column types for prepared queries are returned using
+       the MYSQL_TIME structure. */
     case QMetaType::QDateTime:
         return toQDateTimeFromString(std::move(value));
 
-    case QMetaType::QDate:
+    case QMetaType::QDate: // The same as for the QMetaType::QDateTime is true here
         return toQDateFromString(value);
-
-    case QMetaType::QTime:
-        return toQTimeFromString(value);
 
     case QMetaType::Double:
         return toDoubleFromString(value);
 
     case QMetaType::QByteArray:
         return toQByteArray(index);
+
+    /* The QMetaType::QTime is never reached because the MYSQL_TYPE_TIME is mapped
+       to the QString. So moved down as the last case statement. */
+    case QMetaType::QTime:
+        Q_UNREACHABLE();
+        // return toQTimeFromString(value);
 
     default:
         return value;
