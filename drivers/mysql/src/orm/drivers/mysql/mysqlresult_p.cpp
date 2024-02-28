@@ -487,26 +487,29 @@ MySqlResultPrivate::toMySqlDateTime(const QDate date, const QTime time, const in
         mysqlTime.second_part = static_cast<ulong>(time.msec()) * 1000; // Convert from milliseconds (ms) to microseconds
     };
 
+    /* We don't need to set the MYSQL_TIME.time_type as they are not during preparing
+       statements. */
+
     switch (typeId) {
     case QMetaType::QDateTime:
         initDate();
         initTime();
 
-        mysqlTime.time_type = MYSQL_TIMESTAMP_DATETIME;
+        // mysqlTime.time_type = MYSQL_TIMESTAMP_DATETIME;
         bind.buffer_type = MYSQL_TYPE_DATETIME;
         break;
 
     case QMetaType::QDate:
         initDate();
 
-        mysqlTime.time_type = MYSQL_TIMESTAMP_DATE;
+        // mysqlTime.time_type = MYSQL_TIMESTAMP_DATE;
         bind.buffer_type = MYSQL_TYPE_DATE;
         break;
 
     case QMetaType::QTime:
         initTime();
 
-        mysqlTime.time_type = MYSQL_TIMESTAMP_TIME;
+        // mysqlTime.time_type = MYSQL_TIMESTAMP_TIME;
         bind.buffer_type = MYSQL_TYPE_TIME;
         break;
 
