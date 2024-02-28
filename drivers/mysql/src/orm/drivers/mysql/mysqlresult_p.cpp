@@ -464,6 +464,8 @@ MYSQL_TIME
 MySqlResultPrivate::toMySqlDateTime(const QDate date, const QTime time, const int typeId,
                                     MYSQL_BIND &bind)
 {
+    // This method is used for prepared bindings
+
     Q_ASSERT(typeId == QMetaType::QDateTime || typeId == QMetaType::QTime ||
              typeId == QMetaType::QDate);
 
