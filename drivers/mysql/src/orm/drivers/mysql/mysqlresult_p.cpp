@@ -612,8 +612,10 @@ MySqlResultPrivate::toQDateTimeFromMySQLTime(const int typeId,
     if (typeId == QMetaType::QDate)
         return date;
 
-    if (typeId == QMetaType::QTime)
-        return time;
+    /* It never can have the QMetaType::QTime typeId because we are mapping
+       the MYSQL_TYPE_TIME to QMetaType::QString in the decodeMySqlType() method above. */
+    // if (typeId == QMetaType::QTime)
+    //     return time;
 
     Q_UNREACHABLE();
 }
