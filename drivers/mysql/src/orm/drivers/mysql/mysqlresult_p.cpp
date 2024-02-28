@@ -524,14 +524,20 @@ quint64 MySqlResultPrivate::toBitField(const MyField &field,
     if (fieldValue == nullptr)
         return 0;
 
-    // CUR drivers find out why +7 and add the comment silverqx
+    /* +7 is pure math, hard to explain how this works, try to compute for 1 bit to 9 bit
+       and it will immediately be clear how this works. Also, I have revisited whole
+       method and everything is ok. */
+
     // Byte-aligned length
     const auto numBytes = (field.myField->length + 7) / 8;
     quint64 result = 0;
 
     for (ulong index = 0; index < numBytes; ++index) {
         const quint64 tmp = static_cast<quint8>(fieldValue[index]);
+        /* Shift the current value 8 bit-s left to make 8 bit space (zero-ed)
+           for the next 8 bit chunk (tmp quint8!). */
         result <<= 8;
+        // Then OR this new 8 bit-s from the tmp to this prepared empty 8-bit space
         result |= tmp;
     }
 
