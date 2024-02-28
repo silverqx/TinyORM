@@ -39,6 +39,8 @@ MySqlErrorType MySqlUtilsPrivate::prepareStmtError(const NotNull<MYSQL_STMT *> s
 QMetaType
 MySqlUtilsPrivate::decodeMySqlType(const enum_field_types mysqlType, const uint flags)
 {
+    // This method is used for result sets
+
     QMetaType::Type typeId = QMetaType::UnknownType;
 
     switch (mysqlType) {
