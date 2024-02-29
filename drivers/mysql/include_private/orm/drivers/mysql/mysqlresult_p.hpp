@@ -50,7 +50,7 @@ namespace Orm::Drivers::MySql
         };
 
         /* Normal queries */
-        /*! Populate the fields vector. */
+        /*! Populate the result fields vector. */
         bool populateFields(MYSQL *mysql);
 
         /* Prepared queries */
