@@ -312,7 +312,7 @@ QVariant MySqlResultPrivate::getValueForNormal(const ResultFieldsSizeType index)
 
     // BIT field
     if (isBitType(field.myField->type))
-        return QVariant::fromValue(toBitField(field, column));
+        return toBitField(field, column);
 
     const auto typeId = field.metaType.id();
     const auto fieldLength = mysql_fetch_lengths(result)[index];
@@ -336,7 +336,7 @@ QVariant MySqlResultPrivate::getValueForPrepared(const ResultFieldsSizeType inde
 
     // BIT field
     if (isBitType(field.myField->type))
-        return QVariant::fromValue(toBitField(field, field.fieldValue.get()));
+        return toBitField(field, field.fieldValue.get());
 
     const auto typeId = field.metaType.id();
 
