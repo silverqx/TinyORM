@@ -32,10 +32,11 @@ bool MySqlResultPrivate::populateFields(MYSQL *const mysql)
     if (!hasFields)
         return false;
 
-    // CUR drivers test with no metadata silverqx
     /* MariaDB doesn't have the mysql_result_metadata() function (metadata for normal
        queries). */
 #ifndef MARIADB_VERSION_ID
+    /* This should never happen because MYSQL_OPT_OPTIONAL_RESULTSET_METADATA and
+       CLIENT_OPTIONAL_RESULTSET_METADATA aren't allowed for MySQL connections. */
     // Nothing to do, metadata disabled
     if (mysql_result_metadata(result) == RESULTSET_METADATA_NONE)
         throw Exceptions::LogicError(
@@ -75,11 +76,8 @@ bool MySqlResultPrivate::bindResultValues()
     if (!hasFields)
         return false;
 
-    // CUR drivers for prepared statements it has RESULTSET_METADATA_NONE (0), need to try disable metadata and examine the changes in the meta silverqx
-    // Nothing to do, metadata disabled
-   // if (mysql_result_metadata(meta) == RESULTSET_METADATA_NONE)
-   //     throw Exceptions::LogicError(
-   //             u"Result set has no metadata in %1()."_s.arg(__tiny_func__));
+    /* Prepared queries don't use metadata the same way as normal queries,
+       it's always RESULTSET_METADATA_NONE. */
 
     // Allocate memory for result sets that will be obtained from the database
     allocateMemoryForBindings(resultBinds, fieldsCount);
