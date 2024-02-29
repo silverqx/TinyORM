@@ -314,16 +314,16 @@ QVariant MySqlResultPrivate::getValueForNormal(const ResultFieldsSizeType index)
     if (isBitType(field.myField->type))
         return QVariant::fromValue(toBitField(field, column));
 
-    QString value;
     const auto typeId = field.metaType.id();
-    // CUR drivers revisit silverqx
     const auto fieldLength = mysql_fetch_lengths(result)[index];
 
-    // BLOB field needs QVariant(QByteArray) as the storage (handled in toQByteArray())
-    if (typeId != QMetaType::QByteArray)
-        value = QString::fromUtf8(column, static_cast<QString::size_type>(fieldLength));
+    // BLOB field needs QVariant(QByteArray) as the storage
+    if (typeId == QMetaType::QByteArray)
+        return QByteArray(row[index], static_cast<QByteArray::size_type>(fieldLength));
 
-    return createQVariant(typeId, std::move(value), index);
+    return createQVariant(typeId, QString::fromUtf8(column,
+                                                    static_cast<QString::size_type>(
+                                                        fieldLength)));
 }
 
 QVariant MySqlResultPrivate::getValueForPrepared(const ResultFieldsSizeType index) const
@@ -355,8 +355,14 @@ QVariant MySqlResultPrivate::getValueForPrepared(const ResultFieldsSizeType inde
         return toQDateTimeFromMySQLTime(typeId, reinterpret_cast<const MYSQL_TIME *>(
                                                     field.fieldValue.get()));
 
+    // The BLOB field needs QVariant(QByteArray) as storage
+    if (typeId == QMetaType::QByteArray)
+        return toQByteArray(index);
+
     // Create a QVariant by the given metatype ID and field value
-    return createQVariant(typeId, fieldValueToString(typeId, field), index);
+    return createQVariant(typeId, QString::fromUtf8(field.fieldValue.get(),
+                                                    static_cast<QString::size_type>(
+                                                        field.fieldValueSize)));
 }
 
 void
@@ -664,32 +670,19 @@ QVariant MySqlResultPrivate::toDoubleFromString(const QString &value) const
     }
 }
 
+QVariant MySqlResultPrivate::toQByteArray(const ResultFieldsSizeType index) const
+{
+    // This method is called for prepared queries only
+
+    // Index bounds checked in MySqlResult::data()
+    const auto &field = resultFields[index];
+
+    return {QByteArray(field.fieldValue.get(),
+                       static_cast<QByteArray::size_type>(field.fieldValueSize))};
+}
+
 QVariant
-MySqlResultPrivate::toQByteArray(const ResultFieldsSizeType index) const
-{
-    if (preparedQuery) {
-        const auto &field = resultFields[index]; // Index bounds checked in MySqlResult::data()
-        return {QByteArray(field.fieldValue.get(),
-                           static_cast<QByteArray::size_type>(field.fieldValueSize))};
-    }
-
-    // CUR drivers revisit this if I need to fetch the length silverqx
-    const auto fieldLength = mysql_fetch_lengths(result)[index];
-    return {QByteArray(row[index], static_cast<QByteArray::size_type>(fieldLength))};
-}
-
-QString MySqlResultPrivate::fieldValueToString(const int typeId, const MyField &field)
-{
-    // The BLOB field needs QVariant(QByteArray) as storage (handled in toQByteArray())
-    if (typeId == QMetaType::QByteArray)
-        return {};
-
-    return QString::fromUtf8(field.fieldValue.get(),
-                             static_cast<QString::size_type>(field.fieldValueSize));
-}
-
-QVariant MySqlResultPrivate::createQVariant(const int typeId, QString &&value,
-                                            const ResultFieldsSizeType index) const
+MySqlResultPrivate::createQVariant(const int typeId, QString &&value) const
 {
     switch (typeId) {
     /* Also, the MYSQL_TYPE_TIME is returned as the QString (normal/prepared) because of
@@ -717,22 +710,22 @@ QVariant MySqlResultPrivate::createQVariant(const int typeId, QString &&value,
        QDate because date/time column types for prepared queries are returned using
        the MYSQL_TIME structure. */
     case QMetaType::QDateTime:
+        Q_ASSERT(!preparedQuery);
         return toQDateTimeFromString(std::move(value));
 
     case QMetaType::QDate: // The same as for the QMetaType::QDateTime is true here
+        Q_ASSERT(!preparedQuery);
         return toQDateFromString(value);
 
     case QMetaType::Double:
         return toDoubleFromString(value);
 
-    case QMetaType::QByteArray:
-        return toQByteArray(index);
-
     /* The QMetaType::QTime is never reached because the MYSQL_TYPE_TIME is mapped
-       to the QString. So moved down as the last case statement. */
+       to the QString. So moved down as the last case statement. QByteArray is always
+       handled earlier. */
+    case QMetaType::QByteArray:
     case QMetaType::QTime:
         Q_UNREACHABLE();
-        // return toQTimeFromString(value);
 
     default:
         return value;
