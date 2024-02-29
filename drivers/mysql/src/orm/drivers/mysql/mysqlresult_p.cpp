@@ -247,7 +247,6 @@ void MySqlResultPrivate::bindPreparedBindings(
             break;
 
         case QMetaType::QString:
-        // CUR drivers finish, test if is convertible to QString and do something with it silverqx
         default: {
             // Emplace to the vector to make it alive until mysql_stmt_execute()
             const auto &stringRef = stringVector.emplaceBack(
