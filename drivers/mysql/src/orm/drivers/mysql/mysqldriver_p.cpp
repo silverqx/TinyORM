@@ -274,6 +274,11 @@ void MySqlDriverPrivate::setOptionFlag(uint &optionFlags, const QStringView opti
                  "must be used instead of the CLIENT_SSL option (the CLIENT_SSL is set "
                  "internally in the client library), in %1()."_s
                 .arg(__tiny_func__));
+    else if (option == "CLIENT_OPTIONAL_RESULTSET_METADATA"_L1)
+        throw Exceptions::InvalidArgumentError(
+                u"The TinyMySql library doesn't support optional metadata for MySQL "
+                 "connections (CLIENT_OPTIONAL_RESULTSET_METADATA) in %1()."_s
+                .arg(__tiny_func__));
     else
         throw Exceptions::InvalidArgumentError(
                 u"Unknown MySQL connect option '%1' in %2()."_s

@@ -76,6 +76,7 @@ bool MySqlResult::exec(const QString &query)
                 .arg(__tiny_func__),
                 MySqlUtils::prepareMySqlError(mysql, errNo), d->query);
 
+    // Populate the result fields vector (MyField)
     const auto hasFields = d->populateFields(mysql);
 
     // Executed query has result set
@@ -140,6 +141,9 @@ bool MySqlResult::exec()
 
     if (d->stmt == nullptr)
         return false;
+
+    /* Prepared queries don't use metadata the same way as normal queries,
+       it's always RESULTSET_METADATA_NONE. */
 
     /* These mysql_stmt_xyz()-s functions are weird, if they return a bool, then
        they return zero for success and non-zero if an error occurred, but the type is
