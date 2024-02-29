@@ -82,7 +82,7 @@ namespace Orm::Drivers::MySql
         struct MySqlOptionValue {
             /*! MySQL connection option. */
             mysql_option option;
-            /*! The set method for MySQL connection option (calls mysql_option()). */
+            /*! The set method for MySQL connection option (calls mysql_options()). */
             SetOptionMemFn setMySqlOption;
         };
 
