@@ -33,7 +33,8 @@ QVariant MySqlResult::handle() const noexcept
     Q_D(const MySqlResult);
 
     if (d->preparedQuery)
-        // CUR check this later; I don't understand it now silverqx
+        /* The d->meta is only returned for SELECT queries, for INSERT/UPDATE/DELETE
+           queries it's nullptr and the d->stmt is returned instead. */
         return d->meta == nullptr ? QVariant::fromValue(d->stmt)
                                   : QVariant::fromValue(d->meta);
 
