@@ -82,6 +82,9 @@ namespace Orm::Drivers
         /*! Get the SQL database driver used to access the database connection (const). */
         std::weak_ptr<const SqlDriver> driverWeak() const noexcept;
 
+        /*! Get the result associated with the query (const). */
+        const SqlResult &result() const noexcept;
+
         /* Normal queries */
         /*! Execute the given SQL query (non-prepared/normal only). */
         bool exec(const QString &query);

@@ -127,6 +127,12 @@ std::weak_ptr<const SqlDriver> SqlQuery::driverWeak() const noexcept
     return m_sqlResult->driver();
 }
 
+const SqlResult &SqlQuery::result() const noexcept // noexcept is correct here
+{
+    // This method exists only to access the SqlResult::handle() method
+    return *m_sqlResult;
+}
+
 /* Normal queries */
 
 bool SqlQuery::exec(const QString &query)
