@@ -299,7 +299,8 @@ Databases::createDriversConnectionTemp(
 
 std::optional<QString>
 Databases::createDriversConnectionTempFrom(
-        const QString &fromConfiguration, const ConnectionNameParts &connectionParts)
+        const QString &fromConfiguration, const ConnectionNameParts &connectionParts,
+        const bool open)
 {
     const auto configuration = Databases::configurationForTemp(fromConfiguration, true);
 
@@ -310,7 +311,35 @@ Databases::createDriversConnectionTempFrom(
     auto connectionName = connectionNameForTemp(fromConfiguration, connectionParts);
 
     // Add a new TinyDrivers database connection
-    createDriversConnectionInternal(connectionName, *configuration);
+    createDriversConnectionInternal(connectionName, *configuration, open);
+
+    return connectionName;
+}
+
+std::optional<QString>
+Databases::createDriversConnectionTempFrom(
+        const QString &fromConfiguration, const ConnectionNameParts &connectionParts,
+        std::unordered_map<QString, QVariant> &&optionsToUpdate,
+        const std::vector<QString> &optionsToRemove, const bool open)
+{
+    const auto
+    configurationOriginal = Databases::configurationForTemp(fromConfiguration, true);
+
+    // Nothing to do, no configuration exists
+    if (!configurationOriginal)
+        return std::nullopt;
+
+    // Make configuration copy so I can modify it
+    auto configuration = configurationOriginal->get();
+
+    // Add, modify, or remove options in the configuration
+    updateConfigurationForTemp(configuration, std::move(optionsToUpdate),
+                               optionsToRemove);
+
+    auto connectionName = connectionNameForTemp(fromConfiguration, connectionParts);
+
+    // Add a new TinyDrivers database connection
+    createDriversConnectionInternal(connectionName, configuration, open);
 
     return connectionName;
 }

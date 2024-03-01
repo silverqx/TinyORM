@@ -125,8 +125,17 @@ namespace TestUtils
                 const QVariantHash &configuration, bool open = true);
         /*! Create temp. DB connection for one test method from config., TinyDrivers. */
         static std::optional<QString>
-        createDriversConnectionTempFrom(const QString &fromConfiguration,
-                                        const ConnectionNameParts &connectionParts);
+        createDriversConnectionTempFrom(
+                const QString &fromConfiguration,
+                const ConnectionNameParts &connectionParts, bool open = true);
+        /*! Create a temp. DB connection for one test method from config., TinyDrivers */
+        static std::optional<QString>
+        createDriversConnectionTempFrom(
+                const QString &fromConfiguration,
+                const ConnectionNameParts &connectionParts,
+                std::unordered_map<QString, QVariant> &&optionsToUpdate,
+                const std::vector<QString> &optionsToRemove = {},
+                bool open = true);
 #endif
 
         /*! Get a configuration for the given connection for XyzConnectionTemp methods. */
