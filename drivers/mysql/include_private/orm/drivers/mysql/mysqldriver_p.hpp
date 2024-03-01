@@ -73,7 +73,7 @@ namespace Orm::Drivers::MySql
         /*! Parse the given MySQL connection option to name and value. */
         static MySqlOptionParsed parseMySqlOption(QStringView optionRaw);
 
-        /*! Set the given MySQL connection option. */
+        /*! Set the given MySQL connection option (using mysql_options()). */
         bool mysqlSetConnectionOption(QStringView option, QStringView value);
 
         /*! Alias type for the setOptionXx() methods. */
@@ -93,6 +93,7 @@ namespace Orm::Drivers::MySql
 
         /*! Update the openFlags argument value based on the given flag value. */
         static void setOptionFlag(uint &optionFlags, QStringView option);
+
         /*! Set the MySQL option to the given string value. */
         static bool setOptionString(MYSQL *mysql, mysql_option option, QStringView value);
         /*! Set the MySQL option to the given unsigned int value. */
@@ -113,6 +114,7 @@ namespace Orm::Drivers::MySql
         /*! Get the MySQL SSL-mode option by the given QString value. */
         static mysql_ssl_mode getOptionSslMode(QStringView value);
 #endif
+
         /*! Log warnings to the console for some boolean connection options. */
         static void logBoolOptionWarnings(mysql_option option);
         /*! Determine if the given value is the bool true value (true, on, yes, 1). */

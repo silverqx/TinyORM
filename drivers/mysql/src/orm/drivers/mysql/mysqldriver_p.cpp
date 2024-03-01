@@ -51,12 +51,13 @@ MySqlDriverPrivate::mysqlSetConnectionOptions(const QString &options)
         // Parse the given MySQL connection option to name and value
         auto &&[option, value] = parseMySqlOption(optionRaw);
 
-        // Set the given MySQL connection option
+        // Set the given MySQL connection option (using mysql_options())
         if (mysqlSetConnectionOption(option, *value))
             continue;
 
         /* If the connection option has no value or ends with the TRUE-like boolean
-           keywords (true, on, 1), then treat it as a flag. */
+           keywords (true, on, 1), then treat it as a flag, these options are passed
+           to the mysql_real_connect() method using the client_flag parameter. */
         if (!value || isTrueBoolOption(*value))
             setOptionFlag(optionFlags, option);
 
@@ -218,6 +219,9 @@ bool MySqlDriverPrivate::mysqlSetConnectionOption(const QStringView option,
 const MySqlDriverPrivate::MySqlOptionsHash &
 MySqlDriverPrivate::getMySqlOptionsHash()
 {
+    /* These options are for mysql_options() function, they are set before the MySQL
+       connection is established. */
+
     /* The u""_s is correct here, don't use latin1 because we need to use
        the hash.contains(QStringView) as our option names are QStrinView-s
        after the split() method call. So this is the best solution. */
@@ -256,6 +260,8 @@ MySqlDriverPrivate::getMySqlOptionsHash()
 
 void MySqlDriverPrivate::setOptionFlag(uint &optionFlags, const QStringView option)
 {
+    // These options are for mysql_real_connect() client_flag parameter
+
     if (option == "CLIENT_COMPRESS"_L1)
         optionFlags |= CLIENT_COMPRESS;
     else if (option == "CLIENT_FOUND_ROWS"_L1)
