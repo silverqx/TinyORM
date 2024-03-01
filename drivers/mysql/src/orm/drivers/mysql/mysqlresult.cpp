@@ -412,7 +412,6 @@ bool MySqlResult::isNull(const size_type index)
 
     const auto idx = static_cast<MySqlResultPrivate::ResultFieldsSizeType>(index);
 
-    // CUR drivers test isNull() out of bounds if no metadata silverqx
     // Throw an exception if an index for result fields vector is out of bounds
     d->throwIfBadResultFieldsIndex(idx);
 
