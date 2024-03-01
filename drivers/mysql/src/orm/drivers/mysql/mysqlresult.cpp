@@ -322,6 +322,7 @@ bool MySqlResult::fetch(const size_type index)
     else {
         mysql_data_seek(d->result, static_cast<quint64>(index)); // Returns nothing and also no errors
 
+        // Don't check MySQL error here
         if (d->row = mysql_fetch_row(d->result);
             d->row == nullptr
         )
@@ -374,7 +375,7 @@ bool MySqlResult::fetchNext()
             return false;
     }
     else {
-        // CUR drivers missing error check silverqx
+        // Don't check MySQL error here
         if (d->row = mysql_fetch_row(d->result);
             d->row == nullptr
         )
@@ -450,7 +451,6 @@ MySqlResult::size_type MySqlResult::numRowsAffected()
     if (d->preparedQuery)
         return static_cast<size_type>(mysql_stmt_affected_rows(d->stmt));
 
-    // CUR drivers try to pass d->result like above and make it noexcept and also SqlQuery::numRowsAffected() silverqx
     return static_cast<size_type>(mysql_affected_rows(d->drv_d_func()->mysql));
 }
 
