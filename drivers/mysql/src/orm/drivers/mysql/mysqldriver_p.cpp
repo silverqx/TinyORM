@@ -11,6 +11,7 @@ TINYORM_BEGIN_COMMON_NAMESPACE
 using namespace Qt::StringLiterals; // NOLINT(google-build-using-namespace)
 
 using Orm::Drivers::MySql::Constants::COMMA;
+using Orm::Drivers::MySql::Constants::EMPTY;
 using Orm::Drivers::MySql::Constants::EQ_C;
 using Orm::Drivers::MySql::Constants::SEMICOLON;
 
@@ -52,17 +53,17 @@ MySqlDriverPrivate::mysqlSetConnectionOptions(const QString &options)
         auto &&[option, value] = parseMySqlOption(optionRaw);
 
         // Set the given MySQL connection option (using mysql_options())
-        if (mysqlSetConnectionOption(option, *value))
+        if (mysqlSetConnectionOption(option, value))
             continue;
 
         /* If the connection option has no value or ends with the TRUE-like boolean
            keywords (true, on, 1), then treat it as a flag, these options are passed
            to the mysql_real_connect() method using the client_flag parameter. */
-        if (!value || isTrueBoolOption(*value))
+        if (isTrueBoolOption(value))
             setOptionFlag(optionFlags, option);
 
         else if (option == "UNIX_SOCKET"_L1) // _L1 is correct here
-            unixSocket = value->toString();
+            unixSocket = value.toString();
 
         else
             throw Exceptions::InvalidArgumentError(
@@ -188,18 +189,24 @@ void MySqlDriverPrivate::mysqlClose() noexcept
 MySqlDriverPrivate::MySqlOptionParsed
 MySqlDriverPrivate::parseMySqlOption(const QStringView optionRaw)
 {
+    const auto optionRawCount = optionRaw.count(EQ_C);
+
     // Can contain 0 or 1 = character; 0 for flags and 1 for options with a value
-    Q_ASSERT(!(optionRaw.count(EQ_C) > 1));
+    Q_ASSERT(optionRawCount >= 0 && optionRawCount <= 1);
 
     const auto option = optionRaw.split(EQ_C);
 
-    return {option.constFirst().trimmed(), option[1].trimmed()};
+    return {option.constFirst().trimmed(), optionRawCount == 0 ? EMPTY :
+                                                                 option[1].trimmed()};
 }
 
 bool MySqlDriverPrivate::mysqlSetConnectionOption(const QStringView option,
                                                   const QStringView value)
 {
     const auto &optionsHash = getMySqlOptionsHash();
+
+    // Throw an exception if the given MySQL option is unsupported (mysql_options())
+    throwIfUnsupportedOption(option, value);
 
     // Nothing to do, also don't throw exception here (an exception will be thrown later)
     if (!optionsHash.contains(option))
@@ -253,6 +260,9 @@ MySqlDriverPrivate::getMySqlOptionsHash()
         {u"MYSQL_SHARED_MEMORY_BASE_NAME"_s,
                                          {MYSQL_SHARED_MEMORY_BASE_NAME,
                                                                      setOptionString}},
+        {u"MYSQL_OPT_OPTIONAL_RESULTSET_METADATA"_s,
+                                         {MYSQL_OPT_OPTIONAL_RESULTSET_METADATA,
+                                                                     setOptionBool}},
     };
 
     return cachedOptions;
@@ -313,7 +323,7 @@ bool MySqlDriverPrivate::setOptionBool(MYSQL *const mysql, const mysql_option op
     logBoolOptionWarnings(option);
 
     // Revisited, an empty value is considered as true so it's a kind of flag
-    const auto boolValue = value.isEmpty() || isTrueBoolOption(value);
+    const auto boolValue = isTrueBoolOption(value);
 
     return mysql_options(mysql, option, &boolValue) == 0;
 }
@@ -380,6 +390,30 @@ void MySqlDriverPrivate::logBoolOptionWarnings(const mysql_option option)
                 << u"The MYSQL_OPT_RECONNECT option is still available but is "
                     "deprecated; expect it to be removed in a future version of MySQL, "
                     "in %1()."_s.arg(__tiny_func__);
+}
+
+bool MySqlDriverPrivate::isTrueBoolOption(const QStringView value) noexcept
+{
+    using namespace Qt::StringLiterals; // NOLINT(google-build-using-namespace)
+
+    // _L1 is correct here
+    return value.isEmpty() ||
+           value.compare("true"_L1, Qt::CaseInsensitive) == 0 ||
+           value.compare("on"_L1,   Qt::CaseInsensitive) == 0 ||
+           value.compare("yes"_L1,  Qt::CaseInsensitive) == 0 ||
+           value == '1'_L1;
+}
+
+void MySqlDriverPrivate::throwIfUnsupportedOption(const QStringView option,
+                                                  const QStringView value)
+{
+    /* Calling the isTrueBoolOption(value) to allow setting it to OFF/false, setting it
+       to OFF supported but setting it to ON isn't. */
+    if (option == "MYSQL_OPT_OPTIONAL_RESULTSET_METADATA"_L1 && isTrueBoolOption(value))
+        throw Exceptions::InvalidArgumentError(
+                u"The TinyMySql library doesn't support optional metadata for MySQL "
+                 "connections (MYSQL_OPT_OPTIONAL_RESULTSET_METADATA) in %1()."_s
+                .arg(__tiny_func__));
 }
 
 } // namespace Orm::Drivers::MySql
