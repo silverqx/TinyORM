@@ -108,9 +108,12 @@ bool MySqlResultPrivate::bindResultValues()
             resultBind.buffer_length = field.fieldValueSize = 8UL;
         else {
             resultBind.buffer_type = MYSQL_TYPE_STRING;
-            // CUR drivers I didn't see +1 for NULL char anywhere on any MySQL docs page in any example, try it with full buffers for more type like char[40] or varchar[255] and find out how it works and behaves silverqx
-            // +1 for the NULL character
-            resultBind.buffer_length = field.fieldValueSize = fieldInfo->length + 1UL;
+            /* Revisited, no need to add +1 byte for the NULL character, the QString will
+               be constructed from these data based on the current size and it creates
+               a copy of these data and adds the NULL character at the end.
+               Also, MySQL server doesn't add a NULL character at the end.
+               Eg. PHP PDO doesn't add +1 during strings fetching. */
+            resultBind.buffer_length = field.fieldValueSize = fieldInfo->length;
         }
 
         // The following two lines only bind data members using pointers (no real values)
@@ -119,9 +122,10 @@ bool MySqlResultPrivate::bindResultValues()
         resultBind.is_unsigned = (fieldInfo->flags & UNSIGNED_FLAG) != 0U;
 
         /* Prepare the output/result buffer (it has nothing to do with prepared bindings),
-           +1 for the terminating null character. */
+           No need to add +1 for the terminating null character. See the note a few lines
+           above. */
         field.fieldValue = resultBind.buffer_length > 0UL
-                           ? std::make_unique<char[]>(resultBind.buffer_length + 1UL) // NOLINT(modernize-avoid-c-arrays)
+                           ? std::make_unique<char[]>(resultBind.buffer_length) // NOLINT(modernize-avoid-c-arrays)
                            : nullptr;
         resultBind.buffer = static_cast<void *>(field.fieldValue.get());
 
