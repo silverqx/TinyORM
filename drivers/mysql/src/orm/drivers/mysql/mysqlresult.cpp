@@ -255,7 +255,6 @@ bool MySqlResult::exec()
 SqlRecord MySqlResult::record() const
 {
     Q_D(const MySqlResult);
-    // CUR drivers check if is a good idea to fetch fields again because all fields are already cached in the MyField:::myField silverqx
 
     auto *const mysqlRes = d->preparedQuery ? d->meta : d->result;
     // Backup the current cursor position
@@ -272,6 +271,9 @@ SqlRecord MySqlResult::record() const
     // Restore the cursor position
     mysql_field_seek(mysqlRes, currentCursor);
 
+    /* The result could be cached to avoid materializing it again and again but
+       I will not do that, it's not a big deal, the result set is already cached on
+       the client and this materialization is fast. */
     return result;
 }
 
