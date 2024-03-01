@@ -225,11 +225,15 @@ bool MySqlResult::exec()
                     .arg(__tiny_func__),
                     MySqlUtils::prepareStmtError(d->stmt), d->query, d->boundValues);
 
-        // CUR drivers revisit try to achieve or avoid calling the mysql_stmt_bind_result() twice silverqx
         if (d->hasBlobs) {
             d->bindResultBlobs();
 
-            // Re-bind output columns in the result set to data buffers and length buffers
+            /* Re-bind output columns in the result set to data and length buffers.
+               The mysql_stmt_bind_result() must be called twice, it can't be avoided as
+               we are storing whole result set. I still think this can be avoided using
+               the mysql_stmt_fetch_column() and setting the buffer_length to 0, it then
+               returns the real size but this should be called during obtaining the BLOB
+               field inside the value() method. */
             if (mysql_stmt_bind_result(d->stmt, d->resultBinds.get()))
                 throw Exceptions::QueryError(
                         d->connectionName,
