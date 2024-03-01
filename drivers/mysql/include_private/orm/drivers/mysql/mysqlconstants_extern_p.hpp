@@ -21,6 +21,7 @@ namespace Orm::Drivers::MySql::Constants
     TINYDRIVERS_EXPORT extern const QChar EQ_C;
 
     // Common strings
+    TINYDRIVERS_EXPORT extern const QString EMPTY;
     TINYDRIVERS_EXPORT extern const QString COMMA;
 
     // Database related

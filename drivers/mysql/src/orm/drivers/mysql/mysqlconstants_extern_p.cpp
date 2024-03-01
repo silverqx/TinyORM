@@ -14,6 +14,7 @@ namespace Orm::Drivers::MySql::Constants
     const QChar EQ_C      = '='_L1;
 
     // Common strings
+    const QString EMPTY   = ""_L1;
     const QString COMMA   = u", "_s;
 
     // Database related

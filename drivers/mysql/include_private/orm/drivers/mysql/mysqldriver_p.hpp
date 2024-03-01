@@ -68,7 +68,7 @@ namespace Orm::Drivers::MySql
             /*! MySQL connection option name. */
             QStringView option;
             /*! MySQL connection option value. */
-            std::optional<QStringView> value;
+            QStringView value;
         };
         /*! Parse the given MySQL connection option to name and value. */
         static MySqlOptionParsed parseMySqlOption(QStringView optionRaw);
@@ -118,7 +118,9 @@ namespace Orm::Drivers::MySql
         /*! Log warnings to the console for some boolean connection options. */
         static void logBoolOptionWarnings(mysql_option option);
         /*! Determine if the given value is the bool true value (true, on, yes, 1). */
-        inline static bool isTrueBoolOption(QStringView value) noexcept;
+        static bool isTrueBoolOption(QStringView value) noexcept;
+        /*! Throw exception if the given MySQL option is unsupported (mysql_options()). */
+        static void throwIfUnsupportedOption(QStringView option, QStringView value);
 
         /*! Convert the given QString to the char array (return nullptr if isNull()). */
         inline static const char *toCharArray(const QByteArray &value) noexcept;
@@ -148,17 +150,6 @@ namespace Orm::Drivers::MySql
     const char *MySqlDriverPrivate::toCharArray(const QByteArray &value) noexcept
     {
         return value.isNull() ? nullptr : value.constData();
-    }
-
-    bool MySqlDriverPrivate::isTrueBoolOption(const QStringView value) noexcept
-    {
-        using namespace Qt::StringLiterals; // NOLINT(google-build-using-namespace)
-
-        // _L1 is correct here
-        return value.compare("true"_L1, Qt::CaseInsensitive) == 0 ||
-               value.compare("on"_L1,   Qt::CaseInsensitive) == 0 ||
-               value.compare("yes"_L1,  Qt::CaseInsensitive) == 0 ||
-               value == '1'_L1;
     }
 
 } // namespace Orm::Drivers::MySql

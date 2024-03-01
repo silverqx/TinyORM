@@ -19,6 +19,7 @@ using Orm::Constants::H127001;
 using Orm::Constants::NOSPACE;
 using Orm::Constants::P5432;
 using Orm::Constants::QMYSQL;
+using Orm::Constants::SEMICOLON;
 using Orm::Constants::UTF8MB4;
 using Orm::Constants::UTF8MB40900aici;
 using Orm::Constants::charset_;
@@ -37,7 +38,6 @@ using TypeUtils = Orm::Utils::Type;
 using Orm::Drivers::CursorPosition;
 using Orm::Drivers::Exceptions::InvalidArgumentError;
 using Orm::Drivers::NumericalPrecisionPolicy;
-using Orm::Drivers::SqlDatabase;
 using Orm::Drivers::SqlDriver;
 using Orm::Drivers::SqlQuery;
 
@@ -57,6 +57,9 @@ private Q_SLOTS:
     void MySQL_addUseAndRemoveThreeConnections_FiveTimes() const;
 
     void MySQL_addExistingConnection_ThrowException() const;
+
+    void MySQL_enableOptionalMetadata_ThrowException() const;
+    void MySQL_disableOptionalMetadata() const;
 
 // NOLINTNEXTLINE(readability-redundant-access-specifiers)
 private:
@@ -445,6 +448,152 @@ void tst_SqlDatabaseManager::MySQL_addExistingConnection_ThrowException() const
     QVERIFY(!connection.isValid());
     QVERIFY(Databases::driversConnectionNames().isEmpty());
     QVERIFY(Databases::driversOpenedConnectionNames().isEmpty());
+}
+
+void tst_SqlDatabaseManager::MySQL_enableOptionalMetadata_ThrowException() const
+{
+    // CLIENT_OPTIONAL_RESULTSET_METADATA
+    {
+        const auto connectionName =
+                Databases::createDriversConnectionTempFrom(
+                    Databases::MYSQL_DRIVERS, {ClassName, QString::fromUtf8(__func__)}, // NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
+                    false);
+
+        if (!connectionName)
+            QSKIP(TestUtils::AutoTestSkipped
+                  .arg(TypeUtils::classPureBasename(*this), Databases::MYSQL_DRIVERS)
+                  .toUtf8().constData(), );
+
+        auto connection = Databases::driversConnection(*connectionName, false);
+        /* Setting it this way, I will not refactor the createDriversConnectionTempFrom()
+           to be able modify options_ hash. */
+        connection.setConnectOptions(
+                    QStringList({connection.connectOptions(),
+                                 u"CLIENT_OPTIONAL_RESULTSET_METADATA"_s}) // Must support option without the value (=ON/OFF; w/o value == ON)
+                    .join(SEMICOLON));
+
+        QVERIFY_THROWS_EXCEPTION(InvalidArgumentError, connection.open());
+
+        // Restore
+        /* This will generate expected warning about the connection is still in use
+           it can't be avoided because we want to test the query.driver/Weak(). */
+        Databases::removeDriversConnection(*connectionName);
+
+        // The sqldriver must be invalidated immediately
+        QVERIFY(!connection.isValid());
+        QVERIFY(Databases::driversConnectionNames().isEmpty());
+        QVERIFY(Databases::driversOpenedConnectionNames().isEmpty());
+    }
+
+    // MYSQL_OPT_OPTIONAL_RESULTSET_METADATA
+    {
+        const auto connectionName =
+                Databases::createDriversConnectionTempFrom(
+                    Databases::MYSQL_DRIVERS, {ClassName, QString::fromUtf8(__func__)}, // NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
+                    false);
+
+        if (!connectionName)
+            QSKIP(TestUtils::AutoTestSkipped
+                  .arg(TypeUtils::classPureBasename(*this), Databases::MYSQL_DRIVERS)
+                  .toUtf8().constData(), );
+
+        auto connection = Databases::driversConnection(*connectionName, false);
+        /* Setting it this way, I will not refactor the createDriversConnectionTempFrom()
+           to be able modify options_ hash. */
+        connection.setConnectOptions(
+                    QStringList({connection.connectOptions(),
+                                 u"MYSQL_OPT_OPTIONAL_RESULTSET_METADATA=ON"_s})
+                    .join(SEMICOLON));
+
+        QVERIFY_THROWS_EXCEPTION(InvalidArgumentError, connection.open());
+
+        // Restore
+        /* This will generate expected warning about the connection is still in use
+           it can't be avoided because we want to test the query.driver/Weak(). */
+        Databases::removeDriversConnection(*connectionName);
+
+        // The sqldriver must be invalidated immediately
+        QVERIFY(!connection.isValid());
+        QVERIFY(Databases::driversConnectionNames().isEmpty());
+        QVERIFY(Databases::driversOpenedConnectionNames().isEmpty());
+    }
+}
+
+void tst_SqlDatabaseManager::MySQL_disableOptionalMetadata() const
+{
+    /* CLIENT_OPTIONAL_RESULTSET_METADATA=OFF
+       Setting CLIENT_OPTIONAL_RESULTSET_METADATA to OFF is another story than setting
+       MYSQL_OPT_OPTIONAL_RESULTSET_METADATA to OFF, it must still throw an exception
+       because it's a pure flag, so if it's set it will be OR-ed to the connection flags
+       and there is nothing like detecting if it's a flag option and if is set to OFF
+       then remove this flag from connection flags, so must throw. */
+    {
+        const auto connectionName =
+                Databases::createDriversConnectionTempFrom(
+                    Databases::MYSQL_DRIVERS, {ClassName, QString::fromUtf8(__func__)}, // NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
+                    false);
+
+        if (!connectionName)
+            QSKIP(TestUtils::AutoTestSkipped
+                  .arg(TypeUtils::classPureBasename(*this), Databases::MYSQL_DRIVERS)
+                  .toUtf8().constData(), );
+
+        auto connection = Databases::driversConnection(*connectionName, false);
+        /* Setting it this way, I will not refactor the createDriversConnectionTempFrom()
+           to be able modify options_ hash. */
+        connection.setConnectOptions(
+                    QStringList({connection.connectOptions(),
+                                 u"CLIENT_OPTIONAL_RESULTSET_METADATA=OFF"_s}) // Must support option without the value (=ON/OFF; w/o value == ON)
+                    .join(SEMICOLON));
+
+        QVERIFY_THROWS_EXCEPTION(InvalidArgumentError, connection.open());
+
+        // Restore
+        /* This will generate expected warning about the connection is still in use
+           it can't be avoided because we want to test the query.driver/Weak(). */
+        Databases::removeDriversConnection(*connectionName);
+
+        // The sqldriver must be invalidated immediately
+        QVERIFY(!connection.isValid());
+        QVERIFY(Databases::driversConnectionNames().isEmpty());
+        QVERIFY(Databases::driversOpenedConnectionNames().isEmpty());
+    }
+
+    /* MYSQL_OPT_OPTIONAL_RESULTSET_METADATA=OFF
+       Setting it to off is correct because it will call mysql_options(), MySQL client
+       internally removes the CLIENT_OPTIONAL_RESULTSET_METADATA flag from connection
+       flags. */
+    {
+        const auto connectionName =
+                Databases::createDriversConnectionTempFrom(
+                    Databases::MYSQL_DRIVERS, {ClassName, QString::fromUtf8(__func__)}, // NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
+                    false);
+
+        if (!connectionName)
+            QSKIP(TestUtils::AutoTestSkipped
+                  .arg(TypeUtils::classPureBasename(*this), Databases::MYSQL_DRIVERS)
+                  .toUtf8().constData(), );
+
+        auto connection = Databases::driversConnection(*connectionName, false);
+        /* Setting it this way, I will not refactor the createDriversConnectionTempFrom()
+           to be able modify options_ hash. */
+        connection.setConnectOptions(
+                    QStringList({connection.connectOptions(),
+                                 u"MYSQL_OPT_OPTIONAL_RESULTSET_METADATA=OFF"_s})
+                    .join(SEMICOLON));
+
+        QVERIFY(connection.open());
+
+        // Restore
+        /* This will generate expected warning about the connection is still in use
+           it can't be avoided because we want to test the query.driver/Weak(). */
+        Databases::removeDriversConnection(*connectionName);
+
+        // The sqldriver must be invalidated immediately
+        QVERIFY(!connection.isValid());
+        QVERIFY(Databases::driversConnectionNames().isEmpty());
+        QVERIFY(Databases::driversOpenedConnectionNames().isEmpty());
+    }
 }
 // NOLINTEND(readability-convert-member-functions-to-static)
 

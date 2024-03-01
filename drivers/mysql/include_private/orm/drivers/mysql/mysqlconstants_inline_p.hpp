@@ -19,6 +19,7 @@ namespace Orm::Drivers::MySql::Constants
     inline const QChar EQ_C      = QLatin1Char('=');
 
     // Common strings
+    inline const QString EMPTY   = QLatin1String("");
     inline const QString COMMA   = QStringLiteral(", ");
 
     // Database related
