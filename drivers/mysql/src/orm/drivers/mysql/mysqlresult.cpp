@@ -494,6 +494,7 @@ void MySqlResult::cleanup()
     mysqlFreeResults();
 
     // Prepared queries
+    // No need to call mysql_stmt_free_result(), calling only mysql_stmt_close() is enough
     mysqlStmtClose();
 
     // d->meta != nullptr check is inside as the first thing
@@ -554,6 +555,7 @@ void MySqlResult::cleanupForDtor() noexcept
     mysqlFreeResultsForDtor();
 
     // Prepared queries
+    // No need to call mysql_stmt_free_result(), calling only mysql_stmt_close() is enough
     // d->stmt != nullptr check is NOT inside the mysql_stmt_close()
     if (d->stmt != nullptr)
         mysql_stmt_close(d->stmt);
@@ -567,7 +569,6 @@ void MySqlResult::cleanupForDtor() noexcept
        from the destructor as they are smart pointers. */
 }
 
-// CUR drivers make the same logic also for prepared statements; now I'm pretty sure the same logic is also needed for prepared stmts; look also at detachFromResultSet(); see https://dev.mysql.com/doc/c-api/8.3/en/mysql-stmt-next-result.html; see https://github.com/php/php-src/blob/75ef03e742cac6a69c8475252ae2a725902c2e1e/ext/pdo_mysql/mysql_statement.c#L351 silverqx
 void MySqlResult::mysqlFreeResults()
 {
     Q_D(MySqlResult);
