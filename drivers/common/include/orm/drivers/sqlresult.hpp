@@ -133,6 +133,8 @@ namespace Orm::Drivers
         /* Result sets */
         /*! Get a SqlRecord containing the field information for the current query. */
         virtual SqlRecord record() const = 0;
+        /*! Get a SqlRecord containing the field information for the current query. */
+        virtual const SqlRecord &recordCached() const = 0;
         /*! Get the ID of the most recent inserted row if the database supports it. */
         virtual QVariant lastInsertId() const = 0; // Can't be noexcept because PostgresResult::lastInsertId() will call driver()->createResult()
 

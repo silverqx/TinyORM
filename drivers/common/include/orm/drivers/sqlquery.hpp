@@ -117,6 +117,8 @@ namespace Orm::Drivers
         /* Result sets */
         /*! Get a SqlRecord containing the field information for the current query. */
         SqlRecord record() const;
+        /*! Get a SqlRecord containing the field information for the current query. */
+        const SqlRecord &recordCached() const;
         /*! Get the ID of the most recent inserted row if the database supports it. */
         QVariant lastInsertId() const;
 

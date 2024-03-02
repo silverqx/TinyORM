@@ -272,6 +272,15 @@ SqlRecord SqlQuery::record() const
     return record;
 }
 
+const SqlRecord &SqlQuery::recordCached() const
+{
+    /* The record will be cached for better performance, it avoids materialization
+       of the record again and again. Cache is invalidated during seek(), fetchXyz()
+       operations or if executing a new query on the same instance or re-executing
+       query. */
+    return m_sqlResult->recordCached();
+}
+
 QVariant SqlQuery::lastInsertId() const
 {
     // Nothing to do, query was not executed
@@ -374,7 +383,7 @@ QVariant SqlQuery::value(const size_type index) const
 
 QVariant SqlQuery::value(const QString &name) const
 {
-    const auto index = m_sqlResult->record().indexOf(name);
+    const auto index = m_sqlResult->recordCached().indexOf(name);
 
     if (index > -1)
         return value(index);
@@ -399,8 +408,7 @@ bool SqlQuery::isNull(const size_type index) const
 
 bool SqlQuery::isNull(const QString &name) const
 {
-    // CUR drivers perf check this record() call because it's doing the same performance heavy computation thing still again; cache it? silverqx
-    const auto index = m_sqlResult->record().indexOf(name);
+    const auto index = m_sqlResult->recordCached().indexOf(name);
 
     if (index > -1)
         return isNull(index);
