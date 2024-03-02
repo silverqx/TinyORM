@@ -57,6 +57,8 @@ private Q_SLOTS:
 
     void insert_update_delete() const;
 
+    void seeking() const;
+
 // NOLINTNEXTLINE(readability-redundant-access-specifiers)
 private:
     /*! Create QueryBuilder instance for the given connection. */
@@ -720,6 +722,193 @@ void tst_SqlQuery_Prepared::insert_update_delete() const
         QVERIFY(users.isActive());
         QVERIFY(users.isSelect());
     }
+}
+
+void tst_SqlQuery_Prepared::seeking() const
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    auto users = createQuery(connection);
+
+    const auto query = u"select id from users order by id"_s;
+    auto ok = users.prepare(query);
+    QVERIFY(ok);
+
+    // Test bound values
+    QVERIFY(users.boundValues().isEmpty());
+
+    ok = users.exec();
+
+    QVERIFY(ok);
+    QVERIFY(users.isActive());
+    QVERIFY(!users.isValid());
+    QVERIFY(users.isSelect());
+    const auto querySize = users.size();
+    QCOMPARE(querySize, 5);
+
+    // Verify the result
+    QVector<quint64> expected {1, 2, 3, 4, 5};
+    QVector<quint64> actual;
+    actual.reserve(querySize);
+
+    // First verify if we have the correct result set
+    while (users.next()) {
+        QVERIFY(!users.isNull(ID));
+        // Number of fields
+        const auto record = users.recordCached();
+        QCOMPARE(record.count(), 1);
+        QVERIFY(record.contains(ID));
+
+        actual.emplaceBack(users.value(ID).value<quint64>());
+    }
+    QCOMPARE(actual, expected);
+
+    using enum Orm::Drivers::CursorPosition;
+
+    QCOMPARE(users.at(), AfterLastRow);
+
+    // The following tests test all possible seeking code branches
+
+    /* Testing first(), last(), next(), previous() */
+    QVERIFY(users.first());
+    QCOMPARE(users.at(), 0);
+    QCOMPARE(users.value<quint64>(ID), 1);
+
+    QVERIFY(!users.previous());
+    QCOMPARE(users.at(), BeforeFirstRow);
+    QVERIFY(!users.previous());
+    QCOMPARE(users.at(), BeforeFirstRow);
+
+    QVERIFY(users.next());
+    QCOMPARE(users.at(), 0);
+    QCOMPARE(users.value<quint64>(ID), 1);
+
+    QVERIFY(users.last());
+    QCOMPARE(users.at(), 4);
+    QCOMPARE(users.value<quint64>(ID), 5);
+
+    QVERIFY(!users.next());
+    QCOMPARE(users.at(), AfterLastRow);
+    QVERIFY(!users.next());
+    QCOMPARE(users.at(), AfterLastRow);
+
+    QVERIFY(users.previous());
+    QCOMPARE(users.at(), 4);
+    QCOMPARE(users.value<quint64>(ID), 5);
+
+    QVERIFY(users.previous());
+    QCOMPARE(users.at(), 3);
+    QCOMPARE(users.value<quint64>(ID), 4);
+
+    /* Testing seek() - seekArbitrary() */
+    // In mapSeekToFetch()
+    QVERIFY(!users.seek(std::numeric_limits<int>::max(), false));
+    QCOMPARE(users.at(), AfterLastRow);
+    // In seekArbitrary()
+    QVERIFY(!users.seek(-3, false));
+    QCOMPARE(users.at(), BeforeFirstRow);
+
+    // Branch - fetch()
+    QVERIFY(users.seek(4, false));
+    QCOMPARE(users.at(), 4);
+    QCOMPARE(users.value<quint64>(ID), 5);
+
+    // Branch - fetchPrevious()
+    QVERIFY(users.seek(3, false));
+    QCOMPARE(users.at(), 3);
+    QCOMPARE(users.value<quint64>(ID), 4);
+
+    // The BeforeFirstRow branch for fetchPrevious() is unreachable with non-relative seek
+
+    // Branch - fetchNext()
+    QVERIFY(users.seek(4, false));
+    QCOMPARE(users.at(), 4);
+    QCOMPARE(users.value<quint64>(ID), 5);
+
+    QVERIFY(!users.seek(5, false));
+    QCOMPARE(users.at(), AfterLastRow);
+
+    /* From here things start to be a little messy because relative seek() has
+       a lot of branches. */
+
+    /* Testing relative seek() - seekRelative() */
+    // AfterLastRow
+    QCOMPARE(users.at(), AfterLastRow);
+    QVERIFY(!users.seek(0, true));
+    QCOMPARE(users.at(), AfterLastRow);
+    QVERIFY(!users.seek(1, true));
+    QCOMPARE(users.at(), AfterLastRow);
+
+    // BeforeFirstRow
+    // Prepare
+    QVERIFY(users.first());
+    QCOMPARE(users.at(), 0);
+    QVERIFY(!users.previous());
+    QCOMPARE(users.at(), BeforeFirstRow);
+    // Test
+    QVERIFY(!users.seek(0, true));
+    QCOMPARE(users.at(), BeforeFirstRow);
+    QVERIFY(!users.seek(-1, true));
+    QCOMPARE(users.at(), BeforeFirstRow);
+
+    // default: BeforeFirstRow
+    // Prepare
+    QVERIFY(users.seek(2, false));
+    QCOMPARE(users.at(), 2);
+    // Test
+    QVERIFY(!users.seek(-3, true));
+    QCOMPARE(users.at(), BeforeFirstRow);
+
+    // Legend: -- means or distinguishes the main sub-section
+
+    /* Testing relative seek() - fetchNext(), fetchPrevious(), and fetch() */
+    // -- BeforeFirstRow in seekRelative()
+
+    // Branches - fetchNext() and fetchPrevious() are unreachable
+
+    // Branch - fetch()
+    QVERIFY(users.seek(5, true));
+    QCOMPARE(users.at(), 4);
+    QCOMPARE(users.value<quint64>(ID), 5);
+
+    // AfterLastRow in mapSeekToFetch()
+    // Prepare
+    QVERIFY(users.first());
+    QCOMPARE(users.at(), 0);
+    QVERIFY(!users.previous());
+    QCOMPARE(users.at(), BeforeFirstRow);
+    // Test
+    QVERIFY(!users.seek(6, true));
+    QCOMPARE(users.at(), AfterLastRow);
+
+    // -- AfterLastRow in seekRelative()
+
+    // Branches - fetchPrevious(), fetchNext() and AfterLastRow in mapSeekToFetch() are unreachable
+
+    // Branch - fetch()
+    QVERIFY(users.seek(-4, true));
+    QCOMPARE(users.at(), 1);
+    QCOMPARE(users.value<quint64>(ID), 2);
+
+    // -- default: in seekRelative()
+    // Branch - fetchNext()
+    QVERIFY(users.seek(1, true));
+    QCOMPARE(users.at(), 2);
+    QCOMPARE(users.value<quint64>(ID), 3);
+
+    // Branch - fetchPrevious()
+    QVERIFY(users.seek(-1, true));
+    QCOMPARE(users.at(), 1);
+    QCOMPARE(users.value<quint64>(ID), 2);
+
+    // Branch - fetch()
+    QVERIFY(users.seek(2, true));
+    QCOMPARE(users.at(), 3);
+    QCOMPARE(users.value<quint64>(ID), 4);
+
+    // AfterLastRow in mapSeekToFetch()
+    QVERIFY(!users.seek(2, true));
+    QCOMPARE(users.at(), AfterLastRow);
 }
 
 /* private */

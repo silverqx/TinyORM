@@ -509,7 +509,6 @@ bool SqlQuery::seekArbitrary(const size_type index, size_type &actualIdx) noexce
 
 bool SqlQuery::seekRelative(const size_type index, size_type &actualIdx)
 {
-    // CUR drivers finish this if I will have higher IQ silverqx
     switch (at()) {
     case BeforeFirstRow:
         // Nothing to do
