@@ -434,13 +434,13 @@ namespace
     /*! Pointer to the previous Message Handler. */
     QtMessageHandler g_originalHandler = nullptr;
     /*! Logged messages in the Message Handler. */
-    QStringList g_loggedMessages;
+    Q_GLOBAL_STATIC(QStringList, g_loggedMessages);
 
     /*! Custom Message Handler that records logged messages. */
     void tinyMessageHandler(const QtMsgType type, const QMessageLogContext &context,
                             const QString &message)
     {
-        g_loggedMessages << message;
+        *g_loggedMessages << message;
 
         if (g_originalHandler != nullptr)
             g_originalHandler(type, context, message);
@@ -486,13 +486,13 @@ void tst_SqlQuery_Prepared::select_BoundMoreValues() const
     QCOMPARE(users.executedQuery(), query);
 
     // Verify the logged message 😎
-    QCOMPARE(g_loggedMessages.size(), 1);
+    QCOMPARE(g_loggedMessages->size(), 1);
     static const auto expectedWarning =
             u"The values.size() > placeholdersCount, the higher number "
              "of prepared bindings. The current number of placeholder markers is "
              "'1' and the number of bound values is '2', but everything will "
              "work normally, in MySqlResultPrivate::checkPreparedBindingsCount()."_s;
-    QCOMPARE(g_loggedMessages.first(), expectedWarning);
+    QCOMPARE(g_loggedMessages->first(), expectedWarning);
 
     // Verify the result
     QVector<IdAndCustomType<QString>> expected {
@@ -519,7 +519,7 @@ void tst_SqlQuery_Prepared::select_BoundMoreValues() const
     QCOMPARE(actual, expected);
 
     // Restore
-    g_loggedMessages.clear();
+    g_loggedMessages->clear();
 }
 
 void tst_SqlQuery_Prepared::seeking() const
