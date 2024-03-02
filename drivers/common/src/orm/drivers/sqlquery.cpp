@@ -554,6 +554,9 @@ bool SqlQuery::mapSeekToFetch(const size_type actualIdx)
         if (m_sqlResult->fetchPrevious())
             return true;
 
+        /* This code branch is unreachable but don't use the Q_UNREACHABLE() here as
+           the seeking logic has a lot of branches and there is a small chance that
+           it can be reached. But I didn't succeed to reach it and I tried hard. */
         m_sqlResult->setAt(BeforeFirstRow);
         return false;
     }
