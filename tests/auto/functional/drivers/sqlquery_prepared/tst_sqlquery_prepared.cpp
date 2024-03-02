@@ -910,6 +910,7 @@ void tst_SqlQuery_Prepared::seeking() const
     QVERIFY(!users.seek(2, true));
     QCOMPARE(users.at(), AfterLastRow);
 }
+// NOLINTEND(readability-convert-member-functions-to-static)
 
 /* private */
 

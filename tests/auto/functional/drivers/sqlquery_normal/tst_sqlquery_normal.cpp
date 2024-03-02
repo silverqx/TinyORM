@@ -708,6 +708,7 @@ void tst_SqlQuery_Normal::seeking() const
     QVERIFY(!users.seek(2, true));
     QCOMPARE(users.at(), AfterLastRow);
 }
+// NOLINTEND(readability-convert-member-functions-to-static)
 
 /* private */
 
