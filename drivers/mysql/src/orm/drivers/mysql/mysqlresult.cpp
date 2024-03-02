@@ -372,7 +372,7 @@ bool MySqlResult::fetchLast()
         return false;
 
     // Cursor is already on the last row/result
-    if (at() == rowsCount)
+    if (at() == rowsCount - 1)
         return true;
 
     return fetch(rowsCount - 1);
