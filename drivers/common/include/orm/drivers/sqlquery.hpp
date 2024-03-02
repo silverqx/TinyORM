@@ -5,7 +5,7 @@
 #include <orm/macros/systemheader.hpp>
 TINY_SYSTEM_HEADER
 
-#include <QtGlobal>
+#include <QVariant>
 
 #include "orm/drivers/driverstypes.hpp"
 #include "orm/drivers/macros/export.hpp"
@@ -138,6 +138,13 @@ namespace Orm::Drivers
         /*! Get the field value with the field name in the current record. */
         QVariant value(const QString &name) const;
 
+        /*! Get the field value at the given index in the current record. */
+        template<typename T>
+        T value(size_type index) const;
+        /*! Get the field value with the field name in the current record. */
+        template<typename T>
+        T value(const QString &name) const;
+
         /*! Determine whether the field at the given index is NULL. */
         bool isNull(size_type index) const;
         /*! Determine whether the field with the given field name is NULL. */
@@ -182,6 +189,20 @@ namespace Orm::Drivers
         /*! Query result set. */
         NotNull<std::unique_ptr<SqlResult>> m_sqlResult;
     };
+
+    /* public */
+
+    template<typename T>
+    T SqlQuery::value(const size_type index) const
+    {
+        return value(index).value<T>();
+    }
+
+    template<typename T>
+    T SqlQuery::value(const QString &name) const
+    {
+        return value(name).value<T>();
+    }
 
 } // namespace Orm::Drivers
 
