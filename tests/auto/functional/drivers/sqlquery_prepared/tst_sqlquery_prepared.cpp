@@ -26,6 +26,8 @@ using Orm::Drivers::Exceptions::QueryError;
 using Orm::Drivers::SqlDatabase;
 using Orm::Drivers::SqlQuery;
 
+using enum Orm::Drivers::CursorPosition;
+
 using Orm::Utils::NullVariant;
 
 using TypeUtils = Orm::Utils::Type;
@@ -58,6 +60,8 @@ private Q_SLOTS:
     void insert_update_delete() const;
 
     void seeking() const;
+
+    void finish_And_detachFromResultSet() const;
 
 // NOLINTNEXTLINE(readability-redundant-access-specifiers)
 private:
@@ -763,8 +767,6 @@ void tst_SqlQuery_Prepared::seeking() const
     }
     QCOMPARE(actual, expected);
 
-    using enum Orm::Drivers::CursorPosition;
-
     QCOMPARE(users.at(), AfterLastRow);
 
     // The following tests test all possible seeking code branches
@@ -909,6 +911,91 @@ void tst_SqlQuery_Prepared::seeking() const
     // AfterLastRow in mapSeekToFetch()
     QVERIFY(!users.seek(2, true));
     QCOMPARE(users.at(), AfterLastRow);
+}
+
+void tst_SqlQuery_Prepared::finish_And_detachFromResultSet() const
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    auto users = createQuery(connection);
+
+    const auto query = u"select id, name from users where id < ? order by id"_s;
+    auto ok = users.prepare(query);
+    QVERIFY(ok);
+
+    users.addBindValue(4);
+
+    // Test bound values
+    {
+        const auto boundValues = users.boundValues();
+        QCOMPARE(boundValues.size(), 1);
+        QCOMPARE(boundValues, QVariantList {4});
+    }
+
+    ok = users.exec();
+
+    // Check everything what can be checked for this basic query (default configuration)
+    QVERIFY(ok);
+    QVERIFY(users.isActive());
+    QVERIFY(!users.isValid());
+    QVERIFY(users.isSelect());
+    const auto querySize = users.size();
+    QCOMPARE(querySize, 3);
+    // Behaves the same as the size() for SELECT queries
+    QCOMPARE(users.numRowsAffected(), 3);
+    QCOMPARE(users.numericalPrecisionPolicy(), LowPrecisionDouble);
+    QCOMPARE(users.executedQuery(), query);
+    QCOMPARE(users.lastInsertId(), QVariant());
+
+    // Verify the result
+    QVector<IdAndCustomType<QString>> expected {
+        {1, "andrej"}, {2, "silver"}, {3, "peter"},
+    };
+    QVector<IdAndCustomType<QString>> actual;
+    actual.reserve(querySize);
+
+    while (users.next()) {
+        QVERIFY(users.isValid());
+        QVERIFY(!users.isNull(0));
+        QVERIFY(!users.isNull(1));
+        QVERIFY(!users.isNull(ID));
+        QVERIFY(!users.isNull(NAME));
+        // Number of fields
+        const auto record = users.recordCached();
+        QCOMPARE(record.count(), 2);
+        QVERIFY(record.contains(ID));
+        QVERIFY(record.contains(NAME));
+
+        actual.emplaceBack(users.value(ID).value<quint64>(),
+                           users.value(NAME).value<QString>());
+    }
+    QCOMPARE(actual, expected);
+
+    users.finish();
+
+    QVERIFY(!users.isActive());
+    QVERIFY(!users.isValid());
+    QVERIFY(users.isSelect());
+    QCOMPARE(users.at(), BeforeFirstRow);
+    QCOMPARE(users.size(), -1);
+    // Behaves the same as the size() for SELECT queries
+    QCOMPARE(users.numRowsAffected(), -1);
+    QCOMPARE(users.numericalPrecisionPolicy(), LowPrecisionDouble);
+    QCOMPARE(users.executedQuery(), query);
+    QCOMPARE(users.lastInsertId(), QVariant());
+
+    // Test bound values
+    {
+        const auto boundValues = users.boundValues();
+        QCOMPARE(boundValues.size(), 1);
+        QCOMPARE(boundValues, QVariantList {4});
+    }
+
+    QVERIFY(!users.next());
+    QVERIFY(!users.previous());
+    QVERIFY(!users.first());
+    QVERIFY(!users.last());
+    QVERIFY(!users.seek(1));
 }
 // NOLINTEND(readability-convert-member-functions-to-static)
 
