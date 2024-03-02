@@ -121,6 +121,7 @@ void tst_SqlQuery_Prepared::select_All() const
     QVERIFY(users.isActive());
     QVERIFY(users.isSelect());
     QVERIFY(!users.isValid());
+    QCOMPARE(users.at(), BeforeFirstRow);
     const auto querySize = users.size();
     QCOMPARE(querySize, 5);
     // Behaves the same as the size() for SELECT queries
@@ -153,6 +154,7 @@ void tst_SqlQuery_Prepared::select_All() const
                            users.value(NAME).value<QString>());
     }
     QCOMPARE(actual, expected);
+    QCOMPARE(users.at(), AfterLastRow);
 }
 
 void tst_SqlQuery_Prepared::select_EmptyResultSet() const
@@ -178,6 +180,7 @@ void tst_SqlQuery_Prepared::select_EmptyResultSet() const
     QVERIFY(users.isActive());
     QVERIFY(users.isSelect());
     QVERIFY(!users.isValid());
+    QCOMPARE(users.at(), BeforeFirstRow);
     const auto querySize = users.size();
     QCOMPARE(querySize, 0);
     // Behaves the same as the size() for SELECT queries
@@ -188,10 +191,15 @@ void tst_SqlQuery_Prepared::select_EmptyResultSet() const
     QCOMPARE(users.boundValues().size(), 1);
 
     QVERIFY(!users.next());
+    QCOMPARE(users.at(), BeforeFirstRow);
     QVERIFY(!users.previous());
+    QCOMPARE(users.at(), BeforeFirstRow);
     QVERIFY(!users.first());
+    QCOMPARE(users.at(), BeforeFirstRow);
     QVERIFY(!users.last());
+    QCOMPARE(users.at(), BeforeFirstRow);
     QVERIFY(!users.seek(1));
+    QCOMPARE(users.at(), BeforeFirstRow);
 }
 
 void tst_SqlQuery_Prepared::select_WithWhere() const
@@ -217,6 +225,7 @@ void tst_SqlQuery_Prepared::select_WithWhere() const
     QVERIFY(users.isActive());
     QVERIFY(users.isSelect());
     QVERIFY(!users.isValid());
+    QCOMPARE(users.at(), BeforeFirstRow);
     const auto querySize = users.size();
     QCOMPARE(querySize, 3);
     // Behaves the same as the size() for SELECT queries
@@ -246,6 +255,7 @@ void tst_SqlQuery_Prepared::select_WithWhere() const
                            users.value(NAME).value<QString>());
     }
     QCOMPARE(actual, expected);
+    QCOMPARE(users.at(), AfterLastRow);
 }
 
 void tst_SqlQuery_Prepared::select_IsNull() const
@@ -267,6 +277,7 @@ void tst_SqlQuery_Prepared::select_IsNull() const
     QVERIFY(users.isActive());
     QVERIFY(users.isSelect());
     QVERIFY(!users.isValid());
+    QCOMPARE(users.at(), BeforeFirstRow);
     const auto querySize = users.size();
     QCOMPARE(querySize, 5);
     QCOMPARE(users.executedQuery(), query);
@@ -290,6 +301,7 @@ void tst_SqlQuery_Prepared::select_IsNull() const
                            users.isNull(NOTE));
     }
     QCOMPARE(actual, expected);
+    QCOMPARE(users.at(), AfterLastRow);
 }
 
 void tst_SqlQuery_Prepared::select_Aggregate_Count() const
@@ -315,6 +327,7 @@ void tst_SqlQuery_Prepared::select_Aggregate_Count() const
     QVERIFY(users.isActive());
     QVERIFY(users.isSelect());
     QVERIFY(!users.isValid());
+    QCOMPARE(users.at(), BeforeFirstRow);
     const auto querySize = users.size();
     QCOMPARE(querySize, 1);
     QCOMPARE(users.executedQuery(), query);
@@ -350,6 +363,7 @@ void tst_SqlQuery_Prepared::select_Testing_recordCached() const
     QVERIFY(users.isActive());
     QVERIFY(users.isSelect());
     QVERIFY(!users.isValid());
+    QCOMPARE(users.at(), BeforeFirstRow);
     const auto querySize = users.size();
     QCOMPARE(querySize, 5);
     // Behaves the same as the size() for SELECT queries
@@ -389,6 +403,7 @@ void tst_SqlQuery_Prepared::select_Testing_recordCached() const
     }
     QCOMPARE(actual, expected);
     QCOMPARE(actualNull, expectedNull);
+    QCOMPARE(users.at(), AfterLastRow);
 }
 
 void tst_SqlQuery_Prepared::select_BoundLessValues() const
