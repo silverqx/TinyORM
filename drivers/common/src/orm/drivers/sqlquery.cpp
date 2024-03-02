@@ -364,7 +364,7 @@ bool SqlQuery::seek(const size_type index, const bool relative)
         return false;
 
     // Relative seek
-    if (!seekRelative(index, actualIdx))
+    if (relative && !seekRelative(index, actualIdx))
         return false;
 
     return mapSeekToFetch(actualIdx);
