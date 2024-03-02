@@ -44,7 +44,7 @@ private Q_SLOTS:
 
     void select_All() const;
     void select_EmptyResultSet() const;
-    void select_SameResultSet() const;
+    void select_FetchingSameResultSet() const;
     void select_WithWhere() const;
 
     void select_IsNull() const;
@@ -184,7 +184,7 @@ void tst_SqlQuery_Normal::select_EmptyResultSet() const
     QCOMPARE(users.at(), BeforeFirstRow);
 }
 
-void tst_SqlQuery_Normal::select_SameResultSet() const
+void tst_SqlQuery_Normal::select_FetchingSameResultSet() const
 {
     QFETCH_GLOBAL(QString, connection);
 
