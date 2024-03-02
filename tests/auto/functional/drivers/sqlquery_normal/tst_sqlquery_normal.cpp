@@ -111,6 +111,7 @@ void tst_SqlQuery_Normal::select_All() const
     QVERIFY(users.isActive());
     QVERIFY(users.isSelect());
     QVERIFY(!users.isValid());
+    QCOMPARE(users.at(), BeforeFirstRow);
     const auto querySize = users.size();
     QCOMPARE(querySize, 5);
     // Behaves the same as the size() for SELECT queries
@@ -144,6 +145,7 @@ void tst_SqlQuery_Normal::select_All() const
                            users.value(NAME).value<QString>());
     }
     QCOMPARE(actual, expected);
+    QCOMPARE(users.at(), AfterLastRow);
 }
 
 void tst_SqlQuery_Normal::select_EmptyResultSet() const
@@ -160,6 +162,7 @@ void tst_SqlQuery_Normal::select_EmptyResultSet() const
     QVERIFY(users.isActive());
     QVERIFY(users.isSelect());
     QVERIFY(!users.isValid());
+    QCOMPARE(users.at(), BeforeFirstRow);
     const auto querySize = users.size();
     QCOMPARE(querySize, 0);
     // Behaves the same as the size() for SELECT queries
@@ -170,10 +173,15 @@ void tst_SqlQuery_Normal::select_EmptyResultSet() const
     QVERIFY(users.boundValues().isEmpty());
 
     QVERIFY(!users.next());
+    QCOMPARE(users.at(), BeforeFirstRow);
     QVERIFY(!users.previous());
+    QCOMPARE(users.at(), BeforeFirstRow);
     QVERIFY(!users.first());
+    QCOMPARE(users.at(), BeforeFirstRow);
     QVERIFY(!users.last());
+    QCOMPARE(users.at(), BeforeFirstRow);
     QVERIFY(!users.seek(1));
+    QCOMPARE(users.at(), BeforeFirstRow);
 }
 
 void tst_SqlQuery_Normal::select_SameResultSet() const
@@ -189,6 +197,7 @@ void tst_SqlQuery_Normal::select_SameResultSet() const
     QVERIFY(users.isActive());
     QVERIFY(users.isSelect());
     QVERIFY(!users.isValid());
+    QCOMPARE(users.at(), BeforeFirstRow);
     const auto querySize = users.size();
     QCOMPARE(querySize, 3);
     // Behaves the same as the size() for SELECT queries
@@ -221,6 +230,7 @@ void tst_SqlQuery_Normal::select_WithWhere() const
     QVERIFY(users.isActive());
     QVERIFY(users.isSelect());
     QVERIFY(!users.isValid());
+    QCOMPARE(users.at(), BeforeFirstRow);
     const auto querySize = users.size();
     QCOMPARE(querySize, 3);
     // Behaves the same as the size() for SELECT queries
@@ -252,6 +262,7 @@ void tst_SqlQuery_Normal::select_WithWhere() const
                            users.value(NAME).value<QString>());
     }
     QCOMPARE(actual, expected);
+    QCOMPARE(users.at(), AfterLastRow);
 }
 
 void tst_SqlQuery_Normal::select_IsNull() const
@@ -267,6 +278,7 @@ void tst_SqlQuery_Normal::select_IsNull() const
     QVERIFY(users.isActive());
     QVERIFY(users.isSelect());
     QVERIFY(!users.isValid());
+    QCOMPARE(users.at(), BeforeFirstRow);
     const auto querySize = users.size();
     QCOMPARE(querySize, 5);
     QCOMPARE(users.executedQuery(), query);
@@ -290,6 +302,7 @@ void tst_SqlQuery_Normal::select_IsNull() const
                            users.isNull(NOTE));
     }
     QCOMPARE(actual, expected);
+    QCOMPARE(users.at(), AfterLastRow);
 }
 
 void tst_SqlQuery_Normal::select_Aggregate_Count() const
@@ -305,6 +318,7 @@ void tst_SqlQuery_Normal::select_Aggregate_Count() const
     QVERIFY(users.isActive());
     QVERIFY(users.isSelect());
     QVERIFY(!users.isValid());
+    QCOMPARE(users.at(), BeforeFirstRow);
     const auto querySize = users.size();
     QCOMPARE(querySize, 1);
     QCOMPARE(users.executedQuery(), query);
@@ -334,6 +348,7 @@ void tst_SqlQuery_Normal::select_Testing_recordCached() const
     QVERIFY(users.isActive());
     QVERIFY(users.isSelect());
     QVERIFY(!users.isValid());
+    QCOMPARE(users.at(), BeforeFirstRow);
     const auto querySize = users.size();
     QCOMPARE(querySize, 5);
     // Behaves the same as the size() for SELECT queries
@@ -373,6 +388,7 @@ void tst_SqlQuery_Normal::select_Testing_recordCached() const
     }
     QCOMPARE(actual, expected);
     QCOMPARE(actualNull, expectedNull);
+    QCOMPARE(users.at(), AfterLastRow);
 }
 
 /* I will test the INSERT, UPDATE, and DELETE in the one test method, it's nothing
