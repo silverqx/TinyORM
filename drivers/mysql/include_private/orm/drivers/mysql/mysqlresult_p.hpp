@@ -5,6 +5,7 @@
 #include "orm/drivers/macros/declaresqldriverprivate_p.hpp"
 #include "orm/drivers/mysql/mysqldriver.hpp"
 #include "orm/drivers/mysql/mysqltypes_p.hpp"
+#include "orm/drivers/sqlrecord.hpp"
 #include "orm/drivers/sqlresult_p.hpp"
 
 /* All the in vs out bindings/data-related comments and identifier names related
@@ -115,6 +116,9 @@ namespace Orm::Drivers::MySql
         bool hasBlobs = false;
         /*! Is the current result set for the prepared statement? */
         bool preparedQuery = false;
+
+        /*! Cache for the record() method. */
+        mutable std::optional<SqlRecord> recordCache = std::nullopt;
 
     private:
         /* Prepared queries */

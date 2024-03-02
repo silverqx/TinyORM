@@ -49,6 +49,8 @@ private Q_SLOTS:
 
     void select_Aggregate_Count() const;
 
+    void select_Testing_recordCached() const;
+
     void select_BoundLessValues() const;
     void select_BoundMoreValues() const;
 
@@ -122,7 +124,8 @@ void tst_SqlQuery_Prepared::select_All() const
 
     // Verify the result
     QVector<IdAndCustomType<QString>> expected {
-        {1, "andrej"}, {2, "silver"}, {3, "peter"}, {4, "jack"}, {5, "obiwan"},
+        {1, u"andrej"_s}, {2, u"silver"_s}, {3, u"peter"_s}, {4, u"jack"_s},
+        {5, u"obiwan"_s},
     };
     QVector<IdAndCustomType<QString>> actual;
     actual.reserve(querySize);
@@ -134,7 +137,7 @@ void tst_SqlQuery_Prepared::select_All() const
         QVERIFY(!users.isNull(ID));
         QVERIFY(!users.isNull(NAME));
         // Number of fields
-        const auto record = users.record();
+        const auto record = users.recordCached();
         QCOMPARE(record.count(), 2);
         QVERIFY(record.contains(ID));
         QVERIFY(record.contains(NAME));
@@ -188,7 +191,7 @@ void tst_SqlQuery_Prepared::select_WithWhere() const
         QVERIFY(!users.isNull(ID));
         QVERIFY(!users.isNull(NAME));
         // Number of fields
-        const auto record = users.record();
+        const auto record = users.recordCached();
         QCOMPARE(record.count(), 2);
         QVERIFY(record.contains(ID));
         QVERIFY(record.contains(NAME));
@@ -232,7 +235,7 @@ void tst_SqlQuery_Prepared::select_IsNull() const
     while (users.next()) {
         QVERIFY(users.isValid());
         // Number of fields
-        const auto record = users.record();
+        const auto record = users.recordCached();
         QCOMPARE(record.count(), 2);
         QVERIFY(record.contains(ID));
         QVERIFY(record.contains(NOTE));
@@ -275,11 +278,71 @@ void tst_SqlQuery_Prepared::select_Aggregate_Count() const
     QVERIFY(ok);
     QVERIFY(users.isValid());
     // Number of fields
-    const auto record = users.record();
+    const auto record = users.recordCached();
     QCOMPARE(record.count(), 1);
     QVERIFY(record.contains("aggregate"));
 
     QCOMPARE(users.value("aggregate").value<quint64>(), 2);
+}
+
+void tst_SqlQuery_Prepared::select_Testing_recordCached() const
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    auto users = createQuery(connection);
+
+    const auto query = u"select id, name, is_banned, note from users order by id"_s;
+    auto ok = users.prepare(query);
+    QVERIFY(ok);
+
+    // Test bound values
+    QVERIFY(users.boundValues().isEmpty());
+
+    ok = users.exec();
+
+    QVERIFY(ok);
+    QVERIFY(users.isActive());
+    QVERIFY(!users.isValid());
+    QVERIFY(users.isSelect());
+    const auto querySize = users.size();
+    QCOMPARE(querySize, 5);
+    // Behaves the same as the size() for SELECT queries
+    QCOMPARE(users.numRowsAffected(), 5);
+    QCOMPARE(users.numericalPrecisionPolicy(), LowPrecisionDouble);
+    QCOMPARE(users.executedQuery(), query);
+    QCOMPARE(users.lastInsertId(), QVariant());
+
+    // Verify the result
+    QVector<QVector<QVariant>> expected {
+        {1, "andrej", 0, NullVariant::QString()},
+        {2, "silver", 0, NullVariant::QString()},
+        {3, "peter", 1, u"no torrents no roles"_s},
+        {4, "jack", 0, u"test SoftDeletes"_s},
+        {5, "obiwan", 1, u"test SoftDeletes"_s},
+    };
+    QVector<QVector<QVariant>> actual;
+    actual.reserve(querySize);
+
+    QVector<bool> expectedNull {true, true, false, false, false};
+    QVector<bool> actualNull;
+    actualNull.reserve(querySize);
+
+    while (users.next()) {
+        QVERIFY(users.isValid());
+        actualNull << users.isNull(NOTE);
+        // Number of fields
+        const auto record = users.recordCached();
+        QCOMPARE(record.count(), 4);
+        QVERIFY(record.contains(ID));
+        QVERIFY(record.contains(NAME));
+
+        actual << QVector<QVariant>({users.value(ID).value<quint64>(),
+                                     users.value(NAME).value<QString>(),
+                                     users.value("is_banned").value<QString>(),
+                                     users.value(NOTE).value<QString>()});
+    }
+    QCOMPARE(actual, expected);
+    QCOMPARE(actualNull, expectedNull);
 }
 
 void tst_SqlQuery_Prepared::select_BoundLessValues() const
@@ -381,7 +444,7 @@ void tst_SqlQuery_Prepared::select_BoundMoreValues() const
         QVERIFY(!users.isNull(ID));
         QVERIFY(!users.isNull(NAME));
         // Number of fields
-        const auto record = users.record();
+        const auto record = users.recordCached();
         QCOMPARE(record.count(), 2);
         QVERIFY(record.contains(ID));
         QVERIFY(record.contains(NAME));
@@ -474,7 +537,7 @@ void tst_SqlQuery_Prepared::insert_update_delete() const
         QVERIFY(ok);
         QVERIFY(users.isValid());
         // Number of fields
-        const auto record = users.record();
+        const auto record = users.recordCached();
         QCOMPARE(record.count(), 7);
         for (const auto &column : columnNames)
             QVERIFY(record.contains(column));
@@ -545,7 +608,7 @@ void tst_SqlQuery_Prepared::insert_update_delete() const
         QVERIFY(ok);
         QVERIFY(users.isValid());
         // Number of fields
-        const auto record = users.record();
+        const auto record = users.recordCached();
         QCOMPARE(record.count(), 7);
         for (const auto &column : columnNames)
             QVERIFY(record.contains(column));

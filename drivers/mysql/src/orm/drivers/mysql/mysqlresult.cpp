@@ -6,7 +6,6 @@
 #include "orm/drivers/mysql/mysqldriver_p.hpp"
 #include "orm/drivers/mysql/mysqlresult_p.hpp"
 #include "orm/drivers/mysql/mysqlutils_p.hpp"
-#include "orm/drivers/sqlrecord.hpp"
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
@@ -143,6 +142,8 @@ bool MySqlResult::exec()
     if (d->stmt == nullptr)
         return false;
 
+    d->recordCache.reset();
+
     /* Prepared queries don't use metadata the same way as normal queries,
        it's always RESULTSET_METADATA_NONE. */
 
@@ -271,10 +272,17 @@ SqlRecord MySqlResult::record() const
     // Restore the cursor position
     mysql_field_seek(mysqlRes, currentCursor);
 
-    /* The result could be cached to avoid materializing it again and again but
-       I will not do that, it's not a big deal, the result set is already cached on
-       the client and this materialization is fast. */
     return result;
+}
+
+const SqlRecord &MySqlResult::recordCached() const
+{
+    Q_D(const MySqlResult);
+
+    if (!d->recordCache)
+        d->recordCache = record();
+
+    return *d->recordCache;
 }
 
 QVariant MySqlResult::lastInsertId() const
@@ -318,6 +326,8 @@ bool MySqlResult::fetch(const size_type index)
     // Cursor is already on the requested row/result
     if (at() == index)
         return true;
+
+    d->recordCache.reset();
 
     // Fetch the next row in the result set
     if (d->preparedQuery) {
@@ -375,6 +385,8 @@ bool MySqlResult::fetchNext()
     // Nothing to fetch, an empty result set
     if (size() == 0)
         return false;
+
+    d->recordCache.reset();
 
     // Fetch the next row in the result set
     if (d->preparedQuery) {
@@ -466,6 +478,9 @@ void MySqlResult::detachFromResultSet() noexcept
 
     // Don't log warnings here to leave this method noexcept
 
+    /* An user still be able to access recordCached() if the cache was populated because
+       of this don't call the d->recordCache.reset() here. */
+
     if (d->preparedQuery)
         mysql_stmt_free_result(d->stmt);
 
@@ -478,6 +493,8 @@ void MySqlResult::detachFromResultSet() noexcept
 void MySqlResult::cleanup()
 {
     Q_D(MySqlResult);
+
+    d->recordCache.reset();
 
     // Normal queries
     mysqlFreeResults();
