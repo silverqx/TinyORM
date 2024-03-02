@@ -57,11 +57,11 @@ private Q_SLOTS:
     void select_BoundLessValues() const;
     void select_BoundMoreValues() const;
 
-    void insert_update_delete() const;
-
     void seeking() const;
 
     void finish_And_detachFromResultSet() const;
+
+    void insert_update_delete() const;
 
 // NOLINTNEXTLINE(readability-redundant-access-specifiers)
 private:
@@ -519,230 +519,6 @@ void tst_SqlQuery_Prepared::select_BoundMoreValues() const
     g_loggedMessages.clear();
 }
 
-/* I will test the INSERT, UPDATE, and DELETE in the one test method, it's nothing
-   wrong about it (it's not absolutely cosher though), it also tests executing more
-   queries on the same SqlQuery instance. */
-void tst_SqlQuery_Prepared::insert_update_delete() const
-{
-    QFETCH_GLOBAL(QString, connection);
-
-    auto users = createQuery(connection);
-    quint64 lastInsertedId = 0;
-
-    // INSERT a new row into the users table
-    {
-        const auto query =
-                u"insert into users "
-                   "(name, is_banned, note, created_at, updated_at, deleted_at) "
-                 "values (?, ?, ?, ?, ?, ?)"_s;
-        auto ok = users.prepare(query);
-        QVERIFY(ok);
-
-        users.addBindValue(u"ashen one"_s);
-        users.addBindValue(1);
-        users.addBindValue(u"test drivers INSERT"_s);
-        users.addBindValue(u"2023-05-11T11:52:53"_s);
-        users.addBindValue(u"2023-05-12T11:52:53"_s);
-        users.addBindValue(NullVariant::QDateTime());
-
-        // Test bound values
-        const auto boundValues = users.boundValues();
-        QCOMPARE(boundValues.size(), 6);
-        QCOMPARE(boundValues,
-                 (QVariantList {u"ashen one"_s, 1, u"test drivers INSERT"_s,
-                                u"2023-05-11T11:52:53"_s, u"2023-05-12T11:52:53"_s,
-                                NullVariant::QDateTime()}));
-
-        ok = users.exec();
-
-        QVERIFY(ok);
-        QVERIFY(users.isActive());
-        QVERIFY(!users.isSelect());
-        QVERIFY(!users.isValid());
-        QCOMPARE(users.size(), -1);
-        QCOMPARE(users.numRowsAffected(), 1);
-        QCOMPARE(users.executedQuery(), query);
-
-        lastInsertedId = users.lastInsertId().value<quint64>();
-        QVERIFY(lastInsertedId > 5);
-    }
-
-    const auto columnNames = std::to_array({ID, NAME, u"is_banned"_s, NOTE, CREATED_AT,
-                                            UPDATED_AT, DELETED_AT});
-
-    // Verify the INSERT
-    {
-        const auto query = u"select * from users where id = ?"_s;
-        auto ok = users.prepare(query);
-        QVERIFY(ok);
-
-        users.addBindValue(lastInsertedId);
-
-        // Test bound values
-        const auto boundValues = users.boundValues();
-        QCOMPARE(boundValues.size(), 1);
-        QCOMPARE(boundValues, QVariantList {lastInsertedId});
-
-        ok = users.exec();
-
-        QVERIFY(ok);
-        QVERIFY(users.isActive());
-        QVERIFY(users.isSelect());
-        QVERIFY(!users.isValid());
-        const auto querySize = users.size();
-        QCOMPARE(querySize, 1);
-        QCOMPARE(users.executedQuery(), query);
-
-        // Verify the result
-        ok = users.first();
-        QVERIFY(ok);
-        QVERIFY(users.isValid());
-        // Number of fields
-        const auto record = users.recordCached();
-        QCOMPARE(record.count(), 7);
-        for (const auto &column : columnNames)
-            QVERIFY(record.contains(column));
-
-        // Tests if the QVariant has the correct type will be done in other test methods
-        QCOMPARE(users.value(NAME)       .value<QString>(),   u"ashen one"_s);
-        QCOMPARE(users.value("is_banned").value<bool>(),      true);
-        QCOMPARE(users.value(NOTE)       .value<QString>(),   u"test drivers INSERT"_s);
-        QCOMPARE(users.value(CREATED_AT) .value<QDateTime>(), QDateTime({2023, 05, 11},
-                                                                        {11, 52, 53}));
-        QCOMPARE(users.value(UPDATED_AT) .value<QDateTime>(), QDateTime({2023, 05, 12},
-                                                                        {11, 52, 53}));
-        QVERIFY(users.isNull(DELETED_AT));
-        QCOMPARE(users.value(DELETED_AT), NullVariant::QDateTime());
-    }
-
-    // UPDATE
-    {
-        const auto query = u"update users set name = ?, is_banned = ? where id = ?"_s;
-        auto ok = users.prepare(query);
-        QVERIFY(ok);
-
-        users.addBindValue(u"micah"_s);
-        users.addBindValue(0);
-        users.addBindValue(lastInsertedId);
-
-        // Test bound values
-        const auto boundValues = users.boundValues();
-        QCOMPARE(boundValues.size(), 3);
-        QCOMPARE(boundValues, (QVariantList {u"micah"_s, 0, lastInsertedId}));
-
-        ok = users.exec();
-
-        QVERIFY(ok);
-        QVERIFY(users.isActive());
-        QVERIFY(!users.isSelect());
-        QVERIFY(!users.isValid());
-        QCOMPARE(users.size(), -1);
-        QCOMPARE(users.numRowsAffected(), 1);
-        QCOMPARE(users.executedQuery(), query);
-    }
-
-    // Verify the UPDATE
-    {
-        const auto query = u"select * from users where id = ?"_s;
-        auto ok = users.prepare(query);
-        QVERIFY(ok);
-
-        users.addBindValue(lastInsertedId);
-
-        // Test bound values
-        const auto boundValues = users.boundValues();
-        QCOMPARE(boundValues.size(), 1);
-        QCOMPARE(boundValues, QVariantList {lastInsertedId});
-
-        ok = users.exec();
-
-        QVERIFY(ok);
-        QVERIFY(users.isActive());
-        QVERIFY(users.isSelect());
-        QVERIFY(!users.isValid());
-        const auto querySize = users.size();
-        QCOMPARE(querySize, 1);
-        QCOMPARE(users.executedQuery(), query);
-
-        // Verify the result
-        ok = users.first();
-        QVERIFY(ok);
-        QVERIFY(users.isValid());
-        // Number of fields
-        const auto record = users.recordCached();
-        QCOMPARE(record.count(), 7);
-        for (const auto &column : columnNames)
-            QVERIFY(record.contains(column));
-
-        // Tests if the QVariant has the correct type will be done in other test methods
-        QCOMPARE(users.value(NAME)       .value<QString>(),   u"micah"_s);
-        QCOMPARE(users.value("is_banned").value<bool>(),      false);
-        QCOMPARE(users.value(NOTE)       .value<QString>(),   u"test drivers INSERT"_s);
-        QCOMPARE(users.value(CREATED_AT) .value<QDateTime>(), QDateTime({2023, 05, 11},
-                                                                        {11, 52, 53}));
-        QCOMPARE(users.value(UPDATED_AT) .value<QDateTime>(), QDateTime({2023, 05, 12},
-                                                                        {11, 52, 53}));
-        QVERIFY(users.isNull(DELETED_AT));
-        QCOMPARE(users.value(DELETED_AT), NullVariant::QDateTime());
-    }
-
-    // Restore and also test the DELETE
-    {
-        const auto query = u"delete from users where id = ?"_s;
-        auto ok = users.prepare(query);
-        QVERIFY(ok);
-
-        users.addBindValue(lastInsertedId);
-
-        // Test bound values
-        const auto boundValues = users.boundValues();
-        QCOMPARE(boundValues.size(), 1);
-        QCOMPARE(boundValues, QVariantList {lastInsertedId});
-
-        ok = users.exec();
-
-        QVERIFY(ok);
-        QVERIFY(users.isActive());
-        QVERIFY(!users.isSelect());
-        QVERIFY(!users.isValid());
-        QCOMPARE(users.size(), -1);
-        QCOMPARE(users.numRowsAffected(), 1);
-        QCOMPARE(users.executedQuery(), query);
-    }
-
-    // Verify the DELETE
-    {
-        const auto query = u"select id from users where id = ?"_s;
-        auto ok = users.prepare(query);
-        QVERIFY(ok);
-
-        users.addBindValue(lastInsertedId);
-
-        // Test bound values
-        const auto boundValues = users.boundValues();
-        QCOMPARE(boundValues.size(), 1);
-        QCOMPARE(boundValues, QVariantList {lastInsertedId});
-
-        ok = users.exec();
-
-        QVERIFY(ok);
-        QVERIFY(users.isActive());
-        QVERIFY(users.isSelect());
-        QVERIFY(!users.isValid());
-        const auto querySize = users.size();
-        QCOMPARE(querySize, 0);
-        QCOMPARE(users.executedQuery(), query);
-
-        // Verify the result
-        ok = users.first();
-        QVERIFY(!ok);
-        QVERIFY(!users.isValid());
-        // Check also this, must stay the same
-        QVERIFY(users.isActive());
-        QVERIFY(users.isSelect());
-    }
-}
-
 void tst_SqlQuery_Prepared::seeking() const
 {
     QFETCH_GLOBAL(QString, connection);
@@ -1011,6 +787,230 @@ void tst_SqlQuery_Prepared::finish_And_detachFromResultSet() const
     QVERIFY(!users.first());
     QVERIFY(!users.last());
     QVERIFY(!users.seek(1));
+}
+
+/* I will test the INSERT, UPDATE, and DELETE in the one test method, it's nothing
+   wrong about it (it's not absolutely cosher though), it also tests executing more
+   queries on the same SqlQuery instance. */
+void tst_SqlQuery_Prepared::insert_update_delete() const
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    auto users = createQuery(connection);
+    quint64 lastInsertedId = 0;
+
+    // INSERT a new row into the users table
+    {
+        const auto query =
+                u"insert into users "
+                   "(name, is_banned, note, created_at, updated_at, deleted_at) "
+                 "values (?, ?, ?, ?, ?, ?)"_s;
+        auto ok = users.prepare(query);
+        QVERIFY(ok);
+
+        users.addBindValue(u"ashen one"_s);
+        users.addBindValue(1);
+        users.addBindValue(u"test drivers INSERT"_s);
+        users.addBindValue(u"2023-05-11T11:52:53"_s);
+        users.addBindValue(u"2023-05-12T11:52:53"_s);
+        users.addBindValue(NullVariant::QDateTime());
+
+        // Test bound values
+        const auto boundValues = users.boundValues();
+        QCOMPARE(boundValues.size(), 6);
+        QCOMPARE(boundValues,
+                 (QVariantList {u"ashen one"_s, 1, u"test drivers INSERT"_s,
+                                u"2023-05-11T11:52:53"_s, u"2023-05-12T11:52:53"_s,
+                                NullVariant::QDateTime()}));
+
+        ok = users.exec();
+
+        QVERIFY(ok);
+        QVERIFY(users.isActive());
+        QVERIFY(!users.isSelect());
+        QVERIFY(!users.isValid());
+        QCOMPARE(users.size(), -1);
+        QCOMPARE(users.numRowsAffected(), 1);
+        QCOMPARE(users.executedQuery(), query);
+
+        lastInsertedId = users.lastInsertId().value<quint64>();
+        QVERIFY(lastInsertedId > 5);
+    }
+
+    const auto columnNames = std::to_array({ID, NAME, u"is_banned"_s, NOTE, CREATED_AT,
+                                            UPDATED_AT, DELETED_AT});
+
+    // Verify the INSERT
+    {
+        const auto query = u"select * from users where id = ?"_s;
+        auto ok = users.prepare(query);
+        QVERIFY(ok);
+
+        users.addBindValue(lastInsertedId);
+
+        // Test bound values
+        const auto boundValues = users.boundValues();
+        QCOMPARE(boundValues.size(), 1);
+        QCOMPARE(boundValues, QVariantList {lastInsertedId});
+
+        ok = users.exec();
+
+        QVERIFY(ok);
+        QVERIFY(users.isActive());
+        QVERIFY(users.isSelect());
+        QVERIFY(!users.isValid());
+        const auto querySize = users.size();
+        QCOMPARE(querySize, 1);
+        QCOMPARE(users.executedQuery(), query);
+
+        // Verify the result
+        ok = users.first();
+        QVERIFY(ok);
+        QVERIFY(users.isValid());
+        // Number of fields
+        const auto record = users.recordCached();
+        QCOMPARE(record.count(), 7);
+        for (const auto &column : columnNames)
+            QVERIFY(record.contains(column));
+
+        // Tests if the QVariant has the correct type will be done in other test methods
+        QCOMPARE(users.value(NAME)       .value<QString>(),   u"ashen one"_s);
+        QCOMPARE(users.value("is_banned").value<bool>(),      true);
+        QCOMPARE(users.value(NOTE)       .value<QString>(),   u"test drivers INSERT"_s);
+        QCOMPARE(users.value(CREATED_AT) .value<QDateTime>(), QDateTime({2023, 05, 11},
+                                                                        {11, 52, 53}));
+        QCOMPARE(users.value(UPDATED_AT) .value<QDateTime>(), QDateTime({2023, 05, 12},
+                                                                        {11, 52, 53}));
+        QVERIFY(users.isNull(DELETED_AT));
+        QCOMPARE(users.value(DELETED_AT), NullVariant::QDateTime());
+    }
+
+    // UPDATE
+    {
+        const auto query = u"update users set name = ?, is_banned = ? where id = ?"_s;
+        auto ok = users.prepare(query);
+        QVERIFY(ok);
+
+        users.addBindValue(u"micah"_s);
+        users.addBindValue(0);
+        users.addBindValue(lastInsertedId);
+
+        // Test bound values
+        const auto boundValues = users.boundValues();
+        QCOMPARE(boundValues.size(), 3);
+        QCOMPARE(boundValues, (QVariantList {u"micah"_s, 0, lastInsertedId}));
+
+        ok = users.exec();
+
+        QVERIFY(ok);
+        QVERIFY(users.isActive());
+        QVERIFY(!users.isSelect());
+        QVERIFY(!users.isValid());
+        QCOMPARE(users.size(), -1);
+        QCOMPARE(users.numRowsAffected(), 1);
+        QCOMPARE(users.executedQuery(), query);
+    }
+
+    // Verify the UPDATE
+    {
+        const auto query = u"select * from users where id = ?"_s;
+        auto ok = users.prepare(query);
+        QVERIFY(ok);
+
+        users.addBindValue(lastInsertedId);
+
+        // Test bound values
+        const auto boundValues = users.boundValues();
+        QCOMPARE(boundValues.size(), 1);
+        QCOMPARE(boundValues, QVariantList {lastInsertedId});
+
+        ok = users.exec();
+
+        QVERIFY(ok);
+        QVERIFY(users.isActive());
+        QVERIFY(users.isSelect());
+        QVERIFY(!users.isValid());
+        const auto querySize = users.size();
+        QCOMPARE(querySize, 1);
+        QCOMPARE(users.executedQuery(), query);
+
+        // Verify the result
+        ok = users.first();
+        QVERIFY(ok);
+        QVERIFY(users.isValid());
+        // Number of fields
+        const auto record = users.recordCached();
+        QCOMPARE(record.count(), 7);
+        for (const auto &column : columnNames)
+            QVERIFY(record.contains(column));
+
+        // Tests if the QVariant has the correct type will be done in other test methods
+        QCOMPARE(users.value(NAME)       .value<QString>(),   u"micah"_s);
+        QCOMPARE(users.value("is_banned").value<bool>(),      false);
+        QCOMPARE(users.value(NOTE)       .value<QString>(),   u"test drivers INSERT"_s);
+        QCOMPARE(users.value(CREATED_AT) .value<QDateTime>(), QDateTime({2023, 05, 11},
+                                                                        {11, 52, 53}));
+        QCOMPARE(users.value(UPDATED_AT) .value<QDateTime>(), QDateTime({2023, 05, 12},
+                                                                        {11, 52, 53}));
+        QVERIFY(users.isNull(DELETED_AT));
+        QCOMPARE(users.value(DELETED_AT), NullVariant::QDateTime());
+    }
+
+    // Restore and also test the DELETE
+    {
+        const auto query = u"delete from users where id = ?"_s;
+        auto ok = users.prepare(query);
+        QVERIFY(ok);
+
+        users.addBindValue(lastInsertedId);
+
+        // Test bound values
+        const auto boundValues = users.boundValues();
+        QCOMPARE(boundValues.size(), 1);
+        QCOMPARE(boundValues, QVariantList {lastInsertedId});
+
+        ok = users.exec();
+
+        QVERIFY(ok);
+        QVERIFY(users.isActive());
+        QVERIFY(!users.isSelect());
+        QVERIFY(!users.isValid());
+        QCOMPARE(users.size(), -1);
+        QCOMPARE(users.numRowsAffected(), 1);
+        QCOMPARE(users.executedQuery(), query);
+    }
+
+    // Verify the DELETE
+    {
+        const auto query = u"select id from users where id = ?"_s;
+        auto ok = users.prepare(query);
+        QVERIFY(ok);
+
+        users.addBindValue(lastInsertedId);
+
+        // Test bound values
+        const auto boundValues = users.boundValues();
+        QCOMPARE(boundValues.size(), 1);
+        QCOMPARE(boundValues, QVariantList {lastInsertedId});
+
+        ok = users.exec();
+
+        QVERIFY(ok);
+        QVERIFY(users.isActive());
+        QVERIFY(users.isSelect());
+        QVERIFY(!users.isValid());
+        const auto querySize = users.size();
+        QCOMPARE(querySize, 0);
+        QCOMPARE(users.executedQuery(), query);
+
+        // Verify the result
+        ok = users.first();
+        QVERIFY(!ok);
+        QVERIFY(!users.isValid());
+        // Check also this, must stay the same
+        QVERIFY(users.isActive());
+        QVERIFY(users.isSelect());
+    }
 }
 // NOLINTEND(readability-convert-member-functions-to-static)
 
