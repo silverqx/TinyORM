@@ -512,21 +512,24 @@ bool SqlQuery::seekRelative(const size_type index, size_type &actualIdx)
     // CUR drivers finish this if I will have higher IQ silverqx
     switch (at()) {
     case BeforeFirstRow:
-        if (index > 0)
-            actualIdx = index - 1;
-        else
+        // Nothing to do
+        if (index <= 0)
             return false;
+
+        actualIdx = index - 1;
         break;
 
     case AfterLastRow:
-        if (index < 0) {
-            m_sqlResult->fetchLast();
-            actualIdx = at() + index + 1;
-        } else
+        // Nothing to do
+        if (index >= 0)
             return false;
+
+        m_sqlResult->fetchLast();
+        actualIdx = at() + index + 1;
         break;
 
     default:
+        // Nothing to do
         if (at() + index < 0) {
             m_sqlResult->setAt(BeforeFirstRow);
             return false;
