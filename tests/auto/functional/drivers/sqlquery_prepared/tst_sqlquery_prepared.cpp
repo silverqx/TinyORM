@@ -43,6 +43,7 @@ private Q_SLOTS:
     void initTestCase() const;
 
     void select_All() const;
+    void select_EmptyResultSet() const;
     void select_WithWhere() const;
 
     void select_IsNull() const;
@@ -146,6 +147,45 @@ void tst_SqlQuery_Prepared::select_All() const
                            users.value(NAME).value<QString>());
     }
     QCOMPARE(actual, expected);
+}
+
+void tst_SqlQuery_Prepared::select_EmptyResultSet() const
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    auto users = createQuery(connection);
+
+    const auto query = u"select id, name from users where name = ?"_s;
+    auto ok = users.prepare(query);
+    QVERIFY(ok);
+
+    users.addBindValue(dummy_NONEXISTENT);
+
+    // Test bound values
+    const auto boundValues = users.boundValues();
+    QCOMPARE(boundValues.size(), 1);
+    QCOMPARE(boundValues, QVariantList {dummy_NONEXISTENT});
+
+    ok = users.exec();
+
+    QVERIFY(ok);
+    QVERIFY(users.isActive());
+    QVERIFY(!users.isValid());
+    QVERIFY(users.isSelect());
+    const auto querySize = users.size();
+    QCOMPARE(querySize, 0);
+    // Behaves the same as the size() for SELECT queries
+    QCOMPARE(users.numRowsAffected(), 0);
+    QCOMPARE(users.executedQuery(), query);
+    QCOMPARE(users.lastInsertId(), QVariant());
+
+    QCOMPARE(users.boundValues().size(), 1);
+
+    QVERIFY(!users.next());
+    QVERIFY(!users.previous());
+    QVERIFY(!users.first());
+    QVERIFY(!users.last());
+    QVERIFY(!users.seek(1));
 }
 
 void tst_SqlQuery_Prepared::select_WithWhere() const

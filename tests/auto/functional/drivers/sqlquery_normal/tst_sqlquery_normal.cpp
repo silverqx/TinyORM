@@ -19,6 +19,7 @@ using Orm::Constants::ID;
 using Orm::Constants::NAME;
 using Orm::Constants::NOTE;
 using Orm::Constants::UPDATED_AT;
+using Orm::Constants::dummy_NONEXISTENT;
 
 using Orm::Drivers::SqlDatabase;
 using Orm::Drivers::SqlQuery;
@@ -40,6 +41,7 @@ private Q_SLOTS:
     void initTestCase() const;
 
     void select_All() const;
+    void select_EmptyResultSet() const;
     void select_WithWhere() const;
 
     void select_IsNull() const;
@@ -135,6 +137,36 @@ void tst_SqlQuery_Normal::select_All() const
                            users.value(NAME).value<QString>());
     }
     QCOMPARE(actual, expected);
+}
+
+void tst_SqlQuery_Normal::select_EmptyResultSet() const
+{
+    QFETCH_GLOBAL(QString, connection);
+
+    auto users = createQuery(connection);
+
+    const auto query = u"select id, name from users where name = '%1'"_s
+                       .arg(dummy_NONEXISTENT);
+    const auto ok = users.exec(query);
+
+    QVERIFY(ok);
+    QVERIFY(users.isActive());
+    QVERIFY(!users.isValid());
+    QVERIFY(users.isSelect());
+    const auto querySize = users.size();
+    QCOMPARE(querySize, 0);
+    // Behaves the same as the size() for SELECT queries
+    QCOMPARE(users.numRowsAffected(), 0);
+    QCOMPARE(users.executedQuery(), query);
+    QCOMPARE(users.lastInsertId(), QVariant());
+
+    QVERIFY(users.boundValues().isEmpty());
+
+    QVERIFY(!users.next());
+    QVERIFY(!users.previous());
+    QVERIFY(!users.first());
+    QVERIFY(!users.last());
+    QVERIFY(!users.seek(1));
 }
 
 void tst_SqlQuery_Normal::select_WithWhere() const
