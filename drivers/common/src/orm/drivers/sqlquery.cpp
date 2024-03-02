@@ -563,7 +563,6 @@ bool SqlQuery::mapSeekToFetch(const size_type actualIdx)
         return true;
 
     m_sqlResult->setAt(AfterLastRow);
-
     return false;
 }
 
