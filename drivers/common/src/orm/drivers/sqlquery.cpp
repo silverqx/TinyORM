@@ -357,6 +357,10 @@ bool SqlQuery::seek(const size_type index, const bool relative)
     if (!isSelect() || !isActive())
         return false;
 
+    // Nothing to fetch, an empty result set
+    if (size() == 0)
+        return false;
+
     auto actualIdx = static_cast<size_type>(BeforeFirstRow);
 
     // Arbitrary seek
