@@ -119,8 +119,8 @@ void tst_SqlQuery_Prepared::select_All() const
     // Check everything what can be checked for this basic query (default configuration)
     QVERIFY(ok);
     QVERIFY(users.isActive());
-    QVERIFY(!users.isValid());
     QVERIFY(users.isSelect());
+    QVERIFY(!users.isValid());
     const auto querySize = users.size();
     QCOMPARE(querySize, 5);
     // Behaves the same as the size() for SELECT queries
@@ -176,8 +176,8 @@ void tst_SqlQuery_Prepared::select_EmptyResultSet() const
 
     QVERIFY(ok);
     QVERIFY(users.isActive());
-    QVERIFY(!users.isValid());
     QVERIFY(users.isSelect());
+    QVERIFY(!users.isValid());
     const auto querySize = users.size();
     QCOMPARE(querySize, 0);
     // Behaves the same as the size() for SELECT queries
@@ -215,8 +215,8 @@ void tst_SqlQuery_Prepared::select_WithWhere() const
 
     QVERIFY(ok);
     QVERIFY(users.isActive());
-    QVERIFY(!users.isValid());
     QVERIFY(users.isSelect());
+    QVERIFY(!users.isValid());
     const auto querySize = users.size();
     QCOMPARE(querySize, 3);
     // Behaves the same as the size() for SELECT queries
@@ -265,8 +265,8 @@ void tst_SqlQuery_Prepared::select_IsNull() const
 
     QVERIFY(ok);
     QVERIFY(users.isActive());
-    QVERIFY(!users.isValid());
     QVERIFY(users.isSelect());
+    QVERIFY(!users.isValid());
     const auto querySize = users.size();
     QCOMPARE(querySize, 5);
     QCOMPARE(users.executedQuery(), query);
@@ -313,8 +313,8 @@ void tst_SqlQuery_Prepared::select_Aggregate_Count() const
 
     QVERIFY(ok);
     QVERIFY(users.isActive());
-    QVERIFY(!users.isValid());
     QVERIFY(users.isSelect());
+    QVERIFY(!users.isValid());
     const auto querySize = users.size();
     QCOMPARE(querySize, 1);
     QCOMPARE(users.executedQuery(), query);
@@ -348,8 +348,8 @@ void tst_SqlQuery_Prepared::select_Testing_recordCached() const
 
     QVERIFY(ok);
     QVERIFY(users.isActive());
-    QVERIFY(!users.isValid());
     QVERIFY(users.isSelect());
+    QVERIFY(!users.isValid());
     const auto querySize = users.size();
     QCOMPARE(querySize, 5);
     // Behaves the same as the size() for SELECT queries
@@ -459,8 +459,8 @@ void tst_SqlQuery_Prepared::select_BoundMoreValues() const
 
     QVERIFY(ok);
     QVERIFY(users.isActive());
-    QVERIFY(!users.isValid());
     QVERIFY(users.isSelect());
+    QVERIFY(!users.isValid());
     const auto querySize = users.size();
     QCOMPARE(querySize, 3);
     // Behaves the same as the size() for SELECT queries
@@ -542,8 +542,8 @@ void tst_SqlQuery_Prepared::insert_update_delete() const
 
         QVERIFY(ok);
         QVERIFY(users.isActive());
-        QVERIFY(!users.isValid());
         QVERIFY(!users.isSelect());
+        QVERIFY(!users.isValid());
         QCOMPARE(users.size(), -1);
         QCOMPARE(users.numRowsAffected(), 1);
         QCOMPARE(users.executedQuery(), query);
@@ -572,8 +572,8 @@ void tst_SqlQuery_Prepared::insert_update_delete() const
 
         QVERIFY(ok);
         QVERIFY(users.isActive());
-        QVERIFY(!users.isValid());
         QVERIFY(users.isSelect());
+        QVERIFY(!users.isValid());
         const auto querySize = users.size();
         QCOMPARE(querySize, 1);
         QCOMPARE(users.executedQuery(), query);
@@ -619,8 +619,8 @@ void tst_SqlQuery_Prepared::insert_update_delete() const
 
         QVERIFY(ok);
         QVERIFY(users.isActive());
-        QVERIFY(!users.isValid());
         QVERIFY(!users.isSelect());
+        QVERIFY(!users.isValid());
         QCOMPARE(users.size(), -1);
         QCOMPARE(users.numRowsAffected(), 1);
         QCOMPARE(users.executedQuery(), query);
@@ -643,8 +643,8 @@ void tst_SqlQuery_Prepared::insert_update_delete() const
 
         QVERIFY(ok);
         QVERIFY(users.isActive());
-        QVERIFY(!users.isValid());
         QVERIFY(users.isSelect());
+        QVERIFY(!users.isValid());
         const auto querySize = users.size();
         QCOMPARE(querySize, 1);
         QCOMPARE(users.executedQuery(), query);
@@ -688,8 +688,8 @@ void tst_SqlQuery_Prepared::insert_update_delete() const
 
         QVERIFY(ok);
         QVERIFY(users.isActive());
-        QVERIFY(!users.isValid());
         QVERIFY(!users.isSelect());
+        QVERIFY(!users.isValid());
         QCOMPARE(users.size(), -1);
         QCOMPARE(users.numRowsAffected(), 1);
         QCOMPARE(users.executedQuery(), query);
@@ -712,8 +712,8 @@ void tst_SqlQuery_Prepared::insert_update_delete() const
 
         QVERIFY(ok);
         QVERIFY(users.isActive());
-        QVERIFY(!users.isValid());
         QVERIFY(users.isSelect());
+        QVERIFY(!users.isValid());
         const auto querySize = users.size();
         QCOMPARE(querySize, 0);
         QCOMPARE(users.executedQuery(), query);
@@ -745,8 +745,8 @@ void tst_SqlQuery_Prepared::seeking() const
 
     QVERIFY(ok);
     QVERIFY(users.isActive());
-    QVERIFY(!users.isValid());
     QVERIFY(users.isSelect());
+    QVERIFY(!users.isValid());
     const auto querySize = users.size();
     QCOMPARE(querySize, 5);
 
@@ -937,8 +937,8 @@ void tst_SqlQuery_Prepared::finish_And_detachFromResultSet() const
     // Check everything what can be checked for this basic query (default configuration)
     QVERIFY(ok);
     QVERIFY(users.isActive());
-    QVERIFY(!users.isValid());
     QVERIFY(users.isSelect());
+    QVERIFY(!users.isValid());
     const auto querySize = users.size();
     QCOMPARE(querySize, 3);
     // Behaves the same as the size() for SELECT queries
@@ -974,8 +974,8 @@ void tst_SqlQuery_Prepared::finish_And_detachFromResultSet() const
     users.finish();
 
     QVERIFY(!users.isActive());
-    QVERIFY(!users.isValid());
     QVERIFY(users.isSelect());
+    QVERIFY(!users.isValid());
     QCOMPARE(users.at(), BeforeFirstRow);
     QCOMPARE(users.size(), -1);
     // Behaves the same as the size() for SELECT queries
