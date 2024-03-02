@@ -431,7 +431,7 @@ SqlQuery::size_type SqlQuery::size() const noexcept
 
 SqlQuery::size_type SqlQuery::numRowsAffected() const
 {
-    // Nothing to do
+    // Nothing to do, also don't check the isSelect() here to have the same API as QtSql
     if (!isActive())
         return -1;
 

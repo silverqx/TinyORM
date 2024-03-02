@@ -448,12 +448,6 @@ MySqlResult::size_type MySqlResult::size() noexcept
 {
     Q_D(const MySqlResult);
 
-    // BUG drivers also verify all removed isXyz() conditions if the is some possible nullptr behavior; omg how I will fix this silverqx
-    // BUG drivers test this, also test affected for select queries, guarantee the same behavior as QtSql module silverqx
-    // Nothing to do
-    if (!isSelect())
-        return -1;
-
     // Don't cache the result as it's already cached in the MYSQL_RES/MYSQL_STMT
     if (d->preparedQuery)
         return static_cast<size_type>(mysql_stmt_num_rows(d->stmt));
