@@ -1,7 +1,6 @@
 #include <QCoreApplication>
 #include <QtTest>
 
-#include "orm/drivers/sqldatabase.hpp"
 #include "orm/drivers/sqlquery.hpp"
 #include "orm/drivers/sqlrecord.hpp"
 
@@ -21,7 +20,6 @@ using Orm::Constants::NOTE;
 using Orm::Constants::UPDATED_AT;
 using Orm::Constants::dummy_NONEXISTENT;
 
-using Orm::Drivers::SqlDatabase;
 using Orm::Drivers::SqlQuery;
 
 using enum Orm::Drivers::CursorPosition;
@@ -68,8 +66,7 @@ private Q_SLOTS:
 // NOLINTNEXTLINE(readability-redundant-access-specifiers)
 private:
     /*! Create QueryBuilder instance for the given connection. */
-    [[nodiscard]] SqlQuery
-    createQuery(const QString &connection) const;
+    [[nodiscard]] inline static SqlQuery createQuery(const QString &connection);
 };
 
 /* private slots */
@@ -105,7 +102,7 @@ struct IdAndCustomType
 
 void tst_SqlQuery_Normal::select_All() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     auto users = createQuery(connection);
 
@@ -142,7 +139,7 @@ void tst_SqlQuery_Normal::select_All() const
         QVERIFY(!users.isNull(ID));
         QVERIFY(!users.isNull(NAME));
         // Number of fields
-        const auto record = users.recordCached();
+        const auto &record = users.recordCached();
         QCOMPARE(record.count(), 2);
         QVERIFY(record.contains(ID));
         QVERIFY(record.contains(NAME));
@@ -156,7 +153,7 @@ void tst_SqlQuery_Normal::select_All() const
 
 void tst_SqlQuery_Normal::select_EmptyResultSet() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     auto users = createQuery(connection);
 
@@ -192,7 +189,7 @@ void tst_SqlQuery_Normal::select_EmptyResultSet() const
 
 void tst_SqlQuery_Normal::select_FetchingSameResultSet() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     auto users = createQuery(connection);
 
@@ -225,7 +222,7 @@ void tst_SqlQuery_Normal::select_FetchingSameResultSet() const
 
 void tst_SqlQuery_Normal::select_WithWhere() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     auto users = createQuery(connection);
 
@@ -259,7 +256,7 @@ void tst_SqlQuery_Normal::select_WithWhere() const
         QVERIFY(!users.isNull(ID));
         QVERIFY(!users.isNull(NAME));
         // Number of fields
-        const auto record = users.recordCached();
+        const auto &record = users.recordCached();
         QCOMPARE(record.count(), 2);
         QVERIFY(record.contains(ID));
         QVERIFY(record.contains(NAME));
@@ -273,7 +270,7 @@ void tst_SqlQuery_Normal::select_WithWhere() const
 
 void tst_SqlQuery_Normal::select_IsNull() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     auto users = createQuery(connection);
 
@@ -299,7 +296,7 @@ void tst_SqlQuery_Normal::select_IsNull() const
     while (users.next()) {
         QVERIFY(users.isValid());
         // Number of fields
-        const auto record = users.recordCached();
+        const auto &record = users.recordCached();
         QCOMPARE(record.count(), 2);
         QVERIFY(record.contains(ID));
         QVERIFY(record.contains(NOTE));
@@ -313,7 +310,7 @@ void tst_SqlQuery_Normal::select_IsNull() const
 
 void tst_SqlQuery_Normal::select_Aggregate_Count() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     auto users = createQuery(connection);
 
@@ -334,7 +331,7 @@ void tst_SqlQuery_Normal::select_Aggregate_Count() const
     QVERIFY(ok);
     QVERIFY(users.isValid());
     // Number of fields
-    const auto record = users.recordCached();
+    const auto &record = users.recordCached();
     QCOMPARE(record.count(), 1);
     QVERIFY(record.contains("aggregate"));
 
@@ -343,7 +340,7 @@ void tst_SqlQuery_Normal::select_Aggregate_Count() const
 
 void tst_SqlQuery_Normal::select_Testing_recordCached() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     auto users = createQuery(connection);
 
@@ -382,7 +379,7 @@ void tst_SqlQuery_Normal::select_Testing_recordCached() const
         QVERIFY(users.isValid());
         actualNull << users.isNull(NOTE);
         // Number of fields
-        const auto record = users.recordCached();
+        const auto &record = users.recordCached();
         QCOMPARE(record.count(), 4);
         QVERIFY(record.contains(ID));
         QVERIFY(record.contains(NAME));
@@ -399,7 +396,7 @@ void tst_SqlQuery_Normal::select_Testing_recordCached() const
 
 void tst_SqlQuery_Normal::seeking() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     auto users = createQuery(connection);
 
@@ -422,7 +419,7 @@ void tst_SqlQuery_Normal::seeking() const
     while (users.next()) {
         QVERIFY(!users.isNull(ID));
         // Number of fields
-        const auto record = users.recordCached();
+        const auto &record = users.recordCached();
         QCOMPARE(record.count(), 1);
         QVERIFY(record.contains(ID));
 
@@ -578,7 +575,7 @@ void tst_SqlQuery_Normal::seeking() const
 
 void tst_SqlQuery_Normal::finish_And_detachFromResultSet() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     auto users = createQuery(connection);
 
@@ -614,7 +611,7 @@ void tst_SqlQuery_Normal::finish_And_detachFromResultSet() const
         QVERIFY(!users.isNull(ID));
         QVERIFY(!users.isNull(NAME));
         // Number of fields
-        const auto record = users.recordCached();
+        const auto &record = users.recordCached();
         QCOMPARE(record.count(), 2);
         QVERIFY(record.contains(ID));
         QVERIFY(record.contains(NAME));
@@ -646,7 +643,7 @@ void tst_SqlQuery_Normal::finish_And_detachFromResultSet() const
 
 void tst_SqlQuery_Normal::select_reExecute_SameQuery() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     auto users = createQuery(connection);
 
@@ -686,7 +683,7 @@ void tst_SqlQuery_Normal::select_reExecute_SameQuery() const
             QVERIFY(!users.isNull(ID));
             QVERIFY(!users.isNull(NAME));
             // Number of fields
-            const auto record = users.recordCached();
+            const auto &record = users.recordCached();
             QCOMPARE(record.count(), 2);
             QVERIFY(record.contains(ID));
             QVERIFY(record.contains(NAME));
@@ -728,7 +725,7 @@ void tst_SqlQuery_Normal::select_reExecute_SameQuery() const
             QVERIFY(!users.isNull(ID));
             QVERIFY(!users.isNull(NAME));
             // Number of fields
-            const auto record = users.recordCached();
+            const auto &record = users.recordCached();
             QCOMPARE(record.count(), 2);
             QVERIFY(record.contains(ID));
             QVERIFY(record.contains(NAME));
@@ -743,7 +740,7 @@ void tst_SqlQuery_Normal::select_reExecute_SameQuery() const
 
 void tst_SqlQuery_Normal::select_executeAnotherQuery_OnSameInstance() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     auto query = createQuery(connection);
 
@@ -781,7 +778,7 @@ void tst_SqlQuery_Normal::select_executeAnotherQuery_OnSameInstance() const
             QVERIFY(!query.isNull(ID));
             QVERIFY(!query.isNull(NAME));
             // Number of fields
-            const auto record = query.recordCached();
+            const auto &record = query.recordCached();
             QCOMPARE(record.count(), 2);
             QVERIFY(record.contains(ID));
             QVERIFY(record.contains(NAME));
@@ -827,7 +824,7 @@ void tst_SqlQuery_Normal::select_executeAnotherQuery_OnSameInstance() const
             QVERIFY(!query.isNull(ID));
             QVERIFY(!query.isNull(NAME));
             // Number of fields
-            const auto record = query.recordCached();
+            const auto &record = query.recordCached();
             QCOMPARE(record.count(), 3);
             QVERIFY(record.contains(ID));
             QVERIFY(record.contains(NAME));
@@ -843,7 +840,7 @@ void tst_SqlQuery_Normal::select_executeAnotherQuery_OnSameInstance() const
 
 void tst_SqlQuery_Normal::select_reExecute_SameQuery_AfterFinish() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     auto users = createQuery(connection);
 
@@ -883,7 +880,7 @@ void tst_SqlQuery_Normal::select_reExecute_SameQuery_AfterFinish() const
             QVERIFY(!users.isNull(ID));
             QVERIFY(!users.isNull(NAME));
             // Number of fields
-            const auto record = users.recordCached();
+            const auto &record = users.recordCached();
             QCOMPARE(record.count(), 2);
             QVERIFY(record.contains(ID));
             QVERIFY(record.contains(NAME));
@@ -947,7 +944,7 @@ void tst_SqlQuery_Normal::select_reExecute_SameQuery_AfterFinish() const
             QVERIFY(!users.isNull(ID));
             QVERIFY(!users.isNull(NAME));
             // Number of fields
-            const auto record = users.recordCached();
+            const auto &record = users.recordCached();
             QCOMPARE(record.count(), 2);
             QVERIFY(record.contains(ID));
             QVERIFY(record.contains(NAME));
@@ -962,7 +959,7 @@ void tst_SqlQuery_Normal::select_reExecute_SameQuery_AfterFinish() const
 
 void tst_SqlQuery_Normal::select_executeAnotherQuery_OnSameInstance_AfterFinish() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     auto query = createQuery(connection);
 
@@ -1000,7 +997,7 @@ void tst_SqlQuery_Normal::select_executeAnotherQuery_OnSameInstance_AfterFinish(
             QVERIFY(!query.isNull(ID));
             QVERIFY(!query.isNull(NAME));
             // Number of fields
-            const auto record = query.recordCached();
+            const auto &record = query.recordCached();
             QCOMPARE(record.count(), 2);
             QVERIFY(record.contains(ID));
             QVERIFY(record.contains(NAME));
@@ -1068,7 +1065,7 @@ void tst_SqlQuery_Normal::select_executeAnotherQuery_OnSameInstance_AfterFinish(
             QVERIFY(!query.isNull(ID));
             QVERIFY(!query.isNull(NAME));
             // Number of fields
-            const auto record = query.recordCached();
+            const auto &record = query.recordCached();
             QCOMPARE(record.count(), 3);
             QVERIFY(record.contains(ID));
             QVERIFY(record.contains(NAME));
@@ -1087,7 +1084,7 @@ void tst_SqlQuery_Normal::select_executeAnotherQuery_OnSameInstance_AfterFinish(
    queries on the same SqlQuery instance. */
 void tst_SqlQuery_Normal::insert_update_delete() const
 {
-    QFETCH_GLOBAL(QString, connection);
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     auto users = createQuery(connection);
     quint64 lastInsertedId = 0;
@@ -1134,7 +1131,7 @@ void tst_SqlQuery_Normal::insert_update_delete() const
         QVERIFY(ok);
         QVERIFY(users.isValid());
         // Number of fields
-        const auto record = users.recordCached();
+        const auto &record = users.recordCached();
         QCOMPARE(record.count(), 7);
         for (const auto &column : columnNames)
             QVERIFY(record.contains(column));
@@ -1185,7 +1182,7 @@ void tst_SqlQuery_Normal::insert_update_delete() const
         QVERIFY(ok);
         QVERIFY(users.isValid());
         // Number of fields
-        const auto record = users.recordCached();
+        const auto &record = users.recordCached();
         QCOMPARE(record.count(), 7);
         for (const auto &column : columnNames)
             QVERIFY(record.contains(column));
@@ -1242,7 +1239,7 @@ void tst_SqlQuery_Normal::insert_update_delete() const
 
 /* private */
 
-SqlQuery tst_SqlQuery_Normal::createQuery(const QString &connection) const
+SqlQuery tst_SqlQuery_Normal::createQuery(const QString &connection)
 {
    return SqlQuery(Databases::driversConnection(connection));
 }
