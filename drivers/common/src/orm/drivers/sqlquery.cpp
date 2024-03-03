@@ -428,7 +428,7 @@ SqlQuery::size_type SqlQuery::size() const noexcept
     if (!driverWeak().lock()->hasFeature(SqlDriver::QuerySize) ||
         !isSelect() || !isActive()
     )
-        return -1;
+        return -1; // Must return -1 here to have the same API as QtSql, nothing else
 
     return m_sqlResult->size();
 }
@@ -437,7 +437,7 @@ SqlQuery::size_type SqlQuery::numRowsAffected() const
 {
     // Nothing to do, also don't check the isSelect() here to have the same API as QtSql
     if (!isActive())
-        return -1;
+        return -1; // Must return -1 here to have the same API as QtSql, nothing else
 
     return m_sqlResult->numRowsAffected();
 }
