@@ -139,6 +139,7 @@ bool MySqlResult::exec()
                  "to the SqlQuery::exec(QString) for normal statements in %1()."_s
                 .arg(__tiny_func__));
 
+    // Nothing to do, eg. mysql_stmt_init() failed (don't remove this check)
     if (d->stmt == nullptr)
         return false;
 
@@ -667,7 +668,7 @@ void MySqlResult::mysqlStmtClose()
 {
     Q_D(MySqlResult);
 
-    // Nothing to do
+    // Nothing to do, d->stmt != nullptr check is NOT inside the mysql_stmt_close()
     if (d->stmt == nullptr)
         return;
 
