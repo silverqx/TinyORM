@@ -36,7 +36,7 @@ void MySqlDriverPrivate::mysqlInit()
 }
 
 MySqlDriverPrivate::SetConnectionOptionsResult
-MySqlDriverPrivate::mysqlSetConnectionOptions(const QString &options)
+MySqlDriverPrivate::mysqlSetConnectionOptions(const QString &options) const
 {
     /* Enable the MySQL's stored procedures support.
        Needed to enable CLIEN_MULTI_STATEMENTS (which also enables CLIENT_MULTI_RESULTS)
@@ -201,7 +201,7 @@ MySqlDriverPrivate::parseMySqlOption(const QStringView optionRaw)
 }
 
 bool MySqlDriverPrivate::mysqlSetConnectionOption(const QStringView option,
-                                                  const QStringView value)
+                                                  const QStringView value) const
 {
     const auto &optionsHash = getMySqlOptionsHash();
 
