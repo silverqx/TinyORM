@@ -29,6 +29,9 @@ namespace Orm::Drivers
         Q_DISABLE_COPY_MOVE(SqlDriver)
         Q_DECLARE_PRIVATE(SqlDriver)
 
+        // To access the setConnectionName()
+        friend class SqlDatabase;
+
     protected:
         /*! Protected constructor. */
         explicit SqlDriver(std::unique_ptr<SqlDriverPrivate> &&dd) noexcept;
@@ -168,6 +171,8 @@ namespace Orm::Drivers
         /* Setters */
         /*! Set a flag whether the connection is open. */
         void setOpen(bool value) noexcept;
+        /*! Set the connection name. */
+        void setConnectionName(QStringView connection) noexcept;
 
         /* Data members */
         /*! Smart pointer to the private implementation. */
