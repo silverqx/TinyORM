@@ -140,6 +140,9 @@ namespace Orm::Drivers
         bool rollback();
 
     private:
+        /*! Set the connection name. */
+        void setConnectionName(const QString &connection) noexcept;
+
         /*! Smart pointer to the private implementation. */
         NotNull<std::shared_ptr<SqlDatabasePrivate>> d;
     };

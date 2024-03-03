@@ -110,6 +110,12 @@ void SqlDriver::setOpen(const bool value) noexcept
     d->isOpen = value;
 }
 
+void SqlDriver::setConnectionName(const QStringView connection) noexcept
+{
+    Q_D(SqlDriver);
+    d->connectionName = connection;
+}
+
 } // namespace Orm::Drivers
 
 TINYORM_END_COMMON_NAMESPACE

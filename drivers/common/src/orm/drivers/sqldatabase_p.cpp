@@ -102,7 +102,9 @@ SqlDatabase SqlDatabasePrivate::addDatabase(SqlDatabase &&db, const QString &con
                 u"The database connection '%1' already exists in %2()."_s
                 .arg(connection, __tiny_func__));
 
-    db.d->connectionName = connection;
+    /* Set a connection name for the connection and also for the associated SQL driver,
+       it will be used in exceptions and logs. */
+    db.setConnectionName(connection);
 
     auto [itDatabase, ok] = connections.try_emplace(connection, std::move(db));
     // Insertion must always happen here

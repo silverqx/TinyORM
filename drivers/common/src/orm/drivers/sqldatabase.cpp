@@ -337,6 +337,15 @@ bool SqlDatabase::rollback()
         return false;
 }
 
+/* private */
+
+void SqlDatabase::setConnectionName(const QString &connection) noexcept
+{
+    d->connectionName = connection;
+    // The connection name will be used in exceptions and logs
+    d->sqldriver->setConnectionName(d->connectionName);
+}
+
 } // namespace Orm::Drivers
 
 TINYORM_END_COMMON_NAMESPACE
