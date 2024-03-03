@@ -65,6 +65,12 @@ private Q_SLOTS:
     void select_reExecute_SameQuery_AfterFinish() const;
     void select_executeAnotherQuery_OnSameInstance_AfterFinish() const;
 
+    void select_reExecute_SameQuery_WithPreparedBindings() const;
+    void select_executeAnotherQuery_OnSameInstance_WithPreparedBindings() const;
+
+    void select_reExecute_SameQuery_AfterFinish_WithPreparedBindings() const;
+    void select_executeAnotherQuery_OnSameInstance_AfterFinish_WithPreparedBindings() const;
+
     void insert_update_delete() const;
 
 // NOLINTNEXTLINE(readability-redundant-access-specifiers)
@@ -1233,6 +1239,516 @@ void tst_SqlQuery_Prepared::select_executeAnotherQuery_OnSameInstance_AfterFinis
         // Verify the result
         QVector<IdAndCustomType<QString>> expected {
             {1, "role one"}, {2, "role two"}, {3, "role three"},
+        };
+        QVector<IdAndCustomType<QString>> actual;
+        actual.reserve(querySize);
+
+        while (query.next()) {
+            QVERIFY(query.isValid());
+            QVERIFY(!query.isNull(0));
+            QVERIFY(!query.isNull(1));
+            QVERIFY(!query.isNull(ID));
+            QVERIFY(!query.isNull(NAME));
+            // Number of fields
+            const auto &record = query.recordCached();
+            QCOMPARE(record.count(), 3);
+            QVERIFY(record.contains(ID));
+            QVERIFY(record.contains(NAME));
+            QVERIFY(record.contains(u"added_on"_s));
+
+            actual.emplaceBack(query.value(ID).value<quint64>(),
+                               query.value(NAME).value<QString>());
+        }
+        QCOMPARE(actual, expected);
+        QCOMPARE(query.at(), AfterLastRow);
+    }
+}
+
+void tst_SqlQuery_Prepared::select_reExecute_SameQuery_WithPreparedBindings() const
+{
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
+
+    auto users = createQuery(connection);
+
+    const auto query = u"select id, name from users where id > ? and note like ? "
+                        "order by id"_s;
+    auto ok = users.prepare(query);
+    QVERIFY(ok);
+
+    users.addBindValue(1);
+    users.addBindValue(u"%le%"_s);
+
+    QVector<IdAndCustomType<QString>> expected {
+        {3, u"peter"_s}, {4, u"jack"_s}, {5, u"obiwan"_s},
+    };
+
+    // Execute first time
+    {
+        // Test bound values
+        const auto boundValues = users.boundValues();
+        QCOMPARE(boundValues.size(), 2);
+        QCOMPARE(boundValues, QVariantList({1, u"%le%"_s}));
+
+        ok = users.exec();
+
+        QVERIFY(ok);
+        QVERIFY(users.isActive());
+        QVERIFY(users.isSelect());
+        QVERIFY(!users.isValid());
+        QCOMPARE(users.at(), BeforeFirstRow);
+        const auto querySize = users.size();
+        QCOMPARE(querySize, 3);
+        // Behaves the same as the size() for SELECT queries
+        QCOMPARE(users.numRowsAffected(), 3);
+        QCOMPARE(users.numericalPrecisionPolicy(), LowPrecisionDouble);
+        QCOMPARE(users.executedQuery(), query);
+        QCOMPARE(users.lastInsertId(), QVariant());
+
+        // Verify the result
+        QVector<IdAndCustomType<QString>> actual;
+        actual.reserve(querySize);
+
+        while (users.next()) {
+            QVERIFY(users.isValid());
+            QVERIFY(!users.isNull(0));
+            QVERIFY(!users.isNull(1));
+            QVERIFY(!users.isNull(ID));
+            QVERIFY(!users.isNull(NAME));
+            // Number of fields
+            const auto &record = users.recordCached();
+            QCOMPARE(record.count(), 2);
+            QVERIFY(record.contains(ID));
+            QVERIFY(record.contains(NAME));
+
+            actual.emplaceBack(users.value(ID).value<quint64>(),
+                               users.value(NAME).value<QString>());
+        }
+        QCOMPARE(actual, expected);
+        QCOMPARE(users.at(), AfterLastRow);
+    }
+
+    // Re-execute second time
+    {
+        // Test bound values
+        const auto boundValues = users.boundValues();
+        QCOMPARE(boundValues.size(), 2);
+        QCOMPARE(boundValues, QVariantList({1, u"%le%"_s}));
+
+        ok = users.exec();
+
+        QVERIFY(ok);
+        QVERIFY(users.isActive());
+        QVERIFY(users.isSelect());
+        QVERIFY(!users.isValid());
+        QCOMPARE(users.at(), BeforeFirstRow);
+        const auto querySize = users.size();
+        QCOMPARE(querySize, 3);
+        // Behaves the same as the size() for SELECT queries
+        QCOMPARE(users.numRowsAffected(), 3);
+        QCOMPARE(users.numericalPrecisionPolicy(), LowPrecisionDouble);
+        QCOMPARE(users.executedQuery(), query);
+        QCOMPARE(users.lastInsertId(), QVariant());
+
+        // Verify the result
+        QVector<IdAndCustomType<QString>> actual;
+        actual.reserve(querySize);
+
+        while (users.next()) {
+            QVERIFY(users.isValid());
+            QVERIFY(!users.isNull(0));
+            QVERIFY(!users.isNull(1));
+            QVERIFY(!users.isNull(ID));
+            QVERIFY(!users.isNull(NAME));
+            // Number of fields
+            const auto &record = users.recordCached();
+            QCOMPARE(record.count(), 2);
+            QVERIFY(record.contains(ID));
+            QVERIFY(record.contains(NAME));
+
+            actual.emplaceBack(users.value(ID).value<quint64>(),
+                               users.value(NAME).value<QString>());
+        }
+        QCOMPARE(actual, expected);
+        QCOMPARE(users.at(), AfterLastRow);
+    }
+}
+
+void tst_SqlQuery_Prepared::
+     select_executeAnotherQuery_OnSameInstance_WithPreparedBindings() const
+{
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
+
+    auto query = createQuery(connection);
+
+    // Execute first time
+    {
+        const auto queryString = u"select id, name from users "
+                                  "where id > ? and note like ? order by id"_s;
+        auto ok = query.prepare(queryString);
+        QVERIFY(ok);
+
+        query.addBindValue(1);
+        query.addBindValue(u"%le%"_s);
+
+        // Test bound values
+        const auto boundValues = query.boundValues();
+        QCOMPARE(boundValues.size(), 2);
+        QCOMPARE(boundValues, QVariantList({1, u"%le%"_s}));
+
+        ok = query.exec();
+
+        QVERIFY(ok);
+        QVERIFY(query.isActive());
+        QVERIFY(query.isSelect());
+        QVERIFY(!query.isValid());
+        QCOMPARE(query.at(), BeforeFirstRow);
+        const auto querySize = query.size();
+        QCOMPARE(querySize, 3);
+        // Behaves the same as the size() for SELECT queries
+        QCOMPARE(query.numRowsAffected(), 3);
+        QCOMPARE(query.numericalPrecisionPolicy(), LowPrecisionDouble);
+        QCOMPARE(query.executedQuery(), queryString);
+        QCOMPARE(query.lastInsertId(), QVariant());
+
+        // Verify the result
+        QVector<IdAndCustomType<QString>> expected {
+            {3, u"peter"_s}, {4, u"jack"_s}, {5, u"obiwan"_s},
+        };
+        QVector<IdAndCustomType<QString>> actual;
+        actual.reserve(querySize);
+
+        while (query.next()) {
+            QVERIFY(query.isValid());
+            QVERIFY(!query.isNull(0));
+            QVERIFY(!query.isNull(1));
+            QVERIFY(!query.isNull(ID));
+            QVERIFY(!query.isNull(NAME));
+            // Number of fields
+            const auto &record = query.recordCached();
+            QCOMPARE(record.count(), 2);
+            QVERIFY(record.contains(ID));
+            QVERIFY(record.contains(NAME));
+
+            actual.emplaceBack(query.value(ID).value<quint64>(),
+                               query.value(NAME).value<QString>());
+        }
+        QCOMPARE(actual, expected);
+        QCOMPARE(query.at(), AfterLastRow);
+    }
+
+    // Re-execute second time
+    {
+        const auto queryString = u"select id, name, added_on from roles "
+                                  "where name like ? and id > ? order by id"_s;
+        auto ok = query.prepare(queryString);
+        QVERIFY(ok);
+
+        query.addBindValue(u"rol%"_s);
+        query.addBindValue(1);
+
+        // Test bound values
+        const auto boundValues = query.boundValues();
+        QCOMPARE(boundValues.size(), 2);
+        QCOMPARE(boundValues, QVariantList({u"rol%"_s, 1}));
+
+        ok = query.exec();
+
+        QVERIFY(ok);
+        QVERIFY(query.isActive());
+        QVERIFY(query.isSelect());
+        QVERIFY(!query.isValid());
+        QCOMPARE(query.at(), BeforeFirstRow);
+        const auto querySize = query.size();
+        QCOMPARE(querySize, 2);
+        // Behaves the same as the size() for SELECT queries
+        QCOMPARE(query.numRowsAffected(), 2);
+        QCOMPARE(query.numericalPrecisionPolicy(), LowPrecisionDouble);
+        QCOMPARE(query.executedQuery(), queryString);
+        QCOMPARE(query.lastInsertId(), QVariant());
+
+        // Verify the result
+        QVector<IdAndCustomType<QString>> expected {
+            {2, "role two"}, {3, "role three"},
+        };
+        QVector<IdAndCustomType<QString>> actual;
+        actual.reserve(querySize);
+
+        while (query.next()) {
+            QVERIFY(query.isValid());
+            QVERIFY(!query.isNull(0));
+            QVERIFY(!query.isNull(1));
+            QVERIFY(!query.isNull(ID));
+            QVERIFY(!query.isNull(NAME));
+            // Number of fields
+            const auto &record = query.recordCached();
+            QCOMPARE(record.count(), 3);
+            QVERIFY(record.contains(ID));
+            QVERIFY(record.contains(NAME));
+            QVERIFY(record.contains(u"added_on"_s));
+
+            actual.emplaceBack(query.value(ID).value<quint64>(),
+                               query.value(NAME).value<QString>());
+        }
+        QCOMPARE(actual, expected);
+        QCOMPARE(query.at(), AfterLastRow);
+    }
+}
+
+void tst_SqlQuery_Prepared::
+     select_reExecute_SameQuery_AfterFinish_WithPreparedBindings() const
+{
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
+
+    auto users = createQuery(connection);
+
+    const auto query = u"select id, name from users where id > ? and note like ? "
+                        "order by id"_s;
+    auto ok = users.prepare(query);
+    QVERIFY(ok);
+
+    users.addBindValue(1);
+    users.addBindValue(u"%le%"_s);
+
+    QVector<IdAndCustomType<QString>> expected {
+        {3, u"peter"_s}, {4, u"jack"_s}, {5, u"obiwan"_s},
+    };
+
+    // Execute first time
+    {
+        // Test bound values
+        const auto boundValues = users.boundValues();
+        QCOMPARE(boundValues.size(), 2);
+        QCOMPARE(boundValues, QVariantList({1, u"%le%"_s}));
+
+        ok = users.exec();
+
+        QVERIFY(ok);
+        QVERIFY(users.isActive());
+        QVERIFY(users.isSelect());
+        QVERIFY(!users.isValid());
+        QCOMPARE(users.at(), BeforeFirstRow);
+        const auto querySize = users.size();
+        QCOMPARE(querySize, 3);
+        // Behaves the same as the size() for SELECT queries
+        QCOMPARE(users.numRowsAffected(), 3);
+        QCOMPARE(users.numericalPrecisionPolicy(), LowPrecisionDouble);
+        QCOMPARE(users.executedQuery(), query);
+        QCOMPARE(users.lastInsertId(), QVariant());
+
+        // Verify the result
+        QVector<IdAndCustomType<QString>> actual;
+        actual.reserve(querySize);
+
+        while (users.next()) {
+            QVERIFY(users.isValid());
+            QVERIFY(!users.isNull(0));
+            QVERIFY(!users.isNull(1));
+            QVERIFY(!users.isNull(ID));
+            QVERIFY(!users.isNull(NAME));
+            // Number of fields
+            const auto &record = users.recordCached();
+            QCOMPARE(record.count(), 2);
+            QVERIFY(record.contains(ID));
+            QVERIFY(record.contains(NAME));
+
+            actual.emplaceBack(users.value(ID).value<quint64>(),
+                               users.value(NAME).value<QString>());
+        }
+        QCOMPARE(actual, expected);
+        QCOMPARE(users.at(), AfterLastRow);
+    }
+
+    // Finish (detachFromResultSet())
+    {
+        users.finish();
+
+        QVERIFY(!users.isActive());
+        QVERIFY(users.isSelect());
+        QVERIFY(!users.isValid());
+        QCOMPARE(users.at(), BeforeFirstRow);
+        QCOMPARE(users.size(), -1);
+        // Behaves the same as the size() for SELECT queries
+        QCOMPARE(users.numRowsAffected(), -1);
+        QCOMPARE(users.numericalPrecisionPolicy(), LowPrecisionDouble);
+        QCOMPARE(users.executedQuery(), query);
+        QCOMPARE(users.lastInsertId(), QVariant());
+
+        QVERIFY(!users.next());
+        QVERIFY(!users.previous());
+        QVERIFY(!users.first());
+        QVERIFY(!users.last());
+        QVERIFY(!users.seek(1));
+    }
+
+    // Re-execute second time
+    {
+        // Test bound values
+        const auto boundValues = users.boundValues();
+        QCOMPARE(boundValues.size(), 2);
+        QCOMPARE(boundValues, QVariantList({1, u"%le%"_s}));
+
+        ok = users.exec();
+
+        QVERIFY(ok);
+        QVERIFY(users.isActive());
+        QVERIFY(users.isSelect());
+        QVERIFY(!users.isValid());
+        QCOMPARE(users.at(), BeforeFirstRow);
+        const auto querySize = users.size();
+        QCOMPARE(querySize, 3);
+        // Behaves the same as the size() for SELECT queries
+        QCOMPARE(users.numRowsAffected(), 3);
+        QCOMPARE(users.numericalPrecisionPolicy(), LowPrecisionDouble);
+        QCOMPARE(users.executedQuery(), query);
+        QCOMPARE(users.lastInsertId(), QVariant());
+
+        // Verify the result
+        QVector<IdAndCustomType<QString>> actual;
+        actual.reserve(querySize);
+
+        while (users.next()) {
+            QVERIFY(users.isValid());
+            QVERIFY(!users.isNull(0));
+            QVERIFY(!users.isNull(1));
+            QVERIFY(!users.isNull(ID));
+            QVERIFY(!users.isNull(NAME));
+            // Number of fields
+            const auto &record = users.recordCached();
+            QCOMPARE(record.count(), 2);
+            QVERIFY(record.contains(ID));
+            QVERIFY(record.contains(NAME));
+
+            actual.emplaceBack(users.value(ID).value<quint64>(),
+                               users.value(NAME).value<QString>());
+        }
+        QCOMPARE(actual, expected);
+        QCOMPARE(users.at(), AfterLastRow);
+    }
+}
+
+void tst_SqlQuery_Prepared::
+     select_executeAnotherQuery_OnSameInstance_AfterFinish_WithPreparedBindings() const
+{
+    QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
+
+    auto query = createQuery(connection);
+
+    // Execute first time
+    const auto queryString = u"select id, name from users "
+                              "where id > ? and note like ? order by id"_s;
+    {
+        auto ok = query.prepare(queryString);
+        QVERIFY(ok);
+
+        query.addBindValue(1);
+        query.addBindValue(u"%le%"_s);
+
+        // Test bound values
+        const auto boundValues = query.boundValues();
+        QCOMPARE(boundValues.size(), 2);
+        QCOMPARE(boundValues, QVariantList({1, u"%le%"_s}));
+
+        ok = query.exec();
+
+        QVERIFY(ok);
+        QVERIFY(query.isActive());
+        QVERIFY(query.isSelect());
+        QVERIFY(!query.isValid());
+        QCOMPARE(query.at(), BeforeFirstRow);
+        const auto querySize = query.size();
+        QCOMPARE(querySize, 3);
+        // Behaves the same as the size() for SELECT queries
+        QCOMPARE(query.numRowsAffected(), 3);
+        QCOMPARE(query.numericalPrecisionPolicy(), LowPrecisionDouble);
+        QCOMPARE(query.executedQuery(), queryString);
+        QCOMPARE(query.lastInsertId(), QVariant());
+
+        // Verify the result
+        QVector<IdAndCustomType<QString>> expected {
+            {3, u"peter"_s}, {4, u"jack"_s}, {5, u"obiwan"_s},
+        };
+        QVector<IdAndCustomType<QString>> actual;
+        actual.reserve(querySize);
+
+        while (query.next()) {
+            QVERIFY(query.isValid());
+            QVERIFY(!query.isNull(0));
+            QVERIFY(!query.isNull(1));
+            QVERIFY(!query.isNull(ID));
+            QVERIFY(!query.isNull(NAME));
+            // Number of fields
+            const auto &record = query.recordCached();
+            QCOMPARE(record.count(), 2);
+            QVERIFY(record.contains(ID));
+            QVERIFY(record.contains(NAME));
+
+            actual.emplaceBack(query.value(ID).value<quint64>(),
+                               query.value(NAME).value<QString>());
+        }
+        QCOMPARE(actual, expected);
+        QCOMPARE(query.at(), AfterLastRow);
+    }
+
+    // Finish (detachFromResultSet())
+    {
+        query.finish();
+
+        QVERIFY(!query.isActive());
+        QVERIFY(query.isSelect());
+        QVERIFY(!query.isValid());
+        QCOMPARE(query.at(), BeforeFirstRow);
+        QCOMPARE(query.size(), -1);
+        // Behaves the same as the size() for SELECT queries
+        QCOMPARE(query.numRowsAffected(), -1);
+        QCOMPARE(query.numericalPrecisionPolicy(), LowPrecisionDouble);
+        QCOMPARE(query.executedQuery(), queryString);
+        QCOMPARE(query.lastInsertId(), QVariant());
+
+        // Test bound values
+        const auto boundValues = query.boundValues();
+        QCOMPARE(boundValues.size(), 2);
+        QCOMPARE(boundValues, QVariantList({1, u"%le%"_s}));
+
+        QVERIFY(!query.next());
+        QVERIFY(!query.previous());
+        QVERIFY(!query.first());
+        QVERIFY(!query.last());
+        QVERIFY(!query.seek(1));
+    }
+
+    // Re-execute second time
+    {
+        const auto queryString1 = u"select id, name, added_on from roles "
+                                   "where name like ? and id > ? order by id"_s;
+        auto ok = query.prepare(queryString1);
+        QVERIFY(ok);
+
+        query.addBindValue(u"rol%"_s);
+        query.addBindValue(1);
+
+        // Test bound values
+        const auto boundValues = query.boundValues();
+        QCOMPARE(boundValues.size(), 2);
+        QCOMPARE(boundValues, QVariantList({u"rol%"_s, 1}));
+
+        ok = query.exec();
+
+        QVERIFY(ok);
+        QVERIFY(query.isActive());
+        QVERIFY(query.isSelect());
+        QVERIFY(!query.isValid());
+        QCOMPARE(query.at(), BeforeFirstRow);
+        const auto querySize = query.size();
+        QCOMPARE(querySize, 2);
+        // Behaves the same as the size() for SELECT queries
+        QCOMPARE(query.numRowsAffected(), 2);
+        QCOMPARE(query.numericalPrecisionPolicy(), LowPrecisionDouble);
+        QCOMPARE(query.executedQuery(), queryString1);
+        QCOMPARE(query.lastInsertId(), QVariant());
+
+        // Verify the result
+        QVector<IdAndCustomType<QString>> expected {
+            {2, "role two"}, {3, "role three"},
         };
         QVector<IdAndCustomType<QString>> actual;
         actual.reserve(querySize);
