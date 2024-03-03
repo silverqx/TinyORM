@@ -449,6 +449,9 @@ MySqlResult::size_type MySqlResult::size() noexcept
 {
     Q_D(const MySqlResult);
 
+    /* No need to call !isSelect() because all method which are calling this method are
+       already doing this check. */
+
     // Don't cache the result as it's already cached in the MYSQL_RES/MYSQL_STMT
     if (d->preparedQuery)
         return static_cast<size_type>(mysql_stmt_num_rows(d->stmt));
