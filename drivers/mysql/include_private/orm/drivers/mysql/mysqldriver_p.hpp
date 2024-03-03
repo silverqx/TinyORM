@@ -28,7 +28,8 @@ namespace Orm::Drivers::MySql
         /*! Allocate and initialize the MYSQL connection handler object. */
         void mysqlInit();
         /*! Set extra MySQL connection options. */
-        SetConnectionOptionsResult mysqlSetConnectionOptions(const QString &options);
+        SetConnectionOptionsResult
+        mysqlSetConnectionOptions(const QString &options) const;
         /*! Set the default character set for the mysql_real_connect() function. */
         void mysqlSetCharacterSet(const QString &host, bool before) const;
         /*! Establish a connection to the MySQL server running on the host. */
@@ -74,7 +75,7 @@ namespace Orm::Drivers::MySql
         static MySqlOptionParsed parseMySqlOption(QStringView optionRaw);
 
         /*! Set the given MySQL connection option (using mysql_options()). */
-        bool mysqlSetConnectionOption(QStringView option, QStringView value);
+        bool mysqlSetConnectionOption(QStringView option, QStringView value) const;
 
         /*! Alias type for the setOptionXx() methods. */
         using SetOptionMemFn = std::function<bool(MYSQL *, mysql_option, QStringView)>;
