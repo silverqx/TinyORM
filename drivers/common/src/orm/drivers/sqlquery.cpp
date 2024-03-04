@@ -293,7 +293,7 @@ QVariant SqlQuery::lastInsertId() const
 bool SqlQuery::next()
 {
     // Nothing to do
-    if (!isSelect() || !isActive())
+    if (!isActive() || !isSelect())
         return false;
 
     switch (at()) {
@@ -315,7 +315,7 @@ bool SqlQuery::next()
 bool SqlQuery::previous()
 {
     // Nothing to do
-    if (!isSelect() || !isActive())
+    if (!isActive() || !isSelect())
         return false;
 
     switch (at()) {
@@ -337,7 +337,7 @@ bool SqlQuery::previous()
 bool SqlQuery::first()
 {
     // Nothing to do
-    if (!isSelect() || !isActive())
+    if (!isActive() || !isSelect())
         return false;
 
     return m_sqlResult->fetchFirst();
@@ -345,7 +345,7 @@ bool SqlQuery::first()
 
 bool SqlQuery::last()
 {
-    if (!isSelect() || !isActive())
+    if (!isActive() || !isSelect())
         return false;
 
     return m_sqlResult->fetchLast();
@@ -354,7 +354,7 @@ bool SqlQuery::last()
 bool SqlQuery::seek(const size_type index, const bool relative)
 {
     // Nothing to do
-    if (!isSelect() || !isActive())
+    if (!isActive() || !isSelect())
         return false;
 
     // Nothing to fetch, an empty result set
@@ -376,7 +376,7 @@ bool SqlQuery::seek(const size_type index, const bool relative)
 
 QVariant SqlQuery::value(const size_type index) const
 {
-    if (isActive() && isValid() && isSelect())
+    if (isActive() && isSelect() && isValid())
         return m_sqlResult->data(index);
 
     throw Exceptions::LogicError(
@@ -400,7 +400,7 @@ QVariant SqlQuery::value(const QString &name) const
 bool SqlQuery::isNull(const size_type index) const
 {
     // NOTE api different, QtSql also returns true for not active and not valid fields :/ silverqx
-    if (isActive() && isValid() && isSelect())
+    if (isActive() && isSelect() && isValid())
         return m_sqlResult->isNull(index);
 
     throw Exceptions::LogicError(
@@ -426,7 +426,7 @@ SqlQuery::size_type SqlQuery::size() const noexcept
 {
     // Nothing to do
     if (!driverWeak().lock()->hasFeature(SqlDriver::QuerySize) ||
-        !isSelect() || !isActive()
+        !isActive() || !isSelect()
     )
         return -1; // Must return -1 here to have the same API as QtSql, nothing else
 
