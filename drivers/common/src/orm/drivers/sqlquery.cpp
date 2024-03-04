@@ -262,12 +262,17 @@ SqlRecord SqlQuery::record() const
     if (!isActive() || !isSelect())
         return {};
 
+    /* Will provide information about all fields such as length, precision,
+       SQL column type, auto-incrementing, ... */
     auto record = m_sqlResult->record();
 
-    // Populate also the field values if the cursor is positioned on a valid record/row
-    if (isValid())
-        for (decltype (record)::size_type index = 0; index < record.count(); ++index)
-            record.setValue(index, value(index));
+    // Nothing to do, not positioned on a valid record/row
+    if (!isValid())
+        return record;
+
+    // Populate field values
+    for (decltype (record)::size_type index = 0; index < record.count(); ++index)
+        record.setValue(index, value(index));
 
     return record;
 }
