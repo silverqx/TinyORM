@@ -3,6 +3,7 @@
 #include "orm/drivers/constants_p.hpp"
 #include "orm/drivers/exceptions/runtimeerror.hpp"
 #include "orm/drivers/sqldriver.hpp"
+#include "orm/drivers/sqlrecord.hpp"
 #include "orm/drivers/sqlresult_p.hpp"
 
 TINYORM_BEGIN_COMMON_NAMESPACE
@@ -201,6 +202,20 @@ void SqlResult::clearBoundValues()
 }
 
 /* Result sets */
+
+void SqlResult::populateFielValuesFor(SqlRecord &record) const
+{
+    // Nothing to do, not positioned on a valid record/row
+    if (!isValid())
+        return;
+
+    /*! Alias for the SqlRecord size type. */
+    using SizeType = std::remove_reference_t<decltype (record)>::size_type;
+
+    // Populate field values
+    for (SizeType index = 0; index < record.count(); ++index)
+        record.setValue(index, data(index));
+}
 
 bool SqlResult::fetchPrevious()
 {

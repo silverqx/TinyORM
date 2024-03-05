@@ -264,26 +264,32 @@ SqlRecord MySqlResult::record() const
     // Seek to the beginning
     mysql_field_seek(mysqlRes, 0);
 
-    SqlRecord result;
+    SqlRecord record;
+    record.reserve(mysql_field_count(d->drv_d_func()->mysql));
+
     const MYSQL_FIELD *fieldInfo = nullptr;
 
+    // Materialize
     while ((fieldInfo = mysql_fetch_field(mysqlRes)) != nullptr)
-        result.append(MySqlUtils::convertToSqlField(fieldInfo));
+        record.append(MySqlUtils::convertToSqlField(fieldInfo));
 
     // Restore the cursor position
     mysql_field_seek(mysqlRes, currentCursor);
 
-    return result;
+    // Populate field values for the given record
+    populateFielValuesFor(record);
+
+    return record;
 }
+
+/* The SqlRecord cache must be defined on the SqlResult instance because SqlResult is
+   responsible for all operations. */
 
 const SqlRecord &MySqlResult::recordCached() const
 {
     Q_D(const MySqlResult);
 
-    if (!d->recordCache)
-        d->recordCache = record();
-
-    return *d->recordCache;
+    return d->recordCache ? *d->recordCache : *(d->recordCache = record());
 }
 
 QVariant MySqlResult::lastInsertId() const
