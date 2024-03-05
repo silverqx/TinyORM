@@ -406,9 +406,9 @@ bool MySqlResult::fetchNext()
     return true;
 }
 
-QVariant MySqlResult::data(const size_type index)
+QVariant MySqlResult::data(const size_type index) const
 {
-    Q_D(MySqlResult);
+    Q_D(const MySqlResult);
 
     const auto idx = static_cast<MySqlResultPrivate::ResultFieldsSizeType>(index);
 
@@ -421,7 +421,7 @@ QVariant MySqlResult::data(const size_type index)
     return d->getValueForNormal(idx);
 }
 
-bool MySqlResult::isNull(const size_type index)
+bool MySqlResult::isNull(const size_type index) const
 {
     Q_D(const MySqlResult);
 
@@ -445,7 +445,7 @@ bool MySqlResult::isNull(const size_type index)
    return d->row[idx] == nullptr;
 }
 
-MySqlResult::size_type MySqlResult::size() noexcept
+MySqlResult::size_type MySqlResult::size() const noexcept
 {
     Q_D(const MySqlResult);
 
@@ -459,7 +459,7 @@ MySqlResult::size_type MySqlResult::size() noexcept
     return static_cast<size_type>(mysql_num_rows(d->result));
 }
 
-MySqlResult::size_type MySqlResult::numRowsAffected()
+MySqlResult::size_type MySqlResult::numRowsAffected() const
 {
     Q_D(const MySqlResult);
 
