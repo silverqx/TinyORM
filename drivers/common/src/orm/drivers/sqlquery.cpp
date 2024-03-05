@@ -260,6 +260,7 @@ SqlRecord SqlQuery::record() const
 {
     // Nothing to do
     if (!isActive() || !isSelect())
+        // Don't throw an exception here as this method can be used as factory method
         return {};
 
     /* Will provide information about all fields such as length, precision,
