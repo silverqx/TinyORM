@@ -46,6 +46,7 @@ namespace Orm::Drivers::MySql
         SqlRecord record() const final;
         /*! Get a SqlRecord containing the field information for the current query. */
         const SqlRecord &recordCached() const final;
+
         /*! Get the ID of the most recent inserted row. */
         QVariant lastInsertId() const final;
 
