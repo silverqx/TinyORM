@@ -103,6 +103,8 @@ namespace Orm::Drivers
         inline bool isEmpty() const noexcept;
         /*! Get the number of fields in the current record. */
         inline size_type count() const noexcept;
+        /*! Allocate memory for at least the given size of fields. */
+        inline void reserve(size_type size);
 
         /*! Determine whether the current record contains the given field name. */
         inline bool contains(const QString &name) const noexcept;
@@ -148,6 +150,11 @@ namespace Orm::Drivers
     SqlRecord::size_type SqlRecord::count() const noexcept
     {
         return static_cast<size_type>(m_fields.size());
+    }
+
+    void SqlRecord::reserve(const size_type size)
+    {
+        m_fields.reserve(size);
     }
 
     bool SqlRecord::contains(const QString &name) const noexcept
