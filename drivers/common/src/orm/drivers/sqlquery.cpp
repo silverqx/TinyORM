@@ -263,18 +263,8 @@ SqlRecord SqlQuery::record() const
         return {};
 
     /* Will provide information about all fields such as length, precision,
-       SQL column type, auto-incrementing, ... */
-    auto record = m_sqlResult->record();
-
-    // Nothing to do, not positioned on a valid record/row
-    if (!isValid())
-        return record;
-
-    // Populate field values
-    for (decltype (record)::size_type index = 0; index < record.count(); ++index)
-        record.setValue(index, value(index));
-
-    return record;
+       SQL column type, auto-incrementing, ..., and also the field value. */
+    return m_sqlResult->record();
 }
 
 const SqlRecord &SqlQuery::recordCached() const
