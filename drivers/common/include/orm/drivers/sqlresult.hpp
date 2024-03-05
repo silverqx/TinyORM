@@ -150,16 +150,16 @@ namespace Orm::Drivers
         virtual bool fetchPrevious();
 
         /*! Get the field value at the given index in the current record. */
-        virtual QVariant data(size_type index) = 0;
+        virtual QVariant data(size_type index) const = 0;
         /*! Determine whether the field at the given index is NULL. */
-        virtual bool isNull(size_type index) = 0;
+        virtual bool isNull(size_type index) const = 0;
 
         /*! Get the size of the result (number of rows returned), -1 if the size can't be
             determined (database must support reporting about query size). */
-        virtual size_type size() noexcept = 0;
+        virtual size_type size() const noexcept = 0;
         /*! Get the number of affected rows for DML queries or -1 if the size can't be
             determined. */
-        virtual size_type numRowsAffected() = 0;
+        virtual size_type numRowsAffected() const = 0;
 
         /*! Release memory associated with the current result set. */
         virtual void detachFromResultSet() noexcept = 0;

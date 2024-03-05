@@ -59,16 +59,16 @@ namespace Orm::Drivers::MySql
         bool fetchNext() final;
 
         /*! Get the field value at the given index in the current record. */
-        QVariant data(size_type index) final;
+        QVariant data(size_type index) const final;
         /*! Determine whether the field at the given index is NULL. */
-        bool isNull(size_type index) final;
+        bool isNull(size_type index) const final;
 
         /*! Get the size of the result (number of rows returned), -1 if the size can't be
             determined. */
-        size_type size() noexcept final;
+        size_type size() const noexcept final;
         /*! Get the number of affected rows for DML queries or -1 if the size can't be
             determined. */
-        size_type numRowsAffected() final;
+        size_type numRowsAffected() const final;
 
         /*! Release memory associated with the current result set. */
         void detachFromResultSet() noexcept final;
