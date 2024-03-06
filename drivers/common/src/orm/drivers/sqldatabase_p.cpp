@@ -103,7 +103,8 @@ SqlDatabase SqlDatabasePrivate::addDatabase(SqlDatabase &&db, const QString &con
                 .arg(connection, __tiny_func__));
 
     /* Set a connection name for the connection and also for the associated SQL driver,
-       it will be used in exceptions and logs. */
+       it will be used in exceptions and logs. The SqlResult obtains a connection name
+       from the SqlDriver. */
     db.setConnectionName(connection);
 
     auto [itDatabase, ok] = connections.try_emplace(connection, std::move(db));
