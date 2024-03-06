@@ -137,15 +137,8 @@ const SqlResult &SqlQuery::result() const noexcept // noexcept is correct here
 
 bool SqlQuery::exec(const QString &query)
 {
-    // Nothing to do
-    if (query.isEmpty())
-        throw Exceptions::InvalidArgumentError(
-                u"The query argument can't be empty in %1()."_s
-                .arg(__tiny_func__));
-
-    if (!this->driverWeakInternal().lock()->isOpen())
-        throw Exceptions::LogicError(
-                u"MySQL database connection isn't open in %1()."_s.arg(__tiny_func__));
+    throwIfNoDatabaseConnection(__tiny_func__);
+    throwIfEmptyQueryString(query, __tiny_func__);
 
 #if defined(QT_DEBUG_SQL) || defined(TINYDRIVERS_DEBUG_SQL)
     QElapsedTimer timer;
@@ -168,15 +161,8 @@ bool SqlQuery::exec(const QString &query)
 
 bool SqlQuery::prepare(const QString &query)
 {
-    // Nothing to do
-    if (query.isEmpty())
-        throw Exceptions::InvalidArgumentError(
-                u"The query argument can't be empty in %1()."_s
-                .arg(__tiny_func__));
-
-    if (!this->driverWeakInternal().lock()->isOpen())
-        throw Exceptions::LogicError(
-                u"MySQL database connection isn't open in %1()."_s.arg(__tiny_func__));
+    throwIfNoDatabaseConnection(__tiny_func__);
+    throwIfEmptyQueryString(query, __tiny_func__);
 
     return m_sqlResult->prepare(query);
 }
@@ -188,8 +174,9 @@ bool SqlQuery::exec()
         throw Exceptions::LogicError(
                 u"The prepared query is empty, call the SqlQuery::prepare() first "
                  "for prepared statements or pass the query string directly "
-                 "to the SqlQuery::exec(QString) for normal statements in %1()."_s
-                .arg(__tiny_func__));
+                 "to the SqlQuery::exec(QString) for normal statements, "
+                 "for '%1' database connection in %2()."_s
+                .arg(connectionName(), __tiny_func__));
 
 #if defined(QT_DEBUG_SQL) || defined(TINYDRIVERS_DEBUG_SQL)
     QElapsedTimer t;
@@ -258,10 +245,7 @@ QVariantList SqlQuery::boundValues() const
 
 SqlRecord SqlQuery::record() const
 {
-    // Nothing to do
-    if (!isActive() || !isSelect())
-        // Don't throw an exception here as this method can be used as factory method
-        return {};
+    throwIfNoResultSet(__tiny_func__);
 
     /* Will provide information about all fields such as length, precision,
        SQL column type, auto-incrementing, ..., and also the field value. */
@@ -270,6 +254,8 @@ SqlRecord SqlQuery::record() const
 
 const SqlRecord &SqlQuery::recordCached() const
 {
+    throwIfNoResultSet(__tiny_func__);
+
     /* The record will be cached for better performance, it avoids materialization
        of the record again and again. Cache is invalidated during seek(), fetchXyz()
        operations or if executing a new query on the same instance or re-executing
@@ -363,68 +349,59 @@ bool SqlQuery::seek(const size_type index, const bool relative)
 
 QVariant SqlQuery::value(const size_type index) const
 {
-    if (isActive() && isSelect() && isValid())
-        return m_sqlResult->data(index);
+    throwIfNoValidResultSet(__tiny_func__);
 
-    throw Exceptions::LogicError(
-            u"No active and valid result set, first, you need to execute the query "
-             "and place the cursor on an existing row to obtain the column/field value "
-             "in %1()."_s.arg(__tiny_func__));
+    return m_sqlResult->data(index);
 }
 
 QVariant SqlQuery::value(const QString &name) const
 {
-    const auto index = m_sqlResult->recordCached().indexOf(name);
+    throwIfNoValidResultSet(__tiny_func__);
 
-    if (index > -1)
-        return value(index);
+    if (const auto index = m_sqlResult->recordCached().indexOf(name); index > -1)
+        return m_sqlResult->data(index);
 
-    throw Exceptions::InvalidArgumentError(
-                u"The field name '%1' doesn't exist or was not fetched for the current "
-                 "result set in %2()."_s.arg(name, __tiny_func__));
+    throwNoFieldName(name, __tiny_func__);
 }
 
 bool SqlQuery::isNull(const size_type index) const
 {
-    // NOTE api different, QtSql also returns true for not active and not valid fields :/ silverqx
-    if (isActive() && isSelect() && isValid())
-        return m_sqlResult->isNull(index);
+    throwIfNoValidResultSet(__tiny_func__);
 
-    throw Exceptions::LogicError(
-                u"No active and valid result set, first, you need to execute the query "
-                 "and place the cursor on an existing row to see if the field is NULL "
-                 "in %1()."_s
-                .arg(__tiny_func__));
+    return m_sqlResult->isNull(index);
 }
 
 bool SqlQuery::isNull(const QString &name) const
 {
-    const auto index = m_sqlResult->recordCached().indexOf(name);
+    throwIfNoValidResultSet(__tiny_func__);
 
-    if (index > -1)
-        return isNull(index);
+    if (const auto index = m_sqlResult->recordCached().indexOf(name); index > -1)
+        return m_sqlResult->isNull(index);
 
-    throw Exceptions::InvalidArgumentError(
-                u"The field name '%1' doesn't exist or was not fetched for the current "
-                 "result set in %2()."_s.arg(name, __tiny_func__));
+    throwNoFieldName(name, __tiny_func__);
 }
 
-SqlQuery::size_type SqlQuery::size() const noexcept
+SqlQuery::size_type SqlQuery::size() const
 {
     // Nothing to do
-    if (!driverWeak().lock()->hasFeature(SqlDriver::QuerySize) ||
-        !isActive() || !isSelect()
+    if (const auto driver = driverWeak().lock();
+        !driver->hasFeature(SqlDriver::QuerySize)
     )
-        return -1; // Must return -1 here to have the same API as QtSql, nothing else
+        throw Exceptions::LogicError(
+                u"The '%1' database driver doesn't support query size reporting, "
+                 "for '%2' database connection in %3()."_s
+                .arg(driver->driverName(), connectionName(), __tiny_func__));
+
+    throwIfNoResultSet(__tiny_func__);
 
     return m_sqlResult->size();
 }
 
 SqlQuery::size_type SqlQuery::numRowsAffected() const
 {
-    // Nothing to do, also don't check the isSelect() here to have the same API as QtSql
-    if (!isActive())
-        return -1; // Must return -1 here to have the same API as QtSql, nothing else
+    /* Nothing to do, query was not executed, also don't check the isSelect() here
+       to have the same API as QtSql. */
+    throwIfNoActiveQuery(__tiny_func__);
 
     return m_sqlResult->numRowsAffected();
 }
@@ -432,8 +409,7 @@ SqlQuery::size_type SqlQuery::numRowsAffected() const
 QVariant SqlQuery::lastInsertId() const
 {
     // Nothing to do, query was not executed
-    if (!isActive())
-        return {};
+    throwIfNoActiveQuery(__tiny_func__);
 
     return m_sqlResult->lastInsertId();
 }
@@ -496,6 +472,30 @@ std::weak_ptr<SqlDriver> SqlQuery::driverWeakInternal() noexcept
 QString SqlQuery::connectionName() const noexcept
 {
     return m_sqlResult->connectionName();
+}
+
+/* Common for both */
+
+void SqlQuery::throwIfNoDatabaseConnection(const QString &functionName)
+{
+    // Nothing to do
+    if (this->driverWeakInternal().lock()->isOpen())
+        return;
+
+    throw Exceptions::LogicError(
+                u"The '%1' database connection isn't open in %2()."_s
+                .arg(connectionName(), functionName));
+}
+
+void SqlQuery::throwIfEmptyQueryString(const QString &query, const QString &functionName)
+{
+    // Nothing to do
+    if (!query.isEmpty())
+        return;
+
+    throw Exceptions::InvalidArgumentError(
+                u"The query argument can't be empty for '%1' database connection "
+                 "in %2()."_s.arg(connectionName(), functionName));
 }
 
 /* Result sets */
@@ -574,6 +574,52 @@ bool SqlQuery::mapSeekToFetch(const size_type actualIdx)
 
     m_sqlResult->setAt(AfterLastRow);
     return false;
+}
+
+void SqlQuery::throwIfNoActiveQuery(const QString &functionName) const
+{
+    // Nothing to do
+    if (isActive())
+        return;
+
+    throw Exceptions::LogicError(
+            u"No active query, you need to execute a query for '%1' database connection "
+             "in %2()."_s.arg(connectionName(), functionName));
+}
+
+void SqlQuery::throwIfNoResultSet(const QString &functionName) const
+{
+    // Nothing to do
+    if (isActive() && isSelect())
+        return;
+
+    throw Exceptions::LogicError(
+            u"No active result set, you need to execute a query to obtain the record "
+             "for '%1' database connection in %2()."_s
+            .arg(connectionName(), functionName));
+}
+
+void SqlQuery::throwIfNoValidResultSet(const QString &functionName) const
+{
+    // Nothing to do
+    if (isActive() && isSelect() && isValid())
+        return;
+
+    // NOTE api different, QtSql also returns true for not active and not valid fields :/ silverqx
+    throw Exceptions::LogicError(
+            u"No active and valid result set, first, you need to execute the query "
+             "and place the cursor on an existing row to obtain the column/field value, "
+             "for '%1' database connection in %2()."_s
+            .arg(connectionName(), functionName));
+}
+
+void SqlQuery::throwNoFieldName(const QString &name, const QString &functionName) const
+{
+    // NOTE api different, QtSql also returns true for field names that don't exist :/ silverqx
+    throw Exceptions::InvalidArgumentError(
+                u"The field name '%1' doesn't exist or was not fetched for the current "
+                 "result set for '%2' database connection in %3()."_s
+                .arg(name, connectionName(), functionName));
 }
 
 /* Constructors */
