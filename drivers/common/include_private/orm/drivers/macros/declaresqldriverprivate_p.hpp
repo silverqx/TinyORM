@@ -23,8 +23,8 @@
             throw Exceptions::LogicError(                                                \
                         u"The SqlResultPrivate::sqldriver smart pointer is nullptr. "    \
                          "The SqlDatabase instance is invalid after calling "            \
-                         "removeDatabase(), in %1()."_s                                  \
-                        .arg(__tiny_func__));                                            \
+                         "removeDatabase(), for '%1' database connection in %2()."_s     \
+                        .arg(connectionName, __tiny_func__));                            \
                                                                                          \
         else T_LIKELY                                                                    \
             return std::static_pointer_cast<const Class>(driver)->d_func();              \
@@ -39,8 +39,8 @@
             throw Exceptions::LogicError(                                                \
                         u"The SqlResultPrivate::sqldriver smart pointer is nullptr. "    \
                          "The SqlDatabase instance is invalid after calling "            \
-                         "removeDatabase(), in %1()."_s                                  \
-                        .arg(__tiny_func__));                                            \
+                         "removeDatabase(), for '%1' database connection in %2()."_s     \
+                        .arg(connectionName, __tiny_func__));                            \
                                                                                          \
         else T_LIKELY                                                                    \
             return std::static_pointer_cast<Class>(driver)->d_func();                    \

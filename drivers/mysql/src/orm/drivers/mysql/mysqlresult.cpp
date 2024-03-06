@@ -16,6 +16,10 @@ using MySqlUtils = Orm::Drivers::MySql::MySqlUtilsPrivate;
 namespace Orm::Drivers::MySql
 {
 
+/* As you can see in the code below all isActive() and isValid() checks are missing,
+   practically no method is doing these checks, they must be done before the SqlResult
+   methods are called. */
+
 /* public */
 
 MySqlResult::MySqlResult(const std::weak_ptr<MySqlDriver> &driver)
@@ -104,8 +108,9 @@ bool MySqlResult::prepare(const QString &query)
 
         if (d->stmt = mysql_stmt_init(mysql); d->stmt == nullptr)
             throw Exceptions::SqlError(
-                        u"Unable to prepare the MYSQL_STMT handler in %1()."_s
-                        .arg(__tiny_func__),
+                        u"Unable to prepare the MYSQL_STMT handler for '%1' MySQL "
+                         "database connection in %2()."_s
+                        .arg(d->connectionName, __tiny_func__),
                         MySqlUtils::prepareMySqlError(mysql));
     }
 
@@ -132,16 +137,13 @@ bool MySqlResult::exec()
 {
     Q_D(MySqlResult);
 
-    if (!d->preparedQuery)
+    // Nothing to do, eg. mysql_stmt_init() failed (don't remove this check)
+    if (!d->preparedQuery || d->stmt == nullptr)
         throw Exceptions::LogicError(
                 u"The prepared query is empty, call the SqlQuery::prepare() first "
                  "for prepared statements or pass the query string directly "
-                 "to the SqlQuery::exec(QString) for normal statements in %1()."_s
-                .arg(__tiny_func__));
-
-    // Nothing to do, eg. mysql_stmt_init() failed (don't remove this check)
-    if (d->stmt == nullptr)
-        return false;
+                 "to the SqlQuery::exec(QString) for normal statements, for '%1' MySQL "
+                 "database connection in %2()."_s.arg(d->connectionName, __tiny_func__));
 
     d->recordCache.reset();
 

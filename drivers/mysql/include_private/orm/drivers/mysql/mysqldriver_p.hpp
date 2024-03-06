@@ -78,7 +78,8 @@ namespace Orm::Drivers::MySql
         bool mysqlSetConnectionOption(QStringView option, QStringView value) const;
 
         /*! Alias type for the setOptionXx() methods. */
-        using SetOptionMemFn = std::function<bool(MYSQL *, mysql_option, QStringView)>;
+        using SetOptionMemFn = std::function<bool(const MySqlDriverPrivate &,
+                                                  mysql_option, QStringView)>;
         /*! MySQL connection option and the set method. */
         struct MySqlOptionValue {
             /*! MySQL connection option. */
@@ -93,35 +94,32 @@ namespace Orm::Drivers::MySql
         static const MySqlOptionsHash &getMySqlOptionsHash();
 
         /*! Update the openFlags argument value based on the given flag value. */
-        static void setOptionFlag(uint &optionFlags, QStringView option);
+        void setOptionFlag(uint &optionFlags, QStringView option) const;
 
         /*! Set the MySQL option to the given string value. */
-        static bool setOptionString(MYSQL *mysql, mysql_option option, QStringView value);
+        bool setOptionString(mysql_option option, QStringView value) const;
         /*! Set the MySQL option to the given unsigned int value. */
-        static bool setOptionUInt(MYSQL *mysql, mysql_option option, QStringView value);
+        bool setOptionUInt(mysql_option option, QStringView value) const;
         /*! Set the MySQL option to the given boolean value. */
-        static bool setOptionBool(MYSQL *mysql, mysql_option option,
-                                  QStringView value) noexcept;
+        bool setOptionBool(mysql_option option, QStringView value) const noexcept;
         /*! Set the MySQL protocol type option to the given value. */
-        static bool setOptionProtocol(MYSQL *mysql, mysql_option option,
-                                      QStringView value);
+        bool setOptionProtocol(mysql_option option, QStringView value) const;
         /*! Get the MySQL protocol type option by the given QString value. */
-        static mysql_protocol_type getOptionProtocol(QStringView value);
+        mysql_protocol_type getOptionProtocol(QStringView value) const;
 // The MYSQL_OPT_SSL_MODE was added in MySQL 5.7.11
 #if !defined(MARIADB_VERSION_ID) && defined(MYSQL_VERSION_ID) && MYSQL_VERSION_ID >= 50711
         /*! Set the MySQL SSL-mode option to the given value. */
-        static bool setOptionSslMode(MYSQL *mysql, mysql_option option,
-                                     QStringView value);
+        bool setOptionSslMode(mysql_option option, QStringView value) const;
         /*! Get the MySQL SSL-mode option by the given QString value. */
-        static mysql_ssl_mode getOptionSslMode(QStringView value);
+        mysql_ssl_mode getOptionSslMode(QStringView value) const;
 #endif
 
         /*! Log warnings to the console for some boolean connection options. */
-        static void logBoolOptionWarnings(mysql_option option);
+        void logBoolOptionWarnings(mysql_option option) const;
         /*! Determine if the given value is the bool true value (true, on, yes, 1). */
         static bool isTrueBoolOption(QStringView value) noexcept;
         /*! Throw exception if the given MySQL option is unsupported (mysql_options()). */
-        static void throwIfUnsupportedOption(QStringView option, QStringView value);
+        void throwIfUnsupportedOption(QStringView option, QStringView value) const;
 
         /*! Convert the given QString to the char array (return nullptr if isNull()). */
         inline static const char *toCharArray(const QByteArray &value) noexcept;
