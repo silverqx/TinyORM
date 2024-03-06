@@ -66,7 +66,7 @@ SqlDatabaseManager::cloneDatabase(const SqlDatabase &other, const QString &conne
 {
     if (!other.isValid())
         throw Exceptions::InvalidArgumentError(
-                u"Can't clone an invalid '%1' connection in %2()."_s
+                u"Can't clone an invalid '%1' database connection in %2()."_s
                 .arg(other.connectionName(), __tiny_func__));
 
     SqlDatabase db(other.driverName());
@@ -130,8 +130,7 @@ void SqlDatabaseManager::throwIfDriverIsNullptr(const std::unique_ptr<SqlDriver>
 
     throw Exceptions::InvalidArgumentError(
                 u"The 'driver' argument can't be nullptr while adding the '%1' "
-                 "connection in %2()."_s
-                .arg(connection, __tiny_func__));
+                 "database connection in %2()."_s.arg(connection, __tiny_func__));
 }
 
 } // namespace Orm::Drivers

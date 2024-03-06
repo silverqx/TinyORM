@@ -35,9 +35,9 @@ bool MySqlDriver::open(
 
     if (isOpen())
         throw Exceptions::LogicError(
-                u"MySQL database connection is already open, first close the connection "
-                 "and then open it again or call the reopen() method, in %1()."_s
-                .arg(__tiny_func__));
+                u"The '%1' MySQL database connection is already open, first close "
+                 "the connection and then open it again or call the reopen() method, "
+                 "in %2()."_s.arg(d->connectionName, __tiny_func__));
 
     try {
         // Allocate and initialize the MYSQL object for the mysql_real_connect()
@@ -146,13 +146,15 @@ bool MySqlDriver::beginTransaction()
     // Nothing to do
     if (!isOpen())
         throw Exceptions::LogicError(
-                u"MySQL database connection isn't open in %1()."_s.arg(__tiny_func__));
+                u"The '%1' MySQL database connection isn't open in %2()."_s
+                .arg(d->connectionName, __tiny_func__));
 
     if (mysql_query(d->mysql, "START TRANSACTION") == 0)
         return true;
 
     throw Exceptions::SqlTransactionError(
-                u"Unable to start transaction in %1()."_s.arg(__tiny_func__),
+                u"Unable to start transaction for '%1' MySQL database connection "
+                 "in %2()."_s.arg(d->connectionName, __tiny_func__),
                 MySqlUtils::prepareMySqlError(d->mysql));
 }
 
@@ -163,13 +165,15 @@ bool MySqlDriver::commitTransaction()
     // Nothing to do
     if (!isOpen())
         throw Exceptions::LogicError(
-                u"MySQL database connection isn't open in %1()."_s.arg(__tiny_func__));
+                u"The '%1' MySQL database connection isn't open in %2()."_s
+                .arg(d->connectionName, __tiny_func__));
 
     if (mysql_query(d->mysql, "COMMIT") == 0)
         return true;
 
     throw Exceptions::SqlTransactionError(
-                u"Unable to commit transaction in %1()."_s.arg(__tiny_func__),
+                u"Unable to commit transaction for '%1' MySQL database connection "
+                 "in %2()."_s.arg(d->connectionName, __tiny_func__),
                 MySqlUtils::prepareMySqlError(d->mysql));
 }
 
@@ -180,13 +184,15 @@ bool MySqlDriver::rollbackTransaction()
     // Nothing to do
     if (!isOpen())
         throw Exceptions::LogicError(
-                u"MySQL database connection isn't open in %1()."_s.arg(__tiny_func__));
+                u"The '%1' MySQL database connection isn't open in %2()."_s
+                .arg(d->connectionName, __tiny_func__));
 
     if (mysql_query(d->mysql, "ROLLBACK") == 0)
         return true;
 
     throw Exceptions::SqlTransactionError(
-                u"Unable to rollback transaction in %1()."_s.arg(__tiny_func__),
+                u"Unable to rollback transaction for '%1' MySQL database connection "
+                 "in %2()."_s.arg(d->connectionName, __tiny_func__),
                 MySqlUtils::prepareMySqlError(d->mysql));
 }
 
@@ -211,10 +217,14 @@ MySqlDriver::createResult(const std::weak_ptr<SqlDriver> &driver) const
         return std::make_unique<MySqlResult>(
                     std::dynamic_pointer_cast<MySqlDriver>(driverShared));
 
-    else T_UNLIKELY
+    else T_UNLIKELY {
+        Q_D(const MySqlDriver);
+
         throw Exceptions::InvalidArgumentError(
-                u"The 'driver' argument can't be nullptr, it can't be expired in %1()."_s
-                .arg(__tiny_func__));
+                u"The 'driver' argument can't be nullptr, it can't be expired, "
+                 "for '%1' MySQL database connection in %2()."_s
+                .arg(d->connectionName, __tiny_func__));
+    }
 }
 
 } // namespace Orm::Drivers::MySql

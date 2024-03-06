@@ -99,7 +99,7 @@ SqlDatabase SqlDatabasePrivate::addDatabase(SqlDatabase &&db, const QString &con
 
     if (connections.contains(connection))
         throw Exceptions::InvalidArgumentError(
-                u"The database connection '%1' already exists in %2()."_s
+                u"The '%1' database connection already exists in %2()."_s
                 .arg(connection, __tiny_func__));
 
     /* Set a connection name for the connection and also for the associated SQL driver,
@@ -491,7 +491,8 @@ void SqlDatabasePrivate::throwIfSqlDriverIsNull() const
     throw Exceptions::LogicError(
                 u"The SqlDatabasePrivate::sqldriver smart pointer is nullptr. "
                  "The SqlDatabase instance is invalid after calling removeDatabase(), "
-                 "in %1()."_s.arg(__tiny_func__));
+                 "for '%1' database connection in %2()."_s
+                .arg(connectionName, __tiny_func__));
 }
 
 void SqlDatabasePrivate::throwIfDifferentThread(const SqlDatabase &db,

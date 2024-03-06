@@ -40,7 +40,8 @@ bool MySqlResultPrivate::populateFields(MYSQL *const mysql)
     // Nothing to do, metadata disabled
     if (mysql_result_metadata(result) == RESULTSET_METADATA_NONE)
         throw Exceptions::LogicError(
-                u"Result set has no metadata in %1()."_s.arg(__tiny_func__));
+                u"Result set has no metadata for '%1' MySQL database connection "
+                 "in %2()."_s.arg(connectionName, __tiny_func__));
 #endif
 
     uint index = 0;
@@ -376,9 +377,9 @@ MySqlResultPrivate::throwIfBadResultFieldsIndex(const ResultFieldsSizeType index
         return;
 
     throw Exceptions::OutOfRangeError(
-                u"The field index '%1' is out of bounds, the index must be between 0-%2 "
-                 "in %3()."_s
-                .arg(index).arg(fieldsCount - 1).arg(__tiny_func__));
+                u"The field index '%1' is out of bounds, the index must be between 0-%2, "
+                 "on '%3' MySQL database connection in %4()."_s
+                .arg(index).arg(fieldsCount - 1).arg(connectionName, __tiny_func__));
 }
 
 /* private */

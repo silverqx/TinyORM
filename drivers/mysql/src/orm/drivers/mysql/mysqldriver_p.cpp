@@ -30,8 +30,9 @@ void MySqlDriverPrivate::mysqlInit()
         return;
 
     throw Exceptions::SqlError(
-                u"Unable to allocate and initialize the MYSQL handler object in %1()."_s
-                .arg(__tiny_func__),
+                u"Unable to allocate and initialize the MYSQL handler object "
+                 "for '%1' database connection in %2()."_s
+                .arg(connectionName, __tiny_func__),
                 MySqlUtils::prepareMySqlError(mysql));
 }
 
@@ -67,8 +68,9 @@ MySqlDriverPrivate::mysqlSetConnectionOptions(const QString &options) const
 
         else
             throw Exceptions::InvalidArgumentError(
-                    u"Failed to set MySQL connection option value '%1' in %2()."_s
-                    .arg(optionRaw.trimmed(), __tiny_func__));
+                    u"Failed to set MySQL connection option '%1' for '%2' database "
+                     "connection in %3()."_s
+                    .arg(optionRaw.trimmed(), connectionName, __tiny_func__));
     }
 
     return {optionFlags, std::move(unixSocket)};
@@ -115,13 +117,15 @@ MySqlDriverPrivate::mysqlSetCharacterSet(const QString &host, const bool before)
         }
 
     const auto messageTmpl =
-            before ? u"before establishing a database connection to the '%1' host"_s
-                   : u"for SQL statements for the '%1' host"_s;
+            before ? u"before establishing the '%1' MySQL database connection "
+                      "to the '%2' host"_s
+                   : u"for SQL statements on '%1' MySQL database connection for the '%2' "
+                      "host"_s;
 
     throw Exceptions::SqlError(
-                u"Unable to set the default character sets [%1] %2 in %3()."_s
+                u"Unable to set default character sets [%1] %2 in %3()."_s
                 .arg(joinDefaultCharacterSets(DefaultCharacterSets),
-                     messageTmpl.arg(host), __tiny_func__),
+                     messageTmpl.arg(connectionName, host), __tiny_func__),
                 MySqlUtils::prepareMySqlError(mysql));
 }
 
@@ -144,9 +148,9 @@ void MySqlDriverPrivate::mysqlRealConnect(
         return;
 
     throw Exceptions::SqlError(
-                u"Unable to establish a connection to the MySQL server "
-                 "running on the '%1' host in %2()."_s
-                .arg(host, __tiny_func__),
+                u"Unable to establish '%1' database connection to the MySQL server "
+                 "running on the '%2' host in %3()."_s
+                .arg(connectionName, host, __tiny_func__),
                 MySqlUtils::prepareMySqlError(mysql));
 }
 
@@ -162,8 +166,8 @@ void MySqlDriverPrivate::mysqlSelectDb(const QString &database)
     }
 
     throw Exceptions::SqlError(
-                u"Unable to select/open database '%1' in %2()."_s
-                .arg(database, __tiny_func__),
+                u"Unable to select/open database '%1' for the '%2' MySQL database "
+                 "connection in %3()."_s.arg(database, connectionName, __tiny_func__),
                 MySqlUtils::prepareMySqlError(mysql));
 }
 
@@ -214,13 +218,14 @@ bool MySqlDriverPrivate::mysqlSetConnectionOption(const QStringView option,
 
     // Set the given option using predefined setOptionXyz() static method
     if (const auto &[mysqlOption, setMySqlOption] = optionsHash.at(option);
-        std::invoke(setMySqlOption, mysql, mysqlOption, value)
+        std::invoke(setMySqlOption, *this, mysqlOption, value)
     )
         return true;
 
     throw Exceptions::InvalidArgumentError(
-                u"Failed to set MySQL '%1' connection option to '%2' value in %3()."_s
-                .arg(option, value, __tiny_func__));
+                u"Failed to set MySQL '%1' connection option to '%2' value for the '%3' "
+                 "database connection in %4()."_s
+                .arg(option, value, connectionName, __tiny_func__));
 }
 
 const MySqlDriverPrivate::MySqlOptionsHash &
@@ -233,42 +238,42 @@ MySqlDriverPrivate::getMySqlOptionsHash()
        the hash.contains(QStringView) as our option names are QStrinView-s
        after the split() method call. So this is the best solution. */
     static const MySqlOptionsHash cachedOptions = {
-        {u"SSL_KEY"_s,                   {MYSQL_OPT_SSL_KEY,         setOptionString}},
-        {u"SSL_CERT"_s,                  {MYSQL_OPT_SSL_CERT,        setOptionString}},
-        {u"SSL_CA"_s,                    {MYSQL_OPT_SSL_CA,          setOptionString}},
-        {u"SSL_CAPATH"_s,                {MYSQL_OPT_SSL_CAPATH,      setOptionString}},
-        {u"SSL_CIPHER"_s,                {MYSQL_OPT_SSL_CIPHER,      setOptionString}},
-        {u"MYSQL_OPT_SSL_KEY"_s,         {MYSQL_OPT_SSL_KEY,         setOptionString}},
-        {u"MYSQL_OPT_SSL_CERT"_s,        {MYSQL_OPT_SSL_CERT,        setOptionString}},
-        {u"MYSQL_OPT_SSL_CA"_s,          {MYSQL_OPT_SSL_CA,          setOptionString}},
-        {u"MYSQL_OPT_SSL_CAPATH"_s,      {MYSQL_OPT_SSL_CAPATH,      setOptionString}},
-        {u"MYSQL_OPT_SSL_CIPHER"_s,      {MYSQL_OPT_SSL_CIPHER,      setOptionString}},
-        {u"MYSQL_OPT_SSL_CRL"_s,         {MYSQL_OPT_SSL_CRL,         setOptionString}},
-        {u"MYSQL_OPT_SSL_CRLPATH"_s,     {MYSQL_OPT_SSL_CRLPATH,     setOptionString}},
+        {u"SSL_KEY"_s,                   {MYSQL_OPT_SSL_KEY,         &MySqlDriverPrivate::setOptionString}},
+        {u"SSL_CERT"_s,                  {MYSQL_OPT_SSL_CERT,        &MySqlDriverPrivate::setOptionString}},
+        {u"SSL_CA"_s,                    {MYSQL_OPT_SSL_CA,          &MySqlDriverPrivate::setOptionString}},
+        {u"SSL_CAPATH"_s,                {MYSQL_OPT_SSL_CAPATH,      &MySqlDriverPrivate::setOptionString}},
+        {u"SSL_CIPHER"_s,                {MYSQL_OPT_SSL_CIPHER,      &MySqlDriverPrivate::setOptionString}},
+        {u"MYSQL_OPT_SSL_KEY"_s,         {MYSQL_OPT_SSL_KEY,         &MySqlDriverPrivate::setOptionString}},
+        {u"MYSQL_OPT_SSL_CERT"_s,        {MYSQL_OPT_SSL_CERT,        &MySqlDriverPrivate::setOptionString}},
+        {u"MYSQL_OPT_SSL_CA"_s,          {MYSQL_OPT_SSL_CA,          &MySqlDriverPrivate::setOptionString}},
+        {u"MYSQL_OPT_SSL_CAPATH"_s,      {MYSQL_OPT_SSL_CAPATH,      &MySqlDriverPrivate::setOptionString}},
+        {u"MYSQL_OPT_SSL_CIPHER"_s,      {MYSQL_OPT_SSL_CIPHER,      &MySqlDriverPrivate::setOptionString}},
+        {u"MYSQL_OPT_SSL_CRL"_s,         {MYSQL_OPT_SSL_CRL,         &MySqlDriverPrivate::setOptionString}},
+        {u"MYSQL_OPT_SSL_CRLPATH"_s,     {MYSQL_OPT_SSL_CRLPATH,     &MySqlDriverPrivate::setOptionString}},
 #if defined(MYSQL_VERSION_ID) && MYSQL_VERSION_ID >= 50710
-        {u"MYSQL_OPT_TLS_VERSION"_s,     {MYSQL_OPT_TLS_VERSION,     setOptionString}},
+        {u"MYSQL_OPT_TLS_VERSION"_s,     {MYSQL_OPT_TLS_VERSION,     &MySqlDriverPrivate::setOptionString}},
 #endif
 #if defined(MYSQL_VERSION_ID) && MYSQL_VERSION_ID >= 50711 && !defined(MARIADB_VERSION_ID)
-        {u"MYSQL_OPT_SSL_MODE"_s,        {MYSQL_OPT_SSL_MODE,        setOptionSslMode}},
+        {u"MYSQL_OPT_SSL_MODE"_s,        {MYSQL_OPT_SSL_MODE,        &MySqlDriverPrivate::setOptionSslMode}},
 #endif
-        {u"MYSQL_OPT_CONNECT_TIMEOUT"_s, {MYSQL_OPT_CONNECT_TIMEOUT, setOptionUInt}},
-        {u"MYSQL_OPT_READ_TIMEOUT"_s,    {MYSQL_OPT_READ_TIMEOUT,    setOptionUInt}},
-        {u"MYSQL_OPT_WRITE_TIMEOUT"_s,   {MYSQL_OPT_WRITE_TIMEOUT,   setOptionUInt}},
-        {u"MYSQL_OPT_RECONNECT"_s,       {MYSQL_OPT_RECONNECT,       setOptionBool}},
-        {u"MYSQL_OPT_LOCAL_INFILE"_s,    {MYSQL_OPT_LOCAL_INFILE,    setOptionUInt}},
-        {u"MYSQL_OPT_PROTOCOL"_s,        {MYSQL_OPT_PROTOCOL,        setOptionProtocol}},
+        {u"MYSQL_OPT_CONNECT_TIMEOUT"_s, {MYSQL_OPT_CONNECT_TIMEOUT, &MySqlDriverPrivate::setOptionUInt}},
+        {u"MYSQL_OPT_READ_TIMEOUT"_s,    {MYSQL_OPT_READ_TIMEOUT,    &MySqlDriverPrivate::setOptionUInt}},
+        {u"MYSQL_OPT_WRITE_TIMEOUT"_s,   {MYSQL_OPT_WRITE_TIMEOUT,   &MySqlDriverPrivate::setOptionUInt}},
+        {u"MYSQL_OPT_RECONNECT"_s,       {MYSQL_OPT_RECONNECT,       &MySqlDriverPrivate::setOptionBool}},
+        {u"MYSQL_OPT_LOCAL_INFILE"_s,    {MYSQL_OPT_LOCAL_INFILE,    &MySqlDriverPrivate::setOptionUInt}},
+        {u"MYSQL_OPT_PROTOCOL"_s,        {MYSQL_OPT_PROTOCOL,        &MySqlDriverPrivate::setOptionProtocol}},
         {u"MYSQL_SHARED_MEMORY_BASE_NAME"_s,
                                          {MYSQL_SHARED_MEMORY_BASE_NAME,
-                                                                     setOptionString}},
+                                                                     &MySqlDriverPrivate::setOptionString}},
         {u"MYSQL_OPT_OPTIONAL_RESULTSET_METADATA"_s,
                                          {MYSQL_OPT_OPTIONAL_RESULTSET_METADATA,
-                                                                     setOptionBool}},
+                                                                     &MySqlDriverPrivate::setOptionBool}},
     };
 
     return cachedOptions;
 }
 
-void MySqlDriverPrivate::setOptionFlag(uint &optionFlags, const QStringView option)
+void MySqlDriverPrivate::setOptionFlag(uint &optionFlags, const QStringView option) const
 {
     // These options are for mysql_real_connect() client_flag parameter
 
@@ -288,27 +293,27 @@ void MySqlDriverPrivate::setOptionFlag(uint &optionFlags, const QStringView opti
         throw Exceptions::InvalidArgumentError(
                 u"The MYSQL_OPT_SSL_KEY, MYSQL_OPT_SSL_CERT, and MYSQL_OPT_SSL_CA "
                  "must be used instead of the CLIENT_SSL option (the CLIENT_SSL is set "
-                 "internally in the client library), in %1()."_s
-                .arg(__tiny_func__));
+                 "internally in the client library), for '%1' database connection "
+                 "in %2()."_s.arg(connectionName, __tiny_func__));
     else if (option == "CLIENT_OPTIONAL_RESULTSET_METADATA"_L1)
         throw Exceptions::InvalidArgumentError(
                 u"The TinyMySql library doesn't support optional metadata for MySQL "
-                 "connections (CLIENT_OPTIONAL_RESULTSET_METADATA) in %1()."_s
-                .arg(__tiny_func__));
+                 "connections (CLIENT_OPTIONAL_RESULTSET_METADATA), for '%1' database "
+                 "connection in %2()."_s.arg(connectionName, __tiny_func__));
     else
         throw Exceptions::InvalidArgumentError(
-                u"Unknown MySQL connect option '%1' in %2()."_s
-                .arg(option, __tiny_func__));
+                u"Unknown MySQL connection option '%1' for '%2' database connection "
+                 "in %3()."_s.arg(option, connectionName, __tiny_func__));
 }
 
-bool MySqlDriverPrivate::setOptionString(MYSQL *const mysql, const mysql_option option,
-                                         const QStringView value)
+bool MySqlDriverPrivate::setOptionString(const mysql_option option,
+                                         const QStringView value) const
 {
     return mysql_options(mysql, option, value.toUtf8().constData()) == 0;
 }
 
-bool MySqlDriverPrivate::setOptionUInt(MYSQL *const mysql, const mysql_option option,
-                                       const QStringView value)
+bool MySqlDriverPrivate::setOptionUInt(const mysql_option option,
+                                       const QStringView value) const
 {
     auto ok = false;
     const auto intValue = value.toUInt(&ok);
@@ -316,8 +321,8 @@ bool MySqlDriverPrivate::setOptionUInt(MYSQL *const mysql, const mysql_option op
     return ok && mysql_options(mysql, option, &intValue) == 0;
 }
 
-bool MySqlDriverPrivate::setOptionBool(MYSQL *const mysql, const mysql_option option,
-                                       const QStringView value) noexcept
+bool MySqlDriverPrivate::setOptionBool(const mysql_option option,
+                                       const QStringView value) const noexcept
 {
     // Log warnings to the console for some boolean connection options
     logBoolOptionWarnings(option);
@@ -328,15 +333,15 @@ bool MySqlDriverPrivate::setOptionBool(MYSQL *const mysql, const mysql_option op
     return mysql_options(mysql, option, &boolValue) == 0;
 }
 
-bool MySqlDriverPrivate::setOptionProtocol(MYSQL *const mysql, const mysql_option option,
-                                           const QStringView value)
+bool MySqlDriverPrivate::setOptionProtocol(const mysql_option option,
+                                           const QStringView value) const
 {
     const auto protocol = getOptionProtocol(value);
 
     return mysql_options(mysql, option, &protocol) == 0;
 }
 
-mysql_protocol_type MySqlDriverPrivate::getOptionProtocol(const QStringView value)
+mysql_protocol_type MySqlDriverPrivate::getOptionProtocol(const QStringView value) const
 {
     if (value == "TCP"_L1 || value == "MYSQL_PROTOCOL_TCP"_L1)
         return MYSQL_PROTOCOL_TCP;
@@ -350,21 +355,21 @@ mysql_protocol_type MySqlDriverPrivate::getOptionProtocol(const QStringView valu
         return MYSQL_PROTOCOL_DEFAULT;
 
     throw Exceptions::InvalidArgumentError(
-                u"Unknown MySQL connection transport protocol '%1' in %2()."_s
-                .arg(value, __tiny_func__));
+                u"Unknown MySQL connection transport protocol '%1' for '%2' database "
+                 "connection in %3()."_s.arg(value, connectionName, __tiny_func__));
 }
 
 // The MYSQL_OPT_SSL_MODE was added in MySQL 5.7.11
 #if defined(MYSQL_VERSION_ID) && MYSQL_VERSION_ID >= 50711 && !defined(MARIADB_VERSION_ID)
-bool MySqlDriverPrivate::setOptionSslMode(MYSQL *const mysql, const mysql_option option,
-                                          const QStringView value)
+bool MySqlDriverPrivate::setOptionSslMode(const mysql_option option,
+                                          const QStringView value) const
 {
     const auto sslMode = getOptionSslMode(value);
 
     return mysql_options(mysql, option, &sslMode) == 0;
 }
 
-mysql_ssl_mode MySqlDriverPrivate::getOptionSslMode(const QStringView value)
+mysql_ssl_mode MySqlDriverPrivate::getOptionSslMode(const QStringView value) const
 {
     if (value == "DISABLED"_L1 || value == "SSL_MODE_DISABLED"_L1)
         return SSL_MODE_DISABLED;
@@ -378,18 +383,19 @@ mysql_ssl_mode MySqlDriverPrivate::getOptionSslMode(const QStringView value)
         return SSL_MODE_VERIFY_IDENTITY;
 
     throw Exceptions::InvalidArgumentError(
-                u"Unknown MySQL SSL mode '%1' in %2()."_s
-                .arg(value, __tiny_func__));
+                u"Unknown MySQL SSL mode '%1' for '%2' database connection in %3()."_s
+                .arg(value, connectionName, __tiny_func__));
 }
 #endif
 
-void MySqlDriverPrivate::logBoolOptionWarnings(const mysql_option option)
+void MySqlDriverPrivate::logBoolOptionWarnings(const mysql_option option) const
 {
     if (option == MYSQL_OPT_RECONNECT)
         qWarning().noquote()
                 << u"The MYSQL_OPT_RECONNECT option is still available but is "
                     "deprecated; expect it to be removed in a future version of MySQL, "
-                    "in %1()."_s.arg(__tiny_func__);
+                    "for '%1' database connection in %2()."_s
+                   .arg(connectionName, __tiny_func__);
 }
 
 bool MySqlDriverPrivate::isTrueBoolOption(const QStringView value) noexcept
@@ -405,15 +411,16 @@ bool MySqlDriverPrivate::isTrueBoolOption(const QStringView value) noexcept
 }
 
 void MySqlDriverPrivate::throwIfUnsupportedOption(const QStringView option,
-                                                  const QStringView value)
+                                                  const QStringView value) const
 {
     /* Calling the isTrueBoolOption(value) to allow setting it to OFF/false, setting it
        to OFF supported but setting it to ON isn't. */
     if (option == "MYSQL_OPT_OPTIONAL_RESULTSET_METADATA"_L1 && isTrueBoolOption(value))
         throw Exceptions::InvalidArgumentError(
                 u"The TinyMySql library doesn't support optional metadata for MySQL "
-                 "connections (MYSQL_OPT_OPTIONAL_RESULTSET_METADATA) in %1()."_s
-                .arg(__tiny_func__));
+                 "connections (MYSQL_OPT_OPTIONAL_RESULTSET_METADATA), "
+                 "for '%1' database connection in %2()."_s
+                .arg(connectionName, __tiny_func__));
 }
 
 } // namespace Orm::Drivers::MySql
