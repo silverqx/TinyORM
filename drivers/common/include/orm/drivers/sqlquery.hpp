@@ -150,7 +150,7 @@ namespace Orm::Drivers
 
         /*! Get the size of the result (number of rows returned), -1 if the size can't be
             determined (database must support reporting about query size). */
-        size_type size() const noexcept;
+        size_type size() const;
         /*! Get the number of affected rows for DML queries or -1 if the size can't be
             determined. */
         size_type numRowsAffected() const;
@@ -172,6 +172,12 @@ namespace Orm::Drivers
         /*! Get the current connection name. */
         QString connectionName() const noexcept;
 
+        /* Common for both */
+        /*! Thrown an exception if the database connection isn't open. */
+        void throwIfNoDatabaseConnection(const QString &functionName);
+        /*! Thrown an exception if the query string is empty. */
+        void throwIfEmptyQueryString(const QString &query, const QString &functionName);
+
         /* Result sets */
         /*! Normal seek. */
         bool seekArbitrary(size_type index, size_type &actualIdx) noexcept;
@@ -179,6 +185,16 @@ namespace Orm::Drivers
         bool seekRelative(size_type index, size_type &actualIdx);
         /*! Map the given index to the fetch-related methods that are available. */
         bool mapSeekToFetch(size_type actualIdx);
+
+        /*! Throw an exception if the query wasn't executed. */
+        void throwIfNoActiveQuery(const QString &functionName) const;
+        /*! Throw exception if there is no result set (SELECT query wasn't executed). */
+        void throwIfNoResultSet(const QString &functionName) const;
+        /*! Throw an exception if the cursor isn't positioned on a valid recrod/row. */
+        void throwIfNoValidResultSet(const QString &functionName) const;
+        /*! Throw an exception if the field name doesn't exist or was not fetched. */
+        [[noreturn]] void throwNoFieldName(const QString &name,
+                                           const QString &functionName) const;
 
         /* Constructors */
         /*! Initialize implementation-dependent query result set for the default
