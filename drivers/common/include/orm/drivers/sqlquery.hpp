@@ -169,6 +169,9 @@ namespace Orm::Drivers
         /*! Get the SQL database driver used to access the database connection. */
         std::weak_ptr<SqlDriver> driverWeakInternal() noexcept;
 
+        /*! Get the current connection name. */
+        QString connectionName() const noexcept;
+
         /* Result sets */
         /*! Normal seek. */
         bool seekArbitrary(size_type index, size_type &actualIdx) noexcept;

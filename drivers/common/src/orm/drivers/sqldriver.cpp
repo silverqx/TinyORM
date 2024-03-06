@@ -39,6 +39,12 @@ bool SqlDriver::isOpenError() const noexcept // NOLINT(readability-convert-membe
     return false;
 }
 
+QString SqlDriver::connectionName() const noexcept
+{
+    Q_D(const SqlDriver);
+    return d->connectionName;
+}
+
 SqlDriver::DbmsType SqlDriver::dbmsType() const noexcept
 {
     Q_D(const SqlDriver);
@@ -110,7 +116,7 @@ void SqlDriver::setOpen(const bool value) noexcept
     d->isOpen = value;
 }
 
-void SqlDriver::setConnectionName(const QStringView connection) noexcept
+void SqlDriver::setConnectionName(const QString &connection) noexcept
 {
     Q_D(SqlDriver);
     d->connectionName = connection;
