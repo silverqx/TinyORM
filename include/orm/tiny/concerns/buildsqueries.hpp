@@ -110,7 +110,7 @@ namespace Concerns
         builder().enforceOrderBy();
 
         qint64 page = 1;
-        qint64 countModels = 0;
+        qint64 modelsSize = 0;
 
         do { // NOLINT(cppcoreguidelines-avoid-do-while)
             /* We'll execute the query for the given page and get the results. If there
@@ -118,9 +118,9 @@ namespace Concerns
                we will call the callback with the current chunk of these results. */
             auto models = builder().forPage(page, count).get();
 
-            countModels = static_cast<qint64>(models.size());
+            modelsSize = static_cast<qint64>(models.size());
 
-            if (countModels == 0)
+            if (modelsSize == 0)
                 break;
 
             /* On each chunk result set, we will pass them to the callback and then let
@@ -134,7 +134,7 @@ namespace Concerns
 
             ++page;
 
-        } while (countModels == count);
+        } while (modelsSize == count);
 
         return true;
     }
@@ -211,7 +211,7 @@ namespace Concerns
         const auto aliasName = alias.isEmpty() ? columnName : alias;
 
         qint64 page = 1;
-        qint64 countModels = 0;
+        qint64 modelsSize = 0;
 
         QVariant lastId;
 
@@ -223,9 +223,9 @@ namespace Concerns
                we will call the callback with the current chunk of these results. */
             auto models = clone.forPageAfterId(count, lastId, columnName, true).get();
 
-            countModels = static_cast<qint64>(models.size());
+            modelsSize = static_cast<qint64>(models.size());
 
-            if (countModels == 0)
+            if (modelsSize == 0)
                 break;
 
             /* Obtain the lastId before the results is passed to the user's callback
@@ -253,7 +253,7 @@ namespace Concerns
 
             ++page;
 
-        } while (countModels == count);
+        } while (modelsSize == count);
 
         return true;
     }
@@ -288,14 +288,14 @@ namespace Concerns
         if (builder().getConnection().pretending())
             return {};
 
-        const auto count = models.size();
+        const auto modelsSize = models.size();
 
-        if (count == 0)
+        if (modelsSize == 0)
             throw Orm::Exceptions::RecordsNotFoundError(
                     QStringLiteral("No records found in %1().").arg(__tiny_func__));
 
-        if (count > 1)
-            throw Orm::Exceptions::MultipleRecordsFoundError(count, __tiny_func__);
+        if (modelsSize > 1)
+            throw Orm::Exceptions::MultipleRecordsFoundError(modelsSize, __tiny_func__);
 
         return std::move(models.first());
     }
