@@ -119,8 +119,6 @@ namespace Orm::Drivers
         SqlRecord record() const;
         /*! Get a SqlRecord containing the field information for the current query. */
         const SqlRecord &recordCached() const;
-        /*! Get the ID of the most recent inserted row if the database supports it. */
-        QVariant lastInsertId() const;
 
         /*! Retrieve the next record and position the cursor on it. */
         bool next();
@@ -156,6 +154,8 @@ namespace Orm::Drivers
         /*! Get the number of affected rows for DML queries or -1 if the size can't be
             determined. */
         size_type numRowsAffected() const;
+        /*! Get the ID of the most recent inserted row if the database supports it. */
+        QVariant lastInsertId() const;
 
         /* Others */
         /*! Clear the result set and releases any resources held by the query. */

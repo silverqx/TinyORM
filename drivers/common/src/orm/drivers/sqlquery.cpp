@@ -277,15 +277,6 @@ const SqlRecord &SqlQuery::recordCached() const
     return m_sqlResult->recordCached();
 }
 
-QVariant SqlQuery::lastInsertId() const
-{
-    // Nothing to do, query was not executed
-    if (!isActive())
-        return {};
-
-    return m_sqlResult->lastInsertId();
-}
-
 bool SqlQuery::next()
 {
     // Nothing to do
@@ -436,6 +427,15 @@ SqlQuery::size_type SqlQuery::numRowsAffected() const
         return -1; // Must return -1 here to have the same API as QtSql, nothing else
 
     return m_sqlResult->numRowsAffected();
+}
+
+QVariant SqlQuery::lastInsertId() const
+{
+    // Nothing to do, query was not executed
+    if (!isActive())
+        return {};
+
+    return m_sqlResult->lastInsertId();
 }
 
 /* Others */
