@@ -1152,15 +1152,15 @@ namespace Orm::Tiny
         models.reserve(static_cast<decltype (models)::size_type>(
                            QueryUtils::queryResultSize(result)));
 
-        const auto fieldsCount = result.record().count();
-
         while (result.next()) {
+            const auto record = result.record();
+            const auto fieldsCount = record.count();
+
             QVector<AttributeItem> row;
             row.reserve(fieldsCount);
 
             // Populate model attributes with data from the database (one table row)
-            const auto record = result.record();
-            for (int i = 0; i < record.count(); ++i)
+            for (int i = 0; i < fieldsCount; ++i)
                 row.append({record.fieldName(i), result.value(i)});
 
             // Create a new model instance from the table row
