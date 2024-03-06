@@ -3,6 +3,8 @@
 #include <QDateTime>
 #include <QUuid>
 
+#include "orm/drivers/sqldriver.hpp"
+
 TINYORM_BEGIN_COMMON_NAMESPACE
 
 namespace Orm::Drivers
@@ -17,6 +19,12 @@ SqlResultPrivate::SqlResultPrivate(const std::weak_ptr<SqlDriver> &driver) noexc
        here even there is another check in the MySqlDriver::createResult() because
        the MySqlResult can still be instantiated manually. */
     Q_ASSERT(!sqldriver.expired());
+
+    // Ownership of the shared_ptr()
+    const auto driverLocked = sqldriver.lock();
+
+    precisionPolicy = driverLocked->defaultNumericalPrecisionPolicy();
+    connectionName = driverLocked->connectionName();
 }
 
 /* This problematic is much more complex. Qt can represent much higher QDate ranges

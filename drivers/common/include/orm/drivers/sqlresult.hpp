@@ -44,9 +44,6 @@ namespace Orm::Drivers
         /*! Get the low-level database result set handle (database specific). */
         virtual QVariant handle() const noexcept = 0;
 
-        /*! Set the connection name. */
-        void setConnectionName(QString &&connection) noexcept;
-
     protected:
         /*! Query placeholders syntax enum. */
         enum BindingSyntax {
@@ -89,6 +86,9 @@ namespace Orm::Drivers
         const SqlDriver *driver() const noexcept;
         /*! Get the SQL database driver used to access the database connection (const). */
         std::weak_ptr<const SqlDriver> driverWeak() const noexcept;
+
+        /*! Get the current connection name. */
+        QString connectionName() const noexcept;
 
         /* Normal queries */
         /*! Execute the given SQL query (non-prepared/normal only). */

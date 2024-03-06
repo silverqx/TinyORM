@@ -125,6 +125,9 @@ namespace Orm::Drivers
         /*! Get the database driver name. */
         virtual QString driverName() const noexcept = 0;
 
+        /*! Get the current connection name. */
+        QString connectionName() const noexcept;
+
         /*! Get the current database driver type. */
         DbmsType dbmsType() const noexcept;
         /*! Get information about the last error that occurred on the database. */
@@ -172,7 +175,7 @@ namespace Orm::Drivers
         /*! Set a flag whether the connection is open. */
         void setOpen(bool value) noexcept;
         /*! Set the connection name. */
-        void setConnectionName(QStringView connection) noexcept;
+        void setConnectionName(const QString &connection) noexcept;
 
         /* Data members */
         /*! Smart pointer to the private implementation. */

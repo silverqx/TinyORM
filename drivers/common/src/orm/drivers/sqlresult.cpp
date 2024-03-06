@@ -17,12 +17,7 @@ namespace Orm::Drivers
 
 SqlResult::SqlResult(std::unique_ptr<SqlResultPrivate> &&dd) noexcept
     : d_ptr(std::move(dd))
-{
-    Q_D(SqlResult);
-
-    setNumericalPrecisionPolicy(
-                d->sqldriver.lock()->defaultNumericalPrecisionPolicy());
-}
+{}
 
 /* public */
 
@@ -30,12 +25,6 @@ SqlResult::SqlResult(std::unique_ptr<SqlResultPrivate> &&dd) noexcept
    If the destructor is inline then the compilation fails because a unique_ptr can't
    destroy an incomplete type. */
 SqlResult::~SqlResult() = default;
-
-void SqlResult::setConnectionName(QString &&connection) noexcept
-{
-    Q_D(SqlResult);
-    d->connectionName = std::move(connection);
-}
 
 /* protected */
 
@@ -125,6 +114,12 @@ std::weak_ptr<const SqlDriver> SqlResult::driverWeak() const noexcept
 {
     Q_D(const SqlResult);
     return d->sqldriver;
+}
+
+QString SqlResult::connectionName() const noexcept
+{
+    Q_D(const SqlResult);
+    return d->connectionName;
 }
 
 /* Prepared queries */

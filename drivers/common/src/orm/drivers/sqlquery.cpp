@@ -493,6 +493,11 @@ std::weak_ptr<SqlDriver> SqlQuery::driverWeakInternal() noexcept
     return m_sqlResult->driver();
 }
 
+QString SqlQuery::connectionName() const noexcept
+{
+    return m_sqlResult->connectionName();
+}
+
 /* Result sets */
 
 bool SqlQuery::seekArbitrary(const size_type index, size_type &actualIdx) noexcept
@@ -595,9 +600,6 @@ std::unique_ptr<SqlResult> SqlQuery::initSqlResult(const SqlDatabase &connection
 
     // Ownership of a unique_ptr()
     auto sqlResult = driver.lock()->createResult(driver);
-
-    // Connection name is used in exception messages
-    sqlResult->setConnectionName(connection.connectionName());
 
     return sqlResult;
 }
