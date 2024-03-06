@@ -196,7 +196,7 @@ void SqlDatabasePrivate::throwIfNoConnection(const QString &connection)
 
     throw Exceptions::InvalidArgumentError(
                 u"The '%1' database connection isn't registered (doesn't exist), please "
-                "register it using the SqlDatabase::addDatabase() method, in %2()."_s
+                 "register it using the SqlDatabase::addDatabase() method, in %2()."_s
                 .arg(connection, __tiny_func__));
 }
 
