@@ -149,7 +149,7 @@ LogsQueries::withFreshQueryLog(const std::function<QVector<Log>()> &callback)
 /* private */
 
 void LogsQueries::logQueryInternal(
-        const QSqlQuery &query, const std::optional<qint64> elapsed,
+        QSqlQuery &query, const std::optional<qint64> elapsed,
 #ifdef TINYORM_DEBUG_SQL
         const QString &type) const
 #else
@@ -168,8 +168,9 @@ void LogsQueries::logQueryInternal(
                             convertNamedToPositionalBindings(query.boundValues()),
 #endif
                             Log::Type::NORMAL, ++m_queryLogId,
-                            elapsed ? *elapsed : -1, query.size(),
-                            query.numRowsAffected()});
+                            elapsed ? *elapsed : -1,
+                            QueryUtils::queryResultSize(query),
+                            query.isActive() ? query.numRowsAffected() : -1});
     }
 
 #ifdef TINYORM_DEBUG_SQL
@@ -182,8 +183,8 @@ void LogsQueries::logQueryInternal(
     qDebug("Executed %s query (%llims, %i results, %i affected%s) : %s",
            type.toUtf8().constData(),
            elapsed ? *elapsed : -1,
-           query.size(),
-           query.numRowsAffected(),
+           QueryUtils::queryResultSize(query),
+           query.isActive() ? query.numRowsAffected() : -1,
            connectionName.isEmpty() ? ""
                                     : QStringLiteral(", %1").arg(connectionName)
                                       .toUtf8().constData(),

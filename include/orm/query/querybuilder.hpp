@@ -1039,7 +1039,7 @@ namespace Orm::Query
         auto query = get({column, key});
 
         // Empty result
-        if (QueryUtils::queryResultSize(query) == 0)
+        if (QueryUtils::queryResultSize(query) <= 0)
             return {};
 
         /* If the column is qualified with a table or have an alias, we cannot use

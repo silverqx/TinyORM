@@ -1,8 +1,11 @@
 #include "orm/schema/mysqlschemabuilder.hpp"
 
 #include "orm/databaseconnection.hpp"
+#include "orm/utils/query.hpp"
 
 TINYORM_BEGIN_COMMON_NAMESPACE
+
+using QueryUtils = Orm::Utils::Query;
 
 namespace Orm::SchemaNs
 {
@@ -25,10 +28,10 @@ MySqlSchemaBuilder::dropDatabaseIfExists(const QString &name) const
 void MySqlSchemaBuilder::dropAllTables() const
 {
     auto query = getAllTables();
-    const auto querySize = query.size();
+    const auto querySize = QueryUtils::queryResultSize(query);
 
     // Nothing to do, empty result
-    if (querySize == 0)
+    if (querySize <= 0)
         return;
 
     QVector<QString> tables;
@@ -49,10 +52,10 @@ void MySqlSchemaBuilder::dropAllTables() const
 void MySqlSchemaBuilder::dropAllViews() const
 {
     auto query = getAllViews();
-    const auto querySize = query.size();
+    const auto querySize = QueryUtils::queryResultSize(query);
 
     // Nothing to do, empty result
-    if (querySize == 0)
+    if (querySize <= 0)
         return;
 
     QVector<QString> views;
@@ -92,9 +95,11 @@ bool MySqlSchemaBuilder::hasTable(const QString &table) const
 {
     const auto tablePrefixed = NOSPACE.arg(m_connection->getTablePrefix(), table);
 
-    return m_connection->selectFromWriteConnection(
-                m_grammar->compileTableExists(),
-                {m_connection->getDatabaseName(), tablePrefixed}).size() > 0;
+    auto query = m_connection->selectFromWriteConnection(
+                     m_grammar->compileTableExists(),
+                     {m_connection->getDatabaseName(), tablePrefixed});
+
+    return QueryUtils::queryResultSize(query) > 0;
 }
 
 } // namespace Orm::SchemaNs

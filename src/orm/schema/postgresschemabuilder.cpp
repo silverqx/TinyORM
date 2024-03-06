@@ -5,9 +5,12 @@
 #include "orm/exceptions/searchpathemptyerror.hpp"
 #include "orm/postgresconnection.hpp"
 #include "orm/schema/grammars/postgresschemagrammar.hpp"
+#include "orm/utils/query.hpp"
 #include "orm/utils/type.hpp"
 
 TINYORM_BEGIN_COMMON_NAMESPACE
+
+using QueryUtils = Orm::Utils::Query;
 
 namespace Orm::SchemaNs
 {
@@ -30,10 +33,10 @@ PostgresSchemaBuilder::dropDatabaseIfExists(const QString &name) const
 void PostgresSchemaBuilder::dropAllTables() const
 {
     auto query = getAllTables();
-    const auto querySize = query.size();
+    const auto querySize = QueryUtils::queryResultSize(query);
 
     // Nothing to do, empty result
-    if (querySize == 0)
+    if (querySize <= 0)
         return;
 
     QVector<QString> tables;
@@ -57,10 +60,10 @@ void PostgresSchemaBuilder::dropAllTables() const
 void PostgresSchemaBuilder::dropAllViews() const
 {
     auto query = getAllViews();
-    const auto querySize = query.size();
+    const auto querySize = QueryUtils::queryResultSize(query);
 
     // Nothing to do, empty result
-    if (querySize == 0)
+    if (querySize <= 0)
         return;
 
     QVector<QString> views;
@@ -127,9 +130,11 @@ bool PostgresSchemaBuilder::hasTable(const QString &table) const
 
     const auto tablePrefixed = NOSPACE.arg(m_connection->getTablePrefix(), table_);
 
-    return m_connection->selectFromWriteConnection(
-                m_grammar->compileTableExists(),
-                {database, schema, tablePrefixed}).size() > 0;
+    auto query = m_connection->selectFromWriteConnection(
+                     m_grammar->compileTableExists(),
+                     {database, schema, tablePrefixed});
+
+    return QueryUtils::queryResultSize(query) > 0;
 }
 
 /* protected */

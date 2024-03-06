@@ -67,8 +67,15 @@ Query::zipForInsert(const QVector<QString> &columns,
 
 int Query::queryResultSize(QSqlQuery &query)
 {
+    // Nothing to do, no result set, isn't active SELECT query
+    if (!query.isActive() || !query.isSelect())
+        return -1;
+
     if (query.driver()->hasFeature(QSqlDriver::QuerySize))
         return query.size();
+
+    // Backup the current cursor position
+    const auto currentCursor = query.at();
 
     query.seek(QSql::BeforeFirstRow);
 
@@ -77,7 +84,8 @@ int Query::queryResultSize(QSqlQuery &query)
     while (query.next())
         ++size;
 
-    query.seek(QSql::BeforeFirstRow);
+    // Restore the cursor position
+    query.seek(currentCursor);
 
     return size;
 }

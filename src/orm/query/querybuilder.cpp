@@ -116,7 +116,7 @@ QVector<QVariant> Builder::pluck(const Column &column)
     const auto size = QueryUtils::queryResultSize(query);
 
     // Empty result
-    if (size == 0)
+    if (size <= 0)
         return {};
 
     /* If the column is qualified with a table or have an alias, we cannot use

@@ -31,7 +31,7 @@ bool BuildsQueries::chunk(const qint64 count,
 
         countResults = static_cast<qint64>(QueryUtils::queryResultSize(results));
 
-        if (countResults == 0)
+        if (countResults <= 0)
             break;
 
         /* On each chunk result set, we will pass them to the callback and then let the
@@ -118,7 +118,7 @@ bool BuildsQueries::chunkById(
 
         countResults = static_cast<qint64>(QueryUtils::queryResultSize(results));
 
-        if (countResults == 0)
+        if (countResults <= 0)
             break;
 
         /* Obtain the lastId before the results is passed to the user's callback because
@@ -180,7 +180,7 @@ SqlQuery BuildsQueries::sole(const QVector<Column> &columns)
 
     const auto count = QueryUtils::queryResultSize(query);
 
-    if (count == 0)
+    if (count <= 0)
         throw Exceptions::RecordsNotFoundError(
                 QStringLiteral("No records found in %1().").arg(__tiny_func__));
 
