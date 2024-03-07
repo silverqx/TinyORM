@@ -314,7 +314,7 @@ bool SqlDatabase::transaction()
 
     // Nothing to do, no transactions support
     else T_UNLIKELY
-        return false;
+        return false; // Don't throw exception here to help avoid #ifdef-s in user's code
 }
 
 bool SqlDatabase::commit()
@@ -324,7 +324,7 @@ bool SqlDatabase::commit()
 
     // Nothing to do, no transactions support
     else T_UNLIKELY
-        return false;
+        return false; // Don't throw exception here to help avoid #ifdef-s in user's code
 }
 
 bool SqlDatabase::rollback()
@@ -334,7 +334,7 @@ bool SqlDatabase::rollback()
 
     // Nothing to do, no transactions support
     else T_UNLIKELY
-        return false;
+        return false; // Don't throw exception here to help avoid #ifdef-s in user's code
 }
 
 /* private */
