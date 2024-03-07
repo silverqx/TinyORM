@@ -33,11 +33,7 @@ namespace Support
 
     public:
         /*! Constructor. */
-        inline SqlDatabasePrivate(std::shared_ptr<SqlDriver> &&driver,
-                                  const QString &driverName_) noexcept;
-        /*! Constructor. */
-        inline SqlDatabasePrivate(std::shared_ptr<SqlDriver> &&driver,
-                                  QString &&driverName_) noexcept;
+        inline explicit SqlDatabasePrivate(std::shared_ptr<SqlDriver> &&driver) noexcept;
         /*! Default destructor. */
         inline ~SqlDatabasePrivate() = default;
 
@@ -76,15 +72,12 @@ namespace Support
         static std::atomic_bool &checkSameThread() noexcept;
 
         /* Factory methods */
-        /*! Factory method to create a new database driver by the given driver name. */
-        static std::shared_ptr<SqlDriver> createSqlDriver(const QString &driver);
-
         /*! Factory method to create the SqlDatabase private implementation instance. */
-        inline static std::shared_ptr<SqlDatabasePrivate>
-        createSqlDatabasePrivate(const QString &driver);
+        static std::shared_ptr<SqlDatabasePrivate>
+        createSqlDatabasePrivate(const QString &driver, const QString &connection);
         /*! Factory method to create the SqlDatabase private implementation instance. */
-        inline static std::shared_ptr<SqlDatabasePrivate>
-        createSqlDatabasePrivate(QString &&driver);
+        static std::shared_ptr<SqlDatabasePrivate>
+        createSqlDatabasePrivate(QString &&driver, const QString &connection);
         /*! Factory method to create the SqlDatabase private implementation instance. */
         static std::shared_ptr<SqlDatabasePrivate>
         createSqlDatabasePrivate(std::shared_ptr<SqlDriver> &&driver);
@@ -99,6 +92,9 @@ namespace Support
         /*! Database driver instance. */
         std::shared_ptr<SqlDriver> sqldriver;
 
+        /* The sqldriver instance also has the same driverName and connectionName data
+           members but we need to make local copies here because sqldriver can be
+           invalidated (destroyed) and we would lost them. */
         /*! Connection driver name. */
         QString driverName;
         /*! Connection name. */
@@ -121,46 +117,6 @@ namespace Support
         NumericalPrecisionPolicy precisionPolicy = LowPrecisionDouble;
 
     private:
-        /* Factory methods */
-        /*! Factory method to create a new MySQL driver instance (shared/loadable). */
-        static std::shared_ptr<SqlDriver> createMySqlDriver();
-        /*! Factory method to create new PostgreSQL driver instance (shared/loadable). */
-        // static std::shared_ptr<SqlDriver> createPostgresDriver();
-        /*! Factory method to create a new SQLite driver instance (shared/loadable). */
-        // static std::shared_ptr<SqlDriver> createSQLiteDriver();
-
-#ifdef TINYDRIVERS_MYSQL_LOADABLE_LIBRARY
-        /*! SQL driver factory function pointer type (allows construction in-place). */
-        using CreateSqlDriverMemFn = SqlDriver *(*)();
-
-        /*! Create a Tiny SQL driver instance (loads a shared library at runtime). */
-        static std::shared_ptr<SqlDriver>
-        createSqlDriverLoadable(const QString &driver, const QString &driverBasenameRaw);
-
-        /*! Wrapper for loading a SQL driver shared library at runtime (thread-safe). */
-        static const std::function<SqlDriver *()> &
-        loadSqlDriver(const QString &driver, const QString &driverBasenameRaw);
-        /*! Load a Tiny SQL driver shared library at runtime (actual code). */
-        static const std::function<SqlDriver *()> &
-        loadSqlDriverCommon(const QString &driver, const QString &driverBasenameRaw);
-        /*! Load a Tiny SQL driver shared library and resolve driver factory function. */
-        static CreateSqlDriverMemFn
-        loadSqlDriverAndResolve(const QString &driverFilepath);
-
-        /*! Get all non-standard Tiny SQL driver locations that LoadLibrary() doesn't
-            load from (TINY_PLUGIN_PATH/QT_PLUGIN_PATH, qmake build folder). */
-        static QStringList sqlDriverPaths(const QString &driver);
-        /*! Get a shared library path inside the build tree (from qmake/CMake build
-            system). */
-        static std::optional<QString> sqlDriverPathFromBuildSystem(const QString &driver);
-        /*! Get a shared library path inside the build tree (from qmake/CMake build
-            system). */
-        static QString getSqlDriverPath(const char *driverPathRaw);
-        /*! Join the given driver path and driver basename (w/o file extension). */
-        static QString joinDriverPath(const QString &driverPath,
-                                      const QString &driverBasename);
-#endif // TINYDRIVERS_MYSQL_LOADABLE_LIBRARY
-
         /* Others */
         /*! Throw an exception if the sqldriver is nullptr. */
         void throwIfSqlDriverIsNull() const;
@@ -170,21 +126,6 @@ namespace Support
     };
 
     /* public */
-
-    /* No need to check the driver for nullptr because that's already checked
-       in the SqlDatabaseManager::addDatabase(). */
-
-    SqlDatabasePrivate::SqlDatabasePrivate(std::shared_ptr<SqlDriver> &&driver,
-                                           const QString &driverName_) noexcept
-        : sqldriver(std::move(driver))
-        , driverName(driverName_)
-    {}
-
-    SqlDatabasePrivate::SqlDatabasePrivate(std::shared_ptr<SqlDriver> &&driver,
-                                           QString &&driverName_) noexcept
-        : sqldriver(std::move(driver))
-        , driverName(std::move(driverName_))
-    {}
 
     /* Database connection */
 
@@ -217,22 +158,6 @@ namespace Support
     void SqlDatabasePrivate::resetDriver() noexcept
     {
         sqldriver.reset();
-    }
-
-    /* Factory methods */
-
-    std::shared_ptr<SqlDatabasePrivate>
-    SqlDatabasePrivate::createSqlDatabasePrivate(const QString &driver)
-    {
-        return std::make_shared<SqlDatabasePrivate>(
-                    SqlDatabasePrivate::createSqlDriver(driver), driver);
-    }
-
-    std::shared_ptr<SqlDatabasePrivate>
-    SqlDatabasePrivate::createSqlDatabasePrivate(QString &&driver)
-    {
-        return std::make_shared<SqlDatabasePrivate>(
-                    SqlDatabasePrivate::createSqlDriver(driver), std::move(driver));
     }
 
 } // namespace Orm::Drivers

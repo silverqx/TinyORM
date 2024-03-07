@@ -70,12 +70,12 @@ namespace Orm::Drivers
 
 /* private */
 
-SqlDatabase::SqlDatabase(const QString &driver)
-    : d(SqlDatabasePrivate::createSqlDatabasePrivate(driver))
+SqlDatabase::SqlDatabase(const QString &driver, const QString &connection)
+    : d(SqlDatabasePrivate::createSqlDatabasePrivate(driver, connection))
 {}
 
-SqlDatabase::SqlDatabase(QString &&driver)
-    : d(SqlDatabasePrivate::createSqlDatabasePrivate(std::move(driver)))
+SqlDatabase::SqlDatabase(QString &&driver, const QString &connection)
+    : d(SqlDatabasePrivate::createSqlDatabasePrivate(std::move(driver), connection))
 {}
 
 SqlDatabase::SqlDatabase(std::unique_ptr<SqlDriver> &&driver)

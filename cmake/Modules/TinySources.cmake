@@ -18,6 +18,7 @@ function(tinydrivers_sources out_headers_private out_headers out_sources)
         sqldriver_p.hpp
         sqlresult_p.hpp
         support/connectionshash_p.hpp
+        support/sqldriverfactory_p.hpp
         utils/type_p.hpp
     )
 
@@ -71,6 +72,7 @@ function(tinydrivers_sources out_headers_private out_headers out_sources)
         sqlrecord.cpp
         sqlresult.cpp
         sqlresult_p.cpp
+        support/sqldriverfactory_p.cpp
         utils/type_p.cpp
     )
 

@@ -19,6 +19,7 @@ sourcesList += \
     $$PWD/orm/drivers/sqlrecord.cpp \
     $$PWD/orm/drivers/sqlresult.cpp \
     $$PWD/orm/drivers/sqlresult_p.cpp \
+    $$PWD/orm/drivers/support/sqldriverfactory_p.cpp \
     $$PWD/orm/drivers/utils/type_p.cpp \
 
 SOURCES += $$sorted(sourcesList)

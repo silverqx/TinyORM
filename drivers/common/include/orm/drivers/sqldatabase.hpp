@@ -29,9 +29,9 @@ namespace Orm::Drivers
         using NotNull = Orm::Drivers::Utils::NotNull<T>;
 
         /*! Private constructor. */
-        explicit SqlDatabase(const QString &driver);
+        SqlDatabase(const QString &driver, const QString &connection);
         /*! Private constructor. */
-        explicit SqlDatabase(QString &&driver);
+        SqlDatabase(QString &&driver, const QString &connection);
         /*! Private constructor. */
         explicit SqlDatabase(std::unique_ptr<SqlDriver> &&driver);
 
