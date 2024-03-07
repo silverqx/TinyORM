@@ -139,6 +139,9 @@ QString MySqlDriver::driverName() const noexcept
 
 /* Transactions */
 
+/* These 3 transaction-related methods can't be const because SQLite and Postgres drivers
+   will call exec(QString). */
+
 bool MySqlDriver::beginTransaction()
 {
     Q_D(MySqlDriver);
