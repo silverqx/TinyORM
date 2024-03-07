@@ -38,13 +38,14 @@ bool SqlDatabaseManager::contains(const QString &connection)
 SqlDatabase
 SqlDatabaseManager::addDatabase(const QString &driver, const QString &connection)
 {
-    return SqlDatabasePrivate::addDatabase(SqlDatabase(driver), connection);
+    return SqlDatabasePrivate::addDatabase(SqlDatabase(driver, connection), connection);
 }
 
 SqlDatabase
 SqlDatabaseManager::addDatabase(QString &&driver, const QString &connection)
 {
-    return SqlDatabasePrivate::addDatabase(SqlDatabase(std::move(driver)), connection);
+    return SqlDatabasePrivate::addDatabase(SqlDatabase(std::move(driver), connection),
+                                           connection);
 }
 
 SqlDatabase
@@ -69,7 +70,7 @@ SqlDatabaseManager::cloneDatabase(const SqlDatabase &other, const QString &conne
                 u"Can't clone an invalid '%1' database connection in %2()."_s
                 .arg(other.connectionName(), __tiny_func__));
 
-    SqlDatabase db(other.driverName());
+    SqlDatabase db(other.driverName(), connection);
     db.d->cloneDatabase(*other.d);
 
     return SqlDatabasePrivate::addDatabase(std::move(db), connection);
