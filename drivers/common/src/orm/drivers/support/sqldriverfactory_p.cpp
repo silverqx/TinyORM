@@ -259,9 +259,9 @@ SqlDriverFactoryPrivate::loadSqlDriverAndResolve(const QString &driverFilepath) 
         return createSqlDriverMemFn;
 
     throw Exceptions::RuntimeError(
-                u"The QLibrary('%1') was loaded successfully but "
-                 "the resolve('TinyDriverInstance') failed for '%2' database connection "
-                 "in %3()."_s
+                u"The QLibrary(\"%1\") was loaded successfully but "
+                 "the resolve(\"TinyDriverInstance\") failed for '%2' database "
+                 "connection in %3()."_s
                 .arg(driverFilepath, connectionName, __tiny_func__));
 }
 
