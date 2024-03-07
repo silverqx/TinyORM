@@ -11,5 +11,5 @@ using TINYORM_PREPEND_NAMESPACE(Orm::Drivers::MySql::MySqlDriver);
 /*! Factory method to create the MySqlDriver instance. */
 extern "C" Q_DECL_EXPORT SqlDriver *TinyDriverInstance()
 {
-    return new MySqlDriver();
+    return new MySqlDriver(); // NOLINT(cppcoreguidelines-owning-memory)
 }
