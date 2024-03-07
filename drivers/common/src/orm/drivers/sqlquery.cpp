@@ -438,7 +438,7 @@ void SqlQuery::clear()
     // Ownership of a weak_ptr()
     const auto driver = driverWeakInternal();
 
-    // Get the SqlResult instance
+                     // Get a new empty SqlResult instance
     *this = SqlQuery(driver.lock()->createResult(driver));
 }
 
