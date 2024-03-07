@@ -38,7 +38,7 @@ namespace Orm::Drivers
 
         /*! Determine if this build of TinyDrivers was built with debugging enabled or
             if it was built in release mode. */
-        static bool isDebugBuild() noexcept; Q_DECL_CONST_FUNCTION
+        static bool isDebugBuild() noexcept Q_DECL_CONST_FUNCTION;
 
         /*! Get the version of the TinyDrivers library. */
         static QVersionNumber version() noexcept Q_DECL_CONST_FUNCTION;
