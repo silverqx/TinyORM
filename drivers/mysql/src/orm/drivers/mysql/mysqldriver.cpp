@@ -204,7 +204,11 @@ MySqlDriver::createResult(const std::weak_ptr<SqlDriver> &driver) const
         /* We need to upcast here, there is no other way, it also has to be
            std::weak_ptr(), it can't be done better. This upcast is kind of check,
            we can't pass down the SqlDriver to the MySqlResult.
-           Even if it would be the shared_ptr<SqlDriver> we had to upcast the same way. */
+           Even if it would be the shared_ptr<SqlDriver> we had to upcast the same way.
+           Revisited, also, all driver data members like host, port, username, ..., and
+           also connectionName will be still the same, it only creates an empty result
+           set. I'm noting this because of SqlQuery::clear() as it was confusing that
+           all these data members stay unchanged, but it's correct. */
         return std::make_unique<MySqlResult>(
                     std::dynamic_pointer_cast<MySqlDriver>(driverShared));
 
