@@ -113,7 +113,7 @@ namespace Orm::Drivers
 
         /* Getters / Setters */
         /*! Determine whether the current driver supports the given feature. */
-        virtual bool hasFeature(DriverFeature feature) const noexcept = 0;
+        virtual bool hasFeature(DriverFeature feature) const = 0;
 
         /*! Determine whether the connection is currently open. */
         virtual bool isOpen() const noexcept;

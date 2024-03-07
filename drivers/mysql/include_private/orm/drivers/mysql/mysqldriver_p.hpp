@@ -53,7 +53,7 @@ namespace Orm::Drivers::MySql
 
         /* hasFeature() */
         /*! Determine whether the MySQL connection handler supports transactions. */
-        inline bool supportsTransactions() const noexcept;
+        bool supportsTransactions() const;
 
         /* Data members */
         /*! MYSQL handler. */
@@ -133,14 +133,6 @@ namespace Orm::Drivers::MySql
     MySqlDriverPrivate::MySqlDriverPrivate() noexcept
         : SqlDriverPrivate(SqlDriver::MySqlServer)
     {}
-
-    /* hasFeature() */
-
-    bool MySqlDriverPrivate::supportsTransactions() const noexcept
-    {
-        return mysql != nullptr &&
-              (mysql->server_capabilities & CLIENT_TRANSACTIONS) == CLIENT_TRANSACTIONS;
-    }
 
     /* private */
 

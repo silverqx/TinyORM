@@ -44,7 +44,7 @@ namespace Orm::Drivers::MySql
 
         /* Getters / Setters */
         /*! Determine whether the current driver supports the given feature. */
-        bool hasFeature(DriverFeature feature) const noexcept final;
+        bool hasFeature(DriverFeature feature) const final;
 
         /*! Get the low-level MySQL database handle (MYSQL *). */
         QVariant handle() const noexcept final;

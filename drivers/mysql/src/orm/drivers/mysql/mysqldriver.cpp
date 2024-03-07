@@ -93,7 +93,7 @@ void MySqlDriver::close() noexcept
 
 /* Getters / Setters */
 
-bool MySqlDriver::hasFeature(const DriverFeature feature) const noexcept
+bool MySqlDriver::hasFeature(const DriverFeature feature) const
 {
     Q_D(const MySqlDriver);
 
@@ -143,11 +143,7 @@ bool MySqlDriver::beginTransaction()
 {
     Q_D(MySqlDriver);
 
-    // Nothing to do
-    if (!isOpen())
-        throw Exceptions::LogicError(
-                u"The '%1' MySQL database connection isn't open in %2()."_s
-                .arg(d->connectionName, __tiny_func__));
+    // No need to check for isOpen() connection, it's done in supportsTransactions()
 
     if (mysql_query(d->mysql, "START TRANSACTION") == 0)
         return true;
@@ -162,11 +158,7 @@ bool MySqlDriver::commitTransaction()
 {
     Q_D(MySqlDriver);
 
-    // Nothing to do
-    if (!isOpen())
-        throw Exceptions::LogicError(
-                u"The '%1' MySQL database connection isn't open in %2()."_s
-                .arg(d->connectionName, __tiny_func__));
+    // No need to check for isOpen() connection, it's done in supportsTransactions()
 
     if (mysql_query(d->mysql, "COMMIT") == 0)
         return true;
@@ -181,11 +173,7 @@ bool MySqlDriver::rollbackTransaction()
 {
     Q_D(MySqlDriver);
 
-    // Nothing to do
-    if (!isOpen())
-        throw Exceptions::LogicError(
-                u"The '%1' MySQL database connection isn't open in %2()."_s
-                .arg(d->connectionName, __tiny_func__));
+    // No need to check for isOpen() connection, it's done in supportsTransactions()
 
     if (mysql_query(d->mysql, "ROLLBACK") == 0)
         return true;
