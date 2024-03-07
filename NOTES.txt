@@ -942,6 +942,16 @@ cat .\compile_commands.json | sls '"file":' > a.txt
 And use regex-es from analyzers-qt5/6.yml
 
 
+Clazy in QtCreator:
+-------------------
+
+- set environment variable
+CLAZY_IGNORE_DIRS=C:[\\/]+(Qt|Program Files|Program Files \(x86\))[\\/].*
+
+- set Project environment (Ctrl+5)
+CLAZY_HEADER_FILTER=[\\/]+(drivers|examples|orm|tests|tom)[\\/]+.+\.(h|hpp)$
+
+
 pwsh autocomeplete:
 -------------------
 For a fast lookup for debugging.
