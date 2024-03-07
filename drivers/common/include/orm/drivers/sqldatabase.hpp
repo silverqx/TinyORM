@@ -67,7 +67,7 @@ namespace Orm::Drivers
         /*! Determine whether the connection has a valid database driver. */
         bool isValid() const noexcept;
         /*! Get information about the last error that occurred on the database. */
-        DummySqlError lastError() const noexcept;
+        DummySqlError lastError() const noexcept Q_DECL_CONST_FUNCTION;
 
         /*! Get the database driver name for the current connection. */
         QString driverName() const noexcept;
