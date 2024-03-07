@@ -278,16 +278,12 @@ QStringList SqlDriverFactoryPrivate::sqlDriverPaths() const
     const auto hasTinyPluginPaths = !envTinyPluginPath.isEmpty();
     const auto hasQtPluginPaths   = !envQtPluginPath.isEmpty();
 
+    constexpr static auto listSeparator = QDir::listSeparator();
+
     QStringList result;
     // +1 for path from qmake/CMake build system
-    result.reserve(envTinyPluginPath.count(QDir::listSeparator()) +
-                   envQtPluginPath.count(QDir::listSeparator()) + 1);
-
-    // Path from qmake/CMake build system (shared library path inside the build tree)
-    if (auto &&sqlDriverPath = sqlDriverPathFromBuildSystem(); sqlDriverPath)
-        result << std::move(*sqlDriverPath);
-
-    constexpr static auto listSeparator = QDir::listSeparator();
+    result.reserve(envTinyPluginPath.count(listSeparator) + (hasTinyPluginPaths ? 1 : 0) +
+                   envQtPluginPath.count(listSeparator) + (hasQtPluginPaths ? 1 : 0) + 1);
 
     // Paths from TINY_PLUGIN_PATH environment variable
     if (hasTinyPluginPaths)
@@ -296,6 +292,10 @@ QStringList SqlDriverFactoryPrivate::sqlDriverPaths() const
     // Paths from QT_PLUGIN_PATH environment variable
     if (hasQtPluginPaths)
         result << envQtPluginPath.split(listSeparator, Qt::SkipEmptyParts);
+
+    // Path from qmake/CMake build system (shared library path inside the build tree)
+    if (auto &&sqlDriverPath = sqlDriverPathFromBuildSystem(); sqlDriverPath)
+        result << std::move(*sqlDriverPath);
 
     return result;
 }
