@@ -645,9 +645,7 @@ std::unique_ptr<SqlResult> SqlQuery::initSqlResult(const SqlDatabase &connection
     const auto driver = const_cast<SqlDatabase &>(connection).driverWeak();
 
     // Ownership of a unique_ptr()
-    auto sqlResult = driver.lock()->createResult(driver);
-
-    return sqlResult;
+    return driver.lock()->createResult(driver);
 }
 
 } // namespace Orm::Drivers
