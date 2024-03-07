@@ -186,6 +186,19 @@ void MySqlDriverPrivate::mysqlClose() noexcept
     mysql_thread_end();
 }
 
+/* hasFeature() */
+
+bool MySqlDriverPrivate::supportsTransactions() const
+{
+    // Revisited, this check really needs open connection
+    if (mysql != nullptr && isOpen)
+        return (mysql->server_capabilities & CLIENT_TRANSACTIONS) == CLIENT_TRANSACTIONS;
+
+    throw Exceptions::LogicError(
+                u"The '%1' database connection isn't open or mysql == nullptr "
+                 "in %2()."_s.arg(connectionName, __tiny_func__));
+}
+
 /* private */
 
 /* open() */
