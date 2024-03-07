@@ -31,6 +31,10 @@ using namespace Qt::StringLiterals; // NOLINT(google-build-using-namespace)
 using Orm::Drivers::Constants::QMYSQL;
 using Orm::Drivers::Constants::SPACE;
 
+#ifdef TINYDRIVERS_MYSQL_LOADABLE_LIBRARY
+using Orm::Drivers::Constants::COMMA;
+#endif
+
 namespace Orm::Drivers::Support
 {
 
@@ -103,11 +107,11 @@ namespace
 {
 #ifdef _MSC_VER
     /*! Get the MySQL driver shared library basename for MSVC. */
-    inline auto getDriverBasenameMsvc(const QString &driverBasename)
+    inline QStringList getDriverBasenameMsvc(const QString &driverBasename)
     {
         auto driverBasenameTmp = driverBasename;
 
-        return std::to_array<QString>({
+        return {
             driverBasenameTmp.append(QString::number(TINYDRIVERS_VERSION_MAJOR)), // TinyMySql0.dll
             // qmake build doesn't support appending d after the basename for Debug builds
 #if defined(TINYDRIVERS_DEBUG) && !defined(TINY_QMAKE_BUILD)
@@ -116,17 +120,17 @@ namespace
             /* As the last, try to load from the raw basename without any postfixes,
                we don't use this but it can be helpful in some situations. */
             driverBasename, // TinyMySql.dll
-        });
+        };
     }
 #endif
 
 #ifdef __linux__
     /*! Get the MySQL driver shared library basename on Linux. */
-    inline auto getDriverBasenameLinux(const QString &driverBasename)
+    inline QStringList getDriverBasenameLinux(const QString &driverBasename)
     {
         auto driverBasenameTmp = driverBasename;
 
-        return std::to_array<QString>({
+        return {
             driverBasenameTmp.prepend(u"lib"_s), // libTinyMySql.so
             // qmake build doesn't support appending d after the basename for Debug builds
 #if defined(TINYDRIVERS_DEBUG) && !defined(TINY_QMAKE_BUILD)
@@ -135,17 +139,17 @@ namespace
             /* As the last, try to load from the raw basename without any postfixes,
                we don't use this but it can be helpful in some situations. */
             driverBasename, // TinyMySql.so
-        });
+        };
     }
 #endif
 
 #ifdef __MINGW32__
     /*! Get the MySQL driver shared library basename on MSYS2/MinGW. */
-    inline auto getDriverBasenameMinGW(const QString &driverBasename)
+    inline QStringList getDriverBasenameMinGW(const QString &driverBasename)
     {
         auto driverBasenameTmp = driverBasename;
 
-        return std::to_array<QString>({
+        return {
             // qmake build doesn't prepend lib for shared libraries on MSYS2
 #ifndef TINY_QMAKE_BUILD
             driverBasenameTmp.prepend(u"lib"_s), // libTinyMySql.dll
@@ -158,12 +162,12 @@ namespace
             /* As the last, try to load from the raw basename without any postfixes,
                we don't use this but it can be helpful in some situations. */
             driverBasename, // TinyMySql.dll
-        });
+        };
     }
 #endif
 
     /*! Get driver library basenames for which to try to load the shared library. */
-    inline auto getDriverBasenames(const QString &driverBasename)
+    inline QStringList getDriverBasenames(const QString &driverBasename)
     {
 #ifdef _MSC_VER
         return getDriverBasenameMsvc(driverBasename);
@@ -236,9 +240,10 @@ SqlDriverFactoryPrivate::loadSqlDriverCommon(const QString &driverBasenameRaw) c
             }
 
     throw Exceptions::RuntimeError(
-                u"Can't load '%1' shared library for '%2' driver at runtime "
-                 "for '%3' database connection in %4()."_s
-                .arg(driverBasenameRaw, driverName, connectionName, __tiny_func__));
+                u"Can't load '%1' shared library for '%2' driver at runtime, basenames "
+                 "trying to load were: %3; for '%4' database connection in %5()."_s
+                .arg(driverBasenameRaw, driverName, driverBasenames.join(COMMA),
+                     connectionName, __tiny_func__));
 }
 
 SqlDriverFactoryPrivate::CreateSqlDriverMemFn
