@@ -83,13 +83,13 @@ namespace Support
     /* public */
 
     SqlDriverFactoryPrivate::SqlDriverFactoryPrivate(const QString &driver,
-                                                     const QString &connection)
+                                                     const QString &connection) // NOLINT(modernize-pass-by-value)
         : driverName(driver)
         , connectionName(connection)
     {}
 
     SqlDriverFactoryPrivate::SqlDriverFactoryPrivate(QString &&driver,
-                                                     const QString &connection)
+                                                     const QString &connection) // NOLINT(modernize-pass-by-value)
         : driverName(std::move(driver))
         , connectionName(connection)
     {}

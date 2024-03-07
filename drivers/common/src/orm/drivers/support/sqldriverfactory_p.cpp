@@ -75,7 +75,7 @@ std::shared_ptr<SqlDriver> SqlDriverFactoryPrivate::make() const
    like TinyORM connections or driver classes are named. 🫤 I will not break this, so
    shared/static libraries will also have these names. */
 
-std::shared_ptr<SqlDriver> SqlDriverFactoryPrivate::createMySqlDriver() const
+std::shared_ptr<SqlDriver> SqlDriverFactoryPrivate::createMySqlDriver() const // NOLINT(readability-convert-member-functions-to-static)
 {
 #ifdef TINYDRIVERS_MYSQL_LOADABLE_LIBRARY
     return createSqlDriverLoadable(u"TinyMySql"_s);
