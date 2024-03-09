@@ -160,3 +160,38 @@ exists($$TINYORM_SOURCE_TREE/drivers/conf.pri): \
 else:disable_autoconf: \
     error( "'conf.pri' for '$${TARGET}' project does not exist.\
             See an example configuration in 'drivers/conf.pri.example'." )
+
+# Create the .build_tree tag file
+# ---
+# Create an empty .build_tree file in the folder where the TinyDrivers shared library is
+# located, in the build tree. This file will be checked in the SqlDriverFactoryPrivate
+# while loading the runtime shared library, eg. TinyMySql. If SqlDriverFactoryPrivate
+# finds this file and cannot load TinyMySql from standard locations then it will try
+# to load TinyMySql from the build tree. This means that it only attempts to load
+# TinyMySql from the build tree if the TinyDrivers library itself is in the build tree.
+# This ensures that it will not be loaded from the build tree, e.g. after installation
+# because it is non-standard behavior.
+
+build_loadable_drivers {
+    TINYDRIVERS_BUILDTREE_TAG_PATH = $$quote($$TINYORM_BUILD_TREE/drivers/common$${TINY_BUILD_SUBFOLDER}/.build_tree)
+
+    buildtreetagfile.target = buildtreetagfile
+    buildtreetagfile.tagFilepath = $$shell_quote($$TINYDRIVERS_BUILDTREE_TAG_PATH)
+    win32: buildtreetagfile.commands = type nul > $$buildtreetagfile.tagFilepath
+    unix: buildtreetagfile.commands = touch $$buildtreetagfile.tagFilepath
+    buildtreetagfile.depends = buildtreetagfile_message
+
+    buildtreetagfile_message.commands = @echo Creating .build_tree tag file at $$buildtreetagfile.tagFilepath
+
+    QMAKE_EXTRA_TARGETS *= buildtreetagfile buildtreetagfile_message
+
+    !exists($$TINYDRIVERS_BUILDTREE_TAG_PATH): \
+        POST_TARGETDEPS *= buildtreetagfile
+}
+
+# Clean the .build_tree tag file
+# ---
+# Don't add it to the QMAKE_CLEAN as the QMAKE_CLEAN doesn't delete executables
+
+build_loadable_drivers: \
+    QMAKE_DISTCLEAN *= $$TINYDRIVERS_BUILDTREE_TAG_PATH

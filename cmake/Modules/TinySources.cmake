@@ -11,6 +11,10 @@ function(tinydrivers_sources out_headers_private out_headers out_sources)
         list(APPEND headers_private constants_inline_p.hpp)
     endif()
 
+    if(TINY_BUILD_LOADABLE_DRIVERS)
+        list(APPEND headers_private utils/fs_p.hpp)
+    endif()
+
     list(APPEND headers_private
         constants_p.hpp
         macros/declaresqldriverprivate_p.hpp
@@ -54,6 +58,10 @@ function(tinydrivers_sources out_headers_private out_headers out_sources)
 
     if(TINY_EXTERN_CONSTANTS)
         list(APPEND sources constants_extern_p.cpp)
+    endif()
+
+    if(TINY_BUILD_LOADABLE_DRIVERS)
+        list(APPEND sources utils/fs_p.cpp)
     endif()
 
     list(APPEND sources
