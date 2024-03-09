@@ -15,9 +15,9 @@ namespace Orm::Drivers::Support
 {
 
     /*! Database connections hash (thread-safe). */
-    class ConnectionsHash
+    class ConnectionsHashPrivate
     {
-        Q_DISABLE_COPY_MOVE(ConnectionsHash)
+        Q_DISABLE_COPY_MOVE(ConnectionsHashPrivate)
 
     public:
         /* Container related */
@@ -35,9 +35,9 @@ namespace Orm::Drivers::Support
         using size_type       = typename ContainerType::size_type;
 
         /*! Default constructor. */
-        inline ConnectionsHash() = default;
+        inline ConnectionsHashPrivate() = default;
         /*! Default destructor. */
-        inline ~ConnectionsHash() = default;
+        inline ~ConnectionsHashPrivate() = default;
 
         /* Lookup */
         /*! Get a connection by the given connection name. */
@@ -80,8 +80,8 @@ namespace Orm::Drivers::Support
 
     /* Lookup */
 
-    ConnectionsHash::mapped_type &
-    ConnectionsHash::at_ts(const key_type &key)
+    ConnectionsHashPrivate::mapped_type &
+    ConnectionsHashPrivate::at_ts(const key_type &key)
     {
         // Shared/read lock
         const std::shared_lock lock(m_mutex);
@@ -89,8 +89,8 @@ namespace Orm::Drivers::Support
         return m_data.at(key);
     }
 
-    const ConnectionsHash::mapped_type &
-    ConnectionsHash::at_ts(const key_type &key) const
+    const ConnectionsHashPrivate::mapped_type &
+    ConnectionsHashPrivate::at_ts(const key_type &key) const
     {
         // Shared/read lock
         const std::shared_lock lock(m_mutex);
@@ -98,12 +98,12 @@ namespace Orm::Drivers::Support
         return m_data.at(key);
     }
 
-    bool ConnectionsHash::contains(const key_type &key) const
+    bool ConnectionsHashPrivate::contains(const key_type &key) const
     {
         return m_data.contains(key);
     }
 
-    bool ConnectionsHash::contains_ts(const key_type &key) const
+    bool ConnectionsHashPrivate::contains_ts(const key_type &key) const
     {
         // Shared/read lock
         const std::shared_lock lock(m_mutex);
@@ -111,7 +111,7 @@ namespace Orm::Drivers::Support
         return m_data.contains(key);
     }
 
-    QStringList ConnectionsHash::keys_ts() const
+    QStringList ConnectionsHashPrivate::keys_ts() const
     {
         // Shared/read lock
         const std::shared_lock lock(m_mutex);
@@ -127,22 +127,22 @@ namespace Orm::Drivers::Support
 
     /* Modifiers */
 
-    ConnectionsHash::node_type
-    ConnectionsHash::extract(const key_type &key)
+    ConnectionsHashPrivate::node_type
+    ConnectionsHashPrivate::extract(const key_type &key)
     {
         return m_data.extract(key);
     }
 
     template<typename ...Args>
-    std::pair<ConnectionsHash::iterator, bool>
-    ConnectionsHash::try_emplace(const key_type &key, Args &&...args)
+    std::pair<ConnectionsHashPrivate::iterator, bool>
+    ConnectionsHashPrivate::try_emplace(const key_type &key, Args &&...args)
     {
         return m_data.try_emplace(key, std::forward<Args>(args)...);
     }
 
     /* Connections specific */
 
-    QStringList ConnectionsHash::openedConnectionNames_ts() const
+    QStringList ConnectionsHashPrivate::openedConnectionNames_ts() const
     {
         // Shared/read lock
         const std::shared_lock lock(m_mutex);
@@ -159,7 +159,7 @@ namespace Orm::Drivers::Support
 
     /* Multi-threading */
 
-    std::shared_mutex &ConnectionsHash::mutex() const noexcept
+    std::shared_mutex &ConnectionsHashPrivate::mutex() const noexcept
     {
         return m_mutex;
     }
