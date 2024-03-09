@@ -186,6 +186,20 @@ function(tiny_create_sqlite_db db_filepath)
 
 endfunction()
 
+# Create an empty .build_tree file in the folder where the TinyDrivers shared library is
+# located (inside the build tree)
+function(tiny_create_buildtree_tagfile filepath)
+
+    if(EXISTS ${filepath})
+        return()
+    endif()
+
+    message(STATUS "Creating .build_tree tag file at '${filepath}'")
+
+    file(TOUCH "${filepath}")
+
+endfunction()
+
 # Find version numbers in the version header file, search following tokens
 # <PREFIX>_VERSION_<MAJOR,MINOR,BUGFIX,BUILD>
 function(tiny_read_version out_version out_major out_minor out_patch out_tweak)

@@ -1,8 +1,13 @@
 #include "orm/drivers/support/sqldriverfactory_p.hpp"
 
+#ifdef _WIN32
+#  include <qt_windows.h>
+#endif
+
 #include <mutex>
 
 #ifdef TINYDRIVERS_MYSQL_LOADABLE_LIBRARY
+#  include <filesystem>
 #  include <shared_mutex>
 
 #  include <QDir>
@@ -19,6 +24,7 @@
 #ifdef TINYDRIVERS_MYSQL_LOADABLE_LIBRARY
 #  include "orm/drivers/exceptions/runtimeerror.hpp"
 #  include "orm/drivers/sqldriver.hpp"
+#  include "orm/drivers/utils/fs_p.hpp"
 #  include "orm/drivers/version.hpp"
 #else
 #  include "orm/drivers/mysql/mysqldriver.hpp"
@@ -32,7 +38,13 @@ using Orm::Drivers::Constants::QMYSQL;
 using Orm::Drivers::Constants::SPACE;
 
 #ifdef TINYDRIVERS_MYSQL_LOADABLE_LIBRARY
+namespace fs = std::filesystem;
+
+using fspath = std::filesystem::path;
+
 using Orm::Drivers::Constants::COMMA;
+
+using FsUtils = Orm::Drivers::Utils::FsPrivate;
 #endif
 
 namespace Orm::Drivers::Support
@@ -294,9 +306,14 @@ QStringList SqlDriverFactoryPrivate::sqlDriverPaths() const
     if (hasQtPluginPaths)
         result << envQtPluginPath.split(listSeparator, Qt::SkipEmptyParts);
 
-    // Path from qmake/CMake build system (shared library path inside the build tree)
-    if (auto &&sqlDriverPath = sqlDriverPathFromBuildSystem(); sqlDriverPath)
-        result << std::move(*sqlDriverPath);
+    /* Path from qmake/CMake build system (shared library path inside the build tree).
+       If loading from all the paths above failed then load the SQL driver library from
+       the build tree. Load it only if the TinyDrivers library location is
+       in the build tree. This ensures that it will not be loaded from the build tree,
+       e.g. after installation because it is non-standard behavior. */
+    if (isTinyDiversInBuildTree())
+        if (auto &&sqlDriverPath = sqlDriverPathFromBuildSystem(); sqlDriverPath)
+            result << std::move(*sqlDriverPath);
 
     return result;
 }
@@ -345,6 +362,43 @@ SqlDriverFactoryPrivate::joinDriverPath(const QString &driverPath,
                                         const QString &driverBasename)
 {
    return QDir::toNativeSeparators(u"%1/%2"_s.arg(driverPath, driverBasename));
+}
+
+#ifdef _WIN32
+namespace
+{
+    /*! Get module handle for the current TinyDrivers DLL library. */
+    inline HMODULE getModuleHandle() noexcept
+    {
+        HMODULE handle = nullptr;
+
+        // Obtain the module handle from the given static method address
+        ::GetModuleHandleEx(GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS |
+                            GET_MODULE_HANDLE_EX_FLAG_UNCHANGED_REFCOUNT,
+                            reinterpret_cast<LPCTSTR>(&SqlDatabase::database), &handle);
+
+        // No need to check if function failed, it sets the handle to nullptr if failed
+
+        return handle;
+    }
+} // namespace
+#endif // _WIN32
+
+bool SqlDriverFactoryPrivate::isTinyDiversInBuildTree()
+{
+    auto *const handle = getModuleHandle();
+
+    // Nothing to do
+    if (handle == nullptr)
+        return false;
+
+    const auto moduleFileName = FsUtils::getModuleFileName(handle);
+
+    // Nothing to do, obtaining the module filename failed
+    if (moduleFileName.empty())
+        return false;
+
+    return fs::exists(fspath(moduleFileName).replace_filename(".build_tree"));
 }
 #endif // TINYDRIVERS_MYSQL_LOADABLE_LIBRARY
 

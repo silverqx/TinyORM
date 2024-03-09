@@ -216,3 +216,18 @@ if((TINY_BUILD_SHARED_DRIVERS OR TINY_BUILD_STATIC_DRIVERS) AND BUILD_MYSQL_DRIV
     tiny_find_package(MySQL REQUIRED)
     target_link_libraries(${TinyDrivers_target} PRIVATE MySQL::MySQL)
 endif()
+
+# Create the .build_tree tag file
+# ---
+# Create an empty .build_tree file in the folder where the TinyDrivers shared library is
+# located, in the build tree. This file will be checked in the SqlDriverFactoryPrivate
+# while loading the runtime shared library, eg. TinyMySql. If SqlDriverFactoryPrivate
+# finds this file and cannot load TinyMySql from standard locations then it will try
+# to load TinyMySql from the build tree. This means that it only attempts to load
+# TinyMySql from the build tree if the TinyDrivers library itself is in the build tree.
+# This ensures that it will not be loaded from the build tree, e.g. after installation
+# because it is non-standard behavior.
+
+if(TINY_BUILD_LOADABLE_DRIVERS)
+    tiny_create_buildtree_tagfile("${${TinyDrivers_ns}_BINARY_DIR}/.build_tree")
+endif()

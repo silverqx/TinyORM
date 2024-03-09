@@ -3,6 +3,9 @@ sourcesList =
 extern_constants: \
     sourcesList += $$PWD/orm/drivers/constants_extern_p.cpp
 
+build_loadable_drivers: \
+    sourcesList += $$PWD/orm/drivers/utils/fs_p.cpp
+
 sourcesList += \
     $$PWD/orm/drivers/dummysqlerror.cpp \
     $$PWD/orm/drivers/exceptions/logicerror.cpp \

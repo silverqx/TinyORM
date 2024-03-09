@@ -7,6 +7,9 @@ extern_constants: \
 else: \
     headersList += $$PWD/orm/drivers/constants_inline_p.hpp
 
+build_loadable_drivers: \
+    headersList += $$PWD/orm/drivers/utils/fs_p.hpp
+
 headersList += \
     $$PWD/orm/drivers/constants_p.hpp \
     $$PWD/orm/drivers/macros/declaresqldriverprivate_p.hpp \
