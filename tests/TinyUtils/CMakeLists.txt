@@ -128,6 +128,12 @@ endif()
 set(tiny_sqlite_db "${${TinyOrm_ns}_BINARY_DIR}/tests/tinyorm_test_1.sqlite3")
 tiny_create_sqlite_db("${tiny_sqlite_db}")
 
+# Add the SQLite database file file to the clean target (CMake doesn't have distclean)
+set_property(TARGET ${TinyUtils_target}
+    APPEND
+        PROPERTY ADDITIONAL_CLEAN_FILES "${tiny_sqlite_db}"
+)
+
 target_compile_definitions(${TinyUtils_target}
     PRIVATE TINYORM_SQLITE_DATABASE="${tiny_sqlite_db}"
 )
