@@ -240,8 +240,9 @@ SqlDriverFactoryPrivate::loadSqlDriverCommon(const QString &driverBasenameRaw) c
             }
 
     throw Exceptions::RuntimeError(
-                u"Can't load '%1' shared library for '%2' driver at runtime, basenames "
-                 "trying to load were: %3; for '%4' database connection in %5()."_s
+                u"Unable to load '%1' shared library for '%2' driver at runtime, "
+                 "basenames attempted to load: %3; for '%4' database connection "
+                 "in %5()."_s
                 .arg(driverBasenameRaw, driverName, driverBasenames.join(COMMA),
                      connectionName, __tiny_func__));
 }
