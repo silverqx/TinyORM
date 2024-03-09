@@ -10,7 +10,7 @@ TINYORM_BEGIN_COMMON_NAMESPACE
 
 using namespace Qt::StringLiterals; // NOLINT(google-build-using-namespace)
 
-using Orm::Drivers::Support::ConnectionsHash;
+using ConnectionsHash = Orm::Drivers::Support::ConnectionsHashPrivate;
 
 namespace Orm::Drivers
 {

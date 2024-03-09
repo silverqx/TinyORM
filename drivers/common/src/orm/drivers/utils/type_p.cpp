@@ -19,7 +19,7 @@ namespace Orm::Drivers::Utils
 
 /* public */
 
-QString Type::prettyFunction(const QString &function)
+QString TypePrivate::prettyFunction(const QString &function)
 {
     // CUR regex doesn't catch main, ::main, run<int>, ::run<int>, functions without NS, fixed regex (?(?:.*::)?(\\w+)(?:<.*>)?::)?(\\w+)(?:<.*>)?(?:$|::<lambda) silverqx
     // TODO perf, rewrite w/o the QRegularExpression silverqx
@@ -33,22 +33,22 @@ QString Type::prettyFunction(const QString &function)
             regex(uR"((?:.*::)?(\w+)(?:<.*>)?::(\w+)(?:$|::<lambda))"_s);
 #else
     throw RuntimeError(
-                "Unsupported compiler in Drivers::Utils::Type::prettyFunction().");
+                "Unsupported compiler in Drivers::Utils::TypePrivate::prettyFunction().");
 #endif
 
     Q_ASSERT_X(!function.isEmpty(), "empty string",
                "The function name can't be empty "
-               "in Drivers::Utils::Type::prettyFunction().");
+               "in Drivers::Utils::TypePrivate::prettyFunction().");
 
     const auto match = regex.match(function);
 
     // This should never happen, but who knows 🤔
     Q_ASSERT_X(match.hasMatch(), "regex match",
                "Can not get the function name "
-               "in Drivers::Utils::Type::prettyFunction().");
+               "in Drivers::Utils::TypePrivate::prettyFunction().");
     Q_ASSERT_X(regex.captureCount() == 2, "regex match",
                "Can not get the function name "
-               "in Drivers::Utils::Type::prettyFunction().");
+               "in Drivers::Utils::TypePrivate::prettyFunction().");
 
     return u"%1::%2"_s.arg(match.captured(1), match.captured(2));
 }

@@ -14,7 +14,7 @@ namespace Orm::Drivers
 {
 namespace Support
 {
-    class ConnectionsHash;
+    class ConnectionsHashPrivate;
 }
 
     class SqlDatabase;
@@ -25,8 +25,8 @@ namespace Support
     {
         Q_DISABLE_COPY_MOVE(SqlDatabasePrivate)
 
-        /*! Alias for the ConnectionsHash. */
-        using ConnectionsHash = Orm::Drivers::Support::ConnectionsHash;
+        /*! Alias for the ConnectionsHashPrivate. */
+        using ConnectionsHash = Orm::Drivers::Support::ConnectionsHashPrivate;
 
         /*! Expose the NumericalPrecisionPolicy enum. */
         using enum Orm::Drivers::NumericalPrecisionPolicy;
