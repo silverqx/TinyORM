@@ -69,17 +69,17 @@ build_tests {
     TINYORM_SQLITE_DATABASE = $$quote($$TINYORM_BUILD_TREE/tests/tinyorm_test_1.sqlite3)
 
     sqlitedatabase.target = sqlitedatabase
-    sqlitedatabase.dbname = $$TINYORM_SQLITE_DATABASE
-    win32: sqlitedatabase.commands = type nul >> $$sqlitedatabase.dbname
+    sqlitedatabase.dbname = $$shell_quote($$TINYORM_SQLITE_DATABASE)
+    win32: sqlitedatabase.commands = type nul > $$sqlitedatabase.dbname
     unix: sqlitedatabase.commands = touch $$sqlitedatabase.dbname
     sqlitedatabase.depends = sqlitedatabase_message
 
     sqlitedatabase_message.commands = @echo Creating SQLite database at $$sqlitedatabase.dbname
 
-    QMAKE_EXTRA_TARGETS += sqlitedatabase sqlitedatabase_message
+    QMAKE_EXTRA_TARGETS *= sqlitedatabase sqlitedatabase_message
 
     !exists($$TINYORM_SQLITE_DATABASE): \
-        POST_TARGETDEPS += sqlitedatabase
+        POST_TARGETDEPS *= sqlitedatabase
 
     # Set path to the SQLite database
     contains(TEMPLATE, vc.*): \
@@ -90,11 +90,10 @@ build_tests {
 
 # Clean the SQLite database
 # ---
+# Don't add it to the QMAKE_CLEAN as the QMAKE_CLEAN doesn't delete executables
 
-build_tests {
-    QMAKE_CLEAN += $$TINYORM_SQLITE_DATABASE
-    QMAKE_DISTCLEAN += $$TINYORM_SQLITE_DATABASE
-}
+build_tests: \
+    QMAKE_DISTCLEAN *= $$TINYORM_SQLITE_DATABASE
 
 # User Configuration
 # ---
