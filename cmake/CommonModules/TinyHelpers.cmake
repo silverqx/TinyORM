@@ -188,15 +188,18 @@ endfunction()
 
 # Create an empty .build_tree file in the folder where the TinyDrivers shared library is
 # located (inside the build tree)
-function(tiny_create_buildtree_tagfile filepath)
+function(tiny_create_buildtree_tagfiles filepaths)
 
-    if(EXISTS ${filepath})
-        return()
-    endif()
+    foreach(filepath ${filepaths})
+        # Nothing to do, .build_tree tag already exists
+        if(EXISTS ${filepath})
+            continue()
+        endif()
 
-    message(STATUS "Creating .build_tree tag file at '${filepath}'")
+        message(VERBOSE "Creating .build_tree tag file at '${filepath}'")
 
-    file(TOUCH "${filepath}")
+        file(TOUCH "${filepath}")
+    endforeach()
 
 endfunction()
 

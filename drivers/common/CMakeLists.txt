@@ -229,5 +229,20 @@ endif()
 # because it is non-standard behavior.
 
 if(TINY_BUILD_LOADABLE_DRIVERS)
-    tiny_create_buildtree_tagfile("${${TinyDrivers_ns}_BINARY_DIR}/.build_tree")
+    set(tiny_buildtree_tag_filepaths "${${TinyDrivers_ns}_BINARY_DIR}/.build_tree")
+
+    # We also need create the .build_tree tag file in the root of the build tree when
+    # build tree deployment feature is enabled because in this case TinyOrm library loads
+    # TinyDrivers from this location and we need to meet isTinyDiversInBuildTree()
+    # condition.
+    if(BUILD_TREE_DEPLOY)
+        list(APPEND tiny_buildtree_tag_filepaths "${CMAKE_BINARY_DIR}/.build_tree")
+    endif()
+
+    tiny_create_buildtree_tagfiles("${tiny_buildtree_tag_filepaths}")
+
+    # Add the .build_tree tag file to the clean target (CMake doesn't have distclean)
+    set_property(TARGET ${TinyDrivers_target}
+        APPEND PROPERTY ADDITIONAL_CLEAN_FILES ${tiny_buildtree_tag_filepaths}
+    )
 endif()
