@@ -361,7 +361,7 @@ QString
 SqlDriverFactoryPrivate::joinDriverPath(const QString &driverPath,
                                         const QString &driverBasename)
 {
-   return QDir::toNativeSeparators(u"%1/%2"_s.arg(driverPath, driverBasename));
+    return QDir::toNativeSeparators(u"%1/%2"_s.arg(driverPath, driverBasename));
 }
 
 #ifdef _WIN32
