@@ -278,9 +278,11 @@ MySqlDriverPrivate::getMySqlOptionsHash()
         {u"MYSQL_SHARED_MEMORY_BASE_NAME"_s,
                                          {MYSQL_SHARED_MEMORY_BASE_NAME,
                                                                      &MySqlDriverPrivate::setOptionString}},
+#ifndef MARIADB_VERSION_ID
         {u"MYSQL_OPT_OPTIONAL_RESULTSET_METADATA"_s,
                                          {MYSQL_OPT_OPTIONAL_RESULTSET_METADATA,
                                                                      &MySqlDriverPrivate::setOptionBool}},
+#endif
     };
 
     return cachedOptions;
