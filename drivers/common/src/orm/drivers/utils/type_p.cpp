@@ -2,17 +2,13 @@
 
 #include <QRegularExpression>
 
-#ifndef _MSC_VER
+#if !defined(__GNUG__) && !defined(__clang__) && !defined(_MSC_VER)
 #  include "orm/drivers/exceptions/runtimeerror.hpp"
 #endif
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
 using namespace Qt::StringLiterals; // NOLINT(google-build-using-namespace)
-
-#ifndef _MSC_VER
-using Orm::Drivers::Exceptions::RuntimeError;
-#endif
 
 namespace Orm::Drivers::Utils
 {
@@ -32,7 +28,7 @@ QString TypePrivate::prettyFunction(const QString &function)
     static const QRegularExpression
             regex(uR"((?:.*::)?(\w+)(?:<.*>)?::(\w+)(?:$|::<lambda))"_s);
 #else
-    throw RuntimeError(
+    throw Exceptions::RuntimeError(
                 "Unsupported compiler in Drivers::Utils::TypePrivate::prettyFunction().");
 #endif
 
