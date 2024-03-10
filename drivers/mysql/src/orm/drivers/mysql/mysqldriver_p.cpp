@@ -310,11 +310,13 @@ void MySqlDriverPrivate::setOptionFlag(uint &optionFlags, const QStringView opti
                  "must be used instead of the CLIENT_SSL option (the CLIENT_SSL is set "
                  "internally in the client library), for '%1' database connection "
                  "in %2()."_s.arg(connectionName, __tiny_func__));
+    // Leave this check enabled for MariaDB as well and inform in the exception message
     else if (option == "CLIENT_OPTIONAL_RESULTSET_METADATA"_L1)
         throw Exceptions::InvalidArgumentError(
                 u"The TinyMySql library doesn't support optional metadata for MySQL "
-                 "connections (CLIENT_OPTIONAL_RESULTSET_METADATA), for '%1' database "
-                 "connection in %2()."_s.arg(connectionName, __tiny_func__));
+                 "connections (CLIENT_OPTIONAL_RESULTSET_METADATA), also, MariaDB "
+                 "doesn't support this option at all, for '%1' database connection "
+                 "in %2()."_s.arg(connectionName, __tiny_func__));
     else
         throw Exceptions::InvalidArgumentError(
                 u"Unknown MySQL connection option '%1' for '%2' database connection "
@@ -428,14 +430,15 @@ bool MySqlDriverPrivate::isTrueBoolOption(const QStringView value) noexcept
 void MySqlDriverPrivate::throwIfUnsupportedOption(const QStringView option,
                                                   const QStringView value) const
 {
+    // Leave this check enabled for MariaDB as well and inform in the exception message
     /* Calling the isTrueBoolOption(value) to allow setting it to OFF/false, setting it
        to OFF supported but setting it to ON isn't. */
     if (option == "MYSQL_OPT_OPTIONAL_RESULTSET_METADATA"_L1 && isTrueBoolOption(value))
         throw Exceptions::InvalidArgumentError(
                 u"The TinyMySql library doesn't support optional metadata for MySQL "
-                 "connections (MYSQL_OPT_OPTIONAL_RESULTSET_METADATA), "
-                 "for '%1' database connection in %2()."_s
-                .arg(connectionName, __tiny_func__));
+                 "connections (MYSQL_OPT_OPTIONAL_RESULTSET_METADATA), also, MariaDB "
+                 "doesn't support this option at all, for '%1' database connection "
+                 "in %2()."_s.arg(connectionName, __tiny_func__));
 }
 
 } // namespace Orm::Drivers::MySql
