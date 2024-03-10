@@ -96,9 +96,9 @@ void
 MySqlDriverPrivate::mysqlSetCharacterSet(const QString &host, const bool before) const
 {
 #ifndef MARIADB_VERSION_ID
-    static constexpr auto isMaria = false;
+    constexpr static auto isMaria = false;
 #else
-    static constexpr auto isMaria = true;
+    constexpr static auto isMaria = true;
 #endif
 
     for (const auto *const characterSetName : DefaultCharacterSets)
