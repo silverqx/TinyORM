@@ -1,6 +1,18 @@
 #include <QCoreApplication>
 #include <QtTest>
 
+/* We need to include MySQL or MariaDB mysql.h to find out whether we are linking against
+   the MySQL or MariaDB client library, metadata-related unit tests need this to work
+   correctly. */
+#if __has_include(<mysql/mysql.h>)
+#  include <mysql/mysql.h> // IWYU pragma: keep
+#elif __has_include(<mysql.h>)
+#  include <mysql.h> // IWYU pragma: keep
+#else
+#  error Can not find the <mysql.h> header file, please install the MySQL C client \
+library.
+#endif
+
 #include "orm/constants.hpp"
 #include "orm/utils/configuration.hpp"
 #include "orm/utils/type.hpp"
@@ -59,7 +71,9 @@ private Q_SLOTS:
     void MySQL_addExistingConnection_ThrowException() const;
 
     void MySQL_enableOptionalMetadata_ThrowException() const;
-    void MySQL_disableOptionalMetadata() const;
+    void MySQL_disableOptionalMetadata_CLIENT_OPTIONAL() const;
+    void MySQL_MySQL_disableOptionalMetadata_MYSQL_OPT() const;
+    void MySQL_MariaDB_disableOptionalMetadata_MYSQL_OPT() const;
 
 // NOLINTNEXTLINE(readability-redundant-access-specifiers)
 private:
@@ -452,6 +466,10 @@ void tst_SqlDatabaseManager::MySQL_addExistingConnection_ThrowException() const
 
 void tst_SqlDatabaseManager::MySQL_enableOptionalMetadata_ThrowException() const
 {
+    /* This test method tests two things, unsupported metadata-related options but it
+       also tests or behaves the same for MariaDB because MariaDB doesn't support
+       metadata at all. So the result is in both cases the same, it must throw. */
+
     // CLIENT_OPTIONAL_RESULTSET_METADATA
     {
         const auto connectionName =
@@ -519,81 +537,135 @@ void tst_SqlDatabaseManager::MySQL_enableOptionalMetadata_ThrowException() const
     }
 }
 
-void tst_SqlDatabaseManager::MySQL_disableOptionalMetadata() const
+void tst_SqlDatabaseManager::MySQL_disableOptionalMetadata_CLIENT_OPTIONAL() const
 {
+    /* We don't need to skip this test if linked against the MariaDB client library
+       because the CLIENT_OPTIONAL_RESULTSET_METADATA is passed as the string everywhere
+       and TinyMySql catch this and throws. */
+
     /* CLIENT_OPTIONAL_RESULTSET_METADATA=OFF
        Setting CLIENT_OPTIONAL_RESULTSET_METADATA to OFF is another story than setting
        MYSQL_OPT_OPTIONAL_RESULTSET_METADATA to OFF, it must still throw an exception
        because it's a pure flag, so if it's set it will be OR-ed to the connection flags
        and there is nothing like detecting if it's a flag option and if is set to OFF
        then remove this flag from connection flags, so must throw. */
-    {
-        const auto connectionName =
-                Databases::createDriversConnectionTempFrom(
-                    Databases::MYSQL_DRIVERS, {ClassName, QString::fromUtf8(__func__)}, // NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
-                    false);
+    const auto connectionName =
+            Databases::createDriversConnectionTempFrom(
+                Databases::MYSQL_DRIVERS, {ClassName, QString::fromUtf8(__func__)}, // NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
+                false);
 
-        if (!connectionName)
-            QSKIP(TestUtils::AutoTestSkipped
-                  .arg(TypeUtils::classPureBasename(*this), Databases::MYSQL_DRIVERS)
-                  .toUtf8().constData(), );
+    if (!connectionName)
+        QSKIP(TestUtils::AutoTestSkipped
+              .arg(TypeUtils::classPureBasename(*this), Databases::MYSQL_DRIVERS)
+              .toUtf8().constData(), );
 
-        auto connection = Databases::driversConnection(*connectionName, false);
-        /* Setting it this way, I will not refactor the createDriversConnectionTempFrom()
-           to be able modify options_ hash. */
-        connection.setConnectOptions(
-                    QStringList({connection.connectOptions(),
-                                 u"CLIENT_OPTIONAL_RESULTSET_METADATA=OFF"_s}) // Must support option without the value (=ON/OFF; w/o value == ON)
-                    .join(SEMICOLON));
+    auto connection = Databases::driversConnection(*connectionName, false);
+    /* Setting it this way, I will not refactor the createDriversConnectionTempFrom()
+       to be able modify options_ hash. */
+    connection.setConnectOptions(
+                QStringList({connection.connectOptions(),
+                             u"CLIENT_OPTIONAL_RESULTSET_METADATA=OFF"_s}) // Must support option without the value (=ON/OFF; w/o value == ON)
+                .join(SEMICOLON));
 
-        QVERIFY_THROWS_EXCEPTION(InvalidArgumentError, connection.open());
+    QVERIFY_THROWS_EXCEPTION(InvalidArgumentError, connection.open());
 
-        // Restore
-        /* This will generate expected warning about the connection is still in use
-           it can't be avoided because we want to test the query.driver/Weak(). */
-        Databases::removeDriversConnection(*connectionName);
+    // Restore
+    /* This will generate expected warning about the connection is still in use
+       it can't be avoided because we want to test the query.driver/Weak(). */
+    Databases::removeDriversConnection(*connectionName);
 
-        // The sqldriver must be invalidated immediately
-        QVERIFY(!connection.isValid());
-        QVERIFY(Databases::driversConnectionNames().isEmpty());
-        QVERIFY(Databases::driversOpenedConnectionNames().isEmpty());
-    }
+    // The sqldriver must be invalidated immediately
+    QVERIFY(!connection.isValid());
+    QVERIFY(Databases::driversConnectionNames().isEmpty());
+    QVERIFY(Databases::driversOpenedConnectionNames().isEmpty());
+}
+
+void tst_SqlDatabaseManager::MySQL_MySQL_disableOptionalMetadata_MYSQL_OPT() const
+{
+    /* The metadata-related flags don't exist if linked against MariaDB client library
+       (the next unit test tests this). */
+#ifdef MARIADB_VERSION_ID
+    QSKIP("The MariaDB database doesn't support "
+          "MYSQL_OPT_OPTIONAL_RESULTSET_METADATA.", );
+#endif
 
     /* MYSQL_OPT_OPTIONAL_RESULTSET_METADATA=OFF
        Setting it to off is correct because it will call mysql_options(), MySQL client
        internally removes the CLIENT_OPTIONAL_RESULTSET_METADATA flag from connection
        flags. */
-    {
-        const auto connectionName =
-                Databases::createDriversConnectionTempFrom(
-                    Databases::MYSQL_DRIVERS, {ClassName, QString::fromUtf8(__func__)}, // NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
-                    false);
+    const auto connectionName =
+            Databases::createDriversConnectionTempFrom(
+                Databases::MYSQL_DRIVERS, {ClassName, QString::fromUtf8(__func__)}, // NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
+                false);
 
-        if (!connectionName)
-            QSKIP(TestUtils::AutoTestSkipped
-                  .arg(TypeUtils::classPureBasename(*this), Databases::MYSQL_DRIVERS)
-                  .toUtf8().constData(), );
+    if (!connectionName)
+        QSKIP(TestUtils::AutoTestSkipped
+              .arg(TypeUtils::classPureBasename(*this), Databases::MYSQL_DRIVERS)
+              .toUtf8().constData(), );
 
-        auto connection = Databases::driversConnection(*connectionName, false);
-        /* Setting it this way, I will not refactor the createDriversConnectionTempFrom()
-           to be able modify options_ hash. */
-        connection.setConnectOptions(
-                    QStringList({connection.connectOptions(),
-                                 u"MYSQL_OPT_OPTIONAL_RESULTSET_METADATA=OFF"_s})
-                    .join(SEMICOLON));
+    auto connection = Databases::driversConnection(*connectionName, false);
+    /* Setting it this way, I will not refactor the createDriversConnectionTempFrom()
+       to be able modify options_ hash. */
+    connection.setConnectOptions(
+                QStringList({connection.connectOptions(),
+                             u"MYSQL_OPT_OPTIONAL_RESULTSET_METADATA=OFF"_s})
+                .join(SEMICOLON));
 
-        QVERIFY(connection.open());
+    QVERIFY(connection.open());
 
-        // Restore
-        /* This will generate expected warning about the connection is still in use
-           it can't be avoided because we want to test the query.driver/Weak(). */
-        Databases::removeDriversConnection(*connectionName);
+    // Restore
+    /* This will generate expected warning about the connection is still in use
+       it can't be avoided because we want to test the query.driver/Weak(). */
+    Databases::removeDriversConnection(*connectionName);
 
-        // The sqldriver must be invalidated immediately
-        QVERIFY(!connection.isValid());
-        QVERIFY(Databases::driversConnectionNames().isEmpty());
-        QVERIFY(Databases::driversOpenedConnectionNames().isEmpty());
-    }
+    // The sqldriver must be invalidated immediately
+    QVERIFY(!connection.isValid());
+    QVERIFY(Databases::driversConnectionNames().isEmpty());
+    QVERIFY(Databases::driversOpenedConnectionNames().isEmpty());
+}
+
+void tst_SqlDatabaseManager::MySQL_MariaDB_disableOptionalMetadata_MYSQL_OPT() const
+{
+    /* The metadata-related flags don't exist if linked against MariaDB client library,
+       this unit test tests this. */
+#ifndef MARIADB_VERSION_ID
+    QSKIP("The MySQL database supports MYSQL_OPT_OPTIONAL_RESULTSET_METADATA, this "
+          "unit test is for MariaDB client library, so skipping.", );
+#endif
+
+    /* MYSQL_OPT_OPTIONAL_RESULTSET_METADATA=OFF
+       Setting it to off is correct because it will call mysql_options(), MySQL client
+       internally removes the CLIENT_OPTIONAL_RESULTSET_METADATA flag from connection
+       flags. */
+    const auto connectionName =
+            Databases::createDriversConnectionTempFrom(
+                Databases::MYSQL_DRIVERS, {ClassName, QString::fromUtf8(__func__)}, // NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
+                false);
+
+    if (!connectionName)
+        QSKIP(TestUtils::AutoTestSkipped
+              .arg(TypeUtils::classPureBasename(*this), Databases::MYSQL_DRIVERS)
+              .toUtf8().constData(), );
+
+    auto connection = Databases::driversConnection(*connectionName, false);
+    /* Setting it this way, I will not refactor the createDriversConnectionTempFrom()
+       to be able modify options_ hash. */
+    connection.setConnectOptions(
+                QStringList({connection.connectOptions(),
+                             u"MYSQL_OPT_OPTIONAL_RESULTSET_METADATA=OFF"_s})
+                .join(SEMICOLON));
+
+    QVERIFY_THROWS_EXCEPTION(InvalidArgumentError, connection.open());
+
+    // Restore
+    /* This will generate expected warning about the connection is still in use
+       it can't be avoided because we want to test the query.driver/Weak(). */
+    Databases::removeDriversConnection(*connectionName);
+
+    // The sqldriver must be invalidated immediately
+    QVERIFY(!connection.isValid());
+    QVERIFY(Databases::driversConnectionNames().isEmpty());
+    QVERIFY(Databases::driversOpenedConnectionNames().isEmpty());
 }
 // NOLINTEND(readability-convert-member-functions-to-static)
 
