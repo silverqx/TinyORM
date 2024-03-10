@@ -32,7 +32,7 @@ std::wstring FsPrivate::getModuleFileName(const HMODULE handle)
        1024 value is from the boost::dll::fs::path path_from_handle() so if it's
        good for boost then it's good for TinyORM. I will not decrease this. */
     for (quint16 i = 2; i <= 1024 && lastError == ERROR_INSUFFICIENT_BUFFER; i *= 2) {
-        const auto bufferSize = MAX_PATH * i;
+        const DWORD bufferSize = MAX_PATH * i;
         std::wstring moduleFilepath(bufferSize, L'\0');
 
         const auto realSize = ::GetModuleFileNameW(handle, moduleFilepath.data(),
