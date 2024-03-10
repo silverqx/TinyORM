@@ -1,5 +1,7 @@
 #include "orm/drivers/sqldatabase_p.hpp"
 
+#include <mutex>
+
 #include "orm/drivers/exceptions/invalidargumenterror.hpp"
 #include "orm/drivers/sqldriver.hpp"
 #include "orm/drivers/support/connectionshash_p.hpp"
