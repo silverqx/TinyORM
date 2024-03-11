@@ -4,10 +4,21 @@ QT -= gui
 TEMPLATE = lib
 TARGET = TinyMySql
 
-# Common for static/shared libraries
+# TinyMySql configuration
 # ---
+# No need to include libraries.pri here because plugin-s don't create prl, pc, and
+# libtool files, also, plugin doesn't create version namelinks.
+# The unversioned_libname can also be used to disable namelink-s but it has a problem,
+# it still writes SONAME to the shared library like: Library soname: [libTinyMySql.so.0],
+# but the namelink isn't physically created, setting the QMAKE_LFLAGS_SONAME to an empty
+# value disables writting SONAME to the shared library.
+# Another solution is CONFIG *= plugin but it sets -DQT_PLUGIN and TinyMySql isn't real
+# Qt Plugin.
 
-include($$TINYORM_SOURCE_TREE/qmake/common/libraries.pri)
+# Disable namelink
+CONFIG *= unversioned_libname
+# Disable -Wl,-soname,libTinyMySql.so.0 during linking
+QMAKE_LFLAGS_SONAME =
 
 # Qt defines
 # ---
@@ -137,3 +148,5 @@ exists($$PWD/conf.pri): \
 else:disable_autoconf: \
     error( "'conf.pri' for '$${TARGET}' project does not exist.\
             See an example configuration in 'drivers/conf.pri.example'." )
+
+message($$CONFIG)
