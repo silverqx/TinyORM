@@ -431,7 +431,7 @@ namespace
 
         // Nothing to do
         if (handle == nullptr)
-            return false;
+            return std::wstring();
 
         return FsUtils::getModuleFileName(handle);
 #elif __linux__
