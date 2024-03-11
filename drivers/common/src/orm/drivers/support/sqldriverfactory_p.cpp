@@ -383,6 +383,7 @@ QString SqlDriverFactoryPrivate::getSqlDriverPath(const char *const driverPathRa
 
     Q_ASSERT(!driverPath.isEmpty());
 
+    // Don't call cleanPath() here, will be called later in joinDriverPath()
     return driverPath;
 }
 
@@ -394,7 +395,10 @@ SqlDriverFactoryPrivate::joinDriverPath(const QString &driverPath,
     if (driverPath.isEmpty())
         return driverBasename;
 
-    return QDir::toNativeSeparators(u"%1/%2"_s.arg(driverPath, driverBasename));
+    /* Don't call absolutePath() or canonicalPath() here, we need to preserve what ever
+       path a user passed into, cleanPath() is ok to have / slashes only and to remove
+       redundant '..'. */
+    return QDir(QDir::cleanPath(driverPath)).filePath(driverBasename);
 }
 
 namespace
