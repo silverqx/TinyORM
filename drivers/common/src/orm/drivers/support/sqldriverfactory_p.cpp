@@ -397,9 +397,9 @@ SqlDriverFactoryPrivate::joinDriverPath(const QString &driverPath,
     return QDir::toNativeSeparators(u"%1/%2"_s.arg(driverPath, driverBasename));
 }
 
-#ifdef _WIN32
 namespace
 {
+#ifdef _WIN32
     /*! Get module handle for the current TinyDrivers DLL library. */
     inline HMODULE getModuleHandle() noexcept
     {
@@ -414,24 +414,38 @@ namespace
 
         return handle;
     }
-} // namespace
 #endif // _WIN32
+
+    /*! Get the fully qualified path for the current TinyDrivers DLL library. */
+    inline auto getModuleFilepath()
+    {
+#ifdef _WIN32
+        auto *const handle = getModuleHandle();
+
+        // Nothing to do
+        if (handle == nullptr)
+            return false;
+
+        return FsUtils::getModuleFileName(handle);
+#elif __linux__
+        return FsUtils::getModuleFileName(
+                    reinterpret_cast<void *>(&SqlDatabase::database));
+#else
+#  error Unsupported OS or platform in Orm::Drivers::Utils::FsFsPrivate.
+#endif
+    }
+} // namespace
 
 bool SqlDriverFactoryPrivate::isTinyDiversInBuildTree()
 {
-    auto *const handle = getModuleHandle();
+    // Get the fully qualified path for the current TinyDrivers DLL library
+    const auto moduleFilepath = getModuleFilepath();
 
-    // Nothing to do
-    if (handle == nullptr)
+    // Nothing to do, obtaining the module filepath failed
+    if (moduleFilepath.empty())
         return false;
 
-    const auto moduleFileName = FsUtils::getModuleFileName(handle);
-
-    // Nothing to do, obtaining the module filename failed
-    if (moduleFileName.empty())
-        return false;
-
-    return fs::exists(fspath(moduleFileName).replace_filename(".build_tree"));
+    return fs::exists(fspath(moduleFilepath).replace_filename(".build_tree"));
 }
 #endif // TINYDRIVERS_MYSQL_LOADABLE_LIBRARY
 
