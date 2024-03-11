@@ -2,6 +2,8 @@
 
 #ifdef _WIN32
 #  include <array>
+#elif __linux__
+#  include <dlfcn.h>
 #endif
 
 TINYORM_BEGIN_COMMON_NAMESPACE
@@ -50,6 +52,20 @@ std::wstring FsPrivate::getModuleFileName(const HMODULE handle)
     /* An error other than ERROR_INSUFFICIENT_BUFFER occurred or failed to allocate
        a large enough buffer. */
     return {};
+}
+
+#elif __linux__
+std::string FsPrivate::getModuleFileName(void *const address)
+{
+    Dl_info info {};
+
+    const auto result = dladdr(address, &info);
+
+    // Nothing to do, dladdr() failed
+    if (result == 0 || info.dli_fname == nullptr)
+        return {};
+
+    return info.dli_fname;
 }
 #endif // _WIN32
 

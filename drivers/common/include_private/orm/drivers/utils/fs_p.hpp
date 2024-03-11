@@ -9,7 +9,9 @@ TINY_SYSTEM_HEADER
 
 #ifdef _WIN32
 #  include <qt_windows.h>
+#endif
 
+#if defined(_WIN32) || defined(__linux__)
 #  include <string>
 #endif
 
@@ -32,8 +34,13 @@ namespace Orm::Drivers::Utils
         ~FsPrivate() = delete;
 
 #ifdef _WIN32
-        /*! Get the fully qualified path for the given module handle. */
+        /*! Get the fully qualified module path for the given module handle. */
         static std::wstring getModuleFileName(HMODULE handle);
+#elif __linux__
+        /*! Get the fully qualified module path by the given address. */
+        static std::string getModuleFileName(void *address);
+#else
+#  error Unsupported OS or platform in Orm::Drivers::Utils::FsFsPrivate.
 #endif
     };
 
