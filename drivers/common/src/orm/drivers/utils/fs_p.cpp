@@ -57,6 +57,8 @@ std::wstring FsPrivate::getModuleFileName(const HMODULE handle)
 #elif __linux__
 std::string FsPrivate::getModuleFileName(void *const address)
 {
+    Q_ASSERT(address != nullptr);
+
     Dl_info info {};
 
     const auto result = dladdr(address, &info);
