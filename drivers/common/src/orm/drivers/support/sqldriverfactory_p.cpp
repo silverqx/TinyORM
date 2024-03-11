@@ -149,6 +149,9 @@ namespace
             driverBasenameLib % 'd'_L1, // libTinyMySqld.so
 #endif
             driverBasenameLib, // libTinyMySql.so
+#if defined(TINYDRIVERS_DEBUG) && !defined(TINY_QMAKE_BUILD)
+            driverBasenameRaw % 'd'_L1, // TinyMySqld.so
+#endif
             /* As the last, try to load from the raw basename without any postfixes,
                we don't use this but it can be helpful in some situations. */
             driverBasenameRaw, // TinyMySql.so
