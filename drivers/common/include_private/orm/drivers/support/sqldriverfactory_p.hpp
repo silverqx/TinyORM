@@ -73,7 +73,7 @@ namespace Support
         static QString joinDriverPath(const QString &driverPath,
                                       const QString &driverBasename);
         /*! Determine if the TinyDrivers shared library is located in the build tree. */
-        static bool isTinyDiversInBuildTree();
+        static bool isTinyDriversInBuildTree();
 #endif // TINYDRIVERS_MYSQL_LOADABLE_LIBRARY
 
         /*! Driver name to create SqlDriver instance for. */
