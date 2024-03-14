@@ -41,7 +41,8 @@ namespace Orm::Drivers
            but were added back to be API compatible with QSqlDriver::DriverFeature. */
 
         /*! Supported driver features enum. */
-        enum DriverFeature {
+        enum DriverFeature
+        {
             /*! Supports batched operations (unused, for API compatibility). */
             BatchOperations,
             /*! Supports BLOB-s fields (Binary Large Objects). */
@@ -79,7 +80,8 @@ namespace Orm::Drivers
         };
 
         /*! Identifier type enum. */
-        enum IdentifierType {
+        enum IdentifierType
+        {
             /*! Field/column name. */
             FieldName,
             /*! Table name. */
@@ -87,7 +89,8 @@ namespace Orm::Drivers
         };
 
         /*! Database driver type enum. */
-        enum DbmsType {
+        enum DbmsType
+        {
             /*! MySQL database driver. */
             MySqlServer,
             // Not implemented yet :/ (must be defined because eg. Orm::SqlQuery uses it)
