@@ -4,7 +4,7 @@ InheritParentConfig:          false
 WarningsAsErrors:             '*'
 HeaderFileExtensions:         ['h','hpp']
 ImplementationFileExtensions: ['cpp']
-HeaderFilterRegex:            '[\\\/]+(examples|orm|tests|tom)[\\\/]+.+\.(h|hpp)$'
+HeaderFilterRegex:            '[\\\/]+(drivers|examples|orm|tests|tom)[\\\/]+.+\.(h|hpp)$'
 FormatStyle:                  none
 UseColor:                     true
 Checks:
