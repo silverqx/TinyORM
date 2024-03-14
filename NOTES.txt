@@ -2362,6 +2362,7 @@ art vendor:publish --provider="Barryvdh\LaravelIdeHelper\IdeHelperServiceProvide
 | WinMerge routes/
 | WinMerge config/
 | WinMerge database/
+| ! merging/comparing migrations was tricky, I have copied whole database, deleted jobs and cache related tables, and then run mig:st (without our migrations, Laravel migrations only (there were migrations for users, cache, jobs tables)), I updated migrations table manually when needed, then I copied our migrations, mig:st of course shows that they are already migrated what is OK
 | copy MySQL database using phpMyAdmin Operations - Copy Database
 | copy PostgreSQL database using Create database - Template to previous DB - set Template to unchecked (false)
 | replace all occurences of DB_LARAVEL_X to the new X version (.env, config/database.php)
