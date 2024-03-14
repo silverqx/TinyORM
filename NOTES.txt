@@ -2684,3 +2684,27 @@ https://docs.github.com/en/actions/hosting-your-own-runners/managing-self-hosted
    - deleting and re-cloning the vcpkg repo
      - the owner must be changed on Windows to NETWORK SERVICE because of git filesystem owner check
      - isn't needed often, look on this step: vcpkg upgrade repository (latest version)
+
+
+Windows Database servers services:
+----------------------------------
+
+Examples of Service name, command-line, and log on account, and install command.
+
+ - don't user mysql_install_db.exe for MariaDB because it only creates a new data directory, it fails
+   when a data directory already exists
+
+MariaDB11
+"C:\Program Files\MariaDB 11.3\bin\mysqld.exe" "--defaults-file=E:\mysql\mariadb_11\data\my.ini" "MariaDB11"
+NT SERVICE\MariaDB11
+mysqld.exe --install MariaDB11 --defaults-file="E:\mysql\mariadb_11\data\my.ini"
+
+MySQL83
+"C:\Program Files\MySQL\MySQL Server 8.3\bin\mysqld.exe" --defaults-file="C:\ProgramData\MySQL\MySQL Server 8.3\my.ini" MySQL83
+NT SERVICE\MySQL83
+mysqld.exe --install MySQL83 --defaults-file="C:\ProgramData\MySQL\MySQL Server 8.3\my.ini"
+
+postgresql-x64-16
+"C:\Program Files\PostgreSQL\16\bin\pg_ctl.exe" runservice -N "postgresql-x64-16" -D "E:\postgres\16\data" -w
+Network Service
+pg_ctl.exe register --pgdata="E:\postgres\16\data" -N postgresql-x64-16 -U 'NT AUTHORITY\NETWORK SERVICE' --wait
