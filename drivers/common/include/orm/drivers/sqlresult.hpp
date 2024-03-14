@@ -46,7 +46,8 @@ namespace Orm::Drivers
 
     protected:
         /*! Query placeholders syntax enum. */
-        enum BindingSyntax {
+        enum BindingSyntax
+        {
             /*! Positional placeholders using the ? character. */
             PositionalBinding,
             /*! Named placeholders using eg. :id (not supported). */

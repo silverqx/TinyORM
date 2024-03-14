@@ -24,7 +24,8 @@ namespace Orm::Drivers
         using size_type = qint64;
 
         /*! Determine whether a field is required during INSERT statements. */
-        enum struct RequiredStatus {
+        enum struct RequiredStatus
+        {
             /*! Unknown required field status. */
             Unknown = -1,
             /*! Optional field. */

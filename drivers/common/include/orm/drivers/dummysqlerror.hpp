@@ -24,7 +24,8 @@ namespace Orm::Drivers
     {
     public:
         /*! An error type type. */
-        enum ErrorType {
+        enum ErrorType
+        {
             NoError,
             ConnectionError,
             StatementError,
