@@ -186,7 +186,7 @@ jobs:
         ./tools/run-clazy-standalone.py \
         -checks="$checks" \
         -extra-arg-before='-Qunused-arguments' \
-        -header-filter='[\\\/]+(examples|orm|tests|tom)[\\\/]+.+\.(h|hpp)$' \
+        -header-filter='[\\\/]+(drivers|examples|orm|tests|tom)[\\\/]+.+\.(h|hpp)$' \
         -j ${{ env.TinyParallel }} \
         -p='${{ runner.workspace }}/TinyORM-builds-cmake/build-analyzer-${{ matrix.qt.key }}-clang-debug' \
-        '[\\\/]+(?:examples|src|tests)[\\\/]+.+?[\\\/]+(?!mocs_)[\w\d_\-\+]+\.cpp$'
+        '[\\\/]+(?:drivers|examples|src|tests)[\\\/]+.+?[\\\/]+(?!mocs_)[\w\d_\-\+]+\.cpp$'
