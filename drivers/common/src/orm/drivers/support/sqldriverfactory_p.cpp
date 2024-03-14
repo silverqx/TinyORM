@@ -319,9 +319,9 @@ QStringList SqlDriverFactoryPrivate::sqlDriverPaths() const
        likely possibilities like 0 and as the last without any postfixes (raw basename).
     */
 
-    const auto envTinyPluginPath       = qEnvironmentVariable("TINY_PLUGIN_PATH");
-    const auto hasTinyPluginPaths      = !envTinyPluginPath.isEmpty();
-    const auto isTinyDiversInBuildTree = this->isTinyDiversInBuildTree();
+    const auto envTinyPluginPath        = qEnvironmentVariable("TINY_PLUGIN_PATH");
+    const auto hasTinyPluginPaths       = !envTinyPluginPath.isEmpty();
+    const auto isTinyDriversInBuildTree = this->isTinyDriversInBuildTree();
 
     constexpr static auto listSeparator = QDir::listSeparator();
 
@@ -329,7 +329,7 @@ QStringList SqlDriverFactoryPrivate::sqlDriverPaths() const
     // +1 for an empty path
     result.reserve(envTinyPluginPath.count(listSeparator) +
                    (hasTinyPluginPaths ? 1 : 0) + 1 +
-                   (isTinyDiversInBuildTree ? 1 : 0));
+                   (isTinyDriversInBuildTree ? 1 : 0));
 
     // Paths from the TINY_PLUGIN_PATH environment variable
     if (hasTinyPluginPaths)
@@ -343,7 +343,7 @@ QStringList SqlDriverFactoryPrivate::sqlDriverPaths() const
        the build tree. Load it only if the TinyDrivers library location is
        in the build tree. This ensures that it will not be loaded from the build tree,
        e.g. after installation because it is non-standard behavior. */
-    if (isTinyDiversInBuildTree)
+    if (isTinyDriversInBuildTree)
         if (auto &&sqlDriverPath = sqlDriverPathFromBuildSystem(); sqlDriverPath)
             result << std::move(*sqlDriverPath);
 
@@ -443,7 +443,7 @@ namespace
     }
 } // namespace
 
-bool SqlDriverFactoryPrivate::isTinyDiversInBuildTree()
+bool SqlDriverFactoryPrivate::isTinyDriversInBuildTree()
 {
     // Get the fully qualified path for the current TinyDrivers DLL library
     const auto moduleFilepath = getModuleFilepath();
