@@ -1,3 +1,4 @@
+#pragma once
 #ifndef ORM_DRIVERS_SQLDATABASE_HPP
 #define ORM_DRIVERS_SQLDATABASE_HPP
 
