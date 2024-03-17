@@ -24,21 +24,21 @@ namespace Orm::Drivers
     {
     protected:
         /*! Default constructor. */
-        inline SqlDatabaseManager() = default;
+        SqlDatabaseManager() = default;
 
     public:
         /*! Copy constructor. */
-        inline SqlDatabaseManager(const SqlDatabaseManager &) = default;
+        SqlDatabaseManager(const SqlDatabaseManager &) = default;
         /*! Copy assignment operator. */
-        inline SqlDatabaseManager &operator=(const SqlDatabaseManager &) = default; // clazy:exclude=function-args-by-value
+        SqlDatabaseManager &operator=(const SqlDatabaseManager &) = default; // clazy:exclude=function-args-by-value
 
         /*! Move constructor. */
-        inline SqlDatabaseManager(SqlDatabaseManager &&) noexcept = default;
+        SqlDatabaseManager(SqlDatabaseManager &&) noexcept = default;
         /*! Move assignment operator. */
-        inline SqlDatabaseManager &operator=(SqlDatabaseManager &&) noexcept = default;
+        SqlDatabaseManager &operator=(SqlDatabaseManager &&) noexcept = default;
 
         /*! Default destructor. */
-        inline ~SqlDatabaseManager() = default;
+        ~SqlDatabaseManager() = default;
 
         /*! Default Database Connection Name. */
         static const QString defaultConnection;

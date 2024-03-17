@@ -5,6 +5,8 @@
 #include <orm/macros/systemheader.hpp>
 TINY_SYSTEM_HEADER
 
+#include <QtTypes>
+
 #include <orm/macros/commonnamespace.hpp>
 
 TINYORM_BEGIN_COMMON_NAMESPACE
@@ -13,7 +15,7 @@ namespace Orm::Drivers
 {
 
     /*! Result set cursor position type. */
-    enum CursorPosition
+    enum CursorPosition : qint8
     {
         /*! Cursor position before the first row. */
         BeforeFirstRow = -1,
@@ -22,7 +24,7 @@ namespace Orm::Drivers
     };
 
     /*! Numerical precision policies for floating point numbers. */
-    enum struct NumericalPrecisionPolicy
+    enum struct NumericalPrecisionPolicy : qint8
     {
         /*! Force 32bit integer values. The fractional part is silently discarded. */
         LowPrecisionInt32    = 0x01,
@@ -35,7 +37,7 @@ namespace Orm::Drivers
     };
 
     /*! Type of a bind parameter (dummy type for API compatibility). */
-    enum struct ParamType
+    enum struct ParamType : qint8
     {
         /*! The bind parameter to put data into the database. */
         In = 0,

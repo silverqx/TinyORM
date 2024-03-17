@@ -37,7 +37,7 @@ namespace Orm::Drivers
         /*! Is the connection currently open? */
         bool isOpen = false;
         /*! The current database connection name (used in exceptions and logs). */
-        QString connectionName {};
+        QString connectionName;
     };
 
     /* public */

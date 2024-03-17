@@ -35,7 +35,7 @@ namespace Support
         /*! Constructor. */
         inline explicit SqlDatabasePrivate(std::shared_ptr<SqlDriver> &&driver) noexcept;
         /*! Default destructor. */
-        inline ~SqlDatabasePrivate() = default;
+        ~SqlDatabasePrivate() = default;
 
         /* Database connection */
         /*! Clone the SqlDatabasePrivate. */
@@ -98,18 +98,18 @@ namespace Support
         /*! Connection driver name. */
         QString driverName;
         /*! Connection name. */
-        QString connectionName {};
+        QString connectionName;
 
         /*! Connection hostname. */
-        QString hostName {};
+        QString hostName;
         /*! Connection database name. */
-        QString databaseName {};
+        QString databaseName;
         /*! Connection username. */
-        QString username {};
+        QString username;
         /*! Connection password. */
-        QString password {};
+        QString password;
         /*! Connection extra options. */
-        QString connectionOptions {};
+        QString connectionOptions;
 
         /*! Connection port. */
         int port = -1;
