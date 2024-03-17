@@ -1,0 +1,13 @@
+# Optimized for Clang-Tidy v18
+---
+InheritParentConfig: true
+Checks:
+  - bugprone-macro-parentheses
+  - cppcoreguidelines-avoid-non-const-global-variables
+  - cppcoreguidelines-pro-bounds-pointer-arithmetic
+  - cppcoreguidelines-pro-type-const-cast
+  - cppcoreguidelines-pro-type-reinterpret-cast
+  - cppcoreguidelines-pro-type-vararg
+  - cppcoreguidelines-special-member-functions
+  - google-default-arguments
+  - llvm-qualified-auto

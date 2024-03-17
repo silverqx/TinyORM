@@ -99,7 +99,7 @@ struct IdAndCustomType
     T custom;
 
     /*! Equality comparison operator for the IdAndCustomType. */
-    inline bool operator==(const IdAndCustomType &) const = default;
+    bool operator==(const IdAndCustomType &) const = default;
 };
 
 void tst_SqlQuery_Normal::select_All() const

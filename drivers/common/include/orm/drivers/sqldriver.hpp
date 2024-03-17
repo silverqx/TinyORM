@@ -27,7 +27,7 @@ namespace Orm::Drivers
     class TINYDRIVERS_EXPORT SqlDriver
     {
         Q_DISABLE_COPY_MOVE(SqlDriver)
-        Q_DECLARE_PRIVATE(SqlDriver)
+        Q_DECLARE_PRIVATE(SqlDriver) // NOLINT(cppcoreguidelines-pro-type-reinterpret-cast)
 
         // To access the setConnectionName()
         friend class SqlDatabase;

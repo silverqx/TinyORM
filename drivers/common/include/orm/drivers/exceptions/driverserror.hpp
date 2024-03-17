@@ -14,7 +14,7 @@ namespace Orm::Drivers::Exceptions
 
     /*! TinyDrivers exceptions tag, all TinyDrivers exceptions are derived from this
         class. */
-    class DriversError // clazy:exclude=copyable-polymorphic
+    class DriversError // NOLINT(cppcoreguidelines-special-member-functions) clazy:exclude=copyable-polymorphic
     {
     public:
         /*! Pure virtual destructor. */
