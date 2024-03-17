@@ -4,7 +4,9 @@
 QMAKE_CXXFLAGS_WARN_ON *= \
     -Wall \
     -Wextra \
-    -Weffc++ \
+    # Weffc++ is outdated, it warnings about bullshits 🤬, even word about this in docs:
+    # https://gcc.gnu.org/bugzilla/show_bug.cgi?id=110186
+    # -Weffc++ \
     -Werror \
     -Wfatal-errors \
     -Winvalid-pch \
