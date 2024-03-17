@@ -21,8 +21,6 @@ Checks:
   - -bugprone-macro-parentheses
   - -clang-analyzer-optin.osx.*
   - -clang-analyzer-osx.*
-  - -cppcoreguidelines-avoid-c-arrays
-  - -cppcoreguidelines-avoid-magic-numbers
   - -cppcoreguidelines-avoid-non-const-global-variables
   - -cppcoreguidelines-macro-usage
   - -cppcoreguidelines-non-private-member-variables-in-classes
@@ -32,8 +30,6 @@ Checks:
   - -cppcoreguidelines-pro-type-vararg
   - -cppcoreguidelines-special-member-functions
   - -google-default-arguments
-  - -google-readability-braces-around-statements
-  - -google-readability-function-size
   - -google-readability-todo
   - -llvm-header-guard
   - -llvm-qualified-auto
@@ -45,10 +41,16 @@ Checks:
   - -readability-identifier-length
   - -readability-magic-numbers
   # All below are only aliases
+  # Enabled
+  - -cppcoreguidelines-avoid-c-arrays
   - -cppcoreguidelines-noexcept-destructor
   - -cppcoreguidelines-noexcept-move-operations
   - -cppcoreguidelines-noexcept-swap
   - -cppcoreguidelines-use-default-member-init
+  - -google-readability-function-size
+  # Disabled above too
+  - -cppcoreguidelines-avoid-magic-numbers
+  - -google-readability-braces-around-statements
 WarningsAsErrors:    '*'
 HeaderFilterRegex:   '[\\\/]+(examples|orm|tests|tom)[\\\/]+.+\.(h|hpp)$'
 FormatStyle:         none
