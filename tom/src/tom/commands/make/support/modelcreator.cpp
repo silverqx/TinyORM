@@ -1283,9 +1283,9 @@ std::size_t ModelCreator::computeReserveForRelationsList(
 {
     // Cache the computed reserve size to avoid recomputation in the private section
     m_relationsListsSize = static_cast<std::size_t>(oneToOne.size()) +
-                          static_cast<std::size_t>(oneToMany.size()) +
-                          static_cast<std::size_t>(belongsTo.size()) +
-                          static_cast<std::size_t>(belongsToMany.size());
+                           static_cast<std::size_t>(oneToMany.size()) +
+                           static_cast<std::size_t>(belongsTo.size()) +
+                           static_cast<std::size_t>(belongsToMany.size());
 
     return m_relationsListsSize;
 }
