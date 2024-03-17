@@ -39,7 +39,8 @@ ${TINY_UNPARSED_ARGUMENTS}")
             #QT_RESTRICTED_CAST_FROM_ASCII
             QT_NO_CAST_TO_ASCII
             QT_NO_CAST_FROM_BYTEARRAY
-            QT_USE_QSTRINGBUILDER
+            # Don't define globally, it's better for compatibility, instead use % when needed
+            #QT_USE_QSTRINGBUILDER
             QT_STRICT_ITERATORS
             QT_NO_KEYWORDS
 
