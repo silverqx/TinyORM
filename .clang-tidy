@@ -1,7 +1,12 @@
 # Optimized for Clang-Tidy v17
 ---
+InheritParentConfig:          false
+WarningsAsErrors:             '*'
 HeaderFileExtensions:         ['h','hpp']
 ImplementationFileExtensions: ['cpp']
+HeaderFilterRegex:            '[\\\/]+(examples|orm|tests|tom)[\\\/]+.+\.(h|hpp)$'
+FormatStyle:                  none
+UseColor:                     true
 Checks:
   - -*
   - bugprone-*
@@ -51,11 +56,6 @@ Checks:
   # Disabled above too
   - -cppcoreguidelines-avoid-magic-numbers
   - -google-readability-braces-around-statements
-WarningsAsErrors:    '*'
-HeaderFilterRegex:   '[\\\/]+(examples|orm|tests|tom)[\\\/]+.+\.(h|hpp)$'
-FormatStyle:         none
-InheritParentConfig: false
-UseColor:            true
 CheckOptions:
   - key:             cppcoreguidelines-avoid-do-while.IgnoreMacros
     value:           true
