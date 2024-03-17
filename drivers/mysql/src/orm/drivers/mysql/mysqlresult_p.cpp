@@ -188,7 +188,7 @@ void MySqlResultPrivate::bindPreparedBindings(
         // Prepared binding value to prepare
         const auto &boundValue = boundValues.at(index);
         // Pointer to a raw data to bind (of course some types need special handling)
-        auto *const data = const_cast<void *>(boundValue.constData());
+        auto *const data = const_cast<void *>(boundValue.constData()); // NOLINT(cppcoreguidelines-pro-type-const-cast)
 
         // Emplace to the vector to make it alive until mysql_stmt_execute()
         preparedBind.is_null = &nullVector.emplaceBack(
@@ -205,7 +205,7 @@ void MySqlResultPrivate::bindPreparedBindings(
             /* The toByteArray().constData() is correct, it will point to the same
                data even if the QVariant creates a copy of the QByteArray inside
                toByteArray(). Also, need to use the constData() to avoid detach. */
-            preparedBind.buffer = const_cast<char *>(
+            preparedBind.buffer = const_cast<char *>( // NOLINT(cppcoreguidelines-pro-type-const-cast)
                                       boundValue.toByteArray().constData());
             break;
 
@@ -257,7 +257,7 @@ void MySqlResultPrivate::bindPreparedBindings(
 
             preparedBind.buffer_type   = MYSQL_TYPE_STRING;
             preparedBind.buffer_length = static_cast<ulong>(stringRef.size());
-            preparedBind.buffer        = const_cast<char *>(stringRef.constData());
+            preparedBind.buffer        = const_cast<char *>(stringRef.constData()); // NOLINT(cppcoreguidelines-pro-type-const-cast)
             break;
         }
         }
@@ -317,7 +317,7 @@ QVariant MySqlResultPrivate::getValueForNormal(const ResultFieldsSizeType index)
         return toBitField(field, fieldValue);
 
     const auto typeId = field.metaType.id();
-    const auto fieldLength = mysql_fetch_lengths(result)[index];
+    const auto fieldLength = mysql_fetch_lengths(result)[index]; // NOLINT(cppcoreguidelines-pro-bounds-pointer-arithmetic)
 
     // BLOB field needs QVariant(QByteArray) as the storage
     if (typeId == QMetaType::QByteArray)
@@ -354,7 +354,7 @@ QVariant MySqlResultPrivate::getValueForPrepared(const ResultFieldsSizeType inde
     if (MySqlUtils::isTimeOrDate(field.myField->type) &&
         field.fieldValueSize >= sizeof (MYSQL_TIME)
     )
-        return toQDateTimeFromMySQLTime(typeId, reinterpret_cast<const MYSQL_TIME *>(
+        return toQDateTimeFromMySQLTime(typeId, reinterpret_cast<const MYSQL_TIME *>( // NOLINT(cppcoreguidelines-pro-type-reinterpret-cast)
                                                     field.fieldValue.get()));
 
     // The BLOB field needs QVariant(QByteArray) as storage
@@ -541,7 +541,7 @@ quint64 MySqlResultPrivate::toBitField(const MyField &field,
     quint64 result = 0;
 
     for (ulong index = 0; index < numBytes; ++index) {
-        const quint64 tmp = static_cast<quint8>(fieldValue[index]);
+        const quint64 tmp = static_cast<quint8>(fieldValue[index]); // NOLINT(cppcoreguidelines-pro-bounds-pointer-arithmetic)
         /* Shift the current value 8 bit-s left to make 8 bit space (zero-ed)
            for the next 8 bit chunk (tmp quint8!). */
         result <<= 8;

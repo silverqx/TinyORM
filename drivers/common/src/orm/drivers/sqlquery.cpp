@@ -642,7 +642,7 @@ std::unique_ptr<SqlResult> SqlQuery::initSqlResult(const SqlDatabase &connection
                 .arg(connection.connectionName(), __tiny_func__));
 
     // This const_cast<> is needed because of the SqlQuery constructor (to have same API)
-    const auto driver = const_cast<SqlDatabase &>(connection).driverWeak();
+    const auto driver = const_cast<SqlDatabase &>(connection).driverWeak(); // NOLINT(cppcoreguidelines-pro-type-const-cast)
 
     // Ownership of a unique_ptr()
     return driver.lock()->createResult(driver);

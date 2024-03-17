@@ -18,7 +18,7 @@ namespace Orm::Drivers
 {
 
 /*! Database connections hash, maps connection names to SqlDatabase instances. */
-Q_GLOBAL_STATIC(ConnectionsHash, g_connections) // NOLINT(misc-use-anonymous-namespace)
+Q_GLOBAL_STATIC(ConnectionsHash, g_connections) // NOLINT(misc-use-anonymous-namespace, cppcoreguidelines-avoid-non-const-global-variables)
 
 /* public */
 

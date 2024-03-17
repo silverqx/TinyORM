@@ -32,6 +32,9 @@ namespace Orm::Drivers::MySql
         /*! Inherit constructors. */
         using SqlResultPrivate::SqlResultPrivate;
 
+        /*! Default destructor. */
+        ~MySqlResultPrivate() = default;
+
         /*! MySQL field type (used for result sets' fields). */
         struct MyField
         {

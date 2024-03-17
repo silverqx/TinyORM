@@ -25,7 +25,7 @@ namespace Orm::Drivers
     class TINYDRIVERS_EXPORT SqlResult
     {
         Q_DISABLE_COPY_MOVE(SqlResult)
-        Q_DECLARE_PRIVATE(SqlResult)
+        Q_DECLARE_PRIVATE(SqlResult) // NOLINT(cppcoreguidelines-pro-type-reinterpret-cast)
 
         // To access practically everything, all logic is defined in the SqlResult
         friend class SqlQuery;
