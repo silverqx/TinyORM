@@ -959,7 +959,7 @@ const QString &tst_DatabaseManager::checkDatabaseExistsFile()
         databasePath.truncate(QDir::fromNativeSeparators(databasePath)
                               .lastIndexOf(QChar('/')));
 
-        return databasePath + sl("/tinyorm_test-check_exists.sqlite3");
+        return databasePath.append(sl("/tinyorm_test-check_exists.sqlite3"));
     }();
 
     return cached;
