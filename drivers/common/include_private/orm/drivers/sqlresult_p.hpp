@@ -36,7 +36,7 @@ namespace Orm::Drivers
         /*! Constructor. */
         explicit SqlResultPrivate(const std::weak_ptr<SqlDriver> &driver) noexcept;
         /*! Default destructor. */
-        inline ~SqlResultPrivate() = default;
+        ~SqlResultPrivate() = default;
 
         /* Prepared queries */
         /*! Determine whether a value stored in the given QVariant isNull(). */
@@ -47,12 +47,12 @@ namespace Orm::Drivers
         std::weak_ptr<SqlDriver> sqldriver;
 
         /*! The current database connection name (used in exceptions and logs). */
-        QString connectionName {};
+        QString connectionName;
 
         /*! The current SQL query text. */
-        QString query {};
+        QString query;
         /*! Bound values for a prepared statement. */
-        QList<QVariant> boundValues {};
+        QList<QVariant> boundValues;
 
         /*! Connection numerical precision policy. */
         NumericalPrecisionPolicy precisionPolicy = LowPrecisionDouble;

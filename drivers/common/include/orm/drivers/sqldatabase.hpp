@@ -40,14 +40,14 @@ namespace Orm::Drivers
         ~SqlDatabase() noexcept;
 
         /*! Copy constructor. */
-        inline SqlDatabase(const SqlDatabase &) = default;
+        SqlDatabase(const SqlDatabase &) = default;
         /*! Copy assignment operator. */
-        inline SqlDatabase &operator=(const SqlDatabase &) = default;
+        SqlDatabase &operator=(const SqlDatabase &) = default;
 
         /*! Move constructor. */
-        inline SqlDatabase(SqlDatabase &&) noexcept = default;
+        SqlDatabase(SqlDatabase &&) noexcept = default;
         /*! Move assignment operator. */
-        inline SqlDatabase &operator=(SqlDatabase &&) noexcept = default;
+        SqlDatabase &operator=(SqlDatabase &&) noexcept = default;
 
         /* Database connection */
         /*! Open the database connection using the current connection values. */

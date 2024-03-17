@@ -158,7 +158,7 @@ void MySqlDriverPrivate::mysqlSelectDb(const QString &database)
 {
     // Nothing to do
     if (database.isEmpty())
-        return databaseName.clear(); // clazy:exclude=returning-void-expression
+        return databaseName.clear(); // NOLINT(readability-avoid-return-with-void-value) clazy:exclude=returning-void-expression
 
     if (mysql_select_db(mysql, database.toUtf8().constData()) == 0) {
         databaseName = database;

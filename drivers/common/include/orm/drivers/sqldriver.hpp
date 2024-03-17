@@ -41,7 +41,7 @@ namespace Orm::Drivers
            but were added back to be API compatible with QSqlDriver::DriverFeature. */
 
         /*! Supported driver features enum. */
-        enum DriverFeature
+        enum DriverFeature : qint8
         {
             /*! Supports batched operations (unused, for API compatibility). */
             BatchOperations,
@@ -80,7 +80,7 @@ namespace Orm::Drivers
         };
 
         /*! Identifier type enum. */
-        enum IdentifierType
+        enum IdentifierType : qint8
         {
             /*! Field/column name. */
             FieldName,
@@ -89,7 +89,7 @@ namespace Orm::Drivers
         };
 
         /*! Database driver type enum. */
-        enum DbmsType
+        enum DbmsType : qint8
         {
             /*! MySQL database driver. */
             MySqlServer,

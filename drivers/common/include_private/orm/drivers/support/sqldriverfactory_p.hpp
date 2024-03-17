@@ -29,7 +29,7 @@ namespace Support
         /*! Constructor. */
         inline SqlDriverFactoryPrivate(QString &&driver, const QString &connection);
         /*! Deleted destructor. */
-        inline ~SqlDriverFactoryPrivate() = default;
+        ~SqlDriverFactoryPrivate() = default;
 
         /*! Create a SqlDriver instance based on the driverName data member. */
         std::shared_ptr<SqlDriver> make() const;

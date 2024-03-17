@@ -24,7 +24,7 @@ namespace Orm::Drivers
     {
     public:
         /*! An error type type. */
-        enum ErrorType
+        enum ErrorType : qint8
         {
             NoError,
             ConnectionError,
@@ -38,17 +38,17 @@ namespace Orm::Drivers
                 const QString &driverText = {}, const QString &databaseText = {}, // NOLINT(google-explicit-constructor)
                 ErrorType errorType = NoError, const QString &errorCode = {}) noexcept;
         /*! Default destructor. */
-        inline ~DummySqlError() = default;
+        ~DummySqlError() = default;
 
         /*! Copy constructor. */
-        inline DummySqlError(const DummySqlError &) = default;
+        DummySqlError(const DummySqlError &) = default;
         /*! Copy assignment operator. */
-        inline DummySqlError &operator=(const DummySqlError &) = default;
+        DummySqlError &operator=(const DummySqlError &) = default;
 
         /*! Move constructor. */
-        inline DummySqlError(DummySqlError &&) noexcept = default;
+        DummySqlError(DummySqlError &&) noexcept = default;
         /*! Move assignment operator. */
-        inline DummySqlError &operator=(DummySqlError &&) noexcept = default;
+        DummySqlError &operator=(DummySqlError &&) noexcept = default;
 
         /*! Equality comparison operator for the SqlError. */
         inline bool operator==(const DummySqlError &other) const noexcept;
@@ -73,14 +73,14 @@ namespace Orm::Drivers
 
     private:
         /*! Driver-specific error text. */
-        QString m_driverText {};
+        QString m_driverText;
         /*! Database-specific error text. */
-        QString m_databaseText {};
+        QString m_databaseText;
         /*! An error type. */
         [[maybe_unused]]
         DummySqlError::ErrorType m_errorType = NoError;
         /*! Database-specific error code. */
-        QString m_errorCode {};
+        QString m_errorCode;
     };
 
     /* public */

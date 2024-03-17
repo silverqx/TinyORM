@@ -35,9 +35,9 @@ namespace Orm::Drivers::Support
         using size_type       = typename ContainerType::size_type;
 
         /*! Default constructor. */
-        inline ConnectionsHashPrivate() = default;
+        ConnectionsHashPrivate() = default;
         /*! Default destructor. */
-        inline ~ConnectionsHashPrivate() = default;
+        ~ConnectionsHashPrivate() = default;
 
         /* Lookup */
         /*! Get a connection by the given connection name. */
@@ -71,9 +71,9 @@ namespace Orm::Drivers::Support
 
     private:
         /*! Database connections hash. */
-        ContainerType m_data {};
+        ContainerType m_data;
         /*! Shared mutex. */
-        mutable std::shared_mutex m_mutex {};
+        mutable std::shared_mutex m_mutex;
     };
 
     /* public */

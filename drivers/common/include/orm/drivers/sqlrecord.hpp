@@ -21,22 +21,22 @@ namespace Orm::Drivers
         using size_type = int;
 
         /*! Default constructor. */
-        inline SqlRecord() = default;
+        SqlRecord() = default;
         /*! Default destructor. */
-        inline ~SqlRecord() = default;
+        ~SqlRecord() = default;
 
         /*! Copy constructor. */
-        inline SqlRecord(const SqlRecord &) = default;
+        SqlRecord(const SqlRecord &) = default;
         /*! Copy assignment operator. */
-        inline SqlRecord &operator=(const SqlRecord &) = default;
+        SqlRecord &operator=(const SqlRecord &) = default;
 
         /*! Move constructor. */
-        inline SqlRecord(SqlRecord &&) noexcept = default;
+        SqlRecord(SqlRecord &&) noexcept = default;
         /*! Move assignment operator. */
-        inline SqlRecord &operator=(SqlRecord &&) noexcept = default;
+        SqlRecord &operator=(SqlRecord &&) noexcept = default;
 
         /*! Equality comparison operator for the SqlRecord. */
-        inline bool operator==(const SqlRecord &) const = default;
+        bool operator==(const SqlRecord &) const = default;
 
         /*! Swap the SqlRecord. */
         inline void swap(SqlRecord &other) noexcept;

@@ -29,7 +29,7 @@ namespace Orm::Drivers::MySql
         /*! Default constructor. */
         MySqlDriver();
         /*! Virtual destructor. */
-        inline ~MySqlDriver() final = default;
+        ~MySqlDriver() final = default;
 
         /*! Open the database connection using the given values. */
         bool open(const QString &database, const QString &username,

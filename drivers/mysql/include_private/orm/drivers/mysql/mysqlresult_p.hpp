@@ -37,7 +37,7 @@ namespace Orm::Drivers::MySql
         {
             /* Common for both */
             /*! Field metatype. */
-            QMetaType metaType {};
+            QMetaType metaType;
             /*! Field metadata. */
             const MYSQL_FIELD *myField = nullptr; // Returned by mysql_fetch_field()
 
@@ -91,7 +91,7 @@ namespace Orm::Drivers::MySql
         /* Data members */
         /* Common for both */
         /*! Fields for the currently obtained record/row. */
-        ResultFieldsType resultFields {};
+        ResultFieldsType resultFields;
 
         /* Normal queries */
         /*! Result set handle (from the mysql_store_result()). */

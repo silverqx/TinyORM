@@ -24,7 +24,7 @@ namespace Orm::Drivers
         using size_type = qint64;
 
         /*! Determine whether a field is required during INSERT statements. */
-        enum struct RequiredStatus
+        enum struct RequiredStatus : qint8
         {
             /*! Unknown required field status. */
             Unknown = -1,
@@ -41,20 +41,20 @@ namespace Orm::Drivers
         explicit SqlField(QString fieldName = {}, QMetaType metaType = {},
                           QString tableName = {});
         /*! Default destructor. */
-        inline ~SqlField() = default;
+        ~SqlField() = default;
 
         /*! Copy constructor. */
-        inline SqlField(const SqlField &) = default;
+        SqlField(const SqlField &) = default;
         /*! Copy assignment operator. */
-        inline SqlField &operator=(const SqlField &) = default;
+        SqlField &operator=(const SqlField &) = default;
 
         /*! Move constructor. */
-        inline SqlField(SqlField &&) noexcept = default;
+        SqlField(SqlField &&) noexcept = default;
         /*! Move assignment operator. */
-        inline SqlField &operator=(SqlField &&) noexcept = default;
+        SqlField &operator=(SqlField &&) noexcept = default;
 
         /*! Equality comparison operator for the SqlField. */
-        inline bool operator==(const SqlField &) const = default;
+        bool operator==(const SqlField &) const = default;
 
         /*! Swap the SqlField. */
         void swap(SqlField &other) noexcept;
@@ -155,9 +155,9 @@ namespace Orm::Drivers
         /*! Table name a field belongs to. */
         QString m_table;
         /*! Underlying database field type name (DB dependent). */
-        QString m_sqlTypeName {}; // Moved up here for a better memory layout/padding
+        QString m_sqlTypeName; // Moved up here for a better memory layout/padding
         /*! Field default value. */
-        QVariant m_defaultValue {};
+        QVariant m_defaultValue;
         /*! Qt metatype. */
         QMetaType m_metaType;
         /*! Determine whether a field is required during INSERT statements. */

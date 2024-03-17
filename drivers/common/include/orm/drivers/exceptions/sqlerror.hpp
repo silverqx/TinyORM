@@ -17,9 +17,9 @@ namespace Orm::Drivers::Exceptions
     struct MySqlErrorType
     {
         /*! Prepared database-specific error code. */
-        QString errNo {};
+        QString errNo;
         /*! Prepared database-specific error message. */
-        QString errorMessage {};
+        QString errorMessage;
     };
 #endif // TINYDRIVERS_MYSQL_DRIVER
 

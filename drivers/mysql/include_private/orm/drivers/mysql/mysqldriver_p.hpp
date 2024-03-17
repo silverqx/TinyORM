@@ -20,7 +20,7 @@ namespace Orm::Drivers::MySql
         /*! Default constructor. */
         inline MySqlDriverPrivate() noexcept;
         /*! Virtual destructor. */
-        inline ~MySqlDriverPrivate() final = default;
+        ~MySqlDriverPrivate() final = default;
 
         /* open() */
         struct SetConnectionOptionsResult;
@@ -59,7 +59,7 @@ namespace Orm::Drivers::MySql
         /*! MYSQL handler. */
         MYSQL *mysql = nullptr;
         /*! The currently selected default database name. */
-        QString databaseName {};
+        QString databaseName;
 
     private:
         /* open() */

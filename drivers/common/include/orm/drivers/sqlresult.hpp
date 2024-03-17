@@ -46,7 +46,7 @@ namespace Orm::Drivers
 
     protected:
         /*! Query placeholders syntax enum. */
-        enum BindingSyntax
+        enum BindingSyntax : qint8
         {
             /*! Positional placeholders using the ? character. */
             PositionalBinding,
