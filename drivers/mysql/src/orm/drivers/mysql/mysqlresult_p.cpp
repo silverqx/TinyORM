@@ -306,15 +306,15 @@ MySqlResultPrivate::errorMessageForStmtFetch(const int status) noexcept
 QVariant MySqlResultPrivate::getValueForNormal(const ResultFieldsSizeType index) const
 {
     const auto &field = resultFields[index]; // Index bounds checked in MySqlResult::data()
-    const auto *const column = row[index];
+    const auto *const fieldValue = row[index];
 
     // Field is NULL
-    if (column == nullptr)
+    if (fieldValue == nullptr)
         return QVariant(field.metaType);
 
     // BIT field
     if (isBitType(field.myField->type))
-        return toBitField(field, column);
+        return toBitField(field, fieldValue);
 
     const auto typeId = field.metaType.id();
     const auto fieldLength = mysql_fetch_lengths(result)[index];
@@ -323,7 +323,7 @@ QVariant MySqlResultPrivate::getValueForNormal(const ResultFieldsSizeType index)
     if (typeId == QMetaType::QByteArray)
         return QByteArray(row[index], static_cast<QByteArray::size_type>(fieldLength));
 
-    return createQVariant(typeId, QString::fromUtf8(column,
+    return createQVariant(typeId, QString::fromUtf8(fieldValue,
                                                     static_cast<QString::size_type>(
                                                         fieldLength)));
 }
