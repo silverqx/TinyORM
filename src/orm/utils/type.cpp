@@ -169,7 +169,7 @@ Type::classPureBasenameMsvc(const QString &className, const bool withNamespace)
 
     // Include the namespace in the result
     if (withNamespace)
-        itBegin += findBeginWithoutNS();
+        itBegin += findBeginWithoutNS(); // NOLINT(cppcoreguidelines-pro-bounds-pointer-arithmetic)
 
     // Do not include the namespace in the result
     // Block needed to pass Clang-Tidy bugprone-branch-clone
@@ -178,11 +178,11 @@ Type::classPureBasenameMsvc(const QString &className, const bool withNamespace)
         if (const qptrdiff toBegin = className.lastIndexOf(QStringLiteral("::"));
              toBegin == -1
         )
-            itBegin += findBeginWithoutNS();
+            itBegin += findBeginWithoutNS(); // NOLINT(cppcoreguidelines-pro-bounds-pointer-arithmetic)
 
         // Have the namespace (:: found), +2 to point after
         else
-            itBegin += toBegin + 2;
+            itBegin += toBegin + 2; // NOLINT(cppcoreguidelines-pro-bounds-pointer-arithmetic)
     }
 
     // Find the end of the class name
@@ -210,7 +210,7 @@ Type::classPureBasenameGcc(const QString &className, const bool withNamespace)
         if (const qptrdiff toBegin = className.lastIndexOf(QStringLiteral("::"));
             toBegin != -1
         )
-            itBegin += toBegin + 2;
+            itBegin += toBegin + 2; // NOLINT(cppcoreguidelines-pro-bounds-pointer-arithmetic)
 
     // Find the end of the class name
     const auto *itEnd = std::find_if(itBegin, className.cend(),

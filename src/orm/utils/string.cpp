@@ -54,7 +54,7 @@ bool String::isNumber(const QStringView string, const bool allowFloating,
     const auto *itBegin = string.cbegin();
     if (string.front() == PLUS || string.front() == MINUS) {
         if (allowPlusMinus)
-            ++itBegin;
+            ++itBegin; // NOLINT(cppcoreguidelines-pro-bounds-pointer-arithmetic)
         else
             return false;
     }

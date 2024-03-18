@@ -182,7 +182,7 @@ namespace Concerns
         QString getCommandName();
 
         /*! Action to do if the passed command was not found. */
-        enum struct CommandNotFound
+        enum struct CommandNotFound : quint8
         {
             /*! Show all commands list using the list command. */
             ShowCommandsList,

@@ -653,7 +653,7 @@ QStringList Application::prepareArguments() const
     arguments.reserve(*m_argc);
 
     for (QStringList::size_type i = 0; i < *m_argc; ++i)
-        arguments << QString::fromUtf8(m_argv[i]);
+        arguments << QString::fromUtf8(m_argv[i]); // NOLINT(cppcoreguidelines-pro-bounds-pointer-arithmetic)
 
     return arguments;
 }
