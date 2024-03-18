@@ -189,7 +189,7 @@ Type::classPureBasenameMsvc(const QString &className, const bool withNamespace)
     const auto *itEnd = std::find_if(itBegin, className.cend(),
                                      [](const QChar ch)
     {
-        // The class name can end with < or space, anything else
+        // The class name can end with < or space (anything else can't be at the end)
         return ch == LT_C || ch == SPACE;
     });
 
