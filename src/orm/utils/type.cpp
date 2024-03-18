@@ -151,6 +151,8 @@ Type::classPureBasenameInternal(const char *typeName, const bool withNamespace)
 #endif
 }
 
+// BUG both msvc and gcc implementation doesn't return correct name for nested classes with namespace, eg. for these types struct A1<int>::N1, struct X::Abc1<int>::N2 it returns A1, X::Abc1 instead of N1, N2; w/o namespaces returns the correct result silverqx
+
 QString
 Type::classPureBasenameMsvc(const QString &className, const bool withNamespace)
 {
