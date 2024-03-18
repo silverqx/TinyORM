@@ -154,11 +154,11 @@ namespace
 
 /*! Template string for tab-completion installed successfully. */
 Q_GLOBAL_STATIC_WITH_ARGS(
-        const QString, IntegrateSuccessTmpl, // NOLINT(misc-use-anonymous-namespace)
+        const QString, IntegrateSuccessTmpl, // NOLINT(misc-use-anonymous-namespace, cppcoreguidelines-avoid-non-const-global-variables)
         ("Tab-completion for the %1 shell was successfully registered. 🎉"))
 /*! Template string for tab-completion already registered. */
 Q_GLOBAL_STATIC_WITH_ARGS(
-        const QString, IntegrateAlreadyRegisteredTmpl, // NOLINT(misc-use-anonymous-namespace)
+        const QString, IntegrateAlreadyRegisteredTmpl, // NOLINT(misc-use-anonymous-namespace, cppcoreguidelines-avoid-non-const-global-variables)
         ("Tab-completion for the %1 shell is already registered. 🙌"))
 
 int IntegrateCommand::integratePwsh() const

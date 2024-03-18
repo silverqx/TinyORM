@@ -504,7 +504,7 @@ QString DatabaseConnection::driverName()
 using DriverNameMapType = std::unordered_map<QString, const QString &>;
 
 /*! Map a Qt's database driver name to the pretty name. */
-Q_GLOBAL_STATIC_WITH_ARGS(const DriverNameMapType, DRIVER_NAME_MAP, ({ // NOLINT(misc-use-anonymous-namespace)
+Q_GLOBAL_STATIC_WITH_ARGS(const DriverNameMapType, DRIVER_NAME_MAP, ({ // NOLINT(misc-use-anonymous-namespace, cppcoreguidelines-avoid-non-const-global-variables)
                               {QMYSQL,  MYSQL_},
                               {QPSQL,   POSTGRESQL},
                               {QSQLITE, SQLITE}
