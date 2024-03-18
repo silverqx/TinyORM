@@ -562,6 +562,9 @@ bool Blueprint::creating() const
 {
     return ranges::contains(m_commands, Create, [](const auto &command)
     {
+        /* We can be at 100% sure that all commands will be convertible at least
+           to the BasicCommand, because the basic requirement is that every command must
+           have a name. */
         return reinterpret_cast<const BasicCommand &>(*command).name;
     });
 }
