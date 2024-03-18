@@ -16,27 +16,32 @@ namespace Orm::Concerns
 namespace
 {
     /*! The connection resolver instance, atomic. */
-    std::atomic<ConnectionResolverInterface *> g_resolver = nullptr;
+    std::atomic<ConnectionResolverInterface *> &g_resolver() noexcept
+    {
+        static std::atomic<ConnectionResolverInterface *> cached = nullptr;
+
+        return cached;
+    }
 } // namespace
 
 /* public */
 
 ConnectionResolverInterface *HasConnectionResolver::getConnectionResolver() noexcept
 {
-    Q_ASSERT(g_resolver != nullptr);
+    Q_ASSERT(g_resolver() != nullptr);
 
-    return g_resolver;
+    return g_resolver();
 }
 
 void HasConnectionResolver::setConnectionResolver(
         ConnectionResolverInterface *resolver) noexcept
 {
-    g_resolver = resolver;
+    g_resolver() = resolver;
 }
 
 void HasConnectionResolver::unsetConnectionResolver() noexcept
 {
-    g_resolver = nullptr;
+    g_resolver() = nullptr;
 }
 
 } // namespace Orm::Concerns

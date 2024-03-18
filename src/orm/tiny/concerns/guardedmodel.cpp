@@ -1,5 +1,7 @@
 #include "orm/tiny/concerns/guardedmodel.hpp"
 
+#include <atomic>
+
 #include "orm/macros/threadlocal.hpp"
 
 TINYORM_BEGIN_COMMON_NAMESPACE
@@ -16,9 +18,14 @@ namespace Orm::Tiny::Concerns
 
 namespace
 {
-    /*! Indicates if all mass assignment is enabled. */
-    T_THREAD_LOCAL
-    auto g_unguarded = false;
+    /*! Indicates if all mass assignment is enabled, atomic. */
+    std::atomic<bool> &g_unguarded() noexcept
+    {
+        T_THREAD_LOCAL
+        static std::atomic<bool> cached = false;
+
+        return cached;
+    }
 } // namespace
 
 /* public */
@@ -26,7 +33,7 @@ namespace
 // NOTE api different, Eloquent returns whatever callback returns silverqx
 void GuardedModel::unguarded(const std::function<void()> &callback)
 {
-    if (g_unguarded)
+    if (g_unguarded())
         return std::invoke(callback); // NOLINT(readability-avoid-return-with-void-value) clazy:exclude=returning-void-expression
 
     unguard();
@@ -47,17 +54,17 @@ void GuardedModel::unguarded(const std::function<void()> &callback)
 void GuardedModel::unguard(const bool state) noexcept
 {
     // NOTE api different, Eloquent use late static binding for unguarded, what means that it can be overridden in the user defined model silverqx
-    g_unguarded = state;
+    g_unguarded() = state;
 }
 
 void GuardedModel::reguard() noexcept
 {
-    g_unguarded = false;
+    g_unguarded() = false;
 }
 
 bool GuardedModel::isUnguarded() noexcept
 {
-    return g_unguarded;
+    return g_unguarded();
 }
 
 } // namespace Orm::Tiny::Concerns
