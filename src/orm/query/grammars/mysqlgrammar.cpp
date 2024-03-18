@@ -115,7 +115,7 @@ MySqlGrammar::getCompileMap() const
                this method is virtual; used the reinterpret_cast<> to avoid useless
                and slower dynamic_cast<>. */
             return std::invoke(compileMethod,
-                               reinterpret_cast<const MySqlGrammar &>(grammar), query);
+                               reinterpret_cast<const MySqlGrammar &>(grammar), query); // NOLINT(cppcoreguidelines-pro-type-reinterpret-cast)
         };
     };
 
@@ -165,7 +165,7 @@ MySqlGrammar::getWhereMethod(const WhereType whereType) const
                this method is virtual; used the reinterpret_cast<> to avoid useless
                and slower dynamic_cast<>. */
             return std::invoke(compileMethod,
-                               reinterpret_cast<const MySqlGrammar &>(grammar), where);
+                               reinterpret_cast<const MySqlGrammar &>(grammar), where); // NOLINT(cppcoreguidelines-pro-type-reinterpret-cast)
         };
     };
 

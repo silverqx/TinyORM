@@ -100,7 +100,7 @@ SQLiteGrammar::getCompileMap() const
                this method is virtual; used the reinterpret_cast<> to avoid useless
                and slower dynamic_cast<>. */
             return std::invoke(compileMethod,
-                               reinterpret_cast<const SQLiteGrammar &>(grammar), query);
+                               reinterpret_cast<const SQLiteGrammar &>(grammar), query); // NOLINT(cppcoreguidelines-pro-type-reinterpret-cast)
         };
     };
 
@@ -149,7 +149,7 @@ SQLiteGrammar::getWhereMethod(const WhereType whereType) const
                this method is virtual; used the reinterpret_cast<> to avoid useless
                and slower dynamic_cast<>. */
             return std::invoke(compileMethod,
-                               reinterpret_cast<const SQLiteGrammar &>(grammar), query);
+                               reinterpret_cast<const SQLiteGrammar &>(grammar), query); // NOLINT(cppcoreguidelines-pro-type-reinterpret-cast)
         };
     };
 

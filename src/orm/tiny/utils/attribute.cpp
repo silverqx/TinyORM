@@ -200,11 +200,11 @@ void Attribute::fixQtNullVariantBug(QVariantMap &attributes) // NOLINT(misc-no-r
                  typeId == QMetaType::QVariantMap
         ) T_UNLIKELY
             fixQtNullVariantBug(
-                *reinterpret_cast<QVariantMap *>(value.data()));
+                *reinterpret_cast<QVariantMap *>(value.data())); // NOLINT(cppcoreguidelines-pro-type-reinterpret-cast)
 
         else if (typeId == QMetaType::QVariantList) T_UNLIKELY
             fixQtNullVariantBug(
-                *reinterpret_cast<QVariantList *>(value.data()));
+                *reinterpret_cast<QVariantList *>(value.data())); // NOLINT(cppcoreguidelines-pro-type-reinterpret-cast)
 
         else T_LIKELY
             continue;
@@ -215,7 +215,7 @@ void Attribute::fixQtNullVariantBug(QVariantList &attributesList) // NOLINT(misc
     for (auto &attributes : attributesList)
         if (Helpers::qVariantTypeId(attributes) == QMetaType::QVariantMap) T_LIKELY
             fixQtNullVariantBug(
-                *reinterpret_cast<QVariantMap *>(attributes.data()));
+                *reinterpret_cast<QVariantMap *>(attributes.data())); // NOLINT(cppcoreguidelines-pro-type-reinterpret-cast)
 
         else T_UNLIKELY
             Q_UNREACHABLE();

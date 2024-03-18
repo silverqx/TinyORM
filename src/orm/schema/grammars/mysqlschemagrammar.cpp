@@ -246,7 +246,7 @@ MySqlSchemaGrammar::invokeCompileMethod(const CommandDefinition &command,
                                         const DatabaseConnection &connection,
                                         const Blueprint &blueprint) const
 {
-    const auto &basicCommand = reinterpret_cast<const BasicCommand &>(command);
+    const auto &basicCommand = reinterpret_cast<const BasicCommand &>(command); // NOLINT(cppcoreguidelines-pro-type-reinterpret-cast)
     Q_ASSERT(typeid (QString) == typeid (basicCommand.name));
     const auto &name = basicCommand.name;
 
@@ -269,7 +269,7 @@ MySqlSchemaGrammar::invokeCompileMethod(const CommandDefinition &command,
         {
             /* Get type of a second parameter of compile method and cast to that type. */
             const auto &castCommand =
-                    reinterpret_cast<decltype (argumentType<1>(compileMethod))>(command_);
+                    reinterpret_cast<decltype (argumentType<1>(compileMethod))>(command_); // NOLINT(cppcoreguidelines-pro-type-reinterpret-cast)
 
             return std::invoke(compileMethod, grammar, blueprint_, castCommand);
         };

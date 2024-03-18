@@ -283,7 +283,7 @@ void Application::fixEmptyArgv()
 
     if (*m_argc == 0 || m_argv == nullptr) {
         *m_argc = 0;
-        m_argv = const_cast<char **>(&empty);
+        m_argv = const_cast<char **>(&empty); // NOLINT(cppcoreguidelines-pro-type-const-cast)
     }
 }
 
