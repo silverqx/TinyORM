@@ -1537,7 +1537,7 @@ Builder::addArrayOfWheres(const QVector<WhereItem> &values, const QString &condi
             query.where(where.column, where.comparison, where.value,
                         where.condition.isEmpty()
                         // Allow to pass a default condition for the QVector<WhereItem>
-                        ? (defaultCondition.isEmpty() ? condition : defaultCondition)
+                        ? (defaultCondition.isEmpty() ? condition : defaultCondition) // NOLINT(readability-avoid-nested-conditional-operator)
                         : where.condition);
 
     }, condition);

@@ -22,11 +22,14 @@ using Orm::Constants::EQ_C;
 using Orm::Constants::GT_C;
 using Orm::Constants::LT_C;
 using Orm::Constants::MINUS;
-using Orm::Constants::NEWLINE;
 using Orm::Constants::PLUS;
 using Orm::Constants::SPACE;
 using Orm::Constants::SQUOTE;
 using Orm::Constants::UNDERSCORE;
+
+#ifdef TINYORM_TESTS_CODE
+using Orm::Constants::NEWLINE;
+#endif
 
 namespace Orm::Utils
 {

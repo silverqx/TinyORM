@@ -113,7 +113,7 @@ namespace Tom
 
         /* Pretend */
         /*! Migrate type (up/down). */
-        enum struct MigrateMethod { Up, Down };
+        enum struct MigrateMethod : quint8 { Up, Down };
 
         /*! Pretend to run the migrations. */
         void pretendToRun(const Migration &migration, MigrateMethod method) const;
