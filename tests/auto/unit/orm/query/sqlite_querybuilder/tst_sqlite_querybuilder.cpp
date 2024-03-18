@@ -79,6 +79,7 @@ private Q_SLOTS:
     void where() const;
     void where_WithVectorValue() const;
     void where_WithVectorValue_DefaultCondition() const;
+    void where_WithVectorValue_Condition_Override() const;
     void where_ColumnExpression() const;
     void where_ValueExpression() const;
 
@@ -931,6 +932,21 @@ void tst_SQLite_QueryBuilder::where_WithVectorValue_DefaultCondition() const
              "(\"id\" = ? or \"size\" > ?)");
     QCOMPARE(builder->getBindings(),
              QVector<QVariant>({QVariant(100), QVariant(3), QVariant(10)}));
+}
+
+void tst_SQLite_QueryBuilder::where_WithVectorValue_Condition_Override() const
+{
+    auto builder = createQuery();
+
+    builder->select("*").from("torrents")
+            .where({{Progress, 100, ">="}})
+            .where({{ID, 3}, {SIZE_, 10, ">"}, {NAME, "xyz", EQ, AND}}, AND, OR);
+    QCOMPARE(builder->toSql(),
+             R"(select * from "torrents" where ("progress" >= ?) and )"
+             R"(("id" = ? or "size" > ? and "name" = ?))");
+    QCOMPARE(builder->getBindings(),
+             QVector<QVariant>({QVariant(100), QVariant(3), QVariant(10),
+                                QVariant("xyz")}));
 }
 
 void tst_SQLite_QueryBuilder::where_ColumnExpression() const

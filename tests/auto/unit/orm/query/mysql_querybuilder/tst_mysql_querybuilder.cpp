@@ -138,6 +138,7 @@ private Q_SLOTS:
     void where() const;
     void where_WithVectorValue() const;
     void where_WithVectorValue_DefaultCondition() const;
+    void where_WithVectorValue_Condition_Override() const;
     void where_QueryableValue() const;
     void where_QueryableColumn() const;
     void where_ColumnExpression() const;
@@ -1472,6 +1473,21 @@ void tst_MySql_QueryBuilder::where_WithVectorValue_DefaultCondition() const
              "(`id` = ? or `size` > ?)");
     QCOMPARE(builder->getBindings(),
              QVector<QVariant>({QVariant(100), QVariant(3), QVariant(10)}));
+}
+
+void tst_MySql_QueryBuilder::where_WithVectorValue_Condition_Override() const
+{
+    auto builder = createQuery();
+
+    builder->select("*").from("torrents")
+            .where({{Progress, 100, ">="}})
+            .where({{ID, 3}, {SIZE_, 10, ">"}, {NAME, "xyz", EQ, AND}}, AND, OR);
+    QCOMPARE(builder->toSql(),
+             "select * from `torrents` where (`progress` >= ?) and "
+             "(`id` = ? or `size` > ? and `name` = ?)");
+    QCOMPARE(builder->getBindings(),
+             QVector<QVariant>({QVariant(100), QVariant(3), QVariant(10),
+                                QVariant("xyz")}));
 }
 
 void tst_MySql_QueryBuilder::where_QueryableValue() const
