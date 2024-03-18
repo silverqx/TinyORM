@@ -33,7 +33,7 @@ namespace Concerns
 
     public:
         /*! Default constructor. */
-        inline Seeder() = default;
+        Seeder() = default;
         /*! Pure virtual destructor. */
         inline virtual ~Seeder() = 0;
 

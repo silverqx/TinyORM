@@ -38,7 +38,7 @@ namespace Query
 
     public:
         /*! Default constructor. */
-        inline BaseGrammar() = default;
+        BaseGrammar() = default;
         /*! Pure virtual destructor. */
         inline virtual ~BaseGrammar() = 0;
 

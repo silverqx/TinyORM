@@ -30,9 +30,9 @@ namespace Grammars
 
     public:
         /*! Default constructor. */
-        inline PostgresSchemaGrammar() = default;
+        PostgresSchemaGrammar() = default;
         /*! Virtual destructor. */
-        inline ~PostgresSchemaGrammar() override = default;
+        ~PostgresSchemaGrammar() override = default;
 
         /*! Check if this Grammar supports schema changes wrapped in a transaction. */
         inline bool supportsSchemaTransactions() const noexcept override;

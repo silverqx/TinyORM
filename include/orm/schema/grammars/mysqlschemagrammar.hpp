@@ -27,7 +27,7 @@ namespace Grammars
         /*! Constructor. */
         inline explicit MySqlSchemaGrammar(bool isMaria = false);
         /*! Virtual destructor. */
-        inline ~MySqlSchemaGrammar() override = default;
+        ~MySqlSchemaGrammar() override = default;
 
         /*! Check if this Grammar supports schema changes wrapped in a transaction. */
         inline bool supportsSchemaTransactions() const noexcept override;

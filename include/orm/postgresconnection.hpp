@@ -28,7 +28,7 @@ namespace Orm
 
     public:
         /*! Virtual destructor. */
-        inline ~PostgresConnection() final = default;
+        ~PostgresConnection() final = default;
 
         /*! Factory method for PostgreSQL database connection. */
         [[nodiscard]] inline static

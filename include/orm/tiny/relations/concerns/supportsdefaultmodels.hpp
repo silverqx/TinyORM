@@ -26,7 +26,7 @@ namespace Orm::Tiny::Relations::Concerns
 
     public:
         /*! Default constructor. */
-        inline SupportsDefaultModels() = default;
+        SupportsDefaultModels() = default;
         /*! Pure virtual destructor. */
         inline virtual ~SupportsDefaultModels() = 0;
 

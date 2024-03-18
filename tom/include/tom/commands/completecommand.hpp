@@ -24,7 +24,7 @@ namespace Tom::Commands
         /*! Constructor. */
         CompleteCommand(Application &application, QCommandLineParser &parser);
         /*! Virtual destructor. */
-        inline ~CompleteCommand() override = default;
+        ~CompleteCommand() override = default;
 
         /*! The console command name. */
         inline QString name() const override;

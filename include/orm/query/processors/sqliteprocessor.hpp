@@ -22,9 +22,9 @@ namespace Orm::Query::Processors
 
     public:
         /*! Default constructor. */
-        inline SQLiteProcessor() = default;
+        SQLiteProcessor() = default;
         /*! Virtual destructor. */
-        inline ~SQLiteProcessor() final = default;
+        ~SQLiteProcessor() final = default;
 
         /*! Process the results of a column listing query. */
         QStringList processColumnListing(SqlQuery &query) const final;

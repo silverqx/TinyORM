@@ -27,7 +27,7 @@ namespace Orm
 
     public:
         /*! Virtual destructor. */
-        inline ~SQLiteConnection() final = default;
+        ~SQLiteConnection() final = default;
 
         /*! Factory method for SQLite database connection. */
         [[nodiscard]] inline static

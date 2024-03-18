@@ -45,7 +45,7 @@ namespace Tom
                 std::shared_ptr<ConnectionResolverInterface> &&connectionResolver,
                 QString table);
         /*! Default destructor. */
-        inline ~MigrationRepository() = default;
+        ~MigrationRepository() = default;
 
         /*! Get the completed migrations (only migration names using pluck). */
         QVector<QVariant> getRanSimple() const;

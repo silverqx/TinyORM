@@ -38,17 +38,17 @@ namespace Concerns
 
     public:
         /*! Default constructor. */
-        inline BuildsSoftDeletes() = default;
+        BuildsSoftDeletes() = default;
         /*! Default destructor. */
-        inline ~BuildsSoftDeletes() = default;
+        ~BuildsSoftDeletes() = default;
 
         /*! Copy constructor. */
-        inline BuildsSoftDeletes(const BuildsSoftDeletes &) = default;
+        BuildsSoftDeletes(const BuildsSoftDeletes &) = default;
         /*! Deleted copy assignment operator (not needed). */
         BuildsSoftDeletes &operator=(const BuildsSoftDeletes &) = delete;
 
         /*! Move constructor. */
-        inline BuildsSoftDeletes(BuildsSoftDeletes &&) noexcept = default;
+        BuildsSoftDeletes(BuildsSoftDeletes &&) noexcept = default;
         /*! Deleted move assignment operator (not needed). */
         BuildsSoftDeletes &operator=(BuildsSoftDeletes &&) = delete;
 
@@ -110,17 +110,17 @@ namespace Concerns
     {
     public:
         /*! Default constructor. */
-        inline BuildsSoftDeletes() = default;
+        BuildsSoftDeletes() = default;
         /*! Default destructor. */
-        inline ~BuildsSoftDeletes() = default;
+        ~BuildsSoftDeletes() = default;
 
         /*! Copy constructor. */
-        inline BuildsSoftDeletes(const BuildsSoftDeletes &) = default;
+        BuildsSoftDeletes(const BuildsSoftDeletes &) = default;
         /*! Deleted copy assignment operator (not needed). */
         BuildsSoftDeletes &operator=(const BuildsSoftDeletes &) = delete;
 
         /*! Move constructor. */
-        inline BuildsSoftDeletes(BuildsSoftDeletes &&) noexcept = default;
+        BuildsSoftDeletes(BuildsSoftDeletes &&) noexcept = default;
         /*! Deleted move assignment operator (not needed). */
         BuildsSoftDeletes &operator=(BuildsSoftDeletes &&) = delete;
     };

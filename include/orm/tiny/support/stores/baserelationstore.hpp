@@ -110,7 +110,7 @@ namespace Support::Stores
 
     public:
         /*! Default destructor. */
-        inline ~BaseRelationStore() = default;
+        ~BaseRelationStore() = default;
 
     protected:
         /*! Called from Model::u_relations to pass reference to the relation method,

@@ -32,7 +32,7 @@ namespace Concerns
 
     public:
         /*! Default constructor. */
-        inline CountsQueries() = default;
+        CountsQueries() = default;
         /*! Pure virtual destructor, to pass -Weffc++. */
         inline virtual ~CountsQueries() = 0;
 

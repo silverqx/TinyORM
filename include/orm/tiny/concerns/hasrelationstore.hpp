@@ -44,9 +44,9 @@ namespace Orm::Tiny::Concerns
 
         /* Constructors */
         /*! Default constructor. */
-        inline HasRelationStore() = default;
+        HasRelationStore() = default;
         /*! Default destructor. */
-        inline ~HasRelationStore() = default;
+        ~HasRelationStore() = default;
 
         /*! Copy constructor. */
         inline HasRelationStore(const HasRelationStore &other);

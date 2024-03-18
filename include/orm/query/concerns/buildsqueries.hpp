@@ -17,18 +17,18 @@ namespace Orm::Query::Concerns
     {
     public:
         /*! Default constructor. */
-        inline BuildsQueries() = default;
+        BuildsQueries() = default;
         /*! Pure virtual destructor, to pass -Weffc++. */
         inline virtual ~BuildsQueries() = 0;
 
         /*! Copy constructor. */
-        inline BuildsQueries(const BuildsQueries &) = default;
+        BuildsQueries(const BuildsQueries &) = default;
         /*! Deleted copy assignment operator (QueryBuilder class contains reference and
             const). */
         BuildsQueries &operator=(const BuildsQueries &) = delete;
 
         /*! Move constructor. */
-        inline BuildsQueries(BuildsQueries &&) = default;
+        BuildsQueries(BuildsQueries &&) = default;
         /*! Deleted move assignment operator (QueryBuilder class contains reference and
             const). */
         BuildsQueries &operator=(BuildsQueries &&) = delete;

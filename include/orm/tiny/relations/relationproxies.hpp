@@ -34,7 +34,7 @@ namespace Tiny::Relations
 
     protected:
         /*! RelationProxies's copy constructor (used by BelongsToMany::clone()). */
-        inline RelationProxies(const RelationProxies &) = default;
+        RelationProxies(const RelationProxies &) = default;
 
     public:
         /*! Parent Model type. */
@@ -43,7 +43,7 @@ namespace Tiny::Relations
         using RelatedType = Related;
 
         /*! Default constructor. */
-        inline RelationProxies() = default;
+        RelationProxies() = default;
         /*! Pure virtual destructor. */
         inline virtual ~RelationProxies() = 0;
 

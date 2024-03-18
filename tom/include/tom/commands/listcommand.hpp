@@ -28,7 +28,7 @@ namespace Tom::Commands
         /*! Constructor. */
         ListCommand(Application &application, QCommandLineParser &parser);
         /*! Virtual destructor. */
-        inline ~ListCommand() override = default;
+        ~ListCommand() override = default;
 
         /*! The console command name. */
         inline QString name() const override;

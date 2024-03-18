@@ -25,9 +25,9 @@ namespace Orm::Connectors
 
     public:
         /*! Default constructor. */
-        inline PostgresConnector() = default;
+        PostgresConnector() = default;
         /*! Virtual destructor. */
-        inline ~PostgresConnector() final = default;
+        ~PostgresConnector() final = default;
 
         /*! Establish a database connection. */
         ConnectionName connect(const QVariantHash &config) const override;

@@ -50,7 +50,7 @@ namespace Support::Stores
         explicit
         BelongsToManyRelatedTableStore(NotNull<HasRelationStore *> hasRelationStore);
         /*! Default destructor. */
-        inline ~BelongsToManyRelatedTableStore() = default;
+        ~BelongsToManyRelatedTableStore() = default;
 
     private:
         /*! Visit the given relation and return a result. */
@@ -67,7 +67,7 @@ namespace Support::Stores
             QString relation;
 
             /*! Equality comparison operator for the CacheKey. */
-            inline bool operator==(const CacheKey &) const = default;
+            bool operator==(const CacheKey &) const = default;
         };
 
         /*! Hasher for the result cache key. */

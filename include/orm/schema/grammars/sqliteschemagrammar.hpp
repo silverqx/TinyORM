@@ -24,9 +24,9 @@ namespace Grammars
 
     public:
         /*! Default constructor. */
-        inline SQLiteSchemaGrammar() = default;
+        SQLiteSchemaGrammar() = default;
         /*! Virtual destructor. */
-        inline ~SQLiteSchemaGrammar() override = default;
+        ~SQLiteSchemaGrammar() override = default;
 
         /*! Check if this Grammar supports schema changes wrapped in a transaction. */
         inline bool supportsSchemaTransactions() const noexcept override;

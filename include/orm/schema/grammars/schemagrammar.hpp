@@ -32,7 +32,7 @@ namespace Grammars
 
     public:
         /*! Default constructor. */
-        inline SchemaGrammar() = default;
+        SchemaGrammar() = default;
         /*! Pure virtual destructor. */
         inline ~SchemaGrammar() override = 0;
 

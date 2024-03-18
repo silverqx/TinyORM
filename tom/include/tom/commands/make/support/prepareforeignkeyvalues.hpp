@@ -33,7 +33,7 @@ namespace Support
         /*! Constructor. */
         PrepareForeignKeyValues(ModelCommand &modelCommand, QStringList &&values);
         /*! Default destructor. */
-        inline ~PrepareForeignKeyValues() = default;
+        ~PrepareForeignKeyValues() = default;
 
         /*! Divide foreign key names by relation types for the ModelCreator class. */
         ForeignKeys prepareValues();

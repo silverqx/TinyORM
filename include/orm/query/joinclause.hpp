@@ -20,17 +20,17 @@ namespace Orm::Query
         using JoinTable = FromClause;
 
         /*! Copy constructor. */
-        inline JoinClause(const JoinClause &) = default;
+        JoinClause(const JoinClause &) = default;
         /*! Deleted copy assignment operator (class contains reference and const). */
         JoinClause &operator=(const JoinClause &) = delete;
 
         /*! Move constructor. */
-        inline JoinClause(JoinClause &&) noexcept = default;
+        JoinClause(JoinClause &&) noexcept = default;
         /*! Deleted move assignment operator (class contains reference and const). */
         JoinClause &operator=(JoinClause &&) = delete;
 
         /*! Virtual destructor. */
-        inline ~JoinClause() final = default;
+        ~JoinClause() final = default;
 
         /*! Constructor with the table as QString. */
         JoinClause(const Builder &query, const QString &type, const QString &table);

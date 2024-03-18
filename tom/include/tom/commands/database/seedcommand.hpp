@@ -33,7 +33,7 @@ namespace Commands::Database
         /*! Constructor. */
         SeedCommand(Application &application, QCommandLineParser &parser);
         /*! Virtual destructor. */
-        inline ~SeedCommand() override = default;
+        ~SeedCommand() override = default;
 
         /*! The console command name. */
         inline QString name() const override;

@@ -21,9 +21,9 @@ namespace Orm::Connectors
 
     public:
         /*! Default constructor. */
-        inline SQLiteConnector() = default;
+        SQLiteConnector() = default;
         /*! Virtual destructor. */
-        inline ~SQLiteConnector() final = default;
+        ~SQLiteConnector() final = default;
 
         /*! Establish a database connection. */
         ConnectionName connect(const QVariantHash &config) const override;

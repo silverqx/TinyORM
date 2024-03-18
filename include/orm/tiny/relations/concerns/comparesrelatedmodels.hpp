@@ -36,7 +36,7 @@ namespace Relations::Concerns
         using RelatedKeyType = typename BaseModel<Related>::KeyType;
 
         /*! Default constructor. */
-        inline ComparesRelatedModels() = default;
+        ComparesRelatedModels() = default;
         /*! Pure virtual destructor. */
         inline virtual ~ComparesRelatedModels() = 0;
 

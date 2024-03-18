@@ -24,13 +24,13 @@ namespace Orm::SchemaNs
         /*! Constructor. */
         IndexDefinitionReference(IndexCommand &indexCommand); // NOLINT(google-explicit-constructor)
         /*! Default destructor. */
-        inline ~IndexDefinitionReference() = default;
+        ~IndexDefinitionReference() = default;
 
         /*! Copy constructor. */
-        inline IndexDefinitionReference(
+        IndexDefinitionReference(
                     const IndexDefinitionReference &) = default;
         /*! Move constructor. */
-        inline IndexDefinitionReference(
+        IndexDefinitionReference(
                     IndexDefinitionReference &&) noexcept = default;
 
         /*! Deleted copy assignment operator. */

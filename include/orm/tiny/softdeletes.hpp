@@ -28,19 +28,19 @@ namespace Orm::Tiny
 
     public:
         /*! Default constructor. */
-        inline SoftDeletes() = default;
+        SoftDeletes() = default;
         /*! Default destructor. */
-        inline ~SoftDeletes() = default;
+        ~SoftDeletes() = default;
 
         /*! Copy constructor. */
-        inline SoftDeletes(const SoftDeletes &) = default;
+        SoftDeletes(const SoftDeletes &) = default;
         /*! Copy assignment operator. */
-        inline SoftDeletes &operator=(const SoftDeletes &) = default;
+        SoftDeletes &operator=(const SoftDeletes &) = default;
 
         /*! Move constructor. */
-        inline SoftDeletes(SoftDeletes &&) noexcept = default;
+        SoftDeletes(SoftDeletes &&) noexcept = default;
         /*! Move assignment operator. */
-        inline SoftDeletes &operator=(SoftDeletes &&) noexcept = default;
+        SoftDeletes &operator=(SoftDeletes &&) noexcept = default;
 
         /*! Initialize the SoftDeletes (add the deleted_at column to the u_dates). */
         void initializeSoftDeletes() const;

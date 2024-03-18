@@ -29,9 +29,9 @@ namespace Tom::Commands::Make::Support
 
     public:
         /*! Default constructor. */
-        inline ModelCreator() = default;
+        ModelCreator() = default;
         /*! Default destructor. */
-        inline ~ModelCreator() = default;
+        ~ModelCreator() = default;
 
         /*! Create a new model at the given path. */
         fspath create(const QString &className, const CmdOptions &cmdOptions,

@@ -31,7 +31,7 @@ namespace Concerns
 
     public:
         /*! Equality comparison operator for the HasTimestamps concern. */
-        inline bool operator==(const HasTimestamps &) const noexcept = default;
+        bool operator==(const HasTimestamps &) const noexcept = default;
 
         /*! Update the model's update timestamp. */
         bool touch();

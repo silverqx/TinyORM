@@ -33,22 +33,22 @@ namespace Orm::Tiny::Casts
                                           CallbackWithAttributes>;
 
         /*! Deleted default constructor (not needed). */
-        inline Attribute() = delete;
+        Attribute() = delete;
         /*! Default destructor. */
-        inline ~Attribute() = default;
+        ~Attribute() = default;
 
         /*! Converting constructor from the CallbackType (typically lambda). */
         inline explicit Attribute(CallbackType &&get) noexcept;
 
         /*! Copy constructor. */
-        inline Attribute(const Attribute &) = default;
+        Attribute(const Attribute &) = default;
         /*! Copy assignment operator. */
-        inline Attribute &operator=(const Attribute &) = default;
+        Attribute &operator=(const Attribute &) = default;
 
         /*! Move constructor. */
-        inline Attribute(Attribute &&) noexcept = default;
+        Attribute(Attribute &&) noexcept = default;
         /*! Move assignment operator. */
-        inline Attribute &operator=(Attribute &&) noexcept = default;
+        Attribute &operator=(Attribute &&) noexcept = default;
 
         /*! Get the attribute accessor. */
         inline const CallbackType &get() const noexcept;

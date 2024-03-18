@@ -24,7 +24,7 @@ namespace Tom::Commands
         /*! Constructor. */
         HelpCommand(Application &application, QCommandLineParser &parser);
         /*! Virtual destructor. */
-        inline ~HelpCommand() override = default;
+        ~HelpCommand() override = default;
 
         /*! The console command name. */
         inline QString name() const override;

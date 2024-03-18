@@ -29,9 +29,9 @@ namespace Tom
 
     public:
         /*! Default constructor. */
-        inline Terminal() = default;
+        Terminal() = default;
         /*! Default destructor. */
-        inline ~Terminal() = default;
+        ~Terminal() = default;
 
         /* Static operations on the Terminal class */
         /*! Prepare the console terminal. */

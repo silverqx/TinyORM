@@ -27,13 +27,13 @@ namespace Orm::SchemaNs
                 Blueprint &blueprint,
                 ColumnDefinitionReference<> columnDefinitionReference);
         /*! Default destructor. */
-        inline ~ForeignIdColumnDefinitionReference() = default;
+        ~ForeignIdColumnDefinitionReference() = default;
 
         /*! Copy constructor. */
-        inline ForeignIdColumnDefinitionReference(
+        ForeignIdColumnDefinitionReference(
                     const ForeignIdColumnDefinitionReference &) = default;
         /*! Move constructor. */
-        inline ForeignIdColumnDefinitionReference(
+        ForeignIdColumnDefinitionReference(
                     ForeignIdColumnDefinitionReference &&) noexcept = default;
 
         /*! Deleted copy assignment operator. */

@@ -39,7 +39,7 @@ namespace Tom
                                           MigrationProperties> &migrationsProperties,
                  const QCommandLineParser &parser);
         /*! Virtual destructor. */
-        inline ~Migrator() override = default;
+        ~Migrator() override = default;
 
         /* Main migrate operations */
         /*! Migrate options. */

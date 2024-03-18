@@ -23,7 +23,7 @@ namespace Orm::Connectors
 
     public:
         /*! Default constructor. */
-        inline ConnectorInterface() = default;
+        ConnectorInterface() = default;
         /*! Pure virtual destructor. */
         inline virtual ~ConnectorInterface() = 0;
 

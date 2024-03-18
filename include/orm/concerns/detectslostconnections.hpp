@@ -32,7 +32,7 @@ namespace Concerns
 
     public:
         /*! Default constructor. */
-        inline DetectsLostConnections() = default;
+        DetectsLostConnections() = default;
         /*! Pure virtual destructor, to pass -Weffc++. */
         inline virtual ~DetectsLostConnections() = 0;
 

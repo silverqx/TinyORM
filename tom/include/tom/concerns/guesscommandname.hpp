@@ -41,7 +41,7 @@ namespace Concerns
 
     protected:
         /*! Default constructor. */
-        inline GuessCommandName() = default;
+        GuessCommandName() = default;
 
         /* For classic command guesser */
         /*! Try to guess the command name by the given name (name can be partial). */

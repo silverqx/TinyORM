@@ -42,7 +42,7 @@ namespace Commands::Migrations
         StatusCommand(Application &application, QCommandLineParser &parser,
                       std::shared_ptr<Migrator> migrator);
         /*! Virtual destructor. */
-        inline ~StatusCommand() override = default;
+        ~StatusCommand() override = default;
 
         /*! The console command name. */
         inline QString name() const override;

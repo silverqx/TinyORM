@@ -36,13 +36,13 @@ namespace Orm::SchemaNs
         /*! Constructor. */
         ColumnDefinitionReference(ColumnDefinition &columnDefinition); // NOLINT(google-explicit-constructor)
         /*! Default destructor. */
-        inline ~ColumnDefinitionReference() = default;
+        ~ColumnDefinitionReference() = default;
 
         /*! Copy constructor. */
-        inline ColumnDefinitionReference(
+        ColumnDefinitionReference(
                     const ColumnDefinitionReference &) = default;
         /*! Move constructor. */
-        inline ColumnDefinitionReference(
+        ColumnDefinitionReference(
                     ColumnDefinitionReference &&) noexcept = default;
 
         /*! Deleted copy assignment operator. */

@@ -20,9 +20,9 @@ namespace Orm::Configurations
 
     public:
         /*! Default constructor. */
-        inline PostgresConfigurationParser() = default;
+        PostgresConfigurationParser() = default;
         /*! Virtual destructor. */
-        inline ~PostgresConfigurationParser() final = default;
+        ~PostgresConfigurationParser() final = default;
 
     protected:
         /*! Parse the driver-specific database configuration. */

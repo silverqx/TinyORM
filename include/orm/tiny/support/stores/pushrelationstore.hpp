@@ -37,7 +37,7 @@ namespace Orm::Tiny::Support::Stores
         PushRelationStore(NotNull<HasRelationStore *> hasRelationStore,
                           RelationsType<AllRelations...> &models);
         /*! Default destructor. */
-        inline ~PushRelationStore() = default;
+        ~PushRelationStore() = default;
 
     private:
         /*! Get the result of a push. */

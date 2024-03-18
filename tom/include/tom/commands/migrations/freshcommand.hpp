@@ -31,7 +31,7 @@ namespace Commands::Migrations
         FreshCommand(Application &application, QCommandLineParser &parser,
                      std::shared_ptr<Migrator> migrator);
         /*! Virtual destructor. */
-        inline ~FreshCommand() override = default;
+        ~FreshCommand() override = default;
 
         /*! The console command name. */
         inline QString name() const override;

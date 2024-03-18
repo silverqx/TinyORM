@@ -59,7 +59,7 @@ namespace Support::Stores
                 std::optional<std::reference_wrapper<
                         QStringList>> relations = std::nullopt);
         /*! Default destructor. */
-        inline ~QueriesRelationshipsStore() = default;
+        ~QueriesRelationshipsStore() = default;
 
     private:
         /*! Method called after visitation. */

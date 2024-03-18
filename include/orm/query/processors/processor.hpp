@@ -32,7 +32,7 @@ namespace Query::Processors
 
     public:
         /*! Default constructor. */
-        inline Processor() = default;
+        Processor() = default;
         /*! Pure virtual destructor. */
         inline virtual ~Processor() = 0;
 

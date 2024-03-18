@@ -20,9 +20,9 @@ namespace Orm::Configurations
 
     public:
         /*! Default constructor. */
-        inline SQLiteConfigurationParser() = default;
+        SQLiteConfigurationParser() = default;
         /*! Virtual destructor. */
-        inline ~SQLiteConfigurationParser() final = default;
+        ~SQLiteConfigurationParser() final = default;
 
     protected:
         /*! Parse the driver-specific database configuration. */

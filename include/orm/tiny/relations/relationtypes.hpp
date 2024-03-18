@@ -19,11 +19,11 @@ namespace Orm::Tiny::Relations
     {
     protected:
         /*! IsRelation's copy constructor (used by BelongsToMany::clone()). */
-        inline IsRelation(const IsRelation &) = default;
+        IsRelation(const IsRelation &) = default;
 
     public:
         /*! Default constructor. */
-        inline IsRelation() = default;
+        IsRelation() = default;
         /*! Pure virtual destructor. */
         inline virtual ~IsRelation() = 0;
 
@@ -45,7 +45,7 @@ namespace Orm::Tiny::Relations
 
     public:
         /*! Default constructor. */
-        inline IsOneRelation() = default;
+        IsOneRelation() = default;
         /*! Pure virtual destructor. */
         inline virtual ~IsOneRelation() = 0;
     };
@@ -57,11 +57,11 @@ namespace Orm::Tiny::Relations
     {
     protected:
         /*! IsManyRelation's copy constructor (used by BelongsToMany::clone()). */
-        inline IsManyRelation(const IsManyRelation &) = default;
+        IsManyRelation(const IsManyRelation &) = default;
 
     public:
         /*! Default constructor. */
-        inline IsManyRelation() = default;
+        IsManyRelation() = default;
         /*! Pure virtual destructor. */
         inline virtual ~IsManyRelation() = 0;
 
@@ -81,11 +81,11 @@ namespace Orm::Tiny::Relations
     {
     protected:
         /*! IsPivotRelation's copy constructor (used by BelongsToMany::clone()). */
-        inline IsPivotRelation(const IsPivotRelation &) = default;
+        IsPivotRelation(const IsPivotRelation &) = default;
 
     public:
         /*! Default constructor. */
-        inline IsPivotRelation() = default;
+        IsPivotRelation() = default;
         /*! Pure virtual destructor. */
         inline virtual ~IsPivotRelation() = 0;
 

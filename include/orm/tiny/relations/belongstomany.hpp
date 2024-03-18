@@ -41,7 +41,7 @@ namespace Orm::Tiny::Relations
                       const QString &relatedKey = "", const QString &relationName = "");
 
         /*! BelongsToMany's copy constructor (used by BelongsToMany::clone()). */
-        inline BelongsToMany(const BelongsToMany &) = default;
+        BelongsToMany(const BelongsToMany &) = default;
 
     public:
         /*! Parent Model type. */
@@ -52,7 +52,7 @@ namespace Orm::Tiny::Relations
         using PivotTypeType = PivotType;
 
         /*! Virtual destructor. */
-        inline ~BelongsToMany() override = default;
+        ~BelongsToMany() override = default;
 
         /*! BelongsToMany's move constructor. */
         BelongsToMany(BelongsToMany &&) = delete;

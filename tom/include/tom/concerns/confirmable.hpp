@@ -30,7 +30,7 @@ namespace Concerns
 
     public:
         /*! Default constructor. */
-        inline Confirmable() = default;
+        Confirmable() = default;
         /*! Pure virtual destructor. */
         inline virtual ~Confirmable() = 0;
 

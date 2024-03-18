@@ -22,7 +22,7 @@ namespace Orm::SchemaNs
         using SchemaBuilder::SchemaBuilder;
 
         /*! Virtual destructor. */
-        inline ~MySqlSchemaBuilder() override = default;
+        ~MySqlSchemaBuilder() override = default;
 
         /*! Create a database in the schema. */
         std::optional<SqlQuery>

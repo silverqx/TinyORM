@@ -31,7 +31,7 @@ namespace Orm::Tiny::Relations
         using RelatedType = Related;
 
         /*! Virtual destructor. */
-        inline ~HasMany() override = default;
+        ~HasMany() override = default;
 
         /*! Instantiate and initialize a new HasMany instance. */
         static std::unique_ptr<HasMany<Model, Related>>

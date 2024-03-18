@@ -22,7 +22,7 @@ namespace Orm
 
     public:
         /*! Default constructor. */
-        inline ConnectionResolverInterface() = default;
+        ConnectionResolverInterface() = default;
         /*! Pure virtual destructor. */
         inline virtual ~ConnectionResolverInterface() = 0;
 

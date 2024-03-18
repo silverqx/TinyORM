@@ -21,9 +21,9 @@ namespace Orm::Connectors
 
     public:
         /*! Default constructor. */
-        inline MySqlConnector() = default;
+        MySqlConnector() = default;
         /*! Virtual destructor. */
-        inline ~MySqlConnector() final = default;
+        ~MySqlConnector() final = default;
 
         /*! Establish a database connection. */
         ConnectionName connect(const QVariantHash &config) const override;

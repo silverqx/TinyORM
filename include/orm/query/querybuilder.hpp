@@ -54,15 +54,15 @@ namespace Orm::Query
         /* Need to be the polymorphic type because of dynamic_cast<>
            in the Grammar::concatenateWhereClauses(). */
         /*! Virtual destructor. */
-        inline ~Builder() override = default;
+        ~Builder() override = default;
 
         /*! Copy constructor. */
-        inline Builder(const Builder &) = default;
+        Builder(const Builder &) = default;
         /*! Deleted copy assignment operator (class contains reference and const). */
         Builder &operator=(const Builder &) = delete;
 
         /*! Move constructor. */
-        inline Builder(Builder &&) noexcept = default;
+        Builder(Builder &&) noexcept = default;
         /*! Deleted move assignment operator (class contains reference and const). */
         Builder &operator=(Builder &&) = delete;
 

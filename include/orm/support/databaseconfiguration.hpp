@@ -27,9 +27,9 @@ namespace Orm::Support
         using ConfigurationsType = std::unordered_map<QString, QVariantHash>;
 
         /*! Default constructor. */
-        inline DatabaseConfiguration() = default;
+        DatabaseConfiguration() = default;
         /*! Default destructor. */
-        inline ~DatabaseConfiguration() = default;
+        ~DatabaseConfiguration() = default;
 
         /*! Default Database Connection Name, used as default value in method declarations
             only. */

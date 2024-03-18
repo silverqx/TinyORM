@@ -31,7 +31,7 @@ namespace Commands::Migrations
         RollbackCommand(Application &application, QCommandLineParser &parser,
                         std::shared_ptr<Migrator> migrator);
         /*! Virtual destructor. */
-        inline ~RollbackCommand() override = default;
+        ~RollbackCommand() override = default;
 
         /*! The console command name. */
         inline QString name() const override;

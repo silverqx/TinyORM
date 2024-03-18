@@ -194,7 +194,7 @@ namespace Query
         QVariant       value {Qt::UTC}; // UTC is the default timezone, not the Qt::LocalTime (it overrides this default)
 
         /*! Equality comparison operator for the QtTimeZoneConfig. */
-        inline bool operator==(const QtTimeZoneConfig &) const = default;
+        bool operator==(const QtTimeZoneConfig &) const = default;
     };
 
 } // namespace Orm

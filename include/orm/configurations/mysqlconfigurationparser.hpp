@@ -20,9 +20,9 @@ namespace Orm::Configurations
 
     public:
         /*! Default constructor. */
-        inline MySqlConfigurationParser() = default;
+        MySqlConfigurationParser() = default;
         /*! Virtual destructor. */
-        inline ~MySqlConfigurationParser() final = default;
+        ~MySqlConfigurationParser() final = default;
 
     protected:
         /*! Parse the driver-specific database configuration. */

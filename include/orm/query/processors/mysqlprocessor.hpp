@@ -19,9 +19,9 @@ namespace Orm::Query::Processors
 
     public:
         /*! Default constructor. */
-        inline MySqlProcessor() = default;
+        MySqlProcessor() = default;
         /*! Virtual destructor. */
-        inline ~MySqlProcessor() final = default;
+        ~MySqlProcessor() final = default;
     };
 
 } // namespace Orm::Query::Processors

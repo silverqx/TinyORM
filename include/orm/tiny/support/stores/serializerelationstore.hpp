@@ -45,7 +45,7 @@ namespace Support::Stores
                 NotNull<HasRelationStore *> hasRelationStore, const QString &relation,
                 const RelationsType<AllRelations...> &models, C &attributes);
         /*! Default destructor. */
-        inline ~SerializeRelationStore() = default;
+        ~SerializeRelationStore() = default;
 
     private:
         /*! Method called after visitation. */

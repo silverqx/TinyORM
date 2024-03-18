@@ -89,7 +89,7 @@ namespace Concerns
                     std::vector<std::shared_ptr<Migration>> migrations = {},
                     std::vector<std::shared_ptr<Seeder>> seeders = {});
         /*! Virtual destructor. */
-        inline ~Application() override = default;
+        ~Application() override = default;
 
         /*! Instantiate/initialize all migration classes. */
         template<typename ...Migrations>

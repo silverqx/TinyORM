@@ -26,7 +26,7 @@ namespace Orm
 
     public:
         /*! Virtual destructor. */
-        inline ~MySqlConnection() final = default;
+        ~MySqlConnection() final = default;
 
         /*! Factory method for MySQL database connection. */
         [[nodiscard]] inline static

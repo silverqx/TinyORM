@@ -36,7 +36,7 @@ namespace Commands::Migrations
         InstallCommand(Application &application, QCommandLineParser &parser,
                        std::shared_ptr<MigrationRepository> repository);
         /*! Virtual destructor. */
-        inline ~InstallCommand() override = default;
+        ~InstallCommand() override = default;
 
         /*! The console command name. */
         inline QString name() const override;

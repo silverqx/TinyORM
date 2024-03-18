@@ -47,15 +47,15 @@ namespace Orm::Tiny
         /*! Constructor. */
         Builder(std::shared_ptr<QueryBuilder> &&query, const Model &model);
         /*! Default destructor. */
-        inline ~Builder() = default;
+        ~Builder() = default;
 
         /*! Copy constructor (needed by the chunkById() -> clone() method). */
-        inline Builder(const Builder &) = default;
+        Builder(const Builder &) = default;
         /*! Deleted copy assignment operator (not needed). */
         Builder &operator=(const Builder &) = delete;
 
         /*! Move constructor (copy ctor needed so enable also the move ctor). */
-        inline Builder(Builder &&) noexcept = default;
+        Builder(Builder &&) noexcept = default;
         /*! Deleted move assignment operator (not needed). */
         Builder &operator=(Builder &&) = delete;
 

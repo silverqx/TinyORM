@@ -34,7 +34,7 @@ namespace Tom
         inline static const QString FileName;
 
         /*! Default constructor. */
-        inline Migration() = default;
+        Migration() = default;
         /*! Pure virtual destructor. */
         inline virtual ~Migration() = 0;
 

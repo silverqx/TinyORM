@@ -32,9 +32,9 @@ namespace Types
 
     public:
         /*! Deleted default constructor (not needed). */
-        inline SqlQuery() = delete;
+        SqlQuery() = delete;
         /*! Default destructor. */
-        inline ~SqlQuery() = default;
+        ~SqlQuery() = default;
 
         /*! Deleted copy constructor (follow the base class). */
         SqlQuery(const SqlQuery &other) = delete;

@@ -51,7 +51,7 @@ namespace Concerns
     protected:
         /*! InteractsWithPivotTable's copy constructor
             (used by BelongsToMany::clone()). */
-        inline InteractsWithPivotTable(const InteractsWithPivotTable &) = default;
+        InteractsWithPivotTable(const InteractsWithPivotTable &) = default;
 
     public:
         /*! Alias for the current BelongsToMany type (for shorter name). */
@@ -62,7 +62,7 @@ namespace Concerns
         using RelatedKeyType = typename BaseModel<Related>::KeyType;
 
         /*! Default constructor. */
-        inline InteractsWithPivotTable() = default;
+        InteractsWithPivotTable() = default;
         /*! Pure virtual destructor. */
         inline virtual ~InteractsWithPivotTable() = 0;
 

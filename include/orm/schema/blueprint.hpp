@@ -48,7 +48,7 @@ namespace Grammars
                            const std::function<void(Blueprint &)> &callback = nullptr,
                            QString &&prefix = "");
         /*! Default destructor. */
-        inline ~Blueprint() = default;
+        ~Blueprint() = default;
 
         /*! Execute the blueprint against the database. */
         void build(DatabaseConnection &connection, const SchemaGrammar &grammar);

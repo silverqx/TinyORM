@@ -49,7 +49,7 @@ namespace Concerns
 
     public:
         /*! Default constructor. */
-        inline Pretendable() = default;
+        Pretendable() = default;
         /*! Pure virtual destructor. */
         inline virtual ~Pretendable() = 0;
 

@@ -29,17 +29,17 @@ namespace Concerns
 
     public:
         /*! Default constructor. */
-        inline BuildsQueries() = default;
+        BuildsQueries() = default;
         /*! Default destructor. */
-        inline ~BuildsQueries() = default;
+        ~BuildsQueries() = default;
 
         /*! Copy constructor. */
-        inline BuildsQueries(const BuildsQueries &) = default;
+        BuildsQueries(const BuildsQueries &) = default;
         /*! Deleted copy assignment operator (not needed). */
         BuildsQueries &operator=(const BuildsQueries &) = delete;
 
         /*! Move constructor. */
-        inline BuildsQueries(BuildsQueries &&) noexcept = default;
+        BuildsQueries(BuildsQueries &&) noexcept = default;
         /*! Deleted move assignment operator (not needed). */
         BuildsQueries &operator=(BuildsQueries &&) = delete;
 

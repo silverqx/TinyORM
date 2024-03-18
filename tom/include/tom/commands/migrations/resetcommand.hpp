@@ -31,7 +31,7 @@ namespace Commands::Migrations
         ResetCommand(Application &application, QCommandLineParser &parser,
                      std::shared_ptr<Migrator> migrator);
         /*! Virtual destructor. */
-        inline ~ResetCommand() override = default;
+        ~ResetCommand() override = default;
 
         /*! The console command name. */
         inline QString name() const override;

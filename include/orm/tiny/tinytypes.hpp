@@ -120,7 +120,7 @@ namespace Types
     struct DontFillDefaultAttributes
     {
         /*! Default constructor. */
-        inline DontFillDefaultAttributes() = default;
+        DontFillDefaultAttributes() = default;
     };
 
     /*! Instance of the tag used to select a constructor without filling Default
@@ -166,7 +166,7 @@ namespace Types
         inline CastItem(CastType castType, QVariant modifier = {}) noexcept; // NOLINT(google-explicit-constructor)
 
         /*! Equality comparison operator for the CastItem. */
-        inline bool operator==(const CastItem &) const = default;
+        bool operator==(const CastItem &) const = default;
 
         /* Getters */
         /*! Get the cast type. */

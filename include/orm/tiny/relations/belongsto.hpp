@@ -43,7 +43,7 @@ namespace Orm::Tiny::Relations
         using RelatedType = Related;
 
         /*! Virtual destructor. */
-        inline ~BelongsTo() override = default;
+        ~BelongsTo() override = default;
 
         /*! Instantiate and initialize a new BelongsTo instance. */
         static std::unique_ptr<BelongsTo<Model, Related>>

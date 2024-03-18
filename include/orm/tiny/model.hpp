@@ -120,17 +120,17 @@ namespace Orm::Tiny
         /*! Create a new TinyORM model instance, default constructor. */
         Model();
         /*! Default destructor. */
-        inline ~Model() = default;
+        ~Model() = default;
 
         /*! Model's copy constructor. */
-        inline Model(const Model &) = default;
+        Model(const Model &) = default;
         /*! Model's move constructor. */
-        inline Model(Model &&) noexcept = default;
+        Model(Model &&) noexcept = default;
 
         /*! Model's copy assignment operator. */
-        inline Model &operator=(const Model &) = default;
+        Model &operator=(const Model &) = default;
         /*! Model's move assignment operator. */
-        inline Model &operator=(Model &&) noexcept = default;
+        Model &operator=(Model &&) noexcept = default;
 
         /*! Create a new TinyORM model instance from attributes
             (converting constructor). */

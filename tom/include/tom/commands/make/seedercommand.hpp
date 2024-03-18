@@ -25,7 +25,7 @@ namespace Tom::Commands::Make
         /*! Constructor. */
         SeederCommand(Application &application, QCommandLineParser &parser);
         /*! Virtual destructor. */
-        inline ~SeederCommand() override = default;
+        ~SeederCommand() override = default;
 
         /*! The console command name. */
         inline QString name() const override;

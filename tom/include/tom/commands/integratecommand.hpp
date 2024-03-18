@@ -24,7 +24,7 @@ namespace Tom::Commands
         /*! Constructor. */
         IntegrateCommand(Application &application, QCommandLineParser &parser);
         /*! Virtual destructor. */
-        inline ~IntegrateCommand() override = default;
+        ~IntegrateCommand() override = default;
 
         /*! The console command name. */
         inline QString name() const override;

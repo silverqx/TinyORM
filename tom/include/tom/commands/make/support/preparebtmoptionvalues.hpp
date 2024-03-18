@@ -27,7 +27,7 @@ namespace Tom::Commands::Make::Support
         /*! Constructor. */
         inline PrepareBtmOptionValues(ModelCommand &modelCommand, V &&values);
         /*! Default destructor. */
-        inline ~PrepareBtmOptionValues() = default;
+        ~PrepareBtmOptionValues() = default;
 
         /*! Prepare belongs-to-many's command-line options for the ModelCreator class. */
         P prepareValuesFor(const QString &optionName);

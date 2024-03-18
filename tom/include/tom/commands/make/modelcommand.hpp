@@ -51,7 +51,7 @@ namespace Support
         /*! Constructor. */
         ModelCommand(Application &application, QCommandLineParser &parser);
         /*! Virtual destructor. */
-        inline ~ModelCommand() override = default;
+        ~ModelCommand() override = default;
 
         /*! The console command name. */
         inline QString name() const override;

@@ -33,7 +33,7 @@ namespace Orm::Concerns
 
     protected:
         /*! Default constructor. */
-        inline ParsesSearchPath() = default;
+        ParsesSearchPath() = default;
 
         /*! Parse the PostgreSQL search_path configuration value into the vector. */
         static QStringList parseSearchPath(const QString &searchPath);

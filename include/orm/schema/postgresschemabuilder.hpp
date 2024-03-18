@@ -31,7 +31,7 @@ namespace Grammars
         using SchemaBuilder::SchemaBuilder;
 
         /*! Virtual destructor. */
-        inline ~PostgresSchemaBuilder() override = default;
+        ~PostgresSchemaBuilder() override = default;
 
         /*! Create a database in the schema. */
         std::optional<SqlQuery> createDatabase(const QString &name) const override;

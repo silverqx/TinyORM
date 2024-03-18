@@ -35,7 +35,7 @@ namespace Grammars
         /*! Constructor. */
         explicit SchemaBuilder(std::shared_ptr<DatabaseConnection> connection);
         /*! Virtual destructor, this class is used so can not be pure. */
-        inline virtual ~SchemaBuilder() = default;
+        virtual ~SchemaBuilder() = default;
 
         /*! Create a database in the schema. */
         virtual std::optional<SqlQuery>

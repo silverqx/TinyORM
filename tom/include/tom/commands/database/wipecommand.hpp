@@ -33,7 +33,7 @@ namespace Tom::Commands::Database
         /*! Constructor. */
         WipeCommand(Application &application, QCommandLineParser &parser);
         /*! Virtual destructor. */
-        inline ~WipeCommand() override = default;
+        ~WipeCommand() override = default;
 
         /*! The console command name. */
         inline QString name() const override;

@@ -28,7 +28,7 @@ namespace Concerns
 
     public:
         /*! Default constructor. */
-        inline CallsCommands() = default;
+        CallsCommands() = default;
         /*! Pure virtual destructor. */
         inline virtual ~CallsCommands() = 0;
 

@@ -56,18 +56,18 @@ namespace Types
         /*! Default constructor. */
         inline SyncChanges();
         /*! Default destructor. */
-        inline ~SyncChanges() = default;
+        ~SyncChanges() = default;
 
         /*! Copy constructor. */
-        inline SyncChanges(const SyncChanges &) = default;
+        SyncChanges(const SyncChanges &) = default;
         /*! Copy assignment operator. */
-        inline SyncChanges &operator=(const SyncChanges &) = default;
+        SyncChanges &operator=(const SyncChanges &) = default;
 
         /*! Move constructor. */
-        inline SyncChanges(SyncChanges &&) // NOLINT(bugprone-exception-escape)
+        SyncChanges(SyncChanges &&) // NOLINT(bugprone-exception-escape)
         noexcept(std::is_nothrow_move_constructible_v<ContainerType>) = default; // NOLINT(performance-noexcept-move-constructor)
         /*! Move assignment operator. */
-        inline SyncChanges &operator=(SyncChanges &&) // NOLINT(bugprone-exception-escape)
+        SyncChanges &operator=(SyncChanges &&) // NOLINT(bugprone-exception-escape)
         noexcept(std::is_nothrow_move_assignable_v<ContainerType>) = default; // NOLINT(performance-noexcept-move-constructor)
 
         /* SyncChanges related */
@@ -151,7 +151,7 @@ namespace Types
 
         /* Comparison */
         /*! Equality comparison operator for the SyncChanges. */
-        inline bool operator==(const SyncChanges &) const = default;
+        bool operator==(const SyncChanges &) const = default;
 
     protected:
         /*! Cast the given key to the primary key type. */

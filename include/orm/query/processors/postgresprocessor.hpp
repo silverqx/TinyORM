@@ -19,9 +19,9 @@ namespace Orm::Query::Processors
 
     public:
         /*! Default constructor. */
-        inline PostgresProcessor() = default;
+        PostgresProcessor() = default;
         /*! Virtual destructor. */
-        inline ~PostgresProcessor() final = default;
+        ~PostgresProcessor() final = default;
     };
 
 } // namespace Orm::Query::Processors

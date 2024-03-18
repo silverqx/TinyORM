@@ -27,7 +27,7 @@ namespace Orm::Configurations
 
     public:
         /*! Default constructor. */
-        inline ConfigurationParser() = default;
+        ConfigurationParser() = default;
         /*! Pure virtual destructor. */
         inline ~ConfigurationParser() override = 0;
 

@@ -29,7 +29,7 @@ namespace Commands
         /*! Constructor. */
         AboutCommand(Application &application, QCommandLineParser &parser);
         /*! Virtual destructor. */
-        inline ~AboutCommand() override = default;
+        ~AboutCommand() override = default;
 
         /*! The console command name. */
         inline QString name() const override;

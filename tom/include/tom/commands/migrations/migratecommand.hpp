@@ -31,7 +31,7 @@ namespace Commands::Migrations
         MigrateCommand(Application &application, QCommandLineParser &parser,
                        std::shared_ptr<Migrator> migrator);
         /*! Virtual destructor. */
-        inline ~MigrateCommand() override = default;
+        ~MigrateCommand() override = default;
 
         /*! The console command name. */
         inline QString name() const override;

@@ -81,11 +81,11 @@ namespace Private
             : NotNull(other.get())
         {}
 
-        inline NotNull(const NotNull &) = default;
-        inline NotNull &operator=(const NotNull &) = default;
+        NotNull(const NotNull &) = default;
+        NotNull &operator=(const NotNull &) = default;
 
-        inline NotNull(NotNull &&) = default;
-        inline NotNull &operator=(NotNull &&) = default;
+        NotNull(NotNull &&) = default;
+        NotNull &operator=(NotNull &&) = default;
 
         /*! Return the managed pointer (allows access to the smart pointer). */
         constexpr Private::value_or_reference_return_t<T> get() const // NOLINT(readability-const-return-type)

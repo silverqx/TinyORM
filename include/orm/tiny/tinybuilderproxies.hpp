@@ -33,17 +33,17 @@ namespace Tiny
 
     public:
         /*! Default constructor. */
-        inline BuilderProxies() = default;
+        BuilderProxies() = default;
         /*! Default destructor. */
-        inline ~BuilderProxies() = default;
+        ~BuilderProxies() = default;
 
         /*! Copy constructor. */
-        inline BuilderProxies(const BuilderProxies &) = default;
+        BuilderProxies(const BuilderProxies &) = default;
         /*! Deleted copy assignment operator (not needed). */
         BuilderProxies &operator=(const BuilderProxies &) = delete;
 
         /*! Move constructor. */
-        inline BuilderProxies(BuilderProxies &&) noexcept = default;
+        BuilderProxies(BuilderProxies &&) noexcept = default;
         /*! Deleted move assignment operator (not needed). */
         BuilderProxies &operator=(BuilderProxies &&) = delete;
 

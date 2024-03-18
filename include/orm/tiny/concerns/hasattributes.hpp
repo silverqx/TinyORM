@@ -57,7 +57,7 @@ namespace Orm::Tiny::Concerns
         using AttributesSizeType = typename QVector<AttributeItem>::size_type;
 
         /*! Equality comparison operator for the HasAttributes concern. */
-        inline bool operator==(const HasAttributes &) const = default;
+        bool operator==(const HasAttributes &) const = default;
 
         /*! Set a given attribute on the model. */
         Derived &setAttribute(const QString &key, QVariant value);
@@ -164,12 +164,12 @@ namespace Orm::Tiny::Concerns
 
         public:
             /*! Default destructor. */
-            inline ~AttributeReference() = default;
+            ~AttributeReference() = default;
 
             /*! Copy constructor. */
-            inline AttributeReference(const AttributeReference &) = default;
+            AttributeReference(const AttributeReference &) = default;
             /*! Move constructor. */
-            inline AttributeReference(AttributeReference &&) noexcept = default;
+            AttributeReference(AttributeReference &&) noexcept = default;
             /*! Deleted move assignment operator. */
             AttributeReference &operator=(AttributeReference &&) = delete;
 

@@ -36,7 +36,7 @@ namespace Orm::Tiny::Support::Stores
         /*! Constructor. */
         explicit LazyRelationStore(NotNull<HasRelationStore *> hasRelationStore);
         /*! Default destructor. */
-        inline ~LazyRelationStore() = default;
+        ~LazyRelationStore() = default;
 
     private:
         /*! Get the result of lazy load. */

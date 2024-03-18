@@ -26,7 +26,7 @@ namespace Tom::Commands::Make
         /*! Constructor. */
         MakeCommand(Application &application, QCommandLineParser &parser);
         /*! Virtual destructor. */
-        inline ~MakeCommand() override = default;
+        ~MakeCommand() override = default;
 
     protected:
         /*! Check whether the created file already exists and create folder if needed. */

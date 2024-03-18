@@ -41,7 +41,7 @@ namespace Orm::Tiny::Support::Stores
                 const Tiny::TinyBuilder<Derived> &builder,
                 ModelsCollection<CollectionModel> &models, const WithItem &relation);
         /*! Default destructor. */
-        inline ~EagerRelationStore() = default;
+        ~EagerRelationStore() = default;
 
     private:
         /*! Method called after visitation. */

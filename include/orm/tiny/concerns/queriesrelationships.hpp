@@ -106,17 +106,17 @@ namespace Private
 
     public:
         /*! Default constructor. */
-        inline QueriesRelationships() = default;
+        QueriesRelationships() = default;
         /*! Default destructor. */
-        inline ~QueriesRelationships() = default;
+        ~QueriesRelationships() = default;
 
         /*! Copy constructor. */
-        inline QueriesRelationships(const QueriesRelationships &) = default;
+        QueriesRelationships(const QueriesRelationships &) = default;
         /*! Deleted copy assignment operator (not needed). */
         QueriesRelationships &operator=(const QueriesRelationships &) = delete;
 
         /*! Move constructor. */
-        inline QueriesRelationships(QueriesRelationships &&) noexcept = default;
+        QueriesRelationships(QueriesRelationships &&) noexcept = default;
         /*! Deleted move assignment operator (not needed). */
         QueriesRelationships &operator=(QueriesRelationships &&) = delete;
 

@@ -25,7 +25,7 @@ namespace Tom::Commands::Make
         /*! Constructor. */
         MigrationCommand(Application &application, QCommandLineParser &parser);
         /*! Virtual destructor. */
-        inline ~MigrationCommand() override = default;
+        ~MigrationCommand() override = default;
 
         /*! The console command name. */
         inline QString name() const override;

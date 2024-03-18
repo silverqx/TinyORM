@@ -31,7 +31,7 @@ namespace Commands::Migrations
         RefreshCommand(Application &application, QCommandLineParser &parser,
                        std::shared_ptr<Migrator> migrator);
         /*! Virtual destructor. */
-        inline ~RefreshCommand() override = default;
+        ~RefreshCommand() override = default;
 
         /*! The console command name. */
         inline QString name() const override;

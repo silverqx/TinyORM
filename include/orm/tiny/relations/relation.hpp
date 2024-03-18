@@ -47,7 +47,7 @@ namespace Relations
                  const QString &relatedKey = "");
 
         /*! Relation's copy constructor (used by BelongsToMany::clone()). */
-        inline Relation(const Relation &) = default;
+        Relation(const Relation &) = default;
 
     public:
         /*! Parent Model type. */

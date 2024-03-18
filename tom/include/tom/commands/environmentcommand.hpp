@@ -22,7 +22,7 @@ namespace Tom::Commands
         /*! Constructor. */
         EnvironmentCommand(Application &application, QCommandLineParser &parser);
         /*! Virtual destructor. */
-        inline ~EnvironmentCommand() override = default;
+        ~EnvironmentCommand() override = default;
 
         /*! The console command name. */
         inline QString name() const override;

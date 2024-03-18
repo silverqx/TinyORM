@@ -22,7 +22,7 @@ namespace Tom::Commands
         /*! Constructor. */
         InspireCommand(Application &application, QCommandLineParser &parser);
         /*! Virtual destructor. */
-        inline ~InspireCommand() override = default;
+        ~InspireCommand() override = default;
 
         /*! The console command name. */
         inline QString name() const override;

@@ -24,7 +24,7 @@ namespace Orm::Configurations
 
     public:
         /*! Default constructor. */
-        inline ConfigurationParserInterface() = default;
+        ConfigurationParserInterface() = default;
         /*! Pure virtual destructor. */
         inline virtual ~ConfigurationParserInterface() = 0;
 

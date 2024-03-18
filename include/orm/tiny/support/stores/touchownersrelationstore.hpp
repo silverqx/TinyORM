@@ -36,7 +36,7 @@ namespace Orm::Tiny::Support::Stores
         TouchOwnersRelationStore(NotNull<HasRelationStore *> hasRelationStore,
                                  const QString &relation);
         /*! Default destructor. */
-        inline ~TouchOwnersRelationStore() = default;
+        ~TouchOwnersRelationStore() = default;
 
     private:
         /*! Method called after visitation. */

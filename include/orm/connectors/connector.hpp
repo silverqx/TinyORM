@@ -22,7 +22,7 @@ namespace Orm::Connectors
 
     public:
         /*! Default constructor. */
-        inline Connector() = default;
+        Connector() = default;
         /*! Pure virtual destructor. */
         inline ~Connector() override = 0;
 

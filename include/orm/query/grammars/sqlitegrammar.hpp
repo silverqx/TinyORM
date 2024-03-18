@@ -19,9 +19,9 @@ namespace Orm::Query::Grammars
 
     public:
         /*! Default constructor. */
-        inline SQLiteGrammar() = default;
+        SQLiteGrammar() = default;
         /*! Virtual destructor. */
-        inline ~SQLiteGrammar() override = default;
+        ~SQLiteGrammar() override = default;
 
         /*! Compile an insert ignore statement into SQL. */
         QString compileInsertOrIgnore(const QueryBuilder &query,
