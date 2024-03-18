@@ -44,6 +44,7 @@ Checks:
   - -cppcoreguidelines-noexcept-swap
   - -cppcoreguidelines-use-default-member-init
   - -google-readability-function-size
+  - -google-readability-namespace-comments
   # Disabled above too
   - -cppcoreguidelines-avoid-magic-numbers
   - -google-readability-braces-around-statements
@@ -52,7 +53,5 @@ CheckOptions:
     value:           true
   - key:             cppcoreguidelines-rvalue-reference-param-not-moved.AllowPartialMove
     value:           true
-  - key:             google-readability-namespace-comments.ShortNamespaceLines
-    value:           '5'
   - key:             llvm-namespace-comment.ShortNamespaceLines
     value:           '5'
