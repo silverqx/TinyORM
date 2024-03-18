@@ -40,11 +40,11 @@ namespace Commands
         /*! Argument description. */
         QString description;
         /*! Appended to the Usage line, if empty the name is used. */
-        QString syntax       {};
+        QString syntax;
         /*! Is argument optional? */
-        bool    optional   = false;
+        bool optional = false;
         /*! Argument's default value (optional argument only). */
-        QString defaultValue {};
+        QString defaultValue;
     };
 
     /*! Abstract base class for the console command. */
@@ -158,10 +158,10 @@ namespace Commands
         std::reference_wrapper<QCommandLineParser> m_parser;
 
         /*! Passed command's arguments. */
-        QStringList m_arguments {};
+        QStringList m_arguments;
 
         /*! Map positional argument names to the index for obtaining values. */
-        std::unordered_map<QString, ArgumentsSizeType> m_positionalArguments {};
+        std::unordered_map<QString, ArgumentsSizeType> m_positionalArguments;
 
     private:
         /*! Initialize positional arguments map. */

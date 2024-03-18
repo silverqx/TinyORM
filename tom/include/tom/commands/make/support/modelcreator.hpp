@@ -207,17 +207,17 @@ namespace Tom::Commands::Make::Support
         static QString joinRelationsList(RelationsWithOrder &&relationsList);
 
         /*! TinyORM include paths for the generated model. */
-        std::set<QString> m_includesOrmList {};
+        std::set<QString> m_includesOrmList;
         /*! Include paths for the generated model. */
-        std::set<QString> m_includesList {};
+        std::set<QString> m_includesList;
         /*! Using directives for the generated model. */
-        std::set<QString> m_usingsList {};
+        std::set<QString> m_usingsList;
         /*! Relations list for the generated model's base class (all related classes). */
-        std::set<QString> m_relationsList {};
+        std::set<QString> m_relationsList;
         /*! Pivots list for the generated model's base class. */
-        std::set<QString> m_pivotsList {};
+        std::set<QString> m_pivotsList;
         /*! Forward declarations list for related models. */
-        std::set<QString> m_forwardsList {};
+        std::set<QString> m_forwardsList;
 
         /*! Cached relations lists size to avoid recomputations (NOT m_relationsList). */
         std::size_t m_relationsListsSize = 0;

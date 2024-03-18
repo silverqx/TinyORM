@@ -18,35 +18,35 @@ namespace Tom::Commands::Make
     struct BelongToManyForeignKeys
     {
         /*! The foreign key of the parent model. */
-        QString foreignPivotKey {};
+        QString foreignPivotKey;
         /*! The associated key of the relation. */
-        QString relatedPivotKey {};
+        QString relatedPivotKey;
     };
 
     /*! Foreign keys lists divided by relation types. */
     struct ForeignKeys
     {
         /*! Foreign keys for one-to-one relations. */
-        QStringList oneToOne {};
+        QStringList oneToOne;
         /*! Foreign keys for one-to-many relations. */
-        QStringList oneToMany {};
+        QStringList oneToMany;
         /*! Foreign keys for belongs-to relations. */
-        QStringList belongsTo {};
+        QStringList belongsTo;
         /*! Foreign keys for belongs-to-many relations. */
-        std::vector<BelongToManyForeignKeys> belongsToMany {};
+        std::vector<BelongToManyForeignKeys> belongsToMany;
     };
 
     /*! Relationship methods order defined on the command-line. */
     struct RelationsOrder
     {
         /*! Order of one-to-one relations. */
-        std::vector<std::size_t> oneToOne {};
+        std::vector<std::size_t> oneToOne;
         /*! Order of one-to-many relations. */
-        std::vector<std::size_t> oneToMany {};
+        std::vector<std::size_t> oneToMany;
         /*! Order of belongs-to relations. */
-        std::vector<std::size_t> belongsTo {};
+        std::vector<std::size_t> belongsTo;
         /*! Order of belongs-to-many relations. */
-        std::vector<std::size_t> belongsToMany {};
+        std::vector<std::size_t> belongsToMany;
     };
 
     /*! Struct to hold command-line option values. */

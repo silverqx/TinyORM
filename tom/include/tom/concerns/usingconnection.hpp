@@ -130,7 +130,7 @@ namespace Concerns
         /*! The database connection resolver instance. */
         std::shared_ptr<ConnectionResolverInterface> m_connectionResolver = nullptr;
         /*! The name of the database connection to use. */
-        QString m_connection {};
+        QString m_connection;
     };
 
     /* public */

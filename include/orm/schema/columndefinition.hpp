@@ -31,7 +31,7 @@ namespace Orm::SchemaNs
     {
     public:
         /*! Command name. */
-        QString name {};
+        QString name;
     };
 
     /*! Drop columns command. */
@@ -39,7 +39,7 @@ namespace Orm::SchemaNs
     {
     public:
         /*! Command name. */
-        QString name {};
+        QString name;
 
         /*! Columns to drop. */
         QVector<Column> columns;
@@ -50,10 +50,10 @@ namespace Orm::SchemaNs
     {
     public:
         /*! Command name. */
-        QString name {};
+        QString name;
 
         /*! Rename from. */
-        QString from {};
+        QString from;
         /*! Rename to. */
         QString to;
     };
@@ -63,16 +63,16 @@ namespace Orm::SchemaNs
     {
     public:
         /*! Command name. */
-        QString name {};
+        QString name;
 
         /*! Index name. */
         QString index;
         /*! Columns for which to create an index. */
         QVector<Column> columns;
         /*! Algorithm to use during index creation. */
-        QString algorithm {};
+        QString algorithm;
         /*! Dictionary for the to_tsvector function for fulltext search (PostgreSQL). */
-        QString language {};
+        QString language;
     };
 
     /*! Foreign key constraints command. */
@@ -80,7 +80,7 @@ namespace Orm::SchemaNs
     {
     public:
         /*! Command name. */
-        QString name {};
+        QString name;
 
         /*! Index name for the foreign key. */
         QString index;
@@ -88,15 +88,15 @@ namespace Orm::SchemaNs
         QVector<Column> columns;
 
         /*! Specifies the referenced columns. */
-        QVector<QString> references {};
+        QVector<QString> references;
         /*! Specifies the referenced table. */
-        QString on {};
+        QString on;
         /*! Specifies ON DELETE action (cascade/restrict/set null/no action/
             set default). */
-        QString onDelete {};
+        QString onDelete;
         /*! Specifies ON UPDATE action (cascade/restrict/set null/no action/
             set default). */
-        QString onUpdate {};
+        QString onUpdate;
 
         /*! Set the foreign key as deferrable (PostgreSQL). */
         std::optional<bool> deferrable = std::nullopt;
@@ -112,7 +112,7 @@ namespace Orm::SchemaNs
     {
     public:
         /*! Command name. */
-        QString name {};
+        QString name;
         /*! Column name. */
         QString column;
         /*! Column comment value. */
@@ -126,7 +126,7 @@ namespace Orm::SchemaNs
     {
     public:
         /*! Command name. */
-        QString name {};
+        QString name;
         /*! Column name. */
         QString column;
         /*! Starting value of an auto-incrementing field (MySQL/PostgreSQL). */
@@ -138,7 +138,7 @@ namespace Orm::SchemaNs
     {
     public:
         /*! Command name. */
-        QString name {};
+        QString name;
         /*! Table comment value. */
         QString comment;
     };
@@ -152,15 +152,15 @@ namespace Orm::SchemaNs
         /*! Column type. */
         ColumnType type = ColumnType::Undefined;
         /*! Column name. */
-        QString name {};
+        QString name;
         /*! Indicates whether a column will be changed or created. */
         bool change = false;
 
         /* Column type specific */
         /*! Allowed index values for Enumaration Literals (enum/set). */
-        QVector<QString> allowed {};
+        QVector<QString> allowed;
         /*! Value for a generated, computed column type (SQL Server). */
-        QString expression {};
+        QString expression;
         /*! Length of the char or varchar column. */
         int length = DefaultStringLength;
         /*! Number of digits after the decimal point for floating-point types. */
@@ -178,33 +178,33 @@ namespace Orm::SchemaNs
 
         /* Indexes - used by blueprint command for indexes or fluent indexes on column */
         /*! Add an index. */
-        std::variant<std::monostate, QString, bool> index        {};
+        std::variant<std::monostate, QString, bool> index;
         /*! Add a primary index. */
-        std::variant<std::monostate, QString, bool> primary      {};
+        std::variant<std::monostate, QString, bool> primary;
         /*! Add a fulltext index. */
-        std::variant<std::monostate, QString, bool> fulltext     {};
+        std::variant<std::monostate, QString, bool> fulltext;
         /*! Add a spatial index. */
-        std::variant<std::monostate, QString, bool> spatialIndex {};
+        std::variant<std::monostate, QString, bool> spatialIndex;
         /*! Add a unique index. */
-        std::variant<std::monostate, QString, bool> unique       {};
+        std::variant<std::monostate, QString, bool> unique;
 
         /* Column definition */
         /*! Determine "after" which column to place a current column (MySQL). */
-        QString after         {};
+        QString after;
         /*! Specify a character set for the column (MySQL). */
-        QString charset       {};
+        QString charset;
         /*! Specify a collation for the column (MySQL/PostgreSQL/SQL Server). */
-        QString collation     {};
+        QString collation;
         /*! Add a comment to the column (MySQL/PostgreSQL). */
-        QString comment       {};
+        QString comment;
         /*! Specify a "default" value for the column. */
-        QVariant defaultValue {};
+        QVariant defaultValue;
         /*! Specifies a "on update" action (MySQL; used by the datetime and timestamp). */
-        QVariant onUpdate     {};
+        QVariant onUpdate;
         /*! Create a SQL compliant identity column (PostgreSQL). */
-        QString generatedAs   {};
+        QString generatedAs;
         /*! Rename a column, used with the change() method (MySQL). */
-        QString renameTo      {};
+        QString renameTo;
 
         /*! Set the starting value of an auto-incrementing field (MySQL/PostgreSQL),
             alias for the 'startingValue'. */

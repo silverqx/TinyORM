@@ -69,8 +69,8 @@ namespace Types
     /*! Attribute item used in ORM models. */
     struct SHAREDLIB_EXPORT AttributeItem
     {
-        QString  key   {};
-        QVariant value {};
+        QString  key;
+        QVariant value;
 
         /*! Converting operator to the UpdateItem. */
         explicit operator UpdateItem() const;

@@ -50,7 +50,7 @@ namespace Orm::Query
 
     private:
         /*! Expression's value. */
-        QVariant m_value {};
+        QVariant m_value;
     };
 
     /* public */

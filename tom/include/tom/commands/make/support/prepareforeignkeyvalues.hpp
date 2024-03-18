@@ -68,7 +68,7 @@ namespace Support
         QStringList m_values;
 
         /*! Currently processed relation name. */
-        QString m_currentRelation {};
+        QString m_currentRelation;
         /*! Next index value to process in the given values list. */
         QStringList::size_type m_valueIndex = 0;
         /*! Determine whether a value for currently processed relation was set. */

@@ -92,9 +92,9 @@ namespace Tom
 #endif
 
         /*! Cache for detected ansi output. */
-        mutable std::unordered_map<const std::ostream *, bool> m_isAnsiOutput {};
+        mutable std::unordered_map<const std::ostream *, bool> m_isAnsiOutput;
         /*! Cache for detected ansi output, wide version. */
-        mutable std::unordered_map<const std::wostream *, bool> m_isAnsiWOutput {};
+        mutable std::unordered_map<const std::wostream *, bool> m_isAnsiWOutput;
 
         /*! Current terminal width. */
         int m_lastWidth = 80;

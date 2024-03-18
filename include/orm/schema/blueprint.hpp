@@ -446,11 +446,11 @@ namespace Grammars
         static int DefaultStringLength;
 
         /*! The storage engine that should be used for the table (MySQL). */
-        QString engine {};
+        QString engine;
         /*! The default character set that should be used for the table (MySQL). */
-        QString charset {};
+        QString charset;
         /*! The collation that should be used for the table (MySQL). */
-        QString collation {};
+        QString collation;
 
     protected:
         /*! Expose column types. */
@@ -496,14 +496,14 @@ namespace Grammars
         QString m_prefix;
 
         /*! The columns that should be added to the table. */
-        QVector<ColumnDefinition> m_columns {};
+        QVector<ColumnDefinition> m_columns;
         /*! The commands that should be run for the table. */
-        std::deque<std::shared_ptr<CommandDefinition>> m_commands {};
+        std::deque<std::shared_ptr<CommandDefinition>> m_commands;
 
         /*! Whether to make the table temporary. */
         bool m_temporary = false;
         /*! The column to add new columns after. */
-        QString m_after {};
+        QString m_after;
     };
 
     /* public */

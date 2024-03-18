@@ -116,7 +116,7 @@ namespace Support
         void createSeeder(const QString &className) const;
 
         /*! The model creator instance. */
-        Support::ModelCreator m_creator {};
+        Support::ModelCreator m_creator;
         /*! Was shown an unused warning for the foreign-key option? */
         bool m_shownUnusedForeignKey = false;
         /*! Was shown an unused warning for the disable-/incrementing option? */
@@ -124,9 +124,9 @@ namespace Support
         /*! Was shown an unused warning for the disable-/snake-attributes option? */
         bool m_shownUnusedSnakeAttribtues = false;
         /*! Unused btm options, will be shown in the warning. */
-        std::set<QString> m_unusedBtmOptions {};
+        std::set<QString> m_unusedBtmOptions;
         /*! Unused options if generating a pivot model, will be shown in the warning. */
-        std::set<QString> m_unusedPivotModelOptions {};
+        std::set<QString> m_unusedPivotModelOptions;
         /*! Was --pivot-model option given on the command-line? */
         bool m_isSetPivotModel = false;
 

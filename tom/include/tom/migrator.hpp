@@ -155,12 +155,12 @@ namespace Tom
                                          MigrationProperties>> m_migrationsProperties;
         /*! Map a migration names by migrations type-id (type_index)
             (used by migrate, rollback, pretend). */
-        std::unordered_map<std::type_index, QString> m_migrationNamesMap {};
+        std::unordered_map<std::type_index, QString> m_migrationNamesMap;
         /*! Migration names list (used by status). */
-        std::set<QString> m_migrationNames {};
+        std::set<QString> m_migrationNames;
         /*! Map a migration instances by migration names (used by reset). */
         std::unordered_map<QString,
-                           std::shared_ptr<Migration>> m_migrationInstancesMap {};
+                           std::shared_ptr<Migration>> m_migrationInstancesMap;
     };
 
     /* public */

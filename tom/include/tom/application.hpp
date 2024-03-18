@@ -282,7 +282,7 @@ namespace Concerns
         /*! Qt's application instance. */
         std::unique_ptr<QCoreApplication> m_qtApplication;
         /*! Command-line parser. */
-        QCommandLineParser m_parser {};
+        QCommandLineParser m_parser;
 
         /*! Current environment. */
         QString m_environment = QStringLiteral("local");
@@ -301,7 +301,7 @@ namespace Concerns
         std::vector<std::shared_ptr<Migration>> m_migrations;
         /*! Cache the migration properties by the migration type-id. */
         std::unordered_map<std::type_index,
-                           MigrationProperties> m_migrationsProperties {};
+                           MigrationProperties> m_migrationsProperties;
 
         /*! Seeders vector to process. */
         std::vector<std::shared_ptr<Seeder>> m_seeders;
@@ -310,7 +310,7 @@ namespace Concerns
         bool m_interactive = true;
 
         /*! Application options (more info at the cpp file beginning). */
-        QList<CommandLineOption> m_options {};
+        QList<CommandLineOption> m_options;
 
         /* Auto tests helpers */
 #ifdef TINYTOM_TESTS_CODE

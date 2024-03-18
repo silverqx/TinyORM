@@ -98,20 +98,20 @@ namespace Query
     /*! Having clause item. */
     struct HavingConditionItem
     {
-        Column     column     {};
-        QVariant   value      {};
+        Column     column;
+        QVariant   value;
         QString    comparison {Orm::Constants::EQ};
         QString    condition  {Orm::Constants::AND};
         HavingType type       {HavingType::UNDEFINED};
-        QString    sql        {}; // for the raw version
+        QString    sql;       // for the raw version
     };
 
     /*! Order by clause item. */
     struct OrderByItem
     {
-        Column      column    {};
+        Column      column;
         QString     direction {Orm::Constants::ASC};
-        QString     sql       {}; // for the raw version
+        QString     sql;      // for the raw version
     };
 
     /*! Update item. */
@@ -127,7 +127,7 @@ namespace Query
         Column   column;
         QVariant value;
         QString  comparison {Orm::Constants::EQ};
-        QString  condition  {};
+        QString  condition;
     };
 
     /*! Where item to compare two columns, primarily used in vector overloads. */
@@ -136,36 +136,36 @@ namespace Query
         Column  first;
         Column  second;
         QString comparison {Orm::Constants::EQ};
-        QString condition  {};
+        QString condition;
     };
 
     /*! Where item that stores values for the where between clause. */
     struct WhereBetweenItem
     {
-        QVariant min {};
-        QVariant max {};
+        QVariant min;
+        QVariant max;
     };
 
     /*! Where item that stores column names for the where between clause. */
     struct WhereBetweenColumnsItem
     {
-        Column min {};
-        Column max {};
+        Column min;
+        Column max;
     };
 
     /*! Where clause item, primarily used in grammars to build sql query. */
     struct WhereConditionItem
     {
-        Column                        column         {};
-        QVariant                      value          {};
+        Column                        column;
+        QVariant                      value;
         QString                       comparison     {Orm::Constants::EQ};
         QString                       condition      {Orm::Constants::AND};
         WhereType                     type           {WhereType::UNDEFINED};
         std::shared_ptr<QueryBuilder> nestedQuery    {nullptr};
-        QVector<Column>               columns        {};
-        QVector<QVariant>             values         {};
-        Column                        columnTwo      {};
-        QString                       sql            {}; // for the raw version
+        QVector<Column>               columns;
+        QVector<QVariant>             values;
+        Column                        columnTwo;
+        QString                       sql;           // for the raw version
         bool                          nope           {false};
         WhereBetweenItem              between        {};
         WhereBetweenColumnsItem       betweenColumns {};

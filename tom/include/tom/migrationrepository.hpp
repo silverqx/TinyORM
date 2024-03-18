@@ -93,7 +93,7 @@ namespace Tom
         /*! The name of the migration table. */
         QString m_table;
         /*! The name of the database connection to use. */
-        QString m_connection {};
+        QString m_connection;
     };
 
     /* public */
