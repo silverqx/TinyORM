@@ -18,7 +18,7 @@ namespace
 {
     /*! Indicates if all mass assignment is enabled. */
     T_THREAD_LOCAL
-    bool g_unguarded = false;
+    auto g_unguarded = false;
 } // namespace
 
 /* public */
