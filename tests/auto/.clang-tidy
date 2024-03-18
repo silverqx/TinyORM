@@ -1,4 +1,4 @@
-# Optimized for Clang-Tidy v17
+# Optimized for Clang-Tidy v18
 ---
 Checks:
     - -bugprone-unchecked-optional-access
