@@ -1519,6 +1519,18 @@ Builder &
 Builder::addArrayOfWheres(const QVector<WhereItem> &values, const QString &condition,
                           const QString &defaultCondition)
 {
+    /* Conditions Order look confusing at first look, the order is:
+       where.condition, defaultCondition, condition
+       The reason why condition is after the default condition is the condition is used
+       between logical groups (OR operator in the following example) and
+       the where.condition and defaultCondition is used inside the logical group
+       (AND operator in the following example):
+       (a = 1 AND b = 2) OR (c = 3)
+       What means, if there is no where.condition then we use the defaultCondition, but if
+       the defaultCondition isn't defined then use the condition as the default.
+       So the condition is used for both, between and also inside logical groups and
+       you can override expression operators inside logical groups using
+       the defaultCondition. 🤔🙃 */
     return where([&values, &condition, &defaultCondition](Builder &query)
     {
         for (const auto &where : values)
