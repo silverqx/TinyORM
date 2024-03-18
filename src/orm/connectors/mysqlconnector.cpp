@@ -126,7 +126,7 @@ void MySqlConnector::setModes(const QSqlDatabase &connection,
 {
     // Custom modes defined
     if (config.contains("modes"))
-        return setCustomModes(connection, config); // clazy:exclude=returning-void-expression
+        return setCustomModes(connection, config); // NOLINT(readability-avoid-return-with-void-value) clazy:exclude=returning-void-expression
 
     // No strict defined
     if (!config.contains(strict_))

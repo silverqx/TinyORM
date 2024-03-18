@@ -27,7 +27,7 @@ namespace
 void GuardedModel::unguarded(const std::function<void()> &callback)
 {
     if (g_unguarded)
-        return std::invoke(callback); // clazy:exclude=returning-void-expression
+        return std::invoke(callback); // NOLINT(readability-avoid-return-with-void-value) clazy:exclude=returning-void-expression
 
     unguard();
 

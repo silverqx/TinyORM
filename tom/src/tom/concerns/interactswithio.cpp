@@ -373,7 +373,7 @@ void InteractsWithIO::withoutAnsi(const std::function<void()> &callback)
 {
     // Nothing to do, ansi is already disabled
     if (m_ansi && !m_ansi.value())
-        return std::invoke(callback); // clazy:exclude=returning-void-expression
+        return std::invoke(callback); // NOLINT(readability-avoid-return-with-void-value) clazy:exclude=returning-void-expression
 
     // Backup the current m_ansi value
     auto previousAnsi = m_ansi;

@@ -29,7 +29,7 @@ void Pretendable::optionalPretend(
 {
     // Execute the callback without pretending
     if (!pretend)
-        return std::invoke(callback, connection); // clazy:exclude=returning-void-expression
+        return std::invoke(callback, connection); // NOLINT(readability-avoid-return-with-void-value) clazy:exclude=returning-void-expression
 
     // Gather executed queries
     auto queriesLog = connection.pretend(callback);
@@ -53,7 +53,7 @@ void Pretendable::optionalPretend(
 {
     // Execute the callback without pretending
     if (!pretend)
-        return std::invoke(callback); // clazy:exclude=returning-void-expression
+        return std::invoke(callback); // NOLINT(readability-avoid-return-with-void-value) clazy:exclude=returning-void-expression
 
     // Gather executed queries
     auto queriesLog = connection.pretend(callback);

@@ -52,7 +52,7 @@ SQLiteSchemaBuilder::dropDatabaseIfExists(const QString &name) const
 void SQLiteSchemaBuilder::dropAllTables() const
 {
     if (m_connection->getDatabaseName() != in_memory)
-        return refreshDatabaseFile(); // clazy:exclude=returning-void-expression
+        return refreshDatabaseFile(); // NOLINT(readability-avoid-return-with-void-value) clazy:exclude=returning-void-expression
 
     using Grammars::SQLiteSchemaGrammar;
 

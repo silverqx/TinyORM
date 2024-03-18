@@ -214,7 +214,7 @@ void Migrator::runUp(const Migration &migration, const int batch,
                      const bool pretend) const
 {
     if (pretend)
-        return pretendToRun(migration, MigrateMethod::Up); // clazy:exclude=returning-void-expression
+        return pretendToRun(migration, MigrateMethod::Up); // NOLINT(readability-avoid-return-with-void-value) clazy:exclude=returning-void-expression
 
     const auto migrationName = cachedMigrationName(migration);
 
@@ -311,7 +311,7 @@ void Migrator::runDown(const RollbackItem &migrationToRollback, const bool prete
     const auto &[id, migrationName, migration] = migrationToRollback;
 
     if (pretend)
-        return pretendToRun(*migration, MigrateMethod::Down); // clazy:exclude=returning-void-expression
+        return pretendToRun(*migration, MigrateMethod::Down); // NOLINT(readability-avoid-return-with-void-value) clazy:exclude=returning-void-expression
 
     comment(QStringLiteral("Rolling back: "), false).note(migrationName);
 
@@ -379,7 +379,7 @@ void Migrator::runMigration(const Migration &migration, const MigrateMethod meth
 
     // Without transaction
     if (!withinTransaction)
-        return migrateByMethod(migration, method); // clazy:exclude=returning-void-expression
+        return migrateByMethod(migration, method); // NOLINT(readability-avoid-return-with-void-value) clazy:exclude=returning-void-expression
 
     // Transactional migration
     connection.beginTransaction();
@@ -401,10 +401,10 @@ void Migrator::migrateByMethod(const Migration &migration, const MigrateMethod m
 {
     switch (method) {
     case MigrateMethod::Up:
-        return migration.up(); // clazy:exclude=returning-void-expression
+        return migration.up(); // NOLINT(readability-avoid-return-with-void-value) clazy:exclude=returning-void-expression
 
     case MigrateMethod::Down:
-        return migration.down(); // clazy:exclude=returning-void-expression
+        return migration.down(); // NOLINT(readability-avoid-return-with-void-value) clazy:exclude=returning-void-expression
     }
 
     Q_UNREACHABLE();
