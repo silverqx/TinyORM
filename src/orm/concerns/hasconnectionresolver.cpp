@@ -15,8 +15,8 @@ namespace Orm::Concerns
 
 namespace
 {
-    /*! The connection resolver instance. */
-    ConnectionResolverInterface *g_resolver = nullptr;
+    /*! The connection resolver instance, atomic. */
+    std::atomic<ConnectionResolverInterface *> g_resolver = nullptr;
 } // namespace
 
 /* public */
