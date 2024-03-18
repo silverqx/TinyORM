@@ -126,7 +126,7 @@ QString BaseGrammar::unqualifyColumn(const QString &column)
 {
     const auto lastDotIndex = column.lastIndexOf(DOT);
 
-    // Nothing do unqualify, a dot not found
+    // Nothing to unqualify, a dot not found
     if (lastDotIndex == -1)
         return column;
 
