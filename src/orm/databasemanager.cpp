@@ -276,7 +276,7 @@ DatabaseManager &DatabaseManager::reference()
     throw Exceptions::RuntimeError(InstanceExceptionMessage);
 }
 
-DatabaseConnection &DatabaseManager::connection(const QString &name)
+DatabaseConnection &DatabaseManager::connection(const QString &name) // NOLINT(google-default-arguments)
 {
     const auto &connectionName = parseConnectionName(name);
 

@@ -40,12 +40,12 @@ QString SchemaGrammar::compileDropAllViews(const QVector<QString> &/*unused*/) c
     throw Exceptions::RuntimeError(NotImplemented);
 }
 
-QString SchemaGrammar::compileGetAllTables(const QVector<QString> &/*unused*/) const
+QString SchemaGrammar::compileGetAllTables(const QVector<QString> &/*unused*/) const // NOLINT(google-default-arguments)
 {
     throw Exceptions::RuntimeError(NotImplemented);
 }
 
-QString SchemaGrammar::compileGetAllViews(const QVector<QString> &/*unused*/) const
+QString SchemaGrammar::compileGetAllViews(const QVector<QString> &/*unused*/) const // NOLINT(google-default-arguments)
 {
     throw Exceptions::RuntimeError(NotImplemented);
 }

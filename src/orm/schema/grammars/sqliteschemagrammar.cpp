@@ -35,14 +35,14 @@ SQLiteSchemaGrammar::compileDropAllViews(const QVector<QString> &/*unused*/) con
 }
 
 QString
-SQLiteSchemaGrammar::compileGetAllTables(const QVector<QString> &/*unused*/) const
+SQLiteSchemaGrammar::compileGetAllTables(const QVector<QString> &/*unused*/) const // NOLINT(google-default-arguments)
 {
     return QStringLiteral("select name, type "
                           "from sqlite_master "
                           "where type = 'table' and name not like 'sqlite_%'");
 }
 
-QString SQLiteSchemaGrammar::compileGetAllViews(const QVector<QString> &/*unused*/) const
+QString SQLiteSchemaGrammar::compileGetAllViews(const QVector<QString> &/*unused*/) const // NOLINT(google-default-arguments)
 {
     return QStringLiteral("select name, type "
                           "from sqlite_master where type = 'view'");
@@ -79,7 +79,7 @@ QString SQLiteSchemaGrammar::compileTableExists() const
                 "select * from sqlite_master where type = 'table' and name = ?");
 }
 
-QString SQLiteSchemaGrammar::compileColumnListing(const QString &table) const
+QString SQLiteSchemaGrammar::compileColumnListing(const QString &table) const // NOLINT(google-default-arguments)
 {
     return QStringLiteral("pragma table_info(%1)").arg(BaseGrammar::wrap(table));
 }

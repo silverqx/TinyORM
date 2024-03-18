@@ -39,7 +39,7 @@ QString PostgresSchemaGrammar::compileDropAllViews(const QVector<QString> &views
 }
 
 QString
-PostgresSchemaGrammar::compileGetAllTables(const QVector<QString> &databases) const
+PostgresSchemaGrammar::compileGetAllTables(const QVector<QString> &databases) const // NOLINT(google-default-arguments)
 {
     return QStringLiteral(
                 "select tablename, "
@@ -50,7 +50,7 @@ PostgresSchemaGrammar::compileGetAllTables(const QVector<QString> &databases) co
 }
 
 QString
-PostgresSchemaGrammar::compileGetAllViews(const QVector<QString> &databases) const
+PostgresSchemaGrammar::compileGetAllViews(const QVector<QString> &databases) const // NOLINT(google-default-arguments)
 {
     return QStringLiteral(
                 "select viewname, "
@@ -78,7 +78,7 @@ QString PostgresSchemaGrammar::compileTableExists() const
                             "table_name = ? and table_type = 'BASE TABLE'");
 }
 
-QString PostgresSchemaGrammar::compileColumnListing(const QString &/*unused*/) const
+QString PostgresSchemaGrammar::compileColumnListing(const QString &/*unused*/) const // NOLINT(google-default-arguments)
 {
     return QStringLiteral("select column_name "
                           "from information_schema.columns "

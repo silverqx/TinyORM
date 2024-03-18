@@ -38,13 +38,13 @@ QString MySqlSchemaGrammar::compileDropAllViews(const QVector<QString> &views) c
 }
 
 QString
-MySqlSchemaGrammar::compileGetAllTables(const QVector<QString> &/*unused*/) const
+MySqlSchemaGrammar::compileGetAllTables(const QVector<QString> &/*unused*/) const // NOLINT(google-default-arguments)
 {
     return QStringLiteral("show full tables where table_type = 'BASE TABLE'");
 }
 
 QString
-MySqlSchemaGrammar::compileGetAllViews(const QVector<QString> &/*unused*/) const
+MySqlSchemaGrammar::compileGetAllViews(const QVector<QString> &/*unused*/) const // NOLINT(google-default-arguments)
 {
     return QStringLiteral("show full tables where table_type = 'VIEW'");
 }
@@ -67,7 +67,7 @@ QString MySqlSchemaGrammar::compileTableExists() const
                             "`table_type` = 'BASE TABLE'");
 }
 
-QString MySqlSchemaGrammar::compileColumnListing(const QString &/*unused*/) const
+QString MySqlSchemaGrammar::compileColumnListing(const QString &/*unused*/) const // NOLINT(google-default-arguments)
 {
     return QStringLiteral("select `column_name` as `column_name` "
                           "from `information_schema`.`columns` "
