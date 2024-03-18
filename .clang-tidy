@@ -27,7 +27,6 @@ Checks:
   - -clang-analyzer-osx.*
   - -cppcoreguidelines-macro-usage
   - -cppcoreguidelines-non-private-member-variables-in-classes
-  - -cppcoreguidelines-special-member-functions
   - -google-readability-todo
   - -llvm-header-guard
   - -misc-include-cleaner

@@ -28,7 +28,7 @@ namespace Tom
     /*! Migrations database repository. */
     class MigrationRepository
     {
-        Q_DISABLE_COPY(MigrationRepository)
+        Q_DISABLE_COPY_MOVE(MigrationRepository)
 
         /*! Alias for the ConnectionResolverInterface. */
         using ConnectionResolverInterface = Orm::ConnectionResolverInterface;

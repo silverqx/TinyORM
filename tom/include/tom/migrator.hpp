@@ -21,7 +21,7 @@ namespace Tom
     /*! Migration service class. */
     class Migrator : public Concerns::InteractsWithIO
     {
-        Q_DISABLE_COPY(Migrator)
+        Q_DISABLE_COPY_MOVE(Migrator)
 
         /*! Alias for the ConnectionResolverInterface. */
         using ConnectionResolverInterface = Orm::ConnectionResolverInterface;
