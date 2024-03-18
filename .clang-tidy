@@ -28,8 +28,6 @@ Checks:
   - -cppcoreguidelines-avoid-non-const-global-variables
   - -cppcoreguidelines-macro-usage
   - -cppcoreguidelines-non-private-member-variables-in-classes
-  - -cppcoreguidelines-pro-bounds-pointer-arithmetic
-  - -cppcoreguidelines-pro-type-vararg
   - -cppcoreguidelines-special-member-functions
   - -google-readability-todo
   - -llvm-header-guard

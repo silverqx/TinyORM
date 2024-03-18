@@ -130,7 +130,7 @@ QString BaseGrammar::unqualifyColumn(const QString &column)
     if (lastDotIndex == -1)
         return column;
 
-    return QStringView(column.constData() + lastDotIndex + 1, column.constEnd())
+    return QStringView(column.constBegin() + lastDotIndex + 1, column.constEnd())
             .trimmed().toString();
 }
 
