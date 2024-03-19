@@ -526,7 +526,7 @@ namespace Orm
             timer.start();
 
         /* Prepare bindings early so they will be prepared only once (for performance
-           reasons). The weird preparedBindings return value is for better variable
+           reasons). The weird preparedBindings() return value is for better variable
            naming. */
         const auto &preparedBindings = prepareBindings(bindings);
 
