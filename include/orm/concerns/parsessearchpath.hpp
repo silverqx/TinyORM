@@ -20,7 +20,7 @@ namespace Orm::Concerns
     /*! Parse the PostgreSQL search_path configuration value into the vector. */
     class SHAREDLIB_EXPORT ParsesSearchPath
     {
-        Q_DISABLE_COPY(ParsesSearchPath)
+        Q_DISABLE_COPY_MOVE(ParsesSearchPath)
 
     public:
         /*! Pure virtual destructor, to pass -Weffc++. */

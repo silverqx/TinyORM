@@ -26,7 +26,7 @@ namespace Concerns
     /*! Prints alert and asks for the confirmation (Y/N). */
     class Confirmable
     {
-        Q_DISABLE_COPY(Confirmable)
+        Q_DISABLE_COPY_MOVE(Confirmable)
 
     public:
         /*! Default constructor. */

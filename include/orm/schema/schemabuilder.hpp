@@ -26,7 +26,7 @@ namespace Grammars
     /*! Database schema builder base class. */
     class SHAREDLIB_EXPORT SchemaBuilder
     {
-        Q_DISABLE_COPY(SchemaBuilder)
+        Q_DISABLE_COPY_MOVE(SchemaBuilder)
 
         /*! Alias for the helper utils. */
         using Helpers = Orm::Utils::Helpers;

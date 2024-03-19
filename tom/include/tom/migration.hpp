@@ -27,7 +27,7 @@ namespace Tom
     /*! Migrations base class. */
     class Migration
     {
-        Q_DISABLE_COPY(Migration)
+        Q_DISABLE_COPY_MOVE(Migration)
 
     public:
         /*! Filename of the migration file. */

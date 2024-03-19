@@ -16,7 +16,7 @@ namespace Tom::Commands::Make
     /*! Create a new Tom application project. */
     class ProjectCommand : public Command
     {
-        Q_DISABLE_COPY(ProjectCommand)
+        Q_DISABLE_COPY_MOVE(ProjectCommand)
 
         /*! Alias for the filesystem path. */
 //        using path = std::filesystem::path;

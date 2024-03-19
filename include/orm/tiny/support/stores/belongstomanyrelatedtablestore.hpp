@@ -26,7 +26,7 @@ namespace Support::Stores
     class BelongsToManyRelatedTableStore final :
             public BaseRelationStore<Derived, AllRelations...>
     {
-        Q_DISABLE_COPY(BelongsToManyRelatedTableStore)
+        Q_DISABLE_COPY_MOVE(BelongsToManyRelatedTableStore)
 
         // To access visitWithResult()
         friend Concerns::HasRelationships<Derived, AllRelations...>;

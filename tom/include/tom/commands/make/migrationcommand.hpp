@@ -16,7 +16,7 @@ namespace Tom::Commands::Make
     /*! Create a new migration file. */
     class MigrationCommand : public MakeCommand
     {
-        Q_DISABLE_COPY(MigrationCommand)
+        Q_DISABLE_COPY_MOVE(MigrationCommand)
 
         /*! Alias for the filesystem path. */
         using fspath = std::filesystem::path;

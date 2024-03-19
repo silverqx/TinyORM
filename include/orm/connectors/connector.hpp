@@ -18,7 +18,7 @@ namespace Orm::Connectors
     /*! Connectors base class. */
     class Connector : public Concerns::DetectsLostConnections
     {
-        Q_DISABLE_COPY(Connector)
+        Q_DISABLE_COPY_MOVE(Connector)
 
     public:
         /*! Default constructor. */

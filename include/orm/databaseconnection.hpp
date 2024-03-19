@@ -51,7 +51,7 @@ namespace Orm
             // Needed to suppress the -Wnon-virtual-dtor diagnostic
             public std::enable_shared_from_this<DatabaseConnection>
     {
-        Q_DISABLE_COPY(DatabaseConnection)
+        Q_DISABLE_COPY_MOVE(DatabaseConnection)
 
         // To access shouldCountElapsed() method
         friend Concerns::ManagesTransactions;

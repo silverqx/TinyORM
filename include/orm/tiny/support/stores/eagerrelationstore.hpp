@@ -20,7 +20,7 @@ namespace Orm::Tiny::Support::Stores
              AllRelationsConcept ...AllRelations>
     class EagerRelationStore final : public BaseRelationStore<Derived, AllRelations...>
     {
-        Q_DISABLE_COPY(EagerRelationStore)
+        Q_DISABLE_COPY_MOVE(EagerRelationStore)
 
         /*! Alias for the NotNull. */
         template<typename T>

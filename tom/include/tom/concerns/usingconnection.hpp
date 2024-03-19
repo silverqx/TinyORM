@@ -39,7 +39,7 @@ namespace Concerns
         to the previous state after finish. */
     class UsingConnection
     {
-        Q_DISABLE_COPY(UsingConnection)
+        Q_DISABLE_COPY_MOVE(UsingConnection)
 
         /*! Alias for the ConnectionResolverInterface. */
         using ConnectionResolverInterface = Orm::ConnectionResolverInterface;

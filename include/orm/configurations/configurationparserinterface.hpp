@@ -20,7 +20,7 @@ namespace Orm::Configurations
     /*! Configuration parser interface class. */
     class ConfigurationParserInterface
     {
-        Q_DISABLE_COPY(ConfigurationParserInterface)
+        Q_DISABLE_COPY_MOVE(ConfigurationParserInterface)
 
     public:
         /*! Default constructor. */

@@ -21,7 +21,7 @@ namespace Orm::Tiny::Relations
                    public Concerns::SupportsDefaultModels<Model, Related, HasOne>,
                    public Concerns::ComparesRelatedModels<Model, Related, HasOne>
     {
-        Q_DISABLE_COPY(HasOne)
+        Q_DISABLE_COPY_MOVE(HasOne)
 
         // To access getRelatedKeyFrom()
         friend Concerns::ComparesRelatedModels<Model, Related, HasOne>;

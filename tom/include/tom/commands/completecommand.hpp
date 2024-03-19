@@ -18,7 +18,7 @@ namespace Tom::Commands
     /*! Complete command names and parameters (for tab-completion only). */
     class CompleteCommand : public Command
     {
-        Q_DISABLE_COPY(CompleteCommand)
+        Q_DISABLE_COPY_MOVE(CompleteCommand)
 
     public:
         /*! Constructor. */

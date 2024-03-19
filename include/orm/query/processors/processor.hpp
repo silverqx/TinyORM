@@ -25,7 +25,7 @@ namespace Query::Processors
     /*! Base processor class, process SQL results. */
     class SHAREDLIB_EXPORT Processor
     {
-        Q_DISABLE_COPY(Processor)
+        Q_DISABLE_COPY_MOVE(Processor)
 
         /*! Alias for the SqlQuery. */
         using SqlQuery = Orm::Types::SqlQuery;

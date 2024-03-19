@@ -21,7 +21,7 @@ namespace Grammars
     class SHAREDLIB_EXPORT PostgresSchemaBuilder : public SchemaBuilder,
                                                    protected Concerns::ParsesSearchPath
     {
-        Q_DISABLE_COPY(PostgresSchemaBuilder)
+        Q_DISABLE_COPY_MOVE(PostgresSchemaBuilder)
 
         /*! Alias for the PostgresSchemaGrammar. */
         using PostgresSchemaGrammar = Grammars::PostgresSchemaGrammar;

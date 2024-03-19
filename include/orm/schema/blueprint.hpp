@@ -35,7 +35,7 @@ namespace Grammars
     /*! Table blueprint for the schema grammar. */
     class SHAREDLIB_EXPORT Blueprint
     {
-        Q_DISABLE_COPY(Blueprint)
+        Q_DISABLE_COPY_MOVE(Blueprint)
 
         /*! Alias for the Query::Expression. */
         using Expression    = Query::Expression;

@@ -22,7 +22,7 @@ namespace Tom::Commands::Database
                         public Concerns::Pretendable,
                         public Concerns::UsingConnection
     {
-        Q_DISABLE_COPY(WipeCommand)
+        Q_DISABLE_COPY_MOVE(WipeCommand)
 
         /*! Alias for the DatabaseConnection. */
         using DatabaseConnection = Orm::DatabaseConnection;

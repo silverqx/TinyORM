@@ -25,7 +25,7 @@ namespace Tom
     /*! Describes current terminal features. */
     class Terminal
     {
-        Q_DISABLE_COPY(Terminal)
+        Q_DISABLE_COPY_MOVE(Terminal)
 
     public:
         /*! Default constructor. */

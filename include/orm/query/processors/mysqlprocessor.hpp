@@ -15,7 +15,7 @@ namespace Orm::Query::Processors
     /*! MySQL processor, process SQL results. */
     class MySqlProcessor final : public Processor
     {
-        Q_DISABLE_COPY(MySqlProcessor)
+        Q_DISABLE_COPY_MOVE(MySqlProcessor)
 
     public:
         /*! Default constructor. */

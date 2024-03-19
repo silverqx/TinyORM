@@ -51,7 +51,7 @@ namespace Commands
     class Command : public Concerns::CallsCommands,
                     public Concerns::InteractsWithIO
     {
-        Q_DISABLE_COPY(Command)
+        Q_DISABLE_COPY_MOVE(Command)
 
         // To access parser()
         friend Concerns::Confirmable;

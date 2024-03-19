@@ -31,7 +31,7 @@ namespace Support
     class ModelCommand : public MakeCommand,
                          protected Concerns::PrepareOptionValues
     {
-        Q_DISABLE_COPY(ModelCommand)
+        Q_DISABLE_COPY_MOVE(ModelCommand)
 
         // To access values() and isSetAll()
         friend Concerns::PrepareOptionValues;

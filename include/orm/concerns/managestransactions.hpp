@@ -30,7 +30,7 @@ namespace Concerns
     /*! Manages database transactions. */
     class SHAREDLIB_EXPORT ManagesTransactions
     {
-        Q_DISABLE_COPY(ManagesTransactions)
+        Q_DISABLE_COPY_MOVE(ManagesTransactions)
 
         // To access resetTransactions() method
         friend DatabaseConnection;

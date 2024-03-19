@@ -17,7 +17,7 @@ namespace Orm::Connectors
     class MySqlConnector final : public ConnectorInterface,
                                  public Connector
     {
-        Q_DISABLE_COPY(MySqlConnector)
+        Q_DISABLE_COPY_MOVE(MySqlConnector)
 
     public:
         /*! Default constructor. */

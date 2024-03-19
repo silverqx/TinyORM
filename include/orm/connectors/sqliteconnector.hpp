@@ -17,7 +17,7 @@ namespace Orm::Connectors
     class SQLiteConnector final : public ConnectorInterface,
                                   public Connector
     {
-        Q_DISABLE_COPY(SQLiteConnector)
+        Q_DISABLE_COPY_MOVE(SQLiteConnector)
 
     public:
         /*! Default constructor. */

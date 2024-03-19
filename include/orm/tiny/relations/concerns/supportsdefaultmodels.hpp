@@ -17,7 +17,7 @@ namespace Orm::Tiny::Relations::Concerns
     template<class Model, class Related, template<class, class> class RelationType>
     class SupportsDefaultModels
     {
-        Q_DISABLE_COPY(SupportsDefaultModels)
+        Q_DISABLE_COPY_MOVE(SupportsDefaultModels)
 
         /*! Alias for the AttributeItem. */
         using AttributeItem = Orm::Tiny::AttributeItem;

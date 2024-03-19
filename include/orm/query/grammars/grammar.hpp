@@ -19,7 +19,7 @@ namespace Orm::Query::Grammars
     /*! Sql grammar base class. */
     class SHAREDLIB_EXPORT Grammar : public BaseGrammar
     {
-        Q_DISABLE_COPY(Grammar)
+        Q_DISABLE_COPY_MOVE(Grammar)
 
     public:
         /*! Default constructor. */

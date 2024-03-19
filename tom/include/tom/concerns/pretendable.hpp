@@ -40,7 +40,7 @@ namespace Concerns
     /*! Pretend the callback on the base of a bool value (mainly the --pretend option). */
     class Pretendable
     {
-        Q_DISABLE_COPY(Pretendable)
+        Q_DISABLE_COPY_MOVE(Pretendable)
 
         /*! Alias for the DatabaseConnection. */
         using DatabaseConnection = Orm::DatabaseConnection;

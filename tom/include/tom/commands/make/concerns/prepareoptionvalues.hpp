@@ -23,7 +23,7 @@ namespace Concerns
     /*! Prepare command-line option values for the ModelCreator class. */
     class PrepareOptionValues
     {
-        Q_DISABLE_COPY(PrepareOptionValues)
+        Q_DISABLE_COPY_MOVE(PrepareOptionValues)
 
     public:
         /*! Default constructor. */

@@ -28,7 +28,7 @@ namespace Query
     /*! Base class for the database grammar. */
     class SHAREDLIB_EXPORT BaseGrammar
     {
-        Q_DISABLE_COPY(BaseGrammar)
+        Q_DISABLE_COPY_MOVE(BaseGrammar)
 
     protected:
         /*! Alias for the container utils. */

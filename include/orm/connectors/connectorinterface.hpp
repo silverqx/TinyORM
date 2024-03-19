@@ -19,7 +19,7 @@ namespace Orm::Connectors
     /*! Connectors interface class. */
     class ConnectorInterface
     {
-        Q_DISABLE_COPY(ConnectorInterface)
+        Q_DISABLE_COPY_MOVE(ConnectorInterface)
 
     public:
         /*! Default constructor. */

@@ -16,7 +16,7 @@ namespace Tom::Commands::Make
     /*! Create a new seeder class. */
     class SeederCommand : public MakeCommand
     {
-        Q_DISABLE_COPY(SeederCommand)
+        Q_DISABLE_COPY_MOVE(SeederCommand)
 
         /*! Alias for the filesystem path. */
         using fspath = std::filesystem::path;

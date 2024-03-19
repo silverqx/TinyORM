@@ -18,7 +18,7 @@ namespace Tom::Commands
     class HelpCommand : public Command,
                         public Concerns::PrintsOptions
     {
-        Q_DISABLE_COPY(HelpCommand)
+        Q_DISABLE_COPY_MOVE(HelpCommand)
 
     public:
         /*! Constructor. */

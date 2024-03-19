@@ -17,7 +17,7 @@ namespace Orm::Tiny::Relations
     template<class Model, class Related>
     class HasOneOrMany : public Relation<Model, Related>
     {
-        Q_DISABLE_COPY(HasOneOrMany)
+        Q_DISABLE_COPY_MOVE(HasOneOrMany)
 
         /*! Alias for the attribute utils. */
         using AttributeUtils = Orm::Tiny::Utils::Attribute;

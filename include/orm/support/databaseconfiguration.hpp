@@ -20,7 +20,7 @@ namespace Orm::Support
     /*! Database configuration class. */
     class DatabaseConfiguration
     {
-        Q_DISABLE_COPY(DatabaseConfiguration)
+        Q_DISABLE_COPY_MOVE(DatabaseConfiguration)
 
     public:
         /*! Type used for Database Connections map. */

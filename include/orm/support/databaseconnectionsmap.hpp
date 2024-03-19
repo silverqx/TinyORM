@@ -16,7 +16,7 @@ namespace Orm::Support
     /*! Handles Database connections for the current thread. */
     class DatabaseConnectionsMap
     {
-        Q_DISABLE_COPY(DatabaseConnectionsMap)
+        Q_DISABLE_COPY_MOVE(DatabaseConnectionsMap)
 
     public:
         /*! Default constructor. */

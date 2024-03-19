@@ -22,7 +22,7 @@ namespace Tom::Commands
     class ListCommand : public Command,
                         public Concerns::PrintsOptions
     {
-        Q_DISABLE_COPY(ListCommand)
+        Q_DISABLE_COPY_MOVE(ListCommand)
 
     public:
         /*! Constructor. */

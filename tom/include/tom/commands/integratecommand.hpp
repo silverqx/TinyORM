@@ -18,7 +18,7 @@ namespace Tom::Commands
     /*! Enable tab-completion for the given shell. */
     class IntegrateCommand : public Command
     {
-        Q_DISABLE_COPY(IntegrateCommand)
+        Q_DISABLE_COPY_MOVE(IntegrateCommand)
 
     public:
         /*! Constructor. */

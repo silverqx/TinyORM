@@ -23,7 +23,7 @@ namespace Commands
     /*! Display basic information about the tom application. */
     class AboutCommand : public Command
     {
-        Q_DISABLE_COPY(AboutCommand)
+        Q_DISABLE_COPY_MOVE(AboutCommand)
 
     public:
         /*! Constructor. */

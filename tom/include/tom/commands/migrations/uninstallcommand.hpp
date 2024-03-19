@@ -26,7 +26,7 @@ namespace Commands::Migrations
                              public Concerns::Pretendable,
                              public Concerns::UsingConnection
     {
-        Q_DISABLE_COPY(UninstallCommand)
+        Q_DISABLE_COPY_MOVE(UninstallCommand)
 
         /*! Alias for the Command. */
         using Command = Commands::Command;

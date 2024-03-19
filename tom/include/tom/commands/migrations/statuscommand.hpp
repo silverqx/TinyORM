@@ -30,7 +30,7 @@ namespace Commands::Migrations
     class StatusCommand : public Command,
                           public Concerns::UsingConnection
     {
-        Q_DISABLE_COPY(StatusCommand)
+        Q_DISABLE_COPY_MOVE(StatusCommand)
 
         /*! Alias for the tabulate cell. */
         using TableCell = InteractsWithIO::TableCell;

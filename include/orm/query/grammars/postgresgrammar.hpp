@@ -15,7 +15,7 @@ namespace Orm::Query::Grammars
     /*! PostgreSQL grammar. */
     class SHAREDLIB_EXPORT PostgresGrammar : public Grammar
     {
-        Q_DISABLE_COPY(PostgresGrammar)
+        Q_DISABLE_COPY_MOVE(PostgresGrammar)
 
     public:
         /*! Default constructor. */

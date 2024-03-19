@@ -15,7 +15,7 @@ namespace Orm::SchemaNs
     /*! SQLite schema builder class. */
     class SHAREDLIB_EXPORT SQLiteSchemaBuilder : public SchemaBuilder
     {
-        Q_DISABLE_COPY(SQLiteSchemaBuilder)
+        Q_DISABLE_COPY_MOVE(SQLiteSchemaBuilder)
 
     public:
         /*! Inherit constructors. */

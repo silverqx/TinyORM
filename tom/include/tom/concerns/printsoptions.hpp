@@ -27,7 +27,7 @@ namespace Concerns
     /*! Print options section. */
     class PrintsOptions
     {
-        Q_DISABLE_COPY(PrintsOptions)
+        Q_DISABLE_COPY_MOVE(PrintsOptions)
 
     public:
         /*! Constructor. */

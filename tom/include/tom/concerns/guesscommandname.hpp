@@ -30,7 +30,7 @@ namespace Concerns
     /*! Try to guess the command name by the given name (name can be partial). */
     class SHAREDLIB_EXPORT GuessCommandName
     {
-        Q_DISABLE_COPY(GuessCommandName)
+        Q_DISABLE_COPY_MOVE(GuessCommandName)
 
         /*! Alias for the Command. */
         using Command = Commands::Command;

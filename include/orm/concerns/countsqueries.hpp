@@ -25,7 +25,7 @@ namespace Concerns
     /*! Counts the number of executed queries and the elapsed time of queries. */
     class SHAREDLIB_EXPORT CountsQueries
     {
-        Q_DISABLE_COPY(CountsQueries)
+        Q_DISABLE_COPY_MOVE(CountsQueries)
 
         // To access hitTransactionalCounters() method
         friend class ManagesTransactions;

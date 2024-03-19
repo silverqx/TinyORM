@@ -26,7 +26,7 @@ namespace Concerns
     /*! Seeders base class. */
     class SHAREDLIB_EXPORT Seeder
     {
-        Q_DISABLE_COPY(Seeder)
+        Q_DISABLE_COPY_MOVE(Seeder)
 
         /*! Alias for the InteractsWithIO. */
         using InteractsWithIO = Concerns::InteractsWithIO;

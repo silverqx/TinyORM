@@ -17,7 +17,7 @@ namespace Orm::Tiny::Support::Stores
     class TouchOwnersRelationStore final :
             public BaseRelationStore<Derived, AllRelations...>
     {
-        Q_DISABLE_COPY(TouchOwnersRelationStore)
+        Q_DISABLE_COPY_MOVE(TouchOwnersRelationStore)
 
         /*! Alias for the NotNull. */
         template<typename T>

@@ -16,7 +16,7 @@ namespace Orm::Configurations
         options, the parsed configuration will be used in the MySqlConnector. */
     class MySqlConfigurationParser final : public ConfigurationParser
     {
-        Q_DISABLE_COPY(MySqlConfigurationParser)
+        Q_DISABLE_COPY_MOVE(MySqlConfigurationParser)
 
     public:
         /*! Default constructor. */

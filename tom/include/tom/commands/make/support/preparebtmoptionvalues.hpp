@@ -21,7 +21,7 @@ namespace Tom::Commands::Make::Support
     template<BtmPreparedValuesConcept P = QStringList, BtmValuesConcept V = QStringList>
     class PrepareBtmOptionValues
     {
-        Q_DISABLE_COPY(PrepareBtmOptionValues)
+        Q_DISABLE_COPY_MOVE(PrepareBtmOptionValues)
 
     public:
         /*! Constructor. */

@@ -16,7 +16,7 @@ namespace Orm::Configurations
         options, the parsed configuration will be used in the SQLiteConnector. */
     class SQLiteConfigurationParser final : public ConfigurationParser
     {
-        Q_DISABLE_COPY(SQLiteConfigurationParser)
+        Q_DISABLE_COPY_MOVE(SQLiteConfigurationParser)
 
     public:
         /*! Default constructor. */

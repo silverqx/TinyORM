@@ -28,7 +28,7 @@ namespace Concerns
     /*! Detect lost connection by passed exception message. */
     class SHAREDLIB_EXPORT DetectsLostConnections
     {
-        Q_DISABLE_COPY(DetectsLostConnections)
+        Q_DISABLE_COPY_MOVE(DetectsLostConnections)
 
     public:
         /*! Default constructor. */

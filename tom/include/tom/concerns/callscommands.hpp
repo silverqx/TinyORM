@@ -24,7 +24,7 @@ namespace Concerns
     /*! Invoke another command by name and passed arguments. */
     class CallsCommands
     {
-        Q_DISABLE_COPY(CallsCommands)
+        Q_DISABLE_COPY_MOVE(CallsCommands)
 
     public:
         /*! Default constructor. */

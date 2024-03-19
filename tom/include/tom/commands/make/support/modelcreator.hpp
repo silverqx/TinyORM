@@ -22,7 +22,7 @@ namespace Tom::Commands::Make::Support
     /*! Model file generator (used by the make:model command). */
     class ModelCreator
     {
-        Q_DISABLE_COPY(ModelCreator)
+        Q_DISABLE_COPY_MOVE(ModelCreator)
 
         /*! Alias for the filesystem path. */
         using fspath = std::filesystem::path;

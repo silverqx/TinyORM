@@ -23,7 +23,7 @@ namespace Grammars
     /*! PostgreSQL schemma grammar. */
     class SHAREDLIB_EXPORT PostgresSchemaGrammar : public SchemaGrammar
     {
-        Q_DISABLE_COPY(PostgresSchemaGrammar)
+        Q_DISABLE_COPY_MOVE(PostgresSchemaGrammar)
 
         /*! Alias for the string utils. */
         using StringUtils = Orm::Utils::String;

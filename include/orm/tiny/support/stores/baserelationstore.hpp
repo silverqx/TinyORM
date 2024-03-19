@@ -83,7 +83,7 @@ namespace Support::Stores
     template<typename Derived, AllRelationsConcept ...AllRelations>
     class BaseRelationStore
     {
-        Q_DISABLE_COPY(BaseRelationStore)
+        Q_DISABLE_COPY_MOVE(BaseRelationStore)
 
         // To access visit()
         friend Concerns::HasRelationships<Derived, AllRelations...>;

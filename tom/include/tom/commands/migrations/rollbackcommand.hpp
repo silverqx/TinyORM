@@ -24,7 +24,7 @@ namespace Commands::Migrations
                             public Concerns::Confirmable,
                             public Concerns::UsingConnection
     {
-        Q_DISABLE_COPY(RollbackCommand)
+        Q_DISABLE_COPY_MOVE(RollbackCommand)
 
     public:
         /*! Constructor. */

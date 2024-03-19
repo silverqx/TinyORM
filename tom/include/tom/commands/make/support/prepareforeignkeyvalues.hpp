@@ -27,7 +27,7 @@ namespace Support
     /*! Divide foreign key names by relation types for the ModelCreator class. */
     class PrepareForeignKeyValues
     {
-        Q_DISABLE_COPY(PrepareForeignKeyValues)
+        Q_DISABLE_COPY_MOVE(PrepareForeignKeyValues)
 
     public:
         /*! Constructor. */

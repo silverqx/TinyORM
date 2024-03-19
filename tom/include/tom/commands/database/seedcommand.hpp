@@ -24,7 +24,7 @@ namespace Commands::Database
                         public Concerns::Confirmable,
                         public Concerns::UsingConnection
     {
-        Q_DISABLE_COPY(SeedCommand)
+        Q_DISABLE_COPY_MOVE(SeedCommand)
 
         /*! Alias for the ConnectionResolverInterface. */
         using ConnectionResolverInterface = Orm::ConnectionResolverInterface;

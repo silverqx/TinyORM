@@ -17,7 +17,7 @@ namespace Orm
     class SHAREDLIB_EXPORT PostgresConnection final : public DatabaseConnection,
                                                       public Concerns::ParsesSearchPath
     {
-        Q_DISABLE_COPY(PostgresConnection)
+        Q_DISABLE_COPY_MOVE(PostgresConnection)
 
         /*! Private constructor. */
         explicit PostgresConnection(

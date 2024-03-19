@@ -28,7 +28,7 @@ namespace Concerns
     /*! Logs executed queries to the console. */
     class SHAREDLIB_EXPORT LogsQueries
     {
-        Q_DISABLE_COPY(LogsQueries)
+        Q_DISABLE_COPY_MOVE(LogsQueries)
 
     public:
         /*! Default constructor. */

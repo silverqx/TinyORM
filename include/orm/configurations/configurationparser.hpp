@@ -20,7 +20,7 @@ namespace Orm::Configurations
     class ConfigurationParser : public ConfigurationParserInterface,
                                 public ConfigurationOptionsParser
     {
-        Q_DISABLE_COPY(ConfigurationParser)
+        Q_DISABLE_COPY_MOVE(ConfigurationParser)
 
         // To access config()
         friend class ConfigurationOptionsParser;

@@ -17,7 +17,7 @@ namespace Orm::Tiny::Relations
     class HasMany : public IsManyRelation,
                     public HasOneOrMany<Model, Related>
     {
-        Q_DISABLE_COPY(HasMany)
+        Q_DISABLE_COPY_MOVE(HasMany)
 
     protected:
         /*! Protected constructor. */

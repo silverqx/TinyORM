@@ -18,7 +18,7 @@ namespace Orm
     /*! Database connection resolver interface. */
     class ConnectionResolverInterface
     {
-        Q_DISABLE_COPY(ConnectionResolverInterface)
+        Q_DISABLE_COPY_MOVE(ConnectionResolverInterface)
 
     public:
         /*! Default constructor. */

@@ -42,7 +42,7 @@ namespace Concerns
     /*! Set of methods for the console output/input. */
     class SHAREDLIB_EXPORT InteractsWithIO
     {
-        Q_DISABLE_COPY(InteractsWithIO)
+        Q_DISABLE_COPY_MOVE(InteractsWithIO)
 
         // To access private ctor and errorWallInternal() (used by logException())
         friend Tom::Application;

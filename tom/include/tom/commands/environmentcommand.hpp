@@ -16,7 +16,7 @@ namespace Tom::Commands
     /*! Display the current environment. */
     class EnvironmentCommand : public Command
     {
-        Q_DISABLE_COPY(EnvironmentCommand)
+        Q_DISABLE_COPY_MOVE(EnvironmentCommand)
 
     public:
         /*! Constructor. */

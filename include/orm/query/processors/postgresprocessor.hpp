@@ -15,7 +15,7 @@ namespace Orm::Query::Processors
     /*! PostgreSQL processor, process SQL results. */
     class PostgresProcessor final : public Processor
     {
-        Q_DISABLE_COPY(PostgresProcessor)
+        Q_DISABLE_COPY_MOVE(PostgresProcessor)
 
     public:
         /*! Default constructor. */

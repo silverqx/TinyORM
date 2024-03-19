@@ -21,7 +21,7 @@ namespace Orm::Configurations
         in the Connector-s by the QSqlDatabase::setConnectOptions() method. */
     class ConfigurationOptionsParser
     {
-        Q_DISABLE_COPY(ConfigurationOptionsParser)
+        Q_DISABLE_COPY_MOVE(ConfigurationOptionsParser)
 
     public:
         /*! Default constructor. */

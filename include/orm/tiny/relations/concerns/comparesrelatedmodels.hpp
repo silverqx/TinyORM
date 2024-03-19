@@ -23,7 +23,7 @@ namespace Relations::Concerns
     template<class Model, class Related, template<class, class> class RelationType>
     class ComparesRelatedModels
     {
-        Q_DISABLE_COPY(ComparesRelatedModels)
+        Q_DISABLE_COPY_MOVE(ComparesRelatedModels)
 
         /*! Model alias, helps to avoid conflict with the Model template parameter. */
         template<typename Derived>

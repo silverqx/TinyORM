@@ -16,7 +16,7 @@ namespace Tom::Commands
     /*! Display an inspiring quote. */
     class InspireCommand : public Command
     {
-        Q_DISABLE_COPY(InspireCommand)
+        Q_DISABLE_COPY_MOVE(InspireCommand)
 
     public:
         /*! Constructor. */

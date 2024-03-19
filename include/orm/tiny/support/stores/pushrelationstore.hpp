@@ -16,7 +16,7 @@ namespace Orm::Tiny::Support::Stores
     template<typename Derived, AllRelationsConcept ...AllRelations>
     class PushRelationStore final : public BaseRelationStore<Derived, AllRelations...>
     {
-        Q_DISABLE_COPY(PushRelationStore)
+        Q_DISABLE_COPY_MOVE(PushRelationStore)
 
         // To access result(), setResult(), and models()
         friend Concerns::HasRelationships<Derived, AllRelations...>;

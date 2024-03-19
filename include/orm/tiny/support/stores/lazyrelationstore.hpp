@@ -16,7 +16,7 @@ namespace Orm::Tiny::Support::Stores
     template<typename Derived, typename Related, AllRelationsConcept ...AllRelations>
     class LazyRelationStore final : public BaseRelationStore<Derived, AllRelations...>
     {
-        Q_DISABLE_COPY(LazyRelationStore)
+        Q_DISABLE_COPY_MOVE(LazyRelationStore)
 
         // To access result()
         friend Concerns::HasRelationships<Derived, AllRelations...>;

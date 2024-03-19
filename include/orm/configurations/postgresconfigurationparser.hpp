@@ -16,7 +16,7 @@ namespace Orm::Configurations
         options, the parsed configuration will be used in the PostgresConnector. */
     class PostgresConfigurationParser final : public ConfigurationParser
     {
-        Q_DISABLE_COPY(PostgresConfigurationParser)
+        Q_DISABLE_COPY_MOVE(PostgresConfigurationParser)
 
     public:
         /*! Default constructor. */

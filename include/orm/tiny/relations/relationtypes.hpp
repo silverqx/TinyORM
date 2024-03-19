@@ -41,7 +41,7 @@ namespace Orm::Tiny::Relations
     /*! Tag for one type relation. */
     class IsOneRelation
     {
-        Q_DISABLE_COPY(IsOneRelation)
+        Q_DISABLE_COPY_MOVE(IsOneRelation)
 
     public:
         /*! Default constructor. */

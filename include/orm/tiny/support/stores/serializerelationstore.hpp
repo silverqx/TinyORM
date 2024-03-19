@@ -25,7 +25,7 @@ namespace Support::Stores
     class SerializeRelationStore final :
             public BaseRelationStore<Derived, AllRelations...>
     {
-        Q_DISABLE_COPY(SerializeRelationStore)
+        Q_DISABLE_COPY_MOVE(SerializeRelationStore)
 
         /*! Alias for the NotNull. */
         template<typename T>

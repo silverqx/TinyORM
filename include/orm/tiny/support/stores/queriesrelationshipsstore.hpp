@@ -26,7 +26,7 @@ namespace Support::Stores
     class QueriesRelationshipsStore final :
             public BaseRelationStore<Derived, AllRelations...>
     {
-        Q_DISABLE_COPY(QueriesRelationshipsStore)
+        Q_DISABLE_COPY_MOVE(QueriesRelationshipsStore)
 
         /*! Alias for the NotNull. */
         template<typename T>

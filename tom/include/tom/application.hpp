@@ -54,7 +54,7 @@ namespace Concerns
     class SHAREDLIB_EXPORT Application : public Concerns::InteractsWithIO,
                                          public Concerns::GuessCommandName
     {
-        Q_DISABLE_COPY(Application)
+        Q_DISABLE_COPY_MOVE(Application)
 
         // To access createVersionsSubsection()
         friend Commands::AboutCommand;

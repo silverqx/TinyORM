@@ -21,7 +21,7 @@ namespace Orm::Connectors
                                     public Connector,
                                     protected Concerns::ParsesSearchPath
     {
-        Q_DISABLE_COPY(PostgresConnector)
+        Q_DISABLE_COPY_MOVE(PostgresConnector)
 
     public:
         /*! Default constructor. */

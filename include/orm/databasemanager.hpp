@@ -22,7 +22,7 @@ namespace Query
     /*! Database manager. */
     class SHAREDLIB_EXPORT DatabaseManager final : public ConnectionResolverInterface
     {
-        Q_DISABLE_COPY(DatabaseManager)
+        Q_DISABLE_COPY_MOVE(DatabaseManager)
 
         /*! Type for the Database Configuration. */
         using Configuration = Orm::Support::DatabaseConfiguration;

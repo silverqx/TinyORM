@@ -15,7 +15,7 @@ namespace Orm::Query::Processors
     /*! SQLite processor, process SQL results. */
     class SHAREDLIB_EXPORT SQLiteProcessor final : public Processor
     {
-        Q_DISABLE_COPY(SQLiteProcessor)
+        Q_DISABLE_COPY_MOVE(SQLiteProcessor)
 
         /*! Alias for the SqlQuery. */
         using SqlQuery = Orm::Types::SqlQuery;
