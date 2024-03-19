@@ -26,7 +26,6 @@ Checks:
   - -clang-analyzer-optin.osx.*
   - -clang-analyzer-osx.*
   - -cppcoreguidelines-macro-usage
-  - -cppcoreguidelines-non-private-member-variables-in-classes
   - -google-readability-todo
   - -llvm-header-guard
   - -misc-include-cleaner
@@ -47,6 +46,7 @@ Checks:
   - -google-readability-namespace-comments
   # Disabled above too
   - -cppcoreguidelines-avoid-magic-numbers
+  - -cppcoreguidelines-non-private-member-variables-in-classes
   - -google-readability-braces-around-statements
 CheckOptions:
   - key:             cppcoreguidelines-avoid-do-while.IgnoreMacros
