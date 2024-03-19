@@ -1077,7 +1077,7 @@ namespace Orm::Tiny
         if (m_eagerLoad.isEmpty())
             return;
 
-        for (const auto &relation : std::as_const(m_eagerLoad))
+        for (const auto &relation : m_eagerLoad)
             /* For nested eager loads we'll skip loading them here and they will be
                loaded later using the nested query which retrieves this nested relations,
                because that is where they get hydrated as models. */

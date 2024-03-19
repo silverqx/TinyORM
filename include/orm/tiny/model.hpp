@@ -1329,7 +1329,7 @@ namespace Orm::Tiny
            the connection have to be set before fill(). */
         model.setConnection(getConnectionName());
 
-        model.mergeCasts(std::as_const(*this).getUserCasts());
+        model.mergeCasts(getUserCasts());
         model.fill(attributes);
 
         // I want to have these two as the last thing
@@ -1354,7 +1354,7 @@ namespace Orm::Tiny
            the connection have to be set before fill(). */
         model.setConnection(getConnectionName());
 
-        model.mergeCasts(std::as_const(*this).getUserCasts());
+        model.mergeCasts(getUserCasts());
         model.fill(std::move(attributes));
 
         // I want to have these two as the last thing
