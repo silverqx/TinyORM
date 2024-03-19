@@ -101,7 +101,7 @@ namespace Orm::Tiny::Relations
         getResults() const override;
         /*! Execute the query as a "select" statement. */
         ModelsCollection<Related>
-        get(const QVector<Column> &columns = {ASTERISK}) const override;
+        get(const QVector<Column> &columns = {ASTERISK}) const override; // NOLINT(google-default-arguments)
 
         /* Getters / Setters */
         /*! Get the fully qualified foreign key for the relation. */
@@ -155,15 +155,15 @@ namespace Orm::Tiny::Relations
         /* TinyBuilder proxy methods that need modifications */
         /*! Find a model by its primary key. */
         std::optional<Related>
-        find(const QVariant &id,
+        find(const QVariant &id, // NOLINT(google-default-arguments)
              const QVector<Column> &columns = {ASTERISK}) const override;
         /*! Find a model by its primary key or return fresh model instance. */
         Related
-        findOrNew(const QVariant &id,
+        findOrNew(const QVariant &id, // NOLINT(google-default-arguments)
                   const QVector<Column> &columns = {ASTERISK}) const override;
         /*! Find a model by its primary key or throw an exception. */
         Related
-        findOrFail(const QVariant &id,
+        findOrFail(const QVariant &id, // NOLINT(google-default-arguments)
                    const QVector<Column> &columns = {ASTERISK}) const override;
         /*! Find multiple models by their primary keys. */
         ModelsCollection<Related>
@@ -190,9 +190,9 @@ namespace Orm::Tiny::Relations
 
         /*! Execute the query and get the first result. */
         std::optional<Related>
-        first(const QVector<Column> &columns = {ASTERISK}) const override;
+        first(const QVector<Column> &columns = {ASTERISK}) const override; // NOLINT(google-default-arguments)
         /*! Get the first record matching the attributes or instantiate it. */
-        Related firstOrNew(const QVector<WhereItem> &attributes = {},
+        Related firstOrNew(const QVector<WhereItem> &attributes = {}, // NOLINT(google-default-arguments)
                            const QVector<AttributeItem> &values = {}) const override;
         /*! Get the first record matching the attributes or create it. */
         Related firstOrCreate(const QVector<WhereItem> &attributes = {},
@@ -200,15 +200,15 @@ namespace Orm::Tiny::Relations
                               const QVector<AttributeItem> &pivotValues = {},
                               bool touch = true) const;
         /*! Execute the query and get the first result or throw an exception. */
-        Related firstOrFail(const QVector<Column> &columns = {ASTERISK}) const override;
+        Related firstOrFail(const QVector<Column> &columns = {ASTERISK}) const override; // NOLINT(google-default-arguments)
 
         /*! Execute the query and get the first result or call a callback. */
         std::optional<Related>
-        firstOr(const QVector<Column> &columns,
+        firstOr(const QVector<Column> &columns, // NOLINT(google-default-arguments)
                 const std::function<void()> &callback = nullptr) const override;
         /*! Execute the query and get the first result or call a callback. */
         inline std::optional<Related>
-        firstOr(const std::function<void()> &callback = nullptr) const override;
+        firstOr(const std::function<void()> &callback = nullptr) const override; // NOLINT(google-default-arguments)
 
         /*! Execute the query and get the first result or call a callback. */
         template<typename R>
@@ -221,12 +221,12 @@ namespace Orm::Tiny::Relations
 
         /*! Add a basic where clause to the query, and return the first result. */
         std::optional<Related>
-        firstWhere(const Column &column, const QString &comparison,
+        firstWhere(const Column &column, const QString &comparison, // NOLINT(google-default-arguments)
                    const QVariant &value,
                    const QString &condition = AND) const override;
         /*! Add a basic where clause to the query, and return the first result. */
         inline std::optional<Related>
-        firstWhereEq(const Column &column, const QVariant &value,
+        firstWhereEq(const Column &column, const QVariant &value, // NOLINT(google-default-arguments)
                      const QString &condition = AND) const override;
 
         /* Builds Queries */
@@ -236,12 +236,12 @@ namespace Orm::Tiny::Relations
                        bool(ModelsCollection<Related> &&models, qint64 page)> &callback
         ) const override;
         /*! Execute a callback over each item while chunking. */
-        bool each(const std::function<bool(Related &&model, qint64 index)> &callback,
+        bool each(const std::function<bool(Related &&model, qint64 index)> &callback, // NOLINT(google-default-arguments)
                   qint64 count = 1000) const override;
 
         /*! Run a map over each item while chunking. */
         ModelsCollection<Related>
-        chunkMap(const std::function<Related(Related &&model)> &callback,
+        chunkMap(const std::function<Related(Related &&model)> &callback, // NOLINT(google-default-arguments)
                  qint64 count = 1000) const override;
         /*! Run a map over each item while chunking. */
         template<typename T>
@@ -251,13 +251,13 @@ namespace Orm::Tiny::Relations
 
         /*! Chunk the results of a query by comparing IDs. */
         bool
-        chunkById(qint64 count,
+        chunkById(qint64 count, // NOLINT(google-default-arguments)
                   const std::function<
                       bool(ModelsCollection<Related> &&models, qint64 page)> &callback,
                   const QString &column = "",
                   const QString &alias = "") const override;
         /*! Execute a callback over each item while chunking by ID. */
-        bool eachById(const std::function<bool(Related &&model, qint64 index)> &callback,
+        bool eachById(const std::function<bool(Related &&model, qint64 index)> &callback, // NOLINT(google-default-arguments)
                       qint64 count = 1000, const QString &column = "",
                       const QString &alias = "") const override;
 
@@ -357,7 +357,7 @@ namespace Orm::Tiny::Relations
         /* Querying Relationship Existence/Absence */
         /*! Add the constraints for a relationship query. */
         std::unique_ptr<Builder<Related>>
-        getRelationExistenceQuery(
+        getRelationExistenceQuery( // NOLINT(google-default-arguments)
                 std::unique_ptr<Builder<Related>> &&query,
                 const Builder<Model> &parentQuery,
                 const QVector<Column> &columns = {ASTERISK}) const override;
@@ -540,7 +540,7 @@ namespace Orm::Tiny::Relations
 
     template<class Model, class Related, class PivotType>
     ModelsCollection<Related>
-    BelongsToMany<Model, Related, PivotType>::get(const QVector<Column> &columns) const
+    BelongsToMany<Model, Related, PivotType>::get(const QVector<Column> &columns) const // NOLINT(google-default-arguments)
     {
         /* First we'll add the proper select columns onto the query so it is run with
            the proper columns. Then, we will get the results and hydrate out pivot
@@ -746,7 +746,7 @@ namespace Orm::Tiny::Relations
 
     template<class Model, class Related, class PivotType>
     std::optional<Related>
-    BelongsToMany<Model, Related, PivotType>::find(
+    BelongsToMany<Model, Related, PivotType>::find( // NOLINT(google-default-arguments)
             const QVariant &id, const QVector<Column> &columns) const
     {
         return this->where(this->m_related->getQualifiedKeyName(), EQ, id)
@@ -754,7 +754,7 @@ namespace Orm::Tiny::Relations
     }
 
     template<class Model, class Related, class PivotType>
-    Related BelongsToMany<Model, Related, PivotType>::findOrNew(
+    Related BelongsToMany<Model, Related, PivotType>::findOrNew( // NOLINT(google-default-arguments)
             const QVariant &id, const QVector<Column> &columns) const
     {
         // Found
@@ -765,7 +765,7 @@ namespace Orm::Tiny::Relations
     }
 
     template<class Model, class Related, class PivotType>
-    Related BelongsToMany<Model, Related, PivotType>::findOrFail(
+    Related BelongsToMany<Model, Related, PivotType>::findOrFail( // NOLINT(google-default-arguments)
             const QVariant &id, const QVector<Column> &columns) const
     {
         auto model = find(id, columns);
@@ -848,7 +848,7 @@ namespace Orm::Tiny::Relations
 
     template<class Model, class Related, class PivotType>
     std::optional<Related>
-    BelongsToMany<Model, Related, PivotType>::first(const QVector<Column> &columns) const
+    BelongsToMany<Model, Related, PivotType>::first(const QVector<Column> &columns) const // NOLINT(google-default-arguments)
     {
         auto results = this->take(1).get(columns);
 
@@ -860,7 +860,7 @@ namespace Orm::Tiny::Relations
 
     template<class Model, class Related, class PivotType>
     Related
-    BelongsToMany<Model, Related, PivotType>::firstOrNew(
+    BelongsToMany<Model, Related, PivotType>::firstOrNew( // NOLINT(google-default-arguments)
             const QVector<WhereItem> &attributes,
             const QVector<AttributeItem> &values) const
     {
@@ -904,7 +904,7 @@ namespace Orm::Tiny::Relations
 
     template<class Model, class Related, class PivotType>
     Related
-    BelongsToMany<Model, Related, PivotType>::firstOrFail(
+    BelongsToMany<Model, Related, PivotType>::firstOrFail( // NOLINT(google-default-arguments)
             const QVector<Column> &columns) const
     {
         if (auto model = first(columns); model)
@@ -915,7 +915,7 @@ namespace Orm::Tiny::Relations
 
     template<class Model, class Related, class PivotType>
     std::optional<Related>
-    BelongsToMany<Model, Related, PivotType>::firstOr(
+    BelongsToMany<Model, Related, PivotType>::firstOr( // NOLINT(google-default-arguments)
             const QVector<Column> &columns, const std::function<void()> &callback) const
     {
         auto model = first(columns);
@@ -933,7 +933,7 @@ namespace Orm::Tiny::Relations
 
     template<class Model, class Related, class PivotType>
     std::optional<Related>
-    BelongsToMany<Model, Related, PivotType>::firstOr(
+    BelongsToMany<Model, Related, PivotType>::firstOr( // NOLINT(google-default-arguments)
             const std::function<void()> &callback) const
     {
         return firstOr({ASTERISK}, callback);
@@ -970,7 +970,7 @@ namespace Orm::Tiny::Relations
 
     template<class Model, class Related, class PivotType>
     std::optional<Related>
-    BelongsToMany<Model, Related, PivotType>::firstWhere(
+    BelongsToMany<Model, Related, PivotType>::firstWhere( // NOLINT(google-default-arguments)
             const Column &column, const QString &comparison,
             const QVariant &value, const QString &condition) const
     {
@@ -979,7 +979,7 @@ namespace Orm::Tiny::Relations
 
     template<class Model, class Related, class PivotType>
     std::optional<Related>
-    BelongsToMany<Model, Related, PivotType>::firstWhereEq(
+    BelongsToMany<Model, Related, PivotType>::firstWhereEq( // NOLINT(google-default-arguments)
             const Column &column, const QVariant &value,
             const QString &condition) const
     {
@@ -1005,7 +1005,7 @@ namespace Orm::Tiny::Relations
     }
 
     template<class Model, class Related, class PivotType>
-    bool BelongsToMany<Model, Related, PivotType>::each(
+    bool BelongsToMany<Model, Related, PivotType>::each( // NOLINT(google-default-arguments)
             const std::function<bool(Related &&, qint64)> &callback,
             const qint64 count) const
     {
@@ -1026,7 +1026,7 @@ namespace Orm::Tiny::Relations
 
     template<class Model, class Related, class PivotType>
     ModelsCollection<Related>
-    BelongsToMany<Model, Related, PivotType>::chunkMap(
+    BelongsToMany<Model, Related, PivotType>::chunkMap( // NOLINT(google-default-arguments)
             const std::function<Related(Related &&)> &callback, const qint64 count) const
     {
         ModelsCollection<Related> result;
@@ -1068,7 +1068,7 @@ namespace Orm::Tiny::Relations
     }
 
     template<class Model, class Related, class PivotType>
-    bool BelongsToMany<Model, Related, PivotType>::chunkById(
+    bool BelongsToMany<Model, Related, PivotType>::chunkById( // NOLINT(google-default-arguments)
             const qint64 count,
             const std::function<bool(ModelsCollection<Related> &&, qint64)> &callback,
             const QString &column, const QString &alias) const
@@ -1092,7 +1092,7 @@ namespace Orm::Tiny::Relations
     }
 
     template<class Model, class Related, class PivotType>
-    bool BelongsToMany<Model, Related, PivotType>::eachById(
+    bool BelongsToMany<Model, Related, PivotType>::eachById( // NOLINT(google-default-arguments)
             const std::function<bool(Related &&, qint64)> &callback,
             const qint64 count, const QString &column, const QString &alias) const
     {
@@ -1534,7 +1534,7 @@ namespace Orm::Tiny::Relations
 
     template<class Model, class Related, class PivotType>
     std::unique_ptr<Builder<Related>>
-    BelongsToMany<Model, Related, PivotType>::getRelationExistenceQuery(
+    BelongsToMany<Model, Related, PivotType>::getRelationExistenceQuery( // NOLINT(google-default-arguments)
             std::unique_ptr<Builder<Related>> &&query,
             const Builder<Model> &parentQuery,
             const QVector<Column> &columns) const

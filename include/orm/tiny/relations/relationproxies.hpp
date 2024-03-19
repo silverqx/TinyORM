@@ -73,13 +73,13 @@ namespace Tiny::Relations
 
         /*! Find a model by its primary key. */
         virtual std::optional<Related>
-        find(const QVariant &id, const QVector<Column> &columns = {ASTERISK}) const;
+        find(const QVariant &id, const QVector<Column> &columns = {ASTERISK}) const; // NOLINT(google-default-arguments)
         /*! Find a model by its primary key or return fresh model instance. */
         virtual Related
-        findOrNew(const QVariant &id, const QVector<Column> &columns = {ASTERISK}) const;
+        findOrNew(const QVariant &id, const QVector<Column> &columns = {ASTERISK}) const; // NOLINT(google-default-arguments)
         /*! Find a model by its primary key or throw an exception. */
         virtual Related
-        findOrFail(const QVariant &id,
+        findOrFail(const QVariant &id, // NOLINT(google-default-arguments)
                    const QVector<Column> &columns = {ASTERISK}) const;
         // findMany() is missing intentionally doesn't make sense for one type relations
 
@@ -103,25 +103,25 @@ namespace Tiny::Relations
 
         /*! Execute the query and get the first result. */
         virtual std::optional<Related>
-        first(const QVector<Column> &columns = {ASTERISK}) const;
+        first(const QVector<Column> &columns = {ASTERISK}) const; // NOLINT(google-default-arguments)
         /*! Get the first record matching the attributes or instantiate it. */
         virtual Related
-        firstOrNew(const QVector<WhereItem> &attributes = {},
+        firstOrNew(const QVector<WhereItem> &attributes = {}, // NOLINT(google-default-arguments)
                    const QVector<AttributeItem> &values = {}) const;
         /*! Get the first record matching the attributes or create it. */
         Related
         firstOrCreate(const QVector<WhereItem> &attributes = {},
                       const QVector<AttributeItem> &values = {}) const;
         /*! Execute the query and get the first result or throw an exception. */
-        virtual Related firstOrFail(const QVector<Column> &columns = {ASTERISK}) const;
+        virtual Related firstOrFail(const QVector<Column> &columns = {ASTERISK}) const; // NOLINT(google-default-arguments)
 
         /*! Execute the query and get the first result or call a callback. */
         virtual std::optional<Related>
-        firstOr(const QVector<Column> &columns,
+        firstOr(const QVector<Column> &columns, // NOLINT(google-default-arguments)
                 const std::function<void()> &callback = nullptr) const;
         /*! Execute the query and get the first result or call a callback. */
         virtual std::optional<Related>
-        firstOr(const std::function<void()> &callback = nullptr) const;
+        firstOr(const std::function<void()> &callback = nullptr) const; // NOLINT(google-default-arguments)
 
         /*! Execute the query and get the first result or call a callback. */
         template<typename R>
@@ -134,11 +134,11 @@ namespace Tiny::Relations
 
         /*! Add a basic where clause to the query, and return the first result. */
         virtual std::optional<Related>
-        firstWhere(const Column &column, const QString &comparison,
+        firstWhere(const Column &column, const QString &comparison, // NOLINT(google-default-arguments)
                    const QVariant &value, const QString &condition = AND) const;
         /*! Add a basic where clause to the query, and return the first result. */
         virtual std::optional<Related>
-        firstWhereEq(const Column &column, const QVariant &value,
+        firstWhereEq(const Column &column, const QVariant &value, // NOLINT(google-default-arguments)
                      const QString &condition = AND) const;
 
         /*! Add a where clause on the primary key to the query. */
@@ -864,12 +864,12 @@ namespace Tiny::Relations
                   bool(ModelsCollection<Related> &&models, qint64 page)> &callback) const;
         /*! Execute a callback over each item while chunking. */
         virtual bool
-        each(const std::function<bool(Related &&model, qint64 index)> &callback,
+        each(const std::function<bool(Related &&model, qint64 index)> &callback, // NOLINT(google-default-arguments)
              qint64 count = 1000) const;
 
         /*! Run a map over each item while chunking. */
         virtual ModelsCollection<Related>
-        chunkMap(const std::function<Related(Related &&model)> &callback,
+        chunkMap(const std::function<Related(Related &&model)> &callback, // NOLINT(google-default-arguments)
                  qint64 count = 1000) const;
         /*! Run a map over each item while chunking. */
         template<typename T>
@@ -879,13 +879,13 @@ namespace Tiny::Relations
 
         /*! Chunk the results of a query by comparing IDs. */
         virtual bool
-        chunkById(qint64 count,
+        chunkById(qint64 count, // NOLINT(google-default-arguments)
                   const std::function<
                       bool(ModelsCollection<Related> &&models, qint64 page)> &callback,
                   const QString &column = "", const QString &alias = "") const;
         /*! Execute a callback over each item while chunking by ID. */
         virtual bool
-        eachById(const std::function<bool(Related &&model, qint64 index)> &callback,
+        eachById(const std::function<bool(Related &&model, qint64 index)> &callback, // NOLINT(google-default-arguments)
                  qint64 count = 1000, const QString &column = "",
                  const QString &alias = "") const;
 
@@ -1091,7 +1091,7 @@ namespace Tiny::Relations
 
     template<class Model, class Related>
     std::optional<Related>
-    RelationProxies<Model, Related>::find(const QVariant &id,
+    RelationProxies<Model, Related>::find(const QVariant &id, // NOLINT(google-default-arguments)
                                           const QVector<Column> &columns) const
     {
         return getQuery().find(id, columns);
@@ -1099,7 +1099,7 @@ namespace Tiny::Relations
 
     template<class Model, class Related>
     Related
-    RelationProxies<Model, Related>::findOrNew(const QVariant &id,
+    RelationProxies<Model, Related>::findOrNew(const QVariant &id, // NOLINT(google-default-arguments)
                                                const QVector<Column> &columns) const
     {
         return getQuery().findOrNew(id, columns);
@@ -1107,7 +1107,7 @@ namespace Tiny::Relations
 
     template<class Model, class Related>
     Related
-    RelationProxies<Model, Related>::findOrFail(const QVariant &id,
+    RelationProxies<Model, Related>::findOrFail(const QVariant &id, // NOLINT(google-default-arguments)
                                                 const QVector<Column> &columns) const
     {
         return getQuery().findOrFail(id, columns);
@@ -1151,14 +1151,14 @@ namespace Tiny::Relations
 
     template<class Model, class Related>
     std::optional<Related>
-    RelationProxies<Model, Related>::first(const QVector<Column> &columns) const
+    RelationProxies<Model, Related>::first(const QVector<Column> &columns) const // NOLINT(google-default-arguments)
     {
         return getQuery().first(columns);
     }
 
     template<class Model, class Related>
     Related
-    RelationProxies<Model, Related>::firstOrNew(
+    RelationProxies<Model, Related>::firstOrNew( // NOLINT(google-default-arguments)
             const QVector<WhereItem> &attributes,
             const QVector<AttributeItem> &values) const
     {
@@ -1175,7 +1175,7 @@ namespace Tiny::Relations
     }
 
     template<class Model, class Related>
-    Related RelationProxies<Model, Related>::firstOrFail(
+    Related RelationProxies<Model, Related>::firstOrFail( // NOLINT(google-default-arguments)
             const QVector<Column> &columns) const
     {
         return getQuery().firstOrFail(columns);
@@ -1183,7 +1183,7 @@ namespace Tiny::Relations
 
     template<class Model, class Related>
     std::optional<Related>
-    RelationProxies<Model, Related>::firstOr(
+    RelationProxies<Model, Related>::firstOr( // NOLINT(google-default-arguments)
             const QVector<Column> &columns, const std::function<void()> &callback) const
     {
         return getQuery().firstOr(columns, callback);
@@ -1191,7 +1191,7 @@ namespace Tiny::Relations
 
     template<class Model, class Related>
     std::optional<Related>
-    RelationProxies<Model, Related>::firstOr(const std::function<void()> &callback) const
+    RelationProxies<Model, Related>::firstOr(const std::function<void()> &callback) const // NOLINT(google-default-arguments)
     {
         return getQuery().firstOr({ASTERISK}, callback);
     }
@@ -1215,7 +1215,7 @@ namespace Tiny::Relations
 
     template<class Model, class Related>
     std::optional<Related>
-    RelationProxies<Model, Related>::firstWhere(
+    RelationProxies<Model, Related>::firstWhere( // NOLINT(google-default-arguments)
             const Column &column, const QString &comparison,
             const QVariant &value, const QString &condition) const
     {
@@ -1224,7 +1224,7 @@ namespace Tiny::Relations
 
     template<class Model, class Related>
     std::optional<Related>
-    RelationProxies<Model, Related>::firstWhereEq(
+    RelationProxies<Model, Related>::firstWhereEq( // NOLINT(google-default-arguments)
             const Column &column, const QVariant &value, const QString &condition) const
     {
         return getQuery().firstWhereEq(column, value, condition);
@@ -3130,7 +3130,7 @@ namespace Tiny::Relations
     }
 
     template<class Model, class Related>
-    bool RelationProxies<Model, Related>::each(
+    bool RelationProxies<Model, Related>::each( // NOLINT(google-default-arguments)
             const std::function<bool(Related &&, qint64)> &callback,
             const qint64 count) const
     {
@@ -3139,7 +3139,7 @@ namespace Tiny::Relations
 
     template<class Model, class Related>
     ModelsCollection<Related>
-    RelationProxies<Model, Related>::chunkMap(
+    RelationProxies<Model, Related>::chunkMap( // NOLINT(google-default-arguments)
             const std::function<Related(Related &&)> &callback, const qint64 count) const
     {
         return getQuery().chunkMap(callback, count);
@@ -3155,7 +3155,7 @@ namespace Tiny::Relations
     }
 
     template<class Model, class Related>
-    bool RelationProxies<Model, Related>::chunkById(
+    bool RelationProxies<Model, Related>::chunkById( // NOLINT(google-default-arguments)
             const qint64 count,
             const std::function<bool(ModelsCollection<Related> &&, qint64)> &callback,
             const QString &column, const QString &alias) const
@@ -3164,7 +3164,7 @@ namespace Tiny::Relations
     }
 
     template<class Model, class Related>
-    bool RelationProxies<Model, Related>::eachById(
+    bool RelationProxies<Model, Related>::eachById( // NOLINT(google-default-arguments)
             const std::function<bool(Related &&, qint64)> &callback,
             const qint64 count, const QString &column, const QString &alias) const
     {

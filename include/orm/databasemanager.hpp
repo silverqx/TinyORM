@@ -146,7 +146,7 @@ namespace Query
         static DatabaseManager &reference();
 
         /*! Get a database connection instance. */
-        DatabaseConnection &connection(const QString &name = "") final;
+        DatabaseConnection &connection(const QString &name = "") final; // NOLINT(google-default-arguments)
         /*! Begin a fluent query against the database on a given connection (alias for
             the connection() method). */
         inline DatabaseConnection &on(const QString &connection);

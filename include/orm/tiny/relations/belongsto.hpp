@@ -134,7 +134,7 @@ namespace Orm::Tiny::Relations
         /* Querying Relationship Existence/Absence */
         /*! Add the constraints for a relationship query. */
         std::unique_ptr<Builder<Related>>
-        getRelationExistenceQuery(
+        getRelationExistenceQuery( // NOLINT(google-default-arguments)
                 std::unique_ptr<Builder<Related>> &&query,
                 const Builder<Model> &parentQuery,
                 const QVector<Column> &columns = {ASTERISK}) const override;
@@ -457,7 +457,7 @@ namespace Orm::Tiny::Relations
 
     template<class Model, class Related>
     std::unique_ptr<Builder<Related>>
-    BelongsTo<Model, Related>::getRelationExistenceQuery(
+    BelongsTo<Model, Related>::getRelationExistenceQuery( // NOLINT(google-default-arguments)
             std::unique_ptr<Builder<Related>> &&query,
             const Builder<Model> &/*parentQuery*/,
             const QVector<Column> &columns) const

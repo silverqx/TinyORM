@@ -52,9 +52,9 @@ namespace Grammars
         virtual QString compileDropAllViews(const QVector<QString> &views) const;
 
         /*! Compile the SQL needed to retrieve all table names. */
-        virtual QString compileGetAllTables(const QVector<QString> &databases = {}) const;
+        virtual QString compileGetAllTables(const QVector<QString> &databases = {}) const; // NOLINT(google-default-arguments)
         /*! Compile the SQL needed to retrieve all view names. */
-        virtual QString compileGetAllViews(const QVector<QString> &databases = {}) const;
+        virtual QString compileGetAllViews(const QVector<QString> &databases = {}) const; // NOLINT(google-default-arguments)
 
         /*! Compile the command to enable foreign key constraints. */
         virtual QString compileEnableForeignKeyConstraints() const = 0;
@@ -64,7 +64,7 @@ namespace Grammars
         /*! Compile the query to determine the list of tables. */
         virtual QString compileTableExists() const;
         /*! Compile the query to determine the list of columns. */
-        virtual QString compileColumnListing(const QString &table = "") const = 0;
+        virtual QString compileColumnListing(const QString &table = "") const = 0; // NOLINT(google-default-arguments)
 
         /* Compile methods for commands */
         /*! Compile a change column command. */

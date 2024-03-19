@@ -27,7 +27,7 @@ namespace Orm
         inline virtual ~ConnectionResolverInterface() = 0;
 
         /*! Get a database connection instance. */
-        virtual DatabaseConnection &connection(const QString &name = "") = 0;
+        virtual DatabaseConnection &connection(const QString &name = "") = 0; // NOLINT(google-default-arguments)
 
         /*! Get the default connection name. */
         virtual const QString &getDefaultConnection() const = 0;

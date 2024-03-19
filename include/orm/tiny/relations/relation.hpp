@@ -107,7 +107,7 @@ namespace Relations
         inline ModelsCollection<Related> getEager() const;
         /*! Execute the query as a "select" statement. */
         inline virtual ModelsCollection<Related>
-        get(const QVector<Column> &columns = {ASTERISK}) const;
+        get(const QVector<Column> &columns = {ASTERISK}) const; // NOLINT(google-default-arguments)
 
         /* Getters / Setters */
         /*! Get the underlying query for the relation. */
@@ -173,7 +173,7 @@ namespace Relations
         /*! Add the constraints for an internal relationship existence query.
             Essentially, these queries compare on column names like whereColumn. */
         virtual std::unique_ptr<Builder<Related>>
-        getRelationExistenceQuery(
+        getRelationExistenceQuery( // NOLINT(google-default-arguments)
                 std::unique_ptr<Builder<Related>> &&query,
                 const Builder<Model> &parentQuery,
                 const QVector<Column> &columns = {ASTERISK}) const;
@@ -251,7 +251,7 @@ namespace Relations
 
     template<class Model, class Related>
     ModelsCollection<Related>
-    Relation<Model, Related>::get(const QVector<Column> &columns) const
+    Relation<Model, Related>::get(const QVector<Column> &columns) const // NOLINT(google-default-arguments)
     {
         return m_query->get(columns);
     }
@@ -435,7 +435,7 @@ namespace Relations
 
     template<class Model, class Related>
     std::unique_ptr<Builder<Related>>
-    Relation<Model, Related>::getRelationExistenceQuery(
+    Relation<Model, Related>::getRelationExistenceQuery( // NOLINT(google-default-arguments)
             std::unique_ptr<Builder<Related>> &&query, const Builder<Model> &/*unused*/,
             const QVector<Column> &columns) const
     {

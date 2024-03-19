@@ -56,12 +56,12 @@ namespace Orm::Tiny::Relations
         /* TinyBuilder proxy methods that need modifications */
         /*! Find a model by its primary key or return a new instance of the related
             model. */
-        Related findOrNew(const QVariant &id,
+        Related findOrNew(const QVariant &id, // NOLINT(google-default-arguments)
                           const QVector<Column> &columns = {ASTERISK}) const override;
 
         /*! Get the first related model record matching the attributes or instantiate
             it. */
-        Related firstOrNew(const QVector<WhereItem> &attributes = {},
+        Related firstOrNew(const QVector<WhereItem> &attributes = {}, // NOLINT(google-default-arguments)
                            const QVector<AttributeItem> &values = {}) const override;
         /*! Get the first related record matching the attributes or create it. */
         Related firstOrCreate(const QVector<WhereItem> &attributes = {},
@@ -119,7 +119,7 @@ namespace Orm::Tiny::Relations
         /* Querying Relationship Existence/Absence */
         /*! Add the constraints for a relationship query. */
         std::unique_ptr<Builder<Related>>
-        getRelationExistenceQuery(
+        getRelationExistenceQuery( // NOLINT(google-default-arguments)
                 std::unique_ptr<Builder<Related>> &&query,
                 const Builder<Model> &parentQuery,
                 const QVector<Column> &columns = {ASTERISK}) const override;
@@ -208,7 +208,7 @@ namespace Orm::Tiny::Relations
     /* TinyBuilder proxy methods that need modifications */
 
     template<class Model, class Related>
-    Related HasOneOrMany<Model, Related>::findOrNew(const QVariant &id,
+    Related HasOneOrMany<Model, Related>::findOrNew(const QVariant &id, // NOLINT(google-default-arguments)
                                                     const QVector<Column> &columns) const
     {
         // Found
@@ -223,7 +223,7 @@ namespace Orm::Tiny::Relations
     }
 
     template<class Model, class Related>
-    Related HasOneOrMany<Model, Related>::firstOrNew(
+    Related HasOneOrMany<Model, Related>::firstOrNew( // NOLINT(google-default-arguments)
             const QVector<WhereItem> &attributes,
             const QVector<AttributeItem> &values) const
     {
@@ -459,7 +459,7 @@ namespace Orm::Tiny::Relations
 
     template<class Model, class Related>
     std::unique_ptr<Builder<Related>>
-    HasOneOrMany<Model, Related>::getRelationExistenceQuery(
+    HasOneOrMany<Model, Related>::getRelationExistenceQuery( // NOLINT(google-default-arguments)
             std::unique_ptr<Builder<Related>> &&query,
             const Builder<Model> &parentQuery,
             const QVector<Column> &columns) const
