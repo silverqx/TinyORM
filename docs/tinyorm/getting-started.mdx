@@ -281,9 +281,9 @@ If you need to customize the names of the columns used to store the timestamps, 
 
     private:
         /*! The name of the "created at" column. */
-        inline static QString CREATED_AT() { return QStringLiteral("creation_date"); }
+        static QString CREATED_AT() { return QStringLiteral("creation_date"); }
         /*! The name of the "updated at" column. */
-        inline static QString UPDATED_AT() { return QStringLiteral("updated_date"); }
+        static QString UPDATED_AT() { return QStringLiteral("updated_date"); }
     };
 
 #### Touching timestamps
