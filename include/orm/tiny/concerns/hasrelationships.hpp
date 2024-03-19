@@ -340,7 +340,7 @@ namespace Concerns
         /*! On the base of alternative held by m_relations decide, which
             touchOwnersVisited() to execute. */
         template<typename Related, typename Relation>
-        void touchOwnersVisited(Relation &&relation, const QString &relationName);
+        void touchOwnersVisited(const Relation &relation, const QString &relationName);
 
         /* QueriesRelationships store related */
         /*! Create 'QueriesRelationships relation store' to obtain relation instance. */
@@ -1344,7 +1344,7 @@ namespace Concerns
     template<typename Derived, AllRelationsConcept ...AllRelations>
     template<typename Related, typename Relation>
     void HasRelationships<Derived, AllRelations...>::touchOwnersVisited(
-            Relation &&relation, const QString &relationName)
+            const Relation &relation, const QString &relationName)
     {
         relation->touch();
 

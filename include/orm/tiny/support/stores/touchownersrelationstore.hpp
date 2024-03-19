@@ -70,9 +70,8 @@ namespace Orm::Tiny::Support::Stores
         using Related = typename std::invoke_result_t<Method, Derived>
                                     ::element_type::RelatedType;
 
-        this->basemodel()
-                .template touchOwnersVisited<Related>(std::move(relationInstance),
-                                                      *m_relation);
+        this->basemodel().template touchOwnersVisited<Related>(relationInstance,
+                                                               *m_relation);
     }
 
 } // namespace Orm::Tiny::Support::Stores

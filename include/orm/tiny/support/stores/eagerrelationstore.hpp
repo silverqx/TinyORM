@@ -112,8 +112,7 @@ namespace Orm::Tiny::Support::Stores
             return std::invoke(method, dummyModel);
         });
 
-        m_builder->eagerLoadRelationVisited(std::move(relationInstance),
-                                            *m_models, *m_relation);
+        m_builder->eagerLoadRelationVisited(relationInstance, *m_models, *m_relation);
     }
 
     template<typename Derived,

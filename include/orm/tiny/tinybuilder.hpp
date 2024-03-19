@@ -252,7 +252,7 @@ namespace Orm::Tiny
         /*! Eagerly load the relationship on a set of models. */
         template<typename Relation, SameDerivedCollectionModel<Model> CollectionModel>
         void eagerLoadRelationVisited(
-                Relation &&relation, ModelsCollection<CollectionModel> &models,
+                Relation &relation, ModelsCollection<CollectionModel> &models,
                 const WithItem &relationItem) const;
 
         /*! Create a vector of models from the SqlQuery. */
@@ -1110,7 +1110,7 @@ namespace Orm::Tiny
     template<typename Model>
     template<typename Relation, SameDerivedCollectionModel<Model> CollectionModel>
     void Builder<Model>::eagerLoadRelationVisited(
-            Relation &&relation, ModelsCollection<CollectionModel> &models,
+            Relation &relation, ModelsCollection<CollectionModel> &models,
             const WithItem &relationItem) const
     {
         /* First we will "back up" the existing where conditions (Relation::noConstraints)
