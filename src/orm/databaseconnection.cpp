@@ -345,7 +345,13 @@ QSqlQuery DatabaseConnection::getQtQuery()
 QVector<QVariant> &
 DatabaseConnection::prepareBindings(QVector<QVariant> &bindings) const
 {
-    // Weird return value (non-const reference) is for better variable naming in caller
+    /* Weird return value (non-const reference) is for better variable naming in caller.
+       Also, I tried to revert back movable bindings to const & bindings only because
+       I thought there was no reason for movable bindings but I denied it.
+       The reason was that each binding would have to be copied one by one at the end
+       of the following for() loop and this is less efficient, so is better to move or
+       copy bindings container once in select/statement/insert/affectingStatement methods
+       and then modify them here. I leave it this way, it's not a big deal anyway. 😎 */
 
     for (auto &binding : bindings) {
         // Nothing to convert

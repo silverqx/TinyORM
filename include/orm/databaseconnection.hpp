@@ -511,7 +511,7 @@ namespace Orm
     template<typename Return>
     Return
     DatabaseConnection::run(
-            const QString &queryString, QVector<QVariant> &&bindings,
+            const QString &queryString, QVector<QVariant> &&bindings, // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
             const QString &type, const RunCallback<Return> &callback)
     {
         reconnectIfMissingConnection();
