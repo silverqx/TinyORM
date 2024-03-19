@@ -245,8 +245,8 @@ Builder::update(const QVector<UpdateItem> &values)
 {
     return m_connection->update(
                 m_grammar->compileUpdate(*this, values),
-                cleanBindings(m_grammar->prepareBindingsForUpdate(getRawBindings(),
-                                                                  values)));
+                cleanBindings(QueryGrammar::prepareBindingsForUpdate(getRawBindings(),
+                                                                     values)));
 }
 
 namespace
@@ -334,7 +334,7 @@ std::tuple<int, QSqlQuery> Builder::remove()
 {
     return m_connection->remove(
             m_grammar->compileDelete(*this),
-            cleanBindings(m_grammar->prepareBindingsForDelete(getRawBindings())));
+            cleanBindings(QueryGrammar::prepareBindingsForDelete(getRawBindings())));
 }
 
 void Builder::truncate()

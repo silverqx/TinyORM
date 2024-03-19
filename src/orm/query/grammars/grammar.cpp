@@ -75,8 +75,8 @@ QString Grammar::compileUpdate(QueryBuilder &query,
 }
 
 QVector<QVariant>
-Grammar::prepareBindingsForUpdate(const BindingsMap &bindings, // NOLINT(readability-convert-member-functions-to-static)
-                                  const QVector<UpdateItem> &values) const
+Grammar::prepareBindingsForUpdate(const BindingsMap &bindings,
+                                  const QVector<UpdateItem> &values)
 {
 #if defined(__GNUG__) && !defined(__clang__)
 #  pragma GCC diagnostic push
@@ -131,7 +131,7 @@ QString Grammar::compileDelete(QueryBuilder &query) const
                                       : compileDeleteWithJoins(query, table, wheres);
 }
 
-QVector<QVariant> Grammar::prepareBindingsForDelete(const BindingsMap &bindings) const  // NOLINT(readability-convert-member-functions-to-static)
+QVector<QVariant> Grammar::prepareBindingsForDelete(const BindingsMap &bindings)
 {
     QVector<QVariant> preparedBindings;
     preparedBindings.reserve(

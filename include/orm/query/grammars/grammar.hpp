@@ -51,9 +51,9 @@ namespace Orm::Query::Grammars
         virtual QString
         compileUpdate(QueryBuilder &query, const QVector<UpdateItem> &values) const;
         /*! Prepare the bindings for an update statement. */
-        QVector<QVariant>
+        static QVector<QVariant>
         prepareBindingsForUpdate(const BindingsMap &bindings,
-                                 const QVector<UpdateItem> &values) const;
+                                 const QVector<UpdateItem> &values);
 
         /*! Compile an "upsert" statement into SQL. */
         virtual QString
@@ -63,8 +63,7 @@ namespace Orm::Query::Grammars
         /*! Compile a delete statement into SQL. */
         virtual QString compileDelete(QueryBuilder &query) const;
         /*! Prepare the bindings for a delete statement. */
-        QVector<QVariant>
-        prepareBindingsForDelete(const BindingsMap &bindings) const;
+        static QVector<QVariant> prepareBindingsForDelete(const BindingsMap &bindings);
 
         /*! Compile a truncate table statement into SQL. Returns a map of
             the query string and bindings. */
