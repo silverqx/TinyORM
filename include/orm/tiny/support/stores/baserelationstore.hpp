@@ -64,7 +64,7 @@ namespace Support::Stores
     class SerializeRelationStore;
 
     /*! Type of data saved in the relation store. */
-    enum struct RelationStoreType
+    enum struct RelationStoreType : quint8
     {
         EAGER,
         EAGER_POINTERS,

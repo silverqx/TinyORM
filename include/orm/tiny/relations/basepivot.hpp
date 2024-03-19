@@ -403,10 +403,10 @@ namespace Orm::Tiny::Relations
         // Configured using the withTimestamps() method
         if (withTimestamps) {
             if (createdAt != CREATED_AT)
-                const_cast<QString &>(CREATED_AT) = createdAt;
+                const_cast<QString &>(CREATED_AT) = createdAt; // NOLINT(cppcoreguidelines-pro-type-const-cast)
 
             if (updatedAt != UPDATED_AT)
-                const_cast<QString &>(UPDATED_AT) = updatedAt;
+                const_cast<QString &>(UPDATED_AT) = updatedAt; // NOLINT(cppcoreguidelines-pro-type-const-cast)
         }
 
         // Inferre from the parent model
@@ -414,12 +414,12 @@ namespace Orm::Tiny::Relations
             if (const auto &parentCreatedAt = Parent::getCreatedAtColumn();
                 parentCreatedAt != CREATED_AT
             )
-                const_cast<QString &>(CREATED_AT) = parentCreatedAt;
+                const_cast<QString &>(CREATED_AT) = parentCreatedAt; // NOLINT(cppcoreguidelines-pro-type-const-cast)
 
             if (const auto &parentUpdatedAt = Parent::getUpdatedAtColumn();
                 parentUpdatedAt != UPDATED_AT
             )
-                const_cast<QString &>(UPDATED_AT) = parentUpdatedAt;
+                const_cast<QString &>(UPDATED_AT) = parentUpdatedAt; // NOLINT(cppcoreguidelines-pro-type-const-cast)
         }
     }
 

@@ -861,7 +861,7 @@ namespace Orm::Tiny::Concerns
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     QVector<AttributeItem>
-    HasAttributes<Derived, AllRelations...>::only(QStringList &&attributes) const
+    HasAttributes<Derived, AllRelations...>::only(QStringList &&attributes) const // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
     {
         QVector<AttributeItem> result;
         result.reserve(attributes.size());

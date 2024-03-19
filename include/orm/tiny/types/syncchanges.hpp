@@ -173,7 +173,7 @@ namespace Types
     /* SyncChanges related */
 
     template<typename KeyType>
-    SyncChanges &SyncChanges::merge(SyncChanges &&changes)
+    SyncChanges &SyncChanges::merge(SyncChanges &&changes) // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
     {
         /* I can't find a better place for this check, an alternative is to add
            the dataSize() -> m_data.size() public method and wrap it in

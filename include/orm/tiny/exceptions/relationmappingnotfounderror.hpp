@@ -18,7 +18,7 @@ namespace Orm::Tiny::Exceptions
     {
     public:
         /*! Exception message will be generated on the base of this enum struct. */
-        enum struct From
+        enum struct From : qint8
         {
             UNDEFINED       = -1,
             BELONGS_TO      = 0,

@@ -820,7 +820,7 @@ namespace Orm::Query
                              QVector<QVariant> &&bindings);
 
         /*! Builder property types. */
-        enum struct PropertyType
+        enum struct PropertyType : quint8
         {
             COLUMNS,
         };

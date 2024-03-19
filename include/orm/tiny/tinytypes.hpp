@@ -128,7 +128,7 @@ namespace Types
     inline constexpr DontFillDefaultAttributes dontFillDefaultAttributes {};
 
     /*! Cast types. */
-    enum struct CastType
+    enum struct CastType : quint8
     {
         // Bool
         Bool, Boolean,

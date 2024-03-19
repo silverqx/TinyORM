@@ -271,7 +271,7 @@ namespace Orm::Tiny::Relations
 
     template<class Model, class Related>
     QHash<typename Model::KeyType, Related>
-    BelongsTo<Model, Related>::buildDictionary(ModelsCollection<Related> &&results) const
+    BelongsTo<Model, Related>::buildDictionary(ModelsCollection<Related> &&results) const // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
     {
         QHash<typename Model::KeyType, Related> dictionary;
         dictionary.reserve(results.size());

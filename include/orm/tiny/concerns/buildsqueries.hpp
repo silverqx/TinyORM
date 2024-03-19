@@ -144,7 +144,7 @@ namespace Concerns
                                     const qint64 count)
     {
         return chunk(count, [&callback]
-                            (ModelsCollection<Model> &&models, const qint64 /*unused*/)
+                            (ModelsCollection<Model> &&models, const qint64 /*unused*/) // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
         {
             qint64 index = 0;
 
@@ -168,7 +168,7 @@ namespace Concerns
         result.reserve(static_cast<typename ModelsCollection<Model>::size_type>(count));
 
         chunk(count, [&result, &callback]
-                     (ModelsCollection<Model> &&models, const qint64 /*unused*/)
+                     (ModelsCollection<Model> &&models, const qint64 /*unused*/) // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
         {
             for (auto &&model : models)
                 result << std::invoke(callback, std::move(model));
@@ -190,7 +190,7 @@ namespace Concerns
         result.reserve(static_cast<typename QVector<T>::size_type>(count));
 
         chunk(count, [&result, &callback]
-                     (ModelsCollection<Model> &&models, const qint64 /*unused*/)
+                     (ModelsCollection<Model> &&models, const qint64 /*unused*/) // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
         {
             for (auto &&model : models)
                 result << std::invoke(callback, std::move(model));
@@ -264,7 +264,7 @@ namespace Concerns
             const qint64 count, const QString &column, const QString &alias) const
     {
         return chunkById(count, [&callback, count]
-                                (ModelsCollection<Model> &&models, const qint64 page)
+                                (ModelsCollection<Model> &&models, const qint64 page) // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
         {
             qint64 index = 0;
 

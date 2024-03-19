@@ -22,7 +22,7 @@ namespace Concerns
 {
 
     /*! SoftDeletes constraint types. */
-    enum struct TrashedType
+    enum struct TrashedType : quint8
     {
         WITHOUT_TRASHED,
         WITH_TRASHED,

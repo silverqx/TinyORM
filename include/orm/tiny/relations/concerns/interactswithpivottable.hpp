@@ -339,8 +339,7 @@ namespace Concerns
 
     template<class Model, class Related, class PivotType>
     BelongsToMany<Model, Related, PivotType> &
-    InteractsWithPivotTable<Model, Related, PivotType>::withPivot(
-            QStringList &&columns)
+    InteractsWithPivotTable<Model, Related, PivotType>::withPivot(QStringList &&columns) // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
     {
         for (auto &&column : columns)
             if (!hasPivotColumn(column))

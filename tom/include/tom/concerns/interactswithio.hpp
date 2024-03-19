@@ -76,7 +76,8 @@ namespace Concerns
         virtual ~InteractsWithIO();
 
         /*! Verbosity levels. */
-        enum struct Verbosity {
+        enum struct Verbosity : quint8
+        {
             Quiet       = 0x0001,
             Normal      = 0x0002,
             Verbose     = 0x0004,

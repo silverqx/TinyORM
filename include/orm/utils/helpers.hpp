@@ -105,7 +105,7 @@ namespace Utils
 
     template<typename T>
     T &&
-    Helpers::tap(T &&value, std::function<void(T &)> &&callback)
+    Helpers::tap(T &&value, std::function<void(T &)> &&callback) // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
     requires (!std::is_reference_v<T>)
     {
         if (callback)
@@ -118,7 +118,7 @@ namespace Utils
 
     template<typename T>
     T &&
-    Helpers::tap(T &&value, std::function<void()> &&callback)
+    Helpers::tap(T &&value, std::function<void()> &&callback) // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
     requires (!std::is_reference_v<T>)
     {
         if (callback)

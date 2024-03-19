@@ -358,7 +358,7 @@ namespace Private
     template<typename Related>
     TinyBuilder<Model> &
     QueriesRelationships<Model>::has(
-            std::unique_ptr<Relation<Related>> &&relation, const QString &comparison,
+            std::unique_ptr<Relation<Related>> &&relation, const QString &comparison, // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
             const qint64 count, const QString &condition,
             const std::function<void(QueryBuilder &)> &callback)
     {
@@ -379,7 +379,7 @@ namespace Private
     template<typename Related, typename>
     TinyBuilder<Model> &
     QueriesRelationships<Model>::has(
-            std::unique_ptr<Relation<Related>> &&relation, const QString &comparison,
+            std::unique_ptr<Relation<Related>> &&relation, const QString &comparison, // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
             const qint64 count, const QString &condition,
             const std::function<void(TinyBuilder<Related> &)> &callback)
     {
@@ -636,7 +636,7 @@ namespace Private
     template<typename Model>
     template<typename Related>
     void QueriesRelationships<Model>::hasNestedInternalFromStore(
-            std::unique_ptr<Relation<Related>> &&relation)
+            std::unique_ptr<Relation<Related>> &&relation) // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
     {
         /* Check if a template argument passed to nested has() equals with the guessed
            Related template argument for a last nested relation. */

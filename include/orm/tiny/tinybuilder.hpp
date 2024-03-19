@@ -1144,7 +1144,7 @@ namespace Orm::Tiny
 
     template<typename Model>
     ModelsCollection<Model>
-    Builder<Model>::hydrate(SqlQuery &&result) const
+    Builder<Model>::hydrate(SqlQuery &&result) const // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
     {
         auto instance = newModelInstance();
 

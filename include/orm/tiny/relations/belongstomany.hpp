@@ -503,7 +503,7 @@ namespace Orm::Tiny::Relations
     template<class Model, class Related, class PivotType>
     QHash<typename Model::KeyType, ModelsCollection<Related>>
     BelongsToMany<Model, Related, PivotType>::buildDictionary(
-            ModelsCollection<Related> &&results) const
+            ModelsCollection<Related> &&results) const // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
     {
         /* First we will build a dictionary of child models keyed by the foreign key
            of the relation so that we will easily and quickly match them to their
@@ -1010,7 +1010,7 @@ namespace Orm::Tiny::Relations
             const qint64 count) const
     {
         return chunk(count, [&callback]
-                            (ModelsCollection<Related> &&models, const qint64 /*unused*/)
+                            (ModelsCollection<Related> &&models, const qint64 /*unused*/) // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
         {
             qint64 index = 0;
 
@@ -1034,7 +1034,7 @@ namespace Orm::Tiny::Relations
         result.reserve(static_cast<typename ModelsCollection<Related>::size_type>(count));
 
         chunk(count, [&result, &callback]
-                     (ModelsCollection<Related> &&models, const qint64 /*unused*/)
+                     (ModelsCollection<Related> &&models, const qint64 /*unused*/) // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
         {
             for (auto &&model : models)
                 result << std::invoke(callback, std::move(model));
@@ -1056,7 +1056,7 @@ namespace Orm::Tiny::Relations
         result.reserve(static_cast<typename QVector<T>::size_type>(count));
 
         chunk(count, [&result, &callback]
-                     (ModelsCollection<Related> &&models, const qint64 /*unused*/)
+                     (ModelsCollection<Related> &&models, const qint64 /*unused*/) // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
         {
             for (auto &&model : models)
                 result << std::invoke(callback, std::move(model));
@@ -1097,7 +1097,7 @@ namespace Orm::Tiny::Relations
             const qint64 count, const QString &column, const QString &alias) const
     {
         return chunkById(count, [&callback, count]
-                                (ModelsCollection<Related> &&models, const qint64 page)
+                                (ModelsCollection<Related> &&models, const qint64 page) // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
         {
             qint64 index = 0;
 

@@ -421,7 +421,7 @@ namespace Orm::Tiny
     private:
         /* Operations on a Model instance */
         /*! Method to call in the incrementOrDecrement(). */
-        enum struct IncrementOrDecrement
+        enum struct IncrementOrDecrement : quint8
         {
             INCREMENT,
             DECREMENT,

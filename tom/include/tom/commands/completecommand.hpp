@@ -73,7 +73,7 @@ namespace Tom::Commands
         getCommandOptionsSignature(const std::optional<QString> &command) const;
 
         /*! Option type (long/short). */
-        enum struct OptionType
+        enum struct OptionType : qint8
         {
             UNDEFINED = -1,
             LONG,

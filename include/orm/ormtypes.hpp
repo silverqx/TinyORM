@@ -40,7 +40,7 @@ namespace Query
     using FromClause = std::variant<std::monostate, QString, Query::Expression>;
 
     /*! Binding types. */
-    enum struct BindingType
+    enum struct BindingType : quint8
     {
         SELECT,
         FROM,
@@ -64,7 +64,7 @@ namespace Query
     };
 
     /*! Supported where clause types. */
-    enum struct WhereType
+    enum struct WhereType : qint8
     {
         UNDEFINED = -1,
         BASIC,
@@ -88,7 +88,7 @@ namespace Query
     };
 
     /*! Supported having types. */
-    enum struct HavingType
+    enum struct HavingType : qint8
     {
         UNDEFINED = -1,
         BASIC,
@@ -172,7 +172,7 @@ namespace Query
     };
 
     /*! Time zone type for the QtTimeZoneConfig connection configuration option. */
-    enum struct QtTimeZoneType
+    enum struct QtTimeZoneType : quint8
     {
         /*! Don't convert time zone. */
         DontConvert,

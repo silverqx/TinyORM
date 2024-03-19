@@ -353,7 +353,7 @@ namespace Orm::Tiny::Relations
     template<class Model, class Related>
     ModelsCollection<Related>
     HasOneOrMany<Model, Related>::createMany(
-            QVector<QVector<AttributeItem>> &&records) const
+            QVector<QVector<AttributeItem>> &&records) const // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
     {
         ModelsCollection<Related> instances;
         instances.reserve(records.size());
@@ -403,7 +403,7 @@ namespace Orm::Tiny::Relations
     template<typename RelationType>
     QHash<typename Model::KeyType, RelationType>
     HasOneOrMany<Model, Related>::buildDictionary(
-            ModelsCollection<Related> &&results) const
+            ModelsCollection<Related> &&results) const // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
     {
         QHash<typename Model::KeyType, RelationType> dictionary;
         dictionary.reserve(results.size());

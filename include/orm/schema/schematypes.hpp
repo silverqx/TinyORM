@@ -20,7 +20,7 @@ namespace Orm::SchemaNs
     inline constexpr int DefaultStringLength = 255;
 
     /*! Column types. */
-    enum struct ColumnType
+    enum struct ColumnType : qint8
     {
         Undefined = -1,
         Char,

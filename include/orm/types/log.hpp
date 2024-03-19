@@ -20,7 +20,7 @@ namespace Types
     struct Log
     {
         /*! Type of the query in log record. */
-        enum struct Type
+        enum struct Type : qint8
         {
             UNDEFINED = -1,
             NORMAL,

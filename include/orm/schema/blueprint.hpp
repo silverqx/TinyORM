@@ -775,7 +775,7 @@ namespace Grammars
 
         m_commands.emplace_back(std::move(command));
 
-        return reinterpret_cast<T &>(*m_commands.back());
+        return reinterpret_cast<T &>(*m_commands.back()); // NOLINT(cppcoreguidelines-pro-type-reinterpret-cast)
     }
 
     template<CommandDefinitionConcept T>

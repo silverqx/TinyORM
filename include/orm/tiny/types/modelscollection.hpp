@@ -610,7 +610,7 @@ namespace Types
     }
 
     template<DerivedCollectionModel Model>
-    ModelsCollection<Model>::ModelsCollection(QVector<Model> &&models) noexcept
+    ModelsCollection<Model>::ModelsCollection(QVector<Model> &&models) noexcept // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
     requires (!std::is_pointer_v<Model>)
     {
         for (auto &&model : models)
@@ -630,7 +630,7 @@ namespace Types
 
     template<DerivedCollectionModel Model>
     ModelsCollection<Model> &
-    ModelsCollection<Model>::operator=(QVector<Model> &&models) noexcept
+    ModelsCollection<Model>::operator=(QVector<Model> &&models) noexcept // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
     requires (!std::is_pointer_v<Model>)
     {
         for (auto &&model : models)
@@ -1733,7 +1733,7 @@ namespace Types
         {
             return model->exists && freshModels.contains(model->getKeyCasted());
         })
-            .map([&freshModels](ModelRawType &&model)
+            .map([&freshModels](ModelRawType &&model) // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
         {
             return *freshModels.at(model.getKeyCasted());
         });
@@ -1848,7 +1848,7 @@ namespace Types
     QVector<QVector<AttributeItem>>
     ModelsCollection<Model>::toVector() const
     {
-        return map<QVector<AttributeItem>>([](ModelRawType &&model)
+        return map<QVector<AttributeItem>>([](ModelRawType &&model) // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
         {
             return model.template toVector<PivotType>();
         });
@@ -1859,7 +1859,7 @@ namespace Types
     QVector<QVariantMap>
     ModelsCollection<Model>::toMap() const
     {
-        return map<QVariantMap>([](ModelRawType &&model)
+        return map<QVariantMap>([](ModelRawType &&model) // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
         {
             return model.template toMap<PivotType>();
         });
@@ -1871,7 +1871,7 @@ namespace Types
     ModelsCollection<Model>::toVectorVariantList() const
     {
 #if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
-        return map<QVariant>([](ModelRawType &&model)
+        return map<QVariant>([](ModelRawType &&model) // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
         {
             return QVariant::fromValue(model.template toVector<PivotType>());
         });
@@ -1900,7 +1900,7 @@ namespace Types
     ModelsCollection<Model>::toMapVariantList() const
     {
 #if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
-        return map<QVariant>([](ModelRawType &&model) -> QVariant
+        return map<QVariant>([](ModelRawType &&model) -> QVariant // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
         {
             return model.template toMap<PivotType>();
         });
@@ -2474,7 +2474,7 @@ namespace Types
     /*! Create a ModelsCollection from the given attributes. */
     template<Tiny::ModelConcept Model>
     Tiny::Types::ModelsCollection<Model>
-    collect(QVector<QVector<Tiny::AttributeItem>> &&attributesList)
+    collect(QVector<QVector<Tiny::AttributeItem>> &&attributesList) // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
     {
         Tiny::Types::ModelsCollection<Model> result;
         result.reserve(attributesList.size());
@@ -2488,7 +2488,7 @@ namespace Types
     /*! Create a ModelsCollection from the given attributes. */
     template<Tiny::ModelConcept Model>
     Tiny::Types::ModelsCollection<Model>
-    collect(QVector<QVector<Tiny::AttributeItem>> &&attributesList,
+    collect(QVector<QVector<Tiny::AttributeItem>> &&attributesList, // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
             const QString &connection)
     {
         Tiny::Types::ModelsCollection<Model> result;

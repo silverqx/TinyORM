@@ -140,7 +140,7 @@ namespace Orm::Tiny::Concerns
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     Derived &
-    GuardsAttributes<Derived, AllRelations...>::mergeFillable(QStringList &&fillable)
+    GuardsAttributes<Derived, AllRelations...>::mergeFillable(QStringList &&fillable) // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
     {
         auto &fillable_ = basemodel().getUserFillable();
 
@@ -191,7 +191,7 @@ namespace Orm::Tiny::Concerns
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     Derived &
-    GuardsAttributes<Derived, AllRelations...>::mergeGuarded(QStringList &&guarded)
+    GuardsAttributes<Derived, AllRelations...>::mergeGuarded(QStringList &&guarded) // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
     {
         auto &guarded_ = basemodel().getUserGuarded();
 
@@ -285,7 +285,7 @@ namespace Orm::Tiny::Concerns
     template<typename Derived, AllRelationsConcept ...AllRelations>
     std::unordered_set<QString>
     GuardsAttributes<Derived, AllRelations...>::moveToSetForGuardableHash(
-            QStringList &&columns)
+            QStringList &&columns) // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
     {
         std::unordered_set<QString> columnsSet;
 

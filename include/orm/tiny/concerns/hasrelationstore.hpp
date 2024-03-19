@@ -117,7 +117,7 @@ namespace Orm::Tiny::Concerns
         const SerializeRelationStore<C> &serializeRelationStore() const;
 
         /*! Type of the template message to generate. */
-        enum struct CopyMoveTemplateType
+        enum struct CopyMoveTemplateType : quint8
         {
             COPY,
             MOVE,
@@ -233,7 +233,7 @@ namespace Orm::Tiny::Concerns
     {
         m_relationStore.push(
             std::make_shared<EagerRelationStore<CollectionModel>>(
-                const_cast<HasRelationStore *>(this), builder, models, relation));
+                const_cast<HasRelationStore *>(this), builder, models, relation)); // NOLINT(cppcoreguidelines-pro-type-const-cast)
 
         return *m_relationStore.top();
     }
@@ -244,7 +244,7 @@ namespace Orm::Tiny::Concerns
             RelationsType<AllRelations...> &models) const
     {
         m_relationStore.push(
-            std::make_shared<PushRelationStore>(const_cast<HasRelationStore *>(this),
+            std::make_shared<PushRelationStore>(const_cast<HasRelationStore *>(this), // NOLINT(cppcoreguidelines-pro-type-const-cast)
                                                 models));
 
         return *m_relationStore.top();
@@ -256,7 +256,7 @@ namespace Orm::Tiny::Concerns
             const QString &relation) const
     {
         m_relationStore.push(std::make_shared<TouchOwnersRelationStore>(
-                                 const_cast<HasRelationStore *>(this), relation));
+                                 const_cast<HasRelationStore *>(this), relation)); // NOLINT(cppcoreguidelines-pro-type-const-cast)
 
         return *m_relationStore.top();
     }
@@ -267,7 +267,7 @@ namespace Orm::Tiny::Concerns
     HasRelationStore<Derived, AllRelations...>::createLazyStore() const
     {
         m_relationStore.push(std::make_shared<LazyRelationStore<Related>>(
-                                 const_cast<HasRelationStore *>(this)));
+                                 const_cast<HasRelationStore *>(this))); // NOLINT(cppcoreguidelines-pro-type-const-cast)
 
         return *m_relationStore.top();
     }
@@ -278,7 +278,7 @@ namespace Orm::Tiny::Concerns
     createBelongsToManyRelatedTableStore() const
     {
         m_relationStore.push(std::make_shared<BelongsToManyRelatedTableStore>(
-                                 const_cast<HasRelationStore *>(this)));
+                                 const_cast<HasRelationStore *>(this))); // NOLINT(cppcoreguidelines-pro-type-const-cast)
 
         return *m_relationStore.top();
     }
@@ -293,7 +293,7 @@ namespace Orm::Tiny::Concerns
             const std::optional<std::reference_wrapper<QStringList>> relations) const
     {
         m_relationStore.push(std::make_shared<QueriesRelationshipsStore<Related>>(
-                                 const_cast<HasRelationStore *>(this), origin,
+                                 const_cast<HasRelationStore *>(this), origin, // NOLINT(cppcoreguidelines-pro-type-const-cast)
                                  comparison, count, condition, callback, relations));
 
         return *m_relationStore.top();
@@ -307,7 +307,7 @@ namespace Orm::Tiny::Concerns
             C &attributes) const
     {
         m_relationStore.push(std::make_shared<SerializeRelationStore<C>>(
-                                 const_cast<HasRelationStore *>(this), relation, models,
+                                 const_cast<HasRelationStore *>(this), relation, models, // NOLINT(cppcoreguidelines-pro-type-const-cast)
                                  attributes));
 
         return *m_relationStore.top();
