@@ -2149,12 +2149,10 @@ namespace Orm::Tiny::Concerns
         /* All parameters and the return value are the QVariant to simplify and
            for outsource the code from the castAttribute() method, this method is
            designed especially for the castAttribute() method. */
-        const double multiplier = std::pow(static_cast<double>(10.0),
-                                           decimals.template value<int>());
+        const auto multiplier = std::pow(10.0, decimals.template value<int>());
 
-        return static_cast<double>(
-                    std::round(value.template value<double>() * multiplier) /
-                    multiplier);
+        // No cast need, it always return double because of value<double>()
+        return std::round(value.template value<double>() * multiplier) / multiplier;
     }
 
     /* Serialization - Attributes */
