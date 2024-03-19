@@ -2518,7 +2518,7 @@ namespace Tiny::Relations
     RelationProxies<Model, Related>::whereExists(
             C &&callback, const QString &condition, const bool nope) const
     {
-        getQuery().whereExists(callback, condition, nope);
+        getQuery().whereExists(std::forward<C>(callback), condition, nope);
 
         return relation();
     }
@@ -2528,7 +2528,7 @@ namespace Tiny::Relations
     const Relation<Model, Related> &
     RelationProxies<Model, Related>::orWhereExists(C &&callback, const bool nope) const
     {
-        getQuery().whereExists(callback, OR, nope);
+        getQuery().whereExists(std::forward<C>(callback), OR, nope);
 
         return relation();
     }
@@ -2539,7 +2539,7 @@ namespace Tiny::Relations
     RelationProxies<Model, Related>::whereNotExists(
             C &&callback, const QString &condition) const
     {
-        getQuery().whereExists(callback, condition, true);
+        getQuery().whereExists(std::forward<C>(callback), condition, true);
 
         return relation();
     }
@@ -2549,7 +2549,7 @@ namespace Tiny::Relations
     const Relation<Model, Related> &
     RelationProxies<Model, Related>::orWhereNotExists(C &&callback) const
     {
-        getQuery().whereExists(callback, OR, true);
+        getQuery().whereExists(std::forward<C>(callback), OR, true);
 
         return relation();
     }

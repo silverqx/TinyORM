@@ -2685,7 +2685,7 @@ namespace Tiny
     {
         auto builder = query();
 
-        builder->whereExists(callback, condition, nope);
+        builder->whereExists(std::forward<C>(callback), condition, nope);
 
         return builder;
     }
@@ -2697,7 +2697,7 @@ namespace Tiny
     {
         auto builder = query();
 
-        builder->whereExists(callback, OR, nope);
+        builder->whereExists(std::forward<C>(callback), OR, nope);
 
         return builder;
     }
@@ -2710,7 +2710,7 @@ namespace Tiny
     {
         auto builder = query();
 
-        builder->whereExists(callback, condition, true);
+        builder->whereExists(std::forward<C>(callback), condition, true);
 
         return builder;
     }
@@ -2722,7 +2722,7 @@ namespace Tiny
     {
         auto builder = query();
 
-        builder->whereExists(callback, OR, true);
+        builder->whereExists(std::forward<C>(callback), OR, true);
 
         return builder;
     }

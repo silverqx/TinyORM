@@ -1503,32 +1503,32 @@ namespace Orm::Query
             /* Similar to the sub-select clause, we will create a new query instance so
                the developer may cleanly specify the entire exists query and we will
                compile the whole thing in the grammar and insert it into the SQL. */
-            std::invoke(callback, *query);
+            std::invoke(std::forward<C>(callback), *query);
 
             return addWhereExistsQuery(query, condition, nope);
         }
 
         // For the QueryBuilder & or std::shared_ptr<QueryBuilder>
         else
-            return addWhereExistsQuery(callback, condition, nope);
+            return addWhereExistsQuery(std::forward<C>(callback), condition, nope);
     }
 
     template<QueryableShared C>
     Builder &Builder::orWhereExists(C &&callback, const bool nope)
     {
-        return whereExists(callback, OR, nope);
+        return whereExists(std::forward<C>(callback), OR, nope);
     }
 
     template<QueryableShared C>
     Builder &Builder::whereNotExists(C &&callback, const QString &condition)
     {
-        return whereExists(callback, condition, true);
+        return whereExists(std::forward<C>(callback), condition, true);
     }
 
     template<QueryableShared C>
     Builder &Builder::orWhereNotExists(C &&callback)
     {
-        return whereExists(callback, OR, true);
+        return whereExists(std::forward<C>(callback), OR, true);
     }
 
     /* where dates */

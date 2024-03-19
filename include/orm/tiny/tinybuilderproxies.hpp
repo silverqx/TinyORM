@@ -1755,7 +1755,7 @@ namespace Tiny
     BuilderProxies<Model>::whereExists(C &&callback, const QString &condition,
                                        const bool nope)
     {
-        getQuery().whereExists(callback, condition, nope);
+        getQuery().whereExists(std::forward<C>(callback), condition, nope);
         return builder();
     }
 
@@ -1764,7 +1764,7 @@ namespace Tiny
     TinyBuilder<Model> &
     BuilderProxies<Model>::orWhereExists(C &&callback, const bool nope)
     {
-        getQuery().whereExists(callback, OR, nope);
+        getQuery().whereExists(std::forward<C>(callback), OR, nope);
         return builder();
     }
 
@@ -1773,7 +1773,7 @@ namespace Tiny
     TinyBuilder<Model> &
     BuilderProxies<Model>::whereNotExists(C &&callback, const QString &condition)
     {
-        getQuery().whereExists(callback, condition, true);
+        getQuery().whereExists(std::forward<C>(callback), condition, true);
         return builder();
     }
 
@@ -1782,7 +1782,7 @@ namespace Tiny
     TinyBuilder<Model> &
     BuilderProxies<Model>::orWhereNotExists(C &&callback)
     {
-        getQuery().whereExists(callback, OR, true);
+        getQuery().whereExists(std::forward<C>(callback), OR, true);
         return builder();
     }
 
