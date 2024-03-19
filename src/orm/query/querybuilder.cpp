@@ -2,6 +2,7 @@
 
 #include <QDebug>
 
+#include <range/v3/numeric/accumulate.hpp>
 #include <range/v3/view/remove_if.hpp>
 
 #include "orm/databaseconnection.hpp"
@@ -1233,8 +1234,13 @@ const QString &Builder::defaultKeyName() const noexcept // NOLINT(readability-co
 QVector<QVariant> Builder::getBindings() const
 {
     QVector<QVariant> flattenBindings;
+    flattenBindings.reserve(ranges::accumulate(m_bindings, 0, std::plus(),
+                                               [](const QVector<QVariant> &bindings)
+    {
+        return bindings.size();
+    }));
 
-    for (const auto &bindings : std::as_const(m_bindings))
+    for (const auto &bindings : m_bindings)
         for (const auto &binding : bindings)
             flattenBindings << binding;
 
