@@ -7,4 +7,4 @@ if (-not (Test-Path env:WindowsSDKLibVersion)) {
     . qtenv6.ps1
 }
 
-str.ps1 -BuildPath '<your_path_here>\TinyORM\TinyORM-builds-qmake\build-TinyORM-Desktop_Qt_6_6_2_MSVC2022_64bit-Profile'
+str.ps1 -BuildPath '<your_path_here>\TinyORM\TinyORM-builds-qmake\build-TinyORM-Desktop_Qt_6_7_0_MSVC2022_64bit-Profile'
