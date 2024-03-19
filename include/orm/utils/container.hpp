@@ -27,7 +27,7 @@ namespace Orm::Utils
         /*! Convert a string container into a (comma) delimited string. */
         template<JoinContainer T, DelimiterConcept D = const QString &>
         static QString
-        join(const T &container, D &&delimiter = Constants::COMMA);
+        join(const T &container, const D &delimiter = Constants::COMMA);
 
         /*! Count all string sizes in the given container and optionally add value to
             every string. */
@@ -38,11 +38,11 @@ namespace Orm::Utils
     private:
         /*! Get the delimiter size (returns 1 for the QChar). */
         template<typename SizeType = QString::size_type, DelimiterConcept D>
-        static SizeType delimiterSize(D &&delimiter);
+        static SizeType delimiterSize(const D &delimiter);
     };
 
     template<JoinContainer T, DelimiterConcept D>
-    QString Container::join(const T &container, D &&delimiter)
+    QString Container::join(const T &container, const D &delimiter)
     {
         // Nothing to join
         if (container.empty())
@@ -96,7 +96,7 @@ namespace Orm::Utils
     /* private */
 
     template<typename SizeType, DelimiterConcept D>
-    SizeType Container::delimiterSize(D &&delimiter)
+    SizeType Container::delimiterSize(const D &delimiter)
     {
         if constexpr (std::is_constructible_v<QChar, D>)
             return 1;
