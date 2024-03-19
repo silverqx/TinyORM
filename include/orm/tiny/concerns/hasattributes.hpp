@@ -2350,7 +2350,7 @@ namespace Orm::Tiny::Concerns
 
         // Return the cached get mutator
         if (m_attributeMutatorsCache.contains(key))
-            // std::as_const() to prevent detach
+            // std::as_const() to prevent detach as it's mutable
             return std::as_const(m_attributeMutatorsCache).find(key).value();
 
         /* Get an accessor callback from the u_mutators map by the given attribute key,
