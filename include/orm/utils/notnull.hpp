@@ -58,8 +58,7 @@ namespace Private
         static_assert (Private::is_comparable_to_nullptr<T>::value,
                 "The NotNull T template argument cannot be the nullptr.");
 
-        template<typename U,
-                 typename = std::enable_if_t<std::is_convertible_v<U, T>>>
+        template<std::convertible_to<T> U>
         constexpr NotNull(U &&u) // NOLINT(google-explicit-constructor)
             : m_ptr(std::forward<U>(u))
         {
@@ -67,16 +66,14 @@ namespace Private
                 std::terminate();
         }
 
-        template<typename = std::enable_if_t<!std::is_same_v<std::nullptr_t, T>>>
-        constexpr NotNull(T u) // NOLINT(google-explicit-constructor)
+        constexpr NotNull(T u) requires (!std::is_same_v<std::nullptr_t, T>) // NOLINT(google-explicit-constructor)
             : m_ptr(std::move(u))
         {
             if (m_ptr == nullptr)
                 std::terminate();
         }
 
-        template<typename U,
-                 typename = std::enable_if_t<std::is_convertible_v<U, T>>>
+        template<std::convertible_to<T> U>
         constexpr NotNull(const NotNull<U> &other) // NOLINT(google-explicit-constructor)
             : NotNull(other.get())
         {}
