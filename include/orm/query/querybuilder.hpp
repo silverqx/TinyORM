@@ -1494,8 +1494,7 @@ namespace Orm::Query
     /* where exists */
 
     template<QueryableShared C>
-    Builder &Builder::whereExists(C &&callback, const QString &condition,
-                                  const bool nope)
+    Builder &Builder::whereExists(C &&callback, const QString &condition, const bool nope)
     {
         if constexpr (std::invocable<C, Builder &>) {
             // Ownership of the std::shared_ptr<QueryBuilder>
