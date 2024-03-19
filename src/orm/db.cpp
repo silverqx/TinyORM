@@ -121,8 +121,7 @@ DB::affectingStatement(const QString &query, QVector<QVariant> bindings,
                     .affectingStatement(query, std::move(bindings));
 }
 
-SqlQuery DB::unprepared(const QString &query,
-                        const QString &connection)
+SqlQuery DB::unprepared(const QString &query, const QString &connection)
 {
     return manager().connection(connection).unprepared(query);
 }

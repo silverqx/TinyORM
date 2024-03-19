@@ -243,20 +243,17 @@ namespace Query
 
         /* Pretending */
         /*! Execute the given callback in "dry run" mode. */
-        QVector<Log>
-        pretend(const std::function<void()> &callback,
-                const QString &connection = "");
+        QVector<Log> pretend(const std::function<void()> &callback,
+                             const QString &connection = "");
         /*! Execute the given callback in "dry run" mode. */
-        QVector<Log>
-        pretend(const std::function<void(DatabaseConnection &)> &callback,
-                const QString &connection = "");
+        QVector<Log> pretend(const std::function<void(DatabaseConnection &)> &callback,
+                             const QString &connection = "");
 
         /* Records were modified */
         /*! Check if any records have been modified. */
         bool getRecordsHaveBeenModified(const QString &connection = "");
         /*! Indicates if any records have been modified. */
-        void recordsHaveBeenModified(bool value = true,
-                                     const QString &connection = "");
+        void recordsHaveBeenModified(bool value = true, const QString &connection = "");
         /*! Reset the record modification state. */
         void forgetRecordModificationState(const QString &connection = "");
 

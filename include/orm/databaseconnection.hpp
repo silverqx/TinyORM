@@ -227,11 +227,9 @@ namespace Orm
 
         /* Others */
         /*! Execute the given callback in "dry run" mode. */
-        QVector<Log>
-        pretend(const std::function<void()> &callback);
+        QVector<Log> pretend(const std::function<void()> &callback);
         /*! Execute the given callback in "dry run" mode. */
-        QVector<Log>
-        pretend(const std::function<void(DatabaseConnection &)> &callback);
+        QVector<Log> pretend(const std::function<void(DatabaseConnection &)> &callback);
         /*! Determine if the connection is in a "dry run". */
         inline bool pretending() const;
 
@@ -263,8 +261,8 @@ namespace Orm
 
         /*! Callback type used in the run() method. */
         template<typename Return>
-        using RunCallback =
-                std::function<Return(const QString &, const QVector<QVariant> &)>;
+        using RunCallback = std::function<Return(const QString &,
+                                                 const QVector<QVariant> &)>;
 
         /*! Run a SQL statement and log its execution context. */
         template<typename Return>

@@ -189,8 +189,7 @@ DatabaseManager::affectingStatement(const QString &query, QVector<QVariant> bind
     return this->connection(connection).affectingStatement(query, std::move(bindings));
 }
 
-SqlQuery DatabaseManager::unprepared(const QString &query,
-                                     const QString &connection)
+SqlQuery DatabaseManager::unprepared(const QString &query, const QString &connection)
 {
     return this->connection(connection).unprepared(query);
 }
@@ -225,8 +224,7 @@ bool DatabaseManager::rollbackToSavepoint(const QString &id, const QString &conn
     return this->connection(connection).rollbackToSavepoint(id);
 }
 
-bool DatabaseManager::rollbackToSavepoint(const std::size_t id,
-                                          const QString &connection)
+bool DatabaseManager::rollbackToSavepoint(const std::size_t id, const QString &connection)
 {
     return this->connection(connection).rollbackToSavepoint(id);
 }
@@ -562,8 +560,7 @@ bool DatabaseManager::hasConfigValue(const QString &option, const QString &conne
 /* Pretending */
 
 QVector<Log>
-DatabaseManager::pretend(const std::function<void()> &callback,
-                         const QString &connection)
+DatabaseManager::pretend(const std::function<void()> &callback, const QString &connection)
 {
     return this->connection(connection).pretend(callback);
 }
