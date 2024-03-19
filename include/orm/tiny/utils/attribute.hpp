@@ -206,14 +206,14 @@ namespace Orm::Tiny::Utils
     {
         fixQtNullVariantBug(attributes);
 
-        return attributes;
+        return std::move(attributes);
     }
 
     QVariantList Attribute::fixQtNullVariantBug(QVariantList &&attributesList)
     {
         fixQtNullVariantBug(attributesList);
 
-        return attributesList;
+        return std::move(attributesList);
     }
 
 } // namespace Orm::Tiny::Utils
