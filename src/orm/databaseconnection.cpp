@@ -345,6 +345,8 @@ QSqlQuery DatabaseConnection::getQtQuery()
 QVector<QVariant> &
 DatabaseConnection::prepareBindings(QVector<QVariant> &bindings) const
 {
+    // Weird return value (non-const reference) is for better variable naming in caller
+
     for (auto &binding : bindings) {
         // Nothing to convert
         if (!binding.isValid() || binding.isNull())
