@@ -1,0 +1,6 @@
+# Optimized for Clang-Tidy v18
+---
+InheritParentConfig: true
+CheckOptions:
+  - key:   misc-header-include-cycle.IgnoredFilesList
+    value: '[\\\/]+models[\\\/]+.+\.hpp$'

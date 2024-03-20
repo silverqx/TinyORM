@@ -7,3 +7,6 @@ Checks:
     - -cppcoreguidelines-pro-type-reinterpret-cast
     - -misc-const-correctness
     - -readability-function-cognitive-complexity
+CheckOptions:
+  - key:   misc-header-include-cycle.IgnoredFilesList
+    value: '[\\\/]+tests[\\\/]+models[\\\/]+models[\\\/]+.+\.hpp$'
