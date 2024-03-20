@@ -1,9 +1,9 @@
 # Optimized for Clang-Tidy v18
 ---
+InheritParentConfig: true
 Checks:
     - -bugprone-unchecked-optional-access
     - -cppcoreguidelines-pro-type-const-cast
     - -cppcoreguidelines-pro-type-reinterpret-cast
     - -misc-const-correctness
     - -readability-function-cognitive-complexity
-InheritParentConfig: true
