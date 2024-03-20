@@ -49,9 +49,9 @@ Checks:
   - -cppcoreguidelines-non-private-member-variables-in-classes
   - -google-readability-braces-around-statements
 CheckOptions:
-  - key:             cppcoreguidelines-avoid-do-while.IgnoreMacros
-    value:           true
-  - key:             cppcoreguidelines-rvalue-reference-param-not-moved.AllowPartialMove
-    value:           true
-  - key:             llvm-namespace-comment.ShortNamespaceLines
-    value:           '5'
+  - key:   cppcoreguidelines-avoid-do-while.IgnoreMacros
+    value: true
+  - key:   cppcoreguidelines-rvalue-reference-param-not-moved.AllowPartialMove
+    value: true
+  - key:   llvm-namespace-comment.ShortNamespaceLines
+    value: '5'
