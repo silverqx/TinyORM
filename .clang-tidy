@@ -23,8 +23,10 @@ Checks:
   - hicpp-exception-baseclass
   - hicpp-multiway-paths-covered
   - -bugprone-easily-swappable-parameters
+  - -bugprone-macro-parentheses
   - -clang-analyzer-optin.osx.*
   - -clang-analyzer-osx.*
+  - -clang-analyzer-webkit.*
   - -cppcoreguidelines-macro-usage
   - -google-readability-todo
   - -llvm-header-guard
