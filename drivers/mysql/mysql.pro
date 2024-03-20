@@ -148,5 +148,3 @@ exists($$PWD/conf.pri): \
 else:disable_autoconf: \
     error( "'conf.pri' for '$${TARGET}' project does not exist.\
             See an example configuration in 'drivers/conf.pri.example'." )
-
-message($$CONFIG)
