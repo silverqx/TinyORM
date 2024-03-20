@@ -152,7 +152,7 @@ bool MySqlConnection::useUpsertAlias()
 void MySqlConnection::setConfigVersion(const QString &value)
 {
     // Override it through the config., it ensures that more code branches will be tested
-    const_cast<QVariantHash &>(m_config).insert(Version, value);
+    m_config.insert(Version, value);
 
     // We need to reset these to recomputed them again
     m_version = std::nullopt;
