@@ -40,11 +40,11 @@ namespace Commands
         /*! Argument description. */
         QString description;
         /*! Appended to the Usage line, if empty the name is used. */
-        QString syntax;
+        QString syntax       {}; // NOLINT(readability-redundant-member-init)
         /*! Is argument optional? */
-        bool optional = false;
+        bool optional      = false;
         /*! Argument's default value (optional argument only). */
-        QString defaultValue;
+        QString defaultValue {}; // NOLINT(readability-redundant-member-init)
     };
 
     /*! Abstract base class for the console command. */

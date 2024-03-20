@@ -70,9 +70,9 @@ namespace Orm::SchemaNs
         /*! Columns for which to create an index. */
         QVector<Column> columns;
         /*! Algorithm to use during index creation. */
-        QString algorithm;
+        QString algorithm {}; // NOLINT(readability-redundant-member-init)
         /*! Dictionary for the to_tsvector function for fulltext search (PostgreSQL). */
-        QString language;
+        QString language {}; // NOLINT(readability-redundant-member-init)
     };
 
     /*! Foreign key constraints command. */
@@ -88,15 +88,15 @@ namespace Orm::SchemaNs
         QVector<Column> columns;
 
         /*! Specifies the referenced columns. */
-        QVector<QString> references;
+        QVector<QString> references {}; // NOLINT(readability-redundant-member-init)
         /*! Specifies the referenced table. */
-        QString on;
+        QString on {}; // NOLINT(readability-redundant-member-init)
         /*! Specifies ON DELETE action (cascade/restrict/set null/no action/
             set default). */
-        QString onDelete;
+        QString onDelete {}; // NOLINT(readability-redundant-member-init)
         /*! Specifies ON UPDATE action (cascade/restrict/set null/no action/
             set default). */
-        QString onUpdate;
+        QString onUpdate {}; // NOLINT(readability-redundant-member-init)
 
         /*! Set the foreign key as deferrable (PostgreSQL). */
         std::optional<bool> deferrable = std::nullopt;
@@ -152,19 +152,19 @@ namespace Orm::SchemaNs
         /*! Column type. */
         ColumnType type = ColumnType::Undefined;
         /*! Column name. */
-        QString name;
+        QString name {}; // NOLINT(readability-redundant-member-init)
         /*! Indicates whether a column will be changed or created. */
         bool change = false;
 
         /* Column type specific */
         /*! Allowed index values for Enumaration Literals (enum/set). */
-        QVector<QString> allowed;
+        QVector<QString> allowed {}; // NOLINT(readability-redundant-member-init)
         /*! Value for a generated, computed column type (SQL Server). */
-        QString expression;
+        QString expression {}; // NOLINT(readability-redundant-member-init)
         /*! Length of the char or varchar column. */
         int length = DefaultStringLength;
         /*! Number of digits after the decimal point for floating-point types. */
-        std::optional<int> places = std::nullopt;
+        std::optional<int> places    = std::nullopt;
         /*! Determine fractional seconds in time values (MySQL 0-6). */
         std::optional<int> precision = std::nullopt;
         /* srid max. value should be 2^32-1 as is described here, so unsigned int
@@ -178,33 +178,33 @@ namespace Orm::SchemaNs
 
         /* Indexes - used by blueprint command for indexes or fluent indexes on column */
         /*! Add an index. */
-        std::variant<std::monostate, QString, bool> index;
+        std::variant<std::monostate, QString, bool> index        {}; // NOLINT(readability-redundant-member-init)
         /*! Add a primary index. */
-        std::variant<std::monostate, QString, bool> primary;
+        std::variant<std::monostate, QString, bool> primary      {}; // NOLINT(readability-redundant-member-init)
         /*! Add a fulltext index. */
-        std::variant<std::monostate, QString, bool> fulltext;
+        std::variant<std::monostate, QString, bool> fulltext     {}; // NOLINT(readability-redundant-member-init)
         /*! Add a spatial index. */
-        std::variant<std::monostate, QString, bool> spatialIndex;
+        std::variant<std::monostate, QString, bool> spatialIndex {}; // NOLINT(readability-redundant-member-init)
         /*! Add a unique index. */
-        std::variant<std::monostate, QString, bool> unique;
+        std::variant<std::monostate, QString, bool> unique       {}; // NOLINT(readability-redundant-member-init)
 
         /* Column definition */
         /*! Determine "after" which column to place a current column (MySQL). */
-        QString after;
+        QString after         {}; // NOLINT(readability-redundant-member-init)
         /*! Specify a character set for the column (MySQL). */
-        QString charset;
+        QString charset       {}; // NOLINT(readability-redundant-member-init)
         /*! Specify a collation for the column (MySQL/PostgreSQL/SQL Server). */
-        QString collation;
+        QString collation     {}; // NOLINT(readability-redundant-member-init)
         /*! Add a comment to the column (MySQL/PostgreSQL). */
-        QString comment;
+        QString comment       {}; // NOLINT(readability-redundant-member-init)
         /*! Specify a "default" value for the column. */
-        QVariant defaultValue;
+        QVariant defaultValue {}; // NOLINT(readability-redundant-member-init)
         /*! Specifies a "on update" action (MySQL; used by the datetime and timestamp). */
-        QVariant onUpdate;
+        QVariant onUpdate     {}; // NOLINT(readability-redundant-member-init)
         /*! Create a SQL compliant identity column (PostgreSQL). */
-        QString generatedAs;
+        QString generatedAs   {}; // NOLINT(readability-redundant-member-init)
         /*! Rename a column, used with the change() method (MySQL). */
-        QString renameTo;
+        QString renameTo      {}; // NOLINT(readability-redundant-member-init)
 
         /*! Set the starting value of an auto-incrementing field (MySQL/PostgreSQL),
             alias for the 'startingValue'. */

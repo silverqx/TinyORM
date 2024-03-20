@@ -98,20 +98,20 @@ namespace Query
     /*! Having clause item. */
     struct HavingConditionItem
     {
-        Column     column;
-        QVariant   value;
+        Column     column     {}; // NOLINT(readability-redundant-member-init)
+        QVariant   value      {}; // NOLINT(readability-redundant-member-init)
         QString    comparison {Orm::Constants::EQ};
         QString    condition  {Orm::Constants::AND};
         HavingType type       {HavingType::UNDEFINED};
-        QString    sql;       // for the raw version
+        QString    sql        {}; // for the raw version; NOLINT(readability-redundant-member-init)
     };
 
     /*! Order by clause item. */
     struct OrderByItem
     {
-        Column      column;
+        Column      column    {}; // NOLINT(readability-redundant-member-init)
         QString     direction {Orm::Constants::ASC};
-        QString     sql;      // for the raw version
+        QString     sql       {}; // for the raw version; NOLINT(readability-redundant-member-init)
     };
 
     /*! Update item. */
@@ -127,7 +127,7 @@ namespace Query
         Column   column;
         QVariant value;
         QString  comparison {Orm::Constants::EQ};
-        QString  condition;
+        QString  condition  {}; // NOLINT(readability-redundant-member-init)
     };
 
     /*! Where item to compare two columns, primarily used in vector overloads. */
@@ -136,7 +136,7 @@ namespace Query
         Column  first;
         Column  second;
         QString comparison {Orm::Constants::EQ};
-        QString condition;
+        QString condition  {}; // NOLINT(readability-redundant-member-init)
     };
 
     /*! Where item that stores values for the where between clause. */
@@ -156,16 +156,16 @@ namespace Query
     /*! Where clause item, primarily used in grammars to build sql query. */
     struct WhereConditionItem
     {
-        Column                        column;
-        QVariant                      value;
+        Column                        column         {}; // NOLINT(readability-redundant-member-init)
+        QVariant                      value          {}; // NOLINT(readability-redundant-member-init)
         QString                       comparison     {Orm::Constants::EQ};
         QString                       condition      {Orm::Constants::AND};
         WhereType                     type           {WhereType::UNDEFINED};
         std::shared_ptr<QueryBuilder> nestedQuery    {nullptr};
-        QVector<Column>               columns;
-        QVector<QVariant>             values;
-        Column                        columnTwo;
-        QString                       sql;           // for the raw version
+        QVector<Column>               columns        {}; // NOLINT(readability-redundant-member-init)
+        QVector<QVariant>             values         {}; // NOLINT(readability-redundant-member-init)
+        Column                        columnTwo      {}; // NOLINT(readability-redundant-member-init)
+        QString                       sql            {}; // for the raw version; NOLINT(readability-redundant-member-init)
         bool                          nope           {false};
         WhereBetweenItem              between        {};
         WhereBetweenColumnsItem       betweenColumns {};
