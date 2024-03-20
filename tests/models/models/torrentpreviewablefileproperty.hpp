@@ -52,7 +52,7 @@ private:
     };
 
     /*! The relations to eager load on every query. */
-    QVector<QString> u_with {
+    QVector<QString> u_with { // NOLINT(readability-redundant-member-init)
 //        "torrentFile",
     };
 

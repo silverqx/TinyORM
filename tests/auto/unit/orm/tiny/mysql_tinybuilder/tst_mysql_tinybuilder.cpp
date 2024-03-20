@@ -118,7 +118,7 @@ private:
     std::unique_ptr<TinyBuilder<Model>> createTinyQuery() const;
 
     /*! Connection name used in this test case. */
-    QString m_connection {};
+    QString m_connection;
 };
 
 /* private slots */

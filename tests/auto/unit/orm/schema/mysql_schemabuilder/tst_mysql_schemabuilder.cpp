@@ -189,21 +189,21 @@ private:
 
     /* Default MySQL connection */
     /*! Connection name used in this test case (default MYSQL connection). */
-    QString m_connection {};
+    QString m_connection;
 
     /*! The charset set for the current MySQL connection (based on env. variable). */
-    QString m_charset {};
+    QString m_charset;
     /*! The collation set for the current MySQL connection (based on env. variable). */
-    QString m_collation {};
+    QString m_collation;
 
     /* Second MariaDB connection */
     /*! Second connection name used in this test case (MARIADB connection). */
-    QString m_connectionMaria {};
+    QString m_connectionMaria;
 
     /*! The charset set for the second MariaDB connection (based on env. variable). */
-    QString m_charsetMaria {};
+    QString m_charsetMaria;
     /*! The collation set for the second MariaDB connection (based on env. variable). */
-    QString m_collationMaria {};
+    QString m_collationMaria;
 };
 
 /* private slots */

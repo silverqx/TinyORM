@@ -134,7 +134,7 @@ private:
     inline static const auto Firewalls = sl("firewalls");
 
     /*! Connection name used in this test case. */
-    QString m_connection {};
+    QString m_connection;
 };
 
 /* private slots */
