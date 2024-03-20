@@ -54,9 +54,9 @@ namespace Orm::Drivers::Support
 /*! SQL loadable drivers' factory methods hash type. */
 using DriverLoadedHashType = std::unordered_map<QString, std::function<SqlDriver *()>>;
 /*! SQL loadable drivers' factory methods hash (used to check if driver is loaded too). */
-Q_GLOBAL_STATIC(DriverLoadedHashType, g_driversLoaded) // NOLINT(misc-use-anonymous-namespace)
+Q_GLOBAL_STATIC(DriverLoadedHashType, g_driversLoaded) // NOLINT(misc-use-anonymous-namespace, cppcoreguidelines-avoid-non-const-global-variables)
 /*! Mutex to secure loading of loadable driver shared libraries. */
-Q_GLOBAL_STATIC(std::shared_mutex, mx_driversLoaded) // NOLINT(misc-use-anonymous-namespace)
+Q_GLOBAL_STATIC(std::shared_mutex, mx_driversLoaded) // NOLINT(misc-use-anonymous-namespace, cppcoreguidelines-avoid-non-const-global-variables)
 #endif
 
 /* public */
@@ -288,7 +288,7 @@ SqlDriverFactoryPrivate::loadSqlDriverAndResolve(const QString &driverFilepath) 
         return nullptr;
 
     // Resolve the TinyDriverInstance function
-    auto *const createSqlDriverMemFn = reinterpret_cast<CreateSqlDriverMemFn>(
+    auto *const createSqlDriverMemFn = reinterpret_cast<CreateSqlDriverMemFn>( // NOLINT(cppcoreguidelines-pro-type-reinterpret-cast)
                                            sqlDriverLib.resolve("TinyDriverInstance"));
 
     if (createSqlDriverMemFn != nullptr)
@@ -416,7 +416,7 @@ namespace
         // Obtain the module handle from the given static method address
         ::GetModuleHandleEx(GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS |
                             GET_MODULE_HANDLE_EX_FLAG_UNCHANGED_REFCOUNT,
-                            reinterpret_cast<LPCTSTR>(&SqlDatabase::database), &handle);
+                            reinterpret_cast<LPCTSTR>(&SqlDatabase::database), &handle); // NOLINT(cppcoreguidelines-pro-type-reinterpret-cast)
 
         // No need to check if function failed, it sets the handle to nullptr if failed
 

@@ -440,9 +440,9 @@ void tst_SqlQuery_Prepared::select_BoundLessValues() const
 namespace
 {
     /*! Pointer to the previous Message Handler. */
-    QtMessageHandler g_originalHandler = nullptr;
+    QtMessageHandler g_originalHandler = nullptr; // NOLINT(cppcoreguidelines-avoid-non-const-global-variables)
     /*! Logged messages in the Message Handler. */
-    Q_GLOBAL_STATIC(QStringList, g_loggedMessages);
+    Q_GLOBAL_STATIC(QStringList, g_loggedMessages); // NOLINT(cppcoreguidelines-avoid-non-const-global-variables)
 
     /*! Custom Message Handler that records logged messages. */
     void tinyMessageHandler(const QtMsgType type, const QMessageLogContext &context,

@@ -28,11 +28,11 @@ namespace Orm::Concerns
 /* private */
 
 /*! QString constant for the "BEGIN WORK" query (Qt internally uses this query string). */
-Q_GLOBAL_STATIC_WITH_ARGS(const QString, StartTransaction, ("BEGIN WORK")) // NOLINT(misc-use-anonymous-namespace)
+Q_GLOBAL_STATIC_WITH_ARGS(const QString, StartTransaction, ("BEGIN WORK")) // NOLINT(misc-use-anonymous-namespace, cppcoreguidelines-avoid-non-const-global-variables)
 /*! QString constant for the "START TRANSACTION" query. */
-Q_GLOBAL_STATIC_WITH_ARGS(const QString, Commit,           ("COMMIT")) // NOLINT(misc-use-anonymous-namespace)
+Q_GLOBAL_STATIC_WITH_ARGS(const QString, Commit,           ("COMMIT")) // NOLINT(misc-use-anonymous-namespace, cppcoreguidelines-avoid-non-const-global-variables)
 /*! QString constant for the "START TRANSACTION" query. */
-Q_GLOBAL_STATIC_WITH_ARGS(const QString, RollBack,         ("ROLLBACK")) // NOLINT(misc-use-anonymous-namespace)
+Q_GLOBAL_STATIC_WITH_ARGS(const QString, RollBack,         ("ROLLBACK")) // NOLINT(misc-use-anonymous-namespace, cppcoreguidelines-avoid-non-const-global-variables)
 #ifdef TINYORM_USING_QTSQLDRIVERS
 /*! QString constant for the "ManagesTransactions::beginTransaction" function name. */
 Q_GLOBAL_STATIC_WITH_ARGS(const QString, BeginTransactionFunction, // NOLINT(misc-use-anonymous-namespace)
