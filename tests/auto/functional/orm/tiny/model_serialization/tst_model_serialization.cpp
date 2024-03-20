@@ -144,7 +144,7 @@ private Q_SLOTS:
 // NOLINTNEXTLINE(readability-redundant-access-specifiers)
 private:
     /*! Connection name used in this test case. */
-    QString m_connection {};
+    QString m_connection;
 };
 
 /* private slots */
@@ -1221,7 +1221,7 @@ tst_Model_Serialization::toVector_WithRelation_BelongsToMany_TorrentTags() const
         // Then extract the tag_property vectors from all tags
         /* I'm going to directly modify the tag vector using the QVariant::data(),
            it helps to avoid a lot of a junky code. */
-        auto &tags = *reinterpret_cast<QVariantList *>(itTags->value.data());
+        auto &tags = *reinterpret_cast<QVariantList *>(itTags->value.data()); // NOLINT(cppcoreguidelines-pro-type-reinterpret-cast)
 
         QVector<QVector<AttributeItem>> actualTagProperties;
         actualTagProperties.reserve(tags.size());

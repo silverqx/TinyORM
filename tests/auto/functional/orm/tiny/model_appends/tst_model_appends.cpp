@@ -70,7 +70,7 @@ private Q_SLOTS:
 // NOLINTNEXTLINE(readability-redundant-access-specifiers)
 private:
     /*! Connection name used in this test case. */
-    QString m_connection {};
+    QString m_connection;
 };
 
 /* private slots */

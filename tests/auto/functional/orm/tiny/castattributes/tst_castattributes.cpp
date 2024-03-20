@@ -32,7 +32,7 @@ using Models::Type;
 
 /* Helper types for the model cache */
 /*! Row type to obtain from the DB. */
-enum struct RowType
+enum struct RowType : quint8
 {
     /*! All columns all filled with values. */
     AllFilled = 1,
@@ -65,7 +65,7 @@ struct ModelCacheKey
     RowType rowType;
 
     /*! Equality comparison operator for the ModelCacheKey. */
-    inline bool operator==(const ModelCacheKey &) const noexcept = default;
+    bool operator==(const ModelCacheKey &) const noexcept = default;
 };
 
 /*! The std::hash specialization for the ModelCacheKey. */
@@ -77,7 +77,7 @@ class std::hash<ModelCacheKey>
 
 public:
     /*! Generate hash for the given ModelCacheKey. */
-    inline std::size_t operator()(const ModelCacheKey &cacheKey) const noexcept
+    std::size_t operator()(const ModelCacheKey &cacheKey) const noexcept
     {
         /*! RowType underlying type. */
         using RowTypeUnderlying = std::underlying_type_t<RowType>;
@@ -289,7 +289,7 @@ private:
     static void enableReturnQDateTime(const QString &connection);
 
     /*! Cache a Type model by a connection name and row type */
-    mutable std::unordered_map<ModelCacheKey, Type> m_modelsCache {};
+    mutable std::unordered_map<ModelCacheKey, Type> m_modelsCache;
 };
 
 /* private slots */

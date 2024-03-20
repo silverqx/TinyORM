@@ -100,7 +100,7 @@ private:
     static std::optional<QString> alternativeConnection_Sqlite();
 
     /*! Created database connections (needed by the cleanupTestCase()). */
-    QStringList m_connections {};
+    QStringList m_connections;
 };
 
 /* private slots */

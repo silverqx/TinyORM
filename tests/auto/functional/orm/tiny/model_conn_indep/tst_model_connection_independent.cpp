@@ -179,7 +179,7 @@ private Q_SLOTS:
 // NOLINTNEXTLINE(readability-redundant-access-specifiers)
 private:
     /*! Connection name used in this test case. */
-    QString m_connection {};
+    QString m_connection;
 };
 
 /* private slots */
@@ -1648,7 +1648,7 @@ namespace
         QString name;
 
         /*! Equality comparison operator for the IdAndName. */
-        inline bool operator==(const IdAndName &right) const noexcept
+        bool operator==(const IdAndName &right) const noexcept
         {
             return id == right.id && name == right.name;
         }

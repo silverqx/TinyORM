@@ -51,19 +51,19 @@ protected:
 
 private:
     /*! Prepare a date for vector, map, or JSON serialization. */
-    inline static QString serializeDate(const QDate date)
+    static QString serializeDate(const QDate date)
     {
         return date.toString("dd.MM.yyyy");
     }
 
     /*! Prepare a datetime for vector, map, or JSON serialization. */
-    inline static QString serializeDateTime(const QDateTime &datetime)
+    static QString serializeDateTime(const QDateTime &datetime)
     {
         return datetime.toUTC().toString("dd.MM.yyyy HH:mm:ss.z t");
     }
 
     /*! Prepare a time for vector, map, or JSON serialization. */
-    inline static QString serializeTime(const QTime time)
+    static QString serializeTime(const QTime time)
     {
         /* .z reports the seconds to full available (millisecond) precision without
            trailing zeroes, so if ms is .123 it reports also .123, what means there is

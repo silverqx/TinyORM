@@ -64,7 +64,7 @@ private Q_SLOTS:
 // NOLINTNEXTLINE(readability-redundant-access-specifiers)
 private:
     /*! Connection name used in this test case. */
-    QString m_connection {};
+    QString m_connection;
 };
 
 /*! User type used to compare values. */
@@ -82,7 +82,7 @@ struct UserType
     bool trashed;
 
     /*! Equality comparison operator for the UserType. */
-    inline bool operator==(const UserType &) const = default;
+    bool operator==(const UserType &) const = default;
 };
 
 /* private slots */

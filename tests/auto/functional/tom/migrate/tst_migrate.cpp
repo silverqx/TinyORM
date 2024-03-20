@@ -96,7 +96,7 @@ private:
     inline static const auto MigrationsTable = sl("migrations_unit_testing");
 
     /*! Created database connections (needed by the cleanupTestCase()). */
-    QStringList m_connections {};
+    QStringList m_connections;
 };
 
 /*! Alias for the test output row. */
@@ -108,27 +108,27 @@ using StatusRow = tst_Migrate::StatusRow;
 namespace
 {
     // Status
-    const auto *Yes = "Yes";
-    const auto *No  = "No";
+    const auto *const Yes = "Yes";
+    const auto *const No  = "No";
 
     // Batches
-    const auto *s_1  = "1";
-    const auto *s_2  = "2";
-    const auto *s_3  = "3";
-    const auto *s_4  = "4";
-    const auto *s_5  = "5";
+    const auto *const s_1  = "1";
+    const auto *const s_2  = "2";
+    const auto *const s_3  = "3";
+    const auto *const s_4  = "4";
+    const auto *const s_5  = "5";
 
     // Migration names
-    const auto *
+    const auto *const
     s_2014_10_12_000000_create_posts_table =
             "2014_10_12_000000_create_posts_table";
-    const auto *
+    const auto *const
     s_2014_10_12_100000_add_factor_column_to_posts_table =
             "2014_10_12_100000_add_factor_column_to_posts_table";
-    const auto *
+    const auto *const
     s_2014_10_12_200000_create_properties_table =
             "2014_10_12_200000_create_properties_table";
-    const auto *
+    const auto *const
     s_2014_10_12_300000_create_phones_table =
             "2014_10_12_300000_create_phones_table";
 

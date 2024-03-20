@@ -38,7 +38,7 @@ private:
     inline static const auto *ClassName = "tst_PostgreSQL_SchemaBuilder_f";
 
     /*! Connection name used in this test case. */
-    QString m_connection {};
+    QString m_connection;
 };
 
 /* private slots */

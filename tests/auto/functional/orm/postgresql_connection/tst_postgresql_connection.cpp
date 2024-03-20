@@ -59,9 +59,9 @@ private:
     inline static const auto *ClassName = "tst_PostgreSQL_Connection";
 
     /*! Connection name used in this test case. */
-    QString m_connection {};
+    QString m_connection;
     /*! The Database Manager used in this test case. */
-    std::shared_ptr<DatabaseManager> m_dm {};
+    std::shared_ptr<DatabaseManager> m_dm;
 };
 
 /* private slots */

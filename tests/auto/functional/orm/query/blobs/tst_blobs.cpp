@@ -57,11 +57,11 @@ private:
 };
 
 /*! QString constant for the "types" table. */
-Q_GLOBAL_STATIC_WITH_ARGS(const QString, TypesTable, ("types"))
+Q_GLOBAL_STATIC_WITH_ARGS(const QString, TypesTable, ("types")) // NOLINT(misc-use-anonymous-namespace, cppcoreguidelines-avoid-non-const-global-variables)
 /*! QString constant for the "medium_text" column name. */
-Q_GLOBAL_STATIC_WITH_ARGS(const QString, medium_text, ("medium_text"))
+Q_GLOBAL_STATIC_WITH_ARGS(const QString, medium_text, ("medium_text")) // NOLINT(misc-use-anonymous-namespace, cppcoreguidelines-avoid-non-const-global-variables)
 /*! QString constant for the "binary" column name. */
-Q_GLOBAL_STATIC_WITH_ARGS(const QString, medium_binary, ("medium_binary"))
+Q_GLOBAL_STATIC_WITH_ARGS(const QString, medium_binary, ("medium_binary")) // NOLINT(misc-use-anonymous-namespace, cppcoreguidelines-avoid-non-const-global-variables)
 
 /* private slots */
 
@@ -435,7 +435,7 @@ void tst_Blobs::restoreMaxAllowedPacketForMySql(const QString &connection) const
 
     // Verify the max_allowed_packet SESSION variable value
     if (getMaxAllowedPacketForMySql(connection) == m_initialMaxAllowedPacket)
-        return m_initialMaxAllowedPacket.reset(); // clazy:exclude=returning-void-expression
+        return m_initialMaxAllowedPacket.reset(); // NOLINT(readability-avoid-return-with-void-value) clazy:exclude=returning-void-expression
 
     throw std::runtime_error(
                 sl("Restoring the max_allowed_packet to '%1' value for '%2' connection "

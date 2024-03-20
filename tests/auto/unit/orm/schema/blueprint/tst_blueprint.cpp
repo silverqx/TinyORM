@@ -49,7 +49,7 @@ private Q_SLOTS:
 // NOLINTNEXTLINE(readability-redundant-access-specifiers)
 private:
     /*! Connection name used in this test case. */
-    QString m_connection {};
+    QString m_connection;
 };
 
 /* private slots */
@@ -73,7 +73,7 @@ void tst_Blueprint::index_DefaultNames() const
         blueprint.unique({NAME, "foo"});
         const auto &commands = blueprint.getCommands();
 
-        QCOMPARE(reinterpret_cast<const IndexCommand &>(*commands.front()).index,
+        QCOMPARE(reinterpret_cast<const IndexCommand &>(*commands.front()).index, // NOLINT(cppcoreguidelines-pro-type-reinterpret-cast)
                  "torrents_name_foo_unique");
     }
     // Index
@@ -82,7 +82,7 @@ void tst_Blueprint::index_DefaultNames() const
         blueprint.index(SIZE_);
         const auto &commands = blueprint.getCommands();
 
-        QCOMPARE(reinterpret_cast<const IndexCommand &>(*commands.front()).index,
+        QCOMPARE(reinterpret_cast<const IndexCommand &>(*commands.front()).index, // NOLINT(cppcoreguidelines-pro-type-reinterpret-cast)
                  "torrents_size_index");
     }
     // SpatialIndex
@@ -91,7 +91,7 @@ void tst_Blueprint::index_DefaultNames() const
         blueprint.spatialIndex({"coordinates"});
         const auto &commands = blueprint.getCommands();
 
-        QCOMPARE(reinterpret_cast<const IndexCommand &>(*commands.front()).index,
+        QCOMPARE(reinterpret_cast<const IndexCommand &>(*commands.front()).index, // NOLINT(cppcoreguidelines-pro-type-reinterpret-cast)
                  "torrents_coordinates_spatialindex");
     }
     // FullText
@@ -100,7 +100,7 @@ void tst_Blueprint::index_DefaultNames() const
         blueprint.fullText(NOTE);
         const auto &commands = blueprint.getCommands();
 
-        QCOMPARE(reinterpret_cast<const IndexCommand &>(*commands.front()).index,
+        QCOMPARE(reinterpret_cast<const IndexCommand &>(*commands.front()).index, // NOLINT(cppcoreguidelines-pro-type-reinterpret-cast)
                  "torrents_note_fulltext");
     }
 }
@@ -113,7 +113,7 @@ void tst_Blueprint::index_DefaultNames_WithPrefix() const
         blueprint.unique({NAME, "foo"});
         const auto &commands = blueprint.getCommands();
 
-        QCOMPARE(reinterpret_cast<const IndexCommand &>(*commands.front()).index,
+        QCOMPARE(reinterpret_cast<const IndexCommand &>(*commands.front()).index, // NOLINT(cppcoreguidelines-pro-type-reinterpret-cast)
                  "prefix_torrents_name_foo_unique");
     }
     // Index
@@ -122,7 +122,7 @@ void tst_Blueprint::index_DefaultNames_WithPrefix() const
         blueprint.index(SIZE_);
         const auto &commands = blueprint.getCommands();
 
-        QCOMPARE(reinterpret_cast<const IndexCommand &>(*commands.front()).index,
+        QCOMPARE(reinterpret_cast<const IndexCommand &>(*commands.front()).index, // NOLINT(cppcoreguidelines-pro-type-reinterpret-cast)
                  "prefix_torrents_size_index");
     }
     // SpatialIndex
@@ -131,7 +131,7 @@ void tst_Blueprint::index_DefaultNames_WithPrefix() const
         blueprint.spatialIndex({"coordinates"});
         const auto &commands = blueprint.getCommands();
 
-        QCOMPARE(reinterpret_cast<const IndexCommand &>(*commands.front()).index,
+        QCOMPARE(reinterpret_cast<const IndexCommand &>(*commands.front()).index, // NOLINT(cppcoreguidelines-pro-type-reinterpret-cast)
                  "prefix_torrents_coordinates_spatialindex");
     }
     // FullText
@@ -140,7 +140,7 @@ void tst_Blueprint::index_DefaultNames_WithPrefix() const
         blueprint.fullText(NOTE);
         const auto &commands = blueprint.getCommands();
 
-        QCOMPARE(reinterpret_cast<const IndexCommand &>(*commands.front()).index,
+        QCOMPARE(reinterpret_cast<const IndexCommand &>(*commands.front()).index, // NOLINT(cppcoreguidelines-pro-type-reinterpret-cast)
                  "prefix_torrents_note_fulltext");
     }
 }
@@ -152,7 +152,7 @@ void tst_Blueprint::dropIndex_ByColumns_DefaultNames() const
         blueprint.dropUnique({NAME, "foo"});
         const auto &commands = blueprint.getCommands();
 
-        QCOMPARE(reinterpret_cast<const IndexCommand &>(*commands.front()).index,
+        QCOMPARE(reinterpret_cast<const IndexCommand &>(*commands.front()).index, // NOLINT(cppcoreguidelines-pro-type-reinterpret-cast)
                  "torrents_name_foo_unique");
     }
     // Index
@@ -161,7 +161,7 @@ void tst_Blueprint::dropIndex_ByColumns_DefaultNames() const
         blueprint.dropIndex(QVector<QString> {SIZE_});
         const auto &commands = blueprint.getCommands();
 
-        QCOMPARE(reinterpret_cast<const IndexCommand &>(*commands.front()).index,
+        QCOMPARE(reinterpret_cast<const IndexCommand &>(*commands.front()).index, // NOLINT(cppcoreguidelines-pro-type-reinterpret-cast)
                  "torrents_size_index");
     }
     // SpatialIndex
@@ -170,7 +170,7 @@ void tst_Blueprint::dropIndex_ByColumns_DefaultNames() const
         blueprint.dropSpatialIndex({"coordinates"});
         const auto &commands = blueprint.getCommands();
 
-        QCOMPARE(reinterpret_cast<const IndexCommand &>(*commands.front()).index,
+        QCOMPARE(reinterpret_cast<const IndexCommand &>(*commands.front()).index, // NOLINT(cppcoreguidelines-pro-type-reinterpret-cast)
                  "torrents_coordinates_spatialindex");
     }
     // FullText
@@ -179,7 +179,7 @@ void tst_Blueprint::dropIndex_ByColumns_DefaultNames() const
         blueprint.dropFullText(QVector<QString> {NOTE});
         const auto &commands = blueprint.getCommands();
 
-        QCOMPARE(reinterpret_cast<const IndexCommand &>(*commands.front()).index,
+        QCOMPARE(reinterpret_cast<const IndexCommand &>(*commands.front()).index, // NOLINT(cppcoreguidelines-pro-type-reinterpret-cast)
                  "torrents_note_fulltext");
     }
 }
@@ -191,7 +191,7 @@ void tst_Blueprint::dropIndex_ByColumns_DefaultNames_WithPrefix() const
         blueprint.dropUnique({NAME, "foo"});
         const auto &commands = blueprint.getCommands();
 
-        QCOMPARE(reinterpret_cast<const IndexCommand &>(*commands.front()).index,
+        QCOMPARE(reinterpret_cast<const IndexCommand &>(*commands.front()).index, // NOLINT(cppcoreguidelines-pro-type-reinterpret-cast)
                  "prefix_torrents_name_foo_unique");
     }
     // Index
@@ -200,7 +200,7 @@ void tst_Blueprint::dropIndex_ByColumns_DefaultNames_WithPrefix() const
         blueprint.dropIndex(QVector<QString> {SIZE_});
         const auto &commands = blueprint.getCommands();
 
-        QCOMPARE(reinterpret_cast<const IndexCommand &>(*commands.front()).index,
+        QCOMPARE(reinterpret_cast<const IndexCommand &>(*commands.front()).index, // NOLINT(cppcoreguidelines-pro-type-reinterpret-cast)
                  "prefix_torrents_size_index");
     }
     // SpatialIndex
@@ -209,7 +209,7 @@ void tst_Blueprint::dropIndex_ByColumns_DefaultNames_WithPrefix() const
         blueprint.dropSpatialIndex({"coordinates"});
         const auto &commands = blueprint.getCommands();
 
-        QCOMPARE(reinterpret_cast<const IndexCommand &>(*commands.front()).index,
+        QCOMPARE(reinterpret_cast<const IndexCommand &>(*commands.front()).index, // NOLINT(cppcoreguidelines-pro-type-reinterpret-cast)
                  "prefix_torrents_coordinates_spatialindex");
     }
     // FullText
@@ -218,7 +218,7 @@ void tst_Blueprint::dropIndex_ByColumns_DefaultNames_WithPrefix() const
         blueprint.dropFullText(QVector<QString> {NOTE});
         const auto &commands = blueprint.getCommands();
 
-        QCOMPARE(reinterpret_cast<const IndexCommand &>(*commands.front()).index,
+        QCOMPARE(reinterpret_cast<const IndexCommand &>(*commands.front()).index, // NOLINT(cppcoreguidelines-pro-type-reinterpret-cast)
                  "prefix_torrents_note_fulltext");
     }
 }
@@ -230,7 +230,7 @@ void tst_Blueprint::dropIndex_ByIndexName() const
         blueprint.dropUnique(NAME);
         const auto &commands = blueprint.getCommands();
 
-        QCOMPARE(reinterpret_cast<const IndexCommand &>(*commands.front()).index,
+        QCOMPARE(reinterpret_cast<const IndexCommand &>(*commands.front()).index, // NOLINT(cppcoreguidelines-pro-type-reinterpret-cast)
                  NAME);
     }
     // Index
@@ -239,7 +239,7 @@ void tst_Blueprint::dropIndex_ByIndexName() const
         blueprint.dropIndex(SIZE_);
         const auto &commands = blueprint.getCommands();
 
-        QCOMPARE(reinterpret_cast<const IndexCommand &>(*commands.front()).index,
+        QCOMPARE(reinterpret_cast<const IndexCommand &>(*commands.front()).index, // NOLINT(cppcoreguidelines-pro-type-reinterpret-cast)
                  SIZE_);
     }
     // SpatialIndex
@@ -248,7 +248,7 @@ void tst_Blueprint::dropIndex_ByIndexName() const
         blueprint.dropSpatialIndex("coordinates");
         const auto &commands = blueprint.getCommands();
 
-        QCOMPARE(reinterpret_cast<const IndexCommand &>(*commands.front()).index,
+        QCOMPARE(reinterpret_cast<const IndexCommand &>(*commands.front()).index, // NOLINT(cppcoreguidelines-pro-type-reinterpret-cast)
                  "coordinates");
     }
     // FullText
@@ -257,7 +257,7 @@ void tst_Blueprint::dropIndex_ByIndexName() const
         blueprint.dropFullText(NOTE);
         const auto &commands = blueprint.getCommands();
 
-        QCOMPARE(reinterpret_cast<const IndexCommand &>(*commands.front()).index,
+        QCOMPARE(reinterpret_cast<const IndexCommand &>(*commands.front()).index, // NOLINT(cppcoreguidelines-pro-type-reinterpret-cast)
                  NOTE);
     }
 }

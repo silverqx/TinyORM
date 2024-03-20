@@ -253,7 +253,7 @@ private Q_SLOTS:
 // NOLINTNEXTLINE(readability-redundant-access-specifiers)
 private:
     /*! Connection name used in this test case. */
-    QString m_connection {};
+    QString m_connection;
 };
 
 /* private slots */
@@ -4168,10 +4168,10 @@ struct ExpectedItem
     typename ModelsCollection<AlbumImage *>::size_type index;
 
     /*! Equality comparison operator for the ExpectedItem. */
-    inline bool operator==(const ExpectedItem &) const = default; // clazy:exclude=function-args-by-value
+    bool operator==(const ExpectedItem &) const = default; // clazy:exclude=function-args-by-value
 };
 
-Q_DECLARE_TYPEINFO(ExpectedItem, Q_PRIMITIVE_TYPE);
+Q_DECLARE_TYPEINFO(ExpectedItem, Q_PRIMITIVE_TYPE); // NOLINT(modernize-type-traits, performance-enum-size)
 
 void tst_Collection_Relations::each_lvalue_index() const
 {
