@@ -23,6 +23,7 @@ Checks:
   - hicpp-exception-baseclass
   - hicpp-multiway-paths-covered
   - -bugprone-easily-swappable-parameters
+  # This check is triggered for every TU so disabling
   - -bugprone-macro-parentheses
   - -clang-analyzer-optin.osx.*
   - -clang-analyzer-osx.*
