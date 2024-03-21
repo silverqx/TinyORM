@@ -1,27 +1,30 @@
 #!/usr/bin/env pwsh
 
 Param(
-    [Parameter(Position = 0,
-        HelpMessage = 'Specifies the cpp files to be processed, is joined with the | character ' +
-            'and used in the parenthesized regex eg. (file1|file2).')]
-    [ValidateNotNullOrEmpty()]
-    [string[]] $Files,
-
-    [Parameter(
-        HelpMessage = 'Specifies the files paths to be processed, is joined with by the | ' +
-            'character and used in the parenthesized regex eg. (folder1|folder2).')]
-    [ValidateNotNullOrEmpty()]
-    [string[]] $FilesPaths,
-
-    [Parameter(Mandatory, Position = 0,
+    [Parameter(Mandatory,
         HelpMessage = 'Specifies the path to the TinyORM source folder.')]
     [ValidateNotNullOrEmpty()]
     [string] $SourcePath,
 
-    [Parameter(Position = 1,
+    [Parameter(
         HelpMessage = 'Specifies the path to the CMake build folder, is pwd by default.')]
     [ValidateNotNullOrEmpty()]
     [string] $BuildPath = $($(Get-Location).Path),
+
+    [Parameter(HelpMessage = 'Specifies the cpp files to be processed, is joined with ' +
+            'the | character and used in the parenthesized regex eg. (file1|file2).')]
+    [ValidateNotNullOrEmpty()]
+    [string[]] $Files,
+
+    [Parameter(HelpMessage = 'Specifies the files paths to be processed, is joined with by the | ' +
+            'character and used in the parenthesized regex eg. (folder1|folder2).')]
+    [ValidateNotNullOrEmpty()]
+    [string[]] $FilesPaths,
+
+    [Parameter(HelpMessage = 'Specifies subfolders to lint. The pattern value is used ' +
+        'in regular expression, eg. (examples|src|tests|tom).')]
+    [AllowEmptyString()]
+    [string] $InSubFoldersPattern = '(?:examples|src|tests|tom)',
 
     [Parameter(HelpMessage = 'Skip Clang Tidy analyzes.')]
     [switch] $SkipClangTidy,
@@ -88,7 +91,7 @@ if (-not $PSBoundParameters.ContainsKey('Parallel') -or $Parallel -lt 1) {
 $FilesPaths = $null -eq $FilesPaths ? '.+?'          : "(?:$($FilesPaths -join '|'))"
 $Files      = $null -eq $Files      ? '[\w\d_\-\+]+' : "(?:$($Files -join '|'))"
 
-$Script:RegEx = "[\\\/]+(?:examples|src|tests|tom)[\\\/]+$FilesPaths[\\\/]+(?!mocs_)$($Files)\.cpp$"
+$Script:RegEx = "[\\\/]+$InSubFoldersPattern[\\\/]+$FilesPaths[\\\/]+(?!mocs_)$Files\.cpp$"
 
 # Append the build type to the build path
 $BuildPath = $BuildPath.TrimEnd((Get-Slashes))
@@ -238,7 +241,7 @@ if (-not $SkipClazy) {
     run-clazy-standalone.ps1 `
         -checks="$Script:Checks" `
         -extra-arg-before='-Qunused-arguments' `
-        -header-filter='[\\\/]+(examples|orm|tests|tom)[\\\/]+.+\.(h|hpp)$' `
+        -header-filter="[\\\/]+$InSubFoldersPattern[\\\/]+.+\.(h|hpp)$" `
         -j $Parallel `
         -p="$BuildPath" $Script:RegEx
 }
