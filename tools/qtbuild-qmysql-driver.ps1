@@ -29,6 +29,8 @@ Set-StrictMode -Version 3.0
 # ---
 Set-Variable STACK_NAME -Option Constant -Value $MyInvocation.MyCommand.Name
 
+$Script:QtRoot = $env:TINY_QT_ROOT ?? 'C:\Qt'
+$Script:QtRootAlt = $Script:QtRoot.Replace('\', '/')
 $Script:QtMajorVersion = $null
 $Script:QtEnvVersion = $null
 $Script:VisualStudioVersion = '17.0'
@@ -69,25 +71,25 @@ function Test-QtVersionInstalled
 {
     Write-Progress "Testing whether Qt $QtVersion is installed"
 
-    if (Test-Path "C:\Qt\$QtVersion") {
+    if (Test-Path "$Script:QtRoot\$QtVersion") {
         return
     }
 
     Write-ExitError ("The passed Qt version '$QtVersion' is not installed " +
-        "in the 'C:\Qt\$QtVersion\' folder.")
+        "in the '$Script:QtRoot\$QtVersion\' folder.")
 }
 
 # Check whether the source files to build the Qt MySQL plugin are installed
 function Test-QtSourcesInstalled {
     Write-Progress "Testing whether Qt $QtVersion source files are installed"
 
-    if (Test-Path "C:\Qt\$QtVersion\Src\qtbase\src\plugins\sqldrivers") {
+    if (Test-Path "$Script:QtRoot\$QtVersion\Src\qtbase\src\plugins\sqldrivers") {
         return
     }
 
     Write-ExitError ("Source files to build the Qt MySQL plugin for the passed " +
         "Qt version '$QtVersion' are not installed " +
-        "in the 'C:\Qt\$QtVersion\Src\qtbase\src\plugins\sqldrivers' folder.")
+        "in the '$Script:QtRoot\$QtVersion\Src\qtbase\src\plugins\sqldrivers' folder.")
 }
 
 # Check whether the MySQL Server is installed
@@ -226,11 +228,11 @@ Set-Location "$QtVersion/msvc2019_64/Debug"
 Write-Progress 'Configuring...'
 
 qt-cmake `
-    -S "C:/Qt/$QtVersion/Src/qtbase/src/plugins/sqldrivers" `
+    -S "$Script:QtRootAlt/$QtVersion/Src/qtbase/src/plugins/sqldrivers" `
     -B . `
     -G Ninja `
     -D CMAKE_BUILD_TYPE:STRING=Debug `
-    -D CMAKE_INSTALL_PREFIX:PATH="C:/Qt/$QtVersion/msvc2019_64" `
+    -D CMAKE_INSTALL_PREFIX:PATH="$Script:QtRootAlt/$QtVersion/msvc2019_64" `
     -D MySQL_INCLUDE_DIR:PATH="${Script:MySqlServerPath}/include" `
     -D MySQL_LIBRARY:FILEPATH="${Script:MySqlServerPath}/lib/libmysql.lib" `
     -D FEATURE_sql_psql:BOOL=OFF `
@@ -253,11 +255,11 @@ Set-Location '../RelWithDebInfo'
 Write-Progress 'Configuring...'
 
 qt-cmake `
-    -S "C:/Qt/$QtVersion/Src/qtbase/src/plugins/sqldrivers" `
+    -S "$Script:QtRootAlt/$QtVersion/Src/qtbase/src/plugins/sqldrivers" `
     -B . `
     -G Ninja `
     -D CMAKE_BUILD_TYPE:STRING=RelWithDebInfo `
-    -D CMAKE_INSTALL_PREFIX:PATH="C:/Qt/$QtVersion/msvc2019_64" `
+    -D CMAKE_INSTALL_PREFIX:PATH="$Script:QtRootAlt/$QtVersion/msvc2019_64" `
     -D MySQL_INCLUDE_DIR:PATH="${Script:MySqlServerPath}/include" `
     -D MySQL_LIBRARY:FILEPATH="${Script:MySqlServerPath}/lib/libmysql.lib" `
     -D FEATURE_sql_psql:BOOL=OFF `

@@ -88,7 +88,7 @@ if (-not $PSBoundParameters.ContainsKey('Parallel') -or $Parallel -lt 1) {
 $FilesPaths = $null -eq $FilesPaths ? '.+?'          : "(?:$($FilesPaths -join '|'))"
 $Files      = $null -eq $Files      ? '[\w\d_\-\+]+' : "(?:$($Files -join '|'))"
 
-$Script:RegEx = "[\\\/]+(?:examples|src|tests)[\\\/]+$FilesPaths[\\\/]+(?!mocs_)$($Files)\.cpp$"
+$Script:RegEx = "[\\\/]+(?:examples|src|tests|tom)[\\\/]+$FilesPaths[\\\/]+(?!mocs_)$($Files)\.cpp$"
 
 # Append the build type to the build path
 $BuildPath = $BuildPath.TrimEnd((Get-Slashes))
@@ -123,7 +123,7 @@ $clazyCurrentVersion = $Matches.version
 
 Write-Info 'Recommended versions'
 Newline
-Write-Output "  Clang-Tidy `e[32mv17`e[0m (current `e[33mv$clangTidyCurrentVersion`e[0m)"
+Write-Output "  Clang-Tidy `e[32mv18`e[0m (current `e[33mv$clangTidyCurrentVersion`e[0m)"
 Write-Output "  Clazy standalone `e[32mv1.11`e[0m (current `e[33mv$clazyCurrentVersion`e[0m)"
 
 # Initialize build environment if it's not already initialized
@@ -162,6 +162,7 @@ if (-not (Test-Path $BuildPath\compile_commands.json)) {
         -D CMAKE_EXPORT_COMPILE_COMMANDS:BOOL=ON `
         -D CMAKE_EXPORT_PACKAGE_REGISTRY:BOOL=OFF `
         -D CMAKE_BUILD_TYPE:STRING=$BuildType `
+        -D CMAKE_CXX_SCAN_FOR_MODULES:BOOL=OFF `
         -D VCPKG_APPLOCAL_DEPS:BOOL=OFF `
         -D VERBOSE_CONFIGURE:BOOL=ON `
         -D MATCH_EQUAL_EXPORTED_BUILDTREE:BOOL=OFF `

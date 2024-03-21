@@ -94,7 +94,7 @@ try {
     vcpkg hash $tempFile
 }
 catch {
-    Write-Error "Failed to download an archive for hashing from the URL:`n$url"
+    Write-Error "Failed to download an archive for hashing from the URL:`n${url}"
     # Re-throw
     throw
 }
