@@ -22,9 +22,9 @@ Param(
     [string[]] $FilesPaths,
 
     [Parameter(HelpMessage = 'Specifies subfolders to lint. The pattern value is used ' +
-        'in regular expression, eg. (examples|src|tests|tom).')]
+        'in regular expression, eg. (drivers|examples|src|tests|tom).')]
     [AllowEmptyString()]
-    [string] $InSubFoldersPattern = '(?:examples|src|tests|tom)',
+    [string] $InSubFoldersPattern = '(?:drivers|examples|src|tests|tom)',
 
     [Parameter(HelpMessage = 'Skip Clang Tidy analyzes.')]
     [switch] $SkipClangTidy,
@@ -113,12 +113,17 @@ function Set-DriversCMakeParameters {
     [OutputType([string[]])]
     Param()
 
+    # The DRIVERS_TYPE can only be changed if the -BuildDrivers is explicitly specified, this is ok
     if ($BuildDrivers) {
         return @('-D BUILD_DRIVERS:BOOL=ON', "-D DRIVERS_TYPE:STRING=$DriversType")
     }
 
-    # Explicitly pass OFF when the CMake build folder already exists
-    if (Test-Path $BuildPath\CMakeCache.txt) {
+    # Explicitly pass OFF when the CMake build folder already exists, also, disable it only when
+    # the -BuildDrivers:$false is explicitly specified, if not specified then CMake will use
+    # the cached value
+    if ($Script:PSBoundParameters.ContainsKey('BuildDrivers') -and `
+        (Test-Path $BuildPath\CMakeCache.txt)
+    ) {
         return @('-D BUILD_DRIVERS:BOOL=OFF')
     }
 
