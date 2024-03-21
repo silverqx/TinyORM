@@ -42,7 +42,7 @@ Set-StrictMode -Version 3.0
 
 Clear-Host
 
-$Script:TinyORMMainPath = '<your_path_here>'
+$Script:TinyORMMainPath = $env:TINYORM_MAIN_DIR ?? '<your_path_here>'
 
 Lint-TinyORM.ps1 `
     -SourcePath "$Script:TinyORMMainPath\TinyORM" `
