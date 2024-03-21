@@ -52,7 +52,15 @@ Param(
 
     [Parameter(HelpMessage = 'Specifies the number of tidy instances to be run in parallel.')]
     [ValidateNotNull()]
-    [int] $Parallel
+    [int] $Parallel,
+
+    [Parameter(HelpMessage = 'Build TinyORM database drivers that replaces QtSql module.')]
+    [switch] $BuildDrivers,
+
+    [Parameter(HelpMessage = 'Build TinyDrivers database driver (core/common code).')]
+    [ValidateSet('Shared', 'Loadable', 'Static')]
+    [ValidateNotNullOrEmpty()]
+    [string] $DriversType = 'Shared'
 )
 
 Set-StrictMode -Version 3.0
@@ -96,6 +104,28 @@ $Script:RegEx = "[\\\/]+$InSubFoldersPattern[\\\/]+$FilesPaths[\\\/]+(?!mocs_)$F
 # Append the build type to the build path
 $BuildPath = $BuildPath.TrimEnd((Get-Slashes))
 $BuildPath += "_$BuildType"
+
+# Functions section
+# ---
+
+# Create TinyDrivers-related CMake parameters based on the pwsh script arguments
+function Set-DriversCMakeParameters {
+    [OutputType([string[]])]
+    Param()
+
+    if ($BuildDrivers) {
+        return @('-D BUILD_DRIVERS:BOOL=ON', "-D DRIVERS_TYPE:STRING=$DriversType")
+    }
+
+    # Explicitly pass OFF when the CMake build folder already exists
+    if (Test-Path $BuildPath\CMakeCache.txt) {
+        return @('-D BUILD_DRIVERS:BOOL=OFF')
+    }
+
+    # However, if the CMake build folder doesn't exist, pass nothing to avoid the unused parameter
+    # warning
+    return @()
+}
 
 # Main section
 # ---
@@ -173,8 +203,7 @@ cmake `
     -D ORM:BOOL=ON `
     -D TOM:BOOL=ON `
     -D TOM_EXAMPLE:BOOL=ON `
-    # -D BUILD_DRIVERS:BOOL=ON `
-    # -D DRIVERS_TYPE:STRING=Shared
+    (Set-DriversCMakeParameters)
 
 if (-not $?) {
     Write-ExitError 'CMake configure failed.'
