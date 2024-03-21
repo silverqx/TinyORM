@@ -148,36 +148,43 @@ else {
 }
 
 # Configure and Build
+cmake `
+    -S $SourcePath `
+    -B $BuildPath `
+    -G 'Ninja' `
+    -D CMAKE_CXX_COMPILER_LAUNCHER:FILEPATH=ccache `
+    <# the $null can't be swapped by the '' empty string! #> `
+    ($PSVersionTable.Platform -ceq 'Unix' ? '-D CMAKE_CXX_COMPILER:FILEPATH=clang++'
+                                          : $null) `
+    -D CMAKE_TOOLCHAIN_FILE:PATH="$env:VCPKG_ROOT/scripts/buildsystems/vcpkg.cmake" `
+    -D CMAKE_DISABLE_PRECOMPILE_HEADERS:BOOL=ON `
+    -D CMAKE_EXPORT_COMPILE_COMMANDS:BOOL=ON `
+    -D CMAKE_EXPORT_PACKAGE_REGISTRY:BOOL=OFF `
+    -D CMAKE_BUILD_TYPE:STRING=$BuildType `
+    -D CMAKE_CXX_SCAN_FOR_MODULES:BOOL=OFF `
+    -D VCPKG_APPLOCAL_DEPS:BOOL=OFF `
+    -D VERBOSE_CONFIGURE:BOOL=ON `
+    -D MATCH_EQUAL_EXPORTED_BUILDTREE:BOOL=OFF `
+    -D MYSQL_PING:BOOL=ON `
+    -D BUILD_TESTS:BOOL=ON `
+    -D ORM:BOOL=ON `
+    -D TOM:BOOL=ON `
+    -D TOM_EXAMPLE:BOOL=ON
+
+if (-not $?) {
+    Write-ExitError 'CMake configure failed.'
+}
+
 if (-not (Test-Path $BuildPath\compile_commands.json)) {
-    cmake `
-        -S $SourcePath `
-        -B $BuildPath `
-        -G 'Ninja' `
-        -D CMAKE_CXX_COMPILER_LAUNCHER:FILEPATH=ccache `
-        <# the $null can't be swapped by the '' empty string! #> `
-        ($PSVersionTable.Platform -ceq 'Unix' ? '-D CMAKE_CXX_COMPILER:FILEPATH=clang++'
-                                              : $null) `
-        -D CMAKE_TOOLCHAIN_FILE:PATH="$env:VCPKG_ROOT/scripts/buildsystems/vcpkg.cmake" `
-        -D CMAKE_DISABLE_PRECOMPILE_HEADERS:BOOL=ON `
-        -D CMAKE_EXPORT_COMPILE_COMMANDS:BOOL=ON `
-        -D CMAKE_EXPORT_PACKAGE_REGISTRY:BOOL=OFF `
-        -D CMAKE_BUILD_TYPE:STRING=$BuildType `
-        -D CMAKE_CXX_SCAN_FOR_MODULES:BOOL=OFF `
-        -D VCPKG_APPLOCAL_DEPS:BOOL=OFF `
-        -D VERBOSE_CONFIGURE:BOOL=ON `
-        -D MATCH_EQUAL_EXPORTED_BUILDTREE:BOOL=OFF `
-        -D MYSQL_PING:BOOL=ON `
-        -D BUILD_TESTS:BOOL=ON `
-        -D ORM:BOOL=ON `
-        -D TOM:BOOL=ON `
-        -D TOM_EXAMPLE:BOOL=ON
+    Write-ExitError "CMake configure didn't generate '$BuildPath\compile_commands.json' " +
+        'compilation database, CMAKE_EXPORT_COMPILE_COMMANDS must be set to ON.'
 }
 
 cmake --build $BuildPath --target all `
     $($VerbosePreference -eq 'SilentlyContinue' ? '' : '--verbose')
 
 if (-not $?) {
-    Write-ExitError 'CMake build failed'
+    Write-ExitError 'CMake build failed.'
 }
 
 # This is critical so Clang-Tidy can correctly apply Checks from the .clang-tidy file
