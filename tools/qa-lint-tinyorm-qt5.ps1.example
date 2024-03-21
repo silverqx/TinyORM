@@ -40,7 +40,15 @@ Param(
 
     [Parameter(HelpMessage = 'Specifies the number of tidy instances to be run in parallel.')]
     [ValidateNotNull()]
-    [int] $Parallel
+    [int] $Parallel,
+
+    [Parameter(HelpMessage = 'Build TinyORM database drivers that replaces QtSql module.')]
+    [switch] $BuildDrivers,
+
+    [Parameter(HelpMessage = 'Build TinyDrivers database driver (core/common code).')]
+    [ValidateSet('Shared', 'Loadable', 'Static')]
+    [ValidateNotNullOrEmpty()]
+    [string] $DriversType = 'Shared'
 )
 
 Set-StrictMode -Version 3.0
