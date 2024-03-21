@@ -221,6 +221,11 @@ defineTest(tiny_link_drivers) {
             include($$TINYORM_SOURCE_TREE/qmake/support/variables.pri)
             LIBS += $$quote(-L$$clean_path($$TINYORM_BUILD_TREE)/drivers/common$${TINY_BUILD_SUBFOLDER}/)
             LIBS += -lTinyDrivers
+
+            build_loadable_drivers: \
+            $$isBuildingMySqlDriver: \
+                LIBS += $$quote(-L$$clean_path($$TINYORM_BUILD_TREE)/drivers/mysql$${TINY_BUILD_SUBFOLDER}/)
+
             export(LIBS)
         }
         export(INCLUDEPATH)
