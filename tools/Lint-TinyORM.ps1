@@ -172,7 +172,9 @@ cmake `
     -D BUILD_TESTS:BOOL=ON `
     -D ORM:BOOL=ON `
     -D TOM:BOOL=ON `
-    -D TOM_EXAMPLE:BOOL=ON
+    -D TOM_EXAMPLE:BOOL=ON `
+    # -D BUILD_DRIVERS:BOOL=ON `
+    # -D DRIVERS_TYPE:STRING=Shared
 
 if (-not $?) {
     Write-ExitError 'CMake configure failed.'
