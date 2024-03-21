@@ -8,9 +8,9 @@ Param(
     [string[]] $Files,
 
     [Parameter(HelpMessage = 'Specifies subfolders to lint. The pattern value is used ' +
-        'in regular expression, eg. (examples|src|tests|tom).')]
+        'in regular expression, eg. (drivers|examples|src|tests|tom).')]
     [AllowEmptyString()]
-    [string] $InSubFoldersPattern = '(?:examples|src|tests|tom)',
+    [string] $InSubFoldersPattern = '(?:drivers|examples|src|tests|tom)',
 
     [Parameter(
         HelpMessage = 'Specifies the files paths to be processed, is joined with by the | ' +
