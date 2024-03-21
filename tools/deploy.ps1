@@ -993,7 +993,7 @@ function Get-TagMessage {
 
 # Select for which ports to bump the port-version number
 function Read-PortVersionsToBump {
-    [OutputType([array])]
+    [OutputType([bool])]
     Param()
 
     $versionTypeChoice = [System.Management.Automation.Host.ChoiceDescription[]](@(
