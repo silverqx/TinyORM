@@ -124,6 +124,7 @@ namespace
         insertDbOption(options, SSL_CERT, qEnvironmentVariable("DB_MYSQL_SSL_CERT"));
         insertDbOption(options, SSL_KEY,  qEnvironmentVariable("DB_MYSQL_SSL_KEY"));
         insertDbOption(options, SSL_CA,   qEnvironmentVariable("DB_MYSQL_SSL_CA"));
+        insertDbOption(options, SSL_MODE, qEnvironmentVariable("DB_MYSQL_SSL_MODE"));
 
         return options;
     }

@@ -20,9 +20,11 @@ using Orm::Constants::QSQLITE;
 using Orm::Constants::SSL_CA;
 using Orm::Constants::SSL_CERT;
 using Orm::Constants::SSL_KEY;
+using Orm::Constants::SSL_MODE;
 using Orm::Constants::UTF8;
 using Orm::Constants::UTF8MB4;
 using Orm::Constants::UTF8MB40900aici;
+using Orm::Constants::VerifyCA;
 using Orm::Constants::Version;
 using Orm::Constants::application_name;
 using Orm::Constants::charset_;
@@ -46,6 +48,7 @@ using Orm::Constants::spatial_ref_sys;
 using Orm::Constants::ssl_ca;
 using Orm::Constants::ssl_cert;
 using Orm::Constants::ssl_key;
+using Orm::Constants::ssl_mode;
 using Orm::Constants::sslcert;
 using Orm::Constants::sslkey;
 using Orm::Constants::sslmode_;
@@ -533,6 +536,7 @@ void tst_DatabaseManager::ssl_MySQL_ConfigurationValues() const
     const auto sslCertValue = sl("C:/example/mysql-cert.pem");
     const auto sslKeyValue  = sl("C:/example/mysql-key.pem");
     const auto sslCaValue   = sl("C:/example/mysql-ca.pem");
+    const auto sslModeValue = VerifyCA;
     // The 'options' level
     const auto sslCertOptionsValue = sl("D:/example/client-cert.pem");
     const auto sslKeyOptionsValue  = sl("D:/example/client-key.pem");
@@ -544,6 +548,7 @@ void tst_DatabaseManager::ssl_MySQL_ConfigurationValues() const
         {ssl_cert,  sslCertValue},
         {ssl_key,   sslKeyValue},
         {ssl_ca,    sslCaValue},
+        {ssl_mode,  sslModeValue},
         {options_,  QVariantHash({{SSL_CERT, sslCertOptionsValue},
                                   {SSL_KEY,  sslKeyOptionsValue}})}
     };
@@ -581,6 +586,7 @@ void tst_DatabaseManager::ssl_MySQL_ConfigurationValues() const
                  {ssl_cert,       sslCertValue},
                  {ssl_key,        sslKeyValue},
                  {ssl_ca,         sslCaValue},
+                 {ssl_mode,       sslModeValue},
                  {options_,       QVariantHash({{SSL_CERT, sslCertOptionsValue},
                                                 {SSL_KEY,  sslKeyOptionsValue}})},
              }));
@@ -600,10 +606,12 @@ void tst_DatabaseManager::ssl_MySQL_ConfigurationValues() const
                  {ssl_cert,       sslCertValue},
                  {ssl_key,        sslKeyValue},
                  {ssl_ca,         sslCaValue},
+                 {ssl_mode,       sslModeValue},
                                                  // Here must be uppercase
                  {options_,       QVariantHash({{SSL_CERT, sslCertValue},
                                                 {SSL_KEY,  sslKeyValue},
-                                                {SSL_CA,   sslCaValue}})},
+                                                {SSL_CA,   sslCaValue},
+                                                {SSL_MODE, sslModeValue}})},
              }));
 
     // Restore

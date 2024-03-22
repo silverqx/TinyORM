@@ -8,6 +8,7 @@ TINYORM_BEGIN_COMMON_NAMESPACE
 using Orm::Constants::SSL_CA;
 using Orm::Constants::SSL_CERT;
 using Orm::Constants::SSL_KEY;
+using Orm::Constants::SSL_MODE;
 using Orm::Constants::Version;
 
 namespace Orm::Configurations
@@ -70,7 +71,7 @@ void MySqlConfigurationParser::addSslOptions(QVariantHash &options) const
     /* Copy all SSL-related connection options from the top-level configuration level
        to the 'options' hash. If the options hash already contains the same option, then
        it will be overwritten. */
-    copyOptionsFromTopLevel(options, {SSL_CA, SSL_CERT, SSL_KEY}, true);
+    copyOptionsFromTopLevel(options, {SSL_CA, SSL_CERT, SSL_KEY, SSL_MODE}, true);
 }
 
 } // namespace Orm::Configurations

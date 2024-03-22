@@ -583,6 +583,7 @@ jobs:
         DB_MYSQL_SSL_CA: /usr/local/share/crystal-mysql/ca.pem
         DB_MYSQL_SSL_CERT: /usr/local/share/crystal-mysql/client-cert.pem
         DB_MYSQL_SSL_KEY: /usr/local/share/crystal-mysql/client-key.pem
+        DB_MYSQL_SSL_MODE: ${{ secrets.DB_MYSQL_SSL_MODE }}
         DB_MYSQL_USERNAME: ${{ secrets.DB_MYSQL_USERNAME }}
         DB_PGSQL_CHARSET: ${{ secrets.DB_PGSQL_CHARSET }}
         DB_PGSQL_DATABASE: ${{ secrets.DB_PGSQL_DATABASE }}
@@ -606,6 +607,7 @@ jobs:
         DB_MYSQL_SSL_CA: /usr/local/share/crystal-mysql/ca.pem
         DB_MYSQL_SSL_CERT: /usr/local/share/crystal-mysql/client-cert.pem
         DB_MYSQL_SSL_KEY: /usr/local/share/crystal-mysql/client-key.pem
+        DB_MYSQL_SSL_MODE: ${{ secrets.DB_MYSQL_SSL_MODE }}
         DB_MYSQL_USERNAME: ${{ secrets.DB_MYSQL_USERNAME }}
         DB_PGSQL_CHARSET: ${{ secrets.DB_PGSQL_CHARSET }}
         DB_PGSQL_DATABASE: ${{ secrets.DB_PGSQL_DATABASE }}
@@ -635,6 +637,7 @@ jobs:
         DB_MYSQL_SSL_CA: /usr/local/share/crystal-mysql/ca.pem
         DB_MYSQL_SSL_CERT: /usr/local/share/crystal-mysql/client-cert.pem
         DB_MYSQL_SSL_KEY: /usr/local/share/crystal-mysql/client-key.pem
+        DB_MYSQL_SSL_MODE: ${{ secrets.DB_MYSQL_SSL_MODE }}
         DB_MYSQL_USERNAME: ${{ secrets.DB_MYSQL_USERNAME }}
         TOM_EXAMPLE_ENV: testing
 

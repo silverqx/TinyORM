@@ -708,6 +708,7 @@ https://github.com/silverqx/files/raw/main/clazy-standalone.tar.bz2
         DB_MYSQL_SSL_CA: ${{ runner.workspace }}/../mysql/data/ca.pem
         DB_MYSQL_SSL_CERT: ${{ runner.workspace }}/../mysql/data/client-cert.pem
         DB_MYSQL_SSL_KEY: ${{ runner.workspace }}/../mysql/data/client-key.pem
+        DB_MYSQL_SSL_MODE: ${{ secrets.DB_MYSQL_SSL_MODE }}
         DB_MYSQL_USERNAME: ${{ secrets.DB_MYSQL_USERNAME }}
         DB_PGSQL_CHARSET: utf8
         DB_PGSQL_DATABASE: ${{ secrets.DB_PGSQL_DATABASE }}
@@ -2172,10 +2173,11 @@ db.setDatabaseName(qEnvironmentVariable("DB_MYSQL_DATABASE"));
 db.setUserName(qEnvironmentVariable("DB_MYSQL_USERNAME"));
 db.setPassword(qEnvironmentVariable("DB_MYSQL_PASSWORD"));
 db.setPort(qEnvironmentVariable("DB_MYSQL_PORT").toUInt());
-db.setConnectOptions(QStringLiteral("SSL_CERT=%1;SSL_KEY=%2;SSL_CA=%3")
+db.setConnectOptions(QStringLiteral("SSL_CERT=%1;SSL_KEY=%2;SSL_CA=%3;MYSQL_OPT_SSL_MODE=%4")
                      .arg(qEnvironmentVariable("DB_MYSQL_SSL_CERT"),
                           qEnvironmentVariable("DB_MYSQL_SSL_KEY"),
-                          qEnvironmentVariable("DB_MYSQL_SSL_CA")));
+                          qEnvironmentVariable("DB_MYSQL_SSL_CA"),
+                          qEnvironmentVariable("DB_MYSQL_SSL_MODE")));
 
 auto ok = db.open();
 if (ok) {

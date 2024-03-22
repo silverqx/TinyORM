@@ -105,9 +105,15 @@ namespace Orm::Constants
     inline const QString SSL_CERT     = QStringLiteral("SSL_CERT");
     inline const QString SSL_KEY      = QStringLiteral("SSL_KEY");
     inline const QString SSL_CA       = QStringLiteral("SSL_CA");
+    inline const QString SSL_MODE     = QStringLiteral("MYSQL_OPT_SSL_MODE"); // QtSql MySQL doesn't support short SSL_MODE option so this long version must be used
     inline const QString &ssl_cert    = SSL_CERT;
     inline const QString &ssl_key     = SSL_KEY;
     inline const QString &ssl_ca      = SSL_CA;
+    inline const QString &ssl_mode    = SSL_MODE;
+    inline const QString Disabled     = QStringLiteral("DISABLED");
+    inline const QString Preferred    = QStringLiteral("PREFERRED");
+    inline const QString Required     = QStringLiteral("REQUIRED");
+    inline const QString VerifyCA     = QStringLiteral("VERIFY_CA");
 
     // PostgreSQL SSL
     inline const QString sslmode_     = QStringLiteral("sslmode");

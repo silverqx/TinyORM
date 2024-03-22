@@ -106,9 +106,15 @@ namespace Orm::Constants
     SHAREDLIB_EXPORT extern const QString SSL_CERT;
     SHAREDLIB_EXPORT extern const QString SSL_KEY;
     SHAREDLIB_EXPORT extern const QString SSL_CA;
+    SHAREDLIB_EXPORT extern const QString SSL_MODE;
     SHAREDLIB_EXPORT extern const QString &ssl_cert;
     SHAREDLIB_EXPORT extern const QString &ssl_key;
     SHAREDLIB_EXPORT extern const QString &ssl_ca;
+    SHAREDLIB_EXPORT extern const QString &ssl_mode;
+    SHAREDLIB_EXPORT extern const QString Disabled;
+    SHAREDLIB_EXPORT extern const QString Preferred;
+    SHAREDLIB_EXPORT extern const QString Required;
+    SHAREDLIB_EXPORT extern const QString VerifyCA;
 
     // PostgreSQL SSL
     SHAREDLIB_EXPORT extern const QString sslmode_;

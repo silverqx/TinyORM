@@ -194,6 +194,7 @@ You can create and configure a new database connection using the `create` method
         {ssl_ca,          QStringLiteral("C:/mysql/data/ca.pem")},
         {ssl_cert,        QStringLiteral("C:/mysql/data/client-cert.pem")},
         {ssl_key,         QStringLiteral("C:/mysql/data/client-key.pem")},
+        {ssl_mode,        VerifyCA},
         // Or
     //    {options,         ConfigUtils::mysqlSslOptions()},
         {timezone_,       TZ00},
@@ -384,7 +385,7 @@ This feature is heavily dependent on the underlying `QSqlDatabase` module. What 
 
 ##### MySQL
 
-You have to pass the `SSL_CA`, `SSL_CERT`, and `SSL_KEY` options.
+You have to pass the `SSL_CA`, `SSL_CERT`, `SSL_KEY`, and `MYSQL_OPT_SSL_MODE` options.
 
 <Tabs groupId={shell}>
 <TabItem value={pwsh} label={pwsh_label}>
@@ -401,7 +402,8 @@ You have to pass the `SSL_CA`, `SSL_CERT`, and `SSL_KEY` options.
         // highlight-start
         {"options", QVariantHash({{"SSL_CA",   "C:/mysql/data/ca.pem"},
                                   {"SSL_CERT", "C:/mysql/data/client-cert.pem"},
-                                  {"SSL_KEY",  "C:/mysql/data/client-key.pem"}})},
+                                  {"SSL_KEY",  "C:/mysql/data/client-key.pem"},
+                                  {"MYSQL_OPT_SSL_MODE", "VERIFY_CA"}})},
         // highlight-end
     });
 
@@ -420,14 +422,15 @@ You have to pass the `SSL_CA`, `SSL_CERT`, and `SSL_KEY` options.
         // highlight-start
         {"options", QVariantHash({{"SSL_CA",   "~/.local/share/TinyORM/ssl/ca.pem"},
                                   {"SSL_CERT", "~/.local/share/TinyORM/ssl/client-cert.pem"},
-                                  {"SSL_KEY",  "~/.local/share/TinyORM/ssl/client-key.pem"}})},
+                                  {"SSL_KEY",  "~/.local/share/TinyORM/ssl/client-key.pem"},
+                                  {"MYSQL_OPT_SSL_MODE", "VERIFY_CA"}})},
         // highlight-end
     });
 
 </TabItem>
 </Tabs>
 
-You may also use the `ConfigUtils::mysqlSslOptions()` or the `ConfigUtils::insertMySqlSslOptions()` methods to insert these options for you and define them using the `DB_MYSQL_SSL_CA`, `DB_MYSQL_SSL_CERT`, and `DB_MYSQL_SSL_KEY` environment variables.
+You may also use the `ConfigUtils::mysqlSslOptions()` or the `ConfigUtils::insertMySqlSslOptions()` methods to insert these options for you and define them using the `DB_MYSQL_SSL_CA`, `DB_MYSQL_SSL_CERT`, `DB_MYSQL_SSL_KEY`, and `DB_MYSQL_SSL_MODE` environment variables.
 
     #include <orm/db.hpp>
     #include <orm/utils/configuration.hpp>
@@ -463,6 +466,7 @@ You can define these SSL-related options in the top-level configuration, they wi
         {"SSL_CA",   "C:/mysql/data/ca.pem"},
         {"SSL_CERT", "C:/mysql/data/client-cert.pem"},
         {"SSL_KEY",  "C:/mysql/data/client-key.pem"},
+        {"MYSQL_OPT_SSL_MODE", "VERIFY_CA"},
         // highlight-end
     });
 
@@ -482,6 +486,7 @@ You can define these SSL-related options in the top-level configuration, they wi
         {"SSL_CA",   "~/.local/share/TinyORM/ssl/ca.pem"},
         {"SSL_CERT", "~/.local/share/TinyORM/ssl/client-cert.pem"},
         {"SSL_KEY",  "~/.local/share/TinyORM/ssl/client-key.pem"},
+        {"MYSQL_OPT_SSL_MODE", "VERIFY_CA"},
         // highlight-end
     });
 
