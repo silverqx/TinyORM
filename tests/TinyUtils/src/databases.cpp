@@ -17,6 +17,7 @@ using Orm::Drivers::SqlDatabase;
 #endif
 
 using Orm::Constants::EMPTY;
+using Orm::Constants::EQ_C;
 using Orm::Constants::H127001;
 using Orm::Constants::P3306;
 using Orm::Constants::P5432;
@@ -28,6 +29,7 @@ using Orm::Constants::SEMICOLON;
 using Orm::Constants::SSL_CA;
 using Orm::Constants::SSL_CERT;
 using Orm::Constants::SSL_KEY;
+using Orm::Constants::SSL_MODE;
 using Orm::Constants::ROOT;
 using Orm::Constants::TZ00;
 using Orm::Constants::UTC;
@@ -509,13 +511,16 @@ QString Databases::createMySQLOrMariaSslOptions(const QVariantHash &configuratio
     result.reserve(3);
 
     if (options.contains(SSL_CERT))
-        result << sl("SSL_CERT=").append(options[SSL_CERT].value<QString>());
+        result << SSL_CERT % EQ_C % options[SSL_CERT].value<QString>();
 
     if (options.contains(SSL_KEY))
-        result << sl("SSL_KEY=").append(options[SSL_KEY].value<QString>());
+        result << SSL_KEY % EQ_C % options[SSL_KEY].value<QString>();
 
     if (options.contains(SSL_CA))
-        result << sl("SSL_CA=").append(options[SSL_CA].value<QString>());
+        result << SSL_CA % EQ_C % options[SSL_CA].value<QString>();
+
+    if (options.contains(SSL_MODE))
+        result << SSL_MODE % EQ_C % options[SSL_MODE].value<QString>();
 
     return result.join(SEMICOLON);
 }
@@ -826,7 +831,7 @@ const std::vector<const char *> &Databases::mysqlSslEnvVariables()
 {
     // SSL-related Environment variables to check if all are empty
     static const std::vector<const char *> cached {
-        "DB_MYSQL_SSL_CA", "DB_MYSQL_SSL_CERT", "DB_MYSQL_SSL_KEY",
+        "DB_MYSQL_SSL_CA", "DB_MYSQL_SSL_CERT", "DB_MYSQL_SSL_KEY", "DB_MYSQL_SSL_MODE",
     };
 
     return cached;
@@ -834,6 +839,11 @@ const std::vector<const char *> &Databases::mysqlSslEnvVariables()
 
 const std::vector<const char *> &Databases::mariaSslEnvVariables()
 {
+    /* We are using MySQL client library to connect to the MariaDB server so
+       the MYSQL_OPT_SSL_MODE can't be defined because MariaDB server doesn't recognize
+       this option, MariaDB has the MYSQL_OPT_SSL_VERIFY_SERVER_CERT but it can't be used
+       either becuase MySQL client library doesn't recognize it. */
+
     // SSL-related Environment variables to check if all are empty
     static const std::vector<const char *> cached {
         "DB_MARIA_SSL_CA", "DB_MARIA_SSL_CERT", "DB_MARIA_SSL_KEY",
