@@ -457,7 +457,7 @@ void Databases::createDriversConnectionInternal(
     if (driver == QMYSQL) {
         if (connection.startsWith(MYSQL_DRIVERS))
             createDriversMySQLConnection(
-                        connection, configuration, mysqlEnvVariables(), open);
+                        connection, configuration, mysqlSslEnvVariables(), open);
 
         else if (connection.startsWith(MARIADB_DRIVERS))
             createDriversMariaConnection(
