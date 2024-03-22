@@ -256,6 +256,9 @@ MySqlDriverPrivate::getMySqlOptionsHash()
         {u"SSL_CA"_s,                    {MYSQL_OPT_SSL_CA,          &MySqlDriverPrivate::setOptionString}},
         {u"SSL_CAPATH"_s,                {MYSQL_OPT_SSL_CAPATH,      &MySqlDriverPrivate::setOptionString}},
         {u"SSL_CIPHER"_s,                {MYSQL_OPT_SSL_CIPHER,      &MySqlDriverPrivate::setOptionString}},
+#if defined(MYSQL_VERSION_ID) && MYSQL_VERSION_ID >= 50711 && !defined(MARIADB_VERSION_ID)
+        {u"SSL_MODE"_s,                  {MYSQL_OPT_SSL_MODE,        &MySqlDriverPrivate::setOptionSslMode}},
+#endif
         {u"MYSQL_OPT_SSL_KEY"_s,         {MYSQL_OPT_SSL_KEY,         &MySqlDriverPrivate::setOptionString}},
         {u"MYSQL_OPT_SSL_CERT"_s,        {MYSQL_OPT_SSL_CERT,        &MySqlDriverPrivate::setOptionString}},
         {u"MYSQL_OPT_SSL_CA"_s,          {MYSQL_OPT_SSL_CA,          &MySqlDriverPrivate::setOptionString}},
