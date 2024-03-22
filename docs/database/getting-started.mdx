@@ -445,7 +445,7 @@ You may also use the `ConfigUtils::mysqlSslOptions()` or the `ConfigUtils::inser
         {"options", ConfigUtils::mysqlSslOptions()},
     });
 
-You can define these SSL-related options in the top-level configuration, they will be copied to the `options` option hash during a configuration parsing. The top-level configuration takes precedence and overwrites the options in the `options` hash.
+You can define these SSL-related options in the top-level configuration, they will be copied to the `options` option hash during configuration parsing. The top-level configuration takes precedence and overwrites the options in the `options` hash.
 
 <Tabs groupId={shell}>
 <TabItem value={pwsh} label={pwsh_label}>
@@ -493,7 +493,7 @@ You can take a look at the GitHub actions how the `MySQL` certificates are gener
 :::
 
 :::tip
-You can also pass the `QString` to the `options` configuration separated by the `;` semicolon character and using the `=` to assign values.
+You can also pass the `QString` to the `options` configuration separated by the `;` semicolon character and use the `=` to assign values.
 :::
 
 ##### PostgreSQL
