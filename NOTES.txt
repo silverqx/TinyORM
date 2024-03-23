@@ -947,7 +947,11 @@ Clazy in QtCreator:
 -------------------
 
 - set environment variable
+  - (?:) doesn't work!
 CLAZY_IGNORE_DIRS=C:[\\/]+(Qt|Program Files|Program Files \(x86\))[\\/].*
+
+  - new RegEx:
+^(([Cc]?:[\\/]+(Program Files|Program Files \(x86\))[\\/])|([Ee]?:[\\/]+Qt[\\/])|([Ee]?:[\\/]+c_libs[\\/]vcpkg[\\/]installed[\\/])|([Oo]?:[\\/]+Code[\\/]+c_libs[\\/]vcpkg[\\/]installed[\\/])).*
 
 - set Project environment (Ctrl+5)
 CLAZY_HEADER_FILTER=[\\/]+(drivers|examples|orm|tests|tom)[\\/]+.+\.(h|hpp)$
