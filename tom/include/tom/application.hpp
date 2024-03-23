@@ -13,8 +13,6 @@ TINY_SYSTEM_HEADER
 
 #include <range/v3/view/slice.hpp>
 
-#include <orm/utils/notnull.hpp>
-
 #include "tom/config.hpp" // IWYU pragma: keep
 
 #include "tom/concerns/guesscommandname.hpp"
@@ -77,13 +75,10 @@ namespace Concerns
         using ConnectionResolverInterface = Orm::ConnectionResolverInterface;
         /*! Alias for the DatabaseManager. */
         using DatabaseManager = Orm::DatabaseManager;
-        /*! Alias for the NotNull. */
-        template<typename T>
-        using NotNull = Orm::Utils::NotNull<T>;
 
     public:
         /*! Constructor. */
-        Application(int &argc, char **argv, std::shared_ptr<DatabaseManager> db,
+        Application(int &argc, char *argv[], std::shared_ptr<DatabaseManager> db,
                     const char *environmentEnvName = "TOM_ENV",
                     QString migrationTable = QStringLiteral("migrations"),
                     std::vector<std::shared_ptr<Migration>> migrations = {},
@@ -156,11 +151,6 @@ namespace Concerns
     protected:
         /*! Alias for the commands' base class. */
         using Command = Commands::Command;
-
-        /*! Fix m_argc/m_argv data members if the argv is empty. */
-        void fixEmptyArgv();
-        /*! Processes the specified function at application's normal exit. */
-//        static void initializeAtExit();
 
         /*! Initialize the command-line parser. */
         void initializeParser(QCommandLineParser &parser);
@@ -268,9 +258,9 @@ namespace Concerns
         void throwIfEmptyDefaultConnection() const;
 
         /*! Current application argc. */
-        NotNull<int *> m_argc;
+        int m_argc;
         /*! Current application argv. */
-        char **m_argv;
+        std::span<const char *> m_argv;
 
         /*! DatabaseManager instance. */
         std::shared_ptr<DatabaseManager> m_db;

@@ -165,12 +165,14 @@ namespace
 
 /* public */
 
-Application::Application(int &argc, char **argv, std::shared_ptr<DatabaseManager> db,
+/* Can't change it to const char *argv[] and const int argc because we are passing them
+   down to the QCoreApplication() and it needs non-const values. */
+Application::Application(int &argc, char *argv[], std::shared_ptr<DatabaseManager> db, // NOLINT(modernize-avoid-c-arrays)
                          const char *const environmentEnvName, QString migrationTable,
                          std::vector<std::shared_ptr<Migration>> migrations,
                          std::vector<std::shared_ptr<Seeder>> seeders)
-    : m_argc(&argc)
-    , m_argv(argv)
+    : m_argc(argc)
+    , m_argv(const_cast<const char **>(argv), argc)
     , m_db(std::move(db))
     , m_qtApplication(createQCoreApplication(argc, argv))
     , m_environmentEnvName(environmentEnvName)
@@ -188,12 +190,6 @@ Application::Application(int &argc, char **argv, std::shared_ptr<DatabaseManager
     QCoreApplication::setOrganizationName(QStringLiteral("TinyORM"));
     QCoreApplication::setOrganizationDomain(QStringLiteral("tinyorm.org"));
     QCoreApplication::setApplicationVersion(TINYTOM_VERSION_STR);
-
-    // Print a newline at application's normal exit
-//    initializeAtExit();
-
-    // Fix m_argc/m_argv data members if the argv is empty
-    fixEmptyArgv();
 
     // Initialize the command-line parser
     initializeParser(m_parser);
@@ -276,25 +272,6 @@ void Application::enableInUnitTests() noexcept
 #endif
 
 /* protected */
-
-void Application::fixEmptyArgv()
-{
-    constexpr static const auto *const empty = "";
-
-    if (*m_argc == 0 || m_argv == nullptr) {
-        *m_argc = 0;
-        m_argv = const_cast<char **>(&empty); // NOLINT(cppcoreguidelines-pro-type-const-cast)
-    }
-}
-
-// CUR tom, remove? silverqx
-//void Application::initializeAtExit()
-//{
-//    std::atexit([]
-//    {
-//        std::cout << std::endl;
-//    });
-//}
 
 void Application::initializeParser(QCommandLineParser &parser)
 {
@@ -650,10 +627,10 @@ std::shared_ptr<Migrator> Application::createMigrator() const
 QStringList Application::prepareArguments() const
 {
     QStringList arguments;
-    arguments.reserve(*m_argc);
+    arguments.reserve(m_argc);
 
-    for (QStringList::size_type i = 0; i < *m_argc; ++i)
-        arguments << QString::fromUtf8(m_argv[i]); // NOLINT(cppcoreguidelines-pro-bounds-pointer-arithmetic)
+    for (const auto *const argv : m_argv)
+        arguments << QString::fromUtf8(argv);
 
     return arguments;
 }
