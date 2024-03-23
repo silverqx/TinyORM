@@ -118,7 +118,7 @@ namespace Concerns
                we will call the callback with the current chunk of these results. */
             auto models = builder().forPage(page, count).get();
 
-            modelsSize = static_cast<qint64>(models.size());
+            modelsSize = models.size();
 
             if (modelsSize == 0)
                 break;
@@ -223,7 +223,7 @@ namespace Concerns
                we will call the callback with the current chunk of these results. */
             auto models = clone.forPageAfterId(count, lastId, columnName, true).get();
 
-            modelsSize = static_cast<qint64>(models.size());
+            modelsSize = models.size();
 
             if (modelsSize == 0)
                 break;
