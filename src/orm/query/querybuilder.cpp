@@ -1807,7 +1807,7 @@ void Builder::checkBindingType(const BindingType type) const
     // TODO add hash which maps BindingType to the QString silverqx
     throw Exceptions::InvalidArgumentError(
                 QStringLiteral("Invalid binding type '%1' in %2().")
-                .arg(static_cast<int>(type))
+                .arg(static_cast<quint8>(type))
                 .arg(__tiny_func__));
 }
 

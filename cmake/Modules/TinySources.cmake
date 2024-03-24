@@ -52,6 +52,7 @@ function(tinyorm_sources out_headers out_sources)
         exceptions/lostconnectionerror.hpp
         exceptions/multiplerecordsfounderror.hpp
         exceptions/ormerror.hpp
+        exceptions/outofrangeerror.hpp
         exceptions/queryerror.hpp
         exceptions/recordsnotfounderror.hpp
         exceptions/runtimeerror.hpp
@@ -113,6 +114,7 @@ function(tinyorm_sources out_headers out_sources)
         utils/container.hpp
         utils/fs.hpp
         utils/helpers.hpp
+        utils/integralcast.hpp
         utils/notnull.hpp
         utils/nullvariant.hpp
         utils/query.hpp

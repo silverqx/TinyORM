@@ -823,8 +823,7 @@ namespace Concerns
         auto query = newPivotQuery()->get();
 
         QVector<PivotType> pivots;
-        pivots.reserve(static_cast<decltype (pivots)::size_type>(
-                           QueryUtils::queryResultSize(query)));
+        pivots.reserve(QueryUtils::queryResultSize(query));
 
         while (query.next())
             // std::move() is really needed here
@@ -956,8 +955,7 @@ namespace Concerns
                            QVector<AttributeItem>> &idsWithAttributes) const
     {
         QVector<QVariant> ids;
-        ids.reserve(static_cast<decltype (ids)::size_type>(
-                        idsWithAttributes.size()));
+        ids.reserve(static_cast<decltype (ids)::size_type>(idsWithAttributes.size()));
 
         for (const auto &record : idsWithAttributes)
             ids << record.first;

@@ -46,6 +46,7 @@ headersList += \
     $$PWD/orm/exceptions/lostconnectionerror.hpp \
     $$PWD/orm/exceptions/multiplerecordsfounderror.hpp \
     $$PWD/orm/exceptions/ormerror.hpp \
+    $$PWD/orm/exceptions/outofrangeerror.hpp \
     $$PWD/orm/exceptions/queryerror.hpp \
     $$PWD/orm/exceptions/recordsnotfounderror.hpp \
     $$PWD/orm/exceptions/runtimeerror.hpp \
@@ -107,6 +108,7 @@ headersList += \
     $$PWD/orm/utils/container.hpp \
     $$PWD/orm/utils/fs.hpp \
     $$PWD/orm/utils/helpers.hpp \
+    $$PWD/orm/utils/integralcast.hpp \
     $$PWD/orm/utils/notnull.hpp \
     $$PWD/orm/utils/nullvariant.hpp \
     $$PWD/orm/utils/query.hpp \

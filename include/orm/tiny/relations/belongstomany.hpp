@@ -1328,8 +1328,7 @@ namespace Orm::Tiny::Relations
         auto query = this->newPivotQuery()->get({m_relatedPivotKey});
 
         QVector<QVariant> ids;
-        ids.reserve(static_cast<decltype (ids)::size_type>(
-                        QueryUtils::queryResultSize(query)));
+        ids.reserve(QueryUtils::queryResultSize(query));
 
         while (query.next())
             ids << query.value(m_relatedPivotKey);

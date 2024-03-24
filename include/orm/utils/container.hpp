@@ -5,8 +5,8 @@
 #include "orm/macros/systemheader.hpp"
 TINY_SYSTEM_HEADER
 
-#include "orm/constants.hpp"
 #include "orm/ormconcepts.hpp" // IWYU pragma: keep
+#include "orm/utils/integralcast.hpp"
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
@@ -51,8 +51,11 @@ namespace Orm::Utils
         QString joined;
         // +4 serves as a reserve (for the reserve() 😂)
         const auto delimiterSize_ = delimiterSize<typename T::size_type>(delimiter);
-        joined.reserve(static_cast<QString::size_type>(
-                           countStringSizes(container, delimiterSize_ + 4)));
+        if constexpr (std::is_same_v<QString::size_type, typename T::size_type>)
+            joined.reserve(countStringSizes(container, delimiterSize_ + 4));
+        else
+            joined.reserve(IntegralCast<QString::size_type>(
+                               countStringSizes(container, delimiterSize_ + 4)));
 
         auto it = container.cbegin();
         const auto end = container.cend();
@@ -88,7 +91,10 @@ namespace Orm::Utils
         SizeType size = 0;
 
         for (const auto &string : container)
-            size += static_cast<SizeType>(string.size()) + addToElement;
+            if constexpr (std::is_same_v<SizeType, typename T::value_type::size_type>)
+                size += string.size() + addToElement;
+            else
+                size += static_cast<SizeType>(string.size()) + addToElement;
 
         return size;
     }
@@ -101,7 +107,7 @@ namespace Orm::Utils
         if constexpr (std::is_constructible_v<QChar, D>)
             return 1;
         else
-            return static_cast<SizeType>(QString(delimiter).size());
+            return QString(delimiter).size();
     }
 
 } // namespace Orm::Utils

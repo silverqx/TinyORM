@@ -101,7 +101,8 @@ namespace Query
 
     /*! QString container concept (used by ContainerUtils::countStringSizes()). */
     template<typename T>
-    concept QStringContainer = JoinContainer<T> &&
+    concept QStringContainer = requires { typename T::value_type::size_type; } &&
+                               JoinContainer<T> &&
                                !std::convertible_to<T, QVector<Column>>;
 
 } // namespace Orm

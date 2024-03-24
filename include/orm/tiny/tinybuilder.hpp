@@ -1149,8 +1149,7 @@ namespace Orm::Tiny
         auto instance = newModelInstance();
 
         ModelsCollection<Model> models;
-        models.reserve(static_cast<decltype (models)::size_type>(
-                           QueryUtils::queryResultSize(result)));
+        models.reserve(QueryUtils::queryResultSize(result));
 
         while (result.next()) {
             const auto record = result.record();

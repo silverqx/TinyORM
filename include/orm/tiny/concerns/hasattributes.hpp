@@ -305,11 +305,11 @@ namespace Orm::Tiny::Concerns
         static void rehashAttributePositions(
                 const QVector<AttributeItem> &attributes,
                 std::unordered_map<QString, AttributesSizeType> &attributesHash,
-                int from = 0);
+                AttributesSizeType from = 0);
         /*! Rehash attribute positions from the given index. */
         static std::unordered_map<QString, AttributesSizeType>
         rehashAttributePositions(const QVector<AttributeItem> &attributes,
-                                 int from = 0);
+                                 AttributesSizeType from = 0);
 
         /* Datetime-related */
         /*! Determine if the given attribute is a date. */
@@ -622,7 +622,8 @@ namespace Orm::Tiny::Concerns
 
         // Build attributes hash
         m_attributesHash.clear();
-        m_attributesHash.reserve(static_cast<std::size_t>(m_attributes.size()));
+        m_attributesHash.reserve(static_cast<decltype (m_attributesHash)::size_type>(
+                                     m_attributes.size()));
 
         rehashAttributePositions(m_attributes, m_attributesHash);
 
@@ -646,7 +647,8 @@ namespace Orm::Tiny::Concerns
 
         // Build attributes hash
         m_attributesHash.clear();
-        m_attributesHash.reserve(static_cast<std::size_t>(m_attributes.size()));
+        m_attributesHash.reserve(static_cast<decltype (m_attributesHash)::size_type>(
+                                     m_attributes.size()));
 
         rehashAttributePositions(m_attributes, m_attributesHash);
 
@@ -899,8 +901,9 @@ namespace Orm::Tiny::Concerns
     {
         const auto size = m_attributes.size();
 
-        std::unordered_map<QString, AttributesSizeType>
-        dirtyHash(static_cast<std::size_t>(size));
+        using DirtyHashType = std::unordered_map<QString, AttributesSizeType>;
+
+        DirtyHashType dirtyHash(static_cast<DirtyHashType::size_type>(size));
 
         for (auto i = 0; i < size; ++i)
             if (const auto &key = m_attributes.at(i).key;
@@ -1592,7 +1595,14 @@ namespace Orm::Tiny::Concerns
             /* The 'attribute' doesn't exist in the m_original/Hash, so create it and
                rehash m_originalHash, but only from the added position. */
             else {
-                const auto rehashFrom = static_cast<int>(modelAttributes.size()) - 1;
+                // Needed to avoid ambigous std::max() overload
+                using AttributesSizeType = std::remove_cvref_t<decltype (modelAttributes)>
+                                              ::size_type;
+                /* Here should never happen that model will have 0 attributes because
+                   it must contain at least the ID attribute, but if this happen and
+                   the rehashFrom index would be -1 in this case then rehash from 0. */
+                const auto rehashFrom = std::max<AttributesSizeType>(
+                                            modelAttributes.size() - 1, 0);
 
                 m_original.append({attribute, modelAttributeValue});
 
@@ -1650,7 +1660,7 @@ namespace Orm::Tiny::Concerns
     void HasAttributes<Derived, AllRelations...>::rehashAttributePositions(
             const QVector<AttributeItem> &attributes,
             std::unordered_map<QString, AttributesSizeType> &attributesHash,
-            const int from)
+            const AttributesSizeType from)
     {
         /* This member function is universal and can be used for m_attributes,
            m_changes and m_original and it associated unordered_maps m_attributesHash,
@@ -1664,12 +1674,11 @@ namespace Orm::Tiny::Concerns
     std::unordered_map<QString, typename HasAttributes<Derived, AllRelations...>::
                                          AttributesSizeType>
     HasAttributes<Derived, AllRelations...>::rehashAttributePositions(
-            const QVector<AttributeItem> &attributes, const int from)
+            const QVector<AttributeItem> &attributes, const AttributesSizeType from)
     {
         std::unordered_map<QString, AttributesSizeType> attributesHash;
         attributesHash.reserve(
-                static_cast<std::unordered_map<QString, AttributesSizeType>::size_type>(
-                        attributes.size()));
+                static_cast<decltype (attributesHash)::size_type>(attributes.size()));
 
         rehashAttributePositions(attributes, attributesHash, from);
 
