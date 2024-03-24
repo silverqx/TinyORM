@@ -127,24 +127,25 @@ std::tuple<std::string, QString, std::string>
 MigrationCommand::prepareMigrationNameClassName(QString &&migration)
 {
     // Try to extract the extension from the migration name
-    auto ext = fspath(migration.toStdString()).extension().string();
-    const auto hasExt = !ext.empty();
+    auto extension = fspath(migration.toStdString()).extension().string();
+    const auto hasExtension = !extension.empty();
 
     const auto startsWithDatetimePrefix = TomUtils::startsWithDatetimePrefix(migration);
 
     /* Classname was passed on the command-line */
-    if (!startsWithDatetimePrefix && !hasExt)
+    if (!startsWithDatetimePrefix && !hasExtension)
         return {{}, prepareFinalMigrationName(std::move(migration)), std::string {}};
 
     /* Filename was passed on the command-line */
     return prepareMigrationNameFromFilename(
-                startsWithDatetimePrefix, std::move(migration), hasExt, std::move(ext));
+                startsWithDatetimePrefix, std::move(migration), hasExtension,
+                std::move(extension));
 }
 
 std::tuple<std::string, QString, std::string>
 MigrationCommand::prepareMigrationNameFromFilename(
-        const bool startsWithDatetimePrefix, QString &&migration, const bool hasExt,
-        std::string &&ext)
+        const bool startsWithDatetimePrefix, QString &&migration, const bool hasExtension,
+        std::string &&extension)
 {
     QString migrationName;
 
@@ -154,11 +155,12 @@ MigrationCommand::prepareMigrationNameFromFilename(
                               migrationName);
 
     // Try to extract the extension
-    auto extension = tryExtractExtensionFromName(hasExt, std::move(ext), migrationName);
+    auto extensionFinal = tryExtractExtensionFromName(hasExtension, std::move(extension),
+                                                      migrationName);
 
     return {std::move(datetimePrefix),
             prepareFinalMigrationName(std::move(migrationName)),
-            std::move(extension)};
+            std::move(extensionFinal)};
 }
 
 std::string
@@ -191,20 +193,18 @@ MigrationCommand::tryExtractDateTimePrefixFromName(
 }
 
 std::string
-MigrationCommand::tryExtractExtensionFromName(const bool hasExt, std::string &&ext,
-                                              QString &migrationName)
+MigrationCommand::tryExtractExtensionFromName(
+        const bool hasExtension, std::string &&extension, QString &migrationName)
 {
     // Nothing to extract
-    if (!hasExt)
+    if (!hasExtension)
         return {};
-
-    auto extension = std::move(ext);
 
     // Remove the extension from the migration name
     migrationName.truncate(migrationName.size() -
                            static_cast<QString::size_type>(extension.size()));
 
-    return extension;
+    return std::move(extension);
 }
 
 QString MigrationCommand::prepareFinalMigrationName(QString &&migration)

@@ -47,8 +47,8 @@ namespace Tom::Commands::Make
         /*! Prepare a migration name from the filename. */
         static std::tuple<std::string, QString, std::string>
         prepareMigrationNameFromFilename(
-                bool startsWithDatetimePrefix, QString &&migration, bool hasExt,
-                std::string &&ext);
+                bool startsWithDatetimePrefix, QString &&migration, bool hasExtension,
+                std::string &&extension);
         /*! Try to extract the datetime prefix from the migration name. */
         static std::string
         tryExtractDateTimePrefixFromName(
@@ -56,7 +56,7 @@ namespace Tom::Commands::Make
                 QString &migrationName);
         /*! Try to extract the extension from the migration name. */
         static std::string
-        tryExtractExtensionFromName(bool hasExt, std::string &&ext,
+        tryExtractExtensionFromName(bool hasExtension, std::string &&extension,
                                     QString &migrationName);
         /*! Prepare a final migration name. */
         static QString prepareFinalMigrationName(QString &&migration);
