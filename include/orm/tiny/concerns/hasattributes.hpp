@@ -1590,7 +1590,7 @@ namespace Orm::Tiny::Concerns
                 m_original[attributeIndex].value = modelAttributeValue;
             }
             /* The 'attribute' doesn't exist in the m_original/Hash, so create it and
-               rehash m_originalHash, but only from the addition position. */
+               rehash m_originalHash, but only from the added position. */
             else {
                 const auto rehashFrom = static_cast<int>(modelAttributes.size()) - 1;
 
