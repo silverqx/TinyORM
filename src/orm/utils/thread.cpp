@@ -72,7 +72,7 @@ namespace
 } // namespace
 
 void Thread::nameThreadForDebugging([[maybe_unused]] const QString &threadName,
-                                    [[maybe_unused]] const quint64 threadId)
+                                    [[maybe_unused]] const quint64 /*unused*/)
 {
 #if !defined(__clang__) && \
     !defined(TINYORM_NO_DEBUG) && defined(Q_CC_MSVC) && !defined(Q_OS_WINRT)
@@ -83,7 +83,7 @@ void Thread::nameThreadForDebugging([[maybe_unused]] const QString &threadName,
 }
 
 void Thread::nameThreadForDebugging([[maybe_unused]] const char *threadName,
-                                    [[maybe_unused]] const quint64 threadId)
+                                    [[maybe_unused]] const quint64 /*unused*/)
 {
 #if !defined(__clang__) && \
     !defined(TINYORM_NO_DEBUG) && defined(Q_CC_MSVC) && !defined(Q_OS_WINRT)
