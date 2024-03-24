@@ -232,7 +232,7 @@ int ListCommand::commandsMaxSize(const std::vector<std::shared_ptr<Command>> &co
 
     auto commandsMaxSize = static_cast<int>((*it)->name().size());
 
-    // Align commands' description to the same level as options' description
+    // Align commands' descriptions to the same level as options' descriptions
     if (commandsMaxSize < optionsMaxSize)
         commandsMaxSize = optionsMaxSize;
 
