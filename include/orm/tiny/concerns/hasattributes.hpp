@@ -2160,7 +2160,7 @@ namespace Orm::Tiny::Concerns
            designed especially for the castAttribute() method. */
         const auto multiplier = std::pow(10.0, decimals.template value<int>());
 
-        // No cast need, it always return double because of value<double>()
+        // No cast need, it always returns double because of value<double>()
         return std::round(value.template value<double>() * multiplier) / multiplier;
     }
 
