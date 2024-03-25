@@ -233,7 +233,7 @@ ModelCreator::createOneToOneRelation(
     Q_ASSERT(relatedClasses.size() == foreignKeys.size());
 
     RelationsWithOrder result;
-    result.reserve(static_cast<std::size_t>(relatedClasses.size()));
+    result.reserve(static_cast<decltype (result)::size_type>(relatedClasses.size()));
 
     for (const auto &[relatedClass, foreignKey, relationOrder] :
          ranges::views::zip(relatedClasses, foreignKeys, orderList)
@@ -291,7 +291,7 @@ ModelCreator::createOneToManyRelation(
     Q_ASSERT(relatedClasses.size() == foreignKeys.size());
 
     RelationsWithOrder result;
-    result.reserve(static_cast<std::size_t>(relatedClasses.size()));
+    result.reserve(static_cast<decltype (result)::size_type>(relatedClasses.size()));
 
     for (const auto &[relatedClass, foreignKey, relationOrder] :
          ranges::views::zip(relatedClasses, foreignKeys, orderList)
@@ -349,7 +349,7 @@ ModelCreator::createBelongsToRelation(
     Q_ASSERT(relatedClasses.size() == foreignKeys.size());
 
     RelationsWithOrder result;
-    result.reserve(static_cast<std::size_t>(relatedClasses.size()));
+    result.reserve(static_cast<decltype (result)::size_type>(relatedClasses.size()));
 
     for (const auto &[relatedClass, foreignKey, relationOrder] :
          ranges::views::zip(relatedClasses, foreignKeys, orderList)
@@ -433,7 +433,8 @@ ModelCreator::createBelongsToManyRelation(
     if (relatedClasses.isEmpty())
         return {};
 
-    const auto relatedClassesSize = static_cast<std::size_t>(relatedClasses.size());
+    const auto relatedClassesSize = static_cast<RelationsWithOrder::size_type>(
+                                        relatedClasses.size());
 
     // All lists must have the same number of items
     Q_ASSERT(allHaveSameSize(relatedClassesSize,
@@ -673,7 +674,7 @@ QString ModelCreator::createAccessorMethods(const QStringList &accessors,
 
     // Loop over accessor names and create individual accessor methods
     QStringList accessorMethodsList;
-    accessorMethodsList.reserve(static_cast<QStringList::size_type>(
+    accessorMethodsList.reserve(static_cast<decltype (accessorMethodsList)::size_type>(
                                     accessorNames.size()));
 
     for (const auto &accessor : accessorNames) {
@@ -940,7 +941,7 @@ QString::size_type ModelCreator::getRelationNamesMaxSize(const CmdOptions &cmdOp
                                             belongsToManyList)->size() + 1,
     };
 
-    return static_cast<QString::size_type>(*std::ranges::max_element(relationSizes));
+    return *std::ranges::max_element(relationSizes);
 }
 
 ModelCreator::RelationsWithOrder
@@ -953,7 +954,7 @@ ModelCreator::createOneToOneRelationItem(
         return {};
 
     RelationsWithOrder result;
-    result.reserve(static_cast<std::size_t>(relatedClasses.size()));
+    result.reserve(static_cast<decltype (result)::size_type>(relatedClasses.size()));
 
     for (const auto &[relatedClass, relationOrder] :
          ranges::views::zip(relatedClasses, orderList)
@@ -995,7 +996,7 @@ ModelCreator::createOneToManyRelationItem(
         return {};
 
     RelationsWithOrder result;
-    result.reserve(static_cast<std::size_t>(relatedClasses.size()));
+    result.reserve(static_cast<decltype (result)::size_type>(relatedClasses.size()));
 
     for (const auto &[relatedClass, relationOrder] :
          ranges::views::zip(relatedClasses, orderList)
@@ -1037,7 +1038,7 @@ ModelCreator::createBelongsToRelationItem(
         return {};
 
     RelationsWithOrder result;
-    result.reserve(static_cast<std::size_t>(relatedClasses.size()));
+    result.reserve(static_cast<decltype (result)::size_type>(relatedClasses.size()));
 
     for (const auto &[relatedClass, relationOrder] :
          ranges::views::zip(relatedClasses, orderList)
@@ -1079,7 +1080,7 @@ ModelCreator::createBelongsToManyRelationItem(
         return {};
 
     RelationsWithOrder result;
-    result.reserve(static_cast<std::size_t>(relatedClasses.size()));
+    result.reserve(static_cast<decltype (result)::size_type>(relatedClasses.size()));
 
     for (const auto &[relatedClass, relationOrder] :
          ranges::views::zip(relatedClasses, orderList)
@@ -1128,7 +1129,8 @@ ModelCreator::createMutatorsHash(const QString &className, const QStringList &ac
 
     // Loop over mutator names and create individual mutator items
     QStringList mutatorItemsList;
-    mutatorItemsList.reserve(static_cast<QStringList::size_type>(mutatorNames.size()));
+    mutatorItemsList.reserve(static_cast<decltype (mutatorItemsList)::size_type>(
+                                 mutatorNames.size()));
 
     for (const auto &mutator : mutatorNames)
         mutatorItemsList << createMutatorItem(className, mutator, mutatorsMaxSize);
@@ -1169,13 +1171,12 @@ ModelCreator::getMutatorNamesMaxSize(const std::set<QString> &mutators)
     if (mutators.empty())
         return 0;
 
-    return static_cast<QString::size_type>(
-                std::ranges::max_element(mutators,
-                                         [](const QString &left, const QString &right)
+    return std::ranges::max_element(mutators,
+                                    [](const QString &left, const QString &right)
     {
         return left.size() < right.size();
     })
-        ->size());
+        ->size();
 }
 
 QString
@@ -1282,12 +1283,9 @@ std::size_t ModelCreator::computeReserveForRelationsList(
         const QStringList &belongsTo, const QStringList &belongsToMany)
 {
     // Cache the computed reserve size to avoid recomputation in the private section
-    m_relationsListsSize = static_cast<std::size_t>(oneToOne.size()) +
-                           static_cast<std::size_t>(oneToMany.size()) +
-                           static_cast<std::size_t>(belongsTo.size()) +
-                           static_cast<std::size_t>(belongsToMany.size());
-
-    return m_relationsListsSize;
+    return m_relationsListsSize = static_cast<decltype (m_relationsListsSize)>(
+                                      oneToOne.size()  + oneToMany.size() +
+                                      belongsTo.size() + belongsToMany.size());
 }
 
 QString ModelCreator::joinRelationsList(RelationsWithOrder &&relationsList) // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
