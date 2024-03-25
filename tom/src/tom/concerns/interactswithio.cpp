@@ -471,7 +471,7 @@ InteractsWithIO::countSetOption(const QString &optionName,
                                 const QCommandLineParser &parser)
 {
     /* This should be in the CommandLineParser, but I will not create a wrapper class
-       because of one line, I don't event create a future todo task for this. */
+       because of one line, I don't even create a future todo task for this. */
     return static_cast<QStringList::size_type>(
                 std::ranges::count(parser.optionNames(), optionName));
 }
