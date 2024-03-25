@@ -99,7 +99,7 @@ int ListCommand::raw(const QString &namespaceArg)
 {
     const auto &commands = getCommandsByNamespace(getNamespaceName(namespaceArg));
 
-    const auto it = std::ranges::max_element(commands, std::less {},
+    const auto it = std::ranges::max_element(commands, std::less(),
                                              [](const auto &command)
     {
         return command->name().size();
@@ -225,7 +225,7 @@ Concerns::PrintsOptions::SizeType
 ListCommand::commandsMaxSize(const std::vector<std::shared_ptr<Command>> &commands,
                              const PrintsOptions::SizeType optionsMaxSize)
 {
-    const auto it = std::ranges::max_element(commands, std::less {},
+    const auto it = std::ranges::max_element(commands, std::less(),
                                              [](const auto &command)
     {
         return command->name().size();

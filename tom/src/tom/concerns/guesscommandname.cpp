@@ -80,7 +80,7 @@ GuessCommandName::printAmbiguousCommands(
             const QString &commandName,
             const std::vector<std::shared_ptr<Command>> &commands) const
 {
-    const auto it = std::ranges::max_element(commands, std::less {},
+    const auto it = std::ranges::max_element(commands, std::less(),
                                              [](const auto &command)
     {
         return command->name().size();

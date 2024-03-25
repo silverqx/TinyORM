@@ -202,7 +202,7 @@ void HelpCommand::printArgumentsSection(
 QString::size_type
 HelpCommand::argumentsMaxSize(const std::vector<PositionalArgument> &arguments)
 {
-    const auto it = std::ranges::max_element(arguments, std::less {},
+    const auto it = std::ranges::max_element(arguments, std::less(),
                                              [](const auto &argument)
     {
         return argument.name.size();

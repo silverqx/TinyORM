@@ -506,7 +506,7 @@ namespace
     /*! Get max. line size after the split with the newline in all rendered lines. */
     QString::size_type getMaxLineWidth(const QStringList &lines)
     {
-        const auto it = std::ranges::max_element(lines, std::less {},
+        const auto it = std::ranges::max_element(lines, std::less(),
                                                  [](const QString &line)
         {
             return line.size();
