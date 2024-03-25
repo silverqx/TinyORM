@@ -586,6 +586,7 @@ QStringList::size_type
 InteractsWithIO::computeReserveForErrorWall(const QStringList &splitted,
                                             const int maxLineWidth)
 {
+    // TODO qt5 remove, change to QStringList::size_type silverqx
     qint64 size = 0;
 
     for (const auto &line : splitted)
@@ -593,7 +594,12 @@ InteractsWithIO::computeReserveForErrorWall(const QStringList &splitted,
            to start a new line if there is <30% free space, +2 is enough. */
         size += std::llround(static_cast<double>(line.size()) / maxLineWidth) + 2;
 
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+    return size;
+#else
+    // This is ok, line width can be longer than int::max()
     return static_cast<QStringList::size_type>(size);
+#endif
 }
 
 InteractsWithIO::TableColors InteractsWithIO::initializeTableColors() const
