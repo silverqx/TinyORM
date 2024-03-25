@@ -50,6 +50,7 @@ bool Terminal::isatty(FILE *stream) noexcept
 
 Terminal::TerminalSize Terminal::terminalSize() noexcept
 {
+    // Don't change to short, int is MUCH easier to manage, helps to avoid static_cast<>-s
     int width  = -1;
     int height = -1;
 
