@@ -299,7 +299,7 @@ QString Command::argument(const ArgumentsSizeType index, const bool useDefault) 
     if (!useDefault)
         return positionalArguments.value(index);
 
-    // Default value supported
+    // Default value support
     const auto defaultValue = positionalArgumentsRef.at(
                                   static_cast<ArgumentsStdSizeType>(index) - 1)
                               .defaultValue;
