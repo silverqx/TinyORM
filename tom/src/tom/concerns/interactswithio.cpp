@@ -250,23 +250,23 @@ const InteractsWithIO &InteractsWithIO::werrorWall(const QString &string,
 }
 
 const InteractsWithIO &
-InteractsWithIO::newLine(const int count, const Verbosity verbosity) const
+InteractsWithIO::newLine(const quint16 count, const Verbosity verbosity) const
 {
     if (dontOutput(verbosity))
         return *this;
 
-    std::cout << std::string(static_cast<std::size_t>(count), '\n');
+    std::cout << std::string(count, '\n');
 
     return *this;
 }
 
 const InteractsWithIO &
-InteractsWithIO::newLineErr(const int count, const Verbosity verbosity) const
+InteractsWithIO::newLineErr(const quint16 count, const Verbosity verbosity) const
 {
     if (dontOutput(verbosity))
         return *this;
 
-    std::cerr << std::string(static_cast<std::size_t>(count), '\n');
+    std::cerr << std::string(count, '\n');
 
     return *this;
 }

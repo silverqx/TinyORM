@@ -150,10 +150,10 @@ namespace Concerns
                                           Verbosity verbosity = Normal) const;
 
         /*! Write a blank line. */
-        const InteractsWithIO &newLine(int count = 1,
+        const InteractsWithIO &newLine(quint16 count = 1,
                                        Verbosity verbosity = Normal) const;
         /*! Write a blank line, wide version. */
-        const InteractsWithIO &newLineErr(int count = 1,
+        const InteractsWithIO &newLineErr(quint16 count = 1,
                                           Verbosity verbosity = Normal) const;
 
         /*! Format input to textual table. */
