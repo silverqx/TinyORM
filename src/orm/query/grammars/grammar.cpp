@@ -277,8 +277,9 @@ QStringList Grammar::compileWheresToVector(const QueryBuilder &query) const
     compiledWheres.reserve(wheres.size());
 
     for (const auto &where : wheres)
-        compiledWheres << SPACE_IN.arg(where.condition,
-                                       std::invoke(getWhereMethod(where.type), *this, where));
+        compiledWheres << SPACE_IN
+                          .arg(where.condition,
+                               std::invoke(getWhereMethod(where.type), *this, where));
 
     return compiledWheres;
 }
