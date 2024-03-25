@@ -30,6 +30,9 @@ namespace Concerns
         Q_DISABLE_COPY_MOVE(PrintsOptions)
 
     public:
+        /*! Alias for the QString::size_type. */
+        using SizeType = QString::size_type;
+
         /*! Constructor. */
         PrintsOptions(const QList<CommandLineOption> &options,
                       const Concerns::InteractsWithIO &io);
@@ -37,16 +40,16 @@ namespace Concerns
         inline virtual ~PrintsOptions() = 0;
 
         /*! Print options section. */
-        int printOptionsSection(bool commonOptions) const;
+        SizeType printOptionsSection(bool commonOptions) const;
 
     private:
         /*! Create an option names list prepared for output. */
         static QStringList createOptionNamesList(const QCommandLineOption &option);
 
         /*! Get max. option size in all options. */
-        int optionsMaxSize() const;
+        SizeType optionsMaxSize() const;
         /*! Print options to the console. */
-        void printOptions(int optionsMaxSize) const;
+        void printOptions(SizeType optionsMaxSize) const;
 
         /*! Print an option's default value part. */
         void printOptionDefaultValue(const QCommandLineOption &option) const;

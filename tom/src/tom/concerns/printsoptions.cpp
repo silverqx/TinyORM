@@ -33,7 +33,8 @@ PrintsOptions::PrintsOptions(const QList<CommandLineOption> &options,
     , m_io(io)
 {}
 
-int PrintsOptions::printOptionsSection(const bool commonOptions) const
+PrintsOptions::SizeType
+PrintsOptions::printOptionsSection(const bool commonOptions) const
 {
     io().newLine();
     io().comment(commonOptions ? QStringLiteral("Common options:")
@@ -90,23 +91,23 @@ QStringList PrintsOptions::createOptionNamesList(const QCommandLineOption &optio
     return options;
 }
 
-int PrintsOptions::optionsMaxSize() const
+PrintsOptions::SizeType
+PrintsOptions::optionsMaxSize() const
 {
-    int optionsMaxSize = 0;
+    SizeType optionsMaxSize = 0;
 
     for (const auto &option : options()) {
 
         validateOption(option);
 
-        optionsMaxSize = std::max<int>(optionsMaxSize,
-                                       static_cast<int>(createOptionNamesList(option)
-                                                        .join(COMMA).size()));
+        optionsMaxSize = std::max(optionsMaxSize,
+                                  createOptionNamesList(option).join(COMMA).size());
     }
 
     return optionsMaxSize;
 }
 
-void PrintsOptions::printOptions(const int optionsMaxSize) const
+void PrintsOptions::printOptions(const SizeType optionsMaxSize) const
 {
     for (const auto &option : options()) {
 

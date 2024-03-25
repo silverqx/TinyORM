@@ -64,13 +64,16 @@ namespace Tom::Commands
 
         /* Commands section */
         /*! Print commands section. */
-        void printCommandsSection(const QString &namespaceName, int optionsMaxSize) const;
+        void printCommandsSection(const QString &namespaceName,
+                                  PrintsOptions::SizeType optionsMaxSize) const;
         /*! Get max. command size in all command names. */
-        static int commandsMaxSize(const std::vector<std::shared_ptr<Command>> &commands,
-                                   int optionsMaxSize);
+        static PrintsOptions::SizeType
+        commandsMaxSize(const std::vector<std::shared_ptr<Command>> &commands,
+                        PrintsOptions::SizeType optionsMaxSize);
         /*! Print commands to the console. */
-        void printCommands(const std::vector<std::shared_ptr<Command>> &commands,
-                           int commandsMaxSize, bool hasNamespaceName) const;
+        void printCommands(
+                const std::vector<std::shared_ptr<Command>> &commands,
+                PrintsOptions::SizeType commandsMaxSize, bool hasNamespaceName) const;
         /*! Print a new namespace section. */
         void tryBeginNsSection(QString &renderingNamespace,
                                const QString &commandName, bool hasNamespaceName) const;

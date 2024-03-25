@@ -105,7 +105,7 @@ int ListCommand::raw(const QString &namespaceArg)
         return command->name().size();
     });
 
-    const auto commandMaxSize = static_cast<int>((*it)->name().size());
+    const auto commandMaxSize = (*it)->name().size();
 
     for (const auto &command : commands) {
         const auto commandName = command->name();
@@ -196,7 +196,7 @@ ListCommand::printAmbiguousNamespaces(const QString &namespaceName,
 /* Commands section */
 
 void ListCommand::printCommandsSection(const QString &namespaceName,
-                                       const int optionsMaxSize) const
+                                       const PrintsOptions::SizeType optionsMaxSize) const
 {
     const auto hasNamespaceName = !namespaceName.isNull();
 
@@ -221,8 +221,9 @@ void ListCommand::printCommandsSection(const QString &namespaceName,
     printCommands(commands, commandsMaxSize, hasNamespaceName);
 }
 
-int ListCommand::commandsMaxSize(const std::vector<std::shared_ptr<Command>> &commands,
-                                 const int optionsMaxSize)
+Concerns::PrintsOptions::SizeType
+ListCommand::commandsMaxSize(const std::vector<std::shared_ptr<Command>> &commands,
+                             const PrintsOptions::SizeType optionsMaxSize)
 {
     const auto it = std::ranges::max_element(commands, std::less {},
                                              [](const auto &command)
@@ -230,18 +231,15 @@ int ListCommand::commandsMaxSize(const std::vector<std::shared_ptr<Command>> &co
         return command->name().size();
     });
 
-    auto commandsMaxSize = static_cast<int>((*it)->name().size());
+    const auto commandsMaxSize = (*it)->name().size();
 
     // Align commands' descriptions to the same level as options' descriptions
-    if (commandsMaxSize < optionsMaxSize)
-        commandsMaxSize = optionsMaxSize;
-
-    return commandsMaxSize;
+    return std::max(commandsMaxSize, optionsMaxSize);
 }
 
 void ListCommand::printCommands(
         const std::vector<std::shared_ptr<Command>> &commands,
-        const int commandsMaxSize, const bool hasNamespaceName) const
+        const PrintsOptions::SizeType commandsMaxSize, const bool hasNamespaceName) const
 {
     // Currently rendering NS
     QString renderingNamespace;

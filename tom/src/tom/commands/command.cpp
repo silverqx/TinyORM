@@ -103,10 +103,10 @@ QStringList Command::passedArguments() const
 namespace
 {
     /*! Find n-th option with the given name in option names list. */
-    auto findNthOption(const QString &optionName, const int nthOptionIdx,
+    auto findNthOption(const QString &optionName, const QString::size_type nthOptionIdx,
                        const QStringList &optionNames)
     {
-        auto nthOptionLooping = 0;
+        QString::size_type nthOptionLooping = 0;
 
         return std::ranges::find_if(optionNames,
                                     [nthOptionIdx, &nthOptionLooping, &optionName]
@@ -158,7 +158,7 @@ QStringList Command::optionNames() const
 
         /* Index of one option name eg. --with-pivot= in all arguments
            (1. option = 0, 2. = 1). */
-        auto nthOptionIdx = 0;
+        QString::size_type nthOptionIdx = 0;
 
         for (const auto &value : values) {
             const auto commasCount = value.count(regex);
@@ -177,14 +177,14 @@ QStringList Command::optionNames() const
 #else
             /* We need to save the index position because the nthOption iterator will be
                invalidated after an insertion. */
-            const auto optionIdx = static_cast<int>(
+            const auto optionIdx = static_cast<decltype (optionNames)::size_type>(
                                        std::distance(optionNames.cbegin(), nthOption));
 
             for (auto i = 0; i < commasCount ; ++i)
                 optionNames.insert(optionIdx, optionName);
 #endif
             // Take into account also a newly inserted option names
-            ++nthOptionIdx += static_cast<decltype (nthOptionIdx)>(commasCount);
+            ++nthOptionIdx += commasCount;
         }
     }
 
