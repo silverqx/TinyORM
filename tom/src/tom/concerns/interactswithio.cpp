@@ -507,7 +507,7 @@ namespace
     QString::size_type getMaxLineWidth(const QStringList &lines)
     {
         const auto it = std::ranges::max_element(lines, std::less {},
-                                                 [](const auto &line)
+                                                 [](const QString &line)
         {
             return line.size();
         });
