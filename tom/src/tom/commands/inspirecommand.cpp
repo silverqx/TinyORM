@@ -17,7 +17,7 @@ int InspireCommand::run()
 {
     Command::run();
 
-    static const std::vector inspires {
+    static const std::array inspires {
         "Act only according to that maxim whereby you can, at the same time, will that it should become a universal law. - Immanuel Kant",
         "An unexamined life is not worth living. - Socrates",
         "Be present above all else. - Naval Ravikant",
@@ -63,8 +63,8 @@ int InspireCommand::run()
     // Seed the generator
     std::default_random_engine generator(rd());
     // Define the range
-    std::uniform_int_distribution<std::size_t> // NOLINT(misc-const-correctness)
-    distribute(0, static_cast<decltype (inspires)::size_type>(size) - 1);
+    std::uniform_int_distribution<decltype (inspires)::size_type> // NOLINT(misc-const-correctness)
+    distribute(0, size - 1);
 
     comment(inspires.at(distribute(generator)));
 

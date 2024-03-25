@@ -401,7 +401,6 @@ QStringList DatabaseManager::connectionNames() const
 QStringList DatabaseManager::openedConnectionNames() const
 {
     QStringList names;
-    // TODO overflow, add check code https://stackoverflow.com/questions/22184403/how-to-cast-the-size-t-to-double-or-int-c/22184657#22184657 silverqx
     names.reserve(static_cast<decltype (names)::size_type>(m_connections->size()));
 
     for (const auto &connection : *m_connections)

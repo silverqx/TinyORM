@@ -432,7 +432,7 @@ QVector<QString>
 PostgresSchemaGrammar::getModifiersForChange(const ColumnDefinition &column) const
 {
     QVector<QString> modifiers;
-    modifiers.reserve(static_cast<QVector<QString>::size_type>(
+    modifiers.reserve(static_cast<decltype (modifiers)::size_type>(
                           m_modifierMethodsForChangeSize));
 
     for (const auto method : m_modifierMethodsForChange)

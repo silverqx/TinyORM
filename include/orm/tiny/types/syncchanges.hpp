@@ -335,9 +335,9 @@ namespace Types
     SyncChanges::size_type SyncChanges::size() const
     noexcept(std::is_nothrow_invocable_v<decltype (&mapped_type::size), ContainerType &>)
     {
-        return static_cast<size_type>(attached().size()) +
-               static_cast<size_type>(detached().size()) +
-               static_cast<size_type>(updated().size());
+        return static_cast<size_type>(attached().size() +
+                                      detached().size() +
+                                      updated().size());
     }
 
     bool SyncChanges::empty() const

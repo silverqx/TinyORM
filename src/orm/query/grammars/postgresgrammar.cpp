@@ -201,8 +201,9 @@ PostgresGrammar::getWhereMethod(const WhereType whereType) const
     static const auto size = cached.size();
 
     // Check if whereType is in the range, just for sure 😏
-    const auto type = static_cast<QVector<WhereMemFn>::size_type>(whereType);
-    Q_ASSERT((0 <= type) && (type < size));
+    using SizeType = std::remove_const_t<decltype (cached)>::size_type;
+    const auto type = static_cast<SizeType>(whereType);
+    Q_ASSERT((type >= 0) && (type < size));
 
     return cached.at(type);
 }

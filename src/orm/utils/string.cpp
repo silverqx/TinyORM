@@ -179,7 +179,8 @@ QString String::snake(QString string, const QChar delimiter)
 
     // RegExp not used for performance reasons
     std::vector<QString::size_type> positions;
-    positions.reserve(static_cast<std::size_t>(string.size() / 2) + 2);
+    positions.reserve(
+                static_cast<decltype (positions)::size_type>(string.size() / 2) + 2);
 
     for (QString::size_type i = 0; i < string.size(); ++i) {
         const auto ch = string.at(i);

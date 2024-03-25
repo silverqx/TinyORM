@@ -1677,7 +1677,7 @@ namespace Types
         result.reserve(size);
 
         std::unordered_set<T> values;
-        result.reserve(static_cast<typename std::unordered_set<T>::size_type>(size));
+        result.reserve(static_cast<decltype (values)::size_type>(size));
 
         for (ModelLoopType model : *this) {
             ModelRawType *const modelPointer = toPointer(model);

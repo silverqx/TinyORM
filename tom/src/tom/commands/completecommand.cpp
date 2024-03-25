@@ -256,7 +256,8 @@ int CompleteCommand::printGuessedCommands(
         const std::vector<std::shared_ptr<Command>> &commands) const
 {
     QStringList guessedCommands;
-    guessedCommands.reserve(static_cast<QStringList::size_type>(commands.size()));
+    guessedCommands.reserve(
+                static_cast<decltype (guessedCommands)::size_type>(commands.size()));
 
     for (const auto &command : commands) {
         auto commandName = command->name();
@@ -288,8 +289,8 @@ int CompleteCommand::printGuessedNamespaces(const QString &word) const
     const auto printAll = word.isEmpty();
 
     QStringList namespaceNames;
-    namespaceNames.reserve(
-                static_cast<QStringList::size_type>(allNamespaceNames.size()));
+    namespaceNames.reserve(static_cast<decltype (namespaceNames)::size_type>(
+                               allNamespaceNames.size()));
 
     for (const QString &namespaceName : allNamespaceNames)
         if (!namespaceName.isEmpty() &&
@@ -309,7 +310,7 @@ int CompleteCommand::printGuessedNamespaces(const QString &word) const
 // FUTURE complete, printGuessedNamespaces and printGuessedShells are practically the same methods, if I will implement another method of this simple list type, then create common method and reuse code silverqx
 int CompleteCommand::printGuessedShells(const QString &word) const
 {
-    static const std::vector allShellNames {
+    static const std::array allShellNames {
 #ifndef _MSC_VER
         ShBash,
 #endif
@@ -322,7 +323,8 @@ int CompleteCommand::printGuessedShells(const QString &word) const
     const auto printAll = word.isEmpty();
 
     QStringList shellNames;
-    shellNames.reserve(static_cast<QStringList::size_type>(allShellNames.size()));
+    shellNames.reserve(
+                static_cast<decltype (shellNames)::size_type>(allShellNames.size()));
 
     for (const QString &shellName : allShellNames)
         if (!shellName.isEmpty() && (printAll || shellName.startsWith(word)))

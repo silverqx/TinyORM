@@ -237,7 +237,8 @@ void HelpCommand::printArgumentDefaultValue(const PositionalArgument &argument) 
     newLine();
 }
 
-int HelpCommand::printOptionsSection(const Command &command) const
+Concerns::PrintsOptions::SizeType
+HelpCommand::printOptionsSection(const Command &command) const
 {
     // Prepare the m_options list, commands' options will be obtained from it
     application().prependOptions(command.optionsSignature());

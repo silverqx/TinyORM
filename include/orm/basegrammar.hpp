@@ -156,7 +156,7 @@ namespace Query
     QVector<QString> BaseGrammar::wrapArray(const T &values) const
     {
         QVector<QString> wrapped;
-        wrapped.reserve(static_cast<QVector<QString>::size_type>(values.size()));
+        wrapped.reserve(values.size());
 
         for (const auto &value : values)
             wrapped << wrap(value);
@@ -202,8 +202,7 @@ namespace Query
     QString BaseGrammar::parametrize(const Container &values) const
     {
         QStringList compiledParameters;
-        compiledParameters.reserve(
-                    static_cast<QStringList::size_type>(values.size()));
+        compiledParameters.reserve(values.size());
 
         for (const auto &value : values)
             compiledParameters << parameter(value);

@@ -91,8 +91,10 @@ QVector<AttributeItem>
 Attribute::removeDuplicateKeys(const QVector<AttributeItem> &attributes)
 {
     const auto size = attributes.size();
-    // The helper set, to check duplicate keys
-    std::unordered_set<QString> added(static_cast<std::size_t>(size));
+
+    /*! The helper set, to check duplicate keys. */
+    using AddedType = std::unordered_set<QString>;
+    AddedType added(static_cast<AddedType::size_type>(size));
 
     QVector<std::reference_wrapper<const AttributeItem>> dedupedAttributesReversed;
     dedupedAttributesReversed.reserve(size);
@@ -119,8 +121,10 @@ QVector<AttributeItem>
 Attribute::removeDuplicateKeys(QVector<AttributeItem> &&attributes) // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
 {
     const auto size = attributes.size();
-    // The helper set, to check duplicate keys
-    std::unordered_set<QString> added(static_cast<std::size_t>(size));
+
+    /*! The helper set, to check duplicate keys. */
+    using AddedType = std::unordered_set<QString>;
+    AddedType added(static_cast<AddedType::size_type>(size));
 
     QVector<std::reference_wrapper<AttributeItem>> dedupedAttributesReversed;
     dedupedAttributesReversed.reserve(size);

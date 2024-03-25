@@ -65,7 +65,7 @@ namespace Tom::Commands
         void printArgumentDefaultValue(const PositionalArgument &argument) const;
 
         /*! Print options section. */
-        int printOptionsSection(const Command &command) const;
+        PrintsOptions::SizeType printOptionsSection(const Command &command) const;
         /*! Print help section. */
         void printHelpSection(const Command &command) const;
     };

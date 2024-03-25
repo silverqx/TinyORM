@@ -85,7 +85,7 @@ GuessCommandName::printAmbiguousCommands(
     {
         return command->name().size();
     });
-    const auto commandsMaxSize = static_cast<int>((*it)->name().size());
+    const auto commandsMaxSize = (*it)->name().size();
 
     // Prepare commands for the errorWall()
     auto formattedCommands = commands

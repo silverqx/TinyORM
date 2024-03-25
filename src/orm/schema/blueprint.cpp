@@ -56,7 +56,8 @@ QVector<QString> Blueprint::toSql(const DatabaseConnection &connection,
 
     QVector<QString> statements;
     // Reserve * 2 might be enough, can't be predicted :/
-    statements.reserve(static_cast<QVector<QString>::size_type>(m_commands.size()) * 2);
+    statements.reserve(
+                static_cast<decltype (statements)::size_type>(m_commands.size()) * 2);
 
     // CUR schema sqlite, divide to 2 call, hasCompileMethod and then invoke, get rid of sql.isEmpty() silverqx
     for (const auto &command : m_commands)

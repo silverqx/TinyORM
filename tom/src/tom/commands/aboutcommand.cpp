@@ -182,7 +182,7 @@ std::unordered_set<QString> AboutCommand::getOnlyValues() const
     const auto onlyList = values(only_, Qt::SkipEmptyParts);
 
     std::unordered_set<QString> only;
-    only.reserve(static_cast<std::unordered_set<QString>::size_type>(onlyList.size()));
+    only.reserve(static_cast<decltype (only)::size_type>(onlyList.size()));
 
     for (const auto &value : onlyList)
         only.emplace(value.toLower());
