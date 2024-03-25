@@ -289,18 +289,28 @@ QStringList Command::arguments() const
 
 QString Command::argument(const ArgumentsSizeType index, const bool useDefault) const
 {
-    const auto &positionalArgumentsRef = positionalArguments();
-
-    using ArgumentsStdSizeType =
-            std::remove_cvref_t<decltype (positionalArgumentsRef)>::size_type;
+    /* Below is confusing so look at the example for eg. tom help about:
+       parser().positionalArguments() will contain {"help", "about"}
+       this->positionalArguments() will contain whatever command defines in its
+       std::vector<PositionalArgument> HelpCommand::positionalArguments() method.
+       Because of this we need -1 for index because HelpCommand::positionalArguments()
+       defines positional arguments only without the command name of course. */
 
     const auto positionalArguments = parser().positionalArguments();
 
+    /* If we don't need the default value then we can return immediately using the basic
+       implementation w/o Default value support (QCommandLineParser). */
     if (!useDefault)
         return positionalArguments.value(index);
 
+    const auto &positionalArgumentsRef = this->positionalArguments();
+
+    using ArgumentsStdSizeType = std::remove_cvref_t<decltype (positionalArgumentsRef)>
+                                    ::size_type;
+
     // Default value support
     const auto defaultValue = positionalArgumentsRef.at(
+                                  // -1 to exclude the command name
                                   static_cast<ArgumentsStdSizeType>(index) - 1)
                               .defaultValue;
 
