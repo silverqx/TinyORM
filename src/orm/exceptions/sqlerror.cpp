@@ -48,8 +48,9 @@ QString SqlError::formatMessage(const char *message, const QSqlError &error)
 
     QString result;
     // +32 as a reserve; +4 : 2 * ', '
-    result.reserve(messageStr.size() + 11 + nativeErrorCode.size() + driverText.size() +
-                   databaseText.size() + 1 + 4 + 32);
+    result.reserve(messageStr.size() + 11 +
+                   nativeErrorCode.size() + driverText.size() + databaseText.size() + 1 +
+                   4 + 32);
 
     result += messageStr;
     result += QStringLiteral("\nQSqlError(");

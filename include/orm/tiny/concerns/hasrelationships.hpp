@@ -1403,8 +1403,8 @@ namespace Concerns
     HasRelationships<Derived, AllRelations...>::getLoadedRelationsWithoutPivot() const
     {
         QVector<WithItem> relations;
-        relations.reserve(
-            static_cast<decltype (relations)::size_type>(m_relations.size()));
+        relations.reserve(static_cast<decltype (relations)::size_type>(
+                              m_relations.size()));
 
         /* Get all currently loaded relation names except pivot relations. We need
            to check for the pivot models, but only if the std::variant which holds

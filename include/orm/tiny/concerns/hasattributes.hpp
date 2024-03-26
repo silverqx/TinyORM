@@ -1677,8 +1677,8 @@ namespace Orm::Tiny::Concerns
             const QVector<AttributeItem> &attributes, const AttributesSizeType from)
     {
         std::unordered_map<QString, AttributesSizeType> attributesHash;
-        attributesHash.reserve(
-                static_cast<decltype (attributesHash)::size_type>(attributes.size()));
+        attributesHash.reserve(static_cast<decltype (attributesHash)::size_type>(
+                                   attributes.size()));
 
         rehashAttributePositions(attributes, attributesHash, from);
 

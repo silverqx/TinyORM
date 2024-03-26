@@ -263,8 +263,8 @@ int CompleteCommand::printGuessedCommands(
         const std::vector<std::shared_ptr<Command>> &commands) const
 {
     QStringList guessedCommands;
-    guessedCommands.reserve(
-                static_cast<decltype (guessedCommands)::size_type>(commands.size()));
+    guessedCommands.reserve(static_cast<decltype (guessedCommands)::size_type>(
+                                commands.size()));
 
     for (const auto &command : commands) {
         auto commandName = command->name();
@@ -330,8 +330,8 @@ int CompleteCommand::printGuessedShells(const QString &word) const
     const auto printAll = word.isEmpty();
 
     QStringList shellNames;
-    shellNames.reserve(
-                static_cast<decltype (shellNames)::size_type>(allShellNames.size()));
+    shellNames.reserve(static_cast<decltype (shellNames)::size_type>(
+                           allShellNames.size()));
 
     for (const QString &shellName : allShellNames)
         if (!shellName.isEmpty() && (printAll || shellName.startsWith(word)))
