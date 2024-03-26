@@ -94,8 +94,11 @@ int CompleteCommand::run() // NOLINT(readability-function-cognitive-complexity)
     const auto commandlineArg = value(commandline);
 
 #ifdef _MSC_VER
-    const auto positionArg = static_cast<QString::size_type>(
-                                 value(position_).toLongLong());
+#  if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+    const auto positionArg = value(position_).toLongLong();
+#  else
+    const auto positionArg = value(position_).toInt();
+#  endif
 
     const auto commandlineArgSize = commandlineArg.size();
 
@@ -106,7 +109,11 @@ int CompleteCommand::run() // NOLINT(readability-function-cognitive-complexity)
     const auto currentCommandArg = getCurrentTomCommand(currentCommandSplitted);
     const auto tomCommandSize = currentCommandSplitted.constFirst().size();
 #else
-    const auto cwordArg = static_cast<QString::size_type>(value(cword_).toLongLong());
+#  if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+    const auto cwordArg = value(cword_).toLongLong();
+#  else
+    const auto cwordArg = value(cword_).toInt();
+#  endif
 
     // Currently processed tom command
     const auto currentCommandArg = getCurrentTomCommand(commandlineArg, cwordArg);
