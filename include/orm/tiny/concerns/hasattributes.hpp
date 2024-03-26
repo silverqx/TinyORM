@@ -1598,9 +1598,9 @@ namespace Orm::Tiny::Concerns
                 // Needed to avoid ambigous std::max() overload
                 using AttributesSizeType = std::remove_cvref_t<decltype (modelAttributes)>
                                               ::size_type;
-                /* Here should never happen that model will have 0 attributes because
+                /* It should never happen that a model will have 0 attributes because
                    it must contain at least the ID attribute, but if this happen and
-                   the rehashFrom index would be -1 in this case then rehash from 0. */
+                   the rehashFrom index would be -1, then rehash from 0 in this case. */
                 const auto rehashFrom = std::max<AttributesSizeType>(
                                             modelAttributes.size() - 1, 0);
 
