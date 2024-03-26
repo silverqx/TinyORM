@@ -1278,16 +1278,6 @@ QString ModelCreator::createForwardsSection() const
 
 /* Common for public/private sections */
 
-std::size_t ModelCreator::computeReserveForRelationsList(
-        const QStringList &oneToOne, const QStringList &oneToMany,
-        const QStringList &belongsTo, const QStringList &belongsToMany)
-{
-    // Cache the computed reserve size to avoid recomputation in the private section
-    return m_relationsListsSize = static_cast<decltype (m_relationsListsSize)>(
-                                      oneToOne.size()  + oneToMany.size() +
-                                      belongsTo.size() + belongsToMany.size());
-}
-
 QString ModelCreator::joinRelationsList(RelationsWithOrder &&relationsList) // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
 {
     auto relationsQList = ranges::views::move(relationsList)

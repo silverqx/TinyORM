@@ -200,7 +200,8 @@ namespace Tom::Commands::Make::Support
 
         /* Common for public/private sections */
         /*! Compute reserve value for the public section list. */
-        std::size_t computeReserveForRelationsList(
+        inline std::size_t
+        computeReserveForRelationsList(
                 const QStringList &oneToOne, const QStringList &oneToMany,
                 const QStringList &belongsTo, const QStringList &belongsToMany);
         /*! Join relations list. */
@@ -222,6 +223,20 @@ namespace Tom::Commands::Make::Support
         /*! Cached relations lists size to avoid recomputations (NOT m_relationsList). */
         std::size_t m_relationsListsSize = 0;
     };
+
+    /* protected */
+
+    /* Common for public/private sections */
+
+    std::size_t ModelCreator::computeReserveForRelationsList(
+            const QStringList &oneToOne, const QStringList &oneToMany,
+            const QStringList &belongsTo, const QStringList &belongsToMany)
+    {
+        // Cache the computed reserve size to avoid recomputation in the private section
+        return m_relationsListsSize = static_cast<decltype (m_relationsListsSize)>(
+                                          oneToOne.size()  + oneToMany.size() +
+                                          belongsTo.size() + belongsToMany.size());
+    }
 
 } // namespace Tom::Commands::Make::Support
 
