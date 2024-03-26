@@ -413,7 +413,8 @@ void Command::validateRequiredArguments() const
         else
             ++requiredArgsSize;
 
-    /* -1 to exclude the command name.
+    /* -1 to exclude the command name, our this->positionalArguments() doesn't contain
+       command name of course.
        It can be also understood as the index to the missing argument. */
     const auto passedArgsSize = this->arguments().size() - 1;
 
