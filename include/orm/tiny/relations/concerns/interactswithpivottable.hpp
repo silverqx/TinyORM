@@ -894,8 +894,8 @@ namespace Concerns
         if (updated)
             pivot->save();
 
-        /* It will not touch if attributes size is 0, because this function is called
-           only when attributes are not empty. */
+        /* It will not touch if attributes size is 0, this function is only called when
+           attributes are not empty, this condition is in the attachNew() method. */
         if (touch)
             touchIfTouching_();
 
