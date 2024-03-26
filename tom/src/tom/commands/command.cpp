@@ -302,18 +302,7 @@ QString Command::argument(const ArgumentsSizeType index, const bool useDefault) 
     if (!useDefault)
         return positionalArguments.value(index);
 
-    const auto &positionalArgumentsRef = this->positionalArguments();
-
-    using ArgumentsStdSizeType = std::remove_cvref_t<decltype (positionalArgumentsRef)>
-                                    ::size_type;
-
-    // Default value support
-    const auto defaultValue = positionalArgumentsRef.at(
-                                  // -1 to exclude the command name
-                                  static_cast<ArgumentsStdSizeType>(index) - 1)
-                              .defaultValue;
-
-    return positionalArguments.value(index, defaultValue);
+    return argumentInternal(positionalArguments, index);
 }
 
 QString Command::argument(const QString &name, const bool useDefault) const
@@ -426,6 +415,28 @@ void Command::validateRequiredArguments() const
               .arg(arguments.at(static_cast<RequiredStdSizeType>(passedArgsSize)).name));
 
     Application::exitApplication(EXIT_FAILURE);
+}
+
+QString Command::argumentInternal(const QStringList &positionalArguments,
+                                  const ArgumentsSizeType index) const
+{
+    // This method can't be called with 0-index if useDefault == true
+    Q_ASSERT_X(index > 0, "Command::argument()",
+               "The this->positionalArguments() doesn't provide data for 0-index "
+               "(command name).");
+
+    const auto &positionalArgumentsRef = this->positionalArguments();
+
+    using ArgumentsStdSizeType = std::remove_cvref_t<decltype (positionalArgumentsRef)>
+                                    ::size_type;
+
+    // Default value support
+    const auto defaultValue = positionalArgumentsRef.at(
+                                  // -1 to exclude the command name
+                                  static_cast<ArgumentsStdSizeType>(index) - 1)
+                              .defaultValue;
+
+    return positionalArguments.value(index, defaultValue);
 }
 
 QStringList::size_type Command::commasCount(const QStringList &values)

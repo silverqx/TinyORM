@@ -173,6 +173,10 @@ namespace Commands
         /*! Validate if all required positional arguments were passed on the cmd. line. */
         void validateRequiredArguments() const;
 
+        /*! Get a positional argument at the given index position. */
+        QString argumentInternal(const QStringList &positionalArguments,
+                                 ArgumentsSizeType index) const;
+
         /*! Count the number of commas in the values list for reserve. */
         static QStringList::size_type
         commasCount(const QStringList &values);
