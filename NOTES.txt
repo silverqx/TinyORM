@@ -2714,3 +2714,18 @@ postgresql-x64-16
 "C:\Program Files\PostgreSQL\16\bin\pg_ctl.exe" runservice -N "postgresql-x64-16" -D "E:\postgres\16\data" -w
 Network Service
 pg_ctl.exe register --pgdata="E:\postgres\16\data" -N postgresql-x64-16 -U 'NT AUTHORITY\NETWORK SERVICE' --wait
+
+
+Integral casting rules:
+-----------------------
+
+The following are most used cases which I corrected during the static_cast<> revisit.
+
+ - static_cast<>
+   - qint64 -> int
+   - std::size_t -> qint64 or int
+   - qint64 or int -> std::size_t (if signed value can't be <0, eg. .size() methods)
+ - IntegralCast<>
+   - qint64 or int -> std::size_t (if signed value can be <0)
+ - no cast:
+   - int -> qint64
