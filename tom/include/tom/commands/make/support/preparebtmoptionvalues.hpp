@@ -99,8 +99,7 @@ namespace Tom::Commands::Make::Support
 
         auto optionsNames = modelCommand().optionNames();
 
-        m_preparedValues.reserve(static_cast<typename P::size_type>(
-                                   optionsNames.size()) - 1);
+        m_preparedValues.reserve(static_cast<P::size_type>(optionsNames.size()) - 1);
 
         for (auto &&option : optionsNames) {
             // Try to start a new btm relation during the given option values search
