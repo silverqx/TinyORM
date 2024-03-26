@@ -899,7 +899,7 @@ namespace Concerns
         if (touch)
             touchIfTouching_();
 
-        return static_cast<int>(updated);
+        return updated ? 1 : 0;
     }
 
     template<class Model, class Related, class PivotType>
