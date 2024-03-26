@@ -64,7 +64,7 @@ int InspireCommand::run()
     std::default_random_engine generator(rd());
     // Define the range
     std::uniform_int_distribution<decltype (inspires)::size_type> // NOLINT(misc-const-correctness)
-    distribute(0, size - 1);
+    distribute(0, size - 1); // -1 is ok because it's 0-based
 
     comment(inspires.at(distribute(generator)));
 
