@@ -208,7 +208,7 @@ HelpCommand::argumentsMaxSize(const std::vector<PositionalArgument> &arguments)
         return argument.name.size();
     });
 
-    return (*it).name.size();
+    return it->name.size();
 }
 
 QString::size_type

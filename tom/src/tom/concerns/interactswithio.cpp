@@ -511,7 +511,7 @@ namespace
             return line.size();
         });
 
-        return (*it).size();
+        return it->size();
     }
 
 } // namespace
