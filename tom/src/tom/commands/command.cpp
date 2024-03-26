@@ -415,7 +415,7 @@ void Command::validateRequiredArguments() const
             ++requiredArgsSize;
 
     /* -1 to exclude the command name.
-       It can be also understand as the index to the missing argument. */
+       It can be also understood as the index to the missing argument. */
     const auto passedArgsSize = this->arguments().size() - 1;
 
     // All required positional arguments were passed
