@@ -1031,7 +1031,11 @@ namespace Orm::Tiny::Relations
     {
         ModelsCollection<Related> result;
         // Reserve the first page, it can help reallocations at the beginning
-        result.reserve(static_cast<typename ModelsCollection<Related>::size_type>(count));
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+        result.reserve(count);
+#else
+        result.reserve(static_cast<dectype (result)::size_type>(count));
+#endif
 
         chunk(count, [&result, &callback]
                      (ModelsCollection<Related> &&models, const qint64 /*unused*/) // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
@@ -1053,7 +1057,11 @@ namespace Orm::Tiny::Relations
     {
         QVector<T> result;
         // Reserve the first page, it can help reallocations at the beginning
-        result.reserve(static_cast<typename QVector<T>::size_type>(count));
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+        result.reserve(count);
+#else
+        result.reserve(static_cast<decltype (result)::size_type>(count));
+#endif
 
         chunk(count, [&result, &callback]
                      (ModelsCollection<Related> &&models, const qint64 /*unused*/) // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
