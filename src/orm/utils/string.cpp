@@ -107,6 +107,8 @@ QString String::ltrim(const QString &string, const QString &characters)
 
 QString String::rtrim(const QString &string, const QString &characters)
 {
+    /* The ++ and -- isn't bug, I'm doing this comment months after I wrote the code but
+       I still remember that it's correct. */
 #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
     QString::size_type position = 0;
 
