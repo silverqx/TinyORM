@@ -596,7 +596,7 @@ InteractsWithIO::computeReserveForErrorWall(const QStringList &splitted,
 #if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
     return size;
 #else
-    // This is ok, line width can be longer than int::max()
+    // This is ok, the line width can't be longer than int::max()
     return static_cast<QStringList::size_type>(size);
 #endif
 }
