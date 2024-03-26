@@ -87,6 +87,7 @@ bool HelpCommand::validateRequiredArguments(
     for (std::vector<PositionalArgument>::size_type i = 1;
          i < arguments.size() ; ++i
     ) {
+        // We are starting from the index 1, so -1 is ok here, underflow can't happen
         const auto &left = arguments.at(i - 1);
         const auto &right = arguments.at(i);
 
