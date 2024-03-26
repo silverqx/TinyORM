@@ -98,10 +98,10 @@ QString String::ltrim(const QString &string, const QString &characters)
         else
             break;
 
-#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
-    return string.mid(position);
-#else
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
     return string.sliced(position);
+#else
+    return string.mid(position);
 #endif
 }
 
@@ -109,17 +109,7 @@ QString String::rtrim(const QString &string, const QString &characters)
 {
     /* The ++ and -- isn't bug, I'm doing this comment months after I wrote the code but
        I still remember that it's correct. */
-#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
-    QString::size_type position = 0;
-
-    for (const auto itChar : string | ranges::views::reverse)
-        if (characters.contains(itChar))
-            ++position;
-        else
-            break;
-
-    return string.chopped(position);
-#else
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
     QString::size_type position = string.size();
 
     for (const auto itChar : string | ranges::views::reverse)
@@ -129,6 +119,16 @@ QString String::rtrim(const QString &string, const QString &characters)
             break;
 
     return string.first(position);
+#else
+    QString::size_type position = 0;
+
+    for (const auto itChar : string | ranges::views::reverse)
+        if (characters.contains(itChar))
+            ++position;
+        else
+            break;
+
+    return string.chopped(position);
 #endif
 }
 

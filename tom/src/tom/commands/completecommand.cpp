@@ -276,11 +276,11 @@ int CompleteCommand::printGuessedCommands(
         guessedCommands << QStringLiteral("%1;%2;%3").arg(commandName, commandName,
                                                           command->description());
 #else
-#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
-        guessedCommands << commandName;
-#else
+#  if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
         guessedCommands << std::move(commandName);
-#endif
+#  else
+        guessedCommands << commandName;
+#  endif
 #endif
     }
 
@@ -440,11 +440,11 @@ int CompleteCommand::printGuessedLongOptions(
                     options << QStringLiteral("%1;%2;%3").arg(longOption, longOption,
                                                               option.description());
 #else
-#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
-                    options << longOption;
-#else
+#  if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
                     options << std::move(longOption);
-#endif
+#  else
+                    options << longOption;
+#  endif
 #endif
                 }
                 // With a value
@@ -461,11 +461,11 @@ int CompleteCommand::printGuessedLongOptions(
                                     option.description(),
                                     getOptionDefaultValue(option));
 #else
-#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
-                    options << longOption;
-#else
+#  if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
                     options << std::move(longOption);
-#endif
+#  else
+                    options << longOption;
+#  endif
 #endif
                 }
             }

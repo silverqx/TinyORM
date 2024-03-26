@@ -537,10 +537,10 @@ QString InteractsWithIO::errorWallInternal(const QString &string) const
         // Split lines by the given width
         for (const auto &lineNl : splitted)
             for (auto &&line : StringUtils::splitStringByWidth(lineNl, maxLineWidth))
-#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
-                lines << line;
-#else
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
                 lines << std::move(line);
+#else
+                lines << line;
 #endif
     }
 

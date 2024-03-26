@@ -104,10 +104,10 @@ namespace Orm::Utils
             queryString.replace(queryString.indexOf(QLatin1Char('?')), 1, bindingValue);
 
             if (simpleBindings)
-#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
-                simpleBindingsList << bindingValue;
-#else
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
                 simpleBindingsList << std::move(bindingValue);
+#else
+                simpleBindingsList << bindingValue;
 #endif
         }
 

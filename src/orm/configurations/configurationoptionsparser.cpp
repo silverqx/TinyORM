@@ -71,16 +71,16 @@ void ConfigurationOptionsParser::copyOptionsFromTopLevel(
             continue;
 
         // Copy the value to the 'options' hash
-#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
-        if (const auto &newValue = config()[optionTopLevel];
-            !newValue.value<QString>().isEmpty()
-        )
-            options.insert(option, newValue);
-#else
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
         if (auto newValue = config().value(optionTopLevel);
             !newValue.value<QString>().isEmpty()
         )
             options.emplace(std::move(option), std::move(newValue));
+#else
+        if (const auto &newValue = config()[optionTopLevel];
+            !newValue.value<QString>().isEmpty()
+        )
+            options.insert(option, newValue);
 #endif
     }
 }

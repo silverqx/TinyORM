@@ -58,24 +58,24 @@ QString SqlError::formatMessage(const char *message, const QSqlError &error)
     errorText.reserve(3);
 
     if (!nativeErrorCode.isEmpty())
-#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
-        errorText << nativeErrorCode;
-#else
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
         errorText << std::move(nativeErrorCode);
+#else
+        errorText << nativeErrorCode;
 #endif
 
     if (!driverText.isEmpty())
-#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
-        errorText << driverText;
-#else
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
         errorText << std::move(driverText);
+#else
+        errorText << driverText;
 #endif
 
     if (!databaseText.isEmpty())
-#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
-        errorText << databaseText;
-#else
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
         errorText << std::move(databaseText);
+#else
+        errorText << databaseText;
 #endif
 
     result += errorText.join(COMMA);

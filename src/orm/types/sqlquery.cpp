@@ -18,10 +18,10 @@ SqlQuery::SqlQuery(QSqlQuery &&other, const QtTimeZoneConfig &qtTimeZone, // NOL
                    const QueryGrammar &queryGrammar,
                    const std::optional<bool> returnQDateTime
 )
-#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
-    : QSqlQuery(other)
-#else
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
     : QSqlQuery(std::move(other))
+#else
+    : QSqlQuery(other)
 #endif
     , m_qtTimeZone(qtTimeZone)
     , m_isConvertingTimeZone(m_qtTimeZone.type != QtTimeZoneType::DontConvert)

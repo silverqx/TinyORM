@@ -64,10 +64,10 @@ QVector<QString> Blueprint::toSql(const DatabaseConnection &connection,
         if (auto sql = grammar.invokeCompileMethod(*command, connection, *this);
             !sql.isEmpty()
         )
-#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
-            statements << sql;
-#else
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
             statements << std::move(sql);
+#else
+            statements << sql;
 #endif
 
     return statements;

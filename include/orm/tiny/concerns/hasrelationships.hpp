@@ -1555,11 +1555,11 @@ namespace Concerns
             QVector<AttributeItem> &attributes, QString &&relation,
             QVariant &&relationSerialized)
     {
-#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
-        attributes.append({std::move(relation), std::move(relationSerialized)});
-#else
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
         attributes.emplaceBack(std::move(relation),
                                std::move(relationSerialized));
+#else
+        attributes.append({std::move(relation), std::move(relationSerialized)});
 #endif
     }
 
