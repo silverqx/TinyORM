@@ -1426,7 +1426,7 @@ namespace Orm::Tiny
             return {};
 
         QVector<WithItem> nested;
-        nested.reserve(static_cast<decltype (nested)::size_type>(nestedSize));
+        nested.reserve(nestedSize);
 
         /* We are basically looking for any relationships that are nested deeper than
            the given top-level relationship. We will just check for any relations
