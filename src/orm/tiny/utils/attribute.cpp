@@ -54,7 +54,7 @@ ModelAttributes
 Attribute::convertVectorToModelAttributes(const QVector<AttributeItem> &attributes)
 {
     ModelAttributes result;
-    result.reserve(static_cast<ModelAttributes::size_type>(attributes.size()));
+    result.reserve(static_cast<decltype (result)::size_type>(attributes.size()));
 
     for (const auto &attribute : attributes)
         result.try_emplace(attribute.key, attribute.value);

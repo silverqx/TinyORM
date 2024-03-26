@@ -820,7 +820,7 @@ namespace Concerns
 
         C attributes;
         if constexpr (HasReserveMethod<C>)
-            attributes.reserve(static_cast<QVector<AttributeItem>::size_type>(
+            attributes.reserve(static_cast<decltype (attributes)::size_type>(
                                    serializableRelations.size()));
 
         for (const auto &[relation, models] : serializableRelations) {
@@ -1404,7 +1404,7 @@ namespace Concerns
     {
         QVector<WithItem> relations;
         relations.reserve(
-            static_cast<QVector<WithItem>::size_type>(m_relations.size()));
+            static_cast<decltype (relations)::size_type>(m_relations.size()));
 
         /* Get all currently loaded relation names except pivot relations. We need
            to check for the pivot models, but only if the std::variant which holds
