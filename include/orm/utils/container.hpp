@@ -91,6 +91,7 @@ namespace Orm::Utils
         SizeType size = 0;
 
         for (const auto &string : container)
+            // TODO qt5 remove, check and remove similar constexpr conditions silverqx
             if constexpr (std::is_same_v<SizeType, typename T::value_type::size_type>)
                 size += string.size() + addToElement;
             else
