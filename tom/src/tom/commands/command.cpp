@@ -365,7 +365,8 @@ void Command::initializePositionalArguments()
         return;
 
     m_positionalArguments =
-            ranges::views::zip_with([](const auto &argument, auto &&index)
+            ranges::views::zip_with([](const PositionalArgument &argument,
+                                       const ArgumentsSizeType index)
                                     -> std::pair<QString, ArgumentsSizeType>
     {
         return {argument.name, index};
