@@ -1799,16 +1799,25 @@ Builder &Builder::whereInternal(
     return *this;
 }
 
+/*! Type for binding type names array, used to map BindingType to its name. */
+using BindingNamesMapType = const std::array<const char *, 9>;
+
+/*! Map BindingType enum to the pretty names. */
+Q_GLOBAL_STATIC_WITH_ARGS(BindingNamesMapType, BindingNamesMap, // NOLINT(misc-use-anonymous-namespace, cppcoreguidelines-avoid-non-const-global-variables)
+                          ({"SELECT", "FROM", "JOIN", "WHERE", "GROUPBY", "HAVING",
+                            "ORDER", "UNION", "UNIONORDER"}))
+
 void Builder::checkBindingType(const BindingType type) const
 {
     if (m_bindings.contains(type))
         return;
 
-    // TODO add hash which maps BindingType to the QString silverqx
+    const auto typeInt = static_cast<quint8>(type);
+
     throw Exceptions::InvalidArgumentError(
-                QStringLiteral("Invalid binding type '%1' in %2().")
-                .arg(static_cast<quint8>(type))
-                .arg(__tiny_func__));
+                QStringLiteral("Invalid binding type '%2(%1)' in %3().")
+                .arg(typeInt)
+                .arg(BindingNamesMap->at(typeInt), __tiny_func__));
 }
 
 const std::unordered_set<QString> &Builder::getOperators()
