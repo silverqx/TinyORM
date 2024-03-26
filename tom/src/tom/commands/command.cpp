@@ -374,7 +374,7 @@ void Command::initializePositionalArguments()
         ranges::views::closed_iota(static_cast<ArgumentsSizeType>(1),
                                    static_cast<ArgumentsSizeType>(arguments.size()))
     )
-            | ranges::to<decltype (m_positionalArguments)>();
+        | ranges::to<decltype (m_positionalArguments)>();
 
     // The same as above, I leave above as I want to have one example with zip_with()
 //    for (ArgumentsSizeType index = 0; const auto &argument : positionalArguments())
