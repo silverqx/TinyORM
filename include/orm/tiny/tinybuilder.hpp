@@ -1412,7 +1412,8 @@ namespace Orm::Tiny
     QVector<WithItem>
     Builder<Model>::relationsNestedUnder(const QString &topRelationName) const
     {
-        /*! Count the number of nested relations. */
+        /*! Count the number of nested relations, always returns qint64 difference type,
+            even on Qt5. */
         const auto nestedSize = std::ranges::count_if(
                                     m_eagerLoad, [this, &topRelationName]
                                                  (const auto &relation)
