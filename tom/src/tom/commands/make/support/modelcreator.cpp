@@ -416,6 +416,9 @@ namespace
     template<ContainersSizeConcept ...C>
     bool allHaveSameSize(const std::size_t size, const C &...container)
     {
+        /* I created containerSize() function that did static_cast<> only if (constexpr)
+           !is_same_v<C::size_type, std::size_t> but it reported -Wsign-compare diagnostic
+           warning on this line, so only option is to always call static_cast<>. */
         return ((size == static_cast<std::size_t>(container.size())) && ...);
     }
 } // namespace
