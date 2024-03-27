@@ -419,10 +419,10 @@ QVariant MySqlResult::data(const size_type index) const
 {
     Q_D(const MySqlResult);
 
-    const auto idx = static_cast<MySqlResultPrivate::ResultFieldsSizeType>(index);
-
     // Throw an exception if an index for result fields vector is out of bounds
-    d->throwIfBadResultFieldsIndex(idx);
+    d->throwIfBadResultFieldsIndex(index);
+
+    const auto idx = static_cast<MySqlResultPrivate::ResultFieldsSizeType>(index);
 
     if (d->preparedQuery)
         return d->getValueForPrepared(idx);
@@ -434,10 +434,10 @@ bool MySqlResult::isNull(const size_type index) const
 {
     Q_D(const MySqlResult);
 
-    const auto idx = static_cast<MySqlResultPrivate::ResultFieldsSizeType>(index);
-
     // Throw an exception if an index for result fields vector is out of bounds
-    d->throwIfBadResultFieldsIndex(idx);
+    d->throwIfBadResultFieldsIndex(index);
+
+    const auto idx = static_cast<MySqlResultPrivate::ResultFieldsSizeType>(index);
 
    /* MyField::isNull is populated for prepared statements only.
       The row/result set/data must be fetched first to obtain the correct result. ❗ */
