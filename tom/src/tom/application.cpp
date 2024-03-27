@@ -172,7 +172,8 @@ Application::Application(int &argc, char *argv[], std::shared_ptr<DatabaseManage
                          std::vector<std::shared_ptr<Migration>> migrations,
                          std::vector<std::shared_ptr<Seeder>> seeders)
     : m_argc(argc)
-    , m_argv(const_cast<const char **>(argv), argc)
+    , m_argv(const_cast<const char **>(argv),
+             static_cast<decltype (m_argv)::size_type>(argc))
     , m_db(std::move(db))
     , m_qtApplication(createQCoreApplication(argc, argv))
     , m_environmentEnvName(environmentEnvName)
