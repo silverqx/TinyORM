@@ -89,7 +89,7 @@ namespace Orm::Drivers::MySql
         QVariant getValueForPrepared(ResultFieldsSizeType index) const;
 
         /*! Throw an exception if an index for result fields vector is out of bounds. */
-        void throwIfBadResultFieldsIndex(ResultFieldsSizeType index) const;
+        void throwIfBadResultFieldsIndex(size_type index) const;
 
         /* Data members */
         /* Common for both */

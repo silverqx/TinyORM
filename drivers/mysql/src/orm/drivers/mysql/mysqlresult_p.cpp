@@ -368,12 +368,12 @@ QVariant MySqlResultPrivate::getValueForPrepared(const ResultFieldsSizeType inde
 }
 
 void
-MySqlResultPrivate::throwIfBadResultFieldsIndex(const ResultFieldsSizeType index) const
+MySqlResultPrivate::throwIfBadResultFieldsIndex(const size_type index) const
 {
     const auto fieldsCount = resultFields.size();
 
     // Nothing to do
-    if (index >= 0 || index < fieldsCount)
+    if (index >= 0 || index < static_cast<size_type>(fieldsCount))
         return;
 
     throw Exceptions::OutOfRangeError(
