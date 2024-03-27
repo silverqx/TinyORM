@@ -43,7 +43,7 @@ QString Type::prettyFunction(const QString &function)
 #if defined(__GNUG__) || defined(__clang__)
     static const QRegularExpression regex(
                 QStringLiteral(R"((?:.* )?(?:.*::)?(\w+)(?:<.*>)?::(\w+)\(.*\))"));
-#elif _MSC_VER
+#elif defined(_MSC_VER)
     static const QRegularExpression regex(
                 QStringLiteral(R"((?:.*::)?(\w+)(?:<.*>)?::(\w+)(?:$|::<lambda))"));
 #else

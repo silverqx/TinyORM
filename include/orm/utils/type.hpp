@@ -25,7 +25,7 @@ TINYORM_BEGIN_COMMON_NAMESPACE
 // NOLINTNEXTLINE(bugprone-reserved-identifier)
 #  define __tiny_func__ \
     Orm::Utils::Type::prettyFunction(static_cast<const char *>(__PRETTY_FUNCTION__))
-#elif _MSC_VER
+#elif defined(_MSC_VER)
 // NOLINTNEXTLINE(bugprone-reserved-identifier)
 #  define __tiny_func__ \
     Orm::Utils::Type::prettyFunction(static_cast<const char *>(__FUNCTION__))
