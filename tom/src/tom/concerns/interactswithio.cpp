@@ -338,11 +338,19 @@ bool InteractsWithIO::confirm(const QString &question, const bool defaultAnswer)
     /* MSVC contains a bug, it doesn't work with std::cin, it throws assert,
        the std::wcin works well, even emoji-s work.
 
+       For MSYS2 the Unicode support for non-Unicode programs must be enabled/checked
+       in Control Panel - Region - Administrative - Language for non-Unicode programs:
+       ✔️ Beta: Use Unicode UTF-8 for worldwide language support
+       It doesn't work without this, I've tried all possible combinations, but I think
+       I would need to manually translate the current ANSI code page to UTF-8 using
+       the WideCharToMultiByte() or even std::codecvt() functions, and that is a waste
+       of time because we don't need it, currently, we only read 'yes' and latin1 is
+       enough for this.
+
        std::noskipws - if contains whitespaces at the beginning, treat it as an empty
                        string, it returns the false answer. */
 #if defined(_MSC_VER) || defined(__MINGW32__)
     std::wstring answerRaw;
-    // BUG mingw doesn't work, only latin1 works ěščř or emoji-s prints ?? silverqx
     std::wcin >> std::noskipws >> answerRaw;
 
     const auto answer = QString::fromStdWString(answerRaw).toLower();
