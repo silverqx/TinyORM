@@ -335,12 +335,23 @@ bool InteractsWithIO::confirm(const QString &question, const bool defaultAnswer)
                                                      : QStringLiteral("no")));
     note(QStringLiteral("> "), false);
 
+    /* MSVC contains a bug, it doesn't work with std::cin, it throws assert,
+       the std::wcin works well, even emoji-s work.
+
+       std::noskipws - if contains whitespaces at the beginning, treat it as an empty
+                       string, it returns the false answer. */
+#if defined(_MSC_VER) || defined(__MINGW32__)
     std::wstring answerRaw;
-    /* If contains whitespaces at the beginning consider it as an empty string, it returns
-       the false answer. */
+    // BUG mingw doesn't work, only latin1 works ěščř or emoji-s prints ?? silverqx
     std::wcin >> std::noskipws >> answerRaw;
 
     const auto answer = QString::fromStdWString(answerRaw).toLower();
+#else
+    std::string answerRaw;
+    std::cin >> std::noskipws >> answerRaw;
+
+    const auto answer = QString::fromStdString(answerRaw).toLower();
+#endif
 
     return answer == QLatin1String("y") || answer == QLatin1String("ye") ||
            answer == QLatin1String("yes");
