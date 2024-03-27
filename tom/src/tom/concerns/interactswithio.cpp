@@ -336,6 +336,8 @@ bool InteractsWithIO::confirm(const QString &question, const bool defaultAnswer)
     note(QStringLiteral("> "), false);
 
     std::wstring answerRaw;
+    /* If contains whitespaces at the beginning consider it as an empty string, it returns
+       the false answer. */
     std::wcin >> std::noskipws >> answerRaw;
 
     const auto answer = QString::fromStdWString(answerRaw).toLower();
