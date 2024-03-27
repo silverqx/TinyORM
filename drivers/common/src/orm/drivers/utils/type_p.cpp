@@ -24,7 +24,7 @@ QString TypePrivate::prettyFunction(const QString &function)
 #if defined(__GNUG__) || defined(__clang__)
     static const QRegularExpression
             regex(uR"((?:.* )?(?:.*::)?(\w+)(?:<.*>)?::(\w+)\(.*\))"_s);
-#elif _MSC_VER
+#elif defined(_MSC_VER)
     static const QRegularExpression
             regex(uR"((?:.*::)?(\w+)(?:<.*>)?::(\w+)(?:$|::<lambda))"_s);
 #else
