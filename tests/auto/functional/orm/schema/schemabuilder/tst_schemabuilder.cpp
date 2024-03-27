@@ -268,8 +268,7 @@ void tst_SchemaBuilder::getColumnListing() const
 
     // Move to the unordered_set as returned column names are not ordered
     std::unordered_set<QString> columns;
-    columns.reserve(static_cast<std::unordered_set<QString>::size_type>(
-                        columnsList.size()));
+    columns.reserve(static_cast<decltype (columns)::size_type>(columnsList.size()));
     std::ranges::move(columnsList, std::inserter(columns, columns.end()));
 
     QCOMPARE(columns,
@@ -375,8 +374,7 @@ QSet<QString> tst_SchemaBuilder::getAllTablesFor(const QString &connection)
     auto query = Schema::on(connection).getAllTables();
 
     QSet<QString> tablesActual;
-    tablesActual.reserve(static_cast<decltype (tablesActual)::size_type>(
-                             QueryUtils::queryResultSize(query)));
+    tablesActual.reserve(QueryUtils::queryResultSize(query));
 
     while (query.next())
         tablesActual << query.value(0).value<QString>();
@@ -389,8 +387,7 @@ QSet<QString> tst_SchemaBuilder::getAllViewsFor(const QString &connection)
     auto query = Schema::on(connection).getAllViews();
 
     QSet<QString> views;
-    views.reserve(static_cast<decltype (views)::size_type>(
-                      QueryUtils::queryResultSize(query)));
+    views.reserve(QueryUtils::queryResultSize(query));
 
     while (query.next())
         views << query.value(0).value<QString>();

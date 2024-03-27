@@ -1636,14 +1636,13 @@ void tst_QueryBuilder::chunk() const
     QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     // <page, chunk_rowsCount>
-    const std::unordered_map<qint64, qint64> expectedRows {{1, 3}, {2, 3}, {3, 2}};
+    const std::unordered_map<qint64, int> expectedRows {{1, 3}, {2, 3}, {3, 2}};
 
     /* Can't be inside the chunk's callback because QCOMPARE internally calls 'return;'
        and it causes compile error. */
     const auto compareResultSize = [&expectedRows](SqlQuery &query, const qint64 page)
     {
-        QCOMPARE(static_cast<qint64>(QueryUtils::queryResultSize(query)),
-                 expectedRows.at(page));
+        QCOMPARE(QueryUtils::queryResultSize(query), expectedRows.at(page));
     };
 
     std::vector<quint64> ids;
@@ -1675,14 +1674,13 @@ void tst_QueryBuilder::chunk_ReturnFalse() const
     QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     // <page, chunk_rowsCount> (I leave it here also in this test, doesn't matter much
-    const std::unordered_map<qint64, qint64> expectedRows {{1, 3}, {2, 3}, {3, 2}};
+    const std::unordered_map<qint64, int> expectedRows {{1, 3}, {2, 3}, {3, 2}};
 
     /* Can't be inside the chunk's callback because QCOMPARE internally calls 'return;'
        and it causes compile error. */
     const auto compareResultSize = [&expectedRows](SqlQuery &query, const qint64 page)
     {
-        QCOMPARE(static_cast<qint64>(QueryUtils::queryResultSize(query)),
-                 expectedRows.at(page));
+        QCOMPARE(QueryUtils::queryResultSize(query), expectedRows.at(page));
     };
 
     std::vector<quint64> ids;
@@ -1846,14 +1844,13 @@ void tst_QueryBuilder::chunkById() const
     QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     // <page, chunk_rowsCount>
-    const std::unordered_map<qint64, qint64> expectedRows {{1, 3}, {2, 3}, {3, 2}};
+    const std::unordered_map<qint64, int> expectedRows {{1, 3}, {2, 3}, {3, 2}};
 
     /* Can't be inside the chunk's callback because QCOMPARE internally calls 'return;'
        and it causes compile error. */
     const auto compareResultSize = [&expectedRows](SqlQuery &query, const qint64 page)
     {
-        QCOMPARE(static_cast<qint64>(QueryUtils::queryResultSize(query)),
-                 expectedRows.at(page));
+        QCOMPARE(QueryUtils::queryResultSize(query), expectedRows.at(page));
     };
 
     std::vector<quint64> ids;
@@ -1885,14 +1882,13 @@ void tst_QueryBuilder::chunkById_ReturnFalse() const
     QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     // <page, chunk_rowsCount> (I leave it here also in this test, doesn't matter much
-    const std::unordered_map<qint64, qint64> expectedRows {{1, 3}, {2, 3}, {3, 2}};
+    const std::unordered_map<qint64, int> expectedRows {{1, 3}, {2, 3}, {3, 2}};
 
     /* Can't be inside the chunk's callback because QCOMPARE internally calls 'return;'
        and it causes compile error. */
     const auto compareResultSize = [&expectedRows](SqlQuery &query, const qint64 page)
     {
-        QCOMPARE(static_cast<qint64>(QueryUtils::queryResultSize(query)),
-                 expectedRows.at(page));
+        QCOMPARE(QueryUtils::queryResultSize(query), expectedRows.at(page));
     };
 
     std::vector<quint64> ids;
@@ -1951,14 +1947,13 @@ void tst_QueryBuilder::chunkById_WithAlias() const
     QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     // <page, chunk_rowsCount>
-    const std::unordered_map<qint64, qint64> expectedRows {{1, 3}, {2, 3}, {3, 2}};
+    const std::unordered_map<qint64, int> expectedRows {{1, 3}, {2, 3}, {3, 2}};
 
     /* Can't be inside the chunk's callback because QCOMPARE internally calls 'return;'
        and it causes compile error. */
     const auto compareResultSize = [&expectedRows](SqlQuery &query, const qint64 page)
     {
-        QCOMPARE(static_cast<qint64>(QueryUtils::queryResultSize(query)),
-                 expectedRows.at(page));
+        QCOMPARE(QueryUtils::queryResultSize(query), expectedRows.at(page));
     };
 
     std::vector<quint64> ids;
@@ -1992,14 +1987,13 @@ void tst_QueryBuilder::chunkById_ReturnFalse_WithAlias() const
     QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     // <page, chunk_rowsCount> (I leave it here also in this test, doesn't matter much
-    const std::unordered_map<qint64, qint64> expectedRows {{1, 3}, {2, 3}, {3, 2}};
+    const std::unordered_map<qint64, int> expectedRows {{1, 3}, {2, 3}, {3, 2}};
 
     /* Can't be inside the chunk's callback because QCOMPARE internally calls 'return;'
        and it causes compile error. */
     const auto compareResultSize = [&expectedRows](SqlQuery &query, const qint64 page)
     {
-        QCOMPARE(static_cast<qint64>(QueryUtils::queryResultSize(query)),
-                 expectedRows.at(page));
+        QCOMPARE(QueryUtils::queryResultSize(query), expectedRows.at(page));
     };
 
     std::vector<quint64> ids;
