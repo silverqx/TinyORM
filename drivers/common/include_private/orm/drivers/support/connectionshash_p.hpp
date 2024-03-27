@@ -117,7 +117,7 @@ namespace Orm::Drivers::Support
         const std::shared_lock lock(m_mutex);
 
         QStringList result;
-        result.reserve(static_cast<QStringList::size_type>(m_data.size()));
+        result.reserve(static_cast<decltype (result)::size_type>(m_data.size()));
 
         for (const auto &[key, _] : m_data)
             result << key;

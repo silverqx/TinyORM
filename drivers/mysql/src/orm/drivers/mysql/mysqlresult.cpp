@@ -267,7 +267,7 @@ SqlRecord MySqlResult::record() const
     mysql_field_seek(mysqlRes, 0);
 
     SqlRecord record;
-    record.reserve(static_cast<SqlRecord::size_type>(
+    record.reserve(static_cast<decltype (record)::size_type>(
                        mysql_field_count(d->drv_d_func()->mysql)));
 
     const MYSQL_FIELD *fieldInfo = nullptr;
