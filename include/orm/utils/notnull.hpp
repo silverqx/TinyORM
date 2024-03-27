@@ -120,9 +120,7 @@ namespace Private
     template<typename T>
     auto makeNotNull(T &&t) noexcept
     {
-        using NotNullType = std::remove_cv_t<std::remove_reference_t<T>>;
-
-        return NotNull<NotNullType>(std::forward<T>(t));
+        return NotNull<std::remove_cvref_t<T>>(std::forward<T>(t));
     }
 
     template<typename T, typename U>
