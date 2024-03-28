@@ -137,7 +137,7 @@ QList<QStringView>
 ConfigurationOptionsParser::splitConfigOptions(const QString &optionsString)
 {
     QList<QStringView> list;
-    list.reserve(optionsString.count(SEMICOLON) + optionsString.count(COMMA_C));
+    list.reserve(optionsString.count(SEMICOLON) + optionsString.count(COMMA_C) + 2);
 
     // Split by the ; and also ,
     for (auto &&value : QStringView(optionsString).split(SEMICOLON, Qt::SkipEmptyParts))
