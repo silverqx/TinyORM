@@ -156,15 +156,15 @@ ConfigurationOptionsParser::mergeOptions(const QVariantHash &connectortOptions,
     /* Insert options from the default connector options hash, if the prepared
        configuration options already doesn't contain it, so user can overwrite
        default connector options. */
-    auto itDefault = connectortOptions.constBegin();
-    while (itDefault != connectortOptions.constEnd()) {
-        const auto &key = itDefault.key();
-        const auto &value = itDefault.value();
+    auto itConnectortOptions = connectortOptions.constBegin();
+    while (itConnectortOptions != connectortOptions.constEnd()) {
+        const auto &key = itConnectortOptions.key();
+        const auto &value = itConnectortOptions.value();
 
         if (!merged.contains(key))
             merged.insert(key, value);
 
-        ++itDefault;
+        ++itConnectortOptions;
     }
 
     return merged;
