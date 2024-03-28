@@ -9,6 +9,7 @@
 TINYORM_BEGIN_COMMON_NAMESPACE
 
 using Orm::Constants::COMMA_C;
+using Orm::Constants::EMPTY;
 using Orm::Constants::EQ_C;
 using Orm::Constants::SEMICOLON;
 using Orm::Constants::options_;
@@ -109,17 +110,23 @@ QVariantHash ConfigurationOptionsParser::prepareConfigOptions(const QVariant &op
     if (Helpers::qVariantTypeId(options) != QMetaType::QString)
         return options.value<QVariantHash>();
 
-    // The following algorithm converts the QString defined 'options' to the QVariantHash
-    // QStringView saves 3 copies (per one split operation)
-    const auto list = splitConfigOptions(options.value<QString>());
+    /* The following algorithm converts the QString defined 'options' to the QVariantHash.
+       QStringView saves 3 copies (per one split operation). */
+    const auto optionsRaw = splitConfigOptions(options.value<QString>());
 
     QVariantHash preparedOptions;
-    preparedOptions.reserve(list.size());
+    preparedOptions.reserve(optionsRaw.size());
 
-    for (const auto value : list) {
-        Q_ASSERT(value.count(EQ_C) == 1);
+    /* The following logic must be 1:1 as in MySqlDriverPrivate::parseMySqlOption() to
+       work properly, when we have another drivers we will have to ensure it for them
+       as well. */
+    for (const auto optionRaw : optionsRaw) {
+        /* Can contain 0 or 1 = character; 0 for flags and 1 for options with a value.
+           An option flag with no value is considered to be ON/TRUE (enabled). */
+        const auto optionRawCount = optionRaw.count(EQ_C);
+        Q_ASSERT(optionRawCount >= 0 && optionRawCount <= 1);
 
-        const auto option = value.split(EQ_C);
+        const auto option = optionRaw.split(EQ_C);
 
 #if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
         preparedOptions.emplace(
@@ -127,7 +134,7 @@ QVariantHash ConfigurationOptionsParser::prepareConfigOptions(const QVariant &op
         preparedOptions.insert(
 #endif
                     option.constFirst().trimmed().toString(),
-                    option[1].trimmed().toString());
+                    optionRawCount == 0 ? EMPTY : option[1].trimmed().toString());
     }
 
     return preparedOptions;
@@ -182,9 +189,15 @@ QString ConfigurationOptionsParser::concatenateOptions(const QVariantHash &optio
     auto itOption = options.constBegin();
     while (itOption != options.constEnd()) {
         const auto &key = itOption.key();
-        const auto &value = itOption.value();
+        const auto value = itOption.value().value<QString>();
 
-        concatenated << QStringLiteral("%1=%2").arg(key, value.value<QString>());
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+        concatenated.emplaceBack(
+#else
+        concatenated.append(
+#endif
+                    // Support option flags without a value (are considred as enabled)
+                    value.isEmpty() ? key : QStringLiteral("%1=%2").arg(key, value));
 
         ++itOption;
     }
