@@ -251,41 +251,41 @@ MySqlDriverPrivate::getMySqlOptionsHash()
        the hash.contains(QStringView) as our option names are QStrinView-s
        after the split() method call. So this is the best solution. */
     static const MySqlOptionsHash cachedOptions = {
-        {u"SSL_KEY"_s,                   {MYSQL_OPT_SSL_KEY,         &MySqlDriverPrivate::setOptionString}},
-        {u"SSL_CERT"_s,                  {MYSQL_OPT_SSL_CERT,        &MySqlDriverPrivate::setOptionString}},
-        {u"SSL_CA"_s,                    {MYSQL_OPT_SSL_CA,          &MySqlDriverPrivate::setOptionString}},
-        {u"SSL_CAPATH"_s,                {MYSQL_OPT_SSL_CAPATH,      &MySqlDriverPrivate::setOptionString}},
-        {u"SSL_CIPHER"_s,                {MYSQL_OPT_SSL_CIPHER,      &MySqlDriverPrivate::setOptionString}},
+        {u"SSL_KEY"_s,                   {MYSQL_OPT_SSL_KEY,         SetOptionString}},
+        {u"SSL_CERT"_s,                  {MYSQL_OPT_SSL_CERT,        SetOptionString}},
+        {u"SSL_CA"_s,                    {MYSQL_OPT_SSL_CA,          SetOptionString}},
+        {u"SSL_CAPATH"_s,                {MYSQL_OPT_SSL_CAPATH,      SetOptionString}},
+        {u"SSL_CIPHER"_s,                {MYSQL_OPT_SSL_CIPHER,      SetOptionString}},
 #if defined(MYSQL_VERSION_ID) && MYSQL_VERSION_ID >= 50711 && !defined(MARIADB_VERSION_ID)
-        {u"SSL_MODE"_s,                  {MYSQL_OPT_SSL_MODE,        &MySqlDriverPrivate::setOptionSslMode}},
+        {u"SSL_MODE"_s,                  {MYSQL_OPT_SSL_MODE,        SetOptionSslMode}},
 #endif
-        {u"MYSQL_OPT_SSL_KEY"_s,         {MYSQL_OPT_SSL_KEY,         &MySqlDriverPrivate::setOptionString}},
-        {u"MYSQL_OPT_SSL_CERT"_s,        {MYSQL_OPT_SSL_CERT,        &MySqlDriverPrivate::setOptionString}},
-        {u"MYSQL_OPT_SSL_CA"_s,          {MYSQL_OPT_SSL_CA,          &MySqlDriverPrivate::setOptionString}},
-        {u"MYSQL_OPT_SSL_CAPATH"_s,      {MYSQL_OPT_SSL_CAPATH,      &MySqlDriverPrivate::setOptionString}},
-        {u"MYSQL_OPT_SSL_CIPHER"_s,      {MYSQL_OPT_SSL_CIPHER,      &MySqlDriverPrivate::setOptionString}},
-        {u"MYSQL_OPT_SSL_CRL"_s,         {MYSQL_OPT_SSL_CRL,         &MySqlDriverPrivate::setOptionString}},
-        {u"MYSQL_OPT_SSL_CRLPATH"_s,     {MYSQL_OPT_SSL_CRLPATH,     &MySqlDriverPrivate::setOptionString}},
+        {u"MYSQL_OPT_SSL_KEY"_s,         {MYSQL_OPT_SSL_KEY,         SetOptionString}},
+        {u"MYSQL_OPT_SSL_CERT"_s,        {MYSQL_OPT_SSL_CERT,        SetOptionString}},
+        {u"MYSQL_OPT_SSL_CA"_s,          {MYSQL_OPT_SSL_CA,          SetOptionString}},
+        {u"MYSQL_OPT_SSL_CAPATH"_s,      {MYSQL_OPT_SSL_CAPATH,      SetOptionString}},
+        {u"MYSQL_OPT_SSL_CIPHER"_s,      {MYSQL_OPT_SSL_CIPHER,      SetOptionString}},
+        {u"MYSQL_OPT_SSL_CRL"_s,         {MYSQL_OPT_SSL_CRL,         SetOptionString}},
+        {u"MYSQL_OPT_SSL_CRLPATH"_s,     {MYSQL_OPT_SSL_CRLPATH,     SetOptionString}},
         // MariaDB also supports this option, it doesn't even need MARIADB_ prefix
 #if defined(MYSQL_VERSION_ID) && MYSQL_VERSION_ID >= 50710
-        {u"MYSQL_OPT_TLS_VERSION"_s,     {MYSQL_OPT_TLS_VERSION,     &MySqlDriverPrivate::setOptionString}},
+        {u"MYSQL_OPT_TLS_VERSION"_s,     {MYSQL_OPT_TLS_VERSION,     SetOptionString}},
 #endif
 #if defined(MYSQL_VERSION_ID) && MYSQL_VERSION_ID >= 50711 && !defined(MARIADB_VERSION_ID)
-        {u"MYSQL_OPT_SSL_MODE"_s,        {MYSQL_OPT_SSL_MODE,        &MySqlDriverPrivate::setOptionSslMode}},
+        {u"MYSQL_OPT_SSL_MODE"_s,        {MYSQL_OPT_SSL_MODE,        SetOptionSslMode}},
 #endif
-        {u"MYSQL_OPT_CONNECT_TIMEOUT"_s, {MYSQL_OPT_CONNECT_TIMEOUT, &MySqlDriverPrivate::setOptionUInt}},
-        {u"MYSQL_OPT_READ_TIMEOUT"_s,    {MYSQL_OPT_READ_TIMEOUT,    &MySqlDriverPrivate::setOptionUInt}},
-        {u"MYSQL_OPT_WRITE_TIMEOUT"_s,   {MYSQL_OPT_WRITE_TIMEOUT,   &MySqlDriverPrivate::setOptionUInt}},
-        {u"MYSQL_OPT_RECONNECT"_s,       {MYSQL_OPT_RECONNECT,       &MySqlDriverPrivate::setOptionBool}},
-        {u"MYSQL_OPT_LOCAL_INFILE"_s,    {MYSQL_OPT_LOCAL_INFILE,    &MySqlDriverPrivate::setOptionUInt}},
-        {u"MYSQL_OPT_PROTOCOL"_s,        {MYSQL_OPT_PROTOCOL,        &MySqlDriverPrivate::setOptionProtocol}},
+        {u"MYSQL_OPT_CONNECT_TIMEOUT"_s, {MYSQL_OPT_CONNECT_TIMEOUT, SetOptionUInt}},
+        {u"MYSQL_OPT_READ_TIMEOUT"_s,    {MYSQL_OPT_READ_TIMEOUT,    SetOptionUInt}},
+        {u"MYSQL_OPT_WRITE_TIMEOUT"_s,   {MYSQL_OPT_WRITE_TIMEOUT,   SetOptionUInt}},
+        {u"MYSQL_OPT_RECONNECT"_s,       {MYSQL_OPT_RECONNECT,       SetOptionBool}},
+        {u"MYSQL_OPT_LOCAL_INFILE"_s,    {MYSQL_OPT_LOCAL_INFILE,    SetOptionUInt}},
+        {u"MYSQL_OPT_PROTOCOL"_s,        {MYSQL_OPT_PROTOCOL,        SetOptionProtocol}},
         {u"MYSQL_SHARED_MEMORY_BASE_NAME"_s,
                                          {MYSQL_SHARED_MEMORY_BASE_NAME,
-                                                                     &MySqlDriverPrivate::setOptionString}},
+                                                                     SetOptionString}},
 #ifndef MARIADB_VERSION_ID
         {u"MYSQL_OPT_OPTIONAL_RESULTSET_METADATA"_s,
                                          {MYSQL_OPT_OPTIONAL_RESULTSET_METADATA,
-                                                                     &MySqlDriverPrivate::setOptionBool}},
+                                                                     SetOptionBool}},
 #endif
     };
 

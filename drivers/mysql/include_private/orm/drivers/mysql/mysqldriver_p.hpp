@@ -126,6 +126,20 @@ namespace Orm::Drivers::MySql
 
         /*! The default character sets used for connection and SQL statements. */
         constexpr static auto DefaultCharacterSets = std::to_array({"utf8mb4", "utf8"});
+
+        // Shortcuts to have shorter lines in getMySqlOptionsHash()
+        /*! Shortcut to setOptionString() method. */
+        constexpr static auto SetOptionString   = &MySqlDriverPrivate::setOptionString;
+        /*! Shortcut to setOptionUInt() method. */
+        constexpr static auto SetOptionUInt     = &MySqlDriverPrivate::setOptionUInt;
+        /*! Shortcut to setOptionBool() method. */
+        constexpr static auto SetOptionBool     = &MySqlDriverPrivate::setOptionBool;
+        /*! Shortcut to setOptionProtocol() method. */
+        constexpr static auto SetOptionProtocol = &MySqlDriverPrivate::setOptionProtocol;
+#if !defined(MARIADB_VERSION_ID) && defined(MYSQL_VERSION_ID) && MYSQL_VERSION_ID >= 50711
+        /*! Shortcut to setOptionSslMode() method. */
+        constexpr static auto SetOptionSslMode  = &MySqlDriverPrivate::setOptionSslMode;
+#endif
     };
 
     /* public */
