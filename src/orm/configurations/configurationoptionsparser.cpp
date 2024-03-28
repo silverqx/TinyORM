@@ -162,7 +162,11 @@ ConfigurationOptionsParser::mergeOptions(const QVariantHash &connectortOptions,
         const auto &value = itConnectortOptions.value();
 
         if (!merged.contains(key))
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+            merged.emplace(key, value);
+#else
             merged.insert(key, value);
+#endif
 
         ++itConnectortOptions;
     }
