@@ -150,10 +150,8 @@ QVariantHash
 ConfigurationOptionsParser::mergeOptions(const QVariantHash &connectortOptions,
                                          QVariantHash &&preparedConfigOptions)
 {
-    // Move to the variable with a better name
-    const auto preparedConfigOptionsSize = preparedConfigOptions.size();
-    QVariantHash merged = std::move(preparedConfigOptions);
-    merged.reserve(merged.size() + preparedConfigOptionsSize);
+    QVariantHash merged(std::move(preparedConfigOptions));
+    merged.reserve(merged.size() + connectortOptions.size());
 
     /* Insert options from the default connector options hash, if the prepared
        configuration options already doesn't contain it, so user can overwrite
