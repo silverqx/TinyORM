@@ -266,6 +266,7 @@ MySqlDriverPrivate::getMySqlOptionsHash()
         {u"MYSQL_OPT_SSL_CIPHER"_s,      {MYSQL_OPT_SSL_CIPHER,      &MySqlDriverPrivate::setOptionString}},
         {u"MYSQL_OPT_SSL_CRL"_s,         {MYSQL_OPT_SSL_CRL,         &MySqlDriverPrivate::setOptionString}},
         {u"MYSQL_OPT_SSL_CRLPATH"_s,     {MYSQL_OPT_SSL_CRLPATH,     &MySqlDriverPrivate::setOptionString}},
+        // MariaDB also supports this option, it doesn't even need MARIADB_ prefix
 #if defined(MYSQL_VERSION_ID) && MYSQL_VERSION_ID >= 50710
         {u"MYSQL_OPT_TLS_VERSION"_s,     {MYSQL_OPT_TLS_VERSION,     &MySqlDriverPrivate::setOptionString}},
 #endif
