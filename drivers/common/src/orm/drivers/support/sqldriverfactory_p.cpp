@@ -250,7 +250,7 @@ SqlDriverFactoryPrivate::loadSqlDriverCommon(const QString &driverBasenameRaw) c
 {
     const auto driverBasenames = getDriverBasenames(driverBasenameRaw);
 
-    /* Try to load library from paths from TINY/QT_PLUGIN_PATH environment variables and
+    /* Try to load library from paths from TINY_PLUGIN_PATH environment variable and
        from paths from qmake/CMake build system (inside the build tree). */
     for (const auto &driverPath : sqlDriverPaths())
         // Try to load all our basenames

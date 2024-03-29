@@ -61,7 +61,7 @@ namespace Support
         loadSqlDriverAndResolve(const QString &driverFilepath) const;
 
         /*! Get all non-standard Tiny SQL driver locations that LoadLibrary() doesn't
-            load from (TINY_PLUGIN_PATH/QT_PLUGIN_PATH, qmake build folder). */
+            load from (TINY_PLUGIN_PATH environment variable and qmake build folder). */
         QStringList sqlDriverPaths() const;
         /*! Get a shared library path inside the build tree (from qmake/CMake build
             system). */
