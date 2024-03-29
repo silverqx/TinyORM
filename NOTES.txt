@@ -2770,6 +2770,11 @@ QVariant null vs invalid:
     qDebug() << vinvalid.isNull();
     qDebug() << !vinvalid.isValid();
 
+QLibrary debugging:
+
+ - set: QT_DEBUG_PLUGINS=1
+ - it will log all debug messages to the console
+
 
 c++ library confusions:
 -----------------------
