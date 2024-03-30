@@ -281,6 +281,7 @@ SqlDriverFactoryPrivate::CreateSqlDriverMemFn
 SqlDriverFactoryPrivate::loadSqlDriverAndResolve(const QString &driverFilepath) const
 {
     // CUR drivers UNIX version number silverqx
+    // Version number doesn't work on MSYS2, it uses qlibrary_win.cpp implementation
     QLibrary sqlDriverLib(driverFilepath);
 
     // Nothing to do, the driver isn't on the given filepath
