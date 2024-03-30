@@ -6,6 +6,7 @@
 #include <range/v3/algorithm/contains.hpp>
 
 #include <orm/constants.hpp>
+#include <orm/db.hpp>
 #include <orm/libraryinfo.hpp>
 #include <orm/utils/string.hpp>
 #include <orm/utils/type.hpp>
@@ -23,6 +24,7 @@ TINYORM_BEGIN_COMMON_NAMESPACE
 using Orm::Constants::NOSPACE;
 using Orm::Constants::SPACE;
 
+using Orm::DB;
 using Orm::LibraryInfo;
 
 using StringUtils = Orm::Utils::String;
@@ -215,6 +217,7 @@ QVector<SectionItem> AboutCommand::gatherAllAboutInformation() const
         {sl("Environment"),                        gatherEnvironmentInformation()},
         {sl("Macros <gray>C Preprocessor</gray>"), gatherMacrosInformation()},
         {sl("Versions"),                           gatherVersionsInformation()},
+        {sl("Connections"),                        gatherConnectionsInformation()},
     };
 }
 
@@ -287,6 +290,14 @@ QVector<SubSectionItem> AboutCommand::gatherVersionsInformation()
 #endif
 
     return versions;
+}
+
+QVector<SubSectionItem> AboutCommand::gatherConnectionsInformation()
+{
+    return {
+        {std::nullopt, {{sl("Connection names"),  DB::connectionNames().join(SPACE)},
+                        {sl("Available drivers"), DB::supportedDrivers().join(SPACE)}}},
+    };
 }
 
 } // namespace Tom::Commands

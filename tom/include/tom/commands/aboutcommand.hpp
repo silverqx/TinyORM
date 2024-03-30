@@ -69,6 +69,8 @@ namespace Commands
         static QVector<SubSectionItem> gatherMacrosInformation();
         /*! Gather version-related information. */
         static QVector<SubSectionItem> gatherVersionsInformation();
+        /*! Gather database connections information. */
+        static QVector<SubSectionItem> gatherConnectionsInformation();
     };
 
     /* public */
