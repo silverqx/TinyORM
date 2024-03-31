@@ -384,7 +384,7 @@ int CompleteCommand::printEnvironmentNames(const QString &environmentName) const
     QStringList environmentNames;
     environmentNames.reserve(allEnvironmentNames.size());
 
-    for (auto &&environment : allEnvironmentNames)
+    for (const auto &environment : allEnvironmentNames)
         /* It also evaluates to true if the given environmentName is an empty string "",
            so it prints all environment names in this case.
            Also --env= has to be prepended because pwsh overwrites whole option. */
