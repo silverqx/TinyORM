@@ -89,7 +89,7 @@ namespace Tom::Commands
         inline static bool isLongOption(const QString &wordArg);
         /*! Determine whether the given word is a short option argument. */
         inline static bool isShortOption(const QString &wordArg);
-        /*! Get the command-line option value (--database=value). */
+        /*! Get the command-line option value (eg. --database=value). */
         static QString getOptionValue(const QString &wordArg);
 
         /*! Determine whether the given command contains the given option. */
