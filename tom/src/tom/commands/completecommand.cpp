@@ -382,6 +382,7 @@ int CompleteCommand::printEnvironmentNames(const QString &environmentName) const
     };
 
     QStringList environmentNames;
+    environmentNames.reserve(allEnvironmentNames.size());
 
     for (auto &&environment : allEnvironmentNames)
         /* It also evaluates to true if the given environmentName is an empty string "",
