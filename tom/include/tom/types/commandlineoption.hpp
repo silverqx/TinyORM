@@ -16,7 +16,7 @@ namespace Tom
 namespace Types
 {
 
-    /*! Command line option with a hidden option support (wrapper around
+    /*! Command-line option with a hidden option support (wrapper around
         the QCommandLineOption). */
     class CommandLineOption : public QCommandLineOption
     {
