@@ -111,7 +111,7 @@ int CompleteCommand::run() // NOLINT(readability-function-cognitive-complexity)
     const auto currentCommandArg   = getCurrentTomCommand(currentCommandSplitted);
     const auto tomCommandSize      = currentCommandSplitted.constFirst().size();
 
-    // Register-ArgumentCompleter --word with workaround for arrays
+    // Get the command-line option value for --word= option (with workaround for pwsh)
     const auto commandlineArgSize = commandlineArg.size();
     const auto wordArg = getWordOptionValue(currentCommandSplitted, positionArg,
                                             commandlineArgSize);
