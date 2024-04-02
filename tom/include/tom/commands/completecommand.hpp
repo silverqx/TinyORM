@@ -60,7 +60,7 @@ namespace Tom::Commands
         /*! Print all or guessed shell names for the integrate command. */
         int printGuessedShells(const QString &word) const;
         /*! Print all or guessed connection names for the --database= option. */
-        int printGuessedConnectionNames(const QString &connectionName) const;
+        int printGuessedConnectionNames(const QString &connectionNamesArg) const;
         /*! Print all or guessed environment names for the --env= option. */
         int printGuessedEnvironmentNames(const QString &environmentName) const;
         /*! Print all or guessed section names for the about command --only= option. */
@@ -106,6 +106,24 @@ namespace Tom::Commands
         /*! Obtain all connection names tagged with shell:connection comment from
             the main.cpp file. */
         static QStringList getConnectionNamesFromFile();
+
+        /*! Return type for the initializePrintArrayOptionValues() method. */
+        struct PrintArrayOptionValuesType
+        {
+            /*! Value to complete/find (passed on command-line). */
+            QString lastOptionValueArg;
+            /*! All values for completion (excluding already printed values). */
+            QList<QStringView> allValuesFiltered;
+            /*! Determine whether completing the first value (need by pwsh). */
+            bool isFirstOptionValue;
+            /*! Print all values (if the input option value argument is empty). */
+            bool printAllValues;
+        };
+
+        /*! Initialize local variables for printing and guessing array option values. */
+        static PrintArrayOptionValuesType
+        initializePrintArrayOptionValues(const QStringView optionValuesArg,
+                                         const QStringList &allValues);
 
         /*! Commands to exclude from the list. */
         /*const*/ std::unordered_set<QString> m_dontList {

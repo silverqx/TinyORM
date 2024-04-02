@@ -406,27 +406,40 @@ int CompleteCommand::printGuessedShells(const QString &word) const
     return EXIT_SUCCESS;
 }
 
-int CompleteCommand::printGuessedConnectionNames(const QString &connectionName) const
+int CompleteCommand::printGuessedConnectionNames(const QString &connectionNamesArg) const
 {
     const auto allConnectionNames = getConnectionNamesFromFile();
 
-    // Nothing to guess
+    // Nothing to guess, no database connections where defined for the tom application
     if (allConnectionNames.isEmpty())
         return EXIT_SUCCESS;
 
-    QStringList connectionNames;
-    connectionNames.reserve(allConnectionNames.size());
+    // Initialize local variables
+    auto [connectionNameArg,
+          allConnectionNamesFiltered,
+          isFirstConnectionNameArg,
+          printAllConnectionNames
+    ] = initializePrintArrayOptionValues(connectionNamesArg, allConnectionNames);
 
-    for (const auto &connection : allConnectionNames)
-        /* It also evaluates to true if the given connectionName is an empty string "",
-           so it prints all connection names in this case.
-           Also --database= has to be prepended because pwsh overwrites whole option. */
-        if (connection.startsWith(connectionName))
-            connectionNames
-                    << QStringLiteral("%1;%2")
-                       .arg(NOSPACE.arg(LongOption.arg(database_).append(EQ_C),
-                                        connection),
-                            connection);
+    QStringList connectionNames;
+    connectionNames.reserve(allConnectionNamesFiltered.size());
+
+    /* It also evaluates to true if the given connectionNamesArg is an empty string "",
+       it prints all connection names in this case.
+       isFirstConnectionNameArg note:
+       For the first connection name the --database= has to be prepended because pwsh
+       overwrites the whole option, for the next connections we don't have to, this is
+       because for the following connections, the wordArg is empty, so pwsh doesn't
+       overwrite the entire text of the --database= option, so we only need to print
+       the connection name. */
+    for (const auto allConnectionName : allConnectionNamesFiltered)
+        if (printAllConnectionNames || allConnectionName.startsWith(connectionNameArg))
+            connectionNames << sl("%1;%2").arg(
+                                   isFirstConnectionNameArg
+                                   ? NOSPACE.arg(LongOption.arg(database_).append(EQ_C),
+                                                 allConnectionName)
+                                   : allConnectionName,
+                                   allConnectionName);
 
     // Print
     note(connectionNames.join(NEWLINE));
@@ -461,61 +474,6 @@ int CompleteCommand::printGuessedEnvironmentNames(const QString &environmentName
     return EXIT_SUCCESS;
 }
 
-namespace
-{
-    /*! Return type for the initializePrintGuessedSectionNamesForAbout() function. */
-    struct PrintGuessedSectionNamesForAboutType
-    {
-        /*! Section name to complete/find (passed on command-line). */
-        QString sectionArg;
-        /*! All section names for completion (excluding already printed section names). */
-        QList<QStringView> allSectionNamesFiltered;
-        /*! Determine whether completing the first section name (need by pwsh). */
-        bool isFirstValue;
-        /*! Print all section names (if the section name input is empty). */
-        bool printAllSectionNames;
-    };
-
-    /*! Initialize local variables for the printGuessedSectionNamesForAbout() method. */
-    PrintGuessedSectionNamesForAboutType
-    initializePrintGuessedSectionNamesForAbout(const QStringView sectionNamesArg,
-                                               const QStringList &allSectionNames)
-    {
-        // Nothing to do, the wordArg is empty, return right away as we know the resut
-        if (sectionNamesArg.isEmpty())
-            return {EMPTY, ranges::to<QList<QStringView>>(allSectionNames), true, true};
-
-        // Current wordArg, section names already displayed on the command-line
-        auto sectionNamesArgSplitted = sectionNamesArg.split(COMMA_C, Qt::KeepEmptyParts);
-        // Needed for pwsh, determines an output format
-        const auto isFirstValue = sectionNamesArgSplitted.size() == 1;
-        /* Currently completed section name, we need to take it out so that this section
-           name is not filtered out in the ranges::views::filter() algorithm below. */
-        const auto sectionArg = sectionNamesArgSplitted.takeLast();
-        const auto printAllSectionNames = sectionArg.isEmpty();
-
-        // Remove all empty and null strings (it would print all section names w/o this)
-        sectionNamesArgSplitted.removeAll({});
-
-        // Filter out section names that are already displayed on the command-line
-        auto allSectionNamesFiltered =
-                allSectionNames | ranges::views::filter([&sectionNamesArgSplitted]
-                                                        (const QString &allSectionName)
-        {
-            // Include all of section names that aren't already on the command-line
-            return std::ranges::all_of(sectionNamesArgSplitted,
-                                       [&allSectionName](const QStringView sectionName)
-            {
-                return !allSectionName.startsWith(sectionName);
-            });
-        })
-            | ranges::to<QList<QStringView>>();
-
-        return {sectionArg.toString(), std::move(allSectionNamesFiltered), isFirstValue,
-                printAllSectionNames};
-    }
-} // namespace
-
 int CompleteCommand::printGuessedSectionNamesForAbout(
         const QStringView sectionNamesArg) const
 {
@@ -524,27 +482,30 @@ int CompleteCommand::printGuessedSectionNamesForAbout(
     };
 
     // Initialize local variables
-    auto [sectionArg, allSectionNamesFiltered, isFirstValue, printAllSectionNames] =
-            initializePrintGuessedSectionNamesForAbout(sectionNamesArg, allSectionNames);
+    auto [sectionNameArg,
+          allSectionNamesFiltered,
+          isFirstSectionNameArg,
+          printAllSectionNames
+    ] = initializePrintArrayOptionValues(sectionNamesArg, allSectionNames);
 
     QStringList sectionNames;
     sectionNames.reserve(allSectionNamesFiltered.size());
 
-    for (const auto section : allSectionNamesFiltered)
-        /* It also evaluates to true if the given environmentName is an empty string "",
-           so it prints all environment names in this case.
-           Also --env= has to be prepended because pwsh overwrites whole option. */
-        if (printAllSectionNames || section.startsWith(sectionArg))
+    /* It also evaluates to true if the given sectionNamesArg is an empty string "",
+       it prints all section names in this case.
+       isFirstSectionNameArg note:
+       For the first section name the --only= has to be prepended because pwsh
+       overwrites the whole option, for the next sections we don't have to, this is
+       because for the following sections, the wordArg is empty, so pwsh doesn't overwrite
+       the entire text of the --only= option, so we only need to print a section name. */
+    for (const auto allSectionName : allSectionNamesFiltered)
+        if (printAllSectionNames || allSectionName.startsWith(sectionNameArg))
             sectionNames << sl("%1;%2").arg(
-                                /* This is weird, but for the first section name we must
-                                   print also --only= and for the next section we don't,
-                                   reason is that for subsequent sections the wordArg is
-                                   empty so pwsh doesn't rewrite the whole --only= option
-                                   text so we must print the section name only. */
-                                isFirstValue
-                                ? NOSPACE.arg(LongOption.arg(only_).append(EQ_C), section)
-                                : section,
-                                section);
+                                isFirstSectionNameArg
+                                ? NOSPACE.arg(LongOption.arg(only_).append(EQ_C),
+                                              allSectionName)
+                                : allSectionName,
+                                allSectionName);
 
     // Print
     note(sectionNames.join(NEWLINE));
@@ -783,6 +744,44 @@ QStringList CompleteCommand::getConnectionNamesFromFile()
     mainFileStream.close();
 
     return connectionNames;
+}
+
+CompleteCommand::PrintArrayOptionValuesType
+CompleteCommand::initializePrintArrayOptionValues(const QStringView optionValuesArg,
+                                                  const QStringList &allValues)
+{
+    // Nothing to do, option values are empty, return right away as we know the resut
+    if (optionValuesArg.isEmpty())
+        return {EMPTY, ranges::to<QList<QStringView>>(allValues), true, true};
+
+    // Option values already displayed on the command-line (from getOptionValue())
+    auto optionValuesArgSplitted = optionValuesArg.split(COMMA_C, Qt::KeepEmptyParts);
+    // Needed for pwsh, determines an output format
+    const auto isFirstOptionValue = optionValuesArgSplitted.size() == 1;
+    /* The currently completing option value needs to be removed, so that this option
+       value is not filtered out in the ranges::views::filter() algorithm below. */
+    const auto lastOptionValueArg = optionValuesArgSplitted.takeLast();
+    const auto printAllValues = lastOptionValueArg.isEmpty();
+
+    // Remove all empty and null strings (it would print all option values w/o this)
+    optionValuesArgSplitted.removeAll({});
+
+    // Filter out option values that are already displayed on the command-line
+    auto allValuesFiltered = allValues
+            | ranges::views::filter([&optionValuesArgSplitted]
+                                    (const QString &allValue)
+    {
+        // Include all option values that aren't already on the command-line
+        return std::ranges::none_of(optionValuesArgSplitted,
+                                    [&allValue](const QStringView optionValueArg)
+        {
+            return allValue.startsWith(optionValueArg);
+        });
+    })
+            | ranges::to<QList<QStringView>>();
+
+    return {lastOptionValueArg.toString(), std::move(allValuesFiltered),
+            isFirstOptionValue, printAllValues};
 }
 
 } // namespace Tom::Commands
