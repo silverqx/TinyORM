@@ -41,7 +41,7 @@ namespace Tom::Commands
 #ifdef _MSC_VER
         /*! Currently processed tom command. */
         static std::optional<QString>
-        getCurrentTomCommand(const QStringList &currentCommandSplitted);
+        getCurrentTomCommand(const QStringList &commandlineArgSplitted);
 #else
         /*! Currently processed tom command. */
         static std::optional<QString>
@@ -49,7 +49,7 @@ namespace Tom::Commands
 #endif
         /*! Get the command-line option value for --word= option (workaround for pwsh). */
         QString getWordOptionValue(
-                const QStringList &currentCommandSplitted,
+                const QStringList &commandlineArgSplitted,
                 QString::size_type positionArg, QString::size_type commandlineArgSize);
 
         /*! Print all guessed commands. */
@@ -60,11 +60,11 @@ namespace Tom::Commands
         /*! Print all or guessed shell names for the integrate command. */
         int printGuessedShells(const QString &word) const;
         /*! Print all or guessed connection names for the --database= option. */
-        int printAndGuessConnectionNames(const QString &connectionName) const;
+        int printGuessedConnectionNames(const QString &connectionName) const;
         /*! Print all or guessed environment names for the --env= option. */
-        int printEnvironmentNames(const QString &environmentName) const;
-        /*! Print all section names for the about command --only= option. */
-        int printSectionNamesForAbout(QStringView sectionNamesValue) const;
+        int printGuessedEnvironmentNames(const QString &environmentName) const;
+        /*! Print all or guessed section names for the about command --only= option. */
+        int printGuessedSectionNamesForAbout(QStringView sectionNamesArg) const;
         /*! Print all or guessed long option parameter names. */
         int printGuessedLongOptions(const std::optional<QString> &currentCommand,
                                     const QString &word) const;

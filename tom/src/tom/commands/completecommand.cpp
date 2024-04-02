@@ -105,15 +105,15 @@ int CompleteCommand::run() // NOLINT(readability-function-cognitive-complexity)
 #  endif
 
     // Currently processed tom command
-    const auto currentCommandSplitted = commandlineArg.split(SPACE);
-    Q_ASSERT(!currentCommandSplitted.isEmpty());
+    const auto commandlineArgSplitted = commandlineArg.split(SPACE);
+    Q_ASSERT(!commandlineArgSplitted.isEmpty());
 
-    const auto currentCommandArg = getCurrentTomCommand(currentCommandSplitted);
-    const auto tomCommandSize    = currentCommandSplitted.constFirst().size();
+    const auto currentCommandArg = getCurrentTomCommand(commandlineArgSplitted);
+    const auto tomCommandSize    = commandlineArgSplitted.constFirst().size();
 
     // Get the command-line option value for --word= option (with workaround for pwsh)
     const auto commandlineArgSize = commandlineArg.size();
-    const auto wordArg = getWordOptionValue(currentCommandSplitted, positionArg,
+    const auto wordArg = getWordOptionValue(commandlineArgSplitted, positionArg,
                                             commandlineArgSize);
 #else
     const auto wordArg = value(word_);
@@ -192,7 +192,7 @@ int CompleteCommand::run() // NOLINT(readability-function-cognitive-complexity)
     if (currentCommandArg == About && wordArg.startsWith(LongOption.arg(only_)) &&
         positionArg >= commandlineArgSize
     )
-        return printSectionNamesForAbout(getOptionValue(wordArg));
+        return printGuessedSectionNamesForAbout(getOptionValue(wordArg));
 #endif
 
     /* Print inferred database connection names for the --database= option
@@ -203,7 +203,7 @@ int CompleteCommand::run() // NOLINT(readability-function-cognitive-complexity)
         currentCommandArg && commandHasLongOption(*currentCommandArg, database_) &&
         positionArg >= commandlineArgSize
     )
-        return printAndGuessConnectionNames(getOptionValue(wordArg));
+        return printGuessedConnectionNames(getOptionValue(wordArg));
 #endif
 
     /* Print environment names for the --env= option
@@ -214,7 +214,7 @@ int CompleteCommand::run() // NOLINT(readability-function-cognitive-complexity)
         currentCommandArg && // All commands has the --env= option
         positionArg >= commandlineArgSize
     )
-        return printEnvironmentNames(getOptionValue(wordArg));
+        return printGuessedEnvironmentNames(getOptionValue(wordArg));
 #endif
 
     /* Print all or guessed long option parameter names
@@ -242,27 +242,27 @@ int CompleteCommand::run() // NOLINT(readability-function-cognitive-complexity)
 
 #ifdef _MSC_VER
 std::optional<QString>
-CompleteCommand::getCurrentTomCommand(const QStringList &currentCommandSplitted)
+CompleteCommand::getCurrentTomCommand(const QStringList &commandlineArgSplitted)
 {
     // It's not a command name
-    if (currentCommandSplitted.size() < 2 || isLongOption(currentCommandSplitted[1]))
+    if (commandlineArgSplitted.size() < 2 || isLongOption(commandlineArgSplitted[1]))
         return std::nullopt;
 
-    return std::make_optional(currentCommandSplitted[1]);
+    return std::make_optional(commandlineArgSplitted[1]);
 }
 #else
 std::optional<QString>
 CompleteCommand::getCurrentTomCommand(const QString &commandlineArg,
                                       const QString::size_type cword)
 {
-    const auto currentCommandSplitted = commandlineArg.trimmed().split(SPACE);
-    const auto currentSplittedSize = currentCommandSplitted.size();
+    const auto commandlineArgSplitted = commandlineArg.trimmed().split(SPACE);
+    const auto currentSplittedSize = commandlineArgSplitted.size();
 
     if (currentSplittedSize <= 1)
         return std::nullopt;
 
     for (auto i = 1; i < currentSplittedSize; ++i)
-        if (const auto &currentCommand = currentCommandSplitted[i];
+        if (const auto &currentCommand = commandlineArgSplitted[i];
             !isOptionArgument(currentCommand)
         ) {
             // Little weird, but the current tom command is actually completing now
@@ -277,7 +277,7 @@ CompleteCommand::getCurrentTomCommand(const QString &commandlineArg,
 #endif
 
 QString CompleteCommand::getWordOptionValue(
-        const QStringList &currentCommandSplitted,
+        const QStringList &commandlineArgSplitted,
         const QString::size_type positionArg, const QString::size_type commandlineArgSize)
 {
     /* This method contains a special handling (alternative to getOptionValue() method)
@@ -297,7 +297,7 @@ QString CompleteCommand::getWordOptionValue(
     if (positionArg != commandlineArgSize)
         return wordArg;
 
-    const auto &lastArg = currentCommandSplitted.constLast();
+    const auto &lastArg = commandlineArgSplitted.constLast();
 
     /* This condition can't be true with the current Register-ArgumentCompleter
        implementation, it ensures that our completion will work correctly if this will be
@@ -406,7 +406,7 @@ int CompleteCommand::printGuessedShells(const QString &word) const
     return EXIT_SUCCESS;
 }
 
-int CompleteCommand::printAndGuessConnectionNames(const QString &connectionName) const
+int CompleteCommand::printGuessedConnectionNames(const QString &connectionName) const
 {
     const auto allConnectionNames = getConnectionNamesFromFile();
 
@@ -433,7 +433,7 @@ int CompleteCommand::printAndGuessConnectionNames(const QString &connectionName)
     return EXIT_SUCCESS;
 }
 
-int CompleteCommand::printEnvironmentNames(const QString &environmentName) const
+int CompleteCommand::printGuessedEnvironmentNames(const QString &environmentName) const
 {
     static const QStringList allEnvironmentNames {
         QStringLiteral("dev"),     QStringLiteral("development"), QStringLiteral("local"),
@@ -462,8 +462,8 @@ int CompleteCommand::printEnvironmentNames(const QString &environmentName) const
 
 namespace
 {
-    /*! Return type for the initializePrintSectionNamesForAbout() function. */
-    struct PrintSectionNamesForAboutType
+    /*! Return type for the initializePrintGuessedSectionNamesForAbout() function. */
+    struct PrintGuessedSectionNamesForAboutType
     {
         /*! Section name to complete/find (passed on command-line). */
         QString sectionArg;
@@ -475,34 +475,34 @@ namespace
         bool printAllSectionNames;
     };
 
-    /*! Initialize local variables for the printSectionNamesForAbout() method. */
-    PrintSectionNamesForAboutType
-    initializePrintSectionNamesForAbout(const QStringView sectionNamesValue,
-                                        const QStringList &allSectionNames)
+    /*! Initialize local variables for the printGuessedSectionNamesForAbout() method. */
+    PrintGuessedSectionNamesForAboutType
+    initializePrintGuessedSectionNamesForAbout(const QStringView sectionNamesArg,
+                                               const QStringList &allSectionNames)
     {
         // Nothing to do, the wordArg is empty, return right away as we know the resut
-        if (sectionNamesValue.isEmpty())
+        if (sectionNamesArg.isEmpty())
             return {EMPTY, ranges::to<QList<QStringView>>(allSectionNames), true, true};
 
         // Current wordArg, section names already displayed on the command-line
-        auto sectionNamesSplitted = sectionNamesValue.split(COMMA_C, Qt::KeepEmptyParts);
+        auto sectionNamesArgSplitted = sectionNamesArg.split(COMMA_C, Qt::KeepEmptyParts);
         // Needed for pwsh, determines an output format
-        const auto isFirstValue = sectionNamesSplitted.size() == 1;
+        const auto isFirstValue = sectionNamesArgSplitted.size() == 1;
         /* Currently completed section name, we need to take it out so that this section
            name is not filtered out in the ranges::views::filter() algorithm below. */
-        const auto sectionArg = sectionNamesSplitted.takeLast();
+        const auto sectionArg = sectionNamesArgSplitted.takeLast();
         const auto printAllSectionNames = sectionArg.isEmpty();
 
         // Remove all empty and null strings (it would print all section names w/o this)
-        sectionNamesSplitted.removeAll({});
+        sectionNamesArgSplitted.removeAll({});
 
         // Filter out section names that are already displayed on the command-line
         auto allSectionNamesFiltered =
-                allSectionNames | ranges::views::filter([&sectionNamesSplitted]
+                allSectionNames | ranges::views::filter([&sectionNamesArgSplitted]
                                                         (const QString &allSectionName)
         {
             // Include all of section names that aren't already on the command-line
-            return std::ranges::all_of(sectionNamesSplitted,
+            return std::ranges::all_of(sectionNamesArgSplitted,
                                        [&allSectionName](const QStringView sectionName)
             {
                 return !allSectionName.startsWith(sectionName);
@@ -515,7 +515,8 @@ namespace
     }
 } // namespace
 
-int CompleteCommand::printSectionNamesForAbout(const QStringView sectionNamesValue) const
+int CompleteCommand::printGuessedSectionNamesForAbout(
+        const QStringView sectionNamesArg) const
 {
     static const QStringList allSectionNames {
         sl("environment"), sl("macros"), sl("versions"), sl("connections"),
@@ -523,7 +524,7 @@ int CompleteCommand::printSectionNamesForAbout(const QStringView sectionNamesVal
 
     // Initialize local variables
     auto [sectionArg, allSectionNamesFiltered, isFirstValue, printAllSectionNames] =
-            initializePrintSectionNamesForAbout(sectionNamesValue, allSectionNames);
+            initializePrintGuessedSectionNamesForAbout(sectionNamesArg, allSectionNames);
 
     QStringList sectionNames;
     sectionNames.reserve(allSectionNamesFiltered.size());
@@ -732,11 +733,11 @@ QString CompleteCommand::getOptionValue(const QString &wordArg)
 {
     Q_ASSERT(wordArg.contains(EQ_C));
 
-    const auto splitted = wordArg.split(EQ_C);
+    const auto wordArgSplitted = wordArg.split(EQ_C);
 
-    Q_ASSERT(splitted.size() <= 2);
+    Q_ASSERT(wordArgSplitted.size() <= 2);
 
-    return splitted.size() == 1 ? QString() : splitted.last();
+    return wordArgSplitted.size() == 1 ? QString() : wordArgSplitted.last();
 }
 
 bool CompleteCommand::commandHasLongOption(const QString &command, const QString &option)
