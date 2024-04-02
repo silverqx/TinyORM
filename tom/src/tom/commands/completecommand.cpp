@@ -406,6 +406,7 @@ int CompleteCommand::printGuessedShells(const QString &word) const
     return EXIT_SUCCESS;
 }
 
+#ifdef _MSC_VER
 int CompleteCommand::printGuessedConnectionNames(const QString &connectionNamesArg) const
 {
     const auto allConnectionNames = getConnectionNamesFromFile();
@@ -512,6 +513,7 @@ int CompleteCommand::printGuessedSectionNamesForAbout(
 
     return EXIT_SUCCESS;
 }
+#endif
 
 int CompleteCommand::printGuessedLongOptions(
             const std::optional<QString> &currentCommand, const QString &word) const
@@ -746,6 +748,7 @@ QStringList CompleteCommand::getConnectionNamesFromFile()
     return connectionNames;
 }
 
+#ifdef _MSC_VER
 CompleteCommand::PrintArrayOptionValuesType
 CompleteCommand::initializePrintArrayOptionValues(const QStringView optionValuesArg,
                                                   const QStringList &allValues)
@@ -783,6 +786,7 @@ CompleteCommand::initializePrintArrayOptionValues(const QStringView optionValues
     return {lastOptionValueArg.toString(), std::move(allValuesFiltered),
             isFirstOptionValue, printAllValues};
 }
+#endif
 
 } // namespace Tom::Commands
 
