@@ -195,7 +195,7 @@ int CompleteCommand::run() // NOLINT(readability-function-cognitive-complexity)
         return printGuessedSectionNamesForAbout(getOptionValue(wordArg));
 #endif
 
-    /* Print inferred database connection names for the --database= option
+    /* Print all or inferred database connection names for the --database= option
        --- */
     // Bash has it's own guess logic in the tom.bash complete file
 #ifdef _MSC_VER
