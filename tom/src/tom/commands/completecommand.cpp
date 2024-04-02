@@ -351,11 +351,11 @@ int CompleteCommand::printGuessedCommands(
     return EXIT_SUCCESS;
 }
 
-int CompleteCommand::printGuessedNamespaces(const QString &word) const
+int CompleteCommand::printGuessedNamespaces(const QString &wordArg) const
 {
     const auto &allNamespaceNames = Application::namespaceNames();
 
-    const auto printAll = word.isEmpty();
+    const auto printAll = wordArg.isEmpty();
 
     QStringList namespaceNames;
     namespaceNames.reserve(static_cast<decltype (namespaceNames)::size_type>(
@@ -363,7 +363,7 @@ int CompleteCommand::printGuessedNamespaces(const QString &word) const
 
     for (const QString &namespaceName : allNamespaceNames)
         if (!namespaceName.isEmpty() &&
-            (printAll || namespaceName.startsWith(word))
+            (printAll || namespaceName.startsWith(wordArg))
         )
             namespaceNames << namespaceName;
 
@@ -377,7 +377,7 @@ int CompleteCommand::printGuessedNamespaces(const QString &word) const
 }
 
 // FUTURE complete, printGuessedNamespaces and printGuessedShells are practically the same methods, if I will implement another method of this simple list type, then create common method and reuse code silverqx
-int CompleteCommand::printGuessedShells(const QString &word) const
+int CompleteCommand::printGuessedShells(const QString &wordArg) const
 {
     static const std::array allShellNames {
 #ifndef _MSC_VER
@@ -389,14 +389,14 @@ int CompleteCommand::printGuessedShells(const QString &word) const
 #endif
     };
 
-    const auto printAll = word.isEmpty();
+    const auto printAll = wordArg.isEmpty();
 
     QStringList shellNames;
     shellNames.reserve(static_cast<decltype (shellNames)::size_type>(
                            allShellNames.size()));
 
     for (const QString &shellName : allShellNames)
-        if (!shellName.isEmpty() && (printAll || shellName.startsWith(word)))
+        if (!shellName.isEmpty() && (printAll || shellName.startsWith(wordArg)))
             shellNames << shellName;
 
     // Want to have un-sorted if printing all namespaces
@@ -503,7 +503,7 @@ int CompleteCommand::printGuessedConnectionNames(const QString &connectionNamesA
     return EXIT_SUCCESS;
 }
 
-int CompleteCommand::printGuessedEnvironmentNames(const QString &environmentName) const
+int CompleteCommand::printGuessedEnvironmentNames(const QString &environmentNameArg) const
 {
     static const QStringList allEnvironmentNames {
         QStringLiteral("dev"),     QStringLiteral("development"), QStringLiteral("local"),
@@ -514,11 +514,11 @@ int CompleteCommand::printGuessedEnvironmentNames(const QString &environmentName
     QStringList environmentNames;
     environmentNames.reserve(allEnvironmentNames.size());
 
+    /* It also evaluates to true if the given environmentNameArg is an empty string "",
+       so it prints all environment names in this case.
+       Also --env= has to be prepended because pwsh overwrites whole option. */
     for (const auto &environment : allEnvironmentNames)
-        /* It also evaluates to true if the given environmentName is an empty string "",
-           so it prints all environment names in this case.
-           Also --env= has to be prepended because pwsh overwrites whole option. */
-        if (environment.startsWith(environmentName))
+        if (environment.startsWith(environmentNameArg))
             environmentNames
                     << QStringLiteral("%1;%2").arg(
                            NOSPACE.arg(LongOption.arg(Env).append(EQ_C), environment),
@@ -532,15 +532,15 @@ int CompleteCommand::printGuessedEnvironmentNames(const QString &environmentName
 #endif
 
 int CompleteCommand::printGuessedLongOptions(
-            const std::optional<QString> &currentCommand, const QString &word) const
+        const std::optional<QString> &currentCommand, const QString &wordArg) const
 {
     const auto commandOptions = getCommandOptionsSignature(currentCommand);
 
 #if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
     // The -- is guaranteed by the isLongOption(wordArg)
-    const auto wordToGuess = word.sliced(2);
+    const auto wordToGuess = wordArg.sliced(2);
 #else
-    const auto wordToGuess = word.mid(2);
+    const auto wordToGuess = wordArg.mid(2);
 #endif
     const auto printAll = wordToGuess.isEmpty();
 

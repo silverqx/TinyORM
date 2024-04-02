@@ -56,20 +56,20 @@ namespace Tom::Commands
         int printGuessedCommands(
                 const std::vector<std::shared_ptr<Command>> &commands) const;
         /*! Print all or guessed namespace names for the list command. */
-        int printGuessedNamespaces(const QString &word) const;
+        int printGuessedNamespaces(const QString &wordArg) const;
         /*! Print all or guessed shell names for the integrate command. */
-        int printGuessedShells(const QString &word) const;
+        int printGuessedShells(const QString &wordArg) const;
 #ifdef _MSC_VER
         /*! Print all or guessed section names for the about command --only= option. */
         int printGuessedSectionNamesForAbout(QStringView sectionNamesArg) const;
         /*! Print all or guessed connection names for the --database= option. */
         int printGuessedConnectionNames(const QString &connectionNamesArg) const;
         /*! Print all or guessed environment names for the --env= option. */
-        int printGuessedEnvironmentNames(const QString &environmentName) const;
+        int printGuessedEnvironmentNames(const QString &environmentNameArg) const;
 #endif
         /*! Print all or guessed long option parameter names. */
         int printGuessedLongOptions(const std::optional<QString> &currentCommand,
-                                    const QString &word) const;
+                                    const QString &wordArg) const;
         /*! Print all or guessed short option parameter names. */
         int printGuessedShortOptions(const std::optional<QString> &currentCommand) const;
 
