@@ -108,8 +108,8 @@ int CompleteCommand::run() // NOLINT(readability-function-cognitive-complexity)
     const auto currentCommandSplitted = commandlineArg.split(SPACE);
     Q_ASSERT(!currentCommandSplitted.isEmpty());
 
-    const auto currentCommandArg   = getCurrentTomCommand(currentCommandSplitted);
-    const auto tomCommandSize      = currentCommandSplitted.constFirst().size();
+    const auto currentCommandArg = getCurrentTomCommand(currentCommandSplitted);
+    const auto tomCommandSize    = currentCommandSplitted.constFirst().size();
 
     // Get the command-line option value for --word= option (with workaround for pwsh)
     const auto commandlineArgSize = commandlineArg.size();
