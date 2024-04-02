@@ -19,7 +19,7 @@ R"(
 # ---
 
 Register-ArgumentCompleter -Native -CommandName tom,tom_testdata -ScriptBlock {
-    param($wordToComplete, $commandAst, $cursorPosition)
+    Param($wordToComplete, $commandAst, $cursorPosition)
     [Console]::InputEncoding = `
     [Console]::OutputEncoding = $OutputEncoding = [System.Text.Utf8Encoding]::new()
     $Local:word = $wordToComplete.Replace('"', '\"')
