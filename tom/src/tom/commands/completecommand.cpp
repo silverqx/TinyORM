@@ -423,6 +423,13 @@ CompleteCommand::printGuessedSectionNamesForAbout(const QStringView sectionNames
           printAllSectionNames
     ] = initializePrintArrayOptionValues(sectionNamesArg, allSectionNames);
 
+    /* Print only one space if all array option values have already been entered,
+       it prevents printing basic files completion. */
+    if (allSectionNamesFiltered.isEmpty()){
+        note(sl(" ; "));
+        return EXIT_SUCCESS;
+    }
+
     QStringList sectionNames;
     sectionNames.reserve(allSectionNamesFiltered.size());
 
@@ -462,6 +469,13 @@ int CompleteCommand::printGuessedConnectionNames(const QString &connectionNamesA
           isFirstConnectionNameArg,
           printAllConnectionNames
     ] = initializePrintArrayOptionValues(connectionNamesArg, allConnectionNames);
+
+    /* Print only one space if all array option values have already been entered,
+       it prevents printing basic files completion. */
+    if (allConnectionNamesFiltered.isEmpty()){
+        note(sl(" ; "));
+        return EXIT_SUCCESS;
+    }
 
     QStringList connectionNames;
     connectionNames.reserve(allConnectionNamesFiltered.size());
