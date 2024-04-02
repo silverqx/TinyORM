@@ -415,6 +415,7 @@ int CompleteCommand::printGuessedConnectionNames(const QString &connectionName) 
         return EXIT_SUCCESS;
 
     QStringList connectionNames;
+    connectionNames.reserve(allConnectionNames.size());
 
     for (const auto &connection : allConnectionNames)
         /* It also evaluates to true if the given connectionName is an empty string "",
