@@ -299,9 +299,11 @@ QString CompleteCommand::getWordOptionValue(
 
     const auto &lastArg = commandlineArgSplitted.constLast();
 
-    /* This condition can't be true with the current Register-ArgumentCompleter
-       implementation, it ensures that our completion will work correctly if this will be
-       by any chance fixed in future pwsh versions. 🙃 */
+    /* Reason for this is to ensures that our completion will work correctly if this
+       will be by any chance fixed in future pwsh versions. 🙃
+       I found out later that it's also true in cases like this:
+       tom about --json| or tom about --only=macros|
+       So when the last word is already completed and there is nothing to complete. */
     if (wordArg == lastArg)
         return wordArg;
 
