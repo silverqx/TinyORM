@@ -411,7 +411,7 @@ int CompleteCommand::printGuessedConnectionNames(const QString &connectionName) 
     const auto allConnectionNames = getConnectionNamesFromFile();
 
     // Nothing to guess
-    if (allConnectionNames.empty())
+    if (allConnectionNames.isEmpty())
         return EXIT_SUCCESS;
 
     QStringList connectionNames;
