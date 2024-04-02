@@ -407,6 +407,45 @@ int CompleteCommand::printGuessedShells(const QString &word) const
 }
 
 #ifdef _MSC_VER
+int
+CompleteCommand::printGuessedSectionNamesForAbout(const QStringView sectionNamesArg) const
+{
+    static const QStringList allSectionNames {
+        sl("environment"), sl("macros"), sl("versions"), sl("connections"),
+    };
+
+    // Initialize local variables
+    auto [sectionNameArg,
+          allSectionNamesFiltered,
+          isFirstSectionNameArg,
+          printAllSectionNames
+    ] = initializePrintArrayOptionValues(sectionNamesArg, allSectionNames);
+
+    QStringList sectionNames;
+    sectionNames.reserve(allSectionNamesFiltered.size());
+
+    /* It also evaluates to true if the given sectionNamesArg is an empty string "",
+       it prints all section names in this case.
+       isFirstSectionNameArg note:
+       For the first section name the --only= has to be prepended because pwsh
+       overwrites the whole option, for the next sections we don't have to, this is
+       because for the following sections, the wordArg is empty, so pwsh doesn't overwrite
+       the entire text of the --only= option, so we only need to print a section name. */
+    for (const auto allSectionName : allSectionNamesFiltered)
+        if (printAllSectionNames || allSectionName.startsWith(sectionNameArg))
+            sectionNames << sl("%1;%2").arg(
+                                isFirstSectionNameArg
+                                ? NOSPACE.arg(LongOption.arg(only_).append(EQ_C),
+                                              allSectionName)
+                                : allSectionName,
+                                allSectionName);
+
+    // Print
+    note(sectionNames.join(NEWLINE));
+
+    return EXIT_SUCCESS;
+}
+
 int CompleteCommand::printGuessedConnectionNames(const QString &connectionNamesArg) const
 {
     const auto allConnectionNames = getConnectionNamesFromFile();
@@ -471,45 +510,6 @@ int CompleteCommand::printGuessedEnvironmentNames(const QString &environmentName
 
     // Print
     note(environmentNames.join(NEWLINE));
-
-    return EXIT_SUCCESS;
-}
-
-int CompleteCommand::printGuessedSectionNamesForAbout(
-        const QStringView sectionNamesArg) const
-{
-    static const QStringList allSectionNames {
-        sl("environment"), sl("macros"), sl("versions"), sl("connections"),
-    };
-
-    // Initialize local variables
-    auto [sectionNameArg,
-          allSectionNamesFiltered,
-          isFirstSectionNameArg,
-          printAllSectionNames
-    ] = initializePrintArrayOptionValues(sectionNamesArg, allSectionNames);
-
-    QStringList sectionNames;
-    sectionNames.reserve(allSectionNamesFiltered.size());
-
-    /* It also evaluates to true if the given sectionNamesArg is an empty string "",
-       it prints all section names in this case.
-       isFirstSectionNameArg note:
-       For the first section name the --only= has to be prepended because pwsh
-       overwrites the whole option, for the next sections we don't have to, this is
-       because for the following sections, the wordArg is empty, so pwsh doesn't overwrite
-       the entire text of the --only= option, so we only need to print a section name. */
-    for (const auto allSectionName : allSectionNamesFiltered)
-        if (printAllSectionNames || allSectionName.startsWith(sectionNameArg))
-            sectionNames << sl("%1;%2").arg(
-                                isFirstSectionNameArg
-                                ? NOSPACE.arg(LongOption.arg(only_).append(EQ_C),
-                                              allSectionName)
-                                : allSectionName,
-                                allSectionName);
-
-    // Print
-    note(sectionNames.join(NEWLINE));
 
     return EXIT_SUCCESS;
 }
