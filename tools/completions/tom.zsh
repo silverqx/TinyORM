@@ -36,6 +36,10 @@ __tom_namespaces() {
     _values namespace 'global' 'db' 'make' 'migrate' 'namespaced' 'all'
 }
 
+__tom_about_sections() {
+    _values -s , section 'connections' 'environment' 'macros' 'versions'
+}
+
 # Try to infer database connection names if a user is in the right folder and have tagged
 # connection names with '// shell:connection' comment
 __tom_connections() {
@@ -134,7 +138,7 @@ _tom() {
                 $common_options \
                 '--json[Output the information as JSON]' \
                 '--pretty[Enable JSON human readable output]' \
-                '--only=[Sections to display (partial match)]:section names'
+                '--only=[Sections to display (partial match)]:section names:__tom_about_sections'
             ;;
 
         (env|inspire)

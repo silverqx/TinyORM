@@ -77,6 +77,10 @@ __tom_environments() {
     echo 'dev development local prod production test testing staging'
 }
 
+__tom_about_sections() {
+    echo 'environment macros versions connections'
+}
+
 _tom()
 {
     local cur prev words cword split
@@ -120,6 +124,12 @@ _tom()
        [[ $prev == '--database' ]]
     then
         COMPREPLY=($(compgen -W "$(__tom_connections)" -- "$cur"))
+        return
+    fi
+
+    # Complete section names for about command --only= option
+    if [[ -v tom_command ]] && [[ $tom_command == 'about' ]] && [[ $prev == '--only' ]]; then
+        COMPREPLY=($(compgen -W "$(__tom_about_sections)" -- "$cur"))
         return
     fi
 
@@ -234,6 +244,10 @@ __tom_namespaces() {
     _values namespace 'global' 'db' 'make' 'migrate' 'namespaced' 'all'
 }
 
+__tom_about_sections() {
+    _values -s , section 'connections' 'environment' 'macros' 'versions'
+}
+
 # Try to infer database connection names if a user is in the right folder and have tagged
 # connection names with '// shell:connection' comment
 __tom_connections() {
@@ -332,7 +346,7 @@ _tom() {
                 $common_options \
                 '--json[Output the information as JSON]' \
                 '--pretty[Enable JSON human readable output]' \
-                '--only=[Sections to display (partial match)]:section names'
+                '--only=[Sections to display (partial match)]:section names:__tom_about_sections'
             ;;
 
         (env|inspire)

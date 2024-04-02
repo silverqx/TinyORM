@@ -405,6 +405,39 @@ std::vector<QString> String::splitStringByWidth(const QString &string, const int
     return lines;
 }
 
+QList<QStringView> String::splitAtFirst(const QStringView string, const QChar separator,
+                                        const Qt::SplitBehavior behavior)
+{
+    // Nothing to do
+    if (string.isEmpty())
+        return {};
+
+    const auto index = string.indexOf(separator);
+
+    // Nothing to do, separator was not found
+    if (index == -1)
+        return {string};
+
+    const auto *const begin = string.constBegin();
+    const auto *const end = string.constEnd();
+    const auto *const itSeparator = string.constBegin() + index;
+    const auto *const itAfterSeparator = string.constBegin() + index + 1; // +1 to skip the separator
+
+    // Currently, a value before the separator must contain at least one character
+    Q_ASSERT(begin < itSeparator);
+    // Standard development check, therefore is separated from the above
+    Q_ASSERT(itAfterSeparator <= end);
+
+    if (behavior == Qt::SkipEmptyParts && itAfterSeparator == end)
+        return {{begin, itSeparator}};
+
+    /* This is correct in all cases, overflow can't happen if there is nothing after
+       the separator, eg. key=, in this case the beginIndex will point to the constEnd(),
+       so the result will be like {string.constEnd(), string.constEnd()} what is an empty
+       string view. */
+    return {{begin, itSeparator}, {itAfterSeparator, end}};
+}
+
 QString::size_type String::countBefore(QString string, const QChar character,
                                        const QString::size_type position)
 {

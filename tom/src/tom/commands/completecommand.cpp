@@ -10,6 +10,7 @@
 #include <range/v3/view/transform.hpp>
 
 #include <orm/constants.hpp>
+#include <orm/macros/likely.hpp>
 #include <orm/utils/string.hpp>
 
 #include "tom/application.hpp"
@@ -24,7 +25,9 @@ TINYORM_BEGIN_COMMON_NAMESPACE
 
 namespace fs = std::filesystem;
 
+using Orm::Constants::COMMA_C;
 using Orm::Constants::DASH;
+using Orm::Constants::EMPTY;
 using Orm::Constants::EQ_C;
 using Orm::Constants::NEWLINE;
 using Orm::Constants::NOSPACE;
@@ -33,6 +36,7 @@ using Orm::Constants::database_;
 
 using StringUtils = Orm::Utils::String;
 
+using Tom::Constants::About;
 using Tom::Constants::DoubleDash;
 using Tom::Constants::Env;
 using Tom::Constants::Help;
@@ -42,6 +46,7 @@ using Tom::Constants::LongOption;
 using Tom::Constants::ShPwsh;
 using Tom::Constants::commandline;
 using Tom::Constants::commandline_up;
+using Tom::Constants::only_;
 using Tom::Constants::word_;
 using Tom::Constants::word_up;
 
@@ -90,7 +95,6 @@ int CompleteCommand::run() // NOLINT(readability-function-cognitive-complexity)
     Command::run();
 
     /* Initialization section */
-    const auto wordArg = value(word_);
     const auto commandlineArg = value(commandline);
 
 #ifdef _MSC_VER
@@ -100,15 +104,20 @@ int CompleteCommand::run() // NOLINT(readability-function-cognitive-complexity)
     const auto positionArg = value(position_).toInt();
 #  endif
 
-    const auto commandlineArgSize = commandlineArg.size();
-
     // Currently processed tom command
     const auto currentCommandSplitted = commandlineArg.split(SPACE);
     Q_ASSERT(!currentCommandSplitted.isEmpty());
 
-    const auto currentCommandArg = getCurrentTomCommand(currentCommandSplitted);
-    const auto tomCommandSize = currentCommandSplitted.constFirst().size();
+    const auto currentCommandArg   = getCurrentTomCommand(currentCommandSplitted);
+    const auto tomCommandSize      = currentCommandSplitted.constFirst().size();
+
+    // Register-ArgumentCompleter --word with workaround for arrays
+    const auto commandlineArgSize = commandlineArg.size();
+    const auto wordArg = getWordOptionValue(currentCommandSplitted, positionArg,
+                                            commandlineArgSize);
 #else
+    const auto wordArg = value(word_);
+
 #  if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
     const auto cwordArg = value(cword_).toLongLong();
 #  else
@@ -177,6 +186,16 @@ int CompleteCommand::run() // NOLINT(readability-function-cognitive-complexity)
     if (!isOptionArgument(wordArg) && currentCommandArg == Integrate)
 #endif
         return printGuessedShells(wordArg);
+
+    /* Print all or guessed section names for the about command --only= option
+       --- */
+    // Bash has it's own guess logic in the tom.bash complete file
+#ifdef _MSC_VER
+    if (currentCommandArg == About && wordArg.startsWith(LongOption.arg(only_)) &&
+        positionArg >= commandlineArgSize
+    )
+        return printSectionNamesForAbout(getOptionValue(wordArg));
+#endif
 
     /* Print inferred database connection names for the --database= option
        --- */
@@ -258,6 +277,49 @@ CompleteCommand::getCurrentTomCommand(const QString &commandlineArg,
     return std::nullopt;
 }
 #endif
+
+QString CompleteCommand::getWordOptionValue(
+        const QStringList &currentCommandSplitted,
+        const QString::size_type positionArg, const QString::size_type commandlineArgSize)
+{
+    /* This method contains a special handling (alternative to getOptionValue() method)
+       with workaround for the --word= pwsh option from the Register-ArgumentCompleter.
+       It fixes cases when the option value on the command-line to complete contains
+       array value like --only=version,| in this case, pwsh provides/fills
+       the $wordToComplete in the Register-ArgumentCompleter with an empty string so
+       there is no way how to correctly complete these values.
+       This method workarounds/fixes this behavior and instead of an empty string provides
+       the correct value you would expect like --only=version,| or --only=version,ma|
+       which enables to complete the given partial array values. */
+
+    auto wordArg = value(word_);
+
+    /* Nothing to do, cursor is already after an option, eg: --only=env | or --only=env, |
+       or somewhere before. */
+    if (positionArg != commandlineArgSize)
+        return wordArg;
+
+    const auto &lastArg = currentCommandSplitted.constLast();
+
+    /* This condition can't be true with the current Register-ArgumentCompleter
+       implementation, it ensures that our completion will work correctly if this will be
+       by any chance fixed in future pwsh versions. 🙃 */
+    if (wordArg == lastArg)
+        return wordArg;
+
+    const auto isLongOption = CompleteCommand::isLongOption(lastArg);
+    const auto isWordArgEmpty = wordArg.isEmpty();
+
+        // Targets --only=macros,| and returns --only=macros,
+    if ((isLongOption && isWordArgEmpty && lastArg.endsWith(COMMA_C)) ||
+        // Targets --only=macros,versions,en| and returns --only=macros,versions,en
+        isLongOptionWithArrayValue(lastArg)
+    ) T_UNLIKELY
+        return lastArg;
+
+    else T_LIKELY
+        return wordArg;
+}
 
 int CompleteCommand::printGuessedCommands(
         const std::vector<std::shared_ptr<Command>> &commands) const
@@ -396,6 +458,96 @@ int CompleteCommand::printEnvironmentNames(const QString &environmentName) const
 
     // Print
     note(environmentNames.join(NEWLINE));
+
+    return EXIT_SUCCESS;
+}
+
+namespace
+{
+    /*! Return type for the initializePrintSectionNamesForAbout() function. */
+    struct PrintSectionNamesForAboutType
+    {
+        /*! Section name to complete/find (passed on command-line). */
+        QString sectionArg;
+        /*! All section names for completion (excluding already printed section names). */
+        QList<QStringView> allSectionNamesFiltered;
+        /*! Determine whether completing the first section name (need by pwsh). */
+        bool isFirstValue;
+        /*! Print all section names (if the section name input is empty). */
+        bool printAllSectionNames;
+    };
+
+    /*! Initialize local variables for the printSectionNamesForAbout() method. */
+    PrintSectionNamesForAboutType
+    initializePrintSectionNamesForAbout(const QStringView sectionNamesValue,
+                                        const QStringList &allSectionNames)
+    {
+        // Nothing to do, the wordArg is empty, return right away as we know the resut
+        if (sectionNamesValue.isEmpty())
+            return {EMPTY, ranges::to<QList<QStringView>>(allSectionNames), true, true};
+
+        // Current wordArg, section names already displayed on the command-line
+        auto sectionNamesSplitted = sectionNamesValue.split(COMMA_C, Qt::KeepEmptyParts);
+        // Needed for pwsh, determines an output format
+        const auto isFirstValue = sectionNamesSplitted.size() == 1;
+        /* Currently completed section name, we need to take it out so that this section
+           name is not filtered out in the ranges::views::filter() algorithm below. */
+        const auto sectionArg = sectionNamesSplitted.takeLast();
+        const auto printAllSectionNames = sectionArg.isEmpty();
+
+        // Remove all empty and null strings (it would print all section names w/o this)
+        sectionNamesSplitted.removeAll({});
+
+        // Filter out section names that are already displayed on the command-line
+        auto allSectionNamesFiltered =
+                allSectionNames | ranges::views::filter([&sectionNamesSplitted]
+                                                        (const QString &allSectionName)
+        {
+            // Include all of section names that aren't already on the command-line
+            return std::ranges::all_of(sectionNamesSplitted,
+                                       [&allSectionName](const QStringView sectionName)
+            {
+                return !allSectionName.startsWith(sectionName);
+            });
+        })
+            | ranges::to<QList<QStringView>>();
+
+        return {sectionArg.toString(), std::move(allSectionNamesFiltered), isFirstValue,
+                printAllSectionNames};
+    }
+} // namespace
+
+int CompleteCommand::printSectionNamesForAbout(const QStringView sectionNamesValue) const
+{
+    static const QStringList allSectionNames {
+        sl("environment"), sl("macros"), sl("versions"), sl("connections"),
+    };
+
+    // Initialize local variables
+    auto [sectionArg, allSectionNamesFiltered, isFirstValue, printAllSectionNames] =
+            initializePrintSectionNamesForAbout(sectionNamesValue, allSectionNames);
+
+    QStringList sectionNames;
+    sectionNames.reserve(allSectionNamesFiltered.size());
+
+    for (const auto section : allSectionNamesFiltered)
+        /* It also evaluates to true if the given environmentName is an empty string "",
+           so it prints all environment names in this case.
+           Also --env= has to be prepended because pwsh overwrites whole option. */
+        if (printAllSectionNames || section.startsWith(sectionArg))
+            sectionNames << sl("%1;%2").arg(
+                                /* This is weird, but for the first section name we must
+                                   print also --only= and for the next section we don't,
+                                   reason is that for subsequent sections the wordArg is
+                                   empty so pwsh doesn't rewrite the whole --only= option
+                                   text so we must print the section name only. */
+                                isFirstValue
+                                ? NOSPACE.arg(LongOption.arg(only_).append(EQ_C), section)
+                                : section,
+                                section);
+
+    // Print
+    note(sectionNames.join(NEWLINE));
 
     return EXIT_SUCCESS;
 }
@@ -563,6 +715,19 @@ bool CompleteCommand::isOptionArgument(const QString &wordArg, const OptionType 
         return isShort;
 
     Q_UNREACHABLE();
+}
+
+bool CompleteCommand::isLongOptionWithArrayValue(const QString &wordArg)
+{
+    // Nothing to check, not a long option
+    if (!isLongOption(wordArg))
+        return false;
+
+    const auto wordArgSplitted = StringUtils::splitAtFirst(wordArg, EQ_C,
+                                                           Qt::KeepEmptyParts);
+
+    // Checks --only=macros, or --only=macros,en
+    return wordArgSplitted.size() == 2 && wordArgSplitted.constLast().contains(COMMA_C);
 }
 
 QString CompleteCommand::getOptionValue(const QString &wordArg)

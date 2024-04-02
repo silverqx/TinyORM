@@ -969,6 +969,10 @@ tom complete --word="mi" --commandline="tom mi" --position=6
 tom complete --word="--" --commandline="tom migrate --" --position=14
 tom complete --word="--p" --commandline="tom migrate --p" --position=15
 
+tom complete --word="--only=env" --commandline="tom about --only=env" --position=20
+tom complete --word="" --commandline="tom about --only=environment," --position=29
+tom complete --word="m" --commandline="tom about --only=environment,m" --position=30
+
 
 cmake build commands:
 ---------------------

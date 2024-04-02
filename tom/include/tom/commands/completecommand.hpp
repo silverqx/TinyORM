@@ -47,6 +47,10 @@ namespace Tom::Commands
         static std::optional<QString>
         getCurrentTomCommand(const QString &commandlineArg, QString::size_type cword);
 #endif
+        /*! Get the command-line option value for --word= option (workaround for pwsh). */
+        QString getWordOptionValue(
+                const QStringList &currentCommandSplitted,
+                QString::size_type positionArg, QString::size_type commandlineArgSize);
 
         /*! Print all guessed commands. */
         int printGuessedCommands(
@@ -59,6 +63,8 @@ namespace Tom::Commands
         int printAndGuessConnectionNames(const QString &connectionName) const;
         /*! Print all or guessed environment names for the --env= option. */
         int printEnvironmentNames(const QString &environmentName) const;
+        /*! Print all section names for the about command --only= option. */
+        int printSectionNamesForAbout(QStringView sectionNamesValue) const;
         /*! Print all or guessed long option parameter names. */
         int printGuessedLongOptions(const std::optional<QString> &currentCommand,
                                     const QString &word) const;
@@ -89,6 +95,8 @@ namespace Tom::Commands
         inline static bool isLongOption(const QString &wordArg);
         /*! Determine whether the given word is a short option argument. */
         inline static bool isShortOption(const QString &wordArg);
+        /*! Determine if the given word is a long option argument with an array value. */
+        inline static bool isLongOptionWithArrayValue(const QString &wordArg);
         /*! Get the command-line option value (eg. --database=value). */
         static QString getOptionValue(const QString &wordArg);
 

@@ -36,6 +36,10 @@ __tom_environments() {
     echo 'dev development local prod production test testing staging'
 }
 
+__tom_about_sections() {
+    echo 'environment macros versions connections'
+}
+
 _tom()
 {
     local cur prev words cword split
@@ -79,6 +83,12 @@ _tom()
        [[ $prev == '--database' ]]
     then
         COMPREPLY=($(compgen -W "$(__tom_connections)" -- "$cur"))
+        return
+    fi
+
+    # Complete section names for about command --only= option
+    if [[ -v tom_command ]] && [[ $tom_command == 'about' ]] && [[ $prev == '--only' ]]; then
+        COMPREPLY=($(compgen -W "$(__tom_about_sections)" -- "$cur"))
         return
     fi
 
