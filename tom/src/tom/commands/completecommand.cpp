@@ -133,15 +133,13 @@ int CompleteCommand::run() // NOLINT(readability-function-cognitive-complexity)
     /* Print all commands after tom command itself or for the help command
        --- */
 #ifdef _MSC_VER
-    if (!isOptionArgument(wordArg) && wordArg.isEmpty() &&
+    if (wordArg.isEmpty() &&
         (positionArg == tomCommandSize + 1 ||
          (positionArg >= commandlineArgSize &&
           (!commandlineArg.contains(SPACE) || currentCommandArg == Help)))
     )
 #else
-    if (!isOptionArgument(wordArg) && wordArg.isEmpty() &&
-        (!currentCommandArg || currentCommandArg == Help)
-    )
+    if (wordArg.isEmpty() && (!currentCommandArg || currentCommandArg == Help))
 #endif
         return printGuessedCommands(
                     application().guessCommandNamesForComplete({}));
