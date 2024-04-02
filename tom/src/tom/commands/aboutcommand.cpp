@@ -296,7 +296,8 @@ QVector<SubSectionItem> AboutCommand::gatherConnectionsInformation()
 {
     return {
         {std::nullopt, {{sl("Available drivers"),   DB::supportedDrivers().join(SPACE)},
-                        {sl("Connection names"),    DB::connectionNames().join(SPACE)}}},
+                        {sl("Connection names"),    DB::connectionNames().join(SPACE)},
+                        {sl("Default connection"),  DB::getDefaultConnection()}}},
     };
 }
 
