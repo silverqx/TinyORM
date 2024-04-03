@@ -579,7 +579,8 @@ void MySqlResult::cleanupForDtor() noexcept
     d->stmt = nullptr;
 
     /* The d->preparedBinds and d->resultBinds will be auto-freed if called
-       from the destructor as they are smart pointers. */
+       from the destructor as they are smart pointers. Also, we don't need to reset
+       the isActive and cursor as the instance will be destroyed immediately. */
 }
 
 void MySqlResult::mysqlFreeResults()
