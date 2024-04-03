@@ -507,12 +507,12 @@ void MySqlResult::cleanup()
     mysqlFreeResults();
 
     // Prepared queries
-    // No need to call mysql_stmt_free_result(), calling only mysql_stmt_close() is enough
-    mysqlStmtClose();
-
     // d->meta != nullptr check is inside as the first thing
     mysql_free_result(d->meta);
     d->meta = nullptr;
+
+    // No need to call mysql_stmt_free_result(), calling only mysql_stmt_close() is enough
+    mysqlStmtClose();
 
     d->preparedBinds.reset();
     d->resultBinds.reset();
@@ -568,15 +568,15 @@ void MySqlResult::cleanupForDtor() noexcept
     mysqlFreeResultsForDtor();
 
     // Prepared queries
+    // d->meta != nullptr check is inside as the first thing
+    mysql_free_result(d->meta);
+    d->meta = nullptr;
+
     // No need to call mysql_stmt_free_result(), calling only mysql_stmt_close() is enough
     // d->stmt != nullptr check is NOT inside the mysql_stmt_close()
     if (d->stmt != nullptr)
         mysql_stmt_close(d->stmt);
     d->stmt = nullptr;
-
-    // d->meta != nullptr check is inside as the first thing
-    mysql_free_result(d->meta);
-    d->meta = nullptr;
 
     /* The d->preparedBinds and d->resultBinds will be auto-freed if called
        from the destructor as they are smart pointers. */
