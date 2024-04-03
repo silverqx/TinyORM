@@ -52,7 +52,7 @@ bool MySqlResult::exec(const QString &query)
 {
     Q_D(MySqlResult);
 
-    cleanup();
+    cleanupForNormal();
 
     d->query = query.trimmed();
 
@@ -97,7 +97,7 @@ bool MySqlResult::prepare(const QString &query)
 {
     Q_D(MySqlResult);
 
-    cleanup();
+    cleanupForPrepared();
 
     d->query = query.trimmed();
     d->preparedQuery = true;
@@ -497,7 +497,7 @@ void MySqlResult::detachFromResultSet() noexcept
 
 /* Cleanup */
 
-void MySqlResult::cleanup()
+void MySqlResult::cleanupForNormal()
 {
     Q_D(MySqlResult);
 
@@ -505,6 +505,16 @@ void MySqlResult::cleanup()
 
     // Normal queries
     mysqlFreeResults();
+
+    // Common code for both
+    cleanupForBoth();
+}
+
+void MySqlResult::cleanupForPrepared()
+{
+    Q_D(MySqlResult);
+
+    d->recordCache.reset();
 
     // Prepared queries
     // d->meta != nullptr check is inside as the first thing
@@ -521,13 +531,7 @@ void MySqlResult::cleanup()
     d->preparedQuery = false;
 
     // Common code for both
-    /* The MyField.fieldValue buffer will be auto-freed as it's a smart pointer and
-       the MyField::myField is freed during the mysql_free_result() call. */
-    d->resultFields.clear();
-    d->boundValues.clear();
-
-    setActive(false);
-    setAt(BeforeFirstRow);
+    cleanupForBoth();
 }
 
 /* private */
@@ -565,18 +569,22 @@ void MySqlResult::cleanupForDtor() noexcept
     Q_D(MySqlResult);
 
     // Normal queries
-    mysqlFreeResultsForDtor();
+    if (!d->preparedQuery)
+        mysqlFreeResultsForDtor();
 
     // Prepared queries
-    // d->meta != nullptr check is inside as the first thing
-    mysql_free_result(d->meta);
-    d->meta = nullptr;
+    else {
+        // d->meta != nullptr check is inside as the first thing
+        mysql_free_result(d->meta);
+        d->meta = nullptr;
 
-    // No need to call mysql_stmt_free_result(), calling only mysql_stmt_close() is enough
-    // d->stmt != nullptr check is NOT inside the mysql_stmt_close()
-    if (d->stmt != nullptr)
-        mysql_stmt_close(d->stmt);
-    d->stmt = nullptr;
+        /* No need to call mysql_stmt_free_result(), calling only the mysql_stmt_close()
+           is enough. */
+        // d->stmt != nullptr check is NOT inside the mysql_stmt_close()
+        if (d->stmt != nullptr)
+            mysql_stmt_close(d->stmt);
+        d->stmt = nullptr;
+    }
 
     /* The d->preparedBinds and d->resultBinds will be auto-freed if called
        from the destructor as they are smart pointers. Also, we don't need to reset
@@ -696,6 +704,20 @@ void MySqlResult::mysqlStmtClose()
     }
 
     d->stmt = nullptr;
+}
+
+void MySqlResult::cleanupForBoth()
+{
+    Q_D(MySqlResult);
+
+    // Common code for both
+    /* The MyField.fieldValue buffer will be auto-freed as it's a smart pointer and
+       the MyField::myField is freed during the mysql_free_result() call. */
+    d->resultFields.clear();
+    d->boundValues.clear();
+
+    setActive(false);
+    setAt(BeforeFirstRow);
 }
 
 } // namespace Orm::Drivers::MySql

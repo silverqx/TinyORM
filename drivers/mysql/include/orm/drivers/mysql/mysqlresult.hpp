@@ -75,8 +75,10 @@ namespace Orm::Drivers::MySql
         void detachFromResultSet() noexcept final;
 
         /* Cleanup */
-        /*! Main cleanup method, free normal and prepared statements. */
-        void cleanup();
+        /*! Main cleanup/free method for normal statements. */
+        void cleanupForNormal();
+        /*! Main cleanup/free method for prepared statements. */
+        void cleanupForPrepared();
 
     private:
         /* Result sets */
@@ -95,6 +97,9 @@ namespace Orm::Drivers::MySql
         void mysqlFreeMultiResultsForDtor() const noexcept;
         /*! Close the prepared statement and deallocate the statement handler. */
         void mysqlStmtClose();
+
+        /*! Main cleanup/free method for normal and prepared statements (common logic). */
+        void cleanupForBoth();
     };
 
 } // namespace Orm::Drivers::MySql
