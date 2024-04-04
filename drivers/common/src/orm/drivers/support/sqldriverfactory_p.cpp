@@ -280,7 +280,14 @@ SqlDriverFactoryPrivate::loadSqlDriverCommon(const QString &driverBasenameRaw) c
 SqlDriverFactoryPrivate::CreateSqlDriverMemFn
 SqlDriverFactoryPrivate::loadSqlDriverAndResolve(const QString &driverFilepath) const
 {
-    // CUR drivers UNIX version number silverqx
+    /* I will not use QLibrary() overload with the version number on Linux because CMake
+       doesn't create namelinks for MODULE libraries and also it doesn't write SONAME
+       into the library header. I have created a separate implementation for Linux that
+       uses QLibrary() with a version number, but I forgot about this, also, a few weeks
+       ago I disabled writting the SONAME into the library header for qmake builds using
+       the CONFIG *= unversioned_libname. So I definitely giving up about this QLibrary()
+       overload for Linux. I have stashed this new implementation if needed. */
+
     // Version number doesn't work on MSYS2, it uses qlibrary_win.cpp implementation
     QLibrary sqlDriverLib(driverFilepath);
 
