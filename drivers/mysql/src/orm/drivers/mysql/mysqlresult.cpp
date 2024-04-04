@@ -530,6 +530,8 @@ void MySqlResult::cleanupForPrepared()
     d->hasBlobs = false;
     d->preparedQuery = false;
 
+    d->boundValues.clear();
+
     // Common code for both
     cleanupForBoth();
 }
@@ -714,7 +716,6 @@ void MySqlResult::cleanupForBoth()
     /* The MyField.fieldValue buffer will be auto-freed as it's a smart pointer and
        the MyField::myField is freed during the mysql_free_result() call. */
     d->resultFields.clear();
-    d->boundValues.clear();
 
     setActive(false);
     setAt(BeforeFirstRow);
