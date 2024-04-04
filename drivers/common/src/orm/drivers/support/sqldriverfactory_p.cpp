@@ -25,7 +25,7 @@
 #  include "orm/drivers/exceptions/runtimeerror.hpp"
 #  include "orm/drivers/sqldriver.hpp"
 #  include "orm/drivers/utils/fs_p.hpp"
-#  include "orm/drivers/version.hpp"
+#  include "orm/drivers/version.hpp" // IWYU pragma: keep
 #else
 #  include "orm/drivers/mysql/mysqldriver.hpp"
 #endif
