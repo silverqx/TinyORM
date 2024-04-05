@@ -35,12 +35,18 @@ namespace Support
         std::shared_ptr<SqlDriver> make() const;
 
     private:
+#ifdef TINYDRIVERS_MYSQL_DRIVER
         /*! Factory method to create a new MySQL driver instance (shared/loadable). */
         std::shared_ptr<SqlDriver> createMySqlDriver() const;
+#endif
+#ifdef TINYDRIVERS_PSQL_DRIVER
         /*! Factory method to create new PostgreSQL driver instance (shared/loadable). */
         // std::shared_ptr<SqlDriver> createPostgresDriver() const;
+#endif
+#ifdef TINYDRIVERS_SQLITE_DRIVER
         /*! Factory method to create a new SQLite driver instance (shared/loadable). */
         // std::shared_ptr<SqlDriver> createSQLiteDriver() const;
+#endif
 
 #ifdef TINYDRIVERS_MYSQL_LOADABLE_LIBRARY
         /*! SQL driver factory function pointer type (allows construction in-place). */

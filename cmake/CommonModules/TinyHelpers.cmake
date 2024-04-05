@@ -308,7 +308,13 @@ don't enable the INLINE_CONSTANTS cmake option :/.")
     endif()
 
     if(TINY_VCPKG AND TINY_IS_MULTI_CONFIG)
-        message(FATAL_ERROR "The multi-configuration generators are not supported in vcpkg ports.")
+        message(FATAL_ERROR "The multi-configuration generators are not supported \
+in vcpkg ports.")
+    endif()
+
+    if(BUILD_DRIVERS AND NOT BUILD_MYSQL_DRIVER)
+        message(FATAL_ERROR "If the BUILD_DRIVERS option is enabled, at least one \
+driver implementation must be enabled, please enable BUILD_MYSQL_DRIVER.")
     endif()
 
 endfunction()

@@ -26,7 +26,9 @@
 #  include "orm/drivers/sqldriver.hpp"
 #  include "orm/drivers/utils/fs_p.hpp"
 #  include "orm/drivers/version.hpp" // IWYU pragma: keep
-#else
+#endif
+
+#if defined(TINYDRIVERS_MYSQL_DRIVER) && !defined(TINYDRIVERS_MYSQL_LOADABLE_LIBRARY)
 #  include "orm/drivers/mysql/mysqldriver.hpp"
 #endif
 
@@ -65,14 +67,20 @@ std::shared_ptr<SqlDriver> SqlDriverFactoryPrivate::make() const
 {
     Q_ASSERT(!driverName.isEmpty());
 
+#ifdef TINYDRIVERS_MYSQL_DRIVER
     if (driverName == QMYSQL)
         return createMySqlDriver();
+#endif
 
+#ifdef TINYDRIVERS_PSQL_DRIVER
     // if (driver == QPSQL)
     //     return createPostgresDriver();
+#endif
 
+#ifdef TINYDRIVERS_SQLITE_DRIVER
     // if (driver == QSQLITE)
     //     return createSQLiteDriver();
+#endif
 
     throw Exceptions::InvalidArgumentError(
                 u"Unsupported driver '%1', available drivers: %2; "
@@ -87,32 +95,38 @@ std::shared_ptr<SqlDriver> SqlDriverFactoryPrivate::make() const
    like TinyORM connections or driver classes are named. 🫤 I will not break this, so
    shared/static libraries will also have these names. */
 
+#ifdef TINYDRIVERS_MYSQL_DRIVER
 std::shared_ptr<SqlDriver> SqlDriverFactoryPrivate::createMySqlDriver() const // NOLINT(readability-convert-member-functions-to-static)
 {
-#ifdef TINYDRIVERS_MYSQL_LOADABLE_LIBRARY
+#  ifdef TINYDRIVERS_MYSQL_LOADABLE_LIBRARY
     return createSqlDriverLoadable(u"TinyMySql"_s);
-#else
+#  else
     return std::make_shared<MySql::MySqlDriver>();
-#endif
+#  endif
 }
+#endif
 
+#ifdef TINYDRIVERS_PSQL_DRIVER
 // std::shared_ptr<SqlDriver> SqlDriverFactory::createPostgresDriver() const
 // {
-// #ifdef TINYDRIVERS_PSQL_LOADABLE_LIBRARY
+// #  ifdef TINYDRIVERS_PSQL_LOADABLE_LIBRARY
 //     return createSqlDriverLoadable(QPSQL, u"TinyPostgres"_s);
-// #else
+// #  else
 //     return std::make_shared<Postgres::PostgresDriver>();
-// #endif
+// #  endif
 // }
+#endif
 
+#ifdef TINYDRIVERS_SQLITE_DRIVER
 // std::shared_ptr<SqlDriver> SqlDriverFactory::createSQLiteDriver() const
 // {
-// #ifdef TINYDRIVERS_SQLITE_LOADABLE_LIBRARY
+// #  ifdef TINYDRIVERS_SQLITE_LOADABLE_LIBRARY
 //     return createSqlDriverLoadable(QSQLITE, u"TinySQLite"_s);
-// #else
+// #  else
 //     return std::make_shared<SQLite::SQLiteDriver>();
-// #endif
+// #  endif
 // }
+#endif
 
 #ifdef TINYDRIVERS_MYSQL_LOADABLE_LIBRARY
 namespace
