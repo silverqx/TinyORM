@@ -6,15 +6,11 @@
 
 #include "orm/databaseconnection.hpp"
 #include "orm/macros/likely.hpp"
-#ifdef TINYORM_DEBUG_SQL
-#  include "orm/utils/query.hpp"
-#endif
+#include "orm/utils/query.hpp"
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
-#ifdef TINYORM_DEBUG_SQL
 using QueryUtils = Orm::Utils::Query;
-#endif
 
 namespace Orm::Concerns
 {

@@ -16,6 +16,10 @@ TINY_SYSTEM_HEADER
 #include "orm/tiny/exceptions/modelnotfounderror.hpp"
 #include "orm/tiny/tinybuilderproxies.hpp"
 
+#ifdef TINYORM_NO_DEBUG
+#  include "orm/utils/query.hpp"
+#endif
+
 TINYORM_BEGIN_COMMON_NAMESPACE
 
 namespace Orm::Tiny
