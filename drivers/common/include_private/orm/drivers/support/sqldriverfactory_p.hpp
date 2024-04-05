@@ -2,9 +2,6 @@
 #ifndef ORM_DRIVERS_SUPPORT_SQLDRIVERFACTORY_P_HPP
 #define ORM_DRIVERS_SUPPORT_SQLDRIVERFACTORY_P_HPP
 
-#include "orm/macros/systemheader.hpp"
-TINY_SYSTEM_HEADER
-
 #include <QString>
 
 #include <orm/macros/commonnamespace.hpp>
