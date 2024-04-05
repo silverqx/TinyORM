@@ -1,11 +1,11 @@
 # Initialize TinyDrivers CMake internal cache variables, early initialization
 function(tiny_init_driver_types_pre)
 
-    set(driversTypeForce DRIVERS_TYPE-NOTFOUND)
-
     # Build the TinyDrivers library as a static archive if the TinyOrm library is built
     # as a static archive; also, the DRIVERS_TYPE option will be hidden in this case
     # because it can't have any other value
+    set(driversTypeForce DRIVERS_TYPE-NOTFOUND)
+
     if(BUILD_DRIVERS AND NOT BUILD_SHARED_LIBS)
         set(driversTypeForce Static)
     endif()
