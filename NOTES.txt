@@ -1299,8 +1299,9 @@ Valgrind, callgrind, and KCachegrind:
 
 This only works on the Linux, I have setup Gentoo for this.
 
+ - switch project to Profile build type
  - QtCreator debug view (ctrl+4) and open/switch to the Callgrind view (in the bottom view)
- - simply start and open the resut in the KCachegrind
+ - simply Start Valgrind analysis and open the result in the KCachegrind
  - described here - https://doc.qt.io/qtcreator/creator-cache-profiler.html
 
 I have enabled debug symbols and source files for the glibc, so I can see everything nicely:
