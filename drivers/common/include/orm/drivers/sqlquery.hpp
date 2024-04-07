@@ -174,9 +174,9 @@ namespace Orm::Drivers
 
         /* Common for both */
         /*! Thrown an exception if the database connection isn't open. */
-        void throwIfNoDatabaseConnection(const QString &functionName);
+        void throwIfNoDatabaseConnection();
         /*! Thrown an exception if the query string is empty. */
-        void throwIfEmptyQueryString(const QString &query, const QString &functionName);
+        void throwIfEmptyQueryString(const QString &query);
 
         /* Result sets */
         /*! Normal seek. */
@@ -187,14 +187,13 @@ namespace Orm::Drivers
         bool mapSeekToFetch(size_type actualIdx);
 
         /*! Throw an exception if the query wasn't executed. */
-        void throwIfNoActiveQuery(const QString &functionName) const;
+        void throwIfNoActiveQuery() const;
         /*! Throw exception if there is no result set (SELECT query wasn't executed). */
-        void throwIfNoResultSet(const QString &functionName) const;
+        void throwIfNoResultSet() const;
         /*! Throw an exception if the cursor isn't positioned on a valid recrod/row. */
-        void throwIfNoValidResultSet(const QString &functionName) const;
+        void throwIfNoValidResultSet() const;
         /*! Throw an exception if the field name doesn't exist or was not fetched. */
-        [[noreturn]] void throwNoFieldName(const QString &name,
-                                           const QString &functionName) const;
+        [[noreturn]] void throwNoFieldName(const QString &name) const;
 
         /* Constructors */
         /*! Initialize implementation-dependent query result set for the default

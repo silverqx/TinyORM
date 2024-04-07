@@ -137,8 +137,8 @@ const SqlResult &SqlQuery::result() const noexcept // noexcept is correct here
 
 bool SqlQuery::exec(const QString &query)
 {
-    throwIfNoDatabaseConnection(__tiny_func__);
-    throwIfEmptyQueryString(query, __tiny_func__);
+    throwIfNoDatabaseConnection();
+    throwIfEmptyQueryString(query);
 
 #if defined(QT_DEBUG_SQL) || defined(TINYDRIVERS_DEBUG_SQL)
     QElapsedTimer timer;
@@ -161,8 +161,8 @@ bool SqlQuery::exec(const QString &query)
 
 bool SqlQuery::prepare(const QString &query)
 {
-    throwIfNoDatabaseConnection(__tiny_func__);
-    throwIfEmptyQueryString(query, __tiny_func__);
+    throwIfNoDatabaseConnection();
+    throwIfEmptyQueryString(query);
 
     return m_sqlResult->prepare(query);
 }
@@ -245,7 +245,7 @@ QVariantList SqlQuery::boundValues() const
 
 SqlRecord SqlQuery::record() const
 {
-    throwIfNoResultSet(__tiny_func__);
+    throwIfNoResultSet();
 
     /* Will provide information about all fields such as length, precision,
        SQL column type, auto-incrementing, ..., and also the field value. */
@@ -254,7 +254,7 @@ SqlRecord SqlQuery::record() const
 
 const SqlRecord &SqlQuery::recordCached() const
 {
-    throwIfNoResultSet(__tiny_func__);
+    throwIfNoResultSet();
 
     /* The record will be cached for better performance, it avoids materialization
        of the record again and again. Cache is invalidated during seek(), fetchXyz()
@@ -349,36 +349,36 @@ bool SqlQuery::seek(const size_type index, const bool relative)
 
 QVariant SqlQuery::value(const size_type index) const
 {
-    throwIfNoValidResultSet(__tiny_func__);
+    throwIfNoValidResultSet();
 
     return m_sqlResult->data(index);
 }
 
 QVariant SqlQuery::value(const QString &name) const
 {
-    throwIfNoValidResultSet(__tiny_func__);
+    throwIfNoValidResultSet();
 
     if (const auto index = m_sqlResult->recordCached().indexOf(name); index > -1)
         return m_sqlResult->data(index);
 
-    throwNoFieldName(name, __tiny_func__);
+    throwNoFieldName(name);
 }
 
 bool SqlQuery::isNull(const size_type index) const
 {
-    throwIfNoValidResultSet(__tiny_func__);
+    throwIfNoValidResultSet();
 
     return m_sqlResult->isNull(index);
 }
 
 bool SqlQuery::isNull(const QString &name) const
 {
-    throwIfNoValidResultSet(__tiny_func__);
+    throwIfNoValidResultSet();
 
     if (const auto index = m_sqlResult->recordCached().indexOf(name); index > -1)
         return m_sqlResult->isNull(index);
 
-    throwNoFieldName(name, __tiny_func__);
+    throwNoFieldName(name);
 }
 
 SqlQuery::size_type SqlQuery::size() const
@@ -392,7 +392,7 @@ SqlQuery::size_type SqlQuery::size() const
                  "for '%2' database connection in %3()."_s
                 .arg(driver->driverName(), connectionName(), __tiny_func__));
 
-    throwIfNoResultSet(__tiny_func__);
+    throwIfNoResultSet();
 
     return m_sqlResult->size();
 }
@@ -401,7 +401,7 @@ SqlQuery::size_type SqlQuery::numRowsAffected() const
 {
     /* Nothing to do, query was not executed, also don't check the isSelect() here
        to have the same API as QtSql. */
-    throwIfNoActiveQuery(__tiny_func__);
+    throwIfNoActiveQuery();
 
     return m_sqlResult->numRowsAffected();
 }
@@ -409,7 +409,7 @@ SqlQuery::size_type SqlQuery::numRowsAffected() const
 QVariant SqlQuery::lastInsertId() const
 {
     // Nothing to do, query was not executed
-    throwIfNoActiveQuery(__tiny_func__);
+    throwIfNoActiveQuery();
 
     return m_sqlResult->lastInsertId();
 }
@@ -476,7 +476,7 @@ QString SqlQuery::connectionName() const noexcept
 
 /* Common for both */
 
-void SqlQuery::throwIfNoDatabaseConnection(const QString &functionName)
+void SqlQuery::throwIfNoDatabaseConnection()
 {
     // Nothing to do
     if (this->driverWeakInternal().lock()->isOpen())
@@ -484,10 +484,10 @@ void SqlQuery::throwIfNoDatabaseConnection(const QString &functionName)
 
     throw Exceptions::LogicError(
                 u"The '%1' database connection isn't open in %2()."_s
-                .arg(connectionName(), functionName));
+                .arg(connectionName(), __tiny_func__));
 }
 
-void SqlQuery::throwIfEmptyQueryString(const QString &query, const QString &functionName)
+void SqlQuery::throwIfEmptyQueryString(const QString &query)
 {
     // Nothing to do
     if (!query.isEmpty())
@@ -495,7 +495,7 @@ void SqlQuery::throwIfEmptyQueryString(const QString &query, const QString &func
 
     throw Exceptions::InvalidArgumentError(
                 u"The query argument can't be empty for '%1' database connection "
-                 "in %2()."_s.arg(connectionName(), functionName));
+                 "in %2()."_s.arg(connectionName(), __tiny_func__));
 }
 
 /* Result sets */
@@ -576,7 +576,18 @@ bool SqlQuery::mapSeekToFetch(const size_type actualIdx)
     return false;
 }
 
-void SqlQuery::throwIfNoActiveQuery(const QString &functionName) const
+/* I must drop the functionName parameter, it was passed using the __tiny_func__ macro
+   inside the origin method to print where the exception occurred, but the __tiny_func__
+   internally instantiates QRegularExpression and that is really slow.
+   Partial solution that I also tried was to save the __tiny_func__ as a static local
+   variable but it also slower ~5-10ms for tst_sqlquery_normal test case.
+   Solution would be to rewrite the TypePrivate::prettyFunction() without
+   QRegularExpression and use static local variable for __tiny_func__ and even better
+   would be to use the std::source_location or std::stacktrace.
+   Removing the __tiny_func__ and make exception messages less informative is a good deal
+   because of the gained performance ~40ms and that is a lot. */
+
+void SqlQuery::throwIfNoActiveQuery() const
 {
     // Nothing to do
     if (isActive())
@@ -584,10 +595,10 @@ void SqlQuery::throwIfNoActiveQuery(const QString &functionName) const
 
     throw Exceptions::LogicError(
             u"No active query, you need to execute a query for '%1' database connection "
-             "in %2()."_s.arg(connectionName(), functionName));
+             "in %2()."_s.arg(connectionName(), __tiny_func__));
 }
 
-void SqlQuery::throwIfNoResultSet(const QString &functionName) const
+void SqlQuery::throwIfNoResultSet() const
 {
     // Nothing to do
     if (isActive() && isSelect())
@@ -596,10 +607,10 @@ void SqlQuery::throwIfNoResultSet(const QString &functionName) const
     throw Exceptions::LogicError(
             u"No active result set, you need to execute a query to obtain the record "
              "for '%1' database connection in %2()."_s
-            .arg(connectionName(), functionName));
+            .arg(connectionName(), __tiny_func__));
 }
 
-void SqlQuery::throwIfNoValidResultSet(const QString &functionName) const
+void SqlQuery::throwIfNoValidResultSet() const
 {
     // Nothing to do
     if (isActive() && isSelect() && isValid())
@@ -610,16 +621,16 @@ void SqlQuery::throwIfNoValidResultSet(const QString &functionName) const
             u"No active and valid result set, first, you need to execute the query "
              "and place the cursor on an existing row to obtain the column/field value, "
              "for '%1' database connection in %2()."_s
-            .arg(connectionName(), functionName));
+            .arg(connectionName(), __tiny_func__));
 }
 
-void SqlQuery::throwNoFieldName(const QString &name, const QString &functionName) const
+void SqlQuery::throwNoFieldName(const QString &name) const
 {
     // NOTE api different, QtSql also returns true for field names that don't exist :/ silverqx
     throw Exceptions::InvalidArgumentError(
                 u"The field name '%1' doesn't exist or was not fetched for the current "
                  "result set for '%2' database connection in %3()."_s
-                .arg(name, connectionName(), functionName));
+                .arg(name, connectionName(), __tiny_func__));
 }
 
 /* Constructors */
