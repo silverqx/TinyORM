@@ -42,7 +42,7 @@ isEmpty(TINYORM_BUILD_TREE):   TINYORM_BUILD_TREE   = $$tinyorm_build_tree()
 # All variables below can also be used to put together a path to the TinyORM build tree
 # They were used in previous versions a better option is to use the variables above
 
-# Underscored Qt version (eg. 6_5_2)
+# Underscored Qt version (eg. 6_7_0)
 TINY_QT_VERSION_UNDERSCORED = $$replace(QT_VERSION, \., _)
 
 # Build type string (Debug, Profile, or Release)

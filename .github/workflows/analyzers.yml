@@ -1,4 +1,4 @@
-name: Clang-Tidy and Clazy Qt5.15/6.5
+name: Clang-Tidy and Clazy Qt5.15/6.7
 
 on:
   push:
@@ -23,7 +23,7 @@ jobs:
 
           - key: qt6
             name: Qt6
-            version: 6.5.3
+            version: 6.7.0
 
     env:
       TINY_CLANG_TIDY_COMPLETED: false
