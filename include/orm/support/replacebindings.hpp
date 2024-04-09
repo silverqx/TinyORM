@@ -62,6 +62,7 @@ namespace Orm::Support
         static const auto Null_        = QStringLiteral("null");
         static const auto Binary       = QStringLiteral("<binary(%1)>");
         static const auto HexBinary    = QStringLiteral("hex-binary(%1)\"%2\"");
+        static const auto TextAlt      = QStringLiteral("<text(%1)>");
         static const auto TMPL_SQUOTES = QStringLiteral("\"%1\"");
 
         QString bindingValue;
@@ -95,11 +96,16 @@ namespace Orm::Support
             }
             // Support for strings quoting
 #ifdef PROJECT_TINYDRIVERS_PRIVATE
-            else if (binding.typeId() == QMetaType::QString)
+            else if (binding.typeId() == QMetaType::QString) {
 #else
-            else if (Helpers::qVariantTypeId(binding) == QMetaType::QString)
+            else if (Helpers::qVariantTypeId(binding) == QMetaType::QString) {
 #endif
-                bindingValue = TMPL_SQUOTES.arg(binding.template value<QString>());
+                const auto textData = binding.template value<QString>();
+                const auto textSize = textData.size();
+                // Don't overwhelm terminal with a lot of text, 1024 characters is enough
+                bindingValue = textSize > 1024 ? TextAlt.arg(textSize)
+                                               : TMPL_SQUOTES.arg(textData);
+            }
             else
                 bindingValue = binding.template value<QString>();
 
