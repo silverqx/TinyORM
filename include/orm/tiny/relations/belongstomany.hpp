@@ -1034,7 +1034,7 @@ namespace Orm::Tiny::Relations
 #if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
         result.reserve(count);
 #else
-        result.reserve(static_cast<dectype (result)::size_type>(count));
+        result.reserve(static_cast<decltype (result)::size_type>(count));
 #endif
 
         chunk(count, [&result, &callback]
