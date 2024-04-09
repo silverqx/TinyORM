@@ -367,7 +367,8 @@ QVector<SubSectionItem> AboutCommand::gatherVersionsInformation()
                               {QStringLiteral("tom"), TINYTOM_VERSION_STR},
                           });
 #else
-    versions.push_front({std::nullopt, {
+    versions.push_front({std::nullopt,
+                         std::map<QString, QString> {
                              {QStringLiteral("tom"), TINYTOM_VERSION_STR},
                          }});
 #endif

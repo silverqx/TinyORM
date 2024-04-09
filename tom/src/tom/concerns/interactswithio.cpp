@@ -493,7 +493,12 @@ InteractsWithIO::countSetOption(const QString &optionName,
 {
     /* This should be in the CommandLineParser, but I will not create a wrapper class
        because of one line, I don't even create a future todo task for this. */
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
     return std::ranges::count(parser.optionNames(), optionName);
+#else
+    return static_cast<QStringList::size_type>(
+                std::ranges::count(parser.optionNames(), optionName));
+#endif
 }
 
 bool InteractsWithIO::dontOutput(const Verbosity verbosity) const

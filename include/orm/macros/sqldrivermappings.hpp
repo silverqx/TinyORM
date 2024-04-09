@@ -57,7 +57,7 @@ C preprocessor macro to select the SQL drivers to use.
 /* Includes */
 
 #ifdef TINYORM_USING_QTSQLDRIVERS
-#  include <QtCore/qtconfigmacros.h>
+#  include <QtGlobal>
 #elif defined(TINYORM_USING_TINYDRIVERS)
 #  include "orm/macros/commonnamespace.hpp"
 #endif

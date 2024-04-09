@@ -418,10 +418,17 @@ QList<QStringView> String::splitAtFirst(const QStringView string, const QChar se
     if (index == -1)
         return {string};
 
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
     const auto *const begin = string.constBegin();
     const auto *const end = string.constEnd();
     const auto *const itSeparator = string.constBegin() + index;
     const auto *const itAfterSeparator = string.constBegin() + index + 1; // +1 to skip the separator
+#else
+    const auto *const begin = string.cbegin();
+    const auto *const end = string.cend();
+    const auto *const itSeparator = string.cbegin() + index;
+    const auto *const itAfterSeparator = string.cbegin() + index + 1; // +1 to skip the separator
+#endif
 
     // Currently, a value before the separator must contain at least one character
     Q_ASSERT(begin < itSeparator);
@@ -479,9 +486,19 @@ QString String::loremIpsum512Paragraph(const QStringList::size_type count)
        "Semper a rutrum at In nibh cursus Nam libero tempus. "
        "Risus nibh semper quis volutpat facilisi.");
 
+#  if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
     return QStringList(count, lorem511).join(NEWLINE);
             // Insert the s character before the last . to make it 512, 1024, ...
             // .insert(-1, QLatin1Char('s'));
+#  else
+    QStringList result;
+    result.reserve(count);
+
+    for (QStringList::size_type index = 0; index < count; ++index)
+        result << lorem511;
+
+    return result.join(NEWLINE);
+#  endif
 }
 #endif
 
