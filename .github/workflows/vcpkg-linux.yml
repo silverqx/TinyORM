@@ -1,3 +1,7 @@
+# OS settings notes:
+# ---
+# Set time zone to 'Etc/UTC' (this was the default)
+
 name: Vcpkg Linux
 
 on:
