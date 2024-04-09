@@ -2954,6 +2954,68 @@ TinyORM C++ Coding Style:
 GitHub actions self-hosted runners:
 -----------------------------------
 
+OS settings:
+---
+
+ - Linux:
+   - set time zone to 'Etc/UTC' (this was the default)
+
+merydeye-tinyactions useful commands:
+---
+
+ - removing old Clang 17:
+sudo apt purge clang-17 clang-tidy-17 lld-17
+apt-key list
+sudo rm llvm-17.asc (from trusted.gpg.d/)
+add-apt-repository --list
+sudo rm archive_uri-http_apt_llvm_org_jammy_-jammy.list (from sources.list.d/)
+
+ - install Clang 18:
+wget -O- https://apt.llvm.org/llvm-snapshot.gpg.key | sudo tee /etc/apt/trusted.gpg.d/llvm-18.asc
+sudo add-apt-repository --yes --sourceslist 'deb http://apt.llvm.org/jammy/ llvm-toolchain-jammy-18 main'
+sudo apt install clang-18 clang-tidy-18 lld-18
+
+ - upgrade aqtinstall (needed before ugprading Qt)
+python3 -m pip install --upgrade pip
+aqt version
+pip list
+pip show aqtinstall
+pip install --upgrade aqtinstall
+
+ - removing old Qt v6.5.3
+sudo rm -rf /opt/Qt/6.5.3
+
+ - install Qt v6.7.0
+aqt list-qt linux desktop
+aqt list-qt linux desktop --arch 6.7.0
+aqt install-qt --external 7z --outputdir /opt/Qt linux desktop 6.7.0 linux_gcc_64
+
+ - Qt Maintenance Tool:
+
+initial installation of Qt base FW only (w/o user input):
+./qt-unified-linux-x64-4.7.0-online.run --root /opt/Qt --email 'silver.zachara@gmail.com' --password '' --accept-licenses --default-answer --confirm-command install qt.qt6.670.linux_gcc_64
+
+Following install also QtCreator, QtDesignerStudio, CMake, and Ninja:
+./qt-unified-linux-x64-4.7.0-online.run --root /opt/Qt --email 'silver.zachara@gmail.com' --password '' install
+
+Searching packages:
+./MaintenanceTool --type package --filter-packages "DisplayName=Desktop, Version=6.7.0" search qt.qt6.670.linux_gcc_64
+./MaintenanceTool --type package --filter-packages "DisplayName=Desktop" search qt.qt6.670.linux_gcc_64
+
+Removing packages:
+./MaintenanceTool remove qt.tools.cmake qt.tools.ninja qt.tools.qtcreator_gui qt.tools.qtdesignstudio
+
+Updating packages (not tested yet):
+./MaintenanceTool update
+./MaintenanceTool update qt.qt6.670.linux_gcc_64
+
+Others:
+./MaintenanceTool check-updates
+./MaintenanceTool clear-cache (if cache is too big: du -sh ~/.cache/qt-unified-linux-online)
+
+Others:
+---
+
 After a few week all stoped runners are invalided so they must be re-configured.
 Simply delete the .runner file and invoke the config script again as is described here:
 https://docs.github.com/en/actions/hosting-your-own-runners/managing-self-hosted-runners/adding-self-hosted-runners
