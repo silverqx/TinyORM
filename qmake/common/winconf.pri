@@ -12,6 +12,12 @@ DEFINES *= _WIN32_IE=_WIN32_IE_IE110
 DEFINES *= WIN32_LEAN_AND_MEAN
 DEFINES *= NOMINMAX
 
+# Needed to suppress this for <=Qt5 because a lot of new warning on Qt v5, I will not
+# invest more time to this to correctly fix it because Qt5 support will be removed soon
+if(win32-msvc|win32-clang-msvc): \
+versionAtMost(QT_MAJOR_VERSION, 5): \
+    DEFINES *= _SILENCE_STDEXT_ARR_ITERS_DEPRECATION_WARNING
+
 # Latest qmake's msvc fixes
 # ---
 win32-msvc {
