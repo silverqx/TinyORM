@@ -134,20 +134,9 @@ void tst_DatabaseManager::MySQL_removeConnection_Connected() const
     const auto driverName = QMYSQL;
 
     // Add a new database connection
-    const auto connectionName = Databases::createConnectionTemp(
+    const auto connectionName = Databases::createConnectionTempFrom(
                                     Databases::MYSQL,
-                                    {ClassName, QString::fromUtf8(__func__)}, // NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
-    {
-        {driver_,    driverName},
-        {host_,      qEnvironmentVariable("DB_MYSQL_HOST",      H127001)},
-        {port_,      qEnvironmentVariable("DB_MYSQL_PORT",      P5432)},
-        {database_,  databaseName},
-        {username_,  qEnvironmentVariable("DB_MYSQL_USERNAME",  EMPTY)},
-        {password_,  qEnvironmentVariable("DB_MYSQL_PASSWORD",  EMPTY)},
-        {charset_,   qEnvironmentVariable("DB_MYSQL_CHARSET",   UTF8MB4)},
-        {collation_, qEnvironmentVariable("DB_MYSQL_COLLATION", UTF8MB40900aici)},
-        {options_,   ConfigUtils::mysqlSslOptions()},
-    });
+                                    {ClassName, QString::fromUtf8(__func__)}); // NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
 
     if (!connectionName)
         QSKIP(TestUtils::AutoTestSkipped
@@ -219,20 +208,9 @@ void tst_DatabaseManager::Postgres_removeConnection_Connected() const
     const auto driverName = QPSQL;
 
     // Add a new database connection
-    const auto connectionName = Databases::createConnectionTemp(
+    const auto connectionName = Databases::createConnectionTempFrom(
                                     Databases::POSTGRESQL,
-                                    {ClassName, QString::fromUtf8(__func__)}, // NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
-    {
-        {driver_,          driverName},
-        {application_name, sl("TinyORM tests - tst_databasemanager")},
-        {host_,            qEnvironmentVariable("DB_PGSQL_HOST",       H127001)},
-        {port_,            qEnvironmentVariable("DB_PGSQL_PORT",       P5432)},
-        {database_,        databaseName},
-        {search_path,      qEnvironmentVariable("DB_PGSQL_SEARCHPATH", PUBLIC)},
-        {username_,        qEnvironmentVariable("DB_PGSQL_USERNAME",   postgres_)},
-        {password_,        qEnvironmentVariable("DB_PGSQL_PASSWORD",   EMPTY)},
-        {charset_,         qEnvironmentVariable("DB_PGSQL_CHARSET",    UTF8)},
-    });
+                                    {ClassName, QString::fromUtf8(__func__)}); // NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
 
     if (!connectionName)
         QSKIP(TestUtils::AutoTestSkipped
