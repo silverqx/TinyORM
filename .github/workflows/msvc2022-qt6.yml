@@ -412,9 +412,12 @@ jobs:
         DB_MYSQL_ROOT_USERNAME: ${{ secrets.DB_MYSQL_ROOT_USERNAME }}
         DB_MYSQL_USERNAME: ${{ secrets.DB_MYSQL_USERNAME }}
 
-    - name: MySQL add libmysql.dll on the $env:Path
+    - name: MySQL add libmysql.dll on the $env:Path, INCLUDE, and LIB
       run: |
         '${{ env.TinyMySQLInstallationPath }}\lib' >> $env:GITHUB_PATH
+        # Needed by the lastest FindMySQL.cmake module, it stopped working without this
+        'INCLUDE=${{ env.TinyMySQLInstallationPath }}\include' >> $env:GITHUB_ENV
+        'LIB=${{ env.TinyMySQLInstallationPath }}\lib' >> $env:GITHUB_ENV
 
     - name: SQLite create TinyORM database
       run: |
