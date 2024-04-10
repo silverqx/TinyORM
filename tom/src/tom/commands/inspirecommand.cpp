@@ -1,5 +1,6 @@
 #include "tom/commands/inspirecommand.hpp"
 
+#include <array>
 #include <random>
 
 TINYORM_BEGIN_COMMON_NAMESPACE
