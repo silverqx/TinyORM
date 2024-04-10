@@ -17,7 +17,6 @@ using Orm::Drivers::SqlDatabase;
 #endif
 
 using Orm::Constants::EMPTY;
-using Orm::Constants::EQ_C;
 using Orm::Constants::H127001;
 using Orm::Constants::P3306;
 using Orm::Constants::P5432;
@@ -29,7 +28,6 @@ using Orm::Constants::SEMICOLON;
 using Orm::Constants::SSL_CA;
 using Orm::Constants::SSL_CERT;
 using Orm::Constants::SSL_KEY;
-using Orm::Constants::SSL_MODE;
 using Orm::Constants::ROOT;
 using Orm::Constants::TZ00;
 using Orm::Constants::UTC;
@@ -61,6 +59,11 @@ using Orm::Constants::qt_timezone;
 using Orm::Constants::strict_;
 using Orm::Constants::timezone_;
 using Orm::Constants::username_;
+
+#ifdef TINYORM_USING_TINYDRIVERS
+using Orm::Constants::EQ_C;
+using Orm::Constants::SSL_MODE;
+#endif
 
 using Orm::DB;
 using Orm::DatabaseManager;
