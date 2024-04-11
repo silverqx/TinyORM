@@ -512,6 +512,11 @@ MySQL Timezone tables:
  - update the URL_MYSQL_TIMEZONE_TABLES GitHub secret
  - download from https://dev.mysql.com/downloads/timezones.html
  - pick the posix version without the leap second
+ - Commands to update MySQL server on merydeye-devel
+mysql_config_editor print --all
+mysql --login-path=root -p mysql
+source timezone_posix.sql;
+Restart-Service MySQL83
 
 
 Versions info:
