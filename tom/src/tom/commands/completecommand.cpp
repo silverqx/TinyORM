@@ -27,18 +27,19 @@ namespace fs = std::filesystem;
 
 using Orm::Constants::COMMA_C;
 using Orm::Constants::DASH;
-using Orm::Constants::EMPTY;
 using Orm::Constants::EQ_C;
 using Orm::Constants::NEWLINE;
-using Orm::Constants::NOSPACE;
 using Orm::Constants::SPACE;
+
+#ifdef _MSC_VER
+using Orm::Constants::EMPTY;
+using Orm::Constants::NOSPACE;
 using Orm::Constants::database_;
+#endif
 
 using StringUtils = Orm::Utils::String;
 
-using Tom::Constants::About;
 using Tom::Constants::DoubleDash;
-using Tom::Constants::Env;
 using Tom::Constants::Help;
 using Tom::Constants::Integrate;
 using Tom::Constants::List;
@@ -46,12 +47,14 @@ using Tom::Constants::LongOption;
 using Tom::Constants::ShPwsh;
 using Tom::Constants::commandline;
 using Tom::Constants::commandline_up;
-using Tom::Constants::only_;
 using Tom::Constants::word_;
 using Tom::Constants::word_up;
 
 #ifdef _MSC_VER
+using Tom::Constants::About;
+using Tom::Constants::Env;
 using Tom::Constants::LongOptionValue;
+using Tom::Constants::only_;
 using Tom::Constants::position_;
 using Tom::Constants::position_up;
 #else

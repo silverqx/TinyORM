@@ -62,7 +62,7 @@ Terminal::TerminalSize Terminal::terminalSize() noexcept
     height = (csbi.srWindow.Bottom - csbi.srWindow.Top) + 1;
 #elif defined(__linux__)
     winsize w {};
-    ioctl(fileno(stdout), TIOCGWINSZ, &w);
+    ioctl(fileno(stdout), TIOCGWINSZ, &w); // NOLINT(cppcoreguidelines-pro-type-vararg)
 
     width  = w.ws_col;
     height = w.ws_row;

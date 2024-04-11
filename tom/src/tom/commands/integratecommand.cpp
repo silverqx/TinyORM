@@ -288,11 +288,11 @@ int IntegrateCommand::integrateBash() const
 }
 
 /*! Bash completions directory path. */
-Q_GLOBAL_STATIC_WITH_ARGS(const QString, BashCompletionsDirPath, // NOLINT(misc-use-anonymous-namespace)
+Q_GLOBAL_STATIC_WITH_ARGS(const QString, BashCompletionsDirPath, // NOLINT(misc-use-anonymous-namespace, cppcoreguidelines-avoid-non-const-global-variables)
                           ("/usr/share/bash-completion/completions"))
 
 /*! Path to the TinyORM tom bash completion file. */
-Q_GLOBAL_STATIC_WITH_ARGS(const QString, TomBashCompletionFilepath, // NOLINT(misc-use-anonymous-namespace)
+Q_GLOBAL_STATIC_WITH_ARGS(const QString, TomBashCompletionFilepath, // NOLINT(misc-use-anonymous-namespace, cppcoreguidelines-avoid-non-const-global-variables)
                           (QString("%1/tom").arg(*BashCompletionsDirPath)))
 
 void IntegrateCommand::throwIfBashCompletionDirNotExists()
@@ -362,7 +362,7 @@ int IntegrateCommand::integrateZsh() const
 }
 
 /*! Zsh completions directory path. */
-Q_GLOBAL_STATIC_WITH_ARGS(const QStringList, ZshCompletionsDirPaths, // NOLINT(misc-use-anonymous-namespace)
+Q_GLOBAL_STATIC_WITH_ARGS(const QStringList, ZshCompletionsDirPaths, // NOLINT(misc-use-anonymous-namespace, cppcoreguidelines-avoid-non-const-global-variables)
                           ({"/usr/local/share/zsh/site-functions",
                             "/usr/share/zsh/site-functions"}))
 
@@ -377,7 +377,7 @@ struct ZshCompletionPathsItem
 
 /*! Paths to the TinyORM tom zsh completion files. */
 Q_GLOBAL_STATIC_WITH_ARGS(
-        QVector<ZshCompletionPathsItem>, TomZshCompletionPaths, // NOLINT(misc-use-anonymous-namespace)
+        QVector<ZshCompletionPathsItem>, TomZshCompletionPaths, // NOLINT(misc-use-anonymous-namespace, cppcoreguidelines-avoid-non-const-global-variables)
         ({{ZshCompletionsDirPaths->constFirst(),
            QString("%1/_tom").arg(ZshCompletionsDirPaths->constFirst())},
           {ZshCompletionsDirPaths->at(1),

@@ -24,10 +24,6 @@ using Orm::Constants::PUBLIC;
 using Orm::Constants::QMYSQL;
 using Orm::Constants::QPSQL;
 using Orm::Constants::QSQLITE;
-using Orm::Constants::SEMICOLON;
-using Orm::Constants::SSL_CA;
-using Orm::Constants::SSL_CERT;
-using Orm::Constants::SSL_KEY;
 using Orm::Constants::ROOT;
 using Orm::Constants::TZ00;
 using Orm::Constants::UTC;
@@ -62,6 +58,10 @@ using Orm::Constants::username_;
 
 #ifdef TINYORM_USING_TINYDRIVERS
 using Orm::Constants::EQ_C;
+using Orm::Constants::SEMICOLON;
+using Orm::Constants::SSL_CA;
+using Orm::Constants::SSL_CERT;
+using Orm::Constants::SSL_KEY;
 using Orm::Constants::SSL_MODE;
 #endif
 

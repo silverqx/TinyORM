@@ -35,19 +35,19 @@ Q_GLOBAL_STATIC_WITH_ARGS(const QString, Commit,           ("COMMIT")) // NOLINT
 Q_GLOBAL_STATIC_WITH_ARGS(const QString, RollBack,         ("ROLLBACK")) // NOLINT(misc-use-anonymous-namespace, cppcoreguidelines-avoid-non-const-global-variables)
 #ifdef TINYORM_USING_QTSQLDRIVERS
 /*! QString constant for the "ManagesTransactions::beginTransaction" function name. */
-Q_GLOBAL_STATIC_WITH_ARGS(const QString, BeginTransactionFunction, // NOLINT(misc-use-anonymous-namespace)
+Q_GLOBAL_STATIC_WITH_ARGS(const QString, BeginTransactionFunction, // NOLINT(misc-use-anonymous-namespace, cppcoreguidelines-avoid-non-const-global-variables)
                           ("ManagesTransactions::beginTransaction"))
 /*! QString constant for the "ManagesTransactions::commit" function name. */
-Q_GLOBAL_STATIC_WITH_ARGS(const QString, CommitFunction, // NOLINT(misc-use-anonymous-namespace)
+Q_GLOBAL_STATIC_WITH_ARGS(const QString, CommitFunction, // NOLINT(misc-use-anonymous-namespace, cppcoreguidelines-avoid-non-const-global-variables)
                           ("ManagesTransactions::commit"))
 /*! QString constant for the "ManagesTransactions::rollBack" function name. */
-Q_GLOBAL_STATIC_WITH_ARGS(const QString, RollBackFunction, // NOLINT(misc-use-anonymous-namespace)
+Q_GLOBAL_STATIC_WITH_ARGS(const QString, RollBackFunction, // NOLINT(misc-use-anonymous-namespace, cppcoreguidelines-avoid-non-const-global-variables)
                           ("ManagesTransactions::rollBack"))
 /*! QString constant for the "ManagesTransactions::savepoint" function name. */
-Q_GLOBAL_STATIC_WITH_ARGS(const QString, SavepointFunction, // NOLINT(misc-use-anonymous-namespace)
+Q_GLOBAL_STATIC_WITH_ARGS(const QString, SavepointFunction, // NOLINT(misc-use-anonymous-namespace, cppcoreguidelines-avoid-non-const-global-variables)
                           ("ManagesTransactions::savepoint"))
 /*! QString constant for the "ManagesTransactions::rollbackToSavepoint" function name. */
-Q_GLOBAL_STATIC_WITH_ARGS(const QString, RollbackToSavepointFunction, // NOLINT(misc-use-anonymous-namespace)
+Q_GLOBAL_STATIC_WITH_ARGS(const QString, RollbackToSavepointFunction, // NOLINT(misc-use-anonymous-namespace, cppcoreguidelines-avoid-non-const-global-variables)
                           ("ManagesTransactions::rollbackToSavepoint"))
 #endif
 
