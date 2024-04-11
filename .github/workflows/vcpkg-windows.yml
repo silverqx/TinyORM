@@ -287,7 +287,7 @@ jobs:
     - name: ${{ matrix.qt.name }} prepare environment
       if: env.TinyIsSelfHostedRunner == 'true'
       run: |
-        'C:\Qt\${{ matrix.qt.version }}\msvc2019_64\bin' >> $env:GITHUB_PATH
+        "$env:TINY_QT_ROOT\${{ matrix.qt.version }}\msvc2019_64\bin" >> $env:GITHUB_PATH
 
     # Prepare ccache
     #
