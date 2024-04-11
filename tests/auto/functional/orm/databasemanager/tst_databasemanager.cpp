@@ -116,9 +116,6 @@ void tst_DatabaseManager::initTestCase()
 
 void tst_DatabaseManager::MySQL_removeConnection_Connected() const
 {
-    const auto databaseName = qEnvironmentVariable("DB_MYSQL_DATABASE", EMPTY);
-    const auto driverName = QMYSQL;
-
     // Add a new database connection
     const auto connectionName = Databases::createConnectionTempFrom(
                                     Databases::MYSQL,
@@ -134,8 +131,9 @@ void tst_DatabaseManager::MySQL_removeConnection_Connected() const
     const auto openedConnections = m_dm->openedConnectionNames();
 
     QCOMPARE(connection.getName(), *connectionName);
-    QCOMPARE(connection.getDatabaseName(), databaseName);
-    QCOMPARE(connection.driverName(), driverName);
+    QCOMPARE(connection.getDatabaseName(),
+             qEnvironmentVariable("DB_MYSQL_DATABASE", EMPTY));
+    QCOMPARE(connection.driverName(), QMYSQL);
     QCOMPARE(m_dm->connectionNames().size(), 1);
     QCOMPARE(openedConnections.size(), 1);
     QCOMPARE(openedConnections.first(), *connectionName);
@@ -190,9 +188,6 @@ void tst_DatabaseManager::MySQL_removeConnection_NotConnected() const
 
 void tst_DatabaseManager::Postgres_removeConnection_Connected() const
 {
-    const auto databaseName = qEnvironmentVariable("DB_PGSQL_DATABASE", "");
-    const auto driverName = QPSQL;
-
     // Add a new database connection
     const auto connectionName = Databases::createConnectionTempFrom(
                                     Databases::POSTGRESQL,
@@ -208,8 +203,8 @@ void tst_DatabaseManager::Postgres_removeConnection_Connected() const
     const auto openedConnections = m_dm->openedConnectionNames();
 
     QCOMPARE(connection.getName(), *connectionName);
-    QCOMPARE(connection.getDatabaseName(), databaseName);
-    QCOMPARE(connection.driverName(), driverName);
+    QCOMPARE(connection.getDatabaseName(), qEnvironmentVariable("DB_PGSQL_DATABASE", ""));
+    QCOMPARE(connection.driverName(), QPSQL);
     QCOMPARE(m_dm->connectionNames().size(), 1);
     QCOMPARE(openedConnections.size(), 1);
     QCOMPARE(openedConnections.first(), *connectionName);

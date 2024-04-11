@@ -86,24 +86,10 @@ private:
 // NOLINTBEGIN(readability-convert-member-functions-to-static)
 void tst_SqlDatabaseManager::MySQL_removeConnection_Connected() const
 {
-    const auto databaseName = qEnvironmentVariable("DB_MYSQL_DATABASE", EMPTY);
-    const auto driverName = QMYSQL;
-
     // Add a new database connection
-    const auto connectionName = Databases::createDriversConnectionTemp(
+    const auto connectionName = Databases::createDriversConnectionTempFrom(
                                     Databases::MYSQL_DRIVERS,
-                                    {ClassName, QString::fromUtf8(__func__)}, // NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
-    {
-        {driver_,    driverName},
-        {host_,      qEnvironmentVariable("DB_MYSQL_HOST",      H127001)},
-        {port_,      qEnvironmentVariable("DB_MYSQL_PORT",      P5432)},
-        {database_,  databaseName},
-        {username_,  qEnvironmentVariable("DB_MYSQL_USERNAME",  EMPTY)},
-        {password_,  qEnvironmentVariable("DB_MYSQL_PASSWORD",  EMPTY)},
-        {charset_,   qEnvironmentVariable("DB_MYSQL_CHARSET",   UTF8MB4)},
-        {collation_, qEnvironmentVariable("DB_MYSQL_COLLATION", UTF8MB40900aici)},
-        {options_,   ConfigUtils::mysqlSslOptions()},
-    });
+                                    {ClassName, QString::fromUtf8(__func__)}); // NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
 
     if (!connectionName)
         QSKIP(TestUtils::AutoTestSkipped
@@ -118,8 +104,8 @@ void tst_SqlDatabaseManager::MySQL_removeConnection_Connected() const
     QVERIFY(connection.isOpen());
     QVERIFY(!connection.isOpenError());
     QCOMPARE(connection.connectionName(), *connectionName);
-    QCOMPARE(connection.databaseName(), databaseName);
-    QCOMPARE(connection.driverName(), driverName);
+    QCOMPARE(connection.databaseName(), qEnvironmentVariable("DB_MYSQL_DATABASE", EMPTY));
+    QCOMPARE(connection.driverName(), QMYSQL);
     QCOMPARE(openedConnections.size(), 1);
     QCOMPARE(openedConnections.first(), *connectionName);
     QCOMPARE(Databases::driversConnectionNames().size(), 1);
