@@ -151,7 +151,7 @@ jobs:
         -extra-arg-before='-Qunused-arguments'
         -p='${{ runner.workspace }}/TinyORM-builds-cmake/build-analyzer-${{ matrix.qt.key }}-clang-debug'
         -j ${{ env.TinyParallel }}
-        '[\\\/]+(?:examples|src|tests)[\\\/]+.+?[\\\/]+(?!mocs_)[\w\d_\-\+]+\.cpp$'
+        '[\\\/]+(?:drivers|examples|orm|src|tests|tom)[\\\/]+.+?[\\\/]+(?!mocs_)[\w\d_\-\+]+\.cpp$'
 
     - name: Clazy-standalone prepare
       working-directory: ${{ env.TinyORMPath }}
@@ -189,4 +189,4 @@ jobs:
         -header-filter='[\\\/]+(drivers|examples|orm|tests|tom)[\\\/]+.+\.(h|hpp)$' \
         -j ${{ env.TinyParallel }} \
         -p='${{ runner.workspace }}/TinyORM-builds-cmake/build-analyzer-${{ matrix.qt.key }}-clang-debug' \
-        '[\\\/]+(?:drivers|examples|src|tests)[\\\/]+.+?[\\\/]+(?!mocs_)[\w\d_\-\+]+\.cpp$'
+        '[\\\/]+(?:drivers|examples|orm|src|tests|tom)[\\\/]+.+?[\\\/]+(?!mocs_)[\w\d_\-\+]+\.cpp$'
