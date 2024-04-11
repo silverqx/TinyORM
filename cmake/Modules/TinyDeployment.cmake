@@ -358,9 +358,14 @@ function(tiny_build_tree_deployment)
 
     list(LENGTH filesToDeploy filesToDeployCount)
 
-    if(filesToDeployCount GREATER 0)
+    if((TINY_BUILD_LOADABLE_DRIVERS OR TINY_BUILD_SHARED_DRIVERS) AND
+            filesToDeployCount GREATER 0
+    )
+        # Without the COMMAND_EXPAND_LISTS it fails for Release builds because expression
+        # for the TARGET_PDB_FILE file returns "" an empty string
         add_custom_target(TinyBuildTreeDeployTarget
             ALL ${CMAKE_COMMAND} -E copy -t ${CMAKE_BINARY_DIR} ${filesToDeploy}
+            COMMAND_EXPAND_LISTS
             VERBATIM
             COMMENT
                 "Copying ${TinyDrivers_target} libraries to the root of the build tree..."
