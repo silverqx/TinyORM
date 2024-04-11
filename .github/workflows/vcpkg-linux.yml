@@ -367,7 +367,10 @@ jobs:
         cache_path: ${{ steps.ccache-initialize-cache.outputs.CachePath }}
         image_os: ${{ steps.ccache-initialize-cache.outputs.ImageOS }}
 
+    # I'm managing the ccache configuration manually on self-hosted runners using the ccache.conf
+    # because it's or will be used by more actions.
     - name: Ccache prepare configuration 🥳
+      if: env.TinyIsSelfHostedRunner == 'false'
       run: |
         # ~ 490 * 3 + 100
         ccache --set-config max_size=1600M
