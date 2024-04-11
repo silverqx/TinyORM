@@ -3124,3 +3124,24 @@ The following are most used cases which I corrected during the static_cast<> rev
    - qint64 or int -> std::size_t (if signed value can be <0)
  - no cast:
    - int -> qint64
+
+
+Building QtSql5 MySQL drivers for Qt5:
+--------------------------------------
+
+QtSql5 isn't able to build against the latest MySQL v8.3 server, it must be built against
+the MySQL v8.0.x branch. Reason are mysql_list_fields() and mysql_ssl_set() functions that
+were removed in the latest MySQL versions (at sure in v8.3 branch).
+
+Build commands:
+qmake E:\Qt\5.15.2\Src\qtbase\src\plugins\sqldrivers\sqldrivers.pro -- MYSQL_INCDIR="C:/optx64/mysql-8.0.36-winx64/include" MYSQL_LIBDIR="C:/optx64/mysql-8.0.36-winx64/lib"
+jom sub-mysql
+jom sub-mysql-install_subtargets (or you can use this install target)
+
+To install just copy two dll and pdb files to Qt\5.15.2\msvc2019_64\plugins\sqldrivers, not needed
+to copy the Qt5Sql_QMYSQLDriverPlugin.cmake as the default installation already contains it.
+
+All this isn't enough as you need the correct libmysql.dll and openssl 1 libraries. I added
+these libaries to my dotfiles at bin_qt5.
+To use these libraries prepend this path to the Qt v5.15 KIT Environment:
+PATH=+E:\dotfiles\bin_qt5;
