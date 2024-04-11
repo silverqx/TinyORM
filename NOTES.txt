@@ -3020,7 +3020,48 @@ After a few week all stoped runners are invalided so they must be re-configured.
 Simply delete the .runner file and invoke the config script again as is described here:
 https://docs.github.com/en/actions/hosting-your-own-runners/managing-self-hosted-runners/adding-self-hosted-runners
 
- - !!! backup .env and .path (Linux only) before deleting whole runner's folder
+ - Common for both:
+   - you can safely remove these folders from _work/TinyORM:
+HelloWorld-builds-cmake
+HelloWorld-FetchContent-Install
+TinyORM-builds-cmake
+
+ - Linux:
+   - AutoHotkey shortcuts
+     - ctrl-ga (leader), r - run, s - suspend, h - htop, a - un/pause
+
+Start-TinyORMActions
+cd /opt/actions-runners/tinyorm
+sudo ./svc.sh stop
+mv .runner .runner.bak
+./config.sh --url https://github.com/silverqx/TinyORM --token <token_from_GH_settings>
+runner name already was in lower case
+sudo ./svc.sh start
+rm .runner.bak
+Stop-TinyORMActions (after work is done)
+
+- Windows:
+cd E:\actions-runners\tinyorm
+sst-a.ps1
+mv .\.runner .\.runner.bak
+./config.cmd --url https://github.com/silverqx/TinyORM --token <token_from_GH_settings>
+ - Enter the name of runner: [press Enter for MERYDEYE-DEVEL] merydeye-devel (changed name to lower case)
+ - Would you like to run the runner as service? (Y/N) [press Enter for N] y (non-default answer)
+ - User account to use for the service [press Enter for NT AUTHORITY\NETWORK SERVICE] (default answer)
+rm -Force .\.runner.bak
+change Service actions.runner.silverqx-TinyORM.merydeye-devel Startup type to Manual
+ - or Disabled after work is done
+sst-a.ps1 (after work is done)
+
+- pwsh scripts to work with runner services:
+sg-a.ps1  (Get-Service)
+sst-a.ps1 (Stop-Service)
+ss-a.ps1  (Start-Service)
+sr-a.ps1  (Restart-Service)
+
+- Notes:
+ - !!! (don't delete runner's folder) backup .env and .path (Linux only) before deleting
+       whole runner's folder
  - no need to remove services before re-configuring
    - on Linux call this commend before: sudo ./svc.sh stop
    - Linux svc commands: sudo ./svc.sh start/status/stop
@@ -3033,11 +3074,12 @@ https://docs.github.com/en/actions/hosting-your-own-runners/managing-self-hosted
    - Stop-TinyORMActions
 
  - needed manual actions:
-   - deleting build folders eg. after compiler or Qt upgrade
+   - deleting build folders eg. after compiler or Qt upgrade (see Common for both section above)
    - deleting and re-cloning the vcpkg repo
      - the owner must be changed on Windows to NETWORK SERVICE because of git filesystem owner check
-     - isn't needed often, look on this step in actions (vcpkg-linux/windows.yml files) why it's so:
-       vcpkg upgrade repository (latest version)
+     - isn't needed often, look on this step in actions (vcpkg-linux/windows.yml files) why it's so,
+       step name to search: vcpkg upgrade repository (latest version)
+       - i'm simply fetching latest changes and doing hard reset on master
 
 
 Windows Database servers services:
