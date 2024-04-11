@@ -366,7 +366,7 @@ jobs:
         $serviceName = 'MySQL'
 
         Write-Output '::group::Get-Service'
-        $mysqlService = Get-Service MySQL
+        $mysqlService = Get-Service $serviceName
         Write-Output $mysqlService
         Write-Output '::endgroup::'
 
