@@ -19,6 +19,7 @@ on:
     branches:
       - main
       - gh-actions
+      - silverqx-develop
 
 jobs:
 
