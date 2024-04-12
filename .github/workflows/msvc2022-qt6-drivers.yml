@@ -7,6 +7,7 @@
 name: MSVC2022 Qt6.7 TinyDrivers
 
 on:
+  workflow_dispatch:
   push:
     branches:
       - main
@@ -29,14 +30,15 @@ jobs:
 
     strategy:
       matrix:
-        drivers-type: [Shared, Loadable]
+        drivers-type: [Shared]
+        # drivers-type: [Shared, Loadable]
 
         build-type:
           - key: debug
             name: Debug
 
-          - key: release
-            name: Release
+          # - key: release
+          #   name: Release
 
     steps:
     - uses: actions/checkout@v4

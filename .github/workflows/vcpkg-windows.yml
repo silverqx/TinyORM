@@ -1,6 +1,7 @@
 name: Vcpkg Windows
 
 on:
+  workflow_dispatch:
   push:
     branches:
       - main

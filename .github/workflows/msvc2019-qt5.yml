@@ -5,6 +5,7 @@
 name: MSVC2019 Qt5.15
 
 on:
+  workflow_dispatch:
   push:
     branches:
       - main

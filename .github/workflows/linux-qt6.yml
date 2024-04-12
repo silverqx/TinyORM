@@ -15,6 +15,7 @@
 name: Linux GCC/Clang Qt6.2
 
 on:
+  workflow_dispatch:
   push:
     branches:
       - main

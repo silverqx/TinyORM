@@ -11,6 +11,7 @@
 name: MSYS2 UCRT64 GCC/Clang
 
 on:
+  workflow_dispatch:
   push:
     branches:
       - main
