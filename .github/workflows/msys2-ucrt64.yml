@@ -418,7 +418,7 @@ jobs:
         DB_PGSQL_SEARCHPATH: ${{ secrets.DB_PGSQL_SEARCHPATH }}
         DB_PGSQL_USERNAME: ${{ secrets.DB_PGSQL_USERNAME }}
         DB_SQLITE_DATABASE: ${{ env.TinySQLitePath }}
-        TOM_TESTS_ENV: testing
+        TOM_TESTS_ENV: ${{ vars.TOM_TESTS_ENV }}
 
     - name: Tom example test some commands (MySQL) 🚀
       shell: msys2 {0}

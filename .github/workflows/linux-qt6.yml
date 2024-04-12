@@ -622,7 +622,7 @@ jobs:
         DB_PGSQL_SSLMODE: ${{ secrets.DB_PGSQL_SSLMODE }}
         DB_PGSQL_USERNAME: ${{ secrets.DB_PGSQL_USERNAME }}
         DB_SQLITE_DATABASE: ${{ env.TinySQLitePath }}
-        TOM_TESTS_ENV: testing
+        TOM_TESTS_ENV: ${{ vars.TOM_TESTS_ENV }}
 
     - name: Tom example test some commands (MySQL) 🚀
       working-directory: ../TinyORM-builds-cmake/build-${{ matrix.compiler.key }}-cmake-debug/examples/tom
