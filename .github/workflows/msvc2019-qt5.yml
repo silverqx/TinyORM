@@ -501,7 +501,7 @@ jobs:
         DB_MYSQL_HOST: ${{ secrets.DB_MYSQL_HOST }}
         DB_MYSQL_PASSWORD: ${{ secrets.DB_MYSQL_PASSWORD }}
         DB_MYSQL_USERNAME: ${{ secrets.DB_MYSQL_USERNAME }}
-        TOM_EXAMPLE_ENV: testing
+        TOM_EXAMPLE_ENV: ${{ vars.TOM_EXAMPLE_ENV }}
 
     - name: Tom example test some commands (PostgreSQL) 🙌
       working-directory: ../TinyORM-builds-cmake/build-msvc-cmake-debug/examples/tom
@@ -520,7 +520,7 @@ jobs:
         DB_PGSQL_PASSWORD: ${{ secrets.DB_PGSQL_PASSWORD }}
         DB_PGSQL_SEARCHPATH: ${{ secrets.DB_PGSQL_SEARCHPATH }}
         DB_PGSQL_USERNAME: ${{ secrets.DB_PGSQL_USERNAME }}
-        TOM_EXAMPLE_ENV: testing
+        TOM_EXAMPLE_ENV: ${{ vars.TOM_EXAMPLE_ENV }}
 
     - name: Tom example test some commands (SQLite) 🏁
       working-directory: ../TinyORM-builds-cmake/build-msvc-cmake-debug/examples/tom
@@ -534,4 +534,4 @@ jobs:
         .\tom.exe migrate:status --database=tinyorm_tom_sqlite --no-ansi
       env:
         DB_SQLITE_DATABASE: ${{ env.TinySQLitePath }}
-        TOM_EXAMPLE_ENV: testing
+        TOM_EXAMPLE_ENV: ${{ vars.TOM_EXAMPLE_ENV }}
