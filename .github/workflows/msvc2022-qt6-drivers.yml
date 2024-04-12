@@ -31,15 +31,14 @@ jobs:
 
     strategy:
       matrix:
-        drivers-type: [Shared]
-        # drivers-type: [Shared, Loadable]
+        drivers-type: [Shared, Loadable]
 
         build-type:
           - key: debug
             name: Debug
 
-          # - key: release
-          #   name: Release
+          - key: release
+            name: Release
 
     steps:
     - uses: actions/checkout@v4
