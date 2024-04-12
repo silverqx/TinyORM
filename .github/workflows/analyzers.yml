@@ -1,10 +1,17 @@
 name: Clang-Tidy and Clazy Qt5.15/6.7
 
-on:
-  push:
-    branches:
-      - main
-      - gh-actions
+# Invoke manually from the command-line using the gh command, eg.:
+# gh workflow run --ref silverqx-develop
+# The reason for this is that I have 2 self-hosted runners on one PC (one for Linux and other for
+# Windows) and I'm not able to serialize all these workflows and because of that I would have to
+# decrease parallel and it would take hours to finish, so all Linux workflows must be invoked
+# manually.
+on: workflow_dispatch
+# on:
+#   push:
+#     branches:
+#       - main
+#       - gh-actions
 
 concurrency:
   group: tinyorm-linux
@@ -24,9 +31,9 @@ jobs:
             name: Qt5
             version: 5.15.2
 
-          # - key: qt6
-          #   name: Qt6
-          #   version: 6.7.0
+          - key: qt6
+            name: Qt6
+            version: 6.7.0
 
     env:
       TINY_CLANG_TIDY_COMPLETED: false
@@ -45,6 +52,11 @@ jobs:
         [[ "${{ runner.name }}" == 'merydeye-'* ]] && isSelfHostedRunner='true' || isSelfHostedRunner='false'
         echo "TinyIsSelfHostedRunner=$isSelfHostedRunner" >> $GITHUB_ENV
 
+        # Parallel 4 ISN't maximum but because this workflow runs hours I will use parallel 4 to be
+        # able continue working on my PC, also, I decided to use the different strategy, I will use
+        # the on: workflow_dispatch for all Linux GitHub Actions and will invoke these workflows
+        # manually from the command-line using the gh command, eg.:
+        # gh workflow run --ref silverqx-develop
         [[ "$isSelfHostedRunner" == 'true' ]] && parallel=4 || parallel=2
         echo "TinyParallel=$parallel" >> $GITHUB_ENV
 

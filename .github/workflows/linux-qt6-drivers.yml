@@ -6,12 +6,18 @@
 
 name: Linux GCC/Clang Qt6.7 TinyDrivers
 
-on:
-  push:
-    branches:
-      - main
-      - gh-actions
-      - silverqx-develop
+# Invoke manually from the command-line using the gh command, eg.:
+# gh workflow run --ref silverqx-develop
+# The reason for this is that I have 2 self-hosted runners on one PC (one for Linux and other for
+# Windows) and I'm not able to serialize all these workflows and because of that I would have to
+# decrease parallel and it would take hours to finish, so all Linux workflows must be invoked
+# manually.
+on: workflow_dispatch
+# on:
+#   push:
+#     branches:
+#       - main
+#       - gh-actions
 
 concurrency:
   group: tinyorm-linux
@@ -31,6 +37,7 @@ jobs:
     strategy:
       matrix:
         drivers-type: [Shared, Loadable]
+
         build-type:
           - key: debug
             name: Debug
@@ -55,13 +62,19 @@ jobs:
         runnerWorkPath=$(realpath '${{ runner.workspace }}/..')
         echo "TinyRunnerWorkPath=$runnerWorkPath" >> $GITHUB_ENV
 
+        # Parallel gcc to 3 and clang to 8 is maximum what my computer allows but I decided to use
+        # the different strategy, I will use the on: workflow_dispatch for all Linux GitHub Actions
+        # and will invoke these workflows manually from the command-line using the gh command, eg.:
+        # gh workflow run --ref silverqx-develop
+        # --
+        # The description below is Outdated but I leave the comment.
         # For gcc13 with the parallel 4 I saw 15.1GB maximum memory usage from 15.6GB and that is
         # very close to the edge, so I have to decrease it to 3.
         # For clang18 it was ~11.6 from 15.6GB so parallel 8 is ok.
         # I must divide all parallel by 2 because I have 2 self-hosted runners on the same computer
         # and also -1 for reserve to avoid swapping, so for clang: 8 / 2 - 1 = 3 and for gcc:
         # 3 / 2 - 1 = 1.
-        parallel=${{ matrix.compiler.key == 'gcc13' && '1' || '3' }}
+        parallel=${{ matrix.compiler.key == 'gcc13' && '3' || '8' }}
         echo "TinyParallel=$parallel" >> $GITHUB_ENV
 
         tinyormPath=$(realpath ./main)

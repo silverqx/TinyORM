@@ -4,11 +4,18 @@
 
 name: Vcpkg Linux
 
-on:
-  push:
-    branches:
-      - main
-      - gh-actions
+# Invoke manually from the command-line using the gh command, eg.:
+# gh workflow run --ref silverqx-develop
+# The reason for this is that I have 2 self-hosted runners on one PC (one for Linux and other for
+# Windows) and I'm not able to serialize all these workflows and because of that I would have to
+# decrease parallel and it would take hours to finish, so all Linux workflows must be invoked
+# manually.
+on: workflow_dispatch
+# on:
+#   push:
+#     branches:
+#       - main
+#       - gh-actions
 
 concurrency:
   group: tinyorm-linux
@@ -70,6 +77,12 @@ jobs:
         [[ "${{ runner.name }}" == 'merydeye-'* ]] && isSelfHostedRunner='true' || isSelfHostedRunner='false'
         echo "TinyIsSelfHostedRunner=$isSelfHostedRunner" >> $GITHUB_ENV
 
+        # Parallel gcc to 3 and clang to 8 is maximum what my computer allows but I decided to use
+        # the different strategy, I will use the on: workflow_dispatch for all Linux GitHub Actions
+        # and will invoke these workflows manually from the command-line using the gh command, eg.:
+        # gh workflow run --ref silverqx-develop
+        # --
+        # The description below is Outdated but I leave the comment.
         # I must divide all parallel by 2 because I have 2 self-hosted runners on the same computer
         # and also -1 for reserve to avoid swapping, so 10 / 2 - 1 = 4
         [[ "$isSelfHostedRunner" == 'true' ]] && parallel=4 || parallel=2
