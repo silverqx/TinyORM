@@ -22,7 +22,7 @@ jobs:
     name: Clang-Tidy and Clazy
 
     # Self-hosted runner is Ubuntu 22.04
-    runs-on: [self-hosted, linux]
+    runs-on: [ self-hosted, linux ]
 
     strategy:
       matrix:

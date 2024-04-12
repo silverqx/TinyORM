@@ -30,7 +30,7 @@ jobs:
     name: Vcpkg Linux
 
     # Self-hosted runner is Ubuntu 22.04
-    runs-on: [self-hosted, linux]
+    runs-on: [ self-hosted, linux ]
 #    runs-on: ubuntu-22.04
 
     strategy:
@@ -46,7 +46,7 @@ jobs:
 #          - key: qt5
 #            name: Qt5
 #            version: 5.15.2
-#            apt: [qtbase5-dev]
+#            apt: [ qtbase5-dev ]
 #            vcpkg-qt: qt5-base
 #            vcpkg-qt-features: qt5-base[core]
 #            vcpkg-tinyorm: tinyorm-qt5
@@ -55,7 +55,7 @@ jobs:
           - key: qt6
             name: Qt6
             version: 6.7.0
-            apt: [qt6-base-dev, libqt6sql6-sqlite]
+            apt: [ qt6-base-dev, libqt6sql6-sqlite ]
             vcpkg-qt: qtbase
             vcpkg-qt-features: qtbase[core,sql-sqlite]
             vcpkg-tinyorm: tinyorm

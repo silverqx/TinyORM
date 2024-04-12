@@ -27,11 +27,11 @@ jobs:
     name: cmake build / ctest
 
     # Self-hosted runner is Windows 11 (Release Preview channel - 23H2)
-    runs-on: [self-hosted, windows]
+    runs-on: [ self-hosted, windows ]
 
     strategy:
       matrix:
-        drivers-type: [Shared, Loadable]
+        drivers-type: [ Shared, Loadable ]
 
         build-type:
           - key: debug
