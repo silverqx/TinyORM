@@ -1,0 +1,234 @@
+# MySQL
+# ---
+# Forces TLS connections with the caching_sha2_password and certificate validation, also validates
+# issuer  == CN=MySQL_Server_TinyORM_Auto_Generated_CA_Certificate and
+# subject == CN=MySQL_Server_TinyORM_Auto_Generated_Client_Certificate.
+
+name: Linux GCC/Clang Qt6.7 TinyDrivers
+
+on:
+  push:
+    branches:
+      - main
+      - gh-actions
+      - silverqx-develop
+
+concurrency:
+  group: tinyorm
+
+# I will not remove the build folders before a job execution it's not necessary and
+# it will be faster this way. I can still remove them manually if needed or
+# if something goes wrong.
+
+jobs:
+
+  build:
+    name: cmake build / ctest
+
+    # Self-hosted runner is Ubuntu 22.04
+    runs-on: [self-hosted, linux]
+
+    strategy:
+      matrix:
+        drivers-type: [Shared, Loadable]
+        build-type:
+          - key: debug
+            name: Debug
+
+          - key: release
+            name: Release
+
+        compiler:
+          - key: clang18
+            command: clang++-18
+
+          - key: gcc13
+            command: g++-13
+
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        path: main
+
+    - name: TinyORM prepare environment
+      run: |
+        runnerWorkPath=$(realpath '${{ runner.workspace }}/..')
+        echo "TinyRunnerWorkPath=$runnerWorkPath" >> $GITHUB_ENV
+
+        # For gcc13 with the parallel 4 I saw 15.1GB maximum memory usage from 15.6GB and that is
+        # very close to the edge, so I have to decrease it to 3.
+        # For clang18 it was ~11.6 from 15.6GB so parallel 8 is ok.
+        parallel=${{ matrix.compiler.key == 'gcc13' && '3' || '8' }}
+        echo "TinyParallel=$parallel" >> $GITHUB_ENV
+
+        tinyormPath=$(realpath ./main)
+        echo "TinyORMPath=$tinyormPath" >> $GITHUB_ENV
+
+        tinyormBuildName='TinyDrivers-${{ matrix.compiler.key }}-${{ matrix.drivers-type }}-${{ matrix.build-type.key }}'
+        echo "TinyORMBuildName=$tinyormBuildName" >> $GITHUB_ENV
+
+        tinyormBuildFolder="build-$tinyormBuildName"
+        echo "TinyORMBuildFolder=$tinyormBuildFolder" >> $GITHUB_ENV
+
+        tinyormBuildTree="${{ runner.workspace }}/TinyORM-builds-cmake/$tinyormBuildFolder"
+        echo "TinyORMBuildTree=$tinyormBuildTree" >> $GITHUB_ENV
+
+    - name: MySQL service check status
+      run: |
+        mysqladmin --password="$DB_MYSQL_PASSWORD" ping
+      env:
+        DB_MYSQL_PASSWORD: ${{ secrets.DB_MYSQL_PASSWORD_SELF }}
+
+    - name: Ninja install latest version
+      uses: seanmiddleditch/gha-setup-ninja@master
+      with:
+        destination: ${{ env.TinyRunnerWorkPath }}/ninja-build
+
+    # Don't use the default CCACHE_DIR path on self-hosted runners
+    - name: Ccache prepare environment
+      run: |
+        ccacheDirPath='${{ runner.workspace }}/ccache'
+        echo "CCACHE_DIR=$ccacheDirPath" >> $GITHUB_ENV
+
+    # I'm managing the ccache configuration manually on self-hosted runners using the ccache.conf
+    # because it's used by more actions.
+
+    - name: Ccache print version and configuration
+      run: |
+        echo '::group::Print version'
+        ccache --version
+        echo '::endgroup::'
+
+        echo '::group::Print ccache config'
+        ccache --show-config
+        echo '::endgroup::'
+
+    - name: vcpkg prepare environment
+      run: |
+        echo "VCPKG_ROOT=$VCPKG_INSTALLATION_ROOT" >> $GITHUB_ENV
+        echo 'VCPKG_DEFAULT_TRIPLET=x64-linux-dynamic' >> $GITHUB_ENV
+        echo 'VCPKG_MAX_CONCURRENCY=${{ env.TinyParallel }}' >> $GITHUB_ENV
+
+    - name: Qt v6.7.0 prepare environment
+      run: |
+        echo '/opt/Qt/6.7.0/bin' >> $GITHUB_PATH
+        echo "LD_LIBRARY_PATH=/opt/Qt/6.7.0/gcc_64/lib${LD_LIBRARY_PATH:+:}$LD_LIBRARY_PATH" >> $GITHUB_ENV
+
+        # The CMAKE_PREFIX_PATH must be defined on the GitHub Actions, this is some kind of a bug
+        # because the CMake can't find the Qt, but if I export the PATH directly in the step
+        # it works but doesn't work using the GITHUB_PATH like define two line above. 🫤
+        echo "CMAKE_PREFIX_PATH=/opt/Qt/6.7.0/gcc_64${CMAKE_PREFIX_PATH:+:}$CMAKE_PREFIX_PATH" >> $GITHUB_ENV
+
+    - name: CMake print version
+      run: |
+        cmake --version
+
+    - name: TinyORM create build folder (${{ env.TinyORMBuildName }})
+      run: |
+        mkdir --parents '${{ env.TinyORMBuildTree }}'
+
+    - name: Ccache clear statistics
+      run: |
+        ccache --zero-stats
+
+    # BUILD_TREE_DEPLOY isn't needed because CMake forces linker to write absolute paths to exe, but
+    # I enable it anyway to test this feature.
+    # CMAKE_DISABLE_PRECOMPILE_HEADERS=ON is correct as we need to test missing #include-s.
+    - name: TinyORM cmake configure (${{ env.TinyORMBuildName }})
+      working-directory: ${{ env.TinyORMPath }}
+      run: >-
+        cmake
+        -S .
+        -B '${{ env.TinyORMBuildTree }}'
+        -G Ninja
+        -D CMAKE_CXX_COMPILER_LAUNCHER:FILEPATH=/usr/local/bin/ccache
+        -D CMAKE_CXX_COMPILER:FILEPATH='/usr/bin/${{ matrix.compiler.command }}'
+        -D CMAKE_TOOLCHAIN_FILE:FILEPATH="$VCPKG_INSTALLATION_ROOT/scripts/buildsystems/vcpkg.cmake"
+        -D CMAKE_DISABLE_PRECOMPILE_HEADERS:BOOL=ON
+        -D CMAKE_EXPORT_PACKAGE_REGISTRY:BOOL=OFF
+        -D CMAKE_BUILD_TYPE:STRING=${{ matrix.build-type.name }}
+        -D CMAKE_CXX_SCAN_FOR_MODULES:BOOL=OFF
+        -D VCPKG_APPLOCAL_DEPS:BOOL=OFF
+        -D VERBOSE_CONFIGURE:BOOL=ON
+        -D BUILD_TREE_DEPLOY:BOOL=ON
+        -D MATCH_EQUAL_EXPORTED_BUILDTREE:BOOL=ON
+        -D STRICT_MODE:BOOL=ON
+        -D MYSQL_PING:BOOL=ON
+        -D BUILD_TESTS:BOOL=ON
+        -D ORM:BOOL=ON
+        -D TOM:BOOL=ON
+        -D TOM_EXAMPLE:BOOL=ON
+        -D BUILD_DRIVERS:BOOL=ON
+        -D DRIVERS_TYPE:STRING=${{ matrix.drivers-type }}
+
+    - name: TinyORM cmake build ✨ (${{ env.TinyORMBuildName }})
+      working-directory: ${{ env.TinyORMBuildTree }}
+      run: |
+        cmake --build . --target all --parallel ${{ env.TinyParallel }}
+
+    - name: Ccache print statistics
+      run: |
+        ccache --show-stats -vv
+
+    # Used migrate:fresh instead (is safer)
+    - name: Create and Seed tables for unit tests 🎉
+      working-directory: ${{ env.TinyORMBuildTree }}/tests/testdata_tom
+      run: |
+        export LD_LIBRARY_PATH=../..${LD_LIBRARY_PATH:+:}"$LD_LIBRARY_PATH"
+
+        ./tom_testdata migrate:fresh --database=tinyorm_testdata_tom_mysql --seed --no-ansi
+      env:
+        DB_MYSQL_CHARSET: ${{ secrets.DB_MYSQL_CHARSET }}
+        DB_MYSQL_COLLATION: ${{ secrets.DB_MYSQL_COLLATION }}
+        DB_MYSQL_DATABASE: ${{ secrets.DB_MYSQL_DATABASE }}
+        DB_MYSQL_HOST: ${{ secrets.DB_MYSQL_HOST_SELF }}
+        DB_MYSQL_PASSWORD: ${{ secrets.DB_MYSQL_PASSWORD_SELF }}
+        DB_MYSQL_SSL_CA: ${{ secrets.DB_MYSQL_DATA_SELF_LINUX }}/ca.pem
+        DB_MYSQL_SSL_CERT: ${{ secrets.DB_MYSQL_DATA_SELF_LINUX }}/client-cert.pem
+        DB_MYSQL_SSL_KEY: ${{ secrets.DB_MYSQL_DATA_SELF_LINUX }}/client-key.pem
+        DB_MYSQL_SSL_MODE: ${{ secrets.DB_MYSQL_SSL_MODE }}
+        DB_MYSQL_USERNAME: ${{ secrets.DB_MYSQL_USERNAME_SELF }}
+        TOM_TESTDATA_ENV: testing
+
+    - name: TinyORM execute ctest 🔥
+      working-directory: ${{ env.TinyORMBuildTree }}
+      run: |
+        ctest --output-on-failure
+      env:
+        DB_MYSQL_CHARSET: ${{ secrets.DB_MYSQL_CHARSET }}
+        DB_MYSQL_COLLATION: ${{ secrets.DB_MYSQL_COLLATION }}
+        DB_MYSQL_DATABASE: ${{ secrets.DB_MYSQL_DATABASE }}
+        DB_MYSQL_HOST: ${{ secrets.DB_MYSQL_HOST_SELF }}
+        DB_MYSQL_PASSWORD: ${{ secrets.DB_MYSQL_PASSWORD_SELF }}
+        DB_MYSQL_SSL_CA: ${{ secrets.DB_MYSQL_DATA_SELF_LINUX }}/ca.pem
+        DB_MYSQL_SSL_CERT: ${{ secrets.DB_MYSQL_DATA_SELF_LINUX }}/client-cert.pem
+        DB_MYSQL_SSL_KEY: ${{ secrets.DB_MYSQL_DATA_SELF_LINUX }}/client-key.pem
+        DB_MYSQL_SSL_MODE: ${{ secrets.DB_MYSQL_SSL_MODE }}
+        DB_MYSQL_USERNAME: ${{ secrets.DB_MYSQL_USERNAME_SELF }}
+        TOM_TESTS_ENV: testing
+
+    - name: Tom example test some commands (MySQL) 🚀
+      working-directory: ${{ env.TinyORMBuildTree }}/examples/tom
+      run: |
+        export LD_LIBRARY_PATH=../..${LD_LIBRARY_PATH:+:}"$LD_LIBRARY_PATH"
+
+        ./tom migrate:fresh --database=tinyorm_tom_mysql --seed --no-ansi
+        ./tom migrate:uninstall --reset --database=tinyorm_tom_mysql --no-ansi
+        ./tom migrate:install --database=tinyorm_tom_mysql --no-ansi
+        ./tom migrate --database=tinyorm_tom_mysql --seed --no-ansi
+        ./tom migrate:status --database=tinyorm_tom_mysql --no-ansi
+        ./tom migrate:refresh --database=tinyorm_tom_mysql --seed --no-ansi
+        ./tom migrate:reset --database=tinyorm_tom_mysql --no-ansi
+        ./tom migrate:uninstall --database=tinyorm_tom_mysql --no-ansi
+      env:
+        DB_MYSQL_CHARSET: ${{ secrets.DB_MYSQL_CHARSET }}
+        DB_MYSQL_COLLATION: ${{ secrets.DB_MYSQL_COLLATION }}
+        DB_MYSQL_DATABASE: ${{ secrets.DB_MYSQL_DATABASE }}
+        DB_MYSQL_HOST: ${{ secrets.DB_MYSQL_HOST_SELF }}
+        DB_MYSQL_PASSWORD: ${{ secrets.DB_MYSQL_PASSWORD_SELF }}
+        DB_MYSQL_SSL_CA: ${{ secrets.DB_MYSQL_DATA_SELF_LINUX }}/ca.pem
+        DB_MYSQL_SSL_CERT: ${{ secrets.DB_MYSQL_DATA_SELF_LINUX }}/client-cert.pem
+        DB_MYSQL_SSL_KEY: ${{ secrets.DB_MYSQL_DATA_SELF_LINUX }}/client-key.pem
+        DB_MYSQL_SSL_MODE: ${{ secrets.DB_MYSQL_SSL_MODE }}
+        DB_MYSQL_USERNAME: ${{ secrets.DB_MYSQL_USERNAME_SELF }}
+        TOM_EXAMPLE_ENV: ${{ vars.TOM_EXAMPLE_ENV }}
