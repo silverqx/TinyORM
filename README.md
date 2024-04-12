@@ -9,6 +9,8 @@
 [![Clang-Tidy/Clazy Qt5.15/6.7][action-analyzers-qt5-qt6-badge]][action-analyzers-qt5-qt6]
 [![Vcpkg Windows][action-vcpkg-windows-badge]][action-vcpkg-windows]
 [![Vcpkg Linux][action-vcpkg-linux-badge]][action-vcpkg-linux]
+[![MSVC2022 Qt6.7 TinyDrivers][action-msvc2022-qt6-drivers-badge]][action-msvc2022-qt6-drivers]
+[![Linux GCC/Clang Qt6.2 TinyDrivers][action-linux-qt6-drivers-badge]][action-linux-qt6-drivers]
 
 [![TinyORM - www.tinyorm.org][docs-badge]][docs]
 [![License MIT][license-badge]][license]
@@ -134,6 +136,10 @@ The following list fastly summarizes all the `TinyORM` features.
 [action-vcpkg-windows-badge]: https://github.com/silverqx/TinyORM/actions/workflows/vcpkg-windows.yml/badge.svg
 [action-vcpkg-linux]: https://github.com/silverqx/TinyORM/actions/workflows/vcpkg-linux.yml
 [action-vcpkg-linux-badge]: https://github.com/silverqx/TinyORM/actions/workflows/vcpkg-linux.yml/badge.svg
+[action-msvc2022-qt6-drivers]: https://github.com/silverqx/TinyORM/actions/workflows/msvc2022-qt6-drivers.yml
+[action-msvc2022-qt6-drivers-badge]: https://github.com/silverqx/TinyORM/actions/workflows/msvc2022-qt6-drivers.yml/badge.svg
+[action-linux-qt6-drivers]: https://github.com/silverqx/TinyORM/actions/workflows/linux-qt6-drivers.yml
+[action-linux-qt6-drivers-badge]: https://github.com/silverqx/TinyORM/actions/workflows/linux-qt6-drivers.yml/badge.svg
 [docs-badge]: https://img.shields.io/badge/Docs-www.tinyorm.org-blue
 [docs]: https://www.tinyorm.org
 [license-badge]: https://img.shields.io/github/license/silverqx/TinyORM
