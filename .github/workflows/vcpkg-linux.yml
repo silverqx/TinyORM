@@ -19,7 +19,7 @@ jobs:
   vcpkg-linux:
     name: Vcpkg Linux
 
-    # Self-hosted runner is Ubuntu 22.04 too
+    # Self-hosted runner is Ubuntu 22.04
     runs-on: [self-hosted, linux]
 #    runs-on: ubuntu-22.04
 
