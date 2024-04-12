@@ -2959,6 +2959,14 @@ TinyORM C++ Coding Style:
 GitHub actions self-hosted runners:
 -----------------------------------
 
+Invoke Linux on: workflow_dispatch:
+---
+cdt
+gh workflow run
+gh workflow run --ref silverqx-develop
+gh workflow run linux-qt6-drivers.yml --ref silverqx-develop; gh workflow run vcpkg-linux.yml --ref silverqx-develop
+gh workflow run analyzers.yml --ref silverqx-develop
+
 OS settings:
 ---
 
