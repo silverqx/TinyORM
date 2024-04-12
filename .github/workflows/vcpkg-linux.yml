@@ -10,6 +10,9 @@ on:
       - main
       - gh-actions
 
+concurrency:
+  group: tinyorm
+
 # I will not remove the build folders before a job execution it's not necessary and
 # it will be faster this way. I can still remove them manually if needed or
 # if something goes wrong.
@@ -67,7 +70,7 @@ jobs:
         [[ "${{ runner.name }}" == 'merydeye-'* ]] && isSelfHostedRunner='true' || isSelfHostedRunner='false'
         echo "TinyIsSelfHostedRunner=$isSelfHostedRunner" >> $GITHUB_ENV
 
-        [[ "$isSelfHostedRunner" == 'true' ]] && parallel=4 || parallel=2
+        [[ "$isSelfHostedRunner" == 'true' ]] && parallel=10 || parallel=2
         echo "TinyParallel=$parallel" >> $GITHUB_ENV
 
         tinyormPath=$(realpath ./main)
