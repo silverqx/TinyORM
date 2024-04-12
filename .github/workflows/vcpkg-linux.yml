@@ -413,12 +413,15 @@ jobs:
         -D CMAKE_CXX_SCAN_FOR_MODULES:BOOL=OFF
         -D VCPKG_APPLOCAL_DEPS:BOOL=OFF
         -D VERBOSE_CONFIGURE:BOOL=ON
+        -D BUILD_TREE_DEPLOY:BOOL=OFF
         -D MATCH_EQUAL_EXPORTED_BUILDTREE:BOOL=ON
+        -D STRICT_MODE:BOOL=OFF
         -D MYSQL_PING:BOOL=OFF
         -D BUILD_TESTS:BOOL=OFF
         -D ORM:BOOL=ON
         -D TOM:BOOL=OFF
         -D TOM_EXAMPLE:BOOL=OFF
+        -D BUILD_DRIVERS:BOOL=OFF
 
     - name: TinyORM cmake build ✨ (manual-gcc-${{ matrix.build-type.key }})
       working-directory: >-
@@ -512,11 +515,15 @@ jobs:
         -D CMAKE_EXPORT_PACKAGE_REGISTRY:BOOL=OFF
         -D VCPKG_APPLOCAL_DEPS:BOOL=OFF
         -D VERBOSE_CONFIGURE:BOOL=ON
+        -D BUILD_TREE_DEPLOY:BOOL=OFF
+        -D MATCH_EQUAL_EXPORTED_BUILDTREE:BOOL=OFF
+        -D STRICT_MODE:BOOL=OFF
         -D MYSQL_PING:BOOL=OFF
         -D BUILD_TESTS:BOOL=OFF
         -D ORM:BOOL=ON
         -D TOM:BOOL=OFF
         -D TOM_EXAMPLE:BOOL=OFF
+        -D BUILD_DRIVERS:BOOL=OFF
         -D RESOLVE_TINYORM:STRING=FetchContent
 
     # Also install it, to test the deployment process
