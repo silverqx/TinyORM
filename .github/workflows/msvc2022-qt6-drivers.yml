@@ -14,7 +14,7 @@ on:
       - silverqx-develop
 
 concurrency:
-  group: tinyorm
+  group: tinyorm-windows
 
 # I will not remove the build folders before a job execution it's not necessary and
 # it will be faster this way. I can still remove them manually if needed or
@@ -53,7 +53,9 @@ jobs:
         $mysqlInstallationPath = Split-Path -Parent -Path (Split-Path -Parent -Path $mysqlExePath)
         "TinyMySQLInstallationPath=$mysqlInstallationPath" >> $env:GITHUB_ENV
 
-        "TinyParallel=10" >> $env:GITHUB_ENV
+        # I must divide all parallel by 2 because I have 2 self-hosted runners on the same computer
+        # and also -1 for reserve to avoid swapping, so 10 / 2 - 1 = 4
+        "TinyParallel=4" >> $env:GITHUB_ENV
 
         $tinyormPath = Resolve-Path -Path ./main
         "TinyORMPath=$tinyormPath" >> $env:GITHUB_ENV

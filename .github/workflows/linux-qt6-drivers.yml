@@ -14,7 +14,7 @@ on:
       - silverqx-develop
 
 concurrency:
-  group: tinyorm
+  group: tinyorm-linux
 
 # I will not remove the build folders before a job execution it's not necessary and
 # it will be faster this way. I can still remove them manually if needed or
@@ -58,7 +58,10 @@ jobs:
         # For gcc13 with the parallel 4 I saw 15.1GB maximum memory usage from 15.6GB and that is
         # very close to the edge, so I have to decrease it to 3.
         # For clang18 it was ~11.6 from 15.6GB so parallel 8 is ok.
-        parallel=${{ matrix.compiler.key == 'gcc13' && '3' || '8' }}
+        # I must divide all parallel by 2 because I have 2 self-hosted runners on the same computer
+        # and also -1 for reserve to avoid swapping, so for clang: 8 / 2 - 1 = 3 and for gcc:
+        # 3 / 2 - 1 = 1.
+        parallel=${{ matrix.compiler.key == 'gcc13' && '1' || '3' }}
         echo "TinyParallel=$parallel" >> $GITHUB_ENV
 
         tinyormPath=$(realpath ./main)
