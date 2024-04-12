@@ -2,8 +2,8 @@
 
 [![MSVC2019 Qt5.15][action-msvc2019-qt5-badge]][action-msvc2019-qt5]
 [![MSVC2022 Qt6.7][action-msvc2022-qt6-badge]][action-msvc2022-qt6]
-[![Linux GCC/Clang Qt5.15][action-linux-badge-qt5]][action-linux-qt5]
-[![Linux GCC/Clang Qt6.2][action-linux-badge-qt6]][action-linux-qt6]
+[![Linux GCC/Clang Qt5.15][action-linux-qt5-badge]][action-linux-qt5]
+[![Linux GCC/Clang Qt6.2][action-linux-qt6-badge]][action-linux-qt6]
 [![MSYS2 UCRT64 GCC/Clang][action-mingw-badge]][action-mingw]
 [![clang-cl MSVC2022][action-clang-cl-badge]][action-clang-cl]
 [![Clang-Tidy/Clazy Qt5.15/6.7][action-analyzers-qt5-qt6-badge]][action-analyzers-qt5-qt6]
@@ -123,9 +123,9 @@ The following list fastly summarizes all the `TinyORM` features.
 [action-msvc2022-qt6]: https://github.com/silverqx/TinyORM/actions/workflows/msvc2022-qt6.yml
 [action-msvc2022-qt6-badge]: https://github.com/silverqx/TinyORM/actions/workflows/msvc2022-qt6.yml/badge.svg
 [action-linux-qt5]: https://github.com/silverqx/TinyORM/actions/workflows/linux-qt5.yml
-[action-linux-badge-qt5]: https://github.com/silverqx/TinyORM/actions/workflows/linux-qt5.yml/badge.svg
+[action-linux-qt5-badge]: https://github.com/silverqx/TinyORM/actions/workflows/linux-qt5.yml/badge.svg
 [action-linux-qt6]: https://github.com/silverqx/TinyORM/actions/workflows/linux-qt6.yml
-[action-linux-badge-qt6]: https://github.com/silverqx/TinyORM/actions/workflows/linux-qt6.yml/badge.svg
+[action-linux-qt6-badge]: https://github.com/silverqx/TinyORM/actions/workflows/linux-qt6.yml/badge.svg
 [action-mingw]: https://github.com/silverqx/TinyORM/actions/workflows/msys2-ucrt64.yml
 [action-mingw-badge]: https://github.com/silverqx/TinyORM/actions/workflows/msys2-ucrt64.yml/badge.svg
 [action-clang-cl]: https://github.com/silverqx/TinyORM/actions/workflows/clang-cl-qt6.yml
