@@ -628,11 +628,14 @@ jobs:
       run: |
         export LD_LIBRARY_PATH=../..${LD_LIBRARY_PATH:+:}"$LD_LIBRARY_PATH"
 
+        ./tom migrate:fresh --database=tinyorm_tom_mysql --no-ansi
+        ./tom migrate:uninstall --reset --database=tinyorm_tom_mysql --no-ansi
         ./tom migrate:install --database=tinyorm_tom_mysql --no-ansi
-        ./tom migrate:status --database=tinyorm_tom_mysql --no-ansi
         ./tom migrate --database=tinyorm_tom_mysql --seed --no-ansi
-        ./tom migrate:refresh --database=tinyorm_tom_mysql --seed --no-ansi
         ./tom migrate:status --database=tinyorm_tom_mysql --no-ansi
+        ./tom migrate:refresh --database=tinyorm_tom_mysql --seed --no-ansi
+        ./tom migrate:reset --database=tinyorm_tom_mysql --no-ansi
+        ./tom migrate:uninstall --database=tinyorm_tom_mysql --no-ansi
       env:
         DB_MYSQL_CHARSET: ${{ secrets.DB_MYSQL_CHARSET }}
         DB_MYSQL_COLLATION: ${{ secrets.DB_MYSQL_COLLATION }}
@@ -651,11 +654,14 @@ jobs:
       run: |
         export LD_LIBRARY_PATH=../..${LD_LIBRARY_PATH:+:}"$LD_LIBRARY_PATH"
 
+        ./tom migrate:fresh --database=tinyorm_tom_postgres --no-ansi
+        ./tom migrate:uninstall --reset --database=tinyorm_tom_postgres --no-ansi
         ./tom migrate:install --database=tinyorm_tom_postgres --no-ansi
-        ./tom migrate:status --database=tinyorm_tom_postgres --no-ansi
         ./tom migrate --database=tinyorm_tom_postgres --seed --no-ansi
-        ./tom migrate:refresh --database=tinyorm_tom_postgres --seed --no-ansi
         ./tom migrate:status --database=tinyorm_tom_postgres --no-ansi
+        ./tom migrate:refresh --database=tinyorm_tom_postgres --seed --no-ansi
+        ./tom migrate:reset --database=tinyorm_tom_postgres --no-ansi
+        ./tom migrate:uninstall --database=tinyorm_tom_postgres --no-ansi
       env:
         DB_PGSQL_CHARSET: ${{ secrets.DB_PGSQL_CHARSET }}
         DB_PGSQL_DATABASE: ${{ secrets.DB_PGSQL_DATABASE }}
@@ -670,11 +676,14 @@ jobs:
       run: |
         export LD_LIBRARY_PATH=../..${LD_LIBRARY_PATH:+:}"$LD_LIBRARY_PATH"
 
+        ./tom migrate:fresh --database=tinyorm_tom_sqlite --no-ansi
+        ./tom migrate:uninstall --reset --database=tinyorm_tom_sqlite --no-ansi
         ./tom migrate:install --database=tinyorm_tom_sqlite --no-ansi
-        ./tom migrate:status --database=tinyorm_tom_sqlite --no-ansi
         ./tom migrate --database=tinyorm_tom_sqlite --seed --no-ansi
-        ./tom migrate:refresh --database=tinyorm_tom_sqlite --seed --no-ansi
         ./tom migrate:status --database=tinyorm_tom_sqlite --no-ansi
+        ./tom migrate:refresh --database=tinyorm_tom_sqlite --seed --no-ansi
+        ./tom migrate:reset --database=tinyorm_tom_sqlite --no-ansi
+        ./tom migrate:uninstall --database=tinyorm_tom_sqlite --no-ansi
       env:
         DB_SQLITE_DATABASE: ${{ env.TinySQLitePath }}
         TOM_EXAMPLE_ENV: ${{ vars.TOM_EXAMPLE_ENV }}
