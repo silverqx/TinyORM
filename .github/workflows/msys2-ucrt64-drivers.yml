@@ -60,6 +60,7 @@ jobs:
         $runnerWorkPath = Resolve-Path -Path '${{ runner.workspace }}/..'
         "TinyRunnerWorkPath=$runnerWorkPath" >> $env:GITHUB_ENV
 
+        # Don't user more than 3 for GCC, it would need 64GB RAM (no money 💵)
         $parallel = ${{ matrix.compiler.key == 'gcc' && 3 || 9 }}
         "TinyParallel=$parallel" >> $env:GITHUB_ENV
 
