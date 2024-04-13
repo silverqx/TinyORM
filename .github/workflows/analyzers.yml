@@ -24,6 +24,7 @@ jobs:
     # Self-hosted runner is Ubuntu 22.04
     runs-on: [ self-hosted, linux ]
 
+    # Clang Tidy can't be executed on Release builds, it's designed to be run on Debug builds only
     strategy:
       matrix:
         qt:
