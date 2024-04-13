@@ -335,7 +335,7 @@ endfunction()
 function(tiny_build_tree_deployment)
 
     # Nothing to do
-    if(TINY_VCPKG OR NOT MSVC OR NOT BUILD_SHARED_LIBS)
+    if(TINY_VCPKG OR (NOT MSVC AND NOT MINGW) OR NOT BUILD_SHARED_LIBS)
         return()
     endif()
 
@@ -345,15 +345,26 @@ function(tiny_build_tree_deployment)
     if(TINY_BUILD_LOADABLE_DRIVERS OR TINY_BUILD_SHARED_DRIVERS)
         list(APPEND filesToDeploy
             $<TARGET_FILE:${TinyDrivers_target}>
-            $<$<CONFIG:Debug,RelWithDebInfo>:$<TARGET_PDB_FILE:${TinyDrivers_target}>>
         )
     endif()
 
     if(TINY_BUILD_LOADABLE_DRIVERS)
         list(APPEND filesToDeploy
             $<TARGET_FILE:${TinyMySql_target}>
-            $<$<CONFIG:Debug,RelWithDebInfo>:$<TARGET_PDB_FILE:${TinyMySql_target}>>
         )
+    endif()
+
+    # Only MSVC have PDB files
+    if(MSVC)
+        list(APPEND filesToDeploy
+            $<$<CONFIG:Debug,RelWithDebInfo>:$<TARGET_PDB_FILE:${TinyDrivers_target}>>
+        )
+
+        if(TINY_BUILD_LOADABLE_DRIVERS)
+            list(APPEND filesToDeploy
+                $<$<CONFIG:Debug,RelWithDebInfo>:$<TARGET_PDB_FILE:${TinyMySql_target}>>
+            )
+        endif()
     endif()
 
     list(LENGTH filesToDeploy filesToDeployCount)
