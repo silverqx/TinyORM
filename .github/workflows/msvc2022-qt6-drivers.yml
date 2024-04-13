@@ -30,7 +30,7 @@ jobs:
 
     strategy:
       matrix:
-        drivers-type: [ Shared, Loadable ]
+        drivers-type: [ Shared, Loadable, Static ]
 
         build-type:
           - key: debug
