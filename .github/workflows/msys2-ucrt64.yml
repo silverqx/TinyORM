@@ -323,6 +323,11 @@ jobs:
       run: |
         cmake.exe --version
 
+    - name: vcpkg print version
+      shell: msys2 {0}
+      run: |
+        "$VCPKG_INSTALLATION_ROOT/vcpkg.exe" --version
+
     - name: TinyORM create build folder (${{ matrix.compiler.key }}-${{ matrix.qt.key }}-cmake-debug)
       run: >-
         New-Item -Type Directory
