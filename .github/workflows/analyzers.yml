@@ -64,6 +64,15 @@ jobs:
         tinyormPath=$(realpath ./main)
         echo "TinyORMPath=$tinyormPath" >> $GITHUB_ENV
 
+        tinyormBuildName='analyzers-${{ matrix.qt.key }}-clang-Loadable-debug'
+        echo "TinyORMBuildName=$tinyormBuildName" >> $GITHUB_ENV
+
+        tinyormBuildFolder="build-$tinyormBuildName"
+        echo "TinyORMBuildFolder=$tinyormBuildFolder" >> $GITHUB_ENV
+
+        tinyormBuildTree="${{ runner.workspace }}/TinyORM-builds-cmake/$tinyormBuildFolder"
+        echo "TinyORMBuildTree=$tinyormBuildTree" >> $GITHUB_ENV
+
     - name: Test self-hosted runner
       if: env.TinyIsSelfHostedRunner == 'false'
       run: |
@@ -125,12 +134,12 @@ jobs:
         ccache --zero-stats
 
     # CMAKE_DISABLE_PRECOMPILE_HEADERS=ON is correct (I want to disable PCH here)
-    - name: TinyORM cmake configure (analyzer-${{ matrix.qt.key }}-clang-debug)
+    - name: TinyORM cmake configure (${{ env.TinyORMBuildName }})
       working-directory: ${{ env.TinyORMPath }}
       run: >-
         cmake
         -S .
-        -B '${{ runner.workspace }}/TinyORM-builds-cmake/build-analyzer-${{ matrix.qt.key }}-clang-debug'
+        -B '${{ env.TinyORMBuildTree }}'
         -G Ninja
         -D CMAKE_CXX_COMPILER_LAUNCHER:FILEPATH=/usr/local/bin/ccache
         -D CMAKE_CXX_COMPILER:FILEPATH=/usr/bin/clang++-18
@@ -138,23 +147,23 @@ jobs:
         -D CMAKE_DISABLE_PRECOMPILE_HEADERS:BOOL=ON
         -D CMAKE_EXPORT_COMPILE_COMMANDS:BOOL=ON
         -D CMAKE_EXPORT_PACKAGE_REGISTRY:BOOL=OFF
-        -D CMAKE_BUILD_TYPE:STRING=Debug
+        -D CMAKE_BUILD_TYPE:STRING=${{ matrix.build-type.name }}
         -D CMAKE_CXX_SCAN_FOR_MODULES:BOOL=OFF
         -D VCPKG_APPLOCAL_DEPS:BOOL=OFF
         -D VERBOSE_CONFIGURE:BOOL=ON
         -D BUILD_TREE_DEPLOY:BOOL=OFF
         -D MATCH_EQUAL_EXPORTED_BUILDTREE:BOOL=OFF
-        -D STRICT_MODE:BOOL=OFF
+        -D STRICT_MODE:BOOL=ON
         -D MYSQL_PING:BOOL=ON
         -D BUILD_TESTS:BOOL=ON
         -D ORM:BOOL=ON
         -D TOM:BOOL=ON
         -D TOM_EXAMPLE:BOOL=ON
-        -D BUILD_DRIVERS:BOOL=OFF
+        -D BUILD_DRIVERS:BOOL=ON
+        -D DRIVERS_LOADABLE:BOOL=ON
 
-    - name: TinyORM cmake build ✨ (analyzer-${{ matrix.qt.key }}-clang-debug)
-      working-directory: >-
-        ../TinyORM-builds-cmake/build-analyzer-${{ matrix.qt.key }}-clang-debug
+    - name: TinyORM cmake build ✨ (${{ env.TinyORMBuildName }})
+      working-directory: ${{ env.TinyORMBuildTree }}
       run: >-
         cmake --build . --target all --parallel ${{ env.TinyParallel }}
 
@@ -169,7 +178,7 @@ jobs:
 
         run-clang-tidy-18
         -extra-arg-before='-Qunused-arguments'
-        -p='${{ runner.workspace }}/TinyORM-builds-cmake/build-analyzer-${{ matrix.qt.key }}-clang-debug'
+        -p='${{ env.TinyORMBuildTree }}'
         -j ${{ env.TinyParallel }}
         '[\\\/]+(?:drivers|examples|orm|src|tests|tom)[\\\/]+.+?[\\\/]+(?!mocs_)[\w\d_\-\+]+\.cpp$'
 
@@ -208,5 +217,5 @@ jobs:
         -extra-arg-before='-Qunused-arguments' \
         -header-filter='[\\\/]+(drivers|examples|orm|tests|tom)[\\\/]+.+\.(h|hpp)$' \
         -j ${{ env.TinyParallel }} \
-        -p='${{ runner.workspace }}/TinyORM-builds-cmake/build-analyzer-${{ matrix.qt.key }}-clang-debug' \
+        -p='${{ env.TinyORMBuildTree }}' \
         '[\\\/]+(?:drivers|examples|orm|src|tests|tom)[\\\/]+.+?[\\\/]+(?!mocs_)[\w\d_\-\+]+\.cpp$'
