@@ -96,15 +96,16 @@ feature_option(BUILD_TREE_DEPLOY
 
 # TinyDrivers options
 feature_option(BUILD_DRIVERS
-    "Build TinyORM database drivers that replaces QtSql module" OFF
+    "Build TinyDrivers SQL database drivers (core/common code; replaces QtSql module)" OFF
 )
 feature_string_option_dependent(DRIVERS_TYPE
     "Shared;Loadable;Static"
-    "Build TinyDrivers database driver (core/common code)" Shared
+    "How to build and link against TinyDrivers SQL database drivers (supported values: \
+Shared, Loadable, and Static)" Shared
     "BUILD_DRIVERS AND BUILD_SHARED_LIBS" ${TINY_DRIVERS_TYPE_FORCE}
 )
 feature_option_dependent(BUILD_MYSQL_DRIVER
-    "Build TinyORM MySQL database driver" ON
+    "Build TinyDrivers MySQL database driver" ON
     "BUILD_DRIVERS" OFF
 )
 
