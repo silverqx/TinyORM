@@ -231,6 +231,12 @@ macro(tiny_init_tiny_variables)
 to generate find_dependency() calls for the TinyORM package configuration file."
     )
 
+    # Qt Required components for find_package() command
+    set(TinyQtComponentsRequired Core)
+    if(NOT BUILD_DRIVERS)
+        list(APPEND TinyQtComponentsRequired Sql)
+    endif()
+
     # Specifies which TinyDrivers build type is currently being built (for nicer if()-s)
     tiny_init_driver_types()
 

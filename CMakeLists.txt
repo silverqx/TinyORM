@@ -392,9 +392,10 @@ tiny_resource_and_manifest(${TinyOrm_target}
 # Must be before the TinyCommon, to exclude WINVER for the MSYS2 Qt6 builds to avoid:
 # 'WINVER' macro redefined [-Wmacro-redefined]
 # Look also to the TinyCommon for conditional WINVER definition
-find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Core Sql)
+# TinyQtComponentsRequired: Core and Sql (if NOT BUILD_DRIVERS)
+find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS ${TinyQtComponentsRequired})
 tiny_find_package(Qt${QT_VERSION_MAJOR} ${minQtVersion} CONFIG
-    REQUIRED COMPONENTS Core Sql
+    REQUIRED COMPONENTS ${TinyQtComponentsRequired}
 )
 tiny_find_package(range-v3 CONFIG REQUIRED)
 
@@ -409,11 +410,14 @@ tiny_common(${CommonConfig_target}
 target_link_libraries(${TinyOrm_target}
     PUBLIC
         Qt${QT_VERSION_MAJOR}::Core
-        Qt${QT_VERSION_MAJOR}::Sql
         range-v3::range-v3
 )
 
 # Conditional dependencies
+if(NOT BUILD_DRIVERS)
+    target_link_libraries(${TinyOrm_target} PUBLIC Qt${QT_VERSION_MAJOR}::Sql)
+endif()
+
 if(STRICT_MODE)
     target_link_libraries(${TinyOrm_target}
         PUBLIC ${TinyOrm_ns}::${CommonConfig_target}
@@ -511,13 +515,15 @@ set_package_properties(Qt${QT_VERSION_MAJOR}Core
         TYPE REQUIRED
         PURPOSE "Provides QVariant, QString, and Qt containers"
 )
-set_package_properties(Qt${QT_VERSION_MAJOR}Sql
-    PROPERTIES
-        URL "https://doc.qt.io/qt-${QT_VERSION_MAJOR}/qtsql-index.html"
-        DESCRIPTION "Classes for database integration using SQL"
-        TYPE REQUIRED
-        PURPOSE "Provides SQL database layer"
-)
+if(NOT BUILD_DRIVERS)
+    set_package_properties(Qt${QT_VERSION_MAJOR}Sql
+        PROPERTIES
+            URL "https://doc.qt.io/qt-${QT_VERSION_MAJOR}/qtsql-index.html"
+            DESCRIPTION "Classes for database integration using SQL"
+            TYPE REQUIRED
+            PURPOSE "Provides SQL database layer"
+    )
+endif()
 set_package_properties(range-v3
     PROPERTIES
         URL "https://ericniebler.github.io/range-v3/"
