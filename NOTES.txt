@@ -1333,6 +1333,24 @@ the vcpkg install tinyorm[core] first.
 set(PORT_DEBUG ON)
 set(PORT_DEBUG OFF)
 
+Note add a few months later:
+Set HEAD_REF to branch you want to test eg. HEAD_REF silverqx-develop, it doesn't need to update
+the SHA512 (it ignores it). Then call vcpkg install with the --head parameter.
+The head source code is in buildtrees\tinyorm\src\head\ceb68d7bf0-e190df2f70\, every new commit
+creates a new xyz..d7bf0-e190df2f70 folder.
+You don't need to update/increment the "port-version" in vcpkg.json file.
+
+Commands for this new workflow:
+--
+svcpkg_tinyorm_port_qt6_testing.ps1
+cdvp6.ps1
+vcpkg remove tinyorm:x64-windows
+vcpkg remove tinyorm:x64-windows-static
+vcpkg install tinyorm[core,sql-mysql,tom-example]:x64-windows --recurse --editable --head
+vcpkg install tinyorm[core,build-mysql-driver,tom-example]:x64-windows --recurse --editable --head
+vcpkg install tinyorm[core,sql-mysql,tom-example]:x64-windows-static --recurse --editable --head
+vcpkg install tinyorm[core,build-mysql-driver,tom-example]:x64-windows-static --recurse --editable --head
+
 
 Drop all PostgreSQL tables:
 ---------------------------
