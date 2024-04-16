@@ -312,6 +312,10 @@ don't enable the INLINE_CONSTANTS cmake option :/.")
 ports.")
     endif()
 
+    if(TINY_VCPKG AND TINY_BUILD_LOADABLE_DRIVERS)
+        message(FATAL_ERROR "Loadable SQL drivers are not supported in vcpkg ports.")
+    endif()
+
     if(BUILD_DRIVERS AND NOT BUILD_MYSQL_DRIVER)
         message(FATAL_ERROR "If the BUILD_DRIVERS option is enabled, at least one \
 driver implementation must be enabled, please enable BUILD_MYSQL_DRIVER.")
@@ -622,3 +626,75 @@ function(tiny_generate_target_includes out_variable)
     set(${out_variable} ${result} PARENT_SCOPE)
 
 endfunction()
+
+# Set up package properties using the set_package_properties()
+macro(set_packages_properties)
+
+    set_package_properties(QT
+        PROPERTIES
+            URL "https://doc.qt.io/qt-${QT_VERSION_MAJOR}/"
+            DESCRIPTION "Qt is a full development framework"
+            TYPE REQUIRED
+            PURPOSE "Provides SQL database layer by the QtSql module, QVariant, and QString"
+    )
+    set_package_properties(Qt${QT_VERSION_MAJOR}
+        PROPERTIES
+            URL "https://doc.qt.io/qt-${QT_VERSION_MAJOR}/"
+            DESCRIPTION "Qt is a full development framework"
+            TYPE REQUIRED
+            PURPOSE "Provides SQL database layer by the QtSql module, QVariant, and QString"
+    )
+    set_package_properties(Qt${QT_VERSION_MAJOR}Core
+        PROPERTIES
+            URL "https://doc.qt.io/qt-${QT_VERSION_MAJOR}/qtcore-index.html"
+            DESCRIPTION "Core non-graphical classes used by other modules"
+            TYPE REQUIRED
+            PURPOSE "Provides QVariant, QString, and Qt containers"
+    )
+    if(NOT BUILD_DRIVERS)
+        set_package_properties(Qt${QT_VERSION_MAJOR}Sql
+            PROPERTIES
+                URL "https://doc.qt.io/qt-${QT_VERSION_MAJOR}/qtsql-index.html"
+                DESCRIPTION "Classes for database integration using SQL"
+                TYPE REQUIRED
+                PURPOSE "Provides SQL database layer"
+        )
+    endif()
+    set_package_properties(range-v3
+        PROPERTIES
+            URL "https://ericniebler.github.io/range-v3/"
+            DESCRIPTION "Range algorithms, views, and actions for STL"
+            TYPE REQUIRED
+            PURPOSE "Used to have a nice and clear code"
+    )
+    if(MYSQL_PING OR BUILD_MYSQL_DRIVER)
+        if(TINY_VCPKG)
+            set_package_properties(unofficial-libmysql
+                PROPERTIES
+                    URL "https://www.mysql.com"
+                    DESCRIPTION "MySQL client library (vcpkg unofficial)"
+                    TYPE REQUIRED
+                    PURPOSE "Provides low-level access to the MySQL client/server \
+protocol (used by mysql-ping or build-mysql-driver vcpkg features)"
+            )
+        else()
+            set_package_properties(MySQL
+                PROPERTIES
+                    # URL and DESCRIPTION are already set by Find-module Package (FindMySQL.cmake)
+                    TYPE REQUIRED
+                    PURPOSE "Provides low-level access to the MySQL client/server \
+protocol (used by MySqlConnection::pingDatabase() or if BUILD_MYSQL_DRIVER is enabled)"
+            )
+        endif()
+    endif()
+    if(TOM)
+        set_package_properties(tabulate
+            PROPERTIES
+                URL "https://github.com/p-ranav/tabulate"
+                DESCRIPTION "Table Maker for Modern C++"
+                TYPE REQUIRED
+                PURPOSE "Used by the Tom in the migrate:status command"
+        )
+    endif()
+
+endmacro()

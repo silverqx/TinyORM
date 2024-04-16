@@ -143,9 +143,10 @@ function(tiny_install_tinyorm)
     endif()
 
     # TinyORM's package config needs the FindMySQL package module when the MYSQL_PING
-    # is enabled
+    # is enabled, vcpkg doesn't need it because we are using the unofficial-libmysql
+    # package config
     set(tiny_cmake_module_path)
-    if(MYSQL_PING OR BUILD_MYSQL_DRIVER)
+    if(NOT TINY_VCPKG AND (MYSQL_PING OR BUILD_MYSQL_DRIVER))
         install(FILES "cmake/Modules/FindMySQL.cmake"
             DESTINATION "${tiny_config_package_dir}/Modules"
         )
@@ -260,9 +261,10 @@ endfunction()
 function(tiny_export_build_tree)
 
     # TinyORM's package config needs the FindMySQL package module when the MYSQL_PING
-    # is enabled
+    # is enabled, vcpkg doesn't need it because we are using the unofficial-libmysql
+    # package config
     set(tiny_cmake_module_path)
-    if(MYSQL_PING OR BUILD_MYSQL_DRIVER)
+    if(NOT TINY_VCPKG AND (MYSQL_PING OR BUILD_MYSQL_DRIVER))
         file(COPY "cmake/Modules/FindMySQL.cmake" DESTINATION "cmake/Modules")
 
         set(tiny_cmake_module_path "\

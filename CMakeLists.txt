@@ -429,8 +429,7 @@ else()
 endif()
 
 if(MYSQL_PING)
-    tiny_find_package(MySQL REQUIRED)
-    target_link_libraries(${TinyOrm_target} PRIVATE MySQL::MySQL)
+    tiny_find_and_link_mysql(${TinyOrm_target})
 endif()
 
 if(TOM)
@@ -494,60 +493,8 @@ endif()
 # Some info output
 # ---
 
-set_package_properties(QT
-    PROPERTIES
-        URL "https://doc.qt.io/qt-${QT_VERSION_MAJOR}/"
-        DESCRIPTION "Qt is a full development framework"
-        TYPE REQUIRED
-        PURPOSE "Provides SQL database layer by the QtSql module, QVariant, and QString"
-)
-set_package_properties(Qt${QT_VERSION_MAJOR}
-    PROPERTIES
-        URL "https://doc.qt.io/qt-${QT_VERSION_MAJOR}/"
-        DESCRIPTION "Qt is a full development framework"
-        TYPE REQUIRED
-        PURPOSE "Provides SQL database layer by the QtSql module, QVariant, and QString"
-)
-set_package_properties(Qt${QT_VERSION_MAJOR}Core
-    PROPERTIES
-        URL "https://doc.qt.io/qt-${QT_VERSION_MAJOR}/qtcore-index.html"
-        DESCRIPTION "Core non-graphical classes used by other modules"
-        TYPE REQUIRED
-        PURPOSE "Provides QVariant, QString, and Qt containers"
-)
-if(NOT BUILD_DRIVERS)
-    set_package_properties(Qt${QT_VERSION_MAJOR}Sql
-        PROPERTIES
-            URL "https://doc.qt.io/qt-${QT_VERSION_MAJOR}/qtsql-index.html"
-            DESCRIPTION "Classes for database integration using SQL"
-            TYPE REQUIRED
-            PURPOSE "Provides SQL database layer"
-    )
-endif()
-set_package_properties(range-v3
-    PROPERTIES
-        URL "https://ericniebler.github.io/range-v3/"
-        DESCRIPTION "Range algorithms, views, and actions for STL"
-        TYPE REQUIRED
-        PURPOSE "Used to have a nice and clear code"
-)
-if(MYSQL_PING)
-    set_package_properties(MySQL
-        PROPERTIES
-            # URL and DESCRIPTION are already set by Find-module Package (FindMySQL.cmake)
-            TYPE REQUIRED
-            PURPOSE "Provides MySQL ping, enables MySqlConnection::pingDatabase()"
-    )
-endif()
-if(TOM)
-    set_package_properties(tabulate
-        PROPERTIES
-            URL "https://github.com/p-ranav/tabulate"
-            DESCRIPTION "Table Maker for Modern C++"
-            TYPE REQUIRED
-            PURPOSE "Used by the Tom in the migrate:status command"
-    )
-endif()
+# Set up package properties using the set_package_properties()
+set_packages_properties()
 
 if(VERBOSE_CONFIGURE)
     if(NOT TINY_IS_MULTI_CONFIG AND NOT TINY_BUILD_TYPE_LOWER STREQUAL "debug")

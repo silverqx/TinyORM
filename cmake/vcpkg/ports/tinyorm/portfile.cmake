@@ -10,6 +10,7 @@ vcpkg_check_features(
     OUT_FEATURE_OPTIONS FEATURE_OPTIONS
     PREFIX TINYORM
     FEATURES
+        build-mysql-driver   BUILD_MYSQL_DRIVER
         disable-thread-local DISABLE_THREAD_LOCAL
         inline-constants     INLINE_CONSTANTS
         mysql-ping           MYSQL_PING
@@ -19,11 +20,27 @@ vcpkg_check_features(
         tom-example          TOM_EXAMPLE
 )
 
+# Validate input
+if(TINYORM_BUILD_MYSQL_DRIVER AND
+    ("sql-mysql" IN_LIST FEATURES OR "sql-psql" IN_LIST FEATURES OR "sql-sqlite" IN_LIST FEATURES)
+)
+    message(FATAL_ERROR "The build-mysql-driver and sql-mysql, sql-psql, sql-sqlite vcpkg features \
+are mutually exclusive, linking against QtSql and TinyDrivers libraries simultaneously is not \
+allowed.")
+endif()
+
+if(TINYORM_BUILD_MYSQL_DRIVER)
+    list(APPEND FEATURE_OPTIONS -DBUILD_DRIVERS:BOOL=ON)
+endif()
+
 vcpkg_cmake_configure(
     SOURCE_PATH "${SOURCE_PATH}"
     OPTIONS
         -DCMAKE_EXPORT_PACKAGE_REGISTRY:BOOL=OFF
+        # TODO vcpkg ask about this during PR to vcpkg repository silverqx
+        -DCMAKE_CXX_SCAN_FOR_MODULES:BOOL=OFF
         -DBUILD_TESTS:BOOL=OFF
+        -DBUILD_TREE_DEPLOY:BOOL=OFF
         -DTINY_PORT:STRING=${PORT}
         -DTINY_VCPKG:BOOL=ON
         -DVERBOSE_CONFIGURE:BOOL=ON

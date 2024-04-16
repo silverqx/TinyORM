@@ -213,8 +213,7 @@ endif()
 
 # The PRIVATE MySQL dependency is propagated correctly for TinyDrivers lib. static build
 if((TINY_BUILD_SHARED_DRIVERS OR TINY_BUILD_STATIC_DRIVERS) AND BUILD_MYSQL_DRIVER)
-    tiny_find_package(MySQL REQUIRED)
-    target_link_libraries(${TinyDrivers_target} PRIVATE MySQL::MySQL)
+    tiny_find_and_link_mysql(${TinyDrivers_target})
 endif()
 
 # Create the .build_tree tag file
