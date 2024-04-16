@@ -49,7 +49,7 @@
       "description": "Enable ORM-related source code (without it only the query builder is compiled)"
     },
     "sql-mysql": {
-      "description": "Build Qt SQL Driver for MySQL",
+      "description": "Build Qt SQL MySQL database driver (provided by QtSql)",
       "dependencies": [
         {
           "name": "qtbase",
@@ -61,7 +61,7 @@
       ]
     },
     "sql-psql": {
-      "description": "Build Qt SQL Driver for PostgreSQL",
+      "description": "Build Qt SQL PostgreSQL database driver (provided by QtSql)",
       "dependencies": [
         {
           "name": "qtbase",
@@ -73,7 +73,7 @@
       ]
     },
     "sql-sqlite": {
-      "description": "Build Qt SQL Driver for SQLite",
+      "description": "Build Qt SQL SQLite database driver (provided by QtSql)",
       "dependencies": [
         {
           "name": "qtbase",
