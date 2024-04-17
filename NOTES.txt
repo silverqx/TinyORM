@@ -1333,12 +1333,16 @@ the vcpkg install tinyorm[core] first.
 set(PORT_DEBUG ON)
 set(PORT_DEBUG OFF)
 
-Note add a few months later:
+Note added a few months later:
+
 Set HEAD_REF to branch you want to test eg. HEAD_REF silverqx-develop, it doesn't need to update
 the SHA512 (it ignores it). Then call vcpkg install with the --head parameter.
 The head source code is in buildtrees\tinyorm\src\head\ceb68d7bf0-e190df2f70\, every new commit
 creates a new xyz..d7bf0-e190df2f70 folder.
 You don't need to update/increment the "port-version" in vcpkg.json file.
+
+To use head in vcpkg manifest mode define set(VCPKG_USE_HEAD_VERSION ON) before vcpkg_from_github()
+Source: https://github.com/microsoft/vcpkg/pull/16613#issuecomment-799801106
 
 Commands for this new workflow:
 --
