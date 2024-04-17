@@ -334,6 +334,7 @@ list(APPEND CMAKE_MODULE_PATH \"\${CMAKE_CURRENT_LIST_DIR}/cmake/Modules\")")
 endfunction()
 
 # Copy TinyDrivers and TinyMySql libraries to the root of the build tree
+# TODO cmake if TinyORM is built through FetchContent then we need to deploy also the TinyOrm library because TinyORM is built in the FETCHCONTENT_BASE_DIR folder and from there is deployed to the CMAKE_BINARY_DIR, these two folders are totally different so currently we end up only with TinyDrivers libraries deployed with the TinyOrm library; I will have somehow detect that we are in the FetchContent context/mode silverqx
 function(tiny_build_tree_deployment)
 
     # Nothing to do
