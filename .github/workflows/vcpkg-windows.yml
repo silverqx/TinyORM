@@ -37,6 +37,7 @@ jobs:
           # - key: qt5
           #   name: Qt5
           #   version: 5.15.2
+          #   # For vcpkg classic mode (install tests)
           #   vcpkg-qt: qt5-base
           #   vcpkg-qt-features: qt5-base[core]
           #   vcpkg-tinyorm: tinyorm-qt5
@@ -45,6 +46,7 @@ jobs:
           - key: qt6
             name: Qt6
             version: 6.7.0
+            # For vcpkg classic mode (install tests)
             vcpkg-qt: qtbase
             vcpkg-qt-features: qtbase[core,sql-sqlite]
             vcpkg-tinyorm: tinyorm
