@@ -237,6 +237,9 @@ jobs:
     # VcpkgManifest method (no install or deployment)
     # ---
 
+    # I don't need to use set(VCPKG_USE_HEAD_VERSION ON) and set HEAD_REF because I'm using
+    # Edit-VcpkgRefAndHash a few steps above to correctly set RED and SHA512.
+
     - name: 🪡 VcpkgManifest method (no install or deployment) 🪡
       run: |
         echo 'no-op'
