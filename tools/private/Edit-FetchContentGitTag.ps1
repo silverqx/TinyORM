@@ -12,7 +12,7 @@ Param(
 
 Set-StrictMode -Version 3.0
 
-# Used by the vcpkg-Windows.yml and vcpkg-Linux.yml workflow
+# Used by the vcpkg-windows.yml and vcpkg-linux.yml workflow
 
 # Common functions
 # ---

@@ -3,7 +3,7 @@
 Set-StrictMode -Version 3.0
 
 # This file contains some functions for deploy.ps1 script, they were extracted because they are
-# reused in the vcpkg-Windows.yml and vcpkg-Linux.yml GitHub actions.
+# reused in the vcpkg-windows.yml and vcpkg-linux.yml GitHub actions.
 
 # Common functions
 # ---
