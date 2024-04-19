@@ -13,11 +13,6 @@ name: Linux GCC/Clang Qt6.7 TinyDrivers
 # decrease parallel and it would take hours to finish, so all Linux workflows must be invoked
 # manually.
 on: workflow_dispatch
-# on:
-#   push:
-#     branches:
-#       - main
-#       - gh-actions
 
 concurrency:
   group: tinyorm-linux

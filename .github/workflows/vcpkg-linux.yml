@@ -11,11 +11,6 @@ name: Vcpkg Linux
 # decrease parallel and it would take hours to finish, so all Linux workflows must be invoked
 # manually.
 on: workflow_dispatch
-# on:
-#   push:
-#     branches:
-#       - main
-#       - gh-actions
 
 concurrency:
   group: tinyorm-linux
@@ -31,7 +26,6 @@ jobs:
 
     # Self-hosted runner is Ubuntu 22.04
     runs-on: [ self-hosted, linux ]
-#    runs-on: ubuntu-22.04
 
     strategy:
       matrix:
