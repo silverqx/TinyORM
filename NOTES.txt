@@ -1230,7 +1230,7 @@ How the Package Config file works:
  - first info messages are are printed:
    - log messages output can be controlled by the --log-level=<level> and --log-context CMake
      parameters during configure eg.:
-     - --log-level=DEBUG --log-context (full ouput)
+     - --log-level=DEBUG --log-context (full output)
      - --log-level=VERBOSE (only verbose without debug output)
 
    - I have invested a lot of effort to these info messages
