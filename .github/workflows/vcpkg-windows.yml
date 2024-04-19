@@ -516,3 +516,12 @@ jobs:
       env:
         TINYORM_HELLOWORLD_DB_SQLITE_DATABASE: ../../../HelloWorld.sqlite3
 
+    # The reason for this is the concurrency:group: can contain only two in_progress workflows,
+    # one will be in_progress and the second will be queued (waiting until the first finish),
+    # and all others will be canceled.
+    - name: Run vcpkg-windows-drivers.yml workflows
+      working-directory: ${{ env.TinyORMPath }}
+      run: |
+        gh workflow run vcpkg-windows-drivers.yml --ref ${{ github.ref_name }}
+      env:
+        GH_TOKEN: ${{ github.token }}

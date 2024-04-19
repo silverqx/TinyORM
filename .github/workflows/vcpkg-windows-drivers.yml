@@ -1,10 +1,6 @@
 name: Vcpkg Windows TinyDrivers
 
-on:
-  workflow_dispatch:
-  push:
-    branches:
-      - main
+on: workflow_dispatch
 
 concurrency:
   group: tinyorm-windows
@@ -474,4 +470,3 @@ jobs:
         DB_MYSQL_SSL_KEY: ${{ secrets.DB_MYSQL_DATA_SELF_WINDOWS }}/client-key.pem
         DB_MYSQL_SSL_MODE: ${{ secrets.DB_MYSQL_SSL_MODE }}
         DB_MYSQL_USERNAME: ${{ secrets.DB_MYSQL_USERNAME_SELF }}
-

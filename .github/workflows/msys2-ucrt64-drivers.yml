@@ -6,11 +6,7 @@
 
 name: MSYS2 UCRT64 GCC/Clang TinyDrivers
 
-on:
-  workflow_dispatch:
-  push:
-    branches:
-      - main
+on: workflow_dispatch
 
 concurrency:
   group: tinyorm-windows
