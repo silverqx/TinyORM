@@ -73,29 +73,45 @@ $Script:NumberOfSkippedUnitTestsNew = $null
 function Initialize-ScriptVariables {
 
     $Script:BumpsHash = [ordered] @{
-        TinyOrm   = @{type               = [BumpType]::None
-                      versionOld         = $null
-                      versionBumped      = $null
-                      versionOldArray    = $null
-                      versionBumpedArray = $null
-                      versionHpp         = Resolve-Path -Path ./include/orm/version.hpp
-                      macroPrefix        = 'TINYORM_VERSION_'}
+        TinyOrm     = @{type               = [BumpType]::None
+                        versionOld         = $null
+                        versionBumped      = $null
+                        versionOldArray    = $null
+                        versionBumpedArray = $null
+                        versionHpp         = Resolve-Path -Path ./include/orm/version.hpp
+                        macroPrefix        = 'TINYORM_VERSION_'}
 
-        tom       = @{type               = [BumpType]::None
-                      versionOld         = $null
-                      versionBumped      = $null
-                      versionOldArray    = $null
-                      versionBumpedArray = $null
-                      versionHpp         = Resolve-Path -Path ./tom/include/tom/version.hpp
-                      macroPrefix        = 'TINYTOM_VERSION_'}
+        tom         = @{type               = [BumpType]::None
+                        versionOld         = $null
+                        versionBumped      = $null
+                        versionOldArray    = $null
+                        versionBumpedArray = $null
+                        versionHpp         = Resolve-Path -Path ./tom/include/tom/version.hpp
+                        macroPrefix        = 'TINYTOM_VERSION_'}
 
-        TinyUtils = @{type               = [BumpType]::None
-                      versionOld         = $null
-                      versionBumped      = $null
-                      versionOldArray    = $null
-                      versionBumpedArray = $null
-                      versionHpp         = Resolve-Path -Path ./tests/TinyUtils/src/version.hpp
-                      macroPrefix        = 'TINYUTILS_VERSION_'}
+        TinyDrivers = @{type               = [BumpType]::None
+                        versionOld         = $null
+                        versionBumped      = $null
+                        versionOldArray    = $null
+                        versionBumpedArray = $null
+                        versionHpp         = Resolve-Path -Path ./drivers/common/include/orm/drivers/version.hpp
+                        macroPrefix        = 'TINYDRIVERS_VERSION_'}
+
+        TinyMySql   = @{type               = [BumpType]::None
+                        versionOld         = $null
+                        versionBumped      = $null
+                        versionOldArray    = $null
+                        versionBumpedArray = $null
+                        versionHpp         = Resolve-Path -Path ./drivers/mysql/include/orm/drivers/mysql/version.hpp
+                        macroPrefix        = 'TINYMYSQL_VERSION_'}
+
+        TinyUtils   = @{type               = [BumpType]::None
+                        versionOld         = $null
+                        versionBumped      = $null
+                        versionOldArray    = $null
+                        versionBumpedArray = $null
+                        versionHpp         = Resolve-Path -Path ./tests/TinyUtils/src/version.hpp
+                        macroPrefix        = 'TINYUTILS_VERSION_'}
     }
 
     # The number represents the Number of Lines, not the number of occurrences, so eg. 3 means there
@@ -134,6 +150,14 @@ function Initialize-ScriptVariables {
                 (Resolve-Path -Path ./docs/README.mdx) = 1
             }
         }
+
+        TinyDrivers = @{
+            # RegEx: (?<!v)(?<version>0\.0\.0)
+            [VersionType]::VersionOnly = [ordered] @{
+                (Resolve-Path -Path ./tom/src/tom/commands/aboutcommand.cpp) = 1
+            }
+        }
+
         # TinyUtils doesn't have any version numbers in files
     }
 
@@ -500,9 +524,11 @@ function Test-AllBumpsEmpty {
     NewLine
     Write-Progress 'Testing if all bump types are empty...'
 
-    if ($Script:BumpsHash.TinyOrm.type -ne [BumpType]::None -or
-        $Script:BumpsHash.tom.type -ne [BumpType]::None -or
-        $Script:BumpsHash.TinyUtils.type -ne [BumpType]::None
+    if ($Script:BumpsHash.TinyOrm.type     -ne [BumpType]::None -or
+        $Script:BumpsHash.tom.type         -ne [BumpType]::None -or
+        $Script:BumpsHash.TinyDrivers.type -ne [BumpType]::None -or
+        $Script:BumpsHash.TinyMySql.type   -ne [BumpType]::None -or
+        $Script:BumpsHash.TinyUtils.type   -ne [BumpType]::None
     ) {
         return
     }
@@ -561,10 +587,7 @@ function Read-VersionNumbers {
     foreach ($bumpRow in $Script:BumpsHash.GetEnumerator()) {
         $bumpValue = $bumpRow.Value
 
-        # Nothing to bump
-        if ($bumpValue.type -eq [BumpType]::None) {
-            continue
-        }
+        # We always need to read version numbers because of 'Not bumped' section in a commit message
 
         $versionHppPath      = $bumpValue.versionHpp
         $macroPrefix         = $bumpValue.macroPrefix
@@ -592,6 +615,7 @@ function Read-VersionNumbers {
         Test-VersionArrayCount $versionArray.Count $expectedOccurrences $macroPrefix $versionHppPath
 
         $bumpValue.versionOldArray = $versionArray
+        $bumpValue.versionOld      = $versionArray -join '.'
     }
 }
 
@@ -644,7 +668,6 @@ function Update-VersionNumbers {
             $versionBumpedArray[$bumpTypeToReset] = 0
         }
 
-        $bumpValue.versionOld         = $versionOldArray    -join '.'
         $bumpValue.versionBumped      = $versionBumpedArray -join '.'
         $bumpValue.versionBumpedArray = $versionBumpedArray
     }
@@ -692,7 +715,7 @@ function Show-VersionNumbers {
     foreach ($bumpRow in $Script:BumpsHash.GetEnumerator()) {
         $bumpValue = $bumpRow.Value
 
-        $bumpNamePadded = $bumpRow.Name.PadRight(10)
+        $bumpNamePadded = $bumpRow.Name.PadRight(12)
         Write-Host "`e[32m$bumpNamePadded`e[0m" -NoNewline
 
         # Nothing to do, skipped version number
@@ -925,6 +948,21 @@ function Show-DiffSummaryAndApprove {
     Approve-Continue -Exit
 }
 
+# Determine whether TinyOrm version number was bumped (it must always be bumped here)
+function Test-TinyOrmBumped
+{
+    [OutputType([void])]
+    Param()
+
+    Write-Progress 'Testing if the TinyOrm version number was bumped...'
+
+    if ($Script:BumpsHash.TinyOrm.type -ne [BumpType]::None) {
+        return
+    }
+
+    Write-ExitError 'TinyORM version must always be bumped during commit message generation.'
+}
+
 # Put together a commit message based on all bump types and version numbers
 function Get-BumpCommitMessage {
     [OutputType([string])]
@@ -932,46 +970,65 @@ function Get-BumpCommitMessage {
 
     Write-Progress 'Generating the bump commit message and setting it to clipboard...'
 
-    $message = 'bump version to '
+    # Shortcuts
+    $TinyOrmBumpValue     = $Script:BumpsHash.TinyOrm
+    $tomBumpValue         = $Script:BumpsHash.tom
+    $TinyDriversBumpValue = $Script:BumpsHash.TinyDrivers
+    $TinyMySqlBumpValue   = $Script:BumpsHash.TinyMySql
+    $TinyUtilsBumpValue   = $Script:BumpsHash.TinyUtils
 
-    $TinyOrmBumpValue   = $Script:BumpsHash.TinyOrm
-    $tomBumpValue       = $Script:BumpsHash.tom
-    $TinyUtilsBumpValue = $Script:BumpsHash.TinyUtils
-
-    $isTinyOrmBump   = $TinyOrmBumpValue.type   -ne [BumpType]::None
-    $isTomBump       = $tomBumpValue.type       -ne [BumpType]::None
-    $isTinyUtilsBump = $TinyUtilsBumpValue.type -ne [BumpType]::None
+    $isTomBump         = $tomBumpValue.type         -ne [BumpType]::None
+    $isTinyDriversBump = $TinyDriversBumpValue.type -ne [BumpType]::None
+    $isTinyMySqlBump   = $TinyMySqlBumpValue.type   -ne [BumpType]::None
+    $isTinyUtilsBump   = $TinyUtilsBumpValue.type   -ne [BumpType]::None
 
     # TinyOrm
-    if ($isTinyOrmBump) {
-        # The TinyORM here is correct, it's the only one exception when the casing doesn't match,
-        # it should be TinyOrm (because it's a version number for the TinyOrm library) but I take it
-        # as TinyORM project (as whole) version number
-        $message += 'TinyORM v' + $TinyOrmBumpValue.versionBumped
-    }
+    # Determine whether TinyOrm version number was bumped (it must always be bumped here)
+    Test-TinyOrmBumped
+
+    # The TinyORM here is correct, it's the only one exception when the casing doesn't match,
+    # it should be TinyOrm (because it's a version number for the TinyOrm library) but I take it
+    # as TinyORM project (as whole) version number
+    $message = 'TinyORM v' + $TinyOrmBumpValue.versionBumped
 
     # tom
+    # I want to have the tom version number in the commit title if it was bumped
     if ($isTomBump) {
-        # Prepend the and word if necessary
-        if ($isTinyOrmBump) {
-            $message += ' and '
-        }
-        $message += 'tom v' + $tomBumpValue.versionBumped
+        $message += ' and tom v' + $tomBumpValue.versionBumped
     }
 
-    # TinyUtils
-    if ($isTinyUtilsBump) {
-        # Append the TinyUtils version to the commit message description
-        if ($isTinyOrmBump) {
-            $message += "`n`nAlso bumped to TinyUtils v$($TinyUtilsBumpValue.versionBumped)."
+    # All other bumped version numbers
+    if ($isTinyDriversBump -or $isTinyMySqlBump -or $isTinyUtilsBump) {
+        $message += "`n`nAlso bumped to:`n"
+
+        if ($isTinyDriversBump) {
+            $message += "`n - TinyDrivers v" + $TinyDriversBumpValue.versionBumped
         }
-        # Append the TinyUtils version to the commit message title
-        else {
-            # Prepend the and word if necessary
-            if ($isTomBump) {
-                $message += ' and '
-            }
-            $message += 'TinyUtils v' + $TinyUtilsBumpValue.versionBumped
+        if ($isTinyMySqlBump) {
+            $message += "`n - TinyMySql v" + $TinyMySqlBumpValue.versionBumped
+        }
+        if ($isTinyUtilsBump) {
+            $message += "`n - TinyUtils v" + $TinyUtilsBumpValue.versionBumped
+        }
+    }
+
+    # Not bumped (to also print the current versions)
+    if (-not $isTomBump -or -not $isTinyDriversBump -or -not $isTinyMySqlBump -or
+        -not $isTinyUtilsBump
+    ) {
+        $message += "`n`nNot bumped:`n"
+
+        if (-not $isTomBump) {
+            $message += "`n - tom v" + $tomBumpValue.versionOld
+        }
+        if (-not $isTinyDriversBump) {
+            $message += "`n - TinyDrivers v" + $TinyDriversBumpValue.versionOld
+        }
+        if (-not $isTinyMySqlBump) {
+            $message += "`n - TinyMySql v" + $TinyMySqlBumpValue.versionOld
+        }
+        if (-not $isTinyUtilsBump) {
+            $message += "`n - TinyUtils v" + $TinyUtilsBumpValue.versionOld
         }
     }
 
@@ -1507,9 +1564,12 @@ function Invoke-BumpVersions {
     }
 
     # Select which version numbers to bump
-    $Script:BumpsHash.TinyOrm.type   = Read-BumpType -Name TinyOrm
-    $Script:BumpsHash.tom.type       = Read-BumpType -Name tom
-    $Script:BumpsHash.TinyUtils.type = Read-BumpType -Name TinyUtils
+    # TinyOrm must always be first
+    $Script:BumpsHash.TinyOrm.type     = Read-BumpType -Name TinyOrm
+    $Script:BumpsHash.tom.type         = Read-BumpType -Name tom
+    $Script:BumpsHash.TinyDrivers.type = Read-BumpType -Name TinyDrivers
+    $Script:BumpsHash.TinyMySql.type   = Read-BumpType -Name TinyMySql
+    $Script:BumpsHash.TinyUtils.type   = Read-BumpType -Name TinyUtils
 
     Test-AllBumpsEmpty
 
@@ -1668,7 +1728,7 @@ Invoke-MergeDevelopAndDeploy -Message 'Vcpkg ports were updated and deployed suc
     - get the commit message for updated number of unit tests
     - commit
   - allow to skip bumping version numbers
-  - ask which version numbers to bump for the `TinyOrm`, `tom`, and `TinyUtils` projects
+  - ask which version numbers to bump for the `TinyOrm`, `tom`, `TinyDrivers`, `TinyMySql`, and `TinyUtils` projects
   - display bumped version numbers to verify them
   - display bumped tag number to verify it
   - update bumped version numbers in all `version.hpp` files and also in all other files
@@ -1688,11 +1748,12 @@ Invoke-MergeDevelopAndDeploy -Message 'Vcpkg ports were updated and deployed suc
   - prepare the vcpkg commit message
   - do the commit, merge to the `main` branch (ff-only), and push to the `origin/main`
 
-  The deployment is not possible without bumping the TinyOrm library version number because a git
-  tag must be created. That means that bumping only the tom or TinyUtils isn't possible.
-  This used to be possible, but not anymore because git tags are created during deployment.
+  The deployment is not possible without bumping the `TinyOrm` library version number because a git
+  tag must be created. That means that bumping only the `tom`, `TinyDrivers`, `TinyMySql`, or `TinyUtils`
+  isn't possible. This used to be possible, but not anymore because git tags are created during
+  deployment.
 
-  But there is a second mode that allows to completely skip bumping version numbers and in this case
+  There is a second mode that allows to completely skip bumping version numbers and in this case
   is possible to deploy the vcpkg ports only. The vcpkg ports will use the git commit ID
   of the main branch for the vcpkg_from_github REF option in this case. The first approval question
   allows you to select this so-called second mode.
