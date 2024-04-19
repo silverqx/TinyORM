@@ -98,8 +98,17 @@ function Initialize-ScriptVariables {
                       macroPrefix        = 'TINYUTILS_VERSION_'}
     }
 
+    # The number represents the Number of Lines, not the number of occurrences, so eg. 3 means there
+    # are 3 lines with this version number. So if a line contains more occurrences, it counts as 1.
+    # Also, RegEx searches only for x.y.z (Major, Minor, Bugfix), it doesn't matter whether
+    # the version number also contains the Build version number, it will be untouched, RegEx only
+    # replaces Major, Minor, Bugfix version numbers in this case.
+    # Only files defined below are searched, eg. portfile.cmake also contains vX.Y.Z version
+    # numbers, but these will be replaced by another function later.
+    # ❗Don't define here to replace the REF version number in portfile.cmake.
     $Script:VersionLocations = [ordered] @{
         TinyOrm = @{
+            # RegEx: (?<!v)(?<version>0\.0\.0)
             [VersionType]::VersionOnly = [ordered] @{
                 (Resolve-Path -Path ./NOTES.txt)                                = 3
                 (Resolve-Path -Path ./cmake/vcpkg/ports/tinyorm/vcpkg.json)     = 1
@@ -108,6 +117,7 @@ function Initialize-ScriptVariables {
                 (Resolve-Path -Path ./docs/building/migrations.mdx)             = 1
                 (Resolve-Path -Path ./docs/building/tinyorm.mdx)                = 1
             }
+            # RegEx: (?<version>v0\.0\.0)
             [VersionType]::VersionWith_v = [ordered] @{
                 (Resolve-Path -Path ./NOTES.txt)                 = 2
                 (Resolve-Path -Path ./README.md)                 = 2
@@ -117,6 +127,7 @@ function Initialize-ScriptVariables {
         }
 
         tom = @{
+            # RegEx: (?<version>v0\.0\.0)
             [VersionType]::VersionWith_v = [ordered] @{
                 (Resolve-Path -Path ./NOTES.txt)       = 1
                 (Resolve-Path -Path ./README.md)       = 2
@@ -126,8 +137,10 @@ function Initialize-ScriptVariables {
         # TinyUtils doesn't have any version numbers in files
     }
 
+    # RegEx: see $Script:NumberOfUnitTestsRegExTmpl
     $Script:NumberOfUnitTestsLocations = [ordered] @{
-        # The README.md will be read from to populate the current number of unit tests
+        # The README.md will be read from to populate the current number of unit tests using this
+        # RegEx: with __(?<number>\d{1,2} ?\d{3})__ unit
         (Resolve-Path -Path ./README.md)                    = 2
         (Resolve-Path -Path ./docs/features-summary.mdx)    = 1
         (Resolve-Path -Path ./docs/README.mdx)              = 2
