@@ -1707,9 +1707,7 @@ Invoke-MergeDevelopAndDeploy -Message 'Vcpkg ports were updated and deployed suc
   The TinyORM library bumping version numbers and deployment script
 
  .Description
-  The `deploy.ps1` script helps with bumping version numbers for all libraries and deploying these
-  changes to the `main` branch. It also outputs all the available information and allows to confirm
-  or cancel future processing.
+  The `deploy.ps1` script helps with bumping version numbers for all libraries and deploying these changes to the `main` branch. It also outputs all the available information and allows to confirm or cancel future processing.
 
   It does the following actions:
 
@@ -1748,15 +1746,9 @@ Invoke-MergeDevelopAndDeploy -Message 'Vcpkg ports were updated and deployed suc
   - prepare the vcpkg commit message
   - do the commit, merge to the `main` branch (ff-only), and push to the `origin/main`
 
-  The deployment is not possible without bumping the `TinyOrm` library version number because a git
-  tag must be created. That means that bumping only the `tom`, `TinyDrivers`, `TinyMySql`, or `TinyUtils`
-  isn't possible. This used to be possible, but not anymore because git tags are created during
-  deployment.
+  The deployment is not possible without bumping the `TinyOrm` library version number because a git tag must be created. That means that bumping only the `tom`, `TinyDrivers`, `TinyMySql`, or `TinyUtils` isn't possible. This used to be possible, but not anymore because git tags are created during deployment.
 
-  There is a second mode that allows to completely skip bumping version numbers and in this case
-  is possible to deploy the vcpkg ports only. The vcpkg ports will use the git commit ID
-  of the main branch for the vcpkg_from_github REF option in this case. The first approval question
-  allows you to select this so-called second mode.
+  There is a second mode that allows to completely skip bumping version numbers and in this case is possible to deploy the vcpkg ports only. The vcpkg ports will use the git commit ID of the main branch for the vcpkg_from_github REF option in this case. The first approval question allows you to select this so-called second mode.
 
  .INPUTS
   Nothing.

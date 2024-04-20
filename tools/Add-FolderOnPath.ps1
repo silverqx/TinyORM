@@ -313,17 +313,11 @@ process {
   Prepends or appends a path to the defined environment variable.
 
  .Description
-  `Add-FolderOnPath` script prepends or appends a path to the environment variable defined by
-  the Variable parameter or PATH env. variable by default. A path is prepended by default or
-  you can use the Append parameter to append a path. You can also use the LibraryPath parameter
-  that adds a path to the `LD_LIBRARY_PATH` environment variable.
+  `Add-FolderOnPath` script prepends or appends a path to the environment variable defined by the Variable parameter or PATH env. variable by default. A path is prepended by default or you can use the Append parameter to append a path. You can also use the LibraryPath parameter that adds a path to the `LD_LIBRARY_PATH` environment variable.
 
-  The RestorePath parameter restores a current environment to its original state. It tracks all
-  the changed environment variables and after the call, all the changed env. variables will be
-  restored at once.
+  The RestorePath parameter restores a current environment to its original state. It tracks all the changed environment variables and after the call, all the changed env. variables will be restored at once.
 
-  A path will not be added when an environment variable already contains this path. You can
-  add more paths add once and the script also works on Unix systems.
+  A path will not be added when an environment variable already contains this path. You can add more paths add once and the script also works on Unix systems.
 
  .Parameter Path
   Specifies the folder to add on the system path, is pwd by default.
