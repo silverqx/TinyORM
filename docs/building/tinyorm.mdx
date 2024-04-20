@@ -488,9 +488,12 @@ CMake multi-config generators like `Ninja Multi-Config` or `Visual Studio 16 201
 
 | Option Name                       | Default | Description |
 | --------------------------------- | ------- | ----------- |
+| `BUILD_DRIVERS`                   | `OFF`   | Build [`TinyDrivers`](tinydrivers/getting-started.mdx) SQL database drivers (core/common code; replaces QtSql module). |
+| `BUILD_MYSQL_DRIVERS`             | `OFF`   | Build `TinyDrivers` MySQL database driver.<br/><small>Available when: `BUILD_DRIVERS`</small> |
 | `BUILD_SHARED_LIBS`               | `ON`    | Build as a shared/static library. |
 | `BUILD_TESTS`                     | `OFF`   | Build TinyORM unit tests. |
 | `BUILD_TREE_DEPLOY`               | `ON`    | Copy `TinyDrivers` and `TinyMySql` libraries to the root of the build tree. |
+| `DRIVERS_TYPE`                    | `Shared`| How to build and link against `TinyDrivers` SQL database drivers.<br/><small>The `Static` value will be select by default when the `BUILD_SHARED_LIBS` is `OFF`.<br/>Supported values: `Shared`, `Loadable`, and `Static`<br/>Available when: `BUILD_DRIVERS AND BUILD_SHARED_LIBS`</small> |
 | `INLINE_CONSTANTS`                | `OFF`   | Use inline constants instead of extern constants in the `shared build`.<br/>`OFF` is highly recommended for the `shared build`;<br/>is always `ON` for the `static build`.<br/><small>Available when: `BUILD_SHARED_LIBS`</small> |
 | `MSVC_RUNTIME_DYNAMIC`            | `ON`    | Use MSVC dynamic runtime library (`-MD`) instead of static (`-MT`), also considers a Debug configuration (`-MTd`, `-MDd`).<br/><small>Available when: `MSVC AND NOT DEFINED CMAKE_MSVC_RUNTIME_LIBRARY`</small> |
 | `MYSQL_PING`                      | `OFF`   | Enable `Orm::MySqlConnection::pingDatabase()` method. |
@@ -753,6 +756,10 @@ Everything is ready for build, you can press <kbd>Ctrl</kbd>+<kbd>b</kbd> to bui
 
 | `CONFIG` <small>Option Name</small> | Default | Description |
 | ----------------------------------- | ------- | ----------- |
+| `build_loadable_drivers`            | `OFF`   | Build `TinyDrivers` as a shared library and SQL database drivers (eg. `TinyMySql`) as shared libraries ([`Loadable`](tinydrivers/getting-started.mdx#the-loadable-sql-drivers-build) modules) that are loaded at runtime using `LoadLibrary()` on Windows or `dlopen()` on Linux. |
+| `build_mysql_driver`                | `OFF`   | Build `TinyDrivers` MySQL database driver.<br/><small>It's enabled by default when `build_shared_drivers`, `build_loadable_drivers`, or `build_static_drivers` is enabled.<br/>Available when: `build_shared_drivers` OR `build_loadable_drivers` OR `build_static_drivers`</small> |
+| `build_shared_drivers`              | `OFF`   | Build `TinyDrivers` as a [`Shared`](tinydrivers/getting-started.mdx#the-shared-library-build) library. |
+| `build_static_drivers`              | `OFF`   | Build `TinyDrivers` as a [`Static`](tinydrivers/getting-started.mdx#the-static-build) library archive.<br/><small>The `build_static_drivers` `qmake` configuration option will be select by default when the `CONFIG*=staticlib` is enabled.</small> |
 | `build_tests`                       | `OFF`   | Build TinyORM unit tests. |
 | `disable_autoconf`                  | `OFF`   | Disable the [`Auto-configuration`](#auto-configuration-internals) feature <small>(auto-configuration is enabled by default from `TinyORM` `v0.34.0`)</small>. |
 | `disable_dotenv`                    | `OFF`   | Disable the [`tiny_dotenv`](#environment-files) feature <small>(environment files are enabled by default from `TinyORM` `v0.34.0`)</small>. |

@@ -50,7 +50,7 @@ $Script:BumpCommitMessage = $null
 
 # Base template RegEx to match Number of Unit Tests in all files
 $Script:NumberOfUnitTestsRegExTmpl =
-    '(?<before>(?:with|currently|then) (?:__)?)(?<number>{0})(?<after>(?:__)? unit (?:and|tests))'
+    '(?<before>(?:with|currently|then|all) (?:__)?)(?<number>{0})(?<after>(?:__)? unit (?:and|tests))'
 # RegEx to match Number of Unit Tests in all files
 $Script:NumberOfUnitTestsRegEx = $Script:NumberOfUnitTestsRegExTmpl -f '\d{1,2} ?\d{3}'
 # The current Number of unit tests found in the README.md file
@@ -156,6 +156,19 @@ function Initialize-ScriptVariables {
             [VersionType]::VersionOnly = [ordered] @{
                 (Resolve-Path -Path ./tom/src/tom/commands/aboutcommand.cpp) = 1
             }
+            # RegEx: (?<version>v0\.0\.0)
+            [VersionType]::VersionWith_v = [ordered] @{
+                (Resolve-Path -Path ./README.md)       = 2
+                (Resolve-Path -Path ./docs/README.mdx) = 1
+            }
+        }
+
+        TinyMySql = @{
+            # RegEx: (?<version>v0\.0\.0)
+            [VersionType]::VersionWith_v = [ordered] @{
+                (Resolve-Path -Path ./README.md)       = 2
+                (Resolve-Path -Path ./docs/README.mdx) = 1
+            }
         }
 
         # TinyUtils doesn't have any version numbers in files
@@ -165,10 +178,11 @@ function Initialize-ScriptVariables {
     $Script:NumberOfUnitTestsLocations = [ordered] @{
         # The README.md will be read from to populate the current number of unit tests using this
         # RegEx: with __(?<number>\d{1,2} ?\d{3})__ unit
-        (Resolve-Path -Path ./README.md)                    = 2
-        (Resolve-Path -Path ./docs/features-summary.mdx)    = 1
-        (Resolve-Path -Path ./docs/README.mdx)              = 2
-        (Resolve-Path -Path ./docs/supported-compilers.mdx) = 1
+        (Resolve-Path -Path ./README.md)                            = 3
+        (Resolve-Path -Path ./docs/features-summary.mdx)            = 1
+        (Resolve-Path -Path ./docs/README.mdx)                      = 2
+        (Resolve-Path -Path ./docs/supported-compilers.mdx)         = 1
+        (Resolve-Path -Path ./docs/tinydrivers/getting-started.mdx) = 1
     }
 
     $Script:VcpkgHash = [ordered] @{
@@ -877,7 +891,9 @@ function Edit-VersionNumbersInAllFiles {
     Write-Progress 'Editing bumped version numbers in all files...'
 
     foreach ($versionLocationsAll in $Script:VersionLocations.GetEnumerator()) {
-        $bumpValue = $Script:BumpsHash[$versionLocationsAll.Name]
+        $libraryName = $versionLocationsAll.Name
+        $bumpValue = $Script:BumpsHash[$libraryName]
+        $isTinyDriversOrMySql = $libraryName -in @('TinyDrivers', 'TinyMySql')
 
         # Nothing to edit
         if ($bumpValue.type -eq [BumpType]::None) {
@@ -892,6 +908,13 @@ function Edit-VersionNumbersInAllFiles {
             # Prepend the v character to better target the replacement (be more accurate)
             if ($versionType -eq [VersionType]::VersionWith_v) {
                 $versionOld = 'v' + $versionOld
+
+                # Currently, TinyDrivers and TinyMySql have the same version number so replacing
+                # doesn't work, we must be more specific to better target the version number to
+                # search.
+                if ($isTinyDriversOrMySql) {
+                    $regex = "(?<before>$libraryName(?:__ | |-))"
+                }
             }
             # Can't precede the v character
             else {
@@ -917,6 +940,12 @@ function Edit-VersionNumbersInAllFiles {
                 # Prepend the v character (follow/copy the old version number format)
                 if ($versionType -eq [VersionType]::VersionWith_v) {
                     $versionBumped = 'v' + $versionBumped
+
+                    # Also, we must prepend what was there before for this special case (same
+                    # version numbers).
+                    if ($isTinyDriversOrMySql) {
+                        $versionBumped = "`${before}$versionBumped"
+                    }
                 }
 
                 # Replace the old version number with the bumped version number

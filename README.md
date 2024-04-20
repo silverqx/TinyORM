@@ -13,9 +13,11 @@
 [![Linux GCC/Clang Qt6.2 TinyDrivers][action-linux-qt6-drivers-badge]][action-linux-qt6-drivers]
 
 [![TinyORM - www.tinyorm.org][docs-badge]][docs]
-[![License MIT][license-badge]][license]
+[![License MIT][license-badge]][license]<br/>
 [![TinyORM v0.36.5][version-tinyorm-badge]][docs]
 [![tom v0.7.0][version-tom-badge]][docs-tom]
+[![TinyDrivers v0.1.0][version-tinydrivers-badge]][docs-tinydrivers]
+[![TinyMySql v0.1.0][version-tinymysql-badge]][docs-tinydrivers]
 
 TinyORM is a modern ORM library that makes interacting with a database extremely simple.
 
@@ -54,6 +56,18 @@ Whole library is documented as markdown documents:
 - [Sponsors](/docs/sponsors.mdx#sponsors)
 
 ### Features Summary
+
+The following list summarizes all the `TinyDrivers` and `TinyMySql` libraries' features. 🆕
+
+ - both, normal and prepared statements are supported
+ - TLS/SSL connections using [`MYSQL_OPT_SSL_MODE`](https://dev.mysql.com/doc/c-api/en/mysql-options.html) (verify_ca, verify_identity) 🔥
+ - setting many other connection options (see [`mysqldriver_p.cpp`](https://github.com/silverqx/TinyORM/blob/main/drivers/mysql/src/orm/drivers/mysql/mysqldriver_p.cpp))
+ - building and linking against the [`MariaDB Connector/C`](https://mariadb.com/kb/en/mariadb-connector-c/)
+ - transactions
+ - re-using the current `SqlQuery` instance to re-execute the same or another query
+ - detaching from the result set (associated to release memory)
+ - query size, number of affected rows, last inserted ID, testing `isNull()`, ...
+ - all __3269 unit tests__ passed 😮
 
 The following list fastly summarizes all the `TinyORM` features.
 
@@ -143,7 +157,10 @@ The following list fastly summarizes all the `TinyORM` features.
 [docs-badge]: https://img.shields.io/badge/Docs-www.tinyorm.org-blue
 [docs]: https://www.tinyorm.org
 [docs-tom]: https://www.tinyorm.org/database/migrations
+[docs-tinydrivers]: https://www.tinyorm.org/tinydrivers/getting-started
 [license-badge]: https://img.shields.io/github/license/silverqx/TinyORM
 [license]: https://github.com/silverqx/TinyORM/blob/main/LICENSE
 [version-tinyorm-badge]: https://img.shields.io/badge/TinyORM-v0.36.5-blue
 [version-tom-badge]: https://img.shields.io/badge/tom-v0.7.0-blue
+[version-tinydrivers-badge]: https://img.shields.io/badge/TinyDrivers-v0.1.0-blue
+[version-tinymysql-badge]: https://img.shields.io/badge/TinyMySql-v0.1.0-blue

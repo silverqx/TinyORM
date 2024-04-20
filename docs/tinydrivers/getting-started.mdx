@@ -1,0 +1,122 @@
+---
+sidebar_position: 0
+sidebar_label: Getting Started
+description: TinyORM makes interacting with a database extremely simple using raw SQL, a fluent query builder, and the TinyORM. It provides first-party support for four databases MySQL/MariaDB, PostgreSQL, and SQLite.
+keywords: [c++ orm, database, getting started, tinydrivers, sql drivers]
+---
+
+# TinyDrivers: Getting Started
+
+- [Introduction](#introduction)
+- [Differences from QtSql](#differences-from-qtsql)
+  - [Build system](#build-system)
+  - [Performance](#performance)
+- [Internals](#internals)
+
+## Introduction
+
+The `TinyDrivers` library is an underlying SQL database layer for `TinyORM`. It can be used instead of the `QtSql` module, can be <u>__swapped__</u> at compile, and has __1:1__ API as the `QtSql` module. 😮 Swapping is controlled by the `qmake` and `CMake` build system options.
+
+It was designed to drop the `QtSql` dependency while maintaining backward compatibility and without the need for any code changes after the swap.
+
+##### Features summary
+
+ - both, normal and prepared statements are supported
+ - TLS/SSL connections using [`MYSQL_OPT_SSL_MODE`](https://dev.mysql.com/doc/c-api/en/mysql-options.html) (verify_ca, verify_identity) 🔥
+ - setting many other connection options (see [`mysqldriver_p.cpp`](https://github.com/silverqx/TinyORM/blob/main/drivers/mysql/src/orm/drivers/mysql/mysqldriver_p.cpp))
+ - building and linking against the [`MariaDB Connector/C`](https://mariadb.com/kb/en/mariadb-connector-c/)
+ - transactions
+ - re-using the current `SqlQuery` instance to re-execute the same or another query
+ - detaching from the result set (associated to release memory)
+ - query size, number of affected rows, last inserted ID, testing `isNull()`, ...
+ - all __3269 unit tests__ passed 😮
+
+:::info
+Currently, only the `MySQL` database driver is supported and finished.
+:::
+
+:::info
+`TinyDrivers` can only be built with `Qt v6`, `Qt v5.15` isn't supported.
+:::
+
+:::note
+`TinyDrivers` library supports both build systems `qmake` and also `CMake`.
+:::
+
+## Differences from QtSql
+
+`TinyDrivers` doesn't return errors the the same way as the `QtSql` module, which means return a `bool` and if it's the result `false` then obtain the `SqlError` instance using the `lastError()` method from `SqlDatabase` or `SqlQuery` instances. Instead, it throws exceptions, and methods returning a `bool` type to report an error state always return `true`.
+
+##### Removed features
+
+Simulation of prepared statements while calling `SqlQuery::exec(QString)`, this functionality is useless because you can call regular prepared statements using `SqlQuery::prepare(QString)` and then `SqlQuery::exec()`.
+
+##### Missing features
+
+Fetching multiple result sets using `SqlQuery::nextResult()`. Multiple statement queries are supported they will be executed correctly (they can return multiple result sets), but only the first result set can be fetched currently. However, destroying multiple result sets is handled correctly.
+
+### Build system
+
+Another difference is that you can build the `TinyDrivers` and its SQL drivers (`TinyMySql`) in 3 different ways; `Shared`, `Static`, and as a `Loadable` library at runtime using `LoadLibrary()` on Windows or `dlopen()` on Linux.
+
+##### The `Shared` library build
+
+It builds two shared libraries, the `TinyDrivers` shared library that contains the core/common code and the `TinyMySql` shared library that contains `MySQL` implementation. The `TinyOrm` links only against the `TinyDrivers` shared library and `TinyMySql` is a private implementation.
+
+##### The `Static` build
+
+It builds one `TinyDrivers` static archive that contains the core/common code and SQL drivers (`TinyMySql`). This static library is linked or merged into the `TinyOrm` shared or static library (both variants are supported).
+
+##### The `Loadable` SQL drivers build
+
+It builds two shared libraries, the `TinyDrivers` shared library that contains the core/common code and `TinyMySql` shared library (module) that contains `MySQL` implementation that is loaded at runtime using `LoadLibrary()` on Windows or `dlopen()` on Linux. The SQL driver library loader throws an exception if it cannot find this library at runtime.
+
+:::info
+The `TinyMySql` links directly against the `MySQL C connector` (`libmysql` or `mysqlclient` library).
+:::
+
+#### `CMake`/`qmake` build options
+
+##### For `CMake`
+
+See [CMake build options](building/tinyorm.mdx#cmake-build-options), related `CMake` build options are:<br/>[`BUILD_DRIVERS`](building/tinyorm.mdx#BUILD_DRIVERS), [`BUILD_MYSQL_DRIVERS`](building/tinyorm.mdx#BUILD_MYSQL_DRIVERS), and [`DRIVERS_TYPE`](building/tinyorm.mdx#DRIVERS_TYPE)
+
+To control shared and static build use [`BUILD_SHARED_LIBS`](https://cmake.org/cmake/help/latest/variable/BUILD_SHARED_LIBS.html) `CMake` configuration option.
+
+##### For `qmake`
+
+See [qmake build options](building/tinyorm.mdx#qmake-build-options), related `qmake` configuration options are:<br/>[`build_loadable_drivers`](building/tinyorm.mdx#build_loadable_drivers), [`build_mysql_driver`](building/tinyorm.mdx#build_mysql_driver), [`build_shared_drivers`](building/tinyorm.mdx#build_shared_drivers), and [`build_static_drivers`](building/tinyorm.mdx#build_static_drivers)
+
+To control shared and static build use [`staticlib`](https://doc.qt.io/qt/qmake-variable-reference.html#config) `qmake` configuration option.
+
+### Performance
+
+Performance is several milliseconds faster compared to `QtSql` with the `QMYSQL` driver. It was tuned using the `KCacheGrind` to be so. It's ~40ms faster on [`TinyOrmPlayground`](https://github.com/silverqx/TinyOrmPlayground) project with __620__ database queries compiled using `GCC v13.2.1` Debug build on Linux. Similar results can be expected on other platforms but it's not guaranteed.
+
+This means performance is very similar to `QtSql`. There is not much to speed up because `TinyDrivers` code is swift and 90% of the time is spent inside the [`MySQL C API`](https://dev.mysql.com/doc/c-api/en/) because we always have to wait for the database server, especially when creating database connections using eg. [`mysql_real_connect()`](https://dev.mysql.com/doc/c-api/en/mysql-real-connect.html) (this function is king among the slowest functions 😎, which is understandable of course).
+
+## Internals
+
+`TinyDrivers` internal design can be divided into 3 different layers:
+
+ - Driver layer
+ - SQL API layer
+ - Public API layer
+
+The Driver layer is eg. `TinyMySql` library which is responsible for communicating with the underlying database driver (eg. [`MySQL C API`](https://dev.mysql.com/doc/c-api/en/)).
+
+The SQL API layer is a semi-layer that glues everything up and sits between the Public interface API and the Driver layer.
+
+The Public interface API layer are the end classes like `SqlDatabase` and `SqlQuery` which are exposed to the end user.
+
+##### SqlDatabase
+
+One more thing worth mentioning is the `SqlDatabase` API. It's one class that has two responsibilities! All static methods act as the database connection manager and an instance of the `SqlDatabase` represents a physical database connection. It's not a good design because it breaks the [Single Responsibility principle](https://en.wikipedia.org/wiki/Single_responsibility_principle), but it's what it is.
+
+##### Namespaces
+
+`TinyDrivers` classes are defined in the `Orm::Drivers` namespace and `TinyMySql` classes in the `Orm::Drivers::MySql` namespace.
+
+##### Documentation
+
+For all other APIs you can follow the [QtSql documentation](https://doc.qt.io/qt/qtsql-index.html) as the API is 1:1. The exception is of course the build system, `TinyOrm` has its own build system that doesn't follow the `QtSql` module.
