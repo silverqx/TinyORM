@@ -59,7 +59,7 @@ jobs:
         tinyormPath=$(realpath ./main)
         echo "TinyORMPath=$tinyormPath" >> $GITHUB_ENV
 
-        tinyormBuildName='analyzers-${{ matrix.qt.key }}-clang-Loadable-debug'
+        tinyormBuildName='analyzers-${{ matrix.qt.key }}-clang-debug'
         echo "TinyORMBuildName=$tinyormBuildName" >> $GITHUB_ENV
 
         tinyormBuildFolder="build-$tinyormBuildName"
