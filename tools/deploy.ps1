@@ -1018,7 +1018,7 @@ function Get-BumpCommitMessage {
     # The TinyORM here is correct, it's the only one exception when the casing doesn't match,
     # it should be TinyOrm (because it's a version number for the TinyOrm library) but I take it
     # as TinyORM project (as whole) version number
-    $message = 'TinyORM v' + $TinyOrmBumpValue.versionBumped
+    $message = 'bump version to TinyORM v' + $TinyOrmBumpValue.versionBumped
 
     # tom
     # I want to have the tom version number in the commit title if it was bumped
