@@ -554,8 +554,7 @@ int CompleteCommand::printGuessedLongOptions(
         auto optionNames = option.names();
 
         // Some validation
-        const auto optionNamesSize = optionNames.size();
-        Q_ASSERT(optionNamesSize == 1 || optionNamesSize == 2);
+        Q_ASSERT(optionNames.size() == 1 || optionNames.size() == 2);
 
         // Don't show hidden options
         if (option.hidden())
