@@ -1399,9 +1399,6 @@ void tst_Collection_Models::sort() const
     });
 
     auto sorted = albums.sort();
-    for (auto *m : sorted) {
-        qDebug() << m->getKeyCasted();
-    }
     QCOMPARE(typeid (sorted), typeid (ModelsCollection<Album *>));
 
     ModelsCollection<Album> expectedAlbums = Orm::collect<Album>({
@@ -1425,9 +1422,6 @@ void tst_Collection_Models::sortDesc() const
     });
 
     auto sorted = albums.sortDesc();
-    for (auto *m : sorted) {
-        qDebug() << m->getKeyCasted();
-    }
     QCOMPARE(typeid (sorted), typeid (ModelsCollection<Album *>));
 
     ModelsCollection<Album> expectedAlbums = Orm::collect<Album>({
@@ -1734,9 +1728,6 @@ void tst_Collection_Models::stableSort() const
     });
 
     auto sorted = albums.stableSort();
-    for (auto *m : sorted) {
-        qDebug() << m->getKeyCasted();
-    }
     QCOMPARE(typeid (sorted), typeid (ModelsCollection<Album *>));
 
     ModelsCollection<Album> expectedAlbums = Orm::collect<Album>({
@@ -1760,9 +1751,6 @@ void tst_Collection_Models::stableSortDesc() const
     });
 
     auto sorted = albums.stableSortDesc();
-    for (auto *m : sorted) {
-        qDebug() << m->getKeyCasted();
-    }
     QCOMPARE(typeid (sorted), typeid (ModelsCollection<Album *>));
 
     ModelsCollection<Album> expectedAlbums = Orm::collect<Album>({
