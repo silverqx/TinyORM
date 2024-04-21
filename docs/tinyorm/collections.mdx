@@ -15,7 +15,7 @@ keywords: [c++ orm, orm, collections, collection, model, tinyorm]
 
 The `Orm::Tiny::Types::ModelsCollection` is specialized container which provides a fluent, convenient wrapper for working with vector of models. All TinyORM methods that return more than one model result, will return instances of the `ModelsCollection` class, including results retrieved via the `get` method or methods that return relationships like the `getRelation` and `getRelationValue`.
 
-The `ModelsCollection` class extends `QVector<Model>`, so it naturally inherits dozens of methods used to work with the underlying vector of TinyORM models. Be sure to review the [`QList`](https://doc.qt.io/qt-6/qlist.html) documentation to learn all about these helpful methods!
+The `ModelsCollection` class extends `QVector<Model>`, so it naturally inherits dozens of methods used to work with the underlying vector of TinyORM models. Be sure to review the [`QList`](https://doc.qt.io/qt/qlist.html) documentation to learn all about these helpful methods!
 
 :::info
 The `ModelsCollection` template parameter can be declared only with the model type or a model type pointer, it also can't be `const` and can't be a reference. It's constrained using the `DerivedCollectionModel` concept.
@@ -328,7 +328,7 @@ If no model passes a given truth test then the value of the second `defaultModel
          {"votes", NullVariant::ULongLong()}}
     */
 
-You can also call all `first` overloads provided by the [`QList::first`](https://doc.qt.io/qt-6/qlist.html#first).
+You can also call all `first` overloads provided by the [`QList::first`](https://doc.qt.io/qt/qlist.html#first).
 
 #### `firstWhere()` {#method-first-where}
 
@@ -434,7 +434,7 @@ If no model passes a given truth test then the value of the second `defaultModel
          {"votes", NullVariant::ULongLong()}}
     */
 
-You can also call all `last` overloads provided by the [`QList::last`](https://doc.qt.io/qt-6/qlist.html#last).
+You can also call all `last` overloads provided by the [`QList::last`](https://doc.qt.io/qt/qlist.html#last).
 
 #### `load()` {#method-load}
 
@@ -820,21 +820,21 @@ The [`toBase`](#method-tobase) is an alias to the `all` method.
 
 #### `toJson()` {#method-tojson}
 
-The `toJson` method converts the collection of models with all nested relations into a JSON serialized [`QByteArray`](https://doc.qt.io/qt-6/qbytearray.html).
+The `toJson` method converts the collection of models with all nested relations into a JSON serialized [`QByteArray`](https://doc.qt.io/qt/qbytearray.html).
 
 It returns an empty array for empty `many` type relations and `null` for empty `one` type relations.
 
 :::info
-The `toJson` method accepts the [`QJsonDocument::JsonFormat`](https://doc.qt.io/qt-6/qjsondocument.html#JsonFormat-enum), possible values are `QJsonDocument::Indented` or `QJsonDocument::Compact`.
+The `toJson` method accepts the [`QJsonDocument::JsonFormat`](https://doc.qt.io/qt/qjsondocument.html#JsonFormat-enum), possible values are `QJsonDocument::Indented` or `QJsonDocument::Compact`.
 :::
 
 #### `toJsonArray()` {#method-tojsonarray}
 
-The `toJsonArray` method converts the collection of models with all nested relations into a [`QJsonArray`](https://doc.qt.io/qt-6/qjsonarray.html).
+The `toJsonArray` method converts the collection of models with all nested relations into a [`QJsonArray`](https://doc.qt.io/qt/qjsonarray.html).
 
 #### `toJsonDocument()` {#method-tojsondocument}
 
-The `toJsonDocument` method converts the collection of models with all nested relations into a [`QJsonDocument`](https://doc.qt.io/qt-6/qjsondocument.html).
+The `toJsonDocument` method converts the collection of models with all nested relations into a [`QJsonDocument`](https://doc.qt.io/qt/qjsondocument.html).
 
 #### `toMap()` {#method-tomap}
 
@@ -1012,7 +1012,7 @@ The `value` method also accepts the second `defaultValue` argument, which will b
 
     // 0
 
-You can also call all `value` overloads provided by the [`QList::value`](https://doc.qt.io/qt-6/qlist.html#value).
+You can also call all `value` overloads provided by the [`QList::value`](https://doc.qt.io/qt/qlist.html#value).
 
 #### `where()` {#method-where}
 

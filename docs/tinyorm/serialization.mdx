@@ -51,7 +51,7 @@ You may also convert entire [collections](tinyorm/collections.mdx) of models to 
 
 ### Serializing To JSON
 
-To convert a model to JSON, you should use the `toJson` method. Like `toVector` or `toMap`, the `toJson` method is recursive, so all attributes and relations will be converted to JSON. You may also specify any JSON encoding options that are supported by [QJsonDocument::toJson](https://doc.qt.io/qt-6/qjsondocument.html#toJson):
+To convert a model to JSON, you should use the `toJson` method. Like `toVector` or `toMap`, the `toJson` method is recursive, so all attributes and relations will be converted to JSON. You may also specify any JSON encoding options that are supported by [QJsonDocument::toJson](https://doc.qt.io/qt/qjsondocument.html#toJson):
 
     using Models::User;
 
@@ -68,7 +68,7 @@ You may also convert entire [collections](tinyorm/collections.mdx) of models to 
 
     return users.toJson();
 
-You can also convert models to the [`QJsonObject`](https://doc.qt.io/qt-6/qjsonobject.html) and [`QJsonDocument`](https://doc.qt.io/qt-6/qjsondocument.html) using the `toJsonArray` and `toJsonDocument` methods and collection of models to [`QJsonArray`](https://doc.qt.io/qt-6/qjsonarray.html) and [`QJsonDocument`](https://doc.qt.io/qt-6/qjsondocument.html) using the [`toJsonArray`](tinyorm/collections.mdx#method-tojsonarray) and [`toJsonDocument`](tinyorm/collections.mdx#method-tojsondocument) methods.
+You can also convert models to the [`QJsonObject`](https://doc.qt.io/qt/qjsonobject.html) and [`QJsonDocument`](https://doc.qt.io/qt/qjsondocument.html) using the `toJsonArray` and `toJsonDocument` methods and collection of models to [`QJsonArray`](https://doc.qt.io/qt/qjsonarray.html) and [`QJsonDocument`](https://doc.qt.io/qt/qjsondocument.html) using the [`toJsonArray`](tinyorm/collections.mdx#method-tojsonarray) and [`toJsonDocument`](tinyorm/collections.mdx#method-tojsondocument) methods.
 
 #### Relationships
 
