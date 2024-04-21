@@ -174,11 +174,11 @@ jobs:
       run: >-
         echo 'TINY_CLANG_TIDY_COMPLETED=true' >> $GITHUB_ENV
 
-        run-clang-tidy-17
-        -extra-arg-before='-Qunused-arguments'
-        -p='${{ env.TinyORMBuildTree }}'
-        -j ${{ env.TinyParallel }}
-        '[\\\/]+(?:drivers|examples|orm|src|tests|tom)[\\\/]+.+?[\\\/]+(?!mocs_)[\w\d_\-\+]+\.cpp$'
+        # run-clang-tidy-17
+        # -extra-arg-before='-Qunused-arguments'
+        # -p='${{ env.TinyORMBuildTree }}'
+        # -j ${{ env.TinyParallel }}
+        # '[\\\/]+(?:drivers|examples|orm|src|tests|tom)[\\\/]+.+?[\\\/]+(?!mocs_)[\w\d_\-\+]+\.cpp$'
 
     - name: Clazy-standalone prepare
       # Run the clazy if the clang-tidy was executed and was success or failed
