@@ -53,7 +53,7 @@ jobs:
         # the on: workflow_dispatch for all Linux GitHub Actions and will invoke these workflows
         # manually from the command-line using the gh command, eg.:
         # gh workflow run --ref silverqx-develop
-        [[ "$isSelfHostedRunner" == 'true' ]] && parallel=4 || parallel=2
+        [[ "$isSelfHostedRunner" == 'true' ]] && parallel=8 || parallel=2
         echo "TinyParallel=$parallel" >> $GITHUB_ENV
 
         tinyormPath=$(realpath ./main)
