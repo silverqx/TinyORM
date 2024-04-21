@@ -475,6 +475,7 @@ jobs:
     # one will be in_progress and the second will be queued (waiting until the first finish),
     # and all others will be canceled.
     - name: Run msys2-ucrt64-drivers.yml workflows
+      if: matrix.build-type.key == 'debug' && matrix.qt.key == 'qt6'
       working-directory: ${{ env.TinyORMPath }}
       run: |
         gh workflow run msys2-ucrt64-drivers.yml --ref ${{ github.ref_name }}

@@ -276,6 +276,7 @@ jobs:
     # one will be in_progress and the second will be queued (waiting until the first finish),
     # and all others will be canceled.
     - name: Run vcpkg-windows.yml workflows
+      if: matrix.drivers-type == 'Shared' && matrix.build-type.key == 'debug'
       working-directory: ${{ env.TinyORMPath }}
       run: |
         gh workflow run vcpkg-windows.yml --ref ${{ github.ref_name }}

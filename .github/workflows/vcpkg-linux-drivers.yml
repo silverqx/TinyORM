@@ -455,6 +455,7 @@ jobs:
     # one will be in_progress and the second will be queued (waiting until the first finish),
     # and all others will be canceled.
     - name: Run analyzers.yml workflows
+      if: matrix.build-type.key == 'debug' && matrix.qt.key == 'qt6'
       working-directory: ${{ env.TinyORMPath }}
       run: |
         gh workflow run analyzers.yml --ref ${{ github.ref_name }}
