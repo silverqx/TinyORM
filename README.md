@@ -15,7 +15,7 @@
 [![TinyORM - www.tinyorm.org][docs-badge]][docs]
 [![License MIT][license-badge]][license]
 [![TinyORM v0.36.5][version-tinyorm-badge]][docs]
-[![tom v0.7.0][version-tom-badge]][docs]
+[![tom v0.7.0][version-tom-badge]][docs-tom]
 
 TinyORM is a modern ORM library that makes interacting with a database extremely simple.
 
@@ -142,6 +142,7 @@ The following list fastly summarizes all the `TinyORM` features.
 [action-linux-qt6-drivers-badge]: https://github.com/silverqx/TinyORM/actions/workflows/linux-qt6-drivers.yml/badge.svg
 [docs-badge]: https://img.shields.io/badge/Docs-www.tinyorm.org-blue
 [docs]: https://www.tinyorm.org
+[docs-tom]: https://www.tinyorm.org/database/migrations
 [license-badge]: https://img.shields.io/github/license/silverqx/TinyORM
 [license]: https://github.com/silverqx/TinyORM/blob/main/LICENSE
 [version-tinyorm-badge]: https://img.shields.io/badge/TinyORM-v0.36.5-blue
