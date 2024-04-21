@@ -248,7 +248,9 @@ jobs:
     # one will be in_progress and the second will be queued (waiting until the first finish),
     # and all others will be canceled.
     - name: Run vcpkg-linux.yml workflows
-      if: matrix.build-type.key == 'debug' && matrix.compiler.key == 'clang18'
+      if: >-
+        matrix.drivers-type == 'Shared' && matrix.build-type.key == 'debug' &&
+        matrix.compiler.key == 'clang18'
       working-directory: ${{ env.TinyORMPath }}
       run: |
         gh workflow run vcpkg-linux.yml --ref ${{ github.ref_name }}
