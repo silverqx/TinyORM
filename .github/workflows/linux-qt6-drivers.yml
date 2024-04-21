@@ -247,10 +247,9 @@ jobs:
     # The reason for this is the concurrency:group: can contain only two in_progress workflows,
     # one will be in_progress and the second will be queued (waiting until the first finish),
     # and all others will be canceled.
-    - name: Run vcpkg-linux/-drivers.yml workflows
+    - name: Run vcpkg-linux.yml workflows
       working-directory: ${{ env.TinyORMPath }}
       run: |
         gh workflow run vcpkg-linux.yml --ref ${{ github.ref_name }}
-        gh workflow run vcpkg-linux-drivers.yml --ref ${{ github.ref_name }}
       env:
         GH_TOKEN: ${{ github.token }}

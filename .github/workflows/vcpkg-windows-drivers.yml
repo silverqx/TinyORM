@@ -470,3 +470,13 @@ jobs:
         DB_MYSQL_SSL_KEY: ${{ secrets.DB_MYSQL_DATA_SELF_WINDOWS }}/client-key.pem
         DB_MYSQL_SSL_MODE: ${{ secrets.DB_MYSQL_SSL_MODE }}
         DB_MYSQL_USERNAME: ${{ secrets.DB_MYSQL_USERNAME_SELF }}
+
+    # The reason for this is the concurrency:group: can contain only two in_progress workflows,
+    # one will be in_progress and the second will be queued (waiting until the first finish),
+    # and all others will be canceled.
+    - name: Run msys2-ucrt64-drivers.yml workflows
+      working-directory: ${{ env.TinyORMPath }}
+      run: |
+        gh workflow run msys2-ucrt64-drivers.yml --ref ${{ github.ref_name }}
+      env:
+        GH_TOKEN: ${{ github.token }}
