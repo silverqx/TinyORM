@@ -3037,6 +3037,10 @@ Searching packages:
 ./MaintenanceTool --type package --filter-packages "DisplayName=Desktop, Version=6.7.0" search qt.qt6.670.linux_gcc_64
 ./MaintenanceTool --type package --filter-packages "DisplayName=Desktop" search qt.qt6.670.linux_gcc_64
 
+Install packages:
+./MaintenanceTool install qt.qt5.5152.gcc_64
+./MaintenanceTool --mirror https://qt-mirror.dannhauer.de install qt.qt5.5152.gcc_64
+
 Removing packages:
 ./MaintenanceTool remove qt.tools.cmake qt.tools.ninja qt.tools.qtcreator_gui qt.tools.qtdesignstudio
 
