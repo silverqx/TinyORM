@@ -129,9 +129,12 @@ jobs:
         ccache --zero-stats
 
     # CMAKE_DISABLE_PRECOMPILE_HEADERS=OFF is correct (already tested in other workflows)
+    # TinyDrivers are disabled for Qt v5.15
     - name: TinyORM cmake configure (${{ env.TinyORMBuildName }})
       working-directory: ${{ env.TinyORMPath }}
       run: >-
+        [[ '${{ matrix.qt.key }}' == 'qt6' ]] && tinyBuildDrivers='ON' || tinyBuildDrivers='OFF'
+
         cmake
         -S .
         -B '${{ env.TinyORMBuildTree }}'
@@ -154,7 +157,7 @@ jobs:
         -D ORM:BOOL=ON
         -D TOM:BOOL=ON
         -D TOM_EXAMPLE:BOOL=ON
-        -D BUILD_DRIVERS:BOOL=ON
+        -D BUILD_DRIVERS:BOOL=$tinyBuildDrivers
         -D DRIVERS_LOADABLE:BOOL=ON
 
     - name: TinyORM cmake build ✨ (${{ env.TinyORMBuildName }})
