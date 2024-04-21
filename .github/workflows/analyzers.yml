@@ -181,6 +181,8 @@ jobs:
         '[\\\/]+(?:drivers|examples|orm|src|tests|tom)[\\\/]+.+?[\\\/]+(?!mocs_)[\w\d_\-\+]+\.cpp$'
 
     - name: Clazy-standalone prepare
+      # Run the clazy if the clang-tidy was executed and was success or failed
+      if: env.TINY_CLANG_TIDY_COMPLETED == 'true' && (success() || failure())
       working-directory: ${{ env.TinyORMPath }}
       run: |
         chmod +x ./tools/run-clazy-standalone.py
