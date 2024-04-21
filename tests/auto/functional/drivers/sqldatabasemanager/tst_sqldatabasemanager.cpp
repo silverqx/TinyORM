@@ -14,7 +14,6 @@ library.
 #endif
 
 #include "orm/constants.hpp"
-#include "orm/utils/configuration.hpp"
 #include "orm/utils/type.hpp"
 
 #include "orm/drivers/exceptions/invalidargumenterror.hpp"
@@ -27,24 +26,12 @@ library.
 using namespace Qt::StringLiterals; /* NOLINT(google-build-using-namespace) */
 
 using Orm::Constants::EMPTY;
-using Orm::Constants::H127001;
 using Orm::Constants::NOSPACE;
-using Orm::Constants::P5432;
 using Orm::Constants::QMYSQL;
 using Orm::Constants::SEMICOLON;
-using Orm::Constants::UTF8MB4;
-using Orm::Constants::UTF8MB40900aici;
-using Orm::Constants::charset_;
-using Orm::Constants::collation_;
-using Orm::Constants::database_;
 using Orm::Constants::driver_;
 using Orm::Constants::host_;
-using Orm::Constants::options_;
-using Orm::Constants::password_;
-using Orm::Constants::port_;
-using Orm::Constants::username_;
 
-using ConfigUtils = Orm::Utils::Configuration;
 using TypeUtils = Orm::Utils::Type;
 
 using Orm::Drivers::CursorPosition;
