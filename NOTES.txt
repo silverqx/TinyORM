@@ -1355,6 +1355,12 @@ vcpkg install tinyorm[core,build-mysql-driver,tom-example]:x64-windows --recurse
 vcpkg install tinyorm[core,sql-mysql,tom-example]:x64-windows-static --recurse --editable --head
 vcpkg install tinyorm[core,build-mysql-driver,tom-example]:x64-windows-static --recurse --editable --head
 
+vcpkg install libmysql libmysql:x64-windows-static
+vcpkg install qtbase[core] qtbase[core]:x64-windows-static --recurse
+vcpkg install qtbase[core,sql-mysql] qtbase[core,sql-mysql]:x64-windows-static --recurse
+vcpkg remove --recurse vcpkg-cmake vcpkg-cmake-config zlib boost-uninstall libmysql qtbase
+vcpkg remove --recurse vcpkg-cmake:x64-windows-static vcpkg-cmake-config:x64-windows-static zlib:x64-windows-static boost-uninstall:x64-windows-static libmysql:x64-windows-static qtbase:x64-windows-static
+
 
 Drop all PostgreSQL tables:
 ---------------------------
