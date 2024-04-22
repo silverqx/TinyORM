@@ -20,7 +20,7 @@ vcpkg_check_features(
         tom-example          TOM_EXAMPLE
 )
 
-# Validate input
+# Validate input feature options
 if(TINYORM_BUILD_MYSQL_DRIVER AND
     ("sql-mysql" IN_LIST FEATURES OR "sql-psql" IN_LIST FEATURES OR "sql-sqlite" IN_LIST FEATURES)
 )
