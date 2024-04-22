@@ -128,7 +128,11 @@ function Edit-VcpkgRefAndHash {
         [string[]] $PortFile,
 
         [Parameter(HelpMessage = 'Specifies whether to enable retries for the Invoke-WebRequest.')]
-        [switch] $EnableRetries = $false
+        [switch] $EnableRetries = $false,
+
+        [Parameter(HelpMessage = 'Specifies whether to use "v${VERSION}" for the REF option ' +
+            'in the portfile.cmake.')]
+        [switch] $RefAsVersionVariable
     )
 
     Write-Progress "Obtaining the origin/$Ref archive hash (SHA512)..."
@@ -152,7 +156,8 @@ function Edit-VcpkgRefAndHash {
     Write-Output $vcpkgHash
 
     foreach ($portfilePath in $PortFile) {
-        $regexRef = '^(?<ref>    REF )(?:[0-9a-f]{40}|v\d+\.\d+\.\d+|[\w\d-_\/]+)$'
+        # Escaping only the first { character is enough
+        $regexRef = '^(?<ref>    REF )(?:[0-9a-f]{40}|v\d+\.\d+\.\d+|[\w\d-_\/]+|"v\$\{VERSION}")$'
         $regexHash = '^(?<sha512>    SHA512 )(?:[0-9a-f]{128})$'
         $regexMatch = "$regexRef|$regexHash"
 
@@ -164,6 +169,12 @@ function Edit-VcpkgRefAndHash {
         $expectedOccurrences = 2
         Test-RefAndHashLinesCountForVcpkg `
             $matchedLines.Count $expectedOccurrences $regexMatch $portfilePath
+
+        # The REF will be whatever is defined in the version/-semver field in the vcpkg.json file
+        # Used when the tag version was defined/created during deploy
+        if ($RefAsVersionVariable) {
+            $Ref = '"v${VERSION}"'
+        }
 
         # Replace the old REF AND SHA512 values with the new values in the portfile.cmake
         $fileContentReplaced = $fileContent -creplace $regexRef,  "`${ref}$Ref" `

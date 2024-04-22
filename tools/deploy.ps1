@@ -1684,7 +1684,8 @@ function Invoke-UpdateVcpkgPorts {
     # Collect all portfiles to update (as an array)
     $portfiles = $Script:VcpkgHash | ForEach-Object { $_.Values.portfile }
 
-    Edit-VcpkgRefAndHash -Project $Script:GitHubProject -Ref $vcpkgRef -PortFile $portfiles
+    Edit-VcpkgRefAndHash -Project $Script:GitHubProject -Ref $vcpkgRef -PortFile $portfiles `
+                         -RefAsVersionVariable:(-not [string]::IsNullOrEmpty($Script:TagVersion))
 
     # Allow to updated port-version fields if TinyOrm version wasn't bumped
     if ($Script:BumpsHash.TinyOrm.type -eq [BumpType]::None) {
