@@ -101,15 +101,6 @@ ${TINY_UNPARSED_ARGUMENTS}")
             $<$<CONFIG:Debug>:/sdl>
         )
 
-        # Needed to suppress this for <=Qt5 because a lot of new warning on Qt v5,
-        # I will not invest more time to this to correctly fix it because Qt5 support
-        # will be removed soon
-        if(QT_VERSION_MAJOR LESS_EQUAL 5)
-            target_compile_definitions(${target} INTERFACE
-                _SILENCE_STDEXT_ARR_ITERS_DEPRECATION_WARNING
-            )
-        endif()
-
         if(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
             target_compile_options(${target} INTERFACE
                 # Set by default by c++20 but from VS 16.11, can be removed when
@@ -127,6 +118,13 @@ ${TINY_UNPARSED_ARGUMENTS}")
 #                /external:templates-
                 /wd4702
             )
+
+            # Needed to suppress this because lot of new warnings on latest MSVC
+            if(CMAKE_CXX_COMPILER_VERSION VERSION_GREATER_EQUAL "19.38.32914.95")
+                target_compile_definitions(${target} INTERFACE
+                    _SILENCE_STDEXT_ARR_ITERS_DEPRECATION_WARNING
+                )
+            endif()
         endif()
 
         target_link_options(${target} INTERFACE
