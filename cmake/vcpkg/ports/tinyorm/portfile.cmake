@@ -36,7 +36,6 @@ endif()
 vcpkg_cmake_configure(
     SOURCE_PATH "${SOURCE_PATH}"
     OPTIONS
-        -DCMAKE_EXPORT_PACKAGE_REGISTRY:BOOL=OFF
         # TODO vcpkg ask about this during PR to vcpkg repository silverqx
         -DCMAKE_CXX_SCAN_FOR_MODULES:BOOL=OFF
         -DBUILD_TESTS:BOOL=OFF
