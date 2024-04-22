@@ -6,6 +6,9 @@ vcpkg_from_github(
     HEAD_REF main
 )
 
+# STL4043 _SILENCE_STDEXT_ARR_ITERS_DEPRECATION_WARNING already defined, see:
+# https://github.com/silverqx/TinyORM/blob/main/cmake/CommonModules/TinyCommon.cmake#L122
+
 vcpkg_check_features(
     OUT_FEATURE_OPTIONS FEATURE_OPTIONS
     PREFIX TINYORM
