@@ -515,8 +515,10 @@ jobs:
     # The reason for this is the concurrency:group: can contain only two in_progress workflows,
     # one will be in_progress and the second will be queued (waiting until the first finish),
     # and all others will be canceled.
+    # Jobs are run randomly! They are sorted from 0 to strategy.job-total - 1 in GitHub UI, so
+    # the first job has index 0, the second job has index 1, ...
     - name: Run vcpkg-windows-drivers.yml workflows
-      if: matrix.build-type.key == 'debug' && matrix.qt.key == 'qt6'
+      if: strategy.job-index == 0
       working-directory: ${{ env.TinyORMPath }}
       run: |
         gh workflow run vcpkg-windows-drivers.yml --ref ${{ github.ref_name }}
