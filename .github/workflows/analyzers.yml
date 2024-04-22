@@ -140,9 +140,9 @@ jobs:
         -B '${{ env.TinyORMBuildTree }}'
         -G Ninja
         -D CMAKE_CXX_COMPILER_LAUNCHER:FILEPATH=/usr/local/bin/ccache
-        -D CMAKE_CXX_COMPILER:FILEPATH=/usr/bin/clang++-17
+        -D CMAKE_CXX_COMPILER:FILEPATH=/usr/bin/clang++-18
         -D CMAKE_TOOLCHAIN_FILE:FILEPATH="$VCPKG_INSTALLATION_ROOT/scripts/buildsystems/vcpkg.cmake"
-        -D CMAKE_DISABLE_PRECOMPILE_HEADERS:BOOL=OFF
+        -D CMAKE_DISABLE_PRECOMPILE_HEADERS:BOOL=ON
         -D CMAKE_EXPORT_COMPILE_COMMANDS:BOOL=ON
         -D CMAKE_EXPORT_PACKAGE_REGISTRY:BOOL=OFF
         -D CMAKE_BUILD_TYPE:STRING=${{ matrix.build-type.name }}
@@ -174,7 +174,7 @@ jobs:
       run: >-
         echo 'TINY_CLANG_TIDY_COMPLETED=true' >> $GITHUB_ENV
 
-        # run-clang-tidy-17
+        # run-clang-tidy-18
         # -extra-arg-before='-Qunused-arguments'
         # -p='${{ env.TinyORMBuildTree }}'
         # -j ${{ env.TinyParallel }}
