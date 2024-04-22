@@ -37,3 +37,6 @@ vcpkg_cmake_config_fixup()
 if(TINYORM_TOM_EXAMPLE)
     vcpkg_copy_tools(TOOL_NAMES tom AUTO_CLEAN)
 endif()
+
+# LICENSE file is already installed using custom logic for vcpkg, see:
+# https://github.com/silverqx/TinyORM/blob/main/cmake/Modules/TinyDeployment.cmake#L240
