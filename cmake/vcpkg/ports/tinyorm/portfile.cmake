@@ -25,7 +25,6 @@ vcpkg_check_features(
 
 # Validate input feature options
 if(TINYORM_BUILD_MYSQL_DRIVER AND "sql-mysql" IN_LIST FEATURES)
-)
     message(FATAL_ERROR "The build-mysql-driver and sql-mysql vcpkg features are mutually \
 exclusive, linking against QtSql and TinyDrivers libraries simultaneously is not allowed.")
 endif()
