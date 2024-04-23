@@ -70,7 +70,7 @@ std::shared_ptr<DatabaseManager> setupDatabaseManager()
 
     // Ownership of the shared_ptr()
     return DB::create({
-#if !PROJECT_TINYDRIVERS || TINYDRIVERS_MYSQL_DRIVER
+#if !defined(PROJECT_TINYDRIVERS) || defined(TINYDRIVERS_MYSQL_DRIVER)
         // MySQL connection
         {QStringLiteral("tinyorm_tom_mysql"), { // shell:connection
             {driver_,         QMYSQL},
@@ -122,7 +122,7 @@ std::shared_ptr<DatabaseManager> setupDatabaseManager()
             {options_,        ConfigUtils::mariaSslOptions()},
         }},
 #endif
-#if !PROJECT_TINYDRIVERS || TINYDRIVERS_PSQL_DRIVER
+#if !defined(PROJECT_TINYDRIVERS) || defined(TINYDRIVERS_PSQL_DRIVER)
         // PostgreSQL connection
         {QStringLiteral("tinyorm_tom_postgres"), { // shell:connection
             {driver_,          QPSQL},
@@ -157,7 +157,7 @@ std::shared_ptr<DatabaseManager> setupDatabaseManager()
             {options_,           ConfigUtils::postgresSslOptions()},
         }},
 #endif
-#if !PROJECT_TINYDRIVERS || TINYDRIVERS_SQLITE_DRIVER
+#if !defined(PROJECT_TINYDRIVERS) || defined(TINYDRIVERS_SQLITE_DRIVER)
         // SQLite connection
         {QStringLiteral("tinyorm_tom_sqlite"), { // shell:connection
             {driver_,                 QSQLITE},
