@@ -48,17 +48,23 @@ $Script:IsBumpingSkipped = $false
 # Bump commit message cache (to avoid regeneration for the tag)
 $Script:BumpCommitMessage = $null
 
+# RegEx to match ten thousand number (12345 or 12 345)
+$Script:NumberTenThousandRegEx = '\d{1,2} ?\d{3}'
+
 # Base template RegEx to match Number of Unit Tests in all files
 $Script:NumberOfUnitTestsRegExTmpl =
     '(?<before>(?:with|currently|then|all) (?:__)?)(?<number>{0})(?<after>(?:__)? unit (?:and|tests))'
 # RegEx to match Number of Unit Tests in all files
-$Script:NumberOfUnitTestsRegEx = $Script:NumberOfUnitTestsRegExTmpl -f '\d{1,2} ?\d{3}'
+$Script:NumberOfUnitTestsRegEx = $Script:NumberOfUnitTestsRegExTmpl -f $Script:NumberTenThousandRegEx
 # The current Number of unit tests found in the README.md file
 $Script:NumberOfUnitTestsCurrent = $null
 # Number of unit tests to update in all files
 $Script:NumberOfUnitTestsNew = $null
 # Number of skipped unit tests (will be used in the commit message only)
 $Script:NumberOfSkippedUnitTestsNew = $null
+
+# RegEx to match the port-version in the vcpkg.json file
+$Script:PortVersionRegEx = '"port-version"\s*?:\s*?(?<version>\d{1,3})\s*?,?'
 
 # Functions section
 # ---
@@ -329,7 +335,7 @@ function Read-NumberOfUnitTestsCurrent {
 
     # Get the first README.md filepath
     $filePath = $Script:NumberOfUnitTestsLocations.Keys.Item(0)
-    $regex = 'with __(?<number>\d{1,2} ?\d{3})__ unit'
+    $regex = 'with __(?<number>{0})__ unit' -f $Script:NumberTenThousandRegEx
 
     $numberOfUnitTestsLines = (Get-Content -Path $filePath) -cmatch $regex
 
@@ -607,7 +613,7 @@ function Read-VersionNumbers {
         $macroPrefix         = $bumpValue.macroPrefix
         $expectedOccurrences = 3
 
-        $regex = "^#define $macroPrefix(?:MAJOR|MINOR|BUGFIX) (?<version>\d+)$"
+        $regex = "^#define $macroPrefix(?:MAJOR|MINOR|BUGFIX) (?<version>\d{1,5})$"
 
         # Obtain all C macros with version numbers
         # No Test-Path check needed as version.hpp filepaths were passed using the Resolve-Path
@@ -846,7 +852,7 @@ function Edit-VersionNumbersInVersionHpp {
         $bumpTypesToMatch       = @($bumpType) + $bumpTypesToReset
         $bumpTypesToMatchMapped = $bumpTypesToMatch | ForEach-Object { $mapBumpTypeToMacro[$_] }
 
-        $regexTmpl = "^(?<before>#define $macroPrefix(?:{0}) )(?<version>\d+)$"
+        $regexTmpl = "^(?<before>#define $macroPrefix(?:{0}) )(?<version>\d{1,5})$"
 
         $fileContent = Get-Content -Path $versionHppPath
 
@@ -1172,18 +1178,16 @@ function Read-PortVersionNumbers {
 
         $vcpkgJsonPath = $portValue.vcpkgJson
 
-        $regex = '"port-version"\s*?:\s*?(?<version>\d+)\s*?,?'
-
         # Obtain the port-version field with version number
         # No Test-Path check needed as vcpkg.json filepaths were passed using the Resolve-Path
-        $portVersionField = (Get-Content -Path $vcpkgJsonPath) -cmatch $regex
+        $portVersionField = (Get-Content -Path $vcpkgJsonPath) -cmatch $Script:PortVersionRegEx
 
         $portVersionFieldCount = $portVersionField.Count
         $expectedOccurrences   = @(0, 1)
 
         # Verify that exactly zero or one port-version field line was found in the vcpkg.json file
         Test-PortVersionFieldForVcpkg `
-            $portVersionFieldCount $regex $vcpkgJsonPath $expectedOccurrences
+            $portVersionFieldCount $Script:PortVersionRegEx $vcpkgJsonPath $expectedOccurrences
 
         # Nothing to do, the port-version field is not defined in the vcpkg.json file
         # I leave the versionOld in the $null state in this case (don't set it to 0) so we don't
@@ -1194,8 +1198,8 @@ function Read-PortVersionNumbers {
         }
 
         # Obtain the port-version number
-        $result = $portVersionField[0] -cmatch $regex
-        Test-RegExResult $regex -Result $result
+        $result = $portVersionField[0] -cmatch $Script:PortVersionRegEx
+        Test-RegExResult $Script:PortVersionRegEx -Result $result
         $portVersion = [int] $Matches.version
 
         $portValue.versionOld = $portVersion
@@ -1321,7 +1325,7 @@ function Add-PortVersionNumber {
     # Verification of the port-version number isn't needed because we know that there isn't
     # any port-version field in the vcpkg.json file
 
-    $regex = '"version-semver"\s*?:\s*?"\d+(?:\.\d+){2,3}"\s*?,?.*'
+    $regex = '"version-semver"\s*?:\s*?"{0}"\s*?,?.*' -f $Script:PortSemVersionRegEx
 
     # Add a new port-version number under the version-semver field (port-version will always be 1
     # in this case)
@@ -1378,15 +1382,14 @@ function Edit-PortVersionNumber {
     Write-Progress "${Script:BOL}Updating bumped port-version number..."
 
     $portValue = $Script:VcpkgHash[$Name]
-    $regex = '"port-version"\s*?:\s*?(?<version>\d+)\s*?,?'
 
     # Verify that the port-version number in the $Script:VcpkgHash is still the same
     Test-SamePortVersionNumberForVcpkg `
-        $PortVersionField $regex $portValue.versionOld $portValue.vcpkgJson
+        $PortVersionField $Script:PortVersionRegEx $portValue.versionOld $portValue.vcpkgJson
 
     # Replace the old version number with the bumped version number
     $portVersionBumped = $portValue.versionBumped
-    return $FileContent -creplace $regex, "`"port-version`": $portVersionBumped,"
+    return $FileContent -creplace $Script:PortVersionRegEx, "`"port-version`": $portVersionBumped,"
 }
 
 # Update port-version numbers in vcpkg.json files
@@ -1408,19 +1411,17 @@ function Edit-PortVersionNumbers {
 
         $vcpkgJsonPath = $portValue.vcpkgJson
 
-        $regex = '"port-version"\s*?:\s*?(?<version>\d+)\s*?,?'
-
         # Obtain the port-version field with version number
         # No Test-Path check needed as vcpkg.json filepaths were passed using the Resolve-Path
         $fileContent = Get-Content -Path $vcpkgJsonPath
-        $portVersionField = $fileContent -cmatch $regex
+        $portVersionField = $fileContent -cmatch $Script:PortVersionRegEx
 
         $portVersionFieldCount = $portVersionField.Count
         $expectedOccurrences   = @(0, 1)
 
         # Verify that exactly zero or one port-version field line was found in the vcpkg.json file
         Test-PortVersionFieldForVcpkg `
-            $portVersionFieldCount $regex $vcpkgJsonPath $expectedOccurrences
+            $portVersionFieldCount $Script:PortVersionRegEx $vcpkgJsonPath $expectedOccurrences
 
         $fileContentReplaced = $null
         $portName = $portRow.Name
@@ -1451,21 +1452,19 @@ function Remove-PortVersions {
     foreach ($portfiles in $Script:VcpkgHash.GetEnumerator()) {
         $vcpkgJsonPath = $portfiles.Value.vcpkgJson
 
-        $regex = '\s*?"port-version"\s*?:\s*?\d+\s*?,?\s*?'
-
         $fileContent = Get-Content -Path $vcpkgJsonPath
 
-        $portVersionField = $fileContent -cmatch $regex
+        $portVersionField = $fileContent -cmatch $Script:PortVersionRegEx
 
         $portVersionFieldCount = $portVersionField.Count
         $expectedOccurrences   = @(0, 1)
 
         # Verify that exactly zero or one port-version field line was found in the vcpkg.json file
         Test-PortVersionFieldForVcpkg `
-            $portVersionFieldCount $regex $vcpkgJsonPath $expectedOccurrences
+            $portVersionFieldCount $Script:PortVersionRegEx $vcpkgJsonPath $expectedOccurrences
 
         # Remove the port-version field from the vcpkg.json file
-        $fileContentReplaced = $fileContent | Where-Object { $_ -cnotmatch $regex }
+        $fileContentReplaced = $fileContent | Where-Object { $_ -cnotmatch $Script:PortVersionRegEx }
 
         # Save to the file
         ($fileContentReplaced -join "`n") + "`n" | Set-Content -Path $vcpkgJsonPath -NoNewline

@@ -5,6 +5,12 @@ Set-StrictMode -Version 3.0
 # This file contains some functions for deploy.ps1 script, they were extracted because they are
 # reused in the vcpkg-windows/-drivers.yml and vcpkg-linux.yml GitHub actions.
 
+# Script variables section
+# ---
+
+# RegEx to match the version-semver in the vcpkg.json
+$Script:PortSemVersionRegEx = '\d{1,4}(?:\.\d{1,5}){2,3}'
+
 # Common functions
 # ---
 
@@ -157,7 +163,8 @@ function Edit-VcpkgRefAndHash {
 
     foreach ($portfilePath in $PortFile) {
         # Escaping only the first { character is enough
-        $regexRef = '^(?<ref>    REF )(?:[0-9a-f]{40}|v\d+\.\d+\.\d+|[\w\d-_\/]+|"v\$\{VERSION}")$'
+        $regexRef = '^(?<ref>    REF )(?:[0-9a-f]{40}|v{0}|[\w\d-_\/]+|"v\$\{VERSION}")$' `
+                    -f $Script:PortSemVersionRegEx
         $regexHash = '^(?<sha512>    SHA512 )(?:[0-9a-f]{128})$'
         $regexMatch = "$regexRef|$regexHash"
 
