@@ -1323,7 +1323,8 @@ function Add-PortVersionNumber {
 
     $regex = '"version-semver"\s*?:\s*?"\d+(?:\.\d+){2,3}"\s*?,?.*'
 
-    # Replace the old version number with the bumped version number
+    # Add a new port-version number under the version-semver field (port-version will always be 1
+    # in this case)
     $portVersionBumped = $portValue.versionBumped
     return $FileContent -creplace $regex, "`$&`n  `"port-version`": $portVersionBumped,"
 }
