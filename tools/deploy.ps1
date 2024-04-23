@@ -852,7 +852,8 @@ function Edit-VersionNumbersInVersionHpp {
         $bumpTypesToMatch       = @($bumpType) + $bumpTypesToReset
         $bumpTypesToMatchMapped = $bumpTypesToMatch | ForEach-Object { $mapBumpTypeToMacro[$_] }
 
-        $regexTmpl = "^(?<before>#define $macroPrefix(?:{0}) )(?<version>\d{1,5})$"
+        # Double {{x}} is needed by the -f operator to keep the curly braces in the formatted string
+        $regexTmpl = "^(?<before>#define $macroPrefix(?:{0}) )(?<version>\d{{1,5}})$"
 
         $fileContent = Get-Content -Path $versionHppPath
 

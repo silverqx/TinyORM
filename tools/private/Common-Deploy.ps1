@@ -163,7 +163,8 @@ function Edit-VcpkgRefAndHash {
 
     foreach ($portfilePath in $PortFile) {
         # Escaping only the first { character is enough
-        $regexRef = '^(?<ref>    REF )(?:[0-9a-f]{40}|v{0}|[\w\d-_\/]+|"v\$\{VERSION}")$' `
+        # Double {{x}} is needed by the -f operator to keep the curly braces in the formatted string
+        $regexRef = '^(?<ref>    REF )(?:[0-9a-f]{{40}}|v{0}|[\w\d-_\/]+|"v\$\{{VERSION}}")$' `
                     -f $Script:PortSemVersionRegEx
         $regexHash = '^(?<sha512>    SHA512 )(?:[0-9a-f]{128})$'
         $regexMatch = "$regexRef|$regexHash"
