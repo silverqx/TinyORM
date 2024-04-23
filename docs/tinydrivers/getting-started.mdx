@@ -47,6 +47,19 @@ Currently, only the `MySQL` database driver is supported and finished.
 
 `TinyDrivers` doesn't return errors the the same way as the `QtSql` module, which means return a `bool` and if it's the result `false` then obtain the `SqlError` instance using the `lastError()` method from `SqlDatabase` or `SqlQuery` instances. Instead, it throws exceptions, and methods returning a `bool` type to report an error state always return `true`.
 
+##### Naming conventions
+
+ - `QtSql` <small>module</small> -> `TinyDrivers` <small>library</small>
+ - `QMYSQL` <small>driver</small> -> `TinyMySql` <small>driver</small>
+
+##### MySQL driver
+
+The following describes the differences between `QMYSQL` and `TinyMySql` drivers.
+
+The `QMYSQL` driver doesn't support setting `MySQL` non-flag [connection options](https://dev.mysql.com/doc/c-api/en/mysql-options.html) like `MYSQL_OPT_RECONNECT` without the value, it needs to be defined with value like `=1` or `=TRUE` (case-sensitive), only real flag options like `CLIENT_INTERACTIVE` can be set without the value and `=` character.
+
+On the other hand, the `TinyMySql` driver allows setting non-flag [connection options](https://dev.mysql.com/doc/c-api/en/mysql-options.html) options without the value and `=` character, which are considered enabled (ON or TRUE).
+
 ##### Removed features
 
 Simulation of prepared statements while calling `SqlQuery::exec(QString)`, this functionality is useless because you can call regular prepared statements using `SqlQuery::prepare(QString)` and then `SqlQuery::exec()`.
