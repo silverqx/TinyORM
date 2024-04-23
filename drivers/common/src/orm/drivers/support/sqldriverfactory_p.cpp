@@ -142,7 +142,7 @@ namespace
 
         return {
             // qmake build doesn't support appending d after the basename for Debug builds
-#if defined(TINYDRIVERS_DEBUG) && !defined(TINY_QMAKE_BUILD)
+#if defined(TINYDRIVERS_DEBUG) && !defined(TINY_QMAKE_BUILD_PRIVATE)
             driverBasenameVersion + 'd'_L1, // TinyMySql0d.dll
 #endif
             driverBasenameVersion, // TinyMySql0.dll
@@ -161,11 +161,11 @@ namespace
 
         return {
             // qmake build doesn't support appending d after the basename for Debug builds
-#if defined(TINYDRIVERS_DEBUG) && !defined(TINY_QMAKE_BUILD)
+#if defined(TINYDRIVERS_DEBUG) && !defined(TINY_QMAKE_BUILD_PRIVATE)
             driverBasenameLib + 'd'_L1, // libTinyMySqld.so
 #endif
             driverBasenameLib, // libTinyMySql.so
-#if defined(TINYDRIVERS_DEBUG) && !defined(TINY_QMAKE_BUILD)
+#if defined(TINYDRIVERS_DEBUG) && !defined(TINY_QMAKE_BUILD_PRIVATE)
             driverBasenameRaw + 'd'_L1, // TinyMySqld.so
 #endif
             /* As the last, try to load from the raw basename without any postfixes,
@@ -182,7 +182,7 @@ namespace
         static const auto versionMajor = QString::number(TINYDRIVERS_VERSION_MAJOR);
 
         // qmake build doesn't prepend lib for shared libraries on MSYS2
-#ifdef TINY_QMAKE_BUILD
+#ifdef TINY_QMAKE_BUILD_PRIVATE
         static const auto driverBasename = driverBasenameRaw;
 #else
         static const auto driverBasename = u"lib"_s + driverBasenameRaw;
@@ -192,7 +192,7 @@ namespace
 
         return {
             // CMake builds only (or any other build system that prepends lib prefix)
-#ifndef TINY_QMAKE_BUILD
+#ifndef TINY_QMAKE_BUILD_PRIVATE
 #  ifdef TINYDRIVERS_DEBUG
             driverBasenameVersion + 'd'_L1, // libTinyMySql0d.dll
 #  endif
@@ -201,7 +201,7 @@ namespace
 #endif
             // Also, try all other combinations without the lib prefix
             // qmake build doesn't support appending d after the basename for Debug builds
-#if defined(TINYDRIVERS_DEBUG) && !defined(TINY_QMAKE_BUILD)
+#if defined(TINYDRIVERS_DEBUG) && !defined(TINY_QMAKE_BUILD_PRIVATE)
             driverBasenameRawVersion + 'd'_L1,
 #endif
             driverBasenameRawVersion,
