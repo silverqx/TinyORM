@@ -4,6 +4,11 @@
 # to the MySQL >= 8.0.34 or >=8.1, there is some problem in TLS 1.2 and 1.3 connection, it can't
 # select correct cipher. I will revert this back in the future when it will be fixed.
 
+# Notes
+# ---
+# Build folders must be manually deleted after bumping version numbers because ccache doesn't get it
+# and then the tst_Versions test case fails.
+
 name: MSYS2 UCRT64 GCC/Clang TinyDrivers
 
 on: workflow_dispatch
