@@ -190,6 +190,7 @@ defineTest(tiny_link_drivers) {
     # Use the TinyDrivers instead of QtSql drivers
     tiny_is_building_drivers() {
         # Defines
+        DEFINES *= PROJECT_TINYDRIVERS
         DEFINES *= TINYORM_USING_TINYDRIVERS
 
         build_shared_drivers | \
