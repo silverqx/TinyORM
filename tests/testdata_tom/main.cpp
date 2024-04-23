@@ -86,6 +86,7 @@ std::shared_ptr<DatabaseManager> setupDatabaseManager()
 
     // Ownership of the shared_ptr()
     return DB::create({
+#if !PROJECT_TINYDRIVERS || TINYDRIVERS_MYSQL_DRIVER
         // MySQL connection
         {sl("tinyorm_testdata_tom_mysql"), { // shell:connection
             {driver_,         QMYSQL},
@@ -135,7 +136,8 @@ std::shared_ptr<DatabaseManager> setupDatabaseManager()
             {Version,         {}}, // Autodetect
             {options_,        ConfigUtils::mariaSslOptions()},
         }},
-
+#endif
+#if !PROJECT_TINYDRIVERS || TINYDRIVERS_PSQL_DRIVER
         // PostgreSQL connection
         {sl("tinyorm_testdata_tom_postgres"), { // shell:connection
             {driver_,            QPSQL},
@@ -160,7 +162,8 @@ std::shared_ptr<DatabaseManager> setupDatabaseManager()
 //            {dont_drop,          QStringList {spatial_ref_sys}},
             {options_,           ConfigUtils::postgresSslOptions()},
         }},
-
+#endif
+#if !PROJECT_TINYDRIVERS || TINYDRIVERS_SQLITE_DRIVER
         // SQLite connection
         {sl("tinyorm_testdata_tom_sqlite"), { // shell:connection
             {driver_,                 QSQLITE},
@@ -177,6 +180,7 @@ std::shared_ptr<DatabaseManager> setupDatabaseManager()
             {prefix_,                 EMPTY},
             {prefix_indexes,          false},
         }}
+#endif
     },
         /* Because the default connection name is not defined, then will be needed
            to provide the connection name using the --database=xyz argument. */
