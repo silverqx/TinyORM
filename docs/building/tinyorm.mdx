@@ -486,25 +486,25 @@ CMake multi-config generators like `Ninja Multi-Config` or `Visual Studio 16 201
 <div className='apitable-build-options'>
 <APITable>
 
-| Option Name                       | Default | Description |
-| --------------------------------- | ------- | ----------- |
-| `BUILD_DRIVERS`                   | `OFF`   | Build [TinyDrivers](tinydrivers/getting-started.mdx) SQL database drivers (core/common code; replaces QtSql module). |
-| `BUILD_MYSQL_DRIVERS`             | `OFF`   | Build `TinyDrivers` MySQL database driver.<br/><small>Available when: `BUILD_DRIVERS`</small> |
-| `BUILD_SHARED_LIBS`               | `ON`    | Build as a shared/static library. |
-| `BUILD_TESTS`                     | `OFF`   | Build TinyORM unit tests. |
-| `BUILD_TREE_DEPLOY`               | `ON`    | Copy `TinyDrivers` and `TinyMySql` libraries to the root of the build tree. |
-| `DRIVERS_TYPE`                    | `Shared`| How to build and link against `TinyDrivers` SQL database drivers.<br/><small>The `Static` value will be select by default when the `BUILD_SHARED_LIBS` is `OFF`.<br/>Supported values: [`Shared`](tinydrivers/getting-started.mdx#the-shared-library-build), [`Loadable`](tinydrivers/getting-started.mdx#the-loadable-sql-drivers-build), and [`Static`](tinydrivers/getting-started.mdx#the-static-build)<br/>Available when: `BUILD_DRIVERS AND BUILD_SHARED_LIBS`</small> |
-| `INLINE_CONSTANTS`                | `OFF`   | Use inline constants instead of extern constants in the `shared build`.<br/>`OFF` is highly recommended for the `shared build`;<br/>is always `ON` for the `static build`.<br/><small>Available when: `BUILD_SHARED_LIBS`</small> |
-| `MSVC_RUNTIME_DYNAMIC`            | `ON`    | Use MSVC dynamic runtime library (`-MD`) instead of static (`-MT`), also considers a Debug configuration (`-MTd`, `-MDd`).<br/><small>Available when: `MSVC AND NOT DEFINED CMAKE_MSVC_RUNTIME_LIBRARY`</small> |
-| `MYSQL_PING`                      | `OFF`   | Enable `Orm::MySqlConnection::pingDatabase()` method. |
-| `ORM`                             | `ON`    | Controls the compilation of all `ORM-related` source code, when this option is `disabled`, then only the `query builder` without `ORM` is compiled. Also excludes `ORM-related` unit tests. |
-| `STRICT_MODE`                     | `OFF`   | Controls propagation of strict compiler/linker options and Qt definitions using the `TinyOrm::CommonConfig` interface library to the user code.<br/><small>(highly recommended; can also be set with the `TINYORM_STRICT_MODE` environment variable; described [here](#cmake-strict_mode-option))</small>. |
-| `TOM`                             | `ON`    | Controls the compilation of all `Tom-related` source code, when this option is `disabled`, then it also excludes `Tom-related` unit tests. |
-| `TOM_EXAMPLE`                     | `OFF`   | Build the <abbr title='TinyORM Migrations'>`tom`</abbr> console application example. |
-| `TOM_MIGRATIONS_DIR`              | `-`     | Default migrations path for the `make:migration` command, can be an absolute or relative path (to the <abbr title='Current working directory'>pwd</abbr>).<br/><small>Default value: `database/migrations` <small>(relative to the pwd)</small></small> |
-| `TOM_MODELS_DIR`                  | `-`     | Default models path for the `make:model` command, can be an absolute or relative path (to the <abbr title='Current working directory'>pwd</abbr>).<br/><small>Default value: `database/models` <small>(relative to the pwd)</small></small> |
-| `TOM_SEEDERS_DIR`                 | `-`     | Default seeders path for the `make:seeder` command, can be an absolute or relative path (to the <abbr title='Current working directory'>pwd</abbr>).<br/><small>Default value: `database/seeders` <small>(relative to the pwd)</small></small> |
-| `VERBOSE_CONFIGURE`               | `OFF`   | Show information about `PACKAGES_FOUND` / `PACKAGES_NOT_FOUND` in the CMake configure output. |
+| Option Name                       | Default  | Description |
+| --------------------------------- | -------- | ----------- |
+| `BUILD_DRIVERS`                   | `OFF`    | Build [TinyDrivers](tinydrivers/getting-started.mdx) SQL database drivers (core/common code; replaces QtSql module). |
+| `BUILD_MYSQL_DRIVERS`             | `OFF`    | Build `TinyDrivers` MySQL database driver.<br/><small>Available when: `BUILD_DRIVERS`</small> |
+| `BUILD_SHARED_LIBS`               | `ON`     | Build as a shared/static library. |
+| `BUILD_TESTS`                     | `OFF`    | Build TinyORM unit tests. |
+| `BUILD_TREE_DEPLOY`               | `ON`     | Copy `TinyDrivers` and `TinyMySql` libraries to the root of the build tree. |
+| `DRIVERS_TYPE`                    | `Shared` | How to build and link against `TinyDrivers` SQL database drivers.<br/><small>The `Static` value will be select by default when the `BUILD_SHARED_LIBS` is `OFF`.<br/>Supported values: [`Shared`](tinydrivers/getting-started.mdx#the-shared-library-build), [`Loadable`](tinydrivers/getting-started.mdx#the-loadable-sql-drivers-build), and [`Static`](tinydrivers/getting-started.mdx#the-static-build)<br/>Available when: `BUILD_DRIVERS AND BUILD_SHARED_LIBS`</small> |
+| `INLINE_CONSTANTS`                | `OFF`    | Use inline constants instead of extern constants in the `shared build`.<br/>`OFF` is highly recommended for the `shared build`;<br/>is always `ON` for the `static build`.<br/><small>Available when: `BUILD_SHARED_LIBS`</small> |
+| `MSVC_RUNTIME_DYNAMIC`            | `ON`     | Use MSVC dynamic runtime library (`-MD`) instead of static (`-MT`), also considers a Debug configuration (`-MTd`, `-MDd`).<br/><small>Available when: `MSVC AND NOT DEFINED CMAKE_MSVC_RUNTIME_LIBRARY`</small> |
+| `MYSQL_PING`                      | `OFF`    | Enable `Orm::MySqlConnection::pingDatabase()` method. |
+| `ORM`                             | `ON`     | Controls the compilation of all `ORM-related` source code, when this option is `disabled`, then only the `query builder` without `ORM` is compiled. Also excludes `ORM-related` unit tests. |
+| `STRICT_MODE`                     | `OFF`    | Controls propagation of strict compiler/linker options and Qt definitions using the `TinyOrm::CommonConfig` interface library to the user code.<br/><small>(highly recommended; can also be set with the `TINYORM_STRICT_MODE` environment variable; described [here](#cmake-strict_mode-option))</small>. |
+| `TOM`                             | `ON`     | Controls the compilation of all `Tom-related` source code, when this option is `disabled`, then it also excludes `Tom-related` unit tests. |
+| `TOM_EXAMPLE`                     | `OFF`    | Build the <abbr title='TinyORM Migrations'>`tom`</abbr> console application example. |
+| `TOM_MIGRATIONS_DIR`              | `-`      | Default migrations path for the `make:migration` command, can be an absolute or relative path (to the <abbr title='Current working directory'>pwd</abbr>).<br/><small>Default value: `database/migrations` <small>(relative to the pwd)</small></small> |
+| `TOM_MODELS_DIR`                  | `-`      | Default models path for the `make:model` command, can be an absolute or relative path (to the <abbr title='Current working directory'>pwd</abbr>).<br/><small>Default value: `database/models` <small>(relative to the pwd)</small></small> |
+| `TOM_SEEDERS_DIR`                 | `-`      | Default seeders path for the `make:seeder` command, can be an absolute or relative path (to the <abbr title='Current working directory'>pwd</abbr>).<br/><small>Default value: `database/seeders` <small>(relative to the pwd)</small></small> |
+| `VERBOSE_CONFIGURE`               | `OFF`    | Show information about `PACKAGES_FOUND` / `PACKAGES_NOT_FOUND` in the CMake configure output. |
 
 </APITable>
 </div>
