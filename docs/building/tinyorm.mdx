@@ -488,7 +488,7 @@ CMake multi-config generators like `Ninja Multi-Config` or `Visual Studio 16 201
 
 | Option Name                       | Default | Description |
 | --------------------------------- | ------- | ----------- |
-| `BUILD_DRIVERS`                   | `OFF`   | Build [`TinyDrivers`](tinydrivers/getting-started.mdx) SQL database drivers (core/common code; replaces QtSql module). |
+| `BUILD_DRIVERS`                   | `OFF`   | Build [TinyDrivers](tinydrivers/getting-started.mdx) SQL database drivers (core/common code; replaces QtSql module). |
 | `BUILD_MYSQL_DRIVERS`             | `OFF`   | Build `TinyDrivers` MySQL database driver.<br/><small>Available when: `BUILD_DRIVERS`</small> |
 | `BUILD_SHARED_LIBS`               | `ON`    | Build as a shared/static library. |
 | `BUILD_TESTS`                     | `OFF`   | Build TinyORM unit tests. |
@@ -756,7 +756,7 @@ Everything is ready for build, you can press <kbd>Ctrl</kbd>+<kbd>b</kbd> to bui
 
 | `CONFIG` <small>Option Name</small> | Default | Description |
 | ----------------------------------- | ------- | ----------- |
-| `build_loadable_drivers`            | `OFF`   | Build `TinyDrivers` as a shared library and SQL database drivers (eg. `TinyMySql`) as shared libraries ([`Loadable`](tinydrivers/getting-started.mdx#the-loadable-sql-drivers-build) modules) that are loaded at runtime using `LoadLibrary()` on Windows or `dlopen()` on Linux. |
+| `build_loadable_drivers`            | `OFF`   | Build [`TinyDrivers`](tinydrivers/getting-started.mdx) as a shared library and SQL database drivers (eg. `TinyMySql`) as shared libraries ([`Loadable`](tinydrivers/getting-started.mdx#the-loadable-sql-drivers-build) modules) that are loaded at runtime using `LoadLibrary()` on Windows or `dlopen()` on Linux. |
 | `build_mysql_driver`                | `OFF`   | Build `TinyDrivers` MySQL database driver.<br/><small>It's enabled by default when `build_shared_drivers`, `build_loadable_drivers`, or `build_static_drivers` is enabled.<br/>Available when: `build_shared_drivers` OR `build_loadable_drivers` OR `build_static_drivers`</small> |
 | `build_shared_drivers`              | `OFF`   | Build `TinyDrivers` as a [`Shared`](tinydrivers/getting-started.mdx#the-shared-library-build) library. |
 | `build_static_drivers`              | `OFF`   | Build `TinyDrivers` as a [`Static`](tinydrivers/getting-started.mdx#the-static-build) library archive.<br/><small>The `build_static_drivers` `qmake` configuration option will be select by default when the [`CONFIG*=static`](#static) is enabled.</small> |
