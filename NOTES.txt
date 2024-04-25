@@ -1155,6 +1155,8 @@ All are snake-case unless otherwise specified.
    - foreach: use the foreach(depend ${depends}) syntax everywhere as default syntax and use
               the IN LISTS XYZ syntax only if needed
 
+https://learn.microsoft.com/en-us/vcpkg/contributing/cmake-guidelines
+
 
 CMake confusions:
 -----------------
