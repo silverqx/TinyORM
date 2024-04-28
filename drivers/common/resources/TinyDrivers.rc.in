@@ -36,7 +36,7 @@ VS_VERSION_INFO VERSIONINFO
                 VALUE "FileDescription",  "Database drivers for TinyORM library\0"
                 VALUE "FileVersion",      VER_FILEVERSION_STR
                 VALUE "InternalName",     "TinyDrivers\0"
-                VALUE "LegalCopyright",   "Copyright (©) 2023 Silver Zachara\0"
+                VALUE "LegalCopyright",   "Copyright (©) 2024 Silver Zachara\0"
                 VALUE "ProductName",      "TinyDrivers\0"
                 VALUE "ProductVersion",   VER_PRODUCTVERSION_STR
                 VALUE "OriginalFilename", VER_ORIGINALFILENAME_STR
