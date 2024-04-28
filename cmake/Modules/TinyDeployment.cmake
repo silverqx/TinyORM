@@ -133,7 +133,7 @@ function(tiny_install_tinyorm)
     if(NOT TINY_VCPKG)
         # The trailing / is important here
         install(DIRECTORY "docs/" DESTINATION "${CMAKE_INSTALL_DOCDIR}/mdx")
-        install(FILES AUTHOR LICENSE TYPE DOC)
+        install(FILES AUTHORS LICENSE TYPE DOC)
         install(FILES NOTES.txt TYPE DOC RENAME NOTES)
         install(FILES README.md TYPE DOC RENAME README)
 
