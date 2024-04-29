@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "https://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+	<maintainer type="person">
+		<email>silver.zachara@gmail.com</email>
+		<name>Silver Zachara</name>
+		<description>Upstream developer, CC on bugs</description>
+	</maintainer>
+	<longdescription lang="en">
+		Modern C++ ORM library for Qt framework
+	</longdescription>
+	<upstream>
+		<remote-id type="github">silverqx/TinyORM</remote-id>
+	</upstream>
+	<bugs-to>https://github.com/silverqx/TinyORM/issues</bugs-to>
+	<doc>https://www.tinyorm.org</doc>
+	<use>
+		<flag name="build-drivers">
+			Build TinyDrivers SQL database drivers (alternative to the QtSql module, MySQL only)
+		</flag>
+		<flag name="disable-thread-local">
+			Remove all thread_local storage duration specifiers (disables multi-threading support)
+		</flag>
+		<flag name="disable-thread-local">
+			Remove all thread_local storage duration specifiers (disables multi-threading support)
+		</flag>
+		<flag name="inline-constants">
+			Use inline constants instead of extern constants in shared builds
+		</flag>
+		<flag name="mysql-ping">
+			Install MySQL C client library (libmysql) to support the mysql_ping()
+		</flag>
+		<flag name="orm">
+			Enable ORM-related source code (without it only the query builder is compiled)
+		</flag>
+		<flag name="mysql">
+			Add support for the MySQL database
+		</flag>
+		<flag name="postgres">
+			Add support for the PostgreSQL database
+		</flag>
+		<flag name="qt5">
+			Build and link against the Qt v5 (deprecated)
+		</flag>
+		<flag name="sqlite">
+			Add support for the SQLite database
+		</flag>
+		<flag name="tom">
+			Enable Tom-related source code (command-line interface)
+		</flag>
+		<flag name="tom-cli">
+			Build Tom command-line application (migrations, scaffolding, enhances bash completion)
+		</flag>
+	</use>
+</pkgmetadata>

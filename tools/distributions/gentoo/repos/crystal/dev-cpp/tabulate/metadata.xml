@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "https://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+	<maintainer type="person">
+		<email>silver.zachara@gmail.com</email>
+		<name>Silver Zachara</name>
+		<description>Primary package maintainer</description>
+	</maintainer>
+	<maintainer type="person">
+		<name>Pranav (p-ranav)</name>
+		<description>Upstream developer, CC on bugs</description>
+	</maintainer>
+	<longdescription lang="en">
+		 Table Maker for Modern C++
+	</longdescription>
+	<upstream>
+		<remote-id type="github">p-ranav/tabulate</remote-id>
+	</upstream>
+	<bugs-to>https://github.com/p-ranav/tabulate/issues</bugs-to>
+	<doc>https://github.com/p-ranav/tabulate</doc>
+</pkgmetadata>
