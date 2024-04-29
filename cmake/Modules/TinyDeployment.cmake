@@ -236,12 +236,6 @@ endfunction()
 # Install the TinyORM Project for the vcpkg port (custom vcpkg logic)
 function(tiny_install_tinyorm_vcpkg)
 
-    # Install license
-    install(FILES LICENSE
-        DESTINATION "${CMAKE_INSTALL_DATADIR}/${TINY_PORT}"
-        RENAME copyright
-    )
-
     # Configure and install the usage file
     set(tinyOrmPackageVersion
         "${TINY_VERSION_MAJOR}.${TINY_VERSION_MINOR}.${TINY_VERSION_PATCH}"
