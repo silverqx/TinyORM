@@ -25,7 +25,7 @@ vcpkg_check_features(
 vcpkg_cmake_configure(
     SOURCE_PATH "${SOURCE_PATH}"
     OPTIONS
-        -DCMAKE_EXPORT_PACKAGE_REGISTRY:BOOL=OFF
+        -DCMAKE_CXX_SCAN_FOR_MODULES:BOOL=OFF
         -DBUILD_TESTS:BOOL=OFF
         -DTINY_PORT:STRING=${PORT}
         -DTINY_VCPKG:BOOL=ON
