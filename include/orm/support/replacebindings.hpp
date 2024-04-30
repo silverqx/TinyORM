@@ -63,7 +63,7 @@ namespace Orm::Support
         static const auto Binary       = QStringLiteral("<binary(%1)>");
         static const auto HexBinary    = QStringLiteral("hex-binary(%1)\"%2\"");
         static const auto TextAlt      = QStringLiteral("<text(%1)>");
-        static const auto TMPL_SQUOTES = QStringLiteral("\"%1\"");
+        static const auto TmplSQuotes  = QStringLiteral("\"%1\"");
 
         QString bindingValue;
 
@@ -104,7 +104,7 @@ namespace Orm::Support
                 const auto textSize = textData.size();
                 // Don't overwhelm terminal with a lot of text, 1024 characters is enough
                 bindingValue = textSize > 1024 ? TextAlt.arg(textSize)
-                                               : TMPL_SQUOTES.arg(textData);
+                                               : TmplSQuotes.arg(textData);
             }
             else
                 bindingValue = binding.template value<QString>();
