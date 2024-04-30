@@ -61,9 +61,9 @@ namespace Orm::Support
         static const auto Invalid      = QStringLiteral("INVALID");
         static const auto Null_        = QStringLiteral("null");
         static const auto Binary       = QStringLiteral("<binary(%1)>");
-        static const auto HexBinary    = QStringLiteral("hex-binary(%1)\"%2\"");
+        static const auto HexBinary    = QStringLiteral("hex-binary(%1)'%2'");
         static const auto TextAlt      = QStringLiteral("<text(%1)>");
-        static const auto TmplSQuotes  = QStringLiteral("\"%1\"");
+        static const auto TmplSQuotes  = QStringLiteral("'%1'");
 
         QString bindingValue;
 
