@@ -29,10 +29,11 @@ namespace Orm::Utils
         /*! Set thread name for debugger, -1 for a current thread. */
         [[maybe_unused]]
         static void nameThreadForDebugging(const QString &threadName,
-                                           quint64 threadId = -1);
+                                           quint64 threadId = static_cast<quint64>(-1)); // -1 here is correct even it's quint64, it will be max. quint64 value, static_cast<> is needed because of this
         /*! Set thread name for debugger, -1 for a current thread. */
         [[maybe_unused]]
-        static void nameThreadForDebugging(const char *threadName, quint64 threadId = -1);
+        static void nameThreadForDebugging(const char *threadName,
+                                           quint64 threadId = static_cast<quint64>(-1)); // -1 here is correct even it's quint64, it will be max. quint64 value, static_cast<> is needed because of this
     };
 
 } // namespace Orm::Utils
