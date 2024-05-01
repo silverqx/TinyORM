@@ -1,4 +1,4 @@
-# Common for static/shared libraries
+# Common for static/shared libraries (don't use for loadable modules libraries)
 # ---
 
 CONFIG *= create_prl create_pc create_libtool
