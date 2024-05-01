@@ -1344,7 +1344,7 @@ namespace Concerns
     template<typename Derived, AllRelationsConcept ...AllRelations>
     template<typename Related, typename Relation>
     void HasRelationships<Derived, AllRelations...>::touchOwnersVisited(
-            const Relation &relation, const QString &relationName)
+            const Relation &relation, [[maybe_unused]] const QString &relationName)
     {
         relation->touch();
 
