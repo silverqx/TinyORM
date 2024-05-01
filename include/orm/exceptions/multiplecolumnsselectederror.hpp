@@ -21,13 +21,13 @@ namespace Orm::Exceptions
 
         /*! Get the number of records found. */
         inline int count() const noexcept;
-        /*! Get a function name where the exception occured. */
+        /*! Get a function name where the exception occurred. */
         inline const QString &functionName() const noexcept;
 
     protected:
         /*! The number of records found. */
         int m_count;
-        /*! Function name where the exception occured. */
+        /*! Function name where the exception occurred. */
         QString m_functionName;
     };
 
