@@ -1975,7 +1975,7 @@ namespace Orm::Tiny::Concerns
         const auto castType = castItem.type();
 
         /*! Convert the QVariant value of a attribute. */
-        const auto convertAttribute = [this, &key, &value_, castType]
+        const auto convertAttribute = [&key, &value_, castType]
                                       (QMetaTypeDef metaType)
         {
             // Throw if the given attribute can not be converted to the given cast type
