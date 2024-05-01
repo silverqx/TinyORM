@@ -106,6 +106,8 @@ target_compile_definitions(${TinyMySql_target}
         QT_NO_CAST_FROM_ASCII
         # TinyMySql defines
         TINYDRIVERS_MYSQL_LOADABLE_LIBRARY
+        # To disable #pragma system_header if compiling TinyORM project itself
+        TINYORM_PRAGMA_SYSTEM_HEADER_OFF
 )
 
 target_compile_definitions(${TinyMySql_target}

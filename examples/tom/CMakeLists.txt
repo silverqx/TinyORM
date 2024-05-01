@@ -74,6 +74,8 @@ target_include_directories(${TomExample_target}
 target_compile_definitions(${TomExample_target}
     PRIVATE
         PROJECT_TOM_EXAMPLE
+        # To disable #pragma system_header if compiling TinyORM project itself
+        TINYORM_PRAGMA_SYSTEM_HEADER_OFF
 )
 
 # Windows resource and manifest files

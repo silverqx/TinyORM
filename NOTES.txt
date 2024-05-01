@@ -75,6 +75,14 @@ the port-version field must be added or bumped in the vcpkg.json file.
 But all of this is handled by the tools/deploy.ps1 script. 👌
 
 
+New library/executable added to the TinyORM project:
+----------------------------------------------------
+
+ - define the private C macro TINYORM_PRAGMA_SYSTEM_HEADER_OFF for every new library/executable
+   added to the TinyORM project; if this is not the case, all warnings will be suppressed,
+   so this needs a special care
+
+
 Proxy methods that internally call the toBase() (applySoftDeletes):
 -------------------------------------------------------------------
 

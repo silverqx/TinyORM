@@ -3,6 +3,11 @@ QT -= gui
 TEMPLATE = app
 TARGET = tom
 
+# Common for all executables
+# ---
+
+include($$TINYORM_SOURCE_TREE/qmake/common/executables.pri)
+
 # Link against TinyORM library for Tom application (also adds defines and include headers)
 # ---
 

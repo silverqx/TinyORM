@@ -48,6 +48,8 @@ ${TINY_UNPARSED_ARGUMENTS}")
         PRIVATE
             PROJECT_TINYORM_TEST
             TINYORM_TESTS_CODE
+            # To disable #pragma system_header if compiling TinyORM project itself
+            TINYORM_PRAGMA_SYSTEM_HEADER_OFF
             # Disable debug output in release mode
             $<$<NOT:$<CONFIG:Debug>>:QT_NO_DEBUG_OUTPUT>
     )

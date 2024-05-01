@@ -280,6 +280,9 @@ target_compile_definitions(${TinyOrm_target}
         $<$<CONFIG:Debug>:TINYORM_DEBUG>
         # Log queries with time measurements
         $<$<CONFIG:Debug>:TINYORM_DEBUG_SQL>
+    PRIVATE
+        # To disable #pragma system_header if compiling TinyORM project itself
+        TINYORM_PRAGMA_SYSTEM_HEADER_OFF
 )
 
 if(BUILD_SHARED_LIBS)

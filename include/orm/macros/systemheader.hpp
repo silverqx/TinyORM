@@ -2,11 +2,12 @@
 #ifndef ORM_MACROS_SYSTEMHEADER_HPP
 #define ORM_MACROS_SYSTEMHEADER_HPP
 
-/* The system_header pragma is disabled if building the TinyORM library itself
-   as the shared library. */
-#if !defined(TINYORM_PRAGMA_SYSTEM_HEADER_OFF) &&                                       \
-    (!defined(TINYORM_BUILDING_SHARED) || !defined(TINYUTILS_BUILDING_SHARED) ||        \
-     !defined(TINYDRIVERS_BUILDING_SHARED))
+/* The system_header pragma is and must be disabled for all our libraries and executables.
+   Which means that every library/executable must define the private C macro
+   TINYORM_PRAGMA_SYSTEM_HEADER_OFF, if this is not the case, all warnings will be
+   suppressed, so this needs a special care if a new library/executable is added
+   to the TinyORM project. */
+#ifndef TINYORM_PRAGMA_SYSTEM_HEADER_OFF
 // Clang masquerades as GCC 4.2.0 so it has to be first
 #  ifdef __clang__
 #    define TINY_SYSTEM_HEADER _Pragma("clang system_header")

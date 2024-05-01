@@ -73,6 +73,8 @@ target_compile_definitions(${TinyUtils_target}
     PRIVATE
         # Disable debug output in release mode
         $<$<NOT:$<CONFIG:Debug>>:QT_NO_DEBUG_OUTPUT>
+        # To disable #pragma system_header if compiling TinyORM project itself
+        TINYORM_PRAGMA_SYSTEM_HEADER_OFF
 )
 
 if(BUILD_SHARED_LIBS)

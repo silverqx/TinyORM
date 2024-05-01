@@ -131,6 +131,8 @@ target_compile_definitions(${TinyDrivers_target}
         $<$<CONFIG:Debug>:TINYDRIVERS_DEBUG>
         # Used in common header files (currently in replacebindings.hpp only)
         PROJECT_TINYDRIVERS_PRIVATE
+        # To disable #pragma system_header if compiling TinyORM project itself
+        TINYORM_PRAGMA_SYSTEM_HEADER_OFF
         # TinyDrivers support these strict Qt macros
         QT_ASCII_CAST_WARNINGS
         QT_NO_CAST_FROM_ASCII

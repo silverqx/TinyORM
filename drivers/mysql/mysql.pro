@@ -64,6 +64,9 @@ build_loadable_drivers: \
 build_tests: \
     DEFINES *= TINYDRIVERS_TESTS_CODE
 
+# To disable #pragma system_header if compiling TinyORM project itself
+DEFINES *= TINYORM_PRAGMA_SYSTEM_HEADER_OFF
+
 # TinyMySql library header and source files
 # ---
 
