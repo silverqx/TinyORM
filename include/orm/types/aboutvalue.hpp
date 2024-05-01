@@ -34,17 +34,17 @@ namespace Orm::Types
 
     /* public */
 
-    AboutValue::AboutValue(QString value) noexcept
-        : value(std::move(value))
+    AboutValue::AboutValue(QString value_) noexcept
+        : value(std::move(value_))
     {}
 
-    AboutValue::AboutValue(QString value, QStringList components) noexcept
-        : value(std::move(value))
-        , components(std::move(components))
+    AboutValue::AboutValue(QString value_, QStringList components_) noexcept
+        : value(std::move(value_))
+        , components(std::move(components_))
     {}
 
-    AboutValue::AboutValue(const char *value)
-        : value(QString::fromUtf8(value))
+    AboutValue::AboutValue(const char *value_)
+        : value(QString::fromUtf8(value_))
     {}
 
 } // namespace Orm::Types

@@ -108,7 +108,7 @@ namespace Orm::Utils
         if constexpr (std::is_constructible_v<QChar, D>)
             return 1;
         else
-            return QString(delimiter).size();
+            return static_cast<SizeType>(QString(delimiter).size());
     }
 
 } // namespace Orm::Utils

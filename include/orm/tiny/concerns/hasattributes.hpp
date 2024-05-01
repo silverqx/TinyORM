@@ -1595,12 +1595,10 @@ namespace Orm::Tiny::Concerns
             /* The 'attribute' doesn't exist in the m_original/Hash, so create it and
                rehash m_originalHash, but only from the added position. */
             else {
-                // Needed to avoid ambigous std::max() overload
-                using AttributesSizeType = std::remove_cvref_t<decltype (modelAttributes)>
-                                              ::size_type;
                 /* It should never happen that a model will have 0 attributes because
                    it must contain at least the ID attribute, but if this happen and
-                   the rehashFrom index would be -1, then rehash from 0 in this case. */
+                   the rehashFrom index would be -1, then rehash from 0 in this case.
+                   <AttributesSizeType> needed to avoid ambigous std::max() overload. */
                 const auto rehashFrom = std::max<AttributesSizeType>(
                                             modelAttributes.size() - 1, 0);
 
