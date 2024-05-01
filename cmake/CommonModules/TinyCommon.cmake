@@ -97,11 +97,16 @@ ${TINY_UNPARSED_ARGUMENTS}")
             /Zc:__cplusplus
             # Standards-conforming behavior
             /Zc:strictStrings
+            # Enable Additional Security Checks for Debug builds only
+            $<$<CONFIG:Debug>:/sdl>
             /W4
-            # Abort compiling on warnings for Debug builds only, Release builds must go on
-            # as far as possible
-            $<$<CONFIG:Debug>:/WX /sdl>
         )
+
+        # Abort compiling on warnings for Debug builds only (excluding vcpkg),
+        # Release and vcpkg builds must go on as far as possible
+        if(NOT TINY_VCPKG)
+            target_compile_options(${target} INTERFACE $<$<CONFIG:Debug>:/WX>)
+        endif()
 
         if(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
             target_compile_options(${target} INTERFACE
@@ -161,6 +166,14 @@ ${TINY_UNPARSED_ARGUMENTS}")
                 CMAKE_CXX_COMPILER_ID STREQUAL "Clang" OR
                 CMAKE_CXX_COMPILER_ID STREQUAL "AppleClang")
     )
+        # Abort compiling on warnings for Debug builds only (excluding vcpkg),
+        # Release and vcpkg builds must go on as far as possible
+        if(NOT TINY_VCPKG)
+            target_compile_options(${target} INTERFACE
+                $<$<CONFIG:Debug>:-Werror -Wfatal-errors -pedantic-errors>
+            )
+        endif()
+
         target_compile_options(${target} INTERFACE
             # -fexceptions for linux is not needed, it is on by default
             -Wall
@@ -168,9 +181,6 @@ ${TINY_UNPARSED_ARGUMENTS}")
             # Weffc++ is outdated, it warnings about bullshits 🤬, even word about this
             # in docs: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=110186
             # -Weffc++
-            # Abort compiling on warnings for Debug builds only, Release builds must go on
-            # as far as possible
-            $<$<CONFIG:Debug>:-Werror -Wfatal-errors -pedantic-errors>
             -pedantic
             -Wcast-qual
             -Wcast-align
