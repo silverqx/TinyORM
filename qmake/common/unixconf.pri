@@ -1,14 +1,16 @@
 # Compiler and Linker options
 # ---
 
+# Abort compiling on warnings for Debug builds only, Release builds must go on as far as possible
+CONFIG(debug, debug|release): \
+    QMAKE_CXXFLAGS_WARN_ON *= -Werror -Wfatal-errors -pedantic-errors
+
 QMAKE_CXXFLAGS_WARN_ON *= \
     -Wall \
     -Wextra \
     # Weffc++ is outdated, it warnings about bullshits 🤬, even word about this in docs:
     # https://gcc.gnu.org/bugzilla/show_bug.cgi?id=110186
     # -Weffc++ \
-    -Werror \
-    -Wfatal-errors \
     -Winvalid-pch \
     -Wcast-qual \
     -Wcast-align \
@@ -23,7 +25,6 @@ QMAKE_CXXFLAGS_WARN_ON *= \
     -Wzero-as-null-pointer-constant \
     -Wuninitialized \
     -pedantic \
-    -pedantic-errors \
 
 clang {
     QMAKE_CXXFLAGS_WARN_ON *= -Wdeprecated

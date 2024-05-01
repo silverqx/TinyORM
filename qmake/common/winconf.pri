@@ -70,7 +70,7 @@ win32-msvc|win32-clang-msvc {
 win32-msvc {
     QMAKE_CXXFLAGS += -guard:cf -bigobj
     QMAKE_CXXFLAGS_DEBUG += -RTC1 -sdl
-    QMAKE_CXXFLAGS_WARN_ON = -external:anglebrackets -external:W0 -WX -W4 -wd4702
+    QMAKE_CXXFLAGS_WARN_ON = -external:anglebrackets -external:W0 -W4 -wd4702
                              # Enable and check it from time to time
 #                             -external:templates-
 }
@@ -79,11 +79,18 @@ win32-msvc {
 # /RTC    - https://lists.llvm.org/pipermail/cfe-commits/Week-of-Mon-20130902/088105.html
 # /bigobj - clang-cl uses it by default - https://reviews.llvm.org/D12981
 win32-clang-msvc: \
-    QMAKE_CXXFLAGS_WARN_ON = -WX -W4
+    QMAKE_CXXFLAGS_WARN_ON = -W4
 
 win32-msvc|win32-clang-msvc {
+    # Abort compiling on warnings for Debug builds only, Release builds must go on
+    # as far as possible
+    CONFIG(debug, debug|release): \
+        QMAKE_CXXFLAGS_WARN_ON *= -WX
+
     # I don't use -MP flag because using the jom
-    QMAKE_LFLAGS += /guard:cf /WX
+    QMAKE_LFLAGS += /guard:cf
+    # Abort linking on warnings for Debug builds only, Release builds must go on as far as possible
+    QMAKE_LFLAGS_DEBUG += /WX
     # Looks like clang-cl does know nothing about these, for now enabling
     QMAKE_LFLAGS_RELEASE += /OPT:REF,ICF=5
 }

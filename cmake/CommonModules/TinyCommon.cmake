@@ -97,8 +97,10 @@ ${TINY_UNPARSED_ARGUMENTS}")
             /Zc:__cplusplus
             # Standards-conforming behavior
             /Zc:strictStrings
-            /WX /W4
-            $<$<CONFIG:Debug>:/sdl>
+            /W4
+            # Abort compiling on warnings for Debug builds only, Release builds must go on
+            # as far as possible
+            $<$<CONFIG:Debug>:/WX /sdl>
         )
 
         if(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
@@ -132,7 +134,9 @@ ${TINY_UNPARSED_ARGUMENTS}")
             $<$<NOT:$<CONFIG:Debug>>:/OPT:REF,ICF=5>
             # /OPT:REF,ICF does not support incremental linking
             $<$<CONFIG:RelWithDebInfo>:/INCREMENTAL:NO>
-            /WX
+            # Abort linking on warnings for Debug builds only, Release builds must go on
+            # as far as possible
+            $<$<CONFIG:Debug>:/WX>
         )
     endif()
 
@@ -164,8 +168,10 @@ ${TINY_UNPARSED_ARGUMENTS}")
             # Weffc++ is outdated, it warnings about bullshits 🤬, even word about this
             # in docs: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=110186
             # -Weffc++
-            -Werror
-            -Wfatal-errors
+            # Abort compiling on warnings for Debug builds only, Release builds must go on
+            # as far as possible
+            $<$<CONFIG:Debug>:-Werror -Wfatal-errors -pedantic-errors>
+            -pedantic
             -Wcast-qual
             -Wcast-align
             -Woverloaded-virtual
@@ -178,8 +184,6 @@ ${TINY_UNPARSED_ARGUMENTS}")
             -Wconversion
             -Wzero-as-null-pointer-constant
             -Wuninitialized
-            -pedantic
-            -pedantic-errors
             # Reduce I/O operations
             -pipe
         )
