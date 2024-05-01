@@ -72,22 +72,23 @@ namespace
 } // namespace
 
 void Thread::nameThreadForDebugging([[maybe_unused]] const QString &threadName,
-                                    [[maybe_unused]] const quint64 /*unused*/)
+                                    [[maybe_unused]] const quint64 threadId)
 {
 #if !defined(__clang__) && \
     !defined(TINYORM_NO_DEBUG) && defined(Q_CC_MSVC) && !defined(Q_OS_WINRT)
-    setCurrentThreadName(HANDLE(-1), threadName.toLocal8Bit().constData());
+    setCurrentThreadName(reinterpret_cast<HANDLE>(threadId), // NOLINT(cppcoreguidelines-pro-type-reinterpret-cast)
+                         threadName.toLocal8Bit().constData());
 #elif defined(Q_OS_LINUX) || defined(Q_OS_MAC) || defined(Q_OS_QNX)
     setCurrentThreadName(threadName.toLocal8Bit().constData());
 #endif
 }
 
 void Thread::nameThreadForDebugging([[maybe_unused]] const char *threadName,
-                                    [[maybe_unused]] const quint64 /*unused*/)
+                                    [[maybe_unused]] const quint64 threadId)
 {
 #if !defined(__clang__) && \
     !defined(TINYORM_NO_DEBUG) && defined(Q_CC_MSVC) && !defined(Q_OS_WINRT)
-    setCurrentThreadName(HANDLE(-1), threadName);
+    setCurrentThreadName(reinterpret_cast<HANDLE>(threadId), threadName); // NOLINT(cppcoreguidelines-pro-type-reinterpret-cast)
 #elif defined(Q_OS_LINUX) || defined(Q_OS_MAC) || defined(Q_OS_QNX)
     setCurrentThreadName(threadName);
 #endif
