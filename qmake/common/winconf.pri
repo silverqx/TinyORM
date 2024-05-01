@@ -69,7 +69,6 @@ win32-msvc|win32-clang-msvc {
 
 win32-msvc {
     QMAKE_CXXFLAGS += -guard:cf -bigobj
-    QMAKE_CXXFLAGS_DEBUG += -RTC1 -sdl
     QMAKE_CXXFLAGS_WARN_ON = -external:anglebrackets -external:W0 -W4 -wd4702
                              # Enable and check it from time to time
 #                             -external:templates-
@@ -82,6 +81,7 @@ win32-clang-msvc: \
     QMAKE_CXXFLAGS_WARN_ON = -W4
 
 win32-msvc|win32-clang-msvc {
+    QMAKE_CXXFLAGS_DEBUG += -RTC1 -sdl
     # Abort compiling on warnings for Debug builds only, Release builds must go on
     # as far as possible
     CONFIG(debug, debug|release): \
