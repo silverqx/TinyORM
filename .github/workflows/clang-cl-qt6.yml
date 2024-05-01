@@ -18,6 +18,7 @@ on:
   push:
     branches:
       - main
+      - gh-actions
 
 jobs:
 
