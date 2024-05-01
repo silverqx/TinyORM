@@ -164,7 +164,8 @@ namespace Support::Stores
            I wouldn't say I liked it as the mutex was locked too long, the thread_local
            will be much faster. */
         T_THREAD_LOCAL
-        static CacheType cache(this->basemodel().getUserRelations().size());
+        static CacheType cache(static_cast<CacheType::size_type>(
+                                   this->basemodel().getUserRelations().size()));
 
         return cache;
     }

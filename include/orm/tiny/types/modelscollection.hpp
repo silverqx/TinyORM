@@ -1150,7 +1150,7 @@ namespace Types
             const std::function<std::pair<K, V>(ModelRawType *)> &callback)
     {
         std::unordered_map<K, V> result;
-        result.reserve(this->size());
+        result.reserve(static_cast<decltype (result)::size_type>(this->size()));
 
         for (ModelLoopType model : *this)
             // Don't handle the nullptr
@@ -1676,8 +1676,8 @@ namespace Types
         ModelsCollection<ModelRawType *> result;
         result.reserve(size);
 
-        std::unordered_set<T> values;
-        result.reserve(static_cast<decltype (values)::size_type>(size));
+        QSet<T> values;
+        result.reserve(size);
 
         for (ModelLoopType model : *this) {
             ModelRawType *const modelPointer = toPointer(model);

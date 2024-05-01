@@ -296,7 +296,7 @@ namespace Concerns
         if (builder().getConnection().pretending())
             return {};
 
-        const auto modelsSize = models.size();
+        const auto modelsSize = static_cast<int>(models.size());
 
         if (modelsSize == 0)
             throw Orm::Exceptions::RecordsNotFoundError(
