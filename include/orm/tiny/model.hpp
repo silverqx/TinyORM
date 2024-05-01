@@ -1059,24 +1059,24 @@ namespace Orm::Tiny
            IsModel is not needed as they don't contain any data members or they
            contain ony a static data members. */
 
-        // Compare the HasAttributes concern
-        using HasAttributes = Concerns::HasAttributes<Derived, AllRelations...>;
-        if (static_cast<const HasAttributes &>(*this) !=
-            static_cast<const HasAttributes &>(right)
+        // Compare the HasAttributes_ concern
+        using HasAttributes_ = Concerns::HasAttributes<Derived, AllRelations...>;
+        if (static_cast<const HasAttributes_ &>(*this) !=
+            static_cast<const HasAttributes_ &>(right)
         )
             return false;
 
-        // Compare the HasRelationships concern
-        using HasRelationships = Concerns::HasRelationships<Derived, AllRelations...>;
-        if (static_cast<const HasRelationships &>(*this) !=
-            static_cast<const HasRelationships &>(right)
+        // Compare the HasRelationships_ concern
+        using HasRelationships_ = Concerns::HasRelationships<Derived, AllRelations...>;
+        if (static_cast<const HasRelationships_ &>(*this) !=
+            static_cast<const HasRelationships_ &>(right)
         )
             return false;
 
-        // Compare the HasTimestamps concern
-        using HasTimestamps = Concerns::HasTimestamps<Derived, AllRelations...>;
-        if (static_cast<const HasTimestamps &>(*this) !=
-            static_cast<const HasTimestamps &>(right)
+        // Compare the HasTimestamps_ concern
+        using HasTimestamps_ = Concerns::HasTimestamps<Derived, AllRelations...>;
+        if (static_cast<const HasTimestamps_ &>(*this) !=
+            static_cast<const HasTimestamps_ &>(right)
         )
             return false;
 
@@ -1099,8 +1099,8 @@ namespace Orm::Tiny
         /* It compares only the size and keys and doesn't compare hash values because
            the std::function doesn't have a full/complete operator==() (it only compares
            for the nullptr). */
-        if (!HasRelationships::compareURelations(model.u_relations,
-                                                 derivedRight.u_relations))
+        if (!HasRelationships_::compareURelations(model.u_relations,
+                                                  derivedRight.u_relations))
             return false;
 
         /* Thanks to the CRTP the user doesn't have to define operator==() in every
