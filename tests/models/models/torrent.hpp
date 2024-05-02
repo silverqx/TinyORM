@@ -291,6 +291,27 @@ private:
 
 } // namespace Models
 
+/* Recursive #include-s
+   ---
+   I tried to remove all recursive #include-s beginning from this Torrent class all way
+   down and it didn't save any memory during compilation. In both cases with and without
+   recursive #include-s the cl.exe memory usage for the tst_model.pro test case was
+   2.1GB.
+   I also tried to remove all unused relations considering the tst_model.pro test case
+   from this Torrent class all way down and it saved a lot of memory, I didn't remember
+   exactly this number but the final cl.exe memory usage for the tst_model.pro test case
+   was 800MB.
+   Now, I tried it again, I removed Tag, Tagged, TorrentState, and User relations,
+   #include-s, ... from the Torrent class and also all unused relations from all other
+   classes that were used by the tst_model.pro test case and the cl.exe memory usage
+   for the tst_model.pro test case was 800MB, when I only left some of these relations,
+   eg. in the User or TorrentPreviewableFile models then the memory usage was 1.1GB.
+   The conclusion is that recursive #include-s don't increase memory usage during
+   compilation (for msvc compiler, other compilers can behave differently but can be
+   expected a similar behavior) but model classes themself are increasing memory usage.
+   This finding is surprising for me because I thought that these recursive #include-s
+   are increasing the memory usage too. */
+
 // TODO finish this, move to base class and test eg in qvector, qhash, etc silverqx
 //QDebug operator<<(QDebug debug, const Models::Torrent &c);
 
