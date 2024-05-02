@@ -158,6 +158,8 @@ jobs:
         git.exe fetch --tags origin
         git.exe reset --hard origin/master
 
+        .\bootstrap-vcpkg.bat
+
     # This should reliably remove the qtbase and tinyorm with all dependencies.
     # It's much faster to do it this way like removing the whole vcpkg folder and then the binary
     # caching should kick in.
