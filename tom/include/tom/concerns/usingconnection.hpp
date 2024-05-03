@@ -97,7 +97,7 @@ namespace Concerns
             connections (in the loop). */
         template<UsingConnectionCallback F>
         int usingConnectionsInternal(
-                QStringList &&names, bool debugSql,
+                QStringList &&names, bool debugSql, // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
                 std::optional<std::reference_wrapper<MigrationRepository>> repository,
                 const F &callback);
         /*! Execute the given callback using the given connections as the default

@@ -70,7 +70,7 @@ namespace Types
 
     /*! Models collection (QVector) with additional handy methods. */
     template<DerivedCollectionModel Model>
-    class ModelsCollection : public QVector<Model>
+    class ModelsCollection : public QVector<Model> // NOLINT(misc-no-recursion)
     {
         /*! Alias for the attribute utils. */
         using AttributeUtils = Orm::Tiny::Utils::Attribute;
@@ -151,17 +151,17 @@ namespace Types
 
         /* Comparison operators */
         /*! Equality comparison operator for the ModelsCollection. */
-        bool operator==(const ModelsCollection<ModelRawType> &other) const
+        bool operator==(const ModelsCollection<ModelRawType> &other) const // NOLINT(misc-no-recursion)
         requires (!std::is_pointer_v<Model>);
         /*! Equality comparison operator for the ModelsCollection. */
-        bool operator==(const ModelsCollection<ModelRawType *> &other) const
+        bool operator==(const ModelsCollection<ModelRawType *> &other) const // NOLINT(misc-no-recursion)
         requires std::is_pointer_v<Model>;
 
         /*! Equality comparison operator for the ModelsCollection. */
-        bool operator==(const ModelsCollection<ModelRawType *> &other) const
+        bool operator==(const ModelsCollection<ModelRawType *> &other) const // NOLINT(misc-no-recursion)
         requires (!std::is_pointer_v<Model>);
         /*! Equality comparison operator for the ModelsCollection. */
-        bool operator==(const ModelsCollection<ModelRawType> &other) const
+        bool operator==(const ModelsCollection<ModelRawType> &other) const // NOLINT(misc-no-recursion)
         requires std::is_pointer_v<Model>;
 
         /* Redeclared overridden methods from the base class */
@@ -682,7 +682,7 @@ namespace Types
     /* Comparison operators */
 
     template<DerivedCollectionModel Model>
-    bool ModelsCollection<Model>::operator==(
+    bool ModelsCollection<Model>::operator==( // NOLINT(misc-no-recursion)
             const ModelsCollection<ModelRawType> &other) const
     requires (!std::is_pointer_v<Model>)
     {
@@ -700,7 +700,7 @@ namespace Types
                the same model; if pointer addresses differ, then compare models using
                the operator==(). */
             if (std::addressof(model) != std::addressof(otherModel) &&
-                model != otherModel
+                model != otherModel // NOLINT(misc-no-recursion)
             )
                 return false;
         }
@@ -709,7 +709,7 @@ namespace Types
     }
 
     template<DerivedCollectionModel Model>
-    bool ModelsCollection<Model>::operator==(
+    bool ModelsCollection<Model>::operator==( // NOLINT(misc-no-recursion)
             const ModelsCollection<ModelRawType *> &other) const
     requires std::is_pointer_v<Model>
     {
@@ -738,7 +738,7 @@ namespace Types
        ModelsCollection<Model *> == ModelsCollection<Model> */
 
     template<DerivedCollectionModel Model>
-    bool ModelsCollection<Model>::operator==(
+    bool ModelsCollection<Model>::operator==( // NOLINT(misc-no-recursion)
             const ModelsCollection<ModelRawType *> &other) const
     requires (!std::is_pointer_v<Model>)
     {
@@ -763,7 +763,7 @@ namespace Types
     }
 
     template<DerivedCollectionModel Model>
-    bool ModelsCollection<Model>::operator==(
+    bool ModelsCollection<Model>::operator==( // NOLINT(misc-no-recursion)
             const ModelsCollection<ModelRawType> &other) const
     requires std::is_pointer_v<Model>
     {
@@ -1294,7 +1294,7 @@ namespace Types
     ModelsCollection<Model>::contains(
             const std::function<bool(ModelRawType *)> &callback)
     {
-        for (ModelLoopType model : *this)
+        for (ModelLoopType model : *this) // NOLINT(readability-use-anyofallof)
             // Don't handle the nullptr
             if (std::invoke(callback, toPointer(model)))
                 return true;

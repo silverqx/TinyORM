@@ -1164,7 +1164,7 @@ namespace Orm::Query
     template<SubQuery T>
     Builder &Builder::selectSub(T &&query, const QString &as)
     {
-        const auto [queryString, bindings] = createSub(std::forward<T>(query));
+        const auto [queryString, bindings] = createSub(std::forward<T>(query)); // NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
 
         return selectRaw(QStringLiteral("(%1) as %2").arg(queryString,
                                                           m_grammar->wrap(as)),
@@ -1175,7 +1175,7 @@ namespace Orm::Query
     Builder &
     Builder::fromSub(T &&query, const QString &as)
     {
-        const auto [queryString, bindings] = createSub(std::forward<T>(query));
+        const auto [queryString, bindings] = createSub(std::forward<T>(query)); // NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
 
         return fromRaw(QStringLiteral("(%1) as %2").arg(queryString,
                                                         m_grammar->wrapTable(as)),
@@ -1190,7 +1190,7 @@ namespace Orm::Query
                   const QVariant &second, const QString &type, const bool where)
     {
         // Ownership of the std::shared_ptr<JoinClause>
-        return joinInternal(newJoinClause(*this, type, std::forward<T>(table)),
+        return joinInternal(newJoinClause(*this, type, std::forward<T>(table)), // NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
                             first, comparison, second, where);
     }
 
@@ -1292,7 +1292,7 @@ namespace Orm::Query
                      const QString &comparison, const QVariant &second,
                      const QString &type, const bool where)
     {
-        return joinSubInternal(createSub(std::forward<T>(query)),
+        return joinSubInternal(createSub(std::forward<T>(query)), // NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
                                as, first, comparison, second, type, where);
     }
 
@@ -1350,7 +1350,7 @@ namespace Orm::Query
         if constexpr (isQueryable<T>)
             return whereSub(column, comparison, std::forward<T>(value), condition);
         else
-            return whereInternal(column, comparison, std::forward<T>(value), condition);
+            return whereInternal(column, comparison, std::forward<T>(value), condition); // NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
     }
 
     template<WhereValue T>

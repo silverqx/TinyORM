@@ -33,7 +33,7 @@ namespace Relations
 namespace Types
 {
     template<DerivedCollectionModel Model>
-    class ModelsCollection;
+    class ModelsCollection; // NOLINT(misc-no-recursion)
 }
 
     template<typename Model>

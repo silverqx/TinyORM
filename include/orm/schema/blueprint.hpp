@@ -525,7 +525,7 @@ namespace Grammars
     template<QStringConcept ...Args>
     const DropColumnsCommand &Blueprint::dropColumns(Args &&...columns)
     {
-        return dropColumns(QVector<QString> {std::forward<Args>(columns)...});
+        return dropColumns(QVector<QString> {std::forward<Args>(columns)...}); // NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
     }
 
     void Blueprint::dropTimestampsTz()

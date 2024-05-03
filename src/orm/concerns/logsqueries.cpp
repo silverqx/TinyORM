@@ -37,7 +37,7 @@ void LogsQueries::logQueryForPretend(
 
     const auto &connectionName = databaseConnection().getName();
 
-    qDebug("Pretended %s query (%s) : %s",
+    qDebug("Pretended %s query (%s) : %s", // NOLINT(cppcoreguidelines-pro-type-vararg)
            type.toUtf8().constData(),
            connectionName.isEmpty() ? "" : connectionName.toUtf8().constData(),
            QueryUtils::parseExecutedQueryForPretend(query, preparedBindings)
@@ -59,7 +59,7 @@ void LogsQueries::logTransactionQuery(
 
     const auto &connectionName = databaseConnection().getName();
 
-    qDebug("Executed transaction query (%llims%s) : %s",
+    qDebug("Executed transaction query (%llims%s) : %s", // NOLINT(cppcoreguidelines-pro-type-vararg)
            elapsed ? *elapsed : -1,
            connectionName.isEmpty() ? ""
                                     : QStringLiteral(", %1").arg(connectionName)
@@ -80,7 +80,7 @@ void LogsQueries::logTransactionQueryForPretend(const QString &query) const
 
     const auto &connectionName = databaseConnection().getName();
 
-    qDebug("Pretended transaction query (%s) : %s",
+    qDebug("Pretended transaction query (%s) : %s", // NOLINT(cppcoreguidelines-pro-type-vararg)
            connectionName.isEmpty() ? "" : connectionName.toUtf8().constData(),
            query.toUtf8().constData());
 #endif
@@ -176,7 +176,7 @@ void LogsQueries::logQueryInternal(
 
     const auto &connectionName = databaseConnection().getName();
 
-    qDebug("Executed %s query (%llims, %i results, %i affected%s) : %s",
+    qDebug("Executed %s query (%llims, %i results, %i affected%s) : %s", // NOLINT(cppcoreguidelines-pro-type-vararg)
            type.toUtf8().constData(),
            elapsed ? *elapsed : -1,
            QueryUtils::queryResultSize(query),

@@ -80,7 +80,7 @@ namespace Concerns
         /*! Set the columns on the pivot table to retrieve. */
         inline BelongsToManyType &withPivot(const QString &column);
         /*! Set the columns on the pivot table to retrieve. */
-        BelongsToManyType &withPivot(QStringList &&columns);
+        BelongsToManyType &withPivot(QStringList &&columns); // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
         /*! Set the columns on the pivot table to retrieve. */
         inline BelongsToManyType &withPivot(QString &&column);
         /*! Set the columns on the pivot table to retrieve. */
@@ -361,7 +361,7 @@ namespace Concerns
     BelongsToMany<Model, Related, PivotType> &
     InteractsWithPivotTable<Model, Related, PivotType>::withPivot(Args &&...columns)
     {
-        return withPivot(QStringList {std::forward<Args>(columns)...});
+        return withPivot(QStringList {std::forward<Args>(columns)...}); // NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
     }
 
     template<class Model, class Related, class PivotType>

@@ -36,9 +36,9 @@ namespace Orm::Tiny::Relations
     protected:
         /*! Protected constructor. */
         BelongsToMany(std::unique_ptr<Related> &&related, Model &parent,
-                      const QString &table = "", const QString &foreignPivotKey = "",
-                      const QString &relatedPivotKey = "", const QString &parentKey = "",
-                      const QString &relatedKey = "", const QString &relationName = "");
+                      const QString &table = "", const QString &foreignPivotKey = "", // NOLINT(modernize-pass-by-value)
+                      const QString &relatedPivotKey = "", const QString &parentKey = "", // NOLINT(modernize-pass-by-value)
+                      const QString &relatedKey = "", const QString &relationName = ""); // NOLINT(modernize-pass-by-value)
 
         /*! BelongsToMany's copy constructor (used by BelongsToMany::clone()). */
         BelongsToMany(const BelongsToMany &) = default;
@@ -329,7 +329,7 @@ namespace Orm::Tiny::Relations
 
         /*! Build model dictionary keyed by the relation's foreign key. */
         QHash<typename Model::KeyType, ModelsCollection<Related>>
-        buildDictionary(ModelsCollection<Related> &&results) const;
+        buildDictionary(ModelsCollection<Related> &&results) const; // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
 
         /*! Prepare the query builder for query execution. */
         Builder<Related> &prepareQueryBuilder() const;

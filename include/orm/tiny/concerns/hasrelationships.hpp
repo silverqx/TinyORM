@@ -31,7 +31,7 @@ namespace Concerns
 
     /*! Model relationships. */
     template<typename Derived, AllRelationsConcept ...AllRelations>
-    class HasRelationships :
+    class HasRelationships : // NOLINT(bugprone-exception-escape, misc-no-recursion)
             private Concerns::HasRelationStore<Derived, AllRelations...>
     {
         /* Using starts in the BaseRelationStore::visit() and is used to access private
@@ -847,7 +847,7 @@ namespace Concerns
     /* Others */
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
-    bool HasRelationships<Derived, AllRelations...>::operator==(
+    bool HasRelationships<Derived, AllRelations...>::operator==( // NOLINT(misc-no-recursion)
             const HasRelationships &right) const
     {
         // u_relations == right.u_relations

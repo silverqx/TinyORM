@@ -29,7 +29,7 @@ namespace
 
 /* public */
 
-SqlQuery::SqlQuery(TSqlQuery &&other, const QtTimeZoneConfig &qtTimeZone, // NOLINT(modernize-pass-by-value,cppcoreguidelines-rvalue-reference-param-not-moved)
+SqlQuery::SqlQuery(TSqlQuery &&other, const QtTimeZoneConfig &qtTimeZone, // NOLINT(modernize-pass-by-value, cppcoreguidelines-rvalue-reference-param-not-moved)
                    const QueryGrammar &queryGrammar,
                    const std::optional<bool> returnQDateTime
 )

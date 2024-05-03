@@ -50,7 +50,7 @@ namespace Orm::Tiny
 
     public:
         /*! Constructor. */
-        Builder(std::shared_ptr<QueryBuilder> &&query, const Model &model);
+        Builder(std::shared_ptr<QueryBuilder> &&query, const Model &model); // NOLINT(modernize-pass-by-value)
         /*! Default destructor. */
         ~Builder() = default;
 
@@ -261,7 +261,7 @@ namespace Orm::Tiny
                 const WithItem &relationItem) const;
 
         /*! Create a vector of models from the SqlQuery. */
-        ModelsCollection<Model> hydrate(SqlQuery &&result) const;
+        ModelsCollection<Model> hydrate(SqlQuery &&result) const; // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
 
         /*! Get the model instance being queried. */
         inline Model &getModel() noexcept;

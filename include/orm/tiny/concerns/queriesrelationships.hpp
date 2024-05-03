@@ -145,7 +145,7 @@ namespace Private
         /*! Add a relationship count / exists condition to the query. */
         template<typename Related>
         TinyBuilder<Model> &
-        has(std::unique_ptr<Relation<Related>> &&relation,
+        has(std::unique_ptr<Relation<Related>> &&relation, // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
             const QString &comparison = GE, qint64 count = 1,
             const QString &condition = AND,
             const std::function<void(QueryBuilder &)> &callback = nullptr);
@@ -153,7 +153,7 @@ namespace Private
             above overload, void type to avoid ambiguity. */
         template<typename Related, typename = void>
         TinyBuilder<Model> &
-        has(std::unique_ptr<Relation<Related>> &&relation,
+        has(std::unique_ptr<Relation<Related>> &&relation, // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
             const QString &comparison = GE, qint64 count = 1,
             const QString &condition = AND,
             const std::function<void(TinyBuilder<Related> &)> &callback = nullptr);
@@ -161,7 +161,7 @@ namespace Private
         /*! Add a relationship count / exists condition to the query. */
 #if defined(__clang__) || defined(__GNUG__)
         template<typename Related, typename Method,
-                 std::enable_if_t<std::is_member_function_pointer_v<Method>, bool> = true>
+                 std::enable_if_t<std::is_member_function_pointer_v<Method>, bool> = true> // NOLINT(modernize-use-constraints)
 #else
         template<typename Related, typename Method>
         requires std::is_member_function_pointer_v<Method>
@@ -206,7 +206,7 @@ namespace Private
             clauses. */
 #if defined(__clang__) || defined(__GNUG__)
         template<typename Related, typename Method,
-                 std::enable_if_t<std::is_member_function_pointer_v<Method>, bool> = true>
+                 std::enable_if_t<std::is_member_function_pointer_v<Method>, bool> = true> // NOLINT(modernize-use-constraints)
 #else
         template<typename Related, typename Method>
         requires std::is_member_function_pointer_v<Method>
@@ -276,7 +276,7 @@ namespace Private
                 QStringList &relations);
         /*! Used by last nested relation that has a tiny query callback. */
         template<typename Related>
-        void hasNestedInternalFromStore(std::unique_ptr<Relation<Related>> &&relation);
+        void hasNestedInternalFromStore(std::unique_ptr<Relation<Related>> &&relation); // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
 
         /*! Store for the last hasNested() relation properties ( comparison, count, and
             callback ). */

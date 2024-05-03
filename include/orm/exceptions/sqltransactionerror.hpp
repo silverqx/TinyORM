@@ -17,7 +17,7 @@ namespace Orm::Exceptions
     class SqlTransactionError : public SqlError // clazy:exclude=copyable-polymorphic
     {
         /*! Inherit constructors. */
-        using SqlError::SqlError;
+        using SqlError::SqlError; // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
     };
 
 } // namespace Orm::Exceptions

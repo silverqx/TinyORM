@@ -67,7 +67,7 @@ namespace Orm::Tiny::Concerns
         QString getKeyForGuardableHash() const;
         /*! Move columns to the std::unordered_set for guardable columns hash cache. */
         static std::unordered_set<QString>
-        moveToSetForGuardableHash(QStringList &&columns);
+        moveToSetForGuardableHash(QStringList &&columns); // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
         /*! Get the fillable attributes of a given vector. */
         QVector<AttributeItem>
         fillableFromArray(const QVector<AttributeItem> &attributes) const;

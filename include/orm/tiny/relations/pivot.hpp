@@ -15,7 +15,7 @@ namespace Tiny::Relations
 {
 
     /*! Basic Pivot class. */
-    class Pivot : public BasePivot<Pivot>
+    class Pivot : public BasePivot<Pivot> // NOLINT(bugprone-exception-escape, misc-no-recursion)
     {
         // TODO study, or stackoverflow friend X vs friend X<Pivot>, if template parameter deduced or all BaseXyz template instances are friends? silverqx
         friend Model<Pivot>;

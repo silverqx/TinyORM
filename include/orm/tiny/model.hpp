@@ -123,14 +123,14 @@ namespace Orm::Tiny
         ~Model() = default;
 
         /*! Model's copy constructor. */
-        Model(const Model &) = default;
+        Model(const Model &) = default; // NOLINT(misc-no-recursion)
         /*! Model's move constructor. */
-        Model(Model &&) = default;
+        Model(Model &&) = default; // NOLINT(bugprone-exception-escape)
 
         /*! Model's copy assignment operator. */
-        Model &operator=(const Model &) = default;
+        Model &operator=(const Model &) = default; // NOLINT(misc-no-recursion)
         /*! Model's move assignment operator. */
-        Model &operator=(Model &&) = default;
+        Model &operator=(Model &&) = default; // NOLINT(bugprone-exception-escape)
 
         /*! Create a new TinyORM model instance from attributes
             (converting constructor). */
@@ -245,7 +245,7 @@ namespace Orm::Tiny
         bool isNot(const std::optional<ModelToCompare> &model) const;
 
         /*! Equality comparison operator for the Model. */
-        bool operator==(const Model &right) const;
+        bool operator==(const Model &right) const; // NOLINT(misc-no-recursion)
 
 #if defined(__clang__) && __clang_major__ >= 16
         /*! Three-way comparison operator for the Model. */
@@ -1053,7 +1053,7 @@ namespace Orm::Tiny
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
-    bool Model<Derived, AllRelations...>::operator==(const Model &right) const
+    bool Model<Derived, AllRelations...>::operator==(const Model &right) const // NOLINT(misc-no-recursion)
     {
         /* Comparing the HasConnectionResolver, GuardsAttributes, ModelProxies, and
            IsModel is not needed as they don't contain any data members or they

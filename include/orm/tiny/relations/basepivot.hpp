@@ -18,7 +18,7 @@ namespace Orm::Tiny::Relations
 
     /*! Base class for Pivot models. */
     template<typename PivotModel>
-    class BasePivot : public Model<PivotModel>,
+    class BasePivot : public Model<PivotModel>, // NOLINT(bugprone-exception-escape, misc-no-recursion)
                       public IsPivotModel
     {
         friend Model<PivotModel>;

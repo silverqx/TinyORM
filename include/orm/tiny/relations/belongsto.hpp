@@ -33,8 +33,8 @@ namespace Orm::Tiny::Relations
     protected:
         /*! Protected constructor. */
         BelongsTo(std::unique_ptr<Related> &&related, Model &child,
-                  const QString &foreignKey, const QString &ownerKey,
-                  const QString &relationName);
+                  const QString &foreignKey, const QString &ownerKey, // NOLINT(modernize-pass-by-value)
+                  const QString &relationName); // NOLINT(modernize-pass-by-value)
 
     public:
         /*! Parent Model type. */
@@ -121,7 +121,7 @@ namespace Orm::Tiny::Relations
 
         /*! Build model dictionary keyed by the parent's primary key. */
         QHash<typename Model::KeyType, Related>
-        buildDictionary(ModelsCollection<Related> &&results) const;
+        buildDictionary(ModelsCollection<Related> &&results) const; // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
 
         /*! Make a new related instance for the given model. */
         inline Related newRelatedInstanceFor(const Model &/*unused*/) const override;

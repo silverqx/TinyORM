@@ -210,7 +210,7 @@ bool MySqlConnection::pingDatabase()
            successful ping. */
         if (ping != 0 && errNo == CR_COMMANDS_OUT_OF_SYNC) {
             // TODO log to file, how often this happen silverqx
-            qWarning("mysql_ping() returned : CR_COMMANDS_OUT_OF_SYNC(%ud)", errNo);
+            qWarning("mysql_ping() returned : CR_COMMANDS_OUT_OF_SYNC(%ud)", errNo); // NOLINT(cppcoreguidelines-pro-type-vararg)
             return true;
         }
 
@@ -219,7 +219,7 @@ bool MySqlConnection::pingDatabase()
         if (ping != 0)
             return false;
 
-        qWarning("Unknown behavior during mysql_ping(), this should never happen :/");
+        qWarning("Unknown behavior during mysql_ping(), this should never happen :/"); // NOLINT(cppcoreguidelines-pro-type-vararg)
         return false;
     };
 

@@ -78,7 +78,7 @@ namespace Concerns
 
     public:
         /*! Constructor. */
-        Application(int &argc, char *argv[], std::shared_ptr<DatabaseManager> db,
+        Application(int &argc, char *argv[], std::shared_ptr<DatabaseManager> db, // NOLINT(modernize-avoid-c-arrays)
                     const char *environmentEnvName = "TOM_ENV",
                     QString migrationTable = QStringLiteral("migrations"),
                     std::vector<std::shared_ptr<Migration>> migrations = {},

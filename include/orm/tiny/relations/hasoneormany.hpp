@@ -25,7 +25,7 @@ namespace Orm::Tiny::Relations
     protected:
         /*! Protected constructor. */
         HasOneOrMany(std::unique_ptr<Related> &&related, Model &parent,
-                     const QString &foreignKey, const QString &localKey);
+                     const QString &foreignKey, const QString &localKey); // NOLINT(modernize-pass-by-value)
 
     public:
         /*! Parent Model type. */
@@ -91,7 +91,7 @@ namespace Orm::Tiny::Relations
         createMany(const QVector<QVector<AttributeItem>> &records) const;
         /*! Create a vector of new instances of the related model. */
         ModelsCollection<Related>
-        createMany(QVector<QVector<AttributeItem>> &&records) const;
+        createMany(QVector<QVector<AttributeItem>> &&records) const; // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
 
     protected:
         /* Relation related operations */
@@ -104,7 +104,7 @@ namespace Orm::Tiny::Relations
         /*! Build model dictionary keyed by the relation's foreign key. */
         template<typename RelationType>
         QHash<typename Model::KeyType, RelationType>
-        buildDictionary(ModelsCollection<Related> &&results) const;
+        buildDictionary(ModelsCollection<Related> &&results) const; // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
 
         /* Getters / Setters */
         /*! Get the plain foreign key. */

@@ -6,7 +6,7 @@
 TINY_SYSTEM_HEADER
 
 #include "orm/macros/sqldrivermappings.hpp"
-#include TINY_INCLUDE_TQueryError
+#include TINY_INCLUDE_TQueryError // NOLINT(llvm-include-order)
 #include TINY_INCLUDE_TSqlDatabase
 
 #include "orm/concerns/countsqueries.hpp"
