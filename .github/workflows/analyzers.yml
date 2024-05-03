@@ -120,6 +120,10 @@ jobs:
       run: |
         cmake --version
 
+    - name: Clazy print version
+      run: |
+        clazy-standalone --version
+
     - name: TinyORM create folder for build trees
       run: |
         mkdir --parents '../TinyORM-builds-cmake'
