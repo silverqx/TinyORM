@@ -232,10 +232,13 @@ namespace Tom::Commands::Make::Support
             const QStringList &oneToOne, const QStringList &oneToMany,
             const QStringList &belongsTo, const QStringList &belongsToMany)
     {
+        using SizeType = decltype (m_relationsListsSize);
+
         // Cache the computed reserve size to avoid recomputation in the private section
-        return m_relationsListsSize = static_cast<decltype (m_relationsListsSize)>(
-                                          oneToOne.size()  + oneToMany.size() +
-                                          belongsTo.size() + belongsToMany.size());
+        return m_relationsListsSize = static_cast<SizeType>(oneToOne.size()) +
+                                      static_cast<SizeType>(oneToMany.size()) +
+                                      static_cast<SizeType>(belongsTo.size()) +
+                                      static_cast<SizeType>(belongsToMany.size());
     }
 
 } // namespace Tom::Commands::Make::Support
