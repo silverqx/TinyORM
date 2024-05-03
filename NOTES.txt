@@ -953,7 +953,9 @@ select -ExpandProperty FullName > b.txt
 
 cat .\compile_commands.json | sls '"file":' > a.txt
 
-And use regex-es from analyzers-qt5/6.yml
+And use regex-es from analyzers-qt5/6.yml, eg.:
+
+Get-Content .\a.txt | sls -Pattern '[\\\/]+(?:drivers|examples|orm|src|tests|tom)[\\\/]+.+?[\\\/]+(?!mocs_)[\w\d_\-\+]+\.cpp' | measure
 
 
 Clazy in QtCreator:
