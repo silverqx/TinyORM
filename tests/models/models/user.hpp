@@ -23,8 +23,7 @@ class Phone;
 class Role;
 class Torrent;
 
-// NOLINTNEXTLINE(misc-no-recursion, bugprone-exception-escape)
-class User final : public Model<User, Phone, Role, Torrent, Pivot>,
+class User final : public Model<User, Phone, Role, Torrent, Pivot>, // NOLINT(bugprone-exception-escape, misc-no-recursion)
                    public SoftDeletes<User>
 {
     friend Model;

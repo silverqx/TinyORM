@@ -18,8 +18,7 @@ using Orm::Tiny::Relations::Pivot;
 
 class User;
 
-// NOLINTNEXTLINE(misc-no-recursion, bugprone-exception-escape)
-class Role final : public Model<Role, User, RoleUser, RoleUser_Appends, Pivot>
+class Role final : public Model<Role, User, RoleUser, RoleUser_Appends, Pivot> // NOLINT(bugprone-exception-escape, misc-no-recursion)
 {
     friend Model;
     using Model::Model;

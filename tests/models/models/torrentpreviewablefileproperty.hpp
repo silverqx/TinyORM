@@ -17,8 +17,7 @@ using Orm::Tiny::Model;
 class FilePropertyProperty;
 class TorrentPreviewableFile;
 
-// NOLINTNEXTLINE(misc-no-recursion, bugprone-exception-escape)
-class TorrentPreviewableFileProperty final :
+class TorrentPreviewableFileProperty final : // NOLINT(bugprone-exception-escape, misc-no-recursion)
         public Model<TorrentPreviewableFileProperty, TorrentPreviewableFile,
                      FilePropertyProperty>
 {

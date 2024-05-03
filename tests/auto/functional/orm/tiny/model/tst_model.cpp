@@ -1802,8 +1802,7 @@ tst_Model::addTouch_setTouchedRelations_getTouchedRelations_touches_clearTouches
 
 namespace
 {
-    // NOLINTNEXTLINE(misc-no-recursion, bugprone-exception-escape)
-    class Role_WithoutUDates final : public Model<Role_WithoutUDates>
+    class Role_WithoutUDates final : public Model<Role_WithoutUDates> // NOLINT(bugprone-exception-escape, misc-no-recursion)
     {
         friend Model;
         using Model::Model;

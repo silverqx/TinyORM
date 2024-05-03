@@ -48,8 +48,7 @@ class TorrentPreviewableFile;
 class TorrentState;
 class User;
 
-// NOLINTNEXTLINE(misc-no-recursion, bugprone-exception-escape)
-class Torrent final :
+class Torrent final : // NOLINT(bugprone-exception-escape, misc-no-recursion)
         public Model<Torrent, TorrentPreviewableFile, TorrentPeer, Tag, User,
                      TorrentState, Pivot>
 //        public Model<Torrent, TorrentPreviewableFile, TorrentPeer, Tag, User,

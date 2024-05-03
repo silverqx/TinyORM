@@ -14,8 +14,7 @@ using Orm::Tiny::Relations::Pivot;
 
 class Torrent_ReturnRelation;
 
-// NOLINTNEXTLINE(misc-no-recursion, bugprone-exception-escape)
-class Tag_ReturnRelation final : public Model<Tag_ReturnRelation, Torrent_ReturnRelation,
+class Tag_ReturnRelation final : public Model<Tag_ReturnRelation, Torrent_ReturnRelation, // NOLINT(bugprone-exception-escape, misc-no-recursion)
                                               Pivot>
 {
     friend Model;

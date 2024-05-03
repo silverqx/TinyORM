@@ -9,8 +9,7 @@ namespace Models
 
 using Orm::Tiny::Model;
 
-// NOLINTNEXTLINE(bugprone-exception-escape)
-class Type final : public Model<Type>
+class Type final : public Model<Type> // NOLINT(bugprone-exception-escape, misc-no-recursion)
 {
     friend Model;
     using Model::Model;

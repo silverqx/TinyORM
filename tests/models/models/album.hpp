@@ -18,8 +18,7 @@ using Orm::Tiny::Model;
 
 class AlbumImage;
 
-// NOLINTNEXTLINE(misc-no-recursion, bugprone-exception-escape)
-class Album final : public Model<Album, AlbumImage>
+class Album final : public Model<Album, AlbumImage> // NOLINT(bugprone-exception-escape, misc-no-recursion)
 {
     friend Model;
     using Model::Model;

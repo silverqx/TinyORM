@@ -17,8 +17,7 @@ using Orm::Constants::SIZE_;
 
 using Orm::Tiny::Model;
 
-// NOLINTNEXTLINE(bugprone-exception-escape)
-class TorrentPreviewableFileEager_WithDefault final :
+class TorrentPreviewableFileEager_WithDefault final : // NOLINT(bugprone-exception-escape, misc-no-recursion)
         public Model<TorrentPreviewableFileEager_WithDefault, TorrentEager_WithDefault,
                      TorrentPreviewableFilePropertyEager>
 {

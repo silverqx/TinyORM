@@ -9,8 +9,7 @@ namespace Models
 
 using Orm::Tiny::Model;
 
-// NOLINTNEXTLINE(bugprone-exception-escape)
-class TagProperty final : public Model<TagProperty>
+class TagProperty final : public Model<TagProperty> // NOLINT(bugprone-exception-escape, misc-no-recursion)
 {
     friend Model;
     using Model::Model;

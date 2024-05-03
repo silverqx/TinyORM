@@ -13,8 +13,7 @@ using Orm::Tiny::Model;
 
 class Torrent;
 
-// NOLINTNEXTLINE(misc-no-recursion, bugprone-exception-escape)
-class TorrentPeer final : public Model<TorrentPeer, Torrent>
+class TorrentPeer final : public Model<TorrentPeer, Torrent> // NOLINT(bugprone-exception-escape, misc-no-recursion)
 {
     friend Model;
     using Model::Model;

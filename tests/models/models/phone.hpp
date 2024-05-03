@@ -13,8 +13,7 @@ using Orm::Tiny::Model;
 
 class User;
 
-// NOLINTNEXTLINE(misc-no-recursion, bugprone-exception-escape)
-class Phone final : public Model<Phone, User>
+class Phone final : public Model<Phone, User> // NOLINT(bugprone-exception-escape, misc-no-recursion)
 {
     friend Model;
     using Model::Model;

@@ -21,8 +21,7 @@ using Orm::Tiny::Model;
 class Role;
 class Torrent;
 
-// NOLINTNEXTLINE(misc-no-recursion, bugprone-exception-escape)
-class Tag final : public Model<Tag, Torrent, TagProperty, Role, Tagged>
+class Tag final : public Model<Tag, Torrent, TagProperty, Role, Tagged> // NOLINT(bugprone-exception-escape, misc-no-recursion)
 //class Tag final : public Model<Tag, Torrent, TagProperty, Role, Pivot>
 {
     friend Model;

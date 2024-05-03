@@ -9,8 +9,7 @@ namespace Models
 
 using Orm::Tiny::Relations::BasePivot;
 
-// NOLINTNEXTLINE(misc-no-recursion, bugprone-exception-escape)
-class RoleUser final : public BasePivot<RoleUser>
+class RoleUser final : public BasePivot<RoleUser> // NOLINT(bugprone-exception-escape, misc-no-recursion)
 {
     friend Model;
     friend BasePivot;

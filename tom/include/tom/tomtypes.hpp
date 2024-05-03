@@ -56,7 +56,7 @@ namespace Tom
     using Orm::Types::AboutValue;
 
     /*! Subsection item type. */
-    struct SubSectionItem // NOLINT(bugprone-exception-escape)
+    struct SubSectionItem // NOLINT(bugprone-exception-escape, misc-no-recursion)
     {
         /*! Subsection item name. */
         std::optional<QString> name;

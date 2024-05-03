@@ -9,8 +9,7 @@ namespace Models
 
 using Orm::Tiny::Model;
 
-// NOLINTNEXTLINE(bugprone-exception-escape)
-class TorrentEager_WithDefault final : public Model<TorrentEager_WithDefault>
+class TorrentEager_WithDefault final : public Model<TorrentEager_WithDefault> // NOLINT(bugprone-exception-escape, misc-no-recursion)
 {
     friend Model;
     using Model::Model;

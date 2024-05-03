@@ -9,8 +9,7 @@ namespace Models
 
 using Orm::Tiny::Model;
 
-// NOLINTNEXTLINE(bugprone-exception-escape)
-class TorrentPreviewableFilePropertyEager final :
+class TorrentPreviewableFilePropertyEager final : // NOLINT(bugprone-exception-escape, misc-no-recursion)
         public Model<TorrentPreviewableFilePropertyEager>
 {
     friend Model;

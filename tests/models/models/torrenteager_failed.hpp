@@ -11,8 +11,7 @@ namespace Models
 
 using Orm::Tiny::Model;
 
-// NOLINTNEXTLINE(bugprone-exception-escape)
-class TorrentEager_Failed final :
+class TorrentEager_Failed final : // NOLINT(bugprone-exception-escape, misc-no-recursion)
         public Model<TorrentEager_Failed, TorrentPreviewableFileEager>
 {
     friend Model;
