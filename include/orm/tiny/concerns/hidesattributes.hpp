@@ -34,7 +34,6 @@ namespace Concerns
         friend Model<Derived, AllRelations...>;
 
     public:
-
         /*! Get the visible attributes for the model. */
         inline const std::set<QString> &getVisible() const noexcept;
         /*! Set the visible attributes for the model. */
