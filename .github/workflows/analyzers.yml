@@ -135,6 +135,9 @@ jobs:
       run: >-
         [[ '${{ matrix.qt.key }}' == 'qt6' ]] && tinyBuildDrivers='ON' || tinyBuildDrivers='OFF'
 
+        [[ '${{ matrix.qt.key }}' == 'qt6' ]] &&
+        tinyDriversType='-D DRIVERS_TYPE:STRING=Loadable' || tinyDriversType=''
+
         cmake
         -S .
         -B '${{ env.TinyORMBuildTree }}'
@@ -158,7 +161,7 @@ jobs:
         -D TOM:BOOL=ON
         -D TOM_EXAMPLE:BOOL=ON
         -D BUILD_DRIVERS:BOOL=$tinyBuildDrivers
-        -D DRIVERS_LOADABLE:BOOL=ON
+        $tinyDriversType
 
     - name: TinyORM cmake build ✨ (${{ env.TinyORMBuildName }})
       working-directory: ${{ env.TinyORMBuildTree }}
