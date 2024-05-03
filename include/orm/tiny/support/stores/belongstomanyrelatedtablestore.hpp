@@ -82,7 +82,7 @@ namespace Support::Stores
                                              CacheKeyHasher>;
 
         /*! Get the related table name result cache. */
-        inline CacheType &cache() const noexcept;
+        inline CacheType &cache() const;
 
         /*! The related table name result. */
         std::optional<QString> m_result = std::nullopt;
@@ -158,7 +158,7 @@ namespace Support::Stores
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     typename BelongsToManyRelatedTableStore<Derived, AllRelations...>::CacheType &
-    BelongsToManyRelatedTableStore<Derived, AllRelations...>::cache() const noexcept
+    BelongsToManyRelatedTableStore<Derived, AllRelations...>::cache() const
     {
         /* I had also used mutex in the visitWithResult(), but I reverted it because
            I wouldn't say I liked it as the mutex was locked too long, the thread_local

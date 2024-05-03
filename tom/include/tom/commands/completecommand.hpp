@@ -125,7 +125,7 @@ namespace Tom::Commands
 
         /*! Initialize local variables for printing and guessing array option values. */
         static PrintArrayOptionValuesType
-        initializePrintArrayOptionValues(const QStringView optionValuesArg,
+        initializePrintArrayOptionValues(QStringView optionValuesArg,
                                          const QStringList &allValues);
 #endif
 

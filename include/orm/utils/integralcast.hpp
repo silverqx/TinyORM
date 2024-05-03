@@ -80,7 +80,7 @@ namespace Private
     {
         constexpr static QString::size_type groupWidth = 3;
 
-        const auto number = QString::number(integer);
+        auto number = QString::number(integer);
         // For reserve()
         const auto numberSizeWithSign = number.size();
         // Qt doesn't prepend + character but test is anyway to be sure
