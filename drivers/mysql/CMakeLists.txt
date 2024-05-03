@@ -148,6 +148,9 @@ tiny_resource_and_manifest(${TinyMySql_target}
 # 'WINVER' macro redefined [-Wmacro-redefined]
 # Look also to the TinyCommon for conditional WINVER definition
 find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Core)
+if(QT_VERSION_MAJOR LESS 6)
+    message(FATAL_ERROR "TinyMySql library is not supported with Qt version <6.")
+endif()
 # No need to call the tiny_find_package() here as the core TinyOrm always depends on it
 find_package(Qt${QT_VERSION_MAJOR} ${minQtVersion} CONFIG
     REQUIRED COMPONENTS Core
