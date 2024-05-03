@@ -113,9 +113,9 @@ namespace Orm::Support
 
             if (simpleBindings)
 #if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
-                simpleBindingsList << std::move(bindingValue);
+                simpleBindingsList << std::move(bindingValue); // clazy:exclude=reserve-candidates
 #else
-                simpleBindingsList << bindingValue;
+                simpleBindingsList << bindingValue; // clazy:exclude=reserve-candidates
 #endif
         }
 

@@ -18,7 +18,7 @@ namespace Orm::Drivers
     class SqlDatabasePrivate;
 
     /*! Database connection. */
-    class TINYDRIVERS_EXPORT SqlDatabase : public SqlDatabaseManager
+    class TINYDRIVERS_EXPORT SqlDatabase : public SqlDatabaseManager // clazy:exclude=rule-of-three
     {
         // To access the private constructors and d smart pointer (private impl.)
         friend SqlDatabaseManager;

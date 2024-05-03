@@ -461,7 +461,7 @@ namespace
         return FsUtils::getModuleFileName(handle);
 #elif __linux__
         return FsUtils::getModuleFileName(
-                    reinterpret_cast<void *>(&SqlDatabase::database));
+                    reinterpret_cast<void *>(&SqlDatabase::database)); // NOLINT(cppcoreguidelines-pro-type-reinterpret-cast)
 #else
 #  error Unsupported OS or platform in Orm::Drivers::Utils::FsFsPrivate.
 #endif
