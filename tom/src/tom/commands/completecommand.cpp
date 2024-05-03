@@ -420,10 +420,10 @@ CompleteCommand::printGuessedSectionNamesForAbout(const QStringView sectionNames
     };
 
     // Initialize local variables
-    auto [sectionNameArg,
-          allSectionNamesFiltered,
-          isFirstSectionNameArg,
-          printAllSectionNames
+    const auto [sectionNameArg,
+                allSectionNamesFiltered,
+                isFirstSectionNameArg,
+                printAllSectionNames
     ] = initializePrintArrayOptionValues(sectionNamesArg, allSectionNames);
 
     /* Print only one space if all array option values have already been entered,
@@ -467,10 +467,10 @@ int CompleteCommand::printGuessedConnectionNames(const QString &connectionNamesA
         return EXIT_SUCCESS;
 
     // Initialize local variables
-    auto [connectionNameArg,
-          allConnectionNamesFiltered,
-          isFirstConnectionNameArg,
-          printAllConnectionNames
+    const auto [connectionNameArg,
+                allConnectionNamesFiltered,
+                isFirstConnectionNameArg,
+                printAllConnectionNames
     ] = initializePrintArrayOptionValues(connectionNamesArg, allConnectionNames);
 
     /* Print only one space if all array option values have already been entered,
