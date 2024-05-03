@@ -1057,7 +1057,7 @@ namespace Orm::Tiny
     {
         /* Comparing the HasConnectionResolver, GuardsAttributes, ModelProxies, and
            IsModel is not needed as they don't contain any data members or they
-           contain ony a static data members. */
+           contain only a static data members. */
 
         // Compare the HasAttributes_ concern
         using HasAttributes_ = Concerns::HasAttributes<Derived, AllRelations...>;

@@ -1289,7 +1289,7 @@ How the Package Config Version file works:
  - my logic also adds nice info messages if linking against unsuitable CMake package
  - also a lot of debug messages that can be enabled using the --log-level=<level> and
    --log-context CMake parameters during configure eg.:
-     - --log-level=DEBUG --log-context (full ouput)
+     - --log-level=DEBUG --log-context (full output)
      - --log-level=VERBOSE (only verbose without debug output)
 
  - they check if the versions are correct, the COMPATIBILITY SameMajorVersion is the main

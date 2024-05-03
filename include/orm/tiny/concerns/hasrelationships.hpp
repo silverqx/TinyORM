@@ -324,7 +324,7 @@ namespace Concerns
                              RelationsType<AllRelations...> &models) const;
 
         /*! On the base of alternative held by m_relations decide, which
-            pushVisitied() to execute. */
+            pushVisited() to execute. */
         template<typename Related>
         void pushVisited() const;
         /*! Push for Many relation types. */

@@ -64,7 +64,7 @@ namespace Concerns
         template<SeederConcept ...T, typename ...Args>
         void callSilent(Args &&...args) const;
 
-        /*! Set the console input/ouput. */
+        /*! Set the console input/output. */
         Seeder &setIO(const InteractsWithIO &io);
 
     private:
