@@ -79,9 +79,15 @@ namespace Concerns
             duplicates). */
         void callInternal(bool silent, std::function<void()> &&callback) const;
 
+        /*! Alias for the optional InteractsWithIO reference. */
+        using OptionalInteractsWithIORef =
+                std::optional<std::reference_wrapper<const InteractsWithIO>>;
+
+        /*! Set the console input/output. */
+        inline Seeder &setIO(OptionalInteractsWithIORef io);
+
         /*! Reference to the IO. */
-        std::optional<
-                std::reference_wrapper<const InteractsWithIO>> m_io = std::nullopt;
+        OptionalInteractsWithIORef m_io = std::nullopt;
     };
 
     /* public */
@@ -99,14 +105,14 @@ namespace Concerns
     template<SeederConcept ...T, typename ...Args>
     void Seeder::call(const bool silent, Args &&...args)
     {
-        (T().setIO(m_io.value())
+        (T().setIO(m_io)
             .callUnfolded(silent, std::forward<Args>(args)...), ...);
     }
 
     template<SeederConcept ...T, typename ...Args>
     void Seeder::call(const bool silent, Args &&...args) const
     {
-        (std::add_const_t<T>().setIO(m_io.value())
+        (std::add_const_t<T>().setIO(m_io)
                               .callUnfolded(silent, std::forward<Args>(args)...), ...);
     }
 
@@ -152,6 +158,15 @@ namespace Concerns
         {
             run(std::forward<Args>(args)...);
         });
+    }
+
+    /* Must exists to correctly call it inside a fold expression and avoid Clang Tidy
+       bugprone-unchecked-optional-access warning. */
+    Seeder &Seeder::setIO(const OptionalInteractsWithIORef io)
+    {
+        m_io = io;
+
+        return *this;
     }
 
 } // namespace Tom
