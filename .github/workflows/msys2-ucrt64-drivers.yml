@@ -280,7 +280,7 @@ jobs:
       working-directory: ${{ env.TinyORMPath }}
       run: |
         $workflowState = gh workflow list --all --json path,state `
-        --jq '.[] | select (.path | endswith("/linux-qt6-drivers.yml")) | .state')
+        --jq '.[] | select (.path | endswith("/linux-qt6-drivers.yml")) | .state'
 
         if ($? -and $workflowState -ceq 'active') {
           gh workflow run linux-qt6-drivers.yml --ref ${{ github.ref_name }}
