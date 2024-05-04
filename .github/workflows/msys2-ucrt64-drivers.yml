@@ -261,3 +261,21 @@ jobs:
         DB_MYSQL_PASSWORD: ${{ secrets.DB_MYSQL_PASSWORD_SELF_MSYS2 }}
         DB_MYSQL_USERNAME: ${{ secrets.DB_MYSQL_USERNAME_SELF_MSYS2 }}
         TOM_EXAMPLE_ENV: ${{ vars.TOM_EXAMPLE_ENV }}
+
+    - name: Prepare Linux runner
+      working-directory: E:/dotfiles/bin
+      run: |
+        .\Start-TinyORMActions.ps1
+
+    # The reason for this is the concurrency:group: can contain only two in_progress workflows,
+    # one will be in_progress and the second will be queued (waiting until the first finish),
+    # and all others will be canceled.
+    # Jobs are run randomly! They are sorted from 0 to strategy.job-total - 1 in GitHub UI, so
+    # the first job has index 0, the second job has index 1, ...
+    - name: Run linux-qt6-drivers.yml workflows
+      if: strategy.job-index == 0
+      working-directory: ${{ env.TinyORMPath }}
+      run: |
+        gh workflow run linux-qt6-drivers.yml --ref ${{ github.ref_name }}
+      env:
+        GH_TOKEN: ${{ github.token }}
