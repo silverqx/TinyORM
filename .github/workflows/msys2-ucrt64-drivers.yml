@@ -262,7 +262,19 @@ jobs:
         DB_MYSQL_USERNAME: ${{ secrets.DB_MYSQL_USERNAME_SELF_MSYS2 }}
         TOM_EXAMPLE_ENV: ${{ vars.TOM_EXAMPLE_ENV }}
 
-    - name: Prepare Linux runner
+    # Start Linux VM runner immediately if there are <=2 matrix combinations or for the penultimate
+    # matrix combination job (to give the runner some time to resume and connect to the network)
+    - name: Prepare Start Linux runner
+      id: vm-start-linux-runner
+      run: >-
+        $shouldStartRunner =
+        (${{ strategy.job-total }} -le 2 -and ${{ strategy.job-index }} -eq 0) -or
+        ${{ strategy.job-index }} -eq ${{ strategy.job-total }} - 2 ? 'true' : 'false'
+
+        "StartLinuxRunner=shouldStartRunner" >> $env:GITHUB_OUTPUT
+
+    - name: Start Linux runner
+      if: steps.vm-start-linux-runner.outputs.StartLinuxRunner == 'true'
       working-directory: E:/dotfiles/bin
       run: |
         .\Start-TinyORMActions.ps1
