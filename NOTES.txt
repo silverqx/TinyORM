@@ -1,4 +1,5 @@
 Increase/bump the release version:
+Increase/bump the release version:
 ----------------------------------
 
 - bump message format:
@@ -1041,6 +1042,12 @@ TinyORM docs github pages:
 --------------------------
 tags: docusaurus
 ---
+
+- Repeatedly
+
+To update browserslist-db and caniuse-lite rules.
+
+npx update-browserslist-db@latest
 
 - npm run clear
 
@@ -3069,6 +3076,15 @@ Updating packages (not tested yet):
 Others:
 ./MaintenanceTool check-updates
 ./MaintenanceTool clear-cache (if cache is too big: du -sh ~/.cache/qt-unified-linux-online)
+
+ - Upgrade GitHub CLI:
+
+https://github.com/cli/cli/blob/trunk/docs/install_linux.md#debian-ubuntu-linux-raspberry-pi-os-apt
+
+wget -qO- https://cli.github.com/packages/githubcli-archive-keyring.gpg | gpg --enarmor | sudo tee /etc/apt/trusted.gpg.d/githubcli-archive-keyring.asc > /dev/null
+gh completion -s zsh | sudo tee /usr/local/share/zsh/site-functions/_gh
+gh completion --shell bash | sudo tee /usr/share/bash-completion/completions/gh
+
 
 Others:
 ---
