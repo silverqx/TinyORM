@@ -1,6 +1,9 @@
 Increase/bump the release version:
-Increase/bump the release version:
 ----------------------------------
+
+- all below is outdated, everything is handled by the tools/deploy.ps1 script
+- Gentoo tinyorm ebuild isn't currently part of the tools/deploy.ps1, create a new ebuild before
+  executing the tools/deploy.ps1 script ❗
 
 - bump message format:
 
@@ -37,6 +40,17 @@ hello-world.mdx#cmake-project
 hello-world.mdx#fetchcontent
 migrations.mdx#cmake-project
 tinyorm.mdx#consume-tinyorm-library-cmake
+
+
+How to create a new Gentoo tinyorm ebuild:
+------------------------------------------
+
+cd /var/db/repos/crystal/dev-db/tinyorm/
+sudo cp tinyorm-0.37.1.ebuild tinyorm-0.37.2.ebuild
+sudo ebuild ./tinyorm-0.37.2.ebuild manifest
+copy an updated Manifest and a new ebuild to tools/distributions/gentoo/repos/crystal/dev-db/tinyorm/
+commit to TinyORM project
+sudo emerge --update --newuse --deep --quiet-build -a @world
 
 
 Number of Unit tests:
@@ -564,6 +578,20 @@ Maintenance:
 
 GitHub Actions:
 ---------------
+
+ - Repeatedly
+   - delete all _work\TinyORM\TinyORM-builds-cmake\Drivers-msys2-u-* after bumping versions because
+     tst_versions test case will fail, I think ccache doesn't get these bumped C macro versions and
+     then it fails
+   - invoke workflows manually (take spacial care on which branch is a workflow invoked):
+     gh workflow run --ref silverqx-develop
+     gh workflow run --ref main
+
+     - msvc2022-qt6-drivers.yml is invoked automatically on:push:
+     - linux-qt6-drivers.yml must be invoked manually after the msys2-ucrt64-drivers.yml finishes
+     - msvc2022-qt6-drivers.yml and linux-qt6-drivers.yml are first/main/entrance workflows that
+       invoke other workflows internally using the 'gh workflow run' command to run them
+       synchronously one by one so the CMake parallel argument can be as high as possible
 
  - Mass deletion of GitHub workflow runs
    - authenticate using the gh if auth expired
