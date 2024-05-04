@@ -15,7 +15,7 @@ TINY_SYSTEM_HEADER
    https://www.gnu.org/software/libtool/manual/html_node/Updating-version-info.html */
 #define TINYDRIVERS_VERSION_MAJOR 0
 #define TINYDRIVERS_VERSION_MINOR 1
-#define TINYDRIVERS_VERSION_BUGFIX 0
+#define TINYDRIVERS_VERSION_BUGFIX 1
 #define TINYDRIVERS_VERSION_BUILD 0
 // Should be empty for stable releases, and use the hyphen before to be compatible with SemVer!
 #define TINYDRIVERS_VERSION_STATUS ""
