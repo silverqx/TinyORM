@@ -1,4 +1,4 @@
-# MySQL
+riv# MySQL
 # ---
 # Both use the default unencrypted database connections because maria client can't connect
 # to the MySQL >= 8.0.34 or >=8.1, there is some problem in TLS 1.2 and 1.3 connection, it can't
@@ -272,10 +272,18 @@ jobs:
     # and all others will be canceled.
     # Jobs are run randomly! They are sorted from 0 to strategy.job-total - 1 in GitHub UI, so
     # the first job has index 0, the second job has index 1, ...
+    # Execute the next workflow inly if it's active and isn't disabled (disabled_manually state).
+    # Also, if the step fails due to any error, continue (eg. network unreachable or similar).
     - name: Run linux-qt6-drivers.yml workflows
+      continue-on-error: true
       if: strategy.job-index == 0
       working-directory: ${{ env.TinyORMPath }}
       run: |
-        gh workflow run linux-qt6-drivers.yml --ref ${{ github.ref_name }}
+        $workflowState = gh workflow list --all --json path,state `
+        --jq '.[] | select (.path | endswith("/linux-qt6-drivers.yml")) | .state'
+
+        if ($? -and $workflowState -ceq 'active') {
+          gh workflow run linux-qt6-drivers.yml --ref ${{ github.ref_name }}
+        }
       env:
         GH_TOKEN: ${{ github.token }}

@@ -519,10 +519,18 @@ jobs:
     # and all others will be canceled.
     # Jobs are run randomly! They are sorted from 0 to strategy.job-total - 1 in GitHub UI, so
     # the first job has index 0, the second job has index 1, ...
+    # Execute the next workflow inly if it's active and isn't disabled (disabled_manually state).
+    # Also, if the step fails due to any error, continue (eg. network unreachable or similar).
     - name: Run vcpkg-windows-drivers.yml workflows
+      continue-on-error: true
       if: strategy.job-index == 0
       working-directory: ${{ env.TinyORMPath }}
       run: |
-        gh workflow run vcpkg-windows-drivers.yml --ref ${{ github.ref_name }}
+        $workflowState = gh workflow list --all --json path,state `
+        --jq '.[] | select (.path | endswith("/vcpkg-windows-drivers.yml")) | .state'
+
+        if ($? -and $workflowState -ceq 'active') {
+          gh workflow run vcpkg-windows-drivers.yml --ref ${{ github.ref_name }}
+        }
       env:
         GH_TOKEN: ${{ github.token }}
