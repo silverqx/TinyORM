@@ -1,4 +1,4 @@
-riv# MySQL
+# MySQL
 # ---
 # Both use the default unencrypted database connections because maria client can't connect
 # to the MySQL >= 8.0.34 or >=8.1, there is some problem in TLS 1.2 and 1.3 connection, it can't
@@ -280,7 +280,7 @@ jobs:
       working-directory: ${{ env.TinyORMPath }}
       run: |
         $workflowState = gh workflow list --all --json path,state `
-        --jq '.[] | select (.path | endswith("/linux-qt6-drivers.yml")) | .state'
+        --jq '.[] | select (.path | endswith("/linux-qt6-drivers.yml")) | .state')
 
         if ($? -and $workflowState -ceq 'active') {
           gh workflow run linux-qt6-drivers.yml --ref ${{ github.ref_name }}
