@@ -14,7 +14,7 @@
 
 [![TinyORM - www.tinyorm.org][docs-badge]][docs]
 [![License MIT][license-badge]][license]<br/>
-[![TinyORM v0.37.2][version-tinyorm-badge]][docs]
+[![TinyORM v0.37.3][version-tinyorm-badge]][docs]
 [![tom v0.9.1][version-tom-badge]][docs-tom]
 [![TinyDrivers v0.1.1][version-tinydrivers-badge]][docs-tinydrivers]
 [![TinyMySql v0.1.1][version-tinymysql-badge]][docs-tinydrivers]
@@ -160,7 +160,7 @@ The following list fastly summarizes all the `TinyORM` features.
 [docs-tinydrivers]: https://www.tinyorm.org/tinydrivers/getting-started
 [license-badge]: https://img.shields.io/github/license/silverqx/TinyORM
 [license]: https://github.com/silverqx/TinyORM/blob/main/LICENSE
-[version-tinyorm-badge]: https://img.shields.io/badge/TinyORM-v0.37.2-blue
+[version-tinyorm-badge]: https://img.shields.io/badge/TinyORM-v0.37.3-blue
 [version-tom-badge]: https://img.shields.io/badge/tom-v0.9.1-blue
 [version-tinydrivers-badge]: https://img.shields.io/badge/TinyDrivers-v0.1.1-blue
 [version-tinymysql-badge]: https://img.shields.io/badge/TinyMySql-v0.1.1-blue
