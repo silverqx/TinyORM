@@ -210,6 +210,17 @@ function Initialize-ScriptVariables {
     }
 }
 
+# Print warning about Gentoo ebuild
+function Write-GentooEbuildWarning {
+    [OutputType([void])]
+    Param()
+
+    NewLine
+    Write-Host 'Create a new tinyorm Gentoo ebuild after bumping TinyOrm version number' `
+    -ForegroundColor Red
+    NewLine
+}
+
 # Determine whether the deploy.ps1 script was executed from the TinyORM root folder (contains
 # the .git/ folder)
 function Test-GitRoot {
@@ -1732,6 +1743,9 @@ Invoke-MergeDevelopAndDeploy `
 Invoke-UpdateVcpkgPorts
 # Merge develop to main and and push to origin/main
 Invoke-MergeDevelopAndDeploy -Message 'Vcpkg ports were updated and deployed successfully. 🥳'
+
+# Warnings on what must be done after the deployment
+Write-GentooEbuildWarning
 
 <#
  .Synopsis
