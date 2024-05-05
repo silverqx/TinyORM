@@ -532,7 +532,7 @@ Important `CMake` options.
 | `CMAKE_DISABLE_PRECOMPILE_HEADERS` | `OFF`   | Disable precompiled headers. |
 | `CMAKE_CXX_COMPILER`               | `auto`  | The full path to the `C++` compiler. |
 | `CMAKE_CXX_COMPILER_LAUNCHER`      | `-`     | Default compiler launcher to use for the `C++` compiler.<br/>Can be used to enable `ccache`, eg. `ccache.exe` on `MinGW` or `/usr/bin/ccache` on `Linux`. |
-| `CMAKE_EXPORT_PACKAGE_REGISTRY`    | `ON`    | Enable the `export(TinyOrm)` command.<br/>`TinyORM` sets this variable to `ON` by default. |
+| `CMAKE_EXPORT_PACKAGE_REGISTRY`    | `OFF`   | Enable the `export(TinyOrm)` command.<br/>`TinyORM` doesn't set this variable by default. Its initial value is taken from the `TINYORM_EXPORT_PACKAGE_REGISTRY` environment variable if not already defined. |
 | `CMAKE_VERBOSE_MAKEFILE`           | `OFF`   | Enable verbose output from Makefile builds. |
 
 </APITable>
