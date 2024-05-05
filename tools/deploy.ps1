@@ -323,23 +323,20 @@ function Test-RegExResult {
     throw "The '$RegEx' regex failed."
 }
 
-# Print warning about Gentoo ebuild
-function Write-GentooEbuildWarning {
+# Post deploy warnings
+# ---
+
+# Print post-deploy warnings and messages about what is needed next to finish the deployment
+function Write-PostDeployWarnings {
     [OutputType([void])]
     Param()
 
-    NewLine
-    Write-Host 'Create a new tinyorm Gentoo ebuild after bumping TinyOrm version number' `
-    -ForegroundColor Red
-}
+    Write-Header 'Post-deploy actions needed after bumping TinyOrm version numbers'
 
-# Print warning about deploying TinyORM-github.io documentation
-function Write-TinyORMDocsWarning {
-    [OutputType([void])]
-    Param()
-
-    Write-Host 'Deploy TinyORM-github.io documentation after bumping TinyOrm version numbers' `
-    -ForegroundColor Red
+    Write-Error (" - remove all 'TinyORM-builds-cmake\Drivers-msys2-u-*' build trees " +
+        'as tst_Versions test case will fail (ccache bug)')
+    Write-Error ' - create a new tinyorm Gentoo ebuild'
+    Write-Error ' - deploy TinyORM-github.io documentation'
     NewLine
 }
 
@@ -1753,9 +1750,8 @@ Invoke-UpdateVcpkgPorts
 # Merge develop to main and and push to origin/main
 Invoke-MergeDevelopAndDeploy -Message 'Vcpkg ports were updated and deployed successfully. 🥳'
 
-# Warnings on what must be done after the deployment
-Write-GentooEbuildWarning
-Write-TinyORMDocsWarning
+# Warnings about what is needed next to finish the deployment
+Write-PostDeployWarnings
 
 <#
  .Synopsis
