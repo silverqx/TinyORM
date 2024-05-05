@@ -46,8 +46,8 @@ How to create a new Gentoo tinyorm ebuild:
 ------------------------------------------
 
 cd /var/db/repos/crystal/dev-db/tinyorm/
-sudo cp tinyorm-0.37.1.ebuild tinyorm-0.37.2.ebuild
-sudo ebuild ./tinyorm-0.37.2.ebuild manifest
+sudo cp/mv tinyorm-0.37.x.ebuild tinyorm-0.37.y.ebuild
+sudo ebuild ./tinyorm-0.37.y.ebuild manifest
 copy an updated Manifest and a new ebuild to tools/distributions/gentoo/repos/crystal/dev-db/tinyorm/
 commit to TinyORM project
 sudo emerge --update --newuse --deep --quiet-build -a @world
