@@ -210,17 +210,6 @@ function Initialize-ScriptVariables {
     }
 }
 
-# Print warning about Gentoo ebuild
-function Write-GentooEbuildWarning {
-    [OutputType([void])]
-    Param()
-
-    NewLine
-    Write-Host 'Create a new tinyorm Gentoo ebuild after bumping TinyOrm version number' `
-    -ForegroundColor Red
-    NewLine
-}
-
 # Determine whether the deploy.ps1 script was executed from the TinyORM root folder (contains
 # the .git/ folder)
 function Test-GitRoot {
@@ -332,6 +321,26 @@ function Test-RegExResult {
     }
 
     throw "The '$RegEx' regex failed."
+}
+
+# Print warning about Gentoo ebuild
+function Write-GentooEbuildWarning {
+    [OutputType([void])]
+    Param()
+
+    NewLine
+    Write-Host 'Create a new tinyorm Gentoo ebuild after bumping TinyOrm version number' `
+    -ForegroundColor Red
+}
+
+# Print warning about deploying TinyORM-github.io documentation
+function Write-TinyORMDocsWarning {
+    [OutputType([void])]
+    Param()
+
+    Write-Host 'Deploy TinyORM-github.io documentation after bumping TinyOrm version numbers' `
+    -ForegroundColor Red
+    NewLine
 }
 
 # Update Number of Unit Tests
@@ -1746,6 +1755,7 @@ Invoke-MergeDevelopAndDeploy -Message 'Vcpkg ports were updated and deployed suc
 
 # Warnings on what must be done after the deployment
 Write-GentooEbuildWarning
+Write-TinyORMDocsWarning
 
 <#
  .Synopsis
