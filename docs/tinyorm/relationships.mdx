@@ -600,7 +600,7 @@ relation->withTimestamps();
 return relation;
 ```
 
-:::caution
+:::warning
 Intermediate tables that utilize TinyORM's automatically maintained timestamps are required to have both `created_at` and `updated_at` timestamp columns.
 :::
 
@@ -753,7 +753,7 @@ for (auto &user : users)
                     ->getAttribute("created_at");
 ```
 
-:::caution
+:::warning
 Custom Pivot models may not use the `SoftDeletes` base class. If you need to soft delete pivot records consider converting your pivot model to an actual TinyORM model.
 :::
 
@@ -1093,7 +1093,7 @@ You may not always need every column from the relationships you are retrieving. 
 auto books = Book::with("author:id,name,book_id")->get();
 ```
 
-:::caution
+:::warning
 When using this feature, you should always include the `id` column and any relevant foreign key columns in the list of columns you wish to retrieve, otherwise relations will not be loaded correctly.
 :::
 

@@ -784,7 +784,7 @@ Sometimes you may want to execute an SQL statement without binding any values. Y
 DB::unprepared("update users set votes = 100 where name = 'Dries'");
 ```
 
-:::caution
+:::warning
 Since unprepared statements do not bind parameters, they may be vulnerable to SQL injection. You should never allow user controlled values within an unprepared statement.
 :::
 
@@ -895,6 +895,6 @@ In short, if you create a `DB::connection` in some thread then you have to use t
 
 If you want to execute some query from another thread for the same connection then you have to create a new connection first and if you have a new connection you can send a query from this new thread to the database.
 
-:::caution
+:::warning
 The [`schema builder`](database/migrations.mdx#tables) and [`migrations`](database/migrations.mdx) don't support multi-threading.
 :::

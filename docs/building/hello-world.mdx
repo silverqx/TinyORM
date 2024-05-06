@@ -195,7 +195,7 @@ int main(int argc, char *argv[])
 }
 ```
 
-:::caution
+:::warning
 The `QSqlDatabase` depends on `QCoreApplication` from `Qt v6.5.3` so you must create the `QCoreApplication` instance before you will call anything from the `TinyORM` library. 🫤 The change was made [here](https://github.com/qt/qtbase/commit/8d2bdc9cd5482eace12ba7e45304857bd24db0e6#diff-1d355c25c0b0eddec2be48253407780c4dc510d986739aec61e1ec892ccaf86e).
 :::
 
@@ -504,11 +504,11 @@ SOURCES += $$PWD/main.cpp
 include($$TINY_MAIN_DIR/TinyORM/qmake/TinyOrm.pri)
 ```
 
-:::caution
+:::warning
 The exact [folders structure](building/tinyorm.mdx#folders-structure) is crucial in this example because the paths to the `TinyORM` source and build folders are relative.
 :::
 
-:::caution
+:::warning
 Please pay special attention to letter casing in paths, especially TinyOrm vs TinyORM!
 :::
 

@@ -52,7 +52,7 @@ The TinyORM `Schema` facade provides database agnostic support for creating and 
 
 The `tom` migrations is a small console application that depends on the `TinyORM` library. All migrations logic is compiled so recompilation is needed after adding a new migration class.
 
-:::caution
+:::warning
 The [`schema builder`](database/migrations.mdx#tables) and [`migrations`](database/migrations.mdx) don't support [multi-threading](database/getting-started.mdx#multi-threading-support).
 :::
 
@@ -405,7 +405,7 @@ The `migrate:fresh` command will drop all tables from the database and then exec
 tom migrate:fresh
 ```
 
-:::caution
+:::warning
 The `migrate:fresh` command will drop all database tables regardless of their prefix. This command should be used with caution when developing on a database that is shared with other applications.
 :::
 
@@ -567,7 +567,7 @@ Schema::table("users", [](Blueprint &table)
 
 The schema builder blueprint offers a variety of methods that correspond to the different types of columns you can add to your database tables. Each of the available methods are listed in the table below:
 
-<div class="tom-column-types-list">
+<div className="tom-column-types-list">
 
 [bigIncrements](#column-method-bigIncrements)
 [bigInteger](#column-method-bigInteger)
@@ -640,7 +640,7 @@ The schema builder blueprint offers a variety of methods that correspond to the 
 Names of `Char`, `Double`, `Enum`, and `Float` column methods are in the CamelCase format to avoid collisions with C++ keywords.
 :::
 
-<div class="tom-column-types">
+<div className="tom-column-types">
 
 #### `bigIncrements()` {#column-method-bigIncrements}
 
@@ -1310,7 +1310,7 @@ Schema::table("users", [](Blueprint &table)
 });
 ```
 
-:::caution
+:::warning
 The SQLite prior to `v3.35.0` doesn't support dropping columns using the `ALTER TABLE DROP COLUMN`, dropping columns was added in the SQLite `v3.35.0` as is described in the [release notes](https://www.sqlite.org/releaselog/3_35_0.html).
 :::
 
@@ -1519,6 +1519,6 @@ Schema::withoutForeignKeyConstraints([]
 });
 ```
 
-:::caution
+:::warning
 The SQLite disables foreign key constraints by default. When using SQLite, make sure to [enable foreign key support](database/getting-started.mdx#sqlite-configuration) in your database configuration before attempting to create them in your migrations. In addition, SQLite only supports creating foreign keys when creating tables and [not when tables are altered](https://www.sqlite.org/omitted.html).
 :::

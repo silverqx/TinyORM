@@ -60,7 +60,7 @@ All examples below assume that `pwsh` runs on `Windows` and `bash` runs on `Linu
 
 Install the required [dependencies](dependencies.mdx) before starting.
 
-:::caution
+:::warning
 The `QSqlDatabase` depends on `QCoreApplication` from `Qt v6.5.3` so you must create the `QCoreApplication` instance before you will call anything from the `TinyORM` library. 🫤 The change was made [here](https://github.com/qt/qtbase/commit/8d2bdc9cd5482eace12ba7e45304857bd24db0e6#diff-1d355c25c0b0eddec2be48253407780c4dc510d986739aec61e1ec892ccaf86e).
 :::
 
@@ -136,8 +136,7 @@ You can set the root and application folder paths in the form below and they wil
 <Tabs groupId={shell}>
 <TabItem value={pwsh} label={pwsh_label} className='tiny-tree'>
 <div className='tiny-root-folder-info-wrapper'>
-    <span className='tiny-root-folder-info-prefix'>Current pwsh path</span>&nbsp;
-    <RootFolder groupId={pwsh} />
+    <span className='tiny-root-folder-info-prefix'>Current pwsh path</span>&nbsp;<RootFolder groupId={pwsh} />
 </div>
 <RootFolderInput groupId={pwsh} label={pwsh_label} />
 <RootFolderInput groupId={application} label={application_label} />
@@ -182,8 +181,7 @@ You can set the root and application folder paths in the form below and they wil
 </TabItem>
 <TabItem value={bash} label={bash_label} className='tiny-tree'>
 <div className='tiny-root-folder-info-wrapper'>
-    <span className='tiny-root-folder-info-prefix'>Current bash path</span>&nbsp;
-    <RootFolder groupId={bash} />
+    <span className='tiny-root-folder-info-prefix'>Current bash path</span>&nbsp;<RootFolder groupId={bash} />
 </div>
 <RootFolderInput groupId={bash} label={bash_label} />
 <RootFolderInput groupId={application} label={application} />
@@ -1024,7 +1022,7 @@ TINY_DOTENV_ROOT = $$PWD
 
 The `tiny_dotenv` feature can be turned off using the [`disable_dotenv`](#disable_dotenv) `qmake` configuration option (eg. `CONFIG*=disable_dotenv`).
 
-:::caution
+:::warning
 `Environment files` don't work in the `CMake` builds.
 :::
 
@@ -1050,7 +1048,7 @@ If you will follow this pattern or logic then you can switch `QtCreator Kits` an
 
 It works this way, all is happening inside the `variables.pri`, it takes a build folder name for the __current__ project eg. `build-HelloWorld-Desktop_Qt_6_7_0_MSVC2022_64bit-Debug`, replaces the `HelloWorld` with the `TinyORM` and as we already know the `TinyORM` build folder location we can simply concatenate these paths like `$$TINY_MAIN_DIR/TinyORM-builds-qmake/build-TinyORM-Desktop_Qt_6_7_0_MSVC2022_64bit-Debug`.
 
-:::caution
+:::warning
 This will only work if you follow the recommended [`Folders structure`](#folders-structure).
 :::
 

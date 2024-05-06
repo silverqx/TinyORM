@@ -20,7 +20,7 @@ Attribute casting allows you to transform TinyORM attribute values when you retr
 
 ## Accessors
 
-:::caution
+:::warning
 Accessors are currently only used during the serialization by the [Appending Values](tinyorm/serialization.mdx#appending-values-to-json) feature. They are not used during the `getAttribute` or `getAttributeValue` methods calls.
 :::
 
@@ -228,7 +228,7 @@ user->mergeCasts({
 });
 ```
 
-:::caution
+:::warning
 You should never define a cast (or an attribute) that has the same name as a relationship.
 :::
 
