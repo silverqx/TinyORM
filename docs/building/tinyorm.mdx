@@ -78,18 +78,36 @@ Here is one simple example for `pwsh`.
 <TabItem value='qtenv6.ps1' label='qtenv6.ps1'>
 
 ```powershell
+#!/usr/bin/env pwsh
+
+Set-StrictMode -Version 3.0
+
 Write-Host 'Setting up environment for Qt 6.7.0 usage...' -ForegroundColor Magenta
-$env:Path = 'C:\Qt\6.7.0\msvc2019_64\bin;' + $env:Path
-. E:\dotfiles\bin\vcvars64.ps1
+Write-Host
+
+$Script:QtRoot = $env:TINY_QT_ROOT ?? 'C:\Qt'
+
+$env:Path = "$Script:QtRoot\6.7.0\msvc2019_64\bin;" + $env:Path
+
+. vcvars64.ps1
 ```
 
 </TabItem>
 <TabItem value='qtenv5.ps1' label='qtenv5.ps1'>
 
 ```powershell
+#!/usr/bin/env pwsh
+
+Set-StrictMode -Version 3.0
+
 Write-Host 'Setting up environment for Qt 5.15.2 usage...' -ForegroundColor Magenta
-$env:Path = 'C:\Qt\5.15.2\msvc2019_64\bin;' + $env:Path
-. E:\dotfiles\bin\vcvars64.ps1
+Write-Host
+
+$Script:QtRoot = $env:TINY_QT_ROOT ?? 'C:\Qt'
+
+$env:Path = "$Script:QtRoot\5.15.2\msvc2019_64\bin;" + $env:Path
+
+. vcvars64.ps1
 ```
 
 </TabItem>
@@ -104,8 +122,10 @@ And here for `Linux`.
 ```bash
 echo 'Setting up environment for Qt 6.7.0 usage...'
 
-export PATH=/opt/Qt/6.7.0/gcc_64/bin${PATH:+:}$PATH
-export LD_LIBRARY_PATH=/opt/Qt/6.7.0/gcc_64/lib${LD_LIBRARY_PATH:+:}$LD_LIBRARY_PATH
+QtRoot="${TINY_QT_ROOT:-/opt/Qt}"
+
+export PATH="$QtRoot/6.7.0/gcc_64/bin"${PATH:+:}$PATH
+export LD_LIBRARY_PATH="$QtRoot/6.7.0/gcc_64/lib"${LD_LIBRARY_PATH:+:}$LD_LIBRARY_PATH
 ```
 
 </TabItem>
@@ -114,12 +134,18 @@ export LD_LIBRARY_PATH=/opt/Qt/6.7.0/gcc_64/lib${LD_LIBRARY_PATH:+:}$LD_LIBRARY_
 ```bash
 echo 'Setting up environment for Qt 5.15.2 usage...'
 
-export PATH=/opt/Qt/5.15.2/gcc_64/bin${PATH:+:}$PATH
-export LD_LIBRARY_PATH=/opt/Qt/5.15.2/gcc_64/lib${LD_LIBRARY_PATH:+:}$LD_LIBRARY_PATH
+QtRoot="${TINY_QT_ROOT:-/opt/Qt}"
+
+export PATH="$QtRoot/5.15.2/gcc_64/bin"${PATH:+:}$PATH
+export LD_LIBRARY_PATH="$QtRoot/5.15.2/gcc_64/lib"${LD_LIBRARY_PATH:+:}$LD_LIBRARY_PATH
 ```
 
 </TabItem>
 </Tabs>
+
+:::info
+ These scripts consider the `TINY_QT_ROOT` environment variable that should point to the `Qt` installation folder, you can define this environment variable globally in your OS.
+:::
 
 ##### Allow symbolic links unprivileged
 
