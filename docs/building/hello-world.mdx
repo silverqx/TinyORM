@@ -299,6 +299,9 @@ You can use the [`FetchContent`](https://cmake.org/cmake/help/latest/module/Fetc
 <CodeBlock className='language-cmake'>
 {`cmake_minimum_required(VERSION VERSION 3.22...3.29 FATAL_ERROR)\n
 project(HelloWorld LANGUAGES CXX)\n
+set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)\n
 # FetchContent method
 include(FetchContent)
 FetchContent_Declare(TinyOrm
@@ -309,9 +312,6 @@ FetchContent_Declare(TinyOrm
 # Here you can configure TinyORM CMake options
 set(MYSQL_PING OFF)
 set(TOM_EXAMPLE ON)\n
-set(CMAKE_CXX_STANDARD 20)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_CXX_EXTENSIONS OFF)\n
 add_executable(HelloWorld
   main.cpp
 )\n
@@ -329,9 +329,12 @@ target_link_libraries(HelloWorld
 <CodeBlock className='language-cmake'>
 {`cmake_minimum_required(VERSION VERSION 3.22...3.29 FATAL_ERROR)\n
 project(HelloWorld LANGUAGES CXX)\n
+set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)\n
 # FetchContent method
 include(FetchContent)
-FetchContent_Declare(TinyORM
+FetchContent_Declare(TinyOrm
     GIT_REPOSITORY https://github.com/silverqx/TinyORM.git
     GIT_TAG        origin/main
     OVERRIDE_FIND_PACKAGE
@@ -339,10 +342,6 @@ FetchContent_Declare(TinyORM
 # Here you can configure TinyORM CMake options
 set(MYSQL_PING OFF)
 set(TOM_EXAMPLE ON)\n
-TinyORM-builds-cmake/build-debug")\n
-set(CMAKE_CXX_STANDARD 20)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_CXX_EXTENSIONS OFF)\n
 add_executable(HelloWorld
   main.cpp
 )\n
