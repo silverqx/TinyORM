@@ -5,6 +5,8 @@ description: TinyORM is an object-relational mapper (ORM) that makes it enjoyabl
 keywords: [c++ orm, orm, getting started, tinyorm]
 ---
 
+import Link from '@docusaurus/Link'
+
 # TinyORM: Getting Started
 
 - [Introduction](#introduction)
@@ -221,7 +223,7 @@ private:
 };
 ```
 
-<a id='timestamps-u_dates' />
+<Link id='timestamps-u_dates' />
 
 The `u_dates` static data member controls the casting of timestamp attributes. The `created_at` and `updated_at` columns are automatically added to the `u_dates` string list when the `u_timestamps` is `true`. Also, the [`Soft Deleting`](#soft-deleting) feature adds the `deleted_at` column to the `u_dates`.
 

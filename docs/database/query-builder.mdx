@@ -5,6 +5,8 @@ description: TinyORM's database query builder provides a convenient, fluent inte
 keywords: [c++ orm, sql, c++ sql, c++ query builder, database, query builder, tinyorm]
 ---
 
+import Link from '@docusaurus/Link'
+
 # Database: Query Builder
 
 - [Introduction](#introduction)
@@ -952,7 +954,7 @@ DB::table("users")->insert({
 });
 ```
 
-<a id='multi-insert-overload' />
+<Link id='multi-insert-overload' />
 
 You may insert several records at once by passing a `QVector<QString>` for column names as the first argument and `QVector<QVector<QVariant>>` for values as the second argument. Each `QVector<QVariant>` represents a record that should be inserted into the table. This overload is useful for multi-insert and allows to specify column names only once:
 

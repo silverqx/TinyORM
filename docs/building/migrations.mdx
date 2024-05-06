@@ -5,6 +5,8 @@ description: How to compile the TinyORM migrations (tom) C++ console application
 keywords: [c++ orm, building, migrations, tinyorm]
 ---
 
+import Link from '@docusaurus/Link'
+
 import CodeBlock from '@theme/CodeBlock'
 import TabItem from '@theme/TabItem'
 import Tabs from '@theme/Tabs'
@@ -160,7 +162,7 @@ To paste a source code correctly in `vim`, press <kbd>Shift</kbd> + <kbd>p</kbd>
 
 And paste the following code.
 
-<a id='string-constants-example' />
+<Link id='string-constants-example' />
 
 ```cpp title='main.cpp'
 #include <orm/db.hpp>
@@ -242,7 +244,7 @@ tom make:migration create_posts_table
 
 Below is the expected folders structure for the migrations. The [`migrations.pri`](#migrations-source-files) file is used only by the `qmake` build system and is not needed with `CMake` builds.
 
-<a id='folders-structure' />
+<Link id='folders-structure' />
 
 ```text
 tom/

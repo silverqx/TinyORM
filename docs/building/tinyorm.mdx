@@ -6,6 +6,8 @@ description: How to compile the TinyORM C++ library on Windows and Linux.
 keywords: [c++ orm, building, tinyorm]
 ---
 
+import Link from '@docusaurus/Link'
+
 import APITable from '@theme/APITable'
 import CodeBlock from '@theme/CodeBlock'
 import TabItem from '@theme/TabItem'
@@ -256,7 +258,7 @@ You can set the root and application folder paths in the form below and they wil
 Avoid paths with spaces with the `qmake` build system, it will not compile.
 :::
 
-<a id='qtcreator-default-build-directory' />
+<Link id='qtcreator-default-build-directory' />
 
 :::tip
 You can force the `QtCreator` to generate a build folders structure as is described above.
@@ -595,7 +597,7 @@ list(APPEND CMAKE_PREFIX_PATH "${convertToCmakeEnvVariable(bash, rootFolderPath(
 
 Or as an alternative, you can set `CMAKE_PREFIX_PATH` environment variable.
 
-<a id='tinyorm-on-path-cmake' />
+<Link id='tinyorm-on-path-cmake' />
 
 As the last thing, do not forget to add `TinyOrm0d.dll` on the path on Windows and on the `LD_LIBRARY_PATH` on Linux, so your application can find it during execution.
 
