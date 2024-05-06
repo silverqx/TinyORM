@@ -60,117 +60,117 @@ You can create and configure a new database connection using the `create` method
 <TabItem value={mysql} label={mysql_label}>
 
 ```cpp
-    #include <orm/db.hpp>
+#include <orm/db.hpp>
 
-    using Orm::DB;
+using Orm::DB;
 
-    // Ownership of a shared_ptr()
-    auto manager = DB::create({
-        {"driver",          "QMYSQL"},
-        {"host",            qEnvironmentVariable("DB_HOST", "127.0.0.1")},
-        {"port",            qEnvironmentVariable("DB_PORT", "3306")},
-        {"database",        qEnvironmentVariable("DB_DATABASE", "")},
-        {"username",        qEnvironmentVariable("DB_USERNAME", "root")},
-        {"password",        qEnvironmentVariable("DB_PASSWORD", "")},
-        {"charset",         qEnvironmentVariable("DB_CHARSET", "utf8mb4")},
-        {"collation",       qEnvironmentVariable("DB_COLLATION", "utf8mb4_0900_ai_ci")},
-        {"timezone",        "+00:00"},
-        /* Specifies what time zone all QDateTime-s will have, the overridden default is
-           the Qt::UTC, set to the Qt::LocalTime or QtTimeZoneType::DontConvert to use
-           the system local time. */
-        {"qt_timezone",     QVariant::fromValue(Qt::UTC)},
-        {"prefix",          ""},
-        {"prefix_indexes",  false},
-        {"strict",          true},
-        {"engine",          "InnoDB"},
-        {"options",         QVariantHash()},
-    });
+// Ownership of a shared_ptr()
+auto manager = DB::create({
+    {"driver",          "QMYSQL"},
+    {"host",            qEnvironmentVariable("DB_HOST", "127.0.0.1")},
+    {"port",            qEnvironmentVariable("DB_PORT", "3306")},
+    {"database",        qEnvironmentVariable("DB_DATABASE", "")},
+    {"username",        qEnvironmentVariable("DB_USERNAME", "root")},
+    {"password",        qEnvironmentVariable("DB_PASSWORD", "")},
+    {"charset",         qEnvironmentVariable("DB_CHARSET", "utf8mb4")},
+    {"collation",       qEnvironmentVariable("DB_COLLATION", "utf8mb4_0900_ai_ci")},
+    {"timezone",        "+00:00"},
+    /* Specifies what time zone all QDateTime-s will have, the overridden default is
+       the Qt::UTC, set to the Qt::LocalTime or QtTimeZoneType::DontConvert to use
+       the system local time. */
+    {"qt_timezone",     QVariant::fromValue(Qt::UTC)},
+    {"prefix",          ""},
+    {"prefix_indexes",  false},
+    {"strict",          true},
+    {"engine",          "InnoDB"},
+    {"options",         QVariantHash()},
+});
 ```
 
 </TabItem>
 <TabItem value={postgres} label={postgres_label}>
 
 ```cpp
-    #include <orm/db.hpp>
+#include <orm/db.hpp>
 
-    using Orm::DB;
+using Orm::DB;
 
-    // Ownership of a shared_ptr()
-    auto manager = DB::create({
-        {"driver",             "QPSQL"},
-        {"host",               qEnvironmentVariable("DB_HOST", "127.0.0.1")},
-        {"port",               qEnvironmentVariable("DB_PORT", "5432")},
-        {"database",           qEnvironmentVariable("DB_DATABASE", "")},
-        {"search_path",        qEnvironmentVariable("DB_SEARCHPATH", "public")},
-        {"username",           qEnvironmentVariable("DB_USERNAME", "postgres")},
-        {"password",           qEnvironmentVariable("DB_PASSWORD", "")},
-        {"charset",            qEnvironmentVariable("DB_CHARSET", "utf8")},
-        {"timezone",           "UTC"},
-        /* Specifies what time zone all QDateTime-s will have, the overridden default is
-           the Qt::UTC, set to the Qt::LocalTime or QtTimeZoneType::DontConvert to use
-           the system local time. */
-        {"qt_timezone",        QVariant::fromValue(Qt::UTC)},
-        {"prefix",             ""},
-        {"prefix_indexes",     false},
-        {"options",            QVariantHash()},
-    });
+// Ownership of a shared_ptr()
+auto manager = DB::create({
+    {"driver",             "QPSQL"},
+    {"host",               qEnvironmentVariable("DB_HOST", "127.0.0.1")},
+    {"port",               qEnvironmentVariable("DB_PORT", "5432")},
+    {"database",           qEnvironmentVariable("DB_DATABASE", "")},
+    {"search_path",        qEnvironmentVariable("DB_SEARCHPATH", "public")},
+    {"username",           qEnvironmentVariable("DB_USERNAME", "postgres")},
+    {"password",           qEnvironmentVariable("DB_PASSWORD", "")},
+    {"charset",            qEnvironmentVariable("DB_CHARSET", "utf8")},
+    {"timezone",           "UTC"},
+    /* Specifies what time zone all QDateTime-s will have, the overridden default is
+       the Qt::UTC, set to the Qt::LocalTime or QtTimeZoneType::DontConvert to use
+       the system local time. */
+    {"qt_timezone",        QVariant::fromValue(Qt::UTC)},
+    {"prefix",             ""},
+    {"prefix_indexes",     false},
+    {"options",            QVariantHash()},
+});
 ```
 
 </TabItem>
 <TabItem value={sqlite} label={sqlite_label}>
 
 ```cpp
-    #include <orm/db.hpp>
+#include <orm/db.hpp>
 
-    using Orm::DB;
+using Orm::DB;
 
-    // Ownership of a shared_ptr()
-    auto manager = DB::create({
-        {"driver",                  "QSQLITE"},
-        {"database",                qEnvironmentVariable("DB_DATABASE", "/example/example.sqlite3")},
-        {"foreign_key_constraints", qEnvironmentVariable("DB_FOREIGN_KEYS", "true")},
-        {"check_database_exists",   true},
-        /* Specifies what time zone all QDateTime-s will have, the overridden default is
-           the Qt::UTC, set to the Qt::LocalTime or QtTimeZoneType::DontConvert to use
-           the system local time. */
-        {"qt_timezone",             QVariant::fromValue(Qt::UTC)},
-        /* Return a QDateTime/QDate with the correct time zone instead of the QString,
-           only works when the qt_timezone isn't set to the DontConvert. */
-        {"return_qdatetime",        true},
-        {"prefix",                  ""},
-        {"prefix_indexes",          false},
-    });
+// Ownership of a shared_ptr()
+auto manager = DB::create({
+    {"driver",                  "QSQLITE"},
+    {"database",                qEnvironmentVariable("DB_DATABASE", "/example/example.sqlite3")},
+    {"foreign_key_constraints", qEnvironmentVariable("DB_FOREIGN_KEYS", "true")},
+    {"check_database_exists",   true},
+    /* Specifies what time zone all QDateTime-s will have, the overridden default is
+       the Qt::UTC, set to the Qt::LocalTime or QtTimeZoneType::DontConvert to use
+       the system local time. */
+    {"qt_timezone",             QVariant::fromValue(Qt::UTC)},
+    /* Return a QDateTime/QDate with the correct time zone instead of the QString,
+       only works when the qt_timezone isn't set to the DontConvert. */
+    {"return_qdatetime",        true},
+    {"prefix",                  ""},
+    {"prefix_indexes",          false},
+});
 ```
 
 </TabItem>
 <TabItem value={maria} label={maria_label}>
 
 ```cpp
-    #include <orm/db.hpp>
+#include <orm/db.hpp>
 
-    using Orm::DB;
+using Orm::DB;
 
-    // Ownership of a shared_ptr()
-    auto manager = DB::create({
-        {"driver",          "QMYSQL"},
-        {"host",            qEnvironmentVariable("DB_HOST", "127.0.0.1")},
-        {"port",            qEnvironmentVariable("DB_PORT", "3306")},
-        {"database",        qEnvironmentVariable("DB_DATABASE", "")},
-        {"username",        qEnvironmentVariable("DB_USERNAME", "root")},
-        {"password",        qEnvironmentVariable("DB_PASSWORD", "")},
-        {"charset",         qEnvironmentVariable("DB_CHARSET", "utf8mb4")},
-        {"collation",       qEnvironmentVariable("DB_COLLATION", "utf8mb4_unicode_520_ci")},
-        {"timezone",        "+00:00"},
-        /* Specifies what time zone all QDateTime-s will have, the overridden default is
-           the Qt::UTC, set to the Qt::LocalTime or QtTimeZoneType::DontConvert to use
-           the system local time. */
-        {"qt_timezone",     QVariant::fromValue(Qt::UTC)},
-        {"prefix",          ""},
-        {"prefix_indexes",  false},
-        {"strict",          true},
-        {"engine",          "InnoDB"},
-        {"options",         QVariantHash()},
-    });
+// Ownership of a shared_ptr()
+auto manager = DB::create({
+    {"driver",          "QMYSQL"},
+    {"host",            qEnvironmentVariable("DB_HOST", "127.0.0.1")},
+    {"port",            qEnvironmentVariable("DB_PORT", "3306")},
+    {"database",        qEnvironmentVariable("DB_DATABASE", "")},
+    {"username",        qEnvironmentVariable("DB_USERNAME", "root")},
+    {"password",        qEnvironmentVariable("DB_PASSWORD", "")},
+    {"charset",         qEnvironmentVariable("DB_CHARSET", "utf8mb4")},
+    {"collation",       qEnvironmentVariable("DB_COLLATION", "utf8mb4_unicode_520_ci")},
+    {"timezone",        "+00:00"},
+    /* Specifies what time zone all QDateTime-s will have, the overridden default is
+       the Qt::UTC, set to the Qt::LocalTime or QtTimeZoneType::DontConvert to use
+       the system local time. */
+    {"qt_timezone",     QVariant::fromValue(Qt::UTC)},
+    {"prefix",          ""},
+    {"prefix_indexes",  false},
+    {"strict",          true},
+    {"engine",          "InnoDB"},
+    {"options",         QVariantHash()},
+});
 ```
 
 </TabItem>
@@ -180,174 +180,174 @@ You can create and configure a new database connection using the `create` method
 <TabItem value={mysql} label={mysql_label}>
 
 ```cpp
-    #include <orm/db.hpp>
-    #include <orm/utils/configuration.hpp>
+#include <orm/db.hpp>
+#include <orm/utils/configuration.hpp>
 
-    using Orm::DB;
+using Orm::DB;
 
-    using ConfigUtils = Orm::Utils::Configuration;
+using ConfigUtils = Orm::Utils::Configuration;
 
-    using namespace Orm::Constants; // NOLINT(google-build-using-namespace)
+using namespace Orm::Constants; // NOLINT(google-build-using-namespace)
 
-    // Ownership of a shared_ptr()
-    auto manager = DB::create({
-        {driver_,         QMYSQL},
-        {host_,           qEnvironmentVariable("DB_HOST", H127001)},
-        {port_,           qEnvironmentVariable("DB_PORT", P3306)},
-        {database_,       qEnvironmentVariable("DB_DATABASE", EMPTY)},
-        {username_,       qEnvironmentVariable("DB_USERNAME", ROOT)},
-        {password_,       qEnvironmentVariable("DB_PASSWORD", EMPTY)},
-        {charset_,        qEnvironmentVariable("DB_CHARSET", UTF8MB4)},
-        {collation_,      qEnvironmentVariable("DB_COLLATION", UTF8MB40900aici)},
-        // SSL-related
-        {ssl_ca,          QStringLiteral("C:/mysql/data/ca.pem")},
-        {ssl_cert,        QStringLiteral("C:/mysql/data/client-cert.pem")},
-        {ssl_key,         QStringLiteral("C:/mysql/data/client-key.pem")},
-        {ssl_mode,        VerifyCA},
-        // Or
-    //    {options,         ConfigUtils::mysqlSslOptions()},
-        {timezone_,       TZ00},
-        /* Specifies what time zone all QDateTime-s will have, the overridden default is
-           the Qt::UTC, set to the Qt::LocalTime or QtTimeZoneType::DontConvert to use
-           the system local time. */
-        {qt_timezone,     QVariant::fromValue(Qt::UTC)},
-        {prefix_,         EMPTY},
-        {prefix_indexes,  false},
-        {strict_,         true},
-    //    {isolation_level, QStringLiteral("REPEATABLE READ")}, // MySQL default is REPEATABLE READ for InnoDB
-        {engine_,         InnoDB},
-        {Version,         {}}, // Autodetect
-        {options_,        QVariantHash()},
-        // Examples
-    //    {options_,        QStringLiteral("MYSQL_OPT_CONNECT_TIMEOUT = 1 ; MYSQL_OPT_READ_TIMEOUT=1")},
-    //    {options_,        QVariantHash {{QStringLiteral("MYSQL_OPT_CONNECT_TIMEOUT"), 1},
-    //                                    {QStringLiteral("MYSQL_OPT_READ_TIMEOUT"),    1}}},
-    });
+// Ownership of a shared_ptr()
+auto manager = DB::create({
+    {driver_,         QMYSQL},
+    {host_,           qEnvironmentVariable("DB_HOST", H127001)},
+    {port_,           qEnvironmentVariable("DB_PORT", P3306)},
+    {database_,       qEnvironmentVariable("DB_DATABASE", EMPTY)},
+    {username_,       qEnvironmentVariable("DB_USERNAME", ROOT)},
+    {password_,       qEnvironmentVariable("DB_PASSWORD", EMPTY)},
+    {charset_,        qEnvironmentVariable("DB_CHARSET", UTF8MB4)},
+    {collation_,      qEnvironmentVariable("DB_COLLATION", UTF8MB40900aici)},
+    // SSL-related
+    {ssl_ca,          QStringLiteral("C:/mysql/data/ca.pem")},
+    {ssl_cert,        QStringLiteral("C:/mysql/data/client-cert.pem")},
+    {ssl_key,         QStringLiteral("C:/mysql/data/client-key.pem")},
+    {ssl_mode,        VerifyCA},
+    // Or
+//    {options,         ConfigUtils::mysqlSslOptions()},
+    {timezone_,       TZ00},
+    /* Specifies what time zone all QDateTime-s will have, the overridden default is
+       the Qt::UTC, set to the Qt::LocalTime or QtTimeZoneType::DontConvert to use
+       the system local time. */
+    {qt_timezone,     QVariant::fromValue(Qt::UTC)},
+    {prefix_,         EMPTY},
+    {prefix_indexes,  false},
+    {strict_,         true},
+//    {isolation_level, QStringLiteral("REPEATABLE READ")}, // MySQL default is REPEATABLE READ for InnoDB
+    {engine_,         InnoDB},
+    {Version,         {}}, // Autodetect
+    {options_,        QVariantHash()},
+    // Examples
+//    {options_,        QStringLiteral("MYSQL_OPT_CONNECT_TIMEOUT = 1 ; MYSQL_OPT_READ_TIMEOUT=1")},
+//    {options_,        QVariantHash {{QStringLiteral("MYSQL_OPT_CONNECT_TIMEOUT"), 1},
+//                                    {QStringLiteral("MYSQL_OPT_READ_TIMEOUT"),    1}}},
+});
 ```
 
 </TabItem>
 <TabItem value={postgres} label={postgres_label}>
 
 ```cpp
-    #include <orm/db.hpp>
-    #include <orm/utils/configuration.hpp>
+#include <orm/db.hpp>
+#include <orm/utils/configuration.hpp>
 
-    using Orm::DB;
+using Orm::DB;
 
-    using ConfigUtils = Orm::Utils::Configuration;
+using ConfigUtils = Orm::Utils::Configuration;
 
-    using namespace Orm::Constants; // NOLINT(google-build-using-namespace)
+using namespace Orm::Constants; // NOLINT(google-build-using-namespace)
 
-    // Ownership of a shared_ptr()
-    auto manager = DB::create({
-        {driver_,            QPSQL},
-        {application_name,   QStringLiteral("Example application")},
-        {host_,              qEnvironmentVariable("DB_HOST", H127001)},
-        {port_,              qEnvironmentVariable("DB_PORT", P5432)},
-        {database_,          qEnvironmentVariable("DB_DATABASE", EMPTY)},
-        {search_path,        qEnvironmentVariable("DB_SEARCHPATH", PUBLIC)},
-        {username_,          qEnvironmentVariable("DB_USERNAME", postgres_)},
-        {password_,          qEnvironmentVariable("DB_PASSWORD", EMPTY)},
-        {charset_,           qEnvironmentVariable("DB_CHARSET", UTF8)},
-        // SSL-related
-        {sslmode_,           QStringLiteral("verify-full")},
-        {sslcert,            QStringLiteral("C:/example/postgres.crt")},
-        {sslkey,             QStringLiteral("C:/example/postgres.key")},
-        {sslrootcert,        QStringLiteral("C:/example/root.crt")},
-        // Or
-    //    {options_,           ConfigUtils::postgresSslOptions()},
-        {timezone_,          UTC},
-        /* Specifies what time zone all QDateTime-s will have, the overridden default is
-           the Qt::UTC, set to the Qt::LocalTime or QtTimeZoneType::DontConvert to use
-           the system local time. */
-        {qt_timezone,        QVariant::fromValue(Qt::UTC)},
-        {prefix_,            EMPTY},
-        {prefix_indexes,     false},
-    //    {isolation_level,    QStringLiteral("REPEATABLE READ")}, // Postgres default is READ COMMITTED
-    //    {synchronous_commit, QStringLiteral("off")},  // Postgres default is on
-        // ConnectionFactory provides a default value for this, this is only for reference
-    //    {dont_drop,          QStringList {spatial_ref_sys}},
-        {options_,           QVariantHash()},
-    });
+// Ownership of a shared_ptr()
+auto manager = DB::create({
+    {driver_,            QPSQL},
+    {application_name,   QStringLiteral("Example application")},
+    {host_,              qEnvironmentVariable("DB_HOST", H127001)},
+    {port_,              qEnvironmentVariable("DB_PORT", P5432)},
+    {database_,          qEnvironmentVariable("DB_DATABASE", EMPTY)},
+    {search_path,        qEnvironmentVariable("DB_SEARCHPATH", PUBLIC)},
+    {username_,          qEnvironmentVariable("DB_USERNAME", postgres_)},
+    {password_,          qEnvironmentVariable("DB_PASSWORD", EMPTY)},
+    {charset_,           qEnvironmentVariable("DB_CHARSET", UTF8)},
+    // SSL-related
+    {sslmode_,           QStringLiteral("verify-full")},
+    {sslcert,            QStringLiteral("C:/example/postgres.crt")},
+    {sslkey,             QStringLiteral("C:/example/postgres.key")},
+    {sslrootcert,        QStringLiteral("C:/example/root.crt")},
+    // Or
+//    {options_,           ConfigUtils::postgresSslOptions()},
+    {timezone_,          UTC},
+    /* Specifies what time zone all QDateTime-s will have, the overridden default is
+       the Qt::UTC, set to the Qt::LocalTime or QtTimeZoneType::DontConvert to use
+       the system local time. */
+    {qt_timezone,        QVariant::fromValue(Qt::UTC)},
+    {prefix_,            EMPTY},
+    {prefix_indexes,     false},
+//    {isolation_level,    QStringLiteral("REPEATABLE READ")}, // Postgres default is READ COMMITTED
+//    {synchronous_commit, QStringLiteral("off")},  // Postgres default is on
+    // ConnectionFactory provides a default value for this, this is only for reference
+//    {dont_drop,          QStringList {spatial_ref_sys}},
+    {options_,           QVariantHash()},
+});
 ```
 
 </TabItem>
 <TabItem value={sqlite} label={sqlite_label}>
 
 ```cpp
-    #include <orm/db.hpp>
-    #include <orm/utils/configuration.hpp>
+#include <orm/db.hpp>
+#include <orm/utils/configuration.hpp>
 
-    using Orm::DB;
+using Orm::DB;
 
-    using ConfigUtils = Orm::Utils::Configuration;
+using ConfigUtils = Orm::Utils::Configuration;
 
-    using namespace Orm::Constants; // NOLINT(google-build-using-namespace)
+using namespace Orm::Constants; // NOLINT(google-build-using-namespace)
 
-    // Ownership of a shared_ptr()
-    auto manager = DB::create({
-        {driver_,                 QSQLITE},
-        {database_,               qEnvironmentVariable("DB_DATABASE", "C:/SQLite/example.sqlite3")},
-        {foreign_key_constraints, qEnvironmentVariable("DB_FOREIGN_KEYS", "true")},
-        {check_database_exists,   true},
-        /* Specifies what time zone all QDateTime-s will have, the overridden default is
-           the Qt::UTC, set to the Qt::LocalTime or QtTimeZoneType::DontConvert to use
-           the system local time. */
-        {qt_timezone,             QVariant::fromValue(Qt::UTC)},
-        /* Return a QDateTime/QDate with the correct time zone instead of the QString,
-           only works when the qt_timezone isn't set to the DontConvert. */
-        {return_qdatetime,        true},
-        {prefix_,                 EMPTY},
-        {prefix_indexes,          false},
-    });
+// Ownership of a shared_ptr()
+auto manager = DB::create({
+    {driver_,                 QSQLITE},
+    {database_,               qEnvironmentVariable("DB_DATABASE", "C:/SQLite/example.sqlite3")},
+    {foreign_key_constraints, qEnvironmentVariable("DB_FOREIGN_KEYS", "true")},
+    {check_database_exists,   true},
+    /* Specifies what time zone all QDateTime-s will have, the overridden default is
+       the Qt::UTC, set to the Qt::LocalTime or QtTimeZoneType::DontConvert to use
+       the system local time. */
+    {qt_timezone,             QVariant::fromValue(Qt::UTC)},
+    /* Return a QDateTime/QDate with the correct time zone instead of the QString,
+       only works when the qt_timezone isn't set to the DontConvert. */
+    {return_qdatetime,        true},
+    {prefix_,                 EMPTY},
+    {prefix_indexes,          false},
+});
 ```
 
 </TabItem>
 <TabItem value={maria} label={maria_label}>
 
 ```cpp
-    #include <orm/db.hpp>
-    #include <orm/utils/configuration.hpp>
+#include <orm/db.hpp>
+#include <orm/utils/configuration.hpp>
 
-    using Orm::DB;
+using Orm::DB;
 
-    using ConfigUtils = Orm::Utils::Configuration;
+using ConfigUtils = Orm::Utils::Configuration;
 
-    using namespace Orm::Constants; // NOLINT(google-build-using-namespace)
+using namespace Orm::Constants; // NOLINT(google-build-using-namespace)
 
-    // Ownership of a shared_ptr()
-    auto manager = DB::create({
-        {driver_,         QMYSQL},
-        {host_,           qEnvironmentVariable("DB_HOST", H127001)},
-        {port_,           qEnvironmentVariable("DB_PORT", P3306)},
-        {database_,       qEnvironmentVariable("DB_DATABASE", EMPTY)},
-        {username_,       qEnvironmentVariable("DB_USERNAME", ROOT)},
-        {password_,       qEnvironmentVariable("DB_PASSWORD", EMPTY)},
-        {charset_,        qEnvironmentVariable("DB_CHARSET", UTF8MB4)},
-        {collation_,      qEnvironmentVariable("DB_COLLATION", UTF8MB4Unicode520ci)},
-        // SSL-related
-        {ssl_ca,          QStringLiteral("C:/maria/data/ca.pem")},
-        {ssl_cert,        QStringLiteral("C:/maria/data/client-cert.pem")},
-        {ssl_key,         QStringLiteral("C:/maria/data/client-key.pem")},
-        // Or
-    //    {options,         ConfigUtils::mariaSslOptions()},
-        {timezone_,       TZ00},
-        /* Specifies what time zone all QDateTime-s will have, the overridden default is
-           the Qt::UTC, set to the Qt::LocalTime or QtTimeZoneType::DontConvert to use
-           the system local time. */
-        {qt_timezone,     QVariant::fromValue(Qt::UTC)},
-        {prefix_,         EMPTY},
-        {prefix_indexes,  false},
-        {strict_,         true},
-    //    {isolation_level, QStringLiteral("REPEATABLE READ")}, // MariaDB default is REPEATABLE READ for InnoDB
-        {engine_,         InnoDB},
-        {Version,         {}}, // Autodetect
-        {options_,        QVariantHash()},
-        // Examples
-    //    {options_,        QStringLiteral("MYSQL_OPT_CONNECT_TIMEOUT = 1 ; MYSQL_OPT_READ_TIMEOUT=1")},
-    //    {options_,        QVariantHash {{QStringLiteral("MYSQL_OPT_CONNECT_TIMEOUT"), 1},
-    //                                    {QStringLiteral("MYSQL_OPT_READ_TIMEOUT"),    1}}},
-    });
+// Ownership of a shared_ptr()
+auto manager = DB::create({
+    {driver_,         QMYSQL},
+    {host_,           qEnvironmentVariable("DB_HOST", H127001)},
+    {port_,           qEnvironmentVariable("DB_PORT", P3306)},
+    {database_,       qEnvironmentVariable("DB_DATABASE", EMPTY)},
+    {username_,       qEnvironmentVariable("DB_USERNAME", ROOT)},
+    {password_,       qEnvironmentVariable("DB_PASSWORD", EMPTY)},
+    {charset_,        qEnvironmentVariable("DB_CHARSET", UTF8MB4)},
+    {collation_,      qEnvironmentVariable("DB_COLLATION", UTF8MB4Unicode520ci)},
+    // SSL-related
+    {ssl_ca,          QStringLiteral("C:/maria/data/ca.pem")},
+    {ssl_cert,        QStringLiteral("C:/maria/data/client-cert.pem")},
+    {ssl_key,         QStringLiteral("C:/maria/data/client-key.pem")},
+    // Or
+//    {options,         ConfigUtils::mariaSslOptions()},
+    {timezone_,       TZ00},
+    /* Specifies what time zone all QDateTime-s will have, the overridden default is
+       the Qt::UTC, set to the Qt::LocalTime or QtTimeZoneType::DontConvert to use
+       the system local time. */
+    {qt_timezone,     QVariant::fromValue(Qt::UTC)},
+    {prefix_,         EMPTY},
+    {prefix_indexes,  false},
+    {strict_,         true},
+//    {isolation_level, QStringLiteral("REPEATABLE READ")}, // MariaDB default is REPEATABLE READ for InnoDB
+    {engine_,         InnoDB},
+    {Version,         {}}, // Autodetect
+    {options_,        QVariantHash()},
+    // Examples
+//    {options_,        QStringLiteral("MYSQL_OPT_CONNECT_TIMEOUT = 1 ; MYSQL_OPT_READ_TIMEOUT=1")},
+//    {options_,        QVariantHash {{QStringLiteral("MYSQL_OPT_CONNECT_TIMEOUT"), 1},
+//                                    {QStringLiteral("MYSQL_OPT_READ_TIMEOUT"),    1}}},
+});
 ```
 
 </TabItem>
@@ -377,16 +377,16 @@ You can also use predefined string constants to avoid unnecessary `QString` inst
 SQLite databases are contained within a single file on your filesystem. You can create a new SQLite database using the `touch` command in your terminal: `touch database.sqlite3`. After the database has been created, you may configure SQLite database connection:
 
 ```cpp
-    #include <orm/db.hpp>
+#include <orm/db.hpp>
 
-    // Ownership of a shared_ptr()
-    auto manager = DB::create({
-        {"driver",    "QSQLITE"},
-        {"database",  qEnvironmentVariable("DB_DATABASE", "/absolute/path/to/database.sqlite3")},
-        {"foreign_key_constraints", qEnvironmentVariable("DB_FOREIGN_KEYS", "true")},
-        {"check_database_exists",   true},
-        {"prefix",                  ""},
-    });
+// Ownership of a shared_ptr()
+auto manager = DB::create({
+    {"driver",    "QSQLITE"},
+    {"database",  qEnvironmentVariable("DB_DATABASE", "/absolute/path/to/database.sqlite3")},
+    {"foreign_key_constraints", qEnvironmentVariable("DB_FOREIGN_KEYS", "true")},
+    {"check_database_exists",   true},
+    {"prefix",                  ""},
+});
 ```
 
 The `database` configuration value is the absolute path to the database. To enable foreign key constraints for SQLite connections, you should set the `foreign_key_constraints` configuration value to `true`, if this configuration value is not set, then the default of the SQLite driver will be used (currently the default is __disabled__).
@@ -409,44 +409,44 @@ You have to pass the `SSL_CA`, `SSL_CERT`, `SSL_KEY`, and `MYSQL_OPT_SSL_MODE` o
 <TabItem value={pwsh} label={pwsh_label}>
 
 ```cpp
-    #include <orm/db.hpp>
+#include <orm/db.hpp>
 
-    using Orm::DB;
+using Orm::DB;
 
-    // Ownership of a shared_ptr()
-    auto manager = DB::create({
-        {"driver",  "QMYSQL"},
-        {"host",    qEnvironmentVariable("DB_MYSQL_HOST", "127.0.0.1")},
-        ...
-        // highlight-start
-        {"options", QVariantHash({{"SSL_CA",   "C:/mysql/data/ca.pem"},
-                                  {"SSL_CERT", "C:/mysql/data/client-cert.pem"},
-                                  {"SSL_KEY",  "C:/mysql/data/client-key.pem"},
-                                  {"MYSQL_OPT_SSL_MODE", "VERIFY_CA"}})},
-        // highlight-end
-    });
+// Ownership of a shared_ptr()
+auto manager = DB::create({
+    {"driver",  "QMYSQL"},
+    {"host",    qEnvironmentVariable("DB_MYSQL_HOST", "127.0.0.1")},
+    ...
+    // highlight-start
+    {"options", QVariantHash({{"SSL_CA",   "C:/mysql/data/ca.pem"},
+                              {"SSL_CERT", "C:/mysql/data/client-cert.pem"},
+                              {"SSL_KEY",  "C:/mysql/data/client-key.pem"},
+                              {"MYSQL_OPT_SSL_MODE", "VERIFY_CA"}})},
+    // highlight-end
+});
 ```
 
 </TabItem>
 <TabItem value={bash} label={bash_label}>
 
 ```cpp
-    #include <orm/db.hpp>
+#include <orm/db.hpp>
 
-    using Orm::DB;
+using Orm::DB;
 
-    // Ownership of a shared_ptr()
-    auto manager = DB::create({
-        {"driver",  "QMYSQL"},
-        {"host",    qEnvironmentVariable("DB_MYSQL_HOST", "127.0.0.1")},
-        ...
-        // highlight-start
-        {"options", QVariantHash({{"SSL_CA",   "~/.local/share/TinyORM/ssl/ca.pem"},
-                                  {"SSL_CERT", "~/.local/share/TinyORM/ssl/client-cert.pem"},
-                                  {"SSL_KEY",  "~/.local/share/TinyORM/ssl/client-key.pem"},
-                                  {"MYSQL_OPT_SSL_MODE", "VERIFY_CA"}})},
-        // highlight-end
-    });
+// Ownership of a shared_ptr()
+auto manager = DB::create({
+    {"driver",  "QMYSQL"},
+    {"host",    qEnvironmentVariable("DB_MYSQL_HOST", "127.0.0.1")},
+    ...
+    // highlight-start
+    {"options", QVariantHash({{"SSL_CA",   "~/.local/share/TinyORM/ssl/ca.pem"},
+                              {"SSL_CERT", "~/.local/share/TinyORM/ssl/client-cert.pem"},
+                              {"SSL_KEY",  "~/.local/share/TinyORM/ssl/client-key.pem"},
+                              {"MYSQL_OPT_SSL_MODE", "VERIFY_CA"}})},
+    // highlight-end
+});
 ```
 
 </TabItem>
@@ -455,21 +455,21 @@ You have to pass the `SSL_CA`, `SSL_CERT`, `SSL_KEY`, and `MYSQL_OPT_SSL_MODE` o
 You may also use the `ConfigUtils::mysqlSslOptions()` or the `ConfigUtils::insertMySqlSslOptions()` methods to insert these options for you and define them using the `DB_MYSQL_SSL_CA`, `DB_MYSQL_SSL_CERT`, `DB_MYSQL_SSL_KEY`, and `DB_MYSQL_SSL_MODE` environment variables.
 
 ```cpp
-    #include <orm/db.hpp>
-    #include <orm/utils/configuration.hpp>
+#include <orm/db.hpp>
+#include <orm/utils/configuration.hpp>
 
-    using Orm::DB;
+using Orm::DB;
 
-    using ConfigUtils = Orm::Utils::Configuration;
+using ConfigUtils = Orm::Utils::Configuration;
 
-    // Ownership of a shared_ptr()
-    auto manager = DB::create({
-        {"driver",  "QMYSQL"},
-        {"host",    qEnvironmentVariable("DB_MYSQL_HOST", "127.0.0.1")},
-        ...
-        // highlight-next-line
-        {"options", ConfigUtils::mysqlSslOptions()},
-    });
+// Ownership of a shared_ptr()
+auto manager = DB::create({
+    {"driver",  "QMYSQL"},
+    {"host",    qEnvironmentVariable("DB_MYSQL_HOST", "127.0.0.1")},
+    ...
+    // highlight-next-line
+    {"options", ConfigUtils::mysqlSslOptions()},
+});
 ```
 
 You can define these SSL-related options in the top-level configuration, they will be copied to the `options` option hash during configuration parsing. The top-level configuration takes precedence and overwrites the options in the `options` hash.
@@ -478,44 +478,44 @@ You can define these SSL-related options in the top-level configuration, they wi
 <TabItem value={pwsh} label={pwsh_label}>
 
 ```cpp
-    #include <orm/db.hpp>
+#include <orm/db.hpp>
 
-    using Orm::DB;
+using Orm::DB;
 
-    // Ownership of a shared_ptr()
-    auto manager = DB::create({
-        {"driver",   "QMYSQL"},
-        {"host",     qEnvironmentVariable("DB_MYSQL_HOST", "127.0.0.1")},
-        ...
-        // highlight-start
-        {"SSL_CA",   "C:/mysql/data/ca.pem"},
-        {"SSL_CERT", "C:/mysql/data/client-cert.pem"},
-        {"SSL_KEY",  "C:/mysql/data/client-key.pem"},
-        {"MYSQL_OPT_SSL_MODE", "VERIFY_CA"},
-        // highlight-end
-    });
+// Ownership of a shared_ptr()
+auto manager = DB::create({
+    {"driver",   "QMYSQL"},
+    {"host",     qEnvironmentVariable("DB_MYSQL_HOST", "127.0.0.1")},
+    ...
+    // highlight-start
+    {"SSL_CA",   "C:/mysql/data/ca.pem"},
+    {"SSL_CERT", "C:/mysql/data/client-cert.pem"},
+    {"SSL_KEY",  "C:/mysql/data/client-key.pem"},
+    {"MYSQL_OPT_SSL_MODE", "VERIFY_CA"},
+    // highlight-end
+});
 ```
 
 </TabItem>
 <TabItem value={bash} label={bash_label}>
 
 ```cpp
-    #include <orm/db.hpp>
+#include <orm/db.hpp>
 
-    using Orm::DB;
+using Orm::DB;
 
-    // Ownership of a shared_ptr()
-    auto manager = DB::create({
-        {"driver",   "QMYSQL"},
-        {"host",     qEnvironmentVariable("DB_MYSQL_HOST", "127.0.0.1")},
-        ...
-        // highlight-start
-        {"SSL_CA",   "~/.local/share/TinyORM/ssl/ca.pem"},
-        {"SSL_CERT", "~/.local/share/TinyORM/ssl/client-cert.pem"},
-        {"SSL_KEY",  "~/.local/share/TinyORM/ssl/client-key.pem"},
-        {"MYSQL_OPT_SSL_MODE", "VERIFY_CA"},
-        // highlight-end
-    });
+// Ownership of a shared_ptr()
+auto manager = DB::create({
+    {"driver",   "QMYSQL"},
+    {"host",     qEnvironmentVariable("DB_MYSQL_HOST", "127.0.0.1")},
+    ...
+    // highlight-start
+    {"SSL_CA",   "~/.local/share/TinyORM/ssl/ca.pem"},
+    {"SSL_CERT", "~/.local/share/TinyORM/ssl/client-cert.pem"},
+    {"SSL_KEY",  "~/.local/share/TinyORM/ssl/client-key.pem"},
+    {"MYSQL_OPT_SSL_MODE", "VERIFY_CA"},
+    // highlight-end
+});
 ```
 
 </TabItem>
@@ -534,18 +534,18 @@ You can also pass the `QString` to the `options` configuration separated by the 
 You have to pass the [`sslmode`](https://www.postgresql.org/docs/current/libpq-ssl.html#LIBPQ-SSL-SSLMODE-STATEMENTS) or the deprecated [`requiressl`](https://www.postgresql.org/docs/current/libpq-connect.html#LIBPQ-CONNECT-REQUIRESSL) options.
 
 ```cpp
-    #include <orm/db.hpp>
+#include <orm/db.hpp>
 
-    using Orm::DB;
+using Orm::DB;
 
-    // Ownership of a shared_ptr()
-    auto manager = DB::create({
-        {"driver",  "QPSQL"},
-        {"host",    qEnvironmentVariable("DB_PGSQL_HOST", "127.0.0.1")},
-        ...
-        // highlight-next-line
-        {"options", QVariantHash({{"sslmode", "verify-full"}})},
-    });
+// Ownership of a shared_ptr()
+auto manager = DB::create({
+    {"driver",  "QPSQL"},
+    {"host",    qEnvironmentVariable("DB_PGSQL_HOST", "127.0.0.1")},
+    ...
+    // highlight-next-line
+    {"options", QVariantHash({{"sslmode", "verify-full"}})},
+});
 ```
 
 And place your __client__ certificates to the `~/.postgres/` on [Linux](https://www.postgresql.org/docs/current/libpq-ssl.html#LIBPQ-SSL-FILE-USAGE) and `$env:APPDATA/postgres/` on Windows. Everything is described in the PostgreSQL's [libpq client](https://www.postgresql.org/docs/current/libpq-ssl.html) and [server](https://www.postgresql.org/docs/15/ssl-tcp.html#SSL-FILE-USAGE) documentation.
@@ -556,46 +556,46 @@ If you want to keep your __client__ certificates in your own location, you can s
 <TabItem value={pwsh} label={pwsh_label}>
 
 ```cpp
-    #include <orm/db.hpp>
+#include <orm/db.hpp>
 
-    using Orm::DB;
+using Orm::DB;
 
-    // Ownership of a shared_ptr()
-    auto manager = DB::create({
-        {"driver",  "QPSQL"},
-        {"host",    qEnvironmentVariable("DB_PGSQL_HOST", "127.0.0.1")},
-        ...
-        // highlight-next-line
-        {"options", QVariantHash({{"sslmode",     "verify-full"},
-                                  // highlight-start
-                                  {"sslcert",     "C:/example/postgres.crt"},
-                                  {"sslkey",      "C:/example/postgres.key"},
-                                  {"sslrootcert", "C:/example/root.crt"}})},
-                                  // highlight-end
-    });
+// Ownership of a shared_ptr()
+auto manager = DB::create({
+    {"driver",  "QPSQL"},
+    {"host",    qEnvironmentVariable("DB_PGSQL_HOST", "127.0.0.1")},
+    ...
+    // highlight-next-line
+    {"options", QVariantHash({{"sslmode",     "verify-full"},
+                              // highlight-start
+                              {"sslcert",     "C:/example/postgres.crt"},
+                              {"sslkey",      "C:/example/postgres.key"},
+                              {"sslrootcert", "C:/example/root.crt"}})},
+                              // highlight-end
+});
 ```
 
 </TabItem>
 <TabItem value={bash} label={bash_label}>
 
 ```cpp
-    #include <orm/db.hpp>
+#include <orm/db.hpp>
 
-    using Orm::DB;
+using Orm::DB;
 
-    // Ownership of a shared_ptr()
-    auto manager = DB::create({
-        {"driver",  "QPSQL"},
-        {"host",    qEnvironmentVariable("DB_PGSQL_HOST", "127.0.0.1")},
-        ...
-        // highlight-next-line
-        {"options", QVariantHash({{"sslmode",     "verify-full"},
-                                  // highlight-start
-                                  {"sslcert",     "/example/postgres.crt"},
-                                  {"sslkey",      "/example/postgres.key"},
-                                  {"sslrootcert", "/example/root.crt"}})},
-                                  // highlight-end
-    });
+// Ownership of a shared_ptr()
+auto manager = DB::create({
+    {"driver",  "QPSQL"},
+    {"host",    qEnvironmentVariable("DB_PGSQL_HOST", "127.0.0.1")},
+    ...
+    // highlight-next-line
+    {"options", QVariantHash({{"sslmode",     "verify-full"},
+                              // highlight-start
+                              {"sslcert",     "/example/postgres.crt"},
+                              {"sslkey",      "/example/postgres.key"},
+                              {"sslrootcert", "/example/root.crt"}})},
+                              // highlight-end
+});
 ```
 
 </TabItem>
@@ -607,44 +607,44 @@ You can define these SSL-related options in the top-level configuration, they wi
 <TabItem value={pwsh} label={pwsh_label}>
 
 ```cpp
-    #include <orm/db.hpp>
+#include <orm/db.hpp>
 
-    using Orm::DB;
+using Orm::DB;
 
-    // Ownership of a shared_ptr()
-    auto manager = DB::create({
-        {"driver",  "QPSQL"},
-        {"host",    qEnvironmentVariable("DB_PGSQL_HOST", "127.0.0.1")},
-        ...
-        // highlight-start
-        {"sslmode",     "verify-full"},
-        {"sslcert",     "C:/example/postgres.crt"},
-        {"sslkey",      "C:/example/postgres.key"},
-        {"sslrootcert", "C:/example/root.crt"},
-        // highlight-end
-    });
+// Ownership of a shared_ptr()
+auto manager = DB::create({
+    {"driver",  "QPSQL"},
+    {"host",    qEnvironmentVariable("DB_PGSQL_HOST", "127.0.0.1")},
+    ...
+    // highlight-start
+    {"sslmode",     "verify-full"},
+    {"sslcert",     "C:/example/postgres.crt"},
+    {"sslkey",      "C:/example/postgres.key"},
+    {"sslrootcert", "C:/example/root.crt"},
+    // highlight-end
+});
 ```
 
 </TabItem>
 <TabItem value={bash} label={bash_label}>
 
 ```cpp
-    #include <orm/db.hpp>
+#include <orm/db.hpp>
 
-    using Orm::DB;
+using Orm::DB;
 
-    // Ownership of a shared_ptr()
-    auto manager = DB::create({
-        {"driver",  "QPSQL"},
-        {"host",    qEnvironmentVariable("DB_PGSQL_HOST", "127.0.0.1")},
-        ...
-        // highlight-start
-        {"sslmode",     "verify-full"},
-        {"sslcert",     "/example/postgres.crt"},
-        {"sslkey",      "/example/postgres.key"},
-        {"sslrootcert", "/example/root.crt"},
-        // highlight-end
-    });
+// Ownership of a shared_ptr()
+auto manager = DB::create({
+    {"driver",  "QPSQL"},
+    {"host",    qEnvironmentVariable("DB_PGSQL_HOST", "127.0.0.1")},
+    ...
+    // highlight-start
+    {"sslmode",     "verify-full"},
+    {"sslcert",     "/example/postgres.crt"},
+    {"sslkey",      "/example/postgres.key"},
+    {"sslrootcert", "/example/root.crt"},
+    // highlight-end
+});
 ```
 
 </TabItem>
@@ -653,21 +653,21 @@ You can define these SSL-related options in the top-level configuration, they wi
 You may also use the `ConfigUtils::postgresSslOptions()` or the `ConfigUtils::insertPostgresSslOptions()` methods to insert the `sslmode`, `sslcert`, `sslkey`, and `sslrootcert` options for you and define them using the `DB_PGSQL_SSLMODE`, `DB_PGSQL_SSLCERT`, `DB_PGSQL_SSLKEY`, and `DB_PGSQL_SSLROOTCERT` environment variable.
 
 ```cpp
-    #include <orm/db.hpp>
-    #include <orm/utils/configuration.hpp>
+#include <orm/db.hpp>
+#include <orm/utils/configuration.hpp>
 
-    using Orm::DB;
+using Orm::DB;
 
-    using ConfigUtils = Orm::Utils::Configuration;
+using ConfigUtils = Orm::Utils::Configuration;
 
-    // Ownership of a shared_ptr()
-    auto manager = DB::create({
-        {"driver",  "QPSQL"},
-        {"host",    qEnvironmentVariable("DB_PGSQL_HOST", "127.0.0.1")},
-        ...
-        // highlight-next-line
-        {"options", ConfigUtils::postgresSslOptions()},
-    });
+// Ownership of a shared_ptr()
+auto manager = DB::create({
+    {"driver",  "QPSQL"},
+    {"host",    qEnvironmentVariable("DB_PGSQL_HOST", "127.0.0.1")},
+    ...
+    // highlight-next-line
+    {"options", ConfigUtils::postgresSslOptions()},
+});
 ```
 
 :::info
@@ -693,14 +693,14 @@ The first argument passed to the `select` method is the SQL query, while the sec
 The `select` method returns a `QSqlQuery` containing the results of the query, where each result can be accessed by `QSqlQuery::next` method. Look into the `QSqlQuery` documentation on how to obtain results from the "query". You may access each column's value by `QSqlQuery::value` method. The first `bool` return value is the value returned from `QSqlQuery::exec` method:
 
 ```cpp
-    #include <QDebug>
+#include <QDebug>
 
-    #include <orm/db.hpp>
+#include <orm/db.hpp>
 
-    auto users = DB::select("select * from users");
+auto users = DB::select("select * from users");
 
-    while(users.next())
-        qDebug() << users.value("name").toString();
+while(users.next())
+    qDebug() << users.value("name").toString();
 ```
 
 #### Selecting Scalar Values
@@ -708,18 +708,18 @@ The `select` method returns a `QSqlQuery` containing the results of the query, w
 Sometimes your database query may result in a single, scalar value. Instead of being required to retrieve the query's scalar result from a record instance, TinyORM allows you to retrieve this value directly using the `scalar` shortcut method:
 
 ```cpp
-    #include <orm/db.hpp>
+#include <orm/db.hpp>
 
-    auto states = DB::scalar(
-        "select count(case when state = 'pending' then 1 end) as states "
-          "from comments"
-    );
+auto states = DB::scalar(
+    "select count(case when state = 'pending' then 1 end) as states "
+      "from comments"
+);
 
-    // With binding
-    auto states = DB::scalar(
-        "select count(case when state = ? then 1 end) as states from comments",
-        {"pending"}
-    );
+// With binding
+auto states = DB::scalar(
+    "select count(case when state = ? then 1 end) as states from comments",
+    {"pending"}
+);
 ```
 
 #### Running An Insert Statement
@@ -727,9 +727,9 @@ Sometimes your database query may result in a single, scalar value. Instead of b
 To execute an `insert` statement, you may use the `insert` method on the `DB` facade. Like `select`, this method accepts the SQL query as its first argument and bindings as its second argument and returns `QSqlQuery`:
 
 ```cpp
-    #include <orm/db.hpp>
+#include <orm/db.hpp>
 
-    DB::insert("insert into users (id, name) values (?, ?)", {1, "Marc"});
+DB::insert("insert into users (id, name) values (?, ?)", {1, "Marc"});
 ```
 
 #### Running An Update Statement
@@ -737,17 +737,17 @@ To execute an `insert` statement, you may use the `insert` method on the `DB` fa
 The `update` method should be used to update existing records in the database. The number of rows affected by the statement and `QSqlQuery` is returned by the method as `std::tuple<int, QSqlQuery>`:
 
 ```cpp
-    #include <QDateTime>
+#include <QDateTime>
 
-    #include <orm/db.hpp>
+#include <orm/db.hpp>
 
-    auto [affected, query] = DB::update(
-        "update users set updated_at = ? where name = ?",
-        {QDateTime::currentDateTimeUtc(), "Anita"}
-    );
+auto [affected, query] = DB::update(
+    "update users set updated_at = ? where name = ?",
+    {QDateTime::currentDateTimeUtc(), "Anita"}
+);
 
-    if (!affected)
-        qDebug() << "Any record was updated.";
+if (!affected)
+    qDebug() << "Any record was updated.";
 ```
 
 #### Running A Delete Statement
@@ -755,9 +755,9 @@ The `update` method should be used to update existing records in the database. T
 The `remove` method should be used to delete records from the database. Like `update`, the number of affected rows and `QSqlQuery` will be returned by the method as `std::tuple<int, QSqlQuery>`:
 
 ```cpp
-    #include <orm/db.hpp>
+#include <orm/db.hpp>
 
-    auto [affected, query] = DB::remove("delete from users");
+auto [affected, query] = DB::remove("delete from users");
 ```
 
 :::note
@@ -769,7 +769,7 @@ The `remove` method should be used to delete records from the database. Like `up
 Some database statements do not return any value. For these types of operations, you may use the `statement` method on the `DB` facade:
 
 ```cpp
-    DB::statement("drop table users");
+DB::statement("drop table users");
 ```
 
 :::tip
@@ -781,7 +781,7 @@ Some database statements do not return any value. For these types of operations,
 Sometimes you may want to execute an SQL statement without binding any values. You may use the `DB` facade's `unprepared` method to accomplish this:
 
 ```cpp
-    DB::unprepared("update users set votes = 100 where name = 'Dries'");
+DB::unprepared("update users set votes = 100 where name = 'Dries'");
 ```
 
 :::caution
@@ -793,7 +793,7 @@ Since unprepared statements do not bind parameters, they may be vulnerable to SQ
 When using the `DB` facade's `statement` methods within transactions, you must be careful to avoid statements that cause [implicit commits](https://dev.mysql.com/doc/refman/8.3/en/implicit-commit.html). These statements will cause the database engine to indirectly commit the entire transaction, leaving TinyORM unaware of the database's transaction level. An example of such a statement is creating a database table:
 
 ```cpp
-    DB::statement("create table users (name varchar(255) null)");
+DB::statement("create table users (name varchar(255) null)");
 ```
 
 Please refer to the MySQL manual for [a list of all statements](https://dev.mysql.com/doc/refman/8.3/en/implicit-commit.html) that trigger implicit commits.
@@ -803,50 +803,50 @@ Please refer to the MySQL manual for [a list of all statements](https://dev.mysq
 You can configure multiple database connections at once during `DatabaseManager` instantiation using the `DB::create` overload, where the first argument is a hash of multiple connections and is of type `QHash<QString, QVariantHash>` and the second argument is the name of the default connection:
 
 ```cpp
-    #include <orm/db.hpp>
+#include <orm/db.hpp>
 
-    // Ownership of a shared_ptr()
-    auto manager = DB::create({
-        {"mysql", {
-            {"driver",    "QMYSQL"},
-            {"host",      qEnvironmentVariable("DB_MYSQL_HOST", "127.0.0.1")},
-            {"port",      qEnvironmentVariable("DB_MYSQL_PORT", "3306")},
-            {"database",  qEnvironmentVariable("DB_MYSQL_DATABASE", "")},
-            {"username",  qEnvironmentVariable("DB_MYSQL_USERNAME", "root")},
-            {"password",  qEnvironmentVariable("DB_MYSQL_PASSWORD", "")},
-            {"charset",   qEnvironmentVariable("DB_MYSQL_CHARSET", "utf8mb4")},
-            {"collation", qEnvironmentVariable("DB_MYSQL_COLLATION", "utf8mb4_0900_ai_ci")},
-            {"strict",    true},
-            {"options",   QVariantHash()},
-        }},
-        {"sqlite", {
-            {"driver",    "QSQLITE"},
-            {"database",  qEnvironmentVariable("DB_SQLITE_DATABASE", "")},
-            {"foreign_key_constraints", qEnvironmentVariable("DB_SQLITE_FOREIGN_KEYS", "true")},
-            {"check_database_exists",   true},
-            {"prefix",                  ""},
-        }},
-    }, "mysql");
+// Ownership of a shared_ptr()
+auto manager = DB::create({
+    {"mysql", {
+        {"driver",    "QMYSQL"},
+        {"host",      qEnvironmentVariable("DB_MYSQL_HOST", "127.0.0.1")},
+        {"port",      qEnvironmentVariable("DB_MYSQL_PORT", "3306")},
+        {"database",  qEnvironmentVariable("DB_MYSQL_DATABASE", "")},
+        {"username",  qEnvironmentVariable("DB_MYSQL_USERNAME", "root")},
+        {"password",  qEnvironmentVariable("DB_MYSQL_PASSWORD", "")},
+        {"charset",   qEnvironmentVariable("DB_MYSQL_CHARSET", "utf8mb4")},
+        {"collation", qEnvironmentVariable("DB_MYSQL_COLLATION", "utf8mb4_0900_ai_ci")},
+        {"strict",    true},
+        {"options",   QVariantHash()},
+    }},
+    {"sqlite", {
+        {"driver",    "QSQLITE"},
+        {"database",  qEnvironmentVariable("DB_SQLITE_DATABASE", "")},
+        {"foreign_key_constraints", qEnvironmentVariable("DB_SQLITE_FOREIGN_KEYS", "true")},
+        {"check_database_exists",   true},
+        {"prefix",                  ""},
+    }},
+}, "mysql");
 ```
 
 If your application needs to use multiple connections, you may access each connection via the `connection` method provided by the `DB` facade. The connection name passed to the `connection` method should correspond to one of the connections key listed in your configuration:
 
 ```cpp
-    #include <orm/db.hpp>
+#include <orm/db.hpp>
 
-    auto query = DB::connection("mysql_test").select(...);
+auto query = DB::connection("mysql_test").select(...);
 ```
 
 You may access the raw underlying `QSqlQuery` instance of a connection using the `getQtQuery` method on a connection instance:
 
 ```cpp
-    auto query = DB::connection().getQtQuery();
+auto query = DB::connection().getQtQuery();
 ```
 
 Or you can use the shortcut method `qtQuery` provided by the `DB` facade:
 
 ```cpp
-    auto query = DB::qtQuery();
+auto query = DB::qtQuery();
 ```
 
 ## Database Transactions
@@ -856,27 +856,27 @@ Or you can use the shortcut method `qtQuery` provided by the `DB` facade:
 If you would like to begin a transaction manually and have complete control over rollbacks and commits, you may use the `beginTransaction` method provided by the `DB` facade:
 
 ```cpp
-    #include <orm/db.hpp>
+#include <orm/db.hpp>
 
-    DB::beginTransaction();
+DB::beginTransaction();
 ```
 
 You can rollback the transaction via the `rollBack` method:
 
 ```cpp
-    DB::rollBack();
+DB::rollBack();
 ```
 
 Lastly, you can commit a transaction via the `commit` method:
 
 ```cpp
-    DB::commit();
+DB::commit();
 ```
 
 All transaction methods accept a connection name as the optional argument:
 
 ```cpp
-    DB::beginTransaction("mysql_test");
+DB::beginTransaction("mysql_test");
 ```
 
 :::tip

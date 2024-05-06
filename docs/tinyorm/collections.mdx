@@ -24,22 +24,22 @@ The `ModelsCollection` template parameter can be declared only with the model ty
 You can iterate over the `ModelsCollection` the same way as over the `QVector`:
 
 ```cpp
-    using Models::User;
+using Models::User;
 
-    ModelsCollection<User> users = User::whereEq("active", true)->get();
+ModelsCollection<User> users = User::whereEq("active", true)->get();
 
-    for (const auto &user : users)
-        qDebug() << user.getAttribute<QString>("name");
+for (const auto &user : users)
+    qDebug() << user.getAttribute<QString>("name");
 ```
 
 However, as previously mentioned, collections are much more powerful than vectors and expose a variety of map / reduce operations that may be chained using an intuitive interface. For example, we may remove all active users and then gather the first name of each remaining user:
 
 ```cpp
-    auto names = User::all().reject([](User *const user)
-    {
-        return user->getAttribute<bool>("active");
-    })
-        .pluck("name");
+auto names = User::all().reject([](User *const user)
+{
+    return user->getAttribute<bool>("active");
+})
+    .pluck("name");
 ```
 
 As you can see, the `ModelsCollection` class allows you to chain its methods to perform fluent mapping and reducing of the underlying vector. In general, collections are immutable, meaning every `ModelsCollection` method returns an entirely new `ModelsCollection` instance.
@@ -57,39 +57,39 @@ While most TinyORM collection methods return a new instance of `ModelsCollection
 Creating a `ModelsCollection` is as simple as:
 
 ```cpp
-    ModelsCollection<User> users {
-        {{"name", "Kate"}, {"votes", 150}},
-        {{"name", "John"}, {"votes", 200}},
-    };
+ModelsCollection<User> users {
+    {{"name", "Kate"}, {"votes", 150}},
+    {{"name", "John"}, {"votes", 200}},
+};
 ```
 
 You can also create a collection of pointers, eg. `ModelsCollection<User *>`:
 
 ```cpp
-    ModelsCollection<User *> userPointers {
-        &users[0], &users[1],
-    };
+ModelsCollection<User *> userPointers {
+    &users[0], &users[1],
+};
 ```
 
 The `ModelsCollection<Model>` is implicitly convertible and assignable from the `QVector<Model>`:
 
 ```cpp
-    QVector<User> usersVector {
-        {{"name", "Kate"}, {"votes", 150}},
-        {{"name", "John"}, {"votes", 200}},
-    };
+QVector<User> usersVector {
+    {{"name", "Kate"}, {"votes", 150}},
+    {{"name", "John"}, {"votes", 200}},
+};
 
-    ModelsCollection<User> users(usersVector);
-    users = usersVector;
+ModelsCollection<User> users(usersVector);
+users = usersVector;
 ```
 
 Alternatively, you can use the `Orm::collect<Model>` helper function to create a `ModelsCollection` from the given attributes:
 
 ```cpp
-    ModelsCollection<User> users = Orm::collect<User>({
-        {{"name", "Kate"}, {"added_on", QDateTime::currentDateTimeUtc()}},
-        {{"name", "John"}, {"added_on", QDateTime({2023, 6, 1}, {13, 46, 15}, Qt::UTC)}},
-    });
+ModelsCollection<User> users = Orm::collect<User>({
+    {{"name", "Kate"}, {"added_on", QDateTime::currentDateTimeUtc()}},
+    {{"name", "John"}, {"added_on", QDateTime({2023, 6, 1}, {13, 46, 15}, Qt::UTC)}},
+});
 ```
 
 :::caution
@@ -174,7 +174,7 @@ For a better understanding of the following examples, many of the variable decla
 The `all` method returns a copy of the underlying vector represented by the collection:
 
 ```cpp
-    QVector<User> = users.all();
+QVector<User> = users.all();
 ```
 
 :::note
@@ -186,18 +186,18 @@ The [`toBase`](#method-tobase) is an alias to the `all` method.
 The `contains` method may be used to determine if a given model instance is contained by the collection. This method accepts a primary key or a model instance:
 
 ```cpp
-    users.contains(1);
+users.contains(1);
 
-    users.contains(User::find(1));
+users.contains(User::find(1));
 ```
 
 Alternatively, you may pass a lambda expression to the `contains` method to determine if a model exists in the collection matching a given truth test:
 
 ```cpp
-    users.contains([](const User *const user)
-    {
-        return user->getKeyCasted() == 2;
-    });
+users.contains([](const User *const user)
+{
+    return user->getKeyCasted() == 2;
+});
 ```
 
 For the inverse of `contains`, see the [doesntContain](#method-doesntcontain) method.
@@ -207,18 +207,18 @@ For the inverse of `contains`, see the [doesntContain](#method-doesntcontain) me
 The `doesntContain` method determines whether the collection does not contain a given item. This method accepts a primary key or a model instance:
 
 ```cpp
-    users.doesntContain(1);
+users.doesntContain(1);
 
-    users.doesntContain(User::find(1));
+users.doesntContain(User::find(1));
 ```
 
 Alternatively, you may pass a lambda expression to the `doesntContain` method to determine if a model does not exist in the collection matching a given truth test:
 
 ```cpp
-    users.doesntContain([](const User *const user)
-    {
-        return user->getKeyCasted() == 2;
-    });
+users.doesntContain([](const User *const user)
+{
+    return user->getKeyCasted() == 2;
+});
 ```
 
 For the inverse of `doesntContain`, see the [contains](#method-contains) method.
@@ -228,35 +228,35 @@ For the inverse of `doesntContain`, see the [contains](#method-contains) method.
 The `each` method iterates over the models in the collection and passes each model to the lambda expression:
 
 ```cpp
-    ModelsCollection<User> users = Post::whereEq("user_id", 1)->get();
+ModelsCollection<User> users = Post::whereEq("user_id", 1)->get();
 
-    users.each([](User *const user)
-    {
-        // ...
-    });
+users.each([](User *const user)
+{
+    // ...
+});
 ```
 
 If you would like to stop iterating through the models, you may return `false` from your lambda expression:
 
 ```cpp
-    users.each([](User *const user)
-    {
-        if (/* condition */)
-            return false;
+users.each([](User *const user)
+{
+    if (/* condition */)
+        return false;
 
-        // Some logic
+    // Some logic
 
-        return true;
-    });
+    return true;
+});
 ```
 
 You may also pass the lambda expression with two parameters, whereas the second one is an index:
 
 ```cpp
-    users.each([](User *const user, const std::size_t index)
-    {
-        // ...
-    });
+users.each([](User *const user, const std::size_t index)
+{
+    // ...
+});
 ```
 
 The `each` method returns an lvalue __reference__ to the currently processed collection.
@@ -268,7 +268,7 @@ It can be also called on `ModelsCollection` rvalues, it returns an rvalue refere
 The `except` method returns all of the models that do not have the given primary keys:
 
 ```cpp
-    ModelsCollection<User *> usersResult = users.except({1, 2, 3});
+ModelsCollection<User *> usersResult = users.except({1, 2, 3});
 ```
 
 All of the models are returned if the `ids` argument is empty `except({})`.
@@ -282,31 +282,31 @@ For the inverse of `except`, see the [only](#method-only) method.
 The `filter` method filters the collection using the lambda expression, keeping only those models that pass a given truth test:
 
 ```cpp
-    auto usersBanned = users.filter([](const User *const user)
-    {
-        return user->getAttribute<bool>("is_banned");
-    });
+auto usersBanned = users.filter([](const User *const user)
+{
+    return user->getAttribute<bool>("is_banned");
+});
 ```
 
 You may also pass the lambda expression with two parameters, whereas the second one is an index:
 
 ```cpp
-    auto usersBanned = users.filter([](const User *const user,
-                                       const std::size_t index)
-    {
-        return index < 10 && user->getAttribute<bool>("is_banned");
-    });
+auto usersBanned = users.filter([](const User *const user,
+                                   const std::size_t index)
+{
+    return index < 10 && user->getAttribute<bool>("is_banned");
+});
 ```
 
 If no lambda expression is supplied, all models of the collection that are equivalent to the `nullptr` will be removed:
 
 ```cpp
-    ModelsCollection<User> usersRaw = User::findMany({1, 2});
-    ModelsCollection<User *> users {&usersRaw[0], nullptr, &usersRaw[1]};
+ModelsCollection<User> usersRaw = User::findMany({1, 2});
+ModelsCollection<User *> users {&usersRaw[0], nullptr, &usersRaw[1]};
 
-    ModelsCollection<User *> filtered = users.filter();
+ModelsCollection<User *> filtered = users.filter();
 
-    // {1, 2}
+// {1, 2}
 ```
 
 For the inverse of `filter`, see the [reject](#method-reject) method.
@@ -316,13 +316,13 @@ For the inverse of `filter`, see the [reject](#method-reject) method.
 The `find` method returns the model that has a primary key matching the given key:
 
 ```cpp
-    User *const user = users.find(1);
+User *const user = users.find(1);
 ```
 
 If you pass a model instance, `find` will attempt to return a model matching the primary key:
 
 ```cpp
-    User *user = users.find(anotherUser);
+User *user = users.find(anotherUser);
 ```
 
 The two overloads above also accept the second `defaultModel` model argument, which will be returned if a model was not found in the collection, its default value is the `nullptr`.
@@ -330,7 +330,7 @@ The two overloads above also accept the second `defaultModel` model argument, wh
 Alternatively, may pass more IDs and `find` will return all models which have a primary key within the given unordered set:
 
 ```cpp
-    ModelsCollection<User *> usersMany = users.find({1, 2});
+ModelsCollection<User *> usersMany = users.find({1, 2});
 ```
 
 This overload internally calls the [`only`](#method-only) method.
@@ -340,38 +340,38 @@ This overload internally calls the [`only`](#method-only) method.
 The `first` method returns the first model in the collection that passes a given truth test:
 
 ```cpp
-    ModelsCollection<User> users {
-        {{"name", "Kate"}, {"votes", 150}},
-        {{"name", "John"}, {"votes", 200}},
-        {{"name", "Jack"}, {"votes", 400}},
-    };
+ModelsCollection<User> users {
+    {{"name", "Kate"}, {"votes", 150}},
+    {{"name", "John"}, {"votes", 200}},
+    {{"name", "Jack"}, {"votes", 400}},
+};
 
-    User *user = users.first([](User *const user)
-    {
-        return user->getAttribute<quint64>("votes") > 150;
-    });
+User *user = users.first([](User *const user)
+{
+    return user->getAttribute<quint64>("votes") > 150;
+});
 
-    // {{"name", "John"}, {"votes", 200}}
+// {{"name", "John"}, {"votes", 200}}
 ```
 
 If no model passes a given truth test then the value of the second `defaultModel` argument will be returned, its default value is the `nullptr`.
 
 ```cpp
-    using NullVariant = Orm::Utils::NullVariant;
+using NullVariant = Orm::Utils::NullVariant;
 
-    User defaultUser {{"name", NullVariant::QString()},
-                      {"votes", NullVariant::ULongLong()}};
+User defaultUser {{"name", NullVariant::QString()},
+                  {"votes", NullVariant::ULongLong()}};
 
-    User *user = users.first([](User *const user)
-    {
-        return user->getAttribute<quint64>("votes") > 500;
-    },
-        &defaultUser);
+User *user = users.first([](User *const user)
+{
+    return user->getAttribute<quint64>("votes") > 500;
+},
+    &defaultUser);
 
-    /*
-        {{"name", NullVariant::QString()},
-         {"votes", NullVariant::ULongLong()}}
-    */
+/*
+    {{"name", NullVariant::QString()},
+     {"votes", NullVariant::ULongLong()}}
+*/
 ```
 
 You can also call all `first` overloads provided by the [`QList::first`](https://doc.qt.io/qt/qlist.html#first).
@@ -381,26 +381,26 @@ You can also call all `first` overloads provided by the [`QList::first`](https:/
 The `firstWhere` method returns the first model in the collection with the given column / value pair:
 
 ```cpp
-    using NullVariant = Orm::Utils::NullVariant;
+using NullVariant = Orm::Utils::NullVariant;
 
-    ModelsCollection<User> users {
-        {{"name", "Leon"}, {"age", NullVariant::UShort()}},
-        {{"name", "Jill"}, {"age", 14}},
-        {{"name", "Jack"}, {"age", 23}},
-        {{"name", "Jill"}, {"age", 84}},
-    };
+ModelsCollection<User> users {
+    {{"name", "Leon"}, {"age", NullVariant::UShort()}},
+    {{"name", "Jill"}, {"age", 14}},
+    {{"name", "Jack"}, {"age", 23}},
+    {{"name", "Jill"}, {"age", 84}},
+};
 
-    auto user = users.firstWhereEq("name", "Linda");
+auto user = users.firstWhereEq("name", "Linda");
 
-    // {{"name", "Jill"}, {"age", 14}}
+// {{"name", "Jill"}, {"age", 14}}
 ```
 
 You may also call the `firstWhere` method with a comparison operator:
 
 ```cpp
-    users.firstWhere("age", ">=", 18);
+users.firstWhere("age", ">=", 18);
 
-    // {{"name", "Jack"}, {"age", 23}}
+// {{"name", "Jack"}, {"age", 23}}
 ```
 
 #### `fresh()` {#method-fresh}
@@ -408,13 +408,13 @@ You may also call the `firstWhere` method with a comparison operator:
 The `fresh` method retrieves a fresh instance of each model in the collection from the database. In addition, any specified relationships will be eager loaded:
 
 ```cpp
-    auto usersFresh = users.fresh();
+auto usersFresh = users.fresh();
 
-    auto usersFresh = users.fresh("comments");
+auto usersFresh = users.fresh("comments");
 
-    auto usersFresh = users.fresh("posts:id,name");
+auto usersFresh = users.fresh("posts:id,name");
 
-    auto usersFresh = users.fresh({"comments", "posts:id,name"});
+auto usersFresh = users.fresh({"comments", "posts:id,name"});
 ```
 
 The `relations` argument format is the same as for TinyBuilder's [`load`](relationships.mdx#lazy-eager-loading) method.
@@ -424,14 +424,14 @@ The `relations` argument format is the same as for TinyBuilder's [`load`](relati
 The `implode` method joins attributes by the given column and the "glue" string you wish to place between the values:
 
 ```cpp
-    ModelsCollection<Product> products {
-        {{"product", "Desk"},  {"price", 200}},
-        {{"product", "Chair"}, {"price", 100}},
-    };
+ModelsCollection<Product> products {
+    {{"product", "Desk"},  {"price", 200}},
+    {{"product", "Chair"}, {"price", 100}},
+};
 
-    products.implode("product", ", ");
+products.implode("product", ", ");
 
-    // {Desk, Chair}
+// {Desk, Chair}
 ```
 
 The default "glue" value is an empty string "".
@@ -441,9 +441,9 @@ The default "glue" value is an empty string "".
 The `isEmpty` method returns `true` if the collection is empty; otherwise, `false` is returned:
 
 ```cpp
-    ModelsCollection<User>().isEmpty();
+ModelsCollection<User>().isEmpty();
 
-    // true
+// true
 ```
 
 #### `isNotEmpty()` {#method-isnotempty}
@@ -451,9 +451,9 @@ The `isEmpty` method returns `true` if the collection is empty; otherwise, `fals
 The `isNotEmpty` method returns `true` if the collection is not empty; otherwise, `false` is returned:
 
 ```cpp
-    ModelsCollection<User>().isNotEmpty();
+ModelsCollection<User>().isNotEmpty();
 
-    // false
+// false
 ```
 
 #### `last()` {#method-last}
@@ -461,39 +461,39 @@ The `isNotEmpty` method returns `true` if the collection is not empty; otherwise
 The `last` method returns the last model in the collection that passes a given truth test:
 
 ```cpp
-    ModelsCollection<User> users {
-        {{"name", "Kate"}, {"votes", 150}},
-        {{"name", "John"}, {"votes", 200}},
-        {{"name", "Jack"}, {"votes", 400}},
-        {{"name", "Rose"}, {"votes", 350}},
-    };
+ModelsCollection<User> users {
+    {{"name", "Kate"}, {"votes", 150}},
+    {{"name", "John"}, {"votes", 200}},
+    {{"name", "Jack"}, {"votes", 400}},
+    {{"name", "Rose"}, {"votes", 350}},
+};
 
-    User *user = users.last([](User *const user)
-    {
-        return user->getAttribute<quint64>("votes") < 300;
-    });
+User *user = users.last([](User *const user)
+{
+    return user->getAttribute<quint64>("votes") < 300;
+});
 
-    // {{"name", "John"}, {"votes", 200}}
+// {{"name", "John"}, {"votes", 200}}
 ```
 
 If no model passes a given truth test then the value of the second `defaultModel` argument will be returned, its default value is the `nullptr`.
 
 ```cpp
-    using NullVariant = Orm::Utils::NullVariant;
+using NullVariant = Orm::Utils::NullVariant;
 
-    User defaultUser {{"name",  NullVariant::QString()},
-                      {"votes", NullVariant::ULongLong()}};
+User defaultUser {{"name",  NullVariant::QString()},
+                  {"votes", NullVariant::ULongLong()}};
 
-    User *user = users.last([](User *const user)
-    {
-        return user->getAttribute<quint64>("votes") < 100;
-    },
-        &defaultUser);
+User *user = users.last([](User *const user)
+{
+    return user->getAttribute<quint64>("votes") < 100;
+},
+    &defaultUser);
 
-    /*
-        {{"name", NullVariant::QString()},
-         {"votes", NullVariant::ULongLong()}}
-    */
+/*
+    {{"name", NullVariant::QString()},
+     {"votes", NullVariant::ULongLong()}}
+*/
 ```
 
 You can also call all `last` overloads provided by the [`QList::last`](https://doc.qt.io/qt/qlist.html#last).
@@ -503,14 +503,14 @@ You can also call all `last` overloads provided by the [`QList::last`](https://d
 The `load` method eager loads the given relationships for all models in the collection:
 
 ```cpp
-    users.load({"comments", "posts"});
+users.load({"comments", "posts"});
 
-    users.load("comments.author");
+users.load("comments.author");
 
-    users.load({{"comments"}, {"posts", [](auto &query)
-    {
-        query.whereEq("active", true);
-    }}});
+users.load({{"comments"}, {"posts", [](auto &query)
+{
+    query.whereEq("active", true);
+}}});
 ```
 
 The `relations` argument format is the same as for TinyBuilder's [`load`](relationships.mdx#lazy-eager-loading) method.
@@ -520,41 +520,41 @@ The `relations` argument format is the same as for TinyBuilder's [`load`](relati
 The `map` method iterates through the collection and passes a __copy__ of each model to the given lambda expression. The lambda expression is free to modify the model and return it, thus forming a new collection of modified models:
 
 ```cpp
-    ModelsCollection<User> users {
-        {{"name", "John"}, {"votes", 200}},
-        {{"name", "Jack"}, {"votes", 400}},
-    };
+ModelsCollection<User> users {
+    {{"name", "John"}, {"votes", 200}},
+    {{"name", "Jack"}, {"votes", 400}},
+};
 
-    auto usersAdded = users.map([](User &&userCopy)
+auto usersAdded = users.map([](User &&userCopy)
+{
+    if (userCopy.getAttribute<QString>("name") == "John")
+        userCopy["votes"] = userCopy.getAttribute<quint64>("votes") + 1;
+
+    return std::move(userCopy);
+});
+
+/*
     {
-        if (userCopy.getAttribute<QString>("name") == "John")
-            userCopy["votes"] = userCopy.getAttribute<quint64>("votes") + 1;
-
-        return std::move(userCopy);
-    });
-
-    /*
-        {
-            {{"name", "John"}, {"price", 201}},
-            {{"name", "Jack"}, {"price", 400}},
-        }
-    */
+        {{"name", "John"}, {"price", 201}},
+        {{"name", "Jack"}, {"price", 400}},
+    }
+*/
 ```
 
 The second `map` overload allows to return the `QVector<T>`:
 
 ```cpp
-    QVector<quint64> usersAdded = users.map<quint64>([](User &&userCopy)
-    {
-        const auto votesRef = userCopy["votes"];
+QVector<quint64> usersAdded = users.map<quint64>([](User &&userCopy)
+{
+    const auto votesRef = userCopy["votes"];
 
-        if (userCopy.getAttribute<QString>("name") == "John")
-             votesRef = userCopy.getAttribute<quint64>("votes") + 1;
+    if (userCopy.getAttribute<QString>("name") == "John")
+         votesRef = userCopy.getAttribute<quint64>("votes") + 1;
 
-        return votesRef->value<quint64>();
-    });
+    return votesRef->value<quint64>();
+});
 
-    // {201, 400}
+// {201, 400}
 ```
 
 Both overloads allow to pass the lambda expression with two arguments, whereas the second argument can be an index of the `std::size_t` type.
@@ -572,28 +572,28 @@ The model copy is passed to the lambda expression even if the `map` iterates ove
 The `mapWithKeys` method iterates through the collection and passes each model to the given lambda expression. It returns the `std::unordered_map<K, V>` and the lambda expression should return the `std::pair<K, V>` containing a single column / value pair:
 
 ```cpp
-    ModelsCollection<User> users {
-        {{"id", 1}, {"name", "John"}, {"email", "john@example.com"}},
-        {{"id", 2}, {"name", "Jill"}, {"email", "jill@example.com"}},
-    };
+ModelsCollection<User> users {
+    {{"id", 1}, {"name", "John"}, {"email", "john@example.com"}},
+    {{"id", 2}, {"name", "Jill"}, {"email", "jill@example.com"}},
+};
 
-    auto usersMap = users.mapWithKeys<quint64, QString>(
-                        [](User *const user) -> std::pair<quint64, QString>
-    {
-        return {user->getKeyCasted(), user->getAttribute<QString>("name")};
-    });
+auto usersMap = users.mapWithKeys<quint64, QString>(
+                    [](User *const user) -> std::pair<quint64, QString>
+{
+    return {user->getKeyCasted(), user->getAttribute<QString>("name")};
+});
 
-    // {{1, 'John'}, {2, 'Jill'}}
+// {{1, 'John'}, {2, 'Jill'}}
 ```
 
 You can also map IDs to the model pointers:
 
 ```cpp
-    auto usersMap = users.mapWithKeys<quint64, User *>(
-                        [](User *const user) -> std::pair<quint64, User *>
-    {
-        return {user->getKeyCasted(), user};
-    });
+auto usersMap = users.mapWithKeys<quint64, User *>(
+                    [](User *const user) -> std::pair<quint64, User *>
+{
+    return {user->getKeyCasted(), user};
+});
 ```
 
 #### `mapWithModelKeys()` {#method-mapwithmodelkeys}
@@ -601,7 +601,7 @@ You can also map IDs to the model pointers:
 The `mapWithModelKeys` maps the primary keys to the `Model *`, it returns the `std::unordered_map<Model::KeyType, Model *>`:
 
 ```cpp
-    auto usersMap = users.mapWithModelKeys();
+auto usersMap = users.mapWithModelKeys();
 ```
 
 #### `modelKeys()` {#method-modelkeys}
@@ -609,17 +609,17 @@ The `mapWithModelKeys` maps the primary keys to the `Model *`, it returns the `s
 The `modelKeys` method returns the primary keys for all models in the collection:
 
 ```cpp
-    ModelsCollection<User> users {
-        {{"id", 1}, {"name", "John"}},
-        {{"id", 2}, {"name", "Jill"}},
-        {{"id", 3}, {"name", "Kate"}},
-        {{"id", 5}, {"name", "Rose"}},
-    };
+ModelsCollection<User> users {
+    {{"id", 1}, {"name", "John"}},
+    {{"id", 2}, {"name", "Jill"}},
+    {{"id", 3}, {"name", "Kate"}},
+    {{"id", 5}, {"name", "Rose"}},
+};
 
-    users.modelKeys(); // Returns QVector<QVariant>
-    users.modelKeys<quint64>();
+users.modelKeys(); // Returns QVector<QVariant>
+users.modelKeys<quint64>();
 
-    // {1, 2, 3, 5}
+// {1, 2, 3, 5}
 ```
 
 #### `only()` {#method-only}
@@ -627,7 +627,7 @@ The `modelKeys` method returns the primary keys for all models in the collection
 The `only` method returns all of the models that have the given primary keys:
 
 ```cpp
-    ModelsCollection<User *> usersResult = users.only({1, 2, 3});
+ModelsCollection<User *> usersResult = users.only({1, 2, 3});
 ```
 
 An empty collection is returned if the `ids` argument is empty `only({})`.
@@ -641,43 +641,43 @@ For the inverse of `only`, see the [except](#method-except) method.
 The `pluck` method retrieves all of the values for a given column, the following overload returns the `QVector<QVariant>`:
 
 ```cpp
-    ModelsCollection<Product> products {
-        {{"id", 1}, {"name", "Desk"}},
-        {{"id", 2}, {"name", "Chair"}},
-    };
+ModelsCollection<Product> products {
+    {{"id", 1}, {"name", "Desk"}},
+    {{"id", 2}, {"name", "Chair"}},
+};
 
-    auto plucked = products.pluck("name");
+auto plucked = products.pluck("name");
 
-    // {Desk, Chair}
+// {Desk, Chair}
 ```
 
 The second overload allows returning the custom type `QVector<T>`:
 
 ```cpp
-    auto plucked = products.pluck<QString>("name");
+auto plucked = products.pluck<QString>("name");
 ```
 
 You may also specify how you wish the resulting collection to be keyed, this overload returns the `std::map<T, QVariant>`:
 
 ```cpp
-    auto plucked = products.pluck<quint64>("name", "id");
+auto plucked = products.pluck<quint64>("name", "id");
 
-    // {{1, "Desk"}, {2, "Chair"}}
+// {{1, "Desk"}, {2, "Chair"}}
 ```
 
 If duplicate keys exist, the last matching attribute will be inserted into the plucked collection:
 
 ```cpp
-    ModelsCollection<Product> collection {
-        {{"brand", "Tesla"},  {"color", "red"}},
-        {{"brand", "Pagani"}, {"color", "white"}},
-        {{"brand", "Tesla"},  {"color", "black"}},
-        {{"brand", "Pagani"}, {"color", "orange"}},
-    };
+ModelsCollection<Product> collection {
+    {{"brand", "Tesla"},  {"color", "red"}},
+    {{"brand", "Pagani"}, {"color", "white"}},
+    {{"brand", "Tesla"},  {"color", "black"}},
+    {{"brand", "Pagani"}, {"color", "orange"}},
+};
 
-    auto plucked = collection.pluck<QString>("color", "brand");
+auto plucked = collection.pluck<QString>("color", "brand");
 
-    // {{'Tesla', 'black'}, {'Pagani', 'orange"}}
+// {{'Tesla', 'black'}, {'Pagani', 'orange"}}
 ```
 
 #### `reject()` {#method-reject}
@@ -685,10 +685,10 @@ If duplicate keys exist, the last matching attribute will be inserted into the p
 The `reject` method filters the collection using the given lambda expression. The lambda should return `true` if the model should be removed from the resulting collection:
 
 ```cpp
-    auto usersWithNote = users.reject([](const User *const user)
-    {
-        return user->getAttribute("note").isNull();
-    });
+auto usersWithNote = users.reject([](const User *const user)
+{
+    return user->getAttribute("note").isNull();
+});
 ```
 
 You may also pass the lambda expression with two arguments, whereas the second argument can be an index of the `std::size_t` type.
@@ -700,21 +700,21 @@ For the inverse of the `reject` method, see the [`filter`](#method-filter) metho
 The `sort` method sorts the models collection by primary keys:
 
 ```cpp
-    ModelsCollection<User> users {
+ModelsCollection<User> users {
+    {{"id", 2}, {"name", "Kate"}},
+    {{"id", 3}, {"name", "John"}},
+    {{"id", 1}, {"name", "Jack"}},
+};
+
+auto sorted = users.sort();
+
+/*
+    {
+        {{"id", 1}, {"name", "Jack"}},
         {{"id", 2}, {"name", "Kate"}},
         {{"id", 3}, {"name", "John"}},
-        {{"id", 1}, {"name", "Jack"}},
-    };
-
-    auto sorted = users.sort();
-
-    /*
-        {
-            {{"id", 1}, {"name", "Jack"}},
-            {{"id", 2}, {"name", "Kate"}},
-            {{"id", 3}, {"name", "John"}},
-        }
-    */
+    }
+*/
 ```
 
 You may pass a predicate and projection callbacks to the `sort` method with your own algorithms. Refer to the CPP reference documentation on [`ranges::sort`](https://en.cppreference.com/w/cpp/algorithm/ranges/sort), which is what the `sort` method calls internally.
@@ -722,34 +722,34 @@ You may pass a predicate and projection callbacks to the `sort` method with your
 You can eg. sort by multiple columns, for an alternative method of multi-column sorting look at [sortBy](#method-sortby):
 
 ```cpp
-    ModelsCollection<User> users {
-        {{"name", "Kate"}, {"votes", 350}},
-        {{"name", "John"}, {"votes", 200}},
-        {{"name", "John"}, {"votes", 150}},
-        {{"name", "Kate"}, {"votes", 200}},
-    };
+ModelsCollection<User> users {
+    {{"name", "Kate"}, {"votes", 350}},
+    {{"name", "John"}, {"votes", 200}},
+    {{"name", "John"}, {"votes", 150}},
+    {{"name", "Kate"}, {"votes", 200}},
+};
 
-    auto sorted = users.sort([](const User *const left,
-                                const User *const right)
+auto sorted = users.sort([](const User *const left,
+                            const User *const right)
+{
+    const auto leftValue = left->getAttribute<QString>("name");
+    const auto rightValue = right->getAttribute<QString>("name");
+
+    if (leftValue == rightValue)
+        return left->getAttribute<quint64>("votes") <
+               right->getAttribute<quint64>("votes");
+
+    return leftValue < rightValue;
+});
+
+/*
     {
-        const auto leftValue = left->getAttribute<QString>("name");
-        const auto rightValue = right->getAttribute<QString>("name");
-
-        if (leftValue == rightValue)
-            return left->getAttribute<quint64>("votes") <
-                   right->getAttribute<quint64>("votes");
-
-        return leftValue < rightValue;
-    });
-
-    /*
-        {
-            {{"name", "John"}, {"votes", 150}},
-            {{"name", "John"}, {"votes", 200}},
-            {{"name", "Kate"}, {"votes", 200}},
-            {{"name", "Kate"}, {"votes", 350}},
-        }
-    */
+        {{"name", "John"}, {"votes", 150}},
+        {{"name", "John"}, {"votes", 200}},
+        {{"name", "Kate"}, {"votes", 200}},
+        {{"name", "Kate"}, {"votes", 350}},
+    }
+*/
 ```
 
 The order of equal elements is not guaranteed to be preserved.
@@ -763,75 +763,75 @@ You can use the [stable](#method-stablesort) sort method variants to preserve th
 The `sortBy` method sorts the collection by the given column, this overload needs the template argument so it can cast the attribute value before comparing:
 
 ```cpp
-    ModelsCollection<User> users {
-        {{"name", "Kate"}, {"votes", 150}},
-        {{"name", "John"}, {"votes", 200}},
+ModelsCollection<User> users {
+    {{"name", "Kate"}, {"votes", 150}},
+    {{"name", "John"}, {"votes", 200}},
+    {{"name", "Jack"}, {"votes", 400}},
+};
+
+auto sorted = users.sortBy<QString>("name");
+
+/*
+    {
         {{"name", "Jack"}, {"votes", 400}},
-    };
-
-    auto sorted = users.sortBy<QString>("name");
-
-    /*
-        {
-            {{"name", "Jack"}, {"votes", 400}},
-            {{"name", "John"}, {"votes", 200}},
-            {{"name", "Kate"}, {"votes", 150}},
-        }
-    */
+        {{"name", "John"}, {"votes", 200}},
+        {{"name", "Kate"}, {"votes", 150}},
+    }
+*/
 ```
 
 You may pass the projection callback to determine how to sort the collection's models:
 
 ```cpp
-    auto sorted = users.sortBy([](User *const user)
-    {
-        return user->getAttribute<quint64>("votes");
-    });
+auto sorted = users.sortBy([](User *const user)
+{
+    return user->getAttribute<quint64>("votes");
+});
 
-    /*
-        {
-            {{"name", "Kate"}, {"votes", 150}},
-            {{"name", "John"}, {"votes", 200}},
-            {{"name", "Jack"}, {"votes", 400}},
-        }
-    */
+/*
+    {
+        {{"name", "Kate"}, {"votes", 150}},
+        {{"name", "John"}, {"votes", 200}},
+        {{"name", "Jack"}, {"votes", 400}},
+    }
+*/
 ```
 
 If you would like to sort your collection by multiple columns, you may pass a vector of comparison lambda expressions that define each sort operation to the `sortBy` method, in the following example is the `name` column sorted in ascending order and the second `votes` column is sorted in descending order:
 
 ```cpp
-    using AttributeUtils = Orm::Tiny::Utils::Attribute;
+using AttributeUtils = Orm::Tiny::Utils::Attribute;
 
-    ModelsCollection<User> users {
-        {{"name", "Kate"}, {"votes", 350}},
+ModelsCollection<User> users {
+    {{"name", "Kate"}, {"votes", 350}},
+    {{"name", "John"}, {"votes", 200}},
+    {{"name", "John"}, {"votes", 150}},
+    {{"name", "Kate"}, {"votes", 200}},
+};
+
+auto sorted = users.sortBy({
+    [](const User *const left, const User *const right)
+    {
+        return AttributeUtils::compareForSortBy(
+                left->getAttribute<QString>("name"),
+                right->getAttribute<QString>("name"));
+    },
+    [](const User *const left, const User *const right)
+    {
+        return AttributeUtils::compareForSortByDesc(
+                left->getAttribute<quint64>("votes"),
+                right->getAttribute<quint64>("votes"));
+    },
+});
+
+/*
+    {
         {{"name", "John"}, {"votes", 200}},
         {{"name", "John"}, {"votes", 150}},
+        {{"name", "Kate"}, {"votes", 350}},
         {{"name", "Kate"}, {"votes", 200}},
-    };
-
-    auto sorted = users.sortBy({
-        [](const User *const left, const User *const right)
-        {
-            return AttributeUtils::compareForSortBy(
-                    left->getAttribute<QString>("name"),
-                    right->getAttribute<QString>("name"));
-        },
-        [](const User *const left, const User *const right)
-        {
-            return AttributeUtils::compareForSortByDesc(
-                    left->getAttribute<quint64>("votes"),
-                    right->getAttribute<quint64>("votes"));
-        },
-    });
-
-    /*
-        {
-            {{"name", "John"}, {"votes", 200}},
-            {{"name", "John"}, {"votes", 150}},
-            {{"name", "Kate"}, {"votes", 350}},
-            {{"name", "Kate"}, {"votes", 200}},
-        }
-    */
+    }
+*/
 ```
 
 The `AttributeUtils::compareForSortBy` and `compareForSortByDesc` methods are helper methods, they are needed because the Qt framework doesn't define `<=>` spaceship operator on its types, it doesn't support the three-way comparison.
@@ -849,21 +849,21 @@ The order of equal elements is not guaranteed to be preserved.
 This method will sort the collection in the opposite order as the [`sort`](#method-sort) method:
 
 ```cpp
-    ModelsCollection<User> users {
-        {{"id", 2}, {"name", "Kate"}},
+ModelsCollection<User> users {
+    {{"id", 2}, {"name", "Kate"}},
+    {{"id", 3}, {"name", "John"}},
+    {{"id", 1}, {"name", "Jack"}},
+};
+
+auto sorted = users.sortDesc();
+
+/*
+    {
         {{"id", 3}, {"name", "John"}},
+        {{"id", 2}, {"name", "Kate"}},
         {{"id", 1}, {"name", "Jack"}},
-    };
-
-    auto sorted = users.sortDesc();
-
-    /*
-        {
-            {{"id", 3}, {"name", "John"}},
-            {{"id", 2}, {"name", "Kate"}},
-            {{"id", 1}, {"name", "Jack"}},
-        }
-    */
+    }
+*/
 ```
 
 The order of equal elements is not guaranteed to be preserved.
@@ -889,21 +889,21 @@ This method has the same signature as the [`sortDesc`](#method-sortdesc) method 
 The `tap` method passes a collection to the given lambda expression, allowing you to "tap" into the collection at a specific point and do something with the models while not affecting the collection itself:
 
 ```cpp
-    ModelsCollection<User> users {
-        {{"id", 2}, {"name", "Kate"}},
-        {{"id", 3}, {"name", "John"}},
-        {{"id", 1}, {"name", "Jack"}},
-    };
+ModelsCollection<User> users {
+    {{"id", 2}, {"name", "Kate"}},
+    {{"id", 3}, {"name", "John"}},
+    {{"id", 1}, {"name", "Jack"}},
+};
 
-    users.sort()
-         .tap([](/*const */ModelsCollection<User *> &usersRef)
-    {
-        qDebug() << "IDs after sorting:"
-                 << usersRef.template modelKeys<quint64>();
-    })
-        .value<quint64>("id");
+users.sort()
+     .tap([](/*const */ModelsCollection<User *> &usersRef)
+{
+    qDebug() << "IDs after sorting:"
+             << usersRef.template modelKeys<quint64>();
+})
+    .value<quint64>("id");
 
-    // 1
+// 1
 ```
 
 The `tap` method returns an lvalue __reference__ to the currently processed collection.
@@ -915,7 +915,7 @@ It can be also called on `ModelsCollection` rvalues, it returns an rvalue refere
 The `toBase` method returns a copy of the underlying vector represented by the collection:
 
 ```cpp
-    QVector<User> = users.toBase();
+QVector<User> = users.toBase();
 ```
 
 :::note
@@ -961,13 +961,13 @@ The `toMapVariantList` method is internally needed by the `toJson` related metho
 The `toQuery` method returns the `TinyBuilder` instance containing a `whereIn` constraint with the collection of models' primary keys:
 
 ```cpp
-    using Models::User;
+using Models::User;
 
-    ModelsCollection<User> users = User::whereEq("status", "VIP")->get();
+ModelsCollection<User> users = User::whereEq("status", "VIP")->get();
 
-    users.toQuery()->update({
-        {"status", "Administrator"},
-    });
+users.toQuery()->update({
+    {"status", "Administrator"},
+});
 ```
 
 #### `toVector()` {#method-tovector}
@@ -991,36 +991,36 @@ The `toVectorVariantList` method is internally needed by the `toJson` related me
 The `unique` method returns all of the unique models in the __sorted__ collection. Any models with the same primary key as another model in the collection are removed:
 
 ```cpp
-    ModelsCollection<User> users {
+ModelsCollection<User> users {
+    {{"id", 2}, {"name", "Kate"}},
+    {{"id", 1}, {"name", "Jack"}},
+    {{"id", 3}, {"name", "John"}},
+    {{"id", 1}, {"name", "Jack"}},
+};
+
+auto unique = users.unique();
+
+/*
+    {
+        {{"id", 1}, {"name", "Jack"}},
         {{"id", 2}, {"name", "Kate"}},
-        {{"id", 1}, {"name", "Jack"}},
         {{"id", 3}, {"name", "John"}},
-        {{"id", 1}, {"name", "Jack"}},
-    };
-
-    auto unique = users.unique();
-
-    /*
-        {
-            {{"id", 1}, {"name", "Jack"}},
-            {{"id", 2}, {"name", "Kate"}},
-            {{"id", 3}, {"name", "John"}},
-        }
-    */
+    }
+*/
 ```
 
 It sorts the collection internally because the [`ranges::unique`](https://en.cppreference.com/w/cpp/algorithm/ranges/unique) can correctly operate only on the sorted container. You can disable it by passing `false` using the first `sort` parameter:
 
 ```cpp
-    auto unique = users.sort().unique(false);
+auto unique = users.sort().unique(false);
 
-    /*
-        {
-            {{"id", 1}, {"name", "Jack"}},
-            {{"id", 2}, {"name", "Kate"}},
-            {{"id", 3}, {"name", "John"}},
-        }
-    */
+/*
+    {
+        {{"id", 1}, {"name", "Jack"}},
+        {{"id", 2}, {"name", "Kate"}},
+        {{"id", 3}, {"name", "John"}},
+    }
+*/
 ```
 
 #### `uniqueBy()` {#method-uniqueby}
@@ -1028,37 +1028,37 @@ It sorts the collection internally because the [`ranges::unique`](https://en.cpp
 The `uniqueBy` method returns all of the unique models in the __sorted__ collection by the given column. Any models with the same column value as another model in the collection are removed. It needs the template argument, so it can cast the attribute value before comparing:
 
 ```cpp
-    ModelsCollection<User> users {
-        {{"name", "Kate"}},
+ModelsCollection<User> users {
+    {{"name", "Kate"}},
+    {{"name", "Jack"}},
+    {{"name", "John"}},
+    {{"name", "Jack"}},
+};
+
+auto unique = users.uniqueBy<QString>("name");
+
+/*
+    {
         {{"name", "Jack"}},
         {{"name", "John"}},
-        {{"name", "Jack"}},
-    };
-
-    auto unique = users.uniqueBy<QString>("name");
-
-    /*
-        {
-            {{"name", "Jack"}},
-            {{"name", "John"}},
-            {{"name", "Kate"}},
-        }
-    */
+        {{"name", "Kate"}},
+    }
+*/
 ```
 
 It sorts the collection internally because the [`ranges::unique`](https://en.cppreference.com/w/cpp/algorithm/ranges/unique) can correctly operate only on the sorted container. You can disable it by passing `false` using the second `sort` parameter:
 
 ```cpp
-    auto unique = users.sortBy<QString>("name")
-                       .uniqueBy<QString>("name", false);
+auto unique = users.sortBy<QString>("name")
+                   .uniqueBy<QString>("name", false);
 
-    /*
-        {
-            {{"name", "Jack"}},
-            {{"name", "John"}},
-            {{"name", "Kate"}},
-        }
-    */
+/*
+    {
+        {{"name", "Jack"}},
+        {{"name", "John"}},
+        {{"name", "Kate"}},
+    }
+*/
 ```
 
 #### `uniqueRelaxed()` {#method-uniquerelaxed}
@@ -1066,22 +1066,22 @@ It sorts the collection internally because the [`ranges::unique`](https://en.cpp
 The `uniqueRelaxed` method returns all of the unique models in the collection, it doesn't need a sorted collection. Any models with the same primary key as another model in the collection are removed:
 
 ```cpp
-    ModelsCollection<User> users {
+ModelsCollection<User> users {
+    {{"id", 2}, {"name", "Kate"}},
+    {{"id", 1}, {"name", "Jack"}},
+    {{"id", 3}, {"name", "John"}},
+    {{"id", 1}, {"name", "Jack"}},
+};
+
+auto unique = users.uniqueRelaxed();
+
+/*
+    {
         {{"id", 2}, {"name", "Kate"}},
         {{"id", 1}, {"name", "Jack"}},
         {{"id", 3}, {"name", "John"}},
-        {{"id", 1}, {"name", "Jack"}},
-    };
-
-    auto unique = users.uniqueRelaxed();
-
-    /*
-        {
-            {{"id", 2}, {"name", "Kate"}},
-            {{"id", 1}, {"name", "Jack"}},
-            {{"id", 3}, {"name", "John"}},
-        }
-    */
+    }
+*/
 ```
 
 #### `uniqueRelaxedBy()` {#method-uniquerelaxedby}
@@ -1089,22 +1089,22 @@ The `uniqueRelaxed` method returns all of the unique models in the collection, i
 The `uniqueRelaxedBy` method returns all of the unique models in the collection by the given column, it doesn't need a sorted collection, but it needs the template argument, so it can cast the attribute value before comparing:
 
 ```cpp
-    ModelsCollection<User> users {
+ModelsCollection<User> users {
+    {{"name", "Kate"}},
+    {{"name", "Jack"}},
+    {{"name", "John"}},
+    {{"name", "Jack"}},
+};
+
+auto unique = users.uniqueRelaxedBy<QString>("name");
+
+/*
+    {
         {{"name", "Kate"}},
         {{"name", "Jack"}},
         {{"name", "John"}},
-        {{"name", "Jack"}},
-    };
-
-    auto unique = users.uniqueRelaxedBy<QString>("name");
-
-    /*
-        {
-            {{"name", "Kate"}},
-            {{"name", "Jack"}},
-            {{"name", "John"}},
-        }
-    */
+    }
+*/
 ```
 
 #### `value()` {#method-value}
@@ -1112,28 +1112,28 @@ The `uniqueRelaxedBy` method returns all of the unique models in the collection 
 The `value` method retrieves a given value from the first model of the collection:
 
 ```cpp
-    ModelsCollection<User> users {
-        {{"name", "John"}, {"votes", 200}},
-        {{"name", "Jack"}, {"votes", 400}},
-    };
+ModelsCollection<User> users {
+    {{"name", "John"}, {"votes", 200}},
+    {{"name", "Jack"}, {"votes", 400}},
+};
 
-    QVariant votes = users.value("votes");
+QVariant votes = users.value("votes");
 
-    // 200
+// 200
 ```
 
 Alternatively, you can cast an obtained `QVariant` value to the given type by the second `value` overload:
 
 ```cpp
-    quint64 votes = users.value<quint64>("votes");
+quint64 votes = users.value<quint64>("votes");
 ```
 
 The `value` method also accepts the second `defaultValue` argument, which will be returned if a collection is empty, the first model is `nullptr`, or a model doesn't contain the given column:
 
 ```cpp
-    auto votes = ModelsCollection<User>().value("votes", 0);
+auto votes = ModelsCollection<User>().value("votes", 0);
 
-    // 0
+// 0
 ```
 
 You can also call all `value` overloads provided by the [`QList::value`](https://doc.qt.io/qt/qlist.html#value).
@@ -1143,45 +1143,45 @@ You can also call all `value` overloads provided by the [`QList::value`](https:/
 The `where` method filters the collection by a given column / value pair:
 
 ```cpp
-    ModelsCollection<Product> products {
-        {{"product", "Desk"},     {"price", 200}},
-        {{"product", "Chair"},    {"price", 100}},
-        {{"product", "Bookcase"}, {"price", 150}},
-        {{"product", "Door"},     {"price", 100}},
-    };
+ModelsCollection<Product> products {
+    {{"product", "Desk"},     {"price", 200}},
+    {{"product", "Chair"},    {"price", 100}},
+    {{"product", "Bookcase"}, {"price", 150}},
+    {{"product", "Door"},     {"price", 100}},
+};
 
-    auto filtered = products.where("price", "=", 100);
+auto filtered = products.where("price", "=", 100);
 
-    /*
-        {
-            {{"product", "Chair"}, {"price", 100}},
-            {{"product", "Door"},  {"price", 100}},
-        }
-    */
+/*
+    {
+        {{"product", "Chair"}, {"price", 100}},
+        {{"product", "Door"},  {"price", 100}},
+    }
+*/
 ```
 
 For convenience, if you want to verify that a column is `=` to a given value, you may call `whereEq` method. Similar `XxxEq` methods are also defined for other commands:
 
-    auto filtered = products.whereEq("price", 100);
+auto filtered = products.whereEq("price", 100);
 
 Optionally, you may pass a comparison operator as the second argument.<br/>Supported operators are `=`, `!=`, `<`, `>`, `<=`, and `>=`:
 
 ```cpp
-    ModelsCollection<Product> products {
-        {{"product", "Desk"},     {"price", 200}},
-        {{"product", "Chair"},    {"price", 100}},
-        {{"product", "Bookcase"}, {"price", 150}},
-        {{"product", "Door"},     {"price", 250}},
-    };
+ModelsCollection<Product> products {
+    {{"product", "Desk"},     {"price", 200}},
+    {{"product", "Chair"},    {"price", 100}},
+    {{"product", "Bookcase"}, {"price", 150}},
+    {{"product", "Door"},     {"price", 250}},
+};
 
-    auto filtered = products.where("price", ">", 150);
+auto filtered = products.where("price", ">", 150);
 
-    /*
-        {
-            {{"product", "Desk"}, {"price", 200}},
-            {{"product", "Door"}, {"price", 250}},
-        }
-    */
+/*
+    {
+        {{"product", "Desk"}, {"price", 200}},
+        {{"product", "Door"}, {"price", 250}},
+    }
+*/
 ```
 
 #### `whereBetween()` {#method-wherebetween}
@@ -1189,23 +1189,23 @@ Optionally, you may pass a comparison operator as the second argument.<br/>Suppo
 The `whereBetween` method filters the collection by determining if a specified models' attribute value is within a given range:
 
 ```cpp
-    ModelsCollection<Product> products {
+ModelsCollection<Product> products {
+    {{"product", "Desk"},     {"price", 200}},
+    {{"product", "Chair"},    {"price",  80}},
+    {{"product", "Bookcase"}, {"price", 150}},
+    {{"product", "Pencil"},   {"price",  30}},
+    {{"product", "Door"},     {"price", 100}},
+};
+
+auto filtered = products.whereBetween<quint64>("price", {100, 200});
+
+/*
+    {
         {{"product", "Desk"},     {"price", 200}},
-        {{"product", "Chair"},    {"price",  80}},
         {{"product", "Bookcase"}, {"price", 150}},
-        {{"product", "Pencil"},   {"price",  30}},
         {{"product", "Door"},     {"price", 100}},
-    };
-
-    auto filtered = products.whereBetween<quint64>("price", {100, 200});
-
-    /*
-        {
-            {{"product", "Desk"},     {"price", 200}},
-            {{"product", "Bookcase"}, {"price", 150}},
-            {{"product", "Door"},     {"price", 100}},
-        }
-    */
+    }
+*/
 ```
 
 #### `whereIn()` {#method-wherein}
@@ -1213,21 +1213,21 @@ The `whereBetween` method filters the collection by determining if a specified m
 The `whereIn` method filters models from the collection that have a specified attribute value that is contained within the given unordered set:
 
 ```cpp
-    ModelsCollection<Product> products {
-        {{"product", "Desk"},     {"price", 200}},
-        {{"product", "Chair"},    {"price", 100}},
-        {{"product", "Bookcase"}, {"price", 150}},
-        {{"product", "Door"},     {"price", 250}},
-    };
+ModelsCollection<Product> products {
+    {{"product", "Desk"},     {"price", 200}},
+    {{"product", "Chair"},    {"price", 100}},
+    {{"product", "Bookcase"}, {"price", 150}},
+    {{"product", "Door"},     {"price", 250}},
+};
 
-    auto filtered = products.whereIn<quint64>("price", {100, 200});
+auto filtered = products.whereIn<quint64>("price", {100, 200});
 
-    /*
-        {
-            {{"product", "Desk"},  {"price", 200}},
-            {{"product", "Chair"}, {"price", 100}},
-        }
-    */
+/*
+    {
+        {{"product", "Desk"},  {"price", 200}},
+        {{"product", "Chair"}, {"price", 100}},
+    }
+*/
 ```
 
 An empty collection is returned if the `values` argument is empty `whereIn("price", {})`.
@@ -1239,22 +1239,22 @@ The order of models in the collection is preserved.
 The `whereNotBetween` method filters the collection by determining if a specified models' attribute value is outside of a given range:
 
 ```cpp
-    ModelsCollection<Product> products {
-        {{"product", "Desk"},     {"price", 200}},
-        {{"product", "Chair"},    {"price",  80}},
-        {{"product", "Bookcase"}, {"price", 150}},
-        {{"product", "Pencil"},   {"price",  30}},
-        {{"product", "Door"},     {"price", 100}},
-    };
+ModelsCollection<Product> products {
+    {{"product", "Desk"},     {"price", 200}},
+    {{"product", "Chair"},    {"price",  80}},
+    {{"product", "Bookcase"}, {"price", 150}},
+    {{"product", "Pencil"},   {"price",  30}},
+    {{"product", "Door"},     {"price", 100}},
+};
 
-    auto filtered = products.whereNotBetween<quint64>("price", {100, 200});
+auto filtered = products.whereNotBetween<quint64>("price", {100, 200});
 
-    /*
-        {
-            {{"product", "Chair"},  {"price", 80}},
-            {{"product", "Pencil"}, {"price", 30}},
-        }
-    */
+/*
+    {
+        {{"product", "Chair"},  {"price", 80}},
+        {{"product", "Pencil"}, {"price", 30}},
+    }
+*/
 ```
 
 #### `whereNotIn()` {#method-wherenotin}
@@ -1262,21 +1262,21 @@ The `whereNotBetween` method filters the collection by determining if a specifie
 The `whereNotIn` method removes models from the collection that have a specified attribute value that is contained within the given unordered set:
 
 ```cpp
-    ModelsCollection<Product> products {
-        {{"product", "Desk"},     {"price", 200}},
-        {{"product", "Chair"},    {"price", 100}},
-        {{"product", "Bookcase"}, {"price", 150}},
-        {{"product", "Door"},     {"price", 250}},
-    };
+ModelsCollection<Product> products {
+    {{"product", "Desk"},     {"price", 200}},
+    {{"product", "Chair"},    {"price", 100}},
+    {{"product", "Bookcase"}, {"price", 150}},
+    {{"product", "Door"},     {"price", 250}},
+};
 
-    auto filtered = products.whereNotIn<quint64>("price", {100, 200});
+auto filtered = products.whereNotIn<quint64>("price", {100, 200});
 
-    /*
-        {
-            {{"product", "Bookcase"},  {"price", 150}},
-            {{"product", "Door"},      {"price", 250}},
-        }
-    */
+/*
+    {
+        {{"product", "Bookcase"},  {"price", 150}},
+        {{"product", "Door"},      {"price", 250}},
+    }
+*/
 ```
 
 All of the models are returned if the `values` argument is empty `whereNotIn("price", {})`.
@@ -1288,24 +1288,24 @@ The order of models in the collection is preserved.
 The `whereNotNull` method returns models from the collection where the given column is not `null` QVariant:
 
 ```cpp
-    #include <orm/utils/nullvariant.hpp>
+#include <orm/utils/nullvariant.hpp>
 
-    using NullVariant = Orm::Utils::NullVariant;
+using NullVariant = Orm::Utils::NullVariant;
 
-    ModelsCollection<User> users {
+ModelsCollection<User> users {
+    {{"name", "John"}},
+    {{"name", NullVariant::QString()}},
+    {{"name", "Jack"}},
+};
+
+auto filtered = users.whereNotNull("name");
+
+/*
+    {
         {{"name", "John"}},
-        {{"name", NullVariant::QString()}},
         {{"name", "Jack"}},
-    };
-
-    auto filtered = users.whereNotNull("name");
-
-    /*
-        {
-            {{"name", "John"}},
-            {{"name", "Jack"}},
-        }
-    */
+    }
+*/
 ```
 
 :::note
@@ -1317,19 +1317,19 @@ The `NullVariant` class returns the correct `null` QVariant for both Qt 5 `QVari
 The `whereNull` method returns models from the collection where the given column is `null` QVariant:
 
 ```cpp
-    #include <orm/utils/nullvariant.hpp>
+#include <orm/utils/nullvariant.hpp>
 
-    using NullVariant = Orm::Utils::NullVariant;
+using NullVariant = Orm::Utils::NullVariant;
 
-    ModelsCollection<User> users {
-        {{"name", "John"}},
-        {{"name", NullVariant::QString()}},
-        {{"name", "Jack"}},
-    };
+ModelsCollection<User> users {
+    {{"name", "John"}},
+    {{"name", NullVariant::QString()}},
+    {{"name", "Jack"}},
+};
 
-    auto filtered = users.whereNotNull("name");
+auto filtered = users.whereNotNull("name");
 
-    // {{"name", NullVariant::QString()}}
+// {{"name", NullVariant::QString()}}
 ```
 
 :::note

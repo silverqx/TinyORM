@@ -43,7 +43,7 @@ Database tables are often related to one another. For example, a blog post may h
 TinyORM relationships are defined as methods on your TinyORM model classes. Since relationships also serve as powerful [query builders](database/query-builder.mdx), defining relationships as methods provides powerful method chaining and querying capabilities. For example, we may chain additional query constraints on this `posts` relationship:
 
 ```cpp
-    user->posts()->whereEq("active", 1).get();
+user->posts()->whereEq("active", 1).get();
 ```
 
 But, before diving too deep into using relationships, let's learn how to define each type of relationship supported by TinyORM.
@@ -53,37 +53,37 @@ But, before diving too deep into using relationships, let's learn how to define 
 Before you start defining relationship methods, you have to declare a model class, let's examine following model class with a "one" type relation:
 
 ```cpp
-    #pragma once
-    #ifndef USER_HPP
-    #define USER_HPP
+#pragma once
+#ifndef USER_HPP
+#define USER_HPP
 
-    #include <orm/tiny/model.hpp>
+#include <orm/tiny/model.hpp>
 
-    #include "models/phone.hpp"
+#include "models/phone.hpp"
 
-    using Orm::Tiny::Model;
+using Orm::Tiny::Model;
 
-    class User final : public Model<User, Phone>
+class User final : public Model<User, Phone>
+{
+    friend Model;
+    using Model::Model;
+
+public:
+    /*! Get the phone associated with the user. */
+    std::unique_ptr<HasOne<User, Phone>>
+    phone()
     {
-        friend Model;
-        using Model::Model;
+        return hasOne<Phone>();
+    }
 
-    public:
-        /*! Get the phone associated with the user. */
-        std::unique_ptr<HasOne<User, Phone>>
-        phone()
-        {
-            return hasOne<Phone>();
-        }
-
-    private:
-        /*! Map of relation names to methods. */
-        QHash<QString, RelationVisitor> u_relations {
-            {"phone", &User::phone); }},
-        };
+private:
+    /*! Map of relation names to methods. */
+    QHash<QString, RelationVisitor> u_relations {
+        {"phone", &User::phone); }},
     };
+};
 
-    #endif // USER_HPP
+#endif // USER_HPP
 ```
 
 First, you have to extend the `Model<Derived, AllRelations...>`, it is a common class for all models, the first template parameter is the type-id of the defined model itself, this pattern is called a [Curiously recurring template pattern](https://en.wikipedia.org/wiki/Curiously_recurring_template_pattern) pattern.
@@ -101,55 +101,55 @@ You may omit the `friend Model` declaration and define all the private data and 
 A one-to-one relationship is a very basic type of database relationship. For example, a `User` model might be associated with one `Phone` model. To define this relationship, we will place a `phone` method on the `User` model. The `phone` method should call the `hasOne` method and return its result. The `hasOne<Related>` method is available to your model via the model's `Orm::Tiny::Model<Derived, AllRelations...>` base class:
 
 ```cpp
-    #pragma once
-    #ifndef USER_HPP
-    #define USER_HPP
+#pragma once
+#ifndef USER_HPP
+#define USER_HPP
 
-    #include <orm/tiny/model.hpp>
+#include <orm/tiny/model.hpp>
 
-    #include "models/phone.hpp"
+#include "models/phone.hpp"
 
-    using Orm::Tiny::Model;
+using Orm::Tiny::Model;
 
-    class User final : public Model<User, Phone>
+class User final : public Model<User, Phone>
+{
+    friend Model;
+    using Model::Model;
+
+public:
+    /*! Get the phone associated with the user. */
+    std::unique_ptr<HasOne<User, Phone>>
+    phone()
     {
-        friend Model;
-        using Model::Model;
+        return hasOne<Phone>();
+    }
 
-    public:
-        /*! Get the phone associated with the user. */
-        std::unique_ptr<HasOne<User, Phone>>
-        phone()
-        {
-            return hasOne<Phone>();
-        }
-
-    private:
-        /*! Map of relation names to methods. */
-        QHash<QString, RelationVisitor> u_relations {
-            {"phone", [](auto &v) { v(&User::phone); }},
-        };
+private:
+    /*! Map of relation names to methods. */
+    QHash<QString, RelationVisitor> u_relations {
+        {"phone", [](auto &v) { v(&User::phone); }},
     };
+};
 
-    #endif // USER_HPP
+#endif // USER_HPP
 ```
 
 The `Related` template argument provided to the `hasOne<Related>` method is the type-id of the related model class. Once the relationship is defined, we may retrieve the related record using Model's `getRelationValue<Related, Tag>` method:
 
 ```cpp
-    auto phone = User::find(1)->getRelationValue<Phone, Orm::One>("phone");
+auto phone = User::find(1)->getRelationValue<Phone, Orm::One>("phone");
 ```
 
 TinyORM determines the foreign key of the relationship based on the parent model name. In this case, the `Phone` model is automatically assumed to have a `user_id` foreign key. If you wish to override this convention, you may pass a first argument to the `hasOne` method:
 
 ```cpp
-    return hasOne<Phone>("foreign_key");
+return hasOne<Phone>("foreign_key");
 ```
 
 Additionally, TinyORM assumes that the foreign key should have a value matching the primary key column of the parent. In other words, TinyORM will look for the value of the user's `id` column in the `user_id` column of the `Phone` record. If you would like the relationship to use a primary key value other than `id` or your model's `u_primaryKey` data member, you may pass a second argument to the `hasOne` method:
 
 ```cpp
-    return hasOne<Phone>("foreign_key", "local_key");
+return hasOne<Phone>("foreign_key", "local_key");
 ```
 
 #### Defining The Inverse Of The Relationship
@@ -157,37 +157,37 @@ Additionally, TinyORM assumes that the foreign key should have a value matching 
 So, we can access the `Phone` model from our `User` model. Next, let's define a relationship on the `Phone` model that will let us access the user that owns the phone. We can define the inverse of a `hasOne` relationship using the `belongsTo<Related>` method:
 
 ```cpp
-    #pragma once
-    #ifndef PHONE_HPP
-    #define PHONE_HPP
+#pragma once
+#ifndef PHONE_HPP
+#define PHONE_HPP
 
-    #include <orm/tiny/model.hpp>
+#include <orm/tiny/model.hpp>
 
-    #include "models/user.hpp"
+#include "models/user.hpp"
 
-    using Orm::Tiny::Model;
+using Orm::Tiny::Model;
 
-    class Phone final : public Model<Phone, User>
+class Phone final : public Model<Phone, User>
+{
+    friend Model;
+    using Model::Model;
+
+public:
+    /*! Get the user that owns the phone. */
+    std::unique_ptr<BelongsTo<Phone, User>>
+    user()
     {
-        friend Model;
-        using Model::Model;
+        return belongsTo<User>();
+    }
 
-    public:
-        /*! Get the user that owns the phone. */
-        std::unique_ptr<BelongsTo<Phone, User>>
-        user()
-        {
-            return belongsTo<User>();
-        }
-
-    private:
-        /*! Map of relation names to methods. */
-        QHash<QString, RelationVisitor> u_relations {
-            {"user", [](auto &v) { v(&Phone::user); }},
-        };
+private:
+    /*! Map of relation names to methods. */
+    QHash<QString, RelationVisitor> u_relations {
+        {"user", [](auto &v) { v(&Phone::user); }},
     };
+};
 
-    #endif // PHONE_HPP
+#endif // PHONE_HPP
 ```
 
 When invoking the `user` method, TinyORM will attempt to find a `User` model that has an `id` which matches the `user_id` column on the `Phone` model.
@@ -197,34 +197,34 @@ TinyORM determines the foreign key name by examining the type-name of the `Relat
  However, if the foreign key on the `Phone` model is not `user_id`, you may pass a custom key name as the first argument to the `belongsTo` method:
 
 ```cpp
-    /*! Get the user that owns the phone. */
-    std::unique_ptr<BelongsTo<Phone, User>>
-    user()
-    {
-        return belongsTo<User>("foreign_key");
-    }
+/*! Get the user that owns the phone. */
+std::unique_ptr<BelongsTo<Phone, User>>
+user()
+{
+    return belongsTo<User>("foreign_key");
+}
 ```
 
 If the parent model does not use `id` as its primary key, or you wish to find the associated model using a different column, you may pass a second argument to the `belongsTo` method specifying the parent table's custom key:
 
 ```cpp
-    /*! Get the user that owns the phone. */
-    std::unique_ptr<BelongsTo<Phone, User>>
-    user()
-    {
-        return belongsTo<User>("foreign_key", "owner_key");
-    }
+/*! Get the user that owns the phone. */
+std::unique_ptr<BelongsTo<Phone, User>>
+user()
+{
+    return belongsTo<User>("foreign_key", "owner_key");
+}
 ```
 
 The third `belongsTo` parameter is the relation name, if you pass it, the foreign key name will be determined from it. By convention, TinyORM will "snake_case" this relation name  and suffix it with a `_` followed by the name of the parent model's primary key column to generate foreign key, the `__func__` predefined identifier is ideal for this. The relation name is also used in BelongsTo's `associate` and `disassociate` methods:
 
 ```cpp
-    /*! Get the user that owns the phone. */
-    std::unique_ptr<BelongsTo<Phone, User>>
-    someUser()
-    {
-        return belongsTo<User>({}, {}, QString::fromUtf8(__func__)); // the foreign key will be some_user_id
-    }
+/*! Get the user that owns the phone. */
+std::unique_ptr<BelongsTo<Phone, User>>
+someUser()
+{
+    return belongsTo<User>({}, {}, QString::fromUtf8(__func__)); // the foreign key will be some_user_id
+}
 ```
 
 The relation name will be guessed from the type-id of the `Related` template parameter, TinyORM takes this name and changes the first character to lower case, so in the example above, the relation name will be `user`.
@@ -234,37 +234,37 @@ The relation name will be guessed from the type-id of the `Related` template par
 A one-to-many relationship is used to define relationships where a single model is the parent to one or more child models. For example, a blog post may have an infinite number of comments. Like all other TinyORM relationships, one-to-many relationships are defined by defining a `hasMany<Related>` method on your TinyORM model:
 
 ```cpp
-    #pragma once
-    #ifndef POST_HPP
-    #define POST_HPP
+#pragma once
+#ifndef POST_HPP
+#define POST_HPP
 
-    #include <orm/tiny/model.hpp>
+#include <orm/tiny/model.hpp>
 
-    #include "models/comment.hpp"
+#include "models/comment.hpp"
 
-    using Orm::Tiny::Model;
+using Orm::Tiny::Model;
 
-    class Post final : public Model<Post, Comment>
+class Post final : public Model<Post, Comment>
+{
+    friend Model;
+    using Model::Model;
+
+public:
+    /*! Get the comments for the blog post. */
+    std::unique_ptr<HasMany<Post, Comment>>
+    comments()
     {
-        friend Model;
-        using Model::Model;
+        return hasMany<Comment>();
+    }
 
-    public:
-        /*! Get the comments for the blog post. */
-        std::unique_ptr<HasMany<Post, Comment>>
-        comments()
-        {
-            return hasMany<Comment>();
-        }
-
-    private:
-        /*! Map of relation names to methods. */
-        QHash<QString, RelationVisitor> u_relations {
-            {"comments", [](auto &v) { v(&Post::comments); }},
-        };
+private:
+    /*! Map of relation names to methods. */
+    QHash<QString, RelationVisitor> u_relations {
+        {"comments", [](auto &v) { v(&Post::comments); }},
     };
+};
 
-    #endif // POST_HPP
+#endif // POST_HPP
 ```
 
 Remember, TinyORM will automatically determine the proper foreign key column for the `Comment` model. By convention, TinyORM will take the "snake_case" name of the parent model and suffix it with `_id`. So, in this example, TinyORM will assume the foreign key column on the `Comment` model is `post_id`.
@@ -272,29 +272,29 @@ Remember, TinyORM will automatically determine the proper foreign key column for
 Once the relationship method has been defined, we can access the `QVector<Related *>` of related comments by Model's `getRelationValue<Related, Container = QVector>` method:
 
 ```cpp
-    #include "models/post.hpp"
+#include "models/post.hpp"
 
-    auto comments = Post::find(1)->getRelationValue<Comment>("comments");
+auto comments = Post::find(1)->getRelationValue<Comment>("comments");
 
-    for (auto *comment : comments) {
-        //
-    }
+for (auto *comment : comments) {
+    //
+}
 ```
 
 Since all relationships also serve as [query builders](database/query-builder.mdx), you may add further constraints to the relationship query by calling the `comments` method and continuing to chain conditions onto the query, all the `TinyBuilder` methods which are related to building queries are proxied:
 
 ```cpp
-    auto comment = Post::find(1)->comments()
-                         ->whereEq("title", "foo")
-                         .first();
+auto comment = Post::find(1)->comments()
+                     ->whereEq("title", "foo")
+                     .first();
 ```
 
 Like the `hasOne` method, you may also override the foreign and local keys by passing additional arguments to the `hasMany` method:
 
 ```cpp
-    return hasMany<Comment>("foreign_key");
+return hasMany<Comment>("foreign_key");
 
-    return hasMany<Comment>("foreign_key", "local_key");
+return hasMany<Comment>("foreign_key", "local_key");
 ```
 
 ### One To Many (Inverse) / Belongs To {#one-to-many-inverse}
@@ -302,47 +302,47 @@ Like the `hasOne` method, you may also override the foreign and local keys by pa
 Now that we can access all of a post's comments, let's define a relationship to allow a comment to access its parent post. To define the inverse of a `hasMany` relationship, define a relationship method on the child model which calls the `belongsTo` method:
 
 ```cpp
-    #pragma once
-    #ifndef COMMENT_HPP
-    #define COMMENT_HPP
+#pragma once
+#ifndef COMMENT_HPP
+#define COMMENT_HPP
 
-    #include <orm/tiny/model.hpp>
+#include <orm/tiny/model.hpp>
 
-    #include "models/post.hpp"
+#include "models/post.hpp"
 
-    using Orm::Tiny::Model;
+using Orm::Tiny::Model;
 
-    class Comment final : public Model<Comment, Post>
+class Comment final : public Model<Comment, Post>
+{
+    friend Model;
+    using Model::Model;
+
+public:
+    /*! Get the post that owns the comment. */
+    std::unique_ptr<BelongsTo<Comment, Post>>
+    post()
     {
-        friend Model;
-        using Model::Model;
+        return belongsTo<Post>();
+    }
 
-    public:
-        /*! Get the post that owns the comment. */
-        std::unique_ptr<BelongsTo<Comment, Post>>
-        post()
-        {
-            return belongsTo<Post>();
-        }
-
-    private:
-        /*! Map of relation names to methods. */
-        QHash<QString, RelationVisitor> u_relations {
-            {"post", [](auto &v) { v(&Comment::post); }},
-        };
+private:
+    /*! Map of relation names to methods. */
+    QHash<QString, RelationVisitor> u_relations {
+        {"post", [](auto &v) { v(&Comment::post); }},
     };
+};
 
-    #endif // COMMENT_HPP
+#endif // COMMENT_HPP
 ```
 
 Once the relationship has been defined, we can retrieve a comment's parent post by Model's `getRelationValue<Related, Tag>` method:
 
 ```cpp
-    #include "models/comment.hpp"
+#include "models/comment.hpp"
 
-    auto comment = Comment::find(1);
+auto comment = Comment::find(1);
 
-    return comment->getRelationValue<Post, Orm::One>("post")->getAttribute<QString>("title");
+return comment->getRelationValue<Post, Orm::One>("post")->getAttribute<QString>("title");
 ```
 
 In the example above, TinyORM will attempt to find a `Post` model that has an `id` which matches the `post_id` column on the `Comment` model.
@@ -352,34 +352,34 @@ TinyORM determines the foreign key name by examining the type-name of the `Relat
 However, if the foreign key for your relationship does not follow these conventions, you may pass a custom foreign key name as the first argument to the `belongsTo` method:
 
 ```cpp
-    /*! Get the post that owns the comment. */
-    std::unique_ptr<BelongsTo<Comment, Post>>
-    post()
-    {
-        return belongsTo<Post>("foreign_key");
-    }
+/*! Get the post that owns the comment. */
+std::unique_ptr<BelongsTo<Comment, Post>>
+post()
+{
+    return belongsTo<Post>("foreign_key");
+}
 ```
 
 If your parent model does not use `id` as its primary key, or you wish to find the associated model using a different column, you may pass a second argument to the `belongsTo` method specifying your parent table's custom key:
 
 ```cpp
-    /*! Get the post that owns the comment. */
-    std::unique_ptr<BelongsTo<Comment, Post>>
-    post()
-    {
-        return belongsTo<Post>("foreign_key", "owner_key");
-    }
+/*! Get the post that owns the comment. */
+std::unique_ptr<BelongsTo<Comment, Post>>
+post()
+{
+    return belongsTo<Post>("foreign_key", "owner_key");
+}
 ```
 
 The third `belongsTo` parameter is the relation name, if you pass it, the foreign key name will be determined from it. By convention, TinyORM will "snake_case" this relation name  and suffix it with a `_` followed by the name of the parent model's primary key column to generate foreign key, the `__func__` predefined identifier is ideal for this. The relation name is also used in BelongsTo's `associate` and `disassociate` methods:
 
 ```cpp
-    /*! Get the post that owns the comment. */
-    std::unique_ptr<BelongsTo<Comment, Post>>
-    somePost()
-    {
-        return belongsTo<Post>({}, {}, QString::fromUtf8(__func__)); // the foreign key will be some_post_id
-    }
+/*! Get the post that owns the comment. */
+std::unique_ptr<BelongsTo<Comment, Post>>
+somePost()
+{
+    return belongsTo<Post>({}, {}, QString::fromUtf8(__func__)); // the foreign key will be some_post_id
+}
 ```
 
 The relation name will be guessed from the type-id of the `Related` template parameter, TinyORM takes this name and changes the first character to lower case, so in the example above, the relation name will be `user`.
@@ -389,34 +389,34 @@ The relation name will be guessed from the type-id of the `Related` template par
 The `belongsTo`, and `hasOne` relationships allow you to define a default model that will be returned if the given relationship is `null`. This pattern is often referred to as the [Null Object pattern](https://en.wikipedia.org/wiki/Null_Object_pattern) and can help remove conditional checks in your code. In the following example, the `user` relation will return an empty `User` model if no user is attached to the `Post` model:
 
 ```cpp
-    /*! Get the author of the post. */
-    std::unique_ptr<BelongsTo<Post, User>>
-    user()
-    {
-        // Ownership of a unique_ptr()
-        auto relation = belongsTo<User>();
+/*! Get the author of the post. */
+std::unique_ptr<BelongsTo<Post, User>>
+user()
+{
+    // Ownership of a unique_ptr()
+    auto relation = belongsTo<User>();
 
-        relation->withDefault();
+    relation->withDefault();
 
-        return relation;
-    }
+    return relation;
+}
 ```
 
 To populate the default model with attributes, you may pass the vector of attributes to the `withDefault` method:
 
 ```cpp
-    /*! Get the author of the post. */
-    std::unique_ptr<BelongsTo<Post, User>>
-    user()
-    {
-        // Ownership of a unique_ptr()
-        auto relation = belongsTo<User>();
+/*! Get the author of the post. */
+std::unique_ptr<BelongsTo<Post, User>>
+user()
+{
+    // Ownership of a unique_ptr()
+    auto relation = belongsTo<User>();
 
-        relation->withDefault({{"name", "Guest Author"},
-                               {"is_active", false}});
+    relation->withDefault({{"name", "Guest Author"},
+                           {"is_active", false}});
 
-        return relation;
-    }
+    return relation;
+}
 ```
 
 ## Many To Many Relationships {#many-to-many}
@@ -446,69 +446,69 @@ Remember, since a role can belong to many users, we cannot simply place a `user_
 Many-to-many relationships are defined by writing a method that returns the result of the `belongsToMany` method. The `belongsToMany` method is provided by the `Orm::Tiny::Model<Derived, AllRelations...>` base class that is used by all of your application's TinyORM models. For example, let's define a `roles` method on our `User` model. The first argument passed to this method is the name of the related model class:
 
 ```cpp
-    #pragma once
-    #ifndef USER_HPP
-    #define USER_HPP
+#pragma once
+#ifndef USER_HPP
+#define USER_HPP
 
-    #include <orm/tiny/relations/pivot.hpp>
+#include <orm/tiny/relations/pivot.hpp>
 
-    #include "models/role.hpp"
+#include "models/role.hpp"
 
-    using Orm::Tiny::Model;
-    using Orm::Tiny::Relations::Pivot;
+using Orm::Tiny::Model;
+using Orm::Tiny::Relations::Pivot;
 
-    class User final : public Model<User, Role, Pivot>
+class User final : public Model<User, Role, Pivot>
+{
+    friend Model;
+    using Model::Model;
+
+public:
+    /*! The roles that belong to the user. */
+    std::unique_ptr<BelongsToMany<User, Role>>
+    roles()
     {
-        friend Model;
-        using Model::Model;
+        return belongsToMany<Role>();
+    }
 
-    public:
-        /*! The roles that belong to the user. */
-        std::unique_ptr<BelongsToMany<User, Role>>
-        roles()
-        {
-            return belongsToMany<Role>();
-        }
-
-    private:
-        /*! Map of relation names to methods. */
-        QHash<QString, RelationVisitor> u_relations {
-            {"roles", [](auto &v) { v(&User::roles); }},
-        };
+private:
+    /*! Map of relation names to methods. */
+    QHash<QString, RelationVisitor> u_relations {
+        {"roles", [](auto &v) { v(&User::roles); }},
     };
+};
 
-    #endif // USER_HPP
+#endif // USER_HPP
 ```
 
 Once the relationship is defined, you may access the user's roles as the `QVector<Related *>`  by Model's `getRelationValue<Related, Container = QVector>` method:
 
 ```cpp
-    #include <QDebug>
+#include <QDebug>
 
-    #include "models/user.hpp"
+#include "models/user.hpp"
 
-    auto user = User::find(1);
+auto user = User::find(1);
 
-    for (auto *role : user->getRelationValue<Role>("roles"))
-        qDebug() << role->getAttribute<quint64>("id");
+for (auto *role : user->getRelationValue<Role>("roles"))
+    qDebug() << role->getAttribute<quint64>("id");
 ```
 
 Since all relationships also serve as query builders, you may add further constraints to the relationship query by calling the `roles` method and continuing to chain conditions onto the query:
 
 ```cpp
-    auto roles = User::find(1)->roles()->orderBy("name").get();
+auto roles = User::find(1)->roles()->orderBy("name").get();
 ```
 
 To determine the table name of the relationship's intermediate table, TinyORM will join the two related model names in alphabetical order. However, you are free to override this convention. You may do so by passing a first argument to the `belongsToMany` method:
 
 ```cpp
-    return belongsToMany<Role>("role_user");
+return belongsToMany<Role>("role_user");
 ```
 
 In addition to customizing the name of the intermediate table, you may also customize the column names of the keys on the table by passing additional arguments to the `belongsToMany` method. The second argument is the foreign key name of the model on which you are defining the relationship, while the third argument is the foreign key name of the model that you are joining to:
 
 ```cpp
-    return belongsToMany<Role>("role_user", "user_id", "role_id");
+return belongsToMany<Role>("role_user", "user_id", "role_id");
 ```
 
 The fourth and fifth arguments are primary key names on models in the many-to-many relation and the sixth argument is the relation name.
@@ -520,38 +520,38 @@ The relation name is used during [Touching Parent Timestamps](#touching-parent-t
 To define the "inverse" of a many-to-many relationship, you should define a method on the related model which also returns the result of the `belongsToMany` method. To complete our user / role example, let's define the `users` method on the `Role` model:
 
 ```cpp
-    #pragma once
-    #ifndef ROLE_HPP
-    #define ROLE_HPP
+#pragma once
+#ifndef ROLE_HPP
+#define ROLE_HPP
 
-    #include <orm/tiny/relations/pivot.hpp>
+#include <orm/tiny/relations/pivot.hpp>
 
-    using Orm::Tiny::Model;
-    using Orm::Tiny::Relations::Pivot;
+using Orm::Tiny::Model;
+using Orm::Tiny::Relations::Pivot;
 
-    class User; // Forward declaration to avoid cyclic dependency
+class User; // Forward declaration to avoid cyclic dependency
 
-    class Role final : public Model<Role, User, Pivot>
+class Role final : public Model<Role, User, Pivot>
+{
+    friend Model;
+    using Model::Model;
+
+public:
+    /*! The users that belong to the role. */
+    std::unique_ptr<BelongsToMany<Role, User>>
+    users()
     {
-        friend Model;
-        using Model::Model;
+        return belongsToMany<User>();
+    }
 
-    public:
-        /*! The users that belong to the role. */
-        std::unique_ptr<BelongsToMany<Role, User>>
-        users()
-        {
-            return belongsToMany<User>();
-        }
-
-    private:
-        /*! Map of relation names to methods. */
-        QHash<QString, RelationVisitor> u_relations {
-            {"users", [](auto &v) { v(&Role::users); }},
-        };
+private:
+    /*! Map of relation names to methods. */
+    QHash<QString, RelationVisitor> u_relations {
+        {"users", [](auto &v) { v(&Role::users); }},
     };
+};
 
-    #endif // ROLE_HPP
+#endif // ROLE_HPP
 ```
 
 As you can see, the relationship is defined exactly the same as its `User` model counterpart with the exception of referencing the `User` model. Since we're reusing the `belongsToMany` method, all of the usual table and key customization options are available when defining the "inverse" of many-to-many relationships.
@@ -561,17 +561,17 @@ As you can see, the relationship is defined exactly the same as its `User` model
 As you have already learned, working with many-to-many relations requires the presence of an intermediate table. TinyORM provides some very helpful ways of interacting with this table. For example, let's assume our `User` model has many `Role` models that it is related to. After accessing this relationship, we may access the intermediate table using the `pivot` attribute on the models:
 
 ```cpp
-    #include <QDebug>
+#include <QDebug>
 
-    #include "models/user.hpp"
+#include "models/user.hpp"
 
-    using Orm::Tiny::Relations::Pivot;
+using Orm::Tiny::Relations::Pivot;
 
-    auto user = User::find(1);
+auto user = User::find(1);
 
-    for (auto *role : user->getRelationValue<Role>("roles"))
-        qDebug() << role->getRelation<Pivot, Orm::One>("pivot")
-                    ->getAttribute("created_at");
+for (auto *role : user->getRelationValue<Role>("roles"))
+    qDebug() << role->getRelation<Pivot, Orm::One>("pivot")
+                ->getAttribute("created_at");
 ```
 
 Notice that each `Role` model we retrieve has automatically assigned a `pivot` relationship. This relation contains a model representing the intermediate table and it is an instance of the `Orm::Tiny::Relations::Pivot` model class.
@@ -579,23 +579,23 @@ Notice that each `Role` model we retrieve has automatically assigned a `pivot` r
 By default, only the model keys will be present on the `pivot` model. If your intermediate table contains extra attributes, you must specify them when defining the relationship:
 
 ```cpp
-    // Ownership of a unique_ptr()
-    auto relation = belongsToMany<Role>();
+// Ownership of a unique_ptr()
+auto relation = belongsToMany<Role>();
 
-    relation->withPivot({"active", "created_by"});
+relation->withPivot({"active", "created_by"});
 
-    return relation;
+return relation;
 ```
 
 If you would like your intermediate table to have `created_at` and `updated_at` timestamps that are automatically maintained by TinyORM, call the `withTimestamps` method when defining the relationship:
 
 ```cpp
-    // Ownership of a unique_ptr()
-    auto relation = belongsToMany<Role>();
+// Ownership of a unique_ptr()
+auto relation = belongsToMany<Role>();
 
-    relation->withTimestamps();
+relation->withTimestamps();
 
-    return relation;
+return relation;
 ```
 
 :::caution
@@ -609,30 +609,30 @@ As noted previously, attributes from the intermediate table may be accessed on m
 For example, if your application contains users that may subscribe to podcasts, you likely have a many-to-many relationship between users and podcasts. If this is the case, you may wish to rename your intermediate table relation name to `subscription` instead of `pivot`. This can be done using the `as` method when defining the relationship:
 
 ```cpp
-    // Ownership of a unique_ptr()
-    auto relation = belongsToMany<Podcast>();
+// Ownership of a unique_ptr()
+auto relation = belongsToMany<Podcast>();
 
-    relation->as("subscription")
-            .withTimestamps();
+relation->as("subscription")
+        .withTimestamps();
 
-    return relation;
+return relation;
 ```
 
 Once the custom intermediate table relation name has been specified, you may access the intermediate table data using the customized name:
 
 ```cpp
-    #include <QDebug>
+#include <QDebug>
 
-    #include "models/user.hpp"
+#include "models/user.hpp"
 
-    using Orm::Tiny::Relations::Pivot;
+using Orm::Tiny::Relations::Pivot;
 
-    auto users = User::with("podcasts")->get();
+auto users = User::with("podcasts")->get();
 
-    for (auto &user : users)
-        for (auto *podcast : user.getRelation<Podcast>("podcasts"))
-            qDebug() << podcast->getRelation<Pivot, Orm::One>("subscription")
-                        ->getAttribute("created_at");
+for (auto &user : users)
+    for (auto *podcast : user.getRelation<Podcast>("podcasts"))
+        qDebug() << podcast->getRelation<Pivot, Orm::One>("subscription")
+                    ->getAttribute("created_at");
 ```
 
 ### Defining Custom Intermediate Table Models
@@ -642,113 +642,113 @@ If you would like to define a custom model to represent the intermediate table o
 Custom many-to-many pivot models should extend the `Orm::Tiny::Relations::BasePivot<PivotModel>` class. For example, we may define a `User` model which uses a custom `RoleUser` pivot model:
 
 ```cpp
-    #pragma once
-    #ifndef USER_HPP
-    #define USER_HPP
+#pragma once
+#ifndef USER_HPP
+#define USER_HPP
 
-    #include <orm/tiny/relations/pivot.hpp>
+#include <orm/tiny/relations/pivot.hpp>
 
-    #include "models/role.hpp"
+#include "models/role.hpp"
 
-    using Orm::Tiny::Model;
-    using Orm::Tiny::Relations::Pivot;
+using Orm::Tiny::Model;
+using Orm::Tiny::Relations::Pivot;
 
-    class User final : public Model<User, Role, Pivot>
+class User final : public Model<User, Role, Pivot>
+{
+    friend Model;
+    using Model::Model;
+
+public:
+    /*! The roles that belong to the user. */
+    std::unique_ptr<BelongsToMany<User, Role, RoleUser>>
+    roles()
     {
-        friend Model;
-        using Model::Model;
+        return belongsToMany<Role, RoleUser>();
+    }
 
-    public:
-        /*! The roles that belong to the user. */
-        std::unique_ptr<BelongsToMany<User, Role, RoleUser>>
-        roles()
-        {
-            return belongsToMany<Role, RoleUser>();
-        }
-
-    private:
-        /*! Map of relation names to methods. */
-        QHash<QString, RelationVisitor> u_relations {
-            {"roles", [](auto &v) { v(&User::roles); }},
-        };
+private:
+    /*! Map of relation names to methods. */
+    QHash<QString, RelationVisitor> u_relations {
+        {"roles", [](auto &v) { v(&User::roles); }},
     };
+};
 
-    #endif // USER_HPP
+#endif // USER_HPP
 ```
 
 When defining the `RoleUser` model, you should extend the `Orm::Tiny::Relations::BasePivot<PivotModel>` class:
 
 ```cpp
-    #pragma once
-    #ifndef ROLEUSER_HPP
-    #define ROLEUSER_HPP
+#pragma once
+#ifndef ROLEUSER_HPP
+#define ROLEUSER_HPP
 
-    #include <orm/tiny/relations/basepivot.hpp>
+#include <orm/tiny/relations/basepivot.hpp>
 
-    using Orm::Tiny::Relations::BasePivot;
+using Orm::Tiny::Relations::BasePivot;
 
-    class RoleUser final : public BasePivot<RoleUser>
-    {
-        friend Model;
-        friend BasePivot;
+class RoleUser final : public BasePivot<RoleUser>
+{
+    friend Model;
+    friend BasePivot;
 
-        using BasePivot::BasePivot;
-    };
+    using BasePivot::BasePivot;
+};
 
-    #endif // ROLEUSER_HPP
+#endif // ROLEUSER_HPP
 ```
 
 You have to pass a custom pivot type to the `AllRelations` template parameter pack on `Model<Derived, AllRelations...>` so that the `Model` knows how to generate a `std::variant`, which holds all the relations and also you have to add a new mapping from the relation name to the custom pivot model type-id, this is  described in more detail in the [Common Rules](#common-rules):
 
 ```cpp
-    #pragma once
-    #ifndef ROLE_HPP
-    #define ROLE_HPP
+#pragma once
+#ifndef ROLE_HPP
+#define ROLE_HPP
 
-    #include <orm/tiny/model.hpp>
+#include <orm/tiny/model.hpp>
 
-    #include "models/roleuser.hpp"
+#include "models/roleuser.hpp"
 
-    using Orm::Tiny::Model;
+using Orm::Tiny::Model;
 
-    class User; // Forward declaration to avoid cyclic dependency
+class User; // Forward declaration to avoid cyclic dependency
 
-    class Role final : public Model<Role, User, RoleUser>
+class Role final : public Model<Role, User, RoleUser>
+{
+    friend Model;
+    using Model::Model;
+
+public:
+    /*! The users that belong to the role. */
+    std::unique_ptr<BelongsToMany<Role, User>>
+    users()
     {
-        friend Model;
-        using Model::Model;
+        return belongsToMany<User>();
+    }
 
-    public:
-        /*! The users that belong to the role. */
-        std::unique_ptr<BelongsToMany<Role, User>>
-        users()
-        {
-            return belongsToMany<User>();
-        }
-
-    private:
-        /*! Map of relation names to methods. */
-        QHash<QString, RelationVisitor> u_relations {
-            {"users", [](auto &v) { v(&Role::users); }},
-        };
+private:
+    /*! Map of relation names to methods. */
+    QHash<QString, RelationVisitor> u_relations {
+        {"users", [](auto &v) { v(&Role::users); }},
     };
+};
 
-    #endif // ROLE_HPP
+#endif // ROLE_HPP
 ```
 
 Once the custom pivot model `RoleUser` has been defined, `getRelation` or `getRelationValue` method returns proper pivot type:
 
 ```cpp
-    #include <QDebug>
+#include <QDebug>
 
-    #include "models/user.hpp"
+#include "models/user.hpp"
 
-    auto users = User::with("roles")->get();
+auto users = User::with("roles")->get();
 
-    for (auto &user : users)
-        for (auto *role : user.getRelation<Role>("roles"))
-            qDebug() << role->getRelation<RoleUser, Orm::One>("pivot")
-                        ->getAttribute("created_at");
+for (auto &user : users)
+    for (auto *role : user.getRelation<Role>("roles"))
+        qDebug() << role->getRelation<RoleUser, Orm::One>("pivot")
+                    ->getAttribute("created_at");
 ```
 
 :::caution
@@ -760,8 +760,8 @@ Custom Pivot models may not use the `SoftDeletes` base class. If you need to sof
 If you have defined a many-to-many relationship that uses a custom pivot model, and that pivot model has an auto-incrementing primary key, you should ensure your custom pivot model class defines an `u_incrementing` data member that is set to `true`.
 
 ```cpp
-    /*! Indicates if the IDs are auto-incrementing. */
-    bool u_incrementing = true;
+/*! Indicates if the IDs are auto-incrementing. */
+bool u_incrementing = true;
 ```
 
 #### Closer Look At Defining Custom Intermediate Table Models
@@ -795,39 +795,39 @@ Since all TinyORM relationships are defined via methods, you may call those meth
 For example, imagine a blog application in which a `User` model has many associated `Post` models:
 
 ```cpp
-    #include "models/post.hpp"
+#include "models/post.hpp"
 
-    using Orm::Tiny::Model;
+using Orm::Tiny::Model;
 
-    class User final : public Model<User, Post>
+class User final : public Model<User, Post>
+{
+    friend Model;
+    using Model::Model;
+
+public:
+    /*! Get all of the posts for the user. */
+    std::unique_ptr<HasMany<User, Post>>
+    posts()
     {
-        friend Model;
-        using Model::Model;
+        return hasMany<Post>();
+    }
 
-    public:
-        /*! Get all of the posts for the user. */
-        std::unique_ptr<HasMany<User, Post>>
-        posts()
-        {
-            return hasMany<Post>();
-        }
-
-    private:
-        /*! Map of relation names to methods. */
-        QHash<QString, RelationVisitor> u_relations {
-            {"posts", [](auto &v) { v(&User::posts); }},
-        };
+private:
+    /*! Map of relation names to methods. */
+    QHash<QString, RelationVisitor> u_relations {
+        {"posts", [](auto &v) { v(&User::posts); }},
     };
+};
 ```
 
 You may query the `posts` relationship and add additional constraints to the relationship like so:
 
 ```cpp
-    #include "models/user.hpp"
+#include "models/user.hpp"
 
-    auto user = User::find(1);
+auto user = User::find(1);
 
-    user->posts()->whereEq("active", 1).get();
+user->posts()->whereEq("active", 1).get();
 ```
 
 You are able to use any of the TinyORM [query builder's](database/query-builder.mdx) methods on the relationship, so be sure to explore the query builder documentation to learn about all of the methods that are available to you.
@@ -841,10 +841,10 @@ All the `TinyBuilder` methods which are related to building queries are proxied 
 As demonstrated in the example above, you are free to add additional constraints to relationships when querying them. However, be careful when chaining `orWhere` clauses onto a relationship, as the `orWhere` clauses will be logically grouped at the same level as the relationship constraint:
 
 ```cpp
-    user->posts()
-        ->whereEq("active", 1)
-        .orWhere("votes", ">=", 100)
-        .get();
+user->posts()
+    ->whereEq("active", 1)
+    .orWhere("votes", ">=", 100)
+    .get();
 ```
 
 The example above will generate the following SQL. As you can see, the `or` clause instructs the query to return _any_ user with greater than 100 votes. The query is no longer constrained to a specific user:
@@ -858,13 +858,13 @@ where user_id = ? and active = 1 or votes >= 100
 In most situations, you should use [logical groups](database/query-builder.mdx#logical-grouping) to group the conditional checks between parentheses:
 
 ```cpp
-    user->posts()
-        ->where([](auto &query)
-        {
-            query.whereEq("active", 1)
-                 .orWhere("votes", ">=", 100);
-        })
-        .get();
+user->posts()
+    ->where([](auto &query)
+    {
+        query.whereEq("active", 1)
+             .orWhere("votes", ">=", 100);
+    })
+    .get();
 ```
 
 The example above will produce the following SQL. Note that the logical grouping has properly grouped the constraints and the query remains constrained to a specific user:
@@ -880,13 +880,13 @@ where user_id = ? and (active = 1 or votes >= 100)
 If you do not need to add additional constraints to the TinyORM relationship query, you may access the relationship directly. For example, continuing to use our `User` and `Post` example models, we may access all of a user's posts like so:
 
 ```cpp
-    #include "models/user.hpp"
+#include "models/user.hpp"
 
-    auto user = User::find(1);
+auto user = User::find(1);
 
-    for (auto *post : user->getRelationValue<Post>("posts")) {
-        //
-    }
+for (auto *post : user->getRelationValue<Post>("posts")) {
+    //
+}
 ```
 
 The `getRelationValue<Related>` method performs "lazy loading", meaning they will only load their relationship data when you actually access them. Because of this, developers often use [eager loading](#eager-loading) to pre-load relationships they know will be accessed after loading the model. Eager loading provides a significant reduction in SQL queries that must be executed to load a model's relations.
@@ -894,11 +894,11 @@ The `getRelationValue<Related>` method performs "lazy loading", meaning they wil
 To access eager loaded relationship use Model's `getRelation<Related>` method:
 
 ```cpp
-    auto user = User::find(1);
+auto user = User::find(1);
 
-    for (auto *post : user->getRelation<Post>("posts")) {
-        //
-    }
+for (auto *post : user->getRelation<Post>("posts")) {
+    //
+}
 ```
 
 As described above TinyORM offers two methods to access relationships; `getRelation` and `getRelationValue`.
@@ -908,13 +908,13 @@ The `getRelation` method is for "eager loaded" relations, when the relationship 
 Both methods have two overloads, the `getRelation<Related, Container = QVector>` overload is for obtaining many type relationships:
 
 ```cpp
-    auto posts = User::find(1)->getRelation<Post>("posts");
+auto posts = User::find(1)->getRelation<Post>("posts");
 ```
 
 The `getRelation<Related, Tag>` overload is for obtaining "one" type relationships:
 
 ```cpp
-    auto user = Post::find(1)->getRelation<User, Orm::One>("user");
+auto user = Post::find(1)->getRelation<User, Orm::One>("user");
 ```
 
 The same is true for the `getRelationValue` method.
@@ -924,40 +924,40 @@ The same is true for the `getRelationValue` method.
 When retrieving model records, you may wish to limit your results based on the existence of a relationship. For example, imagine you want to retrieve all blog posts that have at least one comment. To do so, you may pass the name of the relationship to the `has` and `orHas` methods:
 
 ```cpp
-    #include "models/post.hpp"
+#include "models/post.hpp"
 
-    // Retrieve all posts that have at least one comment...
-    auto posts = Post::has("comments")->get();
+// Retrieve all posts that have at least one comment...
+auto posts = Post::has("comments")->get();
 ```
 
 You may also specify an operator and count value to further customize the query:
 
 ```cpp
-    // Retrieve all posts that have three or more comments...
-    auto posts = Post::has("comments", ">=", 3)->get();
+// Retrieve all posts that have three or more comments...
+auto posts = Post::has("comments", ">=", 3)->get();
 ```
 
 Nested `has` statements may be constructed using "dot" notation. For example, you may retrieve all posts that have at least one comment that has at least one image:
 
 ```cpp
-    // Retrieve posts that have at least one comment with images...
-    auto posts = Post::has<Image>("comments.images")->get();
+// Retrieve posts that have at least one comment with images...
+auto posts = Post::has<Image>("comments.images")->get();
 ```
 
 If you need even more power, you may use the `whereHas` and `orWhereHas` methods to define additional query constraints on your `has` queries, such as inspecting the content of a comment:
 
 ```cpp
-    // Retrieve posts with at least one comment containing words like code%...
-    auto posts = Post::whereHas("comments", [](auto &query)
-    {
-        query.where("content", LIKE, "code%");
-    })->get();
+// Retrieve posts with at least one comment containing words like code%...
+auto posts = Post::whereHas("comments", [](auto &query)
+{
+    query.where("content", LIKE, "code%");
+})->get();
 
-    // Retrieve posts with at least ten comments containing words like code%...
-    auto posts = Post::whereHas("comments", [](auto &query)
-    {
-        query.where("content", LIKE, "code%");
-    }, ">=", 10)->get();
+// Retrieve posts with at least ten comments containing words like code%...
+auto posts = Post::whereHas("comments", [](auto &query)
+{
+    query.where("content", LIKE, "code%");
+}, ">=", 10)->get();
 ```
 
 :::note
@@ -981,28 +981,28 @@ The rule of thumbs are:
 When retrieving model records, you may wish to limit your results based on the absence of a relationship. For example, imagine you want to retrieve all blog posts that **don't** have any comments. To do so, you may pass the name of the relationship to the `doesntHave` and `orDoesntHave` methods:
 
 ```cpp
-    #include "models/post.hpp"
+#include "models/post.hpp"
 
-    auto posts = Post::doesntHave("comments")->get();
+auto posts = Post::doesntHave("comments")->get();
 ```
 
 If you need even more power, you may use the `whereDoesntHave` and `orWhereDoesntHave` methods to add additional query constraints to your `doesntHave` queries, such as inspecting the content of a comment:
 
 ```cpp
-    auto posts = Post::whereDoesntHave("comments", [](auto &query)
-    {
-        query.where("content", LIKE, "code%");
-    })->get();
+auto posts = Post::whereDoesntHave("comments", [](auto &query)
+{
+    query.where("content", LIKE, "code%");
+})->get();
 ```
 
 You may use "dot" notation to execute a query against a nested relationship. For example, the following query will retrieve all posts that have comments from authors that are not banned:
 
 ```cpp
-    auto posts = Post::whereDoesntHave<Author>("comments.author",
-                                               [](auto &query)
-    {
-        query.where("banned", false);
-    })->get();
+auto posts = Post::whereDoesntHave<Author>("comments.author",
+                                           [](auto &query)
+{
+    query.where("banned", false);
+})->get();
 ```
 
 ## Eager Loading
@@ -1010,41 +1010,41 @@ You may use "dot" notation to execute a query against a nested relationship. For
 When accessing TinyORM relationships by Model's `getRelationValue` method, the related models are "lazy loaded". This means the relationship data is not actually loaded until you first access them. However, TinyORM can "eager load" relationships at the time you query the parent model. Eager loading alleviates the "N + 1" query problem. To illustrate the N + 1 query problem, consider a `Book` model that "belongs to" to an `Author` model:
 
 ```cpp
-    using Orm::Tiny::Model;
+using Orm::Tiny::Model;
 
-    class Book final : public Model<Book, Author>
+class Book final : public Model<Book, Author>
+{
+    friend Model;
+    using Model::Model;
+
+public:
+    /*! Get the author that wrote the book. */
+    std::unique_ptr<BelongsTo<Book, Author>>
+    author()
     {
-        friend Model;
-        using Model::Model;
+        return belongsTo<Author>();
+    }
 
-    public:
-        /*! Get the author that wrote the book. */
-        std::unique_ptr<BelongsTo<Book, Author>>
-        author()
-        {
-            return belongsTo<Author>();
-        }
-
-    private:
-        /*! Map of relation names to methods. */
-        QHash<QString, RelationVisitor> u_relations {
-            {"author", [](auto &v) { v(&Book::author); }},
-        };
+private:
+    /*! Map of relation names to methods. */
+    QHash<QString, RelationVisitor> u_relations {
+        {"author", [](auto &v) { v(&Book::author); }},
     };
+};
 ```
 
 Now, let's retrieve all books and their authors:
 
 ```cpp
-    #include <QDebug>
+#include <QDebug>
 
-    #include "models/book.hpp"
+#include "models/book.hpp"
 
-    auto books = Book::all();
+auto books = Book::all();
 
-    for (auto &book : books)
-        qDebug() << book.getRelationValue<Author, Orm::One>("author")
-                    ->getAttribute<QString>("name");
+for (auto &book : books)
+    qDebug() << book.getRelationValue<Author, Orm::One>("author")
+                ->getAttribute<QString>("name");
 ```
 
 This loop will execute one query to retrieve all of the books within the database table, then another query for each book in order to retrieve the book's author. So, if we have 25 books, the code above would run 26 queries: one for the original book, and 25 additional queries to retrieve the author of each book.
@@ -1052,11 +1052,11 @@ This loop will execute one query to retrieve all of the books within the databas
 Thankfully, we can use eager loading to reduce this operation to just two queries. When building a query, you may specify which relationships should be eager loaded using the `with` method:
 
 ```cpp
-    auto books = Book::with("author")->get();
+auto books = Book::with("author")->get();
 
-    for (auto &book : books)
-        qDebug() << book.getRelation<Author, Orm::One>("author")
-                    ->getAttribute<QString>("name");
+for (auto &book : books)
+    qDebug() << book.getRelation<Author, Orm::One>("author")
+                ->getAttribute<QString>("name");
 ```
 
 For this operation, only two queries will be executed - one query to retrieve all of the books and one query to retrieve all of the authors for all of the books:
@@ -1072,7 +1072,7 @@ select * from authors where id in (1, 2, 3, 4, 5, ...)
 Sometimes you may need to eager load several different relationships. To do so, just pass a `QVector<Orm::WithItem>` of relationships to the `with` method:
 
 ```cpp
-    auto books = Book::with({"author", "publisher"})->get();
+auto books = Book::with({"author", "publisher"})->get();
 ```
 
 #### Nested Eager Loading
@@ -1080,7 +1080,7 @@ Sometimes you may need to eager load several different relationships. To do so, 
 To eager a relationship's relationships, you may use "dot" syntax. For example, let's eager load all of the book's authors and all of the author's personal contacts:
 
 ```cpp
-    auto books = Book::with("author.contacts")->get();
+auto books = Book::with("author.contacts")->get();
 ```
 
 #### Eager Loading Specific Columns
@@ -1088,7 +1088,7 @@ To eager a relationship's relationships, you may use "dot" syntax. For example, 
 You may not always need every column from the relationships you are retrieving. For this reason, TinyORM allows you to specify which columns of the relationship you would like to retrieve:
 
 ```cpp
-    auto books = Book::with("author:id,name,book_id")->get();
+auto books = Book::with("author:id,name,book_id")->get();
 ```
 
 :::caution
@@ -1100,44 +1100,44 @@ When using this feature, you should always include the `id` column and any relev
 Sometimes you might want to always load some relationships when retrieving a model. To accomplish this, you may define a `u_with` data member on the model:
 
 ```cpp
-    using Orm::Tiny::Model;
+using Orm::Tiny::Model;
 
-    class Book final : public Model<Book, Author>
+class Book final : public Model<Book, Author>
+{
+    friend Model;
+    using Model::Model;
+
+public:
+    /*! Get the author that wrote the book. */
+    std::unique_ptr<BelongsTo<Book, Author>>
+    author()
     {
-        friend Model;
-        using Model::Model;
+        return belongsTo<Author>();
+    }
 
-    public:
-        /*! Get the author that wrote the book. */
-        std::unique_ptr<BelongsTo<Book, Author>>
-        author()
-        {
-            return belongsTo<Author>();
-        }
-
-    private:
-        /*! Map of relation names to methods. */
-        QHash<QString, RelationVisitor> u_relations {
-            {"author", [](auto &v) { v(&Book::author); }},
-        };
-
-        /*! The relationships that should always be loaded. */
-        QVector<QString> u_with {
-            "author",
-        };
+private:
+    /*! Map of relation names to methods. */
+    QHash<QString, RelationVisitor> u_relations {
+        {"author", [](auto &v) { v(&Book::author); }},
     };
+
+    /*! The relationships that should always be loaded. */
+    QVector<QString> u_with {
+        "author",
+    };
+};
 ```
 
 If you would like to remove an item from the `u_with` data member for a single query, you may use the `without` method:
 
 ```cpp
-    auto books = Book::without("author")->get();
+auto books = Book::without("author")->get();
 ```
 
 If you would like to override all items within the `u_with` data member for a single query, you may use the `withOnly` method:
 
 ```cpp
-    auto books = Book::withOnly("genre")->get();
+auto books = Book::withOnly("genre")->get();
 ```
 
 ### Constraining Eager Loads
@@ -1145,21 +1145,21 @@ If you would like to override all items within the `u_with` data member for a si
 Sometimes you may wish to eager load a relationship but also specify additional query conditions for the eager loading query. You can accomplish this by passing a `QVector<Orm::WithItem>` of relationships to the `with` method where the `name` data member of `Orm::WithItem` struct is a relationship name and the `constraints` data member expects a lambda expression that adds additional constraints to the eager loading query. The first argument passed to the `constraints` lambda expression is an underlying `Orm::QueryBuilder` for a related model:
 
 ```cpp
-    #include "models/user.hpp"
+#include "models/user.hpp"
 
-    auto users = User::with({{"posts", [](auto &query)
-    {
-        query.where("title", "like", "%code%");
-    }}})->get();
+auto users = User::with({{"posts", [](auto &query)
+{
+    query.where("title", "like", "%code%");
+}}})->get();
 ```
 
 In this example, TinyORM will only eager load posts where the post's `title` column contains the word `code`. You may call other [query builder](database/query-builder.mdx) methods to further customize the eager loading operation:
 
 ```cpp
-    auto users = User::with({{"posts", [](auto &query)
-    {
-        query.orderBy("created_at", "desc");
-    }}})->get();
+auto users = User::with({{"posts", [](auto &query)
+{
+    query.orderBy("created_at", "desc");
+}}})->get();
 ```
 
 :::note
@@ -1171,18 +1171,18 @@ The `limit` and `take` query builder methods may not be used when constraining e
 Sometimes you may need to eager load a relationship after the parent model has already been retrieved. For example, this may be useful if you need to dynamically decide whether to load related models:
 
 ```cpp
-    #include "models/book.hpp"
+#include "models/book.hpp"
 
-    auto book = Book::find(1);
+auto book = Book::find(1);
 
-    if (someCondition)
-        book->load("author");
+if (someCondition)
+    book->load("author");
 ```
 
 You may load more relationships at once, to do so, just pass a `QVector<Orm::WithItem>` of relationships to the `load` method:
 
 ```cpp
-    Book::find(1)->load({"author", "publisher"});
+Book::find(1)->load({"author", "publisher"});
 ```
 
 :::note
@@ -1192,10 +1192,10 @@ So far, this only works on models, not on containers returned from Model's `get`
 If you need to set additional query constraints on the eager loading query, you may pass a `QVector<Orm::WithItem>` of relationships to the `load` method where the `name` data member of `Orm::WithItem` struct is a relationship name and the `constraints` data member expects a lambda expression that adds additional constraints to the eager loading query. The first argument passed to the `constraints` lambda expression is an underlying `Orm::QueryBuilder` for a related model:
 
 ```cpp
-    author->load({{"books", [](auto &query)
-    {
-        query.orderBy("published_date", "asc");
-    }}});
+author->load({{"books", [](auto &query)
+{
+    query.orderBy("published_date", "asc");
+}}});
 ```
 
 :::tip
@@ -1209,14 +1209,14 @@ You can also use eager constraining in the Model's `fresh` method.
 TinyORM provides convenient methods for adding new models to relationships. For example, perhaps you need to add a new comment to a post. Instead of manually setting the `post_id` attribute on the `Comment` model you may insert the comment using the relationship's `save` method:
 
 ```cpp
-    #include "models/comment.hpp"
-    #include "models/post.hpp"
+#include "models/comment.hpp"
+#include "models/post.hpp"
 
-    Comment comment({{"message", "A new comment."}});
+Comment comment({{"message", "A new comment."}});
 
-    auto post = Post::find(1);
+auto post = Post::find(1);
 
-    post->comments()->save(comment);
+post->comments()->save(comment);
 ```
 
 Note that we did not access the `comments` relationship with the `getRelation` or `getRelationValue` method. Instead, we called the `comments` method to obtain an instance of the relationship. The `save` method will automatically add the appropriate `post_id` value to the new `Comment` model.
@@ -1224,42 +1224,42 @@ Note that we did not access the `comments` relationship with the `getRelation` o
 If you need to save multiple related models, you may use the `saveMany` method:
 
 ```cpp
-    auto post = Post::find(1);
+auto post = Post::find(1);
 
-    post->comments()->saveMany({
-        {{"message", "A new comment."}},
-        {{"message", "Another new comment."}},
-    });
+post->comments()->saveMany({
+    {{"message", "A new comment."}},
+    {{"message", "Another new comment."}},
+});
 ```
 
 The `save` and `saveMany` methods will not add the new models to any in-memory relationships that are already loaded onto the parent model. If you plan on accessing the relationship after using the `save` or `saveMany` methods, you may wish to use the `refresh` method to reload the model and its relationships:
 
 ```cpp
-    post->comments()->save(comment);
+post->comments()->save(comment);
 
-    post->refresh();
+post->refresh();
 
-    // All comments, including the newly saved comment...
-    post->getRelation<Comment>("comments");
+// All comments, including the newly saved comment...
+post->getRelation<Comment>("comments");
 ```
 
 The many-to-many relationship also supports the `save` and `saveMany` methods. In addition, you may pass the pivot attributes as a second argument and select if you want to touch parent timestamps as a third argument:
 
 ```cpp
-    auto user = User::find(2);
+auto user = User::find(2);
 
-    Role role {{"name", "admin"}};
+Role role {{"name", "admin"}};
 
-    user->roles()->save(role, {{"active", true}});
+user->roles()->save(role, {{"active", true}});
 
-    Role role1 {{"name", "edit"}};
-    Role role2 {{"name", "view"}};
+Role role1 {{"name", "edit"}};
+Role role2 {{"name", "view"}};
 
-    user->roles()->saveMany({role1, role2}, {{{"active", true}},
-                                             {{"active", false}}});
+user->roles()->saveMany({role1, role2}, {{{"active", true}},
+                                         {{"active", false}}});
 
-    // No pivot attributes for role1
-    user->roles()->saveMany({role1, role2}, {{}, {{"active", false}}});
+// No pivot attributes for role1
+user->roles()->saveMany({role1, role2}, {{}, {{"active", false}}});
 ```
 
 #### Recursively Saving Models & Relationships
@@ -1267,14 +1267,14 @@ The many-to-many relationship also supports the `save` and `saveMany` methods. I
 If you would like to `save` your model and all of its associated relationships, you may use the `push` method. In this example, the `Post` model will be saved as well as its comments and the comment's authors:
 
 ```cpp
-    auto post = Post::find(1);
+auto post = Post::find(1);
 
-    post->getRelationValue<Comment>("comments").at(0)->setAttribute("message", "Message");
+post->getRelationValue<Comment>("comments").at(0)->setAttribute("message", "Message");
 
-    post->getRelationValue<Comment>("comments").first()
-        ->getRelationValue<User, Orm::One>("author")->setAttribute("name", "Author Name");
+post->getRelationValue<Comment>("comments").first()
+    ->getRelationValue<User, Orm::One>("author")->setAttribute("name", "Author Name");
 
-    post->push();
+post->push();
 ```
 
 ### The `create` Method
@@ -1282,49 +1282,49 @@ If you would like to `save` your model and all of its associated relationships, 
 In addition to the `save` and `saveMany` methods, you may also use the `create` method, which accepts a vector of attributes, creates a model, and inserts it into the database. The difference between `save` and `create` is that `save` accepts a full TinyORM model instance while `create` accepts a `QVector<Orm::AttributeItem>`. The newly created model will be returned by the `create` method:
 
 ```cpp
-    #include "models/post.hpp"
+#include "models/post.hpp"
 
-    auto post = Post::find(1);
+auto post = Post::find(1);
 
-    auto comment = post->comments()->create({
-        {"message", "A new comment."},
-    });
+auto comment = post->comments()->create({
+    {"message", "A new comment."},
+});
 ```
 
 You may use the `createMany` method to create multiple related models:
 
 ```cpp
-    auto post = Post::find(1);
+auto post = Post::find(1);
 
-    auto comments = post->comments()->createMany({
-        {{"message", "A new comment."}, {"is_published", true}},
-        {{"message", "Another new comment."}, {"is_published", false}},
-    });
+auto comments = post->comments()->createMany({
+    {{"message", "A new comment."}, {"is_published", true}},
+    {{"message", "Another new comment."}, {"is_published", false}},
+});
 ```
 
 The many-to-many relationship also supports the `create` and `createMany` methods. In addition, you may pass the pivot attributes as a second argument and select if you want to touch parent timestamps as a third argument:
 
 ```cpp
-    auto user = User::find(2);
+auto user = User::find(2);
 
-    user->roles()->create({{"name", "admin"}}, {{"active", true}});
+user->roles()->create({{"name", "admin"}}, {{"active", true}});
 
-    user->roles()->createMany({
-        {{"name", "edit"}},
-        {{"name", "view"}},
-    }, {
-        {{"active", true}},
-        {{"active", false}},
-    });
+user->roles()->createMany({
+    {{"name", "edit"}},
+    {{"name", "view"}},
+}, {
+    {{"active", true}},
+    {{"active", false}},
+});
 
-    // No pivot attributes for the first role
-    user->roles()->createMany({
-        {{"name", "edit"}},
-        {{"name", "view"}},
-    }, {
-        {},
-        {{"active", false}},
-    });
+// No pivot attributes for the first role
+user->roles()->createMany({
+    {{"name", "edit"}},
+    {{"name", "view"}},
+}, {
+    {},
+    {{"active", false}},
+});
 ```
 
 You may also use the `findOrNew`, `firstOrNew`, `firstOrCreate`, and `updateOrCreate` methods to [create and update models on relationships](tinyorm/getting-started.mdx#retrieving-or-creating-models).
@@ -1338,23 +1338,23 @@ Before using the `create` method, be sure to review the [mass assignment](tinyor
 If you would like to assign a child model to a new parent model, you may use the `associate` method. In this example, the `User` model defines a `belongsTo` relationship to the `Account` model. The `associate` method will set the foreign key on the child model:
 
 ```cpp
-    #include "models/user.hpp"
+#include "models/user.hpp"
 
-    User user {{"name", "Mike"}};
+User user {{"name", "Mike"}};
 
-    auto account = Account::find(10);
+auto account = Account::find(10);
 
-    user.account()->associate(*account);
+user.account()->associate(*account);
 
-    user.save();
+user.save();
 ```
 
 To remove a parent model from a child model, you may use the `dissociate` method. This method will set the relationship's foreign key to `null`:
 
 ```cpp
-    user.account()->dissociate();
+user.account()->dissociate();
 
-    user.save();
+user.save();
 ```
 
 ### Many To Many Relationships {#updating-many-to-many-relationships}
@@ -1364,53 +1364,53 @@ To remove a parent model from a child model, you may use the `dissociate` method
 TinyORM also provides methods to make working with many-to-many relationships more convenient. For example, let's imagine a user can have many roles and a role can have many users. You may use the `attach` method to attach a role to a user by inserting a record in the relationship's intermediate table:
 
 ```cpp
-    #include "models/user.hpp"
+#include "models/user.hpp"
 
-    auto user = User::find(1);
+auto user = User::find(1);
 
-    user->roles()->attach(roleId);
+user->roles()->attach(roleId);
 ```
 
 When attaching a relationship to a model, you may also pass a vector of additional data to be inserted into the intermediate table:
 
 ```cpp
-    const auto expires = true;
+const auto expires = true;
 
-    user->roles()->attach(roleId, {{"expires", expires}});
+user->roles()->attach(roleId, {{"expires", expires}});
 ```
 
 Sometimes it may be necessary to remove a role from a user. To remove a many-to-many relationship record, use the `detach` method. The `detach` method will delete the appropriate record out of the intermediate table; however, both models will remain in the database:
 
 ```cpp
-    // Detach a single role from the user...
-    user->roles()->detach(roleId);
+// Detach a single role from the user...
+user->roles()->detach(roleId);
 
-    // Detach all roles from the user...
-    user->roles()->detachAll();
+// Detach all roles from the user...
+user->roles()->detachAll();
 ```
 
 For convenience, `attach` and `detach` also accept vectors of IDs or Model instances as input:
 
 ```cpp
-    auto user = User::find(1);
+auto user = User::find(1);
 
-    user->roles()->detach({1, 2, 3});
+user->roles()->detach({1, 2, 3});
 
-    Role role1({{"name", "Role 1"}});
-    role1.save();
-    Role role2({{"name", "Role 2"}});
-    role2.save();
+Role role1({{"name", "Role 1"}});
+role1.save();
+Role role2({{"name", "Role 2"}});
+role2.save();
 
-    user->roles()->attach({{role1}, {role2}});
+user->roles()->attach({{role1}, {role2}});
 ```
 
 The `attach` method also accepts `std::map` as input, so you can pass different attributes for each model you are attaching:
 
 ```cpp
-    user->roles()->attach({
-        {1, {{"expires", true},  {"is_active", false}}},
-        {2, {{"expires", false}, {"is_active", true}}},
-    });
+user->roles()->attach({
+    {1, {{"expires", true},  {"is_active", false}}},
+    {2, {{"expires", false}, {"is_active", true}}},
+});
 ```
 
 #### Syncing Associations
@@ -1418,23 +1418,23 @@ The `attach` method also accepts `std::map` as input, so you can pass different 
 You may also use the `sync` method to construct many-to-many associations. The `sync` method accepts a vector of IDs to place on the intermediate table. Any IDs that are not in the given vector will be removed from the intermediate table. So, after this operation is complete, only the IDs in the given vector will exist in the intermediate table:
 
 ```cpp
-    user->roles()->sync({1, 2, 3});
+user->roles()->sync({1, 2, 3});
 ```
 
 You may also pass additional intermediate table values with the IDs:
 
 ```cpp
-    user->roles()->sync({
-        {1, {{"expires", true}}},
-        {2, {}},
-        {3, {}},
-    });
+user->roles()->sync({
+    {1, {{"expires", true}}},
+    {2, {}},
+    {3, {}},
+});
 ```
 
 If you do not want to detach existing IDs that are missing from the given vector, you may use the `syncWithoutDetaching` method:
 
 ```cpp
-    user->roles()->syncWithoutDetaching({1, 2, 3});
+user->roles()->syncWithoutDetaching({1, 2, 3});
 ```
 
 #### Updating A Record On The Intermediate Table
@@ -1442,11 +1442,11 @@ If you do not want to detach existing IDs that are missing from the given vector
 If you need to update an existing row in your relationship's intermediate table, you may use the `updateExistingPivot` method. This method accepts the intermediate record foreign key and the vector of attributes to update:
 
 ```cpp
-    auto user = User::find(1);
+auto user = User::find(1);
 
-    user->roles()->updateExistingPivot(roleId, {
-        {"active", false},
-    });
+user->roles()->updateExistingPivot(roleId, {
+    {"active", false},
+});
 ```
 
 ## Touching Parent Timestamps
@@ -1456,30 +1456,30 @@ When a model defines a `belongsTo` relationship to another model, such as a `Com
 For example, when a `Comment` model is updated, you may want to automatically "touch" the `updated_at` timestamp of the owning `Post` so that it is set to the current date and time. To accomplish this, you may add a `u_touches` data member to your child model containing the names of the relationships that should have their `updated_at` timestamps updated when the child model is updated:
 
 ```cpp
-    using Orm::Tiny::Model;
+using Orm::Tiny::Model;
 
-    class Comment final : public Model<Comment, Post>
+class Comment final : public Model<Comment, Post>
+{
+    friend Model;
+    using Model::Model;
+
+public:
+    /*! Get the post that owns the comment. */
+    std::unique_ptr<BelongsTo<Comment, Post>>
+    post()
     {
-        friend Model;
-        using Model::Model;
+        return belongsTo<Post>();
+    }
 
-    public:
-        /*! Get the post that owns the comment. */
-        std::unique_ptr<BelongsTo<Comment, Post>>
-        post()
-        {
-            return belongsTo<Post>();
-        }
-
-    private:
-        /*! Map of relation names to methods. */
-        QHash<QString, RelationVisitor> u_relations {
-            {"post", [](auto &v) { v(&Comment::post); }},
-        };
-
-        /*! All of the relationships to be touched. */
-        QStringList u_touches {"post"};
+private:
+    /*! Map of relation names to methods. */
+    QHash<QString, RelationVisitor> u_relations {
+        {"post", [](auto &v) { v(&Comment::post); }},
     };
+
+    /*! All of the relationships to be touched. */
+    QStringList u_touches {"post"};
+};
 ```
 
 :::note
