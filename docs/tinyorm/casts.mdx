@@ -30,6 +30,7 @@ An accessor transforms a TinyORM attribute value when it is accessed (currently 
 
 In this example, we'll define an accessor for the `first_name` attribute. The accessor will automatically be called by TinyORM during serialization if the `first_name` attribute is defined in the `u_appends` data member set. All attribute accessor methods must return the `Orm::Tiny::Casts::Attribute`:
 
+```cpp
     #include <orm/tiny/model.hpp>
 
     using Orm::Tiny::Model;
@@ -60,6 +61,7 @@ In this example, we'll define an accessor for the `first_name` attribute. The ac
             {"first_name", &User::firstName},
         };
     };
+```
 
 All accessor methods return an `Attribute` instance which defines how the attribute will be accessed. To do so, we supply the `get` argument to the `Attribute` class constructor or `Attribute::make` factory method.
 
@@ -67,6 +69,7 @@ As you can see, the current model is captured by-reference using the `[this]` ca
 
 You can also use the second overload that allows you to pass the `ModelAttributes` unordered map to the lambda expression:
 
+```cpp
     protected:
         /*! Get the user's first name (accessor). */
         Attribute firstName() const noexcept
@@ -82,6 +85,7 @@ You can also use the second overload that allows you to pass the `ModelAttribute
                 return firstName;
             });
         }
+```
 
 The [`ModelAttributes`](https://github.com/silverqx/TinyORM/blob/main/include/orm/tiny/types/modelattributes.hpp) container extends the `std::unordered_map<QString, QVariant>` and adds the `at<T>` method that allows you to cast the underlying QVariant value.
 
@@ -99,6 +103,7 @@ You must guarantee that the current model will live long enough to avoid the dan
 
 Sometimes your accessor may need to transform multiple model attributes into a single value. You can use both methods described above to accomplish this:
 
+```cpp
     using Orm::Constants::SPACE_IN;
 
     protected:
@@ -111,9 +116,11 @@ Sometimes your accessor may need to transform multiple model attributes into a s
                                     getAttribute<QString>("last_name"));
             });
         }
+```
 
 Or you can use the `ModelAttributes` overload:
 
+```cpp
     /*! Get the user's full name (accessor). */
     Attribute fullName() const noexcept
     {
@@ -124,11 +131,13 @@ Or you can use the `ModelAttributes` overload:
                                 attributes.at<QString>("last_name"));
         });
     }
+```
 
 #### Accessor Caching
 
 Sometimes computing an attribute value can be intensive, in this case, you can enable caching for this attribute value. To accomplish this, you have to invoke the `shouldCache` method when defining your accessor:
 
+```cpp
     using Orm::Constants::SPACE_IN;
 
     protected:
@@ -141,6 +150,7 @@ Sometimes computing an attribute value can be intensive, in this case, you can e
                                     getAttribute<QString>("last_name"));
             }).shouldCache();
         }
+```
 
 ## Attribute Casting
 
@@ -175,6 +185,7 @@ The primary key name defined by the `u_primaryKey` model's data member is automa
 
 To demonstrate attribute casting, let's cast the `is_admin` attribute, which is stored in our database as an integer (`0` or `1`) to a `QVariant(bool)` value:
 
+```cpp
     #pragma once
 
     #include <orm/tiny/model.hpp>
@@ -191,9 +202,11 @@ To demonstrate attribute casting, let's cast the `is_admin` attribute, which is 
             {"is_admin", CastType::Boolean},
         };
     };
+```
 
 After defining the cast, the `is_admin` attribute will always be cast to a `QVariant(bool)` when you access it, even if the underlying value is stored in the database as an integer:
 
+```cpp
     using Orm::Utils::Helpers;
 
     auto isAdmin = User::find(1)->getAttribute("is_admin");
@@ -204,13 +217,16 @@ After defining the cast, the `is_admin` attribute will always be cast to a `QVar
     if (isAdmin.value<bool>()) {
         //
     }
+```
 
 If you need to add a new, __temporary__ cast at runtime, you may use the `mergeCasts` method. These cast definitions will be added to any of the casts already defined on the model:
 
+```cpp
     user->mergeCasts({
         {"is_paid", CastType::Boolean},
         {"income", {CastType::Decimal, 2}},
     });
+```
 
 :::caution
 You should never define a cast (or an attribute) that has the same name as a relationship.
@@ -229,10 +245,12 @@ The same is true for the datetime or timestamp database column types, you can se
 
 When defining the `CastType::QDate` or `CastType::QDateTime` cast, you may also specify the date's format. In this case you must use the `CastType::CustomQDate` or `CastType::CustomQDateTime` cast types. This format will be used when the [model is serialized to a vector, map, or JSON](tinyorm/serialization.mdx):
 
+```cpp
     /*! The attributes that should be cast. */
     inline static std::unordered_map<QString, CastItem> u_casts {
         {"created_at", {CastType::CustomQDateTime, "yyyy-MM-dd"}},
     };
+```
 
 :::note
 The `CastType::CustomQDate` and `CastType::CustomQDateTime` cast types behave exactly like the `CastType::QDate` and `CastType::QDateTime` cast types with the additional __date's format__ functionality during <u>__serialization__</u>.
@@ -240,6 +258,7 @@ The `CastType::CustomQDate` and `CastType::CustomQDateTime` cast types behave ex
 
 You may customize the [default serialization format](tinyorm/serialization.mdx#customizing-the-default-date-format) for all of your model's dates or datetimes by defining a `serializeDate` or `serializeDateTime` methods on your model. These methods do not affect how your dates are formatted for storage in the database:
 
+```cpp
     /*! Prepare a date for vector, map, or JSON serialization. */
     QString serializeDate(const QDate date)
     {
@@ -251,18 +270,23 @@ You may customize the [default serialization format](tinyorm/serialization.mdx#c
     {
         return datetime.toUTC().toString("yyyy-MM-ddTHH:mm:ssZ");
     }
+```
 
 To specify the format that should be used when actually storing a model's dates within your database, you should define a `u_dateFormat` data member on your model:
 
+```cpp
     /*! The storage format of the model's date columns. */
     inline static QString u_dateFormat {QLatin1Char('U')};
+```
 
 This format can be any format that the QDateTime's `fromString` or `toString` methods accept or the special `U` format that represents the UNIX timestamp (this `U` format is TinyORM-specific and isn't supported by `QDateTime`).
 
 Define a `u_timeFormat` data member on your model to specify the format that should be used when storing a model's times within your database:
 
+```cpp
     /*! The storage format of the model's time columns. */
     inline static QString u_timeFormat {"HH:mm:ss.zzz"};
+```
 
 #### Date Casting, Serialization & Timezones {#date-casting-serialization-and-timezones}
 
@@ -274,6 +298,7 @@ If a custom format is applied to the `CastType::CustomQDate` or `CastType::Custo
 
 Sometimes you may need to apply casts while executing a query, such as when selecting a raw value from a table. For example, consider the following query:
 
+```cpp
     using Models::Post;
     using Models::User;
 
@@ -284,9 +309,11 @@ Sometimes you may need to apply casts while executing a query, such as when sele
                          .toBase(),
                      "last_posted_at"
                  ).get();
+```
 
 The `last_posted_at` attribute on the results of this query will be a simple string. It would be wonderful if we could apply a `CastType::QDateTime` cast to this attribute when executing the query. Thankfully, we may accomplish this using the `withCasts` or `withCast` methods:
 
+```cpp
     auto users = User::select("users.*")
                  ->addSelect(Post::selectRaw("MAX(created_at)")
                                  ->whereColumnEq("user_id", "users.id")
@@ -294,3 +321,4 @@ The `last_posted_at` attribute on the results of this query will be a simple str
                              "last_posted_at")
                  .withCast({"last_posted_at", CastType::QDateTime})
                  .get();
+```

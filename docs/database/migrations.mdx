@@ -225,6 +225,7 @@ A migration class contains two methods: `up` and `down`. The `up` method is used
 
 Within both of these methods, you may use the TinyORM schema builder to expressively create and modify tables. To learn about all of the methods available on the `Schema` builder, [check out its documentation](#creating-tables). For example, the following migration creates a `posts` table:
 
+```cpp
     #pragma once
 
     #include <tom/migration.hpp>
@@ -257,11 +258,13 @@ Within both of these methods, you may use the TinyORM schema builder to expressi
         };
 
     } // namespace Migrations
+```
 
 Migration classes can be named in two formats, StudlyCase without the datetime prefix and "snake_case" with the datetime prefix. If the StudlyCase name is used then the `T_MIGRATION` macro must also be used in the migration class.
 
 Naming with the datetime prefix should look like this.
 
+```cpp
     struct _2014_10_12_000000_create_posts_table : Migration
     {
 
@@ -277,6 +280,7 @@ Naming with the datetime prefix should look like this.
             //
         }
     };
+```
 
 :::tip
 The StudlyCase naming is preferred. Also the `make:migration` command generates migrations in this format.
@@ -286,6 +290,7 @@ The StudlyCase naming is preferred. Also the `make:migration` command generates 
 
 If your migration will be interacting with a database connection other than your application's default database connection, you should set the `connection` data member of your migration:
 
+```cpp
     /*! The name of the database connection to use. */
     QString connection = QStringLiteral("tinyorm_example");
 
@@ -294,6 +299,7 @@ If your migration will be interacting with a database connection other than your
     {
         //
     }
+```
 
 ## Running Migrations
 
@@ -409,6 +415,7 @@ The `migrate:fresh` command will drop all database tables regardless of their pr
 
 To create a new database table, use the `create` method on the `Schema` facade. The `create` method accepts two arguments: the first is the name of the table, while the second is a lambda expression which receives a `Orm::SchemaNs::Blueprint` object that may be used to define the new table:
 
+```cpp
     #include <orm/schema.hpp>
 
     using Orm::Schema;
@@ -420,6 +427,7 @@ To create a new database table, use the `create` method on the `Schema` facade. 
         table.string("email");
         table.timestamps();
     });
+```
 
 When creating the table, you may use any of the schema builder's [column methods](#creating-columns) to define the table's columns.
 
@@ -427,6 +435,7 @@ When creating the table, you may use any of the schema builder's [column methods
 
 You may check for the existence of a table or column using the `hasTable` and `hasColumn` methods:
 
+```cpp
     if (Schema::hasTable("users")) {
         // The "users" table exists...
     }
@@ -434,18 +443,22 @@ You may check for the existence of a table or column using the `hasTable` and `h
     if (Schema::hasColumn("users", "email")) {
         // The "users" table exists and has an "email" column...
     }
+```
 
 #### Database Connection & Table Options
 
 If you want to perform a schema operation on a database connection that is not your application's default connection, use the `connection` method or `on` alias:
 
+```cpp
     Schema::connection("postgres").create("users", [](Blueprint &table)
     {
         table.id();
     });
+```
 
 In addition, a few other data members and methods may be used to define other aspects of the table's creation. The `engine` data member may be used to specify the table's storage engine when using MySQL:
 
+```cpp
     #include <orm/constants.hpp>
 
     using Orm::Constants::InnoDB;
@@ -456,9 +469,11 @@ In addition, a few other data members and methods may be used to define other as
 
         // ...
     });
+```
 
 The `charset` and `collation` data members may be used to specify the character set and collation for the created table when using MySQL:
 
+```cpp
     #include <orm/constants.hpp>
 
     using Orm::Constants::UTF8MB4;
@@ -470,49 +485,60 @@ The `charset` and `collation` data members may be used to specify the character 
 
         // ...
     });
+```
 
 The `temporary` method may be used to indicate that the table should be "temporary". Temporary tables are only visible to the current connection's database session and are dropped automatically when the connection is closed:
 
+```cpp
     Schema::create("calculations", [](Blueprint &table)
     {
         table.temporary();
 
         // ...
     });
+```
 
 If you would like to add a "comment" to a database table, you may invoke the `comment` method on the table instance. Table comments are currently only supported by MySQL and PostgreSQL:
 
+```cpp
     Schema::create("calculations", [](Blueprint &table)
     {
         table.comment("Business calculations");
 
         // ...
     });
+```
 
 ### Updating Tables
 
 The `table` method on the `Schema` facade may be used to update existing tables. Like the `create` method, the `table` method accepts two arguments: the name of the table and a lambda expression that receives a `Blueprint` instance you may use to add columns or indexes to the table:
 
+```cpp
     #include <orm/schema.hpp>
 
     Schema::table("users", [](Blueprint &table)
     {
         table.integer("votes");
     });
+```
 
 ### Renaming / Dropping Tables {#renaming-and-dropping-tables}
 
 To rename an existing database table, use the `rename` method:
 
+```cpp
     #include <orm/schema.hpp>
 
     Schema::rename("from", "to");
+```
 
 To drop an existing table, you may use the `drop` or `dropIfExists` methods:
 
+```cpp
     Schema::drop("users");
 
     Schema::dropIfExists("users");
+```
 
 #### Renaming Tables With Foreign Keys
 
@@ -528,12 +554,14 @@ After renaming a table, you can re-create (drop and create again) the foreign ke
 
 The `table` method on the `Schema` facade may be used to update existing tables. Like the `create` method, the `table` method accepts two arguments: the name of the table and a lambda expression that receives a `Blueprint` instance you may use to add columns to the table:
 
+```cpp
     #include <orm/schema.hpp>
 
     Schema::table("users", [](Blueprint &table)
     {
         table.integer("votes");
     });
+```
 
 ### Available Column Types
 
@@ -618,397 +646,525 @@ Names of `Char`, `Double`, `Enum`, and `Float` column methods are in the CamelCa
 
 The `bigIncrements` method creates an auto-incrementing `UNSIGNED BIGINT` (primary key) equivalent column:
 
+```cpp
     #include <orm/constants.hpp>
 
     table.bigIncrements(Orm::ID);
+```
 
 #### `bigInteger()` {#column-method-bigInteger}
 
 The `bigInteger` method creates a `BIGINT` equivalent column:
 
+```cpp
     table.bigInteger("votes");
+```
 
 #### `binary()` {#column-method-binary}
 
 The `binary` method creates a `BLOB` equivalent column:
 
+```cpp
     table.binary("photo");
+```
 
 #### `boolean()` {#column-method-boolean}
 
 The `boolean` method creates a `BOOLEAN` equivalent column:
 
+```cpp
     table.boolean("confirmed");
+```
 
 #### `Char()` {#column-method-Char}
 
 The `Char` method creates a `CHAR` equivalent column with of a given length:
 
+```cpp
     #include <orm/constants.hpp>
 
     table.Char(Orm::NAME, 100);
+```
 
 #### `date()` {#column-method-date}
 
 The `date` method creates a `DATE` equivalent column:
 
+```cpp
     table.date("created_at");
+```
 
 #### `datetime()` {#column-method-datetime}
 
 The `datetime` method creates a `DATETIME` equivalent column with an optional precision (total digits):
 
+```cpp
     table.datetime("created_at", precision = 0);
+```
 
 #### `datetimes()` {#column-method-datetimes}
 
 The `datetimes` method creates `created_at` and `updated_at` `DATETIME` equivalent columns with an optional precision (total digits):
 
+```cpp
     table.datetimes(precision = 0);
+```
 
 #### `datetimeTz()` {#column-method-datetimeTz}
 
 The `datetimeTz` method creates a `DATETIME` (with timezone) equivalent column with an optional precision (total digits):
 
+```cpp
     #include <orm/constants.hpp>
 
     table.datetimeTz(Orm::CREATED_AT, precision = 0);
+```
 
 #### `decimal()` {#column-method-decimal}
 
 The `decimal` method creates a `DECIMAL` equivalent column with the given precision (total digits) and scale (decimal digits):
 
+```cpp
     table.decimal("amount", precision = 8, scale = 2);
+```
 
 #### `Double()` {#column-method-Double}
 
 The `Double` method creates a `DOUBLE` equivalent column with the given precision (total digits) and scale (decimal digits):
 
+```cpp
     table.Double("amount", 8, 2);
+```
 
 #### `Enum()` {#column-method-Enum}
 
 The `Enum` method creates a `ENUM` equivalent column with the given valid values:
 
+```cpp
     table.Enum("difficulty", {"easy", "hard"});
+```
 
 #### `Float()` {#column-method-Float}
 
 The `Float` method creates a `FLOAT` equivalent column with the given precision (total digits) and scale (decimal digits):
 
+```cpp
     table.Float("amount", 8, 2);
+```
 
 #### `foreignId()` {#column-method-foreignId}
 
 The `foreignId` method creates an `UNSIGNED BIGINT` equivalent column:
 
+```cpp
     table.foreignId("user_id");
+```
 
 #### `foreignIdFor()` {#column-method-foreignIdFor}
 
 The `foreignIdFor` method adds a `{column}_id UNSIGNED BIGINT` equivalent column for a given model class:
 
+```cpp
     #include "models/user.hpp"
 
     Models::User user;
 
     table.foreignIdFor(User);
+```
 
 #### `foreignUuid()` {#column-method-foreignUuid}
 
 The `foreignUuid` method creates a `UUID` equivalent column:
 
+```cpp
     table.foreignUuid("user_id");
+```
 
 #### `geometry()` {#column-method-geometry}
 
 The `geometry` method creates a `GEOMETRY` equivalent column:
 
+```cpp
     table.geometry("positions");
+```
 
 #### `geometryCollection()` {#column-method-geometryCollection}
 
 The `geometryCollection` method creates a `GEOMETRYCOLLECTION` equivalent column:
 
+```cpp
     table.geometryCollection("positions");
+```
 
 #### `id()` {#column-method-id}
 
 The `id` method is an alias of the `bigIncrements` method. By default, the method will create an `id` column; however, you may pass a column name if you would like to assign a different name to the column:
 
+```cpp
     table.id();
+```
 
 #### `increments()` {#column-method-increments}
 
 The `increments` method creates an auto-incrementing `UNSIGNED INTEGER` equivalent column as a primary key:
 
+```cpp
     table.increments("id");
+```
 
 #### `integer()` {#column-method-integer}
 
 The `integer` method creates an `INTEGER` equivalent column:
 
+```cpp
     table.integer("votes");
+```
 
 #### `ipAddress()` {#column-method-ipAddress}
 
 The `ipAddress` method creates a `VARCHAR(45)` equivalent column:
 
+```cpp
     table.ipAddress("visitor");
+```
 
 #### `json()` {#column-method-json}
 
 The `json` method creates a `JSON` equivalent column:
 
+```cpp
     table.json("options");
+```
 
 #### `jsonb()` {#column-method-jsonb}
 
 The `jsonb` method creates a `JSONB` equivalent column:
 
+```cpp
     table.jsonb("options");
+```
 
 #### `lineString()` {#column-method-lineString}
 
 The `lineString` method creates a `LINESTRING` equivalent column:
 
+```cpp
     table.lineString("positions");
+```
 
 #### `longBinary()` {#column-method-longBinary}
 
 The `longBinary` method creates a `LONGBLOB` equivalent column:
 
+```cpp
     table.longBinary("photo");
+```
 
 #### `longText()` {#column-method-longText}
 
 The `longText` method creates a `LONGTEXT` equivalent column:
 
+```cpp
     table.longText("description");
+```
 
 #### `macAddress()` {#column-method-macAddress}
 
 The `macAddress` method creates a column that is intended to hold a MAC address. Some database systems, such as PostgreSQL, have a dedicated column type for this type of data. Other database systems will use a string equivalent `VARCHAR(17)` column:
 
+```cpp
     table.macAddress("device");
+```
 
 #### `mediumBinary()` {#column-method-mediumBinary}
 
 The `mediumBinary` method creates a `MEDIUMBLOB` equivalent column:
 
+```cpp
     table.mediumBinary("photo");
+```
 
 #### `mediumIncrements()` {#column-method-mediumIncrements}
 
 The `mediumIncrements` method creates an auto-incrementing `UNSIGNED MEDIUMINT` equivalent column as a primary key:
 
+```cpp
     table.mediumIncrements("id");
+```
 
 #### `mediumInteger()` {#column-method-mediumInteger}
 
 The `mediumInteger` method creates a `MEDIUMINT` equivalent column:
 
+```cpp
     table.mediumInteger("votes");
+```
 
 #### `mediumText()` {#column-method-mediumText}
 
 The `mediumText` method creates a `MEDIUMTEXT` equivalent column:
 
+```cpp
     table.mediumText("description");
+```
 
 #### `multiLineString()` {#column-method-multiLineString}
 
 The `multiLineString` method creates a `MULTILINESTRING` equivalent column:
 
+```cpp
     table.multiLineString("positions");
+```
 
 #### `multiPoint()` {#column-method-multiPoint}
 
 The `multiPoint` method creates a `MULTIPOINT` equivalent column:
 
+```cpp
     table.multiPoint("positions");
+```
 
 #### `multiPolygon()` {#column-method-multiPolygon}
 
 The `multiPolygon` method creates a `MULTIPOLYGON` equivalent column:
 
+```cpp
     table.multiPolygon("positions");
+```
 
 #### `point()` {#column-method-point}
 
 The `point` method creates a `POINT` equivalent column:
 
+```cpp
     table.point("position");
+```
 
 #### `polygon()` {#column-method-polygon}
 
 The `polygon` method creates a `POLYGON` equivalent column:
 
+```cpp
     table.polygon("position");
+```
 
 #### `rememberToken()` {#column-method-rememberToken}
 
 The `rememberToken` method creates a nullable, `VARCHAR(100)` equivalent column that is intended to store the current "remember me" authentication token:
 
+```cpp
     table.rememberToken();
+```
 
 #### `set()` {#column-method-set}
 
 The `set` method creates a `SET` equivalent column with the given list of valid values:
 
+```cpp
     table.set("flavors", {"strawberry", "vanilla"});
+```
 
 #### `smallIncrements()` {#column-method-smallIncrements}
 
 The `smallIncrements` method creates an auto-incrementing `UNSIGNED SMALLINT` equivalent column as a primary key:
 
+```cpp
     table.smallIncrements("id");
+```
 
 #### `smallInteger()` {#column-method-smallInteger}
 
 The `smallInteger` method creates a `SMALLINT` equivalent column:
 
+```cpp
     table.smallInteger("votes");
+```
 
 #### `softDeletes()` {#column-method-softDeletes}
 
 The `softDeletes` method adds a nullable `deleted_at` `TIMESTAMP` equivalent column with an optional precision (total digits). This column is intended to store the `deleted_at` timestamp needed for TinyORM's "soft delete" functionality:
 
+```cpp
     table.softDeletes("deleted_at", precision = 0);
+```
 
 #### `softDeletesDatetime()` {#column-method-softDeletesDatetime}
 
 The `softDeletesDatetime` method adds a nullable `deleted_at` `DATETIME` equivalent column with an optional precision (total digits). This column is intended to store the `deleted_at` timestamp needed for TinyORM's "soft delete" functionality:
 
+```cpp
     table.softDeletesDatetime("deleted_at", precision = 0);
+```
 
 #### `softDeletesTz()` {#column-method-softDeletesTz}
 
 The `softDeletesTz` method adds a nullable `deleted_at` `TIMESTAMP` (with timezone) equivalent column with an optional precision (total digits). This column is intended to store the `deleted_at` timestamp needed for TinyORM's "soft delete" functionality:
 
+```cpp
     table.softDeletesTz("deleted_at", precision = 0);
+```
 
 #### `string()` {#column-method-string}
 
 The `string` method creates a `VARCHAR` equivalent column of the given length:
 
+```cpp
     #include <orm/constants.hpp>
 
     table.string(Orm::NAME, 100);
+```
 
 #### `text()` {#column-method-text}
 
 The `text` method creates a `TEXT` equivalent column:
 
+```cpp
     table.text("description");
+```
 
 #### `time()` {#column-method-time}
 
 The `time` method creates a `TIME` equivalent column with an optional precision (total digits):
 
+```cpp
     table.time("sunrise", precision = 0);
+```
 
 #### `timeTz()` {#column-method-timeTz}
 
 The `timeTz` method creates a `TIME` (with timezone) equivalent column with an optional precision (total digits):
 
+```cpp
     table.timeTz("sunrise", precision = 0);
+```
 
 #### `timestamp()` {#column-method-timestamp}
 
 The `timestamp` method creates a `TIMESTAMP` equivalent column with an optional precision (total digits):
 
+```cpp
     table.timestamp("added_at", precision = 0);
+```
 
 #### `timestampTz()` {#column-method-timestampTz}
 
 The `timestampTz` method creates a `TIMESTAMP` (with timezone) equivalent column with an optional precision (total digits):
 
+```cpp
     table.timestampTz("added_at", precision = 0);
+```
 
 #### `timestampsTz()` {#column-method-timestampsTz}
 
 The `timestampsTz` method creates `created_at` and `updated_at` `TIMESTAMP` (with timezone) equivalent columns with an optional precision (total digits):
 
+```cpp
     table.timestampsTz(precision = 0);
+```
 
 #### `timestamps()` {#column-method-timestamps}
 
 The `timestamps` method creates `created_at` and `updated_at` `TIMESTAMP` equivalent columns with an optional precision (total digits):
 
+```cpp
     table.timestamps(precision = 0);
+```
 
 #### `tinyBinary()` {#column-method-tinyBinary}
 
 The `tinyBinary` method creates a `TINYBLOB` equivalent column:
 
+```cpp
     table.tinyBinary("photo");
+```
 
 #### `tinyIncrements()` {#column-method-tinyIncrements}
 
 The `tinyIncrements` method creates an auto-incrementing `UNSIGNED TINYINT` equivalent column as a primary key:
 
+```cpp
     table.tinyIncrements("id");
+```
 
 #### `tinyInteger()` {#column-method-tinyInteger}
 
 The `tinyInteger` method creates a `TINYINT` equivalent column:
 
+```cpp
     table.tinyInteger("votes");
+```
 
 #### `tinyText()` {#column-method-tinyText}
 
 The `tinyText` method creates a `TINYTEXT` equivalent column:
 
+```cpp
     table.tinyText("notes");
+```
 
 #### `unsignedBigInteger()` {#column-method-unsignedBigInteger}
 
 The `unsignedBigInteger` method creates an `UNSIGNED BIGINT` equivalent column:
 
+```cpp
     table.unsignedBigInteger("votes");
+```
 
 #### `unsignedDecimal()` {#column-method-unsignedDecimal}
 
 The `unsignedDecimal` method creates an `UNSIGNED DECIMAL` equivalent column with an optional precision (total digits) and scale (decimal digits):
 
+```cpp
     table.unsignedDecimal("amount", precision = 8, scale = 2);
+```
 
 #### `unsignedInteger()` {#column-method-unsignedInteger}
 
 The `unsignedInteger` method creates an `UNSIGNED INTEGER` equivalent column:
 
+```cpp
     table.unsignedInteger("votes");
+```
 
 #### `unsignedMediumInteger()` {#column-method-unsignedMediumInteger}
 
 The `unsignedMediumInteger` method creates an `UNSIGNED MEDIUMINT` equivalent column:
 
+```cpp
     table.unsignedMediumInteger("votes");
+```
 
 #### `unsignedSmallInteger()` {#column-method-unsignedSmallInteger}
 
 The `unsignedSmallInteger` method creates an `UNSIGNED SMALLINT` equivalent column:
 
+```cpp
     table.unsignedSmallInteger("votes");
+```
 
 #### `unsignedTinyInteger()` {#column-method-unsignedTinyInteger}
 
 The `unsignedTinyInteger` method creates an `UNSIGNED TINYINT` equivalent column:
 
+```cpp
     table.unsignedTinyInteger("votes");
+```
 
 #### `uuid()` {#column-method-uuid}
 
 The `uuid` method creates a `UUID` equivalent column:
 
+```cpp
     table.uuid("id");
+```
 
 #### `year()` {#column-method-year}
 
 The `year` method creates a `YEAR` equivalent column:
 
+```cpp
     table.year("birth_year");
+```
 
 </div>
 
@@ -1016,12 +1172,14 @@ The `year` method creates a `YEAR` equivalent column:
 
 In addition to the column types listed above, there are several column "modifiers" you may use when adding a column to a database table. For example, to make the column "nullable", you may use the `nullable` method:
 
+```cpp
     #include <orm/schema.hpp>
 
     Schema::table("users", [](Blueprint &table)
     {
         table.string("email").nullable();
     });
+```
 
 The following table contains all of the available column modifiers. This list does not include [index modifiers](#creating-indexes):
 
@@ -1051,6 +1209,7 @@ The following table contains all of the available column modifiers. This list do
 
 The `defaultValue` modifier accepts a value or an `Orm::Query::Expression` instance. Using an `Expression` instance will prevent TinyORM from wrapping the value in quotes and allow you to use database-specific functions. One situation where this is particularly useful is when you need to assign default values to JSON columns:
 
+```cpp
     #include <orm/schema.hpp>
 
     using Orm::Query::Expression;
@@ -1061,6 +1220,7 @@ The `defaultValue` modifier accepts a value or an `Orm::Query::Expression` insta
         table.json("detail").defaultValue(Expression("(JSON_ARRAY('none'))"));
         table.timestamps();
     });
+```
 
 :::note
 Support for default expressions depends on your database driver, database version, and the field type. Please refer to your database's documentation.
@@ -1074,30 +1234,36 @@ You can obtain an `Orm::Query::Expression` using the [`DB::raw`](database/query-
 
 When using the MySQL database, the `after` method may be used to add columns after an existing column in the schema:
 
+```cpp
     table.after("password", [](Blueprint &table)
     {
         table.string("address_line1");
         table.string("address_line2");
         table.string("city");
     });
+```
 
 ### Modifying Columns
 
 The `change` method allows you to modify the type and attributes of existing columns. For example, you may wish to increase the size of a `string` column. To see the `change` method in action, let's increase the size of the `name` column from 25 to 50. To accomplish this, we simply define the new state of the column and then call the `change` method:
 
+```cpp
     #include <orm/schema.hpp>
 
     Schema::table("users", [](Blueprint &table)
     {
         table.string("name", 50).change();
     });
+```
 
 When modifying a column, you must explicitly include all of the modifiers you want to keep on the column definition - any missing attribute will be dropped. For example, to retain the `unsigned`, `default`, and `comment` attributes, you must call each modifier explicitly when changing the column:
 
+```cpp
     Schema::table("users", [](Blueprint &table)
     {
         table.integer("votes").isUnsigned().defaultValue(1).comment("my comment").change();
     });
+```
 
 :::info
 The `change` method and modifying columns is not implemented for the `SQLite` database because it doesn't support modifying columns out of the box.
@@ -1107,10 +1273,12 @@ The `change` method and modifying columns is not implemented for the `SQLite` da
 
 To rename a column, you may use the `renameColumn` method provided by the schema builder blueprint:
 
+```cpp
     Schema::table("users", [](Blueprint &table)
     {
         table.renameColumn("from", "to");
     });
+```
 
 #### Renaming Columns On Legacy Databases
 
@@ -1124,19 +1292,23 @@ Renaming columns is not supported if you are running a database installation old
 
 To drop a column, you may use the `dropColumn` method on the schema builder blueprint:
 
+```cpp
     Schema::table("users", [](Blueprint &table)
     {
         table.dropColumn("votes");
     });
+```
 
 You may drop multiple columns from a table by passing a `QVector<QString>` of column names to the `dropColumns` method, the `dropColumns` method also provides parameter pack overload:
 
+```cpp
     Schema::table("users", [](Blueprint &table)
     {
         table.dropColumns({"votes", "avatar", "location"});
         // Parameter pack overload
         table.dropColumns("votes", "avatar", "location");
     });
+```
 
 :::caution
 The SQLite prior to `v3.35.0` doesn't support dropping columns using the `ALTER TABLE DROP COLUMN`, dropping columns was added in the SQLite `v3.35.0` as is described in the [release notes](https://www.sqlite.org/releaselog/3_35_0.html).
@@ -1162,24 +1334,32 @@ TinyORM provides several convenient methods related to dropping common types of 
 
 The TinyORM schema builder supports several types of indexes. The following example creates a new `email` column and specifies that its values should be unique. To create the index, we can chain the `unique` method onto the column definition:
 
+```cpp
     #include <orm/schema.hpp>
 
     Schema::table("users", [](Blueprint &table)
     {
         table.string("email").unique();
     });
+```
 
 Alternatively, you may create the index after defining the column. To do so, you should call the `unique` method on the schema builder blueprint. This method accepts the name of the column that should receive a unique index:
 
+```cpp
     table.unique("email");
+```
 
 You may even pass a `QVector<QString>` of columns to an index method to create a compound (or composite) index:
 
+```cpp
     table.index({"account_id", "created_at"});
+```
 
 When creating an index, TinyORM will automatically generate an index name based on the table, column names, and the index type (eg. users_email_unique), but you may pass a second argument to the method to specify the index name yourself:
 
+```cpp
     table.unique("email", "unique_email");
+```
 
 #### Available Index Types
 
@@ -1199,9 +1379,11 @@ TinyORM's schema builder blueprint class provides methods for creating each type
 
 By default, TinyORM uses the `utf8mb4` character set. If you are running a version of MySQL older than the 5.7.7 release or MariaDB older than the 10.2.2 release, you may need to manually configure the default string length generated by migrations in order for MySQL to create indexes for them. You may configure the default string length by calling the `Schema::defaultStringLength` method:
 
+```cpp
     #include <orm/schema.hpp>
 
     Schema::defaultStringLength(191);
+```
 
 :::tip
 Alternatively, you may enable the `innodb_large_prefix` option for your database (enabled by default in >=MySQL 5.7.7). Refer to your database's documentation for instructions on how to properly enable this option.
@@ -1211,7 +1393,9 @@ Alternatively, you may enable the `innodb_large_prefix` option for your database
 
 To rename an index, you may use the `renameIndex` method provided by the schema builder blueprint. This method accepts the current index name as its first argument and the desired name as its second argument:
 
+```cpp
     table.renameIndex("from", "to");
+```
 
 ### Dropping Indexes
 
@@ -1233,15 +1417,18 @@ To drop an index, you must specify the index's name. By default, TinyORM automat
 
 I may also drop indexes by a column name or column names for composite keys, if you pass a `QVector<QString>` of columns into a method that drops indexes, the conventional index name will be generated based on the table name, columns, and index type:
 
+```cpp
     Schema::table("geo", [](Blueprint &table)
     {
         table.dropIndex({"state"}); // Drops index 'geo_state_index'
     });
+```
 
 ### Foreign Key Constraints
 
 TinyORM also provides support for creating foreign key constraints, which are used to force referential integrity at the database level. For example, let's define a `user_id` column on the `posts` table that references the `id` column on a `users` table:
 
+```cpp
     #include <orm/schema.hpp>
 
     using Orm::Constants::ID;
@@ -1252,23 +1439,29 @@ TinyORM also provides support for creating foreign key constraints, which are us
 
         table.foreign("user_id").references(ID).on("users");
     });
+```
 
 Since this syntax is rather verbose, TinyORM provides additional, terser methods that use conventions to provide a better developer experience. When using the `foreignId` method to create your column, the example above can be rewritten like so:
 
+```cpp
     Schema::table("posts", [](Blueprint &table)
     {
         table.foreignId("user_id").constrained();
     });
+```
 
 The `foreignId` method creates an `UNSIGNED BIGINT` equivalent column, while the `constrained` method will use conventions to determine the table and column name being referenced. If your table name does not match TinyORM's conventions, you may specify the table name by passing it as an argument to the `constrained` method:
 
+```cpp
     Schema::table("posts", [](Blueprint &table)
     {
         table.foreignId("user_id").constrained("users");
     });
+```
 
 You may also specify the desired action for the "on delete" and "on update" properties of the constraint:
 
+```cpp
     #include <orm/constants.hpp>
 
     using Orm::SchemaNs::Constants::Cascade;
@@ -1277,6 +1470,7 @@ You may also specify the desired action for the "on delete" and "on update" prop
          .constrained()
          .onUpdate("cascade")
          .onDelete(Cascade);
+```
 
 An alternative, expressive syntax is also provided for these actions:
 
@@ -1290,24 +1484,31 @@ An alternative, expressive syntax is also provided for these actions:
 
 Any additional [column modifiers](#column-modifiers) must be called before the `constrained` method:
 
+```cpp
     table.foreignId("user_id")
          .nullable()
          .constrained();
+```
 
 #### Dropping Foreign Keys
 
 To drop a foreign key, you may use the `dropForeign` method, passing the name of the foreign key constraint to be deleted as an argument. Foreign key constraints use the same naming convention as indexes. In other words, the foreign key constraint name is based on the name of the table and the columns in the constraint, followed by a "_foreign" suffix:
 
+```cpp
     table.dropForeign("posts_user_id_foreign");
+```
 
 Alternatively, you may pass a `QVector<QString>` containing the column name that holds the foreign key to the `dropForeign` method. The `QVector` will be converted to a foreign key constraint name using TinyORM's constraint naming conventions:
 
+```cpp
     table.dropForeign({"user_id"});
+```
 
 #### Toggling Foreign Key Constraints
 
 You may enable or disable foreign key constraints within your migrations by using the following methods:
 
+```cpp
     Schema::enableForeignKeyConstraints();
 
     Schema::disableForeignKeyConstraints();
@@ -1316,6 +1517,7 @@ You may enable or disable foreign key constraints within your migrations by usin
     {
         // Constraints disabled within this lambda expression...
     });
+```
 
 :::caution
 The SQLite disables foreign key constraints by default. When using SQLite, make sure to [enable foreign key support](database/getting-started.mdx#sqlite-configuration) in your database configuration before attempting to create them in your migrations. In addition, SQLite only supports creating foreign keys when creating tables and [not when tables are altered](https://www.sqlite.org/omitted.html).

@@ -25,6 +25,7 @@ When building APIs using TinyORM, you will often need to convert your models and
 
 To convert a model and its loaded [relationships](tinyorm/relationships.mdx) to a vector, you should use the `toVector` or `toMap` methods. This methods are recursive, so all attributes and all relations (including the relations of relations) will be converted to vectors:
 
+```cpp
     using Models::User;
 
     auto user = User::with("roles")->first();
@@ -32,27 +33,33 @@ To convert a model and its loaded [relationships](tinyorm/relationships.mdx) to 
     return user->toVector();
 
     return user->toMap();
+```
 
 The `attributesToVector` or `attributesToMap` methods may be used to convert a model's attributes to a vector or map but not its relationships:
 
+```cpp
     auto user = User::first();
 
     return user->attributesToVector();
 
     return user->attributesToMap();
+```
 
 You may also convert entire [collections](tinyorm/collections.mdx) of models to vectors or maps by calling the [`toVector`](tinyorm/collections.mdx#method-tovector) or [`toMap`](tinyorm/collections.mdx#method-tomap) methods on the collection instance:
 
+```cpp
     ModelsCollection<User> users = User::with("roles")->all();
 
     return users.toVector();
 
     return users.toMap();
+```
 
 ### Serializing To JSON
 
 To convert a model to JSON, you should use the `toJson` method. Like `toVector` or `toMap`, the `toJson` method is recursive, so all attributes and relations will be converted to JSON. You may also specify any JSON encoding options that are supported by [QJsonDocument::toJson](https://doc.qt.io/qt/qjsondocument.html#toJson):
 
+```cpp
     using Models::User;
 
     auto user = User::with("roles")->find(1);
@@ -60,13 +67,16 @@ To convert a model to JSON, you should use the `toJson` method. Like `toVector` 
     return user->toJson();
 
     return user->toJson(QJsonDocument::Indented);
+```
 
 You may also convert entire [collections](tinyorm/collections.mdx) of models to JSON by calling the [`toJson`](tinyorm/collections.mdx#method-tojson) method on the collection instance:
 
 
+```cpp
     ModelsCollection<User> users = User::with("roles")->findMany({1, 2});
 
     return users.toJson();
+```
 
 You can also convert models to the [`QJsonObject`](https://doc.qt.io/qt/qjsonobject.html) and [`QJsonDocument`](https://doc.qt.io/qt/qjsondocument.html) using the `toJsonArray` and `toJsonDocument` methods and collection of models to [`QJsonArray`](https://doc.qt.io/qt/qjsonarray.html) and [`QJsonDocument`](https://doc.qt.io/qt/qjsondocument.html) using the [`toJsonArray`](tinyorm/collections.mdx#method-tojsonarray) and [`toJsonDocument`](tinyorm/collections.mdx#method-tojsondocument) methods.
 
@@ -76,6 +86,7 @@ When a TinyORM model is converted to JSON, its loaded relationships will automat
 
 This behavior is affected and can be overridden by the `u_snakeAttributes` static data member:
 
+```cpp
     #include <orm/tiny/model.hpp>
 
     using Orm::Tiny::Model;
@@ -88,11 +99,13 @@ This behavior is affected and can be overridden by the `u_snakeAttributes` stati
         /*! Indicates whether attributes are snake_cased during serialization. */
         inline static const bool u_snakeAttributes = false;
     };
+```
 
 ## Hiding Attributes From JSON
 
 Sometimes you may wish to limit the attributes, such as passwords, that are included in your model's vector, map, or JSON representation. To do so, add a `u_hidden` static data member to your model. Attributes that are listed in the `u_hidden` data member set will not be included in the serialized representation of your model:
 
+```cpp
     #include <orm/tiny/model.hpp>
 
     using Orm::Tiny::Model;
@@ -105,6 +118,7 @@ Sometimes you may wish to limit the attributes, such as passwords, that are incl
         /*! The attributes that should be hidden during serialization. */
         inline static std::set<QString> u_hidden {"password"};
     };
+```
 
 :::note
 To hide relationships, add the relationship's method name to your TinyORM model's `u_hidden` static data member.
@@ -112,6 +126,7 @@ To hide relationships, add the relationship's method name to your TinyORM model'
 
 Alternatively, you may use the `u_visible` static data member to define an "allow list" of attributes that should be included in your model's vector, map, and JSON representation. All attributes that are not present in the `u_visible` set will be hidden during serialization:
 
+```cpp
     #include <orm/tiny/model.hpp>
 
     using Orm::Tiny::Model;
@@ -126,29 +141,37 @@ Alternatively, you may use the `u_visible` static data member to define an "allo
             "first_name", "last_name",
         };
     };
+```
 
 #### Temporarily Modifying Attribute Visibility
 
 If you would like to make some typically hidden attributes visible on a given model instance, you may use the `makeVisible` method. The `makeVisible` method returns a model reference:
 
+```cpp
     return user.makeVisible("attribute").toMap();
 
     return user.makeVisible({"id", "name"}).toMap();
+```
 
 Likewise, if you would like to hide some attributes that are typically visible, you may use the `makeHidden` method.
 
+```cpp
     return user.makeHidden("attribute").toVector();
 
     return user.makeHidden({"id", "name"}).toVector();
+```
 
 If you wish to temporarily override all of the visible or hidden attributes, you may use the `setVisible` and `setHidden` methods respectively:
 
+```cpp
     return user.setVisible({"id", "name"}).toMap();
 
     return user.setHidden({"email", "password", "note"}).toJson();
+```
 
 You can also clear all visible and hidden attributes or determine whether a visible / hidden attribute is defined:
 
+```cpp
     user.clearVisible();
 
     user.clearHidden();
@@ -156,11 +179,13 @@ You can also clear all visible and hidden attributes or determine whether a visi
     return user.hasVisible("name");
 
     return user.hasHidden("password");
+```
 
 ## Appending Values To JSON
 
 Occasionally, when converting models to vector, map, or JSON, you may wish to add attributes that do not have a corresponding column in your database. To do so, first define an [accessor](tinyorm/casts.mdx#accessors) for the value:
 
+```cpp
     #include <orm/tiny/model.hpp>
 
     using Orm::Tiny::Model;
@@ -180,9 +205,11 @@ Occasionally, when converting models to vector, map, or JSON, you may wish to ad
             });
         }
     };
+```
 
 If you would like the accessor to always be appended to your model's vector, map, and JSON representations, you may add the attribute name to the `u_appends` data member set of your model. Note that attribute names are typically referenced using their "snake_case" serialized representation, even though the accessor's method name is defined using "camelCase":
 
+```cpp
     #include <orm/tiny/model.hpp>
 
     using Orm::Tiny::Model;
@@ -200,6 +227,7 @@ If you would like the accessor to always be appended to your model's vector, map
         /*! The attributes that should be appended during serialization. */
         std::set<QString> u_appends {"is_admin"};
     };
+```
 
 Once the attribute has been added to the `u_appends` set, it will be included in both the model's vector, map, and JSON representations. Attributes in the `u_appends` set will also respect the `u_visible` and `u_hidden` attribute settings configured on the model.
 
@@ -209,17 +237,21 @@ Special note should be given to the `u_mutators` static data member map, which m
 
 At runtime, you may instruct a model instance to append additional attributes using the `append` method. Or, you may use the `setAppends` method to override the entire set of appended attributes for a given model instance:
 
+```cpp
     return user.append("is_admin").toVector();
 
     return user.append({"is_admin", "is_banned"}).toMap();
 
     return user.setAppends({"is_admin"}).toJson();
+```
 
 And you can also clear all appends or determine whether an append is defined:
 
+```cpp
     user.clearAppends();
 
     return user.hasAppend("is_admin");
+```
 
 ## Date Serialization
 
@@ -227,6 +259,7 @@ And you can also clear all appends or determine whether an append is defined:
 
 You may customize the default serialization format by overriding the `serializeDate` and `serializeDateTime` methods. These methods do not affect how your dates are formatted for storage in the database:
 
+```cpp
     /*! Prepare a date for vector, map, or JSON serialization. */
     QString serializeDate(const QDate date)
     {
@@ -238,13 +271,16 @@ You may customize the default serialization format by overriding the `serializeD
     {
         return datetime.toUTC().toString("yyyy-MM-ddTHH:mm:ssZ");
     }
+```
 
 #### Customizing The Date Format Per Attribute
 
 You may customize the serialization format of individual TinyORM date attributes by specifying the date format in the model's [cast declarations](tinyorm/casts.mdx#attribute-casting):
 
+```cpp
     /*! The attributes that should be cast. */
     inline static std::unordered_map<QString, CastItem> u_casts {
         {"birthday",  {CastType::CustomQDate, "yyyy-MM-dd"}},
         {"joined_at", {CastType::CustomQDateTime, "yyyy-MM-dd HH:00"}},
     };
+```

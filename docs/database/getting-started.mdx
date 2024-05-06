@@ -59,6 +59,7 @@ You can create and configure a new database connection using the `create` method
 <Tabs className='tinyorm-configuration-basic' groupId={database}>
 <TabItem value={mysql} label={mysql_label}>
 
+```cpp
     #include <orm/db.hpp>
 
     using Orm::DB;
@@ -84,10 +85,12 @@ You can create and configure a new database connection using the `create` method
         {"engine",          "InnoDB"},
         {"options",         QVariantHash()},
     });
+```
 
 </TabItem>
 <TabItem value={postgres} label={postgres_label}>
 
+```cpp
     #include <orm/db.hpp>
 
     using Orm::DB;
@@ -111,10 +114,12 @@ You can create and configure a new database connection using the `create` method
         {"prefix_indexes",     false},
         {"options",            QVariantHash()},
     });
+```
 
 </TabItem>
 <TabItem value={sqlite} label={sqlite_label}>
 
+```cpp
     #include <orm/db.hpp>
 
     using Orm::DB;
@@ -135,10 +140,12 @@ You can create and configure a new database connection using the `create` method
         {"prefix",                  ""},
         {"prefix_indexes",          false},
     });
+```
 
 </TabItem>
 <TabItem value={maria} label={maria_label}>
 
+```cpp
     #include <orm/db.hpp>
 
     using Orm::DB;
@@ -164,6 +171,7 @@ You can create and configure a new database connection using the `create` method
         {"engine",          "InnoDB"},
         {"options",         QVariantHash()},
     });
+```
 
 </TabItem>
 </Tabs>
@@ -171,6 +179,7 @@ You can create and configure a new database connection using the `create` method
 <Tabs className='tinyorm-configuration-full' groupId={database}>
 <TabItem value={mysql} label={mysql_label}>
 
+```cpp
     #include <orm/db.hpp>
     #include <orm/utils/configuration.hpp>
 
@@ -214,10 +223,12 @@ You can create and configure a new database connection using the `create` method
     //    {options_,        QVariantHash {{QStringLiteral("MYSQL_OPT_CONNECT_TIMEOUT"), 1},
     //                                    {QStringLiteral("MYSQL_OPT_READ_TIMEOUT"),    1}}},
     });
+```
 
 </TabItem>
 <TabItem value={postgres} label={postgres_label}>
 
+```cpp
     #include <orm/db.hpp>
     #include <orm/utils/configuration.hpp>
 
@@ -258,10 +269,12 @@ You can create and configure a new database connection using the `create` method
     //    {dont_drop,          QStringList {spatial_ref_sys}},
         {options_,           QVariantHash()},
     });
+```
 
 </TabItem>
 <TabItem value={sqlite} label={sqlite_label}>
 
+```cpp
     #include <orm/db.hpp>
     #include <orm/utils/configuration.hpp>
 
@@ -287,10 +300,12 @@ You can create and configure a new database connection using the `create` method
         {prefix_,                 EMPTY},
         {prefix_indexes,          false},
     });
+```
 
 </TabItem>
 <TabItem value={maria} label={maria_label}>
 
+```cpp
     #include <orm/db.hpp>
     #include <orm/utils/configuration.hpp>
 
@@ -333,6 +348,7 @@ You can create and configure a new database connection using the `create` method
     //    {options_,        QVariantHash {{QStringLiteral("MYSQL_OPT_CONNECT_TIMEOUT"), 1},
     //                                    {QStringLiteral("MYSQL_OPT_READ_TIMEOUT"),    1}}},
     });
+```
 
 </TabItem>
 </Tabs>
@@ -360,6 +376,7 @@ You can also use predefined string constants to avoid unnecessary `QString` inst
 
 SQLite databases are contained within a single file on your filesystem. You can create a new SQLite database using the `touch` command in your terminal: `touch database.sqlite3`. After the database has been created, you may configure SQLite database connection:
 
+```cpp
     #include <orm/db.hpp>
 
     // Ownership of a shared_ptr()
@@ -370,6 +387,7 @@ SQLite databases are contained within a single file on your filesystem. You can 
         {"check_database_exists",   true},
         {"prefix",                  ""},
     });
+```
 
 The `database` configuration value is the absolute path to the database. To enable foreign key constraints for SQLite connections, you should set the `foreign_key_constraints` configuration value to `true`, if this configuration value is not set, then the default of the SQLite driver will be used (currently the default is __disabled__).
 
@@ -390,6 +408,7 @@ You have to pass the `SSL_CA`, `SSL_CERT`, `SSL_KEY`, and `MYSQL_OPT_SSL_MODE` o
 <Tabs groupId={shell}>
 <TabItem value={pwsh} label={pwsh_label}>
 
+```cpp
     #include <orm/db.hpp>
 
     using Orm::DB;
@@ -406,10 +425,12 @@ You have to pass the `SSL_CA`, `SSL_CERT`, `SSL_KEY`, and `MYSQL_OPT_SSL_MODE` o
                                   {"MYSQL_OPT_SSL_MODE", "VERIFY_CA"}})},
         // highlight-end
     });
+```
 
 </TabItem>
 <TabItem value={bash} label={bash_label}>
 
+```cpp
     #include <orm/db.hpp>
 
     using Orm::DB;
@@ -426,12 +447,14 @@ You have to pass the `SSL_CA`, `SSL_CERT`, `SSL_KEY`, and `MYSQL_OPT_SSL_MODE` o
                                   {"MYSQL_OPT_SSL_MODE", "VERIFY_CA"}})},
         // highlight-end
     });
+```
 
 </TabItem>
 </Tabs>
 
 You may also use the `ConfigUtils::mysqlSslOptions()` or the `ConfigUtils::insertMySqlSslOptions()` methods to insert these options for you and define them using the `DB_MYSQL_SSL_CA`, `DB_MYSQL_SSL_CERT`, `DB_MYSQL_SSL_KEY`, and `DB_MYSQL_SSL_MODE` environment variables.
 
+```cpp
     #include <orm/db.hpp>
     #include <orm/utils/configuration.hpp>
 
@@ -447,12 +470,14 @@ You may also use the `ConfigUtils::mysqlSslOptions()` or the `ConfigUtils::inser
         // highlight-next-line
         {"options", ConfigUtils::mysqlSslOptions()},
     });
+```
 
 You can define these SSL-related options in the top-level configuration, they will be copied to the `options` option hash during configuration parsing. The top-level configuration takes precedence and overwrites the options in the `options` hash.
 
 <Tabs groupId={shell}>
 <TabItem value={pwsh} label={pwsh_label}>
 
+```cpp
     #include <orm/db.hpp>
 
     using Orm::DB;
@@ -469,10 +494,12 @@ You can define these SSL-related options in the top-level configuration, they wi
         {"MYSQL_OPT_SSL_MODE", "VERIFY_CA"},
         // highlight-end
     });
+```
 
 </TabItem>
 <TabItem value={bash} label={bash_label}>
 
+```cpp
     #include <orm/db.hpp>
 
     using Orm::DB;
@@ -489,6 +516,7 @@ You can define these SSL-related options in the top-level configuration, they wi
         {"MYSQL_OPT_SSL_MODE", "VERIFY_CA"},
         // highlight-end
     });
+```
 
 </TabItem>
 </Tabs>
@@ -505,6 +533,7 @@ You can also pass the `QString` to the `options` configuration separated by the 
 
 You have to pass the [`sslmode`](https://www.postgresql.org/docs/current/libpq-ssl.html#LIBPQ-SSL-SSLMODE-STATEMENTS) or the deprecated [`requiressl`](https://www.postgresql.org/docs/current/libpq-connect.html#LIBPQ-CONNECT-REQUIRESSL) options.
 
+```cpp
     #include <orm/db.hpp>
 
     using Orm::DB;
@@ -517,6 +546,7 @@ You have to pass the [`sslmode`](https://www.postgresql.org/docs/current/libpq-s
         // highlight-next-line
         {"options", QVariantHash({{"sslmode", "verify-full"}})},
     });
+```
 
 And place your __client__ certificates to the `~/.postgres/` on [Linux](https://www.postgresql.org/docs/current/libpq-ssl.html#LIBPQ-SSL-FILE-USAGE) and `$env:APPDATA/postgres/` on Windows. Everything is described in the PostgreSQL's [libpq client](https://www.postgresql.org/docs/current/libpq-ssl.html) and [server](https://www.postgresql.org/docs/15/ssl-tcp.html#SSL-FILE-USAGE) documentation.
 
@@ -525,6 +555,7 @@ If you want to keep your __client__ certificates in your own location, you can s
 <Tabs groupId={shell}>
 <TabItem value={pwsh} label={pwsh_label}>
 
+```cpp
     #include <orm/db.hpp>
 
     using Orm::DB;
@@ -542,10 +573,12 @@ If you want to keep your __client__ certificates in your own location, you can s
                                   {"sslrootcert", "C:/example/root.crt"}})},
                                   // highlight-end
     });
+```
 
 </TabItem>
 <TabItem value={bash} label={bash_label}>
 
+```cpp
     #include <orm/db.hpp>
 
     using Orm::DB;
@@ -563,6 +596,7 @@ If you want to keep your __client__ certificates in your own location, you can s
                                   {"sslrootcert", "/example/root.crt"}})},
                                   // highlight-end
     });
+```
 
 </TabItem>
 </Tabs>
@@ -572,6 +606,7 @@ You can define these SSL-related options in the top-level configuration, they wi
 <Tabs groupId={shell}>
 <TabItem value={pwsh} label={pwsh_label}>
 
+```cpp
     #include <orm/db.hpp>
 
     using Orm::DB;
@@ -588,10 +623,12 @@ You can define these SSL-related options in the top-level configuration, they wi
         {"sslrootcert", "C:/example/root.crt"},
         // highlight-end
     });
+```
 
 </TabItem>
 <TabItem value={bash} label={bash_label}>
 
+```cpp
     #include <orm/db.hpp>
 
     using Orm::DB;
@@ -608,12 +645,14 @@ You can define these SSL-related options in the top-level configuration, they wi
         {"sslrootcert", "/example/root.crt"},
         // highlight-end
     });
+```
 
 </TabItem>
 </Tabs>
 
 You may also use the `ConfigUtils::postgresSslOptions()` or the `ConfigUtils::insertPostgresSslOptions()` methods to insert the `sslmode`, `sslcert`, `sslkey`, and `sslrootcert` options for you and define them using the `DB_PGSQL_SSLMODE`, `DB_PGSQL_SSLCERT`, `DB_PGSQL_SSLKEY`, and `DB_PGSQL_SSLROOTCERT` environment variable.
 
+```cpp
     #include <orm/db.hpp>
     #include <orm/utils/configuration.hpp>
 
@@ -629,6 +668,7 @@ You may also use the `ConfigUtils::postgresSslOptions()` or the `ConfigUtils::in
         // highlight-next-line
         {"options", ConfigUtils::postgresSslOptions()},
     });
+```
 
 :::info
 The PostgreSQL's libpq client library provides the [`PGSSLMODE`](https://www.postgresql.org/docs/current/libpq-envars.html#id-1.7.3.22.3.4.13.1.1), [`PGSSLCERT`](https://www.postgresql.org/docs/current/libpq-envars.html#id-1.7.3.22.3.4.16.1.1), [`PGSSLKEY`](https://www.postgresql.org/docs/current/libpq-envars.html#id-1.7.3.22.3.4.17.1.1), and [`PGSSLROOTCERT`](https://www.postgresql.org/docs/current/libpq-envars.html#id-1.7.3.22.3.4.18.1.1) environment variables, so you don't have to use TinyORM's `options` configuration and may use these environment variables instead.
@@ -652,6 +692,7 @@ The first argument passed to the `select` method is the SQL query, while the sec
 
 The `select` method returns a `QSqlQuery` containing the results of the query, where each result can be accessed by `QSqlQuery::next` method. Look into the `QSqlQuery` documentation on how to obtain results from the "query". You may access each column's value by `QSqlQuery::value` method. The first `bool` return value is the value returned from `QSqlQuery::exec` method:
 
+```cpp
     #include <QDebug>
 
     #include <orm/db.hpp>
@@ -660,11 +701,13 @@ The `select` method returns a `QSqlQuery` containing the results of the query, w
 
     while(users.next())
         qDebug() << users.value("name").toString();
+```
 
 #### Selecting Scalar Values
 
 Sometimes your database query may result in a single, scalar value. Instead of being required to retrieve the query's scalar result from a record instance, TinyORM allows you to retrieve this value directly using the `scalar` shortcut method:
 
+```cpp
     #include <orm/db.hpp>
 
     auto states = DB::scalar(
@@ -677,19 +720,23 @@ Sometimes your database query may result in a single, scalar value. Instead of b
         "select count(case when state = ? then 1 end) as states from comments",
         {"pending"}
     );
+```
 
 #### Running An Insert Statement
 
 To execute an `insert` statement, you may use the `insert` method on the `DB` facade. Like `select`, this method accepts the SQL query as its first argument and bindings as its second argument and returns `QSqlQuery`:
 
+```cpp
     #include <orm/db.hpp>
 
     DB::insert("insert into users (id, name) values (?, ?)", {1, "Marc"});
+```
 
 #### Running An Update Statement
 
 The `update` method should be used to update existing records in the database. The number of rows affected by the statement and `QSqlQuery` is returned by the method as `std::tuple<int, QSqlQuery>`:
 
+```cpp
     #include <QDateTime>
 
     #include <orm/db.hpp>
@@ -701,14 +748,17 @@ The `update` method should be used to update existing records in the database. T
 
     if (!affected)
         qDebug() << "Any record was updated.";
+```
 
 #### Running A Delete Statement
 
 The `remove` method should be used to delete records from the database. Like `update`, the number of affected rows and `QSqlQuery` will be returned by the method as `std::tuple<int, QSqlQuery>`:
 
+```cpp
     #include <orm/db.hpp>
 
     auto [affected, query] = DB::remove("delete from users");
+```
 
 :::note
 `delete` can not be used as the method name because it is the reserved word.
@@ -718,7 +768,9 @@ The `remove` method should be used to delete records from the database. Like `up
 
 Some database statements do not return any value. For these types of operations, you may use the `statement` method on the `DB` facade:
 
+```cpp
     DB::statement("drop table users");
+```
 
 :::tip
 `DB::statement` method should be used for [DDL](https://en.wikipedia.org/wiki/Data_definition_language) queries, don't use it for "select" queries because it internally calls `recordsHaveBeenModified` method.
@@ -728,7 +780,9 @@ Some database statements do not return any value. For these types of operations,
 
 Sometimes you may want to execute an SQL statement without binding any values. You may use the `DB` facade's `unprepared` method to accomplish this:
 
+```cpp
     DB::unprepared("update users set votes = 100 where name = 'Dries'");
+```
 
 :::caution
 Since unprepared statements do not bind parameters, they may be vulnerable to SQL injection. You should never allow user controlled values within an unprepared statement.
@@ -738,7 +792,9 @@ Since unprepared statements do not bind parameters, they may be vulnerable to SQ
 
 When using the `DB` facade's `statement` methods within transactions, you must be careful to avoid statements that cause [implicit commits](https://dev.mysql.com/doc/refman/8.3/en/implicit-commit.html). These statements will cause the database engine to indirectly commit the entire transaction, leaving TinyORM unaware of the database's transaction level. An example of such a statement is creating a database table:
 
+```cpp
     DB::statement("create table users (name varchar(255) null)");
+```
 
 Please refer to the MySQL manual for [a list of all statements](https://dev.mysql.com/doc/refman/8.3/en/implicit-commit.html) that trigger implicit commits.
 
@@ -746,6 +802,7 @@ Please refer to the MySQL manual for [a list of all statements](https://dev.mysq
 
 You can configure multiple database connections at once during `DatabaseManager` instantiation using the `DB::create` overload, where the first argument is a hash of multiple connections and is of type `QHash<QString, QVariantHash>` and the second argument is the name of the default connection:
 
+```cpp
     #include <orm/db.hpp>
 
     // Ownership of a shared_ptr()
@@ -770,20 +827,27 @@ You can configure multiple database connections at once during `DatabaseManager`
             {"prefix",                  ""},
         }},
     }, "mysql");
+```
 
 If your application needs to use multiple connections, you may access each connection via the `connection` method provided by the `DB` facade. The connection name passed to the `connection` method should correspond to one of the connections key listed in your configuration:
 
+```cpp
     #include <orm/db.hpp>
 
     auto query = DB::connection("mysql_test").select(...);
+```
 
 You may access the raw underlying `QSqlQuery` instance of a connection using the `getQtQuery` method on a connection instance:
 
+```cpp
     auto query = DB::connection().getQtQuery();
+```
 
 Or you can use the shortcut method `qtQuery` provided by the `DB` facade:
 
+```cpp
     auto query = DB::qtQuery();
+```
 
 ## Database Transactions
 
@@ -791,21 +855,29 @@ Or you can use the shortcut method `qtQuery` provided by the `DB` facade:
 
 If you would like to begin a transaction manually and have complete control over rollbacks and commits, you may use the `beginTransaction` method provided by the `DB` facade:
 
+```cpp
     #include <orm/db.hpp>
 
     DB::beginTransaction();
+```
 
 You can rollback the transaction via the `rollBack` method:
 
+```cpp
     DB::rollBack();
+```
 
 Lastly, you can commit a transaction via the `commit` method:
 
+```cpp
     DB::commit();
+```
 
 All transaction methods accept a connection name as the optional argument:
 
+```cpp
     DB::beginTransaction("mysql_test");
+```
 
 :::tip
 The `DB` facade's transaction methods control the transactions for both the [query builder](database/query-builder.mdx) and [TinyORM](tinyorm/getting-started.mdx).

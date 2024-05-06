@@ -110,6 +110,7 @@ The `--path` and `--realpath` options work the same as for the [`make:migration`
 
 Let's examine a basic model class and discuss some of TinyORM's key conventions:
 
+```cpp
     #pragma once
     #ifndef FLIGHT_HPP
     #define FLIGHT_HPP
@@ -126,6 +127,7 @@ Let's examine a basic model class and discuss some of TinyORM's key conventions:
     };
 
     #endif // FLIGHT_HPP
+```
 
 :::tip
 The `TinyORM` source tree contains the [`Torrent`](https://github.com/silverqx/TinyORM/blob/main/tests/models/models/torrent.hpp#L43) example model that also acts as the full-fledged example model. It has defined and also nicely commented all possible features that model classes can use or define.
@@ -137,6 +139,7 @@ After glancing at the example above, you may have noticed that we did not tell T
 
 If your model's corresponding database table does not fit this convention, you may manually specify the model's table name by defining the private `u_table` data member on the model:
 
+```cpp
     #include <orm/tiny/model.hpp>
 
     using Orm::Tiny::Model;
@@ -150,11 +153,13 @@ If your model's corresponding database table does not fit this convention, you m
         /*! The table associated with the model. */
         QString u_table {"flights"};
     };
+```
 
 ### Primary Keys
 
 TinyORM will also assume that each model's corresponding database table has a primary key column named `id`. If necessary, you may define a private `u_primaryKey` data member on your model to specify a different column that serves as your model's primary key:
 
+```cpp
     #include <orm/tiny/model.hpp>
 
     using Orm::Tiny::Model;
@@ -168,9 +173,11 @@ TinyORM will also assume that each model's corresponding database table has a pr
         /*! The primary key associated with the table. */
         QString u_primaryKey {"id"};
     };
+```
 
 In addition, TinyORM assumes that the primary key is an incrementing integer value. If you wish to use a non-incrementing or a non-numeric primary key you must define a private `u_incrementing` data member on your model that is set to `false`:
 
+```cpp
     #include <orm/tiny/model.hpp>
 
     using Orm::Tiny::Model;
@@ -184,6 +191,7 @@ In addition, TinyORM assumes that the primary key is an incrementing integer val
         /*! Indicates if the model's ID is auto-incrementing. */
         bool u_incrementing = false;
     };
+```
 
 :::caution
 Non-numeric primary keys are not currently implemented, `u_incrementing` code logic is fully implemented, but it is only one part to make it fully work.
@@ -197,6 +205,7 @@ TinyORM requires each model to have at least one uniquely identifying "ID" that 
 
 By default, TinyORM expects `created_at` and `updated_at` columns to exist on your model's corresponding database table.  TinyORM will automatically set these column's values when models are created or updated. If you do not want these columns to be automatically managed by TinyORM, you should define a private `u_timestamps` data member on your model with a value of `false`:
 
+```cpp
     #include <orm/tiny/model.hpp>
 
     using Orm::Tiny::Model;
@@ -210,6 +219,7 @@ By default, TinyORM expects `created_at` and `updated_at` columns to exist on yo
         /*! Indicates if the model should be timestamped. */
         bool u_timestamps = false;
     };
+```
 
 <a id='timestamps-u_dates' />
 
@@ -217,6 +227,7 @@ The `u_dates` static data member controls the casting of timestamp attributes. T
 
 You may add additional columns to the `u_dates` list. After that, these columns will be automatically formatted using the format in the `u_dateFormat` data member during the `setAttribute` method call:
 
+```cpp
     class Flight final : public Model<Flight>
     {
         friend Model;
@@ -226,9 +237,11 @@ You may add additional columns to the `u_dates` list. After that, these columns 
         /*! The attributes that should be mutated to dates. */
         inline static const QStringList u_dates {"departure_at"};
     };
+```
 
 If you need to customize the format of your model's timestamps, set the private `u_dateFormat` data member on your model. This data member determines how date attributes are stored in the database, supported formats are described in the `QDateTime` documentation:
 
+```cpp
     #include <orm/tiny/model.hpp>
 
     using Orm::Tiny::Model;
@@ -242,11 +255,14 @@ If you need to customize the format of your model's timestamps, set the private 
         /*! The storage format of the model's date columns. */
         QString u_dateFormat {"yyyy-MM-dd HH:mm:ss"};
     };
+```
 
 If you need to customize the format of your model's time columns, set the private `u_timeFormat` data member on your model. This data member determines how time attributes are stored in the database, supported formats are described in the `QTime` documentation. The default value for `u_timeFormat` is `HH:mm:ss`:
 
+```cpp
     /*! The storage format of the model's time columns. */
     QString u_timeFormat {"HH:mm:ss.zzz"};
+```
 
 The default value for datetime or timestamp columns is `yyyy-MM-dd HH:mm:ss` and for time columns is `HH:mm:ss`.
 
@@ -254,22 +270,27 @@ The default value for datetime or timestamp columns is `yyyy-MM-dd HH:mm:ss` and
 
 You can set the `u_dateFormat` to `U` if you want to store dates in the database as unix timestamps:
 
+```cpp
     QString u_dateFormat {QLatin1Char('U')};
+```
 
 In this case __all__ date attributes set in the `u_dates` will be handled as unix timestamps, so also the `created_at` and `updated_at` timestamp attributes.
 
 To create unix timestamp columns using the [tom migrations](/database/migrations.mdx) you should use `integer` types:
 
+```cpp
     Schema::table("flights", [](Blueprint &table)
     {
         table.bigInteger("created_at").nullable();
         table.bigInteger("updated_at").nullable();
     });
+```
 
 ##### Custom timestamp column names
 
 If you need to customize the names of the columns used to store the timestamps, you may define `CREATED_AT` and `UPDATED_AT` private static getter methods on your model:
 
+```cpp
     #include <orm/tiny/model.hpp>
 
     using Orm::Tiny::Model;
@@ -285,29 +306,37 @@ If you need to customize the names of the columns used to store the timestamps, 
         /*! The name of the "updated at" column. */
         static QString UPDATED_AT() { return QStringLiteral("updated_date"); }
     };
+```
 
 #### Touching timestamps
 
 You can explicitly touch timestamps using the `touch` method defined on the Model:
 
+```cpp
     auto flight = Flight::find(1);
 
     flight->touch();
     flight->touch("added_on"); // Custom column name
+```
 
 You can also touch multiple rows at once using the `touch` method defined on the TinyBuilder:
 
+```cpp
     auto [affected, query] = Flight::whereEq("status", "new")->touch();
+```
 
 The `touch` method may also be called when building a [relationship](/tinyorm/relationships.mdx) query:
 
+```cpp
     flight->history()->touch();
     flight->history()->whereEq("status", "new").touch();
+```
 
 ### Database Connections
 
 By default, all TinyORM models will use the default database connection that is configured for your application. If you would like to specify a different connection that should be used when interacting with a particular model, you should define a `u_connection` private data member on the model:
 
+```cpp
     #include <orm/tiny/model.hpp>
 
     using Orm::Tiny::Model;
@@ -321,15 +350,19 @@ By default, all TinyORM models will use the default database connection that is 
         /*! The database connection that should be used by the model. */
         QString u_connection {"sqlite"};
     };
+```
 
 In special cases, when you want to query the database through a different connection, you can use `Model::on` method, which takes the connection name as the first argument:
 
+```cpp
     auto user = User::on("sqlite")->find(1);
+```
 
 ## Default Attribute Values
 
 By default, a newly instantiated model instance will not contain any attribute values. If you would like to define the default values for some of your model's attributes, you may define an `u_attributes` data member on your model, it has to be **static** and can be **const**:
 
+```cpp
     #include <QDateTime>
 
     #include <orm/tiny/model.hpp>
@@ -349,6 +382,7 @@ By default, a newly instantiated model instance will not contain any attribute v
             {"added_on", QDateTime::currentDateTimeUtc()},
         };
     };
+```
 
 :::caution
 Use the `Model::instance` or `Model::instanceHeap` related methods to instantiate a model that contains a `QDateTime` in Default Attribute Values, or if attributes you want to pass to the model's constructor contain a `QDateTime` instance <small>(problem is described below)</small>.
@@ -366,21 +400,25 @@ So if the `Model::u_connection` is not yet initialized, `TinyORM` can't obtain t
 
 Once you have created a model and its associated database table, you are ready to start retrieving data from your database. You can think of each TinyORM model as a powerful [query builder](database/query-builder.mdx) allowing you to fluently query the database table associated with the model. The model's `all` method will retrieve all of the records from the model's associated database table:
 
+```cpp
     #include <QDebug>
 
     #include "models/flight.hpp"
 
     for (const auto &flight : Flight::all())
         qDebug() << flight["name"].toString();
+```
 
 #### Building Queries
 
 The TinyORM `all` method will return all of the results in the model's table. However, since each TinyORM model serves as a [query builder](database/query-builder.mdx), you may add additional constraints to queries and then invoke the `get` method to retrieve the results:
 
+```cpp
     auto flights = Flight::whereEq("active", 1)
                ->orderBy("name")
                .take(10)
                .get();
+```
 
 :::tip
 Since TinyORM models are query builders, you should review all of the methods provided by TinyORM's [query builder](database/query-builder.mdx). You may use any of these methods when writing your TinyORM queries.
@@ -394,12 +432,15 @@ All the static methods defined on the `Orm::Tiny::Model<Derived, AllRelations...
 
 If you already have an instance of the TinyORM model that was retrieved from the database, you can "refresh" the model using the `fresh` and `refresh` methods. The `fresh` method will re-retrieve the model from the database. The existing model instance will not be affected:
 
+```cpp
     auto flight = Flight::whereEq("number", "FR 900")->first();
 
     auto freshFlight = flight->fresh();
+```
 
 The `refresh` method will re-hydrate the existing model using fresh data from the database. In addition, all of its loaded relationships will be refreshed as well:
 
+```cpp
     auto flight = Flight::whereEq("number", "FR 900")->first();
 
     flight->setAttribute("number", "FR 456");
@@ -407,17 +448,20 @@ The `refresh` method will re-hydrate the existing model using fresh data from th
     flight->refresh();
 
     flight->getAttribute("number"); // "FR 900"
+```
 
 ### Containers
 
 As we have seen, TinyORM methods like `all` and `get` retrieve multiple records from the database. Since these methods return a `QVector<Model>`, you can iterate it like any other container with the [Range-based for loop](https://en.cppreference.com/w/cpp/language/range-for), [STL-Style Iterators](https://doc.qt.io/qt/containers.html#stl-style-iterators), [Java-Style Iterators](https://doc.qt.io/qt/containers.html#java-style-iterators) or [Ranges](https://www.walletfox.com/course/quickref_range_v3.php).
 
+```cpp
     #include <QDebug>
 
     #include "models/flight.hpp"
 
     for (const auto &flight : Flight::all())
         qDebug() << flight["name"].toString();
+```
 
 :::note
 An `all` method is defined on the `Orm::Tiny::Model<Derived, AllRelations...>` class and `get` method is defined on the `Orm::Tiny::Builder`, may be also referred as `TinyBuilder`, and on the `Orm::Query::Builder` alias `QueryBuilder`.
@@ -429,6 +473,7 @@ Your application may run out of memory if you attempt to load tens of thousands 
 
 The `chunk` method will retrieve a subset of TinyORM models, passing them to a lambda expression for processing. Since only the current chunk of TinyORM models is retrieved at a time, the `chunk` method will provide significantly reduced memory usage when working with a large number of models:
 
+```cpp
     Flight::chunk(200, [](QVector<Flight> &&flights, const int /*unused*/)
     {
         for (auto &&flight : flights) {
@@ -437,11 +482,13 @@ The `chunk` method will retrieve a subset of TinyORM models, passing them to a l
 
         return true;
     });
+```
 
 The first argument passed to the `chunk` method is the number of records you wish to receive per "chunk". The lambda expression passed as the second argument will be invoked for each chunk that is retrieved from the database. A database query will be executed to retrieve each chunk of records passed to the lambda expression.
 
 If you are filtering the results of the `chunk` method based on a column that you will also be updating while iterating over the results, you should use the `chunkById` method. Using the `chunk` method in these scenarios could lead to unexpected and inconsistent results. Internally, the `chunkById` method will always retrieve models with an `id` column greater than the last model in the previous chunk:
 
+```cpp
     Flight::whereEq("departed", true)
         ->chunkById(200, [](QVector<Flight> &&flights, const int /*unused*/)
         {
@@ -450,6 +497,7 @@ If you are filtering the results of the `chunk` method based on a column that yo
 
             return true;
         });
+```
 
 ### Advanced Subqueries
 
@@ -459,6 +507,7 @@ TinyORM also offers advanced subquery support, which allows you to pull informat
 
 Using the subquery functionality available to the query builder's `select` and `addSelect` methods, we can select all of the `destinations` and the name of the flight that most recently arrived at that destination using a single query:
 
+```cpp
     #include "models/destination.hpp"
     #include "models/flight.hpp"
 
@@ -470,11 +519,13 @@ Using the subquery functionality available to the query builder's `select` and `
                 .toBase(),
             "last_flight")
         ->get();
+```
 
 #### Subquery Ordering
 
 In addition, the query builder's `orderBy` function supports subqueries. Continuing to use our flight example, we may use this functionality to sort all destinations based on when the last flight arrived at that destination. Again, this may be done while executing a single database query:
 
+```cpp
     return Destination::orderByDesc(
             Flight::select("arrived_at")
                 ->whereColumnEq("destination_id", "destinations.id")
@@ -482,11 +533,13 @@ In addition, the query builder's `orderBy` function supports subqueries. Continu
                 .limit(1)
                 .toBase())
         ->get();
+```
 
 ## Retrieving Single Models / Aggregates {#retrieving-single-models-and-aggregates}
 
 In addition to retrieving all of the records matching a given query, you may also retrieve single records using the `find`, `first`, `firstWhere`, or `firstWhereEq` methods. Instead of returning a vector of models, these methods return a single model instance:
 
+```cpp
     #include "models/flight.hpp"
 
     // Retrieve a model by its primary key...
@@ -500,9 +553,11 @@ In addition to retrieving all of the records matching a given query, you may als
 
     // Alternative firstWhere method syntax
     auto flight = Flight::firstWhereEq("active", 1);
+```
 
 Sometimes you may wish to perform some other action if no results are found. The `findOr` methods will return a single model instance or, if no results are found, execute the given lambda expression. The value returned by the lambda will be considered the result of the method:
 
+```cpp
     auto flight = Flight::findOr(1, [] {
         // ...
     });
@@ -516,9 +571,11 @@ Sometimes you may wish to perform some other action if no results are found. The
         // ...
         return Flight::find(10);
     });
+```
 
 To obtain only a subset of the model's attributes you may use the `Model::only` method, it returns the `QVector<AttributeItem>`:
 
+```cpp
     #include "models/flight.hpp"
 
     using Orm::Constants::ID;
@@ -527,14 +584,17 @@ To obtain only a subset of the model's attributes you may use the `Model::only` 
     auto flight = Flight::find(1);
 
     auto attributes = flight->only({ID, NAME});
+```
 
 #### Not Found Exceptions
 
 Sometimes you may wish to throw an exception if a model is not found. The `findOrFail` and `firstOrFail` methods will retrieve the first result of the query; however, if no result is found, an `Orm::Tiny::ModelNotFoundError` will be thrown:
 
+```cpp
     auto flight = Flight::findOrFail(1);
 
     auto flight = Flight::where("legs", ">", 3)->firstOrFail();
+```
 
 ### Retrieving Or Creating Models
 
@@ -542,6 +602,7 @@ The `firstOrCreate` method will attempt to locate a database record using the gi
 
 The `firstOrNew` method, like `firstOrCreate`, will attempt to locate a record in the database matching the given attributes. However, if a model is not found, a new model instance will be returned. Note that the model returned by `firstOrNew` has not yet been persisted to the database. You will need to manually call the `save` method to persist it:
 
+```cpp
     #include "models/flight.hpp"
 
     // Retrieve flight by name or create it if it doesn't exist...
@@ -565,14 +626,17 @@ The `firstOrNew` method, like `firstOrCreate`, will attempt to locate a record i
         {{"name", "Tokyo to Sydney"}},
         {{"delayed", 1}, {"arrival_time", "11:30"}}
     );
+```
 
 ### Retrieving Aggregates
 
 When interacting with TinyORM models, you may also use the `count`, `sum`, `max`, and other [aggregate methods](/database/query-builder.mdx#aggregates) provided by the [query builder](/database/query-builder.mdx). As you might expect, these methods return a scalar value instead of a TinyORM model instance:
 
+```cpp
     auto count = Flight::whereEq("active", 1)->count();
 
     auto max = Flight::whereEq("active", 1)->max("price");
+```
 
 ## Inserting & Updating Models {#inserting-and-updating-models}
 
@@ -580,22 +644,26 @@ When interacting with TinyORM models, you may also use the `count`, `sum`, `max`
 
 Of course, when using TinyORM, we don't only need to retrieve models from the database. We also need to insert new records. Thankfully, TinyORM makes it simple. To insert a new record into the database, you should instantiate a new model instance and set attributes on the model. Then, call the `save` method on the model instance:
 
+```cpp
     #include "models/flight.hpp"
 
     // Store a new flight in the database
     Flight flight;
     flight.setAttribute("name", "Slovakia to Czech");
     flight.save();
+```
 
 In this example, we assign the `name` attribute of the `Flight` model instance. When we call the `save` method, a record will be inserted into the database. The model's `created_at` and `updated_at` timestamps will automatically be set when the `save` method is called, so there is no need to set them manually.
 
 Alternatively, you may use the `create` method to "save" a new model using a single C++ statement. The inserted model instance will be returned to you by the `create` method:
 
+```cpp
     #include "models/flight.hpp"
 
     auto flight = Flight::create({
         {"name", "London to Paris"},
     });
+```
 
 However, before using the `create` method, you will need to specify either a `u_fillable` or `u_guarded` static data member on your model class. These static data members are required because all TinyORM models are protected against mass assignment vulnerabilities by default. To learn more about mass assignment, please consult the [mass assignment documentation](#mass-assignment).
 
@@ -603,6 +671,7 @@ However, before using the `create` method, you will need to specify either a `u_
 
 The `save` method may also be used to update models that already exist in the database. To update a model, you should retrieve it and set any attributes you wish to update. Then, you should call the model's `save` method. Again, the `updated_at` timestamp will automatically be updated, so there is no need to manually set its value:
 
+```cpp
     #include "models/flight.hpp"
 
     auto flight = Flight::find(1);
@@ -610,14 +679,17 @@ The `save` method may also be used to update models that already exist in the da
     flight->setAttribute("name", "Paris to London");
 
     flight->save();
+```
 
 #### Mass Updates
 
 Updates can also be performed against models that match a given query. In this example, all flights that are `active` and have a `destination` of `San Diego` will be marked as delayed:
 
+```cpp
     Flight::whereEq("active", 1)
           ->whereEq("destination", "San Diego")
           .update({{"delayed", 1}});
+```
 
 The `update` method expects the `QVector<Orm::UpdateItem>` of column and value pairs representing the columns that should be updated.
 
@@ -627,6 +699,7 @@ TinyORM provides the `isDirty`, `isClean`, and `wasChanged` methods to examine t
 
 The `isDirty` method determines if any of the model's attributes have been changed since the model was retrieved. You may pass a specific attribute name to the `isDirty` method to determine if a particular attribute is dirty. The `isClean` will determine if an attribute has remained unchanged since the model was retrieved. This method also accepts an optional attribute argument:
 
+```cpp
     #include "models/user.hpp"
 
     auto user = User::create({
@@ -649,9 +722,11 @@ The `isDirty` method determines if any of the model's attributes have been chang
 
     user.isDirty(); // false
     user.isClean(); // true
+```
 
 The `wasChanged` method determines if any attributes were changed after the model was last saved into the database. If needed, you may pass an attribute name to see if a particular attribute was changed:
 
+```cpp
     auto user = User::create({
         {"first_name", "Silver"},
         {"last_name", "Zachara"},
@@ -667,16 +742,19 @@ The `wasChanged` method determines if any attributes were changed after the mode
     user.wasChanged(); // true
     user.wasChanged("title"); // true
     user.wasChanged("first_name"); // false
+```
 
 ### Mass Assignment
 
 You may use the `create` method to "save" a new model using a single C++ statement. The inserted model instance will be returned to you by the method:
 
+```cpp
     #include "models/flight.hpp"
 
     auto flight = Flight::create({
         {"name", "London to Paris"},
     });
+```
 
 However, before using the `create` method, you will need to specify either a `u_fillable` or `u_guarded` static data member on your model class. These data members are required because all TinyORM models are protected against mass assignment vulnerabilities by default.
 
@@ -684,6 +762,7 @@ A mass assignment vulnerability occurs when a user passes an unexpected HTTP req
 
 So, to get started, you should define which model attributes you want to make mass assignable. You may do this using the `u_fillable` static data member on the model. For example, let's make the `name` attribute of our `Flight` model mass assignable:
 
+```cpp
     #include <orm/tiny/model.hpp>
 
     using Orm::Tiny::Model;
@@ -699,19 +778,25 @@ So, to get started, you should define which model attributes you want to make ma
             "name",
         };
     };
+```
 
 Once you have specified which attributes are mass assignable, you may use the `create` method to insert a new record in the database. The `create` method returns the newly created model instance:
 
+```cpp
     auto flight = Flight::create({{"name", "London to Paris"}});
+```
 
 If you already have a model instance, you may use the `fill` method to populate it with the vector of attributes:
 
+```cpp
     flight.fill({{"name", "Amsterdam to Frankfurt"}});
+```
 
 #### Allowing Mass Assignment
 
 If you would like to make all of your attributes mass assignable, you may define your model's `u_guarded` static data member as an empty vector. If you choose to unguard your model, you should take special care to always hand-craft the vectors passed to TinyORM's `fill`, `create`, and `update` methods:
 
+```cpp
     #include <orm/tiny/model.hpp>
 
     using Orm::Tiny::Model;
@@ -725,6 +810,7 @@ If you would like to make all of your attributes mass assignable, you may define
         /*! The attributes that aren't mass assignable. */
         inline static QStringList u_guarded {};
     };
+```
 
 ### Upserts
 
@@ -732,10 +818,12 @@ Occasionally, you may need to update an existing model or create a new model if 
 
 In the example below, if a flight exists with a `departure` location of `Oakland` and a `destination` location of `San Diego`, its `price` and `discounted` columns will be updated. If no such flight exists, a new flight will be created which has the attributes resulting from merging the first argument vector with the second argument vector:
 
+```cpp
     auto flight = Flight::updateOrCreate(
         {{"departure", "Oakland"}, {"destination", "San Diego"}},
         {{"price", 99}, {"discounted", 1}}
     );
+```
 
 :::note
 The `firstOrCreate` and `updateOrCreate` methods persist the model, so there's no need to manually call the `save` method.
@@ -743,12 +831,14 @@ The `firstOrCreate` and `updateOrCreate` methods persist the model, so there's n
 
 If you would like to perform multiple "upserts" in a single query, then you should use the `upsert` method instead. The method's first argument consists of the values to insert or update, while the second argument lists the column(s) that uniquely identify records within the associated table. The method's third and final argument is the vector of the columns that should be updated if a matching record already exists in the database. The `upsert` method will automatically set the `created_at` and `updated_at` timestamps if timestamps are enabled on the model:
 
+```cpp
     Flight::upsert(
         {{{"departure", "Oakland"}, {"destination", "San Diego"}, {"price", 99}},
          {{"departure", "Chicago"}, {"destination", "New York"},  {"price", 150}}},
         {"departure", "destination"},
         {"price"}
     );
+```
 
 :::caution
 All databases except SQL Server require the columns in the second argument of the `upsert` method to have a "primary" or "unique" index. In addition, the MySQL database driver ignores the second argument of the `upsert` method and always uses the "primary" and "unique" indexes of the table to detect existing records.
@@ -762,19 +852,23 @@ Row and column aliases will be used with the MySQL server >=8.0.19 instead of th
 
 To delete a model, you may call the `remove`, or an alias `deleteRow` method on the model instance:
 
+```cpp
     #include "models/flight.hpp"
 
     auto flight = Flight::find(1);
 
     flight->remove();
+```
 
 #### Deleting An Existing Model By Its Primary Key
 
 In the example above, we are retrieving the model from the database before calling the `remove` method. However, if you know the primary key of the model, you may delete the model without explicitly retrieving it by calling the `destroy` method.  In addition to accepting the single primary key, the `destroy` method can accept multiple primary keys:
 
+```cpp
     Flight::destroy(1);
 
     Flight::destroy({1, 2, 3});
+```
 
 :::note
 The `destroy` method loads models from the database and calls the `remove` method on each model individually, the reason for this is future compatibility with events.
@@ -784,12 +878,15 @@ The `destroy` method loads models from the database and calls the `remove` metho
 
 Of course, you may build the query to delete all models matching your query's criteria. In this example, we will delete all flights that are marked as inactive:
 
+```cpp
     auto deletedRows = Flight::whereEq("active", 0)->remove();
+```
 
 ### Soft Deleting
 
 In addition to actually removing records from your database, TinyORM can also "soft delete" models. When models are soft deleted, they are not actually removed from your database. Instead, a `deleted_at` attribute is set on the model indicating the date and time at which the model was "deleted". To enable soft deletes for a model, add the `Orm::Tiny::SoftDeletes` base class to the model:
 
+```cpp
     #include <orm/tiny/model.hpp>
     #include <orm/tiny/softdeletes.hpp>
 
@@ -806,6 +903,7 @@ In addition to actually removing records from your database, TinyORM can also "s
         /*! The table associated with the model. */
         QString u_table {"flights"};
     };
+```
 
 :::info
 The `SoftDeletes` base class will automatically cast the `deleted_at` attribute to the `QDateTime` instance for you (it adds the `deleted_at` column to the model's [`u_dates`](#timestamps-u_dates) list).
@@ -813,6 +911,7 @@ The `SoftDeletes` base class will automatically cast the `deleted_at` attribute 
 
 You should also add the `deleted_at` column to your database table. The TinyORM [schema builder](/database/migrations.mdx) contains a helper method to create this column:
 
+```cpp
     Schema::table("flights", [](Blueprint &table)
     {
         table.softDeletes();
@@ -822,40 +921,53 @@ You should also add the `deleted_at` column to your database table. The TinyORM 
     {
         table.dropSoftDeletes();
     });
+```
 
 Now, when you call the `remove` or `deleteModel` method on the model, the `deleted_at` column will be set to the current date and time. However, the model's database record will be left in the table. When querying a model that uses soft deletes, the soft deleted models will automatically be excluded from all query results.
 
 To determine if a given model instance has been soft deleted, you may use the `trashed` method:
 
+```cpp
     if (flight->trashed()) {
         //
     }
+```
 
 #### Restoring Soft Deleted Models
 
 Sometimes you may wish to "un-delete" a soft deleted model. To restore a soft deleted model, you may call the `restore` method on a model instance. The `restore` method will set the model's `deleted_at` column to `null`:
 
+```cpp
     flight->restore();
+```
 
 You may also use the `restore` method in a query to restore multiple models:
 
+```cpp
     Flight::withTrashed()
             ->whereEq("airline_id", 1)
             .restore();
+```
 
 The `restore` method may also be used when building [relationship](/tinyorm/relationships.mdx) queries:
 
+```cpp
     flight->history()->restore();
+```
 
 #### Permanently Deleting Models
 
 Sometimes you may need to truly remove a model from your database. You may use the `forceDelete` method (or it's alias `forceRemove`) to permanently remove a soft deleted model from the database table:
 
+```cpp
     flight->forceDelete();
+```
 
 You may also use the `forceDelete` method when building TinyORM relationship queries:
 
+```cpp
     flight->history()->forceDelete();
+```
 
 ### Querying Soft Deleted Models
 
@@ -863,48 +975,63 @@ You may also use the `forceDelete` method when building TinyORM relationship que
 
 As noted above, soft deleted models will automatically be excluded from query results. However, you may force soft deleted models to be included in a query's results by calling the `withTrashed` method on the query:
 
+```cpp
     auto flights = Flight::withTrashed()
                            ->whereEq("account_id", 1)
                            .get();
+```
 
 The `withTrashed` method may also be called when building a [relationship](/tinyorm/relationships.mdx) query:
 
+```cpp
     flight->history()->withTrashed().get();
+```
 
 #### Retrieving Only Soft Deleted Models
 
 The `onlyTrashed` method will retrieve **only** soft deleted models:
 
+```cpp
     auto flights = Flight::onlyTrashed()
                            ->whereEq("airline_id", 1)
                            .get();
+```
 
 The `onlyTrashed` method may also be called when building a [relationship](/tinyorm/relationships.mdx) query:
 
+```cpp
     flight->history()->onlyTrashed().get();
+```
 
 #### Excluding Soft Deleted Models
 
 As noted above, soft deleted models will automatically be excluded from query results. However, you may force soft deleted models to be **excluded** in a query's results by calling the `withoutTrashed` method on the query:
 
+```cpp
     auto flights = Flight::withoutTrashed()
                            ->whereEq("account_id", 1)
                            .get();
+```
 
 The `withoutTrashed` method may also be called when building a [relationship](/tinyorm/relationships.mdx) query:
 
+```cpp
     flight->history()->withoutTrashed().get();
+```
 
 ### Truncate Table
 
 You may call the `truncate` method to delete all of the model's associated database records. The `truncate` operation will also reset any auto-incrementing IDs on the model's associated table:
 
+```cpp
     Flight::truncate();
+```
 
 ## Replicating Models
 
 You may create an unsaved copy of an existing model instance using the `replicate` method. This method is particularly useful when you have model instances that share many of the same attributes:
 
+```cpp
     auto shipping = Address::create({
         {"type", "shipping"},
         {"line_1", "123 Example Street"},
@@ -920,9 +1047,11 @@ You may create an unsaved copy of an existing model instance using the `replicat
     });
 
     billing.save();
+```
 
 To exclude one or more attributes from being replicated to the new model, you may pass an unordered_set to the `replicate` method:
 
+```cpp
     auto flight = Flight::create({
         {"destination", "LAX"},
         {"origin", "LHR"},
@@ -934,11 +1063,13 @@ To exclude one or more attributes from being replicated to the new model, you ma
         "last_flown",
         "last_pilot_id",
     });
+```
 
 ## Comparing Models
 
 Sometimes you may need to determine if two models are the "same" or not. The `is` and `isNot` methods may be used to quickly verify two models have the same primary key, table, and database connection or not:
 
+```cpp
     if (post->is(anotherPost)) {
         //
     }
@@ -946,12 +1077,15 @@ Sometimes you may need to determine if two models are the "same" or not. The `is
     if (post->isNot(anotherPost)) {
         //
     }
+```
 
 The `is` and `isNot` methods are also available when using the `belongsTo` and `hasOne` [relationships](/tinyorm/relationships.mdx). This method is particularly helpful when you would like to compare a related model without issuing a query to retrieve that model:
 
+```cpp
     if (post->author()->is(user)) {
         //
     }
+```
 
 ##### Equality comparison
 
