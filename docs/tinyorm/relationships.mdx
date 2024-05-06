@@ -429,17 +429,19 @@ To define this relationship, three database tables are needed: `users`, `roles`,
 
 Remember, since a role can belong to many users, we cannot simply place a `user_id` column on the `roles` table. This would mean that a role could only belong to a single user. In order to provide support for roles being assigned to multiple users, the `role_user` table is needed. We can summarize the relationship's table structure like so:
 
-    users
-        id - integer
-        name - string
+```text
+users
+  id - integer
+  name - string
 
-    roles
-        id - integer
-        name - string
+roles
+  id - integer
+  name - string
 
-    role_user
-        user_id - integer
-        role_id - integer
+role_user
+  user_id - integer
+  role_id - integer
+```
 
 #### Model Structure
 
