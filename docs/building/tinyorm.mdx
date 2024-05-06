@@ -440,6 +440,7 @@ cd TinyORM-builds-cmake/build-debug
 -G 'Ninja' \`
 -D CMAKE_BUILD_TYPE:STRING='Debug' \`
 -D CMAKE_TOOLCHAIN_FILE:FILEPATH="${rootFolderPath(pwsh)}/vcpkg/scripts/buildsystems/vcpkg.cmake" \`
+-D CMAKE_CXX_SCAN_FOR_MODULES:BOOL=OFF \`
 -D CMAKE_INSTALL_PREFIX:PATH="${rootFolderPath(pwsh)}/tmp/TinyORM" \`
 -D BUILD_TESTS:BOOL=OFF \`
 -D MATCH_EQUAL_EXPORTED_BUILDTREE:BOOL=ON \`
@@ -457,6 +458,7 @@ cd TinyORM-builds-cmake/build-debug
 -G 'Ninja' \\
 -D CMAKE_BUILD_TYPE:STRING='Debug' \\
 -D CMAKE_TOOLCHAIN_FILE:FILEPATH="${rootFolderPath(bash)}/vcpkg/scripts/buildsystems/vcpkg.cmake" \\
+-D CMAKE_CXX_SCAN_FOR_MODULES:BOOL=OFF \\
 -D CMAKE_INSTALL_PREFIX:PATH="${rootFolderPath(bash)}/tmp/TinyORM" \\
 -D VERBOSE_CONFIGURE:BOOL=ON \\
 -D BUILD_TESTS:BOOL=OFF \\
