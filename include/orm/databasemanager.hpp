@@ -149,6 +149,9 @@ namespace Query
         /*! Obtain a reference to the DatabaseManager. */
         static DatabaseManager &reference();
 
+        /*! Releases the ownership of the DatabaseManager managed object. */
+        static void free() noexcept;
+
         /*! Get a database connection instance. */
         DatabaseConnection &connection(const QString &name = "") final; // NOLINT(google-default-arguments)
         /*! Begin a fluent query against the database on a given connection (alias for

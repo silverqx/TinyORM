@@ -292,6 +292,11 @@ DatabaseManager &DatabaseManager::reference()
     throw Exceptions::RuntimeError(InstanceExceptionMessage);
 }
 
+void DatabaseManager::free() noexcept
+{
+    m_instance.reset();
+}
+
 DatabaseConnection &DatabaseManager::connection(const QString &name) // NOLINT(google-default-arguments)
 {
     const auto &connectionName = parseConnectionName(name);

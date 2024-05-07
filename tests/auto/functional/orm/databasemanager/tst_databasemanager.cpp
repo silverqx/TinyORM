@@ -83,6 +83,10 @@ private Q_SLOTS:
     void MySQL_addUseAndRemoveConnection_FiveTimes() const;
     void MySQL_addUseAndRemoveThreeConnections_FiveTimes() const;
 
+    // Can't be enabled (one time test only, run as needed)
+    // void reset_DatabaseManager() const;
+    // void reset_DB_DatabaseManager() const;
+
 // NOLINTNEXTLINE(readability-redundant-access-specifiers)
 private:
     /*! Test case class name. */
@@ -908,6 +912,32 @@ void tst_DatabaseManager::MySQL_addUseAndRemoveThreeConnections_FiveTimes() cons
         QVERIFY(m_dm->openedConnectionNames().isEmpty());
     }
 }
+
+/* These two tests can't be enabled as it resets the DatabaseManager::m_instance and
+   destroys all connections and they can't be re-created easily. No need to invest
+   more time to this and hack things around. */
+
+//void tst_DatabaseManager::reset_DatabaseManager() const
+//{
+//    // tst_DatabaseManager::m_dm, Databases::m_dm, and DatabaseManager::m_instance
+//    QCOMPARE(m_dm.use_count(), 3);
+
+//    Orm::DatabaseManager::free();
+//    QCOMPARE(m_dm.use_count(), 2);
+//}
+
+//void tst_DatabaseManager::reset_DB_DatabaseManager() const
+//{
+//    // tst_DatabaseManager::m_dm, Databases::m_dm, and DatabaseManager::m_instance
+//    QCOMPARE(m_dm.use_count(), 3);
+
+//    // To assign/populate the DB::m_manager shared instance
+//    Orm::DB::getDefaultConnection();
+//    QCOMPARE(m_dm.use_count(), 4);
+
+//    Orm::DB::free();
+//    QCOMPARE(m_dm.use_count(), 2);
+//}
 // NOLINTEND(readability-convert-member-functions-to-static)
 
 /* private */

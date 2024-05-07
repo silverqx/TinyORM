@@ -628,6 +628,15 @@ void DB::resetStatementCounters(const QStringList &connections)
     manager().resetStatementCounters(connections);
 }
 
+/* DB */
+
+void DB::free() noexcept
+{
+    // Reset both, DatabaseManager and DB ownership of the DatabaseManager managed object
+    m_manager.reset();
+    DatabaseManager::free();
+}
+
 /* private */
 
 DatabaseManager &DB::manager()

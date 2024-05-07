@@ -359,6 +359,10 @@ namespace Orm
         /*! Reset the number of executed queries on given connections. */
         static void resetStatementCounters(const QStringList &connections);
 
+        /* DB */
+        /*! Releases the ownership of the DatabaseManager managed object. */
+        static void free() noexcept;
+
     private:
         /*! Get a reference to the DatabaseManager. */
         static DatabaseManager &manager();

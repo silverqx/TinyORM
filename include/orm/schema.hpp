@@ -103,6 +103,9 @@ namespace Orm
                                const QString &connection = "");
 
         /* Schema */
+        /*! Releases the ownership of the DatabaseManager managed object. */
+        static void free() noexcept;
+
         /*! Get a schema builder instance for the default connection. */
         static SchemaBuilder &connection(const QString &name = "");
         /*! Get a schema builder instance for a connection. (alias for the connection()

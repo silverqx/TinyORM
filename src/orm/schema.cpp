@@ -139,6 +139,11 @@ bool Schema::hasColumns(const QString &table, const QVector<QString> &columns,
 
 /* Schema */
 
+void Schema::free() noexcept
+{
+    m_manager.reset();
+}
+
 SchemaBuilder &Schema::connection(const QString &name)
 {
     return schemaBuilder(name);
