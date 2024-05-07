@@ -987,6 +987,24 @@ And use regex-es from analyzers-qt5/6.yml, eg.:
 Get-Content .\a.txt | sls -Pattern '[\\\/]+(?:drivers|examples|orm|src|tests|tom)[\\\/]+.+?[\\\/]+(?!mocs_)[\w\d_\-\+]+\.cpp' | measure
 
 
+QtCreator clangd/analyzers confusions:
+--------------------------------------
+
+To finally solve this confusions I tested it all.
+
+- always use the latest clangd, cland-tidy, clazy (scoop, Gentoo pacakge)
+- for both clangd and analyzers in QtCreator settings set Clang warnings to:
+  -Wall -Wextra -Wpedantic
+  - no need to use -Weffc++ as is really outdated and produces false positives, also
+    it does nothing with clangd, in clang docs is written this:
+    Synonym for -Wnon-virtual-dtor.
+    See https://clang.llvm.org/docs/DiagnosticsReference.html#weffc
+    But I was never able to trigger this warning in QtCreator as the diagnostic warning
+    on the source code.
+- check: Use diagnostic flags from build system
+  - so everything C macro is correctly defined and applied from our build system
+
+
 Clazy in QtCreator:
 -------------------
 
