@@ -1,0 +1,8 @@
+# Allows to enable ccache using "CONFIG+=ccache" on both OS-es.
+# The load(ccache) have to be called explicitly otherwise it will not be loaded,
+# qmake doesn't call this ccache.prf first and then the mkspecs\features\unix\ccache.prf
+# afterwards automatically.
+win32: \
+    load(tiny_ccache_win32)
+else:unix: \
+    load(ccache)
