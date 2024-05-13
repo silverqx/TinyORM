@@ -393,7 +393,7 @@ But a special situation is when you are building your application / library and 
 | `TINYTOM_MIGRATIONS_DIR`          | Default migrations path for the `make:migration` command, can be an absolute or relative path (to the <abbr title='Current working directory'>pwd</abbr>).<br/><small>Default value: `database/migrations` <small>(relative to the pwd)</small></small><br/><small>Defined by [`TOM_MIGRATIONS_DIR`](#TOM_MIGRATIONS_DIR) <small>(cmake)</small> configuration build option.<br/><small>(qmake note) You can use `DEFINES += TINYTOM_MIGRATIONS_DIR="\"database/migrations\""` on the command-line or set it in the __main__ [`conf.pri`](https://github.com/silverqx/TinyORM/blob/main/conf.pri.example#L65-L70) file.</small></small> |
 | `TINYTOM_MODELS_DIR`              | Default models path for the `make:model` command, can be an absolute or relative path (to the <abbr title='Current working directory'>pwd</abbr>).<br/><small>Default value: `database/models` <small>(relative to the pwd)</small></small><br/><small>Defined by [`TOM_MODELS_DIR`](#TOM_MODELS_DIR) <small>(cmake)</small> configuration build option.<br/><small>(qmake note) You can use `DEFINES += TINYTOM_MODELS_DIR="\"database/models\""` on the command-line or set it in the __main__ [`conf.pri`](https://github.com/silverqx/TinyORM/blob/main/conf.pri.example#L72-L73) file.</small></small> |
 | `TINYTOM_SEEDERS_DIR`             | Default seeders path for the `make:seeder` command, can be an absolute or relative path (to the <abbr title='Current working directory'>pwd</abbr>).<br/><small>Default value: `database/seeders` <small>(relative to the pwd)</small></small><br/><small>Defined by [`TOM_SEEDERS_DIR`](#TOM_SEEDERS_DIR) <small>(cmake)</small> configuration build option.<br/><small>(qmake note) You can use `DEFINES += TINYTOM_SEEDERS_DIR="\"database/seeders\""` on the command-line or set it in the __main__ [`conf.pri`](https://github.com/silverqx/TinyORM/blob/main/conf.pri.example#L75-L76) file.</small></small> |
-| `TINYORM_USING_PCH`               | Defined if building with precompiled headers.<br/><small>Controlled by [`qmake`](#precompile_header) / [`CMake`](#CMAKE_DISABLE_PRECOMPILE_HEADERS).</small> |
+| `TINYORM_USING_PCH`               | Defined if building with precompiled headers.<br/><small>Controlled by [`qmake`](#qmake-precompile_header) / [`CMake`](#CMAKE_DISABLE_PRECOMPILE_HEADERS).</small> |
 
 </APITable>
 </div>
@@ -787,8 +787,9 @@ Everything is ready for build, you can press <kbd>Ctrl</kbd>+<kbd>b</kbd> to bui
 | `build_loadable_drivers`            | `OFF`   | Build [`TinyDrivers`](tinydrivers/getting-started.mdx) as a shared library and SQL database drivers (eg. `TinyMySql`) as shared libraries ([`Loadable`](tinydrivers/getting-started.mdx#the-loadable-sql-drivers-build) modules) that are loaded at runtime using `LoadLibrary()` on Windows or `dlopen()` on Linux. |
 | `build_mysql_driver`                | `OFF`   | Build `TinyDrivers` MySQL database driver.<br/><small>It's enabled by default when `build_shared_drivers`, `build_loadable_drivers`, or `build_static_drivers` is enabled.<br/>Available when: `build_shared_drivers` OR `build_loadable_drivers` OR `build_static_drivers`</small> |
 | `build_shared_drivers`              | `OFF`   | Build `TinyDrivers` as a [`Shared`](tinydrivers/getting-started.mdx#the-shared-library-build) library. |
-| `build_static_drivers`              | `OFF`   | Build `TinyDrivers` as a [`Static`](tinydrivers/getting-started.mdx#the-static-build) library archive.<br/><small>The `build_static_drivers` `qmake` configuration option will be select by default when the [`CONFIG*=static`](#static) is enabled.</small> |
+| `build_static_drivers`              | `OFF`   | Build `TinyDrivers` as a [`Static`](tinydrivers/getting-started.mdx#the-static-build) library archive.<br/><small>The `build_static_drivers` `qmake` configuration option will be select by default when the [`CONFIG*=static`](#qmake-static) is enabled.</small> |
 | `build_tests`                       | `OFF`   | Build TinyORM unit tests. |
+| `ccache`                            | `ON`    | Enable compiler cache. [Homepage](https://ccache.dev/)<br/><small>It works on Windows and Unix systems. This option overrides qmake's `ccache` option. It internally calls qmake's [`ccache`](#qmake-ccache) option on Unix and [`tiny_ccache_win32`](#tiny_ccache_win32) on Windows.<br/>Reason: It allows using the same option on both OS-es.</small> |
 | `disable_autoconf`                  | `OFF`   | Disable the [`Auto-configuration`](#auto-configuration-internals) feature <small>(auto-configuration is enabled by default from `TinyORM` `v0.34.0`)</small>. |
 | `disable_dotenv`                    | `OFF`   | Disable the [`tiny_dotenv`](#environment-files) feature <small>(environment files are enabled by default from `TinyORM` `v0.34.0`)</small>. |
 | `disable_thread_local`              | `OFF`   | Remove all [`thread_local`](https://en.cppreference.com/w/c/language/storage_duration) storage duration specifiers, it disables multi-threading support. |
@@ -819,7 +820,7 @@ Advanced `TinyORM` options.
 Important `qmake` options.
 
 <div className='apitable-build-options'>
-<APITable>
+<APITable name='qmake'>
 
 | `CONFIG` <small>Option Name</small> | Default | Description |
 | ----------------------------------- | ------- | ----------- |
@@ -1094,10 +1095,10 @@ These `conf.pri` files are intended for configuring qmake's `INCLUDEPATH` and `L
 
 ## Ccache support
 
-The TinyORM supports the [`ccache`](https://ccache.dev/) out of the box for all [supported compilers](supported-compilers.mdx). For qmake you can enable it using the `CONFIG+=ccache` on Linux or `CONFIG+=tiny_ccache_win32` on Windows. For CMake you can set the `CMAKE_CXX_COMPILER_LAUNCHER=ccache`.
+The TinyORM supports the [`ccache`](https://ccache.dev/) out of the box for all [supported compilers](supported-compilers.mdx). For `qmake` you can enable it using the [`CONFIG+=ccache`](#ccache) and for `CMake` you can set the [`CMAKE_CXX_COMPILER_LAUNCHER=ccache`](#CMAKE_CXX_COMPILER_LAUNCHER).
 
-On `Linux` it's clear, the ccache is fully supported and works also with the `precompiled headers`. But was necessary to add some workarounds to the `qmake`/`CMake` build systems to make out of the box support on `Windows`. When you enable the `ccache` on `Windows` then the build system disables `precompiled headers` and replaces the `-Zi` compiler option with the `-Z7` (link to the [issue](https://github.com/ccache/ccache/issues/1040)).
+On `Linux` it's clear, the `ccache` is fully supported and works also with the `precompiled headers`. But was necessary to add some workarounds to the `qmake`/`CMake` build systems to make out of the box support on `Windows`. When you enable the `ccache` on `Windows` then the build system disables `precompiled headers` and replaces the `-Zi` compiler option with the `-Z7` (link to the [issue](https://github.com/ccache/ccache/issues/1040)).
 
 :::tip
-You can install the ccache using the `scoop install ccache` command on Windows. See the [Dependencies](dependencies.mdx#linux-installation-ccache) page for how to install `ccache` on Linux.
+You can install the `ccache` using the `scoop install ccache` command on Windows. See the [Dependencies](dependencies.mdx#linux-installation-ccache) page for how to install `ccache` on Linux.
 :::
