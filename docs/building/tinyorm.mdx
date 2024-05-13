@@ -1099,5 +1099,5 @@ The TinyORM supports the [`ccache`](https://ccache.dev/) out of the box for all 
 On `Linux` it's clear, the ccache is fully supported and works also with the `precompiled headers`. But was necessary to add some workarounds to the `qmake`/`CMake` build systems to make out of the box support on `Windows`. When you enable the `ccache` on `Windows` then the build system disables `precompiled headers` and replaces the `-Zi` compiler option with the `-Z7` (link to the [issue](https://github.com/ccache/ccache/issues/1040)).
 
 :::tip
-You can install the ccache using the `scoop install ccache` command on Windows.
+You can install the ccache using the `scoop install ccache` command on Windows. See the [Dependencies](dependencies.mdx#linux-installation-ccache) page for how to install `ccache` on Linux.
 :::
