@@ -14,7 +14,7 @@
 
 
 <script>gtag("config","AW-989655383"),gtag("event","conversion",{send_to:"AW-989655383/vDYzCM--ks4DENfi89cD"})</script><link rel="stylesheet" href="/assets/css/styles.21a15f53.css">
-<script src="/assets/js/runtime~main.503b8af3.js" defer="defer"></script>
+<script src="/assets/js/runtime~main.edd1df04.js" defer="defer"></script>
 <script src="/assets/js/main.0d8a2c08.js" defer="defer"></script>
 </head>
 <body class="navigation-with-keyboard">
@@ -35,7 +35,7 @@
 <h5 class="anchor anchorWithHideOnScrollNavbar_WYt5" id="features-summary">Features summary<a href="#features-summary" class="hash-link" aria-label="Direct link to Features summary" title="Direct link to Features summary">​</a></h5>
 <ul>
 <li>both, normal and prepared statements are supported</li>
-<li>TLS/SSL connections using <a href="https://dev.mysql.com/doc/c-api/en/mysql-options.html" target="_blank" rel="noopener noreferrer"><code>MYSQL_OPT_SSL_MODE</code></a> (verify_ca, verify_identity) 🔥</li>
+<li>TLS/SSL connections using <a href="https://dev.mysql.com/doc/c-api/8.4/en/mysql-options.html" target="_blank" rel="noopener noreferrer"><code>MYSQL_OPT_SSL_MODE</code></a> (verify_ca, verify_identity) 🔥</li>
 <li>setting many other connection options (see <a href="https://github.com/silverqx/TinyORM/blob/main/drivers/mysql/src/orm/drivers/mysql/mysqldriver_p.cpp" target="_blank" rel="noopener noreferrer"><code>mysqldriver_p.cpp</code></a>)</li>
 <li>building and linking against the <a href="https://mariadb.com/kb/en/mariadb-connector-c/" target="_blank" rel="noopener noreferrer"><code>MariaDB Connector/C</code></a></li>
 <li>transactions</li>
@@ -56,8 +56,8 @@
 </ul>
 <h5 class="anchor anchorWithHideOnScrollNavbar_WYt5" id="mysql-driver">MySQL driver<a href="#mysql-driver" class="hash-link" aria-label="Direct link to MySQL driver" title="Direct link to MySQL driver">​</a></h5>
 <p>The following describes the differences between <code>QMYSQL</code> and <code>TinyMySql</code> drivers.</p>
-<p>The <code>QMYSQL</code> driver doesn&#x27;t support setting <code>MySQL</code> non-flag <a href="https://dev.mysql.com/doc/c-api/en/mysql-options.html" target="_blank" rel="noopener noreferrer">connection options</a> like <code>MYSQL_OPT_RECONNECT</code> without the value, it needs to be defined with value like <code>=1</code> or <code>=TRUE</code> (case-sensitive), only real flag options like <code>CLIENT_INTERACTIVE</code> can be set without the value and <code>=</code> character.</p>
-<p>On the other hand, the <code>TinyMySql</code> driver allows setting non-flag <a href="https://dev.mysql.com/doc/c-api/en/mysql-options.html" target="_blank" rel="noopener noreferrer">connection options</a> options without the value and <code>=</code> character, which are considered enabled (ON or TRUE).</p>
+<p>The <code>QMYSQL</code> driver doesn&#x27;t support setting <code>MySQL</code> non-flag <a href="https://dev.mysql.com/doc/c-api/8.4/en/mysql-options.html" target="_blank" rel="noopener noreferrer">connection options</a> like <code>MYSQL_OPT_RECONNECT</code> without the value, it needs to be defined with value like <code>=1</code> or <code>=TRUE</code> (case-sensitive), only real flag options like <code>CLIENT_INTERACTIVE</code> can be set without the value and <code>=</code> character.</p>
+<p>On the other hand, the <code>TinyMySql</code> driver allows setting non-flag <a href="https://dev.mysql.com/doc/c-api/8.4/en/mysql-options.html" target="_blank" rel="noopener noreferrer">connection options</a> options without the value and <code>=</code> character, which are considered enabled (ON or TRUE).</p>
 <h5 class="anchor anchorWithHideOnScrollNavbar_WYt5" id="removed-features">Removed features<a href="#removed-features" class="hash-link" aria-label="Direct link to Removed features" title="Direct link to Removed features">​</a></h5>
 <p>Simulation of prepared statements while calling <code>SqlQuery::exec(QString)</code>, this functionality is useless because you can call regular prepared statements using <code>SqlQuery::prepare(QString)</code> and then <code>SqlQuery::exec()</code>.</p>
 <h5 class="anchor anchorWithHideOnScrollNavbar_WYt5" id="missing-features">Missing features<a href="#missing-features" class="hash-link" aria-label="Direct link to Missing features" title="Direct link to Missing features">​</a></h5>
@@ -80,7 +80,7 @@
 <p>To control shared and static build use <a href="/building/tinyorm#qmake-static"><code>static</code></a> <code>qmake</code> <a href="https://doc.qt.io/qt/qmake-variable-reference.html#config" target="_blank" rel="noopener noreferrer">configuration option</a>.</p>
 <h3 class="anchor anchorWithHideOnScrollNavbar_WYt5" id="performance">Performance<a href="#performance" class="hash-link" aria-label="Direct link to Performance" title="Direct link to Performance">​</a></h3>
 <p>Performance is several milliseconds faster compared to <code>QtSql</code> with the <code>QMYSQL</code> driver. It was tuned using the <code>KCacheGrind</code> to be so. It&#x27;s ~40ms faster on <a href="https://github.com/silverqx/TinyOrmPlayground" target="_blank" rel="noopener noreferrer"><code>TinyOrmPlayground</code></a> project with <strong>620</strong> database queries compiled using <code>GCC v13.2.1</code> Debug build on Linux. Similar results can be expected on other platforms but it&#x27;s not guaranteed.</p>
-<p>This means performance is very similar to <code>QtSql</code>. There is not much to speed up because <code>TinyDrivers</code> code is swift and 90% of the time is spent inside the <a href="https://dev.mysql.com/doc/c-api/en/" target="_blank" rel="noopener noreferrer"><code>MySQL C API</code></a> because we always have to wait for the database server, especially when creating database connections using eg. <a href="https://dev.mysql.com/doc/c-api/en/mysql-real-connect.html" target="_blank" rel="noopener noreferrer"><code>mysql_real_connect()</code></a> (this function is king among the slowest functions 😎, which is understandable of course).</p>
+<p>This means performance is very similar to <code>QtSql</code>. There is not much to speed up because <code>TinyDrivers</code> code is swift and 90% of the time is spent inside the <a href="https://dev.mysql.com/doc/c-api/8.4/en/" target="_blank" rel="noopener noreferrer"><code>MySQL C API</code></a> because we always have to wait for the database server, especially when creating database connections using eg. <a href="https://dev.mysql.com/doc/c-api/8.4/en/mysql-real-connect.html" target="_blank" rel="noopener noreferrer"><code>mysql_real_connect()</code></a> (this function is king among the slowest functions 😎, which is understandable of course).</p>
 <h2 class="anchor anchorWithHideOnScrollNavbar_WYt5" id="internals">Internals<a href="#internals" class="hash-link" aria-label="Direct link to Internals" title="Direct link to Internals">​</a></h2>
 <p><code>TinyDrivers</code> internal design can be divided into 3 different layers:</p>
 <ul>
@@ -88,7 +88,7 @@
 <li>SQL API layer</li>
 <li>Public API layer</li>
 </ul>
-<p>The Driver layer is eg. <code>TinyMySql</code> library which is responsible for communicating with the underlying database driver (eg. <a href="https://dev.mysql.com/doc/c-api/en/" target="_blank" rel="noopener noreferrer"><code>MySQL C API</code></a>).</p>
+<p>The Driver layer is eg. <code>TinyMySql</code> library which is responsible for communicating with the underlying database driver (eg. <a href="https://dev.mysql.com/doc/c-api/8.4/en/" target="_blank" rel="noopener noreferrer"><code>MySQL C API</code></a>).</p>
 <p>The SQL API layer is a semi-layer that glues everything up and sits between the Public interface API and the Driver layer.</p>
 <p>The Public interface API layer are the end classes like <code>SqlDatabase</code> and <code>SqlQuery</code> which are exposed to the end user.</p>
 <h5 class="anchor anchorWithHideOnScrollNavbar_WYt5" id="sqldatabase">SqlDatabase<a href="#sqldatabase" class="hash-link" aria-label="Direct link to SqlDatabase" title="Direct link to SqlDatabase">​</a></h5>
