@@ -120,6 +120,25 @@ begin {
         Write-Host 'Restored' -ForegroundColor DarkGreen
     }
 
+    # Throw if the given path exists and it's not a directory
+    function Test-PathToAdd {
+        [OutputType([void])]
+        Param(
+            [Parameter(Mandatory,
+                HelpMessage = "Throw if the given path exists and it's not a directory.")]
+            [AllowEmptyString()]
+            [string]
+            $Path
+        )
+
+        if (-not (Test-Path -Path $Path) -or
+            (Get-Item -Path $Path).PSIsContainer -eq $true) {
+            return
+        }
+
+        throw "The given path '$(Resolve-Path -Path $Path)' exists and it's not a directory."
+    }
+
     # Obtain paths to add and excluded paths
     function Get-Paths {
         [CmdletBinding(PositionalBinding = $false)]
@@ -139,6 +158,11 @@ begin {
         if (-not ($VariableValue -eq '')) {
 
             foreach ($pathToAdd in $Path) {
+                # Throw if the given path exists and it's not a directory
+                Test-PathToAdd -Path $pathToAdd
+
+                # Get the RegEx for a given path that can be used to determine if the given path is
+                # on the system path ($env:Path or $PATH).
                 $pathToMatch = Get-PathToMatch -Path $pathToAdd
 
                 $pathToAddNormalized = $(Get-FullPath -Path $pathToAdd)
