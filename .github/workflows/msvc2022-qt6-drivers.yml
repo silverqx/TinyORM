@@ -82,7 +82,7 @@ jobs:
 
     - name: MySQL service check status
       run: |
-        $serviceName = 'MySQL83'
+        $serviceName = 'MySQL84'
 
         Write-Output '::group::Get-Service'
         $mysqlService = Get-Service $serviceName

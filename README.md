@@ -62,7 +62,7 @@ Whole library is documented as markdown documents:
 The following list summarizes all the `TinyDrivers` and `TinyMySql` libraries' features. 🆕
 
  - both, normal and prepared statements are supported
- - TLS/SSL connections using [`MYSQL_OPT_SSL_MODE`](https://dev.mysql.com/doc/c-api/en/mysql-options.html) (verify_ca, verify_identity) 🔥
+ - TLS/SSL connections using [`MYSQL_OPT_SSL_MODE`](https://dev.mysql.com/doc/c-api/8.4/en/mysql-options.html) (verify_ca, verify_identity) 🔥
  - setting many other connection options (see [`mysqldriver_p.cpp`](https://github.com/silverqx/TinyORM/blob/main/drivers/mysql/src/orm/drivers/mysql/mysqldriver_p.cpp))
  - building and linking against the [`MariaDB Connector/C`](https://mariadb.com/kb/en/mariadb-connector-c/)
  - transactions

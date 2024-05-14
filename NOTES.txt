@@ -539,7 +539,7 @@ MySQL Timezone tables:
 mysql_config_editor print --all
 mysql --login-path=root -p mysql
 source timezone_posix.sql;
-Restart-Service MySQL83
+Restart-Service MySQL84
 
 
 Versions info:
@@ -1148,7 +1148,7 @@ TinyDrivers output of operator<<()-s:
 
 Output of all TinyDrivers operator<<()-s SqlDatabase, SqlRecord, SqlField, DummySqlError
 
-SqlDatabase(driver="QMYSQL", database="tinyorm_test_1", host="mysql.test", port=3306, user="szachara", open=true", options="SSL_CERT=C:/mysql/mysql_8.3/data/client-cert.pem;SSL_CA=C:/mysql/mysql_8.3/data/ca.pem;SSL_KEY=C:/mysql/mysql_8.3/data/client-key.pem")
+SqlDatabase(driver="QMYSQL", database="tinyorm_test_1", host="mysql.test", port=3306, user="szachara", open=true", options="SSL_CERT=C:/mysql/mysql_8.4/data/client-cert.pem;SSL_CA=C:/mysql/mysql_8.4/data/ca.pem;SSL_KEY=C:/mysql/mysql_8.4/data/client-key.pem")
 --
 SqlRecord(7)
  0: SqlField(name: "id", type: qulonglong, value: "1", isNull: false, isValid: true, length: 20, precision: 0, required: true, sqlType: 8, sqlTypeName: BIGINT, autoIncrement: true, tableName: "users")
@@ -3214,10 +3214,10 @@ MariaDB11
 NT SERVICE\MariaDB11
 mysqld.exe --install MariaDB11 --defaults-file="E:\mysql\mariadb_11\data\my.ini"
 
-MySQL83
-"C:\Program Files\MySQL\MySQL Server 8.3\bin\mysqld.exe" --defaults-file="C:\ProgramData\MySQL\MySQL Server 8.3\my.ini" MySQL83
-NT SERVICE\MySQL83
-mysqld.exe --install MySQL83 --defaults-file="C:\ProgramData\MySQL\MySQL Server 8.3\my.ini"
+MySQL84
+"C:\Program Files\MySQL\MySQL Server 8.4\bin\mysqld.exe" --defaults-file="C:\ProgramData\MySQL\MySQL Server 8.4\my.ini" MySQL84
+NT SERVICE\MySQL84
+mysqld.exe --install MySQL84 --defaults-file="C:\ProgramData\MySQL\MySQL Server 8.4\my.ini"
 
 postgresql-x64-16
 "C:\Program Files\PostgreSQL\16\bin\pg_ctl.exe" runservice -N "postgresql-x64-16" -D "E:\postgres\16\data" -w
@@ -3243,7 +3243,7 @@ The following are most used cases which I corrected during the static_cast<> rev
 Building QtSql5 MySQL drivers for Qt5:
 --------------------------------------
 
-QtSql5 isn't able to build against the latest MySQL v8.3 server, it must be built against
+QtSql5 isn't able to build against the MySQL >=8.3 server, it must be built against
 the MySQL v8.0.x branch. Reason are mysql_list_fields() and mysql_ssl_set() functions that
 were removed in the latest MySQL versions (at sure in v8.3 branch).
 
