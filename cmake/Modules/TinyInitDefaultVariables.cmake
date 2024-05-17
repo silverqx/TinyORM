@@ -149,6 +149,15 @@ builds
     # Fix CMake variables if CMAKE_CXX_COMPILER_LAUNCHER is ccache or sccache
     tiny_fix_ccache()
 
+    # To avoid vcpkg warning: D9025 : overriding '/W3' with '/W4'
+    # I also though about the following RegEx but it seems to aggresive:
+    # " *(\/|-)(W[0-4]|nologo|EHsc|utf-8) *"
+    # CMAKE_CXX_FLAGS can also be used somewhere else like in features compile tests or
+    # similar things and it could change their behavior.
+    if(MSVC AND TINY_VCPKG)
+        string(REGEX REPLACE " *(\/|-)W[0-4] *" " " CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
+    endif()
+
 endmacro()
 
 # Initialize Tiny variables, early initialization
@@ -190,6 +199,12 @@ macro(tiny_init_tiny_variables_pre)
     set(TINY_IS_MULTI_CONFIG "${isMultiConfig}" CACHE INTERNAL
         "True when using a multi-configuration generator.")
     unset(isMultiConfig)
+
+    # Provide the default value if not set
+    if(NOT TINY_VCPKG)
+        set(TINY_VCPKG FALSE)
+        set(TINY_PORT TINY_PORT-NOTFOUND)
+    endif()
 
     # Auto-detect the CMAKE_TOOLCHAIN_FILE from the VCPKG_ROOT environment variable
     if(DEFINED ENV{VCPKG_ROOT} AND NOT DEFINED CMAKE_TOOLCHAIN_FILE)
