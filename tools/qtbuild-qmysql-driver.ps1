@@ -173,10 +173,10 @@ function Test-BuildEnvironment
     Newline
 }
 
-# Initialize the Qt and MSVC2022 build environment if it's not already there
+# Initialize the Qt and MSVC build environment if it's not already there
 function Initialize-QtEnvironment
 {
-    Write-Progress 'Initializing Qt and MSVC2022 build environment'
+    Write-Progress 'Initializing Qt and MSVC build environment'
 
     if (Test-Path env:WindowsSDKLibVersion) {
         Write-Error ('The MSVC build environment already initialized. Exiting the Qt environment ' +
@@ -204,7 +204,7 @@ Test-QtVersionInstalled
 Test-QtSourcesInstalled
 Test-MySQLServerInstalled
 
-# Initialize the Qt and MSVC2022 build environment if it's not already there
+# Initialize the Qt and MSVC build environment if it's not already there
 Initialize-QtEnvironment
 Test-BuildEnvironment
 
@@ -275,6 +275,7 @@ cmake --build . --target install
 
 # Done
 # ---
+
 Pop-Location -StackName $STACK_NAME
 
 Write-Progress "Linked against the MySQL Server at: $Script:MySqlServerPath"
