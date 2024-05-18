@@ -153,6 +153,10 @@ export LD_LIBRARY_PATH="$QtRoot/5.15.2/gcc_64/lib"${LD_LIBRARY_PATH:+:}$LD_LIBRA
  These scripts consider the `TINY_QT_ROOT` environment variable that should point to the `Qt` installation folder, you can define this environment variable globally in your OS.
 :::
 
+:::info
+You can't execute these `qtenvX` scripts, they have to be sourced like `source qtenvX` or `. qtenvX`.
+:::
+
 ##### Allow symbolic links unprivileged
 
 Open `Local Security Policy`, go to `Local Policies - User Rights Assignment`, open `Create symbolic links` and add your user account or user group, restart when it doesn't apply immediately.
