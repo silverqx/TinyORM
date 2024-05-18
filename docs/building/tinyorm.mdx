@@ -122,6 +122,8 @@ And here for `Linux`.
 <TabItem value='qtenv6' label='qtenv6'>
 
 ```bash
+#!/usr/bin/env sh
+
 echo 'Setting up environment for Qt 6.7.0 usage...'
 
 QtRoot="${TINY_QT_ROOT:-/opt/Qt}"
@@ -134,6 +136,8 @@ export LD_LIBRARY_PATH="$QtRoot/6.7.0/gcc_64/lib"${LD_LIBRARY_PATH:+:}$LD_LIBRAR
 <TabItem value='qtenv5' label='qtenv5'>
 
 ```bash
+#!/usr/bin/env sh
+
 echo 'Setting up environment for Qt 5.15.2 usage...'
 
 QtRoot="${TINY_QT_ROOT:-/opt/Qt}"
