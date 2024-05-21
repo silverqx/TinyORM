@@ -104,7 +104,7 @@ endif()
 target_link_libraries(${TomExample_target} PRIVATE ${TinyOrm_ns}::${TinyOrm_target})
 
 # Conditional dependencies
-# vcpkg workaround bugfix for QtSql module and static builds (need on Windows and Linux too, MSYS2
+# vcpkg workaround bugfix for QtSql module and static builds (needed on Windows and Linux too, MSYS2
 # doesn't support compiling libmysql).
 # Source of this problem starts in the QtSql6 QMYSQL driver package config file at:
 # packages/qtbase_x64-windows-static/share/Qt6Sql/Qt6QMYSQLDriverPluginTargets.cmake
