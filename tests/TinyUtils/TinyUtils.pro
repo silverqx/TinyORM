@@ -51,11 +51,6 @@ tiny_resource_and_manifest($$tinyRcIncludepath)
 
 unset(tinyRcIncludepath)
 
-# Use Precompiled headers (PCH)
-# ---
-
-include($$PWD/src/pch.pri)
-
 # Default rules for deployment
 # ---
 

@@ -33,15 +33,6 @@ add_library(${TinyUtils_target}
 )
 add_library(${TinyOrm_ns}::${TinyUtils_target} ALIAS ${TinyUtils_target})
 
-# Use Precompiled headers (PCH)
-# ---
-
-target_precompile_headers(${TinyUtils_target} PRIVATE $<$<COMPILE_LANGUAGE:CXX>:"pch.h">)
-
-if(NOT CMAKE_DISABLE_PRECOMPILE_HEADERS)
-    target_compile_definitions(${TinyUtils_target} PRIVATE TINYORM_USING_PCH)
-endif()
-
 # TinyORM library specific configuration
 # ---
 
