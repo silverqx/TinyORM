@@ -83,7 +83,6 @@ ${TINY_UNPARSED_ARGUMENTS}")
     # clang-cl.exe notes:
     # /RTC    - https://lists.llvm.org/pipermail/cfe-commits/Week-of-Mon-20130902/088105.html
     # /bigobj - clang-cl uses it by default - https://reviews.llvm.org/D12981
-
     if(MSVC)
         # Common for MSVC and clang-cl
         target_compile_options(${target} INTERFACE
