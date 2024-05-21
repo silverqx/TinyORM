@@ -33,7 +33,7 @@ namespace Orm::Drivers::Utils
 #ifdef _WIN32
         /*! Get the fully qualified module path for the given module handle. */
         static std::wstring getModuleFileName(HMODULE handle);
-#elif __linux__
+#elif defined(__linux__)
         /*! Get the fully qualified module path by the given address. */
         static std::string getModuleFileName(void *address);
 #else

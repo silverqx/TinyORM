@@ -2,7 +2,7 @@
 
 #ifdef _WIN32
 #  include <array>
-#elif __linux__
+#elif defined(__linux__)
 #  include <dlfcn.h>
 #endif
 
@@ -54,7 +54,7 @@ std::wstring FsPrivate::getModuleFileName(const HMODULE handle)
     return {};
 }
 
-#elif __linux__
+#elif defined(__linux__)
 std::string FsPrivate::getModuleFileName(void *const address)
 {
     Q_ASSERT(address != nullptr);

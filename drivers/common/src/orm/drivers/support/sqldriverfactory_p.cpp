@@ -459,7 +459,7 @@ namespace
             return std::wstring();
 
         return FsUtils::getModuleFileName(handle);
-#elif __linux__
+#elif defined(__linux__)
         return FsUtils::getModuleFileName(
                     reinterpret_cast<void *>(&SqlDatabase::database)); // NOLINT(cppcoreguidelines-pro-type-reinterpret-cast)
 #else
