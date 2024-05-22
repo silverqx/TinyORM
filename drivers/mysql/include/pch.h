@@ -6,8 +6,6 @@
 /* Add C++ includes here */
 #include <QDateTime>
 
-#include <optional>
-
 #include <orm/macros/commonnamespace.hpp>
 #include <orm/macros/likely.hpp>
 #include <orm/macros/stringify.hpp>

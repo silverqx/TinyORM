@@ -28,9 +28,10 @@
 #endif
 
 #include <fstream>
-#include <optional>
 #include <set>
 #include <stack>
+#include <typeindex>
+#include <typeinfo>
 #include <unordered_set>
 
 #ifdef __GNUG__

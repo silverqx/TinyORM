@@ -20,7 +20,9 @@
 #  include <qt_windows.h>
 #endif
 
+#include <mutex>
 #include <shared_mutex>
+#include <thread>
 
 #ifdef __linux__
 #  include <dlfcn.h>
