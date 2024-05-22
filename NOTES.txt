@@ -3195,7 +3195,12 @@ sr-a.ps1  (Restart-Service)
  - needed manual actions:
    - deleting build folders eg. after compiler or Qt upgrade (see Common for both section above)
    - deleting and re-cloning the vcpkg repo
+     - deleting not needed
+     - I have added: vcpkg upgrade repository (latest version); to every self-hosted workflow so
+       vcpkg is upgraded automatically
      - the owner must be changed on Windows to NETWORK SERVICE because of git filesystem owner check
+       - I don't need to change owner even if I upgrade vcpkg from pwsh command line
+       - setting owner is only needed if I delete and re-clone the vcpkg folder
      - isn't needed often, look on this step in actions (vcpkg-linux/windows.yml files) why it's so,
        step name to search: vcpkg upgrade repository (latest version)
        - i'm simply fetching latest changes and doing hard reset on master
