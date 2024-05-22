@@ -14,9 +14,6 @@
 #include <QRegularExpression>
 #include <QSet>
 #include <QTimeZone>
-#include <QtSql/QSqlError>
-#include <QtSql/QSqlQuery>
-#include <QtSql/QSqlRecord>
 #include <QVariantHash>
 #include <QVersionNumber>
 
@@ -25,6 +22,12 @@
 #endif
 #ifdef _WIN32
 #  include <qt_windows.h>
+#endif
+
+#ifndef TINYORM_USING_TINYDRIVERS
+#  include <QtSql/QSqlError>
+#  include <QtSql/QSqlQuery>
+#  include <QtSql/QSqlRecord>
 #endif
 
 #include <fstream>
