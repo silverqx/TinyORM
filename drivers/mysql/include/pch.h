@@ -2,46 +2,14 @@
 
 /* Add C includes here */
 
-#if defined __cplusplus
+#ifdef __cplusplus
 /* Add C++ includes here */
 #include <QDateTime>
-//#include <QDebug>
-//#include <QHash>
-//#include <QMap>
-#include <QStringList>
-//#include <QTimeZone>
-//#include <QTimer>
-#include <QVariant>
-//#include <QVector>
 
-#include <algorithm>
-#include <array>
-//#include <bitset>
-//#include <cassert>
-//#include <cfloat>
-//#include <cmath>
-//#include <complex>
-//#include <condition_variable>
-#include <cstddef>
-#include <cstdint>
-#include <cstdlib>
-//#include <functional>
-#include <initializer_list>
-#include <iterator>
-//#include <map>
-#include <memory>
-//#include <mutex>
-#include <numeric>
 #include <optional>
-//#include <set>
-//#include <span>
-//#include <string>
-//#include <thread>
-#include <tuple>
-#include <type_traits>
-#include <typeindex>
-#include <typeinfo>
-#include <unordered_map>
-//#include <unordered_set>
-#include <vector>
+
+#include <orm/macros/commonnamespace.hpp>
+#include <orm/macros/likely.hpp>
+#include <orm/macros/stringify.hpp>
+#include <orm/macros/systemheader.hpp>
 #endif

@@ -2,46 +2,36 @@
 
 /* Add C includes here */
 
-#if defined __cplusplus
+#ifdef __cplusplus
 /* Add C++ includes here */
 #include <QDateTime>
-#include <QDebug>
-//#include <QHash>
-//#include <QMap>
-#include <QStringList>
-#include <QTimeZone>
-//#include <QTimer>
+#include <QDir>
+#include <QElapsedTimer>
+#include <QLibrary>
+#include <QRegularExpression>
+#include <QUuid>
 #include <QVariant>
-//#include <QVector>
+#include <QVersionNumber>
 
-#include <algorithm>
-#include <array>
-//#include <bitset>
-//#include <cassert>
-//#include <cfloat>
-//#include <cmath>
-//#include <complex>
-//#include <condition_variable>
-#include <cstddef>
-#include <cstdint>
-#include <cstdlib>
-#include <functional>
-#include <initializer_list>
-#include <iterator>
-//#include <map>
-#include <memory>
-#include <mutex>
-#include <numeric>
-#include <optional>
-//#include <set>
-//#include <span>
-//#include <string>
-#include <thread>
-#include <tuple>
-#include <type_traits>
-#include <typeindex>
-#include <typeinfo>
-#include <unordered_map>
-//#include <unordered_set>
-#include <vector>
+#ifndef QT_NO_DEBUG_STREAM
+#  include <QDebug>
+#endif
+#ifdef _WIN32
+#  include <qt_windows.h>
+#endif
+
+#include <shared_mutex>
+
+#ifdef __linux__
+#  include <dlfcn.h>
+#endif
+
+#include <orm/macros/archdetect.hpp>
+#include <orm/macros/commonnamespace.hpp>
+#include <orm/macros/compilerdetect.hpp>
+#include <orm/macros/export_common.hpp>
+#include <orm/macros/likely.hpp>
+#include <orm/macros/stringify.hpp>
+#include <orm/macros/systemheader.hpp>
+#include <orm/support/replacebindings.hpp>
 #endif

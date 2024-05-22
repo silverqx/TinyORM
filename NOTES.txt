@@ -3259,3 +3259,17 @@ All this isn't enough as you need the correct libmysql.dll and openssl 1 librari
 these libaries to my dotfiles at bin_qt5.
 To use these libraries prepend this path to the Qt v5.15 KIT Environment:
 PATH=+E:\dotfiles\bin_qt5;
+
+
+Optimize PCH #include-s:
+------------------------
+
+ - search all system #include-s in all hpp and cpp files and paste them to the pch.h
+ - remove duplicate #include-s eg. <QStringList> already includes <QString> or <QDir> already includes <QFile>
+ - add also our TinyORM headers that are included eg. in TinyDrivers/MySql as system headers!
+ - then change RegEx to search all #include-s in #ifdef, changed '# *...' to '# +include <.*>'
+ - and mirror these #ifdef-s in pch.h
+
+Get-ChildItem -Recurse .\include\orm\*.hpp,.\src\orm\*.cpp | Select-String -Pattern '# *include <.*>' -Raw | ForEach-Object { $_ -creplace '(?:# *|(>) *// *(.*)$)', '$1' } | Sort-Object -Unique -CaseSensitive
+Get-ChildItem -Recurse .\drivers\common\*.hpp,.\drivers\common\*.cpp | Select-String -Pattern '# +include <.*>' -Raw | ForEach-Object { $_ -creplace '(?:# *|(>) *// *(.*)$)', '$1' } | Sort-Object -Unique -CaseSensitive
+Get-ChildItem -Recurse .\drivers\mysql\*.hpp,.\drivers\mysql\*.cpp | Select-String -Pattern '# +include <.*>' -Raw | ForEach-Object { $_ -creplace '(?:# *|(>) *// *(.*)$)', '$1' } | Sort-Object -Unique -CaseSensitive
