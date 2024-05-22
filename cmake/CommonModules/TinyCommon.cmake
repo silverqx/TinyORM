@@ -96,8 +96,6 @@ ${TINY_UNPARSED_ARGUMENTS}")
             /Zc:__cplusplus
             # Standards-conforming behavior
             /Zc:strictStrings
-            # # C/C++ conformant preprocessor
-            /Zc:preprocessor
             # Enable Additional Security Checks for Debug builds only
             $<$<CONFIG:Debug>:/sdl>
             /W4
@@ -121,6 +119,8 @@ ${TINY_UNPARSED_ARGUMENTS}")
                 # Standards-conforming behavior
                 /Zc:wchar_t,rvalueCast,inline
                 /Zc:throwingNew,referenceBinding,ternary
+                # C/C++ conformant preprocessor
+                /Zc:preprocessor
                 /external:anglebrackets /external:W0
                 # Enable and check it from time to time
 #                /external:templates-
