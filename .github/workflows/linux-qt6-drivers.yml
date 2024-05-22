@@ -120,6 +120,24 @@ jobs:
         echo 'VCPKG_DEFAULT_TRIPLET=x64-linux-dynamic' >> $GITHUB_ENV
         echo 'VCPKG_MAX_CONCURRENCY=${{ env.TinyParallel }}' >> $GITHUB_ENV
 
+    - name: vcpkg upgrade repository (latest version)
+      run: |
+        cd "$VCPKG_INSTALLATION_ROOT"
+
+        git switch master
+        git fetch --tags origin
+        git reset --hard origin/master
+
+        ./bootstrap-vcpkg.sh
+
+    - name: CMake print version
+      run: |
+        cmake --version
+
+    - name: vcpkg print version
+      run: |
+        vcpkg --version
+
     - name: Qt v6.7.0 prepare environment
       run: |
         echo '/opt/Qt/6.7.0/bin' >> $GITHUB_PATH

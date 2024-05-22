@@ -141,6 +141,12 @@ jobs:
         ccache.exe --show-config
         Write-Output '::endgroup::'
 
+    - name: Self-hosted runner prepare environment
+      run: |
+        'C:\Program Files\CMake\bin' >> $env:GITHUB_PATH
+        "$env:VCPKG_INSTALLATION_ROOT" >> $env:GITHUB_PATH
+        "$env:TINY_QT_ROOT\6.7.0\msvc2019_64\bin" >> $env:GITHUB_PATH
+
     # Must be after the ilammy/msvc-dev-cmd@v1 because vcvars64 overrides the VCPKG_ROOT
     - name: vcpkg prepare environment
       run: |
@@ -148,11 +154,15 @@ jobs:
         'VCPKG_DEFAULT_TRIPLET=x64-windows' >> $env:GITHUB_ENV
         'VCPKG_MAX_CONCURRENCY=${{ env.TinyParallel }}' >> $env:GITHUB_ENV
 
-    - name: Self-hosted runner prepare environment
+    - name: vcpkg upgrade repository (latest version)
       run: |
-        'C:\Program Files\CMake\bin' >> $env:GITHUB_PATH
-        "$env:VCPKG_INSTALLATION_ROOT" >> $env:GITHUB_PATH
-        "$env:TINY_QT_ROOT\6.7.0\msvc2019_64\bin" >> $env:GITHUB_PATH
+        Set-Location -Path $env:VCPKG_INSTALLATION_ROOT
+
+        git.exe switch master
+        git.exe fetch --tags origin
+        git.exe reset --hard origin/master
+
+        .\bootstrap-vcpkg.bat
 
     - name: CMake print version
       run: |

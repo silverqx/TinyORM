@@ -110,6 +110,12 @@ jobs:
         # Binary caching
         'VCPKG_BINARY_SOURCES=clear;x-gha,readwrite' >> $env:GITHUB_ENV
 
+    - name: Self-hosted runner prepare environment
+      if: env.TinyIsSelfHostedRunner == 'true'
+      run: |
+        'C:\Program Files\CMake\bin' >> $env:GITHUB_PATH
+        "$env:VCPKG_INSTALLATION_ROOT" >> $env:GITHUB_PATH
+
     - name: vcpkg prepare binary caching
       uses: actions/github-script@v6
       with:
@@ -117,11 +123,16 @@ jobs:
           core.exportVariable('ACTIONS_CACHE_URL', process.env.ACTIONS_CACHE_URL || '');
           core.exportVariable('ACTIONS_RUNTIME_TOKEN', process.env.ACTIONS_RUNTIME_TOKEN || '');
 
-    - name: Self-hosted runner prepare environment
+    - name: vcpkg upgrade repository (latest version)
       if: env.TinyIsSelfHostedRunner == 'true'
       run: |
-        'C:\Program Files\CMake\bin' >> $env:GITHUB_PATH
-        "$env:VCPKG_INSTALLATION_ROOT" >> $env:GITHUB_PATH
+        Set-Location -Path $env:VCPKG_INSTALLATION_ROOT
+
+        git.exe switch master
+        git.exe fetch --tags origin
+        git.exe reset --hard origin/master
+
+        .\bootstrap-vcpkg.bat
 
     - name: CMake print version
       run: |
@@ -148,17 +159,6 @@ jobs:
     # The following two steps (vcpkg install) are not needed below they only test if the vcpkg
     # classic mode works correctly. The Release and Debug build types are build at once so invoke
     # these two steps for the debug matrix only.
-
-    - name: vcpkg upgrade repository (latest version)
-      if: env.TinyIsSelfHostedRunner == 'true' && matrix.build-type.key == 'debug'
-      run: |
-        Set-Location -Path $env:VCPKG_INSTALLATION_ROOT
-
-        git.exe switch master
-        git.exe fetch --tags origin
-        git.exe reset --hard origin/master
-
-        .\bootstrap-vcpkg.bat
 
     # This should reliably remove the qtbase and tinyorm with all dependencies.
     # It's much faster to do it this way like removing the whole vcpkg folder and then the binary

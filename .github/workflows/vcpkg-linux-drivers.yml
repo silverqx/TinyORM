@@ -93,6 +93,10 @@ jobs:
         # Binary caching
         echo 'VCPKG_BINARY_SOURCES=clear;x-gha,readwrite' >> $GITHUB_ENV
 
+    - name: vcpkg add on the $PATH
+      run: |
+        echo "$VCPKG_INSTALLATION_ROOT" >> $GITHUB_PATH
+
     - name: vcpkg prepare binary caching
       uses: actions/github-script@v6
       with:
@@ -100,9 +104,15 @@ jobs:
           core.exportVariable('ACTIONS_CACHE_URL', process.env.ACTIONS_CACHE_URL || '');
           core.exportVariable('ACTIONS_RUNTIME_TOKEN', process.env.ACTIONS_RUNTIME_TOKEN || '');
 
-    - name: vcpkg add on the $PATH
+    - name: vcpkg upgrade repository (latest version)
       run: |
-        echo "$VCPKG_INSTALLATION_ROOT" >> $GITHUB_PATH
+        cd "$VCPKG_INSTALLATION_ROOT"
+
+        git switch master
+        git fetch --tags origin
+        git reset --hard origin/master
+
+        ./bootstrap-vcpkg.sh
 
     - name: CMake print version
       run: |
@@ -129,17 +139,6 @@ jobs:
     # The following two steps (vcpkg install) are not needed below they only test if the vcpkg
     # classic mode works correctly. The Release and Debug build types are build at once so invoke
     # these two steps for the debug matrix only.
-
-    - name: vcpkg upgrade repository (latest version)
-      if: matrix.build-type.key == 'debug'
-      run: |
-        cd "$VCPKG_INSTALLATION_ROOT"
-
-        git switch master
-        git fetch --tags origin
-        git reset --hard origin/master
-
-        ./bootstrap-vcpkg.sh
 
     # This should reliably remove the qtbase and tinyorm with all dependencies.
     # It's much faster to do it this way like removing the whole vcpkg folder and then the binary
