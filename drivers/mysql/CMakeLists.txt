@@ -82,6 +82,8 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
     )
 endif()
 
+# Order of #include-s is very important because of pch.h as its name is the same for all
+# projects, the ${PROJECT_SOURCE_DIR}/include must be as the first #include!
 target_include_directories(${TinyMySql_target}
     PRIVATE
         "$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>"

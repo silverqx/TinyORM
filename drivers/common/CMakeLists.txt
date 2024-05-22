@@ -94,12 +94,12 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
     )
 endif()
 
+# Order of #include-s is very important because of pch.h as its name is the same for all
+# projects, the ${PROJECT_SOURCE_DIR}/include must be as the first #include!
 target_include_directories(${TinyDrivers_target}
-    PUBLIC
-        "$<BUILD_INTERFACE:${${TinyOrm_ns}_SOURCE_DIR}/include>"
-        "$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>"
-    PRIVATE
-        "$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include_private>"
+    PUBLIC  "$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>"
+    PRIVATE "$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include_private>"
+    PUBLIC  "$<BUILD_INTERFACE:${${TinyOrm_ns}_SOURCE_DIR}/include>"
 )
 
 if(BUILD_MYSQL_DRIVER)
