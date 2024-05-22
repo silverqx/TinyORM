@@ -68,7 +68,8 @@ win32-msvc|win32-clang-msvc {
 # ---
 
 win32-msvc {
-    QMAKE_CXXFLAGS += -guard:cf -bigobj
+    # C/C++ conformant preprocessor
+    QMAKE_CXXFLAGS += -guard:cf -bigobj -Zc:preprocessor
     QMAKE_CXXFLAGS_WARN_ON = -external:anglebrackets -external:W0 -W4 -wd4702
                              # Enable and check it from time to time
 #                             -external:templates-

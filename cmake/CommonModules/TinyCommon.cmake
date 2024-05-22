@@ -96,6 +96,8 @@ ${TINY_UNPARSED_ARGUMENTS}")
             /Zc:__cplusplus
             # Standards-conforming behavior
             /Zc:strictStrings
+            # # C/C++ conformant preprocessor
+            /Zc:preprocessor
             # Enable Additional Security Checks for Debug builds only
             $<$<CONFIG:Debug>:/sdl>
             /W4
