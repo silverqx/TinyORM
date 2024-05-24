@@ -42,7 +42,7 @@ jobs:
 
           - key: qt6
             name: Qt6
-            version: 6.7.0
+            version: 6.7.1
             # For vcpkg classic mode (install tests)
             vcpkg-qt: qtbase
             vcpkg-qt-features: qtbase[core,sql-sqlite]

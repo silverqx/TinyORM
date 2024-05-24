@@ -84,12 +84,12 @@ Here is one simple example for `pwsh`.
 
 Set-StrictMode -Version 3.0
 
-Write-Host 'Setting up environment for Qt 6.7.0 usage...' -ForegroundColor Magenta
+Write-Host 'Setting up environment for Qt 6.7.1 usage...' -ForegroundColor Magenta
 Write-Host
 
 $Script:QtRoot = $env:TINY_QT_ROOT ?? 'C:\Qt'
 
-$env:Path = "$Script:QtRoot\6.7.0\msvc2019_64\bin;" + $env:Path
+$env:Path = "$Script:QtRoot\6.7.1\msvc2019_64\bin;" + $env:Path
 
 . vcvars64.ps1
 ```
@@ -124,12 +124,12 @@ And here for `Linux`.
 ```bash
 #!/usr/bin/env sh
 
-echo 'Setting up environment for Qt 6.7.0 usage...'
+echo 'Setting up environment for Qt 6.7.1 usage...'
 
 QtRoot="${TINY_QT_ROOT:-/opt/Qt}"
 
-export PATH="$QtRoot/6.7.0/gcc_64/bin"${PATH:+:}$PATH
-export LD_LIBRARY_PATH="$QtRoot/6.7.0/gcc_64/lib"${LD_LIBRARY_PATH:+:}$LD_LIBRARY_PATH
+export PATH="$QtRoot/6.7.1/gcc_64/bin"${PATH:+:}$PATH
+export LD_LIBRARY_PATH="$QtRoot/6.7.1/gcc_64/lib"${LD_LIBRARY_PATH:+:}$LD_LIBRARY_PATH
 ```
 
 </TabItem>
@@ -206,10 +206,10 @@ You can set the root and application folder paths in the form below and they wil
 │       │       ├── migrations.pri
 │       │       └── seeders.pri
 │       ├── tom-builds-cmake/
-│       │   └── build-TinyORM-Desktop_Qt_6_7_0_MSVC2019_64bit-Debug/
+│       │   └── build-TinyORM-Desktop_Qt_6_7_1_MSVC2019_64bit-Debug/
 │       └── tom-builds-qmake/
 │           ├── build-TinyORM-Desktop_Qt_5_15_3_MSYS2_UCRT64_64bit-Release/
-│           └── build-TinyORM-Desktop_Qt_6_7_0_MSVC2019_64bit-Debug/
+│           └── build-TinyORM-Desktop_Qt_6_7_1_MSVC2019_64bit-Debug/
 ├── tmp/
 └── vcpkg/
 ```
@@ -251,10 +251,10 @@ You can set the root and application folder paths in the form below and they wil
 │       │       ├── migrations.pri
 │       │       └── seeders.pri
 │       ├── tom-builds-cmake/
-│       │   └── build-TinyORM-Desktop_Qt_6_7_0_clang14_64bit_ccache-Debug/
+│       │   └── build-TinyORM-Desktop_Qt_6_7_1_clang14_64bit_ccache-Debug/
 │       └── tom-builds-qmake/
-│           ├── build-TinyORM-Desktop_Qt_6_7_0_GCC_64bit-Debug/
-│           └── build-TinyORM-Desktop_Qt_6_7_0_clang14_64bit_ccache-Release/
+│           ├── build-TinyORM-Desktop_Qt_6_7_1_GCC_64bit-Debug/
+│           └── build-TinyORM-Desktop_Qt_6_7_1_clang14_64bit_ccache-Release/
 ├── tmp/
 └── vcpkg/
 ```
@@ -284,7 +284,7 @@ Prepare compilation environment, we need to put the Qt Framework and Visual Stud
 <CodeBlock className='language-powershell'>
 {`mkdir ${rootFolderPath(pwsh)}
 cd ${rootFolderPath(pwsh)}
-$env:Path = 'C:\\Qt\\6.7.0\\msvc2019_64\\bin;' + $env:Path
+$env:Path = 'C:\\Qt\\6.7.1\\msvc2019_64\\bin;' + $env:Path
 vcvars64.ps1`}
 </CodeBlock>
 </TabItem>
@@ -292,8 +292,8 @@ vcvars64.ps1`}
 <CodeBlock className='language-bash'>
 {`mkdir -p ${rootFolderPath(bash)}
 cd ${rootFolderPath(bash)}
-export PATH=/opt/Qt/6.7.0/gcc_64/bin$\{PATH:+:\}$PATH
-export LD_LIBRARY_PATH=/opt/Qt/6.7.0/gcc_64/lib$\{LD_LIBRARY_PATH:+:\}$LD_LIBRARY_PATH`}
+export PATH=/opt/Qt/6.7.1/gcc_64/bin$\{PATH:+:\}$PATH
+export LD_LIBRARY_PATH=/opt/Qt/6.7.1/gcc_64/lib$\{LD_LIBRARY_PATH:+:\}$LD_LIBRARY_PATH`}
 </CodeBlock>
 </TabItem>
 </Tabs>
@@ -870,7 +870,7 @@ TINY_MAIN_DIR = $$clean_path(<your_path>)
 TINY_DOTENV_ROOT = $$PWD
 
 # Path to the TinyORM build folder (specified manually)
-TINYORM_BUILD_TREE = $$quote($$TINY_MAIN_DIR/TinyORM-builds-qmake/build-TinyORM-Desktop_Qt_6_7_0_MSVC2019_64bit-Debug/)
+TINYORM_BUILD_TREE = $$quote($$TINY_MAIN_DIR/TinyORM-builds-qmake/build-TinyORM-Desktop_Qt_6_7_1_MSVC2019_64bit-Debug/)
 # vcpkg - range-v3 and tabulate
 TINY_VCPKG_ROOT = $$quote(<your_path>/vcpkg/)
 #TINY_VCPKG_TRIPLET = x64-windows
@@ -904,7 +904,7 @@ These variables will be set after the configuration is done:
 | `TINY_BUILD_SUBFOLDER`        | Folder by release type if `CONFIG+=debug_and_release` is defined <small>(/debug, /release, or an empty string)</small>. |
 | `TINY_CCACHE_BUILD`           | To correctly link `ccache` build against a `ccache` build <small>(_ccache or an empty string)</small>. |
 | `TINY_MSVC_VERSION`           | The `msvc` compiler string <small>(MSVC2022 or MSVC2019)</small>. |
-| `TINY_QT_VERSION_UNDERSCORED` | Underscored `Qt` version <small>(eg. 6_7_0)</small>. |
+| `TINY_QT_VERSION_UNDERSCORED` | Underscored `Qt` version <small>(eg. 6_7_1)</small>. |
 | `TINY_RELEASE_TYPE_CAMEL`     | Build type string <small>(Debug, Profile, or Release)</small>. |
 | `TINY_VCPKG_INCLUDE`          | Path to the `vcpkg` `include` folder <small>(vcpkg/installed/&lt;triplet&gt;/include/)</small>. |
 
@@ -935,7 +935,7 @@ include($$TINY_MAIN_DIR/TinyORM/qmake/TinyOrm.pri)
 
 # TinyORM library path
 TINYORM_BUILD_TREE = $$quote($$TINY_MAIN_DIR/TinyORM-builds-qmake)
-LIBS += $$quote(-L$$TINYORM_BUILD_TREE/build-TinyORM-Desktop_Qt_6_7_0_MSVC2019_64bit-Debug/src$${TINY_BUILD_SUBFOLDER}/)
+LIBS += $$quote(-L$$TINYORM_BUILD_TREE/build-TinyORM-Desktop_Qt_6_7_1_MSVC2019_64bit-Debug/src$${TINY_BUILD_SUBFOLDER}/)
 LIBS += -lTinyOrm
 ```
 
@@ -952,7 +952,7 @@ include($$TINY_MAIN_DIR/TinyORM/qmake/TinyOrm.pri)
 
 # TinyORM library path
 TINYORM_BUILD_TREE = $$quote($$TINY_MAIN_DIR/TinyORM-builds-qmake)
-LIBS += $$quote(-L$$TINYORM_BUILD_TREE/build-TinyORM-Desktop_Qt_6_7_0_GCC_64bit-Debug/src$${TINY_BUILD_SUBFOLDER}/)
+LIBS += $$quote(-L$$TINYORM_BUILD_TREE/build-TinyORM-Desktop_Qt_6_7_1_GCC_64bit-Debug/src$${TINY_BUILD_SUBFOLDER}/)
 LIBS += -lTinyOrm
 ```
 
@@ -1085,7 +1085,7 @@ TINY_BUILD_TREE = $$shadowed($$PWD)
 
 If you will follow this pattern or logic then you can switch `QtCreator Kits` and the `TINYORM_BUILD_TREE` will be __auto-generated__ correctly and will always point to the correct `TinyORM` build tree.
 
-It works this way, all is happening inside the `variables.pri`, it takes a build folder name for the __current__ project eg. `build-HelloWorld-Desktop_Qt_6_7_0_MSVC2022_64bit-Debug`, replaces the `HelloWorld` with the `TinyORM` and as we already know the `TinyORM` build folder location we can simply concatenate these paths like `$$TINY_MAIN_DIR/TinyORM-builds-qmake/build-TinyORM-Desktop_Qt_6_7_0_MSVC2022_64bit-Debug`.
+It works this way, all is happening inside the `variables.pri`, it takes a build folder name for the __current__ project eg. `build-HelloWorld-Desktop_Qt_6_7_1_MSVC2022_64bit-Debug`, replaces the `HelloWorld` with the `TinyORM` and as we already know the `TinyORM` build folder location we can simply concatenate these paths like `$$TINY_MAIN_DIR/TinyORM-builds-qmake/build-TinyORM-Desktop_Qt_6_7_1_MSVC2022_64bit-Debug`.
 
 :::warning
 This will only work if you follow the recommended [`Folders structure`](#folders-structure).

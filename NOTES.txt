@@ -512,7 +512,7 @@ Upgrade the Qt to new version:
  - remove the old C:\Qt\x.y.z version folder (leftovers)
  - open dotfiles in the vscode and file/replace all occurences of x.y.z and x_y_z to the new version; commit - upgraded to Qt vx.y.z
  - add a new Qt version on the user PATH environment variable
- - build the QMYSQL driver - qtbuild-qmysql-driver.ps1 6.7.0
+ - build the QMYSQL driver - qtbuild-qmysql-driver.ps1 6.7.1
  - open the QtCreator
    - fix all the Settings - Kits - Kits Qt versions
    - fix the Settings - Debugger - Source Paths Mapping
@@ -527,7 +527,7 @@ GitHub Action workflows:
    - 7zip the qsqlmysql.dll, qsqlmysql.pdb, qsqlmysqld.dll, qsqlmysqld.pdb to the TinyOrm-files/qmysql_dlls-x.y.z.7z
    - remove the old TinyOrm-files/qmysql_dlls-x.y.z.7z file
    - generate the new hash - .\tools\Get-DownloadsHash.ps1 -Platform Linux, Windows
-   - commit - upgraded to Qt v6.7.0
+   - commit - upgraded to Qt v6.7.1
  - update the URL_QMYSQL_DLLS_MSVC_X64_x_y_z GitHub secret
 
 MySQL Timezone tables:
@@ -645,13 +645,13 @@ GitHub Actions:
      - add-apt-repository Clang 14
    - clang-cl-qt6.yml
      - Install LLVM and Clang 15.0.6 (KyleMayes/install-llvm-action@v1)
-     - Qt 6.7.0 install base components (jurplel/install-qt-action@v3)
-     - QMYSQL install driver dlls (Qt 6.7.0) - needed to rebuild the QSQL QMYSQL driver
+     - Qt 6.7.1 install base components (jurplel/install-qt-action@v3)
+     - QMYSQL install driver dlls (Qt 6.7.1) - needed to rebuild the QSQL QMYSQL driver
    - linux-qtX.yml
      - add-apt-repository Clang 15
    - msvc-2022.yml
-     - Qt 6.7.0 install base components (jurplel/install-qt-action@v3)
-     - QMYSQL install driver dlls (Qt 6.7.0) - needed to rebuild the QSQL QMYSQL driver
+     - Qt 6.7.1 install base components (jurplel/install-qt-action@v3)
+     - QMYSQL install driver dlls (Qt 6.7.1) - needed to rebuild the QSQL QMYSQL driver
 
  - how to update the clazy-standalone (analyzers.yml):
    - update the QtCreator to latest version, copy libexec/qtcreator/clang/ to some empty folder
@@ -1301,7 +1301,7 @@ How the Package Config file works:
    - I have invested a lot of effort to these info messages
    - whether linking against the single, multi, vcpkg builds
    - against which TinyORM package is linking eg.:
-     Found package TinyOrm 0.37.3.0 Debug (requested 0.37.3) at O:/Code/c/qMedia/TinyORM/TinyORM-builds-cmake/build-TinyORM-Desktop_Qt_6_7_0_MSVC2022_64bit-Debug/TinyOrmConfig.cmake
+     Found package TinyOrm 0.37.3.0 Debug (requested 0.37.3) at O:/Code/c/qMedia/TinyORM/TinyORM-builds-cmake/build-TinyORM-Desktop_Qt_6_7_1_MSVC2022_64bit-Debug/TinyOrmConfig.cmake
 
    - whether Matching build type for Build tree was enabled/disabled eg.:
      Matching build type for the TinyOrm 0.37.3.0 package build tree was enabled
@@ -3091,12 +3091,21 @@ pip install --upgrade aqtinstall
  - removing old Qt v6.5.3
 sudo rm -rf /opt/Qt/6.5.3
 
- - install Qt v6.7.0
+ - install Qt v6.7.1
 aqt list-qt linux desktop
-aqt list-qt linux desktop --arch 6.7.0
-aqt install-qt --external 7z --outputdir /opt/Qt linux desktop 6.7.0 linux_gcc_64
+aqt list-qt linux desktop --arch 6.7.1
+aqt install-qt --external 7z --outputdir /opt/Qt linux desktop 6.7.1 linux_gcc_64
 
  - Qt Maintenance Tool:
+   - don't call ./MaintenanceTool update as it installs QtCreator
+
+to update Qt run eg. 6.7.0 -> 6.7.1 call:
+./MaintenanceTool --type package --filter-packages "DisplayName=Desktop" search qt.qt6.671.linux_gcc_64
+./MaintenanceTool install qt.qt6.671.linux_gcc_64
+./MaintenanceTool --mirror https://qt-mirror.dannhauer.de install qt.qt6.671.linux_gcc_64
+./MaintenanceTool remove qt.qt6.670.linux_gcc_64
+no env or PATH-s upgrade is needed
+what is needed is to replace all 6.7.0 -> 6.7.1 in GitHub workflow yml files
 
 initial installation of Qt base FW only (w/o user input):
 ./qt-unified-linux-x64-4.7.0-online.run --root /opt/Qt --email 'silver.zachara@gmail.com' --password '' --accept-licenses --default-answer --confirm-command install qt.qt6.670.linux_gcc_64

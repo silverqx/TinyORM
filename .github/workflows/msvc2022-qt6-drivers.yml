@@ -148,7 +148,7 @@ jobs:
       run: |
         'C:\Program Files\CMake\bin' >> $env:GITHUB_PATH
         "$env:VCPKG_INSTALLATION_ROOT" >> $env:GITHUB_PATH
-        "$env:TINY_QT_ROOT\6.7.0\msvc2019_64\bin" >> $env:GITHUB_PATH
+        "$env:TINY_QT_ROOT\6.7.1\msvc2019_64\bin" >> $env:GITHUB_PATH
 
     # Must be after the ilammy/msvc-dev-cmd@v1 because vcvars64 overrides the VCPKG_ROOT
     - name: vcpkg prepare environment

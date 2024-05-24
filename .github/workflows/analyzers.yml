@@ -32,7 +32,7 @@ jobs:
 
           - key: qt6
             name: Qt6
-            version: 6.7.0
+            version: 6.7.1
 
     env:
       TINY_CLANG_TIDY_COMPLETED: false
