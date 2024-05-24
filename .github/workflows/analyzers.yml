@@ -120,6 +120,10 @@ jobs:
       run: |
         cmake --version
 
+    - name: vcpkg print version
+      run: |
+        vcpkg --version
+
     - name: Clazy print version
       run: |
         clazy-standalone --version
