@@ -5,6 +5,9 @@ on: workflow_dispatch
 concurrency:
   group: tinyorm-windows
 
+env:
+  TINY_VCPKG_NEEDS_UPGRADE: false
+
 # I will not remove the build folders before a job execution it's not necessary and
 # it will be faster this way. I can still remove them manually if needed or
 # if something goes wrong.
@@ -123,8 +126,35 @@ jobs:
           core.exportVariable('ACTIONS_CACHE_URL', process.env.ACTIONS_CACHE_URL || '');
           core.exportVariable('ACTIONS_RUNTIME_TOKEN', process.env.ACTIONS_RUNTIME_TOKEN || '');
 
+    - name: vcpkg needs upgrade? (once per day)
+      run: |
+        $vcpkgUpgradedAtFilepath = '${{ runner.workspace }}/.vcpkg_upgraded_at'
+
+        if (-not (Test-Path -Path $vcpkgUpgradedAtFilepath)) {
+          'TINY_VCPKG_NEEDS_UPGRADE=true' >> $env:GITHUB_ENV
+          exit 0
+        }
+
+        $datePreviousUpgrade = New-Object System.DateTime
+
+        $result = [System.DateTime]::TryParseExact( `
+          (Get-Content '${{ runner.workspace }}/.vcpkg_upgraded_at'), 'yyyyMMdd', `
+          [cultureinfo]::InvariantCulture, `
+          [System.Globalization.DateTimeStyles]::None -bor `
+          [System.Globalization.DateTimeStyles]::AssumeLocal, [ref]$datePreviousUpgrade)
+
+        if (-not $result) {
+          throw "Parsing the '.vcpkg_upgraded_at' failed."
+        }
+
+        $dateToday = Get-Date -Hour 0 -Minute 0 -Second 0 -Millisecond 0
+
+        if ($datePreviousUpgrade -lt $dateToday) {
+          'TINY_VCPKG_NEEDS_UPGRADE=true' >> $env:GITHUB_ENV
+        }
+
     - name: vcpkg upgrade repository (latest version)
-      if: env.TinyIsSelfHostedRunner == 'true'
+      if: env.TinyIsSelfHostedRunner == 'true' && env.TINY_VCPKG_NEEDS_UPGRADE == 'true'
       run: |
         Set-Location -Path $env:VCPKG_INSTALLATION_ROOT
 
@@ -133,6 +163,8 @@ jobs:
         git.exe reset --hard origin/master
 
         .\bootstrap-vcpkg.bat
+
+        Get-Date -Format 'yyyyMMdd' > '${{ runner.workspace }}/.vcpkg_upgraded_at'
 
     - name: CMake print version
       run: |

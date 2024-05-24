@@ -11,6 +11,9 @@ on: workflow_dispatch
 concurrency:
   group: tinyorm-linux
 
+env:
+  TINY_VCPKG_NEEDS_UPGRADE: false
+
 jobs:
 
   analyzers:
@@ -105,6 +108,43 @@ jobs:
         echo "VCPKG_ROOT=$VCPKG_INSTALLATION_ROOT" >> $GITHUB_ENV
         echo 'VCPKG_DEFAULT_TRIPLET=x64-linux-dynamic' >> $GITHUB_ENV
         echo 'VCPKG_MAX_CONCURRENCY=${{ env.TinyParallel }}' >> $GITHUB_ENV
+
+    - name: vcpkg needs upgrade? (once per day)
+      run: |
+        vcpkgUpgradedAtFilepath='${{ runner.workspace }}/.vcpkg_upgraded_at'
+
+        if [ ! -f "$vcpkgUpgradedAtFilepath" ] || [ ! -r "$vcpkgUpgradedAtFilepath" ] || \
+          ! read datePreviousUpgradeRaw < "$vcpkgUpgradedAtFilepath"
+        then
+          echo 'TINY_VCPKG_NEEDS_UPGRADE=true' >> $GITHUB_ENV
+          exit 0
+        fi
+
+        datePreviousUpgrade=$(date --date="$datePreviousUpgradeRaw" +%s)
+
+        if [ $? -ne 0 ] || [ -z "$datePreviousUpgrade" ]; then
+          echo "Parsing the '.vcpkg_upgraded_at' failed." >&2
+          exit 1
+        fi
+
+        dateToday=$(date --date=$(date +%Y-%m-%d) +%s)
+
+        if [ "$datePreviousUpgrade" -lt "$dateToday" ]; then
+          echo 'TINY_VCPKG_NEEDS_UPGRADE=true' >> $GITHUB_ENV
+        fi
+
+    - name: vcpkg upgrade repository (latest version)
+      if: env.TINY_VCPKG_NEEDS_UPGRADE == 'true'
+      run: |
+        cd "$VCPKG_INSTALLATION_ROOT"
+
+        git switch master
+        git fetch --tags origin
+        git reset --hard origin/master
+
+        ./bootstrap-vcpkg.sh
+
+        date +%Y-%m-%d > '${{ runner.workspace }}/.vcpkg_upgraded_at'
 
     - name: ${{ matrix.qt.name }} prepare environment
       run: |

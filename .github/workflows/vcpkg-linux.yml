@@ -15,6 +15,9 @@ on: workflow_dispatch
 concurrency:
   group: tinyorm-linux
 
+env:
+  TINY_VCPKG_NEEDS_UPGRADE: false
+
 # I will not remove the build folders before a job execution it's not necessary and
 # it will be faster this way. I can still remove them manually if needed or
 # if something goes wrong.
@@ -147,8 +150,32 @@ jobs:
           core.exportVariable('ACTIONS_CACHE_URL', process.env.ACTIONS_CACHE_URL || '');
           core.exportVariable('ACTIONS_RUNTIME_TOKEN', process.env.ACTIONS_RUNTIME_TOKEN || '');
 
+    - name: vcpkg needs upgrade? (once per day)
+      run: |
+        vcpkgUpgradedAtFilepath='${{ runner.workspace }}/.vcpkg_upgraded_at'
+
+        if [ ! -f "$vcpkgUpgradedAtFilepath" ] || [ ! -r "$vcpkgUpgradedAtFilepath" ] || \
+          ! read datePreviousUpgradeRaw < "$vcpkgUpgradedAtFilepath"
+        then
+          echo 'TINY_VCPKG_NEEDS_UPGRADE=true' >> $GITHUB_ENV
+          exit 0
+        fi
+
+        datePreviousUpgrade=$(date --date="$datePreviousUpgradeRaw" +%s)
+
+        if [ $? -ne 0 ] || [ -z "$datePreviousUpgrade" ]; then
+          echo "Parsing the '.vcpkg_upgraded_at' failed." >&2
+          exit 1
+        fi
+
+        dateToday=$(date --date=$(date +%Y-%m-%d) +%s)
+
+        if [ "$datePreviousUpgrade" -lt "$dateToday" ]; then
+          echo 'TINY_VCPKG_NEEDS_UPGRADE=true' >> $GITHUB_ENV
+        fi
+
     - name: vcpkg upgrade repository (latest version)
-      if: env.TinyIsSelfHostedRunner == 'true'
+      if: env.TinyIsSelfHostedRunner == 'true' && env.TINY_VCPKG_NEEDS_UPGRADE == 'true'
       run: |
         cd "$VCPKG_INSTALLATION_ROOT"
 
@@ -157,6 +184,8 @@ jobs:
         git reset --hard origin/master
 
         ./bootstrap-vcpkg.sh
+
+        date +%Y-%m-%d > '${{ runner.workspace }}/.vcpkg_upgraded_at'
 
     - name: CMake print version
       run: |
