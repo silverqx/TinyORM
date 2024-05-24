@@ -3193,6 +3193,7 @@ sr-a.ps1  (Restart-Service)
    - Stop-TinyORMActions
 
  - needed manual actions:
+   - remote origin must be cloned using HTTPS URL, not git!
    - deleting build folders eg. after compiler or Qt upgrade (see Common for both section above)
    - deleting and re-cloning the vcpkg repo
      - deleting not needed
@@ -3203,7 +3204,7 @@ sr-a.ps1  (Restart-Service)
        - setting owner is only needed if I delete and re-clone the vcpkg folder
      - isn't needed often, look on this step in actions (vcpkg-linux/windows.yml files) why it's so,
        step name to search: vcpkg upgrade repository (latest version)
-       - i'm simply fetching latest changes and doing hard reset on master
+       - I'm simply fetching latest changes and doing hard reset on master
 
 
 Windows Database servers services:
