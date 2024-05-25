@@ -18,5 +18,4 @@ win32-msvc|win32-clang-msvc: \
     CONFIG -= precompile_header
 
 for(tool, $$list(QMAKE_CC QMAKE_CXX QMAKE_LINK QMAKE_LINK_SHLIB QMAKE_LINK_C)): \
-    !isEmpty($$tool): \
-        $$tool = ccache $$eval($$tool)
+    $$tool = ccache $$eval($$tool)
