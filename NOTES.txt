@@ -2951,6 +2951,7 @@ PowerShell confusions:
  - variable names are case-insensitive
  - you don't have to ` escape newline: after + | = or inside () -join -replace
  - you must ` escape newline between function parameters eg.: -Path `\n -Message
+ - don't call return 1 for exiting pwsh scripts, always use exit 1 for this purpose
 
 
 qmake confusions:
