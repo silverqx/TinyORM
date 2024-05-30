@@ -3003,6 +3003,30 @@ qmake confusions:
    - if we are eg. three functions deep inside then it's enough to call export() only once,
      there is no need to re-export() in parent functions
 
+ - $$cat() and $$system() 'mode' parameter:
+   - default is true
+   - lines or blob are the best
+   - lines - every line as a separate list value, excluding empty lines;
+             size == number of lines w/o empty lines
+   - blob  - variable will contain one value only with exact content of the file (no list)
+             size == 1
+   - true  - split not even at newlines but also at spaces on every line, includes newlines as split points
+             size == number of lines + number of all spaces
+   - false - split not even at newlines but also at spaces on every line, excluding newlines as split points
+             size == number of lines w/o empty lines + number of all spaces
+
+ - $$system() 'stsvar' parameter and return value:
+   - -1 if command crashes; stdout will always be empty
+   - 0 if successful
+   - on Windows replaces \r\n with \n in output
+   - return variable will countain stdout
+   - stderr can't be obtained, is forwarded to the current stderr
+   - if fails return value will contain what ever was returned, it doesn't have to empty in case,
+     will be empty only if the command crashes
+
+ - defined() 'type' parameter:
+   - the default value is test & replace
+
 
 tools/deploy.ps1:
 -----------------
