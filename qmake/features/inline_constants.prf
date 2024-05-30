@@ -4,7 +4,7 @@ if(CONFIG(dll, dll|shared|static|staticlib) | \
 CONFIG(shared, dll|shared|static|staticlib)): \
     error( "inline constants (inline_constants CONFIG option) cause crashes with\
             the shared library on MinGW clang, please use\
-            \"CONFIG += extern_constants\" instead." )
+            \"CONFIG += extern_constants\" instead or leave it undefined." )
 
 CONFIG -= extern_constants
 CONFIG *= inline_constants
