@@ -55,11 +55,11 @@ defineTest(tiny_is_building_driver) {
     driverType = $$1
     out = $$2
 
-    equals(driverType, mysql): isMySql = true
+    equals(driverType, "mysql"): isMySql = true
     else: isMySql = false
-    equals(driverType, psql): isPostgres = true
+    equals(driverType, "psql"): isPostgres = true
     else: isPostgres = false
-    equals(driverType, sqlite): isSQLite = true
+    equals(driverType, "sqlite"): isSQLite = true
     else: isSQLite = false
 
     # Verify whether the driverType has the correct value
@@ -141,10 +141,10 @@ defineTest(tiny_drivers_check_build_types) {
 # Determine whether the current TARGET is TinyDrivers-related.
 defineTest(tiny_is_drivers_target) {
     tiny_is_building_drivers(): \
-    if(equals(TARGET, TinyDrivers) | \
-       equals(TARGET, TinyMySql)): \
-       # equals(TARGET, TinyPostgres) | \
-       # equals(TARGET, TinySQLite)): \
+    if(equals(TARGET, "TinyDrivers") | \
+       equals(TARGET, "TinyMySql")): \
+       # equals(TARGET, "TinyPostgres") | \
+       # equals(TARGET, "TinySQLite")): \
         return(true)
 
     return(false)

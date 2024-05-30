@@ -10,7 +10,7 @@ CONFIG -= extern_constants
 CONFIG *= inline_constants
 
 # The TinyDrivers sub-project has its own DEFINES for global constants
-equals(TARGET, TinyDrivers) {
+equals(TARGET, "TinyDrivers") {
     DEFINES -= TINYDRIVERS_EXTERN_CONSTANTS
     DEFINES *= TINYDRIVERS_INLINE_CONSTANTS
 }
