@@ -1,40 +1,27 @@
-# Some compilers simulate other compilers to serve as drop-in replacements
-# Eg. clang-cl simulates MSVC compiler
-TINY_SIMULATED_VERSION =
+# Check/verify all toolchain requirements and edge cases, throws error() on any problem
 
-if(gcc|clang):!win32-clang-msvc: \
-    TINY_COMPILER_VERSION = $$system("$${QMAKE_CXX} -dumpversion")
-
-else:win32-msvc|win32-clang-msvc {
-    TINY_MSVC_COMPILER_VERSION = $$QMAKE_MSC_VER
-
-    win32-clang-msvc {
-        TINY_CLANG_CL_COMPILER_VERSION = $$system("$${QMAKE_CXX} --version")
-        TINY_CLANG_CL_COMPILER_VERSION = $$member(TINY_CLANG_CL_COMPILER_VERSION, 2)
-        # Ok, to be absolutely correct 😎
-        TINY_COMPILER_VERSION = $$TINY_CLANG_CL_COMPILER_VERSION
-        TINY_SIMULATED_VERSION = $$TINY_MSVC_COMPILER_VERSION
-    }
-    else: \
-        TINY_COMPILER_VERSION = $$TINY_MSVC_COMPILER_VERSION
-}
-
-else: \
-    error( "Unknown compiler '$$QMAKE_COMPILER'" )
+# Populate the TINY_COMPILER_VERSION and TINY_SIMULATED_VERSION qmake variables
+load(tiny_compiler_version)
 
 !build_pass: \
-if(win32-msvc|win32-clang-msvc): \
-!versionAtLeast(TINY_MSVC_COMPILER_VERSION, $$replace(tinyMinReqMsvc, \., "")): \
-    error( "Minimum required MSVC version was not satisfied, required version\
-            >=$${tinyMinReqMsvc}, your version is $${TINY_MSVC_COMPILER_VERSION},\
-            upgrade Visual Studio." )
+if(win32-msvc|win32-clang-msvc) {
+    win32-msvc:       tinyMsvcVersion = $$TINY_COMPILER_VERSION
+    win32-clang-msvc: tinyMsvcVersion = $$TINY_SIMULATED_VERSION
+
+    !versionAtLeast(tinyMsvcVersion, $$replace(tinyMinReqMsvc, \., "")): \
+        error( "Minimum required MSVC version was not satisfied, required version\
+                >=$${tinyMinReqMsvc}, your version is $${tinyMsvcVersion},\
+                upgrade Visual Studio." )
+
+    unset(tinyMsvcVersion)
+}
 
 !build_pass: \
 win32-clang-msvc: \
-!versionAtLeast(TINY_CLANG_CL_COMPILER_VERSION, $$tinyMinReqClangCl): \
+!versionAtLeast(TINY_COMPILER_VERSION, $$tinyMinReqClangCl): \
     error( "Minimum required clang-cl version was not satisfied, required version\
-            >=$${tinyMinReqClangCl}, your version is\
-            $${TINY_CLANG_CL_COMPILER_VERSION}, upgrade LLVM." )
+            >=$${tinyMinReqClangCl}, your version is $${TINY_COMPILER_VERSION},\
+            upgrade LLVM." )
 
 !build_pass: \
 !versionAtLeast(QT_VERSION, $$tinyMinRecQt): \

@@ -13,7 +13,7 @@ tinyMinRecClang   = 12
 tinyMinRecGCC     = 10.2
 tinyMinRecQt      = 5.15.2
 
-# Make minimum toolchain version a requirement
+# Check/verify all toolchain requirements and edge cases, throws error() on any problem
 load(tiny_toolchain_requirement)
 # The staticlib option check
 load(tiny_staticlib_check)

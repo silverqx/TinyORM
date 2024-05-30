@@ -1,0 +1,66 @@
+# Populate the TINY_COMPILER_VERSION and TINY_SIMULATED_VERSION qmake variables
+
+# Don't return if it's the clang-cl compiler because we have to manually obtain
+# the compiler version.
+!win32-clang-msvc: \
+!isEmpty(TINY_COMPILER_VERSION): \
+    return()
+
+# Obtain the compiler version using the QMAKE_CXX variable and the given version option
+# parameter.
+defineReplace(tiny_get_compiler_version) {
+    # Argument checks
+    !defined(1, var) | \
+    isEmpty(1): \
+        error( "The first string 'versionOption' parameter can't be empty\
+                in tiny_get_compiler_version()." )
+
+    # Prepare variable names
+    versionOption = $$1
+
+    # Main section
+    exitCode = -1
+
+    compilerVersion = $$system("$${QMAKE_CXX} $${versionOption}", "true", exitCode)
+
+    equals(exitCode, 0): \
+        return($$compilerVersion)
+
+    error( "Obtaining TINY_COMPILER_VERSION failed with exit code '$${exitCode}'.\
+            The '$${QMAKE_CXX}' compiler isn't supported." )
+}
+
+!defined(TINY_SIMULATED_VERSION, var): \
+    TINY_SIMULATED_VERSION =
+
+if(gcc|clang):!win32-clang-msvc: \
+    TINY_COMPILER_VERSION = $$tiny_get_compiler_version("-dumpversion")
+
+else:win32-msvc|win32-clang-msvc {
+    win32-clang-msvc {
+        tinyClangClCompilerVersion = $$tiny_get_compiler_version("--version")
+        tinyClangClCompilerVersion = $$member(tinyClangClCompilerVersion, 2)
+
+        # Nothing to do, versions are the same, return to avoid calling cache()
+        equals(TINY_COMPILER_VERSION, $$tinyClangClCompilerVersion): \
+        equals(TINY_SIMULATED_VERSION, $$QMAKE_MSC_VER): \
+            return()
+
+        # Ok, to be absolutely correct 😎
+        TINY_COMPILER_VERSION = $$tinyClangClCompilerVersion
+        # Some compilers simulate other compilers to serve as drop-in replacements
+        # Eg. clang-cl simulates MSVC compiler
+        TINY_SIMULATED_VERSION = $$QMAKE_MSC_VER
+        unset(tinyClangClCompilerVersion)
+    }
+    else: \
+        TINY_COMPILER_VERSION = $$QMAKE_MSC_VER
+}
+
+else: \
+    error( "Unknown compiler '$$QMAKE_COMPILER'." )
+
+unset(tinyResult)
+
+cache(TINY_COMPILER_VERSION) # set cache is the default
+cache(TINY_SIMULATED_VERSION)
