@@ -141,6 +141,8 @@ output" OFF
 # only one option with the clang-cl is inline constants for both shared/static builds
 # Look at NOTES.txt[inline constants] how this funckin machinery works 😎
 # Related issue: https://github.com/llvm/llvm-project/issues/55938
+# Possible reason why extern constants don't work with static linking:
+# https://stackoverflow.com/a/3187324/2266467
 if(NOT (MINGW AND CMAKE_CXX_COMPILER_ID STREQUAL "Clang" AND BUILD_SHARED_LIBS))
     feature_option_dependent(INLINE_CONSTANTS
         "Use inline constants instead of extern constants in the shared build. \

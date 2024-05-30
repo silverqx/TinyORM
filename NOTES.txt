@@ -1506,6 +1506,8 @@ inline constants:
 -----------------
 
  - for static archive build only inline constants are allowed, this is the default for all scenarios, any ify
+   I think here is the comment why extern constants don't work with static linkage and static libs:
+   https://stackoverflow.com/a/3187324/2266467
 
  - cmake
    - normal behavior is that user can switch between inline and extern constants using the INLINE_CONSTANTS cmake option

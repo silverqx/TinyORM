@@ -1,3 +1,5 @@
+# Possible reason why extern constants don't work with static linking:
+# https://stackoverflow.com/a/3187324/2266467
 !build_pass: \
 if(CONFIG(static, dll|shared|static|staticlib) | \
 CONFIG(staticlib, dll|shared|static|staticlib)): \
