@@ -94,7 +94,7 @@ defineReplace(tiny_configure_cmake_rc) {
     else: \
         pragmaCodepage = 65001
 
-    rcFileContent = $$cat($$rcFile, blob)
+    rcFileContent = $$cat($$rcFile, "blob")
 
     # Support OriginalFilename in the Windows RC file
     load(resolve_target)

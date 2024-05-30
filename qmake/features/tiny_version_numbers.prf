@@ -86,7 +86,7 @@ defineTest(tiny_version_numbers) {
                 abosulte path in tiny_version_numbers()." )
 
     # Find version numbers in the version.hpp file
-    versionFileContent = $$cat($$versionHeader, lines)
+    versionFileContent = $$cat($$versionHeader, "lines")
     versionTokens      = MAJOR MINOR BUGFIX BUILD STATUS
     regexpTokens       = $$join(versionTokens, '|')
     regexp             = "_($${regexpTokens}) +([0-9]+|\"-{1}\w+\")"
