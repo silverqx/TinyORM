@@ -3027,6 +3027,11 @@ qmake confusions:
  - defined() 'type' parameter:
    - the default value is test & replace
 
+ - comparing numbers and version numbers:
+   - versionAtLeast() and versionAtMost(), will use QVersionNumber::fromString()
+   - lessThan() and greaterThan(), will use QString::toInt()
+   - equals() to compare equality, it will be compared as QString, in qmake everything is QString
+
 
 tools/deploy.ps1:
 -----------------
