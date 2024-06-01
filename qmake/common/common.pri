@@ -1,12 +1,3 @@
-# Unsupported build types
-# ---
-!build_pass:win32-clang-g++ {
-    CONFIG(static, dll|shared|static|staticlib) | \
-    CONFIG(staticlib, dll|shared|static|staticlib): \
-        error( "MinGW clang static build is not supported, contains a problem with\
-                duplicate symbols, you can try to fix it :)." )
-}
-
 # Load .env and .env.$$QMAKE_PLATFORM files
 # ---
 
@@ -45,24 +36,11 @@ CONFIG(release, debug|release): \
 # TinyORM configuration
 # ---
 
-# Use extern constants for shared build
-# clang-cl notes:
-# shared build crashes with extern constants, force to inline constants 😕🤔
-# only one option with the clang-cl is inline constants for both shared/static builds
+# Use extern constants by default
 # Look at NOTES.txt[inline constants] how this funckin machinery works 😎
-win32-clang-msvc: \
-    CONFIG += inline_constants
-
-else: \
-CONFIG(shared, dll|shared|static|staticlib) | \
-CONFIG(dll, dll|shared|static|staticlib) {
-    # Support override because inline_constants can be used in the shared build too
-    !inline_constants: \
-        CONFIG *= extern_constants
-}
-# Archive library build (static build)
-else: \
-    CONFIG += inline_constants
+!extern_constants: \
+!inline_constants: \
+    CONFIG += extern_constants
 
 # Platform specific configuration
 # ---

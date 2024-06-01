@@ -1,9 +1,10 @@
+# MinGW Clang shared build crashes with inline constants (fixed in Clang v18)
 # Related issue: https://github.com/llvm/llvm-project/issues/55938
-!build_pass:win32-clang-g++: \
+!build_pass:win32-clang-g++:versionAtMost(TINY_COMPILER_VERSION, 17): \
 if(CONFIG(dll, dll|shared|static|staticlib) | \
 CONFIG(shared, dll|shared|static|staticlib)): \
     error( "inline constants (inline_constants CONFIG option) cause crashes with\
-            the shared library on MinGW clang, please use\
+            the shared library on MinGW Clang <18, please use\
             \"CONFIG += extern_constants\" instead or leave it undefined." )
 
 CONFIG -= extern_constants

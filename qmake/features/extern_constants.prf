@@ -1,15 +1,7 @@
-# Possible reason why extern constants don't work with static linking:
-# https://stackoverflow.com/a/3187324/2266467
-!build_pass: \
-if(CONFIG(static, dll|shared|static|staticlib) | \
-CONFIG(staticlib, dll|shared|static|staticlib)): \
+# Fixed in Clang v18
+!build_pass:win32-clang-msvc:versionAtMost(TINY_COMPILER_VERSION, 17): \
     error( "extern constants (extern_constants CONFIG option) cause crashes with\
-            an archive library, please use \"CONFIG += inline_constants\" instead or\
-            leave it undefined." )
-
-!build_pass:win32-clang-msvc: \
-    error( "extern constants (extern_constants CONFIG option) cause crashes with\
-            the shared library on clang-cl MSVC, please use\
+            the shared library on clang-cl MSVC <18, please use\
             \"CONFIG += inline_constants\" instead or leave it undefined." )
 
 CONFIG -= inline_constants
