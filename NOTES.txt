@@ -1542,6 +1542,8 @@ inline constants:
      - so inline constants are only one option with clang-cl
 
 The conclusion is that the funckin string constants 💥, it was bearable until I have added the clang-cl MSVC support.
+Clang under <v18 is full of bugs, the same is true for lld. Huge amount of problems were fixed before 14-18.
+I think is the time to try Clang libc++ std library again and give it a try, but I don't believe I compile basic code, last time I tried I had a problems with hello world. 😅
 
 
 eagerLoadRelations() and Model::load() history:
