@@ -182,6 +182,8 @@ ${TINY_UNPARSED_ARGUMENTS}")
             # Weffc++ is outdated, it warnings about bullshits 🤬, even word about this
             # in docs: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=110186
             # -Weffc++
+            # CMake already defines it
+            # -Winvalid-pch
             -pedantic
             -Wcast-qual
             -Wcast-align
@@ -195,7 +197,8 @@ ${TINY_UNPARSED_ARGUMENTS}")
             -Wconversion
             -Wzero-as-null-pointer-constant
             -Wuninitialized
-            # Reduce I/O operations
+            -Wdeprecated-copy-dtor
+            # Reduce I/O operations (use pipes between commands when possible)
             -pipe
         )
 
@@ -204,6 +207,11 @@ ${TINY_UNPARSED_ARGUMENTS}")
         check_cxx_compiler_flag(-Wstrict-null-sentinel SNS_SUPPORT)
         if(SNS_SUPPORT)
             target_compile_options(${target} INTERFACE -Wstrict-null-sentinel)
+        endif()
+
+        # Has the potential to catch weird code
+        if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+            target_compile_options(${target} INTERFACE -Wdeprecated)
         endif()
     endif()
 
