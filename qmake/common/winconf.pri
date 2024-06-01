@@ -78,8 +78,19 @@ win32-msvc {
 # clang-cl.exe notes:
 # /RTC    - https://lists.llvm.org/pipermail/cfe-commits/Week-of-Mon-20130902/088105.html
 # /bigobj - clang-cl uses it by default - https://reviews.llvm.org/D12981
-win32-clang-msvc: \
+win32-clang-msvc {
     QMAKE_CXXFLAGS_WARN_ON = -W4
+
+    # Relative paths in -Yu or -Fp are throwing -Wmicrosoft-include warning on clang-cl
+    # with msvc, but not all, only if it contains more ../../, eg. 5 levels up, this is
+    # happening especially for auto tests which have deep folder structure.
+    precompile_header: \
+        QMAKE_CXXFLAGS_WARN_ON += -Wno-microsoft-include
+
+    # Always use colors in diagnostics
+    equals(QMAKE_LINK, lld-link): \
+        QMAKE_LFLAGS *= --color-diagnostics
+}
 
 win32-msvc|win32-clang-msvc {
     QMAKE_CXXFLAGS_DEBUG += -RTC1 -sdl
@@ -96,8 +107,9 @@ win32-msvc|win32-clang-msvc {
     QMAKE_LFLAGS_RELEASE += /OPT:REF,ICF=5
 }
 
-win32-clang-g++ {
-    # -mthreads is unused on Clang
-    QMAKE_CXXFLAGS_EXCEPTIONS_ON -= -mthreads
+# -mthreads is unused on Clang and also g++ and -fexceptions is enabled by default,
+# these are old obsolete/deprecated flags for of mingw32, also CMake doesn't use these.
+gcc|clang {
+    QMAKE_CXXFLAGS_EXCEPTIONS_ON -= -fexceptions -mthreads
     QMAKE_LFLAGS_EXCEPTIONS_ON -= -mthreads
 }

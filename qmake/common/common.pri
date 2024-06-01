@@ -50,3 +50,6 @@ mingw|if(unix:!macx): include($$PWD/unixconf.pri)
 
 !if(win32|macx|if(mingw|if(unix:!macx))): \
     message( "Unsupported platform ($${QMAKE_PLATFORM}-$${QMAKE_COMPILER})." )
+
+# Enable colors and ANSI escape codes in diagnostics (works also with clang-cl)
+llvm: QMAKE_CXXFLAGS *= -fansi-escape-codes -fcolor-diagnostics
