@@ -7,7 +7,7 @@ macro(tiny_init_cmake_variables_pre)
     # Set the CMAKE_EXPORT_PACKAGE_REGISTRY from the TINYORM_EXPORT_PACKAGE_REGISTRY
     # environment variable
     if(NOT DEFINED CMAKE_EXPORT_PACKAGE_REGISTRY AND
-            DEFINED ENV{TINYORM_EXPORT_PACKAGE_REGISTRY}
+           DEFINED ENV{TINYORM_EXPORT_PACKAGE_REGISTRY}
     )
         set(CMAKE_EXPORT_PACKAGE_REGISTRY $ENV{TINYORM_EXPORT_PACKAGE_REGISTRY}
             CACHE BOOL "Enables the export(PACKAGE) command, export packages \

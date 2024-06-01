@@ -41,7 +41,7 @@ Visual Studio")
 
     # clang-cl
     if(MSVC AND CMAKE_CXX_COMPILER_ID STREQUAL "Clang" AND
-        CMAKE_CXX_SIMULATE_ID STREQUAL "MSVC"
+            CMAKE_CXX_SIMULATE_ID STREQUAL "MSVC"
     )
         if(CMAKE_CXX_SIMULATE_VERSION VERSION_LESS TINY_MSVC)
             message(FATAL_ERROR "Minimum required MSVC version was not satisfied, \
@@ -301,7 +301,7 @@ with inline constants :/.")
     endif()
 
     if(MINGW AND CMAKE_CXX_COMPILER_ID STREQUAL "Clang" AND BUILD_SHARED_LIBS AND
-        INLINE_CONSTANTS
+            INLINE_CONSTANTS AND CMAKE_CXX_COMPILER_VERSION VERSION_LESS "18"
     )
         message(FATAL_ERROR "MinGW clang shared build crashes with inline constants, \
 don't enable the INLINE_CONSTANTS cmake option :/.")
