@@ -293,17 +293,20 @@ endmacro()
 # Throw a fatal error for unsupported environments
 function(tiny_check_unsupported_build)
 
+    # Fixed in Clang v18 🎉
     # Related issue: https://github.com/llvm/llvm-project/issues/55938
 
-    if(MINGW AND CMAKE_CXX_COMPILER_ID STREQUAL "Clang" AND NOT BUILD_SHARED_LIBS)
-        message(FATAL_ERROR "MinGW clang static build is not supported, it has problems \
-with inline constants :/.")
+    if(MINGW AND CMAKE_CXX_COMPILER_ID STREQUAL "Clang" AND NOT BUILD_SHARED_LIBS AND
+            CMAKE_CXX_COMPILER_VERSION VERSION_LESS "18"
+    )
+        message(FATAL_ERROR "MinGW Clang <18 static build is not supported, it has \
+problems with inline constants :/.")
     endif()
 
     if(MINGW AND CMAKE_CXX_COMPILER_ID STREQUAL "Clang" AND BUILD_SHARED_LIBS AND
             INLINE_CONSTANTS AND CMAKE_CXX_COMPILER_VERSION VERSION_LESS "18"
     )
-        message(FATAL_ERROR "MinGW clang shared build crashes with inline constants, \
+        message(FATAL_ERROR "MinGW Clang <18 shared build crashes with inline constants, \
 don't enable the INLINE_CONSTANTS cmake option :/.")
     endif()
 

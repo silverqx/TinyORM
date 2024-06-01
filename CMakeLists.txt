@@ -80,6 +80,7 @@ tiny_toolchain_requirement(
 
 include(FeatureSummary)
 include(TinyFeatureOptions)
+include(TinyOptions)
 
 # Initialize default CMake variables on which CMake options depend
 tiny_init_cmake_variables_pre()
@@ -136,20 +137,8 @@ feature_option(VERBOSE_CONFIGURE
 output" OFF
 )
 
-# MinGW clang shared build crashes with inline constants
-# clang-cl shared build crashes with extern constants so force to inline constants 😕🤔
-# only one option with the clang-cl is inline constants for both shared/static builds
-# Look at NOTES.txt[inline constants] how this funckin machinery works 😎
-# Related issue: https://github.com/llvm/llvm-project/issues/55938
-# Possible reason why extern constants don't work with static linking:
-# https://stackoverflow.com/a/3187324/2266467
-if(NOT (MINGW AND CMAKE_CXX_COMPILER_ID STREQUAL "Clang" AND BUILD_SHARED_LIBS))
-    feature_option_dependent(INLINE_CONSTANTS
-        "Use inline constants instead of extern constants in the shared build. \
-OFF is highly recommended for the shared build; is always ON for the static build" OFF
-        "BUILD_SHARED_LIBS AND NOT (MSVC AND CMAKE_CXX_COMPILER_ID STREQUAL \"Clang\")" ON
-    )
-endif()
+# Initialize INLINE_CONSTANTS CMake feature dependent option
+tiny_initialize_inline_constants_option()
 
 mark_as_advanced(MATCH_EQUAL_EXPORTED_BUILDTREE)
 
