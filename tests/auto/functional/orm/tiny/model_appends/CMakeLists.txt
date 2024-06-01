@@ -9,4 +9,4 @@ add_executable(model_appends
 add_test(NAME model_appends COMMAND model_appends)
 
 include(TinyTestCommon)
-tiny_configure_test(model_appends INCLUDE_MODELS)
+tiny_configure_test(model_appends DEPENDS_ON_UNITTESTS INCLUDE_MODELS)

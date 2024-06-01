@@ -9,4 +9,4 @@ add_executable(databasemanager
 add_test(NAME databasemanager COMMAND databasemanager)
 
 include(TinyTestCommon)
-tiny_configure_test(databasemanager)
+tiny_configure_test(databasemanager DEPENDS_ON_UNITTESTS)

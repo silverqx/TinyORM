@@ -9,4 +9,4 @@ add_executable(relations_insrt_updt
 add_test(NAME relations_insrt_updt COMMAND relations_insrt_updt)
 
 include(TinyTestCommon)
-tiny_configure_test(relations_insrt_updt INCLUDE_MODELS)
+tiny_configure_test(relations_insrt_updt DEPENDS_ON_UNITTESTS INCLUDE_MODELS RUN_SERIAL)

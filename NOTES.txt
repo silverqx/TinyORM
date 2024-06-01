@@ -1064,6 +1064,9 @@ $env:Path = "E:\c\qMedia\TinyORM\TinyORM-builds-cmake\build-TinyORM-Desktop_Qt_5
 ctest
 ctest --progress
 
+ - also running tests in parallel is supported 🎉
+ctest --parallel 10
+
  - some debug output:
 
 cmake --trace-expand --trace-source=tests/auto/unit/orm/query/mysql_querybuilder/CMakeLists.txt -LA ..

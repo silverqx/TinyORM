@@ -9,4 +9,4 @@ add_executable(relations_conn_indep
 add_test(NAME relations_conn_indep COMMAND relations_conn_indep)
 
 include(TinyTestCommon)
-tiny_configure_test(relations_conn_indep INCLUDE_MODELS)
+tiny_configure_test(relations_conn_indep DEPENDS_ON_UNITTESTS INCLUDE_MODELS RUN_SERIAL)

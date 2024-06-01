@@ -9,4 +9,4 @@ add_executable(querybuilder
 add_test(NAME querybuilder COMMAND querybuilder)
 
 include(TinyTestCommon)
-tiny_configure_test(querybuilder)
+tiny_configure_test(querybuilder DEPENDS_ON_UNITTESTS RUN_SERIAL)

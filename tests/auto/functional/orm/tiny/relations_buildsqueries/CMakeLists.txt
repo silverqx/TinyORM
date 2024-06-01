@@ -9,4 +9,4 @@ add_executable(relations_buildsqueries
 add_test(NAME relations_buildsqueries COMMAND relations_buildsqueries)
 
 include(TinyTestCommon)
-tiny_configure_test(relations_buildsqueries INCLUDE_MODELS)
+tiny_configure_test(relations_buildsqueries DEPENDS_ON_UNITTESTS INCLUDE_MODELS RUN_SERIAL)

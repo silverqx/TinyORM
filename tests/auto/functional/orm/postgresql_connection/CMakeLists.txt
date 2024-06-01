@@ -9,4 +9,4 @@ add_executable(postgresql_connection
 add_test(NAME postgresql_connection COMMAND postgresql_connection)
 
 include(TinyTestCommon)
-tiny_configure_test(postgresql_connection)
+tiny_configure_test(postgresql_connection DEPENDS_ON_UNITTESTS)

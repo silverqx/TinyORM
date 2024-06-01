@@ -9,4 +9,4 @@ add_executable(model_serialization
 add_test(NAME model_serialization COMMAND model_serialization)
 
 include(TinyTestCommon)
-tiny_configure_test(model_serialization INCLUDE_MODELS)
+tiny_configure_test(model_serialization DEPENDS_ON_UNITTESTS INCLUDE_MODELS RUN_SERIAL)

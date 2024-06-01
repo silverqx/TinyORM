@@ -9,5 +9,4 @@ add_executable(castattributes
 add_test(NAME castattributes COMMAND castattributes)
 
 include(TinyTestCommon)
-tiny_configure_test(castattributes INCLUDE_MODELS)
-
+tiny_configure_test(castattributes DEPENDS_ON_UNITTESTS INCLUDE_MODELS RUN_SERIAL)

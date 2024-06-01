@@ -4,7 +4,10 @@ include(TinySources)
 # Configure a passed auto test
 function(tiny_configure_test name)
 
-    set(options INCLUDE_MIGRATIONS INCLUDE_MODELS INCLUDE_PROJECT_SOURCE_DIR)
+    set(options
+        DEPENDS_ON_UNITTESTS INCLUDE_MIGRATIONS INCLUDE_MODELS INCLUDE_PROJECT_SOURCE_DIR
+        RUN_SERIAL
+    )
     cmake_parse_arguments(PARSE_ARGV 1 TINY "${options}" "" "")
 
     if(DEFINED TINY_UNPARSED_ARGUMENTS)
@@ -27,6 +30,20 @@ ${TINY_UNPARSED_ARGUMENTS}")
             VISIBILITY_INLINES_HIDDEN YES
             AUTOMOC ON
     )
+
+    # These two settings allow to run tests in parallel using eg.: ctest --parallel 10
+    # Parallel 30 saves ~12s on msvc (from 42s to 30s)
+    set_tests_properties(${name} PROPERTIES RUN_SERIAL ${TINY_RUN_SERIAL})
+
+    # Primarily to depend all functional tests on unit tests
+    if(TINY_DEPENDS_ON_UNITTESTS)
+        set_tests_properties(${name}
+            PROPERTIES
+                DEPENDS "databaseconnection;mysql_querybuilder;postgresql_querybuilder;\
+sqlite_querybuilder;blueprint;mysql_schemabuilder;postgresql_schemabuilder;\
+sqlite_schemabuilder;mysql_tinybuilder"
+        )
+    endif()
 
     # Setup correct PATH env. variable, used by ctest command, needed to find TinyUtils
     # and TinyOrm libraries in the build tree

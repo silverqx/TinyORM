@@ -9,4 +9,4 @@ add_executable(postgresql_qdatetime
 add_test(NAME postgresql_qdatetime COMMAND postgresql_qdatetime)
 
 include(TinyTestCommon)
-tiny_configure_test(postgresql_qdatetime)
+tiny_configure_test(postgresql_qdatetime DEPENDS_ON_UNITTESTS RUN_SERIAL)

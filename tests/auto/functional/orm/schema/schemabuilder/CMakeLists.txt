@@ -9,4 +9,4 @@ add_executable(schemabuilder
 add_test(NAME schemabuilder COMMAND schemabuilder)
 
 include(TinyTestCommon)
-tiny_configure_test(schemabuilder)
+tiny_configure_test(schemabuilder DEPENDS_ON_UNITTESTS RUN_SERIAL)
