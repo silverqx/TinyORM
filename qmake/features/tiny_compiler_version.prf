@@ -62,5 +62,5 @@ else: \
 
 unset(tinyResult)
 
-cache(TINY_COMPILER_VERSION) # set cache is the default
+cache(TINY_COMPILER_VERSION) # 'set cache' is the default
 cache(TINY_SIMULATED_VERSION)
