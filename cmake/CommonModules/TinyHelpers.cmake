@@ -381,10 +381,100 @@ function(tiny_should_fix_ccache_msvc out_variable)
 
 endfunction()
 
+# Determine whether to disable PCH based on the ccache --print-version and set
+# the internal cache variable TINY_CCACHE_VERSION (msvc only)
+# Precompiled headers are fully supported on msvc for ccache >=4.10, so
+# disable PCH for ccache <4.10 only.
+# The git-ref is a special value, it means that the ccache was built manually from eg.
+# master branch, in this case suppose the version is always >=4.10.
+# If the ccache isn't on the system path or parsing the version failed set to 0.
+function(tiny_should_disable_precompile_headers out_variable)
+
+    # Nothing to do, ccache version was already populated (cache hit)
+    if(DEFINED TINY_CCACHE_VERSION AND NOT TINY_CCACHE_VERSION STREQUAL "")
+        if(TINY_CCACHE_VERSION VERSION_GREATER_EQUAL "4.10" OR
+            TINY_CCACHE_VERSION STREQUAL "git-ref"
+        )
+            set(${out_variable} FALSE PARENT_SCOPE)
+        else()
+            set(${out_variable} TRUE PARENT_SCOPE)
+        endif()
+
+        return()
+    endif()
+
+    set(helpString "Ccache version used to determine whether to disable PCH (msvc only).")
+
+    execute_process(
+        COMMAND "${CMAKE_CXX_COMPILER_LAUNCHER}" --print-version
+        RESULT_VARIABLE exitCode
+        OUTPUT_VARIABLE ccacheVersionRaw
+        OUTPUT_STRIP_TRAILING_WHITESPACE
+        ERROR_QUIET
+    )
+
+    # ccache can't be executed, in this case don't disable PCH and even don't cache
+    # the TINY_CCACHE_VERSION because the build is gona to fail and we don't want to
+    # cache wrong value
+    if(exitCode STREQUAL "no such file or directory")
+        set(${out_variable} FALSE PARENT_SCOPE)
+        return()
+    endif()
+
+    # ccache <4.10 doesn't have the --print-version parameter, we can be pretty sure that
+    # the version is <4.10 because we know the ccache is on the system path
+    if(NOT exitCode EQUAL 0)
+        set(TINY_CCACHE_VERSION "0" CACHE INTERNAL "${helpString}")
+        set(${out_variable} TRUE PARENT_SCOPE)
+        return()
+    endif()
+
+    # Detect a manual build version (git reference).
+    # The git-ref is a special value, it means that the ccache was built manually from eg.
+    # master branch, in this case set ccache version as the git-ref string. This version
+    # will be supposed as the latest version and will be assumed it supports PCH.
+    # CMake doesn't support {x,y}. 😮
+    set(regexpGitRef
+        "^.*\.[0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f]*$")
+
+    if(ccacheVersionRaw MATCHES "${regexpGitRef}")
+        set(TINY_CCACHE_VERSION "git-ref" CACHE INTERNAL "${helpString}")
+        set(${out_variable} FALSE PARENT_SCOPE)
+        return()
+    endif()
+
+    # Detect a normal tag version like eg. 4.10
+    set(regexpVersion "^[0-9]+\.[0-9]+(\.[0-9]+)?(\.[0-9]+)?$")
+
+    # This should never happen :/
+    if(NOT ccacheVersionRaw MATCHES "${regexpVersion}")
+        message(FATAL_ERROR "Parse of the 'ccache --print-version' failed \
+in tiny_should_disable_precompile_headers().")
+    endif()
+
+    set(TINY_CCACHE_VERSION "${CMAKE_MATCH_0}" CACHE INTERNAL "${helpString}")
+
+    if(TINY_CCACHE_VERSION VERSION_GREATER_EQUAL "4.10")
+        set(${out_variable} FALSE PARENT_SCOPE)
+    else()
+        set(${out_variable} TRUE PARENT_SCOPE)
+    endif()
+
+endfunction()
+
 # Disable the precompilation of header files
 function(tiny_disable_precompile_headers)
 
-    message(VERBOSE "Disabled PCH because ccache or sccache is used as compiler launcher for MSVC")
+    # Determine whether to disable PCH based on the ccache --print-version
+    set(shouldDisablePCH FALSE)
+    tiny_should_disable_precompile_headers(shouldDisablePCH)
+
+    if(NOT shouldDisablePCH)
+        return()
+    endif()
+
+    message(VERBOSE "Disabled PCH because ccache or sccache is used as compiler \
+launcher for MSVC")
 
     get_property(help_string CACHE CMAKE_DISABLE_PRECOMPILE_HEADERS
         PROPERTY HELPSTRING

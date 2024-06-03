@@ -1,0 +1,78 @@
+# Determine whether to disable PCH based on the ccache --print-version and set
+# the internal cache variable TINY_CCACHE_VERSION (msvc only)
+# Precompiled headers are fully supported on msvc for ccache >=4.10, so
+# disable PCH for ccache <4.10 only.
+# The git-ref is a special value, it means that the ccache was built manually from eg.
+# master branch, in this case suppose the version is always >=4.10.
+# If the ccache isn't on the system path or parsing the version failed set to 0.
+defineTest(tiny_should_disable_precompile_headers) {
+
+    # Nothing to do, ccache version was already populated (cache hit)
+    defined(TINY_CCACHE_VERSION, var): \
+    !isEmpty(TINY_CCACHE_VERSION) {
+        versionAtLeast(TINY_CCACHE_VERSION, 4.10) | \
+        equals(TINY_CCACHE_VERSION, "git-ref"): \
+            return(false)
+        else: \
+            return(true)
+    }
+
+    # Nothing to do, ccache isn't on the system path (--version argument is needed as
+    # w/o it the exit code is 1). In this case don't disable PCH and even don't cache
+    # the TINY_CCACHE_VERSION because the build is gona to fail and we don't want to
+    # cache a wrong value
+    !system("ccache --version"): \
+        return(false)
+
+    exitCode = 1
+    ccacheVersionRaw = \
+        $$system("ccache --print-version 2>$$QMAKE_SYSTEM_NULL_DEVICE", "lines", exitCode)
+
+    # ccache <4.10 doesn't have the --print-version parameter, because we know the ccache
+    # is on the system path so we can be pretty sure that the version is <4.10.
+    !equals(exitCode, 0) {
+        TINY_CCACHE_VERSION = 0
+        export(TINY_CCACHE_VERSION)
+        cache(TINY_CCACHE_VERSION) # 'set cache' is the default
+        return(true)
+    }
+
+    # Detect a manual build version (git reference).
+    # The git-ref is a special value, it means that the ccache was built manually from eg.
+    # master branch, in this case set ccache version as the git-ref string. This version
+    # will be supposed as the latest version and will be assumed it supports PCH.
+    regexpGitRef = "^(?:.*\.[a-z0-9]{8,40})$"
+
+    matches = $$find(ccacheVersionRaw, $$regexpGitRef)
+    matchesSize = $$size(matches)
+
+    !isEmpty(matches): \
+    equals(matchesSize, 1) {
+        TINY_CCACHE_VERSION = $$quote(git-ref)
+        export(TINY_CCACHE_VERSION)
+        cache(TINY_CCACHE_VERSION) # 'set cache' is the default
+        return(false)
+    }
+
+    # Detect a normal tag version like eg. 4.10
+    regexpVersion = "^(?:\d{1,3}(?:\.\d{1,5}){1,3})$"
+
+    matches = $$find(ccacheVersionRaw, $$regexpVersion)
+    matchesSize = $$size(matches)
+
+    # This should never happen :/
+    isEmpty(matches) | \
+    !equals(matchesSize, 1): \
+        error( "Parse of the 'ccache --print-version' failed in tiny_version_numbers()." )
+
+    TINY_CCACHE_VERSION = $$first(matches)
+
+    export(TINY_CCACHE_VERSION)
+    # Cache the result so the ccache --print-version is not invoked for every sub-project
+    cache(TINY_CCACHE_VERSION) # 'set cache' is the default
+
+    versionAtLeast(TINY_CCACHE_VERSION, 4.10): \
+        return(false)
+    else: \
+        return(true)
+}

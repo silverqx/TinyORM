@@ -13,8 +13,10 @@ for(cfFlags, \
         # The ~= doesn't work with \/ character
         $$cfFlags = $$replace($$cfFlags, "(?:-|\/)Zi", -Z7)
 
-# MSYS2 g++, clang++ work well with the precompiled headers but the msvc doesn't
-win32-msvc|win32-clang-msvc: \
+load(private/tiny_ccache_version)
+
+# Determine whether to disable PCH based on the ccache --print-version
+tiny_should_disable_precompile_headers(): \
     CONFIG -= precompile_header
 
 for(tool, $$list(QMAKE_CC QMAKE_CXX QMAKE_LINK QMAKE_LINK_SHLIB QMAKE_LINK_C)): \
