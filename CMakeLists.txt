@@ -352,6 +352,9 @@ if(TOM)
     if(BUILD_TESTS)
         target_compile_definitions(${TinyOrm_target} PUBLIC TINYTOM_TESTS_CODE)
     endif()
+
+    # Set TINYORM_LTO macro based on the INTERPROCEDURAL_OPTIMIZATION target property
+    tiny_set_lto_compile_definition(${TinyOrm_target})
 endif()
 
 if(TOM_EXAMPLE)

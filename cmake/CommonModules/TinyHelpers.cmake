@@ -173,6 +173,16 @@ ${TINY_UNPARSED_ARGUMENTS}")
 
 endfunction()
 
+# Set TINYORM_LTO macro based on the INTERPROCEDURAL_OPTIMIZATION target property
+# Used by the tom about command to show if the LTO is enabled
+function(tiny_set_lto_compile_definition target)
+
+    get_target_property(tinyHasLTO ${target} INTERPROCEDURAL_OPTIMIZATION)
+
+    target_compile_definitions(${target} PRIVATE -DTINYORM_LTO=${tinyHasLTO})
+
+endfunction()
+
 # Create an empty SQLite database file if it does not exist
 function(tiny_create_sqlite_db db_filepath)
 

@@ -111,6 +111,10 @@ std::map<QString, QString> LibraryInfo::ormCMacrosMap()
 #else
         {sl("TINYORM_INLINE_CONSTANTS"), OFF},
 #endif
+// CMake ON/OFF
+#ifdef TINYORM_LTO
+        {sl("TINYORM_LTO"), TINY_CMAKE_BOOL(TINYORM_LTO)},
+#endif
 #ifdef TINYORM_MYSQL_PING
         {sl("TINYORM_MYSQL_PING"), ON},
 #else

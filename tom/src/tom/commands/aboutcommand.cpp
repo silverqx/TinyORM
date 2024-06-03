@@ -299,7 +299,7 @@ QVector<SectionItem> AboutCommand::gatherAllAboutInformation() const
     };
 }
 
-#ifdef TINYORM_MSVC_RUNTIME_DYNAMIC
+#if defined(TINYORM_MSVC_RUNTIME_DYNAMIC) || defined(TINYORM_LTO)
 using Orm::Constants::OFF;
 using Orm::Constants::ON;
 
@@ -331,6 +331,10 @@ QVector<SubSectionItem> AboutCommand::gatherEnvironmentInformation() const
                 {sl("Link type"),           "Static"},
 #endif
 // CMake ON/OFF
+// qmake has bad support for ltcg so it's not handled in qmake (don't do it in future)
+#ifdef TINYORM_LTO
+                {sl("Link Time Optimization"), TINY_CMAKE_BOOL(TINYORM_LTO)},
+#endif
 #ifdef TINYORM_MSVC_RUNTIME_DYNAMIC
                 {sl("MSVC Runtime dynamic"),
                             TINY_CMAKE_BOOL(TINYORM_MSVC_RUNTIME_DYNAMIC)},
