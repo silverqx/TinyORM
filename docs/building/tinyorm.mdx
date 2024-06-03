@@ -569,6 +569,7 @@ Important `CMake` options.
 | `CMAKE_CXX_COMPILER`               | `auto`  | The full path to the `C++` compiler. |
 | `CMAKE_CXX_COMPILER_LAUNCHER`      | `-`     | Default compiler launcher to use for the `C++` compiler.<br/>Can be used to enable `ccache`, eg. `ccache.exe` on `MinGW` or `/usr/bin/ccache` on `Linux`. |
 | `CMAKE_EXPORT_PACKAGE_REGISTRY`    | `OFF`   | Enable the `export(TinyOrm)` command.<br/>`TinyORM` doesn't set this variable by default. Its initial value is taken from the `TINYORM_EXPORT_PACKAGE_REGISTRY` environment variable if not already defined. |
+| <small>`CMAKE_INTERPROCEDURAL_OPTIMIZATION`</small> | `OFF`   | Enable [Link time code optimization](https://en.wikipedia.org/wiki/Interprocedural_optimization) ([LTO](https://wiki.gentoo.org/wiki/LTO)).<br/><small>Works on all [Supported Compilers](supported-compilers.mdx).</small> |
 | `CMAKE_VERBOSE_MAKEFILE`           | `OFF`   | Enable verbose output from Makefile builds. |
 
 </APITable>
@@ -833,6 +834,7 @@ Important `qmake` options.
 | `CONFIG` <small>Option Name</small> | Default | Description |
 | ----------------------------------- | ------- | ----------- |
 | `ccache`                            | `OFF`   | Enable compiler cache. [Homepage](https://ccache.dev/)<br/><small>It works only on the Unix systems. It works well with `g++` and `clang++` and also supports precompiled headers. TinyORM overrides this qmake option with the [`ccache`](#ccache) option.<br/>See [Ccache support](#ccache-support) for more information.</small> |
+| `ltcg`                              | `OFF`   | Enable [Link time code optimization](https://en.wikipedia.org/wiki/Interprocedural_optimization) ([LTO](https://wiki.gentoo.org/wiki/LTO)).<br/><small>Works on all [Supported Compilers](supported-compilers.mdx).</small> |
 | `precompile_header`                 | `-`     | Enable precompiled headers, you can disable them with:<br/> `CONFIG-=precompile_header`.<br/><small>The `precompile_header` is enabled by default on `msvc`, `g++`, `clang++`, `clang-cl` on `Windows` and disabled by default on `linux`.</small> |
 | `static`<br/>`staticlib`            | `OFF`   | Build as a `static` library (lib only).<br/><small>If you want to build all libraries in the `TinyORM` project as static library archives and link against static libraries use the [`CONFIG += static`](https://doc.qt.io/qt/qmake-variable-reference.html#config). Don't use the `CONFIG += staticlib`.<br/>See [NOTES.txt](https://github.com/silverqx/TinyORM/blob/main/NOTES.txt) for more information (search `static vs staticlib`).</small> |
 | `static_runtime`                    | `OFF`   | Link against the `shared` (dynamic) or `static` run-time library.<br/><small>The `-MD` becomes `-MT` and `-MDd` becomes `-MTd`. It works only on `MSVC` and `MinGW` or `MSYS2`.<br/>Please <u>don't use</u> this option.<br/>Available when: `msvc` or `mingw`</small> |
