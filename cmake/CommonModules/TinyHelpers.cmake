@@ -525,11 +525,11 @@ function(tiny_fix_ccache_msvc_325)
 
 endfunction()
 
-# Helper function to replace /Zi by /Z7 in the CMAKE_<C|CXX>_FLAGS_<CONFIG> option
+# Helper function to replace /Zi and /ZI by /Z7 in the CMAKE_<C|CXX>_FLAGS_<CONFIG> option
 function(tiny_replace_Zi_by_Z7_for option help_string)
 
-    if(DEFINED ${option} AND ${option} MATCHES "/Zi")
-        string(REPLACE "/Zi" "/Z7" ${option} "${${option}}")
+    if(DEFINED ${option} AND ${option} MATCHES "(/|-)(Zi|ZI)")
+        string(REGEX REPLACE "(/|-)(Zi|ZI)" "/Z7" ${option} "${${option}}")
 
         get_property(help_string_property CACHE ${option} PROPERTY HELPSTRING)
         if(NOT help_string_property)
@@ -541,7 +541,7 @@ function(tiny_replace_Zi_by_Z7_for option help_string)
 
 endfunction()
 
-# Replace /Zi by /Z7 in the CMAKE_<C|CXX>_FLAGS_<CONFIG> option for the CMake <3.25
+# Replace /Zi or /ZI by /Z7 in the CMAKE_<C|CXX>_FLAGS_<CONFIG> option for the CMake <3.25
 function(tiny_fix_ccache_msvc_324)
 
     # Nothing to do, multi-configuration generators are not supported
@@ -551,7 +551,7 @@ generators or with undefined CMAKE_BUILD_TYPE on CMake <3.25")
         return()
     endif()
 
-    # Replace /Zi by /Z7 by the build config type, for the CMake <=3.24
+    # Replace /Zi and /ZI by /Z7 by the build config type, for the CMake <=3.24
     if(TINY_BUILD_TYPE_LOWER STREQUAL "debug")
         tiny_replace_Zi_by_Z7_for(CMAKE_CXX_FLAGS_DEBUG
             "Flags used by the CXX compiler during DEBUG builds.")
@@ -576,15 +576,15 @@ endfunction()
 
 # Fix CMake variables if CMAKE_CXX_COMPILER_LAUNCHER is ccache or sccache
 # It applies fixes for MSVC compiler. It disables precompiled headers as they are not
-# supported on Windows with ccache and changes the -Zi compiler option to the -Z7
-# for debug builds for CMake <3.25 as the -Zi compiler option is not supported or
+# supported on Windows with ccache and changes the -Zi and -ZI compiler options to the -Z7
+# for debug builds for CMake <3.25 as the -Zi and -ZI compiler options is not supported or
 # set up the CMAKE_MSVC_DEBUG_INFORMATION_FORMAT for CMake >=3.25
 # (https://github.com/ccache/ccache/issues/1040)
 function(tiny_fix_ccache_msvc)
 
     # I will check only the CMAKE_CXX_COMPILER_LAUNCHER and not also the
     # CMAKE_C_COMPILER_LAUNCHER as this is a pure c++ project and c compiler is not used
-    # anyway but I will replace the Zi to Z7 compiler option in both
+    # anyway but I will replace the Zi to Z7 compiler options in both
     # CMAKE_<C|CXX>_FLAGS_<CONFIG> to be consistent 🤔
 
     # Fix the MSVC debug information format by the CMake version
@@ -595,13 +595,14 @@ function(tiny_fix_ccache_msvc)
         # Support the MSVC debug information format flags added in the CMake 3.25
         tiny_fix_ccache_msvc_325()
     else()
-        # Replace /Zi by /Z7 in the CMAKE_<C|CXX>_FLAGS_<CONFIG> for the CMake <3.25
+        # Replace /Zi and /ZI by /Z7 in the CMAKE_<C|CXX>_FLAGS_<CONFIG>
+        # for the CMake <3.25
         tiny_fix_ccache_msvc_324()
     endif()
 
     # Don't disable PCH if no fixes were applied
     # The new MSVC debug information format flags method also supports multi-config generators
-    # The old replace /Zi by /Z7 method doesn't support multi-config generators
+    # The old replace (/Zi|/ZI) by /Z7 method doesn't support multi-config generators
     # Don't remove this isNewMsvcDebugInformationFormat check, is correct!
     if(isNewMsvcDebugInformationFormat OR NOT TINY_IS_MULTI_CONFIG)
         tiny_disable_precompile_headers()

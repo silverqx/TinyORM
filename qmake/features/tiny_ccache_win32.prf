@@ -10,8 +10,9 @@ for(cfFlags, \
            QMAKE_CFLAGS_RELEASE QMAKE_CXXFLAGS_RELEASE) \
 ): \
     !isEmpty($$cfFlags): \
+        # Replace -Zi and -ZI with the -Z7
         # The ~= doesn't work with \/ character
-        $$cfFlags = $$replace($$cfFlags, "(?:-|\/)Zi", -Z7)
+        $$cfFlags = $$replace($$cfFlags, "(?:-|\/)(?:Zi|ZI)", -Z7)
 
 load(private/tiny_ccache_version)
 
