@@ -602,7 +602,7 @@ jobs:
     - name: TinyORM execute ctest 🔥
       working-directory: ../TinyORM-builds-cmake/build-${{ matrix.compiler.key }}-cmake-debug
       run: |
-        ctest --output-on-failure
+        ctest --output-on-failure --parallel 4
       env:
         DB_MYSQL_CHARSET: ${{ secrets.DB_MYSQL_CHARSET }}
         DB_MYSQL_COLLATION: ${{ secrets.DB_MYSQL_COLLATION }}

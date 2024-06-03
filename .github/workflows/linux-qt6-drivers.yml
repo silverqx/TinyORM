@@ -252,7 +252,7 @@ jobs:
     - name: TinyORM execute ctest 🔥
       working-directory: ${{ env.TinyORMBuildTree }}
       run: |
-        ctest --output-on-failure
+        ctest --output-on-failure --parallel 16
       env:
         DB_MYSQL_CHARSET: ${{ secrets.DB_MYSQL_CHARSET }}
         DB_MYSQL_COLLATION: ${{ secrets.DB_MYSQL_COLLATION }}
