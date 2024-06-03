@@ -62,9 +62,9 @@ QVersionNumber LibraryInfo::version() noexcept
                           TINYORM_VERSION_BUGFIX);
 }
 
-#ifndef TINY_CMAKE_BOOL
-/*! Convert the CMake BOOL type value passed by the the C macro to the ON/OFF QString. */
-#  define TINY_CMAKE_BOOL(value) TypeUtils::isCMakeTrue(TINY_STRINGIFY(value)) ? ON : OFF
+#ifndef TINY_MACRO_BOOL
+/*! Convert the macro BOOL type value passed by the the C macro to the ON/OFF QString. */
+#  define TINY_MACRO_BOOL(value) TypeUtils::isCMakeTrue(TINY_STRINGIFY(value)) ? ON : OFF
 #endif
 
 std::map<QString, QString> LibraryInfo::ormCMacrosMap()
@@ -113,7 +113,7 @@ std::map<QString, QString> LibraryInfo::ormCMacrosMap()
 #endif
 // CMake ON/OFF
 #ifdef TINYORM_LTO
-        {sl("TINYORM_LTO"), TINY_CMAKE_BOOL(TINYORM_LTO)},
+        {sl("TINYORM_LTO"), TINY_MACRO_BOOL(TINYORM_LTO)},
 #endif
 #ifdef TINYORM_MYSQL_PING
         {sl("TINYORM_MYSQL_PING"), ON},
@@ -133,7 +133,7 @@ std::map<QString, QString> LibraryInfo::ormCMacrosMap()
 #endif
 // CMake ON/OFF
 #ifdef TINYORM_STRICT_MODE
-        {sl("TINYORM_STRICT_MODE"), TINY_CMAKE_BOOL(TINYORM_STRICT_MODE)},
+        {sl("TINYORM_STRICT_MODE"), TINY_MACRO_BOOL(TINYORM_STRICT_MODE)},
 #endif
 // Newline needed - QtCreator syntax highlighting bug
 #ifdef TINYORM_TESTS_CODE
@@ -154,7 +154,7 @@ std::map<QString, QString> LibraryInfo::ormCMacrosMap()
 // CMake ON/OFF
 #ifdef TINYORM_MSVC_RUNTIME_DYNAMIC
         {sl("TINYORM_MSVC_RUNTIME_DYNAMIC"),
-                    TINY_CMAKE_BOOL(TINYORM_MSVC_RUNTIME_DYNAMIC)},
+                    TINY_MACRO_BOOL(TINYORM_MSVC_RUNTIME_DYNAMIC)},
 #endif
     };
 }

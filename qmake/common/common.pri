@@ -8,7 +8,7 @@ load(tiny_dotenv)
 
 CONFIG *= qt c++20 strict_c++ warn_on utf8_source hide_symbols no_keywords no_include_pwd
 CONFIG *= tiny_system_headers
-CONFIG *= silent
+#CONFIG *= silent
 CONFIG -= c++11 app_bundle
 
 # Qt defines
