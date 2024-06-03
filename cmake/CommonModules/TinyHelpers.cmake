@@ -487,7 +487,7 @@ endfunction()
 # Fix CMake variables if CMAKE_CXX_COMPILER_LAUNCHER is ccache or sccache
 # It applies fixes for MSVC compiler. It disables precompiled headers as they are not
 # supported on Windows with ccache and changes the -Zi compiler option to the -Z7
-# for debug builds as the -Zi compiler option is not supported for CMake <3.25 or
+# for debug builds for CMake <3.25 as the -Zi compiler option is not supported or
 # set up the CMAKE_MSVC_DEBUG_INFORMATION_FORMAT for CMake >=3.25
 # (https://github.com/ccache/ccache/issues/1040)
 function(tiny_fix_ccache_msvc)
