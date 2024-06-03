@@ -1,5 +1,5 @@
 # Target the g++, clang++, msvc, and clang-cl with msvc compilers
-!win32: return()
+!win32|!msvc|mingw: return()
 
 # https://github.com/ccache/ccache/issues/1040
 for(cfFlags, \
