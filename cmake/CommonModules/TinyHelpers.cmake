@@ -602,6 +602,7 @@ function(tiny_fix_ccache_msvc)
     # Don't disable PCH if no fixes were applied
     # The new MSVC debug information format flags method also supports multi-config generators
     # The old replace /Zi by /Z7 method doesn't support multi-config generators
+    # Don't remove this isNewMsvcDebugInformationFormat check, is correct!
     if(isNewMsvcDebugInformationFormat OR NOT TINY_IS_MULTI_CONFIG)
         tiny_disable_precompile_headers()
     endif()
