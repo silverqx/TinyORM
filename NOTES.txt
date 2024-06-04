@@ -3041,6 +3041,45 @@ qmake confusions:
    - equals() to compare equality, it will be compared as QString, in qmake everything is QString
 
 
+GitHub Actions confusions:
+--------------------------
+
+ - matrix include/exclude with objects:
+
+I finally got it, I always used arrays in include/exclude and this is wrong, it must be object
+
+matrix:
+  lto: [ ON, OFF ]
+  drivers-type: [ Shared, Loadable, Static ]
+  build-type:
+    - key: debug
+      name: Debug
+    - key: release
+      name: Release
+  exclude|include:
+    - lto: ON
+      drivers-type: Static
+      build-type:
+        key: release
+        name: Release
+
+So it must be object and NOT array of object:
+build-type:
+  key: release
+  name: Release
+
+Or:
+build-type: { key: release, name: Release }
+
+Previous BAD definition I tried in include/exclude:
+  exclude:
+    - lto: ON
+      drivers-type: Static
+      build-type:
+        - key: release
+          name: Release
+
+
 tools/deploy.ps1:
 -----------------
 
@@ -3326,3 +3365,11 @@ Optimize PCH #include-s:
 Get-ChildItem -Recurse .\include\orm\*.hpp,.\src\orm\*.cpp | Select-String -Pattern '# *include <.*>' -Raw | ForEach-Object { $_ -creplace '(?:# *|(>) *// *(.*)$)', '$1' } | Sort-Object -Unique -CaseSensitive
 Get-ChildItem -Recurse .\drivers\common\*.hpp,.\drivers\common\*.cpp | Select-String -Pattern '# +include <.*>' -Raw | ForEach-Object { $_ -creplace '(?:# *|(>) *// *(.*)$)', '$1' } | Sort-Object -Unique -CaseSensitive
 Get-ChildItem -Recurse .\drivers\mysql\*.hpp,.\drivers\mysql\*.cpp | Select-String -Pattern '# +include <.*>' -Raw | ForEach-Object { $_ -creplace '(?:# *|(>) *// *(.*)$)', '$1' } | Sort-Object -Unique -CaseSensitive
+
+
+Link Time Optimization (LTO):
+-----------------------------
+
+ - works on Windows:      msvc, clang-cl with lld linker
+ - works on Linux:        g++ with bfd, clang with lld linker
+ - doesn't work on MSYS2: clang++/g++ with lld/bfd linker
