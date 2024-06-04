@@ -416,6 +416,7 @@ jobs:
     - name: TinyORM cmake configure (msvc-cmake-debug)
       run: >-
         cmake.exe
+        --log-level=DEBUG --log-context
         -S .
         -B ../TinyORM-builds-cmake/build-msvc-cmake-debug
         -G Ninja

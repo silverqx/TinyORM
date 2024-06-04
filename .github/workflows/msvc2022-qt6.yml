@@ -560,6 +560,7 @@ jobs:
     - name: TinyORM cmake configure (msvc-cmake-${{ matrix.build-type.key }})
       run: >-
         cmake.exe
+        --log-level=DEBUG --log-context
         -S .
         -B ../TinyORM-builds-cmake/build-msvc-cmake-${{ matrix.build-type.key }}
         -G Ninja

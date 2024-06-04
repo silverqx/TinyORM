@@ -342,6 +342,7 @@ jobs:
       shell: msys2 {0}
       run: >-
         cmake.exe
+        --log-level=DEBUG --log-context
         -S .
         -B ../TinyORM-builds-cmake/build-${{ matrix.compiler.key }}-${{ matrix.qt.key }}-cmake-debug
         -G Ninja

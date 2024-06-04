@@ -187,6 +187,7 @@ jobs:
         tinyDriversType='-D DRIVERS_TYPE:STRING=Loadable' || tinyDriversType=''
 
         cmake
+        --log-level=DEBUG --log-context
         -S .
         -B '${{ env.TinyORMBuildTree }}'
         -G Ninja

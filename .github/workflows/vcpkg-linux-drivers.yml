@@ -252,6 +252,7 @@ jobs:
       working-directory: HelloWorld-TinyDrivers
       run: >-
         cmake
+        --log-level=DEBUG --log-context
         -S .
         -B '${{ runner.workspace }}/HelloWorld-builds-cmake/build-TinyDrivers-vcpkgmanifest-gcc-${{ matrix.build-type.key }}'
         -G Ninja
@@ -335,6 +336,7 @@ jobs:
       working-directory: ${{ env.TinyORMPath }}
       run: >-
         cmake
+        --log-level=DEBUG --log-context
         -S .
         -B '${{ runner.workspace }}/TinyORM-builds-cmake/build-TinyDrivers-manual-gcc-${{ matrix.build-type.key }}'
         -G Ninja
@@ -380,6 +382,7 @@ jobs:
       working-directory: HelloWorld-TinyDrivers
       run: >-
         cmake
+        --log-level=DEBUG --log-context
         -S .
         -B '${{ runner.workspace }}/HelloWorld-builds-cmake/build-TinyDrivers-manual-gcc-${{ matrix.build-type.key }}'
         -G Ninja
@@ -448,6 +451,7 @@ jobs:
       working-directory: HelloWorld-TinyDrivers
       run: >-
         cmake
+        --log-level=DEBUG --log-context
         -S .
         -B '${{ runner.workspace }}/HelloWorld-builds-cmake/build-TinyDrivers-fetchcontent-gcc-${{ matrix.build-type.key }}'
         -G Ninja

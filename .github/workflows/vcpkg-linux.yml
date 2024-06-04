@@ -281,6 +281,7 @@ jobs:
       working-directory: HelloWorld
       run: >-
         cmake
+        --log-level=DEBUG --log-context
         -S .
         -B '${{ runner.workspace }}/HelloWorld-builds-cmake/build-vcpkgmanifest-gcc-${{ matrix.build-type.key }}'
         -G Ninja
@@ -450,6 +451,7 @@ jobs:
       working-directory: ${{ env.TinyORMPath }}
       run: >-
         cmake
+        --log-level=DEBUG --log-context
         -S .
         -B '${{ runner.workspace }}/TinyORM-builds-cmake/build-manual-gcc-${{ matrix.build-type.key }}'
         -G Ninja
@@ -493,6 +495,7 @@ jobs:
       working-directory: HelloWorld
       run: >-
         cmake
+        --log-level=DEBUG --log-context
         -S .
         -B '${{ runner.workspace }}/HelloWorld-builds-cmake/build-manual-gcc-${{ matrix.build-type.key }}'
         -G Ninja
@@ -552,6 +555,7 @@ jobs:
       working-directory: HelloWorld
       run: >-
         cmake
+        --log-level=DEBUG --log-context
         -S .
         -B '${{ runner.workspace }}/HelloWorld-builds-cmake/build-fetchcontent-gcc-${{ matrix.build-type.key }}'
         -G Ninja

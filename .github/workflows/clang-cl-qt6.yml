@@ -562,6 +562,7 @@ jobs:
     - name: TinyORM cmake configure (clang-cl-cmake-debug)
       run: >-
         cmake.exe
+        --log-level=DEBUG --log-context
         -S .
         -B ../TinyORM-builds-cmake/build-clang-cl-cmake-debug
         -G Ninja

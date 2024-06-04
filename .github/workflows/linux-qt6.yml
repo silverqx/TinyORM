@@ -540,6 +540,7 @@ jobs:
     - name: TinyORM cmake configure (${{ matrix.compiler.key }}-cmake-debug)
       run: >-
         cmake
+        --log-level=DEBUG --log-context
         -S .
         -B ../TinyORM-builds-cmake/build-${{ matrix.compiler.key }}-cmake-debug
         -G Ninja

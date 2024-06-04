@@ -222,6 +222,7 @@ jobs:
       working-directory: ${{ env.TinyORMPath }}
       run: >-
         cmake.exe
+        --log-level=DEBUG --log-context
         -S .
         -B '${{ env.TinyORMBuildTree }}'
         -G Ninja

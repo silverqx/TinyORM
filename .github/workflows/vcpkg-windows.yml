@@ -261,6 +261,7 @@ jobs:
       working-directory: HelloWorld
       run: >-
         cmake.exe
+        --log-level=DEBUG --log-context
         -S .
         -B '${{ runner.workspace }}/HelloWorld-builds-cmake/build-vcpkgmanifest-msvc-${{ matrix.build-type.key }}'
         -G Ninja
@@ -408,6 +409,7 @@ jobs:
       working-directory: ${{ env.TinyORMPath }}
       run: >-
         cmake.exe
+        --log-level=DEBUG --log-context
         -S .
         -B '${{ runner.workspace }}/TinyORM-builds-cmake/build-manual-msvc-${{ matrix.build-type.key }}'
         -G Ninja
@@ -451,6 +453,7 @@ jobs:
       working-directory: HelloWorld
       run: >-
         cmake.exe
+        --log-level=DEBUG --log-context
         -S .
         -B '${{ runner.workspace }}/HelloWorld-builds-cmake/build-manual-msvc-${{ matrix.build-type.key }}'
         -G Ninja
@@ -506,6 +509,7 @@ jobs:
       working-directory: HelloWorld
       run: >-
         cmake.exe
+        --log-level=DEBUG --log-context
         -S .
         -B '${{ runner.workspace }}/HelloWorld-builds-cmake/build-fetchcontent-msvc-${{ matrix.build-type.key }}'
         -G Ninja
