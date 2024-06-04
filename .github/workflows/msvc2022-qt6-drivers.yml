@@ -33,6 +33,8 @@ jobs:
 
     strategy:
       matrix:
+        lto: [ OFF ]
+
         drivers-type: [ Shared, Loadable, Static ]
 
         build-type:
@@ -41,6 +43,13 @@ jobs:
 
           - key: release
             name: Release
+
+        include:
+          - lto: ON
+            drivers-type: Loadable
+            build-type:
+              key: release
+              name: Release
 
     steps:
     - uses: actions/checkout@v4
@@ -232,6 +241,7 @@ jobs:
         -D CMAKE_EXPORT_PACKAGE_REGISTRY:BOOL=OFF
         -D CMAKE_BUILD_TYPE:STRING=${{ matrix.build-type.name }}
         -D CMAKE_CXX_SCAN_FOR_MODULES:BOOL=OFF
+        -D CMAKE_INTERPROCEDURAL_OPTIMIZATION:BOOL=${{ matrix.lto }}
         -D VCPKG_APPLOCAL_DEPS:BOOL=OFF
         -D VERBOSE_CONFIGURE:BOOL=ON
         -D BUILD_TREE_DEPLOY:BOOL=ON

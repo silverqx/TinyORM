@@ -34,6 +34,8 @@ jobs:
 
     strategy:
       matrix:
+        lto: [ OFF ]
+
         drivers-type: [ Shared, Loadable, Static ]
 
         build-type:
@@ -49,6 +51,25 @@ jobs:
 
           - key: gcc13
             command: g++-13
+
+        include:
+          - lto: ON
+            drivers-type: Loadable
+            build-type:
+              key: release
+              name: Release
+            compiler:
+              key: clang18
+              command: clang++-18
+
+          - lto: ON
+            drivers-type: Loadable
+            build-type:
+              key: release
+              name: Release
+            compiler:
+              key: gcc13
+              command: g++-13
 
     steps:
     - uses: actions/checkout@v4
