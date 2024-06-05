@@ -30,7 +30,7 @@ using Orm::Constants::UTC;
 using Orm::Constants::UTF8;
 using Orm::Constants::UTF8MB4;
 using Orm::Constants::UTF8MB40900aici;
-using Orm::Constants::UTF8MB4Unicode520ci;
+using Orm::Constants::UTF8MB4Uca1400aici;
 using Orm::Constants::InnoDB;
 using Orm::Constants::Version;
 using Orm::Constants::application_name;
@@ -674,7 +674,7 @@ Databases::mariaConfiguration()
         {password_,       qEnvironmentVariable("DB_MARIA_PASSWORD",  EMPTY)},
         {charset_,        qEnvironmentVariable("DB_MARIA_CHARSET",   UTF8MB4)},
         {collation_,      qEnvironmentVariable("DB_MARIA_COLLATION",
-                                               UTF8MB4Unicode520ci)},
+                                               UTF8MB4Uca1400aici)},
         // Very important for tests
         {timezone_,       TZ00},
         /* Specifies what time zone all QDateTime-s will have, the overridden default

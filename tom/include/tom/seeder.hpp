@@ -286,8 +286,8 @@ namespace Seeders
     using TINYORM_PREPEND_NAMESPACE(Orm::Constants::UTF8MB4Unicode520ci); // NOLINT(misc-unused-using-decls)
     /*! Alias for the string constant "utf8mb4_0900_ai_ci". */
     using TINYORM_PREPEND_NAMESPACE(Orm::Constants::UTF8MB40900aici); // NOLINT(misc-unused-using-decls)
-    /*! Alias for the string constant "uca1400_nopad_ai_ci". */
-    using TINYORM_PREPEND_NAMESPACE(Orm::Constants::Uca1400Nopadaici); // NOLINT(misc-unused-using-decls)
+    /*! Alias for the string constant "utf8mb4_uca1400_ai_ci". */
+    using TINYORM_PREPEND_NAMESPACE(Orm::Constants::UTF8MB4Uca1400aici); // NOLINT(misc-unused-using-decls)
     /*! Alias for the string constant "ucs_basic". */
     using TINYORM_PREPEND_NAMESPACE(Orm::Constants::UcsBasic); // NOLINT(misc-unused-using-decls)
     /*! Alias for the string constant "POSIX". */

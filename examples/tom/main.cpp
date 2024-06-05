@@ -106,7 +106,7 @@ std::shared_ptr<DatabaseManager> setupDatabaseManager()
             {password_,       qEnvironmentVariable("DB_MARIA_PASSWORD",  EMPTY)},
             {charset_,        qEnvironmentVariable("DB_MARIA_CHARSET",   UTF8MB4)},
             {collation_,      qEnvironmentVariable("DB_MARIA_COLLATION",
-                                                   UTF8MB4Unicode520ci)},
+                                                   UTF8MB4Uca1400aici)},
             // SYSTEM - set the time zone to your local MySQL server time zone
             {timezone_,       TZ00},
             /* Specifies what time zone all QDateTime-s will have, the overridden default

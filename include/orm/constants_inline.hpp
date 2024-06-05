@@ -164,7 +164,7 @@ namespace Orm::Constants
     inline const QString UTF8Unicodeci       = QStringLiteral("utf8_unicode_ci");
     inline const QString UTF8MB4Unicode520ci = QStringLiteral("utf8mb4_unicode_520_ci");
     inline const QString UTF8MB40900aici     = QStringLiteral("utf8mb4_0900_ai_ci");
-    inline const QString Uca1400Nopadaici    = QStringLiteral("uca1400_nopad_ai_ci");
+    inline const QString UTF8MB4Uca1400aici  = QStringLiteral("utf8mb4_uca1400_ai_ci"); // MariaDB 11.5
     inline const QString UcsBasic            = QStringLiteral("ucs_basic");
     inline const QString POSIX_              = QStringLiteral("POSIX");
 
