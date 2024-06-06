@@ -314,6 +314,15 @@ jobs:
         DB_MYSQL_USERNAME: ${{ secrets.DB_MYSQL_USERNAME_SELF }}
         TOM_EXAMPLE_ENV: ${{ vars.TOM_EXAMPLE_ENV }}
 
+    # The tom_testdata will be needed in vcpkg-linux-drivers.yml so we need to copy this executable,
+    # the reason for this is to always have the latest tom_testdata and to avoid manual rebuilds if
+    # any shared library is updated on which the tom_testdata depends to avoid crashes.
+    - name: Install tom_testdata for vcpkg-linux-drivers.yml
+      if: matrix.compiler.key == 'gcc13' && matrix.drivers-type == 'Static' && matrix.build-type.key == 'release'
+      working-directory: ${{ env.TinyORMBuildTree }}/tests/testdata_tom
+      run: |
+        cp --force --target-directory="$(realpath ~/bin)" ./tom_testdata
+
     # The reason for this is the concurrency:group: can contain only two in_progress workflows,
     # one will be in_progress and the second will be queued (waiting until the first finish),
     # and all others will be canceled.

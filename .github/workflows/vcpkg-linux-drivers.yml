@@ -213,8 +213,8 @@ jobs:
 
     # The linux-qt6-drivers.yml workflow calls migrate:fresh and it calls the db:wipe internally,
     # so we need a freshly migrated MySQL database, I should use fresh database anyway.
-    # The tom_testdata binary lives in the /usr/local/bin/ and it's from GCC static Release build
-    # build-TinyDrivers-gcc13-Static-release, I don't need the latest actual version build before.
+    # The tom_testdata binary lives in the ~/bin/ and it's from GCC static Release build
+    # build-TinyDrivers-gcc13-Static-release.
     - name: Prepare MySQL database
       run: |
         tom_testdata migrate:fresh --database=tinyorm_testdata_tom_mysql --seed --drop-views
