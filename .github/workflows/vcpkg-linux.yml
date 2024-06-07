@@ -592,7 +592,10 @@ jobs:
     - name: HelloWorld execute (SQLite) 🏁
       working-directory: ../HelloWorld-FetchContent-Install/${{ matrix.build-type.name }}/bin
       run: |
-        export LD_LIBRARY_PATH='../lib'${LD_LIBRARY_PATH:+:}"$LD_LIBRARY_PATH"
+        # This is enough for use to distinguish between Ubuntu, Fedora, or Gentoo
+        [ -r /etc/debian_version ] && libFolder='lib' || libFolder='lib64'
+
+        export LD_LIBRARY_PATH="../$libFolder"${LD_LIBRARY_PATH:+:}"$LD_LIBRARY_PATH"
 
         ./HelloWorld
       env:
