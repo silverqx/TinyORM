@@ -40,7 +40,7 @@ else()
     set(tmpFindLibraryNames ${tmpFindLibraryNames_mysql} ${tmpFindLibraryNames_maria})
 endif()
 
-pkg_check_modules(PC_MySQL QUIET ${tmpCheckModules})
+pkg_search_module(PC_MySQL QUIET ${tmpCheckModules})
 
 find_path(MySQL_INCLUDE_DIR
     NAMES mysql.h
