@@ -227,7 +227,7 @@ jobs:
       run: >-
         echo 'TINY_CLANG_TIDY_COMPLETED=true' >> $GITHUB_ENV
 
-        run-clang-tidy-18
+        run-clang-tidy
         -extra-arg-before='-Qunused-arguments'
         -p='${{ env.TinyORMBuildTree }}'
         -j ${{ env.TinyParallel }}
