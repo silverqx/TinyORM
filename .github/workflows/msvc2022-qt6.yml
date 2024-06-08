@@ -523,6 +523,8 @@ jobs:
         # ~ 190 * 3 + 100 (not enough for the msvc2022, so * 2)
         ccache.exe --set-config max_size=1400M
         ccache.exe --set-config sloppiness=pch_defines,time_macros
+        ccache.exe --set-config depend_mode=true
+        ccache.exe --set-config inode_cache=true
 
     - name: Ccache print version and configuration
       run: |

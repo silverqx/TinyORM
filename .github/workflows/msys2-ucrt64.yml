@@ -298,6 +298,8 @@ jobs:
         # gcc: ~ 180 * 3 + 100 ; clang: ~ 140 * 3 + 100
         ccache.exe --set-config max_size=${{ matrix.compiler.key == 'gcc' && '640M' || '520M' }}
         ccache.exe --set-config sloppiness=pch_defines,time_macros
+        ccache.exe --set-config depend_mode=true
+        ccache.exe --set-config inode_cache=true
 
     - name: Ccache print version and configuration
       shell: msys2 {0}
