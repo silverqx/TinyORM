@@ -51,6 +51,9 @@ jobs:
         $mysqlExePath = (Get-Command -Name mysql.exe).Source
         $mysqlInstallationPath = Split-Path -Parent -Path (Split-Path -Parent -Path $mysqlExePath)
         "TinyMySQLInstallationPath=$mysqlInstallationPath" >> $env:GITHUB_ENV
+
+        $mysqlDataPath = Join-Path -Path $runnerWorkPath -ChildPath 'mysql/data'
+        "TinyMySQLDataPath=$mysqlDataPath" >> $env:GITHUB_ENV
       env:
         DB_SQLITE_DATABASE: ${{ secrets.DB_SQLITE_DATABASE }}
 
@@ -263,13 +266,13 @@ jobs:
 
     - name: MySQL create data folder
       run: |
-        New-Item -Type Directory '${{ env.TinyRunnerWorkPath }}/mysql/data'
+        New-Item -Type Directory '${{ env.TinyMySQLDataPath }}'
 
     - name: MySQL initialize my.ini configuration
       working-directory: .github/resources/windows
       run: >-
         (Get-Content -Path ./my_8_ssl.template.ini) -creplace
-        '\{MYSQL_DATADIR\}', '${{ env.TinyRunnerWorkPath }}/mysql/data' -creplace
+        '\{MYSQL_DATADIR\}', '${{ env.TinyMySQLDataPath }}' -creplace
         '\{MYSQL_HOST\}', $env:DB_MYSQL_HOST |
         Set-Content -Path '${{ env.TinyMySQLInstallationPath }}/my.ini'
       env:
@@ -280,7 +283,7 @@ jobs:
         mysqld.exe --initialize-insecure --console
 
     - name: MySQL generate SSL certificates
-      working-directory: ${{ env.TinyRunnerWorkPath }}/mysql/data
+      working-directory: ${{ env.TinyMySQLDataPath }}
       run: |
         # It's enough to remove only these three certificate-related files
         Remove-Item ./ca.pem, ./server-cert.pem, ./server-key.pem
@@ -606,9 +609,9 @@ jobs:
         DB_MYSQL_DATABASE: ${{ secrets.DB_MYSQL_DATABASE }}
         DB_MYSQL_HOST: ${{ secrets.DB_MYSQL_HOST_SSL }}
         DB_MYSQL_PASSWORD: ${{ secrets.DB_MYSQL_PASSWORD }}
-        DB_MYSQL_SSL_CA: ${{ env.TinyRunnerWorkPath }}/mysql/data/ca.pem
-        DB_MYSQL_SSL_CERT: ${{ env.TinyRunnerWorkPath }}/mysql/data/client-cert.pem
-        DB_MYSQL_SSL_KEY: ${{ env.TinyRunnerWorkPath }}/mysql/data/client-key.pem
+        DB_MYSQL_SSL_CA: ${{ env.TinyMySQLDataPath }}/ca.pem
+        DB_MYSQL_SSL_CERT: ${{ env.TinyMySQLDataPath }}/client-cert.pem
+        DB_MYSQL_SSL_KEY: ${{ env.TinyMySQLDataPath }}/client-key.pem
         DB_MYSQL_SSL_MODE: ${{ secrets.DB_MYSQL_SSL_MODE }}
         DB_MYSQL_USERNAME: ${{ secrets.DB_MYSQL_USERNAME }}
         DB_PGSQL_CHARSET: ${{ secrets.DB_PGSQL_CHARSET }}
@@ -630,9 +633,9 @@ jobs:
         DB_MYSQL_DATABASE: ${{ secrets.DB_MYSQL_DATABASE }}
         DB_MYSQL_HOST: ${{ secrets.DB_MYSQL_HOST_SSL }}
         DB_MYSQL_PASSWORD: ${{ secrets.DB_MYSQL_PASSWORD }}
-        DB_MYSQL_SSL_CA: ${{ env.TinyRunnerWorkPath }}/mysql/data/ca.pem
-        DB_MYSQL_SSL_CERT: ${{ env.TinyRunnerWorkPath }}/mysql/data/client-cert.pem
-        DB_MYSQL_SSL_KEY: ${{ env.TinyRunnerWorkPath }}/mysql/data/client-key.pem
+        DB_MYSQL_SSL_CA: ${{ env.TinyMySQLDataPath }}/ca.pem
+        DB_MYSQL_SSL_CERT: ${{ env.TinyMySQLDataPath }}/client-cert.pem
+        DB_MYSQL_SSL_KEY: ${{ env.TinyMySQLDataPath }}/client-key.pem
         DB_MYSQL_SSL_MODE: ${{ secrets.DB_MYSQL_SSL_MODE }}
         DB_MYSQL_USERNAME: ${{ secrets.DB_MYSQL_USERNAME }}
         DB_PGSQL_CHARSET: ${{ secrets.DB_PGSQL_CHARSET }}
@@ -664,9 +667,9 @@ jobs:
         DB_MYSQL_DATABASE: ${{ secrets.DB_MYSQL_DATABASE }}
         DB_MYSQL_HOST: ${{ secrets.DB_MYSQL_HOST_SSL }}
         DB_MYSQL_PASSWORD: ${{ secrets.DB_MYSQL_PASSWORD }}
-        DB_MYSQL_SSL_CA: ${{ env.TinyRunnerWorkPath }}/mysql/data/ca.pem
-        DB_MYSQL_SSL_CERT: ${{ env.TinyRunnerWorkPath }}/mysql/data/client-cert.pem
-        DB_MYSQL_SSL_KEY: ${{ env.TinyRunnerWorkPath }}/mysql/data/client-key.pem
+        DB_MYSQL_SSL_CA: ${{ env.TinyMySQLDataPath }}/ca.pem
+        DB_MYSQL_SSL_CERT: ${{ env.TinyMySQLDataPath }}/client-cert.pem
+        DB_MYSQL_SSL_KEY: ${{ env.TinyMySQLDataPath }}/client-key.pem
         DB_MYSQL_SSL_MODE: ${{ secrets.DB_MYSQL_SSL_MODE }}
         DB_MYSQL_USERNAME: ${{ secrets.DB_MYSQL_USERNAME }}
         TOM_EXAMPLE_ENV: ${{ vars.TOM_EXAMPLE_ENV }}

@@ -32,6 +32,9 @@ jobs:
         $mysqlExePath = (Get-Command -Name mysql.exe).Source
         $mysqlInstallationPath = Split-Path -Parent -Path (Split-Path -Parent -Path $mysqlExePath)
         "TinyMySQLInstallationPath=$mysqlInstallationPath" >> $env:GITHUB_ENV
+
+        $mysqlDataPath = Join-Path -Path $runnerWorkPath -ChildPath 'mysql/data'
+        "TinyMySQLDataPath=$mysqlDataPath" >> $env:GITHUB_ENV
       env:
         DB_SQLITE_DATABASE: ${{ secrets.DB_SQLITE_DATABASE }}
 
@@ -79,13 +82,13 @@ jobs:
 
     - name: MySQL create data folder
       run: |
-        New-Item -Type Directory '${{ env.TinyRunnerWorkPath }}/mysql/data'
+        New-Item -Type Directory '${{ env.TinyMySQLDataPath }}'
 
     - name: MySQL initialize my.ini configuration
       working-directory: .github/resources/windows
       run: >-
         (Get-Content -Path ./my_5.template.ini) -creplace
-        '\{MYSQL_DATADIR\}', '${{ env.TinyRunnerWorkPath }}/mysql/data' -creplace
+        '\{MYSQL_DATADIR\}', '${{ env.TinyMySQLDataPath }}' -creplace
         '\{MYSQL_HOST\}', $env:DB_MYSQL_HOST |
         Set-Content -Path '${{ env.TinyMySQLInstallationPath }}/my.ini'
       env:
