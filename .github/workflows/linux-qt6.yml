@@ -425,6 +425,7 @@ jobs:
         sudo apt install --yes ${{ join(matrix.compiler.apt, ' ') }}
         qt6-base-dev libqt6sql6-mysql libqt6sql6-sqlite libqt6sql6-psql
 
+    # No need to use lukka/get-cmake, these images always have latest version
     - name: Ninja install latest version
       uses: seanmiddleditch/gha-setup-ninja@master
       with:

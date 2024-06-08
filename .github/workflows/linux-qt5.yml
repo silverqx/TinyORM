@@ -182,6 +182,7 @@ jobs:
         sudo apt install --yes ${{ join(matrix.compiler.apt, ' ') }}
         qtbase5-dev libqt5sql5-mysql libqt5sql5-sqlite libqt5sql5-psql
 
+    # No need to use lukka/get-cmake, these images always have latest version
     - name: Ninja install latest version
       uses: seanmiddleditch/gha-setup-ninja@master
       with:
