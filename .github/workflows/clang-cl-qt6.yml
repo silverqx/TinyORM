@@ -484,12 +484,12 @@ jobs:
       with:
         path: |
           C:/Program Files/LLVM
-        key: llvm-18.1.3
+        key: llvm-18.1.7
 
-    - name: Install LLVM and Clang 18.1.3
+    - name: Install LLVM and Clang 18.1.7
       uses: KyleMayes/install-llvm-action@v1
       with:
-        version: 18.1.3
+        version: 18.1.7
         force-version: true
         cached: ${{ steps.llvm-cache.outputs.cache-hit }}
 
