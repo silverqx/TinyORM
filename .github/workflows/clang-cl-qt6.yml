@@ -523,8 +523,7 @@ jobs:
 
     - name: Ccache prepare configuration 🥳
       run: |
-        # ~ 135 * 3 + 100
-        ccache.exe --set-config max_size=600M
+        ccache.exe --set-config max_size=2G
         ccache.exe --set-config sloppiness=pch_defines,time_macros
         ccache.exe --set-config depend_mode=true
         ccache.exe --set-config inode_cache=true
