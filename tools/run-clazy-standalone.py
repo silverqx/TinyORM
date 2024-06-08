@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 #
 #===- run-clazy-standalone.py - Parallel clazy-standalone runner --------*- python -*--===#
 #
