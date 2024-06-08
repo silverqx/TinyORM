@@ -233,13 +233,6 @@ jobs:
         -j ${{ env.TinyParallel }}
         '[\\\/]+(?:drivers|examples|orm|src|tests|tom)[\\\/]+.+?[\\\/]+(?!mocs_)[\w\d_\-\+]+\.cpp$'
 
-    - name: Clazy-standalone prepare
-      # Run the clazy if the clang-tidy was executed and was success or failed
-      if: env.TINY_CLANG_TIDY_COMPLETED == 'true' && (success() || failure())
-      working-directory: ${{ env.TinyORMPath }}
-      run: |
-        chmod +x ./tools/run-clazy-standalone.py
-
     # Disabled checks
     # Level 2      - qstring-allocations
     # Manual level - qt4-qstring-from-array, qt6-qlatin1stringchar-to-u,
@@ -265,7 +258,7 @@ jobs:
         `# Checks Excluded from level2`\
         'no-qstring-allocations'
 
-        ./tools/run-clazy-standalone.py \
+        python3 ./tools/run-clazy-standalone.py \
         -checks="$checks" \
         -extra-arg-before='-Qunused-arguments' \
         -header-filter='[\\\/]+(drivers|examples|orm|tests|tom)[\\\/]+.+\.(h|hpp)$' \
