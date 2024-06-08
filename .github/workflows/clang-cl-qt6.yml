@@ -244,12 +244,14 @@ jobs:
         pg_isready.exe
         Write-Output '::endgroup::'
 
+    # Adding the DB_MYSQL_HOST_CLIENT isn't strictly needed (works without it too)
     - name: Hosts add MySQL server hostname
       run: >-
-        "127.0.0.1`t$env:DB_MYSQL_HOST" |
+        "127.0.0.1`t$env:DB_MYSQL_HOST $env:DB_MYSQL_HOST_CLIENT" |
         Add-Content -Path "$env:windir/System32/drivers/etc/hosts" -Force
       env:
         DB_MYSQL_HOST: ${{ secrets.DB_MYSQL_HOST_SSL }}
+        DB_MYSQL_HOST_CLIENT: ${{ secrets.DB_MYSQL_HOST_CLIENT_SSL }}
 
     - name: MySQL create data folder
       run: |
