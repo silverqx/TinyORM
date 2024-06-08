@@ -455,7 +455,7 @@ jobs:
         -S .
         -B '${{ runner.workspace }}/TinyORM-builds-cmake/build-manual-gcc-${{ matrix.build-type.key }}'
         -G Ninja
-        -D CMAKE_CXX_COMPILER_LAUNCHER:FILEPATH=/usr/local/bin/ccache
+        -D CMAKE_CXX_COMPILER_LAUNCHER:FILEPATH=ccache
         -D CMAKE_TOOLCHAIN_FILE:FILEPATH="$VCPKG_INSTALLATION_ROOT/scripts/buildsystems/vcpkg.cmake"
         -D CMAKE_DISABLE_PRECOMPILE_HEADERS:BOOL=OFF
         -D CMAKE_BUILD_TYPE:STRING=${{ matrix.build-type.name }}
@@ -559,7 +559,7 @@ jobs:
         -S .
         -B '${{ runner.workspace }}/HelloWorld-builds-cmake/build-fetchcontent-gcc-${{ matrix.build-type.key }}'
         -G Ninja
-        -D CMAKE_CXX_COMPILER_LAUNCHER:FILEPATH=/usr/local/bin/ccache
+        -D CMAKE_CXX_COMPILER_LAUNCHER:FILEPATH=ccache
         -D CMAKE_TOOLCHAIN_FILE:FILEPATH="$VCPKG_INSTALLATION_ROOT/scripts/buildsystems/vcpkg.cmake"
         -D CMAKE_DISABLE_PRECOMPILE_HEADERS:BOOL=OFF
         -D CMAKE_BUILD_TYPE:STRING=${{ matrix.build-type.name }}
