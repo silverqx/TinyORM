@@ -95,13 +95,14 @@ function Test-QtSourcesInstalled {
 # Check whether the MySQL Server is installed
 function Test-MySQLServerInstalled
 {
-    Write-Progress "Testing whether MySQL Server is installed"
+    Write-Progress "Testing whether MySQL Server $MySQLVersion is installed"
 
     if (Test-Path $Script:MySqlServerPath) {
         return
     }
 
-    Write-ExitError "The MySQL Server is not installed in the '$Script:MySqlServerPath' folder."
+    Write-ExitError ("The MySQL Server $MySQLVersion is not installed " +
+        "in the '$Script:MySqlServerPath' folder.")
 }
 
 # Remove $QtVersion build folder if the $CleanBuild was passed
