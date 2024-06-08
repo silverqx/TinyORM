@@ -324,13 +324,10 @@ jobs:
     - name: MySQL time zone POSIX tables download
       if: steps.downloads-cache-mysql-timezone-tables.outputs.cache-hit != 'true'
       run: >-
-        # $response = Invoke-WebRequest -Uri $env:URL_MYSQL_TIMEZONE_TABLES -HttpVersion 2.0
-
-        # $response | Select-Object -ExpandProperty Content |
+        Invoke-WebRequest -Uri $env:URL_MYSQL_TIMEZONE_TABLES -HttpVersion 2.0
+        -MaximumRetryCount 3 -RetryIntervalSec 10 |
+        Select-Object -ExpandProperty Content |
         Set-Content -Path $env:archive_filepath -AsByteStream
-
-        curl.exe --fail --silent --show-error --location --remote-name
-        --output-dir '${{ runner.temp }}' "$env:URL_MYSQL_TIMEZONE_TABLES"
 
         7z.exe x -y -o'${{ runner.temp }}' "$env:archive_filepath"
       env:
