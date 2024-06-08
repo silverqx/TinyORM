@@ -107,14 +107,8 @@ jobs:
         sudo apt install --yes '^libxcb.*-dev' libx11-xcb-dev libglu1-mesa-dev libxrender-dev
         libxi-dev libxkbcommon-dev libxkbcommon-x11-dev
 
-    - name: Ninja install latest version
-      if: env.TinyIsSelfHostedRunner == 'true'
-      uses: seanmiddleditch/gha-setup-ninja@master
-      with:
-        destination: ${{ env.TinyRunnerWorkPath }}/ninja-build
-
+    # lukka/get-cmake@latest needed because of Fedora
     - name: CMake and Ninja install latest versions
-      if: env.TinyIsSelfHostedRunner == 'false'
       uses: lukka/get-cmake@latest
       with:
         useLocalCache: true

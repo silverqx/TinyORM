@@ -76,10 +76,12 @@ jobs:
       run: |
         throw 'This workflow is optimized for the self-hosted runner only.'
 
-    - name: Ninja install latest version
-      uses: seanmiddleditch/gha-setup-ninja@master
+    # lukka/get-cmake@latest needed because of Fedora
+    - name: CMake and Ninja install latest versions
+      uses: lukka/get-cmake@latest
       with:
-        destination: ${{ env.TinyRunnerWorkPath }}/ninja-build
+        useLocalCache: true
+        useCloudCache: false
 
     # Don't use the default CCACHE_DIR path on self-hosted runners
     - name: Ccache prepare environment
