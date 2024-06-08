@@ -1,9 +1,15 @@
 [client]
 # Common
 host={MYSQL_HOST}
+default-character-set=utf8mb4
 
-# Strict TLS connection
+# Strict TLS connection (as secure as possible to test it)
 ssl-ca="{SSL_CERTIFICATES_PATH}/ca.pem"
 ssl-cert="{SSL_CERTIFICATES_PATH}/client-cert.pem"
 ssl-key="{SSL_CERTIFICATES_PATH}/client-key.pem"
 ssl-mode=VERIFY_IDENTITY
+
+tls-version=TLSv1.3
+
+[mysql]
+no-beep

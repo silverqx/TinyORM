@@ -1,3 +1,7 @@
 [client]
 # Common
 host={MYSQL_HOST}
+default-character-set=utf8mb4
+
+[mysql]
+no-beep

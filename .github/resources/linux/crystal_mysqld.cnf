@@ -1,3 +1,22 @@
 [mysqld]
+mysqlx=off
+
+# The TCP/IP addresses the MySQL Server will listen on
+bind_address="127.0.0.1,::1"
+mysqlx_bind_address="127.0.0.1,::1"
+
+# All TLS-related confgurations leave at defaults to test it how it behaves if we don't use TLS
+
 # The default authentication plugin to be used when connecting to the server
 default_authentication_plugin=caching_sha2_password
+
+# General logging
+general-log=off
+
+# Slow queries logging
+slow-query-log=off
+long-query-time=10
+
+# Binary log
+# I don't need bin log, is primarily used for replication and after restore from backup
+disable-log-bin=on
