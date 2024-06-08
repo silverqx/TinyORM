@@ -279,11 +279,13 @@ jobs:
         pg_isready
         echo '::endgroup::'
 
+    # Adding the DB_MYSQL_HOST_CLIENT isn't strictly needed (works without it too)
     - name: Hosts add MySQL server hostname
       run: >-
-        sudo -- sh -c "echo '127.0.0.1\t$DB_MYSQL_HOST' >> /etc/hosts"
+        sudo -- sh -c "echo '127.0.0.1\t$DB_MYSQL_HOST $DB_MYSQL_HOST_CLIENT' >> /etc/hosts"
       env:
         DB_MYSQL_HOST: ${{ secrets.DB_MYSQL_HOST_SSL }}
+        DB_MYSQL_HOST_CLIENT: ${{ secrets.DB_MYSQL_HOST_CLIENT_SSL }}
 
     - name: MySQL initialize crystal_mysqld.cnf configuration
       working-directory: .github/resources/linux
@@ -300,11 +302,121 @@ jobs:
       env:
         DB_MYSQL_HOST: ${{ secrets.DB_MYSQL_HOST_SSL }}
 
-    - name: MySQL generate SSL certificates
+    # Remove certificates to generate are own
+    - name: MySQL SSL certificates remove
+      run: >-
+        sudo --user=mysql --
+        rm /var/lib/mysql/{ca,ca-key,server-cert,server-key,client-cert,client-key}.pem
+
+    - name: MySQL SSL certificates initialize
+      id: openssl-initialize-mysql-certificates
       run: |
-        # It's enough to remove only these three certificate-related files
-        sudo --user=mysql -- rm /var/lib/mysql/{ca,server-cert,server-key}.pem
-        sudo mysql_ssl_rsa_setup --suffix=TinyORM --uid=mysql
+        folderPath='${{ env.TinyRunnerWorkPath }}/tiny-mysql-certificates'
+
+        # Create an empty folder for generating certificates
+        sudo mkdir "$folderPath"
+        sudo chown runner:docker "$folderPath"
+
+        echo "FolderPath=$folderPath" >> $GITHUB_OUTPUT
+
+        # This hash invalidates the MySQL certificates cache every month
+        hash=$(date +%4Y%2m)
+        echo "Hash=$hash" >> $GITHUB_OUTPUT
+
+    - name: MySQL SSL certificates restore cache
+      uses: actions/cache/restore@v3
+      id: openssl-cache-mysql-certificates
+      with:
+        path: |
+          ${{ env.folder_path }}/*.pem
+        key: ${{ runner.os }}-openssl-${{ env.cache_name }}-${{ env.cache_hash }}
+      env:
+        # This hash invalidates this certificates cache every month
+        cache_hash: ${{ steps.openssl-initialize-mysql-certificates.outputs.Hash }}
+        cache_name: mysql-certificates
+        folder_path: ${{ steps.openssl-initialize-mysql-certificates.outputs.FolderPath }}
+
+    - name: MySQL SSL certificates generate
+      if: steps.openssl-cache-mysql-certificates.outputs.cache-hit != 'true'
+      working-directory: ${{ steps.openssl-initialize-mysql-certificates.outputs.FolderPath }}
+      run: |
+        echo '::group::Print openssl version'
+        openssl version -a
+        echo '::endgroup::'
+
+        echo '::group::CA certificate'
+        # -days 32 is important, -days 30 is not enough
+        openssl req -new -x509 -nodes -subj "$DB_MYSQL_SSL_SUBJECT_CA" -days 32 \
+        -keyout ./ca-key.pem -out ./ca.pem
+        echo '::endgroup::'
+
+        echo '::group::Server certificate'
+        openssl req -new -nodes -subj "$DB_MYSQL_SSL_SUBJECT_SERVER" -keyout ./server-key.pem -out \
+        ./server-req.pem
+        OPENSSL_SAN="DNS:${DB_MYSQL_HOST}" \
+        openssl x509 -req -CA ./ca.pem -CAkey ./ca-key.pem -days 32 -set_serial 01 \
+        -extfile "$extfile" -in ./server-req.pem -out ./server-cert.pem
+        echo '::endgroup::'
+
+        echo '::group::Client certificate'
+        openssl req -new -nodes -subj "$DB_MYSQL_SSL_SUBJECT_CLIENT" -keyout ./client-key.pem \
+        -out ./client-req.pem
+        OPENSSL_SAN="DNS:${DB_MYSQL_HOST_CLIENT}" \
+        openssl x509 -req -CA ./ca.pem -CAkey ./ca-key.pem -days 32 -set_serial 02 \
+        -extfile "$extfile" -in ./client-req.pem -out ./client-cert.pem
+        echo '::endgroup::'
+      env:
+        extfile: ${{ github.workspace }}/.github/resources/openssl/usr_cert.cnf
+        DB_MYSQL_HOST: ${{ secrets.DB_MYSQL_HOST_SSL }}
+        DB_MYSQL_HOST_CLIENT: ${{ secrets.DB_MYSQL_HOST_CLIENT_SSL }}
+        DB_MYSQL_SSL_SUBJECT_CA: ${{ secrets.DB_MYSQL_SSL_SUBJECT_CA }}
+        DB_MYSQL_SSL_SUBJECT_SERVER: ${{ secrets.DB_MYSQL_SSL_SUBJECT_SERVER }}
+        DB_MYSQL_SSL_SUBJECT_CLIENT: ${{ secrets.DB_MYSQL_SSL_SUBJECT_CLIENT }}
+
+    # Always verify, regardless if certificates were newly generated or restored from the cache
+    - name: MySQL SSL certificates verify
+      working-directory: ${{ steps.openssl-initialize-mysql-certificates.outputs.FolderPath }}
+      run: |
+        openssl verify -CAfile ./ca.pem ./server-cert.pem ./client-cert.pem
+
+    # Save the cache only if certificates were newly generated
+    # The actions/cache/save allows to use the Move-Item during the install step
+    - name: MySQL SSL certificates save cache
+      if: steps.openssl-cache-mysql-certificates.outputs.cache-hit != 'true'
+      uses: actions/cache/save@v3
+      with:
+        path: |
+          ${{ env.folder_path }}/*.pem
+        key: ${{ steps.openssl-cache-mysql-certificates.outputs.cache-primary-key }}
+      env:
+        folder_path: ${{ steps.openssl-initialize-mysql-certificates.outputs.FolderPath }}
+
+    - name: MySQL SSL certificates install
+      working-directory: ${{ steps.openssl-initialize-mysql-certificates.outputs.FolderPath }}
+      run: |
+        mysqlDataPath=/var/lib/mysql
+
+        echo '::group::Install CA certificate'
+        sudo mv --target-directory="$mysqlDataPath" ./ca.pem
+        sudo chmod 644 "$mysqlDataPath/ca.pem"
+        sudo chown mysql:mysql "$mysqlDataPath/ca.pem"
+        echo '::endgroup::'
+
+        echo '::group::Install server certificates'
+        sudo mv --target-directory="$mysqlDataPath" ./server-{cert,key}.pem
+        sudo chmod 640 "$mysqlDataPath/server-cert.pem"
+        sudo chmod 600 "$mysqlDataPath/server-key.pem"
+        sudo chown mysql:mysql "$mysqlDataPath"/server-{cert,key}.pem
+        echo '::endgroup::'
+
+        echo '::group::Install client certificates'
+        sudo mv --target-directory="$mysqlDataPath" ./client-{cert,key}.pem
+        sudo chmod 640 "$mysqlDataPath/client-cert.pem"
+        sudo chmod 600 "$mysqlDataPath/client-key.pem"
+        sudo chown mysql:mysql "$mysqlDataPath"/client-{cert,key}.pem
+        echo '::endgroup::'
+      env:
+        pg_data_path: ${{ steps.databases-initialize-mysql.outputs.PgDataPath }}
 
     - name: MySQL copy SSL certificates for runner user
       run: |
@@ -323,18 +435,22 @@ jobs:
       run: |
         sudo systemctl start mysql.service
 
+    # Securing the root account even on localhost is for testing to make sure that everything
+    # works as expected
     - name: MySQL change ${{ secrets.DB_MYSQL_ROOT_USERNAME }} password
       run: >-
         echo "
         alter user '$DB_MYSQL_ROOT_USERNAME'@'localhost'
         identified with caching_sha2_password by '$DB_MYSQL_ROOT_PASSWORD'
-        require issuer '/CN=MySQL_Server_TinyORM_Auto_Generated_CA_Certificate' and
-        subject '/CN=MySQL_Server_TinyORM_Auto_Generated_Client_Certificate';" |
+        require issuer '$DB_MYSQL_SSL_SUBJECT_CA' and
+        subject '$DB_MYSQL_SSL_SUBJECT_CLIENT';" |
         mysql --user="$DB_MYSQL_ROOT_USERNAME" --password="$DB_MYSQL_ROOT_PASSWORD_DEFAULT"
       env:
         DB_MYSQL_ROOT_PASSWORD: ${{ secrets.DB_MYSQL_ROOT_PASSWORD }}
         DB_MYSQL_ROOT_PASSWORD_DEFAULT: ${{ secrets.DB_MYSQL_ROOT_PASSWORD_DEFAULT }}
         DB_MYSQL_ROOT_USERNAME: ${{ secrets.DB_MYSQL_ROOT_USERNAME }}
+        DB_MYSQL_SSL_SUBJECT_CA: ${{ secrets.DB_MYSQL_SSL_SUBJECT_CA }}
+        DB_MYSQL_SSL_SUBJECT_CLIENT: ${{ secrets.DB_MYSQL_SSL_SUBJECT_CLIENT }}
 
     - name: MySQL populate time zone tables 👌
       run: >-
@@ -382,8 +498,8 @@ jobs:
         echo "
         create user '$DB_MYSQL_USERNAME'@'%'
         identified with caching_sha2_password by '$DB_MYSQL_PASSWORD'
-        require issuer '/CN=MySQL_Server_TinyORM_Auto_Generated_CA_Certificate' and
-        subject '/CN=MySQL_Server_TinyORM_Auto_Generated_Client_Certificate';
+        require issuer '$DB_MYSQL_SSL_SUBJECT_CA' and
+        subject '$DB_MYSQL_SSL_SUBJECT_CLIENT';
         grant all privileges on \`tinyorm\\_%\`.* to '$DB_MYSQL_USERNAME'@'%';
         grant select on \`mysql\`.\`time_zone_name\` to '$DB_MYSQL_USERNAME'@'%';
         flush privileges;" |
@@ -393,6 +509,8 @@ jobs:
         DB_MYSQL_ROOT_PASSWORD: ${{ secrets.DB_MYSQL_ROOT_PASSWORD }}
         DB_MYSQL_ROOT_USERNAME: ${{ secrets.DB_MYSQL_ROOT_USERNAME }}
         DB_MYSQL_USERNAME: ${{ secrets.DB_MYSQL_USERNAME }}
+        DB_MYSQL_SSL_SUBJECT_CA: ${{ secrets.DB_MYSQL_SSL_SUBJECT_CA }}
+        DB_MYSQL_SSL_SUBJECT_CLIENT: ${{ secrets.DB_MYSQL_SSL_SUBJECT_CLIENT }}
 
     - name: SQLite create TinyORM database
       run: |
