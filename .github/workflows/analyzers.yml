@@ -193,7 +193,7 @@ jobs:
         -B '${{ env.TinyORMBuildTree }}'
         -G Ninja
         -D CMAKE_CXX_COMPILER_LAUNCHER:FILEPATH=ccache
-        -D CMAKE_CXX_COMPILER:FILEPATH=/usr/bin/clang++-18
+        -D CMAKE_CXX_COMPILER:FILEPATH=clang++-18
         -D CMAKE_TOOLCHAIN_FILE:FILEPATH="$VCPKG_INSTALLATION_ROOT/scripts/buildsystems/vcpkg.cmake"
         -D CMAKE_DISABLE_PRECOMPILE_HEADERS:BOOL=ON
         -D CMAKE_EXPORT_COMPILE_COMMANDS:BOOL=ON
