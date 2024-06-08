@@ -3373,3 +3373,28 @@ Link Time Optimization (LTO):
  - works on Windows:      msvc, clang-cl with lld linker
  - works on Linux:        g++ with bfd, clang with lld linker
  - doesn't work on MSYS2: clang++/g++ with lld/bfd linker
+
+
+MySQL option files syntax:
+--------------------------
+
+ - no spaces before/after = (spaces are allowed though in general)
+ - on/off instead 1/0
+ - quotes are not needed
+   - use quotes for paths
+   - for nicer syntax highlighting
+ - options with - are command-line options and with _ system variable options
+   - they don't have to be 1:1
+   - prefer system variables
+   - use command-line options when it makes sense
+ - option sections
+   - [client] section is applied for:
+     - all client MySQL programs
+     - C API client library as well
+   - [mysql] is applied for MySQL programs only
+   - options in last sections override the previous one
+   - the best order is: [client], [mysqlXYZ], [mysqld], [mysqld-8.4]
+   - [mysqld-8.4] targets specific MySQL version
+   - the [DEFAULT] section can be used for own variables, if some variable value can't be resolved
+     the this section is checked at first
+   - https://dev.mysql.com/doc/refman/8.4/en/option-files.html#option-file-syntax
