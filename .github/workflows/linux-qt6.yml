@@ -397,7 +397,7 @@ jobs:
 
     - name: SQLite create TinyORM database
       run: |
-        mkdir --parents "$(dirname "${{ env.TinySQLitePath }}")"
+        mkdir --parents "$(dirname '${{ env.TinySQLitePath }}')"
 
         touch '${{ env.TinySQLitePath }}'
 

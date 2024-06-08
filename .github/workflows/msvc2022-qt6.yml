@@ -74,7 +74,7 @@ jobs:
     - name: PostgreSQL SSL certificates initialize
       id: openssl-initialize-postgresql-certificates
       run: |
-        $folderPath = Join-Path -Path ${{ env.TinyRunnerWorkPath }} `
+        $folderPath = Join-Path -Path '${{ env.TinyRunnerWorkPath }}' `
         -ChildPath 'tiny-postgresql-certificates'
 
         # Create an empty folder for generating certificates
