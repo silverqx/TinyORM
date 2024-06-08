@@ -776,9 +776,9 @@ https://github.com/silverqx/files/raw/main/clazy-standalone.tar.bz2
 
     - name: Dump pwd
       run: Get-Location
-    - name: Dump OS env
+    - name: Dump OS env (sorted)
       run: |
-        Get-ChildItem env:
+        Get-ChildItem env: | sort
 
   Common:
 
