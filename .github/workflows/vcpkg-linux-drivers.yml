@@ -183,7 +183,8 @@ jobs:
     - name: vcpkg install libmysql (classic mode)
       if: matrix.build-type.key == 'debug'
       run: |
-        vcpkg install libmysql
+        # Temporary GCC14 workaround
+        CFLAGS="-Wno-implicit-function-declaration -Wno-int-conversion" vcpkg install libmysql
 
     - name: vcpkg install ${{ matrix.qt.vcpkg-qt }} (classic mode)
       if: matrix.build-type.key == 'debug'
