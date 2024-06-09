@@ -9,7 +9,7 @@ Param(
     [Parameter(
         HelpMessage = 'Specifies the path to the CMake build folder, is pwd by default.')]
     [ValidateNotNullOrEmpty()]
-    [string] $BuildPath = $($(Get-Location).Path),
+    [string] $BuildPath = (Get-Location).Path,
 
     [Parameter(HelpMessage = 'Specifies the cpp files to be processed, is joined with ' +
             'the | character and used in the parenthesized regex eg. (file1|file2).')]

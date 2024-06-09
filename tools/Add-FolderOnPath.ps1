@@ -5,7 +5,7 @@ Param(
     [Parameter(Position = 0, ValueFromPipeline, ValueFromPipelinebyPropertyName,
         HelpMessage = 'Specifies the folder to add on the system path, is pwd by default.')]
     [ValidateNotNullOrEmpty()]
-    [string[]] $Path = $($(Get-Location).Path),
+    [string[]] $Path = (Get-Location).Path,
 
     [Parameter(Position = 1, ValueFromPipelinebyPropertyName,
         HelpMessage = 'Specifies the environment variable to which to add a Path, is env:PATH ' +

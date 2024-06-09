@@ -4,7 +4,7 @@ Param(
     [Parameter(Position = 0, ValueFromPipeline, ValueFromPipelinebyPropertyName,
         HelpMessage = 'Specifies the TinyORM debug build folder to add.')]
     [ValidateNotNullOrEmpty()]
-    [string[]] $BuildPath = $($(Get-Location).Path)
+    [string[]] $BuildPath = (Get-Location).Path
 )
 
 Set-StrictMode -Version 3.0

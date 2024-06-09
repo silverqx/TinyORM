@@ -10,7 +10,7 @@ Param(
     [Parameter(Position = 1,
         HelpMessage = 'Specifies the path to the project folder, is pwd by default.')]
     [ValidateNotNullOrEmpty()]
-    [string] $Path = $($(Get-Location).Path) + '\*',
+    [string] $Path = (Get-Location).Path + '\*',
 
     [Parameter(Position = 2,
         HelpMessage = 'Specifies an array of one or more string patterns to be matched as the ' +

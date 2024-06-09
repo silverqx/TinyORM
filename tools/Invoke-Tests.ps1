@@ -9,7 +9,7 @@ Param(
     [Parameter(Position = 1,
         HelpMessage = 'Specifies the path to the qmake build folder, is pwd by default.')]
     [ValidateNotNullOrEmpty()]
-    [string] $BuildPath = $($(Get-Location).Path)
+    [string] $BuildPath = (Get-Location).Path
 )
 
 Set-StrictMode -Version 3.0

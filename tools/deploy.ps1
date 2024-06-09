@@ -989,7 +989,7 @@ function Show-DiffSummaryAndApprove {
         [Parameter(
             HelpMessage = 'Specifies the folder for which to show  git diff, is pwd by default.')]
         [ValidateNotNullOrEmpty()]
-        [string[]] $Path = $($(Get-Location).Path)
+        [string[]] $Path = (Get-Location).Path
     )
 
     Write-Progress 'Showing diff summary...'
