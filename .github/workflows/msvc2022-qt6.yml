@@ -27,6 +27,10 @@ jobs:
 
     runs-on: windows-2022
 
+    env:
+      TINY_QT_VERSION: 6.7.1
+      TINY_QT_SPEC: msvc2019_64
+
     strategy:
       matrix:
         build-type:
@@ -548,59 +552,50 @@ jobs:
         postgres.exe --version
         Write-Output '::endgroup::'
 
-    - name: Qt 6.7.1 install base components
+    - name: Visual Studio 2022 pwsh shell setup
+      uses: ilammy/msvc-dev-cmd@v1
+      with:
+        arch: x64
+
+    - name: Qt ${{ env.TINY_QT_VERSION }} install base components
       uses: jurplel/install-qt-action@v3
       with:
         archives: qtbase
-        version: 6.7.1
-        arch: win64_msvc2019_64
+        version: ${{ env.TINY_QT_VERSION }}
+        arch: win64_${{ env.TINY_QT_SPEC }}
+        source: true
+        src-archives: qtbase
         cache: true
         setup-python: false
         extra: --external 7z.exe
         dir: ${{ env.TinyRunnerWorkPath }}
 
-    - name: QMYSQL driver dlls initialize download (Qt 6.7.1)
-      id: downloads-initialize-qmysql-dlls
+    - name: QMYSQL driver DLLs initialize
+      id: compiles-initialize-qmysql-dlls
       run: |
-        $filename = (Split-Path -Path $env:URL_QMYSQL_DLLS_MSVC_X64_6_7_1 -Leaf)
-        "Filename=$filename" >> $env:GITHUB_OUTPUT
+        $qtVersion = $env:TINY_QT_VERSION.Replace('.', '')
+        "QtVersion=$qtVersion" >> $env:GITHUB_OUTPUT
 
-        $filepath = Join-Path -Path ${{ runner.temp }} -ChildPath $filename
-        "Filepath=$filepath" >> $env:GITHUB_OUTPUT
-
-        $response = Invoke-WebRequest -Uri $env:URL_CACHE_HASH_WINDOWS
-        "Hash=$($response.Content)" >> $env:GITHUB_OUTPUT
-      env:
-        URL_QMYSQL_DLLS_MSVC_X64_6_7_1: ${{ secrets.URL_QMYSQL_DLLS_MSVC_X64_6_7_1 }}
-        URL_CACHE_HASH_WINDOWS: ${{ secrets.URL_CACHE_HASH_WINDOWS }}
-
-    - name: QMYSQL driver dlls restore cache (download)
+    - name: QMYSQL driver DLLs restore cache
       uses: actions/cache@v3
-      id: downloads-cache-qmysql-dlls
+      id: compiles-cache-qmysql-dlls
       with:
-        path: ${{ env.archive_filepath }}
-        key: ${{ runner.os }}-drivers-${{ env.cache_name }}-${{ env.cache_hash }}
+        path: |
+          ${{ env.QT_PLUGIN_PATH }}/sqldrivers/qsqlmysql*.dll
+          ${{ env.QT_PLUGIN_PATH }}/sqldrivers/qsqlmysql*.pdb
+        key: ${{ runner.os }}-drivers-${{ env.cache_name }}-${{ env.qt_version }}
       env:
-        archive_filepath: ${{ steps.downloads-initialize-qmysql-dlls.outputs.Filepath }}
-        cache_hash: ${{ steps.downloads-initialize-qmysql-dlls.outputs.Hash }}
-        cache_name: qmysql-dlls-qt6
+        cache_name: qmysql-dlls-qt
+        qt_version: ${{ steps.compiles-initialize-qmysql-dlls.outputs.QtVersion }}
 
-    - name: QMYSQL driver dlls download (Qt 6.7.1)
-      if: steps.downloads-cache-qmysql-dlls.outputs.cache-hit != 'true'
+    - name: QMYSQL driver DLLs build and install 🚀 (Qt ${{ env.TINY_QT_VERSION }})
+      if: steps.compiles-cache-qmysql-dlls.outputs.cache-hit != 'true'
       run: >-
-        $response = Invoke-WebRequest -Uri $env:URL_QMYSQL_DLLS_MSVC_X64_6_7_1
-
-        $response | Select-Object -ExpandProperty Content |
-        Set-Content -Path $env:archive_filepath -AsByteStream
-      env:
-        archive_filepath: ${{ steps.downloads-initialize-qmysql-dlls.outputs.Filepath }}
-        URL_QMYSQL_DLLS_MSVC_X64_6_7_1: ${{ secrets.URL_QMYSQL_DLLS_MSVC_X64_6_7_1 }}
-
-    - name: QMYSQL driver dlls install (Qt 6.7.1)
-      run: |
-        7z.exe x -y -o"$env:QT_PLUGIN_PATH/sqldrivers" $env:archive_filepath
-      env:
-        archive_filepath: ${{ steps.downloads-initialize-qmysql-dlls.outputs.Filepath }}
+        ./tools/qtbuild-qmysql-driver.ps1 -SkipInitializeBuildEnvironment
+        -QtRootPath (Get-Item -Path $env:QT_PLUGIN_PATH).Parent.Parent.Parent
+        -QtVersion $env:TINY_QT_VERSION -QtSpec $env:TINY_QT_SPEC
+        -MySQLServerPath $env:TinyMySQLInstallationPath
+        -BuildPath '${{ runner.workspace }}'
 
     - name: Ccache initialize
       id: ccache-initialize-cache
@@ -646,11 +641,6 @@ jobs:
         Write-Output '::group::Print ccache config'
         ccache.exe --show-config
         Write-Output '::endgroup::'
-
-    - name: Visual Studio 2022 pwsh shell setup
-      uses: ilammy/msvc-dev-cmd@v1
-      with:
-        arch: x64
 
     # Must be after the ilammy/msvc-dev-cmd@v1 because vcvars64 overrides the VCPKG_ROOT
     - name: vcpkg prepare environment

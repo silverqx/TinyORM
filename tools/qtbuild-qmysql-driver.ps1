@@ -19,27 +19,37 @@ Param(
         'The argument "{0}" does not match the "{1}" pattern.')]
     [string] $MySQLVersion = '8.4',
 
+    [Parameter(HelpMessage = 'Clean CMake build (delete the $QtVersion build folder).')]
+    [switch] $CleanBuild,
+
+    [Parameter(
+        HelpMessage = 'Specifies the main Qt path, is $env:TINY_QT_ROOT or C:\Qt by default.')]
+    [ValidateNotNullOrEmpty()]
+    [string] $QtRootPath,
+
     [Parameter(
         HelpMessage = 'Specifies the MySQL server installation path, by default is guessed using ' +
             'the MySQLVersion argument in the default $env:ProgramFiles installation location.')]
     [ValidateNotNullOrEmpty()]
     [string] $MySQLServerPath,
 
-    [Parameter(HelpMessage = 'Clean CMake build (delete the $QtVersion build folder).')]
-    [switch] $CleanBuild,
-
     [Parameter(
-        HelpMessage = 'Specifies the parent path to the CMake build folders, is pwd by default.')]
+        HelpMessage = 'Specifies the parent path to the CMake build folders, ' +
+            'is $env:TINY_QT_QMYSQL_BUILD_PATH or pwd by default.')]
     [ValidateNotNullOrEmpty()]
     [string] $BuildPath,
 
     [Parameter(
-        HelpMessage = 'Specifies the Qt spec and is used in the CMAKE_INSTALL_PREFIX, is msvc2019_64 by default.')]
+        HelpMessage = 'Specifies the Qt spec and is used in the CMAKE_INSTALL_PREFIX, ' +
+            'is msvc2019_64 by default.')]
     [ValidateNotNullOrEmpty()]
     [string] $QtSpec = 'msvc2019_64',
 
     [Parameter(HelpMessage = 'Specifies whether to install the QMYSQL drivers.')]
-    [switch] $NoInstall
+    [switch] $NoInstall,
+
+    [Parameter(HelpMessage = 'Specifies whether to skip initializing Build and Qt environments.')]
+    [switch] $SkipInitializeBuildEnvironment
 )
 
 Set-StrictMode -Version 3.0
@@ -53,7 +63,9 @@ Set-StrictMode -Version 3.0
 # ---
 Set-Variable STACK_NAME -Option Constant -Value $MyInvocation.MyCommand.Name
 
-$Script:QtRoot = $env:TINY_QT_ROOT ?? 'C:\Qt'
+$Script:QtRoot = $PSBoundParameters.ContainsKey('QtRootPath') `
+                 ? $QtRootPath
+                 : $env:TINY_QT_ROOT ?? 'C:\Qt'
 $Script:QtRoot = Get-FullPath -Path $Script:QtRoot
 $Script:QtRootAlt = $Script:QtRoot.Replace('\', '/')
 $Script:QtMajorVersion = $null
@@ -66,8 +78,6 @@ $Script:BuildPath = $PSBoundParameters.ContainsKey('BuildPath') `
                     ? $BuildPath
                     : $env:TINY_QT_QMYSQL_BUILD_PATH ?? $(Get-Location).Path
 $Script:BuildPath = Get-FullPath -Path $Script:BuildPath
-$Script:IsCWD = -not $PSBoundParameters.ContainsKey('BuildPath') -and
-                $null -eq $env:TINY_QT_QMYSQL_BUILD_PATH
 $Script:QtSqlDriversBuildPath = $null
 $Script:BOL = '  '
 
@@ -138,10 +148,10 @@ function Test-MySQLServerInstalled
         "in the '$Script:MySqlServerPath' folder.")
 }
 
-# Create the root Qt sqldrivers build folder
+# Create the main Qt sqldrivers build folder
 function New-QtSqlDriversBuildPath
 {
-    Write-Progress 'Creating the root Qt sqldrivers build folder'
+    Write-Progress 'Creating the main Qt sqldrivers build folder'
 
     $Script:QtSqlDriversBuildPath = "${Script:BuildPath}\qt${Script:QtMajorVersion}_sqldrivers"
 
@@ -172,7 +182,7 @@ function New-BuildFolders
 {
     Write-Progress 'Creating build folders'
 
-    $relWithDebInfoPath = Join-Path -Path $PWD -ChildPath "./$QtVersion/$QtSpec/RelWithDebInfo"
+    $relWithDebInfoPath = Join-Path -Path $PWD -ChildPath "$QtVersion/$QtSpec/RelWithDebInfo"
 
     if (-not (Test-Path $relWithDebInfoPath)) {
         New-Item -Type Directory -Path $relWithDebInfoPath | Out-Null
@@ -245,7 +255,9 @@ function Initialize-QtEnvironment
 # Preparations
 # ---
 
-# Clear-Host
+if (-not (Test-Path env:RUNNER_ENVIRONMENT)) {
+    Clear-Host
+}
 
 Write-Header "Preparations"
 
@@ -256,18 +268,20 @@ Test-QtSourcesInstalled
 Test-MySQLServerInstalled
 
 # Initialize the Qt and MSVC build environment if it's not already there
-Initialize-QtEnvironment
-Test-BuildEnvironment
+if (-not $SkipInitializeBuildEnvironment) {
+    Initialize-QtEnvironment
+    Test-BuildEnvironment
+}
+else {
+    Write-Error 'Skipping Qt and MSVC build environment initialization'
+}
 
 # Prepare the build folder
-# Create the root Qt sqldrivers build folder
+# Create the main Qt sqldrivers build folder
 New-QtSqlDriversBuildPath
 
-# Not needed if building in the CWD
-if (-not $Script:IsCWD) {
-    Push-Location -StackName $STACK_NAME
-    Set-Location $Script:QtSqlDriversBuildPath
-}
+Push-Location -StackName $STACK_NAME
+Set-Location $Script:QtSqlDriversBuildPath
 
 # Remove $QtVersion build folder if the $CleanBuild was passed
 Invoke-CleanBuild
@@ -335,10 +349,7 @@ cmake --build . --target ($NoInstall ? 'all' : 'install')
 # Done
 # ---
 
-# Not needed if building in the CWD
-if (-not $Script:IsCWD) {
-    Pop-Location -StackName $STACK_NAME
-}
+Pop-Location -StackName $STACK_NAME
 
 Newline
 Write-Progress 'Linked against the MySQL Server at: ' -NoNewline
