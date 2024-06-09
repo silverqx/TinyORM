@@ -41,10 +41,13 @@ function Write-Info {
         [Parameter(Position = 0, Mandatory, HelpMessage = 'Writes an info message to the host.')]
         [ValidateNotNullOrEmpty()]
         [string]
-        $Message
+        $Message,
+
+        [Parameter(HelpMessage = 'No newline is added after the last output string.')]
+        [switch] $NoNewline
     )
 
-    Write-Host $Message -ForegroundColor DarkGreen
+    Write-Host $Message -ForegroundColor DarkGreen -NoNewline:$NoNewline
 }
 
 # Write a progress message to a host
@@ -54,10 +57,13 @@ function Write-Progress {
         [Parameter(Position = 0, Mandatory, HelpMessage = 'Writes a progress message to the host.')]
         [ValidateNotNullOrEmpty()]
         [string]
-        $Message
+        $Message,
+
+        [Parameter(HelpMessage = 'No newline is added after the last output string.')]
+        [switch] $NoNewline
     )
 
-    Write-Host $Message -ForegroundColor DarkYellow
+    Write-Host $Message -ForegroundColor DarkYellow -NoNewline:$NoNewline
 }
 
 # Write an error message to a host
