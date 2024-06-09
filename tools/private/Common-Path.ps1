@@ -70,7 +70,7 @@ function Get-PathToMatch {
     return "(?:^|$separator)$pathToMatch[$slashes]*(?:$|$separator)"
 }
 
-# Remove a path separator at the end and call the [System.IO.Path]::GetFullPath
+# Remove a path separator at the end and call the [System.IO.Path]::GetFullPath (normalize to \)
 function Get-FullPath {
     [CmdletBinding()]
     [OutputType([string[]])]
