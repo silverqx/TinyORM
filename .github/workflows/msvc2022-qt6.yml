@@ -632,7 +632,7 @@ jobs:
       run: |
         # First value is compressed data size
         # ~ 190 * 3 + 100
-        ccache.exe --set-config max_size=1400M
+        ccache.exe --set-config max_size=700M
         ccache.exe --set-config sloppiness=pch_defines,time_macros
         ccache.exe --set-config depend_mode=true
         ccache.exe --set-config inode_cache=true
