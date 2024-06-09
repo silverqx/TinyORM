@@ -5,7 +5,7 @@ Param(
         HelpMessage = 'Specifies the Qt version for which to build the QMYSQL driver ' +
             '(version number inside the Qt installation folder).')]
     [ValidateNotNullOrEmpty()]
-    [ValidatePattern('^[5-8]\.\d{1,2}\.\d{1,2}$',
+    [ValidatePattern('^[5-9]\.\d{1,2}\.\d{1,2}$',
         ErrorMessage = 'The argument "{0}" is not the correct Qt version number. ' +
         'The argument "{0}" does not match the "{1}" pattern.')]
     [string] $QtVersion,
@@ -19,33 +19,66 @@ Param(
         'The argument "{0}" does not match the "{1}" pattern.')]
     [string] $MySQLVersion = '8.4',
 
+    [Parameter(
+        HelpMessage = 'Specifies the MySQL server installation path, by default is guessed using ' +
+            'the MySQLVersion argument in the default $env:ProgramFiles installation location.')]
+    [ValidateNotNullOrEmpty()]
+    [string] $MySQLServerPath,
+
     [Parameter(HelpMessage = 'Clean CMake build (delete the $QtVersion build folder).')]
-    [switch] $CleanBuild
+    [switch] $CleanBuild,
+
+    [Parameter(
+        HelpMessage = 'Specifies the parent path to the CMake build folders, is pwd by default.')]
+    [ValidateNotNullOrEmpty()]
+    [string] $BuildPath,
+
+    [Parameter(
+        HelpMessage = 'Specifies the Qt spec and is used in the CMAKE_INSTALL_PREFIX, is msvc2019_64 by default.')]
+    [ValidateNotNullOrEmpty()]
+    [string] $QtSpec = 'msvc2019_64',
+
+    [Parameter(HelpMessage = 'Specifies whether to install the QMYSQL drivers.')]
+    [switch] $NoInstall
 )
 
 Set-StrictMode -Version 3.0
+
+# Includes
+# ---
+. $PSScriptRoot\private\Common-Host.ps1
+. $PSScriptRoot\private\Common-Path.ps1
 
 # Script variables section
 # ---
 Set-Variable STACK_NAME -Option Constant -Value $MyInvocation.MyCommand.Name
 
 $Script:QtRoot = $env:TINY_QT_ROOT ?? 'C:\Qt'
+$Script:QtRoot = Get-FullPath -Path $Script:QtRoot
 $Script:QtRootAlt = $Script:QtRoot.Replace('\', '/')
 $Script:QtMajorVersion = $null
 $Script:QtEnvVersion = $null
 $Script:VisualStudioVersion = '17.0'
-$Script:MySqlServerPath = "C:/Program Files/MySQL/MySQL Server $MySQLVersion"
+$Script:MySqlServerPath = $PSBoundParameters.ContainsKey('MySQLServerPath') `
+                          ? (Get-FullPath -Path $MySQLServerPath).Replace('\', '/')
+                          : "C:/Program Files/MySQL/MySQL Server $MySQLVersion"
+$Script:BuildPath = $PSBoundParameters.ContainsKey('BuildPath') `
+                    ? $BuildPath
+                    : $env:TINY_QT_QMYSQL_BUILD_PATH ?? $(Get-Location).Path
+$Script:BuildPath = Get-FullPath -Path $Script:BuildPath
+$Script:IsCWD = -not $PSBoundParameters.ContainsKey('BuildPath') -and
+                $null -eq $env:TINY_QT_QMYSQL_BUILD_PATH
+$Script:QtSqlDriversBuildPath = $null
 $Script:BOL = '  '
 
 # Functions section
 # ---
-. $PSScriptRoot\private\Common-Host.ps1
 
 # Initialize Qt's major and environment version script variables
 function Initialize-QtVersions
 {
     # Extract major and minor versions from the passed $QtVersion
-    if (-not ($QtVersion -match '^(?<major>[5-8])\.(?<minor>\d{1,2})\.\d{1,2}$')) {
+    if (-not ($QtVersion -match '^(?<major>[5-9])\.(?<minor>\d{1,2})\.\d{1,2}$')) {
         Write-ExitError 'Match for the ''$QtEnvVersion'' variable failed.' -NoNewlineBefore
     }
 
@@ -75,8 +108,8 @@ function Test-QtVersionInstalled
         return
     }
 
-    Write-ExitError ("The passed Qt version '$QtVersion' is not installed " +
-        "in the '$Script:QtRoot\$QtVersion\' folder.")
+    Write-ExitError ("The passed Qt version '$QtVersion' is not installed at: " +
+        "$Script:QtRoot\$QtVersion")
 }
 
 # Check whether the source files to build the Qt MySQL plugin are installed
@@ -105,6 +138,23 @@ function Test-MySQLServerInstalled
         "in the '$Script:MySqlServerPath' folder.")
 }
 
+# Create the root Qt sqldrivers build folder
+function New-QtSqlDriversBuildPath
+{
+    Write-Progress 'Creating the root Qt sqldrivers build folder'
+
+    $Script:QtSqlDriversBuildPath = "${Script:BuildPath}\qt${Script:QtMajorVersion}_sqldrivers"
+
+    if (-not (Test-Path -Path $Script:QtSqlDriversBuildPath)) {
+        New-Item -ItemType Directory -Path $Script:QtSqlDriversBuildPath | Out-Null
+
+        Write-Progress "${Script:BOL}Created at: $Script:QtSqlDriversBuildPath"
+    }
+    else {
+        Write-Error "${Script:BOL}Build folder already exists at: $Script:QtSqlDriversBuildPath"
+    }
+}
+
 # Remove $QtVersion build folder if the $CleanBuild was passed
 function Invoke-CleanBuild
 {
@@ -122,7 +172,7 @@ function New-BuildFolders
 {
     Write-Progress 'Creating build folders'
 
-    $relWithDebInfoPath = Join-Path -Path $PWD -ChildPath "./$QtVersion/msvc2019_64/RelWithDebInfo"
+    $relWithDebInfoPath = Join-Path -Path $PWD -ChildPath "./$QtVersion/$QtSpec/RelWithDebInfo"
 
     if (-not (Test-Path $relWithDebInfoPath)) {
         New-Item -Type Directory -Path $relWithDebInfoPath | Out-Null
@@ -130,10 +180,10 @@ function New-BuildFolders
         Write-Progress "${Script:BOL}Created the Release folder at: $relWithDebInfoPath"
     }
     else {
-        Write-Error "${Script:BOL}Release folder already exists ($relWithDebInfoPath)"
+        Write-Error "${Script:BOL}Release folder already exists at: $relWithDebInfoPath"
     }
 
-    $debugPath = Join-Path -Path $PWD -ChildPath "$QtVersion/msvc2019_64/Debug"
+    $debugPath = Join-Path -Path $PWD -ChildPath "$QtVersion/$QtSpec/Debug"
 
     if (-not (Test-Path $debugPath)) {
         New-Item -Type Directory -Path $debugPath | Out-Null
@@ -141,7 +191,7 @@ function New-BuildFolders
         Write-Progress "${Script:BOL}Created the Debug folder at: $debugPath"
     }
     else {
-        Write-Error "${Script:BOL}Debug folder already exists ($debugPath)"
+        Write-Error "${Script:BOL}Debug folder already exists at: $debugPath"
     }
 }
 
@@ -180,8 +230,8 @@ function Initialize-QtEnvironment
     Write-Progress 'Initializing Qt and MSVC build environment'
 
     if (Test-Path env:WindowsSDKLibVersion) {
-        Write-Error ('The MSVC build environment already initialized. Exiting the Qt environment ' +
-            'initialization!')
+        Write-Error ("${Script:BOL}The MSVC build environment already initialized. " +
+            'Exiting the Qt environment initialization!')
 
         return
     }
@@ -195,7 +245,7 @@ function Initialize-QtEnvironment
 # Preparations
 # ---
 
-Clear-Host
+# Clear-Host
 
 Write-Header "Preparations"
 
@@ -210,9 +260,14 @@ Initialize-QtEnvironment
 Test-BuildEnvironment
 
 # Prepare the build folder
-Push-Location -StackName $STACK_NAME
+# Create the root Qt sqldrivers build folder
+New-QtSqlDriversBuildPath
 
-Set-Location "E:\c_libs\qt${Script:QtMajorVersion}_sqldrivers"
+# Not needed if building in the CWD
+if (-not $Script:IsCWD) {
+    Push-Location -StackName $STACK_NAME
+    Set-Location $Script:QtSqlDriversBuildPath
+}
 
 # Remove $QtVersion build folder if the $CleanBuild was passed
 Invoke-CleanBuild
@@ -223,17 +278,18 @@ New-BuildFolders
 # ---
 Write-Header 'Debug Build'
 
-Set-Location "$QtVersion/msvc2019_64/Debug"
+Set-Location "$QtVersion/$QtSpec/Debug"
 
 # Configure
 Write-Progress 'Configuring...'
 
 qt-cmake `
+    --log-level=VERBOSE `
     -S "$Script:QtRootAlt/$QtVersion/Src/qtbase/src/plugins/sqldrivers" `
     -B . `
     -G Ninja `
     -D CMAKE_BUILD_TYPE:STRING=Debug `
-    -D CMAKE_INSTALL_PREFIX:PATH="$Script:QtRootAlt/$QtVersion/msvc2019_64" `
+    -D CMAKE_INSTALL_PREFIX:PATH="$Script:QtRootAlt/$QtVersion/$QtSpec" `
     -D MySQL_INCLUDE_DIR:PATH="${Script:MySqlServerPath}/include" `
     -D MySQL_LIBRARY:FILEPATH="${Script:MySqlServerPath}/lib/libmysql.lib" `
     -D FEATURE_sql_psql:BOOL=OFF `
@@ -242,10 +298,11 @@ qt-cmake `
 
 NewLine
 
-# Build and install
-Write-Progress 'Building and installing...'
+# Build and/or install
+$Script:InstallingText = $NoInstall ? 'only' : 'and installing'
+Write-Progress "Building ${Script:InstallingText}..."
 
-cmake --build . --target install
+cmake --build . --target ($NoInstall ? 'all' : 'install')
 
 # Release build
 # ---
@@ -256,11 +313,12 @@ Set-Location '../RelWithDebInfo'
 Write-Progress 'Configuring...'
 
 qt-cmake `
+    --log-level=VERBOSE `
     -S "$Script:QtRootAlt/$QtVersion/Src/qtbase/src/plugins/sqldrivers" `
     -B . `
     -G Ninja `
     -D CMAKE_BUILD_TYPE:STRING=RelWithDebInfo `
-    -D CMAKE_INSTALL_PREFIX:PATH="$Script:QtRootAlt/$QtVersion/msvc2019_64" `
+    -D CMAKE_INSTALL_PREFIX:PATH="$Script:QtRootAlt/$QtVersion/$QtSpec" `
     -D MySQL_INCLUDE_DIR:PATH="${Script:MySqlServerPath}/include" `
     -D MySQL_LIBRARY:FILEPATH="${Script:MySqlServerPath}/lib/libmysql.lib" `
     -D FEATURE_sql_psql:BOOL=OFF `
@@ -269,17 +327,28 @@ qt-cmake `
 
 NewLine
 
-# Build and install
-Write-Progress 'Building and installing...'
+# Build and/or install
+Write-Progress "Building ${Script:InstallingText}..."
 
-cmake --build . --target install
+cmake --build . --target ($NoInstall ? 'all' : 'install')
 
 # Done
 # ---
 
-Pop-Location -StackName $STACK_NAME
-
-Write-Progress "Linked against the MySQL Server at: $Script:MySqlServerPath"
+# Not needed if building in the CWD
+if (-not $Script:IsCWD) {
+    Pop-Location -StackName $STACK_NAME
+}
 
 Newline
-Write-Info "The QMYSQL driver for Qt $QtVersion was built and installed successfully. 🥳"
+Write-Progress 'Linked against the MySQL Server at: ' -NoNewline
+Write-Info $Script:MySqlServerPath
+
+if (-not $NoInstall) {
+    Write-Progress 'QMYSQL driver installed to: ' -NoNewline
+    Write-Info "$Script:QtRootAlt/$QtVersion/$QtSpec"
+}
+
+$Script:InstalledText = $NoInstall ? '' : ' and installed'
+Newline
+Write-Info "The QMYSQL driver for Qt $QtVersion was built${Script:InstalledText} successfully. 🥳"
