@@ -633,6 +633,7 @@ jobs:
 
     - name: Ccache prepare configuration 🥳
       run: |
+        # Initial build size 1.4G :/
         ccache.exe --set-config max_size=2G
         ccache.exe --set-config sloppiness=pch_defines,time_macros
         ccache.exe --set-config depend_mode=true

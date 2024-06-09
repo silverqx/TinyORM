@@ -375,6 +375,7 @@ jobs:
 
     - name: Ccache prepare configuration 🥳
       run: |
+        # First value is compressed data size
         # ~ 175 * 3 + 100
         ccache.exe --set-config max_size=650M
         ccache.exe --set-config sloppiness=pch_defines,time_macros

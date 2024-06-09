@@ -295,6 +295,7 @@ jobs:
     - name: Ccache prepare configuration 🥳
       shell: msys2 {0}
       run: |
+        # First value is compressed data size
         # gcc: ~ 180 * 3 + 100 ; clang: ~ 140 * 3 + 100
         ccache.exe --set-config max_size=${{ matrix.compiler.key == 'gcc' && '640M' || '520M' }}
         ccache.exe --set-config sloppiness=pch_defines,time_macros
