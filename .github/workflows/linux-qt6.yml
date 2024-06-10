@@ -537,69 +537,16 @@ jobs:
       run: |
         sudo apt update
 
-    - name: apt install ${{ join(matrix.compiler.apt, ', ') }}, and Qt 6.2.4 base
+    - name: apt install ${{ join(matrix.compiler.apt, ', ') }}, Qt 6.2.4 base, and ccache
       run: >-
         sudo apt install --yes ${{ join(matrix.compiler.apt, ' ') }}
-        qt6-base-dev libqt6sql6-mysql libqt6sql6-sqlite libqt6sql6-psql
+        qt6-base-dev libqt6sql6-mysql libqt6sql6-sqlite libqt6sql6-psql ccache
 
     # No need to use lukka/get-cmake, these images always have latest version
     - name: Ninja install latest version
       uses: seanmiddleditch/gha-setup-ninja@master
       with:
         destination: ${{ env.TinyRunnerWorkPath }}/ninja-build
-
-    - name: Ccache initialize download
-      id: downloads-initialize-ccache
-      run: |
-        filename=$(basename "$URL_CCACHE_LINUX_X64")
-        echo "Filename=$filename" >> $GITHUB_OUTPUT
-
-        filepath="${{ runner.temp }}/$filename"
-        echo "Filepath=$filepath" >> $GITHUB_OUTPUT
-
-        hash=$(wget "$URL_CACHE_HASH_LINUX" -O- --no-verbose --quiet)
-        echo "Hash=$hash" >> $GITHUB_OUTPUT
-      env:
-        URL_CACHE_HASH_LINUX: ${{ secrets.URL_CACHE_HASH_LINUX }}
-        URL_CCACHE_LINUX_X64: ${{ secrets.URL_CCACHE_LINUX_X64 }}
-
-    - name: Ccache restore cache (download)
-      uses: actions/cache@v3
-      id: downloads-cache-ccache
-      with:
-        path: ${{ env.archive_filepath }}
-        key: ${{ runner.os }}-caches-${{ env.cache_name }}-${{ env.cache_hash }}
-      env:
-        archive_filepath: ${{ steps.downloads-initialize-ccache.outputs.Filepath }}
-        cache_hash: ${{ steps.downloads-initialize-ccache.outputs.Hash }}
-        cache_name: ccache
-
-    - name: Ccache download
-      if: steps.downloads-cache-ccache.outputs.cache-hit != 'true'
-      run: |
-        wget "$URL_CCACHE_LINUX_X64" --output-document="$archive_filepath" --no-verbose
-      env:
-        archive_filepath: ${{ steps.downloads-initialize-ccache.outputs.Filepath }}
-        URL_CCACHE_LINUX_X64: ${{ secrets.URL_CCACHE_LINUX_X64 }}
-
-    - name: Ccache install
-      run: |
-        echo '::group::Extract archive'
-        tar xJvf "$archive_filepath" --directory '${{ runner.temp }}'
-        echo '::endgroup::'
-
-        echo '::group::Install'
-        extractedFolder=$(basename --suffix='.tar.xz' "$archive_filename")
-        cd "${{ runner.temp }}/$extractedFolder"
-        sudo make install
-        echo '::endgroup::'
-
-        echo '::group::Print version'
-        ccache --version
-        echo '::endgroup::'
-      env:
-        archive_filename: ${{ steps.downloads-initialize-ccache.outputs.Filename }}
-        archive_filepath: ${{ steps.downloads-initialize-ccache.outputs.Filepath }}
 
     - name: Ccache initialize
       id: ccache-initialize-cache
@@ -663,7 +610,7 @@ jobs:
         -S .
         -B ../TinyORM-builds-cmake/build-${{ matrix.compiler.key }}-cmake-debug
         -G Ninja
-        -D CMAKE_CXX_COMPILER_LAUNCHER:FILEPATH=/usr/local/bin/ccache
+        -D CMAKE_CXX_COMPILER_LAUNCHER:FILEPATH=ccache
         -D CMAKE_CXX_COMPILER:FILEPATH=${{ matrix.compiler.command }}
         -D CMAKE_TOOLCHAIN_FILE:FILEPATH="$VCPKG_INSTALLATION_ROOT/scripts/buildsystems/vcpkg.cmake"
         -D CMAKE_DISABLE_PRECOMPILE_HEADERS:BOOL=ON

@@ -95,10 +95,10 @@ jobs:
       run: |
         sudo apt update
 
-    - name: apt install g++-12
+    - name: apt install g++-12 and ccache
       if: env.TinyIsSelfHostedRunner == 'false'
       run: |
-        sudo apt install --yes g++-12
+        sudo apt install --yes g++-12 ccache
 
     # Qt5 build dependencies: https://wiki.qt.io/Building_Qt_5_from_Git
     - name: apt install Qt5 build dependencies
@@ -315,7 +315,7 @@ jobs:
     - name: apt install Qt v${{ matrix.qt.version }} base (${{ join(matrix.compiler.apt, ', ') }})
       if: env.TinyIsSelfHostedRunner == 'false'
       run: |
-        sudo apt install --yes ${{ join(matrix.qt.apt, ' ') }}
+        sudo apt install --yes ${{ join(matrix.qt.apt, ' ') }} ccache
 
     # Prepare ccache
     #
@@ -329,62 +329,6 @@ jobs:
       run: |
         ccacheDirPath=$(realpath '${{ runner.workspace }}/ccache')
         echo "CCACHE_DIR=$ccacheDirPath" >> $GITHUB_ENV
-
-    - name: Ccache initialize download
-      if: env.TinyIsSelfHostedRunner == 'false'
-      id: downloads-initialize-ccache
-      run: |
-        filename=$(basename "$URL_CCACHE_LINUX_X64")
-        echo "Filename=$filename" >> $GITHUB_OUTPUT
-
-        filepath="${{ runner.temp }}/$filename"
-        echo "Filepath=$filepath" >> $GITHUB_OUTPUT
-
-        hash=$(wget "$URL_CACHE_HASH_LINUX" -O- --no-verbose --quiet)
-        echo "Hash=$hash" >> $GITHUB_OUTPUT
-      env:
-        URL_CACHE_HASH_LINUX: ${{ secrets.URL_CACHE_HASH_LINUX }}
-        URL_CCACHE_LINUX_X64: ${{ secrets.URL_CCACHE_LINUX_X64 }}
-
-    - name: Ccache restore cache (download)
-      if: env.TinyIsSelfHostedRunner == 'false'
-      uses: actions/cache@v3
-      id: downloads-cache-ccache
-      with:
-        path: ${{ env.archive_filepath }}
-        key: ${{ runner.os }}-caches-${{ env.cache_name }}-${{ env.cache_hash }}
-      env:
-        archive_filepath: ${{ steps.downloads-initialize-ccache.outputs.Filepath }}
-        cache_hash: ${{ steps.downloads-initialize-ccache.outputs.Hash }}
-        cache_name: ccache
-
-    - name: Ccache download
-      if: env.TinyIsSelfHostedRunner == 'false' && steps.downloads-cache-ccache.outputs.cache-hit != 'true'
-      run: |
-        wget "$URL_CCACHE_LINUX_X64" --output-document="$archive_filepath" --no-verbose
-      env:
-        archive_filepath: ${{ steps.downloads-initialize-ccache.outputs.Filepath }}
-        URL_CCACHE_LINUX_X64: ${{ secrets.URL_CCACHE_LINUX_X64 }}
-
-    - name: Ccache install
-      if: env.TinyIsSelfHostedRunner == 'false'
-      run: |
-        echo '::group::Extract archive'
-        tar xJvf "$archive_filepath" --directory '${{ runner.temp }}'
-        echo '::endgroup::'
-
-        echo '::group::Install'
-        extractedFolder=$(basename --suffix='.tar.xz' "$archive_filename")
-        cd "${{ runner.temp }}/$extractedFolder"
-        sudo make install
-        echo '::endgroup::'
-
-        echo '::group::Print version'
-        ccache --version
-        echo '::endgroup::'
-      env:
-        archive_filename: ${{ steps.downloads-initialize-ccache.outputs.Filename }}
-        archive_filepath: ${{ steps.downloads-initialize-ccache.outputs.Filepath }}
 
     - name: Ccache initialize
       if: env.TinyIsSelfHostedRunner == 'false'
