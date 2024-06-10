@@ -31,6 +31,10 @@ jobs:
     # Self-hosted runner is Ubuntu 22.04
     runs-on: [ self-hosted, linux ]
 
+    env:
+      TINY_PARALLEL_GCC: 4
+      TINY_PARALLEL_CLANG: 8
+
     strategy:
       matrix:
         lto: [ OFF ]
@@ -45,10 +49,12 @@ jobs:
             name: Release
 
         compiler:
-          - key: clang18
+          - key: clang
+            name: clang18
             command: clang++-18
 
-          - key: gcc14
+          - key: gcc
+            name: gcc14
             command: g++-14
 
         include:
@@ -58,7 +64,8 @@ jobs:
               key: release
               name: Release
             compiler:
-              key: clang18
+              key: clang
+              name: clang18
               command: clang++-18
 
           - lto: ON
@@ -67,7 +74,8 @@ jobs:
               key: release
               name: Release
             compiler:
-              key: gcc14
+              key: gcc
+              name: gcc14
               command: g++-14
 
     steps:
@@ -92,13 +100,16 @@ jobs:
         # I must divide all parallel by 2 because I have 2 self-hosted runners on the same computer
         # and also -1 for reserve to avoid swapping, so for clang: 8 / 2 - 1 = 3 and for gcc:
         # 3 / 2 - 1 = 1.
-        parallel=${{ matrix.compiler.key == 'gcc14' && '3' || '8' }}
+        [[ '${{ matrix.compiler.key }}' == 'gcc' ]] && parallel=$TINY_PARALLEL_GCC || \
+        parallel=$TINY_PARALLEL_CLANG
         echo "TinyParallel=$parallel" >> $GITHUB_ENV
+
+        echo "TinyParallelVcpkg=$(nproc)" >> $GITHUB_ENV
 
         tinyormPath=$(realpath ./main)
         echo "TinyORMPath=$tinyormPath" >> $GITHUB_ENV
 
-        tinyormBuildName='TinyDrivers-${{ matrix.compiler.key }}-${{ matrix.drivers-type }}-${{ matrix.build-type.key }}'
+        tinyormBuildName='TinyDrivers-${{ matrix.compiler.name }}-${{ matrix.drivers-type }}-${{ matrix.build-type.key }}'
         echo "TinyORMBuildName=$tinyormBuildName" >> $GITHUB_ENV
 
         tinyormBuildFolder="build-$tinyormBuildName"
@@ -147,7 +158,7 @@ jobs:
       run: |
         echo "VCPKG_ROOT=$VCPKG_INSTALLATION_ROOT" >> $GITHUB_ENV
         echo 'VCPKG_DEFAULT_TRIPLET=x64-linux-dynamic' >> $GITHUB_ENV
-        echo "VCPKG_MAX_CONCURRENCY=$TinyParallel" >> $GITHUB_ENV
+        echo "VCPKG_MAX_CONCURRENCY=$TinyParallelVcpkg" >> $GITHUB_ENV
 
     - name: vcpkg needs upgrade? (once per day)
       run: |
@@ -319,7 +330,7 @@ jobs:
     # the reason for this is to always have the latest tom_testdata and to avoid manual rebuilds if
     # any shared library is updated on which the tom_testdata depends to avoid crashes.
     - name: Install tom_testdata for vcpkg-linux-drivers.yml
-      if: matrix.compiler.key == 'gcc14' && matrix.drivers-type == 'Static' && matrix.build-type.key == 'release'
+      if: matrix.compiler.key == 'gcc' && matrix.drivers-type == 'Static' && matrix.build-type.key == 'release'
       working-directory: ${{ env.TinyORMBuildTree }}/tests/testdata_tom
       run: |
         mkdir -p "$RUNNER_WORKSPACE/.local/bin"

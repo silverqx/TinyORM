@@ -27,6 +27,17 @@ jobs:
 
     runs-on: ubuntu-24.04
 
+    env:
+      # This number must also be changed in the matrix as env context can't be used in the matrix
+      TINY_LLVM_VERSION: 18
+      TINY_LLVM_APT_NAME: noble
+      # First value is a compressed data size
+      # gcc: ~ 165 * 3 + 100 ; clang: ~ 100 * 3 + 100
+      TINY_CCACHE_MAX_SIZE_GCC: 600M
+      TINY_CCACHE_MAX_SIZE_CLANG: 400M
+      # Clang and vcpkg use $(nproc --all) (max. available cores)
+      TINY_PARALLEL_GCC: 2
+
     strategy:
       matrix:
         compiler:
@@ -50,6 +61,16 @@ jobs:
 
         sqlitePath="$runnerWorkPath/SQLite/$DB_SQLITE_DATABASE"
         echo "TinySQLitePath=$sqlitePath" >> $GITHUB_ENV
+
+        [[ '${{ matrix.compiler.key }}' == 'gcc' ]] && ccacheMaxSize="$TINY_CCACHE_MAX_SIZE_GCC" \
+        || ccacheMaxSize="$TINY_CCACHE_MAX_SIZE_CLANG"
+        echo "TinyCcacheMaxSize=$ccacheMaxSize" >> $GITHUB_ENV
+
+        [[ '${{ matrix.compiler.key }}' == 'gcc' ]] && parallel=$TINY_PARALLEL_GCC \
+        || parallel=$(nproc --all)
+        echo "TinyParallel=$parallel" >> $GITHUB_ENV
+
+        echo "TinyParallelVcpkg=$(nproc --all)" >> $GITHUB_ENV
       env:
         DB_SQLITE_DATABASE: ${{ secrets.DB_SQLITE_DATABASE }}
 
@@ -534,14 +555,15 @@ jobs:
         sqlite3 --version
         echo '::endgroup::'
 
-    - name: add-apt-repository Clang 18
+    - name: add-apt-repository Clang ${{ env.TINY_LLVM_VERSION }}
       if: matrix.compiler.key == 'clang'
       run: >-
         wget -O- https://apt.llvm.org/llvm-snapshot.gpg.key |
-        sudo tee /etc/apt/trusted.gpg.d/llvm-18.asc > /dev/null
+        sudo tee /etc/apt/trusted.gpg.d/llvm-${{ env.TINY_LLVM_VERSION }}.asc > /dev/null
 
         sudo add-apt-repository --yes
-        --sourceslist 'deb http://apt.llvm.org/noble/ llvm-toolchain-noble-18 main'
+        --sourceslist 'deb http://apt.llvm.org/${{ env.TINY_LLVM_APT_NAME }}/
+        llvm-toolchain-${{ env.TINY_LLVM_APT_NAME }}-${{ env.TINY_LLVM_VERSION }} main'
 
     - name: apt update
       run: |
@@ -580,9 +602,7 @@ jobs:
 
     - name: Ccache prepare configuration 🥳
       run: |
-        # First value is a compressed data size
-        # gcc: ~ 165 * 3 + 100 ; clang: ~ 100 * 3 + 100
-        ccache --set-config max_size=${{ matrix.compiler.key == 'gcc' && '600M' || '400M' }}
+        ccache --set-config max_size="$TinyCcacheMaxSize"
         ccache --set-config sloppiness=pch_defines,time_macros
 
     - name: Ccache print version and configuration
@@ -599,7 +619,7 @@ jobs:
       run: |
         echo "VCPKG_ROOT=$VCPKG_INSTALLATION_ROOT" >> $GITHUB_ENV
         echo 'VCPKG_DEFAULT_TRIPLET=x64-linux-dynamic' >> $GITHUB_ENV
-        echo 'VCPKG_MAX_CONCURRENCY=2' >> $GITHUB_ENV
+        echo "VCPKG_MAX_CONCURRENCY=$TinyParallelVcpkg" >> $GITHUB_ENV
 
     - name: CMake print version
       run: |
@@ -642,7 +662,7 @@ jobs:
     - name: TinyORM cmake build ✨ (${{ matrix.compiler.name }}-cmake-debug)
       run: >-
         cmake --build ../TinyORM-builds-cmake/build-${{ matrix.compiler.name }}-cmake-debug
-        --target all --parallel 2
+        --target all --parallel $TinyParallel
 
     - name: Ccache print statistics
       run: |
@@ -679,7 +699,7 @@ jobs:
     - name: TinyORM execute ctest 🔥
       working-directory: ../TinyORM-builds-cmake/build-${{ matrix.compiler.name }}-cmake-debug
       run: |
-        ctest --output-on-failure --parallel 4
+        ctest --output-on-failure --parallel $(($TinyParallel + $(nproc --all) / 2))
       env:
         DB_MYSQL_CHARSET: ${{ secrets.DB_MYSQL_CHARSET }}
         DB_MYSQL_COLLATION: ${{ secrets.DB_MYSQL_COLLATION }}

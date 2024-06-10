@@ -20,6 +20,10 @@ jobs:
     # Self-hosted runner is Windows 11 (Release Preview channel - 24H2)
     runs-on: [ self-hosted, windows ]
 
+    env:
+      TINY_MYSQL_SERVICE: MySQL84
+      TINY_PARALLEL: 10
+
     strategy:
       matrix:
         build-type:
@@ -56,8 +60,6 @@ jobs:
         $mysqlInstallationPath = Split-Path -Parent -Path (Split-Path -Parent -Path $mysqlExePath)
         "TinyMySQLInstallationPath=$mysqlInstallationPath" >> $env:GITHUB_ENV
 
-        "TinyParallel=10" >> $env:GITHUB_ENV
-
         $tinyormPath = Resolve-Path -Path ./main
         "TinyORMPath=$tinyormPath" >> $env:GITHUB_ENV
 
@@ -70,16 +72,14 @@ jobs:
 
     - name: MySQL service check status
       run: |
-        $serviceName = 'MySQL84'
-
         Write-Output '::group::Get-Service'
-        $mysqlService = Get-Service $serviceName
+        $mysqlService = Get-Service $env:TINY_MYSQL_SERVICE
         Write-Output $mysqlService
         Write-Output '::endgroup::'
 
         Write-Output '::group::Service running check'
         $mysqlService.status.ToString() -ceq 'Running' -or `
-        $(throw "$serviceName service is not running") > $null
+        $(throw "$env:TINY_MYSQL_SERVICE service is not running") > $null
         Write-Output '::endgroup::'
 
         # .mylogin.cnf isn't detected because self-hosted runners are running under
@@ -115,7 +115,7 @@ jobs:
       run: |
         "VCPKG_ROOT=$env:VCPKG_INSTALLATION_ROOT" >> $env:GITHUB_ENV
         'VCPKG_DEFAULT_TRIPLET=x64-windows' >> $env:GITHUB_ENV
-        "VCPKG_MAX_CONCURRENCY=$env:TinyParallel" >> $env:GITHUB_ENV
+        "VCPKG_MAX_CONCURRENCY=$env:TINY_PARALLEL" >> $env:GITHUB_ENV
 
         $vcpkgPath = Resolve-Path -Path "$env:TinyORMPath/cmake/vcpkg"
 
@@ -312,7 +312,7 @@ jobs:
       working-directory: >-
         ../HelloWorld-builds-cmake/Drivers-vcpkgmanifest-msvc-${{ matrix.build-type.key }}
       run: |
-        cmake.exe --build . --target all --parallel $env:TinyParallel
+        cmake.exe --build . --target all --parallel $env:TINY_PARALLEL
 
     - name: HelloWorld-TinyDrivers execute (MySQL) 🏁
       working-directory: >-
@@ -387,7 +387,7 @@ jobs:
     - name: TinyORM cmake build ✨ (manual-msvc-${{ matrix.build-type.key }})
       working-directory: ../TinyORM-builds-cmake/Drivers-manual-msvc-${{ matrix.build-type.key }}
       run: |
-        cmake.exe --build . --target all --parallel $env:TinyParallel
+        cmake.exe --build . --target all --parallel $env:TINY_PARALLEL
 
     - name: Ccache print statistics
       run: |
@@ -420,7 +420,7 @@ jobs:
       working-directory: >-
         ../HelloWorld-builds-cmake/Drivers-manual-msvc-${{ matrix.build-type.key }}
       run: |
-        cmake.exe --build . --target all --parallel $env:TinyParallel
+        cmake.exe --build . --target all --parallel $env:TINY_PARALLEL
 
     - name: HelloWorld-TinyDrivers execute (MySQL) 🏁
       working-directory: >-
@@ -499,7 +499,7 @@ jobs:
       working-directory: >-
         ../HelloWorld-builds-cmake/Drivers-fetchcontent-msvc-${{ matrix.build-type.key }}
       run: |
-        cmake.exe --build . --target install --parallel $env:TinyParallel
+        cmake.exe --build . --target install --parallel $env:TINY_PARALLEL
 
     - name: Ccache print statistics
       run: |

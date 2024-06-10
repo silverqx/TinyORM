@@ -18,6 +18,15 @@ jobs:
 
     runs-on: windows-2019
 
+    env:
+      TINY_QT_VERSION: 5.15.2
+      TINY_QT_SPEC: win64_msvc2019_64
+      # First value is a compressed data size
+      # ~ 175 * 3 + 100
+      TINY_CCACHE_MAX_SIZE: 650M
+      TINY_MYSQL_SERVICE: MySQL
+      TINY_POSTGRES_SERVICE: postgresql-x64-14
+
     steps:
     - uses: actions/checkout@v4
 
@@ -35,6 +44,8 @@ jobs:
 
         $mysqlDataPath = Join-Path -Path $runnerWorkPath -ChildPath 'mysql/data'
         "TinyMySQLDataPath=$mysqlDataPath" >> $env:GITHUB_ENV
+
+        "TinyParallel=$env:NUMBER_OF_PROCESSORS" >> $env:GITHUB_ENV
       env:
         DB_SQLITE_DATABASE: ${{ secrets.DB_SQLITE_DATABASE }}
 
@@ -44,21 +55,19 @@ jobs:
 
     - name: PostgreSQL service start
       run: |
-        Set-Service -Name postgresql-x64-14 -StartupType Manual
-        Start-Service postgresql-x64-14
+        Set-Service -Name $env:TINY_POSTGRES_SERVICE -StartupType Manual
+        Start-Service $env:TINY_POSTGRES_SERVICE
 
     - name: PostgreSQL service check status
       run: |
-        $serviceName = 'postgresql-x64-14'
-
         Write-Output '::group::Get-Service'
-        $pgsqlService = Get-Service $serviceName
+        $pgsqlService = Get-Service $env:TINY_POSTGRES_SERVICE
         Write-Output $pgsqlService
         Write-Output '::endgroup::'
 
         Write-Output '::group::Service running check'
         $pgsqlService.status.ToString() -ceq 'Running' -or `
-        $(throw "$serviceName service is not running") > $null
+        $(throw "$env:TINY_POSTGRES_SERVICE service is not running") > $null
         Write-Output '::endgroup::'
 
         Write-Output '::group::pg_isready'
@@ -109,8 +118,8 @@ jobs:
 
     - name: MySQL service install/start
       run: |
-        mysqld.exe --install MySQL
-        Start-Service MySQL
+        mysqld.exe --install $env:TINY_MYSQL_SERVICE
+        Start-Service $env:TINY_MYSQL_SERVICE
 
     # The secured_password is store in the string form so we have to re-create the [SecureString]
     # from this encrypted string and then it can be decrypted as normally would 😬
@@ -178,7 +187,7 @@ jobs:
         "source $filepath" |
         mysql.exe --user=$env:DB_MYSQL_ROOT_USERNAME --password=$env:DB_MYSQL_ROOT_PASSWORD mysql
 
-        Restart-Service MySQL
+        Restart-Service $env:TINY_MYSQL_SERVICE
       env:
         extracted_folder: ${{ steps.downloads-initialize-mysql-timezone-tables.outputs.ExtractedFolder }}
         DB_MYSQL_ROOT_PASSWORD: ${{ secrets.DB_MYSQL_ROOT_PASSWORD }}
@@ -186,16 +195,14 @@ jobs:
 
     - name: MySQL service check status
       run: |
-        $serviceName = 'MySQL'
-
         Write-Output '::group::Get-Service'
-        $mysqlService = Get-Service $serviceName
+        $mysqlService = Get-Service $env:TINY_MYSQL_SERVICE
         Write-Output $mysqlService
         Write-Output '::endgroup::'
 
         Write-Output '::group::Service running check'
         $mysqlService.status.ToString() -ceq 'Running' -or `
-        $(throw "$serviceName service is not running") > $null
+        $(throw "$env:TINY_MYSQL_SERVICE service is not running") > $null
         Write-Output '::endgroup::'
 
         Write-Output '::group::Ping'
@@ -262,18 +269,18 @@ jobs:
         postgres.exe --version
         Write-Output '::endgroup::'
 
-    - name: Qt 5.15.2 install base components
+    - name: Qt ${{ env.TINY_QT_VERSION }} install base components
       uses: jurplel/install-qt-action@v3
       with:
         archives: qtbase
-        version: 5.15.2
-        arch: win64_msvc2019_64
+        version: ${{ env.TINY_QT_VERSION }}
+        arch: ${{ env.TINY_QT_SPEC }}
         cache: true
         setup-python: false
         extra: --external 7z.exe
         dir: ${{ env.TinyRunnerWorkPath }}
 
-    - name: QMYSQL driver dlls initialize download (Qt 5.15.2)
+    - name: QMYSQL driver dlls initialize download (Qt ${{ env.TINY_QT_VERSION }})
       id: downloads-initialize-qmysql-dlls
       run: |
         $filename = (Split-Path -Path $env:URL_QMYSQL_DLLS_MSVC_X64_QT_5 -Leaf)
@@ -299,7 +306,7 @@ jobs:
         cache_hash: ${{ steps.downloads-initialize-qmysql-dlls.outputs.Hash }}
         cache_name: qmysql-dlls-qt5
 
-    - name: QMYSQL driver dlls download (Qt 5.15.2)
+    - name: QMYSQL driver dlls download (Qt ${{ env.TINY_QT_VERSION }})
       if: steps.downloads-cache-qmysql-dlls.outputs.cache-hit != 'true'
       run: >-
         $response = Invoke-WebRequest -Uri $env:URL_QMYSQL_DLLS_MSVC_X64_QT_5
@@ -310,13 +317,13 @@ jobs:
         archive_filepath: ${{ steps.downloads-initialize-qmysql-dlls.outputs.Filepath }}
         URL_QMYSQL_DLLS_MSVC_X64_QT_5: ${{ secrets.URL_QMYSQL_DLLS_MSVC_X64_QT_5 }}
 
-    - name: QMYSQL driver dlls install (Qt 5.15.2)
+    - name: QMYSQL driver dlls install (Qt ${{ env.TINY_QT_VERSION }})
       run: |
         7z.exe x -y -o"$env:QT_PLUGIN_PATH/sqldrivers" $env:archive_filepath
       env:
         archive_filepath: ${{ steps.downloads-initialize-qmysql-dlls.outputs.Filepath }}
 
-    - name: MySQL 8 libmysql.dll initialize download (Qt 5.15.2)
+    - name: MySQL 8 libmysql.dll initialize download (Qt ${{ env.TINY_QT_VERSION }})
       id: downloads-initialize-mysql_8-libmysql-dll
       run: |
         $filename = (Split-Path -Path $env:URL_LIBMYSQL_DLL_MYSQL_8_MSVC_X64_QT_5 -Leaf)
@@ -342,7 +349,7 @@ jobs:
         cache_hash: ${{ steps.downloads-initialize-mysql_8-libmysql-dll.outputs.Hash }}
         cache_name: mysql_8-libmysql-dll
 
-    - name: MySQL 8 libmysql.dll download (Qt 5.15.2)
+    - name: MySQL 8 libmysql.dll download (Qt ${{ env.TINY_QT_VERSION }})
       if: steps.downloads-cache-mysql_8-libmysql-dll.outputs.cache-hit != 'true'
       run: |
         $response = Invoke-WebRequest -Uri $env:URL_LIBMYSQL_DLL_MYSQL_8_MSVC_X64_QT_5
@@ -353,7 +360,7 @@ jobs:
         archive_filepath: ${{ steps.downloads-initialize-mysql_8-libmysql-dll.outputs.Filepath }}
         URL_LIBMYSQL_DLL_MYSQL_8_MSVC_X64_QT_5: ${{ secrets.URL_LIBMYSQL_DLL_MYSQL_8_MSVC_X64_QT_5 }}
 
-    - name: MySQL 8 libmysql.dll install (Qt 5.15.2)
+    - name: MySQL 8 libmysql.dll install (Qt ${{ env.TINY_QT_VERSION }})
       run: |
         7z.exe x -y -o"$env:TinyRunnerWorkPath/TinyORM-bin" $env:archive_filepath
       env:
@@ -391,9 +398,7 @@ jobs:
 
     - name: Ccache prepare configuration 🥳
       run: |
-        # First value is compressed data size
-        # ~ 175 * 3 + 100
-        ccache.exe --set-config max_size=650M
+        ccache.exe --set-config max_size=$env:TINY_CCACHE_MAX_SIZE
         ccache.exe --set-config sloppiness=pch_defines,time_macros
         ccache.exe --set-config depend_mode=true
         ccache.exe --set-config inode_cache=true
@@ -418,7 +423,7 @@ jobs:
       run: |
         "VCPKG_ROOT=$env:VCPKG_INSTALLATION_ROOT" >> $env:GITHUB_ENV
         'VCPKG_DEFAULT_TRIPLET=x64-windows' >> $env:GITHUB_ENV
-        'VCPKG_MAX_CONCURRENCY=2' >> $env:GITHUB_ENV
+        "VCPKG_MAX_CONCURRENCY=$env:TinyParallel" >> $env:GITHUB_ENV
 
     - name: CMake print version
       run: |
@@ -458,8 +463,9 @@ jobs:
         -D BUILD_DRIVERS:BOOL=OFF
 
     - name: TinyORM cmake build ✨ (msvc-cmake-debug)
-      run: |
-        cmake.exe --build ../TinyORM-builds-cmake/build-msvc-cmake-debug --target all --parallel 2
+      run: >-
+        cmake.exe --build ../TinyORM-builds-cmake/build-msvc-cmake-debug --target all
+        --parallel $env:TinyParallel
 
     - name: Ccache print statistics
       run: |
@@ -489,10 +495,12 @@ jobs:
         DB_SQLITE_DATABASE: ${{ env.TinySQLitePath }}
         TOM_TESTDATA_ENV: ${{ vars.TOM_TESTDATA_ENV }}
 
+    # $env:NUMBER_OF_PROCESSORS / 2 : rounds down
     - name: TinyORM execute ctest 🔥
       working-directory: ../TinyORM-builds-cmake/build-msvc-cmake-debug
-      run: |
-        ctest.exe --output-on-failure --parallel 4
+      run: >-
+        ctest.exe --output-on-failure
+        --parallel ([int] $env:TinyParallel + $env:NUMBER_OF_PROCESSORS / 2)
       env:
         DB_MYSQL_CHARSET: ${{ secrets.DB_MYSQL_CHARSET }}
         DB_MYSQL_COLLATION: ${{ secrets.DB_MYSQL_57_COLLATION }}

@@ -24,6 +24,16 @@ jobs:
 
     runs-on: windows-2022
 
+    env:
+      # First value is a compressed data size
+      # gcc: ~ 180 * 3 + 100 ; clang: ~ 140 * 3 + 100
+      TINY_CCACHE_MAX_SIZE_GCC: 640M
+      TINY_CCACHE_MAX_SIZE_CLANG: 520M
+      # Clang and vcpkg uses $env:NUMBER_OF_PROCESSORS
+      TINY_PARALLEL_GCC: 2
+      TINY_MYSQL_SERVICE: MySQL
+      TINY_POSTGRES_SERVICE: postgresql-x64-14
+
     strategy:
       matrix:
         compiler:
@@ -61,13 +71,23 @@ jobs:
 
         $mysqlDataPath = Join-Path -Path $runnerWorkPath -ChildPath 'mysql/data'
         "TinyMySQLDataPath=$mysqlDataPath" >> $env:GITHUB_ENV
+
+        $ccacheMaxSize = '${{ matrix.compiler.key }}' -ceq 'gcc' ? $env:TINY_CCACHE_MAX_SIZE_GCC :
+        $env:TINY_CCACHE_MAX_SIZE_CLANG
+        "TinyCcacheMaxSize=$ccacheMaxSize" >> $env:GITHUB_ENV
+
+        $parallel = '${{ matrix.compiler.key }}' -ceq 'gcc' ? $env:TINY_PARALLEL_GCC :
+        $env:NUMBER_OF_PROCESSORS
+        "TinyParallel=$parallel" >> $env:GITHUB_ENV
+
+        "TinyParallelVcpkg=$env:NUMBER_OF_PROCESSORS" >> $env:GITHUB_ENV
       env:
         DB_SQLITE_DATABASE: ${{ secrets.DB_SQLITE_DATABASE }}
 
     - name: PostgreSQL service start
       run: |
-        Set-Service -Name postgresql-x64-14 -StartupType Manual
-        Start-Service postgresql-x64-14
+        Set-Service -Name $env:TINY_POSTGRES_SERVICE -StartupType Manual
+        Start-Service $env:TINY_POSTGRES_SERVICE
 
     - name: PostgreSQL PGBIN add on the $env:Path
       run: |
@@ -75,11 +95,11 @@ jobs:
 
     - name: PostgreSQL service check status
       run: |
-        $pgsqlService = Get-Service postgresql-x64-14
+        $pgsqlService = Get-Service $env:TINY_POSTGRES_SERVICE
         Write-Output $pgsqlService
 
         $pgsqlService.status.ToString() -ceq 'Running' `
-        -or $(throw 'postgresql-x64-14 service is not running') > $null
+        -or $(throw "$env:TINY_POSTGRES_SERVICE service is not running") > $null
 
         pg_isready.exe
 
@@ -127,8 +147,8 @@ jobs:
 
     - name: MySQL service install/start
       run: |
-        mysqld.exe --install MySQL
-        Start-Service MySQL
+        mysqld.exe --install $env:TINY_MYSQL_SERVICE
+        Start-Service $env:TINY_MYSQL_SERVICE
 
     # The secured_password is store in the string form so we have to re-create the [SecureString]
     # from this encrypted string and then it can be decrypted as normally would 😬
@@ -196,7 +216,7 @@ jobs:
         "source $filepath" |
         mysql.exe --user=$env:DB_MYSQL_ROOT_USERNAME --password=$env:DB_MYSQL_ROOT_PASSWORD mysql
 
-        Restart-Service MySQL
+        Restart-Service $env:TINY_MYSQL_SERVICE
       env:
         extracted_folder: ${{ steps.downloads-initialize-mysql-timezone-tables.outputs.ExtractedFolder }}
         DB_MYSQL_ROOT_PASSWORD: ${{ secrets.DB_MYSQL_ROOT_PASSWORD }}
@@ -204,16 +224,14 @@ jobs:
 
     - name: MySQL service check status
       run: |
-        $serviceName = 'MySQL'
-
         Write-Output '::group::Get-Service'
-        $mysqlService = Get-Service $serviceName
+        $mysqlService = Get-Service $env:TINY_MYSQL_SERVICE
         Write-Output $mysqlService
         Write-Output '::endgroup::'
 
         Write-Output '::group::Service running check'
         $mysqlService.status.ToString() -ceq 'Running' -or `
-        $(throw "$serviceName service is not running") > $null
+        $(throw "$env:TINY_MYSQL_SERVICE service is not running") > $null
         Write-Output '::endgroup::'
 
         Write-Output '::group::Ping'
@@ -311,9 +329,7 @@ jobs:
     - name: Ccache prepare configuration 🥳
       shell: msys2 {0}
       run: |
-        # First value is compressed data size
-        # gcc: ~ 180 * 3 + 100 ; clang: ~ 140 * 3 + 100
-        ccache.exe --set-config max_size=${{ matrix.compiler.key == 'gcc' && '640M' || '520M' }}
+        ccache.exe --set-config max_size=$TinyCcacheMaxSize
         ccache.exe --set-config sloppiness=pch_defines,time_macros
         ccache.exe --set-config depend_mode=true
         ccache.exe --set-config inode_cache=true
@@ -335,7 +351,7 @@ jobs:
         echo "VCPKG_ROOT=$VCPKG_INSTALLATION_ROOT" >> $GITHUB_ENV
         echo 'VCPKG_DEFAULT_TRIPLET=x64-mingw-dynamic' >> $GITHUB_ENV
         echo 'VCPKG_DEFAULT_HOST_TRIPLET=x64-mingw-dynamic' >> $GITHUB_ENV
-        echo 'VCPKG_MAX_CONCURRENCY=2' >> $GITHUB_ENV
+        echo "VCPKG_MAX_CONCURRENCY=$TinyParallelVcpkg" >> $GITHUB_ENV
 
     - name: CMake print version
       shell: msys2 {0}
@@ -389,7 +405,7 @@ jobs:
       run: >-
         cmake.exe
         --build ../TinyORM-builds-cmake/build-${{ matrix.compiler.key }}-${{ matrix.qt.key }}-cmake-debug
-        --target all --parallel ${{ matrix.compiler.key == 'gcc' && 1 || 2 }}
+        --target all --parallel $TinyParallel
 
     - name: Ccache print statistics
       shell: msys2 {0}
@@ -422,12 +438,13 @@ jobs:
         DB_SQLITE_DATABASE: ${{ env.TinySQLitePath }}
         TOM_TESTDATA_ENV: ${{ vars.TOM_TESTDATA_ENV }}
 
+    # $NUMBER_OF_PROCESSORS / 2 : rounds down; also don't use nproc here!
     - name: TinyORM execute ctest 🔥
       shell: msys2 {0}
       working-directory: >-
         ../TinyORM-builds-cmake/build-${{ matrix.compiler.key }}-${{ matrix.qt.key }}-cmake-debug
       run: |
-        ctest.exe --output-on-failure --parallel 4
+        ctest.exe --output-on-failure --parallel $(($TinyParallel + $NUMBER_OF_PROCESSORS / 2))
       env:
         DB_MYSQL_CHARSET: ${{ secrets.DB_MYSQL_CHARSET }}
         DB_MYSQL_COLLATION: ${{ secrets.DB_MYSQL_COLLATION }}

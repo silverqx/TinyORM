@@ -24,6 +24,13 @@ jobs:
     # Self-hosted runner is Windows 11 (Release Preview channel - 24H2)
     runs-on: [ self-hosted, windows ]
 
+    env:
+      TINY_QT_SPEC: win64_msvc2019_64
+      # First value is a compressed data size
+      # ~ 70 * 3 + 100
+      TINY_CCACHE_MAX_SIZE: 500M
+      TINY_PARALLEL: 10
+
     strategy:
       matrix:
         build-type:
@@ -69,7 +76,7 @@ jobs:
         $isSelfHostedRunner = $env:RUNNER_NAME.StartsWith('merydeye-', $true, $null)
         "TinyIsSelfHostedRunner=$isSelfHostedRunner" >> $env:GITHUB_ENV
 
-        $parallel = $isSelfHostedRunner ? 10 : 2
+        $parallel = $isSelfHostedRunner ? $env:TINY_PARALLEL : $env:NUMBER_OF_PROCESSORS
         "TinyParallel=$parallel" >> $env:GITHUB_ENV
 
         $tinyormPath = Resolve-Path -Path ./main
@@ -320,7 +327,7 @@ jobs:
       with:
         archives: qtbase
         version: ${{ matrix.qt.version }}
-        arch: win64_msvc2019_64
+        arch: ${{ env.TINY_QT_SPEC }}
         cache: true
         setup-python: false
         extra: --external 7z.exe
@@ -377,9 +384,7 @@ jobs:
     - name: Ccache prepare configuration 🥳
       if: env.TinyIsSelfHostedRunner == 'false'
       run: |
-        # First value is compressed data size
-        # ~ 70 * 3 + 100
-        ccache.exe --set-config max_size=500M
+        ccache.exe --set-config max_size=$env:TINY_CCACHE_MAX_SIZE
         ccache.exe --set-config sloppiness=pch_defines,time_macros
         ccache.exe --set-config depend_mode=true
         ccache.exe --set-config inode_cache=true

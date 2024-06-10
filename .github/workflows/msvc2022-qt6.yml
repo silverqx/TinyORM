@@ -29,7 +29,12 @@ jobs:
 
     env:
       TINY_QT_VERSION: 6.7.1
-      TINY_QT_SPEC: msvc2019_64
+      TINY_QT_SPEC: win64_msvc2019_64
+      # First value is a compressed data size
+      # ~ 190 * 3 + 100
+      TINY_CCACHE_MAX_SIZE: 700M
+      TINY_MYSQL_SERVICE: MySQL
+      TINY_POSTGRES_SERVICE: postgresql-x64-14
 
     strategy:
       matrix:
@@ -57,6 +62,11 @@ jobs:
 
         $mysqlDataPath = Join-Path -Path $runnerWorkPath -ChildPath 'mysql/data'
         "TinyMySQLDataPath=$mysqlDataPath" >> $env:GITHUB_ENV
+
+        $qtSpecPlain = $env:TINY_QT_SPEC.Split('_')[1..$env:TINY_QT_SPEC.Count] -join '_'
+        "TinyQtSpecPlain=$qtSpecPlain" >> $env:GITHUB_ENV
+
+        "TinyParallel=$env:NUMBER_OF_PROCESSORS" >> $env:GITHUB_ENV
       env:
         DB_SQLITE_DATABASE: ${{ secrets.DB_SQLITE_DATABASE }}
 
@@ -183,8 +193,8 @@ jobs:
 
     - name: PostgreSQL service start
       run: |
-        Set-Service -Name postgresql-x64-14 -StartupType Manual
-        Start-Service postgresql-x64-14
+        Set-Service -Name $env:TINY_POSTGRES_SERVICE -StartupType Manual
+        Start-Service $env:TINY_POSTGRES_SERVICE
 
     - name: PostgreSQL change ${{ secrets.DB_PGSQL_ROOT_USERNAME }} password
       run: >-
@@ -240,20 +250,18 @@ jobs:
 
     - name: PostgreSQL service restart
       run: |
-        Restart-Service postgresql-x64-14
+        Restart-Service $env:TINY_POSTGRES_SERVICE
 
     - name: PostgreSQL service check status
       run: |
-        $serviceName = 'postgresql-x64-14'
-
         Write-Output '::group::Get-Service'
-        $pgsqlService = Get-Service $serviceName
+        $pgsqlService = Get-Service $env:TINY_POSTGRES_SERVICE
         Write-Output $pgsqlService
         Write-Output '::endgroup::'
 
         Write-Output '::group::Service running check'
         $pgsqlService.status.ToString() -ceq 'Running' -or `
-        $(throw "$serviceName service is not running") > $null
+        $(throw "$env:TINY_POSTGRES_SERVICE service is not running") > $null
         Write-Output '::endgroup::'
 
         Write-Output '::group::pg_isready'
@@ -407,8 +415,8 @@ jobs:
 
     - name: MySQL service install/start
       run: |
-        mysqld.exe --install MySQL
-        Start-Service MySQL
+        mysqld.exe --install $env:TINY_MYSQL_SERVICE
+        Start-Service $env:TINY_MYSQL_SERVICE
 
     # Securing the root account even on localhost is for testing to make sure that everything
     # works as expected
@@ -490,16 +498,14 @@ jobs:
 
     - name: MySQL service check status
       run: |
-        $serviceName = 'MySQL'
-
         Write-Output '::group::Get-Service'
-        $mysqlService = Get-Service $serviceName
+        $mysqlService = Get-Service $env:TINY_MYSQL_SERVICE
         Write-Output $mysqlService
         Write-Output '::endgroup::'
 
         Write-Output '::group::Service running check'
         $mysqlService.status.ToString() -ceq 'Running' -or `
-        $(throw "$serviceName service is not running") > $null
+        $(throw "$env:TINY_MYSQL_SERVICE service is not running") > $null
         Write-Output '::endgroup::'
 
         Write-Output '::group::Ping'
@@ -575,7 +581,7 @@ jobs:
       with:
         archives: qtbase
         version: ${{ env.TINY_QT_VERSION }}
-        arch: win64_${{ env.TINY_QT_SPEC }}
+        arch: ${{ env.TINY_QT_SPEC }}
         source: true
         src-archives: qtbase
         cache: true
@@ -615,7 +621,7 @@ jobs:
       run: >-
         ./tools/qtbuild-qmysql-driver.ps1 -SkipInitializeBuildEnvironment
         -QtRootPath (Get-Item -Path $env:QT_PLUGIN_PATH).Parent.Parent.Parent
-        -QtVersion $env:TINY_QT_VERSION -QtSpec $env:TINY_QT_SPEC
+        -QtVersion $env:TINY_QT_VERSION -QtSpec $env:TinyQtSpecPlain
         -MySQLServerPath $env:TinyMySQLInstallationPath
         -BuildPath $env:RUNNER_WORKSPACE
 
@@ -647,9 +653,7 @@ jobs:
 
     - name: Ccache prepare configuration 🥳
       run: |
-        # First value is compressed data size
-        # ~ 190 * 3 + 100
-        ccache.exe --set-config max_size=700M
+        ccache.exe --set-config max_size=$env:TINY_CCACHE_MAX_SIZE
         ccache.exe --set-config sloppiness=pch_defines,time_macros
         ccache.exe --set-config depend_mode=true
         ccache.exe --set-config inode_cache=true
@@ -669,7 +673,7 @@ jobs:
       run: |
         "VCPKG_ROOT=$env:VCPKG_INSTALLATION_ROOT" >> $env:GITHUB_ENV
         'VCPKG_DEFAULT_TRIPLET=x64-windows' >> $env:GITHUB_ENV
-        'VCPKG_MAX_CONCURRENCY=2' >> $env:GITHUB_ENV
+        "VCPKG_MAX_CONCURRENCY=$env:TinyParallel" >> $env:GITHUB_ENV
 
     - name: CMake print version
       run: |
@@ -712,7 +716,7 @@ jobs:
     - name: TinyORM cmake build ✨ (msvc-cmake-${{ matrix.build-type.key }})
       run: >-
         cmake.exe --build ../TinyORM-builds-cmake/build-msvc-cmake-${{ matrix.build-type.key }}
-        --target all --parallel 2
+        --target all --parallel $env:TinyParallel
 
     - name: Ccache print statistics
       run: |
@@ -747,10 +751,12 @@ jobs:
         DB_SQLITE_DATABASE: ${{ env.TinySQLitePath }}
         TOM_TESTDATA_ENV: ${{ vars.TOM_TESTDATA_ENV }}
 
+    # $env:NUMBER_OF_PROCESSORS / 2 : rounds down
     - name: TinyORM execute ctest 🔥
       working-directory: ../TinyORM-builds-cmake/build-msvc-cmake-${{ matrix.build-type.key }}
-      run: |
-        ctest.exe --output-on-failure --parallel 4
+      run: >-
+        ctest.exe --output-on-failure
+        --parallel ([int] $env:TinyParallel + $env:NUMBER_OF_PROCESSORS / 2)
       env:
         DB_MYSQL_CHARSET: ${{ secrets.DB_MYSQL_CHARSET }}
         DB_MYSQL_COLLATION: ${{ secrets.DB_MYSQL_COLLATION }}

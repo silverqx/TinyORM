@@ -31,6 +31,14 @@ jobs:
     # Self-hosted runner is Windows 11 (Release Preview channel - 24H2)
     runs-on: [ self-hosted, windows ]
 
+    env:
+      # Don't user more than 3 for GCC, it would need 64GB RAM (no money 💵)
+      TINY_PARALLEL_GCC: 3
+      TINY_PARALLEL_CLANG_OR_VCPKG: 9
+      TINY_MYSQL_SERVICE: MySQL84
+      # Used by the msys2.cmd script
+      MSYS2_ROOT: C:\msys64
+
     strategy:
       matrix:
         drivers-type: [ Shared, Loadable, Static ]
@@ -49,10 +57,6 @@ jobs:
           - key: gcc
             command: g++.exe
 
-    # Used by the msys2.cmd script
-    env:
-      MSYS2_ROOT: C:\msys64
-
     steps:
     - uses: actions/checkout@v4
       with:
@@ -62,10 +66,6 @@ jobs:
       run: |
         $runnerWorkPath = Resolve-Path -Path "$env:RUNNER_WORKSPACE/.."
         "TinyRunnerWorkPath=$runnerWorkPath" >> $env:GITHUB_ENV
-
-        # Don't user more than 3 for GCC, it would need 64GB RAM (no money 💵)
-        $parallel = ${{ matrix.compiler.key == 'gcc' && 3 || 9 }}
-        "TinyParallel=$parallel" >> $env:GITHUB_ENV
 
         $tinyormPath = Resolve-Path -Path ./main
         "TinyORMPath=$tinyormPath" >> $env:GITHUB_ENV
@@ -80,18 +80,22 @@ jobs:
         $tinyormBuildFolder
         "TinyORMBuildTree=$tinyormBuildTree" >> $env:GITHUB_ENV
 
+        $parallel = '${{ matrix.compiler.key }}' -ceq 'gcc' ? $env:TINY_PARALLEL_GCC :
+        $env:TINY_PARALLEL_CLANG_OR_VCPKG
+        "TinyParallel=$parallel" >> $env:GITHUB_ENV
+
+        "TinyParallelVcpkg=$env:TINY_PARALLEL_CLANG_OR_VCPKG" >> $env:GITHUB_ENV
+
     - name: MySQL service check status
       run: |
-        $serviceName = 'MySQL84'
-
         Write-Output '::group::Get-Service'
-        $mysqlService = Get-Service $serviceName
+        $mysqlService = Get-Service $env:TINY_MYSQL_SERVICE
         Write-Output $mysqlService
         Write-Output '::endgroup::'
 
         Write-Output '::group::Service running check'
         $mysqlService.status.ToString() -ceq 'Running' -or `
-        $(throw "$serviceName service is not running") > $null
+        $(throw "$env:TINY_MYSQL_SERVICE service is not running") > $null
         Write-Output '::endgroup::'
 
         # .mylogin.cnf isn't detected because self-hosted runners are running under
@@ -147,7 +151,7 @@ jobs:
         echo "VCPKG_ROOT=$VCPKG_INSTALLATION_ROOT" >> $GITHUB_ENV
         echo 'VCPKG_DEFAULT_TRIPLET=x64-mingw-dynamic' >> $GITHUB_ENV
         echo 'VCPKG_DEFAULT_HOST_TRIPLET=x64-mingw-dynamic' >> $GITHUB_ENV
-        echo "VCPKG_MAX_CONCURRENCY=$env:TinyParallel" >> $GITHUB_ENV
+        echo "VCPKG_MAX_CONCURRENCY=$TinyParallelVcpkg" >> $GITHUB_ENV
 
     - name: vcpkg needs upgrade? (once per day)
       run: |
@@ -220,7 +224,7 @@ jobs:
         cmake.exe
         --log-level=DEBUG --log-context
         -S .
-        -B $env:TinyORMBuildTree
+        -B $TinyORMBuildTree
         -G Ninja
         -D CMAKE_CXX_COMPILER_LAUNCHER:FILEPATH='/ucrt64/bin/ccache.exe'
         -D CMAKE_CXX_COMPILER:FILEPATH="/ucrt64/bin/${{ matrix.compiler.command }}"
@@ -246,7 +250,7 @@ jobs:
       shell: msys2 {0}
       working-directory: ${{ env.TinyORMBuildTree }}
       run: |
-        cmake.exe --build . --target all --parallel $env:TinyParallel
+        cmake.exe --build . --target all --parallel $TinyParallel
 
     - name: Ccache print statistics
       shell: msys2 {0}
@@ -270,11 +274,12 @@ jobs:
         DB_MYSQL_USERNAME: ${{ secrets.DB_MYSQL_USERNAME_SELF_MSYS2 }}
         TOM_TESTDATA_ENV: ${{ vars.TOM_TESTDATA_ENV }}
 
+    # $NUMBER_OF_PROCESSORS / 2 : rounds down; also don't use nproc here!
     - name: TinyORM execute ctest 🔥
       shell: msys2 {0}
       working-directory: ${{ env.TinyORMBuildTree }}
       run: |
-        ctest.exe --output-on-failure --parallel 16
+        ctest.exe --output-on-failure --parallel $(($TinyParallel + $NUMBER_OF_PROCESSORS / 2))
       env:
         DB_MYSQL_CHARSET: ${{ secrets.DB_MYSQL_CHARSET }}
         DB_MYSQL_COLLATION: ${{ secrets.DB_MYSQL_COLLATION }}
