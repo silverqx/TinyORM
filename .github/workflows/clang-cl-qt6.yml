@@ -563,6 +563,14 @@ jobs:
         $qtVersion = $env:TINY_QT_VERSION.Replace('.', '')
         "QtVersion=$qtVersion" >> $env:GITHUB_OUTPUT
 
+        [System.Version] $mysqlVersionRaw = ('select version();' |
+        mysql --user=$env:DB_MYSQL_USERNAME --password=$env:DB_MYSQL_PASSWORD)[1]
+        $mysqlVersion = '{0}{1}' -f $mysqlVersionRaw.Major, $mysqlVersionRaw.Minor
+        "MySQLVersion=$mysqlVersion" >> $env:GITHUB_OUTPUT
+      env:
+        DB_MYSQL_PASSWORD: ${{ secrets.DB_MYSQL_PASSWORD }}
+        DB_MYSQL_USERNAME: ${{ secrets.DB_MYSQL_USERNAME }}
+
     - name: QMYSQL driver DLLs restore cache
       uses: actions/cache@v3
       id: compiles-cache-qmysql-dlls
@@ -570,10 +578,11 @@ jobs:
         path: |
           ${{ env.QT_PLUGIN_PATH }}/sqldrivers/qsqlmysql*.dll
           ${{ env.QT_PLUGIN_PATH }}/sqldrivers/qsqlmysql*.pdb
-        key: ${{ runner.os }}-drivers-${{ env.cache_name }}-${{ env.qt_version }}
+        key: ${{ runner.os }}-drivers-${{ env.cache_name }}-${{ env.qt_version }}-${{ env.mysql_version }}
       env:
         cache_name: qmysql-dlls-qt
         qt_version: ${{ steps.compiles-initialize-qmysql-dlls.outputs.QtVersion }}
+        mysql_version: ${{ steps.compiles-initialize-qmysql-dlls.outputs.MySQLVersion }}
 
     - name: QMYSQL driver DLLs build and install 🚀 (Qt ${{ env.TINY_QT_VERSION }})
       if: steps.compiles-cache-qmysql-dlls.outputs.cache-hit != 'true'
