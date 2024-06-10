@@ -693,7 +693,7 @@ jobs:
         -S .
         -B ../TinyORM-builds-cmake/build-clang-cl-cmake-debug
         -G Ninja
-        -D CMAKE_CXX_COMPILER_LAUNCHER:FILEPATH='C:/ProgramData/chocolatey/bin/ccache.exe'
+        -D CMAKE_CXX_COMPILER_LAUNCHER:FILEPATH=ccache.exe
         -D CMAKE_TOOLCHAIN_FILE:FILEPATH="$env:VCPKG_INSTALLATION_ROOT/scripts/buildsystems/vcpkg.cmake"
         -D CMAKE_C_COMPILER:FILEPATH="$env:LLVM_PATH/bin/clang-cl.exe"
         -D CMAKE_CXX_COMPILER:FILEPATH="$env:LLVM_PATH/bin/clang-cl.exe"
