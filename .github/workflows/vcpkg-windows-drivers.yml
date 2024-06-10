@@ -49,7 +49,7 @@ jobs:
     # this way because I tried to refactor it to the env.TinyRunnerWorkPath and it looks terrible
     - name: TinyORM prepare environment
       run: |
-        $runnerWorkPath = Resolve-Path -Path '${{ runner.workspace }}/..'
+        $runnerWorkPath = Resolve-Path -Path "$env:RUNNER_WORKSPACE/.."
         "TinyRunnerWorkPath=$runnerWorkPath" >> $env:GITHUB_ENV
 
         $mysqlExePath = (Get-Command -Name mysql.exe).Source
@@ -69,10 +69,10 @@ jobs:
 
     - name: MySQL add libmysql.dll on the $env:Path, INCLUDE, and LIB
       run: |
-        '${{ env.TinyMySQLInstallationPath }}\lib' >> $env:GITHUB_PATH
+        "$env:TinyMySQLInstallationPath\lib" >> $env:GITHUB_PATH
         # Needed by the lastest FindMySQL.cmake module, it stopped working without this
-        'INCLUDE=${{ env.TinyMySQLInstallationPath }}\include' >> $env:GITHUB_ENV
-        'LIB=${{ env.TinyMySQLInstallationPath }}\lib' >> $env:GITHUB_ENV
+        "INCLUDE=$env:TinyMySQLInstallationPath\include" >> $env:GITHUB_ENV
+        "LIB=$env:TinyMySQLInstallationPath\lib" >> $env:GITHUB_ENV
 
     - name: MySQL service check status
       run: |
@@ -121,9 +121,9 @@ jobs:
       run: |
         "VCPKG_ROOT=$env:VCPKG_INSTALLATION_ROOT" >> $env:GITHUB_ENV
         'VCPKG_DEFAULT_TRIPLET=x64-windows' >> $env:GITHUB_ENV
-        'VCPKG_MAX_CONCURRENCY=${{ env.TinyParallel }}' >> $env:GITHUB_ENV
+        "VCPKG_MAX_CONCURRENCY=$env:TinyParallel" >> $env:GITHUB_ENV
 
-        $vcpkgPath = Resolve-Path -Path '${{ env.TinyORMPath }}/cmake/vcpkg'
+        $vcpkgPath = Resolve-Path -Path "$env:TinyORMPath/cmake/vcpkg"
 
         $portsPath = Join-Path -Path $vcpkgPath -ChildPath 'ports'
         "VCPKG_OVERLAY_PORTS=$portsPath" >> $env:GITHUB_ENV
@@ -148,7 +148,7 @@ jobs:
 
     - name: vcpkg needs upgrade? (once per day)
       run: |
-        $vcpkgUpgradedAtFilepath = '${{ runner.workspace }}/.vcpkg_upgraded_at'
+        $vcpkgUpgradedAtFilepath = "$env:RUNNER_WORKSPACE/.vcpkg_upgraded_at"
 
         if (-not (Test-Path -Path $vcpkgUpgradedAtFilepath)) {
           'TINY_VCPKG_NEEDS_UPGRADE=true' >> $env:GITHUB_ENV
@@ -158,7 +158,7 @@ jobs:
         $datePreviousUpgrade = New-Object System.DateTime
 
         $result = [System.DateTime]::TryParseExact( `
-          (Get-Content '${{ runner.workspace }}/.vcpkg_upgraded_at'), 'yyyyMMdd', `
+          (Get-Content "$env:RUNNER_WORKSPACE/.vcpkg_upgraded_at"), 'yyyyMMdd', `
           [cultureinfo]::InvariantCulture, `
           [System.Globalization.DateTimeStyles]::None -bor `
           [System.Globalization.DateTimeStyles]::AssumeLocal, [ref]$datePreviousUpgrade)
@@ -184,7 +184,7 @@ jobs:
 
         .\bootstrap-vcpkg.bat
 
-        Get-Date -Format 'yyyyMMdd' > '${{ runner.workspace }}/.vcpkg_upgraded_at'
+        Get-Date -Format 'yyyyMMdd' > "$env:RUNNER_WORKSPACE/.vcpkg_upgraded_at"
 
     - name: CMake print version
       run: |
@@ -201,9 +201,9 @@ jobs:
         . ./tools/private/Common-Deploy.ps1
 
         $portfileQt6Path = Resolve-Path -Path './cmake/vcpkg/ports/tinyorm/portfile.cmake'
-        $vcpkgRef = '${{ github.sha }}'
+        $vcpkgRef = $env:GITHUB_SHA
 
-        Edit-VcpkgRefAndHash -Project '${{ github.repository }}' -Ref $vcpkgRef `
+        Edit-VcpkgRefAndHash -Project $env:GITHUB_REPOSITORY -Ref $vcpkgRef `
         -PortFile $portfileQt6Path -EnableRetries
 
     # The following two steps (vcpkg install) are not needed below they only test if the vcpkg
@@ -306,7 +306,7 @@ jobs:
         cmake.exe
         --log-level=DEBUG --log-context
         -S .
-        -B '${{ runner.workspace }}/HelloWorld-builds-cmake/Drivers-vcpkgmanifest-msvc-${{ matrix.build-type.key }}'
+        -B "$env:RUNNER_WORKSPACE/HelloWorld-builds-cmake/Drivers-vcpkgmanifest-msvc-${{ matrix.build-type.key }}"
         -G Ninja
         -D CMAKE_TOOLCHAIN_FILE:FILEPATH="$env:VCPKG_INSTALLATION_ROOT/scripts/buildsystems/vcpkg.cmake"
         -D CMAKE_DISABLE_PRECOMPILE_HEADERS:BOOL=ON
@@ -318,7 +318,7 @@ jobs:
       working-directory: >-
         ../HelloWorld-builds-cmake/Drivers-vcpkgmanifest-msvc-${{ matrix.build-type.key }}
       run: |
-        cmake.exe --build . --target all --parallel ${{ env.TinyParallel }}
+        cmake.exe --build . --target all --parallel $env:TinyParallel
 
     - name: HelloWorld-TinyDrivers execute (MySQL) 🏁
       working-directory: >-
@@ -347,7 +347,7 @@ jobs:
     # for TinyDrivers).
     - name: Ccache prepare environment
       run: |
-        $ccacheDirPath = Join-Path -Path '${{ runner.workspace }}' -ChildPath ccache_drivers
+        $ccacheDirPath = Join-Path -Path $env:RUNNER_WORKSPACE -ChildPath ccache_drivers
         "CCACHE_DIR=$ccacheDirPath" >> $env:GITHUB_ENV
 
     # Manual method linking against the TinyORM build tree (no install or deployment)
@@ -369,7 +369,7 @@ jobs:
         cmake.exe
         --log-level=DEBUG --log-context
         -S .
-        -B '${{ runner.workspace }}/TinyORM-builds-cmake/Drivers-manual-msvc-${{ matrix.build-type.key }}'
+        -B "$env:RUNNER_WORKSPACE/TinyORM-builds-cmake/Drivers-manual-msvc-${{ matrix.build-type.key }}"
         -G Ninja
         -D CMAKE_CXX_COMPILER_LAUNCHER:FILEPATH='ccache.exe'
         -D CMAKE_TOOLCHAIN_FILE:FILEPATH="$env:VCPKG_INSTALLATION_ROOT/scripts/buildsystems/vcpkg.cmake"
@@ -393,7 +393,7 @@ jobs:
     - name: TinyORM cmake build ✨ (manual-msvc-${{ matrix.build-type.key }})
       working-directory: ../TinyORM-builds-cmake/Drivers-manual-msvc-${{ matrix.build-type.key }}
       run: |
-        cmake.exe --build . --target all --parallel ${{ env.TinyParallel }}
+        cmake.exe --build . --target all --parallel $env:TinyParallel
 
     - name: Ccache print statistics
       run: |
@@ -413,9 +413,9 @@ jobs:
         cmake.exe
         --log-level=DEBUG --log-context
         -S .
-        -B '${{ runner.workspace }}/HelloWorld-builds-cmake/Drivers-manual-msvc-${{ matrix.build-type.key }}'
+        -B "$env:RUNNER_WORKSPACE/HelloWorld-builds-cmake/Drivers-manual-msvc-${{ matrix.build-type.key }}"
         -G Ninja
-        -D CMAKE_PREFIX_PATH:PATH='${{ runner.workspace }}/TinyORM-builds-cmake/Drivers-manual-msvc-${{ matrix.build-type.key }}'
+        -D CMAKE_PREFIX_PATH:PATH="$env:RUNNER_WORKSPACE/TinyORM-builds-cmake/Drivers-manual-msvc-${{ matrix.build-type.key }}"
         -D CMAKE_TOOLCHAIN_FILE:FILEPATH="$env:VCPKG_INSTALLATION_ROOT/scripts/buildsystems/vcpkg.cmake"
         -D CMAKE_DISABLE_PRECOMPILE_HEADERS:BOOL=ON
         -D CMAKE_BUILD_TYPE:STRING=${{ matrix.build-type.name }}
@@ -426,7 +426,7 @@ jobs:
       working-directory: >-
         ../HelloWorld-builds-cmake/Drivers-manual-msvc-${{ matrix.build-type.key }}
       run: |
-        cmake.exe --build . --target all --parallel ${{ env.TinyParallel }}
+        cmake.exe --build . --target all --parallel $env:TinyParallel
 
     - name: HelloWorld-TinyDrivers execute (MySQL) 🏁
       working-directory: >-
@@ -462,8 +462,8 @@ jobs:
     - name: HelloWorld-TinyDrivers prepare FetchContent method (update GIT_TAG)
       working-directory: HelloWorld-TinyDrivers
       run: |
-        $toolsPath = Resolve-Path -Path '${{ env.TinyORMPath }}/tools/private'
-        $gitTag = '${{ github.sha }}'
+        $toolsPath = Resolve-Path -Path "$env:TinyORMPath/tools/private"
+        $gitTag = $env:GITHUB_SHA
 
         & "$toolsPath/Edit-FetchContentGitTag.ps1" -CMakeLists ./CMakeLists.txt -GitTag $gitTag
 
@@ -478,13 +478,13 @@ jobs:
         cmake.exe
         --log-level=DEBUG --log-context
         -S .
-        -B '${{ runner.workspace }}/HelloWorld-builds-cmake/Drivers-fetchcontent-msvc-${{ matrix.build-type.key }}'
+        -B "$env:RUNNER_WORKSPACE/HelloWorld-builds-cmake/Drivers-fetchcontent-msvc-${{ matrix.build-type.key }}"
         -G Ninja
         -D CMAKE_CXX_COMPILER_LAUNCHER:FILEPATH='ccache.exe'
         -D CMAKE_TOOLCHAIN_FILE:FILEPATH="$env:VCPKG_INSTALLATION_ROOT/scripts/buildsystems/vcpkg.cmake"
         -D CMAKE_DISABLE_PRECOMPILE_HEADERS:BOOL=ON
         -D CMAKE_BUILD_TYPE:STRING=${{ matrix.build-type.name }}
-        -D CMAKE_INSTALL_PREFIX:PATH='${{ runner.workspace }}/HelloWorld-TinyDrivers-FetchContent-Install/${{ matrix.build-type.name }}'
+        -D CMAKE_INSTALL_PREFIX:PATH="$env:RUNNER_WORKSPACE/HelloWorld-TinyDrivers-FetchContent-Install/${{ matrix.build-type.name }}"
         -D CMAKE_EXPORT_PACKAGE_REGISTRY:BOOL=OFF
         -D VCPKG_APPLOCAL_DEPS:BOOL=OFF
         -D VERBOSE_CONFIGURE:BOOL=ON
@@ -505,7 +505,7 @@ jobs:
       working-directory: >-
         ../HelloWorld-builds-cmake/Drivers-fetchcontent-msvc-${{ matrix.build-type.key }}
       run: |
-        cmake.exe --build . --target install --parallel ${{ env.TinyParallel }}
+        cmake.exe --build . --target install --parallel $env:TinyParallel
 
     - name: Ccache print statistics
       run: |
@@ -543,7 +543,7 @@ jobs:
         --jq '.[] | select (.path | endswith("/msys2-ucrt64-drivers.yml")) | .state'
 
         if ($? -and $workflowState -ceq 'active') {
-          gh workflow run msys2-ucrt64-drivers.yml --ref ${{ github.ref_name }}
+          gh workflow run msys2-ucrt64-drivers.yml --ref $env:GITHUB_REF_NAME
         }
       env:
         GH_TOKEN: ${{ github.token }}

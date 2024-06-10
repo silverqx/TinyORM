@@ -44,11 +44,11 @@ jobs:
 
     - name: TinyORM prepare environment
       run: |
-        runnerWorkPath=$(realpath '${{ runner.workspace }}/..')
+        runnerWorkPath=$(realpath "$RUNNER_WORKSPACE/..")
         echo "TinyRunnerWorkPath=$runnerWorkPath" >> $GITHUB_ENV
 
         # Starts with the merydeye-
-        [[ "${{ runner.name }}" == 'merydeye-'* ]] && isSelfHostedRunner='true' || isSelfHostedRunner='false'
+        [[ "$RUNNER_NAME" == 'merydeye-'* ]] && isSelfHostedRunner='true' || isSelfHostedRunner='false'
         echo "TinyIsSelfHostedRunner=$isSelfHostedRunner" >> $GITHUB_ENV
 
         # Parallel 4 ISN't maximum but because this workflow runs hours I will use parallel 4 to be
@@ -68,7 +68,7 @@ jobs:
         tinyormBuildFolder="build-$tinyormBuildName"
         echo "TinyORMBuildFolder=$tinyormBuildFolder" >> $GITHUB_ENV
 
-        tinyormBuildTree="${{ runner.workspace }}/TinyORM-builds-cmake/$tinyormBuildFolder"
+        tinyormBuildTree="$RUNNER_WORKSPACE/TinyORM-builds-cmake/$tinyormBuildFolder"
         echo "TinyORMBuildTree=$tinyormBuildTree" >> $GITHUB_ENV
 
     - name: Test self-hosted runner
@@ -86,7 +86,7 @@ jobs:
     # Don't use the default CCACHE_DIR path on self-hosted runners
     - name: Ccache prepare environment
       run: |
-        ccacheDirPath=$(realpath '${{ runner.workspace }}/ccache')
+        ccacheDirPath=$(realpath "$RUNNER_WORKSPACE/ccache")
         echo "CCACHE_DIR=$ccacheDirPath" >> $GITHUB_ENV
 
     - name: Ccache prepare configuration 🥳
@@ -111,11 +111,11 @@ jobs:
       run: |
         echo "VCPKG_ROOT=$VCPKG_INSTALLATION_ROOT" >> $GITHUB_ENV
         echo 'VCPKG_DEFAULT_TRIPLET=x64-linux-dynamic' >> $GITHUB_ENV
-        echo 'VCPKG_MAX_CONCURRENCY=${{ env.TinyParallel }}' >> $GITHUB_ENV
+        echo "VCPKG_MAX_CONCURRENCY=$TinyParallel" >> $GITHUB_ENV
 
     - name: vcpkg needs upgrade? (once per day)
       run: |
-        vcpkgUpgradedAtFilepath='${{ runner.workspace }}/.vcpkg_upgraded_at'
+        vcpkgUpgradedAtFilepath="$RUNNER_WORKSPACE/.vcpkg_upgraded_at"
 
         if [ ! -f "$vcpkgUpgradedAtFilepath" ] || [ ! -r "$vcpkgUpgradedAtFilepath" ] || \
           ! read datePreviousUpgradeRaw < "$vcpkgUpgradedAtFilepath"
@@ -148,7 +148,7 @@ jobs:
 
         ./bootstrap-vcpkg.sh
 
-        date +%Y-%m-%d > '${{ runner.workspace }}/.vcpkg_upgraded_at'
+        date +%Y-%m-%d > "$RUNNER_WORKSPACE/.vcpkg_upgraded_at"
 
     - name: ${{ matrix.qt.name }} prepare environment
       run: |
@@ -193,7 +193,7 @@ jobs:
         cmake
         --log-level=DEBUG --log-context
         -S .
-        -B '${{ env.TinyORMBuildTree }}'
+        -B "$TinyORMBuildTree"
         -G Ninja
         -D CMAKE_CXX_COMPILER_LAUNCHER:FILEPATH=ccache
         -D CMAKE_CXX_COMPILER:FILEPATH=clang++-18
@@ -219,7 +219,7 @@ jobs:
     - name: TinyORM cmake build ✨ (${{ env.TinyORMBuildName }})
       working-directory: ${{ env.TinyORMBuildTree }}
       run: >-
-        cmake --build . --target all --parallel ${{ env.TinyParallel }}
+        cmake --build . --target all --parallel $TinyParallel
 
     - name: Ccache print statistics
       run: |
@@ -232,8 +232,8 @@ jobs:
 
         run-clang-tidy
         -extra-arg-before='-Qunused-arguments'
-        -p='${{ env.TinyORMBuildTree }}'
-        -j ${{ env.TinyParallel }}
+        -p="$TinyORMBuildTree"
+        -j $TinyParallel
         '[\\\/]+(?:drivers|examples|orm|src|tests|tom)[\\\/]+.+?[\\\/]+(?!mocs_)[\w\d_\-\+]+\.cpp$'
 
     # Disabled checks
@@ -265,6 +265,6 @@ jobs:
         -checks="$checks" \
         -extra-arg-before='-Qunused-arguments' \
         -header-filter='[\\\/]+(drivers|examples|orm|tests|tom)[\\\/]+.+\.(h|hpp)$' \
-        -j ${{ env.TinyParallel }} \
-        -p='${{ env.TinyORMBuildTree }}' \
+        -j $TinyParallel \
+        -p="$TinyORMBuildTree" \
         '[\\\/]+(?:drivers|examples|orm|src|tests|tom)[\\\/]+.+?[\\\/]+(?!mocs_)[\w\d_\-\+]+\.cpp$'

@@ -49,7 +49,7 @@ jobs:
 
     - name: TinyORM prepare environment
       run: |
-        $runnerWorkPath = Resolve-Path -Path '${{ runner.workspace }}/..'
+        $runnerWorkPath = Resolve-Path -Path "$env:RUNNER_WORKSPACE/.."
         "TinyRunnerWorkPath=$runnerWorkPath" >> $env:GITHUB_ENV
 
         $sqlitePath = Join-Path -Path $runnerWorkPath -ChildPath "SQLite/$env:DB_SQLITE_DATABASE"
@@ -100,15 +100,15 @@ jobs:
 
     - name: MySQL create data folder
       run: |
-        New-Item -Type Directory '${{ env.TinyMySQLDataPath }}'
+        New-Item -Type Directory $env:TinyMySQLDataPath
 
     - name: MySQL initialize my.ini configuration
       working-directory: .github/resources/windows
       run: >-
         (Get-Content -Path ./my_8.template.ini) -creplace
-        '\{MYSQL_DATADIR\}', '${{ env.TinyMySQLDataPath }}' -creplace
+        '\{MYSQL_DATADIR\}', $env:TinyMySQLDataPath -creplace
         '\{MYSQL_HOST\}', $env:DB_MYSQL_HOST |
-        Set-Content -Path '${{ env.TinyMySQLInstallationPath }}/my.ini'
+        Set-Content -Path "$env:TinyMySQLInstallationPath/my.ini"
       env:
         DB_MYSQL_HOST: ${{ secrets.DB_MYSQL_HOST }}
 
@@ -151,12 +151,12 @@ jobs:
         $filename = (Split-Path -Path $env:URL_MYSQL_TIMEZONE_TABLES -Leaf)
         "Filename=$filename" >> $env:GITHUB_OUTPUT
 
-        $filepath = Join-Path -Path ${{ runner.temp }} -ChildPath $filename
+        $filepath = Join-Path -Path $env:RUNNER_TEMP -ChildPath $filename
         "Filepath=$filepath" >> $env:GITHUB_OUTPUT
 
         $basename = Split-Path -Path $filename -LeafBase
 
-        $extractedFolder = Join-Path -Path ${{ runner.temp }} -ChildPath $basename
+        $extractedFolder = Join-Path -Path $env:RUNNER_TEMP -ChildPath $basename
         "ExtractedFolder=$extractedFolder" >> $env:GITHUB_OUTPUT
 
         "Hash=$basename" >> $env:GITHUB_OUTPUT
@@ -182,7 +182,7 @@ jobs:
         Select-Object -ExpandProperty Content |
         Set-Content -Path $env:archive_filepath -AsByteStream
 
-        7z.exe x -y -o'${{ runner.temp }}' "$env:archive_filepath"
+        7z.exe x -y -o"$env:RUNNER_TEMP" "$env:archive_filepath"
       env:
         archive_filepath: ${{ steps.downloads-initialize-mysql-timezone-tables.outputs.Filepath }}
         URL_MYSQL_TIMEZONE_TABLES: ${{ secrets.URL_MYSQL_TIMEZONE_TABLES }}
@@ -253,9 +253,9 @@ jobs:
 
     - name: SQLite create TinyORM database
       run: |
-        New-Item -Type Directory (Split-Path -Parent -Path '${{ env.TinySQLitePath }}')
+        New-Item -Type Directory (Split-Path -Parent -Path $env:TinySQLitePath)
 
-        New-Item -Type File -Path '${{ env.TinySQLitePath }}'
+        New-Item -Type File -Path $env:TinySQLitePath
 
     - name: Print MySQL, PostgreSQL database versions
       run: |

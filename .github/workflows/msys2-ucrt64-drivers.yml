@@ -60,7 +60,7 @@ jobs:
 
     - name: TinyORM prepare environment
       run: |
-        $runnerWorkPath = Resolve-Path -Path '${{ runner.workspace }}/..'
+        $runnerWorkPath = Resolve-Path -Path "$env:RUNNER_WORKSPACE/.."
         "TinyRunnerWorkPath=$runnerWorkPath" >> $env:GITHUB_ENV
 
         # Don't user more than 3 for GCC, it would need 64GB RAM (no money 💵)
@@ -76,7 +76,7 @@ jobs:
         '${{ matrix.drivers-type }}-${{ matrix.build-type.key }}'
         "TinyORMBuildFolder=$tinyormBuildFolder" >> $env:GITHUB_ENV
 
-        $tinyormBuildTree = Join-Path -Path '${{ runner.workspace }}' TinyORM-builds-cmake `
+        $tinyormBuildTree = Join-Path -Path $env:RUNNER_WORKSPACE TinyORM-builds-cmake `
         $tinyormBuildFolder
         "TinyORMBuildTree=$tinyormBuildTree" >> $env:GITHUB_ENV
 
@@ -126,7 +126,7 @@ jobs:
     # for MSYS2 and compiler.
     - name: Ccache prepare environment
       run: |
-        $ccacheDirPath = Join-Path '${{ runner.workspace }}' ccache_msys2_${{ matrix.compiler.key }}
+        $ccacheDirPath = Join-Path $env:RUNNER_WORKSPACE ccache_msys2_${{ matrix.compiler.key }}
         "CCACHE_DIR=$ccacheDirPath" >> $env:GITHUB_ENV
 
     - name: Ccache print version and configuration
@@ -146,11 +146,11 @@ jobs:
         echo "VCPKG_ROOT=$VCPKG_INSTALLATION_ROOT" >> $GITHUB_ENV
         echo 'VCPKG_DEFAULT_TRIPLET=x64-mingw-dynamic' >> $GITHUB_ENV
         echo 'VCPKG_DEFAULT_HOST_TRIPLET=x64-mingw-dynamic' >> $GITHUB_ENV
-        echo 'VCPKG_MAX_CONCURRENCY=${{ env.TinyParallel }}' >> $GITHUB_ENV
+        echo "VCPKG_MAX_CONCURRENCY=$env:TinyParallel" >> $GITHUB_ENV
 
     - name: vcpkg needs upgrade? (once per day)
       run: |
-        $vcpkgUpgradedAtFilepath = '${{ runner.workspace }}/.vcpkg_upgraded_at'
+        $vcpkgUpgradedAtFilepath = "$env:RUNNER_WORKSPACE/.vcpkg_upgraded_at"
 
         if (-not (Test-Path -Path $vcpkgUpgradedAtFilepath)) {
           'TINY_VCPKG_NEEDS_UPGRADE=true' >> $env:GITHUB_ENV
@@ -160,7 +160,7 @@ jobs:
         $datePreviousUpgrade = New-Object System.DateTime
 
         $result = [System.DateTime]::TryParseExact( `
-          (Get-Content '${{ runner.workspace }}/.vcpkg_upgraded_at'), 'yyyyMMdd', `
+          (Get-Content "$env:RUNNER_WORKSPACE/.vcpkg_upgraded_at"), 'yyyyMMdd', `
           [cultureinfo]::InvariantCulture, `
           [System.Globalization.DateTimeStyles]::None -bor `
           [System.Globalization.DateTimeStyles]::AssumeLocal, [ref]$datePreviousUpgrade)
@@ -186,7 +186,7 @@ jobs:
 
         .\bootstrap-vcpkg.bat
 
-        Get-Date -Format 'yyyyMMdd' > '${{ runner.workspace }}/.vcpkg_upgraded_at'
+        Get-Date -Format 'yyyyMMdd' > "$env:RUNNER_WORKSPACE/.vcpkg_upgraded_at"
 
     - name: CMake print version
       shell: msys2 {0}
@@ -200,8 +200,8 @@ jobs:
 
     - name: TinyORM create build folder (${{ env.TinyORMBuildFolder }})
       run: |
-        if (-not (Test-Path '${{ env.TinyORMBuildTree }}')) {
-          New-Item -Type Directory '${{ env.TinyORMBuildTree }}'
+        if (-not (Test-Path $env:TinyORMBuildTree)) {
+          New-Item -Type Directory $env:TinyORMBuildTree
         }
 
     - name: Ccache clear statistics
@@ -219,7 +219,7 @@ jobs:
         cmake.exe
         --log-level=DEBUG --log-context
         -S .
-        -B '${{ env.TinyORMBuildTree }}'
+        -B $env:TinyORMBuildTree
         -G Ninja
         -D CMAKE_CXX_COMPILER_LAUNCHER:FILEPATH='/ucrt64/bin/ccache.exe'
         -D CMAKE_CXX_COMPILER:FILEPATH="/ucrt64/bin/${{ matrix.compiler.command }}"
@@ -245,7 +245,7 @@ jobs:
       shell: msys2 {0}
       working-directory: ${{ env.TinyORMBuildTree }}
       run: |
-        cmake.exe --build . --target all --parallel ${{ env.TinyParallel }}
+        cmake.exe --build . --target all --parallel $env:TinyParallel
 
     - name: Ccache print statistics
       shell: msys2 {0}

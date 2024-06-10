@@ -77,7 +77,7 @@ jobs:
 
     - name: TinyORM prepare environment
       run: |
-        runnerWorkPath=$(realpath '${{ runner.workspace }}/..')
+        runnerWorkPath=$(realpath "$RUNNER_WORKSPACE/..")
         echo "TinyRunnerWorkPath=$runnerWorkPath" >> $GITHUB_ENV
 
         # Parallel gcc to 3 and clang to 8 is maximum what my computer allows but I decided to use
@@ -104,7 +104,7 @@ jobs:
         tinyormBuildFolder="build-$tinyormBuildName"
         echo "TinyORMBuildFolder=$tinyormBuildFolder" >> $GITHUB_ENV
 
-        tinyormBuildTree="${{ runner.workspace }}/TinyORM-builds-cmake/$tinyormBuildFolder"
+        tinyormBuildTree="$RUNNER_WORKSPACE/TinyORM-builds-cmake/$tinyormBuildFolder"
         echo "TinyORMBuildTree=$tinyormBuildTree" >> $GITHUB_ENV
 
     - name: MySQL service check status
@@ -123,7 +123,7 @@ jobs:
     # Don't use the default CCACHE_DIR path on self-hosted runners
     - name: Ccache prepare environment
       run: |
-        ccacheDirPath='${{ runner.workspace }}/ccache'
+        ccacheDirPath="$RUNNER_WORKSPACE/ccache"
         echo "CCACHE_DIR=$ccacheDirPath" >> $GITHUB_ENV
 
     # I'm managing the ccache configuration manually on self-hosted runners using the ccache.conf
@@ -143,11 +143,11 @@ jobs:
       run: |
         echo "VCPKG_ROOT=$VCPKG_INSTALLATION_ROOT" >> $GITHUB_ENV
         echo 'VCPKG_DEFAULT_TRIPLET=x64-linux-dynamic' >> $GITHUB_ENV
-        echo 'VCPKG_MAX_CONCURRENCY=${{ env.TinyParallel }}' >> $GITHUB_ENV
+        echo "VCPKG_MAX_CONCURRENCY=$TinyParallel" >> $GITHUB_ENV
 
     - name: vcpkg needs upgrade? (once per day)
       run: |
-        vcpkgUpgradedAtFilepath='${{ runner.workspace }}/.vcpkg_upgraded_at'
+        vcpkgUpgradedAtFilepath="$RUNNER_WORKSPACE/.vcpkg_upgraded_at"
 
         if [ ! -f "$vcpkgUpgradedAtFilepath" ] || [ ! -r "$vcpkgUpgradedAtFilepath" ] || \
           ! read datePreviousUpgradeRaw < "$vcpkgUpgradedAtFilepath"
@@ -180,7 +180,7 @@ jobs:
 
         ./bootstrap-vcpkg.sh
 
-        date +%Y-%m-%d > '${{ runner.workspace }}/.vcpkg_upgraded_at'
+        date +%Y-%m-%d > "$RUNNER_WORKSPACE/.vcpkg_upgraded_at"
 
     - name: CMake print version
       run: |
@@ -202,7 +202,7 @@ jobs:
 
     - name: TinyORM create build folder (${{ env.TinyORMBuildName }})
       run: |
-        mkdir --parents '${{ env.TinyORMBuildTree }}'
+        mkdir --parents "$TinyORMBuildTree"
 
     - name: Ccache clear statistics
       run: |
@@ -217,7 +217,7 @@ jobs:
         cmake
         --log-level=DEBUG --log-context
         -S .
-        -B '${{ env.TinyORMBuildTree }}'
+        -B "$TinyORMBuildTree"
         -G Ninja
         -D CMAKE_CXX_COMPILER_LAUNCHER:FILEPATH=ccache
         -D CMAKE_CXX_COMPILER:FILEPATH=${{ matrix.compiler.command }}
@@ -242,7 +242,7 @@ jobs:
     - name: TinyORM cmake build ✨ (${{ env.TinyORMBuildName }})
       working-directory: ${{ env.TinyORMBuildTree }}
       run: |
-        cmake --build . --target all --parallel ${{ env.TinyParallel }}
+        cmake --build . --target all --parallel $TinyParallel
 
     - name: Ccache print statistics
       run: |
@@ -318,8 +318,8 @@ jobs:
       if: matrix.compiler.key == 'gcc14' && matrix.drivers-type == 'Static' && matrix.build-type.key == 'release'
       working-directory: ${{ env.TinyORMBuildTree }}/tests/testdata_tom
       run: |
-        mkdir -p '${{ runner.workspace }}/.local/bin'
-        cp --force --target-directory='${{ runner.workspace }}/.local/bin' ./tom_testdata
+        mkdir -p "$RUNNER_WORKSPACE/.local/bin"
+        cp --force --target-directory="$RUNNER_WORKSPACE/.local/bin" ./tom_testdata
 
     # The reason for this is the concurrency:group: can contain only two in_progress workflows,
     # one will be in_progress and the second will be queued (waiting until the first finish),
@@ -337,7 +337,7 @@ jobs:
         --jq '.[] | select (.path | endswith("/vcpkg-linux.yml")) | .state')
 
         if [ $? -eq 0 ] && [[ "$workflowState" == 'active' ]]; then
-          gh workflow run vcpkg-linux.yml --ref ${{ github.ref_name }}
+          gh workflow run vcpkg-linux.yml --ref "$GITHUB_REF_NAME"
         fi
       env:
         GH_TOKEN: ${{ github.token }}

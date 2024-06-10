@@ -45,7 +45,7 @@ jobs:
 
     - name: TinyORM prepare environment
       run: |
-        $runnerWorkPath = Resolve-Path -Path '${{ runner.workspace }}/..'
+        $runnerWorkPath = Resolve-Path -Path "$env:RUNNER_WORKSPACE/.."
         "TinyRunnerWorkPath=$runnerWorkPath" >> $env:GITHUB_ENV
 
         $sqlitePath = Join-Path -Path $runnerWorkPath -ChildPath "SQLite/$env:DB_SQLITE_DATABASE"
@@ -77,7 +77,7 @@ jobs:
     - name: PostgreSQL SSL certificates initialize
       id: openssl-initialize-postgresql-certificates
       run: |
-        $folderPath = Join-Path -Path '${{ env.TinyRunnerWorkPath }}' `
+        $folderPath = Join-Path -Path $env:TinyRunnerWorkPath `
         -ChildPath 'tiny-postgresql-certificates'
 
         # Create an empty folder for generating certificates
@@ -271,15 +271,15 @@ jobs:
 
     - name: MySQL create data folder
       run: |
-        New-Item -Type Directory '${{ env.TinyMySQLDataPath }}'
+        New-Item -Type Directory $env:TinyMySQLDataPath
 
     - name: MySQL initialize my.ini configuration
       working-directory: .github/resources/windows
       run: >-
         (Get-Content -Path ./my_8_ssl.template.ini) -creplace
-        '\{MYSQL_DATADIR\}', '${{ env.TinyMySQLDataPath }}' -creplace
+        '\{MYSQL_DATADIR\}', $env:TinyMySQLDataPath -creplace
         '\{MYSQL_HOST\}', $env:DB_MYSQL_HOST |
-        Set-Content -Path '${{ env.TinyMySQLInstallationPath }}/my.ini'
+        Set-Content -Path "$env:TinyMySQLInstallationPath/my.ini"
       env:
         DB_MYSQL_HOST: ${{ secrets.DB_MYSQL_HOST_SSL }}
 
@@ -307,8 +307,7 @@ jobs:
     - name: MySQL SSL certificates initialize
       id: openssl-initialize-mysql-certificates
       run: |
-        $folderPath = Join-Path -Path '${{ env.TinyRunnerWorkPath }}' `
-        -ChildPath 'tiny-mysql-certificates'
+        $folderPath = Join-Path -Path $env:TinyRunnerWorkPath -ChildPath 'tiny-mysql-certificates'
 
         # Create an empty folder for generating certificates
         New-Item -Type Directory $folderPath
@@ -395,17 +394,15 @@ jobs:
       working-directory: ${{ steps.openssl-initialize-mysql-certificates.outputs.FolderPath }}
       run: |
         Write-Output '::group::Install CA certificate'
-        Move-Item -Path ./ca.pem -Destination '${{ env.TinyMySQLDataPath }}'
+        Move-Item -Path ./ca.pem -Destination $env:TinyMySQLDataPath
         Write-Output '::endgroup::'
 
         Write-Output '::group::Install server certificates'
-        Move-Item -Path ./server-cert.pem, ./server-key.pem `
-        -Destination '${{ env.TinyMySQLDataPath }}'
+        Move-Item -Path ./server-cert.pem, ./server-key.pem -Destination $env:TinyMySQLDataPath
         Write-Output '::endgroup::'
 
         Write-Output '::group::Install client certificates'
-        Move-Item -Path ./client-cert.pem, ./client-key.pem `
-        -Destination '${{ env.TinyMySQLDataPath }}'
+        Move-Item -Path ./client-cert.pem, ./client-key.pem $env:TinyMySQLDataPath
         Write-Output '::endgroup::'
 
     - name: MySQL service install/start
@@ -421,8 +418,8 @@ jobs:
       run: >-
         "alter user '$env:DB_MYSQL_ROOT_USERNAME'@'localhost'
         identified with caching_sha2_password by '$env:DB_MYSQL_ROOT_PASSWORD'
-        require issuer '${{ env.DB_MYSQL_SSL_SUBJECT_CA }}' and
-        subject '${{ env.DB_MYSQL_SSL_SUBJECT_CLIENT }}';" |
+        require issuer '$env:DB_MYSQL_SSL_SUBJECT_CA' and
+        subject '$env:DB_MYSQL_SSL_SUBJECT_CLIENT';" |
         mysql.exe --user=$env:DB_MYSQL_ROOT_USERNAME
         --password=$($env:secured_password | ConvertTo-SecureString |
         ConvertFrom-SecureString -AsPlainText)
@@ -440,12 +437,12 @@ jobs:
         $filename = (Split-Path -Path $env:URL_MYSQL_TIMEZONE_TABLES -Leaf)
         "Filename=$filename" >> $env:GITHUB_OUTPUT
 
-        $filepath = Join-Path -Path ${{ runner.temp }} -ChildPath $filename
+        $filepath = Join-Path -Path $env:RUNNER_TEMP -ChildPath $filename
         "Filepath=$filepath" >> $env:GITHUB_OUTPUT
 
         $basename = Split-Path -Path $filename -LeafBase
 
-        $extractedFolder = Join-Path -Path ${{ runner.temp }} -ChildPath $basename
+        $extractedFolder = Join-Path -Path $env:RUNNER_TEMP -ChildPath $basename
         "ExtractedFolder=$extractedFolder" >> $env:GITHUB_OUTPUT
 
         "Hash=$basename" >> $env:GITHUB_OUTPUT
@@ -471,7 +468,7 @@ jobs:
         Select-Object -ExpandProperty Content |
         Set-Content -Path $env:archive_filepath -AsByteStream
 
-        7z.exe x -y -o'${{ runner.temp }}' "$env:archive_filepath"
+        7z.exe x -y -o"$env:RUNNER_TEMP" "$env:archive_filepath"
       env:
         archive_filepath: ${{ steps.downloads-initialize-mysql-timezone-tables.outputs.Filepath }}
         URL_MYSQL_TIMEZONE_TABLES: ${{ secrets.URL_MYSQL_TIMEZONE_TABLES }}
@@ -530,8 +527,8 @@ jobs:
       run: >-
         "create user '$env:DB_MYSQL_USERNAME'@'%'
         identified with caching_sha2_password by '$env:DB_MYSQL_PASSWORD'
-        require issuer '${{ env.DB_MYSQL_SSL_SUBJECT_CA }}' and
-        subject '${{ env.DB_MYSQL_SSL_SUBJECT_CLIENT }}';
+        require issuer '$env:DB_MYSQL_SSL_SUBJECT_CA' and
+        subject '$env:DB_MYSQL_SSL_SUBJECT_CLIENT';
         grant all privileges on ``tinyorm\_%``.* to '$env:DB_MYSQL_USERNAME'@'%';
         grant select on ``mysql``.``time_zone_name`` to '$env:DB_MYSQL_USERNAME'@'%';
         flush privileges;" |
@@ -546,16 +543,16 @@ jobs:
 
     - name: MySQL add libmysql.dll on the $env:Path, INCLUDE, and LIB
       run: |
-        '${{ env.TinyMySQLInstallationPath }}\lib' >> $env:GITHUB_PATH
+        "$env:TinyMySQLInstallationPath\lib" >> $env:GITHUB_PATH
         # Needed by the lastest FindMySQL.cmake module, it stopped working without this
-        'INCLUDE=${{ env.TinyMySQLInstallationPath }}\include' >> $env:GITHUB_ENV
-        'LIB=${{ env.TinyMySQLInstallationPath }}\lib' >> $env:GITHUB_ENV
+        "INCLUDE=$env:TinyMySQLInstallationPath\include" >> $env:GITHUB_ENV
+        "LIB=$env:TinyMySQLInstallationPath\lib" >> $env:GITHUB_ENV
 
     - name: SQLite create TinyORM database
       run: |
-        New-Item -Type Directory (Split-Path -Parent -Path '${{ env.TinySQLitePath }}')
+        New-Item -Type Directory (Split-Path -Parent -Path $env:TinySQLitePath)
 
-        New-Item -Type File -Path '${{ env.TinySQLitePath }}'
+        New-Item -Type File -Path $env:TinySQLitePath
 
     - name: Print MySQL, PostgreSQL database versions
       run: |
@@ -619,7 +616,7 @@ jobs:
         -QtRootPath (Get-Item -Path $env:QT_PLUGIN_PATH).Parent.Parent.Parent
         -QtVersion $env:TINY_QT_VERSION -QtSpec $env:TINY_QT_SPEC
         -MySQLServerPath $env:TinyMySQLInstallationPath
-        -BuildPath '${{ runner.workspace }}'
+        -BuildPath $env:RUNNER_WORKSPACE
 
     - name: Ccache initialize
       id: ccache-initialize-cache

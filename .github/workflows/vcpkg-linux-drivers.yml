@@ -59,7 +59,7 @@ jobs:
     # this way because I tried to refactor it to the env.TinyRunnerWorkPath and it looks terrible
     - name: TinyORM prepare environment
       run: |
-        runnerWorkPath=$(realpath '${{ runner.workspace }}/..')
+        runnerWorkPath=$(realpath "$RUNNER_WORKSPACE/..")
         echo "TinyRunnerWorkPath=$runnerWorkPath" >> $GITHUB_ENV
 
         echo "TinyParallel=10" >> $GITHUB_ENV
@@ -85,9 +85,9 @@ jobs:
         echo "VCPKG_ROOT=$VCPKG_INSTALLATION_ROOT" >> $GITHUB_ENV
         # The x64-linux is correct
         echo 'VCPKG_DEFAULT_TRIPLET=x64-linux' >> $GITHUB_ENV
-        echo 'VCPKG_MAX_CONCURRENCY=${{ env.TinyParallel }}' >> $GITHUB_ENV
+        echo "VCPKG_MAX_CONCURRENCY=$TinyParallel" >> $GITHUB_ENV
 
-        vcpkgPath=$(realpath '${{ env.TinyORMPath }}/cmake/vcpkg')
+        vcpkgPath=$(realpath "$TinyORMPath/cmake/vcpkg")
 
         portsPath="$vcpkgPath/ports"
         echo "VCPKG_OVERLAY_PORTS=$portsPath" >> $GITHUB_ENV
@@ -111,7 +111,7 @@ jobs:
 
     - name: vcpkg needs upgrade? (once per day)
       run: |
-        vcpkgUpgradedAtFilepath='${{ runner.workspace }}/.vcpkg_upgraded_at'
+        vcpkgUpgradedAtFilepath="$RUNNER_WORKSPACE/.vcpkg_upgraded_at"
 
         if [ ! -f "$vcpkgUpgradedAtFilepath" ] || [ ! -r "$vcpkgUpgradedAtFilepath" ] || \
           ! read datePreviousUpgradeRaw < "$vcpkgUpgradedAtFilepath"
@@ -144,7 +144,7 @@ jobs:
 
         ./bootstrap-vcpkg.sh
 
-        date +%Y-%m-%d > '${{ runner.workspace }}/.vcpkg_upgraded_at'
+        date +%Y-%m-%d > "$RUNNER_WORKSPACE/.vcpkg_upgraded_at"
 
     - name: CMake print version
       run: |
@@ -163,9 +163,9 @@ jobs:
         . ./tools/private/Common-Deploy.ps1
 
         $portfileQt6Path = Resolve-Path -Path './cmake/vcpkg/ports/tinyorm/portfile.cmake'
-        $vcpkgRef = '${{ github.sha }}'
+        $vcpkgRef = $env:GITHUB_SHA
 
-        Edit-VcpkgRefAndHash -Project '${{ github.repository }}' -Ref $vcpkgRef `
+        Edit-VcpkgRefAndHash -Project $env:GITHUB_REPOSITORY -Ref $vcpkgRef `
         -PortFile $portfileQt6Path -EnableRetries
 
     # The following two steps (vcpkg install) are not needed below they only test if the vcpkg
@@ -220,7 +220,7 @@ jobs:
     # it's from GCC static Release build (build-TinyDrivers-gcc13-Static-release).
     - name: Prepare MySQL database
       run: |
-        export PATH='${{ runner.workspace }}/.local/bin'${PATH:+:}"$PATH"
+        export PATH="$RUNNER_WORKSPACE/.local/bin"${PATH:+:}"$PATH"
 
         tom_testdata migrate:fresh --database=tinyorm_testdata_tom_mysql --seed --drop-views
       env:
@@ -259,7 +259,7 @@ jobs:
         cmake
         --log-level=DEBUG --log-context
         -S .
-        -B '${{ runner.workspace }}/HelloWorld-builds-cmake/build-TinyDrivers-vcpkgmanifest-gcc-${{ matrix.build-type.key }}'
+        -B "$RUNNER_WORKSPACE/HelloWorld-builds-cmake/build-TinyDrivers-vcpkgmanifest-gcc-${{ matrix.build-type.key }}"
         -G Ninja
         -D CMAKE_TOOLCHAIN_FILE:FILEPATH="$VCPKG_INSTALLATION_ROOT/scripts/buildsystems/vcpkg.cmake"
         -D CMAKE_DISABLE_PRECOMPILE_HEADERS:BOOL=ON
@@ -271,7 +271,7 @@ jobs:
       working-directory: >-
         ../HelloWorld-builds-cmake/build-TinyDrivers-vcpkgmanifest-gcc-${{ matrix.build-type.key }}
       run: |
-        cmake --build . --target all --parallel ${{ env.TinyParallel }}
+        cmake --build . --target all --parallel $TinyParallel
 
     - name: HelloWorld-TinyDrivers execute (MySQL) 🏁
       working-directory: >-
@@ -311,7 +311,7 @@ jobs:
     # Don't use the default CCACHE_DIR path on self-hosted runners
     - name: Ccache prepare environment
       run: |
-        ccacheDirPath=$(realpath '${{ runner.workspace }}/ccache_drivers')
+        ccacheDirPath=$(realpath "$RUNNER_WORKSPACE/ccache_drivers")
         echo "CCACHE_DIR=$ccacheDirPath" >> $GITHUB_ENV
 
     - name: Ccache print version and configuration
@@ -343,7 +343,7 @@ jobs:
         cmake
         --log-level=DEBUG --log-context
         -S .
-        -B '${{ runner.workspace }}/TinyORM-builds-cmake/build-TinyDrivers-manual-gcc-${{ matrix.build-type.key }}'
+        -B "$RUNNER_WORKSPACE/TinyORM-builds-cmake/build-TinyDrivers-manual-gcc-${{ matrix.build-type.key }}"
         -G Ninja
         -D CMAKE_CXX_COMPILER_LAUNCHER:FILEPATH=ccache
         -D CMAKE_TOOLCHAIN_FILE:FILEPATH="$VCPKG_INSTALLATION_ROOT/scripts/buildsystems/vcpkg.cmake"
@@ -369,7 +369,7 @@ jobs:
       working-directory: >-
         ../TinyORM-builds-cmake/build-TinyDrivers-manual-gcc-${{ matrix.build-type.key }}
       run: |
-        cmake --build . --target all --parallel ${{ env.TinyParallel }}
+        cmake --build . --target all --parallel $TinyParallel
 
     - name: Ccache print statistics
       run: |
@@ -389,9 +389,9 @@ jobs:
         cmake
         --log-level=DEBUG --log-context
         -S .
-        -B '${{ runner.workspace }}/HelloWorld-builds-cmake/build-TinyDrivers-manual-gcc-${{ matrix.build-type.key }}'
+        -B "$RUNNER_WORKSPACE/HelloWorld-builds-cmake/build-TinyDrivers-manual-gcc-${{ matrix.build-type.key }}"
         -G Ninja
-        -D CMAKE_PREFIX_PATH:PATH='${{ runner.workspace }}/TinyORM-builds-cmake/build-TinyDrivers-manual-gcc-${{ matrix.build-type.key }}'
+        -D CMAKE_PREFIX_PATH:PATH="$RUNNER_WORKSPACE/TinyORM-builds-cmake/build-TinyDrivers-manual-gcc-${{ matrix.build-type.key }}"
         -D CMAKE_TOOLCHAIN_FILE:FILEPATH="$VCPKG_INSTALLATION_ROOT/scripts/buildsystems/vcpkg.cmake"
         -D CMAKE_DISABLE_PRECOMPILE_HEADERS:BOOL=ON
         -D CMAKE_BUILD_TYPE:STRING=${{ matrix.build-type.name }}
@@ -402,13 +402,13 @@ jobs:
       working-directory: >-
         ../HelloWorld-builds-cmake/build-TinyDrivers-manual-gcc-${{ matrix.build-type.key }}
       run: |
-        cmake --build . --target all --parallel ${{ env.TinyParallel }}
+        cmake --build . --target all --parallel $TinyParallel
 
     - name: HelloWorld-TinyDrivers execute (MySQL) 🏁
       working-directory: >-
         ../HelloWorld-builds-cmake/build-TinyDrivers-manual-gcc-${{ matrix.build-type.key }}
       run: |
-        buildFolder='${{ runner.workspace }}/TinyORM-builds-cmake/build-TinyDrivers-manual-gcc-${{ matrix.build-type.key }}'
+        buildFolder="$RUNNER_WORKSPACE/TinyORM-builds-cmake/build-TinyDrivers-manual-gcc-${{ matrix.build-type.key }}"
 
         export LD_LIBRARY_PATH="$buildFolder"${LD_LIBRARY_PATH:+:}"$LD_LIBRARY_PATH"
 
@@ -442,8 +442,8 @@ jobs:
       shell: pwsh -NoProfile -Command "& '{0}'"
       working-directory: HelloWorld-TinyDrivers
       run: |
-        $toolsPath = Resolve-Path -Path '${{ env.TinyORMPath }}/tools/private'
-        $gitTag = '${{ github.sha }}'
+        $toolsPath = Resolve-Path -Path "$TinyORMPath/tools/private"
+        $gitTag = $env:GITHUB_SHA
 
         & "$toolsPath/Edit-FetchContentGitTag.ps1" -CMakeLists ./CMakeLists.txt -GitTag $gitTag
 
@@ -458,13 +458,13 @@ jobs:
         cmake
         --log-level=DEBUG --log-context
         -S .
-        -B '${{ runner.workspace }}/HelloWorld-builds-cmake/build-TinyDrivers-fetchcontent-gcc-${{ matrix.build-type.key }}'
+        -B "$RUNNER_WORKSPACE/HelloWorld-builds-cmake/build-TinyDrivers-fetchcontent-gcc-${{ matrix.build-type.key }}"
         -G Ninja
         -D CMAKE_CXX_COMPILER_LAUNCHER:FILEPATH=ccache
         -D CMAKE_TOOLCHAIN_FILE:FILEPATH="$VCPKG_INSTALLATION_ROOT/scripts/buildsystems/vcpkg.cmake"
         -D CMAKE_DISABLE_PRECOMPILE_HEADERS:BOOL=OFF
         -D CMAKE_BUILD_TYPE:STRING=${{ matrix.build-type.name }}
-        -D CMAKE_INSTALL_PREFIX:PATH='${{ runner.workspace }}/HelloWorld-TinyDrivers-FetchContent-Install/${{ matrix.build-type.name }}'
+        -D CMAKE_INSTALL_PREFIX:PATH="$RUNNER_WORKSPACE/HelloWorld-TinyDrivers-FetchContent-Install/${{ matrix.build-type.name }}"
         -D CMAKE_EXPORT_PACKAGE_REGISTRY:BOOL=OFF
         -D VCPKG_APPLOCAL_DEPS:BOOL=OFF
         -D VERBOSE_CONFIGURE:BOOL=ON
@@ -485,7 +485,7 @@ jobs:
       working-directory: >-
         ../HelloWorld-builds-cmake/build-TinyDrivers-fetchcontent-gcc-${{ matrix.build-type.key }}
       run: |
-        cmake --build . --target install --parallel ${{ env.TinyParallel }}
+        cmake --build . --target install --parallel $TinyParallel
 
     - name: Ccache print statistics
       run: |
@@ -529,7 +529,7 @@ jobs:
         --jq '.[] | select (.path | endswith("/analyzers.yml")) | .state')
 
         if [ $? -eq 0 ] && [[ "$workflowState" == 'active' ]]; then
-          gh workflow run analyzers.yml --ref ${{ github.ref_name }}
+          gh workflow run analyzers.yml --ref "$GITHUB_REF_NAME"
         fi
       env:
         GH_TOKEN: ${{ github.token }}

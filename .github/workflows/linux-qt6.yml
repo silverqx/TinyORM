@@ -43,7 +43,7 @@ jobs:
 
     - name: TinyORM prepare environment
       run: |
-        runnerWorkPath=$(realpath '${{ runner.workspace }}/..')
+        runnerWorkPath=$(realpath "$RUNNER_WORKSPACE/..")
         echo "TinyRunnerWorkPath=$runnerWorkPath" >> $GITHUB_ENV
 
         sqlitePath="$runnerWorkPath/SQLite/$DB_SQLITE_DATABASE"
@@ -90,7 +90,7 @@ jobs:
     - name: PostgreSQL SSL certificates initialize
       id: openssl-initialize-postgresql-certificates
       run: |
-        folderPath='${{ env.TinyRunnerWorkPath }}/tiny-postgresql-certificates'
+        folderPath="$TinyRunnerWorkPath/tiny-postgresql-certificates"
 
         # Create an empty folder for generating certificates
         sudo mkdir "$folderPath"
@@ -311,7 +311,7 @@ jobs:
     - name: MySQL SSL certificates initialize
       id: openssl-initialize-mysql-certificates
       run: |
-        folderPath='${{ env.TinyRunnerWorkPath }}/tiny-mysql-certificates'
+        folderPath="$TinyRunnerWorkPath/tiny-mysql-certificates"
 
         # Create an empty folder for generating certificates
         sudo mkdir "$folderPath"
@@ -514,9 +514,9 @@ jobs:
 
     - name: SQLite create TinyORM database
       run: |
-        mkdir --parents "$(dirname '${{ env.TinySQLitePath }}')"
+        mkdir --parents "$(dirname "$TinySQLitePath")"
 
-        touch '${{ env.TinySQLitePath }}'
+        touch "$TinySQLitePath"
 
     - name: Print MySQL, SQLite, PostgreSQL database versions
       run: |
