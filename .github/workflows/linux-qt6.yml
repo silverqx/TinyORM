@@ -545,7 +545,7 @@ jobs:
       run: |
         sudo apt update
 
-    - name: apt install ${{ join(matrix.compiler.apt, ', ') }}, Qt 6.2.4 base, and ccache
+    - name: apt install ${{ join(matrix.compiler.apt, ', ') }}, Qt 6 base, and ccache
       run: >-
         sudo apt install --yes ${{ join(matrix.compiler.apt, ' ') }}
         qt6-base-dev libqt6sql6-mysql libqt6sql6-sqlite libqt6sql6-psql ccache
@@ -572,7 +572,7 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-${{ env.image_os }}-ccache-${{ env.cache_name }}-
       env:
-        cache_name: ${{ matrix.compiler.key }}-qt62
+        cache_name: ${{ matrix.compiler.key }}-qt6
         cache_path: ${{ steps.ccache-initialize-cache.outputs.CachePath }}
         image_os: ${{ steps.ccache-initialize-cache.outputs.ImageOS }}
 

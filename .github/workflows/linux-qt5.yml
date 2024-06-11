@@ -185,7 +185,7 @@ jobs:
       run: |
         sudo apt update
 
-    - name: apt install ${{ join(matrix.compiler.apt, ', ') }}, Qt 5.15.3 base, and ccache
+    - name: apt install ${{ join(matrix.compiler.apt, ', ') }}, Qt 5.15 base, and ccache
       run: >-
         sudo apt install --yes ${{ join(matrix.compiler.apt, ' ') }}
         qtbase5-dev libqt5sql5-mysql libqt5sql5-sqlite libqt5sql5-psql ccache
