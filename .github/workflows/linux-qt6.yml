@@ -520,9 +520,17 @@ jobs:
 
     - name: Print MySQL, PostgreSQL, and SQLite database versions
       run: |
+        echo '::group::MySQL version'
         mysql --version
+        echo '::endgroup::'
+
+        echo '::group::PostgreSQL version'
         pg_config --version
+        echo '::endgroup::'
+
+        echo '::group::SQLite version'
         sqlite3 --version
+        echo '::endgroup::'
 
     - name: add-apt-repository Clang 18
       if: matrix.compiler.key == 'clang18'
