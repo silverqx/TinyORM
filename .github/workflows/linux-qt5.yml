@@ -21,11 +21,13 @@ jobs:
     strategy:
       matrix:
         compiler:
-          - key: clang18
+          - key: clang
+            name: clang18
             apt: [ clang-18, lld-18 ]
             command: clang++-18
 
-          - key: gcc12
+          - key: gcc
+            name: gcc12
             apt: [ g++-12 ]
             command: g++-12
 
@@ -173,7 +175,7 @@ jobs:
         echo '::endgroup::'
 
     - name: add-apt-repository Clang 18
-      if: matrix.compiler.key == 'clang18'
+      if: matrix.compiler.key == 'clang'
       run: >-
         wget -O- https://apt.llvm.org/llvm-snapshot.gpg.key |
         sudo tee /etc/apt/trusted.gpg.d/llvm-18.asc > /dev/null
@@ -212,7 +214,7 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-${{ env.image_os }}-ccache-${{ env.cache_name }}-
       env:
-        cache_name: ${{ matrix.compiler.key }}-qt5
+        cache_name: ${{ matrix.compiler.name }}-qt5
         cache_path: ${{ steps.ccache-initialize-cache.outputs.CachePath }}
         image_os: ${{ steps.ccache-initialize-cache.outputs.ImageOS }}
 
@@ -220,7 +222,7 @@ jobs:
       run: |
         # First value is a compressed data size
         # gcc: ~ 115 * 3 + 100 ; clang: ~ 90 * 3 + 100
-        ccache --set-config max_size=${{ matrix.compiler.key == 'gcc12' && '450M' || '380M' }}
+        ccache --set-config max_size=${{ matrix.compiler.key == 'gcc' && '450M' || '380M' }}
         ccache --set-config sloppiness=pch_defines,time_macros
         ccache --show-config
 
@@ -244,20 +246,20 @@ jobs:
       run: |
         cmake --version
 
-    - name: TinyORM create build folder (${{ matrix.compiler.key }}-cmake-debug)
+    - name: TinyORM create build folder (${{ matrix.compiler.name }}-cmake-debug)
       run: |
-        mkdir --parents '../TinyORM-builds-cmake/build-${{ matrix.compiler.key }}-cmake-debug'
+        mkdir --parents '../TinyORM-builds-cmake/build-${{ matrix.compiler.name }}-cmake-debug'
 
     - name: Ccache clear statistics
       run: |
         ccache --zero-stats
 
-    - name: TinyORM cmake configure (${{ matrix.compiler.key }}-cmake-debug)
+    - name: TinyORM cmake configure (${{ matrix.compiler.name }}-cmake-debug)
       run: >-
         cmake
         --log-level=DEBUG --log-context
         -S .
-        -B ../TinyORM-builds-cmake/build-${{ matrix.compiler.key }}-cmake-debug
+        -B ../TinyORM-builds-cmake/build-${{ matrix.compiler.name }}-cmake-debug
         -G Ninja
         -D CMAKE_CXX_COMPILER_LAUNCHER:FILEPATH=ccache
         -D CMAKE_CXX_COMPILER:FILEPATH=${{ matrix.compiler.command }}
@@ -278,9 +280,9 @@ jobs:
         -D TOM_EXAMPLE:BOOL=ON
         -D BUILD_DRIVERS:BOOL=OFF
 
-    - name: TinyORM cmake build ✨ (${{ matrix.compiler.key }}-cmake-debug)
+    - name: TinyORM cmake build ✨ (${{ matrix.compiler.name }}-cmake-debug)
       run: >-
-        cmake --build ../TinyORM-builds-cmake/build-${{ matrix.compiler.key }}-cmake-debug
+        cmake --build ../TinyORM-builds-cmake/build-${{ matrix.compiler.name }}-cmake-debug
         --target all --parallel 2
 
     - name: Ccache print statistics
@@ -288,7 +290,7 @@ jobs:
         ccache --show-stats -vv
 
     - name: Create and Seed tables for unit tests 🎉
-      working-directory: ../TinyORM-builds-cmake/build-${{ matrix.compiler.key }}-cmake-debug/tests/testdata_tom
+      working-directory: ../TinyORM-builds-cmake/build-${{ matrix.compiler.name }}-cmake-debug/tests/testdata_tom
       run: >-
         export LD_LIBRARY_PATH=../..${LD_LIBRARY_PATH:+:}"$LD_LIBRARY_PATH"
 
@@ -312,7 +314,7 @@ jobs:
         TOM_TESTDATA_ENV: ${{ vars.TOM_TESTDATA_ENV }}
 
     - name: TinyORM execute ctest 🔥
-      working-directory: ../TinyORM-builds-cmake/build-${{ matrix.compiler.key }}-cmake-debug
+      working-directory: ../TinyORM-builds-cmake/build-${{ matrix.compiler.name }}-cmake-debug
       run: |
         ctest --output-on-failure --parallel 4
       env:
@@ -332,7 +334,7 @@ jobs:
         TOM_TESTS_ENV: ${{ vars.TOM_TESTS_ENV }}
 
     - name: Tom example test some commands (MySQL) 🚀
-      working-directory: ../TinyORM-builds-cmake/build-${{ matrix.compiler.key }}-cmake-debug/examples/tom
+      working-directory: ../TinyORM-builds-cmake/build-${{ matrix.compiler.name }}-cmake-debug/examples/tom
       run: |
         export LD_LIBRARY_PATH=../..${LD_LIBRARY_PATH:+:}"$LD_LIBRARY_PATH"
 
@@ -354,7 +356,7 @@ jobs:
         TOM_EXAMPLE_ENV: ${{ vars.TOM_EXAMPLE_ENV }}
 
     - name: Tom example test some commands (PostgreSQL) 🙌
-      working-directory: ../TinyORM-builds-cmake/build-${{ matrix.compiler.key }}-cmake-debug/examples/tom
+      working-directory: ../TinyORM-builds-cmake/build-${{ matrix.compiler.name }}-cmake-debug/examples/tom
       run: |
         export LD_LIBRARY_PATH=../..${LD_LIBRARY_PATH:+:}"$LD_LIBRARY_PATH"
 
@@ -376,7 +378,7 @@ jobs:
         TOM_EXAMPLE_ENV: ${{ vars.TOM_EXAMPLE_ENV }}
 
     - name: Tom example test some commands (SQLite) 🏁
-      working-directory: ../TinyORM-builds-cmake/build-${{ matrix.compiler.key }}-cmake-debug/examples/tom
+      working-directory: ../TinyORM-builds-cmake/build-${{ matrix.compiler.name }}-cmake-debug/examples/tom
       run: |
         export LD_LIBRARY_PATH=../..${LD_LIBRARY_PATH:+:}"$LD_LIBRARY_PATH"
 
