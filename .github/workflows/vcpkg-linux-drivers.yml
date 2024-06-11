@@ -73,6 +73,10 @@ jobs:
       env:
         DB_MYSQL_PASSWORD: ${{ secrets.DB_MYSQL_PASSWORD_SELF }}
 
+    - name: Print MySQL database version
+      run: |
+        mysql --version
+
     # lukka/get-cmake@latest needed because of Fedora
     - name: CMake and Ninja install latest versions
       uses: lukka/get-cmake@latest
