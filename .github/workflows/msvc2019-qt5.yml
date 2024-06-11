@@ -38,7 +38,7 @@ jobs:
       env:
         DB_SQLITE_DATABASE: ${{ secrets.DB_SQLITE_DATABASE }}
 
-    - name: PostgreSQL add on the $env:Path
+    - name: PostgreSQL add PGBIN on the $env:Path
       run: |
         "$env:PGBIN" >> $env:GITHUB_PATH
 
