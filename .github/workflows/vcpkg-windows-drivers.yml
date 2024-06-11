@@ -56,12 +56,6 @@ jobs:
         $mysqlInstallationPath = Split-Path -Parent -Path (Split-Path -Parent -Path $mysqlExePath)
         "TinyMySQLInstallationPath=$mysqlInstallationPath" >> $env:GITHUB_ENV
 
-        # Parallel 10 is maximum what my computer allows, I have to invoke Linux self-hosted runners
-        # manually so 10 is ok.
-        # --
-        # The description below is Outdated but I leave the comment.
-        # I must divide all parallel by 2 because I have 2 self-hosted runners on the same computer
-        # and also -1 for reserve to avoid swapping, so 10 / 2 - 1 = 4
         "TinyParallel=10" >> $env:GITHUB_ENV
 
         $tinyormPath = Resolve-Path -Path ./main
