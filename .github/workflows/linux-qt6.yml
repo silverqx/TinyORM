@@ -11,7 +11,7 @@
 # on the libpq client side, so the the server host name is matched against the CN (Common Name)
 # stored in the server certificate.
 
-name: Linux GCC/Clang Qt6.2
+name: Linux GCC/Clang Qt6.4
 
 on:
   workflow_dispatch:
