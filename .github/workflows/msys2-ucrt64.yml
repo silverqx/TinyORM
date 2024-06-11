@@ -148,7 +148,7 @@ jobs:
     - name: MySQL time zone POSIX tables initialize download
       id: downloads-initialize-mysql-timezone-tables
       run: |
-        $filename = (Split-Path -Path $env:URL_MYSQL_TIMEZONE_TABLES -Leaf)
+        $filename = Split-Path -Path $env:URL_MYSQL_TIMEZONE_TABLES -Leaf
         "Filename=$filename" >> $env:GITHUB_OUTPUT
 
         $filepath = Join-Path -Path $env:RUNNER_TEMP -ChildPath $filename
