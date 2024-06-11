@@ -92,7 +92,7 @@ jobs:
     - name: Ccache prepare configuration 🥳
       if: env.TinyIsSelfHostedRunner == 'false'
       run: |
-        # First value is compressed data size
+        # First value is a compressed data size
         # ~ 490 * 3 + 100
         ccache --set-config max_size=1600M
         ccache --set-config sloppiness=pch_defines,time_macros
