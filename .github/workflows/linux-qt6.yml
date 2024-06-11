@@ -531,7 +531,7 @@ jobs:
         sudo tee /etc/apt/trusted.gpg.d/llvm-18.asc > /dev/null
 
         sudo add-apt-repository --yes
-        --sourceslist 'deb http://apt.llvm.org/jammy/ llvm-toolchain-jammy-18 main'
+        --sourceslist 'deb http://apt.llvm.org/noble/ llvm-toolchain-noble-18 main'
 
     - name: apt update
       run: |
