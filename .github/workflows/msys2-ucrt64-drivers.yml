@@ -164,7 +164,7 @@ jobs:
           (Get-Content "$env:RUNNER_WORKSPACE/.vcpkg_upgraded_at"), 'yyyyMMdd', `
           [cultureinfo]::InvariantCulture, `
           [System.Globalization.DateTimeStyles]::None -bor `
-          [System.Globalization.DateTimeStyles]::AssumeLocal, [ref]$datePreviousUpgrade)
+          [System.Globalization.DateTimeStyles]::AssumeLocal, [ref] $datePreviousUpgrade)
 
         if (-not $result) {
           throw "Parsing the '.vcpkg_upgraded_at' failed."
