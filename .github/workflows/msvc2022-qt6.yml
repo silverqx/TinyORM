@@ -30,9 +30,12 @@ jobs:
     env:
       TINY_QT_VERSION: 6.7.1
       TINY_QT_SPEC: win64_msvc2019_64
+      # The following was computed for the Debug build only, I have added also the Release build but
+      # 700M is still enough, currently init. builds are: Debug - 0.3G, Release - 0.1G; because of
+      # this increasing ~50M
       # First value is a compressed data size
       # ~ 190 * 3 + 100
-      TINY_CCACHE_MAX_SIZE: 700M
+      TINY_CCACHE_MAX_SIZE: 750M
       TINY_MYSQL_SERVICE: MySQL
       TINY_POSTGRES_SERVICE: postgresql-x64-14
 
