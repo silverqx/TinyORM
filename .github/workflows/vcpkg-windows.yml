@@ -1,3 +1,7 @@
+# Common notes
+# ---
+# Queries/uses only SQLite database.
+
 name: Vcpkg Windows
 
 on: workflow_dispatch

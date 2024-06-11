@@ -118,6 +118,7 @@ jobs:
     # machine, it would be a waste of resources because everything is already installed and
     # up to date.
 
+    # msys2.cmd helper script for GitHub self-hosted runner to avoid using msys2_shell.cmd
     - name: MSYS2 UCRT64 prepare environment
       run: |
         'E:\actions-runners\bin' >> $env:GITHUB_PATH
