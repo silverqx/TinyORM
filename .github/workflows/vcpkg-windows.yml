@@ -21,7 +21,7 @@ jobs:
   vcpkg-windows:
     name: Vcpkg Windows
 
-    # Self-hosted runner is Windows 11 (Release Preview channel - 23H2)
+    # Self-hosted runner is Windows 11 (Release Preview channel - 24H2)
     runs-on: [ self-hosted, windows ]
 
     strategy:
