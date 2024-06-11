@@ -371,7 +371,7 @@ jobs:
         -S .
         -B "$env:RUNNER_WORKSPACE/TinyORM-builds-cmake/Drivers-manual-msvc-${{ matrix.build-type.key }}"
         -G Ninja
-        -D CMAKE_CXX_COMPILER_LAUNCHER:FILEPATH='ccache.exe'
+        -D CMAKE_CXX_COMPILER_LAUNCHER:FILEPATH=ccache.exe
         -D CMAKE_TOOLCHAIN_FILE:FILEPATH="$env:VCPKG_INSTALLATION_ROOT/scripts/buildsystems/vcpkg.cmake"
         -D CMAKE_DISABLE_PRECOMPILE_HEADERS:BOOL=ON
         -D CMAKE_BUILD_TYPE:STRING=${{ matrix.build-type.name }}
@@ -480,7 +480,7 @@ jobs:
         -S .
         -B "$env:RUNNER_WORKSPACE/HelloWorld-builds-cmake/Drivers-fetchcontent-msvc-${{ matrix.build-type.key }}"
         -G Ninja
-        -D CMAKE_CXX_COMPILER_LAUNCHER:FILEPATH='ccache.exe'
+        -D CMAKE_CXX_COMPILER_LAUNCHER:FILEPATH=ccache.exe
         -D CMAKE_TOOLCHAIN_FILE:FILEPATH="$env:VCPKG_INSTALLATION_ROOT/scripts/buildsystems/vcpkg.cmake"
         -D CMAKE_DISABLE_PRECOMPILE_HEADERS:BOOL=ON
         -D CMAKE_BUILD_TYPE:STRING=${{ matrix.build-type.name }}
