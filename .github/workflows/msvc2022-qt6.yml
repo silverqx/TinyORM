@@ -555,7 +555,7 @@ jobs:
         New-Item -Type File -Path $env:TinySQLitePath
 
     # Windows github hosted runners don't contain sqlite3 executable
-    - name: Print MySQL, PostgreSQL database versions
+    - name: Print MySQL and PostgreSQL database versions
       run: |
         Write-Output '::group::MySQL version'
         mysql.exe --version

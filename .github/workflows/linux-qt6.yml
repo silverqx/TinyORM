@@ -518,7 +518,7 @@ jobs:
 
         touch "$TinySQLitePath"
 
-    - name: Print MySQL, SQLite, PostgreSQL database versions
+    - name: Print MySQL, PostgreSQL, and SQLite database versions
       run: |
         mysql --version
         pg_config --version
