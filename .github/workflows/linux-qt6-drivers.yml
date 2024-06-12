@@ -32,7 +32,9 @@ jobs:
     runs-on: [ self-hosted, linux ]
 
     env:
-      TINY_PARALLEL_GCC: 4
+      # Don't use more than 3 cores, I also saw blue screen with zram :/
+      # Currenlty using 16G swap file to be safe
+      TINY_PARALLEL_GCC: 3
       TINY_PARALLEL_CLANG: 8
 
     strategy:
