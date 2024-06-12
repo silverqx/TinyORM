@@ -382,8 +382,8 @@ jobs:
         -S .
         -B ../TinyORM-builds-cmake/build-${{ matrix.compiler.key }}-${{ matrix.qt.key }}-cmake-debug
         -G Ninja
-        -D CMAKE_CXX_COMPILER_LAUNCHER:FILEPATH='/ucrt64/bin/ccache.exe'
-        -D CMAKE_CXX_COMPILER:FILEPATH="/ucrt64/bin/${{ matrix.compiler.command }}"
+        -D CMAKE_CXX_COMPILER_LAUNCHER:FILEPATH=ccache.exe
+        -D CMAKE_CXX_COMPILER:FILEPATH=${{ matrix.compiler.command }}
         -D CMAKE_TOOLCHAIN_FILE:FILEPATH="$VCPKG_INSTALLATION_ROOT/scripts/buildsystems/vcpkg.cmake"
         -D CMAKE_DISABLE_PRECOMPILE_HEADERS:BOOL=ON
         -D CMAKE_EXPORT_PACKAGE_REGISTRY:BOOL=OFF
