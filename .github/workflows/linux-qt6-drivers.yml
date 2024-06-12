@@ -3,6 +3,10 @@
 # Forces TLS connections with the caching_sha2_password and certificate validation, also validates
 # certificate's CN for issuer and subject.
 
+# ccache
+# ---
+# Uses /ccache_drivers folder and the compressed cache size is 1.8G (after whole workflow finishes)
+
 name: Linux GCC/Clang Qt6.7 TinyDrivers
 
 # Invoke manually from the command-line using the gh command, eg.:

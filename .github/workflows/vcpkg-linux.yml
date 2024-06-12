@@ -6,6 +6,10 @@
 # ---
 # Set time zone to 'Etc/UTC' (this was the default)
 
+# ccache
+# ---
+# Uses /ccache_vcpkg folder and the compressed cache size is 250M (after whole workflow finishes)
+
 name: Vcpkg Linux
 
 # Invoke manually from the command-line using the gh command, eg.:

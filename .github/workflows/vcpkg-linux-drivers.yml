@@ -2,6 +2,10 @@
 # ---
 # Set time zone to 'Etc/UTC' (this was the default)
 
+# ccache
+# ---
+# Uses /ccache_drivers folder and the compressed cache size is 290M (after whole workflow finishes)
+
 name: Vcpkg Linux TinyDrivers
 
 # Invoke manually from the command-line using the gh command, eg.:
