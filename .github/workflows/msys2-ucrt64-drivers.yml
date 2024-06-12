@@ -34,7 +34,7 @@ jobs:
       TINY_PARALLEL_GCC: 3
       TINY_PARALLEL_CLANG_OR_VCPKG: 9
       TINY_MYSQL_SERVICE: MySQL84
-      # Used by the msys2.cmd script
+      # Used by the msys2.cmd script and cygpath.exe
       MSYS2_ROOT: C:\msys64
 
       # State variables
@@ -80,6 +80,9 @@ jobs:
         $tinyormBuildTree = Join-Path -Path $env:RUNNER_WORKSPACE TinyORM-builds-cmake `
         $tinyormBuildName
         "TinyORMBuildTree=$tinyormBuildTree" >> $env:GITHUB_ENV
+
+        $tinyormBuildTreeCyg = & "$env:MSYS2_ROOT\usr\bin\cygpath.exe" --unix $tinyormBuildTree
+        "TinyORMBuildTreeCyg=$tinyormBuildTreeCyg" >> $env:GITHUB_ENV
 
         $parallel = '${{ matrix.compiler.key }}' -ceq 'gcc' ? $env:TINY_PARALLEL_GCC :
         $env:TINY_PARALLEL_CLANG_OR_VCPKG
@@ -218,7 +221,7 @@ jobs:
       run: >-
         cmake.exe --log-level=DEBUG --log-context
         -S .
-        -B "$TinyORMBuildTree"
+        -B "$TinyORMBuildTreeCyg"
         -G Ninja
         -D CMAKE_CXX_COMPILER_LAUNCHER:FILEPATH=ccache.exe
         -D CMAKE_CXX_COMPILER:FILEPATH=${{ matrix.compiler.command }}
