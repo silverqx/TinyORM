@@ -85,6 +85,7 @@ jobs:
 
     # Don't use the default CCACHE_DIR path on self-hosted runners
     - name: Ccache prepare environment
+      if: env.TinyIsSelfHostedRunner == 'true'
       run: |
         ccacheDirPath=$(realpath "$RUNNER_WORKSPACE/ccache")
         echo "CCACHE_DIR=$ccacheDirPath" >> $GITHUB_ENV
