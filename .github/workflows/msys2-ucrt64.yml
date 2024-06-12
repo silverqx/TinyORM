@@ -409,8 +409,9 @@ jobs:
 
     - name: TinyORM cmake build ✨ (${{ env.TinyORMBuildName }})
       shell: msys2 {0}
+      working-directory: ${{ env.TinyORMBuildTree }}
       run: |
-        cmake.exe --build $env:TinyORMBuildTree --target all --parallel $TinyParallel
+        cmake.exe --build . --target all --parallel $TinyParallel
 
     - name: Ccache print statistics
       shell: msys2 {0}

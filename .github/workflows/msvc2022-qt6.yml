@@ -719,8 +719,9 @@ jobs:
         -D BUILD_DRIVERS:BOOL=OFF
 
     - name: TinyORM cmake build ✨ (${{ env.TinyORMBuildName }})
+      working-directory: ${{ env.TinyORMBuildTree }}
       run: |
-        cmake.exe --build $env:TinyORMBuildTree --target all --parallel $env:TinyParallel
+        cmake.exe --build . --target all --parallel $env:TinyParallel
 
     - name: Ccache print statistics
       run: |
