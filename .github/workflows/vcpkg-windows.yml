@@ -25,10 +25,6 @@ jobs:
     runs-on: [ self-hosted, windows ]
 
     env:
-      TINY_QT_SPEC: win64_msvc2019_64
-      # First value is a compressed data size
-      # ~ 70 * 3 + 100
-      TINY_CCACHE_MAX_SIZE: 500M
       TINY_PARALLEL: 10
 
     strategy:
@@ -72,28 +68,13 @@ jobs:
         $runnerWorkPath = Resolve-Path -Path "$env:RUNNER_WORKSPACE/.."
         "TinyRunnerWorkPath=$runnerWorkPath" >> $env:GITHUB_ENV
 
-        # Starts with the merydeye-
-        $isSelfHostedRunner = $env:RUNNER_NAME.StartsWith('merydeye-', $true, $null)
-        "TinyIsSelfHostedRunner=$isSelfHostedRunner" >> $env:GITHUB_ENV
-
-        $parallel = $isSelfHostedRunner ? $env:TINY_PARALLEL : $env:NUMBER_OF_PROCESSORS
-        "TinyParallel=$parallel" >> $env:GITHUB_ENV
-
         $tinyormPath = Resolve-Path -Path ./main
         "TinyORMPath=$tinyormPath" >> $env:GITHUB_ENV
 
     - name: Ninja install latest version
-      if: env.TinyIsSelfHostedRunner == 'true'
       uses: seanmiddleditch/gha-setup-ninja@master
       with:
         destination: ${{ env.TinyRunnerWorkPath }}/ninja-build
-
-    - name: CMake and Ninja install latest versions
-      if: env.TinyIsSelfHostedRunner == 'false'
-      uses: lukka/get-cmake@latest
-      with:
-        useLocalCache: true
-        useCloudCache: false
 
     - name: Visual Studio 2022 pwsh shell setup
       uses: ilammy/msvc-dev-cmd@v1
@@ -105,7 +86,7 @@ jobs:
       run: |
         "VCPKG_ROOT=$env:VCPKG_INSTALLATION_ROOT" >> $env:GITHUB_ENV
         'VCPKG_DEFAULT_TRIPLET=x64-windows' >> $env:GITHUB_ENV
-        "VCPKG_MAX_CONCURRENCY=$env:TinyParallel" >> $env:GITHUB_ENV
+        "VCPKG_MAX_CONCURRENCY=$env:TINY_PARALLEL" >> $env:GITHUB_ENV
 
         $vcpkgPath = Resolve-Path -Path "$env:TinyORMPath/cmake/vcpkg"
 
@@ -119,7 +100,6 @@ jobs:
         'VCPKG_BINARY_SOURCES=clear;x-gha,readwrite' >> $env:GITHUB_ENV
 
     - name: Self-hosted runner prepare environment
-      if: env.TinyIsSelfHostedRunner == 'true'
       run: |
         'C:\Program Files\CMake\bin' >> $env:GITHUB_PATH
         "$env:VCPKG_INSTALLATION_ROOT" >> $env:GITHUB_PATH
@@ -159,7 +139,7 @@ jobs:
         }
 
     - name: vcpkg upgrade repository (latest version)
-      if: env.TinyIsSelfHostedRunner == 'true' && env.TINY_VCPKG_NEEDS_UPGRADE == 'true'
+      if: env.TINY_VCPKG_NEEDS_UPGRADE == 'true'
       run: |
         Set-Location -Path $env:VCPKG_INSTALLATION_ROOT
 
@@ -280,7 +260,7 @@ jobs:
       working-directory: >-
         ../HelloWorld-builds-cmake/build-vcpkgmanifest-msvc-${{ matrix.build-type.key }}
       run: |
-        cmake.exe --build . --target all --parallel $env:TinyParallel
+        cmake.exe --build . --target all --parallel $env:TINY_PARALLEL
 
     # Related issue: https://github.com/microsoft/vcpkg/issues/33539
     - name: HelloWorld finish VCPKG_APPLOCAL_DEPS (Debug)
@@ -321,20 +301,7 @@ jobs:
 
     # The FetchContent and Manual methods below need Qt installed and to be accessible on the system
 
-    - name: Qt v${{ matrix.qt.version }} install base components
-      if: env.TinyIsSelfHostedRunner == 'false'
-      uses: jurplel/install-qt-action@v3
-      with:
-        archives: qtbase
-        version: ${{ matrix.qt.version }}
-        arch: ${{ env.TINY_QT_SPEC }}
-        cache: true
-        setup-python: false
-        extra: --external 7z.exe
-        dir: ${{ env.TinyRunnerWorkPath }}
-
     - name: ${{ matrix.qt.name }} prepare environment
-      if: env.TinyIsSelfHostedRunner == 'true'
       run: |
         "$env:TINY_QT_ROOT\${{ matrix.qt.version }}\msvc2019_64\bin" >> $env:GITHUB_PATH
 
@@ -346,48 +313,9 @@ jobs:
 
     # Don't use the default CCACHE_DIR path on self-hosted runners
     - name: Ccache prepare environment
-      if: env.TinyIsSelfHostedRunner == 'true'
       run: |
         $ccacheDirPath = Join-Path -Path $env:RUNNER_WORKSPACE -ChildPath ccache_vcpkg
         "CCACHE_DIR=$ccacheDirPath" >> $env:GITHUB_ENV
-
-    - name: Ccache initialize
-      if: env.TinyIsSelfHostedRunner == 'false'
-      id: ccache-initialize-cache
-      run: |
-        Write-Output '::group::Install'
-        choco install ccache --yes
-        Write-Output '::endgroup::'
-
-        Write-Output '::group::get-config cache_dir'
-        $cachePath = ccache.exe --get-config cache_dir
-        "CachePath=$cachePath" >> $env:GITHUB_OUTPUT
-
-        "ImageOS=$env:ImageOS" >> $env:GITHUB_OUTPUT
-        Write-Output '::endgroup::'
-
-    - name: Ccache restore cache 🕺
-      if: env.TinyIsSelfHostedRunner == 'false'
-      uses: actions/cache@v3
-      with:
-        path: ${{ env.cache_path }}
-        key: ${{ runner.os }}-${{ env.image_os }}-ccache-${{ env.cache_name }}-${{ github.run_id }}
-        restore-keys: |
-          ${{ runner.os }}-${{ env.image_os }}-ccache-${{ env.cache_name }}-
-      env:
-        cache_name: vcpkg-windows-${{ matrix.qt.key }}-${{ matrix.build-type.key }}
-        cache_path: ${{ steps.ccache-initialize-cache.outputs.CachePath }}
-        image_os: ${{ steps.ccache-initialize-cache.outputs.ImageOS }}
-
-    # I'm managing the ccache configuration manually on self-hosted runners using the ccache.conf
-    # because it's used by more actions.
-    - name: Ccache prepare configuration 🥳
-      if: env.TinyIsSelfHostedRunner == 'false'
-      run: |
-        ccache.exe --set-config max_size=$env:TINY_CCACHE_MAX_SIZE
-        ccache.exe --set-config sloppiness=pch_defines,time_macros
-        ccache.exe --set-config depend_mode=true
-        ccache.exe --set-config inode_cache=true
 
     - name: Ccache print version and configuration
       run: |
@@ -441,7 +369,7 @@ jobs:
       working-directory: >-
         ../TinyORM-builds-cmake/build-manual-msvc-${{ matrix.build-type.key }}
       run: |
-        cmake.exe --build . --target all --parallel $env:TinyParallel
+        cmake.exe --build . --target all --parallel $env:TINY_PARALLEL
 
     - name: Ccache print statistics
       run: |
@@ -474,7 +402,7 @@ jobs:
       working-directory: >-
         ../HelloWorld-builds-cmake/build-manual-msvc-${{ matrix.build-type.key }}
       run: |
-        cmake.exe --build . --target all --parallel $env:TinyParallel
+        cmake.exe --build . --target all --parallel $env:TINY_PARALLEL
 
     - name: HelloWorld execute (SQLite) 🏁
       working-directory: >-
@@ -543,7 +471,7 @@ jobs:
       working-directory: >-
         ../HelloWorld-builds-cmake/build-fetchcontent-msvc-${{ matrix.build-type.key }}
       run: |
-        cmake.exe --build . --target install --parallel $env:TinyParallel
+        cmake.exe --build . --target install --parallel $env:TINY_PARALLEL
 
     - name: Ccache print statistics
       run: |

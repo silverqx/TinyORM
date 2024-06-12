@@ -22,6 +22,10 @@ jobs:
     # Self-hosted runner is Ubuntu 22.04
     runs-on: [ self-hosted, linux ]
 
+    env:
+      TINY_PARALLEL: 8
+      TINY_CLANG_TIDY_COMPLETED: false
+
     # Clang Tidy can't be executed on Release builds, it's designed to be run on Debug builds only
     strategy:
       matrix:
@@ -34,9 +38,6 @@ jobs:
             name: Qt6
             version: 6.7.1
 
-    env:
-      TINY_CLANG_TIDY_COMPLETED: false
-
     steps:
     - uses: actions/checkout@v4
       with:
@@ -47,34 +48,14 @@ jobs:
         runnerWorkPath=$(realpath "$RUNNER_WORKSPACE/..")
         echo "TinyRunnerWorkPath=$runnerWorkPath" >> $GITHUB_ENV
 
-        # Starts with the merydeye-
-        [[ "$RUNNER_NAME" == 'merydeye-'* ]] && isSelfHostedRunner='true' || isSelfHostedRunner='false'
-        echo "TinyIsSelfHostedRunner=$isSelfHostedRunner" >> $GITHUB_ENV
-
-        # Parallel 4 ISN't maximum but because this workflow runs hours I will use parallel 4 to be
-        # able continue working on my PC, also, I decided to use the different strategy, I will use
-        # the on: workflow_dispatch for all Linux GitHub Actions and will invoke these workflows
-        # manually from the command-line using the gh command, eg.:
-        # gh workflow run --ref silverqx-develop
-        [[ "$isSelfHostedRunner" == 'true' ]] && parallel=8 || parallel=2
-        echo "TinyParallel=$parallel" >> $GITHUB_ENV
-
         tinyormPath=$(realpath ./main)
         echo "TinyORMPath=$tinyormPath" >> $GITHUB_ENV
 
         tinyormBuildName='analyzers-${{ matrix.qt.key }}-clang-debug'
         echo "TinyORMBuildName=$tinyormBuildName" >> $GITHUB_ENV
 
-        tinyormBuildFolder="build-$tinyormBuildName"
-        echo "TinyORMBuildFolder=$tinyormBuildFolder" >> $GITHUB_ENV
-
-        tinyormBuildTree="$RUNNER_WORKSPACE/TinyORM-builds-cmake/$tinyormBuildFolder"
+        tinyormBuildTree="$RUNNER_WORKSPACE/TinyORM-builds-cmake/build-$tinyormBuildName"
         echo "TinyORMBuildTree=$tinyormBuildTree" >> $GITHUB_ENV
-
-    - name: Test self-hosted runner
-      if: env.TinyIsSelfHostedRunner == 'false'
-      run: |
-        throw 'This workflow is optimized for the self-hosted runner only.'
 
     # lukka/get-cmake@latest needed because of Fedora
     - name: CMake and Ninja install latest versions
@@ -86,18 +67,9 @@ jobs:
     # Don't use the default CCACHE_DIR path on self-hosted runners
     # analyzers.yml and vcpkg-linux.yml use the same /ccache_vcpkg folder
     - name: Ccache prepare environment
-      if: env.TinyIsSelfHostedRunner == 'true'
       run: |
         ccacheDirPath=$(realpath "$RUNNER_WORKSPACE/ccache_vcpkg")
         echo "CCACHE_DIR=$ccacheDirPath" >> $GITHUB_ENV
-
-    - name: Ccache prepare configuration 🥳
-      if: env.TinyIsSelfHostedRunner == 'false'
-      run: |
-        # First value is a compressed data size
-        # ~ 490 * 3 + 100
-        ccache --set-config max_size=1600M
-        ccache --set-config sloppiness=pch_defines,time_macros
 
     - name: Ccache print version and configuration
       run: |
@@ -113,7 +85,7 @@ jobs:
       run: |
         echo "VCPKG_ROOT=$VCPKG_INSTALLATION_ROOT" >> $GITHUB_ENV
         echo 'VCPKG_DEFAULT_TRIPLET=x64-linux-dynamic' >> $GITHUB_ENV
-        echo "VCPKG_MAX_CONCURRENCY=$TinyParallel" >> $GITHUB_ENV
+        echo "VCPKG_MAX_CONCURRENCY=$TINY_PARALLEL" >> $GITHUB_ENV
 
     - name: vcpkg needs upgrade? (once per day)
       run: |
@@ -221,7 +193,7 @@ jobs:
     - name: TinyORM cmake build ✨ (${{ env.TinyORMBuildName }})
       working-directory: ${{ env.TinyORMBuildTree }}
       run: >-
-        cmake --build . --target all --parallel $TinyParallel
+        cmake --build . --target all --parallel $TINY_PARALLEL
 
     - name: Ccache print statistics
       run: |
@@ -235,7 +207,7 @@ jobs:
         run-clang-tidy
         -extra-arg-before='-Qunused-arguments'
         -p="$TinyORMBuildTree"
-        -j $TinyParallel
+        -j $TINY_PARALLEL
         '[\\\/]+(?:drivers|examples|orm|src|tests|tom)[\\\/]+.+?[\\\/]+(?!mocs_)[\w\d_\-\+]+\.cpp$'
 
     # Disabled checks
@@ -267,6 +239,6 @@ jobs:
         -checks="$checks" \
         -extra-arg-before='-Qunused-arguments' \
         -header-filter='[\\\/]+(drivers|examples|orm|tests|tom)[\\\/]+.+\.(h|hpp)$' \
-        -j $TinyParallel \
+        -j $TINY_PARALLEL \
         -p="$TinyORMBuildTree" \
         '[\\\/]+(?:drivers|examples|orm|src|tests|tom)[\\\/]+.+?[\\\/]+(?!mocs_)[\w\d_\-\+]+\.cpp$'

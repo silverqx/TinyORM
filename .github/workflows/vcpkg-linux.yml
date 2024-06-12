@@ -34,6 +34,9 @@ jobs:
     # Self-hosted runner is Ubuntu 22.04
     runs-on: [ self-hosted, linux ]
 
+    env:
+      TINY_PARALLEL: 10
+
     strategy:
       matrix:
         build-type:
@@ -76,32 +79,8 @@ jobs:
         runnerWorkPath=$(realpath "$RUNNER_WORKSPACE/..")
         echo "TinyRunnerWorkPath=$runnerWorkPath" >> $GITHUB_ENV
 
-        # Starts with the merydeye-
-        [[ "$RUNNER_NAME" == 'merydeye-'* ]] && isSelfHostedRunner='true' || isSelfHostedRunner='false'
-        echo "TinyIsSelfHostedRunner=$isSelfHostedRunner" >> $GITHUB_ENV
-
-        [[ "$isSelfHostedRunner" == 'true' ]] && parallel=4 || parallel=2
-        echo "TinyParallel=$parallel" >> $GITHUB_ENV
-
         tinyormPath=$(realpath ./main)
         echo "TinyORMPath=$tinyormPath" >> $GITHUB_ENV
-
-    - name: apt update
-      if: env.TinyIsSelfHostedRunner == 'false'
-      run: |
-        sudo apt update
-
-    - name: apt install g++-12 and ccache
-      if: env.TinyIsSelfHostedRunner == 'false'
-      run: |
-        sudo apt install --yes g++-12 ccache
-
-    # Qt5 build dependencies: https://wiki.qt.io/Building_Qt_5_from_Git
-    - name: apt install Qt5 build dependencies
-      if: env.TinyIsSelfHostedRunner == 'false' && matrix.qt.key == 'qt5'
-      run: >-
-        sudo apt install --yes '^libxcb.*-dev' libx11-xcb-dev libglu1-mesa-dev libxrender-dev
-        libxi-dev libxkbcommon-dev libxkbcommon-x11-dev
 
     # lukka/get-cmake@latest needed because of Fedora
     - name: CMake and Ninja install latest versions
@@ -115,7 +94,7 @@ jobs:
         echo "VCPKG_ROOT=$VCPKG_INSTALLATION_ROOT" >> $GITHUB_ENV
         # The x64-linux is correct
         echo 'VCPKG_DEFAULT_TRIPLET=x64-linux' >> $GITHUB_ENV
-        echo "VCPKG_MAX_CONCURRENCY=$TinyParallel" >> $GITHUB_ENV
+        echo "VCPKG_MAX_CONCURRENCY=$TINY_PARALLEL" >> $GITHUB_ENV
 
         vcpkgPath=$(realpath "$TinyORMPath/cmake/vcpkg")
 
@@ -129,7 +108,6 @@ jobs:
         echo 'VCPKG_BINARY_SOURCES=clear;x-gha,readwrite' >> $GITHUB_ENV
 
     - name: vcpkg add on the $PATH
-      if: env.TinyIsSelfHostedRunner == 'true'
       run: |
         echo "$VCPKG_INSTALLATION_ROOT" >> $GITHUB_PATH
 
@@ -165,7 +143,7 @@ jobs:
         fi
 
     - name: vcpkg upgrade repository (latest version)
-      if: env.TinyIsSelfHostedRunner == 'true' && env.TINY_VCPKG_NEEDS_UPGRADE == 'true'
+      if: env.TINY_VCPKG_NEEDS_UPGRADE == 'true'
       run: |
         cd "$VCPKG_INSTALLATION_ROOT"
 
@@ -285,7 +263,7 @@ jobs:
       working-directory: >-
         ../HelloWorld-builds-cmake/build-vcpkgmanifest-gcc-${{ matrix.build-type.key }}
       run: |
-        cmake --build . --target all --parallel $TinyParallel
+        cmake --build . --target all --parallel $TINY_PARALLEL
 
     - name: HelloWorld execute (SQLite) 🏁
       working-directory: >-
@@ -298,7 +276,6 @@ jobs:
     # The FetchContent and Manual methods below need Qt installed and to be accessible on the system
 
     - name: ${{ matrix.qt.name }} prepare environment
-      if: env.TinyIsSelfHostedRunner == 'true'
       run: |
         echo '/opt/Qt/${{ matrix.qt.version }}/bin' >> $GITHUB_PATH
         echo "LD_LIBRARY_PATH=/opt/Qt/${{ matrix.qt.version }}/gcc_64/lib${LD_LIBRARY_PATH:+:}$LD_LIBRARY_PATH" >> $GITHUB_ENV
@@ -307,11 +284,6 @@ jobs:
         # because the CMake can't find the Qt, but if I export the PATH directly in the step
         # it works but doesn't work using the GITHUB_PATH like define two line above. 🫤
         echo "CMAKE_PREFIX_PATH=/opt/Qt/${{ matrix.qt.version }}/gcc_64${CMAKE_PREFIX_PATH:+:}$CMAKE_PREFIX_PATH" >> $GITHUB_ENV
-
-    - name: apt install Qt v${{ matrix.qt.version }} base (${{ join(matrix.compiler.apt, ', ') }})
-      if: env.TinyIsSelfHostedRunner == 'false'
-      run: |
-        sudo apt install --yes ${{ join(matrix.qt.apt, ' ') }} ccache
 
     # Prepare ccache
     #
@@ -322,42 +294,9 @@ jobs:
     # Don't use the default CCACHE_DIR path on self-hosted runners
     # vcpkg-linux.yml and analyzers.yml use the same /ccache_vcpkg folder
     - name: Ccache prepare environment
-      if: env.TinyIsSelfHostedRunner == 'true'
       run: |
         ccacheDirPath=$(realpath "$RUNNER_WORKSPACE/ccache_vcpkg")
         echo "CCACHE_DIR=$ccacheDirPath" >> $GITHUB_ENV
-
-    - name: Ccache initialize
-      if: env.TinyIsSelfHostedRunner == 'false'
-      id: ccache-initialize-cache
-      run: |
-        cachePath=$(ccache --get-config cache_dir)
-        echo "CachePath=$cachePath" >> $GITHUB_OUTPUT
-
-        echo "ImageOS=$ImageOS" >> $GITHUB_OUTPUT
-
-    # This is not needed on the self-hosted runner
-    - name: Ccache restore cache 🕺
-      if: env.TinyIsSelfHostedRunner == 'false'
-      uses: actions/cache@v3
-      with:
-        path: ${{ env.cache_path }}
-        key: ${{ runner.os }}-${{ env.image_os }}-ccache-${{ env.cache_name }}-${{ github.run_id }}
-        restore-keys: |
-          ${{ runner.os }}-${{ env.image_os }}-ccache-${{ env.cache_name }}-
-      env:
-        # Distinguish also by debug/release build type
-        cache_name: vcpkg-linux-${{ matrix.qt.key }}-${{ matrix.build-type.key }}
-        cache_path: ${{ steps.ccache-initialize-cache.outputs.CachePath }}
-        image_os: ${{ steps.ccache-initialize-cache.outputs.ImageOS }}
-
-    # I'm managing the ccache configuration manually on self-hosted runners using the ccache.conf
-    # because it's or will be used by more actions.
-    - name: Ccache prepare configuration 🥳
-      if: env.TinyIsSelfHostedRunner == 'false'
-      run: |
-        ccache --set-config max_size=600M
-        ccache --set-config sloppiness=pch_defines,time_macros
 
     - name: Ccache print version and configuration
       run: |
@@ -411,7 +350,7 @@ jobs:
       working-directory: >-
         ../TinyORM-builds-cmake/build-manual-gcc-${{ matrix.build-type.key }}
       run: |
-        cmake --build . --target all --parallel $TinyParallel
+        cmake --build . --target all --parallel $TINY_PARALLEL
 
     - name: Ccache print statistics
       run: |
@@ -444,7 +383,7 @@ jobs:
       working-directory: >-
         ../HelloWorld-builds-cmake/build-manual-gcc-${{ matrix.build-type.key }}
       run: |
-        cmake --build . --target all --parallel $TinyParallel
+        cmake --build . --target all --parallel $TINY_PARALLEL
 
     - name: HelloWorld execute (SQLite) 🏁
       working-directory: >-
@@ -517,7 +456,7 @@ jobs:
       working-directory: >-
         ../HelloWorld-builds-cmake/build-fetchcontent-gcc-${{ matrix.build-type.key }}
       run: |
-        cmake --build . --target install --parallel $TinyParallel
+        cmake --build . --target install --parallel $TINY_PARALLEL
 
     - name: Ccache print statistics
       run: |
