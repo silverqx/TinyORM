@@ -258,10 +258,11 @@ jobs:
     # CMAKE_DISABLE_PRECOMPILE_HEADERS=ON is correct (no need to use PCH for one TU)
     # VCPKG_APPLOCAL_DEPS=OFF is correct as everything is linked statically on Linux
     # Don't use ccache for the VcpkgManifest method as the vcpkg has its own binary caching
+    # CFLAGS is a temporary GCC14 workaround because of libedit dependency of libmysql
     - name: HelloWorld-TinyDrivers cmake configure (vcpkgmanifest-gcc-${{ matrix.build-type.key }})
       working-directory: HelloWorld-TinyDrivers
       run: >-
-        cmake
+        CFLAGS="-Wno-implicit-function-declaration -Wno-int-conversion" cmake
         --log-level=DEBUG --log-context
         -S .
         -B "$RUNNER_WORKSPACE/HelloWorld-builds-cmake/build-TinyDrivers-vcpkgmanifest-gcc-${{ matrix.build-type.key }}"
