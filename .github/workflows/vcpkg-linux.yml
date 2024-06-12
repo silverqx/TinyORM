@@ -415,7 +415,7 @@ jobs:
       shell: pwsh -NoProfile -Command "& '{0}'"
       working-directory: HelloWorld
       run: |
-        $toolsPath = Resolve-Path -Path "$TinyORMPath/tools/private"
+        $toolsPath = Resolve-Path -Path "$env:TinyORMPath/tools/private"
         $gitTag = $env:GITHUB_SHA
 
         & "$toolsPath/Edit-FetchContentGitTag.ps1" -CMakeLists ./CMakeLists.txt -GitTag $gitTag
