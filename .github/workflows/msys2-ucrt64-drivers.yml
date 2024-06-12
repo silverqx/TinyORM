@@ -218,7 +218,7 @@ jobs:
       run: >-
         cmake.exe --log-level=DEBUG --log-context
         -S .
-        -B $TinyORMBuildTree
+        -B "$TinyORMBuildTree"
         -G Ninja
         -D CMAKE_CXX_COMPILER_LAUNCHER:FILEPATH=ccache.exe
         -D CMAKE_CXX_COMPILER:FILEPATH=${{ matrix.compiler.command }}
