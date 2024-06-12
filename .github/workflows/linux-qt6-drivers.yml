@@ -96,17 +96,14 @@ jobs:
         echo "TinyRunnerWorkPath=$runnerWorkPath" >> $GITHUB_ENV
 
         # Parallel gcc to 3 and clang to 8 is maximum what my computer allows but I decided to use
-        # the different strategy, I will use the on: workflow_dispatch for all Linux GitHub Actions
-        # and will invoke these workflows manually from the command-line using the gh command, eg.:
+        # the different strategy, I will use the on: workflow_dispatch for all self-hosted actions
+        # and these workflows are invoked automatically one from other:
         # gh workflow run --ref silverqx-develop
         # --
-        # The description below is Outdated but I leave the comment.
-        # For gcc14 with the parallel 4 I saw 15.1GB maximum memory usage from 15.6GB and that is
-        # very close to the edge, so I have to decrease it to 3.
-        # For clang18 it was ~11.6 from 15.6GB so parallel 8 is ok.
-        # I must divide all parallel by 2 because I have 2 self-hosted runners on the same computer
-        # and also -1 for reserve to avoid swapping, so for clang: 8 / 2 - 1 = 3 and for gcc:
-        # 3 / 2 - 1 = 1.
+        # For gcc14 with the parallel 4 I saw 15.1GB maximum memory usage out of 15.6GB and that is
+        # very close to the edge, so I have to decrease it to 3 (also saw the blue screen on Fedora
+        # with zram only without the swap file).
+        # For clang18 it was ~11.6 out of 15.6GB so parallel 8 is ok.
         [[ '${{ matrix.compiler.key }}' == 'gcc' ]] && parallel=$TINY_PARALLEL_GCC || \
         parallel=$TINY_PARALLEL_CLANG
         echo "TinyParallel=$parallel" >> $GITHUB_ENV
