@@ -210,22 +210,6 @@ jobs:
       run: |
         Copy-Item -Path ./HelloWorld.sqlite3 -Destination $env:RUNNER_WORKSPACE -Force
 
-    - name: TinyORM create folder for build trees
-      run: |
-        $buildTreesPath = '../TinyORM-builds-cmake'
-
-        if (-not (Test-Path $buildTreesPath)) {
-          New-Item -Type Directory $buildTreesPath
-        }
-
-    - name: HelloWorld create folder for build trees
-      run: |
-        $buildTreesPath = '../HelloWorld-builds-cmake'
-
-        if (-not (Test-Path $buildTreesPath)) {
-          New-Item -Type Directory $buildTreesPath
-        }
-
     # VcpkgManifest method with the VCPKG_APPLOCAL_DEPS (no install or deployment)
     # ---
 

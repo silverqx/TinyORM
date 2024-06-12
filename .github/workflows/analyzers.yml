@@ -152,10 +152,6 @@ jobs:
       run: |
         clazy-standalone --version
 
-    - name: TinyORM create folder for build trees
-      run: |
-        mkdir --parents '../TinyORM-builds-cmake'
-
     - name: Ccache clear statistics
       run: |
         ccache --zero-stats

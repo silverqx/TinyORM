@@ -238,22 +238,6 @@ jobs:
         repository: silverqx/TinyORM-HelloWorld-TinyDrivers
         path: HelloWorld-TinyDrivers
 
-    - name: TinyORM create folder for build trees
-      run: |
-        $buildTreesPath = '../TinyORM-builds-cmake'
-
-        if (-not (Test-Path $buildTreesPath)) {
-          New-Item -Type Directory $buildTreesPath
-        }
-
-    - name: HelloWorld-TinyDrivers create folder for build trees
-      run: |
-        $buildTreesPath = '../HelloWorld-builds-cmake'
-
-        if (-not (Test-Path $buildTreesPath)) {
-          New-Item -Type Directory $buildTreesPath
-        }
-
     # The tom_testdata.exe, FetchContent, and Manual methods below need Qt installed and to be
     # accessible on the system
     - name: ${{ matrix.qt.name }} prepare environment

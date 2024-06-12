@@ -204,12 +204,6 @@ jobs:
       run: |
         "$VCPKG_INSTALLATION_ROOT/vcpkg.exe" --version
 
-    - name: TinyORM create build folder (${{ env.TinyORMBuildFolder }})
-      run: |
-        if (-not (Test-Path $env:TinyORMBuildTree)) {
-          New-Item -Type Directory $env:TinyORMBuildTree
-        }
-
     - name: Ccache clear statistics
       shell: msys2 {0}
       run: |

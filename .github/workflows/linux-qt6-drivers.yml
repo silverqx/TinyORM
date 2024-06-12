@@ -216,10 +216,6 @@ jobs:
         # it works but doesn't work using the GITHUB_PATH like define two line above. 🫤
         echo "CMAKE_PREFIX_PATH=/opt/Qt/6.7.1/gcc_64${CMAKE_PREFIX_PATH:+:}$CMAKE_PREFIX_PATH" >> $GITHUB_ENV
 
-    - name: TinyORM create build folder (${{ env.TinyORMBuildName }})
-      run: |
-        mkdir --parents "$TinyORMBuildTree"
-
     - name: Ccache clear statistics
       run: |
         ccache --zero-stats

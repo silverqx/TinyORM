@@ -273,10 +273,6 @@ jobs:
       run: |
         cmake --version
 
-    - name: TinyORM create build folder (${{ env.TinyORMBuildName }})
-      run: |
-        mkdir --parents "$TinyORMBuildTree"
-
     - name: Ccache clear statistics
       run: |
         ccache --zero-stats

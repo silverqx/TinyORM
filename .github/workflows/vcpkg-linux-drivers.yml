@@ -216,14 +216,6 @@ jobs:
         repository: silverqx/TinyORM-HelloWorld-TinyDrivers
         path: HelloWorld-TinyDrivers
 
-    - name: TinyORM create folder for build trees
-      run: |
-        mkdir --parents '../TinyORM-builds-cmake'
-
-    - name: HelloWorld-TinyDrivers create folder for build trees
-      run: |
-        mkdir --parents '../HelloWorld-builds-cmake'
-
     # The linux-qt6-drivers.yml workflow calls migrate:fresh and it calls the db:wipe internally,
     # so we need a freshly migrated MySQL database, I should use fresh database anyway.
     # The tom_testdata binary lives in the 'runner.workspace/.local/bin' and

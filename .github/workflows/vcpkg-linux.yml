@@ -225,14 +225,6 @@ jobs:
       run: |
         cp --target-directory="$RUNNER_WORKSPACE" ./HelloWorld.sqlite3
 
-    - name: TinyORM create folder for build trees
-      run: |
-        mkdir --parents '../TinyORM-builds-cmake'
-
-    - name: HelloWorld create folder for build trees
-      run: |
-        mkdir --parents '../HelloWorld-builds-cmake'
-
     # VcpkgManifest method (no install or deployment)
     # ---
 
