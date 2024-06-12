@@ -67,7 +67,8 @@ jobs:
         $mysqlDataPath = Join-Path -Path $runnerWorkPath -ChildPath 'mysql/data'
         "TinyMySQLDataPath=$mysqlDataPath" >> $env:GITHUB_ENV
 
-        $qtSpecPlain = $env:TINY_QT_SPEC.Split('_')[1..$env:TINY_QT_SPEC.Count] -join '_'
+        $qtSpecSplitted = $env:TINY_QT_SPEC.Split('_')
+        $qtSpecPlain = $qtSpecSplitted[1..($qtSpecSplitted.Count - 1)] -join '_'
         "TinyQtSpecPlain=$qtSpecPlain" >> $env:GITHUB_ENV
 
         "TinyParallel=$env:NUMBER_OF_PROCESSORS" >> $env:GITHUB_ENV
