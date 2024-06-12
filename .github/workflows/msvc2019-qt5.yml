@@ -376,7 +376,7 @@ jobs:
 
     - name: MySQL 8 libmysql.dll add on the $env:Path
       run: |
-        "$env:TinyRunnerWorkPath/TinyORM-bin" >> $env:GITHUB_PATH
+        "$env:TinyRunnerWorkPath\TinyORM-bin" >> $env:GITHUB_PATH
 
     - name: Ccache initialize
       id: ccache-initialize-cache
