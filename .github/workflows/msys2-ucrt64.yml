@@ -422,7 +422,7 @@ jobs:
       shell: msys2 {0}
       working-directory: ${{ env.TinyORMBuildTree }}/tests/testdata_tom
       run: >-
-        export PATH=../..${PATH:+:}"$PATH"
+        export PATH="$TinyORMBuildTreeCyg"${PATH:+:}"$PATH"
 
         ./tom_testdata.exe migrate
         --database=tinyorm_testdata_tom_mysql,tinyorm_testdata_tom_postgres,tinyorm_testdata_tom_sqlite
@@ -469,7 +469,7 @@ jobs:
       shell: msys2 {0}
       working-directory: ${{ env.TinyORMBuildTree }}/examples/tom
       run: |
-        export PATH=../..${PATH:+:}"$PATH"
+        export PATH="$TinyORMBuildTreeCyg"${PATH:+:}"$PATH"
 
         ./tom.exe migrate:fresh --database=tinyorm_tom_mysql --no-ansi
         ./tom.exe migrate:uninstall --reset --database=tinyorm_tom_mysql --no-ansi
@@ -492,7 +492,7 @@ jobs:
       shell: msys2 {0}
       working-directory: ${{ env.TinyORMBuildTree }}/examples/tom
       run: |
-        export PATH=../..${PATH:+:}"$PATH"
+        export PATH="$TinyORMBuildTreeCyg"${PATH:+:}"$PATH"
 
         ./tom.exe migrate:fresh --database=tinyorm_tom_postgres --no-ansi
         ./tom.exe migrate:uninstall --reset --database=tinyorm_tom_postgres --no-ansi
@@ -515,7 +515,7 @@ jobs:
       shell: msys2 {0}
       working-directory: ${{ env.TinyORMBuildTree }}/examples/tom
       run: |
-        export PATH=../..${PATH:+:}"$PATH"
+        export PATH="$TinyORMBuildTreeCyg"${PATH:+:}"$PATH"
 
         ./tom.exe migrate:fresh --database=tinyorm_tom_sqlite --no-ansi
         ./tom.exe migrate:uninstall --reset --database=tinyorm_tom_sqlite --no-ansi
