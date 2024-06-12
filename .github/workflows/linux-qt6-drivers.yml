@@ -115,10 +115,7 @@ jobs:
         tinyormBuildName='TinyDrivers-${{ matrix.compiler.name }}-${{ matrix.drivers-type }}-${{ matrix.build-type.key }}'
         echo "TinyORMBuildName=$tinyormBuildName" >> $GITHUB_ENV
 
-        tinyormBuildFolder="build-$tinyormBuildName"
-        echo "TinyORMBuildFolder=$tinyormBuildFolder" >> $GITHUB_ENV
-
-        tinyormBuildTree="$RUNNER_WORKSPACE/TinyORM-builds-cmake/$tinyormBuildFolder"
+        tinyormBuildTree="$RUNNER_WORKSPACE/TinyORM-builds-cmake/build-$tinyormBuildName"
         echo "TinyORMBuildTree=$tinyormBuildTree" >> $GITHUB_ENV
 
     - name: MySQL service check status
