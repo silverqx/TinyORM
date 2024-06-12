@@ -26,7 +26,7 @@ jobs:
       # gcc: ~ 115 * 3 + 100 ; clang: ~ 90 * 3 + 100
       TINY_CCACHE_MAX_SIZE_GCC: 450M
       TINY_CCACHE_MAX_SIZE_CLANG: 380M
-      # Clang and vcpkg use $(nproc --all) (max. available cores)
+      # Clang and vcpkg use $(nproc) (max. available cores)
       TINY_PARALLEL_GCC: 2
 
     strategy:
@@ -58,10 +58,10 @@ jobs:
         echo "TinyCcacheMaxSize=$ccacheMaxSize" >> $GITHUB_ENV
 
         [[ '${{ matrix.compiler.key }}' == 'gcc' ]] && parallel=$TINY_PARALLEL_GCC \
-        || parallel=$(nproc --all)
+        || parallel=$(nproc)
         echo "TinyParallel=$parallel" >> $GITHUB_ENV
 
-        echo "TinyParallelVcpkg=$(nproc --all)" >> $GITHUB_ENV
+        echo "TinyParallelVcpkg=$(nproc)" >> $GITHUB_ENV
       env:
         DB_SQLITE_DATABASE: ${{ secrets.DB_SQLITE_DATABASE }}
 
@@ -336,7 +336,7 @@ jobs:
     - name: TinyORM execute ctest 🔥
       working-directory: ../TinyORM-builds-cmake/build-${{ matrix.compiler.name }}-cmake-debug
       run: |
-        ctest --output-on-failure --parallel $(($TinyParallel + $(nproc --all) / 2))
+        ctest --output-on-failure --parallel $(($TinyParallel + $(nproc) / 2))
       env:
         DB_MYSQL_CHARSET: ${{ secrets.DB_MYSQL_CHARSET }}
         DB_MYSQL_COLLATION: ${{ secrets.DB_MYSQL_COLLATION }}
