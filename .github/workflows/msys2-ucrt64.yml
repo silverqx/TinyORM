@@ -104,7 +104,7 @@ jobs:
 
     - name: PostgreSQL PGBIN add on the $env:Path
       run: |
-        "$env:PGBIN" >> $env:GITHUB_PATH
+        $env:PGBIN >> $env:GITHUB_PATH
 
     - name: PostgreSQL service check status
       run: |
