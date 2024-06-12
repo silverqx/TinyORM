@@ -538,3 +538,19 @@ jobs:
         fi
       env:
         GH_TOKEN: ${{ github.token }}
+
+    - name: Cancel analyzers.yml workflow (on failure)
+      if: ${{ failure() }}
+      working-directory: ${{ env.TinyORMPath }}
+      run: |
+        databaseId=$(gh run list --workflow analyzers.yml --event workflow_dispatch \
+        --json databaseId,conclusion,status \
+        --jq '.[] | select (.status == "pending") | select (.conclusion == "") | .databaseId')
+
+        if [ $? -eq 0 ] && [[ "$databaseId" != "" && "$databaseId" =~ ^[0-9]+$ ]] &&
+           [ $databaseId -gt 0 ]
+        then
+          gh run cancel $databaseId
+        fi
+      env:
+        GH_TOKEN: ${{ github.token }}
