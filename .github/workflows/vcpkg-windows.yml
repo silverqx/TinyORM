@@ -348,7 +348,7 @@ jobs:
     - name: Ccache prepare environment
       if: env.TinyIsSelfHostedRunner == 'true'
       run: |
-        $ccacheDirPath = Join-Path -Path $env:RUNNER_WORKSPACE -ChildPath ccache
+        $ccacheDirPath = Join-Path -Path $env:RUNNER_WORKSPACE -ChildPath ccache_vcpkg
         "CCACHE_DIR=$ccacheDirPath" >> $env:GITHUB_ENV
 
     - name: Ccache initialize

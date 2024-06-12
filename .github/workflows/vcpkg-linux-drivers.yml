@@ -315,7 +315,7 @@ jobs:
     # Don't use the default CCACHE_DIR path on self-hosted runners
     - name: Ccache prepare environment
       run: |
-        ccacheDirPath=$(realpath "$RUNNER_WORKSPACE/ccache_drivers")
+        ccacheDirPath=$(realpath "$RUNNER_WORKSPACE/ccache_vcpkg_drivers")
         echo "CCACHE_DIR=$ccacheDirPath" >> $GITHUB_ENV
 
     - name: Ccache print version and configuration

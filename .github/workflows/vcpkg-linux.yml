@@ -320,10 +320,11 @@ jobs:
     # the CMAKE_CXX_COMPILER_LAUNCHER option.
 
     # Don't use the default CCACHE_DIR path on self-hosted runners
+    # vcpkg-linux.yml and analyzers.yml use the same /ccache_vcpkg folder
     - name: Ccache prepare environment
       if: env.TinyIsSelfHostedRunner == 'true'
       run: |
-        ccacheDirPath=$(realpath "$RUNNER_WORKSPACE/ccache")
+        ccacheDirPath=$(realpath "$RUNNER_WORKSPACE/ccache_vcpkg")
         echo "CCACHE_DIR=$ccacheDirPath" >> $GITHUB_ENV
 
     - name: Ccache initialize

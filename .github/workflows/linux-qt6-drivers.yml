@@ -138,7 +138,7 @@ jobs:
     # Don't use the default CCACHE_DIR path on self-hosted runners
     - name: Ccache prepare environment
       run: |
-        ccacheDirPath="$RUNNER_WORKSPACE/ccache"
+        ccacheDirPath="$RUNNER_WORKSPACE/ccache_drivers"
         echo "CCACHE_DIR=$ccacheDirPath" >> $GITHUB_ENV
 
     # I'm managing the ccache configuration manually on self-hosted runners using the ccache.conf

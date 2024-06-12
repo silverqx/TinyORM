@@ -337,11 +337,10 @@ jobs:
     # packages build through the FetchContent CMake module are also using the ccache, they respect
     # the CMAKE_CXX_COMPILER_LAUNCHER option.
 
-    # Don't use the default CCACHE_DIR path on self-hosted runners (also use separate folder
-    # for TinyDrivers).
+    # Don't use the default CCACHE_DIR path on self-hosted runners
     - name: Ccache prepare environment
       run: |
-        $ccacheDirPath = Join-Path -Path $env:RUNNER_WORKSPACE -ChildPath ccache_drivers
+        $ccacheDirPath = Join-Path -Path $env:RUNNER_WORKSPACE -ChildPath ccache_vcpkg_drivers
         "CCACHE_DIR=$ccacheDirPath" >> $env:GITHUB_ENV
 
     # Manual method linking against the TinyORM build tree (no install or deployment)
