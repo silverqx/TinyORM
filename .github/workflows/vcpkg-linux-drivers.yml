@@ -254,6 +254,14 @@ jobs:
       run: |
         echo 'no-op'
 
+    - name: HelloWorld prepare VcpkgManifest method environment
+      run: |
+        helloWorldVcpkgManifestBuildName='vcpkgmanifest-gcc-${{ matrix.build-type.key }}'
+        echo "HelloWorldVcpkgManifestBuildName=$helloWorldVcpkgManifestBuildName" >> $GITHUB_ENV
+
+        helloWoldVcpkgManifestBuildTree="$RUNNER_WORKSPACE/HelloWorld-builds-cmake/build-TinyDrivers-$helloWorldVcpkgManifestBuildName"
+        echo "HelloWorldVcpkgManifestBuildTree=$helloWoldVcpkgManifestBuildTree" >> $GITHUB_ENV
+
     - name: HelloWorld-TinyDrivers prepare VcpkgManifest method (vcpkg.json)
       working-directory: HelloWorld-TinyDrivers
       run: |
@@ -263,13 +271,13 @@ jobs:
     # VCPKG_APPLOCAL_DEPS=OFF is correct as everything is linked statically on Linux
     # Don't use ccache for the VcpkgManifest method as the vcpkg has its own binary caching
     # CFLAGS is a temporary GCC14 workaround because of libedit dependency of libmysql
-    - name: HelloWorld-TinyDrivers cmake configure (vcpkgmanifest-gcc-${{ matrix.build-type.key }})
+    - name: HelloWorld-TinyDrivers cmake configure (${{ env.HelloWorldVcpkgManifestBuildName }})
       working-directory: HelloWorld-TinyDrivers
       run: >-
         CFLAGS="-Wno-implicit-function-declaration -Wno-int-conversion" cmake
         --log-level=DEBUG --log-context
         -S .
-        -B "$RUNNER_WORKSPACE/HelloWorld-builds-cmake/build-TinyDrivers-vcpkgmanifest-gcc-${{ matrix.build-type.key }}"
+        -B "$HelloWorldVcpkgManifestBuildTree"
         -G Ninja
         -D CMAKE_TOOLCHAIN_FILE:FILEPATH="$VCPKG_INSTALLATION_ROOT/scripts/buildsystems/vcpkg.cmake"
         -D CMAKE_DISABLE_PRECOMPILE_HEADERS:BOOL=ON
@@ -277,15 +285,13 @@ jobs:
         -D VCPKG_APPLOCAL_DEPS:BOOL=OFF
         -D RESOLVE_TINYORM:STRING=VcpkgManifest
 
-    - name: HelloWorld-TinyDrivers cmake build ✨ (vcpkgmanifest-gcc-${{ matrix.build-type.key }})
-      working-directory: >-
-        ../HelloWorld-builds-cmake/build-TinyDrivers-vcpkgmanifest-gcc-${{ matrix.build-type.key }}
+    - name: HelloWorld-TinyDrivers cmake build ✨ (${{ env.HelloWorldVcpkgManifestBuildName }})
+      working-directory: ${{ env.HelloWorldVcpkgManifestBuildTree }}
       run: |
         cmake --build . --target all --parallel $TinyParallel
 
     - name: HelloWorld-TinyDrivers execute (MySQL) 🏁
-      working-directory: >-
-        ../HelloWorld-builds-cmake/build-TinyDrivers-vcpkgmanifest-gcc-${{ matrix.build-type.key }}
+      working-directory: ${{ env.HelloWorldVcpkgManifestBuildTree }}
       run: |
         ./HelloWorld-TinyDrivers
       env:
@@ -341,19 +347,30 @@ jobs:
       run: |
         echo 'no-op'
 
+    - name: HelloWorld prepare Manual method environment
+      run: |
+        helloWorldManualBuildName='manual-gcc-${{ matrix.build-type.key }}'
+        echo "HelloWorldManualBuildName=$helloWorldManualBuildName" >> $GITHUB_ENV
+
+        tinyormManualBuildTree="$RUNNER_WORKSPACE/TinyORM-builds-cmake/build-TinyDrivers-$helloWorldManualBuildName"
+        echo "TinyORMManualBuildTree=$tinyormManualBuildTree" >> $GITHUB_ENV
+
+        helloWoldManualBuildTree="$RUNNER_WORKSPACE/HelloWorld-builds-cmake/build-TinyDrivers-$helloWorldManualBuildName"
+        echo "HelloWorldManualBuildTree=$helloWoldManualBuildTree" >> $GITHUB_ENV
+
     - name: Ccache clear statistics
       run: |
         ccache --zero-stats
 
     # CMAKE_DISABLE_PRECOMPILE_HEADERS=OFF is correct (I want to use PCH here)
     # BUILD_TREE_DEPLOY=ON is needed here
-    - name: TinyORM cmake configure (manual-gcc-${{ matrix.build-type.key }})
+    - name: TinyORM cmake configure (${{ env.HelloWorldManualBuildName }})
       working-directory: ${{ env.TinyORMPath }}
       run: >-
         cmake
         --log-level=DEBUG --log-context
         -S .
-        -B "$RUNNER_WORKSPACE/TinyORM-builds-cmake/build-TinyDrivers-manual-gcc-${{ matrix.build-type.key }}"
+        -B "$TinyORMManualBuildTree"
         -G Ninja
         -D CMAKE_CXX_COMPILER_LAUNCHER:FILEPATH=ccache
         -D CMAKE_TOOLCHAIN_FILE:FILEPATH="$VCPKG_INSTALLATION_ROOT/scripts/buildsystems/vcpkg.cmake"
@@ -375,9 +392,8 @@ jobs:
         -D BUILD_DRIVERS:BOOL=ON
         -D DRIVERS_TYPE:STRING=Shared
 
-    - name: TinyORM cmake build ✨ (manual-gcc-${{ matrix.build-type.key }})
-      working-directory: >-
-        ../TinyORM-builds-cmake/build-TinyDrivers-manual-gcc-${{ matrix.build-type.key }}
+    - name: TinyORM cmake build ✨ (${{ env.HelloWorldManualBuildName }})
+      working-directory: ${{ env.TinyORMManualBuildTree }}
       run: |
         cmake --build . --target all --parallel $TinyParallel
 
@@ -393,34 +409,30 @@ jobs:
         cp ./vcpkg.json.Manual.example ./vcpkg.json
 
     # CMAKE_DISABLE_PRECOMPILE_HEADERS=ON is correct (no need to use PCH for one TU)
-    - name: HelloWorld-TinyDrivers cmake configure (manual-gcc-${{ matrix.build-type.key }})
+    - name: HelloWorld-TinyDrivers cmake configure (${{ env.HelloWorldManualBuildName }})
       working-directory: HelloWorld-TinyDrivers
       run: >-
         cmake
         --log-level=DEBUG --log-context
         -S .
-        -B "$RUNNER_WORKSPACE/HelloWorld-builds-cmake/build-TinyDrivers-manual-gcc-${{ matrix.build-type.key }}"
+        -B "$HelloWorldManualBuildTree"
         -G Ninja
-        -D CMAKE_PREFIX_PATH:PATH="$RUNNER_WORKSPACE/TinyORM-builds-cmake/build-TinyDrivers-manual-gcc-${{ matrix.build-type.key }}"
+        -D CMAKE_PREFIX_PATH:PATH="$TinyORMManualBuildTree"
         -D CMAKE_TOOLCHAIN_FILE:FILEPATH="$VCPKG_INSTALLATION_ROOT/scripts/buildsystems/vcpkg.cmake"
         -D CMAKE_DISABLE_PRECOMPILE_HEADERS:BOOL=ON
         -D CMAKE_BUILD_TYPE:STRING=${{ matrix.build-type.name }}
         -D VCPKG_APPLOCAL_DEPS:BOOL=OFF
         -D RESOLVE_TINYORM:STRING=Manual
 
-    - name: HelloWorld-TinyDrivers cmake build ✨ (manual-gcc-${{ matrix.build-type.key }})
-      working-directory: >-
-        ../HelloWorld-builds-cmake/build-TinyDrivers-manual-gcc-${{ matrix.build-type.key }}
+    - name: HelloWorld-TinyDrivers cmake build ✨ (${{ env.HelloWorldManualBuildName }})
+      working-directory: ${{ env.HelloWorldManualBuildTree }}
       run: |
         cmake --build . --target all --parallel $TinyParallel
 
     - name: HelloWorld-TinyDrivers execute (MySQL) 🏁
-      working-directory: >-
-        ../HelloWorld-builds-cmake/build-TinyDrivers-manual-gcc-${{ matrix.build-type.key }}
+      working-directory: ${{ env.HelloWorldManualBuildTree }}
       run: |
-        buildFolder="$RUNNER_WORKSPACE/TinyORM-builds-cmake/build-TinyDrivers-manual-gcc-${{ matrix.build-type.key }}"
-
-        export LD_LIBRARY_PATH="$buildFolder"${LD_LIBRARY_PATH:+:}"$LD_LIBRARY_PATH"
+        export LD_LIBRARY_PATH="$TinyORMManualBuildTree"${LD_LIBRARY_PATH:+:}"$LD_LIBRARY_PATH"
 
         ./HelloWorld-TinyDrivers
       env:
@@ -442,6 +454,14 @@ jobs:
       run: |
         echo 'no-op'
 
+    - name: HelloWorld prepare FetchContent method environment
+      run: |
+        helloWorldFetchContentBuildName='fetchcontent-gcc-${{ matrix.build-type.key }}'
+        echo "HelloWorldFetchContentBuildName=$helloWorldFetchContentBuildName" >> $GITHUB_ENV
+
+        helloWoldFetchContentBuildTree="$RUNNER_WORKSPACE/HelloWorld-builds-cmake/build-TinyDrivers-$helloWorldFetchContentBuildName"
+        echo "HelloWorldFetchContentBuildTree=$helloWoldFetchContentBuildTree" >> $GITHUB_ENV
+
     - name: HelloWorld-TinyDrivers prepare FetchContent method (vcpkg.json)
       working-directory: HelloWorld-TinyDrivers
       run: |
@@ -462,13 +482,13 @@ jobs:
         ccache --zero-stats
 
     # CMAKE_DISABLE_PRECOMPILE_HEADERS=OFF is correct (I want to use PCH here)
-    - name: HelloWorld-TinyDrivers cmake configure (fetchcontent-gcc-${{ matrix.build-type.key }})
+    - name: HelloWorld-TinyDrivers cmake configure (${{ env.HelloWorldFetchContentBuildName }})
       working-directory: HelloWorld-TinyDrivers
       run: >-
         cmake
         --log-level=DEBUG --log-context
         -S .
-        -B "$RUNNER_WORKSPACE/HelloWorld-builds-cmake/build-TinyDrivers-fetchcontent-gcc-${{ matrix.build-type.key }}"
+        -B "$HelloWorldFetchContentBuildTree"
         -G Ninja
         -D CMAKE_CXX_COMPILER_LAUNCHER:FILEPATH=ccache
         -D CMAKE_TOOLCHAIN_FILE:FILEPATH="$VCPKG_INSTALLATION_ROOT/scripts/buildsystems/vcpkg.cmake"
@@ -491,9 +511,8 @@ jobs:
         -D RESOLVE_TINYORM:STRING=FetchContent
 
     # Also install it, to test the deployment process
-    - name: HelloWorld-TinyDrivers cmake build and install ✨ (fetchcontent-gcc-${{ matrix.build-type.key }})
-      working-directory: >-
-        ../HelloWorld-builds-cmake/build-TinyDrivers-fetchcontent-gcc-${{ matrix.build-type.key }}
+    - name: HelloWorld-TinyDrivers cmake build and install ✨ (${{ env.HelloWorldFetchContentBuildName }})
+      working-directory: ${{ env.HelloWorldFetchContentBuildTree }}
       run: |
         cmake --build . --target install --parallel $TinyParallel
 

@@ -242,6 +242,14 @@ jobs:
       run: |
         echo 'no-op'
 
+    - name: HelloWorld prepare VcpkgManifest method environment
+      run: |
+        helloWorldVcpkgManifestBuildName='vcpkgmanifest-gcc-${{ matrix.build-type.key }}'
+        echo "HelloWorldVcpkgManifestBuildName=$helloWorldVcpkgManifestBuildName" >> $GITHUB_ENV
+
+        helloWoldVcpkgManifestBuildTree="$RUNNER_WORKSPACE/HelloWorld-builds-cmake/build-$helloWorldVcpkgManifestBuildName"
+        echo "HelloWorldVcpkgManifestBuildTree=$helloWoldVcpkgManifestBuildTree" >> $GITHUB_ENV
+
     - name: HelloWorld prepare VcpkgManifest method (vcpkg.json)
       working-directory: HelloWorld
       run: |
@@ -250,13 +258,13 @@ jobs:
     # CMAKE_DISABLE_PRECOMPILE_HEADERS=ON is correct (no need to use PCH for one TU)
     # VCPKG_APPLOCAL_DEPS=OFF is correct as everything is linked statically on Linux
     # Don't use ccache for the VcpkgManifest method as the vcpkg has its own binary caching
-    - name: HelloWorld cmake configure (vcpkgmanifest-gcc-${{ matrix.build-type.key }})
+    - name: HelloWorld cmake configure (${{ env.HelloWorldVcpkgManifestBuildName }})
       working-directory: HelloWorld
       run: >-
         cmake
         --log-level=DEBUG --log-context
         -S .
-        -B "$RUNNER_WORKSPACE/HelloWorld-builds-cmake/build-vcpkgmanifest-gcc-${{ matrix.build-type.key }}"
+        -B "$HelloWorldVcpkgManifestBuildTree"
         -G Ninja
         -D CMAKE_TOOLCHAIN_FILE:FILEPATH="$VCPKG_INSTALLATION_ROOT/scripts/buildsystems/vcpkg.cmake"
         -D CMAKE_DISABLE_PRECOMPILE_HEADERS:BOOL=ON
@@ -264,15 +272,13 @@ jobs:
         -D VCPKG_APPLOCAL_DEPS:BOOL=OFF
         -D RESOLVE_TINYORM:STRING=VcpkgManifest
 
-    - name: HelloWorld cmake build ✨ (vcpkgmanifest-gcc-${{ matrix.build-type.key }})
-      working-directory: >-
-        ../HelloWorld-builds-cmake/build-vcpkgmanifest-gcc-${{ matrix.build-type.key }}
+    - name: HelloWorld cmake build ✨ (${{ env.HelloWorldVcpkgManifestBuildName }})
+      working-directory: ${{ env.HelloWorldVcpkgManifestBuildTree }}
       run: |
         cmake --build . --target all --parallel $TINY_PARALLEL
 
     - name: HelloWorld execute (SQLite) 🏁
-      working-directory: >-
-        ../HelloWorld-builds-cmake/build-vcpkgmanifest-gcc-${{ matrix.build-type.key }}
+      working-directory: ${{ env.HelloWorldVcpkgManifestBuildTree }}
       run: |
         ./HelloWorld
       env:
@@ -320,18 +326,29 @@ jobs:
       run: |
         echo 'no-op'
 
+    - name: HelloWorld prepare Manual method environment
+      run: |
+        helloWorldManualBuildName='manual-gcc-${{ matrix.build-type.key }}'
+        echo "HelloWorldManualBuildName=$helloWorldManualBuildName" >> $GITHUB_ENV
+
+        tinyormManualBuildTree="$RUNNER_WORKSPACE/TinyORM-builds-cmake/build-$helloWorldManualBuildName"
+        echo "TinyORMManualBuildTree=$tinyormManualBuildTree" >> $GITHUB_ENV
+
+        helloWoldManualBuildTree="$RUNNER_WORKSPACE/HelloWorld-builds-cmake/build-$helloWorldManualBuildName"
+        echo "HelloWorldManualBuildTree=$helloWoldManualBuildTree" >> $GITHUB_ENV
+
     - name: Ccache clear statistics
       run: |
         ccache --zero-stats
 
     # CMAKE_DISABLE_PRECOMPILE_HEADERS=OFF is correct (I want to use PCH here)
-    - name: TinyORM cmake configure (manual-gcc-${{ matrix.build-type.key }})
+    - name: TinyORM cmake configure (${{ env.HelloWorldManualBuildName }})
       working-directory: ${{ env.TinyORMPath }}
       run: >-
         cmake
         --log-level=DEBUG --log-context
         -S .
-        -B "$RUNNER_WORKSPACE/TinyORM-builds-cmake/build-manual-gcc-${{ matrix.build-type.key }}"
+        -B "$TinyORMManualBuildTree"
         -G Ninja
         -D CMAKE_CXX_COMPILER_LAUNCHER:FILEPATH=ccache
         -D CMAKE_TOOLCHAIN_FILE:FILEPATH="$VCPKG_INSTALLATION_ROOT/scripts/buildsystems/vcpkg.cmake"
@@ -351,9 +368,8 @@ jobs:
         -D TOM_EXAMPLE:BOOL=OFF
         -D BUILD_DRIVERS:BOOL=OFF
 
-    - name: TinyORM cmake build ✨ (manual-gcc-${{ matrix.build-type.key }})
-      working-directory: >-
-        ../TinyORM-builds-cmake/build-manual-gcc-${{ matrix.build-type.key }}
+    - name: TinyORM cmake build ✨ (${{ env.HelloWorldManualBuildName }})
+      working-directory: ${{ env.TinyORMManualBuildTree }}
       run: |
         cmake --build . --target all --parallel $TINY_PARALLEL
 
@@ -369,34 +385,30 @@ jobs:
         cp ./vcpkg.json.Manual.example ./vcpkg.json
 
     # CMAKE_DISABLE_PRECOMPILE_HEADERS=ON is correct (no need to use PCH for one TU)
-    - name: HelloWorld cmake configure (manual-gcc-${{ matrix.build-type.key }})
+    - name: HelloWorld cmake configure (${{ env.HelloWorldManualBuildName }})
       working-directory: HelloWorld
       run: >-
         cmake
         --log-level=DEBUG --log-context
         -S .
-        -B "$RUNNER_WORKSPACE/HelloWorld-builds-cmake/build-manual-gcc-${{ matrix.build-type.key }}"
+        -B "$HelloWorldManualBuildTree"
         -G Ninja
-        -D CMAKE_PREFIX_PATH:PATH="$RUNNER_WORKSPACE/TinyORM-builds-cmake/build-manual-gcc-${{ matrix.build-type.key }}"
+        -D CMAKE_PREFIX_PATH:PATH="$TinyORMManualBuildTree"
         -D CMAKE_TOOLCHAIN_FILE:FILEPATH="$VCPKG_INSTALLATION_ROOT/scripts/buildsystems/vcpkg.cmake"
         -D CMAKE_DISABLE_PRECOMPILE_HEADERS:BOOL=ON
         -D CMAKE_BUILD_TYPE:STRING=${{ matrix.build-type.name }}
         -D VCPKG_APPLOCAL_DEPS:BOOL=OFF
         -D RESOLVE_TINYORM:STRING=Manual
 
-    - name: HelloWorld cmake build ✨ (manual-gcc-${{ matrix.build-type.key }})
-      working-directory: >-
-        ../HelloWorld-builds-cmake/build-manual-gcc-${{ matrix.build-type.key }}
+    - name: HelloWorld cmake build ✨ (${{ env.HelloWorldManualBuildName }})
+      working-directory: ${{ env.HelloWorldManualBuildTree }}
       run: |
         cmake --build . --target all --parallel $TINY_PARALLEL
 
     - name: HelloWorld execute (SQLite) 🏁
-      working-directory: >-
-        ../HelloWorld-builds-cmake/build-manual-gcc-${{ matrix.build-type.key }}
+      working-directory: ${{ env.HelloWorldManualBuildTree }}
       run: |
-        buildFolder="$RUNNER_WORKSPACE/TinyORM-builds-cmake/build-manual-gcc-${{ matrix.build-type.key }}"
-
-        export LD_LIBRARY_PATH="$buildFolder"${LD_LIBRARY_PATH:+:}"$LD_LIBRARY_PATH"
+        export LD_LIBRARY_PATH="$TinyORMManualBuildTree"${LD_LIBRARY_PATH:+:}"$LD_LIBRARY_PATH"
 
         ./HelloWorld
       env:
@@ -408,6 +420,14 @@ jobs:
     - name: 🪡 FetchContent method (with install or deployment) 🪡
       run: |
         echo 'no-op'
+
+    - name: HelloWorld prepare FetchContent method environment
+      run: |
+        helloWorldFetchContentBuildName='fetchcontent-gcc-${{ matrix.build-type.key }}'
+        echo "HelloWorldFetchContentBuildName=$helloWorldFetchContentBuildName" >> $GITHUB_ENV
+
+        helloWoldFetchContentBuildTree="$RUNNER_WORKSPACE/HelloWorld-builds-cmake/build-$helloWorldFetchContentBuildName"
+        echo "HelloWorldFetchContentBuildTree=$helloWoldFetchContentBuildTree" >> $GITHUB_ENV
 
     - name: HelloWorld prepare FetchContent method (vcpkg.json)
       working-directory: HelloWorld
@@ -429,13 +449,13 @@ jobs:
         ccache --zero-stats
 
     # CMAKE_DISABLE_PRECOMPILE_HEADERS=OFF is correct (I want to use PCH here)
-    - name: HelloWorld cmake configure (fetchcontent-gcc-${{ matrix.build-type.key }})
+    - name: HelloWorld cmake configure (${{ env.HelloWorldFetchContentBuildName }})
       working-directory: HelloWorld
       run: >-
         cmake
         --log-level=DEBUG --log-context
         -S .
-        -B "$RUNNER_WORKSPACE/HelloWorld-builds-cmake/build-fetchcontent-gcc-${{ matrix.build-type.key }}"
+        -B "$HelloWorldFetchContentBuildTree"
         -G Ninja
         -D CMAKE_CXX_COMPILER_LAUNCHER:FILEPATH=ccache
         -D CMAKE_TOOLCHAIN_FILE:FILEPATH="$VCPKG_INSTALLATION_ROOT/scripts/buildsystems/vcpkg.cmake"
@@ -457,9 +477,8 @@ jobs:
         -D RESOLVE_TINYORM:STRING=FetchContent
 
     # Also install it, to test the deployment process
-    - name: HelloWorld cmake build and install ✨ (fetchcontent-gcc-${{ matrix.build-type.key }})
-      working-directory: >-
-        ../HelloWorld-builds-cmake/build-fetchcontent-gcc-${{ matrix.build-type.key }}
+    - name: HelloWorld cmake build and install ✨ (${{ env.HelloWorldFetchContentBuildName }})
+      working-directory: ${{ env.HelloWorldFetchContentBuildTree }}
       run: |
         cmake --build . --target install --parallel $TINY_PARALLEL
 

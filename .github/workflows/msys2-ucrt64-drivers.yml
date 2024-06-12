@@ -73,12 +73,12 @@ jobs:
 
         # I had to shorten the folder name because of long path names, removed build-Tiny
         # at the beginning, u means ucrt64.
-        $tinyormBuildFolder = 'Drivers-msys2-u-${{ matrix.compiler.key }}-' +
+        $tinyormBuildName = 'Drivers-msys2-u-${{ matrix.compiler.key }}-' +
         '${{ matrix.drivers-type }}-${{ matrix.build-type.key }}'
-        "TinyORMBuildFolder=$tinyormBuildFolder" >> $env:GITHUB_ENV
+        "TinyORMBuildName=$tinyormBuildName" >> $env:GITHUB_ENV
 
         $tinyormBuildTree = Join-Path -Path $env:RUNNER_WORKSPACE TinyORM-builds-cmake `
-        $tinyormBuildFolder
+        $tinyormBuildName
         "TinyORMBuildTree=$tinyormBuildTree" >> $env:GITHUB_ENV
 
         $parallel = '${{ matrix.compiler.key }}' -ceq 'gcc' ? $env:TINY_PARALLEL_GCC :
@@ -218,7 +218,7 @@ jobs:
     # BUILD_TREE_DEPLOY isn't needed because CMake forces linker to write absolute paths to exe, but
     # I enable it anyway to test this feature.
     # CMAKE_DISABLE_PRECOMPILE_HEADERS=ON is correct as we need to test missing #include-s.
-    - name: TinyORM cmake configure (${{ env.TinyORMBuildFolder }})
+    - name: TinyORM cmake configure (${{ env.TinyORMBuildName }})
       shell: msys2 {0}
       working-directory: ${{ env.TinyORMPath }}
       run: >-
@@ -247,7 +247,7 @@ jobs:
         -D BUILD_DRIVERS:BOOL=ON
         -D DRIVERS_TYPE:STRING=${{ matrix.drivers-type }}
 
-    - name: TinyORM cmake build ✨ (${{ env.TinyORMBuildFolder }})
+    - name: TinyORM cmake build ✨ (${{ env.TinyORMBuildName }})
       shell: msys2 {0}
       working-directory: ${{ env.TinyORMBuildTree }}
       run: |

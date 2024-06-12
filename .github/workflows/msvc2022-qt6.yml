@@ -71,6 +71,13 @@ jobs:
         "TinyQtSpecPlain=$qtSpecPlain" >> $env:GITHUB_ENV
 
         "TinyParallel=$env:NUMBER_OF_PROCESSORS" >> $env:GITHUB_ENV
+
+        $tinyormBuildName = 'msvc-cmake-${{ matrix.build-type.key }}'
+        "TinyORMBuildName=$tinyormBuildName" >> $env:GITHUB_ENV
+
+        $tinyormBuildTree = Join-Path -Path $env:RUNNER_WORKSPACE TinyORM-builds-cmake `
+        "build-$tinyormBuildName"
+        "TinyORMBuildTree=$tinyormBuildTree" >> $env:GITHUB_ENV
       env:
         DB_SQLITE_DATABASE: ${{ secrets.DB_SQLITE_DATABASE }}
 
@@ -683,21 +690,20 @@ jobs:
       run: |
         cmake.exe --version
 
-    - name: TinyORM create build folder (msvc-cmake-${{ matrix.build-type.key }})
-      run: >-
-        New-Item -Type Directory
-        '../TinyORM-builds-cmake/build-msvc-cmake-${{ matrix.build-type.key }}'
+    - name: TinyORM create build folder (${{ env.TinyORMBuildName }})
+      run: |
+        New-Item -Type Directory $env:TinyORMBuildTree
 
     - name: Ccache clear statistics
       run: |
         ccache.exe --zero-stats
 
-    - name: TinyORM cmake configure (msvc-cmake-${{ matrix.build-type.key }})
+    - name: TinyORM cmake configure (${{ env.TinyORMBuildName }})
       run: >-
         cmake.exe
         --log-level=DEBUG --log-context
         -S .
-        -B ../TinyORM-builds-cmake/build-msvc-cmake-${{ matrix.build-type.key }}
+        -B $env:TinyORMBuildTree
         -G Ninja
         -D CMAKE_CXX_COMPILER_LAUNCHER:FILEPATH=ccache.exe
         -D CMAKE_TOOLCHAIN_FILE:FILEPATH="$env:VCPKG_INSTALLATION_ROOT/scripts/buildsystems/vcpkg.cmake"
@@ -717,18 +723,16 @@ jobs:
         -D TOM_EXAMPLE:BOOL=ON
         -D BUILD_DRIVERS:BOOL=OFF
 
-    - name: TinyORM cmake build ✨ (msvc-cmake-${{ matrix.build-type.key }})
-      run: >-
-        cmake.exe --build ../TinyORM-builds-cmake/build-msvc-cmake-${{ matrix.build-type.key }}
-        --target all --parallel $env:TinyParallel
+    - name: TinyORM cmake build ✨ (${{ env.TinyORMBuildName }})
+      run: |
+        cmake.exe --build $env:TinyORMBuildTree --target all --parallel $env:TinyParallel
 
     - name: Ccache print statistics
       run: |
         ccache.exe --show-stats -vv
 
     - name: Create and Seed tables for unit tests 🎉
-      working-directory: >-
-        ../TinyORM-builds-cmake/build-msvc-cmake-${{ matrix.build-type.key }}/tests/testdata_tom
+      working-directory: ${{ env.TinyORMBuildTree }}/tests/testdata_tom
       run: >-
         $env:Path = '..\..;' + $env:Path
 
@@ -757,7 +761,7 @@ jobs:
 
     # $env:NUMBER_OF_PROCESSORS / 2 : rounds down
     - name: TinyORM execute ctest 🔥
-      working-directory: ../TinyORM-builds-cmake/build-msvc-cmake-${{ matrix.build-type.key }}
+      working-directory: ${{ env.TinyORMBuildTree }}
       run: >-
         ctest.exe --output-on-failure
         --parallel ([int] $env:TinyParallel + $env:NUMBER_OF_PROCESSORS / 2)
@@ -782,8 +786,7 @@ jobs:
         TOM_TESTS_ENV: ${{ vars.TOM_TESTS_ENV }}
 
     - name: Tom example test some commands (MySQL) 🚀
-      working-directory: >-
-        ../TinyORM-builds-cmake/build-msvc-cmake-${{ matrix.build-type.key }}/examples/tom
+      working-directory: ${{ env.TinyORMBuildTree }}/examples/tom
       run: |
         $env:Path = '..\..;' + $env:Path
 
@@ -809,8 +812,7 @@ jobs:
         TOM_EXAMPLE_ENV: ${{ vars.TOM_EXAMPLE_ENV }}
 
     - name: Tom example test some commands (PostgreSQL) 🙌
-      working-directory: >-
-        ../TinyORM-builds-cmake/build-msvc-cmake-${{ matrix.build-type.key }}/examples/tom
+      working-directory: ${{ env.TinyORMBuildTree }}/examples/tom
       run: |
         $env:Path = '..\..;' + $env:Path
 
@@ -832,8 +834,7 @@ jobs:
         TOM_EXAMPLE_ENV: ${{ vars.TOM_EXAMPLE_ENV }}
 
     - name: Tom example test some commands (SQLite) 🏁
-      working-directory: >-
-        ../TinyORM-builds-cmake/build-msvc-cmake-${{ matrix.build-type.key }}/examples/tom
+      working-directory: ${{ env.TinyORMBuildTree }}/examples/tom
       run: |
         $env:Path = '..\..;' + $env:Path
 

@@ -72,6 +72,12 @@ jobs:
         echo "TinyParallel=$parallel" >> $GITHUB_ENV
 
         echo "TinyParallelVcpkg=$(nproc)" >> $GITHUB_ENV
+
+        tinyormBuildName='${{ matrix.compiler.name }}-cmake-debug'
+        echo "TinyORMBuildName=$tinyormBuildName" >> $GITHUB_ENV
+
+        tinyormBuildTree="$RUNNER_WORKSPACE/TinyORM-builds-cmake/build-$tinyormBuildName"
+        echo "TinyORMBuildTree=$tinyormBuildTree" >> $GITHUB_ENV
       env:
         DB_SQLITE_DATABASE: ${{ secrets.DB_SQLITE_DATABASE }}
 
@@ -626,20 +632,20 @@ jobs:
       run: |
         cmake --version
 
-    - name: TinyORM create build folder (${{ matrix.compiler.name }}-cmake-debug)
+    - name: TinyORM create build folder (${{ env.TinyORMBuildName }})
       run: |
-        mkdir --parents '../TinyORM-builds-cmake/build-${{ matrix.compiler.name }}-cmake-debug'
+        mkdir --parents "$TinyORMBuildTree"
 
     - name: Ccache clear statistics
       run: |
         ccache --zero-stats
 
-    - name: TinyORM cmake configure (${{ matrix.compiler.name }}-cmake-debug)
+    - name: TinyORM cmake configure (${{ env.TinyORMBuildName }})
       run: >-
         cmake
         --log-level=DEBUG --log-context
         -S .
-        -B ../TinyORM-builds-cmake/build-${{ matrix.compiler.name }}-cmake-debug
+        -B "$TinyORMBuildTree"
         -G Ninja
         -D CMAKE_CXX_COMPILER_LAUNCHER:FILEPATH=ccache
         -D CMAKE_CXX_COMPILER:FILEPATH=${{ matrix.compiler.command }}
@@ -660,17 +666,16 @@ jobs:
         -D TOM_EXAMPLE:BOOL=ON
         -D BUILD_DRIVERS:BOOL=OFF
 
-    - name: TinyORM cmake build ✨ (${{ matrix.compiler.name }}-cmake-debug)
-      run: >-
-        cmake --build ../TinyORM-builds-cmake/build-${{ matrix.compiler.name }}-cmake-debug
-        --target all --parallel $TinyParallel
+    - name: TinyORM cmake build ✨ (${{ env.TinyORMBuildName }})
+      run: |
+        cmake --build "$TinyORMBuildTree" --target all --parallel $TinyParallel
 
     - name: Ccache print statistics
       run: |
         ccache --show-stats -vv
 
     - name: Create and Seed tables for unit tests 🎉
-      working-directory: ../TinyORM-builds-cmake/build-${{ matrix.compiler.name }}-cmake-debug/tests/testdata_tom
+      working-directory: ${{ env.TinyORMBuildTree }}/tests/testdata_tom
       run: >-
         export LD_LIBRARY_PATH=../..${LD_LIBRARY_PATH:+:}"$LD_LIBRARY_PATH"
 
@@ -698,7 +703,7 @@ jobs:
         TOM_TESTDATA_ENV: ${{ vars.TOM_TESTDATA_ENV }}
 
     - name: TinyORM execute ctest 🔥
-      working-directory: ../TinyORM-builds-cmake/build-${{ matrix.compiler.name }}-cmake-debug
+      working-directory: ${{ env.TinyORMBuildTree }}
       run: |
         ctest --output-on-failure --parallel $(($TinyParallel + $(nproc) / 2))
       env:
@@ -722,7 +727,7 @@ jobs:
         TOM_TESTS_ENV: ${{ vars.TOM_TESTS_ENV }}
 
     - name: Tom example test some commands (MySQL) 🚀
-      working-directory: ../TinyORM-builds-cmake/build-${{ matrix.compiler.name }}-cmake-debug/examples/tom
+      working-directory: ${{ env.TinyORMBuildTree }}/examples/tom
       run: |
         export LD_LIBRARY_PATH=../..${LD_LIBRARY_PATH:+:}"$LD_LIBRARY_PATH"
 
@@ -748,7 +753,7 @@ jobs:
         TOM_EXAMPLE_ENV: ${{ vars.TOM_EXAMPLE_ENV }}
 
     - name: Tom example test some commands (PostgreSQL) 🙌
-      working-directory: ../TinyORM-builds-cmake/build-${{ matrix.compiler.name }}-cmake-debug/examples/tom
+      working-directory: ${{ env.TinyORMBuildTree }}/examples/tom
       run: |
         export LD_LIBRARY_PATH=../..${LD_LIBRARY_PATH:+:}"$LD_LIBRARY_PATH"
 
@@ -770,7 +775,7 @@ jobs:
         TOM_EXAMPLE_ENV: ${{ vars.TOM_EXAMPLE_ENV }}
 
     - name: Tom example test some commands (SQLite) 🏁
-      working-directory: ../TinyORM-builds-cmake/build-${{ matrix.compiler.name }}-cmake-debug/examples/tom
+      working-directory: ${{ env.TinyORMBuildTree }}/examples/tom
       run: |
         export LD_LIBRARY_PATH=../..${LD_LIBRARY_PATH:+:}"$LD_LIBRARY_PATH"
 
