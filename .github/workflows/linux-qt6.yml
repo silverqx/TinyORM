@@ -670,11 +670,13 @@ jobs:
       run: |
         ccache --show-stats -vv
 
+    - name: TinyORM add on the $LD_LIBRARY_PATH
+      run: |
+        echo "LD_LIBRARY_PATH=$TinyORMBuildTree${LD_LIBRARY_PATH:+:}$LD_LIBRARY_PATH" >> $env:GITHUB_ENV
+
     - name: Create and Seed tables for unit tests 🎉
       working-directory: ${{ env.TinyORMBuildTree }}/tests/testdata_tom
       run: >-
-        export LD_LIBRARY_PATH=../..${LD_LIBRARY_PATH:+:}"$LD_LIBRARY_PATH"
-
         ./tom_testdata migrate
         --database=tinyorm_testdata_tom_mysql,tinyorm_testdata_tom_postgres,tinyorm_testdata_tom_sqlite
         --seed --no-ansi
@@ -725,8 +727,6 @@ jobs:
     - name: Tom example test some commands (MySQL) 🚀
       working-directory: ${{ env.TinyORMBuildTree }}/examples/tom
       run: |
-        export LD_LIBRARY_PATH=../..${LD_LIBRARY_PATH:+:}"$LD_LIBRARY_PATH"
-
         ./tom migrate:fresh --database=tinyorm_tom_mysql --no-ansi
         ./tom migrate:uninstall --reset --database=tinyorm_tom_mysql --no-ansi
         ./tom migrate:install --database=tinyorm_tom_mysql --no-ansi
@@ -751,8 +751,6 @@ jobs:
     - name: Tom example test some commands (PostgreSQL) 🙌
       working-directory: ${{ env.TinyORMBuildTree }}/examples/tom
       run: |
-        export LD_LIBRARY_PATH=../..${LD_LIBRARY_PATH:+:}"$LD_LIBRARY_PATH"
-
         ./tom migrate:fresh --database=tinyorm_tom_postgres --no-ansi
         ./tom migrate:uninstall --reset --database=tinyorm_tom_postgres --no-ansi
         ./tom migrate:install --database=tinyorm_tom_postgres --no-ansi
@@ -773,8 +771,6 @@ jobs:
     - name: Tom example test some commands (SQLite) 🏁
       working-directory: ${{ env.TinyORMBuildTree }}/examples/tom
       run: |
-        export LD_LIBRARY_PATH=../..${LD_LIBRARY_PATH:+:}"$LD_LIBRARY_PATH"
-
         ./tom migrate:fresh --database=tinyorm_tom_sqlite --no-ansi
         ./tom migrate:uninstall --reset --database=tinyorm_tom_sqlite --no-ansi
         ./tom migrate:install --database=tinyorm_tom_sqlite --no-ansi
