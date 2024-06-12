@@ -223,8 +223,7 @@ jobs:
     - name: TinyORM cmake configure (${{ env.TinyORMBuildName }})
       working-directory: ${{ env.TinyORMPath }}
       run: >-
-        cmake.exe
-        --log-level=DEBUG --log-context
+        cmake.exe --log-level=DEBUG --log-context
         -S .
         -B $env:TinyORMBuildTree
         -G Ninja

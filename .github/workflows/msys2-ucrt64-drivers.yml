@@ -216,8 +216,7 @@ jobs:
       shell: msys2 {0}
       working-directory: ${{ env.TinyORMPath }}
       run: >-
-        cmake.exe
-        --log-level=DEBUG --log-context
+        cmake.exe --log-level=DEBUG --log-context
         -S .
         -B $TinyORMBuildTree
         -G Ninja

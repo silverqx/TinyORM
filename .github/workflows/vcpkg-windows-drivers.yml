@@ -291,8 +291,7 @@ jobs:
     - name: HelloWorld-TinyDrivers cmake configure (${{ env.HelloWorldVcpkManifestBuildName }})
       working-directory: HelloWorld-TinyDrivers
       run: >-
-        cmake.exe
-        --log-level=DEBUG --log-context
+        cmake.exe --log-level=DEBUG --log-context
         -S .
         -B $env:HelloWorldVcpkManifestBuildTree
         -G Ninja
@@ -364,8 +363,7 @@ jobs:
     - name: TinyORM cmake configure (${{ env.HelloWorldManualBuildName }})
       working-directory: ${{ env.TinyORMPath }}
       run: >-
-        cmake.exe
-        --log-level=DEBUG --log-context
+        cmake.exe --log-level=DEBUG --log-context
         -S .
         -B $env:TinyORMManualBuildTree
         -G Ninja
@@ -408,8 +406,7 @@ jobs:
     - name: HelloWorld-TinyDrivers cmake configure (${{ env.HelloWorldManualBuildName }})
       working-directory: HelloWorld-TinyDrivers
       run: >-
-        cmake.exe
-        --log-level=DEBUG --log-context
+        cmake.exe --log-level=DEBUG --log-context
         -S .
         -B $env:HelloWorldManualBuildTree
         -G Ninja
@@ -480,8 +477,7 @@ jobs:
     - name: HelloWorld-TinyDrivers cmake configure (${{ env.HelloWorldFetchContentBuildName }})
       working-directory: HelloWorld-TinyDrivers
       run: >-
-        cmake.exe
-        --log-level=DEBUG --log-context
+        cmake.exe --log-level=DEBUG --log-context
         -S .
         -B $env:HelloWorldFetchContentBuildTree
         -G Ninja

@@ -360,8 +360,7 @@ jobs:
     - name: TinyORM cmake configure (${{ env.HelloWorldManualBuildName }})
       working-directory: ${{ env.TinyORMPath }}
       run: >-
-        cmake
-        --log-level=DEBUG --log-context
+        cmake --log-level=DEBUG --log-context
         -S .
         -B "$TinyORMManualBuildTree"
         -G Ninja
@@ -405,8 +404,7 @@ jobs:
     - name: HelloWorld-TinyDrivers cmake configure (${{ env.HelloWorldManualBuildName }})
       working-directory: HelloWorld-TinyDrivers
       run: >-
-        cmake
-        --log-level=DEBUG --log-context
+        cmake --log-level=DEBUG --log-context
         -S .
         -B "$HelloWorldManualBuildTree"
         -G Ninja
@@ -478,8 +476,7 @@ jobs:
     - name: HelloWorld-TinyDrivers cmake configure (${{ env.HelloWorldFetchContentBuildName }})
       working-directory: HelloWorld-TinyDrivers
       run: >-
-        cmake
-        --log-level=DEBUG --log-context
+        cmake --log-level=DEBUG --log-context
         -S .
         -B "$HelloWorldFetchContentBuildTree"
         -G Ninja

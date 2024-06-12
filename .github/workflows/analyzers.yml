@@ -166,8 +166,7 @@ jobs:
         [[ '${{ matrix.qt.key }}' == 'qt6' ]] &&
         tinyDriversType='-D DRIVERS_TYPE:STRING=Loadable' || tinyDriversType=''
 
-        cmake
-        --log-level=DEBUG --log-context
+        cmake --log-level=DEBUG --log-context
         -S .
         -B "$TinyORMBuildTree"
         -G Ninja

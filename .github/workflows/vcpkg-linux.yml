@@ -254,8 +254,7 @@ jobs:
     - name: HelloWorld cmake configure (${{ env.HelloWorldVcpkgManifestBuildName }})
       working-directory: HelloWorld
       run: >-
-        cmake
-        --log-level=DEBUG --log-context
+        cmake --log-level=DEBUG --log-context
         -S .
         -B "$HelloWorldVcpkgManifestBuildTree"
         -G Ninja
@@ -338,8 +337,7 @@ jobs:
     - name: TinyORM cmake configure (${{ env.HelloWorldManualBuildName }})
       working-directory: ${{ env.TinyORMPath }}
       run: >-
-        cmake
-        --log-level=DEBUG --log-context
+        cmake --log-level=DEBUG --log-context
         -S .
         -B "$TinyORMManualBuildTree"
         -G Ninja
@@ -381,8 +379,7 @@ jobs:
     - name: HelloWorld cmake configure (${{ env.HelloWorldManualBuildName }})
       working-directory: HelloWorld
       run: >-
-        cmake
-        --log-level=DEBUG --log-context
+        cmake --log-level=DEBUG --log-context
         -S .
         -B "$HelloWorldManualBuildTree"
         -G Ninja
@@ -445,8 +442,7 @@ jobs:
     - name: HelloWorld cmake configure (${{ env.HelloWorldFetchContentBuildName }})
       working-directory: HelloWorld
       run: >-
-        cmake
-        --log-level=DEBUG --log-context
+        cmake --log-level=DEBUG --log-context
         -S .
         -B "$HelloWorldFetchContentBuildTree"
         -G Ninja
