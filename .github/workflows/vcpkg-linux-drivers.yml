@@ -27,7 +27,7 @@ jobs:
   vcpkg-linux-tinydrivers:
     name: Vcpkg Linux TinyDrivers
 
-    # Self-hosted runner is Ubuntu 22.04
+    # Self-hosted runner is Fedora 40
     runs-on: [ self-hosted, linux ]
 
     strategy:
