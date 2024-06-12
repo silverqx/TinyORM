@@ -11,9 +11,6 @@ on: workflow_dispatch
 concurrency:
   group: tinyorm-linux
 
-env:
-  TINY_VCPKG_NEEDS_UPGRADE: false
-
 jobs:
 
   analyzers:
@@ -23,8 +20,12 @@ jobs:
     runs-on: [ self-hosted, linux ]
 
     env:
+      # Settings (constant variables)
       TINY_PARALLEL: 8
+
+      # State variables
       TINY_CLANG_TIDY_COMPLETED: false
+      TINY_VCPKG_NEEDS_UPGRADE: false
 
     # Clang Tidy can't be executed on Release builds, it's designed to be run on Debug builds only
     strategy:

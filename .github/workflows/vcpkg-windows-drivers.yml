@@ -5,9 +5,6 @@ on: workflow_dispatch
 concurrency:
   group: tinyorm-windows
 
-env:
-  TINY_VCPKG_NEEDS_UPGRADE: false
-
 # I will not remove the build folders before a job execution it's not necessary and
 # it will be faster this way. I can still remove them manually if needed or
 # if something goes wrong.
@@ -21,8 +18,12 @@ jobs:
     runs-on: [ self-hosted, windows ]
 
     env:
+      # Settings (constant variables)
       TINY_MYSQL_SERVICE: MySQL84
       TINY_PARALLEL: 10
+
+      # State variables
+      TINY_VCPKG_NEEDS_UPGRADE: false
 
     strategy:
       matrix:

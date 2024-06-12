@@ -16,9 +16,6 @@ on: workflow_dispatch
 concurrency:
   group: tinyorm-linux
 
-env:
-  TINY_VCPKG_NEEDS_UPGRADE: false
-
 # I will not remove the build folders before a job execution it's not necessary and
 # it will be faster this way. I can still remove them manually if needed or
 # if something goes wrong.
@@ -32,10 +29,14 @@ jobs:
     runs-on: [ self-hosted, linux ]
 
     env:
+      # Settings (constant variables)
       # Don't use more than 3 cores, I also saw blue screen with zram :/
       # Currenlty using 16G swap file to be safe
       TINY_PARALLEL_GCC: 3
       TINY_PARALLEL_CLANG: 8
+
+      # State variables
+      TINY_VCPKG_NEEDS_UPGRADE: false
 
     strategy:
       matrix:

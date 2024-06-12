@@ -27,6 +27,7 @@ jobs:
     runs-on: windows-2022
 
     env:
+      # Settings (constant variables)
       TINY_QT_VERSION: 6.7.1
       TINY_QT_SPEC: msvc2019_64
       TINY_LLVM_VERSION: 18.1.7

@@ -19,6 +19,7 @@ jobs:
     runs-on: windows-2019
 
     env:
+      # Settings (constant variables)
       TINY_QT_VERSION: 5.15.2
       TINY_QT_SPEC: win64_msvc2019_64
       # First value is a compressed data size

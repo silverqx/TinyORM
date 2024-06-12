@@ -16,9 +16,6 @@ on: workflow_dispatch
 concurrency:
   group: tinyorm-windows
 
-env:
-  TINY_VCPKG_NEEDS_UPGRADE: false
-
 # I will not remove the build folders before a job execution it's not necessary and
 # it will be faster this way. I can still remove them manually if needed or
 # if something goes wrong.
@@ -32,12 +29,16 @@ jobs:
     runs-on: [ self-hosted, windows ]
 
     env:
+      # Settings (constant variables)
       # Don't user more than 3 for GCC, it would need 64GB RAM (no money 💵)
       TINY_PARALLEL_GCC: 3
       TINY_PARALLEL_CLANG_OR_VCPKG: 9
       TINY_MYSQL_SERVICE: MySQL84
       # Used by the msys2.cmd script
       MSYS2_ROOT: C:\msys64
+
+      # State variables
+      TINY_VCPKG_NEEDS_UPGRADE: false
 
     strategy:
       matrix:

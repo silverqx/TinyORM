@@ -19,6 +19,7 @@ jobs:
     runs-on: ubuntu-24.04
 
     env:
+      # Settings (constant variables)
       # This number must also be changed in the matrix as env context can't be used in the matrix
       TINY_LLVM_VERSION: 18
       TINY_LLVM_APT_NAME: noble

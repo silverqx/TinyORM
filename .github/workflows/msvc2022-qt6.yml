@@ -28,6 +28,7 @@ jobs:
     runs-on: windows-2022
 
     env:
+      # Settings (constant variables)
       TINY_QT_VERSION: 6.7.1
       TINY_QT_SPEC: win64_msvc2019_64
       # The following was computed for the Debug build only, I have added also the Release build but
