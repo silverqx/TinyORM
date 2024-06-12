@@ -193,9 +193,10 @@ jobs:
     # Install libmysql separately so I will see what's up if it fails
     - name: vcpkg install libmysql (classic mode)
       if: matrix.build-type.key == 'debug'
-      run: |
+      run: >-
         # Temporary GCC14 workaround
-        CFLAGS="-Wno-implicit-function-declaration -Wno-int-conversion" vcpkg install libmysql
+        CFLAGS="-Wno-implicit-function-declaration -Wno-int-conversion"
+        vcpkg install libmysql
 
     - name: vcpkg install ${{ matrix.qt.vcpkg-qt }} (classic mode)
       if: matrix.build-type.key == 'debug'
@@ -274,8 +275,8 @@ jobs:
     - name: HelloWorld-TinyDrivers cmake configure (${{ env.HelloWorldVcpkgManifestBuildName }})
       working-directory: HelloWorld-TinyDrivers
       run: >-
-        CFLAGS="-Wno-implicit-function-declaration -Wno-int-conversion" cmake
-        --log-level=DEBUG --log-context
+        CFLAGS="-Wno-implicit-function-declaration -Wno-int-conversion"
+        cmake --log-level=DEBUG --log-context
         -S .
         -B "$HelloWorldVcpkgManifestBuildTree"
         -G Ninja
