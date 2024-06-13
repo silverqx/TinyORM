@@ -1,3 +1,7 @@
+# ccache
+# ---
+# Uses /ccache_vcpkg_drivers folder and compressed cache size is 90M (after whole workflow finishes)
+
 name: Vcpkg Windows TinyDrivers
 
 on: workflow_dispatch

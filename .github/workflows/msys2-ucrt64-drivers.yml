@@ -4,6 +4,11 @@
 # to the MySQL >= 8.0.34 or >=8.1, there is some problem in TLS 1.2 and 1.3 connection, it can't
 # select correct cipher. I will revert this back in the future when it will be fixed.
 
+# ccache
+# ---
+# Uses /ccache_msys2_gcc folder and compressed cache size is 1.2G (after whole workflow finishes)
+# Uses /ccache_msys2_clang folder and compressed cache size is 1G (after whole workflow finishes)
+
 # Notes
 # ---
 # Build folders must be manually deleted after bumping version numbers because ccache doesn't get it

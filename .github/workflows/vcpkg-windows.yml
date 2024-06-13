@@ -2,6 +2,10 @@
 # ---
 # Queries/uses only SQLite database.
 
+# ccache
+# ---
+# Uses /ccache_vcpkg folder and the compressed cache size is 80M (after whole workflow finishes)
+
 name: Vcpkg Windows
 
 on: workflow_dispatch
