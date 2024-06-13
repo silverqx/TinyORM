@@ -343,7 +343,7 @@ if(TOM)
             # For the tom about command
             # TINYORM_ is correct, it can be potentially used somewhere else
             TINYORM_MSVC_RUNTIME_DYNAMIC=${MSVC_RUNTIME_DYNAMIC}
-            # TINYTOM_ is corrent, it's strictly for the tom about command only
+            # TINYTOM_ is correct, it's strictly for the tom about command only
             TINYTOM_CMAKE_MSVC_RUNTIME_LIBRARY=${CMAKE_MSVC_RUNTIME_LIBRARY}
             TINYORM_STRICT_MODE=${STRICT_MODE}
     )
