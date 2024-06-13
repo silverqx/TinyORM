@@ -205,7 +205,9 @@ jobs:
 
     - name: vcpkg install ${{ matrix.qt.vcpkg-tinyorm }} (classic mode)
       if: matrix.build-type.key == 'debug'
-      run: |
+      run: >-
+        # Temporary GCC14 workaround
+        CFLAGS="-Wno-implicit-function-declaration -Wno-int-conversion"
         vcpkg install ${{ matrix.qt.vcpkg-tinyorm-features }}
 
     # Prepare TinyORM-HelloWorld-TinyDrivers project
