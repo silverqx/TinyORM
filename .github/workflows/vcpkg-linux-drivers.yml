@@ -4,7 +4,7 @@
 
 # ccache
 # ---
-# Uses /ccache_drivers folder and the compressed cache size is 290M (after whole workflow finishes)
+# Uses /ccache_drivers folder and the compressed cache size is 330M (after whole workflow finishes)
 
 name: Vcpkg Linux TinyDrivers
 

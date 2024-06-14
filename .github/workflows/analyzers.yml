@@ -1,7 +1,8 @@
 # ccache
 # ---
-# Uses /ccache_vcpkg folder and the compressed cache size is 330M (after whole workflow finishes)
+# Uses /ccache_vcpkg folder and the compressed cache size is 360M (after whole workflow finishes)
 # This /ccache_vcpkg folder is common for analyzers.yml and vcpkg-linux.yml workflows
+# vcpkg-linux.yml takes 205M and analyzers.yml takes 155M
 
 name: Clang-Tidy and Clazy Qt5.15/6.7
 
