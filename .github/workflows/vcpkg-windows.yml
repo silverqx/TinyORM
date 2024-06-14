@@ -105,6 +105,12 @@ jobs:
         $tripletsPath = Join-Path -Path $vcpkgPath -ChildPath 'triplets'
         "VCPKG_OVERLAY_TRIPLETS=$tripletsPath" >> $env:GITHUB_ENV
 
+    - name: vcpkg create binary caching folder
+      run: |
+        if (-not (Test-Path $env:VCPKG_DEFAULT_BINARY_CACHE)) {
+          New-Item -Type Directory $env:VCPKG_DEFAULT_BINARY_CACHE
+        }
+
     - name: Self-hosted runner prepare environment
       run: |
         'C:\Program Files\CMake\bin' >> $env:GITHUB_PATH

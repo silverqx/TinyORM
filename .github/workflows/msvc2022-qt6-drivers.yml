@@ -175,6 +175,12 @@ jobs:
         $vcpkgArchivesPath = Join-Path -Path $env:RUNNER_WORKSPACE -ChildPath vcpkg_archives
         "VCPKG_DEFAULT_BINARY_CACHE=$vcpkgArchivesPath" >> $env:GITHUB_ENV
 
+    - name: vcpkg create binary caching folder
+      run: |
+        if (-not (Test-Path $env:VCPKG_DEFAULT_BINARY_CACHE)) {
+          New-Item -Type Directory $env:VCPKG_DEFAULT_BINARY_CACHE
+        }
+
     - name: vcpkg needs upgrade? (once per day)
       run: |
         $vcpkgUpgradedAtFilepath = "$env:RUNNER_WORKSPACE/.vcpkg_upgraded_at"

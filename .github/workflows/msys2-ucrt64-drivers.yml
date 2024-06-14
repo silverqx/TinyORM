@@ -166,6 +166,12 @@ jobs:
         vcpkgArchivesPath=$(cygpath.exe --windows "$RUNNER_WORKSPACE\vcpkg_archives")
         echo "VCPKG_DEFAULT_BINARY_CACHE=$vcpkgArchivesPath" >> $GITHUB_ENV
 
+    - name: vcpkg create binary caching folder
+      run: |
+        if (-not (Test-Path $env:VCPKG_DEFAULT_BINARY_CACHE)) {
+          New-Item -Type Directory $env:VCPKG_DEFAULT_BINARY_CACHE
+        }
+
     - name: vcpkg needs upgrade? (once per day)
       run: |
         $vcpkgUpgradedAtFilepath = "$env:RUNNER_WORKSPACE/.vcpkg_upgraded_at"
