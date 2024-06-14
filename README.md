@@ -3,14 +3,14 @@
 [![MSVC2019 Qt5.15][action-msvc2019-qt5-badge]][action-msvc2019-qt5]
 [![MSVC2022 Qt6.7][action-msvc2022-qt6-badge]][action-msvc2022-qt6]
 [![Linux GCC/Clang Qt5.15][action-linux-qt5-badge]][action-linux-qt5]
-[![Linux GCC/Clang Qt6.2][action-linux-qt6-badge]][action-linux-qt6]
+[![Linux GCC/Clang Qt6.4][action-linux-qt6-badge]][action-linux-qt6]
 [![MSYS2 UCRT64 GCC/Clang][action-mingw-badge]][action-mingw]
 [![clang-cl MSVC2022][action-clang-cl-badge]][action-clang-cl]
 [![Clang-Tidy/Clazy Qt5.15/6.7][action-analyzers-qt5-qt6-badge]][action-analyzers-qt5-qt6]
 [![Vcpkg Windows][action-vcpkg-windows-badge]][action-vcpkg-windows]
 [![Vcpkg Linux][action-vcpkg-linux-badge]][action-vcpkg-linux]
 [![MSVC2022 Qt6.7 TinyDrivers][action-msvc2022-qt6-drivers-badge]][action-msvc2022-qt6-drivers]
-[![Linux GCC/Clang Qt6.2 TinyDrivers][action-linux-qt6-drivers-badge]][action-linux-qt6-drivers]
+[![Linux GCC/Clang Qt6.7 TinyDrivers][action-linux-qt6-drivers-badge]][action-linux-qt6-drivers]
 
 [![TinyORM - www.tinyorm.org][docs-badge]][docs]
 [![License MIT][license-badge]][license]<br/>
