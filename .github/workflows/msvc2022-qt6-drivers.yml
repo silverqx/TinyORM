@@ -80,7 +80,8 @@ jobs:
 
         # I had to shorten the folder name because of long path names, removed build-Tiny
         # at the beginning.
-        $tinyormBuildName = 'Drivers-msvc-${{ matrix.drivers-type }}-${{ matrix.build-type.key }}'
+        $tinyormBuildName = 'Drivers-msvc-${{ matrix.drivers-type }}-${{ matrix.build-type.key }}' +
+        ('${{ matrix.lto }}' -ceq 'ON' ? '-lto' : '')
         "TinyORMBuildName=$tinyormBuildName" >> $env:GITHUB_ENV
 
         $tinyormBuildTree = Join-Path -Path $env:RUNNER_WORKSPACE TinyORM-builds-cmake `

@@ -114,6 +114,7 @@ jobs:
         echo "TinyORMPath=$tinyormPath" >> $GITHUB_ENV
 
         tinyormBuildName='TinyDrivers-${{ matrix.compiler.name }}-${{ matrix.drivers-type }}-${{ matrix.build-type.key }}'
+        [[ '${{ matrix.lto }}' == 'ON' ]] && tinyormBuildName="$tinyormBuildName-lto"
         echo "TinyORMBuildName=$tinyormBuildName" >> $GITHUB_ENV
 
         tinyormBuildTree="$RUNNER_WORKSPACE/TinyORM-builds-cmake/build-$tinyormBuildName"
