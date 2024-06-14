@@ -384,7 +384,7 @@ jobs:
 
     - name: Ccache print statistics
       run: |
-        ccache --show-stats -vv
+        ccache --show-stats --verbose
 
     # Build and execute the HelloWorld-TinyDrivers console application
 
@@ -502,7 +502,7 @@ jobs:
 
     - name: Ccache print statistics
       run: |
-        ccache --show-stats -vv
+        ccache --show-stats --verbose
 
     - name: HelloWorld-TinyDrivers execute (MySQL) 🏁
       working-directory: >-

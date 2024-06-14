@@ -199,7 +199,7 @@ jobs:
 
     - name: Ccache print statistics
       run: |
-        ccache --show-stats -vv
+        ccache --show-stats --verbose
 
     - name: TinyORM execute clang-tidy 🔥
       working-directory: ${{ env.TinyORMPath }}

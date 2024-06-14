@@ -723,7 +723,7 @@ jobs:
 
     - name: Ccache print statistics
       run: |
-        ccache.exe --show-stats -vv
+        ccache.exe --show-stats --verbose
 
     - name: TinyORM add on the $env:Path
       run: |

@@ -357,7 +357,7 @@ jobs:
 
     - name: Ccache print statistics
       run: |
-        ccache --show-stats -vv
+        ccache --show-stats --verbose
 
     # Build and execute the HelloWorld console application
 
@@ -465,7 +465,7 @@ jobs:
 
     - name: Ccache print statistics
       run: |
-        ccache --show-stats -vv
+        ccache --show-stats --verbose
 
     - name: HelloWorld execute (SQLite) 🏁
       working-directory: ../HelloWorld-FetchContent-Install/${{ matrix.build-type.name }}/bin

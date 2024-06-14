@@ -261,7 +261,7 @@ jobs:
     - name: Ccache print statistics
       shell: msys2 {0}
       run: |
-        ccache.exe --show-stats -vv
+        ccache.exe --show-stats --verbose
 
     # Used migrate:fresh instead (is safer)
     - name: Create and Seed tables for unit tests 🎉

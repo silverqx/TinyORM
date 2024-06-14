@@ -259,7 +259,7 @@ jobs:
 
     - name: Ccache print statistics
       run: |
-        ccache --show-stats -vv
+        ccache --show-stats --verbose
 
     - name: TinyORM add on the $LD_LIBRARY_PATH
       run: |
