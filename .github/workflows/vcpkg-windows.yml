@@ -326,7 +326,7 @@ jobs:
         "HelloWorldManualBuildName=$helloWorldManualBuildName" >> $env:GITHUB_ENV
 
         $tinyormManualBuildTree = Join-Path -Path $env:RUNNER_WORKSPACE `
-        TinyORM-builds-cmake "build-$helloWorldManualBuildName"
+        TinyORM-builds-cmake "build-vcpkg-$helloWorldManualBuildName"
         "TinyORMManualBuildTree=$tinyormManualBuildTree" >> $env:GITHUB_ENV
 
         $helloWorldManualBuildTree = Join-Path -Path $env:RUNNER_WORKSPACE `

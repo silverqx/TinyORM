@@ -338,7 +338,7 @@ jobs:
         helloWorldManualBuildName='manual-gcc-${{ matrix.build-type.key }}'
         echo "HelloWorldManualBuildName=$helloWorldManualBuildName" >> $GITHUB_ENV
 
-        tinyormManualBuildTree="$RUNNER_WORKSPACE/TinyORM-builds-cmake/build-TinyDrivers-$helloWorldManualBuildName"
+        tinyormManualBuildTree="$RUNNER_WORKSPACE/TinyORM-builds-cmake/build-TinyDrivers-vcpkg-$helloWorldManualBuildName"
         echo "TinyORMManualBuildTree=$tinyormManualBuildTree" >> $GITHUB_ENV
 
         helloWoldManualBuildTree="$RUNNER_WORKSPACE/HelloWorld-builds-cmake/build-TinyDrivers-$helloWorldManualBuildName"
