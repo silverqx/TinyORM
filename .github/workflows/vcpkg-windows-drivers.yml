@@ -116,11 +116,15 @@ jobs:
         arch: x64
 
     # Must be after the ilammy/msvc-dev-cmd@v1 because vcvars64 overrides the VCPKG_ROOT
+    # Define the VCPKG_DEFAULT_BINARY_CACHE because it takes ~20G in C:\Windows\ServiceProfiles
     - name: vcpkg prepare environment
       run: |
         "VCPKG_ROOT=$env:VCPKG_INSTALLATION_ROOT" >> $env:GITHUB_ENV
         'VCPKG_DEFAULT_TRIPLET=x64-windows' >> $env:GITHUB_ENV
         "VCPKG_MAX_CONCURRENCY=$env:TINY_PARALLEL" >> $env:GITHUB_ENV
+
+        $vcpkgArchivesPath = Join-Path -Path $env:RUNNER_WORKSPACE -ChildPath vcpkg_archives
+        "VCPKG_DEFAULT_BINARY_CACHE=$vcpkgArchivesPath" >> $env:GITHUB_ENV
 
         $vcpkgPath = Resolve-Path -Path "$env:TinyORMPath/cmake/vcpkg"
 

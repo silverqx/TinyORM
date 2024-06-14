@@ -154,6 +154,7 @@ jobs:
         ccache.exe --show-config
         echo '::endgroup::'
 
+    # Define the VCPKG_DEFAULT_BINARY_CACHE because it takes ~20G in C:\Windows\ServiceProfiles
     - name: vcpkg prepare environment
       shell: msys2 {0}
       run: |
@@ -161,6 +162,9 @@ jobs:
         echo 'VCPKG_DEFAULT_TRIPLET=x64-mingw-dynamic' >> $GITHUB_ENV
         echo 'VCPKG_DEFAULT_HOST_TRIPLET=x64-mingw-dynamic' >> $GITHUB_ENV
         echo "VCPKG_MAX_CONCURRENCY=$TinyParallelVcpkg" >> $GITHUB_ENV
+
+        vcpkgArchivesPath=$(cygpath.exe --windows "$RUNNER_WORKSPACE\vcpkg_archives")
+        echo "VCPKG_DEFAULT_BINARY_CACHE=$vcpkgArchivesPath" >> $GITHUB_ENV
 
     - name: vcpkg needs upgrade? (once per day)
       run: |

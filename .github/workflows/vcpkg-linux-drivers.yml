@@ -89,6 +89,7 @@ jobs:
         useLocalCache: true
         useCloudCache: false
 
+    # Don't define VCPKG_DEFAULT_BINARY_CACHE as Linux VM image is strictly for GH actions use only
     - name: vcpkg prepare environment
       run: |
         echo "VCPKG_ROOT=$VCPKG_INSTALLATION_ROOT" >> $GITHUB_ENV
