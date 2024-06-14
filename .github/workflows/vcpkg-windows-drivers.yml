@@ -134,20 +134,10 @@ jobs:
         $tripletsPath = Join-Path -Path $vcpkgPath -ChildPath 'triplets'
         "VCPKG_OVERLAY_TRIPLETS=$tripletsPath" >> $env:GITHUB_ENV
 
-        # Binary caching
-        'VCPKG_BINARY_SOURCES=clear;x-gha,readwrite' >> $env:GITHUB_ENV
-
     - name: Self-hosted runner prepare environment
       run: |
         'C:\Program Files\CMake\bin' >> $env:GITHUB_PATH
         "$env:VCPKG_INSTALLATION_ROOT" >> $env:GITHUB_PATH
-
-    - name: vcpkg prepare binary caching
-      uses: actions/github-script@v6
-      with:
-        script: |
-          core.exportVariable('ACTIONS_CACHE_URL', process.env.ACTIONS_CACHE_URL || '');
-          core.exportVariable('ACTIONS_RUNTIME_TOKEN', process.env.ACTIONS_RUNTIME_TOKEN || '');
 
     - name: vcpkg needs upgrade? (once per day)
       run: |

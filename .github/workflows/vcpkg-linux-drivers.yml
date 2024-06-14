@@ -105,19 +105,9 @@ jobs:
         tripletsPath="$vcpkgPath/triplets"
         echo "VCPKG_OVERLAY_TRIPLETS=$tripletsPath" >> $GITHUB_ENV
 
-        # Binary caching
-        echo 'VCPKG_BINARY_SOURCES=clear;x-gha,readwrite' >> $GITHUB_ENV
-
     - name: vcpkg add on the $PATH
       run: |
         echo "$VCPKG_INSTALLATION_ROOT" >> $GITHUB_PATH
-
-    - name: vcpkg prepare binary caching
-      uses: actions/github-script@v6
-      with:
-        script: |
-          core.exportVariable('ACTIONS_CACHE_URL', process.env.ACTIONS_CACHE_URL || '');
-          core.exportVariable('ACTIONS_RUNTIME_TOKEN', process.env.ACTIONS_RUNTIME_TOKEN || '');
 
     - name: vcpkg needs upgrade? (once per day)
       run: |
