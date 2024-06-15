@@ -20,9 +20,6 @@
 #ifndef QT_NO_DEBUG_STREAM
 #  include <QDebug>
 #endif
-#ifdef _WIN32
-#  include <qt_windows.h>
-#endif
 
 #ifndef TINYORM_USING_TINYDRIVERS
 #  include <QtSql/QSqlError>

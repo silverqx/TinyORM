@@ -16,9 +16,6 @@
 #ifndef QT_NO_DEBUG_STREAM
 #  include <QDebug>
 #endif
-#ifdef _WIN32
-#  include <qt_windows.h>
-#endif
 
 #include <mutex>
 #include <shared_mutex>
