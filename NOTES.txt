@@ -503,6 +503,12 @@ Features related/to implement:
  - tom                   : tom migrations related
 
 
+Upgrade the MSVC toolchain to new version:
+------------------------------------------
+
+ - update the NTDDI_VERSION
+
+
 Upgrade the Qt to new version:
 ------------------------------
 
