@@ -70,13 +70,14 @@ function Get-PathToMatch {
     return "(?:^|$separator)$pathToMatch[$slashes]*(?:$|$separator)"
 }
 
-# Remove a path separator at the end and call the [System.IO.Path]::GetFullPath (normalize to \)
-function Get-FullPath {
+# Removed trailing slashes from the given path (relative or absolute)
+function Remove-TrailingSlashes {
     [CmdletBinding()]
     [OutputType([string[]])]
     Param(
         [Parameter(Position = 0, Mandatory, ValueFromPipeline, ValueFromPipelinebyPropertyName,
-            HelpMessage = "Specifies a path to normalize.")]
+            HelpMessage = 'Specifies a path for which to remove trailing slashes.')]
+        [AllowEmptyCollection()]
         [string[]]
         $Path
     )
@@ -84,10 +85,43 @@ function Get-FullPath {
     process {
         [string[]] $normalized = @()
 
-        foreach ($p in $Path) {
-            $normalized += [System.IO.Path]::GetFullPath(
-                ($p -replace "[$(Get-Slashes -ForRegEx)]+$", '')
-            )
+        foreach ($pathRaw in $Path) {
+            $normalized += $pathRaw -replace "[$(Get-Slashes -ForRegEx)]+$", ''
+        }
+
+        return $normalized
+    }
+}
+
+# Remove a path separator at the end and call the [System.IO.Path]::GetFullPath (normalize to \)
+function Get-FullPath {
+    [CmdletBinding()]
+    [OutputType([string[]])]
+    Param(
+        [Parameter(Position = 0, Mandatory, ValueFromPipeline, ValueFromPipelinebyPropertyName,
+            HelpMessage = "Specifies a path to normalize.")]
+        [AllowEmptyCollection()]
+        [string[]]
+        $Path,
+
+        [Parameter(ValueFromPipelinebyPropertyName,
+            HelpMessage = 'Specifies the beginning of a fully qualified path for the given ' +
+                'relative Path.')]
+        [string]
+        $BasePath
+    )
+
+    process {
+        [string[]] $normalized = @()
+
+        foreach ($pathRaw in $Path) {
+            # Removed trailing slashes
+            $pathNoTrailingSlashes = Remove-TrailingSlashes -Path $pathRaw
+
+                           # Needed to select the correct overload
+            $normalized += $PSBoundParameters.ContainsKey('BasePath') `
+                           ? [System.IO.Path]::GetFullPath($pathNoTrailingSlashes, $BasePath)
+                           : [System.IO.Path]::GetFullPath($pathNoTrailingSlashes)
         }
 
         return $normalized

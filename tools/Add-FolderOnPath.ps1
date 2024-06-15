@@ -20,18 +20,23 @@ Param(
     [switch] $RestorePath,
 
     [Parameter(HelpMessage = 'Append to the environment variable (default action is prepend).')]
-    [switch] $Append
+    [switch] $Append,
+
+    [Parameter(ValueFromPipelinebyPropertyName,
+        HelpMessage = 'Specifies that the given path is relative and also adds it as relative.')]
+    [switch] $Relative
 )
 
 begin {
     Set-StrictMode -Version 3.0
 
+    . $PSScriptRoot\private\Common-Path.ps1
+
     if (-not (Test-Path 'Variable:Global:TinyBackedUpVariables')) {
         $Global:TinyBackedUpVariables = @()
     }
     $Script:Slashes = $null
-
-    . $PSScriptRoot\private\Common-Path.ps1
+    $Script:IsPathFullyQualified = [IO.Path]::IsPathFullyQualified($Path)
 
     function Get-EnvVariable {
         [OutputType([string[]])]
@@ -139,6 +144,24 @@ begin {
         throw "The given path '$(Resolve-Path -Path $Path)' exists and it's not a directory."
     }
 
+    # Throw if the Relative parameter was passed and the given Path isn't relative
+    function Test-RelativePath {
+        [OutputType([void])]
+        Param(
+            [Parameter(Mandatory,
+                HelpMessage = 'Throw if the given path is not relative and the Relative ' +
+                    'parameter was passed.')]
+            [string]
+            $Path
+        )
+
+        if (-not $Relative -or -not $Script:IsPathFullyQualified) {
+            return
+        }
+
+        throw "The given path '$Path' must be relative if the 'Relative' parameter was passed."
+    }
+
     # Obtain paths to add and excluded paths
     function Get-Paths {
         [CmdletBinding(PositionalBinding = $false)]
@@ -160,12 +183,20 @@ begin {
             foreach ($pathToAdd in $Path) {
                 # Throw if the given path exists and it's not a directory
                 Test-PathToAdd -Path $pathToAdd
+                # Throw if the Relative parameter was passed and the given Path isn't relative
+                Test-RelativePath -Path $pathToAdd
+
+                $pathToAddNormalized =
+                    $Relative ? (Remove-TrailingSlashes -Path $pathToAdd)
+                              : ($Script:IsPathFullyQualified `
+                                ? (Get-FullPath -Path $pathToAdd)
+                                : (Get-FullPath -Path $pathToAdd -BasePath (Get-Location).Path))
 
                 # Get the RegEx for a given path that can be used to determine if the given path is
                 # on the system path ($env:Path or $PATH).
-                $pathToMatch = Get-PathToMatch -Path $pathToAdd
-
-                $pathToAddNormalized = $(Get-FullPath -Path $pathToAdd)
+                # Also, don't resolve a relative path to absolute here and don't check if is
+                # on the system path ($env:Path or $PATH) as it depends on CWD!
+                $pathToMatch = Get-PathToMatch -Path $pathToAddNormalized
 
                 if ($VariableValue -notmatch $pathToMatch) {
                     $pathsToAdd += $pathToAddNormalized
