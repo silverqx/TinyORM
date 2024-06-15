@@ -1,10 +1,19 @@
 # WinApi
 # ---
+# For orientation in these versions, see:
+# https://developer.microsoft.com/en-us/windows/downloads/sdk-archive/
+# https://microsoft.fandom.com/wiki/List_of_Windows_codenames
+# https://en.wikipedia.org/wiki/Windows_11_version_history
+# https://en.wikipedia.org/wiki/Microsoft_Windows_SDK
 
-# All have to be defined because of checks at the beginning of the qt_windows.h
-# Windows 10 1903 "19H1" - 0x0A000007
+# The ideal case would be not to define these and rely on what is defined
+# in <qt_windows.h> but Qt uses too old values for these, eg. MSYS2 patches these and
+# uses the latest versions, so we have to define these manually because the original
+# Qt code doesn't maintain these correctly.
+# All have to be defined because of checks at the beginning of <qt_windows.h> (fixed)
+# Windows 11 "22H2" - 0x0A00000C
 DEFINES *= WINVER=_WIN32_WINNT_WIN10
-DEFINES *= NTDDI_VERSION=NTDDI_WIN10_19H1
+DEFINES *= NTDDI_VERSION=NTDDI_WIN10_NI
 DEFINES *= _WIN32_WINNT=_WIN32_WINNT_WIN10
 # Internet Explorer 11
 DEFINES *= _WIN32_IE=_WIN32_IE_IE110

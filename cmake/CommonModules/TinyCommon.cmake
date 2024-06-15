@@ -51,29 +51,49 @@ ${TINY_UNPARSED_ARGUMENTS}")
     # Platform specific configurations
     # ---
 
-    if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
-        # All have to be defined because of checks at the beginning of <qt_windows.h>
-        # WINVER, _WIN32_WINNT, NTDDI_VERSION
+    # WinApi
+    # For orientation in these versions, see:
+    # https://developer.microsoft.com/en-us/windows/downloads/sdk-archive/
+    # https://microsoft.fandom.com/wiki/List_of_Windows_codenames
+    # https://en.wikipedia.org/wiki/Windows_11_version_history
+    # https://en.wikipedia.org/wiki/Microsoft_Windows_SDK
 
+    # The ideal case would be not to define these and rely on what is defined
+    # in <qt_/windows.h> but Qt uses too old values for these, eg. MSYS2 patches these and
+    # uses the latest versions, so we have to define these manually because the original
+    # Qt code doesn't maintain these correctly.
+    # All have to be defined because of checks at the beginning of <qt_windows.h> (fixed)
+    # WINVER, _WIN32_WINNT, NTDDI_VERSION
+    if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
         # MSYS2 Qt 6 already defines these macros in the Qt6Targets.cmake Qt6::Platform
+        # which is included in Package Config file. These C macros comes
+        # from the QtBaseConfigureTests.cmake#qt_internal_ensure_latest_win_nt_api(),
+        # this functions is doing compile test using the check_cxx_source_compiles(),
+        # it includes the <windows.h> and checks whether these C macros are defined and
+        # if they are not then it appends them to the QT_PLATFORM_DEFINITIONS, then
+        # the QT_PLATFORM_DEFINITIONS is set for the Qt6::Platform interface library.
+        # So these C macros are set on MSVC (in <sdkddkver.h> is advanced guess logic)
+        # and are not set on mingw-w64/MSYS2 in the <windows.h> file.
+        # What means we can't set them on MSYS2 because it throws [-Wmacro-redefined].
         # Flipped expression of : if(MINGW AND QT_VERSION_MAJOR GREATER_EQUAL 6)
         if(NOT MINGW OR NOT QT_VERSION_MAJOR GREATER_EQUAL 6)
             target_compile_definitions(${target} INTERFACE
-                # Windows 10 1903 "19H1" - 0x0A000007
+                # Windows 11 "22H2" - 0x0A00000C
                 WINVER=_WIN32_WINNT_WIN10
                 _WIN32_WINNT=_WIN32_WINNT_WIN10
             )
         endif()
 
         target_compile_definitions(${target} INTERFACE
-            # Windows 10 1903 "19H1" - 0x0A000007
-            NTDDI_VERSION=NTDDI_WIN10_19H1
+            # Windows 11 "22H2" - 0x0A00000C
+            NTDDI_VERSION=NTDDI_WIN10_NI
             # Internet Explorer 11
             _WIN32_IE=_WIN32_IE_IE110
-            UNICODE _UNICODE
             # Exclude unneeded header files
             WIN32_LEAN_AND_MEAN
             NOMINMAX
+            # Others
+            UNICODE _UNICODE
         )
     endif()
 
