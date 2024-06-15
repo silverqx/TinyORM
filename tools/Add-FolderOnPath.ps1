@@ -261,8 +261,7 @@ begin {
             [string]
             $VariableValue,
 
-            [Parameter(Mandatory,
-                HelpMessage = "Specifies added paths to the env. variable.")]
+            [Parameter(Mandatory, HelpMessage = 'Specifies added paths to the env. variable.')]
             [AllowEmptyCollection()]
             [string[]]
             $PathsToAdd,
@@ -302,7 +301,7 @@ begin {
         [OutputType([void])]
         Param(
             [Parameter(Position = 0, Mandatory, ValueFromPipeline, ValueFromPipelinebyPropertyName,
-                HelpMessage = "Specifies a path to export.")]
+                HelpMessage = 'Specifies a path to export.')]
             [string[]]
             $Path
         )

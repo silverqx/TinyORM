@@ -99,7 +99,7 @@ function Get-FullPath {
     [OutputType([string[]])]
     Param(
         [Parameter(Position = 0, Mandatory, ValueFromPipeline, ValueFromPipelinebyPropertyName,
-            HelpMessage = "Specifies a path to normalize.")]
+            HelpMessage = 'Specifies a path to normalize.')]
         [AllowEmptyCollection()]
         [string[]]
         $Path,
