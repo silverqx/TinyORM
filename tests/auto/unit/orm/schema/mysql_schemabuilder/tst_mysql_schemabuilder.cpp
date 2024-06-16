@@ -7,6 +7,7 @@
 #include "orm/utils/type.hpp"
 
 #include "databases.hpp"
+#include "macros.hpp"
 
 #ifndef TINYORM_DISABLE_ORM
 #  include "models/user.hpp"
@@ -832,7 +833,7 @@ void tst_MySql_SchemaBuilder::renameColumn() const
 
 void tst_MySql_SchemaBuilder::dropAllTypes() const
 {
-    QVERIFY_EXCEPTION_THROWN(Schema::on(m_connection).dropAllTypes(), LogicError);
+    TVERIFY_THROWS_EXCEPTION(LogicError, Schema::on(m_connection).dropAllTypes());
 }
 
 void tst_MySql_SchemaBuilder::getAllTables() const

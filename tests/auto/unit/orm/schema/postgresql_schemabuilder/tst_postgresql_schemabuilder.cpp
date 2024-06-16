@@ -7,6 +7,7 @@
 #include "orm/utils/type.hpp"
 
 #include "databases.hpp"
+#include "macros.hpp"
 
 #ifndef TINYORM_DISABLE_ORM
 #  include "models/user.hpp"
@@ -773,7 +774,7 @@ void tst_PostgreSQL_SchemaBuilder::renameColumn() const
 
 void tst_PostgreSQL_SchemaBuilder::dropAllTypes() const
 {
-    QVERIFY_EXCEPTION_THROWN(Schema::on(m_connection).dropAllTypes(), LogicError);
+    TVERIFY_THROWS_EXCEPTION(LogicError, Schema::on(m_connection).dropAllTypes());
 }
 
 void tst_PostgreSQL_SchemaBuilder::getAllTables() const
@@ -901,10 +902,10 @@ void tst_PostgreSQL_SchemaBuilder::hasTable_DatabaseDiffers_ThrowException() con
     // Verify
     DB::connection(m_connection).pretend([](auto &connection)
     {
-        QVERIFY_EXCEPTION_THROWN(
+        TVERIFY_THROWS_EXCEPTION(
+                    InvalidArgumentError,
                     Schema::on(connection.getName())
-                    .hasTable(sl("%1-database.public.users").arg(dummy_NONEXISTENT)),
-                    InvalidArgumentError);
+                    .hasTable(sl("%1-database.public.users").arg(dummy_NONEXISTENT)));
     });
 }
 
@@ -1049,8 +1050,8 @@ void tst_PostgreSQL_SchemaBuilder::
               .toUtf8().constData(), );
 
     // Create database connection
-    QVERIFY_EXCEPTION_THROWN(DB::connection(*connectionName),
-                             InvalidArgumentError);
+    TVERIFY_THROWS_EXCEPTION(InvalidArgumentError,
+                             DB::connection(*connectionName));
 
     // Restore
     QVERIFY(Databases::removeConnection(*connectionName));
@@ -2601,7 +2602,8 @@ void tst_PostgreSQL_SchemaBuilder::virtualAs_StoredAs_Nullable_ModifyTable() con
 
 void tst_PostgreSQL_SchemaBuilder::change_VirtualAs_ThrowException() const
 {
-    QVERIFY_EXCEPTION_THROWN(
+    TVERIFY_THROWS_EXCEPTION(
+                LogicError,
                 DB::connection(m_connection).pretend([](auto &connection)
     {
         Schema::on(connection.getName())
@@ -2612,13 +2614,13 @@ void tst_PostgreSQL_SchemaBuilder::change_VirtualAs_ThrowException() const
                exception, PostgreSQL doesn't support modifying generated columns. */
             table.integer("discounted_virtual").virtualAs("price - 5").change();
         });
-    }),
-                LogicError);
+    }));
 }
 
 void tst_PostgreSQL_SchemaBuilder::change_StoredAs_ThrowException() const
 {
-    QVERIFY_EXCEPTION_THROWN(
+    TVERIFY_THROWS_EXCEPTION(
+                LogicError,
                 DB::connection(m_connection).pretend([](auto &connection)
     {
         Schema::on(connection.getName())
@@ -2629,8 +2631,7 @@ void tst_PostgreSQL_SchemaBuilder::change_StoredAs_ThrowException() const
                exception, PostgreSQL doesn't support modifying generated columns. */
             table.integer("discounted_virtual").storedAs("price - 5").change();
         });
-    }),
-                LogicError);
+    }));
 }
 
 void tst_PostgreSQL_SchemaBuilder::drop_StoredAs() const

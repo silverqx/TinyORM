@@ -12,6 +12,11 @@
 #  include "orm/exceptions/runtimeerror.hpp"
 #endif
 
+#ifndef sl
+/*! Alias for the QStringLiteral(). */
+#  define sl(str) QStringLiteral(str)
+#endif
+
 #ifdef TINYORM_USING_TINYDRIVERS
 using Orm::Drivers::SqlDatabase;
 #endif

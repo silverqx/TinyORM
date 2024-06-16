@@ -468,6 +468,7 @@ Common:
  - overflow           : add check code, eg when size_t to int conversion
  - perf               : performance
  - production         : check before deploy to production
+ - qt5 remove         : code to remove after the Qt v5 support will dropped
  - regex              : mark regex-es, try to avoid them
  - reliability        : make things more robust and reliable
  - repeat             : tasks that should I make from time to time

@@ -25,15 +25,18 @@ ${TINY_UNPARSED_ARGUMENTS}")
     # Qt defines
     # ---
 
+    # Disable deprecated APIs up to the given Qt version
+    # TODO qt5 remove silverqx
+    if(QT_VERSION_MAJOR GREATER_EQUAL 6)
+        # Disable all the APIs deprecated up to Qt 6.7.0
+        target_compile_definitions(${target} INTERFACE QT_DISABLE_DEPRECATED_UP_TO=0x060700)
+    else()
+        # Disable all the APIs deprecated up to Qt 6.0.0
+        target_compile_definitions(${target} INTERFACE QT_DISABLE_DEPRECATED_BEFORE=0x060000)
+    endif()
+
     target_compile_definitions(${target}
         INTERFACE
-            # You can also make your code fail to compile if it uses deprecated APIs.
-            # In order to do so, uncomment the following line.
-            # You can also select to disable deprecated APIs only up to a certain version
-            # of Qt.
-            # Disables all the APIs deprecated before Qt 6.0.0
-            QT_DISABLE_DEPRECATED_BEFORE=0x060000
-
             #QT_ASCII_CAST_WARNINGS
             #QT_NO_CAST_FROM_ASCII
             #QT_RESTRICTED_CAST_FROM_ASCII

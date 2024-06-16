@@ -5,6 +5,7 @@
 #include "orm/utils/query.hpp"
 
 #include "databases.hpp"
+#include "macros.hpp"
 
 #include "models/torrent.hpp"
 #include "models/torrenteager.hpp"
@@ -410,25 +411,25 @@ void tst_Model_Relations::getRelation_EagerLoad_Failed() const
     Torrent torrent;
 
     // Many relation
-    QVERIFY_EXCEPTION_THROWN(
-                (torrent.getRelation<TorrentPreviewableFile>("torrentFiles")),
-                RelationNotLoadedError);
+    TVERIFY_THROWS_EXCEPTION(
+                RelationNotLoadedError,
+                (torrent.getRelation<TorrentPreviewableFile>("torrentFiles")));
     // One relation, obtained as QVector, also possible
-    QVERIFY_EXCEPTION_THROWN(
-                (torrent.getRelation<TorrentPeer>("torrentFiles")),
-                RelationNotLoadedError);
+    TVERIFY_THROWS_EXCEPTION(
+                RelationNotLoadedError,
+                (torrent.getRelation<TorrentPeer>("torrentFiles")));
     // Many relation
-    QVERIFY_EXCEPTION_THROWN(
-                (torrent.getRelation<TorrentPeer, One>("torrentFiles")),
-                RelationNotLoadedError);
+    TVERIFY_THROWS_EXCEPTION(
+                RelationNotLoadedError,
+                (torrent.getRelation<TorrentPeer, One>("torrentFiles")));
     // BelongsTo relation
-    QVERIFY_EXCEPTION_THROWN(
-                (TorrentPeer().getRelation<Torrent, One>("torrent")),
-                RelationNotLoadedError);
+    TVERIFY_THROWS_EXCEPTION(
+                RelationNotLoadedError,
+                (TorrentPeer().getRelation<Torrent, One>("torrent")));
     // BelongsToMany relation
-    QVERIFY_EXCEPTION_THROWN(
-                (torrent.getRelation<Tag>("tags")),
-                RelationNotLoadedError);
+    TVERIFY_THROWS_EXCEPTION(
+                RelationNotLoadedError,
+                (torrent.getRelation<Tag>("tags")));
 }
 
 void tst_Model_Relations::eagerLoad_Failed() const
@@ -437,8 +438,8 @@ void tst_Model_Relations::eagerLoad_Failed() const
 
     ConnectionOverride::connection = connection;
 
-    QVERIFY_EXCEPTION_THROWN(TorrentEager_Failed::find(1),
-                             RelationMappingNotFoundError);
+    TVERIFY_THROWS_EXCEPTION(RelationMappingNotFoundError,
+                             TorrentEager_Failed::find(1));
 }
 
 void tst_Model_Relations::getRelationValue_LazyLoad_ManyAndOne() const
@@ -926,10 +927,10 @@ void tst_Model_Relations::with_Vector_MoreRelations() const
         QCOMPARE(typeid (file), typeid (TorrentPreviewableFile *));
 
         // No TorrentPreviewableFileProperty loaded
-        QVERIFY_EXCEPTION_THROWN(
+        TVERIFY_THROWS_EXCEPTION(
+                    RuntimeError,
                     (file->getRelation<TorrentPreviewableFileProperty, One>(
-                         "fileProperty")),
-                    RuntimeError);
+                         "fileProperty")));
     }
 }
 
@@ -939,8 +940,8 @@ void tst_Model_Relations::with_NonExistentRelation_Failed() const
 
     ConnectionOverride::connection = connection;
 
-    QVERIFY_EXCEPTION_THROWN(Torrent::with("torrentFiles-NON_EXISTENT")->find(1),
-                             RelationMappingNotFoundError);
+    TVERIFY_THROWS_EXCEPTION(RelationMappingNotFoundError,
+                             Torrent::with("torrentFiles-NON_EXISTENT")->find(1));
 }
 
 void tst_Model_Relations::with_WithSelectConstraint() const
@@ -1781,8 +1782,8 @@ void tst_Model_Relations::load_NonExistentRelation_Failed() const
 
     QVERIFY(torrent->getRelations().empty());
 
-    QVERIFY_EXCEPTION_THROWN(torrent->load("torrentFiles-NON_EXISTENT"),
-                             RelationMappingNotFoundError);
+    TVERIFY_THROWS_EXCEPTION(RelationMappingNotFoundError,
+                             torrent->load("torrentFiles-NON_EXISTENT"));
     QVERIFY(torrent->getRelations().empty());
 }
 

@@ -10,6 +10,7 @@
 #include "orm/utils/type.hpp"
 
 #include "databases.hpp"
+#include "macros.hpp"
 
 using Orm::Constants::ID;
 using Orm::Constants::UTC;

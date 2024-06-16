@@ -9,6 +9,7 @@
 #include "orm/utils/helpers.hpp"
 
 #include "databases.hpp"
+#include "macros.hpp"
 
 #include "models/type.hpp"
 
@@ -509,8 +510,8 @@ void tst_CastAttributes::cast_QByteArray_to_QDateTime_ThrowException() const
 
     type.mergeCasts({{"binary", CastType::QDateTime}});
 
-    QVERIFY_EXCEPTION_THROWN(type.getAttribute("binary"),
-                             InvalidFormatError);
+    TVERIFY_THROWS_EXCEPTION(InvalidFormatError,
+                             type.getAttribute("binary"));
 }
 
 void tst_CastAttributes::cast_QDateTime_to_QByteArray_ThrowException() const
@@ -525,8 +526,8 @@ void tst_CastAttributes::cast_QDateTime_to_QByteArray_ThrowException() const
 
     type.mergeCasts({{"datetime", CastType::QByteArray}});
 
-    QVERIFY_EXCEPTION_THROWN(type.getAttribute("datetime"),
-                             InvalidArgumentError);
+    TVERIFY_THROWS_EXCEPTION(InvalidArgumentError,
+                             type.getAttribute("datetime"));
 }
 
 /* Default casts */

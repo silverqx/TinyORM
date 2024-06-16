@@ -7,6 +7,7 @@
 #include "orm/utils/type.hpp"
 
 #include "databases.hpp"
+#include "macros.hpp"
 
 using Orm::Constants::EMPTY;
 using Orm::Constants::NAME;
@@ -811,10 +812,10 @@ void tst_DatabaseManager::SQLite_CheckDatabaseExists_True() const
               .toUtf8().constData(), );
 
     // Verify
-    QVERIFY_EXCEPTION_THROWN(
+    TVERIFY_THROWS_EXCEPTION(
+                SQLiteDatabaseDoesNotExistError,
                 m_dm->connection(*connectionName)
-                .statement(sl("create table tbl1 (one varchar(10), two smallint)")),
-                SQLiteDatabaseDoesNotExistError);
+                .statement(sl("create table tbl1 (one varchar(10), two smallint)")));
 
     // Restore
     QVERIFY(Databases::removeConnection(*connectionName));

@@ -6,6 +6,7 @@
 #include "orm/utils/nullvariant.hpp"
 
 #include "databases.hpp"
+#include "macros.hpp"
 
 #include "models/torrent.hpp"
 
@@ -924,8 +925,8 @@ void tst_MySql_TinyBuilder::has_UnsupportedHasNested_Failed() const
 {
     auto builder = createTinyQuery<Torrent>();
 
-    QVERIFY_EXCEPTION_THROWN(builder->has("torrentFiles.fileProperty"),
-                             InvalidArgumentError);
+    TVERIFY_THROWS_EXCEPTION(InvalidArgumentError,
+                             builder->has("torrentFiles.fileProperty"));
 }
 
 void tst_MySql_TinyBuilder::orHas_Basic_OnHasMany() const

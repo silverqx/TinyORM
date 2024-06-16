@@ -8,6 +8,7 @@
 #include "orm/utils/type.hpp"
 
 #include "databases.hpp"
+#include "macros.hpp"
 
 using Orm::Constants::PUBLIC;
 using Orm::Constants::search_path;
@@ -108,9 +109,9 @@ void tst_PostgreSQL_SchemaBuilder_f::
               .toUtf8().constData(), );
 
     // Verify
-    QVERIFY_EXCEPTION_THROWN(
-                Schema::on(*connectionName).hasTable(sl("users")),
-                SearchPathEmptyError);
+    TVERIFY_THROWS_EXCEPTION(
+                SearchPathEmptyError,
+                Schema::on(*connectionName).hasTable(sl("users")));
 
     // Restore
     QVERIFY(Databases::removeConnection(*connectionName));

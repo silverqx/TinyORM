@@ -6,6 +6,7 @@ load(tiny_dotenv)
 # Common Configuration ( also for tests )
 # ---
 
+# TODO qt5 remove silverqx
 versionAtLeast(QT_VERSION, 6.2.4): \
     CONFIG *= c++20
 else: \
@@ -19,11 +20,14 @@ CONFIG -= c++11 app_bundle
 # Qt defines
 # ---
 
-# You can also make your code fail to compile if it uses deprecated APIs.
-# In order to do so, uncomment the following line.
-# You can also select to disable deprecated APIs only up to a certain version of Qt.
-# Disables all the APIs deprecated before Qt 6.0.0
-DEFINES *= QT_DISABLE_DEPRECATED_BEFORE=0x060000
+# Disable deprecated APIs up to the given Qt version
+# Disable all the APIs deprecated up to Qt 6.7.0
+# TODO qt5 remove silverqx
+versionAtLeast(QT_VERSION, 6): \
+    DEFINES *= QT_DISABLE_DEPRECATED_UP_TO=0x060700
+# Disable all the APIs deprecated up to Qt 6.0.0
+else: \
+    DEFINES *= QT_DISABLE_DEPRECATED_BEFORE=0x060000
 
 #DEFINES *= QT_ASCII_CAST_WARNINGS
 #DEFINES *= QT_NO_CAST_FROM_ASCII

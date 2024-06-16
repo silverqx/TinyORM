@@ -2,6 +2,7 @@
 #include <QtTest>
 
 #include "databases.hpp"
+#include "macros.hpp"
 
 #include "models/torrent.hpp"
 

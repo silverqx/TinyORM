@@ -10,6 +10,7 @@
 #include "orm/utils/type.hpp"
 
 #include "databases.hpp"
+#include "macros.hpp"
 
 using namespace Qt::StringLiterals; /* NOLINT(google-build-using-namespace) */
 
@@ -629,12 +630,12 @@ void tst_SqlQuery_Normal::finish_And_detachFromResultSet() const
     QVERIFY(users.isSelect());
     QVERIFY(!users.isValid());
     QCOMPARE(users.at(), BeforeFirstRow);
-    QVERIFY_THROWS_EXCEPTION(LogicError, users.size());
+    TVERIFY_THROWS_EXCEPTION(LogicError, users.size());
     // Behaves the same as the size() for SELECT queries
-    QVERIFY_THROWS_EXCEPTION(LogicError, users.numRowsAffected());
+    TVERIFY_THROWS_EXCEPTION(LogicError, users.numRowsAffected());
     QCOMPARE(users.numericalPrecisionPolicy(), LowPrecisionDouble);
     QCOMPARE(users.executedQuery(), query);
-    QVERIFY_THROWS_EXCEPTION(LogicError, users.lastInsertId());
+    TVERIFY_THROWS_EXCEPTION(LogicError, users.lastInsertId());
 
     QVERIFY(!users.next());
     QVERIFY(!users.previous());
@@ -902,12 +903,12 @@ void tst_SqlQuery_Normal::select_reExecute_SameQuery_AfterFinish() const
         QVERIFY(users.isSelect());
         QVERIFY(!users.isValid());
         QCOMPARE(users.at(), BeforeFirstRow);
-        QVERIFY_THROWS_EXCEPTION(LogicError, users.size());
+        TVERIFY_THROWS_EXCEPTION(LogicError, users.size());
         // Behaves the same as the size() for SELECT queries
-        QVERIFY_THROWS_EXCEPTION(LogicError, users.numRowsAffected());
+        TVERIFY_THROWS_EXCEPTION(LogicError, users.numRowsAffected());
         QCOMPARE(users.numericalPrecisionPolicy(), LowPrecisionDouble);
         QCOMPARE(users.executedQuery(), query);
-        QVERIFY_THROWS_EXCEPTION(LogicError, users.lastInsertId());
+        TVERIFY_THROWS_EXCEPTION(LogicError, users.lastInsertId());
 
         QVERIFY(!users.next());
         QVERIFY(!users.previous());
@@ -1019,12 +1020,12 @@ void tst_SqlQuery_Normal::select_executeAnotherQuery_OnSameInstance_AfterFinish(
         QVERIFY(query.isSelect());
         QVERIFY(!query.isValid());
         QCOMPARE(query.at(), BeforeFirstRow);
-        QVERIFY_THROWS_EXCEPTION(LogicError, query.size());
+        TVERIFY_THROWS_EXCEPTION(LogicError, query.size());
         // Behaves the same as the size() for SELECT queries
-        QVERIFY_THROWS_EXCEPTION(LogicError, query.numRowsAffected());
+        TVERIFY_THROWS_EXCEPTION(LogicError, query.numRowsAffected());
         QCOMPARE(query.numericalPrecisionPolicy(), LowPrecisionDouble);
         QCOMPARE(query.executedQuery(), queryString);
-        QVERIFY_THROWS_EXCEPTION(LogicError, query.lastInsertId());
+        TVERIFY_THROWS_EXCEPTION(LogicError, query.lastInsertId());
 
         QVERIFY(!query.next());
         QVERIFY(!query.previous());
@@ -1104,7 +1105,7 @@ void tst_SqlQuery_Normal::insert_update_delete() const
         QVERIFY(users.isActive());
         QVERIFY(!users.isSelect());
         QVERIFY(!users.isValid());
-        QVERIFY_THROWS_EXCEPTION(LogicError, users.size());
+        TVERIFY_THROWS_EXCEPTION(LogicError, users.size());
         QCOMPARE(users.numRowsAffected(), 1);
         QCOMPARE(users.executedQuery(), query);
 
@@ -1161,7 +1162,7 @@ void tst_SqlQuery_Normal::insert_update_delete() const
         QVERIFY(users.isActive());
         QVERIFY(!users.isSelect());
         QVERIFY(!users.isValid());
-        QVERIFY_THROWS_EXCEPTION(LogicError, users.size());
+        TVERIFY_THROWS_EXCEPTION(LogicError, users.size());
         QCOMPARE(users.numRowsAffected(), 1);
         QCOMPARE(users.executedQuery(), query);
     }
@@ -1210,7 +1211,7 @@ void tst_SqlQuery_Normal::insert_update_delete() const
         QVERIFY(users.isActive());
         QVERIFY(!users.isSelect());
         QVERIFY(!users.isValid());
-        QVERIFY_THROWS_EXCEPTION(LogicError, users.size());
+        TVERIFY_THROWS_EXCEPTION(LogicError, users.size());
         QCOMPARE(users.numRowsAffected(), 1);
         QCOMPARE(users.executedQuery(), query);
     }

@@ -2,6 +2,7 @@
 #include <QtTest>
 
 #include "databases.hpp"
+#include "macros.hpp"
 
 #include "models/torrent.hpp"
 #include "models/torrentpreviewablefile.hpp"
@@ -233,8 +234,7 @@ void tst_Relations_Inserting_Updating::save_OnHasOneOrMany_Failed() const
     });
     QVERIFY(!file.exists);
 
-    QVERIFY_EXCEPTION_THROWN(torrent->torrentFiles()->save(file),
-                             QueryError);
+    TVERIFY_THROWS_EXCEPTION(QueryError, torrent->torrentFiles()->save(file));
     QVERIFY(!file.exists);
     QVERIFY(!file[ID]->isValid());
     QCOMPARE(file["torrent_id"], QVariant(1));
@@ -403,8 +403,8 @@ void tst_Relations_Inserting_Updating::saveMany_OnHasOneOrMany_Failed() const
         std::move(file2),
     };
     ModelsCollection<TorrentPreviewableFile> savedFiles;
-    QVERIFY_EXCEPTION_THROWN(savedFiles = torrent->torrentFiles()->saveMany(filesToSave),
-                             QueryError);
+    TVERIFY_THROWS_EXCEPTION(QueryError,
+                             savedFiles = torrent->torrentFiles()->saveMany(filesToSave));
     QVERIFY(savedFiles.isEmpty());
 }
 
@@ -503,8 +503,8 @@ void tst_Relations_Inserting_Updating::create_OnHasOneOrMany_Failed() const
     };
     TorrentPreviewableFile file;
 
-    QVERIFY_EXCEPTION_THROWN(file = torrent->torrentFiles()->create(fileAttribtues),
-                             QueryError);
+    TVERIFY_THROWS_EXCEPTION(QueryError,
+                             file = torrent->torrentFiles()->create(fileAttribtues));
     QVERIFY(!file.exists);
     QVERIFY(file.getAttributes().isEmpty());
 }
@@ -521,13 +521,14 @@ void tst_Relations_Inserting_Updating::create_OnHasOneOrMany_WithRValue_Failed()
 
     TorrentPreviewableFile file;
 
-    QVERIFY_EXCEPTION_THROWN(file = torrent->torrentFiles()->create({
-        {"file_index", 1},
-        {"filepath",   "test1_file1.mkv"},
-        {SIZE_,        377477},
-        {Progress,     222},
-        {NOTE,         "relation's save fail"},
-    }), QueryError);
+    TVERIFY_THROWS_EXCEPTION(QueryError,
+            file = torrent->torrentFiles()->create({
+                {"file_index", 1},
+                {"filepath",   "test1_file1.mkv"},
+                {SIZE_,        377477},
+                {Progress,     222},
+                {NOTE,         "relation's save fail"},
+            }));
 
     QVERIFY(!file.exists);
     QVERIFY(file.getAttributes().isEmpty());
@@ -689,9 +690,9 @@ void tst_Relations_Inserting_Updating::createMany_OnHasOneOrMany_Failed() const
     };
 
     ModelsCollection<TorrentPreviewableFile> savedFiles;
-    QVERIFY_EXCEPTION_THROWN(savedFiles = torrent->torrentFiles()
-                                          ->createMany(fileAttributesToSave),
-                             QueryError);
+    TVERIFY_THROWS_EXCEPTION(QueryError,
+                             savedFiles = torrent->torrentFiles()
+                                          ->createMany(fileAttributesToSave));
     QVERIFY(savedFiles.isEmpty());
 }
 
@@ -707,7 +708,7 @@ tst_Relations_Inserting_Updating::createMany_OnHasOneOrMany_WithRValue_Failed() 
     QVERIFY(torrent->exists);
 
     ModelsCollection<TorrentPreviewableFile> savedFiles;
-    QVERIFY_EXCEPTION_THROWN(
+    TVERIFY_THROWS_EXCEPTION(QueryError,
                 savedFiles = torrent->torrentFiles()->createMany({{
                     {"file_index", 1},
                     {"filepath",   "test1_file1.mkv"},
@@ -723,8 +724,7 @@ tst_Relations_Inserting_Updating::createMany_OnHasOneOrMany_WithRValue_Failed() 
                     {SIZE_,        377477},
                     {Progress,     222},
                     {NOTE,         "relation's save fail"},
-                }}),
-                QueryError);
+                }}));
     QVERIFY(savedFiles.isEmpty());
 }
 
@@ -837,8 +837,7 @@ void tst_Relations_Inserting_Updating::save_OnBelongsToMany_Failed() const
     Tag tag({{NAME, "tag1"}});
     QVERIFY(!tag.exists);
 
-    QVERIFY_EXCEPTION_THROWN(torrent->tags()->save(tag),
-                             QueryError);
+    TVERIFY_THROWS_EXCEPTION(QueryError, torrent->tags()->save(tag));
     QVERIFY(!tag.exists);
     QVERIFY(!tag[ID]->isValid());
 
@@ -1001,8 +1000,8 @@ void tst_Relations_Inserting_Updating::saveMany_OnBelongsToMany_Failed() const
 
     ModelsCollection<Tag> tagsToSave {std::move(tag1), std::move(tag2)};
     ModelsCollection<Tag> savedTags;
-    QVERIFY_EXCEPTION_THROWN(savedTags = torrent->tags()->saveMany(tagsToSave),
-                             QueryError);
+    TVERIFY_THROWS_EXCEPTION(QueryError,
+                             savedTags = torrent->tags()->saveMany(tagsToSave));
     QVERIFY(savedTags.isEmpty());
 
     size = torrent->tags()->get({ID}).size();
@@ -1114,8 +1113,8 @@ void tst_Relations_Inserting_Updating::create_OnBelongsToMany_Failed() const
     QVector<AttributeItem> tagAttributes {{NAME, "tag1"}};
     Tag tag;
 
-    QVERIFY_EXCEPTION_THROWN(tag = torrent->tags()->create(tagAttributes),
-                             QueryError);
+    TVERIFY_THROWS_EXCEPTION(QueryError,
+                             tag = torrent->tags()->create(tagAttributes));
     QVERIFY(!tag.exists);
     QVERIFY(tag.getAttributes().isEmpty());
 
@@ -1140,8 +1139,8 @@ void tst_Relations_Inserting_Updating::create_OnBelongsToMany_WithRValue_Failed(
 
     Tag tag;
 
-    QVERIFY_EXCEPTION_THROWN(tag = torrent->tags()->create({{NAME, "tag1"}}),
-                             QueryError);
+    TVERIFY_THROWS_EXCEPTION(QueryError,
+                             tag = torrent->tags()->create({{NAME, "tag1"}}));
     QVERIFY(!tag.exists);
     QVERIFY(tag.getAttributes().isEmpty());
 
@@ -1289,9 +1288,9 @@ void tst_Relations_Inserting_Updating::createMany_OnBelongsToMany_Failed() const
 
     ModelsCollection<Tag> tags;
 
-    QVERIFY_EXCEPTION_THROWN(tags = torrent->tags()->createMany(tagAttributes,
-                                                                {{{"active", false}}}),
-                             QueryError);
+    TVERIFY_THROWS_EXCEPTION(QueryError,
+                             tags = torrent->tags()->createMany(tagAttributes,
+                                                                {{{"active", false}}}));
     QVERIFY(tags.isEmpty());
 
     size = torrent->tags()->get({ID}).size();
@@ -1316,11 +1315,11 @@ tst_Relations_Inserting_Updating::createMany_OnBelongsToMany_WithRValue_Failed()
 
     ModelsCollection<Tag> tags;
 
-    QVERIFY_EXCEPTION_THROWN(tags = torrent->tags()->createMany({{{NAME, "tag1"}},
+    TVERIFY_THROWS_EXCEPTION(QueryError,
+                             tags = torrent->tags()->createMany({{{NAME, "tag1"}},
                                                                  {{NAME, "tag1"}}},
 
-                                                                {{{"active", false}}}),
-                             QueryError);
+                                                                {{{"active", false}}}));
     QVERIFY(tags.isEmpty());
 
     size = torrent->tags()->get({ID}).size();

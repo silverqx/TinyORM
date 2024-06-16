@@ -10,6 +10,7 @@
 #include "tom/commands/migrations/statuscommand.hpp"
 
 #include "databases.hpp"
+#include "macros.hpp"
 
 #include "migrations/2014_10_12_000000_create_posts_table.hpp"
 #include "migrations/2014_10_12_100000_add_factor_column_to_posts_table.hpp"

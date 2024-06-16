@@ -9,6 +9,7 @@
 #include "orm/utils/query.hpp"
 
 #include "databases.hpp"
+#include "macros.hpp"
 
 #include "models/massassignmentmodels.hpp"
 #include "models/setting.hpp"
@@ -389,7 +390,7 @@ void tst_Model::save_Update_Failed() const
 
     peer->setAttribute("total_seeds-NON_EXISTENT", 15);
 
-    QVERIFY_EXCEPTION_THROWN(peer->save(), QueryError);
+    TVERIFY_THROWS_EXCEPTION(QueryError, peer->save());
 
     QVERIFY(peer->exists);
 }
@@ -832,10 +833,8 @@ void tst_Model::findOrFail_NotFoundFailed() const
 
     ConnectionOverride::connection = connection;
 
-    QVERIFY_EXCEPTION_THROWN(Torrent::findOrFail(999999),
-                             ModelNotFoundError);
-    QVERIFY_EXCEPTION_THROWN(Torrent::findOrFail(999999, {ID, NAME}),
-                             ModelNotFoundError);
+    TVERIFY_THROWS_EXCEPTION(ModelNotFoundError, Torrent::findOrFail(999999));
+    TVERIFY_THROWS_EXCEPTION(ModelNotFoundError, Torrent::findOrFail(999999, {ID, NAME}));
 }
 
 void tst_Model::findMany() const
@@ -1351,13 +1350,14 @@ void tst_Model::create_Failed() const
     const auto addedOn = QDateTime({2021, 2, 1}, {20, 22, 10}, Qt::UTC);
 
     Torrent torrent;
-    QVERIFY_EXCEPTION_THROWN((torrent = Torrent::create({
+    TVERIFY_THROWS_EXCEPTION(QueryError,
+    (torrent = Torrent::create({
         {"name-NON_EXISTENT", "test100"},
         {SIZE_,               100},
         {Progress,            333},
         {"added_on",          addedOn},
         {HASH_,               "1009e3af2768cdf52ec84c1f320333f68401dc6e"},
-    })), QueryError);
+    })));
 
     QVERIFY(!torrent.exists);
     QVERIFY(torrent.getAttributes().isEmpty());

@@ -7,6 +7,7 @@
 #include "orm/utils/type.hpp"
 
 #include "databases.hpp"
+#include "macros.hpp"
 
 using Orm::Constants::AND;
 using Orm::Constants::ASC;
@@ -3011,19 +3012,19 @@ void tst_MySql_QueryBuilder::whereRowValues() const
 void tst_MySql_QueryBuilder::whereRowValues_Empty() const
 {
     // Different size
-    QVERIFY_EXCEPTION_THROWN(
+    TVERIFY_THROWS_EXCEPTION(
+                InvalidArgumentError,
                 createQuery()->select("*").from("torrents")
-                .whereRowValues({NAME}, EQ, {"test3", 3}),
-                InvalidArgumentError);
-    QVERIFY_EXCEPTION_THROWN(
+                .whereRowValues({NAME}, EQ, {"test3", 3}));
+    TVERIFY_THROWS_EXCEPTION(
+            InvalidArgumentError,
             createQuery()->select("*").from("torrents")
-            .whereRowValues({}, EQ, {"test3", 3}),
-            InvalidArgumentError);
+            .whereRowValues({}, EQ, {"test3", 3}));
     // Empty columns/values
-    QVERIFY_EXCEPTION_THROWN(
+    TVERIFY_THROWS_EXCEPTION(
+            InvalidArgumentError,
             createQuery()->select("*").from("torrents")
-            .whereRowValues({}, EQ, {}),
-            InvalidArgumentError);
+            .whereRowValues({}, EQ, {}));
 }
 
 void tst_MySql_QueryBuilder::whereRowValues_ColumnExpression() const

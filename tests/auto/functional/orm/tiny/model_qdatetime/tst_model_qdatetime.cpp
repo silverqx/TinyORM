@@ -6,6 +6,7 @@
 #include "orm/utils/nullvariant.hpp"
 
 #include "databases.hpp"
+#include "macros.hpp"
 
 #include "models/datetime.hpp"
 

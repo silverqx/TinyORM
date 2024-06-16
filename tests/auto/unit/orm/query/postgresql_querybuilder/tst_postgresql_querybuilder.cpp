@@ -5,6 +5,7 @@
 #include "orm/utils/type.hpp"
 
 #include "databases.hpp"
+#include "macros.hpp"
 
 using Orm::Constants::AND;
 using Orm::Constants::ASC;

@@ -4,6 +4,7 @@
 #include "orm/db.hpp"
 
 #include "databases.hpp"
+#include "macros.hpp"
 
 #include "models/datetime.hpp"
 #include "models/filepropertyproperty.hpp"
@@ -208,18 +209,18 @@ void tst_Model_Connection_Independent::
 defaultAttributeValues_WithQDateTime_DefaultCtor() const
 {
     // Default ctor must throw because of the QDateTime
-    QVERIFY_EXCEPTION_THROWN(TorrentEager(), InvalidArgumentError);
+    TVERIFY_THROWS_EXCEPTION(InvalidArgumentError, TorrentEager());
 }
 
 void tst_Model_Connection_Independent::
 defaultAttributeValues_WithQDateTime_ConvertingAttributesCtor() const
 {
     // Attributes converting ctor must throw because of the QDateTime
-    QVERIFY_EXCEPTION_THROWN(TorrentEager({
+    TVERIFY_THROWS_EXCEPTION(InvalidArgumentError,
+                             TorrentEager({
                                  {NAME, "test22"},
                                  {NOTE, "Torrent::instance()"},
-                             }),
-                             InvalidArgumentError);
+                             }));
 }
 
 void tst_Model_Connection_Independent::
@@ -227,11 +228,11 @@ defaultAttributeValues_WithQDateTime_ListInitializationCtor() const
 {
     /* List initialization using the std::initializer_list<AttributeItem> must throw
        because of the QDateTime. */
-    QVERIFY_EXCEPTION_THROWN((TorrentEager {
+    TVERIFY_THROWS_EXCEPTION(InvalidArgumentError,
+                             (TorrentEager {
                                  {NAME, "test22"},
                                  {NOTE, "Torrent::instance()"},
-                             }),
-                             InvalidArgumentError);
+                             }));
 }
 
 void tst_Model_Connection_Independent::
@@ -963,8 +964,7 @@ tst_Model_Connection_Independent::massAssignment_TotallyGuarded_Exception() cons
     Torrent_TotallyGuarded torrent;
 
     QVERIFY(!torrent.exists);
-    QVERIFY_EXCEPTION_THROWN(torrent.fill({{NAME, "test150"}}),
-                             MassAssignmentError);
+    TVERIFY_THROWS_EXCEPTION(MassAssignmentError, torrent.fill({{NAME, "test150"}}));
 }
 
 void tst_Model_Connection_Independent::
@@ -2217,16 +2217,16 @@ void tst_Model_Connection_Independent::sole() const
 
 void tst_Model_Connection_Independent::sole_RecordsNotFoundError() const
 {
-    QVERIFY_EXCEPTION_THROWN(
-            FilePropertyProperty::whereEq(NAME, dummy_NONEXISTENT)->sole(),
-            RecordsNotFoundError);
+    TVERIFY_THROWS_EXCEPTION(
+            RecordsNotFoundError,
+            FilePropertyProperty::whereEq(NAME, dummy_NONEXISTENT)->sole());
 }
 
 void tst_Model_Connection_Independent::sole_MultipleRecordsFoundError() const
 {
-    QVERIFY_EXCEPTION_THROWN(
-            FilePropertyProperty::whereEq("file_property_id", 5)->sole(),
-            MultipleRecordsFoundError);
+    TVERIFY_THROWS_EXCEPTION(
+            MultipleRecordsFoundError,
+            FilePropertyProperty::whereEq("file_property_id", 5)->sole());
 }
 
 void tst_Model_Connection_Independent::sole_Pretending() const
@@ -2257,16 +2257,16 @@ void tst_Model_Connection_Independent::soleValue() const
 
 void tst_Model_Connection_Independent::soleValue_RecordsNotFoundError() const
 {
-    QVERIFY_EXCEPTION_THROWN(
-            FilePropertyProperty::whereEq(NAME, dummy_NONEXISTENT)->soleValue(NAME),
-            RecordsNotFoundError);
+    TVERIFY_THROWS_EXCEPTION(
+            RecordsNotFoundError,
+            FilePropertyProperty::whereEq(NAME, dummy_NONEXISTENT)->soleValue(NAME));
 }
 
 void tst_Model_Connection_Independent::soleValue_MultipleRecordsFoundError() const
 {
-    QVERIFY_EXCEPTION_THROWN(
-            FilePropertyProperty::soleValue(NAME),
-            MultipleRecordsFoundError);
+    TVERIFY_THROWS_EXCEPTION(
+            MultipleRecordsFoundError,
+            FilePropertyProperty::soleValue(NAME));
 }
 
 void tst_Model_Connection_Independent::soleValue_Pretending() const

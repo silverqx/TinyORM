@@ -2,6 +2,7 @@
 #include <QtTest>
 
 #include "databases.hpp"
+#include "macros.hpp"
 
 #include "models/torrent.hpp"
 
@@ -162,10 +163,10 @@ void tst_TinyBuilder::firstOrFail_NotFoundFailed() const
 
     ConnectionOverride::connection = connection;
 
-    QVERIFY_EXCEPTION_THROWN(Torrent::whereEq(ID, 999999)->firstOrFail(),
-                             ModelNotFoundError);
-    QVERIFY_EXCEPTION_THROWN(Torrent::whereEq(ID, 999999)->firstOrFail({ID, NAME}),
-                             ModelNotFoundError);
+    TVERIFY_THROWS_EXCEPTION(ModelNotFoundError,
+                             Torrent::whereEq(ID, 999999)->firstOrFail());
+    TVERIFY_THROWS_EXCEPTION(ModelNotFoundError,
+                             Torrent::whereEq(ID, 999999)->firstOrFail({ID, NAME}));
 }
 
 void tst_TinyBuilder::incrementAndDecrement() const
@@ -271,9 +272,9 @@ void tst_TinyBuilder::update_Failed() const
 
     ConnectionOverride::connection = connection;
 
-    QVERIFY_EXCEPTION_THROWN(
-                Torrent::whereEq(ID, 3)->update({{"progress-NON_EXISTENT", 333}}),
-                QueryError);
+    TVERIFY_THROWS_EXCEPTION(
+                QueryError,
+                Torrent::whereEq(ID, 3)->update({{"progress-NON_EXISTENT", 333}}));
 }
 
 void tst_TinyBuilder::update_SameValue() const

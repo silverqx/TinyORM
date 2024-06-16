@@ -13,11 +13,6 @@
 
 #include "export.hpp"
 
-#ifndef sl
-/*! Alias for the QStringLiteral(). */
-#  define sl(str) QStringLiteral(str)
-#endif
-
 namespace Orm
 {
     class DatabaseManager;

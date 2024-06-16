@@ -5,6 +5,7 @@ HEADERS += \
     $$PWD/databases.hpp \
     $$PWD/export.hpp \
     $$PWD/fs.hpp \
+    $$PWD/macros.hpp \
     $$PWD/version.hpp \
 
 SOURCES += \

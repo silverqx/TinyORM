@@ -11,6 +11,7 @@
 #include "orm/utils/type.hpp"
 
 #include "databases.hpp"
+#include "macros.hpp"
 
 using Orm::Constants::ASTERISK;
 using Orm::Constants::COMMA;
@@ -1224,12 +1225,12 @@ void tst_QueryBuilder::upsert_EmptyUpdate() const
 {
     QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
-    QVERIFY_EXCEPTION_THROWN(
+    TVERIFY_THROWS_EXCEPTION(
+                InvalidArgumentError,
                 createQuery(connection)->from("tag_properties")
                 .upsert({{{"tag_id", 1}, {"color", "pink"},   {"position", 0}},
                          {{"tag_id", 1}, {"color", "purple"}, {"position", 4}}},
-                        {"position"}, {}),
-                InvalidArgumentError);
+                        {"position"}, {}));
 }
 
 void tst_QueryBuilder::upsert_WithoutUpdate_UpdateAll() const
@@ -1583,20 +1584,20 @@ void tst_QueryBuilder::sole_RecordsNotFoundError() const
 {
     QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
-    QVERIFY_EXCEPTION_THROWN(
+    TVERIFY_THROWS_EXCEPTION(
+            RecordsNotFoundError,
             createQuery(connection)->from("torrents")
                 .whereEq(NAME, dummy_NONEXISTENT)
-                .sole(),
-            RecordsNotFoundError);
+                .sole());
 }
 
 void tst_QueryBuilder::sole_MultipleRecordsFoundError() const
 {
     QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
-    QVERIFY_EXCEPTION_THROWN(
-            createQuery(connection)->from("torrents").whereEq("user_id", 1).sole(),
-            MultipleRecordsFoundError);
+    TVERIFY_THROWS_EXCEPTION(
+            MultipleRecordsFoundError,
+            createQuery(connection)->from("torrents").whereEq("user_id", 1).sole());
 }
 
 void tst_QueryBuilder::soleValue() const
@@ -1615,22 +1616,22 @@ void tst_QueryBuilder::soleValue_RecordsNotFoundError() const
 {
     QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
-    QVERIFY_EXCEPTION_THROWN(
+    TVERIFY_THROWS_EXCEPTION(
+            RecordsNotFoundError,
             createQuery(connection)->from("torrents")
                 .whereEq(NAME, dummy_NONEXISTENT)
-                .soleValue(NAME),
-            RecordsNotFoundError);
+                .soleValue(NAME));
 }
 
 void tst_QueryBuilder::soleValue_MultipleRecordsFoundError() const
 {
     QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
-    QVERIFY_EXCEPTION_THROWN(
+    TVERIFY_THROWS_EXCEPTION(
+            MultipleRecordsFoundError,
             createQuery(connection)->from("torrents")
                 .whereEq("user_id", 1)
-                .soleValue(NAME),
-            MultipleRecordsFoundError);
+                .soleValue(NAME));
 }
 
 void tst_QueryBuilder::chunk() const
@@ -1719,12 +1720,13 @@ void tst_QueryBuilder::chunk_EnforceOrderBy() const
 {
     QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
-    QVERIFY_EXCEPTION_THROWN(createQuery(connection)->from("file_property_properties")
-                             .chunk(3, [](SqlQuery &/*unused*/, const qint64 /*unused*/)
+    TVERIFY_THROWS_EXCEPTION(
+            RuntimeError,
+            createQuery(connection)->from("file_property_properties")
+                        .chunk(3, [](SqlQuery &/*unused*/, const qint64 /*unused*/)
     {
         return true;
-    }),
-        RuntimeError);
+    }));
 }
 
 void tst_QueryBuilder::chunk_EmptyResult() const
@@ -1812,12 +1814,13 @@ void tst_QueryBuilder::each_EnforceOrderBy() const
 {
     QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
-    QVERIFY_EXCEPTION_THROWN(createQuery(connection)->from("file_property_properties")
-                             .each([](SqlQuery &/*unused*/, const qint64 /*unused*/)
+    TVERIFY_THROWS_EXCEPTION(
+            RuntimeError,
+            createQuery(connection)->from("file_property_properties")
+                        .each([](SqlQuery &/*unused*/, const qint64 /*unused*/)
     {
         return true;
-    }),
-        RuntimeError);
+    }));
 }
 
 void tst_QueryBuilder::each_EmptyResult() const

@@ -6,6 +6,7 @@
 
 #include "common/collection.hpp"
 #include "databases.hpp"
+#include "macros.hpp"
 
 #include "models/albumimage.hpp"
 
@@ -2666,8 +2667,8 @@ void tst_Collection_Models::load_lvalue_NonExistentRelation_Failed() const
     // Verify before
     verify();
 
-    QVERIFY_EXCEPTION_THROWN(albums.load("albumImages-NON_EXISTENT"),
-                             RelationMappingNotFoundError);
+    TVERIFY_THROWS_EXCEPTION(RelationMappingNotFoundError,
+                             albums.load("albumImages-NON_EXISTENT"));
 
     // Verify after
     verify();
@@ -2905,8 +2906,8 @@ void tst_Collection_Models::load_rvalue_NonExistentRelation_Failed() const
     // Verify before
     verify();
 
-    QVERIFY_EXCEPTION_THROWN(std::move(albums).load("albumImages-NON_EXISTENT"),
-                             RelationMappingNotFoundError);
+    TVERIFY_THROWS_EXCEPTION(RelationMappingNotFoundError,
+                             std::move(albums).load("albumImages-NON_EXISTENT"));
 
     // Verify after
     verify();
@@ -3132,8 +3133,8 @@ void tst_Collection_Models::where_InvalidComparisonOperator_ThrowException() con
     QVERIFY(Common::verifyIds(images, {2, 3, 4, 5, 6}));
 
     // Verify
-    QVERIFY_EXCEPTION_THROWN(images.where(ID, dummy_NONEXISTENT, 10),
-                             InvalidArgumentError);
+    TVERIFY_THROWS_EXCEPTION(InvalidArgumentError,
+                             images.where(ID, dummy_NONEXISTENT, 10));
 }
 
 void tst_Collection_Models::whereNull_QString() const

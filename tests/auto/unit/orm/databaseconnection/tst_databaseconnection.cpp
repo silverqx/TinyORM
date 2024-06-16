@@ -10,6 +10,7 @@
 #include "orm/utils/type.hpp"
 
 #include "databases.hpp"
+#include "macros.hpp"
 
 using Orm::Constants::ID;
 using Orm::Constants::NAME;
@@ -867,9 +868,9 @@ void tst_DatabaseConnection::scalar_MultipleColumnsSelectedError() const
 {
     QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
-    QVERIFY_EXCEPTION_THROWN(DB::connection(connection).scalar(
-                                 "select id, name from torrents order by id"),
-                             MultipleColumnsSelectedError);
+    TVERIFY_THROWS_EXCEPTION(MultipleColumnsSelectedError,
+                             DB::connection(connection).scalar(
+                                 "select id, name from torrents order by id"));
 }
 // NOLINTEND(readability-convert-member-functions-to-static)
 

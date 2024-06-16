@@ -9,6 +9,7 @@
 #include "orm/utils/type.hpp"
 
 #include "databases.hpp"
+#include "macros.hpp"
 
 namespace fs = std::filesystem;
 

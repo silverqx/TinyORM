@@ -14,6 +14,7 @@
 #endif
 
 #include "databases.hpp"
+#include "macros.hpp"
 
 #ifndef TINYORM_DISABLE_ORM
 #  include "models/user.hpp"
@@ -749,7 +750,7 @@ void tst_SQLite_SchemaBuilder::renameColumn() const
 
 void tst_SQLite_SchemaBuilder::dropAllTypes() const
 {
-    QVERIFY_EXCEPTION_THROWN(Schema::on(m_connection).dropAllTypes(), LogicError);
+    TVERIFY_THROWS_EXCEPTION(LogicError, Schema::on(m_connection).dropAllTypes());
 }
 
 void tst_SQLite_SchemaBuilder::getAllTables() const
@@ -1330,57 +1331,57 @@ void tst_SQLite_SchemaBuilder::indexes_Blueprint() const
 
 void tst_SQLite_SchemaBuilder::indexes_Fluent_Fulltext_SpatialIndex_Exceptions() const
 {
-    QVERIFY_EXCEPTION_THROWN(
+    TVERIFY_THROWS_EXCEPTION(
+                RuntimeError,
                 Schema::on(m_connection).create(Firewalls, [](Blueprint &table)
                 {
                     table.id();
 
                     table.string("name_f").fulltext();
-                }),
-                    RuntimeError);
+                }));
 
-    QVERIFY_EXCEPTION_THROWN(
+    TVERIFY_THROWS_EXCEPTION(
+                RuntimeError,
                 Schema::on(m_connection).create(Firewalls, [](Blueprint &table)
                 {
                     table.id();
 
                     table.geometry("coordinates_s").spatialIndex();
-                }),
-                    RuntimeError);
+                }));
 }
 
 void tst_SQLite_SchemaBuilder::indexes_Blueprint_Fulltext_SpatialIndex_Exceptions() const
 {
-    QVERIFY_EXCEPTION_THROWN(
+    TVERIFY_THROWS_EXCEPTION(
+                RuntimeError,
                 Schema::on(m_connection).create(Firewalls, [](Blueprint &table)
                 {
                     table.id();
 
                     table.string("name_f");
                     table.fullText({"name_f"});
-                }),
-                    RuntimeError);
+                }));
 
-    QVERIFY_EXCEPTION_THROWN(
+    TVERIFY_THROWS_EXCEPTION(
+                RuntimeError,
                 Schema::on(m_connection).create(Firewalls, [](Blueprint &table)
                 {
                     table.id();
 
                     table.geometry("coordinates_s").isGeometry();
                     table.spatialIndex("coordinates_s");
-                }),
-                    RuntimeError);
+                }));
 }
 
 void tst_SQLite_SchemaBuilder::renameIndex() const
 {
-    QVERIFY_EXCEPTION_THROWN(
+    TVERIFY_THROWS_EXCEPTION(
+                RuntimeError,
                 Schema::on(m_connection).table(Firewalls, [](Blueprint &table)
                 {
                     table.renameIndex("firewalls_name_unique",
                                       "firewalls_name_unique_renamed");
-                }),
-                    RuntimeError);
+                }));
 }
 
 void tst_SQLite_SchemaBuilder::dropIndex_ByIndexName() const
@@ -1560,34 +1561,34 @@ void tst_SQLite_SchemaBuilder::dropIndex_ByMultipleColumns() const
 
 void tst_SQLite_SchemaBuilder::dropPrimary_Exception() const
 {
-    QVERIFY_EXCEPTION_THROWN(
+    TVERIFY_THROWS_EXCEPTION(
+                RuntimeError,
                 Schema::on(m_connection).table(Firewalls, [](Blueprint &table)
                 {
                     table.dropPrimary();
-                }),
-                    RuntimeError);
+                }));
 }
 
 void tst_SQLite_SchemaBuilder::dropFullText_Exception() const
 {
-    QVERIFY_EXCEPTION_THROWN(
+    TVERIFY_THROWS_EXCEPTION(
+                RuntimeError,
                 Schema::on(m_connection).table(Firewalls, [](Blueprint &table)
                 {
                     // By column name
                     table.dropFullText({"name_f"});
-                }),
-                    RuntimeError);
+                }));
 }
 
 void tst_SQLite_SchemaBuilder::dropSpatialIndex_Exception() const
 {
-    QVERIFY_EXCEPTION_THROWN(
+    TVERIFY_THROWS_EXCEPTION(
+                RuntimeError,
                 Schema::on(m_connection).table(Firewalls, [](Blueprint &table)
                 {
                     // By index name
                     table.dropSpatialIndex("firewalls_coordinates_s_spatialindex");
-                }),
-                    RuntimeError);
+                }));
 }
 
 void tst_SQLite_SchemaBuilder::foreignKey() const
@@ -1704,13 +1705,13 @@ void tst_SQLite_SchemaBuilder::foreignKey_WithModel() const
 
 void tst_SQLite_SchemaBuilder::dropForeign() const
 {
-    QVERIFY_EXCEPTION_THROWN(
+    TVERIFY_THROWS_EXCEPTION(
+                RuntimeError,
                 Schema::on(m_connection).table(Firewalls, [](Blueprint &table)
                 {
                     // By column name
                     table.dropForeign({"user_id"});
-                }),
-                    RuntimeError);
+                }));
 }
 
 /* private */

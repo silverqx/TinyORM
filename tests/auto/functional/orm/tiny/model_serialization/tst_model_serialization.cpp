@@ -2,6 +2,7 @@
 #include <QtTest>
 
 #include "databases.hpp"
+#include "macros.hpp"
 
 #include "models/album.hpp"
 #include "models/datetime.hpp"
