@@ -6,7 +6,12 @@ load(tiny_dotenv)
 # Common Configuration ( also for tests )
 # ---
 
-CONFIG *= qt c++20 strict_c++ warn_on utf8_source hide_symbols no_keywords no_include_pwd
+versionAtLeast(QT_VERSION, 6.2.4): \
+    CONFIG *= c++20
+else: \
+    CONFIG *= c++2a
+
+CONFIG *= qt strict_c++ warn_on utf8_source hide_symbols no_keywords no_include_pwd
 CONFIG *= tiny_system_headers
 CONFIG *= silent
 CONFIG -= c++11 app_bundle
