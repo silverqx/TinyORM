@@ -1,8 +1,6 @@
 #include <QCoreApplication>
 #include <QtTest>
 
-#include <typeinfo>
-
 #include "orm/db.hpp"
 #include "orm/utils/query.hpp"
 
