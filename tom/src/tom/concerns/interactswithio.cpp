@@ -130,7 +130,7 @@ const InteractsWithIO &InteractsWithIO::alert(const QString &string,
     if (dontOutput(verbosity))
         return *this;
 
-    const auto asterisks = ASTERISK.repeated(string.count() + 12);
+    const auto asterisks = ASTERISK.repeated(string.size() + 12);
 
     comment(asterisks);
     comment(QStringLiteral("*     %1     *").arg(string));
@@ -221,7 +221,7 @@ const InteractsWithIO &InteractsWithIO::walert(const QString &string,
     if (dontOutput(verbosity))
         return *this;
 
-    const auto asterisks = ASTERISK.repeated(string.count() + 12);
+    const auto asterisks = ASTERISK.repeated(string.size() + 12);
 
     wcomment(asterisks);
     wcomment(QStringLiteral("*     %1     *").arg(string));
