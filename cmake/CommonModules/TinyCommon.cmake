@@ -116,15 +116,16 @@ ${TINY_UNPARSED_ARGUMENTS}")
             /Zc:__cplusplus
             # Standards-conforming behavior
             /Zc:strictStrings
-            # Enable Additional Security Checks for Debug builds only
-            $<$<CONFIG:Debug>:/sdl>
-            /W4
         )
 
         # Abort compiling on warnings for Debug builds only (excluding vcpkg),
         # Release and vcpkg builds must go on as far as possible
         if(NOT TINY_VCPKG)
-            target_compile_options(${target} INTERFACE $<$<CONFIG:Debug>:/WX>)
+            target_compile_options(${target} INTERFACE
+                /W4
+                # Enable Additional Security Checks for Debug builds only
+                $<$<CONFIG:Debug>:/WX /sdl>
+            )
         endif()
 
         if(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
