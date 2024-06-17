@@ -2851,6 +2851,9 @@ insert_QDateTime_0300Timezone_DatetimeColumn_UtcOnServer_DontConvert() const
     QCOMPARE(DB::qtTimeZone(connection),
              QtTimeZoneConfig {QtTimeZoneType::DontConvert});
 
+    /* The QDateTime's time zone is ignored with the QtTimeZoneType::DontConvert
+       connection option, only toString(m_queryGrammar->getDateFormat()) is applied. */
+
     // Insert
     quint64 lastId = createQuery(connection)->from(*datetimes).insertGetId(
                          {{*datetime,

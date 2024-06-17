@@ -1265,6 +1265,9 @@ create_QDateTime_0300Timezone_DatetimeAttribute_UtcOnServer_DontConvert() const
 
     ConnectionOverride::connection = connection;
 
+    /* The QDateTime's time zone is ignored with the QtTimeZoneType::DontConvert
+       connection option, only toString(m_queryGrammar->getDateFormat()) is applied. */
+
     DB::setQtTimeZone(QtTimeZoneConfig {QtTimeZoneType::DontConvert}, connection);
     QCOMPARE(DB::qtTimeZone(connection),
              QtTimeZoneConfig {QtTimeZoneType::DontConvert});
