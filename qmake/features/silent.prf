@@ -1,0 +1,6 @@
+# Bugfix to silent the rc.exe command-line output on msvc, it overrides/extends
+# the original silent.prf feature.
+load(silent)
+
+!macx-xcode:msvc: \
+    QMAKE_RC = @$$QMAKE_RC
