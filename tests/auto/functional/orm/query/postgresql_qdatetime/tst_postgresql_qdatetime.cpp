@@ -18,6 +18,7 @@ using Orm::Constants::UTC;
 using Orm::DB;
 using Orm::QtTimeZoneConfig;
 using Orm::QtTimeZoneType;
+using Orm::TTimeZone;
 using Orm::Utils::Helpers;
 using Orm::Utils::NullVariant;
 
@@ -204,7 +205,7 @@ insert_Qt_QDateTime_UtcTimezone_DatetimeColumn_UtcOnServer() const
 
         QVERIFY(qtQuery.prepare(R"(insert into "datetimes" ("datetime") values (?))"));
 
-        qtQuery.addBindValue(QDateTime({2022, 8, 28}, {13, 14, 15}, Qt::UTC));
+        qtQuery.addBindValue(QDateTime({2022, 8, 28}, {13, 14, 15}, TTimeZone::UTC));
 
         QVERIFY(qtQuery.exec());
 
@@ -414,7 +415,7 @@ insert_Qt_QDateTime_UtcTimezone_TimestampColumn_UtcOnServer() const
 
         QVERIFY(qtQuery.prepare(R"(insert into "datetimes" ("timestamp") values (?))"));
 
-        qtQuery.addBindValue(QDateTime({2022, 8, 29}, {13, 14, 15}, Qt::UTC));
+        qtQuery.addBindValue(QDateTime({2022, 8, 29}, {13, 14, 15}, TTimeZone::UTC));
 
         // QPSQL driver converts the QDateTime time zone to UTC
         QVERIFY(qtQuery.exec());
@@ -627,7 +628,7 @@ insert_Qt_QDateTime_UtcTimezone_DatetimeColumn_0200OnServer() const
 
         QVERIFY(qtQuery.prepare(R"(insert into "datetimes" ("datetime") values (?))"));
 
-        qtQuery.addBindValue(QDateTime({2022, 8, 28}, {13, 14, 15}, Qt::UTC));
+        qtQuery.addBindValue(QDateTime({2022, 8, 28}, {13, 14, 15}, TTimeZone::UTC));
 
         QVERIFY(qtQuery.exec());
 
@@ -840,7 +841,7 @@ insert_Qt_QDateTime_UtcTimezone_TimestampColumn_0200OnServer() const
 
         QVERIFY(qtQuery.prepare(R"(insert into "datetimes" ("timestamp") values (?))"));
 
-        qtQuery.addBindValue(QDateTime({2022, 8, 29}, {13, 14, 15}, Qt::UTC));
+        qtQuery.addBindValue(QDateTime({2022, 8, 29}, {13, 14, 15}, TTimeZone::UTC));
 
         // QPSQL driver converts the QDateTime time zone to UTC
         QVERIFY(qtQuery.exec());
@@ -1051,7 +1052,7 @@ insert_QDateTime_UtcTimezone_DatetimeColumn_UtcOnServer() const
     // Insert
     quint64 lastId = createQuery()->from(*datetimes).insertGetId(
                          {{*datetime,
-                           QDateTime({2022, 8, 28}, {13, 14, 15}, Qt::UTC)}});
+                           QDateTime({2022, 8, 28}, {13, 14, 15}, TTimeZone::UTC)}});
 
     // Verify
     {
@@ -1071,7 +1072,8 @@ insert_QDateTime_UtcTimezone_DatetimeColumn_UtcOnServer() const
            configuration, TinyORM QueryBuilder fixes the buggy time zone behavior
            of the QPSQL driver. */
         const auto datetimeActual = datetimeDbVariant.value<QDateTime>();
-        const auto datetimeExpected = QDateTime({2022, 8, 28}, {13, 14, 15}, Qt::UTC);
+        const auto datetimeExpected = QDateTime({2022, 8, 28}, {13, 14, 15},
+                                                TTimeZone::UTC);
 
         QCOMPARE(datetimeActual, datetimeExpected);
         QCOMPARE(datetimeActual, datetimeExpected.toLocalTime());
@@ -1109,7 +1111,8 @@ insert_QDateTime_0200Timezone_DatetimeColumn_UtcOnServer() const
            configuration, TinyORM QueryBuilder fixes the buggy time zone behavior
            of the QPSQL driver. */
         const auto datetimeActual = datetimeDbVariant.value<QDateTime>();
-        const auto datetimeExpected = QDateTime({2022, 8, 28}, {11, 14, 15}, Qt::UTC);
+        const auto datetimeExpected = QDateTime({2022, 8, 28}, {11, 14, 15},
+                                                TTimeZone::UTC);
 
         QCOMPARE(datetimeActual, datetimeExpected);
         QCOMPARE(datetimeActual, datetimeExpected.toLocalTime());
@@ -1144,7 +1147,8 @@ void tst_PostgreSQL_QDateTime::insert_QString_DatetimeColumn_UtcOnServer() const
            configuration, TinyORM QueryBuilder fixes the buggy time zone behavior
            of the QPSQL driver. */
         const auto datetimeActual = datetimeDbVariant.value<QDateTime>();
-        const auto datetimeExpected = QDateTime({2022, 8, 28}, {13, 14, 15}, Qt::UTC);
+        const auto datetimeExpected = QDateTime({2022, 8, 28}, {13, 14, 15},
+                                                TTimeZone::UTC);
 
         QCOMPARE(datetimeActual, datetimeExpected);
         QCOMPARE(datetimeActual, datetimeExpected.toLocalTime());
@@ -1161,7 +1165,7 @@ insert_QDateTime_UtcTimezone_TimestampColumn_UtcOnServer() const
     // Insert
     quint64 lastId = createQuery()->from(*datetimes).insertGetId(
                          {{*timestamp,
-                           QDateTime({2022, 8, 28}, {13, 14, 15}, Qt::UTC)}});
+                           QDateTime({2022, 8, 28}, {13, 14, 15}, TTimeZone::UTC)}});
 
     // Verify
     {
@@ -1181,7 +1185,8 @@ insert_QDateTime_UtcTimezone_TimestampColumn_UtcOnServer() const
            configuration, TinyORM QueryBuilder fixes the buggy time zone behavior
            of the QPSQL driver. */
         const auto timestampActual = timestampDbVariant.value<QDateTime>();
-        const auto timestampExpected = QDateTime({2022, 8, 28}, {13, 14, 15}, Qt::UTC);
+        const auto timestampExpected = QDateTime({2022, 8, 28}, {13, 14, 15},
+                                                 TTimeZone::UTC);
 
         QCOMPARE(timestampActual, timestampExpected);
         QCOMPARE(timestampActual, timestampExpected.toLocalTime());
@@ -1219,7 +1224,8 @@ insert_QDateTime_0200Timezone_TimestampColumn_UtcOnServer() const
            configuration, TinyORM QueryBuilder fixes the buggy time zone behavior
            of the QPSQL driver. */
         const auto timestampActual = timestampDbVariant.value<QDateTime>();
-        const auto timestampExpected = QDateTime({2022, 8, 28}, {11, 14, 15}, Qt::UTC);
+        const auto timestampExpected = QDateTime({2022, 8, 28}, {11, 14, 15},
+                                                 TTimeZone::UTC);
 
         QCOMPARE(timestampActual, timestampExpected);
         QCOMPARE(timestampActual, timestampExpected.toLocalTime());
@@ -1254,7 +1260,8 @@ void tst_PostgreSQL_QDateTime::insert_QString_TimestampColumn_UtcOnServer() cons
            configuration, TinyORM QueryBuilder fixes the buggy time zone behavior
            of the QPSQL driver. */
         const auto timestampActual = timestampDbVariant.value<QDateTime>();
-        const auto timestampExpected = QDateTime({2022, 8, 28}, {13, 14, 15}, Qt::UTC);
+        const auto timestampExpected = QDateTime({2022, 8, 28}, {13, 14, 15},
+                                                 TTimeZone::UTC);
 
         QCOMPARE(timestampActual, timestampExpected);
         QCOMPARE(timestampActual, timestampExpected.toLocalTime());
@@ -1275,7 +1282,7 @@ insert_QDateTime_UtcTimezone_DatetimeColumn_0200OnServer() const
     // Insert
     quint64 lastId = createQuery()->from(*datetimes).insertGetId(
                          {{*datetime,
-                           QDateTime({2022, 8, 28}, {13, 14, 15}, Qt::UTC)}});
+                           QDateTime({2022, 8, 28}, {13, 14, 15}, TTimeZone::UTC)}});
 
     // Verify
     {
@@ -1391,7 +1398,7 @@ insert_QDateTime_UtcTimezone_TimestampColumn_0200OnServer() const
     // Insert
     quint64 lastId = createQuery()->from(*datetimes).insertGetId(
                          {{*timestamp,
-                           QDateTime({2022, 8, 28}, {13, 14, 15}, Qt::UTC)}});
+                           QDateTime({2022, 8, 28}, {13, 14, 15}, TTimeZone::UTC)}});
 
     // Verify
     {
@@ -2865,7 +2872,7 @@ TSqlQuery tst_PostgreSQL_QDateTime::createQtQuery() const
 
 void tst_PostgreSQL_QDateTime::setUtcTimezone() const
 {
-    setTimezone(UTC, {QtTimeZoneType::QtTimeSpec, QVariant::fromValue(Qt::UTC)});
+    setTimezone(UTC, QtTimeZoneConfig::utc());
 }
 
 void tst_PostgreSQL_QDateTime::setEUBratislavaTimezone() const

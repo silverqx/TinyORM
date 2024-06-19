@@ -22,7 +22,6 @@
 namespace Models
 {
 
-//using Orm::AttributeItem;
 using Orm::Constants::HASH_;
 using Orm::Constants::ID;
 using Orm::Constants::NAME;
@@ -31,6 +30,9 @@ using Orm::Constants::PARENTH_ONE;
 using Orm::Constants::Progress;
 using Orm::Constants::SIZE_;
 using Orm::Constants::SPACE_IN;
+
+//using Orm::AttributeItem;
+//using Orm::QtTimeZoneConfig;
 
 using Orm::Tiny::Model;
 using Orm::Tiny::Relations::Pivot;
@@ -217,7 +219,7 @@ private:
 //    inline static const QVector<AttributeItem> u_attributes {
 //        {SIZE_,      0},
 //        {Progress, 0},
-//        {"added_on", QDateTime({2021, 4, 1}, {15, 10, 10}, Qt::UTC)},
+//        {"added_on", QDateTime({2021, 4, 1}, {15, 10, 10}, QtTimeZoneConfig::utc())},
 //    };
 
     /*! The attributes that are mass assignable. */

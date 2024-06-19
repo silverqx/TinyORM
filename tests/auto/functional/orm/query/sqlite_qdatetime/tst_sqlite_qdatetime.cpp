@@ -18,6 +18,7 @@ using Orm::DB;
 using Orm::QtTimeZoneConfig;
 using Orm::QtTimeZoneType;
 using Orm::SQLiteConnection;
+using Orm::TTimeZone;
 using Orm::Utils::Helpers;
 using Orm::Utils::NullVariant;
 
@@ -197,7 +198,7 @@ insert_Qt_QDateTime_UtcTimezone_DatetimeColumn() const
 
         QVERIFY(qtQuery.prepare(R"(insert into "datetimes" ("datetime") values (?))"));
 
-        qtQuery.addBindValue(QDateTime({2022, 8, 28}, {13, 14, 15}, Qt::UTC));
+        qtQuery.addBindValue(QDateTime({2022, 8, 28}, {13, 14, 15}, TTimeZone::UTC));
 
         QVERIFY(qtQuery.exec());
 
@@ -238,7 +239,8 @@ insert_Qt_QDateTime_UtcTimezone_DatetimeColumn() const
         /* QSQLITE driver returns a string of a datetime with a timezone that was sent
            to the database in unchanged form. */
         const auto datetimeActual = datetimeDbVariant.value<QDateTime>();
-        const auto datetimeExpected = QDateTime({2022, 8, 28}, {13, 14, 15}, Qt::UTC);
+        const auto datetimeExpected = QDateTime({2022, 8, 28}, {13, 14, 15},
+                                                TTimeZone::UTC);
 
         QCOMPARE(datetimeActual, datetimeExpected);
         QCOMPARE(datetimeActual, datetimeExpected.toLocalTime());
@@ -383,7 +385,7 @@ insert_Qt_QDateTime_UtcTimezone_TimestampColumn() const
 
         QVERIFY(qtQuery.prepare(R"(insert into "datetimes" ("timestamp") values (?))"));
 
-        qtQuery.addBindValue(QDateTime({2022, 8, 29}, {13, 14, 15}, Qt::UTC));
+        qtQuery.addBindValue(QDateTime({2022, 8, 29}, {13, 14, 15}, TTimeZone::UTC));
 
         /* QSQLITE driver takes the QDateTime timezone into account, it internally calls
            .toString(Qt::ISODateWithMs). */
@@ -424,7 +426,8 @@ insert_Qt_QDateTime_UtcTimezone_TimestampColumn() const
         /* QSQLITE driver returns a string of a datetime with a timezone that was sent
            to the database in unchanged form. */
         const auto timestampActual = timestampDbVariant.value<QDateTime>();
-        const auto timestampExpected = QDateTime({2022, 8, 29}, {13, 14, 15}, Qt::UTC);
+        const auto timestampExpected = QDateTime({2022, 8, 29}, {13, 14, 15},
+                                                 TTimeZone::UTC);
 
         QCOMPARE(timestampActual, timestampExpected);
         QCOMPARE(timestampActual, timestampExpected.toLocalTime());
@@ -568,7 +571,7 @@ insert_QDateTime_UtcTimezone_DatetimeColumn_OnReturnQDateTime() const
     // Insert
     quint64 lastId = createQuery()->from(*datetimes).insertGetId(
                          {{*datetime,
-                           QDateTime({2022, 8, 28}, {13, 14, 15}, Qt::UTC)}});
+                           QDateTime({2022, 8, 28}, {13, 14, 15}, TTimeZone::UTC)}});
 
     // Verify
     {
@@ -584,7 +587,8 @@ insert_QDateTime_UtcTimezone_DatetimeColumn_OnReturnQDateTime() const
 
         // TinyORM QueryBuilder fixes this and returns the QDateTime instead of QString
         const auto datetimeActual = datetimeDbVariant.value<QDateTime>();
-        const auto datetimeExpected = QDateTime({2022, 8, 28}, {13, 14, 15}, Qt::UTC);
+        const auto datetimeExpected = QDateTime({2022, 8, 28}, {13, 14, 15},
+                                                TTimeZone::UTC);
 
         QCOMPARE(datetimeActual, datetimeExpected);
         QCOMPARE(datetimeActual, datetimeExpected.toLocalTime());
@@ -617,7 +621,8 @@ insert_QDateTime_0200Timezone_DatetimeColumn_OnReturnQDateTime() const
 
         // TinyORM QueryBuilder fixes this and returns the QDateTime instead of QString
         const auto datetimeActual = datetimeDbVariant.value<QDateTime>();
-        const auto datetimeExpected = QDateTime({2022, 8, 28}, {11, 14, 15}, Qt::UTC);
+        const auto datetimeExpected = QDateTime({2022, 8, 28}, {11, 14, 15},
+                                                TTimeZone::UTC);
 
         QCOMPARE(datetimeActual, datetimeExpected);
         QCOMPARE(datetimeActual, datetimeExpected.toLocalTime());
@@ -648,7 +653,8 @@ void tst_SQLite_QDateTime::insert_QString_DatetimeColumn_OnReturnQDateTime() con
 
         // TinyORM QueryBuilder fixes this and returns the QDateTime instead of QString
         const auto datetimeActual = datetimeDbVariant.value<QDateTime>();
-        const auto datetimeExpected = QDateTime({2022, 8, 28}, {13, 14, 15}, Qt::UTC);
+        const auto datetimeExpected = QDateTime({2022, 8, 28}, {13, 14, 15},
+                                                TTimeZone::UTC);
 
         QCOMPARE(datetimeActual, datetimeExpected);
         QCOMPARE(datetimeActual, datetimeExpected.toLocalTime());
@@ -665,7 +671,7 @@ insert_QDateTime_UtcTimezone_TimestampColumn_OnReturnQDateTime() const
     // Insert
     quint64 lastId = createQuery()->from(*datetimes).insertGetId(
                          {{*timestamp,
-                           QDateTime({2022, 8, 28}, {13, 14, 15}, Qt::UTC)}});
+                           QDateTime({2022, 8, 28}, {13, 14, 15}, TTimeZone::UTC)}});
 
     // Verify
     {
@@ -681,7 +687,8 @@ insert_QDateTime_UtcTimezone_TimestampColumn_OnReturnQDateTime() const
 
         // TinyORM QueryBuilder fixes this and returns the QDateTime instead of QString
         const auto timestampActual = timestampDbVariant.value<QDateTime>();
-        const auto timestampExpected = QDateTime({2022, 8, 28}, {13, 14, 15}, Qt::UTC);
+        const auto timestampExpected = QDateTime({2022, 8, 28}, {13, 14, 15},
+                                                 TTimeZone::UTC);
 
         QCOMPARE(timestampActual, timestampExpected);
         QCOMPARE(timestampActual, timestampExpected.toLocalTime());
@@ -714,7 +721,8 @@ insert_QDateTime_0200Timezone_TimestampColumn_OnReturnQDateTime() const
 
         // TinyORM QueryBuilder fixes this and returns the QDateTime instead of QString
         const auto timestampActual = timestampDbVariant.value<QDateTime>();
-        const auto timestampExpected = QDateTime({2022, 8, 28}, {11, 14, 15}, Qt::UTC);
+        const auto timestampExpected = QDateTime({2022, 8, 28}, {11, 14, 15},
+                                                 TTimeZone::UTC);
 
         QCOMPARE(timestampActual, timestampExpected);
         QCOMPARE(timestampActual, timestampExpected.toLocalTime());
@@ -745,7 +753,8 @@ void tst_SQLite_QDateTime::insert_QString_TimestampColumn_OnReturnQDateTime() co
 
         // TinyORM QueryBuilder fixes this and returns the QDateTime instead of QString
         const auto timestampActual = timestampDbVariant.value<QDateTime>();
-        const auto timestampExpected = QDateTime({2022, 8, 28}, {13, 14, 15}, Qt::UTC);
+        const auto timestampExpected = QDateTime({2022, 8, 28}, {13, 14, 15},
+                                                 TTimeZone::UTC);
 
         QCOMPARE(timestampActual, timestampExpected);
         QCOMPARE(timestampActual, timestampExpected.toLocalTime());
@@ -766,7 +775,7 @@ insert_QDateTime_UtcTimezone_DatetimeColumn_OffReturnQDateTime() const
     // Insert
     quint64 lastId = createQuery()->from(*datetimes).insertGetId(
                          {{*datetime,
-                           QDateTime({2022, 8, 28}, {13, 14, 15}, Qt::UTC)}});
+                           QDateTime({2022, 8, 28}, {13, 14, 15}, TTimeZone::UTC)}});
 
     // Verify
     {
@@ -875,7 +884,7 @@ insert_QDateTime_UtcTimezone_TimestampColumn_OffReturnQDateTime() const
     // Insert
     quint64 lastId = createQuery()->from(*datetimes).insertGetId(
                          {{*timestamp,
-                           QDateTime({2022, 8, 28}, {13, 14, 15}, Qt::UTC)}});
+                           QDateTime({2022, 8, 28}, {13, 14, 15}, TTimeZone::UTC)}});
 
     // Verify
     {
@@ -1780,12 +1789,8 @@ insert_QDateTime_0300Timezone_DatetimeColumn_UtcOnServer_DontConvert() const
     // Restore
     restore(lastId);
 
-    DB::connection(m_connection)
-            .setQtTimeZone(QtTimeZoneConfig {QtTimeZoneType::QtTimeSpec,
-                                             QVariant::fromValue(Qt::UTC)});
-    QCOMPARE(DB::qtTimeZone(m_connection),
-             (QtTimeZoneConfig {QtTimeZoneType::QtTimeSpec,
-                                QVariant::fromValue(Qt::UTC)}));
+    DB::connection(m_connection).setQtTimeZone(QtTimeZoneConfig::utc());
+    QCOMPARE(DB::qtTimeZone(m_connection), QtTimeZoneConfig::utc());
 }
 // NOLINTEND(readability-convert-member-functions-to-static)
 

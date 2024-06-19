@@ -177,25 +177,74 @@ namespace Query
     {
         /*! Don't convert time zone. */
         DontConvert,
-        /*! QtTimeZoneConfig contains Qt::TimeSpec, use toTimeSpec() for conversion. */
-        QtTimeSpec,
         /*! QtTimeZoneConfig contains the QTimeZone, use toTimeZone() for conversion. */
         QTimeZone,
         /*! QtTimeZoneConfig contains seconds, use toOffsetFromUtc() for conversion. */
         OffsetFromUtc,
+#if QT_VERSION < QT_VERSION_CHECK(6, 5, 0)
+        /*! QtTimeZoneConfig contains Qt::TimeSpec, use toTimeSpec() for conversion. */
+        QtTimeSpec,
+#endif
     };
+
+/* The TTimeZone alias can be used on Qt v5, Qt <v6.5, and also Qt >=v6.5.
+   It helps to support all Qt versions still. */
+#if QT_VERSION >= QT_VERSION_CHECK(6, 5, 0)
+    /*! Alias for QTimeZone::Initialization. */
+    using TTimeZone = QTimeZone::Initialization;
+#else
+    /*! Alias for Qt::TimeSpec. */
+    using TTimeZone = Qt::TimeSpec;
+#endif
 
     /*! Determine how the QDateTime time zone will be converted, it's saved
         in the qt_timezone database connection's configuration option. */
     struct QtTimeZoneConfig
     {
+#if QT_VERSION >= QT_VERSION_CHECK(6, 5, 0)
+        /*! Time zone type saved in the value data member. */
+        QtTimeZoneType type  {QtTimeZoneType::QTimeZone};
+        /*! Time zone value (UTC by default). */
+        QVariant       value {QVariant::fromValue(QTimeZone(QTimeZone::UTC))}; // UTC is the default timezone, not the QTimeZone::LocalTime (it overrides this default)
+#else
         /*! Time zone type saved in the value data member. */
         QtTimeZoneType type  {QtTimeZoneType::QtTimeSpec};
-        /*! Time zone value. */
+        /*! Time zone value (UTC by default). */
         QVariant       value {Qt::UTC}; // UTC is the default timezone, not the Qt::LocalTime (it overrides this default)
+#endif
 
         /*! Equality comparison operator for the QtTimeZoneConfig. */
         bool operator==(const QtTimeZoneConfig &) const = default;
+
+        /*! Factory method to create QtTimeZoneConfig as QTimeZone::UTC instance. */
+#if QT_VERSION >= QT_VERSION_CHECK(6, 5, 0)
+        inline static QtTimeZoneConfig utc() noexcept
+#else
+        inline static QtTimeZoneConfig utc()
+#endif
+        {
+#if QT_VERSION >= QT_VERSION_CHECK(6, 5, 0)
+            return {QtTimeZoneType::QTimeZone,
+                    QVariant::fromValue(QTimeZone(QTimeZone::UTC))};
+#else
+            return {QtTimeZoneType::QtTimeSpec, Qt::UTC};
+#endif
+        }
+
+        /*! Factory method to create QtTimeZoneConfig as QTimeZone::LocalTime instance. */
+#if QT_VERSION >= QT_VERSION_CHECK(6, 5, 0)
+        inline static QtTimeZoneConfig localTime() noexcept
+#else
+        inline static QtTimeZoneConfig localTime()
+#endif
+        {
+#if QT_VERSION >= QT_VERSION_CHECK(6, 5, 0)
+            return {QtTimeZoneType::QTimeZone,
+                    QVariant::fromValue(QTimeZone(QTimeZone::LocalTime))};
+#else
+            return {QtTimeZoneType::QtTimeSpec, Qt::LocalTime};
+#endif
+        }
     };
 
 } // namespace Orm

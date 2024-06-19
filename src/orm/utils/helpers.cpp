@@ -86,12 +86,25 @@ Helpers::convertTimeZone(const QDateTime &datetime, const QtTimeZoneConfig &time
 
     switch (timezoneType) {
     T_LIKELY
+    case QtTimeZoneType::QTimeZone:
+#if QT_VERSION >= QT_VERSION_CHECK(6, 5, 0)
+        if (const auto typeId = Helpers::qVariantTypeId(timezoneValue);
+            typeId == QMetaType::fromType<QTimeZone::Initialization>().id()
+        )
+            return datetime.toTimeZone(timezoneValue.value<QTimeZone::Initialization>());
+        else if (typeId == QMetaType::fromType<QTimeZone>().id())
+#endif
+            return datetime.toTimeZone(timezoneValue.value<QTimeZone>());
+#if QT_VERSION >= QT_VERSION_CHECK(6, 5, 0)
+        else
+            Q_UNREACHABLE();
+#endif
+
+#if QT_VERSION < QT_VERSION_CHECK(6, 5, 0)
+    T_LIKELY
     case QtTimeZoneType::QtTimeSpec:
         return datetime.toTimeSpec(timezoneValue.value<Qt::TimeSpec>());
-
-    T_LIKELY
-    case QtTimeZoneType::QTimeZone:
-        return datetime.toTimeZone(timezoneValue.value<QTimeZone>());
+#endif
 
     T_UNLIKELY
     case QtTimeZoneType::OffsetFromUtc:
@@ -110,19 +123,32 @@ Helpers::setTimeZone(QDateTime &datetime, const QtTimeZoneConfig &timezone)
 
     switch (timezoneType) {
     T_LIKELY
-    case QtTimeZoneType::QtTimeSpec:
-        datetime.setTimeSpec(timezoneValue.value<Qt::TimeSpec>());
+    case QtTimeZoneType::QTimeZone:
+#if QT_VERSION >= QT_VERSION_CHECK(6, 5, 0)
+        if (const auto typeId = Helpers::qVariantTypeId(timezoneValue);
+            typeId == QMetaType::fromType<QTimeZone::Initialization>().id()
+        )
+            datetime.setTimeZone(timezoneValue.value<QTimeZone::Initialization>());
+        else if (typeId == QMetaType::fromType<QTimeZone>().id())
+#endif
+            datetime.setTimeZone(timezoneValue.value<QTimeZone>());
+#if QT_VERSION >= QT_VERSION_CHECK(6, 5, 0)
+        else
+            Q_UNREACHABLE();
+#endif
         break;
 
+#if QT_VERSION < QT_VERSION_CHECK(6, 5, 0)
     T_LIKELY
-    case QtTimeZoneType::QTimeZone:
-        datetime.setTimeZone(timezoneValue.value<QTimeZone>());
+    case QtTimeZoneType::QtTimeSpec:
+        datetime.setTimeSpec(timezoneValue.value<Qt::TimeSpec>());
         break;
 
     T_UNLIKELY
     case QtTimeZoneType::OffsetFromUtc:
         datetime.setOffsetFromUtc(timezoneValue.value<int>());
         break;
+#endif
 
     T_UNLIKELY
     default:

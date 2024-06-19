@@ -35,6 +35,7 @@ using Orm::Exceptions::RuntimeError;
 using Orm::One;
 using Orm::QtTimeZoneConfig;
 using Orm::QtTimeZoneType;
+using Orm::TTimeZone;
 
 using Orm::Tiny::AttributeItem;
 using Orm::Tiny::ConnectionOverride;
@@ -2970,7 +2971,7 @@ timezone_TimestampAttribute_UtcOnServer_OnCustomPivotModel_ManyToMany() const
        configuration, TinyORM TinyBuilder fixes and unifies the buggy time zone
        behavior of all QtSql drivers. */
     const auto timestampActual = timestampDbVariant.value<QDateTime>();
-    const auto timestampExpected = QDateTime({2021, 2, 21}, {17, 31, 58}, Qt::UTC);
+    const auto timestampExpected = QDateTime({2021, 2, 21}, {17, 31, 58}, TTimeZone::UTC);
 
     QCOMPARE(timestampActual, timestampExpected);
     QCOMPARE(timestampActual, timestampExpected.toLocalTime());
@@ -3027,7 +3028,8 @@ timezone_TimestampAttribute_UtcOnServer_DontConvert_OnCustomPivot_MtM() const
    This is the reason why we must use #if QT_VERSION >= QT_VERSION_CHECK(6, 8, 0)
    everywhere for QtSql QMYSQL and QPSQL and tinymysql_lib_utc_qdatetime >= 20240618
    for TinyDrivers TinyMySql. */
-#if QT_VERSION >= QT_VERSION_CHECK(6, 8, 0) || tinymysql_lib_utc_qdatetime >= 20240618
+#if QT_VERSION >= QT_VERSION_CHECK(6, 8, 0) || \
+    (defined(tinymysql_lib_utc_qdatetime) && tinymysql_lib_utc_qdatetime >= 20240618)
     if (const auto driverName = DB::driverName(connection);
         driverName == QMYSQL || driverName == QPSQL
     ) {
@@ -3055,11 +3057,8 @@ timezone_TimestampAttribute_UtcOnServer_DontConvert_OnCustomPivot_MtM() const
 #endif
 
     // Restore
-    DB::setQtTimeZone(QtTimeZoneConfig {QtTimeZoneType::QtTimeSpec,
-                                        QVariant::fromValue(Qt::UTC)}, connection);
-    QCOMPARE(DB::qtTimeZone(connection),
-             (QtTimeZoneConfig {QtTimeZoneType::QtTimeSpec,
-                                QVariant::fromValue(Qt::UTC)}));
+    DB::setQtTimeZone(QtTimeZoneConfig::utc(), connection);
+    QCOMPARE(DB::qtTimeZone(connection), QtTimeZoneConfig::utc());
 }
 // NOLINTEND(readability-convert-member-functions-to-static)
 

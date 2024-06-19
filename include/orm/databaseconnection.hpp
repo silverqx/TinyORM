@@ -74,13 +74,13 @@ namespace Orm
         explicit DatabaseConnection(
                 std::function<Connectors::ConnectionName()> &&connection,
                 QString &&database = "", QString &&tablePrefix = "",
-                QtTimeZoneConfig &&qtTimeZone = {QtTimeZoneType::QtTimeSpec, Qt::UTC},
+                QtTimeZoneConfig &&qtTimeZone = QtTimeZoneConfig::utc(),
                 QVariantHash &&config = {});
         /*! Protected constructor for SQLite connection. */
         explicit DatabaseConnection(
                 std::function<Connectors::ConnectionName()> &&connection,
                 QString &&database = "", QString &&tablePrefix = "",
-                QtTimeZoneConfig &&qtTimeZone = {QtTimeZoneType::QtTimeSpec, Qt::UTC},
+                QtTimeZoneConfig &&qtTimeZone = QtTimeZoneConfig::utc(),
                 std::optional<bool> returnQDateTime = true,
                 QVariantHash &&config = {});
 

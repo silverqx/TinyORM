@@ -290,9 +290,15 @@ inline static QString u_timeFormat {"HH:mm:ss.zzz"};
 
 #### Date Casting, Serialization & Timezones {#date-casting-serialization-and-timezones}
 
-By default, the `CastType::CustomQDate` and `CastType::CustomQDateTime` casts will serialize dates to a UTC ISO-8601 date string (`yyyy-MM-ddTHH:mm:ss.zzzZ`), regardless of the timezone specified in your database connection's `qt_timezone` configuration option. You are strongly encouraged to always use this serialization format, as well as to store your application's dates in the UTC timezone by not changing your database connection's `qt_timezone` configuration option from its default `Qt::UTC` value. Consistently using the UTC timezone throughout your application will provide the maximum level of interoperability with other date manipulation libraries or services written in any programming language.
+By default, the `CastType::CustomQDate` and `CastType::CustomQDateTime` casts will serialize dates to a UTC ISO-8601 date string (`yyyy-MM-ddTHH:mm:ss.zzzZ`), regardless of the timezone specified in your database connection's `qt_timezone` configuration option. You are strongly encouraged to always use this serialization format, as well as to store your application's dates in the UTC timezone by not changing your database connection's `qt_timezone` configuration option from its default `QTimeZone::UTC` value. Consistently using the UTC timezone throughout your application will provide the maximum level of interoperability with other date manipulation libraries or services written in any programming language.
 
 If a custom format is applied to the `CastType::CustomQDate` or `CastType::CustomQDateTime` cast types, such as `{CastType::CustomQDateTime, "yyyy-MM-dd HH:mm:ss"}`, the inner timezone of the QDateTime instance will be used during date serialization. Typically, this will be the timezone specified in your database connection's `qt_timezone` configuration option.
+
+:::info
+Passing the `Qt::TimeSpec` (eg. `Qt::UTC` or `Qt::LocalTime`) to `QDateTime` methods was deprecated in [`Qt >=6.5`](https://github.com/qt/qtbase/commit/8c8d6ff7b6e2e6b1b673051685f1499ae4d65e05?diff=unified&w=0), it was replaced by the `enum QTimeZone::Initialization` (`QTimeZone::UTC` and `QTimeZone::LocalTime`).
+
+If you need to support older and newer versions of Qt at the same time, you can use the `Orm::QtTimeZoneConfig::utc()` or `QtTimeZoneConfig::localTime()` factory methods to create the `QtTimeZoneConfig` instance.
+:::
 
 ### Query Time Casting
 

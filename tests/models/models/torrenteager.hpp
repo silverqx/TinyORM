@@ -59,7 +59,7 @@ private:
     inline static const QVector<AttributeItem> u_attributes { // NOLINT(cppcoreguidelines-interfaces-global-init)
         {SIZE_,      0},
         {Progress,   0},
-        {"added_on", QDateTime({2021, 4, 1}, {15, 10, 10}, Qt::UTC)},
+        {"added_on", QDateTime({2021, 4, 1}, {15, 10, 10}, Orm::TTimeZone::UTC)},
     };
 
     /*! The attributes that are mass assignable. */

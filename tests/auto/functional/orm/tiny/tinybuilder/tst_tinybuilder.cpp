@@ -11,6 +11,8 @@ using Orm::Constants::NAME;
 using Orm::Constants::Progress;
 using Orm::Constants::SIZE_;
 
+using Orm::TTimeZone;
+
 using Orm::Tiny::ConnectionOverride;
 using Orm::Tiny::Exceptions::ModelNotFoundError;
 
@@ -194,7 +196,7 @@ void tst_TinyBuilder::incrementAndDecrement() const
     QCOMPARE(sizeOriginal, QVariant(14));
     QCOMPARE(progressOriginal, QVariant(400));
     QCOMPARE(updatedAtOriginal,
-             QVariant(QDateTime({2021, 1, 4}, {18, 46, 31}, Qt::UTC)));
+             QVariant(QDateTime({2021, 1, 4}, {18, 46, 31}, TTimeZone::UTC)));
 
     // Increment
     Torrent::whereEq(ID, 4)->increment(SIZE_, 2, {{Progress, 444}});
@@ -241,7 +243,7 @@ void tst_TinyBuilder::update() const
     QVERIFY(torrent->exists);
     QCOMPARE(progressOriginal, QVariant(400));
     QCOMPARE(updatedAtOriginal,
-             QVariant(QDateTime({2021, 1, 4}, {18, 46, 31}, Qt::UTC)));
+             QVariant(QDateTime({2021, 1, 4}, {18, 46, 31}, TTimeZone::UTC)));
 
     auto [affected, query] = Torrent::whereEq(ID, 4)->update({{Progress, 447}});
     QCOMPARE(affected, 1);

@@ -819,11 +819,10 @@ void tst_DatabaseConnection::timezone_And_qt_timezone() const
 
     // Original config. qt_timezone
     QCOMPARE(DB::originalConfigValue(qt_timezone, connection),
-             QVariant::fromValue(Qt::UTC));
+             QVariant::fromValue(Orm::TTimeZone::UTC));
 
     // Connection qt_timezone (parsed)
-    QCOMPARE(connectionRef.getQtTimeZone(),
-             (QtTimeZoneConfig {QtTimeZoneType::QtTimeSpec, Qt::UTC}));
+    QCOMPARE(connectionRef.getQtTimeZone(), QtTimeZoneConfig::utc());
 
     // Time zone for the database connection (session variable)
     const auto timeZone = connectionRef.getConfig(timezone_);

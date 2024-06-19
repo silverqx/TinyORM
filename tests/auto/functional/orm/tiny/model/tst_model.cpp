@@ -28,6 +28,7 @@ using Orm::Constants::SIZE_;
 using Orm::Constants::UPDATED_AT;
 
 using Orm::DB;
+using Orm::TTimeZone;
 using Orm::Tiny::ConnectionOverride;
 using Orm::Tiny::Exceptions::ModelNotFoundError;
 using Orm::Tiny::Model;
@@ -169,7 +170,7 @@ void tst_Model::save_Insert() const
 
     Torrent torrent;
 
-    const auto addedOn = QDateTime({2020, 10, 1}, {20, 22, 10}, Qt::UTC);
+    const auto addedOn = QDateTime({2020, 10, 1}, {20, 22, 10}, TTimeZone::UTC);
     torrent.setAttribute(NAME, "test50")
             .setAttribute(SIZE_, 50)
             .setAttribute(Progress, 50)
@@ -222,7 +223,7 @@ void tst_Model::save_Insert_WithDefaultValues() const
 
     Torrent torrent;
 
-    const auto addedOn = QDateTime({2020, 10, 1}, {20, 22, 10}, Qt::UTC);
+    const auto addedOn = QDateTime({2020, 10, 1}, {20, 22, 10}, TTimeZone::UTC);
     torrent.setAttribute(NAME, "test51")
             .setAttribute("added_on", addedOn)
             .setAttribute(HASH_, "5179e3af2768cdf52ec84c1f320333f68401dc61");
@@ -624,8 +625,8 @@ void tst_Model::whereEq() const
     }
     // QDateTime
     {
-        auto torrent = Torrent::whereEq("added_on",
-                                        QDateTime({2020, 8, 1}, {20, 11, 10}, Qt::UTC))
+        auto torrent = Torrent::whereEq("added_on", QDateTime({2020, 8, 1}, {20, 11, 10},
+                                                              TTimeZone::UTC))
                        ->first();
         QVERIFY(torrent);
         QCOMPARE(torrent->getKey(), QVariant(1));
@@ -1173,7 +1174,7 @@ void tst_Model::firstOrCreate_Found() const
         QCOMPARE(torrent[SIZE_], QVariant(13));
         QCOMPARE(torrent[Progress], QVariant(300));
         QCOMPARE(torrent["added_on"],
-                QVariant(QDateTime({2020, 8, 3}, {20, 11, 10}, Qt::UTC)));
+                QVariant(QDateTime({2020, 8, 3}, {20, 11, 10}, TTimeZone::UTC)));
         QCOMPARE(torrent[HASH_], QVariant("3579e3af2768cdf52ec84c1f320333f68401dc6e"));
     }
 }
@@ -1184,7 +1185,7 @@ void tst_Model::firstOrCreate_NotFound() const
 
     ConnectionOverride::connection = connection;
 
-    const auto addedOn = QDateTime({2020, 10, 1}, {20, 22, 10}, Qt::UTC);
+    const auto addedOn = QDateTime({2020, 10, 1}, {20, 22, 10}, TTimeZone::UTC);
 
     auto torrent = Torrent::firstOrCreate(
                        {{NAME, "test100"}},
@@ -1306,7 +1307,7 @@ void tst_Model::create() const
 
     ConnectionOverride::connection = connection;
 
-    const auto addedOn = QDateTime({2021, 2, 1}, {20, 22, 10}, Qt::UTC);
+    const auto addedOn = QDateTime({2021, 2, 1}, {20, 22, 10}, TTimeZone::UTC);
 
     auto torrent = Torrent::create({
         {NAME,       "test100"},
@@ -1347,7 +1348,7 @@ void tst_Model::create_Failed() const
 
     ConnectionOverride::connection = connection;
 
-    const auto addedOn = QDateTime({2021, 2, 1}, {20, 22, 10}, Qt::UTC);
+    const auto addedOn = QDateTime({2021, 2, 1}, {20, 22, 10}, TTimeZone::UTC);
 
     Torrent torrent;
     TVERIFY_THROWS_EXCEPTION(QueryError,
@@ -1388,7 +1389,7 @@ void tst_Model::incrementAndDecrement() const
     QCOMPARE(sizeOriginal, QVariant(14));
     QCOMPARE(progressOriginal, QVariant(400));
     QCOMPARE(updatedAtOriginal,
-             QVariant(QDateTime({2021, 1, 4}, {18, 46, 31}, Qt::UTC)));
+             QVariant(QDateTime({2021, 1, 4}, {18, 46, 31}, TTimeZone::UTC)));
 
     // Increment
     torrent4_1->increment(SIZE_, 2, {{Progress, 444}});
@@ -1473,7 +1474,7 @@ void tst_Model::update() const
     QVERIFY(torrent->exists);
     QCOMPARE(progressOriginal, QVariant(400));
     QCOMPARE(updatedAtOriginal,
-             QVariant(QDateTime({2021, 1, 4}, {18, 46, 31}, Qt::UTC)));
+             QVariant(QDateTime({2021, 1, 4}, {18, 46, 31}, TTimeZone::UTC)));
 
     auto result = torrent->update({{Progress, 449}});
 
@@ -1728,7 +1729,7 @@ void tst_Model::touch_WithAttribute() const
     // Verify an original added_on value
     auto addedOnOriginal = Torrent::find(1)->getAttribute("added_on");
     QCOMPARE(addedOnOriginal,
-             QVariant(QDateTime({2020, 8, 1}, {20, 11, 10}, Qt::UTC)));
+             QVariant(QDateTime({2020, 8, 1}, {20, 11, 10}, TTimeZone::UTC)));
 
     // Save a time before touch
     auto timeBeforeTouch = QDateTime::currentDateTimeUtc();
@@ -1832,7 +1833,7 @@ void tst_Model::getAttribute_UnixTimestamp_With_UDates() const
     QCOMPARE(Helpers::qVariantTypeId(addedOn), QMetaType::QDateTime);
     // This is most important, should return QDateTime and not int
     QCOMPARE(addedOn.value<QDateTime>(),
-             QDateTime::fromSecsSinceEpoch(1659361016, Qt::UTC));
+             QDateTime::fromSecsSinceEpoch(1659361016, TTimeZone::UTC));
 }
 
 void tst_Model::getAttribute_UnixTimestamp_WithOut_UDates() const

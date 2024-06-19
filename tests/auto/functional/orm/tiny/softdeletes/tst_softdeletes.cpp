@@ -216,10 +216,12 @@ void tst_SoftDeletes::onlyTrashed() const
 
 namespace
 {
-    const auto UpdatedAt4Original = QDateTime({2022, 1, 4}, {17, 46, 31}, Qt::UTC); // clazy:exclude=non-pod-global-static
-    const auto DeletedAt4Original = QDateTime({2022, 1, 4}, {20, 46, 31}, Qt::UTC); // clazy:exclude=non-pod-global-static
-    const auto UpdatedAt5Original = QDateTime({2022, 1, 5}, {17, 46, 31}, Qt::UTC); // clazy:exclude=non-pod-global-static
-    const auto DeletedAt5Original = QDateTime({2022, 1, 5}, {20, 46, 31}, Qt::UTC); // clazy:exclude=non-pod-global-static
+    using Orm::TTimeZone;
+
+    const auto UpdatedAt4Original = QDateTime({2022, 1, 4}, {17, 46, 31}, TTimeZone::UTC); // clazy:exclude=non-pod-global-static
+    const auto DeletedAt4Original = QDateTime({2022, 1, 4}, {20, 46, 31}, TTimeZone::UTC); // clazy:exclude=non-pod-global-static
+    const auto UpdatedAt5Original = QDateTime({2022, 1, 5}, {17, 46, 31}, TTimeZone::UTC); // clazy:exclude=non-pod-global-static
+    const auto DeletedAt5Original = QDateTime({2022, 1, 5}, {20, 46, 31}, TTimeZone::UTC); // clazy:exclude=non-pod-global-static
 } // namespace
 
 void tst_SoftDeletes::restore_remove_OnModel() const

@@ -32,6 +32,7 @@ using Orm::Exceptions::MultipleRecordsFoundError;
 using Orm::Exceptions::RecordsNotFoundError;
 using Orm::Exceptions::RuntimeError;
 using Orm::Query::Builder;
+using Orm::TTimeZone;
 using Orm::Types::SqlQuery;
 
 using QueryBuilder = Orm::Query::Builder;
@@ -542,9 +543,9 @@ void tst_QueryBuilder::whereDate_QDate()
     QCOMPARE(QueryUtils::queryResultSize(result), 3);
 
     QVector<QDateTime> expectedCreatedAts {
-        QDateTime({2016, 6, 1}, {8,  8, 23}, Qt::UTC),
-        QDateTime({2017, 7, 2}, {8,  9, 23}, Qt::UTC),
-        QDateTime({2018, 8, 3}, {8, 10, 23}, Qt::UTC),
+        QDateTime({2016, 6, 1}, {8,  8, 23}, TTimeZone::UTC),
+        QDateTime({2017, 7, 2}, {8,  9, 23}, TTimeZone::UTC),
+        QDateTime({2018, 8, 3}, {8, 10, 23}, TTimeZone::UTC),
     };
 
     QVector<QDateTime> actualCreatedAts;
@@ -563,7 +564,7 @@ void tst_QueryBuilder::whereDate_QDateTime()
     auto result = createQuery(connection)->from("torrents")
                   .whereDate(CREATED_AT, LE,
                              // QTime part is ignored
-                             QDateTime({2018, 8, 3}, {}, Qt::UTC))
+                             QDateTime({2018, 8, 3}, {}, TTimeZone::UTC))
                   .orderBy(CREATED_AT)
                   .get();
 
@@ -571,9 +572,9 @@ void tst_QueryBuilder::whereDate_QDateTime()
     QCOMPARE(QueryUtils::queryResultSize(result), 3);
 
     QVector<QDateTime> expectedCreatedAts {
-        QDateTime({2016, 6, 1}, {8,  8, 23}, Qt::UTC),
-        QDateTime({2017, 7, 2}, {8,  9, 23}, Qt::UTC),
-        QDateTime({2018, 8, 3}, {8, 10, 23}, Qt::UTC),
+        QDateTime({2016, 6, 1}, {8,  8, 23}, TTimeZone::UTC),
+        QDateTime({2017, 7, 2}, {8,  9, 23}, TTimeZone::UTC),
+        QDateTime({2018, 8, 3}, {8, 10, 23}, TTimeZone::UTC),
     };
 
     QVector<QDateTime> actualCreatedAts;
@@ -598,9 +599,9 @@ void tst_QueryBuilder::whereDate_QString()
     QCOMPARE(QueryUtils::queryResultSize(result), 3);
 
     QVector<QDateTime> expectedCreatedAts {
-        QDateTime({2016, 6, 1}, {8,  8, 23}, Qt::UTC),
-        QDateTime({2017, 7, 2}, {8,  9, 23}, Qt::UTC),
-        QDateTime({2018, 8, 3}, {8, 10, 23}, Qt::UTC),
+        QDateTime({2016, 6, 1}, {8,  8, 23}, TTimeZone::UTC),
+        QDateTime({2017, 7, 2}, {8,  9, 23}, TTimeZone::UTC),
+        QDateTime({2018, 8, 3}, {8, 10, 23}, TTimeZone::UTC),
     };
 
     QVector<QDateTime> actualCreatedAts;
@@ -625,9 +626,9 @@ void tst_QueryBuilder::whereTime_QTime()
     QCOMPARE(QueryUtils::queryResultSize(result), 3);
 
     QVector<QDateTime> expectedCreatedAts {
-        QDateTime({2016, 6, 1}, {8,  8, 23}, Qt::UTC),
-        QDateTime({2017, 7, 2}, {8,  9, 23}, Qt::UTC),
-        QDateTime({2018, 8, 3}, {8, 10, 23}, Qt::UTC),
+        QDateTime({2016, 6, 1}, {8,  8, 23}, TTimeZone::UTC),
+        QDateTime({2017, 7, 2}, {8,  9, 23}, TTimeZone::UTC),
+        QDateTime({2018, 8, 3}, {8, 10, 23}, TTimeZone::UTC),
     };
 
     QVector<QDateTime> actualCreatedAts;
@@ -646,7 +647,7 @@ void tst_QueryBuilder::whereTime_QDateTime()
     auto result = createQuery(connection)->from("torrents")
                   .whereTime(CREATED_AT, LE,
                              // QDate part is ignored
-                             QDateTime({}, {8, 10, 23}, Qt::UTC))
+                             QDateTime({}, {8, 10, 23}, TTimeZone::UTC))
                   .orderBy(CREATED_AT)
                   .get();
 
@@ -654,9 +655,9 @@ void tst_QueryBuilder::whereTime_QDateTime()
     QCOMPARE(QueryUtils::queryResultSize(result), 3);
 
     QVector<QDateTime> expectedCreatedAts {
-        QDateTime({2016, 6, 1}, {8,  8, 23}, Qt::UTC),
-        QDateTime({2017, 7, 2}, {8,  9, 23}, Qt::UTC),
-        QDateTime({2018, 8, 3}, {8, 10, 23}, Qt::UTC),
+        QDateTime({2016, 6, 1}, {8,  8, 23}, TTimeZone::UTC),
+        QDateTime({2017, 7, 2}, {8,  9, 23}, TTimeZone::UTC),
+        QDateTime({2018, 8, 3}, {8, 10, 23}, TTimeZone::UTC),
     };
 
     QVector<QDateTime> actualCreatedAts;
@@ -681,9 +682,9 @@ void tst_QueryBuilder::whereTime_QString()
     QCOMPARE(QueryUtils::queryResultSize(result), 3);
 
     QVector<QDateTime> expectedCreatedAts {
-        QDateTime({2016, 6, 1}, {8,  8, 23}, Qt::UTC),
-        QDateTime({2017, 7, 2}, {8,  9, 23}, Qt::UTC),
-        QDateTime({2018, 8, 3}, {8, 10, 23}, Qt::UTC),
+        QDateTime({2016, 6, 1}, {8,  8, 23}, TTimeZone::UTC),
+        QDateTime({2017, 7, 2}, {8,  9, 23}, TTimeZone::UTC),
+        QDateTime({2018, 8, 3}, {8, 10, 23}, TTimeZone::UTC),
     };
 
     QVector<QDateTime> actualCreatedAts;
@@ -708,9 +709,9 @@ void tst_QueryBuilder::whereDay_QDate()
     QCOMPARE(QueryUtils::queryResultSize(result), 3);
 
     QVector<QDateTime> expectedCreatedAts {
-        QDateTime({2016, 6, 1}, {8,  8, 23}, Qt::UTC),
-        QDateTime({2017, 7, 2}, {8,  9, 23}, Qt::UTC),
-        QDateTime({2018, 8, 3}, {8, 10, 23}, Qt::UTC),
+        QDateTime({2016, 6, 1}, {8,  8, 23}, TTimeZone::UTC),
+        QDateTime({2017, 7, 2}, {8,  9, 23}, TTimeZone::UTC),
+        QDateTime({2018, 8, 3}, {8, 10, 23}, TTimeZone::UTC),
     };
 
     QVector<QDateTime> actualCreatedAts;
@@ -727,7 +728,7 @@ void tst_QueryBuilder::whereDay_QDateTime()
     QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     auto result = createQuery(connection)->from("torrents")
-                  .whereDay(CREATED_AT, LE, QDateTime({2018, 8, 3}, {}, Qt::UTC))
+                  .whereDay(CREATED_AT, LE, QDateTime({2018, 8, 3}, {}, TTimeZone::UTC))
                   .orderBy(CREATED_AT)
                   .get();
 
@@ -735,9 +736,9 @@ void tst_QueryBuilder::whereDay_QDateTime()
     QCOMPARE(QueryUtils::queryResultSize(result), 3);
 
     QVector<QDateTime> expectedCreatedAts {
-        QDateTime({2016, 6, 1}, {8,  8, 23}, Qt::UTC),
-        QDateTime({2017, 7, 2}, {8,  9, 23}, Qt::UTC),
-        QDateTime({2018, 8, 3}, {8, 10, 23}, Qt::UTC),
+        QDateTime({2016, 6, 1}, {8,  8, 23}, TTimeZone::UTC),
+        QDateTime({2017, 7, 2}, {8,  9, 23}, TTimeZone::UTC),
+        QDateTime({2018, 8, 3}, {8, 10, 23}, TTimeZone::UTC),
     };
 
     QVector<QDateTime> actualCreatedAts;
@@ -762,9 +763,9 @@ void tst_QueryBuilder::whereDay_QString()
     QCOMPARE(QueryUtils::queryResultSize(result), 3);
 
     QVector<QDateTime> expectedCreatedAts {
-        QDateTime({2016, 6, 1}, {8,  8, 23}, Qt::UTC),
-        QDateTime({2017, 7, 2}, {8,  9, 23}, Qt::UTC),
-        QDateTime({2018, 8, 3}, {8, 10, 23}, Qt::UTC),
+        QDateTime({2016, 6, 1}, {8,  8, 23}, TTimeZone::UTC),
+        QDateTime({2017, 7, 2}, {8,  9, 23}, TTimeZone::UTC),
+        QDateTime({2018, 8, 3}, {8, 10, 23}, TTimeZone::UTC),
     };
 
     QVector<QDateTime> actualCreatedAts;
@@ -789,9 +790,9 @@ void tst_QueryBuilder::whereDay_int()
     QCOMPARE(QueryUtils::queryResultSize(result), 3);
 
     QVector<QDateTime> expectedCreatedAts {
-        QDateTime({2016, 6, 1}, {8,  8, 23}, Qt::UTC),
-        QDateTime({2017, 7, 2}, {8,  9, 23}, Qt::UTC),
-        QDateTime({2018, 8, 3}, {8, 10, 23}, Qt::UTC),
+        QDateTime({2016, 6, 1}, {8,  8, 23}, TTimeZone::UTC),
+        QDateTime({2017, 7, 2}, {8,  9, 23}, TTimeZone::UTC),
+        QDateTime({2018, 8, 3}, {8, 10, 23}, TTimeZone::UTC),
     };
 
     QVector<QDateTime> actualCreatedAts;
@@ -816,9 +817,9 @@ void tst_QueryBuilder::whereMonth_QDate()
     QCOMPARE(QueryUtils::queryResultSize(result), 3);
 
     QVector<QDateTime> expectedCreatedAts {
-        QDateTime({2016, 6, 1}, {8,  8, 23}, Qt::UTC),
-        QDateTime({2017, 7, 2}, {8,  9, 23}, Qt::UTC),
-        QDateTime({2018, 8, 3}, {8, 10, 23}, Qt::UTC),
+        QDateTime({2016, 6, 1}, {8,  8, 23}, TTimeZone::UTC),
+        QDateTime({2017, 7, 2}, {8,  9, 23}, TTimeZone::UTC),
+        QDateTime({2018, 8, 3}, {8, 10, 23}, TTimeZone::UTC),
     };
 
     QVector<QDateTime> actualCreatedAts;
@@ -835,7 +836,7 @@ void tst_QueryBuilder::whereMonth_QDateTime()
     QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     auto result = createQuery(connection)->from("torrents")
-                  .whereMonth(CREATED_AT, LE, QDateTime({2018, 8, 3}, {}, Qt::UTC))
+                  .whereMonth(CREATED_AT, LE, QDateTime({2018, 8, 3}, {}, TTimeZone::UTC))
                   .orderBy(CREATED_AT)
                   .get();
 
@@ -843,9 +844,9 @@ void tst_QueryBuilder::whereMonth_QDateTime()
     QCOMPARE(QueryUtils::queryResultSize(result), 3);
 
     QVector<QDateTime> expectedCreatedAts {
-        QDateTime({2016, 6, 1}, {8,  8, 23}, Qt::UTC),
-        QDateTime({2017, 7, 2}, {8,  9, 23}, Qt::UTC),
-        QDateTime({2018, 8, 3}, {8, 10, 23}, Qt::UTC),
+        QDateTime({2016, 6, 1}, {8,  8, 23}, TTimeZone::UTC),
+        QDateTime({2017, 7, 2}, {8,  9, 23}, TTimeZone::UTC),
+        QDateTime({2018, 8, 3}, {8, 10, 23}, TTimeZone::UTC),
     };
 
     QVector<QDateTime> actualCreatedAts;
@@ -870,9 +871,9 @@ void tst_QueryBuilder::whereMonth_QString()
     QCOMPARE(QueryUtils::queryResultSize(result), 3);
 
     QVector<QDateTime> expectedCreatedAts {
-        QDateTime({2016, 6, 1}, {8,  8, 23}, Qt::UTC),
-        QDateTime({2017, 7, 2}, {8,  9, 23}, Qt::UTC),
-        QDateTime({2018, 8, 3}, {8, 10, 23}, Qt::UTC),
+        QDateTime({2016, 6, 1}, {8,  8, 23}, TTimeZone::UTC),
+        QDateTime({2017, 7, 2}, {8,  9, 23}, TTimeZone::UTC),
+        QDateTime({2018, 8, 3}, {8, 10, 23}, TTimeZone::UTC),
     };
 
     QVector<QDateTime> actualCreatedAts;
@@ -897,9 +898,9 @@ void tst_QueryBuilder::whereMonth_int()
     QCOMPARE(QueryUtils::queryResultSize(result), 3);
 
     QVector<QDateTime> expectedCreatedAts {
-        QDateTime({2016, 6, 1}, {8,  8, 23}, Qt::UTC),
-        QDateTime({2017, 7, 2}, {8,  9, 23}, Qt::UTC),
-        QDateTime({2018, 8, 3}, {8, 10, 23}, Qt::UTC),
+        QDateTime({2016, 6, 1}, {8,  8, 23}, TTimeZone::UTC),
+        QDateTime({2017, 7, 2}, {8,  9, 23}, TTimeZone::UTC),
+        QDateTime({2018, 8, 3}, {8, 10, 23}, TTimeZone::UTC),
     };
 
     QVector<QDateTime> actualCreatedAts;
@@ -924,9 +925,9 @@ void tst_QueryBuilder::whereYear_QDate()
     QCOMPARE(QueryUtils::queryResultSize(result), 3);
 
     QVector<QDateTime> expectedCreatedAts {
-        QDateTime({2016, 6, 1}, {8,  8, 23}, Qt::UTC),
-        QDateTime({2017, 7, 2}, {8,  9, 23}, Qt::UTC),
-        QDateTime({2018, 8, 3}, {8, 10, 23}, Qt::UTC),
+        QDateTime({2016, 6, 1}, {8,  8, 23}, TTimeZone::UTC),
+        QDateTime({2017, 7, 2}, {8,  9, 23}, TTimeZone::UTC),
+        QDateTime({2018, 8, 3}, {8, 10, 23}, TTimeZone::UTC),
     };
 
     QVector<QDateTime> actualCreatedAts;
@@ -943,7 +944,7 @@ void tst_QueryBuilder::whereYear_QDateTime()
     QFETCH_GLOBAL(QString, connection); // NOLINT(modernize-type-traits)
 
     auto result = createQuery(connection)->from("torrents")
-                  .whereYear(CREATED_AT, LE, QDateTime({2018, 8, 3}, {}, Qt::UTC))
+                  .whereYear(CREATED_AT, LE, QDateTime({2018, 8, 3}, {}, TTimeZone::UTC))
                   .orderBy(CREATED_AT)
                   .get();
 
@@ -951,9 +952,9 @@ void tst_QueryBuilder::whereYear_QDateTime()
     QCOMPARE(QueryUtils::queryResultSize(result), 3);
 
     QVector<QDateTime> expectedCreatedAts {
-        QDateTime({2016, 6, 1}, {8,  8, 23}, Qt::UTC),
-        QDateTime({2017, 7, 2}, {8,  9, 23}, Qt::UTC),
-        QDateTime({2018, 8, 3}, {8, 10, 23}, Qt::UTC),
+        QDateTime({2016, 6, 1}, {8,  8, 23}, TTimeZone::UTC),
+        QDateTime({2017, 7, 2}, {8,  9, 23}, TTimeZone::UTC),
+        QDateTime({2018, 8, 3}, {8, 10, 23}, TTimeZone::UTC),
     };
 
     QVector<QDateTime> actualCreatedAts;
@@ -978,9 +979,9 @@ void tst_QueryBuilder::whereYear_QString()
     QCOMPARE(QueryUtils::queryResultSize(result), 3);
 
     QVector<QDateTime> expectedCreatedAts {
-        QDateTime({2016, 6, 1}, {8,  8, 23}, Qt::UTC),
-        QDateTime({2017, 7, 2}, {8,  9, 23}, Qt::UTC),
-        QDateTime({2018, 8, 3}, {8, 10, 23}, Qt::UTC),
+        QDateTime({2016, 6, 1}, {8,  8, 23}, TTimeZone::UTC),
+        QDateTime({2017, 7, 2}, {8,  9, 23}, TTimeZone::UTC),
+        QDateTime({2018, 8, 3}, {8, 10, 23}, TTimeZone::UTC),
     };
 
     QVector<QDateTime> actualCreatedAts;
@@ -1005,9 +1006,9 @@ void tst_QueryBuilder::whereYear_int()
     QCOMPARE(QueryUtils::queryResultSize(result), 3);
 
     QVector<QDateTime> expectedCreatedAts {
-        QDateTime({2016, 6, 1}, {8,  8, 23}, Qt::UTC),
-        QDateTime({2017, 7, 2}, {8,  9, 23}, Qt::UTC),
-        QDateTime({2018, 8, 3}, {8, 10, 23}, Qt::UTC),
+        QDateTime({2016, 6, 1}, {8,  8, 23}, TTimeZone::UTC),
+        QDateTime({2017, 7, 2}, {8,  9, 23}, TTimeZone::UTC),
+        QDateTime({2018, 8, 3}, {8, 10, 23}, TTimeZone::UTC),
     };
 
     QVector<QDateTime> actualCreatedAts;

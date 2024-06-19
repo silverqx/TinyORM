@@ -27,6 +27,7 @@ using Orm::Exceptions::InvalidArgumentError;
 using Orm::Exceptions::MultipleRecordsFoundError;
 using Orm::Exceptions::RecordsNotFoundError;
 using Orm::One;
+using Orm::TTimeZone;
 
 using TypeUtils = Orm::Utils::Type;
 
@@ -245,7 +246,7 @@ defaultAttributeValues_WithQDateTime_InstanceMethod() const
     QCOMPARE(torrent[SIZE_], QVariant(0));
     QCOMPARE(torrent[Progress], QVariant(0));
     QCOMPARE(torrent["added_on"],
-             QVariant(QDateTime({2021, 4, 1}, {15, 10, 10}, Qt::UTC)));
+             QVariant(QDateTime({2021, 4, 1}, {15, 10, 10}, TTimeZone::UTC)));
     QCOMPARE(torrent.getAttributes().size(), 3);
 
     // Check also the connection name
@@ -268,7 +269,7 @@ defaultAttributeValues_WithQDateTime_InstanceAttributesMethod() const
     QCOMPARE(torrent[SIZE_], QVariant(0));
     QCOMPARE(torrent[Progress], QVariant(0));
     QCOMPARE(torrent["added_on"],
-             QVariant(QDateTime({2021, 4, 1}, {15, 10, 10}, Qt::UTC)));
+             QVariant(QDateTime({2021, 4, 1}, {15, 10, 10}, TTimeZone::UTC)));
     QCOMPARE(torrent[NAME], QVariant(name));
     QCOMPARE(torrent[NOTE], QVariant(note));
     QCOMPARE(torrent.getAttributes().size(), 5);
@@ -291,7 +292,7 @@ defaultAttributeValues_WithQDateTime_InstanceMethod_WithConnection() const
     QCOMPARE(torrent[SIZE_], QVariant(0));
     QCOMPARE(torrent[Progress], QVariant(0));
     QCOMPARE(torrent["added_on"],
-             QVariant(QDateTime({2021, 4, 1}, {15, 10, 10}, Qt::UTC)));
+             QVariant(QDateTime({2021, 4, 1}, {15, 10, 10}, TTimeZone::UTC)));
     QCOMPARE(torrent.getAttributes().size(), 3);
 
     // Check also the connection name
@@ -324,7 +325,7 @@ defaultAttributeValues_WithQDateTime_InstanceAttributesMethod_WithConnection() c
     QCOMPARE(torrent[SIZE_], QVariant(0));
     QCOMPARE(torrent[Progress], QVariant(0));
     QCOMPARE(torrent["added_on"],
-             QVariant(QDateTime({2021, 4, 1}, {15, 10, 10}, Qt::UTC)));
+             QVariant(QDateTime({2021, 4, 1}, {15, 10, 10}, TTimeZone::UTC)));
     QCOMPARE(torrent[NAME], QVariant(name));
     QCOMPARE(torrent[NOTE], QVariant(note));
     QCOMPARE(torrent.getAttributes().size(), 5);
@@ -409,7 +410,7 @@ defaultAttributeValues_WithQDateTime_InstanceHeapMethod() const
     QCOMPARE((*torrent)[SIZE_], QVariant(0));
     QCOMPARE((*torrent)[Progress], QVariant(0));
     QCOMPARE((*torrent)["added_on"],
-             QVariant(QDateTime({2021, 4, 1}, {15, 10, 10}, Qt::UTC)));
+             QVariant(QDateTime({2021, 4, 1}, {15, 10, 10}, TTimeZone::UTC)));
     QCOMPARE((*torrent).getAttributes().size(), 3);
 
     // Check also the connection name
@@ -432,7 +433,7 @@ defaultAttributeValues_WithQDateTime_InstanceHeapAttributesMethod() const
     QCOMPARE((*torrent)[SIZE_], QVariant(0));
     QCOMPARE((*torrent)[Progress], QVariant(0));
     QCOMPARE((*torrent)["added_on"],
-             QVariant(QDateTime({2021, 4, 1}, {15, 10, 10}, Qt::UTC)));
+             QVariant(QDateTime({2021, 4, 1}, {15, 10, 10}, TTimeZone::UTC)));
     QCOMPARE((*torrent)[NAME], QVariant(name));
     QCOMPARE((*torrent)[NOTE], QVariant(note));
     QCOMPARE(torrent->getAttributes().size(), 5);
@@ -455,7 +456,7 @@ defaultAttributeValues_WithQDateTime_InstanceHeapMethod_WithConnection() const
     QCOMPARE((*torrent)[SIZE_], QVariant(0));
     QCOMPARE((*torrent)[Progress], QVariant(0));
     QCOMPARE((*torrent)["added_on"],
-             QVariant(QDateTime({2021, 4, 1}, {15, 10, 10}, Qt::UTC)));
+             QVariant(QDateTime({2021, 4, 1}, {15, 10, 10}, TTimeZone::UTC)));
     QCOMPARE(torrent->getAttributes().size(), 3);
 
     // Check also the connection name
@@ -488,7 +489,7 @@ defaultAttributeValues_WithQDateTime_InstanceHeapAttributesMethod_WithConnection
     QCOMPARE((*torrent)[SIZE_], QVariant(0));
     QCOMPARE((*torrent)[Progress], QVariant(0));
     QCOMPARE((*torrent)["added_on"],
-             QVariant(QDateTime({2021, 4, 1}, {15, 10, 10}, Qt::UTC)));
+             QVariant(QDateTime({2021, 4, 1}, {15, 10, 10}, TTimeZone::UTC)));
     QCOMPARE((*torrent)[NAME], QVariant(name));
     QCOMPARE((*torrent)[NOTE], QVariant(note));
     QCOMPARE(torrent->getAttributes().size(), 5);
@@ -625,7 +626,7 @@ void tst_Model_Connection_Independent::subscriptOperator() const
     QCOMPARE((*torrent)[NAME], QVariant("test2"));
 
     QCOMPARE((*torrent)["added_on"],
-            QVariant(QDateTime({2020, 8, 2}, {20, 11, 10}, Qt::UTC)));
+            QVariant(QDateTime({2020, 8, 2}, {20, 11, 10}, TTimeZone::UTC)));
 }
 
 void tst_Model_Connection_Independent::subscriptOperator_OnLhs() const
@@ -996,7 +997,7 @@ void tst_Model_Connection_Independent::
 {
     Torrent_GuardedAttribute torrent;
 
-    const auto createdAt = QDateTime({2021, 2, 2}, {10, 11, 12}, Qt::UTC);
+    const auto createdAt = QDateTime({2021, 2, 2}, {10, 11, 12}, TTimeZone::UTC);
 
     torrent.forceFill({{CREATED_AT, createdAt}});
 
@@ -1192,13 +1193,13 @@ void tst_Model_Connection_Independent::pluck_With_u_dates() const
         auto result = Torrent::pluck("added_on");
 
         QVector<QVariant> expected {
-            QDateTime({2020, 8, 1}, {20, 11, 10}, Qt::UTC),
-            QDateTime({2020, 8, 2}, {20, 11, 10}, Qt::UTC),
-            QDateTime({2020, 8, 3}, {20, 11, 10}, Qt::UTC),
-            QDateTime({2020, 8, 4}, {20, 11, 10}, Qt::UTC),
-            QDateTime({2020, 8, 5}, {20, 11, 10}, Qt::UTC),
-            QDateTime({2020, 8, 6}, {20, 11, 10}, Qt::UTC),
-            QDateTime({2020, 8, 7}, {20, 11, 10}, Qt::UTC),
+            QDateTime({2020, 8, 1}, {20, 11, 10}, TTimeZone::UTC),
+            QDateTime({2020, 8, 2}, {20, 11, 10}, TTimeZone::UTC),
+            QDateTime({2020, 8, 3}, {20, 11, 10}, TTimeZone::UTC),
+            QDateTime({2020, 8, 4}, {20, 11, 10}, TTimeZone::UTC),
+            QDateTime({2020, 8, 5}, {20, 11, 10}, TTimeZone::UTC),
+            QDateTime({2020, 8, 6}, {20, 11, 10}, TTimeZone::UTC),
+            QDateTime({2020, 8, 7}, {20, 11, 10}, TTimeZone::UTC),
         };
         QCOMPARE(result, expected);
     }
@@ -1207,13 +1208,13 @@ void tst_Model_Connection_Independent::pluck_With_u_dates() const
         auto result = Torrent::pluck<quint64>("added_on", ID);
 
         std::map<quint64, QVariant> expected {
-            {1, QDateTime({2020, 8, 1}, {20, 11, 10}, Qt::UTC)},
-            {2, QDateTime({2020, 8, 2}, {20, 11, 10}, Qt::UTC)},
-            {3, QDateTime({2020, 8, 3}, {20, 11, 10}, Qt::UTC)},
-            {4, QDateTime({2020, 8, 4}, {20, 11, 10}, Qt::UTC)},
-            {5, QDateTime({2020, 8, 5}, {20, 11, 10}, Qt::UTC)},
-            {6, QDateTime({2020, 8, 6}, {20, 11, 10}, Qt::UTC)},
-            {7, QDateTime({2020, 8, 7}, {20, 11, 10}, Qt::UTC)},
+            {1, QDateTime({2020, 8, 1}, {20, 11, 10}, TTimeZone::UTC)},
+            {2, QDateTime({2020, 8, 2}, {20, 11, 10}, TTimeZone::UTC)},
+            {3, QDateTime({2020, 8, 3}, {20, 11, 10}, TTimeZone::UTC)},
+            {4, QDateTime({2020, 8, 4}, {20, 11, 10}, TTimeZone::UTC)},
+            {5, QDateTime({2020, 8, 5}, {20, 11, 10}, TTimeZone::UTC)},
+            {6, QDateTime({2020, 8, 6}, {20, 11, 10}, TTimeZone::UTC)},
+            {7, QDateTime({2020, 8, 7}, {20, 11, 10}, TTimeZone::UTC)},
         };
         QCOMPARE(result, expected);
     }
@@ -1222,13 +1223,13 @@ void tst_Model_Connection_Independent::pluck_With_u_dates() const
         auto result = Torrent::pluck<QDateTime>(ID, "added_on");
 
         std::map<QDateTime, QVariant> expected {
-            {QDateTime({2020, 8, 1}, {20, 11, 10}, Qt::UTC), 1},
-            {QDateTime({2020, 8, 2}, {20, 11, 10}, Qt::UTC), 2},
-            {QDateTime({2020, 8, 3}, {20, 11, 10}, Qt::UTC), 3},
-            {QDateTime({2020, 8, 4}, {20, 11, 10}, Qt::UTC), 4},
-            {QDateTime({2020, 8, 5}, {20, 11, 10}, Qt::UTC), 5},
-            {QDateTime({2020, 8, 6}, {20, 11, 10}, Qt::UTC), 6},
-            {QDateTime({2020, 8, 7}, {20, 11, 10}, Qt::UTC), 7},
+            {QDateTime({2020, 8, 1}, {20, 11, 10}, TTimeZone::UTC), 1},
+            {QDateTime({2020, 8, 2}, {20, 11, 10}, TTimeZone::UTC), 2},
+            {QDateTime({2020, 8, 3}, {20, 11, 10}, TTimeZone::UTC), 3},
+            {QDateTime({2020, 8, 4}, {20, 11, 10}, TTimeZone::UTC), 4},
+            {QDateTime({2020, 8, 5}, {20, 11, 10}, TTimeZone::UTC), 5},
+            {QDateTime({2020, 8, 6}, {20, 11, 10}, TTimeZone::UTC), 6},
+            {QDateTime({2020, 8, 7}, {20, 11, 10}, TTimeZone::UTC), 7},
         };
         QCOMPARE(result, expected);
     }
@@ -1257,13 +1258,13 @@ void tst_Model_Connection_Independent::pluck_QualifiedColumnOrKey_With_u_dates()
         auto result = Torrent::pluck("torrents.added_on");
 
         QVector<QVariant> expected {
-            QDateTime({2020, 8, 1}, {20, 11, 10}, Qt::UTC),
-            QDateTime({2020, 8, 2}, {20, 11, 10}, Qt::UTC),
-            QDateTime({2020, 8, 3}, {20, 11, 10}, Qt::UTC),
-            QDateTime({2020, 8, 4}, {20, 11, 10}, Qt::UTC),
-            QDateTime({2020, 8, 5}, {20, 11, 10}, Qt::UTC),
-            QDateTime({2020, 8, 6}, {20, 11, 10}, Qt::UTC),
-            QDateTime({2020, 8, 7}, {20, 11, 10}, Qt::UTC),
+            QDateTime({2020, 8, 1}, {20, 11, 10}, TTimeZone::UTC),
+            QDateTime({2020, 8, 2}, {20, 11, 10}, TTimeZone::UTC),
+            QDateTime({2020, 8, 3}, {20, 11, 10}, TTimeZone::UTC),
+            QDateTime({2020, 8, 4}, {20, 11, 10}, TTimeZone::UTC),
+            QDateTime({2020, 8, 5}, {20, 11, 10}, TTimeZone::UTC),
+            QDateTime({2020, 8, 6}, {20, 11, 10}, TTimeZone::UTC),
+            QDateTime({2020, 8, 7}, {20, 11, 10}, TTimeZone::UTC),
         };
         QCOMPARE(result, expected);
     }
@@ -1272,13 +1273,13 @@ void tst_Model_Connection_Independent::pluck_QualifiedColumnOrKey_With_u_dates()
         auto result = Torrent::pluck<quint64>("torrents.added_on", ID);
 
         std::map<quint64, QVariant> expected {
-            {1, QDateTime({2020, 8, 1}, {20, 11, 10}, Qt::UTC)},
-            {2, QDateTime({2020, 8, 2}, {20, 11, 10}, Qt::UTC)},
-            {3, QDateTime({2020, 8, 3}, {20, 11, 10}, Qt::UTC)},
-            {4, QDateTime({2020, 8, 4}, {20, 11, 10}, Qt::UTC)},
-            {5, QDateTime({2020, 8, 5}, {20, 11, 10}, Qt::UTC)},
-            {6, QDateTime({2020, 8, 6}, {20, 11, 10}, Qt::UTC)},
-            {7, QDateTime({2020, 8, 7}, {20, 11, 10}, Qt::UTC)},
+            {1, QDateTime({2020, 8, 1}, {20, 11, 10}, TTimeZone::UTC)},
+            {2, QDateTime({2020, 8, 2}, {20, 11, 10}, TTimeZone::UTC)},
+            {3, QDateTime({2020, 8, 3}, {20, 11, 10}, TTimeZone::UTC)},
+            {4, QDateTime({2020, 8, 4}, {20, 11, 10}, TTimeZone::UTC)},
+            {5, QDateTime({2020, 8, 5}, {20, 11, 10}, TTimeZone::UTC)},
+            {6, QDateTime({2020, 8, 6}, {20, 11, 10}, TTimeZone::UTC)},
+            {7, QDateTime({2020, 8, 7}, {20, 11, 10}, TTimeZone::UTC)},
         };
         QCOMPARE(result, expected);
     }
@@ -1287,13 +1288,13 @@ void tst_Model_Connection_Independent::pluck_QualifiedColumnOrKey_With_u_dates()
         auto result = Torrent::orderBy(ID)->pluck("added_on as added_on_alt");
 
         QVector<QVariant> expected {
-            QDateTime({2020, 8, 1}, {20, 11, 10}, Qt::UTC),
-            QDateTime({2020, 8, 2}, {20, 11, 10}, Qt::UTC),
-            QDateTime({2020, 8, 3}, {20, 11, 10}, Qt::UTC),
-            QDateTime({2020, 8, 4}, {20, 11, 10}, Qt::UTC),
-            QDateTime({2020, 8, 5}, {20, 11, 10}, Qt::UTC),
-            QDateTime({2020, 8, 6}, {20, 11, 10}, Qt::UTC),
-            QDateTime({2020, 8, 7}, {20, 11, 10}, Qt::UTC),
+            QDateTime({2020, 8, 1}, {20, 11, 10}, TTimeZone::UTC),
+            QDateTime({2020, 8, 2}, {20, 11, 10}, TTimeZone::UTC),
+            QDateTime({2020, 8, 3}, {20, 11, 10}, TTimeZone::UTC),
+            QDateTime({2020, 8, 4}, {20, 11, 10}, TTimeZone::UTC),
+            QDateTime({2020, 8, 5}, {20, 11, 10}, TTimeZone::UTC),
+            QDateTime({2020, 8, 6}, {20, 11, 10}, TTimeZone::UTC),
+            QDateTime({2020, 8, 7}, {20, 11, 10}, TTimeZone::UTC),
         };
         QCOMPARE(result, expected);
     }
@@ -1302,13 +1303,13 @@ void tst_Model_Connection_Independent::pluck_QualifiedColumnOrKey_With_u_dates()
         auto result = Torrent::pluck<quint64>("added_on as added_on_alt", "id as id_alt");
 
         std::map<quint64, QVariant> expected {
-            {1, QDateTime({2020, 8, 1}, {20, 11, 10}, Qt::UTC)},
-            {2, QDateTime({2020, 8, 2}, {20, 11, 10}, Qt::UTC)},
-            {3, QDateTime({2020, 8, 3}, {20, 11, 10}, Qt::UTC)},
-            {4, QDateTime({2020, 8, 4}, {20, 11, 10}, Qt::UTC)},
-            {5, QDateTime({2020, 8, 5}, {20, 11, 10}, Qt::UTC)},
-            {6, QDateTime({2020, 8, 6}, {20, 11, 10}, Qt::UTC)},
-            {7, QDateTime({2020, 8, 7}, {20, 11, 10}, Qt::UTC)},
+            {1, QDateTime({2020, 8, 1}, {20, 11, 10}, TTimeZone::UTC)},
+            {2, QDateTime({2020, 8, 2}, {20, 11, 10}, TTimeZone::UTC)},
+            {3, QDateTime({2020, 8, 3}, {20, 11, 10}, TTimeZone::UTC)},
+            {4, QDateTime({2020, 8, 4}, {20, 11, 10}, TTimeZone::UTC)},
+            {5, QDateTime({2020, 8, 5}, {20, 11, 10}, TTimeZone::UTC)},
+            {6, QDateTime({2020, 8, 6}, {20, 11, 10}, TTimeZone::UTC)},
+            {7, QDateTime({2020, 8, 7}, {20, 11, 10}, TTimeZone::UTC)},
         };
         QCOMPARE(result, expected);
     }
@@ -1317,13 +1318,13 @@ void tst_Model_Connection_Independent::pluck_QualifiedColumnOrKey_With_u_dates()
         auto result = Torrent::pluck<quint64>("torrents.added_on", "id as id_alt");
 
         std::map<quint64, QVariant> expected {
-            {1, QDateTime({2020, 8, 1}, {20, 11, 10}, Qt::UTC)},
-            {2, QDateTime({2020, 8, 2}, {20, 11, 10}, Qt::UTC)},
-            {3, QDateTime({2020, 8, 3}, {20, 11, 10}, Qt::UTC)},
-            {4, QDateTime({2020, 8, 4}, {20, 11, 10}, Qt::UTC)},
-            {5, QDateTime({2020, 8, 5}, {20, 11, 10}, Qt::UTC)},
-            {6, QDateTime({2020, 8, 6}, {20, 11, 10}, Qt::UTC)},
-            {7, QDateTime({2020, 8, 7}, {20, 11, 10}, Qt::UTC)},
+            {1, QDateTime({2020, 8, 1}, {20, 11, 10}, TTimeZone::UTC)},
+            {2, QDateTime({2020, 8, 2}, {20, 11, 10}, TTimeZone::UTC)},
+            {3, QDateTime({2020, 8, 3}, {20, 11, 10}, TTimeZone::UTC)},
+            {4, QDateTime({2020, 8, 4}, {20, 11, 10}, TTimeZone::UTC)},
+            {5, QDateTime({2020, 8, 5}, {20, 11, 10}, TTimeZone::UTC)},
+            {6, QDateTime({2020, 8, 6}, {20, 11, 10}, TTimeZone::UTC)},
+            {7, QDateTime({2020, 8, 7}, {20, 11, 10}, TTimeZone::UTC)},
         };
         QCOMPARE(result, expected);
     }
@@ -1353,7 +1354,7 @@ void tst_Model_Connection_Independent::only() const
         {ID,         1},
         {NAME,       QString("test1")},
         {SIZE_,      11},
-        {CREATED_AT, QDateTime({2016, 6, 1}, {8, 8, 23}, Qt::UTC)},
+        {CREATED_AT, QDateTime({2016, 6, 1}, {8, 8, 23}, TTimeZone::UTC)},
     };
     QCOMPARE(attributes, expectedAttributes);
 }

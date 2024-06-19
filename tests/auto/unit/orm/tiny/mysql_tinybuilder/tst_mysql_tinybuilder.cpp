@@ -21,6 +21,7 @@ using Orm::Exceptions::InvalidArgumentError;
 using Orm::QueryBuilder;
 using Orm::Tiny::Model;
 using Orm::Tiny::TinyBuilder;
+using Orm::TTimeZone;
 using Orm::Utils::Helpers;
 using Orm::Utils::NullVariant;
 
@@ -227,7 +228,8 @@ void tst_MySql_TinyBuilder::setAttribute_UnixTimestamp_With_UDates_UDateFormat()
     {
         Role role;
         role.setConnection(m_connection);
-        role.setAttribute("added_on", QDateTime::fromSecsSinceEpoch(timestamp, Qt::UTC));
+        role.setAttribute("added_on",
+                          QDateTime::fromSecsSinceEpoch(timestamp, TTimeZone::UTC));
 
         const auto &attributes = role.getAttributes();
 
@@ -280,7 +282,7 @@ void tst_MySql_TinyBuilder::
     Role_CustomUDate::u_dates = QStringList {"added_on"};
     /* Expected format without u_dateFormat is - 2022-08-03 15:36:56 UTC, even if
        the input is the unix timestamp. */
-    auto expectedTimestamp = QDateTime::fromSecsSinceEpoch(timestamp, Qt::UTC)
+    auto expectedTimestamp = QDateTime::fromSecsSinceEpoch(timestamp, TTimeZone::UTC)
                              .toString(Role_CustomUDate()
                                        .setConnection(m_connection)
                                        .getDateFormat());
@@ -289,7 +291,8 @@ void tst_MySql_TinyBuilder::
     {
         Role_CustomUDate role;
         role.setConnection(m_connection);
-        role.setAttribute("added_on", QDateTime::fromSecsSinceEpoch(timestamp, Qt::UTC));
+        role.setAttribute("added_on",
+                          QDateTime::fromSecsSinceEpoch(timestamp, TTimeZone::UTC));
 
         const auto &attributes = role.getAttributes();
 
@@ -330,14 +333,15 @@ void tst_MySql_TinyBuilder::setAttribute_UnixTimestamp_WithOut_UDates() const
     {
         /* Expected format without u_dateFormat is - 2022-08-03 15:36:56 UTC, even if
            the input is the unix timestamp. */
-        auto expectedTimestamp = QDateTime::fromSecsSinceEpoch(timestamp, Qt::UTC)
+        auto expectedTimestamp = QDateTime::fromSecsSinceEpoch(timestamp, TTimeZone::UTC)
                                  .toString(Role_CustomUDate()
                                            .setConnection(m_connection)
                                            .getDateFormat());
 
         Role_CustomUDate role;
         role.setConnection(m_connection);
-        role.setAttribute("added_on", QDateTime::fromSecsSinceEpoch(timestamp, Qt::UTC));
+        role.setAttribute("added_on",
+                          QDateTime::fromSecsSinceEpoch(timestamp, TTimeZone::UTC));
 
         const auto &attributes = role.getAttributes();
 

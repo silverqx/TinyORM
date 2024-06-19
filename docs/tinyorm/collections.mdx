@@ -88,7 +88,7 @@ Alternatively, you can use the `Orm::collect<Model>` helper function to create a
 ```cpp
 ModelsCollection<User> users = Orm::collect<User>({
     {{"name", "Kate"}, {"added_on", QDateTime::currentDateTimeUtc()}},
-    {{"name", "John"}, {"added_on", QDateTime({2023, 6, 1}, {13, 46, 15}, Qt::UTC)}},
+    {{"name", "John"}, {"added_on", QDateTime({2023, 6, 1}, {13, 46, 15}, QTimeZone::UTC)}},
 });
 ```
 

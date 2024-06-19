@@ -21,6 +21,7 @@ using Orm::Constants::SIZE_;
 using Orm::Constants::UPDATED_AT;
 using Orm::Constants::pivot_;
 
+using Orm::TTimeZone;
 using Orm::Utils::Helpers;
 using Orm::Utils::NullVariant;
 
@@ -221,8 +222,8 @@ void tst_Model_Serialization::toVector() const
 void tst_Model_Serialization::toMap_WithCasts() const
 {
     auto datetime = Datetime::instance({
-        {"datetime",  QDateTime({2023, 05, 13}, {10, 11, 12}, Qt::UTC)},
-        {"date",      QDateTime({2023, 05, 14}, {10, 11, 12}, Qt::UTC)},
+        {"datetime",  QDateTime({2023, 05, 13}, {10, 11, 12}, TTimeZone::UTC)},
+        {"date",      QDateTime({2023, 05, 14}, {10, 11, 12}, TTimeZone::UTC)},
         {"timestamp", static_cast<qint64>(1662712888)},
     });
 
@@ -248,8 +249,8 @@ void tst_Model_Serialization::toMap_WithCasts() const
 void tst_Model_Serialization::toVector_WithCasts() const
 {
     auto datetime = Datetime::instance({
-        {"datetime",  QDateTime({2023, 05, 13}, {10, 11, 12}, Qt::UTC)},
-        {"date",      QDateTime({2023, 05, 14}, {10, 11, 12}, Qt::UTC)},
+        {"datetime",  QDateTime({2023, 05, 13}, {10, 11, 12}, TTimeZone::UTC)},
+        {"date",      QDateTime({2023, 05, 14}, {10, 11, 12}, TTimeZone::UTC)},
         {"timestamp", static_cast<qint64>(1662712888)},
     });
 
@@ -275,8 +276,8 @@ void tst_Model_Serialization::toVector_WithCasts() const
 void tst_Model_Serialization::toMap_UDatesOnly_QDateTime_For_date_column() const
 {
     auto datetime = Datetime::instance({
-        {"datetime", QDateTime({2023, 05, 13}, {10, 11, 12}, Qt::UTC)},
-        {"date",     QDateTime({2023, 05, 14}, {10, 11, 12}, Qt::UTC)},
+        {"datetime", QDateTime({2023, 05, 13}, {10, 11, 12}, TTimeZone::UTC)},
+        {"date",     QDateTime({2023, 05, 14}, {10, 11, 12}, TTimeZone::UTC)},
     });
 
     QVariantMap serialized = datetime.toMap();
@@ -294,8 +295,8 @@ void
 tst_Model_Serialization::toVector_UDatesOnly_QDateTime_For_date_column() const
 {
     auto datetime = Datetime::instance({
-        {"datetime", QDateTime({2023, 05, 13}, {10, 11, 12}, Qt::UTC)},
-        {"date",     QDateTime({2023, 05, 14}, {10, 11, 12}, Qt::UTC)},
+        {"datetime", QDateTime({2023, 05, 13}, {10, 11, 12}, TTimeZone::UTC)},
+        {"date",     QDateTime({2023, 05, 14}, {10, 11, 12}, TTimeZone::UTC)},
     });
 
     QVector<AttributeItem> serialized = datetime.toVector();
@@ -379,8 +380,8 @@ void tst_Model_Serialization::toMap_WithDateModfiers() const
     Datetime::u_timeFormat = sl("HH:mm:ss.zzz");
 
     auto datetime = Datetime::instance({
-        {"datetime", QDateTime({2023, 05, 13}, {10, 11, 12}, Qt::UTC)},
-        {"date",     QDateTime({2023, 05, 14}, {10, 11, 12}, Qt::UTC)},
+        {"datetime", QDateTime({2023, 05, 13}, {10, 11, 12}, TTimeZone::UTC)},
+        {"date",     QDateTime({2023, 05, 14}, {10, 11, 12}, TTimeZone::UTC)},
         {"time",     QTime(14, 11, 15)}, // It must also accept QTime() instances
         {"time_ms",  QTime(14, 11, 15, 123)}, // It must also accept QTime() instances
     });
@@ -412,8 +413,8 @@ void tst_Model_Serialization::toMap_WithDateModfiers() const
 void tst_Model_Serialization::toVector_WithDateModfiers() const
 {
     auto datetime = Datetime::instance({
-        {"datetime", QDateTime({2023, 05, 13}, {10, 11, 12}, Qt::UTC)},
-        {"date",     QDateTime({2023, 05, 14}, {10, 11, 12}, Qt::UTC)},
+        {"datetime", QDateTime({2023, 05, 13}, {10, 11, 12}, TTimeZone::UTC)},
+        {"date",     QDateTime({2023, 05, 14}, {10, 11, 12}, TTimeZone::UTC)},
         {"time",     sl("14:11:15")},
         {"time_ms",  sl("14:11:15.12")},
     });
@@ -444,7 +445,7 @@ void tst_Model_Serialization::toVector_WithDateModfiers() const
 void tst_Model_Serialization::toMap_WithDateModfiers_UnixTimestamp() const
 {
     auto datetime = Datetime::instance({
-        {"datetime", QDateTime({2023, 05, 13}, {10, 11, 12}, Qt::UTC)},
+        {"datetime", QDateTime({2023, 05, 13}, {10, 11, 12}, TTimeZone::UTC)},
     });
 
     datetime.mergeCasts({
@@ -467,7 +468,7 @@ void tst_Model_Serialization::toMap_WithDateModfiers_UnixTimestamp() const
 void tst_Model_Serialization::toVector_WithDateModfiers_UnixTimestamp() const
 {
     auto datetime = Datetime::instance({
-        {"datetime", QDateTime({2023, 05, 13}, {10, 11, 12}, Qt::UTC)},
+        {"datetime", QDateTime({2023, 05, 13}, {10, 11, 12}, TTimeZone::UTC)},
     });
 
     datetime.mergeCasts({
@@ -490,8 +491,8 @@ void tst_Model_Serialization::toVector_WithDateModfiers_UnixTimestamp() const
 void tst_Model_Serialization::toMap_UDatesOnly_OverrideSerializeDateTime() const
 {
     auto datetime = Datetime_SerializeOverride::instance({
-        {"datetime", QDateTime({2023, 05, 13}, {10, 11, 12}, Qt::UTC)},
-        {"date",     QDateTime({2023, 05, 14}, {10, 11, 12}, Qt::UTC)},
+        {"datetime", QDateTime({2023, 05, 13}, {10, 11, 12}, TTimeZone::UTC)},
+        {"date",     QDateTime({2023, 05, 14}, {10, 11, 12}, TTimeZone::UTC)},
     });
 
 #if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
@@ -518,8 +519,8 @@ void
 tst_Model_Serialization::toVector_UDatesOnly_OverrideSerializeDateTime() const
 {
     auto datetime = Datetime_SerializeOverride::instance({
-        {"datetime", QDateTime({2023, 05, 13}, {10, 11, 12}, Qt::UTC)},
-        {"date",     QDateTime({2023, 05, 14}, {10, 11, 12}, Qt::UTC)},
+        {"datetime", QDateTime({2023, 05, 13}, {10, 11, 12}, TTimeZone::UTC)},
+        {"date",     QDateTime({2023, 05, 14}, {10, 11, 12}, TTimeZone::UTC)},
     });
 
 #if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
@@ -545,8 +546,8 @@ tst_Model_Serialization::toVector_UDatesOnly_OverrideSerializeDateTime() const
 void tst_Model_Serialization::toMap_CastsOnly_OverrideSerializeDateTime() const
 {
     auto datetime = Datetime_SerializeOverride::instance({
-        {"datetime", QDateTime({2023, 05, 13}, {10, 11, 12}, Qt::UTC)},
-        {"date",     QDateTime({2023, 05, 14}, {10, 11, 12}, Qt::UTC)},
+        {"datetime", QDateTime({2023, 05, 13}, {10, 11, 12}, TTimeZone::UTC)},
+        {"date",     QDateTime({2023, 05, 14}, {10, 11, 12}, TTimeZone::UTC)},
         {"time",     sl("14:11:15")},
         {"time_ms",  sl("14:11:15.123")},
     });
@@ -582,8 +583,8 @@ tst_Model_Serialization::toVector_CastsOnly_OverrideSerializeDateTime() const
     Datetime_SerializeOverride::u_timeFormat = sl("HH:mm:ss.zzz");
 
     auto datetime = Datetime_SerializeOverride::instance({
-        {"datetime", QDateTime({2023, 05, 13}, {10, 11, 12}, Qt::UTC)},
-        {"date",     QDateTime({2023, 05, 14}, {10, 11, 12}, Qt::UTC)},
+        {"datetime", QDateTime({2023, 05, 13}, {10, 11, 12}, TTimeZone::UTC)},
+        {"date",     QDateTime({2023, 05, 14}, {10, 11, 12}, TTimeZone::UTC)},
         {"time",     QTime(14, 11, 15)}, // It must also accept QTime() instances
         {"time_ms",  QTime(14, 11, 15, 123)}, // It must also accept QTime() instances
     });
@@ -616,8 +617,8 @@ void tst_Model_Serialization::
      toMap_WithUDatesAndCasts_OverrideSerializeDateTime() const
 {
     auto datetime = Datetime_SerializeOverride::instance({
-        {"datetime", QDateTime({2023, 05, 13}, {10, 11, 12}, Qt::UTC)},
-        {"date",     QDateTime({2023, 05, 14}, {10, 11, 12}, Qt::UTC)},
+        {"datetime", QDateTime({2023, 05, 13}, {10, 11, 12}, TTimeZone::UTC)},
+        {"date",     QDateTime({2023, 05, 14}, {10, 11, 12}, TTimeZone::UTC)},
     });
 
 #if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
@@ -650,8 +651,8 @@ void tst_Model_Serialization::
      toVector_WithUDatesAndCasts_OverrideSerializeDateTime() const
 {
     auto datetime = Datetime_SerializeOverride::instance({
-        {"datetime", QDateTime({2023, 05, 13}, {10, 11, 12}, Qt::UTC)},
-        {"date",     QDateTime({2023, 05, 14}, {10, 11, 12}, Qt::UTC)},
+        {"datetime", QDateTime({2023, 05, 13}, {10, 11, 12}, TTimeZone::UTC)},
+        {"date",     QDateTime({2023, 05, 14}, {10, 11, 12}, TTimeZone::UTC)},
     });
 
 #if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
@@ -688,8 +689,8 @@ void tst_Model_Serialization::
     Datetime_SerializeOverride::u_timeFormat = sl("HH:mm:ss.zzz");
 
     auto datetime = Datetime_SerializeOverride::instance({
-        {"datetime", QDateTime({2023, 05, 13}, {10, 11, 12}, Qt::UTC)},
-        {"date",     QDateTime({2023, 05, 14}, {10, 11, 12}, Qt::UTC)},
+        {"datetime", QDateTime({2023, 05, 13}, {10, 11, 12}, TTimeZone::UTC)},
+        {"date",     QDateTime({2023, 05, 14}, {10, 11, 12}, TTimeZone::UTC)},
         {"time",     QTime(14, 11, 15)}, // It must also accept QTime() instances
         {"time_ms",  QTime(14, 11, 15, 12)}, // It must also accept QTime() instances
     });
@@ -728,8 +729,8 @@ void tst_Model_Serialization::
     Datetime_SerializeOverride::u_timeFormat = sl("HH:mm:ss.zzz");
 
     auto datetime = Datetime_SerializeOverride::instance({
-        {"datetime", QDateTime({2023, 05, 13}, {10, 11, 12}, Qt::UTC)},
-        {"date",     QDateTime({2023, 05, 14}, {10, 11, 12}, Qt::UTC)},
+        {"datetime", QDateTime({2023, 05, 13}, {10, 11, 12}, TTimeZone::UTC)},
+        {"date",     QDateTime({2023, 05, 14}, {10, 11, 12}, TTimeZone::UTC)},
         {"time",     sl("14:11:15")},
         {"time_ms",  sl("14:11:15.123")},
     });

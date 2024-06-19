@@ -101,10 +101,10 @@ private:
     std::shared_ptr<DatabaseManager> m_dm;
 };
 
-/*! The QtTimeZoneConfig set to the Qt::UTC. */
+/*! The QtTimeZoneConfig set to the QTimeZone::UTC. */
 Q_GLOBAL_STATIC_WITH_ARGS(
         const QVariant, QtTimeZoneConfigUTC, // NOLINT(misc-use-anonymous-namespace, cppcoreguidelines-avoid-non-const-global-variables)
-        (QVariant::fromValue(QtTimeZoneConfig {QtTimeZoneType::QtTimeSpec, Qt::UTC})))
+        (QVariant::fromValue(QtTimeZoneConfig::utc())))
 /*! QString constant for the "users" table. */
 Q_GLOBAL_STATIC_WITH_ARGS(const QString, UsersTable, ("users")) // NOLINT(misc-use-anonymous-namespace, cppcoreguidelines-avoid-non-const-global-variables)
 

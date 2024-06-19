@@ -73,6 +73,7 @@ using Orm::Constants::SSL_MODE;
 using Orm::DB;
 using Orm::DatabaseManager;
 using Orm::Exceptions::RuntimeError;
+using Orm::TTimeZone;
 
 using ConfigUtils = Orm::Utils::Configuration;
 
@@ -644,9 +645,12 @@ Databases::mysqlConfiguration()
         // Very important for tests
         {timezone_,       TZ00},
         /* Specifies what time zone all QDateTime-s will have, the overridden default
-           is the Qt::UTC, set to the Qt::LocalTime or QtTimeZoneType::DontConvert to
-           use the system local time. */
-        {qt_timezone,     QVariant::fromValue(Qt::UTC)},
+           is the QTimeZone::UTC, set to the QTimeZone::LocalTime or
+           QtTimeZoneType::DontConvert to use the system local time.
+           Also, don't use the QtTimeZoneConfig::utc() here because
+           of tst_DatabaseConnection::timezone_And_qt_timezone() test to pass, we need to
+           test if the value is correctly parsed. */
+        {qt_timezone,     QVariant::fromValue(TTimeZone::UTC)},
         {prefix_,         EMPTY},
         {prefix_indexes,  false},
         {strict_,         true},
@@ -682,9 +686,12 @@ Databases::mariaConfiguration()
         // Very important for tests
         {timezone_,       TZ00},
         /* Specifies what time zone all QDateTime-s will have, the overridden default
-           is the Qt::UTC, set to the Qt::LocalTime or QtTimeZoneType::DontConvert to
-           use the system local time. */
-        {qt_timezone,     QVariant::fromValue(Qt::UTC)},
+           is the QTimeZone::UTC, set to the QTimeZone::LocalTime or
+           QtTimeZoneType::DontConvert to use the system local time.
+           Also, don't use the QtTimeZoneConfig::utc() here because
+           of tst_DatabaseConnection::timezone_And_qt_timezone() test to pass, we need to
+           test if the value is correctly parsed. */
+        {qt_timezone,     QVariant::fromValue(TTimeZone::UTC)},
         {prefix_,         EMPTY},
         {prefix_indexes,  false},
         {strict_,         true},
@@ -712,9 +719,12 @@ Databases::sqliteConfiguration()
         {foreign_key_constraints, true},
         {check_database_exists,   true},
         /* Specifies what time zone all QDateTime-s will have, the overridden default
-           is the Qt::UTC, set to the Qt::LocalTime or QtTimeZoneType::DontConvert to
-           use the system local time. */
-        {qt_timezone,             QVariant::fromValue(Qt::UTC)},
+           is the QTimeZone::UTC, set to the QTimeZone::LocalTime or
+           QtTimeZoneType::DontConvert to use the system local time.
+           Also, don't use the QtTimeZoneConfig::utc() here because
+           of tst_DatabaseConnection::timezone_And_qt_timezone() test to pass, we need to
+           test if the value is correctly parsed. */
+        {qt_timezone,             QVariant::fromValue(TTimeZone::UTC)},
         /* Return a QDateTime with the correct time zone instead of the QString,
            only works when the qt_timezone isn't set to the DontConvert. */
         {return_qdatetime,        true},
@@ -741,9 +751,12 @@ Databases::postgresConfiguration()
         {charset_,           qEnvironmentVariable("DB_PGSQL_CHARSET",    UTF8)},
         {timezone_,          UTC},
         /* Specifies what time zone all QDateTime-s will have, the overridden default
-           is the Qt::UTC, set to the Qt::LocalTime or QtTimeZoneType::DontConvert to
-           use the system local time. */
-        {qt_timezone,        QVariant::fromValue(Qt::UTC)},
+           is the QTimeZone::UTC, set to the QTimeZone::LocalTime or
+           QtTimeZoneType::DontConvert to use the system local time.
+           Also, don't use the QtTimeZoneConfig::utc() here because
+           of tst_DatabaseConnection::timezone_And_qt_timezone() test to pass, we need to
+           test if the value is correctly parsed. */
+        {qt_timezone,        QVariant::fromValue(TTimeZone::UTC)},
         {prefix_,            EMPTY},
         {prefix_indexes,     false},
 //        {isolation_level,    sl("REPEATABLE READ")}, // Postgres default is READ COMMITTED

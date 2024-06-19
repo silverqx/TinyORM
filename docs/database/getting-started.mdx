@@ -76,9 +76,9 @@ auto manager = DB::create({
     {"collation",       qEnvironmentVariable("DB_COLLATION", "utf8mb4_0900_ai_ci")},
     {"timezone",        "+00:00"},
     /* Specifies what time zone all QDateTime-s will have, the overridden default is
-       the Qt::UTC, set to the Qt::LocalTime or QtTimeZoneType::DontConvert to use
-       the system local time. */
-    {"qt_timezone",     QVariant::fromValue(Qt::UTC)},
+       the QTimeZone::UTC, set to the QTimeZone::LocalTime or
+       QtTimeZoneType::DontConvert to use the system local time. */
+    {"qt_timezone",     QVariant::fromValue(QTimeZone::UTC)},
     {"prefix",          ""},
     {"prefix_indexes",  false},
     {"strict",          true},
@@ -107,9 +107,9 @@ auto manager = DB::create({
     {"charset",            qEnvironmentVariable("DB_CHARSET", "utf8")},
     {"timezone",           "UTC"},
     /* Specifies what time zone all QDateTime-s will have, the overridden default is
-       the Qt::UTC, set to the Qt::LocalTime or QtTimeZoneType::DontConvert to use
-       the system local time. */
-    {"qt_timezone",        QVariant::fromValue(Qt::UTC)},
+       the QTimeZone::UTC, set to the QTimeZone::LocalTime or
+       QtTimeZoneType::DontConvert to use the system local time. */
+    {"qt_timezone",        QVariant::fromValue(QTimeZone::UTC)},
     {"prefix",             ""},
     {"prefix_indexes",     false},
     {"options",            QVariantHash()},
@@ -131,9 +131,9 @@ auto manager = DB::create({
     {"foreign_key_constraints", qEnvironmentVariable("DB_FOREIGN_KEYS", "true")},
     {"check_database_exists",   true},
     /* Specifies what time zone all QDateTime-s will have, the overridden default is
-       the Qt::UTC, set to the Qt::LocalTime or QtTimeZoneType::DontConvert to use
-       the system local time. */
-    {"qt_timezone",             QVariant::fromValue(Qt::UTC)},
+       the QTimeZone::UTC, set to the QTimeZone::LocalTime or
+       QtTimeZoneType::DontConvert to use the system local time. */
+    {"qt_timezone",             QVariant::fromValue(QTimeZone::UTC)},
     /* Return a QDateTime/QDate with the correct time zone instead of the QString,
        only works when the qt_timezone isn't set to the DontConvert. */
     {"return_qdatetime",        true},
@@ -162,9 +162,9 @@ auto manager = DB::create({
     {"collation",       qEnvironmentVariable("DB_COLLATION", "utf8mb4_unicode_520_ci")},
     {"timezone",        "+00:00"},
     /* Specifies what time zone all QDateTime-s will have, the overridden default is
-       the Qt::UTC, set to the Qt::LocalTime or QtTimeZoneType::DontConvert to use
-       the system local time. */
-    {"qt_timezone",     QVariant::fromValue(Qt::UTC)},
+       the QTimeZone::UTC, set to the QTimeZone::LocalTime or
+       QtTimeZoneType::DontConvert to use the system local time. */
+    {"qt_timezone",     QVariant::fromValue(QTimeZone::UTC)},
     {"prefix",          ""},
     {"prefix_indexes",  false},
     {"strict",          true},
@@ -208,9 +208,9 @@ auto manager = DB::create({
 //    {options,         ConfigUtils::mysqlSslOptions()},
     {timezone_,       TZ00},
     /* Specifies what time zone all QDateTime-s will have, the overridden default is
-       the Qt::UTC, set to the Qt::LocalTime or QtTimeZoneType::DontConvert to use
-       the system local time. */
-    {qt_timezone,     QVariant::fromValue(Qt::UTC)},
+       the QTimeZone::UTC, set to the QTimeZone::LocalTime or
+       QtTimeZoneType::DontConvert to use the system local time. */
+    {qt_timezone,     QVariant::fromValue(QTimeZone::UTC)},
     {prefix_,         EMPTY},
     {prefix_indexes,  false},
     {strict_,         true},
@@ -258,9 +258,9 @@ auto manager = DB::create({
 //    {options_,           ConfigUtils::postgresSslOptions()},
     {timezone_,          UTC},
     /* Specifies what time zone all QDateTime-s will have, the overridden default is
-       the Qt::UTC, set to the Qt::LocalTime or QtTimeZoneType::DontConvert to use
-       the system local time. */
-    {qt_timezone,        QVariant::fromValue(Qt::UTC)},
+       the QTimeZone::UTC, set to the QTimeZone::LocalTime or
+       QtTimeZoneType::DontConvert to use the system local time. */
+    {qt_timezone,        QVariant::fromValue(QTimeZone::UTC)},
     {prefix_,            EMPTY},
     {prefix_indexes,     false},
 //    {isolation_level,    QStringLiteral("REPEATABLE READ")}, // Postgres default is READ COMMITTED
@@ -291,9 +291,9 @@ auto manager = DB::create({
     {foreign_key_constraints, qEnvironmentVariable("DB_FOREIGN_KEYS", "true")},
     {check_database_exists,   true},
     /* Specifies what time zone all QDateTime-s will have, the overridden default is
-       the Qt::UTC, set to the Qt::LocalTime or QtTimeZoneType::DontConvert to use
-       the system local time. */
-    {qt_timezone,             QVariant::fromValue(Qt::UTC)},
+       the QTimeZone::UTC, set to the QTimeZone::LocalTime or
+       QtTimeZoneType::DontConvert to use the system local time. */
+    {qt_timezone,             QVariant::fromValue(QTimeZone::UTC)},
     /* Return a QDateTime/QDate with the correct time zone instead of the QString,
        only works when the qt_timezone isn't set to the DontConvert. */
     {return_qdatetime,        true},
@@ -333,9 +333,9 @@ auto manager = DB::create({
 //    {options,         ConfigUtils::mariaSslOptions()},
     {timezone_,       TZ00},
     /* Specifies what time zone all QDateTime-s will have, the overridden default is
-       the Qt::UTC, set to the Qt::LocalTime or QtTimeZoneType::DontConvert to use
-       the system local time. */
-    {qt_timezone,     QVariant::fromValue(Qt::UTC)},
+       the QTimeZone::UTC, set to the QTimeZone::LocalTime or
+       QtTimeZoneType::DontConvert to use the system local time. */
+    {qt_timezone,     QVariant::fromValue(QTimeZone::UTC)},
     {prefix_,         EMPTY},
     {prefix_indexes,  false},
     {strict_,         true},
@@ -370,6 +370,10 @@ A database connection is resolved lazily, which means that the connection config
 
 :::tip
 You can also use predefined string constants to avoid unnecessary `QString` instantiations, as used in the `tom` migrations [example](building/migrations.mdx#string-constants-example).
+:::
+
+:::info
+See [Date Casting, Serialization & Timezones](tinyorm/casts.mdx#date-casting-serialization-and-timezones) if you have problems with `qt_timezone` configuration option and `QTimeZone` value on older `Qt <6.5` versions.
 :::
 
 #### SQLite Configuration

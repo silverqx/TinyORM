@@ -16,6 +16,7 @@ using Orm::Constants::Progress;
 using Orm::Constants::SIZE_;
 using Orm::Constants::UPDATED_AT;
 
+using Orm::TTimeZone;
 using Orm::Utils::NullVariant;
 
 using TypeUtils = Orm::Utils::Type;
@@ -484,8 +485,8 @@ void tst_Model_Appends::toVector_WithAppends_WithHidden_ForExistingAttribute() c
 void tst_Model_Appends::toMap_WithAppends_OverrideSerializeDateTime() const
 {
     auto datetime = Datetime_SerializeOverride::instance({
-        {"datetime", QDateTime({2023, 05, 13}, {10, 11, 12}, Qt::UTC)},
-        {"date",     QDateTime({2023, 05, 14}, {10, 11, 12}, Qt::UTC)},
+        {"datetime", QDateTime({2023, 05, 13}, {10, 11, 12}, TTimeZone::UTC)},
+        {"date",     QDateTime({2023, 05, 14}, {10, 11, 12}, TTimeZone::UTC)},
         {"time",     sl("14:11:15")},
     });
 
@@ -515,8 +516,8 @@ void
 tst_Model_Appends::toVector_WithAppends_OverrideSerializeDateTime() const
 {
     auto datetime = Datetime_SerializeOverride::instance({
-        {"datetime", QDateTime({2023, 05, 13}, {10, 11, 12}, Qt::UTC)},
-        {"date",     QDateTime({2023, 05, 14}, {10, 11, 12}, Qt::UTC)},
+        {"datetime", QDateTime({2023, 05, 13}, {10, 11, 12}, TTimeZone::UTC)},
+        {"date",     QDateTime({2023, 05, 14}, {10, 11, 12}, TTimeZone::UTC)},
         {"time",     QTime(14, 11, 15)}, // It must also accept QTime() instances
     });
 

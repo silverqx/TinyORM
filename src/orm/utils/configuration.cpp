@@ -42,7 +42,7 @@ QtTimeZoneConfig
 Configuration::prepareQtTimeZone(const QVariantHash &config, const QString &connection)
 {
     if (!config.contains(qt_timezone))
-        return {QtTimeZoneType::QtTimeSpec, Qt::UTC};
+        return QtTimeZoneConfig::utc();
 
     return prepareQtTimeZone(config[qt_timezone], connection);
 }
@@ -52,12 +52,23 @@ Configuration::prepareQtTimeZone(const QVariant &qtTimeZone, const QString &conn
 {
     // Nothing to do
     if (!qtTimeZone.isValid() || qtTimeZone.isNull())
-        return {QtTimeZoneType::QtTimeSpec, Qt::UTC};
+        return QtTimeZoneConfig::utc();
 
     const auto typeId = Helpers::qVariantTypeId(qtTimeZone);
 
+#if QT_VERSION >= QT_VERSION_CHECK(6, 5, 0)
+    if (typeId == QMetaType::fromType<QTimeZone::Initialization>().id())
+        return {QtTimeZoneType::QTimeZone,
+                QVariant::fromValue(
+                        QTimeZone(qtTimeZone.value<QTimeZone::Initialization>()))};
+#else
     if (typeId == QMetaType::fromType<Qt::TimeSpec>().id())
         return {QtTimeZoneType::QtTimeSpec, qtTimeZone.value<Qt::TimeSpec>()};
+#endif
+
+    if (typeId == QMetaType::fromType<QTimeZone>().id())
+        return {QtTimeZoneType::QTimeZone,
+                QVariant::fromValue(qtTimeZone.value<QTimeZone>())};
 
     // Allow to define the QtTimeZoneType::DontConvert for the qt_timezone config. option
     if (typeId == QMetaType::fromType<QtTimeZoneType>().id())
@@ -65,10 +76,6 @@ Configuration::prepareQtTimeZone(const QVariant &qtTimeZone, const QString &conn
             qtTimeZoneValue == QtTimeZoneType::DontConvert
         )
             return {QtTimeZoneType::DontConvert, {}};
-
-    if (typeId == QMetaType::fromType<QTimeZone>().id())
-        return {QtTimeZoneType::QTimeZone,
-                QVariant::fromValue(qtTimeZone.value<QTimeZone>())};
 
     /* Must be a valid IANA timezone ID and must be available on a current system.
        Also if a configuration option is the QString then return the QTimeZone

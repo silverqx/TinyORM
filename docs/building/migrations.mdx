@@ -221,9 +221,9 @@ std::shared_ptr<DatabaseManager> setupDatabaseManager()
         {collation_,  qEnvironmentVariable("DB_MYSQL_COLLATION", UTF8MB40900aici)},
         {timezone_,   TZ00},
         /* Specifies what time zone all QDateTime-s will have, the overridden default is
-           the Qt::UTC, set to the Qt::LocalTime or QtTimeZoneType::DontConvert to use
-           the system local time. */
-        {qt_timezone, QVariant::fromValue(Qt::UTC)},
+           the QTimeZone::UTC, set to the QTimeZone::LocalTime or
+           QtTimeZoneType::DontConvert to use the system local time. */
+        {qt_timezone, QVariant::fromValue(QTimeZone::UTC)},
         {strict_,     true},
     },
         QStringLiteral("tinyorm_tom_mysql")); // shell:connection
