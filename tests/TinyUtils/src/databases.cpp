@@ -72,7 +72,6 @@ using Orm::Constants::SSL_MODE;
 
 using Orm::DB;
 using Orm::DatabaseManager;
-
 using Orm::Exceptions::RuntimeError;
 
 using ConfigUtils = Orm::Utils::Configuration;
