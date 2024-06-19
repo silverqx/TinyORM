@@ -181,7 +181,7 @@ namespace Query
         QtTimeSpec,
         /*! QtTimeZoneConfig contains the QTimeZone, use toTimeZone() for conversion. */
         QTimeZone,
-        /*! QtTimeZoneConfig contains seconds, use toOffesetFromUtc() for conversion. */
+        /*! QtTimeZoneConfig contains seconds, use toOffsetFromUtc() for conversion. */
         OffsetFromUtc,
     };
 
