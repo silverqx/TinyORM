@@ -28,10 +28,10 @@ ${TINY_UNPARSED_ARGUMENTS}")
     # Disable deprecated APIs up to the given Qt version
     # TODO qt5 remove silverqx
     if(QT_VERSION_MAJOR GREATER_EQUAL 6)
-        # Disable all the APIs deprecated up to Qt 6.7.0
+        # Disable all the APIs deprecated up to Qt v6.7.0 (including)
         target_compile_definitions(${target} INTERFACE QT_DISABLE_DEPRECATED_UP_TO=0x060700)
     else()
-        # Disable all the APIs deprecated up to Qt 6.0.0
+        # Disable all the APIs deprecated up to Qt v6.0.0 (including)
         target_compile_definitions(${target} INTERFACE QT_DISABLE_DEPRECATED_BEFORE=0x060000)
     endif()
 

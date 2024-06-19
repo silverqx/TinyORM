@@ -21,11 +21,11 @@ CONFIG -= c++11 app_bundle
 # ---
 
 # Disable deprecated APIs up to the given Qt version
-# Disable all the APIs deprecated up to Qt 6.7.0
+# Disable all the APIs deprecated up to Qt v6.7.0 (including)
 # TODO qt5 remove silverqx
 versionAtLeast(QT_VERSION, 6): \
     DEFINES *= QT_DISABLE_DEPRECATED_UP_TO=0x060800
-# Disable all the APIs deprecated up to Qt 6.0.0
+# Disable all the APIs deprecated up to Qt v6.0.0 (including)
 else: \
     DEFINES *= QT_DISABLE_DEPRECATED_BEFORE=0x060000
 
