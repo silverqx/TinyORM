@@ -45,4 +45,16 @@ TINY_SYSTEM_HEADER
 #define TINYDRIVERS_VERSION \
     (TINYDRIVERS_VERSION_MAJOR * 10000 + TINYDRIVERS_VERSION_MINOR * 100 + TINYDRIVERS_VERSION_BUGFIX)
 
+/*! Compute the HEX representation from the given version numbers (for comparison).
+    Can be used like:
+    #if TINYDRIVERS_VERSION_HEX >= TINYDRIVERS_VERSION_CHECK(0, 37, 3) */
+#define TINYDRIVERS_VERSION_CHECK(major, minor, bugfix) \
+    ((major << 16) | (minor << 8) | (bugfix))
+
+/*! HEX representation of the current TinyDrivers version (for comparison).
+    TINYDRIVERS_VERSION_HEX is (major << 16) | (minor << 8) | bugfix. */
+#define TINYDRIVERS_VERSION_HEX TINYDRIVERS_VERSION_CHECK(TINYDRIVERS_VERSION_MAJOR,    \
+                                                          TINYDRIVERS_VERSION_MINOR,    \
+                                                          TINYDRIVERS_VERSION_BUGFIX)
+
 #endif // ORM_DRIVERS_VERSION_HPP

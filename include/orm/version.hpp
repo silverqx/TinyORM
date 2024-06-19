@@ -45,4 +45,16 @@ TINY_SYSTEM_HEADER
 #define TINYORM_VERSION \
     (TINYORM_VERSION_MAJOR * 10000 + TINYORM_VERSION_MINOR * 100 + TINYORM_VERSION_BUGFIX)
 
+/*! Compute the HEX representation from the given version numbers (for comparison).
+    Can be used like:
+    #if TINYORM_VERSION_HEX >= TINYORM_VERSION_CHECK(0, 37, 3) */
+#define TINYORM_VERSION_CHECK(major, minor, bugfix) \
+    ((major << 16) | (minor << 8) | (bugfix))
+
+/*! HEX representation of the current TinyORM version (for comparison).
+    TINYORM_VERSION_HEX is (major << 16) | (minor << 8) | bugfix. */
+#define TINYORM_VERSION_HEX TINYORM_VERSION_CHECK(TINYORM_VERSION_MAJOR,    \
+                                                  TINYORM_VERSION_MINOR,    \
+                                                  TINYORM_VERSION_BUGFIX)
+
 #endif // ORM_VERSION_HPP

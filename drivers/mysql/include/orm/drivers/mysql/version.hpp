@@ -45,6 +45,18 @@ TINY_SYSTEM_HEADER
 #define TINYMYSQL_VERSION \
     (TINYMYSQL_VERSION_MAJOR * 10000 + TINYMYSQL_VERSION_MINOR * 100 + TINYMYSQL_VERSION_BUGFIX)
 
+/*! Compute the HEX representation from the given version numbers (for comparison).
+    Can be used like:
+    #if TINYMYSQL_VERSION_HEX >= TINYMYSQL_VERSION_CHECK(0, 37, 3) */
+#define TINYMYSQL_VERSION_CHECK(major, minor, bugfix) \
+    ((major << 16) | (minor << 8) | (bugfix))
+
+/*! HEX representation of the current TinyMySql version (for comparison).
+    TINYMYSQL_VERSION_HEX is (major << 16) | (minor << 8) | bugfix. */
+#define TINYMYSQL_VERSION_HEX TINYMYSQL_VERSION_CHECK(TINYMYSQL_VERSION_MAJOR,    \
+                                                      TINYMYSQL_VERSION_MINOR,    \
+                                                      TINYMYSQL_VERSION_BUGFIX)
+
 /* Library Features */
 
 /*! Fixed QDateTime handling introduced in Qt v6.8.
