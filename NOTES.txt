@@ -512,6 +512,8 @@ Upgrade the MSVC toolchain to new version:
 
 Upgrade the Qt to new version:
 ------------------------------
+tags: qt upgrade, qt update, update qt, upgrade qt, qt, update, upgrade
+--
 
  - run the QtCreator and do the PrintScreen of the Settings - Kits - Kits
  - close the QtCreator
@@ -530,12 +532,14 @@ GitHub Action workflows:
 
  - open TinyORM in the vscode and file/replace all occurrences of x.y.z and x_y_z to the new version
  - commit - workflows upgraded to Qt vx.y.z
- - TinyOrm-files:
+ - TinyOrm-files (not needed for Qt >=v6):
+   - workflows for Qt >=v6 is used qtbuild-qmysql-driver.ps1 to simplify upgrades
    - 7zip the qsqlmysql.dll, qsqlmysql.pdb, qsqlmysqld.dll, qsqlmysqld.pdb to the TinyOrm-files/qmysql_dlls-x.y.z.7z
    - remove the old TinyOrm-files/qmysql_dlls-x.y.z.7z file
    - generate the new hash - .\tools\Get-DownloadsHash.ps1 -Platform Linux, Windows
    - commit - upgraded to Qt v6.7.2
- - update the URL_QMYSQL_DLLS_MSVC_X64_x_y_z GitHub secret
+ - update the URL_QMYSQL_DLLS_MSVC_X64_x_y_z GitHub secret (also not needed for Qt >=v6)
+ - for self-hosted runners see: merydeye-tinyactions useful commands
 
 MySQL Timezone tables:
 
