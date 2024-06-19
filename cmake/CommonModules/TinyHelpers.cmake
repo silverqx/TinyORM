@@ -624,8 +624,8 @@ endfunction()
 # contains ccache/sccache (fixes for Clang compilers)
 function(tiny_should_fix_ccache_clang out_variable)
 
-    # Target the Clang on Linux and MSYS2
-    if(MSVC OR NOT CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+    # Target the Clang on Linux, MSYS2, and also clang-cl with MSVC
+    if(NOT CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
         set(${out_variable} FALSE PARENT_SCOPE)
         return()
     endif()
@@ -651,11 +651,9 @@ function(tiny_fix_ccache)
 
     if(shouldFixCcacheMsvc)
         tiny_fix_ccache_msvc()
-
-        # The early return() can be here, but I chose not to add it
     endif()
 
-    # Fixes for the Clang compiler on Linux and MSYS2 (excluding the clang-cl with MSVC)
+    # Fixes for the Clang compiler on Linux, MSYS2, and also clang-cl with MSVC
     # Ignore PCH timestamps if the ccache is used (recommended in ccache docs)
     set(shouldFixCcacheClang FALSE)
     tiny_should_fix_ccache_clang(shouldFixCcacheClang)
