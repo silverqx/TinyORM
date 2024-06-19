@@ -28,7 +28,7 @@ jobs:
 
     env:
       # Settings (constant variables)
-      TINY_QT_VERSION: 6.7.1
+      TINY_QT_VERSION: 6.7.2
       TINY_QT_SPEC: msvc2019_64
       TINY_LLVM_VERSION: 18.1.7
       # Initial build size 1.4G :/

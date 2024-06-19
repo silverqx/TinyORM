@@ -33,7 +33,7 @@ jobs:
 
     env:
       # Settings (constant variables)
-      TINY_QT_VERSION: 6.7.1
+      TINY_QT_VERSION: 6.7.2
       TINY_QT_SPEC: win64_msvc2019_64
       TINY_MYSQL_SERVICE: MySQL84
       TINY_PARALLEL: 10

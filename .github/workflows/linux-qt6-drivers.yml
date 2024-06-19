@@ -208,15 +208,15 @@ jobs:
       run: |
         vcpkg --version
 
-    - name: Qt v6.7.1 prepare environment
+    - name: Qt v6.7.2 prepare environment
       run: |
-        echo '/opt/Qt/6.7.1/bin' >> $GITHUB_PATH
-        echo "LD_LIBRARY_PATH=/opt/Qt/6.7.1/gcc_64/lib${LD_LIBRARY_PATH:+:}$LD_LIBRARY_PATH" >> $GITHUB_ENV
+        echo '/opt/Qt/6.7.2/bin' >> $GITHUB_PATH
+        echo "LD_LIBRARY_PATH=/opt/Qt/6.7.2/gcc_64/lib${LD_LIBRARY_PATH:+:}$LD_LIBRARY_PATH" >> $GITHUB_ENV
 
         # The CMAKE_PREFIX_PATH must be defined on the GitHub Actions, this is some kind of a bug
         # because the CMake can't find the Qt, but if I export the PATH directly in the step
         # it works but doesn't work using the GITHUB_PATH like define two line above. 🫤
-        echo "CMAKE_PREFIX_PATH=/opt/Qt/6.7.1/gcc_64${CMAKE_PREFIX_PATH:+:}$CMAKE_PREFIX_PATH" >> $GITHUB_ENV
+        echo "CMAKE_PREFIX_PATH=/opt/Qt/6.7.2/gcc_64${CMAKE_PREFIX_PATH:+:}$CMAKE_PREFIX_PATH" >> $GITHUB_ENV
 
     - name: Ccache clear statistics
       run: |

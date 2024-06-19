@@ -29,7 +29,7 @@ jobs:
 
     env:
       # Settings (constant variables)
-      TINY_QT_VERSION: 6.7.1
+      TINY_QT_VERSION: 6.7.2
       TINY_QT_SPEC: win64_msvc2019_64
       # The following was computed for the Debug build only, I have added also the Release build but
       # 700M is still enough, currently init. builds are: Debug - 0.3G, Release - 0.1G; because of

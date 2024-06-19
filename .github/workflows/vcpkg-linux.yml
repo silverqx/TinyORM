@@ -65,7 +65,7 @@ jobs:
 
           - key: qt6
             name: Qt6
-            version: 6.7.1
+            version: 6.7.2
             apt: [ qt6-base-dev, libqt6sql6-sqlite ]
             # For vcpkg classic mode (install tests)
             vcpkg-qt: qtbase
