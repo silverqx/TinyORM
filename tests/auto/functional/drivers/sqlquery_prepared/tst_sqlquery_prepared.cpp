@@ -6,6 +6,10 @@
 #include "orm/drivers/sqlquery.hpp"
 #include "orm/drivers/sqlrecord.hpp"
 
+#ifdef TINYDRIVERS_MYSQL_DRIVER
+#  include "orm/drivers/mysql/version.hpp"
+#endif
+
 #include "orm/constants.hpp"
 #include "orm/utils/nullvariant.hpp"
 #include "orm/utils/type.hpp"
@@ -1865,10 +1869,19 @@ void tst_SqlQuery_Prepared::insert_update_delete() const
         QCOMPARE(users.value(NAME)       .value<QString>(),   u"ashen one"_s);
         QCOMPARE(users.value("is_banned").value<bool>(),      true);
         QCOMPARE(users.value(NOTE)       .value<QString>(),   u"test drivers INSERT"_s);
+#if tinymysql_lib_utc_qdatetime >= 20240618
+        QCOMPARE(users.value(CREATED_AT) .value<QDateTime>(), QDateTime({2023, 05, 11},
+                                                                        {11, 52, 53},
+                                                                        QTimeZone::UTC));
+        QCOMPARE(users.value(UPDATED_AT) .value<QDateTime>(), QDateTime({2023, 05, 12},
+                                                                        {11, 52, 53},
+                                                                        QTimeZone::UTC));
+#else
         QCOMPARE(users.value(CREATED_AT) .value<QDateTime>(), QDateTime({2023, 05, 11},
                                                                         {11, 52, 53}));
         QCOMPARE(users.value(UPDATED_AT) .value<QDateTime>(), QDateTime({2023, 05, 12},
                                                                         {11, 52, 53}));
+#endif
         QVERIFY(users.isNull(DELETED_AT));
         QCOMPARE(users.value(DELETED_AT), NullVariant::QDateTime());
     }
@@ -1936,10 +1949,19 @@ void tst_SqlQuery_Prepared::insert_update_delete() const
         QCOMPARE(users.value(NAME)       .value<QString>(),   u"micah"_s);
         QCOMPARE(users.value("is_banned").value<bool>(),      false);
         QCOMPARE(users.value(NOTE)       .value<QString>(),   u"test drivers INSERT"_s);
+#if tinymysql_lib_utc_qdatetime >= 20240618
+        QCOMPARE(users.value(CREATED_AT) .value<QDateTime>(), QDateTime({2023, 05, 11},
+                                                                        {11, 52, 53},
+                                                                        QTimeZone::UTC));
+        QCOMPARE(users.value(UPDATED_AT) .value<QDateTime>(), QDateTime({2023, 05, 12},
+                                                                        {11, 52, 53},
+                                                                        QTimeZone::UTC));
+#else
         QCOMPARE(users.value(CREATED_AT) .value<QDateTime>(), QDateTime({2023, 05, 11},
                                                                         {11, 52, 53}));
         QCOMPARE(users.value(UPDATED_AT) .value<QDateTime>(), QDateTime({2023, 05, 12},
                                                                         {11, 52, 53}));
+#endif
         QVERIFY(users.isNull(DELETED_AT));
         QCOMPARE(users.value(DELETED_AT), NullVariant::QDateTime());
     }

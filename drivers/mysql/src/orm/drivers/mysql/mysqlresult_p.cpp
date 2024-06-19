@@ -1,6 +1,7 @@
 #include "orm/drivers/mysql/mysqlresult_p.hpp"
 
 #include <QDateTime>
+#include <QTimeZone>
 
 #include "orm/drivers/exceptions/outofrangeerror.hpp"
 #include "orm/drivers/mysql/mysqlconstants_p.hpp"
@@ -215,9 +216,7 @@ void MySqlResultPrivate::bindPreparedBindings(
             preparedBind.buffer_length = sizeof (MYSQL_TIME);
             // Emplace to the vector to make it alive until mysql_stmt_execute()
             preparedBind.buffer = &timeVector.emplaceBack(
-                                      toMySqlDateTime(
-                                          boundValue.toDate(), boundValue.toTime(),
-                                          boundValue.typeId(), preparedBind));
+                                      toMySqlDateTime(boundValue, preparedBind));
             break;
 
         case QMetaType::UInt:
@@ -455,10 +454,11 @@ bool MySqlResultPrivate::isBlobType(const enum_field_types fieldType) noexcept
 }
 
 MYSQL_TIME
-MySqlResultPrivate::toMySqlDateTime(const QDate date, const QTime time, const int typeId,
-                                    MYSQL_BIND &bind)
+MySqlResultPrivate::toMySqlDateTime(const QVariant &boundValue, MYSQL_BIND &bind)
 {
     // This method is used for prepared bindings
+
+    const auto typeId = boundValue.typeId();
 
     Q_ASSERT(typeId == QMetaType::QDateTime || typeId == QMetaType::QTime ||
              typeId == QMetaType::QDate);
@@ -466,14 +466,14 @@ MySqlResultPrivate::toMySqlDateTime(const QDate date, const QTime time, const in
     // Create and zero the MYSQL_TIME structure as 0000-00-00 00:00:00.000000
     auto mysqlTime = createMsqlTime();
 
-    const auto initDate = [&mysqlTime, date]
+    const auto initDate = [&mysqlTime](QDate date)
     {
         mysqlTime.year  = static_cast<uint>(date.year());
         mysqlTime.month = static_cast<uint>(date.month());
         mysqlTime.day   = static_cast<uint>(date.day());
     };
 
-    const auto initTime = [&mysqlTime, time]
+    const auto initTime = [&mysqlTime](QTime time)
     {
         mysqlTime.hour        = static_cast<uint>(time.hour());
         mysqlTime.minute      = static_cast<uint>(time.minute());
@@ -485,23 +485,27 @@ MySqlResultPrivate::toMySqlDateTime(const QDate date, const QTime time, const in
        statements. */
 
     switch (typeId) {
-    case QMetaType::QDateTime:
-        initDate();
-        initTime();
+    case QMetaType::QDateTime: {
+        // tinymysql_lib_utc_qdatetime 20240618L
+        const auto datetime = boundValue.value<QDateTime>().toUTC();
+
+        initDate(datetime.date());
+        initTime(datetime.time());
 
         // mysqlTime.time_type = MYSQL_TIMESTAMP_DATETIME;
         bind.buffer_type = MYSQL_TYPE_DATETIME;
         break;
+    }
 
     case QMetaType::QDate:
-        initDate();
+        initDate(boundValue.value<QDate>());
 
         // mysqlTime.time_type = MYSQL_TIMESTAMP_DATE;
         bind.buffer_type = MYSQL_TYPE_DATE;
         break;
 
     case QMetaType::QTime:
-        initTime();
+        initTime(boundValue.value<QTime>());
 
         // mysqlTime.time_type = MYSQL_TIMESTAMP_TIME;
         bind.buffer_type = MYSQL_TYPE_TIME;
@@ -600,6 +604,10 @@ QVariant MySqlResultPrivate::toQDateTimeFromString(QString value)
         value.insert(4, DASH).insert(7, DASH).insert(10, 'T'_L1).insert(13, COLON)
              .insert(16, COLON);
 
+    // tinymysql_lib_utc_qdatetime 20240618L
+    if (!value.endsWith('Z'_L1))
+        value.append('Z'_L1);
+
     return QDateTime::fromString(value, Qt::ISODateWithMs);
 }
 
@@ -624,7 +632,8 @@ MySqlResultPrivate::toQDateTimeFromMySQLTime(const int typeId,
                         static_cast<double>(mysqlTime->second_part) / 1000))};
 
     if (typeId == QMetaType::QDateTime)
-        return QDateTime(date, time);
+                                     // tinymysql_lib_utc_qdatetime 20240618L
+        return QDateTime(date, time, QTimeZone::UTC);
 
     if (typeId == QMetaType::QDate)
         return date;

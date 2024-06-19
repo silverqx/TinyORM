@@ -1,6 +1,10 @@
 #include <QCoreApplication>
 #include <QtTest>
 
+#ifdef TINYDRIVERS_MYSQL_DRIVER
+#  include "orm/drivers/mysql/version.hpp"
+#endif
+
 #include "orm/db.hpp"
 #include "orm/utils/helpers.hpp"
 #include "orm/utils/nullvariant.hpp"
@@ -1308,11 +1312,40 @@ create_QDateTime_0300Timezone_DatetimeAttribute_UtcOnServer_DontConvert() const
            configuration, TinyORM TinyBuilder fixes and unifies the buggy time zone
            behavior of all QtSql drivers. */
         const auto datetimeActual = datetimeDbVariant.value<QDateTime>();
+
+/* Qt >=v6.8 fixes time zone handling, it calls toUTC() on QDateTime instance while
+   sending QDateTime()-s to the database, calls SET time_zone = '+00:00' while opening
+   a database connection, and returns QDateTime() instances with the UTC time zone during
+   retrieving column values for both normal and prepared queries.
+   This is the reason why we must use #if QT_VERSION >= QT_VERSION_CHECK(6, 8, 0)
+   everywhere for QtSql QMYSQL and QPSQL and tinymysql_lib_utc_qdatetime >= 20240618
+   for TinyDrivers TinyMySql. */
+#if QT_VERSION >= QT_VERSION_CHECK(6, 8, 0) || tinymysql_lib_utc_qdatetime >= 20240618
+        if (const auto driverName = DB::driverName(connection);
+            driverName == QMYSQL || driverName == QPSQL
+        ) {
+            const auto datetimeExpected = QDateTime({2022, 8, 28}, {13, 14, 15},
+                                                    QTimeZone::UTC);
+
+            QCOMPARE(datetimeActual, datetimeExpected);
+            QCOMPARE(datetimeActual.timeZone(), QTimeZone::utc());
+        }
+        else if (driverName == QSQLITE) {
+            const auto datetimeExpected = QDateTime({2022, 8, 28}, {13, 14, 15});
+
+            QCOMPARE(datetimeActual, datetimeExpected);
+            QCOMPARE(datetimeActual, datetimeExpected.toLocalTime());
+            QCOMPARE(datetimeActual.timeZone(), QTimeZone::systemTimeZone());
+        }
+        else
+            Q_UNREACHABLE();
+#else
         const auto datetimeExpected = QDateTime({2022, 8, 28}, {13, 14, 15});
 
         QCOMPARE(datetimeActual, datetimeExpected);
         QCOMPARE(datetimeActual, datetimeExpected.toLocalTime());
         QCOMPARE(datetimeActual.timeZone(), QTimeZone::systemTimeZone());
+#endif
     }
 
     // Restore

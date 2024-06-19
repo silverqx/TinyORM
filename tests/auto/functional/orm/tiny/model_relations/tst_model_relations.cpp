@@ -1,6 +1,10 @@
 #include <QCoreApplication>
 #include <QtTest>
 
+#ifdef TINYDRIVERS_MYSQL_DRIVER
+#  include "orm/drivers/mysql/version.hpp"
+#endif
+
 #include "orm/db.hpp"
 #include "orm/utils/query.hpp"
 
@@ -21,6 +25,8 @@ using Orm::Constants::ID;
 using Orm::Constants::NAME;
 using Orm::Constants::Progress;
 using Orm::Constants::QMYSQL;
+using Orm::Constants::QPSQL;
+using Orm::Constants::QSQLITE;
 using Orm::Constants::SIZE_;
 using Orm::Constants::UPDATED_AT;
 
@@ -3013,11 +3019,40 @@ timezone_TimestampAttribute_UtcOnServer_DontConvert_OnCustomPivot_MtM() const
        configuration, TinyORM TinyBuilder fixes and unifies the buggy time zone
        behavior of all QtSql drivers. */
     const auto timestampActual = timestampDbVariant.value<QDateTime>();
+
+/* Qt >=v6.8 fixes time zone handling, it calls toUTC() on QDateTime instance while
+   sending QDateTime()-s to the database, calls SET time_zone = '+00:00' while opening
+   a database connection, and returns QDateTime() instances with the UTC time zone during
+   retrieving column values for both normal and prepared queries.
+   This is the reason why we must use #if QT_VERSION >= QT_VERSION_CHECK(6, 8, 0)
+   everywhere for QtSql QMYSQL and QPSQL and tinymysql_lib_utc_qdatetime >= 20240618
+   for TinyDrivers TinyMySql. */
+#if QT_VERSION >= QT_VERSION_CHECK(6, 8, 0) || tinymysql_lib_utc_qdatetime >= 20240618
+    if (const auto driverName = DB::driverName(connection);
+        driverName == QMYSQL || driverName == QPSQL
+    ) {
+        const auto timestampExpected = QDateTime({2021, 2, 21}, {17, 31, 58},
+                                                 QTimeZone::UTC);
+
+        QCOMPARE(timestampActual, timestampExpected);
+        QCOMPARE(timestampActual.timeZone(), QTimeZone::utc());
+    }
+    else if (driverName == QSQLITE) {
+        const auto timestampExpected = QDateTime({2021, 2, 21}, {17, 31, 58});
+
+        QCOMPARE(timestampActual, timestampExpected);
+        QCOMPARE(timestampActual, timestampExpected.toLocalTime());
+        QCOMPARE(timestampActual.timeZone(), QTimeZone::systemTimeZone());
+    }
+    else
+        Q_UNREACHABLE();
+#else
     const auto timestampExpected = QDateTime({2021, 2, 21}, {17, 31, 58});
 
     QCOMPARE(timestampActual, timestampExpected);
     QCOMPARE(timestampActual, timestampExpected.toLocalTime());
     QCOMPARE(timestampActual.timeZone(), QTimeZone::systemTimeZone());
+#endif
 
     // Restore
     DB::setQtTimeZone(QtTimeZoneConfig {QtTimeZoneType::QtTimeSpec,

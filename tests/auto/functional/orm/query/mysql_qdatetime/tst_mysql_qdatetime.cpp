@@ -3,6 +3,10 @@
 
 #ifdef TINYORM_USING_TINYDRIVERS
 #  include "orm/drivers/dummysqlerror.hpp"
+
+#  ifdef TINYDRIVERS_MYSQL_DRIVER
+#    include "orm/drivers/mysql/version.hpp"
+#  endif
 #endif
 
 #include "orm/db.hpp"
@@ -27,6 +31,14 @@ using QueryBuilder = Orm::Query::Builder;
 using TypeUtils = Orm::Utils::Type;
 
 using TestUtils::Databases;
+
+/* Qt >=v6.8 fixes time zone handling, it calls toUTC() on QDateTime instance while
+   sending QDateTime()-s to the database, calls SET time_zone = '+00:00' while opening
+   a database connection, and returns QDateTime() instances with the UTC time zone during
+   retrieving column values for both normal and prepared queries.
+   This is the reason why we must use #if QT_VERSION >= QT_VERSION_CHECK(6, 8, 0)
+   everywhere for QtSql QMYSQL and QPSQL and tinymysql_lib_utc_qdatetime >= 20240618
+   for TinyDrivers TinyMySql. */
 
 class tst_MySql_QDateTime : public QObject // clazy:exclude=ctor-missing-parent-argument
 {
@@ -262,11 +274,19 @@ insert_Qt_QDateTime_UtcTimezone_DatetimeColumn_UtcOnServer() const
         /* QMYSQL driver doesn't care about QDateTime timezone and returns the QDateTime
            in a local timezone. */
         const auto datetimeActual = datetimeDbVariant.value<QDateTime>();
+#if QT_VERSION >= QT_VERSION_CHECK(6, 8, 0) || tinymysql_lib_utc_qdatetime >= 20240618
+        const auto datetimeExpected = QDateTime({2022, 8, 28}, {13, 14, 15},
+                                                QTimeZone::UTC);
+
+        QCOMPARE(datetimeActual, datetimeExpected);
+        QCOMPARE(datetimeActual.timeZone(), QTimeZone::utc());
+#else
         const auto datetimeExpected = QDateTime({2022, 8, 28}, {13, 14, 15});
 
         QCOMPARE(datetimeActual, datetimeExpected);
         QCOMPARE(datetimeActual, datetimeExpected.toLocalTime());
         QCOMPARE(datetimeActual.timeZone(), QTimeZone::systemTimeZone());
+#endif
     }
 
     // Restore
@@ -327,11 +347,19 @@ insert_Qt_QDateTime_0200Timezone_DatetimeColumn_UtcOnServer() const
         /* QMYSQL driver doesn't care about QDateTime timezone and returns the QDateTime
            in a local timezone. */
         const auto datetimeActual = datetimeDbVariant.value<QDateTime>();
+#if QT_VERSION >= QT_VERSION_CHECK(6, 8, 0) || tinymysql_lib_utc_qdatetime >= 20240618
+        const auto datetimeExpected = QDateTime({2022, 8, 28}, {11, 14, 15},
+                                                QTimeZone::UTC);
+
+        QCOMPARE(datetimeActual, datetimeExpected);
+        QCOMPARE(datetimeActual.timeZone(), QTimeZone::utc());
+#else
         const auto datetimeExpected = QDateTime({2022, 8, 28}, {13, 14, 15});
 
         QCOMPARE(datetimeActual, datetimeExpected);
         QCOMPARE(datetimeActual, datetimeExpected.toLocalTime());
         QCOMPARE(datetimeActual.timeZone(), QTimeZone::systemTimeZone());
+#endif
     }
 
     // Restore
@@ -390,11 +418,19 @@ void tst_MySql_QDateTime::insert_Qt_QString_DatetimeColumn_UtcOnServer() const
         /* QMYSQL driver doesn't care about QDateTime timezone and returns the QDateTime
            in a local timezone. */
         const auto datetimeActual = datetimeDbVariant.value<QDateTime>();
+#if QT_VERSION >= QT_VERSION_CHECK(6, 8, 0) || tinymysql_lib_utc_qdatetime >= 20240618
+        const auto datetimeExpected = QDateTime({2022, 8, 28}, {13, 14, 15},
+                                                QTimeZone::UTC);
+
+        QCOMPARE(datetimeActual, datetimeExpected);
+        QCOMPARE(datetimeActual.timeZone(), QTimeZone::utc());
+#else
         const auto datetimeExpected = QDateTime({2022, 8, 28}, {13, 14, 15});
 
         QCOMPARE(datetimeActual, datetimeExpected);
         QCOMPARE(datetimeActual, datetimeExpected.toLocalTime());
         QCOMPARE(datetimeActual.timeZone(), QTimeZone::systemTimeZone());
+#endif
     }
 
     // Restore
@@ -455,11 +491,19 @@ insert_Qt_QDateTime_UtcTimezone_TimestampColumn_UtcOnServer() const
         /* QMYSQL driver doesn't care about QDateTime timezone and returns the QDateTime
            in a local timezone. */
         const auto timestampActual = timestampDbVariant.value<QDateTime>();
+#if QT_VERSION >= QT_VERSION_CHECK(6, 8, 0) || tinymysql_lib_utc_qdatetime >= 20240618
+        const auto timestampExpected = QDateTime({2022, 8, 29}, {13, 14, 15},
+                                                 QTimeZone::UTC);
+
+        QCOMPARE(timestampActual, timestampExpected);
+        QCOMPARE(timestampActual.timeZone(), QTimeZone::utc());
+#else
         const auto timestampExpected = QDateTime({2022, 8, 29}, {13, 14, 15});
 
         QCOMPARE(timestampActual, timestampExpected);
         QCOMPARE(timestampActual, timestampExpected.toLocalTime());
         QCOMPARE(timestampActual.timeZone(), QTimeZone::systemTimeZone());
+#endif
     }
 
     // Restore
@@ -520,11 +564,19 @@ insert_Qt_QDateTime_0200Timezone_TimestampColumn_UtcOnServer() const
         /* QMYSQL driver doesn't care about QDateTime timezone and returns the QDateTime
            in a local timezone. */
         const auto timestampActual = timestampDbVariant.value<QDateTime>();
+#if QT_VERSION >= QT_VERSION_CHECK(6, 8, 0) || tinymysql_lib_utc_qdatetime >= 20240618
+        const auto timestampExpected = QDateTime({2022, 8, 29}, {11, 14, 15},
+                                                 QTimeZone::UTC);
+
+        QCOMPARE(timestampActual, timestampExpected);
+        QCOMPARE(timestampActual.timeZone(), QTimeZone::utc());
+#else
         const auto timestampExpected = QDateTime({2022, 8, 29}, {13, 14, 15});
 
         QCOMPARE(timestampActual, timestampExpected);
         QCOMPARE(timestampActual, timestampExpected.toLocalTime());
         QCOMPARE(timestampActual.timeZone(), QTimeZone::systemTimeZone());
+#endif
     }
 
     // Restore
@@ -584,11 +636,19 @@ void tst_MySql_QDateTime::insert_Qt_QString_TimestampColumn_UtcOnServer() const
         /* QMYSQL driver doesn't care about QDateTime timezone and returns the QDateTime
            in a local timezone. */
         const auto timestampActual = timestampDbVariant.value<QDateTime>();
+#if QT_VERSION >= QT_VERSION_CHECK(6, 8, 0) || tinymysql_lib_utc_qdatetime >= 20240618
+        const auto timestampExpected = QDateTime({2022, 8, 29}, {13, 14, 15},
+                                                 QTimeZone::UTC);
+
+        QCOMPARE(timestampActual, timestampExpected);
+        QCOMPARE(timestampActual.timeZone(), QTimeZone::utc());
+#else
         const auto timestampExpected = QDateTime({2022, 8, 29}, {13, 14, 15});
 
         QCOMPARE(timestampActual, timestampExpected);
         QCOMPARE(timestampActual, timestampExpected.toLocalTime());
         QCOMPARE(timestampActual.timeZone(), QTimeZone::systemTimeZone());
+#endif
     }
 
     // Restore
@@ -652,11 +712,19 @@ insert_Qt_QDateTime_UtcTimezone_DatetimeColumn_0200OnServer() const
         /* QMYSQL driver doesn't care about QDateTime timezone and returns the QDateTime
            in a local timezone. */
         const auto datetimeActual = datetimeDbVariant.value<QDateTime>();
+#if QT_VERSION >= QT_VERSION_CHECK(6, 8, 0) || tinymysql_lib_utc_qdatetime >= 20240618
+        const auto datetimeExpected = QDateTime({2022, 8, 28}, {13, 14, 15},
+                                                QTimeZone::UTC);
+
+        QCOMPARE(datetimeActual, datetimeExpected);
+        QCOMPARE(datetimeActual.timeZone(), QTimeZone::utc());
+#else
         const auto datetimeExpected = QDateTime({2022, 8, 28}, {13, 14, 15});
 
         QCOMPARE(datetimeActual, datetimeExpected);
         QCOMPARE(datetimeActual, datetimeExpected.toLocalTime());
         QCOMPARE(datetimeActual.timeZone(), QTimeZone::systemTimeZone());
+#endif
     }
 
     // Restore
@@ -718,11 +786,19 @@ insert_Qt_QDateTime_0200Timezone_DatetimeColumn_0200OnServer() const
         /* QMYSQL driver doesn't care about QDateTime timezone and returns the QDateTime
            in a local timezone. */
         const auto datetimeActual = datetimeDbVariant.value<QDateTime>();
+#if QT_VERSION >= QT_VERSION_CHECK(6, 8, 0) || tinymysql_lib_utc_qdatetime >= 20240618
+        const auto datetimeExpected = QDateTime({2022, 8, 28}, {11, 14, 15},
+                                                QTimeZone::UTC);
+
+        QCOMPARE(datetimeActual, datetimeExpected);
+        QCOMPARE(datetimeActual.timeZone(), QTimeZone::utc());
+#else
         const auto datetimeExpected = QDateTime({2022, 8, 28}, {13, 14, 15});
 
         QCOMPARE(datetimeActual, datetimeExpected);
         QCOMPARE(datetimeActual, datetimeExpected.toLocalTime());
         QCOMPARE(datetimeActual.timeZone(), QTimeZone::systemTimeZone());
+#endif
     }
 
     // Restore
@@ -782,11 +858,19 @@ void tst_MySql_QDateTime::insert_Qt_QString_DatetimeColumn_0200OnServer() const
         /* QMYSQL driver doesn't care about QDateTime timezone and returns the QDateTime
            in a local timezone. */
         const auto datetimeActual = datetimeDbVariant.value<QDateTime>();
+#if QT_VERSION >= QT_VERSION_CHECK(6, 8, 0) || tinymysql_lib_utc_qdatetime >= 20240618
+        const auto datetimeExpected = QDateTime({2022, 8, 28}, {13, 14, 15},
+                                                QTimeZone::UTC);
+
+        QCOMPARE(datetimeActual, datetimeExpected);
+        QCOMPARE(datetimeActual.timeZone(), QTimeZone::utc());
+#else
         const auto datetimeExpected = QDateTime({2022, 8, 28}, {13, 14, 15});
 
         QCOMPARE(datetimeActual, datetimeExpected);
         QCOMPARE(datetimeActual, datetimeExpected.toLocalTime());
         QCOMPARE(datetimeActual.timeZone(), QTimeZone::systemTimeZone());
+#endif
     }
 
     // Restore
@@ -848,11 +932,19 @@ insert_Qt_QDateTime_UtcTimezone_TimestampColumn_0200OnServer() const
         /* QMYSQL driver doesn't care about QDateTime timezone and returns the QDateTime
            in a local timezone. */
         const auto timestampActual = timestampDbVariant.value<QDateTime>();
+#if QT_VERSION >= QT_VERSION_CHECK(6, 8, 0) || tinymysql_lib_utc_qdatetime >= 20240618
+        const auto timestampExpected = QDateTime({2022, 8, 29}, {13, 14, 15},
+                                                 QTimeZone::UTC);
+
+        QCOMPARE(timestampActual, timestampExpected);
+        QCOMPARE(timestampActual.timeZone(), QTimeZone::utc());
+#else
         const auto timestampExpected = QDateTime({2022, 8, 29}, {13, 14, 15});
 
         QCOMPARE(timestampActual, timestampExpected);
         QCOMPARE(timestampActual, timestampExpected.toLocalTime());
         QCOMPARE(timestampActual.timeZone(), QTimeZone::systemTimeZone());
+#endif
     }
 
     // Restore
@@ -914,11 +1006,19 @@ insert_Qt_QDateTime_0200Timezone_TimestampColumn_0200OnServer() const
         /* QMYSQL driver doesn't care about QDateTime timezone and returns the QDateTime
            in a local timezone. */
         const auto timestampActual = timestampDbVariant.value<QDateTime>();
+#if QT_VERSION >= QT_VERSION_CHECK(6, 8, 0) || tinymysql_lib_utc_qdatetime >= 20240618
+        const auto timestampExpected = QDateTime({2022, 8, 29}, {11, 14, 15},
+                                                 QTimeZone::UTC);
+
+        QCOMPARE(timestampActual, timestampExpected);
+        QCOMPARE(timestampActual.timeZone(), QTimeZone::utc());
+#else
         const auto timestampExpected = QDateTime({2022, 8, 29}, {13, 14, 15});
 
         QCOMPARE(timestampActual, timestampExpected);
         QCOMPARE(timestampActual, timestampExpected.toLocalTime());
         QCOMPARE(timestampActual.timeZone(), QTimeZone::systemTimeZone());
+#endif
     }
 
     // Restore
@@ -978,11 +1078,19 @@ void tst_MySql_QDateTime::insert_Qt_QString_TimestampColumn_0200OnServer() const
         /* QMYSQL driver doesn't care about QDateTime timezone and returns the QDateTime
            in a local timezone. */
         const auto timestampActual = timestampDbVariant.value<QDateTime>();
+#if QT_VERSION >= QT_VERSION_CHECK(6, 8, 0) || tinymysql_lib_utc_qdatetime >= 20240618
+        const auto timestampExpected = QDateTime({2022, 8, 29}, {13, 14, 15},
+                                                 QTimeZone::UTC);
+
+        QCOMPARE(timestampActual, timestampExpected);
+        QCOMPARE(timestampActual.timeZone(), QTimeZone::utc());
+#else
         const auto timestampExpected = QDateTime({2022, 8, 29}, {13, 14, 15});
 
         QCOMPARE(timestampActual, timestampExpected);
         QCOMPARE(timestampActual, timestampExpected.toLocalTime());
         QCOMPARE(timestampActual.timeZone(), QTimeZone::systemTimeZone());
+#endif
     }
 
     // Restore
@@ -2877,11 +2985,19 @@ insert_QDateTime_0300Timezone_DatetimeColumn_UtcOnServer_DontConvert() const
 
         // Practically it should behave as is the default QMYSQL driver behavior
         const auto datetimeActual = datetimeDbVariant.value<QDateTime>();
+#if QT_VERSION >= QT_VERSION_CHECK(6, 8, 0) || tinymysql_lib_utc_qdatetime >= 20240618
+        const auto datetimeExpected = QDateTime({2022, 8, 28}, {13, 14, 15},
+                                                QTimeZone::UTC);
+
+        QCOMPARE(datetimeActual, datetimeExpected);
+        QCOMPARE(datetimeActual.timeZone(), QTimeZone::utc());
+#else
         const auto datetimeExpected = QDateTime({2022, 8, 28}, {13, 14, 15});
 
         QCOMPARE(datetimeActual, datetimeExpected);
         QCOMPARE(datetimeActual, datetimeExpected.toLocalTime());
         QCOMPARE(datetimeActual.timeZone(), QTimeZone::systemTimeZone());
+#endif
     }
 
     // Restore

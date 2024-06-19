@@ -45,4 +45,11 @@ TINY_SYSTEM_HEADER
 #define TINYMYSQL_VERSION \
     (TINYMYSQL_VERSION_MAJOR * 10000 + TINYMYSQL_VERSION_MINOR * 100 + TINYMYSQL_VERSION_BUGFIX)
 
+/* Library Features */
+
+/*! Fixed QDateTime handling introduced in Qt v6.8.
+    https://github.com/qt/qtbase/commit/2781c3b6248fe4410a7afffd41bad72d8567fc95
+    https://codereview.qt-project.org/c/qt/qtbase/+/546954 */
+#define tinymysql_lib_utc_qdatetime 20240618L
+
 #endif // ORM_DRIVERS_MYSQL_VERSION_HPP
