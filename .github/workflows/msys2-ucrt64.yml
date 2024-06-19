@@ -197,7 +197,7 @@ jobs:
         URL_MYSQL_TIMEZONE_TABLES: ${{ secrets.URL_MYSQL_TIMEZONE_TABLES }}
 
     - name: MySQL time zone POSIX tables restore cache (download)
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       id: downloads-cache-mysql-timezone-tables
       with:
         path: ${{ env.extracted_folder }}
@@ -327,7 +327,7 @@ jobs:
         echo "ImageOS=$ImageOS" >> $GITHUB_OUTPUT
 
     - name: Ccache restore cache 🕺
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       with:
         # This path is ok also for MSYS2 shells
         path: ${{ env.cache_path }}

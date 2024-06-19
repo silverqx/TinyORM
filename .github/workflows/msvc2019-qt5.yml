@@ -163,7 +163,7 @@ jobs:
         URL_MYSQL_TIMEZONE_TABLES: ${{ secrets.URL_MYSQL_TIMEZONE_TABLES }}
 
     - name: MySQL time zone POSIX tables restore cache (download)
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       id: downloads-cache-mysql-timezone-tables
       with:
         path: ${{ env.extracted_folder }}
@@ -304,7 +304,7 @@ jobs:
         URL_CACHE_HASH_WINDOWS: ${{ secrets.URL_CACHE_HASH_WINDOWS }}
 
     - name: QMYSQL driver dlls restore cache (download)
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       id: downloads-cache-qmysql-dlls
       with:
         path: ${{ env.archive_filepath }}
@@ -347,7 +347,7 @@ jobs:
         URL_CACHE_HASH_WINDOWS: ${{ secrets.URL_CACHE_HASH_WINDOWS }}
 
     - name: MySQL 8 libmysql.dll restore cache
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       id: downloads-cache-mysql_8-libmysql-dll
       with:
         path: ${{ env.archive_filepath }}
@@ -393,7 +393,7 @@ jobs:
         Write-Output '::endgroup::'
 
     - name: Ccache restore cache 🕺
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       with:
         path: ${{ env.cache_path }}
         key: ${{ runner.os }}-${{ env.image_os }}-ccache-${{ env.cache_name }}-${{ github.run_id }}

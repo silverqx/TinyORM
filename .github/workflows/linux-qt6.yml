@@ -133,7 +133,7 @@ jobs:
         echo "Hash=$hash" >> $GITHUB_OUTPUT
 
     - name: PostgreSQL SSL certificates restore cache
-      uses: actions/cache/restore@v3
+      uses: actions/cache/restore@v4
       id: openssl-cache-postgresql-certificates
       with:
         path: |
@@ -208,7 +208,7 @@ jobs:
     # The actions/cache/save allows to use the Move-Item during the install step
     - name: PostgreSQL SSL certificates save cache
       if: steps.openssl-cache-postgresql-certificates.outputs.cache-hit != 'true'
-      uses: actions/cache/save@v3
+      uses: actions/cache/save@v4
       with:
         path: |
           ${{ env.folder_path }}/*.crt
@@ -354,7 +354,7 @@ jobs:
         echo "Hash=$hash" >> $GITHUB_OUTPUT
 
     - name: MySQL SSL certificates restore cache
-      uses: actions/cache/restore@v3
+      uses: actions/cache/restore@v4
       id: openssl-cache-mysql-certificates
       with:
         path: |
@@ -413,7 +413,7 @@ jobs:
     # The actions/cache/save allows to use the Move-Item during the install step
     - name: MySQL SSL certificates save cache
       if: steps.openssl-cache-mysql-certificates.outputs.cache-hit != 'true'
-      uses: actions/cache/save@v3
+      uses: actions/cache/save@v4
       with:
         path: |
           ${{ env.folder_path }}/*.pem
@@ -596,7 +596,7 @@ jobs:
         echo "ImageOS=$ImageOS" >> $GITHUB_OUTPUT
 
     - name: Ccache restore cache 🕺
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       with:
         path: ${{ env.cache_path }}
         key: ${{ runner.os }}-${{ env.image_os }}-ccache-${{ env.cache_name }}-${{ github.run_id }}
