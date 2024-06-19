@@ -22,7 +22,6 @@ using Orm::Constants::UPDATED_AT;
 using Orm::Constants::pivot_;
 
 using Orm::Utils::Helpers;
-
 using Orm::Utils::NullVariant;
 
 using TypeUtils = Orm::Utils::Type;
