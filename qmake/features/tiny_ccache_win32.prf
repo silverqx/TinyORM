@@ -1,18 +1,19 @@
-# Target the g++, clang++, msvc, and clang-cl with msvc compilers
-!win32|!msvc|mingw: return()
+# Target the g++, clang++, MSVC, and Clang-cl with MSVC compilers and also MinGW
+if(!win32|!msvc):!mingw: return()
 
 # https://github.com/ccache/ccache/issues/1040
-for(cfFlags, \
-    $$list(QMAKE_CFLAGS QMAKE_CXXFLAGS \
-           QMAKE_CFLAGS_DEBUG QMAKE_CXXFLAGS_DEBUG \
-           QMAKE_CFLAGS_RELEASE_WITH_DEBUGINFO QMAKE_CXXFLAGS_RELEASE_WITH_DEBUGINFO \
-           # The Release build type shouldn't contain this flag but replace it anyway
-           QMAKE_CFLAGS_RELEASE QMAKE_CXXFLAGS_RELEASE) \
-): \
-    !isEmpty($$cfFlags): \
-        # Replace -Zi and -ZI with the -Z7
-        # The ~= doesn't work with \/ character
-        $$cfFlags = $$replace($$cfFlags, "(?:-|\/)(?:Zi|ZI)", -Z7)
+msvc: \
+    for(cfFlags, \
+        $$list(QMAKE_CFLAGS QMAKE_CXXFLAGS \
+               QMAKE_CFLAGS_DEBUG QMAKE_CXXFLAGS_DEBUG \
+               QMAKE_CFLAGS_RELEASE_WITH_DEBUGINFO QMAKE_CXXFLAGS_RELEASE_WITH_DEBUGINFO \
+               # The Release build type shouldn't contain this flag but replace it anyway
+               QMAKE_CFLAGS_RELEASE QMAKE_CXXFLAGS_RELEASE) \
+    ): \
+        !isEmpty($$cfFlags): \
+            # Replace -Zi and -ZI with the -Z7
+            # The ~= doesn't work with \/ character
+            $$cfFlags = $$replace($$cfFlags, "(?:-|\/)(?:Zi|ZI)", -Z7)
 
 load(private/tiny_ccache_version)
 
