@@ -23,12 +23,12 @@ using Orm::Exceptions::InvalidArgumentError;
 using Orm::Exceptions::InvalidFormatError;
 using Orm::SQLiteConnection;
 using Orm::TTimeZone;
-
-using Orm::Tiny::CastItem;
-using Orm::Tiny::CastType;
 using Orm::Utils::Helpers;
 
 using TypeUtils = Orm::Utils::Type;
+
+using Orm::Tiny::CastItem;
+using Orm::Tiny::CastType;
 
 using TestUtils::Databases;
 

@@ -36,6 +36,10 @@ using Orm::One;
 using Orm::QtTimeZoneConfig;
 using Orm::QtTimeZoneType;
 using Orm::TTimeZone;
+using Orm::Utils::Helpers;
+
+using QueryUtils = Orm::Utils::Query;
+using TypeUtils = Orm::Utils::Type;
 
 using Orm::Tiny::AttributeItem;
 using Orm::Tiny::ConnectionOverride;
@@ -43,10 +47,6 @@ using Orm::Tiny::Exceptions::RelationMappingNotFoundError;
 using Orm::Tiny::Exceptions::RelationNotLoadedError;
 using Orm::Tiny::Relations::Pivot;
 using Orm::Tiny::Types::ModelsCollection;
-using Orm::Utils::Helpers;
-
-using QueryUtils = Orm::Utils::Query;
-using TypeUtils = Orm::Utils::Type;
 
 using TestUtils::Databases;
 

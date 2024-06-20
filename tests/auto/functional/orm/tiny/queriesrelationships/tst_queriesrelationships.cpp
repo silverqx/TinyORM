@@ -11,11 +11,11 @@ using Orm::Constants::Progress;
 
 using Orm::QueryBuilder;
 
+using TypeUtils = Orm::Utils::Type;
+
 using Orm::Tiny::ConnectionOverride;
 using Orm::Tiny::Relations::Relation;
 using Orm::Tiny::TinyBuilder;
-
-using TypeUtils = Orm::Utils::Type;
 
 using TestUtils::Databases;
 

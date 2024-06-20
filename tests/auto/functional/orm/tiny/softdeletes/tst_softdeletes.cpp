@@ -12,9 +12,9 @@ using Orm::Constants::NAME;
 using Orm::Constants::NOTE;
 using Orm::Constants::UPDATED_AT;
 
-using Orm::Tiny::ConnectionOverride;
-
 using TypeUtils = Orm::Utils::Type;
+
+using Orm::Tiny::ConnectionOverride;
 
 using TestUtils::Databases;
 

@@ -13,10 +13,10 @@ using Orm::Constants::dummy_NONEXISTENT;
 
 using Orm::One;
 
+using TypeUtils = Orm::Utils::Type;
+
 using Orm::Tiny::ConnectionOverride;
 using Orm::Tiny::Types::ModelsCollection;
-
-using TypeUtils = Orm::Utils::Type;
 
 using TestUtils::Databases;
 

@@ -29,10 +29,6 @@ using Orm::Constants::UPDATED_AT;
 
 using Orm::DB;
 using Orm::TTimeZone;
-using Orm::Tiny::ConnectionOverride;
-using Orm::Tiny::Exceptions::ModelNotFoundError;
-using Orm::Tiny::Model;
-using Orm::Tiny::Types::ModelsCollection;
 using Orm::Utils::Helpers;
 using Orm::Utils::NullVariant;
 
@@ -40,6 +36,11 @@ using TQueryError;
 
 using QueryUtils = Orm::Utils::Query;
 using TypeUtils = Orm::Utils::Type;
+
+using Orm::Tiny::ConnectionOverride;
+using Orm::Tiny::Exceptions::ModelNotFoundError;
+using Orm::Tiny::Model;
+using Orm::Tiny::Types::ModelsCollection;
 
 using TestUtils::Databases;
 

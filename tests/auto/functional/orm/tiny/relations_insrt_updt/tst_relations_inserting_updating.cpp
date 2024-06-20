@@ -19,13 +19,13 @@ using Orm::Constants::Updated_;
 
 using Orm::One;
 
-using Orm::Tiny::AttributeItem;
-using Orm::Tiny::ConnectionOverride;
-using Orm::Tiny::Types::ModelsCollection;
-
 using TQueryError;
 
 using TypeUtils = Orm::Utils::Type;
+
+using Orm::Tiny::AttributeItem;
+using Orm::Tiny::ConnectionOverride;
+using Orm::Tiny::Types::ModelsCollection;
 
 using TestUtils::Databases;
 

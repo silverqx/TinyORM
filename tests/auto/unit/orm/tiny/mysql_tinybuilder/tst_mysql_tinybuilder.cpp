@@ -19,13 +19,14 @@ using Orm::Constants::SIZE_;
 using Orm::DB;
 using Orm::Exceptions::InvalidArgumentError;
 using Orm::QueryBuilder;
-using Orm::Tiny::Model;
-using Orm::Tiny::TinyBuilder;
 using Orm::TTimeZone;
 using Orm::Utils::Helpers;
 using Orm::Utils::NullVariant;
 
 using TypeUtils = Orm::Utils::Type;
+
+using Orm::Tiny::Model;
+using Orm::Tiny::TinyBuilder;
 
 using TestUtils::Databases;
 

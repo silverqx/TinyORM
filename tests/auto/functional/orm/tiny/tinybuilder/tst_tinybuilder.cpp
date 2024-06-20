@@ -13,14 +13,15 @@ using Orm::Constants::SIZE_;
 
 using Orm::TTimeZone;
 
+using TQueryError;
+
+using TypeUtils = Orm::Utils::Type;
+
 using Orm::Tiny::ConnectionOverride;
 using Orm::Tiny::Exceptions::ModelNotFoundError;
 
-using TQueryError;
-
 template<typename Model>
 using TinyBuilder = Orm::Tiny::Builder<Model>;
-using TypeUtils = Orm::Utils::Type;
 
 using TestUtils::Databases;
 

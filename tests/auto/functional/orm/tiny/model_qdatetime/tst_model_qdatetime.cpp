@@ -25,12 +25,12 @@ using Orm::DB;
 using Orm::QtTimeZoneConfig;
 using Orm::QtTimeZoneType;
 using Orm::TTimeZone;
+using Orm::Utils::Helpers;
 using Orm::Utils::NullVariant;
 
-using Orm::Tiny::ConnectionOverride;
-using Orm::Utils::Helpers;
-
 using TypeUtils = Orm::Utils::Type;
+
+using Orm::Tiny::ConnectionOverride;
 
 using TestUtils::Databases;
 

@@ -16,10 +16,11 @@ using Orm::Constants::SIZE_;
 using Orm::Constants::UPDATED_AT;
 
 using Orm::One;
-using Orm::Tiny::ConnectionOverride;
-using Orm::Tiny::Types::ModelsCollection;
 
 using TypeUtils = Orm::Utils::Type;
+
+using Orm::Tiny::ConnectionOverride;
+using Orm::Tiny::Types::ModelsCollection;
 
 using TestUtils::Databases;
 

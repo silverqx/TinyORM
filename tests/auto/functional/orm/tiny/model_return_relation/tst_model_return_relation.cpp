@@ -10,11 +10,11 @@ using Orm::Constants::UPDATED_AT;
 
 using Orm::One;
 
+using TypeUtils = Orm::Utils::Type;
+
 using Orm::Tiny::ConnectionOverride;
 using Orm::Tiny::Relations::Pivot;
 using Orm::Tiny::Types::ModelsCollection;
-
-using TypeUtils = Orm::Utils::Type;
 
 using TestUtils::Databases;
 
