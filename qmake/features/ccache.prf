@@ -4,5 +4,6 @@
 # afterwards automatically.
 win32: \
     load(tiny_ccache_win32)
-else:unix: \
+
+unix:!macx: \
     load(ccache)
