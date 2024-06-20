@@ -125,9 +125,9 @@ std::optional<QDate> SqlQuery::asDate(const QString &value)
 std::optional<QDateTime> SqlQuery::asDateTime(const QString &value) const
 {
     // FUTURE datetime, apply this only if the return_qdatetime will support column names, so apply it only for the defined columns silverqx
-    /* If this value is an integer, we will assume it is a UNIX timestamp's value
+    /* If this value is an integer, we will assume it is a Unix timestamp's value
        and format a QDateTime object from this timestamp. This allows flexibility
-       when defining your date fields as they might be UNIX timestamps here. */
+       when defining your date fields as they might be Unix timestamps here. */
 //    if (StringUtils::isNumber(valueString))
 //        // TODO switch ms accuracy? For the u_dateFormat too? silverqx
 //        if (auto date = QDateTime::fromSecsSinceEpoch(value.value<qint64>());

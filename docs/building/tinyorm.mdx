@@ -905,7 +905,7 @@ These variables will be set after the configuration is done:
 | ----------------------------- | ----------- |
 | `TINY_BUILD_SUBFOLDER`        | Folder by release type if `CONFIG+=debug_and_release` is defined <small>(/debug, /release, or an empty string)</small>. |
 | `TINY_CCACHE_BUILD`           | To correctly link `ccache` build against a `ccache` build <small>(_ccache or an empty string)</small>. |
-| `TINY_MSVC_VERSION`           | The `msvc` compiler string <small>(MSVC2022 or MSVC2019)</small>. |
+| `TINY_MSVC_VERSION`           | The `MSVC` compiler string <small>(MSVC2022 or MSVC2019)</small>. |
 | `TINY_QT_VERSION_UNDERSCORED` | Underscored `Qt` version <small>(eg. 6_7_2)</small>. |
 | `TINY_RELEASE_TYPE_CAMEL`     | Build type string <small>(Debug, Profile, or Release)</small>. |
 | `TINY_VCPKG_INCLUDE`          | Path to the `vcpkg` `include` folder <small>(vcpkg/installed/&lt;triplet&gt;/include/)</small>. |
@@ -1013,7 +1013,7 @@ On Linux `-isystem` marks the directory as a system directory, it prevents warni
 
 On Windows you can use `QMAKE_CXXFLAGS_WARN_ON = -external:anglebrackets -external:W0`, it applies a warning level 0 to the angel bracket includes; `#include <file>`.
 
-With the `clang-cl` with `MSVC` you can use `-imsvc`.
+With the `Clang-cl` with `MSVC` you can use `-imsvc`.
 :::
 
 ### Auto-configuration internals

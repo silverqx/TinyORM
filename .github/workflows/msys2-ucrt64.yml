@@ -27,7 +27,7 @@ jobs:
     env:
       # Settings (constant variables)
       # First value is a compressed data size
-      # gcc: ~ 180 * 3 + 100 ; clang: ~ 140 * 3 + 100
+      # GCC: ~ 180 * 3 + 100 ; clang: ~ 140 * 3 + 100
       TINY_CCACHE_MAX_SIZE_GCC: 640M
       TINY_CCACHE_MAX_SIZE_CLANG: 520M
       # Clang and vcpkg uses $env:NUMBER_OF_PROCESSORS

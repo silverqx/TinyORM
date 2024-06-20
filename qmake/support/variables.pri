@@ -55,7 +55,7 @@ else:CONFIG(release, debug|release): \
     else: \
         TINY_RELEASE_TYPE_CAMEL = Release
 
-# Msvc compiler string (MSVC2022 or MSVC2019)
+# MSVC compiler string (MSVC2022 or MSVC2019)
 greaterThan(QMAKE_MSC_VER, 1929): \
     TINY_MSVC_VERSION = MSVC2022
 else: \

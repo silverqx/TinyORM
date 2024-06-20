@@ -86,7 +86,7 @@ defineTest(tiny_find_mysql_win32) {
     export(LIBS_PRIVATE)
 }
 
-# Find the MySQL C library for UNIX platform.
+# Find the MySQL C library for Unix platform.
 defineTest(tiny_find_mysql_unix) {
     # MySQL C library
     # Find with pkg-config (preferred)

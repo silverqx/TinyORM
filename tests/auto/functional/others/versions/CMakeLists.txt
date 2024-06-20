@@ -49,7 +49,7 @@ file(GENERATE OUTPUT "${TINY_BUILD_GENDIR}/include/versionsdebug_cmake-$<CONFIG>
     NEWLINE_STYLE UNIX
 )
 
-# Following commented code throws warning with clang-cl:
+# Following commented code throws warning with Clang-cl:
 # warning: definition of macro 'TINYTEST_VERSIONS_VERSIONSDEBUG' does not match definition
 # in precompiled header [-Wclang-cl-pch]
 

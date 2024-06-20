@@ -2,8 +2,8 @@ include(TinyFeatureOptions)
 
 # Initialize INLINE_CONSTANTS CMake feature dependent option.
 # MinGW Clang shared build crashes with inline constants (fixed in Clang v18).
-# clang-cl shared build crashes with extern constants so force to inline constants 😕🤔
-# (also fixed in Clang v18), only one option with the clang-cl is inline constants
+# Clang-cl shared build crashes with extern constants so force to inline constants 😕🤔
+# (also fixed in Clang v18), only one option with the Clang-cl is inline constants
 # for both shared/static builds.
 # Look at NOTES.txt[inline constants] how this funckin machinery works. 😎
 # Related issue: https://github.com/llvm/llvm-project/issues/55938

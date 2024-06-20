@@ -270,15 +270,15 @@ The default value for datetime or timestamp columns is `yyyy-MM-dd HH:mm:ss` and
 
 ##### Unix timestamps
 
-You can set the `u_dateFormat` to `U` if you want to store dates in the database as unix timestamps:
+You can set the `u_dateFormat` to `U` if you want to store dates in the database as Unix timestamps:
 
 ```cpp
 QString u_dateFormat {QLatin1Char('U')};
 ```
 
-In this case __all__ date attributes set in the `u_dates` will be handled as unix timestamps, so also the `created_at` and `updated_at` timestamp attributes.
+In this case __all__ date attributes set in the `u_dates` will be handled as Unix timestamps, so also the `created_at` and `updated_at` timestamp attributes.
 
-To create unix timestamp columns using the [tom migrations](/database/migrations.mdx) you should use `integer` types:
+To create Unix timestamp columns using the [tom migrations](/database/migrations.mdx) you should use `integer` types:
 
 ```cpp
 Schema::table("flights", [](Blueprint &table)

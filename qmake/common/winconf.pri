@@ -27,7 +27,7 @@ if(win32-msvc|win32-clang-msvc): \
 versionAtMost(QT_MAJOR_VERSION, 5): \
     DEFINES *= _SILENCE_STDEXT_ARR_ITERS_DEPRECATION_WARNING
 
-# Latest qmake's msvc fixes
+# Latest qmake's MSVC fixes
 # ---
 win32-msvc {
     greaterThan(QMAKE_MSC_VER, 1909) {
@@ -86,12 +86,12 @@ win32-msvc {
 
 # clang-cl.exe notes:
 # /RTC    - https://lists.llvm.org/pipermail/cfe-commits/Week-of-Mon-20130902/088105.html
-# /bigobj - clang-cl uses it by default - https://reviews.llvm.org/D12981
+# /bigobj - Clang-cl uses it by default - https://reviews.llvm.org/D12981
 win32-clang-msvc {
     QMAKE_CXXFLAGS_WARN_ON = -W4
 
-    # Relative paths in -Yu or -Fp are throwing -Wmicrosoft-include warning on clang-cl
-    # with msvc, but not all, only if it contains more ../../, eg. 5 levels up, this is
+    # Relative paths in -Yu or -Fp are throwing -Wmicrosoft-include warning on Clang-cl
+    # with MSVC, but not all, only if it contains more ../../, eg. 5 levels up, this is
     # happening especially for auto tests which have deep folder structure.
     precompile_header: \
         QMAKE_CXXFLAGS_WARN_ON += -Wno-microsoft-include
@@ -112,7 +112,7 @@ win32-msvc|win32-clang-msvc {
     QMAKE_LFLAGS += /guard:cf
     # Abort linking on warnings for Debug builds only, Release builds must go on as far as possible
     QMAKE_LFLAGS_DEBUG += /WX
-    # Looks like clang-cl does know nothing about these, for now enabling
+    # Looks like Clang-cl does know nothing about these, for now enabling
     QMAKE_LFLAGS_RELEASE += /OPT:REF,ICF=5
 }
 

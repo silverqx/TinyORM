@@ -321,7 +321,7 @@ namespace Orm::Tiny::Concerns
         inline QDate asDate(const QVariant &value) const;
         /*! Return a timestamp as QTime object. */
         inline QTime asTime(const QVariant &value) const;
-        /*! Return a timestamp as unix timestamp. */
+        /*! Return a timestamp as Unix timestamp. */
         inline qint64 asTimestamp(const QVariant &value) const;
 
         /*! Return a timestamp as QDateTime or QDate object. */
@@ -1040,7 +1040,7 @@ namespace Orm::Tiny::Concerns
         if (value.isNull())
             return nullFor_fromDateTime(value, format);
 
-        // Support unix timestamps
+        // Support Unix timestamps
         if (format == QLatin1Char('U')) T_UNLIKELY
             return asTimestamp(value);
 
@@ -1069,8 +1069,8 @@ namespace Orm::Tiny::Concerns
 
         const auto &format = getDateFormat();
 
-        // Support unix timestamps
-        /* This should be templated and for the unix timestamps the return type should be
+        // Support Unix timestamps
+        /* This should be templated and for the Unix timestamps the return type should be
            qint64, but it would make the code more complex because I would have to move
            the getDateFormat() outside, so I will simply return QString, it's not a big
            deal, INSERT/UPDATE clauses with '1604xxx' for the bigint columns are totaly
@@ -1716,9 +1716,9 @@ namespace Orm::Tiny::Concerns
 
         const auto valueString = value.value<QString>();
 
-        /* If this value is an integer, we will assume it is a UNIX timestamp's value
+        /* If this value is an integer, we will assume it is a Unix timestamp's value
            and format a QDateTime object from this timestamp. This allows flexibility
-           when defining your date fields as they might be UNIX timestamps here. */
+           when defining your date fields as they might be Unix timestamps here. */
         if (StringUtils::isNumber(valueString))
             // TODO switch ms accuracy? For the u_dateFormat too? silverqx
             if (auto unixTimestamp = QDateTime::fromSecsSinceEpoch(value.value<qint64>());
@@ -2616,7 +2616,7 @@ namespace Orm::Tiny::Concerns
         if (isCustomDateCastType(castItem)) {
             const auto castModifier = castItem.modifier().template value<QString>();
 
-            // Support unix timestamps
+            // Support Unix timestamps
             if (castModifier == QLatin1Char('U')) {
                 value = asTimestamp(value);
                 return;

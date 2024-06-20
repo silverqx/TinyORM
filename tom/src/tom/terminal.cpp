@@ -239,7 +239,7 @@ void Terminal::enableUtf8ConsoleEncoding()
     /* UTF-8 encoding is corrupted for narrow input functions, needed to use wcin/wstring
        for an input, input will be in the unicode encoding then needed to translate
        unicode to utf8, eg. by QString::fromStdWString(), WideCharToMultiByte(), or
-       std::codecvt(). It also works with msys2 ucrt64 gcc/clang. */
+       std::codecvt(). It also works with MSYS2 UCRT64 GCC/Clang. */
     SetConsoleCP(CP_UTF8);
     std::ignore = _setmode(_fileno(stdin), _O_WTEXT); // std::ignore to suppress C6031
 }

@@ -32,7 +32,7 @@ ${TINY_UNPARSED_ARGUMENTS}")
     )
 
     # These two settings allow to run tests in parallel using eg.: ctest --parallel 10
-    # Parallel 30 saves ~12s on msvc (from 42s to 30s)
+    # Parallel 30 saves ~12s on MSVC (from 42s to 30s)
     set_tests_properties(${name} PROPERTIES RUN_SERIAL ${TINY_RUN_SERIAL})
 
     # Primarily to depend all functional tests on unit tests

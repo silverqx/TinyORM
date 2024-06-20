@@ -308,7 +308,7 @@ private:
    for the tst_model.pro test case was 800MB, when I only left some of these relations,
    eg. in the User or TorrentPreviewableFile models then the memory usage was 1.1GB.
    The conclusion is that recursive #include-s don't increase memory usage during
-   compilation (for msvc compiler, other compilers can behave differently but can be
+   compilation (for MSVC compiler, other compilers can behave differently but can be
    expected a similar behavior) but model classes themself are increasing memory usage.
    This finding is surprising for me because I thought that these recursive #include-s
    are increasing the memory usage too. */

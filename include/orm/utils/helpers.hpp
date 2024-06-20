@@ -112,7 +112,7 @@ namespace Utils
             std::invoke(callback, value);
 
         /* forward not needed, also the std::move() would be ok (treated by constraint),
-           forward prevents clang warning. */
+           forward prevents Clang warning. */
         return std::forward<T>(value);
     }
 
@@ -125,7 +125,7 @@ namespace Utils
             std::invoke(callback);
 
         /* forward not needed, also the std::move() would be ok (treated by constraint),
-           forward prevents clang warning. */
+           forward prevents Clang warning. */
         return std::forward<T>(value);
     }
 

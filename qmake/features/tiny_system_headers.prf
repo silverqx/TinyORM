@@ -14,7 +14,7 @@ else: \
 # they are tagged as -internal-isystem, tagging them as -isystem causes the error above.
 # On MSYS2 with Qt6 are includes in the C:/msys64/ucrt64/include/qt6/ so tagging them
 # as -isystem is needed.
-# On unix and also clang-cl with msvc it is needed to avoid warnings from system headers.
+# On Unix and also Clang-cl with MSVC it is needed to avoid warnings from system headers.
 !if(mingw:versionAtMost(QT_MAJOR_VERSION, 5)): \
     QMAKE_CXXFLAGS += $$optionToken $$shell_quote($$[QT_INSTALL_HEADERS]/)
 

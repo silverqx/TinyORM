@@ -1,6 +1,6 @@
 # Determine whether to disable PCH based on the ccache --print-version and set
-# the internal cache variable TINY_CCACHE_VERSION (msvc only)
-# Precompiled headers are fully supported on msvc for ccache >=4.10, so
+# the internal cache variable TINY_CCACHE_VERSION (MSVC only)
+# Precompiled headers are fully supported on MSVC for ccache >=4.10, so
 # disable PCH for ccache <4.10 only.
 # The git-ref is a special value, it means that the ccache was built manually from eg.
 # master branch, in this case suppose the version is always >=4.10.

@@ -88,7 +88,7 @@ defineReplace(tiny_configure_cmake_rc) {
     # The core of the problem is in the $$cat() and write_file() qmake functions they
     # don't know process UTF-8 encoded files, they use the ANSI encoding.
     # Few weeks later: I don't understand how the heck is possible that it works with
-    # the msvc Qt5.
+    # the MSVC Qt5.
     greaterThan(QT_MAJOR_VERSION, 5): \
         pragmaCodepage = DEFAULT
     else: \

@@ -10,7 +10,7 @@ TINY_SYSTEM_HEADER
 // Used compiler
 // Must be before GNU, because clang claims to be GNU too
 #ifdef __clang__
-// Apple clang has other version numbers
+// Apple Clang has other version numbers
 #  ifdef __apple_build_version__
 #    define TINYORM_COMPILER_STRING "Clang " __clang_version__ " (Apple)"
 #  else

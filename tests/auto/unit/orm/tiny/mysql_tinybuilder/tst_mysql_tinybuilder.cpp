@@ -52,7 +52,7 @@ private Q_SLOTS:
     void touch_CustomColumn() const;
     void touch_NotUsesTimestamps() const;
 
-    /* Attributes - unix timestamps - u_dateFormat = 'U' */
+    /* Attributes - Unix timestamps - u_dateFormat = 'U' */
     void setAttribute_UnixTimestamp_With_UDates_UDateFormat() const;
     void setAttribute_UnixTimestamp_With_UDates_Without_UDateFormat() const;
     void setAttribute_UnixTimestamp_WithOut_UDates() const;
@@ -217,7 +217,7 @@ void tst_MySql_TinyBuilder::touch_NotUsesTimestamps() const
     QCOMPARE(query, std::nullopt);
 }
 
-/* Attributes - unix timestamps - u_dateFormat = 'U' */
+/* Attributes - Unix timestamps - u_dateFormat = 'U' */
 
 void tst_MySql_TinyBuilder::setAttribute_UnixTimestamp_With_UDates_UDateFormat() const
 {
@@ -281,7 +281,7 @@ void tst_MySql_TinyBuilder::
     // Prepare without u_dateFormat but with u_dates
     Role_CustomUDate::u_dates = QStringList {"added_on"};
     /* Expected format without u_dateFormat is - 2022-08-03 15:36:56 UTC, even if
-       the input is the unix timestamp. */
+       the input is the Unix timestamp. */
     auto expectedTimestamp = QDateTime::fromSecsSinceEpoch(timestamp, TTimeZone::UTC)
                              .toString(Role_CustomUDate()
                                        .setConnection(m_connection)
@@ -332,7 +332,7 @@ void tst_MySql_TinyBuilder::setAttribute_UnixTimestamp_WithOut_UDates() const
     // QDateTime
     {
         /* Expected format without u_dateFormat is - 2022-08-03 15:36:56 UTC, even if
-           the input is the unix timestamp. */
+           the input is the Unix timestamp. */
         auto expectedTimestamp = QDateTime::fromSecsSinceEpoch(timestamp, TTimeZone::UTC)
                                  .toString(Role_CustomUDate()
                                            .setConnection(m_connection)

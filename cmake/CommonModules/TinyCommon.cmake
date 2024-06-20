@@ -108,13 +108,13 @@ ${TINY_UNPARSED_ARGUMENTS}")
 
     # clang-cl.exe notes:
     # /RTC    - https://lists.llvm.org/pipermail/cfe-commits/Week-of-Mon-20130902/088105.html
-    # /bigobj - clang-cl uses it by default - https://reviews.llvm.org/D12981
+    # /bigobj - Clang-cl uses it by default - https://reviews.llvm.org/D12981
     if(MSVC)
-        # Common for MSVC and clang-cl
+        # Common for MSVC and Clang-cl
         target_compile_options(${target} INTERFACE
             # Suppress banner and info messages
             /nologo
-            # Is safer to provide this explicitly, qmake do it for msvc too
+            # Is safer to provide this explicitly, qmake do it for MSVC too
             /EHsc
             /utf-8
             # Has to be enabled explicitly
@@ -139,7 +139,7 @@ ${TINY_UNPARSED_ARGUMENTS}")
                 # Set by default by c++20 but from VS 16.11, can be removed when
                 # minMsvcReqVersion will be >= 16.11
                 /permissive-
-                # clang-cl 16 throws -Wunused-command-line-argument, so provide it
+                # Clang-cl 16 throws -Wunused-command-line-argument, so provide it
                 # only for the MSVC
                 /guard:cf
                 /bigobj
@@ -203,7 +203,7 @@ ${TINY_UNPARSED_ARGUMENTS}")
         endif()
 
         target_compile_options(${target} INTERFACE
-            # -fexceptions for linux is not needed, it is on by default
+            # -fexceptions for Linux is not needed, it is on by default
             -Wall
             -Wextra
             # Weffc++ is outdated, it warnings about bullshits 🤬, even word about this
@@ -242,7 +242,7 @@ ${TINY_UNPARSED_ARGUMENTS}")
         endif()
     endif()
 
-    # Use faster lld linker on Clang (target the Clang except clang-cl with MSVC)
+    # Use faster lld linker on Clang (target the Clang except Clang-cl with MSVC)
     # Don't set for MINGW to avoid duplicate setting (look a few lines above)
     # TODO use LINKER_TYPE target property when min. version will be CMake v3.29 silverqx
     if(NOT MINGW AND NOT MSVC AND CMAKE_CXX_COMPILER_ID STREQUAL "Clang")

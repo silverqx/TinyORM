@@ -6,8 +6,8 @@
 #if defined(TINYDRIVERS_EXTERN_CONSTANTS) && defined(TINYDRIVERS_INLINE_CONSTANTS)
 #  error Both TINYDRIVERS_EXTERN_CONSTANTS and TINYDRIVERS_INLINE_CONSTANTS defined.
 #endif
-/* clang-cl shared build crashes with extern constants, force to inline constants. 😕🤔
-   Only one option with the clang-cl is inline constants for both shared/static builds.
+/* Clang-cl shared build crashes with extern constants, force to inline constants. 😕🤔
+   Only one option with the Clang-cl is inline constants for both shared/static builds.
    Look at NOTES.txt[inline constants] how this funckin machinery works. 😎 */
 #if !defined(TINYDRIVERS_INLINE_CONSTANTS) && defined(_MSC_VER) && defined(__clang__)
 #  undef TINYDRIVERS_EXTERN_CONSTANTS

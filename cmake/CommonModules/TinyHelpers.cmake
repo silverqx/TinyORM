@@ -39,7 +39,7 @@ Visual Studio")
         endif()
     endif()
 
-    # clang-cl
+    # Clang-cl
     if(MSVC AND CMAKE_CXX_COMPILER_ID STREQUAL "Clang" AND
             CMAKE_CXX_SIMULATE_ID STREQUAL "MSVC"
     )
@@ -50,7 +50,7 @@ Visual Studio")
         endif()
 
         if(CMAKE_CXX_COMPILER_VERSION VERSION_LESS TINY_CLANG_CL)
-            message(FATAL_ERROR "Minimum required clang-cl version was not satisfied, \
+            message(FATAL_ERROR "Minimum required Clang-cl version was not satisfied, \
 required version >=${TINY_CLANG_CL}, your version is ${CMAKE_CXX_COMPILER_VERSION}, \
 upgrade LLVM")
         endif()
@@ -377,7 +377,7 @@ endfunction()
 # contains ccache/sccache (fixes for MSVC compilers)
 function(tiny_should_fix_ccache_msvc out_variable)
 
-    # Target the msvc and clang-cl with msvc compilers on Windows
+    # Target the MSVC and Clang-cl with MSVC compilers on Windows
     if(NOT WIN32 OR NOT MSVC OR MINGW OR NOT DEFINED CMAKE_CXX_COMPILER_LAUNCHER)
         set(${out_variable} FALSE PARENT_SCOPE)
         return()
@@ -392,8 +392,8 @@ function(tiny_should_fix_ccache_msvc out_variable)
 endfunction()
 
 # Determine whether to disable PCH based on the ccache --print-version and set
-# the internal cache variable TINY_CCACHE_VERSION (msvc only)
-# Precompiled headers are fully supported on msvc for ccache >=4.10, so
+# the internal cache variable TINY_CCACHE_VERSION (MSVC only)
+# Precompiled headers are fully supported on MSVC for ccache >=4.10, so
 # disable PCH for ccache <4.10 only.
 # The git-ref is a special value, it means that the ccache was built manually from eg.
 # master branch, in this case suppose the version is always >=4.10.
@@ -413,7 +413,7 @@ function(tiny_should_disable_precompile_headers out_variable)
         return()
     endif()
 
-    set(helpString "Ccache version used to determine whether to disable PCH (msvc only).")
+    set(helpString "Ccache version used to determine whether to disable PCH (MSVC only).")
 
     execute_process(
         COMMAND "${CMAKE_CXX_COMPILER_LAUNCHER}" --print-version
@@ -624,7 +624,7 @@ endfunction()
 # contains ccache/sccache (fixes for Clang compilers)
 function(tiny_should_fix_ccache_clang out_variable)
 
-    # Target the Clang on Linux, MSYS2, and also clang-cl with MSVC
+    # Target the Clang on Linux, MSYS2, and also Clang-cl with MSVC
     if(NOT CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
         set(${out_variable} FALSE PARENT_SCOPE)
         return()
@@ -645,7 +645,7 @@ function(tiny_fix_ccache)
 
     # MSYS2 g++ or clang++ work well with the precompiled headers but the msvc doesn't
 
-    # Fixes for the MSVC compiler (including the clang-cl with MSVC)
+    # Fixes for the MSVC compiler (including the Clang-cl with MSVC)
     set(shouldFixCcacheMsvc FALSE)
     tiny_should_fix_ccache_msvc(shouldFixCcacheMsvc)
 
@@ -653,7 +653,7 @@ function(tiny_fix_ccache)
         tiny_fix_ccache_msvc()
     endif()
 
-    # Fixes for the Clang compiler on Linux, MSYS2, and also clang-cl with MSVC
+    # Fixes for the Clang compiler on Linux, MSYS2, and also Clang-cl with MSVC
     # Ignore PCH timestamps if the ccache is used (recommended in ccache docs)
     set(shouldFixCcacheClang FALSE)
     tiny_should_fix_ccache_clang(shouldFixCcacheClang)

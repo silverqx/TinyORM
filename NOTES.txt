@@ -1532,7 +1532,7 @@ inline constants:
      - related issue: https://github.com/llvm/llvm-project/issues/55938
    - clang-cl shared build crashes with extern constants, so force to inline constants 😕🤔
      - don't show INLINE_CONSTANTS cmake option and provide the default value ON using feature_option_dependent(INLINE_CONSTANTS) depends option, so inline constants is the default
-     - so inline constants are only one option with clang-cl
+     - so inline constants are only one option with Clang-cl
 
  - qmake
    - normal behavior is that user can switch between inline and extern constants using the inline_constants/extern_constants qmake CONFIG option
@@ -1547,12 +1547,12 @@ inline constants:
    - MinGW clang static build is not supported, contains a problem with duplicit symbols, this build type is disabled
      - qmake error() is thrown with a nice message
      - cmake compiles ok but crashes in this scenario
-   - clang-cl shared build crashes with extern constants, so force to inline constants 😕🤔
+   - Clang-cl shared build crashes with extern constants, so force to inline constants 😕🤔
      - when is shared build then inline_constants qmake CONFIG option is set (this is the default)
      - when user set extern_constants then qmake error() is thrown with nice message (I have removed this correction logic)
-     - so inline constants are only one option with clang-cl
+     - so inline constants are only one option with Clang-cl
 
-The conclusion is that the funckin string constants 💥, it was bearable until I have added the clang-cl MSVC support.
+The conclusion is that the funckin string constants 💥, it was bearable until I have added the Clang-cl MSVC support.
 Clang under <v18 is full of bugs, the same is true for lld. Huge amount of problems were fixed before 14-18.
 I think is the time to try Clang libc++ std library again and give it a try, but I don't believe I compile basic code, last time I tried I had a problems with hello world. 😅
 
@@ -2623,7 +2623,7 @@ Compilation time and Memory usage:
   - Qt 6.2.4
 MSVC2019          9.9GB 1:27
 MSVC2022          8.0GB 1:25
-clang-cl MSVC2022 5.5GB 1:35
+Clang-cl MSVC2022 5.5GB 1:35
 
 
 bugs:

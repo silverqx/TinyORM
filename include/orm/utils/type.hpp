@@ -83,10 +83,10 @@ namespace Orm::Utils
             code. */
         static QString
         classPureBasenameInternal(const char *typeName, bool withNamespace);
-        /*! Class name with or w/o a namespace and w/o template parameters, msvc code. */
+        /*! Class name with or w/o a namespace and w/o template parameters, MSVC code. */
         static QString
         classPureBasenameMsvc(const QString &className, bool withNamespace);
-        /*! Class name with or w/o a namespace and w/o template parameters, gcc code. */
+        /*! Class name with or w/o a namespace and w/o template parameters, GCC code. */
         static QString
         classPureBasenameGcc(const QString &className, bool withNamespace);
     };

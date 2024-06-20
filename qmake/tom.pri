@@ -26,7 +26,7 @@
 #
 # - TINY_BUILD_SUBFOLDER        - Folder by release type if CONFIG+=debug_and_release is defined (/debug, /release, or an empty string).
 # - TINY_CCACHE_BUILD           - To correctly link ccache build against a ccache build (_ccache or an empty string).
-# - TINY_MSVC_VERSION           - Msvc compiler string (MSVC2022 or MSVC2019).
+# - TINY_MSVC_VERSION           - MSVC compiler string (MSVC2022 or MSVC2019).
 # - TINY_QT_VERSION_UNDERSCORED - Underscored Qt version (eg. 6_7_2).
 # - TINY_RELEASE_TYPE_CAMEL     - Build type string (Debug, Profile, or Release).
 # - TINY_VCPKG_INCLUDE          - Path to the vcpkg include folder (vcpkg/installed/<triplet>/include/).

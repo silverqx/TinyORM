@@ -18,9 +18,9 @@ namespace Migrations
 
                 table.string(NAME).unique();
 
-                // To test unix timestamps, u_dateFormat = 'U'
+                // To test Unix timestamps, u_dateFormat = 'U'
                 table.bigInteger("added_on").nullable()
-                        .comment("To test unix timestamps, u_dateFormat = 'U'");
+                        .comment("To test Unix timestamps, u_dateFormat = 'U'");
             });
         }
 

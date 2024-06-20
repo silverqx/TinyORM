@@ -151,9 +151,9 @@ function createTables(string $connection): void
         $table->id();
         $table->string('name')->unique();
 
-        // To test unix timestamps, u_dateFormat = 'U'
+        // To test Unix timestamps, u_dateFormat = 'U'
         $table->bigInteger('added_on')->nullable()
-            ->comment("To test unix timestamps, u_dateFormat = 'U'");
+            ->comment("To test Unix timestamps, u_dateFormat = 'U'");
     });
 
     $schema->create('role_user', function (Blueprint $table) {

@@ -2207,7 +2207,7 @@ TINYORM_END_COMMON_NAMESPACE
 // CUR cmake/qmake run tests in parallel for tests that allow it silverqx
 // CUR study how to use acquire/release memory order for m_queryLogId atomic silverqx
 // FUTURE divide Query Builder and TinyOrm to own packages (dlls)? think about it 🤔 silverqx
-// BUG clang on mingw inline static initialization with another static in the same class defined line before, all other compilers (on linux too) works silverqx
+// BUG clang on mingw inline static initialization with another static in the same class defined line before, all other compilers (on Linux too) works silverqx
 // CUR docs mdx syntax highlight prism Treeview https://prismjs.com/plugins/treeview/ silverqx
 // CUR docs IdealImage silverqx
 // TODO cache static_cast<>(*this) in the model()/basemodel() CRTP as a class data member std::optional<std::reference_wrapper<Derived>> m_model = std::nullopt, but I will have to create copy ctor to set m_model {std::nullopt}, the same for other similar model() methods like Model::model(), then I can to check if (m_model) and return right away and I will call static_cast or dynamic_cast only once for every instance, it is cast everytime now 😟 silverqx

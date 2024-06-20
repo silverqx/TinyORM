@@ -97,7 +97,7 @@ jobs:
         runnerWorkPath=$(realpath "$RUNNER_WORKSPACE/..")
         echo "TinyRunnerWorkPath=$runnerWorkPath" >> $GITHUB_ENV
 
-        # Parallel gcc to 3 and clang to 8 is maximum what my computer allows but I decided to use
+        # Parallel gcc to 3 and Clang to 8 is maximum what my computer allows but I decided to use
         # the different strategy, I will use the on: workflow_dispatch for all self-hosted actions
         # and these workflows are invoked automatically one from other:
         # gh workflow run --ref silverqx-develop

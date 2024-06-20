@@ -136,7 +136,7 @@ private Q_SLOTS:
     /* Touching timestamps */
     void addTouch_setTouchedRelations_getTouchedRelations_touches_clearTouches() const;
 
-    /* Attributes - unix timestamps */
+    /* Attributes - Unix timestamps */
     void getAttribute_UnixTimestamp_With_UDates() const;
     void getAttribute_UnixTimestamp_WithOut_UDates() const;
 
@@ -1799,7 +1799,7 @@ tst_Model::addTouch_setTouchedRelations_getTouchedRelations_touches_clearTouches
     QVERIFY(std::addressof(torrent.getTouchedRelations()) == std::addressof(touches));
 }
 
-/* Attributes - unix timestamps - u_dateFormat = 'U' */
+/* Attributes - Unix timestamps - u_dateFormat = 'U' */
 
 namespace
 {

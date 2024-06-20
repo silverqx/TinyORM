@@ -247,7 +247,7 @@ namespace Orm::SchemaNs
        I have decided not to use polymorphic commands, I wanted to use
        designated initializers with aggregates, the consequence of this is
        usage of reinterpret_cast() :/, but it works great.
-       I had to reject designated initializers with commands because of gcc throws
+       I had to reject designated initializers with commands because of GCC throws
        -Wmissing-field-initializers warning with aggregates that have a base class
        even empty base class, so I had to use classic aggregate initialization with
        commands, it's not a big deal as all data members of commands have to be

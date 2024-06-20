@@ -1,6 +1,6 @@
 # Populate the TINY_COMPILER_VERSION and TINY_SIMULATED_VERSION qmake variables
 
-# Don't return if it's the clang-cl compiler because we have to manually obtain
+# Don't return if it's the Clang-cl compiler because we have to manually obtain
 # the compiler version.
 !win32-clang-msvc: \
 !isEmpty(TINY_COMPILER_VERSION): \
@@ -49,7 +49,7 @@ else:win32-msvc|win32-clang-msvc {
         # Ok, to be absolutely correct 😎
         TINY_COMPILER_VERSION = $$tinyClangClCompilerVersion
         # Some compilers simulate other compilers to serve as drop-in replacements
-        # Eg. clang-cl simulates MSVC compiler
+        # Eg. Clang-cl simulates MSVC compiler
         TINY_SIMULATED_VERSION = $$QMAKE_MSC_VER
         unset(tinyClangClCompilerVersion)
     }
