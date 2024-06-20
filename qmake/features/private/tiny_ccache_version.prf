@@ -19,7 +19,7 @@ defineTest(tiny_should_disable_precompile_headers) {
 
     # Nothing to do, ccache isn't on the system path (--version argument is needed as
     # w/o it the exit code is 1). In this case don't disable PCH and even don't cache
-    # the TINY_CCACHE_VERSION because the build is gona to fail and we don't want to
+    # the TINY_CCACHE_VERSION because the build is going to fail and we don't want to
     # cache a wrong value
     !system("ccache --version 1>$$QMAKE_SYSTEM_NULL_DEVICE 2>$$QMAKE_SYSTEM_NULL_DEVICE"): \
         return(false)
