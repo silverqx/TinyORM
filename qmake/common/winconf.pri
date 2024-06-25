@@ -88,6 +88,13 @@ win32-msvc {
 # /RTC    - https://lists.llvm.org/pipermail/cfe-commits/Week-of-Mon-20130902/088105.html
 # /bigobj - Clang-cl uses it by default - https://reviews.llvm.org/D12981
 win32-clang-msvc {
+    # Must be added manually because msvc-version.conf isn't included for Clang-cl
+    QMAKE_CXXFLAGS *= -Zc:__cplusplus -Zc:strictStrings
+    # CMake also uses these to disable inlining and optimization but I don't want to have
+    # them enabled in qmake Debug builds to have higher diversity to catch possible
+    # errors and warnings related to inlining and optimization 😎
+#    QMAKE_CXXFLAGS_DEBUG *= -Ob0 -Od
+
     QMAKE_CXXFLAGS_WARN_ON = -W4
 
     # Relative paths in -Yu or -Fp are throwing -Wmicrosoft-include warning on Clang-cl
