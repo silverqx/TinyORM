@@ -3409,3 +3409,63 @@ MySQL option files syntax:
    - the [DEFAULT] section can be used for own variables, if some variable value can't be resolved
      the this section is checked at first
    - https://dev.mysql.com/doc/refman/8.4/en/option-files.html#option-file-syntax
+
+
+vcpkg CMake build command:
+--------------------------
+
+This is the CMake command line invoked by vcpkg for Debug configuration:
+
+cmake.exe `
+-S E:/actions-runners/tinyorm/_work/TinyORM/vcpkg/buildtrees/tinyorm/src/0a65ecabc0-1237b34f9a.clean `
+-B . `
+-G Ninja `
+-D CMAKE_BUILD_TYPE=Debug `
+-D CMAKE_INSTALL_PREFIX='E:/actions-runners/tinyorm/_work/TinyORM/vcpkg/packages/tinyorm_x64-windows/debug' `
+-D FETCHCONTENT_FULLY_DISCONNECTED=ON `
+-D CMAKE_CXX_SCAN_FOR_MODULES:BOOL=OFF `
+-D CMAKE_EXPORT_PACKAGE_REGISTRY:BOOL=OFF `
+-D BUILD_TESTS:BOOL=OFF `
+-D BUILD_TREE_DEPLOY:BOOL=OFF `
+-D TINY_PORT:STRING=tinyorm `
+-D TINY_VCPKG:BOOL=ON `
+-D VERBOSE_CONFIGURE:BOOL=ON `
+-D BUILD_MYSQL_DRIVER=ON `
+-D DISABLE_THREAD_LOCAL=OFF `
+-D INLINE_CONSTANTS=OFF `
+-D MYSQL_PING=OFF `
+-D ORM=OFF `
+-D STRICT_MODE=OFF `
+-D TOM=ON `
+-D TOM_EXAMPLE=ON `
+-D BUILD_DRIVERS:BOOL=ON `
+-D CMAKE_MAKE_PROGRAM='C:/Program Files/Microsoft Visual Studio/2022/Community/Common7/IDE/CommonExtensions/Microsoft/CMake/Ninja/ninja.exe' `
+-D BUILD_SHARED_LIBS=ON `
+-D VCPKG_CHAINLOAD_TOOLCHAIN_FILE='E:/actions-runners/tinyorm/_work/TinyORM/vcpkg/scripts/toolchains/windows.cmake' `
+-D VCPKG_TARGET_TRIPLET=x64-windows `
+-D VCPKG_SET_CHARSET_FLAG=ON `
+-D VCPKG_PLATFORM_TOOLSET=v143 `
+-D CMAKE_EXPORT_NO_PACKAGE_REGISTRY=ON `
+-D CMAKE_FIND_PACKAGE_NO_PACKAGE_REGISTRY=ON `
+-D CMAKE_FIND_PACKAGE_NO_SYSTEM_PACKAGE_REGISTRY=ON `
+-D CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS_SKIP=TRUE `
+-D CMAKE_VERBOSE_MAKEFILE=ON `
+-D VCPKG_APPLOCAL_DEPS=OFF `
+-D CMAKE_TOOLCHAIN_FILE=E:/actions-runners/tinyorm/_work/TinyORM/vcpkg/scripts/buildsystems/vcpkg.cmake `
+-D CMAKE_ERROR_ON_ABSOLUTE_INSTALL_DESTINATION=ON `
+-D VCPKG_CXX_FLAGS= `
+-D VCPKG_CXX_FLAGS_RELEASE= `
+-D VCPKG_CXX_FLAGS_DEBUG= `
+-D VCPKG_C_FLAGS= `
+-D VCPKG_C_FLAGS_RELEASE= `
+-D VCPKG_C_FLAGS_DEBUG= `
+-D VCPKG_CRT_LINKAGE=dynamic `
+-D VCPKG_LINKER_FLAGS= `
+-D VCPKG_LINKER_FLAGS_RELEASE= `
+-D VCPKG_LINKER_FLAGS_DEBUG= `
+-D VCPKG_TARGET_ARCHITECTURE=x64 `
+-D CMAKE_INSTALL_LIBDIR:STRING=lib `
+-D CMAKE_INSTALL_BINDIR:STRING=bin `
+-D _VCPKG_ROOT_DIR=E:/actions-runners/tinyorm/_work/TinyORM/vcpkg `
+-D _VCPKG_INSTALLED_DIR=E:/actions-runners/tinyorm/_work/TinyORM/vcpkg/installed `
+-D VCPKG_MANIFEST_INSTALL=OFF
