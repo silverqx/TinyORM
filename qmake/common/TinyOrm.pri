@@ -43,5 +43,5 @@ build_tests: \
 # Link against the TinyDrivers library (if enabled) or QtSql module
 # ---
 
-load(tiny_drivers)
+load(private/tiny_drivers)
 tiny_link_drivers()

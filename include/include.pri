@@ -12,7 +12,7 @@ else: \
         $$PWD/orm/schema/schemaconstants_inline.hpp
 
 # TinyOrm library compiled against the TinyDrivers doesn't use these exception classes
-load(tiny_drivers)
+load(private/tiny_drivers)
 !tiny_is_building_drivers(): \
     headersList += \
         $$PWD/orm/exceptions/queryerror.hpp \

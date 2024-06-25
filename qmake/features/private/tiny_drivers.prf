@@ -180,7 +180,7 @@ defineTest(tiny_add_drivers_includepath) {
     }
     # Add as the SYSTEM include path
     else {
-        load(tiny_system_includepath)
+        load(private/tiny_system_includepath)
         tiny_add_system_includepath($$driversIncludePath)
     }
 }

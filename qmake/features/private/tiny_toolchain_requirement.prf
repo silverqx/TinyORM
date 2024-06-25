@@ -1,7 +1,7 @@
 # Check/verify all toolchain requirements and edge cases, throws error() on any problem
 
 # Populate the TINY_COMPILER_VERSION and TINY_SIMULATED_VERSION qmake variables
-load(tiny_compiler_version)
+load(private/tiny_compiler_version)
 
 !build_pass: \
 if(win32-msvc|win32-clang-msvc) {

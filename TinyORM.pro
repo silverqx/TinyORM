@@ -14,14 +14,14 @@ tinyMinRecGCC     = 10.2
 tinyMinRecQt      = 5.15.2
 
 # Check/verify all toolchain requirements and edge cases, throws error() on any problem
-load(tiny_toolchain_requirement)
+load(private/tiny_toolchain_requirement)
 # The staticlib option check
-load(tiny_staticlib_check)
+load(private/tiny_staticlib_check)
 
 # Sub-projects
 # ---
 
-load(tiny_drivers)
+load(private/tiny_drivers)
 tiny_drivers_check_build_types()
 
 SUBDIRS =

@@ -43,7 +43,7 @@ DEFINES *= PROJECT_TINYORM_TEST
 mingw: tinyRcIncludepath += $$quote($$TINYORM_SOURCE_TREE/tests/resources/)
 else:  tinyRcIncludepath =
 
-load(tiny_resource_and_manifest)
+load(private/tiny_resource_and_manifest)
 tiny_resource_and_manifest($$tinyRcIncludepath,     \
     $$quote($$TINYORM_SOURCE_TREE/tests/resources), \
     TinyTest                                        \

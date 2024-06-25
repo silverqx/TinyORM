@@ -44,13 +44,13 @@ include($$PWD/src.pri)
 
 # Find version numbers in the version header file and assign them to the
 # <TARGET>_VERSION_<MAJOR,MINOR,PATCH,TWEAK> and also to the VERSION variable.
-load(tiny_version_numbers)
+load(private/tiny_version_numbers)
 tiny_version_numbers()
 
 # Windows resource and manifest files
 # ---
 
-load(tiny_resource_and_manifest)
+load(private/tiny_resource_and_manifest)
 tiny_resource_and_manifest(                                                            \
     # RC_INCLUDEPATH - find icons, Windows manifest on MinGW, and orm/version.hpp and stringify.hpp
     # These two paths are not divided as in other tiny_resource_and_manifest() calls
@@ -76,7 +76,7 @@ win32-msvc:CONFIG(debug, debug|release) {
 # Some info output
 # ---
 
-load(tiny_info_messages)
+load(private/tiny_info_messages)
 tiny_log_info_messages()
 
 !build_pass {
@@ -93,7 +93,7 @@ tiny_log_info_messages()
 # ---
 
 !disable_autoconf {
-    load(tiny_find_packages)
+    load(private/tiny_find_packages)
 
     # Find the vcpkg and add the vcpkg/<triplet>/include/ on the system include path
     tiny_find_vcpkg()

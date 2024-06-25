@@ -34,7 +34,7 @@ include($$PWD/src/src.pri)
 
 # Find version numbers in a version header file and assign them to the
 # <TARGET>_VERSION_<MAJOR,MINOR,PATCH,TWEAK> and also to the VERSION variable
-load(tiny_version_numbers)
+load(private/tiny_version_numbers)
 tiny_version_numbers()
 
 # Windows resource and manifest files
@@ -46,7 +46,7 @@ tinyRcIncludepath = $$quote($$TINYORM_SOURCE_TREE/include/) \
 # Find Windows manifest
 mingw: tinyRcIncludepath += $$quote($$TINYORM_SOURCE_TREE/tests/TinyUtils/resources/)
 
-load(tiny_resource_and_manifest)
+load(private/tiny_resource_and_manifest)
 tiny_resource_and_manifest($$tinyRcIncludepath)
 
 unset(tinyRcIncludepath)

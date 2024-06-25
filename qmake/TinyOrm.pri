@@ -85,7 +85,7 @@ disable_tom: DEFINES *= TINYORM_DISABLE_TOM
 # Link against TinyORM library
 # ---
 
-load(tiny_system_includepath)
+load(private/tiny_system_includepath)
 
 tiny_add_system_includepath($$quote($$TINYORM_SOURCE_TREE/include/))
 
@@ -106,7 +106,7 @@ tiny_add_system_includepath($$quote($$TINYORM_SOURCE_TREE/include/))
 # TINY_VCPKG_ROOT and TINY_VCPKG_TRIPLET environment variables
 # VCPKG_ROOT and VCPKG_DEFAULT_TRIPLET environment variables
 
-load(tiny_find_packages)
+load(private/tiny_find_packages)
 
 tiny_find_vcpkg()
 

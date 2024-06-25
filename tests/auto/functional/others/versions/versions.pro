@@ -22,7 +22,7 @@ win32 {
 
     # Find version numbers in the version header files and assign them to the
     # <TARGET>_VERSION_<MAJOR,MINOR,PATCH,TWEAK> (excluding the VERSION variable).
-    load(tiny_version_numbers)
+    load(private/tiny_version_numbers)
     build_shared_drivers | \
     build_loadable_drivers: tiny_version_numbers(, TinyDrivers, false)
     build_loadable_drivers: tiny_version_numbers(, TinyMySql, false)

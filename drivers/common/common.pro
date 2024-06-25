@@ -51,7 +51,7 @@ CONFIG(release, debug|release): DEFINES += TINYDRIVERS_NO_DEBUG
 # Debug build
 CONFIG(debug, debug|release): DEFINES *= TINYDRIVERS_DEBUG
 
-load(tiny_drivers)
+load(private/tiny_drivers)
 # Cache the result to the isBuildingMySqlDriver variable
 tiny_is_building_driver(mysql, isBuildingMySqlDriver)
 
@@ -89,7 +89,7 @@ $$isBuildingMySqlDriver {
 
 # Find version numbers in the version header file and assign them to the
 # <TARGET>_VERSION_<MAJOR,MINOR,PATCH,TWEAK> and also to the VERSION variable.
-load(tiny_version_numbers)
+load(private/tiny_version_numbers)
 tiny_version_numbers()
 
 # Windows resource and manifest files
@@ -101,7 +101,7 @@ tinyRcIncludepath = $$quote($$TINYORM_SOURCE_TREE/include/) \
 # To find Windows manifest
 mingw: tinyRcIncludepath += $$quote($$TINYORM_SOURCE_TREE/drivers/common/resources/)
 
-load(tiny_resource_and_manifest)
+load(private/tiny_resource_and_manifest)
 tiny_resource_and_manifest(                                                             \
     $$tinyRcIncludepath, $$quote($$TINYORM_SOURCE_TREE/drivers/common/resources)        \
 )
@@ -131,7 +131,7 @@ win32-msvc:CONFIG(debug, debug|release) {
 # To include commonnamespace.hpp, export_common.hpp, likely.hpp, and systemheader.hpp
 # Helps to avoid dependency on the TinyCommon (no need because of 4 simple files)
 
-load(tiny_system_includepath)
+load(private/tiny_system_includepath)
 tiny_add_system_includepath($$quote($$TINYORM_SOURCE_TREE/include/))
 
 # This path is already added on the INCLUDEPATH in the mysql/include/include.pri file
@@ -145,7 +145,7 @@ $$isBuildingMySqlDriver: \
 
 !build_loadable_drivers: \
 !disable_autoconf {
-    load(tiny_find_packages)
+    load(private/tiny_find_packages)
 
     # Find the MySQL and add it on the system include path and library path
     $$isBuildingMySqlDriver: \

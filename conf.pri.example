@@ -94,8 +94,8 @@
 # Ubuntu - apt install ccache
 
 disable_autoconf {
-#    load(tiny_system_includepath)
-    load(tiny_find_packages)
+#    load(private/tiny_system_includepath)
+    load(private/tiny_find_packages)
 }
 
 # MinGW

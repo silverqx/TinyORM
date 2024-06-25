@@ -1,5 +1,5 @@
-load(tiny_system_includepath)
-load(tiny_vcpkg)
+load(private/tiny_system_includepath)
+load(private/tiny_vcpkg)
 
 # Find the vcpkg root folder and add the vcpkg/<triplet>/include/ on system include path.
 defineTest(tiny_find_vcpkg) {

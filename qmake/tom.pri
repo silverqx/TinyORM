@@ -89,7 +89,7 @@ disable_tom: \
 
 # Find version numbers in the version header file and assign them to the
 # <TARGET>_VERSION_<MAJOR,MINOR,PATCH,TWEAK> and also to the VERSION variable.
-load(tiny_version_numbers)
+load(private/tiny_version_numbers)
 tiny_version_numbers($$quote($$TINYTOM_SOURCE_TREE/include/tom/version.hpp))
 
 # Windows resource and manifest files
@@ -101,7 +101,7 @@ tinyRcIncludepath = $$quote($$TINYORM_SOURCE_TREE/include/) \
 # To find Windows manifest
 mingw: tinyRcIncludepath += $$quote($$TINYTOM_SOURCE_TREE/resources/)
 
-load(tiny_resource_and_manifest)
+load(private/tiny_resource_and_manifest)
 tiny_resource_and_manifest(                                               \
     $$tinyRcIncludepath, $$TINYTOM_SOURCE_TREE/resources, tom, Tom        \
 )
@@ -111,7 +111,7 @@ unset(tinyRcIncludepath)
 # Link against TinyORM library
 # ---
 
-load(tiny_system_includepath)
+load(private/tiny_system_includepath)
 
 tiny_add_system_includepath(                   \
     $$quote($$TINYORM_SOURCE_TREE/include/)    \
@@ -132,7 +132,7 @@ tiny_add_system_includepath(                   \
 # TINY_VCPKG_ROOT and TINY_VCPKG_TRIPLET environment variables
 # VCPKG_ROOT and VCPKG_DEFAULT_TRIPLET environment variables
 
-load(tiny_find_packages)
+load(private/tiny_find_packages)
 
 tiny_find_vcpkg()
 

@@ -1,7 +1,7 @@
 # Load .env and .env.$$QMAKE_PLATFORM files
 # ---
 
-load(tiny_dotenv)
+load(private/tiny_dotenv)
 
 # Common Configuration ( also for tests )
 # ---

@@ -1,6 +1,6 @@
 TEMPLATE = subdirs
 
-load(tiny_drivers)
+load(private/tiny_drivers)
 
 subdirsList = \
     orm \

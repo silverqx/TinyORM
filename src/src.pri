@@ -6,7 +6,7 @@ extern_constants: \
         $$PWD/orm/schema/schemaconstants_extern.cpp
 
 # TinyOrm library compiled against the TinyDrivers doesn't use these exception classes
-load(tiny_drivers)
+load(private/tiny_drivers)
 !tiny_is_building_drivers(): \
     sourcesList += \
         $$PWD/orm/exceptions/queryerror.cpp \
