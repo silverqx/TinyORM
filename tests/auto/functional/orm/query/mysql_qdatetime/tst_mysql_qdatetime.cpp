@@ -236,7 +236,7 @@ insert_Qt_QDateTime_UtcTimezone_DatetimeColumn_UtcOnServer() const
 
         qtQuery.addBindValue(QDateTime({2022, 8, 28}, {13, 14, 15}, TTimeZone::UTC));
 
-        // QMYSQL driver doesn't care about QDateTime timezone
+        // QMYSQL driver doesn't care about QDateTime timezone (fixed in Qt v6.8)
         QVERIFY(qtQuery.exec());
 
         QVERIFY(!qtQuery.lastError().isValid());
@@ -310,7 +310,7 @@ insert_Qt_QDateTime_0200Timezone_DatetimeColumn_UtcOnServer() const
 
         qtQuery.addBindValue(QDateTime({2022, 8, 28}, {13, 14, 15}, *TimeZone0200));
 
-        // QMYSQL driver doesn't care about QDateTime timezone
+        // QMYSQL driver doesn't care about QDateTime timezone (fixed in Qt v6.8)
         QVERIFY(qtQuery.exec());
 
         QVERIFY(!qtQuery.lastError().isValid());
@@ -456,7 +456,7 @@ insert_Qt_QDateTime_UtcTimezone_TimestampColumn_UtcOnServer() const
 
         qtQuery.addBindValue(QDateTime({2022, 8, 29}, {13, 14, 15}, TTimeZone::UTC));
 
-        // QMYSQL driver doesn't care about QDateTime timezone
+        // QMYSQL driver doesn't care about QDateTime timezone (fixed in Qt v6.8)
         QVERIFY(qtQuery.exec());
 
         QVERIFY(!qtQuery.lastError().isValid());
@@ -530,7 +530,7 @@ insert_Qt_QDateTime_0200Timezone_TimestampColumn_UtcOnServer() const
 
         qtQuery.addBindValue(QDateTime({2022, 8, 29}, {13, 14, 15}, *TimeZone0200));
 
-        // QMYSQL driver doesn't care about QDateTime timezone
+        // QMYSQL driver doesn't care about QDateTime timezone (fixed in Qt v6.8)
         QVERIFY(qtQuery.exec());
 
         QVERIFY(!qtQuery.lastError().isValid());
@@ -603,7 +603,7 @@ void tst_MySql_QDateTime::insert_Qt_QString_TimestampColumn_UtcOnServer() const
 
         qtQuery.addBindValue(QString("2022-08-29 13:14:15"));
 
-        // QMYSQL driver doesn't care about QDateTime timezone
+        // QMYSQL driver doesn't care about QDateTime timezone (fixed in Qt v6.8)
         QVERIFY(qtQuery.exec());
 
         QVERIFY(!qtQuery.lastError().isValid());
@@ -680,7 +680,7 @@ insert_Qt_QDateTime_UtcTimezone_DatetimeColumn_0200OnServer() const
 
         qtQuery.addBindValue(QDateTime({2022, 8, 28}, {13, 14, 15}, TTimeZone::UTC));
 
-        // QMYSQL driver doesn't care about QDateTime timezone
+        // QMYSQL driver doesn't care about QDateTime timezone (fixed in Qt v6.8)
         QVERIFY(qtQuery.exec());
 
         QVERIFY(!qtQuery.lastError().isValid());
@@ -755,7 +755,7 @@ insert_Qt_QDateTime_0200Timezone_DatetimeColumn_0200OnServer() const
 
         qtQuery.addBindValue(QDateTime({2022, 8, 28}, {13, 14, 15}, *TimeZone0200));
 
-        // QMYSQL driver doesn't care about QDateTime timezone
+        // QMYSQL driver doesn't care about QDateTime timezone (fixed in Qt v6.8)
         QVERIFY(qtQuery.exec());
 
         QVERIFY(!qtQuery.lastError().isValid());
@@ -903,7 +903,7 @@ insert_Qt_QDateTime_UtcTimezone_TimestampColumn_0200OnServer() const
 
         qtQuery.addBindValue(QDateTime({2022, 8, 29}, {13, 14, 15}, TTimeZone::UTC));
 
-        // QMYSQL driver doesn't care about QDateTime timezone
+        // QMYSQL driver doesn't care about QDateTime timezone (fixed in Qt v6.8)
         QVERIFY(qtQuery.exec());
 
         QVERIFY(!qtQuery.lastError().isValid());
@@ -978,7 +978,7 @@ insert_Qt_QDateTime_0200Timezone_TimestampColumn_0200OnServer() const
 
         qtQuery.addBindValue(QDateTime({2022, 8, 29}, {13, 14, 15}, *TimeZone0200));
 
-        // QMYSQL driver doesn't care about QDateTime timezone
+        // QMYSQL driver doesn't care about QDateTime timezone (fixed in Qt v6.8)
         QVERIFY(qtQuery.exec());
 
         QVERIFY(!qtQuery.lastError().isValid());
