@@ -201,7 +201,7 @@ jobs:
     - name: vcpkg install ${{ matrix.qt.vcpkg-tinyorm }} (classic mode)
       if: matrix.build-type.key == 'debug'
       run: |
-        vcpkg install ${{ matrix.qt.vcpkg-tinyorm-features }}
+        vcpkg install ${{ matrix.qt.vcpkg-tinyorm-features }} --clean-after-build
 
     # Prepare TinyORM-HelloWorld project
 
