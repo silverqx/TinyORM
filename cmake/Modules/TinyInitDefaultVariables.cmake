@@ -43,10 +43,10 @@ DESTINATION is encountered")
     )
 
     # Allow selecting dynamic or static MSVC runtime, also the TINY_VCPKG check isn't
-    # needed because the MSVC_RUNTIME_DYNAMIC option isn't defined during vcpkg builds,
-    # see the comment for the MSVC_RUNTIME_DYNAMIC option.
-    # The MSVC_RUNTIME_DYNAMIC is always defined so the DEFINED check isn't needed
-    if(MSVC AND NOT MSVC_RUNTIME_DYNAMIC STREQUAL MSVC_RUNTIME_DYNAMIC-NOTFOUND)
+    # strictly needed as on vcpkg the MSVC_RUNTIME_DYNAMIC isn't defined/used but with
+    # the TINY_VCPKG is clearly visible whats up.
+    # Also see the comment for the MSVC_RUNTIME_DYNAMIC option.
+    if(MSVC AND (NOT TINY_VCPKG OR DEFINED MSVC_RUNTIME_DYNAMIC))
         if(MSVC_RUNTIME_DYNAMIC)
             set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>DLL")
         else()

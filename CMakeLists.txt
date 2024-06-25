@@ -117,12 +117,14 @@ when the build type is equal" OFF
     "CMAKE_EXPORT_PACKAGE_REGISTRY AND NOT TINY_IS_MULTI_CONFIG" OFF
 )
 
-# Don't depend on the TINY_VCPKG, the CMAKE_MSVC_RUNTIME_LIBRARY check is sufficient
-# because vcpkg defines it
+# The condition allows to use both mechanism to control dynamic/static,
+# the CMAKE_MSVC_RUNTIME_LIBRARY or MSVC_RUNTIME_DYNAMIC
+# Also this isn't allowed with vcpkg as it controls this using triplet (VCPKG_CRT_LINKAGE)
 feature_option_dependent(MSVC_RUNTIME_DYNAMIC
     "Use MSVC dynamic runtime library (-MD) instead of static (-MT), also considers \
 a Debug configuration (-MTd, -MDd)" ON
-    "MSVC AND NOT DEFINED CMAKE_MSVC_RUNTIME_LIBRARY" MSVC_RUNTIME_DYNAMIC-NOTFOUND
+    "MSVC AND (NOT TINY_VCPKG OR NOT DEFINED CMAKE_MSVC_RUNTIME_LIBRARY)"
+    MSVC_RUNTIME_DYNAMIC-NOTFOUND
 )
 
 feature_option_environment(STRICT_MODE
