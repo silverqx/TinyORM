@@ -101,6 +101,21 @@ win32-clang-msvc {
     ccache:precompile_header: \
         QMAKE_CXXFLAGS = -Xclang -fno-pch-timestamp $$QMAKE_CXXFLAGS
 
+    # Bugfix/workaround for win32-clang-msvc mkspec, it's needed because qmake doesn't
+    # remove $$TARGET_pch.obj and rebuilds fail because the -Yc compile command for
+    # creating PCH isn't called if this file still exists
+    precompile_header {
+        # We need the TINY_BUILD_SUBFOLDER
+        include($$TINYORM_SOURCE_TREE/qmake/support/variables.pri)
+
+        pchObjFilepath = $$quote($$OUT_PWD$$TINY_BUILD_SUBFOLDER/$${TARGET}_pch.obj)
+
+        QMAKE_CLEAN *= $$pchObjFilepath
+        QMAKE_DISTCLEAN *= $$pchObjFilepath
+
+        unset(pchObjFilepath)
+    }
+
     QMAKE_CXXFLAGS_WARN_ON = -W4
 
     # Relative paths in -Yu or -Fp are throwing -Wmicrosoft-include warning on Clang-cl
