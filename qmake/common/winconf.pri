@@ -93,6 +93,7 @@ win32-clang-msvc {
     # CMake also uses these to disable inlining and optimization but I don't want to have
     # them enabled in qmake Debug builds to have higher diversity to catch possible
     # errors and warnings related to inlining and optimization 😎
+    # Also qmake uses -Od if CONFIG+=optimize_debug is defined
 #    QMAKE_CXXFLAGS_DEBUG *= -Ob0 -Od
 
     QMAKE_CXXFLAGS_WARN_ON = -W4
