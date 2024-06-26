@@ -96,6 +96,11 @@ win32-clang-msvc {
     # Also qmake uses -Od if CONFIG+=optimize_debug is defined
 #    QMAKE_CXXFLAGS_DEBUG *= -Ob0 -Od
 
+    # The -fno-pch-timestamp option is needed for Clang with ccache
+    # qmake on win32 ignores the QMAKE_CXXFLAGS_PRECOMPILE variable
+    ccache:precompile_header: \
+        QMAKE_CXXFLAGS = -Xclang -fno-pch-timestamp $$QMAKE_CXXFLAGS
+
     QMAKE_CXXFLAGS_WARN_ON = -W4
 
     # Relative paths in -Yu or -Fp are throwing -Wmicrosoft-include warning on Clang-cl
