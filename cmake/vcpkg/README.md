@@ -10,11 +10,12 @@ These ports are supposed to be used as [overlay ports](https://learn.microsoft.c
 
 ```
 VCPKG_OVERLAY_PORTS=C:\Users\<username>\AppData\Roaming\vcpkg\ports
+VCPKG_OVERLAY_PORTS=X:\<path>\TinyORM\cmake\vcpkg\ports
 ```
 
 #### Qt latest (TinyDrivers)
 
-Currently, only the MySQL database driver is supported with `TinyDrivers`. It drops the `QtSql` dependency.
+Currently, only the `MySQL` database driver is supported with `TinyDrivers`. It drops the `QtSql` dependency.
 
 vcpkg install tinyorm[core,build-mysql-driver] qtbase[core] libmysql --dry-run
 
