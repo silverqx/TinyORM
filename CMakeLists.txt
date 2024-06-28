@@ -59,13 +59,13 @@ set(minRecGCCVersion     10.2)
 set(minRecClangVersion   12)
 set(minReqClangClVersion 14.0.3)
 # Packages
-set(minQtVersion       5.15.2)
+set(minQtVersion         5.15.2)
 # As the range-v3 uses exact version policy in the package config file so passing version
 # makes real problems on CI pipelines where different OS images can have installed
 # different versions of range-v3 (doesn't matter if it's vcpkg or some package manager)
-#set(minRangeV3Version  0.12.0)
+#set(minRangeV3Version   0.12.0)
 # tabulate doesn't provide Package Version File
-#set(minTabulateVersion 1.5.0)
+#set(minTabulateVersion  1.5.0)
 
 # Make minimum toolchain version a requirement
 tiny_toolchain_requirement(
