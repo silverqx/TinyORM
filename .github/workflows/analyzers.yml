@@ -4,7 +4,7 @@
 # This /ccache_vcpkg folder is common for analyzers.yml and vcpkg-linux.yml workflows
 # vcpkg-linux.yml takes 205M and analyzers.yml takes 155M
 
-name: Clang-Tidy and Clazy Qt5.15/6.7
+name: Clang-Tidy and Clazy 6.7
 
 # Invoke manually from the command-line using the gh command, eg.:
 # gh workflow run --ref silverqx-develop
@@ -36,11 +36,8 @@ jobs:
     # Clang Tidy can't be executed on Release builds, it's designed to be run on Debug builds only
     strategy:
       matrix:
+        # Leaving here this matrix for future versions
         qt:
-          - key: qt5
-            name: Qt5
-            version: 5.15.2
-
           - key: qt6
             name: Qt6
             version: 6.7.2
@@ -159,15 +156,9 @@ jobs:
         ccache --zero-stats
 
     # CMAKE_DISABLE_PRECOMPILE_HEADERS=ON is correct (Clazy is failing with OFF)
-    # TinyDrivers are disabled for Qt v5.15
     - name: TinyORM cmake configure (${{ env.TinyORMBuildName }})
       working-directory: ${{ env.TinyORMPath }}
       run: >-
-        [[ '${{ matrix.qt.key }}' == 'qt6' ]] && tinyBuildDrivers='ON' || tinyBuildDrivers='OFF'
-
-        [[ '${{ matrix.qt.key }}' == 'qt6' ]] &&
-        tinyDriversType='-D DRIVERS_TYPE:STRING=Loadable' || tinyDriversType=''
-
         cmake --log-level=DEBUG --log-context
         -S .
         -B "$TinyORMBuildTree"
@@ -190,8 +181,8 @@ jobs:
         -D ORM:BOOL=ON
         -D TOM:BOOL=ON
         -D TOM_EXAMPLE:BOOL=ON
-        -D BUILD_DRIVERS:BOOL=$tinyBuildDrivers
-        $tinyDriversType
+        -D BUILD_DRIVERS:BOOL=ON
+        -D DRIVERS_TYPE:STRING=Loadable
 
     - name: TinyORM cmake build ✨ (${{ env.TinyORMBuildName }})
       working-directory: ${{ env.TinyORMBuildTree }}

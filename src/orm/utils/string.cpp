@@ -98,18 +98,13 @@ QString String::ltrim(const QString &string, const QString &characters)
         else
             break;
 
-#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
     return string.sliced(position);
-#else
-    return string.mid(position);
-#endif
 }
 
 QString String::rtrim(const QString &string, const QString &characters)
 {
     /* The ++ and -- isn't bug, I'm doing this comment months after I wrote the code but
        I still remember that it's correct. */
-#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
     QString::size_type position = string.size();
 
     for (const auto itChar : string | ranges::views::reverse)
@@ -119,17 +114,6 @@ QString String::rtrim(const QString &string, const QString &characters)
             break;
 
     return string.first(position);
-#else
-    QString::size_type position = 0;
-
-    for (const auto itChar : string | ranges::views::reverse)
-        if (characters.contains(itChar))
-            ++position;
-        else
-            break;
-
-    return string.chopped(position);
-#endif
 }
 
 QString String::stripTags(QString string)
@@ -311,16 +295,10 @@ namespace
                 if (!line.isEmpty())
                     line.append(SPACE);
 
-#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
                 // Guaranteed by the token.size() > emptySpace
                 line.append(token.first(pos));
                 // Cut the appended part
                 token = token.sliced(pos);
-#else
-                line.append(token.left(pos));
-                // Cut the appended part
-                token = token.mid(pos);
-#endif
             }
 
             // In every case no more space on the line here, push to lines
@@ -336,18 +314,11 @@ namespace
                     break;
                 }
 
-#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
                 // Guaranteed by the token.size() <= width, so token.size() > width
                 // Fill the whole line
                 line.append(token.first(width));
                 // Cut the appended part
                 token = token.sliced(width);
-#else
-                // Fill the whole line
-                line.append(token.left(width));
-                // Cut the appended part
-                token = token.mid(width);
-#endif
                 // Push to lines
                 lines.emplace_back(std::move(line));
                 // Start a new line
@@ -418,17 +389,10 @@ QList<QStringView> String::splitAtFirst(const QStringView string, const QChar se
     if (index == -1)
         return {string};
 
-#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
     const auto *const begin = string.constBegin();
     const auto *const end = string.constEnd();
     const auto *const itSeparator = string.constBegin() + index;
     const auto *const itAfterSeparator = string.constBegin() + index + 1; // +1 to skip the separator
-#else
-    const auto *const begin = string.cbegin();
-    const auto *const end = string.cend();
-    const auto *const itSeparator = string.cbegin() + index;
-    const auto *const itAfterSeparator = string.cbegin() + index + 1; // +1 to skip the separator
-#endif
 
     // Currently, a value before the separator must contain at least one character
     Q_ASSERT(begin < itSeparator);

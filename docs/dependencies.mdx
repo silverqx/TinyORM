@@ -11,18 +11,21 @@ import Link from '@docusaurus/Link'
 # Dependencies
 
 The code was developed on MSVC 16.9-16.11, MSVC 17.2-17.9, GCC 10.2-14.1, and Clang 11-18, so may be assumed it will work on future releases of these compilers. Minimum required ISO C++ standard is C++20.
-The Qt framework version used during development was 5.15.2 and >=6.2.
+The Qt framework version used during development was ~5.15.2~ and >=6.2.
 
 ##### Required
 
 - minimum ISO C++ standard is C++20
-- &gt;= [Qt Framework 5.15.2](https://www.qt.io/download-qt-installer) - [`QtCore`](https://doc.qt.io/qt-5/qtcore-module.html) and [`QtSql`](https://doc.qt.io/qt-5/qtsql-index.html) modules
 - &gt;= [Qt Framework 6.2](https://www.qt.io/download-qt-installer) - [`QtCore`](https://doc.qt.io/qt-6/qtcore-module.html) and [`QtSql`](https://doc.qt.io/qt-6/qtsql-index.html) modules
 - &gt;= [range-v3 0.11.0](https://github.com/ericniebler/range-v3)
 - [tabulate](https://github.com/p-ranav/tabulate)
 
 :::warning
-Be aware that the standard support for the last release of the __Qt 5__ series ended on __26. May 2023__. [[1](https://endoflife.date/qt)][[2](https://www.qt.io/blog/qt-5.15-support-ends)]
+Be aware that the standard support for the last release of the __Qt v5__ series ended on __26. May 2023__. [[1](https://endoflife.date/qt)][[2](https://www.qt.io/blog/qt-5.15-support-ends)]
+:::
+
+:::danger
+Support for __Qt v5.15__ was removed since __TinyORM v0.38.0__.
 :::
 
 ##### Optional

@@ -64,13 +64,8 @@ namespace Orm::Tiny
     {
         typename C::size_type;
         // Good enough, I won't invest more effort into this 🙃
-#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
         requires std::same_as<typename C::size_type, std::size_t> ||
                  std::same_as<typename C::size_type, qsizetype>;
-#else
-        requires std::same_as<typename C::size_type, std::size_t> ||
-                 std::same_as<typename C::size_type, int>;
-#endif
         { c.reserve(typename C::size_type()) } -> std::same_as<void>;
     };
 

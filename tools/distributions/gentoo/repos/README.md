@@ -27,8 +27,8 @@ dev-cpp/tabulate ~amd64
 Configure `USE` flags by creating `tinyorm` file at `/etc/portage/package.use/`
 
 ```
-dev-db/tinyorm mysql postgres sqlite mysql-ping tom tom-cli -qt5
-#dev-db/tinyorm build-drivers mysql -sqlite -qt5
+dev-db/tinyorm mysql postgres sqlite mysql-ping tom tom-cli
+#dev-db/tinyorm build-drivers mysql -sqlite
 ```
 
 Check `USE` flags

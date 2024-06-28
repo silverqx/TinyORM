@@ -115,7 +115,7 @@ function Test-VcpkgRefAndHashReplaced {
         $matchedLines.Count $expectedOccurrences $regexMatch $portfilePath
 }
 
-# Update the REF and SHA512 in tinyorm and tinyorm-qt5 portfiles
+# Update the REF and SHA512 in tinyorm portfile
 function Edit-VcpkgRefAndHash {
     [OutputType([void])]
     Param(

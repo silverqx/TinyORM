@@ -20,11 +20,7 @@ namespace Orm::Utils
 
 int Helpers::qVariantTypeId(const QVariant &value)
 {
-#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
     return value.typeId();
-#else
-    return value.userType();
-#endif
 }
 
 void Helpers::logException(const std::exception &e, const bool fatal)
@@ -193,11 +189,7 @@ void Helpers::logPluginsPath(const QString &exceptionMessage)
         return;
 
     qInfo().nospace() << "Plugins Path: "
-#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
                       << QLibraryInfo::path(QLibraryInfo::PluginsPath);
-#else
-                      << QLibraryInfo::location(QLibraryInfo::PluginsPath);
-#endif
 }
 
 } // namespace Orm::Utils

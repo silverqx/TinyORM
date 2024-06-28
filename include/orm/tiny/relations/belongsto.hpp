@@ -278,14 +278,9 @@ namespace Orm::Tiny::Relations
 
         /*! Build model dictionary keyed by the parent's primary key. */
         for (auto &&result : results)
-#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
-            dictionary.emplace(
-#else
-            dictionary.insert(
-#endif
-                        result.getAttribute(m_ownerKey)
-                        .template value<typename Model::KeyType>(),
-                        std::move(result));
+            dictionary.emplace(result.getAttribute(m_ownerKey)
+                               .template value<typename Model::KeyType>(),
+                               std::move(result));
 
         return dictionary;
     }
@@ -335,7 +330,7 @@ namespace Orm::Tiny::Relations
     Model &BelongsTo<Model, Related>::dissociate() const
     {
         // TEST Model::save with null key silverqx
-        // FEATURE dilemma primarykey, Model::KeyType vs QVariant, set to null, will be different for Qt5 (QVariant(QVariant::Type(qMetaTypeId<Model::KeyType>()))) and Qt6 (QVariant(QMetaType(qMetaTypeId<Model::KeyType>())))) ; ALSO current problem is, that I check that foreignKey !isValid || isNull, but when QVariant with type (Model::KeyType) and also with null is created by the above commands, then it is still null (isNull == true), but is considered as !!VALID!! (isValid == true) silverqx
+        // FEATURE dilemma primarykey, Model::KeyType vs QVariant, set to null, for Qt6 it will be (QVariant(QMetaType(qMetaTypeId<Model::KeyType>())))) ; ALSO current problem is, that I check that foreignKey !isValid || isNull, but when QVariant with type (Model::KeyType) and also with null is created by the above commands, then it is still null (isNull == true), but is considered as !!VALID!! (isValid == true) silverqx
         m_child->setAttribute(m_foreignKey, {});
 
         // TEST operations that are related on the Model::m_relation data member how they behave, when m_relations value contains the std::nullopt value silverqx

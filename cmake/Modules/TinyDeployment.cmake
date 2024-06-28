@@ -183,7 +183,7 @@ list(APPEND CMAKE_MODULE_PATH \"\${CMAKE_CURRENT_LIST_DIR}/Modules\")")
         "cmake/TinyOrmConfig.cmake.in"
         "${TINY_BUILD_INSTALLTREEDIR}/TinyOrmConfig.cmake"
         INSTALL_DESTINATION "${tiny_config_package_dir}"
-        # TODO future, do this like Qt is doing it, I'm missing Qt5Core_COMPILE_DEFINITIONS, Qt5Core_DEFINITIONS, Qt5Core_INCLUDE_DIRS, Qt5Core_LIBRARIES, also do the same for the build tree silverqx
+        # TODO future, do this like Qt is doing it, I'm missing Qt6Core_COMPILE_DEFINITIONS, Qt6Core_DEFINITIONS, Qt6Core_INCLUDE_DIRS, Qt6Core_LIBRARIES, also do the same for the build tree silverqx
         PATH_VARS
             BIN_INSTALL_DIR CONFIG_INSTALL_DIR DOC_INSTALL_DIR INCLUDE_INSTALL_DIR
             LIB_INSTALL_DIR

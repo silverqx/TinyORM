@@ -493,12 +493,7 @@ InteractsWithIO::countSetOption(const QString &optionName,
 {
     /* This should be in the CommandLineParser, but I will not create a wrapper class
        because of one line, I don't even create a future todo task for this. */
-#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
     return std::ranges::count(parser.optionNames(), optionName);
-#else
-    return static_cast<QStringList::size_type>(
-                std::ranges::count(parser.optionNames(), optionName));
-#endif
 }
 
 bool InteractsWithIO::dontOutput(const Verbosity verbosity) const
@@ -563,11 +558,7 @@ QString InteractsWithIO::errorWallInternal(const QString &string) const
         // Split lines by the given width
         for (const auto &lineNl : splitted)
             for (auto &&line : StringUtils::splitStringByWidth(lineNl, maxLineWidth))
-#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
                 lines << std::move(line);
-#else
-                lines << line;
-#endif
     }
 
     QString output;
@@ -611,20 +602,14 @@ QStringList::size_type
 InteractsWithIO::computeReserveForErrorWall(const QStringList &splitted,
                                             const int maxLineWidth)
 {
-    // TODO qt5 remove, change to QStringList::size_type silverqx
-    qint64 size = 0;
+    QStringList::size_type size = 0;
 
     for (const auto &line : splitted)
         /* +2 serves as a reserve because the splitting algorithm can decided
            to start a new line if there is <30% free space, +2 is enough. */
         size += std::llround(static_cast<double>(line.size()) / maxLineWidth) + 2;
 
-#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
     return size;
-#else
-    // This is ok, the line width can't be longer than int::max()
-    return static_cast<QStringList::size_type>(size);
-#endif
 }
 
 InteractsWithIO::TableColors InteractsWithIO::initializeTableColors() const

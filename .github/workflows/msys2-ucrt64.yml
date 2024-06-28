@@ -45,15 +45,13 @@ jobs:
             command: clang++.exe
 
           # GitHub Free Plan is not enough for this (no money 💵)
-          # Qt5 and Qt6 with g++ is causing exhausted memory even with -j1
+          # Qt6 with g++ is causing exhausted memory even with -j1
           # - key: gcc
           #   pacboy: [ 'gcc:u' ]
           #   command: g++.exe
 
+        # Leaving here this matrix for future versions
         qt:
-          - key: qt5
-            pacboy: qt5-base:u
-
           - key: qt6
             pacboy: qt6-base:u
 

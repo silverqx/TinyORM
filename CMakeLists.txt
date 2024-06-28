@@ -59,7 +59,7 @@ set(minRecGCCVersion     10.2)
 set(minRecClangVersion   12)
 set(minReqClangClVersion 14.0.3)
 # Packages
-set(minQtVersion         5.15.2)
+set(minQtVersion         6.2)
 # Unused
 # As the range-v3 uses exact version policy in the package config file so passing version
 # makes real problems on CI pipelines where different OS images can have installed
@@ -395,7 +395,9 @@ tiny_resource_and_manifest(${TinyOrm_target}
 # 'WINVER' macro redefined [-Wmacro-redefined]
 # Look also to the TinyCommon for conditional WINVER definition
 # TinyQtComponentsRequired: Core and Sql (if NOT BUILD_DRIVERS)
-find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS ${TinyQtComponentsRequired})
+# Leaving this find_package(QT NAMES) search pattern even if the Qt v5 support was removed
+# because I like it and can be used with future Qt version
+find_package(QT NAMES Qt6 REQUIRED COMPONENTS ${TinyQtComponentsRequired})
 tiny_find_package(Qt${QT_VERSION_MAJOR} ${minQtVersion} CONFIG
     REQUIRED COMPONENTS ${TinyQtComponentsRequired}
 )
@@ -411,6 +413,8 @@ tiny_common(${CommonConfig_target}
 # Unconditional dependencies
 target_link_libraries(${TinyOrm_target}
     PUBLIC
+        # Never use versionless Qt targets (as QT_NO_CREATE_VERSIONLESS_TARGETS might be
+        # defined)
         Qt${QT_VERSION_MAJOR}::Core
         range-v3::range-v3
 )

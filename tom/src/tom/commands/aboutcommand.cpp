@@ -364,18 +364,11 @@ QVector<SubSectionItem> AboutCommand::gatherVersionsInformation()
 {
     auto versions = Application::createVersionsSubsection();
 
-#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
                           // std::nullopt produces -Wmaybe-uninitialized in GCC release builds
     versions.emplaceFront(std::optional<QString> {std::nullopt},
                           std::map<QString, QString> {
                               {QStringLiteral("tom"), TINYTOM_VERSION_STR},
                           });
-#else
-    versions.push_front({std::nullopt,
-                         std::map<QString, QString> {
-                             {QStringLiteral("tom"), TINYTOM_VERSION_STR},
-                         }});
-#endif
 
     return versions;
 }

@@ -418,11 +418,7 @@ namespace Orm::Tiny::Relations
 
             else
                 // Move to the std::optional
-#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
                 dictionary.emplace(foreignKey, std::move(result));
-#else
-                dictionary.insert(foreignKey, std::move(result));
-#endif
 
         return dictionary;
     }

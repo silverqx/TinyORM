@@ -11,7 +11,7 @@ tinyMinReqMsvc          = 19.29
 tinyMinReqClangCl       = 14.0.3
 tinyMinRecClang         = 12
 tinyMinRecGCC           = 10.2
-tinyMinRecQt            = 5.15.2
+tinyMinRecQt            = 6.2
 # Unused
 #tinyMinRangeV3Version  = 0.12.0
 #tinyMinTabulateVersion = 1.5.0

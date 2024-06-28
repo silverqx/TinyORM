@@ -38,7 +38,7 @@ $Script:BumpsHash = $null
 $Script:VersionLocations = $null
 # Files in which a number of unit tests needs to be updated (integer value is the number of updates)
 $Script:NumberOfUnitTestsLocations = $null
-# Vcpkg port filepaths and bumping port-version field for tinyorm and tinyorm-qt5 ports
+# Vcpkg port filepaths and bumping port-version field for tinyorm port
 $Script:VcpkgHash = $null
 
 # Tag version with the v prefix
@@ -134,7 +134,6 @@ function Initialize-ScriptVariables {
             [VersionType]::VersionOnly = [ordered] @{
                 (Resolve-Path -Path ./NOTES.txt)                                = 3
                 (Resolve-Path -Path ./cmake/vcpkg/ports/tinyorm/vcpkg.json)     = 1
-                (Resolve-Path -Path ./cmake/vcpkg/ports/tinyorm-qt5/vcpkg.json) = 1
                 (Resolve-Path -Path ./docs/building/hello-world.mdx)            = 4
                 (Resolve-Path -Path ./docs/building/migrations.mdx)             = 1
                 (Resolve-Path -Path ./docs/building/tinyorm.mdx)                = 1
@@ -195,14 +194,6 @@ function Initialize-ScriptVariables {
         tinyorm           = @{
             portfile      = Resolve-Path -Path ./cmake/vcpkg/ports/tinyorm/portfile.cmake
             vcpkgJson     = Resolve-Path -Path ./cmake/vcpkg/ports/tinyorm/vcpkg.json
-            bumpType      = [YesNoType]::No
-            versionOld    = $null
-            versionBumped = $null
-        }
-
-        'tinyorm-qt5' = @{
-            portfile      = Resolve-Path -Path ./cmake/vcpkg/ports/tinyorm-qt5/portfile.cmake
-            vcpkgJson     = Resolve-Path -Path ./cmake/vcpkg/ports/tinyorm-qt5/vcpkg.json
             bumpType      = [YesNoType]::No
             versionOld    = $null
             versionBumped = $null
@@ -1124,33 +1115,21 @@ function Read-PortVersionsToBump {
                 '&tinyorm', 'tinyorm Qt6 port'
             )
             New-Object System.Management.Automation.Host.ChoiceDescription(
-                'tinyorm-qt&5', 'tinyorm-qt5 Qt5 port'
-            )
-            New-Object System.Management.Automation.Host.ChoiceDescription(
-                '&Both', 'Both ports tinyorm and tinyorm-qt5'
-            )
-            New-Object System.Management.Automation.Host.ChoiceDescription(
                 '&None', 'Don''t bump'
             )
         ))
 
     $answer = $Host.Ui.PromptForChoice(
-        "Bump `e[32mtinyorm`e[0m and/or `e[32mtinyorm-qt5`e[0m port-version numbers",
-        'Choose the vcpkg port/s to bump:', $versionTypeChoice, 3
+        "Bump `e[32mtinyorm`e[0m port-version number",
+        'Choose the vcpkg port to bump:', $versionTypeChoice, 1
     )
 
     # References
-    $tinyormValue    = $Script:VcpkgHash.tinyorm
-    $tinyormQt5Value = $Script:VcpkgHash['tinyorm-qt5']
+    $tinyormValue = $Script:VcpkgHash.tinyorm
 
     switch ($answer) {
-        0 { $tinyormValue.bumpType    = [YesNoType]::Yes }
-        1 { $tinyormQt5Value.bumpType = [YesNoType]::Yes }
-        2 {
-            $tinyormValue.bumpType    = [YesNoType]::Yes
-            $tinyormQt5Value.bumpType = [YesNoType]::Yes
-        }
-        3 { return $true }
+        0 { $tinyormValue.bumpType = [YesNoType]::Yes }
+        1 { return $true }
         Default {
             throw 'Unreachable code.'
         }
@@ -1639,7 +1618,7 @@ function Invoke-BumpVersions {
     Test-LastExitCode
 }
 
-# Main logic to bump vcpkg port-version fields in the tinyorm and tinyorm-qt5 ports
+# Main logic to bump vcpkg port-version field in the tinyorm port
 function Invoke-BumpPortVersions {
     [OutputType([void])]
     Param()
@@ -1787,7 +1766,7 @@ Write-PostDeployWarnings
   - prepare a tag message with the bumped version number
   - create an annotated git tag
   - merge the `develop` to the `main` branch (ff-only), and push to the `origin/main`
-  - update the vcpkg `tinyorm` and `tinyorm-qt5` portfiles
+  - update the vcpkg `tinyorm` portfile
     - obtain the `origin/main` commit ID (SHA-1) or use the tag number (based on select mode)
     - update the REF value
     - obtain the `origin/main` archive hash (SHA512)

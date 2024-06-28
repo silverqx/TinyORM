@@ -72,17 +72,10 @@ void ConfigurationOptionsParser::copyOptionsFromTopLevel(
             continue;
 
         // Copy the value to the 'options' hash
-#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
         if (auto newValue = config().value(optionTopLevel);
             !newValue.value<QString>().isEmpty()
         )
             options.emplace(std::move(option), std::move(newValue));
-#else
-        if (const auto &newValue = config()[optionTopLevel];
-            !newValue.value<QString>().isEmpty()
-        )
-            options.insert(option, newValue);
-#endif
     }
 }
 
@@ -128,11 +121,7 @@ QVariantHash ConfigurationOptionsParser::prepareConfigOptions(const QVariant &op
 
         const auto option = optionRaw.split(EQ_C);
 
-#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
         preparedOptions.emplace(
-#else
-        preparedOptions.insert(
-#endif
                     option.constFirst().trimmed().toString(),
                     optionRawCount == 0 ? EMPTY : option[1].trimmed().toString());
     }
@@ -169,11 +158,7 @@ ConfigurationOptionsParser::mergeOptions(const QVariantHash &connectortOptions,
         const auto &value = itConnectortOptions.value();
 
         if (!merged.contains(key))
-#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
             merged.emplace(key, value);
-#else
-            merged.insert(key, value);
-#endif
 
         ++itConnectortOptions;
     }
@@ -191,11 +176,7 @@ QString ConfigurationOptionsParser::concatenateOptions(const QVariantHash &optio
         const auto &key = itOption.key();
         const auto value = itOption.value().value<QString>();
 
-#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
         concatenated.emplaceBack(
-#else
-        concatenated.append(
-#endif
                     // Support option flags without a value (are considred as enabled)
                     value.isEmpty() ? key : QStringLiteral("%1=%2").arg(key, value));
 

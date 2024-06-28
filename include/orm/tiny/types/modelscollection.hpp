@@ -102,12 +102,7 @@ namespace Types
         using ConstModelLoopType = std::conditional_t<std::is_pointer_v<Model>,
                                                       const ModelRawType *const,
                                                       const ModelRawType &>;
-#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
         using parameter_type  = typename StorageType::parameter_type;
-#else
-        using parameter_type  = std::conditional_t<std::is_pointer_v<Model>,
-                                                   ModelRawType *, const ModelRawType &>;
-#endif
 
         /* Iterators related */
         using iterator               = typename StorageType::iterator;
@@ -165,7 +160,6 @@ namespace Types
         requires std::is_pointer_v<Model>;
 
         /* Redeclared overridden methods from the base class */
-#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
         /*! Returns a reference to the first model in the collection. */
         inline Model &first();
         /*! Returns a reference to the first model in the collection. */
@@ -186,22 +180,6 @@ namespace Types
         inline Model value(size_type index) const;
         /*! Returns the value at index position i in the collection. */
         inline Model value(size_type index, parameter_type defaultValue) const;
-#else
-        /*! Returns a reference to the first model in the collection. */
-        inline Model &first();
-        /*! Returns a reference to the first model in the collection. */
-        inline const Model &first() const;
-
-        /*! Returns a reference to the last model in the collection. */
-        inline Model &last();
-        /*! Returns a reference to the last model in the collection. */
-        inline const Model &last() const;
-
-        /*! Returns the value at index position i in the collection. */
-        inline Model value(size_type index) const;
-        /*! Returns the value at index position i in the collection. */
-        inline Model value(size_type index, parameter_type defaultValue) const;
-#endif
 
         /* BaseCollection */
         /*! Run a filter over each of the models in the collection. */
@@ -789,7 +767,6 @@ namespace Types
 
     /* Redeclared overridden methods from the base class */
 
-#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
     template<DerivedCollectionModel Model>
     Model &
     ModelsCollection<Model>::first()
@@ -846,50 +823,6 @@ namespace Types
     {
         return StorageType::value(index, defaultValue);
     }
-#else
-    template<DerivedCollectionModel Model>
-    Model &
-    ModelsCollection<Model>::first()
-    {
-        return StorageType::first();
-    }
-
-    template<DerivedCollectionModel Model>
-    const Model &
-    ModelsCollection<Model>::first() const
-    {
-        return StorageType::first();
-    }
-
-    template<DerivedCollectionModel Model>
-    Model &
-    ModelsCollection<Model>::last()
-    {
-        return StorageType::last();
-    }
-
-    template<DerivedCollectionModel Model>
-    const Model &
-    ModelsCollection<Model>::last() const
-    {
-        return StorageType::last();
-    }
-
-    template<DerivedCollectionModel Model>
-    Model
-    ModelsCollection<Model>::value(const size_type index) const
-    {
-        return StorageType::value(index);
-    }
-
-    template<DerivedCollectionModel Model>
-    Model
-    ModelsCollection<Model>::value(const size_type index,
-                                   parameter_type defaultValue) const
-    {
-        return StorageType::value(index, defaultValue);
-    }
-#endif
 
     /* BaseCollection */
 
@@ -1096,14 +1029,9 @@ namespace Types
         result.reserve(size);
 
         for (size_type index = 0; index < size; ++index)
-#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
             result.emplaceBack(
                         std::invoke(callback, getModelCopy(this->operator[](index)),
                                     index));
-#else
-            result.append(std::invoke(callback, getModelCopy(this->operator[](index)),
-                                      index));
-#endif
 
         return result;
     }
@@ -1120,11 +1048,7 @@ namespace Types
         result.reserve(size);
 
         for (auto &&model : *this)
-#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
             result.emplaceBack(std::invoke(callback, getModelCopy(model)));
-#else
-            result.append(std::invoke(callback, getModelCopy(model)));
-#endif
 
         return result;
     }
@@ -1870,28 +1794,10 @@ namespace Types
     QVariantList
     ModelsCollection<Model>::toVectorVariantList() const
     {
-#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
         return map<QVariant>([](ModelRawType &&model) // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
         {
             return QVariant::fromValue(model.template toVector<PivotType>());
         });
-#else
-        /* The map<>() returns the QVector but the QJson module needs the QVariantList
-           to correctly serialize relations, I will not add a new map<> overload. */
-        QVariantList result;
-        result.reserve(this->size());
-
-        for (ConstModelLoopType model : *this)
-            /* The getModelCopy() wouldn't be needed here for Qt5 but I would have to
-               make this method non-const, it's a small price to call the getModelCopy()
-               to avoid ABI compatibility breakage in the future because the Qt5 support
-               will be removed in the near future and the original map<> is also doing
-               a model copy. */
-            result << QVariant::fromValue(
-                          getModelCopy(model).template toVector<PivotType>());
-
-        return result;
-#endif
     }
 
     template<DerivedCollectionModel Model>
@@ -1899,27 +1805,10 @@ namespace Types
     QVariantList
     ModelsCollection<Model>::toMapVariantList() const
     {
-#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
         return map<QVariant>([](ModelRawType &&model) -> QVariant // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
         {
             return model.template toMap<PivotType>();
         });
-#else
-        /* The map<>() returns the QVector but the QJson module needs the QVariantList
-           to correctly serialize relations, I will not add a new map<> overload. */
-        QVariantList result;
-        result.reserve(this->size());
-
-        for (ConstModelLoopType model : *this)
-            /* The getModelCopy() wouldn't be needed here for Qt5 but I would have to
-               make this method non-const, it's a small price to call the getModelCopy()
-               to avoid ABI compatibility breakage in the future because the Qt5 support
-               will be removed in the near future and the original map<> is also doing
-               a model copy. */
-            result << getModelCopy(model).template toMap<PivotType>();
-
-        return result;
-#endif
     }
 
     template<DerivedCollectionModel Model>

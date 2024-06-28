@@ -61,11 +61,7 @@ namespace Private
     {
         /* The std::div returns both, integer after division operation (quot) and also
            the remainder (rem). */
-#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
         const auto groupSeparatorDiv = std::lldiv(numberSize, groupWidth);
-#else
-        const auto groupSeparatorDiv = std::div(numberSize, groupWidth);
-#endif
 
         /* -1 is for pure mathematic reasons, try to call lldiv with different numberSize
            and 3 for groupWith to see how it works. */

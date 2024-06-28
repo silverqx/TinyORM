@@ -187,8 +187,8 @@ namespace Query
 #endif
     };
 
-/* The TTimeZone alias can be used on Qt v5, Qt <v6.5, and also Qt >=v6.5.
-   It helps to support all Qt versions still. */
+/* The TTimeZone alias can be used on Qt <v6.5 and also Qt >=v6.5.
+   It helps to support both Qt versions still. */
 #if QT_VERSION >= QT_VERSION_CHECK(6, 5, 0)
     /*! Alias for QTimeZone::Initialization. */
     using TTimeZone = QTimeZone::Initialization;
@@ -250,15 +250,5 @@ namespace Query
 } // namespace Orm
 
 TINYORM_END_COMMON_NAMESPACE
-
-// Register custom QVariant types for Qt 5
-#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
-Q_DECLARE_METATYPE(QTimeZone) // NOLINT(performance-no-int-to-ptr, misc-no-recursion)
-Q_DECLARE_METATYPE(Qt::TimeSpec) // NOLINT(performance-no-int-to-ptr, misc-no-recursion)
-
-Q_DECLARE_METATYPE(TINYORM_PREPEND_NAMESPACE(Orm::WhereConditionItem)) // NOLINT(performance-no-int-to-ptr, misc-no-recursion)
-Q_DECLARE_METATYPE(TINYORM_PREPEND_NAMESPACE(Orm::QtTimeZoneConfig)) // NOLINT(performance-no-int-to-ptr, misc-no-recursion)
-Q_DECLARE_METATYPE(TINYORM_PREPEND_NAMESPACE(Orm::QtTimeZoneType)) // NOLINT(performance-no-int-to-ptr, misc-no-recursion)
-#endif
 
 #endif // ORM_ORMTYPES_HPP

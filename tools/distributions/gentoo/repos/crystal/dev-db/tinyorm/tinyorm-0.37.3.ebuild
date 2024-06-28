@@ -20,9 +20,9 @@ else
 	KEYWORDS="~amd64"
 fi
 
-IUSE="build-drivers disable-thread-local inline-constants mysql mysql-ping +orm postgres -qt5 +sqlite +tom +tom-cli"
+IUSE="build-drivers disable-thread-local inline-constants mysql mysql-ping +orm postgres +sqlite +tom +tom-cli"
 REQUIRED_USE="
-	build-drivers? ( || ( mysql ) !postgres !sqlite !qt5 )
+	build-drivers? ( || ( mysql ) !postgres !sqlite )
 	tom-cli? ( tom )
 "
 
@@ -32,14 +32,8 @@ RDEPEND="
 		mysql? ( dev-db/mysql-connector-c:= )
 	)
 	!build-drivers? (
-		!qt5? (
-			>=dev-qt/qtbase-6.7:6[icu]
-			dev-qt/qtbase:=[mysql,postgres,sqlite]
-		)
-		qt5? (
-			dev-qt/qtcore:5[icu]
-			dev-qt/qtsql:5[mysql,postgres,sqlite]
-		)
+		>=dev-qt/qtbase-6.7:6[icu]
+		dev-qt/qtbase:=[mysql,postgres,sqlite]
 	)
 	mysql-ping? ( dev-db/mysql-connector-c:= )
 "

@@ -169,19 +169,9 @@ QStringList Command::optionNames() const
             }
 
             // Iterator to the option name
-            const auto nthOption = findNthOption(optionName, nthOptionIdx, optionNames);
+            optionNames.insert(findNthOption(optionName, nthOptionIdx, optionNames),
+                               commasCount, optionName);
 
-#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
-            optionNames.insert(nthOption, commasCount, optionName);
-#else
-            /* We need to save the index position because the nthOption iterator will be
-               invalidated after an insertion. */
-            const auto optionIdx = static_cast<decltype (optionNames)::size_type>(
-                                       std::distance(optionNames.cbegin(), nthOption));
-
-            for (auto i = 0; i < commasCount ; ++i)
-                optionNames.insert(optionIdx, optionName);
-#endif
             // Take into account also a newly inserted option names
             ++nthOptionIdx += commasCount;
         }
@@ -224,12 +214,7 @@ QStringList Command::values(const QString &name, const Qt::SplitBehavior behavio
     // Support passing more values delimited by comma
     for (auto &&value : values) {
         if (!value.contains(regex)) {
-#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
             valuesSplitted << std::move(value);
-#else
-            valuesSplitted << value;
-#endif
-
             continue;
         }
 

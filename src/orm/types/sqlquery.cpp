@@ -33,11 +33,7 @@ SqlQuery::SqlQuery(TSqlQuery &&other, const QtTimeZoneConfig &qtTimeZone, // NOL
                    const QueryGrammar &queryGrammar,
                    const std::optional<bool> returnQDateTime
 )
-#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
     : TSqlQuery(std::move(other))
-#else
-    : TSqlQuery(other)
-#endif
     , m_qtTimeZone(qtTimeZone)
     , m_isConvertingTimeZone(m_qtTimeZone.type != QtTimeZoneType::DontConvert)
     , m_isSQLiteDb(isSQLiteDbmsType(*this))

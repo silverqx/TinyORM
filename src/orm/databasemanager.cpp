@@ -34,12 +34,6 @@ DatabaseManager::DatabaseManager(const QString &defaultConnection)
     Concerns::HasConnectionResolver::setConnectionResolver(this);
 
     setupDefaultReconnector();
-
-    /* I couldn't find a better place for this, even though this place is ideal because
-       it guarantees that it will be called only once per whole application. */
-#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
-    registerQMetaTypesForQt5();
-#endif
 }
 
 DatabaseManager::DatabaseManager(const QVariantHash &config, const QString &connection,
@@ -985,31 +979,6 @@ void DatabaseManager::checkInstance()
     throw Exceptions::RuntimeError(
             "Only one instance of DatabaseManager is allowed per process.");
 }
-
-#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
-void DatabaseManager::registerQMetaTypesForQt5()
-{
-    if (!QMetaType::hasRegisteredComparators<QtTimeZoneConfig>())
-        QMetaType::registerEqualsComparator<QtTimeZoneConfig>();
-
-    /* Comparing serialized models with the toMap() and toVector() */
-    if (!QMetaType::hasRegisteredComparators<QVector<QVariantMap>>())
-        QMetaType::registerEqualsComparator<QVector<QVariantMap>>();
-
-#ifndef TINYORM_DISABLE_ORM
-    using Tiny::AttributeItem;
-
-    if (!QMetaType::hasRegisteredComparators<AttributeItem>())
-        QMetaType::registerEqualsComparator<AttributeItem>();
-
-    if (!QMetaType::hasRegisteredComparators<QVector<AttributeItem>>())
-        QMetaType::registerEqualsComparator<QVector<AttributeItem>>();
-
-    if (!QMetaType::hasRegisteredComparators<QVector<QVector<AttributeItem>>>())
-        QMetaType::registerEqualsComparator<QVector<QVector<AttributeItem>>>();
-#endif
-}
-#endif
 
 } // namespace Orm
 

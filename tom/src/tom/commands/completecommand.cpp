@@ -101,11 +101,7 @@ int CompleteCommand::run() // NOLINT(readability-function-cognitive-complexity)
     const auto commandlineArg = value(commandline);
 
 #ifdef _MSC_VER
-#  if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
     const auto positionArg = value(position_).toLongLong();
-#  else
-    const auto positionArg = value(position_).toInt();
-#  endif
 
     // Currently processed tom command
     const auto commandlineArgSplitted = commandlineArg.split(SPACE);
@@ -119,13 +115,8 @@ int CompleteCommand::run() // NOLINT(readability-function-cognitive-complexity)
     const auto wordArg = getWordOptionValue(commandlineArgSplitted, positionArg,
                                             commandlineArgSize);
 #else
-    const auto wordArg = value(word_);
-
-#  if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+    const auto wordArg  = value(word_);
     const auto cwordArg = value(cword_).toLongLong();
-#  else
-    const auto cwordArg = value(cword_).toInt();
-#  endif
 
     // Currently processed tom command
     const auto currentCommandArg = getCurrentTomCommand(commandlineArg, cwordArg);
@@ -341,11 +332,7 @@ int CompleteCommand::printGuessedCommands(
         guessedCommands << QStringLiteral("%1;%2;%3").arg(commandName, commandName,
                                                           command->description());
 #else
-#  if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
         guessedCommands << std::move(commandName);
-#  else
-        guessedCommands << commandName;
-#  endif
 #endif
     }
 
@@ -539,12 +526,8 @@ int CompleteCommand::printGuessedLongOptions(
 {
     const auto commandOptions = getCommandOptionsSignature(currentCommand);
 
-#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
     // The -- is guaranteed by the isLongOption(wordArg)
     const auto wordToGuess = wordArg.sliced(2);
-#else
-    const auto wordToGuess = wordArg.mid(2);
-#endif
     const auto printAll = wordToGuess.isEmpty();
 
     QStringList options;
@@ -574,11 +557,7 @@ int CompleteCommand::printGuessedLongOptions(
                     options << QStringLiteral("%1;%2;%3").arg(longOption, longOption,
                                                               option.description());
 #else
-#  if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
                     options << std::move(longOption);
-#  else
-                    options << longOption;
-#  endif
 #endif
                 }
                 // With a value
@@ -595,11 +574,7 @@ int CompleteCommand::printGuessedLongOptions(
                                     option.description(),
                                     getOptionDefaultValue(option));
 #else
-#  if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
                     options << std::move(longOption);
-#  else
-                    options << longOption;
-#  endif
 #endif
                 }
             }

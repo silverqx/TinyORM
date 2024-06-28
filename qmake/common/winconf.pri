@@ -23,7 +23,8 @@ DEFINES *= NOMINMAX
 
 # TODO qmake this will not work with clang-cl problem is that CMAKE_CXX_SIMULATE_VERSION reports only short version like 19.40, so I can't fix it easily silverqx
 # Needed to suppress this because lot of new warnings on latest MSVC, also doesn't matter
-# too much because TinyORM compiles even without it with Qt v6, warnings were only on Qt5
+# too much because TinyORM compiles even without it with Qt v6, warnings were only
+# on Qt v5
 win32-msvc: \
 versionAtLeast(TINY_COMPILER_FULL_VERSION, 19.38.32914.95): \
     DEFINES *= _SILENCE_STDEXT_ARR_ITERS_DEPRECATION_WARNING

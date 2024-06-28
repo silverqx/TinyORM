@@ -1031,11 +1031,7 @@ namespace Orm::Tiny::Relations
     {
         ModelsCollection<Related> result;
         // Reserve the first page, it can help reallocations at the beginning
-#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
         result.reserve(count);
-#else
-        result.reserve(static_cast<decltype (result)::size_type>(count));
-#endif
 
         chunk(count, [&result, &callback]
                      (ModelsCollection<Related> &&models, const qint64 /*unused*/) // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
@@ -1057,11 +1053,7 @@ namespace Orm::Tiny::Relations
     {
         QVector<T> result;
         // Reserve the first page, it can help reallocations at the beginning
-#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
         result.reserve(count);
-#else
-        result.reserve(static_cast<decltype (result)::size_type>(count));
-#endif
 
         chunk(count, [&result, &callback]
                      (ModelsCollection<Related> &&models, const qint64 /*unused*/) // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
@@ -1497,13 +1489,8 @@ namespace Orm::Tiny::Relations
                begin with "pivot_" and add those to this vector, as well as unsetting
                them from the parent's models since they exist in a different table. */
             if (attribute.key.startsWith(QStringLiteral("pivot_"))) {
-
                 // Remove the 'pivot_' part from an attribute key
-#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
                 values.append({attribute.key.sliced(6), attribute.value});
-#else
-                values.append({attribute.key.mid(6), attribute.value});
-#endif
 
                 model.unsetAttribute(attribute);
             }

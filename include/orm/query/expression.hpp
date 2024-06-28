@@ -78,9 +78,4 @@ namespace Orm::Query
 
 TINYORM_END_COMMON_NAMESPACE
 
-// Register custom QVariant types for Qt 5
-#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
-Q_DECLARE_METATYPE(TINYORM_PREPEND_NAMESPACE(Orm::Query::Expression)) // NOLINT(performance-no-int-to-ptr, misc-no-recursion)
-#endif
-
 #endif // ORM_QUERY_EXPRESSION_HPP

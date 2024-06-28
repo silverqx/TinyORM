@@ -340,11 +340,7 @@ void Application::prependOptions(QList<CommandLineOption> &&options)
     m_options = std::move(options);
 
     // Common options after Command options
-#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
     m_options << std::move(commonOptions);
-#else
-    m_options << commonOptions;
-#endif
 }
 
 /* Run command */
@@ -455,13 +451,7 @@ void Application::printFullVersions() const
     note(QStringLiteral("tom "), false);
     info(TINYTOM_VERSION_STR);
 
-#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
     for (const auto &[subsectionName, abouts] : createVersionsSubsection()) {
-#else
-    // To avoid clazy warning
-    const auto versions = createVersionsSubsection();
-    for (const auto &[subsectionName, abouts] : versions) {
-#endif
         // Subsection name is optional
         if (subsectionName) {
             newLine();

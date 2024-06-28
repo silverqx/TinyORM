@@ -1,12 +1,10 @@
 <h1><img src="https://github.com/silverqx/TinyORM/blob/main/resources/icons/logo-optim.svg" width="34" height="34" alt="TinyORM Logo" align="center">&nbsp;TinyORM</h1>
 
-[![MSVC2019 Qt5.15][action-msvc2019-qt5-badge]][action-msvc2019-qt5]
 [![MSVC2022 Qt6.7][action-msvc2022-qt6-badge]][action-msvc2022-qt6]
-[![Linux GCC/Clang Qt5.15][action-linux-qt5-badge]][action-linux-qt5]
 [![Linux GCC/Clang Qt6.4][action-linux-qt6-badge]][action-linux-qt6]
 [![MSYS2 UCRT64 GCC/Clang][action-mingw-badge]][action-mingw]
 [![clang-cl MSVC2022][action-clang-cl-badge]][action-clang-cl]
-[![Clang-Tidy/Clazy Qt5.15/6.7][action-analyzers-qt5-qt6-badge]][action-analyzers-qt5-qt6]
+[![Clang-Tidy/Clazy 6.7][action-analyzers-qt6-badge]][action-analyzers-qt6]
 [![Vcpkg Windows][action-vcpkg-windows-badge]][action-vcpkg-windows]
 [![Vcpkg Linux][action-vcpkg-linux-badge]][action-vcpkg-linux]
 [![MSVC2022 Qt6.7 TinyDrivers][action-msvc2022-qt6-drivers-badge]][action-msvc2022-qt6-drivers]
@@ -134,20 +132,16 @@ The following list fastly summarizes all the `TinyORM` features.
 ###### TinyOrmPlayground multi-threaded
 ![Invoked TinyOrmPlayground multi-threaded](/docs/assets/img/features-summary/tinyormplayground-multi-threaded.png)
 
-[action-msvc2019-qt5]: https://github.com/silverqx/TinyORM/actions/workflows/msvc2019-qt5.yml
-[action-msvc2019-qt5-badge]: https://github.com/silverqx/TinyORM/actions/workflows/msvc2019-qt5.yml/badge.svg
 [action-msvc2022-qt6]: https://github.com/silverqx/TinyORM/actions/workflows/msvc2022-qt6.yml
 [action-msvc2022-qt6-badge]: https://github.com/silverqx/TinyORM/actions/workflows/msvc2022-qt6.yml/badge.svg
-[action-linux-qt5]: https://github.com/silverqx/TinyORM/actions/workflows/linux-qt5.yml
-[action-linux-qt5-badge]: https://github.com/silverqx/TinyORM/actions/workflows/linux-qt5.yml/badge.svg
 [action-linux-qt6]: https://github.com/silverqx/TinyORM/actions/workflows/linux-qt6.yml
 [action-linux-qt6-badge]: https://github.com/silverqx/TinyORM/actions/workflows/linux-qt6.yml/badge.svg
 [action-mingw]: https://github.com/silverqx/TinyORM/actions/workflows/msys2-ucrt64.yml
 [action-mingw-badge]: https://github.com/silverqx/TinyORM/actions/workflows/msys2-ucrt64.yml/badge.svg
 [action-clang-cl]: https://github.com/silverqx/TinyORM/actions/workflows/clang-cl-qt6.yml
 [action-clang-cl-badge]: https://github.com/silverqx/TinyORM/actions/workflows/clang-cl-qt6.yml/badge.svg
-[action-analyzers-qt5-qt6]: https://github.com/silverqx/TinyORM/actions/workflows/analyzers.yml
-[action-analyzers-qt5-qt6-badge]: https://github.com/silverqx/TinyORM/actions/workflows/analyzers.yml/badge.svg
+[action-analyzers-qt6]: https://github.com/silverqx/TinyORM/actions/workflows/analyzers.yml
+[action-analyzers-qt6-badge]: https://github.com/silverqx/TinyORM/actions/workflows/analyzers.yml/badge.svg
 [action-vcpkg-windows]: https://github.com/silverqx/TinyORM/actions/workflows/vcpkg-windows.yml
 [action-vcpkg-windows-badge]: https://github.com/silverqx/TinyORM/actions/workflows/vcpkg-windows.yml/badge.svg
 [action-vcpkg-linux]: https://github.com/silverqx/TinyORM/actions/workflows/vcpkg-linux.yml

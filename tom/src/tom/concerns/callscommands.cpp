@@ -60,21 +60,12 @@ CallsCommands::createCommandLineArguments(
     newArguments.reserve(currentArguments.size() + arguments.size());
 
     // Absolute path of the exe name
-#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
     newArguments << std::move(currentArguments.first());
-#else
-    newArguments << currentArguments.constFirst();
-#endif
     // Command name
     newArguments << command;
 
     // Remove a command exe name and tom's command name
-#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
     currentArguments.remove(0, 2);
-#else
-    currentArguments.removeFirst();
-    currentArguments.removeFirst();
-#endif
 
     // Get common allowed command-line arguments from the current command-line arguments
     newArguments << getCommonArguments(currentArguments);

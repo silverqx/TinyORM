@@ -484,26 +484,14 @@ namespace Orm::Tiny::Concerns
                     const QString &attribute, const QString &functionName);
 
         /* Casting Attributes */
-        /* QMetaType isn't trivially copyable in Qt5, so const-lvalue reference needed. */
-#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
-        /*! QMetaType used in a function declaration. */
-        using QMetaTypeDecl = QMetaType;
-        /*! QMetaType used in a function definition. */
-        using QMetaTypeDef  = const QMetaType;
-#else
-        /*! QMetaType used in a function declaration. */
-        using QMetaTypeDecl = std::add_lvalue_reference_t<const QMetaType>;
-        /*! QMetaType used in a function definition. */
-        using QMetaTypeDef  = QMetaTypeDecl;
-#endif
         /*! Throw if the given attribute can not be converted to the given cast type. */
         static void throwIfCanNotCastAttribute(
-                    const QString &key, CastType castType, QMetaTypeDecl metaType,
+                    const QString &key, CastType castType, QMetaType metaType,
                     const QVariant &value, const QString &functionName);
 #ifdef TINYORM_DEBUG
         /*! Log if the QVariant::convert() for the given attribute failed. */
         static void logIfConvertAttributeFailed(
-                    const QString &key, CastType castType, QMetaTypeDecl metaType,
+                    const QString &key, CastType castType, QMetaType metaType,
                     const QString &functionName);
 #endif
 
@@ -1382,11 +1370,7 @@ namespace Orm::Tiny::Concerns
            as these attributes are not really in the attributes vector, but are run
            when we need to serialize or JSON the model for convenience to the coder. */
         for (const auto &key : getSerializableAppends())
-#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
             attributes.emplaceBack(key, mutateAccessorAttribute(key));
-#else
-            attributes.append({key, mutateAccessorAttribute(key)});
-#endif
 
         return attributes;
     }
@@ -1974,29 +1958,23 @@ namespace Orm::Tiny::Concerns
 
         /*! Convert the QVariant value of a attribute. */
         const auto convertAttribute = [&key, &value_, castType]
-                                      (QMetaTypeDef metaType)
+                                      (const QMetaType metaType)
         {
             // Throw if the given attribute can not be converted to the given cast type
             throwIfCanNotCastAttribute(key, castType, metaType, value_,
                                        QLatin1String("HasAttributes::castAttribute"));
 
-#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
-            const auto &metaTypeId = metaType;
-#else
-            const auto metaTypeId = metaType.id();
-#endif
-
 #ifdef TINYORM_DEBUG
             /* Still check for the false value and log to the debug stream, but not if
                the value_ is null, because converting null QVariant will always return
                false and the QVariant type will be changed anyway. */
-            if (!value_.convert(metaTypeId) && !value_.isNull())
+            if (!value_.convert(metaType) && !value_.isNull())
                 // Log if the QVariant::convert() for the given attribute failed
                 logIfConvertAttributeFailed(
                             key, castType, metaType,
                             QLatin1String("HasAttributes::castAttribute"));
 #else
-            value_.convert(metaTypeId);
+            value_.convert(metaType);
 #endif
 
             return value_;
@@ -2041,12 +2019,8 @@ namespace Orm::Tiny::Concerns
             return convertAttribute(QMetaType(QMetaType::Bool));
         // Int 16-bit
         case CastType::Short:
-            /* Qt5 QVariant doesn't define the short int type QVariant::Short, but
-               it can be bypassed using the QMetaType. */
             return convertAttribute(QMetaType(QMetaType::Short));
         case CastType::UShort:
-            /* Qt5 QVariant doesn't define the short int type QVariant::Short, but
-               it can be bypassed using the QMetaType. */
             return convertAttribute(QMetaType(QMetaType::UShort));
         // Float
         case CastType::Real:
@@ -2062,15 +2036,8 @@ namespace Orm::Tiny::Concerns
             auto converted = convertAttribute(QMetaType(QMetaType::Double));
             const auto &modifier = castItem.modifier();
 
-            /* This is pure for the performance reasons, in the Qt6 the isNull()
-               internally also checks if isValid(). In the Qt5 the logic is different. */
-#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
-            if (modifier.isNull() || converted.isNull()
-#else
-            if (!modifier.isValid()  || modifier.isNull() ||
-                !converted.isValid() || converted.isNull()
-#endif
-            )
+            // The isNull() internally also checks if isValid() (from Qt6)
+            if (modifier.isNull() || converted.isNull())
                 return converted;
 
             return roundDecimals(converted, modifier);
@@ -2369,11 +2336,8 @@ namespace Orm::Tiny::Concerns
 
         // Cache the get mutator (accessor) value
         if (attribute.withCaching()) T_UNLIKELY
-#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
             m_attributeMutatorsCache.emplace(key, value);
-#else
-            m_attributeMutatorsCache.insert(key, value);
-#endif
+
         // Remove the get mutator (accessor) from the cache if caching is disabled
         else T_LIKELY
             m_attributeMutatorsCache.remove(key);
@@ -2449,14 +2413,10 @@ namespace Orm::Tiny::Concerns
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
     void HasAttributes<Derived, AllRelations...>::throwIfCanNotCastAttribute(
-            const QString &key, const CastType castType, QMetaTypeDef metaType,
+            const QString &key, const CastType castType, const QMetaType metaType,
             const QVariant &value, const QString &functionName)
     {
-#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
         if (value.canConvert(metaType))
-#else
-        if (value.canConvert(metaType.id()))
-#endif
             return;
 
         throw Orm::Exceptions::InvalidArgumentError(
@@ -2471,7 +2431,7 @@ namespace Orm::Tiny::Concerns
 #ifdef TINYORM_DEBUG
     template<typename Derived, AllRelationsConcept ...AllRelations>
     void HasAttributes<Derived, AllRelations...>::logIfConvertAttributeFailed(
-            const QString &key, const CastType castType, QMetaTypeDef metaType,
+            const QString &key, const CastType castType, const QMetaType metaType,
             const QString &functionName)
     {
         /* This should not happen because the QVariant::canConvert() is called before
@@ -2584,18 +2544,10 @@ namespace Orm::Tiny::Concerns
         if (appendKeys.empty())
             return;
 
-#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
         attributes.removeIf([&appendKeys](const AttributeItem &attribute)
         {
             return appendKeys.contains(attribute.key);
         });
-#else
-        for (auto it = attributes.begin(); it != attributes.end(); /*unused*/)
-            if (appendKeys.contains(it->key)) T_UNLIKELY
-                it = attributes.erase(it);
-            else T_LIKELY
-                ++it;
-#endif
     }
 
     template<typename Derived, AllRelationsConcept ...AllRelations>
@@ -2674,11 +2626,7 @@ namespace Orm::Tiny::Concerns
 
                 // QVector<AttributeItem>
                 else
-#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
                     serializableAttributes.emplaceBack(key, value);
-#else
-                    serializableAttributes.append({key, value});
-#endif
             }
 
         return serializableAttributes;
@@ -2736,11 +2684,7 @@ namespace Orm::Tiny::Concerns
 
         for (auto &&[key, value] : attributes)
             if (!hiddenKeys.contains(key))
-#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
                 serializableAttributes.emplaceBack(std::move(key), std::move(value));
-#else
-                serializableAttributes.append({std::move(key), std::move(value)});
-#endif
 
         return serializableAttributes;
     }

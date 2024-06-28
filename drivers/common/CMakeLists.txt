@@ -193,7 +193,9 @@ tiny_resource_and_manifest(${TinyDrivers_target}
 # Must be before the TinyCommon, to exclude WINVER for the MSYS2 Qt6 builds to avoid:
 # 'WINVER' macro redefined [-Wmacro-redefined]
 # Look also to the TinyCommon for conditional WINVER definition
-find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Core)
+# Leaving this find_package(QT NAMES) search pattern even if the Qt v5 support was removed
+# because I like it and can be used with future Qt version
+find_package(QT NAMES Qt6 REQUIRED COMPONENTS Core)
 if(QT_VERSION_MAJOR LESS 6)
     message(FATAL_ERROR "TinyDrivers library is not supported with Qt version <6.")
 endif()
@@ -202,7 +204,7 @@ find_package(Qt${QT_VERSION_MAJOR} ${minQtVersion} CONFIG
     REQUIRED COMPONENTS Core
 )
 
-# Unconditional dependencies
+# Unconditional dependencies                       # Never use versionless Qt targets
 target_link_libraries(${TinyDrivers_target} PUBLIC Qt${QT_VERSION_MAJOR}::Core)
 
 # Conditional dependencies

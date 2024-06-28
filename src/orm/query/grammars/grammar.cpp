@@ -656,17 +656,10 @@ QString Grammar::removeLeadingBoolean(QString &&statement)
     /* Before and/or could not be whitespace, current implementation doesn't include
        whitespaces before. */
     if (statement.startsWith(AndTmpl))
-#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
         return statement.sliced(firstChar(4));
-#else
-        return statement.mid(firstChar(4));
-#endif
+
     if (statement.startsWith(OrTmpl))
-#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
         return statement.sliced(firstChar(3));
-#else
-        return statement.mid(firstChar(3));
-#endif
 
     return std::move(statement);
 }

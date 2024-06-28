@@ -29,10 +29,9 @@ tom/include/tom/version.hpp
 README.md
 docs/README.md
 
-- vcpkg ports version number
+- vcpkg port version number
 
 cmake/vcpkg/ports/tinyorm/vcpkg.json
-cmake/vcpkg/ports/tinyorm-qt5/vcpkg.json
 
 - versions in docs
 
@@ -56,13 +55,6 @@ sudo emerge --update --newuse --deep --quiet-build -a @world
 Number of Unit tests:
 ---------------------
 
-- Qt5 has 14 unit tests less; the QSQLITE driver tests are excluded in the tst_migrate;
-  Not SKIPPED but excluded using preprocessor macros!
-
-Testing of the Qt 5 QSQLITE driver is excluded because it doesn't support
-ALTER TABLE DROP COLUMN, support for dropping columns was added
-in the SQLite v3.35.0.
-
 - Linux has 3 unit tests less and 3 SKIPPED unit tests more;
   checking exe properties are excluded in the tst_versions;
   They are SKIPPED!
@@ -70,7 +62,7 @@ in the SQLite v3.35.0.
 Linux doesn't have exe properties like version, description, ...
 
 
-How to updated vcpkg tinyorm and tinyorm-qt5 ports:
+How to updated vcpkg tinyorm port:
 ---------------------------------------------------
 
 Everything needed is in the tools/deploy.ps1 script so I write only a small summary.
@@ -468,7 +460,6 @@ Common:
  - overflow           : add check code, eg when size_t to int conversion
  - perf               : performance
  - production         : check before deploy to production
- - qt5 remove         : code to remove after the Qt v5 support will dropped
  - regex              : mark regex-es, try to avoid them
  - reliability        : make things more robust and reliable
  - repeat             : tasks that should I make from time to time
@@ -972,7 +963,7 @@ pwsh -NoLogo -NoProfile -File InvokeXTimes.ps1 100
 Powershell Clang analyzers:
 ---------------------------
 
-qa-lint-tinyorm-qt5.ps1 is tailor-made for TinyORM project.
+qa-lint-tinyorm-qt6.ps1 is tailor-made for TinyORM project.
 
 qa-clang-tidy.ps1, qa-clazy-standalone.ps1, qa-clazy-standalone-st.ps1 are more general, they can be used with any project, "-st" script calls raw clazy-standalone.exe.
 
@@ -993,7 +984,7 @@ select -ExpandProperty FullName > b.txt
 
 cat .\compile_commands.json | sls '"file":' > a.txt
 
-And use regex-es from analyzers-qt5/6.yml, eg.:
+And use regex-es from analyzers.yml, eg.:
 
 Get-Content .\a.txt | sls -Pattern '[\\\/]+(?:drivers|examples|orm|src|tests|tom)[\\\/]+.+?[\\\/]+(?!mocs_)[\w\d_\-\+]+\.cpp' | measure
 
@@ -1088,8 +1079,8 @@ cmake -LA .
 cmake.exe -S E:/c/qMedia/TinyORM/TinyORM -B E:/c/qMedia/TinyORM/TinyORM-builds-cmake/build-cmake -GNinja `
 "-DCMAKE_BUILD_TYPE:STRING=Debug" `
 "-DCMAKE_PROJECT_INCLUDE_BEFORE:PATH=E:/Qt/Tools/QtCreator/share/qtcreator/package-manager/auto-setup.cmake" `
-"-DQT_QMAKE_EXECUTABLE:STRING=E:/Qt/5.15.2/msvc2019_64/bin/qmake.exe" `
-"-DCMAKE_PREFIX_PATH:STRING=E:/Qt/5.15.2/msvc2019_64" `
+"-DQT_QMAKE_EXECUTABLE:STRING=E:/Qt/6.7.2/msvc2019_64/bin/qmake.exe" `
+"-DCMAKE_PREFIX_PATH:STRING=E:/Qt/6.7.2/msvc2019_64" `
 "-DCMAKE_C_COMPILER:STRING=C:/Program Files (x86)/Microsoft Visual Studio/2019/Community/VC/Tools/MSVC/14.29.30037/bin/HostX64/x64/cl.exe" `
 "-DCMAKE_CXX_COMPILER:STRING=C:/Program Files (x86)/Microsoft Visual Studio/2019/Community/VC/Tools/MSVC/14.29.30037/bin/HostX64/x64/cl.exe" ` "-DCMAKE_TOOLCHAIN_FILE:PATH=E:/c_libs/vcpkg/scripts/buildsystems/vcpkg.cmake"
 
@@ -1387,9 +1378,8 @@ TinyORM vcpkg testing (CMake build):
 Don't install it to the main vcpkg installation because it can happened that whole qtbase will be
 installed and it pulls in many boost packages or mysql client library pulls in much more in.
 
-I have created the svcpkg_tinyorm_port_qt5/qt6_testing.ps1 scripts so execute it and
+I have created the svcpkg_tinyorm_port_qt6_testing.ps1 script so execute it and
 use the installation at:
-O:\Code\c_libs\vcpkg-tinyorm-port-qt5\
 O:\Code\c_libs\vcpkg-tinyorm-port-qt6\
 
 To install only the necessary minimum use:
@@ -3206,8 +3196,8 @@ Searching packages:
 ./MaintenanceTool --type package --filter-packages "DisplayName=Desktop" search qt.qt6.670.linux_gcc_64
 
 Install packages:
-./MaintenanceTool install qt.qt5.5152.gcc_64
-./MaintenanceTool --mirror https://qt-mirror.dannhauer.de install qt.qt5.5152.gcc_64
+./MaintenanceTool install qt.qt6.672.linux_gcc_64
+./MaintenanceTool --mirror https://qt-mirror.dannhauer.de install qt.qt6.672.linux_gcc_64
 
 Removing packages:
 ./MaintenanceTool remove qt.tools.cmake qt.tools.ninja qt.tools.qtcreator_gui qt.tools.qtdesignstudio
@@ -3345,6 +3335,8 @@ The following are most used cases which I corrected during the static_cast<> rev
 
 Building QtSql5 MySQL drivers for Qt5:
 --------------------------------------
+note: don't remove even after Qt v5 support was removed
+---
 
 QtSql5 isn't able to build against the MySQL >=8.3 server, it must be built against
 the MySQL v8.0.x branch. Reason are mysql_list_fields() and mysql_ssl_set() functions that

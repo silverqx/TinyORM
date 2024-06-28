@@ -21,11 +21,7 @@ namespace Orm::Support
     /*! Concept for a bindings type used in the replaceBindingsInSql(). */
     template<typename T>
     concept BindingsConcept = std::convertible_to<T, QVector<QVariant>> ||
-#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
                               std::convertible_to<T, QVariantList>;
-#else
-                              std::convertible_to<T, QVariantMap>;
-#endif
 
     /*! Library class for replace placeholders in SQL queries. */
     class ReplaceBindings
@@ -112,11 +108,7 @@ namespace Orm::Support
             queryString.replace(queryString.indexOf(QLatin1Char('?')), 1, bindingValue);
 
             if (simpleBindings)
-#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
                 simpleBindingsList << std::move(bindingValue); // clazy:exclude=reserve-candidates
-#else
-                simpleBindingsList << bindingValue; // clazy:exclude=reserve-candidates
-#endif
         }
 
         return {std::move(queryString), std::move(simpleBindingsList)};

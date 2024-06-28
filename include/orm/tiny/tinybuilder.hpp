@@ -422,11 +422,7 @@ namespace Orm::Tiny
             column_ = std::get<QString>(column);
 
         if (column_.contains(DOT))
-#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
             column_ = column_.sliced(column_.lastIndexOf(DOT) + 1);
-#else
-            column_ = column_.mid(column_.lastIndexOf(DOT) + 1);
-#endif
 
         return model->getAttribute(column_);
     }
@@ -445,11 +441,7 @@ namespace Orm::Tiny
             column_ = std::get<QString>(column);
 
         if (column_.contains(DOT))
-#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
             column_ = column_.sliced(column_.lastIndexOf(DOT) + 1);
-#else
-            column_ = column_.mid(column_.lastIndexOf(DOT) + 1);
-#endif
 
         return model.getAttribute(column_);
     }
@@ -1376,11 +1368,7 @@ namespace Orm::Tiny
         progress.reserve(names.size());
 
         for (auto &&segment : names) {
-#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
             progress << std::move(segment);
-#else
-            progress << segment;
-#endif
 
             auto last = progress.join(DOT);
             const auto containsRelation = [&last](const auto &relation)
@@ -1438,7 +1426,7 @@ namespace Orm::Tiny
            that start with the given top relations and add them to our vector. */
         for (const auto &[relationName, constraints] : m_eagerLoad)
             if (isNestedUnder(topRelationName, relationName))
-#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0) || (defined(__clang__) && __clang_major__ < 16)
+#if defined(__clang__) && __clang_major__ < 16
                 nested.append({relationName.mid(topRelationName.size() + 1),
                                constraints});
 #else

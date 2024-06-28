@@ -734,11 +734,7 @@ namespace Concerns
     Derived &
     HasRelationships<Derived, AllRelations...>::addTouch(const QString &touch)
     {
-#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
         basemodel().getUserTouches().emplaceBack(touch);
-#else
-        basemodel().getUserTouches().append(touch);
-#endif
 
         return model();
     }
@@ -747,11 +743,7 @@ namespace Concerns
     Derived &
     HasRelationships<Derived, AllRelations...>::addTouch(QString &&touch)
     {
-#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
         basemodel().getUserTouches().emplaceBack(std::move(touch));
-#else
-        basemodel().getUserTouches().append(std::move(touch));
-#endif
 
         return model();
     }
@@ -1555,12 +1547,8 @@ namespace Concerns
             QVector<AttributeItem> &attributes, QString &&relation,
             QVariant &&relationSerialized)
     {
-#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
         attributes.emplaceBack(std::move(relation),
                                std::move(relationSerialized));
-#else
-        attributes.append({std::move(relation), std::move(relationSerialized)});
-#endif
     }
 
     /* Serialization - HidesAttributes */

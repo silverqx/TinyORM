@@ -100,10 +100,6 @@ namespace Concerns
         void logQueryInternal(TSqlQuery &query, std::optional<qint64> elapsed,
                               const QString &type) const;
 
-        /*! Convert a named bindings map to the positional bindings vector. */
-        static QVector<QVariant>
-        convertNamedToPositionalBindings(QVariantMap &&bindings);
-
         /*! Dynamic cast *this to the DatabaseConnection & derived type. */
         const DatabaseConnection &databaseConnection() const;
 

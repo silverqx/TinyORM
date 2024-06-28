@@ -497,13 +497,14 @@ tiny_resource_and_manifest(${Tom_target}
 # Resolve and link dependencies
 # ---
 
-find_package(QT NAMES Qt6 Qt5 COMPONENTS Core REQUIRED)
+find_package(QT NAMES Qt6 COMPONENTS Core REQUIRED)
 find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Core REQUIRED)
 find_package(TinyOrm 0.37.3 CONFIG REQUIRED)
 
 # Unconditional dependencies
 target_link_libraries(${Tom_target}
     PRIVATE
+        # Never use versionless Qt targets
         Qt${QT_VERSION_MAJOR}::Core
         TinyOrm::TinyOrm
 )

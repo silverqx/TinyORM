@@ -42,16 +42,6 @@ jobs:
             name: Release
 
         qt:
-          # GitHub Free Plan is not enough for this (no money 💵)
-          # - key: qt5
-          #   name: Qt5
-          #   version: 5.15.2
-          #   # For vcpkg classic mode (install tests)
-          #   vcpkg-qt: qt5-base
-          #   vcpkg-qt-features: qt5-base[core]
-          #   vcpkg-tinyorm: tinyorm-qt5
-          #   vcpkg-tinyorm-features: tinyorm-qt5[core,tom-example]
-
           - key: qt6
             name: Qt6
             version: 6.7.2
@@ -171,12 +161,10 @@ jobs:
         . ./tools/private/Common-Deploy.ps1
 
         $portfileQt6Path = Resolve-Path -Path './cmake/vcpkg/ports/tinyorm/portfile.cmake'
-        $portfileQt5Path = Resolve-Path -Path './cmake/vcpkg/ports/tinyorm-qt5/portfile.cmake'
         $vcpkgRef = $env:GITHUB_SHA
 
         Edit-VcpkgRefAndHash -Project $env:GITHUB_REPOSITORY -Ref $vcpkgRef `
-        -PortFile $portfileQt6Path, $portfileQt5Path `
-        -EnableRetries
+        -PortFile $portfileQt6Path -EnableRetries
 
     # The following two steps (vcpkg install) are not needed below they only test if the vcpkg
     # classic mode works correctly. The Release and Debug build types are build at once so invoke
@@ -260,29 +248,18 @@ jobs:
 
     # Related issue: https://github.com/microsoft/vcpkg/issues/33539
     - name: HelloWorld finish VCPKG_APPLOCAL_DEPS (Debug)
-      if: matrix.qt.key == 'qt6' && matrix.build-type.key == 'debug'
+      if: matrix.build-type.key == 'debug'
       working-directory: ${{ env.HelloWorldVcpkManifestBuildTree }}
       run: |
         Copy-Item -Path ./vcpkg_installed/x64-windows/debug/bin/sqlite3.dll -Destination .
         Copy-Item -Path ./vcpkg_installed/x64-windows/debug/Qt6 -Destination . -Recurse -Force
 
     - name: HelloWorld finish VCPKG_APPLOCAL_DEPS (Release)
-      if: matrix.qt.key == 'qt6' && matrix.build-type.key == 'release'
+      if: matrix.build-type.key == 'release'
       working-directory: ${{ env.HelloWorldVcpkManifestBuildTree }}
       run: |
         Copy-Item -Path ./vcpkg_installed/x64-windows/bin/sqlite3.dll -Destination .
         Copy-Item -Path ./vcpkg_installed/x64-windows/Qt6 -Destination . -Recurse -Force
-
-    # Qt5 has a problem too, it's deployed but to the wrong folder, the Release build is ok
-    - name: HelloWorld finish VCPKG_APPLOCAL_DEPS (Debug)
-      if: matrix.qt.key == 'qt5' && matrix.build-type.key == 'debug'
-      working-directory: ${{ env.HelloWorldVcpkManifestBuildTree }}
-      run: |
-        if (-not (Test-Path ./debug)) {
-          New-Item -type Directory ./debug
-        }
-
-        Copy-Item -Path ./plugins -Destination ./debug -Recurse -Force
 
     - name: HelloWorld execute (SQLite) 🏁
       working-directory: ${{ env.HelloWorldVcpkManifestBuildTree }}

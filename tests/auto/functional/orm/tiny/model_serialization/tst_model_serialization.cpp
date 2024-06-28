@@ -495,11 +495,7 @@ void tst_Model_Serialization::toMap_UDatesOnly_OverrideSerializeDateTime() const
         {"date",     QDateTime({2023, 05, 14}, {10, 11, 12}, TTimeZone::UTC)},
     });
 
-#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
     Datetime_SerializeOverride::u_dates = {"date", "datetime"};
-#else
-    Datetime_SerializeOverride::u_dates = QStringList {"date", "datetime"};
-#endif
 
     QVariantMap serialized = datetime.toMap();
     QCOMPARE(serialized.size(), 2);
@@ -523,11 +519,7 @@ tst_Model_Serialization::toVector_UDatesOnly_OverrideSerializeDateTime() const
         {"date",     QDateTime({2023, 05, 14}, {10, 11, 12}, TTimeZone::UTC)},
     });
 
-#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
     Datetime_SerializeOverride::u_dates = {"date", "datetime"};
-#else
-    Datetime_SerializeOverride::u_dates = QStringList {"date", "datetime"};
-#endif
 
     QVector<AttributeItem> serialized = datetime.toVector();
     QCOMPARE(serialized.size(), 2);
@@ -621,11 +613,7 @@ void tst_Model_Serialization::
         {"date",     QDateTime({2023, 05, 14}, {10, 11, 12}, TTimeZone::UTC)},
     });
 
-#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
     Datetime_SerializeOverride::u_dates = {"date", "datetime"};
-#else
-    Datetime_SerializeOverride::u_dates = QStringList {"date", "datetime"};
-#endif
 
     datetime.mergeCasts({
         {"datetime", CastType::QDateTime},
@@ -655,11 +643,7 @@ void tst_Model_Serialization::
         {"date",     QDateTime({2023, 05, 14}, {10, 11, 12}, TTimeZone::UTC)},
     });
 
-#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
     Datetime_SerializeOverride::u_dates = {"date", "datetime"};
-#else
-    Datetime_SerializeOverride::u_dates = QStringList {"date", "datetime"};
-#endif
 
     datetime.mergeCasts({
         {"datetime", CastType::QDateTime},
@@ -763,11 +747,7 @@ void tst_Model_Serialization::
 
 void tst_Model_Serialization::toMap_UDatesOnly_DateNullVariants() const
 {
-#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
     Type::u_dates = {"date", "datetime", "timestamp"};
-#else
-    Type::u_dates = QStringList {"date", "datetime", "timestamp"};
-#endif
 
     auto type = Type::find(3, {ID, "date", "datetime", "timestamp"});
     QVERIFY(type);
@@ -788,11 +768,7 @@ void tst_Model_Serialization::toMap_UDatesOnly_DateNullVariants() const
 
 void tst_Model_Serialization::toVector_UDatesOnly_DateNullVariants() const
 {
-#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
     Type::u_dates = {"date", "datetime", "timestamp"};
-#else
-    Type::u_dates = QStringList {"date", "datetime", "timestamp"};
-#endif
 
     auto type = Type::find(3, {ID, "date", "datetime", "timestamp"});
     QVERIFY(type);

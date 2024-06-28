@@ -165,11 +165,7 @@ namespace Concerns
     {
         ModelsCollection<Model> result;
         // Reserve the first page, it can help reallocations at the beginning
-#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
         result.reserve(count);
-#else
-        result.reserve(static_cast<decltype (result)::size_type>(count));
-#endif
 
         chunk(count, [&result, &callback]
                      (ModelsCollection<Model> &&models, const qint64 /*unused*/) // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
@@ -191,11 +187,7 @@ namespace Concerns
     {
         QVector<T> result;
         // Reserve the first page, it can help reallocations at the beginning
-#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
         result.reserve(count);
-#else
-        result.reserve(static_cast<decltype (result)::size_type>(count));
-#endif
 
         chunk(count, [&result, &callback]
                      (ModelsCollection<Model> &&models, const qint64 /*unused*/) // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)

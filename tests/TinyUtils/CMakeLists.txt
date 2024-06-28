@@ -100,6 +100,7 @@ tiny_resource_and_manifest(${TinyUtils_target}
 # Unconditional dependencies
 target_link_libraries(${TinyUtils_target}
     PUBLIC
+        # Never use versionless Qt targets
         Qt${QT_VERSION_MAJOR}::Core
         ${TinyOrm_ns}::${TinyOrm_target}
 )

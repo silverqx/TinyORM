@@ -74,12 +74,12 @@ The `Visual Studio` does not provide `vcvars` scripts for `pwsh`, you can use [`
 
 The same is true for the `Qt Framework`, it doesn't provide `qtenv` scripts for `pwsh` too. You can create your own script, place it on the `$env:Path` user/system path and it will be available system-wide.
 
-Here is one simple example for `pwsh`.
+Here is one simple example for `pwsh` and `bash` on `Linux`.
 
 <Tabs groupId={shell}>
-<TabItem value='qtenv6.ps1' label='qtenv6.ps1'>
+<TabItem value={pwsh} label={pwsh_label}>
 
-```powershell
+```powershell title='qtenv6.ps1'
 #!/usr/bin/env pwsh
 
 Set-StrictMode -Version 3.0
@@ -95,33 +95,9 @@ $env:Path = "$Script:QtRoot\6.7.2\msvc2019_64\bin;" + $env:Path
 ```
 
 </TabItem>
-<TabItem value='qtenv5.ps1' label='qtenv5.ps1'>
+<TabItem value={bash} label={bash_label}>
 
-```powershell
-#!/usr/bin/env pwsh
-
-Set-StrictMode -Version 3.0
-
-Write-Host 'Setting up environment for Qt 5.15.2 usage...' -ForegroundColor Magenta
-Write-Host
-
-$Script:QtRoot = $env:TINY_QT_ROOT ?? 'C:\Qt'
-
-$env:Path = "$Script:QtRoot\5.15.2\msvc2019_64\bin;" + $env:Path
-
-. vcvars64.ps1
-```
-
-</TabItem>
-</Tabs>
-
-And here for `Linux`.
-
-
-<Tabs groupId={shell}>
-<TabItem value='qtenv6' label='qtenv6'>
-
-```bash
+```bash title='qtenv6'
 #!/usr/bin/env sh
 
 echo 'Setting up environment for Qt 6.7.2 usage...'
@@ -130,20 +106,6 @@ QtRoot="${TINY_QT_ROOT:-/opt/Qt}"
 
 export PATH="$QtRoot/6.7.2/gcc_64/bin"${PATH:+:}$PATH
 export LD_LIBRARY_PATH="$QtRoot/6.7.2/gcc_64/lib"${LD_LIBRARY_PATH:+:}$LD_LIBRARY_PATH
-```
-
-</TabItem>
-<TabItem value='qtenv5' label='qtenv5'>
-
-```bash
-#!/usr/bin/env sh
-
-echo 'Setting up environment for Qt 5.15.2 usage...'
-
-QtRoot="${TINY_QT_ROOT:-/opt/Qt}"
-
-export PATH="$QtRoot/5.15.2/gcc_64/bin"${PATH:+:}$PATH
-export LD_LIBRARY_PATH="$QtRoot/5.15.2/gcc_64/lib"${LD_LIBRARY_PATH:+:}$LD_LIBRARY_PATH
 ```
 
 </TabItem>
@@ -196,8 +158,8 @@ You can set the root and application folder paths in the form below and they wil
 │   |   │   └── build-clang-debug/
 │   |   └── TinyORM-builds-qmake/
 │   |       ├── build-debug/
-│   |       ├── build-TinyORM-Desktop_Qt_5_15_2_MSVC2019_64bit-Debug/
-│   |       └── build-TinyORM-Desktop_Qt_5_15_2_MSYS2_UCRT64_64bit-Release/
+│   |       ├── build-TinyORM-Desktop_Qt_6_7_2_MSVC2019_64bit-Debug/
+│   |       └── build-TinyORM-Desktop_Qt_6_7_2_MSYS2_UCRT64_64bit-Release/
 │   └── tom/
 │       ├── tom/
 │       │   └── database/
@@ -208,7 +170,7 @@ You can set the root and application folder paths in the form below and they wil
 │       ├── tom-builds-cmake/
 │       │   └── build-TinyORM-Desktop_Qt_6_7_2_MSVC2019_64bit-Debug/
 │       └── tom-builds-qmake/
-│           ├── build-TinyORM-Desktop_Qt_5_15_3_MSYS2_UCRT64_64bit-Release/
+│           ├── build-TinyORM-Desktop_Qt_6_7_2_MSYS2_UCRT64_64bit-Release/
 │           └── build-TinyORM-Desktop_Qt_6_7_2_MSVC2019_64bit-Debug/
 ├── tmp/
 └── vcpkg/
@@ -241,8 +203,8 @@ You can set the root and application folder paths in the form below and they wil
 │   |   │   └── build-clang-debug/
 │   |   └── TinyORM-builds-qmake/
 │   |       ├── build-debug/
-│   |       ├── build-TinyORM-Desktop_Qt_5_15_2_GCC_64bit-Debug/
-│   |       └── build-TinyORM-Desktop_Qt_5_15_2_clang18_64bit_ccache-Release/
+│   |       ├── build-TinyORM-Desktop_Qt_6_7_2_GCC_64bit-Debug/
+│   |       └── build-TinyORM-Desktop_Qt_6_7_2_clang18_64bit_ccache-Release/
 │   └── tom/
 │       ├── tom/
 │       │   └── database/

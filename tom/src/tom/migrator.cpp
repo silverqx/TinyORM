@@ -175,11 +175,7 @@ QString Migrator::getMigrationName(const Migration &migration) const
            it starts with the '_' char, it will be validated by the throw method below. */
 
         auto migrationName = migrationNameOriginal.startsWith(UNDERSCORE)
-#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
                              ? migrationNameOriginal.sliced(1)
-#else
-                             ? migrationNameOriginal.mid(1)
-#endif
                              : migrationNameOriginal;
 
         throwIfMigrationClassNameNotValid(migrationNameOriginal, migrationName);

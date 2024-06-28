@@ -158,11 +158,7 @@ void LogsQueries::logQueryInternal(
             executedQuery = query.lastQuery();
 
         m_queryLog->append({std::move(executedQuery),
-#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
                             query.boundValues(),
-#else
-                            convertNamedToPositionalBindings(query.boundValues()),
-#endif
                             Log::Type::NORMAL, ++m_queryLogId,
                             elapsed ? *elapsed : -1,
                             QueryUtils::queryResultSize(query),
@@ -186,18 +182,6 @@ void LogsQueries::logQueryInternal(
                                       .toUtf8().constData(),
            QueryUtils::parseExecutedQuery(query).toUtf8().constData());
 #endif
-}
-
-QVector<QVariant>
-LogsQueries::convertNamedToPositionalBindings(QVariantMap &&bindings) // NOLINT(cppcoreguidelines-rvalue-reference-param-not-moved)
-{
-    QVector<QVariant> result;
-    result.reserve(bindings.size());
-
-    for (auto &&binding : bindings)
-        result << std::move(binding);
-
-    return result;
 }
 
 const DatabaseConnection &LogsQueries::databaseConnection() const

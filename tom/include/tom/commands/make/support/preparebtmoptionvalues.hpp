@@ -153,12 +153,7 @@ namespace Tom::Commands::Make::Support
             result.reserve(valuesSize);
 
             // Insert default values
-#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
             result.insert(result.cbegin(), valuesSize, {});
-#else
-            for (typename P::size_type i = 0; i < valuesSize ; ++i)
-                result.push_back({});
-#endif
 
             return {std::move(result), true};
         }

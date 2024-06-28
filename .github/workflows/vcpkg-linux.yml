@@ -53,16 +53,6 @@ jobs:
             name: Release
 
         qt:
-          # - key: qt5
-          #   name: Qt5
-          #   version: 5.15.2
-          #   apt: [ qtbase5-dev ]
-          #   # For vcpkg classic mode (install tests)
-          #   vcpkg-qt: qt5-base
-          #   vcpkg-qt-features: qt5-base[core]
-          #   vcpkg-tinyorm: tinyorm-qt5
-          #   vcpkg-tinyorm-features: tinyorm-qt5[core]
-
           - key: qt6
             name: Qt6
             version: 6.7.2
@@ -173,12 +163,10 @@ jobs:
         . ./tools/private/Common-Deploy.ps1
 
         $portfileQt6Path = Resolve-Path -Path './cmake/vcpkg/ports/tinyorm/portfile.cmake'
-        $portfileQt5Path = Resolve-Path -Path './cmake/vcpkg/ports/tinyorm-qt5/portfile.cmake'
         $vcpkgRef = $env:GITHUB_SHA
 
         Edit-VcpkgRefAndHash -Project $env:GITHUB_REPOSITORY -Ref $vcpkgRef `
-        -PortFile $portfileQt6Path, $portfileQt5Path `
-        -EnableRetries
+        -PortFile $portfileQt6Path -EnableRetries
 
     # The following two steps (vcpkg install) are not needed below they only test if the vcpkg
     # classic mode works correctly. The Release and Debug build types are build at once so invoke

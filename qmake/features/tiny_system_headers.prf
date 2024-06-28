@@ -8,15 +8,10 @@ win32-clang-msvc: \
 else: \
     optionToken = -isystem
 
-# Avoid following error on MSYS2 with Qt5:
-# fatal error: stdlib.h: No such file or directory
-# On MSYS2 are the Qt5 includes installed directly in the C:/msys64/ucrt64/include/ and
-# they are tagged as -internal-isystem, tagging them as -isystem causes the error above.
 # On MSYS2 with Qt6 are includes in the C:/msys64/ucrt64/include/qt6/ so tagging them
 # as -isystem is needed.
 # On Unix and also Clang-cl with MSVC it is needed to avoid warnings from system headers.
-!if(mingw:versionAtMost(QT_MAJOR_VERSION, 5)): \
-    QMAKE_CXXFLAGS += $$optionToken $$shell_quote($$[QT_INSTALL_HEADERS]/)
+QMAKE_CXXFLAGS += $$optionToken $$shell_quote($$[QT_INSTALL_HEADERS]/)
 
 for(module, QT) {
     equals(module, "testlib"): \
