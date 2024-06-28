@@ -103,7 +103,7 @@ Proxy methods that internally call the toBase() (applySoftDeletes):
 
 I have little misunderstood when the SoftDeletes constraint will be applied, I thought that it will be applied only
 during the TinyBuilder::toBase(), that is not absolutely true because whether it will be applied is controlled by
-the Model::newQueryXyz() methods. These Model::newQueryXyz() methods are called on various places, somehwhere
+the Model::newQueryXyz() methods. These Model::newQueryXyz() methods are called on various places, somewhere
 the newQuery() (applies SoftDeletes) is called and on another places the newModelQuery() (doesn't apply SoftDeletes) or newQueryWithoutRelationships() is called.
 
 Anyway I leave this new structure of proxy methods that are divided by the toBase() or getQuery() internal method calls,
@@ -134,7 +134,7 @@ toSql
 update
 upsert
 
-These three getters are discutable, but I will apply SoftDeletes, it won't hurt anything:
+These three getters are discussable, but I will apply SoftDeletes, it won't hurt anything:
 from
 getConnection
 getGrammar
@@ -329,7 +329,7 @@ Special rules:
  - QSQLITE driver - returns null QVariant(QMetaType(QMetaType::QString)) for all null values
  - QMYSQL driver  - returns null QVariant(QMetaType(QMetaType::Char)) for tinyint database types
  - QPSQL driver   - the logic for - and ULongLong is not applied for the null values, so it's
-                    everytime LongLong
+                    every time LongLong
 
 
 All places where is created some Model instance:
@@ -513,13 +513,13 @@ Upgrade the MSVC toolchain to new version:
 Upgrade the Qt to new version:
 ------------------------------
 tags: qt upgrade, qt update, update qt, upgrade qt, qt, update, upgrade
---
+---
 
  - run the QtCreator and do the PrintScreen of the Settings - Kits - Kits
  - close the QtCreator
  - run the Qt Maintenance Tool and add a new Qt version and also remove the old Qt version if want
  - remove the old C:\Qt\x.y.z version folder (leftovers)
- - open dotfiles in the vscode and file/replace all occurences of x.y.z and x_y_z to the new version; commit - upgraded to Qt vx.y.z
+ - open dotfiles in the vscode and file/replace all occurrences of x.y.z and x_y_z to the new version; commit - upgraded to Qt vx.y.z
  - add a new Qt version on the user PATH environment variable
  - build the QMYSQL driver - qtbuild-qmysql-driver.ps1 6.7.2
  - open the QtCreator
@@ -670,7 +670,7 @@ GitHub Actions:
 tar cjvf ../clazy-standalone.tar.bz2 .
 
    - then update this file in the https://github.com/silverqx/files project
-   - no need to udpate the URL in the GitHub URL_CLAZY_STANDALONE_LINUX_X64 secret,
+   - no need to update the URL in the GitHub URL_CLAZY_STANDALONE_LINUX_X64 secret,
      it's still the same:
 https://github.com/silverqx/files/raw/main/clazy-standalone.tar.bz2
 
@@ -1003,7 +1003,7 @@ QtCreator clangd/analyzers confusions:
 
 To finally solve this confusions I tested it all.
 
-- always use the latest clangd, cland-tidy, clazy (scoop, Gentoo pacakge)
+- always use the latest clangd, clang-tidy, clazy (scoop, Gentoo package)
 - for both clangd and analyzers in QtCreator settings set Clang warnings to:
   -Wall -Wextra -Wpedantic
   - no need to use -Weffc++ as is really outdated and produces false positives, also
@@ -1138,7 +1138,7 @@ npm install @docusaurus/core@latest @docusaurus/plugin-client-redirects@latest @
 yarn upgrade @docusaurus/core@latest @docusaurus/preset-classic@latest
 
 
-TinyOrm headres used in TinyDrivers:
+TinyOrm headers used in TinyDrivers:
 ------------------------------------
 
 TinyDrivers and SQL libraries like TinyMySql use some header files from TinyOrm library.
@@ -1268,7 +1268,7 @@ CMake confusions:
     - w/o VERBATIM you need to escape eg. \" to be passed on command-line
     - also, everything is already quoted correctly with or w/o verbatim that is a little weird,
       eg. if some list item contains space and is used with copy command then it will be quotes,
-      also the main command is quoted everytime
+      also the main command is quoted every time
     - hard to tell how this works but use VERBATIM and don't care about escaping 🤔 because it's
       also cross-platform or cross-shell so it knows which OS or shell is used and will escape
       correctly
@@ -1333,7 +1333,7 @@ How the Package Config file works:
 
 Differences between Package Config files for Install and Build tree:
 
- - they are pactically identical
+ - they are practically identical
  - this is how the Package Config for the Install tree differs from the Build tree:
    - it has a little different logic for the Information message about build type used because
      it must the vcpkg package manager into account, it calls the tiny_get_build_types() and
@@ -1384,7 +1384,7 @@ It's crazy 🙃😲🙋‍
 TinyORM vcpkg testing (CMake build):
 ------------------------------------
 
-Don't install it to the main vcpkg installation because it can happend that whole qtbase will be
+Don't install it to the main vcpkg installation because it can happened that whole qtbase will be
 installed and it pulls in many boost packages or mysql client library pulls in much more in.
 
 I have created the svcpkg_tinyorm_port_qt5/qt6_testing.ps1 scripts so execute it and
@@ -1392,7 +1392,7 @@ use the installation at:
 O:\Code\c_libs\vcpkg-tinyorm-port-qt5\
 O:\Code\c_libs\vcpkg-tinyorm-port-qt6\
 
-To install only the neccesary minimum use:
+To install only the necessary minimum use:
 
 vcpkg install tinyorm[core] qtbase[core,sql] --dry-run
 vcpkg install tinyorm[core] qtbase[core,sql-sqlite] --dry-run
@@ -1527,7 +1527,7 @@ inline constants:
      - so don't show INLINE_CONSTANTS cmake option and value is NOT DEFINED in this case so the default will be used and it's the extern constants
      - related issue: https://github.com/llvm/llvm-project/issues/55938
    - MinGW clang static build is not supported, problem with inline constants :/
-     - this is different than qmake build, it compiles (qmake has problem with duplicit symbols) but it crashes
+     - this is different than qmake build, it compiles (qmake has problem with duplicate symbols) but it crashes
      - so throw cmake message(FATAL_ERROR) with a nice message in TinyHelpers tiny_check_unsupported_build()
      - related issue: https://github.com/llvm/llvm-project/issues/55938
    - clang-cl shared build crashes with extern constants, so force to inline constants 😕🤔
@@ -1544,7 +1544,7 @@ inline constants:
    - MinGW clang shared build crashes with inline constants
      - when user sets inline_constants then qmake error() is thrown with nice message
      - so the default is extern constants, if no CONFIG option was set or user can set the extern_constants qmake CONFIG option manually (I have removed this correction logic)
-   - MinGW clang static build is not supported, contains a problem with duplicit symbols, this build type is disabled
+   - MinGW clang static build is not supported, contains a problem with duplicate symbols, this build type is disabled
      - qmake error() is thrown with a nice message
      - cmake compiles ok but crashes in this scenario
    - Clang-cl shared build crashes with extern constants, so force to inline constants 😕🤔
@@ -2768,7 +2768,7 @@ art vendor:publish --provider="Barryvdh\LaravelIdeHelper\IdeHelperServiceProvide
 | ! merging/comparing migrations was tricky, I have copied whole database, deleted jobs and cache related tables, and then run mig:st (without our migrations, Laravel migrations only (there were migrations for users, cache, jobs tables)), I updated migrations table manually when needed, then I copied our migrations, mig:st of course shows that they are already migrated what is OK
 | copy MySQL database using phpMyAdmin Operations - Copy Database
 | copy PostgreSQL database using Create database - Template to previous DB - set Template to unchecked (false)
-| replace all occurences of DB_LARAVEL_X to the new X version (.env, config/database.php)
+| replace all occurrences of DB_LARAVEL_X to the new X version (.env, config/database.php)
 art migrate:status
 art migrate --pretend
 art migrate
@@ -2788,7 +2788,7 @@ art migrate --database=pgsql
 Performance:
 ------------
 tests was done on std::vector<AttributeItem> with 1'000'000 values
---
+---
 
  - appending using grow container when needed vs loop over input data, compute size and reserve
    Result: reserve is 200% faster
@@ -2876,7 +2876,7 @@ QVariant null vs invalid:
 
  - null QVariant is valid
  - invalid QVariant is also null!
- - so checks like this (attribute.isNull() || !attribute.isValid()) are redundand because it would
+ - so checks like this (attribute.isNull() || !attribute.isValid()) are redundant because it would
    be enough to only check (attribute.isNull()), but I'm checking both in most cases.
 
     QVariant vnull {QMetaType(QMetaType::QString)};
@@ -2896,9 +2896,9 @@ QLibrary debugging:
 c++ library confusions:
 -----------------------
 
- - std::unordred_map reserve() vs ctor(size_type), they are the same
+ - std::unordered_map reserve() vs ctor(size_type), they are the same
 
- - shared_ptr and unique_ptr complete vs incomeplete type:
+ - shared_ptr and unique_ptr complete vs incomplete type:
    - https://en.cppreference.com/w/cpp/memory/unique_ptr
    - https://howardhinnant.github.io/incomplete.html
      local copy in Books (search):
@@ -3011,8 +3011,8 @@ qmake confusions:
 
  - static vs staticlib
    - static
-     means prefer linking against static library archives and if the sub-project TEMAPLTE qmake
-     option constains ".*lib" then set the CONFIG += staticlib
+     means prefer linking against static library archives and if the sub-project TEMPLATE qmake
+     option contains ".*lib" then set the CONFIG += staticlib
    - staticlib
      means build all sub-projects as static archive libraries and it also sets the CONFIG += static
      What means don't use it for the whole TinyORM project because it contains many sub-projects
@@ -3038,7 +3038,7 @@ qmake confusions:
    - -1 if command crashes; stdout will always be empty
    - 0 if successful
    - on Windows replaces \r\n with \n in output
-   - return variable will countain stdout
+   - return variable will contain stdout
    - stderr can't be obtained, is forwarded to the current stderr
    - if fails return value will contain what ever was returned, it doesn't have to empty in case,
      will be empty only if the command crashes
@@ -3116,7 +3116,7 @@ function Invoke-CreateTag
 Windows File properties:
 ------------------------
 tags: FILEFLAGS, debug
---
+---
 
 They can also be checked using, especially checking the IsDebug build:
 
@@ -3169,7 +3169,7 @@ wget -O- https://apt.llvm.org/llvm-snapshot.gpg.key | sudo tee /etc/apt/trusted.
 sudo add-apt-repository --yes --sourceslist 'deb http://apt.llvm.org/jammy/ llvm-toolchain-jammy-18 main'
 sudo apt install clang-18 clang-tidy-18 lld-18
 
- - upgrade aqtinstall (needed before ugprading Qt)
+ - upgrade aqtinstall (needed before upgrading Qt)
 python3 -m pip install --upgrade pip
 aqt version
 pip list
@@ -3232,7 +3232,7 @@ gh completion --shell bash | sudo tee /usr/share/bash-completion/completions/gh
 Others:
 ---
 
-After a few week all stoped runners are invalided so they must be re-configured.
+After a few week all stopped runners are invalided so they must be re-configured.
 Simply delete the .runner file and invoke the config script again as is described here:
 https://docs.github.com/en/actions/hosting-your-own-runners/managing-self-hosted-runners/adding-self-hosted-runners
 
@@ -3359,7 +3359,7 @@ To install just copy two dll and pdb files to Qt\5.15.2\msvc2019_64\plugins\sqld
 to copy the Qt5Sql_QMYSQLDriverPlugin.cmake as the default installation already contains it.
 
 All this isn't enough as you need the correct libmysql.dll and openssl 1 libraries. I added
-these libaries to my dotfiles at bin_qt5.
+these libraries to my dotfiles at bin_qt5.
 To use these libraries prepend this path to the Qt v5.15 KIT Environment:
 PATH=+E:\dotfiles\bin_qt5;
 
