@@ -34,7 +34,7 @@ docs/README.md
 cmake/vcpkg/ports/tinyorm/vcpkg.json
 cmake/vcpkg/ports/tinyorm-qt5/vcpkg.json
 
-- verions in docs
+- versions in docs
 
 hello-world.mdx#cmake-project
 hello-world.mdx#fetchcontent
