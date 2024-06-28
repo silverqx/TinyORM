@@ -51,6 +51,7 @@ namespace Orm::Utils
         QString joined;
         // +4 serves as a reserve (for the reserve() 😂)
         const auto delimiterSize_ = delimiterSize<typename T::size_type>(delimiter);
+        // Can't be removed as T can be Qt or std container type (different size_type)
         if constexpr (std::is_same_v<QString::size_type, typename T::size_type>)
             joined.reserve(countStringSizes(container, delimiterSize_ + 4));
         else
@@ -91,7 +92,7 @@ namespace Orm::Utils
         SizeType size = 0;
 
         for (const auto &string : container)
-            // TODO qt5 remove, check and remove similar constexpr conditions silverqx
+            // Can't be removed as T can be Qt or std container type (different size_type)
             if constexpr (std::is_same_v<SizeType, typename T::value_type::size_type>)
                 size += string.size() + addToElement;
             else
