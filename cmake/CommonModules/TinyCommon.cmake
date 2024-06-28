@@ -154,7 +154,10 @@ ${TINY_UNPARSED_ARGUMENTS}")
                 /wd4702
             )
 
-            # Needed to suppress this because lot of new warnings on latest MSVC
+            # TODO cmake this will not work with clang-cl problem is that CMAKE_CXX_SIMULATE_VERSION reports only short version like 19.40, so I can't fix it easily silverqx
+            # Needed to suppress this because lot of new warnings on latest MSVC, also doesn't
+            # matter too much because TinyORM compiles even without it with Qt v6, warnings were
+            # only on Qt5
             if(CMAKE_CXX_COMPILER_VERSION VERSION_GREATER_EQUAL "19.38.32914.95")
                 target_compile_definitions(${target} INTERFACE
                     _SILENCE_STDEXT_ARR_ITERS_DEPRECATION_WARNING

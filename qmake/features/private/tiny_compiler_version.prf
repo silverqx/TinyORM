@@ -33,6 +33,9 @@ defineReplace(tiny_get_compiler_version) {
 !defined(TINY_SIMULATED_VERSION, var): \
     TINY_SIMULATED_VERSION =
 
+!defined(TINY_COMPILER_FULL_VERSION, var): \
+    TINY_COMPILER_FULL_VERSION =
+
 if(gcc|clang):!win32-clang-msvc: \
     TINY_COMPILER_VERSION = $$tiny_get_compiler_version("-dumpversion")
 
@@ -53,8 +56,11 @@ else:win32-msvc|win32-clang-msvc {
         TINY_SIMULATED_VERSION = $$QMAKE_MSC_VER
         unset(tinyClangClCompilerVersion)
     }
-    else: \
+    else {
         TINY_COMPILER_VERSION = $$QMAKE_MSC_VER
+        TINY_COMPILER_FULL_VERSION = $$replace(QMAKE_MSC_FULL_VER, "(..)(..)(.*)", \
+                                               "\\1.\\2.\\3")
+    }
 }
 
 else: \
@@ -64,3 +70,4 @@ unset(tinyResult)
 
 cache(TINY_COMPILER_VERSION) # 'set cache' is the default
 cache(TINY_SIMULATED_VERSION)
+cache(TINY_COMPILER_FULL_VERSION)
