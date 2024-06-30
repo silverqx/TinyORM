@@ -7,14 +7,14 @@ TEMPLATE = subdirs
 # Rec - recommended, shows info message
 
 # 16.10/16.11 (1929) - to support #pragma system_header
-tinyMinReqMsvc          = 19.29
-tinyMinReqQt            = 6.2
-tinyMinReqClangCl       = 14.0.3
-tinyMinRecClang         = 12
-tinyMinRecGCC           = 10.2
+tinyMinReqMsvc    = 19.29
+tinyMinReqQt      = 6.2
+tinyMinReqClangCl = 14.0.3
+tinyMinRecClang   = 12
+tinyMinRecGCC     = 10.2
 # Unused
-#tinyMinRangeV3Version  = 0.12.0
-#tinyMinTabulateVersion = 1.5.0
+#tinyMinReqRangeV3Version  = 0.12.0
+#tinyMinReqTabulateVersion = 1.5.0
 
 # Check/verify all toolchain requirements and edge cases, throws error() on any problem
 load(private/tiny_toolchain_requirement)
