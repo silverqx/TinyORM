@@ -69,11 +69,13 @@ set(minReqQtVersion      6.2)
 #set(minReqTabulateVersion 1.5.0)
 
 # Make minimum toolchain version a requirement
+include(TinyToolchainRequirement)
 tiny_toolchain_requirement(
     MSVC     ${minReqMsvcVersion}
     CLANG_CL ${minReqClangClVersion}
     GCC      ${minRecGCCVersion}
     CLANG    ${minRecClangVersion}
+    QT       ${minReqQtVersion}
 )
 
 # TinyORM build options
