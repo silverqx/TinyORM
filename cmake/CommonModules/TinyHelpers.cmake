@@ -402,7 +402,7 @@ function(tiny_should_disable_precompile_headers out_variable)
     # This should never happen :/
     if(NOT ccacheVersionRaw MATCHES "${regexpVersion}")
         message(FATAL_ERROR "Parsing of the 'ccache --print-version' failed \
-in tiny_should_disable_precompile_headers().")
+in ${CMAKE_CURRENT_FUNCTION}().")
     endif()
 
     set(TINY_CCACHE_VERSION "${CMAKE_MATCH_0}" CACHE INTERNAL "${helpString}")
