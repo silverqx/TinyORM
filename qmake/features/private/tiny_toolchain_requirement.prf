@@ -24,10 +24,10 @@ win32-clang-msvc: \
             upgrade LLVM." )
 
 !build_pass: \
-!versionAtLeast(QT_VERSION, $$tinyMinRecQt): \
-    message( "Minimum recommended Qt Framework version was not satisfied, recommended\
-              version >=$${tinyMinRecQt}, your version is $${QT_VERSION}, upgrade\
-              Qt Framework.")
+!versionAtLeast(QT_VERSION, $$tinyMinReqQt): \
+    error( "Minimum required Qt Framework version was not satisfied, recommended\
+            version >=$${tinyMinReqQt}, your version is $${QT_VERSION}, upgrade\
+            Qt Framework.")
 
 !build_pass: \
 !win32-clang-msvc:if(gcc|clang) {
