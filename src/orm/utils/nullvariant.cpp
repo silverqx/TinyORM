@@ -10,7 +10,11 @@
    combinations of rvalue or passing by value on the recipient side (eg. to some
    function).
    I wanted to refactor this to returning by value because practically all NullVariant
-   method calls are used as factory methods but I denied it after I tested it. */
+   method calls are used as factory methods but I denied it after I tested it.
+
+   Also, the primary reason this class exists was to support the older Qt v5.15,
+   what means this class isn't needed anymore, but I have decided to leave it because of
+   the above-described performance boost. 😎 */
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
