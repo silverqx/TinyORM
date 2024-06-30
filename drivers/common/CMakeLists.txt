@@ -198,7 +198,7 @@ if(QT_VERSION_MAJOR LESS 6)
     message(FATAL_ERROR "TinyDrivers library is not supported with Qt version <6.")
 endif()
 # No need to call the tiny_find_package() here as the core TinyOrm always depends on it
-find_package(Qt${QT_VERSION_MAJOR} ${minQtVersion} CONFIG
+find_package(Qt${QT_VERSION_MAJOR} ${minReqQtVersion} CONFIG
     REQUIRED COMPONENTS Core
 )
 

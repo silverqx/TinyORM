@@ -59,7 +59,7 @@ set(minRecGCCVersion     10.2)
 set(minRecClangVersion   12)
 set(minReqClangClVersion 14.0.3)
 # Packages
-set(minQtVersion         6.2)
+set(minReqQtVersion      6.2)
 # Unused
 # As the range-v3 uses exact version policy in the package config file so passing version
 # makes real problems on CI pipelines where different OS images can have installed
@@ -398,7 +398,7 @@ tiny_resource_and_manifest(${TinyOrm_target}
 # Leaving this find_package(QT NAMES) search pattern even if the Qt v5 support was removed
 # because I like it and can be used with future Qt version
 find_package(QT NAMES Qt6 REQUIRED COMPONENTS ${TinyQtComponentsRequired})
-tiny_find_package(Qt${QT_VERSION_MAJOR} ${minQtVersion} CONFIG
+tiny_find_package(Qt${QT_VERSION_MAJOR} ${minReqQtVersion} CONFIG
     REQUIRED COMPONENTS ${TinyQtComponentsRequired}
 )
 tiny_find_package(range-v3 CONFIG REQUIRED)
@@ -460,7 +460,7 @@ endif()
 
 if(BUILD_TESTS)
     enable_testing()
-    find_package(Qt${QT_VERSION_MAJOR} ${minQtVersion} REQUIRED COMPONENTS Test)
+    find_package(Qt${QT_VERSION_MAJOR} ${minReqQtVersion} REQUIRED COMPONENTS Test)
 
     add_subdirectory(tests)
 endif()
