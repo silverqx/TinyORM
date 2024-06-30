@@ -2,7 +2,6 @@
 
 #include "orm/constants.hpp"
 #include "orm/exceptions/invalidargumenterror.hpp"
-#include "orm/utils/helpers.hpp"
 #include "orm/utils/type.hpp"
 
 TINYORM_BEGIN_COMMON_NAMESPACE
@@ -16,8 +15,6 @@ using Orm::Constants::sslmode_;
 using Orm::Constants::sslcert;
 using Orm::Constants::sslkey;
 using Orm::Constants::sslrootcert;
-
-using Orm::Utils::Helpers;
 
 namespace Orm::Configurations
 {
@@ -72,8 +69,8 @@ void PostgresConfigurationParser::throwIfSearchPathHasWrongType() const
     if (!config().contains(search_path))
         return;
 
-    if (const auto type = Helpers::qVariantTypeId(config()[search_path]);
-        type == QMetaType::QString || type == QMetaType::QStringList
+    if (const auto typeId = config()[search_path].typeId();
+        typeId == QMetaType::QString || typeId == QMetaType::QStringList
     )
         return;
 
@@ -91,8 +88,8 @@ void PostgresConfigurationParser::throwIfDontDropHasWrongType() const
     if (!config().contains(dont_drop))
         return;
 
-    if (const auto type = Helpers::qVariantTypeId(config()[dont_drop]);
-        type == QMetaType::QString || type == QMetaType::QStringList
+    if (const auto typeId = config()[dont_drop].typeId();
+        typeId == QMetaType::QString || typeId == QMetaType::QStringList
     )
         return;
 

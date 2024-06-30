@@ -12,7 +12,6 @@ TINY_SYSTEM_HEADER
 #include "orm/macros/export.hpp"
 #include "orm/macros/sqldrivermappings.hpp"
 #include "orm/support/replacebindings.hpp"
-#include "orm/utils/helpers.hpp"
 
 TINY_FORWARD_DECLARE_TSqlQuery
 
@@ -25,9 +24,6 @@ namespace Orm::Utils
     class SHAREDLIB_EXPORT Query : public Support::ReplaceBindings
     {
         Q_DISABLE_COPY_MOVE(Query)
-
-        /*! Alias for the helper utils. */
-        using Helpers = Orm::Utils::Helpers;
 
     public:
         /*! Deleted default constructor, this is a pure library class. */

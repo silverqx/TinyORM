@@ -17,8 +17,6 @@
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
-using Orm::Utils::Helpers;
-
 namespace Orm::Query
 {
 
@@ -847,9 +845,7 @@ Builder &Builder::whereDate(const Column &column, const QString &comparison,
                             QVariant value, const QString &condition)
 {
     // Convert to the QString representation (support both QDate and QDateTime)
-    if (const auto type = Helpers::qVariantTypeId(value);
-        type == QMetaType::QDate
-    )
+    if (const auto type = value.typeId(); type == QMetaType::QDate)
         value = value.value<QDate>().toString(Qt::ISODate);
 
     else if (type == QMetaType::QDateTime)
@@ -863,9 +859,7 @@ Builder &Builder::whereTime(const Column &column, const QString &comparison,
                             QVariant value, const QString &condition)
 {
     // Convert to the QString representation (support both QTime and QDateTime)
-    if (const auto type = Helpers::qVariantTypeId(value);
-        type == QMetaType::QTime
-    )
+    if (const auto type = value.typeId(); type == QMetaType::QTime)
         value = value.value<QTime>().toString(Qt::ISODate);
 
     else if (type == QMetaType::QDateTime)
@@ -879,9 +873,7 @@ Builder &Builder::whereDay(const Column &column, const QString &comparison,
                            QVariant value, const QString &condition)
 {
     // Convert to the int representation (support both QDate and QDateTime)
-    if (const auto type = Helpers::qVariantTypeId(value);
-        type == QMetaType::QDate
-    )
+    if (const auto type = value.typeId(); type == QMetaType::QDate)
         value = value.value<QDate>().day();
 
     else if (type == QMetaType::QDateTime)
@@ -898,9 +890,7 @@ Builder &Builder::whereMonth(const Column &column, const QString &comparison,
                              QVariant value, const QString &condition)
 {
     // Convert to the int representation (support both QDate and QDateTime)
-    if (const auto type = Helpers::qVariantTypeId(value);
-        type == QMetaType::QDate
-    )
+    if (const auto type = value.typeId(); type == QMetaType::QDate)
         value = value.value<QDate>().month();
 
     else if (type == QMetaType::QDateTime)
@@ -917,9 +907,7 @@ Builder &Builder::whereYear(const Column &column, const QString &comparison,
                             QVariant value, const QString &condition)
 {
     // Convert to the int representation (support both QDate and QDateTime)
-    if (const auto type = Helpers::qVariantTypeId(value);
-        type == QMetaType::QDate
-    )
+    if (const auto type = value.typeId(); type == QMetaType::QDate)
         value = value.value<QDate>().year();
 
     else if (type == QMetaType::QDateTime)

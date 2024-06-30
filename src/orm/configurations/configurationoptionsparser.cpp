@@ -3,7 +3,6 @@
 #include "orm/configurations/configurationparser.hpp"
 #include "orm/constants.hpp"
 #include "orm/exceptions/invalidargumenterror.hpp"
-#include "orm/utils/helpers.hpp"
 #include "orm/utils/type.hpp"
 
 TINYORM_BEGIN_COMMON_NAMESPACE
@@ -13,8 +12,6 @@ using Orm::Constants::EMPTY;
 using Orm::Constants::EQ_C;
 using Orm::Constants::SEMICOLON;
 using Orm::Constants::options_;
-
-using Orm::Utils::Helpers;
 
 namespace Orm::Configurations
 {
@@ -83,9 +80,7 @@ void ConfigurationOptionsParser::copyOptionsFromTopLevel(
 
 void ConfigurationOptionsParser::validateConfigOptions(const QVariant &options)
 {
-    if (Helpers::qVariantTypeId(options) == QMetaType::QString ||
-        options.canConvert<QVariantHash>()
-    )
+    if (options.typeId() == QMetaType::QString || options.canConvert<QVariantHash>())
         return;
 
     throw Exceptions::InvalidArgumentError(
@@ -100,7 +95,7 @@ QVariantHash ConfigurationOptionsParser::prepareConfigOptions(const QVariant &op
 {
     /* Nothing to do, already contains the QVariantHas. Input is already validated, so
        we can be sure that the 'options' option type is the QVariantHash. */
-    if (Helpers::qVariantTypeId(options) != QMetaType::QString)
+    if (options.typeId() != QMetaType::QString)
         return options.value<QVariantHash>();
 
     /* The following algorithm converts the QString defined 'options' to the QVariantHash.

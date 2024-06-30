@@ -6,7 +6,6 @@
 
 #include "orm/db.hpp"
 #include "orm/sqliteconnection.hpp"
-#include "orm/utils/helpers.hpp"
 
 #include "databases.hpp"
 #include "macros.hpp"
@@ -23,7 +22,6 @@ using Orm::Exceptions::InvalidArgumentError;
 using Orm::Exceptions::InvalidFormatError;
 using Orm::SQLiteConnection;
 using Orm::TTimeZone;
-using Orm::Utils::Helpers;
 
 using TypeUtils = Orm::Utils::Type;
 
@@ -453,7 +451,7 @@ void tst_CastAttributes::withCasts_OnTinyBuilder() const
     QCOMPARE(type->getKeyCasted(), 1);
 
     auto attribute = type->getAttribute("smallint");
-    auto typeId = Helpers::qVariantTypeId(attribute);
+    auto typeId = attribute.typeId();
 
     if (const auto driverName = DB::driverName(connection);
         driverName == QMYSQL
@@ -482,7 +480,7 @@ void tst_CastAttributes::withCasts_OnModel() const
     QCOMPARE(type->getKeyCasted(), 1);
 
     auto attribute = type->getAttribute("smallint");
-    auto typeId = Helpers::qVariantTypeId(attribute);
+    auto typeId = attribute.typeId();
 
     if (const auto driverName = DB::driverName(connection);
         driverName == QMYSQL
@@ -540,7 +538,7 @@ void tst_CastAttributes::defaultCast_bool_true() const
     auto &type = model(connection);
 
     auto attribute = type.getAttribute("bool_true");
-    auto typeId = Helpers::qVariantTypeId(attribute);
+    auto typeId = attribute.typeId();
 
     if (const auto driverName = DB::driverName(connection);
         driverName == QMYSQL
@@ -563,7 +561,7 @@ void tst_CastAttributes::defaultCast_bool_false() const
     auto &type = model(connection);
 
     auto attribute = type.getAttribute("bool_false");
-    auto typeId = Helpers::qVariantTypeId(attribute);
+    auto typeId = attribute.typeId();
 
     if (const auto driverName = DB::driverName(connection);
         driverName == QMYSQL
@@ -586,7 +584,7 @@ void tst_CastAttributes::defaultCast_smallint() const
     auto &type = model(connection);
 
     auto attribute = type.getAttribute("smallint");
-    auto typeId = Helpers::qVariantTypeId(attribute);
+    auto typeId = attribute.typeId();
 
     if (const auto driverName = DB::driverName(connection);
         driverName == QMYSQL
@@ -609,7 +607,7 @@ void tst_CastAttributes::defaultCast_smallint_u() const
     auto &type = model(connection);
 
     auto attribute = type.getAttribute("smallint_u");
-    auto typeId = Helpers::qVariantTypeId(attribute);
+    auto typeId = attribute.typeId();
 
     if (const auto driverName = DB::driverName(connection);
         driverName == QMYSQL
@@ -632,7 +630,7 @@ void tst_CastAttributes::defaultCast_int() const
     auto &type = model(connection);
 
     auto attribute = type.getAttribute("int");
-    auto typeId = Helpers::qVariantTypeId(attribute);
+    auto typeId = attribute.typeId();
 
     if (const auto driverName = DB::driverName(connection);
         driverName == QMYSQL
@@ -655,7 +653,7 @@ void tst_CastAttributes::defaultCast_int_u() const
     auto &type = model(connection);
 
     auto attribute = type.getAttribute("int_u");
-    auto typeId = Helpers::qVariantTypeId(attribute);
+    auto typeId = attribute.typeId();
 
     if (const auto driverName = DB::driverName(connection);
         driverName == QMYSQL
@@ -678,7 +676,7 @@ void tst_CastAttributes::defaultCast_bigint() const
     auto &type = model(connection);
 
     auto attribute = type.getAttribute("bigint");
-    auto typeId = Helpers::qVariantTypeId(attribute);
+    auto typeId = attribute.typeId();
 
     if (const auto driverName = DB::driverName(connection);
         driverName == QMYSQL
@@ -701,7 +699,7 @@ void tst_CastAttributes::defaultCast_bigint_u() const
     auto &type = model(connection);
 
     auto attribute = type.getAttribute("bigint_u");
-    auto typeId = Helpers::qVariantTypeId(attribute);
+    auto typeId = attribute.typeId();
 
     if (const auto driverName = DB::driverName(connection);
         driverName == QMYSQL
@@ -724,7 +722,7 @@ void tst_CastAttributes::defaultCast_smallint_Negative() const
     auto &type = modelNegative(connection);
 
     auto attribute = type.getAttribute("smallint");
-    auto typeId = Helpers::qVariantTypeId(attribute);
+    auto typeId = attribute.typeId();
 
     if (const auto driverName = DB::driverName(connection);
         driverName == QMYSQL
@@ -747,7 +745,7 @@ void tst_CastAttributes::defaultCast_int_Negative() const
     auto &type = modelNegative(connection);
 
     auto attribute = type.getAttribute("int");
-    auto typeId = Helpers::qVariantTypeId(attribute);
+    auto typeId = attribute.typeId();
 
     if (const auto driverName = DB::driverName(connection);
         driverName == QMYSQL
@@ -770,7 +768,7 @@ void tst_CastAttributes::defaultCast_bigint_Negative() const
     auto &type = modelNegative(connection);
 
     auto attribute = type.getAttribute("bigint");
-    auto typeId = Helpers::qVariantTypeId(attribute);
+    auto typeId = attribute.typeId();
 
     if (const auto driverName = DB::driverName(connection);
         driverName == QMYSQL
@@ -796,7 +794,7 @@ void tst_CastAttributes::defaultCast_double() const
     auto &type = model(connection);
 
     auto attribute = type.getAttribute("double");
-    auto typeId = Helpers::qVariantTypeId(attribute);
+    auto typeId = attribute.typeId();
 
     if (const auto driverName = DB::driverName(connection);
         driverName == QMYSQL
@@ -822,7 +820,7 @@ void tst_CastAttributes::defaultCast_double_Negative() const
     auto &type = modelNegative(connection);
 
     auto attribute = type.getAttribute("double");
-    auto typeId = Helpers::qVariantTypeId(attribute);
+    auto typeId = attribute.typeId();
 
     if (const auto driverName = DB::driverName(connection);
         driverName == QMYSQL
@@ -852,7 +850,7 @@ void tst_CastAttributes::defaultCast_double_NaN() const
     auto &type = model(connection);
 
     auto attribute = type.getAttribute("double_nan");
-    auto typeId = Helpers::qVariantTypeId(attribute);
+    auto typeId = attribute.typeId();
 
     QCOMPARE(typeId, QMetaType::Double);
     QCOMPARE(attribute.value<double>(), std::numeric_limits<double>::quiet_NaN());
@@ -872,7 +870,7 @@ void tst_CastAttributes::defaultCast_double_Infinity() const
     auto &type = model(connection);
 
     auto attribute = type.getAttribute("double_infinity");
-    auto typeId = Helpers::qVariantTypeId(attribute);
+    auto typeId = attribute.typeId();
 
     QCOMPARE(typeId, QMetaType::Double);
     QCOMPARE(attribute.value<double>(), std::numeric_limits<double>::infinity());
@@ -888,7 +886,7 @@ void tst_CastAttributes::defaultCast_decimal() const
     auto &type = model(connection);
 
     auto attribute = type.getAttribute("decimal");
-    auto typeId = Helpers::qVariantTypeId(attribute);
+    auto typeId = attribute.typeId();
 
     if (const auto driverName = DB::driverName(connection);
         driverName == QMYSQL
@@ -914,7 +912,7 @@ void tst_CastAttributes::defaultCast_decimal_Negative() const
     auto &type = modelNegative(connection);
 
     auto attribute = type.getAttribute("decimal");
-    auto typeId = Helpers::qVariantTypeId(attribute);
+    auto typeId = attribute.typeId();
 
     if (const auto driverName = DB::driverName(connection);
         driverName == QMYSQL
@@ -944,7 +942,7 @@ void tst_CastAttributes::defaultCast_decimal_NaN() const
     auto &type = model(connection);
 
     auto attribute = type.getAttribute("decimal_nan");
-    auto typeId = Helpers::qVariantTypeId(attribute);
+    auto typeId = attribute.typeId();
 
     QCOMPARE(typeId, QMetaType::Double);
     QCOMPARE(attribute.value<double>(), std::numeric_limits<double>::quiet_NaN());
@@ -964,7 +962,7 @@ void tst_CastAttributes::defaultCast_decimal_Infinity() const
     auto &type = model(connection);
 
     auto attribute = type.getAttribute("decimal_infinity");
-    auto typeId = Helpers::qVariantTypeId(attribute);
+    auto typeId = attribute.typeId();
 
     QCOMPARE(typeId, QMetaType::Double);
     QCOMPARE(attribute.value<double>(), std::numeric_limits<double>::infinity());
@@ -977,7 +975,7 @@ void tst_CastAttributes::defaultCast_string() const
     auto &type = model(connection);
 
     auto attribute = type.getAttribute("string");
-    auto typeId = Helpers::qVariantTypeId(attribute);
+    auto typeId = attribute.typeId();
 
     QCOMPARE(typeId, QMetaType::QString);
     QCOMPARE(attribute.value<QString>(), sl("string text"));
@@ -990,7 +988,7 @@ void tst_CastAttributes::defaultCast_text() const
     auto &type = model(connection);
 
     auto attribute = type.getAttribute("text");
-    auto typeId = Helpers::qVariantTypeId(attribute);
+    auto typeId = attribute.typeId();
 
     QCOMPARE(typeId, QMetaType::QString);
     QCOMPARE(attribute.value<QString>(), sl("text text"));
@@ -1003,7 +1001,7 @@ void tst_CastAttributes::defaultCast_timestamp() const
     auto &type = model(connection);
 
     auto attribute = type.getAttribute("timestamp");
-    auto typeId = Helpers::qVariantTypeId(attribute);
+    auto typeId = attribute.typeId();
 
     QCOMPARE(typeId, QMetaType::QDateTime);
 
@@ -1020,7 +1018,7 @@ void tst_CastAttributes::defaultCast_datetime() const
     auto &type = model(connection);
 
     auto attribute = type.getAttribute("datetime");
-    auto typeId = Helpers::qVariantTypeId(attribute);
+    auto typeId = attribute.typeId();
 
     QCOMPARE(typeId, QMetaType::QDateTime);
 
@@ -1037,7 +1035,7 @@ void tst_CastAttributes::defaultCast_date() const
     auto &type = model(connection);
 
     auto attribute = type.getAttribute("date");
-    auto typeId = Helpers::qVariantTypeId(attribute);
+    auto typeId = attribute.typeId();
 
     QCOMPARE(typeId, QMetaType::QDate);
 
@@ -1051,7 +1049,7 @@ void tst_CastAttributes::defaultCast_time() const
     auto &type = model(connection);
 
     auto attribute = type.getAttribute("time");
-    auto typeId = Helpers::qVariantTypeId(attribute);
+    auto typeId = attribute.typeId();
 
     // Postgres returns QTime() because its time type can't be out of 24 hours range
     if (DB::driverName(connection) == QPSQL) {
@@ -1082,7 +1080,7 @@ void tst_CastAttributes::defaultCast_timestamp_QSQLITE_OffReturnQDateTime() cons
     QCOMPARE(type->getKeyCasted(), 1);
 
     auto attribute = type->getAttribute("timestamp");
-    auto typeId = Helpers::qVariantTypeId(attribute);
+    auto typeId = attribute.typeId();
 
     QCOMPARE(typeId, QMetaType::QString);
 
@@ -1111,7 +1109,7 @@ void tst_CastAttributes::defaultCast_datetime_QSQLITE_OffReturnQDateTime() const
     QCOMPARE(type->getKeyCasted(), 1);
 
     auto attribute = type->getAttribute("datetime");
-    auto typeId = Helpers::qVariantTypeId(attribute);
+    auto typeId = attribute.typeId();
 
     QCOMPARE(typeId, QMetaType::QString);
 
@@ -1140,7 +1138,7 @@ void tst_CastAttributes::defaultCast_date_QSQLITE_OffReturnQDateTime() const
     QCOMPARE(type->getKeyCasted(), 1);
 
     auto attribute = type->getAttribute("date");
-    auto typeId = Helpers::qVariantTypeId(attribute);
+    auto typeId = attribute.typeId();
 
     QCOMPARE(typeId, QMetaType::QString);
 
@@ -1157,7 +1155,7 @@ void tst_CastAttributes::defaultCast_blob() const
     auto &type = model(connection);
 
     auto attribute = type.getAttribute("binary");
-    auto typeId = Helpers::qVariantTypeId(attribute);
+    auto typeId = attribute.typeId();
 
     if (const auto driverName = DB::driverName(connection);
         driverName == QMYSQL
@@ -1195,7 +1193,7 @@ void tst_CastAttributes::defaultCast_Null_bool_true() const
     auto &type = modelNull(connection);
 
     auto attribute = type.getAttribute("bool_true");
-    auto typeId = Helpers::qVariantTypeId(attribute);
+    auto typeId = attribute.typeId();
 
     if (const auto driverName = DB::driverName(connection);
         driverName == QMYSQL
@@ -1220,7 +1218,7 @@ void tst_CastAttributes::defaultCast_Null_smallint() const
     auto &type = modelNull(connection);
 
     auto attribute = type.getAttribute("smallint");
-    auto typeId = Helpers::qVariantTypeId(attribute);
+    auto typeId = attribute.typeId();
 
     if (const auto driverName = DB::driverName(connection);
         driverName == QMYSQL
@@ -1243,7 +1241,7 @@ void tst_CastAttributes::defaultCast_Null_smallint_u() const
     auto &type = modelNull(connection);
 
     auto attribute = type.getAttribute("smallint_u");
-    auto typeId = Helpers::qVariantTypeId(attribute);
+    auto typeId = attribute.typeId();
 
     if (const auto driverName = DB::driverName(connection);
         driverName == QMYSQL
@@ -1266,7 +1264,7 @@ void tst_CastAttributes::defaultCast_Null_int() const
     auto &type = modelNull(connection);
 
     auto attribute = type.getAttribute("int");
-    auto typeId = Helpers::qVariantTypeId(attribute);
+    auto typeId = attribute.typeId();
 
     if (const auto driverName = DB::driverName(connection);
         driverName == QMYSQL
@@ -1289,7 +1287,7 @@ void tst_CastAttributes::defaultCast_Null_int_u() const
     auto &type = modelNull(connection);
 
     auto attribute = type.getAttribute("int_u");
-    auto typeId = Helpers::qVariantTypeId(attribute);
+    auto typeId = attribute.typeId();
 
     if (const auto driverName = DB::driverName(connection);
         driverName == QMYSQL
@@ -1312,7 +1310,7 @@ void tst_CastAttributes::defaultCast_Null_bigint() const
     auto &type = modelNull(connection);
 
     auto attribute = type.getAttribute("bigint");
-    auto typeId = Helpers::qVariantTypeId(attribute);
+    auto typeId = attribute.typeId();
 
     if (const auto driverName = DB::driverName(connection);
         driverName == QMYSQL
@@ -1337,7 +1335,7 @@ void tst_CastAttributes::defaultCast_Null_bigint_u() const
     auto &type = modelNull(connection);
 
     auto attribute = type.getAttribute("bigint_u");
-    auto typeId = Helpers::qVariantTypeId(attribute);
+    auto typeId = attribute.typeId();
 
     if (const auto driverName = DB::driverName(connection);
         driverName == QMYSQL
@@ -1365,7 +1363,7 @@ void tst_CastAttributes::defaultCast_Null_double() const
     auto &type = modelNull(connection);
 
     auto attribute = type.getAttribute("double");
-    auto typeId = Helpers::qVariantTypeId(attribute);
+    auto typeId = attribute.typeId();
 
     if (const auto driverName = DB::driverName(connection);
         driverName == QMYSQL
@@ -1395,7 +1393,7 @@ void tst_CastAttributes::defaultCast_Null_double_NaN() const
     auto &type = modelNull(connection);
 
     auto attribute = type.getAttribute("double_nan");
-    auto typeId = Helpers::qVariantTypeId(attribute);
+    auto typeId = attribute.typeId();
 
     QCOMPARE(typeId, QMetaType::Double);
     QVERIFY(attribute.isNull());
@@ -1415,7 +1413,7 @@ void tst_CastAttributes::defaultCast_Null_double_Infinity() const
     auto &type = modelNull(connection);
 
     auto attribute = type.getAttribute("double_infinity");
-    auto typeId = Helpers::qVariantTypeId(attribute);
+    auto typeId = attribute.typeId();
 
     QCOMPARE(typeId, QMetaType::Double);
     QVERIFY(attribute.isNull());
@@ -1431,7 +1429,7 @@ void tst_CastAttributes::defaultCast_Null_decimal() const
     auto &type = modelNull(connection);
 
     auto attribute = type.getAttribute("decimal");
-    auto typeId = Helpers::qVariantTypeId(attribute);
+    auto typeId = attribute.typeId();
 
     if (const auto driverName = DB::driverName(connection);
         driverName == QMYSQL
@@ -1461,7 +1459,7 @@ void tst_CastAttributes::defaultCast_Null_decimal_NaN() const
     auto &type = modelNull(connection);
 
     auto attribute = type.getAttribute("decimal_nan");
-    auto typeId = Helpers::qVariantTypeId(attribute);
+    auto typeId = attribute.typeId();
 
     QCOMPARE(typeId, QMetaType::Double);
     QVERIFY(attribute.isNull());
@@ -1481,7 +1479,7 @@ void tst_CastAttributes::defaultCast_Null_decimal_Infinity() const
     auto &type = modelNull(connection);
 
     auto attribute = type.getAttribute("decimal_infinity");
-    auto typeId = Helpers::qVariantTypeId(attribute);
+    auto typeId = attribute.typeId();
 
     QCOMPARE(typeId, QMetaType::Double);
     QVERIFY(attribute.isNull());
@@ -1494,7 +1492,7 @@ void tst_CastAttributes::defaultCast_Null_string() const
     auto &type = modelNull(connection);
 
     auto attribute = type.getAttribute("string");
-    auto typeId = Helpers::qVariantTypeId(attribute);
+    auto typeId = attribute.typeId();
 
     QCOMPARE(typeId, QMetaType::QString);
     QVERIFY(attribute.isNull());
@@ -1507,7 +1505,7 @@ void tst_CastAttributes::defaultCast_Null_text() const
     auto &type = modelNull(connection);
 
     auto attribute = type.getAttribute("text");
-    auto typeId = Helpers::qVariantTypeId(attribute);
+    auto typeId = attribute.typeId();
 
     QCOMPARE(typeId, QMetaType::QString);
     QVERIFY(attribute.isNull());
@@ -1520,7 +1518,7 @@ void tst_CastAttributes::defaultCast_Null_timestamp() const
     auto &type = modelNull(connection);
 
     auto attribute = type.getAttribute("timestamp");
-    auto typeId = Helpers::qVariantTypeId(attribute);
+    auto typeId = attribute.typeId();
 
     if (DB::driverName(connection) == QSQLITE)
         QCOMPARE(typeId, QMetaType::QString);
@@ -1537,7 +1535,7 @@ void tst_CastAttributes::defaultCast_Null_datetime() const
     auto &type = modelNull(connection);
 
     auto attribute = type.getAttribute("datetime");
-    auto typeId = Helpers::qVariantTypeId(attribute);
+    auto typeId = attribute.typeId();
 
     if (DB::driverName(connection) == QSQLITE)
         QCOMPARE(typeId, QMetaType::QString);
@@ -1554,7 +1552,7 @@ void tst_CastAttributes::defaultCast_Null_date() const
     auto &type = modelNull(connection);
 
     auto attribute = type.getAttribute("date");
-    auto typeId = Helpers::qVariantTypeId(attribute);
+    auto typeId = attribute.typeId();
 
     if (DB::driverName(connection) == QSQLITE)
         QCOMPARE(typeId, QMetaType::QString);
@@ -1571,7 +1569,7 @@ void tst_CastAttributes::defaultCast_Null_time() const
     auto &type = modelNull(connection);
 
     auto attribute = type.getAttribute("time");
-    auto typeId = Helpers::qVariantTypeId(attribute);
+    auto typeId = attribute.typeId();
 
     if (const auto driverName = DB::driverName(connection);
         driverName == QMYSQL
@@ -1595,7 +1593,7 @@ void tst_CastAttributes::defaultCast_Null_blob() const
     auto &type = modelNull(connection);
 
     auto attribute = type.getAttribute("binary");
-    auto typeId = Helpers::qVariantTypeId(attribute);
+    auto typeId = attribute.typeId();
 
     if (const auto driverName = DB::driverName(connection);
         driverName == QMYSQL
@@ -1622,7 +1620,7 @@ void tst_CastAttributes::cast_bool_true_to_bool() const
     type.mergeCasts({{"bool_true", CastType::Bool}});
 
     auto attribute = type.getAttribute("bool_true");
-    auto typeId = Helpers::qVariantTypeId(attribute);
+    auto typeId = attribute.typeId();
 
     if (const auto driverName = DB::driverName(connection);
         driverName == QMYSQL
@@ -1647,7 +1645,7 @@ void tst_CastAttributes::cast_bool_true_to_int() const
     type.mergeCasts({{"bool_true", CastType::Integer}});
 
     auto attribute = type.getAttribute("bool_true");
-    auto typeId = Helpers::qVariantTypeId(attribute);
+    auto typeId = attribute.typeId();
 
     if (const auto driverName = DB::driverName(connection);
         driverName == QMYSQL
@@ -1672,7 +1670,7 @@ void tst_CastAttributes::cast_bool_false_to_bool() const
     type.mergeCasts({{"bool_false", CastType::Bool}});
 
     auto attribute = type.getAttribute("bool_false");
-    auto typeId = Helpers::qVariantTypeId(attribute);
+    auto typeId = attribute.typeId();
 
     if (const auto driverName = DB::driverName(connection);
         driverName == QMYSQL
@@ -1697,7 +1695,7 @@ void tst_CastAttributes::cast_bool_false_to_int() const
     type.mergeCasts({{"bool_false", CastType::Integer}});
 
     auto attribute = type.getAttribute("bool_false");
-    auto typeId = Helpers::qVariantTypeId(attribute);
+    auto typeId = attribute.typeId();
 
     if (const auto driverName = DB::driverName(connection);
         driverName == QMYSQL
@@ -1722,7 +1720,7 @@ void tst_CastAttributes::cast_smallint_to_uint() const
     type.mergeCasts({{"smallint", CastType::UInteger}});
 
     auto attribute = type.getAttribute("smallint");
-    auto typeId = Helpers::qVariantTypeId(attribute);
+    auto typeId = attribute.typeId();
 
     if (const auto driverName = DB::driverName(connection);
         driverName == QMYSQL
@@ -1747,7 +1745,7 @@ void tst_CastAttributes::cast_smallint_u_to_ulonglong() const
     type.mergeCasts({{"smallint_u", CastType::ULongLong}});
 
     auto attribute = type.getAttribute("smallint_u");
-    auto typeId = Helpers::qVariantTypeId(attribute);
+    auto typeId = attribute.typeId();
 
     if (const auto driverName = DB::driverName(connection);
         driverName == QMYSQL
@@ -1772,7 +1770,7 @@ void tst_CastAttributes::cast_int_to_ulonglong() const
     type.mergeCasts({{"int", CastType::ULongLong}});
 
     auto attribute = type.getAttribute("int");
-    auto typeId = Helpers::qVariantTypeId(attribute);
+    auto typeId = attribute.typeId();
 
     if (const auto driverName = DB::driverName(connection);
         driverName == QMYSQL
@@ -1797,7 +1795,7 @@ void tst_CastAttributes::cast_int_u_to_ulonglong() const
     type.mergeCasts({{"int_u", CastType::ULongLong}});
 
     auto attribute = type.getAttribute("int_u");
-    auto typeId = Helpers::qVariantTypeId(attribute);
+    auto typeId = attribute.typeId();
 
     if (const auto driverName = DB::driverName(connection);
         driverName == QMYSQL
@@ -1822,7 +1820,7 @@ void tst_CastAttributes::cast_bigint_to_QString() const
     type.mergeCasts({{"bigint", CastType::QString}});
 
     auto attribute = type.getAttribute("bigint");
-    auto typeId = Helpers::qVariantTypeId(attribute);
+    auto typeId = attribute.typeId();
 
     if (const auto driverName = DB::driverName(connection);
         driverName == QMYSQL
@@ -1847,7 +1845,7 @@ void tst_CastAttributes::cast_bigint_u_to_QString() const
     type.mergeCasts({{"bigint_u", CastType::QString}});
 
     auto attribute = type.getAttribute("bigint_u");
-    auto typeId = Helpers::qVariantTypeId(attribute);
+    auto typeId = attribute.typeId();
 
     if (const auto driverName = DB::driverName(connection);
         driverName == QMYSQL
@@ -1872,7 +1870,7 @@ void tst_CastAttributes::cast_smallint_Negative_to_short() const
     type.mergeCasts({{"smallint", CastType::Short}});
 
     auto attribute = type.getAttribute("smallint");
-    auto typeId = Helpers::qVariantTypeId(attribute);
+    auto typeId = attribute.typeId();
 
     if (const auto driverName = DB::driverName(connection);
         driverName == QMYSQL
@@ -1897,7 +1895,7 @@ void tst_CastAttributes::cast_smallint_Negative_to_int() const
     type.mergeCasts({{"smallint", CastType::Int}});
 
     auto attribute = type.getAttribute("smallint");
-    auto typeId = Helpers::qVariantTypeId(attribute);
+    auto typeId = attribute.typeId();
 
     if (const auto driverName = DB::driverName(connection);
         driverName == QMYSQL
@@ -1922,7 +1920,7 @@ void tst_CastAttributes::cast_smallint_Negative_to_QString() const
     type.mergeCasts({{"smallint", CastType::QString}});
 
     auto attribute = type.getAttribute("smallint");
-    auto typeId = Helpers::qVariantTypeId(attribute);
+    auto typeId = attribute.typeId();
 
     if (const auto driverName = DB::driverName(connection);
         driverName == QMYSQL
@@ -1947,7 +1945,7 @@ void tst_CastAttributes::cast_int_Negative_to_longlong() const
     type.mergeCasts({{"int", CastType::LongLong}});
 
     auto attribute = type.getAttribute("int");
-    auto typeId = Helpers::qVariantTypeId(attribute);
+    auto typeId = attribute.typeId();
 
     if (const auto driverName = DB::driverName(connection);
         driverName == QMYSQL
@@ -1972,7 +1970,7 @@ void tst_CastAttributes::cast_int_Negative_to_QString() const
     type.mergeCasts({{"int", CastType::QString}});
 
     auto attribute = type.getAttribute("int");
-    auto typeId = Helpers::qVariantTypeId(attribute);
+    auto typeId = attribute.typeId();
 
     if (const auto driverName = DB::driverName(connection);
         driverName == QMYSQL
@@ -1997,7 +1995,7 @@ void tst_CastAttributes::cast_bigint_Negative_to_longlong() const
     type.mergeCasts({{"bigint", CastType::LongLong}});
 
     auto attribute = type.getAttribute("bigint");
-    auto typeId = Helpers::qVariantTypeId(attribute);
+    auto typeId = attribute.typeId();
 
     if (const auto driverName = DB::driverName(connection);
         driverName == QMYSQL
@@ -2022,7 +2020,7 @@ void tst_CastAttributes::cast_bigint_Negative_to_QString() const
     type.mergeCasts({{"bigint", CastType::QString}});
 
     auto attribute = type.getAttribute("bigint");
-    auto typeId = Helpers::qVariantTypeId(attribute);
+    auto typeId = attribute.typeId();
 
     if (const auto driverName = DB::driverName(connection);
         driverName == QMYSQL
@@ -2050,7 +2048,7 @@ void tst_CastAttributes::cast_double_to_longlong() const
     type.mergeCasts({{"double", CastType::LongLong}});
 
     auto attribute = type.getAttribute("double");
-    auto typeId = Helpers::qVariantTypeId(attribute);
+    auto typeId = attribute.typeId();
 
     if (const auto driverName = DB::driverName(connection);
         driverName == QMYSQL
@@ -2078,7 +2076,7 @@ void tst_CastAttributes::cast_double_to_QString() const
     type.mergeCasts({{"double", CastType::QString}});
 
     auto attribute = type.getAttribute("double");
-    auto typeId = Helpers::qVariantTypeId(attribute);
+    auto typeId = attribute.typeId();
 
     if (const auto driverName = DB::driverName(connection);
         driverName == QMYSQL
@@ -2106,7 +2104,7 @@ void tst_CastAttributes::cast_double_Negative_to_longlong() const
     type.mergeCasts({{"double", CastType::LongLong}});
 
     auto attribute = type.getAttribute("double");
-    auto typeId = Helpers::qVariantTypeId(attribute);
+    auto typeId = attribute.typeId();
 
     if (const auto driverName = DB::driverName(connection);
         driverName == QMYSQL
@@ -2134,7 +2132,7 @@ void tst_CastAttributes::cast_double_Negative_to_QString() const
     type.mergeCasts({{"double", CastType::QString}});
 
     auto attribute = type.getAttribute("double");
-    auto typeId = Helpers::qVariantTypeId(attribute);
+    auto typeId = attribute.typeId();
 
     if (const auto driverName = DB::driverName(connection);
         driverName == QMYSQL
@@ -2162,7 +2160,7 @@ void tst_CastAttributes::cast_decimal_to_Decimal() const
     type.mergeCasts({{"decimal", CastType::Decimal}});
 
     auto attribute = type.getAttribute("decimal");
-    auto typeId = Helpers::qVariantTypeId(attribute);
+    auto typeId = attribute.typeId();
 
     if (const auto driverName = DB::driverName(connection);
         driverName == QMYSQL
@@ -2190,7 +2188,7 @@ void tst_CastAttributes::cast_decimal_to_longlong() const
     type.mergeCasts({{"decimal", CastType::LongLong}});
 
     auto attribute = type.getAttribute("decimal");
-    auto typeId = Helpers::qVariantTypeId(attribute);
+    auto typeId = attribute.typeId();
 
     if (const auto driverName = DB::driverName(connection);
         driverName == QMYSQL
@@ -2218,7 +2216,7 @@ void tst_CastAttributes::cast_decimal_to_QString() const
     type.mergeCasts({{"decimal", CastType::QString}});
 
     auto attribute = type.getAttribute("decimal");
-    auto typeId = Helpers::qVariantTypeId(attribute);
+    auto typeId = attribute.typeId();
 
     if (const auto driverName = DB::driverName(connection);
         driverName == QMYSQL
@@ -2246,7 +2244,7 @@ void tst_CastAttributes::cast_decimal_Negative_to_Decimal() const
     type.mergeCasts({{"decimal", CastType::Decimal}});
 
     auto attribute = type.getAttribute("decimal");
-    auto typeId = Helpers::qVariantTypeId(attribute);
+    auto typeId = attribute.typeId();
 
     if (const auto driverName = DB::driverName(connection);
         driverName == QMYSQL
@@ -2274,7 +2272,7 @@ void tst_CastAttributes::cast_decimal_Negative_to_longlong() const
     type.mergeCasts({{"decimal", CastType::LongLong}});
 
     auto attribute = type.getAttribute("decimal");
-    auto typeId = Helpers::qVariantTypeId(attribute);
+    auto typeId = attribute.typeId();
 
     if (const auto driverName = DB::driverName(connection);
         driverName == QMYSQL
@@ -2302,7 +2300,7 @@ void tst_CastAttributes::cast_decimal_Negative_to_QString() const
     type.mergeCasts({{"decimal", CastType::QString}});
 
     auto attribute = type.getAttribute("decimal");
-    auto typeId = Helpers::qVariantTypeId(attribute);
+    auto typeId = attribute.typeId();
 
     if (const auto driverName = DB::driverName(connection);
         driverName == QMYSQL
@@ -2330,7 +2328,7 @@ void tst_CastAttributes::cast_decimal_to_Decimal_With_Modifier_2_Down() const
     type.mergeCasts({{"decimal_down", {CastType::Decimal, 2}}});
 
     auto attribute = type.getAttribute("decimal_down");
-    auto typeId = Helpers::qVariantTypeId(attribute);
+    auto typeId = attribute.typeId();
 
     if (const auto driverName = DB::driverName(connection);
         driverName == QMYSQL
@@ -2358,7 +2356,7 @@ void tst_CastAttributes::cast_decimal_to_Decimal_With_Modifier_2_Up() const
     type.mergeCasts({{"decimal_up", {CastType::Decimal, 2}}});
 
     auto attribute = type.getAttribute("decimal_up");
-    auto typeId = Helpers::qVariantTypeId(attribute);
+    auto typeId = attribute.typeId();
 
     if (const auto driverName = DB::driverName(connection);
         driverName == QMYSQL
@@ -2386,7 +2384,7 @@ void tst_CastAttributes::cast_decimal_to_Decimal_With_Modifier_2_Down_Negative()
     type.mergeCasts({{"decimal_down", {CastType::Decimal, 2}}});
 
     auto attribute = type.getAttribute("decimal_down");
-    auto typeId = Helpers::qVariantTypeId(attribute);
+    auto typeId = attribute.typeId();
 
     if (const auto driverName = DB::driverName(connection);
         driverName == QMYSQL
@@ -2414,7 +2412,7 @@ void tst_CastAttributes::cast_decimal_to_Decimal_With_Modifier_2_Up_Negative() c
     type.mergeCasts({{"decimal_up", {CastType::Decimal, 2}}});
 
     auto attribute = type.getAttribute("decimal_up");
-    auto typeId = Helpers::qVariantTypeId(attribute);
+    auto typeId = attribute.typeId();
 
     if (const auto driverName = DB::driverName(connection);
         driverName == QMYSQL
@@ -2439,7 +2437,7 @@ void tst_CastAttributes::cast_timestamp_to_QDateTime() const
     type.mergeCasts({{"timestamp", CastType::QDateTime}});
 
     auto attribute = type.getAttribute("timestamp");
-    auto typeId = Helpers::qVariantTypeId(attribute);
+    auto typeId = attribute.typeId();
 
     if (const auto driverName = DB::driverName(connection);
         driverName == QMYSQL
@@ -2465,7 +2463,7 @@ void tst_CastAttributes::cast_timestamp_to_QString() const
     type.mergeCasts({{"timestamp", CastType::QString}});
 
     auto attribute = type.getAttribute("timestamp");
-    auto typeId = Helpers::qVariantTypeId(attribute);
+    auto typeId = attribute.typeId();
 
     if (const auto driverName = DB::driverName(connection);
         driverName == QMYSQL
@@ -2495,7 +2493,7 @@ void tst_CastAttributes::cast_timestamp_to_Timestamp() const
     type.mergeCasts({{"timestamp", CastType::Timestamp}});
 
     auto attribute = type.getAttribute("timestamp");
-    auto typeId = Helpers::qVariantTypeId(attribute);
+    auto typeId = attribute.typeId();
 
     if (const auto driverName = DB::driverName(connection);
         driverName == QMYSQL
@@ -2523,7 +2521,7 @@ void tst_CastAttributes::cast_datetime_to_QDateTime() const
     type.mergeCasts({{"datetime", CastType::QDateTime}});
 
     auto attribute = type.getAttribute("datetime");
-    auto typeId = Helpers::qVariantTypeId(attribute);
+    auto typeId = attribute.typeId();
 
     if (const auto driverName = DB::driverName(connection);
         driverName == QMYSQL
@@ -2549,7 +2547,7 @@ void tst_CastAttributes::cast_datetime_to_QString() const
     type.mergeCasts({{"datetime", CastType::QString}});
 
     auto attribute = type.getAttribute("datetime");
-    auto typeId = Helpers::qVariantTypeId(attribute);
+    auto typeId = attribute.typeId();
 
     if (const auto driverName = DB::driverName(connection);
         driverName == QMYSQL
@@ -2579,7 +2577,7 @@ void tst_CastAttributes::cast_date_to_QDate() const
     type.mergeCasts({{"date", CastType::QDate}});
 
     auto attribute = type.getAttribute("date");
-    auto typeId = Helpers::qVariantTypeId(attribute);
+    auto typeId = attribute.typeId();
 
     if (const auto driverName = DB::driverName(connection);
         driverName == QMYSQL
@@ -2606,7 +2604,7 @@ void tst_CastAttributes::cast_date_to_QString() const
     type.mergeCasts({{"date", CastType::QString}});
 
     auto attribute = type.getAttribute("date");
-    auto typeId = Helpers::qVariantTypeId(attribute);
+    auto typeId = attribute.typeId();
 
     if (const auto driverName = DB::driverName(connection);
         driverName == QMYSQL
@@ -2631,7 +2629,7 @@ void tst_CastAttributes::cast_time_to_QTime() const
     type.mergeCasts({{"time", CastType::QTime}});
 
     auto attribute = type.getAttribute("time");
-    auto typeId = Helpers::qVariantTypeId(attribute);
+    auto typeId = attribute.typeId();
 
     if (const auto driverName = DB::driverName(connection);
         driverName == QMYSQL
@@ -2658,7 +2656,7 @@ void tst_CastAttributes::cast_time_to_QString() const
     type.mergeCasts({{"time", CastType::QString}});
 
     auto attribute = type.getAttribute("time");
-    auto typeId = Helpers::qVariantTypeId(attribute);
+    auto typeId = attribute.typeId();
 
     const auto driverName = DB::driverName(connection);
 
@@ -2689,7 +2687,7 @@ void tst_CastAttributes::cast_blob_to_QByteArray() const
     type.mergeCasts({{"binary", CastType::QByteArray}});
 
     auto attribute = type.getAttribute("binary");
-    auto typeId = Helpers::qVariantTypeId(attribute);
+    auto typeId = attribute.typeId();
 
     if (const auto driverName = DB::driverName(connection);
         driverName == QMYSQL
@@ -2715,7 +2713,7 @@ void tst_CastAttributes::cast_blob_to_QString() const
     type.mergeCasts({{"binary", CastType::QString}});
 
     auto attribute = type.getAttribute("binary");
-    auto typeId = Helpers::qVariantTypeId(attribute);
+    auto typeId = attribute.typeId();
 
     if (const auto driverName = DB::driverName(connection);
         driverName == QMYSQL
@@ -2740,7 +2738,7 @@ void tst_CastAttributes::cast_Null_bool_true_to_bool() const
     type.mergeCasts({{"bool_true", CastType::Bool}});
 
     auto attribute = type.getAttribute("bool_true");
-    auto typeId = Helpers::qVariantTypeId(attribute);
+    auto typeId = attribute.typeId();
 
     QVERIFY(attribute.isNull());
 
@@ -2769,7 +2767,7 @@ void tst_CastAttributes::cast_Null_bool_true_to_int() const
     type.mergeCasts({{"bool_true", CastType::Integer}});
 
     auto attribute = type.getAttribute("bool_true");
-    auto typeId = Helpers::qVariantTypeId(attribute);
+    auto typeId = attribute.typeId();
 
     QVERIFY(attribute.isNull());
 
@@ -2799,7 +2797,7 @@ void tst_CastAttributes::cast_Existing_Invalid_to_int() const
     type.mergeCasts({{"invalid", CastType::Integer}});
 
     auto attribute = type.getAttribute("invalid");
-    auto typeId = Helpers::qVariantTypeId(attribute);
+    auto typeId = attribute.typeId();
 
     QVERIFY(!attribute.isValid());
     QVERIFY(attribute.isNull());
@@ -2830,7 +2828,7 @@ void tst_CastAttributes::cast_NonExisting_Invalid_to_int() const
     type.mergeCasts({{dummy_NONEXISTENT, CastType::Integer}});
 
     auto attribute = type.getAttribute(dummy_NONEXISTENT);
-    auto typeId = Helpers::qVariantTypeId(attribute);
+    auto typeId = attribute.typeId();
 
     QVERIFY(!attribute.isValid());
     QVERIFY(attribute.isNull());
@@ -2859,7 +2857,7 @@ void tst_CastAttributes::cast_Null_smallint_to_Short() const
     type.mergeCasts({{"smallint", CastType::Short}});
 
     auto attribute = type.getAttribute("smallint");
-    auto typeId = Helpers::qVariantTypeId(attribute);
+    auto typeId = attribute.typeId();
 
     QVERIFY(attribute.isNull());
 
@@ -2886,7 +2884,7 @@ void tst_CastAttributes::cast_Null_smallint_u_to_UShort() const
     type.mergeCasts({{"smallint_u", CastType::UShort}});
 
     auto attribute = type.getAttribute("smallint_u");
-    auto typeId = Helpers::qVariantTypeId(attribute);
+    auto typeId = attribute.typeId();
 
     QVERIFY(attribute.isNull());
 
@@ -2913,7 +2911,7 @@ void tst_CastAttributes::cast_Null_int_to_Int() const
     type.mergeCasts({{"int", CastType::Int}});
 
     auto attribute = type.getAttribute("int");
-    auto typeId = Helpers::qVariantTypeId(attribute);
+    auto typeId = attribute.typeId();
 
     QVERIFY(attribute.isNull());
 
@@ -2940,7 +2938,7 @@ void tst_CastAttributes::cast_Null_int_u_to_UInt() const
     type.mergeCasts({{"int_u", CastType::UInt}});
 
     auto attribute = type.getAttribute("int_u");
-    auto typeId = Helpers::qVariantTypeId(attribute);
+    auto typeId = attribute.typeId();
 
     QVERIFY(attribute.isNull());
 
@@ -2967,7 +2965,7 @@ void tst_CastAttributes::cast_Null_bigint_to_LongLong() const
     type.mergeCasts({{"bigint", CastType::LongLong}});
 
     auto attribute = type.getAttribute("bigint");
-    auto typeId = Helpers::qVariantTypeId(attribute);
+    auto typeId = attribute.typeId();
 
     QVERIFY(attribute.isNull());
 
@@ -2994,7 +2992,7 @@ void tst_CastAttributes::cast_Null_bigint_u_to_ULongLong() const
     type.mergeCasts({{"bigint_u", CastType::ULongLong}});
 
     auto attribute = type.getAttribute("bigint_u");
-    auto typeId = Helpers::qVariantTypeId(attribute);
+    auto typeId = attribute.typeId();
 
     QVERIFY(attribute.isNull());
 
@@ -3021,7 +3019,7 @@ void tst_CastAttributes::cast_Null_double_to_Double() const
     type.mergeCasts({{"double", CastType::Double}});
 
     auto attribute = type.getAttribute("double");
-    auto typeId = Helpers::qVariantTypeId(attribute);
+    auto typeId = attribute.typeId();
 
     QVERIFY(attribute.isNull());
 
@@ -3055,7 +3053,7 @@ void tst_CastAttributes::cast_Null_double_NaN() const
     type.mergeCasts({{"double", CastType::Double}});
 
     auto attribute = type.getAttribute("double_nan");
-    auto typeId = Helpers::qVariantTypeId(attribute);
+    auto typeId = attribute.typeId();
 
     QCOMPARE(typeId, QMetaType::Double);
     QVERIFY(attribute.isNull());
@@ -3077,7 +3075,7 @@ void tst_CastAttributes::cast_Null_double_Infinity() const
     type.mergeCasts({{"double", CastType::Double}});
 
     auto attribute = type.getAttribute("double_infinity");
-    auto typeId = Helpers::qVariantTypeId(attribute);
+    auto typeId = attribute.typeId();
 
     QCOMPARE(typeId, QMetaType::Double);
     QVERIFY(attribute.isNull());
@@ -3092,7 +3090,7 @@ void tst_CastAttributes::cast_Null_decimal_to_Decimal() const
     type.mergeCasts({{"decimal", CastType::Decimal}});
 
     auto attribute = type.getAttribute("decimal");
-    auto typeId = Helpers::qVariantTypeId(attribute);
+    auto typeId = attribute.typeId();
 
     QVERIFY(attribute.isNull());
 
@@ -3126,7 +3124,7 @@ void tst_CastAttributes::cast_Null_decimal_NaN() const
     type.mergeCasts({{"double", CastType::Double}});
 
     auto attribute = type.getAttribute("decimal_nan");
-    auto typeId = Helpers::qVariantTypeId(attribute);
+    auto typeId = attribute.typeId();
 
     QCOMPARE(typeId, QMetaType::Double);
     QVERIFY(attribute.isNull());
@@ -3148,7 +3146,7 @@ void tst_CastAttributes::cast_Null_decimal_Infinity() const
     type.mergeCasts({{"double", CastType::Double}});
 
     auto attribute = type.getAttribute("decimal_infinity");
-    auto typeId = Helpers::qVariantTypeId(attribute);
+    auto typeId = attribute.typeId();
 
     QCOMPARE(typeId, QMetaType::Double);
     QVERIFY(attribute.isNull());
@@ -3163,7 +3161,7 @@ void tst_CastAttributes::cast_Null_string_to_QString() const
     type.mergeCasts({{"string", CastType::QString}});
 
     auto attribute = type.getAttribute("string");
-    auto typeId = Helpers::qVariantTypeId(attribute);
+    auto typeId = attribute.typeId();
 
     QVERIFY(attribute.isNull());
 
@@ -3190,7 +3188,7 @@ void tst_CastAttributes::cast_Null_text_to_QString() const
     type.mergeCasts({{"text", CastType::QString}});
 
     auto attribute = type.getAttribute("text");
-    auto typeId = Helpers::qVariantTypeId(attribute);
+    auto typeId = attribute.typeId();
 
     QVERIFY(attribute.isNull());
 
@@ -3217,7 +3215,7 @@ void tst_CastAttributes::cast_Null_timestamp_to_Timestamp() const
     type.mergeCasts({{"timestamp", CastType::Timestamp}});
 
     auto attribute = type.getAttribute("timestamp");
-    auto typeId = Helpers::qVariantTypeId(attribute);
+    auto typeId = attribute.typeId();
 
     QVERIFY(attribute.isNull());
 
@@ -3244,7 +3242,7 @@ void tst_CastAttributes::cast_Null_datetime_to_QDateTime() const
     type.mergeCasts({{"datetime", CastType::QDateTime}});
 
     auto attribute = type.getAttribute("datetime");
-    auto typeId = Helpers::qVariantTypeId(attribute);
+    auto typeId = attribute.typeId();
 
     QVERIFY(attribute.isNull());
 
@@ -3271,7 +3269,7 @@ void tst_CastAttributes::cast_Null_date_to_QDate() const
     type.mergeCasts({{"date", CastType::QDate}});
 
     auto attribute = type.getAttribute("date");
-    auto typeId = Helpers::qVariantTypeId(attribute);
+    auto typeId = attribute.typeId();
 
     QVERIFY(attribute.isNull());
 
@@ -3298,7 +3296,7 @@ void tst_CastAttributes::cast_Null_time_to_QTime() const
     type.mergeCasts({{"time", CastType::QTime}});
 
     auto attribute = type.getAttribute("time");
-    auto typeId = Helpers::qVariantTypeId(attribute);
+    auto typeId = attribute.typeId();
 
     QVERIFY(attribute.isNull());
 
@@ -3325,7 +3323,7 @@ void tst_CastAttributes::cast_Null_blob_to_QByteArray() const
     type.mergeCasts({{"binary", CastType::QByteArray}});
 
     auto attribute = type.getAttribute("binary");
-    auto typeId = Helpers::qVariantTypeId(attribute);
+    auto typeId = attribute.typeId();
 
     QVERIFY(attribute.isNull());
 

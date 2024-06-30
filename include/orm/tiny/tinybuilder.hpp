@@ -11,6 +11,8 @@ TINY_SYSTEM_HEADER
 #include <range/v3/action/transform.hpp>
 
 #include "orm/databaseconnection.hpp"
+#include "orm/utils/helpers.hpp"
+
 #include "orm/tiny/concerns/buildsqueries.hpp"
 #include "orm/tiny/concerns/buildssoftdeletes.hpp"
 #include "orm/tiny/concerns/queriesrelationships.hpp"

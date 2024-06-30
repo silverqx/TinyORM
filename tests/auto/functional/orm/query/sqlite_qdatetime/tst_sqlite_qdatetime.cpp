@@ -19,7 +19,6 @@ using Orm::QtTimeZoneConfig;
 using Orm::QtTimeZoneType;
 using Orm::SQLiteConnection;
 using Orm::TTimeZone;
-using Orm::Utils::Helpers;
 using Orm::Utils::NullVariant;
 
 using QueryBuilder = Orm::Query::Builder;
@@ -234,7 +233,7 @@ insert_Qt_QDateTime_UtcTimezone_DatetimeColumn() const
         QVERIFY(datetimeDbVariant.isValid());
         QVERIFY(!datetimeDbVariant.isNull());
 
-        QCOMPARE(Helpers::qVariantTypeId(datetimeDbVariant), QMetaType::QString);
+        QCOMPARE(datetimeDbVariant.typeId(), QMetaType::QString);
 
         /* QSQLITE driver returns a string of a datetime with a timezone that was sent
            to the database in unchanged form. */
@@ -298,7 +297,7 @@ insert_Qt_QDateTime_0200Timezone_DatetimeColumn() const
         QVERIFY(datetimeDbVariant.isValid());
         QVERIFY(!datetimeDbVariant.isNull());
 
-        QCOMPARE(Helpers::qVariantTypeId(datetimeDbVariant), QMetaType::QString);
+        QCOMPARE(datetimeDbVariant.typeId(), QMetaType::QString);
 
         /* QSQLITE driver returns a string of a datetime with a timezone that was sent
            to the database in unchanged form. */
@@ -358,7 +357,7 @@ void tst_SQLite_QDateTime::insert_Qt_QString_DatetimeColumn() const
         QVERIFY(datetimeDbVariant.isValid());
         QVERIFY(!datetimeDbVariant.isNull());
 
-        QCOMPARE(Helpers::qVariantTypeId(datetimeDbVariant), QMetaType::QString);
+        QCOMPARE(datetimeDbVariant.typeId(), QMetaType::QString);
 
         /* QSQLITE driver returns a string of a datetime that was sent to the database
            in unchanged form. */
@@ -421,7 +420,7 @@ insert_Qt_QDateTime_UtcTimezone_TimestampColumn() const
         QVERIFY(timestampDbVariant.isValid());
         QVERIFY(!timestampDbVariant.isNull());
 
-        QCOMPARE(Helpers::qVariantTypeId(timestampDbVariant), QMetaType::QString);
+        QCOMPARE(timestampDbVariant.typeId(), QMetaType::QString);
 
         /* QSQLITE driver returns a string of a datetime with a timezone that was sent
            to the database in unchanged form. */
@@ -485,7 +484,7 @@ insert_Qt_QDateTime_0200Timezone_TimestampColumn() const
         QVERIFY(timestampDbVariant.isValid());
         QVERIFY(!timestampDbVariant.isNull());
 
-        QCOMPARE(Helpers::qVariantTypeId(timestampDbVariant), QMetaType::QString);
+        QCOMPARE(timestampDbVariant.typeId(), QMetaType::QString);
 
         /* QSQLITE driver returns a string of a datetime with a timezone that was sent
            to the database in unchanged form. */
@@ -545,7 +544,7 @@ void tst_SQLite_QDateTime::insert_Qt_QString_TimestampColumn() const
         QVERIFY(timestampDbVariant.isValid());
         QVERIFY(!timestampDbVariant.isNull());
 
-        QCOMPARE(Helpers::qVariantTypeId(timestampDbVariant), QMetaType::QString);
+        QCOMPARE(timestampDbVariant.typeId(), QMetaType::QString);
 
         /* QSQLITE driver returns a string of a datetime that was sent to the database
            in unchanged form. */
@@ -583,7 +582,7 @@ insert_QDateTime_UtcTimezone_DatetimeColumn_OnReturnQDateTime() const
         QVERIFY(datetimeDbVariant.isValid());
         QVERIFY(!datetimeDbVariant.isNull());
 
-        QCOMPARE(Helpers::qVariantTypeId(datetimeDbVariant), QMetaType::QDateTime);
+        QCOMPARE(datetimeDbVariant.typeId(), QMetaType::QDateTime);
 
         // TinyORM QueryBuilder fixes this and returns the QDateTime instead of QString
         const auto datetimeActual = datetimeDbVariant.value<QDateTime>();
@@ -617,7 +616,7 @@ insert_QDateTime_0200Timezone_DatetimeColumn_OnReturnQDateTime() const
         QVERIFY(datetimeDbVariant.isValid());
         QVERIFY(!datetimeDbVariant.isNull());
 
-        QCOMPARE(Helpers::qVariantTypeId(datetimeDbVariant), QMetaType::QDateTime);
+        QCOMPARE(datetimeDbVariant.typeId(), QMetaType::QDateTime);
 
         // TinyORM QueryBuilder fixes this and returns the QDateTime instead of QString
         const auto datetimeActual = datetimeDbVariant.value<QDateTime>();
@@ -649,7 +648,7 @@ void tst_SQLite_QDateTime::insert_QString_DatetimeColumn_OnReturnQDateTime() con
         QVERIFY(datetimeDbVariant.isValid());
         QVERIFY(!datetimeDbVariant.isNull());
 
-        QCOMPARE(Helpers::qVariantTypeId(datetimeDbVariant), QMetaType::QDateTime);
+        QCOMPARE(datetimeDbVariant.typeId(), QMetaType::QDateTime);
 
         // TinyORM QueryBuilder fixes this and returns the QDateTime instead of QString
         const auto datetimeActual = datetimeDbVariant.value<QDateTime>();
@@ -683,7 +682,7 @@ insert_QDateTime_UtcTimezone_TimestampColumn_OnReturnQDateTime() const
         QVERIFY(timestampDbVariant.isValid());
         QVERIFY(!timestampDbVariant.isNull());
 
-        QCOMPARE(Helpers::qVariantTypeId(timestampDbVariant), QMetaType::QDateTime);
+        QCOMPARE(timestampDbVariant.typeId(), QMetaType::QDateTime);
 
         // TinyORM QueryBuilder fixes this and returns the QDateTime instead of QString
         const auto timestampActual = timestampDbVariant.value<QDateTime>();
@@ -717,7 +716,7 @@ insert_QDateTime_0200Timezone_TimestampColumn_OnReturnQDateTime() const
         QVERIFY(timestampDbVariant.isValid());
         QVERIFY(!timestampDbVariant.isNull());
 
-        QCOMPARE(Helpers::qVariantTypeId(timestampDbVariant), QMetaType::QDateTime);
+        QCOMPARE(timestampDbVariant.typeId(), QMetaType::QDateTime);
 
         // TinyORM QueryBuilder fixes this and returns the QDateTime instead of QString
         const auto timestampActual = timestampDbVariant.value<QDateTime>();
@@ -749,7 +748,7 @@ void tst_SQLite_QDateTime::insert_QString_TimestampColumn_OnReturnQDateTime() co
         QVERIFY(timestampDbVariant.isValid());
         QVERIFY(!timestampDbVariant.isNull());
 
-        QCOMPARE(Helpers::qVariantTypeId(timestampDbVariant), QMetaType::QDateTime);
+        QCOMPARE(timestampDbVariant.typeId(), QMetaType::QDateTime);
 
         // TinyORM QueryBuilder fixes this and returns the QDateTime instead of QString
         const auto timestampActual = timestampDbVariant.value<QDateTime>();
@@ -787,7 +786,7 @@ insert_QDateTime_UtcTimezone_DatetimeColumn_OffReturnQDateTime() const
         QVERIFY(datetimeDbVariant.isValid());
         QVERIFY(!datetimeDbVariant.isNull());
 
-        QCOMPARE(Helpers::qVariantTypeId(datetimeDbVariant), QMetaType::QString);
+        QCOMPARE(datetimeDbVariant.typeId(), QMetaType::QString);
 
         /* Returning the QDateTime (fixed behavior by the TinyORM QueryBuilder) can be
            disabled by the return_qdatetime = false. */
@@ -824,7 +823,7 @@ insert_QDateTime_0200Timezone_DatetimeColumn_OffReturnQDateTime() const
         QVERIFY(datetimeDbVariant.isValid());
         QVERIFY(!datetimeDbVariant.isNull());
 
-        QCOMPARE(Helpers::qVariantTypeId(datetimeDbVariant), QMetaType::QString);
+        QCOMPARE(datetimeDbVariant.typeId(), QMetaType::QString);
 
         /* Returning the QDateTime (fixed behavior by the TinyORM QueryBuilder) can be
            disabled by the return_qdatetime = false. */
@@ -859,7 +858,7 @@ void tst_SQLite_QDateTime::insert_QString_DatetimeColumn_OffReturnQDateTime() co
         QVERIFY(datetimeDbVariant.isValid());
         QVERIFY(!datetimeDbVariant.isNull());
 
-        QCOMPARE(Helpers::qVariantTypeId(datetimeDbVariant), QMetaType::QString);
+        QCOMPARE(datetimeDbVariant.typeId(), QMetaType::QString);
 
         /* Returning the QDateTime (fixed behavior by the TinyORM QueryBuilder) can be
            disabled by the return_qdatetime = false. */
@@ -896,7 +895,7 @@ insert_QDateTime_UtcTimezone_TimestampColumn_OffReturnQDateTime() const
         QVERIFY(timestampDbVariant.isValid());
         QVERIFY(!timestampDbVariant.isNull());
 
-        QCOMPARE(Helpers::qVariantTypeId(timestampDbVariant), QMetaType::QString);
+        QCOMPARE(timestampDbVariant.typeId(), QMetaType::QString);
 
         /* Returning the QDateTime (fixed behavior by the TinyORM QueryBuilder) can be
            disabled by the return_qdatetime = false. */
@@ -933,7 +932,7 @@ insert_QDateTime_0200Timezone_TimestampColumn_OffReturnQDateTime() const
         QVERIFY(timestampDbVariant.isValid());
         QVERIFY(!timestampDbVariant.isNull());
 
-        QCOMPARE(Helpers::qVariantTypeId(timestampDbVariant), QMetaType::QString);
+        QCOMPARE(timestampDbVariant.typeId(), QMetaType::QString);
 
         /* Returning the QDateTime (fixed behavior by the TinyORM QueryBuilder) can be
            disabled by the return_qdatetime = false. */
@@ -968,7 +967,7 @@ void tst_SQLite_QDateTime::insert_QString_TimestampColumn_OffReturnQDateTime() c
         QVERIFY(timestampDbVariant.isValid());
         QVERIFY(!timestampDbVariant.isNull());
 
-        QCOMPARE(Helpers::qVariantTypeId(timestampDbVariant), QMetaType::QString);
+        QCOMPARE(timestampDbVariant.typeId(), QMetaType::QString);
 
         /* Returning the QDateTime (fixed behavior by the TinyORM QueryBuilder) can be
            disabled by the return_qdatetime = false. */
@@ -1035,7 +1034,7 @@ void tst_SQLite_QDateTime::insert_Qt_QDate_UtcTimezone_DateColumn() const
         QVERIFY(dateDbVariant.isValid());
         QVERIFY(!dateDbVariant.isNull());
 
-        QCOMPARE(Helpers::qVariantTypeId(dateDbVariant), QMetaType::QString);
+        QCOMPARE(dateDbVariant.typeId(), QMetaType::QString);
 
         const auto dateActual = dateDbVariant.value<QDate>();
         const auto dateExpected = QDate(2022, 8, 28);
@@ -1090,7 +1089,7 @@ void tst_SQLite_QDateTime::insert_Qt_QString_DateColumn() const
         QVERIFY(dateDbVariant.isValid());
         QVERIFY(!dateDbVariant.isNull());
 
-        QCOMPARE(Helpers::qVariantTypeId(dateDbVariant), QMetaType::QString);
+        QCOMPARE(dateDbVariant.typeId(), QMetaType::QString);
 
         const auto dateActual = dateDbVariant.value<QDate>();
         const auto dateExpected = QDate(2022, 8, 28);
@@ -1122,7 +1121,7 @@ tst_SQLite_QDateTime::insert_QDate_UtcTimezone_DateColumn_OnReturnQDateTime() co
         QVERIFY(dateDbVariant.isValid());
         QVERIFY(!dateDbVariant.isNull());
 
-        QCOMPARE(Helpers::qVariantTypeId(dateDbVariant), QMetaType::QDate);
+        QCOMPARE(dateDbVariant.typeId(), QMetaType::QDate);
 
         const auto dateActual = dateDbVariant.value<QDate>();
         const auto dateExpected = QDate(2022, 8, 28);
@@ -1149,7 +1148,7 @@ void tst_SQLite_QDateTime::insert_QString_DateColumn_OnReturnQDateTime() const
         QVERIFY(dateDbVariant.isValid());
         QVERIFY(!dateDbVariant.isNull());
 
-        QCOMPARE(Helpers::qVariantTypeId(dateDbVariant), QMetaType::QDate);
+        QCOMPARE(dateDbVariant.typeId(), QMetaType::QDate);
 
         const auto dateActual = dateDbVariant.value<QDate>();
         const auto dateExpected = QDate(2022, 8, 28);
@@ -1181,7 +1180,7 @@ tst_SQLite_QDateTime::insert_QDate_UtcTimezone_DateColumn_OffReturnQDateTime() c
         QVERIFY(dateDbVariant.isValid());
         QVERIFY(!dateDbVariant.isNull());
 
-        QCOMPARE(Helpers::qVariantTypeId(dateDbVariant), QMetaType::QString);
+        QCOMPARE(dateDbVariant.typeId(), QMetaType::QString);
 
         const auto dateActual = dateDbVariant.value<QDate>();
         const auto dateExpected = QDate(2022, 8, 28);
@@ -1211,7 +1210,7 @@ void tst_SQLite_QDateTime::insert_QString_DateColumn_OffReturnQDateTime() const
         QVERIFY(dateDbVariant.isValid());
         QVERIFY(!dateDbVariant.isNull());
 
-        QCOMPARE(Helpers::qVariantTypeId(dateDbVariant), QMetaType::QString);
+        QCOMPARE(dateDbVariant.typeId(), QMetaType::QString);
 
         const auto dateActual = dateDbVariant.value<QDate>();
         const auto dateExpected = QDate(2022, 8, 28);
@@ -1273,7 +1272,7 @@ void tst_SQLite_QDateTime::insert_Qt_QTime_UtcTimezone_TimeColumn() const
         QVERIFY(timeDbVariant.isValid());
         QVERIFY(!timeDbVariant.isNull());
 
-        QCOMPARE(Helpers::qVariantTypeId(timeDbVariant), QMetaType::QString);
+        QCOMPARE(timeDbVariant.typeId(), QMetaType::QString);
 
         const auto timeActual = timeDbVariant.value<QTime>();
         const auto timeExpected = QTime(17, 2, 59);
@@ -1328,7 +1327,7 @@ void tst_SQLite_QDateTime::insert_Qt_QString_TimeColumn() const
         QVERIFY(timeDbVariant.isValid());
         QVERIFY(!timeDbVariant.isNull());
 
-        QCOMPARE(Helpers::qVariantTypeId(timeDbVariant), QMetaType::QString);
+        QCOMPARE(timeDbVariant.typeId(), QMetaType::QString);
 
         const auto timeActual = timeDbVariant.value<QTime>();
         const auto timeExpected = QTime(17, 2, 59);
@@ -1363,7 +1362,7 @@ tst_SQLite_QDateTime::insert_QTime_UtcTimezone_TimeColumn_OnReturnQDateTime() co
         /* The return_qdatetime doesn't affect time columns/fields, they are returned
            as QString to support time ranges larger than 24-hours,
            eg. like for MySQL '-838:59:59' to '838:59:59'. */
-        QCOMPARE(Helpers::qVariantTypeId(timeDbVariant), QMetaType::QString);
+        QCOMPARE(timeDbVariant.typeId(), QMetaType::QString);
 
         const auto timeActual = timeDbVariant.value<QTime>();
         const auto timeExpected = QTime(17, 2, 59);
@@ -1393,7 +1392,7 @@ void tst_SQLite_QDateTime::insert_QString_TimeColumn_OnReturnQDateTime() const
         /* The return_qdatetime doesn't affect time columns/fields, they are returned
            as QString to support time ranges larger than 24-hours,
            eg. like for MySQL '-838:59:59' to '838:59:59'. */
-        QCOMPARE(Helpers::qVariantTypeId(timeDbVariant), QMetaType::QString);
+        QCOMPARE(timeDbVariant.typeId(), QMetaType::QString);
 
         const auto timeActual = timeDbVariant.value<QTime>();
         const auto timeExpected = QTime(17, 2, 59);
@@ -1425,7 +1424,7 @@ tst_SQLite_QDateTime::insert_QTime_UtcTimezone_TimeColumn_OffReturnQDateTime() c
         QVERIFY(timeDbVariant.isValid());
         QVERIFY(!timeDbVariant.isNull());
 
-        QCOMPARE(Helpers::qVariantTypeId(timeDbVariant), QMetaType::QString);
+        QCOMPARE(timeDbVariant.typeId(), QMetaType::QString);
 
         const auto timeActual = timeDbVariant.value<QTime>();
         const auto timeExpected = QTime(17, 2, 59);
@@ -1455,7 +1454,7 @@ void tst_SQLite_QDateTime::insert_QString_TimeColumn_OffReturnQDateTime() const
         QVERIFY(timeDbVariant.isValid());
         QVERIFY(!timeDbVariant.isNull());
 
-        QCOMPARE(Helpers::qVariantTypeId(timeDbVariant), QMetaType::QString);
+        QCOMPARE(timeDbVariant.typeId(), QMetaType::QString);
 
         const auto timeActual = timeDbVariant.value<QTime>();
         const auto timeExpected = QTime(17, 2, 59);
@@ -1519,7 +1518,7 @@ insert_Qt_QDateTime_Null_DatetimeColumn() const
         QVERIFY(datetimeDbVariant.isNull());
 
         // QSQLITE driver simply returns QVariant(QMetaType::QString)
-        QCOMPARE(Helpers::qVariantTypeId(datetimeDbVariant), QMetaType::QString);
+        QCOMPARE(datetimeDbVariant.typeId(), QMetaType::QString);
 
         /* TZ is irrelevant for null values, but I will check them anyway, if something
            weird happens and TZ changes then test fail, so I will know about that. */
@@ -1580,7 +1579,7 @@ void tst_SQLite_QDateTime::insert_Qt_QDate_Null_DateColumn() const
         QVERIFY(dateDbVariant.isNull());
 
         // QSQLITE driver simply returns QVariant(QMetaType::QString)
-        QCOMPARE(Helpers::qVariantTypeId(dateDbVariant), QMetaType::QString);
+        QCOMPARE(dateDbVariant.typeId(), QMetaType::QString);
 
         const auto dateActual = dateDbVariant.value<QDate>();
         const auto dateExpected = QDate();
@@ -1636,7 +1635,7 @@ void tst_SQLite_QDateTime::insert_Qt_QTime_Null_TimeColumn() const
         QVERIFY(timeDbVariant.isNull());
 
         // QSQLITE driver simply returns QVariant(QMetaType::QString)
-        QCOMPARE(Helpers::qVariantTypeId(timeDbVariant), QMetaType::QString);
+        QCOMPARE(timeDbVariant.typeId(), QMetaType::QString);
 
         const auto timeActual = timeDbVariant.value<QDate>();
         const auto timeExpected = QDate();
@@ -1672,7 +1671,7 @@ void tst_SQLite_QDateTime::insert_QDateTime_Null_DatetimeColumn() const
            Because there is no way we can detect a null datetime column. So instead
            of returning the QVariant(QMetaType::QDateTime) we get
            the QVariant(QMetaType::QString). */
-        QCOMPARE(Helpers::qVariantTypeId(datetimeDbVariant), QMetaType::QString);
+        QCOMPARE(datetimeDbVariant.typeId(), QMetaType::QString);
 
         /* TZ is irrelevant for null values, but I will check them anyway, if something
            weird happens and TZ changes then test fail, so I will know about that. */
@@ -1705,7 +1704,7 @@ void tst_SQLite_QDateTime::insert_QDate_Null_DateColumn() const
         QVERIFY(timeDbVariant.isNull());
 
         // QSQLITE driver simply returns QVariant(QMetaType::QString)
-        QCOMPARE(Helpers::qVariantTypeId(timeDbVariant), QMetaType::QString);
+        QCOMPARE(timeDbVariant.typeId(), QMetaType::QString);
 
         const auto timeActual = timeDbVariant.value<QDate>();
         const auto timeExpected = QDate();
@@ -1733,7 +1732,7 @@ void tst_SQLite_QDateTime::insert_QTime_Null_TimeColumn() const
         QVERIFY(dateDbVariant.isNull());
 
         // QSQLITE driver simply returns QVariant(QMetaType::QString)
-        QCOMPARE(Helpers::qVariantTypeId(dateDbVariant), QMetaType::QString);
+        QCOMPARE(dateDbVariant.typeId(), QMetaType::QString);
 
         const auto dateActual = dateDbVariant.value<QDate>();
         const auto dateExpected = QDate();
@@ -1773,7 +1772,7 @@ insert_QDateTime_0300Timezone_DatetimeColumn_UtcOnServer_DontConvert() const
         QVERIFY(datetimeDbVariant.isValid());
         QVERIFY(!datetimeDbVariant.isNull());
 
-        QCOMPARE(Helpers::qVariantTypeId(datetimeDbVariant), QMetaType::QString);
+        QCOMPARE(datetimeDbVariant.typeId(), QMetaType::QString);
 
         /* Practically it should behave as is the default QSQLITE driver behavior,
            so it also retuns QString because return_qdatetime only works when converting

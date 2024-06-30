@@ -10,6 +10,7 @@
 #include "orm/exceptions/multiplecolumnsselectederror.hpp"
 #include "orm/query/querybuilder.hpp"
 #include "orm/utils/configuration.hpp"
+#include "orm/utils/helpers.hpp"
 #include "orm/utils/type.hpp"
 
 TINYORM_BEGIN_COMMON_NAMESPACE
@@ -374,7 +375,7 @@ DatabaseConnection::prepareBindings(QVector<QVariant> &bindings) const
         if (!binding.isValid() || binding.isNull())
             continue;
 
-        switch (Helpers::qVariantTypeId(binding)) {
+        switch (binding.typeId()) {
         case QMetaType::QDate:
             // QDate doesn't have a time zone
             binding = binding.value<QDate>().toString(Qt::ISODate);

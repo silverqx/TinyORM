@@ -22,7 +22,6 @@ using Orm::Constants::UPDATED_AT;
 using Orm::Constants::pivot_;
 
 using Orm::TTimeZone;
-using Orm::Utils::Helpers;
 using Orm::Utils::NullVariant;
 
 using TypeUtils = Orm::Utils::Type;
@@ -758,9 +757,9 @@ void tst_Model_Serialization::toMap_UDatesOnly_DateNullVariants() const
 
     QCOMPARE(serialized[ID].template value<typename Type::KeyType>(), 3);
 
-    QCOMPARE(Helpers::qVariantTypeId(serialized["date"]),      QMetaType::QDateTime);
-    QCOMPARE(Helpers::qVariantTypeId(serialized["datetime"]),  QMetaType::QDateTime);
-    QCOMPARE(Helpers::qVariantTypeId(serialized["timestamp"]), QMetaType::QDateTime);
+    QCOMPARE(serialized["date"].typeId(),      QMetaType::QDateTime);
+    QCOMPARE(serialized["datetime"].typeId(),  QMetaType::QDateTime);
+    QCOMPARE(serialized["timestamp"].typeId(), QMetaType::QDateTime);
 
     // Restore
     Type::u_dates.clear();
@@ -789,9 +788,9 @@ void tst_Model_Serialization::toVector_UDatesOnly_DateNullVariants() const
     QCOMPARE(serialized2.key, "datetime");
     QCOMPARE(serialized3.key, "timestamp");
 
-    QCOMPARE(Helpers::qVariantTypeId(serialized1.value), QMetaType::QDateTime);
-    QCOMPARE(Helpers::qVariantTypeId(serialized2.value), QMetaType::QDateTime);
-    QCOMPARE(Helpers::qVariantTypeId(serialized3.value), QMetaType::QDateTime);
+    QCOMPARE(serialized1.value.typeId(), QMetaType::QDateTime);
+    QCOMPARE(serialized2.value.typeId(), QMetaType::QDateTime);
+    QCOMPARE(serialized3.value.typeId(), QMetaType::QDateTime);
 
     // Restore
     Type::u_dates.clear();
@@ -830,10 +829,10 @@ void tst_Model_Serialization::toMap_WithCasts_DateNullVariants() const
     QVERIFY(serialized3.isValid() && serialized3.isNull());
     QVERIFY(serialized4.isValid() && serialized4.isNull());
 
-    QCOMPARE(Helpers::qVariantTypeId(serialized1), QMetaType::QDate);
-    QCOMPARE(Helpers::qVariantTypeId(serialized2), QMetaType::QDateTime);
-    QCOMPARE(Helpers::qVariantTypeId(serialized3), QMetaType::LongLong);
-    QCOMPARE(Helpers::qVariantTypeId(serialized4), QMetaType::QTime);
+    QCOMPARE(serialized1.typeId(), QMetaType::QDate);
+    QCOMPARE(serialized2.typeId(), QMetaType::QDateTime);
+    QCOMPARE(serialized3.typeId(), QMetaType::LongLong);
+    QCOMPARE(serialized4.typeId(), QMetaType::QTime);
 
     // Restore
     type->resetCasts();
@@ -874,10 +873,10 @@ void tst_Model_Serialization::toVector_WithCasts_DateNullVariants() const
     QVERIFY(serialized3.value.isValid() && serialized3.value.isNull());
     QVERIFY(serialized4.value.isValid() && serialized4.value.isNull());
 
-    QCOMPARE(Helpers::qVariantTypeId(serialized1.value), QMetaType::QDate);
-    QCOMPARE(Helpers::qVariantTypeId(serialized2.value), QMetaType::QDateTime);
-    QCOMPARE(Helpers::qVariantTypeId(serialized3.value), QMetaType::LongLong);
-    QCOMPARE(Helpers::qVariantTypeId(serialized4.value), QMetaType::QTime);
+    QCOMPARE(serialized1.value.typeId(), QMetaType::QDate);
+    QCOMPARE(serialized2.value.typeId(), QMetaType::QDateTime);
+    QCOMPARE(serialized3.value.typeId(), QMetaType::LongLong);
+    QCOMPARE(serialized4.value.typeId(), QMetaType::QTime);
 
     // Restore
     type->resetCasts();

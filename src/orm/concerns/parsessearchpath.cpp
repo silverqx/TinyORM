@@ -4,7 +4,6 @@
 #include <range/v3/view/transform.hpp>
 
 #include "orm/schema/schemaconstants.hpp"
-#include "orm/utils/helpers.hpp"
 #include "orm/utils/string.hpp"
 
 TINYORM_BEGIN_COMMON_NAMESPACE
@@ -12,7 +11,6 @@ TINYORM_BEGIN_COMMON_NAMESPACE
 using Orm::Constants::COMMA_C;
 
 using Orm::SchemaNs::Constants::TRIM_QUOTES;
-using Orm::Utils::Helpers;
 
 using StringUtils = Orm::Utils::String;
 
@@ -72,7 +70,7 @@ QStringList ParsesSearchPath::parseSearchPath(const QVariant &searchPath)
        we can be sure here that it's the QString or QStringList. Also don't use
        the QVariant::canConvert() here as there are no benefits from it, only pitfalls,
        eg. an empty QString if converting from the QStringList. */
-    if (Helpers::qVariantTypeId(searchPath) == QMetaType::QString)
+    if (searchPath.typeId() == QMetaType::QString)
         return parseSearchPath(searchPath.value<QString>());
 
     return parseSearchPath(searchPath.value<QStringList>());

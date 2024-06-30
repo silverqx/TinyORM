@@ -4,8 +4,6 @@
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
-using Orm::Utils::Helpers;
-
 namespace Orm::Query::Grammars
 {
 
@@ -227,7 +225,7 @@ QString SQLiteGrammar::dateBasedWhereColumn(const QString &type,
     // Compare as text types
     case WhereType::DATE:
     case WhereType::TIME:
-        Q_ASSERT(Helpers::qVariantTypeId(where.value) == QMetaType::QString);
+        Q_ASSERT(where.value.typeId() == QMetaType::QString);
 
         return QStringLiteral("strftime('%1', %2)").arg(type, wrap(where.column));
 
@@ -235,7 +233,7 @@ QString SQLiteGrammar::dateBasedWhereColumn(const QString &type,
     case WhereType::DAY:
     case WhereType::MONTH:
     case WhereType::YEAR:
-        Q_ASSERT(Helpers::qVariantTypeId(where.value) == QMetaType::Int);
+        Q_ASSERT(where.value.typeId() == QMetaType::Int);
 
         return QStringLiteral("cast(strftime('%1', %2) as integer)")
                 .arg(type, wrap(where.column));

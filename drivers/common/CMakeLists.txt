@@ -129,8 +129,6 @@ target_compile_definitions(${TinyDrivers_target}
         $<$<NOT:$<CONFIG:Debug>>:TINYDRIVERS_NO_DEBUG>
         # Debug build
         $<$<CONFIG:Debug>:TINYDRIVERS_DEBUG>
-        # Used in common header files (currently in replacebindings.hpp only)
-        PROJECT_TINYDRIVERS_PRIVATE
         # To disable #pragma system_header if compiling TinyORM project itself
         TINYORM_PRAGMA_SYSTEM_HEADER_OFF
         # TinyDrivers support these strict Qt macros

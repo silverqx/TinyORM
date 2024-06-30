@@ -29,7 +29,6 @@ using Orm::Constants::UPDATED_AT;
 
 using Orm::DB;
 using Orm::TTimeZone;
-using Orm::Utils::Helpers;
 using Orm::Utils::NullVariant;
 
 using TQueryError;
@@ -1831,7 +1830,7 @@ void tst_Model::getAttribute_UnixTimestamp_With_UDates() const
     QVERIFY(addedOn.isValid() && !addedOn.isNull());
 
     // Also the SQLite returns the QDateTime
-    QCOMPARE(Helpers::qVariantTypeId(addedOn), QMetaType::QDateTime);
+    QCOMPARE(addedOn.typeId(), QMetaType::QDateTime);
     // This is most important, should return QDateTime and not int
     QCOMPARE(addedOn.value<QDateTime>(),
              QDateTime::fromSecsSinceEpoch(1659361016, TTimeZone::UTC));
@@ -1853,7 +1852,7 @@ void tst_Model::getAttribute_UnixTimestamp_WithOut_UDates() const
     /* Only MySQL returns correct underlying type, the SQLite doesn't care and PostgreSQL
        returns ULongLong. */
     if (DB::driverName(connection) == QMYSQL)
-        QCOMPARE(Helpers::qVariantTypeId(addedOn), QMetaType::LongLong);
+        QCOMPARE(addedOn.typeId(), QMetaType::LongLong);
     else
         QVERIFY(addedOn.canConvert<qint64>());
 
@@ -1878,7 +1877,7 @@ void tst_Model::getAttribute_UnixTimestamp_With_UDates_Null() const
     // Compare also the type (excluding SQLite)
     // SQLite doesn't return correct underlying type in the QVariant
     if (DB::driverName(connection) != QSQLITE)
-        QCOMPARE(Helpers::qVariantTypeId(addedOn), QMetaType::LongLong);
+        QCOMPARE(addedOn.typeId(), QMetaType::LongLong);
 
     /* SQLite doesn't return correct underlying type in the QVariant for null values
        like MySQL driver does, skip this compare for the SQLite database. */
@@ -1903,7 +1902,7 @@ void tst_Model::getAttribute_UnixTimestamp_WithOut_UDates_Null() const
     // Compare also the type (excluding SQLite)
     // SQLite doesn't return correct underlying type in the QVariant
     if (DB::driverName(connection) != QSQLITE)
-        QCOMPARE(Helpers::qVariantTypeId(addedOn), QMetaType::LongLong);
+        QCOMPARE(addedOn.typeId(), QMetaType::LongLong);
 
     /* SQLite doesn't return correct underlying type in the QVariant for null values
        like MySQL driver does, skip this compare for the SQLite database. */

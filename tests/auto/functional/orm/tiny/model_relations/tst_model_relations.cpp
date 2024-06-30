@@ -36,7 +36,6 @@ using Orm::One;
 using Orm::QtTimeZoneConfig;
 using Orm::QtTimeZoneType;
 using Orm::TTimeZone;
-using Orm::Utils::Helpers;
 
 using QueryUtils = Orm::Utils::Query;
 using TypeUtils = Orm::Utils::Type;
@@ -2851,7 +2850,7 @@ void tst_Model_Relations::withCasts_OnRelation_OneToMany() const
 
     auto attribute = torrentFile->getAttribute(Progress);
 
-    auto typeId = Helpers::qVariantTypeId(attribute);
+    auto typeId = attribute.typeId();
 
     if (const auto driverName = DB::driverName(connection);
         driverName == QMYSQL
@@ -2884,7 +2883,7 @@ void tst_Model_Relations::withCasts_OnRelation_ManyToMany() const
 
     auto attribute = tag->getKey();
 
-    auto typeId = Helpers::qVariantTypeId(attribute);
+    auto typeId = attribute.typeId();
 
     if (const auto driverName = DB::driverName(connection);
         driverName == QMYSQL
@@ -2920,7 +2919,7 @@ void tst_Model_Relations::u_casts_OnCustomPivotModel_ManyToMany() const
 
     auto attribute = tagged->getAttribute("active");
 
-    auto typeId = Helpers::qVariantTypeId(attribute);
+    auto typeId = attribute.typeId();
 
     if (const auto driverName = DB::driverName(connection);
         driverName == QMYSQL
@@ -2965,7 +2964,7 @@ timezone_TimestampAttribute_UtcOnServer_OnCustomPivotModel_ManyToMany() const
     QVERIFY(timestampDbVariant.isValid());
     QVERIFY(!timestampDbVariant.isNull());
 
-    QCOMPARE(Helpers::qVariantTypeId(timestampDbVariant), QMetaType::QDateTime);
+    QCOMPARE(timestampDbVariant.typeId(), QMetaType::QDateTime);
 
     /* The time zone must be as is defined in the qt_timezone connection
        configuration, TinyORM TinyBuilder fixes and unifies the buggy time zone
@@ -3014,7 +3013,7 @@ timezone_TimestampAttribute_UtcOnServer_DontConvert_OnCustomPivot_MtM() const
     QVERIFY(timestampDbVariant.isValid());
     QVERIFY(!timestampDbVariant.isNull());
 
-    QCOMPARE(Helpers::qVariantTypeId(timestampDbVariant), QMetaType::QDateTime);
+    QCOMPARE(timestampDbVariant.typeId(), QMetaType::QDateTime);
 
     /* The time zone must be as is defined in the qt_timezone connection
        configuration, TinyORM TinyBuilder fixes and unifies the buggy time zone

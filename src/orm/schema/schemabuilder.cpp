@@ -5,6 +5,7 @@
 
 #include "orm/databaseconnection.hpp"
 #include "orm/exceptions/logicerror.hpp"
+#include "orm/utils/helpers.hpp"
 #include "orm/utils/query.hpp"
 
 #ifdef TINYORM_USING_TINYDRIVERS
@@ -12,6 +13,8 @@
 #endif
 
 TINYORM_BEGIN_COMMON_NAMESPACE
+
+using Orm::Utils::Helpers;
 
 using QueryUtils = Orm::Utils::Query;
 

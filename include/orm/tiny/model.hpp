@@ -1902,7 +1902,7 @@ namespace Orm::Tiny
 
         for (const auto &[key, value] : attributes)
             if (value.isValid() && !value.isNull() &&
-                Helpers::qVariantTypeId(value) == QMetaType::QDateTime
+                value.typeId() == QMetaType::QDateTime
             )
                 throw Orm::Exceptions::InvalidArgumentError(
                         message.arg(TypeUtils::classPureBasename<Derived>(), key));

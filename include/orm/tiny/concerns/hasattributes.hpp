@@ -572,7 +572,7 @@ namespace Orm::Tiny::Concerns
         /* If an attribute is listed as a "date", we'll convert it from a DateTime
            instance into a form proper for storage on the database tables using
            the connection grammar's date format. We will auto set the values. */
-        if (const auto typeId = Helpers::qVariantTypeId(value);
+        if (const auto typeId = value.typeId();
             value.isValid() && (isDateAttribute(key) ||
             // NOTE api different, if the QDateTime or QDate is detected then take it as datetime silverqx
             typeId == QMetaType::QDateTime || typeId == QMetaType::QDate ||
@@ -1688,7 +1688,7 @@ namespace Orm::Tiny::Concerns
         /* If this value is already a QDateTime instance, we shall just return it as is.
            This prevents us having to re-parse a QDateTime instance when we know
            it already is one. */
-        if (Helpers::qVariantTypeId(value) == QMetaType::QDateTime)
+        if (value.typeId() == QMetaType::QDateTime)
             return convertTimeZone(value.value<QDateTime>());
 
         // The value has to be convertible to the QString so we can work with it
@@ -1766,7 +1766,7 @@ namespace Orm::Tiny::Concerns
         /* If this value is already a QTime instance, we shall just return it as is.
            This prevents us having to re-parse a QTime instance when we know
            it already is one. */
-        if (Helpers::qVariantTypeId(value) == QMetaType::QTime)
+        if (value.typeId() == QMetaType::QTime)
             return value.template value<QTime>();
 
         // The value has to be convertible to the QString so we can work with it
@@ -1808,7 +1808,7 @@ namespace Orm::Tiny::Concerns
     {
         // This method is used only for u_dates so no QTime handling is applied
 
-        const auto typeId = Helpers::qVariantTypeId(value);
+        const auto typeId = value.typeId();
 
         if (typeId == QMetaType::QDate ||
             (typeId == QMetaType::QString &&
@@ -1825,7 +1825,7 @@ namespace Orm::Tiny::Concerns
     HasAttributes<Derived, AllRelations...>::asDateOrDateTimeOrTime(
             const QVariant &value) const
     {
-        const auto typeId = Helpers::qVariantTypeId(value);
+        const auto typeId = value.typeId();
 
         if (typeId == QMetaType::QDate ||
             (typeId == QMetaType::QString &&
@@ -1848,7 +1848,7 @@ namespace Orm::Tiny::Concerns
     HasAttributes<Derived, AllRelations...>::fromDateOrDateTimeOrTime(
             const QVariant &value, const QString &format) const
     {
-        if (const auto typeId = Helpers::qVariantTypeId(value);
+        if (const auto typeId = value.typeId();
             typeId == QMetaType::QDate ||
             (typeId == QMetaType::QString &&
              Helpers::isStandardDateFormat(value.value<QString>()))
@@ -1877,7 +1877,7 @@ namespace Orm::Tiny::Concerns
     HasAttributes<Derived, AllRelations...>::nullFor_fromDateTime(
             const QVariant &value, const QString &format)
     {
-        const auto typeId = Helpers::qVariantTypeId(value);
+        const auto typeId = value.typeId();
 
         if (format == QLatin1Char('U')) T_UNLIKELY
             return NullVariant::LongLong();
@@ -1900,7 +1900,7 @@ namespace Orm::Tiny::Concerns
     HasAttributes<Derived, AllRelations...>::nullFor_addCastAttributesTo(
             const QVariant &value)
     {
-        const auto typeId = Helpers::qVariantTypeId(value);
+        const auto typeId = value.typeId();
 
         if (typeId == QMetaType::QDate ||
             (typeId == QMetaType::QString &&
@@ -2350,7 +2350,7 @@ namespace Orm::Tiny::Concerns
     HasAttributes<Derived, AllRelations...>::serializeDateOrDateTimeOrTime(
             const QVariant &value)
     {
-        const auto typeId = Helpers::qVariantTypeId(value);
+        const auto typeId = value.typeId();
 
         if (typeId == QMetaType::QDate ||
             (typeId == QMetaType::QString &&
@@ -2576,7 +2576,7 @@ namespace Orm::Tiny::Concerns
 
             const auto castedDate = asDateOrDateTimeOrTime(value);
 
-            if (const auto typeId = Helpers::qVariantTypeId(castedDate);
+            if (const auto typeId = castedDate.typeId();
                 typeId == QMetaType::QDate
             ) T_UNLIKELY
                 value = castedDate.template value<QDate>().toString(castModifier);
@@ -2763,7 +2763,7 @@ namespace Orm::Tiny::Concerns
     void HasAttributes<Derived, AllRelations...>::serializeDateOrDateTimeForAccessors(
             QVariant &value)
     {
-        const auto typeId = Helpers::qVariantTypeId(value);
+        const auto typeId = value.typeId();
 
         // Nothing to do, not a datetime
         if (typeId != QMetaType::QDateTime && typeId != QMetaType::QDate &&

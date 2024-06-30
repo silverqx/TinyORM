@@ -9,7 +9,6 @@ TINY_SYSTEM_HEADER
 
 #include "orm/tiny/macros/crtpmodelwithbase.hpp"
 #include "orm/tiny/tinyconcepts.hpp" // IWYU pragma: keep
-#include "orm/utils/helpers.hpp"
 
 TINYORM_BEGIN_COMMON_NAMESPACE
 
@@ -26,9 +25,6 @@ namespace Concerns
     template<typename Derived, AllRelationsConcept ...AllRelations>
     class HasTimestamps
     {
-        /*! Alias for the helper utils. */
-        using Helpers = Orm::Utils::Helpers;
-
     public:
         /*! Equality comparison operator for the HasTimestamps concern. */
         bool operator==(const HasTimestamps &) const noexcept = default;

@@ -63,9 +63,6 @@ namespace Utils
         inline static std::size_t &hashCombine(std::size_t &seed, const T &value)
         noexcept(IsNothrowHashable<std::remove_const_t<T>>::value);
 
-        /*! Get the storage type of the value stored in the QVariant. */
-        static int qVariantTypeId(const QVariant &value);
-
         /*! Log exception caught in the main exception handler in a current thread. */
         [[maybe_unused]]
         static void logException(const std::exception &e, bool fatal = false);

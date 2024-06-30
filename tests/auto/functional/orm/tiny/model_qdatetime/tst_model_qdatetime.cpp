@@ -6,7 +6,6 @@
 #endif
 
 #include "orm/db.hpp"
-#include "orm/utils/helpers.hpp"
 #include "orm/utils/nullvariant.hpp"
 
 #include "databases.hpp"
@@ -25,7 +24,6 @@ using Orm::DB;
 using Orm::QtTimeZoneConfig;
 using Orm::QtTimeZoneType;
 using Orm::TTimeZone;
-using Orm::Utils::Helpers;
 using Orm::Utils::NullVariant;
 
 using TypeUtils = Orm::Utils::Type;
@@ -157,7 +155,7 @@ create_QDateTime_UtcTimezone_DatetimeAttribute_UtcOnServer() const
 
         // Check whether a stored value and type are correct
         const auto attribute = datetime.getAttributeFromArray(*datetime_);
-        QCOMPARE(Helpers::qVariantTypeId(attribute), QMetaType::QString);
+        QCOMPARE(attribute.typeId(), QMetaType::QString);
         QCOMPARE(attribute.value<QString>(), QString("2022-08-28 13:14:15"));
 
         QVERIFY(datetime.save());
@@ -177,7 +175,7 @@ create_QDateTime_UtcTimezone_DatetimeAttribute_UtcOnServer() const
         QVERIFY(datetimeDbVariant.isValid());
         QVERIFY(!datetimeDbVariant.isNull());
 
-        QCOMPARE(Helpers::qVariantTypeId(datetimeDbVariant), QMetaType::QDateTime);
+        QCOMPARE(datetimeDbVariant.typeId(), QMetaType::QDateTime);
 
         /* The time zone must be as is defined in the qt_timezone connection
            configuration, TinyORM TinyBuilder fixes and unifies the buggy time zone
@@ -212,7 +210,7 @@ create_QDateTime_0200Timezone_DatetimeAttribute_UtcOnServer() const
 
         // Check whether a stored value and type are correct
         const auto attribute = datetime.getAttributeFromArray(*datetime_);
-        QCOMPARE(Helpers::qVariantTypeId(attribute), QMetaType::QString);
+        QCOMPARE(attribute.typeId(), QMetaType::QString);
         QCOMPARE(attribute.value<QString>(), QString("2022-08-28 11:14:15"));
 
         QVERIFY(datetime.save());
@@ -232,7 +230,7 @@ create_QDateTime_0200Timezone_DatetimeAttribute_UtcOnServer() const
         QVERIFY(datetimeDbVariant.isValid());
         QVERIFY(!datetimeDbVariant.isNull());
 
-        QCOMPARE(Helpers::qVariantTypeId(datetimeDbVariant), QMetaType::QDateTime);
+        QCOMPARE(datetimeDbVariant.typeId(), QMetaType::QDateTime);
 
         /* The time zone must be as is defined in the qt_timezone connection
            configuration, TinyORM TinyBuilder fixes and unifies the buggy time zone
@@ -265,7 +263,7 @@ void tst_Model_QDateTime::create_QString_DatetimeAttribute_UtcOnServer() const
 
         // Check whether a stored value and type are correct
         const auto attribute = datetime.getAttributeFromArray(*datetime_);
-        QCOMPARE(Helpers::qVariantTypeId(attribute), QMetaType::QString);
+        QCOMPARE(attribute.typeId(), QMetaType::QString);
         QCOMPARE(attribute.value<QString>(), QString("2022-08-28 13:14:15"));
 
         QVERIFY(datetime.save());
@@ -285,7 +283,7 @@ void tst_Model_QDateTime::create_QString_DatetimeAttribute_UtcOnServer() const
         QVERIFY(datetimeDbVariant.isValid());
         QVERIFY(!datetimeDbVariant.isNull());
 
-        QCOMPARE(Helpers::qVariantTypeId(datetimeDbVariant), QMetaType::QDateTime);
+        QCOMPARE(datetimeDbVariant.typeId(), QMetaType::QDateTime);
 
         /* The time zone must be as is defined in the qt_timezone connection
            configuration, TinyORM TinyBuilder fixes and unifies the buggy time zone
@@ -319,7 +317,7 @@ create_QDateTime_UtcTimezone_TimestampAttribute_UtcOnServer() const
 
         // Check whether a stored value and type are correct
         const auto attribute = datetime.getAttributeFromArray(*timestamp);
-        QCOMPARE(Helpers::qVariantTypeId(attribute), QMetaType::QString);
+        QCOMPARE(attribute.typeId(), QMetaType::QString);
         QCOMPARE(attribute.value<QString>(), QString("2022-08-28 13:14:15"));
 
         QVERIFY(datetime.save());
@@ -339,7 +337,7 @@ create_QDateTime_UtcTimezone_TimestampAttribute_UtcOnServer() const
         QVERIFY(timestampDbVariant.isValid());
         QVERIFY(!timestampDbVariant.isNull());
 
-        QCOMPARE(Helpers::qVariantTypeId(timestampDbVariant), QMetaType::QDateTime);
+        QCOMPARE(timestampDbVariant.typeId(), QMetaType::QDateTime);
 
         /* The time zone must be as is defined in the qt_timezone connection
            configuration, TinyORM TinyBuilder fixes and unifies the buggy time zone
@@ -374,7 +372,7 @@ create_QDateTime_0200Timezone_TimestampAttribute_UtcOnServer() const
 
         // Check whether a stored value and type are correct
         const auto attribute = datetime.getAttributeFromArray(*timestamp);
-        QCOMPARE(Helpers::qVariantTypeId(attribute), QMetaType::QString);
+        QCOMPARE(attribute.typeId(), QMetaType::QString);
         QCOMPARE(attribute.value<QString>(), QString("2022-08-28 11:14:15"));
 
         QVERIFY(datetime.save());
@@ -394,7 +392,7 @@ create_QDateTime_0200Timezone_TimestampAttribute_UtcOnServer() const
         QVERIFY(timestampDbVariant.isValid());
         QVERIFY(!timestampDbVariant.isNull());
 
-        QCOMPARE(Helpers::qVariantTypeId(timestampDbVariant), QMetaType::QDateTime);
+        QCOMPARE(timestampDbVariant.typeId(), QMetaType::QDateTime);
 
         /* The time zone must be as is defined in the qt_timezone connection
            configuration, TinyORM TinyBuilder fixes and unifies the buggy time zone
@@ -427,7 +425,7 @@ void tst_Model_QDateTime::create_QString_TimestampAttribute_UtcOnServer() const
 
         // Check whether a stored value and type are correct
         const auto attribute = datetime.getAttributeFromArray(*timestamp);
-        QCOMPARE(Helpers::qVariantTypeId(attribute), QMetaType::QString);
+        QCOMPARE(attribute.typeId(), QMetaType::QString);
         QCOMPARE(attribute.value<QString>(), QString("2022-08-28 13:14:15"));
 
         QVERIFY(datetime.save());
@@ -447,7 +445,7 @@ void tst_Model_QDateTime::create_QString_TimestampAttribute_UtcOnServer() const
         QVERIFY(timestampDbVariant.isValid());
         QVERIFY(!timestampDbVariant.isNull());
 
-        QCOMPARE(Helpers::qVariantTypeId(timestampDbVariant), QMetaType::QDateTime);
+        QCOMPARE(timestampDbVariant.typeId(), QMetaType::QDateTime);
 
         /* The time zone must be as is defined in the qt_timezone connection
            configuration, TinyORM TinyBuilder fixes and unifies the buggy time zone
@@ -489,7 +487,7 @@ create_QDateTime_UtcTimezone_DatetimeAttribute_0200OnServer() const
 
         // Check whether a stored value and type are correct
         const auto attribute = datetime.getAttributeFromArray(*datetime_);
-        QCOMPARE(Helpers::qVariantTypeId(attribute), QMetaType::QString);
+        QCOMPARE(attribute.typeId(), QMetaType::QString);
         QCOMPARE(attribute.value<QString>(), QString("2022-08-28 15:14:15"));
 
         QVERIFY(datetime.save());
@@ -509,7 +507,7 @@ create_QDateTime_UtcTimezone_DatetimeAttribute_0200OnServer() const
         QVERIFY(datetimeDbVariant.isValid());
         QVERIFY(!datetimeDbVariant.isNull());
 
-        QCOMPARE(Helpers::qVariantTypeId(datetimeDbVariant), QMetaType::QDateTime);
+        QCOMPARE(datetimeDbVariant.typeId(), QMetaType::QDateTime);
 
         /* The time zone must be as is defined in the qt_timezone connection
            configuration, TinyORM TinyBuilder fixes and unifies the buggy time zone
@@ -549,7 +547,7 @@ create_QDateTime_0200Timezone_DatetimeAttribute_0200OnServer() const
 
         // Check whether a stored value and type are correct
         const auto attribute = datetime.getAttributeFromArray(*datetime_);
-        QCOMPARE(Helpers::qVariantTypeId(attribute), QMetaType::QString);
+        QCOMPARE(attribute.typeId(), QMetaType::QString);
         QCOMPARE(attribute.value<QString>(), QString("2022-08-28 13:14:15"));
 
         QVERIFY(datetime.save());
@@ -569,7 +567,7 @@ create_QDateTime_0200Timezone_DatetimeAttribute_0200OnServer() const
         QVERIFY(datetimeDbVariant.isValid());
         QVERIFY(!datetimeDbVariant.isNull());
 
-        QCOMPARE(Helpers::qVariantTypeId(datetimeDbVariant), QMetaType::QDateTime);
+        QCOMPARE(datetimeDbVariant.typeId(), QMetaType::QDateTime);
 
         /* The time zone must be as is defined in the qt_timezone connection
            configuration, TinyORM TinyBuilder fixes and unifies the buggy time zone
@@ -607,7 +605,7 @@ void tst_Model_QDateTime::create_QString_DatetimeAttribute_0200OnServer() const
 
         // Check whether a stored value and type are correct
         const auto attribute = datetime.getAttributeFromArray(*datetime_);
-        QCOMPARE(Helpers::qVariantTypeId(attribute), QMetaType::QString);
+        QCOMPARE(attribute.typeId(), QMetaType::QString);
         QCOMPARE(attribute.value<QString>(), QString("2022-08-28 13:14:15"));
 
         QVERIFY(datetime.save());
@@ -627,7 +625,7 @@ void tst_Model_QDateTime::create_QString_DatetimeAttribute_0200OnServer() const
         QVERIFY(datetimeDbVariant.isValid());
         QVERIFY(!datetimeDbVariant.isNull());
 
-        QCOMPARE(Helpers::qVariantTypeId(datetimeDbVariant), QMetaType::QDateTime);
+        QCOMPARE(datetimeDbVariant.typeId(), QMetaType::QDateTime);
 
         /* The time zone must be as is defined in the qt_timezone connection
            configuration, TinyORM TinyBuilder fixes and unifies the buggy time zone
@@ -666,7 +664,7 @@ create_QDateTime_UtcTimezone_TimestampAttribute_0200OnServer() const
 
         // Check whether a stored value and type are correct
         const auto attribute = datetime.getAttributeFromArray(*timestamp);
-        QCOMPARE(Helpers::qVariantTypeId(attribute), QMetaType::QString);
+        QCOMPARE(attribute.typeId(), QMetaType::QString);
         QCOMPARE(attribute.value<QString>(), QString("2022-08-28 15:14:15"));
 
         QVERIFY(datetime.save());
@@ -686,7 +684,7 @@ create_QDateTime_UtcTimezone_TimestampAttribute_0200OnServer() const
         QVERIFY(timestampDbVariant.isValid());
         QVERIFY(!timestampDbVariant.isNull());
 
-        QCOMPARE(Helpers::qVariantTypeId(timestampDbVariant), QMetaType::QDateTime);
+        QCOMPARE(timestampDbVariant.typeId(), QMetaType::QDateTime);
 
         /* The time zone must be as is defined in the qt_timezone connection
            configuration, TinyORM TinyBuilder fixes and unifies the buggy time zone
@@ -726,7 +724,7 @@ create_QDateTime_0200Timezone_TimestampAttribute_0200OnServer() const
 
         // Check whether a stored value and type are correct
         const auto attribute = datetime.getAttributeFromArray(*timestamp);
-        QCOMPARE(Helpers::qVariantTypeId(attribute), QMetaType::QString);
+        QCOMPARE(attribute.typeId(), QMetaType::QString);
         QCOMPARE(attribute.value<QString>(), QString("2022-08-28 13:14:15"));
 
         QVERIFY(datetime.save());
@@ -746,7 +744,7 @@ create_QDateTime_0200Timezone_TimestampAttribute_0200OnServer() const
         QVERIFY(timestampDbVariant.isValid());
         QVERIFY(!timestampDbVariant.isNull());
 
-        QCOMPARE(Helpers::qVariantTypeId(timestampDbVariant), QMetaType::QDateTime);
+        QCOMPARE(timestampDbVariant.typeId(), QMetaType::QDateTime);
 
         /* The time zone must be as is defined in the qt_timezone connection
            configuration, TinyORM TinyBuilder fixes and unifies the buggy time zone
@@ -784,7 +782,7 @@ void tst_Model_QDateTime::create_QString_TimestampAttribute_0200OnServer() const
 
         // Check whether a stored value and type are correct
         const auto attribute = datetime.getAttributeFromArray(*timestamp);
-        QCOMPARE(Helpers::qVariantTypeId(attribute), QMetaType::QString);
+        QCOMPARE(attribute.typeId(), QMetaType::QString);
         QCOMPARE(attribute.value<QString>(), QString("2022-08-28 13:14:15"));
 
         QVERIFY(datetime.save());
@@ -804,7 +802,7 @@ void tst_Model_QDateTime::create_QString_TimestampAttribute_0200OnServer() const
         QVERIFY(timestampDbVariant.isValid());
         QVERIFY(!timestampDbVariant.isNull());
 
-        QCOMPARE(Helpers::qVariantTypeId(timestampDbVariant), QMetaType::QDateTime);
+        QCOMPARE(timestampDbVariant.typeId(), QMetaType::QDateTime);
 
         /* The time zone must be as is defined in the qt_timezone connection
            configuration, TinyORM TinyBuilder fixes and unifies the buggy time zone
@@ -840,7 +838,7 @@ void tst_Model_QDateTime::create_QDate_UtcTimezone_DateAttribute_UtcOnServer() c
 
         // Check whether a stored value and type are correct
         const auto attribute = datetime.getAttributeFromArray(*date);
-        QCOMPARE(Helpers::qVariantTypeId(attribute), QMetaType::QString);
+        QCOMPARE(attribute.typeId(), QMetaType::QString);
         QCOMPARE(attribute.value<QString>(), QString("2022-08-28"));
 
         QVERIFY(datetime.save());
@@ -860,7 +858,7 @@ void tst_Model_QDateTime::create_QDate_UtcTimezone_DateAttribute_UtcOnServer() c
         QVERIFY(dateDbVariant.isValid());
         QVERIFY(!dateDbVariant.isNull());
 
-        QCOMPARE(Helpers::qVariantTypeId(dateDbVariant), QMetaType::QDate);
+        QCOMPARE(dateDbVariant.typeId(), QMetaType::QDate);
 
         const auto dateActual = dateDbVariant.value<QDate>();
         const auto dateExpected = QDate(2022, 8, 28);
@@ -887,7 +885,7 @@ void tst_Model_QDateTime::create_QString_DateAttribute_UtcOnServer() const
 
         // Check whether a stored value and type are correct
         const auto attribute = datetime.getAttributeFromArray(*date);
-        QCOMPARE(Helpers::qVariantTypeId(attribute), QMetaType::QString);
+        QCOMPARE(attribute.typeId(), QMetaType::QString);
         QCOMPARE(attribute.value<QString>(), QString("2022-08-28"));
 
         QVERIFY(datetime.save());
@@ -907,7 +905,7 @@ void tst_Model_QDateTime::create_QString_DateAttribute_UtcOnServer() const
         QVERIFY(dateDbVariant.isValid());
         QVERIFY(!dateDbVariant.isNull());
 
-        QCOMPARE(Helpers::qVariantTypeId(dateDbVariant), QMetaType::QDate);
+        QCOMPARE(dateDbVariant.typeId(), QMetaType::QDate);
 
         const auto dateActual = dateDbVariant.value<QDate>();
         const auto dateExpected = QDate(2022, 8, 28);
@@ -937,7 +935,7 @@ void tst_Model_QDateTime::create_QDate_UtcTimezone_DateAttribute_0200OnServer() 
 
         // Check whether a stored value and type are correct
         const auto attribute = datetime.getAttributeFromArray(*date);
-        QCOMPARE(Helpers::qVariantTypeId(attribute), QMetaType::QString);
+        QCOMPARE(attribute.typeId(), QMetaType::QString);
         QCOMPARE(attribute.value<QString>(), QString("2022-08-28"));
 
         QVERIFY(datetime.save());
@@ -957,7 +955,7 @@ void tst_Model_QDateTime::create_QDate_UtcTimezone_DateAttribute_0200OnServer() 
         QVERIFY(dateDbVariant.isValid());
         QVERIFY(!dateDbVariant.isNull());
 
-        QCOMPARE(Helpers::qVariantTypeId(dateDbVariant), QMetaType::QDate);
+        QCOMPARE(dateDbVariant.typeId(), QMetaType::QDate);
 
         const auto dateActual = dateDbVariant.value<QDate>();
         const auto dateExpected = QDate(2022, 8, 28);
@@ -986,7 +984,7 @@ void tst_Model_QDateTime::create_QString_DateAttribute_0200OnServer() const
 
         // Check whether a stored value and type are correct
         const auto attribute = datetime.getAttributeFromArray(*date);
-        QCOMPARE(Helpers::qVariantTypeId(attribute), QMetaType::QString);
+        QCOMPARE(attribute.typeId(), QMetaType::QString);
         QCOMPARE(attribute.value<QString>(), QString("2022-08-28"));
 
         QVERIFY(datetime.save());
@@ -1006,7 +1004,7 @@ void tst_Model_QDateTime::create_QString_DateAttribute_0200OnServer() const
         QVERIFY(dateDbVariant.isValid());
         QVERIFY(!dateDbVariant.isNull());
 
-        QCOMPARE(Helpers::qVariantTypeId(dateDbVariant), QMetaType::QDate);
+        QCOMPARE(dateDbVariant.typeId(), QMetaType::QDate);
 
         const auto dateActual = dateDbVariant.value<QDate>();
         const auto dateExpected = QDate(2022, 8, 28);
@@ -1037,7 +1035,7 @@ void tst_Model_QDateTime::create_QDateTime_Null_DatetimeAttribute_UtcOnServer() 
         // Check whether a stored value and type are correct
         const auto attribute = datetime.getAttributeFromArray(*datetime_);
         QVERIFY(attribute.isValid() && attribute.isNull());
-        QCOMPARE(Helpers::qVariantTypeId(attribute), QMetaType::QDateTime);
+        QCOMPARE(attribute.typeId(), QMetaType::QDateTime);
 
         QVERIFY(datetime.save());
 
@@ -1064,9 +1062,9 @@ void tst_Model_QDateTime::create_QDateTime_Null_DatetimeAttribute_UtcOnServer() 
            QSQLITE driver simply returns QVariant(QMetaType::QString) for all null
            values. */
         if (DB::driverName(connection) == QSQLITE)
-            QCOMPARE(Helpers::qVariantTypeId(datetimeDbVariant), QMetaType::QString);
+            QCOMPARE(datetimeDbVariant.typeId(), QMetaType::QString);
         else
-            QCOMPARE(Helpers::qVariantTypeId(datetimeDbVariant), QMetaType::QDateTime);
+            QCOMPARE(datetimeDbVariant.typeId(), QMetaType::QDateTime);
 
         /* TZ is irrelevant for null values, but I will check them anyway, if something
            weird happens and TZ changes then test fail, so I will know about that. */
@@ -1098,7 +1096,7 @@ void tst_Model_QDateTime::create_QDate_Null_DateAttribute_UtcOnServer() const
         // Check whether a stored value and type are correct
         const auto attribute = datetime.getAttributeFromArray(*date);
         QVERIFY(attribute.isValid() && attribute.isNull());
-        QCOMPARE(Helpers::qVariantTypeId(attribute), QMetaType::QDate);
+        QCOMPARE(attribute.typeId(), QMetaType::QDate);
 
         QVERIFY(datetime.save());
 
@@ -1125,9 +1123,9 @@ void tst_Model_QDateTime::create_QDate_Null_DateAttribute_UtcOnServer() const
            QSQLITE driver simply returns QVariant(QMetaType::QString) for all null
            values. */
         if (DB::driverName(connection) == QSQLITE)
-            QCOMPARE(Helpers::qVariantTypeId(dateDbVariant), QMetaType::QString);
+            QCOMPARE(dateDbVariant.typeId(), QMetaType::QString);
         else
-            QCOMPARE(Helpers::qVariantTypeId(dateDbVariant), QMetaType::QDate);
+            QCOMPARE(dateDbVariant.typeId(), QMetaType::QDate);
 
         const auto dateActual = dateDbVariant.value<QDate>();
         const auto dateExpected = QDate();
@@ -1162,7 +1160,7 @@ void tst_Model_QDateTime::create_QDateTime_Null_DatetimeAttribute_0200OnServer()
         // Check whether a stored value and type are correct
         const auto attribute = datetime.getAttributeFromArray(*datetime_);
         QVERIFY(attribute.isValid() && attribute.isNull());
-        QCOMPARE(Helpers::qVariantTypeId(attribute), QMetaType::QDateTime);
+        QCOMPARE(attribute.typeId(), QMetaType::QDateTime);
 
         QVERIFY(datetime.save());
 
@@ -1189,9 +1187,9 @@ void tst_Model_QDateTime::create_QDateTime_Null_DatetimeAttribute_0200OnServer()
            QSQLITE driver simply returns QVariant(QMetaType::QString) for all null
            values. */
         if (DB::driverName(connection) == QSQLITE)
-            QCOMPARE(Helpers::qVariantTypeId(datetimeDbVariant), QMetaType::QString);
+            QCOMPARE(datetimeDbVariant.typeId(), QMetaType::QString);
         else
-            QCOMPARE(Helpers::qVariantTypeId(datetimeDbVariant), QMetaType::QDateTime);
+            QCOMPARE(datetimeDbVariant.typeId(), QMetaType::QDateTime);
 
         /* TZ is irrelevant for null values, but I will check them anyway, if something
            weird happens and TZ changes then test fail, so I will know about that. */
@@ -1225,7 +1223,7 @@ void tst_Model_QDateTime::create_QDate_Null_DateAttribute_0200OnServer() const
         // Check whether a stored value and type are correct
         const auto attribute = datetime.getAttributeFromArray(*date);
         QVERIFY(attribute.isValid() && attribute.isNull());
-        QCOMPARE(Helpers::qVariantTypeId(attribute), QMetaType::QDate);
+        QCOMPARE(attribute.typeId(), QMetaType::QDate);
 
         QVERIFY(datetime.save());
 
@@ -1252,9 +1250,9 @@ void tst_Model_QDateTime::create_QDate_Null_DateAttribute_0200OnServer() const
            QSQLITE driver simply returns QVariant(QMetaType::QString) for all null
            values. */
         if (DB::driverName(connection) == QSQLITE)
-            QCOMPARE(Helpers::qVariantTypeId(dateDbVariant), QMetaType::QString);
+            QCOMPARE(dateDbVariant.typeId(), QMetaType::QString);
         else
-            QCOMPARE(Helpers::qVariantTypeId(dateDbVariant), QMetaType::QDate);
+            QCOMPARE(dateDbVariant.typeId(), QMetaType::QDate);
 
         const auto dateActual = dateDbVariant.value<QDate>();
         const auto dateExpected = QDate();
@@ -1293,7 +1291,7 @@ create_QDateTime_0300Timezone_DatetimeAttribute_UtcOnServer_DontConvert() const
 
         // Check whether a stored value and type are correct
         const auto attribute = datetime.getAttributeFromArray(*datetime_);
-        QCOMPARE(Helpers::qVariantTypeId(attribute), QMetaType::QString);
+        QCOMPARE(attribute.typeId(), QMetaType::QString);
         QCOMPARE(attribute.value<QString>(), QString("2022-08-28 13:14:15"));
 
         QVERIFY(datetime.save());
@@ -1313,7 +1311,7 @@ create_QDateTime_0300Timezone_DatetimeAttribute_UtcOnServer_DontConvert() const
         QVERIFY(datetimeDbVariant.isValid());
         QVERIFY(!datetimeDbVariant.isNull());
 
-        QCOMPARE(Helpers::qVariantTypeId(datetimeDbVariant), QMetaType::QDateTime);
+        QCOMPARE(datetimeDbVariant.typeId(), QMetaType::QDateTime);
 
         /* The time zone must be as is defined in the qt_timezone connection
            configuration, TinyORM TinyBuilder fixes and unifies the buggy time zone

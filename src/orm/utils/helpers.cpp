@@ -18,11 +18,6 @@ namespace Orm::Utils
 
 /* public */
 
-int Helpers::qVariantTypeId(const QVariant &value)
-{
-    return value.typeId();
-}
-
 void Helpers::logException(const std::exception &e, const bool fatal)
 {
     const QString exceptionMessage(e.what());
@@ -84,7 +79,7 @@ Helpers::convertTimeZone(const QDateTime &datetime, const QtTimeZoneConfig &time
     T_LIKELY
     case QtTimeZoneType::QTimeZone:
 #if QT_VERSION >= QT_VERSION_CHECK(6, 5, 0)
-        if (const auto typeId = Helpers::qVariantTypeId(timezoneValue);
+        if (const auto typeId = timezoneValue.typeId();
             typeId == QMetaType::fromType<QTimeZone::Initialization>().id()
         )
             return datetime.toTimeZone(timezoneValue.value<QTimeZone::Initialization>());
@@ -121,7 +116,7 @@ Helpers::setTimeZone(QDateTime &datetime, const QtTimeZoneConfig &timezone)
     T_LIKELY
     case QtTimeZoneType::QTimeZone:
 #if QT_VERSION >= QT_VERSION_CHECK(6, 5, 0)
-        if (const auto typeId = Helpers::qVariantTypeId(timezoneValue);
+        if (const auto typeId = timezoneValue.typeId();
             typeId == QMetaType::fromType<QTimeZone::Initialization>().id()
         )
             datetime.setTimeZone(timezoneValue.value<QTimeZone::Initialization>());

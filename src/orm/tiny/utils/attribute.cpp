@@ -5,11 +5,8 @@
 #include <range/v3/view/transform.hpp>
 
 #include "orm/macros/likely.hpp"
-#include "orm/utils/helpers.hpp"
 
 TINYORM_BEGIN_COMMON_NAMESPACE
-
-using Orm::Utils::Helpers;
 
 namespace Orm::Tiny::Utils
 {
@@ -200,7 +197,7 @@ void Attribute::fixQtNullVariantBug(QVariantMap &attributes) // NOLINT(misc-no-r
         if (value.isNull()) T_UNLIKELY
             value = QVariant::fromValue(nullptr);
 
-        else if (const auto typeId = Helpers::qVariantTypeId(value);
+        else if (const auto typeId = value.typeId();
                  typeId == QMetaType::QVariantMap
         ) T_UNLIKELY
             fixQtNullVariantBug(
@@ -217,7 +214,7 @@ void Attribute::fixQtNullVariantBug(QVariantMap &attributes) // NOLINT(misc-no-r
 void Attribute::fixQtNullVariantBug(QVariantList &attributesList) // NOLINT(misc-no-recursion)
 {
     for (auto &attributes : attributesList)
-        if (Helpers::qVariantTypeId(attributes) == QMetaType::QVariantMap) T_LIKELY
+        if (attributes.typeId() == QMetaType::QVariantMap) T_LIKELY
             fixQtNullVariantBug(
                 *reinterpret_cast<QVariantMap *>(attributes.data())); // NOLINT(cppcoreguidelines-pro-type-reinterpret-cast)
 

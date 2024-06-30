@@ -25,7 +25,6 @@ using Orm::DB;
 using Orm::QtTimeZoneConfig;
 using Orm::QtTimeZoneType;
 using Orm::TTimeZone;
-using Orm::Utils::Helpers;
 using Orm::Utils::NullVariant;
 
 using QueryBuilder = Orm::Query::Builder;
@@ -270,7 +269,7 @@ insert_Qt_QDateTime_UtcTimezone_DatetimeColumn_UtcOnServer() const
         QVERIFY(datetimeDbVariant.isValid());
         QVERIFY(!datetimeDbVariant.isNull());
 
-        QCOMPARE(Helpers::qVariantTypeId(datetimeDbVariant), QMetaType::QDateTime);
+        QCOMPARE(datetimeDbVariant.typeId(), QMetaType::QDateTime);
 
         /* QMYSQL driver doesn't care about QDateTime timezone and returns the QDateTime
            in a local timezone. */
@@ -344,7 +343,7 @@ insert_Qt_QDateTime_0200Timezone_DatetimeColumn_UtcOnServer() const
         QVERIFY(datetimeDbVariant.isValid());
         QVERIFY(!datetimeDbVariant.isNull());
 
-        QCOMPARE(Helpers::qVariantTypeId(datetimeDbVariant), QMetaType::QDateTime);
+        QCOMPARE(datetimeDbVariant.typeId(), QMetaType::QDateTime);
 
         /* QMYSQL driver doesn't care about QDateTime timezone and returns the QDateTime
            in a local timezone. */
@@ -416,7 +415,7 @@ void tst_MySql_QDateTime::insert_Qt_QString_DatetimeColumn_UtcOnServer() const
         QVERIFY(datetimeDbVariant.isValid());
         QVERIFY(!datetimeDbVariant.isNull());
 
-        QCOMPARE(Helpers::qVariantTypeId(datetimeDbVariant), QMetaType::QDateTime);
+        QCOMPARE(datetimeDbVariant.typeId(), QMetaType::QDateTime);
 
         /* QMYSQL driver doesn't care about QDateTime timezone and returns the QDateTime
            in a local timezone. */
@@ -490,7 +489,7 @@ insert_Qt_QDateTime_UtcTimezone_TimestampColumn_UtcOnServer() const
         QVERIFY(timestampDbVariant.isValid());
         QVERIFY(!timestampDbVariant.isNull());
 
-        QCOMPARE(Helpers::qVariantTypeId(timestampDbVariant), QMetaType::QDateTime);
+        QCOMPARE(timestampDbVariant.typeId(), QMetaType::QDateTime);
 
         /* QMYSQL driver doesn't care about QDateTime timezone and returns the QDateTime
            in a local timezone. */
@@ -564,7 +563,7 @@ insert_Qt_QDateTime_0200Timezone_TimestampColumn_UtcOnServer() const
         QVERIFY(timestampDbVariant.isValid());
         QVERIFY(!timestampDbVariant.isNull());
 
-        QCOMPARE(Helpers::qVariantTypeId(timestampDbVariant), QMetaType::QDateTime);
+        QCOMPARE(timestampDbVariant.typeId(), QMetaType::QDateTime);
 
         /* QMYSQL driver doesn't care about QDateTime timezone and returns the QDateTime
            in a local timezone. */
@@ -637,7 +636,7 @@ void tst_MySql_QDateTime::insert_Qt_QString_TimestampColumn_UtcOnServer() const
         QVERIFY(timestampDbVariant.isValid());
         QVERIFY(!timestampDbVariant.isNull());
 
-        QCOMPARE(Helpers::qVariantTypeId(timestampDbVariant), QMetaType::QDateTime);
+        QCOMPARE(timestampDbVariant.typeId(), QMetaType::QDateTime);
 
         /* QMYSQL driver doesn't care about QDateTime timezone and returns the QDateTime
            in a local timezone. */
@@ -714,7 +713,7 @@ insert_Qt_QDateTime_UtcTimezone_DatetimeColumn_0200OnServer() const
         QVERIFY(datetimeDbVariant.isValid());
         QVERIFY(!datetimeDbVariant.isNull());
 
-        QCOMPARE(Helpers::qVariantTypeId(datetimeDbVariant), QMetaType::QDateTime);
+        QCOMPARE(datetimeDbVariant.typeId(), QMetaType::QDateTime);
 
         /* QMYSQL driver doesn't care about QDateTime timezone and returns the QDateTime
            in a local timezone. */
@@ -789,7 +788,7 @@ insert_Qt_QDateTime_0200Timezone_DatetimeColumn_0200OnServer() const
         QVERIFY(datetimeDbVariant.isValid());
         QVERIFY(!datetimeDbVariant.isNull());
 
-        QCOMPARE(Helpers::qVariantTypeId(datetimeDbVariant), QMetaType::QDateTime);
+        QCOMPARE(datetimeDbVariant.typeId(), QMetaType::QDateTime);
 
         /* QMYSQL driver doesn't care about QDateTime timezone and returns the QDateTime
            in a local timezone. */
@@ -862,7 +861,7 @@ void tst_MySql_QDateTime::insert_Qt_QString_DatetimeColumn_0200OnServer() const
         QVERIFY(datetimeDbVariant.isValid());
         QVERIFY(!datetimeDbVariant.isNull());
 
-        QCOMPARE(Helpers::qVariantTypeId(datetimeDbVariant), QMetaType::QDateTime);
+        QCOMPARE(datetimeDbVariant.typeId(), QMetaType::QDateTime);
 
         /* QMYSQL driver doesn't care about QDateTime timezone and returns the QDateTime
            in a local timezone. */
@@ -937,7 +936,7 @@ insert_Qt_QDateTime_UtcTimezone_TimestampColumn_0200OnServer() const
         QVERIFY(timestampDbVariant.isValid());
         QVERIFY(!timestampDbVariant.isNull());
 
-        QCOMPARE(Helpers::qVariantTypeId(timestampDbVariant), QMetaType::QDateTime);
+        QCOMPARE(timestampDbVariant.typeId(), QMetaType::QDateTime);
 
         /* QMYSQL driver doesn't care about QDateTime timezone and returns the QDateTime
            in a local timezone. */
@@ -1012,7 +1011,7 @@ insert_Qt_QDateTime_0200Timezone_TimestampColumn_0200OnServer() const
         QVERIFY(timestampDbVariant.isValid());
         QVERIFY(!timestampDbVariant.isNull());
 
-        QCOMPARE(Helpers::qVariantTypeId(timestampDbVariant), QMetaType::QDateTime);
+        QCOMPARE(timestampDbVariant.typeId(), QMetaType::QDateTime);
 
         /* QMYSQL driver doesn't care about QDateTime timezone and returns the QDateTime
            in a local timezone. */
@@ -1085,7 +1084,7 @@ void tst_MySql_QDateTime::insert_Qt_QString_TimestampColumn_0200OnServer() const
         QVERIFY(timestampDbVariant.isValid());
         QVERIFY(!timestampDbVariant.isNull());
 
-        QCOMPARE(Helpers::qVariantTypeId(timestampDbVariant), QMetaType::QDateTime);
+        QCOMPARE(timestampDbVariant.typeId(), QMetaType::QDateTime);
 
         /* QMYSQL driver doesn't care about QDateTime timezone and returns the QDateTime
            in a local timezone. */
@@ -1137,7 +1136,7 @@ insert_QDateTime_UtcTimezone_DatetimeColumn_UtcOnServer() const
         QVERIFY(datetimeDbVariant.isValid());
         QVERIFY(!datetimeDbVariant.isNull());
 
-        QCOMPARE(Helpers::qVariantTypeId(datetimeDbVariant), QMetaType::QDateTime);
+        QCOMPARE(datetimeDbVariant.typeId(), QMetaType::QDateTime);
 
         /* The time zone must be as is defined in the qt_timezone connection
            configuration, TinyORM QueryBuilder fixes the buggy time zone behavior
@@ -1178,7 +1177,7 @@ insert_QDateTime_0200Timezone_DatetimeColumn_UtcOnServer() const
         QVERIFY(datetimeDbVariant.isValid());
         QVERIFY(!datetimeDbVariant.isNull());
 
-        QCOMPARE(Helpers::qVariantTypeId(datetimeDbVariant), QMetaType::QDateTime);
+        QCOMPARE(datetimeDbVariant.typeId(), QMetaType::QDateTime);
 
         /* The time zone must be as is defined in the qt_timezone connection
            configuration, TinyORM QueryBuilder fixes the buggy time zone behavior
@@ -1217,7 +1216,7 @@ void tst_MySql_QDateTime::insert_QString_DatetimeColumn_UtcOnServer() const
         QVERIFY(datetimeDbVariant.isValid());
         QVERIFY(!datetimeDbVariant.isNull());
 
-        QCOMPARE(Helpers::qVariantTypeId(datetimeDbVariant), QMetaType::QDateTime);
+        QCOMPARE(datetimeDbVariant.typeId(), QMetaType::QDateTime);
 
         /* The time zone must be as is defined in the qt_timezone connection
            configuration, TinyORM QueryBuilder fixes the buggy time zone behavior
@@ -1258,7 +1257,7 @@ insert_QDateTime_UtcTimezone_TimestampColumn_UtcOnServer() const
         QVERIFY(timestampDbVariant.isValid());
         QVERIFY(!timestampDbVariant.isNull());
 
-        QCOMPARE(Helpers::qVariantTypeId(timestampDbVariant), QMetaType::QDateTime);
+        QCOMPARE(timestampDbVariant.typeId(), QMetaType::QDateTime);
 
         /* The time zone must be as is defined in the qt_timezone connection
            configuration, TinyORM QueryBuilder fixes the buggy time zone behavior
@@ -1299,7 +1298,7 @@ insert_QDateTime_0200Timezone_TimestampColumn_UtcOnServer() const
         QVERIFY(timestampDbVariant.isValid());
         QVERIFY(!timestampDbVariant.isNull());
 
-        QCOMPARE(Helpers::qVariantTypeId(timestampDbVariant), QMetaType::QDateTime);
+        QCOMPARE(timestampDbVariant.typeId(), QMetaType::QDateTime);
 
         /* The time zone must be as is defined in the qt_timezone connection
            configuration, TinyORM QueryBuilder fixes the buggy time zone behavior
@@ -1338,7 +1337,7 @@ void tst_MySql_QDateTime::insert_QString_TimestampColumn_UtcOnServer() const
         QVERIFY(timestampDbVariant.isValid());
         QVERIFY(!timestampDbVariant.isNull());
 
-        QCOMPARE(Helpers::qVariantTypeId(timestampDbVariant), QMetaType::QDateTime);
+        QCOMPARE(timestampDbVariant.typeId(), QMetaType::QDateTime);
 
         /* The time zone must be as is defined in the qt_timezone connection
            configuration, TinyORM QueryBuilder fixes the buggy time zone behavior
@@ -1383,7 +1382,7 @@ insert_QDateTime_UtcTimezone_DatetimeColumn_0200OnServer() const
         QVERIFY(datetimeDbVariant.isValid());
         QVERIFY(!datetimeDbVariant.isNull());
 
-        QCOMPARE(Helpers::qVariantTypeId(datetimeDbVariant), QMetaType::QDateTime);
+        QCOMPARE(datetimeDbVariant.typeId(), QMetaType::QDateTime);
 
         /* The time zone must be as is defined in the qt_timezone connection
            configuration, TinyORM QueryBuilder fixes the buggy time zone behavior
@@ -1425,7 +1424,7 @@ insert_QDateTime_0200Timezone_DatetimeColumn_0200OnServer() const
         QVERIFY(datetimeDbVariant.isValid());
         QVERIFY(!datetimeDbVariant.isNull());
 
-        QCOMPARE(Helpers::qVariantTypeId(datetimeDbVariant), QMetaType::QDateTime);
+        QCOMPARE(datetimeDbVariant.typeId(), QMetaType::QDateTime);
 
         /* The time zone must be as is defined in the qt_timezone connection
            configuration, TinyORM QueryBuilder fixes the buggy time zone behavior
@@ -1465,7 +1464,7 @@ void tst_MySql_QDateTime::insert_QString_DatetimeColumn_0200OnServer() const
         QVERIFY(datetimeDbVariant.isValid());
         QVERIFY(!datetimeDbVariant.isNull());
 
-        QCOMPARE(Helpers::qVariantTypeId(datetimeDbVariant), QMetaType::QDateTime);
+        QCOMPARE(datetimeDbVariant.typeId(), QMetaType::QDateTime);
 
         /* The time zone must be as is defined in the qt_timezone connection
            configuration, TinyORM QueryBuilder fixes the buggy time zone behavior
@@ -1507,7 +1506,7 @@ insert_QDateTime_UtcTimezone_TimestampColumn_0200OnServer() const
         QVERIFY(timestampDbVariant.isValid());
         QVERIFY(!timestampDbVariant.isNull());
 
-        QCOMPARE(Helpers::qVariantTypeId(timestampDbVariant), QMetaType::QDateTime);
+        QCOMPARE(timestampDbVariant.typeId(), QMetaType::QDateTime);
 
         /* The time zone must be as is defined in the qt_timezone connection
            configuration, TinyORM QueryBuilder fixes the buggy time zone behavior
@@ -1549,7 +1548,7 @@ insert_QDateTime_0200Timezone_TimestampColumn_0200OnServer() const
         QVERIFY(timestampDbVariant.isValid());
         QVERIFY(!timestampDbVariant.isNull());
 
-        QCOMPARE(Helpers::qVariantTypeId(timestampDbVariant), QMetaType::QDateTime);
+        QCOMPARE(timestampDbVariant.typeId(), QMetaType::QDateTime);
 
         /* The time zone must be as is defined in the qt_timezone connection
            configuration, TinyORM QueryBuilder fixes the buggy time zone behavior
@@ -1589,7 +1588,7 @@ void tst_MySql_QDateTime::insert_QString_TimestampColumn_0200OnServer() const
         QVERIFY(timestampDbVariant.isValid());
         QVERIFY(!timestampDbVariant.isNull());
 
-        QCOMPARE(Helpers::qVariantTypeId(timestampDbVariant), QMetaType::QDateTime);
+        QCOMPARE(timestampDbVariant.typeId(), QMetaType::QDateTime);
 
         /* The time zone must be as is defined in the qt_timezone connection
            configuration, TinyORM QueryBuilder fixes the buggy time zone behavior
@@ -1659,7 +1658,7 @@ void tst_MySql_QDateTime::insert_Qt_QDate_UtcTimezone_DateColumn_UtcOnServer() c
         QVERIFY(dateDbVariant.isValid());
         QVERIFY(!dateDbVariant.isNull());
 
-        QCOMPARE(Helpers::qVariantTypeId(dateDbVariant), QMetaType::QDate);
+        QCOMPARE(dateDbVariant.typeId(), QMetaType::QDate);
 
         const auto dateActual = dateDbVariant.value<QDate>();
         const auto dateExpected = QDate(2022, 8, 28);
@@ -1717,7 +1716,7 @@ void tst_MySql_QDateTime::insert_Qt_QString_DateColumn_UtcOnServer() const
         QVERIFY(dateDbVariant.isValid());
         QVERIFY(!dateDbVariant.isNull());
 
-        QCOMPARE(Helpers::qVariantTypeId(dateDbVariant), QMetaType::QDate);
+        QCOMPARE(dateDbVariant.typeId(), QMetaType::QDate);
 
         const auto dateActual = dateDbVariant.value<QDate>();
         const auto dateExpected = QDate(2022, 8, 28);
@@ -1779,7 +1778,7 @@ void tst_MySql_QDateTime::insert_Qt_QDate_UtcTimezone_DateColumn_0200OnServer() 
         QVERIFY(dateDbVariant.isValid());
         QVERIFY(!dateDbVariant.isNull());
 
-        QCOMPARE(Helpers::qVariantTypeId(dateDbVariant), QMetaType::QDate);
+        QCOMPARE(dateDbVariant.typeId(), QMetaType::QDate);
 
         const auto dateActual = dateDbVariant.value<QDate>();
         const auto dateExpected = QDate(2022, 8, 28);
@@ -1839,7 +1838,7 @@ void tst_MySql_QDateTime::insert_Qt_QString_DateColumn_0200OnServer() const
         QVERIFY(dateDbVariant.isValid());
         QVERIFY(!dateDbVariant.isNull());
 
-        QCOMPARE(Helpers::qVariantTypeId(dateDbVariant), QMetaType::QDate);
+        QCOMPARE(dateDbVariant.typeId(), QMetaType::QDate);
 
         const auto dateActual = dateDbVariant.value<QDate>();
         const auto dateExpected = QDate(2022, 8, 28);
@@ -1875,7 +1874,7 @@ void tst_MySql_QDateTime::insert_QDate_UtcTimezone_DateColumn_UtcOnServer() cons
         QVERIFY(dateDbVariant.isValid());
         QVERIFY(!dateDbVariant.isNull());
 
-        QCOMPARE(Helpers::qVariantTypeId(dateDbVariant), QMetaType::QDate);
+        QCOMPARE(dateDbVariant.typeId(), QMetaType::QDate);
 
         const auto dateActual = dateDbVariant.value<QDate>();
         const auto dateExpected = QDate(2022, 8, 28);
@@ -1906,7 +1905,7 @@ void tst_MySql_QDateTime::insert_QString_DateColumn_UtcOnServer() const
         QVERIFY(dateDbVariant.isValid());
         QVERIFY(!dateDbVariant.isNull());
 
-        QCOMPARE(Helpers::qVariantTypeId(dateDbVariant), QMetaType::QDate);
+        QCOMPARE(dateDbVariant.typeId(), QMetaType::QDate);
 
         const auto dateActual = dateDbVariant.value<QDate>();
         const auto dateExpected = QDate(2022, 8, 28);
@@ -1941,7 +1940,7 @@ void tst_MySql_QDateTime::insert_QDate_UtcTimezone_DateColumn_0200OnServer() con
         QVERIFY(dateDbVariant.isValid());
         QVERIFY(!dateDbVariant.isNull());
 
-        QCOMPARE(Helpers::qVariantTypeId(dateDbVariant), QMetaType::QDate);
+        QCOMPARE(dateDbVariant.typeId(), QMetaType::QDate);
 
         const auto dateActual = dateDbVariant.value<QDate>();
         const auto dateExpected = QDate(2022, 8, 28);
@@ -1974,7 +1973,7 @@ void tst_MySql_QDateTime::insert_QString_DateColumn_0200OnServer() const
         QVERIFY(dateDbVariant.isValid());
         QVERIFY(!dateDbVariant.isNull());
 
-        QCOMPARE(Helpers::qVariantTypeId(dateDbVariant), QMetaType::QDate);
+        QCOMPARE(dateDbVariant.typeId(), QMetaType::QDate);
 
         const auto dateActual = dateDbVariant.value<QDate>();
         const auto dateExpected = QDate(2022, 8, 28);
@@ -2040,7 +2039,7 @@ void tst_MySql_QDateTime::insert_Qt_QTime_UtcTimezone_TimeColumn_UtcOnServer() c
 
         /* MySQL TIME column type is returned as QString because it can be within
            the range '-838:59:59' to '838:59:59'. */
-        QCOMPARE(Helpers::qVariantTypeId(timeDbVariant), QMetaType::QString);
+        QCOMPARE(timeDbVariant.typeId(), QMetaType::QString);
 
         const auto timeActual = timeDbVariant.value<QString>();
         const auto timeExpected = sl("17:02:59");
@@ -2100,7 +2099,7 @@ void tst_MySql_QDateTime::insert_Qt_QString_TimeColumn_UtcOnServer() const
 
         /* MySQL TIME column type is returned as QString because it can be within
            the range '-838:59:59' to '838:59:59'. */
-        QCOMPARE(Helpers::qVariantTypeId(timeDbVariant), QMetaType::QString);
+        QCOMPARE(timeDbVariant.typeId(), QMetaType::QString);
 
         const auto timeActual = timeDbVariant.value<QString>();
         const auto timeExpected = QString("17:02:59");
@@ -2164,7 +2163,7 @@ void tst_MySql_QDateTime::insert_Qt_QTime_UtcTimezone_TimeColumn_0200OnServer() 
 
         /* MySQL TIME column type is returned as QString because it can be within
            the range '-838:59:59' to '838:59:59'. */
-        QCOMPARE(Helpers::qVariantTypeId(timeDbVariant), QMetaType::QString);
+        QCOMPARE(timeDbVariant.typeId(), QMetaType::QString);
 
         const auto timeActual = timeDbVariant.value<QString>();
         const auto timeExpected = QString("17:02:59");
@@ -2226,7 +2225,7 @@ void tst_MySql_QDateTime::insert_Qt_QString_TimeColumn_0200OnServer() const
 
         /* MySQL TIME column type is returned as QString because it can be within
            the range '-838:59:59' to '838:59:59'. */
-        QCOMPARE(Helpers::qVariantTypeId(timeDbVariant), QMetaType::QString);
+        QCOMPARE(timeDbVariant.typeId(), QMetaType::QString);
 
         const auto timeActual = timeDbVariant.value<QString>();
         const auto timeExpected = QString("17:02:59");
@@ -2264,7 +2263,7 @@ void tst_MySql_QDateTime::insert_QTime_UtcTimezone_TimeColumn_UtcOnServer() cons
 
         /* MySQL TIME column type is returned as QString because it can be within
            the range '-838:59:59' to '838:59:59'. */
-        QCOMPARE(Helpers::qVariantTypeId(timeDbVariant), QMetaType::QString);
+        QCOMPARE(timeDbVariant.typeId(), QMetaType::QString);
 
         const auto timeActual = timeDbVariant.value<QString>();
         const auto timeExpected = QString("17:02:59");
@@ -2297,7 +2296,7 @@ void tst_MySql_QDateTime::insert_QString_TimeColumn_UtcOnServer() const
 
         /* MySQL TIME column type is returned as QString because it can be within
            the range '-838:59:59' to '838:59:59'. */
-        QCOMPARE(Helpers::qVariantTypeId(timeDbVariant), QMetaType::QString);
+        QCOMPARE(timeDbVariant.typeId(), QMetaType::QString);
 
         const auto timeActual = timeDbVariant.value<QString>();
         const auto timeExpected = QString("17:02:59");
@@ -2334,7 +2333,7 @@ void tst_MySql_QDateTime::insert_QTime_UtcTimezone_TimeColumn_0200OnServer() con
 
         /* MySQL TIME column type is returned as QString because it can be within
            the range '-838:59:59' to '838:59:59'. */
-        QCOMPARE(Helpers::qVariantTypeId(timeDbVariant), QMetaType::QString);
+        QCOMPARE(timeDbVariant.typeId(), QMetaType::QString);
 
         const auto timeActual = timeDbVariant.value<QString>();
         const auto timeExpected = QString("17:02:59");
@@ -2369,7 +2368,7 @@ void tst_MySql_QDateTime::insert_QString_TimeColumn_0200OnServer() const
 
         /* MySQL TIME column type is returned as QString because it can be within
            the range '-838:59:59' to '838:59:59'. */
-        QCOMPARE(Helpers::qVariantTypeId(timeDbVariant), QMetaType::QString);
+        QCOMPARE(timeDbVariant.typeId(), QMetaType::QString);
 
         const auto timeActual = timeDbVariant.value<QString>();
         const auto timeExpected = QString("17:02:59");
@@ -2433,7 +2432,7 @@ void tst_MySql_QDateTime::insert_Qt_QDateTime_Null_DatetimeColumn_UtcOnServer() 
         QVERIFY(datetimeDbVariant.isValid());
         QVERIFY(datetimeDbVariant.isNull());
 
-        QCOMPARE(Helpers::qVariantTypeId(datetimeDbVariant), QMetaType::QDateTime);
+        QCOMPARE(datetimeDbVariant.typeId(), QMetaType::QDateTime);
 
         /* TZ is irrelevant for null values, but I will check them anyway, if something
            weird happens and TZ changes then test fail, so I will know about that. */
@@ -2496,7 +2495,7 @@ void tst_MySql_QDateTime::insert_Qt_QDate_Null_DateColumn_UtcOnServer() const
         QVERIFY(dateDbVariant.isValid());
         QVERIFY(dateDbVariant.isNull());
 
-        QCOMPARE(Helpers::qVariantTypeId(dateDbVariant), QMetaType::QDate);
+        QCOMPARE(dateDbVariant.typeId(), QMetaType::QDate);
 
         const auto dateActual = dateDbVariant.value<QDate>();
         const auto dateExpected = QDate();
@@ -2554,7 +2553,7 @@ void tst_MySql_QDateTime::insert_Qt_QTime_Null_TimeColumn_UtcOnServer() const
         QVERIFY(timeDbVariant.isValid());
         QVERIFY(timeDbVariant.isNull());
 
-        QCOMPARE(Helpers::qVariantTypeId(timeDbVariant), QMetaType::QString);
+        QCOMPARE(timeDbVariant.typeId(), QMetaType::QString);
 
         const auto timeActual = timeDbVariant.value<QString>();
         const auto timeExpected = QString();
@@ -2616,7 +2615,7 @@ void tst_MySql_QDateTime::insert_Qt_QDateTime_Null_DatetimeColumn_0200OnServer()
         QVERIFY(datetimeDbVariant.isValid());
         QVERIFY(datetimeDbVariant.isNull());
 
-        QCOMPARE(Helpers::qVariantTypeId(datetimeDbVariant), QMetaType::QDateTime);
+        QCOMPARE(datetimeDbVariant.typeId(), QMetaType::QDateTime);
 
         /* TZ is irrelevant for null values, but I will check them anyway, if something
            weird happens and TZ changes then test fail, so I will know about that. */
@@ -2681,7 +2680,7 @@ void tst_MySql_QDateTime::insert_Qt_QDate_Null_DateColumn_0200OnServer() const
         QVERIFY(dateDbVariant.isValid());
         QVERIFY(dateDbVariant.isNull());
 
-        QCOMPARE(Helpers::qVariantTypeId(dateDbVariant), QMetaType::QDate);
+        QCOMPARE(dateDbVariant.typeId(), QMetaType::QDate);
 
         const auto dateActual = dateDbVariant.value<QDate>();
         const auto dateExpected = QDate();
@@ -2741,7 +2740,7 @@ void tst_MySql_QDateTime::insert_Qt_QTime_Null_TimeColumn_0200OnServer() const
         QVERIFY(timeDbVariant.isValid());
         QVERIFY(timeDbVariant.isNull());
 
-        QCOMPARE(Helpers::qVariantTypeId(timeDbVariant), QMetaType::QString);
+        QCOMPARE(timeDbVariant.typeId(), QMetaType::QString);
 
         const auto timeActual = timeDbVariant.value<QString>();
         const auto timeExpected = QString();
@@ -2777,7 +2776,7 @@ void tst_MySql_QDateTime::insert_QDateTime_Null_DatetimeColumn_UtcOnServer() con
         QVERIFY(datetimeDbVariant.isValid());
         QVERIFY(datetimeDbVariant.isNull());
 
-        QCOMPARE(Helpers::qVariantTypeId(datetimeDbVariant), QMetaType::QDateTime);
+        QCOMPARE(datetimeDbVariant.typeId(), QMetaType::QDateTime);
 
         /* TZ is irrelevant for null values, but I will check them anyway, if something
            weird happens and TZ changes then test fail, so I will know about that. */
@@ -2813,7 +2812,7 @@ void tst_MySql_QDateTime::insert_QDate_Null_DateColumn_UtcOnServer() const
         QVERIFY(dateDbVariant.isValid());
         QVERIFY(dateDbVariant.isNull());
 
-        QCOMPARE(Helpers::qVariantTypeId(dateDbVariant), QMetaType::QDate);
+        QCOMPARE(dateDbVariant.typeId(), QMetaType::QDate);
 
         const auto dateActual = dateDbVariant.value<QDate>();
         const auto dateExpected = QDate();
@@ -2844,7 +2843,7 @@ void tst_MySql_QDateTime::insert_QTime_Null_TimeColumn_UtcOnServer() const
         QVERIFY(timeDbVariant.isValid());
         QVERIFY(timeDbVariant.isNull());
 
-        QCOMPARE(Helpers::qVariantTypeId(timeDbVariant), QMetaType::QString);
+        QCOMPARE(timeDbVariant.typeId(), QMetaType::QString);
 
         const auto timeActual = timeDbVariant.value<QString>();
         const auto timeExpected = QString();
@@ -2880,7 +2879,7 @@ void tst_MySql_QDateTime::insert_QDateTime_Null_DatetimeColumn_0200OnServer() co
         QVERIFY(datetimeDbVariant.isValid());
         QVERIFY(datetimeDbVariant.isNull());
 
-        QCOMPARE(Helpers::qVariantTypeId(datetimeDbVariant), QMetaType::QDateTime);
+        QCOMPARE(datetimeDbVariant.typeId(), QMetaType::QDateTime);
 
         /* TZ is irrelevant for null values, but I will check them anyway, if something
            weird happens and TZ changes then test fail, so I will know about that. */
@@ -2918,7 +2917,7 @@ void tst_MySql_QDateTime::insert_QDate_Null_DateColumn_0200OnServer() const
         QVERIFY(dateDbVariant.isValid());
         QVERIFY(dateDbVariant.isNull());
 
-        QCOMPARE(Helpers::qVariantTypeId(dateDbVariant), QMetaType::QDate);
+        QCOMPARE(dateDbVariant.typeId(), QMetaType::QDate);
 
         const auto dateActual = dateDbVariant.value<QDate>();
         const auto dateExpected = QDate();
@@ -2951,7 +2950,7 @@ void tst_MySql_QDateTime::insert_QTime_Null_TimeColumn_0200OnServer() const
         QVERIFY(timeDbVariant.isValid());
         QVERIFY(timeDbVariant.isNull());
 
-        QCOMPARE(Helpers::qVariantTypeId(timeDbVariant), QMetaType::QString);
+        QCOMPARE(timeDbVariant.typeId(), QMetaType::QString);
 
         const auto timeActual = timeDbVariant.value<QString>();
         const auto timeExpected = QString();
@@ -3000,7 +2999,7 @@ insert_QDateTime_0300Timezone_DatetimeColumn_UtcOnServer_DontConvert() const
         QVERIFY(datetimeDbVariant.isValid());
         QVERIFY(!datetimeDbVariant.isNull());
 
-        QCOMPARE(Helpers::qVariantTypeId(datetimeDbVariant), QMetaType::QDateTime);
+        QCOMPARE(datetimeDbVariant.typeId(), QMetaType::QDateTime);
 
         // Practically it should behave as is the default QMYSQL driver behavior
         const auto datetimeActual = datetimeDbVariant.value<QDateTime>();

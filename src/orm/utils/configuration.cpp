@@ -5,7 +5,6 @@
 #include "orm/exceptions/invalidargumenterror.hpp"
 #include "orm/ormconcepts.hpp" // IWYU pragma: keep
 #include "orm/ormtypes.hpp"
-#include "orm/utils/helpers.hpp"
 #include "orm/utils/type.hpp"
 
 TINYORM_BEGIN_COMMON_NAMESPACE
@@ -54,7 +53,7 @@ Configuration::prepareQtTimeZone(const QVariant &qtTimeZone, const QString &conn
     if (!qtTimeZone.isValid() || qtTimeZone.isNull())
         return QtTimeZoneConfig::utc();
 
-    const auto typeId = Helpers::qVariantTypeId(qtTimeZone);
+    const auto typeId = qtTimeZone.typeId();
 
 #if QT_VERSION >= QT_VERSION_CHECK(6, 5, 0)
     if (typeId == QMetaType::fromType<QTimeZone::Initialization>().id())
