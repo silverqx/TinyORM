@@ -423,9 +423,9 @@ function(tiny_should_disable_precompile_headers out_variable)
         ERROR_QUIET
     )
 
-    # ccache can't be executed, in this case don't disable PCH and even don't cache
+    # ccache can't be executed, don't disable PCH in this case and even don't cache
     # the TINY_CCACHE_VERSION because the build is gona to fail and we don't want to
-    # cache wrong value
+    # cache the wrong value
     if(exitCode STREQUAL "no such file or directory")
         set(${out_variable} FALSE PARENT_SCOPE)
         return()
@@ -458,7 +458,7 @@ function(tiny_should_disable_precompile_headers out_variable)
 
     # This should never happen :/
     if(NOT ccacheVersionRaw MATCHES "${regexpVersion}")
-        message(FATAL_ERROR "Parse of the 'ccache --print-version' failed \
+        message(FATAL_ERROR "Parsing of the 'ccache --print-version' failed \
 in tiny_should_disable_precompile_headers().")
     endif()
 
