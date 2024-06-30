@@ -20,6 +20,75 @@ function(tiny_to_bool out_variable value)
 
 endfunction()
 
+# Determine whether the minimum Qt version was satisfied using and set the internal cache
+# variable TINY_QT_VERSION
+# Command used to obtain a Qt version: "${QT_QMAKE_EXECUTABLE}" -query QT_VERSION
+# This check is needed because eg. QtCreator sets the QT_QMAKE_EXECUTABLE based on the
+# selected KIT, but there can be other Qt versions on the system/user path so even if
+# the QT_QMAKE_EXECUTABLE contains qmake from eg. Qt v5.15 then the find_package()
+# function is still able to find the correct Qt version, so this check is specifically
+# for the QtCreator and informs about wrongly select KIT.
+# If the QT_QMAKE_EXECUTABLE command can't be executed or it returns a non-zero exit code
+# then continue a normal execution and leave the decision logic up to the find_package()
+# function.
+function(tiny_satisfied_minimum_required_qt_version out_variable)
+
+    # Nothing to do, Qt version was already populated (cache hit)
+    if(DEFINED TINY_QT_VERSION AND NOT TINY_QT_VERSION STREQUAL "")
+        if(TINY_QT_VERSION VERSION_GREATER_EQUAL minReqQtVersion)
+            set(${out_variable} TRUE PARENT_SCOPE)
+
+        # There is a very low chance that this code branch will be invoked, but I can't
+        # remove it 😎
+        else()
+            set(${out_variable} FALSE PARENT_SCOPE)
+        endif()
+
+        return()
+    endif()
+
+    execute_process(
+        COMMAND "${QT_QMAKE_EXECUTABLE}" -query QT_VERSION
+        RESULT_VARIABLE exitCode
+        OUTPUT_VARIABLE qtVersion
+        OUTPUT_STRIP_TRAILING_WHITESPACE
+        ERROR_QUIET
+    )
+
+    # qmake can't be executed or qmake returned non-zero exit code, don't fail
+    # in these cases and even don't cache the TINY_QT_VERSION as we don't want to cache
+    # the wrong version value and leave the decision logic up to find_package()
+    if(exitCode STREQUAL "no such file or directory" OR NOT exitCode EQUAL 0)
+        message(VERBOSE "Qt version could not be determined because the \
+'${QT_QMAKE_EXECUTABLE}' command can't be executed or it returned a non-zero exit code, \
+continuing a normal execution and leaving decision logic up to the find_package() \
+function, in ${CMAKE_CURRENT_FUNCTION}()")
+
+        set(${out_variable} TRUE PARENT_SCOPE)
+        return()
+    endif()
+
+    # Detect a normal tag version like eg. 6.7.2
+    set(regexpVersion "^[0-9]+\.[0-9]+\.[0-9]+(\.[0-9]+)?$")
+
+    # This should never happen :/
+    if(NOT qtVersion MATCHES "${regexpVersion}")
+        message(FATAL_ERROR "Parsing of the 'qmake -query QT_VERSION' failed, \
+in ${CMAKE_CURRENT_FUNCTION}().")
+    endif()
+
+    set(TINY_QT_VERSION "${CMAKE_MATCH_0}" CACHE INTERNAL
+        "Qt version used to determine whether a minimum required Qt version was \
+satisfied.")
+
+    if(TINY_QT_VERSION VERSION_GREATER_EQUAL minReqQtVersion)
+        set(${out_variable} TRUE PARENT_SCOPE)
+    else()
+        set(${out_variable} FALSE PARENT_SCOPE)
+    endif()
+
+endfunction()
+
 # Make minimum toolchain version a requirement
 function(tiny_toolchain_requirement)
 
@@ -73,6 +142,17 @@ upgrade the GCC compiler")
 recommended version >=${TINY_CLANG}, your version is ${CMAKE_CXX_COMPILER_VERSION}, \
 upgrade Clang compiler")
         endif()
+    endif()
+
+    # Minimum required Qt version (minReqQtVersion)
+    set(satisfiedMinReqQtVersion)
+    tiny_satisfied_minimum_required_qt_version(satisfiedMinReqQtVersion)
+
+    if(NOT satisfiedMinReqQtVersion)
+        # Should never happend that the TINY_QT_VERSION is undefined or empty
+        message(FATAL_ERROR "Minimum required Qt version was not satisfied, \
+required version >=${minReqQtVersion}, your version is ${TINY_QT_VERSION}, \
+upgrade Qt Framework")
     endif()
 
 endfunction()
