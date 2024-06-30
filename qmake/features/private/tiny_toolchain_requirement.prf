@@ -25,7 +25,7 @@ win32-clang-msvc: \
 
 !build_pass: \
 !versionAtLeast(QT_VERSION, $$tinyMinReqQt): \
-    error( "Minimum required Qt Framework version was not satisfied, recommended\
+    error( "Minimum required Qt Framework version was not satisfied, required\
             version >=$${tinyMinReqQt}, your version is $${QT_VERSION}, upgrade\
             Qt Framework.")
 
