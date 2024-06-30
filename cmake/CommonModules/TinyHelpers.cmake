@@ -243,42 +243,6 @@ macro(tiny_set_rc_flags)
 
 endmacro()
 
-# Throw a fatal error for unsupported environments
-function(tiny_check_unsupported_build)
-
-    # Fixed in Clang v18 🎉
-    # Related issue: https://github.com/llvm/llvm-project/issues/55938
-
-    if(MINGW AND CMAKE_CXX_COMPILER_ID STREQUAL "Clang" AND NOT BUILD_SHARED_LIBS AND
-            CMAKE_CXX_COMPILER_VERSION VERSION_LESS "18"
-    )
-        message(FATAL_ERROR "MinGW Clang <18 static build is not supported, it has \
-problems with inline constants :/.")
-    endif()
-
-    if(MINGW AND CMAKE_CXX_COMPILER_ID STREQUAL "Clang" AND BUILD_SHARED_LIBS AND
-            INLINE_CONSTANTS AND CMAKE_CXX_COMPILER_VERSION VERSION_LESS "18"
-    )
-        message(FATAL_ERROR "MinGW Clang <18 shared build crashes with inline constants, \
-don't enable the INLINE_CONSTANTS cmake option :/.")
-    endif()
-
-    if(TINY_VCPKG AND TINY_IS_MULTI_CONFIG)
-        message(FATAL_ERROR "Multi-configuration generators are not supported in vcpkg \
-ports.")
-    endif()
-
-    if(TINY_VCPKG AND TINY_BUILD_LOADABLE_DRIVERS)
-        message(FATAL_ERROR "Loadable SQL drivers are not supported in vcpkg ports.")
-    endif()
-
-    if(BUILD_DRIVERS AND NOT BUILD_MYSQL_DRIVER)
-        message(FATAL_ERROR "If the BUILD_DRIVERS option is enabled, at least one \
-driver implementation must be enabled, please enable BUILD_MYSQL_DRIVER.")
-    endif()
-
-endfunction()
-
 # Print a VERBOSE message against which library is project linking
 function(tiny_print_linking_against target)
 
