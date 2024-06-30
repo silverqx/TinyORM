@@ -1207,6 +1207,8 @@ ALTER TABLE `types` ADD `char_col` CHAR(20) NULL DEFAULT NULL AFTER `medium_bina
 
 CMake Guidelines:
 -----------------
+tags: code style
+---
 
 All are snake-case unless otherwise specified.
 
