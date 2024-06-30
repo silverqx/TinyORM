@@ -24,7 +24,7 @@ function(tiny_get_target_configurations out_target_configuations)
     set(TINY_${CMAKE_FIND_PACKAGE_NAME}_FOUND_CONFIGURATIONS "${configurations}"
         CACHE INTERNAL
         "Found all installed target configurations for single-configuration \
-installations")
+installations.")
 
     set(${out_target_configuations} ${configurations} PARENT_SCOPE)
 

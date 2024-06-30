@@ -12,7 +12,7 @@ function(tiny_init_driver_types_pre)
 
     set(TINY_DRIVERS_TYPE_FORCE ${driversTypeForce} CACHE INTERNAL
         "Specifies value for the 'force' parameter \
-for the feature_string_option_dependent(DRIVERS_TYPE) function")
+for the feature_string_option_dependent(DRIVERS_TYPE) function.")
 
 endfunction()
 
@@ -62,16 +62,16 @@ Shared, Static, or Loadable (case-insensitive).")
 
     set(TINY_BUILD_SHARED_DRIVERS ${driversShared} CACHE INTERNAL
         "Determine whether ${TinyDrivers_target} library will be built as a shared \
-library with all enabled SQL drivers inside")
+library with all enabled SQL drivers inside.")
     set(TINY_BUILD_STATIC_DRIVERS ${driversStatic} CACHE INTERNAL
         "Determine whether ${TinyDrivers_target} library will be built as a static \
-library that will be linked into the ${TinyOrm_target} shared or static library")
+library that will be linked into the ${TinyOrm_target} shared or static library.")
     set(TINY_BUILD_LOADABLE_DRIVERS ${driversLoadable} CACHE INTERNAL
         "Determine whether all enabled SQL drivers will be built as loadable shared \
-libraries which will be loaded at runtime by the ${TinyDrivers_target} shared library")
+libraries which will be loaded at runtime by the ${TinyDrivers_target} shared library.")
     set(TINY_DRIVERS_LIBRARY_TYPE ${driversLibraryType} CACHE INTERNAL
         "Specifies ${TinyDrivers_target} library type for the add_library() CMake \
-function")
+function.")
 
 endfunction()
 

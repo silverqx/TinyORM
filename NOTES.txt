@@ -1222,6 +1222,9 @@ All are snake-case unless otherwise specified.
  - commands:
    - foreach: use the foreach(depend ${depends}) syntax everywhere as default syntax and use
               the IN LISTS XYZ syntax only if needed
+ - dot at the end of a sentence should be at:
+   - CACHE [INTERNAL] help string descriptions
+   - message(FATAL_ERROR), all other messages like STATUS, DEBUG, ... should be without a dot
 
 https://learn.microsoft.com/en-us/vcpkg/contributing/cmake-guidelines
 

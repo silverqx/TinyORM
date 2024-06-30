@@ -82,7 +82,7 @@ ${TINY_UNPARSED_ARGUMENTS}")
         if(CMAKE_CXX_COMPILER_VERSION VERSION_LESS TINY_MSVC)
             message(FATAL_ERROR "Minimum required MSVC version was not satisfied, \
 required version >=${TINY_MSVC}, your version is ${CMAKE_CXX_COMPILER_VERSION}, upgrade \
-Visual Studio")
+Visual Studio.")
         endif()
     endif()
 
@@ -93,13 +93,13 @@ Visual Studio")
         if(CMAKE_CXX_SIMULATE_VERSION VERSION_LESS TINY_MSVC)
             message(FATAL_ERROR "Minimum required MSVC version was not satisfied, \
 required version >=${TINY_MSVC}, your version is ${CMAKE_CXX_SIMULATE_VERSION}, upgrade \
-Visual Studio")
+Visual Studio.")
         endif()
 
         if(CMAKE_CXX_COMPILER_VERSION VERSION_LESS TINY_CLANG_CL)
             message(FATAL_ERROR "Minimum required Clang-cl version was not satisfied, \
 required version >=${TINY_CLANG_CL}, your version is ${CMAKE_CXX_COMPILER_VERSION}, \
-upgrade LLVM")
+upgrade LLVM.")
         endif()
     endif()
 
@@ -130,7 +130,7 @@ upgrade Clang compiler")
         # Should never happend that the TINY_QT_VERSION is undefined or empty
         message(FATAL_ERROR "Minimum required Qt version was not satisfied, \
 required version >=${TINY_QT}, your version is ${TINY_QT_VERSION}, \
-upgrade Qt Framework")
+upgrade Qt Framework.")
     endif()
 
 endfunction()

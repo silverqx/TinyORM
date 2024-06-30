@@ -11,7 +11,7 @@ macro(tiny_init_cmake_variables_pre)
     )
         set(CMAKE_EXPORT_PACKAGE_REGISTRY $ENV{TINYORM_EXPORT_PACKAGE_REGISTRY}
             CACHE BOOL "Enables the export(PACKAGE) command, export packages \
-to the user package registry")
+to the user package registry.")
     endif()
 
 endmacro()
@@ -22,18 +22,18 @@ macro(tiny_init_cmake_variables)
     # Especially important for multi-config generators (a good practice for single-config
     # generators as well)
     set(CMAKE_DEBUG_POSTFIX d CACHE STRING
-        "Default filename postfix for libraries for Debug configuration")
+        "Default filename postfix for libraries for Debug configuration.")
 
     # find_package() related
     set(CMAKE_FIND_PACKAGE_SORT_ORDER NATURAL CACHE STRING
-        "The default order for sorting packages found using find_package()")
+        "The default order for sorting packages found using find_package().")
     set(CMAKE_FIND_PACKAGE_SORT_DIRECTION DEC CACHE STRING
-        "The sorting direction used by CMAKE_FIND_PACKAGE_SORT_ORDER")
+        "The sorting direction used by CMAKE_FIND_PACKAGE_SORT_ORDER.")
 
     # Others
     set(CMAKE_WARN_ON_ABSOLUTE_INSTALL_DESTINATION ON CACHE BOOL
         "Ask cmake_install.cmake script to warn each time a file with absolute INSTALL \
-DESTINATION is encountered")
+DESTINATION is encountered.")
 
     mark_as_advanced(
         CMAKE_DEBUG_POSTFIX
@@ -63,7 +63,7 @@ DESTINATION is encountered")
     )
         get_property(help_string CACHE CMAKE_INSTALL_PREFIX PROPERTY HELPSTRING)
         if(NOT help_string)
-            set(help_string "Install path prefix, prepended onto install directories")
+            set(help_string "Install path prefix, prepended onto install directories.")
         endif()
 
         if(MINGW)
@@ -78,7 +78,7 @@ DESTINATION is encountered")
 
     # Avoid linking a release build types against debug builds
     set(helpStringTemplate
-        "Map from <CONFIG> project configuration to an imported target's configuration")
+        "Map from <CONFIG> project configuration to an imported target's configuration.")
 
     string(REPLACE "<CONFIG>" "Release" release_helpString ${helpStringTemplate})
     string(REPLACE "<CONFIG>" "RelWithDebInfo" relWithDebInfo_helpString
@@ -308,7 +308,7 @@ $<SHELL_PATH:${${TinyOrm_ns}_BINARY_DIR}/tests/${TinyUtils_ns}>${TINY_PATH_SEPAR
     endif()
 
     set(TINY_BUILD_GENDIR "${TinyOrm_ns}_generated" CACHE INTERNAL
-        "Generated content in the build tree")
+        "Generated content in the build tree.")
 
     # Provide the default value if not set
     if(NOT TINY_VCPKG)
@@ -326,7 +326,7 @@ $<SHELL_PATH:${${TinyOrm_ns}_BINARY_DIR}/tests/${TinyUtils_ns}>${TINY_PATH_SEPAR
     endif()
     set(TINY_EXTERN_CONSTANTS ${tinyExternConstants} CACHE INTERNAL
         "Determine whether ${TinyOrm_target} library will be built with extern or inline \
-constants")
+constants.")
     unset(tinyExternConstants)
 
 endmacro()
@@ -355,13 +355,13 @@ macro(tiny_init_tom_database_dirs)
 
         # Set path from the -D options or from the above default values
         set(TOM_MIGRATIONS_DIR "${TOM_MIGRATIONS_DIR}" CACHE PATH
-            "Default migrations path for the make:migration command")
+            "Default migrations path for the make:migration command.")
 
         set(TOM_MODELS_DIR "${TOM_MODELS_DIR}" CACHE PATH
-            "Default models path for the make:model command")
+            "Default models path for the make:model command.")
 
         set(TOM_SEEDERS_DIR "${TOM_SEEDERS_DIR}" CACHE PATH
-            "Default seeders path for the make:seeder command")
+            "Default seeders path for the make:seeder command.")
 
         mark_as_advanced(TOM_MIGRATIONS_DIR TOM_MODELS_DIR TOM_SEEDERS_DIR)
     endif()
