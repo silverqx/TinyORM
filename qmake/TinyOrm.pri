@@ -60,6 +60,20 @@ TINYTOM_SOURCE_TREE = $$quote($$TINYORM_SOURCE_TREE/tom)
 
 include($$TINYORM_SOURCE_TREE/qmake/support/variables.pri)
 
+# Version requirements
+# ---
+# Older versions may work, but you are on your own
+# Req - requirement, throws error
+# Rec - recommended, shows info message
+
+tinyMinReqQt = 6.2
+# Unused
+#tinyMinReqRangeV3Version  = 0.12.0
+#tinyMinReqTabulateVersion = 1.5.0
+
+# Check/verify all dependency libraries requirements, throws error() on any problem
+load(private/tiny_dependencies_requirement)
+
 # Qt Common Configuration
 # ---
 

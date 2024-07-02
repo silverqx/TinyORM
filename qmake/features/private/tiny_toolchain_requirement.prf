@@ -41,3 +41,6 @@ win32-clang-msvc: \
                   recommended version >=$${tinyMinRecGCC}, your version is\
                   $${TINY_COMPILER_VERSION}, upgrade GCC compiler.")
 }
+
+# Check/verify all dependency libraries requirements, throws error() on any problem
+load(private/tiny_dependencies_requirement)
