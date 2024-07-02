@@ -3131,6 +3131,23 @@ TinyORM C++ Coding Style:
 #define ORM_DRIVERS_MYSQL_MYSQLRESULT_P_HPP
 #define ORM_DRIVERS_MYSQL_CONSTANTS_EXTERN_P_HPP
 
+ - Q/List vs Q/Vector naming (related to renaming QVector to QList refactor)
+   - name all variables or methods that holds/operates on the QList<> as vector,
+     the only one exception to this rule are toList() conversion methods which can't
+     be names as toVector() because of naming collision with std::vector<>
+   - also use the word Vector in all comments which are QList<> related
+
+Note from the commit:
+All symbols described below which contain the word [Vv]ector will not be
+renamed to [Ll]ist, the reason for this is that the QList<> is vector and
+in the future when the QtCore dependency will be dropped 😮 this will be
+the std::vector<> again. 😎
+
+ - variable names that are of type QList<>
+ - method names which are operating on the QList<>
+ - comments like: Vector of attached models IDs.
+ - the same is also true for TinyORM-github.io documentation
+
 
 GitHub actions self-hosted runners:
 -----------------------------------
