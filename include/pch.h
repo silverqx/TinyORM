@@ -40,24 +40,4 @@
 #if defined(Q_OS_LINUX) && !defined(QT_LINUXBASE)
 #  include <sys/prctl.h>
 #endif
-
-#include <range/v3/action/erase.hpp>
-#include <range/v3/action/remove_if.hpp>
-#include <range/v3/action/sort.hpp>
-#include <range/v3/action/transform.hpp>
-#include <range/v3/action/unique.hpp>
-#include <range/v3/algorithm/contains.hpp>
-#include <range/v3/algorithm/set_algorithm.hpp>
-#include <range/v3/algorithm/stable_sort.hpp>
-#include <range/v3/algorithm/unique.hpp>
-#include <range/v3/iterator/insert_iterators.hpp>
-#include <range/v3/numeric/accumulate.hpp>
-#include <range/v3/range/conversion.hpp>
-#include <range/v3/view/filter.hpp>
-#include <range/v3/view/map.hpp>
-#include <range/v3/view/move.hpp>
-#include <range/v3/view/remove_if.hpp>
-#include <range/v3/view/reverse.hpp>
-#include <range/v3/view/set_algorithm.hpp>
-#include <range/v3/view/transform.hpp>
 #endif
